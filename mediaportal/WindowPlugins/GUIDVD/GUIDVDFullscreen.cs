@@ -61,7 +61,7 @@ namespace MediaPortal.GUI.Video
 
     public override bool OnMessage(GUIMessage message)
     {
-      Log.Write("DVDFullscreen: Message: {0}", message.Message.ToString());
+      _log.Info("DVDFullscreen: Message: {0}", message.Message.ToString());
       if (message.Message == GUIMessage.MessageType.GUI_MSG_WINDOW_INIT)
       {
         GUIWindowManager.ReplaceWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
@@ -81,7 +81,7 @@ namespace MediaPortal.GUI.Video
 
     protected bool OnPlayDVD()
     {
-      Log.Write("DVDFullscreen: Play DVD");
+      _log.Info("DVDFullscreen: Play DVD");
       GUIVideoFiles videoFiles = (GUIVideoFiles)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIDEOS);
       if (null == videoFiles) return false;
       //check if dvd is inserted

@@ -64,7 +64,7 @@ namespace ProgramsDatabase
     private void ReadNewSection(string strLine)
     {
       string strTemp;
-      // Log.Write("MyFileINI: ReadNewSection: {0}", strLine);
+      // _log.Info("MyFileINI: ReadNewSection: {0}", strLine);
       if (curFile == null)
       {
         curFile = new FileItem(this.sqlDB);

@@ -27,6 +27,8 @@ using MediaPortal.TV.Database;
 using MediaPortal.Core.Transcoding;
 using MediaPortal.Util;
 using MediaPortal.TV.DiskSpace;
+using MediaPortal.Utils.Services;
+
 namespace MediaPortal.TV.Recording
 {
   /// <summary>
@@ -325,7 +327,9 @@ namespace MediaPortal.TV.Recording
             {
               if (transcording.status == Status.Busy)
                 transcording.status = Status.Error;
-              Log.Write(ex);
+              ServiceProvider services = GlobalServiceProvider.Instance;
+              ILog log = services.Get<ILog>();
+              log.Error(ex);
             }
           }
           else System.Threading.Thread.Sleep(1000);
@@ -431,7 +435,7 @@ namespace MediaPortal.TV.Recording
       }
       if (tinfo.deleteOriginal)
       {
-        Utils.DeleteRecording(info.file);
+         MediaPortal.Util.Utils.DeleteRecording(info.file);
         tinfo.recorded.FileName = System.IO.Path.ChangeExtension(info.file, ".wmv");
         TVDatabase.SetRecordedFileName(tinfo.recorded);
       }
@@ -462,7 +466,7 @@ namespace MediaPortal.TV.Recording
       }
       if (tinfo.deleteOriginal)
       {
-        Utils.DeleteRecording(info.file);
+         MediaPortal.Util.Utils.DeleteRecording(info.file);
         tinfo.recorded.FileName = System.IO.Path.ChangeExtension(info.file, ".mpg");
         TVDatabase.SetRecordedFileName(tinfo.recorded);
       }
@@ -494,7 +498,7 @@ namespace MediaPortal.TV.Recording
       }
       if (tinfo.deleteOriginal)
       {
-        Utils.DeleteRecording(info.file);
+         MediaPortal.Util.Utils.DeleteRecording(info.file);
         tinfo.recorded.FileName = System.IO.Path.ChangeExtension(info.file, ".avi");
         TVDatabase.SetRecordedFileName(tinfo.recorded);
       }

@@ -27,6 +27,7 @@ using System;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.GUI.Video
 {
@@ -37,8 +38,12 @@ namespace MediaPortal.GUI.Video
   /// </summary>
   public class tvDotComParser : ISetupForm
   {
+    static ILog _log;
+
     static tvDotComParser()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
     }
 
     string folderToSave = "Episode Guides/";
@@ -219,11 +224,11 @@ namespace MediaPortal.GUI.Video
       // if so we will show all episodes of a show and let the user pick
       // examples: 28 FX_Rescue Me_200508310003p25
       // 9 WDRB_Seinfeld_200508141830p2915
-      Log.WriteFile(Log.LogType.TVCom, filename);
+      _log.Info(filename);
       if (Regex.IsMatch(filename, "[0-9]{1,3}\\s[A-Z0-9]{2,}_"))
       {
-        Log.WriteFile(Log.LogType.TVCom, "I think this is a MP Naming convention...");
-        Log.WriteFile(Log.LogType.TVCom, "Operation will show all Episodes of this show for manual selection!");
+        _log.Info("I think this is a MP Naming convention...");
+        _log.Info("Operation will show all Episodes of this show for manual selection!");
 
         try
         {
@@ -233,7 +238,7 @@ namespace MediaPortal.GUI.Video
         }
         catch
         {
-          Log.WriteFile(Log.LogType.TVCom, "Could not get showname from filename");
+          _log.Info("Could not get showname from filename");
           return false;
         }
 
@@ -251,7 +256,7 @@ namespace MediaPortal.GUI.Video
         }
         catch
         {
-          Log.WriteFile(Log.LogType.TVCom, "Could not get EpisodeTitle from filename (tried \"_\")");
+          _log.Info("Could not get EpisodeTitle from filename (tried \"_\")");
           return false;
         }
       }
@@ -264,13 +269,13 @@ namespace MediaPortal.GUI.Video
         }
         catch
         {
-          Log.WriteFile(Log.LogType.TVCom, "Could not get EpisodeTitle from filename (tried \"-\")");
+          _log.Info("Could not get EpisodeTitle from filename (tried \"-\")");
           return false;
         }
       }
       else
       {
-        Log.WriteFile(Log.LogType.TVCom, "Could not get EpisodeTitle from filename");
+        _log.Info("Could not get EpisodeTitle from filename");
         showname = filename;
         episodeTitle = String.Empty;
 
@@ -352,7 +357,7 @@ namespace MediaPortal.GUI.Video
         {
           season = -1;
           ep = -1;
-          Log.WriteFile(Log.LogType.TVCom, "Error in exact match finding....trying partial match");
+          _log.Info("Error in exact match finding....trying partial match");
           //return false;
         }
       }
@@ -425,13 +430,13 @@ namespace MediaPortal.GUI.Video
                 }
                 catch
                 {
-                  Log.WriteFile(Log.LogType.TVCom, "Error getting interpreting List of Episodes, probably this show's episodes aren't properly organized into Seasons/Episodes!");
+                  _log.Info("Error getting interpreting List of Episodes, probably this show's episodes aren't properly organized into Seasons/Episodes!");
                   return false;
                 }
 
               }
               else
-                Log.WriteFile(Log.LogType.TVCom, "End of List reached... - Note this probably means that the List was not downloaded completely, please manually delete the file to force a redownload!");
+                _log.Info("End of List reached... - Note this probably means that the List was not downloaded completely, please manually delete the file to force a redownload!");
             }
           }
           else
@@ -475,7 +480,7 @@ namespace MediaPortal.GUI.Video
           freshlyDownloaded = true;
         }
         else
-          Log.WriteFile(Log.LogType.TVCom, saveGuide + " already exists, skipping download");
+          _log.Info(saveGuide + " already exists, skipping download");
         // **********
         if (!System.IO.File.Exists(saveSummary))// || redownload)
         {
@@ -484,7 +489,7 @@ namespace MediaPortal.GUI.Video
           Client.DownloadFile("http://www.tv.com/" + subURL + "/summary.html&full_summary=1", saveSummary);
         }
         else
-          Log.WriteFile(Log.LogType.TVCom, saveSummary + " already exists, skipping download");
+          _log.Info(saveSummary + " already exists, skipping download");
       }
       catch { return false; };
       return freshlyDownloaded;
@@ -523,7 +528,7 @@ namespace MediaPortal.GUI.Video
         string[] lines = Regex.Split(all, "\n");
 
 
-        Log.WriteFile(Log.LogType.TVCom, "Offset file found, searching for matches...");
+        _log.Info("Offset file found, searching for matches...");
 
         for (int i = 0; i < lines.Length; i++)
         {
@@ -532,7 +537,7 @@ namespace MediaPortal.GUI.Video
           {
             if (ep >= Convert.ToInt32(elems[2]))
             {
-              Log.WriteFile(Log.LogType.TVCom, "Found offset...");
+              _log.Info("Found offset...");
               if (elems.Length < 4)
               {
                 offSet++;
@@ -545,9 +550,9 @@ namespace MediaPortal.GUI.Video
           }
         }
         if (offSet > 0)
-          Log.WriteFile(Log.LogType.TVCom, "Total Offset: " + offSet.ToString());
+          _log.Info("Total Offset: " + offSet.ToString());
         else
-          Log.WriteFile(Log.LogType.TVCom, "No Offsets found...");
+          _log.Info("No Offsets found...");
       }
 
 
@@ -573,16 +578,16 @@ namespace MediaPortal.GUI.Video
         try
         {
           System.Net.WebClient Client = new System.Net.WebClient();
-          Log.WriteFile(Log.LogType.TVCom, "Trying to download Image");
+          _log.Info("Trying to download Image");
           Client.DownloadFile(thumbURL, saveAs);
           Client.DownloadFile(thumbURL.Replace("thumb", "photo_viewer"), saveAs.Replace(".jpg", "L.jpg"));
-          Log.WriteFile(Log.LogType.TVCom, "Downloaded Image sucessfully!");
+          _log.Info("Downloaded Image sucessfully!");
 
         }
         catch
         {
-          Log.WriteFile(Log.LogType.TVCom, "Error downloading Image (parsed wrong URL?)");
-          Log.WriteFile(Log.LogType.TVCom, "The URL was: " + thumbURL);
+          _log.Info("Error downloading Image (parsed wrong URL?)");
+          _log.Info("The URL was: " + thumbURL);
           return false;
         }
 
@@ -590,7 +595,7 @@ namespace MediaPortal.GUI.Video
       }
       else
       {
-        Log.WriteFile(Log.LogType.TVCom, "Image exists, no need to redownload!");
+        _log.Info("Image exists, no need to redownload!");
         return true;
       }
     }
@@ -611,7 +616,7 @@ namespace MediaPortal.GUI.Video
       // we get the stream from the website
       System.Net.WebClient Client = new System.Net.WebClient();
       System.IO.Stream strm = Client.OpenRead("http://www.tv.com/search.php?type=11&stype=program&qs=" + title);
-      Log.WriteFile(Log.LogType.TVCom, "Downloaded results, now parsing...");
+      _log.Info("Downloaded results, now parsing...");
       System.IO.StreamReader sr = new System.IO.StreamReader(strm);
 
       try
@@ -660,10 +665,10 @@ namespace MediaPortal.GUI.Video
       for (int i = 0; i < results.Count; i++)
       {
         searchResults[i] = (string)results[i];
-        //Log.WriteFile(Log.LogType.TVCom, searchResults[i]);
+        //_log.Info(searchResults[i]);
       }
 
-      Log.WriteFile(Log.LogType.TVCom, "Parsing of SearchResults complete!");
+      _log.Info("Parsing of SearchResults complete!");
       return searchResults;
     }
 
@@ -723,8 +728,8 @@ namespace MediaPortal.GUI.Video
         {
           // apparently we werent in the correct line
           // we cant continue
-          Log.WriteFile(Log.LogType.TVCom, "Could not locate this episode! (Or a parsing Error Occured)");
-          Log.WriteFile(Log.LogType.TVCom, "Are you sure this episode exists?");
+          _log.Info("Could not locate this episode! (Or a parsing Error Occured)");
+          _log.Info("Are you sure this episode exists?");
           throw;
         }
 
@@ -743,7 +748,7 @@ namespace MediaPortal.GUI.Video
         }
         catch
         {
-          Log.WriteFile(Log.LogType.TVCom, "Error Parsing First Aired Info....Skipping");
+          _log.Info("Error Parsing First Aired Info....Skipping");
         }
 
         //************** Writer
@@ -759,7 +764,7 @@ namespace MediaPortal.GUI.Video
           }
           catch
           {
-            Log.WriteFile(Log.LogType.TVCom, "Error Parsing Writer, Skipping.");
+            _log.Info("Error Parsing Writer, Skipping.");
           }
         }
 
@@ -776,7 +781,7 @@ namespace MediaPortal.GUI.Video
           }
           catch
           {
-            Log.WriteFile(Log.LogType.TVCom, "Error Parsing Director, Skipping.");
+            _log.Info("Error Parsing Director, Skipping.");
           }
         }
 
@@ -795,13 +800,13 @@ namespace MediaPortal.GUI.Video
             string[] split2 = Regex.Split(tmp, "\\(");
             try
             {
-              //Log.WriteFile(Log.LogType.TVCom, tmp);
+              //_log.Info(tmp);
               episodeInfo.guestStarsCharacters.Add(split2[1].Replace("),", "").Trim());
               episodeInfo.guestStars.Add(split2[0].Trim());
             }
             catch (Exception)
             {
-              Log.WriteFile(Log.LogType.TVCom, "Error Parsing at least one of the Guest Stars, Skipping.");
+              _log.Info("Error Parsing at least one of the Guest Stars, Skipping.");
             }
           }
         }
@@ -859,7 +864,7 @@ namespace MediaPortal.GUI.Video
         }
         catch
         {
-          Log.WriteFile(Log.LogType.TVCom, "Error Parsing the Rating or number of Ratings, Skipping.");
+          _log.Info("Error Parsing the Rating or number of Ratings, Skipping.");
         }
 
 
@@ -878,8 +883,8 @@ namespace MediaPortal.GUI.Video
           }
           catch (Exception e1)
           {
-            Log.WriteFile(Log.LogType.TVCom, "Error at Parsing ImageURL");
-            Log.WriteFile(Log.LogType.TVCom, e1.Message);
+            _log.Info("Error at Parsing ImageURL");
+            _log.Info(e1.Message);
 
           }
         }
@@ -907,8 +912,8 @@ namespace MediaPortal.GUI.Video
               // again an error here is not good
               // we try to open the stream again to be on the top again, but the rest probably wont work either
               showSummaryStream = new System.IO.StreamReader(folderToSave + showTitle + "/" + showTitle + "_Summary.htm");
-              Log.WriteFile(Log.LogType.TVCom, "Error at Parsing Originally");
-              Log.WriteFile(Log.LogType.TVCom, e2.Message);
+              _log.Info("Error at Parsing Originally");
+              _log.Info(e2.Message);
 
             }
           }
@@ -923,8 +928,8 @@ namespace MediaPortal.GUI.Video
             catch (Exception e22)
             {
               showSummaryStream = new System.IO.StreamReader(folderToSave + showTitle + "/" + showTitle + "_Summary.htm");
-              Log.WriteFile(Log.LogType.TVCom, "Error at Parsing Currently airs");
-              Log.WriteFile(Log.LogType.TVCom, e22.Message);
+              _log.Info("Error at Parsing Currently airs");
+              _log.Info(e22.Message);
             }
           }
 
@@ -941,8 +946,8 @@ namespace MediaPortal.GUI.Video
         catch (Exception e3)
         {
           showSummaryStream = new System.IO.StreamReader(folderToSave + showTitle + "/" + showTitle + "_Summary.htm");
-          Log.WriteFile(Log.LogType.TVCom, "Error at Parsing Network");
-          Log.WriteFile(Log.LogType.TVCom, e3.Message);
+          _log.Info("Error at Parsing Network");
+          _log.Info(e3.Message);
         }
         // ********** runtime:
         line = jumpStreamUntil(ref showSummaryStream, " mins)");
@@ -953,8 +958,8 @@ namespace MediaPortal.GUI.Video
         catch (Exception e4)
         {
           showSummaryStream = new System.IO.StreamReader(folderToSave + showTitle + "/" + showTitle + "_Summary.htm");
-          Log.WriteFile(Log.LogType.TVCom, "Error at Parsing runtime");
-          Log.WriteFile(Log.LogType.TVCom, e4.Message);
+          _log.Info("Error at Parsing runtime");
+          _log.Info(e4.Message);
         }
 
         // ********** status:
@@ -967,8 +972,8 @@ namespace MediaPortal.GUI.Video
         catch (Exception e5)
         {
           showSummaryStream = new System.IO.StreamReader(folderToSave + showTitle + "/" + showTitle + "_Summary.htm");
-          Log.WriteFile(Log.LogType.TVCom, "Error at Parsing status");
-          Log.WriteFile(Log.LogType.TVCom, e5.Message);
+          _log.Info("Error at Parsing status");
+          _log.Info(e5.Message);
         }
 
         // ********** series premiere:
@@ -980,8 +985,8 @@ namespace MediaPortal.GUI.Video
         catch (Exception e6)
         {
           showSummaryStream = new System.IO.StreamReader(folderToSave + showTitle + "/" + showTitle + "_Summary.htm");
-          Log.WriteFile(Log.LogType.TVCom, "Error at Parsing series premiere");
-          Log.WriteFile(Log.LogType.TVCom, e6.Message);
+          _log.Info("Error at Parsing series premiere");
+          _log.Info(e6.Message);
         }
 
         // ********** Genre:
@@ -1010,16 +1015,16 @@ namespace MediaPortal.GUI.Video
           catch (Exception e8)
           {
             showSummaryStream = new System.IO.StreamReader(folderToSave + showTitle + "/" + showTitle + "_Summary.htm");
-            Log.WriteFile(Log.LogType.TVCom, "Error at Parsing general series desc");
-            Log.WriteFile(Log.LogType.TVCom, e8.Message);
+            _log.Info("Error at Parsing general series desc");
+            _log.Info(e8.Message);
           }
 
         }
         catch (Exception e7)
         {
           showSummaryStream = new System.IO.StreamReader(folderToSave + showTitle + "/" + showTitle + "_Summary.htm");
-          Log.WriteFile(Log.LogType.TVCom, "Error at Parsing genre, have to skip series description");
-          Log.WriteFile(Log.LogType.TVCom, e7.Message);
+          _log.Info("Error at Parsing genre, have to skip series description");
+          _log.Info(e7.Message);
         }
 
 
@@ -1040,16 +1045,16 @@ namespace MediaPortal.GUI.Video
         }
         catch (Exception e9)
         {
-          Log.WriteFile(Log.LogType.TVCom, "Error at Parsing regular cast");
-          Log.WriteFile(Log.LogType.TVCom, e9.Message);
+          _log.Info("Error at Parsing regular cast");
+          _log.Info(e9.Message);
         }
 
       }
       catch (Exception ex)
       {
 
-        Log.WriteFile(Log.LogType.TVCom, "There was an error Parsing the information");
-        Log.WriteFile(Log.LogType.TVCom, ex.Message);
+        _log.Info("There was an error Parsing the information");
+        _log.Info(ex.Message);
         throw ex;
       }
       finally
@@ -1140,7 +1145,7 @@ namespace MediaPortal.GUI.Video
     {
       System.IO.StreamWriter mappingsWriter = new System.IO.StreamWriter(folderToSave + "mappings.csv", true);
       mappingsWriter.WriteLine(shownameGuess + ";" + realShowname + ";" + subURL);
-      Log.WriteFile(Log.LogType.TVCom, "Writing new mapping: " + shownameGuess + ";" + realShowname + ";" + subURL);
+      _log.Info("Writing new mapping: " + shownameGuess + ";" + realShowname + ";" + subURL);
       mappingsWriter.Close();
     }
 

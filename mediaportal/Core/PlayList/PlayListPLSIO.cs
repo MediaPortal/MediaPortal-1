@@ -116,7 +116,7 @@ namespace MediaPortal.Playlists
             PlayListItem newItem = new PlayListItem(infoLine, fileName, duration);
             if (tmp.IndexOf("http:") < 0 && tmp.IndexOf("mms:") < 0 && tmp.IndexOf("rtp:") < 0)
             {
-              Utils.GetQualifiedFilename(basePath, ref fileName);
+              MediaPortal.Util.Utils.GetQualifiedFilename(basePath, ref fileName);
               newItem.Type = PlayListItem.PlayListItemType.AudioStream;
             }
             playlist.Add(newItem);

@@ -28,6 +28,7 @@ using System.Windows.Forms;
 using System.Threading;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.InputDevices
 {
@@ -36,6 +37,13 @@ namespace MediaPortal.InputDevices
     bool controlEnabled = false;
     bool logVerbose = false;           // Verbose logging
     InputHandler _inputHandler;
+    protected ILog _log;
+
+    public HidListener()
+    {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+    }
 
     public void Init(IntPtr hwnd)
     {
@@ -56,7 +64,7 @@ namespace MediaPortal.InputDevices
         if (!_inputHandler.IsLoaded)
         {
           controlEnabled = false;
-          Log.Write("HID: Error loading default mapping file - please reinstall MediaPortal");
+          _log.Info("HID: Error loading default mapping file - please reinstall MediaPortal");
         }
       }
     }
@@ -89,7 +97,7 @@ namespace MediaPortal.InputDevices
 
         InputDevices.LastHidRequest = appCommand;
 
-        if (logVerbose) Log.Write("HID: Command: {0} - {1}", ((msg.LParam.ToInt32() >> 16) & ~0xF000), InputDevices.LastHidRequest.ToString());
+        if (logVerbose) _log.Info("HID: Command: {0} - {1}", ((msg.LParam.ToInt32() >> 16) & ~0xF000), InputDevices.LastHidRequest.ToString());
 
         if (!_inputHandler.MapAction((msg.LParam.ToInt32() >> 16) & ~0xF000))
           return false;

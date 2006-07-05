@@ -4,6 +4,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using MediaPortal.GUI.Library;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Profile
 {
@@ -116,8 +117,10 @@ namespace MediaPortal.Profile
 
 #if DEBUG
     ~CacheSettingsProvider()
-    { 
-      Log.Write("Filename: {0} Cachehit: {1} Cachemiss: {2}", provider.FileName, cacheHit, cacheMiss);
+    {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      ILog log = services.Get<ILog>();
+      log.Info("Filename: {0} Cachehit: {1} Cachemiss: {2}", provider.FileName, cacheHit, cacheMiss);
     }
 #endif
   }

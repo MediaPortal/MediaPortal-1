@@ -28,6 +28,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Dialogs;
 using System.Text.RegularExpressions;
+using MediaPortal.Utils.Services;
 #endregion
 
 namespace MediaPortal.GUI.GUIScript
@@ -95,11 +96,15 @@ namespace MediaPortal.GUI.GUIScript
 
 		ExpressionEval eval = new ExpressionEval();
 
+    protected ILog _log;
 		#endregion
 
 		#region Constructor
 		public MPScript()
-		{
+    {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+
 			eval.FunctionHandler += new FunctionHandler(MPFunctions);
 			
 			// save Tokens in hashtable
@@ -380,7 +385,7 @@ namespace MediaPortal.GUI.GUIScript
 			} 
 			catch(Exception ex)
 			{
-				Log.Write("Syntax Error!", ex.Message);
+				_log.Info("Syntax Error!", ex.Message);
 				buttonText="SCRIPT ERROR!!";
 				global_variable[ScriptName]="ERROR";
 			}
@@ -608,7 +613,7 @@ namespace MediaPortal.GUI.GUIScript
 					else 
 					{
 						if (debuging==true) WriteLnDebug("ERROR in Line {0:000}",progPointer);
-						Log.Write("MPScript: Syntax error in Line {0}",progPointer);
+						_log.Info("MPScript: Syntax error in Line {0}",progPointer);
 						progPointer++;
 					}
 				}
@@ -616,7 +621,7 @@ namespace MediaPortal.GUI.GUIScript
 			catch(Exception ex)
 			{
 				global_variable[ScriptName]="ERROR";
-				Log.Write("Syntax Error!", ex.Message);
+				_log.Info("Syntax Error!", ex.Message);
 				if (debuging==true) WriteLnDebug("ERROR in Line {0:000}",progPointer);
 			}
 			return true;

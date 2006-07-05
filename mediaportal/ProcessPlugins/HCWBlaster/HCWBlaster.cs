@@ -26,7 +26,7 @@
 using System;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
-
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.HCWBlaster
 {
@@ -48,35 +48,35 @@ namespace MediaPortal.HCWBlaster
 		private        bool   _ExLogging   = false;
 
 		private HCWIRBlaster irblaster;
-		
+    protected ILog _log;
 		#region MPInteraction
 
 		public HCWBlaster()
 		{
-			//
-			// TODO: Add constructor logic here
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
 			//
 			//irblaster = new HCWIRBlaster();
 		}
 
 		public void Start()
 		{
-			Log.Write("HCWBlaster: HCWBlaster {0} plugin starting.", _version);
+			_log.Info("HCWBlaster: HCWBlaster {0} plugin starting.", _version);
 
 			LoadSettings();
 			
 			if (_ExLogging == true) 
-                Log.Write("HCWBlaster: Extended Logging is Enabled.");
+                _log.Info("HCWBlaster: Extended Logging is Enabled.");
 
 			if (_ExLogging == false) 
-				Log.Write("HCWBlaster: Extended Logging is NOT Enabled.");
+				_log.Info("HCWBlaster: Extended Logging is NOT Enabled.");
 
 			if (_ExLogging == true)
-				Log.Write("HCWBlaster: Creating IRBlaster Object.");
+				_log.Info("HCWBlaster: Creating IRBlaster Object.");
 
 			irblaster = new HCWIRBlaster();
 
-			Log.Write("HCWBlaster: Adding message handler for HCWBlaster {0}.", _version);
+			_log.Info("HCWBlaster: Adding message handler for HCWBlaster {0}.", _version);
 
 			GUIWindowManager.Receivers += new SendMessageHandler(this.OnThreadMessage);
 			return;
@@ -84,7 +84,7 @@ namespace MediaPortal.HCWBlaster
 
 		public void Stop()
 		{
-			Log.Write("HCWBlaster: HCWBlaster {0} plugin stopping.", _version);
+			_log.Info("HCWBlaster: HCWBlaster {0} plugin stopping.", _version);
 			return;
 		}
 
@@ -112,7 +112,7 @@ namespace MediaPortal.HCWBlaster
 		public void ChangeTunerChannel(string channel_data) 
 		{
 			if (_ExLogging == true)
-				Log.Write("HCWBlaster: Calling IR Blaster Code for: {0}", channel_data );
+				_log.Info("HCWBlaster: Calling IR Blaster Code for: {0}", channel_data );
 			irblaster.blast(channel_data, _ExLogging);
 		}
 

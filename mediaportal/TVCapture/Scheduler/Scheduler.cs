@@ -38,6 +38,7 @@ using MediaPortal.Player;
 using MediaPortal.Dialogs;
 using MediaPortal.TV.Teletext;
 using MediaPortal.TV.DiskSpace;
+using MediaPortal.Utils.Services;
 #endregion
 
 namespace MediaPortal.TV.Recording
@@ -60,9 +61,13 @@ namespace MediaPortal.TV.Recording
     // number of minutes we keeprecording after the program starts
     int _postRecordInterval = 0;
     DateTime _scheduleTimer;
+    protected ILog _log;
 
     public Scheduler()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+
       _recordingsListChanged = false;
       _recordingsList = new List<TVRecording>();
       _recordingsList.Clear();
@@ -86,7 +91,7 @@ namespace MediaPortal.TV.Recording
     }
     private void OnRecordingsChanged(TVDatabase.RecordingChange change)
     {
-      Log.Write("Scheduler:Recordings changed");
+      _log.Info("Scheduler:Recordings changed");
       _recordingsListChanged = true;
     }
     public void ResetTimer()
@@ -155,7 +160,7 @@ namespace MediaPortal.TV.Recording
       // then we need to re-load the recordings from the database
       if (_recordingsListChanged)
       {
-        Log.Write("Scheduler:reload recordings");
+        _log.Info("Scheduler:reload recordings");
         ReloadRecordingList(handler);
         _recordingsListChanged = false;
       }//if (_recordingsListChanged)
@@ -170,8 +175,8 @@ namespace MediaPortal.TV.Recording
         // between  (now-4 hours) - (now+iPostRecordInterval+3 hours)
         DateTime dtStart = dtCurrentTime.AddHours(-4);
         DateTime dtEnd = dtCurrentTime.AddMinutes(_postRecordInterval + 3 * 60);
-        long iStartTime = Utils.datetolong(dtStart);
-        long iEndTime = Utils.datetolong(dtEnd);
+        long iStartTime = MediaPortal.Util.Utils.datetolong(dtStart);
+        long iEndTime = MediaPortal.Util.Utils.datetolong(dtEnd);
 
         // for each TV recording scheduled
         for (int j = 0; j < _recordingsList.Count; ++j)
@@ -221,7 +226,7 @@ namespace MediaPortal.TV.Recording
                   if (rec.IsRecordingProgramAtTime(dtTime, prog2Min, paddingFront, paddingEnd))
                   {
                     //then send the announcement that we are about to record this recording in 2 minutes from now
-                    Log.WriteFile(Log.LogType.Recorder, "Recorder: Send announcement for recording:{0}", rec.ToString());
+                    _log.Info("Recorder: Send announcement for recording:{0}", rec.ToString());
                     rec.IsAnnouncementSend = true;
                     GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_ABOUT_TO_START_RECORDING, 0, 0, 0, 0, 0, null);
                     msg.Object = rec;
@@ -279,7 +284,7 @@ namespace MediaPortal.TV.Recording
             {
               //yes, then send the announcement
               rec.IsAnnouncementSend = true;
-              Log.WriteFile(Log.LogType.Recorder, "Recorder: Send announcement for recording:{0}", rec.ToString());
+              _log.Info("Recorder: Send announcement for recording:{0}", rec.ToString());
               GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_ABOUT_TO_START_RECORDING, 0, 0, 0, 0, 0, null);
               msg.Object = rec;
               msg.Object2 = null;
@@ -452,10 +457,10 @@ namespace MediaPortal.TV.Recording
       }
 
       // not recording this yet
-      Log.WriteFile(Log.LogType.Recorder, "Recorder: time to record '{0}' on channel:{1} from {2}-{3} id:{4} priority:{5} quality:{6} {7}", rec.Title, rec.Channel, rec.StartTime.ToLongTimeString(), rec.EndTime.ToLongTimeString(), rec.ID, rec.Priority, rec.Quality.ToString(), rec.RecType.ToString());
+      _log.Info("Recorder: time to record '{0}' on channel:{1} from {2}-{3} id:{4} priority:{5} quality:{6} {7}", rec.Title, rec.Channel, rec.StartTime.ToLongTimeString(), rec.EndTime.ToLongTimeString(), rec.ID, rec.Priority, rec.Quality.ToString(), rec.RecType.ToString());
       if (currentProgram != null)
       {
-        Log.WriteFile(Log.LogType.Recorder, "Recorder: program:{0}-{1}", currentProgram.StartTime.ToLongTimeString(), currentProgram.EndTime.ToLongTimeString());
+        _log.Info("Recorder: program:{0}-{1}", currentProgram.StartTime.ToLongTimeString(), currentProgram.EndTime.ToLongTimeString());
       }
 
       // find free card we can use for recording
@@ -464,12 +469,12 @@ namespace MediaPortal.TV.Recording
       {
         // no card found. 
         //check if this recording has a higher priority then any recordings currently busy
-        Log.WriteFile(Log.LogType.Recorder, "Recorder:  No card found, check if a card is recording a show which has a lower priority then priority:{0}", rec.Priority);
+        _log.Info("Recorder:  No card found, check if a card is recording a show which has a lower priority then priority:{0}", rec.Priority);
         cardNo = FindFreeCardForRecording(handler,rec.Channel, true, rec.Priority);
         if (cardNo < 0)
         {
           //no, other recordings have higher priority...
-          Log.WriteFile(Log.LogType.Recorder, "Recorder:  no recordings have a lower priority then priority:{0}", rec.Priority);
+          _log.Info("Recorder:  no recordings have a lower priority then priority:{0}", rec.Priority);
           return false;
         }
       }
@@ -498,7 +503,7 @@ namespace MediaPortal.TV.Recording
 
           GUIListItem item = new GUIListItem();
           item.Label = dev.CurrentTVRecording.Title;
-          string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, dev.CurrentTVRecording.Channel);
+          string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, dev.CurrentTVRecording.Channel);
           if (System.IO.File.Exists(strLogo))
           {
             item.IconImage = strLogo;
@@ -521,7 +526,7 @@ namespace MediaPortal.TV.Recording
           {
             cardNo = cardWithLowestPriority;
             TVCaptureDevice dev = handler.TVCards[cardNo];
-            Log.WriteFile(Log.LogType.Recorder, "Recorder: Canceled recording:{0} priority:{1} on card:{2}",
+            _log.Info("Recorder: Canceled recording:{0} priority:{1} on card:{2}",
                            dev.CurrentTVRecording.ToString(),
                            dev.CurrentTVRecording.Priority,
                            dev.CommercialName);
@@ -540,7 +545,7 @@ namespace MediaPortal.TV.Recording
                   if (count == selectedIndex)
                   {
                     cardNo = i;
-                    Log.WriteFile(Log.LogType.Recorder, "Recorder: User canceled recording:{0} priority:{1} on card:{2}",
+                    _log.Info("Recorder: User canceled recording:{0} priority:{1} on card:{2}",
                       dev.CurrentTVRecording.ToString(),
                       dev.CurrentTVRecording.Priority,
                       dev.CommercialName);
@@ -555,28 +560,28 @@ namespace MediaPortal.TV.Recording
         }
         if (cardNo < 0)
         {
-          Log.WriteFile(Log.LogType.Recorder, "Recorder:  no card available for recording");
+          _log.Info("Recorder:  no card available for recording");
           return false;//no card free
         }
       }
 
       //now we have a free card
       TVCaptureDevice card = handler.TVCards[cardNo];
-      Log.WriteFile(Log.LogType.Recorder, "Recorder:  using card:{0} prio:{1}", card.CommercialName, card.Priority);
+      _log.Info("Recorder:  using card:{0} prio:{1}", card.CommercialName, card.Priority);
       if (card.IsRecording)
       {
         //if its recording, we cancel it 
-        Log.WriteFile(Log.LogType.Recorder, "Recorder:  card:{0} was recording. Now use it for recording new program", card.CommercialName);
-        Log.WriteFile(Log.LogType.Recorder, "Recorder: Stop recording card:{0} channel:{1}", card.CommercialName, card.TVChannel);
+        _log.Info("Recorder:  card:{0} was recording. Now use it for recording new program", card.CommercialName);
+        _log.Info("Recorder: Stop recording card:{0} channel:{1}", card.CommercialName, card.TVChannel);
         if (card.CurrentTVRecording.RecType == TVRecording.RecordingType.Once)
         {
-          card.CurrentTVRecording.Canceled = Utils.datetolong(DateTime.Now);
+          card.CurrentTVRecording.Canceled = MediaPortal.Util.Utils.datetolong(DateTime.Now);
         }
         else
         {
-          long datetime = Utils.datetolong(DateTime.Now);
+          long datetime = MediaPortal.Util.Utils.datetolong(DateTime.Now);
           TVProgram prog = card.CurrentProgramRecording;
-          if (prog != null) datetime = Utils.datetolong(prog.StartTime);
+          if (prog != null) datetime = MediaPortal.Util.Utils.datetolong(prog.StartTime);
           card.CurrentTVRecording.CanceledSeries.Add(datetime);
         }
         //and stop the recording

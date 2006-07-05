@@ -57,7 +57,7 @@ namespace MediaPortal.GUI.TV
       {
         CurrentProgram = null;
         List<TVProgram> programs = new List<TVProgram>();
-        TVDatabase.GetPrograms(Utils.datetolong(DateTime.Now), Utils.datetolong(DateTime.Now.AddDays(10)), ref programs);
+        TVDatabase.GetPrograms(MediaPortal.Util.Utils.datetolong(DateTime.Now), MediaPortal.Util.Utils.datetolong(DateTime.Now.AddDays(10)), ref programs);
         foreach ( TVProgram prog in programs )
         {
           if ( value.IsRecordingProgram(prog, false) )
@@ -89,7 +89,7 @@ namespace MediaPortal.GUI.TV
       if ( currentProgram != null )
       {
         string strTime = String.Format("{0} {1} - {2}",
-            Utils.GetShortDayString(currentProgram.StartTime),
+            MediaPortal.Util.Utils.GetShortDayString(currentProgram.StartTime),
             currentProgram.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
             currentProgram.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
@@ -107,7 +107,7 @@ namespace MediaPortal.GUI.TV
         return;
 
       string strTime = String.Format("{0} {1} - {2}",
-          Utils.GetShortDayString(currentProgram.StartTime),
+          MediaPortal.Util.Utils.GetShortDayString(currentProgram.StartTime),
           currentProgram.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
           currentProgram.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
@@ -190,7 +190,7 @@ namespace MediaPortal.GUI.TV
         item.TVTag = recSeries;
         item.MusicTag = null;
         item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
-        string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, recSeries.Channel);
+        string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, recSeries.Channel);
         if ( !System.IO.File.Exists(strLogo) )
         {
           strLogo = "defaultVideoBig.png";
@@ -206,7 +206,7 @@ namespace MediaPortal.GUI.TV
         item.IconImageBig = strLogo;
         item.IconImage = strLogo;
         item.Label2 = String.Format("{0} {1} - {2}",
-                                                            Utils.GetShortDayString(recSeries.StartTime),
+                                                            MediaPortal.Util.Utils.GetShortDayString(recSeries.StartTime),
                                                             recSeries.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
                                                             recSeries.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
         ;
@@ -658,8 +658,8 @@ namespace MediaPortal.GUI.TV
         List<TVProgram> programs = new List<TVProgram>();
         DateTime dtStart = rec.EndTime.AddMinutes(1);
         DateTime dtEnd = dtStart.AddHours(3);
-        long iStart = Utils.datetolong(dtStart);
-        long iEnd = Utils.datetolong(dtEnd);
+        long iStart = MediaPortal.Util.Utils.datetolong(dtStart);
+        long iEnd = MediaPortal.Util.Utils.datetolong(dtEnd);
         TVDatabase.GetProgramsPerChannel(rec.Channel, iStart, iEnd, ref programs);
         if ( programs.Count >= 2 )
         {

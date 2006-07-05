@@ -176,7 +176,7 @@ namespace MediaPortal.GUI.Music
       {
         string imageFileName = albumInfo.ImageURL;
         string thumbNailFileName = GUIMusicFiles.GetAlbumThumbName(m_tag.Artist, m_tag.Album);
-        Utils.FileDelete(thumbNailFileName);
+        MediaPortal.Util.Utils.FileDelete(thumbNailFileName);
         needsRefresh = true;
         Close();
         return;
@@ -239,7 +239,7 @@ namespace MediaPortal.GUI.Music
         for (int i = 0; i < albumInfo.NumberOfSongs; ++i)
         {
           MusicSong song = albumInfo.GetSong(i);
-          line = Utils.SecondsToHMSString(song.Duration);
+          line = MediaPortal.Util.Utils.SecondsToHMSString(song.Duration);
           GUIMessage msg1 = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL2_SET, GetID, 0, tbTextArea.GetID, i, 0, null);
           msg1.Label = (line);
           OnMessage(msg1);
@@ -294,7 +294,7 @@ namespace MediaPortal.GUI.Music
       {
         //	Download image and save as 
         //	permanent thumb
-        Utils.DownLoadImage(imageFileName, thumbNailFileName);
+        MediaPortal.Util.Utils.DownLoadImage(imageFileName, thumbNailFileName);
       }
 
       if (System.IO.File.Exists(thumbNailFileName))

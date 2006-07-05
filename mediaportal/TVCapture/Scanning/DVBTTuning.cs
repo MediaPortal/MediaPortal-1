@@ -28,6 +28,7 @@ using MediaPortal.TV.Recording;
 using MediaPortal.GUI.Library;
 using System.Xml;
 using System.Xml.XPath;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.TV.Scanning
 {
@@ -45,8 +46,12 @@ namespace MediaPortal.TV.Scanning
     int _newChannels, _updatedChannels;
     int _newRadioChannels, _updatedRadioChannels;
     bool _channelsFound = false;
+    protected ILog _log;
+
     public DVBTTuning()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
     }
 
     #region ITuning Members
@@ -75,30 +80,30 @@ namespace MediaPortal.TV.Scanning
       _currentFrequencyIndex = -1;
       String countryCode = String.Empty;
 
-      Log.WriteFile(Log.LogType.Log, "dvbt-scan:Opening dvbt.xml");
+      _log.Info("dvbt-scan:Opening dvbt.xml");
       XmlDocument doc = new XmlDocument();
       doc.Load("Tuningparameters/dvbt.xml");
       XPathNavigator nav = doc.CreateNavigator();
       // Ensure we are at the root node
       nav.MoveToRoot();
 
-      Log.WriteFile(Log.LogType.Log, "dvbt-scan:auto tune for {0}", countryName);
+      _log.Info("dvbt-scan:auto tune for {0}", countryName);
       _listFrequencies.Clear();
       XPathExpression expr = nav.Compile("/dvbt/country[@name='" + countryName + "']");
       XPathNavigator countryNav = nav.SelectSingleNode(expr);
       if (countryNav != null)
       {
-        Log.WriteFile(Log.LogType.Log, "dvbt-scan:found country {0} in dvbt.xml", countryName);
+        _log.Info("dvbt-scan:found country {0} in dvbt.xml", countryName);
         XmlNode nodeCountry = ((IHasXmlNode)countryNav).GetNode();
         try
         {
           _scanOffset = XmlConvert.ToInt32(nodeCountry.Attributes.GetNamedItem(@"offset").InnerText);
-          Log.WriteFile(Log.LogType.Log, "dvbt-scan:scanoffset: {0} ", _scanOffset);
+          _log.Info("dvbt-scan:scanoffset: {0} ", _scanOffset);
         }
         catch (Exception) { }
 
         XmlNodeList frequencyList = nodeCountry.SelectNodes("carrier");
-        Log.WriteFile(Log.LogType.Log, "dvbt-scan:number of carriers:{0}", frequencyList.Count);
+        _log.Info("dvbt-scan:number of carriers:{0}", frequencyList.Count);
         int[] carrier;
         foreach (XmlNode node in frequencyList)
         {
@@ -112,13 +117,13 @@ namespace MediaPortal.TV.Scanning
 
           if (carrier[1] == 0) carrier[1] = 8;
           _listFrequencies.Add(carrier);
-          Log.WriteFile(Log.LogType.Log, "dvbt-scan:added:{0}", carrier[0]);
+          _log.Info("dvbt-scan:added:{0}", carrier[0]);
         }
       }
       if (_listFrequencies.Count == 0) return;
 
-      Log.WriteFile(Log.LogType.Log, "dvbt-scan:loaded:{0} _listFrequencies", _listFrequencies.Count);
-      Log.WriteFile(Log.LogType.Log, "dvbt-scan:{0} has a scan offset of {1}kHz", countryCode, _scanOffset);
+      _log.Info("dvbt-scan:loaded:{0} _listFrequencies", _listFrequencies.Count);
+      _log.Info("dvbt-scan:{0} has a scan offset of {1}kHz", countryCode, _scanOffset);
 
       return;
     }
@@ -192,7 +197,7 @@ namespace MediaPortal.TV.Scanning
 
     void DetectAvailableStreams()
     {
-      Log.Write("dvbt-scan:ScanChannels() {0}/{1}", _currentFrequencyIndex, _listFrequencies.Count);
+      _log.Info("dvbt-scan:ScanChannels() {0}/{1}", _currentFrequencyIndex, _listFrequencies.Count);
       if (_currentFrequencyIndex < 0 || _currentFrequencyIndex >= _listFrequencies.Count) return;
       int[] tmp;
       tmp = (int[])_listFrequencies[_currentFrequencyIndex];
@@ -202,7 +207,7 @@ namespace MediaPortal.TV.Scanning
 
       _captureCard.Process();
       _callback.OnSignal(_captureCard.SignalQuality, _captureCard.SignalStrength);
-      Log.Write("ScanChannels() {0} {1}", _captureCard.SignalStrength, _captureCard.SignalQuality);
+      _log.Info("ScanChannels() {0} {1}", _captureCard.SignalStrength, _captureCard.SignalQuality);
       _callback.OnStatus2(String.Format("new tv:{0} new radio:{1} updated tv:{2} updated radio:{3}", _newChannels, _newRadioChannels, _updatedChannels, _updatedRadioChannels));
       int newChannels = _newChannels;
       int updatedChannels = _updatedChannels;
@@ -211,7 +216,7 @@ namespace MediaPortal.TV.Scanning
       _captureCard.StoreTunedChannels(false, true, ref _newChannels, ref _updatedChannels, ref _newRadioChannels, ref _updatedRadioChannels);
       _callback.OnStatus2(String.Format("new tv:{0} new radio:{1} updated tv:{2} updated radio:{3}", _newChannels, _newRadioChannels, _updatedChannels, _updatedRadioChannels));
       _callback.UpdateList();
-      Log.Write("dvbt-scan:ScanChannels() done");
+      _log.Info("dvbt-scan:ScanChannels() done");
 
       if (newChannels != _newChannels ||updatedChannels != _updatedChannels ||
           newRadio != _newRadioChannels ||updatedRadio != _updatedRadioChannels)
@@ -231,7 +236,7 @@ namespace MediaPortal.TV.Scanning
 
     void Tune(int offset)
     {
-      Log.Write("dvbt-scan:ScanNextFrequency() {0}/{1}", _currentFrequencyIndex, _listFrequencies.Count);
+      _log.Info("dvbt-scan:ScanNextFrequency() {0}/{1}", _currentFrequencyIndex, _listFrequencies.Count);
       if (_currentFrequencyIndex < 0) _currentFrequencyIndex = 0;
       if (_currentFrequencyIndex >= _listFrequencies.Count) return;
 
@@ -249,12 +254,12 @@ namespace MediaPortal.TV.Scanning
       string description = String.Format("Transponder:{0:###.##} MHz. Bandwidth:{1} MHz locking...", frequency, tmp[1]);
       _callback.OnStatus(description);
 
-      Log.WriteFile(Log.LogType.Log, "dvbt-scan:tune to freq:{0} bandwidth:{1} offset:{2}", chan.Frequency, chan.Bandwidth, offset);
+      _log.Info("dvbt-scan:tune to freq:{0} bandwidth:{1} offset:{2}", chan.Frequency, chan.Bandwidth, offset);
       _captureCard.Tune(chan, 0);
 
       _captureCard.Process();
       _callback.OnSignal(_captureCard.SignalQuality, _captureCard.SignalStrength);
-      Log.Write("dvbt-scan:signal quality:{0} signal strength:{1} signal present:{2}",
+      _log.Info("dvbt-scan:signal quality:{0} signal strength:{1} signal present:{2}",
                   _captureCard.SignalQuality, _captureCard.SignalStrength, _captureCard.SignalPresent());
       return;
     }

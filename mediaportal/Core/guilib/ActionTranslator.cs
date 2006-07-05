@@ -22,6 +22,7 @@ using System;
 using System.Collections;
 using System.Xml;
 using System.Windows.Forms;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.GUI.Library
 {
@@ -67,7 +68,9 @@ namespace MediaPortal.GUI.Library
     {
       mapWindows.Clear();
       string strFilename="keymap.xml";
-      Log.Write("  Load key mapping from {0}", strFilename);
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      ILog log = services.Get<ILog>();
+      log.Info("  Load key mapping from {0}", strFilename);
       try
       {
         // Load the XML file
@@ -119,7 +122,7 @@ namespace MediaPortal.GUI.Library
       }
       catch(Exception ex)
       {
-        Log.Write("exception loading keymap {0} err:{1} stack:{2}", strFilename, ex.Message,ex.StackTrace);
+        log.Warn("exception loading keymap {0} err:{1} stack:{2}", strFilename, ex.Message,ex.StackTrace);
       }
       return false;
     }

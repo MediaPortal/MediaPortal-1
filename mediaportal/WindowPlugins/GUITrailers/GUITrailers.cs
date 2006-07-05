@@ -739,7 +739,7 @@ namespace MediaPortal.GUI.Video
       {
         GUIListItem item = new GUIListItem();
         item.IsFolder = true;
-        Utils.SetDefaultIcons(item);
+        MediaPortal.Util.Utils.SetDefaultIcons(item);
         item.Label = MainListOptions[i];
         listview.Add(item);
         i++;
@@ -899,7 +899,7 @@ namespace MediaPortal.GUI.Video
       GUIListItem item1 = new GUIListItem();
       item1.Label = "..";
       item1.IsFolder = true;
-      Utils.SetDefaultIcons(item1);
+      MediaPortal.Util.Utils.SetDefaultIcons(item1);
       listview.Add(item1);
 
       int i = 0;
@@ -907,7 +907,7 @@ namespace MediaPortal.GUI.Video
       {
         GUIListItem item = new GUIListItem();
         item.IsFolder = true;
-        Utils.SetDefaultIcons(item);
+        MediaPortal.Util.Utils.SetDefaultIcons(item);
         item.Label = _TrailerName[i];
         listview.Add(item);
         i++;
@@ -927,7 +927,7 @@ namespace MediaPortal.GUI.Video
       GUIListItem item1 = new GUIListItem();
       item1.Label = "..";
       item1.IsFolder = true;
-      Utils.SetDefaultIcons(item1);
+      MediaPortal.Util.Utils.SetDefaultIcons(item1);
       listview.Add(item1);
 
       int i = 0;
@@ -935,7 +935,7 @@ namespace MediaPortal.GUI.Video
       {
         GUIListItem item = new GUIListItem();
         item.IsFolder = true;
-        Utils.SetDefaultIcons(item);
+        MediaPortal.Util.Utils.SetDefaultIcons(item);
         item.Label = _TrailerName[i];
         listview.Add(item);
         i++;
@@ -950,7 +950,7 @@ namespace MediaPortal.GUI.Video
       GUIListItem item1 = new GUIListItem();
       item1.Label = "..";
       item1.IsFolder = true;
-      Utils.SetDefaultIcons(item1);
+      MediaPortal.Util.Utils.SetDefaultIcons(item1);
       listview.Add(item1);
 
       int i = 0;
@@ -958,7 +958,7 @@ namespace MediaPortal.GUI.Video
       {
         GUIListItem item = new GUIListItem();
         item.IsFolder = true;
-        Utils.SetDefaultIcons(item);
+        MediaPortal.Util.Utils.SetDefaultIcons(item);
         item.Label = _TrailerName[i];
         listview.Add(item);
         i++;
@@ -975,7 +975,7 @@ namespace MediaPortal.GUI.Video
       GUIListItem item1 = new GUIListItem();
       item1.Label = "..";
       item1.IsFolder = true;
-      Utils.SetDefaultIcons(item1);
+      MediaPortal.Util.Utils.SetDefaultIcons(item1);
       listview.Add(item1);
 
       int i = 0;
@@ -1009,7 +1009,7 @@ namespace MediaPortal.GUI.Video
         GUIListItem item1 = new GUIListItem();
         item1.Label = "..";
         item1.IsFolder = true;
-        Utils.SetDefaultIcons(item1);
+        MediaPortal.Util.Utils.SetDefaultIcons(item1);
         listview.Add(item1);
 
         int i = 0;
@@ -1017,7 +1017,7 @@ namespace MediaPortal.GUI.Video
         {
           GUIListItem item = new GUIListItem();
           item.IsFolder = true;
-          Utils.SetDefaultIcons(item);
+          MediaPortal.Util.Utils.SetDefaultIcons(item);
           item.Label = _TrailerName[i];
           listview.Add(item);
           i++;
@@ -1045,7 +1045,7 @@ namespace MediaPortal.GUI.Video
         GUIListItem item1 = new GUIListItem();
         item1.Label = "..";
         item1.IsFolder = true;
-        Utils.SetDefaultIcons(item1);
+        MediaPortal.Util.Utils.SetDefaultIcons(item1);
         listview.Add(item1);
 
         int i = 0;
@@ -1053,7 +1053,7 @@ namespace MediaPortal.GUI.Video
         {
           GUIListItem item = new GUIListItem();
           item.IsFolder = true;
-          Utils.SetDefaultIcons(item);
+          MediaPortal.Util.Utils.SetDefaultIcons(item);
           item.Label = _TrailerName[i];
           listview.Add(item);
           i++;
@@ -1077,7 +1077,7 @@ namespace MediaPortal.GUI.Video
         GUIListItem item1 = new GUIListItem();
         item1.Label = "..";
         item1.IsFolder = true;
-        Utils.SetDefaultIcons(item1);
+        MediaPortal.Util.Utils.SetDefaultIcons(item1);
         listview.Add(item1);
 
         GUIListItem item = new GUIListItem();
@@ -1122,7 +1122,7 @@ namespace MediaPortal.GUI.Video
       GUIListItem item1 = new GUIListItem();
       item1.Label = "..";
       item1.IsFolder = true;
-      Utils.SetDefaultIcons(item1);
+      MediaPortal.Util.Utils.SetDefaultIcons(item1);
       listview.Add(item1);
 
       while (movienames[i] != null)
@@ -1134,7 +1134,7 @@ namespace MediaPortal.GUI.Video
           GUIListItem item = new GUIListItem();
           item.Label = LMovieName[j];
           item.IsFolder = true;
-          Utils.SetDefaultIcons(item);
+          MediaPortal.Util.Utils.SetDefaultIcons(item);
           listview.Add(item);
           j++;
         }
@@ -1146,7 +1146,7 @@ namespace MediaPortal.GUI.Video
           GUIListItem item = new GUIListItem();
           item.Label = LMovieName[j];
           item.IsFolder = true;
-          Utils.SetDefaultIcons(item);
+          MediaPortal.Util.Utils.SetDefaultIcons(item);
           listview.Add(item);
           j++;
         }
@@ -1158,7 +1158,7 @@ namespace MediaPortal.GUI.Video
           GUIListItem item = new GUIListItem();
           item.Label = LMovieName[j];
           item.IsFolder = true;
-          Utils.SetDefaultIcons(item);
+          MediaPortal.Util.Utils.SetDefaultIcons(item);
           listview.Add(item);
           j++;
         }
@@ -1171,7 +1171,7 @@ namespace MediaPortal.GUI.Video
           item.Label = LMovieName[j];
           listview.Add(item);
           item.IsFolder = true;
-          Utils.SetDefaultIcons(item);
+          MediaPortal.Util.Utils.SetDefaultIcons(item);
           j++;
         }
         else if (letter.Equals("#") == true)
@@ -1184,7 +1184,7 @@ namespace MediaPortal.GUI.Video
               GUIListItem item = new GUIListItem();
               item.Label = LMovieName[j];
               item.IsFolder = true;
-              Utils.SetDefaultIcons(item);
+              MediaPortal.Util.Utils.SetDefaultIcons(item);
               listview.Add(item);
               j++;
             }

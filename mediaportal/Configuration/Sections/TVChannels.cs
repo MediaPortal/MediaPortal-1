@@ -33,6 +33,7 @@ using Microsoft.Win32;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
 using DirectShowLib;
+using MediaPortal.Utils.Services;
 
 #pragma warning disable 108
 
@@ -102,6 +103,8 @@ namespace MediaPortal.Configuration.Sections
       CHANNEL_DVBT_FAILED = -5
     }
 
+    protected ILog _log;
+
     public SectionTvChannels()
       : this("TV Channels")
     {
@@ -110,6 +113,9 @@ namespace MediaPortal.Configuration.Sections
     public SectionTvChannels(string name)
       : base(name)
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+
       // This call is required by the Windows Form Designer.
       InitializeComponent();
     }
@@ -2307,18 +2313,18 @@ namespace MediaPortal.Configuration.Sections
       int itemCount = listViewTvChannels.Items.Count;
       int deletedChans = 0;
 
-      MediaPortal.GUI.Library.Log.Write("Scanning {0} channels for scrambled status", Convert.ToString(itemCount));
+      _log.Info("Scanning {0} channels for scrambled status", Convert.ToString(itemCount));
       for (int index = 0; index < itemCount; index++)
         if (((TelevisionChannel)listViewTvChannels.Items[index].Tag).Scrambled) // channel is scrambled
         {
-          MediaPortal.GUI.Library.Log.Write("Deleting scrambled channel: {0}", ( (TelevisionChannel)listViewTvChannels.Items[index].Tag ).Name);
+          _log.Info("Deleting scrambled channel: {0}", ( (TelevisionChannel)listViewTvChannels.Items[index].Tag ).Name);
           listViewTvChannels.Items.RemoveAt(index);
           itemCount -= 1;
           deletedChans += 1;
         }
 
       SaveSettings();
-      MediaPortal.GUI.Library.Log.Write("Deleted {0} scrambled channels", Convert.ToString(deletedChans));
+      _log.Info("Deleted {0} scrambled channels", Convert.ToString(deletedChans));
       listViewTvChannels.EndUpdate();
     }
 

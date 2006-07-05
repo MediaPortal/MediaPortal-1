@@ -35,6 +35,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using DShowNET.Helper;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.GUI.Library
 {
@@ -109,7 +110,7 @@ namespace MediaPortal.GUI.Library
 
       public PackedTextureNode Insert(string fileName, Image img, Image rootImage)
       {
-        //Log.Write("rect:({0},{1}) {2}x{3} img:{4}x{5} filename:{6} left:{7} right:{8}",
+        //_log.Info("rect:({0},{1}) {2}x{3} img:{4}x{5} filename:{6} left:{7} right:{8}",
         //				Rect.Left,Rect.Top,Rect.Width,Rect.Height,img.Width,img.Height,FileName, ChildLeft,ChildRight);
         if (ChildLeft != null && ChildRight != null)
         {
@@ -172,11 +173,14 @@ namespace MediaPortal.GUI.Library
 
     #region variables
     List<PackedTexture> _packedTextures;
+    private ILog _log;
     #endregion
 
     #region ctor/dtor
     public TexturePacker()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
     }
     #endregion
 
@@ -186,11 +190,11 @@ namespace MediaPortal.GUI.Library
       PackedTextureNode node = root.Insert(fileName, img, rootImage);
       if (node != null)
       {
-        //Log.Write("added {0} at ({1},{2}) {3}x{4}",fileName,node.Rect.X,node.Rect.Y,node.Rect.Width,node.Rect.Height);
+        //_log.Info("added {0} at ({1},{2}) {3}x{4}",fileName,node.Rect.X,node.Rect.Y,node.Rect.Width,node.Rect.Height);
         node.FileName = fileName;
         return true;
       }
-      //Log.Write("no room anymore to add:{0}", fileName);
+      //_log.Info("no room anymore to add:{0}", fileName);
       return false;
     }
 
@@ -343,7 +347,7 @@ namespace MediaPortal.GUI.Library
         bigOne.texture = tex;
         bigOne.texture.Disposing += new EventHandler(texture_Disposing);
 
-        Log.Write("TexturePacker: Loaded {0} texture:{1}x{2} miplevels:{3}", fileName, info2.Width, info2.Height, tex.LevelCount);
+        _log.Info("TexturePacker: Loaded {0} texture:{1}x{2} miplevels:{3}", fileName, info2.Width, info2.Height, tex.LevelCount);
       }
     }
 
@@ -357,7 +361,7 @@ namespace MediaPortal.GUI.Library
         {
           if (bigOne.textureNo >= 0)
           {
-            Log.Write("TexturePacker: disposing texture:{0}", bigOne.textureNo);
+            _log.Info("TexturePacker: disposing texture:{0}", bigOne.textureNo);
             FontEngineRemoveTexture(bigOne.textureNo);
             if (Disposing != null)
             {
@@ -437,7 +441,7 @@ namespace MediaPortal.GUI.Library
             {
               IntPtr ptr = DirectShowUtil.GetUnmanagedTexture(bigOne.texture);
               bigOne.textureNo = FontEngineAddTexture(ptr.ToInt32(), true, (void*)ptr.ToPointer());
-              Log.Write("TexturePacker: fontengine add texure:{0}", bigOne.textureNo);
+              _log.Info("TexturePacker: fontengine add texure:{0}", bigOne.textureNo);
             }
           }
           TextureNo = bigOne.textureNo;
@@ -450,14 +454,14 @@ namespace MediaPortal.GUI.Library
 
     public void Dispose()
     {
-      Log.Write("TexturePacker:Dispose()");
+      _log.Info("TexturePacker:Dispose()");
       if (_packedTextures != null)
       {
         foreach (PackedTexture bigOne in _packedTextures)
         {
           if (bigOne.textureNo >= 0)
           {
-            Log.Write("TexturePacker: remove texture:{0}", bigOne.textureNo);
+            _log.Info("TexturePacker: remove texture:{0}", bigOne.textureNo);
             FontEngineRemoveTexture(bigOne.textureNo);
             if (Disposing != null)
             {
@@ -487,7 +491,7 @@ namespace MediaPortal.GUI.Library
         Usage.None, ResourceType.Textures,
         textureFormat))
       {
-        Log.Write("TexurePacker:Using compressed textures");
+        _log.Info("TexurePacker:Using compressed textures");
         return true;
       }
       return false;

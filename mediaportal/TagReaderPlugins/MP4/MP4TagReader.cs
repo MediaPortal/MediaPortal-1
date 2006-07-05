@@ -24,6 +24,7 @@ using System.Text;
 using MediaPortal.TagReader;
 using MediaPortal.TagReader.MP4.MiscUtil.Conversion;
 using MediaPortal.GUI.Library;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.TagReader.MP4
 {
@@ -34,12 +35,12 @@ namespace MediaPortal.TagReader.MP4
 	{
 		protected MusicTag m_tag = new MusicTag();
 		protected byte[] _imageBytes;
+    protected ILog _log;
 
 		public MP4TagReader()
 		{
-			// 
-			// TODO: Add constructor logic here
-			//
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
 		}
 
     public override int Priority
@@ -54,7 +55,7 @@ namespace MediaPortal.TagReader.MP4
 		}
 		public override bool ReadTag(string strFileName)
 		{
-			Log.Write("mp4 tag: scan {0}",strFileName);
+			_log.Info("mp4 tag: scan {0}",strFileName);
 			m_tag.Clear();
       _imageBytes = null;
 			try 
@@ -133,24 +134,24 @@ namespace MediaPortal.TagReader.MP4
 						}
 						catch(Exception e)
 						{
-							Log.Write("MP4TagReader.ReadTag: {0} while extracting embedded cover art", e.Message);
+							_log.Info("MP4TagReader.ReadTag: {0} while extracting embedded cover art", e.Message);
 						}
 					}
 
-					// Log.Write("Title={0}", m_tag.Title);
-					// Log.Write("Artist={0}", m_tag.Artist);
-					// Log.Write("Album={0}", m_tag.Album);
-					// Log.Write("Comment={0}", m_tag.Comment);
-					// Log.Write("Genre={0}", m_tag.Genre);
-					// Log.Write("Year={0}", m_tag.Year);
-					// Log.Write("Track={0}", m_tag.Track);
+					// _log.Info("Title={0}", m_tag.Title);
+					// _log.Info("Artist={0}", m_tag.Artist);
+					// _log.Info("Album={0}", m_tag.Album);
+					// _log.Info("Comment={0}", m_tag.Comment);
+					// _log.Info("Genre={0}", m_tag.Genre);
+					// _log.Info("Year={0}", m_tag.Year);
+					// _log.Info("Track={0}", m_tag.Track);
 
 					return true;
 				}
 			} 
 			catch (Exception e) 
 			{
-				Log.Write("MP4 Parser Error: '{0}'", e.Message);
+				_log.Info("MP4 Parser Error: '{0}'", e.Message);
 			}
 			return false;
 		}

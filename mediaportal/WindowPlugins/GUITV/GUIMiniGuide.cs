@@ -247,7 +247,7 @@ namespace MediaPortal.GUI.TV
         {
           item = new GUIListItem("");
           item.Label2 = current.Name;
-          logo = Utils.GetCoverArt(Thumbs.TVChannel, current.Name);
+          logo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, current.Name);
 
           // if we are watching this channel mark it
           if (GUITVHome.Navigator.CurrentChannel.CompareTo(tvChannelList[i].Name) == 0)

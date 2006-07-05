@@ -28,6 +28,7 @@ using System.Collections;
 using System.Reflection;
 using MediaPortal.Util;
 using MediaPortal.GUI.Library;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Player
 {
@@ -38,10 +39,17 @@ namespace MediaPortal.Player
   {
     static ArrayList _externalPlayerList = new ArrayList();
     static bool _externalPlayersLoaded = false;
+    static ILog _log;
+
+    public PlayerFactory()
+    {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+    }
 
     private void LoadExternalPlayers()
     {
-      Log.Write("Loading external players plugins");
+      _log.Info("Loading external players plugins");
       string[] fileList = System.IO.Directory.GetFiles(@"plugins\ExternalPlayers", "*.dll");
       foreach (string fileName in fileList)
       {
@@ -60,25 +68,25 @@ namespace MediaPortal.Player
                   if (t.IsSubclassOf(typeof(IExternalPlayer)))
                   {
                     object newObj = (object)Activator.CreateInstance(t);
-                    Log.Write("  found plugin:{0} in {1}", t.ToString(), fileName);
+                    _log.Info("  found plugin:{0} in {1}", t.ToString(), fileName);
 
                     IExternalPlayer player = (IExternalPlayer)newObj;
-                    Log.Write("  player:{0}.  author: {1}", player.PlayerName, player.AuthorName);
+                    _log.Info("  player:{0}.  author: {1}", player.PlayerName, player.AuthorName);
                     _externalPlayerList.Add(player);
                   }
                 }
               }
               catch (Exception e)
               {
-                Log.Write("Error loading external player: {0}", t.ToString());
-                Log.Write("Error: {0}", e.StackTrace);
+                _log.Info("Error loading external player: {0}", t.ToString());
+                _log.Info("Error: {0}", e.StackTrace);
               }
             }
           }
         }
         catch (Exception e)
         {
-          Log.Write("Error loading external player: {0}", e);
+          _log.Info("Error loading external player: {0}", e);
         }
       }
       _externalPlayersLoaded = true;
@@ -124,7 +132,7 @@ namespace MediaPortal.Player
         {
           if (!GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindow))
           {
-            Log.Write("PlayerFactory: Disabling DX9 exclusive mode");
+            _log.Info("PlayerFactory: Disabling DX9 exclusive mode");
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
             GUIWindowManager.SendMessage(msg);
           }
@@ -132,7 +140,7 @@ namespace MediaPortal.Player
         }
       }
 
-      if (Utils.IsVideo(fileName))
+      if (MediaPortal.Util.Utils.IsVideo(fileName))
       {
         if (extension == ".tv" || extension == ".sbe" || extension == ".dvr-ms")
         {
@@ -154,7 +162,7 @@ namespace MediaPortal.Player
         newPlayer = new Player.TStreamBufferPlayer9();
         return newPlayer;
       }
-      if (Utils.IsVideo(fileName))
+      if (MediaPortal.Util.Utils.IsVideo(fileName))
       {
         newPlayer = new Player.VideoPlayerVMR9();
         return newPlayer;
@@ -166,14 +174,14 @@ namespace MediaPortal.Player
         return newPlayer;
       }
 
-      if (Utils.IsCDDA(fileName))
+      if (MediaPortal.Util.Utils.IsCDDA(fileName))
       {
         newPlayer = new Player.AudioPlayerWMP9();
 
         return newPlayer;
       }
 
-      if (Utils.IsAudio(fileName))
+      if (MediaPortal.Util.Utils.IsAudio(fileName))
       {
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
         {

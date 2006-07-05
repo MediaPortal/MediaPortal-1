@@ -437,8 +437,8 @@ namespace MediaPortal.GUI.Library
             _labelControl.Width = (int) (fMaxWidth - 50 + _scrollPosititionX - _scrollOffset); 
             _labelControl.TextColor = dwTextColor;
             int xpos = (int) (fPosX - _scrollPosititionX + _scrollOffset);
-            //            Log.Write("fPosX, _scrollPosititionX, _scrollOffset, xpos: {0} {1} {2} {3}", fPosX, _scrollPosititionX, _scrollOffset, xpos);
-            //            Log.Write("szText {0}", szText);
+            //            _log.Info("fPosX, _scrollPosititionX, _scrollOffset, xpos: {0} {1} {2} {3}", fPosX, _scrollPosititionX, _scrollOffset, xpos);
+            //            _log.Info("szText {0}", szText);
             _labelControl.SetPosition(xpos, (int) fPosY);
             _labelControl.Render(timePassed);
           }

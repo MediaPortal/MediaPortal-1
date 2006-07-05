@@ -366,7 +366,7 @@ namespace MediaPortal.GUI.TV
             objects++;
             GUIListItem item = new GUIListItem();
             item.Label = rec.Channel;
-            string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel);
+            string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel);
             if (!System.IO.File.Exists(strLogo))
             {
               strLogo = "defaultVideoBig.png";
@@ -385,7 +385,7 @@ namespace MediaPortal.GUI.TV
         GUIListItem item = new GUIListItem();
         item.IsFolder = true;
         item.Label = "..";
-        Utils.SetDefaultIcons(item);
+        MediaPortal.Util.Utils.SetDefaultIcons(item);
         item.IconImage = item.IconImageBig;
         listAlbums.Add(item);
         listViews.Add(item);
@@ -399,7 +399,7 @@ namespace MediaPortal.GUI.TV
             item = new GUIListItem();
             item.Label = rec.Title;
             item.TVTag = rec;
-            string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel);
+            string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel);
             if (!System.IO.File.Exists(strLogo))
             {
               strLogo = "defaultVideoBig.png";
@@ -642,8 +642,8 @@ namespace MediaPortal.GUI.TV
           item.Label = rec.Title;
           TimeSpan ts = rec.EndTime - rec.StartTime;
           string strTime = String.Format("{0} {1} ",
-            Utils.GetShortDayString(rec.StartTime),
-            Utils.SecondsToHMString((int)ts.TotalSeconds));
+            MediaPortal.Util.Utils.GetShortDayString(rec.StartTime),
+            MediaPortal.Util.Utils.SecondsToHMString((int)ts.TotalSeconds));
           item.Label2 = strTime;
           item.Label3 = rec.Genre;
         }
@@ -711,7 +711,7 @@ namespace MediaPortal.GUI.TV
       TVRecorded rec = (TVRecorded)pItem.TVTag;
       if (System.IO.File.Exists(rec.FileName))
       {
-        Log.Write("TVRecording:play:{0}", rec.FileName);
+        _log.Info("TVRecording:play:{0}", rec.FileName);
         g_Player.Stop();
         Recorder.StopViewing();
 
@@ -733,17 +733,17 @@ namespace MediaPortal.GUI.TV
             dlgYesNo.SetHeading(GUILocalizeStrings.Get(900)); //resume movie?
             dlgYesNo.SetLine(1, rec.Channel);
             dlgYesNo.SetLine(2, title);
-            dlgYesNo.SetLine(3, GUILocalizeStrings.Get(936) + Utils.SecondsToHMSString(stoptime));
+            dlgYesNo.SetLine(3, GUILocalizeStrings.Get(936) + MediaPortal.Util.Utils.SecondsToHMSString(stoptime));
             dlgYesNo.SetDefaultToYes(true);
             dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
 
             if (!dlgYesNo.IsConfirmed) stoptime = 0;
           }
         }
-        Log.Write("GUIRecordedTV Play:{0}", rec.FileName);
+        _log.Info("GUIRecordedTV Play:{0}", rec.FileName);
         if (g_Player.Play(rec.FileName))
         {
-          if (Utils.IsVideo(rec.FileName))
+          if (MediaPortal.Util.Utils.IsVideo(rec.FileName))
           {
             GUIGraphicsContext.IsFullScreenVideo = true;
             GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
@@ -824,7 +824,7 @@ namespace MediaPortal.GUI.TV
       if (rec != null)
       {
         string strTime = String.Format("{0} {1} - {2}",
-          Utils.GetShortDayString(rec.StartTime),
+          MediaPortal.Util.Utils.GetShortDayString(rec.StartTime),
           rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
           rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
@@ -833,7 +833,7 @@ namespace MediaPortal.GUI.TV
         GUIPropertyManager.SetProperty("#TV.RecordedTV.Time", strTime);
         GUIPropertyManager.SetProperty("#TV.RecordedTV.Description", rec.Description);
 
-        string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel);
+        string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel);
         if (System.IO.File.Exists(strLogo))
         {
           GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb", strLogo);

@@ -32,6 +32,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using Microsoft.Win32;
 using Message=ProcessPlugins.ExternalDisplay.Setting.Message;
+using MediaPortal.Utils.Services;
 
 namespace ProcessPlugins.ExternalDisplay
 {
@@ -49,6 +50,13 @@ namespace ProcessPlugins.ExternalDisplay
     private DateTime lastAction = DateTime.MinValue; //Keeps track of when last action occurred
     private PropertyBrowser browser = null;
     private Thread t;
+    protected ILog _log;
+
+    public ExternalDisplay()
+    {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+    }
 
     #region IPlugin implementation
 
@@ -73,19 +81,19 @@ namespace ProcessPlugins.ExternalDisplay
       {
         return;
       }
-      Log.Write("ExternalDisplay plugin starting...");
+      _log.Info("ExternalDisplay plugin starting...");
       try
       {
         //Initialize display
         display = Settings.Instance.LCDType;
         if (display == null)
         {
-          Log.Write("ExternalDisplay: Requested display type not found.  Plugin not started!!!");
+          _log.Info("ExternalDisplay: Requested display type not found.  Plugin not started!!!");
           return;
         }
         if (display is LCDHypeWrapper && !VerifyDriverLynxDriver())
         {
-          Log.Write(
+          _log.Info(
             "ExternalDisplay: DriverLYNX Port I/O Driver (needed for the choosen display type) not detected.  Plugin not started!");
           return;
         }
@@ -102,7 +110,7 @@ namespace ProcessPlugins.ExternalDisplay
       }
       catch (Exception ex)
       {
-        Log.Write("ExternalDisplay.DoStart: Exception while starting plugin: " + ex.Message);
+        _log.Info("ExternalDisplay.DoStart: Exception while starting plugin: " + ex.Message);
         if (t != null && t.IsAlive)
           t.Abort();
         t = null;
@@ -117,14 +125,14 @@ namespace ProcessPlugins.ExternalDisplay
     {
       bool doLog = Settings.Instance.ExtensiveLogging;
       if (doLog)
-        Log.Write("ExternalDisplay: Entering run loop.");
+        _log.Info("ExternalDisplay: Entering run loop.");
       try
       {
         if (doLog)
-          Log.Write("ExternalDisplay: Creating displayhandler.");
+          _log.Info("ExternalDisplay: Creating displayhandler.");
         handler = new DisplayHandler(display);
         if (doLog)
-          Log.Write("ExternalDisplay: Starting displayhandler.");
+          _log.Info("ExternalDisplay: Starting displayhandler.");
         handler.Start();
         //Start property browser if needed
         while (!stopRequested)
@@ -132,20 +140,20 @@ namespace ProcessPlugins.ExternalDisplay
           DoWork();
           handler.DisplayLines();
           if (doLog)
-            Log.Write("ExternalDisplay: Sleeping...");
+            _log.Info("ExternalDisplay: Sleeping...");
           Thread.Sleep(Settings.Instance.ScrollDelay);
         }
         //stop display handler
         if (doLog)
-          Log.Write("ExternalDisplay: Stopping displayhandler.");
+          _log.Info("ExternalDisplay: Stopping displayhandler.");
         handler.Stop();
       }
       catch (Exception ex)
       {
-        Log.Write("ExternalDisplay.Run: " + ex.Message);
+        _log.Info("ExternalDisplay.Run: " + ex.Message);
       }
       if (doLog)
-        Log.Write("ExternalDisplay: Exiting run loop.");
+        _log.Info("ExternalDisplay: Exiting run loop.");
     }
 
     /// <summary>
@@ -178,7 +186,7 @@ namespace ProcessPlugins.ExternalDisplay
       }
       catch (Exception ex)
       {
-        Log.Write("ExternalDisplay.Stop: " + ex.Message);
+        _log.Info("ExternalDisplay.Stop: " + ex.Message);
       }
     }
 
@@ -293,7 +301,7 @@ namespace ProcessPlugins.ExternalDisplay
       try
       {
         if (Settings.Instance.ExtensiveLogging)
-          Log.Write("ExternalDisplay: Processing status.");
+          _log.Info("ExternalDisplay: Processing status.");
         Debug.Assert(display != null);
         GUIWindow.Window activeWindow = (GUIWindow.Window) GUIWindowManager.ActiveWindow;
         //Determine MediaPortal status
@@ -346,7 +354,7 @@ namespace ProcessPlugins.ExternalDisplay
         if (browser != null)
         {
           if (Settings.Instance.ExtensiveLogging)
-            Log.Write("ExternalDisplay: Updating PropertyBrowser.");
+            _log.Info("ExternalDisplay: Updating PropertyBrowser.");
           browser.SetStatus(status);
           browser.SetActiveWindow(activeWindow);
         }
@@ -366,7 +374,7 @@ namespace ProcessPlugins.ExternalDisplay
       }
       catch (Exception ex)
       {
-        Log.Write("ExternalDisplay.DoWork: " + ex.Message);
+        _log.Info("ExternalDisplay.DoWork: " + ex.Message);
       }
     }
 
@@ -388,11 +396,11 @@ namespace ProcessPlugins.ExternalDisplay
       switch (e.Mode)
       {
         case PowerModes.Suspend:
-          Log.Write("ExternalDisplay: Suspend or Hibernation detected, shutting down plugin");
+          _log.Info("ExternalDisplay: Suspend or Hibernation detected, shutting down plugin");
           DoStop();
           break;
         case PowerModes.Resume:
-          Log.Write("ExternalDisplay: Resume from Suspend or Hibernation detected, starting plugin");
+          _log.Info("ExternalDisplay: Resume from Suspend or Hibernation detected, starting plugin");
           DoStart();
           break;
       }

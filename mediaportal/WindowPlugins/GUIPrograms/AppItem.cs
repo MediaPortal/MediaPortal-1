@@ -31,6 +31,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using WindowPlugins.GUIPrograms;
 using Programs.Utils;
+using MediaPortal.Utils.Services;
 
 namespace ProgramsDatabase
 {
@@ -89,6 +90,7 @@ namespace ProgramsDatabase
 
     public bool linksAreLoaded = false;
     protected FilelinkList fileLinks = null;
+    protected ILog _log;
 
     // event: read new file
     public delegate void RefreshInfoEventHandler(string curLine);
@@ -107,6 +109,9 @@ namespace ProgramsDatabase
 
     public AppItem(SQLiteClient initSqlDB)
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+
       // constructor: save SQLiteDB object 
       sqlDB = initSqlDB;
       // .. init member variables ...
@@ -215,10 +220,10 @@ namespace ProgramsDatabase
       }
       else
       {
-        Log.Write("error in myPrograms: AppItem.LaunchGenericPlayer: unknown command: {0}", command);
+        _log.Info("error in myPrograms: AppItem.LaunchGenericPlayer: unknown command: {0}", command);
         return;
       }
-      if (Utils.IsVideo(filename))
+      if (MediaPortal.Util.Utils.IsVideo(filename))
       {
         GUIGraphicsContext.IsFullScreenVideo = true;
         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
@@ -334,7 +339,7 @@ namespace ProgramsDatabase
               g_Player.Stop();
             }
           }
-          Utils.StartProcess(procStart, WaitForExit);
+          MediaPortal.Util.Utils.StartProcess(procStart, WaitForExit);
           if (mpGuiMode)
           {
             GUIGraphicsContext.DX9Device.Reset(GUIGraphicsContext.DX9Device.PresentationParameters);
@@ -351,7 +356,7 @@ namespace ProgramsDatabase
                                            ex.Message,
                                            ex.Source,
                                            ex.StackTrace);
-        Log.Write(ErrorString);
+        _log.Info(ErrorString);
         this.LaunchErrorMsg = ErrorString;
       }
       finally
@@ -419,7 +424,7 @@ namespace ProgramsDatabase
 
         if (errors.Trim() != "")
         {
-          Log.Write("AppItem PrePost errors: {0}", errors);
+          _log.Info("AppItem PrePost errors: {0}", errors);
         }
       }
 
@@ -900,7 +905,7 @@ namespace ProgramsDatabase
         }
         catch (SQLiteException ex)
         {
-          Log.Write("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Info("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         }
       }
     }
@@ -928,8 +933,8 @@ namespace ProgramsDatabase
         }
         catch (SQLiteException ex)
         {
-          Log.Write("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
-          Log.Write("sql \n{0}", sql);
+          _log.Info("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Info("sql \n{0}", sql);
         }
       }
     }
@@ -946,7 +951,7 @@ namespace ProgramsDatabase
         }
         catch (SQLiteException ex)
         {
-          Log.Write("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Info("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         }
       }
     }
@@ -983,7 +988,7 @@ namespace ProgramsDatabase
         }
         catch (SQLiteException ex)
         {
-          Log.Write("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Info("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         }
       }
     }
@@ -998,7 +1003,7 @@ namespace ProgramsDatabase
         }
         catch (SQLiteException ex)
         {
-          Log.Write("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Info("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         }
       }
     }
@@ -1079,7 +1084,7 @@ namespace ProgramsDatabase
       }
       catch (SQLiteException ex)
       {
-        Log.Write("programdatabase exception (AppItem.FixFileLinks) err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        _log.Info("programdatabase exception (AppItem.FixFileLinks) err:{0} stack:{1}", ex.Message, ex.StackTrace);
       }
 
     }

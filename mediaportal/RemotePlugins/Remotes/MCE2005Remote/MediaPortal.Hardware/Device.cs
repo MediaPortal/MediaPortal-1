@@ -31,6 +31,7 @@ using System.Collections;
 using System.Threading;
 using System.Diagnostics;
 using MediaPortal.GUI.Library;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Hardware
 {
@@ -128,7 +129,12 @@ namespace MediaPortal.Hardware
           throw new Exception(string.Format("Failed in call to SetupDiGetDeviceInterfaceDetail ({0})", GetLastError()));
         }
 
-        if (LogVerbose) Log.Write("MCE: Found: {0}", deviceInterfaceDetailData.DevicePath);
+        if (LogVerbose)
+        {
+          ServiceProvider services = GlobalServiceProvider.Instance;
+          ILog log = services.Get<ILog>();
+          log.Info("MCE: Found: {0}", deviceInterfaceDetailData.DevicePath);
+        }
 
         if ((deviceInterfaceDetailData.DevicePath.IndexOf("#vid_0471&pid_0815") != -1) || // Microsoft/Philips 2005
         (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_045e&pid_006d") != -1) ||     // Microsoft/Philips 2004

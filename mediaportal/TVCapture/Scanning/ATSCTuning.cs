@@ -29,7 +29,7 @@ using MediaPortal.TV.Database;
 using MediaPortal.GUI.Library;
 using MediaPortal.TV.Recording;
 using System.Xml;
-
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.TV.Scanning
 {
@@ -49,8 +49,12 @@ namespace MediaPortal.TV.Scanning
 
     int _newChannels, _updatedChannels;
     int _newRadioChannels, _updatedRadioChannels;
+    protected ILog _log;
+
     public ATSCTuning()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
     }
     #region ITuning Members
     public void Start()
@@ -116,7 +120,7 @@ namespace MediaPortal.TV.Scanning
 
     void DetectAvailableStreams()
     {
-      Log.Write("atsc-scan:Found signal,scanning for channels. Quality:{0} level:{1}", _captureCard.SignalQuality, _captureCard.SignalStrength);
+      _log.Info("atsc-scan:Found signal,scanning for channels. Quality:{0} level:{1}", _captureCard.SignalQuality, _captureCard.SignalStrength);
       string chanDesc = String.Format("Channel:{0}", _currentIndex);
       string description = String.Format("Found signal for channel:{0} {1}, Scanning channels", _currentIndex, chanDesc);
       _callback.OnStatus(description);
@@ -152,7 +156,7 @@ namespace MediaPortal.TV.Scanning
       string description = String.Format("Channel:{0}/{1} {2}", _currentIndex, MaxATSCChannel, chanDesc);
       _callback.OnStatus(description);
 
-      Log.WriteFile(Log.LogType.Log, "tune channel:{0}/{1} {2}", _currentIndex, MaxATSCChannel, chanDesc);
+      _log.Info("tune channel:{0}/{1} {2}", _currentIndex, MaxATSCChannel, chanDesc);
 
       DVBChannel newchan = new DVBChannel();
       newchan.NetworkID = -1;
@@ -171,7 +175,7 @@ namespace MediaPortal.TV.Scanning
       //tune locking : 2 seconds
       _captureCard.Process();
       _callback.OnSignal(_captureCard.SignalQuality, _captureCard.SignalStrength);
-      Log.Write("atsc-scan:signal quality:{0} signal strength:{1} signal present:{2}",
+      _log.Info("atsc-scan:signal quality:{0} signal strength:{1} signal present:{2}",
                   _captureCard.SignalQuality, _captureCard.SignalStrength, _captureCard.SignalPresent());
     }
     #endregion

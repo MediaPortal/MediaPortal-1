@@ -5,7 +5,7 @@ using System.Threading;
 using System.ComponentModel;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
-
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.GUI.Video
 {
@@ -57,7 +57,10 @@ namespace MediaPortal.GUI.Video
 			}
 			catch(Exception ex)
 			{
-				Log.Write("GUITrailers.DownloadWorker: {0}", ex.Message);
+        ServiceProvider services = GlobalServiceProvider.Instance;
+        ILog log = services.Get<ILog>();
+
+				log.Info("GUITrailers.DownloadWorker: {0}", ex.Message);
 			}
 			finally
 			{

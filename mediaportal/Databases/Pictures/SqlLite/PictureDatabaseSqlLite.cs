@@ -26,6 +26,7 @@ using MediaPortal.Util;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.Pictures;
 using MediaPortal.Database;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Picture.Database
 {
@@ -36,18 +37,21 @@ namespace MediaPortal.Picture.Database
   {
     bool disposed = false;
     SQLiteClient m_db = null;
-
-
+    protected ILog _log;
 
     public PictureDatabaseSqlLite()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+
       Open();
     }
+
     void Open()
     {
       lock (typeof(PictureDatabase))
       {
-        Log.WriteFile(Log.LogType.Log, false, "opening picture database");
+        _log.Info("opening picture database");
         try
         {
           // Open database
@@ -67,10 +71,10 @@ namespace MediaPortal.Picture.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "picture database exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("picture database exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
-        Log.WriteFile(Log.LogType.Log, false, "picture database opened");
+        _log.Info("picture database opened");
       }
     }
     bool CreateTables()
@@ -136,7 +140,7 @@ namespace MediaPortal.Picture.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
         return -1;
@@ -159,7 +163,7 @@ namespace MediaPortal.Picture.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "MediaPortal.Picture.Database exception deleting picture err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("MediaPortal.Picture.Database exception deleting picture err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
         return;
@@ -196,7 +200,7 @@ namespace MediaPortal.Picture.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
         return 0;
@@ -224,7 +228,7 @@ namespace MediaPortal.Picture.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -273,7 +277,7 @@ namespace MediaPortal.Picture.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
         return DateTime.MinValue;
@@ -283,7 +287,7 @@ namespace MediaPortal.Picture.Database
 
     public int EXIFOrientationToRotation(int orientation)
     {
-      Log.Write("Orientation: {0}", orientation);
+      _log.Info("Orientation: {0}", orientation);
 
       if (orientation == 6)
         return 1;

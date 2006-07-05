@@ -25,56 +25,56 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 namespace MediaPortal.TV.Database
 {
-	/// <summary>
-	/// Class which holds all information about a recorded TV program
-	/// </summary>
+  /// <summary>
+  /// Class which holds all information about a recorded TV program
+  /// </summary>
   [Serializable()]
   public class TVRecorded
-	{
-		public enum KeepMethod
-		{
-			UntilWatched,
-			UntilSpaceNeeded,
-			TillDate,
-			Always
-		};
-    long				_startTime;
-    long				_endTime;
-    string			_title;
-    string      _channelName;
-    string      _genre;
-    string      _description;
-    string      _fileName;
-    int         _recordedId=-1;
-    int         _playedCounter=0;
-		DateTime		_keepUntilDate=DateTime.MaxValue;
-		KeepMethod  _keepUntilMethod=KeepMethod.UntilSpaceNeeded;
+  {
+    public enum KeepMethod
+    {
+      UntilWatched,
+      UntilSpaceNeeded,
+      TillDate,
+      Always
+    };
+    long _startTime;
+    long _endTime;
+    string _title;
+    string _channelName;
+    string _genre;
+    string _description;
+    string _fileName;
+    int _recordedId = -1;
+    int _playedCounter = 0;
+    DateTime _keepUntilDate = DateTime.MaxValue;
+    KeepMethod _keepUntilMethod = KeepMethod.UntilSpaceNeeded;
 
-		public DateTime KeepRecordingTill
-		{
-			get 
-			{
-				return _keepUntilDate;
-			}
-			set 
-			{
-				_keepUntilDate=value;
-			}
-		}
+    public DateTime KeepRecordingTill
+    {
+      get
+      {
+        return _keepUntilDate;
+      }
+      set
+      {
+        _keepUntilDate = value;
+      }
+    }
 
-		public KeepMethod KeepRecordingMethod
-		{
-			get { return _keepUntilMethod;}
-			set { _keepUntilMethod=value;}
-		}
+    public KeepMethod KeepRecordingMethod
+    {
+      get { return _keepUntilMethod; }
+      set { _keepUntilMethod = value; }
+    }
 
     /// <summary>
     /// Property to get/set the filename of this recorded tv program
     /// </summary>
     public string FileName
     {
-      get { return _fileName;}
-      set { _fileName=value;}
+      get { return _fileName; }
+      set { _fileName = value; }
     }
 
     /// <summary>
@@ -82,8 +82,8 @@ namespace MediaPortal.TV.Database
     /// </summary>
     public string Description
     {
-      get { return _description;}
-      set { _description=value;}
+      get { return _description; }
+      set { _description = value; }
     }
 
     /// <summary>
@@ -91,8 +91,8 @@ namespace MediaPortal.TV.Database
     /// </summary>
     public string Genre
     {
-      get { return _genre;}
-      set { _genre=value;}
+      get { return _genre; }
+      set { _genre = value; }
     }
 
     /// <summary>
@@ -100,8 +100,8 @@ namespace MediaPortal.TV.Database
     /// </summary>
     public string Channel
     {
-      get { return _channelName;}
-      set { _channelName=value;}
+      get { return _channelName; }
+      set { _channelName = value; }
     }
 
     /// <summary>
@@ -109,8 +109,8 @@ namespace MediaPortal.TV.Database
     /// </summary>
     public string Title
     {
-      get { return _title;}
-      set { _title=value;}
+      get { return _title; }
+      set { _title = value; }
     }
 
     /// <summary>
@@ -118,8 +118,8 @@ namespace MediaPortal.TV.Database
     /// </summary>
     public long Start
     {
-      get { return _startTime;}
-      set { _startTime=value;}
+      get { return _startTime; }
+      set { _startTime = value; }
     }
 
     /// <summary>
@@ -127,8 +127,8 @@ namespace MediaPortal.TV.Database
     /// </summary>
     public long End
     {
-      get { return _endTime;}
-      set { _endTime=value;}
+      get { return _endTime; }
+      set { _endTime = value; }
     }
 
     /// <summary>
@@ -136,7 +136,7 @@ namespace MediaPortal.TV.Database
     /// </summary>
     public DateTime StartTime
     {
-      get { return Utils.longtodate(_startTime);}
+      get { return MediaPortal.Util.Utils.longtodate(_startTime); }
     }
 
     /// <summary>
@@ -144,7 +144,7 @@ namespace MediaPortal.TV.Database
     /// </summary>
     public DateTime EndTime
     {
-      get { return Utils.longtodate(_endTime);}
+      get { return MediaPortal.Util.Utils.longtodate(_endTime); }
     }
 
     /// <summary>
@@ -152,8 +152,8 @@ namespace MediaPortal.TV.Database
     /// </summary>
     public int ID
     {
-      get { return _recordedId;}
-      set { _recordedId=value;}
+      get { return _recordedId; }
+      set { _recordedId = value; }
     }
 
     /// <summary>
@@ -161,31 +161,31 @@ namespace MediaPortal.TV.Database
     /// </summary>
     public int Played
     {
-      get { return _playedCounter;}
-      set { _playedCounter=value;}
+      get { return _playedCounter; }
+      set { _playedCounter = value; }
     }
 
-		public void SetProperties()
-		{
-			string strTime=String.Format("{0} {1} - {2}", 
-				Utils.GetShortDayString(StartTime) , 
-				StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
-				EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
+    public void SetProperties()
+    {
+      string strTime = String.Format("{0} {1} - {2}",
+        MediaPortal.Util.Utils.GetShortDayString(StartTime),
+        StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+        EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
-			GUIPropertyManager.SetProperty("#TV.RecordedTV.Title",Title);
-			GUIPropertyManager.SetProperty("#TV.RecordedTV.Genre",Genre);
-			GUIPropertyManager.SetProperty("#TV.RecordedTV.Time",strTime);
-			GUIPropertyManager.SetProperty("#TV.RecordedTV.Description",Description);
-			string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,Channel);
-			if (System.IO.File.Exists(strLogo))
-			{
-				GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb",strLogo);
-			}
-			else
-			{
-				GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb","defaultVideoBig.png");
-			}
-		}
+      GUIPropertyManager.SetProperty("#TV.RecordedTV.Title", Title);
+      GUIPropertyManager.SetProperty("#TV.RecordedTV.Genre", Genre);
+      GUIPropertyManager.SetProperty("#TV.RecordedTV.Time", strTime);
+      GUIPropertyManager.SetProperty("#TV.RecordedTV.Description", Description);
+      string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, Channel);
+      if (System.IO.File.Exists(strLogo))
+      {
+        GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb", strLogo);
+      }
+      else
+      {
+        GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb", "defaultVideoBig.png");
+      }
+    }
 
     public bool ShouldBeDeleted
     {
@@ -196,5 +196,5 @@ namespace MediaPortal.TV.Database
         return true;
       }
     }
-	}
+  }
 }

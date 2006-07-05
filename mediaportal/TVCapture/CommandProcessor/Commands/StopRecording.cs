@@ -46,8 +46,8 @@ namespace MediaPortal.TV.Recording
   {
     public override void Execute(CommandProcessor handler)
     {
-      Log.WriteFile(Log.LogType.Recorder, "Command:Stop recording");
-      
+      _log.Info("Command:Stop recording");
+
       if (handler.TVCards.Count == 0)
       {
         ErrorMessage = GUILocalizeStrings.Get(753); //"No tuner cards installed";
@@ -66,28 +66,28 @@ namespace MediaPortal.TV.Recording
         return;
       }
       //yes. then cancel the recording
-      Log.WriteFile(Log.LogType.Recorder, "Recorder: Stop recording card:{0} channel:{1}", dev.CommercialName, dev.TVChannel);
+      _log.Info("Recorder: Stop recording card:{0} channel:{1}", dev.CommercialName, dev.TVChannel);
       int ID = dev.CurrentTVRecording.ID;
 
       if (dev.CurrentTVRecording.RecType == TVRecording.RecordingType.Once)
       {
-        Log.WriteFile(Log.LogType.Recorder, "Recorder: cancel recording");
-        dev.CurrentTVRecording.Canceled = Utils.datetolong(DateTime.Now);
+        _log.Info("Recorder: cancel recording");
+        dev.CurrentTVRecording.Canceled = MediaPortal.Util.Utils.datetolong(DateTime.Now);
       }
       else
       {
-        long datetime = Utils.datetolong(DateTime.Now);
+        long datetime = MediaPortal.Util.Utils.datetolong(DateTime.Now);
         TVProgram prog = dev.CurrentProgramRecording;
-        Log.WriteFile(Log.LogType.Recorder, "Recorder: cancel {0}", prog);
+        _log.Info("Recorder: cancel {0}", prog);
 
         if (prog != null)
         {
-          datetime = Utils.datetolong(prog.StartTime);
-          Log.WriteFile(Log.LogType.Recorder, "Recorder: cancel serie {0} {1} {2}", prog.Title, prog.StartTime.ToLongDateString(), prog.StartTime.ToLongTimeString());
+          datetime = MediaPortal.Util.Utils.datetolong(prog.StartTime);
+          _log.Info("Recorder: cancel serie {0} {1} {2}", prog.Title, prog.StartTime.ToLongDateString(), prog.StartTime.ToLongTimeString());
         }
         else
         {
-          Log.WriteFile(Log.LogType.Recorder, "Recorder: cancel series");
+          _log.Info("Recorder: cancel series");
         }
         dev.CurrentTVRecording.CanceledSeries.Add(datetime);
       }

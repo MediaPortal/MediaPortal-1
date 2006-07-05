@@ -155,7 +155,7 @@ namespace WindowPlugins.GUISettings.Wizard
     {
       if (control == btnNext)
       {
-        Log.Write("dvbt-scan:pressed next");
+        _log.Info("dvbt-scan:pressed next");
         GUIWizardCardsDetected.ScanNextCardType();
         return;
       }
@@ -210,7 +210,7 @@ namespace WindowPlugins.GUISettings.Wizard
         GUIListItem item = new GUIListItem();
         item.Label = String.Format("{0}. {1}", count, chan.Name);
         item.IsFolder = false;
-        string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, chan.Name);
+        string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, chan.Name);
         if (!System.IO.File.Exists(strLogo))
         {
           strLogo = "defaultVideoBig.png";

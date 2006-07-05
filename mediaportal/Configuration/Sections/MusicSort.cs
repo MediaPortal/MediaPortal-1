@@ -116,17 +116,17 @@ namespace MediaPortal.Configuration.Sections
 
       string line1 = tbSortLeft.Text;
       string line2 = tbSortRight.Text;
-      line1 = Utils.ReplaceTag(line1, "%track%", trackNr); line2 = Utils.ReplaceTag(line2, "%track%", trackNr);
-      line1 = Utils.ReplaceTag(line1, "%filesize%", fileSize); line2 = Utils.ReplaceTag(line2, "%filesize%", fileSize);
-      line1 = Utils.ReplaceTag(line1, "%artist%", artist); line2 = Utils.ReplaceTag(line2, "%artist%", artist);
-      line1 = Utils.ReplaceTag(line1, "%album%", album); line2 = Utils.ReplaceTag(line2, "%album%", album);
-      line1 = Utils.ReplaceTag(line1, "%title%", title); line2 = Utils.ReplaceTag(line2, "%title%", title);
-      line1 = Utils.ReplaceTag(line1, "%year%", year); line2 = Utils.ReplaceTag(line2, "%year%", year);
-      line1 = Utils.ReplaceTag(line1, "%date%", date); line2 = Utils.ReplaceTag(line2, "%date%", date);
-      line1 = Utils.ReplaceTag(line1, "%filename%", filename); line2 = Utils.ReplaceTag(line2, "%filename%", filename);
-      line1 = Utils.ReplaceTag(line1, "%rating%", rating); line2 = Utils.ReplaceTag(line2, "%rating%", rating);
-      line1 = Utils.ReplaceTag(line1, "%duration%", duration); line2 = Utils.ReplaceTag(line2, "%duration%", duration);
-      line1 = Utils.ReplaceTag(line1, "%genre%", genre); line2 = Utils.ReplaceTag(line2, "%genre%", genre);
+      line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%track%", trackNr); line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%track%", trackNr);
+      line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%filesize%", fileSize); line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%filesize%", fileSize);
+      line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%artist%", artist); line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%artist%", artist);
+      line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%album%", album); line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%album%", album);
+      line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%title%", title); line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%title%", title);
+      line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%year%", year); line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%year%", year);
+      line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%date%", date); line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%date%", date);
+      line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%filename%", filename); line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%filename%", filename);
+      line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%rating%", rating); line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%rating%", rating);
+      line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%duration%", duration); line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%duration%", duration);
+      line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%genre%", genre); line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%genre%", genre);
 
       while (line1.Length < 25) line1 += " ";
       textBoxSample.Text = line1 + line2;

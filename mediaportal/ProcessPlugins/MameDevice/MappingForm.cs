@@ -31,6 +31,7 @@ using System.Windows.Forms;
 using System.Xml;
 using System.IO;
 using MediaPortal.GUI.Library;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.InputDevices
 {
@@ -666,13 +667,16 @@ namespace MediaPortal.InputDevices
 
     bool SaveMapping(string xmlFile)
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      ILog log = services.Get<ILog>();
+
       try
       {
         DirectoryInfo dir = Directory.CreateDirectory("InputDeviceMappings\\custom");
       }
       catch
       {
-        Log.Write("MAP: Error accessing directory \"InputDeviceMappings\\custom\"");
+        log.Info("MAP: Error accessing directory \"InputDeviceMappings\\custom\"");
       }
       DialogResult result = MessageBox.Show(this, "Information:\n\nThere is no plausibility check implemented in this version.\nMake sure your mappings are correct.\n\nThis is just an information, settings will be saved.",
         "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -741,7 +745,7 @@ namespace MediaPortal.InputDevices
       }
       catch
       {
-        Log.Write("MAP: Error saving mapping to XML file");
+        log.Info("MAP: Error saving mapping to XML file");
         return false;
       }
     }

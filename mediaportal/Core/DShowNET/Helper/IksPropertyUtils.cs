@@ -20,8 +20,9 @@
  */
 using System;
 using System.Runtime.InteropServices;
-using MediaPortal.GUI.Library;
+using MediaPortal.Utils.Services;
 using DirectShowLib;
+
 namespace DShowNET
 {
 	/// <summary>
@@ -30,6 +31,7 @@ namespace DShowNET
 	public class IksPropertyUtils
 	{
 		protected IBaseFilter captureFilter;
+    protected static ILog _log;
 
 		protected enum KsPropertySupport:uint
 		{
@@ -115,6 +117,9 @@ namespace DShowNET
 
 		public IksPropertyUtils(IBaseFilter filter)
 		{
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+
 			captureFilter=filter;
 		}
 
@@ -126,13 +131,13 @@ namespace DShowNET
 			uint uiSize;
 			if (propertySet==null) 
 			{
-				Log.Write("GetByteValue() properySet=null");
+				_log.Info("GetByteValue() properySet=null");
 				return 0;
 			}
 			int hr=propertySet.QuerySupported( ref propertyGuid, propId, out IsTypeSupported);
 			if (hr!=0 || (IsTypeSupported & (uint)KsPropertySupport.Get)==0) 
 			{
-				Log.Write("GetByteValue() property is not supported");
+				_log.Info("GetByteValue() property is not supported");
 				return 0;
 			}
 
@@ -163,7 +168,7 @@ namespace DShowNET
 			
 			if (hr!=0)
 			{
-				Log.Write("GetByteValue() failed 0x{0:X}",hr);
+				_log.Info("GetByteValue() failed 0x{0:X}",hr);
 			}
 			return returnValue;
 		}
@@ -174,7 +179,7 @@ namespace DShowNET
 			IKsPropertySet propertySet= captureFilter as IKsPropertySet;
 			if (propertySet==null) 
 			{
-				Log.Write("GetByteValue() properySet=null");
+				_log.Info("GetByteValue() properySet=null");
 				return ;
 			}
 			uint IsTypeSupported=0;
@@ -182,7 +187,7 @@ namespace DShowNET
 			int hr=propertySet.QuerySupported( ref propertyGuid, propId, out IsTypeSupported);
 			if (hr!=0 || (IsTypeSupported & (uint)KsPropertySupport.Set)==0) 
 			{
-				Log.Write("SetByteValue() property is not supported");
+				_log.Info("SetByteValue() property is not supported");
 				return ;
 			}
 
@@ -200,7 +205,7 @@ namespace DShowNET
 			
 			if (hr!=0)
 			{
-				Log.Write("SetByteValue() failed 0x{0:X}",hr);
+				_log.Info("SetByteValue() failed 0x{0:X}",hr);
 			}
 		}
 
@@ -212,13 +217,13 @@ namespace DShowNET
 			uint uiSize;
 			if (propertySet==null) 
 			{
-				Log.Write("GetIntValue() properySet=null");
+				_log.Info("GetIntValue() properySet=null");
 				return 0;
 			}
 			int hr=propertySet.QuerySupported( ref propertyGuid, propId, out IsTypeSupported);
 			if (hr!=0 || (IsTypeSupported & (uint)KsPropertySupport.Get)==0) 
 			{
-				Log.Write("GetIntValue() property is not supported");
+				_log.Info("GetIntValue() property is not supported");
 				return 0;
 			}
       
@@ -257,7 +262,7 @@ namespace DShowNET
 			IKsPropertySet propertySet= captureFilter as IKsPropertySet;
 			if (propertySet==null) 
 			{
-				Log.Write("SetIntValue() properySet=null");
+				_log.Info("SetIntValue() properySet=null");
 				return ;
 			}
 			uint IsTypeSupported=0;
@@ -265,7 +270,7 @@ namespace DShowNET
 			int hr=propertySet.QuerySupported( ref propertyGuid, propId, out IsTypeSupported);
 			if (hr!=0 || (IsTypeSupported & (uint)KsPropertySupport.Set)==0) 
 			{
-				Log.Write("SetIntValue() property is not supported");
+				_log.Info("SetIntValue() property is not supported");
 				return ;
 			}
 			IntPtr pDataReturned = Marshal.AllocCoTaskMem(100);
@@ -273,7 +278,7 @@ namespace DShowNET
 			hr=propertySet.RemoteSet(ref propertyGuid,propId,pDataReturned,4, pDataReturned,4);
 			if (hr!=0)
 			{
-				Log.Write("SetIntValue() failed 0x{0:X}",hr);
+				_log.Info("SetIntValue() failed 0x{0:X}",hr);
 			}
 			Marshal.FreeCoTaskMem(pDataReturned);
 		}
@@ -286,13 +291,13 @@ namespace DShowNET
 			uint uiSize;
 			if (propertySet==null) 
 			{
-				Log.Write("GetString() properySet=null");
+				_log.Info("GetString() properySet=null");
 				return String.Empty;
 			}
 			int hr=propertySet.QuerySupported( ref propertyGuid, propId, out IsTypeSupported);
 			if (hr!=0 || (IsTypeSupported & (uint)KsPropertySupport.Get)==0) 
 			{
-				Log.Write("GetString() property is not supported");
+				_log.Info("GetString() property is not supported");
 				return String.Empty;
 			}
 
@@ -316,13 +321,13 @@ namespace DShowNET
 			uint uiSize;
 			if (propertySet==null) 
 			{
-				Log.Write("GetStructure() properySet=null");
+				_log.Info("GetStructure() properySet=null");
 				return null;
 			}
 			int hr=propertySet.QuerySupported( ref propertyGuid, propId, out IsTypeSupported);
 			if (hr!=0 || (IsTypeSupported & (uint)KsPropertySupport.Get)==0) 
 			{
-				Log.Write("GetString() GetStructure is not supported");
+				_log.Info("GetString() GetStructure is not supported");
 				return null;
 			}
 
@@ -335,7 +340,7 @@ namespace DShowNET
 			}
 			else
 			{
-				Log.Write("GetStructure() failed 0x{0:X}",hr);
+				_log.Info("GetStructure() failed 0x{0:X}",hr);
 			}
 			Marshal.FreeCoTaskMem(pDataReturned);
 			return objReturned;
@@ -348,14 +353,14 @@ namespace DShowNET
 			uint IsTypeSupported=0;
 			if (propertySet==null) 
 			{
-				Log.Write("SetStructure() properySet=null");
+				_log.Info("SetStructure() properySet=null");
 				return ;
 			}
 
 			int hr=propertySet.QuerySupported( ref propertyGuid, propId, out IsTypeSupported);
 			if (hr!=0 || (IsTypeSupported & (uint)KsPropertySupport.Set)==0) 
 			{
-				Log.Write("GetString() GetStructure is not supported");
+				_log.Info("GetString() GetStructure is not supported");
 				return ;
 			}
 
@@ -365,7 +370,7 @@ namespace DShowNET
 			hr=propertySet.RemoteSet(ref propertyGuid,propId,pDataReturned,(uint)iSize, pDataReturned,(uint)iSize );
 			if (hr!=0)
 			{
-				Log.Write("SetStructure() failed 0x{0:X}",hr);
+				_log.Info("SetStructure() failed 0x{0:X}",hr);
 			}
 			Marshal.FreeCoTaskMem(pDataReturned);
 		}

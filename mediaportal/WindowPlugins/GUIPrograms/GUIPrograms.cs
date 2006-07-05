@@ -557,12 +557,12 @@ namespace WindowPlugins.GUIPrograms
         if (!bSuccess)
         {
           strMsg = "Connection failed";
-          Log.Write("myPrograms: RefreshData failed");
+          _log.Info("myPrograms: RefreshData failed");
         }
         else
         {
           strMsg = String.Format("No match for '{0}'", curFile.Title);
-          Log.Write("myPrograms: No data found for '{0}'", curFile.Title);
+          _log.Info("myPrograms: No data found for '{0}'", curFile.Title);
         }
         if (null != dlgOk)
         {

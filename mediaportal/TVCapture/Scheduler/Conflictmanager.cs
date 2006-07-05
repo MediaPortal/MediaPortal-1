@@ -67,7 +67,7 @@ namespace MediaPortal.TV.Recording
       if (cardNo >= 0)
       {
         cards[cardNo]++;
-        //Log.Write("  card:{0} {1} {2}",cardNo,cards[cardNo], ChannelName);
+        //_log.Info("  card:{0} {1} {2}",cardNo,cards[cardNo], ChannelName);
         if (cards[cardNo] > 1) return true;
       }
       return false;

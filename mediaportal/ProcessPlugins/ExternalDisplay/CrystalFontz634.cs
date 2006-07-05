@@ -30,7 +30,7 @@ namespace ProcessPlugins.ExternalDisplay
   /// CrystalFontz 634 driver
   /// </summary>
   /// <author>Nopap</author>
-  public class CrystalFontz634 : IDisplay
+  public class CrystalFontz634 : BaseDisplay, IDisplay
   {
     private SerialPort commPort = null;
     private int lines = 4;
@@ -60,7 +60,7 @@ namespace ProcessPlugins.ExternalDisplay
     {
       if (line >= lines)
       {
-        Log.Write("CrystalFontz634.SetLine: error bad line number" + line);
+        _log.Info("CrystalFontz634.SetLine: error bad line number" + line);
         return;
       }
       try
@@ -70,7 +70,7 @@ namespace ProcessPlugins.ExternalDisplay
       }
       catch (Exception ex)
       {
-        Log.Write("CrystalFontz634.SetLine: " + ex.Message);
+        _log.Info("CrystalFontz634.SetLine: " + ex.Message);
       }
     }
 
@@ -141,7 +141,7 @@ namespace ProcessPlugins.ExternalDisplay
       }
       catch (Exception ex)
       {
-        Log.Write("CrystalFontz634.Initialize: " + ex.Message);
+        _log.Info("CrystalFontz634.Initialize: " + ex.Message);
       }
     }
 
@@ -168,7 +168,7 @@ namespace ProcessPlugins.ExternalDisplay
       }
       catch (Exception ex)
       {
-        Log.Write("CrystalFontz634.Dispose: " + ex.Message);
+        _log.Info("CrystalFontz634.Dispose: " + ex.Message);
       }
     }
 

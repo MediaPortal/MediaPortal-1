@@ -186,12 +186,12 @@ namespace MediaPortal.GUI.Radio
 
     protected void Initialize()
     {
-      Log.Write("StartImportXML: Initialize");
+      _log.Info("StartImportXML: Initialize");
       _tvGuideFileName = "xmltv";
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         _tvGuideFileName = xmlreader.GetValueAsString("xmltv", "folder", "xmltv");
-        _tvGuideFileName = Utils.RemoveTrailingSlash(_tvGuideFileName);
+        _tvGuideFileName = MediaPortal.Util.Utils.RemoveTrailingSlash(_tvGuideFileName);
         _useColorsForGenres = xmlreader.GetValueAsBool("xmltv", "colors", false);
       }
 
@@ -569,7 +569,7 @@ namespace MediaPortal.GUI.Radio
             }
             UpdateCurrentProgram();
 
-            Log.Write("turn tv on");
+            _log.Info("turn tv on");
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RESUME_TV, (int)GUIWindow.Window.WINDOW_TV, GetID, 0, 0, 0, null);
             msg.SendToTargetWindow = true;
             GUIWindowManager.SendThreadMessage(msg);
@@ -945,7 +945,7 @@ namespace MediaPortal.GUI.Radio
         RadioStation chan = (RadioStation)_channelList[channel];
         string strChannel = chan.Name;
         if (strChannel == null) return;
-        string strLogo = Utils.GetCoverArt(Thumbs.Radio, strChannel);
+        string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.Radio, strChannel);
         GUIPropertyManager.SetProperty("#Radio.Guide.Title", String.Empty);
         GUIPropertyManager.SetProperty("#Radio.Guide.Time", String.Empty);
         GUIPropertyManager.SetProperty("#Radio.Guide.Description", String.Empty);
@@ -975,7 +975,7 @@ namespace MediaPortal.GUI.Radio
       else if (_currentProgram != null)
       {
 
-        string strLogo = Utils.GetCoverArt(Thumbs.Radio, _currentProgram.Channel);
+        string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.Radio, _currentProgram.Channel);
         string strTime = String.Format("{0}-{1}",
           _currentProgram.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
           _currentProgram.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
@@ -1028,7 +1028,7 @@ namespace MediaPortal.GUI.Radio
         {
           RadioStation tvChan = (RadioStation)_channelList[chan];
 
-          string strLogo = Utils.GetCoverArt(Thumbs.Radio, tvChan.Name);
+          string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.Radio, tvChan.Name);
           if (System.IO.File.Exists(strLogo))
           {
             GUIButton3PartControl img = GetControl(iChannel + (int)Controls.IMG_CHAN1) as GUIButton3PartControl;
@@ -1057,8 +1057,8 @@ namespace MediaPortal.GUI.Radio
       List<TVProgram> programs = new List<TVProgram>();
       DateTime dtStart = DateTime.Now;
       DateTime dtEnd = dtStart.AddDays(30);
-      long iStart = Utils.datetolong(dtStart);
-      long iEnd = Utils.datetolong(dtEnd);
+      long iStart = MediaPortal.Util.Utils.datetolong(dtStart);
+      long iEnd = MediaPortal.Util.Utils.datetolong(dtEnd);
       RadioDatabase.GetProgramsPerChannel(channel.Name, iStart, iEnd, ref programs);
       _totalProgramCount = programs.Count;
       if (_totalProgramCount == 0) _totalProgramCount = _channelCount;
@@ -1086,8 +1086,8 @@ namespace MediaPortal.GUI.Radio
           program = new TVProgram();
           if (ichan == 0)
           {
-            program.Start = Utils.datetolong(DateTime.Now);
-            program.End = Utils.datetolong(DateTime.Now);
+            program.Start = MediaPortal.Util.Utils.datetolong(DateTime.Now);
+            program.End = MediaPortal.Util.Utils.datetolong(DateTime.Now);
             program.Title = "-";
             program.Genre = "-";
           }
@@ -1164,7 +1164,7 @@ namespace MediaPortal.GUI.Radio
 
           if (program.StartTime.Date != DateTime.Now.Date)
           {
-            img.Label1 = String.Format("{0} {1}", Utils.GetShortDayString(program.StartTime), program.Title);
+            img.Label1 = String.Format("{0} {1}", MediaPortal.Util.Utils.GetShortDayString(program.StartTime), program.Title);
           }
         }
         GUILabelControl labelTemplate;
@@ -1228,7 +1228,7 @@ namespace MediaPortal.GUI.Radio
 
     void RenderChannel(int iChannel, RadioStation channel, long iStart, long iEnd, bool selectCurrentShow)
     {
-      string strLogo = Utils.GetCoverArt(Thumbs.Radio, channel.Name);
+      string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.Radio, channel.Name);
       if (System.IO.File.Exists(strLogo))
       {
         GUIButton3PartControl img = GetControl(iChannel + (int)Controls.IMG_CHAN1) as GUIButton3PartControl;
@@ -1255,9 +1255,9 @@ namespace MediaPortal.GUI.Radio
       RadioDatabase.GetProgramsPerChannel(channel.Name, iStart, iEnd, ref programs);
       if (programs.Count == 0)
       {
-        DateTime dt = Utils.longtodate(iEnd);
+        DateTime dt = MediaPortal.Util.Utils.longtodate(iEnd);
         //dt=dt.AddMinutes(_timePerBlock);
-        long iProgEnd = Utils.datetolong(dt);
+        long iProgEnd = MediaPortal.Util.Utils.datetolong(dt);
         TVProgram prog = new TVProgram();
         prog.Start = iStart;
         prog.End = iProgEnd;

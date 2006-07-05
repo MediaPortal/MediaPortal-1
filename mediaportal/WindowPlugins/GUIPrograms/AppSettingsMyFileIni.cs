@@ -591,7 +591,7 @@ namespace WindowPlugins.GUIPrograms
       curApp.EnableGUIRefresh = this.chkbEnableGUIRefresh.Checked;
       curApp.Pincode = ProgramUtils.StrToIntDef(this.txtPinCode.Text, -1);
       curApp.ContentID = ProgramContentManager.NodeID(cbContentProfile.SelectedIndex);
-      // Log.Write(" dw: wrote contentID {0}", curApp.ContentID);
+      // _log.Info(" dw: wrote contentID {0}", curApp.ContentID);
     }
 
     public override bool EntriesOK(AppItem curApp)

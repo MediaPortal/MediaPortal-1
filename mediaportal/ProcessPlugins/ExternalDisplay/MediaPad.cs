@@ -28,7 +28,7 @@ namespace ProcessPlugins.ExternalDisplay
   /// <summary>
   /// Logitech diNovo MediaPad LCD driver
   /// </summary>
-  public class MediaPad : IDisplay
+  public class MediaPad : BaseDisplay, IDisplay
   {
     private double mediaPadId; //Unique ID of the Mediapad
     private double mediaPadLcdId; //Unique ID of the Mediapad LCD display
@@ -80,7 +80,7 @@ namespace ProcessPlugins.ExternalDisplay
       Status res = SetLine(mediaPadLcdId, (short) line, ref message, DisplayMode.Static);
       if (res != Status.Success)
       {
-        Log.Write("ExternalDisplay: Could not send text to Mediapad LCD ({0})", res.ToString());
+        _log.Info("ExternalDisplay: Could not send text to Mediapad LCD ({0})", res.ToString());
       }
     }
 
@@ -136,7 +136,7 @@ namespace ProcessPlugins.ExternalDisplay
     /// <param name="contrast">ignored</param>
     public void Initialize(string port, int lines, int cols, int delay, int linesG, int colsG, int timeG, bool backLight, int contrast)
     {
-      Log.Write("ExternalDisplay: Found Logitech diNovo Mediapad with ID {0} and LCD ID {1}", mediaPadId, mediaPadLcdId);
+      _log.Info("ExternalDisplay: Found Logitech diNovo Mediapad with ID {0} and LCD ID {1}", mediaPadId, mediaPadLcdId);
       SetDisplayMode(ScreenMode.Normal);
       Clear();
       Beep();
@@ -155,7 +155,7 @@ namespace ProcessPlugins.ExternalDisplay
       Status res = ClearScreen(mediaPadLcdId);
       if (res != Status.Success)
       {
-        Log.Write("ExternalDisplay: Could not clear Mediapad LCD ({0}", res.ToString());
+        _log.Info("ExternalDisplay: Could not clear Mediapad LCD ({0}", res.ToString());
       }
     }
 
@@ -187,7 +187,7 @@ namespace ProcessPlugins.ExternalDisplay
       res = SetMode(mediaPadLcdId, mode);
       if (res != Status.Success)
       {
-        Log.Write("ExternalDisplay: Could not switch Mediapad to time mode ({0})", res.ToString());
+        _log.Info("ExternalDisplay: Could not switch Mediapad to time mode ({0})", res.ToString());
       }
     }
 
@@ -200,7 +200,7 @@ namespace ProcessPlugins.ExternalDisplay
       res = MakeBeep(mediaPadLcdId);
       if (res != Status.Success)
       {
-        Log.Write("ExternalDisplay: Could not make Mediapad beep ({0}", res.ToString());
+        _log.Info("ExternalDisplay: Could not make Mediapad beep ({0}", res.ToString());
       }
       return;
     }

@@ -25,20 +25,31 @@
 
 using System;
 using System.Windows.Forms;
-
+using MediaPortal.Utils.Services;
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.InputDevices
 {
   public static class InputDevices
   {
+    #region vars
+    static ILog _log;
+    #endregion
+
     #region Methods
+
+    static InputDevices()
+    {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+    }
+
 
     public static void Init()
     {
       if (_initialized)
       {
-        Log.Write("Remotes: Init was called before Stop - stopping devices now");
+        _log.Info("Remotes: Init was called before Stop - stopping devices now");
         Stop();
       }
 
@@ -56,7 +67,7 @@ namespace MediaPortal.InputDevices
     {
       if (!_initialized)
       {
-        Log.Write("Remotes: Stop was called without Init - exiting");
+        _log.Info("Remotes: Stop was called without Init - exiting");
         return;
       }
 

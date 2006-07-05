@@ -29,7 +29,7 @@ using MediaPortal.TV.Recording;
 using System.Xml;
 using DirectShowLib;
 using DirectShowLib.BDA;
-
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.TV.Scanning
 {
@@ -55,8 +55,12 @@ namespace MediaPortal.TV.Scanning
 
     int newChannels, updatedChannels;
     int newRadioChannels, updatedRadioChannels;
+    protected ILog _log;
+
     public DVBCTuning()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
     }
 
     #region ITuning Members
@@ -95,7 +99,7 @@ namespace MediaPortal.TV.Scanning
       _channelCount = 0;
       string line;
       string[] tpdata;
-      Log.WriteFile(Log.LogType.Log, "dvbc-scan:Opening {0}", fileName);
+      _log.Info("dvbc-scan:Opening {0}", fileName);
       // load _dvbcChannelsList list and start scan
       System.IO.TextReader tin = System.IO.File.OpenText(fileName);
 
@@ -207,7 +211,7 @@ namespace MediaPortal.TV.Scanning
               }
               catch
               {
-                Log.WriteFile(Log.LogType.Log, "dvbc-scan:Error in line:{0}", LineNr);
+                _log.Info("dvbc-scan:Error in line:{0}", LineNr);
               }
             }
           }
@@ -216,7 +220,7 @@ namespace MediaPortal.TV.Scanning
       tin.Close();
 
 
-      Log.WriteFile(Log.LogType.Log, "dvbc-scan:loaded:{0} dvbc transponders", _channelCount);
+      _log.Info("dvbc-scan:loaded:{0} dvbc transponders", _channelCount);
       _currentIndex = 0;
       return;
     }
@@ -299,7 +303,7 @@ namespace MediaPortal.TV.Scanning
             _dvbcChannels[_currentIndex].modstr, 
             _dvbcChannels[_currentIndex].symbolrate/1000);
       string description = String.Format("Transponder:{0} locking...", chanDesc);
-      Log.WriteFile(Log.LogType.Log, "dvbc-scan:tune dvbcChannel:{0}/{1} {2}", _currentIndex, _channelCount, chanDesc);
+      _log.Info("dvbc-scan:tune dvbcChannel:{0}/{1} {2}", _currentIndex, _channelCount, chanDesc);
       _callback.OnStatus(description);
 
       DVBChannel newchan = new DVBChannel();
@@ -315,7 +319,7 @@ namespace MediaPortal.TV.Scanning
 
       _captureCard.Process();
       _callback.OnSignal(_captureCard.SignalQuality, _captureCard.SignalStrength);
-      Log.Write("dvbc-scan:signal quality:{0} signal strength:{1} signal present:{2}",
+      _log.Info("dvbc-scan:signal quality:{0} signal strength:{1} signal present:{2}",
                   _captureCard.SignalQuality, _captureCard.SignalStrength, _captureCard.SignalPresent());
     }
     #endregion

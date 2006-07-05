@@ -29,8 +29,7 @@ using System.Collections;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D=Microsoft.DirectX.Direct3D;
-
-
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.GUI.Library
 {
@@ -43,9 +42,13 @@ namespace MediaPortal.GUI.Library
 		string    _url;
 		DateTime  _dateDownloaded=DateTime.MinValue;
 		int       _cacheMinutes = 60*30; //30minutes
+    protected ILog _log;
 
 		public DownloadedImage(string url)
 		{
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+
 			URL=url;
 			int pos=url.LastIndexOf("/");
         
@@ -114,7 +117,7 @@ namespace MediaPortal.GUI.Library
 					}
 					catch(Exception)
 					{
-						Log.Write("DownloadedImage:Download() Delete failed:{0}", FileName);
+						_log.Info("DownloadedImage:Download() Delete failed:{0}", FileName);
 					}
 
 					client.DownloadFile(URL, FileName);
@@ -137,7 +140,7 @@ namespace MediaPortal.GUI.Library
 								}
 								catch(Exception)
 								{
-									Log.Write("DownloadedImage:Download() Delete failed:{0}", newFile);
+									_log.Info("DownloadedImage:Download() Delete failed:{0}", newFile);
 								}
 								System.IO.File.Move(FileName,newFile);
 								FileName=newFile;
@@ -146,7 +149,7 @@ namespace MediaPortal.GUI.Library
 					}
 					catch(Exception)
 					{
-						Log.Write("DownloadedImage:Download() DownloadFile failed:{0}->{1}", URL,FileName);
+						_log.Info("DownloadedImage:Download() DownloadFile failed:{0}->{1}", URL,FileName);
 
 					}
 					_dateDownloaded=DateTime.Now;
@@ -154,7 +157,7 @@ namespace MediaPortal.GUI.Library
 				} 
 				catch(Exception ex)
 				{
-					Log.Write("download failed:{0}", ex.Message);
+					_log.Info("download failed:{0}", ex.Message);
 				}
 			}
 			return false;

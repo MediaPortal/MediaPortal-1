@@ -175,7 +175,7 @@ namespace MediaPortal.GUI.Music
       {
         string coverArtUrl = artistInfo.ImageURL;
         string coverArtFileName = GUIMusicFiles.GetArtistCoverArtName(artistInfo.Artist);
-        if (coverArtFileName != String.Empty) Utils.FileDelete(coverArtFileName);
+        if (coverArtFileName != String.Empty) MediaPortal.Util.Utils.FileDelete(coverArtFileName);
         m_bRefresh = true;
         Close();
         return;
@@ -389,7 +389,7 @@ namespace MediaPortal.GUI.Music
       {
         //	Download image and save as 
         //	permanent thumb
-        Utils.DownLoadImage(coverArtUrl, coverArtFileName);
+        MediaPortal.Util.Utils.DownLoadImage(coverArtUrl, coverArtFileName);
       }
 
       if (System.IO.File.Exists(coverArtFileName))

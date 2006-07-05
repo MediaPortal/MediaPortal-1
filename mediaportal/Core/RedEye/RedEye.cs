@@ -28,6 +28,7 @@ using System.Collections;
 using JH.CommBase;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.RedEyeIR
 {
@@ -66,7 +67,9 @@ namespace MediaPortal.RedEyeIR
 		/// to methods should be done through the singleton property "Instance".
 		/// </summary>
 		private RedEye()
-		{
+    {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
 		}
 
 		public delegate void OnRemoteCommand(object command);
@@ -82,6 +85,7 @@ namespace MediaPortal.RedEyeIR
 		private const string remotefile = "remotevalues.xml";
 		static RedEye instance = null;
 		private string currentChannel = "0";
+    protected ILog _log;
 
 		public OnRemoteCommand RemoteCommandCallback
 		{
@@ -304,12 +308,12 @@ namespace MediaPortal.RedEyeIR
 			if (base.Online)
 			{
 				base.SendImmediate((byte)'%');
-				Log.Write("RedEye IRDA set");
+				_log.Info("RedEye IRDA set");
 				Sleep(500);
 			}
 			else
 			{
-				Log.Write("IRDA set failed, Port not Online");
+				_log.Info("IRDA set failed, Port not Online");
 				throw new System.Exception("IRDA set failed, Port not Online");
 				
 			}
@@ -321,12 +325,12 @@ namespace MediaPortal.RedEyeIR
 			if (base.Online)
 			{
 				base.SendImmediate((byte)'&');
-				Log.Write("RedEye RC5 Set");
+				_log.Info("RedEye RC5 Set");
 				Sleep(500);
 			}
 			else
 			{
-				Log.Write("RC5 set failed, Port not Online");
+				_log.Info("RC5 set failed, Port not Online");
 				throw new System.Exception("RC5 set failed, Port not Online");
 				
 			}
@@ -338,12 +342,12 @@ namespace MediaPortal.RedEyeIR
 			if (base.Online)
 			{
 				base.SendImmediate((byte)'$');
-				Log.Write("RedEye SkY set");
+				_log.Info("RedEye SkY set");
 				Sleep(500);
 			}
 			else
 			{
-				Log.Write("SKY set failed, Port not Online");
+				_log.Info("SKY set failed, Port not Online");
 				throw new System.Exception("SKY set failed, Port not Online");
 				
 			}
@@ -387,14 +391,14 @@ namespace MediaPortal.RedEyeIR
 						}
 						else
 						{
-							Log.Write("Redeye Failed to Send channel change : " + channel);
+							_log.Info("Redeye Failed to Send channel change : " + channel);
 							throw new System.Exception("Redeye Failed to Send channel change : " + channel);
 							
 						}
 						Sleep(CommandDelay);
 					}	
 				}
-				Log.Write("RedEye Transmitted Channel : " + channel);
+				_log.Info("RedEye Transmitted Channel : " + channel);
 			}											
 		}
 	}

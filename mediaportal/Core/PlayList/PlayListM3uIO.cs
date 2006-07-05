@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using MediaPortal.Util;
-using MediaPortal.GUI.Library;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Playlists
 {
@@ -14,14 +14,21 @@ namespace MediaPortal.Playlists
     private PlayList playlist;
     private StreamReader file;
     private string basePath;
+    protected ILog _log;
+
+    public PlayListM3uIO()
+    {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+    }
 
     public bool Load(PlayList incomingPlaylist, string playlistFileName)
     {
-      if (playlistFileName == null) 
+      if (playlistFileName == null)
         return false;
       playlist = incomingPlaylist;
       playlist.Clear();
-      
+
       try
       {
         playlist.Name = Path.GetFileName(playlistFileName);
@@ -54,7 +61,7 @@ namespace MediaPortal.Playlists
             {
               string songName = null;
               int lDuration = 0;
-              
+
               if (ExtractM3uInfo(trimmedLine, ref songName, ref lDuration))
               {
                 line = file.ReadLine();
@@ -71,9 +78,9 @@ namespace MediaPortal.Playlists
           }
         }
       }
-      catch (Exception ex )
+      catch (Exception ex)
       {
-        Log.Write("exception loading playlist {0} err:{1} stack:{2}", playlistFileName, ex.Message, ex.StackTrace);
+        _log.Info("exception loading playlist {0} err:{1} stack:{2}", playlistFileName, ex.Message, ex.StackTrace);
         return false;
       }
       return true;
@@ -93,7 +100,7 @@ namespace MediaPortal.Playlists
         lDuration = System.Int32.Parse(duration);
         return true;
       }
-       return false; 
+      return false;
     }
 
 
@@ -102,7 +109,7 @@ namespace MediaPortal.Playlists
       if (fileName == null || fileName.Length == 0)
         return false;
 
-      Utils.GetQualifiedFilename(basePath, ref fileName);
+      MediaPortal.Util.Utils.GetQualifiedFilename(basePath, ref fileName);
       PlayListItem newItem = new PlayListItem(songName, fileName, duration);
       newItem.Type = PlayListItem.PlayListItemType.Audio;
       if (songName.Length == 0)
@@ -130,7 +137,7 @@ namespace MediaPortal.Playlists
       }
       catch (Exception e)
       {
-        Log.Write("failed to save a playlist {0}. err: {1} stack: {2}", fileName, e.Message, e.StackTrace);
+        _log.Info("failed to save a playlist {0}. err: {1} stack: {2}", fileName, e.Message, e.StackTrace);
       }
     }
   }

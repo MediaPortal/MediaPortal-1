@@ -26,11 +26,12 @@ using MediaPortal.GUI.Library;
 using Programs.Utils;
 using SQLite.NET;
 using WindowPlugins.GUIPrograms;
+using MediaPortal.Utils.Services;
 
 namespace ProgramsDatabase
 {
 
-  public class Filelist: ArrayList
+  public class Filelist : ArrayList
   {
 
     string mFilepath = "";
@@ -158,7 +159,7 @@ namespace ProgramsDatabase
         SQLiteResultSet results;
         mFilepath = pathSubfolders;
         string sqlQuery = ProgramSettings.viewHandler.BuildQuery(appID, pathSubfolders);
-        // Log.Write("dw \n{0}", sqlQuery);
+        // _log.Info("dw \n{0}", sqlQuery);
         results = sqlDB.Execute(sqlQuery);
         if (results.Rows.Count == 0)
           return ;
@@ -179,7 +180,9 @@ namespace ProgramsDatabase
       }
       catch (SQLiteException ex)
       {
-        Log.Write("Filedatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        ServiceProvider services = GlobalServiceProvider.Instance;
+        ILog log = services.Get<ILog>();
+        log.Info("Filedatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
       }
     }
   }

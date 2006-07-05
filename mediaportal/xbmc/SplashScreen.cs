@@ -26,6 +26,7 @@
 using System.ComponentModel;
 using System.Threading;
 using System.Windows.Forms;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal
 {
@@ -44,6 +45,14 @@ namespace MediaPortal
     private bool stopRequested = false;
     private SplashForm frm;
     private string info;
+    static ILog _log;
+
+    public SplashScreen()
+    {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+    }
+
 
     /// <summary>
     /// Starts the splash screen.
@@ -143,14 +152,14 @@ namespace MediaPortal
       {
         string[] strVersion = version.Split('$');
         versionLabel.Text = strVersion[0];
-        GUI.Library.Log.Write("Application Version: {0}", strVersion[0]);
+        _log.Info("Application Version: {0}", strVersion[0]);
         if (strVersion.Length > 1)
         {
           string day = strVersion[1].Substring(4, 2);
           string month = strVersion[1].Substring(7, 2);
           string year = strVersion[1].Substring(10, 4);
           string time = strVersion[1].Substring(15, 5);
-          GUI.Library.Log.Write("SVN Build: {0}-{1}-{2} / {3}", month, day, year, time);
+          _log.Info("SVN Build: {0}-{1}-{2} / {3}", month, day, year, time);
           cvsLabel.Text = string.Format("SVN Build {0}-{1}-{2}/{3}", month, day, year, time);
         }
         Update();

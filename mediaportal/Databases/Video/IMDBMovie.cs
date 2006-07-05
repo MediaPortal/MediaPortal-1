@@ -235,7 +235,7 @@ namespace MediaPortal.Video.Database
 	}
 		public void SetProperties()
 		{
-			string strThumb = Utils.GetLargeCoverArtName(Thumbs.MovieTitle,Title);
+      string strThumb = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, Title);
 			GUIPropertyManager.SetProperty("#director",Director);
 			GUIPropertyManager.SetProperty("#genre",Genre);
 			GUIPropertyManager.SetProperty("#cast",Cast);
@@ -259,7 +259,7 @@ namespace MediaPortal.Video.Database
 		}
 		public void SetPlayProperties()
 		{
-			string strThumb = Utils.GetLargeCoverArtName(Thumbs.MovieTitle,Title);
+      string strThumb = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, Title);
 			GUIPropertyManager.SetProperty("#Play.Current.Director",Director);
 			GUIPropertyManager.SetProperty("#Play.Current.Genre",Genre);
 			GUIPropertyManager.SetProperty("#Play.Current.Cast",Cast);

@@ -57,6 +57,7 @@ using Toub.MediaCenter.Dvrms.Metadata;
 using MediaPortal.TV.BDA;
 using DShowNET.TsFileSink;
 using MediaPortal.TV.Scanning;
+using MediaPortal.Utils.Services;
 #endregion
 #pragma warning disable 618
 namespace MediaPortal.TV.Recording
@@ -314,6 +315,7 @@ namespace MediaPortal.TV.Recording
     protected IPin _pinTeletext;
     protected string _currentTimeShiftFileName;
     protected string _lastError = String.Empty;
+    protected ILog _log;
 
 #if DUMP
 		System.IO.FileStream fileout;
@@ -327,6 +329,9 @@ namespace MediaPortal.TV.Recording
     /// <param name="pCard">instance of a TVCaptureDevice which contains all details about this card</param>
     public DVBGraphBase(TVCaptureDevice pCard)
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+
       _card = pCard;
       _cardId = pCard.ID;
       _graphState = State.None;
@@ -411,7 +416,7 @@ namespace MediaPortal.TV.Recording
         _vmr9.Dispose();
         _vmr9 = null;
       }
-      Log.WriteFile(Log.LogType.Log, "DVBGraph:StartRecording()");
+      _log.Info("DVBGraph:StartRecording()");
       uint iRecordingType = 0;
       if (bContentRecording)
         iRecordingType = 0;
@@ -423,7 +428,7 @@ namespace MediaPortal.TV.Recording
         bool success = DvrMsCreate(out m_recorderId, (IBaseFilter)m_IStreamBufferSink, strFileName, iRecordingType);
         if (!success)
         {
-          Log.WriteFile(Log.LogType.Log, true, "DVBGraph:StartRecording() FAILED to create recording");
+          _log.Error("DVBGraph:StartRecording() FAILED to create recording");
           return false;
         }
         long lStartTime = 0;
@@ -444,13 +449,13 @@ namespace MediaPortal.TV.Recording
           if (timeProgStart.Year > 2000)
           {
             TimeSpan ts = DateTime.Now - timeProgStart;
-            Log.WriteFile(Log.LogType.Log, "DVBGraph: Start recording from {0}:{1:00}:{2:00} which is {3:00}:{4:00}:{5:00} in the past",
+            _log.Info("DVBGraph: Start recording from {0}:{1:00}:{2:00} which is {3:00}:{4:00}:{5:00} in the past",
               timeProgStart.Hour, timeProgStart.Minute, timeProgStart.Second,
               ts.TotalHours, ts.TotalMinutes, ts.TotalSeconds);
 
             lStartTime = (long)ts.TotalSeconds;
           }
-          else Log.WriteFile(Log.LogType.Log, "DVBGraph: record entire timeshift buffer");
+          else _log.Info("DVBGraph: record entire timeshift buffer");
 
           TimeSpan tsMaxTimeBack = DateTime.Now - _startTimer;
           if (lStartTime > tsMaxTimeBack.TotalSeconds)
@@ -474,7 +479,7 @@ namespace MediaPortal.TV.Recording
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        _log.Error(ex);
       }
       finally
       {
@@ -495,10 +500,10 @@ namespace MediaPortal.TV.Recording
     public void StopRecording()
     {
       if (_graphState != State.Recording) return;
-      Log.WriteFile(Log.LogType.Log, "DVBGraph:stop recording...");
+      _log.Info("DVBGraph:stop recording...");
       if (m_recorderId >= 0)
       {
-        //Log.WriteFile(Log.LogType.Log, "DVBGraph:stop recorder:{0}...", m_recorderId);
+        //_log.Info("DVBGraph:stop recorder:{0}...", m_recorderId);
         DvrMsStop(m_recorderId);
         m_recorderId = -1;
 
@@ -506,7 +511,7 @@ namespace MediaPortal.TV.Recording
 
 
       _graphState = State.TimeShifting;
-      //Log.WriteFile(Log.LogType.Log, "DVBGraph:stopped recording...");
+      //_log.Info("DVBGraph:stopped recording...");
     }//public void StopRecording()
 
     #endregion
@@ -522,7 +527,7 @@ namespace MediaPortal.TV.Recording
     public bool StartViewing(TVChannel channel)
     {
       if (_graphState != State.Created) return false;
-      Log.WriteFile(Log.LogType.Log, "DVBGraph:StartViewing() {0}", channel.Name);
+      _log.Info("DVBGraph:StartViewing() {0}", channel.Name);
 
       _isOverlayVisible = true;
       // add VMR9 renderer to graph
@@ -553,7 +558,7 @@ namespace MediaPortal.TV.Recording
         if (_graphBuilder.Render(_pinDemuxerVideoMPEG4) != 0)
         {
           _lastError = String.Format("Unable to connect MPG4 pin");
-          Log.WriteFile(Log.LogType.Log, true, "DVBGraph:Failed to render MPEG4 video out pin MPEG-2 Demultiplexer");
+          _log.Error("DVBGraph:Failed to render MPEG4 video out pin MPEG-2 Demultiplexer");
           return false;
         }
       }
@@ -566,7 +571,7 @@ namespace MediaPortal.TV.Recording
         if (_graphBuilder.Render(_pinDemuxerVideo) != 0)
         {
           _lastError = String.Format("Unable to connect MPG2 pin");
-          Log.WriteFile(Log.LogType.Log, true, "DVBGraph:Failed to render video out pin MPEG-2 Demultiplexer");
+          _log.Error("DVBGraph:Failed to render video out pin MPEG-2 Demultiplexer");
           return false;
         }
 
@@ -574,29 +579,29 @@ namespace MediaPortal.TV.Recording
       int serviceType;
       _isUsingAC3 = TVDatabase.DoesChannelHaveAC3(channel, Network() == NetworkType.DVBC, Network() == NetworkType.DVBT, Network() == NetworkType.DVBS, Network() == NetworkType.ATSC, out serviceType);
       if (_isUsingAC3)
-        Log.WriteFile(Log.LogType.Log, "DVBGraph: channel {0} uses AC3", channel.Name);
+        _log.Info("DVBGraph: channel {0} uses AC3", channel.Name);
       else
-        Log.WriteFile(Log.LogType.Log, "DVBGraph: channel {0} uses MP2 audio", channel.Name);
-      Log.Write("DVBGraph:StartViewing(). : ac3={0}", _isUsingAC3);
+        _log.Info("DVBGraph: channel {0} uses MP2 audio", channel.Name);
+      _log.Info("DVBGraph:StartViewing(). : ac3={0}", _isUsingAC3);
 
       if (!_isUsingAC3)
       {
-        //Log.WriteFile(Log.LogType.Log, false, "DVBGraph:render MP2 audio pin");
+        //_log.Info("DVBGraph:render MP2 audio pin");
         if (_graphBuilder.Render(_pinDemuxerAudio) != 0)
         {
           _lastError = String.Format("Unable to connect audio pin");
-          Log.WriteFile(Log.LogType.Log, true, "DVBGraph:Failed to render audio out pin MPEG-2 Demultiplexer");
+          _log.Error("DVBGraph:Failed to render audio out pin MPEG-2 Demultiplexer");
           return false;
         }
 
       }
       else
       {
-        //Log.WriteFile(Log.LogType.Log, false, "DVBGraph:render AC3 audio pin");
+        //_log.Info("DVBGraph:render AC3 audio pin");
         if (_graphBuilder.Render(_pinAC3Out) != 0)
         {
           _lastError = String.Format("Unable to connect AC3 pin");
-          Log.WriteFile(Log.LogType.Log, true, "DVBGraph:Failed to render AC3 pin MPEG-2 Demultiplexer");
+          _log.Error("DVBGraph:Failed to render AC3 pin MPEG-2 Demultiplexer");
           return false;
         }
       }
@@ -628,7 +633,7 @@ namespace MediaPortal.TV.Recording
         if (_videoWindowInterface == null)
         {
           _lastError = String.Format("IVideoWindow not present");
-          Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED:Unable to get IVideoWindow");
+          _log.Error("DVBGraph:FAILED:Unable to get IVideoWindow");
           return false;
         }
 
@@ -636,23 +641,23 @@ namespace MediaPortal.TV.Recording
         if (_basicVideoInterFace == null)
         {
           _lastError = String.Format("IBasicVideo2 not present");
-          Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED:Unable to get IBasicVideo2");
+          _log.Error("DVBGraph:FAILED:Unable to get IBasicVideo2");
           return false;
         }
 
         // and set it up
         hr = _videoWindowInterface.put_Owner(GUIGraphicsContext.ActiveForm);
         if (hr != 0)
-          Log.WriteFile(Log.LogType.Log, true, "DVBGraph: FAILED:set Video window:0x{0:X}", hr);
+          _log.Error("DVBGraph: FAILED:set Video window:0x{0:X}", hr);
 
         hr = _videoWindowInterface.put_WindowStyle((WindowStyle)((int)WindowStyle.ClipSiblings + (int)WindowStyle.Child + (int)WindowStyle.ClipChildren));
         if (hr != 0)
-          Log.WriteFile(Log.LogType.Log, true, "DVBGraph: FAILED:set Video window style:0x{0:X}", hr);
+          _log.Error("DVBGraph: FAILED:set Video window style:0x{0:X}", hr);
 
         //show overlay window
         hr = _videoWindowInterface.put_Visible(OABool.True);
         if (hr != 0)
-          Log.WriteFile(Log.LogType.Log, true, "DVBGraph: FAILED:put_Visible:0x{0:X}", hr);
+          _log.Error("DVBGraph: FAILED:put_Visible:0x{0:X}", hr);
       }
 
       //start the graph
@@ -661,7 +666,7 @@ namespace MediaPortal.TV.Recording
       if (hr < 0)
       {
         _lastError = String.Format("Unable to start graph");
-        Log.WriteFile(Log.LogType.Log, true, "DVBGraph: FAILED unable to start graph :0x{0:X}", hr);
+        _log.Error("DVBGraph: FAILED unable to start graph :0x{0:X}", hr);
         return false;
       }
 
@@ -688,7 +693,7 @@ namespace MediaPortal.TV.Recording
         TuneChannel(channel);
 
 
-      //Log.WriteFile(Log.LogType.Log, "DVBGraph:Viewing..");
+      //_log.Info("DVBGraph:Viewing..");
       return true;
     }//public bool StartViewing(AnalogVideoStandard standard, int iChannel,int country)
 
@@ -705,11 +710,11 @@ namespace MediaPortal.TV.Recording
       if (_graphState != State.Viewing) return false;
 
       GUIGraphicsContext.OnVideoWindowChanged -= new VideoWindowChangedHandler(GUIGraphicsContext_OnVideoWindowChanged);
-      Log.WriteFile(Log.LogType.Log, "DVBGraph: StopViewing()");
+      _log.Info("DVBGraph: StopViewing()");
       if (_videoWindowInterface != null)
         _videoWindowInterface.put_Visible(OABool.False);
 
-      //Log.WriteFile(Log.LogType.Log, "DVBGraph: stop vmr9");
+      //_log.Info("DVBGraph: stop vmr9");
       if (_vmr9 != null)
       {
         _vmr9.Enable(false);
@@ -732,7 +737,7 @@ namespace MediaPortal.TV.Recording
       DirectShowUtil.RemoveDownStreamFilters(_graphBuilder, _pinDemuxerAudio);
       DirectShowUtil.RemoveDownStreamFilters(_graphBuilder, _pinDemuxerVideo);
 
-      //Log.WriteFile(Log.LogType.Log, "DVBGraph: view stopped");
+      //_log.Info("DVBGraph: view stopped");
       _isGraphRunning = false;
       _graphState = State.Created;
 
@@ -757,11 +762,11 @@ namespace MediaPortal.TV.Recording
         return false;
 
 
-      ulong freeSpace = Utils.GetFreeDiskSpace(strFileName);
+      ulong freeSpace = MediaPortal.Util.Utils.GetFreeDiskSpace(strFileName);
       if (freeSpace < (1024L * 1024L * 1024L))// 1 GB
       {
         _lastError = GUILocalizeStrings.Get(765);// "Not enough free diskspace";
-        Log.WriteFile(Log.LogType.Recorder, true, "Recorder:  failed to start timeshifting since drive {0}: has less then 1GB freediskspace", strFileName[0]);
+        _log.Error("Recorder:  failed to start timeshifting since drive {0}: has less then 1GB freediskspace", strFileName[0]);
         return false;
       }
 
@@ -770,7 +775,7 @@ namespace MediaPortal.TV.Recording
         _vmr9.Dispose();
         _vmr9 = null;
       }
-      Log.WriteFile(Log.LogType.Log, "DVBGraph:StartTimeShifting() {0}", channel.Name);
+      _log.Info("DVBGraph:StartTimeShifting() {0}", channel.Name);
 
       GetTvChannelFromDatabase(channel);
       if (_currentTuningObject == null)
@@ -784,9 +789,9 @@ namespace MediaPortal.TV.Recording
         int serviceType; ;
         _isUsingAC3 = TVDatabase.DoesChannelHaveAC3(channel, Network() == NetworkType.DVBC, Network() == NetworkType.DVBT, Network() == NetworkType.DVBS, Network() == NetworkType.ATSC, out serviceType);
         if (_isUsingAC3)
-          Log.WriteFile(Log.LogType.Log, "DVBGraph: channel {0} uses AC3", channel.Name);
+          _log.Info("DVBGraph: channel {0} uses AC3", channel.Name);
         else
-          Log.WriteFile(Log.LogType.Log, "DVBGraph: channel {0} uses MP2 audio", channel.Name);
+          _log.Info("DVBGraph: channel {0} uses MP2 audio", channel.Name);
       }
 
       if (_currentTuningObject.ServiceType == Mpeg4VideoServiceType)
@@ -794,7 +799,7 @@ namespace MediaPortal.TV.Recording
         SetupDemuxerPin(_pinDemuxerVideoMPEG4, _currentTuningObject.VideoPid, (int)MediaSampleContent.ElementaryStream, true);
       }
 
-      Log.Write("DVBGraph:(). StartTimeShifting: ac3={0}", _isUsingAC3);
+      _log.Info("DVBGraph:(). StartTimeShifting: ac3={0}", _isUsingAC3);
 
       bool success = false;
       if (UseTsTimeShifting)
@@ -810,12 +815,12 @@ namespace MediaPortal.TV.Recording
           _mediaControl = (IMediaControl)_graphBuilder;
         }
         //now start the graph
-        //Log.WriteFile(Log.LogType.Log, "DVBGraph: start graph");
+        //_log.Info("DVBGraph: start graph");
         int hr = _mediaControl.Run();
         if (hr < 0)
         {
           _lastError = String.Format("Unable to run graph");
-          Log.WriteFile(Log.LogType.Log, true, "DVBGraph: FAILED unable to start graph :0x{0:X}", hr);
+          _log.Error("DVBGraph: FAILED unable to start graph :0x{0:X}", hr);
           return false;
         }
         TuneChannel(channel);
@@ -824,11 +829,11 @@ namespace MediaPortal.TV.Recording
       }
       else
       {
-        Log.WriteFile(Log.LogType.Log, true, "DVBGraph:Unable to create sinksource()");
+        _log.Error("DVBGraph:Unable to create sinksource()");
         return false;
       }
 
-      //Log.WriteFile(Log.LogType.Log, "DVBGraph:timeshifting started");
+      //_log.Info("DVBGraph:timeshifting started");
       return true;
     }//public bool StartTimeShifting(int country,AnalogVideoStandard standard, int iChannel, string strFileName)
 
@@ -842,7 +847,7 @@ namespace MediaPortal.TV.Recording
     public bool StopTimeShifting()
     {
       if (_graphState != State.TimeShifting) return false;
-      Log.WriteFile(Log.LogType.Log, "DVBGraph: StopTimeShifting()");
+      _log.Info("DVBGraph: StopTimeShifting()");
 
       if (_mediaControl != null)
       {
@@ -909,7 +914,7 @@ namespace MediaPortal.TV.Recording
       if (_graphState != State.Viewing) return;
       if (_basicVideoInterFace == null) return;
       if (_videoWindowInterface == null) return;
-      Log.Write("DVBGraph:OnVideoWindowChanged()");
+      _log.Info("DVBGraph:OnVideoWindowChanged()");
       int iVideoWidth, iVideoHeight;
       int aspectX, aspectY;
       _basicVideoInterFace.GetVideoSize(out iVideoWidth, out iVideoHeight);
@@ -953,14 +958,14 @@ namespace MediaPortal.TV.Recording
         if (rSource.Left < 0 || rSource.Top < 0 || rSource.Width <= 0 || rSource.Height <= 0) return;
         if (rDest.Left < 0 || rDest.Top < 0 || rDest.Width <= 0 || rDest.Height <= 0) return;
 
-        Log.Write("overlay: video WxH  : {0}x{1}", iVideoWidth, iVideoHeight);
-        Log.Write("overlay: video AR   : {0}:{1}", aspectX, aspectY);
-        Log.Write("overlay: screen WxH : {0}x{1}", nw, nh);
-        Log.Write("overlay: AR type    : {0}", GUIGraphicsContext.ARType);
-        Log.Write("overlay: PixelRatio : {0}", GUIGraphicsContext.PixelRatio);
-        Log.Write("overlay: src        : ({0},{1})-({2},{3})",
+        _log.Info("overlay: video WxH  : {0}x{1}", iVideoWidth, iVideoHeight);
+        _log.Info("overlay: video AR   : {0}:{1}", aspectX, aspectY);
+        _log.Info("overlay: screen WxH : {0}x{1}", nw, nh);
+        _log.Info("overlay: AR type    : {0}", GUIGraphicsContext.ARType);
+        _log.Info("overlay: PixelRatio : {0}", GUIGraphicsContext.PixelRatio);
+        _log.Info("overlay: src        : ({0},{1})-({2},{3})",
           rSource.X, rSource.Y, rSource.X + rSource.Width, rSource.Y + rSource.Height);
-        Log.Write("overlay: dst        : ({0},{1})-({2},{3})",
+        _log.Info("overlay: dst        : ({0},{1})-({2},{3})",
           rDest.X, rDest.Y, rDest.X + rDest.Width, rDest.Y + rDest.Height);
 
 
@@ -994,12 +999,12 @@ namespace MediaPortal.TV.Recording
       //or vice-versa. ifso, graphs should be rebuild
       if (_graphState != State.Viewing && _graphState != State.TimeShifting && _graphState != State.Recording)
       {
-        Log.Write("DVBGraph: ShouldRebuildGraph({0})  false, not viewing", newChannel.Name);
+        _log.Info("DVBGraph: ShouldRebuildGraph({0})  false, not viewing", newChannel.Name);
         return false;
       }
       int serviceType;
       bool useAC3 = TVDatabase.DoesChannelHaveAC3(newChannel, Network() == NetworkType.DVBC, Network() == NetworkType.DVBT, Network() == NetworkType.DVBS, Network() == NetworkType.ATSC, out serviceType);
-      Log.Write("DVBGraph: ShouldRebuildGraph({0})  current ac3:{1} new channel ac3:{2}",
+      _log.Info("DVBGraph: ShouldRebuildGraph({0})  current ac3:{1} new channel ac3:{2}",
                   newChannel.Name, _isUsingAC3, useAC3);
       if (useAC3 != _isUsingAC3) return true;
       if (_currentTuningObject != null)
@@ -1018,14 +1023,14 @@ namespace MediaPortal.TV.Recording
     public void SetAudioLanguage(int audioPid)
     {
       if (audioPid == _currentTuningObject.AudioPid) return;
-      Log.WriteFile(Log.LogType.Log, true, "DVBGraph: change audio pid {0:X}-> pid:{1:X} {2}", _currentTuningObject.AudioPid, audioPid, _graphState);
+      _log.Error("DVBGraph: change audio pid {0:X}-> pid:{1:X} {2}", _currentTuningObject.AudioPid, audioPid, _graphState);
 
       SetupDemuxerPin(_pinAC3Out, audioPid, (int)MediaSampleContent.ElementaryStream, true);
       SetupDemuxerPin(_pinDemuxerAudio, audioPid, (int)MediaSampleContent.ElementaryStream, true);
 
       if (audioPid == _currentTuningObject.AC3Pid)
       {
-        Log.WriteFile(Log.LogType.Log, true, "DVBGraph: AC3 audio");
+        _log.Error("DVBGraph: AC3 audio");
         //check if ac3 pin is connected
         IPin pin;
         _pinAC3Out.ConnectedTo(out pin);
@@ -1034,13 +1039,13 @@ namespace MediaPortal.TV.Recording
           //no? then connect ac3 pin
           if (_mediaControl != null)
           {
-            Log.WriteFile(Log.LogType.Log, true, "DVBGraph: stop graph");
+            _log.Error("DVBGraph: stop graph");
             _mediaControl.Stop();
-            Log.WriteFile(Log.LogType.Log, true, "DVBGraph: disconnect MP2 pin");
+            _log.Error("DVBGraph: disconnect MP2 pin");
             _pinDemuxerAudio.Disconnect();
-            Log.WriteFile(Log.LogType.Log, true, "DVBGraph: connect AC3 pin");
+            _log.Error("DVBGraph: connect AC3 pin");
             _graphBuilder.Render(_pinAC3Out);
-            Log.WriteFile(Log.LogType.Log, true, "DVBGraph: start graph");
+            _log.Error("DVBGraph: start graph");
             _mediaControl.Run();
           }
         }
@@ -1051,7 +1056,7 @@ namespace MediaPortal.TV.Recording
       }
       else
       {
-        Log.WriteFile(Log.LogType.Log, true, "DVBGraph: MP2 audio");
+        _log.Error("DVBGraph: MP2 audio");
         //check if mpeg2 audio pin is connected
         IPin pin;
         _pinDemuxerAudio.ConnectedTo(out pin);
@@ -1060,13 +1065,13 @@ namespace MediaPortal.TV.Recording
           //no? then connect mpeg2 audio pin
           if (_mediaControl != null)
           {
-            Log.WriteFile(Log.LogType.Log, true, "DVBGraph: stop graph");
+            _log.Error("DVBGraph: stop graph");
             _mediaControl.Stop();
-            Log.WriteFile(Log.LogType.Log, true, "DVBGraph: disconnect AC3 pin");
+            _log.Error("DVBGraph: disconnect AC3 pin");
             _pinAC3Out.Disconnect();
-            Log.WriteFile(Log.LogType.Log, true, "DVBGraph: connect MP2 pin");
+            _log.Error("DVBGraph: connect MP2 pin");
             _graphBuilder.Render(_pinDemuxerAudio);
-            Log.WriteFile(Log.LogType.Log, true, "DVBGraph: start graph");
+            _log.Error("DVBGraph: start graph");
             _mediaControl.Run();
           }
         }
@@ -1078,7 +1083,7 @@ namespace MediaPortal.TV.Recording
       _currentTuningObject.AudioPid = audioPid;
       if (_cardProperties.IsCISupported())
       {
-        Log.WriteFile(Log.LogType.Log, true, "DVBGraph: resending PMT to CAM");
+        _log.Error("DVBGraph: resending PMT to CAM");
         UpdateCAM();
       }
 
@@ -1315,7 +1320,7 @@ namespace MediaPortal.TV.Recording
         if (hr != 0)
         {
           _lastError = String.Format("Unable to add StreamBufferSink filter");
-          Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED cannot add StreamBufferSink:{0:X}", hr);
+          _log.Error("DVBGraph:FAILED cannot add StreamBufferSink:{0:X}", hr);
           return false;
         }
         //create MPEG2 Analyzer filter
@@ -1324,7 +1329,7 @@ namespace MediaPortal.TV.Recording
         if (hr != 0)
         {
           _lastError = String.Format("Unable to add mpeg2 analyzer filter");
-          Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED cannot add mpeg2 analyzer to graph:{0:X}", hr);
+          _log.Error("DVBGraph:FAILED cannot add mpeg2 analyzer to graph:{0:X}", hr);
           return false;
         }
 
@@ -1335,7 +1340,7 @@ namespace MediaPortal.TV.Recording
         if (pinObj0 == null)
         {
           _lastError = String.Format("failed connect mpeg2 demuxer to mpeg2 analyzer");
-          Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED cannot find mpeg2 analyzer input pin");
+          _log.Error("DVBGraph:FAILED cannot find mpeg2 analyzer input pin");
           return false;
         }
 
@@ -1344,7 +1349,7 @@ namespace MediaPortal.TV.Recording
         if (hr != 0)
         {
           _lastError = String.Format("failed connect mpeg2 demuxer to mpeg2 analyzer");
-          Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED to connect demux video output->mpeg2 analyzer:{0:X}", hr);
+          _log.Error("DVBGraph:FAILED to connect demux video output->mpeg2 analyzer:{0:X}", hr);
           return false;
         }
 
@@ -1355,7 +1360,7 @@ namespace MediaPortal.TV.Recording
         if (hr != 0)
         {
           _lastError = String.Format("failed connect mpeg2 demuxer to mpeg2 analyzer");
-          Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED cannot find mpeg2 analyzer output pin:{0:X}", hr);
+          _log.Error("DVBGraph:FAILED cannot find mpeg2 analyzer output pin:{0:X}", hr);
           return false;
         }
 
@@ -1364,7 +1369,7 @@ namespace MediaPortal.TV.Recording
         if (hr != 0)
         {
           _lastError = String.Format("failed connect mpeg2 demuxer to mpeg2 analyzer");
-          Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED cannot find SBE input pin:{0:X}", hr);
+          _log.Error("DVBGraph:FAILED cannot find SBE input pin:{0:X}", hr);
           return false;
         }
 
@@ -1372,7 +1377,7 @@ namespace MediaPortal.TV.Recording
         if (hr != 0)
         {
           _lastError = String.Format("failed connect mpeg2 demuxer to mpeg2 analyzer");
-          Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED to connect mpeg2 analyzer->streambuffer sink:{0:X}", hr);
+          _log.Error("DVBGraph:FAILED to connect mpeg2 analyzer->streambuffer sink:{0:X}", hr);
           return false;
         }
 
@@ -1380,49 +1385,49 @@ namespace MediaPortal.TV.Recording
 
         if (!useAC3)
         {
-          //Log.WriteFile(Log.LogType.Log, false, "DVBGraph:connect MP2 audio pin->SBE");
+          //_log.Info("DVBGraph:connect MP2 audio pin->SBE");
           //connect MPEG2 demuxer audio output ->StreamBufferSink Input #1
           //Get StreamBufferSink InputPin #1
           pinObj3 = DsFindPin.ByDirection((IBaseFilter)m_StreamBufferSink, PinDirection.Input, 1);
           if (hr != 0)
           {
             _lastError = String.Format("failed connect stream buffer sink");
-            Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED cannot find SBE input pin#2");
+            _log.Error("DVBGraph:FAILED cannot find SBE input pin#2");
             return false;
           }
           hr = _graphBuilder.Connect(_pinDemuxerAudio, pinObj3);
           if (hr != 0)
           {
             _lastError = String.Format("failed connect stream buffer sink");
-            Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED to connect mpeg2 demuxer audio out->streambuffer sink in#2:{0:X}", hr);
+            _log.Error("DVBGraph:FAILED to connect mpeg2 demuxer audio out->streambuffer sink in#2:{0:X}", hr);
             return false;
           }
         }
         else
         {
           //connect ac3 pin ->stream buffersink input #2
-          //Log.WriteFile(Log.LogType.Log, false, "DVBGraph:connect AC3 audio pin->SBE");
+          //_log.Info("DVBGraph:connect AC3 audio pin->SBE");
           if (_pinAC3Out != null)
           {
             pinObj3 = DsFindPin.ByDirection((IBaseFilter)m_StreamBufferSink, PinDirection.Input, 1);
             if (hr != 0)
             {
               _lastError = String.Format("failed connect stream buffer sink");
-              Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED cannot find SBE input pin#2");
+              _log.Error("DVBGraph:FAILED cannot find SBE input pin#2");
               return false;
             }
             hr = _graphBuilder.Connect(_pinAC3Out, pinObj3);
             if (hr != 0)
             {
               _lastError = String.Format("failed connect stream buffer sink");
-              Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED to connect mpeg2 demuxer AC3 out->streambuffer sink in#2:{0:X}", hr);
+              _log.Error("DVBGraph:FAILED to connect mpeg2 demuxer AC3 out->streambuffer sink in#2:{0:X}", hr);
               return false;
             }
           }
           else
           {
             _lastError = String.Format("failed AC3 audio pin not found");
-            Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED ac3 pin not found?");
+            _log.Error("DVBGraph:FAILED ac3 pin not found?");
           }
         }
         int ipos = fileName.LastIndexOf(@"\");
@@ -1444,7 +1449,7 @@ namespace MediaPortal.TV.Recording
         if (hr != 0)
         {
           _lastError = String.Format("Timeshifting folder not present");
-          Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED to set timeshift folder to:{0} {1:X}", strDir, hr);
+          _log.Error("DVBGraph:FAILED to set timeshift folder to:{0} {1:X}", strDir, hr);
           return false;
         }
 
@@ -1453,7 +1458,7 @@ namespace MediaPortal.TV.Recording
         if (hr != 0)
         {
           _lastError = String.Format("Unable to set timeshift buffer files to 6-8 files");
-          Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED to set timeshifting files to 6-8 {0:X}", hr);
+          _log.Error("DVBGraph:FAILED to set timeshifting files to 6-8 {0:X}", hr);
           return false;
         }
 
@@ -1462,7 +1467,7 @@ namespace MediaPortal.TV.Recording
         if (hr != 0)
         {
           _lastError = String.Format("Unable to set timeshift buffer length to {0}", iFileDuration);
-          Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED to set timeshifting filesduration to {0} {1:X}", iFileDuration, hr);
+          _log.Error("DVBGraph:FAILED to set timeshifting filesduration to {0} {1:X}", iFileDuration, hr);
           return false;
         }
 
@@ -1484,7 +1489,7 @@ namespace MediaPortal.TV.Recording
         if (hr != 0 && hr != 1)
         {
           _lastError = String.Format("Unable to start timeshifting");
-          Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED to set timeshift file to:{0} {1:X}", fileName, hr);
+          _log.Error("DVBGraph:FAILED to set timeshift file to:{0} {1:X}", fileName, hr);
           return false;
         }
       }
@@ -1689,7 +1694,7 @@ namespace MediaPortal.TV.Recording
       {
         //load PMT from disk
         string pmtName = String.Format(@"database\pmt\pmt_{0}_{1}_{2}_{3}_{4}.dat",
-          Utils.FilterFileName(_currentTuningObject.ServiceName),
+          MediaPortal.Util.Utils.FilterFileName(_currentTuningObject.ServiceName),
           _currentTuningObject.NetworkID,
           _currentTuningObject.TransportStreamID,
           _currentTuningObject.ProgramNumber,
@@ -1697,7 +1702,7 @@ namespace MediaPortal.TV.Recording
         if (!System.IO.File.Exists(pmtName))
         {
           //PMT is not on disk...
-          Log.WriteFile(Log.LogType.Log, true, "pmt {0} not found", pmtName);
+          _log.Error("pmt {0} not found", pmtName);
           _pmtRetyCount = 0;
           _lastPMTVersion = -1;
           _refreshPmtTable = true;
@@ -1720,7 +1725,7 @@ namespace MediaPortal.TV.Recording
         if (pmt == null)
         {
           //NO PMT read
-          Log.WriteFile(Log.LogType.Log, true, "pmt {0} empty", pmtName);
+          _log.Error("pmt {0} empty", pmtName);
           _pmtRetyCount = 0;
           _lastPMTVersion = -1;
           _refreshPmtTable = true;
@@ -1729,7 +1734,7 @@ namespace MediaPortal.TV.Recording
         if (pmt.Length < 6)
         {
           //PMT length is invalid
-          Log.WriteFile(Log.LogType.Log, true, "pmt {0} invalid", pmtName);
+          _log.Error("pmt {0} invalid", pmtName);
           _pmtRetyCount = 0;
           _lastPMTVersion = -1;
           _refreshPmtTable = true;
@@ -1742,7 +1747,7 @@ namespace MediaPortal.TV.Recording
         if (!sections.GetChannelInfoFromPMT(pmt, ref info))
         {
           //decoding failed
-          Log.WriteFile(Log.LogType.Log, true, "pmt {0} failed to decode", pmtName);
+          _log.Error("pmt {0} failed to decode", pmtName);
           _pmtRetyCount = 0;
           _lastPMTVersion = -1;
           _refreshPmtTable = true;
@@ -1870,7 +1875,7 @@ namespace MediaPortal.TV.Recording
               //yes then set mpeg2 demultiplexer mappings so new pids are mapped correctly
               if (_graphState == State.Radio && (_currentTuningObject.PCRPid <= 0 || _currentTuningObject.PCRPid >= 0x1fff))
               {
-                Log.Write("DVBGraph:SendPMT() setup demux:audio pid:{0:X} AC3 pid:{1:X} pcrpid:{2:X}", _currentTuningObject.AudioPid, _currentTuningObject.AC3Pid, _currentTuningObject.PCRPid);
+                _log.Info("DVBGraph:SendPMT() setup demux:audio pid:{0:X} AC3 pid:{1:X} pcrpid:{2:X}", _currentTuningObject.AudioPid, _currentTuningObject.AC3Pid, _currentTuningObject.PCRPid);
                 SetupDemuxer(_pinDemuxerVideo, 0, _pinDemuxerAudio, 0, _pinAC3Out, 0);
                 SetupDemuxerPin(_pinMPG1Out, _currentTuningObject.AudioPid, (int)MediaSampleContent.TransportPayload, true);
                 SetupDemuxerPin(_pinMPG1Out, _currentTuningObject.PCRPid, (int)MediaSampleContent.TransportPacket, false);
@@ -1881,7 +1886,7 @@ namespace MediaPortal.TV.Recording
               }
               else
               {
-                Log.Write("DVBGraph:SendPMT() set demux: video pid:{0:X} audio pid:{1:X} AC3 pid:{2:X} audio1 pid:{3:X} audio2 pid:{4:X} audio3 pid:{5:X} subtitle pid:{6:X} teletext pid:{7:X} pcr pid:{8:X}",
+                _log.Info("DVBGraph:SendPMT() set demux: video pid:{0:X} audio pid:{1:X} AC3 pid:{2:X} audio1 pid:{3:X} audio2 pid:{4:X} audio3 pid:{5:X} subtitle pid:{6:X} teletext pid:{7:X} pcr pid:{8:X}",
                             _currentTuningObject.VideoPid, _currentTuningObject.AudioPid, _currentTuningObject.AC3Pid,
                             _currentTuningObject.Audio1, _currentTuningObject.Audio2, _currentTuningObject.Audio3,
                             _currentTuningObject.SubtitlePid, _currentTuningObject.TeletextPid, _currentTuningObject.PCRPid);
@@ -1938,7 +1943,7 @@ namespace MediaPortal.TV.Recording
             {
               camType = xmlreader.GetValueAsString("dvbs", "cam", "Viaccess");
             }
-            Log.Write("DVBGraph:Send PMT#{0} version:{1} signal strength:{2} signal quality:{3} locked:{4} cam:{5}", _pmtSendCounter, pmtVersion, SignalStrength(), SignalQuality(), _tunerLocked, camType);
+            _log.Info("DVBGraph:Send PMT#{0} version:{1} signal strength:{2} signal quality:{3} locked:{4} cam:{5}", _pmtSendCounter, pmtVersion, SignalStrength(), SignalQuality(), _tunerLocked, camType);
             _streamDemuxer.DumpPMT(pmt);
             if (_currentTuningObject.AC3Pid != 0x0)
             {
@@ -1948,7 +1953,7 @@ namespace MediaPortal.TV.Recording
               }
               else
               {
-                Log.Write("DVBGraph:Send PMT#{0} version:{1} failed", _pmtSendCounter, pmtVersion);
+                _log.Info("DVBGraph:Send PMT#{0} version:{1} failed", _pmtSendCounter, pmtVersion);
                 _refreshPmtTable = true;
                 _lastPMTVersion = -1;
                 _pmtSendCounter = 0;
@@ -1963,7 +1968,7 @@ namespace MediaPortal.TV.Recording
               }
               else
               {
-                Log.Write("DVBGraph:Send PMT#{0} version:{1} failed", _pmtSendCounter, pmtVersion);
+                _log.Info("DVBGraph:Send PMT#{0} version:{1} failed", _pmtSendCounter, pmtVersion);
                 _refreshPmtTable = true;
                 _lastPMTVersion = -1;
                 _pmtSendCounter = 0;
@@ -1975,7 +1980,7 @@ namespace MediaPortal.TV.Recording
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        _log.Error(ex);
       }
       return false;
     }//SendPMT()
@@ -1987,7 +1992,7 @@ namespace MediaPortal.TV.Recording
       {
         //load PMT from disk
         string pmtName = String.Format(@"database\pmt\pmt_{0}_{1}_{2}_{3}_{4}.dat",
-          Utils.FilterFileName(_currentTuningObject.ServiceName),
+          MediaPortal.Util.Utils.FilterFileName(_currentTuningObject.ServiceName),
           _currentTuningObject.NetworkID,
           _currentTuningObject.TransportStreamID,
           _currentTuningObject.ProgramNumber,
@@ -1995,7 +2000,7 @@ namespace MediaPortal.TV.Recording
         if (!System.IO.File.Exists(pmtName))
         {
           //PMT is not on disk...
-          Log.WriteFile(Log.LogType.Log, true, "pmt {0} not found", pmtName);
+          _log.Error("pmt {0} not found", pmtName);
           _pmtRetyCount = 0;
           _lastPMTVersion = -1;
           _refreshPmtTable = true;
@@ -2018,7 +2023,7 @@ namespace MediaPortal.TV.Recording
         if (pmt == null)
         {
           //NO PMT read
-          Log.WriteFile(Log.LogType.Log, true, "pmt {0} empty", pmtName);
+          _log.Error("pmt {0} empty", pmtName);
           _pmtRetyCount = 0;
           _lastPMTVersion = -1;
           _refreshPmtTable = true;
@@ -2027,7 +2032,7 @@ namespace MediaPortal.TV.Recording
         if (pmt.Length < 6)
         {
           //PMT length is invalid
-          Log.WriteFile(Log.LogType.Log, true, "pmt {0} invalid", pmtName);
+          _log.Error("pmt {0} invalid", pmtName);
           _pmtRetyCount = 0;
           _lastPMTVersion = -1;
           _refreshPmtTable = true;
@@ -2040,7 +2045,7 @@ namespace MediaPortal.TV.Recording
         if (!sections.GetChannelInfoFromPMT(pmt, ref info))
         {
           //decoding failed
-          Log.WriteFile(Log.LogType.Log, true, "pmt {0} failed to decode", pmtName);
+          _log.Error("pmt {0} failed to decode", pmtName);
           _pmtRetyCount = 0;
           _lastPMTVersion = -1;
           _refreshPmtTable = true;
@@ -2145,7 +2150,7 @@ namespace MediaPortal.TV.Recording
               {
                 camType = xmlreader.GetValueAsString("dvbs", "cam", "Viaccess");
               }
-              Log.Write("DVBGraph:Send PMT#{0} version:{1} signal strength:{2} signal quality:{3} locked:{4} cam:{5}", _pmtSendCounter, pmtVersion, SignalStrength(), SignalQuality(), _tunerLocked, camType);
+              _log.Info("DVBGraph:Send PMT#{0} version:{1} signal strength:{2} signal quality:{3} locked:{4} cam:{5}", _pmtSendCounter, pmtVersion, SignalStrength(), SignalQuality(), _tunerLocked, camType);
               _streamDemuxer.DumpPMT(pmt);
               if (_currentTuningObject.AC3Pid != 0x0)
               {
@@ -2155,7 +2160,7 @@ namespace MediaPortal.TV.Recording
                 }
                 else
                 {
-                  Log.Write("DVBGraph:Send PMT#{0} version:{1} failed", _pmtSendCounter, pmtVersion);
+                  _log.Info("DVBGraph:Send PMT#{0} version:{1} failed", _pmtSendCounter, pmtVersion);
                   _refreshPmtTable = true;
                   _lastPMTVersion = -1;
                   _pmtSendCounter = 0;
@@ -2170,7 +2175,7 @@ namespace MediaPortal.TV.Recording
                 }
                 else
                 {
-                  Log.Write("DVBGraph:Send PMT#{0} version:{1} failed", _pmtSendCounter, pmtVersion);
+                  _log.Info("DVBGraph:Send PMT#{0} version:{1} failed", _pmtSendCounter, pmtVersion);
                   _refreshPmtTable = true;
                   _lastPMTVersion = -1;
                   _pmtSendCounter = 0;
@@ -2183,7 +2188,7 @@ namespace MediaPortal.TV.Recording
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        _log.Error(ex);
       }
       return false;
     }
@@ -2237,21 +2242,21 @@ namespace MediaPortal.TV.Recording
               lnbKhz = xmlreader.GetValueAsInt("dvbs", "lnb", 22);
               diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc", 1);
               lnbKind = xmlreader.GetValueAsInt("dvbs", "lnbKind", 0);
-              Log.Write("DVBGraph: using profile diseqc 1 LNB:{0} kHz diseqc:{1} lnbKind:{2}", lnbKhz, diseqc, lnbKind);
+              _log.Info("DVBGraph: using profile diseqc 1 LNB:{0} kHz diseqc:{1} lnbKind:{2}", lnbKhz, diseqc, lnbKind);
               break;
             case 2:
               // config b
               lnbKhz = xmlreader.GetValueAsInt("dvbs", "lnb2", 22);
               diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc2", 1);
               lnbKind = xmlreader.GetValueAsInt("dvbs", "lnbKind2", 0);
-              Log.Write("DVBGraph: using profile diseqc 2 LNB:{0} kHz diseqc:{1} lnbKind:{2}", lnbKhz, diseqc, lnbKind);
+              _log.Info("DVBGraph: using profile diseqc 2 LNB:{0} kHz diseqc:{1} lnbKind:{2}", lnbKhz, diseqc, lnbKind);
               break;
             case 3:
               // config c
               lnbKhz = xmlreader.GetValueAsInt("dvbs", "lnb3", 22);
               diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc3", 1);
               lnbKind = xmlreader.GetValueAsInt("dvbs", "lnbKind3", 0);
-              Log.Write("DVBGraph: using profile diseqc 3 LNB:{0} kHz diseqc:{1} lnbKind:{2}", lnbKhz, diseqc, lnbKind);
+              _log.Info("DVBGraph: using profile diseqc 3 LNB:{0} kHz diseqc:{1} lnbKind:{2}", lnbKhz, diseqc, lnbKind);
               break;
             //
             case 4:
@@ -2259,7 +2264,7 @@ namespace MediaPortal.TV.Recording
               lnbKhz = xmlreader.GetValueAsInt("dvbs", "lnb4", 22);
               diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc4", 1);
               lnbKind = xmlreader.GetValueAsInt("dvbs", "lnbKind4", 0);
-              Log.Write("DVBGraph: using profile diseqc 4 LNB:{0} kHz diseqc:{1} lnbKind:{2}", lnbKhz, diseqc, lnbKind);
+              _log.Info("DVBGraph: using profile diseqc 4 LNB:{0} kHz diseqc:{1} lnbKind:{2}", lnbKhz, diseqc, lnbKind);
               //
               break;
           }// switch(disNo)
@@ -2297,7 +2302,7 @@ namespace MediaPortal.TV.Recording
         //#DM Checks to see if xml values have been read, if not takes DB values for DiSEqC
         if (diseqc == -1) diseqcUsed = ch.DiSEqC;
         else diseqcUsed = diseqc;
-        Log.WriteFile(Log.LogType.Log, "DVBGraph: LNB Settings: freq={0} lnbKHz={1} lnbFreq={2} diseqc={3}", ch.Frequency, ch.LnbSwitchFrequency, ch.LNBFrequency, diseqcUsed);
+        _log.Info("DVBGraph: LNB Settings: freq={0} lnbKHz={1} lnbFreq={2} diseqc={3}", ch.Frequency, ch.LnbSwitchFrequency, ch.LNBFrequency, diseqcUsed);
       }
       catch (Exception)
       {
@@ -2328,28 +2333,28 @@ namespace MediaPortal.TV.Recording
         switch (disEqcUsed)
         {
           case 0: //none
-            Log.Write("DVBGraph: disEqc:none");
+            _log.Info("DVBGraph: disEqc:none");
             return;
           case 1: //simple A
-            Log.Write("DVBGraph: disEqc:simple A (not supported)");
+            _log.Info("DVBGraph: disEqc:simple A (not supported)");
             return;
           case 2: //simple B
-            Log.Write("DVBGraph: disEqc:simple B (not supported)");
+            _log.Info("DVBGraph: disEqc:simple B (not supported)");
             return;
           case 3: //Level 1 A/A     0000-0000 0000-0000
-            Log.Write("DVBGraph: disEqc:level 1 A/A");
+            _log.Info("DVBGraph: disEqc:level 1 A/A");
             inputRange = 0;
             break;
           case 4: //Level 1 B/A     0000-0001 0000-0000
-            Log.Write("DVBGraph: disEqc:level 1 B/A");
+            _log.Info("DVBGraph: disEqc:level 1 B/A");
             inputRange = 1 << 16;
             break;
           case 5: //Level 1 A/B     0000-0000 0000-0001
-            Log.Write("DVBGraph: disEqc:level 1 A/B");
+            _log.Info("DVBGraph: disEqc:level 1 A/B");
             inputRange = 1;
             break;
           case 6: //Level 1 B/B     0000-0001 0000-0001
-            Log.Write("DVBGraph: disEqc:level 1 B/B");
+            _log.Info("DVBGraph: disEqc:level 1 B/B");
             inputRange = (1 << 16) + 1;
             break;
         }
@@ -2359,7 +2364,7 @@ namespace MediaPortal.TV.Recording
         if (_currentTuningObject.Frequency >= _currentTuningObject.LnbSwitchFrequency) // 22kHz
           inputRange |= (1 << 8);
 
-        Log.Write("DVBGraph: Set inputrange to:{0:X}", inputRange);
+        _log.Info("DVBGraph: Set inputrange to:{0:X}", inputRange);
         dvbSpace.InputRange = inputRange.ToString();
       }
       catch (Exception)
@@ -2394,9 +2399,9 @@ namespace MediaPortal.TV.Recording
     protected void UpdateVideoState()
     {
       bool isViewing = Recorder.IsCardViewing(_cardId);
-      //Log.Write("DVBGraphBase.UpdateVideoState() Viewing: {0}", isViewing);
+      //_log.Info("DVBGraphBase.UpdateVideoState() Viewing: {0}", isViewing);
       if (!isViewing) return;
-      //      Log.Write("packets:{0} pmt:{1:X}  vmr9:{2} fps:{3} locked:{4} quality:{5} level:{6}",
+      //      _log.Info("packets:{0} pmt:{1:X}  vmr9:{2} fps:{3} locked:{4} quality:{5} level:{6}",
       //      _streamDemuxer.ReceivingPackets, _lastPMTVersion, GUIGraphicsContext.Vmr9Active, GUIGraphicsContext.Vmr9FPS, TunerLocked(), SignalQuality(), SignalStrength());
 
       // do we receive any packets?
@@ -2410,7 +2415,7 @@ namespace MediaPortal.TV.Recording
           return;
         }
         //no, then state = no signal
-        Log.Write("DVBGraphBDA: No signal quality:{0} strength:{1} locked:{2} fps:{3}", SignalQuality(), SignalStrength(), SignalPresent(), GUIGraphicsContext.Vmr9FPS);
+        _log.Info("DVBGraphBDA: No signal quality:{0} strength:{1} locked:{2} fps:{3}", SignalQuality(), SignalStrength(), SignalPresent(), GUIGraphicsContext.Vmr9FPS);
         VideoRendererStatistics.VideoState = VideoRendererStatistics.State.NoSignal;
         return;
       }
@@ -2437,12 +2442,12 @@ namespace MediaPortal.TV.Recording
             VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
             return;
           }
-          Log.Write("DVBGraphBDA: VMR9 stopped quality:{0} strength:{1} locked:{2} fps:{3}", SignalQuality(), SignalStrength(), SignalPresent(), GUIGraphicsContext.Vmr9FPS);
+          _log.Info("DVBGraphBDA: VMR9 stopped quality:{0} strength:{1} locked:{2} fps:{3}", SignalQuality(), SignalStrength(), SignalPresent(), GUIGraphicsContext.Vmr9FPS);
           VideoRendererStatistics.VideoState = VideoRendererStatistics.State.NoSignal;
           return;*/
           if (_notifySignalLost)
           {
-            Log.Write("DVBGraphBDA: VMR9 stopped quality:{0} strength:{1} locked:{2} fps:{3}", SignalQuality(), SignalStrength(), SignalPresent(), GUIGraphicsContext.Vmr9FPS);
+            _log.Info("DVBGraphBDA: VMR9 stopped quality:{0} strength:{1} locked:{2} fps:{3}", SignalQuality(), SignalStrength(), SignalPresent(), GUIGraphicsContext.Vmr9FPS);
             VideoRendererStatistics.VideoState = VideoRendererStatistics.State.NoSignal;
             return;
           }
@@ -2465,7 +2470,7 @@ namespace MediaPortal.TV.Recording
         _epgGrabber.Reset();
         if (_graphState == State.Epg)
         {
-          Log.WriteFile(Log.LogType.Log, "DVBGraph:EPG done");
+          _log.Info("DVBGraph:EPG done");
           _mediaControl.Stop();
           _isGraphRunning = false;
           //_graphState = State.Created;
@@ -2485,7 +2490,7 @@ namespace MediaPortal.TV.Recording
       if (_duration == 0) _duration = 3000; //default
       if (!_signalPresent) // tuner is unlocked
       {
-        Log.Write("DVBGraph: Unlocked... wait for tunerlock");
+        _log.Info("DVBGraph: Unlocked... wait for tunerlock");
         // give one more chance to the tuner to be locked
         DateTime dt = DateTime.Now;
         while (!_signalPresent)
@@ -2495,7 +2500,7 @@ namespace MediaPortal.TV.Recording
           System.Threading.Thread.Sleep(100); // will check 10 times per second
           UpdateSignalPresent();
         }
-        Log.Write("Tuner locked: {0}", _signalPresent);
+        _log.Info("Tuner locked: {0}", _signalPresent);
         if (_signalPresent) // got signal back ?
         {
           _signalPresent = true;
@@ -2579,9 +2584,9 @@ namespace MediaPortal.TV.Recording
         {
           //FilterState state;
           //_mediaControl.GetState(50, out state);
-          Log.Write("wait for pmt :{0}", _lastPMTVersion);
+          _log.Info("wait for pmt :{0}", _lastPMTVersion);
           //bool gotPMT = false;
-          //Log.Write("DVBGraph:Get PMT {0}", _graphState);
+          //_log.Info("DVBGraph:Get PMT {0}", _graphState);
           IntPtr pmtMem = Marshal.AllocCoTaskMem(4096);// max. size for pmt
           if (pmtMem != IntPtr.Zero)
           {
@@ -2597,22 +2602,22 @@ namespace MediaPortal.TV.Recording
               if (pmtProgramNumber == _currentTuningObject.ProgramNumber)
               {
                 //gotPMT = true;
-                //Log.Write("DVBGraph:Got PMT version:{0} {1}", version, _lastPMTVersion);
+                //_log.Info("DVBGraph:Got PMT version:{0} {1}", version, _lastPMTVersion);
                 if (_lastPMTVersion != version)
                 {
-                  Log.Write("DVBGraph:Got PMT version:{0}", version);
+                  _log.Info("DVBGraph:Got PMT version:{0}", version);
                   m_streamDemuxer_OnPMTIsChanged(pmt);
                 }
                 else
                 {
-                  //	Log.Write("DVBGraph:Got old PMT version:{0} {1}",_lastPMTVersion,version);
+                  //	_log.Info("DVBGraph:Got old PMT version:{0} {1}",_lastPMTVersion,version);
                 }
               }
               else
               {
                 //ushort chcount = 0;
                 //_analyzerInterface.GetChannelCount(ref chcount);
-                //Log.Write("DVBGraph:Got wrong PMT:{0} {1} channels:{2}", pmtProgramNumber, _currentTuningObject.ProgramNumber, chcount);
+                //_log.Info("DVBGraph:Got wrong PMT:{0} {1} channels:{2}", pmtProgramNumber, _currentTuningObject.ProgramNumber, chcount);
               }
               pmt = null;
             }
@@ -2681,12 +2686,12 @@ namespace MediaPortal.TV.Recording
             TVDatabase.GetATSCTuneRequest(channel.ID, out physicalChannel, out providerName, out frequency, out symbolrate, out innerFec, out modulation, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out audio1, out audio2, out audio3, out ac3Pid, out audioLanguage, out audioLanguage1, out audioLanguage2, out audioLanguage3, out minorChannel, out majorChannel, out HasEITPresentFollow, out HasEITSchedule, out pcrPid);
             if (physicalChannel == -1)
             {
-              Log.WriteFile(Log.LogType.Log, true, "DVBGraph:database invalid tuning details for channel:{0}", channel.ID);
+              _log.Error("DVBGraph:database invalid tuning details for channel:{0}", channel.ID);
               return;
             }
             frequency = 0;
             symbolrate = 0;
-            Log.WriteFile(Log.LogType.Log, "DVBGraph:  tuning details: frequency:{0} kHz physicalChannel:{1} major channel:{2} minor channel:{3} modulation:{4} ONID:{5} TSID:{6} SID:{7} provider:{8} video:0x{9:X} audio:0x{10:X} pcr:0x{11:X}",
+            _log.Info("DVBGraph:  tuning details: frequency:{0} kHz physicalChannel:{1} major channel:{2} minor channel:{3} modulation:{4} ONID:{5} TSID:{6} SID:{7} provider:{8} video:0x{9:X} audio:0x{10:X} pcr:0x{11:X}",
               frequency, physicalChannel, minorChannel, majorChannel, modulation, ONID, TSID, SID, providerName, videoPid, audioPid, pcrPid);
 
             _currentTuningObject = new DVBChannel();
@@ -2729,10 +2734,10 @@ namespace MediaPortal.TV.Recording
             TVDatabase.GetDVBCTuneRequest(channel.ID, out providerName, out frequency, out symbolrate, out innerFec, out modulation, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out audio1, out audio2, out audio3, out ac3Pid, out audioLanguage, out audioLanguage1, out audioLanguage2, out audioLanguage3, out HasEITPresentFollow, out HasEITSchedule, out pcrPid);
             if (frequency <= 0)
             {
-              Log.WriteFile(Log.LogType.Log, true, "DVBGraph:database invalid tuning details for channel:{0}", channel.ID);
+              _log.Error("DVBGraph:database invalid tuning details for channel:{0}", channel.ID);
               return;
             }
-            Log.WriteFile(Log.LogType.Log, "DVBGraph:  tuning details: frequency:{0} kHz symbolrate:{1} innerFec:{2} modulation:{3} ONID:{4} TSID:{5} SID:{6} provider:{7}",
+            _log.Info("DVBGraph:  tuning details: frequency:{0} kHz symbolrate:{1} innerFec:{2} modulation:{3} ONID:{4} TSID:{5} SID:{6} provider:{7}",
               frequency, symbolrate, innerFec, modulation, ONID, TSID, SID, providerName);
             //bool needSwitch = true;
             /*if (_currentTuningObject!=null)
@@ -2786,11 +2791,11 @@ namespace MediaPortal.TV.Recording
             {
               if (TVDatabase.GetSatChannel(channel.ID, Mpeg4VideoServiceType, ref ch) == false)//only television
               {
-                Log.WriteFile(Log.LogType.Log, true, "DVBGraph:database invalid tuning details for channel:{0}", channel.ID);
+                _log.Error("DVBGraph:database invalid tuning details for channel:{0}", channel.ID);
                 return;
               }
             }
-            Log.WriteFile(Log.LogType.Log, "DVBGraph:  tuning details: frequency:{0} kHz polarisation:{1} innerFec:{2} symbolrate:{3} ONID:{4} TSID:{5} SID:{6} provider:{7}",
+            _log.Info("DVBGraph:  tuning details: frequency:{0} kHz polarisation:{1} innerFec:{2} symbolrate:{3} ONID:{4} TSID:{5} SID:{6} provider:{7}",
               ch.Frequency, ch.Polarity, ch.FEC, ch.Symbolrate, ch.NetworkID, ch.TransportStreamID, ch.ProgramNumber, ch.ServiceProvider);
 
             //bool needSwitch = true;
@@ -2847,10 +2852,10 @@ namespace MediaPortal.TV.Recording
             TVDatabase.GetDVBTTuneRequest(channel.ID, out providerName, out frequency, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out bandWidth, out audio1, out audio2, out audio3, out ac3Pid, out audioLanguage, out audioLanguage1, out audioLanguage2, out audioLanguage3, out HasEITPresentFollow, out HasEITSchedule, out pcrPid);
             if (frequency <= 0)
             {
-              Log.WriteFile(Log.LogType.Log, true, "DVBGraph:database invalid tuning details for channel:{0}", channel.ID);
+              _log.Error("DVBGraph:database invalid tuning details for channel:{0}", channel.ID);
               return;
             }
-            Log.WriteFile(Log.LogType.Log, "DVBGraph:  tuning details: frequency:{0} kHz ONID:{1} TSID:{2} SID:{3} provider:{4}", frequency, ONID, TSID, SID, providerName);
+            _log.Info("DVBGraph:  tuning details: frequency:{0} kHz ONID:{1} TSID:{2} SID:{3} provider:{4}", frequency, ONID, TSID, SID, providerName);
             //get the IDVBTLocator interface from the new tuning request
 
             //bool needSwitch = true;
@@ -2917,7 +2922,7 @@ namespace MediaPortal.TV.Recording
             {
               _mediaControl.Stop();
               int hr=_graphBuilder.RemoveFilter((IBaseFilter)_filterTsFileSink);
-              Log.WriteFile(Log.LogType.Log, "DVBGraph:remove TsFileSink:0x{0:X}", hr);
+              _log.Info("DVBGraph:remove TsFileSink:0x{0:X}", hr);
               CreateTsTimeShifting(_currentTimeShiftFileName, false);
               _mediaControl.Run();
             }
@@ -2938,7 +2943,7 @@ namespace MediaPortal.TV.Recording
         _currentChannelNumber = channel.Number;
         _startTimer = DateTime.Now;
 
-        Log.WriteFile(Log.LogType.Log, "DVBGraph:TuneChannel() tune to channel:{0}", channel.ID);
+        _log.Info("DVBGraph:TuneChannel() tune to channel:{0}", channel.ID);
 
         GetTvChannelFromDatabase(channel);
         if (_currentTuningObject == null)
@@ -2964,7 +2969,7 @@ namespace MediaPortal.TV.Recording
         }
         catch (Exception ex)
         {
-          Log.Write(ex);
+          _log.Error(ex);
         }
         //SendPMT();
         _refreshPmtTable = true;
@@ -2972,7 +2977,7 @@ namespace MediaPortal.TV.Recording
         _pmtRetyCount = 0;
         _analyzerInterface.ResetParser();
 
-        //Log.WriteFile(Log.LogType.Log, false, "DVBGraph:set mpeg2demuxer video:0x{0:x} audio:0x{1:X} ac3:0x{2:X}",
+        //_log.Info("DVBGraph:set mpeg2demuxer video:0x{0:x} audio:0x{1:X} ac3:0x{2:X}",
         //                _currentTuningObject.VideoPid, _currentTuningObject.AudioPid, _currentTuningObject.AC3Pid);
         SetupDemuxer(_pinDemuxerVideo, _currentTuningObject.VideoPid, _pinDemuxerAudio, _currentTuningObject.AudioPid, _pinAC3Out, _currentTuningObject.AC3Pid);
         if (_streamDemuxer != null)
@@ -3009,7 +3014,7 @@ namespace MediaPortal.TV.Recording
         //_analyzerInterface.SetPidFilterCallback(this);
       }
       catch (Exception) { }
-      Log.Write("DVBGraph: wait for tunerlock");
+      _log.Info("DVBGraph: wait for tunerlock");
       //wait until tuner is locked
       DateTime dt = DateTime.Now;
       while (!_signalPresent)                     // will exit if we found a signal                              
@@ -3019,7 +3024,7 @@ namespace MediaPortal.TV.Recording
         System.Threading.Thread.Sleep(100);       // 10 checks/s
         UpdateSignalPresent();
       } 
-      Log.Write("DVBGraph:TuneChannel done signal strength:{0} signal quality:{1} locked:{2}", SignalStrength(), SignalQuality(), _tunerLocked);
+      _log.Info("DVBGraph:TuneChannel done signal strength:{0} signal quality:{1} locked:{2}", SignalStrength(), SignalQuality(), _tunerLocked);
     }//public void TuneChannel(AnalogVideoStandard standard,int iChannel,int country)
 
 
@@ -3055,13 +3060,13 @@ namespace MediaPortal.TV.Recording
       if (!_isGraphRunning)
       {
 
-        Log.Write("Start graph!");
+        _log.Info("Start graph!");
         if (_mediaControl == null)
           _mediaControl = (IMediaControl)_graphBuilder;
         int hr = _mediaControl.Run();
         if (hr < 0)
         {
-          Log.WriteFile(Log.LogType.Log, true, "DVBGraph: FAILED unable to start graph :0x{0:X}", hr);
+          _log.Error("DVBGraph: FAILED unable to start graph :0x{0:X}", hr);
           return;
         }
 
@@ -3104,7 +3109,7 @@ namespace MediaPortal.TV.Recording
         SetupDemuxerPin(_pinDemuxerSections, 0x11, (int)MediaSampleContent.Mpeg2PSI, false);
       }
 
-      Log.Write("DVBGraph: wait for tunerlock");
+      _log.Info("DVBGraph: wait for tunerlock");
       //wait until tuner is locked
       DateTime dt = DateTime.Now;
       while (!_signalPresent)                     // will exit if we found a signal                              
@@ -3131,7 +3136,7 @@ namespace MediaPortal.TV.Recording
     {
       //it may take a while before signal quality/level is correct
       if (_filterDvbAnalyzer == null) return;
-      Log.WriteFile(Log.LogType.Log, "DVBGraph: StoreChannels() signal level:{0} signal quality:{1} locked:{2}", SignalStrength(), SignalQuality(), _tunerLocked);
+      _log.Info("DVBGraph: StoreChannels() signal level:{0} signal quality:{1} locked:{2}", SignalStrength(), SignalQuality(), _tunerLocked);
       TVDatabase.ClearCache();
       //get list of current tv channels present in the database
       List<TVChannel> tvChannels = new List<TVChannel>();
@@ -3155,7 +3160,7 @@ namespace MediaPortal.TV.Recording
         _analyzerInterface.GetChannelCount(ref count);
         if (count == 0)
         {
-          Log.WriteFile(Log.LogType.Log, "DVBGraph: found 0 channels");
+          _log.Info("DVBGraph: found 0 channels");
           return;
         }
         using (DVBSections sections = new DVBSections())
@@ -3238,7 +3243,7 @@ namespace MediaPortal.TV.Recording
         for (int i = 0; i < hwPids.Count; ++i)
           pidList += String.Format("0x{0:X},", (ushort)hwPids[i]);
 
-        Log.Write("check...{0} pids:{1} {2}", _scanPidListReady, hwPids.Count, pidList);
+        _log.Info("check...{0} pids:{1} {2}", _scanPidListReady, hwPids.Count, pidList);
         if (_scanPidListReady == false) return;
 
         //setup MPEG2 demuxer so it sends the PMT's to the analyzer filter
@@ -3313,7 +3318,7 @@ namespace MediaPortal.TV.Recording
 
                 channelReady[index] = true;
                 newChannelsFound = true;
-                Log.Write("channel:{0}/{1} pid:0x{2:X} ready", index, (hwPids.Count - offset), hwPids[offset + index]);
+                _log.Info("channel:{0}/{1} pid:0x{2:X} ready", index, (hwPids.Count - offset), hwPids[offset + index]);
                 hwPids[offset + index] = (ushort)0x2000;
               }
             }// for (int index = 0; index < hwPids.Count-offset; ++index)
@@ -3347,11 +3352,11 @@ namespace MediaPortal.TV.Recording
       }
       if (transp.channels == null)
       {
-        Log.WriteFile(Log.LogType.Log, "DVBGraph: found no channels", transp.channels);
+        _log.Info("DVBGraph: found no channels", transp.channels);
         return;
       }
 
-      Log.WriteFile(Log.LogType.Log, "DVBGraph: found {0}", transp.channels.Count);
+      _log.Info("DVBGraph: found {0}", transp.channels.Count);
       for (int i = 0; i < transp.channels.Count; ++i)
       {
         DVBSections.ChannelInfo info = (DVBSections.ChannelInfo)transp.channels[i];
@@ -3461,7 +3466,7 @@ namespace MediaPortal.TV.Recording
 
         if (info.serviceType != Mpeg2VideoServiceType && info.serviceType != Mpeg2AudioServiceType && info.serviceType != Mpeg4VideoServiceType)
         {
-          Log.WriteFile(Log.LogType.Log, "DVBGraph:unknown service type: provider:{0} service:{1} scrambled:{2} frequency:{3} kHz networkid:{4} transportid:{5} serviceid:{6} tv:{7} radio:{8} audiopid:0x{9:X} videopid:0x{10:X} teletextpid:0x{11:X} program:{12} pcr pid:0x{13:X} service type:{14} major:{15} minor:{16}",
+          _log.Info("DVBGraph:unknown service type: provider:{0} service:{1} scrambled:{2} frequency:{3} kHz networkid:{4} transportid:{5} serviceid:{6} tv:{7} radio:{8} audiopid:0x{9:X} videopid:0x{10:X} teletextpid:0x{11:X} program:{12} pcr pid:0x{13:X} service type:{14} major:{15} minor:{16}",
                                             info.service_provider_name,
                                             info.service_name,
                                             info.scrambled,
@@ -3476,7 +3481,7 @@ namespace MediaPortal.TV.Recording
                                             info.serviceType, info.majorChannel, info.minorChannel);
           continue;
         }
-        Log.WriteFile(Log.LogType.Log, "DVBGraph:Found provider:{0} service:{1} scrambled:{2} frequency:{3} kHz networkid:{4} transportid:{5} serviceid:{6} tv:{7} radio:{8} audiopid:0x{9:X} videopid:0x{10:X} teletextpid:0x{11:X} program:{12} pcr pid:0x{13:X} ac3 pid:0x{14:X} major:{15} minor:{16} LCN:{17} type:{18}",
+        _log.Info("DVBGraph:Found provider:{0} service:{1} scrambled:{2} frequency:{3} kHz networkid:{4} transportid:{5} serviceid:{6} tv:{7} radio:{8} audiopid:0x{9:X} videopid:0x{10:X} teletextpid:0x{11:X} program:{12} pcr pid:0x{13:X} ac3 pid:0x{14:X} major:{15} minor:{16} LCN:{17} type:{18}",
                                             info.service_provider_name,
                                             info.service_name,
                                             info.scrambled,
@@ -3491,7 +3496,7 @@ namespace MediaPortal.TV.Recording
 
         if (info.serviceID == 0)
         {
-          Log.WriteFile(Log.LogType.Log, "DVBGraph: channel#{0} has no service id", i);
+          _log.Info("DVBGraph: channel#{0} has no service id", i);
           continue;
         }
         bool isRadio = ((!hasVideo) && hasAudio);
@@ -3537,7 +3542,7 @@ namespace MediaPortal.TV.Recording
         if (info.serviceType == Mpeg2VideoServiceType || info.serviceType == Mpeg4VideoServiceType)//tv
         {
 
-          Log.WriteFile(Log.LogType.Log, "DVBGraph: channel {0} is a tv channel", newchannel.ServiceName);
+          _log.Info("DVBGraph: channel {0} is a tv channel", newchannel.ServiceName);
           bool isNewChannel = true;
           TVChannel existingTvChannel = new TVChannel();
           existingTvChannel.Name = newchannel.ServiceName;
@@ -3619,11 +3624,11 @@ namespace MediaPortal.TV.Recording
             existingTvChannel.ID = -1;
             existingTvChannel.Number = TVDatabase.FindFreeTvChannelNumber(newchannel.ProgramNumber);
             existingTvChannel.Sort = 40000;
-            Log.WriteFile(Log.LogType.Log, "DVBGraph: add new channel for {0}:{1}:{2}", existingTvChannel.Name, existingTvChannel.Number, existingTvChannel.Sort);
+            _log.Info("DVBGraph: add new channel for {0}:{1}:{2}", existingTvChannel.Name, existingTvChannel.Number, existingTvChannel.Sort);
             int id = TVDatabase.AddChannel(existingTvChannel);
             if (id < 0)
             {
-              Log.WriteFile(Log.LogType.Log, true, "DVBGraph: failed to add new channel for {0}:{1}:{2} to database", existingTvChannel.Name, existingTvChannel.Number, existingTvChannel.Sort);
+              _log.Error("DVBGraph: failed to add new channel for {0}:{1}:{2} to database", existingTvChannel.Name, existingTvChannel.Number, existingTvChannel.Sort);
             }
             channelId = id;
             newChannels++;
@@ -3632,12 +3637,12 @@ namespace MediaPortal.TV.Recording
           {
             TVDatabase.UpdateChannel(existingTvChannel, existingTvChannel.Sort);
             updatedChannels++;
-            Log.WriteFile(Log.LogType.Log, "DVBGraph: update channel {0}:{1}:{2} {3}", existingTvChannel.Name, existingTvChannel.Number, existingTvChannel.Sort, existingTvChannel.ID);
+            _log.Info("DVBGraph: update channel {0}:{1}:{2} {3}", existingTvChannel.Name, existingTvChannel.Number, existingTvChannel.Sort, existingTvChannel.ID);
           }
 
           if (Network() == NetworkType.DVBT)
           {
-            Log.WriteFile(Log.LogType.Log, "DVBGraph: map channel {0} id:{1} to DVBT card:{2}", newchannel.ServiceName, channelId, ID);
+            _log.Info("DVBGraph: map channel {0} id:{1} to DVBT card:{2}", newchannel.ServiceName, channelId, ID);
             TVDatabase.MapDVBTChannel(newchannel.ServiceName,
               newchannel.ServiceProvider,
               channelId,
@@ -3656,7 +3661,7 @@ namespace MediaPortal.TV.Recording
           }
           if (Network() == NetworkType.DVBC)
           {
-            Log.WriteFile(Log.LogType.Log, "DVBGraph: map channel {0} id:{1} to DVBC card:{2}", newchannel.ServiceName, channelId, ID);
+            _log.Info("DVBGraph: map channel {0} id:{1} to DVBC card:{2}", newchannel.ServiceName, channelId, ID);
             TVDatabase.MapDVBCChannel(newchannel.ServiceName,
               newchannel.ServiceProvider,
               channelId,
@@ -3678,7 +3683,7 @@ namespace MediaPortal.TV.Recording
           }
           if (Network() == NetworkType.ATSC)
           {
-            Log.WriteFile(Log.LogType.Log, "DVBGraph: map channel {0} id:{1} to ATSC card:{2}", newchannel.ServiceName, channelId, ID);
+            _log.Info("DVBGraph: map channel {0} id:{1} to ATSC card:{2}", newchannel.ServiceName, channelId, ID);
             TVDatabase.MapATSCChannel(newchannel.ServiceName,
               newchannel.PhysicalChannel,
               newchannel.MinorChannel,
@@ -3704,7 +3709,7 @@ namespace MediaPortal.TV.Recording
 
           if (Network() == NetworkType.DVBS)
           {
-            Log.WriteFile(Log.LogType.Log, "DVBGraph: map channel {0} id:{1} to DVBS card:{2}", newchannel.ServiceName, channelId, ID);
+            _log.Info("DVBGraph: map channel {0} id:{1} to DVBS card:{2}", newchannel.ServiceName, channelId, ID);
             newchannel.ID = channelId;
             TVDatabase.AddSatChannel(newchannel);
           }
@@ -3770,11 +3775,11 @@ namespace MediaPortal.TV.Recording
             station.Channel = newchannel.ProgramNumber;
             station.Frequency = newchannel.Frequency;
             station.Scrambled = info.scrambled;
-            Log.WriteFile(Log.LogType.Log, "DVBGraph: add new radio channel for {0} {1}", station.Name, station.Frequency);
+            _log.Info("DVBGraph: add new radio channel for {0} {1}", station.Name, station.Frequency);
             int id = RadioDatabase.AddStation(ref station);
             if (id < 0)
             {
-              Log.WriteFile(Log.LogType.Log, true, "DVBGraph: failed to add new radio channel for {0} {1} to database", station.Name, station.Frequency);
+              _log.Error("DVBGraph: failed to add new radio channel for {0} {1} to database", station.Name, station.Frequency);
             }
             channelId = id;
             newRadioChannels++;
@@ -3782,29 +3787,29 @@ namespace MediaPortal.TV.Recording
           else
           {
             updatedRadioChannels++;
-            Log.WriteFile(Log.LogType.Log, "DVBGraph: channel {0} already exists in tv database", newchannel.ServiceName);
+            _log.Info("DVBGraph: channel {0} already exists in tv database", newchannel.ServiceName);
           }
 
           if (Network() == NetworkType.DVBT)
           {
-            Log.WriteFile(Log.LogType.Log, "DVBGraph: map radio channel {0} id:{1} to DVBT card:{2}", newchannel.ServiceName, channelId, ID);
+            _log.Info("DVBGraph: map radio channel {0} id:{1} to DVBT card:{2}", newchannel.ServiceName, channelId, ID);
             RadioDatabase.MapDVBTChannel(newchannel.ServiceName, newchannel.ServiceProvider, channelId, newchannel.Frequency, newchannel.NetworkID, newchannel.TransportStreamID, newchannel.ProgramNumber, _currentTuningObject.AudioPid, newchannel.PMTPid, newchannel.Bandwidth, newchannel.PCRPid);
           }
           if (Network() == NetworkType.DVBC)
           {
-            Log.WriteFile(Log.LogType.Log, "DVBGraph: map radio channel {0} id:{1} to DVBC card:{2}", newchannel.ServiceName, channelId, ID);
+            _log.Info("DVBGraph: map radio channel {0} id:{1} to DVBC card:{2}", newchannel.ServiceName, channelId, ID);
             RadioDatabase.MapDVBCChannel(newchannel.ServiceName, newchannel.ServiceProvider, channelId, newchannel.Frequency, newchannel.Symbolrate, newchannel.FEC, newchannel.Modulation, newchannel.NetworkID, newchannel.TransportStreamID, newchannel.ProgramNumber, _currentTuningObject.AudioPid, newchannel.PMTPid, newchannel.PCRPid);
           }
           if (Network() == NetworkType.ATSC)
           {
-            Log.WriteFile(Log.LogType.Log, "DVBGraph: map radio channel {0} id:{1} to DVBC card:{2}", newchannel.ServiceName, channelId, ID);
+            _log.Info("DVBGraph: map radio channel {0} id:{1} to DVBC card:{2}", newchannel.ServiceName, channelId, ID);
             RadioDatabase.MapATSCChannel(newchannel.ServiceName, newchannel.PhysicalChannel,
               newchannel.MinorChannel,
               newchannel.MajorChannel, newchannel.ServiceProvider, channelId, newchannel.Frequency, newchannel.Symbolrate, newchannel.FEC, newchannel.Modulation, newchannel.NetworkID, newchannel.TransportStreamID, newchannel.ProgramNumber, _currentTuningObject.AudioPid, newchannel.PMTPid, newchannel.PCRPid);
           }
           if (Network() == NetworkType.DVBS)
           {
-            Log.WriteFile(Log.LogType.Log, "DVBGraph: map radio channel {0} id:{1} to DVBS card:{2}", newchannel.ServiceName, channelId, ID);
+            _log.Info("DVBGraph: map radio channel {0} id:{1} to DVBS card:{2}", newchannel.ServiceName, channelId, ID);
             newchannel.ID = channelId;
 
             int scrambled = 0;
@@ -3830,7 +3835,7 @@ namespace MediaPortal.TV.Recording
     protected void SetLCN()
     {
 
-      //Log.Write("SetLCN");
+      //_log.Info("SetLCN");
       Int16 count = 0;
       while (true)
       {
@@ -3844,7 +3849,7 @@ namespace MediaPortal.TV.Recording
           if (channel != null)
           {
             channel.Sort = LCN;
-            //           Log.Write("lcn:{0} network:0x{1:X} transportid:0x{2:X} serviceid:0x{3:X} {4}",LCN , networkId, transportId, serviceID, channel.Name);
+            //           _log.Info("lcn:{0} network:0x{1:X} transportid:0x{2:X} serviceid:0x{3:X} {4}",LCN , networkId, transportId, serviceID, channel.Name);
             TVDatabase.UpdateChannel(channel, channel.Sort);
           }
           else
@@ -3855,12 +3860,12 @@ namespace MediaPortal.TV.Recording
               station.Sort = LCN;
               RadioDatabase.UpdateStation(station);
             }
-            //            Log.Write("unknown channel lcn:{0} network:0x{1:X} transportid:0x{2:X} serviceid:0x{3:X}",LCN, networkId, transportId, serviceID);
+            //            _log.Info("unknown channel lcn:{0} network:0x{1:X} transportid:0x{2:X} serviceid:0x{3:X}",LCN, networkId, transportId, serviceID);
           }
         }
         else
         {
-          //          Log.Write("LCN total:{0}", count);
+          //          _log.Info("LCN total:{0}", count);
           return;
         }
         count++;
@@ -3889,10 +3894,10 @@ namespace MediaPortal.TV.Recording
             RadioDatabase.GetATSCTuneRequest(channel.ID, out physicalChannel, out minorChannel, out majorChannel, out providerName, out frequency, out symbolrate, out innerFec, out modulation, out ONID, out TSID, out SID, out audioPid, out pmtPid, out pcrPid);
             if (physicalChannel < 0)
             {
-              Log.WriteFile(Log.LogType.Log, true, "DVBGraph:database invalid tuning details for station:{0}", channel.ID);
+              _log.Error("DVBGraph:database invalid tuning details for station:{0}", channel.ID);
               return;
             }
-            Log.WriteFile(Log.LogType.Log, "DVBGraph:  tuning details: frequency:{0} kHz physicalChannel:{1} symbolrate:{2} innerFec:{3} modulation:{4} ONID:{5} TSID:{6} SID:{7} provider:{8}",
+            _log.Info("DVBGraph:  tuning details: frequency:{0} kHz physicalChannel:{1} symbolrate:{2} innerFec:{3} modulation:{4} ONID:{5} TSID:{6} SID:{7} provider:{8}",
               frequency, physicalChannel, symbolrate, innerFec, modulation, ONID, TSID, SID, providerName);
             _currentTuningObject = new DVBChannel();
             _currentTuningObject.PhysicalChannel = physicalChannel;
@@ -3920,10 +3925,10 @@ namespace MediaPortal.TV.Recording
             RadioDatabase.GetDVBCTuneRequest(channel.ID, out providerName, out frequency, out symbolrate, out innerFec, out modulation, out ONID, out TSID, out SID, out audioPid, out pmtPid, out pcrPid);
             if (frequency <= 0)
             {
-              Log.WriteFile(Log.LogType.Log, true, "DVBGraph:database invalid tuning details for channel:{0}", channel.Channel);
+              _log.Error("DVBGraph:database invalid tuning details for channel:{0}", channel.Channel);
               return;
             }
-            Log.WriteFile(Log.LogType.Log, "DVBGraph:  tuning details: frequency:{0} kHz symbolrate:{1} innerFec:{2} modulation:{3} ONID:{4} TSID:{5} SID:{6} provider:{7}",
+            _log.Info("DVBGraph:  tuning details: frequency:{0} kHz symbolrate:{1} innerFec:{2} modulation:{3} ONID:{4} TSID:{5} SID:{6} provider:{7}",
               frequency, symbolrate, innerFec, modulation, ONID, TSID, SID, providerName);
 
             _currentTuningObject = new DVBChannel();
@@ -3952,10 +3957,10 @@ namespace MediaPortal.TV.Recording
             DVBChannel ch = new DVBChannel();
             if (RadioDatabase.GetDVBSTuneRequest(channel.ID, 0, ref ch) == false)//only radio
             {
-              Log.WriteFile(Log.LogType.Log, true, "DVBGraph:database invalid tuning details for channel:{0}", channel.Channel);
+              _log.Error("DVBGraph:database invalid tuning details for channel:{0}", channel.Channel);
               return;
             }
-            Log.WriteFile(Log.LogType.Log, "DVBGraph:  tuning details: frequency:{0} kHz polarisation:{1} innerFec:{2} symbolrate:{3} ONID:{4} TSID:{5} SID:{6} provider:{7}",
+            _log.Info("DVBGraph:  tuning details: frequency:{0} kHz polarisation:{1} innerFec:{2} symbolrate:{3} ONID:{4} TSID:{5} SID:{6} provider:{7}",
               ch.Frequency, ch.Polarity, ch.FEC, ch.Symbolrate, ch.NetworkID, ch.TransportStreamID, ch.ProgramNumber, ch.ServiceProvider);
             _currentTuningObject = new DVBChannel();
             _currentTuningObject.Frequency = ch.Frequency;
@@ -3996,10 +4001,10 @@ namespace MediaPortal.TV.Recording
             RadioDatabase.GetDVBTTuneRequest(channel.ID, out providerName, out frequency, out ONID, out TSID, out SID, out audioPid, out pmtPid, out bandwidth, out pcrPid);
             if (frequency <= 0)
             {
-              Log.WriteFile(Log.LogType.Log, true, "DVBGraph:database invalid tuning details for channel:{0}", channel.Channel);
+              _log.Error("DVBGraph:database invalid tuning details for channel:{0}", channel.Channel);
               return;
             }
-            Log.WriteFile(Log.LogType.Log, "DVBGraph:  tuning details: frequency:{0} kHz ONID:{1} TSID:{2} SID:{3} provider:{4}", frequency, ONID, TSID, SID, providerName);
+            _log.Info("DVBGraph:  tuning details: frequency:{0} kHz ONID:{1} TSID:{2} SID:{3} provider:{4}", frequency, ONID, TSID, SID, providerName);
 
 
             _currentTuningObject = new DVBChannel();
@@ -4027,7 +4032,7 @@ namespace MediaPortal.TV.Recording
       {
         _currentChannelNumber = channel.Channel;
         _startTimer = DateTime.Now;
-        Log.WriteFile(Log.LogType.Log, "DVBGraph:TuneRadioChannel() tune to radio station:{0}", channel.Name);
+        _log.Info("DVBGraph:TuneRadioChannel() tune to radio station:{0}", channel.Name);
         GetRadioChannelFromDatabase(channel);
         if (_currentTuningObject == null)
         {
@@ -4035,7 +4040,7 @@ namespace MediaPortal.TV.Recording
         }
         SubmitTuneRequest(_currentTuningObject);
 
-        Log.WriteFile(Log.LogType.Log, "DVBGraph:TuneRadioChannel() done");
+        _log.Info("DVBGraph:TuneRadioChannel() done");
 
         if (_streamDemuxer != null)
         {
@@ -4076,7 +4081,7 @@ namespace MediaPortal.TV.Recording
           _vmr9.Dispose();
           _vmr9 = null;
         }
-        Log.WriteFile(Log.LogType.Log, "DVBGraph:StartRadio()");
+        _log.Info("DVBGraph:StartRadio()");
 
 
         // add the preferred video/audio codecs
@@ -4089,25 +4094,25 @@ namespace MediaPortal.TV.Recording
         }
         if (_currentTuningObject.PCRPid <= 0 || _currentTuningObject.PCRPid >= 0x1fff)
         {
-          Log.Write("DVBGraph: map pid 0x:{0:X} to mpg1 pin pcr:0x{1:X}", _currentTuningObject.AudioPid, _currentTuningObject.PCRPid);
+          _log.Info("DVBGraph: map pid 0x:{0:X} to mpg1 pin pcr:0x{1:X}", _currentTuningObject.AudioPid, _currentTuningObject.PCRPid);
           SetupDemuxer(_pinDemuxerVideo, 0, _pinDemuxerAudio, 0, _pinAC3Out, 0);
           SetupDemuxerPin(_pinMPG1Out, _currentTuningObject.AudioPid, (int)MediaSampleContent.TransportPayload, true);
           SetupDemuxerPin(_pinMPG1Out, _currentTuningObject.PCRPid, (int)MediaSampleContent.TransportPacket, false);
           //setup demuxer MTS pin
 
-          Log.Write("DVBGraph: render mpg1 pin");
+          _log.Info("DVBGraph: render mpg1 pin");
           if (_graphBuilder.Render(_pinMPG1Out/*_pinDemuxerAudio*/) != 0)
           {
-            Log.WriteFile(Log.LogType.Log, true, "DVBGraph:Failed to render audio out pin MPEG-2 Demultiplexer");
+            _log.Error("DVBGraph:Failed to render audio out pin MPEG-2 Demultiplexer");
             return;
           }
         }
         else
         {
-          Log.Write("DVBGraph: render audio pin");
+          _log.Info("DVBGraph: render audio pin");
           if (_graphBuilder.Render(_pinDemuxerAudio) != 0)
           {
-            Log.WriteFile(Log.LogType.Log, true, "DVBGraph:Failed to render audio out pin MPEG-2 Demultiplexer");
+            _log.Error("DVBGraph:Failed to render audio out pin MPEG-2 Demultiplexer");
             return;
           }
         }
@@ -4122,26 +4127,26 @@ namespace MediaPortal.TV.Recording
           int hr = _mediaControl.Run();
           if (hr < 0)
           {
-            Log.WriteFile(Log.LogType.Log, true, "DVBGraph: FAILED unable to start graph :0x{0:X}", hr);
+            _log.Error("DVBGraph: FAILED unable to start graph :0x{0:X}", hr);
             return;
           }
         }
         else
         {
-          Log.WriteFile(Log.LogType.Log, true, "DVBGraph: FAILED cannot get IMediaControl");
+          _log.Error("DVBGraph: FAILED cannot get IMediaControl");
         }
 
         TuneRadioChannel(station);
         _isGraphRunning = true;
         _graphState = State.Radio;
-        Log.WriteFile(Log.LogType.Log, "DVBGraph:Listening to radio..");
+        _log.Info("DVBGraph:Listening to radio..");
         return;
       }
 
       // tune to the correct channel
 
       TuneRadioChannel(station);
-      Log.WriteFile(Log.LogType.Log, "DVBGraph:Listening to radio..");
+      _log.Info("DVBGraph:Listening to radio..");
     }
 
     public void TuneRadioFrequency(int frequency)
@@ -4157,22 +4162,22 @@ namespace MediaPortal.TV.Recording
     }
     protected bool m_streamDemuxer_OnAudioFormatChanged(MediaPortal.TV.Recording.DVBDemuxer.AudioHeader audioFormat)
     {/*
-			Log.Write("DVBGraph:Audio format changed");
-			Log.Write("DVBGraph:  Bitrate:{0}",audioFormat.Bitrate);
-			Log.Write("DVBGraph:  Layer:{0}",audioFormat.Layer);
-			Log.Write("DVBGraph:  SamplingFreq:{0}",audioFormat.SamplingFreq);
-			Log.Write("DVBGraph:  Channel:{0}",audioFormat.Channel);
-			Log.Write("DVBGraph:  Bound:{0}",audioFormat.Bound);
-			Log.Write("DVBGraph:  Copyright:{0}",audioFormat.Copyright);
-			Log.Write("DVBGraph:  Emphasis:{0}",audioFormat.Emphasis);
-			Log.Write("DVBGraph:  ID:{0}",audioFormat.ID);
-			Log.Write("DVBGraph:  Mode:{0}",audioFormat.Mode);
-			Log.Write("DVBGraph:  ModeExtension:{0}",audioFormat.ModeExtension);
-			Log.Write("DVBGraph:  Original:{0}",audioFormat.Original);
-			Log.Write("DVBGraph:  PaddingBit:{0}",audioFormat.PaddingBit);
-			Log.Write("DVBGraph:  PrivateBit:{0}",audioFormat.PrivateBit);
-			Log.Write("DVBGraph:  ProtectionBit:{0}",audioFormat.ProtectionBit);
-			Log.Write("DVBGraph:  TimeLength:{0}",audioFormat.TimeLength);*/
+			_log.Info("DVBGraph:Audio format changed");
+			_log.Info("DVBGraph:  Bitrate:{0}",audioFormat.Bitrate);
+			_log.Info("DVBGraph:  Layer:{0}",audioFormat.Layer);
+			_log.Info("DVBGraph:  SamplingFreq:{0}",audioFormat.SamplingFreq);
+			_log.Info("DVBGraph:  Channel:{0}",audioFormat.Channel);
+			_log.Info("DVBGraph:  Bound:{0}",audioFormat.Bound);
+			_log.Info("DVBGraph:  Copyright:{0}",audioFormat.Copyright);
+			_log.Info("DVBGraph:  Emphasis:{0}",audioFormat.Emphasis);
+			_log.Info("DVBGraph:  ID:{0}",audioFormat.ID);
+			_log.Info("DVBGraph:  Mode:{0}",audioFormat.Mode);
+			_log.Info("DVBGraph:  ModeExtension:{0}",audioFormat.ModeExtension);
+			_log.Info("DVBGraph:  Original:{0}",audioFormat.Original);
+			_log.Info("DVBGraph:  PaddingBit:{0}",audioFormat.PaddingBit);
+			_log.Info("DVBGraph:  PrivateBit:{0}",audioFormat.PrivateBit);
+			_log.Info("DVBGraph:  ProtectionBit:{0}",audioFormat.ProtectionBit);
+			_log.Info("DVBGraph:  TimeLength:{0}",audioFormat.TimeLength);*/
       return true;
     }
 
@@ -4187,7 +4192,7 @@ namespace MediaPortal.TV.Recording
       try
       {
         string pmtName = String.Format(@"database\pmt\pmt_{0}_{1}_{2}_{3}_{4}.dat",
-          Utils.FilterFileName(_currentTuningObject.ServiceName),
+          MediaPortal.Util.Utils.FilterFileName(_currentTuningObject.ServiceName),
           _currentTuningObject.NetworkID,
           _currentTuningObject.TransportStreamID,
           _currentTuningObject.ProgramNumber,
@@ -4223,7 +4228,7 @@ namespace MediaPortal.TV.Recording
 #endif
         if (!isSame || _pmtSendCounter == 0)
         {
-          Log.WriteFile(Log.LogType.Log, "DVBGraph: OnPMTIsChanged:{0}", pmtName);
+          _log.Info("DVBGraph: OnPMTIsChanged:{0}", pmtName);
           using (System.IO.FileStream stream = new System.IO.FileStream(pmtName, System.IO.FileMode.Create, System.IO.FileAccess.Write, System.IO.FileShare.None))
           {
             stream.Write(pmtTable, 0, pmtTable.Length);
@@ -4234,13 +4239,13 @@ namespace MediaPortal.TV.Recording
         }
         if (Recorder.IsCardViewing(_cardId) || _graphState == State.Epg || _graphState == State.Radio)
         {
-          Log.WriteFile(Log.LogType.Log, "DVBGraph: grab epg for {0}", _currentTuningObject.ServiceName);
+          _log.Info("DVBGraph: grab epg for {0}", _currentTuningObject.ServiceName);
           _epgGrabber.GrabEPG(_currentTuningObject.ServiceName, _currentTuningObject.HasEITSchedule == true);
         }
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        _log.Error(ex);
       }
     }
 
@@ -4305,9 +4310,9 @@ namespace MediaPortal.TV.Recording
               break;
           }
 
-          //Log.Write("nr:{0} pid:0x{1:X}, hr:{2:X}", i, (int)pid, hr);
+          //_log.Info("nr:{0} pid:0x{1:X}, hr:{2:X}", i, (int)pid, hr);
         }
-        Log.WriteFile(Log.LogType.Log, "DVBGraph:SetHardwarePidFiltering to:{0}", pidsText);
+        _log.Info("DVBGraph:SetHardwarePidFiltering to:{0}", pidsText);
       }
       SendHWPids(pids);
       //      DumpMpeg2DemuxerMappings(_filterMpeg2Demultiplexer);
@@ -4358,11 +4363,11 @@ namespace MediaPortal.TV.Recording
     {
       if (_graphState != State.Created) return false;
       // tune to the correct channel
-      Log.WriteFile(Log.LogType.Log, "DVBGraph:Grab epg for :{0}", channel.Name);
+      _log.Info("DVBGraph:Grab epg for :{0}", channel.Name);
 
 
       //now start the graph
-      Log.WriteFile(Log.LogType.Log, "DVBGraph: start graph");
+      _log.Info("DVBGraph: start graph");
       if (_mediaControl == null)
       {
         _mediaControl = (IMediaControl)_graphBuilder;
@@ -4370,7 +4375,7 @@ namespace MediaPortal.TV.Recording
       int hr = _mediaControl.Run();
       if (hr < 0)
       {
-        Log.WriteFile(Log.LogType.Log, true, "DVBGraph: FAILED unable to start graph :0x{0:X}", hr);
+        _log.Error("DVBGraph: FAILED unable to start graph :0x{0:X}", hr);
         return false;
       }
       TuneChannel(channel);
@@ -4406,7 +4411,7 @@ namespace MediaPortal.TV.Recording
       lock (this)
       {
         //if (_scanPidListReady) return 0;
-        Log.Write("FilterPids:{0}", count);
+        _log.Info("FilterPids:{0}", count);
         string pidsText = String.Empty;
         _scanPidList = new ArrayList();
         for (int i = 0; i < count; ++i)
@@ -4416,7 +4421,7 @@ namespace MediaPortal.TV.Recording
           pidsText += String.Format("{0:X},", pid);
         }
 
-        //Log.WriteFile(Log.LogType.Log, "DVBGraph:analyzer pids to:{0}", pidsText);
+        //_log.Info("DVBGraph:analyzer pids to:{0}", pidsText);
         _scanPidListReady = true;
       }
       return 0;
@@ -4496,7 +4501,7 @@ namespace MediaPortal.TV.Recording
     bool CreateTsTimeShifting(string fileName, bool useAc3)
     {
       _currentTimeShiftFileName = fileName;
-      Log.WriteFile(Log.LogType.Log, "DVBGraph:add TsFileSink");
+      _log.Info("DVBGraph:add TsFileSink");
       //delete any old timeshifting files
       string file = System.IO.Path.GetFileName(fileName);
       string path = fileName.Substring(0, fileName.Length - (file.Length + 1));
@@ -4505,8 +4510,8 @@ namespace MediaPortal.TV.Recording
       {
         if (files[i].IndexOf(file) >= 0)
         {
-          Log.WriteFile(Log.LogType.Log, "DVBGraph:delete old file {0}", files[i]);
-          Utils.FileDelete(files[i]);
+          _log.Info("DVBGraph:delete old file {0}", files[i]);
+          MediaPortal.Util.Utils.FileDelete(files[i]);
         }
       }
       //create new MpgMux filter
@@ -4515,7 +4520,7 @@ namespace MediaPortal.TV.Recording
       int hr = _graphBuilder.AddFilter(filterMux, "MpgMux");
       if (hr != 0)
       {
-        Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED cannot add MpgMux:{0:X}", hr);
+        _log.Error("DVBGraph:FAILED cannot add MpgMux:{0:X}", hr);
         return false;
       }
 
@@ -4527,7 +4532,7 @@ namespace MediaPortal.TV.Recording
         _graphBuilder.Connect(_pinDemuxerAudio, pinMuxAudio);
         if (hr != 0)
         {
-          Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED cannot connect audio mpeg2 demux->mux input 1:{0:X}", hr);
+          _log.Error("DVBGraph:FAILED cannot connect audio mpeg2 demux->mux input 1:{0:X}", hr);
           return false;
         }
       }
@@ -4536,7 +4541,7 @@ namespace MediaPortal.TV.Recording
         _graphBuilder.Connect(_pinAC3Out, pinMuxAudio);
         if (hr != 0)
         {
-          Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED cannot connect ac3 mpeg2 demux->mux input 1:{0:X}", hr);
+          _log.Error("DVBGraph:FAILED cannot connect ac3 mpeg2 demux->mux input 1:{0:X}", hr);
           return false;
         }
       }
@@ -4546,7 +4551,7 @@ namespace MediaPortal.TV.Recording
         hr = _graphBuilder.Connect(_pinDemuxerVideoMPEG4, pinMuxVideo);
         if (hr != 0)
         {
-          Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED cannot connect video mpeg4 demux->mux input 2:{0:X}", hr);
+          _log.Error("DVBGraph:FAILED cannot connect video mpeg4 demux->mux input 2:{0:X}", hr);
           return false;
         }
       }
@@ -4555,7 +4560,7 @@ namespace MediaPortal.TV.Recording
         hr = _graphBuilder.Connect(_pinDemuxerVideo, pinMuxVideo);
         if (hr != 0)
         {
-          Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED cannot connect video mpeg2 demux->mux input 2:{0:X}", hr);
+          _log.Error("DVBGraph:FAILED cannot connect video mpeg2 demux->mux input 2:{0:X}", hr);
           return false;
         }
       }
@@ -4565,13 +4570,13 @@ namespace MediaPortal.TV.Recording
       hr = _graphBuilder.AddFilter((IBaseFilter)_filterTsFileSink, "TsFileSink");
       if (hr != 0)
       {
-        Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED cannot add TsFileSink:{0:X}", hr);
+        _log.Error("DVBGraph:FAILED cannot add TsFileSink:{0:X}", hr);
         return false;
       }
       IFileSinkFilter interfaceFile = _filterTsFileSink as IFileSinkFilter;
       if (interfaceFile == null)
       {
-        Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED cannot get IFileSinkFilter from TsFileSink");
+        _log.Error("DVBGraph:FAILED cannot get IFileSinkFilter from TsFileSink");
         return false;
       }
 
@@ -4589,13 +4594,13 @@ namespace MediaPortal.TV.Recording
       IPin pinIn = DsFindPin.ByDirection((IBaseFilter)_filterTsFileSink, PinDirection.Input, 0);
       if (pinIn == null)
       {
-        Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED cannot find input pin of TsFileSink");
+        _log.Error("DVBGraph:FAILED cannot find input pin of TsFileSink");
         return false;
       }
       hr = _graphBuilder.Connect(_pinDemuxerTS, pinIn);
       if (hr != 0)
       {
-        Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED cannot connect demuxer->TsFileSink:{0:X}", hr);
+        _log.Error("DVBGraph:FAILED cannot connect demuxer->TsFileSink:{0:X}", hr);
         return false;
       }*/
       return true;

@@ -38,6 +38,7 @@ using MediaPortal.Player;
 using MediaPortal.Dialogs;
 using MediaPortal.TV.Teletext;
 using MediaPortal.TV.DiskSpace;
+using MediaPortal.Utils.Services;
 #endregion
 
 namespace MediaPortal.TV.Recording
@@ -64,8 +65,13 @@ namespace MediaPortal.TV.Recording
 
     static List<TVChannel> _tvChannelsList = new List<TVChannel>();
 
+    protected ILog _log;
+
     public MultiCardBase()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+
       _killTimeshiftingTimer = DateTime.Now;
       TVDatabase.GetChannels(ref _tvChannelsList);
     }
@@ -142,7 +148,7 @@ namespace MediaPortal.TV.Recording
       }
       if (g_Player.Playing)
       {
-        Log.WriteFile(Log.LogType.Log, true, "Handler.StopPlayer() player still active");
+        _log.Error("Handler.StopPlayer() player still active");
       }*/
       int counter = 0;
       while (VMR9Util.g_vmr9 != null)
@@ -153,7 +159,7 @@ namespace MediaPortal.TV.Recording
       }
       if (VMR9Util.g_vmr9 != null)
       {
-        Log.WriteFile(Log.LogType.Log,true,"Handler.StopPlayer() vmr9 still active");
+        _log.Error("Handler.StopPlayer() vmr9 still active");
       }
     }
   }

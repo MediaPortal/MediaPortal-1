@@ -29,6 +29,7 @@ using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using MediaPortal.InputDevices;
 using MediaPortal.GUI.Library;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.InputDevices
 {
@@ -49,6 +50,7 @@ namespace MediaPortal.InputDevices
     string remoteModel = "";
     int irTransServerPort = 21000;
     bool logVerbose = false;
+    protected ILog _log;
     #endregion
 
     #region Enums and Structure
@@ -94,6 +96,8 @@ namespace MediaPortal.InputDevices
 
     public IrTrans()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
     }
 
     /// <summary>
@@ -122,7 +126,7 @@ namespace MediaPortal.InputDevices
       if (Connect_IrTrans(irTransServerPort))
       {
         if (logVerbose)
-          Log.Write("IRTrans: Connection established.");
+          _log.Info("IRTrans: Connection established.");
         // Now Wait for data to be sent
         WaitForData();
       }
@@ -142,12 +146,12 @@ namespace MediaPortal.InputDevices
       {
         m_Socket.Close();
         if (logVerbose)
-          Log.Write("IRTrans: Connection closed.");
+          _log.Info("IRTrans: Connection closed.");
       }
       catch (SocketException se)
       {
         if (logVerbose)
-          Log.Write("IRTrans: Exception on closing socket. {0}", se.Message);
+          _log.Info("IRTrans: Exception on closing socket. {0}", se.Message);
       }
     }
 
@@ -172,7 +176,7 @@ namespace MediaPortal.InputDevices
       }
       catch (SocketException)
       {
-        Log.Write("IRTrans: Could not connect to server - server not started?");
+        _log.Info("IRTrans: Could not connect to server - server not started?");
         return false;
       }
     }
@@ -196,7 +200,7 @@ namespace MediaPortal.InputDevices
       catch (SocketException se)
       {
         if (logVerbose)
-          Log.Write("IRTrans: Error on receive from socket: {0}", se.Message);
+          _log.Info("IRTrans: Error on receive from socket: {0}", se.Message);
       }
     }
 
@@ -227,14 +231,14 @@ namespace MediaPortal.InputDevices
         NETWORKRECV netrecv = (NETWORKRECV)Marshal.PtrToStructure(ptrReceive, typeof(NETWORKRECV));
         if (logVerbose)
         {
-          Log.Write("IRTrans: Command Start --------------------------------------------");
-          Log.Write("IRTrans: Client       = {0}", netrecv.clientid);
-          Log.Write("IRTrans: Status       = {0}", (IrTransStatus)netrecv.statustype);
-          Log.Write("IRTrans: Remote       = {0}", netrecv.remote);
-          Log.Write("IRTrans: Command Num. = {0}", netrecv.command_num.ToString());
-          Log.Write("IRTrans: Command      = {0}", netrecv.command);
-          Log.Write("IRTrans: Data         = {0}", netrecv.data);
-          Log.Write("IRTrans: Command End ----------------------------------------------");
+          _log.Info("IRTrans: Command Start --------------------------------------------");
+          _log.Info("IRTrans: Client       = {0}", netrecv.clientid);
+          _log.Info("IRTrans: Status       = {0}", (IrTransStatus)netrecv.statustype);
+          _log.Info("IRTrans: Remote       = {0}", netrecv.remote);
+          _log.Info("IRTrans: Command Num. = {0}", netrecv.command_num.ToString());
+          _log.Info("IRTrans: Command      = {0}", netrecv.command);
+          _log.Info("IRTrans: Data         = {0}", netrecv.data);
+          _log.Info("IRTrans: Command End ----------------------------------------------");
         }
 
         // Do an action only on Receive and if the command came from the selected Remote
@@ -247,18 +251,18 @@ namespace MediaPortal.InputDevices
               if (irtransHandler.MapAction(netrecv.command.Trim()))
               {
                 if (logVerbose)
-                  Log.Write("IRTrans: Action mapped");
+                  _log.Info("IRTrans: Action mapped");
               }
               else
               {
                 if (logVerbose)
-                  Log.Write("IRTrans: Action not mapped");
+                  _log.Info("IRTrans: Action not mapped");
               }
             }
             catch (Exception ex)
             {
               if (logVerbose)
-                Log.Write("IRTrans: Exception in IRTranshandler: {0}", ex.Message);
+                _log.Info("IRTrans: Exception in IRTranshandler: {0}", ex.Message);
             }
           }
         }
@@ -271,7 +275,7 @@ namespace MediaPortal.InputDevices
       catch (SocketException se)
       {
         if (logVerbose)
-          Log.Write("IRTrans: Error on receive from socket: {0}", se.Message);
+          _log.Info("IRTrans: Error on receive from socket: {0}", se.Message);
       }
     }
   }

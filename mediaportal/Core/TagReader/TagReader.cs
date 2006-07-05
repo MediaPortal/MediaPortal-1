@@ -22,7 +22,7 @@ using System;
 using System.Collections;
 using System.Reflection;
 using System.Drawing;
-using MediaPortal.GUI.Library;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.TagReader
 {
@@ -36,14 +36,18 @@ namespace MediaPortal.TagReader
 	public class TagReader
 	{
     static ArrayList m_readers=new ArrayList();
+    static ILog _log;
 		
 		/// <summary>
 		/// Constructor
 		/// This will load all tagreader plugins from plugins/tagreaders
 		/// </summary>
     static TagReader()
-		{	
-      Log.Write("Loading tag reader plugins");
+		{
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+
+      _log.Info("Loading tag reader plugins");
       string[] strFiles=System.IO.Directory.GetFiles(@"plugins\tagreaders", "*.dll");
       foreach (string strFile in strFiles)
       {
@@ -63,7 +67,7 @@ namespace MediaPortal.TagReader
                   if (t.IsSubclassOf (typeof(ITagReader)))
                   {
                     object newObj=(object)Activator.CreateInstance(t);
-                    Log.Write("  found plugin:{0} in {1}",t.ToString(), strFile);
+                    _log.Info("  found plugin:{0} in {1}",t.ToString(), strFile);
                     ITagReader reader=(ITagReader)newObj;
                     m_readers.Add(reader);
                   }
@@ -118,7 +122,7 @@ namespace MediaPortal.TagReader
         }
         catch(Exception ex)
         { 
-          Log.Write("Tag reader generated exception:{0}",ex.ToString());
+          _log.Info("Tag reader generated exception:{0}",ex.ToString());
         }
       }
       return null;
@@ -161,7 +165,7 @@ namespace MediaPortal.TagReader
         }
         catch(Exception ex)
         { 
-          Log.Write("Tag reader generated exception:{0}",ex.ToString());
+          _log.Info("Tag reader generated exception:{0}",ex.ToString());
         }
       }
       return null;

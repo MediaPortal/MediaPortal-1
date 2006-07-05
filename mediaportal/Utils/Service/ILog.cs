@@ -30,5 +30,10 @@ namespace MediaPortal.Utils.Services
 		void Error(string strFormat, params object[] arg);
 		void Info(string strFormat, params object[] arg);
 		void Warn(string strFormat, params object[] arg);
+    void DebugThread(string strFormat, params object[] arg);
+    void ErrorThread(string strFormat, params object[] arg);
+    void InfoThread(string strFormat, params object[] arg);
+    void WarnThread(string strFormat, params object[] arg);
+    void Error(Exception ex);
 	}
 }

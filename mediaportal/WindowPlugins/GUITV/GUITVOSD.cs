@@ -441,7 +441,7 @@ namespace MediaPortal.GUI.TV
                 ToggleSubMenu(0, m_iActiveMenu);						// hide the currently active sub-menu
               }
               //g_application.m_guiWindowFullScreen.m_bOSDVisible = false;	// toggle the OSD off so parent window can de-init
-              Log.Write("TVOSD:stop");
+              _log.Info("TVOSD:stop");
               if (Recorder.IsRecording())
               {
                 Recorder.StopRecording();
@@ -453,7 +453,7 @@ namespace MediaPortal.GUI.TV
               if (g_Player.Paused)
                 g_Player.Pause();	// Unpause playback
 
-              g_Player.Speed = Utils.GetNextRewindSpeed(g_Player.Speed);
+              g_Player.Speed = MediaPortal.Util.Utils.GetNextRewindSpeed(g_Player.Speed);
               if (g_Player.Speed < 1)	// are we not playing back at normal speed
               {
                 ToggleButton((int)Controls.OSD_REWIND, true);		// make sure out button is in the down position
@@ -472,7 +472,7 @@ namespace MediaPortal.GUI.TV
               if (g_Player.Paused)
                 g_Player.Pause();	// Unpause playback
 
-              g_Player.Speed = Utils.GetNextForwardSpeed(g_Player.Speed);
+              g_Player.Speed = MediaPortal.Util.Utils.GetNextForwardSpeed(g_Player.Speed);
               if (g_Player.Speed > 1)	// are we not playing back at normal speed
               {
                 ToggleButton((int)Controls.OSD_FFWD, true);		// make sure out button is in the down position
@@ -1193,7 +1193,7 @@ namespace MediaPortal.GUI.TV
 
     private void OnPreviousChannel()
     {
-      Log.Write("GUITV OSD: OnPreviousChannel");
+      _log.Info("GUITV OSD: OnPreviousChannel");
       if (!Recorder.View) return;
       GUITVHome.Navigator.ZapToPreviousChannel(false);
 
@@ -1203,7 +1203,7 @@ namespace MediaPortal.GUI.TV
 
     private void OnNextChannel()
     {
-      Log.Write("GUITV OSD: OnNextChannel");
+      _log.Info("GUITV OSD: OnNextChannel");
       if (!Recorder.View) return;
 
       GUITVHome.Navigator.ZapToNextChannel(false);
@@ -1221,7 +1221,7 @@ namespace MediaPortal.GUI.TV
     void SetCurrentChannelLogo()
     {
       string strChannel = GetChannelName();
-      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, strChannel);
+      string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, strChannel);
 
       if (imgTvChannelLogo != null)
       {
@@ -1298,7 +1298,7 @@ namespace MediaPortal.GUI.TV
 
           strTime = String.Format("{0} ", prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
           GUIPropertyManager.SetProperty("#TV.View.stop", strTime);
-          GUIPropertyManager.SetProperty("#TV.View.remaining", Utils.SecondsToHMSString(prog.EndTime - prog.StartTime));
+          GUIPropertyManager.SetProperty("#TV.View.remaining", MediaPortal.Util.Utils.SecondsToHMSString(prog.EndTime - prog.StartTime));
         }
         if (tbProgramDescription != null)
         {
@@ -1369,7 +1369,7 @@ namespace MediaPortal.GUI.TV
       {
         GUIPropertyManager.SetProperty("#TV.View.start", prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
         GUIPropertyManager.SetProperty("#TV.View.stop", prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-        GUIPropertyManager.SetProperty("#TV.View.remaining", Utils.SecondsToHMSString(prog.EndTime - prog.StartTime));
+        GUIPropertyManager.SetProperty("#TV.View.remaining", MediaPortal.Util.Utils.SecondsToHMSString(prog.EndTime - prog.StartTime));
         GUIPropertyManager.SetProperty("#TV.View.genre", prog.Genre);
         GUIPropertyManager.SetProperty("#TV.View.title", prog.Title);
         GUIPropertyManager.SetProperty("#TV.View.description", prog.Description);

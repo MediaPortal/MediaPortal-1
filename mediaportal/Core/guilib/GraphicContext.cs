@@ -27,6 +27,7 @@ using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
 using AMS.Profile;
 using System.Runtime.InteropServices;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.GUI.Library
 {
@@ -125,6 +126,7 @@ namespace MediaPortal.GUI.Library
     static bool vmr9Allowed = true;
     static Size videoSize;
     static bool hasFocus = false;
+    static ILog _log;
 
     const uint SC_MONITORPOWER = 0xF170;
     const uint WM_SYSCOMMAND = 0x0112;
@@ -137,6 +139,12 @@ namespace MediaPortal.GUI.Library
     // singleton. Dont allow any instance of this class
     private GUIGraphicsContext()
     {
+    }
+
+    static GUIGraphicsContext()
+    {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
     }
 
     /// <summary>
@@ -206,7 +214,7 @@ namespace MediaPortal.GUI.Library
       else
         strFileName += ".xml";
 
-      // Log.Write("save {0}" ,strFileName);
+      // _log.Info("save {0}" ,strFileName);
       using (MediaPortal.Profile.Settings xmlWriter = new MediaPortal.Profile.Settings(strFileName))
       {
         xmlWriter.SetValue("screen", "offsetx", m_iOffsetX.ToString());
@@ -257,7 +265,7 @@ namespace MediaPortal.GUI.Library
       else
         strFileName += ".xml";
 
-      Log.Write("  load {0}", strFileName);
+      _log.Info("  load {0}", strFileName);
       using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings(strFileName))
       {
         m_iOffsetX = xmlReader.GetValueAsInt("screen", "offsetx", 0);
@@ -989,10 +997,10 @@ namespace MediaPortal.GUI.Library
         if (value != vmr9Active)
         {
           vmr9Active = value;
-          if (vmr9Active) Log.Write("VMR9: now active");
+          if (vmr9Active) _log.Info("VMR9: now active");
           else
           {
-            Log.Write("VMR9: not active");
+            _log.Info("VMR9: not active");
           }
         }
       }

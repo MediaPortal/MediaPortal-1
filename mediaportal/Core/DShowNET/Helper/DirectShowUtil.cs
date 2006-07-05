@@ -25,6 +25,8 @@ using System.Runtime.InteropServices.ComTypes;
 using MediaPortal.GUI.Library;
 using DirectShowLib;
 using DShowNET.Helper;
+using MediaPortal.Utils.Services;
+
 #pragma warning disable 618
 namespace DShowNET.Helper
 {
@@ -34,8 +36,12 @@ namespace DShowNET.Helper
 	public class DirectShowUtil
   {
     const int magicConstant = -759872593;
-		public DirectShowUtil()
+    static ILog _log;
+
+		static DirectShowUtil()
 		{
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
 		}
 
     static public IBaseFilter AddFilterToGraph(IGraphBuilder graphBuilder, string strFilterName)
@@ -52,25 +58,25 @@ namespace DShowNET.Helper
             int hr = graphBuilder.AddFilter(NewFilter, strFilterName);
 						if( hr < 0 ) 
 						{
-							Log.WriteFile(Log.LogType.Error,true,"failed:unable to add filter:{0} to graph", strFilterName);
+							_log.Error("failed:unable to add filter:{0} to graph", strFilterName);
 							NewFilter=null;
 						}
 						else
 						{
-							Log.WriteFile(Log.LogType.Log,"added filter:{0} to graph", strFilterName);
+							_log.Info("added filter:{0} to graph", strFilterName);
 						}
 						break;
 					}
 				}
 				if (NewFilter==null)
 				{
-					Log.WriteFile(Log.LogType.Error,true,"failed filter:{0} not found", strFilterName);
+					_log.Error("failed filter:{0} not found", strFilterName);
 				}
 				return NewFilter;
 			}
 			catch(Exception ex)
 			{
-				Log.WriteFile(Log.LogType.Error,true,"failed filter:{0} not found {0}", strFilterName,ex.Message);
+				_log.Error("failed filter:{0} not found {0}", strFilterName,ex.Message);
 				return null;
 			}
     }
@@ -82,7 +88,7 @@ namespace DShowNET.Helper
 				int hr;
 				IPin pinOut=null;
 				IBaseFilter NewFilter=null;
-				Log.WriteFile(Log.LogType.Log,"add filter:{0} to graph clock:{0}", strFilterName,setAsReferenceClock);
+				_log.Info("add filter:{0} to graph clock:{0}", strFilterName,setAsReferenceClock);
 	      
 				//check first if audio renderer exists!
 				bool bRendererExists=false;
@@ -95,7 +101,7 @@ namespace DShowNET.Helper
 				}
 				if (!bRendererExists) 
 				{
-					Log.WriteFile(Log.LogType.Log,true,"FAILED: audio renderer:{0} doesnt exists", strFilterName);
+					_log.Error("FAILED: audio renderer:{0} doesnt exists", strFilterName);
 					return null;
 				}
 
@@ -129,7 +135,7 @@ namespace DShowNET.Helper
 							{ 
 								if (filter.Name== strFilterName)
 								{
-									Log.WriteFile(Log.LogType.Log,"filter already in graph");
+									_log.Info("filter already in graph");
 									
 									if (setAsReferenceClock)
 										(graphBuilder as IMediaFilter).SetSyncSource(pBasefilter[0] as IReferenceClock);
@@ -140,7 +146,7 @@ namespace DShowNET.Helper
 								}
 								else
 								{
-									Log.WriteFile(Log.LogType.Log,"remove "+ filter.Name + " from graph");
+									_log.Info("remove "+ filter.Name + " from graph");
                   pinOut = FindSourcePinOf(pBasefilter[0]);
                   graphBuilder.RemoveFilter(pBasefilter[0]);
 									bAllRemoved=true;
@@ -164,17 +170,17 @@ namespace DShowNET.Helper
 						hr = graphBuilder.AddFilter( NewFilter, strFilterName );
 						if( hr < 0 ) 
 						{
-							Log.WriteFile(Log.LogType.Log,true,"failed:unable to add filter:{0} to graph", strFilterName);
+							_log.Error("failed:unable to add filter:{0} to graph", strFilterName);
 							NewFilter=null;
 						}
 						else
 						{
-							Log.WriteFile(Log.LogType.Log,"added filter:{0} to graph", strFilterName);
+							_log.Info("added filter:{0} to graph", strFilterName);
 							if (pinOut!=null)
 							{
 								hr=graphBuilder.Render(pinOut);
-								if (hr==0) Log.WriteFile(Log.LogType.Log," pinout rendererd");
-								else Log.WriteFile(Log.LogType.Log,true," failed: pinout render");
+								if (hr==0) _log.Info(" pinout rendererd");
+								else _log.Error(" failed: pinout render");
 							}
 							if (setAsReferenceClock)
 								(graphBuilder as IMediaFilter).SetSyncSource(NewFilter as IReferenceClock);
@@ -184,12 +190,12 @@ namespace DShowNET.Helper
 				}//foreach (Filter filter in filters.AudioRenderers)
 				if (NewFilter==null)
 				{
-					Log.WriteFile(Log.LogType.Log,true,"failed filter:{0} not found", strFilterName);
+					_log.Error("failed filter:{0} not found", strFilterName);
 				}
 			}
 			catch(Exception ex)
 			{
-				Log.WriteFile(Log.LogType.Log,true,"DirectshowUtil. Failed to add filter:{0} to graph :{0} {1} [2}", 
+				_log.Error("DirectshowUtil. Failed to add filter:{0} to graph :{0} {1} [2}", 
 							strFilterName,ex.Message,ex.Source,ex.StackTrace);
 			}
       return null;
@@ -246,7 +252,7 @@ namespace DShowNET.Helper
       int hr=filter.EnumPins(out pinEnum);
       if( (hr == 0) && (pinEnum != null) )
       {
-        Log.WriteFile(Log.LogType.Log,"got pins");
+        _log.Info("got pins");
         pinEnum.Reset();
         IPin[] pins = new IPin[1];
         int iFetched;
@@ -254,7 +260,7 @@ namespace DShowNET.Helper
         do
         {
           // Get the next pin
-          //Log.WriteFile(Log.LogType.Log,"  get pin:{0}",iPinNo);
+          //_log.Info("  get pin:{0}",iPinNo);
           iPinNo++;
           hr = pinEnum.Next( 1, pins, out iFetched );
           if( hr == 0 )
@@ -265,12 +271,12 @@ namespace DShowNET.Helper
               hr=pins[0].QueryPinInfo(out pinInfo);
 							if (hr==0)
 							{
-								Log.WriteFile(Log.LogType.Log,"  got pin#{0}:{1}",iPinNo-1,pinInfo.name);
+								_log.Info("  got pin#{0}:{1}",iPinNo-1,pinInfo.name);
 								//Marshal.ReleaseComObject(pinInfo.filter);
 							}
 							else
 							{
-								Log.WriteFile(Log.LogType.Log,"  got pin:?");
+								_log.Info("  got pin:?");
 							}
               PinDirection pinDir;
               pins[0].QueryDirection(out pinDir);
@@ -283,11 +289,11 @@ namespace DShowNET.Helper
 									hr=graphBuilder.Render(pins[0]);
 									if (hr==0) 
 									{
-										Log.WriteFile(Log.LogType.Log,"  render ok");
+										_log.Info("  render ok");
 									}
 									else 
 									{
-										Log.WriteFile(Log.LogType.Log,true,"  render failed:{0:x}",hr);
+										_log.Error("  render failed:{0:x}",hr);
 										bAllConnected=false;
 									}
 									pinsRendered++;
@@ -295,14 +301,14 @@ namespace DShowNET.Helper
 								if (pConnectPin!=null)
 									Marshal.ReleaseComObject(pConnectPin);
 								pConnectPin=null;
-                //else Log.WriteFile(Log.LogType.Log,"pin is already connected");
+                //else _log.Info("pin is already connected");
               }
               Marshal.ReleaseComObject( pins[0] );
             }
             else 
             {
               iFetched=0;
-              Log.WriteFile(Log.LogType.Log,"no pins?");
+              _log.Info("no pins?");
               break;
             }
           }
@@ -319,7 +325,7 @@ namespace DShowNET.Helper
       int hr=filter.EnumPins(out pinEnum);
       if( (hr == 0) && (pinEnum != null) )
       {
-        //Log.WriteFile(Log.LogType.Log,"got pins");
+        //_log.Info("got pins");
         pinEnum.Reset();
         IPin[] pins = new IPin[1];
         int iFetched;
@@ -327,50 +333,50 @@ namespace DShowNET.Helper
         do
         {
           // Get the next pin
-          //Log.WriteFile(Log.LogType.Log,"  get pin:{0}",iPinNo);
+          //_log.Info("  get pin:{0}",iPinNo);
           iPinNo++;
           hr = pinEnum.Next( 1, pins, out iFetched );
           if( hr == 0 )
           {
             if (iFetched==1 && pins[0]!=null) 
             {
-              //Log.WriteFile(Log.LogType.Log,"  find pin info");
+              //_log.Info("  find pin info");
               PinInfo pinInfo = new PinInfo();
               hr=pins[0].QueryPinInfo(out pinInfo);
 							if (hr>=0)
 							{
 								//Marshal.ReleaseComObject(pinInfo.filter);
-								Log.WriteFile(Log.LogType.Log,"  got pin#{0}:{1}",iPinNo-1,pinInfo.name);
+								_log.Info("  got pin#{0}:{1}",iPinNo-1,pinInfo.name);
 							}
 							else
-								Log.WriteFile(Log.LogType.Log,"  got pin:?");
+								_log.Info("  got pin:?");
               PinDirection pinDir;
               pins[0].QueryDirection(out pinDir);
               if (pinDir==PinDirection.Output)
               {
-                //Log.WriteFile(Log.LogType.Log,"  is output");
+                //_log.Info("  is output");
                 IPin pConnectPin=null;
                 hr=pins[0].ConnectedTo(out pConnectPin);  
                 if (hr==0 && pConnectPin!=null)
                 {
-                  //Log.WriteFile(Log.LogType.Log,"  pin is connected ");
+                  //_log.Info("  pin is connected ");
                   hr=pins[0].Disconnect();
-                  if (hr==0) Log.WriteFile(Log.LogType.Log,"  disconnected ok");
+                  if (hr==0) _log.Info("  disconnected ok");
                   else 
                   {
-                    Log.WriteFile(Log.LogType.Log,true,"  disconnected failed");
+                    _log.Error("  disconnected failed");
                   }
 									Marshal.ReleaseComObject(pConnectPin);
 									pConnectPin=null;
                 }
-                //else Log.WriteFile(Log.LogType.Log,"pin is already connected");
+                //else _log.Info("pin is already connected");
               }
               Marshal.ReleaseComObject( pins[0] );
             }
             else 
             {
               iFetched=0;
-              Log.WriteFile(Log.LogType.Log,"no pins?");
+              _log.Info("no pins?");
               break;
             }
           }
@@ -529,7 +535,7 @@ namespace DShowNET.Helper
       DsGuid cat = new DsGuid(PinCategory.VideoPort);
       int hr = captureGraphBuilder.FindPin(videoDeviceFilter,PinDirection.Output, cat,new DsGuid( mediaType),false,0,out pPin);
       if (hr>=0 && pPin!=null)
-        Log.WriteFile(Log.LogType.Log,"Found videoport pin");
+        _log.Info("Found videoport pin");
       return pPin;
     }
 
@@ -539,7 +545,7 @@ namespace DShowNET.Helper
       DsGuid cat = new DsGuid(PinCategory.Preview);
       int hr = captureGraphBuilder.FindPin(videoDeviceFilter, PinDirection.Output,  cat, new DsGuid(mediaType), false, 0, out pPin);
       if (hr>=0 && pPin!=null)
-        Log.WriteFile(Log.LogType.Log,"Found preview pin");
+        _log.Info("Found preview pin");
       return pPin;
     }
 
@@ -549,7 +555,7 @@ namespace DShowNET.Helper
       DsGuid cat = new DsGuid(PinCategory.Capture);
       int hr = captureGraphBuilder.FindPin(videoDeviceFilter,PinDirection.Output, cat,new DsGuid (mediaType),false,0,out pPin);
       if (hr>=0 && pPin!=null)
-        Log.WriteFile(Log.LogType.Log,"Found capture pin");
+        _log.Info("Found capture pin");
       return pPin;
     }
 
@@ -573,7 +579,7 @@ namespace DShowNET.Helper
 							FilterInfo filter_infos=new FilterInfo();
 							foundfilter[0].QueryFilterInfo(out filter_infos);
 
-							Log.Write("GetFilterByName: {0}, {1}", name, filter_infos.achName);
+							_log.Info("GetFilterByName: {0}, {1}", name, filter_infos.achName);
             
 							if (filter_infos.achName.LastIndexOf(name)!=-1)
 							{

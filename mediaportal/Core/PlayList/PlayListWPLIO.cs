@@ -5,6 +5,7 @@ using System.Xml;
 using System.IO;
 using MediaPortal.Util;
 using MediaPortal.GUI.Library;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Playlists
 {
@@ -35,7 +36,7 @@ namespace MediaPortal.Playlists
               if (srcNode.InnerText.Length > 0)
               {
                 fileName = srcNode.InnerText;
-                Utils.GetQualifiedFilename(basePath, ref fileName);
+                MediaPortal.Util.Utils.GetQualifiedFilename(basePath, ref fileName);
                 PlayListItem newItem = new PlayListItem(fileName, fileName, 0);
                 newItem.Type = PlayListItem.PlayListItemType.Audio;
                 string description;
@@ -50,7 +51,9 @@ namespace MediaPortal.Playlists
       }
       catch (Exception ex)
       {
-        Log.Write("exception loading playlist {0} err:{1} stack:{2}", fileName, ex.Message, ex.StackTrace);
+        ServiceProvider services = GlobalServiceProvider.Instance;
+        ILog log = services.Get<ILog>();
+        log.Info("exception loading playlist {0} err:{1} stack:{2}", fileName, ex.Message, ex.StackTrace);
       }
       return false;
     }

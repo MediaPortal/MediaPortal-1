@@ -44,6 +44,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
 using MediaPortal.TV.Database;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.TV.Recording
 {
@@ -79,11 +80,16 @@ namespace MediaPortal.TV.Recording
 
     public DVBEPG()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+
       m_cardType = (int)EPGCard.Invalid;
     }
 
     public DVBEPG(int card)
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
 
       m_cardType = card;
       m_networkType = NetworkType.DVBS;
@@ -91,6 +97,8 @@ namespace MediaPortal.TV.Recording
     }
     public DVBEPG(int card, NetworkType networkType)
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
       //
       // TODO: Fügen Sie hier die Konstruktorlogik hinzu
       //
@@ -121,6 +129,7 @@ namespace MediaPortal.TV.Recording
     MediaPortal.UserInterface.Controls.MPLabel m_mhwChannels;
     MediaPortal.UserInterface.Controls.MPLabel m_mhwTitles;
     bool m_isLocked = false;
+    protected ILog _log;
 
     // mhw
     public struct Programm
@@ -317,7 +326,7 @@ namespace MediaPortal.TV.Recording
         //
         if (data.extendedEventUseable == false && data.shortEventUseable == false)
         {
-          //Log.Write("epg-grabbing: event IGNORED by language selection");
+          //_log.Info("epg-grabbing: event IGNORED by language selection");
           return 0;
         }
 
@@ -361,7 +370,7 @@ namespace MediaPortal.TV.Recording
         //
         if (tv.Title == String.Empty || tv.Title == "n.a.")
         {
-          //Log.Write("epg: entrie without title found");
+          //_log.Info("epg: entrie without title found");
           dateProgramEnd = DateTime.MinValue;
           return 0;
         }
@@ -371,13 +380,13 @@ namespace MediaPortal.TV.Recording
         //
         if (channelName == String.Empty)
         {
-          //Log.Write("epg-grab: FAILED no channel-name: {0} : {1}",tv.Start,tv.End);
+          //_log.Info("epg-grab: FAILED no channel-name: {0} : {1}",tv.Start,tv.End);
           dateProgramEnd = DateTime.MinValue;
           return 0;
         }
 
 
-        Log.WriteFile(Log.LogType.EPG, "epg-grab: {0} {1}-{2} {3}", tv.Channel, tv.Start, tv.End, tv.Title);
+        _log.Info("epg-grab: {0} {1}-{2} {3}", tv.Channel, tv.Start, tv.End, tv.Title);
         ArrayList programsInDatabase = new ArrayList();
         TVDatabase.GetProgramsPerChannel(tv.Channel, tv.Start + 1, tv.End - 1, ref programsInDatabase);
         if (programsInDatabase.Count == 0)
@@ -396,7 +405,7 @@ namespace MediaPortal.TV.Recording
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        _log.Error(ex);
         dateProgramEnd = DateTime.MinValue;
         return 0;
       }
@@ -414,7 +423,7 @@ namespace MediaPortal.TV.Recording
 
       string longStringA = String.Format("{0:0000}{1:00}{2:00}", year, mon, day);
       string longStringB = String.Format("{0:00}{1:00}{2:00}", hour, min, sec);
-      //Log.Write("epg-grab: string-value={0}",longStringA+longStringB);
+      //_log.Info("epg-grab: string-value={0}",longStringA+longStringB);
       return (long)Convert.ToUInt64(longStringA + longStringB);
     }
     //
@@ -533,7 +542,7 @@ namespace MediaPortal.TV.Recording
           {
             if (lang == "")
               continue;
-            //Log.Write("epg-grabbing: language selected={0}",lang);
+            //_log.Info("epg-grabbing: language selected={0}",lang);
             string codeEE = "";
             string codeSE = "";
 
@@ -543,7 +552,7 @@ namespace MediaPortal.TV.Recording
 
             if (eit.eeLanguageCode != null)
             {
-              //Log.Write("epg-grabbing: e-event-lang={0}",eit.eeLanguageCode);
+              //_log.Info("epg-grabbing: e-event-lang={0}",eit.eeLanguageCode);
               codeEE = eit.eeLanguageCode.ToLower();
               if (codeEE.Length == 3)
               {
@@ -557,7 +566,7 @@ namespace MediaPortal.TV.Recording
 
             if (eit.seLanguageCode != null)
             {
-              //Log.Write("epg-grabbing: s-event-lang={0}",eit.seLanguageCode);
+              //_log.Info("epg-grabbing: s-event-lang={0}",eit.seLanguageCode);
               codeSE = eit.seLanguageCode.ToLower();
               if (codeSE.Length == 3)
               {
@@ -627,7 +636,7 @@ namespace MediaPortal.TV.Recording
         return; // already got channles table
 
       int dataLen = data.Length;
-      Log.WriteFile(Log.LogType.EPG, "mhw-epg: start parse channels for mhw", m_namesBuffer.Count);
+      _log.Info("mhw-epg: start parse channels for mhw", m_namesBuffer.Count);
       lock (m_namesBuffer.SyncRoot)
       {
         for (int n = 4; n < dataLen; n += 22)
@@ -641,9 +650,9 @@ namespace MediaPortal.TV.Recording
           ch.ChannelName = System.Text.Encoding.ASCII.GetString(data, n + 6, 16);
           ch.ChannelName = ch.ChannelName.Trim();
           m_namesBuffer.Add(ch);
-          Log.WriteFile(Log.LogType.EPG, "mhw-epg: added channel {0} to mhw channels table", ch.ChannelName);
+          _log.Info("mhw-epg: added channel {0} to mhw channels table", ch.ChannelName);
         }// for(int n=0
-        //Log.Write("mhw-epg: found {0} channels for mhw",m_namesBuffer.Count);
+        //_log.Info("mhw-epg: found {0} channels for mhw",m_namesBuffer.Count);
         m_mhwChannelsCount = m_namesBuffer.Count;
       }
     }
@@ -678,7 +687,7 @@ namespace MediaPortal.TV.Recording
             th.ThemeText = th.ThemeText.Trim();
             th.ThemeIndex = val;
             m_themeBuffer.Add(th);
-            Log.WriteFile(Log.LogType.EPG, "mhw-epg: theme '{0}' with id 0x{1:X} found", th.ThemeText, th.ThemeIndex);
+            _log.Info("mhw-epg: theme '{0}' with id 0x{1:X} found", th.ThemeText, th.ThemeIndex);
             val++;
             themesNames += 15;
           }
@@ -788,8 +797,8 @@ namespace MediaPortal.TV.Recording
 
       lock (m_titleBuffer.SyncRoot)
       {
-        Log.WriteFile(Log.LogType.EPG, "mhw-epg: count of programms={0}", m_titleBuffer.Count);
-        Log.WriteFile(Log.LogType.EPG, "mhw-epg: buffer contains {0} summaries now", m_summaryBuffer.Count);
+        _log.Info("mhw-epg: count of programms={0}", m_titleBuffer.Count);
+        _log.Info("mhw-epg: buffer contains {0} summaries now", m_summaryBuffer.Count);
         ArrayList list = new ArrayList();
         foreach (Programm prg in m_titleBuffer)
         {
@@ -908,9 +917,9 @@ namespace MediaPortal.TV.Recording
 
         if (count > 0)
         {
-          Log.WriteFile(Log.LogType.EPG, "mhw-epg: added {0} entries to database", m_addsToDatabase);
-          Log.WriteFile(Log.LogType.EPG, "mhw-epg: titles buffer contains {0} objects", m_titleBuffer.Count);
-          Log.WriteFile(Log.LogType.EPG, "mhw-epg: summaries buffer contains {0} objects", m_summaryBuffer.Count);
+          _log.Info("mhw-epg: added {0} entries to database", m_addsToDatabase);
+          _log.Info("mhw-epg: titles buffer contains {0} objects", m_titleBuffer.Count);
+          _log.Info("mhw-epg: summaries buffer contains {0} objects", m_summaryBuffer.Count);
         }
         //m_titleBuffer.Clear();
         for (int i = 0; i < reGrabTimes.Length; ++i)

@@ -24,20 +24,28 @@ using System.ComponentModel;
 using System.Threading;
 using MediaPortal.Player;
 using MediaPortal.GUI.Library;
+using MediaPortal.Utils.Services;
 using Microsoft.Win32;
 
 namespace MediaPortal.Player
 {
 	public class VolumeHandler
-	{
-		#region Constructors
+  {
+    #region Vars
+    protected ILog _log;
+    #endregion
 
-		public VolumeHandler() : this(LoadFromRegistry())
+    #region Constructors
+
+    public VolumeHandler() : this(LoadFromRegistry())
 		{
 		}
 
 		public VolumeHandler(int[] volumeTable)
-		{
+    {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+
 			bool isDigital = true;
       //string mixerControlledComponent = "Wave";
 
@@ -151,7 +159,7 @@ namespace MediaPortal.Player
 			}
 			catch(Exception e)
 			{
-				Log.Write("VolumeHandler.SetVolume: {0}", e.Message);
+				_log.Info("VolumeHandler.SetVolume: {0}", e.Message);
 			}
 		}
 		
@@ -170,7 +178,7 @@ namespace MediaPortal.Player
 			}
 			catch(Exception e)
 			{
-				Log.Write("VolumeHandler.SetVolume: {0}", e.Message);
+				_log.Info("VolumeHandler.SetVolume: {0}", e.Message);
 			}
 		}
 

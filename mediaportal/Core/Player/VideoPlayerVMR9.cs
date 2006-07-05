@@ -62,7 +62,7 @@ namespace MediaPortal.Player
       Vmr9 = new VMR9Util();
 
       // switch back to directx fullscreen mode
-      Log.Write("VideoPlayerVMR9: Enabling DX9 exclusive mode");
+      _log.Info("VideoPlayerVMR9: Enabling DX9 exclusive mode");
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
       GUIWindowManager.SendMessage(msg);
 
@@ -109,7 +109,7 @@ namespace MediaPortal.Player
         if (hr != 0)
         {
           Error.SetError("Unable to play movie", "Unable to render file. Missing codecs?");
-          Log.WriteFile(Log.LogType.Log, true, "VideoPlayer9:Failed to render file -> vmr9");
+          _log.Error("VideoPlayer9:Failed to render file -> vmr9");
           return false;
         }
 
@@ -194,7 +194,7 @@ namespace MediaPortal.Player
       catch (Exception ex)
       {
         Error.SetError("Unable to play movie", "Unable build graph for VMR9");
-        Log.WriteFile(Log.LogType.Log, true, "VideoPlayer9:exception while creating DShow graph {0} {1}", ex.Message, ex.StackTrace);
+        _log.Error("VideoPlayer9:exception while creating DShow graph {0} {1}", ex.Message, ex.StackTrace);
         return false;
       }
     }
@@ -218,7 +218,7 @@ namespace MediaPortal.Player
     {
       if (graphBuilder == null) return;
       int hr;
-      Log.Write("VideoPlayer9:cleanup DShow graph");
+      _log.Info("VideoPlayer9:cleanup DShow graph");
       try
       {
         videoWin = graphBuilder as IVideoWindow;
@@ -241,7 +241,7 @@ namespace MediaPortal.Player
           hr = mediaCtrl.Stop();
           FilterState state;
           hr = mediaCtrl.GetState(10, out state);
-          Log.Write("state:{0} {1:X}", state.ToString(), hr);
+          _log.Info("state:{0} {1:X}", state.ToString(), hr);
           mediaCtrl = null;
         }
         mediaEvt = null;
@@ -305,13 +305,13 @@ namespace MediaPortal.Player
       }
       catch (Exception ex)
       {
-        Log.WriteFile(Log.LogType.Log, true, "VideoPlayerVMR9: Exception while cleanuping DShow graph - {0} {1}", ex.Message, ex.StackTrace);
+        _log.Error("VideoPlayerVMR9: Exception while cleanuping DShow graph - {0} {1}", ex.Message, ex.StackTrace);
       }
 
       //switch back to directx windowed mode
       if (!GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindow))
       {
-        Log.Write("VideoPlayerVMR9: Disabling DX9 exclusive mode");
+        _log.Info("VideoPlayerVMR9: Disabling DX9 exclusive mode");
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
         GUIWindowManager.SendMessage(msg);
       }

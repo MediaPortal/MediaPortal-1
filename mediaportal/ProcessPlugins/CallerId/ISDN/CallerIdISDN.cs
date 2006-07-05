@@ -35,6 +35,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Dialogs;
 using MediaPortal.Player;
+using MediaPortal.Utils.Services;
 
 namespace ProcessPlugins.CallerId
 {
@@ -65,6 +66,8 @@ namespace ProcessPlugins.CallerId
     int resumeTimeOut = -1;
 
     ISDNWatch ISDNWatch;
+
+    static ILog _log;
 
     static private Hashtable AreaCodeLookup
     {
@@ -105,7 +108,7 @@ namespace ProcessPlugins.CallerId
           {
             // TODO detect that it wasn't loaded succesfully or other error conditions, if it *was* located.
             areaTable.Add("000", ERR_FAILED_TO_FIND_AREACODE_XML);  // slot 000 reserved for hashtable status
-            Log.WriteFile(Log.LogType.Log,true,"ISDN: Cannot load area codes from " + areaCodeXMLFile, "error");
+            _log.Error("ISDN: Cannot load area codes from " + areaCodeXMLFile, "error");
           }
 
 
@@ -151,7 +154,7 @@ namespace ProcessPlugins.CallerId
           {
             // TODO detect that it wasn't loaded succesfully or other error conditions, if it *was* located.
             countryTable.Add("000", ERR_FAILED_TO_FIND_COUNTRYCODE_XML);  // slot 000 reserved for hashtable status
-            Log.WriteFile(Log.LogType.Log,true,"ISDN: Cannot load country codes from " + countryCodeXMLFile, "error");
+            _log.Error("ISDN: Cannot load country codes from " + countryCodeXMLFile, "error");
           }
           countryCodeLookup = countryTable;
         } 
@@ -195,7 +198,7 @@ namespace ProcessPlugins.CallerId
           {
             // TODO detect that it wasn't loaded succesfully or other error conditions, if it *was* located.
             translatorTable.Add("000", ERR_FAILED_TO_FIND_COUNTRYCODE_XML);  // slot 000 reserved for hashtable status
-            Log.WriteFile(Log.LogType.Log,true,"ISDN: Cannot load translator codes from " + translatorXMLFile, "error");
+            _log.Error("ISDN: Cannot load translator codes from " + translatorXMLFile, "error");
           }
           countryTranslator = translatorTable;
         } 
@@ -203,6 +206,11 @@ namespace ProcessPlugins.CallerId
       }
     }
 
+    public CallerIdISDN()
+    {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+    }
 
     #region ISetupForm Members
 
@@ -280,7 +288,7 @@ namespace ProcessPlugins.CallerId
         if (myArea == null)
           myArea = Strings.Unknown;
         if (myAreaCode != "")
-          Log.Write("ISDN: Home location: {0} ({1}), {2} ({3})", myArea, myAreaCode, myCountryLong, myCountryCode);
+          _log.Info("ISDN: Home location: {0} ({1}), {2} ({3})", myArea, myAreaCode, myCountryLong, myCountryCode);
 
         ISDNWatch = new ISDNWatch();
         ISDNWatch.Start();
@@ -289,7 +297,7 @@ namespace ProcessPlugins.CallerId
       else
       {
         ISDNdisabled = true;
-        Log.Write("ISDN: CAPI error. No ISDN card installed? Caller-ID disabled.");
+        _log.Info("ISDN: CAPI error. No ISDN card installed? Caller-ID disabled.");
       }
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
@@ -362,9 +370,9 @@ namespace ProcessPlugins.CallerId
           caller = OutlookHelper.OutlookLookup(outlookQuery);
 
         if (caller.Name != string.Empty)
-          Log.Write("ISDN: Incoming call from {0} ({1}, {2} / {3})", caller.Name, location, (string)CountryTranslator[country], outlookQuery);
+          _log.Info("ISDN: Incoming call from {0} ({1}, {2} / {3})", caller.Name, location, (string)CountryTranslator[country], outlookQuery);
         else
-          Log.Write("ISDN: Incoming call ({0}, {1} / {2})", location, (string)CountryTranslator[country], outlookQuery);
+          _log.Info("ISDN: Incoming call ({0}, {1} / {2})", location, (string)CountryTranslator[country], outlookQuery);
 
 
         // Notify window popup

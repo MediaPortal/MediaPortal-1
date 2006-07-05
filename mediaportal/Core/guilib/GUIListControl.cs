@@ -29,7 +29,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Forms; // used for Keys definition
 using Microsoft.DirectX.Direct3D;
-using MediaPortal.Util;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.GUI.Library
 {
@@ -1318,7 +1318,7 @@ namespace MediaPortal.GUI.Library
             if (message.Label == item.Path)
             {
               item.IsDownloading = true;
-              item.Label2 = Utils.GetSize(message.Param1);
+              item.Label2 = MediaPortal.Util.Utils.GetSize(message.Param1);
               if (item.FileInfo != null)
               {
                 double length = (double)item.FileInfo.Length;
@@ -1350,7 +1350,7 @@ namespace MediaPortal.GUI.Library
               item.IsDownloading = false;
               if (item.FileInfo != null)
               {
-                item.Label2 = Utils.GetSize(item.FileInfo.Length);
+                item.Label2 = MediaPortal.Util.Utils.GetSize(item.FileInfo.Length);
               }
             }
           }
@@ -2754,7 +2754,7 @@ namespace MediaPortal.GUI.Library
 
       try
       {
-        //Log.Write("Moving List Item {0} down. Old index:{1}, new index{2}", item1.Path, iItem, iNextItem);
+        //_log.Info("Moving List Item {0} down. Old index:{1}, new index{2}", item1.Path, iItem, iNextItem);
         System.Threading.Monitor.Enter(this);
         _listItems[iItem] = item2;
         _listItems[iNextItem] = item1;
@@ -2763,7 +2763,7 @@ namespace MediaPortal.GUI.Library
 
       catch (Exception ex)
       {
-        Log.Write("GUIListControl.MoveItemDown caused an exception: {0}", ex.Message);
+        _log.Info("GUIListControl.MoveItemDown caused an exception: {0}", ex.Message);
         selectedItemIndex = -1;
       }
 
@@ -2795,7 +2795,7 @@ namespace MediaPortal.GUI.Library
 
       try
       {
-        //Log.Write("Moving List Item {0} up. Old index:{1}, new index{2}", item1.Path, iItem, iPreviousItem);
+        //_log.Info("Moving List Item {0} up. Old index:{1}, new index{2}", item1.Path, iItem, iPreviousItem);
         System.Threading.Monitor.Enter(this);
         _listItems[iItem] = item2;
         _listItems[iPreviousItem] = item1;
@@ -2804,7 +2804,7 @@ namespace MediaPortal.GUI.Library
 
       catch (Exception ex)
       {
-        Log.Write("GUIListControl.MoveItemUp caused an exception: {0}", ex.Message);
+        _log.Info("GUIListControl.MoveItemUp caused an exception: {0}", ex.Message);
         selectedItemIndex = -1;
       }
 

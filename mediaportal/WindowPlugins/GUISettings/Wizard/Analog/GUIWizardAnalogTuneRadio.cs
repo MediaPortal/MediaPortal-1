@@ -105,7 +105,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 			}
 			catch(Exception ex)
 			{
-				Log.WriteFile(Log.LogType.Log,true,"ex:{0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);
+				_log.Error("ex:{0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);
 			}
 			finally
 			{
@@ -121,7 +121,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 		}
 		void ScanChannels(TVCaptureDevice captureCard)
 		{
-			Log.Write("Analog-scan:ScanChannels() {0}/{1}",currentFrequencyIndex,200);
+			_log.Info("Analog-scan:ScanChannels() {0}/{1}",currentFrequencyIndex,200);
 			if (currentFrequencyIndex < 0 || currentFrequencyIndex >=200) return;
 
 
@@ -136,7 +136,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 
 		void ScanNextFrequency(TVCaptureDevice captureCard,int offset)
 		{
-			Log.Write("Analog-scan:ScanNextFrequency() {0}/{1}",currentFrequencyIndex,maxFreq);
+			_log.Info("Analog-scan:ScanNextFrequency() {0}/{1}",currentFrequencyIndex,maxFreq);
 			if (currentFrequencyIndex <minFreq) currentFrequencyIndex =minFreq;
 			if (currentFrequencyIndex >=maxFreq) return;
 
@@ -146,7 +146,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 			if (!captureCard.SignalPresent())
 				System.Threading.Thread.Sleep(400);
 
-			Log.WriteFile(Log.LogType.Log,"Analog-scan:tune:{0}",currentFrequencyIndex);
+			_log.Info("Analog-scan:tune:{0}",currentFrequencyIndex);
 
 			RadioStation station = new RadioStation();
 			float freq=(float)currentFrequencyIndex;
@@ -154,7 +154,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 			station.Name=String.Format("{0} FM",freq.ToString("f2"));
 			station.Frequency=currentFrequencyIndex;
 			captureCard.StartRadio(station);
-			Log.WriteFile(Log.LogType.Log,"Analog-scan:tuned");
+			_log.Info("Analog-scan:tuned");
 			return;
 		}
 
@@ -172,7 +172,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 
 		void UpdateList()
 		{
-			Log.Write("UpdateList()");
+			_log.Info("UpdateList()");
 			listChannelsFound.Clear();
 			if (listRadioChannels.Count==0)
 			{
@@ -180,7 +180,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 				item.Label="No stations found";
 				item.IsFolder=false;
 				listChannelsFound.Add(item);
-				Log.Write("UpdateList() done");
+				_log.Info("UpdateList() done");
 				return;
 
 			}
@@ -202,7 +202,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 				count++;
 			}
 			listChannelsFound.ScrollToEnd();
-			Log.Write("UpdateList() done");
+			_log.Info("UpdateList() done");
 		}
 		void UpdateStatus()
 		{
@@ -217,7 +217,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 			string description=String.Format("{0} FM", freq.ToString("f2"));
 			lblChannelsFound.Label=description;
 			lblStatus.Label=String.Format("Found {0} radio stations",newChannels);
-			Log.Write("Analog-scan:ScanChannels() done");
+			_log.Info("Analog-scan:ScanChannels() done");
 		}
 
 		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)

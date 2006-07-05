@@ -898,7 +898,7 @@ namespace MediaPortal.GUI.Weather
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
         skipConnectionTest = xmlreader.GetValueAsBool("weather", "skipconnectiontest", false);
 
-      Log.Write("MyWeather.SkipConnectionTest: {0}", skipConnectionTest);
+      _log.Info("MyWeather.SkipConnectionTest: {0}", skipConnectionTest);
 
       int code = 0;
 
@@ -906,7 +906,7 @@ namespace MediaPortal.GUI.Weather
       {
         if (System.IO.File.Exists(weatherFile)) return true;
 
-        Log.Write("MyWeather.Download: No internet connection {0}", code);
+        _log.Info("MyWeather.Download: No internet connection {0}", code);
 
         if (skipConnectionTest == false)
           return false;
@@ -930,7 +930,7 @@ namespace MediaPortal.GUI.Weather
         }
         catch (Exception ex)
         {
-          Log.Write("Failed to download weather:{0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+          _log.Info("Failed to download weather:{0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
         }
       }
       return false;

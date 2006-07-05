@@ -36,7 +36,7 @@ using System.Xml;
 using System.IO;
 using Microsoft.Win32;
 using MediaPortal.GUI.Library;
-
+using MediaPortal.Utils.Services;
 
 namespace ProcessPlugins.TvMovie
 {
@@ -291,9 +291,12 @@ namespace ProcessPlugins.TvMovie
     /// </summary>
     private void LoadMapping()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      ILog log = services.Get<ILog>();
+
       if (!File.Exists(_xmlFile))
       {
-        Log.Write("TVMovie: Mapping file \"{0}\" does not exist, using empty list", _xmlFile);
+        log.Info("TVMovie: Mapping file \"{0}\" does not exist, using empty list", _xmlFile);
         return;
       }
 
@@ -352,8 +355,8 @@ namespace ProcessPlugins.TvMovie
       }
       catch (System.Xml.XmlException ex)
       {
-        Log.Write("TVMovie: The mapping file \"{0}\" seems to be corrupt", _xmlFile);
-        Log.Write("TVMovie: {0}", ex.Message);
+        log.Info("TVMovie: The mapping file \"{0}\" seems to be corrupt", _xmlFile);
+        log.Info("TVMovie: {0}", ex.Message);
       }
       treeViewChannels.EndUpdate();
     }

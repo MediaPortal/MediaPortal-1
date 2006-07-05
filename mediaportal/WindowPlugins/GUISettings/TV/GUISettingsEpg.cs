@@ -44,9 +44,9 @@ namespace WindowPlugins.GUISettings.TV
           GUIListItem item = new GUIListItem();
           item.Label = chan.Name;
           item.IsFolder = false;
-          item.ThumbnailImage = Utils.GetCoverArt(Thumbs.TVChannel, chan.Name);
-          item.IconImage = Utils.GetCoverArt(Thumbs.TVChannel, chan.Name);
-          item.IconImageBig = Utils.GetCoverArt(Thumbs.TVChannel, chan.Name);
+          item.ThumbnailImage = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, chan.Name);
+          item.IconImage = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, chan.Name);
+          item.IconImageBig = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, chan.Name);
           item.Selected = chan.AutoGrabEpg;
           item.TVTag = chan;
           listChannels.Add(item);

@@ -170,6 +170,10 @@
       <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
       <Name>DirectShowLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Utils\Utils.csproj">
+      <Project>{6DA0E4DF-6230-4642-98B5-E690BB6942BB}</Project>
+      <Name>Utils</Name>
+    </ProjectReference>
     <Reference Include="Interop.TunerLib">
       <Name>Interop.TunerLib</Name>
       <HintPath>..\Interop.TunerLib.dll</HintPath>

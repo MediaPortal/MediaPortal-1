@@ -33,6 +33,7 @@ using System.Reflection;
 using MadMouse;
 using System.Runtime.InteropServices;
 using Microsoft.Win32;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.RemoteControls
 {
@@ -52,13 +53,13 @@ namespace MediaPortal.RemoteControls
 		private static IntPtr	_windowHandle;
 		private static bool		_KeyMapFileLoaded	= false;
 		private static DataSet	_KeyMapFile			= new DataSet();
+    private static ILog _log;
 		#endregion
 
 		public FireDTVRemote()
 		{
-			//
-			// TODO: Add constructor logic here
-			//
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
 		}
 		#region Private Methods
 		private void StartFireDTVComms()
@@ -72,7 +73,7 @@ namespace MediaPortal.RemoteControls
 					sourceFilter.StartFireDTVRemoteControlSupport();
 				}
 				else
-					Log.Write("FireDTV Source Filter Not Found");
+					_log.Info("FireDTV Source Filter Not Found");
 			}
 		}
 		
@@ -82,7 +83,7 @@ namespace MediaPortal.RemoteControls
 				if ( fi.Name.ToUpper() == Value.ToUpper() )
 					return fi.GetValue( null );    
 
-			Log.Write(string.Format("FireSATRemote StringToEnum : Can't convert {0} to {1}", Value,t.ToString()));
+			_log.Info(string.Format("FireSATRemote StringToEnum : Can't convert {0} to {1}", Value,t.ToString()));
 			return null;
 		}
 		#endregion
@@ -105,12 +106,12 @@ namespace MediaPortal.RemoteControls
               _FireSAPapiFound = File.Exists(fullDllPath + "FiresatApi.dll");
               if (!_FireSAPapiFound)
                 _remoteEnabled = false;
-              MediaPortal.GUI.Library.Log.Write("FireDTV: DLL found in directory: {0}", fullDllPath);
+              _log.Info("FireDTV: DLL found in directory: {0}", fullDllPath);
             }
           }
           catch (Exception)
           {
-            MediaPortal.GUI.Library.Log.Write("FireDTV: unable to determine firedtv directory" );
+            _log.Info("FireDTV: unable to determine firedtv directory" );
             _remoteEnabled = false;
             return;
           }
@@ -136,16 +137,16 @@ namespace MediaPortal.RemoteControls
 						_KeyMapFileLoaded = true;
 					}
 					else
-						Log.Write("FireDTV Key Map File Not Found!");
+						_log.Info("FireDTV Key Map File Not Found!");
 				}
 			}
 			catch(FileNotFoundException eFileNotFound)
 			{
-				Log.Write(eFileNotFound.Message);
+				_log.Info(eFileNotFound.Message);
 			}
 			catch(MadMouse.FireDTV.FireDTVException eFireDTV)
 			{
-				Log.Write(eFireDTV.Message);
+				_log.Info(eFireDTV.Message);
 			}
 		}
 
@@ -223,7 +224,7 @@ namespace MediaPortal.RemoteControls
 							}
 							catch(InvalidCastException eCast)
 							{
-								Log.Write("FireDTV Map Key Error : " + eCast.Message);
+								_log.Info("FireDTV Map Key Error : " + eCast.Message);
 							}
 						}
 				

@@ -224,7 +224,7 @@ namespace MediaPortal.EPG.config
 
       if (System.IO.File.Exists(_strChannelsFile))
       {
-        //Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: Loading Existing channels.xml");
+        //_log.Info("WebEPG Config: Loading Existing channels.xml");
         MediaPortal.Webepg.Profile.Xml xmlreader = new MediaPortal.Webepg.Profile.Xml(_strChannelsFile);
         int channelCount = xmlreader.GetValueAsInt(country, "TotalChannels", 0);
 
@@ -254,7 +254,7 @@ namespace MediaPortal.EPG.config
     {
       if (System.IO.File.Exists(_strChannelsFile))
       {
-        //Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: Loading Existing channels.xml");
+        //_log.Info("WebEPG Config: Loading Existing channels.xml");
         MediaPortal.Webepg.Profile.Xml xmlreader = new MediaPortal.Webepg.Profile.Xml(_strChannelsFile);
         int channelCount = xmlreader.GetValueAsInt("ChannelInfo", "TotalChannels", 0);
 
@@ -302,7 +302,7 @@ namespace MediaPortal.EPG.config
         XmlNodeList channelList;
         try
         {
-          //Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: File: {0}", file.Name);
+          //_log.Info("WebEPG Config: File: {0}", file.Name);
           xml.Load(_strGrabberDir + grabber);
           channelList = xml.DocumentElement.SelectNodes("/profile/section/entry");
 
@@ -319,7 +319,7 @@ namespace MediaPortal.EPG.config
         }
         catch (System.Xml.XmlException) // ex)
         {
-          //Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: File open failed - XML error");
+          //_log.Info("WebEPG Config: File open failed - XML error");
           return;
         }
 
@@ -372,7 +372,7 @@ namespace MediaPortal.EPG.config
       if (System.IO.Directory.Exists(_strGrabberDir + country) && _ChannelList != null)
       {
         System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(_strGrabberDir + country);
-        //Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: Directory: {0}", Location);
+        //_log.Info("WebEPG Config: Directory: {0}", Location);
         GrabberInfo gInfo;
         foreach (System.IO.FileInfo file in dir.GetFiles("*.xml"))
         {
@@ -381,7 +381,7 @@ namespace MediaPortal.EPG.config
           XmlNodeList channelList;
           try
           {
-            //Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: File: {0}", file.Name);
+            //_log.Info("WebEPG Config: File: {0}", file.Name);
             xml.Load(file.FullName);
             channelList = xml.DocumentElement.SelectNodes("/profile/section/entry");
 
@@ -398,7 +398,7 @@ namespace MediaPortal.EPG.config
           }
           catch (System.Xml.XmlException) // ex)
           {
-            //Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: File open failed - XML error");
+            //_log.Info("WebEPG Config: File open failed - XML error");
             return;
           }
 

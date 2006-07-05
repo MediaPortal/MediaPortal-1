@@ -437,12 +437,12 @@ namespace MediaPortal.GUI.Video
           else if (CurrentSortMethod == VideoSort.SortMethod.Label)
             item.Label2 = movie.DVDLabel.ToString();
           else if (CurrentSortMethod == VideoSort.SortMethod.Size)
-            item.Label2 = Utils.SecondsToHMString(movie.RunTime * 60);
+            item.Label2 = MediaPortal.Util.Utils.SecondsToHMString(movie.RunTime * 60);
         }
         else
         {
           string strSize1 = String.Empty, strDate = String.Empty;
-          if (item.FileInfo != null) strSize1 = Utils.GetSize(item.FileInfo.Length);
+          if (item.FileInfo != null) strSize1 = MediaPortal.Util.Utils.GetSize(item.FileInfo.Length);
           if (item.FileInfo != null) strDate = item.FileInfo.ModificationTime.ToShortDateString() + " " + item.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
           if (CurrentSortMethod == VideoSort.SortMethod.Name)
             item.Label2 = strSize1;
@@ -556,7 +556,7 @@ namespace MediaPortal.GUI.Video
       if (!pItem.IsFolder)
       {
         //TODO
-        if (Utils.IsVideo(pItem.Path) && !PlayListFactory.IsPlayList(pItem.Path))
+        if (MediaPortal.Util.Utils.IsVideo(pItem.Path) && !PlayListFactory.IsPlayList(pItem.Path))
         {
           PlayListItem playlistItem = new PlayListItem();
           playlistItem.Type = PlayListItem.PlayListItemType.Video;

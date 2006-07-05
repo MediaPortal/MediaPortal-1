@@ -245,7 +245,7 @@ namespace WindowPlugins.GUISettings.Epg
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         _strTVGuideFile = xmlreader.GetValueAsString("xmltv", "folder", "xmltv");
-        _strTVGuideFile = Utils.RemoveTrailingSlash(_strTVGuideFile);
+        _strTVGuideFile = MediaPortal.Util.Utils.RemoveTrailingSlash(_strTVGuideFile);
         _strTVGuideFile += @"\tvguide.xml";
       }
       if (!System.IO.File.Exists(_strTVGuideFile))

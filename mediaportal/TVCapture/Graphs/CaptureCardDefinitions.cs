@@ -25,6 +25,8 @@ using DShowNET.Helper;
 using System.Collections;
 using System.Collections.Generic;
 using MediaPortal.GUI.Library;
+using MediaPortal.Utils.Services;
+
 namespace TVCapture
 {
   #region Data Classes
@@ -264,13 +266,16 @@ namespace TVCapture
     /// </summary>
     private CaptureCardDefinitions()
     {
-      //			Log.Write("CaptureCardDefinitions:ctor IN");
+      //			_log.Info("CaptureCardDefinitions:ctor IN");
+
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      ILog log = services.Get<ILog>();
 
       XmlDocument doc = new XmlDocument();
       if (!System.IO.File.Exists(@"CaptureCardDefinitions.xml"))
       {
-        Log.Write(" Error: CaptureCardDefinitions.xml file not found!");
-        Log.Write("CaptureCardDefinitions:ctor OUT");
+        log.Info(" Error: CaptureCardDefinitions.xml file not found!");
+        log.Info("CaptureCardDefinitions:ctor OUT");
         return;
       }
 
@@ -280,7 +285,7 @@ namespace TVCapture
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        log.Error(ex);
         return;
       }
 
@@ -291,7 +296,7 @@ namespace TVCapture
       {
         if (nodeList != null)
         {
-          //Log.Write(" Loading: capturecards...");
+          //_log.Info(" Loading: capturecards...");
 
           foreach (XmlNode cc in nodeList)
           {
@@ -325,13 +330,13 @@ namespace TVCapture
             cardConfig.CommercialName = cc.Attributes.GetNamedItem(@"commercialname").InnerText;
             cardConfig.CaptureName = cc.Attributes.GetNamedItem(@"capturename").InnerText;
             _mCaptureCardDefinitions.Add(cardConfig);
-            //Log.Write("device:{0}", cardConfig.CommercialName);
+            //_log.Info("device:{0}", cardConfig.CommercialName);
 
             // Get the cards capabilities...
             XmlNode capNode = cc.SelectSingleNode(@"capabilities");
             if (capNode != null)
             {
-              //Log.Write("  Getting capabilities...");
+              //_log.Info("  Getting capabilities...");
               cardConfig.Capabilities.HasTv = XmlConvert.ToBoolean(capNode.Attributes.GetNamedItem(@"tv").InnerText);
               cardConfig.Capabilities.HasRadio = XmlConvert.ToBoolean(capNode.Attributes.GetNamedItem(@"radio").InnerText);
               bool isBda = XmlConvert.ToBoolean(capNode.Attributes.GetNamedItem(@"bda").InnerText);
@@ -344,14 +349,14 @@ namespace TVCapture
               else if (isMpeg2)
                 cardConfig.Capabilities.CardType = CardTypes.Analog;
 
-              //Log.Write("    TV:{0} radio:{1} bda:{2} mce:{3} mpeg2:{4} s/w:{5}",
+              //_log.Info("    TV:{0} radio:{1} bda:{2} mce:{3} mpeg2:{4} s/w:{5}",
               //					cardConfig.Capabilities.HasTv,cardConfig.Capabilities.HasRadio,cardConfig.Capabilities.IsBDADevice,
               //					cardConfig.Capabilities.IsMceDevice,	cardConfig.Capabilities.IsMpeg2Device,cardConfig.Capabilities.IsSoftwareDevice);																																																																
 
             }
             else
             {
-              //Log.Write("  Failed getting capabilities...");
+              //_log.Info("  Failed getting capabilities...");
             }
 
             // First do the tv part, then the (optional) radio part...
@@ -408,7 +413,7 @@ namespace TVCapture
             XmlNode radioNode = cc.SelectSingleNode(@"radio");
             if (radioNode != null)
             {
-              //Log.Write("  Getting radio...");
+              //_log.Info("  Getting radio...");
 
               XmlNode filterNodes = radioNode.SelectSingleNode(@"filters");
               FilterDefinition dsfilter;
@@ -454,14 +459,14 @@ namespace TVCapture
 
 
             }
-            //Log.Write("  Loaded: DeviceId {0}, CommercialName {1}, CaptureName {2}",
+            //_log.Info("  Loaded: DeviceId {0}, CommercialName {1}, CaptureName {2}",
             //	cardConfig.DeviceId, cardConfig.CommercialName, cardConfig.CaptureName);
           }
         }
       }
       catch (System.Exception ex)
       {
-        Log.Write(ex);
+        log.Error(ex);
       }
     }
 

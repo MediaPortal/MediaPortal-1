@@ -154,7 +154,7 @@ namespace MediaPortal.Configuration.Sections
         string prevSkin = xmlwriter.GetValueAsString("skin", "name", "BlueTwo");
         if (prevSkin != listViewAvailableSkins.SelectedItems[0].Text)
         {
-          Utils.DeleteFiles(@"skin\" + listViewAvailableSkins.Text + @"\fonts", "*");
+          MediaPortal.Util.Utils.DeleteFiles(@"skin\" + listViewAvailableSkins.Text + @"\fonts", "*");
         }
         xmlwriter.SetValue("skin", "name", listViewAvailableSkins.SelectedItems[0].Text);
       }

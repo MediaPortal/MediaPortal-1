@@ -614,7 +614,7 @@ namespace MediaPortal.GUI.Music
 
                     foreach (System.IO.FileInfo fi in files)
                     {
-                        if (Utils.IsAudio(fi.FullName))
+                        if (MediaPortal.Util.Utils.IsAudio(fi.FullName))
                         {
                             // This appears to be a music folder
                             isMusicFolder = true;
@@ -636,7 +636,7 @@ namespace MediaPortal.GUI.Music
 
                 catch (Exception ex)
                 {
-                    Log.Write("Cover art grabber exception:{0}", ex.ToString());
+                    _log.Info("Cover art grabber exception:{0}", ex.ToString());
                     continue;
                 }
 
@@ -675,7 +675,7 @@ namespace MediaPortal.GUI.Music
                     {
                         // Have we already processed a track for this folder
                         // and if so, is it an audio file?
-                        if (foundTrackForThisDir || !Utils.IsAudio(fsi.FullName))
+                      if (foundTrackForThisDir || !MediaPortal.Util.Utils.IsAudio(fsi.FullName))
                             continue;
 
                         string path = System.IO.Path.GetDirectoryName(fsi.FullName);
@@ -703,7 +703,7 @@ namespace MediaPortal.GUI.Music
 
                             string curTrackPath = files[i].FullName;
 
-                            if (!Utils.IsAudio(curTrackPath))
+                            if (!MediaPortal.Util.Utils.IsAudio(curTrackPath))
                                 continue;
 
                             foundAudioFileCount++;
@@ -767,7 +767,7 @@ namespace MediaPortal.GUI.Music
                         {
                             curCount++;
 
-                            //Log.Write("Cover art grabber:updating status for {0}", song.Album);
+                            //_log.Info("Cover art grabber:updating status for {0}", song.Album);
                             UpdateAlbumScanProgress(song.Album, albumCount, curCount);
                             foundTrackForThisDir = true;
 
@@ -786,7 +786,7 @@ namespace MediaPortal.GUI.Music
 
                 catch (Exception ex)
                 {
-                    Log.Write("Cover art grabber exception:{0}", ex.ToString());
+                    _log.Info("Cover art grabber exception:{0}", ex.ToString());
                     continue;
                 }
             }
@@ -921,9 +921,9 @@ namespace MediaPortal.GUI.Music
 
                 GUIWindowManager.Process();
 
-                Log.Write("Cover art grabber:getting folder count for {0}...", _TopLevelFolderName);
+                _log.Info("Cover art grabber:getting folder count for {0}...", _TopLevelFolderName);
                 GetAlbumCount(_TopLevelFolderName, ref albumCount);
-                Log.Write("Cover art grabber:{0} folders found", albumCount);
+                _log.Info("Cover art grabber:{0} folders found", albumCount);
             }
 
             finally
@@ -937,9 +937,9 @@ namespace MediaPortal.GUI.Music
             ShowTotalProgressBar(true);
             GUIWindowManager.Process();
 
-            Log.Write("Cover art grabber:getting pending cover count...");
+            _log.Info("Cover art grabber:getting pending cover count...");
             GetCoverArtList(_TopLevelFolderName, ref albumCount, ref curCount, _SkipIfCoverArtExists, ref songs);
-            Log.Write("Cover art grabber:{0} covers queued for update", albumCount);
+            _log.Info("Cover art grabber:{0} covers queued for update", albumCount);
 
             if (_Abort)
             {
@@ -1024,7 +1024,7 @@ namespace MediaPortal.GUI.Music
 
             catch (Exception ex)
             {
-                Log.Write("Cover art grabber exception:{0}", ex.ToString());
+                _log.Info("Cover art grabber exception:{0}", ex.ToString());
                 _GrabCompletedSuccessfully = false;
             }
 
@@ -1043,7 +1043,7 @@ namespace MediaPortal.GUI.Music
         {
             if (GUICoverArtGrabberResults.CancelledByUser || GuiCoverArtResults.AmazonWebService.AbortGrab)
             {
-                Log.Write("Cover art grabber:user aborted grab");
+                _log.Info("Cover art grabber:user aborted grab");
 
                 _AbortedByUser = true;
                 return true;

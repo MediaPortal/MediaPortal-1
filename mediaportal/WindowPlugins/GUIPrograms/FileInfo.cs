@@ -359,7 +359,7 @@ namespace ProgramsDatabase
 
         i++;
         strFile = curFile.GetNewImageFile(curApp, Path.GetExtension(strImgUrl));
-        Utils.DownLoadImage(strImgUrl, strFile);
+        MediaPortal.Util.Utils.DownLoadImage(strImgUrl, strFile);
         if ((File.Exists(strFile)) && (curFile.Imagefile == ""))
         {
           // download successful

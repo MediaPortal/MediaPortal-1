@@ -327,7 +327,7 @@ namespace ProgramsDatabase
       {
         // no covershot found: maybe there's still a review there....
         startOfOvTag = strHTMLLow.IndexOf("<table border=0 bgcolor=\"#d8d8d8\"");
-        //	Log.Write("dw scraper: {0}", iStartOfOV);
+        //	_log.Info("dw scraper: {0}", iStartOfOV);
       }
       if (startOfOvTag !=  - 1)
       {
@@ -447,7 +447,7 @@ namespace ProgramsDatabase
       //			catch(Exception ex)
       catch (Exception)
       {
-        //				Log.Write("AllGameInfoScraper exception: {0}", ex.ToString());
+        //				_log.Info("AllGameInfoScraper exception: {0}", ex.ToString());
       }
 
       return "";

@@ -98,6 +98,10 @@
       <Project>{3333B71D-6304-452C-BEA5-D037E7B3AA6B}</Project>
       <Name>ProcessPlugins</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Utils\Utils.csproj">
+      <Project>{6DA0E4DF-6230-4642-98B5-E690BB6942BB}</Project>
+      <Name>Utils</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\RemotePlugins.csproj">
       <Project>{0A234721-1F13-4DF8-9B1E-64D9E3111203}</Project>
       <Name>RemotePlugins</Name>

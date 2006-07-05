@@ -35,6 +35,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
 using MediaPortal.TV.Scanning;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Configuration.Sections
 {
@@ -107,7 +108,7 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel3;
-
+    protected ILog _log;
 
 
     public Wizard_DVBSTV()
@@ -119,6 +120,9 @@ namespace MediaPortal.Configuration.Sections
     public Wizard_DVBSTV(string name)
       : base(name)
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+
       _card = null;
       // This call is required by the Windows Form Designer.
       InitializeComponent();
@@ -891,10 +895,10 @@ namespace MediaPortal.Configuration.Sections
     {
       if (_card == null)
       {
-        Log.Write("load DVBS:no card");
+        _log.Info("load DVBS:no card");
         return;
       }
-      Log.Write("load DVBS:{0}", _card.FriendlyName);
+      _log.Info("load DVBS:{0}", _card.FriendlyName);
       string filename = String.Format(@"database\card_{0}.xml", _card.FriendlyName);
 
 
@@ -1023,7 +1027,7 @@ namespace MediaPortal.Configuration.Sections
 
         }
         string transponder = xmlreader.GetValueAsString("dvbs", "transponder1", "");
-        Log.Write("1:{0}", transponder);
+        _log.Info("1:{0}", transponder);
         if (transponder != "")
         {
           for (int i = 0; i < cbTransponder.Items.Count; ++i)
@@ -1076,7 +1080,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      Log.Write("Save DVBS:{0}", _card.FriendlyName);
+      _log.Info("Save DVBS:{0}", _card.FriendlyName);
       string filename = String.Format(@"database\card_{0}.xml", _card.FriendlyName);
       // save settings
 

@@ -443,7 +443,7 @@ namespace MediaPortal.GUI.Radio
         item.IsFolder = true;
         item.MusicTag = null;
         item.ThumbnailImage = String.Empty;
-        Utils.SetDefaultIcons(item);
+        MediaPortal.Util.Utils.SetDefaultIcons(item);
         listView.Add(item);
         thumbnailView.Add(item);
 
@@ -479,7 +479,7 @@ namespace MediaPortal.GUI.Radio
             {
               item.IconImageBig = "DefaultMyradioStreamBig.png";
               item.IconImage = "DefaultMyradioStream.png";
-              string thumbnail = Utils.GetCoverArt(Thumbs.Radio, station.Name);
+              string thumbnail = MediaPortal.Util.Utils.GetCoverArt(Thumbs.Radio, station.Name);
               if (System.IO.File.Exists(thumbnail))
               {
                 item.IconImageBig = thumbnail;
@@ -499,7 +499,7 @@ namespace MediaPortal.GUI.Radio
                 item.IconImageBig = "DefaultMyradioBig.png";
                 item.IconImage = "DefaultMyradio.png";
               }
-              string thumbnail = Utils.GetCoverArt(Thumbs.Radio, station.Name);
+              string thumbnail = MediaPortal.Util.Utils.GetCoverArt(Thumbs.Radio, station.Name);
               if (System.IO.File.Exists(thumbnail))
               {
                 item.IconImageBig = thumbnail;
@@ -788,7 +788,7 @@ namespace MediaPortal.GUI.Radio
           if (item.IsFolder) continue;
 
           // if item is a playlist
-          if (Utils.IsPlayList(item.Path))
+          if (MediaPortal.Util.Utils.IsPlayList(item.Path))
           {
             // then load the playlist
             PlayList playlist = new PlayList();
@@ -835,7 +835,7 @@ namespace MediaPortal.GUI.Radio
 
     void Play(GUIListItem item)
     {
-      if (Utils.IsPlayList(item.Path))
+      if (MediaPortal.Util.Utils.IsPlayList(item.Path))
       {
         currentPlayList = new PlayList();
         IPlayListIO loader = PlayListFactory.CreateIO(item.Path);

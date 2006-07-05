@@ -22,6 +22,7 @@
 using System.IO;
 using System.Text;
 using MediaPortal.GUI.Library;
+using MediaPortal.Utils.Services;
 
 namespace ProgramsDatabase
 {
@@ -31,6 +32,7 @@ namespace ProgramsDatabase
   public class MyFileIniReader
   {
     private string m_FileName = "";
+    private ILog _log;
 
     // event: read new section line
     public delegate void IniEventHandler(string strLine);
@@ -41,6 +43,12 @@ namespace ProgramsDatabase
     public event IniEventHandler OnReadAdditionalLine = null;
     // event: read the end of a section
     public event IniEventHandler OnReadEndSection = null;
+
+    public MyFileIniReader()
+    {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+    }
 
     private bool IsSectionLine(string strVal)
     {
@@ -75,7 +83,7 @@ namespace ProgramsDatabase
         return ;
       if (!File.Exists(m_FileName))
       {
-        Log.Write("MyFileIniReader: INI-File not found ({0})", m_FileName);
+        _log.Info("MyFileIniReader: INI-File not found ({0})", m_FileName);
         return ;
       }
       StreamReader reader = new StreamReader(m_FileName, Encoding.GetEncoding(1252));

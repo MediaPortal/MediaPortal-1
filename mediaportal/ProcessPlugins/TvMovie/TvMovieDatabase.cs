@@ -35,7 +35,7 @@ using System.Diagnostics;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using System.Threading;
-
+using MediaPortal.Utils.Services;
 
 namespace ProcessPlugins.TvMovie
 {
@@ -54,8 +54,9 @@ namespace ProcessPlugins.TvMovie
     public event ProgramsChanged OnProgramsChanged;
     public delegate void StationsChanged(int value, int maximum, string text);
     public event StationsChanged OnStationsChanged;
+    protected ILog _log;
 
-
+ 
     private struct Mapping
     {
       private string _channel;
@@ -222,9 +223,12 @@ namespace ProcessPlugins.TvMovie
 
     public TvMovieDatabase()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+
       string dataProviderString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source={0}";
 
-      Log.Write("TVMovie: DB path: {0}", DatabasePath);
+      _log.Info("TVMovie: DB path: {0}", DatabasePath);
 
       if (DatabasePath != string.Empty)
         dataProviderString = string.Format(dataProviderString, DatabasePath);
@@ -268,7 +272,7 @@ namespace ProcessPlugins.TvMovie
     {
       if (!File.Exists(_xmlFile))
       {
-        Log.Write("TVMovie: Mapping file \"{0}\" does not exist", _xmlFile);
+        _log.Info("TVMovie: Mapping file \"{0}\" does not exist", _xmlFile);
         return null;
       }
       ArrayList mappingList = new ArrayList();
@@ -299,8 +303,8 @@ namespace ProcessPlugins.TvMovie
       }
       catch (System.Xml.XmlException ex)
       {
-        Log.Write("TVMovie: The mapping file \"{0}\" seems to be corrupt", _xmlFile);
-        Log.Write("TVMovie: {0}", ex.Message);
+        _log.Info("TVMovie: The mapping file \"{0}\" seems to be corrupt", _xmlFile);
+        _log.Info("TVMovie: {0}", ex.Message);
         return null;
       }
 
@@ -543,11 +547,11 @@ namespace ProcessPlugins.TvMovie
 
       if (mappingList == null)
       {
-        Log.Write("TVMovie: Cannot import from TV Movie database");
+        _log.Info("TVMovie: Cannot import from TV Movie database");
         return 0;
       }
 
-      Log.Write("TVMovie: Importing database");
+      _log.Info("TVMovie: Importing database");
 
       TVDatabase.RemoveOldPrograms();
 
@@ -609,7 +613,7 @@ namespace ProcessPlugins.TvMovie
         MediaPortal.Profile.Settings.SaveCache();
       }
 
-      Log.Write("TVMovie: Imported {0} database entries", maximum);
+      _log.Info("TVMovie: Imported {0} database entries", maximum);
       return maximum;
     }
   }

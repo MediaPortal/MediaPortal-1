@@ -30,7 +30,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
-
+using MediaPortal.Utils.Services;
 using System.Reflection;
 using System.CodeDom;
 using System.CodeDom.Compiler;
@@ -213,7 +213,9 @@ namespace MediaPortal.Configuration.Sections
         }
         catch (InvalidOperationException ex)
         {
-          Log.Write("FireDTV: Error setting device name - device unplugged?! - {0}", ex.Message);
+          ServiceProvider services = GlobalServiceProvider.Instance;
+          ILog log = services.Get<ILog>();
+          log.Info("FireDTV: Error setting device name - device unplugged?! - {0}", ex.Message);
         }
 
       }

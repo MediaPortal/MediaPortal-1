@@ -26,10 +26,11 @@ using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
 using MediaPortal.TV.Database;
 using System.Threading;
-
+using MediaPortal.Utils.Services;
 using DShowNET;
 using DShowNET.Helper;
 using DirectShowLib;
+
 namespace MediaPortal.TV.Recording
 {
   /// <summary>
@@ -236,6 +237,7 @@ namespace MediaPortal.TV.Recording
 													   "Wakashan","Walamo","Waray","Washo","Welsh","Welsh",
 													   "Wolof","Xhosa","Yakut","Yao","Yap","Yiddish","Yoruba",
 													   "Zapotec","Zenaga","Zhuang","Zulu"};
+    protected ILog _log;
 
     #endregion
 
@@ -255,6 +257,9 @@ namespace MediaPortal.TV.Recording
     }
     public DVBSections()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+
       m_sectionsList = new ArrayList();
       transp = new TPList[200];
     }
@@ -690,25 +695,25 @@ namespace MediaPortal.TV.Recording
       IntPtr sectionBuffer = IntPtr.Zero;
 
 
-      //Log.Write("Get pid:{0:X} tid:{1:X} section:{2:X}",pid,tid,tableSection);
+      //_log.Info("Get pid:{0:X} tid:{1:X} section:{2:X}",pid,tid,tableSection);
       m_sectionsList = new ArrayList();
       flag = GetSectionData(filter, pid, tid, ref sectLast, tableSection, timeout);
       if (flag == false)
       {
 
-        Log.WriteFile(Log.LogType.Log, "DVBSections:MsGetStreamData() failed for pid:{0:X} tid:{1:X} section:{2} timeout:{3}", pid, tid, tableSection, timeout);
+        _log.Info("DVBSections:MsGetStreamData() failed for pid:{0:X} tid:{1:X} section:{2} timeout:{3}", pid, tid, tableSection, timeout);
         return false;
       }
       if (sectLast <= 0)
       {
-        Log.WriteFile(Log.LogType.Log, "DVBSections:Sections:MsGetStreamData() timeout for pid:{0:X} tid:{1:X} section:{2} timeout:{3}", pid, tid, tableSection, timeout);
+        _log.Info("DVBSections:Sections:MsGetStreamData() timeout for pid:{0:X} tid:{1:X} section:{2} timeout:{3}", pid, tid, tableSection, timeout);
       }
-      //Log.Write("sections:{0}",sectLast);
+      //_log.Info("sections:{0}",sectLast);
       int totalSections = sectLast;
       for (int n = 0; n < totalSections; n++)
       {
         flag = GetSectionPtr(n, ref sectionBuffer, ref dataLen, ref header, ref tableExt, ref version, ref sectNum, ref sectLast);
-        //Log.Write(" get sect:{0} returned len:{1} ext:{2} num:{3} last:{4} version:{5}",flag,dataLen,tableExt,sectNum, sectLast,version);
+        //_log.Info(" get sect:{0} returned len:{1} ext:{2} num:{3} last:{4} version:{5}",flag,dataLen,tableExt,sectNum, sectLast,version);
         if (flag)
         {
           if (tableExt != -1)
@@ -720,7 +725,7 @@ namespace MediaPortal.TV.Recording
             }
             catch
             {
-              Log.WriteFile(Log.LogType.Log, true, "dvbsections: error on copy data. address={0}, length ={1}", sectionBuffer, dataLen);
+              _log.Error("dvbsections: error on copy data. address={0}, length ={1}", sectionBuffer, dataLen);
               m_sectionsList.Clear();
               break;
             }
@@ -745,7 +750,7 @@ namespace MediaPortal.TV.Recording
             }
             catch
             {
-              Log.WriteFile(Log.LogType.Log, true, "dvbsections: error on copy data. address={0}, length ={1}", sectionBuffer, dataLen);
+              _log.Error("dvbsections: error on copy data. address={0}, length ={1}", sectionBuffer, dataLen);
               m_sectionsList.Clear();
               break;
             }
@@ -953,7 +958,7 @@ namespace MediaPortal.TV.Recording
       // 76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210
       //    0        1        2         3        4       5       6         7        8       9     
 
-      Log.Write("DecodeBAT {0}", buf.Length);
+      _log.Info("DecodeBAT {0}", buf.Length);
       int table_id = buf[0];
       int section_syntax_indicator = (buf[1] >> 7) & 1;
       int section_length = ((buf[1] & 0x7) << 8) + buf[2];
@@ -966,29 +971,29 @@ namespace MediaPortal.TV.Recording
       int start = 10;
       int len = 0;
 
-      Log.Write("DecodeBAT: desc length:{0} bouquet id:{1} tid:{2} sectionlen:{3}",
+      _log.Info("DecodeBAT: desc length:{0} bouquet id:{1} tid:{2} sectionlen:{3}",
             descriptor_length, bouquet_id, table_id, section_length);
       while (len < descriptor_length)
       {
         int descriptor_tag = buf[start + len];
         int descriptor_len = buf[start + len + 1];
-        Log.Write("  descriptor:{0:X} len:{1}", descriptor_tag, descriptor_len);
+        _log.Info("  descriptor:{0:X} len:{1}", descriptor_tag, descriptor_len);
         len += (descriptor_len + 2);
       }
       start += descriptor_length;
 
 
-      Log.Write("DecodeBAT: decode transport length at:{0}", start);
+      _log.Info("DecodeBAT: decode transport length at:{0}", start);
       int transport_length = ((buf[start] & 0xf) << 8) + buf[start + 1];
       start += 2;
-      Log.Write("DecodeBAT: transport_length:{0}", transport_length);
+      _log.Info("DecodeBAT: transport_length:{0}", transport_length);
       len = 0;
       while (len < transport_length)
       {
         int tsid = ((buf[start + len] & 0xF) << 8) + buf[start + len + 1];
         int onid = ((buf[start + len + 2] & 0xF) << 8) + buf[start + len + 3];
         descriptor_length = ((buf[start + len + 4] & 0xF) << 8) + buf[start + len + 5];
-        Log.Write("  tsid:{0:X} onid:{1} descriptor_length:{2}", tsid, onid, descriptor_length);
+        _log.Info("  tsid:{0:X} onid:{1} descriptor_length:{2}", tsid, onid, descriptor_length);
 
         int descstart = start + len + 6;
         int desclen = 0;
@@ -996,7 +1001,7 @@ namespace MediaPortal.TV.Recording
         {
           int descriptor_tag = buf[descstart + desclen];
           int descriptor_len = buf[descstart + desclen + 1];
-          Log.Write("  descriptor:{0:X} len:{1}", descriptor_tag, descriptor_len);
+          _log.Info("  descriptor:{0:X} len:{1}", descriptor_tag, descriptor_len);
           desclen += (descriptor_len + 2);
         }
         len += (descriptor_length + 6);
@@ -1014,7 +1019,7 @@ namespace MediaPortal.TV.Recording
       // check
       if (buf.Length < 10)
       {
-        Log.Write("decodePATTable() length < 10 length={0}", buf.Length);
+        _log.Info("decodePATTable() length < 10 length={0}", buf.Length);
         return 0;
       }
       int table_id = buf[0];
@@ -1031,7 +1036,7 @@ namespace MediaPortal.TV.Recording
       //Log.WriteFile(Log.LogType.Log,"dvbsections:decodePatTable() loop={0}", loop);
       if (loop < 1)
       {
-        Log.Write("decodePATTable() loop < 1 loop={0}", buf.Length);
+        _log.Info("decodePATTable() loop < 1 loop={0}", buf.Length);
         return 0;
       }
       for (int count = 0; count < loop; count++)
@@ -1050,7 +1055,7 @@ namespace MediaPortal.TV.Recording
         }
         else
         {
-          Log.Write("dvbsections:decodePATTable() program number=0");
+          _log.Info("dvbsections:decodePATTable() program number=0");
         }
       }
       return loop;
@@ -1089,7 +1094,7 @@ namespace MediaPortal.TV.Recording
     {
       if (buf.Length < 13)
       {
-        Log.Write("decodePMTTable() len < 13 len={0}", buf.Length);
+        _log.Info("decodePMTTable() len < 13 len={0}", buf.Length);
         return 0;
       }
       int table_id = buf[0];
@@ -1117,7 +1122,7 @@ namespace MediaPortal.TV.Recording
       if (pat.program_number != program_number)
       {
 
-        Log.Write("decodePMTTable() pat program#!=program numer {0}!={1}", pat.program_number, program_number);
+        _log.Info("decodePMTTable() pat program#!=program numer {0}!={1}", pat.program_number, program_number);
         //return 0;
       }
       pat.pid_list = new ArrayList();
@@ -1213,7 +1218,7 @@ namespace MediaPortal.TV.Recording
                 {
                   case 0x02: // video
                   case 0x03: // audio
-                    //Log.Write("dvbsections: indicator {1} {0} found",(indicator==0x02?"for video":"for audio"),indicator);
+                    //_log.Info("dvbsections: indicator {1} {0} found",(indicator==0x02?"for video":"for audio"),indicator);
                     break;
                   case 0x09:
                     pat.caPMT.StreamType = pmt.stream_type;
@@ -1284,7 +1289,7 @@ namespace MediaPortal.TV.Recording
       //[0]     [1..............] [2]  [3] [4] [5.........] [6]   [7]    [8] [9] [10]
       if (buf.Length < 12)
       {
-        Log.Write("decodeSDTTable() len < 12 len={0}", buf.Length);
+        _log.Info("decodeSDTTable() len < 12 len={0}", buf.Length);
         return -1;
       }
 
@@ -1308,7 +1313,7 @@ namespace MediaPortal.TV.Recording
       int pointer = 11;
       int x = 0;
 
-      //Log.Write("decodeSDTTable len={0}/{1} section no:{2} last section no:{3}", buf.Length,section_length,section_number,last_section_number);
+      //_log.Info("decodeSDTTable len={0}/{1} section no:{2} last section no:{3}", buf.Length,section_length,section_number,last_section_number);
 
       while (len1 > 0)
       {
@@ -1331,7 +1336,7 @@ namespace MediaPortal.TV.Recording
           x = buf[pointer + 1] + 2;
           byte[] service = new byte[buf.Length - pointer + 1];
           System.Array.Copy(buf, pointer, service, 0, buf.Length - pointer);
-          //Log.Write("indicator = {0:X}",indicator);
+          //_log.Info("indicator = {0:X}",indicator);
           if (indicator == 0x48)
           {
             ServiceData serviceData;
@@ -1597,7 +1602,7 @@ namespace MediaPortal.TV.Recording
             //						}
             if (indicator == 0x83) // lcn
             {
-              Log.Write("Found LCN Descriptor in NIT");
+              _log.Info("Found LCN Descriptor in NIT");
               this.DVB_GetLogicalChannelNumber(service, ref tp.channels);
             }
             //
@@ -1701,11 +1706,11 @@ namespace MediaPortal.TV.Recording
                 switch (indicator)
                 {
                   case 0x4E:
-                    //Log.Write("dvbsection: extended event found...");
+                    //_log.Info("dvbsection: extended event found...");
                     DVB_ExtendedEvent(descrEIT, ref eit);
                     break;
                   case 0x4D:
-                    //Log.Write("dvbsection: short event found...");
+                    //_log.Info("dvbsection: short event found...");
                     DVB_ShortEvent(descrEIT, ref eit);
                     break;
                   case 0x54:
@@ -1721,7 +1726,7 @@ namespace MediaPortal.TV.Recording
             }
             catch (Exception)
             {
-              //Log.WriteFile(Log.LogType.Log,true,"dvbsection: exception on EIT: {0} {1} {2}",ex.Message,ex.StackTrace,ex.Source);
+              //_log.Error("dvbsection: exception on EIT: {0} {1} {2}",ex.Message,ex.StackTrace,ex.Source);
             }
             System.Windows.Forms.Application.DoEvents();
 
@@ -1822,11 +1827,11 @@ namespace MediaPortal.TV.Recording
         {
           ServiceID = 0;
           LCN = 0;
-          //Log.Write("loop count: {0}", i);
+          //_log.Info("loop count: {0}", i);
           Array.Copy(descriptors, (i * 4), buf, 0, 4);
           ServiceID = (buf[0] << 8) | (buf[1] & 0xff);
           LCN = (buf[2] & 0x03 << 8) | (buf[3] & 0xff);
-          //Log.Write("Service {0} has channel number {1}", myService.SID, myService.LCN);
+          //_log.Info("Service {0} has channel number {1}", myService.SID, myService.LCN);
           for (int j = 0; j < servicesArray.Count; j++)
           {
             ChannelInfo info = (ChannelInfo)servicesArray[j];
@@ -1841,7 +1846,7 @@ namespace MediaPortal.TV.Recording
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        _log.Error(ex);
       }
     }
     //
@@ -2051,7 +2056,7 @@ namespace MediaPortal.TV.Recording
         }
         catch (Exception)
         {
-          //Log.WriteFile(Log.LogType.Log,true,"dvbsections: short-event exception={0} stack={1} source={2}",ex.Message,ex.StackTrace,ex.Source);
+          //_log.Error("dvbsections: short-event exception={0} stack={1} source={2}",ex.Message,ex.StackTrace,ex.Source);
           eit.event_text = "";
           eit.event_name = "";
         }
@@ -2328,7 +2333,7 @@ namespace MediaPortal.TV.Recording
       }
       catch (Exception)
       {
-        //Log.WriteFile(Log.LogType.Log,true,"dvbsections: extended-event exception={0} stack={1} source={2}",ex.Message,ex.StackTrace,ex.Source);
+        //_log.Error("dvbsections: extended-event exception={0} stack={1} source={2}",ex.Message,ex.StackTrace,ex.Source);
       }
       if (eit.event_item == null)
         eit.event_item = "";

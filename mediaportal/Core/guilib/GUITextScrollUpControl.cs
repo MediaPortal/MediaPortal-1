@@ -219,8 +219,8 @@ namespace MediaPortal.GUI.Library
             _font.DrawTextWidth((float) dwPosX + dMaxWidth, (float) dwPosY + ioffy, _textColor, wszText2.Trim(), fTextWidth, GUIControl.Alignment.ALIGN_LEFT);
           }
           _font.DrawTextWidth((float) dwPosX, (float) dwPosY + ioffy, _textColor, wszText1.Trim(), (float) dMaxWidth, GUIControl.Alignment.ALIGN_LEFT);
-          //            Log.Write("dw _positionY, dwPosY, _yPositionScroll, _scrollOffset: {0} {1} {2} {3}", _positionY, dwPosY, _yPositionScroll, _scrollOffset);
-          //            Log.Write("dw wszText1.Trim() {0}", wszText1.Trim());
+          //            _log.Info("dw _positionY, dwPosY, _yPositionScroll, _scrollOffset: {0} {1} {2} {3}", _positionY, dwPosY, _yPositionScroll, _scrollOffset);
+          //            _log.Info("dw wszText1.Trim() {0}", wszText1.Trim());
 
           dwPosY += _itemHeight;
         }

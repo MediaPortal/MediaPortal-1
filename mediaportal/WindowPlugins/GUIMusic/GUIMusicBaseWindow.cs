@@ -583,7 +583,7 @@ namespace MediaPortal.GUI.Music
 
       if (playlist.Count == 1)
       {
-        Log.Write("GUIMusicYears:Play:{0}", playlist[0].FileName);
+        _log.Info("GUIMusicYears:Play:{0}", playlist[0].FileName);
         g_Player.Play(playlist[0].FileName);
         return;
       }
@@ -649,10 +649,10 @@ namespace MediaPortal.GUI.Music
         if (tag != null)
         {
           string trackNr = String.Format("{0:00}", tag.Track);
-          string fileSize = Utils.GetSize(item.Size);
+          string fileSize = MediaPortal.Util.Utils.GetSize(item.Size);
           string year = tag.Year.ToString();
-          string filename = Utils.GetFilename(item.Path);
-          string duration = Utils.SecondsToHMSString(tag.Duration);
+          string filename = MediaPortal.Util.Utils.GetFilename(item.Path);
+          string duration = MediaPortal.Util.Utils.SecondsToHMSString(tag.Duration);
           string rating = tag.Rating.ToString();
           if (tag.Track <= 0) trackNr = "";
           if (tag.Year < 1900) year = "";
@@ -662,16 +662,16 @@ namespace MediaPortal.GUI.Music
 
           string line1 = _sortTags1[(int)method];
           string line2 = _sortTags2[(int)method];
-          line1 = Utils.ReplaceTag(line1, "%track%", trackNr); line2 = Utils.ReplaceTag(line2, "%track%", trackNr);
-          line1 = Utils.ReplaceTag(line1, "%filesize%", fileSize); line2 = Utils.ReplaceTag(line2, "%filesize%", fileSize);
-          line1 = Utils.ReplaceTag(line1, "%artist%", tag.Artist); line2 = Utils.ReplaceTag(line2, "%artist%", tag.Artist);
-          line1 = Utils.ReplaceTag(line1, "%album%", tag.Album); line2 = Utils.ReplaceTag(line2, "%album%", tag.Album);
-          line1 = Utils.ReplaceTag(line1, "%title%", tag.Title); line2 = Utils.ReplaceTag(line2, "%title%", tag.Title);
-          line1 = Utils.ReplaceTag(line1, "%year%", year); line2 = Utils.ReplaceTag(line2, "%year%", year);
-          line1 = Utils.ReplaceTag(line1, "%filename%", filename); line2 = Utils.ReplaceTag(line2, "%filename%", filename);
-          line1 = Utils.ReplaceTag(line1, "%rating%", rating); line2 = Utils.ReplaceTag(line2, "%rating%", rating);
-          line1 = Utils.ReplaceTag(line1, "%duration%", duration); line2 = Utils.ReplaceTag(line2, "%duration%", duration);
-          line1 = Utils.ReplaceTag(line1, "%date%", date); line2 = Utils.ReplaceTag(line2, "%date%", date);
+          line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%track%", trackNr); line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%track%", trackNr);
+          line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%filesize%", fileSize); line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%filesize%", fileSize);
+          line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%artist%", tag.Artist); line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%artist%", tag.Artist);
+          line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%album%", tag.Album); line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%album%", tag.Album);
+          line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%title%", tag.Title); line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%title%", tag.Title);
+          line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%year%", year); line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%year%", year);
+          line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%filename%", filename); line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%filename%", filename);
+          line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%rating%", rating); line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%rating%", rating);
+          line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%duration%", duration); line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%duration%", duration);
+          line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%date%", date); line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%date%", date);
           item.Label = line1;
           item.Label2 = line2;
         }
@@ -714,11 +714,11 @@ namespace MediaPortal.GUI.Music
         {
           if (item.Size > 0)
           {
-            item.Label2 = Utils.GetSize(item.Size);
+            item.Label2 = MediaPortal.Util.Utils.GetSize(item.Size);
           }
           if (method == MusicSort.SortMethod.Filename)
           {
-            item.Label = Utils.GetFilename(item.Path);
+            item.Label = MediaPortal.Util.Utils.GetFilename(item.Path);
           }
         }
       }
@@ -736,7 +736,7 @@ namespace MediaPortal.GUI.Music
           int nDuration = tag.Duration;
           if (nDuration > 0)
           {
-            item.Label2 = Utils.SecondsToHMSString(nDuration);
+            item.Label2 = MediaPortal.Util.Utils.SecondsToHMSString(nDuration);
           }
         }
       }*/
@@ -787,7 +787,7 @@ namespace MediaPortal.GUI.Music
 
     protected virtual void OnRetrieveCoverArt(GUIListItem item)
     {
-      Utils.SetDefaultIcons(item);
+      MediaPortal.Util.Utils.SetDefaultIcons(item);
       if (item.Label == "..") return;
       MusicTag tag = (MusicTag)item.MusicTag;
       string strThumb = GUIMusicFiles.GetCoverArt(item.IsFolder, item.Path, tag);
@@ -797,7 +797,7 @@ namespace MediaPortal.GUI.Music
         item.IconImageBig = strThumb;
         item.IconImage = strThumb;
         // let us test if there is a larger cover art image
-        string strLarge = Utils.ConvertToLargeCoverArt(strThumb);
+        string strLarge = MediaPortal.Util.Utils.ConvertToLargeCoverArt(strThumb);
         if (System.IO.File.Exists(strLarge))
         {
           item.ThumbnailImage = strLarge;
@@ -882,7 +882,7 @@ namespace MediaPortal.GUI.Music
 
     static public string GetArtistCoverArtName(string artist)
     {
-      return Utils.GetCoverArtName(Thumbs.MusicArtists, artist);
+      return MediaPortal.Util.Utils.GetCoverArtName(Thumbs.MusicArtists, artist);
     }
 
     void OnInfoFile(GUIListItem item)
@@ -1424,8 +1424,8 @@ namespace MediaPortal.GUI.Music
                 {
                   try
                   {
-                    string folderjpg = String.Format(@"{0}\folder.jpg", Utils.RemoveTrailingSlash(strPath));
-                    Utils.FileDelete(folderjpg);
+                    string folderjpg = String.Format(@"{0}\folder.jpg", MediaPortal.Util.Utils.RemoveTrailingSlash(strPath));
+                    MediaPortal.Util.Utils.FileDelete(folderjpg);
                     System.IO.File.Copy(thumb, folderjpg);
                   }
                   catch (Exception)
@@ -1471,7 +1471,7 @@ namespace MediaPortal.GUI.Music
     protected bool SaveCoverArtImage(AlbumInfo albumInfo, string albumFolderPath, bool bSaveToAlbumFolder, bool bSaveToThumbsFolder)
     {
       bool result = false;
-      bool isCdOrDVD = Utils.IsDVD(albumFolderPath);
+      bool isCdOrDVD = MediaPortal.Util.Utils.IsDVD(albumFolderPath);
 
       try
       {
@@ -1484,7 +1484,7 @@ namespace MediaPortal.GUI.Music
         //if (bSaveToThumbsFolder)
         if (bSaveToAlbumFolder && !isCdOrDVD)
         {
-          string folderjpg = String.Format(@"{0}\folder.jpg", Utils.RemoveTrailingSlash(albumFolderPath));
+          string folderjpg = String.Format(@"{0}\folder.jpg", MediaPortal.Util.Utils.RemoveTrailingSlash(albumFolderPath));
 
           if (System.IO.File.Exists(folderjpg))
             System.IO.File.Delete(folderjpg);
@@ -1532,7 +1532,7 @@ namespace MediaPortal.GUI.Music
       if (ArtistName == String.Empty) return String.Empty;
       if (AlbumName == String.Empty) return String.Empty;
       string name = String.Format("{0}-{1}", ArtistName, AlbumName);
-      return Utils.GetCoverArtName(Thumbs.MusicAlbum, name);
+      return MediaPortal.Util.Utils.GetCoverArtName(Thumbs.MusicAlbum, name);
     }
     protected virtual void AddSongToFavorites(GUIListItem item)
     {

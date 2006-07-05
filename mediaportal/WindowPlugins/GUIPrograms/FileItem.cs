@@ -25,6 +25,7 @@ using System.IO;
 using MediaPortal.GUI.Library;
 using Programs.Utils;
 using SQLite.NET;
+using MediaPortal.Utils.Services;
 
 namespace ProgramsDatabase
 {
@@ -60,10 +61,13 @@ namespace ProgramsDatabase
     bool mIsFolder;
     ArrayList mFileInfoList = null;
     FileInfo mFileInfoFavourite = null;
-
+    protected ILog _log;
 
     public FileItem(SQLiteClient initSqlDB)
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+
       // constructor: save SQLiteDB object 
       sqlDB = initSqlDB;
       Clear();
@@ -594,12 +598,12 @@ namespace ProgramsDatabase
       {
         string strSQL = String.Format(
           "insert into tblfile (fileid, appid, title, filename, filepath, imagefile, genre, genre2, genre3, genre4, genre5, country, manufacturer, year, rating, overview, system, manualfilename, lastTimeLaunched, launchcount, isfolder, external_id, uppertitle, tagdata, categorydata) values (null, '{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}', '{14}', '{15}', '{16}', '{17}', '{18}', '{19}', '{20}', '{21}', '{22}', '{23}')", AppID, ProgramUtils.Encode(Title), ProgramUtils.Encode(Filename), ProgramUtils.Encode(Filepath), ProgramUtils.Encode(Imagefile), ProgramUtils.Encode(Genre), ProgramUtils.Encode(Genre2), ProgramUtils.Encode(Genre3), ProgramUtils.Encode(Genre4), ProgramUtils.Encode(Genre5), Country, ProgramUtils.Encode(Manufacturer), strYear, Rating, ProgramUtils.Encode(Overview), ProgramUtils.Encode(System_), ProgramUtils.Encode(ManualFilename), strLastLaunch, strLaunchCount, ProgramUtils.BooleanToStr(IsFolder), ExtFileID, ProgramUtils.Encode(Title.ToUpper()), ProgramUtils.Encode(TagData), ProgramUtils.Encode(CategoryData));
-        // Log.Write("dw sql\n{0}", strSQL);
+        // _log.Info("dw sql\n{0}", strSQL);
         sqlDB.Execute(strSQL);
       }
       catch (SQLiteException ex)
       {
-        Log.Write("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        _log.Info("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
       }
     }
 
@@ -620,7 +624,7 @@ namespace ProgramsDatabase
       }
       catch (SQLiteException ex)
       {
-        Log.Write("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        _log.Info("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
       }
     }
 
@@ -635,7 +639,7 @@ namespace ProgramsDatabase
       }
       catch (SQLiteException ex)
       {
-        Log.Write("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        _log.Info("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
       }
     }
 
@@ -664,7 +668,7 @@ namespace ProgramsDatabase
         }
         catch (SQLiteException ex)
         {
-          Log.Write("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Info("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         }
       }
     }
@@ -875,7 +879,7 @@ namespace ProgramsDatabase
         string strSep = "";
         foreach (string strToken in strLine.Split('='))
         {
-          //Log.Write("getvalueofcategory dw token {0}", strToken);
+          //_log.Info("getvalueofcategory dw token {0}", strToken);
           if (!bFirst)
           {
             bValueLine = true;
@@ -911,7 +915,7 @@ namespace ProgramsDatabase
         {
           strToken.Replace("\n", "");
           strToken.Replace("\r", "");
-          //Log.Write("getnameofcategory dw token {0}", strToken);
+          //_log.Info("getnameofcategory dw token {0}", strToken);
           if (!bFirst)
           {
             //doesn't work			bValueLine = strToken.EndsWith("\"");

@@ -152,7 +152,7 @@ namespace DShowNET
         {
           if (IsCamPresent())
           {
-            Log.Write("twinhan: CAM inserted");
+            _log.Info("twinhan: CAM inserted");
           }
         }
         return result;
@@ -206,11 +206,11 @@ namespace DShowNET
               int bytesReturned = Marshal.ReadInt32(ptrDwBytesReturned);
               CIState = (uint)Marshal.ReadInt32(ptrOutBuffer, 0);
               MMIState = (uint)Marshal.ReadInt32(ptrOutBuffer, 4);
-              Log.Write("twinhan:CI State:{0:X} MMI State:{1:X}", CIState, MMIState);
+              _log.Info("twinhan:CI State:{0:X} MMI State:{1:X}", CIState, MMIState);
             }
             else
             {
-              Log.Write("twinhan: unable to get CI State hr:{0:X}", hr);
+              _log.Info("twinhan: unable to get CI State hr:{0:X}", hr);
             }
           }
           finally
@@ -239,7 +239,7 @@ namespace DShowNET
     public bool IsTwinhanCard()
     {
       if (_initialized) return _isTwinHanCard;
-      Log.Write("Twinhan: check for twinhan driver");
+      _log.Info("Twinhan: check for twinhan driver");
       
       bool success = false;
       IntPtr ptrDwBytesReturned = Marshal.AllocCoTaskMem(4);
@@ -278,7 +278,7 @@ namespace DShowNET
               int hr = propertySet.Set(propertyGuid, 0, thbdaBuf, thbdaLen, thbdaBuf, thbdaLen);
               if (hr == 0)
               {
-                Log.WriteFile(Log.LogType.Log, "twinhan card detected");
+                _log.Info("twinhan card detected");
                 success = true;
               }
               //Marshal.ReleaseComObject(propertySet);
@@ -312,7 +312,7 @@ namespace DShowNET
 
       IntPtr ptrPMT = Marshal.AllocCoTaskMem(pmtLen + 1);
 
-      Log.Write("Twinhan: send PMT cam:{0} {1} len:{2} video:0x{3:X} audio:0x{4:X}", camType,camNumber, pmtLen, videoPid, audioPid);
+      _log.Info("Twinhan: send PMT cam:{0} {1} len:{2} video:0x{3:X} audio:0x{4:X}", camType,camNumber, pmtLen, videoPid, audioPid);
 
       if (ptrPMT == IntPtr.Zero)
         return;
@@ -391,10 +391,10 @@ namespace DShowNET
 
           if (hr != 0)
           {
-            Log.Write("SetStructure() failed 0x{0:X}", hr);
+            _log.Info("SetStructure() failed 0x{0:X}", hr);
           }
           else
-            Log.Write("SetStructure() returned ok 0x{0:X}", hr);
+            _log.Info("SetStructure() returned ok 0x{0:X}", hr);
           Marshal.ReleaseComObject(propertySet);
 
         }
@@ -417,21 +417,21 @@ namespace DShowNET
       IKsPropertySet propertySet = pin as IKsPropertySet;
       if (propertySet == null)
       {
-        Log.Write("SetStructure() properySet=null");
+        _log.Info("SetStructure() properySet=null");
         return;
       }
 
       int iSize = Marshal.SizeOf(structureType);
-      Log.Write("size:{0}", iSize);
+      _log.Info("size:{0}", iSize);
       IntPtr pDataReturned = Marshal.AllocCoTaskMem(iSize);
       Marshal.StructureToPtr(structValue, pDataReturned, true);
       int hr = propertySet.RemoteSet(ref propertyGuid, propId, IntPtr.Zero, 0, pDataReturned, (uint)Marshal.SizeOf(structureType));
       if (hr != 0)
       {
-        Log.Write("SetStructure() failed 0x{0:X}", hr);
+        _log.Info("SetStructure() failed 0x{0:X}", hr);
       }
       else
-        Log.Write("SetStructure() returned ok 0x{0:X}", hr);
+        _log.Info("SetStructure() returned ok 0x{0:X}", hr);
       Marshal.FreeCoTaskMem(pDataReturned);
     }
 

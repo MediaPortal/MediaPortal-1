@@ -229,7 +229,7 @@ namespace MediaPortal.GUI.Video
       }
       GUIPropertyManager.SetProperty("#Actor.Movies", movies);
 
-      string largeCoverArtImage = Utils.GetLargeCoverArtName(Thumbs.MovieActors, currentActor.Name);
+      string largeCoverArtImage = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, currentActor.Name);
       if (imgCoverArt != null)
       {
         imgCoverArt.FreeResources();

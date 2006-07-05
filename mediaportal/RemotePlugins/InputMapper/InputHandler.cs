@@ -33,6 +33,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Player;
 using MediaPortal.TV.Recording;
+using MediaPortal.Utils.Services;
 
 
 namespace MediaPortal.InputDevices
@@ -49,6 +50,7 @@ namespace MediaPortal.InputDevices
     int _currentLayer = 1;
     bool _isLoaded = false;
     bool _basicHome = false;
+    protected ILog _log;
 
     /// <summary>
     /// Mapping successful loaded
@@ -130,6 +132,9 @@ namespace MediaPortal.InputDevices
     /// <param name="deviceXmlName">Input device name</param>
     public InputHandler(string deviceXmlName)
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+
       using (Profile.Settings xmlreader = new Profile.Settings("MediaPortal.xml"))
         _basicHome = xmlreader.GetValueAsBool("general", "startbasichome", false);
 
@@ -183,12 +188,12 @@ namespace MediaPortal.InputDevices
       if (System.IO.File.Exists(pathCustom) && CheckXmlFile(pathCustom))
       {
         path = pathCustom;
-        Log.Write("MAP: using custom mappings for {0}", deviceXmlName);
+        _log.Info("MAP: using custom mappings for {0}", deviceXmlName);
       }
       else if (System.IO.File.Exists(pathDefault) && CheckXmlFile(pathDefault))
       {
         path = pathDefault;
-        Log.Write("MAP: using default mappings for {0}", deviceXmlName);
+        _log.Info("MAP: using default mappings for {0}", deviceXmlName);
       }
       return path;
     }
@@ -296,7 +301,7 @@ namespace MediaPortal.InputDevices
     {
       if (!_isLoaded)   // No mapping loaded
       {
-        Log.Write("Map: No button mapping loaded");
+        _log.Info("Map: No button mapping loaded");
         return false;
       }
       Mapping map = null;
@@ -304,11 +309,11 @@ namespace MediaPortal.InputDevices
       if (map == null)
         return false;
 #if DEBUG
-      Log.Write("{0} / {1} / {2} / {3}", map.Condition, map.ConProperty, map.Command, map.CmdProperty);
+      _log.Info("{0} / {1} / {2} / {3}", map.Condition, map.ConProperty, map.Command, map.CmdProperty);
 #endif
       Action action;
       if (map.Sound != string.Empty)
-        Utils.PlaySound(map.Sound, false, true);
+        MediaPortal.Util.Utils.PlaySound(map.Sound, false, true);
       if (map.Focus && !GUIGraphicsContext.HasFocus)
       {
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GETFOCUS, 0, 0, 0, 0, 0, null);
@@ -320,7 +325,7 @@ namespace MediaPortal.InputDevices
         case "ACTION":  // execute Action x
           Key key = new Key(map.CmdKeyChar, map.CmdKeyCode);
 #if DEBUG
-          Log.Write("Executing: key {0} / {1} / Action: {2} / {3}", map.CmdKeyChar, map.CmdKeyCode, map.CmdProperty, ((Action.ActionType)Convert.ToInt32(map.CmdProperty)).ToString());
+          _log.Info("Executing: key {0} / {1} / Action: {2} / {3}", map.CmdKeyChar, map.CmdKeyCode, map.CmdProperty, ((Action.ActionType)Convert.ToInt32(map.CmdProperty)).ToString());
 #endif
           action = new Action(key, (Action.ActionType)Convert.ToInt32(map.CmdProperty), 0, 0);
           GUIGraphicsContext.OnAction(action);

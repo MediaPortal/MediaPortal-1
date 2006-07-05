@@ -33,6 +33,7 @@ using System.Runtime.Serialization.Formatters.Soap;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.View;
+using MediaPortal.Utils.Services;
 
 namespace WindowPlugins.GUIPrograms
 {
@@ -203,7 +204,10 @@ namespace WindowPlugins.GUIPrograms
       }
       else
       {
-        Log.Write("Warning: no programViews2.xml found!");
+        ServiceProvider services = GlobalServiceProvider.Instance;
+        ILog log = services.Get<ILog>();
+
+        log.Info("Warning: no programViews2.xml found!");
       }
       LoadViews();
     }

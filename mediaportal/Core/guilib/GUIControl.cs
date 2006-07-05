@@ -29,9 +29,9 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
-
 using MediaPortal.Drawing;
 using MediaPortal.Drawing.Layouts;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.GUI.Library
 {
@@ -73,6 +73,7 @@ namespace MediaPortal.GUI.Library
     protected long _originalDiffuseColor;
     protected GUIControl _parentControl = null;
     protected bool _isDimmed = false;
+    protected ILog _log;
 
     //protected int DimColor = 0x60ffffff;
 
@@ -103,12 +104,14 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public GUIControl()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
     }
 
     /// <summary>
     /// The basic constructur of the GUIControl class.
     /// </summary>
-    public GUIControl(int dwParentID)
+    public GUIControl(int dwParentID) : this()
     {
       _parentControlId = dwParentID;
     }
@@ -123,7 +126,7 @@ namespace MediaPortal.GUI.Library
     /// <param name="dwPosY">The Y position on the screen of this control.</param>
     /// <param name="dwWidth">The width of this control.</param>
     /// <param name="dwHeight">The height of this control.</param>
-    public GUIControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight)
+    public GUIControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight) : this()
     {
       _parentControlId = dwParentID;
       _controlId = dwControlId;

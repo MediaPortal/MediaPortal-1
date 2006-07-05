@@ -133,7 +133,7 @@ namespace DShowNET
 		
 		public void SetVideoBitRate(int minKbps, int maxKbps,bool isVBR)
 		{
-			Log.Write("IVAC: setvideobitrate min:{0} max:{1} vbr:{2}",minKbps,maxKbps,isVBR);
+			_log.Info("IVAC: setvideobitrate min:{0} max:{1} vbr:{2}",minKbps,maxKbps,isVBR);
 			videoBitRate bitrate=new videoBitRate();
 			if (isVBR) bitrate.bEncodingMode=eBitRateMode.Vbr;
 			else bitrate.bEncodingMode=eBitRateMode.Cbr;
@@ -245,8 +245,8 @@ namespace DShowNET
 				int minKbps, maxKbps;
 				bool isVBR;
 				GetVideoBitRate(out minKbps, out maxKbps,out isVBR);
-				Log.Write("IVAC: version:{0} streamtype:{1} format:{2} resolution:{3}x{4}",version, StreamOutput.ToString(),VideoFormat.ToString(),res.Width,res.Height);
-				Log.Write("IVAC: average bitrate:{0} KBPs peak:{1} KBPs vbr:{2}",minKbps,maxKbps,isVBR);
+				_log.Info("IVAC: version:{0} streamtype:{1} format:{2} resolution:{3}x{4}",version, StreamOutput.ToString(),VideoFormat.ToString(),res.Width,res.Height);
+				_log.Info("IVAC: average bitrate:{0} KBPs peak:{1} KBPs vbr:{2}",minKbps,maxKbps,isVBR);
 
 				return version;
 			}

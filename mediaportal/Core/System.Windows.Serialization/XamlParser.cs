@@ -30,15 +30,20 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Xml;
+using MediaPortal.Utils.Services;
 
 namespace System.Windows.Serialization
 {
 	public sealed class XamlParser
 	{
+    static ILog _log;
+
 		#region Constructors
 
-		private XamlParser()
-		{
+		static XamlParser()
+    {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
 		}
 
 		#endregion Constructors
@@ -229,11 +234,11 @@ namespace System.Windows.Serialization
 				}
 				catch(XamlParserException e)
 				{
-					MediaPortal.GUI.Library.Log.Write("XamlParser.Read: {0}", e.Message);
+					_log.Info("XamlParser.Read: {0}", e.Message);
 				}
 				catch(Exception e)
 				{
-					MediaPortal.GUI.Library.Log.Write("XamlParser.Read: {0}({1},{2}): {3}", _filename, _reader.LineNumber, _reader.LinePosition, e.Message);
+					_log.Info("XamlParser.Read: {0}({1},{2}): {3}", _filename, _reader.LineNumber, _reader.LinePosition, e.Message);
 				}
 			}
 
@@ -367,7 +372,7 @@ namespace System.Windows.Serialization
 				else if(memberInfo is EventInfo)
 				{
 					// TODO: Hook up to event
-					MediaPortal.GUI.Library.Log.Write("Event: {0}", memberInfo.Name);
+					_log.Info("Event: {0}", memberInfo.Name);
 				}
 			}
 		}

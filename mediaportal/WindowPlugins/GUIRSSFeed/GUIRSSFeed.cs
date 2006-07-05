@@ -446,7 +446,7 @@ namespace MediaPortal.GUI.RSS
 
           if (strImage.Length > 0)
           {
-            m_strSiteIcon = Utils.GetThumb(m_strSiteURL);
+            m_strSiteIcon = MediaPortal.Util.Utils.GetThumb(m_strSiteURL);
             if (!System.IO.File.Exists(m_strSiteIcon))
             {
               string strExtension;
@@ -455,22 +455,22 @@ namespace MediaPortal.GUI.RSS
               {
                 string strTemp = "temp";
                 strTemp += strExtension;
-                Utils.FileDelete(strTemp);
+                MediaPortal.Util.Utils.FileDelete(strTemp);
 
-                Utils.DownLoadImage(strImage, strTemp);
+                MediaPortal.Util.Utils.DownLoadImage(strImage, strTemp);
                 if (System.IO.File.Exists(strTemp))
                 {
                   MediaPortal.Util.Picture.CreateThumbnail(strTemp, m_strSiteIcon, 128, 128, 0);
                 }
 
-                Utils.FileDelete(strTemp);
+                MediaPortal.Util.Utils.FileDelete(strTemp);
               }//if ( strExtension.Length>0)
               else
               {
-                Log.Write("image has no extension:{0}", strImage);
+                _log.Info("image has no extension:{0}", strImage);
               }
             }
-            m_strSiteIcon = Utils.GetThumb(m_strSiteURL);
+            m_strSiteIcon = MediaPortal.Util.Utils.GetThumb(m_strSiteURL);
           }
         }
 
@@ -642,7 +642,7 @@ namespace MediaPortal.GUI.RSS
         GUIWindowManager.SendMessage(msg);
 
         // Log exception
-        Log.Write("ex:{0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+        _log.Info("ex:{0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
       }
 
       return text;

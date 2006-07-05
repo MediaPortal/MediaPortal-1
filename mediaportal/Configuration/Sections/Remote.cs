@@ -37,6 +37,7 @@ using Microsoft.Win32;
 using MediaPortal.GUI.Library;
 using MediaPortal.InputDevices;
 using System.Net.Sockets;
+using MediaPortal.Utils.Services;
 
 #pragma warning disable 108
 
@@ -1788,7 +1789,9 @@ namespace MediaPortal.Configuration.Sections
       }
       catch (System.Runtime.InteropServices.COMException)
       {
-        Log.Write("x10Remote: Can't initialize");
+        ServiceProvider services = GlobalServiceProvider.Instance;
+        ILog log = services.Get<ILog>();
+        log.Warn("x10Remote: Can't initialize");
         x10Form = null;
         labelX10DriverInfo.Visible = false;
         linkLabelDownloadX10.Visible = false;

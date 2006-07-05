@@ -76,7 +76,7 @@ namespace MediaPortal.GUI.Music
             GetID = (int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST;
 
             m_directory.AddDrives();
-            m_directory.SetExtensions(Utils.AudioExtensions);
+            m_directory.SetExtensions(MediaPortal.Util.Utils.AudioExtensions);
         }
 
         #region overrides
@@ -505,7 +505,7 @@ namespace MediaPortal.GUI.Music
                 pItem.IsFolder = false;
                 //pItem.m_bIsShareOrDrive = false;
 
-                Utils.SetDefaultIcons(pItem);
+                MediaPortal.Util.Utils.SetDefaultIcons(pItem);
                 if (item.Played)
                 {
                     pItem.Shaded = true;
@@ -516,7 +516,7 @@ namespace MediaPortal.GUI.Music
                     int nDuration = item.Duration;
                     if (nDuration > 0)
                     {
-                        string str = Utils.SecondsToHMSString(nDuration);
+                        string str = MediaPortal.Util.Utils.SecondsToHMSString(nDuration);
                         pItem.Label2 = str;
                     }
                     else
@@ -573,7 +573,7 @@ namespace MediaPortal.GUI.Music
             if (totalPlayingTime.Seconds > 0)
             {
                 strObjects = String.Format("{0} {1}, {2}", iTotalItems, GUILocalizeStrings.Get(1052),
-                            Utils.SecondsToHMSString((int)totalPlayingTime.TotalSeconds));//songs
+                            MediaPortal.Util.Utils.SecondsToHMSString((int)totalPlayingTime.TotalSeconds));//songs
             }
 
             GUIPropertyManager.SetProperty("#itemcount", strObjects);
@@ -707,7 +707,7 @@ namespace MediaPortal.GUI.Music
                 using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
                 {
                     strPlayListPath = xmlreader.GetValueAsString("music", "playlists", String.Empty);
-                    strPlayListPath = Utils.RemoveTrailingSlash(strPlayListPath);
+                    strPlayListPath = MediaPortal.Util.Utils.RemoveTrailingSlash(strPlayListPath);
                 }
 
                 strPath += ".m3u";
@@ -980,7 +980,7 @@ namespace MediaPortal.GUI.Music
                 if (tag != null)
                 {
                     int playCount = tag.TimesPlayed;
-                    string duration = Utils.SecondsToHMSString(tag.Duration);
+                    string duration = MediaPortal.Util.Utils.SecondsToHMSString(tag.Duration);
                     item.Label = string.Format("{0} - {1}", tag.Artist, tag.Title);
                     item.Label2 = duration;
                 }

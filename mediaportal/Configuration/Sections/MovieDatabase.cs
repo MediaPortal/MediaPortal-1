@@ -31,7 +31,7 @@ using System.Windows.Forms;
 using System.Xml;
 using System.IO;
 using System.Threading;
-
+using MediaPortal.Utils.Services;
 using MediaPortal.GUI.Library;
 using MediaPortal.Playlists;
 using MediaPortal.TagReader;
@@ -1761,7 +1761,7 @@ namespace MediaPortal.Configuration.Sections
       comboBoxPictures.Enabled = false;
       if (movie.ID >= 0)
       {
-        string file = Utils.GetLargeCoverArtName(Thumbs.MovieTitle, movie.Title);
+        string file = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, movie.Title);
         if (System.IO.File.Exists(file))
         {
           using (Image img = Image.FromFile(file))
@@ -1985,12 +1985,12 @@ namespace MediaPortal.Configuration.Sections
           ListViewItem listItem = listViewAllActors.SelectedItems[i];
           VideoDatabase.DeleteActor(listItem.Text);
           listViewAllActors.Items.Remove(listItem);
-          string file = Utils.GetLargeCoverArtName(Thumbs.MovieActors, listItem.Text);
+          string file = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, listItem.Text);
           if (System.IO.File.Exists(file))
           {
             System.IO.File.Delete(file);
           }
-          file = Utils.GetCoverArtName(Thumbs.MovieActors, listItem.Text);
+          file = MediaPortal.Util.Utils.GetCoverArtName(Thumbs.MovieActors, listItem.Text);
           if (System.IO.File.Exists(file))
           {
             System.IO.File.Delete(file);
@@ -2059,7 +2059,7 @@ namespace MediaPortal.Configuration.Sections
         file = tbTitle.Text;
       }
       string path, filename;
-      Utils.Split(file, out path, out filename);
+      MediaPortal.Util.Utils.Split(file, out path, out filename);
       movieDetails.Path = path;
       movieDetails.File = filename;
       movieDetails.SearchString = tbTitle.Text;
@@ -2096,15 +2096,17 @@ namespace MediaPortal.Configuration.Sections
       int id = movieDetails.ID;
       if (id < 0)
       {
-        Log.Write("Adding file:{0}", file);
+        ServiceProvider services = GlobalServiceProvider.Instance;
+        ILog log = services.Get<ILog>();
+        log.Info("Adding file:{0}", file);
         id = VideoDatabase.AddMovieFile(file);
         VirtualDirectory dir = new VirtualDirectory();
-        dir.SetExtensions(Utils.VideoExtensions);
+        dir.SetExtensions( MediaPortal.Util.Utils.VideoExtensions);
         ArrayList items = dir.GetDirectoryUnProtected(path, true);
         foreach (GUIListItem item in items)
         {
           if (item.IsFolder) continue;
-          if (Utils.ShouldStack(item.Path, file) && item.Path != file)
+          if ( MediaPortal.Util.Utils.ShouldStack(item.Path, file) && item.Path != file)
           {
             string strPath, strFileName;
 
@@ -2187,13 +2189,13 @@ namespace MediaPortal.Configuration.Sections
         pictureBox1.Image.Dispose();
         pictureBox1.Image = null;
       }
-      string strThumb = Utils.GetCoverArtName(Thumbs.MovieTitle, tbTitle.Text);
-      string LargeThumb = Utils.GetLargeCoverArtName(Thumbs.MovieTitle, tbTitle.Text);
-      Utils.FileDelete(strThumb);
-      Utils.FileDelete(LargeThumb);
+      string strThumb = MediaPortal.Util.Utils.GetCoverArtName(Thumbs.MovieTitle, tbTitle.Text);
+      string LargeThumb = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, tbTitle.Text);
+      MediaPortal.Util.Utils.FileDelete(strThumb);
+      MediaPortal.Util.Utils.FileDelete(LargeThumb);
       IMDBFetcher.DownloadCoverArt(Thumbs.MovieTitle, textBoxPictureURL.Text, tbTitle.Text);
 
-      string file = Utils.GetLargeCoverArtName(Thumbs.MovieTitle, tbTitle.Text);
+      string file = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, tbTitle.Text);
       if (System.IO.File.Exists(file))
       {
         using (Image img = Image.FromFile(file))
@@ -2259,12 +2261,12 @@ namespace MediaPortal.Configuration.Sections
       if (dialogResult == DialogResult.Yes)
       {
         VideoDatabase.DeleteMovieInfoById(CurrentMovie.ID);
-        string file = Utils.GetLargeCoverArtName(Thumbs.MovieTitle, CurrentMovie.Title);
+        string file = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, CurrentMovie.Title);
         if (System.IO.File.Exists(file))
         {
           System.IO.File.Delete(file);
         }
-        file = Utils.GetCoverArtName(Thumbs.MovieTitle, CurrentMovie.Title);
+        file = MediaPortal.Util.Utils.GetCoverArtName(Thumbs.MovieTitle, CurrentMovie.Title);
         if (System.IO.File.Exists(file))
         {
           System.IO.File.Delete(file);

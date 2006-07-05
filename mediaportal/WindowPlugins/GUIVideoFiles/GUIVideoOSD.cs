@@ -327,7 +327,7 @@ namespace MediaPortal.GUI.Video
                 ToggleSubMenu(0, m_iActiveMenu);						// hide the currently active sub-menu
               }
               //g_application.m_guiWindowFullScreen.m_bOSDVisible = false;	// toggle the OSD off so parent window can de-init
-              Log.Write("GUIVideoOSD:stop");
+              _log.Info("GUIVideoOSD:stop");
               g_Player.Stop();						// close our media
               //GUIWindowManager.ShowPreviousWindow();							// go back to the previous window
             }
@@ -337,7 +337,7 @@ namespace MediaPortal.GUI.Video
               if (g_Player.Paused)
                 g_Player.Pause();	// Unpause playback
 
-              g_Player.Speed = Utils.GetNextRewindSpeed(g_Player.Speed);
+              g_Player.Speed = MediaPortal.Util.Utils.GetNextRewindSpeed(g_Player.Speed);
               if (g_Player.Speed < 1)	// are we not playing back at normal speed
               {
                 ToggleButton((int)Controls.OSD_REWIND, true);		// make sure out button is in the down position
@@ -356,7 +356,7 @@ namespace MediaPortal.GUI.Video
               if (g_Player.Paused)
                 g_Player.Pause();	// Unpause playback
 
-              g_Player.Speed = Utils.GetNextForwardSpeed(g_Player.Speed);
+              g_Player.Speed = MediaPortal.Util.Utils.GetNextForwardSpeed(g_Player.Speed);
               if (g_Player.Speed > 1)	// are we not playing back at normal speed
               {
                 ToggleButton((int)Controls.OSD_FFWD, true);		// make sure out button is in the down position

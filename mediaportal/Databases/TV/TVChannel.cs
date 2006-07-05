@@ -436,7 +436,7 @@ namespace MediaPortal.TV.Database
       get
       {
         DateTime dtNow = DateTime.Now;
-        long lNow = Utils.datetolong(dtNow);
+        long lNow =  MediaPortal.Util.Utils.datetolong(dtNow);
         if (_currentProgram != null)
         {
           if (_currentProgram.Start <= lNow && _currentProgram.End >= lNow) return _currentProgram;
@@ -473,10 +473,10 @@ namespace MediaPortal.TV.Database
       _previousProgram = null;
       _currentProgram = null;
       _nextProgram = null;
-      long lNow = Utils.datetolong(dt);
+      long lNow =  MediaPortal.Util.Utils.datetolong(dt);
       List<TVProgram> progs = new List<TVProgram>();
-      long starttime = Utils.datetolong(dt.AddDays(-2));
-      long endtime = Utils.datetolong(dt.AddDays(2));
+      long starttime =  MediaPortal.Util.Utils.datetolong(dt.AddDays(-2));
+      long endtime =  MediaPortal.Util.Utils.datetolong(dt.AddDays(2));
       TVDatabase.GetProgramsPerChannel(Name, starttime, endtime, ref progs);
       for (int i = 0; i < progs.Count; ++i)
       {
@@ -495,7 +495,7 @@ namespace MediaPortal.TV.Database
 
     public TVProgram GetProgramAt(DateTime dt)
     {
-      long lNow = Utils.datetolong(DateTime.Now);
+      long lNow =  MediaPortal.Util.Utils.datetolong(DateTime.Now);
 
       if (_currentProgram == null)
         Update();
@@ -506,7 +506,7 @@ namespace MediaPortal.TV.Database
           Update();
       }
 
-      lNow = Utils.datetolong(dt);
+      lNow =  MediaPortal.Util.Utils.datetolong(dt);
       if (_previousProgram != null)
       {
         if (_previousProgram.Start <= lNow && _previousProgram.End >= lNow)
@@ -524,8 +524,8 @@ namespace MediaPortal.TV.Database
       }
 
       List<TVProgram> progs = new List<TVProgram>();
-      long starttime = Utils.datetolong(dt.AddDays(-2));
-      long endtime = Utils.datetolong(dt.AddDays(2));
+      long starttime =  MediaPortal.Util.Utils.datetolong(dt.AddDays(-2));
+      long endtime =  MediaPortal.Util.Utils.datetolong(dt.AddDays(2));
       TVDatabase.GetProgramsPerChannel(Name, starttime, endtime, ref progs);
       foreach (TVProgram prog in progs)
       {

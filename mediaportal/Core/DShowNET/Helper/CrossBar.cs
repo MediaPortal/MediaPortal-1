@@ -3,10 +3,19 @@ using System.Collections.Generic;
 using System.Text;
 using DirectShowLib;
 using MediaPortal.GUI.Library;
+using MediaPortal.Utils.Services;
+
 namespace DShowNET.Helper
 {
   public class CrossBar
   {
+    static ILog _log;
+
+    static CrossBar()
+    {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+    }
 
     /// <summary>
     /// This function resets the crossbar filter(s)
@@ -50,7 +59,7 @@ namespace DShowNET.Helper
       int iRgbVideo = 0;
 
       if (logActions)
-        Log.Write("FixCrossbarRouting: use tuner:{0} use cvbs#1:{1} use cvbs#2:{2} use svhs:{3} use rgb:{4}", useTuner, useCVBS1, useCVBS2, useSVHS, useRgb);
+        _log.Info("FixCrossbarRouting: use tuner:{0} use cvbs#1:{1} use cvbs#2:{2} use svhs:{3} use rgb:{4}", useTuner, useCVBS1, useCVBS2, useSVHS, useRgb);
       try
       {
         int icurrentCrossbar = 0;
@@ -65,7 +74,7 @@ namespace DShowNET.Helper
           Guid iid;
           object o = null;
           iid = typeof(IAMCrossbar).GUID;
-          if (logActions) Log.Write(" Find crossbar:#{0}", 1 + icurrentCrossbar);
+          if (logActions) _log.Info(" Find crossbar:#{0}", 1 + icurrentCrossbar);
           hr = m_captureGraphBuilder.FindInterface(cat, null, searchfilter,  iid, out o);
           if (hr == 0 && o != null)
           {
@@ -79,13 +88,13 @@ namespace DShowNET.Helper
               // new crossbar found
               icurrentCrossbar++;
               if (logActions)
-                Log.Write("  crossbar found:{0}", icurrentCrossbar);
+                _log.Info("  crossbar found:{0}", icurrentCrossbar);
 
               // get the number of input & output pins of the crossbar
               int iOutputPinCount, iInputPinCount;
               crossbar.get_PinCounts(out iOutputPinCount, out iInputPinCount);
               if (logActions)
-                Log.Write("    crossbar has {0} inputs and {1} outputs", iInputPinCount, iOutputPinCount);
+                _log.Info("    crossbar has {0} inputs and {1} outputs", iInputPinCount, iOutputPinCount);
 
               int iPinIndexRelated;		// pin related (routed) with this output pin
               int iPinIndexRelatedIn; // pin related (routed) with this input pin
@@ -110,7 +119,7 @@ namespace DShowNET.Helper
                     // yes thats possible, now get the information of the input pin
                     crossbar.get_CrossbarPinInfo(true, iIn, out iPinIndexRelatedIn, out PhysicalTypeIn);
                     if (logActions)
-                      Log.Write("     check:in#{0}->out#{1} / {2} -> {3}", iIn, iOut, PhysicalTypeIn.ToString(), PhysicalTypeOut.ToString());
+                      _log.Info("     check:in#{0}->out#{1} / {2} -> {3}", iIn, iOut, PhysicalTypeIn.ToString(), PhysicalTypeOut.ToString());
 
 
                     // boolean indicating if current input pin should be connected to the current output pin
@@ -182,12 +191,12 @@ namespace DShowNET.Helper
                     if (bRoute)
                     {
                       //yes, then connect
-                      if (logActions) Log.Write("     connect");
+                      if (logActions) _log.Info("     connect");
                       hr = crossbar.Route(iOut, iIn);
                       if (logActions)
                       {
-                        if (hr != 0) Log.Write("    connect FAILED");
-                        else Log.Write("    connect success");
+                        if (hr != 0) _log.Info("    connect FAILED");
+                        else _log.Info("    connect success");
                       }
                     }
                   }//if (hr==0)
@@ -197,15 +206,15 @@ namespace DShowNET.Helper
           }//if (hr ==0 && o != null)
           else
           {
-            if (logActions) Log.Write("  no more crossbars.:0x{0:X}", hr);
+            if (logActions) _log.Info("  no more crossbars.:0x{0:X}", hr);
             break;
           }
         }//while (true)
-        if (logActions) Log.Write("crossbar routing done");
+        if (logActions) _log.Info("crossbar routing done");
       }
       catch (Exception ex)
       {
-        Log.Write("crossbar routing exception:{0}", ex.ToString());
+        _log.Info("crossbar routing exception:{0}", ex.ToString());
       }
     }
 
@@ -258,7 +267,7 @@ namespace DShowNET.Helper
         videoRgb = 1 + xmlreader.GetValueAsInt("mapping", "video4", 0);
       }
 
-      Log.Write("FixCrossbarRouting: use tuner:{0} use cvbs#1:{1} use cvbs#2:{2} use svhs:{3} use rgb:{4}", useTuner, useCVBS1, useCVBS2, useSVHS, useRgb);
+      _log.Info("FixCrossbarRouting: use tuner:{0} use cvbs#1:{1} use cvbs#2:{2} use svhs:{3} use rgb:{4}", useTuner, useCVBS1, useCVBS2, useSVHS, useRgb);
       try
       {
         int icurrentCrossbar = 0;
@@ -274,7 +283,7 @@ namespace DShowNET.Helper
           object o = null;
           //cat = FindDirection.UpstreamOnly;
           iid = typeof(IAMCrossbar).GUID;
-          Log.Write(" Find crossbar:#{0}", 1 + icurrentCrossbar);
+          _log.Info(" Find crossbar:#{0}", 1 + icurrentCrossbar);
           DsGuid cat = new DsGuid(FindDirection.UpstreamOnly);
           hr = m_captureGraphBuilder.FindInterface( cat , null, searchfilter,  iid, out o);
           if (hr == 0 && o != null)
@@ -288,12 +297,12 @@ namespace DShowNET.Helper
             {
               // new crossbar found
               icurrentCrossbar++;
-              Log.Write("  crossbar found:{0}", icurrentCrossbar);
+              _log.Info("  crossbar found:{0}", icurrentCrossbar);
 
               // get the number of input & output pins of the crossbar
               int iOutputPinCount, iInputPinCount;
               crossbar.get_PinCounts(out iOutputPinCount, out iInputPinCount);
-              Log.Write("    crossbar has {0} inputs and {1} outputs", iInputPinCount, iOutputPinCount);
+              _log.Info("    crossbar has {0} inputs and {1} outputs", iInputPinCount, iOutputPinCount);
 
               int iPinIndexRelated;		// pin related (routed) with this output pin
               int iPinIndexRelatedIn; // pin related (routed) with this input pin
@@ -317,7 +326,7 @@ namespace DShowNET.Helper
                   {
                     // yes thats possible, now get the information of the input pin
                     crossbar.get_CrossbarPinInfo(true, iIn, out iPinIndexRelatedIn, out PhysicalTypeIn);
-                    Log.Write("     check:in#{0}->out#{1} / {2} -> {3}", iIn, iOut, PhysicalTypeIn.ToString(), PhysicalTypeOut.ToString());
+                    _log.Info("     check:in#{0}->out#{1} / {2} -> {3}", iIn, iOut, PhysicalTypeIn.ToString(), PhysicalTypeOut.ToString());
 
 
                     // boolean indicating if current input pin should be connected to the current output pin
@@ -382,10 +391,10 @@ namespace DShowNET.Helper
                     if (bRoute)
                     {
                       //yes, then connect
-                      Log.Write("     connect");
+                      _log.Info("     connect");
                       hr = crossbar.Route(iOut, iIn);
-                      if (hr != 0) Log.Write("    connect FAILED");
-                      else Log.Write("    connect success");
+                      if (hr != 0) _log.Info("    connect FAILED");
+                      else _log.Info("    connect success");
                     }
                   }//if (hr==0)
                 }//for (int iIn=0; iIn < iInputPinCount; iIn++)
@@ -394,15 +403,15 @@ namespace DShowNET.Helper
           }//if (hr ==0 && o != null)
           else
           {
-            Log.Write("  no more crossbars.:0x{0:X}", hr);
+            _log.Info("  no more crossbars.:0x{0:X}", hr);
             break;
           }
         }//while (true)
-        Log.Write("crossbar routing done");
+        _log.Info("crossbar routing done");
       }
       catch (Exception ex)
       {
-        Log.Write("crossbar routing exception:{0}", ex.ToString());
+        _log.Info("crossbar routing exception:{0}", ex.ToString());
       }
     }
   }

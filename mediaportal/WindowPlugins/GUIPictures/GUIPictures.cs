@@ -139,7 +139,7 @@ namespace MediaPortal.GUI.Pictures
       GetID = (int)GUIWindow.Window.WINDOW_PICTURES;
 
       virtualDirectory.AddDrives();
-      virtualDirectory.SetExtensions(Utils.PictureExtensions);
+      virtualDirectory.SetExtensions(MediaPortal.Util.Utils.PictureExtensions);
     }
     ~GUIPictures()
     {
@@ -154,7 +154,7 @@ namespace MediaPortal.GUI.Pictures
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         isFileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
-        fileMenuPinCode = Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", String.Empty));
+        fileMenuPinCode = MediaPortal.Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", String.Empty));
         string strDefault = xmlreader.GetValueAsString("pictures", "default", String.Empty);
         virtualDirectory.Clear();
         for (int i = 0; i < 20; i++)
@@ -174,7 +174,7 @@ namespace MediaPortal.GUI.Pictures
           Share share = new Share();
           share.Name = xmlreader.GetValueAsString("pictures", shareName, String.Empty);
           share.Path = xmlreader.GetValueAsString("pictures", sharePath, String.Empty);
-          string pinCode = Utils.DecryptPin(xmlreader.GetValueAsString("pictures", strPincode, string.Empty));
+          string pinCode = MediaPortal.Util.Utils.DecryptPin(xmlreader.GetValueAsString("pictures", strPincode, string.Empty));
           if (pinCode != string.Empty)
             share.Pincode = Convert.ToInt32(pinCode);
           else
@@ -691,8 +691,8 @@ namespace MediaPortal.GUI.Pictures
 
       string sizeItem1 = String.Empty;
       string sizeItem2 = String.Empty;
-      if (item1.FileInfo != null) sizeItem1 = Utils.GetSize(item1.FileInfo.Length);
-      if (item2.FileInfo != null) sizeItem2 = Utils.GetSize(item2.FileInfo.Length);
+      if (item1.FileInfo != null) sizeItem1 = MediaPortal.Util.Utils.GetSize(item1.FileInfo.Length);
+      if (item2.FileInfo != null) sizeItem2 = MediaPortal.Util.Utils.GetSize(item2.FileInfo.Length);
 
       SortMethod method = (SortMethod)mapSettings.SortBy;
       bool sortAsc = mapSettings.SortAscending;
@@ -750,10 +750,10 @@ namespace MediaPortal.GUI.Pictures
     void OnRetrieveCoverArt(GUIListItem item)
     {
       if (item.IsRemote) return;
-      Utils.SetDefaultIcons(item);
+      MediaPortal.Util.Utils.SetDefaultIcons(item);
       if (!item.IsFolder)
       {
-        Utils.SetThumbnails(ref item);
+        MediaPortal.Util.Utils.SetThumbnails(ref item);
         string thumbnailImage = GetThumbnail(item.Path);
         item.ThumbnailImage = thumbnailImage;
       }
@@ -764,7 +764,7 @@ namespace MediaPortal.GUI.Pictures
           int pin;
           if (!virtualDirectory.IsProtectedShare(item.Path, out pin))
           {
-            Utils.SetThumbnails(ref item);
+            MediaPortal.Util.Utils.SetThumbnails(ref item);
           }
         }
       }
@@ -808,12 +808,12 @@ namespace MediaPortal.GUI.Pictures
           {
             DoDeleteItem(subItem);
           }
-          Utils.DirectoryDelete(item.Path);
+          MediaPortal.Util.Utils.DirectoryDelete(item.Path);
         }
       }
       else if (!item.IsRemote)
       {
-        Utils.FileDelete(item.Path);
+        MediaPortal.Util.Utils.FileDelete(item.Path);
       }
     }
 
@@ -1027,7 +1027,7 @@ namespace MediaPortal.GUI.Pictures
 
           if (!item.IsFolder)
           {
-            if (Utils.IsPicture(item.Path))
+            if (MediaPortal.Util.Utils.IsPicture(item.Path))
             {
               if (dlgProgress != null)
               {
@@ -1213,7 +1213,7 @@ namespace MediaPortal.GUI.Pictures
       {
         if (!subitem.IsFolder)
         {
-          if (!subitem.IsRemote && Utils.IsPicture(subitem.Path))
+          if (!subitem.IsRemote && MediaPortal.Util.Utils.IsPicture(subitem.Path))
           {
             pictureList.Add(subitem.Path);
             if (pictureList.Count >= 4) break;
@@ -1253,7 +1253,7 @@ namespace MediaPortal.GUI.Pictures
               }
               catch (Exception)
               {
-                Log.Write("Damaged picture file found: {0}. Try to repair or delete this file please!", (string)pictureList[0]);
+                _log.Info("Damaged picture file found: {0}. Try to repair or delete this file please!", (string)pictureList[0]);
               }
 
               //If exists load second of 4 images for the folder thumb.
@@ -1268,7 +1268,7 @@ namespace MediaPortal.GUI.Pictures
                 }
                 catch (Exception)
                 {
-                  Log.Write("Damaged picture file found: {0}. Try to repair or delete this file please!", (string)pictureList[1]);
+                  _log.Info("Damaged picture file found: {0}. Try to repair or delete this file please!", (string)pictureList[1]);
                 }
               }
 
@@ -1284,7 +1284,7 @@ namespace MediaPortal.GUI.Pictures
                 }
                 catch (Exception)
                 {
-                  Log.Write("Damaged picture file found: {0}. Try to repair or delete this file please!", (string)pictureList[2]);
+                  _log.Info("Damaged picture file found: {0}. Try to repair or delete this file please!", (string)pictureList[2]);
                 }
               }
 
@@ -1300,7 +1300,7 @@ namespace MediaPortal.GUI.Pictures
                 }
                 catch (Exception)
                 {
-                  Log.Write("Damaged picture file found: {0}. Try to repair or delete this file please!", (string)pictureList[3]);
+                  _log.Info("Damaged picture file found: {0}. Try to repair or delete this file please!", (string)pictureList[3]);
                 }
               }
             }//using (Graphics g = Graphics.FromImage(bmp) )
@@ -1308,7 +1308,7 @@ namespace MediaPortal.GUI.Pictures
             {
               string thumbnailImageName = path + @"\folder.jpg";
               if (System.IO.File.Exists(thumbnailImageName))
-                Utils.FileDelete(thumbnailImageName);
+                MediaPortal.Util.Utils.FileDelete(thumbnailImageName);
               bmp.Save(thumbnailImageName, System.Drawing.Imaging.ImageFormat.Jpeg);
 
               File.SetAttributes(thumbnailImageName, FileAttributes.Hidden);
@@ -1382,12 +1382,12 @@ namespace MediaPortal.GUI.Pictures
     static public string GetThumbnail(string fileName)
     {
       if (fileName == String.Empty) return String.Empty;
-      return String.Format(@"{0}\{1}.jpg", Thumbs.Pictures, Utils.EncryptLine(fileName));
+      return String.Format(@"{0}\{1}.jpg", Thumbs.Pictures, MediaPortal.Util.Utils.EncryptLine(fileName));
     }
     static public string GetLargeThumbnail(string fileName)
     {
       if (fileName == String.Empty) return String.Empty;
-      return String.Format(@"{0}\{1}L.jpg", Thumbs.Pictures, Utils.EncryptLine(fileName));
+      return String.Format(@"{0}\{1}L.jpg", Thumbs.Pictures, MediaPortal.Util.Utils.EncryptLine(fileName));
     }
 
 
@@ -1414,7 +1414,7 @@ namespace MediaPortal.GUI.Pictures
           if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) return;
           if (!item.IsFolder)
           {
-            if (!item.IsRemote && Utils.IsPicture(item.Path))
+            if (!item.IsRemote && MediaPortal.Util.Utils.IsPicture(item.Path))
             {
               using (PictureDatabase dbs = new PictureDatabase())
               {

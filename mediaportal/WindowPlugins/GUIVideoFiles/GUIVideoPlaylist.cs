@@ -67,7 +67,7 @@ namespace MediaPortal.GUI.Video
 			currentFolder = System.IO.Directory.GetCurrentDirectory();
 			bool result= Load(GUIGraphicsContext.Skin + @"\myvideoplaylist.xml");
 			m_directory.AddDrives();
-			m_directory.SetExtensions(Utils.VideoExtensions);
+			m_directory.SetExtensions(MediaPortal.Util.Utils.VideoExtensions);
 			return result;
 		}
 
@@ -258,14 +258,14 @@ namespace MediaPortal.GUI.Video
 					int nDuration = item.Duration;
 					if (nDuration > 0)
 					{
-						string str = Utils.SecondsToHMSString(nDuration);
+						string str = MediaPortal.Util.Utils.SecondsToHMSString(nDuration);
 						pItem.Label2 = str;
 					}
 					else
 						pItem.Label2 = String.Empty;
 				}
 				itemlist.Add(pItem);
-        Utils.SetDefaultIcons(pItem);
+        MediaPortal.Util.Utils.SetDefaultIcons(pItem);
         
       }
 
@@ -372,9 +372,9 @@ namespace MediaPortal.GUI.Video
               {
                 if (movieDetails.File == fileName /*|| pItem->GetLabel() == info.Title*/)
                 { 
-                  if (Utils.IsDVD(listItem.Path))
+                  if (MediaPortal.Util.Utils.IsDVD(listItem.Path))
                     listItem.Label=String.Format( "({0}:) {1}",  listItem.Path.Substring(0,1),  movieDetails.Title );
-                  string coverArtImage = Utils.GetCoverArt(Thumbs.MovieTitle, movieDetails.Title );
+                  string coverArtImage = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MovieTitle, movieDetails.Title );
                   if (System.IO.File.Exists(coverArtImage))
                   {
                     listItem.ThumbnailImage = coverArtImage;
@@ -400,7 +400,7 @@ namespace MediaPortal.GUI.Video
           int idMovie=VideoDatabase.GetMovieInfo(listItem.Path,ref movieDetails);
           if (idMovie>=0)
           {
-            string coverArtImage= Utils.GetCoverArt(Thumbs.MovieTitle, movieDetails.Title );
+            string coverArtImage= MediaPortal.Util.Utils.GetCoverArt(Thumbs.MovieTitle, movieDetails.Title );
             if (System.IO.File.Exists(coverArtImage))
             {
               listItem.ThumbnailImage = coverArtImage;
@@ -487,7 +487,7 @@ namespace MediaPortal.GUI.Video
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
         {
           playListPath = xmlreader.GetValueAsString("movies","playlists",String.Empty);
-          playListPath = Utils.RemoveTrailingSlash(playListPath);
+          playListPath = MediaPortal.Util.Utils.RemoveTrailingSlash(playListPath);
         }
 
 				string fullPlayListPath = System.IO.Path.GetFileNameWithoutExtension(playlistFileName);

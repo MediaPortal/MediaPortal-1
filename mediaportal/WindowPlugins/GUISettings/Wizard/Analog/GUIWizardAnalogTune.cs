@@ -109,7 +109,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
       }
       catch (Exception ex)
       {
-        Log.WriteFile(Log.LogType.Log, true, "ex:{0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+        _log.Error("ex:{0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
       }
       finally
       {
@@ -125,7 +125,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
     }
     void ScanChannels(TVCaptureDevice captureCard)
     {
-      Log.Write("Analog-scan:ScanChannels() {0}/{1}", currentFrequencyIndex, 200);
+      _log.Info("Analog-scan:ScanChannels() {0}/{1}", currentFrequencyIndex, 200);
       if (currentFrequencyIndex < 0 || currentFrequencyIndex >= 200) return;
 
 
@@ -140,7 +140,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 
     void ScanNextFrequency(TVCaptureDevice captureCard, int offset)
     {
-      Log.Write("Analog-scan:ScanNextFrequency() {0}/{1}", currentFrequencyIndex, 200);
+      _log.Info("Analog-scan:ScanNextFrequency() {0}/{1}", currentFrequencyIndex, 200);
       if (currentFrequencyIndex < 0) currentFrequencyIndex = 0;
       if (currentFrequencyIndex >= 200) return;
 
@@ -154,11 +154,11 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
       if (!captureCard.SignalPresent())
         System.Threading.Thread.Sleep(400);
 
-      Log.WriteFile(Log.LogType.Log, "Analog-scan:tune:{0}", currentFrequencyIndex);
+      _log.Info("Analog-scan:tune:{0}", currentFrequencyIndex);
 
 
       captureCard.ViewChannel(chan);
-      Log.WriteFile(Log.LogType.Log, "Analog-scan:tuned");
+      _log.Info("Analog-scan:tuned");
       return;
     }
 
@@ -176,7 +176,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 
     void UpdateList()
     {
-      Log.Write("UpdateList()");
+      _log.Info("UpdateList()");
       listChannelsFound.Clear();
       if (listTvChannels.Count == 0)
       {
@@ -184,7 +184,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
         item.Label = "No channels found";
         item.IsFolder = false;
         listChannelsFound.Add(item);
-        Log.Write("UpdateList() done");
+        _log.Info("UpdateList() done");
         return;
 
       }
@@ -194,7 +194,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
         GUIListItem item = new GUIListItem();
         item.Label = String.Format("{0}. {1}", count, chan.Name);
         item.IsFolder = false;
-        string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, chan.Name);
+        string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, chan.Name);
         if (!System.IO.File.Exists(strLogo))
         {
           strLogo = "defaultVideoBig.png";
@@ -206,7 +206,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
         count++;
       }
       listChannelsFound.ScrollToEnd();
-      Log.Write("UpdateList() done");
+      _log.Info("UpdateList() done");
     }
     void UpdateStatus()
     {
@@ -219,7 +219,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
       string description = String.Format("Channel:{0}", currentFreq);
       lblChannelsFound.Label = description;
       lblStatus.Label = String.Format("Found {0} tv channels", newChannels);
-      Log.Write("Analog-scan:ScanChannels() done");
+      _log.Info("Analog-scan:ScanChannels() done");
     }
 
     protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)

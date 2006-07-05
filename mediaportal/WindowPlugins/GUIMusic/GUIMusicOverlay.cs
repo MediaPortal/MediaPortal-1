@@ -496,7 +496,7 @@ namespace MediaPortal.GUI.Music
       if (tag != null)
       {
         string strText = GUILocalizeStrings.Get(437);	//	"Duration"
-        string strDuration = String.Format("{0} {1}", strText, Utils.SecondsToHMSString(tag.Duration));
+        string strDuration = String.Format("{0} {1}", strText, MediaPortal.Util.Utils.SecondsToHMSString(tag.Duration));
         if (tag.Duration <= 0) strDuration = String.Empty;
 
         strText = GUILocalizeStrings.Get(435);	//	"Track"
@@ -546,7 +546,7 @@ namespace MediaPortal.GUI.Music
       if (tag != null)
       {
         string strText = GUILocalizeStrings.Get(437);	//	"Duration"
-        string strDuration = String.Format("{0}{1}", strText, Utils.SecondsToHMSString(tag.Duration));
+        string strDuration = String.Format("{0}{1}", strText, MediaPortal.Util.Utils.SecondsToHMSString(tag.Duration));
         if (tag.Duration <= 0) strDuration = String.Empty;
 
         strText = GUILocalizeStrings.Get(435);	//	"Track"
@@ -605,7 +605,7 @@ namespace MediaPortal.GUI.Music
           if (Recorder.IsRadio())
           {
             tag = new MusicTag();
-            string cover = Utils.GetCoverArt(@"Thumbs\Radio", Recorder.RadioStationName());
+            string cover = MediaPortal.Util.Utils.GetCoverArt(@"Thumbs\Radio", Recorder.RadioStationName());
             if (cover != String.Empty) thumb = cover;
             tag.Title = Recorder.RadioStationName();
           }
@@ -626,7 +626,7 @@ namespace MediaPortal.GUI.Music
                 {
                   // got it, check if it has a thumbnail
                   tag.Title = station.Name;
-                  coverart = Utils.GetCoverArt(@"Thumbs\Radio", station.Name);
+                  coverart = MediaPortal.Util.Utils.GetCoverArt(@"Thumbs\Radio", station.Name);
                   if (coverart != String.Empty) thumb = coverart;
                 }
               }
@@ -635,7 +635,7 @@ namespace MediaPortal.GUI.Music
                 if (station.URL.Equals(strFName))
                 {
                   tag.Title = station.Name;
-                  coverart = Utils.GetCoverArt(@"Thumbs\Radio", station.Name);
+                  coverart = MediaPortal.Util.Utils.GetCoverArt(@"Thumbs\Radio", station.Name);
                   if (coverart != String.Empty) thumb = coverart;
                 }
               }

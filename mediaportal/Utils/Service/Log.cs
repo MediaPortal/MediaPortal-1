@@ -85,9 +85,51 @@ namespace MediaPortal.Utils.Services
 			Write(Level.Error, format, arg);
     }
 
-		public void Debug(string format, params object[] arg)
+    public void Debug(string format, params object[] arg)
     {
-			Write(Level.Debug, format, arg);
+      Write(Level.Debug, format, arg);
+    }
+
+    public void InfoThread(string format, params object[] arg)
+    {
+      WriteThread(Level.Information, format, arg);
+    }
+
+    public void WarnThread(string format, params object[] arg)
+    {
+      WriteThread(Level.Warning, format, arg);
+    }
+
+    public void ErrorThread(string format, params object[] arg)
+    {
+      WriteThread(Level.Error, format, arg);
+    }
+
+    public void DebugThread(string format, params object[] arg)
+    {
+      WriteThread(Level.Debug, format, arg);
+    }
+
+    public void Error(Exception ex)
+    {
+      Write(Level.Error, "Exception   :{0}", ex.ToString());
+      Write(Level.Error, "Exception   :{0}", ex.Message);
+      Write(Level.Error, "  site      :{0}", ex.TargetSite);
+      Write(Level.Error, "  source    :{0}", ex.Source);
+      Write(Level.Error, "  stacktrace:{0}", ex.StackTrace);
+    }
+
+    private void WriteThread(Level logLevel, string format, params object[] arg)
+    {
+      // uncomment the following four lines to help identify the calling method, this
+      // is useful in situations where an unreported exception causes problems
+      //		StackTrace stackTrace = new StackTrace();
+      //		StackFrame stackFrame = stackTrace.GetFrame(1);
+      //		MethodBase methodBase = stackFrame.GetMethod();
+      //		Write(logLevel, "{0}", methodBase.Name);
+      String log = String.Format("{0:X} {1}",
+          System.Threading.Thread.CurrentThread.ManagedThreadId, String.Format(format, arg));
+      Write(logLevel, log);
     }
 
 		private void Write(Level logLevel, string format, params object[] arg)

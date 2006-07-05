@@ -27,14 +27,20 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Database;
 using MediaPortal.TV.Database;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Radio.Database
 {
   public class RadioDatabaseADO : IRadioDatabase, IDisposable
   {
     SqlConnection _connection;
+    protected ILog _log;
+
     public RadioDatabaseADO()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+
       string connectionString;
       using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings("mediaportal.xml"))
       {
@@ -283,7 +289,7 @@ namespace MediaPortal.Radio.Database
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        _log.Error(ex);
         return false;
       }
       return true;
@@ -311,7 +317,7 @@ namespace MediaPortal.Radio.Database
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        _log.Error(ex);
       }
     }
 
@@ -358,7 +364,7 @@ namespace MediaPortal.Radio.Database
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        _log.Error(ex);
       }
 
       return -1;
@@ -389,7 +395,7 @@ namespace MediaPortal.Radio.Database
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        _log.Error(ex);
       }
 
       return -1;
@@ -417,7 +423,7 @@ namespace MediaPortal.Radio.Database
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        _log.Error(ex);
       }
     }
 
@@ -444,7 +450,7 @@ namespace MediaPortal.Radio.Database
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        _log.Error(ex);
       }
     }
 
@@ -457,7 +463,7 @@ namespace MediaPortal.Radio.Database
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        _log.Error(ex);
       }
     }
 
@@ -498,7 +504,7 @@ namespace MediaPortal.Radio.Database
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        _log.Error(ex);
       }
 
       return -1;
@@ -529,14 +535,14 @@ namespace MediaPortal.Radio.Database
         {
           strSQL = String.Format("update tblRadioDVBTMapping set frequency='{0}', ONID={1}, TSID={2}, SID={3}, strChannel='{4}',strProvider='{5}',audioPid={6}, pmtPid={7}, bandwidth={8},pcrPid={9} where idChannel ={10}",
             frequency, ONID, TSID, SID, strChannel, strProvider, audioPid, pmtPid, bandWidth, pcrPid, idChannel);
-          //	Log.WriteFile(Log.LogType.Log,true,"sql:{0}", strSQL);
+          //	_log.Error("sql:{0}", strSQL);
           SqlServerUtility.ExecuteNonQuery(_connection, strSQL);
           return idChannel;
         }
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        _log.Error(ex);
       }
 
       return -1;
@@ -559,7 +565,7 @@ namespace MediaPortal.Radio.Database
           // doesnt exists, add it
           strSQL = String.Format("insert into tblRadioDVBCMapping (idChannel, strChannel,strProvider,frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,audioPid,pmtPid,Visible,pcrPid) Values( {0}, '{1}', '{2}', '{3}',{4},{5},{6},{7},{8},{9},{10},{11},1,{12})"
             , idChannel, strChannel, strProvider, frequency, symbolrate, innerFec, modulation, ONID, TSID, SID, audioPid, pmtPid, pcrPid);
-          //Log.WriteFile(Log.LogType.Log,true,"sql:{0}", strSQL);
+          //_log.Error("sql:{0}", strSQL);
           SqlServerUtility.InsertRecord(_connection, strSQL);
           return idChannel;
         }
@@ -567,14 +573,14 @@ namespace MediaPortal.Radio.Database
         {
           strSQL = String.Format("update tblRadioDVBCMapping set frequency='{0}', symbolrate={1}, innerFec={2}, modulation={3}, ONID={4}, TSID={5}, SID={6}, strChannel='{7}', strProvider='{8}',audioPid={9}, pmtPid={10},pcrPid={11} where idChannel like '{12}'",
             frequency, symbolrate, innerFec, modulation, ONID, TSID, SID, strChannel, strProvider, audioPid, pmtPid, pcrPid, idChannel);
-          //Log.WriteFile(Log.LogType.Log,true,"sql:{0}", strSQL);
+          //_log.Error("sql:{0}", strSQL);
           SqlServerUtility.ExecuteNonQuery(_connection, strSQL);
           return idChannel;
         }
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        _log.Error(ex);
       }
 
       return -1;
@@ -598,7 +604,7 @@ namespace MediaPortal.Radio.Database
           // doesnt exists, add it
           strSQL = String.Format("insert into tblRadioATSCMapping (idChannel, strChannel,strProvider,frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,audioPid,pmtPid,channelNumber,minorChannel,majorChannel,Visible,pcrPid) Values( {0}, '{1}', '{2}', '{3}',{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},1,{15})"
             , idChannel, strChannel, strProvider, frequency, symbolrate, innerFec, modulation, ONID, TSID, SID, audioPid, pmtPid, physicalChannel, minorChannel, majorChannel, pcrPid);
-          //Log.WriteFile(Log.LogType.Log,true,"sql:{0}", strSQL);
+          //_log.Error("sql:{0}", strSQL);
           SqlServerUtility.InsertRecord(_connection, strSQL);
           return idChannel;
         }
@@ -606,14 +612,14 @@ namespace MediaPortal.Radio.Database
         {
           strSQL = String.Format("update tblRadioATSCMapping set frequency='{0}', symbolrate={1}, innerFec={2}, modulation={3}, ONID={4}, TSID={5}, SID={6}, strChannel='{7}', strProvider='{8}',audioPid={9}, pmtPid={10}, channelNumber={11},minorChannel={12},majorChannel={13},pcrPid={14} where idChannel like '{15}'",
             frequency, symbolrate, innerFec, modulation, ONID, TSID, SID, strChannel, strProvider, audioPid, pmtPid, physicalChannel, minorChannel, majorChannel, pcrPid, idChannel);
-          //Log.WriteFile(Log.LogType.Log,true,"sql:{0}", strSQL);
+          //_log.Error("sql:{0}", strSQL);
           SqlServerUtility.ExecuteNonQuery(_connection, strSQL);
           return idChannel;
         }
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        _log.Error(ex);
       }
 
       return -1;
@@ -659,7 +665,7 @@ namespace MediaPortal.Radio.Database
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        _log.Error(ex);
       }
     }
 
@@ -707,7 +713,7 @@ namespace MediaPortal.Radio.Database
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        _log.Error(ex);
       }
     }
 
@@ -760,7 +766,7 @@ namespace MediaPortal.Radio.Database
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        _log.Error(ex);
       }
     }
 
@@ -832,7 +838,7 @@ namespace MediaPortal.Radio.Database
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        _log.Error(ex);
       }
       return false;
     }
@@ -853,7 +859,7 @@ namespace MediaPortal.Radio.Database
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        _log.Error(ex);
       }
     }
 
@@ -887,7 +893,7 @@ namespace MediaPortal.Radio.Database
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        _log.Error(ex);
       }
     }
 
@@ -902,7 +908,7 @@ namespace MediaPortal.Radio.Database
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        _log.Error(ex);
       }
     }
 
@@ -924,7 +930,7 @@ namespace MediaPortal.Radio.Database
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        _log.Error(ex);
       }
       return false;
     }
@@ -990,7 +996,7 @@ namespace MediaPortal.Radio.Database
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        _log.Error(ex);
       }
       return;
     }
@@ -1073,7 +1079,7 @@ namespace MediaPortal.Radio.Database
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        _log.Error(ex);
       }
       return -1;
     }
@@ -1107,7 +1113,7 @@ namespace MediaPortal.Radio.Database
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        _log.Error(ex);
       }
 
       return -1;
@@ -1148,14 +1154,14 @@ namespace MediaPortal.Radio.Database
 
         //check if program is already in database
         //check if other programs exist between the start - finish time of this program
-        long endTime = Utils.datetolong(prog.EndTime.AddMinutes(-1));
+        long endTime = MediaPortal.Util.Utils.datetolong(prog.EndTime.AddMinutes(-1));
 
         strSQL = String.Format("SELECT * FROM tblRadioPrograms WHERE idChannel={0} AND ", iChannelId);
         strSQL += String.Format("  ( ('{0}' <= iStartTime and '{1}' >= iStartTime) or  ",
                               prog.Start.ToString(), endTime.ToString());
         strSQL += String.Format("    ('{0}' >= iStartTime and '{1}' >= iStartTime and '{2}' < iEndTime) )",
                     prog.Start.ToString(), endTime.ToString(), prog.Start.ToString());
-        //  Log.WriteFile(Log.LogType.EPG, "sql:{0} {1}-{2} {3}", prog.Channel, prog.Start.ToString(), endTime.ToString(), strSQL);
+        //  _log.Info("sql:{0} {1}-{2} {3}", prog.Channel, prog.Start.ToString(), endTime.ToString(), strSQL);
         using (SqlCommand cmd = _connection.CreateCommand())
         {
           cmd.CommandType = CommandType.Text;
@@ -1178,7 +1184,7 @@ namespace MediaPortal.Radio.Database
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        _log.Error(ex);
       }
       return -1;
     }
@@ -1190,13 +1196,13 @@ namespace MediaPortal.Radio.Database
       try
       {
         System.DateTime yesterday = System.DateTime.Today.AddDays(-1);
-        long longYesterday = Utils.datetolong(yesterday);
+        long longYesterday = MediaPortal.Util.Utils.datetolong(yesterday);
         strSQL = String.Format("DELETE FROM tblRadioPrograms WHERE iEndTime < '{0}'", longYesterday);
         SqlServerUtility.ExecuteNonQuery(_connection, strSQL);
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        _log.Error(ex);
       }
       return;
     }
@@ -1226,7 +1232,7 @@ namespace MediaPortal.Radio.Database
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        _log.Error(ex);
       }
       return false;
     }
@@ -1295,7 +1301,7 @@ namespace MediaPortal.Radio.Database
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        _log.Error(ex);
       }
       return false;
     }

@@ -782,7 +782,7 @@ namespace MediaPortal.GUI.Library
 
             try
             {
-                Log.Write("Moving List Item {0} down. Old index:{1}, new index{2}", item1.Path, iItem, iNextItem);
+                _log.Info("Moving List Item {0} down. Old index:{1}, new index{2}", item1.Path, iItem, iNextItem);
                 System.Threading.Monitor.Enter(this);
                 _itemList[iItem] = item2;
                 _itemList[iNextItem] = item1;
@@ -791,7 +791,7 @@ namespace MediaPortal.GUI.Library
 
             catch (Exception ex)
             {
-                Log.Write("GUIFacadeControl.MoveItemDown caused an exception: {0}", ex.Message);
+                _log.Info("GUIFacadeControl.MoveItemDown caused an exception: {0}", ex.Message);
                 selectedItemIndex = -1;
             }
 
@@ -838,7 +838,7 @@ namespace MediaPortal.GUI.Library
 
             try
             {
-                Log.Write("Moving List Item {0} up. Old index:{1}, new index{2}", item1.Path, iItem, iPreviousItem);
+                _log.Info("Moving List Item {0} up. Old index:{1}, new index{2}", item1.Path, iItem, iPreviousItem);
                 System.Threading.Monitor.Enter(this);
                 _itemList[iItem] = item2;
                 _itemList[iPreviousItem] = item1;
@@ -847,7 +847,7 @@ namespace MediaPortal.GUI.Library
 
             catch (Exception ex)
             {
-                Log.Write("GUIFacadeControl.MoveItemUp caused an exception: {0}", ex.Message);
+                _log.Info("GUIFacadeControl.MoveItemUp caused an exception: {0}", ex.Message);
                 selectedItemIndex = -1;
             }
 

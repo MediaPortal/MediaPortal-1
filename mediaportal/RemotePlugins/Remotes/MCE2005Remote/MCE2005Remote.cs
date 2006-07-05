@@ -29,6 +29,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.Hardware;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.InputDevices
 {
@@ -40,6 +41,7 @@ namespace MediaPortal.InputDevices
     bool controlEnabled = false;  // MCE Remote enabled
     bool logVerbose = false;      // Verbose logging
     InputHandler _inputHandler;    // Input Mapper
+    protected ILog _log;
 
 
     /// <summary>
@@ -47,6 +49,8 @@ namespace MediaPortal.InputDevices
     /// </summary>
     public MCE2005Remote()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
     }
 
 
@@ -73,7 +77,7 @@ namespace MediaPortal.InputDevices
       if (!controlEnabled)
         return;
 
-      if (logVerbose) Log.Write("MCE: Initializing MCE remote");
+      if (logVerbose) _log.Info("MCE: Initializing MCE remote");
 
       try
       {
@@ -85,7 +89,7 @@ namespace MediaPortal.InputDevices
       catch (Exception ex)
       {
         controlEnabled = false;
-        Log.Write("MCE: {0} - support disabled until MP restart", ex.InnerException.Message);
+        _log.Info("MCE: {0} - support disabled until MP restart", ex.InnerException.Message);
         return;
       }
 
@@ -96,12 +100,12 @@ namespace MediaPortal.InputDevices
         if (myProcess.ProcessName.ToLower().Equals("ehtray"))
           try
           {
-            Log.Write("MCE: Stopping Microsoft ehtray");
+            _log.Info("MCE: Stopping Microsoft ehtray");
             myProcess.Kill();
           }
           catch (Exception)
           {
-            Log.Write("MCE: Cannot stop Microsoft ehtray");
+            _log.Info("MCE: Cannot stop Microsoft ehtray");
             DeInit();
             return;
           }
@@ -109,12 +113,12 @@ namespace MediaPortal.InputDevices
       _inputHandler = new InputHandler("Microsoft MCE");
       if (!_inputHandler.IsLoaded)
       {
-        Log.Write("MCE: Error loading default mapping file - please reinstall MediaPortal");
+        _log.Info("MCE: Error loading default mapping file - please reinstall MediaPortal");
         DeInit();
         return;
       }
       else
-        Log.Write("MCE: MCE remote enabled");
+        _log.Info("MCE: MCE remote enabled");
     }
 
 
@@ -125,7 +129,7 @@ namespace MediaPortal.InputDevices
     {
       if (controlEnabled)
       {
-        if (logVerbose) Log.Write("MCE: Stopping MCE remote");
+        if (logVerbose) _log.Info("MCE: Stopping MCE remote");
         Remote.Click -= new RemoteEventHandler(OnRemoteClick);
         Remote.DeviceRemoval -= new DeviceEventHandler(OnDeviceRemoval);
         Remote.DeviceArrival -= new DeviceEventHandler(OnDeviceArrival);
@@ -138,14 +142,14 @@ namespace MediaPortal.InputDevices
     {
       Remote.DeviceRemoval -= new DeviceEventHandler(OnDeviceRemoval);
       Remote.DeviceArrival += new DeviceEventHandler(OnDeviceArrival);
-      Log.Write("MCE: MCE receiver has been unplugged");
+      _log.Info("MCE: MCE receiver has been unplugged");
       DeInit();
     }
 
     void OnDeviceArrival(object sender, EventArgs e)
     {
       Remote.DeviceArrival -= new DeviceEventHandler(OnDeviceArrival);
-      Log.Write("MCE: MCE receiver detected");
+      _log.Info("MCE: MCE receiver detected");
       Init();
     }
 
@@ -174,9 +178,9 @@ namespace MediaPortal.InputDevices
           // Get & execute Mapping
           if (_inputHandler.MapAction((int)button))
           {
-            if (logVerbose) Log.Write("MCE: Command \"{0}\" mapped", button);
+            if (logVerbose) _log.Info("MCE: Command \"{0}\" mapped", button);
           }
-          else if (logVerbose) Log.Write("MCE: Command \"{0}\" not mapped", button);
+          else if (logVerbose) _log.Info("MCE: Command \"{0}\" not mapped", button);
         }
 
         return true;
@@ -193,7 +197,7 @@ namespace MediaPortal.InputDevices
     //RemoteButton button)
     {
       RemoteButton button = e.Button;
-      if (logVerbose) Log.Write("MCE: Incoming button command: {0}", button);
+      if (logVerbose) _log.Info("MCE: Incoming button command: {0}", button);
 
       // Set LastHidRequest, otherwise the HID handler (if enabled) would react on some remote buttons (double execution of command)
       switch (button)
@@ -243,9 +247,9 @@ namespace MediaPortal.InputDevices
       // Get & execute Mapping
       if (_inputHandler.MapAction((int)button))
       {
-        if (logVerbose) Log.Write("MCE: Command \"{0}\" mapped", button);
+        if (logVerbose) _log.Info("MCE: Command \"{0}\" mapped", button);
       }
-      else if (logVerbose) Log.Write("MCE: Command \"{0}\" not mapped", button);
+      else if (logVerbose) _log.Info("MCE: Command \"{0}\" not mapped", button);
     }
 
   }

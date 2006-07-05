@@ -75,7 +75,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
         GUIListItem item = new GUIListItem();
         item.Label = chan.Name;
         item.IsFolder = false;
-        string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, chan.Name);
+        string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, chan.Name);
         if (!System.IO.File.Exists(strLogo))
         {
           strLogo = "defaultVideoBig.png";

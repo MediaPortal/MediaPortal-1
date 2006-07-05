@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using MediaPortal.Support;
 using MediaPortal.GUI.Library;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal
 {
@@ -13,14 +14,18 @@ namespace MediaPortal
   {
     public void LogCrash(object sender, UnhandledExceptionEventArgs eventArgs)
     {
-      Log.WriteFile(Log.LogType.Error,true,"MediaPortal:unhandled exception occured");
+
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      ILog log = services.Get<ILog>();
+
+      log.Error("MediaPortal: Unhandled exception occured");
       string directory = "log";
 
       Exception ex;
       if (eventArgs.ExceptionObject is Exception)
       {
         ex = (Exception)eventArgs.ExceptionObject;
-        Log.Write(ex);
+        log.Error(ex);
       }
       else
       {
@@ -29,13 +34,13 @@ namespace MediaPortal
                 Type of exception: {0}
                 object.ToString {1}", eventArgs.ExceptionObject.GetType(), eventArgs.ExceptionObject.ToString())
                 );
-        Log.Write(ex);
+        log.Error(ex);
       }
 
       ExceptionLogger logger = new ExceptionLogger(ex);
       logger.CreateLogs(directory);
 
-      Log.Write("MediaPortal: stop...");
+      log.Info("MediaPortal: stop...");
       //Process.Start("crash.exe");
       Application.Exit();
     }

@@ -361,7 +361,7 @@ namespace MyMail
         }
         if (newMailsCount > 0)
         {
-          Utils.PlaySound("notify.wav", false, true);
+          MediaPortal.Util.Utils.PlaySound("notify.wav", false, true);
           DisplayOverlayNotify(true, data);
         }
       }

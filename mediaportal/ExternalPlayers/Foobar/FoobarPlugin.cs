@@ -33,6 +33,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.FoobarPlugin
 {
@@ -132,7 +133,9 @@ namespace MediaPortal.FoobarPlugin
               {
                  IntPtr mpHwnd = GetActiveWindow();
                  RunProgram(m_execPath, m_startupparameter);
-                 Log.Write("ExternalPlayers: Started foobar2000 with {0}", m_startupparameter);
+                 ServiceProvider services = GlobalServiceProvider.Instance;
+                 ILog log = services.Get<ILog>();
+                 log.Info("ExternalPlayers: Started foobar2000 with {0}", m_startupparameter);
                  ShowWindow(mpHwnd, SW_RESTORE);
                  SetForegroundWindow(mpHwnd);
                  m_hwnd = FindWindow(null, m_windowName);

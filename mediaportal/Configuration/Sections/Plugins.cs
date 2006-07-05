@@ -34,6 +34,8 @@ using System.Windows.Forms;
 using MediaPortal.Configuration.Controls;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
+using MediaPortal.Utils.Services;
+
 #pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
@@ -56,14 +58,19 @@ namespace MediaPortal.Configuration.Sections
     private ArrayList loadedPlugins = new ArrayList();
     private DataSet ds = new DataSet();
     bool isLoaded = false;
+    protected ILog _log;
 
     public Plugins()
       : this("Plugins")
-    { }
+    {
+    }
 
     public Plugins(string name)
       : base(name)
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+
       // This call is required by the Windows Form Designer.
       InitializeComponent();
 
@@ -215,10 +222,10 @@ namespace MediaPortal.Configuration.Sections
                 }
                 catch (Exception setupFormException)
                 {
-                  Log.Write("Exception in plugin SetupForm loading :{0}", setupFormException.Message);
-                  Log.Write("Current class is :{0}", type.FullName);
+                  _log.Info("Exception in plugin SetupForm loading :{0}", setupFormException.Message);
+                  _log.Info("Current class is :{0}", type.FullName);
 #if DEBUG
-                  Log.Write(setupFormException.StackTrace);
+                  _log.Info(setupFormException.StackTrace);
 #endif
                 }
               }
@@ -247,10 +254,10 @@ namespace MediaPortal.Configuration.Sections
               }
               catch (Exception guiWindowException)
               {
-                Log.Write("Exception in plugin GUIWindows loading :{0}", guiWindowException.Message);
-                Log.Write("Current class is :{0}", t.FullName);
+                _log.Info("Exception in plugin GUIWindows loading :{0}", guiWindowException.Message);
+                _log.Info("Current class is :{0}", t.FullName);
 #if DEBUG
-                Log.Write(guiWindowException.StackTrace);
+                _log.Info(guiWindowException.StackTrace);
 #endif
               }
             }
@@ -258,9 +265,9 @@ namespace MediaPortal.Configuration.Sections
         }
         catch (Exception unknownException)
         {
-          Log.Write("Exception in plugin loading :{0}", unknownException.Message);
+          _log.Info("Exception in plugin loading :{0}", unknownException.Message);
 #if DEBUG
-          Log.Write(unknownException.StackTrace);
+          _log.Info(unknownException.StackTrace);
 #endif
         }
       }

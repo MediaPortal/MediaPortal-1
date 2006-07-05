@@ -970,12 +970,12 @@ namespace MediaPortal.Configuration.Sections
 
       if (strInput == string.Empty)
         strInput = strDefault;
-      strInput = Utils.ReplaceTag(strInput, "%artist%", artist, "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%title%", title, "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%album%", album, "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%track%", trackNr, "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%year%", year, "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%genre%", genre, "unknown");
+      strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%artist%", artist, "unknown");
+      strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%title%", title, "unknown");
+      strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%album%", album, "unknown");
+      strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%track%", trackNr, "unknown");
+      strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%year%", year, "unknown");
+      strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%genre%", genre, "unknown");
 
       int index = strInput.LastIndexOf('\\');
       switch (index)
@@ -993,8 +993,8 @@ namespace MediaPortal.Configuration.Sections
           }
           break;
       }
-      strDirectory = Utils.MakeDirectoryPath(strDirectory);
-      strName = Utils.MakeFileName(strName);
+      strDirectory = MediaPortal.Util.Utils.MakeDirectoryPath(strDirectory);
+      strName = MediaPortal.Util.Utils.MakeFileName(strName);
       string strReturn = strDirectory;
       if (strDirectory != string.Empty)
         strReturn += "\\";

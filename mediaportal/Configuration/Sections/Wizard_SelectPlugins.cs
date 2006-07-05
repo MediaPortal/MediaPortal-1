@@ -33,6 +33,7 @@ using MediaPortal.Util;
 using MediaPortal.TagReader;
 using MediaPortal.Music.Database;
 using MediaPortal.GUI.Library;
+using MediaPortal.Utils.Services;
 
 #pragma warning disable 108
 
@@ -67,6 +68,7 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.Timer timer1;
     private MediaPortal.UserInterface.Controls.MPLabel fileLabel;
     bool isScanning = false;
+    protected ILog _log;
 
     public Wizard_SelectPlugins()
       : this("Media Search")
@@ -76,6 +78,9 @@ namespace MediaPortal.Configuration.Sections
     public Wizard_SelectPlugins(string name)
       : base(name)
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+
       // This call is required by the Windows Form Designer.
       InitializeComponent();
 
@@ -456,7 +461,7 @@ namespace MediaPortal.Configuration.Sections
         }
 
         if (stopScanning) return;
-        if (Utils.IsAudio(file))
+        if (MediaPortal.Util.Utils.IsAudio(file))
         {
           totalAudio++;
           if (scanForAudio)
@@ -465,7 +470,7 @@ namespace MediaPortal.Configuration.Sections
             scanForAudio = false;//no need to scan subfolders
           }
         }
-        if (Utils.IsVideo(file))
+        if (MediaPortal.Util.Utils.IsVideo(file))
         {
           totalVideo++;
           if (scanForVideo)
@@ -474,7 +479,7 @@ namespace MediaPortal.Configuration.Sections
             scanForVideo = false;//no need to scan subfolders
           }
         }
-        if (Utils.IsPicture(file))
+        if (MediaPortal.Util.Utils.IsPicture(file))
         {
           if (file.Length < 260)
           {
@@ -493,7 +498,7 @@ namespace MediaPortal.Configuration.Sections
             }
           }
           else
-            Log.Write("ScanFolder: Path > 260: {0}", file);
+            _log.Info("ScanFolder: Path > 260: {0}", file);
         }
       }
       foreach (string subfolder in folders)

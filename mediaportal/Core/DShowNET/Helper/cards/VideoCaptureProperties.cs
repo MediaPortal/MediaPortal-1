@@ -48,10 +48,10 @@ namespace DShowNET.Helper
             _digitalEverywhere = new DigitalEverywhere(tunerfilter);
             _technoTrend = new TechnoTrend(tunerfilter);
             /*
-            if (_hauppauge.IsHauppage) Log.Write("Hauppauge card properties supported");
-            if (_ivac.IsIVAC) Log.Write("IVAC card properties supported");
-            if (_digitalEverywhere.IsDigitalEverywhere) Log.Write("Digital Everywhere card properties supported");
-            if (_twinhan.IsTwinhan) Log.Write("Twinhan card properties supported");
+            if (_hauppauge.IsHauppage) _log.Info("Hauppauge card properties supported");
+            if (_ivac.IsIVAC) _log.Info("IVAC card properties supported");
+            if (_digitalEverywhere.IsDigitalEverywhere) _log.Info("Digital Everywhere card properties supported");
+            if (_twinhan.IsTwinhan) _log.Info("Twinhan card properties supported");
             */
         }
 

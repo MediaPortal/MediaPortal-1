@@ -444,11 +444,11 @@ namespace MediaPortal.GUI.TV
           if (recs.Count > 1)
           {
             item.IsFolder = true;
-            Utils.SetDefaultIcons(item);
+            MediaPortal.Util.Utils.SetDefaultIcons(item);
           }
           else
           {
-            string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel);
+            string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel);
             if (!System.IO.File.Exists(strLogo))
             {
               strLogo = "defaultVideoBig.png";
@@ -482,7 +482,7 @@ namespace MediaPortal.GUI.TV
         GUIListItem item = new GUIListItem();
         item.Label = "..";
         item.IsFolder = true;
-        Utils.SetDefaultIcons(item);
+        MediaPortal.Util.Utils.SetDefaultIcons(item);
         listSchedules.Add(item);
         total++;
 
@@ -502,7 +502,7 @@ namespace MediaPortal.GUI.TV
               item.Label = recSeries.Title;
               item.TVTag = recSeries;
               item.MusicTag = rec;
-              string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, recSeries.Channel);
+              string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, recSeries.Channel);
               if (!System.IO.File.Exists(strLogo))
               {
                 strLogo = "defaultVideoBig.png";
@@ -633,7 +633,7 @@ namespace MediaPortal.GUI.TV
             {
               case TVRecording.RecordingType.Once:
                 item.Label2 = String.Format("{0} {1} - {2}",
-                        Utils.GetShortDayString(rec.StartTime),
+                        MediaPortal.Util.Utils.GetShortDayString(rec.StartTime),
                         rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
                         rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat)); ;
                 break;
@@ -778,15 +778,15 @@ namespace MediaPortal.GUI.TV
                 if (dlgYesNo.IsConfirmed)
                 {
                   Recorder.StopRecording(rec);
-                  rec.CanceledSeries.Add(Utils.datetolong(rec.StartTime));
-                  TVDatabase.AddCanceledSerie(rec, Utils.datetolong(rec.StartTime));
+                  rec.CanceledSeries.Add(MediaPortal.Util.Utils.datetolong(rec.StartTime));
+                  TVDatabase.AddCanceledSerie(rec, MediaPortal.Util.Utils.datetolong(rec.StartTime));
                 }
               }
             }
             else
             {
-              rec.CanceledSeries.Add(Utils.datetolong(rec.StartTime));
-              TVDatabase.AddCanceledSerie(rec, Utils.datetolong(rec.StartTime));
+              rec.CanceledSeries.Add(MediaPortal.Util.Utils.datetolong(rec.StartTime));
+              TVDatabase.AddCanceledSerie(rec, MediaPortal.Util.Utils.datetolong(rec.StartTime));
             }
             LoadDirectory();
           }
@@ -959,7 +959,7 @@ namespace MediaPortal.GUI.TV
       foreach (TVChannel chan in channels)
       {
         GUIListItem item = new GUIListItem(chan.Name);
-        string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, chan.Name);
+        string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, chan.Name);
         if (!System.IO.File.Exists(strLogo))
         {
           strLogo = "defaultVideoBig.png";
@@ -1093,8 +1093,8 @@ namespace MediaPortal.GUI.TV
       }
       
       dtNow = DateTime.Now.AddDays(day);
-      rec.Start = Utils.datetolong(new DateTime(dtNow.Year, dtNow.Month, dtNow.Day, hour, minute, 0, 0));
-      rec.End = Utils.datetolong(rec.StartTime.AddMinutes(duration));
+      rec.Start = MediaPortal.Util.Utils.datetolong(new DateTime(dtNow.Year, dtNow.Month, dtNow.Day, hour, minute, 0, 0));
+      rec.End = MediaPortal.Util.Utils.datetolong(rec.StartTime.AddMinutes(duration));
       rec.Title = GUILocalizeStrings.Get(413) + " (" + rec.Channel +")";
       Recorder.AddRecording(ref rec);
       LoadDirectory();
@@ -1128,8 +1128,8 @@ namespace MediaPortal.GUI.TV
         if (dlg.IsConfirmed)
         {
           rec.Channel = dlg.Channel;
-          rec.Start = Utils.datetolong(dlg.StartDateTime);
-          rec.End = Utils.datetolong(dlg.EndDateTime);
+          rec.Start = MediaPortal.Util.Utils.datetolong(dlg.StartDateTime);
+          rec.End = MediaPortal.Util.Utils.datetolong(dlg.EndDateTime);
           rec.Canceled = 0;
           TVDatabase.UpdateRecording(rec, TVDatabase.RecordingChange.Modified);
           LoadDirectory();

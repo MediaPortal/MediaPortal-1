@@ -140,7 +140,7 @@ namespace MediaPortal.EPG
         try
         {
           _log.Info("WebEPG: TimeZone, Site : {0}", strTimeZone);
-          //_log.Info(false, "[Debug] WebEPG: TimeZone, debug: {0}", _timeAdjustOnly);
+          //_log.Info("[Debug] WebEPG: TimeZone, debug: {0}", _timeAdjustOnly);
           _SiteTimeZone = new WorldTimeZone(strTimeZone);
         }
         catch (ArgumentException)
@@ -635,7 +635,7 @@ namespace MediaPortal.EPG
             //if (program.EndTime == null && SubData.EndTime != null)
             //{
             //  program.EndTime = SubData.EndTime;
-            //  _log.Info(false, "[Debug] WebEPG: Guide, Program end  : {0}:{1} - {2}/{3}/{4}", SubData.EndTime.Hour, guideData.EndTime.Minute, SubData.EndTime.Day, SubData.EndTime.Month, guideData.EndTime.Year);
+            //  _log.Info("[Debug] WebEPG: Guide, Program end  : {0}:{1} - {2}/{3}/{4}", SubData.EndTime.Hour, guideData.EndTime.Minute, SubData.EndTime.Day, SubData.EndTime.Month, guideData.EndTime.Year);
             //}
 
             if (SubData.Description != "")

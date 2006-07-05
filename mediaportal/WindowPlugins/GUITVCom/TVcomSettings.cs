@@ -22,93 +22,98 @@
 using System;
 using System.Text;
 using MediaPortal.GUI.Library;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.GUI.Video
 {
-	class TVcomSettings
-	{
-		static TVcomSettings()
-		{
-			loadSettings();
-		}
+  class TVcomSettings
+  {
+    static TVcomSettings()
+    {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
 
-		public static bool lookupIfNoSEinFilename = false;
-		public static bool renameFiles = false;
-		public static bool renameOnlyIfNoSEinFilename = true;
-		public static string renameFormat = "[SHOWNAME] - [SEASONNO]x[EPISODENO] - [EPISODETITLE]";
-		public static char replaceSpacesWith = ' ';
-		public static bool lookupActors = false;
-		public static string titleFormat = "[SHOWNAME] - [SEASONNO]x[EPISODENO] - [EPISODETITLE]";
-		public static string genreFormat = "[SHOWNAME] ([GENRE])";
-		private const string settingsFilePath = "Episode Guides/settings";
+      loadSettings();
+    }
 
-
-		private static bool loadSettings()
-		{
-            Log.WriteFile(Log.LogType.TVCom, "Loading Settings...");
-			try
-			{
-				System.IO.StreamReader r = new System.IO.StreamReader(settingsFilePath);
-				lookupIfNoSEinFilename =  Convert.ToBoolean(r.ReadLine());
-				renameFiles =  Convert.ToBoolean(r.ReadLine());
-				renameOnlyIfNoSEinFilename  =  Convert.ToBoolean(r.ReadLine());
-				renameFormat = r.ReadLine();
-				replaceSpacesWith = Convert.ToChar(r.ReadLine());
-				titleFormat = r.ReadLine();
-				genreFormat = r.ReadLine();
-				lookupActors =  Convert.ToBoolean(r.ReadLine());
-				r.Close();
-
-                Log.WriteFile(Log.LogType.TVCom, "Settings loaded Succesfully");
-                Log.WriteFile(Log.LogType.TVCom, lookupIfNoSEinFilename.ToString());
-                Log.WriteFile(Log.LogType.TVCom, renameFiles.ToString());
-                Log.WriteFile(Log.LogType.TVCom, renameOnlyIfNoSEinFilename.ToString());
-                Log.WriteFile(Log.LogType.TVCom, renameFormat);
-                Log.WriteFile(Log.LogType.TVCom, replaceSpacesWith.ToString());
-                Log.WriteFile(Log.LogType.TVCom, titleFormat);
-                Log.WriteFile(Log.LogType.TVCom, genreFormat);
-                Log.WriteFile(Log.LogType.TVCom, lookupActors.ToString());
-
-				return true;
-			}
-			catch
-			{
-                Log.WriteFile(Log.LogType.TVCom, "There was an error loading the Settings!");
-				
-				return false;
-			}
-
-		}
+    public static bool lookupIfNoSEinFilename = false;
+    public static bool renameFiles = false;
+    public static bool renameOnlyIfNoSEinFilename = true;
+    public static string renameFormat = "[SHOWNAME] - [SEASONNO]x[EPISODENO] - [EPISODETITLE]";
+    public static char replaceSpacesWith = ' ';
+    public static bool lookupActors = false;
+    public static string titleFormat = "[SHOWNAME] - [SEASONNO]x[EPISODENO] - [EPISODETITLE]";
+    public static string genreFormat = "[SHOWNAME] ([GENRE])";
+    private const string settingsFilePath = "Episode Guides/settings";
+    static ILog _log;
 
 
-		public static void writeSettings()
-		{
-			if(!System.IO.Directory.Exists("Episode Guides"))
-				System.IO.Directory.CreateDirectory("Episode Guides");
+    private static bool loadSettings()
+    {
+      _log.Info("Loading Settings...");
+      try
+      {
+        System.IO.StreamReader r = new System.IO.StreamReader(settingsFilePath);
+        lookupIfNoSEinFilename = Convert.ToBoolean(r.ReadLine());
+        renameFiles = Convert.ToBoolean(r.ReadLine());
+        renameOnlyIfNoSEinFilename = Convert.ToBoolean(r.ReadLine());
+        renameFormat = r.ReadLine();
+        replaceSpacesWith = Convert.ToChar(r.ReadLine());
+        titleFormat = r.ReadLine();
+        genreFormat = r.ReadLine();
+        lookupActors = Convert.ToBoolean(r.ReadLine());
+        r.Close();
 
-			System.IO.StreamWriter w = new System.IO.StreamWriter(settingsFilePath, false);
-			w.WriteLine(lookupIfNoSEinFilename.ToString());
-			w.WriteLine(renameFiles.ToString());
-			w.WriteLine(renameOnlyIfNoSEinFilename.ToString());
-			w.WriteLine(renameFormat);
-			w.WriteLine(replaceSpacesWith.ToString());
-			w.WriteLine(titleFormat);
-			w.WriteLine(genreFormat);
-			w.WriteLine(lookupActors.ToString());
-			w.Close();
+        _log.Info("Settings loaded Succesfully");
+        _log.Info(lookupIfNoSEinFilename.ToString());
+        _log.Info(renameFiles.ToString());
+        _log.Info(renameOnlyIfNoSEinFilename.ToString());
+        _log.Info(renameFormat);
+        _log.Info(replaceSpacesWith.ToString());
+        _log.Info(titleFormat);
+        _log.Info(genreFormat);
+        _log.Info(lookupActors.ToString());
 
-            Log.WriteFile(Log.LogType.TVCom, "Settings updated:");
-            Log.WriteFile(Log.LogType.TVCom, lookupIfNoSEinFilename.ToString());
-            Log.WriteFile(Log.LogType.TVCom, renameFiles.ToString());
-            Log.WriteFile(Log.LogType.TVCom, renameOnlyIfNoSEinFilename.ToString());
-            Log.WriteFile(Log.LogType.TVCom, renameFormat);
-            Log.WriteFile(Log.LogType.TVCom, replaceSpacesWith.ToString());
-            Log.WriteFile(Log.LogType.TVCom, titleFormat);
-            Log.WriteFile(Log.LogType.TVCom, genreFormat);
-            Log.WriteFile(Log.LogType.TVCom, lookupActors.ToString());
+        return true;
+      }
+      catch
+      {
+        _log.Info("There was an error loading the Settings!");
 
-		}
-	}
+        return false;
+      }
+
+    }
+
+
+    public static void writeSettings()
+    {
+      if (!System.IO.Directory.Exists("Episode Guides"))
+        System.IO.Directory.CreateDirectory("Episode Guides");
+
+      System.IO.StreamWriter w = new System.IO.StreamWriter(settingsFilePath, false);
+      w.WriteLine(lookupIfNoSEinFilename.ToString());
+      w.WriteLine(renameFiles.ToString());
+      w.WriteLine(renameOnlyIfNoSEinFilename.ToString());
+      w.WriteLine(renameFormat);
+      w.WriteLine(replaceSpacesWith.ToString());
+      w.WriteLine(titleFormat);
+      w.WriteLine(genreFormat);
+      w.WriteLine(lookupActors.ToString());
+      w.Close();
+
+      _log.Info("Settings updated:");
+      _log.Info(lookupIfNoSEinFilename.ToString());
+      _log.Info(renameFiles.ToString());
+      _log.Info(renameOnlyIfNoSEinFilename.ToString());
+      _log.Info(renameFormat);
+      _log.Info(replaceSpacesWith.ToString());
+      _log.Info(titleFormat);
+      _log.Info(genreFormat);
+      _log.Info(lookupActors.ToString());
+
+    }
+  }
 
 
 

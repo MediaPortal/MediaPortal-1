@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using MediaPortal.GUI.Library;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.TV.Teletext
 {
@@ -56,7 +57,7 @@ namespace MediaPortal.TV.Teletext
     #region public members
     public void Clear()
     {
-      for (int i = 0; i <= MAX_MAGAZINE;++i )
+      for (int i = 0; i <= MAX_MAGAZINE; ++i)
       {
         _magazineCurrentPageNr[i] = -1;
         _magazineLastRow[i] = -1;
@@ -97,12 +98,12 @@ namespace MediaPortal.TV.Teletext
             {
               continue;
             }
-            //Log.Write("Packet Number:{0}, type:{1}", packetNumber, type);
+            //_log.Info("Packet Number:{0}, type:{1}", packetNumber, type);
             string channelName = "";
             for (int i = 0; i < 20; i++)
             {
               char char1 = (char)(rowData[off + 22 + i] & 127);
-              //Log.Write("{0}-{1:x}", char1, (byte)(rowData[off + 22 + i] & 127));
+              //_log.Info("{0}-{1:x}", char1, (byte)(rowData[off + 22 + i] & 127));
               channelName += char1;
             }
             int pos = channelName.LastIndexOf("teletext", StringComparison.InvariantCultureIgnoreCase);
@@ -231,8 +232,11 @@ namespace MediaPortal.TV.Teletext
       }
       catch (Exception ex)
       {
-        Log.WriteFile(Log.LogType.Error,true,"Exception while decoding teletext");
-        Log.Write(ex);
+        ServiceProvider services = GlobalServiceProvider.Instance;
+        ILog log = services.Get<ILog>();
+
+        log.Error("Exception while decoding teletext");
+        log.Error(ex);
       }
     }//void Decode(byte[] rowData)
     #endregion

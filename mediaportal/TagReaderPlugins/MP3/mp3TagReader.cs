@@ -25,6 +25,7 @@ using System.Text.RegularExpressions;
 using MediaPortal.TagReader;
 using id3;
 using MediaPortal.GUI.Library;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.TagReader.ID3
 {
@@ -217,9 +218,12 @@ namespace MediaPortal.TagReader.ID3
     /// <param name="filename">Der vollständige Pfad der einzulesenden Datei</param>
     public override bool ReadTag(String filename)
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      ILog log = services.Get<ILog>();
+
       try
       {
-//        Log.Write("id3 tag: scan {0}",filename);
+//        _log.Info("id3 tag: scan {0}",filename);
         m_imageBytes = null;
         m_tag.Clear();
         m_containsID3Information=false;
@@ -339,12 +343,12 @@ namespace MediaPortal.TagReader.ID3
         }
         else
         {
-          Log.Write("id3 tag: scan {0} does not exists?",filename);
+          log.Warn("id3 tag: scan {0} does not exists?",filename);
         }
       }
       catch (Exception ex)
       {
-        Log.Write( "Exception reading id3tag of {0} err:{1} stack:{2}",filename,ex.Message, ex.StackTrace);
+        log.Error( "Exception reading id3tag of {0} err:{1} stack:{2}",filename,ex.Message, ex.StackTrace);
 
       }
       if (m_tag!=null)

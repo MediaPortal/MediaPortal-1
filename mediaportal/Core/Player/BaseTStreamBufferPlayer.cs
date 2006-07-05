@@ -28,6 +28,7 @@ using MediaPortal.Util;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
+using MediaPortal.Utils.Services;
 using MediaPortal.GUI.Library;
 using DirectShowLib;
 using DShowNET.Helper;
@@ -119,11 +120,14 @@ namespace MediaPortal.Player
     protected MediaPortal.GUI.Library.Geometry.Type _geometry = MediaPortal.GUI.Library.Geometry.Type.Normal;
 
     protected bool _startingUp;
+    protected ILog _log;
     #endregion
 
     #region ctor/dtor
     public BaseTStreamBufferPlayer()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
     }
     #endregion
 
@@ -138,7 +142,7 @@ namespace MediaPortal.Player
     }
     public override bool Play(string strFile)
     {
-      Log.Write("Streambufferplayer play:{0}", strFile);
+      _log.Info("Streambufferplayer play:{0}", strFile);
       if (!System.IO.File.Exists(strFile)) return false;
       iSpeed = 1;
       _speedRate = 10000;
@@ -146,7 +150,7 @@ namespace MediaPortal.Player
       _duration = -1d;
       if (strFile.ToLower().IndexOf(".tsbuffer") >= 0)
       {
-        Log.Write("Streambufferplayer: live tv");
+        _log.Info("Streambufferplayer: live tv");
         _isLive = true;
       }
       VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
@@ -171,14 +175,14 @@ namespace MediaPortal.Player
       //}
       //else
       {
-        Log.Write("TSStreamBufferPlayer:play {0}", strFile);
+        _log.Info("TSStreamBufferPlayer:play {0}", strFile);
         GC.Collect();
         CloseInterfaces();
         GC.Collect();
         _isStarted = false;
         if (!GetInterfaces(strFile))
         {
-          Log.WriteFile(Log.LogType.Log, true, "TSStreamBufferPlayer:GetInterfaces() failed");
+          _log.Error("TSStreamBufferPlayer:GetInterfaces() failed");
           _currentFile = "";
           return false;
         }
@@ -190,7 +194,7 @@ namespace MediaPortal.Player
       int hr = _mediaEvt.SetNotifyWindow(GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero);
       if (hr < 0)
       {
-        Log.WriteFile(Log.LogType.Log, true, "TSStreamBufferPlayer:SetNotifyWindow() failed");
+        _log.Error("TSStreamBufferPlayer:SetNotifyWindow() failed");
         _currentFile = "";
         CloseInterfaces();
         return false;
@@ -207,18 +211,18 @@ namespace MediaPortal.Player
         hr = _basicVideo.GetVideoSize(out _videoWidth, out _videoHeight);
         if (hr < 0)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TSStreamBufferPlayer:GetVideoSize() failed");
+          _log.Error("TSStreamBufferPlayer:GetVideoSize() failed");
           _currentFile = "";
           CloseInterfaces();
           return false;
         }
-        Log.Write("TSStreamBufferPlayer:VideoSize:{0}x{1}", _videoWidth, _videoHeight);
+        _log.Info("TSStreamBufferPlayer:VideoSize:{0}x{1}", _videoWidth, _videoHeight);
       }
       GUIGraphicsContext.VideoSize = new Size(_videoWidth, _videoHeight);
 
       if (_mediaCtrl == null)
       {
-        Log.WriteFile(Log.LogType.Log, true, "TSStreamBufferPlayer:_mediaCtrl==null");
+        _log.Error("TSStreamBufferPlayer:_mediaCtrl==null");
         _currentFile = "";
         CloseInterfaces();
         return false;
@@ -244,11 +248,13 @@ namespace MediaPortal.Player
       GUIWindowManager.SendThreadMessage(msg);
 
       _state = PlayState.Playing;
-      Log.Write("TsBaseStreamBuffer:start graph");
+
+      _log.Info("TsBaseStreamBuffer:start graph");
       _mediaCtrl.Run();
-      Log.Write("TsBaseStreamBuffer:playing state");
+
+      _log.Info("TsBaseStreamBuffer:playing state");
       OnInitialized();
-      Log.Write("TsBaseStreamBuffer:done");
+      _log.Info("TsBaseStreamBuffer:done");
       return true;
     }
 
@@ -280,7 +286,7 @@ namespace MediaPortal.Player
         nw = _width = GUIGraphicsContext.OverScanWidth;
         nh = _height = GUIGraphicsContext.OverScanHeight;
       }
-      /*			Log.Write("{0},{1}-{2},{3}  vidwin:{4},{5}-{6},{7} fs:{8}", x,y,nw,nh, 
+      /*			_log.Info("{0},{1}-{2},{3}  vidwin:{4},{5}-{6},{7} fs:{8}", x,y,nw,nh, 
               GUIGraphicsContext.VideoWindow.Left,
               GUIGraphicsContext.VideoWindow.Top,
               GUIGraphicsContext.VideoWindow.Right,
@@ -317,18 +323,18 @@ namespace MediaPortal.Player
       rDest.X += (int)x;
       rDest.Y += (int)y;
 
-      Log.Write("overlay: video WxH  : {0}x{1}", _videoWidth, _videoHeight);
-      Log.Write("overlay: video AR   : {0}:{1}", aspectX, aspectY);
-      Log.Write("overlay: screen WxH : {0}x{1}", nw, nh);
-      Log.Write("overlay: AR type    : {0}", GUIGraphicsContext.ARType);
-      Log.Write("overlay: PixelRatio : {0}", GUIGraphicsContext.PixelRatio);
-      Log.Write("overlay: src        : ({0},{1})-({2},{3})",
+      _log.Info("overlay: video WxH  : {0}x{1}", _videoWidth, _videoHeight);
+      _log.Info("overlay: video AR   : {0}:{1}", aspectX, aspectY);
+      _log.Info("overlay: screen WxH : {0}x{1}", nw, nh);
+      _log.Info("overlay: AR type    : {0}", GUIGraphicsContext.ARType);
+      _log.Info("overlay: PixelRatio : {0}", GUIGraphicsContext.PixelRatio);
+      _log.Info("overlay: src        : ({0},{1})-({2},{3})",
         rSource.X, rSource.Y, rSource.X + rSource.Width, rSource.Y + rSource.Height);
-      Log.Write("overlay: dst        : ({0},{1})-({2},{3})",
+      _log.Info("overlay: dst        : ({0},{1})-({2},{3})",
         rDest.X, rDest.Y, rDest.X + rDest.Width, rDest.Y + rDest.Height);
 
 
-      Log.Write("TSStreamBufferPlayer:Window ({0},{1})-({2},{3}) - ({4},{5})-({6},{7})",
+      _log.Info("TSStreamBufferPlayer:Window ({0},{1})-({2},{3}) - ({4},{5})-({6},{7})",
         rSource.X, rSource.Y, rSource.Right, rSource.Bottom,
         rDest.X, rDest.Y, rDest.Right, rDest.Bottom);
 
@@ -362,17 +368,17 @@ namespace MediaPortal.Player
           control.Count(out streamCount);
           if (streamCount > 0)
           {
-            Log.Write("streams:{0}, enable stream 1", streamCount);
+            _log.Info("streams:{0}, enable stream 1", streamCount);
             control.Enable(1, AMStreamSelectEnableFlags.EnableAll);
-            Log.Write("get duration", streamCount);
+            _log.Info("get duration", streamCount);
             UpdateDuration();
             double dPos = _duration;
-            Log.Write("_duration:{0}", _duration);
+            _log.Info("_duration:{0}", _duration);
             if (dPos >= 0 && CurrentPosition < dPos)
             {
-              Log.Write("seek:{0}/{0}", dPos, _duration);
+              _log.Info("seek:{0}/{0}", dPos, _duration);
               SeekAbsolute(dPos);
-              Log.Write("seek:{0}/{0} done", dPos, _duration);
+              _log.Info("seek:{0}/{0} done", dPos, _duration);
             }
             _startingUp = false;
           }
@@ -395,13 +401,13 @@ namespace MediaPortal.Player
       {
         if (Speed > 1 && CurrentPosition + 5d >= Duration)
         {
-          Log.Write("BaseTSStreamBufferPlayer: stop FFWD since end of timeshiftbuffer reached");
+          _log.Info("BaseTSStreamBufferPlayer: stop FFWD since end of timeshiftbuffer reached");
           Speed = 1;
           SeekAsolutePercentage(99);
         }
         if (Speed < 0 && CurrentPosition < 5d)
         {
-          Log.Write("BaseTSStreamBufferPlayer: stop RWD since begin of timeshiftbuffer reached");
+          _log.Info("BaseTSStreamBufferPlayer: stop RWD since begin of timeshiftbuffer reached");
           Speed = 1;
           SeekAsolutePercentage(0);
         }/*
@@ -425,13 +431,13 @@ namespace MediaPortal.Player
       if (_isWindowVisible && !_isVisible)
       {
         _isWindowVisible = false;
-        //Log.Write("TSStreamBufferPlayer:hide window");
+        //_log.Info("TSStreamBufferPlayer:hide window");
         if (_videoWin != null) _videoWin.put_Visible(OABool.False);
       }
       else if (!_isWindowVisible && _isVisible)
       {
         _isWindowVisible = true;
-        //Log.Write("TSStreamBufferPlayer:show window");
+        //_log.Info("TSStreamBufferPlayer:show window");
         if (_videoWin != null) _videoWin.put_Visible(OABool.True);
       }
 
@@ -511,12 +517,12 @@ namespace MediaPortal.Player
             {
               iSpeed = value;
               int hr = _mediaSeeking.SetRate((double)iSpeed);
-              //Log.Write("VideoPlayer:SetRate to:{0} {1:X}", iSpeed,hr);
+              //_log.Info("VideoPlayer:SetRate to:{0} {1:X}", iSpeed,hr);
               if (hr != 0)
               {
                 IMediaSeeking oldMediaSeek = _graphBuilder as IMediaSeeking;
                 hr = oldMediaSeek.SetRate((double)iSpeed);
-                //Log.Write("VideoPlayer:SetRateOld to:{0} {1:X}", iSpeed,hr);
+                //_log.Info("VideoPlayer:SetRateOld to:{0} {1:X}", iSpeed,hr);
               }
               if (iSpeed == 1)
               {
@@ -526,7 +532,7 @@ namespace MediaPortal.Player
                 System.Windows.Forms.Application.DoEvents();
                 FilterState state;
                 _mediaCtrl.GetState(100, out state);
-                //Log.Write("state:{0}", state.ToString());
+                //_log.Info("state:{0}", state.ToString());
                 _mediaCtrl.Run();
               }
             }
@@ -561,7 +567,7 @@ namespace MediaPortal.Player
     public override void ContinueGraph()
     {
       if (_mediaCtrl == null) return;
-      Log.Write("TSStreamBufferPlayer:Continue graph");
+      _log.Info("TSStreamBufferPlayer:Continue graph");
       _mediaCtrl.Run();
       _mediaEvt.SetNotifyWindow(GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero);
 
@@ -572,7 +578,7 @@ namespace MediaPortal.Player
     public override void PauseGraph()
     {
       if (_mediaCtrl == null) return;
-      Log.Write("TSStreamBufferPlayer:Pause graph");
+      _log.Info("TSStreamBufferPlayer:Pause graph");
       _mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero);
       _mediaCtrl.Pause();
       if (VMR9Util.g_vmr9 != null)
@@ -698,14 +704,14 @@ namespace MediaPortal.Player
     {
       if (_state == PlayState.Paused)
       {
-        //Log.Write("BaseTSStreamBufferPlayer:resume");
+        //_log.Info("BaseTSStreamBufferPlayer:resume");
         Speed = 1;
         _mediaCtrl.Run();
         _state = PlayState.Playing;
       }
       else if (_state == PlayState.Playing)
       {
-        //Log.Write("BaseTSStreamBufferPlayer:pause");
+        //_log.Info("BaseTSStreamBufferPlayer:pause");
         _state = PlayState.Paused;
         _mediaCtrl.Pause();
       }
@@ -744,7 +750,7 @@ namespace MediaPortal.Player
     {
       if (SupportsReplay)
       {
-        Log.Write("TSStreamBufferPlayer:stop");
+        _log.Info("TSStreamBufferPlayer:stop");
         if (_mediaCtrl == null) return;
         _mediaCtrl.Stop();
       }
@@ -810,7 +816,7 @@ namespace MediaPortal.Player
 
     public override void SeekAbsolute(double dTimeInSecs)
     {
-      Log.Write("SeekAbsolute:seekabs:{0}", dTimeInSecs);
+      _log.Info("SeekAbsolute:seekabs:{0}", dTimeInSecs);
 
 
       if (_state != PlayState.Init)
@@ -820,29 +826,29 @@ namespace MediaPortal.Player
           if (dTimeInSecs < 0.0d) dTimeInSecs = 0.0d;
           if (dTimeInSecs > Duration) dTimeInSecs = Duration;
           dTimeInSecs = Math.Floor(dTimeInSecs);
-          Log.Write("TSStreamBufferPlayer: seekabs: {0} duration:{1} current pos:{2}", dTimeInSecs, Duration, CurrentPosition);
+          _log.Info("TSStreamBufferPlayer: seekabs: {0} duration:{1} current pos:{2}", dTimeInSecs, Duration, CurrentPosition);
           dTimeInSecs *= 10000000d;
           long pStop = 0;
           long lContentStart, lContentEnd;
           double fContentStart, fContentEnd;
-          Log.Write("get available");
+          _log.Info("get available");
           _mediaSeeking.GetAvailable(out lContentStart, out lContentEnd);
-          Log.Write("get available done");
+          _log.Info("get available done");
           fContentStart = lContentStart;
           fContentEnd = lContentEnd;
 
           dTimeInSecs += fContentStart;
           long lTime = (long)dTimeInSecs;
-          Log.Write("set positions");
+          _log.Info("set positions");
           int hr = _mediaSeeking.SetPositions(new DsLong(lTime), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
-          Log.Write("set positions done");
+          _log.Info("set positions done");
           if (hr != 0)
           {
-            Log.WriteFile(Log.LogType.Log, true, "seek failed->seek to 0 0x:{0:X}", hr);
+            _log.Error("seek failed->seek to 0 0x:{0:X}", hr);
           }
         }
         UpdateCurrentPosition();
-        Log.Write("TSStreamBufferPlayer: current pos:{0}", CurrentPosition);
+        _log.Info("TSStreamBufferPlayer: current pos:{0}", CurrentPosition);
 
       }
     }
@@ -923,7 +929,7 @@ namespace MediaPortal.Player
       // this is triggered only if movie has ended
       // ifso, stop the movie which will trigger MovieStopped
 
-      //Log.Write("TSStreamBufferPlayer:ended {0}", _currentFile);
+      //_log.Info("TSStreamBufferPlayer:ended {0}", _currentFile);
       if (!IsTimeShifting)
       {
         CloseInterfaces();
@@ -966,7 +972,7 @@ namespace MediaPortal.Player
     }
 
 #if DEBUG
-    static DateTime dtStart=DateTime.Now;
+    static DateTime dtStart = DateTime.Now;
 #endif
     protected void UpdateCurrentPosition()
     {
@@ -989,21 +995,21 @@ namespace MediaPortal.Player
       double fPos = _currentPos;
       fCurrentPos -= fContentStart;
       _currentPos = fCurrentPos;
-      // Log.Write("Position:{0}", _currentPos.ToString("f2"));
+      // _log.Info("Position:{0}", _currentPos.ToString("f2"));
       _contentStart = fContentStart;
 #if DEBUG
-      TimeSpan ts=DateTime.Now-dtStart;
-      if (ts.TotalMilliseconds>=1000)
+      TimeSpan ts = DateTime.Now - dtStart;
+      if (ts.TotalMilliseconds >= 1000)
       {
         long lDuration;
         double fDuration;
-        _mediaSeeking.GetDuration(out lDuration); 
-        fDuration=lDuration;
-        fDuration/=10000000d;
+        _mediaSeeking.GetDuration(out lDuration);
+        fDuration = lDuration;
+        fDuration /= 10000000d;
 
-        //Log.Write("pos:{0} content:{1}-{2} duration:{3} stream:{4}",_currentPos,fContentStart,fContentEnd,fDuration,fPos);
-                  
-        dtStart=DateTime.Now;
+        //_log.Info("pos:{0} content:{1}-{2} duration:{3} stream:{4}",_currentPos,fContentStart,fContentEnd,fDuration,fPos);
+
+        dtStart = DateTime.Now;
       }
 #endif
     }
@@ -1021,14 +1027,14 @@ namespace MediaPortal.Player
       _mediaSeeking.GetDuration(out lDuration);
       _duration = lDuration;
       _duration /= 10000000d;
-      //Log.Write("Duration:{0}", _duration.ToString("f2"));
+      //_log.Info("Duration:{0}", _duration.ToString("f2"));
     }
 
     /// <summary> create the used COM components and get the interfaces. </summary>
     protected virtual bool GetInterfaces(string filename)
     {
       int hr;
-      Log.Write("TSStreamBufferPlayer:GetInterfaces()");
+      _log.Info("TSStreamBufferPlayer:GetInterfaces()");
       //Type comtype = null;
       object comobj = null;
       try
@@ -1081,7 +1087,7 @@ namespace MediaPortal.Player
         _mediaSeeking = _graphBuilder as IMediaSeeking;
         if (_mediaSeeking == null)
         {
-          Log.WriteFile(Log.LogType.Log, true, "Unable to get IMediaSeeking interface#1");
+          _log.Error("Unable to get IMediaSeeking interface#1");
         }
 
         if (_audioRendererFilter != null)
@@ -1093,18 +1099,18 @@ namespace MediaPortal.Player
         _basicVideo = _graphBuilder as IBasicVideo2;
         _basicAudio = _graphBuilder as IBasicAudio;
 
-        //Log.Write("TSStreamBufferPlayer:SetARMode");
+        //_log.Info("TSStreamBufferPlayer:SetARMode");
         DirectShowUtil.SetARMode(_graphBuilder, AspectRatioMode.Stretched);
 
         _graphBuilder.SetDefaultSyncSource();
-        //Log.Write("TSStreamBufferPlayer: set Deinterlace");
+        //_log.Info("TSStreamBufferPlayer: set Deinterlace");
 
-        //Log.Write("TSStreamBufferPlayer: done");
+        //_log.Info("TSStreamBufferPlayer: done");
         return true;
       }
       catch (Exception ex)
       {
-        Log.WriteFile(Log.LogType.Log, true, "TSStreamBufferPlayer:exception while creating DShow graph {0} {1}", ex.Message, ex.StackTrace);
+        _log.Error("TSStreamBufferPlayer:exception while creating DShow graph {0} {1}", ex.Message, ex.StackTrace);
         return false;
       }
       finally
@@ -1122,11 +1128,11 @@ namespace MediaPortal.Player
       int hr;
       if (_graphBuilder == null)
       {
-        Log.Write("TSStreamBufferPlayer:grapbuilder=null");
+        _log.Info("TSStreamBufferPlayer:grapbuilder=null");
         return;
       }
 
-      Log.Write("TSStreamBufferPlayer:cleanup DShow graph");
+      _log.Info("TSStreamBufferPlayer:cleanup DShow graph");
       try
       {
 
@@ -1201,9 +1207,9 @@ namespace MediaPortal.Player
       }
       catch (Exception ex)
       {
-        Log.WriteFile(Log.LogType.Log, true, "TSStreamBufferPlayer:exception while cleanuping DShow graph {0} {1}", ex.Message, ex.StackTrace);
+        _log.Error("TSStreamBufferPlayer:exception while cleanuping DShow graph {0} {1}", ex.Message, ex.StackTrace);
       }
-      //Log.Write("TSStreamBufferPlayer:cleanup done");
+      //_log.Info("TSStreamBufferPlayer:cleanup done");
     }
 
     void OnGraphNotify()
@@ -1223,7 +1229,7 @@ namespace MediaPortal.Player
             /*
                         if (code>=EventCode.StreamBufferTimeHole && code <= EventCode.StreamBufferRateChanged)
                         {
-                          Log.Write("TSStreamBufferPlayer: event:{0} param1:{1} param2:{2} param1:0x{3:X} param2:0x{4:X}",code.ToString(),p1,p2,p1,p2);
+                          _log.Info("TSStreamBufferPlayer: event:{0} param1:{1} param2:{2} param1:0x{3:X} param2:0x{4:X}",code.ToString(),p1,p2,p1,p2);
                           long contentStart,contentStop,streamPosition,segmentstop;
                           double fcontentStart,fcontentStop,fstreamPosition,fsegmentstop;
                           _mediaSeeking.GetAvailable(out contentStart, out contentStop);
@@ -1238,8 +1244,8 @@ namespace MediaPortal.Player
                           fcontentStop/=10000000d;
                           fstreamPosition/=10000000d;
                           fsegmentstop/=10000000d;
-                          Log.Write("TSStreamBufferPlayer:  content start   :{0} content stop :{1}", fcontentStart.ToString("f2"), fcontentStop.ToString("f2"));
-                          Log.Write("TSStreamBufferPlayer:  streamPosition  :{0} segment stop :{1}", fstreamPosition.ToString("f2"), fsegmentstop.ToString("f2"));
+                          _log.Info("TSStreamBufferPlayer:  content start   :{0} content stop :{1}", fcontentStart.ToString("f2"), fcontentStop.ToString("f2"));
+                          _log.Info("TSStreamBufferPlayer:  streamPosition  :{0} segment stop :{1}", fstreamPosition.ToString("f2"), fsegmentstop.ToString("f2"));
                           if (code==EventCode.StreamBufferTimeHole)
                           {
                             //The Stream Buffer Source filter has reached a gap in the content. 
@@ -1249,7 +1255,7 @@ namespace MediaPortal.Player
                             newpos /=1000d;
                             if (newpos <fstreamPosition-1 || newpos > fstreamPosition+1)
                             {
-                              Log.Write("TSStreamBufferPlayer:  seek to:{0}", newpos.ToString("f2"));
+                              _log.Info("TSStreamBufferPlayer:  seek to:{0}", newpos.ToString("f2"));
                               SeekAbsolute(1d+newpos);
                             }
                           }
@@ -1257,7 +1263,7 @@ namespace MediaPortal.Player
                           {
                             if (Paused)
                             {
-                              Log.Write("TSStreamBufferPlayer:  unpause");
+                              _log.Info("TSStreamBufferPlayer:  unpause");
                               Pause();
                             }
                           }
@@ -1265,11 +1271,11 @@ namespace MediaPortal.Player
                         else */
             if (code == EventCode.Complete || code == EventCode.ErrorAbort)
             {
-              //Log.Write("TSStreamBufferPlayer: event:{0} param1:{1} param2:{2} param1:0x{3:X} param2:0x{4:X}",code.ToString(),p1,p2,p1,p2);
+              //_log.Info("TSStreamBufferPlayer: event:{0} param1:{1} param2:{2} param1:0x{3:X} param2:0x{4:X}",code.ToString(),p1,p2,p1,p2);
               MovieEnded();
             }
             //else
-            //Log.Write("TSStreamBufferPlayer: event:{0} 0x{1:X} param1:{2} param2:{3} param1:0x{4:X} param2:0x{5:X}",code.ToString(), (int)code,p1,p2,p1,p2);
+            //_log.Info("TSStreamBufferPlayer: event:{0} 0x{1:X} param1:{2} param2:{3} param1:0x{4:X} param2:0x{5:X}",code.ToString(), (int)code,p1,p2,p1,p2);
           }
           else break;
         }
@@ -1297,7 +1303,7 @@ namespace MediaPortal.Player
       _mediaSeeking.GetAvailable(out earliest, out latest);
       _mediaSeeking.GetPositions(out current, out stop);
 
-      // Log.Write("earliest:{0} latest:{1} current:{2} stop:{3} speed:{4}, total:{5}",
+      // _log.Info("earliest:{0} latest:{1} current:{2} stop:{3} speed:{4}, total:{5}",
       //         earliest/10000000,latest/10000000,current/10000000,stop/10000000,_speedRate, (latest-earliest)/10000000);
 
       //earliest += + 30 * 10000000;
@@ -1317,7 +1323,7 @@ namespace MediaPortal.Player
       {
         _speedRate = 10000;
         rewind = earliest;
-        //Log.Write(" seek back:{0}",rewind/10000000);
+        //_log.Info(" seek back:{0}",rewind/10000000);
         hr = _mediaSeeking.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
         _mediaCtrl.Run();
         return;
@@ -1328,14 +1334,14 @@ namespace MediaPortal.Player
       {
         _speedRate = 10000;
         rewind = latest - 100000;
-        //Log.Write(" seek ff:{0}",rewind/10000000);
+        //_log.Info(" seek ff:{0}",rewind/10000000);
         hr = _mediaSeeking.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
         _mediaCtrl.Run();
         return;
       }
 
       //seek to new moment in time
-      //Log.Write(" seek :{0}",rewind/10000000);
+      //_log.Info(" seek :{0}",rewind/10000000);
       hr = _mediaSeeking.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
       _mediaCtrl.Pause();
 

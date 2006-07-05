@@ -31,7 +31,7 @@ namespace ProcessPlugins.ExternalDisplay
   /// CrystalFontz 634 driver
   /// </summary>
   /// <author>Nopap</author>
-  public class NoritakeGU7000 : IDisplay
+  public class NoritakeGU7000 : BaseDisplay, IDisplay
   {
     private SerialPort commPort = null;
     private int lines = 4;
@@ -59,7 +59,7 @@ namespace ProcessPlugins.ExternalDisplay
     {
       if (line >= lines)
       {
-        Log.Write("NoritakeGU7000.SetLine: error bad line number" + line);
+        _log.Info("NoritakeGU7000.SetLine: error bad line number" + line);
         return;
       }
       try
@@ -69,7 +69,7 @@ namespace ProcessPlugins.ExternalDisplay
       }
       catch (Exception ex)
       {
-        Log.Write("NoritakeGU7000.SetLine: " + ex.Message);
+        _log.Info("NoritakeGU7000.SetLine: " + ex.Message);
       }
     }
 
@@ -143,7 +143,7 @@ namespace ProcessPlugins.ExternalDisplay
       }
       catch (Exception ex)
       {
-        Log.Write("NoritakeGU7000.Initialize: " + ex.Message);
+        _log.Info("NoritakeGU7000.Initialize: " + ex.Message);
       }
     }
 
@@ -161,7 +161,7 @@ namespace ProcessPlugins.ExternalDisplay
       }
       catch (Exception ex)
       {
-        Log.Write("NoritakeGU7000.Dispose: " + ex.Message);
+        _log.Info("NoritakeGU7000.Dispose: " + ex.Message);
       }
     }
 

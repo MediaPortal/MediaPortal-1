@@ -84,7 +84,7 @@ namespace MediaPortal.Configuration.Sections
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         chbEnabled.Checked = xmlreader.GetValueAsBool("filemenu", "enabled", true);
-        textPinCodeBox.Text = Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", ""));
+        textPinCodeBox.Text = MediaPortal.Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", ""));
         textTrashcanFolder.Text = xmlreader.GetValueAsString("filemenu", "trashcan", "");
       }
     }
@@ -94,7 +94,7 @@ namespace MediaPortal.Configuration.Sections
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         xmlwriter.SetValueAsBool("filemenu", "enabled", chbEnabled.Checked);
-        xmlwriter.SetValue("filemenu", "pincode", Utils.EncryptPin(textPinCodeBox.Text));
+        xmlwriter.SetValue("filemenu", "pincode", MediaPortal.Util.Utils.EncryptPin(textPinCodeBox.Text));
         xmlwriter.SetValue("filemenu", "trashcan", textTrashcanFolder.Text);
       }
     }

@@ -96,9 +96,9 @@ namespace MediaPortal.Utils.Web
         //			webPage.SetStart(_strPageStart);
         //			webPage.SetEnd(_strPageEnd);
         ////			if(!webPage.SetStart(_strPageStart))
-        ////				//Log.WriteFile(Log.LogType.Log, true, "WebEPG: Start String not found");
+        ////				//_log.Error("WebEPG: Start String not found");
         ////			if(!webPage.SetEnd(_strPageEnd))
-        ////				//Log.WriteFile(Log.LogType.Log, true, "WebEPG: End String not found");
+        ////				//_log.Error("WebEPG: End String not found");
         retProfiler = new HTMLProfiler(source, _strTags, ProfileString());
         retProfiler.Template = GetProfileParser(0);
       }
@@ -272,7 +272,7 @@ namespace MediaPortal.Utils.Web
       }
       catch (System.ArgumentException)// ex)
       {
-        //Log.WriteFile(Log.LogType.Log, true, "WebEPG: Regex error: {0} {1}", regex, ex.ToString());
+        //_log.Error("WebEPG: Regex error: {0} {1}", regex, ex.ToString());
         return "";
       }
 

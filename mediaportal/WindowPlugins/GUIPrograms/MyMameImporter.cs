@@ -28,6 +28,7 @@ using Core.Util;
 using MediaPortal.GUI.Library;
 using Programs.Utils;
 using SQLite.NET;
+using MediaPortal.Utils.Services;
 
 namespace ProgramsDatabase
 {
@@ -56,9 +57,13 @@ namespace ProgramsDatabase
     StringCollection cacheCloneRomnames = new StringCollection();
     StringCollection cacheHistoryRomnames = new StringCollection();
     string[] mameRoms;
+    protected ILog _log;
 
     public MyMameImporter(AppItem objApp, SQLiteClient objDB)
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+
       curApp = objApp;
       sqlDB = objDB;
     }
@@ -71,7 +76,7 @@ namespace ProgramsDatabase
       while (true)
       {
         line = sr.ReadLine();
-//        Log.Write(line);
+//        _log.Info(line);
         if (line == null)
         {
           break;
@@ -108,7 +113,7 @@ namespace ProgramsDatabase
       while (true)
       {
         line = sr.ReadLine();
-//        Log.Write(line);
+//        _log.Info(line);
         if (line == null)
         {
           break;
@@ -250,7 +255,7 @@ namespace ProgramsDatabase
       if (!CheckPrerequisites())
       {
         OnSendMessage(Checker.Problems, -1, -1);
-        Log.Write("MameImporter: import failed! Details: {0}", Checker.Problems);
+        _log.Info("MameImporter: import failed! Details: {0}", Checker.Problems);
         return;
       }
       int i = 0;
@@ -425,7 +430,7 @@ namespace ProgramsDatabase
       }
       else
       {
-        Log.Write("myPrograms: mameImport(ProcessFullEntry): unexpected string '{0}'", fullEntry);
+        _log.Info("myPrograms: mameImport(ProcessFullEntry): unexpected string '{0}'", fullEntry);
       }
     }
 
@@ -462,7 +467,7 @@ namespace ProgramsDatabase
         }
         else
         {
-          Log.Write("myPrograms: mameImport(ProcessGenreEntry): unexpected string '{0}'", genreEntry);
+          _log.Info("myPrograms: mameImport(ProcessGenreEntry): unexpected string '{0}'", genreEntry);
         }
       }
       
@@ -480,7 +485,7 @@ namespace ProgramsDatabase
         }
         else
         {
-          Log.Write("myPrograms: mameImport(ProcessVersionEntry): unexpected string '{0}'", versionEntry);
+          _log.Info("myPrograms: mameImport(ProcessVersionEntry): unexpected string '{0}'", versionEntry);
         }
       }
       

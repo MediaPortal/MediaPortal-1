@@ -86,7 +86,7 @@ namespace WindowPlugins.GUISettings
     {
       base.OnPageLoad();
       //Load settings
-      Log.Write("GUISkipSteps: {0}", "Load settings");
+      _log.Info("GUISkipSteps: {0}", "Load settings");
       ArrayList StepArray = new ArrayList();
 
       using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml") )
@@ -97,7 +97,7 @@ namespace WindowPlugins.GUISettings
           else
             StepArray.Add(Convert.ToInt32(token));
         }
-      //Log.Write("DEBUG - GUISkipSteps: Step 1 = {0}", Convert.ToString(StepArray[0]));
+      //_log.Info("DEBUG - GUISkipSteps: Step 1 = {0}", Convert.ToString(StepArray[0]));
       checkMarkButtonStep1.Selected = ( (int)StepArray[0] == 1 ) ? true : false;
       checkMarkButtonStep2.Selected = ( (int)StepArray[1] == 1 ) ? true : false;
       checkMarkButtonStep3.Selected = ( (int)StepArray[2] == 1 ) ? true : false;
@@ -126,7 +126,7 @@ namespace WindowPlugins.GUISettings
 
     void SaveSettings()
     {
-      Log.Write("GUISkipSteps: {0}", "Save settings");
+      _log.Info("GUISkipSteps: {0}", "Save settings");
 
       string skipSteps = ( Convert.ToInt16(checkMarkButtonStep1.Selected) ).ToString() + ";" +
                          ( Convert.ToInt16(checkMarkButtonStep2.Selected) ).ToString() + ";" +
@@ -149,7 +149,7 @@ namespace WindowPlugins.GUISettings
         xmlwriter.SetValue("movieplayer", "skipsteps", skipSteps);
       }
       g_Player.configLoaded = false;
-      Log.Write("GUISkipSteps: {0}", "reset g_player settings");
+      _log.Info("GUISkipSteps: {0}", "reset g_player settings");
     }
 
     protected override void OnClicked( int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType )

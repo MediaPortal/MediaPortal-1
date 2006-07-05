@@ -28,11 +28,11 @@ using System.IO;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
-
 using System.Collections.Generic;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
+using MediaPortal.Utils.Services;
 
 
 namespace MediaPortal.GUI.Library
@@ -117,6 +117,12 @@ namespace MediaPortal.GUI.Library
     bool _reCalculate = false;
     bool _allocated = false;
     bool _registeredForEvent = false;
+
+    private GUIImage()
+    {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+    }
 
     public GUIImage(int dwParentID)
       : base(dwParentID)
@@ -425,7 +431,7 @@ namespace MediaPortal.GUI.Library
         if (_textureFileNameTag.Length == 0) return;
         if (_textureFileNameTag == "") return;
 
-        if (logtextures) Log.Write("GUIImage:AllocResources:{0}", fileName);
+        if (logtextures) _log.Info("GUIImage:AllocResources:{0}", fileName);
         if (GUITextureManager.GetPackedTexture(fileName, out _texUoff, out _texVoff, out _texUmax, out _texVmax, out _textureWidth, out _textureHeight, out _packedTexture, out _packedTextureNo))
         {
           _reCalculate = true;
@@ -521,7 +527,7 @@ namespace MediaPortal.GUI.Library
         }
         if (file != null && file != String.Empty)
         {
-          if (logtextures) Log.Write("GUIImage:freeresources:{0}", file);
+          if (logtextures) _log.Info("GUIImage:freeresources:{0}", file);
           if (GUITextureManager.IsTemporary(file))
           {
             GUITextureManager.ReleaseTexture(file);
@@ -994,7 +1000,7 @@ namespace MediaPortal.GUI.Library
         if (_cachedTextureFileName != fileName || _listTextures == null || 0 == _listTextures.Length)
         {
           // then free our resources, and reload the (new) image
-          if (logtextures) Log.Write("GUIImage:PreRender() image changed:{0}->{1}", _cachedTextureFileName, fileName);
+          if (logtextures) _log.Info("GUIImage:PreRender() image changed:{0}->{1}", _cachedTextureFileName, fileName);
           FreeResourcesAndRegEvent();
           _cachedTextureFileName = fileName;
           if (fileName.Length == 0)
@@ -1060,7 +1066,7 @@ namespace MediaPortal.GUI.Library
       if (fileName == null) return;
       if (_textureFileNameTag == fileName) return;// same file, no need to do anything
 
-      if (logtextures) Log.Write("GUIImage:SetFileName() {0}", fileName);
+      if (logtextures) _log.Info("GUIImage:SetFileName() {0}", fileName);
       _textureFileNameTag = fileName;
       if (_textureFileNameTag.IndexOf("#") >= 0) _containsProperty = true;
       else _containsProperty = false;

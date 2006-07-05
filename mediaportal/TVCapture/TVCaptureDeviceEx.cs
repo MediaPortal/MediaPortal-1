@@ -42,6 +42,7 @@ using TVCapture;
 //using DirectX.Capture;
 using Toub.MediaCenter.Dvrms.Metadata;
 using System.Threading;
+using MediaPortal.Utils.Services;
 #endregion
 
 namespace MediaPortal.TV.Recording
@@ -156,6 +157,8 @@ namespace MediaPortal.TV.Recording
     [NonSerialized]
     static Hashtable _devices = new Hashtable();
 
+    protected ILog _log;
+
     /// <summary>
     /// #MW#
     /// </summary>
@@ -182,6 +185,9 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     public TVCaptureDevice()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+
       CtorInit();
     }
     void CtorInit()
@@ -260,11 +266,11 @@ namespace MediaPortal.TV.Recording
     {
       get
       {
-        _recordingPath = Utils.RemoveTrailingSlash(_recordingPath);
+        _recordingPath = MediaPortal.Util.Utils.RemoveTrailingSlash(_recordingPath);
         if (_recordingPath == null || _recordingPath.Length == 0)
         {
           _recordingPath = System.IO.Directory.GetCurrentDirectory();
-          _recordingPath = Utils.RemoveTrailingSlash(_recordingPath);
+          _recordingPath = MediaPortal.Util.Utils.RemoveTrailingSlash(_recordingPath);
         }
         return _recordingPath;
       }
@@ -572,7 +578,7 @@ namespace MediaPortal.TV.Recording
 
         if (value.Equals(_currentTvChannelName)) return;//nothing todo
 
-        Log.Write("TVCapture: change channel to :{0}", value);
+        _log.Info("TVCapture: change channel to :{0}", value);
         if (IsTimeShifting || IsRecording)
         {
           if (g_Player.Playing && g_Player.CurrentFile == TimeShiftFullFileName)
@@ -627,7 +633,7 @@ namespace MediaPortal.TV.Recording
       StopEpgGrabbing();
       if (_currentGraphState == State.Viewing)
       {
-        Log.WriteFile(Log.LogType.Log, "TVCapture.Stop Viewing() Card:{0} {1}", ID, _currentTvChannelName);
+        _log.Info("TVCapture.Stop Viewing() Card:{0} {1}", ID, _currentTvChannelName);
         result = _currentGraph.StopViewing();
         _currentTvChannelName = "";
       }
@@ -649,7 +655,7 @@ namespace MediaPortal.TV.Recording
     {
       if (channelName == null || channelName.Length == 0)
       {
-        Log.WriteFile(Log.LogType.Log, true, "TVCapture.Start Viewing channel name is empty");
+        _log.Error("TVCapture.Start Viewing channel name is empty");
         return false;
       }
       StopEpgGrabbing();
@@ -665,11 +671,11 @@ namespace MediaPortal.TV.Recording
 
       if (CreateGraph())
       {
-        Log.WriteFile(Log.LogType.Log, "TVCapture.Start Viewing() Card:{0} :{1}", ID, channelName);
+        _log.Info("TVCapture.Start Viewing() Card:{0} :{1}", ID, channelName);
         TVChannel chan = GetChannel(channelName);
         if (chan == null)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVCapture.Start Viewing() Card:{0} :{1} unknown channel", ID, channelName);
+          _log.Error("TVCapture.Start Viewing() Card:{0} :{1} unknown channel", ID, channelName);
           return false;
         }
         if (_currentGraph.StartViewing(chan))
@@ -915,11 +921,11 @@ namespace MediaPortal.TV.Recording
     {
       if (!IsRecording) return;
 
-      Log.WriteFile(Log.LogType.Log, "TVCapture.StopRecording() Card:{0}", ID);
+      _log.Info("TVCapture.StopRecording() Card:{0}", ID);
       // todo : stop recorder
       _currentGraph.StopRecording();
 
-      _recordedTvObject.End = Utils.datetolong(DateTime.Now);
+      _recordedTvObject.End = MediaPortal.Util.Utils.datetolong(DateTime.Now);
       TVDatabase.AddRecordedTV(_recordedTvObject);
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
@@ -949,7 +955,7 @@ namespace MediaPortal.TV.Recording
       {
         OnTvRecordingEnded(RecordingFileName, _currentTvRecording, _currentTvProgramRecording);
       }
-      //Log.Write("TVCapture.StopRecording():_currentTvProgramRecording=null");
+      //_log.Info("TVCapture.StopRecording():_currentTvProgramRecording=null");
       // cleanup...
       _currentTvProgramRecording = null;
       _currentTvRecording = null;
@@ -998,13 +1004,13 @@ namespace MediaPortal.TV.Recording
 
       if (currentProgram != null)
         _currentTvProgramRecording = currentProgram.Clone();
-      //Log.Write("dev.Record():_currentTvProgramRecording={0}", _currentTvProgramRecording);
+      //_log.Info("dev.Record():_currentTvProgramRecording={0}", _currentTvProgramRecording);
       _currentTvRecording = new TVRecording(recording);
       _preRecordInterval = iPreRecordInterval;
       _postRecordInterval = iPostRecordInterval;
       _currentTvChannelName = recording.Channel;
 
-      Log.WriteFile(Log.LogType.Log, "TVCapture.Record() Card:{0} {1} on {2} from {3}-{4}", ID, recording.Title, _currentTvChannelName, recording.StartTime.ToLongTimeString(), recording.EndTime.ToLongTimeString());
+      _log.Info("TVCapture.Record() Card:{0} {1} on {2} from {3}-{4}", ID, recording.Title, _currentTvChannelName, recording.StartTime.ToLongTimeString(), recording.EndTime.ToLongTimeString());
       // create sink graph
       if (CreateGraph())
       {
@@ -1062,7 +1068,7 @@ namespace MediaPortal.TV.Recording
           else
           {
             //recording ended
-            Log.WriteFile(Log.LogType.Log, "TVCapture.Proces() Card:{0} recording has ended '{1}' on channel:{2} from {3}-{4} id:{5} _cardPriority:{6} quality:{7}",
+            _log.Info("TVCapture.Proces() Card:{0} recording has ended '{1}' on channel:{2} from {3}-{4} id:{5} _cardPriority:{6} quality:{7}",
               ID,
               _currentTvRecording.Title, _currentTvRecording.Channel,
               _currentTvRecording.StartTime.ToLongTimeString(), _currentTvRecording.EndTime.ToLongTimeString(),
@@ -1085,7 +1091,7 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     public void Stop()
     {
-      Log.WriteFile(Log.LogType.Log, "TVCapture.Stop() Card:{0}", ID);
+      _log.Info("TVCapture.Stop() Card:{0}", ID);
       StopRecording();
       StopTimeShifting();
       StopViewing();
@@ -1104,7 +1110,7 @@ namespace MediaPortal.TV.Recording
       if (_currentGraph == null)
       {
         LoadContrastGammaBrightnessSettings();
-        Log.WriteFile(Log.LogType.Log, "TVCapture.CreateGraph() Card:{0}", ID);
+        _log.Info("TVCapture.CreateGraph() Card:{0}", ID);
         _currentGraph = GraphFactory.CreateGraph(this);
         if (_currentGraph == null) return false;
         return _currentGraph.CreateGraph(Quality);
@@ -1128,7 +1134,7 @@ namespace MediaPortal.TV.Recording
       if (_currentGraph != null)
       {
         SaveContrastGammaBrightnessSettings();
-        Log.WriteFile(Log.LogType.Log, "TVCapture.DeleteGraph() Card:{0}", ID);
+        _log.Info("TVCapture.DeleteGraph() Card:{0}", ID);
         _currentGraph.DeleteGraph();
         _currentGraph = null;
       }
@@ -1155,7 +1161,7 @@ namespace MediaPortal.TV.Recording
           return false;
         return true;
       }
-      Log.WriteFile(Log.LogType.Log, "TVCapture.StartTimeShifting() Card:{0} :{1}", ID, channelName);
+      _log.Info("TVCapture.StartTimeShifting() Card:{0} :{1}", ID, channelName);
       TVChannel channel = GetChannel(channelName);
 
       if (_currentGraphState == State.Timeshifting)
@@ -1188,7 +1194,7 @@ namespace MediaPortal.TV.Recording
 
 
       string strFileName = TimeShiftFullFileName;
-      //Log.WriteFile(Log.LogType.Log, "Card:{0} timeshift to file:{1}", ID, strFileName);
+      //_log.Info("Card:{0} timeshift to file:{1}", ID, strFileName);
       bool bResult = _currentGraph.StartTimeShifting(channel, strFileName);
       if (bResult == true)
       {
@@ -1213,10 +1219,10 @@ namespace MediaPortal.TV.Recording
       if (!IsTimeShifting) return false;
 
       //stopping timeshifting will also remove the live.tv file 
-      Log.WriteFile(Log.LogType.Log, "TVCapture.StopTimeShifting() Card:{0}", ID);
+      _log.Info("TVCapture.StopTimeShifting() Card:{0}", ID);
       bool result = _currentGraph.StopTimeShifting();
       string fileName = TimeShiftFullFileName;
-      Utils.FileDelete(fileName);
+      MediaPortal.Util.Utils.FileDelete(fileName);
       _currentTvChannelName = "";
       _timeTimeshiftingStarted = DateTime.MinValue;
       _currentGraphState = State.Initialized;
@@ -1226,7 +1232,7 @@ namespace MediaPortal.TV.Recording
     public void Tune(TVChannel channel)
     {
       if (_currentGraphState != State.Viewing) return;
-      Log.Write("TVCapture.Tune({0}", channel.Name);
+      _log.Info("TVCapture.Tune({0}", channel.Name);
       _currentGraph.TuneChannel(channel);
       _lastChannelChange = DateTime.Now;
       _currentTvChannelName = channel.Name;
@@ -1393,7 +1399,7 @@ namespace MediaPortal.TV.Recording
     #region private members
     void RebuildGraph()
     {
-      Log.WriteFile(Log.LogType.Log, "TvCaptureDevice:RebuildGraph() Card:{0} chan:{1}", ID, _currentTvChannelName);
+      _log.Info("TvCaptureDevice:RebuildGraph() Card:{0} chan:{1}", ID, _currentTvChannelName);
 
       //stop playback of this channel
       if (_currentGraph != null)
@@ -1402,18 +1408,18 @@ namespace MediaPortal.TV.Recording
         {
           if (Recorder.CommandProcessor != null) Recorder.CommandProcessor.StopPlayer();
         }
-        //Log.WriteFile(Log.LogType.Log, "TvCaptureDevice:RebuildGraph() delete graph");
+        //_log.Info("TvCaptureDevice:RebuildGraph() delete graph");
         _currentGraph.StopEpgGrabbing();
         _currentGraph.StopTimeShifting();
         _currentGraph.StopViewing();
         _currentGraph.StopRadio();
-        //Log.WriteFile(Log.LogType.Log, "TvCaptureDevice:RebuildGraph() graph deleted");
+        //_log.Info("TvCaptureDevice:RebuildGraph() graph deleted");
       }
 
       TVChannel channel = GetChannel(_currentTvChannelName);
       if (_currentGraphState == State.Timeshifting)
       {
-        Log.WriteFile(Log.LogType.Log, "TvCaptureDevice:RebuildGraph() recreate timeshifting graph");
+        _log.Info("TvCaptureDevice:RebuildGraph() recreate timeshifting graph");
         _currentGraph.StartTimeShifting(channel, TimeShiftFullFileName);
         _lastChannelChange = DateTime.Now;
         if (Recorder.Running)
@@ -1423,11 +1429,11 @@ namespace MediaPortal.TV.Recording
       }
       else
       {
-        Log.WriteFile(Log.LogType.Log, "TvCaptureDevice:RebuildGraph() recreate viewing graph");
+        _log.Info("TvCaptureDevice:RebuildGraph() recreate viewing graph");
         _currentGraph.StartViewing(channel);
         _lastChannelChange = DateTime.Now;
       }
-      // Log.WriteFile(Log.LogType.Log, "Card:{0} rebuild graph done", ID);
+      // _log.Info("Card:{0} rebuild graph done", ID);
     }
 
     string StripIllegalChars(string recordingAttribute)
@@ -1485,7 +1491,7 @@ namespace MediaPortal.TV.Recording
     /// </remarks>
     bool StartRecording(TVRecording recording)
     {
-      Log.WriteFile(Log.LogType.Log, "TVCapture.StartRecording() Card:{0}  content:{1}", ID, recording.IsContentRecording);
+      _log.Info("TVCapture.StartRecording() Card:{0}  content:{1}", ID, recording.IsContentRecording);
 
       TVProgram prog = null;
       DateTime dtNow = DateTime.Now.AddMinutes(_preRecordInterval);
@@ -1529,26 +1535,26 @@ namespace MediaPortal.TV.Recording
           else
             strInput = xmlreader.GetValueAsString("capture", "seriesformat", string.Empty);
 
-        strInput = Utils.ReplaceTag(strInput, "%channel%", Utils.MakeFileName(currentRunningProgram.Channel), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%title%", Utils.MakeFileName(currentRunningProgram.Title), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%name%", Utils.MakeFileName(currentRunningProgram.Episode), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%series%", Utils.MakeFileName(currentRunningProgram.SeriesNum), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%episode%", Utils.MakeFileName(currentRunningProgram.EpisodeNum), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%part%", Utils.MakeFileName(currentRunningProgram.EpisodePart), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%date%", Utils.MakeFileName(currentRunningProgram.StartTime.Date.ToShortDateString()), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%start%", Utils.MakeFileName(currentRunningProgram.StartTime.ToShortTimeString()), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%end%", Utils.MakeFileName(currentRunningProgram.EndTime.ToShortTimeString()), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%genre%", Utils.MakeFileName(currentRunningProgram.Genre), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%startday%", Utils.MakeFileName(currentRunningProgram.StartTime.Day.ToString()), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%startmonth%", Utils.MakeFileName(currentRunningProgram.StartTime.Month.ToString()), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%startyear%", Utils.MakeFileName(currentRunningProgram.StartTime.Year.ToString()), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%starthh%", Utils.MakeFileName(currentRunningProgram.StartTime.Hour.ToString()), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%startmm%", Utils.MakeFileName(currentRunningProgram.StartTime.Minute.ToString()), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%endday%", Utils.MakeFileName(currentRunningProgram.EndTime.Day.ToString()), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%endmonth%", Utils.MakeFileName(currentRunningProgram.EndTime.Month.ToString()), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%startyear%", Utils.MakeFileName(currentRunningProgram.EndTime.Year.ToString()), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%endhh%", Utils.MakeFileName(currentRunningProgram.EndTime.Hour.ToString()), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%endmm%", Utils.MakeFileName(currentRunningProgram.EndTime.Minute.ToString()), "unknown");
+        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%channel%", MediaPortal.Util.Utils.MakeFileName(currentRunningProgram.Channel), "unknown");
+        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%title%", MediaPortal.Util.Utils.MakeFileName(currentRunningProgram.Title), "unknown");
+        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%name%", MediaPortal.Util.Utils.MakeFileName(currentRunningProgram.Episode), "unknown");
+        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%series%", MediaPortal.Util.Utils.MakeFileName(currentRunningProgram.SeriesNum), "unknown");
+        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%episode%", MediaPortal.Util.Utils.MakeFileName(currentRunningProgram.EpisodeNum), "unknown");
+        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%part%", MediaPortal.Util.Utils.MakeFileName(currentRunningProgram.EpisodePart), "unknown");
+        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%date%", MediaPortal.Util.Utils.MakeFileName(currentRunningProgram.StartTime.Date.ToShortDateString()), "unknown");
+        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%start%", MediaPortal.Util.Utils.MakeFileName(currentRunningProgram.StartTime.ToShortTimeString()), "unknown");
+        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%end%", MediaPortal.Util.Utils.MakeFileName(currentRunningProgram.EndTime.ToShortTimeString()), "unknown");
+        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%genre%", MediaPortal.Util.Utils.MakeFileName(currentRunningProgram.Genre), "unknown");
+        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%startday%", MediaPortal.Util.Utils.MakeFileName(currentRunningProgram.StartTime.Day.ToString()), "unknown");
+        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%startmonth%", MediaPortal.Util.Utils.MakeFileName(currentRunningProgram.StartTime.Month.ToString()), "unknown");
+        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%startyear%", MediaPortal.Util.Utils.MakeFileName(currentRunningProgram.StartTime.Year.ToString()), "unknown");
+        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%starthh%", MediaPortal.Util.Utils.MakeFileName(currentRunningProgram.StartTime.Hour.ToString()), "unknown");
+        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%startmm%", MediaPortal.Util.Utils.MakeFileName(currentRunningProgram.StartTime.Minute.ToString()), "unknown");
+        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%endday%", MediaPortal.Util.Utils.MakeFileName(currentRunningProgram.EndTime.Day.ToString()), "unknown");
+        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%endmonth%", MediaPortal.Util.Utils.MakeFileName(currentRunningProgram.EndTime.Month.ToString()), "unknown");
+        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%startyear%", MediaPortal.Util.Utils.MakeFileName(currentRunningProgram.EndTime.Year.ToString()), "unknown");
+        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%endhh%", MediaPortal.Util.Utils.MakeFileName(currentRunningProgram.EndTime.Hour.ToString()), "unknown");
+        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%endmm%", MediaPortal.Util.Utils.MakeFileName(currentRunningProgram.EndTime.Minute.ToString()), "unknown");
 
         int index = strInput.LastIndexOf('\\');
         if (index != -1)
@@ -1562,8 +1568,8 @@ namespace MediaPortal.TV.Recording
 
         if (subDirectory != string.Empty)
         {
-          subDirectory = Utils.RemoveTrailingSlash(subDirectory);
-          subDirectory = Utils.MakeDirectoryPath(subDirectory);
+          subDirectory = MediaPortal.Util.Utils.RemoveTrailingSlash(subDirectory);
+          subDirectory = MediaPortal.Util.Utils.MakeDirectoryPath(subDirectory);
           fullPath = RecordingPath + "\\" + subDirectory;
           if (!Directory.Exists(fullPath))
             Directory.CreateDirectory(fullPath);
@@ -1578,7 +1584,7 @@ namespace MediaPortal.TV.Recording
                                     dt.Minute,
                                     DateTime.Now.Minute, DateTime.Now.Second);
         }
-        fileName = Utils.MakeFileName(fileName);
+        fileName = MediaPortal.Util.Utils.MakeFileName(fileName);
         if (File.Exists(fullPath + "\\" + fileName + recEngineExt))
         {
           int i = 1;
@@ -1599,19 +1605,19 @@ namespace MediaPortal.TV.Recording
           DateTime.Now.Minute, DateTime.Now.Second,
           recEngineExt);
       }
-      string fullFileName = String.Format(@"{0}\{1}", fullPath, Utils.MakeFileName(fileName));
-      ulong freeSpace = Utils.GetFreeDiskSpace(fullFileName);
+      string fullFileName = String.Format(@"{0}\{1}", fullPath, MediaPortal.Util.Utils.MakeFileName(fileName));
+      ulong freeSpace = MediaPortal.Util.Utils.GetFreeDiskSpace(fullFileName);
       if (freeSpace < (1024L * 1024L * 1024L))// 1 GB
       {
-        Log.WriteFile(Log.LogType.Recorder, true, "Recorder:  failed to start recording since drive {0}: has less then 1GB freediskspace", fullFileName[0]);
+        _log.Error("Recorder:  failed to start recording since drive {0}: has less then 1GB freediskspace", fullFileName[0]);
         return false;
       }
-      Log.Write("Recorder: recording to {0}", fullFileName);
+      _log.Info("Recorder: recording to {0}", fullFileName);
 
       TVChannel channel = GetChannel(_currentTvChannelName);
 
       _recordedTvObject = new TVRecorded();
-      _recordedTvObject.Start = Utils.datetolong(DateTime.Now);
+      _recordedTvObject.Start = MediaPortal.Util.Utils.datetolong(DateTime.Now);
       _recordedTvObject.Channel = _currentTvChannelName;
       _recordedTvObject.FileName = fullFileName;
       _recordedTvObject.KeepRecordingMethod = recording.KeepRecordingMethod;
@@ -1628,7 +1634,7 @@ namespace MediaPortal.TV.Recording
         _recordedTvObject.Title = String.Empty;
         _recordedTvObject.Genre = String.Empty;
         _recordedTvObject.Description = String.Empty;
-        _recordedTvObject.End = Utils.datetolong(DateTime.Now.AddHours(2));
+        _recordedTvObject.End = MediaPortal.Util.Utils.datetolong(DateTime.Now.AddHours(2));
       }
 
       Hashtable attribtutes = GetRecordingAttributes();

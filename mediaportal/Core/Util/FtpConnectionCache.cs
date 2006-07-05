@@ -24,6 +24,8 @@ using System.Collections;
 using System.ComponentModel;
 using EnterpriseDT.Net.Ftp;
 using MediaPortal.GUI.Library;
+using MediaPortal.Utils.Services;
+
 namespace Core.Util
 {
   /// <summary>
@@ -51,11 +53,9 @@ namespace Core.Util
       public long BytesTransferred = 0;			// bytes transferred
       public long BytesOffset = 0;						// bytes offset when resuming an ftp download
 
-
       public FtpConnection()
       {
       }
-
 
       /// <summary>
       /// Function which will be called by the begininvoke() to 
@@ -79,7 +79,7 @@ namespace Core.Util
           Connection.BytesTransferred += new BytesTransferredHandler(OnBytesTransferred);
           Connection.TransferType = FTPTransferType.BINARY;
 
-          Log.Write("ftp:Start Download:{0}->{1}", RemoteFileName, LocalFileName);
+          _log.Info("ftp:Start Download:{0}->{1}", RemoteFileName, LocalFileName);
           if (System.IO.File.Exists(LocalFileName))
           {
             FileInfo info = new FileInfo(LocalFileName);
@@ -96,12 +96,12 @@ namespace Core.Util
 
           Connection.Get(LocalFileName, RemoteFileName);
           Connection.BytesTransferred -= new BytesTransferredHandler(OnBytesTransferred);
-          Log.Write("ftp:download finished {0}->{1}", RemoteFileName, LocalFileName);
+          _log.Info("ftp:download finished {0}->{1}", RemoteFileName, LocalFileName);
         }
         catch (Exception ex)
         {
-          Log.Write("ftp:download of {0} stopped", LocalFileName);
-          Log.Write(ex);
+          _log.Info("ftp:download of {0} stopped", LocalFileName);
+          _log.Error(ex);
         }
         finally
         {
@@ -122,17 +122,17 @@ namespace Core.Util
 
       void Connection_TransferStartedEx(object sender, TransferEventArgs e)
       {
-        Log.Write("ftp: Transfer started {0}->{1}",e.RemoteFilename, e.LocalFilePath);
+        _log.Info("ftp: Transfer started {0}->{1}",e.RemoteFilename, e.LocalFilePath);
       }
 
       void Connection_ReplyReceived(object sender, FTPMessageEventArgs e)
       {
-        Log.Write("ftp:Cmd  :{0}", e.Message);
+        _log.Info("ftp:Cmd  :{0}", e.Message);
       }
 
       void Connection_CommandSent(object sender, FTPMessageEventArgs e)
       {
-        Log.Write("ftp:reply:{0}", e.Message);
+        _log.Info("ftp:reply:{0}", e.Message);
       }
 
 
@@ -180,7 +180,7 @@ namespace Core.Util
           return;
         }
 
-        Log.Write("ftp: download:{0}", remotefile);
+        _log.Info("ftp: download:{0}", remotefile);
         LocalFileName = localfile;
         RemoteFileName = remotefile;
         OriginalRemoteFileName = orgremoteFile;
@@ -209,7 +209,7 @@ namespace Core.Util
         }
         catch (Exception ex)
         {
-          Log.Write(ex);
+          _log.Error(ex);
         }
       }
     }
@@ -218,6 +218,13 @@ namespace Core.Util
     /// list containing all active ftp connections
     /// </summary>
     static ArrayList ftpConnections = new ArrayList();
+    static ILog _log;
+
+    static FtpConnectionCache()
+    {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+    }
 
     /// <summary>
     /// Checks if we have a idle connection to the remote ftp server
@@ -266,7 +273,7 @@ namespace Core.Util
     {
       try
       {
-        Log.Write("ftp:connect to ftp://{0}:{1}", hostname, port);
+        _log.Info("ftp:connect to ftp://{0}:{1}", hostname, port);
         FtpConnection newConnection = new FtpConnection();
         newConnection.HostName = hostname;
         newConnection.LoginName = login;
@@ -288,7 +295,7 @@ namespace Core.Util
       }
       catch (Exception ex)
       {
-        Log.Write("ftp:unable to connect to ftp://{0}:{1} reason:{2}", hostname, port, ex.Message);
+        _log.Info("ftp:unable to connect to ftp://{0}:{1} reason:{2}", hostname, port, ex.Message);
         return null;
       }
     }
@@ -368,7 +375,7 @@ namespace Core.Util
     /// <param name="e"></param>
     static void Connection_TransferCompleteEx(object sender, TransferEventArgs e)
     {
-      Log.Write("ftp: Transfer completed:{0}->{1}",e.RemoteFilename, e.LocalFilePath);
+      _log.Info("ftp: Transfer completed:{0}->{1}",e.RemoteFilename, e.LocalFilePath);
       try
       {
         FTPClient ftpclient = sender as FTPClient;
@@ -386,7 +393,7 @@ namespace Core.Util
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        _log.Error(ex);
       }
     }
   }

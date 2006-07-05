@@ -56,7 +56,7 @@ namespace MediaPortal.Webepg.Profile
     ///   Initializes a new instance of the Xml class by setting the <see cref="Profile.Name" /> to the given file name. </summary>
     /// <param name="fileName">
     ///   The name of the XML file to initialize the <see cref="Profile.Name" /> property with. </param>
-    public Xml(string fileName)
+    public Xml(string fileName) : this()
     {
       if (_strFileName != fileName)
       {

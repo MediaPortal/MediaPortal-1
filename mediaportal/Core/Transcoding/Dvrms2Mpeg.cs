@@ -30,6 +30,7 @@ using DirectShowLib;
 using DirectShowLib.SBE;
 using MediaPortal.GUI.Library;
 using System.Runtime.InteropServices;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Core.Transcoding
 {
@@ -46,12 +47,12 @@ namespace MediaPortal.Core.Transcoding
     protected IMediaSeeking mediaSeeking = null;
     protected IBaseFilter powerDvdMuxer = null;
     protected IMediaEventEx mediaEvt = null;
+    protected ILog _log;
 
     public Dvrms2Mpeg()
     {
-      //
-      // TODO: Add constructor logic here
-      //
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
     }
     #region ITranscode Members
 
@@ -71,29 +72,29 @@ namespace MediaPortal.Core.Transcoding
       //object comobj = null;
       try
       {
-        Log.Write("DVR2MPG: create graph");
+        _log.Info("DVR2MPG: create graph");
         graphBuilder = (IGraphBuilder)new FilterGraph();
 
         _rotEntry = new DsROTEntry((IFilterGraph)graphBuilder);
 
-        Log.Write("DVR2MPG: add streambuffersource");
+        _log.Info("DVR2MPG: add streambuffersource");
         bufferSource = (IStreamBufferSource)new StreamBufferSource();
 
 
         IBaseFilter filter = (IBaseFilter)bufferSource;
         graphBuilder.AddFilter(filter, "SBE SOURCE");
 
-        Log.Write("DVR2MPG: load file:{0}", info.file);
+        _log.Info("DVR2MPG: load file:{0}", info.file);
         IFileSourceFilter fileSource = (IFileSourceFilter)bufferSource;
         int hr = fileSource.Load(info.file, null);
 
 
-        Log.Write("DVR2MPG: Add Cyberlink MPEG2 multiplexer to graph");
+        _log.Info("DVR2MPG: Add Cyberlink MPEG2 multiplexer to graph");
         string monikerPowerDvdMuxer = @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{6770E328-9B73-40C5-91E6-E2F321AEDE57}";
         powerDvdMuxer = Marshal.BindToMoniker(monikerPowerDvdMuxer) as IBaseFilter;
         if (powerDvdMuxer == null)
         {
-          Log.Write("DVR2MPG: FAILED:Unable to create Cyberlink MPEG Muxer (PowerDVD)");
+          _log.Warn("DVR2MPG: FAILED:Unable to create Cyberlink MPEG Muxer (PowerDVD)");
           Cleanup();
           return false;
         }
@@ -101,18 +102,18 @@ namespace MediaPortal.Core.Transcoding
         hr = graphBuilder.AddFilter(powerDvdMuxer, "Cyberlink MPEG Muxer");
         if (hr != 0)
         {
-          Log.Write("DVR2MPG: FAILED:Add Cyberlink MPEG Muxer to filtergraph :0x{0:X}", hr);
+          _log.Warn("DVR2MPG: FAILED:Add Cyberlink MPEG Muxer to filtergraph :0x{0:X}", hr);
           Cleanup();
           return false;
         }
 
         //add filewriter 
-        Log.Write("DVR2MPG: Add FileWriter to graph");
+        _log.Info("DVR2MPG: Add FileWriter to graph");
         string monikerFileWrite = @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{3E8868CB-5FE8-402C-AA90-CB1AC6AE3240}";
         IBaseFilter fileWriterbase = Marshal.BindToMoniker(monikerFileWrite) as IBaseFilter;
         if (fileWriterbase == null)
         {
-          Log.Write("DVR2MPG: FAILED:Unable to create FileWriter");
+          _log.Warn("DVR2MPG: FAILED:Unable to create FileWriter");
           Cleanup();
           return false;
         }
@@ -121,7 +122,7 @@ namespace MediaPortal.Core.Transcoding
         fileWriterFilter = fileWriterbase as IFileSinkFilter;
         if (fileWriterFilter == null)
         {
-          Log.Write("DVR2MPG: FAILED:Add unable to get IFileSinkFilter for filewriter");
+          _log.Warn("DVR2MPG: FAILED:Add unable to get IFileSinkFilter for filewriter");
           Cleanup();
           return false;
         }
@@ -129,7 +130,7 @@ namespace MediaPortal.Core.Transcoding
         hr = graphBuilder.AddFilter(fileWriterbase, "FileWriter");
         if (hr != 0)
         {
-          Log.Write("DVR2MPG: FAILED:Add FileWriter to filtergraph :0x{0:X}", hr);
+          _log.Warn("DVR2MPG: FAILED:Add FileWriter to filtergraph :0x{0:X}", hr);
           Cleanup();
           return false;
         }
@@ -137,7 +138,7 @@ namespace MediaPortal.Core.Transcoding
 
         //connect output #0 of streambuffer source->powerdvd audio in
         //connect output #1 of streambuffer source->powerdvd video in
-        Log.Write("DVR2MPG: connect streambuffer->multiplexer");
+        _log.Info("DVR2MPG: connect streambuffer->multiplexer");
         IPin pinOut0, pinOut1;
         IPin pinIn0, pinIn1;
         pinOut0 = DsFindPin.ByDirection((IBaseFilter)bufferSource, PinDirection.Output, 0);
@@ -147,7 +148,7 @@ namespace MediaPortal.Core.Transcoding
         pinIn1 = DsFindPin.ByDirection(powerDvdMuxer, PinDirection.Input, 1);
         if (pinOut0 == null || pinOut1 == null || pinIn0 == null || pinIn1 == null)
         {
-          Log.Write("DVR2MPG: FAILED:unable to get pins of muxer&source");
+          _log.Warn("DVR2MPG: FAILED:unable to get pins of muxer&source");
           Cleanup();
           return false;
         }
@@ -165,15 +166,15 @@ namespace MediaPortal.Core.Transcoding
         }
         if (hr != 0)
         {
-          Log.Write("DVR2MPG: FAILED: unable to connect audio pins: 0x{0:X}", hr);
+          _log.Warn("DVR2MPG: FAILED: unable to connect audio pins: 0x{0:X}", hr);
           Cleanup();
           return false;
         }
 
         if (usingAc3)
-          Log.Write("DVR2MPG: using AC3 audio");
+          _log.Info("DVR2MPG: using AC3 audio");
         else
-          Log.Write("DVR2MPG: using MPEG audio");
+          _log.Info("DVR2MPG: using MPEG audio");
 
         AMMediaType amVideo = new AMMediaType();
         amVideo.majorType = MediaType.Video;
@@ -181,26 +182,26 @@ namespace MediaPortal.Core.Transcoding
         hr = pinOut1.Connect(pinIn0, amVideo);
         if (hr != 0)
         {
-          Log.Write("DVR2MPG: FAILED: unable to connect video pins: 0x{0:X}", hr);
+          _log.Warn("DVR2MPG: FAILED: unable to connect video pins: 0x{0:X}", hr);
           Cleanup();
           return false;
         }
 
 
         //connect output of powerdvd muxer->input of filewriter
-        Log.Write("DVR2MPG: connect multiplexer->filewriter");
+        _log.Info("DVR2MPG: connect multiplexer->filewriter");
         IPin pinOut, pinIn;
         pinOut = DsFindPin.ByDirection(powerDvdMuxer, PinDirection.Output, 0);
         if (pinOut == null)
         {
-          Log.Write("DVR2MPG: FAILED:cannot get output pin of Cyberlink MPEG muxer :0x{0:X}", hr);
+          _log.Warn("DVR2MPG: FAILED:cannot get output pin of Cyberlink MPEG muxer :0x{0:X}", hr);
           Cleanup();
           return false;
         }
         pinIn = DsFindPin.ByDirection(fileWriterbase, PinDirection.Input, 0);
         if (pinIn == null)
         {
-          Log.Write("DVR2MPG: FAILED:cannot get input pin of Filewriter :0x{0:X}", hr);
+          _log.Warn("DVR2MPG: FAILED:cannot get input pin of Filewriter :0x{0:X}", hr);
           Cleanup();
           return false;
         }
@@ -208,39 +209,39 @@ namespace MediaPortal.Core.Transcoding
         hr = pinOut.Connect(pinIn, mt);
         if (hr != 0)
         {
-          Log.Write("DVR2MPG: FAILED:connect muxer->filewriter :0x{0:X}", hr);
+          _log.Warn("DVR2MPG: FAILED:connect muxer->filewriter :0x{0:X}", hr);
           Cleanup();
           return false;
         }
 
         //set output filename
         string outputFileName = System.IO.Path.ChangeExtension(info.file, ".mpg");
-        Log.Write("DVR2MPG: set output file to :{0}", outputFileName);
+        _log.Info("DVR2MPG: set output file to :{0}", outputFileName);
         mt.majorType = MediaType.Stream;
         mt.subType = MediaSubTypeEx.MPEG2;
 
         hr = fileWriterFilter.SetFileName(outputFileName, mt);
         if (hr != 0)
         {
-          Log.Write("DVR2MPG: FAILED:unable to set filename for filewriter :0x{0:X}", hr);
+          _log.Warn("DVR2MPG: FAILED:unable to set filename for filewriter :0x{0:X}", hr);
           Cleanup();
           return false;
         }
         mediaControl = graphBuilder as IMediaControl;
         mediaSeeking = graphBuilder as IMediaSeeking;
         mediaEvt = graphBuilder as IMediaEventEx;
-        Log.Write("DVR2MPG: start transcoding");
+        _log.Info("DVR2MPG: start transcoding");
         hr = mediaControl.Run();
         if (hr != 0)
         {
-          Log.Write("DVR2MPG: FAILED:unable to start graph :0x{0:X}", hr);
+          _log.Warn("DVR2MPG: FAILED:unable to start graph :0x{0:X}", hr);
           Cleanup();
           return false;
         }
       }
       catch (Exception ex)
       {
-        Log.WriteFile(Log.LogType.Log, true, "DVR2MPG: Unable create graph: {0}", ex.Message);
+        _log.Error("DVR2MPG: Unable create graph: {0}", ex.Message);
         Cleanup();
         return false;
       }
@@ -290,7 +291,7 @@ namespace MediaPortal.Core.Transcoding
 
     void Cleanup()
     {
-      Log.Write("DVR2MPG: cleanup");
+      _log.Info("DVR2MPG: cleanup");
       if (_rotEntry != null)
       {
         _rotEntry.Dispose();

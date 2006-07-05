@@ -106,7 +106,7 @@ namespace DvrMpegCutMP
 			}
 			catch (Exception e)
 			{
-				Log.WriteFile(Log.LogType.Error, "DvrMpegCut: (OnPageLoad) " + e.StackTrace);
+				_log.Error("DvrMpegCut: (OnPageLoad) " + e.StackTrace);
 			}
 
 		}
@@ -208,7 +208,7 @@ namespace DvrMpegCutMP
 			}
 			catch (Exception ex)
 			{
-				Log.WriteFile(Log.LogType.Error, "DvrMpegCut: (LoadDrives) " + ex.StackTrace);
+				_log.Error("DvrMpegCut: (LoadDrives) " + ex.StackTrace);
 			}
 		}
 
@@ -224,7 +224,7 @@ namespace DvrMpegCutMP
 			try
 			{
 				if (folder != null && folder != "")
-					folder = Utils.RemoveTrailingSlash(folder);
+					folder = MediaPortal.Util.Utils.RemoveTrailingSlash(folder);
 				
 				VirtualDirectory Directory;
 				ArrayList itemlist;
@@ -262,7 +262,7 @@ namespace DvrMpegCutMP
 			}
 			catch (Exception ex)
 			{
-				Log.WriteFile(Log.LogType.Error,"DvrMpegCut: (LoadListControl) "+ ex.Message);
+				_log.Error("DvrMpegCut: (LoadListControl) "+ ex.Message);
 			}
 
 		}
@@ -290,7 +290,7 @@ namespace DvrMpegCutMP
 			}
 			catch (Exception ex)
 			{
-				Log.WriteFile(Log.LogType.Error, "DvrMpegCut: (ToCutScreen) " + ex.Message);
+				_log.Error("DvrMpegCut: (ToCutScreen) " + ex.Message);
 			}
 		}
 		#endregion

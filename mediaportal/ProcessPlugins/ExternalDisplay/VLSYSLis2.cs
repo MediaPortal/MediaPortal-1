@@ -29,7 +29,7 @@ namespace ProcessPlugins.ExternalDisplay
   /// VL System L.I.S. 2 Driver
   /// </summary>
   /// <author>Nopap</author>
-  public class VLSYSLis2 : IDisplay
+  public class VLSYSLis2 : BaseDisplay, IDisplay
   {
     private SerialPort commPort = null;
     private int lines = 2;
@@ -68,7 +68,7 @@ namespace ProcessPlugins.ExternalDisplay
       }
       else
       {
-        Log.Write("VLSYSLis2.SetLine: error bad line number" + line);
+        _log.Info("VLSYSLis2.SetLine: error bad line number" + line);
         return;
       }
       commPort.Write(new byte[] { 0, 0xA7},0,2);
@@ -137,7 +137,7 @@ namespace ProcessPlugins.ExternalDisplay
       }
       catch (Exception ex)
       {
-        Log.Write("VLSYSLis2.Initialize: " + ex.Message);
+        _log.Info("VLSYSLis2.Initialize: " + ex.Message);
       }
     }
 
@@ -165,7 +165,7 @@ namespace ProcessPlugins.ExternalDisplay
       }
       catch (Exception ex)
       {
-        Log.Write("VLSYSLis2.Dispose: " + ex.Message);
+        _log.Info("VLSYSLis2.Dispose: " + ex.Message);
       }
     }
 

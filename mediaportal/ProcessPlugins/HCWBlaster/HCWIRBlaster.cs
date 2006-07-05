@@ -22,7 +22,7 @@
 using System;
 using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
-
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.HCWBlaster
 {
@@ -69,9 +69,12 @@ namespace MediaPortal.HCWBlaster
 			public int n;   //One Digit Delay
 		}
 
+    protected ILog _log;
+
 		public HCWIRBlaster()
 		{
-
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
 		}
 
 		static HCWIRBlaster()
@@ -84,7 +87,7 @@ namespace MediaPortal.HCWBlaster
 		public void blast(string channel_data, bool ExLogging)
 		{
 			if (ExLogging == true)
-				Log.Write("HCWBlaster: Changing channels: {0}", channel_data );
+				_log.Info("HCWBlaster: Changing channels: {0}", channel_data );
 
 			int iChannel = Convert.ToInt32(channel_data.ToString());
 
@@ -94,7 +97,7 @@ namespace MediaPortal.HCWBlaster
 				HCWIRBlaster.HCWRetVal = HCWIRBlaster.UIR_Open(0, 0);
 				if (HCWIRBlaster.HCWRetVal == 0)
 				{
-					Log.Write("HCWBlaster: Failed to get Blaster Handle");
+					_log.Info("HCWBlaster: Failed to get Blaster Handle");
 					return;
 				}
                 
@@ -110,11 +113,11 @@ namespace MediaPortal.HCWBlaster
 
 					if (ExLogging == true) 
 					{
-						Log.Write("HCWBlaster: " + devset1);
-						Log.Write("HCWBlaster: " + devset2);
-						Log.Write("HCWBlaster: " + devset3);
-						Log.Write("HCWBlaster: " + devset4);
-						Log.Write("HCWBlaster: " + devset5);
+						_log.Info("HCWBlaster: " + devset1);
+						_log.Info("HCWBlaster: " + devset2);
+						_log.Info("HCWBlaster: " + devset3);
+						_log.Info("HCWBlaster: " + devset4);
+						_log.Info("HCWBlaster: " + devset5);
 					}
 
 				}
@@ -127,10 +130,10 @@ namespace MediaPortal.HCWBlaster
 			int RetChg = HCWIRBlaster.UIR_GotoChannel(HCWIRBlaster.HCWIRConfig.d, HCWIRBlaster.HCWIRConfig.f, iChannel);
 			if (RetChg != 0)
 			{
-				Log.Write("HCWBlaster: UIR_GotoChannel() failed: " + RetChg.ToString());
+				_log.Info("HCWBlaster: UIR_GotoChannel() failed: " + RetChg.ToString());
 			}
 			if (ExLogging == true)
-				Log.Write("HCWBlaster: Finished Changing channels: {0}", channel_data );
+				_log.Info("HCWBlaster: Finished Changing channels: {0}", channel_data );
 		}
 
 	}

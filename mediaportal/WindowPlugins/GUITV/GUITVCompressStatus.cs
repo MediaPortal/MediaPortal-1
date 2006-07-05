@@ -326,7 +326,7 @@ namespace MediaPortal.GUI.TV
         GUIListItem item = new GUIListItem();
         item.Label = info.recorded.Title;
         item.TVTag = info;
-        string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, info.recorded.Channel);
+        string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, info.recorded.Channel);
         if (!System.IO.File.Exists(strLogo))
         {
           strLogo = "defaultVideoBig.png";

@@ -34,6 +34,7 @@ using MediaPortal.Util;
 using MediaPortal.GUI.Library;
 using DirectShowLib;
 using DShowNET.Helper;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Player
 {
@@ -171,11 +172,13 @@ namespace MediaPortal.Player
     protected DateTime updateTimer;
     protected FilterStreams FStreams = null;
     VMR7Util vmr7 = null;
+    protected ILog _log;
 
     public VideoPlayerVMR7()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
     }
-
 
     public override bool Play(string strFile)
     {
@@ -190,7 +193,7 @@ namespace MediaPortal.Player
 
       VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
       _updateNeeded = true;
-      Log.Write("VideoPlayer:play {0}", strFile);
+      _log.Info("VideoPlayer:play {0}", strFile);
       //lock ( typeof(VideoPlayerVMR7) )
       {
         GC.Collect();
@@ -264,7 +267,7 @@ namespace MediaPortal.Player
         _updateNeeded = true;
         SetVideoWindow();
         mediaPos.get_Duration(out m_dDuration);
-        Log.Write("VideoPlayer:Duration:{0}", m_dDuration);
+        _log.Info("VideoPlayer:Duration:{0}", m_dDuration);
 
         AnalyseStreams();
 
@@ -340,14 +343,14 @@ namespace MediaPortal.Player
         rDest.Y += (int)y;
 
 
-        Log.Write("overlay: video WxH  : {0}x{1}", m_iVideoWidth, m_iVideoHeight);
-        Log.Write("overlay: video AR   : {0}:{1}", aspectX, aspectY);
-        Log.Write("overlay: screen WxH : {0}x{1}", nw, nh);
-        Log.Write("overlay: AR type    : {0}", GUIGraphicsContext.ARType);
-        Log.Write("overlay: PixelRatio : {0}", GUIGraphicsContext.PixelRatio);
-        Log.Write("overlay: src        : ({0},{1})-({2},{3})",
+        _log.Info("overlay: video WxH  : {0}x{1}", m_iVideoWidth, m_iVideoHeight);
+        _log.Info("overlay: video AR   : {0}:{1}", aspectX, aspectY);
+        _log.Info("overlay: screen WxH : {0}x{1}", nw, nh);
+        _log.Info("overlay: AR type    : {0}", GUIGraphicsContext.ARType);
+        _log.Info("overlay: PixelRatio : {0}", GUIGraphicsContext.PixelRatio);
+        _log.Info("overlay: src        : ({0},{1})-({2},{3})",
           rSource.X, rSource.Y, rSource.X + rSource.Width, rSource.Y + rSource.Height);
-        Log.Write("overlay: dst        : ({0},{1})-({2},{3})",
+        _log.Info("overlay: dst        : ({0},{1})-({2},{3})",
           rDest.X, rDest.Y, rDest.X + rDest.Width, rDest.Y + rDest.Height);
 
 
@@ -616,7 +619,7 @@ namespace MediaPortal.Player
     {
       if (m_state != PlayState.Init)
       {
-        Log.Write("VideoPlayer:ended {0}", m_strCurrentFile);
+        _log.Info("VideoPlayer:ended {0}", m_strCurrentFile);
         m_strCurrentFile = "";
         CloseInterfaces();
         m_state = PlayState.Init;
@@ -687,7 +690,7 @@ namespace MediaPortal.Player
             }
           }
         }
-        Log.Write("VideoPlayer:SetRate to:{0}", m_speedRate);
+        _log.Info("VideoPlayer:SetRate to:{0}", m_speedRate);
       }
     }
 
@@ -756,9 +759,9 @@ namespace MediaPortal.Player
           if (dTime < 0.0d) dTime = 0.0d;
           if (dTime < Duration)
           {
-            Log.Write("seekabs:{0}", dTime);
+            _log.Info("seekabs:{0}", dTime);
             mediaPos.put_CurrentPosition(dTime);
-            Log.Write("seekabs:{0} done", dTime);
+            _log.Info("seekabs:{0} done", dTime);
           }
         }
       }
@@ -926,7 +929,7 @@ namespace MediaPortal.Player
       }
       catch (Exception ex)
       {
-        Log.WriteFile(Log.LogType.Log, true, "VideoPlayer:exception while creating DShow graph {0} {1}", ex.Message, ex.StackTrace);
+        _log.Error("VideoPlayer:exception while creating DShow graph {0} {1}", ex.Message, ex.StackTrace);
         return false;
       }
     }
@@ -937,7 +940,7 @@ namespace MediaPortal.Player
     {
       if (graphBuilder == null) return;
       int hr;
-      Log.Write("VideoPlayer:cleanup DShow graph");
+      _log.Info("VideoPlayer:cleanup DShow graph");
       try
       {
         if (videoWin != null) videoWin.put_Visible(OABool.False);
@@ -992,7 +995,7 @@ namespace MediaPortal.Player
         // switch back to directx windowed mode
         if (!GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindow))
         {
-          Log.Write("VideoPlayerVMR7: Disabling DX9 exclusive mode");
+          _log.Info("VideoPlayerVMR7: Disabling DX9 exclusive mode");
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
           GUIWindowManager.SendMessage(msg);
         }
@@ -1000,7 +1003,7 @@ namespace MediaPortal.Player
       }
       catch (Exception ex)
       {
-        Log.WriteFile(Log.LogType.Log, true, "VideoPlayerVMR7: Exception while cleanuping DShow graph - {0} {1}", ex.Message, ex.StackTrace);
+        _log.Error("VideoPlayerVMR7: Exception while cleanuping DShow graph - {0} {1}", ex.Message, ex.StackTrace);
       }
     }
 
@@ -1051,7 +1054,7 @@ namespace MediaPortal.Player
       mediaSeek.GetAvailable(out earliest, out latest);
       mediaSeek.GetPositions(out current, out stop);
 
-      // Log.Write("earliest:{0} latest:{1} current:{2} stop:{3} speed:{4}, total:{5}",
+      // _log.Info("earliest:{0} latest:{1} current:{2} stop:{3} speed:{4}, total:{5}",
       //         earliest/10000000,latest/10000000,current/10000000,stop/10000000,m_speedRate, (latest-earliest)/10000000);
 
       //earliest += + 30 * 10000000;
@@ -1071,7 +1074,7 @@ namespace MediaPortal.Player
       {
         m_speedRate = 10000;
         rewind = earliest;
-        //Log.Write(" seek back:{0}",rewind/10000000);
+        //_log.Info(" seek back:{0}",rewind/10000000);
         hr = mediaSeek.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
         mediaCtrl.Run();
         return;
@@ -1082,14 +1085,14 @@ namespace MediaPortal.Player
       {
         m_speedRate = 10000;
         rewind = latest - 100000;
-        //Log.Write(" seek ff:{0}",rewind/10000000);
+        //_log.Info(" seek ff:{0}",rewind/10000000);
         hr = mediaSeek.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
         mediaCtrl.Run();
         return;
       }
 
       //seek to new moment in time
-      //Log.Write(" seek :{0}",rewind/10000000);
+      //_log.Info(" seek :{0}",rewind/10000000);
       hr = mediaSeek.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
       mediaCtrl.Pause();
     }

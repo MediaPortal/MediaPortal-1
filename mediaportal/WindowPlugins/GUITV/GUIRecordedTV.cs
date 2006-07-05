@@ -437,8 +437,8 @@ namespace MediaPortal.GUI.TV
             if (rec.Title.Equals(rec2.Title))
             {
               item.IsFolder = true;
-              Utils.SetDefaultIcons(item);
-              string strLogo = Utils.GetCoverArt(Thumbs.TVShows, rec.Title);
+              MediaPortal.Util.Utils.SetDefaultIcons(item);
+              string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVShows, rec.Title);
               if (System.IO.File.Exists(strLogo))
               {
                 item.ThumbnailImage = strLogo;
@@ -457,7 +457,7 @@ namespace MediaPortal.GUI.TV
             string strLogo = System.IO.Path.ChangeExtension(rec.FileName, ".jpg");
             if (!System.IO.File.Exists(strLogo))
             {
-              strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel);
+              strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel);
               if (!System.IO.File.Exists(strLogo))
               {
                 strLogo = "defaultVideoBig.png";
@@ -475,7 +475,7 @@ namespace MediaPortal.GUI.TV
         GUIListItem item = new GUIListItem();
         item.Label = "..";
         item.IsFolder = true;
-        Utils.SetDefaultIcons(item);
+        MediaPortal.Util.Utils.SetDefaultIcons(item);
         itemlist.Add(item);
         foreach (TVRecorded rec in recordings)
         {
@@ -487,7 +487,7 @@ namespace MediaPortal.GUI.TV
             string strLogo = System.IO.Path.ChangeExtension(rec.FileName, ".jpg");
             if (!System.IO.File.Exists(strLogo))
             {
-              strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel);
+              strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel);
               if (!System.IO.File.Exists(strLogo))
               {
                 strLogo = "defaultVideoBig.png";
@@ -594,9 +594,9 @@ namespace MediaPortal.GUI.TV
         item1.Label = item2.Label = rec.Title;
         TimeSpan ts = rec.EndTime - rec.StartTime;
         string strTime = String.Format("{0} {1} ({2})",
-          Utils.GetShortDayString(rec.StartTime),
+          MediaPortal.Util.Utils.GetShortDayString(rec.StartTime),
           rec.StartTime.ToShortTimeString(),
-          Utils.SecondsToHMString((int)ts.TotalSeconds));
+          MediaPortal.Util.Utils.SecondsToHMString((int)ts.TotalSeconds));
         item1.Label2 = item2.Label2 = strTime;
         if (currentViewMethod == ViewAs.Album)
         {
@@ -627,7 +627,7 @@ namespace MediaPortal.GUI.TV
       TVRecorded rec = (TVRecorded)pItem.TVTag;
       if (System.IO.File.Exists(rec.FileName))
       {
-        Log.Write("TVRecording:play:{0}", rec.FileName);
+        _log.Info("TVRecording:play:{0}", rec.FileName);
         g_Player.Stop();
         Recorder.StopViewing();
 
@@ -640,7 +640,7 @@ namespace MediaPortal.GUI.TV
         int stoptime = 0;
         if (idMovie >= 0 && idFile >= 0 )
         {
-          Log.Write("play got movie id:{0} for {1}", idMovie, rec.FileName);
+          _log.Info("play got movie id:{0} for {1}", idMovie, rec.FileName);
           stoptime = VideoDatabase.GetMovieStopTime(idMovie);
           if (stoptime > 0)
           {
@@ -652,7 +652,7 @@ namespace MediaPortal.GUI.TV
             dlgYesNo.SetHeading(GUILocalizeStrings.Get(900)); //resume movie?
             dlgYesNo.SetLine(1, rec.Channel);
             dlgYesNo.SetLine(2, title);
-            dlgYesNo.SetLine(3, GUILocalizeStrings.Get(936) + Utils.SecondsToHMSString(stoptime));
+            dlgYesNo.SetLine(3, GUILocalizeStrings.Get(936) + MediaPortal.Util.Utils.SecondsToHMSString(stoptime));
             dlgYesNo.SetDefaultToYes(true);
             dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
 
@@ -660,10 +660,10 @@ namespace MediaPortal.GUI.TV
           }
         }
 
-        Log.Write("GUIRecordedTV Play:{0}", rec.FileName);
+        _log.Info("GUIRecordedTV Play:{0}", rec.FileName);
         if (g_Player.Play(rec.FileName))
         {
-          if (Utils.IsVideo(rec.FileName))
+          if (MediaPortal.Util.Utils.IsVideo(rec.FileName))
           {
             GUIGraphicsContext.IsFullScreenVideo = true;
             GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
@@ -703,7 +703,7 @@ namespace MediaPortal.GUI.TV
       TVDatabase.RemoveRecordedTV(rec);
       VideoDatabase.DeleteMovieInfo(rec.FileName);
       VideoDatabase.DeleteMovie(rec.FileName);
-      Utils.DeleteRecording(rec.FileName);
+      MediaPortal.Util.Utils.DeleteRecording(rec.FileName);
 
       LoadDirectory();
       while (m_iSelectedItem >= GetItemCount() && m_iSelectedItem > 0) m_iSelectedItem--;

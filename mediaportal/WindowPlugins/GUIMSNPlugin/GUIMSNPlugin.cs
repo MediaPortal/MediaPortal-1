@@ -669,7 +669,7 @@ namespace MediaPortal.GUI.MSN
             if (contact.OnBlockedList) continue;
             // if the contact is not offline we can send messages and we want to show
             // it in the contactlistview
-            Log.Write("Contact:{0} status:{1}", contact.Name, contact.Status.ToString());
+            _log.Info("Contact:{0} status:{1}", contact.Name, contact.Status.ToString());
             if (contact.Status != PresenceStatus.Offline)
             {
               GUIListItem item = new GUIListItem(contact.Name);
@@ -699,7 +699,7 @@ namespace MediaPortal.GUI.MSN
 
     private void StopMSN()
     {
-      Log.Write("MSN:Stop MSN");
+      _log.Info("MSN:Stop MSN");
       _refreshContactList = true;
       if (_messenger == null) return;
       try
@@ -718,7 +718,7 @@ namespace MediaPortal.GUI.MSN
     // Called when the button 'Connected' is clicked
     private void StartMSN(bool showDialog)
     {
-      Log.Write("MSN:Start MSN");
+      _log.Info("MSN:Start MSN");
       string emailadres = "";
       string password = "";
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
@@ -762,7 +762,7 @@ namespace MediaPortal.GUI.MSN
           // otherwise we receive a server error 540 after a while and loose the connection
           _messenger.Credentials.ClientCode = "Q1P7W2E4J9R8U3S5";
           _messenger.Credentials.ClientID = "msmsgs@msnmsgr.com";
-          Log.Write("MSN: email:{0} pwd:*********", emailadres);
+          _log.Info("MSN: email:{0} pwd:*********", emailadres);
           using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
           {
             bool useProxy = xmlreader.GetValueAsBool("MSNmessenger", "useproxy", false);
@@ -778,7 +778,7 @@ namespace MediaPortal.GUI.MSN
               if (proxyType == 1) _messenger.Nameserver.ConnectivitySettings.ProxyType = ProxyType.Socks5;
               else _messenger.Nameserver.ConnectivitySettings.ProxyType = ProxyType.Socks4;
               // _messenger.Nameserver.ConnectivitySettings.ProxyType = settings;
-              Log.Write("MSN: proxy:{0}:{1} {2}/****",
+              _log.Info("MSN: proxy:{0}:{1} {2}/****",
                   _messenger.Nameserver.ConnectivitySettings.ProxyHost,
                   _messenger.Nameserver.ConnectivitySettings.ProxyPort,
                   _messenger.Nameserver.ConnectivitySettings.ProxyUsername);
@@ -808,7 +808,7 @@ namespace MediaPortal.GUI.MSN
       }
       catch (Exception ex)
       {
-        Log.Write("MSN:Connect exception:{0}", ex.Message);
+        _log.Info("MSN:Connect exception:{0}", ex.Message);
         _isDialogVisible = false;
         _dlgProgress.Close();
 
@@ -827,24 +827,24 @@ namespace MediaPortal.GUI.MSN
     {
       // when the MSN server sends an error code we want to be notified.
       //MessageBox.Show(e.MSNError.ToString(), "Server error received");
-      Log.Write("MSN:Server error received");
+      _log.Info("MSN:Server error received");
     }
 
     void Nameserver_ContactStatusChanged(object sender, ContactStatusChangeEventArgs e)
     {
-      Log.Write("MSN:contact status changed:{0} {1}", e.Contact.Name, e.Contact.Status.ToString());
+      _log.Info("MSN:contact status changed:{0} {1}", e.Contact.Name, e.Contact.Status.ToString());
       _refreshContactList = true;
     }
 
     void Nameserver_ContactOffline(object sender, ContactEventArgs e)
     {
-      Log.Write("MSN:contact offline:{0}.", e.Contact.Name);
+      _log.Info("MSN:contact offline:{0}.", e.Contact.Name);
       _refreshContactList = true;
     }
 
     void Nameserver_ContactOnline(object sender, ContactEventArgs e)
     {
-      Log.Write("MSN:contact online:{0}.", e.Contact.Name);
+      _log.Info("MSN:contact online:{0}.", e.Contact.Name);
       _refreshContactList = true;
     }
 
@@ -854,7 +854,7 @@ namespace MediaPortal.GUI.MSN
     /// </summary>
     private void ConnectionEstablished(object sender, EventArgs e)
     {
-      Log.Write("MSN:connection established.");
+      _log.Info("MSN:connection established.");
     }
 
     /// <summary>
@@ -862,7 +862,7 @@ namespace MediaPortal.GUI.MSN
     /// </summary>
     private void Nameserver_SignedIn(object sender, EventArgs e)
     {
-      Log.Write("MSN:signed in.");
+      _log.Info("MSN:signed in.");
       if (_isDialogVisible)
       {
         _isDialogVisible = false;
@@ -877,7 +877,7 @@ namespace MediaPortal.GUI.MSN
     private void Nameserver_SignedOff(object sender, SignedOffEventArgs e)
     {
       Update();
-      Log.Write("MSN:signed off.");
+      _log.Info("MSN:signed off.");
     }
 
     /// <summary>
@@ -889,7 +889,7 @@ namespace MediaPortal.GUI.MSN
       if (e.Exception is UnauthorizedException)
         return;
 
-      Log.Write("MSN:unable to connect:{0}", e.Exception.Message);
+      _log.Info("MSN:unable to connect:{0}", e.Exception.Message);
       if (_isDialogVisible)
       {
         _isDialogVisible = false;
@@ -907,7 +907,7 @@ namespace MediaPortal.GUI.MSN
     /// </summary>
     private void NameserverProcessor_ConnectingException(object sender, ExceptionEventArgs e)
     {
-      Log.Write("MSN:unable to connect:{0}", e.Exception.Message);
+      _log.Info("MSN:unable to connect:{0}", e.Exception.Message);
       if (_isDialogVisible)
       {
         _isDialogVisible = false;
@@ -925,7 +925,7 @@ namespace MediaPortal.GUI.MSN
     /// </summary>
     private void Nameserver_AuthenticationError(object sender, ExceptionEventArgs e)
     {
-      Log.Write("MSN:unable to connect:invalid username/password");
+      _log.Info("MSN:unable to connect:invalid username/password");
       if (_isDialogVisible)
       {
         _isDialogVisible = false;

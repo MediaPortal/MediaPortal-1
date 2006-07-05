@@ -75,7 +75,7 @@ namespace MediaPortal.Configuration.Sections
 
           string shareNameData = xmlreader.GetValueAsString("pictures", shareName, "");
           string sharePathData = xmlreader.GetValueAsString("pictures", sharePath, "");
-          string sharePinData = Utils.DecryptPin(xmlreader.GetValueAsString("pictures", sharePin, ""));
+          string sharePinData = MediaPortal.Util.Utils.DecryptPin(xmlreader.GetValueAsString("pictures", sharePin, ""));
 
           bool shareTypeData = xmlreader.GetValueAsBool("pictures", shareType, false);
           string shareServerData = xmlreader.GetValueAsString("pictures", shareServer, "");
@@ -163,7 +163,7 @@ namespace MediaPortal.Configuration.Sections
           }
           xmlwriter.SetValue("pictures", shareName, shareNameData);
           xmlwriter.SetValue("pictures", sharePath, sharePathData);
-          xmlwriter.SetValue("pictures", sharePin, Utils.EncryptPin(sharePinData));
+          xmlwriter.SetValue("pictures", sharePin, MediaPortal.Util.Utils.EncryptPin(sharePinData));
 
           xmlwriter.SetValueAsBool("pictures", shareType, shareTypeData);
           xmlwriter.SetValue("pictures", shareServer, shareServerData);

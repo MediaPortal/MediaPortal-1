@@ -28,7 +28,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Player;
 using System.Windows.Forms;
-
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.InputDevices
 {
@@ -45,9 +45,12 @@ namespace MediaPortal.InputDevices
     bool _x10Ati = false;
     bool _x10UseChannelControl = false;
     int _x10Channel = 0;
+    protected ILog _log;
 
     public X10Remote()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
     }
 
     public void Init(IntPtr hwnd)
@@ -76,18 +79,18 @@ namespace MediaPortal.InputDevices
         if (!_inputHandler.IsLoaded)
         {
           _controlEnabled = false;
-          Log.Write("X10: Error loading default mapping file - please reinstall MediaPortal");
+          _log.Info("X10: Error loading default mapping file - please reinstall MediaPortal");
           return;
         }
 
         if (_logVerbose)
         {
           if (_x10Medion)
-            Log.Write("X10Remote: Start Medion");
+            _log.Info("X10Remote: Start Medion");
           else if (_x10Ati)
-            Log.Write("X10Remote: Start ATI");
+            _log.Info("X10Remote: Start ATI");
           else
-            Log.Write("X10Remote: Start Other");
+            _log.Info("X10Remote: Start Other");
         }
       }
       if (_x10Form == null)
@@ -99,7 +102,7 @@ namespace MediaPortal.InputDevices
         catch (System.Runtime.InteropServices.COMException)
         {
           _controlEnabled = false;
-          Log.Write("X10Remote: Can't initialize");
+          _log.Info("X10Remote: Can't initialize");
         }
       }
     }
@@ -116,23 +119,23 @@ namespace MediaPortal.InputDevices
       _inputHandler = null;
 
       if (_logVerbose)
-        Log.Write("X10Remote: Stop");
+        _log.Info("X10Remote: Stop");
     }
 
     public void IX10_X10Command(object sender, AxX10._DIX10InterfaceEvents_X10CommandEvent e)
     {
       if (_logVerbose)
       {
-        Log.Write("X10Remote: Command Start --------------------------------------------");
-        Log.Write("X10Remote: e            = {0}", e.ToString());
-        Log.Write("X10Remote: bszCommand   = {0}", e.bszCommand.ToString());
-        Log.Write("X10Remote: eCommand     = {0} - {1}", (int)Enum.Parse(typeof(X10.EX10Command), e.eCommand.ToString()), e.eCommand.ToString());
-        Log.Write("X10Remote: eCommandType = {0}", e.eCommandType.ToString());
-        Log.Write("X10Remote: eKeyState    = {0}", e.eKeyState.ToString());
-        Log.Write("X10Remote: lAddress     = {0}", e.lAddress.ToString());
-        Log.Write("X10Remote: lSequence    = {0}", e.lSequence.ToString());
-        Log.Write("X10Remote: varTimestamp = {0}", e.varTimestamp.ToString());
-        Log.Write("X10Remote: Command End ----------------------------------------------");
+        _log.Info("X10Remote: Command Start --------------------------------------------");
+        _log.Info("X10Remote: e            = {0}", e.ToString());
+        _log.Info("X10Remote: bszCommand   = {0}", e.bszCommand.ToString());
+        _log.Info("X10Remote: eCommand     = {0} - {1}", (int)Enum.Parse(typeof(X10.EX10Command), e.eCommand.ToString()), e.eCommand.ToString());
+        _log.Info("X10Remote: eCommandType = {0}", e.eCommandType.ToString());
+        _log.Info("X10Remote: eKeyState    = {0}", e.eKeyState.ToString());
+        _log.Info("X10Remote: lAddress     = {0}", e.lAddress.ToString());
+        _log.Info("X10Remote: lSequence    = {0}", e.lSequence.ToString());
+        _log.Info("X10Remote: varTimestamp = {0}", e.varTimestamp.ToString());
+        _log.Info("X10Remote: Command End ----------------------------------------------");
       }
       
       if (e.eKeyState.ToString() == "X10KEY_ON" || e.eKeyState.ToString() == "X10KEY_REPEAT")
@@ -142,11 +145,11 @@ namespace MediaPortal.InputDevices
 
         if (_inputHandler.MapAction((int)Enum.Parse(typeof(X10.EX10Command), e.eCommand.ToString())))
         {
-          if (_logVerbose) Log.Write("X10Remote: Action mapped");
+          if (_logVerbose) _log.Info("X10Remote: Action mapped");
         }
         else
         {
-          if (_logVerbose) Log.Write("X10Remote: Action not mapped");
+          if (_logVerbose) _log.Info("X10Remote: Action not mapped");
         }
       }
     }

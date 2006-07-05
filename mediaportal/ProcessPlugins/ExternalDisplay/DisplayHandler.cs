@@ -23,6 +23,7 @@ using System;
 using ExternalDisplay.Setting;
 using MediaPortal.GUI.Library;
 using ProcessPlugins.ExternalDisplay.Setting;
+using MediaPortal.Utils.Services;
 
 namespace ProcessPlugins.ExternalDisplay
 {
@@ -36,9 +37,13 @@ namespace ProcessPlugins.ExternalDisplay
     protected Line[] lines; //Keeps the lines of text to display on the display
     protected int[] pos;    //Keeps track of the start positions in the display lines
     IDisplay display;       //Reference to the display we are controlling
+    protected ILog _log;
 
     internal DisplayHandler(IDisplay _display)
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+
       display = _display;
       height = Settings.Instance.TextHeight;
       width = Settings.Instance.TextWidth;
@@ -93,7 +98,7 @@ namespace ProcessPlugins.ExternalDisplay
     internal void DisplayLines()
     {
       if (Settings.Instance.ExtensiveLogging)
-        Log.Write("ExternalDisplay: Sending lines to display.");
+        _log.Info("ExternalDisplay: Sending lines to display.");
       try
       {
         for(byte i=0; i<height; i++)
@@ -103,7 +108,7 @@ namespace ProcessPlugins.ExternalDisplay
       }
       catch(Exception ex)
       {
-        Log.Write("ExternalDisplay.DisplayLines: "+ex.Message);
+        _log.Info("ExternalDisplay.DisplayLines: "+ex.Message);
       }
     }
 

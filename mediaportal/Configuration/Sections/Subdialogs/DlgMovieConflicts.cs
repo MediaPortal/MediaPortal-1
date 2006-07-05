@@ -211,7 +211,7 @@ namespace MediaPortal.Configuration.Sections
       IMDBMovie movieDetails = new IMDBMovie();
       int id = VideoDatabase.GetMovieInfo(file, ref movieDetails);
       string path, filename;
-      Utils.Split(file, out path, out filename);
+      MediaPortal.Util.Utils.Split(file, out path, out filename);
       movieDetails.Path = path;
       movieDetails.File = filename;
       movieDetails.SearchString = textBoxTitle.Text;
@@ -245,11 +245,11 @@ namespace MediaPortal.Configuration.Sections
       {
         string strFileName = listView1.SelectedItems[0].Text;
         string strMovieName = string.Empty;
-        if (Utils.IsDVD(strFileName))
+        if (MediaPortal.Util.Utils.IsDVD(strFileName))
         {
           //DVD
           string strDrive = strFileName.Substring(0, 2);
-          strMovieName = Utils.GetDriveName(strDrive);
+          strMovieName = MediaPortal.Util.Utils.GetDriveName(strDrive);
         }
         else if (strFileName.ToUpper().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO") >= 0)
         {

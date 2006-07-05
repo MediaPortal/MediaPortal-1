@@ -33,6 +33,7 @@ using System.Windows.Controls;
 using System.Windows.Media.Animation;
 using System.Windows.Serialization;
 using System.Xml;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.GUI.Library
 {
@@ -233,6 +234,7 @@ namespace MediaPortal.GUI.Library
     protected string _windowXmlFileName = "";
     protected bool _isOverlayAllowed = true;
     private Object instance;
+    protected ILog _log;
 
     //-1=default from topbar.xml 
     // 0=flase from skin.xml
@@ -250,13 +252,15 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public GUIWindow()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
     }
 
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="strXMLFile">filename of xml skin file which belongs to this window</param>
-    public GUIWindow(string skinFile)
+    public GUIWindow(string skinFile) : this()
     {
       if (skinFile == null) return;
       _previousWindowId = -1;
@@ -337,7 +341,7 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception ex)
       {
-        Log.WriteFile(Log.LogType.Log, true, "InitControls exception:{0}", ex.ToString());
+        _log.Error("InitControls exception:{0}", ex.ToString());
       }
     }
 
@@ -352,7 +356,7 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception ex)
       {
-        Log.WriteFile(Log.LogType.Log, true, "DeInitControls exception:{0}", ex.ToString());
+        _log.Error("DeInitControls exception:{0}", ex.ToString());
       }
     }
 
@@ -432,7 +436,7 @@ namespace MediaPortal.GUI.Library
 
       if (!System.IO.File.Exists(_windowXmlFileName))
       {
-        Log.WriteFile(Log.LogType.Log, true, "SKIN: Missing {0}", _windowXmlFileName);
+        _log.Error("SKIN: Missing {0}", _windowXmlFileName);
         return false;
       }
       try
@@ -545,7 +549,7 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception ex)
       {
-        Log.WriteFile(Log.LogType.Log, true, "exception loading window {0} err:{1}\r\n\r\n{2}\r\n\r\n", _windowXmlFileName, ex.Message, ex.StackTrace);
+        _log.Error("exception loading window {0} err:{1}\r\n\r\n{2}\r\n\r\n", _windowXmlFileName, ex.Message, ex.StackTrace);
         return false;
       }
     }
@@ -569,7 +573,7 @@ namespace MediaPortal.GUI.Library
         {
           if (img.Width == 0 || img.Height == 0)
           {
-            Log.Write("xml:{0} image id:{1} width:{2} height:{3} gfx:{4}",
+            _log.Info("xml:{0} image id:{1} width:{2} height:{3} gfx:{4}",
               _windowXmlFileName, img.GetID, img.Width, img.Height, img.FileName);
           }
         }
@@ -578,7 +582,7 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception ex)
       {
-        Log.WriteFile(Log.LogType.Log, true, "Unable to load control. exception:{0}", ex.ToString());
+        _log.Error("Unable to load control. exception:{0}", ex.ToString());
       }
     }
 
@@ -589,7 +593,7 @@ namespace MediaPortal.GUI.Library
 
       if (System.IO.File.Exists(_windowXmlFileName) == false)
       {
-        Log.WriteFile(Log.LogType.Log, true, "SKIN: Missing {0}", _windowXmlFileName);
+        _log.Error("SKIN: Missing {0}", _windowXmlFileName);
         return false;
       }
 
@@ -612,7 +616,7 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception e)
       {
-        Log.Write("GUIWIndow.LoadInclude: {0}", e.Message);
+        _log.Info("GUIWIndow.LoadInclude: {0}", e.Message);
       }
 
       return false;
@@ -636,7 +640,7 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception e)
       {
-        Log.Write("GUIWindow.LoadDefines: {0}", e.Message);
+        _log.Info("GUIWindow.LoadDefines: {0}", e.Message);
       }
 
       return table;
@@ -799,7 +803,7 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception ex)
       {
-        Log.WriteFile(Log.LogType.Log, true, "AllocResources exception:{0}", ex.ToString());
+        _log.Error("AllocResources exception:{0}", ex.ToString());
       }
     }
 
@@ -817,7 +821,7 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception ex)
       {
-        Log.WriteFile(Log.LogType.Log, true, "FreeResources exception:{0}", ex.ToString());
+        _log.Error("FreeResources exception:{0}", ex.ToString());
       }
     }
 
@@ -833,7 +837,7 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception ex)
       {
-        Log.WriteFile(Log.LogType.Log, true, "ResetAllControls exception:{0}", ex.ToString());
+        _log.Error("ResetAllControls exception:{0}", ex.ToString());
       }
     }
 
@@ -874,7 +878,7 @@ namespace MediaPortal.GUI.Library
             }
             catch (Exception ex)
             {
-              Log.WriteFile(Log.LogType.Log, true, "GUIWindow:OnWindowLoaded id:{0} ex:{1} {2} {3}", atrb.ID, ex.Message, ex.StackTrace, this.ToString());
+              _log.Error("GUIWindow:OnWindowLoaded id:{0} ex:{1} {2} {3}", atrb.ID, ex.Message, ex.StackTrace, this.ToString());
             }
           }
         }
@@ -1000,7 +1004,7 @@ namespace MediaPortal.GUI.Library
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "render exception:{0}", ex.ToString());
+          _log.Error("render exception:{0}", ex.ToString());
         }
       }
     }
@@ -1023,7 +1027,7 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception ex)
       {
-        Log.WriteFile(Log.LogType.Log, true, "NeedRefresh exception:{0}", ex.ToString());
+        _log.Error("NeedRefresh exception:{0}", ex.ToString());
       }
       return false;
     }
@@ -1095,7 +1099,7 @@ namespace MediaPortal.GUI.Library
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "OnAction exception:{0}", ex.ToString());
+          _log.Error("OnAction exception:{0}", ex.ToString());
         }
       }
     }
@@ -1191,7 +1195,7 @@ namespace MediaPortal.GUI.Library
                 {
                   GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + GetID));
                 }
-                Log.Write("window:{0} init", this.ToString());
+                _log.Info("window:{0} init", this.ToString());
               }
               OnPageLoad();
 
@@ -1211,7 +1215,7 @@ namespace MediaPortal.GUI.Library
                   GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + _previousWindowId));
                 }
 
-                Log.Write("window:{0} deinit", this.ToString());
+                _log.Info("window:{0} deinit", this.ToString());
                 FreeResources();
                 DeInitControls();
                 GUITextureManager.CleanupThumbs();
@@ -1219,7 +1223,7 @@ namespace MediaPortal.GUI.Library
                 //GC.Collect();
                 //GC.Collect();
                 //long lTotalMemory = GC.GetTotalMemory(true);
-                //Log.Write("Total Memory allocated:{0}", MediaPortal.Util.Utils.GetSize(lTotalMemory));
+                //_log.Info("Total Memory allocated:{0}", MediaPortal.Util.Utils.GetSize(lTotalMemory));
                 return true;
               }
 
@@ -1262,7 +1266,7 @@ namespace MediaPortal.GUI.Library
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "OnMessage exception:{0}", ex.ToString());
+          _log.Error("OnMessage exception:{0}", ex.ToString());
         }
         return false;
       }

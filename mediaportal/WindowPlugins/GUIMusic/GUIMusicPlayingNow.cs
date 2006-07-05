@@ -687,7 +687,7 @@ namespace MediaPortal.GUI.Music
             catch (Exception e)
             {
                 // log the problem...
-                Log.Write("GUIMusicPlayingNow.GetCDInfoFromFreeDB: {0}", e.ToString());
+                _log.Info("GUIMusicPlayingNow.GetCDInfoFromFreeDB: {0}", e.ToString());
             }
         }
 

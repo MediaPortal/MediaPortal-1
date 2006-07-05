@@ -29,121 +29,124 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using System.Reflection;
 using System.IO;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Configuration
 {
-	/// <summary>
-	/// Summary description for Startup.
-	/// </summary>
-	public class Startup
-	{
-		enum StartupMode
-		{
-			Normal,
-			Wizard
-		}
-		StartupMode startupMode = StartupMode.Normal;
+  /// <summary>
+  /// Summary description for Startup.
+  /// </summary>
+  public class Startup
+  {
+    enum StartupMode
+    {
+      Normal,
+      Wizard
+    }
+    StartupMode startupMode = StartupMode.Normal;
 
-		string sectionsConfiguration = String.Empty;
+    string sectionsConfiguration = String.Empty;
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="arguments"></param>
-		public Startup(string[] arguments)
-		{
-			if (!System.IO.File.Exists("mediaportal.xml"))
-				startupMode = StartupMode.Wizard;
-																										
-			else if (arguments!=null)
-			{
-				foreach(string argument in arguments)
-				{
-					string trimmedArgument = argument.ToLower();
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="arguments"></param>
+    public Startup(string[] arguments)
+    {
+      if (!System.IO.File.Exists("mediaportal.xml"))
+        startupMode = StartupMode.Wizard;
 
-					if(trimmedArgument.StartsWith("/wizard"))
-					{
-						startupMode = StartupMode.Wizard;
-					}
+      else if (arguments != null)
+      {
+        foreach (string argument in arguments)
+        {
+          string trimmedArgument = argument.ToLower();
 
-					if(trimmedArgument.StartsWith("/section"))
-					{
-						string[] subArguments = argument.Split('=');
+          if (trimmedArgument.StartsWith("/wizard"))
+          {
+            startupMode = StartupMode.Wizard;
+          }
 
-						if(subArguments.Length >= 2)
-						{
-							sectionsConfiguration = subArguments[1];
-						}
-					}
-				}
-			}
-		}
+          if (trimmedArgument.StartsWith("/section"))
+          {
+            string[] subArguments = argument.Split('=');
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public void Start()
-		{
-      Log.BackupLogFiles();
+            if (subArguments.Length >= 2)
+            {
+              sectionsConfiguration = subArguments[1];
+            }
+          }
+        }
+      }
+    }
 
-      Log.Write("Configuration is starting up");
+    /// <summary>
+    /// 
+    /// </summary>
+    public void Start()
+    {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      ILog log = new MediaPortal.Utils.Services.Log("Configuration", MediaPortal.Utils.Services.Log.Level.Debug);
+      services.Add<ILog>(log);
+
+      log.Info("Configuration is starting up");
 
       FileInfo mpFi = new FileInfo(Assembly.GetExecutingAssembly().Location);
-      Log.Write("Assembly creation time: {0} (UTC)", mpFi.LastWriteTimeUtc.ToUniversalTime());
+      log.Info("Assembly creation time: {0} (UTC)", mpFi.LastWriteTimeUtc.ToUniversalTime());
 
-			Form applicationForm = null;
+      Form applicationForm = null;
 
-			switch(startupMode)
-			{
-				case StartupMode.Normal:
-          Log.Write("Create new standard setup");
-					applicationForm = new SettingsForm();
-					break;
+      switch (startupMode)
+      {
+        case StartupMode.Normal:
+          log.Info("Create new standard setup");
+          applicationForm = new SettingsForm();
+          break;
 
         case StartupMode.Wizard:
-          Log.Write("Create new wizard setup");
-					applicationForm = new WizardForm(sectionsConfiguration);
-					break;
-			}
+          log.Info("Create new wizard setup");
+          applicationForm = new WizardForm(sectionsConfiguration);
+          break;
+      }
 
-      
-			if(applicationForm != null)
-			{
-        
-        Log.Write("start application");
-				System.Windows.Forms.Application.Run(applicationForm);
-			}
-		}
 
-		[STAThread]
-		public static void Main(string[] arguments)
-		{
-			try
-			{
+      if (applicationForm != null)
+      {
 
-				Thumbs.CreateFolders();
+        log.Info("start application");
+        System.Windows.Forms.Application.Run(applicationForm);
+      }
+    }
 
-				AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
-				System.Windows.Forms.Application.EnableVisualStyles();
-				System.Windows.Forms.Application.DoEvents();
+    [STAThread]
+    public static void Main(string[] arguments)
+    {
+      try
+      {
 
-					new Startup(arguments).Start();
-			}
-			finally
-			{
-				GC.Collect();
-			}
-		}
+        Thumbs.CreateFolders();
 
-		private static System.Reflection.Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
-		{
-            if (args.Name.Contains(".resources"))
-                return null;
-            if (args.Name.Contains(".XmlSerializers"))
-                return null;
-    		MessageBox.Show("Failed to locate assembly '" + args.Name + "'." + Environment.NewLine + "Note that the configuration program must be executed from/reside in the MediaPortal folder, the execution will now end.", "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
-			System.Windows.Forms.Application.Exit();
-            return null;
-		}
-	}
+        AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
+        System.Windows.Forms.Application.EnableVisualStyles();
+        System.Windows.Forms.Application.DoEvents();
+
+        new Startup(arguments).Start();
+      }
+      finally
+      {
+        GC.Collect();
+      }
+    }
+
+    private static System.Reflection.Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+    {
+      if (args.Name.Contains(".resources"))
+        return null;
+      if (args.Name.Contains(".XmlSerializers"))
+        return null;
+      MessageBox.Show("Failed to locate assembly '" + args.Name + "'." + Environment.NewLine + "Note that the configuration program must be executed from/reside in the MediaPortal folder, the execution will now end.", "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
+      System.Windows.Forms.Application.Exit();
+      return null;
+    }
+  }
 }

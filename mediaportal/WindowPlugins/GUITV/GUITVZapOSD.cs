@@ -228,7 +228,7 @@ namespace MediaPortal.GUI.TV
 
     private void OnPreviousChannel()
     {
-      Log.Write("GUITV OSD: OnNextChannel");
+      _log.Info("GUITV OSD: OnNextChannel");
       if (!Recorder.View) return;
       GUITVHome.Navigator.ZapToPreviousChannel(true);
 
@@ -239,7 +239,7 @@ namespace MediaPortal.GUI.TV
     private void OnNextChannel()
     {
 
-      Log.Write("GUITV ZAPOSD: OnNextChannel");
+      _log.Info("GUITV ZAPOSD: OnNextChannel");
       if (!Recorder.View) return;
       GUITVHome.Navigator.ZapToNextChannel(true);
       SetCurrentChannelLogo();
@@ -255,7 +255,7 @@ namespace MediaPortal.GUI.TV
     void SetCurrentChannelLogo()
     {
       string strChannel = GetChannelName();
-      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, strChannel);
+      string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, strChannel);
       if (System.IO.File.Exists(strLogo))
       {
         if (imgTvChannelLogo != null)

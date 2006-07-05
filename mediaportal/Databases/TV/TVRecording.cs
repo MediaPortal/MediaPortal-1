@@ -263,7 +263,7 @@ namespace MediaPortal.TV.Database
     /// </summary>
     public DateTime StartTime
     {
-      get { return Utils.longtodate(_startTime); }
+      get { return MediaPortal.Util.Utils.longtodate(_startTime); }
     }
 
     /// <summary>
@@ -271,7 +271,7 @@ namespace MediaPortal.TV.Database
     /// </summary>
     public DateTime EndTime
     {
-      get { return Utils.longtodate(_endTime); }
+      get { return MediaPortal.Util.Utils.longtodate(_endTime); }
     }
 
     #endregion
@@ -865,7 +865,7 @@ namespace MediaPortal.TV.Database
     /// </summary>
     public DateTime CanceledTime
     {
-      get { return Utils.longtodate(_timeCanceled); }
+      get { return MediaPortal.Util.Utils.longtodate(_timeCanceled); }
     }
 
     /// <summary>
@@ -919,7 +919,7 @@ namespace MediaPortal.TV.Database
 
     public void UnCancelSerie(DateTime datetime)
     {
-      long dtProgram = Utils.datetolong(datetime);
+      long dtProgram = MediaPortal.Util.Utils.datetolong(datetime);
       foreach (long dtCanceled in _listCanceledEpisodes)
       {
         if (dtCanceled == dtProgram)
@@ -932,7 +932,7 @@ namespace MediaPortal.TV.Database
     }
     public bool IsSerieIsCanceled(DateTime datetime)
     {
-      long dtProgram = Utils.datetolong(datetime);
+      long dtProgram = MediaPortal.Util.Utils.datetolong(datetime);
       foreach (long dtCanceled in _listCanceledEpisodes)
       {
         if (dtCanceled == dtProgram) return true;
@@ -949,7 +949,7 @@ namespace MediaPortal.TV.Database
       GUIPropertyManager.SetProperty("#TV.Scheduled.thumb", String.Empty);
 
       string strTime = String.Format("{0} {1} - {2}",
-        Utils.GetShortDayString(StartTime),
+        MediaPortal.Util.Utils.GetShortDayString(StartTime),
         StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
         EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
@@ -967,7 +967,7 @@ namespace MediaPortal.TV.Database
       }
 
 
-      string logo = Utils.GetCoverArt(Thumbs.TVChannel, Channel);
+      string logo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, Channel);
       if (System.IO.File.Exists(logo))
       {
         GUIPropertyManager.SetProperty("#TV.Scheduled.thumb", logo);

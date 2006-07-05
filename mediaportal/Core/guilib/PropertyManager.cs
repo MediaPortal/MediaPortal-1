@@ -20,6 +20,7 @@
  */
 using System;
 using System.Collections;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.GUI.Library
 {
@@ -368,7 +369,9 @@ namespace MediaPortal.GUI.Library
         }
         catch (Exception ex)
         {
-          Log.Write("PropertyManager: {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+          ServiceProvider services = GlobalServiceProvider.Instance;
+          ILog log = services.Get<ILog>();
+          log.Warn("PropertyManager: {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
         }
       }
       return line;

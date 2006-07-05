@@ -429,7 +429,7 @@ namespace MediaPortal.Games.Tetris
     {
       if (m_bSounds)
       {
-        Utils.PlaySound(strFilePath, false, true);
+        MediaPortal.Util.Utils.PlaySound(strFilePath, false, true);
       }
     }
 
@@ -818,7 +818,7 @@ namespace MediaPortal.Games.Tetris
 
       if (nBlock < 0 || nBlock > 6)
       {
-        //Log.Write("MyTetrisControl.RenderNext: Block index is out of range");
+        //_log.Info("MyTetrisControl.RenderNext: Block index is out of range");
         return;
       }
 

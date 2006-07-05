@@ -32,6 +32,7 @@ using System.Xml;
 using System.IO;
 using MediaPortal.GUI.Library;
 using System.Threading;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.InputDevices
 {
@@ -69,6 +70,8 @@ namespace MediaPortal.InputDevices
     string inputClassName;
 
     bool changedSettings = false;
+
+    protected ILog _log;
 
     class Data
     {
@@ -153,6 +156,8 @@ namespace MediaPortal.InputDevices
 
     public InputMappingForm(string name)
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
       //
       // Required for Windows Form Designer support
       //
@@ -883,7 +888,7 @@ namespace MediaPortal.InputDevices
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        _log.Error(ex);
         File.Delete("InputDeviceMappings\\custom\\" + xmlFile);
         LoadMapping(xmlFile, true);
       }
@@ -900,7 +905,7 @@ namespace MediaPortal.InputDevices
 #if !DEBUG
       catch
       {
-        Log.Write("MAP: Error accessing directory \"InputDeviceMappings\\custom\"");
+        _log.Info("MAP: Error accessing directory \"InputDeviceMappings\\custom\"");
       }
 
       //try
@@ -1013,7 +1018,7 @@ namespace MediaPortal.InputDevices
 #if !DEBUG
       //catch (Exception ex)
       //{
-      //  Log.Write("MAP: Error saving mapping to XML file: {0}", ex.Message);
+      //  _log.Info("MAP: Error saving mapping to XML file: {0}", ex.Message);
       //  return false;
       //}
 #endif

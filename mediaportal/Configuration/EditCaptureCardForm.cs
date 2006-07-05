@@ -41,6 +41,7 @@ using MediaPortal.TV.Scanning;
 using MediaPortal.GUI.Library;
 using TVCapture;
 using MediaPortal.TV.Database;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Configuration
 {
@@ -131,11 +132,16 @@ namespace MediaPortal.Configuration
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBox5vAntennae;
     TVCaptureDevice prevDevice = null;
 
+    protected ILog _log;
+
     /// <summary>
     /// 
     /// </summary>
     public EditCaptureCardForm(int cardId, bool addNewCard, TVCaptureDevice deviceToEdit)
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+
       ArrayList captureCards = new ArrayList();
       if (addNewCard)
       {
@@ -226,7 +232,7 @@ namespace MediaPortal.Configuration
       FilterHelper.GetMPEG2AudioEncoders(availableAudioCompressors);
       for (int i = 0; i < availableVideoDevices.Count; ++i)
       {
-        Log.Write("device:{0} id:{1}", availableVideoDevices[i].ToString(), availableVideoDeviceMonikers[i].ToString());
+        _log.Info("device:{0} id:{1}", availableVideoDevices[i].ToString(), availableVideoDeviceMonikers[i].ToString());
       }
 
 
@@ -350,7 +356,7 @@ namespace MediaPortal.Configuration
               cd.SupportsRadio = true;
             }
 
-            Log.Write("Adding name:{0} capture:{1} id:{2} type:{3}",
+            _log.Info("Adding name:{0} capture:{1} id:{2} type:{3}",
               cd.CommercialName,
               cd.DeviceId,
               cd.CardType.ToString());
@@ -1430,7 +1436,7 @@ namespace MediaPortal.Configuration
       }
       catch (Exception ex)
       {
-        Log.Write("FillInAll exception:{0} {1} {2}",
+        _log.Info("FillInAll exception:{0} {1} {2}",
           ex.Message, ex.Source, ex.StackTrace);
         return false;
       }

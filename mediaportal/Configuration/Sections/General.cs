@@ -33,6 +33,7 @@ using System.Windows.Forms;
 using Microsoft.Win32;
 using MediaPortal.Util;
 using System.Runtime.InteropServices;
+using MediaPortal.Utils.Services;
 
 #pragma warning disable 108
 
@@ -65,6 +66,7 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPLabel label1;
     private MediaPortal.UserInterface.Controls.MPLabel label3;
     private System.ComponentModel.IContainer components = null;
+    protected ILog _log;
 
     public General()
       : this("General")
@@ -74,6 +76,9 @@ namespace MediaPortal.Configuration.Sections
     public General(string name)
       : base(name)
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+
       // This call is required by the Windows Form Designer.
       InitializeComponent();
 
@@ -211,7 +216,7 @@ namespace MediaPortal.Configuration.Sections
         string prevLanguage = xmlwriter.GetValueAsString("skin", "language", "English");
         string skin = xmlwriter.GetValueAsString("skin", "name", "mce");
         if (prevLanguage != languageComboBox.Text)
-          Utils.DeleteFiles(@"skin\" + skin + @"\fonts", "*");
+          MediaPortal.Util.Utils.DeleteFiles(@"skin\" + skin + @"\fonts", "*");
 
         xmlwriter.SetValue("skin", "language", languageComboBox.Text);
 
@@ -258,9 +263,9 @@ namespace MediaPortal.Configuration.Sections
       }
       catch (Exception ex)
       {
-        GUI.Library.Log.Write("Exception: {0}", ex.Message);
-        GUI.Library.Log.Write("Exception: {0}", ex);
-        GUI.Library.Log.Write("Exception: {0}", ex.StackTrace);
+        _log.Info("Exception: {0}", ex.Message);
+        _log.Info("Exception: {0}", ex);
+        _log.Info("Exception: {0}", ex.StackTrace);
       }
     }
 

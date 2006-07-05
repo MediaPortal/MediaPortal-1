@@ -27,6 +27,7 @@ using DShowNET;
 using MediaPortal.TV.Database;
 using MediaPortal.Player;
 using MediaPortal.Util;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.TV.Recording
 {
@@ -38,9 +39,9 @@ namespace MediaPortal.TV.Recording
     #region constructor / destructor
     public VMR9OSD()
     {
-      //
-      // TODO: Fügen Sie hier die Konstruktorlogik hinzu
-      //
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+
       ReadSkinFile();
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
@@ -106,6 +107,7 @@ namespace MediaPortal.TV.Recording
     float m_renderOSDAlpha = 0.8f;
 
     bool _legacyVolumeOsd = false;
+    protected ILog _log;
 
     #endregion
 
@@ -265,7 +267,7 @@ namespace MediaPortal.TV.Recording
 
       foreach (TVChannel chan in group.TvChannels)
       {
-        string tvlogo = Utils.GetCoverArt(Thumbs.TVChannel, chan.Name);
+        string tvlogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, chan.Name);
         if (System.IO.File.Exists(tvlogo))
         {
           logosFound = true;
@@ -321,7 +323,7 @@ namespace MediaPortal.TV.Recording
       channelCount--;
       int pos = y + textHeight;
       int startAt = positionActChannel - (channelCount / 2);
-      Log.Write("start list at={0} position={1}", startAt, positionActChannel);
+      _log.Info("start list at={0} position={1}", startAt, positionActChannel);
       // draw
       if (group.TvChannels.Count < channelCount || positionActChannel < (channelCount / 2))
         startAt = 0;
@@ -353,7 +355,7 @@ namespace MediaPortal.TV.Recording
         }
         if (logosFound == true)
         {
-          string tvlogo = Utils.GetCoverArt(Thumbs.TVChannel, chan.Name);
+          string tvlogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, chan.Name);
           if (System.IO.File.Exists(tvlogo))
           {
             Bitmap logo = new Bitmap(tvlogo);
@@ -519,7 +521,7 @@ namespace MediaPortal.TV.Recording
         int y = 0;
         if (bm == null || gr == null || channel == null)
         {
-          Log.Write("end rendering zaposd: no bitmap (memory problem?)");
+          _log.Info("end rendering zaposd: no bitmap (memory problem?)");
           return;
         }
         m_osdRendered = OSD.ZapOSD;
@@ -575,7 +577,7 @@ namespace MediaPortal.TV.Recording
         int timeY = 0;
         int logoW = 0;
         int logoH = 0;
-        Log.Write("rendering background...");
+        _log.Info("rendering background...");
 
         if (System.IO.File.Exists(skinPath + "background.png") == true &&
           System.IO.File.Exists(skinPath + "icon_empty_focus.png") == true)
@@ -604,8 +606,8 @@ namespace MediaPortal.TV.Recording
         // text always gets an x-offset 40 pix.
         // tv channel logo
         ypos = y;
-        string tvlogo = Utils.GetCoverArt(Thumbs.TVChannel, serviceName);
-        Log.Write("rendering tv-logo...");
+        string tvlogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, serviceName);
+        _log.Info("rendering tv-logo...");
         if (System.IO.File.Exists(tvlogo))
         {
           logoW = logoW < 64 ? 64 : logoW;
@@ -627,7 +629,7 @@ namespace MediaPortal.TV.Recording
         gr.DrawString(nowDur, drawFont, drawBrush, xPosEnd, y, StringFormat.GenericTypographic);
         gr.DrawString(nowStart + "  " + nowTitle, drawFont, drawBrush, new RectangleF(x, y, xPosEnd - x - 5, xEnd.Height), StringFormat.GenericTypographic);
         // now prog
-        Log.Write("rendering tv-now indicator...");
+        _log.Info("rendering tv-now indicator...");
         if (nowStart != "" &&
           System.IO.File.Exists(skinPath + "osd_progress_mid_orange.png") == true &&
           System.IO.File.Exists(skinPath + "osd_progress_background.png") == true)
@@ -649,7 +651,7 @@ namespace MediaPortal.TV.Recording
 
         // quality and level
         xEnd.Width = 100;
-        Log.Write("rendering signal quality indicator...");
+        _log.Info("rendering signal quality indicator...");
 
         if (signalQuality > 2 &&
           System.IO.File.Exists(skinPath + "osd_progress_background.png") == true &&
@@ -672,7 +674,7 @@ namespace MediaPortal.TV.Recording
           prog.Dispose();
           y += 25;
         }
-        Log.Write("rendering signal level indicator...");
+        _log.Info("rendering signal level indicator...");
 
         if (signalLevel > 2 &&
           System.IO.File.Exists(skinPath + "osd_progress_background.png") == true &&
@@ -702,7 +704,7 @@ namespace MediaPortal.TV.Recording
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        _log.Error(ex);
         SaveBitmap(null, false, true, m_renderOSDAlpha);
       }
     }
@@ -718,7 +720,7 @@ namespace MediaPortal.TV.Recording
         int y = 0;
         if (bm == null || gr == null || channel == null)
         {
-          Log.Write("end rendering zaposd: no bitmap (memory problem?)");
+          _log.Info("end rendering zaposd: no bitmap (memory problem?)");
           return;
         }
         m_osdRendered = OSD.ZapOSD;
@@ -774,7 +776,7 @@ namespace MediaPortal.TV.Recording
         int timeY = 0;
         int logoW = 0;
         int logoH = 0;
-        Log.Write("rendering background...");
+        _log.Info("rendering background...");
 
         if (System.IO.File.Exists(skinPath + "background.png") == true &&
           System.IO.File.Exists(skinPath + "icon_empty_focus.png") == true)
@@ -803,8 +805,8 @@ namespace MediaPortal.TV.Recording
         // text always gets an x-offset 40 pix.
         // tv channel logo
         ypos = y;
-        string tvlogo = Utils.GetCoverArt(Thumbs.TVChannel, serviceName);
-        Log.Write("rendering tv-logo...");
+        string tvlogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, serviceName);
+        _log.Info("rendering tv-logo...");
         if (System.IO.File.Exists(tvlogo))
         {
           logoW = logoW < 64 ? 64 : logoW;
@@ -826,7 +828,7 @@ namespace MediaPortal.TV.Recording
         gr.DrawString(nowDur, drawFont, drawBrush, xPosEnd, y, StringFormat.GenericTypographic);
         gr.DrawString(nowStart + "  " + nowTitle, drawFont, drawBrush, new RectangleF(x, y, xPosEnd - x - 5, xEnd.Height), StringFormat.GenericTypographic);
         // now prog
-        Log.Write("rendering tv-now indicator...");
+        _log.Info("rendering tv-now indicator...");
         if (nowStart != "" &&
           System.IO.File.Exists(skinPath + "osd_progress_mid_orange.png") == true &&
           System.IO.File.Exists(skinPath + "osd_progress_background.png") == true)
@@ -848,7 +850,7 @@ namespace MediaPortal.TV.Recording
 
         // quality and level
         xEnd.Width = 100;
-        Log.Write("rendering signal quality indicator...");
+        _log.Info("rendering signal quality indicator...");
 
         if (signalQuality > 2 &&
           System.IO.File.Exists(skinPath + "osd_progress_background.png") == true &&
@@ -871,7 +873,7 @@ namespace MediaPortal.TV.Recording
           prog.Dispose();
           y += 25;
         }
-        Log.Write("rendering signal level indicator...");
+        _log.Info("rendering signal level indicator...");
 
         if (signalLevel > 2 &&
           System.IO.File.Exists(skinPath + "osd_progress_background.png") == true &&
@@ -895,7 +897,7 @@ namespace MediaPortal.TV.Recording
         gr.DrawString(DateTime.Now.ToShortTimeString(), drawFont, drawBrush, timeX, timeY);
         //render notify
 
-        Log.Write("rendering notify:{0}", notify);
+        _log.Info("rendering notify:{0}", notify);
         y = gHeight / 2;
         x = 100;
         gr.DrawString(notify, new System.Drawing.Font("Arial", 16), new SolidBrush(Color.White), x, y, StringFormat.GenericTypographic);
@@ -903,13 +905,13 @@ namespace MediaPortal.TV.Recording
         drawFont.Dispose();
         drawBrush.Dispose();
         m_bitmapIsVisible = true;
-        Log.Write("show bitmap");
+        _log.Info("show bitmap");
         SaveBitmap(bm, true, true, m_renderOSDAlpha);
-        Log.Write("rendering done");
+        _log.Info("rendering done");
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        _log.Error(ex);
         SaveBitmap(null, false, true, m_renderOSDAlpha);
       }
     }
@@ -1046,7 +1048,7 @@ namespace MediaPortal.TV.Recording
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        _log.Error(ex);
       }
     }
 
@@ -1081,7 +1083,7 @@ namespace MediaPortal.TV.Recording
       }
 
 
-      
+
 
       return false;
     }// savevmr9bitmap

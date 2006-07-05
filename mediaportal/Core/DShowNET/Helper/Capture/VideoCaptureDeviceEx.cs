@@ -27,7 +27,7 @@ using System.Runtime.InteropServices;
 using System.Reflection;
 using DirectShowLib;
 using DShowNET.Helper;
-using MediaPortal.GUI.Library;
+using MediaPortal.Utils.Services;
 
 namespace DShowNET.Helper
 {
@@ -46,6 +46,7 @@ namespace DShowNET.Helper
     private IAMStreamConfig _interfaceStreamConfigVideoCapture = null;
     private IAMStreamConfig _interfaceStreamConfigPreview = null;
     private IAMStreamConfig _interfaceStreamConfigVideoPort = null;
+    private ILog _log;
 
     /// <summary>
     /// #MW#
@@ -69,6 +70,9 @@ namespace DShowNET.Helper
       IBaseFilter pCaptureFilter,
       IBaseFilter pEncoderFilter)
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+
       int hr = 0;
       object o = null;
 
@@ -88,17 +92,17 @@ namespace DShowNET.Helper
       _pinVideoPort = null;
       _pinCapture = DsFindPin.ByDirection(pEncoderFilter, PinDirection.Output, 0);
       if (_pinCapture != null)
-        Log.Write("VideoCaptureDevice: found output pin");
+        _log.Info("VideoCaptureDevice: found output pin");
 
       // get video stream interfaces
-      Log.Write("VideoCaptureDevice:get Video stream control interface (IAMStreamConfig)");
+      _log.Info("VideoCaptureDevice:get Video stream control interface (IAMStreamConfig)");
       DsGuid cat = new DsGuid(PinCategory.Capture);
       Guid iid = typeof(IAMStreamConfig).GUID;
       hr = _captureGraphBuilderInterface.FindInterface(cat, null, _captureFilter, iid, out o);
       if (hr == 0)
       {
         _interfaceStreamConfigVideoCapture = o as IAMStreamConfig;
-        Log.Write("VideoCaptureDevice:got IAMStreamConfig for Capture");
+        _log.Info("VideoCaptureDevice:got IAMStreamConfig for Capture");
       }
 
       o = null;
@@ -108,7 +112,7 @@ namespace DShowNET.Helper
       if (hr == 0)
       {
         _interfaceStreamConfigPreview = o as IAMStreamConfig;
-        Log.Write("VideoCaptureDevice:got IAMStreamConfig for Preview");
+        _log.Info("VideoCaptureDevice:got IAMStreamConfig for Preview");
       }
 
       o = null;
@@ -118,7 +122,7 @@ namespace DShowNET.Helper
       if (hr == 0)
       {
         _interfaceStreamConfigVideoPort = o as IAMStreamConfig;
-        Log.Write("VideoCaptureDevice:got IAMStreamConfig for VPort");
+        _log.Info("VideoCaptureDevice:got IAMStreamConfig for VPort");
       }
     }
 
@@ -141,29 +145,29 @@ namespace DShowNET.Helper
 
     public bool RenderPreview()
     {
-      Log.Write("VideoCaptureDevice:render preview");
+      _log.Info("VideoCaptureDevice:render preview");
       int hr;
       if (null != _pinVideoPort)
       {
-        Log.Write("VideoCaptureDevice:render videoport pin");
+        _log.Info("VideoCaptureDevice:render videoport pin");
         hr = _graphBuilderInterface.Render(_pinVideoPort);
         if (hr == 0) return true;
-        Log.Write("VideoCaptureDevice:FAILED render videoport pin:0x{0:X}", hr);
+        _log.Info("VideoCaptureDevice:FAILED render videoport pin:0x{0:X}", hr);
 
       }
       if (null != _pinVideoPreview)
       {
-        Log.Write("VideoCaptureDevice:render preview pin");
+        _log.Info("VideoCaptureDevice:render preview pin");
         hr = _graphBuilderInterface.Render(_pinVideoPreview);
         if (hr == 0) return true;
-        Log.Write("VideoCaptureDevice:FAILED render preview pin:0x{0:X}", hr);
+        _log.Info("VideoCaptureDevice:FAILED render preview pin:0x{0:X}", hr);
       }
       if (null != _pinCapture)
       {
-        Log.Write("VideoCaptureDevice:render capture pin");
+        _log.Info("VideoCaptureDevice:render capture pin");
         hr = _graphBuilderInterface.Render(_pinCapture);
         if (hr == 0) return true;
-        Log.Write("VideoCaptureDevice:FAILED render capture pin:0x{0:X}", hr);
+        _log.Info("VideoCaptureDevice:FAILED render capture pin:0x{0:X}", hr);
       }
       return false;
     }
@@ -175,7 +179,7 @@ namespace DShowNET.Helper
       DsGuid cat = new DsGuid(PinCategory.VideoPort);
       int hr = _captureGraphBuilderInterface.FindPin(filter, PinDirection.Output, cat, new DsGuid(mediaType), false, 0, out pPin);
       if (hr >= 0 && pPin != null)
-        Log.Write("VideoCaptureDevice:Found videoport pin");
+        _log.Info("VideoCaptureDevice:Found videoport pin");
       return pPin;
     }
 
@@ -185,7 +189,7 @@ namespace DShowNET.Helper
       DsGuid cat = new DsGuid(PinCategory.Preview);
       int hr = _captureGraphBuilderInterface.FindPin(filter, PinDirection.Output, cat, new DsGuid(mediaType), false, 0, out pPin);
       if (hr >= 0 && pPin != null)
-        Log.Write("VideoCaptureDevice:Found preview pin");
+        _log.Info("VideoCaptureDevice:Found preview pin");
       return pPin;
     }
 
@@ -195,7 +199,7 @@ namespace DShowNET.Helper
       DsGuid cat = new DsGuid(PinCategory.Capture);
       int hr = _captureGraphBuilderInterface.FindPin(filter, PinDirection.Output, cat, new DsGuid(mediaType), false, 0, out pPin);
       if (hr >= 0 && pPin != null)
-        Log.Write("VideoCaptureDevice:Found capture pin");
+        _log.Info("VideoCaptureDevice:Found capture pin");
       return pPin;
     }
 
@@ -207,26 +211,26 @@ namespace DShowNET.Helper
       {
         while ((hr = Marshal.ReleaseComObject(_pinCapture))>0);
         _pinCapture = null;
-        if (hr != 0) Log.Write("Sinkgraph:ReleaseComobject(_pinCapture):{0}", hr);
+        if (hr != 0) _log.Info("Sinkgraph:ReleaseComobject(_pinCapture):{0}", hr);
       }
 
       if (_pinAudioPreview != null)
       {
         while ((hr =  Marshal.ReleaseComObject(_pinAudioPreview))>0)
         _pinAudioPreview = null;
-        if (hr != 0) Log.Write("Sinkgraph:ReleaseComobject(_pinAudioPreview):{0}", hr);
+        if (hr != 0) _log.Info("Sinkgraph:ReleaseComobject(_pinAudioPreview):{0}", hr);
       }
       if (_pinVideoPreview != null)
       {
         while ((hr =  Marshal.ReleaseComObject(_pinVideoPreview))>0)
         _pinVideoPreview = null;
-        if (hr != 0) Log.Write("Sinkgraph:ReleaseComobject(_pinVideoPreview):{0}", hr);
+        if (hr != 0) _log.Info("Sinkgraph:ReleaseComobject(_pinVideoPreview):{0}", hr);
       }
       if (_pinVideoPort != null)
       {
         while ((hr = Marshal.ReleaseComObject(_pinVideoPort)) > 0)
         _pinVideoPort = null;
-        if (hr != 0) Log.Write("Sinkgraph:ReleaseComobject(_pinVideoPort):{0}", hr);
+        if (hr != 0) _log.Info("Sinkgraph:ReleaseComobject(_pinVideoPort):{0}", hr);
       }
 
       _interfaceStreamConfigVideoCapture = null;
@@ -308,7 +312,7 @@ namespace DShowNET.Helper
             if (obj != null)
             {
               bmiHeader = (BitmapInfoHeader)obj;
-              Log.Write("VideoCaptureDevice:change capture Framesize :{0}x{1} ->{2}x{3}", bmiHeader.Width, bmiHeader.Height, FrameSize.Width, FrameSize.Height);
+              _log.Info("VideoCaptureDevice:change capture Framesize :{0}x{1} ->{2}x{3}", bmiHeader.Width, bmiHeader.Height, FrameSize.Width, FrameSize.Height);
               bmiHeader.Width = FrameSize.Width;
               bmiHeader.Height = FrameSize.Height;
               setStreamConfigSetting(_interfaceStreamConfigVideoCapture, "BmiHeader", bmiHeader);
@@ -316,7 +320,7 @@ namespace DShowNET.Helper
           }
           catch (Exception)
           {
-            Log.Write("VideoCaptureDevice:FAILED:could not set capture  Framesize to {0}x{1}!", FrameSize.Width, FrameSize.Height);
+            _log.Info("VideoCaptureDevice:FAILED:could not set capture  Framesize to {0}x{1}!", FrameSize.Width, FrameSize.Height);
           }
         }
 
@@ -329,7 +333,7 @@ namespace DShowNET.Helper
             if (obj != null)
             {
               bmiHeader = (BitmapInfoHeader)obj;
-              Log.Write("VideoCaptureDevice:change preview Framesize :{0}x{1} ->{2}x{3}", bmiHeader.Width, bmiHeader.Height, FrameSize.Width, FrameSize.Height);
+              _log.Info("VideoCaptureDevice:change preview Framesize :{0}x{1} ->{2}x{3}", bmiHeader.Width, bmiHeader.Height, FrameSize.Width, FrameSize.Height);
               bmiHeader.Width = FrameSize.Width;
               bmiHeader.Height = FrameSize.Height;
               setStreamConfigSetting(_interfaceStreamConfigPreview, "BmiHeader", bmiHeader);
@@ -337,7 +341,7 @@ namespace DShowNET.Helper
           }
           catch (Exception)
           {
-            Log.Write("VideoCaptureDevice:FAILED:could not set preview Framesize to {0}x{1}!", FrameSize.Width, FrameSize.Height);
+            _log.Info("VideoCaptureDevice:FAILED:could not set preview Framesize to {0}x{1}!", FrameSize.Width, FrameSize.Height);
           }
         }
 
@@ -350,7 +354,7 @@ namespace DShowNET.Helper
             if (obj != null)
             {
               bmiHeader = (BitmapInfoHeader)obj;
-              Log.Write("SWGraph:change vport Framesize :{0}x{1} ->{2}x{3}", bmiHeader.Width, bmiHeader.Height, FrameSize.Width, FrameSize.Height);
+              _log.Info("SWGraph:change vport Framesize :{0}x{1} ->{2}x{3}", bmiHeader.Width, bmiHeader.Height, FrameSize.Width, FrameSize.Height);
               bmiHeader.Width = FrameSize.Width;
               bmiHeader.Height = FrameSize.Height;
               setStreamConfigSetting(_interfaceStreamConfigVideoPort, "BmiHeader", bmiHeader);
@@ -358,7 +362,7 @@ namespace DShowNET.Helper
           }
           catch (Exception)
           {
-            Log.Write("VideoCaptureDevice:FAILED:could not set vport Framesize to {0}x{1}!", FrameSize.Width, FrameSize.Height);
+            _log.Info("VideoCaptureDevice:FAILED:could not set vport Framesize to {0}x{1}!", FrameSize.Width, FrameSize.Height);
           }
         }
       }
@@ -373,14 +377,14 @@ namespace DShowNET.Helper
         {
           try
           {
-            Log.Write("SWGraph:capture FrameRate set to {0}", FrameRate);
+            _log.Info("SWGraph:capture FrameRate set to {0}", FrameRate);
             long avgTimePerFrame = (long)(10000000d / FrameRate);
             setStreamConfigSetting(_interfaceStreamConfigVideoCapture, "AvgTimePerFrame", avgTimePerFrame);
-            Log.Write("VideoCaptureDevice: capture FrameRate done :{0}", FrameRate);
+            _log.Info("VideoCaptureDevice: capture FrameRate done :{0}", FrameRate);
           }
           catch (Exception)
           {
-            Log.Write("VideoCaptureDevice:captureFAILED:could not set FrameRate to {0}!", FrameRate);
+            _log.Info("VideoCaptureDevice:captureFAILED:could not set FrameRate to {0}!", FrameRate);
           }
         }
 
@@ -388,14 +392,14 @@ namespace DShowNET.Helper
         {
           try
           {
-            Log.Write("VideoCaptureDevice:preview FrameRate set to {0}", FrameRate);
+            _log.Info("VideoCaptureDevice:preview FrameRate set to {0}", FrameRate);
             long avgTimePerFrame = (long)(10000000d / FrameRate);
             setStreamConfigSetting(_interfaceStreamConfigPreview, "AvgTimePerFrame", avgTimePerFrame);
-            Log.Write("VideoCaptureDevice: preview FrameRate done :{0}", FrameRate);
+            _log.Info("VideoCaptureDevice: preview FrameRate done :{0}", FrameRate);
           }
           catch (Exception)
           {
-            Log.Write("VideoCaptureDevice:preview FAILED:could not set FrameRate to {0}!", FrameRate);
+            _log.Info("VideoCaptureDevice:preview FAILED:could not set FrameRate to {0}!", FrameRate);
           }
         }
 
@@ -403,14 +407,14 @@ namespace DShowNET.Helper
         {
           try
           {
-            Log.Write("VideoCaptureDevice:vport FrameRate set to {0}", FrameRate);
+            _log.Info("VideoCaptureDevice:vport FrameRate set to {0}", FrameRate);
             long avgTimePerFrame = (long)(10000000d / FrameRate);
             setStreamConfigSetting(_interfaceStreamConfigVideoPort, "AvgTimePerFrame", avgTimePerFrame);
-            Log.Write("VideoCaptureDevice: vport FrameRate done :{0}", FrameRate);
+            _log.Info("VideoCaptureDevice: vport FrameRate done :{0}", FrameRate);
           }
           catch (Exception)
           {
-            Log.Write("VideoCaptureDevice:vport FAILED:could not set FrameRate to {0}!", FrameRate);
+            _log.Info("VideoCaptureDevice:vport FAILED:could not set FrameRate to {0}!", FrameRate);
           }
         }
       }
@@ -435,13 +439,13 @@ namespace DShowNET.Helper
           int hr = streamConfig.GetFormat(out mediaType);
           if (hr != 0)
           {
-            Log.Write("VideoCaptureDevice:getStreamConfigSetting() FAILED to get:{0} (not supported)", fieldName);
+            _log.Info("VideoCaptureDevice:getStreamConfigSetting() FAILED to get:{0} (not supported)", fieldName);
             Marshal.ThrowExceptionForHR(hr);
           }
           // The formatPtr member points to different structures
           // dependingon the formatType
           object formatStruct;
-          //Log.Write("  VideoCaptureDevice.getStreamConfigSetting() find formattype"); 
+          //_log.Info("  VideoCaptureDevice.getStreamConfigSetting() find formattype"); 
           if (mediaType.formatType == FormatType.WaveEx)
             formatStruct = new WaveFormatEx();
           else if (mediaType.formatType == FormatType.VideoInfo)
@@ -452,36 +456,36 @@ namespace DShowNET.Helper
             formatStruct = new MPEG2VideoInfo();
           else if (mediaType.formatType == FormatType.None)
           {
-            //Log.Write("VideoCaptureDevice:getStreamConfigSetting() FAILED no format returned");
+            //_log.Info("VideoCaptureDevice:getStreamConfigSetting() FAILED no format returned");
             //throw new NotSupportedException("This device does not support a recognized format block.");
             return null;
           }
           else
           {
-            //Log.Write("VideoCaptureDevice:getStreamConfigSetting() FAILED unknown fmt:{0} {1} {2}", mediaType.formatType, mediaType.majorType, mediaType.subType);
+            //_log.Info("VideoCaptureDevice:getStreamConfigSetting() FAILED unknown fmt:{0} {1} {2}", mediaType.formatType, mediaType.majorType, mediaType.subType);
             //throw new NotSupportedException("This device does not support a recognized format block.");
             return null;
           }
 
-          //Log.Write("  VideoCaptureDevice.getStreamConfigSetting() get formatptr");
+          //_log.Info("  VideoCaptureDevice.getStreamConfigSetting() get formatptr");
           // Retrieve the nested structure
           Marshal.PtrToStructure(mediaType.formatPtr, formatStruct);
 
           // Find the required field
-          //Log.Write("  VideoCaptureDevice.getStreamConfigSetting() get field");
+          //_log.Info("  VideoCaptureDevice.getStreamConfigSetting() get field");
           Type structType = formatStruct.GetType();
           FieldInfo fieldInfo = structType.GetField(fieldName);
           if (fieldInfo == null)
           {
-            //Log.Write("VideoCaptureDevice.getStreamConfigSetting() FAILED to to find member:{0}", fieldName);
+            //_log.Info("VideoCaptureDevice.getStreamConfigSetting() FAILED to to find member:{0}", fieldName);
             //throw new NotSupportedException("VideoCaptureDevice:FAILED to find the member '" + fieldName + "' in the format block.");
             return null;
           }
 
           // Extract the field's current value
-          //Log.Write("  VideoCaptureDevice.getStreamConfigSetting() get value");
+          //_log.Info("  VideoCaptureDevice.getStreamConfigSetting() get value");
           returnValue = fieldInfo.GetValue(formatStruct);
-          //Log.Write("  VideoCaptureDevice.getStreamConfigSetting() done");	
+          //_log.Info("  VideoCaptureDevice.getStreamConfigSetting() done");	
         }
         finally
         {
@@ -490,7 +494,7 @@ namespace DShowNET.Helper
       }
       catch (Exception)
       {
-        Log.Write("  VideoCaptureDevice.getStreamConfigSetting() FAILED ");
+        _log.Info("  VideoCaptureDevice.getStreamConfigSetting() FAILED ");
       }
       return (returnValue);
     }
@@ -509,10 +513,10 @@ namespace DShowNET.Helper
           int hr = streamConfig.GetFormat(out mediaType);
           if (hr != 0)
           {
-            Log.Write("  VideoCaptureDevice:setStreamConfigSetting() FAILED to set:{0} (getformat) hr:{1}", fieldName, hr);
+            _log.Info("  VideoCaptureDevice:setStreamConfigSetting() FAILED to set:{0} (getformat) hr:{1}", fieldName, hr);
             return null;//Marshal.ThrowExceptionForHR(hr);
           }
-          //Log.Write("  VideoCaptureDevice:setStreamConfigSetting() get formattype");
+          //_log.Info("  VideoCaptureDevice:setStreamConfigSetting() get formattype");
           // The formatPtr member points to different structures
           // dependingon the formatType
           object formatStruct;
@@ -526,44 +530,44 @@ namespace DShowNET.Helper
             formatStruct = new MPEG2VideoInfo();
           else if (mediaType.formatType == FormatType.None)
           {
-            Log.Write("  VideoCaptureDevice:setStreamConfigSetting() FAILED no format returned");
+            _log.Info("  VideoCaptureDevice:setStreamConfigSetting() FAILED no format returned");
             return null;// throw new NotSupportedException("This device does not support a recognized format block.");
           }
           else
           {
-            Log.Write("  VideoCaptureDevice:setStreamConfigSetting() FAILED unknown fmt");
+            _log.Info("  VideoCaptureDevice:setStreamConfigSetting() FAILED unknown fmt");
             return null;//throw new NotSupportedException("This device does not support a recognized format block.");
           }
-          //Log.Write("  VideoCaptureDevice.setStreamConfigSetting() get formatptr");
+          //_log.Info("  VideoCaptureDevice.setStreamConfigSetting() get formatptr");
           // Retrieve the nested structure
           Marshal.PtrToStructure(mediaType.formatPtr, formatStruct);
 
           // Find the required field
-          //Log.Write("  VideoCaptureDevice.setStreamConfigSetting() get field");
+          //_log.Info("  VideoCaptureDevice.setStreamConfigSetting() get field");
           Type structType = formatStruct.GetType();
           FieldInfo fieldInfo = structType.GetField(fieldName);
           if (fieldInfo == null)
           {
-            Log.Write("  VideoCaptureDevice:setStreamConfigSetting() FAILED to to find member:{0}", fieldName);
+            _log.Info("  VideoCaptureDevice:setStreamConfigSetting() FAILED to to find member:{0}", fieldName);
             throw new NotSupportedException("FAILED to find the member '" + fieldName + "' in the format block.");
           }
-          //Log.Write("  VideoCaptureDevice.setStreamConfigSetting() set value");
+          //_log.Info("  VideoCaptureDevice.setStreamConfigSetting() set value");
           // Update the value of the field
           fieldInfo.SetValue(formatStruct, newValue);
 
           // PtrToStructure copies the data so we need to copy it back
           Marshal.StructureToPtr(formatStruct, mediaType.formatPtr, false);
 
-          //Log.Write("  VideoCaptureDevice.setStreamConfigSetting() set format");
+          //_log.Info("  VideoCaptureDevice.setStreamConfigSetting() set format");
           // Save the changes
           hr = streamConfig.SetFormat(mediaType);
           if (hr != 0)
           {
-            Log.Write("  VideoCaptureDevice:setStreamConfigSetting() FAILED to set:{0} {1}", fieldName, hr);
+            _log.Info("  VideoCaptureDevice:setStreamConfigSetting() FAILED to set:{0} {1}", fieldName, hr);
             return null;//Marshal.ThrowExceptionForHR(hr);
           }
-          //else Log.Write("  VideoCaptureDevice.setStreamConfigSetting() set:{0}",fieldName);
-          //Log.Write("  VideoCaptureDevice.setStreamConfigSetting() done");
+          //else _log.Info("  VideoCaptureDevice.setStreamConfigSetting() set:{0}",fieldName);
+          //_log.Info("  VideoCaptureDevice.setStreamConfigSetting() done");
         }
         finally
         {
@@ -573,7 +577,7 @@ namespace DShowNET.Helper
       }
       catch (Exception)
       {
-        Log.Write("  VideoCaptureDevice.:setStreamConfigSetting() FAILED ");
+        _log.Info("  VideoCaptureDevice.:setStreamConfigSetting() FAILED ");
       }
       return null;
     }

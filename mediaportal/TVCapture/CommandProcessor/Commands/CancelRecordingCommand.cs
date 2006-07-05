@@ -66,7 +66,7 @@ namespace MediaPortal.TV.Recording
         return;
       }
       bool stopped = false;
-      Log.WriteFile(Log.LogType.Recorder, "Command:Cancel recording {0} {1}-{2}", 
+      _log.Info("Command:Cancel recording {0} {1}-{2}", 
                                               _recordingToStop.Title,
                                               _recordingToStop.StartTime.ToLongTimeString(),
                                               _recordingToStop.EndTime.ToLongTimeString() );
@@ -85,15 +85,15 @@ namespace MediaPortal.TV.Recording
             //yep then cancel the recording
             if (_recordingToStop.RecType == TVRecording.RecordingType.Once)
             {
-              Log.WriteFile(Log.LogType.Recorder, "Recorder: Stop recording card:{0} channel:{1}", dev.CommercialName, dev.TVChannel);
-              _recordingToStop.Canceled = Utils.datetolong(DateTime.Now);
+              _log.Info("Recorder: Stop recording card:{0} channel:{1}", dev.CommercialName, dev.TVChannel);
+              _recordingToStop.Canceled = MediaPortal.Util.Utils.datetolong(DateTime.Now);
             }
             else
             {
-              Log.WriteFile(Log.LogType.Recorder, "Recorder: Stop serie of recording card:{0} channel:{1}", dev.CommercialName, dev.TVChannel);
-              long datetime = Utils.datetolong(DateTime.Now);
+              _log.Info("Recorder: Stop serie of recording card:{0} channel:{1}", dev.CommercialName, dev.TVChannel);
+              long datetime = MediaPortal.Util.Utils.datetolong(DateTime.Now);
               TVProgram prog = dev.CurrentProgramRecording;
-              if (prog != null) datetime = Utils.datetolong(prog.StartTime);
+              if (prog != null) datetime = MediaPortal.Util.Utils.datetolong(prog.StartTime);
               _recordingToStop.CanceledSeries.Add(datetime);
               _recordingToStop.Canceled = 0;
             }

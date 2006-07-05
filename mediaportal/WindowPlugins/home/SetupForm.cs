@@ -34,6 +34,7 @@ using System.Data;
 using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using MediaPortal.GUI.Library;
+using MediaPortal.Utils.Services;
 
 namespace home
 {
@@ -164,6 +165,7 @@ namespace home
     private MediaPortal.UserInterface.Controls.MPComboBox comboBox2;
     private MediaPortal.UserInterface.Controls.MPComboBox comboBox3;
     private MediaPortal.UserInterface.Controls.MPButton addConfig;
+    protected ILog _log;
 
     #region plugin vars
     public bool CanEnable()		// Indicates whether plugin can be enabled/disabled
@@ -218,6 +220,9 @@ namespace home
 
     public SetupForm()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+
       //
       // Required for Windows Form Designer support
       //
@@ -1615,8 +1620,8 @@ namespace home
                   }
                   catch (Exception setupFormException)
                   {
-                    Log.Write("Exception in plugin SetupForm loading :{0}", setupFormException.Message);
-                    Log.Write("Current class is :{0}", type.FullName);
+                    _log.Info("Exception in plugin SetupForm loading :{0}", setupFormException.Message);
+                    _log.Info("Current class is :{0}", type.FullName);
                   }
                 }
               }
@@ -1625,7 +1630,7 @@ namespace home
         }
         catch (Exception unknownException)
         {
-          Log.Write("Exception in plugin loading :{0}", unknownException.Message);
+          _log.Info("Exception in plugin loading :{0}", unknownException.Message);
         }
       }
     }
@@ -1880,8 +1885,8 @@ namespace home
                         }
                         catch (Exception setupFormException)
                         {
-                          Log.Write("Exception in plugin SetupForm loading :{0}", setupFormException.Message);
-                          Log.Write("Current class is :{0}", type.FullName);
+                          _log.Info("Exception in plugin SetupForm loading :{0}", setupFormException.Message);
+                          _log.Info("Current class is :{0}", type.FullName);
                         }
                       }
                     }
@@ -1890,7 +1895,7 @@ namespace home
               }
               catch (Exception unknownException)
               {
-                Log.Write("Exception in plugin loading :{0}", unknownException.Message);
+                _log.Info("Exception in plugin loading :{0}", unknownException.Message);
               }
 
             }
@@ -2385,7 +2390,7 @@ namespace home
           DirectoryInfo scDir = new DirectoryInfo(scriptdir);
           foreach (FileInfo fi in scDir.GetFiles())
           {
-            Log.Write(fi.Name + "  " + fi.Extension);
+            _log.Info(fi.Name + "  " + fi.Extension);
             if (fi.Extension.ToLower() == ".mps")
             {
               string fl = fi.Name;

@@ -40,6 +40,7 @@ using MediaPortal.Dialogs;
 using MediaPortal.Player;
 using MediaPortal.TV.Recording;
 using MediaPortal.TV.Database;
+using MediaPortal.Utils.Services;
 #endregion
 
 
@@ -120,11 +121,14 @@ namespace MediaPortal.GUI.TV
     string _lineInput = String.Empty;
     static bool _workerThreadRunning = false;
 
+    new static ILog _log;
     #endregion
 
     #region ctor
     public GUITvGuideBase()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
 
       _colorList.Add(Color.Red);
       _colorList.Add(Color.Green);
@@ -194,12 +198,12 @@ namespace MediaPortal.GUI.TV
 
     protected void Initialize()
     {
-      Log.Write("StartImportXML: Initialize");
+      _log.Info("StartImportXML: Initialize");
       _tvGuideFileName = "xmltv";
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         _tvGuideFileName = xmlreader.GetValueAsString("xmltv", "folder", "xmltv");
-        _tvGuideFileName = Utils.RemoveTrailingSlash(_tvGuideFileName);
+        _tvGuideFileName = MediaPortal.Util.Utils.RemoveTrailingSlash(_tvGuideFileName);
         _useColorsForGenres = xmlreader.GetValueAsBool("xmltv", "colors", false);
       }
 
@@ -639,13 +643,13 @@ namespace MediaPortal.GUI.TV
 
             if ( _autoTurnOnTv )
             {
-              Log.Write("TVGuide: automatically turn on TV");
+              _log.Info("TVGuide: automatically turn on TV");
               GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RESUME_TV, (int)GUIWindow.Window.WINDOW_TV, GetID, 0, 0, 0, null);
               msg.SendToTargetWindow = true;
               GUIWindowManager.SendThreadMessage(msg);
             }
             else
-              Log.Write("TVGuide: do not turn tv on automatically");
+              _log.Info("TVGuide: do not turn tv on automatically");
 
             return true;
           }
@@ -1042,7 +1046,7 @@ namespace MediaPortal.GUI.TV
         TVChannel chan = (TVChannel)_channelList[channel];
         string strChannel = chan.Name;
         if (strChannel == null) return;
-        string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, strChannel);
+        string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, strChannel);
         GUIPropertyManager.SetProperty("#TV.Guide.Title", String.Empty);
         GUIPropertyManager.SetProperty("#TV.Guide.Time", String.Empty);
         GUIPropertyManager.SetProperty("#TV.Guide.Description", String.Empty);
@@ -1072,7 +1076,7 @@ namespace MediaPortal.GUI.TV
       else if (_currentProgram != null)
       {
 
-        string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, _currentProgram.Channel);
+        string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, _currentProgram.Channel);
         string strTime = String.Format("{0}-{1}",
           _currentProgram.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
           _currentProgram.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
@@ -1153,7 +1157,7 @@ namespace MediaPortal.GUI.TV
         {
           TVChannel tvChan = (TVChannel)_channelList[chan];
 
-          string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, tvChan.Name);
+          string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, tvChan.Name);
           if (System.IO.File.Exists(strLogo))
           {
             GUIButton3PartControl img = GetControl(iChannel + (int)Controls.IMG_CHAN1) as GUIButton3PartControl;
@@ -1182,8 +1186,8 @@ namespace MediaPortal.GUI.TV
       List<TVProgram> programs = new List<TVProgram>();
       DateTime dtStart = DateTime.Now;
       DateTime dtEnd = dtStart.AddDays(30);
-      long iStart = Utils.datetolong(dtStart);
-      long iEnd = Utils.datetolong(dtEnd);
+      long iStart = MediaPortal.Util.Utils.datetolong(dtStart);
+      long iEnd = MediaPortal.Util.Utils.datetolong(dtEnd);
       TVDatabase.GetProgramsPerChannel(channel.Name, iStart, iEnd, ref programs);
       _totalProgramCount = programs.Count;
       if (_totalProgramCount == 0) _totalProgramCount = _channelCount;
@@ -1211,8 +1215,8 @@ namespace MediaPortal.GUI.TV
           program = new TVProgram();
           if (ichan == 0)
           {
-            program.Start = Utils.datetolong(DateTime.Now);
-            program.End = Utils.datetolong(DateTime.Now);
+            program.Start = MediaPortal.Util.Utils.datetolong(DateTime.Now);
+            program.End = MediaPortal.Util.Utils.datetolong(DateTime.Now);
             program.Title = "-";
             program.Genre = "-";
           }
@@ -1301,7 +1305,7 @@ namespace MediaPortal.GUI.TV
 
           if (program.StartTime.Date != DateTime.Now.Date)
           {
-            img.Label1 = String.Format("{0} {1}", Utils.GetShortDayString(program.StartTime), program.Title);
+            img.Label1 = String.Format("{0} {1}", MediaPortal.Util.Utils.GetShortDayString(program.StartTime), program.Title);
           }
         }
         GUILabelControl labelTemplate;
@@ -1365,7 +1369,7 @@ namespace MediaPortal.GUI.TV
 
     void RenderChannel(int iChannel, TVChannel channel, long iStart, long iEnd, bool selectCurrentShow)
     {
-      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, channel.Name);
+      string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, channel.Name);
       if (System.IO.File.Exists(strLogo))
       {
         GUIButton3PartControl img = GetControl(iChannel + (int)Controls.IMG_CHAN1) as GUIButton3PartControl;
@@ -1392,9 +1396,9 @@ namespace MediaPortal.GUI.TV
       TVDatabase.GetProgramsPerChannel(channel.Name, iStart, iEnd, ref programs);
       if (programs.Count == 0)
       {
-        DateTime dt = Utils.longtodate(iEnd);
+        DateTime dt = MediaPortal.Util.Utils.longtodate(iEnd);
         //dt=dt.AddMinutes(_timePerBlock);
-        long iProgEnd = Utils.datetolong(dt);
+        long iProgEnd = MediaPortal.Util.Utils.datetolong(dt);
         TVProgram prog = new TVProgram();
         prog.Start = iStart;
         prog.End = iProgEnd;
@@ -2140,7 +2144,7 @@ namespace MediaPortal.GUI.TV
       }
       catch (Exception)
       {
-        Log.Write("StartImportXML - Exception " + _tvGuideFileName);
+        _log.Info("StartImportXML - Exception " + _tvGuideFileName);
         return;
       }
       _tvGuideFileWatcher.EnableRaisingEvents = false;
@@ -2156,7 +2160,7 @@ namespace MediaPortal.GUI.TV
 
     static void ThreadFunctionImportTVGuide()
     {
-      Log.Write(@"detected new tvguide ->import new tvguide");
+      _log.Info(@"detected new tvguide ->import new tvguide");
       Thread.Sleep(500);
       try
       {
@@ -2188,7 +2192,7 @@ namespace MediaPortal.GUI.TV
       }
       _tvGuideFileWatcher.EnableRaisingEvents = true;
       _workerThreadRunning = false;
-      Log.Write(@"import done");
+      _log.Info(@"import done");
     }
 
     void ShowContextMenu()

@@ -1986,6 +1986,10 @@
       <Project>{BD4A3413-C9F9-4299-BB52-ED45027EE7CC}</Project>
       <Name>MediaPortal.Support</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Utils\Utils.csproj">
+      <Project>{6DA0E4DF-6230-4642-98B5-E690BB6942BB}</Project>
+      <Name>Utils</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

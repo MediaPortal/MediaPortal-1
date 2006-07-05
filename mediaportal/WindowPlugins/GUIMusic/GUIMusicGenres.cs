@@ -90,7 +90,7 @@ namespace MediaPortal.GUI.Music
             GetID = (int)GUIWindow.Window.WINDOW_MUSIC_GENRE;
 
             m_directory.AddDrives();
-            m_directory.SetExtensions(Utils.AudioExtensions);
+            m_directory.SetExtensions(MediaPortal.Util.Utils.AudioExtensions);
             playlistPlayer = PlayListPlayer.SingletonPlayer;
 
             GUIWindowManager.OnNewAction += new OnActionHandler(GUIWindowManager_OnNewAction);
@@ -385,13 +385,13 @@ namespace MediaPortal.GUI.Music
         protected override void OnRetrieveCoverArt(GUIListItem item)
         {
             if (item.Label == "..") return;
-            Utils.SetDefaultIcons(item);
+            MediaPortal.Util.Utils.SetDefaultIcons(item);
             if (item.IsRemote) return;
             Song song = item.AlbumInfoTag as Song;
             if (song == null) return;
             if (song.genreId >= 0 && song.albumId < 0 && song.artistId < 0 && song.songId < 0)
             {
-                string strThumb = Utils.GetCoverArt(Thumbs.MusicGenre, item.Label);
+                string strThumb = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MusicGenre, item.Label);
                 if (System.IO.File.Exists(strThumb))
                 {
                     item.IconImage = strThumb;
@@ -400,7 +400,7 @@ namespace MediaPortal.GUI.Music
                 }
                 else
                 {
-                    strThumb = Utils.GetFolderThumb(item.Path);
+                    strThumb = MediaPortal.Util.Utils.GetFolderThumb(item.Path);
                     if (System.IO.File.Exists(strThumb))
                     {
                         item.IconImage = strThumb;
@@ -411,7 +411,7 @@ namespace MediaPortal.GUI.Music
             }
             else if (song.artistId >= 0 && song.albumId < 0 && song.songId < 0)
             {
-                string strThumb = Utils.GetCoverArt(Thumbs.MusicArtists, item.Label);
+                string strThumb = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MusicArtists, item.Label);
                 if (System.IO.File.Exists(strThumb))
                 {
                     item.IconImage = strThumb;
@@ -432,7 +432,7 @@ namespace MediaPortal.GUI.Music
                 }
                 else
                 {
-                    strThumb = Utils.GetFolderThumb(item.Path);
+                    strThumb = MediaPortal.Util.Utils.GetFolderThumb(item.Path);
                     if (System.IO.File.Exists(strThumb))
                     {
                         item.IconImage = strThumb;
@@ -440,7 +440,7 @@ namespace MediaPortal.GUI.Music
                         item.ThumbnailImage = strThumb;
                     }
 
-                    // Utils.GetFolderThumb returns an empty string when item.Path.Length == 0
+                    // MediaPortal.Util.Utils.GetFolderThumb returns an empty string when item.Path.Length == 0
                     // so we'll pull to info from the db to reconstruct the full album path
                     else if (strThumb.Length == 0)
                     {
@@ -451,7 +451,7 @@ namespace MediaPortal.GUI.Music
                             albumPath = albumPath.TrimEnd(new char[] { '\\' });
                             albumPath += "\\";
 
-                            strThumb = Utils.GetFolderThumb(albumPath);
+                            strThumb = MediaPortal.Util.Utils.GetFolderThumb(albumPath);
                             if (System.IO.File.Exists(strThumb))
                             {
                                 item.IconImage = strThumb;
@@ -670,7 +670,7 @@ namespace MediaPortal.GUI.Music
 
         protected void AddItemToPlayList(Song song)
         {
-            if (Utils.IsAudio(song.FileName) && !PlayListFactory.IsPlayList(song.FileName))
+            if (MediaPortal.Util.Utils.IsAudio(song.FileName) && !PlayListFactory.IsPlayList(song.FileName))
             {
                 PlayListItem playlistItem = new PlayListItem();
                 playlistItem.Type = Playlists.PlayListItem.PlayListItemType.Audio;
@@ -750,7 +750,7 @@ namespace MediaPortal.GUI.Music
                 GUIListItem pItem = new GUIListItem("..");
                 pItem.Path = String.Empty;
                 pItem.IsFolder = true;
-                Utils.SetDefaultIcons(pItem);
+                MediaPortal.Util.Utils.SetDefaultIcons(pItem);
                 facadeView.Add(pItem);
             }
 
@@ -801,7 +801,7 @@ namespace MediaPortal.GUI.Music
             if (totalPlayingTime.Seconds > 0)
             {
                 strObjects = String.Format("{0} {1}, {2}", iTotalItems, GUILocalizeStrings.Get(1052),
-                            Utils.SecondsToHMSString((int)totalPlayingTime.TotalSeconds));//songs
+                            MediaPortal.Util.Utils.SecondsToHMSString((int)totalPlayingTime.TotalSeconds));//songs
             }
             GUIPropertyManager.SetProperty("#itemcount", strObjects);
             SetLabels();
@@ -862,7 +862,7 @@ namespace MediaPortal.GUI.Music
                     if (tag != null)
                     {
                         int playCount = tag.TimesPlayed;
-                        string duration = Utils.SecondsToHMSString(playCount * tag.Duration);
+                        string duration = MediaPortal.Util.Utils.SecondsToHMSString(playCount * tag.Duration);
                         item.Label = string.Format("{0:00}. {1} - {2}", playCount, tag.Artist, tag.Title);
                         item.Label2 = duration;
                     }
@@ -891,7 +891,7 @@ namespace MediaPortal.GUI.Music
                         //if (handler != null && handler.CurrentView == "Top100") return;
                     }
                     string strFile = message.Label;
-                    if (Utils.IsAudio(strFile))
+                    if (MediaPortal.Util.Utils.IsAudio(strFile))
                     {
                         MusicDatabase dbs = new MusicDatabase();
                         dbs.IncrTop100CounterByFileName(strFile);

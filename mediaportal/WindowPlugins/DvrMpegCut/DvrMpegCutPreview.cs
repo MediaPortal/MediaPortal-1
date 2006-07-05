@@ -117,7 +117,7 @@ namespace DvrMpegCutMP
       }
       catch (Exception ex)
       {
-        Log.WriteFile(Log.LogType.Error, "DvrMpegCut: (DvrMpegCutPreview) " + ex.StackTrace);
+        _log.Error("DvrMpegCut: (DvrMpegCutPreview) " + ex.StackTrace);
       }
 
     }
@@ -143,7 +143,7 @@ namespace DvrMpegCutMP
         if (videoWindow != null)
         {
           GUIGraphicsContext.VideoWindow = new System.Drawing.Rectangle(videoWindow.XPosition, videoWindow.YPosition, videoWindow.Width, videoWindow.Height);
-          //Log.Write("Test " +videoWindow.XPosition  + " " + videoWindow.Width + " " + videoWindow.Height);
+          //_log.Info("Test " +videoWindow.XPosition  + " " + videoWindow.Width + " " + videoWindow.Height);
         }
         g_Player.FullScreen = false;
         g_Player.Play(inFilename.FullName);
@@ -164,7 +164,7 @@ namespace DvrMpegCutMP
       }
       catch (Exception ex)
       {
-        Log.WriteFile(Log.LogType.Error, "DvrMpegCut: (OnPageLoad) " + ex.StackTrace);
+        _log.Error("DvrMpegCut: (OnPageLoad) " + ex.StackTrace);
       }
       //schneideListeLct.Add(new GUIListItem("Test"));
 
@@ -366,7 +366,7 @@ namespace DvrMpegCutMP
       }
       catch (Exception e)
       {
-        Log.WriteFile(Log.LogType.Error, "DvrMpegCut: (CutDvrms) " + e.StackTrace);
+        _log.Error("DvrMpegCut: (CutDvrms) " + e.StackTrace);
       }
     }
 

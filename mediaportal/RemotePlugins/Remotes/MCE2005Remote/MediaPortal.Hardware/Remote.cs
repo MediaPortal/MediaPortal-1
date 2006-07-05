@@ -28,6 +28,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
+using MediaPortal.Utils.Services;
 
 #pragma warning disable 618
 
@@ -75,7 +76,12 @@ namespace MediaPortal.Hardware
       if (devicePath == null)
         throw new Exception("No MCE remote found");
 
-      if (LogVerbose) Log.Write("MCE: Using: {0}", devicePath);
+      if (LogVerbose)
+      {
+        ServiceProvider services = GlobalServiceProvider.Instance;
+        ILog log = services.Get<ILog>();
+        log.Info("MCE: Using: {0}", devicePath);
+      }
 
 			IntPtr deviceHandle = CreateFile(devicePath, FileAccess.Read, FileShare.ReadWrite, 0, FileMode.Open, FileFlag.Overlapped, 0);
 

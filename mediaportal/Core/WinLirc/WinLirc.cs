@@ -26,7 +26,7 @@ using System.Threading;
 using System.Text;
 using System.IO;
 using Microsoft.Win32;
-
+using MediaPortal.Utils.Services;
 using MediaPortal.GUI.Library;
 
 
@@ -88,16 +88,20 @@ namespace MediaPortal.WINLIRC
 		//protected bool m_bNeedsEnter = false;
 		protected bool m_bInitRetry = true;
 		protected int m_IRdelay = 300;
+    protected ILog _log;
 		
 
 		public WinLirc()
-		{
+    {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+
 			Init();
 		}
 
 		public bool Init()
 		{
-			Log.Write("Initialising WinLirc...");
+			_log.Info("Initialising WinLirc...");
 			//load settings
 			using(MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
@@ -130,7 +134,7 @@ namespace MediaPortal.WINLIRC
 			//check we found it - if not, start it!
 			if(m_hwnd.ToInt32() <= 0) // try to find it and start it since it's not found
 			{
-				Log.Write("WinLirc window not found, starting WinLirc");
+				_log.Info("WinLirc window not found, starting WinLirc");
 				IntPtr mpHwnd = GetActiveWindow();//Get MP
 				StartWinLirc(m_pathtowinlirc);//Start Winlirc
 				ShowWindow(mpHwnd,SW_RESTORE); //restore MP		
@@ -138,10 +142,10 @@ namespace MediaPortal.WINLIRC
 			}
 			if(m_hwnd.ToInt32() > 0)
 			{
-				Log.Write("Winlirc OK");
+				_log.Info("Winlirc OK");
 				return true;
 			}
-			Log.Write("Winlirc process not found");
+			_log.Info("Winlirc process not found");
 			return false;
 		}
 
@@ -172,7 +176,7 @@ namespace MediaPortal.WINLIRC
 			}
 			catch(Exception)
 			{
-				Log.Write("Unable to start WinLIRC from {0}", exeName);
+				_log.Info("Unable to start WinLIRC from {0}", exeName);
 				return false;
 			}
 			return true;
@@ -190,7 +194,7 @@ namespace MediaPortal.WINLIRC
 				if (channel_data==String.Empty) return;
 				if(m_hwnd.ToInt32() == 0)
 				{
-					Log.Write("WinLirc HWND is invalid. Check WinLirc is running");
+					_log.Info("WinLirc HWND is invalid. Check WinLirc is running");
 					return;
 				}
 
@@ -215,11 +219,11 @@ namespace MediaPortal.WINLIRC
 
 					if(channelparts.Length != 3)
 					{
-						Log.Write("WinLirc: '" + command + "' is invalid.  Check External Channel follows the correct format (Remote:Repeat:Code 1,Code 2,Code n)");
+						_log.Info("WinLirc: '" + command + "' is invalid.  Check External Channel follows the correct format (Remote:Repeat:Code 1,Code 2,Code n)");
 						continue;
 					}
 
-					Log.Write("WinLirc ChangeTunerChannel: Remote; " + channelparts[0] + " Channel; " + channelparts[2]);
+					_log.Info("WinLirc ChangeTunerChannel: Remote; " + channelparts[0] + " Channel; " + channelparts[2]);
 
 					//go thru chan numbers / commands & output to winLIRC
 					string[] Ops = channelparts[2].Split(",".ToCharArray());
@@ -239,7 +243,7 @@ namespace MediaPortal.WINLIRC
 			}
 			catch(Exception ex)
 			{
-				Log.Write("Exception occured in winlirc plugin:{0}", ex.ToString());
+				_log.Info("Exception occured in winlirc plugin:{0}", ex.ToString());
 			}
 		}
 

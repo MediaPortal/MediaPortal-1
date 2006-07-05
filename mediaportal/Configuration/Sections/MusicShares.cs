@@ -75,7 +75,7 @@ namespace MediaPortal.Configuration.Sections
 
           string shareNameData = xmlreader.GetValueAsString("music", shareName, "");
           string sharePathData = xmlreader.GetValueAsString("music", sharePath, "");
-          string sharePinData = Utils.DecryptPin(xmlreader.GetValueAsString("music", sharePin, ""));
+          string sharePinData = MediaPortal.Util.Utils.DecryptPin(xmlreader.GetValueAsString("music", sharePin, ""));
 
           bool shareTypeData = xmlreader.GetValueAsBool("music", shareType, false);
           string shareServerData = xmlreader.GetValueAsString("music", shareServer, "");
@@ -163,7 +163,7 @@ namespace MediaPortal.Configuration.Sections
           }
           xmlwriter.SetValue("music", shareName, shareNameData);
           xmlwriter.SetValue("music", sharePath, sharePathData);
-          xmlwriter.SetValue("music", sharePin, Utils.EncryptPin(sharePinData));
+          xmlwriter.SetValue("music", sharePin, MediaPortal.Util.Utils.EncryptPin(sharePinData));
           xmlwriter.SetValue("music", shareViewPath, shareView);
 
           xmlwriter.SetValueAsBool("music", shareType, shareTypeData);

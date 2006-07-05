@@ -158,7 +158,7 @@ namespace MediaPortal.Dialogs
 			}
 			if (control==btnPlay)
 			{
-				Log.Write("DialogSetRating:Play:{0}",FileName);
+				_log.Info("DialogSetRating:Play:{0}",FileName);
 				g_Player.Play(FileName);
 			}
 

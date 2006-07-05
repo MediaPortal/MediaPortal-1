@@ -30,10 +30,11 @@ using System.Drawing;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using System.Runtime.InteropServices;
-
+using MediaPortal.Utils.Services;
 using DShowNET;
 using DShowNET.Helper;
 using DirectShowLib;
+
 #pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
@@ -54,6 +55,7 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxDXVA;
     private System.ComponentModel.IContainer components = null;
     bool _init = false;
+    protected ILog _log;
     /// <summary>
     /// 
     /// </summary>
@@ -68,6 +70,9 @@ namespace MediaPortal.Configuration.Sections
     public DVDCodec(string name)
       : base(name)
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+
       // This call is required by the Windows Form Designer.
       InitializeComponent();
 
@@ -112,7 +117,7 @@ namespace MediaPortal.Configuration.Sections
     public override void LoadSettings()
     {
       if (_init == false) return;
-      Log.WriteFile(Log.LogType.Log, "load dvd");
+      _log.Info("load dvd");
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         string audioRenderer = xmlreader.GetValueAsString("dvdplayer", "audiorenderer", "Default DirectSound Device");
@@ -178,7 +183,7 @@ namespace MediaPortal.Configuration.Sections
         videoCodecComboBox.SelectedItem = videoCodec;
 
       }
-      Log.WriteFile(Log.LogType.Log, "load dvd done");
+      _log.Info("load dvd done");
     }
 
     public override void SaveSettings()

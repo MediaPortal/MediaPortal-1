@@ -38,6 +38,7 @@ using Yeti.MMedia.Mp3;
 using Yeti.Lame;
 using WaveLib;
 using Roger.ID3;
+using MediaPortal.Utils.Services;
 //using iTunesLib;
 
 namespace MediaPortal.MusicImport
@@ -84,9 +85,13 @@ namespace MediaPortal.MusicImport
     }
 
     Thread EncodeThread;
+    static ILog _log;
 
     public MusicImport()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         mp3VBR = xmlreader.GetValueAsBool("musicimport", "mp3vbr", true);
@@ -223,12 +228,12 @@ namespace MediaPortal.MusicImport
       string fileFormat = string.Empty;
       string dirFormat = string.Empty;
 
-      strInput = Utils.ReplaceTag(strInput, "%artist%", Utils.MakeFileName(trackInfo.MusicTag.Artist), "Unknown Artist");
-      strInput = Utils.ReplaceTag(strInput, "%title%", Utils.MakeFileName(trackInfo.MusicTag.Title), string.Format("Track {0:00}", trackInfo.MusicTag.Track));
-      strInput = Utils.ReplaceTag(strInput, "%album%", Utils.MakeFileName(trackInfo.MusicTag.Album), "Unknown Album");
-      strInput = Utils.ReplaceTag(strInput, "%track%", Utils.MakeFileName(string.Format("{0:00}", trackInfo.MusicTag.Track)), "");
-      strInput = Utils.ReplaceTag(strInput, "%year%", Utils.MakeFileName(trackInfo.MusicTag.Year.ToString()), "0");
-      strInput = Utils.ReplaceTag(strInput, "%genre%", Utils.MakeFileName(trackInfo.MusicTag.Genre), "");
+      strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%artist%", MediaPortal.Util.Utils.MakeFileName(trackInfo.MusicTag.Artist), "Unknown Artist");
+      strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%title%", MediaPortal.Util.Utils.MakeFileName(trackInfo.MusicTag.Title), string.Format("Track {0:00}", trackInfo.MusicTag.Track));
+      strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%album%", MediaPortal.Util.Utils.MakeFileName(trackInfo.MusicTag.Album), "Unknown Album");
+      strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%track%", MediaPortal.Util.Utils.MakeFileName(string.Format("{0:00}", trackInfo.MusicTag.Track)), "");
+      strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%year%", MediaPortal.Util.Utils.MakeFileName(trackInfo.MusicTag.Year.ToString()), "0");
+      strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%genre%", MediaPortal.Util.Utils.MakeFileName(trackInfo.MusicTag.Genre), "");
 
       string strName = string.Empty;
       string strDirectory = string.Empty;
@@ -244,15 +249,15 @@ namespace MediaPortal.MusicImport
 
       if (strDirectory != string.Empty)
       {
-        strDirectory = Utils.MakeDirectoryPath(strDirectory);
+        strDirectory = MediaPortal.Util.Utils.MakeDirectoryPath(strDirectory);
         if (!Directory.Exists(mp3ImportDir + "\\" + strDirectory))
           Directory.CreateDirectory(mp3ImportDir + "\\" + strDirectory);
       }
 
       if (strName.Trim() == string.Empty)
-        strName = string.Format("{0:00} " + Utils.MakeFileName(trackInfo.MusicTag.Title), trackInfo.MusicTag.Track);
+        strName = string.Format("{0:00} " + MediaPortal.Util.Utils.MakeFileName(trackInfo.MusicTag.Title), trackInfo.MusicTag.Track);
 
-      strName = Utils.MakeFileName(strName);
+      strName = MediaPortal.Util.Utils.MakeFileName(strName);
       if (File.Exists(mp3ImportDir + "\\" + strDirectory + "\\" + strName + ".mp3") && !mp3ReplaceExisting)
       {
         int i = 1;
@@ -386,7 +391,7 @@ namespace MediaPortal.MusicImport
             }
             catch
             {
-              Log.Write("CDIMP: Error moving encoded file {0} to new location {1}", trackInfo.TempFileName, trackInfo.TargetFileName);
+              _log.Info("CDIMP: Error moving encoded file {0} to new location {1}", trackInfo.TempFileName, trackInfo.TargetFileName);
             }
             #endregion
           }
@@ -454,7 +459,7 @@ namespace MediaPortal.MusicImport
                   m_Writer = new Mp3Writer(WaveFile, Format, mp3Config);
                   if (!m_CancelRipping) try
                     {
-                      Log.Write("CDIMP: Processing track {0}", trackInfo.MusicTag.Track);
+                      _log.Info("CDIMP: Processing track {0}", trackInfo.MusicTag.Track);
 
                       DateTime InitTime = DateTime.Now;
                       if (m_Drive.ReadTrack(trackInfo.MusicTag.Track, new CdDataReadEventHandler(WriteWaveData), new CdReadProgressEventHandler(CdReadProgress)) > 0)
@@ -465,12 +470,12 @@ namespace MediaPortal.MusicImport
                         {
                           TimeSpan Duration = DateTime.Now - InitTime;
                           double Speed = m_Drive.TrackSize(trackInfo.MusicTag.Track) / Duration.TotalSeconds / Format.nAvgBytesPerSec;
-                          Log.Write("CDIMP: Done reading track {0} at {1:0.00}x speed", trackInfo.MusicTag.Track, Speed);
+                          _log.Info("CDIMP: Done reading track {0} at {1:0.00}x speed", trackInfo.MusicTag.Track, Speed);
                         }
                       }
                       else
                       {
-                        Log.Write("CDIMP: Error reading track {0}", trackInfo.MusicTag.Track);
+                        _log.Info("CDIMP: Error reading track {0}", trackInfo.MusicTag.Track);
                         m_Writer.Close();
                         WaveFile.Close();
                         if (File.Exists(trackInfo.TempFileName))

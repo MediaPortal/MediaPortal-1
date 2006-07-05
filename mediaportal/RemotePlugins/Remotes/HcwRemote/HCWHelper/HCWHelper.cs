@@ -35,6 +35,7 @@ using System.IO;
 using System.Diagnostics;
 using Microsoft.Win32;
 using MediaPortal.GUI.Library;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.InputDevices.HcwHelper
 {
@@ -51,13 +52,16 @@ namespace MediaPortal.InputDevices.HcwHelper
     private int port = 2110;
     private bool registered = false;
     bool restartIRApp = false;                // Restart Haupp. IR-app. after MP quit
-
+    protected ILog _log;
 
     /// <summary>
     /// Initialization
     /// </summary>
     public HcwHelper()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+
       InitializeComponent();
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
@@ -90,7 +94,7 @@ namespace MediaPortal.InputDevices.HcwHelper
     /// </summary>
     private void Exit()
     {
-      if (logVerbose) Log.Write("HCWHelper: OnClosing");
+      if (logVerbose) _log.Info("HCWHelper: OnClosing");
       connection.ReceiveEvent -= new UdpHelper.Connection.ReceiveEventHandler(OnReceive);
       connection.Send(port + 1, "APP", "STOP", DateTime.Now);
       connection = null;
@@ -107,7 +111,7 @@ namespace MediaPortal.InputDevices.HcwHelper
       while (!cancelWait && ((Process.GetProcessesByName("MediaPortal").Length > 0) || (Process.GetProcessesByName("MediaPortal.vshost").Length > 0)))
         Thread.Sleep(1000);
 
-      if (logVerbose) Log.Write("HCWHelper: MediaPortal is not running");
+      if (logVerbose) _log.Info("HCWHelper: MediaPortal is not running");
       Exit();
     }
 
@@ -126,7 +130,7 @@ namespace MediaPortal.InputDevices.HcwHelper
         while ((Process.GetProcessesByName("Ir").Length != 0) && (i < 15))
         {
           i++;
-          if (logVerbose) Log.Write("HCWHelper: terminating external control: attempt #{0}", i);
+          if (logVerbose) _log.Info("HCWHelper: terminating external control: attempt #{0}", i);
           if (Process.GetProcessesByName("Ir").Length != 0)
           {
             Process.Start(GetHCWPath() + "Ir.exe", "/QUIT");
@@ -140,7 +144,7 @@ namespace MediaPortal.InputDevices.HcwHelper
       Thread.Sleep(200);
       if (Process.GetProcessesByName("Ir").Length != 0)
       {
-        Log.Write("HCWHelper: external control could not be terminated!");
+        _log.Info("HCWHelper: external control could not be terminated!");
         Exit();
       }
       else
@@ -148,7 +152,7 @@ namespace MediaPortal.InputDevices.HcwHelper
           registered = true;
         else
         {
-          Log.Write("HCWHelper: Can't open IR device - IR in use?");
+          _log.Info("HCWHelper: Can't open IR device - IR in use?");
           Exit();
         }
     }
@@ -162,10 +166,10 @@ namespace MediaPortal.InputDevices.HcwHelper
       if (irremote.IRClose(this.Handle, 0))
       {
         registered = false;
-        if (logVerbose) Log.Write("HCWHelper: closing driver successful");
+        if (logVerbose) _log.Info("HCWHelper: closing driver successful");
       }
       else
-        Log.Write("HCWHelper: Can't close IR device");
+        _log.Info("HCWHelper: Can't close IR device");
 
       if (restartIRApp)
         try
@@ -175,7 +179,7 @@ namespace MediaPortal.InputDevices.HcwHelper
         }
         catch (Exception ex)
         {
-          Log.Write("HCWHelper: Exception while restarting IR.exe: {0}", ex.Message);
+          _log.Info("HCWHelper: Exception while restarting IR.exe: {0}", ex.Message);
         }
     }
 
@@ -185,7 +189,7 @@ namespace MediaPortal.InputDevices.HcwHelper
     /// </summary>
     private void OnReceive(string strReceive)
     {
-      if (logVerbose) Log.Write("HCWHelper: received {0}", strReceive);
+      if (logVerbose) _log.Info("HCWHelper: received {0}", strReceive);
       foreach (string msg in strReceive.Split('~'))
       {
         switch (msg.Split('|')[0])
@@ -219,7 +223,7 @@ namespace MediaPortal.InputDevices.HcwHelper
                 }
                 catch (Exception ex)
                 {
-                  Log.Write("HCWHelper: Exception: {0}", ex.Message);
+                  _log.Info("HCWHelper: Exception: {0}", ex.Message);
                 }
                 break;
             }
@@ -256,7 +260,7 @@ namespace MediaPortal.InputDevices.HcwHelper
               break;
           }
           connection.Send(port + 1, "CMD", remoteCommand.ToString(), attackTime);
-          if (logVerbose) Log.Write("HCWHelper: command sent: {0}", remoteCommand);
+          if (logVerbose) _log.Info("HCWHelper: command sent: {0}", remoteCommand);
           break;
       }
       base.WndProc(ref msg);
@@ -302,7 +306,7 @@ namespace MediaPortal.InputDevices.HcwHelper
         dllPath = string.Empty;
 
       if (dllPath == string.Empty)
-        Log.Write("HCWHelper: Could not find registry entries for driver components! (Not installed?)");
+        _log.Info("HCWHelper: Could not find registry entries for driver components! (Not installed?)");
       return dllPath;
     }
 

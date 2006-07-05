@@ -192,7 +192,7 @@ namespace MediaPortal.GUI.TV
       {
         bmpTeletextPage = TeletextGrabber.TeletextCache.GetPage(acutalPageNumber, actualSubPageNumber);
         Redraw();
-        Log.Write("dvb-teletext: select page {0} / subpage {1}", Convert.ToString(acutalPageNumber), Convert.ToString(actualSubPageNumber));
+        _log.Info("dvb-teletext: select page {0} / subpage {1}", Convert.ToString(acutalPageNumber), Convert.ToString(actualSubPageNumber));
       }
     }
 
@@ -249,7 +249,7 @@ namespace MediaPortal.GUI.TV
           actualSubPageNumber = 0;
           bmpTeletextPage = TeletextGrabber.TeletextCache.GetPage(acutalPageNumber, actualSubPageNumber);
           Redraw();
-          Log.Write("dvb-teletext: select page {0} / subpage {1}", Convert.ToString(acutalPageNumber), Convert.ToString(actualSubPageNumber));
+          _log.Info("dvb-teletext: select page {0} / subpage {1}", Convert.ToString(acutalPageNumber), Convert.ToString(actualSubPageNumber));
           inputLine = "";
           return;
         }
@@ -267,7 +267,7 @@ namespace MediaPortal.GUI.TV
           {
             bmpTeletextPage = TeletextGrabber.TeletextCache.GetPage(acutalPageNumber, actualSubPageNumber);
             Redraw();
-            Log.Write("dvb-teletext: select page {0} / subpage {1}", Convert.ToString(acutalPageNumber), Convert.ToString(actualSubPageNumber));
+            _log.Info("dvb-teletext: select page {0} / subpage {1}", Convert.ToString(acutalPageNumber), Convert.ToString(actualSubPageNumber));
             inputLine = String.Empty;
             return;
           }
@@ -282,7 +282,7 @@ namespace MediaPortal.GUI.TV
           {
             bmpTeletextPage = TeletextGrabber.TeletextCache.GetPage(acutalPageNumber, actualSubPageNumber);
             Redraw();
-            Log.Write("dvb-teletext: select page {0} / subpage {1}", Convert.ToString(acutalPageNumber), Convert.ToString(actualSubPageNumber));
+            _log.Info("dvb-teletext: select page {0} / subpage {1}", Convert.ToString(acutalPageNumber), Convert.ToString(actualSubPageNumber));
             inputLine = String.Empty;
             return;
           }
@@ -313,7 +313,7 @@ namespace MediaPortal.GUI.TV
             bmpTeletextPage = TeletextGrabber.TeletextCache.GetPage(acutalPageNumber, actualSubPageNumber);
             Redraw();
           }
-          Log.Write("dvb-teletext: select page {0} / subpage {1}", Convert.ToString(acutalPageNumber), Convert.ToString(actualSubPageNumber));
+          _log.Info("dvb-teletext: select page {0} / subpage {1}", Convert.ToString(acutalPageNumber), Convert.ToString(actualSubPageNumber));
           inputLine = String.Empty;
 
         }
@@ -356,7 +356,7 @@ namespace MediaPortal.GUI.TV
       {
         if (actualSubPageNumber < 100) actualSubPageNumber = 100;
         if (actualSubPageNumber > 899) actualSubPageNumber = 899;
-        Log.Write("dvb-teletext page updated. {0:X}/{1}", acutalPageNumber, actualSubPageNumber);
+        _log.Info("dvb-teletext page updated. {0:X}/{1}", acutalPageNumber, actualSubPageNumber);
         int NumberOfSubpages = TeletextGrabber.TeletextCache.NumberOfSubpages(acutalPageNumber);
         if (NumberOfSubpages > actualSubPageNumber)
         {
@@ -373,7 +373,7 @@ namespace MediaPortal.GUI.TV
 
     void Redraw()
     {
-      Log.Write("dvb-teletext redraw()");
+      _log.Info("dvb-teletext redraw()");
       try
       {
 
@@ -395,7 +395,7 @@ namespace MediaPortal.GUI.TV
           imgTeletext.IsVisible = false;
           imgTeletext.FileName = "";
           GUITextureManager.ReleaseTexture("[teletextpage]");
-          Utils.FileDelete(@"teletext.png");
+          MediaPortal.Util.Utils.FileDelete(@"teletext.png");
           //img.Save(@"teletext.png",System.Drawing.Imaging.ImageFormat.Png);
           imgTeletext.MemoryImage = img;
           imgTeletext.FileName = "[teletextpage]";
@@ -412,7 +412,7 @@ namespace MediaPortal.GUI.TV
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        _log.Error(ex);
       }
     }
 

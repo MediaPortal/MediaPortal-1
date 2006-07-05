@@ -33,6 +33,7 @@ using System.Threading;
 using System.Web;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
+using MediaPortal.Utils.Services;
 
 namespace ProcessPlugins.CallerId
 {
@@ -45,9 +46,12 @@ namespace ProcessPlugins.CallerId
 		private const string ERR_FAILED_TO_FIND_AREACODE_XML = "xml file couldn't be found";
 		private const string SUCCESS_LOADED_AREACODE_XML = "xml file loaded";
 		private Hashtable areaCodeLookup;
+    protected ILog _log;
 
 		public CallerIdPlugin()
-		{
+    {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
 		}
 
 		private Hashtable AreaCodeToLocationMap
@@ -85,7 +89,7 @@ namespace ProcessPlugins.CallerId
 					{
 						// TODO detect that it wasn't loaded succesfully or other error conditions, if it *was* located.
 						temp.Add("000", ERR_FAILED_TO_FIND_AREACODE_XML);		// slot 000 reserved for hashtable status
-						Log.WriteFile(Log.LogType.Log,true,"couldn't load xml from " + areaCodeXMLFile, "error");
+						_log.Error("couldn't load xml from " + areaCodeXMLFile, "error");
 					}
 					areaCodeLookup = temp;
 				} 
@@ -189,7 +193,7 @@ namespace ProcessPlugins.CallerId
 					
 							if (parsedCall == false)
 							{
-								Log.Write("failed to parse call");
+								_log.Info("failed to parse call");
 							}
 						}
 						System.Threading.Thread.Sleep(100); // breathe for a moment, so we don't peg the CPU in this tight loop
@@ -202,7 +206,7 @@ namespace ProcessPlugins.CallerId
 				
 				string eExceptionStr = "Exception: " + e.Message;
 				string eTargetSiteStr = "TargetSite: " + e.TargetSite;
-				Log.WriteFile(Log.LogType.Log,true,String.Format("{0} {1}", eExceptionStr,eTargetSiteStr) );
+				_log.Error(String.Format("{0} {1}", eExceptionStr,eTargetSiteStr) );
 			}
 		}
 
@@ -396,10 +400,10 @@ namespace ProcessPlugins.CallerId
 					// ensure imagepath is set to null; no picture for the error case
 				}
 		
-				Log.Write(@"***** INCOMING CALL: " + DateTime.Now.ToString("F") + @" *****");
-				Log.Write("   Name: "+ titlebarStr);
-				Log.Write("   Number: "+ bodyStr);
-				Log.Write("   Image: "+ imagepathStr);
+				_log.Info(@"***** INCOMING CALL: " + DateTime.Now.ToString("F") + @" *****");
+				_log.Info("   Name: "+ titlebarStr);
+				_log.Info("   Number: "+ bodyStr);
+				_log.Info("   Image: "+ imagepathStr);
 
 
 
@@ -420,7 +424,7 @@ namespace ProcessPlugins.CallerId
 				
 				string eExceptionStr = "Exception: " + e.Message;
 				string eTargetSiteStr = "TargetSite: " + e.TargetSite;
-				Log.Write(String.Format("{0} {1}", eExceptionStr,eTargetSiteStr));
+				_log.Info(String.Format("{0} {1}", eExceptionStr,eTargetSiteStr));
 				return false;
 			}
 			return true;

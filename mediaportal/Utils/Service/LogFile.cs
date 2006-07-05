@@ -39,10 +39,19 @@ namespace MediaPortal.Utils.Services
 
 		  string logName = directory + "\\" + name + ".log";
 			string bakName = directory + "\\" + name + ".bak";
+
 			if (System.IO.File.Exists(bakName))
 				System.IO.File.Delete(bakName);
 			if (System.IO.File.Exists(logName))
 				System.IO.File.Move(logName, bakName);
+
+      string errLogName = directory + "\\" + name + "_error.log";
+      string errBakName = directory + "\\" + name + "_error.bak";
+
+      if (System.IO.File.Exists(errBakName))
+        System.IO.File.Delete(errBakName);
+      if (System.IO.File.Exists(errLogName))
+        System.IO.File.Move(errLogName, errBakName);
 		}
 
 		public LogFile(string name) : this("log", name)

@@ -130,7 +130,7 @@ namespace ProgramsDatabase
       int totalItems = 0;
       foreach (GUIListItem file in curFiles)
       {
-        Utils.SetDefaultIcons(file);
+        MediaPortal.Util.Utils.SetDefaultIcons(file);
         if (file.IsFolder)
         {
           file.ThumbnailImage = GUIGraphicsContext.Skin + @"\media\DefaultFolderBig.png";
@@ -244,14 +244,14 @@ namespace ProgramsDatabase
           {
             g_Player.Stop();
           }
-          Utils.StartProcess(procStart, WaitForExit);
+          MediaPortal.Util.Utils.StartProcess(procStart, WaitForExit);
           GUIGraphicsContext.DX9Device.Reset(GUIGraphicsContext.DX9Device.PresentationParameters);
           AutoPlay.StartListening();
         }
       }
       catch (Exception ex)
       {
-        Log.Write("myPrograms: error launching program\n  filename: {0}\n  arguments: {1}\n  WorkingDirectory: {2}\n  stack: {3} {4} {5}", procStart.FileName,
+        _log.Info("myPrograms: error launching program\n  filename: {0}\n  arguments: {1}\n  WorkingDirectory: {2}\n  stack: {3} {4} {5}", procStart.FileName,
           procStart.Arguments, procStart.WorkingDirectory, ex.Message, ex.Source, ex.StackTrace);
       }
       finally

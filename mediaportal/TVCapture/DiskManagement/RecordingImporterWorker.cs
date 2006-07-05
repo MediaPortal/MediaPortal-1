@@ -9,6 +9,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.TV.Recording;
 using MediaPortal.TV.Database;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.TV.DiskSpace
 {
@@ -99,7 +100,9 @@ namespace MediaPortal.TV.DiskSpace
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        ServiceProvider services = GlobalServiceProvider.Instance;
+        ILog log = services.Get<ILog>();
+        log.Error(ex);
       }
     }
 
@@ -107,7 +110,7 @@ namespace MediaPortal.TV.DiskSpace
 
     static TVRecorded AddFileToTvDatabase(string fileName)
     {
-      //Log.WriteFile(Log.LogType.Recorder, "Recorder: import recording {0}", file);
+      //_log.Info("Recorder: import recording {0}", file);
       try
       {
         using (DvrmsMetadataEditor editor = new DvrmsMetadataEditor(fileName))
@@ -140,7 +143,7 @@ namespace MediaPortal.TV.DiskSpace
 
           if (newRec.Channel == null)
           {
-            string name = Utils.GetFilename(fileName);
+            string name = MediaPortal.Util.Utils.GetFilename(fileName);
             foreach (TVChannel channel in channels)
             {
               if (name.Contains(channel.Name))
@@ -160,7 +163,7 @@ namespace MediaPortal.TV.DiskSpace
 
           if (newRec.Title == null || newRec.Title.Length == 0)
           {
-            newRec.Title = Utils.GetFilename(fileName);  // to have at least one info in the data base about what it is
+            newRec.Title = MediaPortal.Util.Utils.GetFilename(fileName);  // to have at least one info in the data base about what it is
           }
 
           if (newRec.Channel != null && newRec.Channel.Length > 0)
@@ -170,17 +173,17 @@ namespace MediaPortal.TV.DiskSpace
             {
               return newRec;
             }
-            //Log.WriteFile(Log.LogType.Recorder, "Recorder: import recording {0} failed");
+            //_log.Info("Recorder: import recording {0} failed");
           }
           else
           {
-            //Log.WriteFile(Log.LogType.Recorder, "Recorder: import recording {0} failed, unknown tv channel", file);
+            //_log.Info("Recorder: import recording {0} failed, unknown tv channel", file);
           }
         }//using (DvrmsMetadataEditor editor = new DvrmsMetadataEditor(file))
       }
       catch (Exception)
       {
-        //Log.WriteFile(Log.LogType.Log, true, "Recorder:Unable to import {0} reason:{1} {2} {3}", file, ex.Message, ex.Source, ex.StackTrace);
+        //_log.Error("Recorder:Unable to import {0} reason:{1} {2} {3}", file, ex.Message, ex.Source, ex.StackTrace);
       }
       return null;
     }

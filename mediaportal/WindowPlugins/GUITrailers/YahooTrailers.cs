@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using MediaPortal.Player;
 using MediaPortal.GUI.Library;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.GUI.Video
 {
@@ -54,6 +55,8 @@ namespace MediaPortal.GUI.Video
 
         // mediaportal.xml
         public static string server = string.Empty;
+
+    static ILog _log;
 
 		public static void GetTrailers()
 		{
@@ -152,13 +155,13 @@ namespace MediaPortal.GUI.Video
 
                             Match m1 = Regex.Match(m.Value, @"<a\shref=.http://us.rd.yahoo.com/movies/trailers/(?<movienumber>\d*)/.*id=.*wmv-300-p.(?<id>\d*)-(?<segment>\d*).");
                             TrailersUrl[t] = "http://playlist.yahoo.com/makeplaylist.dll?id=" + m1.Groups["id"].Value + "&segment=" + m1.Groups["segment"].Value + "&s=" + m1.Groups["movienumber"].Value + "&ru=y&b=639r4gd1i7uth433192d0&type=t";
-                            Log.Write(m1.Groups["id"].Value);
-                            Log.Write(m1.Groups["segment"].Value);
-                            Log.Write(m1.Groups["movienumber"].Value);
+                            _log.Info(m1.Groups["id"].Value);
+                            _log.Info(m1.Groups["segment"].Value);
+                            _log.Info(m1.Groups["movienumber"].Value);
 
                             Match m2 = Regex.Match(m.Value, @".(?<trailername>.*)</a>");
                             Trailers[t] = m2.Groups["trailername"].Value;
-                            Log.Write(m2.Groups["trailername"].Value);
+                            _log.Info(m2.Groups["trailername"].Value);
                             t++;
                         }
 
@@ -166,13 +169,13 @@ namespace MediaPortal.GUI.Video
                         {
                             Match m1 = Regex.Match(m.Value, @"<a\shref=.http://us.rd.yahoo.com/movies/trailers/(?<movienumber>\d*)/.*id=.*wmv-300-s.(?<id>\d*)-(?<segment>\d*).");
                             TrailersUrl[t] = "http://playlist.yahoo.com/makeplaylist.dll?ids=" + m1.Groups["id"].Value + "&segment=" + m1.Groups["segment"].Value + "&s=" + m1.Groups["movienumber"].Value + "&ru=y&b=639r4gd1i7uth433192d0&type=t";
-                            Log.Write(m1.Groups["id"].Value);
-                            Log.Write(m1.Groups["segment"].Value);
-                            Log.Write(m1.Groups["movienumber"].Value);
+                            _log.Info(m1.Groups["id"].Value);
+                            _log.Info(m1.Groups["segment"].Value);
+                            _log.Info(m1.Groups["movienumber"].Value);
 
                             Match m2 = Regex.Match(m.Value, @".(?<trailername>.*)</a>");
                             Trailers[t] = m2.Groups["trailername"].Value;
-                            Log.Write(m2.Groups["trailername"].Value);
+                            _log.Info(m2.Groups["trailername"].Value);
                             t++;
                         }
                     }
@@ -453,9 +456,9 @@ namespace MediaPortal.GUI.Video
 
 		public YahooTrailers()
 		{
-			//
-			// TODO: Add constructor logic here
-			//
+
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
 		}
 	}
 }

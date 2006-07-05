@@ -30,6 +30,7 @@ using System.Xml.Serialization;
 using ExternalDisplay.Setting;
 using MediaPortal.GUI.Library;
 using ProcessPlugins.ExternalDisplay.Setting;
+using MediaPortal.Utils.Services;
 
 namespace ProcessPlugins.ExternalDisplay
 {
@@ -42,8 +43,8 @@ namespace ProcessPlugins.ExternalDisplay
   /// this class.
   /// </remarks>
   /// <author>JoeDalton</author>
-    [Serializable]
-    public class Settings
+  [Serializable]
+  public class Settings
   {
     #region Singleton implementation
 
@@ -67,12 +68,23 @@ namespace ProcessPlugins.ExternalDisplay
 
     #endregion
 
+    protected ILog _log;
+
+    #region constructor
+    public Settings()
+    {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+    }
+    #endregion
+
     #region Properties
 
     /// <summary>
     /// String representation of the selected display type.  Used for (de)serializing
     /// </summary>
-    [XmlAttribute] public string Type = null;
+    [XmlAttribute]
+    public string Type = null;
 
 
     /// <summary>
@@ -85,19 +97,19 @@ namespace ProcessPlugins.ExternalDisplay
       {
         if (ExtensiveLogging)
         {
-          Log.Write("ExternalDisplay: Determining configured display type...");
+          _log.Info("ExternalDisplay: Determining configured display type...");
         }
         if (Type == null) //If no type selected, take the first one in the list
         {
           if (ExtensiveLogging)
           {
-            Log.Write("ExternalDisplay: Requested type was NULL.  Returning first type found...");
+            _log.Info("ExternalDisplay: Requested type was NULL.  Returning first type found...");
           }
           return Drivers[0];
         }
         if (ExtensiveLogging)
         {
-          Log.Write("ExternalDisplay: Searching type {0}...", Type);
+          _log.Info("ExternalDisplay: Searching type {0}...", Type);
         }
         foreach (IDisplay disp in Drivers) //otherwise get the instance with the correct name
         {
@@ -105,14 +117,14 @@ namespace ProcessPlugins.ExternalDisplay
           {
             if (ExtensiveLogging)
             {
-              Log.Write("ExternalDisplay: Requested type was found.");
+              _log.Info("ExternalDisplay: Requested type was found.");
             }
             return disp;
           }
         }
         if (ExtensiveLogging)
         {
-          Log.Write("ExternalDisplay: Requested type not found.");
+          _log.Info("ExternalDisplay: Requested type not found.");
         }
         return null;
       }
@@ -322,7 +334,8 @@ namespace ProcessPlugins.ExternalDisplay
     /// <summary>
     /// List of message rules
     /// </summary>
-    [XmlElement("Message", typeof(Message))] public List<Message> Messages = new List<Message>();
+    [XmlElement("Message", typeof(Message))]
+    public List<Message> Messages = new List<Message>();
 
     private IDisplay[] m_Drivers = null;
 
@@ -375,7 +388,7 @@ namespace ProcessPlugins.ExternalDisplay
       {
         XmlSerializer ser = new XmlSerializer(typeof(Settings));
         XmlTextReader rdr = new XmlTextReader("ExternalDisplay.xml");
-        settings = (Settings) ser.Deserialize(rdr);
+        settings = (Settings)ser.Deserialize(rdr);
         rdr.Close();
         return settings;
       }
@@ -407,56 +420,56 @@ namespace ProcessPlugins.ExternalDisplay
     /// </summary>
     private void LoadDrivers()
     {
-      Log.Write("ExternalDisplay: Loading drivers...");
+      _log.Info("ExternalDisplay: Loading drivers...");
       ArrayList list = new ArrayList();
       if (ExtensiveLogging)
       {
-        Log.Write("ExternalDisplay: Loading DebugForm...");
+        _log.Info("ExternalDisplay: Loading DebugForm...");
       }
       list.Add(new DebugForm());
       if (ExtensiveLogging)
       {
-        Log.Write("ExternalDisplay: Loading VLSYSLis2...");
+        _log.Info("ExternalDisplay: Loading VLSYSLis2...");
       }
       list.Add(new VLSYSLis2()); // Added by Nopap
       if (ExtensiveLogging)
       {
-        Log.Write("ExternalDisplay: Loading iMON...");
+        _log.Info("ExternalDisplay: Loading iMON...");
       }
       list.Add(new iMON());
       if (ExtensiveLogging)
       {
-        Log.Write("ExternalDisplay: Loading ClipBoard...");
+        _log.Info("ExternalDisplay: Loading ClipBoard...");
       }
       list.Add(new Clipboard());
       if (ExtensiveLogging)
       {
-        Log.Write("ExternalDisplay: Loading Girder...");
+        _log.Info("ExternalDisplay: Loading Girder...");
       }
       list.Add(new Girder());
       if (ExtensiveLogging)
       {
-        Log.Write("ExternalDisplay: Loading MediaPad...");
+        _log.Info("ExternalDisplay: Loading MediaPad...");
       }
       list.Add(new MediaPad());
       if (ExtensiveLogging)
       {
-        Log.Write("ExternalDisplay: Loading PropertySetter...");
+        _log.Info("ExternalDisplay: Loading PropertySetter...");
       }
       list.Add(new None());
       if (ExtensiveLogging)
       {
-        Log.Write("ExternalDisplay: Loading CrystalFontz634...");
+        _log.Info("ExternalDisplay: Loading CrystalFontz634...");
       }
       list.Add(new CrystalFontz634());
       if (ExtensiveLogging)
       {
-        Log.Write("ExternalDisplay: Loading HD44780JD...");
+        _log.Info("ExternalDisplay: Loading HD44780JD...");
       }
       list.Add(new HD44780());
       if (ExtensiveLogging)
       {
-        Log.Write("ExternalDisplay: Loading NoritakeGU7000...");
+        _log.Info("ExternalDisplay: Loading NoritakeGU7000...");
       }
       list.Add(new NoritakeGU7000());
       DirectoryInfo dinfo = new DirectoryInfo(@"plugins\process\LCDDrivers");
@@ -468,7 +481,7 @@ namespace ProcessPlugins.ExternalDisplay
       {
         if (ExtensiveLogging)
         {
-          Log.Write("ExternalDisplay: Loading {0}...", fi.FullName);
+          _log.Info("ExternalDisplay: Loading {0}...", fi.FullName);
         }
         list.Add(new LCDHypeWrapper(fi.FullName));
       }
@@ -476,7 +489,7 @@ namespace ProcessPlugins.ExternalDisplay
       list.CopyTo(m_Drivers);
       if (ExtensiveLogging)
       {
-        Log.Write("ExternalDisplay: Driver loading complete...");
+        _log.Info("ExternalDisplay: Driver loading complete...");
       }
     }
 
@@ -486,8 +499,8 @@ namespace ProcessPlugins.ExternalDisplay
     /// <param name="_settings"></param>
     private static void Default(Settings _settings)
     {
-      _settings.TranslateFrom = new string[] {"©", "®"};
-      _settings.TranslateTo = new string[] {"(c)", "(R)"};
+      _settings.TranslateFrom = new string[] { "©", "®" };
+      _settings.TranslateTo = new string[] { "(c)", "(R)" };
 
       Message msg;
       Line line;
@@ -504,7 +517,7 @@ namespace ProcessPlugins.ExternalDisplay
       //
       msg = new Message();
       msg.Status = Status.Action;
-      msg.Windows.Add((int) GUIWindow.Window.WINDOW_TV);
+      msg.Windows.Add((int)GUIWindow.Window.WINDOW_TV);
       msg.Lines.Add(new Line(new Property("#currentmodule")));
       line = new Line();
       line.values.Add(new Property("#TV.View.channel"));

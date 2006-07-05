@@ -430,7 +430,7 @@ namespace MediaPortal.GUI.Pictures
     }
     public override void Render(float timePassed)
     {
-      //Log.Write("Render:{0} {1} {2}", timePassed, _renderTimer, _frameCounter);
+      //_log.Info("Render:{0} {1} {2}", timePassed, _renderTimer, _frameCounter);
       if (!_isPaused && !_isPictureZoomed)
       {
         if (_frameCounter > 0)
@@ -557,7 +557,7 @@ namespace MediaPortal.GUI.Pictures
       {
         // render the new picture
         bool bResult = false;
-        //Log.Write("method:{0} frame:{1}", _transitionMethod, _frameCounter);
+        //_log.Info("method:{0} frame:{1}", _transitionMethod, _frameCounter);
         switch (_transitionMethod)
         {
           case 0:
@@ -710,7 +710,7 @@ namespace MediaPortal.GUI.Pictures
         if (_slideList.Count - _lastSegmentIndex > 1)
           _lastSegmentIndex = _slideList.Add(filename);
       }
-      else if (Utils.IsPicture(filename))
+      else if (MediaPortal.Util.Utils.IsPicture(filename))
       {
         _slideList.Add(filename);
       }*/
@@ -842,7 +842,7 @@ namespace MediaPortal.GUI.Pictures
       _zoomInfoVisible = false;
 
       strSlide = _slideList[_currentSlide];
-      Log.Write("Next Slide: {0}/{1} : {2}", _currentSlide + 1, _slideList.Count, strSlide);
+      _log.Info("Next Slide: {0}/{1} : {2}", _currentSlide + 1, _slideList.Count, strSlide);
       using (PictureDatabase dbs = new PictureDatabase())
       {
         _rotation = dbs.GetRotation(strSlide);
@@ -1220,7 +1220,7 @@ namespace MediaPortal.GUI.Pictures
       }
 
 
-      //Log.Write("method 10 count:{0} alpha:{1:X}", _frameCounter, iAlpha);
+      //_log.Info("method 10 count:{0} alpha:{1:X}", _frameCounter, iAlpha);
       //render background first
       int lColorDiffuse = (0xff - iAlpha);
       lColorDiffuse <<= 24;
@@ -1711,7 +1711,7 @@ namespace MediaPortal.GUI.Pictures
 
       _isPaused = bPause;
       if (!dlgYesNo.IsConfirmed) return;
-      if (Utils.FileDelete(_backgroundSlideFileName) == true)
+      if (MediaPortal.Util.Utils.FileDelete(_backgroundSlideFileName) == true)
       {
         if (_currentSlide < _slideList.Count) _slideList.RemoveAt(_currentSlide);
 
@@ -2031,9 +2031,9 @@ namespace MediaPortal.GUI.Pictures
     void DeleteThumb(string strSlide)
     {
       string strThumb = GUIPictures.GetThumbnail(strSlide);
-      Utils.FileDelete(strThumb);
+      MediaPortal.Util.Utils.FileDelete(strThumb);
       strThumb = GUIPictures.GetLargeThumbnail(strSlide);
-      Utils.FileDelete(strThumb);
+      MediaPortal.Util.Utils.FileDelete(strThumb);
     }
 
     void StartBackgroundMusic(string path)
@@ -2071,7 +2071,7 @@ namespace MediaPortal.GUI.Pictures
         }
         catch (Exception e)
         {
-          Log.Write("GUISlideShow.StartBackgroundMusic", e.Message);
+          _log.Info("GUISlideShow.StartBackgroundMusic", e.Message);
         }
 
         break;

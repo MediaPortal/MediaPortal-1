@@ -63,7 +63,7 @@ namespace MediaPortal.TV.Recording
 
     public override void Execute(CommandProcessor handler)
     {
-      Log.WriteFile(Log.LogType.Recorder, "Recorder:StartTimeshift tv {0}", _channelName);
+      _log.Info("Recorder:StartTimeshift tv {0}", _channelName);
       TVCaptureDevice dev;
 
       if (handler.TVCards.Count == 0)
@@ -102,13 +102,13 @@ namespace MediaPortal.TV.Recording
       if (cardNo >= 0)
       {
         dev = handler.TVCards[cardNo];
-        Log.WriteFile(Log.LogType.Recorder, "Recorder:  Found card:{0}", dev.CommercialName);
+        _log.Info("Recorder:  Found card:{0}", dev.CommercialName);
 
         string fileName = dev.TimeShiftFullFileName;
-        ulong freeSpace = Utils.GetFreeDiskSpace(fileName);
+        ulong freeSpace = MediaPortal.Util.Utils.GetFreeDiskSpace(fileName);
         if (freeSpace < (1024L * 1024L * 1024L) )// 1 GB
         {
-          Log.WriteFile(Log.LogType.Recorder,true, "Recorder:  failed to start timeshifting since drive {0}: has less then 1GB freediskspace", fileName[0]);
+          _log.Error("Recorder:  failed to start timeshifting since drive {0}: has less then 1GB freediskspace", fileName[0]);
           ErrorMessage = GUILocalizeStrings.Get(765);// "Not enough free diskspace";
           Succeeded = false;
           return;
@@ -127,7 +127,7 @@ namespace MediaPortal.TV.Recording
         if (!dev.IsRecording && !dev.IsTimeShifting && dev.SupportsTimeShifting)
         {
 
-          Log.WriteFile(Log.LogType.Recorder, "Recorder:  start timeshifting on card:{0}", dev.CommercialName);
+          _log.Info("Recorder:  start timeshifting on card:{0}", dev.CommercialName);
           if (dev.StartTimeShifting(_channelName) == false)
           {
             ErrorMessage = String.Format("{0}\r{1}", GUILocalizeStrings.Get(759), dev.GetLastError());//"Failed to start timeshifting";
@@ -148,7 +148,7 @@ namespace MediaPortal.TV.Recording
         return;
       }//if (cardNo>=0)
 
-      Log.WriteFile(Log.LogType.Recorder, "Recorder:  find free card");
+      _log.Info("Recorder:  find free card");
 
 
       // no cards are timeshifting the channel we want.
@@ -182,7 +182,7 @@ namespace MediaPortal.TV.Recording
         {
           ErrorMessage = String.Format(GUILocalizeStrings.Get(756), _channelName);//No tuner can receive:{0}
         }
-        Log.WriteFile(Log.LogType.Recorder, "Recorder:  No free card which can receive channel [{0}]", _channelName);
+        _log.Info("Recorder:  No free card which can receive channel [{0}]", _channelName);
         return; // no card available
       }
 
@@ -192,7 +192,7 @@ namespace MediaPortal.TV.Recording
       handler.TVChannelName = _channelName;
       dev = handler.TVCards[handler.CurrentCardIndex];
 
-      Log.WriteFile(Log.LogType.Recorder, "Recorder:  found free card {0} prio:{1} name:{2}", dev.ID, dev.Priority, dev.Graph.CommercialName);
+      _log.Info("Recorder:  found free card {0} prio:{1} name:{2}", dev.ID, dev.Priority, dev.Graph.CommercialName);
 
       //do we want to use timeshifting ?
       // yep, then turn timeshifting on
@@ -204,14 +204,14 @@ namespace MediaPortal.TV.Recording
         Succeeded = false;
         return;
       }
-      if (Utils.GetFreeDiskSpace(dev.TimeShiftFullFileName) < (1024L * 1024L * 1024L))// 1 GB
+      if (MediaPortal.Util.Utils.GetFreeDiskSpace(dev.TimeShiftFullFileName) < (1024L * 1024L * 1024L))// 1 GB
       {
-        Log.WriteFile(Log.LogType.Recorder, true, "Recorder:  failed to start timeshifting since drive {0}: has less then 1GB freediskspace", dev.TimeShiftFullFileName[0]);
+        _log.Error("Recorder:  failed to start timeshifting since drive {0}: has less then 1GB freediskspace", dev.TimeShiftFullFileName[0]);
         ErrorMessage = GUILocalizeStrings.Get(765);// "Not enough free diskspace";
         Succeeded = false;
         return;
       }
-      Log.WriteFile(Log.LogType.Recorder, "Recorder:  start timeshifting card {0} channel:{1}", dev.CommercialName, _channelName);
+      _log.Info("Recorder:  start timeshifting card {0} channel:{1}", dev.CommercialName, _channelName);
 
       if (dev.IsTimeShifting)
       {

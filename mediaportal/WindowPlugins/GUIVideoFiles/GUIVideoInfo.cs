@@ -126,7 +126,7 @@ namespace MediaPortal.GUI.Video
       spinDisc.IsVisible = false;
       spinDisc.Disabled = true;
       int iItem = 0;
-      if (Utils.IsDVD(currentMovie.Path))
+      if (MediaPortal.Util.Utils.IsDVD(currentMovie.Path))
       {
         spinDisc.IsVisible = true;
         spinDisc.Disabled = false;
@@ -223,10 +223,10 @@ namespace MediaPortal.GUI.Video
         }
 
         currentMovie.ThumbURL = coverArtUrls[item];
-        string coverArtImage = Utils.GetCoverArtName(Thumbs.MovieTitle, currentMovie.Title);
-        string largeCoverArtImage = Utils.GetLargeCoverArtName(Thumbs.MovieTitle, currentMovie.Title);
-        Utils.FileDelete(coverArtImage);
-        Utils.FileDelete(largeCoverArtImage);
+        string coverArtImage = MediaPortal.Util.Utils.GetCoverArtName(Thumbs.MovieTitle, currentMovie.Title);
+        string largeCoverArtImage = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, currentMovie.Title);
+        MediaPortal.Util.Utils.FileDelete(coverArtImage);
+        MediaPortal.Util.Utils.FileDelete(largeCoverArtImage);
         Refresh();
         Update();
         int idMovie = currentMovie.ID;
@@ -339,8 +339,8 @@ namespace MediaPortal.GUI.Video
         string imageUrl = currentMovie.ThumbURL;
         if (imageUrl.Length > 0)
         {
-          string largeCoverArtImage = Utils.GetLargeCoverArtName(Thumbs.MovieTitle, currentMovie.Title);
-          coverArtImage = Utils.GetCoverArtName(Thumbs.MovieTitle, currentMovie.Title);
+          string largeCoverArtImage = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, currentMovie.Title);
+          coverArtImage = MediaPortal.Util.Utils.GetCoverArtName(Thumbs.MovieTitle, currentMovie.Title);
           if (!System.IO.File.Exists(coverArtImage))
           {
             string imageExtension;
@@ -349,20 +349,20 @@ namespace MediaPortal.GUI.Video
             {
               string temporaryFilename = "temp";
               temporaryFilename += imageExtension;
-              Utils.FileDelete(temporaryFilename);
+              MediaPortal.Util.Utils.FileDelete(temporaryFilename);
 
-              Utils.DownLoadAndCacheImage(imageUrl, temporaryFilename);
+              MediaPortal.Util.Utils.DownLoadAndCacheImage(imageUrl, temporaryFilename);
               if (System.IO.File.Exists(temporaryFilename))
               {
                 MediaPortal.Util.Picture.CreateThumbnail(temporaryFilename, coverArtImage, 128, 128, 0);
                 MediaPortal.Util.Picture.CreateThumbnail(temporaryFilename, largeCoverArtImage, 512, 512, 0);
               }
 
-              Utils.FileDelete(temporaryFilename);
+              MediaPortal.Util.Utils.FileDelete(temporaryFilename);
             }//if ( strExtension.Length>0)
             else
             {
-              Log.Write("image has no extension:{0}", imageUrl);
+              _log.Info("image has no extension:{0}", imageUrl);
             }
           }
           if ((System.IO.File.Exists(coverArtImage))&&(FolderForThumbs != string.Empty))
@@ -372,7 +372,7 @@ namespace MediaPortal.GUI.Video
             strFolderImage += "\\folder.jpg"; //TODO                  
             try
             {
-              Utils.FileDelete(strFolderImage);
+              MediaPortal.Util.Utils.FileDelete(strFolderImage);
               System.IO.File.Copy(coverArtImage, strFolderImage);
             }
             catch (Exception)

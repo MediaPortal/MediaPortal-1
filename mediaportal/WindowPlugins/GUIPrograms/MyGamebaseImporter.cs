@@ -26,6 +26,7 @@ using MediaPortal.GUI.Library;
 using Programs.Utils;
 using ProgramsDatabase;
 using SQLite.NET;
+using MediaPortal.Utils.Services;
 
 namespace WindowPlugins.GUIPrograms
 {
@@ -36,6 +37,7 @@ namespace WindowPlugins.GUIPrograms
   {
     private AppItem m_App = null;
     private SQLiteClient sqlDB = null;
+    protected ILog _log;
 
     // event: read new file
     public delegate void GamebaseEventHandler(string strLine, int curPos, int maxPos);
@@ -45,6 +47,9 @@ namespace WindowPlugins.GUIPrograms
 
     public MyGamebaseImporter(AppItem objApp, SQLiteClient objDB)
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+
       m_App = objApp;
       sqlDB = objDB;
     }
@@ -149,13 +154,13 @@ namespace WindowPlugins.GUIPrograms
               }
               else
               {
-                Log.Write("*skipped* gamebase game {0} image{1}", curRomname, curTitleImage);
+                _log.Info("*skipped* gamebase game {0} image{1}", curRomname, curTitleImage);
               }
 
             }
             else
             {
-              Log.Write("*missing* gamebase game {0}", curRomname);
+              _log.Info("*missing* gamebase game {0}", curRomname);
             }
           }
         }
@@ -166,7 +171,7 @@ namespace WindowPlugins.GUIPrograms
       }
       catch (Exception er)
       {
-        Log.Write("myProgams error in connecting to gamebase-mdb \n {0}", er.ToString());
+        _log.Info("myProgams error in connecting to gamebase-mdb \n {0}", er.ToString());
       }
       finally
       {
@@ -186,7 +191,7 @@ namespace WindowPlugins.GUIPrograms
       }
       catch (Exception er)
       {
-        Log.Write("myProgams error in connecting to gamebase-mdb \n {0}", er.ToString());
+        _log.Info("myProgams error in connecting to gamebase-mdb \n {0}", er.ToString());
       }
       finally
       {

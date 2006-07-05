@@ -37,6 +37,7 @@ using Microsoft.Win32;
 using Direct3D = Microsoft.DirectX.Direct3D;
 using MediaPortal.GUI.Library;
 using DirectShowLib;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Player
 {
@@ -57,11 +58,13 @@ namespace MediaPortal.Player
     static AxWMPLib.AxWindowsMediaPlayer _wmp10Player = null;
     bool _needUpdate = true;
     bool _notifyPlaying = true;
+    protected ILog _log;
 
     public AudioPlayerWMP9()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
     }
-
 
     static void CreateInstance()
     {
@@ -127,8 +130,8 @@ namespace MediaPortal.Player
       item.Label = "..";
       item.Label2 = "";
       item.Path = "";
-      Utils.SetDefaultIcons(item);
-      Utils.SetThumbnails(ref item);
+      MediaPortal.Util.Utils.SetDefaultIcons(item);
+      MediaPortal.Util.Utils.SetThumbnails(ref item);
       list.Add(item);
 
       CreateInstance();
@@ -197,7 +200,7 @@ namespace MediaPortal.Player
 
       if (!GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindow))
       {
-        Log.Write("AudioPlayerWMP9: Disabling DX9 exclusive mode");
+        _log.Info("AudioPlayerWMP9: Disabling DX9 exclusive mode");
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
         GUIWindowManager.SendMessage(msg);
       }
@@ -224,7 +227,7 @@ namespace MediaPortal.Player
         _wmp10Player.currentMedia = _wmp10Player.cdromCollection.Item(0).Playlist.get_Item(iTrack - 1);
         if (_wmp10Player.currentMedia == null) return false;
 
-        Log.Write("Audioplayer:play track:{0}/{1}", iTrack, _wmp10Player.cdromCollection.Item(0).Playlist.count);
+        _log.Info("Audioplayer:play track:{0}/{1}", iTrack, _wmp10Player.cdromCollection.Item(0).Playlist.count);
       }
       else if (strFile.IndexOf(".cda") >= 0)
       {
@@ -261,13 +264,13 @@ namespace MediaPortal.Player
         if (ipos >0) strStart += strFile.Substring(ipos+1);
         strFile=strStart;
         _currentFile=strFile;
-        Log.Write("Audioplayer:play {0}", strFile);*/
+        _log.Info("Audioplayer:play {0}", strFile);*/
         //_wmp10Player.URL=strFile;
         _currentFile = strFile;
       }
       else
       {
-        Log.Write("Audioplayer:play {0}", strFile);
+        _log.Info("Audioplayer:play {0}", strFile);
         _wmp10Player.URL = strFile;
       }
       _wmp10Player.Ctlcontrols.play();
@@ -309,9 +312,9 @@ namespace MediaPortal.Player
       // this is triggered only if movie has ended
       // ifso, stop the movie which will trigger MovieStopped
 
-      if (!Utils.IsAudio(_currentFile))
+      if (!MediaPortal.Util.Utils.IsAudio(_currentFile))
         GUIGraphicsContext.IsFullScreenVideo = false;
-      Log.Write("Audioplayer:ended {0} {1}", _currentFile, bManualStop);
+      _log.Info("Audioplayer:ended {0} {1}", _currentFile, bManualStop);
       _currentFile = "";
       if (_wmp10Player != null)
       {
@@ -589,7 +592,7 @@ namespace MediaPortal.Player
 
       if (_isFullScreen)
       {
-        Log.Write("AudioPlayer:Fullscreen");
+        _log.Info("AudioPlayer:Fullscreen");
 
         _positionX = GUIGraphicsContext.OverScanLeft;
         _positionY = GUIGraphicsContext.OverScanTop;
@@ -605,7 +608,7 @@ namespace MediaPortal.Player
 
         //_wmp10Player.fullScreen=true;
         _wmp10Player.stretchToFit = true;
-        Log.Write("AudioPlayer:done");
+        _log.Info("AudioPlayer:done");
         return;
       }
       else
@@ -616,7 +619,7 @@ namespace MediaPortal.Player
 
         _videoRectangle = new Rectangle(_positionX, _positionY, _wmp10Player.ClientSize.Width, _wmp10Player.ClientSize.Height);
         _sourceRectangle = _videoRectangle;
-        //Log.Write("AudioPlayer:set window:({0},{1})-({2},{3})",_positionX,_positionY,_positionX+_wmp10Player.ClientSize.Width,_positionY+_wmp10Player.ClientSize.Height);
+        //_log.Info("AudioPlayer:set window:({0},{1})-({2},{3})",_positionX,_positionY,_positionX+_wmp10Player.ClientSize.Width,_positionY+_wmp10Player.ClientSize.Height);
       }
       //_wmp10Player.uiMode = "none";
       //_wmp10Player.windowlessVideo = true;

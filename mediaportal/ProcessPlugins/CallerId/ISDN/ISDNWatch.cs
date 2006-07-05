@@ -25,6 +25,7 @@ using MediaPortal.GUI.Library;
 using System.Threading;
 using Microsoft.Win32;
 using System.Text;
+using MediaPortal.Utils.Services;
 
 namespace ProcessPlugins.CallerId
 {
@@ -120,6 +121,13 @@ namespace ProcessPlugins.CallerId
     const int HeaderLength = 8;
     const int CAPI_CONNECT = 0x02;
     const int CAPI_IND = 0x82;
+    static ILog _log;
+
+    public ISDNWatch()
+    {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+    }
 
     public class LocationInfo
     {
@@ -172,10 +180,10 @@ namespace ProcessPlugins.CallerId
       // Registering with CAPI
       int capiResult = CAPI_REGISTER(3072, 2, 7, 2048, ref applicationId);
       if (capiResult != 0)
-        Log.Write("ISDN: Application cannot register with CAPI");
+        _log.Info("ISDN: Application cannot register with CAPI");
       else
       {
-        Log.Write("ISDN: Application registered with CAPI ({0})", applicationId);
+        _log.Info("ISDN: Application registered with CAPI ({0})", applicationId);
 
         capiRequest capiRequest = new capiRequest();
         capiRequest.Length = 26;
@@ -192,10 +200,10 @@ namespace ProcessPlugins.CallerId
         capiResult = CAPI_PUT_MESSAGE(applicationId, capiRequest);
 
         if (capiResult != 0)
-          Log.Write("ISDN: CAPI signaling cannot be activated");
+          _log.Info("ISDN: CAPI signaling cannot be activated");
         else
         {
-          Log.Write("ISDN: CAPI signaling activated");
+          _log.Info("ISDN: CAPI signaling activated");
           
           while (!stopThread) // Waiting for signal and signal-processing
           {
@@ -210,7 +218,7 @@ namespace ProcessPlugins.CallerId
             {
               RtlMoveMemory(ref messageHeader, capiBufferPointer, HeaderLength);
 
-              Log.Write("ISDN: CAPI command: 0x{0} / 0x{1}", messageHeader.Command.ToString("X2"), messageHeader.SubCommand.ToString("X2"));
+              _log.Info("ISDN: CAPI command: 0x{0} / 0x{1}", messageHeader.Command.ToString("X2"), messageHeader.SubCommand.ToString("X2"));
 
               if ((messageHeader.Command == CAPI_CONNECT) && (messageHeader.SubCommand == CAPI_IND))
               {
@@ -226,7 +234,7 @@ namespace ProcessPlugins.CallerId
                       logBuffer = (char)ConnectInd.buffer[i] + logBuffer;
                   }
 
-                Log.Write("ISDN: Buffer: {0}", logBuffer);
+                _log.Info("ISDN: Buffer: {0}", logBuffer);
 
                 int lengthCalledId = ConnectInd.buffer[0];
                 int lengthCallerId = ConnectInd.buffer[lengthCalledId + 1];
@@ -237,13 +245,13 @@ namespace ProcessPlugins.CallerId
                   callerId = callerId + (char)ConnectInd.buffer[i];
 
                 callerId = callerId.TrimStart('0');
-                Log.Write("ISDN: stripped {0} leading zeros", lengthCallerId - callerId.Length - 2);
+                _log.Info("ISDN: stripped {0} leading zeros", lengthCallerId - callerId.Length - 2);
 
                 if (ConnectInd.buffer[lengthCalledId+2] == 17)  // International call
                   callerId = "+" + callerId;
 
-                Log.Write("ISDN: CalledID: {0}", calledId);
-                Log.Write("ISDN: CallerID: {0}", callerId);
+                _log.Info("ISDN: CalledID: {0}", calledId);
+                _log.Info("ISDN: CallerID: {0}", callerId);
 
                 CidReceiver(callerId);
               }
@@ -255,10 +263,10 @@ namespace ProcessPlugins.CallerId
           if (CAPI_RELEASE(applicationId) == 0)
           {
             stopThread = false;
-            Log.Write("ISDN: CAPI released ({0})", applicationId);
+            _log.Info("ISDN: CAPI released ({0})", applicationId);
           }
           else
-            Log.Write("ISDN: CAPI cannot be released");
+            _log.Info("ISDN: CAPI cannot be released");
         }
       }
     }
@@ -276,7 +284,7 @@ namespace ProcessPlugins.CallerId
           locationInfo.AreaCode = locationInfo.AreaCode.Remove(0, 1);
       }
       else
-        Log.Write("ISDN: Can't get TAPI location info!!!");
+        _log.Info("ISDN: Can't get TAPI location info!!!");
 
       return locationInfo;
     }

@@ -23,6 +23,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
 using System.Runtime.InteropServices;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.GUI.Library
 {
@@ -39,11 +40,18 @@ namespace MediaPortal.GUI.Library
 		unsafe private static extern void FontEngineSetDevice(void* device);
 
     static protected List<GUIFont> _listFonts = new List<GUIFont>();
+    static protected ILog _log;
 
 		// singleton. Dont allow any instance of this class
 		private GUIFontManager()
-		{
+    {
 		}
+
+    static GUIFontManager()
+    {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+    }
 
 		static public int Count
 		{
@@ -59,7 +67,7 @@ namespace MediaPortal.GUI.Library
 			// Clear current set of fonts
 			Dispose();
 			int counter=0;
-			Log.Write("  Load fonts from {0}", strFilename);
+			_log.Info("  Load fonts from {0}", strFilename);
 			_listFonts.Clear();
 
 			// Load the debug font
@@ -132,7 +140,7 @@ namespace MediaPortal.GUI.Library
 			}
 			catch(Exception ex)
 			{
-				Log.Write("exception loading fonts {0} err:{1} stack:{2}", strFilename, ex.Message,ex.StackTrace);
+				_log.Info("exception loading fonts {0} err:{1} stack:{2}", strFilename, ex.Message,ex.StackTrace);
 			}
 
 			return false;
@@ -181,7 +189,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		static public void	Dispose()
 		{
-			Log.Write("  fonts.Dispose()");
+			_log.Info("  fonts.Dispose()");
 			foreach (GUIFont font in _listFonts)
 			{
 				font.Dispose(null,null);
@@ -193,7 +201,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		static public void InitializeDeviceObjects()
 		{
-			Log.Write("  fonts.InitializeDeviceObjects()");
+			_log.Info("  fonts.InitializeDeviceObjects()");
       IntPtr upDevice = DShowNET.Helper.DirectShowUtil.GetUnmanagedDevice(GUIGraphicsContext.DX9Device);
 
       unsafe

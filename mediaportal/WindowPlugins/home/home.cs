@@ -248,11 +248,11 @@ namespace MediaPortal.GUI.Home
         else
           dialogNotify.SetHeading(1019); // Program is about to begin
         dialogNotify.SetText(String.Format("{0}\n{1}", notify.Title, notify.Description));
-        string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, notify.Channel);
+        string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, notify.Channel);
         dialogNotify.SetImage(strLogo);
         dialogNotify.TimeOut = _notifyTVTimeout;
         if ( _playNotifyBeep )
-          Utils.PlaySound("notify.wav", false, true);
+          MediaPortal.Util.Utils.PlaySound("notify.wav", false, true);
         dialogNotify.DoModal(GUIWindowManager.ActiveWindow);
       }
       switch (message.Message)
@@ -750,7 +750,7 @@ namespace MediaPortal.GUI.Home
         case GUIMessage.MessageType.GUI_MSG_CLICKED:  // Handle Menu tags
           {
             //get sender control
-            Log.Write(" OnMessage : MessageType.GUI_MSG_CLICKED");
+            _log.Info(" OnMessage : MessageType.GUI_MSG_CLICKED");
             base.OnMessage(message);
             int bControl = message.SenderControlId;
             if ( bControl > 1 && bControl < 60 )

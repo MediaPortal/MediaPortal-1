@@ -33,6 +33,8 @@ using System.Runtime.Serialization.Formatters.Soap;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.View;
+using MediaPortal.Utils.Services;
+
 #pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
@@ -207,7 +209,9 @@ namespace MediaPortal.Configuration.Sections
       }
       else
       {
-        Log.Write("MusicViews.xml not found.  No Music Views will be available...");
+        ServiceProvider services = GlobalServiceProvider.Instance;
+        ILog log = services.Get<ILog>();
+        log.Info("MusicViews.xml not found.  No Music Views will be available...");
       }
       LoadViews();
     }

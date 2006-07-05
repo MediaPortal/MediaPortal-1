@@ -24,6 +24,7 @@ using System.Collections;
 using MediaPortal.GUI.Library;
 using Programs.Utils;
 using SQLite.NET;
+using MediaPortal.Utils.Services;
 
 namespace ProgramsDatabase
 {
@@ -33,8 +34,13 @@ namespace ProgramsDatabase
   public class FilelinkItem: FileItem
   {
     int mTargetAppID;
+    new protected ILog _log;
 
-    public FilelinkItem(SQLiteClient initSqlDB): base(initSqlDB){}
+    public FilelinkItem(SQLiteClient initSqlDB): base(initSqlDB)
+    {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+    }
 
     public int TargetAppID
     {
@@ -79,7 +85,7 @@ namespace ProgramsDatabase
       catch (SQLiteException ex)
       {
         sqlDB.Execute("rollback");
-        Log.Write("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        _log.Info("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
       }
     }
 
@@ -105,14 +111,14 @@ namespace ProgramsDatabase
         //sqlDB.Execute("begin");
         string strSQL2 = String.Format(String.Format("INSERT INTO filterItem (appid, grouperAppID, fileID, filename) VALUES ({0}, {1}, {2}, '{3}')",
           this.TargetAppID, this.AppID, this.FileID, ProgramUtils.Encode(Filename)));
-        // Log.Write("hi from filelinkiteminsert: {0}", strSQL2);
+        // _log.Info("hi from filelinkiteminsert: {0}", strSQL2);
         sqlDB.Execute(strSQL2);
         //sqlDB.Execute("commit");
       }
       catch (SQLiteException ex)
       {
         sqlDB.Execute("rollback");
-        Log.Write("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        _log.Info("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
       }
     }
 

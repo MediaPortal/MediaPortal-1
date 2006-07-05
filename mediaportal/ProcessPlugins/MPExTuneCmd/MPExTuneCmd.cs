@@ -31,7 +31,7 @@ using System.Threading;
 using System.Text;
 using System.IO;
 using Microsoft.Win32;
-
+using MediaPortal.Utils.Services;
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.MPExTuneCmd
@@ -45,21 +45,21 @@ namespace MediaPortal.MPExTuneCmd
 		private static string s_TuneCmd		= "";
 		private static string s_TuneParam	= "";
 		private const string  s_version     = "0.1";
+    protected ILog _log;
 
 		public MPExTuneCmd()
-		{
-			//
-			// TODO: Add constructor logic here
-			//
+    {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
 		}
 
 		public void Start()
 		{
-			Log.Write("MPExTuneCmd {0} plugin starting.",s_version);
+			_log.Info("MPExTuneCmd {0} plugin starting.",s_version);
 
 			LoadSettings();
 
-			Log.Write("Adding message handler for MPExTuneCmd {0}.",s_version);
+			_log.Info("Adding message handler for MPExTuneCmd {0}.",s_version);
 
 			GUIWindowManager.Receivers += new SendMessageHandler(this.OnThreadMessage);
 			return;
@@ -67,7 +67,7 @@ namespace MediaPortal.MPExTuneCmd
 
 		public void Stop()
 		{
-			Log.Write("MPExTuneCmd {0} plugin stopping.",s_version);
+			_log.Info("MPExTuneCmd {0} plugin stopping.",s_version);
 			return;
 		}
 
@@ -95,7 +95,7 @@ namespace MediaPortal.MPExTuneCmd
 
 		public void ChangeTunerChannel(string channel_data) 
 		{
-			Log.Write("MPExTuneCmd processing external tuner cmd: {0}", s_TuneCmd + " " + s_TuneParam + channel_data );
+			_log.Info("MPExTuneCmd processing external tuner cmd: {0}", s_TuneCmd + " " + s_TuneParam + channel_data );
 			this.RunProgram(s_TuneCmd, s_TuneParam + channel_data );
 
 		}

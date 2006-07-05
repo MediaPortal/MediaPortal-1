@@ -164,7 +164,7 @@ namespace MediaPortal.GUI.Music
       GetID = (int)GUIWindow.Window.WINDOW_MUSIC_FILES;
 
       m_directory.AddDrives();
-      m_directory.SetExtensions(Utils.AudioExtensions);
+      m_directory.SetExtensions(MediaPortal.Util.Utils.AudioExtensions);
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
@@ -217,10 +217,10 @@ namespace MediaPortal.GUI.Music
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         m_bFileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
-        m_strFileMenuPinCode = Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", String.Empty));
+        m_strFileMenuPinCode = MediaPortal.Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", String.Empty));
 
         m_strPlayListPath = xmlreader.GetValueAsString("music", "playlists", String.Empty);
-        m_strPlayListPath = Utils.RemoveTrailingSlash(m_strPlayListPath);
+        m_strPlayListPath = MediaPortal.Util.Utils.RemoveTrailingSlash(m_strPlayListPath);
 
         m_bAutoShuffle = xmlreader.GetValueAsBool("musicfiles", "autoshuffle", true);
 
@@ -243,7 +243,7 @@ namespace MediaPortal.GUI.Music
           Share share = new Share();
           share.Name = xmlreader.GetValueAsString("music", strShareName, String.Empty);
           share.Path = xmlreader.GetValueAsString("music", strSharePath, String.Empty);
-          string pinCode = Utils.DecryptPin(xmlreader.GetValueAsString("music", strPincode, string.Empty));
+          string pinCode = MediaPortal.Util.Utils.DecryptPin(xmlreader.GetValueAsString("music", strPincode, string.Empty));
           if (pinCode != string.Empty)
             share.Pincode = Convert.ToInt32(pinCode);
           else
@@ -372,7 +372,7 @@ namespace MediaPortal.GUI.Music
       {
         for (char c = 'C'; c <= 'Z'; c++)
         {
-          if ((Utils.GetDriveType(c + ":") & 5) == 5)
+          if ((MediaPortal.Util.Utils.GetDriveType(c + ":") & 5) == 5)
           {
             OnPlayCD(c + ":", false);
             break;
@@ -402,12 +402,12 @@ namespace MediaPortal.GUI.Music
         case GUIMessage.MessageType.GUI_MSG_PLAY_AUDIO_CD:
           if (message.Label2 == "Ask")
           {
-            Log.Write("OnPlayCD (false), vragen dus.");
+            _log.Info("OnPlayCD (false), vragen dus.");
             OnPlayCD(message.Label, false);
           }
           else
           {
-            Log.Write("OnPlayCD (true), niet vragen dus");
+            _log.Info("OnPlayCD (true), niet vragen dus");
             OnPlayCD(message.Label, true);
           }
 
@@ -415,13 +415,13 @@ namespace MediaPortal.GUI.Music
 
         case GUIMessage.MessageType.GUI_MSG_CD_REMOVED:
           GUIMusicFiles.MusicCD = null;
-          if (g_Player.Playing && Utils.IsCDDA(g_Player.CurrentFile))
+          if (g_Player.Playing && MediaPortal.Util.Utils.IsCDDA(g_Player.CurrentFile))
           {
             g_Player.Stop();
           }
           if (GUIWindowManager.ActiveWindow == GetID)
           {
-            if (Utils.IsDVD(currentFolder))
+            if (MediaPortal.Util.Utils.IsDVD(currentFolder))
             {
               currentFolder = String.Empty;
               LoadDirectory(currentFolder);
@@ -471,7 +471,7 @@ namespace MediaPortal.GUI.Music
     ////    dlg.Reset();
     ////    dlg.SetHeading(924); // menu
 
-    ////    if ((!item.IsFolder) && (Utils.getDriveType(item.Path.Substring(0, 2)) == 5))
+    ////    if ((!item.IsFolder) && (MediaPortal.Util.Utils.getDriveType(item.Path.Substring(0, 2)) == 5))
     ////    {
     ////        dlg.AddLocalizedString(1100); //Import CD
     ////        dlg.AddLocalizedString(1101); //Import Track
@@ -489,7 +489,7 @@ namespace MediaPortal.GUI.Music
     ////    }
     ////    else
     ////    {
-    ////        if ((System.IO.Path.GetFileName(item.Path) != String.Empty) || Utils.IsDVD(item.Path))
+    ////        if ((System.IO.Path.GetFileName(item.Path) != String.Empty) || MediaPortal.Util.Utils.IsDVD(item.Path))
     ////        {
     ////            dlg.AddLocalizedString(928); //find coverart
     ////            dlg.AddLocalizedString(4521); //Show Album Info
@@ -501,10 +501,10 @@ namespace MediaPortal.GUI.Music
     ////            }
     ////        }
 
-    ////        if (!item.IsFolder || Utils.IsDVD(item.Path))
+    ////        if (!item.IsFolder || MediaPortal.Util.Utils.IsDVD(item.Path))
     ////            dlg.AddLocalizedString(208); //play
 
-    ////        if (Utils.getDriveType(item.Path) == 5)
+    ////        if (MediaPortal.Util.Utils.getDriveType(item.Path) == 5)
     ////            dlg.AddLocalizedString(654); //Eject
 
     ////        int iPincodeCorrect;
@@ -534,7 +534,7 @@ namespace MediaPortal.GUI.Music
     ////            break;
 
     ////        case 208: // play
-    ////            if (Utils.getDriveType(item.Path) != 5)
+    ////            if (MediaPortal.Util.Utils.getDriveType(item.Path) != 5)
     ////                OnClick(itemNo);
     ////            else
     ////                //Playing the CD from the context menu
@@ -552,8 +552,8 @@ namespace MediaPortal.GUI.Music
     ////            break;
 
     ////        case 654: // Eject
-    ////            if (Utils.getDriveType(item.Path) != 5) Utils.EjectCDROM();
-    ////            else Utils.EjectCDROM(System.IO.Path.GetPathRoot(item.Path));
+    ////            if (MediaPortal.Util.Utils.getDriveType(item.Path) != 5) MediaPortal.Util.Utils.EjectCDROM();
+    ////            else MediaPortal.Util.Utils.EjectCDROM(System.IO.Path.GetPathRoot(item.Path));
     ////            LoadDirectory(String.Empty);
     ////            break;
 
@@ -651,7 +651,7 @@ namespace MediaPortal.GUI.Music
       dlg.Reset();
       dlg.SetHeading(924); // menu
 
-      if ((!item.IsFolder) && (Utils.getDriveType(item.Path.Substring(0, 2)) == 5))
+      if ((!item.IsFolder) && (MediaPortal.Util.Utils.getDriveType(item.Path.Substring(0, 2)) == 5))
       {
         dlg.AddLocalizedString(1100); //Import CD
         dlg.AddLocalizedString(1101); //Import Track
@@ -689,7 +689,7 @@ namespace MediaPortal.GUI.Music
           }
         }
 
-        if (Utils.getDriveType(item.Path) == 5)
+        if (MediaPortal.Util.Utils.getDriveType(item.Path) == 5)
           dlg.AddLocalizedString(654); //Eject
 
         int iPincodeCorrect;
@@ -745,8 +745,8 @@ namespace MediaPortal.GUI.Music
           break;
 
         case 654: // Eject
-          if (Utils.getDriveType(item.Path) != 5) Utils.EjectCDROM();
-          else Utils.EjectCDROM(System.IO.Path.GetPathRoot(item.Path));
+          if (MediaPortal.Util.Utils.getDriveType(item.Path) != 5) MediaPortal.Util.Utils.EjectCDROM();
+          else MediaPortal.Util.Utils.EjectCDROM(System.IO.Path.GetPathRoot(item.Path));
           LoadDirectory(String.Empty);
           break;
 
@@ -993,7 +993,7 @@ namespace MediaPortal.GUI.Music
     {
       for (char c = 'C'; c <= 'Z'; c++)
       {
-        if ((Utils.GetDriveType(c + ":") & 5) == 5)
+        if ((MediaPortal.Util.Utils.GetDriveType(c + ":") & 5) == 5)
         {
           OnPlayCD(c + ":", false);
           break;
@@ -1176,7 +1176,7 @@ namespace MediaPortal.GUI.Music
       if (totalPlayingTime.Seconds > 0)
       {
         strObjects = String.Format("{0} {1}, {2}", iTotalItems, GUILocalizeStrings.Get(1052),
-                    Utils.SecondsToHMSString((int)totalPlayingTime.TotalSeconds));//songs
+                    MediaPortal.Util.Utils.SecondsToHMSString((int)totalPlayingTime.TotalSeconds));//songs
       }
 
       GUIPropertyManager.SetProperty("#itemcount", strObjects);
@@ -1222,7 +1222,7 @@ namespace MediaPortal.GUI.Music
 
         catch (Exception ex)
         {
-          Log.Write("GUIMusicFiles.AddItemToPlayList at itemlist.Sort: {0}", ex.Message);
+          _log.Info("GUIMusicFiles.AddItemToPlayList at itemlist.Sort: {0}", ex.Message);
         }
 
         foreach (GUIListItem item in itemlist)
@@ -1234,7 +1234,7 @@ namespace MediaPortal.GUI.Music
       else
       {
         //TODO
-        if (Utils.IsAudio(pItem.Path) && !PlayListFactory.IsPlayList(pItem.Path))
+        if (MediaPortal.Util.Utils.IsAudio(pItem.Path) && !PlayListFactory.IsPlayList(pItem.Path))
         {
           List<GUIListItem> list = new List<GUIListItem>();
           list.Add(pItem);
@@ -1273,7 +1273,7 @@ namespace MediaPortal.GUI.Music
     }
     protected override void OnRetrieveCoverArt(GUIListItem item)
     {
-      Utils.SetDefaultIcons(item);
+      MediaPortal.Util.Utils.SetDefaultIcons(item);
       if (item.Label == "..") return;
       int pin;
       if (item.IsFolder && (m_directory.IsProtectedShare(item.Path, out pin))) return;
@@ -1285,7 +1285,7 @@ namespace MediaPortal.GUI.Music
       string strFolderThumb = String.Empty;
       if (isfolder)
       {
-        strFolderThumb = String.Format(@"{0}\folder.jpg", Utils.RemoveTrailingSlash(filename));
+        strFolderThumb = String.Format(@"{0}\folder.jpg", MediaPortal.Util.Utils.RemoveTrailingSlash(filename));
         if (System.IO.File.Exists(strFolderThumb))
         {
           return strFolderThumb;
@@ -1696,7 +1696,7 @@ namespace MediaPortal.GUI.Music
               catch (Exception e)
               {
                 // log the problem...
-                Log.Write("OnRetrieveMusicInfo: {0}", e.ToString());
+                _log.Info("OnRetrieveMusicInfo: {0}", e.ToString());
               }
             }
           }//if (!tag.Loaded() )
@@ -1856,7 +1856,7 @@ namespace MediaPortal.GUI.Music
 
         string oldFolder = currentFolder;
         VirtualDirectory dir = new VirtualDirectory();
-        dir.SetExtensions(Utils.AudioExtensions);
+        dir.SetExtensions(MediaPortal.Util.Utils.AudioExtensions);
         List<GUIListItem> items = dir.GetDirectoryUnProtectedExt(pItem.Path, true);
 
         if (items.Count < 2)
@@ -1904,7 +1904,7 @@ namespace MediaPortal.GUI.Music
       {
         string oldFolder = currentFolder;
         VirtualDirectory dir = new VirtualDirectory();
-        dir.SetExtensions(Utils.AudioExtensions);
+        dir.SetExtensions(MediaPortal.Util.Utils.AudioExtensions);
         List<GUIListItem> items = dir.GetDirectoryUnProtectedExt(pItem.Path, true);
 
         if (items.Count < 2)
@@ -2137,7 +2137,7 @@ namespace MediaPortal.GUI.Music
         return false;
 
       Share share = m_directory.GetShare(pItem.Path);
-      bool isCdOrDvd = Utils.IsDVD(pItem.Path);
+      bool isCdOrDvd = MediaPortal.Util.Utils.IsDVD(pItem.Path);
 
       if (!isCdOrDvd && share != null && share.Path == pItem.Path)
         return true;
@@ -2162,7 +2162,7 @@ namespace MediaPortal.GUI.Music
 
     private bool IsCD(string path)
     {
-      if (Utils.IsDVD(path))
+      if (MediaPortal.Util.Utils.IsDVD(path))
       {
         string rootDir = path.Substring(0, 2);
         string video_tsPath = System.IO.Path.Combine(rootDir, "VIDEO_TS");
@@ -2175,7 +2175,7 @@ namespace MediaPortal.GUI.Music
 
     private bool IsDVD(string path)
     {
-      if (Utils.IsDVD(path))
+      if (MediaPortal.Util.Utils.IsDVD(path))
       {
         string rootDir = path.Substring(0, 2);
         string video_tsPath = System.IO.Path.Combine(rootDir, "VIDEO_TS");

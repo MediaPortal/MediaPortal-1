@@ -153,29 +153,29 @@ namespace DShowNET
           (info.achName == TechnoTrend.USB2_T_TUNER) ||
           (info.achName == TechnoTrend.USB2_S_TUNER))
       {
-        Log.WriteFile(Log.LogType.Log, "TechnoTrend card type:{0}", TechnoTrendDeviceType.eDevTypeUsb2);
+        _log.Info("TechnoTrend card type:{0}", TechnoTrendDeviceType.eDevTypeUsb2);
         _deviceType = TechnoTrendDeviceType.eDevTypeUsb2;
       }
       else if (info.achName == TechnoTrend.BUDGET3_TUNER)
       {
-        Log.WriteFile(Log.LogType.Log, "TechnoTrend card type:{0}", TechnoTrendDeviceType.eDevTypeB3);
+        _log.Info("TechnoTrend card type:{0}", TechnoTrendDeviceType.eDevTypeB3);
         _deviceType = TechnoTrendDeviceType.eDevTypeB3;
       }
       else if ((info.achName == TechnoTrend.BUDGET2_C_TUNER) ||
                 (info.achName == TechnoTrend.BUDGET2_S_TUNER) ||
                 (info.achName == TechnoTrend.BUDGET2_T_TUNER))
       {
-        Log.WriteFile(Log.LogType.Log, "TechnoTrend card type:{0}", TechnoTrendDeviceType.eDevTypeB2);
+        _log.Info("TechnoTrend card type:{0}", TechnoTrendDeviceType.eDevTypeB2);
         _deviceType = TechnoTrendDeviceType.eDevTypeB2;
       }
       else if (info.achName == TechnoTrend.USB2_PINNACLE_TUNER)
       {
-        Log.WriteFile(Log.LogType.Log, "TechnoTrend card type:{0}", TechnoTrendDeviceType.eDevTypeUsb2Pinnacle);
+        _log.Info("TechnoTrend card type:{0}", TechnoTrendDeviceType.eDevTypeUsb2Pinnacle);
         _deviceType = TechnoTrendDeviceType.eDevTypeUsb2Pinnacle;
       }
       else
       {
-        // Log.WriteFile(Log.LogType.Log, "Technotrend Unknown card type");
+        // _log.Info("Technotrend Unknown card type");
         _deviceType = TechnoTrendDeviceType.eTypeUnknown;
       }
 
@@ -186,7 +186,7 @@ namespace DShowNET
         _handle = bdaapiOpenHWIdx((UInt32)_deviceType, deviceId);
         if (_handle != 0xffffffff)
         {
-          Log.WriteFile(Log.LogType.Log, false, "Technotrend: card detected");
+          _log.Info("Technotrend: card detected");
           _isCamInitializedTable.Add(_handle, false);
           unsafe
           {
@@ -197,7 +197,7 @@ namespace DShowNET
             int hr = bdaapiOpenCISlim(_handle, _technoTrendStructure);
             if (hr == 0)
             {
-              Log.WriteFile(Log.LogType.Log, false, "Technotrend: CI opened");
+              _log.Info("Technotrend: CI opened");
               _hasCam = true;
             }
             return;
@@ -206,7 +206,7 @@ namespace DShowNET
       }
       catch (Exception)
       {
-        Log.WriteFile(Log.LogType.Log, true, "Technotrend: unable to initialize (does ttBdaDrvApi_Dll.dll exists?)");
+        _log.Error("Technotrend: unable to initialize (does ttBdaDrvApi_Dll.dll exists?)");
         //int x = 1;
       }
       _deviceType = TechnoTrendDeviceType.eTypeUnknown;
@@ -214,11 +214,11 @@ namespace DShowNET
 
     int GetDeviceID(IBaseFilter tunerfilter)
     {
-      Log.WriteFile(Log.LogType.Log, "TechnoTrend: Looking Device ID");
+      _log.Info("TechnoTrend: Looking Device ID");
       IPin outputPin = DirectShowLib.DsFindPin.ByDirection(tunerfilter, PinDirection.Output, 0);
       if (outputPin == null)
         return -1;
-      Log.WriteFile(Log.LogType.Log, "TechnoTrend: Got Pin");
+      _log.Info("TechnoTrend: Got Pin");
       IKsPin iKsPin = outputPin as IKsPin;
       KSMULTIPLE_ITEM pmi;
       IntPtr pDataReturned;
@@ -226,11 +226,11 @@ namespace DShowNET
       Marshal.ReleaseComObject(outputPin);
       if (hr != 0)
       {
-        Log.WriteFile(Log.LogType.Log, "TechnoTrend: Pin does not support Mediums");
+        _log.Info("TechnoTrend: Pin does not support Mediums");
         return -1;  // Pin does not support mediums.
       }
       pmi = (KSMULTIPLE_ITEM)Marshal.PtrToStructure(pDataReturned, typeof(KSMULTIPLE_ITEM));
-      Log.WriteFile(Log.LogType.Log, "TechnoTrend: Got Mediums:{0}", pmi.Count);
+      _log.Info("TechnoTrend: Got Mediums:{0}", pmi.Count);
       if (pmi.Count != 0)
       {
         // Use pointer arithmetic to reference the first medium structure.
@@ -241,7 +241,7 @@ namespace DShowNET
         REGPINMEDIUM medium = (REGPINMEDIUM)Marshal.PtrToStructure(ptrData, typeof(REGPINMEDIUM));
         int id = (int)medium.dw1;
         Marshal.FreeCoTaskMem(pDataReturned);
-        Log.WriteFile(Log.LogType.Log, "TechnoTrend: Device ID:{0}", id);
+        _log.Info("TechnoTrend: Device ID:{0}", id);
         return id;
       }
       else
@@ -257,7 +257,7 @@ namespace DShowNET
       if (_handle != 0xffffffff)
       {
         _isCamInitializedTable.Remove(_handle);
-        Log.WriteFile(Log.LogType.Log, false, "Technotrend: close");
+        _log.Info("Technotrend: close");
         if (_hasCam)
         {
           bdaapiCloseCI(_handle);
@@ -288,18 +288,18 @@ namespace DShowNET
     {
       if ((bool)_isCamInitializedTable[_handle] == false)
       {
-        Log.WriteFile(Log.LogType.Log, false, "Technotrend: service cannot be decoded because the CAM is not ready yet");
+        _log.Info("Technotrend: service cannot be decoded because the CAM is not ready yet");
         return false;
       }
       int hr = bdaapiCIReadPSIFastDrvDemux(_handle, serviceId);
       if (hr == 0)
       {
-        Log.WriteFile(Log.LogType.Log, false, "Technotrend: service decoded");
+        _log.Info("Technotrend: service decoded");
         return true;
       }
       else
       {
-        Log.WriteFile(Log.LogType.Log, false, "Technotrend: unable to decode service");
+        _log.Info("Technotrend: unable to decode service");
         return false;
       }
     }
@@ -396,7 +396,7 @@ namespace DShowNET
         Marshal.WriteByte(ptrData, 3, (byte)((diseqc) & 0xff));
 
         bdaapiSetDiSEqCMsg(_handle, ptrData, length, repeat, toneburst, pol);
-        Log.WriteFile(Log.LogType.Log, false, "Technotrend: Diseqc Command Send");
+        _log.Info("Technotrend: Diseqc Command Send");
       }
       finally
       {
@@ -414,25 +414,25 @@ namespace DShowNET
     {
       int uiAntPwrOnOff = 0;
       string Get5vAntennae = "Disabled";
-      Log.WriteFile(Log.LogType.Log, "Setting TechnoTrend DVB-T 5v Antennae Power enabled:{0}", onOff);
+      _log.Info("Setting TechnoTrend DVB-T 5v Antennae Power enabled:{0}", onOff);
       bdaapiSetDVBTAntPwr(_handle, onOff);
       bdaapiGetDVBTAntPwr(_handle, ref uiAntPwrOnOff);
       if (uiAntPwrOnOff == 0) Get5vAntennae = "Disabled";
       if (uiAntPwrOnOff == 1) Get5vAntennae = "Enabled";
       if (uiAntPwrOnOff == 2) Get5vAntennae = "Not Connected";
-      Log.WriteFile(Log.LogType.Log, "TechnoTrend DVB-T 5v Antennae status:{0}", Get5vAntennae);
+      _log.Info("TechnoTrend DVB-T 5v Antennae status:{0}", Get5vAntennae);
     }
 
     unsafe public static void OnSlotStatus(UInt32 Context, Byte nSlot, Byte nStatus, SlotInfo* csInfo)
     {
       if ((nStatus == 2) || (nStatus == 3) || (nStatus == 4))
       {
-        Log.WriteFile(Log.LogType.Log, false, "Technotrend: CAM initialized {0}", Context);
+        _log.Info("Technotrend: CAM initialized {0}", Context);
         _isCamInitializedTable[Context] = true;
       }
       else
       {
-        Log.WriteFile(Log.LogType.Log, false, "Technotrend: CAM not initialized, Card;{0} status:{1}", Context, nStatus);
+        _log.Info("Technotrend: CAM not initialized, Card;{0} status:{1}", Context, nStatus);
         _isCamInitializedTable[Context] = false;
       }
 

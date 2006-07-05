@@ -32,6 +32,7 @@ using SQLite.NET;
 using DShowNET;
 using DirectShowLib;
 using MediaPortal.Database;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.TV.Database
 {
@@ -102,6 +103,7 @@ namespace MediaPortal.TV.Database
     static public event OnRecordingChangedHandler OnRecordingsChanged = null;
     static public event OnChangedHandler OnNotifiesChanged = null;
     static public event OnChangedHandler OnChannelsChanged = null;
+    static ILog _log;
 
     /// <summary>
     /// private constructor to prevent any instance of this class
@@ -115,6 +117,8 @@ namespace MediaPortal.TV.Database
     /// </summary>
     static TVDatabase()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
 
       Open();
     }
@@ -125,7 +129,7 @@ namespace MediaPortal.TV.Database
         try
         {
           // Open database
-          Log.WriteFile(Log.LogType.Log, false, "opening tvdatabase");
+          _log.Info("opening tvdatabase");
 
           String strPath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.
             GetExecutingAssembly().Location);
@@ -145,9 +149,9 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         }
-        Log.WriteFile(Log.LogType.Log, false, "tvdatabase opened");
+        _log.Info("tvdatabase opened");
       }
     }
 
@@ -206,8 +210,8 @@ namespace MediaPortal.TV.Database
         m_db.Execute("ALTER TABLE recording ADD COLUMN keepMethod Integer");
         m_db.Execute("ALTER TABLE recording ADD COLUMN keepDate text");
         DateTime maxDate = DateTime.MaxValue;
-        m_db.Execute(String.Format("update recorded set keepMethod={0}, keepDate='{1}'", (int)TVRecorded.KeepMethod.Always, Utils.datetolong(maxDate)));
-        m_db.Execute(String.Format("update recording set keepMethod={0}, keepDate='{1}'", (int)TVRecorded.KeepMethod.Always, Utils.datetolong(maxDate)));
+        m_db.Execute(String.Format("update recorded set keepMethod={0}, keepDate='{1}'", (int)TVRecorded.KeepMethod.Always, MediaPortal.Util.Utils.datetolong(maxDate)));
+        m_db.Execute(String.Format("update recording set keepMethod={0}, keepDate='{1}'", (int)TVRecorded.KeepMethod.Always, MediaPortal.Util.Utils.datetolong(maxDate)));
       }
 
       if (versionNr < 5)
@@ -233,7 +237,7 @@ namespace MediaPortal.TV.Database
       {
         DateTime dtStart = new DateTime(1971, 11, 6);
         m_db.Execute("ALTER TABLE channel ADD COLUMN epgLastUpdate text");
-        m_db.Execute(String.Format("update channel set epglastupdate='{0}'", Utils.datetolong(dtStart)));
+        m_db.Execute(String.Format("update channel set epglastupdate='{0}'", MediaPortal.Util.Utils.datetolong(dtStart)));
       }
       m_db.Execute(String.Format("update tblversion set idVersion={0}", currentVersion));
     }
@@ -378,7 +382,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception SQL:{0} err:{1} stack:{2}", strSQL, ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception SQL:{0} err:{1} stack:{2}", strSQL, ex.Message, ex.StackTrace);
           Open();
         }
 
@@ -453,7 +457,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception {0} err:{1} stack:{2}", strSQL, ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception {0} err:{1} stack:{2}", strSQL, ex.Message, ex.StackTrace);
           Open();
         }
 
@@ -480,7 +484,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
 
@@ -559,7 +563,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
         return false;
@@ -588,7 +592,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -658,7 +662,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
         return false;
@@ -681,7 +685,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -702,7 +706,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -739,7 +743,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
 
@@ -775,7 +779,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
 
@@ -798,7 +802,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -818,7 +822,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -841,7 +845,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -875,13 +879,13 @@ namespace MediaPortal.TV.Database
             channel.Number, channel.Frequency.ToString(),
             sort, iExternal, strExternal, (int)channel.TVStandard, iVisible, channel.Country,
             strChannel, scrambled, grabEpg, channel.EpgHours,
-            Utils.datetolong(channel.LastDateTimeEpgGrabbed),
+            MediaPortal.Util.Utils.datetolong(channel.LastDateTimeEpgGrabbed),
             channel.ID);
           m_db.Execute(strSQL);
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -930,14 +934,14 @@ namespace MediaPortal.TV.Database
               strSQL = String.Format("insert into channel (idChannel, strChannel,iChannelNr ,frequency,iSort, bExternal, ExternalChannel,standard, Visible, Country, scrambled,grabEpg,epgHours,epgLastUpdate) values ( {13}, '{0}', {1}, {2}, {3}, {4},'{5}', {6}, {7}, {8}, {9},{10},{11},'{12}' )",
               strChannel, channel.Number, channel.Frequency.ToString(),
               totalchannels + 1, iExternal, strExternal, (int)channel.TVStandard, iVisible, channel.Country, scrambled, grabepg, channel.EpgHours,
-              Utils.datetolong(channel.LastDateTimeEpgGrabbed), channel.ID);
+              MediaPortal.Util.Utils.datetolong(channel.LastDateTimeEpgGrabbed), channel.ID);
             }
             else
             {
               strSQL = String.Format("insert into channel (idChannel, strChannel,iChannelNr ,frequency,iSort, bExternal, ExternalChannel,standard, Visible, Country, scrambled,grabEpg,epgHours,epgLastUpdate) values ( NULL, '{0}', {1}, {2}, {3}, {4},'{5}', {6}, {7}, {8}, {9},{10},{11},'{12}' )",
               strChannel, channel.Number, channel.Frequency.ToString(),
               totalchannels + 1, iExternal, strExternal, (int)channel.TVStandard, iVisible, channel.Country, scrambled, grabepg, channel.EpgHours,
-              Utils.datetolong(channel.LastDateTimeEpgGrabbed));
+              MediaPortal.Util.Utils.datetolong(channel.LastDateTimeEpgGrabbed));
             }
             m_db.Execute(strSQL);
             int iNewID = m_db.LastInsertID();
@@ -961,7 +965,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception sql:{0} err:{1} stack:{2}", strSQL, ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception sql:{0} err:{1} stack:{2}", strSQL, ex.Message, ex.StackTrace);
           Open();
         }
 
@@ -1011,7 +1015,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
 
@@ -1064,7 +1068,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
 
@@ -1122,7 +1126,7 @@ namespace MediaPortal.TV.Database
                                          prog.Start.ToString(), prog.End.ToString());
           strSQL += String.Format("    ('{0}' < iStartTime and '{1}' > iStartTime ) )",
                                           prog.Start.ToString(), prog.End.ToString());
-          //  Log.WriteFile(Log.LogType.EPG, "sql:{0} {1}-{2} {3}", prog.Channel, prog.Start.ToString(), endTime.ToString(), strSQL);
+          //  _log.Info("sql:{0} {1}-{2} {3}", prog.Channel, prog.Start.ToString(), endTime.ToString(), strSQL);
           SQLiteResultSet results2;
           results2 = m_db.Execute(strSQL);
           if (results2.Rows.Count > 0)
@@ -1144,7 +1148,7 @@ namespace MediaPortal.TV.Database
             for (int i = 0; i < results2.Rows.Count; ++i)
             {
               long idProgram = DatabaseUtility.GetAsInt64(results2, i, "idProgram");
-              Log.WriteFile(Log.LogType.EPG, "sql: del {0} id:{1} {2}-{3}", i, idProgram, DatabaseUtility.Get(results2, i, "iStartTime"), DatabaseUtility.Get(results2, i, "iEndTime"));
+              _log.Info("sql: del {0} id:{1} {2}-{3}", i, idProgram, DatabaseUtility.Get(results2, i, "iStartTime"), DatabaseUtility.Get(results2, i, "iEndTime"));
               strSQL = String.Format("DELETE FROM tblPrograms WHERE idProgram={0}", idProgram);
               m_db.Execute(strSQL);
             }
@@ -1159,7 +1163,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
 
@@ -1225,7 +1229,7 @@ namespace MediaPortal.TV.Database
             else chan.AutoGrabEpg = false;
 
             chan.EpgHours = DatabaseUtility.GetAsInt(results, i, 16);
-            chan.LastDateTimeEpgGrabbed = Utils.longtodate(DatabaseUtility.GetAsInt64(results, i, 17));
+            chan.LastDateTimeEpgGrabbed = MediaPortal.Util.Utils.longtodate(DatabaseUtility.GetAsInt64(results, i, 17));
 
             chan.ExternalTunerChannel = DatabaseUtility.Get(results, i, 7);
             chan.TVStandard = (AnalogVideoStandard)DatabaseUtility.GetAsInt(results, i, 8);
@@ -1255,7 +1259,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
         return false;
@@ -1316,7 +1320,7 @@ namespace MediaPortal.TV.Database
             else chan.AutoGrabEpg = false;
 
             chan.EpgHours = DatabaseUtility.GetAsInt(results, i, "epgHours");
-            chan.LastDateTimeEpgGrabbed = Utils.longtodate(DatabaseUtility.GetAsInt64(results, i, "epgLastUpdate"));
+            chan.LastDateTimeEpgGrabbed = MediaPortal.Util.Utils.longtodate(DatabaseUtility.GetAsInt64(results, i, "epgLastUpdate"));
 
             chan.Sort = DatabaseUtility.GetAsInt(results, i, "iSort");
 
@@ -1333,7 +1337,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
         return false;
@@ -1389,7 +1393,7 @@ namespace MediaPortal.TV.Database
           else chan.AutoGrabEpg = false;
 
           chan.EpgHours = DatabaseUtility.GetAsInt(results, 0, "epgHours");
-          chan.LastDateTimeEpgGrabbed = Utils.longtodate(DatabaseUtility.GetAsInt64(results, 0, "epgLastUpdate"));
+          chan.LastDateTimeEpgGrabbed = MediaPortal.Util.Utils.longtodate(DatabaseUtility.GetAsInt64(results, 0, "epgLastUpdate"));
 
           chan.Sort = DatabaseUtility.GetAsInt(results, 0, "iSort");
 
@@ -1401,7 +1405,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
         return null;
@@ -1435,7 +1439,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
         return false;
@@ -1484,7 +1488,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -1505,11 +1509,11 @@ namespace MediaPortal.TV.Database
           if (null == m_db) return;
           DateTime dtStart = new DateTime(1971, 11, 6);
           m_db.Execute("delete from tblPrograms");
-          m_db.Execute(String.Format("update channel set epglastupdate='{0}'", Utils.datetolong(dtStart)));
+          m_db.Execute(String.Format("update channel set epglastupdate='{0}'", MediaPortal.Util.Utils.datetolong(dtStart)));
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -1567,7 +1571,7 @@ namespace MediaPortal.TV.Database
           SQLiteResultSet results;
           results = m_db.Execute(strSQL);
           if (results.Rows.Count == 0) return false;
-          long lTimeStart = Utils.datetolong(DateTime.Now);
+          long lTimeStart = MediaPortal.Util.Utils.datetolong(DateTime.Now);
           for (int i = 0; i < results.Rows.Count; ++i)
           {
             long iStart = DatabaseUtility.GetAsInt64(results, i, "tblPrograms.iStartTime");
@@ -1601,7 +1605,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
         return false;
@@ -1672,7 +1676,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1} {2}", ex.Message, ex.StackTrace, strSQL);
+          _log.Error("TVDatabase exception err:{0} stack:{1} {2}", ex.Message, ex.StackTrace, strSQL);
           Open();
         }
         return false;
@@ -1721,7 +1725,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
         return false;
@@ -1781,7 +1785,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
         return false;
@@ -1820,7 +1824,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
         return false;
@@ -1973,7 +1977,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -1989,12 +1993,12 @@ namespace MediaPortal.TV.Database
         {
           if (null == m_db) return;
           string strSQL = String.Format("update recorded set keepMethod={0}, keepDate='{1}' where idRecorded={2}",
-              (int)rec.KeepRecordingMethod, Utils.datetolong(rec.KeepRecordingTill), rec.ID);
+              (int)rec.KeepRecordingMethod, MediaPortal.Util.Utils.datetolong(rec.KeepRecordingTill), rec.ID);
           m_db.Execute(strSQL);
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -2029,7 +2033,7 @@ namespace MediaPortal.TV.Database
             recording.Priority,
             recording.EpisodesToKeep,
             (int)recording.KeepRecordingMethod,
-            Utils.datetolong(recording.KeepRecordingTill),
+            MediaPortal.Util.Utils.datetolong(recording.KeepRecordingTill),
             recording.PaddingFront,
             recording.PaddingEnd,
             recording.ID);
@@ -2044,7 +2048,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -2072,7 +2076,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -2100,7 +2104,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -2128,7 +2132,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -2150,13 +2154,13 @@ namespace MediaPortal.TV.Database
 
           if (null == m_db)
           {
-            Log.WriteFile(Log.LogType.Log, true, "TVDatabase.AddRecording:tvdatabase not opened");
+            _log.Error("TVDatabase.AddRecording:tvdatabase not opened");
             return -1;
           }
           int iChannelId = GetChannelId(recording.Channel);
           if (iChannelId < 0)
           {
-            Log.WriteFile(Log.LogType.Log, true, "TVDatabase.AddRecording:invalid channel:{0}", recording.Channel);
+            _log.Error("TVDatabase.AddRecording:invalid channel:{0}", recording.Channel);
             return -1;
           }
           int iContentRec = 1;
@@ -2176,7 +2180,7 @@ namespace MediaPortal.TV.Database
               recording.Priority,
               recording.EpisodesToKeep,
               (int)recording.KeepRecordingMethod,
-              Utils.datetolong(recording.KeepRecordingTill),
+              MediaPortal.Util.Utils.datetolong(recording.KeepRecordingTill),
               recording.PaddingFront,
               recording.PaddingEnd,
               recording.ID
@@ -2196,7 +2200,7 @@ namespace MediaPortal.TV.Database
               recording.Priority,
               recording.EpisodesToKeep,
               (int)recording.KeepRecordingMethod,
-              Utils.datetolong(recording.KeepRecordingTill),
+              MediaPortal.Util.Utils.datetolong(recording.KeepRecordingTill),
               recording.PaddingFront,
               recording.PaddingEnd
               );
@@ -2212,7 +2216,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -2236,7 +2240,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -2287,7 +2291,7 @@ namespace MediaPortal.TV.Database
               else rec.IsContentRecording = false;
               rec.KeepRecordingMethod = (TVRecorded.KeepMethod)DatabaseUtility.GetAsInt(results, i, "recording.keepMethod");
               long date = DatabaseUtility.GetAsInt64(results, i, "recording.keepDate");
-              rec.KeepRecordingTill = Utils.longtodate(date);
+              rec.KeepRecordingTill = MediaPortal.Util.Utils.longtodate(date);
               rec.PaddingFront = DatabaseUtility.GetAsInt(results, i, "recording.paddingFront");
               rec.PaddingEnd = DatabaseUtility.GetAsInt(results, i, "recording.paddingEnd");
               GetCanceledRecordings(ref rec);
@@ -2299,7 +2303,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
         return false;
@@ -2340,7 +2344,7 @@ namespace MediaPortal.TV.Database
             else rec.IsContentRecording = false;
             rec.KeepRecordingMethod = (TVRecorded.KeepMethod)DatabaseUtility.GetAsInt(results, i, "recording.keepMethod");
             long date = DatabaseUtility.GetAsInt64(results, i, "recording.keepDate");
-            rec.KeepRecordingTill = Utils.longtodate(date);
+            rec.KeepRecordingTill = MediaPortal.Util.Utils.longtodate(date);
             rec.PaddingFront = DatabaseUtility.GetAsInt(results, i, "recording.paddingFront");
             rec.PaddingEnd = DatabaseUtility.GetAsInt(results, i, "recording.paddingEnd");
             GetCanceledRecordings(ref rec);
@@ -2351,7 +2355,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
         return false;
@@ -2368,7 +2372,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "tvdatabase begin transaction failed exception err:{0} ", ex.Message);
+          _log.Error("tvdatabase begin transaction failed exception err:{0} ", ex.Message);
           Open();
         }
       }
@@ -2384,7 +2388,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "tvdatabase commit failed exception err:{0} ", ex.Message);
+          _log.Error("tvdatabase commit failed exception err:{0} ", ex.Message);
           Open();
         }
       }
@@ -2398,7 +2402,7 @@ namespace MediaPortal.TV.Database
       }
       catch (Exception ex)
       {
-        Log.WriteFile(Log.LogType.Log, true, "tvdatabase rollback failed exception err:{0} ", ex.Message);
+        _log.Error("tvdatabase rollback failed exception err:{0} ", ex.Message);
         Open();
       }
     }
@@ -2415,7 +2419,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -2454,7 +2458,7 @@ namespace MediaPortal.TV.Database
               strFileName,
               recording.Played,
               (int)recording.KeepRecordingMethod,
-              Utils.datetolong(recording.KeepRecordingTill),
+              MediaPortal.Util.Utils.datetolong(recording.KeepRecordingTill),
               recording.ID);
           }
           else
@@ -2469,7 +2473,7 @@ namespace MediaPortal.TV.Database
               strFileName,
               recording.Played,
               (int)recording.KeepRecordingMethod,
-              Utils.datetolong(recording.KeepRecordingTill));
+              MediaPortal.Util.Utils.datetolong(recording.KeepRecordingTill));
           }
           m_db.Execute(strSQL);
           lNewId = m_db.LastInsertID();
@@ -2477,7 +2481,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -2498,7 +2502,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -2518,7 +2522,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -2554,7 +2558,7 @@ namespace MediaPortal.TV.Database
             rec.Played = DatabaseUtility.GetAsInt(results, i, "recorded.iPlayed");
             rec.KeepRecordingMethod = (TVRecorded.KeepMethod)DatabaseUtility.GetAsInt(results, i, "recorded.keepMethod");
             long date = DatabaseUtility.GetAsInt64(results, i, "recorded.keepDate");
-            rec.KeepRecordingTill = Utils.longtodate(date);
+            rec.KeepRecordingTill = MediaPortal.Util.Utils.longtodate(date);
             recordings.Add(rec);
           }
 
@@ -2562,7 +2566,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
         return false;
@@ -2603,12 +2607,12 @@ namespace MediaPortal.TV.Database
           recording.Played = DatabaseUtility.GetAsInt(results, 0, "recorded.iPlayed");
           recording.KeepRecordingMethod = (TVRecorded.KeepMethod)DatabaseUtility.GetAsInt(results, 0, "recorded.keepMethod");
           long date = DatabaseUtility.GetAsInt64(results, 0, "recorded.keepDate");
-          recording.KeepRecordingTill = Utils.longtodate(date);
+          recording.KeepRecordingTill = MediaPortal.Util.Utils.longtodate(date);
           return true;
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
         return false;
@@ -2682,7 +2686,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -2707,7 +2711,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
         return "";
@@ -2722,7 +2726,7 @@ namespace MediaPortal.TV.Database
     /// </summary>
     static public void RemoveOldPrograms()
     {
-      Log.WriteFile(Log.LogType.EPG, false, "RemoveOldPrograms()");
+      _log.Info("RemoveOldPrograms()");
       if (m_db == null) return;
       lock (typeof(TVDatabase))
       {
@@ -2731,22 +2735,22 @@ namespace MediaPortal.TV.Database
         try
         {
           System.DateTime yesterday = System.DateTime.Today.AddDays(-1);
-          long longYesterday = Utils.datetolong(yesterday);
+          long longYesterday = MediaPortal.Util.Utils.datetolong(yesterday);
           strSQL = String.Format("DELETE FROM tblPrograms WHERE iEndTime < '{0}'", longYesterday);
 
-          Log.WriteFile(Log.LogType.EPG, false, "sql:{0}", strSQL);
+          _log.Info("sql:{0}", strSQL);
           m_db.Execute(strSQL);
           strSQL = String.Format("DELETE FROM canceledseries where iCancelTime < '{0}'", longYesterday);
-          Log.WriteFile(Log.LogType.EPG, false, "sql:{0}", strSQL);
+          _log.Info("sql:{0}", strSQL);
           m_db.Execute(strSQL);
-          Log.WriteFile(Log.LogType.EPG, false, "RemoveOldPrograms done");
+          _log.Info("RemoveOldPrograms done");
 
           DatabaseUtility.CompactDatabase(m_db);
-          Log.WriteFile(Log.LogType.EPG, false, "vacuum done");
+          _log.Info("vacuum done");
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1} {2}", ex.Message, ex.StackTrace, strSQL);
+          _log.Error("TVDatabase exception err:{0} stack:{1} {2}", ex.Message, ex.StackTrace, strSQL);
           Open();
         }
         return;
@@ -2796,7 +2800,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -2822,8 +2826,8 @@ namespace MediaPortal.TV.Database
             DateTime dtEnd = program.EndTime;
             dtStart = dtStart.AddMinutes(Minutes);
             dtEnd = dtEnd.AddMinutes(Minutes);
-            program.Start = Utils.datetolong(dtStart);
-            program.End = Utils.datetolong(dtEnd);
+            program.Start = MediaPortal.Util.Utils.datetolong(dtStart);
+            program.End = MediaPortal.Util.Utils.datetolong(dtEnd);
 
             string sql = String.Format("update tblPrograms set iStartTime='{0}' , iEndTime='{1}' where idProgram={2}",
               program.Start, program.End, program.ID);
@@ -2832,7 +2836,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -2857,7 +2861,7 @@ namespace MediaPortal.TV.Database
           ArrayList channels = new ArrayList();
           GetChannels(ref channels);
 
-          long endTime = Utils.datetolong(new DateTime(2100, 1, 1, 0, 0, 0, 0));
+          long endTime = MediaPortal.Util.Utils.datetolong(new DateTime(2100, 1, 1, 0, 0, 0, 0));
           foreach (TVChannel channel in channels)
           {
             // for each tv channel get all programs
@@ -2886,7 +2890,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -2927,7 +2931,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
 
@@ -2949,7 +2953,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -2978,7 +2982,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -3028,7 +3032,7 @@ namespace MediaPortal.TV.Database
                   ac3Pid, audio1, audio2, audio3, al, al1, al2, al3,
                 (HasEITPresentFollow == true ? 1 : 0), (HasEITSchedule == true ? 1 : 0), pcrPid
             );
-            //Log.WriteFile(Log.LogType.Log,true,"sql:{0}", strSQL);
+            //_log.Error("sql:{0}", strSQL);
             m_db.Execute(strSQL);
             int iNewID = m_db.LastInsertID();
             return idChannel;
@@ -3040,14 +3044,14 @@ namespace MediaPortal.TV.Database
               ac3Pid, audio1, audio2, audio3, al, al1, al2, al3,
               (HasEITPresentFollow == true ? 1 : 0), (HasEITSchedule == true ? 1 : 0), pcrPid
               , idChannel);
-            //	Log.WriteFile(Log.LogType.Log,true,"sql:{0}", strSQL);
+            //	_log.Error("sql:{0}", strSQL);
             m_db.Execute(strSQL);
             return idChannel;
           }
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
 
@@ -3096,7 +3100,7 @@ namespace MediaPortal.TV.Database
                                   , strChannel.Trim(), strProvider.Trim(), idChannel, frequency, symbolrate, innerFec, modulation, ONID, TSID, SID, audioPid, videoPid, teletextPid, pmtPid,
                                   ac3Pid, audio1, audio2, audio3, al, al1, al2, al3,
                                   (HasEITPresentFollow == true ? 1 : 0), (HasEITSchedule == true ? 1 : 0), pcrPid);
-            //Log.WriteFile(Log.LogType.Log,true,"sql:{0}", strSQL);
+            //_log.Error("sql:{0}", strSQL);
             m_db.Execute(strSQL);
             int iNewID = m_db.LastInsertID();
             return idChannel;
@@ -3108,15 +3112,15 @@ namespace MediaPortal.TV.Database
                                   ac3Pid, audio1, audio2, audio3, al, al1, al2, al3,
                                   (HasEITPresentFollow == true ? 1 : 0), (HasEITSchedule == true ? 1 : 0), pcrPid,
                                   idChannel);
-            //Log.WriteFile(Log.LogType.Log,true,"sql:{0}", strSQL);
+            //_log.Error("sql:{0}", strSQL);
             m_db.Execute(strSQL);
             return idChannel;
           }
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "sql:{0}", strSQL);
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("sql:{0}", strSQL);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
 
@@ -3165,7 +3169,7 @@ namespace MediaPortal.TV.Database
               , strChannel.Trim(), strProvider.Trim(), idChannel, frequency, symbolrate, innerFec, modulation, ONID, TSID, SID, audioPid, videoPid, teletextPid, pmtPid,
               ac3Pid, audio1, audio2, audio3, al, al1, al2, al3, physicalChannel, minorChannel, majorChannel,
               (HasEITPresentFollow == true ? 1 : 0), (HasEITSchedule == true ? 1 : 0), pcrPid);
-            //Log.WriteFile(Log.LogType.Log,true,"sql:{0}", strSQL);
+            //_log.Error("sql:{0}", strSQL);
             m_db.Execute(strSQL);
             int iNewID = m_db.LastInsertID();
             return idChannel;
@@ -3177,15 +3181,15 @@ namespace MediaPortal.TV.Database
               ac3Pid, audio1, audio2, audio3, al, al1, al2, al3, physicalChannel, minorChannel, majorChannel,
               (HasEITPresentFollow == true ? 1 : 0), (HasEITSchedule == true ? 1 : 0), pcrPid,
               idChannel);
-            //Log.WriteFile(Log.LogType.Log,true,"sql:{0}", strSQL);
+            //_log.Error("sql:{0}", strSQL);
             m_db.Execute(strSQL);
             return idChannel;
           }
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "sql:{0}", strSQL);
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("sql:{0}", strSQL);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
 
@@ -3275,7 +3279,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
         return false;
@@ -3306,7 +3310,7 @@ namespace MediaPortal.TV.Database
       SID = -1;
       pcrPid = -1;
       if (m_db == null) return false;
-      //Log.WriteFile(Log.LogType.Log,true,"GetTuneRequest for iLCN:{0}", iLCN);
+      //_log.Error("GetTuneRequest for iLCN:{0}", iLCN);
       lock (typeof(TVDatabase))
       {
         try
@@ -3366,12 +3370,12 @@ namespace MediaPortal.TV.Database
           retChannel.HasEITPresentFollow = HasEITPresentFollow;
           retChannel.HasEITSchedule = HasEITSchedule;
           retChannel.PCRPid = pcrPid;
-          
+
           return true;
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
         return false;
@@ -3405,7 +3409,7 @@ namespace MediaPortal.TV.Database
       SID = -1;
       pcrPid = -1;
       if (m_db == null) return false;
-      //Log.WriteFile(Log.LogType.Log,true,"GetTuneRequest for iLCN:{0}", iLCN);
+      //_log.Error("GetTuneRequest for iLCN:{0}", iLCN);
       lock (typeof(TVDatabase))
       {
         try
@@ -3475,7 +3479,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
         return false;
@@ -3497,7 +3501,7 @@ namespace MediaPortal.TV.Database
       SID = -1;
       pcrPid = -1;
       if (m_db == null) return false;
-      //Log.WriteFile(Log.LogType.Log,true,"GetTuneRequest for iLCN:{0}", iLCN);
+      //_log.Error("GetTuneRequest for iLCN:{0}", iLCN);
       lock (typeof(TVDatabase))
       {
         try
@@ -3533,7 +3537,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -3557,7 +3561,7 @@ namespace MediaPortal.TV.Database
       SID = -1;
       pcrPid = -1;
       if (m_db == null) return false;
-      //Log.WriteFile(Log.LogType.Log,true,"GetTuneRequest for iLCN:{0}", iLCN);
+      //_log.Error("GetTuneRequest for iLCN:{0}", iLCN);
       lock (typeof(TVDatabase))
       {
         try
@@ -3596,7 +3600,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -3622,7 +3626,7 @@ namespace MediaPortal.TV.Database
       SID = -1;
       pcrPid = -1;
       if (m_db == null) return;
-      //Log.WriteFile(Log.LogType.Log,true,"GetTuneRequest for iLCN:{0}", iLCN);
+      //_log.Error("GetTuneRequest for iLCN:{0}", iLCN);
       lock (typeof(TVDatabase))
       {
         try
@@ -3663,7 +3667,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -3694,7 +3698,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -3731,7 +3735,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -3758,7 +3762,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -3786,7 +3790,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -3820,7 +3824,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -3841,7 +3845,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -3880,7 +3884,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -3919,7 +3923,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -3941,7 +3945,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -3965,7 +3969,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -4019,7 +4023,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
 
@@ -4044,7 +4048,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
         return -1;
@@ -4098,7 +4102,7 @@ namespace MediaPortal.TV.Database
             else chan.AutoGrabEpg = false;
 
             chan.EpgHours = DatabaseUtility.GetAsInt(results, i, "channel.epgHours");
-            chan.LastDateTimeEpgGrabbed = Utils.longtodate(DatabaseUtility.GetAsInt64(results, i, "channel.epgLastUpdate"));
+            chan.LastDateTimeEpgGrabbed = MediaPortal.Util.Utils.longtodate(DatabaseUtility.GetAsInt64(results, i, "channel.epgLastUpdate"));
 
             chan.ExternalTunerChannel = DatabaseUtility.Get(results, i, "channel.ExternalChannel");
             chan.TVStandard = (AnalogVideoStandard)DatabaseUtility.GetAsInt(results, i, "channel.standard");
@@ -4111,7 +4115,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
         return false;
@@ -4126,7 +4130,7 @@ namespace MediaPortal.TV.Database
       }
       catch (Exception ex)
       {
-        Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
     }
@@ -4143,7 +4147,7 @@ namespace MediaPortal.TV.Database
       }
       catch (Exception ex)
       {
-        Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
     }
@@ -4168,7 +4172,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -4276,7 +4280,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -4296,7 +4300,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -4357,7 +4361,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -4402,7 +4406,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -4425,7 +4429,7 @@ namespace MediaPortal.TV.Database
         {
           TVDatabase.GetDVBCTuneRequest(chan.ID, out provider, out freq, out symbolrate, out innerFec, out modulation, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out audio1, out audio2, out audio3, out ac3Pid, out audioLanguage, out audioLanguage1, out audioLanguage2, out audioLanguage3, out HasEITPresentFollow, out HasEITSchedule, out pcrPid);
           //if (serviceid == SID && transportid == TSID) return chan;
-          if ( serviceid == SID && transportid == TSID && networkid == ONID ) //check if networkid has changed during channel update
+          if (serviceid == SID && transportid == TSID && networkid == ONID) //check if networkid has changed during channel update
             return chan;
         }
         if (dvbs)
@@ -4442,7 +4446,7 @@ namespace MediaPortal.TV.Database
         {
           TVDatabase.GetDVBTTuneRequest(chan.ID, out provider, out freq, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out bandWidth, out audio1, out audio2, out audio3, out ac3Pid, out audioLanguage, out audioLanguage1, out audioLanguage2, out audioLanguage3, out HasEITPresentFollow, out HasEITSchedule, out pcrPid);
           //if (serviceid == SID && transportid == TSID) return chan;
-          if ( serviceid == SID && transportid == TSID && networkid == ONID ) // forums patch: http://forum.team-mediaportal.com/viewtopic.php?t=13551
+          if (serviceid == SID && transportid == TSID && networkid == ONID) // forums patch: http://forum.team-mediaportal.com/viewtopic.php?t=13551
             return chan;
         }
       }
@@ -4561,7 +4565,7 @@ namespace MediaPortal.TV.Database
             else chan.AutoGrabEpg = false;
 
             chan.EpgHours = DatabaseUtility.GetAsInt(results, i, "epgHours");
-            chan.LastDateTimeEpgGrabbed = Utils.longtodate(DatabaseUtility.GetAsInt64(results, i, "epgLastUpdate"));
+            chan.LastDateTimeEpgGrabbed = MediaPortal.Util.Utils.longtodate(DatabaseUtility.GetAsInt64(results, i, "epgLastUpdate"));
 
             chan.ExternalTunerChannel = DatabaseUtility.Get(results, i, "ExternalChannel");
             chan.TVStandard = (AnalogVideoStandard)DatabaseUtility.GetAsInt(results, i, "standard");
@@ -4576,7 +4580,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
         return false;
@@ -4616,7 +4620,7 @@ namespace MediaPortal.TV.Database
             else rec.IsContentRecording = false;
             rec.KeepRecordingMethod = (TVRecorded.KeepMethod)DatabaseUtility.GetAsInt(results, i, "recording.keepMethod");
             long date = DatabaseUtility.GetAsInt64(results, i, "recording.keepDate");
-            rec.KeepRecordingTill = Utils.longtodate(date);
+            rec.KeepRecordingTill = MediaPortal.Util.Utils.longtodate(date);
             rec.PaddingFront = DatabaseUtility.GetAsInt(results, i, "recording.paddingFront");
             rec.PaddingEnd = DatabaseUtility.GetAsInt(results, i, "recording.paddingEnd");
             GetCanceledRecordings(ref rec);
@@ -4627,7 +4631,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
         return false;
@@ -4687,7 +4691,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -4782,7 +4786,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
         return false;
@@ -4852,7 +4856,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1} {2}", ex.Message, ex.StackTrace, strSQL);
+          _log.Error("TVDatabase exception err:{0} stack:{1} {2}", ex.Message, ex.StackTrace, strSQL);
           Open();
         }
         return false;
@@ -4888,7 +4892,7 @@ namespace MediaPortal.TV.Database
             rec.Played = DatabaseUtility.GetAsInt(results, i, "recorded.iPlayed");
             rec.KeepRecordingMethod = (TVRecorded.KeepMethod)DatabaseUtility.GetAsInt(results, i, "recorded.keepMethod");
             long date = DatabaseUtility.GetAsInt64(results, i, "recorded.keepDate");
-            rec.KeepRecordingTill = Utils.longtodate(date);
+            rec.KeepRecordingTill = MediaPortal.Util.Utils.longtodate(date);
             recordings.Add(rec);
           }
 
@@ -4896,7 +4900,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
         return false;
@@ -4928,7 +4932,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
         return false;
@@ -4959,7 +4963,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -5037,7 +5041,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
         return false;
@@ -5120,7 +5124,7 @@ namespace MediaPortal.TV.Database
           SQLiteResultSet results;
           results = m_db.Execute(strSQL);
           if (results.Rows.Count == 0) return false;
-          long lTimeStart = Utils.datetolong(DateTime.Now);
+          long lTimeStart = MediaPortal.Util.Utils.datetolong(DateTime.Now);
           for (int i = 0; i < results.Rows.Count; ++i)
           {
             long iStart = DatabaseUtility.GetAsInt64(results, i, "tblPrograms.iStartTime");
@@ -5154,7 +5158,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
         return false;
@@ -5193,7 +5197,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
         return false;
@@ -5225,7 +5229,7 @@ namespace MediaPortal.TV.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          _log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
         return String.Empty;
@@ -5241,7 +5245,7 @@ namespace MediaPortal.TV.Database
         string strSQL;
         if (null == m_db) return null;
         strSQL = String.Format("select * from tblPrograms where tblPrograms.idChannel={0} and '{1}' >= tblPrograms.iStartTime and '{2}' < tblPrograms.iEndTime ",
-                                idChannel, Utils.datetolong(dtTime), Utils.datetolong(dtTime));
+                                idChannel, MediaPortal.Util.Utils.datetolong(dtTime), MediaPortal.Util.Utils.datetolong(dtTime));
         SQLiteResultSet results;
         results = m_db.Execute(strSQL);
         if (results.Rows.Count >= 1)
@@ -5299,12 +5303,12 @@ namespace MediaPortal.TV.Database
       TVChannel channel = TVDatabase.GetTVChannelByStream(isATSC, isDVBT, isDVBC, isDVBS, dvbChannel.NetworkID, dvbChannel.TransportStreamID, dvbChannel.ProgramNumber, out provider);
       if (channel == null)
       {
-        Log.Write("tvdatabase cannot get channel for :{0}", dvbChannel.ServiceName);
+        _log.Info("tvdatabase cannot get channel for :{0}", dvbChannel.ServiceName);
         return;
       }
       if (isDVBC)
       {
-        Log.Write("update dvbc channel:{0}", channel.Name);
+        _log.Info("update dvbc channel:{0}", channel.Name);
         MapDVBCChannel(channel.Name, dvbChannel.ServiceProvider, channel.ID, dvbChannel.Frequency,
                        dvbChannel.Symbolrate, dvbChannel.FEC, dvbChannel.Modulation, dvbChannel.NetworkID,
                        dvbChannel.TransportStreamID, dvbChannel.ProgramNumber,
@@ -5316,7 +5320,7 @@ namespace MediaPortal.TV.Database
       }
       if (isDVBT)
       {
-        Log.Write("update dvbt channel:{0}", channel.Name);
+        _log.Info("update dvbt channel:{0}", channel.Name);
         MapDVBTChannel(channel.Name, dvbChannel.ServiceProvider, channel.ID, dvbChannel.Frequency,
                        dvbChannel.NetworkID, dvbChannel.TransportStreamID, dvbChannel.ProgramNumber,
                        dvbChannel.AudioPid, dvbChannel.VideoPid, dvbChannel.TeletextPid,
@@ -5327,12 +5331,12 @@ namespace MediaPortal.TV.Database
       }
       if (isDVBS)
       {
-        Log.Write("update dvbs channel:{0}", channel.Name);
+        _log.Info("update dvbs channel:{0}", channel.Name);
         UpdateSatChannel(channel.ID, dvbChannel);
       }
       if (isATSC)
       {
-        Log.Write("update atsc channel:{0}", channel.Name);
+        _log.Info("update atsc channel:{0}", channel.Name);
         MapATSCChannel(channel.Name, dvbChannel.PhysicalChannel, dvbChannel.MinorChannel, dvbChannel.MajorChannel,
           dvbChannel.ServiceProvider, channel.ID, dvbChannel.Frequency, dvbChannel.Symbolrate, dvbChannel.FEC,
           dvbChannel.Modulation, dvbChannel.NetworkID, dvbChannel.TransportStreamID, dvbChannel.ProgramNumber,

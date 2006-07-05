@@ -29,7 +29,7 @@ using System.Xml;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
 using System.Windows.Serialization;
-
+using MediaPortal.Utils.Services;
 using MediaPortal.Drawing;
 using MediaPortal.Drawing.Layouts;
 
@@ -41,10 +41,18 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class GUIControlFactory
   {
+    static ILog _log;
+
     #region Constructors
 
     private GUIControlFactory() // NON-CREATABLE
     {
+    }
+
+    static GUIControlFactory()
+    {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
     }
 
     #endregion Constructors
@@ -57,7 +65,7 @@ namespace MediaPortal.GUI.Library
       {
         if (m_referenceNodesByControlType != null)
           return;
-        Log.Write("  Loading references from {0}", referenceFile);
+        _log.Info("  Loading references from {0}", referenceFile);
         m_referenceNodesByControlType = new Hashtable();
         _cachedStyleNodes = new Dictionary<string, XmlNode>();
 
@@ -89,7 +97,7 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception ex)
       {
-        Log.Write("exception loading references {0} err:{1} stack:{2}",
+        _log.Info("exception loading references {0} err:{1} stack:{2}",
           referenceFile, ex.Message, ex.StackTrace);
       }
     }
@@ -115,7 +123,7 @@ namespace MediaPortal.GUI.Library
         {
           int iWidth = Convert.ToInt16(nodeSkinWidth.Value);
           int iHeight = Convert.ToInt16(nodeSkinHeight.Value);
-          Log.Write("  original skin size:{0}x{1}", iWidth, iHeight);
+          _log.Info("  original skin size:{0}x{1}", iWidth, iHeight);
           GUIGraphicsContext.SkinSize = new System.Drawing.Size(iWidth, iHeight);
         }
         catch (FormatException) // Size values were invalid.
@@ -234,7 +242,7 @@ namespace MediaPortal.GUI.Library
               }
               catch
               {
-                Log.Write("GUIControlFactory.ConvertXmlStringToObject: Invalid color format '#{0}' reverting to White", valueText);
+                _log.Info("GUIControlFactory.ConvertXmlStringToObject: Invalid color format '#{0}' reverting to White", valueText);
 
                 return Color.White.ToArgb();
               }
@@ -308,7 +316,7 @@ namespace MediaPortal.GUI.Library
 
           if (styleNode != null)
           {
-            Log.Write("Styling");
+            _log.Info("Styling");
             UpdateControlWithXmlData(control, typeOfControlToCreate, styleNode, defines);
           }
         }
@@ -359,8 +367,8 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception e)
       {
-        Log.Write("GUIControlFactory.Create: {0}\r\n\r\n{1}\r\n\r\n", e.Message, e.StackTrace);
-        Log.Write("Parent: {0} Id: {1}", dwParentId, control.GetID);
+        _log.Info("GUIControlFactory.Create: {0}\r\n\r\n{1}\r\n\r\n", e.Message, e.StackTrace);
+        _log.Info("Parent: {0} Id: {1}", dwParentId, control.GetID);
       }
 
       return control;
@@ -401,7 +409,7 @@ namespace MediaPortal.GUI.Library
           }
           catch (Exception e)
           {
-            Log.Write("Couldn't place {0}, which is {1} in {2}. Exception:{3}",
+            _log.Info("Couldn't place {0}, which is {1} in {2}. Exception:{3}",
               newValue, newValue.GetType(), correspondingMember, e);
           }
         }
@@ -422,7 +430,7 @@ namespace MediaPortal.GUI.Library
 
             if (propertyInfo == null)
             {
-              Log.Write("GUIControlFactory.UpdateControlWithXmlData: '{0}' does not contain a definition for '{1}'", controlType, element.Name);
+              _log.Info("GUIControlFactory.UpdateControlWithXmlData: '{0}' does not contain a definition for '{1}'", controlType, element.Name);
               return;
             }
 
@@ -534,7 +542,7 @@ namespace MediaPortal.GUI.Library
 
           if (t == null)
           {
-            Log.Write("ERROR: unknown control:<{0}>", xmlTypeName);
+            _log.Info("ERROR: unknown control:<{0}>", xmlTypeName);
             return null;
           }
 

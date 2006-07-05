@@ -615,26 +615,26 @@ namespace MediaPortal.Configuration.Sections
                                   DateTime.Now.Minute, DateTime.Now.Second);
       if (strInput != string.Empty)
       {
-        strInput = Utils.ReplaceTag(strInput, "%channel%", example[recType].Channel, "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%title%", example[recType].Title, "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%name%", example[recType].Episode, "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%series%", example[recType].SeriesNum, "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%episode%", example[recType].EpisodeNum, "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%part%", example[recType].EpisodePart, "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%date%", example[recType].StartDate.ToShortDateString(), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%start%", example[recType].StartDate.ToShortTimeString(), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%end%", example[recType].EndDate.ToShortTimeString(), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%genre%", example[recType].Genre, "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%startday%", example[recType].StartDate.Day.ToString(), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%startmonth%", example[recType].StartDate.Month.ToString(), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%startyear%", example[recType].StartDate.Year.ToString(), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%starthh%", example[recType].StartDate.Hour.ToString(), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%startmm%", example[recType].StartDate.Minute.ToString(), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%endday%", example[recType].EndDate.Day.ToString(), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%endmonth%", example[recType].EndDate.Month.ToString(), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%startyear%", example[recType].EndDate.Year.ToString(), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%endhh%", example[recType].EndDate.Hour.ToString(), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%endmm%", example[recType].EndDate.Minute.ToString(), "unknown");
+        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%channel%", example[recType].Channel, "unknown");
+        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%title%", example[recType].Title, "unknown");
+        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%name%", example[recType].Episode, "unknown");
+        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%series%", example[recType].SeriesNum, "unknown");
+        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%episode%", example[recType].EpisodeNum, "unknown");
+        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%part%", example[recType].EpisodePart, "unknown");
+        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%date%", example[recType].StartDate.ToShortDateString(), "unknown");
+        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%start%", example[recType].StartDate.ToShortTimeString(), "unknown");
+        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%end%", example[recType].EndDate.ToShortTimeString(), "unknown");
+        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%genre%", example[recType].Genre, "unknown");
+        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%startday%", example[recType].StartDate.Day.ToString(), "unknown");
+        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%startmonth%", example[recType].StartDate.Month.ToString(), "unknown");
+        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%startyear%", example[recType].StartDate.Year.ToString(), "unknown");
+        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%starthh%", example[recType].StartDate.Hour.ToString(), "unknown");
+        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%startmm%", example[recType].StartDate.Minute.ToString(), "unknown");
+        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%endday%", example[recType].EndDate.Day.ToString(), "unknown");
+        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%endmonth%", example[recType].EndDate.Month.ToString(), "unknown");
+        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%startyear%", example[recType].EndDate.Year.ToString(), "unknown");
+        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%endhh%", example[recType].EndDate.Hour.ToString(), "unknown");
+        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%endmm%", example[recType].EndDate.Minute.ToString(), "unknown");
 
         int index = strInput.LastIndexOf('\\');
         switch (index)
@@ -653,8 +653,8 @@ namespace MediaPortal.Configuration.Sections
             break;
         }
 
-        strDirectory = Utils.MakeDirectoryPath(strDirectory);
-        strName = Utils.MakeFileName(strName);
+        strDirectory = MediaPortal.Util.Utils.MakeDirectoryPath(strDirectory);
+        strName = MediaPortal.Util.Utils.MakeFileName(strName);
       }
       if (strName == string.Empty)
         strName = strDefaultName;
@@ -684,7 +684,7 @@ namespace MediaPortal.Configuration.Sections
       for (char drive = 'a'; drive <= 'z'; drive++)
       {
         string driveLetter = String.Format("{0}:", drive);
-        if (Utils.getDriveType(driveLetter) == 3)
+        if (MediaPortal.Util.Utils.getDriveType(driveLetter) == 3)
         {
           comboDrives.Items.Add(driveLetter);
         }
@@ -748,10 +748,10 @@ namespace MediaPortal.Configuration.Sections
     void UpdateDriveInfo(bool save)
     {
       string drive = (string)comboDrives.SelectedItem;
-      ulong freeSpace = Utils.GetFreeDiskSpace(drive);
-      long totalSpace = Utils.GetDiskSize(drive);
-      lblFreeDiskSpace.Text = Utils.GetSize((long)freeSpace);
-      lblTotalSpace.Text = Utils.GetSize((long)totalSpace);
+      ulong freeSpace = MediaPortal.Util.Utils.GetFreeDiskSpace(drive);
+      long totalSpace = MediaPortal.Util.Utils.GetDiskSize(drive);
+      lblFreeDiskSpace.Text = MediaPortal.Util.Utils.GetSize((long)freeSpace);
+      lblTotalSpace.Text = MediaPortal.Util.Utils.GetSize((long)totalSpace);
       if (lblTotalSpace.Text == "0")
         lblTotalSpace.Text = "Not available - WMI service not available";
 
@@ -773,7 +773,7 @@ namespace MediaPortal.Configuration.Sections
             trackBar1.Value = 0;
           }
         }
-        labelQuota.Text = Utils.GetSize((long)quota);
+        labelQuota.Text = MediaPortal.Util.Utils.GetSize((long)quota);
         using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
         {
           long longQuota = (long)quota;
@@ -789,7 +789,7 @@ namespace MediaPortal.Configuration.Sections
           float quota = (float)Int32.Parse(quotaText);
           if (quota < 51200) quota = 51200f;
           quota *= 1024f;//kbyte
-          labelQuota.Text = Utils.GetSize((long)quota);
+          labelQuota.Text = MediaPortal.Util.Utils.GetSize((long)quota);
 
           float percent = (quota / ((float)totalSpace)) * 100f;
           try

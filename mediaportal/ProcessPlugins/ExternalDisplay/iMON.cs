@@ -28,7 +28,7 @@ namespace ProcessPlugins.ExternalDisplay
   /// <summary>
   /// SoundGraph iMON USB Driver
   /// </summary>
-  public class iMON : IDisplay
+  public class iMON : BaseDisplay, IDisplay
   {
     private const int VfdType = 4;
     private string[] lines = new string[2];
@@ -162,7 +162,7 @@ namespace ProcessPlugins.ExternalDisplay
     {
       if (!Open(VfdType, 0))
       {
-        Log.Write("ExternalDisplay.iMON.Start: Could not open display");
+        _log.Info("ExternalDisplay.iMON.Start: Could not open display");
       }
     }
 

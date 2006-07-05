@@ -25,6 +25,7 @@ using System.IO;
 using MediaPortal.GUI.Library;
 using Programs.Utils;
 using SQLite.NET;
+using MediaPortal.Utils.Services;
 
 namespace ProgramsDatabase
 {
@@ -35,10 +36,17 @@ namespace ProgramsDatabase
   {
     private AppItem m_App = null;
     private SQLiteClient sqlDB = null;
+    private ILog _log;
 
     // event: read new file
     public delegate void MlfEventHandler(string strLine, int curPos, int maxPos);
     public event MlfEventHandler OnReadNewFile = null;
+
+    public MyFileMeedioImporter()
+    {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+    }
 
 
     private void DBImportMeedioItem(SQLiteResultSet results, int iRecord)
@@ -160,7 +168,7 @@ namespace ProgramsDatabase
       }
       catch(Exception ex)
       {
-        Log.Write("myPrograms exception (ConvertSQLitev2v3) {0}", ex.Message.ToString());
+        _log.Info("myPrograms exception (ConvertSQLitev2v3) {0}", ex.Message.ToString());
       }
 
       if (File.Exists(outFile))
@@ -196,7 +204,7 @@ namespace ProgramsDatabase
       }
       catch (SQLiteException ex)
       {
-        Log.Write("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        _log.Info("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
       }
 
     }

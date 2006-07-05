@@ -70,8 +70,8 @@ namespace MediaPortal.GUI.Music
 
       string strSize1 = "";
       string strSize2 = "";
-      if (item1.FileInfo != null) strSize1 = Utils.GetSize(item1.FileInfo.Length);
-      if (item2.FileInfo != null) strSize2 = Utils.GetSize(item2.FileInfo.Length);
+      if (item1.FileInfo != null) strSize1 = MediaPortal.Util.Utils.GetSize(item1.FileInfo.Length);
+      if (item2.FileInfo != null) strSize2 = MediaPortal.Util.Utils.GetSize(item2.FileInfo.Length);
 
       SortMethod method = currentSortMethod;
       bool bAscending = sortAscending;

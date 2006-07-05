@@ -349,7 +349,7 @@ namespace MediaPortal.GUI.TV
         GUIListItem item = new GUIListItem();
         item.Label = rec.Title;
         item.TVTag = rec;
-        string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel);
+        string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel);
         if (!System.IO.File.Exists(strLogo))
         {
           strLogo = "defaultVideoBig.png";
@@ -449,8 +449,8 @@ namespace MediaPortal.GUI.TV
         item1.Label = item2.Label = rec.Title;
         TimeSpan ts = rec.EndTime - rec.StartTime;
         string strTime = String.Format("{0} {1} ",
-          Utils.GetShortDayString(rec.StartTime),
-          Utils.SecondsToHMString((int)ts.TotalSeconds));
+          MediaPortal.Util.Utils.GetShortDayString(rec.StartTime),
+          MediaPortal.Util.Utils.SecondsToHMString((int)ts.TotalSeconds));
         item1.Label2 = item2.Label2 = strTime;
         if (currentViewMethod == ViewAs.Album)
         {

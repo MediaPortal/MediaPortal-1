@@ -25,8 +25,7 @@ using System.IO;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
-
-
+using MediaPortal.Utils.Services;
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Util
@@ -36,9 +35,13 @@ namespace MediaPortal.Util
   /// </summary>
   public class Picture
   {
+    static ILog _log;
+
     // singleton. Dont allow any instance of this class
-    private Picture()
+    static Picture()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
     }
 
     /// <summary>
@@ -74,7 +77,7 @@ namespace MediaPortal.Util
       if (strPic == null) return null;
       if (strPic == String.Empty) return null;
 
-      Log.Write("load picture {0}", strPic);
+      _log.Info("load picture {0}", strPic);
       Direct3D.Texture texture = null;
       Image theImage = null;
       try
@@ -194,7 +197,7 @@ namespace MediaPortal.Util
       }
       catch (Exception ex)
       {
-        Log.Write("Picture.load exception {0} err:{1} stack:{2}", strPic, ex.Message, ex.StackTrace);
+        _log.Info("Picture.load exception {0} err:{1} stack:{2}", strPic, ex.Message, ex.StackTrace);
       }
       finally
       {
@@ -249,7 +252,7 @@ namespace MediaPortal.Util
       }
       catch (Exception ex)
       {
-        Log.Write("Picture.ConvertImageToTexture( {0}x{1} ) exception err:{2} stack:{3}",
+        _log.Info("Picture.ConvertImageToTexture( {0}x{1} ) exception err:{2} stack:{3}",
           iWidth, iHeight,
           ex.Message, ex.StackTrace);
       }
@@ -835,7 +838,7 @@ namespace MediaPortal.Util
     /// </param>
     static public void CreateThumbnail(string strFile, string strThumb, int iMaxWidth, int iMaxHeight, int iRotate)
     {
-      //Log.Write("create thumbnail for {0}-{1}", strFile, strThumb);
+      //_log.Info("create thumbnail for {0}-{1}", strFile, strThumb);
       if (strFile == null || strThumb == null || iMaxHeight <= 0 || iMaxHeight <= 0) return;
       if (strFile == String.Empty || strThumb == String.Empty) return;
 
@@ -849,7 +852,7 @@ namespace MediaPortal.Util
       }
       catch (Exception ex)
       {
-        Log.Write("Picture.CreateThumbnail exception {0} err:{1} stack:{2}", strFile, ex.Message, ex.StackTrace);
+        _log.Info("Picture.CreateThumbnail exception {0} err:{1} stack:{2}", strFile, ex.Message, ex.StackTrace);
       }
       finally
       {
@@ -879,7 +882,7 @@ namespace MediaPortal.Util
       if (strThumb == String.Empty) return;
       if (theImage == null) return;
 
-      //Log.Write("create {0}x{1} thumbnail ->{2}", iMaxWidth, iMaxHeight, strThumb);
+      //_log.Info("create {0}x{1} thumbnail ->{2}", iMaxWidth, iMaxHeight, strThumb);
 
       try
       {
@@ -938,7 +941,7 @@ namespace MediaPortal.Util
       }
       catch (Exception ex)
       {
-        Log.Write("Picture.CreateThumbnail exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        _log.Info("Picture.CreateThumbnail exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
       }
     }//static public void CreateThumbnail(string strFile, string strThumb, int iMaxWidth, int iMaxHeight, int iRotate)
 

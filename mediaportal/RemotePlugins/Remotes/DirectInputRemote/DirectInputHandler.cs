@@ -30,6 +30,7 @@ using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using Microsoft.DirectX.DirectInput;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.InputDevices
 {
@@ -116,8 +117,13 @@ namespace MediaPortal.InputDevices
 
     public event diStateChangeText OnStateChangeText = null;
 
+    protected ILog _log;
+
     public DirectInputHandler()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+
       //
       // TODO: Add constructor logic here
       //
@@ -130,7 +136,7 @@ namespace MediaPortal.InputDevices
         AttachHandlers();
       }
       else
-        Log.Write("DirectInput: Error loading default mapping file - please reinstall MediaPortal");
+        _log.Info("DirectInput: Error loading default mapping file - please reinstall MediaPortal");
     }
 
     ~DirectInputHandler()
@@ -159,8 +165,8 @@ namespace MediaPortal.InputDevices
       }
       catch (Exception ex)
       {
-        Log.Write("DirectInputHandler: error in InitDeviceList");
-        Log.Write(ex.Message.ToString());
+        _log.Info("DirectInputHandler: error in InitDeviceList");
+        _log.Info(ex.Message.ToString());
       }
     }
 
@@ -496,7 +502,7 @@ namespace MediaPortal.InputDevices
 
       if (VerifyAction(actionCode, curAxisValue))
       {
-        Log.Write("mapping action {0}", actionCode);
+        _log.Info("mapping action {0}", actionCode);
         _inputHandler.MapAction(actionCode, actionParam);
       }
     }
@@ -693,14 +699,14 @@ namespace MediaPortal.InputDevices
 
     void AttachHandlers()
     {
-      Utils.OnStartExternal += new Utils.UtilEventHandler(OnStartExternal);
-      Utils.OnStopExternal += new Utils.UtilEventHandler(OnStopExternal);
+      MediaPortal.Util.Utils.OnStartExternal += new MediaPortal.Util.Utils.UtilEventHandler(OnStartExternal);
+      MediaPortal.Util.Utils.OnStopExternal += new MediaPortal.Util.Utils.UtilEventHandler(OnStopExternal);
     }
 
     void DetachHandlers()
     {
-      Utils.OnStartExternal -= new Utils.UtilEventHandler(OnStartExternal);
-      Utils.OnStopExternal -= new Utils.UtilEventHandler(OnStopExternal);
+      MediaPortal.Util.Utils.OnStartExternal -= new MediaPortal.Util.Utils.UtilEventHandler(OnStartExternal);
+      MediaPortal.Util.Utils.OnStopExternal -= new MediaPortal.Util.Utils.UtilEventHandler(OnStopExternal);
     }
 
     public void OnStartExternal(Process proc, bool waitForExit)

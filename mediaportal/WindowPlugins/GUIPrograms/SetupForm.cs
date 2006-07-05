@@ -1526,7 +1526,7 @@ namespace WindowPlugins.GUIPrograms
       AppItem curApp = GetSelectedAppItem();
       XmlNode profileNode = ((taggedMenuItem)sender).XmlTag;
       pageCurrentSettings = GetCurrentSettingsPage();
-      Log.Write("huhu1");
+      //_log.Info("huhu1");
       if (pageCurrentSettings != null)
       {
         // create a pseudo-appitem and read the values from the xml node

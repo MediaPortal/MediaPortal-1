@@ -26,11 +26,11 @@ using System.Drawing;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
-
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
 using System.Runtime.InteropServices;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.GUI.Library
 {
@@ -93,8 +93,18 @@ namespace MediaPortal.GUI.Library
     private int _StartCharacter = 32;
     private int _EndCharacter = 255;
     private static bool logfonts = false;
+    private ILog _log;
     #endregion
+
     #region ctors
+    /// <summary>
+    /// Constructor of the GUIFont class.
+    /// </summary>
+    public GUIFont()
+    {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+    }
     /// <summary>
     /// Constructor of the GUIFont class.
     /// </summary>
@@ -102,8 +112,9 @@ namespace MediaPortal.GUI.Library
     /// <param name="strFileName">The system name of the font (E.g., Arial)</param>
     /// <param name="iHeight">The height of the font.</param>
     public GUIFont(string fontName, string fileName, int fontHeight)
+      : this()
     {
-      if (logfonts) Log.Write("GUIFont:ctor({0}) fontengine: Initialize()", fontName);
+      if (logfonts) _log.Info("GUIFont:ctor({0}) fontengine: Initialize()", fontName);
       FontEngineInitialize(GUIGraphicsContext.Width, GUIGraphicsContext.Height);
       _fontName = fontName;
       _fileName = fileName;
@@ -118,8 +129,9 @@ namespace MediaPortal.GUI.Library
     /// <param name="iHeight">The height of the font.</param>
     /// <param name="style">The style of the font (E.g., Bold)</param>
     public GUIFont(string fontName, string fileName, int iHeight, FontStyle style)
+      : this()
     {
-      if (logfonts) Log.Write("GUIFont:ctor({0}) fontengine: Initialize()", fontName);
+      if (logfonts) _log.Info("GUIFont:ctor({0}) fontengine: Initialize()", fontName);
       FontEngineInitialize(GUIGraphicsContext.Width, GUIGraphicsContext.Height);
       _fontName = fontName;
       _fileName = fileName;
@@ -431,7 +443,7 @@ namespace MediaPortal.GUI.Library
       _systemFont = null;
       if (_fontAdded)
       {
-        if (logfonts) Log.Write("GUIFont:Dispose({0}) fontengine: Remove font:{1}", _fontName, ID.ToString());
+        if (logfonts) _log.Info("GUIFont:Dispose({0}) fontengine: Remove font:{1}", _fontName, ID.ToString());
         if (ID >= 0) FontEngineRemoveFont(ID);
       }
       _fontAdded = false;
@@ -535,7 +547,7 @@ namespace MediaPortal.GUI.Library
           _textureHeight = info.Height;
           _textureWidth = info.Width;
           RestoreDeviceObjects();
-          Log.Write("  Loaded font:{0} height:{1} texture:{2}x{3} chars:[{4}-{5}] miplevels:{6}",
+          _log.Info("  Loaded font:{0} height:{1} texture:{2}x{3} chars:[{4}-{5}] miplevels:{6}",
             _fontName, _fontHeight, _textureWidth, _textureWidth, _StartCharacter, _EndCharacter, _textureFont.LevelCount);
           SetFontEgine();
           return;
@@ -671,7 +683,7 @@ namespace MediaPortal.GUI.Library
 
     void _textureFont_Disposing(object sender, EventArgs e)
     {
-      Log.Write("GUIFont:texture disposing:{0} {1}", ID, _fontName);
+      _log.Info("GUIFont:texture disposing:{0} {1}", ID, _fontName);
       _textureFont = null;
       if (_fontAdded && ID >= 0)
       {
@@ -681,7 +693,7 @@ namespace MediaPortal.GUI.Library
     }
     void Restore()
     {
-      Log.Write("GUIFont:restore font:{0} {1}" ,ID,_fontName);
+      _log.Info("GUIFont:restore font:{0} {1}", ID, _fontName);
       Format fmt = Format.Unknown;
       int colorKey = 0;
       string strCache = String.Format(@"{0}\fonts\{1}_{2}.png", GUIGraphicsContext.Skin, _fontName, _fontHeight);
@@ -712,7 +724,7 @@ namespace MediaPortal.GUI.Library
       if (ID < 0) return;
       Surface surf = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
 
-      if (logfonts) Log.Write("GUIFont:RestoreDeviceObjects() fontengine: add font:" + ID.ToString());
+      if (logfonts) _log.Info("GUIFont:RestoreDeviceObjects() fontengine: add font:" + ID.ToString());
       IntPtr upTexture = DShowNET.Helper.DirectShowUtil.GetUnmanagedTexture(_textureFont);
       unsafe
       {

@@ -348,7 +348,7 @@ namespace MediaPortal.GUI.Video
         case Action.ActionType.ACTION_SHOW_MSN_OSD:
           if (m_bMSNChatPopup)
           {
-            Log.Write("MSN CHAT:ON");
+            _log.Info("MSN CHAT:ON");
 
             m_bMSNChatVisible = true;
             GUIWindowManager.VisibleOsd = GUIWindow.Window.WINDOW_MSNOSD;
@@ -522,7 +522,7 @@ namespace MediaPortal.GUI.Video
               g_Player.SwitchToNextAudio();
               msg.Label = string.Format("{0} ({1}/{2})", g_Player.AudioLanguage(g_Player.CurrentAudioStream), g_Player.CurrentAudioStream + 1, g_Player.AudioStreams);
               OnMessage(msg);
-              Log.Write("GUIVideoFullscreen: switched audio to {0}", msg.Label);
+              _log.Info("GUIVideoFullscreen: switched audio to {0}", msg.Label);
             }
           }
           break;
@@ -540,14 +540,14 @@ namespace MediaPortal.GUI.Video
               else
                 msg.Label = GUILocalizeStrings.Get(519); // Subtitles off
               OnMessage(msg);
-              Log.Write("GUIVideoFullscreen: switched subtitle to {0}", msg.Label);
+              _log.Info("GUIVideoFullscreen: switched subtitle to {0}", msg.Label);
             }
           }
           break;
 
         case Action.ActionType.ACTION_STOP:
           {
-            Log.Write("GUIVideoFullscreen:stop");
+            _log.Info("GUIVideoFullscreen:stop");
             g_Player.Stop();
             GUIWindowManager.ShowPreviousWindow();
           }
@@ -584,14 +584,14 @@ namespace MediaPortal.GUI.Video
 
         case Action.ActionType.ACTION_REWIND:
           {
-            g_Player.Speed = Utils.GetNextRewindSpeed(g_Player.Speed);
+            g_Player.Speed = MediaPortal.Util.Utils.GetNextRewindSpeed(g_Player.Speed);
 
           }
           break;
 
         case Action.ActionType.ACTION_FORWARD:
           {
-            g_Player.Speed = Utils.GetNextForwardSpeed(g_Player.Speed);
+            g_Player.Speed = MediaPortal.Util.Utils.GetNextForwardSpeed(g_Player.Speed);
 
           }
           break;
@@ -674,12 +674,12 @@ namespace MediaPortal.GUI.Video
       //  if (notify == null) return true;
       //  dialogNotify.SetHeading(1016);
       //  dialogNotify.SetText(String.Format("{0}\n{1}", notify.Title, notify.Description));
-      //  string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, notify.Channel);
+      //  string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, notify.Channel);
       //  dialogNotify.SetImage(strLogo);
       //  dialogNotify.TimeOut = _notifyTVTimeout;
       //  NotifyDialogVisible = true;
       //  if ( _playNotifyBeep )
-      //    Utils.PlaySound("notify.wav", false, true);
+      //    MediaPortal.Util.Utils.PlaySound("notify.wav", false, true);
       //  dialogNotify.DoModal(GetID);
       //  NotifyDialogVisible = false;
       //}
@@ -714,7 +714,7 @@ namespace MediaPortal.GUI.Video
 
           if (!m_bMSNChatVisible && m_bMSNChatPopup && (m_msnWindow != null))
           {
-            Log.Write("MSN CHAT:ON");
+            _log.Info("MSN CHAT:ON");
             m_bMSNChatVisible = true;
             GUIWindowManager.VisibleOsd = GUIWindow.Window.WINDOW_MSNOSD;
             m_msnWindow.DoModal(GetID, message);
@@ -872,7 +872,7 @@ namespace MediaPortal.GUI.Video
           break;
 
         case 12902: // MSN Messenger
-          Log.Write("MSN CHAT:ON");
+          _log.Info("MSN CHAT:ON");
           m_bMSNChatVisible = true;
           GUIWindowManager.VisibleOsd = GUIWindow.Window.WINDOW_MSNOSD;
           m_msnWindow.DoModal(GetID, null);

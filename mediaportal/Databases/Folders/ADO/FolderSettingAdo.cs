@@ -6,7 +6,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Xml;
 using System.Xml.Serialization;
-
+using MediaPortal.Utils.Services;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Database;
@@ -16,9 +16,13 @@ namespace Databases.Folders.SqlServer
   public class FolderSettingAdo: IFolderSettings, IDisposable
   {
     SqlConnection _connection;
+    protected ILog _log;
 
     public FolderSettingAdo()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+
       string connectionString;
       using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings("mediaportal.xml"))
       {
@@ -77,7 +81,7 @@ namespace Databases.Folders.SqlServer
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        _log.Error(ex);
       }
       return -1;
     }
@@ -102,7 +106,7 @@ namespace Databases.Folders.SqlServer
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        _log.Error(ex);
       }
     }
 
@@ -150,7 +154,7 @@ namespace Databases.Folders.SqlServer
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        _log.Error(ex);
 
       }
     }
@@ -213,7 +217,7 @@ namespace Databases.Folders.SqlServer
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        _log.Error(ex);
       }
     }
   }
