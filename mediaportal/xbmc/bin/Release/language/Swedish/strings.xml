@@ -2558,6 +2558,22 @@
 		<value>Hittade ingen XMLTV-fil</value>
 	</string>
 	<string>
+		<id>778</id>
+		<value>Starta med timeshift automtiskt på</value>
+	</string>
+	<string>
+		<id>779</id>
+		<value>Timeshift måste sättas på manuellt</value>
+	</string>
+	<string>
+		<id>798</id>
+		<value>Lågt</value>
+	</string>
+	<string>
+		<id>799</id>
+		<value>Högt</value>
+	</string>
+	<string>
 		<id>800</id>
 		<value>Startar med</value>
 	</string>
@@ -5336,6 +5352,38 @@
 	<string>
 		<id>4557</id>
 		<value>Lägg till alla i spellistan</value>
+	</string>
+	<string>
+		<id>6000</id>
+		<value>Videocodec</value>
+	</string>
+	<string>
+		<id>6001</id>
+		<value>Audiocodec</value>
+	</string>
+	<string>
+		<id>6002</id>
+		<value>Audiorenderare</value>
+	</string>
+	<string>
+		<id>6003</id>
+		<value>Deinterlacing</value>
+	</string>
+	<string>
+		<id>6004</id>
+		<value>Aspekt</value>
+	</string>
+	<string>
+		<id>6007</id>
+		<value>Inspelning</value>
+	</string>
+	<string>
+		<id>6018</id>
+		<value>minuter före programmet startar</value>
+	</string>
+	<string>
+		<id>6019</id>
+		<value>minuter efter programmet slutar</value>
 	</string>
 	<string>
 		<id>10100</id>
