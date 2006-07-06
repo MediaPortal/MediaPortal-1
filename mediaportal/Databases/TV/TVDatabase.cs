@@ -4838,6 +4838,8 @@ namespace MediaPortal.TV.Database
               prog.Genre = DatabaseUtility.Get(results, i, "genre.strGenre");
               prog.Title = DatabaseUtility.Get(results, i, "tblPrograms.strTitle");
               prog.Description = DatabaseUtility.Get(results, i, "tblPrograms.strDescription");
+              if (prog.Description == Strings.Unknown)
+                prog.Description = String.Empty;
               prog.Episode = DatabaseUtility.Get(results, i, "tblPrograms.strEpisodeName");
               prog.Repeat = DatabaseUtility.Get(results, i, "tblPrograms.strRepeat");
               prog.ID = DatabaseUtility.GetAsInt(results, i, "tblPrograms.idProgram");
