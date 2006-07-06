@@ -32,21 +32,23 @@ namespace MediaPortal.Utils.Services
     private string _logName;
 
     public LogFileWriter(string directory, string name)
+      : base (directory + "\\" + name + ".log")
     {
+      base.Close();
       _errorName = directory + "\\" + name + "_error.log";
       _logName = directory + "\\" + name + ".log";
     }
 
     public override void WriteLine(string value)
     {
-      _logStream = new StreamWriter(_logName);
+      _logStream = new StreamWriter(_logName, true);
       _logStream.AutoFlush = true;
       _logStream.WriteLine(value);
       _logStream.Close();
 
       if (value.IndexOf("[ERROR]") != -1)
       {
-        _errorStream = new StreamWriter(_errorName);
+        _errorStream = new StreamWriter(_errorName, true);
         _errorStream.AutoFlush = true;
         _errorStream.WriteLine(value);
         _errorStream.Close();
