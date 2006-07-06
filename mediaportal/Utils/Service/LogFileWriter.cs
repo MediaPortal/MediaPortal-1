@@ -32,7 +32,7 @@ namespace MediaPortal.Utils.Services
     private string _logName;
 
     public LogFileWriter(string directory, string name)
-      : base (directory + "\\" + name + ".log")
+      : base (directory + "\\" + name + ".log", true)
     {
       base.Close();
       _errorName = directory + "\\" + name + "_error.log";
