@@ -41,17 +41,20 @@ namespace MediaPortal.Utils.Services
 
     public override void WriteLine(string value)
     {
-      _logStream = new StreamWriter(_logName, true);
-      _logStream.AutoFlush = true;
-      _logStream.WriteLine(value);
-      _logStream.Close();
-
-      if (value.IndexOf("[ERROR]") != -1)
+      lock (typeof(LogFileWriter))
       {
-        _errorStream = new StreamWriter(_errorName, true);
-        _errorStream.AutoFlush = true;
-        _errorStream.WriteLine(value);
-        _errorStream.Close();
+        _logStream = new StreamWriter(_logName, true);
+        _logStream.AutoFlush = true;
+        _logStream.WriteLine(value);
+        _logStream.Close();
+
+        if (value.IndexOf("[ERROR]") != -1)
+        {
+          _errorStream = new StreamWriter(_errorName, true);
+          _errorStream.AutoFlush = true;
+          _errorStream.WriteLine(value);
+          _errorStream.Close();
+        }
       }
     }
   }
