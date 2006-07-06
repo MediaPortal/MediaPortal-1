@@ -30,174 +30,174 @@ using MediaPortal.Utils.Services;
 #pragma warning disable 618
 namespace DShowNET.Helper
 {
-	/// <summary>
-	/// 
-	/// </summary>
-	public class DirectShowUtil
+  /// <summary>
+  /// 
+  /// </summary>
+  public class DirectShowUtil
   {
     const int magicConstant = -759872593;
     static ILog _log;
 
-		static DirectShowUtil()
-		{
+    static DirectShowUtil()
+    {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
-		}
+    }
 
     static public IBaseFilter AddFilterToGraph(IGraphBuilder graphBuilder, string strFilterName)
     {
-			try
-			{
-				IBaseFilter NewFilter=null;
+      try
+      {
+        IBaseFilter NewFilter = null;
         foreach (Filter filter in Filters.LegacyFilters)
-				{
-					if (String.Compare(filter.Name,strFilterName,true) ==0)
+        {
+          if (String.Compare(filter.Name, strFilterName, true) == 0)
           {
-						NewFilter = (IBaseFilter) Marshal.BindToMoniker( filter.MonikerString );
+            NewFilter = (IBaseFilter)Marshal.BindToMoniker(filter.MonikerString);
 
             int hr = graphBuilder.AddFilter(NewFilter, strFilterName);
-						if( hr < 0 ) 
-						{
-							_log.Error("failed:unable to add filter:{0} to graph", strFilterName);
-							NewFilter=null;
-						}
-						else
-						{
-							_log.Info("added filter:{0} to graph", strFilterName);
-						}
-						break;
-					}
-				}
-				if (NewFilter==null)
-				{
-					_log.Error("failed filter:{0} not found", strFilterName);
-				}
-				return NewFilter;
-			}
-			catch(Exception ex)
-			{
-				_log.Error("failed filter:{0} not found {0}", strFilterName,ex.Message);
-				return null;
-			}
+            if (hr < 0)
+            {
+              _log.Error("failed:unable to add filter:{0} to graph", strFilterName);
+              NewFilter = null;
+            }
+            else
+            {
+              _log.Info("added filter:{0} to graph", strFilterName);
+            }
+            break;
+          }
+        }
+        if (NewFilter == null)
+        {
+          _log.Error("failed filter:{0} not found", strFilterName);
+        }
+        return NewFilter;
+      }
+      catch (Exception ex)
+      {
+        _log.Error("failed filter:{0} not found {0}", strFilterName, ex.Message);
+        return null;
+      }
     }
 
-    static public IBaseFilter AddAudioRendererToGraph(IGraphBuilder graphBuilder,string strFilterName, bool setAsReferenceClock)
+    static public IBaseFilter AddAudioRendererToGraph(IGraphBuilder graphBuilder, string strFilterName, bool setAsReferenceClock)
     {
-			try
-			{
-				int hr;
-				IPin pinOut=null;
-				IBaseFilter NewFilter=null;
-				_log.Info("add filter:{0} to graph clock:{0}", strFilterName,setAsReferenceClock);
-	      
-				//check first if audio renderer exists!
-				bool bRendererExists=false;
-        foreach (Filter filter in Filters.AudioRenderers)
-				{
-					if (String.Compare(filter.Name,strFilterName,true) ==0)
-					{
-						bRendererExists=true;
-					}
-				}
-				if (!bRendererExists) 
-				{
-					_log.Error("FAILED: audio renderer:{0} doesnt exists", strFilterName);
-					return null;
-				}
+      try
+      {
+        int hr;
+        IPin pinOut = null;
+        IBaseFilter NewFilter = null;
+        _log.Info("add filter:{0} to graph clock:{0}", strFilterName, setAsReferenceClock);
 
-				// first remove all audio renderers
-				bool bAllRemoved=false;
-				bool bNeedAdd=true;
-				IEnumFilters enumFilters;
-				hr=graphBuilder.EnumFilters(out enumFilters);
-				if (hr>=0 && enumFilters!=null)
-				{
-					int iFetched;
-					enumFilters.Reset();
-					while(!bAllRemoved)
-					{
+        //check first if audio renderer exists!
+        bool bRendererExists = false;
+        foreach (Filter filter in Filters.AudioRenderers)
+        {
+          if (String.Compare(filter.Name, strFilterName, true) == 0)
+          {
+            bRendererExists = true;
+          }
+        }
+        if (!bRendererExists)
+        {
+          _log.Error("FAILED: audio renderer:{0} doesnt exists", strFilterName);
+          return null;
+        }
+
+        // first remove all audio renderers
+        bool bAllRemoved = false;
+        bool bNeedAdd = true;
+        IEnumFilters enumFilters;
+        hr = graphBuilder.EnumFilters(out enumFilters);
+        if (hr >= 0 && enumFilters != null)
+        {
+          int iFetched;
+          enumFilters.Reset();
+          while (!bAllRemoved)
+          {
             IBaseFilter[] pBasefilter = new IBaseFilter[2];
-						hr=enumFilters.Next(1, pBasefilter,out iFetched);
-						if (hr<0 || iFetched!=1 || pBasefilter[0]==null) break;
+            hr = enumFilters.Next(1, pBasefilter, out iFetched);
+            if (hr < 0 || iFetched != 1 || pBasefilter[0] == null) break;
 
             foreach (Filter filter in Filters.AudioRenderers)
-						{
-							Guid classId1;
-							Guid classId2;
-							pBasefilter[0].GetClassID(out classId1);            
-	            
-							NewFilter = (IBaseFilter) Marshal.BindToMoniker( filter.MonikerString );
-							NewFilter.GetClassID(out classId2);
-							Marshal.ReleaseComObject( NewFilter );
-							NewFilter=null;
+            {
+              Guid classId1;
+              Guid classId2;
+              pBasefilter[0].GetClassID(out classId1);
 
-							if (classId1.Equals(classId2))
-							{ 
-								if (filter.Name== strFilterName)
-								{
-									_log.Info("filter already in graph");
-									
-									if (setAsReferenceClock)
-										(graphBuilder as IMediaFilter).SetSyncSource(pBasefilter[0] as IReferenceClock);
+              NewFilter = (IBaseFilter)Marshal.BindToMoniker(filter.MonikerString);
+              NewFilter.GetClassID(out classId2);
+              Marshal.ReleaseComObject(NewFilter);
+              NewFilter = null;
+
+              if (classId1.Equals(classId2))
+              {
+                if (filter.Name == strFilterName)
+                {
+                  _log.Info("filter already in graph");
+
+                  if (setAsReferenceClock)
+                    (graphBuilder as IMediaFilter).SetSyncSource(pBasefilter[0] as IReferenceClock);
                   Marshal.ReleaseComObject(pBasefilter[0]);
-									pBasefilter[0] =null;
-									bNeedAdd=false;
-									break;
-								}
-								else
-								{
-									_log.Info("remove "+ filter.Name + " from graph");
+                  pBasefilter[0] = null;
+                  bNeedAdd = false;
+                  break;
+                }
+                else
+                {
+                  _log.Info("remove " + filter.Name + " from graph");
                   pinOut = FindSourcePinOf(pBasefilter[0]);
                   graphBuilder.RemoveFilter(pBasefilter[0]);
-									bAllRemoved=true;
-									break;
-								}
-							}//if (classId1.Equals(classId2))
-						}//foreach (Filter filter in filters.AudioRenderers)
+                  bAllRemoved = true;
+                  break;
+                }
+              }//if (classId1.Equals(classId2))
+            }//foreach (Filter filter in filters.AudioRenderers)
             if (pBasefilter[0] != null)
               Marshal.ReleaseComObject(pBasefilter[0]);
-					}//while(!bAllRemoved)
-					Marshal.ReleaseComObject(enumFilters);
-				}//if (hr>=0 && enumFilters!=null)
+          }//while(!bAllRemoved)
+          Marshal.ReleaseComObject(enumFilters);
+        }//if (hr>=0 && enumFilters!=null)
 
-				if (!bNeedAdd) return null;
-				// next add the new one...
+        if (!bNeedAdd) return null;
+        // next add the new one...
         foreach (Filter filter in Filters.AudioRenderers)
-				{
-					if (String.Compare(filter.Name,strFilterName,true) ==0)
-					{
-						NewFilter = (IBaseFilter) Marshal.BindToMoniker( filter.MonikerString );
-						hr = graphBuilder.AddFilter( NewFilter, strFilterName );
-						if( hr < 0 ) 
-						{
-							_log.Error("failed:unable to add filter:{0} to graph", strFilterName);
-							NewFilter=null;
-						}
-						else
-						{
-							_log.Info("added filter:{0} to graph", strFilterName);
-							if (pinOut!=null)
-							{
-								hr=graphBuilder.Render(pinOut);
-								if (hr==0) _log.Info(" pinout rendererd");
-								else _log.Error(" failed: pinout render");
-							}
-							if (setAsReferenceClock)
-								(graphBuilder as IMediaFilter).SetSyncSource(NewFilter as IReferenceClock);
-							return NewFilter;
-						}
-					}//if (String.Compare(filter.Name,strFilterName,true) ==0)
-				}//foreach (Filter filter in filters.AudioRenderers)
-				if (NewFilter==null)
-				{
-					_log.Error("failed filter:{0} not found", strFilterName);
-				}
-			}
-			catch(Exception ex)
-			{
-				_log.Error("DirectshowUtil. Failed to add filter:{0} to graph :{0} {1} [2}", 
-							strFilterName,ex.Message,ex.Source,ex.StackTrace);
-			}
+        {
+          if (String.Compare(filter.Name, strFilterName, true) == 0)
+          {
+            NewFilter = (IBaseFilter)Marshal.BindToMoniker(filter.MonikerString);
+            hr = graphBuilder.AddFilter(NewFilter, strFilterName);
+            if (hr < 0)
+            {
+              _log.Error("failed:unable to add filter:{0} to graph", strFilterName);
+              NewFilter = null;
+            }
+            else
+            {
+              _log.Info("added filter:{0} to graph", strFilterName);
+              if (pinOut != null)
+              {
+                hr = graphBuilder.Render(pinOut);
+                if (hr == 0) _log.Info(" pinout rendererd");
+                else _log.Error(" failed: pinout render");
+              }
+              if (setAsReferenceClock)
+                (graphBuilder as IMediaFilter).SetSyncSource(NewFilter as IReferenceClock);
+              return NewFilter;
+            }
+          }//if (String.Compare(filter.Name,strFilterName,true) ==0)
+        }//foreach (Filter filter in filters.AudioRenderers)
+        if (NewFilter == null)
+        {
+          _log.Error("failed filter:{0} not found", strFilterName);
+        }
+      }
+      catch (Exception ex)
+      {
+        _log.Error("DirectshowUtil. Failed to add filter:{0} to graph :{1} {2} {3}",
+              strFilterName, ex.Message, ex.Source, ex.StackTrace);
+      }
       return null;
     }
 
@@ -205,10 +205,10 @@ namespace DShowNET.Helper
 
     static public IPin FindSourcePinOf(IBaseFilter filter)
     {
-      int hr=0;
+      int hr = 0;
       IEnumPins pinEnum;
-      hr=filter.EnumPins(out pinEnum);
-      if( (hr == 0) && (pinEnum != null) )
+      hr = filter.EnumPins(out pinEnum);
+      if ((hr == 0) && (pinEnum != null))
       {
         pinEnum.Reset();
         IPin[] pins = new IPin[1];
@@ -216,173 +216,173 @@ namespace DShowNET.Helper
         do
         {
           // Get the next pin
-          hr = pinEnum.Next( 1, pins, out f );
-          if( (hr == 0) && (pins[0] != null) )
+          hr = pinEnum.Next(1, pins, out f);
+          if ((hr == 0) && (pins[0] != null))
           {
             PinDirection pinDir;
             pins[0].QueryDirection(out pinDir);
-            if (pinDir==PinDirection.Input)
+            if (pinDir == PinDirection.Input)
             {
-              IPin pSourcePin=null;
-              hr=pins[0].ConnectedTo(out pSourcePin);
-              if (hr>=0)
-							{
-								Marshal.ReleaseComObject(pinEnum);
+              IPin pSourcePin = null;
+              hr = pins[0].ConnectedTo(out pSourcePin);
+              if (hr >= 0)
+              {
+                Marshal.ReleaseComObject(pinEnum);
                 return pSourcePin;
               }
             }
-            Marshal.ReleaseComObject( pins[0] );
+            Marshal.ReleaseComObject(pins[0]);
           }
         }
-				while( hr == 0 );
-				Marshal.ReleaseComObject(pinEnum);
+        while (hr == 0);
+        Marshal.ReleaseComObject(pinEnum);
       }
       return null;
     }
 
-		static public bool RenderOutputPins(IGraphBuilder graphBuilder,IBaseFilter filter)
-		{
-			return RenderOutputPins(graphBuilder,filter,100);
-		}
-    static public bool RenderOutputPins(IGraphBuilder graphBuilder,IBaseFilter filter, int maxPinsToRender)
+    static public bool RenderOutputPins(IGraphBuilder graphBuilder, IBaseFilter filter)
     {
-			int  pinsRendered=0;
-      bool bAllConnected=true;
+      return RenderOutputPins(graphBuilder, filter, 100);
+    }
+    static public bool RenderOutputPins(IGraphBuilder graphBuilder, IBaseFilter filter, int maxPinsToRender)
+    {
+      int pinsRendered = 0;
+      bool bAllConnected = true;
       IEnumPins pinEnum;
-      int hr=filter.EnumPins(out pinEnum);
-      if( (hr == 0) && (pinEnum != null) )
+      int hr = filter.EnumPins(out pinEnum);
+      if ((hr == 0) && (pinEnum != null))
       {
         _log.Info("got pins");
         pinEnum.Reset();
         IPin[] pins = new IPin[1];
         int iFetched;
-        int iPinNo=0;
+        int iPinNo = 0;
         do
         {
           // Get the next pin
           //_log.Info("  get pin:{0}",iPinNo);
           iPinNo++;
-          hr = pinEnum.Next( 1, pins, out iFetched );
-          if( hr == 0 )
+          hr = pinEnum.Next(1, pins, out iFetched);
+          if (hr == 0)
           {
-            if (iFetched==1 && pins[0]!=null) 
+            if (iFetched == 1 && pins[0] != null)
             {
               PinInfo pinInfo = new PinInfo();
-              hr=pins[0].QueryPinInfo(out pinInfo);
-							if (hr==0)
-							{
-								_log.Info("  got pin#{0}:{1}",iPinNo-1,pinInfo.name);
-								//Marshal.ReleaseComObject(pinInfo.filter);
-							}
-							else
-							{
-								_log.Info("  got pin:?");
-							}
+              hr = pins[0].QueryPinInfo(out pinInfo);
+              if (hr == 0)
+              {
+                _log.Info("  got pin#{0}:{1}", iPinNo - 1, pinInfo.name);
+                //Marshal.ReleaseComObject(pinInfo.filter);
+              }
+              else
+              {
+                _log.Info("  got pin:?");
+              }
               PinDirection pinDir;
               pins[0].QueryDirection(out pinDir);
-              if (pinDir==PinDirection.Output)
+              if (pinDir == PinDirection.Output)
               {
-                IPin pConnectPin=null;
-                hr=pins[0].ConnectedTo(out pConnectPin);  
-								if (hr!=0 || pConnectPin==null)
-								{
-									hr=graphBuilder.Render(pins[0]);
-									if (hr==0) 
-									{
-										_log.Info("  render ok");
-									}
-									else 
-									{
-										_log.Error("  render failed:{0:x}",hr);
-										bAllConnected=false;
-									}
-									pinsRendered++;
-								}
-								if (pConnectPin!=null)
-									Marshal.ReleaseComObject(pConnectPin);
-								pConnectPin=null;
+                IPin pConnectPin = null;
+                hr = pins[0].ConnectedTo(out pConnectPin);
+                if (hr != 0 || pConnectPin == null)
+                {
+                  hr = graphBuilder.Render(pins[0]);
+                  if (hr == 0)
+                  {
+                    _log.Info("  render ok");
+                  }
+                  else
+                  {
+                    _log.Error("  render failed:{0:x}", hr);
+                    bAllConnected = false;
+                  }
+                  pinsRendered++;
+                }
+                if (pConnectPin != null)
+                  Marshal.ReleaseComObject(pConnectPin);
+                pConnectPin = null;
                 //else _log.Info("pin is already connected");
               }
-              Marshal.ReleaseComObject( pins[0] );
+              Marshal.ReleaseComObject(pins[0]);
             }
-            else 
+            else
             {
-              iFetched=0;
+              iFetched = 0;
               _log.Info("no pins?");
               break;
             }
           }
-          else iFetched=0;
-				}while( iFetched==1 && pinsRendered < maxPinsToRender);
-				Marshal.ReleaseComObject(pinEnum);
+          else iFetched = 0;
+        } while (iFetched == 1 && pinsRendered < maxPinsToRender);
+        Marshal.ReleaseComObject(pinEnum);
       }
       return bAllConnected;
     }
 
-    static public void DisconnectOutputPins(IGraphBuilder graphBuilder,IBaseFilter filter)
+    static public void DisconnectOutputPins(IGraphBuilder graphBuilder, IBaseFilter filter)
     {
       IEnumPins pinEnum;
-      int hr=filter.EnumPins(out pinEnum);
-      if( (hr == 0) && (pinEnum != null) )
+      int hr = filter.EnumPins(out pinEnum);
+      if ((hr == 0) && (pinEnum != null))
       {
         //_log.Info("got pins");
         pinEnum.Reset();
         IPin[] pins = new IPin[1];
         int iFetched;
-        int iPinNo=0;
+        int iPinNo = 0;
         do
         {
           // Get the next pin
           //_log.Info("  get pin:{0}",iPinNo);
           iPinNo++;
-          hr = pinEnum.Next( 1, pins, out iFetched );
-          if( hr == 0 )
+          hr = pinEnum.Next(1, pins, out iFetched);
+          if (hr == 0)
           {
-            if (iFetched==1 && pins[0]!=null) 
+            if (iFetched == 1 && pins[0] != null)
             {
               //_log.Info("  find pin info");
               PinInfo pinInfo = new PinInfo();
-              hr=pins[0].QueryPinInfo(out pinInfo);
-							if (hr>=0)
-							{
-								//Marshal.ReleaseComObject(pinInfo.filter);
-								_log.Info("  got pin#{0}:{1}",iPinNo-1,pinInfo.name);
-							}
-							else
-								_log.Info("  got pin:?");
+              hr = pins[0].QueryPinInfo(out pinInfo);
+              if (hr >= 0)
+              {
+                //Marshal.ReleaseComObject(pinInfo.filter);
+                _log.Info("  got pin#{0}:{1}", iPinNo - 1, pinInfo.name);
+              }
+              else
+                _log.Info("  got pin:?");
               PinDirection pinDir;
               pins[0].QueryDirection(out pinDir);
-              if (pinDir==PinDirection.Output)
+              if (pinDir == PinDirection.Output)
               {
                 //_log.Info("  is output");
-                IPin pConnectPin=null;
-                hr=pins[0].ConnectedTo(out pConnectPin);  
-                if (hr==0 && pConnectPin!=null)
+                IPin pConnectPin = null;
+                hr = pins[0].ConnectedTo(out pConnectPin);
+                if (hr == 0 && pConnectPin != null)
                 {
                   //_log.Info("  pin is connected ");
-                  hr=pins[0].Disconnect();
-                  if (hr==0) _log.Info("  disconnected ok");
-                  else 
+                  hr = pins[0].Disconnect();
+                  if (hr == 0) _log.Info("  disconnected ok");
+                  else
                   {
                     _log.Error("  disconnected failed");
                   }
-									Marshal.ReleaseComObject(pConnectPin);
-									pConnectPin=null;
+                  Marshal.ReleaseComObject(pConnectPin);
+                  pConnectPin = null;
                 }
                 //else _log.Info("pin is already connected");
               }
-              Marshal.ReleaseComObject( pins[0] );
+              Marshal.ReleaseComObject(pins[0]);
             }
-            else 
+            else
             {
-              iFetched=0;
+              iFetched = 0;
               _log.Info("no pins?");
               break;
             }
           }
-          else iFetched=0;
-				}while( iFetched==1 );
-				Marshal.ReleaseComObject(pinEnum);
+          else iFetched = 0;
+        } while (iFetched == 1);
+        Marshal.ReleaseComObject(pinEnum);
       }
     }
 
@@ -396,56 +396,56 @@ namespace DShowNET.Helper
     {
       int hr;
       IBaseFilter overlay;
-      graphBuilder.FindFilterByName("Overlay Mixer2",out overlay);
-        
-      if (overlay!=null)
+      graphBuilder.FindFilterByName("Overlay Mixer2", out overlay);
+
+      if (overlay != null)
       {
         IPin iPin;
         overlay.FindPin("Input0", out iPin);
-        if (iPin!=null)
+        if (iPin != null)
         {
-          IMixerPinConfig pMC = iPin as IMixerPinConfig ;
-          if (pMC!=null)
+          IMixerPinConfig pMC = iPin as IMixerPinConfig;
+          if (pMC != null)
           {
             AspectRatioMode mode;
-            hr=pMC.SetAspectRatioMode(ARRatioMode);
-						hr=pMC.GetAspectRatioMode(out mode);
-						//Marshal.ReleaseComObject(pMC);
+            hr = pMC.SetAspectRatioMode(ARRatioMode);
+            hr = pMC.GetAspectRatioMode(out mode);
+            //Marshal.ReleaseComObject(pMC);
           }
-					Marshal.ReleaseComObject(iPin);
-				}
-				Marshal.ReleaseComObject(overlay);
+          Marshal.ReleaseComObject(iPin);
+        }
+        Marshal.ReleaseComObject(overlay);
       }
-        
+
 
       IEnumFilters enumFilters;
-      hr=graphBuilder.EnumFilters(out enumFilters);
-      if (hr>=0 && enumFilters!=null)
+      hr = graphBuilder.EnumFilters(out enumFilters);
+      if (hr >= 0 && enumFilters != null)
       {
         int iFetched;
         enumFilters.Reset();
         IBaseFilter[] pBasefilter = new IBaseFilter[2];
         do
         {
-          pBasefilter=null;
-          hr=enumFilters.Next(1, pBasefilter,out iFetched);
-          if (hr==0 && iFetched==1 &&  pBasefilter[0]!=null)
+          pBasefilter = null;
+          hr = enumFilters.Next(1, pBasefilter, out iFetched);
+          if (hr == 0 && iFetched == 1 && pBasefilter[0] != null)
           {
 
             IVMRAspectRatioControl pARC = pBasefilter[0] as IVMRAspectRatioControl;
-            if (pARC!=null)
+            if (pARC != null)
             {
               pARC.SetAspectRatioMode(VMRAspectRatioMode.None);
             }
             IVMRAspectRatioControl9 pARC9 = pBasefilter[0] as IVMRAspectRatioControl9;
-            if (pARC9!=null)
+            if (pARC9 != null)
             {
               pARC9.SetAspectRatioMode(VMRAspectRatioMode.None);
             }
 
             IEnumPins pinEnum;
             hr = pBasefilter[0].EnumPins(out pinEnum);
-            if( (hr == 0) && (pinEnum != null) )
+            if ((hr == 0) && (pinEnum != null))
             {
               pinEnum.Reset();
               IPin[] pins = new IPin[1];
@@ -453,71 +453,71 @@ namespace DShowNET.Helper
               do
               {
                 // Get the next pin
-                hr = pinEnum.Next( 1, pins, out f );
-                if(f==1&& hr == 0 && pins[0] != null )
+                hr = pinEnum.Next(1, pins, out f);
+                if (f == 1 && hr == 0 && pins[0] != null)
                 {
-                  IMixerPinConfig pMC = pins[0] as IMixerPinConfig ;
-                  if (null!=pMC)
+                  IMixerPinConfig pMC = pins[0] as IMixerPinConfig;
+                  if (null != pMC)
                   {
                     pMC.SetAspectRatioMode(ARRatioMode);
-									}
-                  Marshal.ReleaseComObject( pins[0] );
+                  }
+                  Marshal.ReleaseComObject(pins[0]);
                 }
-              } while( f ==1);
-							Marshal.ReleaseComObject(pinEnum);
+              } while (f == 1);
+              Marshal.ReleaseComObject(pinEnum);
             }
             Marshal.ReleaseComObject(pBasefilter[0]);
           }
         } while (iFetched == 1 && pBasefilter[0] != null);
-				Marshal.ReleaseComObject(enumFilters);
+        Marshal.ReleaseComObject(enumFilters);
       }
     }
 
-		static bool IsInterlaced(uint x) 
-		{
+    static bool IsInterlaced(uint x)
+    {
       return ((x) & ((uint)AMInterlace.IsInterlaced)) != 0;
-		}
-		static bool IsSingleField(uint x) 
-		{
+    }
+    static bool IsSingleField(uint x)
+    {
       return ((x) & ((uint)AMInterlace.OneFieldPerSample)) != 0;
-		}
-		static bool  IsField1First(uint x)
-		{
+    }
+    static bool IsField1First(uint x)
+    {
       return ((x) & ((uint)AMInterlace.Field1First)) != 0;
-		}
+    }
 
     static VMR9SampleFormat ConvertInterlaceFlags(uint dwInterlaceFlags)
-		{
-			if (IsInterlaced(dwInterlaceFlags)) 
-			{
-				if (IsSingleField(dwInterlaceFlags)) 
-				{
-					if (IsField1First(dwInterlaceFlags)) 
-					{
-						return VMR9SampleFormat.FieldSingleEven;
-					}
-					else 
-					{
-						return VMR9SampleFormat.FieldSingleOdd;
-					}
-				}
-				else 
-				{
-					if (IsField1First(dwInterlaceFlags)) 
-					{
-						return VMR9SampleFormat.FieldInterleavedEvenFirst;
-					}
-					else 
-					{
-						return VMR9SampleFormat.FieldInterleavedOddFirst;
-					}
-				}
-			}
-			else 
-			{
-				return VMR9SampleFormat.ProgressiveFrame;  // Not interlaced.
-			}
-		}
+    {
+      if (IsInterlaced(dwInterlaceFlags))
+      {
+        if (IsSingleField(dwInterlaceFlags))
+        {
+          if (IsField1First(dwInterlaceFlags))
+          {
+            return VMR9SampleFormat.FieldSingleEven;
+          }
+          else
+          {
+            return VMR9SampleFormat.FieldSingleOdd;
+          }
+        }
+        else
+        {
+          if (IsField1First(dwInterlaceFlags))
+          {
+            return VMR9SampleFormat.FieldInterleavedEvenFirst;
+          }
+          else
+          {
+            return VMR9SampleFormat.FieldInterleavedOddFirst;
+          }
+        }
+      }
+      else
+      {
+        return VMR9SampleFormat.ProgressiveFrame;  // Not interlaced.
+      }
+    }
     /// <summary>
     /// Find the overlay mixer and/or the VMR9 windowless filters
     /// and tell them we dont want a fixed Aspect Ratio
@@ -529,81 +529,81 @@ namespace DShowNET.Helper
       //not used anymore
     }
 
-    static public IPin FindVideoPort(ref ICaptureGraphBuilder2 captureGraphBuilder ,ref IBaseFilter videoDeviceFilter,ref Guid mediaType)
+    static public IPin FindVideoPort(ref ICaptureGraphBuilder2 captureGraphBuilder, ref IBaseFilter videoDeviceFilter, ref Guid mediaType)
     {
       IPin pPin;
       DsGuid cat = new DsGuid(PinCategory.VideoPort);
-      int hr = captureGraphBuilder.FindPin(videoDeviceFilter,PinDirection.Output, cat,new DsGuid( mediaType),false,0,out pPin);
-      if (hr>=0 && pPin!=null)
+      int hr = captureGraphBuilder.FindPin(videoDeviceFilter, PinDirection.Output, cat, new DsGuid(mediaType), false, 0, out pPin);
+      if (hr >= 0 && pPin != null)
         _log.Info("Found videoport pin");
       return pPin;
     }
 
-    static public IPin FindPreviewPin(ref ICaptureGraphBuilder2 captureGraphBuilder ,ref IBaseFilter videoDeviceFilter,ref Guid mediaType)
+    static public IPin FindPreviewPin(ref ICaptureGraphBuilder2 captureGraphBuilder, ref IBaseFilter videoDeviceFilter, ref Guid mediaType)
     {
       IPin pPin;
       DsGuid cat = new DsGuid(PinCategory.Preview);
-      int hr = captureGraphBuilder.FindPin(videoDeviceFilter, PinDirection.Output,  cat, new DsGuid(mediaType), false, 0, out pPin);
-      if (hr>=0 && pPin!=null)
+      int hr = captureGraphBuilder.FindPin(videoDeviceFilter, PinDirection.Output, cat, new DsGuid(mediaType), false, 0, out pPin);
+      if (hr >= 0 && pPin != null)
         _log.Info("Found preview pin");
       return pPin;
     }
 
-    static public IPin FindCapturePin(ref ICaptureGraphBuilder2 captureGraphBuilder ,ref IBaseFilter videoDeviceFilter,ref Guid mediaType)
+    static public IPin FindCapturePin(ref ICaptureGraphBuilder2 captureGraphBuilder, ref IBaseFilter videoDeviceFilter, ref Guid mediaType)
     {
-      IPin pPin=null;
+      IPin pPin = null;
       DsGuid cat = new DsGuid(PinCategory.Capture);
-      int hr = captureGraphBuilder.FindPin(videoDeviceFilter,PinDirection.Output, cat,new DsGuid (mediaType),false,0,out pPin);
-      if (hr>=0 && pPin!=null)
+      int hr = captureGraphBuilder.FindPin(videoDeviceFilter, PinDirection.Output, cat, new DsGuid(mediaType), false, 0, out pPin);
+      if (hr >= 0 && pPin != null)
         _log.Info("Found capture pin");
       return pPin;
     }
 
-		static public IBaseFilter GetFilterByName(IGraphBuilder graphBuilder,string name)
-		{
-			int hr=0;
-			IEnumFilters ienumFilt=null;
-			IBaseFilter[] foundfilter = new IBaseFilter[2];
-			int iFetched=0;
-			try
-			{
-				hr=graphBuilder.EnumFilters(out ienumFilt);
-				if (hr==0 && ienumFilt!=null)
-				{
-					ienumFilt.Reset();
-					do
-					{
-						hr=ienumFilt.Next(1, foundfilter,out iFetched);
-						if (hr==0 && iFetched==1)
-						{
-							FilterInfo filter_infos=new FilterInfo();
-							foundfilter[0].QueryFilterInfo(out filter_infos);
+    static public IBaseFilter GetFilterByName(IGraphBuilder graphBuilder, string name)
+    {
+      int hr = 0;
+      IEnumFilters ienumFilt = null;
+      IBaseFilter[] foundfilter = new IBaseFilter[2];
+      int iFetched = 0;
+      try
+      {
+        hr = graphBuilder.EnumFilters(out ienumFilt);
+        if (hr == 0 && ienumFilt != null)
+        {
+          ienumFilt.Reset();
+          do
+          {
+            hr = ienumFilt.Next(1, foundfilter, out iFetched);
+            if (hr == 0 && iFetched == 1)
+            {
+              FilterInfo filter_infos = new FilterInfo();
+              foundfilter[0].QueryFilterInfo(out filter_infos);
 
-							_log.Info("GetFilterByName: {0}, {1}", name, filter_infos.achName);
-            
-							if (filter_infos.achName.LastIndexOf(name)!=-1)
-							{
-								Marshal.ReleaseComObject(ienumFilt);ienumFilt=null;
+              _log.Info("GetFilterByName: {0}, {1}", name, filter_infos.achName);
+
+              if (filter_infos.achName.LastIndexOf(name) != -1)
+              {
+                Marshal.ReleaseComObject(ienumFilt); ienumFilt = null;
                 return foundfilter[0];
-							}
+              }
               Marshal.ReleaseComObject(foundfilter[0]);
-						}
-					} while (iFetched==1 && hr==0);
-					if (ienumFilt!=null)
-						Marshal.ReleaseComObject(ienumFilt);
-					ienumFilt=null;
-				}
-			}
-			catch(Exception)
-			{
-			}
-			finally
-			{
-				if (ienumFilt!=null)
-					Marshal.ReleaseComObject(ienumFilt);
-			}
-			return null;
-		}
+            }
+          } while (iFetched == 1 && hr == 0);
+          if (ienumFilt != null)
+            Marshal.ReleaseComObject(ienumFilt);
+          ienumFilt = null;
+        }
+      }
+      catch (Exception)
+      {
+      }
+      finally
+      {
+        if (ienumFilt != null)
+          Marshal.ReleaseComObject(ienumFilt);
+      }
+      return null;
+    }
 
     static public void RemoveFilters(IGraphBuilder m_graphBuilder)
     {
@@ -623,7 +623,7 @@ namespace DShowNET.Helper
             ienumFilt.Reset();
             do
             {
-              hr = ienumFilt.Next(1,  filter, out iFetched);
+              hr = ienumFilt.Next(1, filter, out iFetched);
               if (hr == 0 && iFetched == 1)
               {
                 m_graphBuilder.RemoveFilter(filter[0]);
@@ -679,7 +679,7 @@ namespace DShowNET.Helper
           ienumFilt.Reset();
           do
           {
-            hr = ienumFilt.Next(1,  filter, out iFetched);
+            hr = ienumFilt.Next(1, filter, out iFetched);
             if (hr == 0 && iFetched == 1)
             {
               Guid filterGuid;
@@ -784,7 +784,7 @@ namespace DShowNET.Helper
       if (enumPins == null) return;
       IPin[] pins = new IPin[2];
       int fetched;
-      while (enumPins.Next(1, pins, out fetched)==0)
+      while (enumPins.Next(1, pins, out fetched) == 0)
       {
         if (fetched != 1) break;
         PinDirection dir;
@@ -796,7 +796,7 @@ namespace DShowNET.Helper
         }
         IPin pinConnected;
         pins[0].ConnectedTo(out pinConnected);
-        if (pinConnected==null)
+        if (pinConnected == null)
         {
           Marshal.ReleaseComObject(pins[0]);
           continue;
@@ -828,5 +828,5 @@ namespace DShowNET.Helper
         RemoveDownStreamFilters(graphBuilder, info.filter, true);
       }
     }
-	}
+  }
 }
