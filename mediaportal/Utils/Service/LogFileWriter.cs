@@ -24,43 +24,33 @@ using System.IO;
 
 namespace MediaPortal.Utils.Services
 {
-	public class LogFileWriter : StreamWriter
-	{
-		private StreamWriter _errorStream;
-		private string _errorName;
+  public class LogFileWriter : StreamWriter
+  {
+    private StreamWriter _errorStream;
+    private StreamWriter _logStream;
+    private string _errorName;
+    private string _logName;
 
-		public LogFileWriter(string directory, string name)	
-			: base(directory + "\\" + name + ".log")
-		{
-			base.AutoFlush = true;
+    public LogFileWriter(string directory, string name)
+    {
+      _errorName = directory + "\\" + name + "_error.log";
+      _logName = directory + "\\" + name + ".log";
+    }
 
-			_errorName = directory + "\\" + name + "_error.log";
-			if (System.IO.File.Exists(_errorName))
-				System.IO.File.Delete(_errorName);
-		}
+    public override void WriteLine(string value)
+    {
+      _logStream = new StreamWriter(_logName);
+      _logStream.AutoFlush = true;
+      _logStream.WriteLine(value);
+      _logStream.Close();
 
-		public override void WriteLine(string value)
-		{
-      try
+      if (value.IndexOf("[ERROR]") != -1)
       {
-        base.WriteLine(value);
+        _errorStream = new StreamWriter(_errorName);
+        _errorStream.AutoFlush = true;
+        _errorStream.WriteLine(value);
+        _errorStream.Close();
       }
-      catch (Exception)
-      {
-        return; // if stream is closed .. leave quitely .. MP not shuting down cleanly
-      }
-			if (value.IndexOf("[ERROR]") != -1)
-			{
-				if (_errorStream == null)
-				{
-					if (System.IO.File.Exists(_errorName))
-						System.IO.File.Delete(_errorName);
-
-					_errorStream = new StreamWriter(_errorName);
-					_errorStream.AutoFlush = true;
-				}
-				_errorStream.WriteLine(value);
-			}
-		}
-	}
+    }
+  }
 }
