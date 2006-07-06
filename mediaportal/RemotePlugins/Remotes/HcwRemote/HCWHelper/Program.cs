@@ -41,7 +41,7 @@ namespace MediaPortal.InputDevices.HcwHelper
     static void Main()
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
-      ILog log = new Log("HCWHelper", Log.Level.Debug);
+      ILog log = new Log("MediaPortal", Log.Level.Debug);
       services.Add<ILog>(log);
 
       log.Info("HCWHelper: Starting up");
