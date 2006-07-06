@@ -2487,7 +2487,7 @@
    </string>
    <string>
       <id>751</id>
-      <value>Zeige alle Lieder des Interpreten</value>
+      <value>Zeige alle Lieder des aktuellen Interpreten</value>
    </string>
    <string>
       <id>752</id>
@@ -2975,7 +2975,7 @@
    </string>
    <string>
       <id>926</id>
-      <value>Titel zur Wiedergabeliste hinzufügen</value>
+      <value>Zur Wiedergabeliste hinzufügen</value>
    </string>
    <string>
       <id>927</id>
@@ -4427,11 +4427,11 @@
    </string>
    <string>
       <id>4551</id>
-      <value>Spiele als nächsten Titel</value>
+      <value>Spiele als Nächstes</value>
    </string>
    <string>
       <id>4552</id>
-      <value>Spiele diesen Titel jetzt</value>
+      <value>Spiele jetzt</value>
    </string>
    <string>
       <id>4553</id>

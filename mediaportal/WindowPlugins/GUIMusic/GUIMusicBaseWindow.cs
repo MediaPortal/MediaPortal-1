@@ -69,6 +69,8 @@ namespace MediaPortal.GUI.Music
     protected bool m_bSortAscending;
     protected bool m_bSortAscendingRoot;
     private bool m_bUseID3 = false;
+    private bool _autoShuffleOnLoad = false;
+
     protected MusicViewHandler handler;
     protected MusicDatabase m_database;
     [SkinControlAttribute(50)]
@@ -101,7 +103,7 @@ namespace MediaPortal.GUI.Music
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         string playNowJumpTo = xmlreader.GetValueAsString("musicmisc", "playnowjumpto", "nowplaying");
-
+       
         switch (playNowJumpTo)
         {
           case "nowplaying":
@@ -118,6 +120,7 @@ namespace MediaPortal.GUI.Music
         }
 
         m_strPlayListPath = xmlreader.GetValueAsString("music", "playlists", String.Empty);
+        _autoShuffleOnLoad = xmlreader.GetValueAsBool("musicfiles", "autoshuffle", false);
       }
     }
 
@@ -555,12 +558,6 @@ namespace MediaPortal.GUI.Music
 
     protected void LoadPlayList(string strPlayList)
     {
-      bool autoShuffleOnLoad = false;
-
-      using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-      {
-        autoShuffleOnLoad = xmlReader.GetValueAsBool("musicfiles", "autoshuffle", false);
-      }
       IPlayListIO loader = PlayListFactory.CreateIO(strPlayList);
       if (loader == null) return;
 
@@ -571,7 +568,7 @@ namespace MediaPortal.GUI.Music
         TellUserSomethingWentWrong();
         return;
       }
-      if (autoShuffleOnLoad)
+      if ( _autoShuffleOnLoad )
       {
         Random r = new Random((int)DateTime.Now.Ticks);
         int shuffleCount = r.Next() % 50;

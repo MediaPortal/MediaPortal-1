@@ -38,6 +38,7 @@ using MediaPortal.Database;
 using MediaPortal.Music.Database;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.View;
+//using MediaPortal.Utils.Services;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Soap;
@@ -645,55 +646,76 @@ namespace MediaPortal.GUI.Music
 
       bool isCD = IsCD(item.Path);
       bool isDVD = IsDVD(item.Path);
+      bool isUpFolder = false;
 
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
       if (dlg == null) return;
       dlg.Reset();
       dlg.SetHeading(924); // menu
 
-      if ((!item.IsFolder) && (MediaPortal.Util.Utils.getDriveType(item.Path.Substring(0, 2)) == 5))
-      {
-        dlg.AddLocalizedString(1100); //Import CD
-        dlg.AddLocalizedString(1101); //Import Track
-        if (MusicImport.MusicImport.Ripping)
-          dlg.AddLocalizedString(1102); //Cancel Import
-      }
-
-      if (!m_directory.IsRemote(currentFolder)) dlg.AddLocalizedString(102); //Scan
-      //dlg.AddLocalizedString(654); //Eject
-
-      if (!facadeView.Focus)
+      if ( !facadeView.Focus )
       {
         // control view has no focus
         dlg.AddLocalizedString(368); //IMDB
       }
       else
       {
-        if ((System.IO.Path.GetFileName(item.Path) != String.Empty) || isCD && !isDVD)
+        //ServiceProvider services = GlobalServiceProvider.Instance;
+        //ILog log = services.Get<ILog>();
+        //{
+        //  log.Info("DEBUG: item.Path - {0} ", System.IO.Path.GetFileName(item.Path));
+        //  log.Info("DEBUG: item.IsFolder - {0} ", Convert.ToString(item.IsFolder));
+        //  log.Info("DEBUG: item.Label - {0} ", System.IO.Path.GetFileName(item.Label));
+        //  log.Info("DEBUG: currentFolder - {0} ", currentFolder);
+        //  log.Info("DEBUG: m_directory - {0} ", m_directory);
+        //  log.Info("DEBUG: m_strCurrentFolder - {0} ", m_strCurrentFolder);
+        //  log.Info("DEBUG: m_strDirectoryStart - {0} ", m_strDirectoryStart);
+        //}
+
+        if ( item.Label == ".." )
+          isUpFolder = true;
+        if ( ( System.IO.Path.GetFileName(item.Path) != String.Empty ) || isCD && !isDVD )
         {
-          dlg.AddLocalizedString(928);    //find coverart
-          dlg.AddLocalizedString(4521);   //Show Album Info
-          dlg.AddLocalizedString(926);    // Add to playlist     
-          dlg.AddLocalizedString(4557);    // Add all to playlist
-          dlg.AddLocalizedString(4551);   // Play next
-          dlg.AddLocalizedString(4552);   // Play now
-
-          if (isCD)
-            dlg.AddLocalizedString(890);   // Play CD
-
-
-          if (!item.IsFolder && !item.IsRemote)
+          if ( !isUpFolder )
           {
-            dlg.AddLocalizedString(930); //Add to favorites
-            dlg.AddLocalizedString(931); //Rating
+            dlg.AddLocalizedString(926);    // Add to playlist     
+            dlg.AddLocalizedString(4557);    // Add all to playlist
+            dlg.AddLocalizedString(4552);   // Play now
+            if ( !item.IsFolder )
+              dlg.AddLocalizedString(4551);   // Play next
+            if ( isCD )
+              dlg.AddLocalizedString(890);   // Play CD
+            if ( !item.IsFolder && !item.IsRemote )
+            {
+              dlg.AddLocalizedString(930); //Add to favorites
+              dlg.AddLocalizedString(931); //Rating
+            }
+            dlg.AddLocalizedString(4521);   //Show Album Info
+            dlg.AddLocalizedString(928);    //find coverart               
+
+            if ( ( !item.IsFolder ) && ( MediaPortal.Util.Utils.getDriveType(item.Path.Substring(0, 2)) == 5 ) )
+            {
+              dlg.AddLocalizedString(1100); //Import CD
+              dlg.AddLocalizedString(1101); //Import Track
+              if ( MusicImport.MusicImport.Ripping )
+                dlg.AddLocalizedString(1102); //Cancel Import
+            }
+
+            if ( !m_directory.IsRemote(currentFolder) )
+              dlg.AddLocalizedString(102); //Scan
+          }
+          else // ".."
+          {
+            dlg.AddLocalizedString(4557);    // Add all to playlist
+            dlg.AddLocalizedString(102); //Scan
           }
         }
 
-        if (MediaPortal.Util.Utils.getDriveType(item.Path) == 5)
+        if ( MediaPortal.Util.Utils.getDriveType(item.Path) == 5 )
           dlg.AddLocalizedString(654); //Eject
 
         int iPincodeCorrect;
-        if (!m_directory.IsProtectedShare(item.Path, out iPincodeCorrect) && !item.IsRemote && m_bFileMenuEnabled)
+        if ( !m_directory.IsProtectedShare(item.Path, out iPincodeCorrect) && !item.IsRemote && m_bFileMenuEnabled )
           dlg.AddLocalizedString(500); // FileMenu
       }
 
@@ -702,7 +724,7 @@ namespace MediaPortal.GUI.Music
         string artist = GUIPropertyManager.GetProperty("#Play.Current.Artist");
         if (artist.Length > 0)
         {
-          dlg.AddLocalizedString(751); // Show all songs of this artist
+          dlg.AddLocalizedString(751); // Show all songs from current artist
         }
       }
 
@@ -978,11 +1000,14 @@ namespace MediaPortal.GUI.Music
 
       //move to next item
       GUIControl.SelectItemControl(GetID, facadeView.GetID, iItem + 1);
-      if (playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Count > 0 && !g_Player.Playing)
+      if ( !g_Player.Playing )
       {
-        playlistPlayer.Reset();
-        playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
-        playlistPlayer.Play(0);
+        if ( playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Count > 0 )
+        {
+          playlistPlayer.Reset();
+          playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
+          playlistPlayer.Play(0);
+        }
       }
 
     }
