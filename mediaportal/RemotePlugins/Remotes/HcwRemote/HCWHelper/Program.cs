@@ -40,7 +40,10 @@ namespace MediaPortal.InputDevices.HcwHelper
     [STAThread]
     static void Main()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
       ILog log = new Log("HCWHelper", Log.Level.Debug);
+      services.Add<ILog>(log);
+
       log.Info("HCWHelper: Starting up");
       Thread.CurrentThread.Priority = ThreadPriority.Highest;
 
