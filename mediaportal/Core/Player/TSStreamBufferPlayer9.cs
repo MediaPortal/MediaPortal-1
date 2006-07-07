@@ -215,11 +215,12 @@ namespace MediaPortal.Player
               byte[] value4Zeros = new byte[4];
               byte[] valueZero = new byte[1];
               byte[] valueOne = new byte[1];
-              value4Zeros[0] = value4Zeros[1] = value4Zeros[2] = value4Zeros[3] = 0;
+              value4Zeros[0] = 1;
+              value4Zeros[1] = value4Zeros[2] = value4Zeros[3] = 0;
               valueZero[0] = 0;
               valueOne[0] = 1;
               settings.SetValue("clockType", value4Zeros, RegistryValueKind.Binary);
-              settings.SetValue("enableAC3", valueOne, RegistryValueKind.Binary);
+              settings.SetValue("enableAC3", valueZero, RegistryValueKind.Binary);
               settings.SetValue("enableAudio2", valueZero, RegistryValueKind.Binary);
               if (_isLive)
               {
