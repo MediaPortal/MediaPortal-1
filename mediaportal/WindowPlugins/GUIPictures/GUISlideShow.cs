@@ -185,6 +185,10 @@ namespace MediaPortal.GUI.Pictures
           Reset();
           GUIGraphicsContext.Overlay = _showOverlayFlag;
           break;
+
+        case GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED:
+          ShowSong();
+          break;
       }
       return base.OnMessage(message);
     }
@@ -2084,6 +2088,35 @@ namespace MediaPortal.GUI.Pictures
         g_Player.Stop();
 
       GUIWindowManager.ShowPreviousWindow();
+    }
+
+    void ShowSong()
+    {
+      GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+      if (dlg == null) return;
+                
+       //get albumart
+      string albumart = g_Player.CurrentFile;
+      int e = albumart.LastIndexOf(@"\")+1;
+      albumart = albumart.Remove(e);
+      if (_currentSlideFileName.Contains(albumart))
+          albumart = string.Empty;
+      else
+      {
+          albumart = albumart + "folder.jpg";
+          if (!File.Exists(albumart))
+              albumart = string.Empty;
+      }
+      // get Sonf-info        
+      MediaPortal.TagReader.MusicTag tag = MediaPortal.TagReader.TagReader.ReadTag(g_Player.CurrentFile);
+      // Show Dialog
+      dlg.Reset();
+      dlg.ClearAll();
+      dlg.SetImage(albumart);
+      dlg.SetHeading(4540);
+      dlg.SetText(tag.Title +"\n"+ tag.Artist + "\n" + tag.Album);
+      dlg.TimeOut = 5;
+      dlg.DoModal(GUIWindowManager.ActiveWindow);
     }
 
     #endregion
