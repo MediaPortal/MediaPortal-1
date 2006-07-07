@@ -21,12 +21,7 @@
     <centered>no</centered>
     <keepaspectratio>no</keepaspectratio>
   </control>
-   <control>
-    	<description>default group</description>
-         <type>group</type>
-         <id>1</id>
-		<dimColor>ffffffff</dimColor>
-    </control>
+
   <control>
     <description>default label</description>
     <type>label</type>
