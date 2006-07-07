@@ -512,7 +512,8 @@ namespace MediaPortal.PowerScheduler
           //if recording has been canceled, then skip it
           if (recording.Canceled > 0)
           {
-            continue;
+            _log.Info(" PowerScheduler: skipping canceled recording - {0}", recording.Title);
+            continue;            
           }
 
           //check starttime
@@ -631,7 +632,7 @@ namespace MediaPortal.PowerScheduler
           DateTime tvguideStartDatetime = new DateTime();
           tvPrograms.Clear();
 
-          // look in the tv guide betweeen earliestStarttime and maximum one month into the future
+          // look in the tv guide between earliestStarttime and maximum one month into the future
           // shorter if we already have found a calendric recording
           if (nextStarttime != DateTime.MinValue)
           {
@@ -647,40 +648,46 @@ namespace MediaPortal.PowerScheduler
             foreach (TVProgram program in tvPrograms)
             {
               // make sure we're only looking at programs from the future
-              if (program.StartTime.AddMinutes(-m_iPreRecordInterval).Ticks > earliestStarttime.Ticks)
+              if ( program.StartTime.AddMinutes(-m_iPreRecordInterval).Ticks > earliestStarttime.Ticks )
               {
-                foreach (TVRecording rec in TVGuideRecordings)
+                foreach ( TVRecording rec in TVGuideRecordings )
                 {
 
-                  switch (rec.RecType)
+                  switch ( rec.RecType )
                   {
-                    case (TVRecording.RecordingType.EveryTimeOnEveryChannel):
+                    case ( TVRecording.RecordingType.EveryTimeOnEveryChannel ):
                       {
                         //tmpNextStarttime = program.StartTime.AddMinutes(- m_iPreRecordInterval);
                         //if (tmpNextStarttime.Ticks > earliestStarttime.Ticks)
-                        if (program.Title == rec.Title)
+                        if ( program.Title == rec.Title )
                         {
                           tmpNextStarttime = program.StartTime.AddMinutes(-m_iPreRecordInterval);
                           programfound = true;
-                          if (m_bExtensiveLog) _log.Info(" PowerScheduler:  TVGuide {0} {1} {2} ", program.Title, program.Channel, tmpNextStarttime);
+                          if ( m_bExtensiveLog )
+                            _log.Info(" PowerScheduler:  TVGuide {0} {1} {2} ", program.Title, program.Channel, tmpNextStarttime);
                         }
                         break;
                       }
-                    case (TVRecording.RecordingType.EveryTimeOnThisChannel):
+                    case ( TVRecording.RecordingType.EveryTimeOnThisChannel ):
                       {
-                        if (program.Title == rec.Title && program.Channel == rec.Channel)
+                        if ( program.Title == rec.Title && program.Channel == rec.Channel )
                         {
                           tmpNextStarttime = program.StartTime.AddMinutes(-m_iPreRecordInterval);
                           programfound = true;
-                          if (m_bExtensiveLog)
+                          if ( m_bExtensiveLog )
                             _log.Info(" PowerScheduler:  TVGuide {0} {1} {2} ", program.Title, program.Channel, tmpNextStarttime);
                         }
                         break;
                       }
                   }
-                  if (programfound)
+                  if ( programfound )
                     break;
                 }
+              }
+              else
+              {
+                if ( m_bExtensiveLog )
+                  _log.Info(" PowerScheduler: TVGuide {0}'s start time ({1}) was after earliest start ({2})", program.Title, program.StartTime, tmpNextStarttime);
               }
               if (programfound)
                 break;
