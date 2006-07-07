@@ -107,7 +107,7 @@ const AMOVIESETUP_FILTER sudDump =
 {
     &CLSID_MPDSA,          // Filter CLSID
     L"MediaPortal Stream Analyzer",   // String name
-    MERIT_NORMAL,           // Filter merit
+		MERIT_DO_NOT_USE,           // Filter merit
     4,                          // Number pins
     sudPins                    // Pin details
 };
