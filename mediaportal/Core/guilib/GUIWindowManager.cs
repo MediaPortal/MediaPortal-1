@@ -380,7 +380,7 @@ namespace MediaPortal.GUI.Library
       {
         if (_listWindows[i].GetID == Window.GetID)
         {
-          _log.Error("Window:{0} and window {1} have the same id's!!!", Window, _listWindows[i]);
+          //_log.Error("Window:{0} and window {1} have the same id's!!!", Window, _listWindows[i]);
           Window.OnAdded();
           return;
         }
