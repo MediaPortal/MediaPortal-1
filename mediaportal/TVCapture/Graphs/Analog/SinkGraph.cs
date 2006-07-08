@@ -628,12 +628,10 @@ namespace MediaPortal.TV.Recording
       }
 
       string langType = "Unknown";
+      currentAudioMode = TVAudioMode.Mono;
 
       if ((availableAudioModes & TVAudioMode.Mono) == TVAudioMode.Mono)
-      {
         langType = "Mono";
-        currentAudioMode = TVAudioMode.Mono;
-      }
 
       if ((availableAudioModes & TVAudioMode.Stereo) == TVAudioMode.Stereo)
       {
