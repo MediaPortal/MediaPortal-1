@@ -533,7 +533,61 @@ public class MediaPortalApp : D3DApp, IRender
   {
     try
     {
-      if (!PluginManager.WndProc(ref msg))
+			if (msg.Msg == WM_POWERBROADCAST)
+			{
+				_log.Info("Main: WM_POWERBROADCAST: {0}", msg.WParam.ToInt32());
+				switch (msg.WParam.ToInt32())
+				{
+					//The PBT_APMQUERYSUSPEND message is sent to request permission to suspend the computer.
+					//An application that grants permission should carry out preparations for the suspension before returning.
+					//Return TRUE to grant the request to suspend. To deny the request, return BROADCAST_QUERY_DENY.
+					case PBT_APMQUERYSUSPEND:
+						_log.Info("Main: Windows is requesting hibernate mode");
+						OnSuspend();
+						break;
+
+					//The PBT_APMQUERYSTANDBY message is sent to request permission to suspend the computer.
+					//An application that grants permission should carry out preparations for the suspension before returning.
+					//Return TRUE to grant the request to suspend. To deny the request, return BROADCAST_QUERY_DENY.
+					case PBT_APMQUERYSTANDBY:
+						// Stop all media before suspending or hibernating
+						_log.Info("Main: Windows is requesting standby mode");
+						OnSuspend();
+						break;
+					case PBT_APMSUSPEND:
+						_log.Info("Main: Windows is suspending");
+						break;
+
+					//The PBT_APMRESUMECRITICAL event is broadcast as a notification that the system has resumed operation. 
+					//this event can indicate that some or all applications did not receive a PBT_APMSUSPEND event. 
+					//For example, this event can be broadcast after a critical suspension caused by a failing battery.
+					case PBT_APMRESUMECRITICAL:
+						_log.Info("Main: Windows has resumed from critical hibernate mode");
+						OnResume();
+						break;
+
+					//The PBT_APMRESUMESUSPEND event is broadcast as a notification that the system has resumed operation after being suspended.
+					case PBT_APMRESUMESUSPEND:
+						_log.Info("Main: Windows has resumed from hibernate mode");
+						OnResume();
+						break;
+
+					//The PBT_APMRESUMESTANDBY event is broadcast as a notification that the system has resumed operation after being standbye.
+					case PBT_APMRESUMESTANDBY:
+						_log.Info("Main: Windows has resumed from standbye mode");
+						OnResume();
+						break;
+
+					//The PBT_APMRESUMEAUTOMATIC event is broadcast when the computer wakes up automatically to
+					//handle an event. An application will not generally respond unless it is handling the event, because the user is not present.
+					case PBT_APMRESUMEAUTOMATIC:
+						_log.Info("Main: Windows has resumed from standby or hibernate mode to handle a requested event");
+						OnResume();
+						break;
+				}
+			}
+			
+			if (!PluginManager.WndProc(ref msg))
       {
         Action action;
         char key;
@@ -591,60 +645,7 @@ public class MediaPortalApp : D3DApp, IRender
           return;
         }
       }
-
-      if (msg.Msg == WM_POWERBROADCAST)
-      {
-        _log.Info("Main: WM_POWERBROADCAST: {0}", msg.WParam.ToInt32());
-        switch (msg.WParam.ToInt32())
-        {
-          //The PBT_APMQUERYSUSPEND message is sent to request permission to suspend the computer.
-          //An application that grants permission should carry out preparations for the suspension before returning.
-          //Return TRUE to grant the request to suspend. To deny the request, return BROADCAST_QUERY_DENY.
-          case PBT_APMQUERYSUSPEND:
-            _log.Info("Main: Windows is requesting hibernate mode");
-            OnSuspend();
-            break;
-
-          //The PBT_APMQUERYSTANDBY message is sent to request permission to suspend the computer.
-          //An application that grants permission should carry out preparations for the suspension before returning.
-          //Return TRUE to grant the request to suspend. To deny the request, return BROADCAST_QUERY_DENY.
-          case PBT_APMQUERYSTANDBY:
-            // Stop all media before suspending or hibernating
-            _log.Info("Main: Windows is requesting standby mode");
-            OnSuspend();
-            break;
-          case PBT_APMSUSPEND:
-            _log.Info("Main: Windows is suspending");
-            break;
-
-          //The PBT_APMRESUMECRITICAL event is broadcast as a notification that the system has resumed operation. 
-          //this event can indicate that some or all applications did not receive a PBT_APMSUSPEND event. 
-          //For example, this event can be broadcast after a critical suspension caused by a failing battery.
-          case PBT_APMRESUMECRITICAL:
-            _log.Info("Main: Windows has resumed from critical hibernate mode");
-            OnResume();
-            break;
-
-          //The PBT_APMRESUMESUSPEND event is broadcast as a notification that the system has resumed operation after being suspended.
-          case PBT_APMRESUMESUSPEND:
-            _log.Info("Main: Windows has resumed from hibernate mode");
-            OnResume();
-            break;
-
-          //The PBT_APMRESUMESTANDBY event is broadcast as a notification that the system has resumed operation after being standbye.
-          case PBT_APMRESUMESTANDBY:
-            _log.Info("Main: Windows has resumed from standbye mode");
-            OnResume();
-            break;
-
-          //The PBT_APMRESUMEAUTOMATIC event is broadcast when the computer wakes up automatically to
-          //handle an event. An application will not generally respond unless it is handling the event, because the user is not present.
-          case PBT_APMRESUMEAUTOMATIC:
-            _log.Info("Main: Windows has resumed from standby or hibernate mode to handle a requested event");
-            OnResume();
-            break;
-        }
-      }
+			      
       //if (msg.Msg==WM_KEYDOWN) Debug.WriteLine("msg keydown");
       g_Player.WndProc(ref msg);
       base.WndProc(ref msg);
