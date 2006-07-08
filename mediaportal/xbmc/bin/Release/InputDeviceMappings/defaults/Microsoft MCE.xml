@@ -133,8 +133,6 @@
 		<button name="Green" code="92">
 			<action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="9976" sound="click.wav" />
 			<action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="9976" sound="click.wav" />
-			<action layer="0" condition="WINDOW" conproperty="1" command="WINDOW" cmdproperty="7700" sound="click.wav" />
-			<action layer="0" condition="WINDOW" conproperty="602" command="WINDOW" cmdproperty="7701" sound="click.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="26" sound="click.wav" />
 		</button>
 		<button name="Yellow" code="93">
