@@ -105,8 +105,7 @@ namespace MediaPortal.TV.Epg
     public EpgGrabber()
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = new MediaPortal.Utils.Services.Log("EPG", MediaPortal.Utils.Services.Log.Level.Debug);
-      services.Replace<ILog>(_log);
+      _log = services.Get<ILog>();
     }
 
     #endregion
