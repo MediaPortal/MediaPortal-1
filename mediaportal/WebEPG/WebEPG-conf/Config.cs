@@ -110,9 +110,9 @@ namespace WebEPG_conf
       cbLinked.CheckStateChanged += handler;
 
 
-      //ServiceProvider services = GlobalServiceProvider.Instance;
+      ServiceProvider services = GlobalServiceProvider.Instance;
       _log = new Log("WebEPG", Log.Level.Debug);
-      //services.Add<ILog>(_log);
+      services.Add<ILog>(_log);
 
       startDirectory = Environment.CurrentDirectory;
 
