@@ -251,8 +251,9 @@ namespace ProcessPlugins.TvMovie
       }
       catch (System.Data.OleDb.OleDbException ex)
       {
-        _log.Info("TVMovie: Error accessing TV Movie Clickfinder database");
+        _log.Info("TVMovie: Error accessing TV Movie Clickfinder database while reading stations");
         _log.Info("TVMovie: Exception: {0}", ex);
+        _canceled = true;
         return;
       }
       finally
@@ -626,7 +627,7 @@ namespace ProcessPlugins.TvMovie
         MediaPortal.Profile.Settings.SaveCache();
       }
 
-      _log.Info("TVMovie: Imported {0} database entries for {1} stations", counter, maximum);
+      _log.Info("TVMovie: Imported {0} database entries for {1} stations", _programsCounter, counter);
     }
   }
 
