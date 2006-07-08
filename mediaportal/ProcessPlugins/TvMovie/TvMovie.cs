@@ -50,7 +50,7 @@ namespace ProcessPlugins.TvMovie
       if (!_database.WasUpdated)
         return;
 
-      int importedStations = _database.Import();
+      _database.Import();
     }
 
 

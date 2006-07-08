@@ -242,20 +242,23 @@ namespace ProcessPlugins.TvMovie
 
       OleDbCommand databaseCommand = new OleDbCommand(sqlSelect, _databaseConnection);
       OleDbDataAdapter databaseAdapter = new OleDbDataAdapter(databaseCommand);
+      DataSet tvMovieTable = new DataSet();
 
       try
       {
         _databaseConnection.Open();
+        databaseAdapter.Fill(tvMovieTable, "Sender");
       }
-      catch (System.Data.OleDb.OleDbException)
+      catch (System.Data.OleDb.OleDbException ex)
       {
+        _log.Info("TVMovie: Error accessing TV Movie Clickfinder database");
+        _log.Info("TVMovie: Exception: {0}", ex);
         return;
       }
-
-      DataSet tvMovieTable = new DataSet();
-      databaseAdapter.Fill(tvMovieTable, "Sender");
-
-      _databaseConnection.Close();
+      finally
+      {
+        _databaseConnection.Close();
+      }
 
       _stations = new ArrayList();
       foreach (DataRow sender in tvMovieTable.Tables["Sender"].Rows)
@@ -263,8 +266,6 @@ namespace ProcessPlugins.TvMovie
 
       _channelList = new ArrayList();
       TVDatabase.GetChannels(ref _channelList);
-
-
     }
 
 
@@ -428,9 +429,21 @@ namespace ProcessPlugins.TvMovie
 
       DataSet tvMovieTable = new DataSet();
 
-      _databaseConnection.Open();
-      databaseAdapter.Fill(tvMovieTable, "TVDaten");
-      _databaseConnection.Close();
+      try
+      {
+        _databaseConnection.Open();
+        databaseAdapter.Fill(tvMovieTable, "TVDaten");
+      }
+      catch (System.Data.OleDb.OleDbException ex)
+      {
+        _log.Info("TVMovie: Error accessing TV Movie Clickfinder database - Current import canceled, waiting for next schedule");
+        _log.Info("TVMovie: Exception: {0}", ex);
+        return 0;
+      }
+      finally
+      {
+        _databaseConnection.Close();
+      }
 
       int programsCount = tvMovieTable.Tables["TVDaten"].Rows.Count;
 
@@ -541,14 +554,14 @@ namespace ProcessPlugins.TvMovie
     }
 
 
-    public int Import()
+    public void Import()
     {
       ArrayList mappingList = GetMappingList();
 
       if (mappingList == null)
       {
         _log.Info("TVMovie: Cannot import from TV Movie database");
-        return 0;
+        return;
       }
 
       _log.Info("TVMovie: Importing database");
@@ -613,8 +626,7 @@ namespace ProcessPlugins.TvMovie
         MediaPortal.Profile.Settings.SaveCache();
       }
 
-      _log.Info("TVMovie: Imported {0} database entries", maximum);
-      return maximum;
+      _log.Info("TVMovie: Imported {0} database entries for {1} stations", counter, maximum);
     }
   }
 
