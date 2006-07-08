@@ -347,7 +347,7 @@ namespace MediaPortal.Configuration.Sections
             "Start MediaPortal in fullscreen mode",
             "Minimize to tray on start up",
             "Minimize to tray on GUI exit",
-            "Auto hide mouse cursor when inactive",
+            "Autohide mouse cursor in fullscreen mode when idle",
             "Show special mouse controls (scrollbars, etc)",
             "Dont show file extensions like .mp3, .avi, .mpg,...",
             "Enable animations",

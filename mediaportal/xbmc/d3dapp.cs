@@ -1522,6 +1522,9 @@ namespace MediaPortal
 
     private void HandleCursor()
     {
+      if (!isMaximized)
+        return;
+
       if (_autoHideMouse)
       {
         if (_showCursor != _lastShowCursor)
