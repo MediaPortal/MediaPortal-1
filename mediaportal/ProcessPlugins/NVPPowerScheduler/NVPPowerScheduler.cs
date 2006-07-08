@@ -215,7 +215,7 @@ namespace MediaPortal.PowerScheduler
       {
         pluginname = wakeable.PluginName();
         tmpNextStarttime = wakeable.GetNextEvent(earliestStarttime);
-        if (m_bExtensiveLog) _log.Info(" PowerScheduler: tmpNextStarttime {0} earliest {1} - {2}", tmpNextStarttime, earliestStarttime, wakeable.PluginName());
+        if (m_bExtensiveLog) _log.Info(" PowerScheduler: tmpNextStarttime {0} earliestPossibleRecording {1} - {2}", tmpNextStarttime, earliestStarttime, wakeable.PluginName());
 
         if (tmpNextStarttime.Ticks > earliestStarttime.Ticks)
         {
@@ -507,7 +507,7 @@ namespace MediaPortal.PowerScheduler
       {
         foreach (TVRecording recording in recordings)
         {
-          DateTime tmpNextStarttime = new DateTime();
+          DateTime tmpNextStarttime = new DateTime(0);
 
           //if recording has been canceled, then skip it
           if (recording.Canceled > 0)
@@ -515,26 +515,24 @@ namespace MediaPortal.PowerScheduler
             _log.Info(" PowerScheduler: skipping canceled recording - {0}", recording.Title);
             continue;            
           }
+					tmpNextStarttime = recording.StartTime.AddMinutes(-m_iPreRecordInterval);
 
           //check starttime
           switch (recording.RecType)
           {
             case (TVRecording.RecordingType.Once):
               {
-                tmpNextStarttime = recording.StartTime.AddMinutes(-m_iPreRecordInterval);
-                if (m_bExtensiveLog)
+                if ((tmpNextStarttime.Ticks > earliestStarttime.Ticks) && (m_bExtensiveLog))
                   _log.Info(" PowerScheduler:  Next date/time:{0} Type:Once      {1}  {2} ",
                             tmpNextStarttime, recording.Channel, recording.Title);
                 break;
               }
             case (TVRecording.RecordingType.Daily):
               {
-                tmpNextStarttime = recording.StartTime.AddMinutes(-m_iPreRecordInterval);
                 tmpNextStarttime = new DateTime(earliestStarttime.Year, earliestStarttime.Month, earliestStarttime.Day,
                                                 tmpNextStarttime.Hour, tmpNextStarttime.Minute, tmpNextStarttime.Second, 0);
-                if (tmpNextStarttime.Ticks < earliestStarttime.Ticks) tmpNextStarttime.AddDays(1);
-                //double days = -tmpNextStarttime.Subtract(earliestStarttime).TotalDays;
-                //tmpNextStarttime = tmpNextStarttime.AddDays(Math.Round(days, 0) + 1);
+                while (tmpNextStarttime.Ticks < earliestStarttime.Ticks) tmpNextStarttime.AddDays(1);
+                
                 if (m_bExtensiveLog)
                   _log.Info(" PowerScheduler:  Next date/time:{0} Type:Daily     {1}  {2} ",
                     tmpNextStarttime, recording.Channel, recording.Title);
@@ -542,18 +540,16 @@ namespace MediaPortal.PowerScheduler
               }
             case (TVRecording.RecordingType.WeekDays):
               {
-                tmpNextStarttime = recording.StartTime.AddMinutes(-m_iPreRecordInterval);
-                DateTime nextWeekDay = DateTime.Now;
-
-                // Skip Weekend
-                while (nextWeekDay.DayOfWeek == System.DayOfWeek.Saturday ||
-                       nextWeekDay.DayOfWeek == System.DayOfWeek.Sunday)
-                {
-                  nextWeekDay = nextWeekDay.AddDays(1);
-                }
-                tmpNextStarttime = new DateTime(nextWeekDay.Year, nextWeekDay.Month, nextWeekDay.Day,
+                tmpNextStarttime = new DateTime(earliestStarttime.Year, earliestStarttime.Month, earliestStarttime.Day,
                                                 tmpNextStarttime.Hour, tmpNextStarttime.Minute, tmpNextStarttime.Second, 0);
-
+								// Skip Weekends
+								while ((tmpNextStarttime.Ticks < earliestStarttime.Ticks) ||
+									     (tmpNextStarttime.DayOfWeek == System.DayOfWeek.Saturday ||
+											  tmpNextStarttime.DayOfWeek == System.DayOfWeek.Sunday))
+                {
+									tmpNextStarttime = tmpNextStarttime.AddDays(1);
+                }
+                
                 if (m_bExtensiveLog)
                   _log.Info(" PowerScheduler:  Next date/time:{0} Type:Weekdays  {1}  {2} ",
                     tmpNextStarttime, recording.Channel, recording.Title);
@@ -562,18 +558,17 @@ namespace MediaPortal.PowerScheduler
               }
             case (TVRecording.RecordingType.WeekEnds):
               {
-                tmpNextStarttime = recording.StartTime.AddMinutes(-m_iPreRecordInterval);
-                DateTime nextWeekDay = DateTime.Now;
-
-                // Skip Weekend
-                while (nextWeekDay.DayOfWeek != System.DayOfWeek.Saturday &&
-                             nextWeekDay.DayOfWeek != System.DayOfWeek.Sunday)
+								tmpNextStarttime = new DateTime(earliestStarttime.Year, earliestStarttime.Month, earliestStarttime.Day,
+																								tmpNextStarttime.Hour, tmpNextStarttime.Minute, tmpNextStarttime.Second, 0);
+								
+                // Skip Weekdays
+                while ((tmpNextStarttime.Ticks < earliestStarttime.Ticks) ||
+											 (tmpNextStarttime.DayOfWeek != System.DayOfWeek.Saturday &&
+												tmpNextStarttime.DayOfWeek != System.DayOfWeek.Sunday))
                 {
-                  nextWeekDay = nextWeekDay.AddDays(1);
+									tmpNextStarttime = tmpNextStarttime.AddDays(1);
                 }
-                tmpNextStarttime = new DateTime(nextWeekDay.Year, nextWeekDay.Month, nextWeekDay.Day,
-                                                                              tmpNextStarttime.Hour, tmpNextStarttime.Minute, tmpNextStarttime.Second, 0);
-
+                
                 if (m_bExtensiveLog)
                   _log.Info(" PowerScheduler:  Next date/time:{0} Type:WeekEnds  {1}  {2} ",
                       tmpNextStarttime, recording.Channel, recording.Title);
@@ -582,16 +577,15 @@ namespace MediaPortal.PowerScheduler
               }
             case (TVRecording.RecordingType.Weekly):
               {
-                tmpNextStarttime = recording.StartTime.AddMinutes(-m_iPreRecordInterval);
-                DateTime nextWeekDay = DateTime.Now;
-                while (nextWeekDay.DayOfWeek != tmpNextStarttime.DayOfWeek)
-                {
-                  nextWeekDay = nextWeekDay.AddDays(1);
-                }
+								tmpNextStarttime = new DateTime(earliestStarttime.Year, earliestStarttime.Month, earliestStarttime.Day,
+																								tmpNextStarttime.Hour, tmpNextStarttime.Minute, tmpNextStarttime.Second, 0);
 
-                tmpNextStarttime = new DateTime(nextWeekDay.Year, nextWeekDay.Month, nextWeekDay.Day,
-                                                tmpNextStarttime.Hour, tmpNextStarttime.Minute, tmpNextStarttime.Second, 0);
-
+								// Skip past dates
+								while (tmpNextStarttime.Ticks < earliestStarttime.Ticks)
+								{
+									tmpNextStarttime = tmpNextStarttime.AddDays(1);
+								}
+                                
                 if (m_bExtensiveLog)
                   _log.Info(" PowerScheduler:  Next date/time:{0} Type:Weekly   {1}  {2} ",
                     tmpNextStarttime, recording.Channel, recording.Title);
@@ -601,7 +595,7 @@ namespace MediaPortal.PowerScheduler
               {
                 TVGuideRecordings.Add(recording);
                 if (m_bExtensiveLog)
-                  _log.Info(" PowerScheduler:  Next date/time:{0} Type:Every1   {1}  {2} ",
+									_log.Info(" PowerScheduler:  Next date/time:{0} Type:EveryTimeOnEveryChannel   {1}  {2} ",
                     tmpNextStarttime, recording.Channel, recording.Title);
                 break;
               }
@@ -609,7 +603,7 @@ namespace MediaPortal.PowerScheduler
               {
                 TVGuideRecordings.Add(recording);
                 if (m_bExtensiveLog)
-                  _log.Info(" PowerScheduler:  Next date/time:{0} Type:Every2   {1}  {2} ",
+									_log.Info(" PowerScheduler:  Next date/time:{0} Type:EveryTimeOnThisChannel   {1}  {2} ",
                     tmpNextStarttime, recording.Channel, recording.Title);
                 break;
               }
@@ -618,7 +612,6 @@ namespace MediaPortal.PowerScheduler
           if (tmpNextStarttime.Ticks > earliestStarttime.Ticks)
             if ((tmpNextStarttime.Ticks < nextStarttime.Ticks) || nextStarttime == DateTime.MinValue)
               nextStarttime = new DateTime(tmpNextStarttime.Ticks);
-
         }
 
         if (TVGuideRecordings.Count > 0)
