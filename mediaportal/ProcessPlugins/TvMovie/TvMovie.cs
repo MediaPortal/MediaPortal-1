@@ -73,7 +73,7 @@ namespace ProcessPlugins.TvMovie
 
     public string Description()
     {
-      return "Import TV Movie Clickfinder EPG data";
+      return "Import TV Movie Clickfinder EPG data (disabled if no Clickfinder is installed)";
     }
 
 
@@ -85,14 +85,19 @@ namespace ProcessPlugins.TvMovie
 
     public void ShowPlugin()
     {
-      Form setup = new TvMovieSettings();
-      setup.ShowDialog();
+      if (TvMovieDatabase.DatabasePath != string.Empty)
+      {
+        Form setup = new TvMovieSettings();
+        setup.ShowDialog();
+      }
+      else
+        MessageBox.Show("Can't find TV Movie Clickfinder database.\nPlease install TV Movie Clickfinder first.", "Error locating Clickfinder", MessageBoxButtons.OK, MessageBoxIcon.Error);
     }
 
 
     public bool CanEnable()
     {
-      return true;
+      return (TvMovieDatabase.DatabasePath != string.Empty);
     }
 
 

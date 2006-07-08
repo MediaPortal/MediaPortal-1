@@ -79,6 +79,7 @@ namespace ProcessPlugins.TvMovie
       this.checkBoxUseShortDesc = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpBeveledLine1 = new MediaPortal.UserInterface.Controls.MPBeveledLine();
       this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
+      this.labelNote = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBoxMapping.SuspendLayout();
       this.panelTimeSpan.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
@@ -100,7 +101,7 @@ namespace ProcessPlugins.TvMovie
       this.treeViewChannels.ShowNodeToolTips = true;
       this.treeViewChannels.ShowPlusMinus = false;
       this.treeViewChannels.ShowRootLines = false;
-      this.treeViewChannels.Size = new System.Drawing.Size(240, 178);
+      this.treeViewChannels.Size = new System.Drawing.Size(240, 168);
       this.treeViewChannels.Sorted = true;
       this.treeViewChannels.TabIndex = 1;
       this.treeViewChannels.DoubleClick += new System.EventHandler(this.treeViewStations_DoubleClick);
@@ -116,7 +117,7 @@ namespace ProcessPlugins.TvMovie
       this.treeViewStations.ShowNodeToolTips = true;
       this.treeViewStations.ShowPlusMinus = false;
       this.treeViewStations.ShowRootLines = false;
-      this.treeViewStations.Size = new System.Drawing.Size(168, 210);
+      this.treeViewStations.Size = new System.Drawing.Size(168, 200);
       this.treeViewStations.Sorted = true;
       this.treeViewStations.TabIndex = 2;
       this.treeViewStations.DoubleClick += new System.EventHandler(this.listBoxTvMovieChannels_DoubleClick);
@@ -124,7 +125,7 @@ namespace ProcessPlugins.TvMovie
       // buttonOk
       // 
       this.buttonOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonOk.Location = new System.Drawing.Point(376, 434);
+      this.buttonOk.Location = new System.Drawing.Point(376, 448);
       this.buttonOk.Name = "buttonOk";
       this.buttonOk.Size = new System.Drawing.Size(75, 23);
       this.buttonOk.TabIndex = 4;
@@ -145,7 +146,7 @@ namespace ProcessPlugins.TvMovie
       this.groupBoxMapping.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxMapping.Location = new System.Drawing.Point(16, 16);
       this.groupBoxMapping.Name = "groupBoxMapping";
-      this.groupBoxMapping.Size = new System.Drawing.Size(472, 274);
+      this.groupBoxMapping.Size = new System.Drawing.Size(472, 264);
       this.groupBoxMapping.TabIndex = 5;
       this.groupBoxMapping.TabStop = false;
       this.groupBoxMapping.Text = "Map Channels to TV Movie Stations";
@@ -158,7 +159,7 @@ namespace ProcessPlugins.TvMovie
       this.panelTimeSpan.Controls.Add(this.maskedTextBoxTimeStart);
       this.panelTimeSpan.Controls.Add(this.label1);
       this.panelTimeSpan.Controls.Add(this.maskedTextBoxTimeEnd);
-      this.panelTimeSpan.Location = new System.Drawing.Point(64, 234);
+      this.panelTimeSpan.Location = new System.Drawing.Point(64, 224);
       this.panelTimeSpan.Name = "panelTimeSpan";
       this.panelTimeSpan.Size = new System.Drawing.Size(139, 23);
       this.panelTimeSpan.TabIndex = 7;
@@ -247,7 +248,7 @@ namespace ProcessPlugins.TvMovie
       // buttonCancel
       // 
       this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonCancel.Location = new System.Drawing.Point(456, 434);
+      this.buttonCancel.Location = new System.Drawing.Point(456, 448);
       this.buttonCancel.Name = "buttonCancel";
       this.buttonCancel.Size = new System.Drawing.Size(75, 23);
       this.buttonCancel.TabIndex = 6;
@@ -287,16 +288,17 @@ namespace ProcessPlugins.TvMovie
       this.mpTabControl.Location = new System.Drawing.Point(16, 72);
       this.mpTabControl.Name = "mpTabControl";
       this.mpTabControl.SelectedIndex = 0;
-      this.mpTabControl.Size = new System.Drawing.Size(512, 338);
+      this.mpTabControl.Size = new System.Drawing.Size(512, 352);
       this.mpTabControl.TabIndex = 9;
       // 
       // tabPageMapChannels
       // 
+      this.tabPageMapChannels.Controls.Add(this.labelNote);
       this.tabPageMapChannels.Controls.Add(this.groupBoxMapping);
       this.tabPageMapChannels.Location = new System.Drawing.Point(4, 22);
       this.tabPageMapChannels.Name = "tabPageMapChannels";
       this.tabPageMapChannels.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPageMapChannels.Size = new System.Drawing.Size(504, 312);
+      this.tabPageMapChannels.Size = new System.Drawing.Size(504, 326);
       this.tabPageMapChannels.TabIndex = 0;
       this.tabPageMapChannels.Text = "Map Channels";
       this.tabPageMapChannels.UseVisualStyleBackColor = true;
@@ -308,7 +310,7 @@ namespace ProcessPlugins.TvMovie
       this.tabPageSettings.Location = new System.Drawing.Point(4, 22);
       this.tabPageSettings.Name = "tabPageSettings";
       this.tabPageSettings.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPageSettings.Size = new System.Drawing.Size(504, 312);
+      this.tabPageSettings.Size = new System.Drawing.Size(504, 326);
       this.tabPageSettings.TabIndex = 1;
       this.tabPageSettings.Text = "Settings";
       this.tabPageSettings.UseVisualStyleBackColor = true;
@@ -317,9 +319,9 @@ namespace ProcessPlugins.TvMovie
       // 
       this.mpGroupBoxDescriptions.Controls.Add(this.checkBoxSlowImport);
       this.mpGroupBoxDescriptions.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBoxDescriptions.Location = new System.Drawing.Point(16, 120);
+      this.mpGroupBoxDescriptions.Location = new System.Drawing.Point(16, 104);
       this.mpGroupBoxDescriptions.Name = "mpGroupBoxDescriptions";
-      this.mpGroupBoxDescriptions.Size = new System.Drawing.Size(472, 64);
+      this.mpGroupBoxDescriptions.Size = new System.Drawing.Size(472, 56);
       this.mpGroupBoxDescriptions.TabIndex = 13;
       this.mpGroupBoxDescriptions.TabStop = false;
       this.mpGroupBoxDescriptions.Text = "Descriptions";
@@ -330,9 +332,9 @@ namespace ProcessPlugins.TvMovie
       this.checkBoxSlowImport.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxSlowImport.Location = new System.Drawing.Point(16, 26);
       this.checkBoxSlowImport.Name = "checkBoxSlowImport";
-      this.checkBoxSlowImport.Size = new System.Drawing.Size(87, 17);
+      this.checkBoxSlowImport.Size = new System.Drawing.Size(381, 17);
       this.checkBoxSlowImport.TabIndex = 11;
-      this.checkBoxSlowImport.Text = "Slower import";
+      this.checkBoxSlowImport.Text = "Slower import (uses less processing power to solve possible video stuttering)";
       this.checkBoxSlowImport.UseVisualStyleBackColor = true;
       // 
       // mpGroupBoxGeneral
@@ -342,7 +344,7 @@ namespace ProcessPlugins.TvMovie
       this.mpGroupBoxGeneral.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBoxGeneral.Location = new System.Drawing.Point(16, 16);
       this.mpGroupBoxGeneral.Name = "mpGroupBoxGeneral";
-      this.mpGroupBoxGeneral.Size = new System.Drawing.Size(472, 88);
+      this.mpGroupBoxGeneral.Size = new System.Drawing.Size(472, 80);
       this.mpGroupBoxGeneral.TabIndex = 0;
       this.mpGroupBoxGeneral.TabStop = false;
       this.mpGroupBoxGeneral.Text = "General";
@@ -373,7 +375,7 @@ namespace ProcessPlugins.TvMovie
       // 
       this.mpBeveledLine1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpBeveledLine1.Location = new System.Drawing.Point(16, 424);
+      this.mpBeveledLine1.Location = new System.Drawing.Point(16, 438);
       this.mpBeveledLine1.Name = "mpBeveledLine1";
       this.mpBeveledLine1.Size = new System.Drawing.Size(508, 2);
       this.mpBeveledLine1.TabIndex = 10;
@@ -385,11 +387,22 @@ namespace ProcessPlugins.TvMovie
       this.openFileDialog.Filter = "TV Movie Database|*.mdb";
       this.openFileDialog.RestoreDirectory = true;
       // 
+      // labelNote
+      // 
+      this.labelNote.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.labelNote.AutoSize = true;
+      this.labelNote.Location = new System.Drawing.Point(256, 296);
+      this.labelNote.Name = "labelNote";
+      this.labelNote.Size = new System.Drawing.Size(223, 13);
+      this.labelNote.TabIndex = 6;
+      this.labelNote.Text = "Note: Use doubleclick to map/unmap stations";
+      this.labelNote.TextAlign = System.Drawing.ContentAlignment.TopRight;
+      // 
       // TvMovieSettings
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(540, 464);
+      this.ClientSize = new System.Drawing.Size(540, 478);
       this.Controls.Add(this.pictureBox2);
       this.Controls.Add(this.mpBeveledLine1);
       this.Controls.Add(this.mpTabControl);
@@ -413,6 +426,7 @@ namespace ProcessPlugins.TvMovie
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
       this.mpTabControl.ResumeLayout(false);
       this.tabPageMapChannels.ResumeLayout(false);
+      this.tabPageMapChannels.PerformLayout();
       this.tabPageSettings.ResumeLayout(false);
       this.mpGroupBoxDescriptions.ResumeLayout(false);
       this.mpGroupBoxDescriptions.PerformLayout();
@@ -450,6 +464,7 @@ namespace ProcessPlugins.TvMovie
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBoxGeneral;
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBoxDescriptions;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxSlowImport;
+    private MediaPortal.UserInterface.Controls.MPLabel labelNote;
   }
 }
 
