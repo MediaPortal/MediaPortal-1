@@ -631,6 +631,22 @@ namespace MediaPortal.GUI.Library
                 SetItemButtonState(GUIPlayListButtonControl.ActiveButton.Main);
             }
 
+						if (message.Message == GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS)
+						{
+							foreach (GUIListItem item in _listItems)
+							{
+								item.Selected = false;
+							}
+							foreach (GUIListItem item in _listItems)
+							{
+								if (item.Path.Equals(message.Label, StringComparison.OrdinalIgnoreCase))
+								{
+									item.Selected = true;
+									break;
+								}
+							}
+						}
+
             return result;
         }
 

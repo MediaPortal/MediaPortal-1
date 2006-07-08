@@ -95,6 +95,7 @@ namespace MediaPortal.GUI.Music
     protected int PlayNowJumpToWindowID = (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW;
     protected bool PlayAllOnSingleItemPlayNow = false;
     protected string m_strPlayListPath = string.Empty;
+		protected string _currentPlaying = string.Empty;
 
     public GUIMusicBaseWindow()
     {
@@ -248,6 +249,16 @@ namespace MediaPortal.GUI.Music
       }
       base.OnAction(action);
     }
+
+		public override bool OnMessage(GUIMessage message)
+		{
+			if (message.Message == GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS)
+			{
+				_currentPlaying = message.Label;
+				facadeView.OnMessage(message);
+			}
+			return base.OnMessage(message);
+		}
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {

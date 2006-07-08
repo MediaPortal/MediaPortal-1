@@ -1191,6 +1191,15 @@ namespace MediaPortal.GUI.Music
         }
         iItem++;
       }
+			for (int i = 0; i < facadeView.Count; ++i)
+			{
+				GUIListItem item = facadeView[i];
+				if (item.Path.Equals(_currentPlaying, StringComparison.OrdinalIgnoreCase))
+				{
+					item.Selected = true;
+					break;
+				}
+			}
       int iTotalItems = itemlist.Count;
       if (itemlist.Count > 0)
       {

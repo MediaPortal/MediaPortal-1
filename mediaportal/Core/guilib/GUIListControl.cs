@@ -1302,11 +1302,14 @@ namespace MediaPortal.GUI.Library
           {
             item.Selected = false;
           }
-          if (message.Param1 >= 0 && message.Param1 < _listItems.Count)
-          {
-            GUIListItem focusedItem = _listItems[message.Param1];
-            focusedItem.Selected = true;
-          }
+					foreach (GUIListItem item in _listItems)
+					{
+						if (item.Path.Equals(message.Label, StringComparison.OrdinalIgnoreCase))
+						{
+							item.Selected = true;
+							break;
+						}
+					}
         }
       }
       if (message.Message == GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADING)

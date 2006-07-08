@@ -336,6 +336,11 @@ namespace MediaPortal.GUI.Library
                     return true;
                 }
             }
+						if (message.Message == GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS)
+						{
+							RouteMessage(message);
+							return true;
+						}
             if (_currentViewMode == ViewMode.Filmstrip && _viewFilmStrip != null)
                 return _viewFilmStrip.OnMessage(message);
             if (_currentViewMode == ViewMode.List && _viewList != null)

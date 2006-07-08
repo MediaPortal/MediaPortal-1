@@ -153,6 +153,9 @@ namespace MediaPortal.Playlists
                 _currentPlayList = PlayListType.PLAYLIST_NONE;
               }
             }
+						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS, 0, 0, 0, -1, 0, null);
+						GUIGraphicsContext.SendMessage(msg);
+
           }
           break;
 
@@ -365,9 +368,13 @@ namespace MediaPortal.Playlists
       if (iSong < 0) iSong = 0;
       if (iSong >= playlist.Count) iSong = playlist.Count - 1;
 
-      int iPreviousSong = _currentSong;
+			int iPreviousSong = _currentSong;
       _currentSong = iSong;
       PlayListItem item = playlist[_currentSong];
+
+			GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS, 0, 0, 0, _currentSong, 0, null);
+			msg.Label = item.FileName;
+			GUIGraphicsContext.SendMessage(msg);
 
       if (playlist.AllPlayed())
       {
@@ -377,7 +384,7 @@ namespace MediaPortal.Playlists
       _log.Info("PlaylistPlayer.Play:{0}", item.FileName);
       if (item.Type == PlayListItem.PlayListItemType.Radio)
       {
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_TUNE_RADIO, 0, 0, 0, 0, 0, null);
+        msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_TUNE_RADIO, 0, 0, 0, 0, 0, null);
         msg.Label = item.Description;
         GUIGraphicsContext.SendMessage(msg);
         item.Played = true;

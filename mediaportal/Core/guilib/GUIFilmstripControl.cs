@@ -984,6 +984,22 @@ namespace MediaPortal.GUI.Library
         }
       }
 
+			if (message.Message == GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS)
+			{
+				foreach (GUIListItem item in _listItems)
+				{
+					item.Selected = false;
+				}
+				foreach (GUIListItem item in _listItems)
+				{
+					if (item.Path.Equals(message.Label, StringComparison.OrdinalIgnoreCase))
+					{
+						item.Selected = true;
+						break;
+					}
+				}
+			}
+
       if (message.Message == GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADING)
       {
         foreach (GUIListItem item in _listItems)
