@@ -31,6 +31,7 @@ using System.Windows.Forms;
 using System.Threading;
 
 using MediaPortal.Utils.Services;
+using MediaPortal.TV.Database;
 
 namespace ProcessPlugins.TvMovie
 {
@@ -50,7 +51,13 @@ namespace ProcessPlugins.TvMovie
       if (!_database.WasUpdated)
         return;
 
+      GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_DISABLEGUIDEREFRESH, 0, 0, 0, 0, 0, null);
+      GUIGraphicsContext.SendMessage(message);
+     
       _database.Import();
+
+      message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ENABLEGUIDEREFRESH, 0, 0, 0, 0, 0, null);
+      GUIGraphicsContext.SendMessage(message);
     }
 
 

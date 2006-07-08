@@ -118,6 +118,8 @@ namespace MediaPortal.GUI.Library
       GUI_MSG_WRONG_PASSWORD,
       GUI_MSG_RECORDER_STOP,
       GUI_MSG_RECORDER_START,
+      GUI_MSG_DISABLEGUIDEREFRESH,
+      GUI_MSG_ENABLEGUIDEREFRESH
     };
 
     private string _label = "";
