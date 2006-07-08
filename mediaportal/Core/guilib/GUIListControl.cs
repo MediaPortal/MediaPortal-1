@@ -571,7 +571,7 @@ namespace MediaPortal.GUI.Library
           dwColor = _remoteColor;
           if (pItem.IsDownloading) dwColor = _downloadColor;
         }
-        if (!pItem.Selected)
+        if (!pItem.Selected && !gotFocus)
           dwColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
 
         RenderText(timePassed, buttonNr, (float)dwPosX, (float)dwPosY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY, (float)dMaxWidth, dwColor, _textLine, bSelected);
