@@ -470,6 +470,7 @@ namespace MediaPortal.TV.Recording
     /// </remarks>
     public void TuneChannel(TVChannel channel)
     {
+      _tvAudioTunerInterface.put_TVAudioMode(TVAudioMode.Mono | TVAudioMode.LangA);
       if (_graphState != State.TimeShifting && _graphState != State.Viewing) return;
       //bool restartGraph = false;
       try
@@ -591,11 +592,10 @@ namespace MediaPortal.TV.Recording
       TVAudioMode availableAudioModes;
       TVAudioMode currentAudioMode;
       TVAudioMode hwSupportedAudioModes;
-      _tvAudioTunerInterface.get_TVAudioMode(out currentAudioMode);
-      _log.Debug("   Current audio mode: {0}", currentAudioMode);
+
       _tvAudioTunerInterface.GetAvailableTVAudioModes(out availableAudioModes);
       _log.Debug("   Channel available audio modes: {0}", availableAudioModes);
-      for (int i = 0; i<8; i++)
+      for (int i = 0; i < 8; i++)
       {
         Thread.Sleep(50);
         _tvAudioTunerInterface.GetAvailableTVAudioModes(out availableAudioModes);
