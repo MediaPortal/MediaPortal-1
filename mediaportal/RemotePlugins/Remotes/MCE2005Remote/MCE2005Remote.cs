@@ -143,12 +143,12 @@ namespace MediaPortal.InputDevices
       Remote.DeviceRemoval -= new DeviceEventHandler(OnDeviceRemoval);
       Remote.DeviceArrival += new DeviceEventHandler(OnDeviceArrival);
       _log.Info("MCE: MCE receiver has been unplugged");
-      DeInit();
     }
 
     void OnDeviceArrival(object sender, EventArgs e)
     {
       Remote.DeviceArrival -= new DeviceEventHandler(OnDeviceArrival);
+      Remote.Click -= new RemoteEventHandler(OnRemoteClick);
       _log.Info("MCE: MCE receiver detected");
       Init();
     }
