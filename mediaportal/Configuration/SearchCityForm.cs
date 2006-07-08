@@ -134,9 +134,9 @@ namespace MediaPortal.Configuration
       // 
       // groupBoxNewCity
       // 
-      this.groupBoxNewCity.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
-                  | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.groupBoxNewCity.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxNewCity.Controls.Add(this.buttonCancelCity);
       this.groupBoxNewCity.Controls.Add(this.groupBoxCityDetails);
       this.groupBoxNewCity.Controls.Add(this.labelCity);
@@ -152,7 +152,7 @@ namespace MediaPortal.Configuration
       // 
       // buttonCancelCity
       // 
-      this.buttonCancelCity.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.buttonCancelCity.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonCancelCity.Location = new System.Drawing.Point(381, 327);
       this.buttonCancelCity.Name = "buttonCancelCity";
       this.buttonCancelCity.Size = new System.Drawing.Size(75, 23);
@@ -160,12 +160,13 @@ namespace MediaPortal.Configuration
       this.buttonCancelCity.Text = "Cancel";
       this.buttonCancelCity.UseVisualStyleBackColor = true;
       this.buttonCancelCity.Visible = false;
+      this.buttonCancelCity.Click += new System.EventHandler(this.buttonCancelCity_Click);
       // 
       // groupBoxCityDetails
       // 
-      this.groupBoxCityDetails.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
-                  | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.groupBoxCityDetails.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxCityDetails.Controls.Add(this.tabControlCityURLs);
       this.groupBoxCityDetails.Controls.Add(this.listBoxCityResults);
       this.groupBoxCityDetails.Controls.Add(this.labelCityResults);
@@ -180,8 +181,8 @@ namespace MediaPortal.Configuration
       // 
       // tabControlCityURLs
       // 
-      this.tabControlCityURLs.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.tabControlCityURLs.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControlCityURLs.Controls.Add(this.tabPageSatImg);
       this.tabControlCityURLs.Controls.Add(this.tabPageTempImg);
       this.tabControlCityURLs.Controls.Add(this.tabPageUVImg);
@@ -207,8 +208,8 @@ namespace MediaPortal.Configuration
       // 
       // textBoxSatURL
       // 
-      this.textBoxSatURL.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.textBoxSatURL.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxSatURL.BorderColor = System.Drawing.Color.Empty;
       this.textBoxSatURL.Location = new System.Drawing.Point(6, 6);
       this.textBoxSatURL.Name = "textBoxSatURL";
@@ -228,8 +229,8 @@ namespace MediaPortal.Configuration
       // 
       // textBoxTempURL
       // 
-      this.textBoxTempURL.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.textBoxTempURL.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxTempURL.BorderColor = System.Drawing.Color.Empty;
       this.textBoxTempURL.Location = new System.Drawing.Point(6, 6);
       this.textBoxTempURL.Name = "textBoxTempURL";
@@ -248,8 +249,8 @@ namespace MediaPortal.Configuration
       // 
       // textBoxUVURL
       // 
-      this.textBoxUVURL.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.textBoxUVURL.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxUVURL.BorderColor = System.Drawing.Color.Empty;
       this.textBoxUVURL.Location = new System.Drawing.Point(6, 6);
       this.textBoxUVURL.Name = "textBoxUVURL";
@@ -268,8 +269,8 @@ namespace MediaPortal.Configuration
       // 
       // textBoxWindURL
       // 
-      this.textBoxWindURL.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.textBoxWindURL.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxWindURL.BorderColor = System.Drawing.Color.Empty;
       this.textBoxWindURL.Location = new System.Drawing.Point(6, 6);
       this.textBoxWindURL.Name = "textBoxWindURL";
@@ -288,8 +289,8 @@ namespace MediaPortal.Configuration
       // 
       // textBoxHumURL
       // 
-      this.textBoxHumURL.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.textBoxHumURL.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxHumURL.BorderColor = System.Drawing.Color.Empty;
       this.textBoxHumURL.Location = new System.Drawing.Point(6, 6);
       this.textBoxHumURL.Name = "textBoxHumURL";
@@ -308,8 +309,8 @@ namespace MediaPortal.Configuration
       // 
       // textBoxPrecURL
       // 
-      this.textBoxPrecURL.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.textBoxPrecURL.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxPrecURL.BorderColor = System.Drawing.Color.Empty;
       this.textBoxPrecURL.Location = new System.Drawing.Point(6, 6);
       this.textBoxPrecURL.Name = "textBoxPrecURL";
@@ -318,9 +319,9 @@ namespace MediaPortal.Configuration
       // 
       // listBoxCityResults
       // 
-      this.listBoxCityResults.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
-                  | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.listBoxCityResults.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.listBoxCityResults.Location = new System.Drawing.Point(62, 18);
       this.listBoxCityResults.Name = "listBoxCityResults";
       this.listBoxCityResults.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
@@ -338,8 +339,8 @@ namespace MediaPortal.Configuration
       // 
       // label3
       // 
-      this.label3.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.label3.AutoEllipsis = true;
       this.label3.Location = new System.Drawing.Point(8, 126);
       this.label3.Name = "label3";
@@ -351,7 +352,7 @@ namespace MediaPortal.Configuration
       // 
       // buttonAddCity
       // 
-      this.buttonAddCity.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.buttonAddCity.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonAddCity.Enabled = false;
       this.buttonAddCity.Location = new System.Drawing.Point(363, 239);
       this.buttonAddCity.Name = "buttonAddCity";
@@ -372,7 +373,7 @@ namespace MediaPortal.Configuration
       // 
       // buttonCitySearch
       // 
-      this.buttonCitySearch.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.buttonCitySearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonCitySearch.Enabled = false;
       this.buttonCitySearch.Location = new System.Drawing.Point(381, 19);
       this.buttonCitySearch.Name = "buttonCitySearch";
@@ -384,8 +385,8 @@ namespace MediaPortal.Configuration
       // 
       // searchTextBox
       // 
-      this.searchTextBox.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.searchTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.searchTextBox.BorderColor = System.Drawing.Color.Empty;
       this.searchTextBox.Location = new System.Drawing.Point(80, 21);
       this.searchTextBox.Name = "searchTextBox";
@@ -581,6 +582,11 @@ namespace MediaPortal.Configuration
     {
       get { return textBoxPrecURL.Text; }
       set { textBoxPrecURL.Text = value; }
+    }
+
+    private void buttonCancelCity_Click(object sender, EventArgs e)
+    {
+      this.Close();
     }
 
   }
