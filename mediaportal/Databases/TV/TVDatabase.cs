@@ -1148,7 +1148,7 @@ namespace MediaPortal.TV.Database
             for (int i = 0; i < results2.Rows.Count; ++i)
             {
               long idProgram = DatabaseUtility.GetAsInt64(results2, i, "idProgram");
-              _log.Info("sql: del {0} id:{1} {2}-{3}", i, idProgram, DatabaseUtility.Get(results2, i, "iStartTime"), DatabaseUtility.Get(results2, i, "iEndTime"));
+              //_log.Info("sql: del {0} id:{1} {2}-{3}", i, idProgram, DatabaseUtility.Get(results2, i, "iStartTime"), DatabaseUtility.Get(results2, i, "iEndTime"));
               strSQL = String.Format("DELETE FROM tblPrograms WHERE idProgram={0}", idProgram);
               m_db.Execute(strSQL);
             }
