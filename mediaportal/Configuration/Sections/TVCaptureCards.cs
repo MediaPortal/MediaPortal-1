@@ -38,6 +38,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Soap;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
+using MediaPortal.Utils.Services;
 #pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
@@ -54,6 +55,7 @@ namespace MediaPortal.Configuration.Sections
     private System.ComponentModel.IContainer components = null;
     private System.Windows.Forms.ColumnHeader columnHeader4;
     bool _init = false;
+		protected ILog _log;
 
     //
     // Privare members
@@ -332,7 +334,10 @@ namespace MediaPortal.Configuration.Sections
 
     public void LoadCaptureCards()
     {
-      if (File.Exists("capturecards.xml"))
+			ServiceProvider services = GlobalServiceProvider.Instance;
+			_log = services.Get<ILog>();
+
+			if (File.Exists("capturecards.xml"))
       {
         using (FileStream fileStream = new FileStream("capturecards.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
         {
@@ -361,6 +366,7 @@ namespace MediaPortal.Configuration.Sections
           catch
           {
             MessageBox.Show("Failed to load previously configured capture card(s), you will need to re-configure your device(s).", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+						_log.Error("Recorder: LoadCaptureCards()");
           }
         }
       }

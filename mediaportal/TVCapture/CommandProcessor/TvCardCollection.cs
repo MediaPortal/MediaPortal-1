@@ -66,23 +66,27 @@ namespace MediaPortal.TV.Recording
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
-
-      try
+			
+			using (FileStream fileStream = new FileStream("capturecards.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
       {
-        using (Stream r = File.Open(@"capturecards.xml", FileMode.Open, FileAccess.Read))
+        try
         {
-          SoapFormatter c = new SoapFormatter();
-          ArrayList cards = (ArrayList)c.Deserialize(r);
-          foreach (TVCaptureDevice dev in cards)
-          {
-            _tvcards.Add(dev);
-          }
-          r.Close();
-        }
-      }
-      catch (Exception)
-      {
-        _log.Info("Recorder: invalid capturecards.xml found! please delete it");
+        	SoapFormatter c = new SoapFormatter();
+					ArrayList cards = (ArrayList)c.Deserialize(fileStream);
+					foreach (TVCaptureDevice dev in cards)
+					{
+						_tvcards.Add(dev);
+					}
+				}
+				catch (Exception ex)
+				{
+					_log.Error("Recorder: invalid capturecards.xml found! please delete it");
+					_log.Error(ex);
+				}
+				finally
+				{
+					fileStream.Close();
+				}
       }
       //subscribe to the recording events of each card
       for (int i = 0; i < _tvcards.Count; i++)

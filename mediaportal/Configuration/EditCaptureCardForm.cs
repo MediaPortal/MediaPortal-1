@@ -164,6 +164,7 @@ namespace MediaPortal.Configuration
         }
         catch
         {
+					_log.Error("Recorder: EditCaptureCardForm");
         }
       }
 

@@ -41,6 +41,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Radio.Database;
 using MediaPortal.TV.Recording;
 using MediaPortal.Configuration.Controls;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Configuration.Sections
 {
@@ -89,6 +90,8 @@ namespace MediaPortal.Configuration.Sections
     static bool reloadList = false;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonClear;
     ListViewColumnSorter _columnSorter;
+
+		protected ILog _log;
 
     public RadioStations()
       : this("Stations")
@@ -769,7 +772,10 @@ namespace MediaPortal.Configuration.Sections
 
     void LoadCards()
     {
-      comboBoxCard.Items.Clear();
+			ServiceProvider services = GlobalServiceProvider.Instance;
+			_log = services.Get<ILog>();
+
+			comboBoxCard.Items.Clear();
       if (File.Exists("capturecards.xml"))
       {
         using (FileStream fileStream = new FileStream("capturecards.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
@@ -806,6 +812,7 @@ namespace MediaPortal.Configuration.Sections
           catch
           {
             MessageBox.Show("Failed to load previously configured capture card(s), you will need to re-configure your device(s).", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+						_log.Error("Recorder: LoadCards()");
           }
         }
       }

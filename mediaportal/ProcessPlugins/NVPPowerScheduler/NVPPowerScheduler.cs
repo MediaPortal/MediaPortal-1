@@ -39,7 +39,7 @@ namespace MediaPortal.PowerScheduler
   /// <summary>
   /// Summary description for NVPPowerScheduler.
   /// </summary>
-  public class NVPPowerScheduler : IPlugin, ISetupForm, IWakeable
+	public class NVPPowerScheduler : IPluginReceiver, ISetupForm, IWakeable
   {
     public static int WINDOW_POWERSCHEDULER = 6039;	// a window ID shouldn't be needed when a non visual plugin ?!
 
@@ -69,6 +69,23 @@ namespace MediaPortal.PowerScheduler
     // near in time pending recordings
     static private System.Windows.Forms.Timer m_SDTimer = new System.Windows.Forms.Timer();
     static ILog _log;
+
+		private const int WM_POWERBROADCAST = 0x0218;
+		private const int PBT_APMQUERYSUSPEND = 0x0000;
+		private const int PBT_APMQUERYSTANDBY = 0x0001;
+		//private const int PBT_APMQUERYSUSPENDFAILED = 0x0002;
+		//private const int PBT_APMQUERYSTANDBYFAILED = 0x0003;
+		private const int PBT_APMSUSPEND = 0x0004;
+		//private const int PBT_APMSTANDBY = 0x0005;
+		private const int PBT_APMRESUMECRITICAL = 0x0006;
+		private const int PBT_APMRESUMESUSPEND = 0x0007;
+		private const int PBT_APMRESUMESTANDBY = 0x0008;
+		//private const int PBTF_APMRESUMEFROMFAILURE = 0x00000001;
+		//private const int PBT_APMBATTERYLOW = 0x0009;
+		//private const int PBT_APMPOWERSTATUSCHANGE = 0x000A;
+		//private const int PBT_APMOEMEVENT = 0x000B;
+		private const int PBT_APMRESUMEAUTOMATIC = 0x0012;
+
 
     public NVPPowerScheduler()
     {
@@ -131,13 +148,12 @@ namespace MediaPortal.PowerScheduler
     void OnWakeupTimer()
     {
       if (m_bExtensiveLog) _log.Info(" PowerScheduler: OnWakeupTimer() ");
-
+			
       _log.Info("PowerScheduler: Wakeup timer expired ");
       m_bResetWakeuptime = true;
       m_iCurrentStart = -1;
       //SetPowerUpTimer();
       WakeupManager();
-
 
       // start recorder if needed
       Recorder.Start();
@@ -168,7 +184,7 @@ namespace MediaPortal.PowerScheduler
     private void OnTimer(Object sender, EventArgs e)
     {
       if (m_bExtensiveLog) _log.Info(" PowerScheduler: OnTimer() ");
-
+			
       if (m_bExtensiveLog) _log.Info(" PowerScheduler: Active window {0}, {1}, {2}", GUIWindowManager.ActiveWindow, m_iActiveWindow, m_bShutdownEnabled);
 
       // If it's been more than 25 secs since last time this method was called
@@ -752,6 +768,55 @@ namespace MediaPortal.PowerScheduler
 
     #endregion
 
+		#region IPluginReceiver Members
+
+		public bool WndProc(ref System.Windows.Forms.Message msg)
+		{
+			if (msg.Msg == WM_POWERBROADCAST)
+			{
+				_log.Debug("PowerScheduler: WM_POWERBROADCAST: {0}", msg.WParam.ToInt32());
+				switch (msg.WParam.ToInt32())
+				{
+					//The PBT_APMQUERYSUSPEND message is sent to request permission to suspend the computer.
+					//An application that grants permission should carry out preparations for the suspension before returning.
+					//Return TRUE to grant the request to suspend. To deny the request, return BROADCAST_QUERY_DENY.
+					case PBT_APMQUERYSUSPEND:
+					//The PBT_APMQUERYSTANDBY message is sent to request permission to suspend the computer.
+					//An application that grants permission should carry out preparations for the suspension before returning.
+					//Return TRUE to grant the request to suspend. To deny the request, return BROADCAST_QUERY_DENY.
+					case PBT_APMQUERYSTANDBY:
+					case PBT_APMSUSPEND:
+						if (m_SDTimer.Enabled)
+						{
+							m_SDTimer.Stop();
+							if (m_bExtensiveLog) _log.Debug("PowerScheduler: SDTimer.Stop()");
+						}
+						break;
+
+					//The PBT_APMRESUMECRITICAL event is broadcast as a notification that the system has resumed operation. 
+					//this event can indicate that some or all applications did not receive a PBT_APMSUSPEND event. 
+					//For example, this event can be broadcast after a critical suspension caused by a failing battery.
+					case PBT_APMRESUMECRITICAL:
+					//The PBT_APMRESUMESUSPEND event is broadcast as a notification that the system has resumed operation after being suspended.
+					case PBT_APMRESUMESUSPEND:
+					//The PBT_APMRESUMESTANDBY event is broadcast as a notification that the system has resumed operation after being standbye.
+					case PBT_APMRESUMESTANDBY:
+					//The PBT_APMRESUMEAUTOMATIC event is broadcast when the computer wakes up automatically to
+					//handle an event. An application will not generally respond unless it is handling the event, because the user is not present.
+					case PBT_APMRESUMEAUTOMATIC:
+						if (!m_SDTimer.Enabled)
+						{
+							m_SDTimer.Start();
+							if (m_bExtensiveLog) _log.Debug("PowerScheduler: WndProc -> SDTimer.Start()");
+						}
+						break;
+				}
+			}
+			return true;
+		}
+
+		#endregion
+
     #region ISetupForm Members
 
     public bool CanEnable()
@@ -839,5 +904,7 @@ namespace MediaPortal.PowerScheduler
     }
 
     #endregion
+
+
   }
 }

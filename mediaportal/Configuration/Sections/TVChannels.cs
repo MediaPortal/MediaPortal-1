@@ -1067,6 +1067,7 @@ namespace MediaPortal.Configuration.Sections
       comboBoxCard.BeginUpdate();
 
       comboBoxCard.Items.Clear();
+
       if (File.Exists("capturecards.xml"))
         using (FileStream fileStream = new FileStream("capturecards.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
           try
@@ -1092,10 +1093,12 @@ namespace MediaPortal.Configuration.Sections
               combo.ID = device.ID;
               comboBoxCard.Items.Add(combo);
             }
+						fileStream.Close();
           }
           catch
           {
             MessageBox.Show("Failed to load previously configured capture card(s), you have to reconfigure your device(s).", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+						_log.Error("Recorder: LoadCards()");
           }
 
       if (comboBoxCard.Items.Count != 0)
