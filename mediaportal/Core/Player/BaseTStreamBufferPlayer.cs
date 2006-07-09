@@ -376,15 +376,18 @@ namespace MediaPortal.Player
             _log.Info("_duration:{0}", _duration);
             if (dPos >= 0 && CurrentPosition < dPos)
             {
-              _log.Info("seek:{0}/{0}", dPos, _duration);
-              SeekAbsolute(dPos);
-              _log.Info("seek:{0}/{0} done", dPos, _duration);
+              if (_duration > 4)
+              {
+                _log.Info("seek:{0}/{0}", dPos, _duration);
+                SeekAbsolute(dPos);
+                _log.Info("seek:{0}/{0} done", dPos, _duration);
+              }
             }
             _startingUp = false;
           }
         }
       }
-      if (VMR9Util.g_vmr9.IsRepainting)
+      if (_startingUp==false && VMR9Util.g_vmr9.IsRepainting)
       {
         VMR9Util.g_vmr9.Process();
       }

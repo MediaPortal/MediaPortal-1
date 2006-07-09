@@ -222,7 +222,7 @@ namespace MediaPortal.Player
               settings.SetValue("clockType", value4Zeros, RegistryValueKind.Binary);
               settings.SetValue("enableAC3", valueZero, RegistryValueKind.Binary);
               settings.SetValue("enableAudio2", valueZero, RegistryValueKind.Binary);
-              if (_isLive)
+              if (false == true && _isLive)
               {
                 settings.SetValue("enableAuto", valueZero, RegistryValueKind.Binary);
               }
@@ -276,7 +276,7 @@ namespace MediaPortal.Player
           return false;
         }
         //_log.Info("TSStreamBufferPlayer9: open file:{0}",filename);
-        if (_isLive)
+        if (false==true && _isLive)
         {
           AMMediaType mpeg2ProgramStream = new AMMediaType();
           mpeg2ProgramStream.majorType = MediaType.Stream;
@@ -302,7 +302,7 @@ namespace MediaPortal.Player
         }
         _log.Info("TSStreamBufferPlayer9:load timeshift file");
         #endregion
-        if (_isLive)
+        if (false == true && _isLive)
         {
           #region connect tsfilesource->demux
           _log.Info("TSStreamBufferPlayer9:connect tsfilesource->mpeg2 demux");
