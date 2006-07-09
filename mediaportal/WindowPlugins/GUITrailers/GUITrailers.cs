@@ -218,6 +218,13 @@ namespace MediaPortal.GUI.Video
       base.OnPreviousWindow();
     }
 
+    //public override bool OnMessage(GUIMessage message)
+    //{
+    //  if(message.Message == GUIMessage.MessageType.GUI_MSG_WINDOWS_MEDIA_PLAYER_BUFFERING)
+      
+    //  return base.OnMessage(message);
+    //}
+
     #endregion
     #region Button/Click functions
     private void OnButtonTwo()
@@ -775,11 +782,12 @@ namespace MediaPortal.GUI.Video
     {
       GetGUIProperties();
       GetMMSURL(url);
-      GUIGraphicsContext.IsFullScreenVideo = true;
-      GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
-      g_Player.FullScreen = true;
-      g_Player.Play(MMSUrl);
-
+      if (g_Player.Play(MMSUrl))
+      {
+        GUIGraphicsContext.IsFullScreenVideo = true;
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+        g_Player.FullScreen = true;
+      }
     }
     void ShowLabelsFalse()
     {
