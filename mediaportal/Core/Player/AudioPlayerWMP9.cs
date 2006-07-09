@@ -58,6 +58,7 @@ namespace MediaPortal.Player
     static AxWMPLib.AxWindowsMediaPlayer _wmp10Player = null;
     bool _needUpdate = true;
     bool _notifyPlaying = true;
+    bool _bufferCompleted = true;
     protected ILog _log;
 
     public AudioPlayerWMP9()
@@ -215,6 +216,8 @@ namespace MediaPortal.Player
 
       _wmp10Player.PlayStateChange += new AxWMPLib._WMPOCXEvents_PlayStateChangeEventHandler(OnPlayStateChange);
 
+      _wmp10Player.Buffering += new AxWMPLib._WMPOCXEvents_BufferingEventHandler(OnBuffering);
+
       //_wmp10Player.enableContextMenu = false;
       //_wmp10Player.Ctlenabled = false;
       if (strFile.IndexOf("cdda:") >= 0)
@@ -277,23 +280,66 @@ namespace MediaPortal.Player
       _wmp10Player.ClientSize = new Size(0, 0);
       _wmp10Player.Visible = false;
 
+      if (_wmp10Player.URL.StartsWith("http") || _wmp10Player.URL.StartsWith("mms"))
+      {
+        try
+        {
+          _bufferCompleted = false;
+          using (WaitCursor waitcursor = new WaitCursor())
+          {
+            GUIGraphicsContext.Overlay = false;
+            while (_bufferCompleted != true)
+            {
+              {
+                _graphState = PlayState.Playing;
+                GUIWindowManager.Process();
+              }
+            }
+          }
+          GUIGraphicsContext.Overlay = true;
 
-      GUIMessage msgPb = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
-      msgPb.Label = strFile;
+          GUIMessage msgPb = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
+          msgPb.Label = strFile;
 
-      GUIWindowManager.SendThreadMessage(msgPb);
-      _graphState = PlayState.Playing;
-      GC.Collect();
-      _needUpdate = true;
-      _isFullScreen = GUIGraphicsContext.IsFullScreenVideo;
-      _positionX = GUIGraphicsContext.VideoWindow.Left;
-      _positionY = GUIGraphicsContext.VideoWindow.Top;
-      _videoWidth = GUIGraphicsContext.VideoWindow.Width;
-      _videoHeight = GUIGraphicsContext.VideoWindow.Height;
+          GUIWindowManager.SendThreadMessage(msgPb);
+          _graphState = PlayState.Playing;
+          GC.Collect();
+          _needUpdate = true;
+          _isFullScreen = GUIGraphicsContext.IsFullScreenVideo;
+          _positionX = GUIGraphicsContext.VideoWindow.Left;
+          _positionY = GUIGraphicsContext.VideoWindow.Top;
+          _videoWidth = GUIGraphicsContext.VideoWindow.Width;
+          _videoHeight = GUIGraphicsContext.VideoWindow.Height;
 
-      SetVideoWindow();
+          SetVideoWindow();
+          return true;
+        }
+        catch (Exception ex)
+        {
+          _log.Error("audioplayer - play internetstream: {0}", ex);
+          return false;
+        }
+      }
+      else
+      {
 
-      return true;
+        GUIMessage msgPb = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
+        msgPb.Label = strFile;
+
+        GUIWindowManager.SendThreadMessage(msgPb);
+        _graphState = PlayState.Playing;
+        GC.Collect();
+        _needUpdate = true;
+        _isFullScreen = GUIGraphicsContext.IsFullScreenVideo;
+        _positionX = GUIGraphicsContext.VideoWindow.Left;
+        _positionY = GUIGraphicsContext.VideoWindow.Top;
+        _videoWidth = GUIGraphicsContext.VideoWindow.Width;
+        _videoHeight = GUIGraphicsContext.VideoWindow.Height;
+
+        SetVideoWindow();
+
+        return true;
+      }
     }
 
     private void OnPlayStateChange(object sender, AxWMPLib._WMPOCXEvents_PlayStateChangeEvent e)
@@ -304,6 +350,18 @@ namespace MediaPortal.Player
         case WMPLib.WMPPlayState.wmppsStopped:
           SongEnded(false);
           break;
+      }
+    }
+
+    private void OnBuffering(object sender, AxWMPLib._WMPOCXEvents_BufferingEvent e)
+    {
+      if (e.start)
+      {
+        _bufferCompleted = false;
+      }
+      if (!e.start)
+      {
+        _bufferCompleted = true;
       }
     }
 
@@ -318,6 +376,7 @@ namespace MediaPortal.Player
       _currentFile = "";
       if (_wmp10Player != null)
       {
+        _bufferCompleted = true;
         _wmp10Player.ClientSize = new Size(0, 0);
         _wmp10Player.Visible = false;
         _wmp10Player.PlayStateChange -= new AxWMPLib._WMPOCXEvents_PlayStateChangeEventHandler(OnPlayStateChange);
@@ -734,6 +793,5 @@ namespace MediaPortal.Player
         }
       }
     }
-
   }
 }
