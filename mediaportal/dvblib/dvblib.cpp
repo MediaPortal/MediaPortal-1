@@ -468,6 +468,69 @@ HRESULT SetupDemuxer(IPin *pVideo,int videoPID,IPin *pAudio,int audioPID,IPin *p
 
 }
 
+HRESULT GetPidMapping(IPin *pVideo,int* pids, int* elementary_stream, int* count)
+{
+	IMPEG2PIDMap	*pMap=NULL;
+	IEnumPIDMap		*pPidEnum=NULL;
+	ULONG			pid;
+	PID_MAP		*pm = new PID_MAP[30];
+	ULONG			pidCount;
+	ULONG			umPid;
+	HRESULT hr=0;
+	try
+	{
+		if (pVideo==NULL)
+		{
+			delete[] pm;
+			*count=0;
+			return 1;
+		}
+		hr=pVideo->QueryInterface(IID_IMPEG2PIDMap,(void**)&pMap);
+		if(FAILED(hr) || pMap==NULL)
+		{
+			Log("unable to get IMPEG2PIDMap :0x%x",hr);
+			delete[] pm;
+			*count=0;
+			return 1;
+		}
+		hr=pMap->EnumPIDMap(&pPidEnum);
+		if(FAILED(hr) || pPidEnum==NULL)
+		{
+			Log("unable to get IEnumPIDMap :0x%x",hr);
+			delete[] pm;
+			*count=0;
+			return 5;
+		}
+		// enum and unmap the pids
+		hr=pPidEnum->Next(30,&pm[0],&pidCount);
+		if(FAILED(hr) || pidCount<=0)
+		{
+			Log("unable to get pids:0x%x",hr);
+			delete[] pm;
+			*count=0;
+			return 5;
+		}
+
+		int maxCount=*count;
+		if (maxCount>pidCount) maxCount=pidCount;
+
+		for (int i=0; i < maxCount;++i)
+		{
+			pids[i]=(int)pm[i].ulPID;
+			elementary_stream[i]=(int)pm[i].MediaSampleContent;
+		}
+		*count=maxCount;
+		pPidEnum->Release();
+		pMap->Release();
+	}
+	catch(...)
+	{
+		Log("exception GetPidMapping");
+	}
+	delete[] pm;
+	return S_OK;
+}
+
 HRESULT SetupDemuxerPin(IPin *pVideo,int videoPID, int elementary_stream, bool unmapOtherPids)
 {
 	IMPEG2PIDMap	*pMap=NULL;
