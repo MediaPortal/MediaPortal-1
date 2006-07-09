@@ -24,38 +24,36 @@ using System.IO;
 
 namespace MediaPortal.Utils.Services
 {
-  public class LogFileWriter : StreamWriter
-  {
-    private StreamWriter _errorStream;
-    private StreamWriter _logStream;
-    private string _errorName;
-    private string _logName;
+	public class LogFileWriter : StreamWriter
+	{
+		private StreamWriter _errorStream;
+		private string _errorName;
 
-    public LogFileWriter(string directory, string name)
-      : base (directory + "\\" + name + ".log", true)
-    {
-      base.Close();
-      _errorName = directory + "\\" + name + "_error.log";
-      _logName = directory + "\\" + name + ".log";
-    }
+		public LogFileWriter(string directory, string name)	
+			: base(directory + "\\" + name + ".log")
+		{
+			base.AutoFlush = true;
 
-    public override void WriteLine(string value)
-    {
-      lock (typeof(LogFileWriter))
-      {
-        _logStream = new StreamWriter(_logName, true);
-        _logStream.AutoFlush = true;
-        _logStream.WriteLine(value);
-        _logStream.Close();
+			_errorName = directory + "\\" + name + "_error.log";
+			if (System.IO.File.Exists(_errorName))
+				System.IO.File.Delete(_errorName);
+		}
 
-        if (value.IndexOf("[ERROR]") != -1)
-        {
-          _errorStream = new StreamWriter(_errorName, true);
-          _errorStream.AutoFlush = true;
-          _errorStream.WriteLine(value);
-          _errorStream.Close();
-        }
-      }
-    }
-  }
+		public override void WriteLine(string value)
+		{
+			base.WriteLine(value);
+			if (value.IndexOf("[ERROR]") != -1)
+			{
+				if (_errorStream == null)
+				{
+					if (System.IO.File.Exists(_errorName))
+						System.IO.File.Delete(_errorName);
+
+					_errorStream = new StreamWriter(_errorName);
+					_errorStream.AutoFlush = true;
+				}
+				_errorStream.WriteLine(value);
+			}
+		}
+	}
 }
