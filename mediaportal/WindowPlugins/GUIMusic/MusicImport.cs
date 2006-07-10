@@ -447,7 +447,8 @@ namespace MediaPortal.MusicImport
                   {
                     mp3Config.format.lhv1.bEnableVBR = 1;
                     mp3Config.format.lhv1.nVbrMethod = VBRMETHOD.VBR_METHOD_ABR;
-                    mp3Config.format.lhv1.dwVbrAbr_bps = Convert.ToUInt16(Rates[mp3BitRate]);
+                    uint ConToKbwVbrAbr_bps = Convert.ToUInt16(Rates[mp3BitRate]);
+                    mp3Config.format.lhv1.dwVbrAbr_bps = ConToKbwVbrAbr_bps * 1000; 
                   }
 
                   if (mp3MONO)
