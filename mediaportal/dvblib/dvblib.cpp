@@ -383,7 +383,7 @@ HRESULT SetupDemuxer(IPin *pVideo,int videoPID,IPin *pAudio,int audioPID,IPin *p
 			}
 		}
 		pPidEnum->Release();
-		if (videoPID>0)
+		if (videoPID>0 && videoPID<0x1fff)
 		{
 			// map new pid
 			pid = (ULONG)videoPID;
@@ -421,7 +421,7 @@ HRESULT SetupDemuxer(IPin *pVideo,int videoPID,IPin *pAudio,int audioPID,IPin *p
 				return 8;
 		}
 		pPidEnum->Release();
-		if (audioPID>0)
+		if (audioPID>0 && audioPID <0x2000)
 		{
 			pid = (ULONG)audioPID;
 			hr=pMap->MapPID(1,&pid,MEDIA_ELEMENTARY_STREAM);
@@ -454,7 +454,7 @@ HRESULT SetupDemuxer(IPin *pVideo,int videoPID,IPin *pAudio,int audioPID,IPin *p
 				return 8;
 		}
 		pPidEnum->Release();
-		if (AC3PID>0 && AC3PID!=0x1fff)
+		if (AC3PID>0 && AC3PID<0x1fff)
 		{
 			pid = (ULONG)AC3PID;
 			hr=pMap->MapPID(1,&pid,MEDIA_ELEMENTARY_STREAM);
