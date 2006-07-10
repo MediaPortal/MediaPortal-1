@@ -3474,6 +3474,10 @@
       <value>Importerer spor</value>
    </string>
    <string>
+      <id>1190</id>
+      <value>Zoom 14:9</value>
+   </string>
+   <string>
       <id>1200</id>
       <value>Oppsett Wizard</value>
    </string>
