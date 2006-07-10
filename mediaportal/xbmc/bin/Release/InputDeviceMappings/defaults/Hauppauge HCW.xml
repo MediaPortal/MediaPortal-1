@@ -206,7 +206,8 @@
 		<button name="Yellow" code="2056">
 			<action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="9977" sound="click.wav" />
 			<action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="9977" sound="click.wav" />
-			<action layer="0" condition="*" conproperty="" command="ACTION" cmdproperty="119" sound="click.wav" />
+			<action layer="0" condition="FULLSCREEN" conproperty="true" command="ACTION" cmdproperty="119" sound="click.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="11" sound="click.wav" />
 		</button>
 		<button name="Blue" code="2041">
 			<action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="9978" sound="click.wav" />
@@ -293,7 +294,8 @@
 		<button name="Yellow" code="1056">
 			<action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="9977" sound="click.wav" />
 			<action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="9977" sound="click.wav" />
-			<action layer="0" condition="*" conproperty="" command="ACTION" cmdproperty="119" sound="click.wav" />
+			<action layer="0" condition="FULLSCREEN" conproperty="true" command="ACTION" cmdproperty="119" sound="click.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="11" sound="click.wav" />
 		</button>
 		<button name="Blue" code="1041">
 			<action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="9978" sound="click.wav" />
