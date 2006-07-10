@@ -78,6 +78,7 @@ namespace MediaPortal.TV.Recording
     static double _lastPosition = 0;
     static CommandProcessor _commandProcessor;
     static ILog _log;
+		static Object thisLock = new Object();
     #endregion
 
     #region events
@@ -132,10 +133,13 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     static public void Start()
     {
-      if (Running) return;//if we are initialized already then no need todo anything
-      CommandProcessor processor = new CommandProcessor();
-      processor.Start();
-      Start(processor);
+			lock (thisLock)
+			{
+				if (Running) return;//if we are initialized already then no need todo anything
+				CommandProcessor processor = new CommandProcessor();
+				processor.Start();
+				Start(processor);
+			}
     }
 
     static public void Start(CommandProcessor processor)
