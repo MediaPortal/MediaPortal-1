@@ -1902,6 +1902,10 @@
 		<value>In attesa della pagina {0}/{1}...</value>
 	</string>
 	<string>
+		<id>599</id>
+		<value>Tempesta</value>
+	</string>
+	<string>
 		<id>600</id>
 		<value>Guida TV</value>
 	</string>
@@ -2557,6 +2561,10 @@
 		<id>772</id>
 		<value>Si desidera riprovare?</value>
     </string>
+	<string>
+		<id>782</id>
+		<value>Registrazione avanzata</value>
+	</string>
     <string>
 	  <id>773</id>
 	  <value>AVVIO</value>
@@ -3254,6 +3262,14 @@
 		<value>Orina per: Durata</value>
 	</string>
 	<string>
+		<id>1018</id>
+		<value>Il programma inzierà in {0}</value>
+	</string>
+	<string>
+		<id>1019</id>
+		<value>il programma sta per iniziare</value>
+	</string>
+	<string>
 		<id>1020</id>
 		<value>Informazioni</value>
 	</string>
@@ -3408,6 +3424,14 @@
 	<string>
 		<id>1105</id>
 		<value>Importazione tracce in corso</value>
+	</string>
+	<string>
+		<id>1200</id>
+		<value>Wizard delle impostazioni</value>
+	</string>
+	<string>
+		<id>100019</id>
+		<value>il programma sta per iniziare</value>
 	</string>
 	<string>
 		<id>1440</id>
@@ -4719,6 +4743,7 @@
 		<id>100017</id>
 		<value>Impostazioni-&gt;Meteo</value>
 	</string>
+
 	<string>
 		<id>100020</id>
 		<value>Impostazioni-&gt;Script</value>
@@ -5485,6 +5510,18 @@
 		<value>Non avviare / selezionare la TV automaticamente</value>
 	</string>
 	<string>
+		<id>777</id>
+		<value>Timeshift modo d'uso</value>
+	</string>
+	<string>
+		<id>778</id>
+		<value>Inizia con Timeshift automaticamente abilitato</value>
+	</string>
+	<string>
+		<id>779</id>
+		<value>Timeshift deve essere abilitato manualmente</value>
+	</string>
+	<string>
 		<id>780</id>
 		<value>Seleziona metodo programmazione</value>
 	</string>
@@ -5493,8 +5530,16 @@
 		<value>Registrazione veloce</value>
 	</string>
 	<string>
-		<id>782</id>
-		<value>Registrazione avanzata</value>
+		<id>798</id>
+		<value>Basso</value>
+	</string>
+	<string>
+		<id>799</id>
+		<value>Alto</value>
+	</string>
+	<string>
+		<id>777</id>
+		<value>Timeshift modo d'uso</value>
 	</string>
 	<string>
 		<id>6000</id>
@@ -5554,7 +5599,11 @@
 	</string>	
 	<string>
 		<id>6014</id>
-		<value>Setup TV</value>
+		<value>Impostazioni TV</value>
+	</string>
+	<string>
+		<id>6015</id>
+		<value>Impostazioni DVD</value>
 	</string>
 	<string>
 		<id>6016</id>
@@ -5573,56 +5622,28 @@
 		<value>minuti dopo il termine del programma</value>
 	</string>
 	<string>
-		<id>777</id>
-		<value>Modalità di utilizzo pausa digitale</value>
-	</string>
-	<string>
-		<id>778</id>
-		<value>Avvia automaticamenta pausa digitale</value>
-	</string>
-	<string>
-		<id>779</id>
-		<value>La pausa digitale deve essere attivata</value>
-	</string>
-	<string>
-		<id>798</id>
-		<value>basso</value>
-	</string>
-	<string>
-		<id>799</id>
-		<value>alto</value>
-	</string>
-	<string>
-		<id>1200</id>
-		<value>Wizard configurazione</value>
-	</string>
-	<string>
-		<id>6015</id>
-		<value>Impostazioni DVD</value>
-	</string>
-	<string>
 		<id>6020</id>
-		<value>Ripeti/cicla diapositive</value>
+		<value>Ripeti/cicla presentazioni</value>
 	</string>
 	<string>
 		<id>6021</id>
-		<value>Sequenza diapositive casuale</value>
+		<value>Ripeti/Riordino automatico presentazioni</value>
 	</string>
 	<string>
 		<id>6022</id>
-		<value>Impostazione filmati</value>
+		<value>Impostazioni Film</value>
 	</string>
 	<string>
 		<id>6023</id>
-		<value>Impostazione schermo</value>
+		<value>Impostazioni Schermo</value>
 	</string>
 	<string>
 		<id>6024</id>
-		<value>Salta</value>
+		<value>Passi di salto</value>
 	</string>
 	<string>
 		<id>6025</id>
-		<value>Impostazione durata salti</value>
+		<value>Impostazioni Passi di salto</value>
 	</string>
 	<string>
 		<id>9997</id>

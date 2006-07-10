@@ -1328,11 +1328,11 @@
 	</string>
 	<string>
 		<id>402</id>
-		<value>Érzékelt:</value>
+		<value>Érzékeltő:</value>
 	</string>
 	<string>
 		<id>403</id>
-		<value>UV Index:</value>
+		<value>UV érték:</value>
 	</string>
 	<string>
 		<id>404</id>
@@ -2460,11 +2460,11 @@
 	</string>
 	<string>
 		<id>746</id>
-		<value>magas</value>
+		<value>Maximum:</value>
 	</string>
 	<string>
 		<id>747</id>
-		<value>alacsony</value>
+		<value>Minimum:</value>
 	</string>
 	<string>
 		<id>748</id>
@@ -3140,23 +3140,23 @@
 	</string>
 	<string>
 		<id>1012</id>
-		<value>Programfutás megszakítása</value>
+		<value>A program meg lett szakítva</value>
 	</string>
 	<string>
 		<id>1013</id>
-		<value>Szeretné, hogy a másodpercek is bekerüljenek a felvételbe?</value>
+		<value>Szeretnéd a második felét is rögzíteni?</value>
 	</string>
 	<string>
 		<id>1014</id>
-		<value>Értesítés küldése a befejezésről</value>
+		<value>Értesítés küldése a mielőtt a műsor elkezdődik</value>
 	</string>
 	<string>
 		<id>1015</id>
-		<value>Ne értesítsen a befejezésről</value>
+		<value>Ne értesítsen a műsor kezdetéről</value>
 	</string>
 	<string>
 		<id>1016</id>
-		<value>Program indítása 5 perc múlva</value>
+		<value>A műsor 5 perc múlva kezdődik</value>
 	</string>
 	<string>
 		<id>1017</id>
@@ -3232,7 +3232,7 @@
 	</string>
 	<string>
 		<id>1037</id>
-		<value>Televízió - Program információ</value>
+		<value>Televízió - Műsor információ</value>
 	</string>
 	<string>
 		<id>1038</id>
@@ -4916,11 +4916,11 @@
 	</string>
 	<string>
 		<id>200013</id>
-		<value>A varázsló segít, hogy a Mediaportal-t egyszerűen és gyorsan beállítsd. Kérlek kövesd a lépéseket.</value>
+		<value>A varázsló segít, hogy a Mediaportal-t egyszerűen és gyorsan beállítsd. Kérlek kövesd a </value>
 	</string>
 	<string>
 		<id>200014</id>
-		<value>Kezdjük a nyelv beállításokkal:</value>
+		<value>lépéseket. Kezdjük a nyelv beállításokkal:</value>
 	</string>
 	<string>
 		<id>200015</id>
@@ -4968,9 +4968,7 @@
 		<value>Kedvencek</value>
 	</string>
 
-
-
-<!--  Begin Addtional strings updated by Helli Gábor 2006.06.01. --> 
+<!--  --> 
 
 <string>
     <id>395</id>
@@ -4992,7 +4990,7 @@
   </string>
 <string>
     <id>534</id>
-    <value>Mérsékelt</value>
+    <value>közepes</value>
   </string>
 
 <string>
@@ -5069,7 +5067,7 @@
 	</string>
 <string>
     <id>769</id>
-    <value>Nem találtam programot</value>
+    <value>Nem találtam műsorokat</value>
 	</string>
 <string>
     <id>770</id>
@@ -5641,5 +5639,65 @@
     <value>Képernyő beállítások</value>
   </string>                
 <!-- -->
+ <string>
+      <id>777</id>
+      <value>Időcsúsztatás használati mód</value>
+   </string>
+   <string>
+      <id>778</id>
+      <value>Automatikus időcsúsztatás bekapcsolás</value>
+   </string>
+   <string>
+      <id>779</id>
+      <value>Manuális időcsúsztatás bekapcsolás</value>
+   </string>
+   <string>
+      <id>798</id>
+      <value>minimális</value>
+   </string>
+
+   <string>
+      <id>799</id>
+      <value>magas</value>
+   </string>
+
+  <string>
+      <id>6024</id>
+      <value>Léptetések</value>
+   </string>
+   <string>
+      <id>6025</id>
+      <value>Léptetés beállítások</value>
+   </string>      
+
+   <string>
+      <id>9997</id>
+      <value>Másodperc:</value>
+   </string>
+   <string>
+      <id>9998</id>
+      <value>Perc:</value>
+   </string>
+   <string>
+      <id>9999</id>
+      <value>Óra:</value>
+   </string>         
+
+  <string>
+      <id>1018</id>
+      <value>A műsor elkezdődik {0} percen belül</value>
+   </string>
+   <string>
+      <id>1019</id>
+      <value>A műsor hamarosan kezdődik</value>
+   </string>      	
+
+ <string>
+      <id>599</id>
+      <value>Zavar</value>
+   </string>
+
+
+
 </strings>
 
