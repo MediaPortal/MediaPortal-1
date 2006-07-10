@@ -607,26 +607,6 @@ namespace MediaPortal.TV.Recording
 
       _log.Debug("   Supported audio modes: {0}", supportedAudioModes);
 
-      int langs = 0;
-      bool langA = false;
-      bool langB = false;
-      bool langC = false;
-      if ((availableAudioModes & TVAudioMode.LangA) == TVAudioMode.LangA)
-      {
-        langA = true;
-        langs++;
-      }
-      if ((availableAudioModes & TVAudioMode.LangB) == TVAudioMode.LangB)
-      {
-        langB = true;
-        langs++;
-      }
-      if ((availableAudioModes & TVAudioMode.LangC) == TVAudioMode.LangC)
-      {
-        langC = true;
-        langs++;
-      }
-
       string langType = "Unknown";
       currentAudioMode = TVAudioMode.Mono;
 
@@ -639,16 +619,26 @@ namespace MediaPortal.TV.Recording
         currentAudioMode = TVAudioMode.Stereo;
       }
 
+      int langs = 0;
+      if ((availableAudioModes & TVAudioMode.LangA) == TVAudioMode.LangA)
+      {
+        if(langs++ == 0)
+          currentAudioMode |= TVAudioMode.LangA;
+      }
+      if ((availableAudioModes & TVAudioMode.LangB) == TVAudioMode.LangB)
+      {
+        if (langs++ == 0)
+          currentAudioMode |= TVAudioMode.LangB;
+      }
+      if ((availableAudioModes & TVAudioMode.LangC) == TVAudioMode.LangC)
+      {
+        if (langs++ == 0)
+          currentAudioMode |= TVAudioMode.LangC;
+      }
+
       if (langs > 1)
         langType = "Bilingual";
 
-      if (langA)
-        currentAudioMode |= TVAudioMode.LangA;
-      else
-      {
-        if (langB)
-          currentAudioMode |= TVAudioMode.LangB;
-      }
       _log.Debug("   Channel audio is: {0}", langType);
       _log.Debug("   Setting audio mode: {0}", currentAudioMode);
       if (_tvAudioTunerInterface.put_TVAudioMode(currentAudioMode) != 0)
