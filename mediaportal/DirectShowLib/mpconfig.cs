@@ -69,7 +69,8 @@ namespace DirectShowLib
         Stretched,
         LetterBox,
         Crop,
-        StretchedAsPrimary
+        StretchedAsPrimary,
+        //Zoom14to9,
     }
 
     #endregion

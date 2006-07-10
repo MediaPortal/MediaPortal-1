@@ -57,7 +57,8 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPCheckBox byIndexCheckBox;
     bool _init = false;
     private MediaPortal.UserInterface.Controls.MPCheckBox cbTurnOnTimeShift;
-    string[] aspectRatio = { "normal", "original", "stretch", "zoom", "letterbox", "panscan" };
+    //string[] aspectRatio = { "normal", "original", "stretch", "zoom", "letterbox", "panscan" };
+    string[] aspectRatio = { "normal", "original", "stretch", "zoom", "zoom149", "letterbox", "panscan" };
 
     public Television()
       : this("Television")
@@ -188,6 +189,7 @@ namespace MediaPortal.Configuration.Sections
             "Original Source Format",
             "Stretch",
             "Zoom",
+            "Zoom 14:9",
             "4:3 Letterbox",
             "4:3 Pan and scan"});
       this.defaultZoomModeComboBox.Location = new System.Drawing.Point(168, 116);

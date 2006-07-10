@@ -148,7 +148,8 @@ namespace WindowPlugins.GUISettings.TV
 		}*/
 		void OnAspectRatio()
 		{
-			string[] aspectRatio = { "normal", "original", "stretch", "zoom", "letterbox", "panscan" };
+			//string[] aspectRatio = { "normal", "original", "stretch", "zoom", "letterbox", "panscan" };
+            string[] aspectRatio = { "normal", "original", "stretch", "zoom149", "zoom", "letterbox", "panscan" };
 			string defaultAspectRatio ="";
 			using (MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{

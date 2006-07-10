@@ -49,7 +49,8 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPLabel label6;
     private System.ComponentModel.IContainer components = null;
 
-    string[] aspectRatio = { "normal", "original", "stretch", "zoom", "letterbox", "panscan" };
+    //string[] aspectRatio = { "normal", "original", "stretch", "zoom", "letterbox", "panscan" };
+    string[] aspectRatio = { "normal", "original", "stretch", "zoom", "zoom149", "letterbox", "panscan" };
 
     public DVDPlayer()
       : this("DVD Player")
@@ -167,17 +168,20 @@ namespace MediaPortal.Configuration.Sections
       // 
       // internalPlayerCheckBox
       // 
+      this.internalPlayerCheckBox.AutoSize = true;
+      this.internalPlayerCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.internalPlayerCheckBox.Location = new System.Drawing.Point(168, 20);
       this.internalPlayerCheckBox.Name = "internalPlayerCheckBox";
-      this.internalPlayerCheckBox.Size = new System.Drawing.Size(232, 16);
+      this.internalPlayerCheckBox.Size = new System.Drawing.Size(231, 17);
       this.internalPlayerCheckBox.TabIndex = 0;
       this.internalPlayerCheckBox.Text = "Use external player (replaces internal player)";
+      this.internalPlayerCheckBox.UseVisualStyleBackColor = true;
       this.internalPlayerCheckBox.CheckedChanged += new System.EventHandler(this.internalPlayerCheckBox_CheckedChanged);
       // 
       // mpGroupBox1
       // 
-      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
       this.mpGroupBox1.Controls.Add(this.internalPlayerCheckBox);
       this.mpGroupBox1.Controls.Add(this.parametersButton);
       this.mpGroupBox1.Controls.Add(this.parametersTextBox);
@@ -185,6 +189,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.Controls.Add(this.fileNameButton);
       this.mpGroupBox1.Controls.Add(this.fileNameTextBox);
       this.mpGroupBox1.Controls.Add(this.label1);
+      this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox1.Location = new System.Drawing.Point(0, 68);
       this.mpGroupBox1.Name = "mpGroupBox1";
       this.mpGroupBox1.Size = new System.Drawing.Size(472, 104);
@@ -194,18 +199,20 @@ namespace MediaPortal.Configuration.Sections
       // 
       // parametersButton
       // 
-      this.parametersButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.parametersButton.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right ) ) );
       this.parametersButton.Location = new System.Drawing.Point(384, 67);
       this.parametersButton.Name = "parametersButton";
       this.parametersButton.Size = new System.Drawing.Size(72, 22);
       this.parametersButton.TabIndex = 6;
       this.parametersButton.Text = "List";
+      this.parametersButton.UseVisualStyleBackColor = true;
       this.parametersButton.Click += new System.EventHandler(this.parametersButton_Click);
       // 
       // parametersTextBox
       // 
-      this.parametersTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.parametersTextBox.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.parametersTextBox.BorderColor = System.Drawing.Color.Empty;
       this.parametersTextBox.Location = new System.Drawing.Point(168, 68);
       this.parametersTextBox.Name = "parametersTextBox";
       this.parametersTextBox.Size = new System.Drawing.Size(208, 20);
@@ -221,18 +228,20 @@ namespace MediaPortal.Configuration.Sections
       // 
       // fileNameButton
       // 
-      this.fileNameButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.fileNameButton.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right ) ) );
       this.fileNameButton.Location = new System.Drawing.Point(384, 43);
       this.fileNameButton.Name = "fileNameButton";
       this.fileNameButton.Size = new System.Drawing.Size(72, 22);
       this.fileNameButton.TabIndex = 3;
       this.fileNameButton.Text = "Browse";
+      this.fileNameButton.UseVisualStyleBackColor = true;
       this.fileNameButton.Click += new System.EventHandler(this.fileNameButton_Click);
       // 
       // fileNameTextBox
       // 
-      this.fileNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.fileNameTextBox.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.fileNameTextBox.BorderColor = System.Drawing.Color.Empty;
       this.fileNameTextBox.Location = new System.Drawing.Point(168, 44);
       this.fileNameTextBox.Name = "fileNameTextBox";
       this.fileNameTextBox.Size = new System.Drawing.Size(208, 20);
@@ -248,14 +257,16 @@ namespace MediaPortal.Configuration.Sections
       // 
       // defaultZoomModeComboBox
       // 
-      this.defaultZoomModeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.defaultZoomModeComboBox.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.defaultZoomModeComboBox.BorderColor = System.Drawing.Color.Empty;
       this.defaultZoomModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.defaultZoomModeComboBox.Items.AddRange(new object[] {
             "Normal",
             "Original Source Format",
             "Stretch",
             "Zoom",
+            "Zoom 14:9",
             "4:3 Letterbox",
             "4:3 Pan and scan"});
       this.defaultZoomModeComboBox.Location = new System.Drawing.Point(168, 24);
@@ -277,9 +288,11 @@ namespace MediaPortal.Configuration.Sections
       this.button2.Name = "button2";
       this.button2.Size = new System.Drawing.Size(75, 23);
       this.button2.TabIndex = 0;
+      this.button2.UseVisualStyleBackColor = true;
       // 
       // textBox1
       // 
+      this.textBox1.BorderColor = System.Drawing.Color.Empty;
       this.textBox1.Location = new System.Drawing.Point(0, 0);
       this.textBox1.Name = "textBox1";
       this.textBox1.Size = new System.Drawing.Size(100, 20);
@@ -287,10 +300,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox3
       // 
-      this.mpGroupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox3.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
       this.mpGroupBox3.Controls.Add(this.label6);
       this.mpGroupBox3.Controls.Add(this.defaultZoomModeComboBox);
+      this.mpGroupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox3.Location = new System.Drawing.Point(0, 0);
       this.mpGroupBox3.Name = "mpGroupBox3";
       this.mpGroupBox3.Size = new System.Drawing.Size(472, 60);

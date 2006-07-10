@@ -64,7 +64,8 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPLabel label7;
     private MediaPortal.UserInterface.Controls.MPComboBox defaultSubtitleLanguageComboBox;
 
-    string[] aspectRatio = { "normal", "original", "stretch", "zoom", "letterbox", "panscan" };
+    //string[] aspectRatio = { "normal", "original", "stretch", "zoom", "letterbox", "panscan" };
+    string[] aspectRatio = { "normal", "original", "stretch", "zoom", "zoom149", "letterbox", "panscan" };
 
     public Movies()
       : this("Movies")
@@ -189,258 +190,264 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
-        this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-        this.defaultZoomModeComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
-        this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
-        this.fileNameButton = new MediaPortal.UserInterface.Controls.MPButton();
-        this.folderNameTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
-        this.repeatPlaylistCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
-        this.folderNameLabel = new MediaPortal.UserInterface.Controls.MPLabel();
-        this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-        this.label7 = new MediaPortal.UserInterface.Controls.MPLabel();
-        this.defaultSubtitleLanguageComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
-        this.dropShadowTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
-        this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
-        this.showSubtitlesCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
-        this.subtitlesButton = new MediaPortal.UserInterface.Controls.MPButton();
-        this.subtitlesFontTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
-        this.label6 = new MediaPortal.UserInterface.Controls.MPLabel();
-        this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
-        this.fontDialog = new System.Windows.Forms.FontDialog();
-        this.tabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
-        this.tabPage1 = new MediaPortal.UserInterface.Controls.MPTabPage();
-        this.tabPage3 = new MediaPortal.UserInterface.Controls.MPTabPage();
-        this.groupBox1.SuspendLayout();
-        this.mpGroupBox1.SuspendLayout();
-        this.tabControl1.SuspendLayout();
-        this.tabPage1.SuspendLayout();
-        this.tabPage3.SuspendLayout();
-        this.SuspendLayout();
-        // 
-        // groupBox1
-        // 
-        this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                    | System.Windows.Forms.AnchorStyles.Right)));
-        this.groupBox1.Controls.Add(this.defaultZoomModeComboBox);
-        this.groupBox1.Controls.Add(this.label1);
-        this.groupBox1.Controls.Add(this.fileNameButton);
-        this.groupBox1.Controls.Add(this.folderNameTextBox);
-        this.groupBox1.Controls.Add(this.repeatPlaylistCheckBox);
-        this.groupBox1.Controls.Add(this.folderNameLabel);
-        this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-        this.groupBox1.Location = new System.Drawing.Point(16, 16);
-        this.groupBox1.Name = "groupBox1";
-        this.groupBox1.Size = new System.Drawing.Size(432, 116);
-        this.groupBox1.TabIndex = 0;
-        this.groupBox1.TabStop = false;
-        this.groupBox1.Text = "Settings";
-        // 
-        // defaultZoomModeComboBox
-        // 
-        this.defaultZoomModeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                    | System.Windows.Forms.AnchorStyles.Right)));
-        this.defaultZoomModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-        this.defaultZoomModeComboBox.Items.AddRange(new object[] {
+      this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.defaultZoomModeComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.fileNameButton = new MediaPortal.UserInterface.Controls.MPButton();
+      this.folderNameTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.repeatPlaylistCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.folderNameLabel = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.label7 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.defaultSubtitleLanguageComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.dropShadowTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.showSubtitlesCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.subtitlesButton = new MediaPortal.UserInterface.Controls.MPButton();
+      this.subtitlesFontTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label6 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
+      this.fontDialog = new System.Windows.Forms.FontDialog();
+      this.tabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
+      this.tabPage1 = new MediaPortal.UserInterface.Controls.MPTabPage();
+      this.tabPage3 = new MediaPortal.UserInterface.Controls.MPTabPage();
+      this.groupBox1.SuspendLayout();
+      this.mpGroupBox1.SuspendLayout();
+      this.tabControl1.SuspendLayout();
+      this.tabPage1.SuspendLayout();
+      this.tabPage3.SuspendLayout();
+      this.SuspendLayout();
+      // 
+      // groupBox1
+      // 
+      this.groupBox1.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.groupBox1.Controls.Add(this.defaultZoomModeComboBox);
+      this.groupBox1.Controls.Add(this.label1);
+      this.groupBox1.Controls.Add(this.fileNameButton);
+      this.groupBox1.Controls.Add(this.folderNameTextBox);
+      this.groupBox1.Controls.Add(this.repeatPlaylistCheckBox);
+      this.groupBox1.Controls.Add(this.folderNameLabel);
+      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBox1.Location = new System.Drawing.Point(16, 16);
+      this.groupBox1.Name = "groupBox1";
+      this.groupBox1.Size = new System.Drawing.Size(432, 116);
+      this.groupBox1.TabIndex = 0;
+      this.groupBox1.TabStop = false;
+      this.groupBox1.Text = "Settings";
+      // 
+      // defaultZoomModeComboBox
+      // 
+      this.defaultZoomModeComboBox.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.defaultZoomModeComboBox.BorderColor = System.Drawing.Color.Empty;
+      this.defaultZoomModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.defaultZoomModeComboBox.Items.AddRange(new object[] {
             "Normal",
             "Original Source Format",
             "Stretch",
             "Zoom",
+            "Zoom 14:9",
             "4:3 Letterbox",
             "4:3 Pan and scan"});
-        this.defaultZoomModeComboBox.Location = new System.Drawing.Point(136, 76);
-        this.defaultZoomModeComboBox.Name = "defaultZoomModeComboBox";
-        this.defaultZoomModeComboBox.Size = new System.Drawing.Size(280, 21);
-        this.defaultZoomModeComboBox.TabIndex = 5;
-        // 
-        // label1
-        // 
-        this.label1.Location = new System.Drawing.Point(16, 80);
-        this.label1.Name = "label1";
-        this.label1.Size = new System.Drawing.Size(120, 16);
-        this.label1.TabIndex = 4;
-        this.label1.Text = "Default zoom mode:";
-        // 
-        // fileNameButton
-        // 
-        this.fileNameButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-        this.fileNameButton.Location = new System.Drawing.Point(344, 51);
-        this.fileNameButton.Name = "fileNameButton";
-        this.fileNameButton.Size = new System.Drawing.Size(72, 22);
-        this.fileNameButton.TabIndex = 3;
-        this.fileNameButton.Text = "Browse";
-        this.fileNameButton.UseVisualStyleBackColor = true;
-        this.fileNameButton.Click += new System.EventHandler(this.fileNameButton_Click);
-        // 
-        // folderNameTextBox
-        // 
-        this.folderNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                    | System.Windows.Forms.AnchorStyles.Right)));
-        this.folderNameTextBox.Location = new System.Drawing.Point(136, 52);
-        this.folderNameTextBox.Name = "folderNameTextBox";
-        this.folderNameTextBox.Size = new System.Drawing.Size(200, 20);
-        this.folderNameTextBox.TabIndex = 2;
-        // 
-        // repeatPlaylistCheckBox
-        // 
-        this.repeatPlaylistCheckBox.AutoSize = true;
-        this.repeatPlaylistCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-        this.repeatPlaylistCheckBox.Location = new System.Drawing.Point(16, 24);
-        this.repeatPlaylistCheckBox.Name = "repeatPlaylistCheckBox";
-        this.repeatPlaylistCheckBox.Size = new System.Drawing.Size(152, 17);
-        this.repeatPlaylistCheckBox.TabIndex = 0;
-        this.repeatPlaylistCheckBox.Text = "Repeat/loop video playlists";
-        this.repeatPlaylistCheckBox.UseVisualStyleBackColor = true;
-        // 
-        // folderNameLabel
-        // 
-        this.folderNameLabel.Location = new System.Drawing.Point(16, 56);
-        this.folderNameLabel.Name = "folderNameLabel";
-        this.folderNameLabel.Size = new System.Drawing.Size(80, 16);
-        this.folderNameLabel.TabIndex = 1;
-        this.folderNameLabel.Text = "Playlist folder:";
-        // 
-        // mpGroupBox1
-        // 
-        this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                    | System.Windows.Forms.AnchorStyles.Right)));
-        this.mpGroupBox1.Controls.Add(this.label7);
-        this.mpGroupBox1.Controls.Add(this.defaultSubtitleLanguageComboBox);
-        this.mpGroupBox1.Controls.Add(this.dropShadowTextBox);
-        this.mpGroupBox1.Controls.Add(this.label4);
-        this.mpGroupBox1.Controls.Add(this.showSubtitlesCheckBox);
-        this.mpGroupBox1.Controls.Add(this.subtitlesButton);
-        this.mpGroupBox1.Controls.Add(this.subtitlesFontTextBox);
-        this.mpGroupBox1.Controls.Add(this.label6);
-        this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-        this.mpGroupBox1.Location = new System.Drawing.Point(16, 16);
-        this.mpGroupBox1.Name = "mpGroupBox1";
-        this.mpGroupBox1.Size = new System.Drawing.Size(432, 136);
-        this.mpGroupBox1.TabIndex = 0;
-        this.mpGroupBox1.TabStop = false;
-        this.mpGroupBox1.Text = "Subtitles";
-        // 
-        // label7
-        // 
-        this.label7.Location = new System.Drawing.Point(16, 104);
-        this.label7.Name = "label7";
-        this.label7.Size = new System.Drawing.Size(96, 16);
-        this.label7.TabIndex = 6;
-        this.label7.Text = "Default language:";
-        // 
-        // defaultSubtitleLanguageComboBox
-        // 
-        this.defaultSubtitleLanguageComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                    | System.Windows.Forms.AnchorStyles.Right)));
-        this.defaultSubtitleLanguageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-        this.defaultSubtitleLanguageComboBox.Location = new System.Drawing.Point(136, 100);
-        this.defaultSubtitleLanguageComboBox.Name = "defaultSubtitleLanguageComboBox";
-        this.defaultSubtitleLanguageComboBox.Size = new System.Drawing.Size(280, 21);
-        this.defaultSubtitleLanguageComboBox.Sorted = true;
-        this.defaultSubtitleLanguageComboBox.TabIndex = 7;
-        // 
-        // dropShadowTextBox
-        // 
-        this.dropShadowTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                    | System.Windows.Forms.AnchorStyles.Right)));
-        this.dropShadowTextBox.Location = new System.Drawing.Point(136, 76);
-        this.dropShadowTextBox.Name = "dropShadowTextBox";
-        this.dropShadowTextBox.Size = new System.Drawing.Size(280, 20);
-        this.dropShadowTextBox.TabIndex = 5;
-        // 
-        // label4
-        // 
-        this.label4.Location = new System.Drawing.Point(16, 80);
-        this.label4.Name = "label4";
-        this.label4.Size = new System.Drawing.Size(120, 16);
-        this.label4.TabIndex = 4;
-        this.label4.Text = "Drop shadow (pixels):";
-        // 
-        // showSubtitlesCheckBox
-        // 
-        this.showSubtitlesCheckBox.AutoSize = true;
-        this.showSubtitlesCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-        this.showSubtitlesCheckBox.Location = new System.Drawing.Point(16, 24);
-        this.showSubtitlesCheckBox.Name = "showSubtitlesCheckBox";
-        this.showSubtitlesCheckBox.Size = new System.Drawing.Size(92, 17);
-        this.showSubtitlesCheckBox.TabIndex = 0;
-        this.showSubtitlesCheckBox.Text = "Show subtitles";
-        this.showSubtitlesCheckBox.UseVisualStyleBackColor = true;
-        // 
-        // subtitlesButton
-        // 
-        this.subtitlesButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-        this.subtitlesButton.Location = new System.Drawing.Point(344, 51);
-        this.subtitlesButton.Name = "subtitlesButton";
-        this.subtitlesButton.Size = new System.Drawing.Size(72, 22);
-        this.subtitlesButton.TabIndex = 3;
-        this.subtitlesButton.Text = "Browse";
-        this.subtitlesButton.UseVisualStyleBackColor = true;
-        this.subtitlesButton.Click += new System.EventHandler(this.subtitlesButton_Click);
-        // 
-        // subtitlesFontTextBox
-        // 
-        this.subtitlesFontTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                    | System.Windows.Forms.AnchorStyles.Right)));
-        this.subtitlesFontTextBox.Location = new System.Drawing.Point(136, 52);
-        this.subtitlesFontTextBox.Name = "subtitlesFontTextBox";
-        this.subtitlesFontTextBox.ReadOnly = true;
-        this.subtitlesFontTextBox.Size = new System.Drawing.Size(200, 20);
-        this.subtitlesFontTextBox.TabIndex = 2;
-        // 
-        // label6
-        // 
-        this.label6.Location = new System.Drawing.Point(16, 56);
-        this.label6.Name = "label6";
-        this.label6.Size = new System.Drawing.Size(72, 16);
-        this.label6.TabIndex = 1;
-        this.label6.Text = "Display font:";
-        // 
-        // tabControl1
-        // 
-        this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                    | System.Windows.Forms.AnchorStyles.Left)
-                    | System.Windows.Forms.AnchorStyles.Right)));
-        this.tabControl1.Controls.Add(this.tabPage1);
-        this.tabControl1.Controls.Add(this.tabPage3);
-        this.tabControl1.Location = new System.Drawing.Point(0, 0);
-        this.tabControl1.Name = "tabControl1";
-        this.tabControl1.SelectedIndex = 0;
-        this.tabControl1.Size = new System.Drawing.Size(472, 408);
-        this.tabControl1.TabIndex = 0;
-        // 
-        // tabPage1
-        // 
-        this.tabPage1.Controls.Add(this.groupBox1);
-        this.tabPage1.Location = new System.Drawing.Point(4, 22);
-        this.tabPage1.Name = "tabPage1";
-        this.tabPage1.Size = new System.Drawing.Size(464, 382);
-        this.tabPage1.TabIndex = 0;
-        this.tabPage1.Text = "General";
-        this.tabPage1.UseVisualStyleBackColor = true;
-        // 
-        // tabPage3
-        // 
-        this.tabPage3.Controls.Add(this.mpGroupBox1);
-        this.tabPage3.Location = new System.Drawing.Point(4, 22);
-        this.tabPage3.Name = "tabPage3";
-        this.tabPage3.Size = new System.Drawing.Size(464, 382);
-        this.tabPage3.TabIndex = 2;
-        this.tabPage3.Text = "Subtitles";
-        this.tabPage3.UseVisualStyleBackColor = true;
-        // 
-        // Movies
-        // 
-        this.Controls.Add(this.tabControl1);
-        this.Name = "Movies";
-        this.Size = new System.Drawing.Size(472, 408);
-        this.groupBox1.ResumeLayout(false);
-        this.groupBox1.PerformLayout();
-        this.mpGroupBox1.ResumeLayout(false);
-        this.mpGroupBox1.PerformLayout();
-        this.tabControl1.ResumeLayout(false);
-        this.tabPage1.ResumeLayout(false);
-        this.tabPage3.ResumeLayout(false);
-        this.ResumeLayout(false);
+      this.defaultZoomModeComboBox.Location = new System.Drawing.Point(136, 76);
+      this.defaultZoomModeComboBox.Name = "defaultZoomModeComboBox";
+      this.defaultZoomModeComboBox.Size = new System.Drawing.Size(280, 21);
+      this.defaultZoomModeComboBox.TabIndex = 5;
+      // 
+      // label1
+      // 
+      this.label1.Location = new System.Drawing.Point(16, 80);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(120, 16);
+      this.label1.TabIndex = 4;
+      this.label1.Text = "Default zoom mode:";
+      // 
+      // fileNameButton
+      // 
+      this.fileNameButton.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.fileNameButton.Location = new System.Drawing.Point(344, 51);
+      this.fileNameButton.Name = "fileNameButton";
+      this.fileNameButton.Size = new System.Drawing.Size(72, 22);
+      this.fileNameButton.TabIndex = 3;
+      this.fileNameButton.Text = "Browse";
+      this.fileNameButton.UseVisualStyleBackColor = true;
+      this.fileNameButton.Click += new System.EventHandler(this.fileNameButton_Click);
+      // 
+      // folderNameTextBox
+      // 
+      this.folderNameTextBox.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.folderNameTextBox.BorderColor = System.Drawing.Color.Empty;
+      this.folderNameTextBox.Location = new System.Drawing.Point(136, 52);
+      this.folderNameTextBox.Name = "folderNameTextBox";
+      this.folderNameTextBox.Size = new System.Drawing.Size(200, 20);
+      this.folderNameTextBox.TabIndex = 2;
+      // 
+      // repeatPlaylistCheckBox
+      // 
+      this.repeatPlaylistCheckBox.AutoSize = true;
+      this.repeatPlaylistCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.repeatPlaylistCheckBox.Location = new System.Drawing.Point(16, 24);
+      this.repeatPlaylistCheckBox.Name = "repeatPlaylistCheckBox";
+      this.repeatPlaylistCheckBox.Size = new System.Drawing.Size(152, 17);
+      this.repeatPlaylistCheckBox.TabIndex = 0;
+      this.repeatPlaylistCheckBox.Text = "Repeat/loop video playlists";
+      this.repeatPlaylistCheckBox.UseVisualStyleBackColor = true;
+      // 
+      // folderNameLabel
+      // 
+      this.folderNameLabel.Location = new System.Drawing.Point(16, 56);
+      this.folderNameLabel.Name = "folderNameLabel";
+      this.folderNameLabel.Size = new System.Drawing.Size(80, 16);
+      this.folderNameLabel.TabIndex = 1;
+      this.folderNameLabel.Text = "Playlist folder:";
+      // 
+      // mpGroupBox1
+      // 
+      this.mpGroupBox1.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.mpGroupBox1.Controls.Add(this.label7);
+      this.mpGroupBox1.Controls.Add(this.defaultSubtitleLanguageComboBox);
+      this.mpGroupBox1.Controls.Add(this.dropShadowTextBox);
+      this.mpGroupBox1.Controls.Add(this.label4);
+      this.mpGroupBox1.Controls.Add(this.showSubtitlesCheckBox);
+      this.mpGroupBox1.Controls.Add(this.subtitlesButton);
+      this.mpGroupBox1.Controls.Add(this.subtitlesFontTextBox);
+      this.mpGroupBox1.Controls.Add(this.label6);
+      this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpGroupBox1.Location = new System.Drawing.Point(16, 16);
+      this.mpGroupBox1.Name = "mpGroupBox1";
+      this.mpGroupBox1.Size = new System.Drawing.Size(432, 136);
+      this.mpGroupBox1.TabIndex = 0;
+      this.mpGroupBox1.TabStop = false;
+      this.mpGroupBox1.Text = "Subtitles";
+      // 
+      // label7
+      // 
+      this.label7.Location = new System.Drawing.Point(16, 104);
+      this.label7.Name = "label7";
+      this.label7.Size = new System.Drawing.Size(96, 16);
+      this.label7.TabIndex = 6;
+      this.label7.Text = "Default language:";
+      // 
+      // defaultSubtitleLanguageComboBox
+      // 
+      this.defaultSubtitleLanguageComboBox.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.defaultSubtitleLanguageComboBox.BorderColor = System.Drawing.Color.Empty;
+      this.defaultSubtitleLanguageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.defaultSubtitleLanguageComboBox.Location = new System.Drawing.Point(136, 100);
+      this.defaultSubtitleLanguageComboBox.Name = "defaultSubtitleLanguageComboBox";
+      this.defaultSubtitleLanguageComboBox.Size = new System.Drawing.Size(280, 21);
+      this.defaultSubtitleLanguageComboBox.Sorted = true;
+      this.defaultSubtitleLanguageComboBox.TabIndex = 7;
+      // 
+      // dropShadowTextBox
+      // 
+      this.dropShadowTextBox.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.dropShadowTextBox.BorderColor = System.Drawing.Color.Empty;
+      this.dropShadowTextBox.Location = new System.Drawing.Point(136, 76);
+      this.dropShadowTextBox.Name = "dropShadowTextBox";
+      this.dropShadowTextBox.Size = new System.Drawing.Size(280, 20);
+      this.dropShadowTextBox.TabIndex = 5;
+      // 
+      // label4
+      // 
+      this.label4.Location = new System.Drawing.Point(16, 80);
+      this.label4.Name = "label4";
+      this.label4.Size = new System.Drawing.Size(120, 16);
+      this.label4.TabIndex = 4;
+      this.label4.Text = "Drop shadow (pixels):";
+      // 
+      // showSubtitlesCheckBox
+      // 
+      this.showSubtitlesCheckBox.AutoSize = true;
+      this.showSubtitlesCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.showSubtitlesCheckBox.Location = new System.Drawing.Point(16, 24);
+      this.showSubtitlesCheckBox.Name = "showSubtitlesCheckBox";
+      this.showSubtitlesCheckBox.Size = new System.Drawing.Size(92, 17);
+      this.showSubtitlesCheckBox.TabIndex = 0;
+      this.showSubtitlesCheckBox.Text = "Show subtitles";
+      this.showSubtitlesCheckBox.UseVisualStyleBackColor = true;
+      // 
+      // subtitlesButton
+      // 
+      this.subtitlesButton.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.subtitlesButton.Location = new System.Drawing.Point(344, 51);
+      this.subtitlesButton.Name = "subtitlesButton";
+      this.subtitlesButton.Size = new System.Drawing.Size(72, 22);
+      this.subtitlesButton.TabIndex = 3;
+      this.subtitlesButton.Text = "Browse";
+      this.subtitlesButton.UseVisualStyleBackColor = true;
+      this.subtitlesButton.Click += new System.EventHandler(this.subtitlesButton_Click);
+      // 
+      // subtitlesFontTextBox
+      // 
+      this.subtitlesFontTextBox.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.subtitlesFontTextBox.BorderColor = System.Drawing.Color.Empty;
+      this.subtitlesFontTextBox.Location = new System.Drawing.Point(136, 52);
+      this.subtitlesFontTextBox.Name = "subtitlesFontTextBox";
+      this.subtitlesFontTextBox.ReadOnly = true;
+      this.subtitlesFontTextBox.Size = new System.Drawing.Size(200, 20);
+      this.subtitlesFontTextBox.TabIndex = 2;
+      // 
+      // label6
+      // 
+      this.label6.Location = new System.Drawing.Point(16, 56);
+      this.label6.Name = "label6";
+      this.label6.Size = new System.Drawing.Size(72, 16);
+      this.label6.TabIndex = 1;
+      this.label6.Text = "Display font:";
+      // 
+      // tabControl1
+      // 
+      this.tabControl1.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
+                  | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.tabControl1.Controls.Add(this.tabPage1);
+      this.tabControl1.Controls.Add(this.tabPage3);
+      this.tabControl1.Location = new System.Drawing.Point(0, 0);
+      this.tabControl1.Name = "tabControl1";
+      this.tabControl1.SelectedIndex = 0;
+      this.tabControl1.Size = new System.Drawing.Size(472, 408);
+      this.tabControl1.TabIndex = 0;
+      // 
+      // tabPage1
+      // 
+      this.tabPage1.Controls.Add(this.groupBox1);
+      this.tabPage1.Location = new System.Drawing.Point(4, 22);
+      this.tabPage1.Name = "tabPage1";
+      this.tabPage1.Size = new System.Drawing.Size(464, 382);
+      this.tabPage1.TabIndex = 0;
+      this.tabPage1.Text = "General";
+      this.tabPage1.UseVisualStyleBackColor = true;
+      // 
+      // tabPage3
+      // 
+      this.tabPage3.Controls.Add(this.mpGroupBox1);
+      this.tabPage3.Location = new System.Drawing.Point(4, 22);
+      this.tabPage3.Name = "tabPage3";
+      this.tabPage3.Size = new System.Drawing.Size(464, 382);
+      this.tabPage3.TabIndex = 2;
+      this.tabPage3.Text = "Subtitles";
+      this.tabPage3.UseVisualStyleBackColor = true;
+      // 
+      // Movies
+      // 
+      this.Controls.Add(this.tabControl1);
+      this.Name = "Movies";
+      this.Size = new System.Drawing.Size(472, 408);
+      this.groupBox1.ResumeLayout(false);
+      this.groupBox1.PerformLayout();
+      this.mpGroupBox1.ResumeLayout(false);
+      this.mpGroupBox1.PerformLayout();
+      this.tabControl1.ResumeLayout(false);
+      this.tabPage1.ResumeLayout(false);
+      this.tabPage3.ResumeLayout(false);
+      this.ResumeLayout(false);
 
     }
     #endregion

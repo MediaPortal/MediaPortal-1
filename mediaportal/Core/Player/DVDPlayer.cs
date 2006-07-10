@@ -601,6 +601,7 @@ namespace MediaPortal.Player
         if (aspectRatioMode == "crop") arMode = AspectRatioMode.Crop;
         if (aspectRatioMode == "letterbox") arMode = AspectRatioMode.LetterBox;
         if (aspectRatioMode == "stretch") arMode = AspectRatioMode.Stretched;
+        //if ( aspectRatioMode == "stretch" ) arMode = AspectRatioMode.zoom14to9;
         if (aspectRatioMode == "follow stream") arMode = AspectRatioMode.StretchedAsPrimary;
         useAC3Filter = xmlreader.GetValueAsBool("dvdplayer", "ac3", false);
         displayMode = xmlreader.GetValueAsString("dvdplayer", "displaymode", "").ToLower();
