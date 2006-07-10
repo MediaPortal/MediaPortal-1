@@ -119,31 +119,36 @@ namespace TVCapture
         // 
         string[] tmp = f.MonikerString.Split(@"\".ToCharArray());
         clsIdName = tmp[tmp.GetUpperBound(0)];
-        clsId = new Guid(clsIdName);
-        FilterCollection fc = new FilterCollection(clsId, true);
-        if (null != fc)
+        try
         {
-          for (int y = 0; y < fc.Count; y++)
+          clsId = new Guid(clsIdName);
+          FilterCollection fc = new FilterCollection(clsId, true);
+          if (null != fc)
           {
-            Filter ff = fc[y];
+            for (int y = 0; y < fc.Count; y++)
+            {
+              Filter ff = fc[y];
 
-            // If the friendly name of the filter already exists, add this device/filter
-            // to the list belonging to this friendly name. Note that this is THE situation which
-            // occurs when having more than one capture card of the same type...
-            if (_mAvailableFilters.ContainsKey(ff.Name))
-            {
-              List<Filter> subFilters = _mAvailableFilters[ff.Name];
-              subFilters.Add(ff);
-            }
-            else
-            {
-              // Add new entry to list
-              List<Filter> subFilters = new List<Filter>();
-              subFilters.Add(ff);
-              _mAvailableFilters[ff.Name] = subFilters;
+              // If the friendly name of the filter already exists, add this device/filter
+              // to the list belonging to this friendly name. Note that this is THE situation which
+              // occurs when having more than one capture card of the same type...
+              if (_mAvailableFilters.ContainsKey(ff.Name))
+              {
+                List<Filter> subFilters = _mAvailableFilters[ff.Name];
+                subFilters.Add(ff);
+              }
+              else
+              {
+                // Add new entry to list
+                List<Filter> subFilters = new List<Filter>();
+                subFilters.Add(ff);
+                _mAvailableFilters[ff.Name] = subFilters;
+              }
             }
           }
         }
+        catch (Exception)
+        { }
       }
     }
 
