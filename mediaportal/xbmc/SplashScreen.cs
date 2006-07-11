@@ -159,8 +159,9 @@ namespace MediaPortal
           string month = strVersion[2].Substring(3, 2);
           string year = strVersion[2].Substring(6, 4);
           string time = strVersion[3].Substring(0, 5);
-          _log.Info("Version: {0} {1} ({2}.{3}.{4} / {5} CET)", strVersion[1], strVersion[4], day, month, year, time);
-          cvsLabel.Text = string.Format("{0} {1} ({2}.{3}.{4}/{5} CET)", strVersion[1], strVersion[4], day, month, year, time);
+          string build = strVersion[4].Substring(0, 13).Trim();
+          _log.Info("Version: {0} {1} ({2}.{3}.{4} / {5} CET)", strVersion[1], build, day, month, year, time);
+          cvsLabel.Text = string.Format("{0} {1} ({2}.{3}.{4}/{5} CET)", strVersion[1], build, day, month, year, time);
         }
         Update();
       }
