@@ -658,8 +658,9 @@ public class MediaPortalApp : D3DApp, IRender
   //called when windows wants to hibernate or go into standbye mode
   void OnSuspend()
   {
-    //stop playback
-    _suspended = true;
+		if (_suspended) return;
+		//stop playback
+    //_suspended = true;
     InputDevices.Stop();
 
     _log.Info("Main: Stopping playback");
@@ -679,9 +680,11 @@ public class MediaPortalApp : D3DApp, IRender
   //called when windows wakes up again
   void OnResume()
   {
-    _log.Info("Main: Switch to home screen");
+		//if (!_suspended) return;
+		_suspended = false;
+		_log.Info("Main: Switch to home screen");
     GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
-    _suspended = false;
+    //_suspended = false;
 
     InputDevices.Init();
 
