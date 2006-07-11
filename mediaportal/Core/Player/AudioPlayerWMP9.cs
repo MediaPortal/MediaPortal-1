@@ -280,68 +280,57 @@ namespace MediaPortal.Player
       _wmp10Player.ClientSize = new Size(0, 0);
       _wmp10Player.Visible = false;
 
-      if (_wmp10Player.URL.StartsWith("http") || _wmp10Player.URL.StartsWith("mms"))
+      // When file is internetstream
+      if (_wmp10Player.URL.StartsWith("http") || _wmp10Player.URL.StartsWith("mms") ||
+            _wmp10Player.URL.StartsWith("HTTP") || _wmp10Player.URL.StartsWith("MMS"))
       {
-        try
+        _bufferCompleted = false;
+        using (WaitCursor waitcursor = new WaitCursor())
         {
-          _bufferCompleted = false;
-          using (WaitCursor waitcursor = new WaitCursor())
+          GUIGraphicsContext.Overlay = false;
+          while (_bufferCompleted != true)
           {
-            GUIGraphicsContext.Overlay = false;
-            while (_bufferCompleted != true)
             {
+              // if true then could not load stream 
+              if (_wmp10Player.playState.Equals(WMPLib.WMPPlayState.wmppsReady))
               {
-                _graphState = PlayState.Playing;
-                GUIWindowManager.Process();
+                _bufferCompleted = true;
               }
+              if (GUIGraphicsContext.Overlay)
+              {
+                GUIGraphicsContext.Overlay = false;
+              }
+              _graphState = PlayState.Playing;
+              GUIWindowManager.Process();
             }
           }
           GUIGraphicsContext.Overlay = true;
-
-          GUIMessage msgPb = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
-          msgPb.Label = strFile;
-
-          GUIWindowManager.SendThreadMessage(msgPb);
-          _graphState = PlayState.Playing;
-          GC.Collect();
-          _needUpdate = true;
-          _isFullScreen = GUIGraphicsContext.IsFullScreenVideo;
-          _positionX = GUIGraphicsContext.VideoWindow.Left;
-          _positionY = GUIGraphicsContext.VideoWindow.Top;
-          _videoWidth = GUIGraphicsContext.VideoWindow.Width;
-          _videoHeight = GUIGraphicsContext.VideoWindow.Height;
-
-          SetVideoWindow();
-          return true;
         }
-        catch (Exception ex)
+        if (_bufferCompleted && _wmp10Player.playState.Equals(WMPLib.WMPPlayState.wmppsReady))
         {
-          _log.Error("audioplayer - play internetstream: {0}", ex);
+          _log.Info("Audioplayer: failed to load {0}", strFile);
           return false;
         }
       }
-      else
-      {
 
-        GUIMessage msgPb = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
-        msgPb.Label = strFile;
+      GUIMessage msgPb = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
+      msgPb.Label = strFile;
 
-        GUIWindowManager.SendThreadMessage(msgPb);
-        _graphState = PlayState.Playing;
-        GC.Collect();
-        _needUpdate = true;
-        _isFullScreen = GUIGraphicsContext.IsFullScreenVideo;
-        _positionX = GUIGraphicsContext.VideoWindow.Left;
-        _positionY = GUIGraphicsContext.VideoWindow.Top;
-        _videoWidth = GUIGraphicsContext.VideoWindow.Width;
-        _videoHeight = GUIGraphicsContext.VideoWindow.Height;
+      GUIWindowManager.SendThreadMessage(msgPb);
+      _graphState = PlayState.Playing;
+      GC.Collect();
+      _needUpdate = true;
+      _isFullScreen = GUIGraphicsContext.IsFullScreenVideo;
+      _positionX = GUIGraphicsContext.VideoWindow.Left;
+      _positionY = GUIGraphicsContext.VideoWindow.Top;
+      _videoWidth = GUIGraphicsContext.VideoWindow.Width;
+      _videoHeight = GUIGraphicsContext.VideoWindow.Height;
 
-        SetVideoWindow();
+      SetVideoWindow();
 
-        return true;
-      }
+      return true;
     }
-
+    
     private void OnPlayStateChange(object sender, AxWMPLib._WMPOCXEvents_PlayStateChangeEvent e)
     {
       if (_wmp10Player == null) return;
