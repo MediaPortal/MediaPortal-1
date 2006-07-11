@@ -150,17 +150,17 @@ namespace MediaPortal
 
       public void SetVersion(string version)
       {
-        string[] strVersion = version.Split('$');
+        string[] strVersion = version.Split('-');
         versionLabel.Text = strVersion[0];
-        _log.Info("Application Version: {0}", strVersion[0]);
+        _log.Info("Version: Application {0}", strVersion[0]);
         if (strVersion.Length > 1)
         {
-          string day = strVersion[1].Substring(4, 2);
-          string month = strVersion[1].Substring(7, 2);
-          string year = strVersion[1].Substring(10, 4);
-          string time = strVersion[1].Substring(15, 5);
-          _log.Info("SVN Build: {0}-{1}-{2} / {3}", month, day, year, time);
-          cvsLabel.Text = string.Format("SVN Build {0}-{1}-{2}/{3}", month, day, year, time);
+          string day = strVersion[2].Substring(0, 2);
+          string month = strVersion[2].Substring(3, 2);
+          string year = strVersion[2].Substring(6, 4);
+          string time = strVersion[3].Substring(0, 5);
+          _log.Info("Version: {0} {1} ({2}.{3}.{4} / {5} CET)", strVersion[1], strVersion[4], day, month, year, time);
+          cvsLabel.Text = string.Format("{0} {1} ({2}.{3}.{4}/{5} CET)", strVersion[1], strVersion[4], day, month, year, time);
         }
         Update();
       }
