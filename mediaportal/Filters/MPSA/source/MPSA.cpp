@@ -539,8 +539,9 @@ STDMETHODIMP CStreamAnalyzer::ResetPids()
 {
 	Log("mpsa::resetpids");
 	m_bReset=true;
-			m_pmtGrabProgNum=0;
-    return NOERROR;
+	m_pmtGrabProgNum=0;
+	memset(m_pmtGrabData,0,4096);
+  return NOERROR;
 }
 HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 {
@@ -559,8 +560,8 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 			{
 				m_pAtscParser->Reset();
 			}
-
 		}		
+		if (m_bScanning==FALSE) return S_OK;
 		//CAutoLock lock(&m_Lock);
 /*
 		if(pbData[0]==0x00 && pbData[1]==0x00 && pbData[2]==0x01)
@@ -578,83 +579,78 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 			return S_OK;
 		}
 */
-		if (m_bScanning)
+		
+		if (m_bDecodeATSC)
 		{
-			if (m_bDecodeATSC)
+			if (pbData[0]==0xc7)
 			{
-				if (pbData[0]==0xc7)
-				{
-					try
-					{
-						m_pAtscParser->ATSCDecodeMasterGuideTable(pbData,len,&m_patChannelsCount);
-					}
-					catch(...)
-					{
-						Dump("mpsaa: unhandled exception while decoding ATSC guide table");
-					}
-				}
-				if (pbData[0]==0xc8 || pbData[0]==0xc9)
-				{
-					try
-					{
-						if (m_patChannelsCount==0)
-						{
-							//decode ATSC: Virtual Channel Table (pid 0xc8 / 0xc9)
-							m_pAtscParser->ATSCDecodeChannelTable(pbData,m_patTable, &m_patChannelsCount,len);
-						}
-
-					}
-					catch(...)
-					{
-						Dump("mpsaa: unhandled exception while decoding ATSC channel table");
-					}
-				}
-
-				//decode ATSC: EPG
 				try
 				{
-					if (m_patChannelsCount>0)
-						m_pAtscParser->ATSCDecodeEPG(pbData,len);
+					m_pAtscParser->ATSCDecodeMasterGuideTable(pbData,len,&m_patChannelsCount);
 				}
 				catch(...)
 				{
-					Dump("mpsaa: unhandled exception while decoding ATSC epg");
+					Dump("mpsaa: unhandled exception while decoding ATSC guide table");
 				}
-				return S_OK;
 			}
+			if (pbData[0]==0xc8 || pbData[0]==0xc9)
+			{
+				try
+				{
+					if (m_patChannelsCount==0)
+					{
+						//decode ATSC: Virtual Channel Table (pid 0xc8 / 0xc9)
+						m_pAtscParser->ATSCDecodeChannelTable(pbData,m_patTable, &m_patChannelsCount,len);
+					}
+
+				}
+				catch(...)
+				{
+					Dump("mpsaa: unhandled exception while decoding ATSC channel table");
+				}
+			}
+
+			//decode ATSC: EPG
+			try
+			{
+				if (m_patChannelsCount>0)
+					m_pAtscParser->ATSCDecodeEPG(pbData,len);
+			}
+			catch(...)
+			{
+				Dump("mpsaa: unhandled exception while decoding ATSC epg");
+			}
+			return S_OK;
 		}		
 			
 		if(pbData[0]==0x02)// pmt
 		{
 			ULONG prgNumber=(pbData[3]<<8)+pbData[4];
 			Log("rcv pmt prog:%x %x", prgNumber,m_pmtGrabProgNum);
-			if (m_bScanning)
+			for(int n=0;n<m_patChannelsCount && n < 512;n++)
 			{
-				for(int n=0;n<m_patChannelsCount && n < 512;n++)
+				try
 				{
-					try
+					if(m_patTable[n].ProgrammNumber==prgNumber )
 					{
-						if(m_patTable[n].ProgrammNumber==prgNumber )
+						if (m_patTable[n].PMTReady==0)
 						{
-							if (m_patTable[n].PMTReady==0)
-							{
-								m_pSections->decodePMT(pbData,&m_patTable[n],len);
-								Log("mpsa::decode PMT program number:0x%x 0x%x",prgNumber,m_patTable[n].ProgrammNumber);
-								//Log("mpsa::PMT decoded");
-								//if(m_patTable[n].Pids.AudioPid1>0)
-								//	m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid1);
-								//if(m_patTable[n].Pids.AudioPid2>0)
-								//	m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid2);
-								//if(m_patTable[n].Pids.AudioPid3>0)
-								//	m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid3);
-							}
+							m_pSections->decodePMT(pbData,&m_patTable[n],len);
+							Log("mpsa::decode PMT program number:0x%x 0x%x",prgNumber,m_patTable[n].ProgrammNumber);
+							//Log("mpsa::PMT decoded");
+							//if(m_patTable[n].Pids.AudioPid1>0)
+							//	m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid1);
+							//if(m_patTable[n].Pids.AudioPid2>0)
+							//	m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid2);
+							//if(m_patTable[n].Pids.AudioPid3>0)
+							//	m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid3);
 						}
-					
-					}	
-					catch(...)
-					{
-						Dump("mpsa: unhandled exception while decoding PMT");
 					}
+				
+				}	
+				catch(...)
+				{
+					Dump("mpsa: unhandled exception while decoding PMT");
 				}
 			}
 			
@@ -676,83 +672,80 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 			}
 		}
 
-		if (m_bScanning)
+		
+		if(pbData[0]==0x00)// pat
 		{
-			if(pbData[0]==0x00)// pat
+		//	Log("rcv:PAT");
+			// we need to check if we received a new PAT
+			// reason, after submitting a tune request (zap to another channel) we might still
+			// receive the old PAT for a couple of msec until the tuner has
+			// finished tuning to the new channel
+			if (m_pSections->IsNewPat(pbData,len))
 			{
-			//	Log("rcv:PAT");
-				// we need to check if we received a new PAT
-				// reason, after submitting a tune request (zap to another channel) we might still
-				// receive the old PAT for a couple of msec until the tuner has
-				// finished tuning to the new channel
-				if (m_pSections->IsNewPat(pbData,len))
+				/*
+				if (m_patChannelsCount>0) 
 				{
-					/*
-					if (m_patChannelsCount>0) 
+					Log("mpsa::Found new PAT");
+					MapSectionPids();//unmap any section pids and map default pids for pat (0x0,0x10,0x11)
+					m_pmtGrabProgNum=0;
+					m_patChannelsCount=0;
+					m_pSections->ResetPAT();//reset PAT...
+					if (m_bDecodeATSC)
 					{
-						Log("mpsa::Found new PAT");
-						MapSectionPids();//unmap any section pids and map default pids for pat (0x0,0x10,0x11)
-						m_pmtGrabProgNum=0;
-						m_patChannelsCount=0;
-						m_pSections->ResetPAT();//reset PAT...
-						if (m_bDecodeATSC)
-						{
-							m_pAtscParser->Reset();
-						}
-					}*/
-					//Log("mpsa::decode pat");
-					try
-					{
-						m_pSections->decodePAT(pbData,m_patTable,&m_patChannelsCount,len);
-						Log("mpsa::PAT decoded and found %d channels, map pids", m_patChannelsCount);
-						int pids[512];
-						for(int n=0;n<m_patChannelsCount && n < 512;n++)
-						{
-							pids[n]=m_patTable[n].ProgrammPMTPID;
-						}
-						MapPMTPids(m_patChannelsCount, pids);
-						bool grabMHW=m_pMHWPin1->isGrabbing() || m_pMHWPin2->isGrabbing();
-						bool grabEPG=m_pEPGPin->isGrabbing();						
-						Log("mpsa::PAT decoded and pids mapped (epg:%d mhw:%d)", grabEPG,grabMHW);
-						m_pFilter->NotifyEvent(EC_PROGRAM_CHANGED,0,(LONG_PTR)(IBaseFilter*)m_pFilter);
+						m_pAtscParser->Reset();
 					}
-					catch(...)
-					{
-						Dump("mpsa: unhandled exception while decoding PAT");
-					}
-				}
-			}
-
-			if(pbData[0]==0x42)// sdt
-			{
+				}*/
+				//Log("mpsa::decode pat");
 				try
 				{
-					//Log("mpsa::decode SDT");
-					if (m_patChannelsCount>0)
+					m_pSections->decodePAT(pbData,m_patTable,&m_patChannelsCount,len);
+					Log("mpsa::PAT decoded and found %d channels, map pids", m_patChannelsCount);
+					int pids[512];
+					for(int n=0;n<m_patChannelsCount && n < 512;n++)
 					{
-						m_pSections->decodeSDT(pbData,m_patTable,m_patChannelsCount,len);
+						pids[n]=m_patTable[n].ProgrammPMTPID;
 					}
+					MapPMTPids(m_patChannelsCount, pids);
+					bool grabMHW=m_pMHWPin1->isGrabbing() || m_pMHWPin2->isGrabbing();
+					bool grabEPG=m_pEPGPin->isGrabbing();						
+					Log("mpsa::PAT decoded and pids mapped (epg:%d mhw:%d)", grabEPG,grabMHW);
+					m_pFilter->NotifyEvent(EC_PROGRAM_CHANGED,0,(LONG_PTR)(IBaseFilter*)m_pFilter);
 				}
 				catch(...)
 				{
-					Dump("mpsa: unhandled exception while decoding SDT");
+					Dump("mpsa: unhandled exception while decoding PAT");
 				}
-				//Log("mpsa::SDT decoded");
 			}
-			if (pbData[0]==0x40) //NIT
+		}
+		if(pbData[0]==0x42)// sdt
+		{
+			try
 			{
-			//	Log("mpsa::rcv decode NIT");
-				try
+				//Log("mpsa::decode SDT");
+				if (m_patChannelsCount>0)
 				{
-					if (m_patChannelsCount>0)
-					{
-						//m_pSections->decodeNITTable(pbData,m_patTable,m_patChannelsCount);
-					}
+					m_pSections->decodeSDT(pbData,m_patTable,m_patChannelsCount,len);
 				}
-				catch(...)
+			}
+			catch(...)
+			{
+				Dump("mpsa: unhandled exception while decoding SDT");
+			}
+			//Log("mpsa::SDT decoded");
+		}
+		if (pbData[0]==0x40) //NIT
+		{
+		//	Log("mpsa::rcv decode NIT");
+			try
+			{
+				if (m_patChannelsCount>0)
 				{
-					Dump("mpsa: unhandled exception while decoding NIT");
+					//m_pSections->decodeNITTable(pbData,m_patTable,m_patChannelsCount);
 				}
+			}
+			catch(...)
+			{
+				Dump("mpsa: unhandled exception while decoding NIT");
 			}
 		}
 	}
@@ -886,7 +879,10 @@ STDMETHODIMP CStreamAnalyzer::GetChannelCount(WORD *count)
 STDMETHODIMP CStreamAnalyzer::SetPMTProgramNumber(ULONG prgNum)
 {
 
-	Log("mpsa:set program id:%d (0x%x)", prgNum,prgNum);
+	Log("mpsa:set program id:%d %d", prgNum,m_pmtGrabProgNum);
+	if (m_pmtGrabProgNum!=prgNum)
+	{
+	}
 	m_pmtGrabProgNum=prgNum;
 	return S_OK;
 }
