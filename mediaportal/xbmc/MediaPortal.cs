@@ -569,10 +569,10 @@ public class MediaPortalApp : D3DApp, IRender
 					//The PBT_APMRESUMESUSPEND event is broadcast as a notification that the system has resumed operation after being suspended.
 					case PBT_APMRESUMESUSPEND:
 						_log.Info("Main: Windows has resumed from hibernate mode");
-						OnResume();
+            OnResume();
 						break;
 
-					//The PBT_APMRESUMESTANDBY event is broadcast as a notification that the system has resumed operation after being standbye.
+					//The PBT_APMRESUMESTANDBY event is broadcast as a notification that the system has resumed operation after being standby.
 					case PBT_APMRESUMESTANDBY:
 						_log.Info("Main: Windows has resumed from standbye mode");
 						OnResume();
@@ -997,8 +997,6 @@ public class MediaPortalApp : D3DApp, IRender
                 GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight);
       _log.Info("Main: Video RAM left: {0} KByte", GUIGraphicsContext.DX9Device.AvailableTextureMemory / 1024);
     }
-
-    MediaPortal.InputDevices.InputDevices.Init( /* splashScreen */);
 
     SetupCamera2D();
 

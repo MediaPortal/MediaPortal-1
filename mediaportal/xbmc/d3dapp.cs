@@ -969,7 +969,6 @@ namespace MediaPortal
           InitializeDeviceObjects();
           //OnDeviceReset(null, null);
           active = true;
-          return;
         }
         catch (Exception ex)
         {
@@ -1005,6 +1004,8 @@ namespace MediaPortal
             InitializeEnvironment();
           }
       }
+
+      MediaPortal.InputDevices.InputDevices.Init();
     }
 
 
