@@ -168,7 +168,9 @@ namespace MediaPortal.Configuration.Sections
 			new string[] { "general", "screensaver", "false" },
       new string[] { "general", "turnoffmonitor", "false" },
 			new string[] { "general", "startbasichome", "false" },
-      new string[] { "general", "allowfocus", "false" } };
+      new string[] { "general", "turnmonitoronafterresume", "false" },
+      new string[] { "general", "allowfocus", "false" }};
+
 
     /// <summary>
     /// 
@@ -361,6 +363,7 @@ namespace MediaPortal.Configuration.Sections
             "Blank screen in fullscreen mode when MediaPortal is idle",
             "Turn off monitor when blanking screen",
             "Start with basic home screen",
+            "Turn monitor/tv on when resuming from standby",
             "Allow MediaPortal (and other apps) to gain focus (per-user setting - needs reboot" +
                 "!)"});
       this.settingsCheckedListBox.Location = new System.Drawing.Point(16, 24);
@@ -441,8 +444,6 @@ namespace MediaPortal.Configuration.Sections
 
     }
     #endregion
-
-
   }
 }
 
