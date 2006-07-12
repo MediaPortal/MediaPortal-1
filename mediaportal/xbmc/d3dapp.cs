@@ -730,16 +730,7 @@ namespace MediaPortal
       return (foundFullscreenMode || foundWindowedMode);
     }
 
-    private PresentInterval guessPresentInterval(int refreshrate)
-    {
-      if (((refreshrate == 50) || (refreshrate == 60)) && ((graphicsCaps.PresentationIntervals & PresentInterval.Two) == PresentInterval.Two))
-          return PresentInterval.Two;
 
-      if (((refreshrate == 75) || (refreshrate == 90)) && ((graphicsCaps.PresentationIntervals & PresentInterval.Three) == PresentInterval.Three))
-        return PresentInterval.Three;
-
-      return PresentInterval.Default;
-    }
     /// <summary>
     /// Build presentation parameters from the current settings
     /// </summary>
@@ -764,6 +755,7 @@ namespace MediaPortal
         presentParams.PresentFlag = PresentFlag.Video; //PresentFlag.LockableBackBuffer;
         presentParams.DeviceWindow = ourRenderTarget;
         presentParams.Windowed = true;
+        //presentParams.PresentationInterval = PresentInterval.Immediate;
       }
       else
       {
@@ -774,14 +766,13 @@ namespace MediaPortal
         presentParams.BackBufferWidth = graphicsSettings.DisplayMode.Width;
         presentParams.BackBufferHeight = graphicsSettings.DisplayMode.Height;
         presentParams.BackBufferFormat = graphicsSettings.DeviceCombo.BackBufferFormat;
-        presentParams.PresentationInterval = guessPresentInterval(graphicsSettings.DisplayMode.RefreshRate);
+        presentParams.PresentationInterval = PresentInterval.Default;
         presentParams.FullScreenRefreshRateInHz = graphicsSettings.DisplayMode.RefreshRate;
         presentParams.SwapEffect = SwapEffect.Discard;
         presentParams.PresentFlag = PresentFlag.Video; //|PresentFlag.LockableBackBuffer;
         presentParams.DeviceWindow = this;
         presentParams.Windowed = false;
       }
-      _log.Info("D3D: PresentationInterval {0}", presentParams.PresentationInterval);
       GUIGraphicsContext.DirectXPresentParameters = presentParams;
     }
 
