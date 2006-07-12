@@ -57,8 +57,20 @@ using Timer = System.Timers.Timer;
 //using Utils = MediaPortal.Util.Utils;
 using MediaPortal.InputDevices;
 using MediaPortal.Utils.Services;
+using System.Runtime.InteropServices;
 
 #endregion
+
+namespace MediaPortal
+{
+  [FlagsAttribute]
+  public enum EXECUTION_STATE : uint
+  {
+    ES_SYSTEM_REQUIRED = 0x00000001,
+    ES_DISPLAY_REQUIRED = 0x00000002,
+    ES_CONTINUOUS = 0x80000000
+  }
+}
 
 public class MediaPortalApp : D3DApp, IRender
 {
@@ -130,6 +142,9 @@ public class MediaPortalApp : D3DApp, IRender
   //private GUILayerRenderer _layerRenderer;
 
   #endregion
+
+  [DllImport("Kernel32.DLL")]
+  private extern static EXECUTION_STATE SetThreadExecutionState(EXECUTION_STATE state);
 
   private static RestartOptions restartOptions = RestartOptions.Reboot;
   private static bool useRestartOptions = false;
@@ -290,37 +305,37 @@ public class MediaPortalApp : D3DApp, IRender
       try
       {
 #endif
-      if (splashScreen != null)
-      {
-        splashScreen.SetInformation("Initializing DirectX...");
-      }
-      MediaPortalApp app = new MediaPortalApp();
-      _log.Info("Main: Initializing DirectX");
-      if (app.CreateGraphicsSample())
-      {
-        IMessageFilter filter = new ThreadMessageFilter(app);
-        Application.AddMessageFilter(filter);
-        try
+        if (splashScreen != null)
         {
-          //app.PreRun();
-          _log.Info("Main: Running");
-          GUIGraphicsContext.BlankScreen = false;
-          Application.Run(app);
-          Debug.WriteLine("after Application.Run");
+          splashScreen.SetInformation("Initializing DirectX...");
         }
-        //#if !DEBUG
-        catch (Exception ex)
+        MediaPortalApp app = new MediaPortalApp();
+        _log.Info("Main: Initializing DirectX");
+        if (app.CreateGraphicsSample())
         {
-          _log.Error(ex);
-          _log.Error("MediaPortal stopped due 2 an exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+          IMessageFilter filter = new ThreadMessageFilter(app);
+          Application.AddMessageFilter(filter);
+          try
+          {
+            //app.PreRun();
+            _log.Info("Main: Running");
+            GUIGraphicsContext.BlankScreen = false;
+            Application.Run(app);
+            Debug.WriteLine("after Application.Run");
+          }
+          //#if !DEBUG
+          catch (Exception ex)
+          {
+            _log.Error(ex);
+            _log.Error("MediaPortal stopped due 2 an exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+          }
+          //#endif
+          finally
+          {
+            Application.RemoveMessageFilter(filter);
+          }
+          app.OnExit();
         }
-        //#endif
-        finally
-        {
-          Application.RemoveMessageFilter(filter);
-        }
-        app.OnExit();
-      }
 #if !DEBUG
       }
       catch (Exception ex)
@@ -533,61 +548,61 @@ public class MediaPortalApp : D3DApp, IRender
   {
     try
     {
-			if (msg.Msg == WM_POWERBROADCAST)
-			{
-				_log.Info("Main: WM_POWERBROADCAST: {0}", msg.WParam.ToInt32());
-				switch (msg.WParam.ToInt32())
-				{
-					//The PBT_APMQUERYSUSPEND message is sent to request permission to suspend the computer.
-					//An application that grants permission should carry out preparations for the suspension before returning.
-					//Return TRUE to grant the request to suspend. To deny the request, return BROADCAST_QUERY_DENY.
-					case PBT_APMQUERYSUSPEND:
-						_log.Info("Main: Windows is requesting hibernate mode");
-						OnSuspend();
-						break;
+      if (msg.Msg == WM_POWERBROADCAST)
+      {
+        _log.Info("Main: WM_POWERBROADCAST: {0}", msg.WParam.ToInt32());
+        switch (msg.WParam.ToInt32())
+        {
+          //The PBT_APMQUERYSUSPEND message is sent to request permission to suspend the computer.
+          //An application that grants permission should carry out preparations for the suspension before returning.
+          //Return TRUE to grant the request to suspend. To deny the request, return BROADCAST_QUERY_DENY.
+          case PBT_APMQUERYSUSPEND:
+            _log.Info("Main: Windows is requesting hibernate mode");
+            OnSuspend();
+            break;
 
-					//The PBT_APMQUERYSTANDBY message is sent to request permission to suspend the computer.
-					//An application that grants permission should carry out preparations for the suspension before returning.
-					//Return TRUE to grant the request to suspend. To deny the request, return BROADCAST_QUERY_DENY.
-					case PBT_APMQUERYSTANDBY:
-						// Stop all media before suspending or hibernating
-						_log.Info("Main: Windows is requesting standby mode");
-						OnSuspend();
-						break;
-					case PBT_APMSUSPEND:
-						_log.Info("Main: Windows is suspending");
-						break;
+          //The PBT_APMQUERYSTANDBY message is sent to request permission to suspend the computer.
+          //An application that grants permission should carry out preparations for the suspension before returning.
+          //Return TRUE to grant the request to suspend. To deny the request, return BROADCAST_QUERY_DENY.
+          case PBT_APMQUERYSTANDBY:
+            // Stop all media before suspending or hibernating
+            _log.Info("Main: Windows is requesting standby mode");
+            OnSuspend();
+            break;
+          case PBT_APMSUSPEND:
+            _log.Info("Main: Windows is suspending");
+            break;
 
-					//The PBT_APMRESUMECRITICAL event is broadcast as a notification that the system has resumed operation. 
-					//this event can indicate that some or all applications did not receive a PBT_APMSUSPEND event. 
-					//For example, this event can be broadcast after a critical suspension caused by a failing battery.
-					case PBT_APMRESUMECRITICAL:
-						_log.Info("Main: Windows has resumed from critical hibernate mode");
-						OnResume();
-						break;
-
-					//The PBT_APMRESUMESUSPEND event is broadcast as a notification that the system has resumed operation after being suspended.
-					case PBT_APMRESUMESUSPEND:
-						_log.Info("Main: Windows has resumed from hibernate mode");
+          //The PBT_APMRESUMECRITICAL event is broadcast as a notification that the system has resumed operation. 
+          //this event can indicate that some or all applications did not receive a PBT_APMSUSPEND event. 
+          //For example, this event can be broadcast after a critical suspension caused by a failing battery.
+          case PBT_APMRESUMECRITICAL:
+            _log.Info("Main: Windows has resumed from critical hibernate mode");
             OnResume();
-						break;
+            break;
 
-					//The PBT_APMRESUMESTANDBY event is broadcast as a notification that the system has resumed operation after being standby.
-					case PBT_APMRESUMESTANDBY:
-						_log.Info("Main: Windows has resumed from standbye mode");
-						OnResume();
-						break;
+          //The PBT_APMRESUMESUSPEND event is broadcast as a notification that the system has resumed operation after being suspended.
+          case PBT_APMRESUMESUSPEND:
+            _log.Info("Main: Windows has resumed from hibernate mode");
+            OnResume();
+            break;
 
-					//The PBT_APMRESUMEAUTOMATIC event is broadcast when the computer wakes up automatically to
-					//handle an event. An application will not generally respond unless it is handling the event, because the user is not present.
-					case PBT_APMRESUMEAUTOMATIC:
-						_log.Info("Main: Windows has resumed from standby or hibernate mode to handle a requested event");
-						OnResume();
-						break;
-				}
-			}
-			
-			if (!PluginManager.WndProc(ref msg))
+          //The PBT_APMRESUMESTANDBY event is broadcast as a notification that the system has resumed operation after being standby.
+          case PBT_APMRESUMESTANDBY:
+            _log.Info("Main: Windows has resumed from standbye mode");
+            OnResume();
+            break;
+
+          //The PBT_APMRESUMEAUTOMATIC event is broadcast when the computer wakes up automatically to
+          //handle an event. An application will not generally respond unless it is handling the event, because the user is not present.
+          case PBT_APMRESUMEAUTOMATIC:
+            _log.Info("Main: Windows has resumed from standby or hibernate mode to handle a requested event");
+            OnResume();
+            break;
+        }
+      }
+
+      if (!PluginManager.WndProc(ref msg))
       {
         Action action;
         char key;
@@ -645,7 +660,7 @@ public class MediaPortalApp : D3DApp, IRender
           return;
         }
       }
-			      
+
       //if (msg.Msg==WM_KEYDOWN) Debug.WriteLine("msg keydown");
       g_Player.WndProc(ref msg);
       base.WndProc(ref msg);
@@ -658,8 +673,8 @@ public class MediaPortalApp : D3DApp, IRender
   //called when windows wants to hibernate or go into standbye mode
   void OnSuspend()
   {
-		if (_suspended) return;
-		//stop playback
+    if (_suspended) return;
+    //stop playback
     _suspended = true;
     InputDevices.Stop();
 
@@ -674,17 +689,30 @@ public class MediaPortalApp : D3DApp, IRender
       _log.Info("Main: Switching to windowed mode");
       SwitchFullScreenOrWindowed(true, true);
     }
-
   }
 
   //called when windows wakes up again
   void OnResume()
   {
-		if (!_suspended) return;
-		_suspended = false;
-		_log.Info("Main: Switch to home screen");
+    if (!_suspended) return;
+    _suspended = false;
+    _log.Info("Main: Switch to home screen");
     GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
     //_suspended = false;
+
+    EXECUTION_STATE oldState = EXECUTION_STATE.ES_CONTINUOUS;
+    bool turnMonitorOn = false;
+    using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+    {
+      turnMonitorOn = xmlreader.GetValueAsBool("general", "turnmonitoronafterresume", false);
+      if (turnMonitorOn)
+      {
+        _log.Info("Main: OnResume - Trying to wake up the monitor / tv");
+        EXECUTION_STATE state = EXECUTION_STATE.ES_CONTINUOUS |
+          EXECUTION_STATE.ES_DISPLAY_REQUIRED;
+        oldState = SetThreadExecutionState(state);
+      }
+    }
 
     InputDevices.Init();
 
@@ -697,6 +725,10 @@ public class MediaPortalApp : D3DApp, IRender
     _onResumeRunning = true;
     _log.Info("Main: Starting recorder");
     Recorder.Start();
+    if (turnMonitorOn)
+    {
+      SetThreadExecutionState(oldState);
+    }
     _onResumeRunning = false;
   }
 
