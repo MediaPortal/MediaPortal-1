@@ -812,7 +812,7 @@ namespace MediaPortal.PowerScheduler
 						break;
 				}
 			}
-			return true;
+			return false; // false = all other processes will handle the msg
 		}
 
 		#endregion
