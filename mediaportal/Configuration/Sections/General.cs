@@ -61,10 +61,6 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPLabel label2;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
     private System.Windows.Forms.CheckedListBox settingsCheckedListBox;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
-    private System.Windows.Forms.NumericUpDown numericUpDown1;
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
-    private MediaPortal.UserInterface.Controls.MPLabel label3;
     private System.ComponentModel.IContainer components = null;
     protected ILog _log;
 
@@ -196,7 +192,7 @@ namespace MediaPortal.Configuration.Sections
 
         // Allow Focus
         using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", false))
-          settingsCheckedListBox.SetItemChecked(17, ((int)subkey.GetValue("ForegroundLockTimeout", 2000000) == 0));
+          settingsCheckedListBox.SetItemChecked(18, ((int)subkey.GetValue("ForegroundLockTimeout", 2000000) == 0));
       }
     }
 
@@ -253,8 +249,8 @@ namespace MediaPortal.Configuration.Sections
         {
           bool focusChecked = ((int)subkey.GetValue("ForegroundLockTimeout", 200000) == 0);
 
-          if (focusChecked != settingsCheckedListBox.GetItemChecked(17))
-            if (settingsCheckedListBox.GetItemChecked(17))
+          if (focusChecked != settingsCheckedListBox.GetItemChecked(18))
+            if (settingsCheckedListBox.GetItemChecked(18))
               subkey.SetValue("ForegroundLockTimeout", 0);
             else
               subkey.SetValue("ForegroundLockTimeout", 200000);
@@ -283,14 +279,8 @@ namespace MediaPortal.Configuration.Sections
       this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.settingsCheckedListBox = new System.Windows.Forms.CheckedListBox();
-      this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
-      this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpGroupBox1.SuspendLayout();
       this.groupBox1.SuspendLayout();
-      this.groupBox2.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
       this.SuspendLayout();
       // 
       // mpGroupBox1
@@ -311,6 +301,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.languageComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.languageComboBox.BorderColor = System.Drawing.Color.Empty;
       this.languageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.languageComboBox.Location = new System.Drawing.Point(168, 20);
       this.languageComboBox.Name = "languageComboBox";
@@ -334,7 +325,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox1.Location = new System.Drawing.Point(0, 64);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(472, 320);
+      this.groupBox1.Size = new System.Drawing.Size(472, 328);
       this.groupBox1.TabIndex = 1;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "General Settings";
@@ -368,78 +359,18 @@ namespace MediaPortal.Configuration.Sections
                 "!)"});
       this.settingsCheckedListBox.Location = new System.Drawing.Point(16, 24);
       this.settingsCheckedListBox.Name = "settingsCheckedListBox";
-      this.settingsCheckedListBox.Size = new System.Drawing.Size(440, 274);
+      this.settingsCheckedListBox.Size = new System.Drawing.Size(440, 289);
       this.settingsCheckedListBox.TabIndex = 0;
-      // 
-      // groupBox2
-      // 
-      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox2.Controls.Add(this.label1);
-      this.groupBox2.Controls.Add(this.numericUpDown1);
-      this.groupBox2.Controls.Add(this.label3);
-      this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox2.Location = new System.Drawing.Point(0, 368);
-      this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new System.Drawing.Size(472, 56);
-      this.groupBox2.TabIndex = 2;
-      this.groupBox2.TabStop = false;
-      this.groupBox2.Text = "VMR9 OSD Settings";
-      this.groupBox2.Visible = false;
-      // 
-      // label1
-      // 
-      this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.label1.Location = new System.Drawing.Point(16, 24);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(96, 16);
-      this.label1.TabIndex = 0;
-      this.label1.Text = "OSD Alpha level:";
-      this.label1.Visible = false;
-      // 
-      // numericUpDown1
-      // 
-      this.numericUpDown1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.numericUpDown1.Location = new System.Drawing.Point(168, 20);
-      this.numericUpDown1.Maximum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-      this.numericUpDown1.Name = "numericUpDown1";
-      this.numericUpDown1.Size = new System.Drawing.Size(168, 20);
-      this.numericUpDown1.TabIndex = 1;
-      this.numericUpDown1.Value = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-      this.numericUpDown1.Visible = false;
-      // 
-      // label3
-      // 
-      this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.label3.Location = new System.Drawing.Point(328, 24);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(128, 16);
-      this.label3.TabIndex = 2;
-      this.label3.Text = "(10 = solid, 0 = invisible)";
-      this.label3.TextAlign = System.Drawing.ContentAlignment.TopRight;
-      this.label3.Visible = false;
       // 
       // General
       // 
       this.BackColor = System.Drawing.SystemColors.Control;
-      this.Controls.Add(this.groupBox2);
       this.Controls.Add(this.groupBox1);
       this.Controls.Add(this.mpGroupBox1);
       this.Name = "General";
       this.Size = new System.Drawing.Size(472, 408);
       this.mpGroupBox1.ResumeLayout(false);
       this.groupBox1.ResumeLayout(false);
-      this.groupBox2.ResumeLayout(false);
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
       this.ResumeLayout(false);
 
     }
