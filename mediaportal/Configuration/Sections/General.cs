@@ -167,6 +167,11 @@ namespace MediaPortal.Configuration.Sections
       new string[] { "general", "turnmonitoronafterresume", "false" },
       new string[] { "general", "allowfocus", "false" }};
 
+    // PLEASE NOTE: when adding items, adjust the box so it doesn't get scrollbars
+    //              AND be aware that "allowfocus" has to be last item in the list
+    //              AND be careful cause depending on where you add a setting, the indexes might change
+    //              (e.g. SaveSettings depends on the index!!!)
+
 
     /// <summary>
     /// 
@@ -192,7 +197,7 @@ namespace MediaPortal.Configuration.Sections
 
         // Allow Focus
         using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", false))
-          settingsCheckedListBox.SetItemChecked(18, ((int)subkey.GetValue("ForegroundLockTimeout", 2000000) == 0));
+          settingsCheckedListBox.SetItemChecked(settingsCheckedListBox.Items.Count - 1, ((int)subkey.GetValue("ForegroundLockTimeout", 2000000) == 0));
       }
     }
 
@@ -240,7 +245,7 @@ namespace MediaPortal.Configuration.Sections
         using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer", true))
           subkey.SetValue("EnableBalloonTips", iValue);
 
-        if (settingsCheckedListBox.GetItemChecked(17))
+        if (settingsCheckedListBox.GetItemChecked(settingsCheckedListBox.Items.Count - 1))
           using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true))
             subkey.SetValue("ForegroundLockTimeout", 0);
 
@@ -250,7 +255,7 @@ namespace MediaPortal.Configuration.Sections
           bool focusChecked = ((int)subkey.GetValue("ForegroundLockTimeout", 200000) == 0);
 
           if (focusChecked != settingsCheckedListBox.GetItemChecked(18))
-            if (settingsCheckedListBox.GetItemChecked(18))
+            if (settingsCheckedListBox.GetItemChecked(settingsCheckedListBox.Items.Count - 1))
               subkey.SetValue("ForegroundLockTimeout", 0);
             else
               subkey.SetValue("ForegroundLockTimeout", 200000);
