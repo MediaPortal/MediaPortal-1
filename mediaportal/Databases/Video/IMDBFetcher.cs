@@ -22,11 +22,14 @@ namespace MediaPortal.Video.Database
     private bool disableCancel = false;
     static ILog _log;
 
-    public IMDBFetcher(IMDB.IProgress progress)
+    static IMDBFetcher()
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+    }
 
+    public IMDBFetcher(IMDB.IProgress progress)
+    {
       _imdb = new IMDB(this);
       this.progress = progress;
     }
