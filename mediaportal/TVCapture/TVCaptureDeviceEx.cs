@@ -183,10 +183,6 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     public TVCaptureDevice()
     {
-      CtorInit();
-    }
-    void CtorInit()
-    {
       int countryCode = 31;
       string tunerInput = "Antenna";
       using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
@@ -856,19 +852,6 @@ namespace MediaPortal.TV.Recording
     #endregion
 
     #region public members
-
-    public bool LoadDefinitions()
-    {
-      if (_graphHelper == null)
-      {
-        CtorInit();
-        _graphHelper = new GraphHelper();
-      }
-      _graphHelper.DeviceId = DeviceId;
-      _graphHelper.CommercialName = CommercialName;
-      //_graphHelper.CaptureName = CaptureName;
-      return _graphHelper.LoadDefinitions(VideoDevice, VideoDeviceMoniker);
-    }
 
 
     /// <summary>
