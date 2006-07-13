@@ -1,4 +1,4 @@
-/* 
+﻿/* 
  *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
@@ -24,12 +24,13 @@ using System.Text;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
-using System.Runtime.InteropServices;
+
 using MediaPortal.Utils.Services;
 
 namespace MediaPortal.GUI.Library
@@ -88,14 +89,14 @@ namespace MediaPortal.GUI.Library
     int _fontId = -1;
     bool _fontAdded = false;
     private string _fontName;
-    private string _fileName;
+    private string _fileName;    
     public const int MaxNumfontVertices = 100 * 6;
     private int _StartCharacter = 32;
     private int _EndCharacter = 255;
     private static bool logfonts = false;
+    private bool _useRTLLang;
     private ILog _log;
     #endregion
-
     #region ctors
     /// <summary>
     /// Constructor of the GUIFont class.
@@ -104,6 +105,7 @@ namespace MediaPortal.GUI.Library
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      LoadSettings();
     }
     /// <summary>
     /// Constructor of the GUIFont class.
@@ -139,6 +141,12 @@ namespace MediaPortal.GUI.Library
       _fontHeight = iHeight;
     }
     #endregion
+
+    private void LoadSettings()
+    {
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      _useRTLLang = xmlreader.GetValueAsBool("skin", "rtllang", false);
+    }
 
     public int ID
     {
@@ -249,8 +257,7 @@ namespace MediaPortal.GUI.Library
       int red = (int)((color >> 16) & 0xff);
       int green = (int)((color >> 8) & 0xff);
       int blue = (int)(color & 0xff);
-
-
+      
       if (alignment == GUIControl.Alignment.ALIGN_LEFT)
       {
         DrawText(xpos, ypos, Color.FromArgb(alpha, red, green, blue), label, RenderFlags.Filtered, maxWidth);
@@ -304,6 +311,159 @@ namespace MediaPortal.GUI.Library
         FontEnginePresent3D(ID);
       }
     }
+    
+
+	#region RTL handling
+	private	static string reverse(string a) 
+	{
+    	string temp = ""; 
+    	string flipsource = "()[]{}<>";
+    	string fliptarget = ")(][}{><";
+    	
+    	int i, j; 
+    	for(j=0, i=a.Length-1; i >= 0; i--, j++) 
+    	{
+    		if ( flipsource.Contains(a[i].ToString()))
+    			temp += fliptarget[flipsource.IndexOf(a[i])].ToString();
+    		else
+    			temp += a[i];
+    	}
+    	return temp;
+	}
+	
+	/// <summary>
+	/// Reverse the direction of characters - Change text from logical to display order
+	/// </summary>
+	/// <remarks>
+	/// Since doing it correct is very complex (for example numbers are written from left to right even in Hebrew). The
+	/// UNICODE standard of handling bidirectional language is a very long document...
+	/// </remarks>
+	/// <param name="text">The text in logical (reading) order</param>
+	/// <returns>The text in display order</returns>	
+    private string HandleRTLText( string inLTRText )
+    {
+      try
+      {
+        // insert an ASCII range here!!!!!!!!1111one
+        const string strRTLChars = "אבגדהוזחטיכךלמםנןסעפףצץקרשת";
+
+        // curious for a funny test? *g* uncomment this:
+        //const string strRTLChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜabcdefghijklmnopqrstuvwxyzäöü";
+        const string strNeutralChars = " ,.?:;'[]{}\\|/`~!@#$%^&*()-=_+*\"";
+        string result = "";
+        string idxChar;
+
+        bool isRTL = false;
+        bool foundRTLChar = false;
+
+        if ( inLTRText.Length > 0 )
+        {
+          // scan for RTL characters
+          int i = 0;
+          while ( ( !foundRTLChar ) && ( i < inLTRText.Length ) )
+          {
+            idxChar = inLTRText.Substring(i, 1);
+            if ( strRTLChars.Contains(idxChar) )
+              foundRTLChar = true;
+            i++;
+          }
+
+          if ( foundRTLChar )
+          {
+            inLTRText = reverse(inLTRText);
+            i = -1;
+            int start;
+            int end;
+
+            while ( i < inLTRText.Length - 1 )
+            {
+              if ( isRTL )
+              {
+                start = i + 1;
+                //bool hebflag=true;
+                bool containsRTL = false;
+                bool neutralContain = false;
+                //int neutralpos = -1;
+
+                // loop over the RTL and the neutral chars until somthing else comes up.
+                do
+                {
+                  i++;
+                  idxChar = inLTRText[i].ToString();
+                  containsRTL = strRTLChars.Contains(idxChar);
+                  neutralContain = strNeutralChars.Contains(idxChar);
+                }
+                while ( ( containsRTL || neutralContain ) & i < inLTRText.Length - 1 );
+
+                // if we didn't reach to the end, we going back 1 charcter
+                if ( i < inLTRText.Length - 1 )
+                  i--;
+                
+                end = i;                
+
+                result += inLTRText.Substring(start, end - start + 1);
+                isRTL = false;
+              }
+              else
+              {
+                start = i + 1;
+                bool engflag = true;
+                bool engContain = false;
+                bool neutralContain = false;
+                int neutralpos = -1;
+
+                // loop over the non-RTL and the neutral chars until somthing else comes up.
+                do
+                {
+                  i++;
+                  idxChar = inLTRText[i].ToString();
+                  neutralContain = strNeutralChars.Contains(idxChar);
+                  engContain = ( !strRTLChars.Contains(idxChar) & !neutralContain );
+
+                  // mark the last index of neutral character series
+                  if ( neutralContain && engflag )
+                  {
+                    engflag = false;
+                    neutralpos = i;
+                  }
+                  if ( engContain && !engflag )
+                    engflag = true;
+                }
+                while ( ( engContain || neutralContain ) & i < inLTRText.Length - 1 );
+
+                // if we didn't reach to the end, we going back 1 charcter
+                if ( i < inLTRText.Length - 1 )
+                  i--;
+
+                if ( neutralpos < 0 )
+                {
+                  end = i;
+                }
+                else
+                {
+                  end = neutralpos - 1;
+                  i = neutralpos - 1;
+                }
+
+                result += reverse(inLTRText.Substring(start, end - start + 1));
+                isRTL = true;
+              }
+            }
+          }
+          else
+          {
+            result = inLTRText;
+          }
+        }
+        return result;
+      }
+      catch ( Exception exp )
+      {
+        return "";
+      }
+    }
+	
+	#endregion RTL handling	
     /// <summary>
     /// Draw some text on the screen.
     /// </summary>
@@ -333,8 +493,8 @@ namespace MediaPortal.GUI.Library
         GUIGraphicsContext.graphics.DrawString(text, _systemFont, new SolidBrush(color), xpos, ypos);
         return;
       }
-
-
+      if (_useRTLLang)
+        text = HandleRTLText(text);
       if (ID >= 0)
       {
         int intColor = color.ToArgb();
