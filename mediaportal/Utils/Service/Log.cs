@@ -148,6 +148,7 @@ namespace MediaPortal.Utils.Services
 
         // Write message to log stream
 				_logStream.WriteLine(message.ToString());
+        _logStream.Flush();
       }
 		}
   }

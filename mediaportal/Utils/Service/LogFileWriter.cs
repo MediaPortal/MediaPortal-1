@@ -30,13 +30,11 @@ namespace MediaPortal.Utils.Services
 		private string _errorName;
 
 		public LogFileWriter(string directory, string name)	
-			: base(directory + "\\" + name + ".log")
+			: base(directory + "\\" + name + ".log", true)
 		{
 			base.AutoFlush = true;
 
 			_errorName = directory + "\\" + name + "_error.log";
-			if (System.IO.File.Exists(_errorName))
-				System.IO.File.Delete(_errorName);
 		}
 
 		public override void WriteLine(string value)
@@ -46,14 +44,18 @@ namespace MediaPortal.Utils.Services
 			{
 				if (_errorStream == null)
 				{
-					if (System.IO.File.Exists(_errorName))
-						System.IO.File.Delete(_errorName);
-
-					_errorStream = new StreamWriter(_errorName);
+					_errorStream = new StreamWriter(_errorName, true);
 					_errorStream.AutoFlush = true;
 				}
 				_errorStream.WriteLine(value);
 			}
 		}
+
+    public override void Flush()
+    {
+      base.Flush();
+      if (_errorStream != null)
+        _errorStream.Flush();
+    }
 	}
 }
