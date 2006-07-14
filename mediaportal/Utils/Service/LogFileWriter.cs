@@ -26,7 +26,7 @@ namespace MediaPortal.Utils.Services
 {
 	public class LogFileWriter : StreamWriter
 	{
-		private StreamWriter _errorStream;
+		private StreamWriter _errorStream = null;
 		private string _errorName;
 
 		public LogFileWriter(string directory, string name)	
@@ -40,6 +40,7 @@ namespace MediaPortal.Utils.Services
 		public override void WriteLine(string value)
 		{
 			base.WriteLine(value);
+      base.Flush();
 			if (value.IndexOf("[ERROR]") != -1)
 			{
 				if (_errorStream == null)
@@ -48,14 +49,8 @@ namespace MediaPortal.Utils.Services
 					_errorStream.AutoFlush = true;
 				}
 				_errorStream.WriteLine(value);
+        _errorStream.Flush();
 			}
 		}
-
-    public override void Flush()
-    {
-      base.Flush();
-      if (_errorStream != null)
-        _errorStream.Flush();
-    }
 	}
 }
