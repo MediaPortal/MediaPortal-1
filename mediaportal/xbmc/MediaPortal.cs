@@ -165,7 +165,8 @@ public class MediaPortalApp : D3DApp, IRender
     AddExceptionHandler();
 #endif
     ServiceProvider services = GlobalServiceProvider.Instance;
-    _log = new MediaPortal.Utils.Services.Log("MediaPortal", MediaPortal.Utils.Services.Log.Level.Debug);
+    LogFile logFile = new LogFile("MediaPortal");
+    _log = new MediaPortal.Utils.Services.Log(logFile.GetSharedStream(), MediaPortal.Utils.Services.Log.Level.Debug);
     services.Add<ILog>(_log);
 
     //Log.BackupLogFiles();

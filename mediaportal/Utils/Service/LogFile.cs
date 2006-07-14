@@ -46,12 +46,12 @@ namespace MediaPortal.Utils.Services
 				System.IO.File.Move(logName, bakName);
 
       string errLogName = directory + "\\" + name + "_error.log";
-      string errBakName = directory + "\\" + name + "_error.bak";
+      //string errBakName = directory + "\\" + name + "_error.bak";
 
-      if (System.IO.File.Exists(errBakName))
-        System.IO.File.Delete(errBakName);
+      //if (System.IO.File.Exists(errBakName))
+      //  System.IO.File.Delete(errBakName);
       if (System.IO.File.Exists(errLogName))
-        System.IO.File.Move(errLogName, errBakName);
+        System.IO.File.Delete(errLogName);
 		}
 
 		public LogFile(string name) : this("log", name)
@@ -62,5 +62,10 @@ namespace MediaPortal.Utils.Services
 		{
 			return (TextWriter)new LogFileWriter(_directory, _name);
 		}
+
+    public TextWriter GetSharedStream()
+    {
+      return (TextWriter)new LogSharedFileWriter(_directory, _name);
+    }
 	}
 }

@@ -24,33 +24,45 @@ using System.IO;
 
 namespace MediaPortal.Utils.Services
 {
-	public class LogFileWriter : StreamWriter
-	{
-		private StreamWriter _errorStream = null;
-		private string _errorName;
+  public class LogFileWriter : StreamWriter
+  {
+    private StreamWriter _errorStream = null;
+    private string _errorName;
 
-		public LogFileWriter(string directory, string name)	
-			: base(directory + "\\" + name + ".log", true)
-		{
-			base.AutoFlush = true;
+    public LogFileWriter(string directory, string name)
+      : base(directory + "\\" + name + ".log", true)
+    {
+      base.AutoFlush = true;
 
-			_errorName = directory + "\\" + name + "_error.log";
-		}
+      _errorName = directory + "\\" + name + "_error.log";
+    }
 
-		public override void WriteLine(string value)
-		{
-			base.WriteLine(value);
-      base.Flush();
-			if (value.IndexOf("[ERROR]") != -1)
-			{
-				if (_errorStream == null)
-				{
-					_errorStream = new StreamWriter(_errorName, true);
-					_errorStream.AutoFlush = true;
-				}
-				_errorStream.WriteLine(value);
-        _errorStream.Flush();
-			}
-		}
-	}
+    public override void WriteLine(string value)
+    {
+      try
+      {
+        base.WriteLine(value);
+        base.Flush();
+      }
+      catch (IOException)
+      {
+      }
+      if (value.IndexOf("[ERROR]") != -1)
+      {
+        if (_errorStream == null)
+        {
+          _errorStream = new StreamWriter(_errorName, true);
+          _errorStream.AutoFlush = true;
+        }
+        try
+        {
+          _errorStream.WriteLine(value);
+          _errorStream.Flush();
+        }
+        catch (IOException)
+        {
+        }
+      }
+    }
+  }
 }
