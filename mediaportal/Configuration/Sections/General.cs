@@ -283,19 +283,19 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.checkBoxlangRTL = new System.Windows.Forms.CheckBox();
       this.languageComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.settingsCheckedListBox = new System.Windows.Forms.CheckedListBox();
-      this.checkBoxlangRTL = new System.Windows.Forms.CheckBox();
       this.mpGroupBox1.SuspendLayout();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
       // mpGroupBox1
       // 
-      this.mpGroupBox1.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox1.Controls.Add(this.checkBoxlangRTL);
       this.mpGroupBox1.Controls.Add(this.languageComboBox);
       this.mpGroupBox1.Controls.Add(this.label2);
@@ -307,15 +307,25 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Language Settings";
       // 
+      // checkBoxlangRTL
+      // 
+      this.checkBoxlangRTL.AutoSize = true;
+      this.checkBoxlangRTL.Location = new System.Drawing.Point(336, 24);
+      this.checkBoxlangRTL.Name = "checkBoxlangRTL";
+      this.checkBoxlangRTL.Size = new System.Drawing.Size(123, 17);
+      this.checkBoxlangRTL.TabIndex = 2;
+      this.checkBoxlangRTL.Text = "Right to left direction";
+      this.checkBoxlangRTL.UseVisualStyleBackColor = true;
+      // 
       // languageComboBox
       // 
-      this.languageComboBox.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.languageComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.languageComboBox.BorderColor = System.Drawing.Color.Empty;
       this.languageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.languageComboBox.Location = new System.Drawing.Point(118, 21);
       this.languageComboBox.Name = "languageComboBox";
-      this.languageComboBox.Size = new System.Drawing.Size(228, 21);
+      this.languageComboBox.Size = new System.Drawing.Size(202, 21);
       this.languageComboBox.TabIndex = 1;
       // 
       // label2
@@ -328,9 +338,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
-                  | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.settingsCheckedListBox);
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox1.Location = new System.Drawing.Point(0, 64);
@@ -342,9 +352,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // settingsCheckedListBox
       // 
-      this.settingsCheckedListBox.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
-                  | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.settingsCheckedListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.settingsCheckedListBox.CheckOnClick = true;
       this.settingsCheckedListBox.Items.AddRange(new object[] {
             "Start MediaPortal in fullscreen mode",
@@ -371,16 +381,6 @@ namespace MediaPortal.Configuration.Sections
       this.settingsCheckedListBox.Name = "settingsCheckedListBox";
       this.settingsCheckedListBox.Size = new System.Drawing.Size(440, 289);
       this.settingsCheckedListBox.TabIndex = 0;
-      // 
-      // checkBoxlangRTL
-      // 
-      this.checkBoxlangRTL.AutoSize = true;
-      this.checkBoxlangRTL.Location = new System.Drawing.Point(364, 23);
-      this.checkBoxlangRTL.Name = "checkBoxlangRTL";
-      this.checkBoxlangRTL.Size = new System.Drawing.Size(94, 17);
-      this.checkBoxlangRTL.TabIndex = 2;
-      this.checkBoxlangRTL.Text = "RTL language";
-      this.checkBoxlangRTL.UseVisualStyleBackColor = true;
       // 
       // General
       // 
