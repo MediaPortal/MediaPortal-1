@@ -1951,11 +1951,11 @@
    </string>
    <string>
       <id>608</id>
-      <value>TV-Guide Import feilet</value>
+      <value>Import av TV-Guide feilet</value>
    </string>
    <string>
       <id>609</id>
-      <value>TV-Guide Import ferdig</value>
+      <value>Importering av TV-Guide er ferdig</value>
    </string>
    <string>
       <id>610</id>
@@ -3019,7 +3019,7 @@
    </string>
    <string>
       <id>937</id>
-      <value>Import TV-guide</value>
+      <value>Importere TV-guide</value>
    </string>
    <string>
       <id>938</id>
