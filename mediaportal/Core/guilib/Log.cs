@@ -146,23 +146,23 @@ namespace MediaPortal.GUI.Library
 
     static string GetFileName(LogType type)
     {
-      string fname = @"log\MediaPortal.log";
+      string fname = @"log\MediaPortal2.log";
       switch (type)
       {
         case LogType.Recorder:
-          fname = @"log\recorder.log";
+          fname = @"log\recorder2.log";
           break;
         case LogType.Error:
-          fname = @"log\error.log";
+          fname = @"log\error2.log";
           break;
         case LogType.EPG:
-          fname = @"log\epg.log";
+          fname = @"log\epg2.log";
           break;
         case LogType.TVCom:
-          fname = @"log\TVCom.log";
+          fname = @"log\TVCom2.log";
           break;
         case LogType.VMR9:
-          fname = @"log\vmr9.log";
+          fname = @"log\vmr92.log";
           break;
       }
       return fname;
