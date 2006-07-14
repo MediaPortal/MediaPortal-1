@@ -1004,8 +1004,6 @@ namespace MediaPortal
             InitializeEnvironment();
           }
       }
-
-      MediaPortal.InputDevices.InputDevices.Init();
     }
 
 

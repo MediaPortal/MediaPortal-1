@@ -2363,8 +2363,8 @@ public class MediaPortalApp : D3DApp, IRender
     {
       case GUIMessage.MessageType.GUI_MSG_RESTART_REMOTE_CONTROLS:
         _log.Info("Main: Restart remote controls");
-        MediaPortal.InputDevices.InputDevices.Stop();
-        MediaPortal.InputDevices.InputDevices.Init();
+        InputDevices.Stop();
+        InputDevices.Init();
         break;
 
       case GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW:
@@ -2795,6 +2795,9 @@ public class MediaPortalApp : D3DApp, IRender
     //registers the player for video window size notifications
     _log.Info("Main: Init players");
     g_Player.Init();
+
+    // Initialize Input Devices
+    InputDevices.Init();
 
     //  hook ProcessExit for a chance to clean up when closed peremptorily
 
