@@ -34,7 +34,16 @@
          <align>right</align>
          <textcolor>ffffffff</textcolor>
       </control>
-
+      <control>
+         <type>label</type>
+         <description>State label</description>
+         <id>100</id>
+         <posX>360</posX>
+         <posY>50</posY>
+         <label>-</label>
+         <font>font16</font>
+         <textcolor>ffffffff</textcolor>
+      </control>
       <control>
          <type>button</type>
          <description>Top Videos button</description>
@@ -311,12 +320,6 @@
          <textcolor3>ffffffff</textcolor3>
          <textureFocus>list_sub_focus.png</textureFocus>
       </control>
-      <control>
-         <type>image</type>
-         <id>36</id>
-         <posX>8</posX>
-         <posY>512</posY>
-         <texture></texture>
-      </control>
+
    </controls>
 </window>

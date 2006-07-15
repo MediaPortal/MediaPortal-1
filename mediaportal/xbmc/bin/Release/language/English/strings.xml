@@ -4996,11 +4996,10 @@
    <string>
       <id>25001</id>
       <value>Waiting for Page {0:X}...!</value>
-   </string>
-   
+   </string>   
    <string Prefix="My ">
       <id>30000</id>
-      <value>My music videos</value>
+      <value>Music Videos</value>
    </string>
    <string>
       <id>30001</id>
@@ -5343,7 +5342,7 @@
       <id>100634</id>
       <value>Wizard/Remote</value>
    </string>
-  <string Prefix="My ">
+   <string Prefix="My ">
       <id>100635</id>
       <value>Wizard/EPG</value>
    </string>

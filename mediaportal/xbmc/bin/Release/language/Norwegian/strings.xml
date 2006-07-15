@@ -4998,6 +4998,38 @@
       <value>Venter på side {0:X}...!</value>
    </string>
    <string>
+      <id>30000</id>
+      <value>Mine musikk videoer</value>
+   </string>
+   <string>
+      <id>30001</id>
+      <value>Mest ønsket</value>
+   </string>
+   <string>
+      <id>30002</id>
+      <value>Nye på Yahoo</value>
+   </string>
+   <string>
+      <id>30003</id>
+      <value>Spill alle</value>
+   </string>   
+   <string>
+      <id>30004</id>
+      <value>Forrige side</value>
+   </string>
+   <string>
+      <id>30005</id>
+      <value>Neste side</value>
+   </string>
+   <string>
+      <id>30006</id>
+      <value>Stopp</value>
+   </string>
+   <string>
+      <id>30007</id>
+      <value>Søke etter andre videoer fra denne artisten</value>
+   </string>
+   <string>
       <id>99845</id>
       <value>TV.com sjekk</value>
    </string>
