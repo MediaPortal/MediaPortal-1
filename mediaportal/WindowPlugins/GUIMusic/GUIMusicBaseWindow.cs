@@ -162,7 +162,7 @@ namespace MediaPortal.GUI.Music
     {
       get
       {
-        return String.Empty;
+        return "musicbase";
       }
     }
 
