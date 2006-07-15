@@ -4998,6 +4998,39 @@
       <value>Warte auf Seite {0:X}...!</value>
    </string>
    <string>
+      <id>30000</id>
+      <value>Musik-Videos</value>
+   </string>
+   <string>
+      <id>30001</id>
+      <value>Top Videos</value>
+   </string>
+   <string>
+      <id>30002</id>
+      <value>Neu bei Yahoo</value>
+   </string>
+   <string>
+      <id>30003</id>
+      <value>Alle abspielen</value>
+   </string>
+   <string>
+      <id>30004</id>
+      <value>Vorherige Seite</value>
+   </string>
+   <string>
+      <id>30005</id>
+      <value>Nächste Seite</value>
+   </string>
+   <string>
+      <id>30006</id>
+      <value>Stop</value>
+   </string>    
+   <string>
+      <id>30007</id>
+      <value>Suche weitere Videos dieses Künstlers</value>
+   </string>
+           
+   <string>
       <id>99845</id>
       <value>Suche bei TV.com</value>
    </string>
