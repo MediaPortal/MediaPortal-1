@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <strings>
    <characters>255</characters>
-   <string>
+   <string Prefix="Mine ">
       <id>0</id>
-      <value>Mine programmer</value>
+      <value>Programmer</value>
    </string>
-   <string>
+   <string Prefix="Mine ">
       <id>1</id>
-      <value>Mine bilder</value>
+      <value>Bilder</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>2</id>
-      <value>Min musikk</value>
+      <value>Musikk</value>
    </string>
-   <string>
+   <string Prefix="Mine ">
       <id>3</id>
-      <value>Mine filmer</value>
+      <value>Filmer</value>
    </string>
    <string>
       <id>4</id>
@@ -29,21 +29,21 @@
       <id>6</id>
       <value>XBOX mediasenter- CVS- versjon</value>
    </string>
-   <string>
+   <string Prefix="Mine ">
       <id>7</id>
-      <value>Mine filer</value>
+      <value>Filer</value>
    </string>
-   <string>
+   <string Prefix="Mitt ">
       <id>8</id>
-      <value>Mitt vær</value>
+      <value>Vær</value>
    </string>
-   <string>
+   <string Prefix="Mine ">
       <id>9</id>
-      <value>Mine nyheter</value>
+      <value>Nyheter</value>
    </string>
-   <string>
+   <string Prefix="Mine ">
       <id>10</id>
-      <value>Mine oppskrifter</value>
+      <value>Oppskrifter</value>
    </string>
    <string>
       <id>11</id>
@@ -121,9 +121,9 @@
       <id>32</id>
       <value>Desember</value>
    </string>
-   <string>
+   <string Prefix="Mine ">
       <id>50</id>
-      <value>Mine DVDer</value>
+      <value>DVDer</value>
    </string>
    <string>
       <id>100</id>
@@ -177,13 +177,13 @@
       <id>112</id>
       <value>PAUSE</value>
    </string>
-   <string>
+   <string Prefix="Mine ">
       <id>113</id>
-      <value>Mine Filer : Kilde</value>
+      <value>Filer : Kilde</value>
    </string>
-   <string>
+   <string Prefix="Mine">
       <id>114</id>
-      <value>Mine Filer : Mål</value>
+      <value>Filer : Mål</value>
    </string>
    <string>
       <id>115</id>
@@ -1381,21 +1381,21 @@
       <id>417</id>
       <value>Vis: Store Ikoner</value>
    </string>
-   <string>
+   <string Prefix="Mine ">
       <id>418</id>
-      <value>Mine Videoer/Sjangere</value>
+      <value>Videoer/Sjangere</value>
    </string>
-   <string>
+   <string Prefix="Mine ">
       <id>419</id>
-      <value>Mine Videoer/Skuespillere</value>
+      <value>Videoer/Skuespillere</value>
    </string>
-   <string>
+   <string Prefix="Mine ">
       <id>420</id>
-      <value>Mine Videoer/År</value>
+      <value>Videoer/År</value>
    </string>
-   <string>
+   <string Prefix="Mine ">
       <id>421</id>
-      <value>Mine Videoer/Tittel</value>
+      <value>Videoer/Tittel</value>
    </string>
    <string>
       <id>422</id>
@@ -1937,9 +1937,9 @@
       <id>604</id>
       <value>Arkivert TV</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>605</id>
-      <value>Min TV</value>
+      <value>TV</value>
    </string>
    <string>
       <id>606</id>
@@ -2177,9 +2177,9 @@
       <id>664</id>
       <value>Slett dette bildet?</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>665</id>
-      <value>Min radio</value>
+      <value>Radio</value>
    </string>
    <string>
       <id>666</id>
@@ -2669,9 +2669,9 @@
       <id>820</id>
       <value>Slette usette opptak?</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>850</id>
-      <value>Min alarm</value>
+      <value>Alarm</value>
    </string>
    <string>
       <id>851</id>
@@ -2921,9 +2921,9 @@
       <id>912</id>
       <value>Kan ikke laste ned siste nytt</value>
    </string>
-   <string>
+   <string Prefix="Mine ">
       <id>913</id>
-      <value>Mine programtilegg</value>
+      <value>Programtilegg</value>
    </string>
    <string>
       <id>914</id>
@@ -3169,7 +3169,7 @@
       <id>982</id>
       <value>Slett hele dette opptaket</value>
    </string>
-   <string>
+   <string Prefix="Mine ">
       <id>983</id>
       <value>Spillelister</value>
    </string>
@@ -3345,7 +3345,7 @@
       <id>1026</id>
       <value>Sjekk loggfilene for detaljer.</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>1027</id>
       <value>DVD</value>
    </string>
@@ -3385,7 +3385,7 @@
       <id>1036</id>
       <value>Ingen video funnet</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>1037</id>
       <value>TV-program informasjon</value>
    </string>
@@ -3481,9 +3481,9 @@
       <id>1200</id>
       <value>Oppsett Wizard</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>1440</id>
-      <value>Mitt tekst-TV</value>
+      <value>Tekst-TV</value>
    </string>
    <string>
       <id>1441</id>
@@ -3525,9 +3525,9 @@
       <id>1450</id>
       <value>Er du sikker på at du vil stoppe opptaket?</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>1950</id>
-      <value>Min status</value>
+      <value>Status</value>
    </string>
    <string>
       <id>1951</id>
@@ -3917,9 +3917,9 @@
       <id>2099</id>
       <value>Nåværende posisjon:</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>2100</id>
-      <value>Lag CD/DVD</value>
+      <value>Brenner</value>
    </string>
    <string>
       <id>2101</id>
@@ -4093,7 +4093,7 @@
       <id>2143</id>
       <value>Hjem</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>2200</id>
       <value>Utforsker</value>
    </string>
@@ -4453,7 +4453,7 @@
       <id>4557</id>
       <value>Legg til alle i spillelisten</value>
    </string>
-   <string>
+   <string Prefix="Mine ">
       <id>5900</id>
       <value>Forfilmer</value>
    </string>
@@ -4661,9 +4661,9 @@
       <id>6025</id>
       <value>Stegvis oppsett</value>
    </string>      
-   <string>
+   <string Prefix="Min ">
       <id>8000</id>
-      <value>Min epost</value>
+      <value>Epost</value>
    </string>
    <string>
       <id>8001</id>
@@ -4849,7 +4849,7 @@
       <id>10102</id>
       <value>Kjappeste tid</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>10103</id>
       <value>Minesveiper</value>
    </string>
@@ -4941,9 +4941,9 @@
       <id>16001</id>
       <value>Festmiks</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>19001</id>
-      <value>Min tetris</value>
+      <value>Tetris</value>
    </string>
    <string>
       <id>19002</id>
@@ -4997,9 +4997,9 @@
       <id>25001</id>
       <value>Venter på side {0:X}...!</value>
    </string>
-   <string>
+   <string Prefix="Mine ">
       <id>30000</id>
-      <value>Mine musikk videoer</value>
+      <value>Musikk videoer</value>
    </string>
    <string>
       <id>30001</id>
@@ -5037,29 +5037,29 @@
       <id>100000</id>
       <value>Hjem</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100001</id>
-      <value>Min TV</value>
+      <value>TV</value>
    </string>
-   <string>
+   <string Prefix="Mine ">
       <id>100002</id>
-      <value>Mine bilder</value>
+      <value>Bilder</value>
    </string>
-   <string>
+   <string Prefix="Mine ">
       <id>100003</id>
-      <value>Mine filer</value>
+      <value>Filer</value>
    </string>
    <string>
       <id>100004</id>
       <value>Innstillinger</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100005</id>
-      <value>Min musikk</value>
+      <value>Musikk</value>
    </string>
-   <string>
+   <string Prefix="Mine ">
       <id>100006</id>
-      <value>Mine filmer</value>
+      <value>Filmer</value>
    </string>
    <string>
       <id>100007</id>
@@ -5109,25 +5109,25 @@
       <id>100020</id>
       <value>Innstillinger-&gt;skript</value>
    </string>
-   <string>
+   <string Prefix="Mine ">
       <id>100021</id>
-      <value>Mine videoer/sjanger</value>
+      <value>videoer/sjanger</value>
    </string>
-   <string>
+   <string Prefix="Mine ">
       <id>100022</id>
-      <value>Mine videoer/skuespiller</value>
+      <value>Videoer/skuespiller</value>
    </string>
-   <string>
+   <string Prefix="Mine ">
       <id>100023</id>
-      <value>Mine videoer/år</value>
+      <value>Videoer/år</value>
    </string>
    <string>
       <id>100024</id>
       <value>Innstillinger-&gt;programmer</value>
    </string>
-   <string>
+   <string Prefix="Mine ">
       <id>100025</id>
-      <value>Mine videoer/tittel</value>
+      <value>Videoer/tittel</value>
    </string>
    <string>
       <id>100026</id>
@@ -5137,17 +5137,17 @@
       <id>100027</id>
       <value>Innstillinger-&gt;generellt-&gt;autokjør</value>
    </string>
-   <string>
+   <string Prefix="Mine ">
       <id>100028</id>
-      <value>Mine videoer/spillelister</value>
+      <value>Videoer/spillelister</value>
    </string>
    <string>
       <id>100029</id>
       <value>Innstillinger-&gt;generelt-&gt;LCD</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100030</id>
-      <value>Min radio</value>
+      <value>Radio</value>
    </string>
    <string>
       <id>100031</id>
@@ -5161,9 +5161,9 @@
       <id>100033</id>
       <value>MSN Messenger-samtale</value>
    </string>
-   <string>
+   <string Prefix="Mine ">
       <id>100034</id>
-      <value>Mine programtilegg</value>
+      <value>Programtilegg</value>
    </string>
    <string>
       <id>100100</id>
@@ -5173,243 +5173,243 @@
       <id>100101</id>
       <value>Fremdriftsdialog</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100500</id>
-      <value>Min musikk/spilleliste</value>
+      <value>Musikk/spilleliste</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100501</id>
-      <value>Min musikk/filer</value>
+      <value>Musikk/filer</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100502</id>
-      <value>Min musikk/album</value>
+      <value>Musikk/album</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100503</id>
-      <value>Min musikk/artister</value>
+      <value>Musikk/artister</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100504</id>
-      <value>Min musikk/sjanger</value>
+      <value>Musikk/sjanger</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100505</id>
-      <value>Min musikk/top100</value>
+      <value>Musikk/top100</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100506</id>
-      <value>Min musikk/favoritter</value>
+      <value>Musikk/favoritter</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100600</id>
-      <value>Min TV/guide</value>
+      <value>TV/guide</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100601</id>
-      <value>Min TV/planlegger</value>
+      <value>TV/planlegger</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100602</id>
-      <value>Min TV/full skjerm</value>
+      <value>TV/full skjerm</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100603</id>
-      <value>Min TV/arkivert TV</value>
+      <value>TV/arkivert TV</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100604</id>
-      <value>Min TV/søk</value>
+      <value>TV/søk</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100605</id>
-      <value>Min TV/arkivert TV/sjanger</value>
+      <value>TV/arkivert TV/sjanger</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100606</id>
-      <value>Min TV/arkivert TV/kanaler</value>
+      <value>TV/arkivert TV/kanaler</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100607</id>
       <value>TV/planlegger/prioriteter</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100608</id>
       <value>TV/planlegger/konflikter</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100609</id>
       <value>TV/kompresjon/hovedside</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100610</id>
       <value>TV/kompresjon/oppsett</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100611</id>
       <value>TV/kompresjon/auto</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100612</id>
       <value>TV/kompresjon/kompresjon</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100613</id>
       <value>TV/kompresjon/status</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100614</id>
       <value>Video-artistinfo</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100615</id>
       <value>Wizard/velkommen</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100616</id>
       <value>Wizard/Kort oppdaget</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100617</id>
       <value>Wizard/land</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100618</id>
       <value>Wizard/skann</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100619</id>
       <value>Wizard/DVBC/land</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100620</id>
       <value>Wizard/DVBC/skann</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100621</id>
       <value>Wizard/DVBS/LNB</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100622</id>
       <value>Wizard/DVBS/LNB detaljer</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100623</id>
       <value>Wizard/DVBS/sender</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100624</id>
       <value>Wizard/DVBS/skann</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100625</id>
       <value>Wizard/ATSC/Skann</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100626</id>
       <value>Wizard/analog/land</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100627</id>
       <value>Wizard/analog/by</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100628</id>
       <value>Wizard/analog/importert</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100629</id>
       <value>Wizard/analog/manuell</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100630</id>
       <value>Wizard/analog/Skann</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100631</id>
       <value>Wizard/analog/omdøpe</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100632</id>
       <value>Wizard/analog/radio</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100633</id>
       <value>Wizard/analog/omdøpe radio</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100634</id>
       <value>Wizard/fjernkontroll</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100635</id>
       <value>Wizard/EPG</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100699</id>
       <value>Wizard/ferdig</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100700</id>
       <value>TV-innstillinger</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100701</id>
       <value>TV-opptaksinnstillinger</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100702</id>
       <value>Sorter TV-kanaler</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100703</id>
       <value>TV filminnstillinger</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100704</id>
       <value>DVD-innstillinger</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100705</id>
       <value>Skin-innstillinger</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100748</id>
       <value>Programinfo</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100749</id>
       <value>TV/Ingen signal</value>
    </string>
-   <string>
+   <string Prefix="Mine ">
       <id>100750</id>
-      <value>Mine oppskrifter</value>
+      <value>Oppskrifter</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100755</id>
-      <value>Min Status</value>
+      <value>Status</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100756</id>
-      <value>Min Status detaljer</value>
+      <value>Status detaljer</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100757</id>
-      <value>Min Status innstillinger</value>
+      <value>Status innstillinger</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100758</id>
       <value>Fildialog</value>
    </string>
-   <string>
+   <string Prefix="Mine ">
       <id>100759</id>
       <value>Arkiverte Tv Info</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100760</id>
       <value>Brenner</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>100770</id>
       <value>Utforsker</value>
    </string>
@@ -5421,21 +5421,21 @@
       <id>102000</id>
       <value>Velg dialog</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>102001</id>
-      <value>Min musikk/info</value>
+      <value>Musikk/info</value>
    </string>
    <string>
       <id>102002</id>
       <value>Dialog OK</value>
    </string>
-   <string>
+   <string Prefix="Mine ">
       <id>102003</id>
-      <value>Mine filmer/Info</value>
+      <value>Filmer/Info</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>102004</id>
-      <value>Mine skript/Info</value>
+      <value>Skript/Info</value>
    </string>
    <string>
       <id>102005</id>
@@ -5445,9 +5445,9 @@
       <id>102006</id>
       <value>Audiovisualisering</value>
    </string>
-   <string>
+   <string Prefix="Mine ">
       <id>102007</id>
-      <value>Mine bilder/lysbildefremvisning</value>
+      <value>Bilder/lysbildefremvisning</value>
    </string>
    <string>
       <id>102008</id>
@@ -5485,13 +5485,13 @@
       <id>102016</id>
       <value>Notis</value>
    </string>
-   <string>
+   <string Prefix="Mitt ">
       <id>102600</id>
-      <value>Mitt vær</value>
+      <value>Vær</value>
    </string>
-   <string>
+   <string Prefix="Mine ">
       <id>102700</id>
-      <value>Mine nyheter</value>
+      <value>Nyheter</value>
    </string>
    <string>
       <id>102900</id>
@@ -5501,23 +5501,23 @@
       <id>102901</id>
       <value>Fullskjerms-OSD</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>103003</id>
       <value>TV/OSD</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>103006</id>
       <value>TV/MSN OSD</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>103007</id>
       <value>TV/Zap OSD</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>107700</id>
       <value>TV/Tekst-TV</value>
    </string>
-   <string>
+   <string Prefix="Min ">
       <id>107701</id>
       <value>TV/Tekst-TV</value>
    </string>
