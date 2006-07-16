@@ -147,14 +147,20 @@ namespace MediaPortal.Player
       {
         graphBuilder = (IGraphBuilder)new FilterGraph();
 
+        _log.Info("RTSPPlayer: add source filter");
         Vmr9.AddVMR9(graphBuilder);
         Vmr9.Enable(false);
 
         IBaseFilter rtspSource = (IBaseFilter)new RtpSourceFilter();
         int hr = graphBuilder.AddFilter((IBaseFilter)rtspSource, "RTSP Source Filter");
-
+        if (hr != 0)
+        {
+          _log.Error("RTSPPlayer:unable to add RTSP source filter:{0:X}", hr);
+          return false;
+        }
 
         // add preferred video & audio codecs
+        _log.Info("RTSPPlayer: add video/audio codecs");
         string strVideoCodec = "";
         string strAudioCodec = "";
         string strAudiorenderer = "";
@@ -167,15 +173,16 @@ namespace MediaPortal.Player
           strAudiorenderer = xmlreader.GetValueAsString("movieplayer", "audiorenderer", "");
         }
         string extension = System.IO.Path.GetExtension(m_strCurrentFile).ToLower();
-        if (extension.Equals(".dvr-ms") || extension.Equals(".mpg") || extension.Equals(".mpeg") || extension.Equals(".bin") || extension.Equals(".dat"))
-        {
+        //if (extension.Equals(".dvr-ms") || extension.Equals(".mpg") || extension.Equals(".mpeg") || extension.Equals(".bin") || extension.Equals(".dat"))
+        //{
           if (strVideoCodec.Length > 0) videoCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strVideoCodec);
           if (strAudioCodec.Length > 0) audioCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strAudioCodec);
-        }
+        //}
         if (bAddFFDshow) ffdShowFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, "ffdshow raw video filter");
         if (strAudiorenderer.Length > 0) audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(graphBuilder, strAudiorenderer, false);
 
 
+        _log.Info("RTSPPlayer: load:{0}", m_strCurrentFile);
         IFileSourceFilter interfaceFile = (IFileSourceFilter)rtspSource;
         if (interfaceFile == null)
         {
@@ -191,11 +198,13 @@ namespace MediaPortal.Player
           _log.Error("RTSPPlayer:Failed to open file:{0} :0x{1:x}", m_strCurrentFile, hr);
           return false;
         }
+        _log.Info("RTSPPlayer: render output pins of rtsp filter");
         DirectShowUtil.RenderOutputPins(graphBuilder, (IBaseFilter)rtspSource);
 
         if (!Vmr9.IsVMR9Connected)
         {
           //VMR9 is not supported, switch to overlay
+          _log.Info("RTSPPlayer: vmr9 not connected");
           mediaCtrl = null;
           Cleanup();
           return false ;
@@ -212,7 +221,7 @@ namespace MediaPortal.Player
         DirectShowUtil.EnableDeInterlace(graphBuilder);
         m_iVideoWidth = Vmr9.VideoWidth;
         m_iVideoHeight = Vmr9.VideoHeight;
-
+        _log.Info("RTSPPlayer: graph build successfull");
         return true;
       }
       catch (Exception ex)

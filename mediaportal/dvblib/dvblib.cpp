@@ -98,21 +98,31 @@ typedef enum
 BEGIN_MESSAGE_MAP(CdvblibApp, CWinApp)
 END_MESSAGE_MAP()
 
+static char* logbuffer=NULL;
+
 void Log(const char *fmt, ...) 
 {
+	if (logbuffer==NULL)
+	{
+		logbuffer=new char[100000];
+	}
 	va_list ap;
 	va_start(ap,fmt);
 
-	char buffer[1000]; 
 	int tmp;
 	va_start(ap,fmt);
-	tmp=vsprintf(buffer, fmt, ap);
+	tmp=vsprintf(logbuffer, fmt, ap);
 	va_end(ap); 
 
 	FILE* fp = fopen("log/dvb.log","a+");
 	if (fp!=NULL)
 	{
-		fprintf(fp,"%s\n",buffer);
+		SYSTEMTIME systemTime;
+		GetLocalTime(&systemTime);
+		fprintf(fp,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d %s\n",
+			systemTime.wDay, systemTime.wMonth, systemTime.wYear,
+			systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
+			logbuffer);
 		fclose(fp);
 	}
 };
@@ -551,8 +561,7 @@ HRESULT SetupDemuxerPin(IPin *pVideo,int videoPID, int elementary_stream, bool u
 	HRESULT hr=0;
 	try
 	{
-
-		Log("setup pid:%x", videoPID);
+		Log("map pid:%x", videoPID);
 		// video
 		if (pVideo!=NULL)
 		{
@@ -563,58 +572,47 @@ HRESULT SetupDemuxerPin(IPin *pVideo,int videoPID, int elementary_stream, bool u
 				delete[] pm;
 				return 1;
 			}
-			// 
-			BOOL mapped=false;
-			if (unmapOtherPids)
-			{
-				hr=pMap->EnumPIDMap(&pPidEnum);
-				if(FAILED(hr) || pPidEnum==NULL)
-				{
-					Log("unable to get IEnumPIDMap :0x%x",hr);
-					delete[] pm;
-					return 5;
-				}
-				// enum and unmap the pids
-				pPidEnum->Next(30,&pm[0],&count);
-				for (int i=0; i < count;++i)
-				{
-					umPid=pm[i].ulPID;
-					if (umPid != videoPID)
-					{
-						Log("  unmap pid:%x", umPid);
-						hr=pMap->UnmapPID(1,&umPid);
-						if (FAILED(hr))
-						{
-							Log("unable to unmap pid:%x %x", umPid,hr);
-						}
-					}
-					else
-					{
-						Log("  pid:%x already mapped", umPid);
-						mapped=TRUE;
-					}
-				}
-				pPidEnum->Release();
-			}
-
-			if (FALSE==mapped)
-			{
-				if (videoPID>=0 && videoPID <0x1fff)
-				{
-					// map new pid
-						Log("  map pid:%x", videoPID);
-					pid = (ULONG)videoPID;
-					hr=pMap->MapPID(1,&pid,(MEDIA_SAMPLE_CONTENT)elementary_stream);
-					if(FAILED(hr))
-					{
-						Log("unable to map pid:%x %x", pid,hr);
-						delete[] pm;
-						return 2;
-					}
-				}
-			}
-			pMap->Release();
 		}
+		if (videoPID>=0 && videoPID <0x1fff)
+		{
+			// map new pid
+			Log("  map pid:%x", videoPID);
+			pid = (ULONG)videoPID;
+			hr=pMap->MapPID(1,&pid,(MEDIA_SAMPLE_CONTENT)elementary_stream);
+			if(FAILED(hr))
+			{
+				Log("unable to map pid:%x %x", pid,hr);
+				delete[] pm;
+				return 2;
+			}
+		}
+		if (unmapOtherPids)
+		{
+			hr=pMap->EnumPIDMap(&pPidEnum);
+			if(FAILED(hr) || pPidEnum==NULL)
+			{
+				Log("unable to get IEnumPIDMap :0x%x",hr);
+				delete[] pm;
+				return 5;
+			}
+			// enum and unmap the pids
+			pPidEnum->Next(30,&pm[0],&count);
+			for (int i=0; i < count;++i)
+			{
+				umPid=pm[i].ulPID;
+				if (umPid != videoPID)
+				{
+					Log("  unmap pid:%x", umPid);
+					hr=pMap->UnmapPID(1,&umPid);
+					if (FAILED(hr))
+					{
+						Log("unable to unmap pid:%x %x", umPid,hr);
+					}
+				}
+			}
+			pPidEnum->Release();
+		}
+		pMap->Release();
 	}
 	catch(...)
 	{
@@ -637,7 +635,7 @@ HRESULT SetupDemuxerPids(IPin *pVideo,int *videoPID, int pidCount,int elementary
 	try
 	{
 
-		Log("setup pids:%d", pidCount);
+		Log("setup pids: count %d", pidCount);
 		// video
 		if (pVideo!=NULL)
 		{
@@ -647,6 +645,22 @@ HRESULT SetupDemuxerPids(IPin *pVideo,int *videoPID, int pidCount,int elementary
 				Log("unable get IMPEG2PIDMap  %x",hr);
 				delete[] pm;
 				return 1;
+			}
+			for (int i=0; i <pidCount;++i)
+			{
+				if (videoPID[i]>=0 && videoPID[i] < 0x1fff)
+				{
+					// map new pid
+					Log("  map pid:%x", videoPID[i]);
+					pid = (ULONG)videoPID[i];
+					hr=pMap->MapPID(1,&pid,(MEDIA_SAMPLE_CONTENT)elementary_stream);
+					if(FAILED(hr))
+					{
+						Log("unable map pid:%x %x", pid,hr);
+						delete[] pm;
+						return 2;
+					}
+				}
 			}
 
 			if (unmapOtherPids)
@@ -669,7 +683,6 @@ HRESULT SetupDemuxerPids(IPin *pVideo,int *videoPID, int pidCount,int elementary
 					{
 						if (umPid == videoPID[x]) 
 						{
-							videoPID[x]=0x2000;
 							mapped=TRUE;
 						}
 					}
@@ -683,31 +696,10 @@ HRESULT SetupDemuxerPids(IPin *pVideo,int *videoPID, int pidCount,int elementary
 							Log("unable unmap pid:%x %x", umPid,hr);
 						}
 					}
-					else
-					{
-						Log("  pid:%x already mapped", umPid);
-						mapped=TRUE;
-					}
 				}
 				pPidEnum->Release();
 			}
 
-			for (int i=0; i <pidCount;++i)
-			{
-				if (videoPID[i]>=0 && videoPID[i] < 0x1fff)
-				{
-					// map new pid
-					Log("  map pid:%x", videoPID[i]);
-					pid = (ULONG)videoPID[i];
-					hr=pMap->MapPID(1,&pid,(MEDIA_SAMPLE_CONTENT)elementary_stream);
-					if(FAILED(hr))
-					{
-						Log("unable map pid:%x %x", pid,hr);
-						delete[] pm;
-						return 2;
-					}
-				}
-			}
 			pMap->Release();
 		}
 	}
@@ -720,8 +712,6 @@ HRESULT SetupDemuxerPids(IPin *pVideo,int *videoPID, int pidCount,int elementary
 }
 HRESULT DumpMpeg2DemuxerMappings(IBaseFilter* mpeg2Demuxer)
 {
-	return S_OK;
-	/*
 	Log("Mpeg2DemuxerMappings");
   IEnumPins* enumPins;
   if ( FAILED(mpeg2Demuxer->EnumPins(&enumPins)))
@@ -763,7 +753,7 @@ HRESULT DumpMpeg2DemuxerMappings(IBaseFilter* mpeg2Demuxer)
     }
   }
   enumPins->Release();
-  return S_OK;*/
+  return S_OK;
 }
 //
 

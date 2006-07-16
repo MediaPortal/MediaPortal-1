@@ -1080,7 +1080,7 @@ namespace MediaPortal.Player
       _mediaSeeking.GetDuration(out lDuration);
       _duration = lDuration;
       _duration /= 10000000d;
-      //_log.Info("Duration:{0}", _duration.ToString("f2"));
+      //_log.Info("Duration:{0} pos:{1}", _duration.ToString("f2"), CurrentPosition.ToString("f2"));
     }
 
     /// <summary> create the used COM components and get the interfaces. </summary>
