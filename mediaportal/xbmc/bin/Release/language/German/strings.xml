@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <strings>
    <characters>255</characters>
-   <string>
+   <string Prefix="Meine ">
       <id>0</id>
       <value>Anwendungen</value>
    </string>
-   <string>
+   <string Prefix="Meine ">
       <id>1</id>
       <value>Bilder</value>
    </string>
-   <string>
+   <string Prefix="Meine ">
       <id>2</id>
       <value>Musik</value>
    </string>
-   <string>
+   <string Prefix="Meine ">
       <id>3</id>
       <value>Videos</value>
    </string>
@@ -29,19 +29,19 @@
       <id>6</id>
       <value>MediaPortal SVN Version</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>7</id>
       <value>Datei-Manager</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>8</id>
       <value>Wetter</value>
    </string>
-   <string>
+   <string Prefix="Meine ">
       <id>9</id>
       <value>Nachrichten</value>
    </string>
-   <string>
+   <string Prefix="Meine ">
       <id>10</id>
       <value>Rezepte</value>
    </string>
@@ -121,7 +121,7 @@
       <id>32</id>
       <value>Dezember</value>
    </string>
-   <string>
+   <string Prefix="Meine ">
       <id>50</id>
       <value>DVDs</value>
    </string>
@@ -177,11 +177,11 @@
       <id>112</id>
       <value>Angehalten</value>
    </string>
-   <string>
+   <string Prefix="Meine ">
       <id>113</id>
       <value>Dateien: Quelle</value>
    </string>
-   <string>
+   <string Prefix="Meine">
       <id>114</id>
       <value>Dateien: Ziel</value>
    </string>
@@ -1085,7 +1085,7 @@
       <id>340</id>
       <value>Versch. Interpreten</value>
    </string>
-   <string>
+   <string Prefix="Meine ">
       <id>341</id>
       <value>DVD</value>
    </string>
@@ -1381,19 +1381,19 @@
       <id>417</id>
       <value>Ansicht: Kacheln</value>
    </string>
-   <string>
+   <string Prefix="Meine ">
       <id>418</id>
       <value>Videos/Genres</value>
    </string>
-   <string>
+   <string Prefix="Meine ">
       <id>419</id>
       <value>Videos/Schauspieler</value>
    </string>
-   <string>
+   <string Prefix="Meine ">
       <id>420</id>
       <value>Videos/Jahr</value>
    </string>
-   <string>
+   <string Prefix="Meine ">
       <id>421</id>
       <value>Videos/Titel</value>
    </string>
@@ -1937,9 +1937,9 @@
       <id>604</id>
       <value>Aufnahmen</value>
    </string>
-   <string>
+  <string Prefix="Mein ">
       <id>605</id>
-      <value>Fernsehen</value>
+      <value>TV</value>
    </string>
    <string>
       <id>606</id>
@@ -2177,7 +2177,7 @@
       <id>664</id>
       <value>Bild löschen?</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>665</id>
       <value>Radio</value>
    </string>
@@ -2669,7 +2669,7 @@
       <id>820</id>
       <value>Noch nicht gesehene Aufnahme löschen?</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>850</id>
       <value>Alarm</value>
    </string>
@@ -3345,7 +3345,7 @@
       <id>1026</id>
       <value>Für Details bitte in die Log-Files schauen</value>
    </string>
-   <string>
+   <string Prefix="Meine ">
       <id>1027</id>
       <value>DVD</value>
    </string>
@@ -3385,7 +3385,7 @@
       <id>1036</id>
       <value>Kein Video gefunden</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>1037</id>
       <value>Fernsehen - Programm-Info</value>
    </string>
@@ -3481,7 +3481,7 @@
       <id>1200</id>
       <value>Einrichtungs-Assistent</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>1440</id>
       <value>Videotext</value>
    </string>
@@ -3525,7 +3525,7 @@
       <id>1450</id>
       <value>Aufnahme wirklich beenden?</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>1950</id>
       <value>Status</value>
    </string>
@@ -3881,7 +3881,7 @@
       <id>2089</id>
       <value>Qualität einstellen</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>2090</id>
       <value>Videoschnitt</value>
    </string>
@@ -3917,9 +3917,9 @@
       <id>2099</id>
       <value>Aktuelle Position:</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>2100</id>
-      <value>Brennen</value>
+      <value>Brenner</value>
    </string>
    <string>
       <id>2101</id>
@@ -4093,7 +4093,7 @@
       <id>2143</id>
       <value>Hauptmenü</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>2200</id>
       <value>Explorer</value>
    </string>
@@ -4453,7 +4453,7 @@
       <id>4557</id>
       <value>Alle zur Wiedergabeliste hinzufügen</value>
    </string>
-   <string>
+   <string Prefix="Meine ">
       <id>5900</id>
       <value>Kinotrailer</value>
    </string>
@@ -4661,9 +4661,9 @@
       <id>6025</id>
       <value>Skip-Stufen-Konfiguration</value>
    </string>      
-   <string>
+   <string Prefix="Meine ">
       <id>8000</id>
-      <value>E-Mail</value>
+      <value>E-Mails</value>
    </string>
    <string>
       <id>8001</id>
@@ -4849,7 +4849,7 @@
       <id>10102</id>
       <value>Rekordzeit</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>10103</id>
       <value>Minesweeper</value>
    </string>
@@ -4941,7 +4941,7 @@
       <id>16001</id>
       <value>Partymix</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>19001</id>
       <value>Tetris</value>
    </string>
@@ -4997,7 +4997,7 @@
       <id>25001</id>
       <value>Warte auf Seite {0:X}...!</value>
    </string>
-   <string>
+   <string Prefix="Meine ">
       <id>30000</id>
       <value>Musik-Videos</value>
    </string>
@@ -5038,15 +5038,15 @@
       <id>100000</id>
       <value>Hauptmenü</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100001</id>
       <value>Fernsehen</value>
    </string>
-   <string>
+   <string Prefix="Meine ">
       <id>100002</id>
       <value>Bilder</value>
    </string>
-   <string>
+   <string Prefix="Meine ">
       <id>100003</id>
       <value>Dateien</value>
    </string>
@@ -5054,11 +5054,11 @@
       <id>100004</id>
       <value>Einstellungen</value>
    </string>
-   <string>
+   <string Prefix="Meine ">
       <id>100005</id>
       <value>Musik</value>
    </string>
-   <string>
+   <string Prefix="Meine ">
       <id>100006</id>
       <value>Filme</value>
    </string>
@@ -5110,15 +5110,15 @@
       <id>100020</id>
       <value>Einstellungen-&gt;Skripte</value>
    </string>
-   <string>
+   <string Prefix="Meine ">
       <id>100021</id>
       <value>Filme/Genre</value>
    </string>
-   <string>
+   <string Prefix="Meine ">
       <id>100022</id>
       <value>Filme/Schauspieler</value>
    </string>
-   <string>
+   <string Prefix="Meine ">
       <id>100023</id>
       <value>Filme/Jahr</value>
    </string>
@@ -5126,7 +5126,7 @@
       <id>100024</id>
       <value>Einstellungen-&gt;Programme</value>
    </string>
-   <string>
+   <string Prefix="Meine ">
       <id>100025</id>
       <value>Filme/Titel</value>
    </string>
@@ -5138,7 +5138,7 @@
       <id>100027</id>
       <value>Einstellungen-&gt;Allgemein-&gt;Autostart</value>
    </string>
-   <string>
+   <string Prefix="Meine ">
       <id>100028</id>
       <value>Filme/Wiedergabeliste</value>
    </string>
@@ -5146,7 +5146,7 @@
       <id>100029</id>
       <value>Einstellungen-&gt;Allgemein-&gt;LCD</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100030</id>
       <value>Radio</value>
    </string>
@@ -5174,245 +5174,245 @@
       <id>100101</id>
       <value>Bitte warten...</value>
    </string>
-   <string>
+   <string Prefix="Meine ">
       <id>100500</id>
       <value>Musik/Wiedergabeliste</value>
    </string>
-   <string>
+   <string Prefix="Meine ">
       <id>100501</id>
       <value>Musik/Dateien</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100502</id>
       <value>Musik/Alben</value>
    </string>
-   <string>
+   <string Prefix="Meine ">
       <id>100503</id>
       <value>Musik/Interpret</value>
    </string>
-   <string>
+   <string Prefix="Meine ">
       <id>100504</id>
       <value>Musik/Genre</value>
    </string>
-   <string>
+   <string Prefix="Meine ">
       <id>100505</id>
       <value>Musik/Top100</value>
    </string>
-   <string>
+   <string Prefix="Meine ">
       <id>100506</id>
       <value>Musik/Favoriten</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100600</id>
       <value>Fernsehen/TV-Programm</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100601</id>
       <value>Fernsehen/Timer</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100602</id>
       <value>Fernsehen/Vollbild</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100603</id>
       <value>Fernsehen/Aufnahmen</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100604</id>
       <value>Fernsehen/Suche</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100605</id>
       <value>Fernsehen/Aufnahmen/Genre</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100606</id>
       <value>Fernsehen/Aufnahmen/Kanäle</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100607</id>
       <value>Fernsehen/Timer/Prioritäten</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100608</id>
       <value>Fernsehen/Timer/Überschneidungen</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100609</id>
       <value>Fernsehen/Komprimieren/Hauptmenü</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100610</id>
       <value>Fernsehen/Komprimieren/Einstellungen</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100611</id>
       <value>Fernsehen/Komprimieren/Automatisch</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100612</id>
       <value>Fernsehen/Komprimieren/Komprimieren</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100613</id>
       <value>Fernsehen/Komprimieren/Status</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100614</id>
-      <value>Video-Künstler-Info</value>
+      <value>Video/Künstler-Info</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100615</id>
       <value>Assistent/Willkommen</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100616</id>
       <value>Assistent/Karten gefunden</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100617</id>
       <value>Assistent/Land</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100618</id>
       <value>Assistent/Kanalsuche</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100619</id>
       <value>Assistent/DVBC/Land</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100620</id>
       <value>Assistent/DVBC/Kanalsuche</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100621</id>
       <value>Assistent/DVBS/LNB</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100622</id>
       <value>Assistent/DVBS/LNB-Details</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100623</id>
       <value>Assistent/DVBS/Transponder</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100624</id>
       <value>Assistent/DVBS/Kanalsuche</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100625</id>
       <value>Assistent/ATSC/Kanalsuche</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100626</id>
       <value>Assistent/Analog/Land</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100627</id>
       <value>Assistent/Analog/Stadt</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100628</id>
       <value>Assistent/Analog/Importiert</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100629</id>
       <value>Assistent/Analog/Manuell</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100630</id>
       <value>Assistent/Analog/Kanalsuche</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100631</id>
       <value>Assistent/Analog/Umbenennen</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100632</id>
       <value>Assistent/Analog/Radio</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100633</id>
       <value>Assistent/Analog/Radio umbenennen</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100634</id>
       <value>Assistent/Fernbedienung</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100635</id>
       <value>Assistent/EPG</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100699</id>
       <value>Assistent/Fertig</value>
    </string>
-   <string>
+   <string Prefix="Meine ">
       <id>100700</id>
       <value>TV-Einstellungen</value>
    </string>
-   <string>
+   <string Prefix="Meine ">
       <id>100701</id>
       <value>TV-Aufnahme-Einstellungen</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100702</id>
       <value>TV-Kanäle sortieren</value>
    </string>
-   <string>
+   <string Prefix="Meine ">
       <id>100703</id>
       <value>TV-Film-Einstellungen</value>
    </string>
-   <string>
+   <string Prefix="Meine ">
       <id>100704</id>
       <value>DVD-Einstellungen</value>
    </string>
-   <string>
+   <string Prefix="Meine ">
       <id>100705</id>
       <value>Oberflächen-Einstellungen</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100748</id>
       <value>Programm-Info</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100749</id>
       <value>TV/Kein Signal</value>
    </string>
-   <string>
+   <string Prefix="Meine ">
       <id>100750</id>
       <value>Rezepte</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100755</id>
-      <value>Status</value>
+      <value>Statusmonitor</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100756</id>
-      <value>Status Details</value>
+      <value>Statusmonitor/Details</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100757</id>
-      <value>Status Einstellungen</value>
+      <value>Statusmonitor/Einstellungen</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100758</id>
       <value>Datei-Dialog</value>
    </string>
-   <string>
+   <string Prefix="Meine ">
       <id>100759</id>
       <value>Info zu Aufnahmen</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100760</id>
       <value>Brenner</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>100770</id>
-      <value>Explorer</value>
+      <value>Datei-Manager</value>
    </string>
    <string>
       <id>101000</id>
@@ -5422,7 +5422,7 @@
       <id>102000</id>
       <value>Auswahldialog</value>
    </string>
-   <string>
+   <string Prefix="Meine ">
       <id>102001</id>
       <value>Musik/Info</value>
    </string>
@@ -5430,11 +5430,11 @@
       <id>102002</id>
       <value>Dialog Ok</value>
    </string>
-   <string>
+   <string Prefix="Meine ">
       <id>102003</id>
       <value>Filme/Info</value>
    </string>
-   <string>
+   <string Prefix="Meine ">
       <id>102004</id>
       <value>Skripte/Info</value>
    </string>
@@ -5446,7 +5446,7 @@
       <id>102006</id>
       <value>Audio-Visualisierung</value>
    </string>
-   <string>
+   <string Prefix="Meine ">
       <id>102007</id>
       <value>Bilder/Diashow</value>
    </string>
@@ -5486,11 +5486,11 @@
       <id>102016</id>
       <value>Benachrichtigung</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>102600</id>
       <value>Wetter</value>
    </string>
-   <string>
+   <string Prefix="Meine ">
       <id>102700</id>
       <value>Nachrichten</value>
    </string>
@@ -5502,23 +5502,23 @@
       <id>102901</id>
       <value>Vollbild OSD</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>103003</id>
       <value>TV/OSD</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>103006</id>
       <value>TV/MSN OSD</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>103007</id>
       <value>TV/Zap OSD</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>107700</id>
       <value>TV/Videotext</value>
    </string>
-   <string>
+   <string Prefix="Mein ">
       <id>107701</id>
       <value>TV/Videotext</value>
    </string>

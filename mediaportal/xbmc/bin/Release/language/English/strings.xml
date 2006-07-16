@@ -3881,7 +3881,7 @@
       <id>2089</id>
       <value>adjust quality</value>
    </string>
-   <string>
+   <string Prefix="My ">
       <id>2090</id>
       <value>Dvr-MpegCut</value>
    </string>

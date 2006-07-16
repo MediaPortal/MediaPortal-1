@@ -24,7 +24,6 @@
 #endregion
 
 using System;
-using System.Globalization;
 using System.IO;
 using System.Collections;
 using System.ComponentModel;
@@ -54,15 +53,10 @@ namespace MediaPortal.Configuration.Sections
     const int WM_SETTINGCHANGE = 0x1A;
     const int SMTO_ABORTIFHUNG = 0x2;
     const int HWND_BROADCAST = 0xFFFF;
-
-    const string LanguageDirectory = @"language\";
-    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
-    private MediaPortal.UserInterface.Controls.MPComboBox languageComboBox;
-    private MediaPortal.UserInterface.Controls.MPLabel label2;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
+        
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxGeneralSettings;
     private System.Windows.Forms.CheckedListBox settingsCheckedListBox;
     private System.ComponentModel.IContainer components = null;
-    private CheckBox checkBoxlangRTL;
     protected ILog _log;
 
     public General()
@@ -78,59 +72,8 @@ namespace MediaPortal.Configuration.Sections
 
       // This call is required by the Windows Form Designer.
       InitializeComponent();
-
-      //
-      // Populate comboboxes
-      //
-      LoadLanguages();
     }
 
-    private void LoadLanguages()
-    {
-      // Get system language
-      string strLongLanguage = CultureInfo.CurrentCulture.EnglishName;
-      int iTrimIndex = strLongLanguage.IndexOf(" ", 0, strLongLanguage.Length);
-      string strShortLanguage = strLongLanguage.Substring(0, iTrimIndex);
-
-      bool bExactLanguageFound = false;
-      if (Directory.Exists(LanguageDirectory))
-      {
-        string[] folders = Directory.GetDirectories(LanguageDirectory, "*.*");
-
-        foreach (string folder in folders)
-        {
-          string fileName = folder.Substring(@"language\".Length);
-
-          //
-          // Exclude cvs folder
-          //
-          if (fileName.ToLower() != "cvs")
-          {
-            if (fileName.Length > 0)
-            {
-              fileName = fileName.Substring(0, 1).ToUpper() + fileName.Substring(1);
-              languageComboBox.Items.Add(fileName);
-
-              // Check language file to user region language
-              if (fileName.ToLower() == strLongLanguage.ToLower())
-              {
-                languageComboBox.Text = fileName;
-                bExactLanguageFound = true;
-              }
-              else if (!bExactLanguageFound && (fileName.ToLower() == strShortLanguage.ToLower()))
-              {
-                languageComboBox.Text = fileName;
-              }
-            }
-          }
-        }
-      }
-
-      if (languageComboBox.Text == "")
-      {
-        languageComboBox.Text = "English";
-      }
-    }
 
     /// <summary>
     /// Clean up any resources being used.
@@ -152,19 +95,19 @@ namespace MediaPortal.Configuration.Sections
       new string[] { "general", "minimizeonstartup", "false" },
       new string[] { "general", "minimizeonexit", "false" },
       new string[] { "general", "autohidemouse", "true" },
-			new string[] { "general", "mousesupport", "true" }, 
+	  new string[] { "general", "mousesupport", "true" }, 
       new string[] { "general", "hideextensions", "true" },
       new string[] { "general", "animations", "true" },
-			new string[] { "general", "autostart", "false" },
-			new string[] { "general", "baloontips", "false" },
-			new string[] { "general", "dblclickasrightclick", "false" },
-			new string[] { "general", "hidetaskbar", "true" },
-			new string[] { "general", "alwaysontop", "true" },
-			new string[] { "general", "exclusivemode", "true" },
-			new string[] { "general", "enableguisounds", "true" },
-			new string[] { "general", "screensaver", "false" },
+	  new string[] { "general", "autostart", "false" },
+	  new string[] { "general", "baloontips", "false" },
+	  new string[] { "general", "dblclickasrightclick", "false" },
+	  new string[] { "general", "hidetaskbar", "true" },
+	  new string[] { "general", "alwaysontop", "true" },
+	  new string[] { "general", "exclusivemode", "true" },
+	  new string[] { "general", "enableguisounds", "true" },
+	  new string[] { "general", "screensaver", "false" },
       new string[] { "general", "turnoffmonitor", "false" },
-			new string[] { "general", "startbasichome", "false" },
+	  new string[] { "general", "startbasichome", "false" },
       new string[] { "general", "turnmonitoronafterresume", "false" },
       new string[] { "general", "allowfocus", "false" }};
 
@@ -190,11 +133,6 @@ namespace MediaPortal.Configuration.Sections
           settingsCheckedListBox.SetItemChecked(index, xmlreader.GetValueAsBool(currentSection[0], currentSection[1], bool.Parse(currentSection[2])));
         }
 
-        //
-        // Set language
-        //
-        languageComboBox.Text = xmlreader.GetValueAsString("skin", "language", languageComboBox.Text);
-        checkBoxlangRTL.Checked = xmlreader.GetValueAsBool("skin", "rtllang", false);
         //numericUpDown1.Value=xmlreader.GetValueAsInt("vmr9OSDSkin","alphaValue",10);
 
         // Allow Focus
@@ -214,18 +152,7 @@ namespace MediaPortal.Configuration.Sections
         {
           string[] currentSection = sectionEntries[index];
           xmlwriter.SetValueAsBool(currentSection[0], currentSection[1], settingsCheckedListBox.GetItemChecked(index));
-        }
-
-        //
-        // Set language
-        string prevLanguage = xmlwriter.GetValueAsString("skin", "language", "English");
-        string skin = xmlwriter.GetValueAsString("skin", "name", "mce");
-        if (prevLanguage != languageComboBox.Text)
-          MediaPortal.Util.Utils.DeleteFiles(@"skin\" + skin + @"\fonts", "*");
-
-        xmlwriter.SetValue("skin", "language", languageComboBox.Text);
-        xmlwriter.SetValueAsBool("skin", "rtllang", checkBoxlangRTL.Checked);
-
+        }        
         //xmlwriter.SetValue("vmr9OSDSkin","alphaValue",numericUpDown1.Value);
       }
 
@@ -282,79 +209,30 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.checkBoxlangRTL = new System.Windows.Forms.CheckBox();
-      this.languageComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.groupBoxGeneralSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.settingsCheckedListBox = new System.Windows.Forms.CheckedListBox();
-      this.mpGroupBox1.SuspendLayout();
-      this.groupBox1.SuspendLayout();
+      this.groupBoxGeneralSettings.SuspendLayout();
       this.SuspendLayout();
       // 
-      // mpGroupBox1
+      // groupBoxGeneralSettings
       // 
-      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpGroupBox1.Controls.Add(this.checkBoxlangRTL);
-      this.mpGroupBox1.Controls.Add(this.languageComboBox);
-      this.mpGroupBox1.Controls.Add(this.label2);
-      this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox1.Location = new System.Drawing.Point(0, 0);
-      this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(472, 56);
-      this.mpGroupBox1.TabIndex = 0;
-      this.mpGroupBox1.TabStop = false;
-      this.mpGroupBox1.Text = "Language Settings";
-      // 
-      // checkBoxlangRTL
-      // 
-      this.checkBoxlangRTL.AutoSize = true;
-      this.checkBoxlangRTL.Location = new System.Drawing.Point(336, 24);
-      this.checkBoxlangRTL.Name = "checkBoxlangRTL";
-      this.checkBoxlangRTL.Size = new System.Drawing.Size(123, 17);
-      this.checkBoxlangRTL.TabIndex = 2;
-      this.checkBoxlangRTL.Text = "Right to left direction";
-      this.checkBoxlangRTL.UseVisualStyleBackColor = true;
-      // 
-      // languageComboBox
-      // 
-      this.languageComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.languageComboBox.BorderColor = System.Drawing.Color.Empty;
-      this.languageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.languageComboBox.Location = new System.Drawing.Point(118, 21);
-      this.languageComboBox.Name = "languageComboBox";
-      this.languageComboBox.Size = new System.Drawing.Size(202, 21);
-      this.languageComboBox.TabIndex = 1;
-      // 
-      // label2
-      // 
-      this.label2.Location = new System.Drawing.Point(16, 24);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(96, 16);
-      this.label2.TabIndex = 0;
-      this.label2.Text = "Display language:";
-      // 
-      // groupBox1
-      // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox1.Controls.Add(this.settingsCheckedListBox);
-      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox1.Location = new System.Drawing.Point(0, 64);
-      this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(472, 328);
-      this.groupBox1.TabIndex = 1;
-      this.groupBox1.TabStop = false;
-      this.groupBox1.Text = "General Settings";
+      this.groupBoxGeneralSettings.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
+                  | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.groupBoxGeneralSettings.Controls.Add(this.settingsCheckedListBox);
+      this.groupBoxGeneralSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxGeneralSettings.Location = new System.Drawing.Point(0, 3);
+      this.groupBoxGeneralSettings.Name = "groupBoxGeneralSettings";
+      this.groupBoxGeneralSettings.Size = new System.Drawing.Size(472, 328);
+      this.groupBoxGeneralSettings.TabIndex = 1;
+      this.groupBoxGeneralSettings.TabStop = false;
+      this.groupBoxGeneralSettings.Text = "General Settings";
       // 
       // settingsCheckedListBox
       // 
-      this.settingsCheckedListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.settingsCheckedListBox.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
+                  | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
       this.settingsCheckedListBox.CheckOnClick = true;
       this.settingsCheckedListBox.Items.AddRange(new object[] {
             "Start MediaPortal in fullscreen mode",
@@ -385,13 +263,10 @@ namespace MediaPortal.Configuration.Sections
       // General
       // 
       this.BackColor = System.Drawing.SystemColors.Control;
-      this.Controls.Add(this.groupBox1);
-      this.Controls.Add(this.mpGroupBox1);
+      this.Controls.Add(this.groupBoxGeneralSettings);
       this.Name = "General";
       this.Size = new System.Drawing.Size(472, 408);
-      this.mpGroupBox1.ResumeLayout(false);
-      this.mpGroupBox1.PerformLayout();
-      this.groupBox1.ResumeLayout(false);
+      this.groupBoxGeneralSettings.ResumeLayout(false);
       this.ResumeLayout(false);
 
     }
