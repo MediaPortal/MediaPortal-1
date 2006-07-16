@@ -320,6 +320,12 @@
          <textcolor3>ffffffff</textcolor3>
          <textureFocus>list_sub_focus.png</textureFocus>
       </control>
-
+      <control>
+         <type>image</type>
+         <id>36</id>
+         <posX>8</posX>
+         <posY>512</posY>
+         <texture></texture>
+      </control>
    </controls>
 </window>
