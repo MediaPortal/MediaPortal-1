@@ -24,6 +24,7 @@ using System.Drawing;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Animation;
 
 namespace MediaPortal.GUI.Library
 {
@@ -75,7 +76,7 @@ namespace MediaPortal.GUI.Library
 
     [XMLSkinElement("hoverHeight")]
     protected int _hoverHeight;
-
+				
     protected GUIImage _hoverImage;
 
     protected int _frameCounter = 0;
@@ -134,7 +135,8 @@ namespace MediaPortal.GUI.Library
 
       _imageFocused.Filtering = false;
       _imageNonFocused.Filtering = false;
-      GUILocalizeStrings.LocalizeLabel(ref _label);
+			      
+			GUILocalizeStrings.LocalizeLabel(ref _label);
       _labelControl = new GUILabelControl(_parentControlId, 0, _positionX, _positionY, _width, _height, _fontName, _label, _textColor, GUIControl.Alignment.ALIGN_LEFT, false);
       _labelControl.TextAlignment = _textAlignment;
       _labelControl.DimColor = DimColor;
@@ -162,6 +164,14 @@ namespace MediaPortal.GUI.Library
         if (value != base.Focus && value)
         {
           GUIPropertyManager.SetProperty("#highlightedbutton", Label);
+					if (value == true)
+					{
+						if (_imageFocused != null) _imageFocused.BeginAnimation();
+					}
+					else
+					{
+						if (_imageNonFocused != null) _imageNonFocused.BeginAnimation();
+					}
         }
 
         base.Focus = value;

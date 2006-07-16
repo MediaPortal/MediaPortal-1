@@ -26,6 +26,7 @@
 using System;
 using System.Drawing;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Windows.Media.Animation;
@@ -44,11 +45,47 @@ namespace MediaPortal.GUI.Library
     public GUIAnimation(int parentId)
       : base(parentId)
     {
+			InitTriggerList();
     }
 
+		public GUIAnimation(GUIAnimation a)
+			:base(a._parentControlId, a._controlId, a._positionX, a._positionY, a._width, a._height)
+		{
+			_animating = false;
+      _isFirstRender = true;
+      _iterationCount = 0;
+      _startTick = 0;
+      _hidePngAnimations = false;
+		  _triggerList = a._triggerList.GetRange(0, a._triggerList.Count);
+			_easing = a._easing;
+      _fillBehavior = a._fillBehavior;
+      _horizontalAlignment = a._horizontalAlignment;
+      _textureNames = a._textureNames;
+      _rate = a._rate;
+      _duration = a._duration;
+      _repeatBehavior = a._repeatBehavior;
+      _verticalAlignment = a._verticalAlignment;
+      _triggerNames = a._triggerNames;
+			InitTriggerList();
+		}
     #endregion Constructors
 
     #region Methods
+
+		protected void InitTriggerList()
+		{
+			_triggerList.Clear();
+			if (_triggerNames == String.Empty) return;
+
+			foreach (string trigger in _triggerNames.Split(';'))
+			{
+				switch ((trigger.Trim()).ToUpper())
+				{
+					case "INIT": _triggerList.Add(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT); break;
+					case "FOCUS": _triggerList.Add(GUIMessage.MessageType.GUI_MSG_SETFOCUS); break;
+				}
+			}
+		}
 
     public void Begin()
     {
@@ -121,9 +158,9 @@ namespace MediaPortal.GUI.Library
 
         _images[index].SetPosition(x, y);
       }
-    }
+		}
 
-    public override void FreeResources()
+		public override void FreeResources()
     {
       if (_images == null)
         return;
@@ -133,6 +170,16 @@ namespace MediaPortal.GUI.Library
 
       _images = null;
     }
+
+		public override bool OnMessage(GUIMessage message)
+		{
+			foreach (GUIMessage.MessageType triggerMsg in _triggerList)
+			{
+				if (triggerMsg == message.Message) Begin(); 
+			}
+			
+			return (base.OnMessage(message));
+		}
 
     public override void Render(float timePassed)
     {
@@ -257,6 +304,9 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("VerticalAlignment")]
     protected VerticalAlignment _verticalAlignment = VerticalAlignment.Top;
 
+		[XMLSkinElement("Triggers")]
+		protected string _triggerNames = "init";
+		
     #endregion Properties (Skin)
 
     #region Fields
@@ -269,6 +319,7 @@ namespace MediaPortal.GUI.Library
     static int _imageId = 200000;
     double _startTick = 0;
     bool _hidePngAnimations = false;
+		protected List<GUIMessage.MessageType> _triggerList = new List<GUIMessage.MessageType>();
 
     #endregion Fields
   }

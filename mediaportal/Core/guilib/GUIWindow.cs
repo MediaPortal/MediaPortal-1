@@ -1121,7 +1121,8 @@ namespace MediaPortal.GUI.Library
     {
       if (message == null) return true;
       //lock (this)
-      int id;
+      AnimationTrigger(message);
+			int id;
       {
         try
         {
@@ -1315,7 +1316,9 @@ namespace MediaPortal.GUI.Library
 
     void TemporaryAnimationTrigger()
     {
-      if (_children == null)
+//BAV: Testing
+return;      
+			if (_children == null)
         return;
 
       // this method is a temporary fix to Harley's animation not starting on subsequent selection of a page
@@ -1325,6 +1328,17 @@ namespace MediaPortal.GUI.Library
           ((GUIAnimation)element).Begin();
       }
     }
+
+		void AnimationTrigger(GUIMessage message)
+		{
+			if (_children == null) return;
+		
+			foreach (UIElement element in _children)
+			{
+				if (element is GUIAnimation)
+					((GUIAnimation)element).OnMessage(message);
+			}
+		}
 
     #endregion
 
