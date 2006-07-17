@@ -233,7 +233,7 @@ namespace MediaPortal.Player
               byte[] value1Zeros = new byte[4];
               byte[] valueZero = new byte[1];
               byte[] valueOne = new byte[1];
-              valueOneZeroZeroZero[0] = 3; valueOneZeroZeroZero[1] = valueOneZeroZeroZero[2] = valueOneZeroZeroZero[3] = 0;
+              valueOneZeroZeroZero[0] = 0; valueOneZeroZeroZero[1] = valueOneZeroZeroZero[2] = valueOneZeroZeroZero[3] = 0;
               valueZeroZeroZeroZero[0] = valueZeroZeroZeroZero[1] = valueZeroZeroZeroZero[2] = valueZeroZeroZeroZero[3] = 0;
               valueZero[0] = 0;
               valueOne[0] = 1;
