@@ -257,6 +257,10 @@ namespace MediaPortal.GUI.Video
         if (xmlreader.GetValueAsBool("movies", "rememberlastfolder", false))
         {
           string lastFolder = xmlreader.GetValueAsString("movies", "lastfolder", currentFolder);
+          if (VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(lastFolder)))
+          {
+            lastFolder = "root";
+          }
           if (lastFolder != "root")
             currentFolder = lastFolder;
         }
@@ -423,6 +427,28 @@ namespace MediaPortal.GUI.Video
 
     protected override void LoadDirectory(string newFolderName)
     {
+
+      // Mounting and loading a DVD image file takes a long time,
+      // so display a message letting the user know that something 
+      // is happening.
+      if (VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(newFolderName)))
+      {
+        if (PlayMountedImageFile(GetID, newFolderName))
+        {
+          return;
+        }
+        else
+        {
+          if (DaemonTools.IsMounted(currentFolder))
+          {
+            newFolderName = DaemonTools.GetVirtualDrive() + @"\";
+          }
+          else
+          {
+            return;
+          }
+        }
+      }
       GUIListItem selectedListItem = facadeView.SelectedListItem;
       if (selectedListItem != null)
       {
@@ -447,37 +473,8 @@ namespace MediaPortal.GUI.Video
       string objectCount = String.Empty;
 
       ArrayList itemlist = new ArrayList();
-
-      // Mounting and loading a DVD image file takes a long time,
-      // so display a message letting the user know that something 
-      // is happening.
-      if (VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(currentFolder)))
-      {
-        if (PlayMountedImageFile(GetID, currentFolder))
-        {
-          currentFolder = System.IO.Path.GetDirectoryName(currentFolder);
-          return;
-        }
-        else
-        {
-          if (DaemonTools.IsMounted(currentFolder))
-          {
-            currentFolder = DaemonTools.GetVirtualDrive() + @"\";
-            GUIControl.ClearControl(GetID, facadeView.GetID);
-            itemlist = m_directory.GetDirectory(currentFolder);
-          }
-          else
-          {
-            return;
-          }
-        }
-      }
-      else
-      {
-        GUIControl.ClearControl(GetID, facadeView.GetID);
-        itemlist = m_directory.GetDirectory(currentFolder);
-      }
-
+      GUIControl.ClearControl(GetID, facadeView.GetID);
+      itemlist = m_directory.GetDirectory(currentFolder);
       if (mapSettings.Stack)
       {
         ArrayList itemfiltered = new ArrayList();
