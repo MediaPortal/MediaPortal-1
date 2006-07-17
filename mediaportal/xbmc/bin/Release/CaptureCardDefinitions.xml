@@ -13986,4 +13986,36 @@
       </connections>
     </tv>
   </capturecard>
+
+  <capturecard commercialname="KWorld 310U USB" capturename="BDA 2881 Capture" devid="vid_eb1a&amp;pid_a310&amp;mi_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"  checkdevice="false"/>
+        <filter cat="tunerdevice"     name="BDA 2881 TVTuner"                 checkdevice="true"/>
+        <filter cat="capture"         name="BDA 2881 Capture"                 checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Easy TV USB DVB-T Stick" capturename="AF9005 BDA Capture Filter" devid="vid_15a4&amp;pid_9020">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"/>
+        <filter cat="tunerdevice"     name="AF9005 BDA Tuner Filter"          checkdevice="true"/>
+        <filter cat="capture"         name="AF9005 BDA Capture Filter"        checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
 </capturecards>
