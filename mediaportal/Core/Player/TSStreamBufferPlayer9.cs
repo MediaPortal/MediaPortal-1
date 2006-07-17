@@ -221,7 +221,7 @@ namespace MediaPortal.Player
         #region tsfilesource settings
         _log.Info("TSStreamBufferPlayer9:initialize tsfilesource");
         bool autoMode = true;         // let tsfilesource control demux and build graph
-        bool supplyMediaType = false;  // supply media type during load
+        bool supplyMediaType = true;  // supply media type during load
         try
         {
           using (RegistryKey hklm = Registry.LocalMachine)
@@ -233,7 +233,7 @@ namespace MediaPortal.Player
               byte[] value1Zeros = new byte[4];
               byte[] valueZero = new byte[1];
               byte[] valueOne = new byte[1];
-              valueOneZeroZeroZero[0] = 1; valueOneZeroZeroZero[1] = valueOneZeroZeroZero[2] = valueOneZeroZeroZero[3] = 0;
+              valueOneZeroZeroZero[0] = 3; valueOneZeroZeroZero[1] = valueOneZeroZeroZero[2] = valueOneZeroZeroZero[3] = 0;
               valueZeroZeroZeroZero[0] = valueZeroZeroZeroZero[1] = valueZeroZeroZeroZero[2] = valueZeroZeroZeroZero[3] = 0;
               valueZero[0] = 0;
               valueOne[0] = 1;
