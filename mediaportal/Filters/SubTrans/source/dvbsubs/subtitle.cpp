@@ -74,6 +74,7 @@ int CSubtitle::RenderBitmap( unsigned char* buffer, char *file_name, unsigned ch
 {
 	uint8_t colorData( 0 );
 	long position( 0 );
+  m_FirstScanline = -1;
 /*	BITMAPINFOHEADER bmi;
 	BITMAPFILEHEADER bfi;
 
@@ -96,7 +97,16 @@ int CSubtitle::RenderBitmap( unsigned char* buffer, char *file_name, unsigned ch
 	{
 		for( int j = 0 ; j < 3 ; j++ )
 		{
-			colorData = buffer[i];
+			if( m_FirstScanline == -1 )
+      {
+        if( buffer[i] > 0 )
+        {
+          m_FirstScanline = i / m_Bitmap.bmWidth;
+          //Log("Subtitle::RenderBitmap - First scanline that contains subtitle picture %d", m_FirstScanline );
+        }
+      }
+
+      colorData = buffer[i];
 			
 			int value = my_palette[colorData * 3 + j];
 
@@ -166,4 +176,9 @@ void CSubtitle::SetPTS( uint64_t PTS )
 {
 	//Log("Subtitle::SetPTS %lld", PTS );
 	m_PTS = PTS;
+}
+
+int CSubtitle::FirstScanline()
+{
+  return m_FirstScanline;
 }

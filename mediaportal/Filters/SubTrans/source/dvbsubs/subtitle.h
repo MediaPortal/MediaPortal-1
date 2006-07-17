@@ -50,11 +50,15 @@ public:
 	
 	void SetPTS( uint64_t PTS );
 
+  int FirstScanline();
+
 	unsigned char* GetData(); 
 
 	int CSubtitle::GetData( int pos );
 
 	unsigned char* m_Data;
+
+  int m_FirstScanline;
 
 private:
 	
