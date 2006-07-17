@@ -439,8 +439,14 @@ namespace MediaPortal.Player
     }
     public void Process()
     {
-      if (!_isVmr9Initialized) return;
-      if (!GUIGraphicsContext.Vmr9Active) return;
+      if (!_isVmr9Initialized)
+      {
+        return;
+      }
+      if (!GUIGraphicsContext.Vmr9Active)
+      {
+        return;
+      }
       if (g_Player.Playing && g_Player.IsDVD && g_Player.IsDVDMenu)
       {
         GUIGraphicsContext.Vmr9FPS = 0f;
@@ -452,10 +458,10 @@ namespace MediaPortal.Player
 
       TimeSpan ts = DateTime.Now - _repaintTimer;
       int frames = FrameCounter;
-      if (ts.TotalMilliseconds >= 1000 || (currentVmr9State == Vmr9PlayState.Playing && FrameCounter>0))
+      if (ts.TotalMilliseconds >= 1000 || (currentVmr9State == Vmr9PlayState.Repaint && FrameCounter>0))
       {
         GUIGraphicsContext.Vmr9FPS = ((float)(frames * 1000)) / ((float)ts.TotalMilliseconds);
-        // _log.Info("VMR9Helper:frames:{0} fps:{1} time:{2}", frames, GUIGraphicsContext.Vmr9FPS,ts.TotalMilliseconds);
+//         _log.Info("VMR9Helper:frames:{0} fps:{1} time:{2}", frames, GUIGraphicsContext.Vmr9FPS,ts.TotalMilliseconds);
         FrameCounter = 0;
 
         if (_threadId == Thread.CurrentThread.ManagedThreadId)
