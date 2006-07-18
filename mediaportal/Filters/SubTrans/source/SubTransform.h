@@ -54,39 +54,39 @@ DECLARE_INTERFACE_( IStreamAnalyzer, IUnknown )
 class CSubTransform : public CTransformFilter, public MSubdecoderObserver
 {
 public:
-    // Constructor & destructor
-    CSubTransform( LPUNKNOWN pUnk, HRESULT *phr );
-    ~CSubTransform();
+  // Constructor & destructor
+  CSubTransform( LPUNKNOWN pUnk, HRESULT *phr );
+  ~CSubTransform();
 
-    // Overridden CTransformFilter methods
-    HRESULT CheckInputType( const CMediaType *mtIn);
-    HRESULT CheckTransform( const CMediaType *mtIn, const CMediaType *mtOut );
-    HRESULT DecideBufferSize( IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES *pProp );
-    HRESULT GetMediaType( int iPosition, CMediaType *pMediaType );
-    HRESULT Transform( IMediaSample *pIn, IMediaSample *pOut );
+  // Overridden CTransformFilter methods
+  HRESULT CheckInputType( const CMediaType *mtIn);
+  HRESULT CheckTransform( const CMediaType *mtIn, const CMediaType *mtOut );
+  HRESULT DecideBufferSize( IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES *pProp );
+  HRESULT GetMediaType( int iPosition, CMediaType *pMediaType );
+  HRESULT Transform( IMediaSample *pIn, IMediaSample *pOut );
 
 	STDMETHODIMP Run( REFERENCE_TIME tStart );
 	STDMETHODIMP Pause();
 	STDMETHODIMP Stop();
 
-    HRESULT BeginFlush( void );
-    HRESULT EndFlush( void );
+  HRESULT BeginFlush( void );
+  HRESULT EndFlush( void );
 
-    CBasePin * GetPin( int n );
-    int GetPinCount();
+  CBasePin * GetPin( int n );
+  int GetPinCount();
 
-    HRESULT SetMediaType(PIN_DIRECTION direction, const CMediaType *pmt);
+  HRESULT SetMediaType(PIN_DIRECTION direction, const CMediaType *pmt);
 
-    static CUnknown * WINAPI CreateInstance(LPUNKNOWN pUnk, HRESULT *pHr);
+  static CUnknown * WINAPI CreateInstance(LPUNKNOWN pUnk, HRESULT *pHr);
 
 	void CSubTransform::GetVideoInfoParameters(
-		const VIDEOINFOHEADER *pvih,	// Pointer to the format header
-		BYTE  * const pbData,			// Pointer to first address in buffer
-		DWORD *pdwWidth,				// Returns the width in pixels
-		DWORD *pdwHeight,				// Returns the height in pixels
-		LONG  *plStrideInBytes,			// Add this to a row to get the new row down
-		BYTE **ppbTop,					// Pointer to first byte in top row of pixels
-		bool bYuv );
+  const VIDEOINFOHEADER *pvih,	// Pointer to the format header
+  BYTE  * const pbData,			// Pointer to first address in buffer
+  DWORD *pdwWidth,				// Returns the width in pixels
+  DWORD *pdwHeight,				// Returns the height in pixels
+  LONG  *plStrideInBytes,			// Add this to a row to get the new row down
+  BYTE **ppbTop,					// Pointer to first byte in top row of pixels
+  bool bYuv );
 
 	
 	HRESULT ConnectToTSFileSource();
@@ -103,22 +103,21 @@ public:
 	void Notify();
 
 private:
-    HRESULT ProcessFrameUYVY( BYTE *pbInput, BYTE *pbOutput, long *pcbByte );
-    HRESULT ProcessFrameYUY2( BYTE *pbInput, BYTE *pbOutput, long *pcbByte );
+  HRESULT ProcessFrameUYVY( BYTE *pbInput, BYTE *pbOutput, long *pcbByte );
+  HRESULT ProcessFrameYUY2( BYTE *pbInput, BYTE *pbOutput, long *pcbByte );
 	
 	void StretchSubtitle();
 
-
-    VIDEOINFOHEADER		m_VihIn;   // Current video format (input)
-    VIDEOINFOHEADER		m_VihOut;  // Current video format (output)
+  VIDEOINFOHEADER		m_VihIn;   // Current video format (input)
+  VIDEOINFOHEADER		m_VihOut;  // Current video format (output)
 
 	CSubtitleInputPin*	m_pSubtitlePin;
-	CAudioInputPin*		m_pAudioPin;
+	CAudioInputPin*		  m_pAudioPin;
 	
 	CDVBSubDecoder*		m_pSubDecoder;
 
 	CCritSec			m_Lock;				// Main renderer critical section
-    CCritSec			m_ReceiveLock;		// Sublock for received samples
+  CCritSec			m_ReceiveLock;		// Sublock for received samples
 
 	unsigned char*		m_curSubtitleData;//[720*576*3];
 	ULONGLONG			m_NextSubtitlePTS;
@@ -131,15 +130,13 @@ private:
 
 	CSubtitle*			m_pSubtitle;
 
-    HBITMAP				m_DibsSub; // dibsection for to-be-scaled subtitle bitmap
-    HDC					m_DC;
-    void *				m_pDibBits;
-    HGDIOBJ				m_OldObject;
+  HBITMAP				m_DibsSub; // dibsection for to-be-scaled subtitle bitmap
+  HDC					  m_DC;
+  void *				m_pDibBits;
+  HGDIOBJ				m_OldObject;
 
 	bool				m_bRenderCurrentSubtitle;
 	bool				m_bSubtitleDiscarded;
-
-
 
 	CComQIPtr<ITSFileSource> m_pTSFileSource;
 };
