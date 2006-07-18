@@ -251,17 +251,20 @@ namespace MediaPortal.GUI.Pictures
               setStuff(ref MyMetadata.ViewerComments, propItem, "10e", "Viewer Comments");
               setStuff(ref MyMetadata.EquipmentMake, propItem, "10f", "Equipment Make");
               setStuff(ref MyMetadata.CameraModel, propItem, "110", "Camera Model");
-              setStuff(ref MyMetadata.DatePictureTaken, propItem, "9003", "Date Picture Taken");
-              string dtstr = MyMetadata.DatePictureTaken.DisplayValue;
-              if (dtstr != null)
+              if (proptext == "9003")
               {
-                try
+                setStuff(ref MyMetadata.DatePictureTaken, propItem, "9003", "Date Picture Taken");
+                string dtstr = MyMetadata.DatePictureTaken.DisplayValue;
+                if (dtstr != null)
                 {
-                  dtstr = dtstr.Substring(0, dtstr.Length - 1);
-                  DateTime dat = DateTime.ParseExact(dtstr, "d", m_dateTimeFormat);
-                  MyMetadata.DatePictureTaken.DisplayValue = Convert.ToString(dat, System.Threading.Thread.CurrentThread.CurrentCulture);
+                  try
+                  {
+                    dtstr = dtstr.Substring(0, m_dateTimeFormat.ShortDatePattern.Length);
+                    DateTime dat = DateTime.ParseExact(dtstr, "d", m_dateTimeFormat);
+                    MyMetadata.DatePictureTaken.DisplayValue = Convert.ToString(dat, System.Threading.Thread.CurrentThread.CurrentCulture);
+                  }
+                  catch (Exception) { }
                 }
-                catch (Exception) { }
               }
 
 

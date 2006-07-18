@@ -117,17 +117,22 @@ namespace MediaPortal.Picture.Database
             ExifMetadata.Metadata metaData = extractor.GetExifMetadata(strPic);
             try
             {
-              DateTimeFormatInfo dateTimeFormat = new DateTimeFormatInfo();
-              dateTimeFormat.ShortDatePattern = "yyyy:MM:dd HH:mm:ss";
+              //Exception here!!! (very bad since the insert doesn't happen then..
+              //  DateTimeFormatInfo dateTimeFormat = new DateTimeFormatInfo();
+              //  dateTimeFormat.ShortDatePattern = "yyyy:MM:dd HH:mm:ss";
+              string picExifDate = metaData.DatePictureTaken.DisplayValue;
+              //DateTime dat = DateTime.ParseExact(picExifDate, "d", dateTimeFormat);
 
-              DateTime dat = DateTime.ParseExact(metaData.DatePictureTaken.DisplayValue, "d", dateTimeFormat);
+              DateTime dat;
+              DateTimeStyles mpPicStyle;
+              mpPicStyle = DateTimeStyles.None;
+              DateTime.TryParseExact(picExifDate, "G", System.Threading.Thread.CurrentThread.CurrentCulture, mpPicStyle, out dat);
               strDateTaken = dat.ToString("yyyy-MM-dd HH:mm:ss");
             }
-            catch (Exception)
+            catch (System.FormatException ex)
             {
+              _log.Error("date conversion exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
             }
-            // Smirnoff: Query the orientation information
-            //						if(iRotation == -1)
             iRotation = EXIFOrientationToRotation(Convert.ToInt32(metaData.Orientation.Hex));
           }
 
@@ -196,7 +201,7 @@ namespace MediaPortal.Picture.Database
           iRotation = EXIFOrientationToRotation(Convert.ToInt32(metaData.Orientation.Hex));
 
           AddPicture(strPicture, iRotation);
-          return 0;
+          return iRotation;
         }
         catch (Exception ex)
         {

@@ -26,6 +26,7 @@
 #region usings
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Threading;
 using System.IO;
@@ -46,11 +47,275 @@ using Direct3D = Microsoft.DirectX.Direct3D;
 
 namespace MediaPortal.GUI.Pictures
 {
+  class SlidePicture
+  {
+    const int MAX_PICTURE_WIDTH = 2040;
+    const int MAX_PICTURE_HEIGHT = 2040;
+
+    private Texture _texture;
+    private int _width = 0;
+    private int _height = 0;
+    private int _rotation = 0;
+
+    private string _filePath;
+    private bool _useActualSizeTexture;
+
+    public Texture Texture
+    {
+      get { return _texture; }
+    }
+
+    public string FilePath
+    {
+      get { return _filePath; }
+    }
+
+    public bool TrueSizeTexture
+    {
+      get { return _useActualSizeTexture; }
+    }
+
+    public int Width
+    {
+      get { return _width; }
+    }
+
+    public int Height
+    {
+      get { return _height; }
+    }
+
+    public int Rotation
+    {
+      get { return _rotation; }
+    }
+
+    public SlidePicture(string strFilePath, bool useActualSizeTexture)
+    {
+      _filePath = strFilePath;
+      using (PictureDatabase dbs = new PictureDatabase())
+      {
+        _rotation = dbs.GetRotation(_filePath);
+      }
+      int iMaxWidth = GUIGraphicsContext.OverScanWidth;
+      int iMaxHeight = GUIGraphicsContext.OverScanHeight;
+
+      _useActualSizeTexture = useActualSizeTexture;
+      if (_useActualSizeTexture)
+      {
+        iMaxWidth = MAX_PICTURE_WIDTH;
+        iMaxHeight = MAX_PICTURE_HEIGHT;
+      }
+
+      _texture = MediaPortal.Util.Picture.Load(strFilePath, _rotation, iMaxWidth, iMaxHeight, true, false, true, out _width, out _height);
+    }
+
+    ~SlidePicture()
+    {
+      if (_texture != null && !_texture.Disposed)
+      {
+        _texture.Dispose();
+        _texture = null;
+      }
+    }
+  }
+
+  class SlideCache
+  {
+    enum RelativeIndex
+    {
+      Prev = 0,
+      Curr = 1,
+      Next = 2
+    }
+
+    Thread _prefetchingThread;
+    Object _prefetchingThreadLock = new Object();
+
+    SlidePicture[] _slides = new SlidePicture[3];
+    Object _slidesLock = new Object();
+
+    string _neededSlideFilePath;
+    RelativeIndex _neededSlideRelativeIndex;
+
+    private SlidePicture NeededSlide
+    {
+      get { return _slides[(int)_neededSlideRelativeIndex]; }
+      set { _slides[(int)_neededSlideRelativeIndex] = value; }
+    }
+
+    private SlidePicture PrevSlide
+    {
+      get { return _slides[(int)RelativeIndex.Prev]; }
+      set { _slides[(int)RelativeIndex.Prev] = value; }
+    }
+
+    private SlidePicture CurrentSlide
+    {
+      get { return _slides[(int)RelativeIndex.Curr]; }
+      set { _slides[(int)RelativeIndex.Curr] = value; }
+    }
+
+    private SlidePicture NextSlide
+    {
+      get { return _slides[(int)RelativeIndex.Next]; }
+      set { _slides[(int)RelativeIndex.Next] = value; }
+    }
+
+    public SlidePicture GetCurrentSlide(string slideFilePath)
+    {
+      // wait for any (needed) prefetching to complete
+      lock (_prefetchingThreadLock)
+      {
+        if (_prefetchingThread != null)
+        {
+          // only wait for the prefetching if it is for the slide file that we need
+          if (_neededSlideFilePath == slideFilePath)
+          {
+            _prefetchingThread.Priority = ThreadPriority.AboveNormal;
+          }
+          else
+          {
+            // uneeded, abort
+            _prefetchingThread.Abort();
+            _prefetchingThread = null;
+          }
+        }
+      }
+
+      while (_prefetchingThread != null)
+        GUIWindowManager.Process();
+
+      lock (_slidesLock)
+      {
+        // try and use pre-fetched slide if appropriate
+        if (NextSlide != null && NextSlide.FilePath == slideFilePath)
+          return NextSlide;
+        else if (PrevSlide != null && PrevSlide.FilePath == slideFilePath)
+          return PrevSlide;
+        else if (CurrentSlide != null && CurrentSlide.FilePath == slideFilePath)
+          return CurrentSlide;
+        else
+          return new SlidePicture(slideFilePath, false);
+      }
+    }
+
+    public void PrefetchNextSlide(string prevPath, string currPath, string nextPath)
+    {
+      lock (_prefetchingThreadLock)
+      {
+        // assume that any incomplete prefetching is uneeded, abort
+        if (_prefetchingThread != null)
+        {
+          _prefetchingThread.Abort();
+          _prefetchingThread = null;
+        }
+      }
+
+      lock (_slidesLock)
+      {
+        // shift slides and determine _neededSlideRelativeIndex
+        if (NextSlide != null && NextSlide.FilePath == currPath)
+        {
+          PrevSlide = CurrentSlide;
+          CurrentSlide = NextSlide;
+          _neededSlideFilePath = nextPath;
+          _neededSlideRelativeIndex = RelativeIndex.Next;
+        }
+        else if (PrevSlide != null && PrevSlide.FilePath == currPath)
+        {
+          NextSlide = CurrentSlide;
+          CurrentSlide = PrevSlide;
+          _neededSlideFilePath = prevPath;
+          _neededSlideRelativeIndex = RelativeIndex.Prev;
+        }
+        else
+        {
+          // may need all 3, but just get next
+          _neededSlideFilePath = nextPath;
+          _neededSlideRelativeIndex = RelativeIndex.Next;
+        }
+      }
+
+      lock (_prefetchingThreadLock)
+      {
+        _prefetchingThread = new Thread(new ThreadStart(LoadNextSlideThread));
+        _prefetchingThread.Priority = ThreadPriority.BelowNormal;
+        Trace.WriteLine(String.Format("prefetching {0} slide {1}", _neededSlideRelativeIndex.ToString("G"), System.IO.Path.GetFileNameWithoutExtension(_neededSlideFilePath)));
+        _prefetchingThread.Start();
+      }
+    }
+
+    /// <summary>
+    /// Method to do the work of actually loading the image from file. This method
+    /// should only be used by the prefetching thread.
+    /// </summary>
+    public void LoadNextSlideThread()
+    {
+      try
+      {
+        Debug.Assert(System.Threading.Thread.CurrentThread == _prefetchingThread);
+
+        lock (_slidesLock)
+        {
+          NeededSlide = new SlidePicture(_neededSlideFilePath, false);
+        }
+
+        lock (_prefetchingThreadLock)
+        {
+          _prefetchingThread = null;
+        }
+      }
+      catch (System.Threading.ThreadAbortException)
+      {
+        // abort is expected when slide changes outpace prefetch, ignore
+        Trace.WriteLine(String.Format("  ...aborted {0} slide {1}", _neededSlideRelativeIndex.ToString("G"), System.IO.Path.GetFileNameWithoutExtension(_neededSlideFilePath)));
+      }
+    }
+  }
+
   /// <summary>
   /// todo : adding zoom OSD (stripped if for KenBurns)
   /// </summary>
   public class GUISlideShow : GUIWindow
   {
+    private SlidePicture LoadCurrentSlide()
+    {
+      if (_slideList.Count == 0) return null;
+      string slideFilePath = _slideList[_currentSlideIndex];
+
+      _currentSlide = _slideCache.GetCurrentSlide(slideFilePath);
+
+      ResetCurrentZoom(_currentSlide);
+
+      PrefetchNextSlide();
+
+      return _currentSlide;
+    }
+
+    private void PrefetchNextSlide()
+    {
+      if (_slideList.Count != 0)
+      {
+        string prev = _slideList[PreviousSlideIndex(false, _currentSlideIndex)];
+        string curr = _slideList[_currentSlideIndex];
+        string next = _slideList[NextSlideIndex(false, _currentSlideIndex)];
+
+        _slideCache.PrefetchNextSlide(prev, curr, next);
+      }
+    }
+
+    private void ResetCurrentZoom(SlidePicture slide)
+    {
+      _kenBurnsEffect = 0;
+      _currentZoomFactor = 1.0f;
+      _currentZoomLeft = 0;
+      _currentZoomTop = 0;
+      _zoomInfoVisible = false;
+
+      CalculateBestZoom(slide.Width, slide.Height);
+    }
+
     #region enums
     enum DirectionType
     {
@@ -86,35 +351,51 @@ namespace MediaPortal.GUI.Pictures
     List<string> _slideList = new List<string>();
     int _slideTime = 0;
     int _counter = 0;
-    Texture _backgroundTexture = null;
-    float _widthBackground = 0;
-    float _heightBackground = 0;
-    float _zoomFactorBackground = 1.0f;
-    float _zoomLeftBackground = 0;
-    float _zoomTopBackgroundd = 0;
-    int _zoomTypeBackground = 0;
 
-    Texture _currentTexture = null;
-    float _widthCurrentTexture = 0;
-    float _heightCurrentTexture = 0;
-    float _currentZoomFactor = 1.0f;
-    float _currentZoomleftFactor = 0;
-    float _currentZoomTopFactor = 0;
-    int _currentZoomType = 0;
+    public float _currentZoomFactor = 1.0f;
+    public float _currentZoomLeft = 0;
+    public float _currentZoomTop = 0;
+    public int _currentZoomType = 0;
+
+    public float _zoomFactorBackground = 1.0f;
+    public float _zoomLeftBackground = 0;
+    public float _zoomTopBackground = 0;
+    public int _zoomTypeBackground = 0;
+
+    SlideCache _slideCache = new SlideCache();
+
+    //Texture _backgroundTexture = null;
+    //float _backgroundSlide.Width = 0;
+    //float _backgroundSlide.Height = 0;
+    //float _zoomFactorBackground = 1.0f;
+    //float _zoomLeft = 0;
+    //float _zoomTop = 0;
+    //int _zoomTypeBackground = 0;
+    SlidePicture _backgroundSlide = null;
+
+    //Texture _currentTexture = null;
+    //float _currentSlide.Width = 0;
+    //float _currentSlide.Height = 0;
+    //float _currentZoomFactor = 1.0f;
+    //float _currentZoomLeft = 0;
+    //float _currentZoomTop = 0;
+    //int _currentZoomType = 0;
+    SlidePicture _currentSlide = null;
+
 
     int _frameCounter = 0;
-    int _currentSlide = 0;
+    int _currentSlideIndex = 0;
     int _lastSlideShown = -1;
     int _transitionMethod = 0;
     bool _isSlideShow = false;
     bool _infoVisible = false;
     bool _zoomInfoVisible = false;
     bool _autoHideOsd = true;
-    string _backgroundSlideFileName = "";
-    string _currentSlideFileName = "";
+    //string _backgroundSlideFileName = "";
+    //string _currentSlideFileName = "";
     bool _isPaused = false;
     float _zoomWidth = 0, _zoomHeight = 0;
-    int _rotation = 0;
+    //int _rotation = 0;
     int _speed = 3;
     bool _showOverlayFlag;
     bool _update = false;
@@ -122,7 +403,7 @@ namespace MediaPortal.GUI.Pictures
     float _defaultZoomFactor = 1.0f;
     bool _isPictureZoomed = false;
     float _userZoomLevel = 1.0f;
-    bool _trueSizeTexture = false;
+    //bool _trueSizeTexture = false;
     bool _autoShuffle = false;
     bool _autoRepeat = false;
 
@@ -177,7 +458,7 @@ namespace MediaPortal.GUI.Pictures
           GUIGraphicsContext.Overlay = false;
           _update = false;
           _lastSlideShown = -1;
-          _currentSlide = -1;
+          _currentSlideIndex = -1;
           LoadSettings();
           return true;
 
@@ -262,7 +543,7 @@ namespace MediaPortal.GUI.Pictures
           {
             // Move picture
             _zoomLeftBackground -= 25;
-            if (_zoomLeftBackground < 0) _zoomLeftBackground = 0;
+            if (_zoomLeftBackground > (int)_backgroundSlide.Width - _zoomWidth) _zoomLeftBackground = (_backgroundSlide.Width - _zoomWidth);
             _slideTime = (int)(DateTime.Now.Ticks / 10000);
           }
           break;
@@ -280,7 +561,7 @@ namespace MediaPortal.GUI.Pictures
           {
             // Move picture
             _zoomLeftBackground += 25;
-            if (_zoomLeftBackground > (int)_widthBackground - _zoomWidth) _zoomLeftBackground = (_widthBackground - _zoomWidth);
+            if (_zoomLeftBackground > (int)_backgroundSlide.Width - _zoomWidth) _zoomLeftBackground = (_backgroundSlide.Width - _zoomWidth);
             _slideTime = (int)(DateTime.Now.Ticks / 10000);
           }
           break;
@@ -293,19 +574,19 @@ namespace MediaPortal.GUI.Pictures
 
         case Action.ActionType.ACTION_MOVE_RIGHT:
           _zoomLeftBackground += 25;
-          if (_zoomLeftBackground > (int)_widthBackground - _zoomWidth) _zoomLeftBackground = (_widthBackground - _zoomWidth);
+          if (_zoomLeftBackground > (int)_backgroundSlide.Width - _zoomWidth) _zoomLeftBackground = (_backgroundSlide.Width - _zoomWidth);
           _slideTime = (int)(DateTime.Now.Ticks / 10000);
           break;
 
         case Action.ActionType.ACTION_MOVE_DOWN:
-          if (_isPictureZoomed) _zoomTopBackgroundd += 25;
-          if (_zoomTopBackgroundd > (int)_heightBackground - _zoomHeight) _zoomTopBackgroundd = (_heightBackground - _zoomHeight);
+          if (_isPictureZoomed) _zoomTopBackground += 25;
+          if (_zoomTopBackground > (int)_backgroundSlide.Height - _zoomHeight) _zoomTopBackground = (_backgroundSlide.Height - _zoomHeight);
           _slideTime = (int)(DateTime.Now.Ticks / 10000);
           break;
 
         case Action.ActionType.ACTION_MOVE_UP:
-          if (_isPictureZoomed) _zoomTopBackgroundd -= 25;
-          if (_zoomTopBackgroundd < 0) _zoomTopBackgroundd = 0;
+          if (_isPictureZoomed) _zoomTopBackground -= 25;
+          if (_zoomTopBackground < 0) _zoomTopBackground = 0;
           _slideTime = (int)(DateTime.Now.Ticks / 10000);
           break;
 
@@ -416,11 +697,11 @@ namespace MediaPortal.GUI.Pictures
             if (_isPictureZoomed)
             {
               _zoomLeftBackground += (int)fX;
-              _zoomTopBackgroundd -= (int)fY;
-              if (_zoomTopBackgroundd < 0) _zoomTopBackgroundd = 0;
+              _zoomTopBackground -= (int)fY;
+              if (_zoomTopBackground < 0) _zoomTopBackground = 0;
               if (_zoomLeftBackground < 0) _zoomLeftBackground = 0;
-              if (_zoomTopBackgroundd > _heightBackground - _zoomHeight) _zoomTopBackgroundd = (_heightBackground - _zoomHeight);
-              if (_zoomLeftBackground > _widthBackground - _zoomWidth) _zoomLeftBackground = (_widthBackground - _zoomWidth);
+              if (_zoomTopBackground > _backgroundSlide.Height - _zoomHeight) _zoomTopBackground = (_backgroundSlide.Height - _zoomHeight);
+              if (_zoomLeftBackground > _backgroundSlide.Width - _zoomWidth) _zoomLeftBackground = (_backgroundSlide.Width - _zoomWidth);
 
               _slideTime = (int)(DateTime.Now.Ticks / 10000);
             }
@@ -451,25 +732,25 @@ namespace MediaPortal.GUI.Pictures
       int iSlides = _slideList.Count;
       if (0 == iSlides) return;
 
-      if (_update || _isSlideShow || null == _backgroundTexture)
+      if (_update || _isSlideShow || null == _backgroundSlide)
       {
         _update = false;
-        if (iSlides > 1 || _backgroundTexture == null)
+        if (iSlides > 1 || _backgroundSlide == null)
         {
-          if (_currentTexture == null)
+          if (_currentSlide == null)
           {
             int totalFrames = (_speed * (int)(1.0 / TIME_PER_FRAME)) + _slideShowTransistionFrames;
             if (_useKenBurns) totalFrames = _kenBurnTransistionSpeed * 30;
-            if (_frameCounter >= totalFrames || _backgroundTexture == null)
+            if (_frameCounter >= totalFrames || _backgroundSlide == null)
             {
-              if ((!_isPaused && !_isPictureZoomed) || _backgroundTexture == null)
+              if ((!_isPaused && !_isPictureZoomed) || _backgroundSlide == null)
               {
-                _currentSlide++;
-                if (_currentSlide >= _slideList.Count)
+                _currentSlideIndex++;
+                if (_currentSlideIndex >= _slideList.Count)
                 {
                   if (_autoRepeat)
                   {
-                    _currentSlide = 0;
+                    _currentSlideIndex = 0;
                     if (_autoShuffle)
                       Shuffle();
                   }
@@ -482,18 +763,19 @@ namespace MediaPortal.GUI.Pictures
           }
         }
 
-        if (_currentSlide != _lastSlideShown)
+        if (_currentSlideIndex != _lastSlideShown)
         {
           // Reset
           _frameCounter = 0;
-          _lastSlideShown = _currentSlide;
+          _lastSlideShown = _currentSlideIndex;
 
           // Get selected picture (zoomed to full screen)
-          _currentTexture = GetSlide(false, out _widthCurrentTexture, out _heightCurrentTexture, out _currentSlideFileName);
+          LoadCurrentSlide();
+
           if (_useKenBurns && _isSlideShow)
           {
             //Select transition based upon picture width/height
-            //_bestZoomFactorCurrent = CalculateBestZoom(_widthCurrentTexture, _heightCurrentTexture);
+            //_bestZoomFactorCurrent = CalculateBestZoom(_currentSlide.Width, _currentSlide.Height);
             _bestZoomFactorCurrent = _currentZoomFactor;
             _kenBurnsEffect = InitKenBurnsTransition();
             KenBurns(_kenBurnsEffect, true);
@@ -521,20 +803,10 @@ namespace MediaPortal.GUI.Pictures
 
 
         // swap our buffers over
-        if (null == _backgroundTexture)
+        if (null == _backgroundSlide)
         {
-          if (null == _currentTexture) return;
-          _backgroundTexture = _currentTexture;
-          _widthBackground = _widthCurrentTexture;
-          _heightBackground = _heightCurrentTexture;
-          _zoomFactorBackground = _currentZoomFactor;
-          _zoomLeftBackground = _currentZoomleftFactor;
-          _zoomTopBackgroundd = _currentZoomTopFactor;
-          _zoomTypeBackground = _currentZoomType;
-          _backgroundSlideFileName = _currentSlideFileName;
-          _currentTexture = null;
-          _slideTime = (int)(DateTime.Now.Ticks / 10000);
-
+          if (null == _currentSlide) return;
+          PushCurrentTextureToBackground();
         }
       }
 
@@ -543,12 +815,12 @@ namespace MediaPortal.GUI.Pictures
 
       // x-fade
       GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
-      if (_transitionMethod != 9 || _currentTexture == null)
+      if (_transitionMethod != 9 || _currentSlide == null)
       {
-        GetOutputRect(_widthBackground, _heightBackground, _zoomFactorBackground, out x, out y, out width, out height);
-        if (_zoomTopBackgroundd + _zoomHeight > _heightBackground) _zoomHeight = _heightBackground - _zoomTopBackgroundd;
-        if (_zoomLeftBackground + _zoomWidth > _widthBackground) _zoomWidth = _widthBackground - _zoomLeftBackground;
-        MediaPortal.Util.Picture.RenderImage(ref _backgroundTexture, x, y, width, height, _zoomWidth, _zoomHeight, _zoomLeftBackground, _zoomTopBackgroundd, true);
+        GetOutputRect(_backgroundSlide.Width, _backgroundSlide.Height, _zoomFactorBackground, out x, out y, out width, out height);
+        if (_zoomTopBackground + _zoomHeight > _backgroundSlide.Height) _zoomHeight = _backgroundSlide.Height - _zoomTopBackground;
+        if (_zoomLeftBackground + _zoomWidth > _backgroundSlide.Width) _zoomWidth = _backgroundSlide.Width - _zoomLeftBackground;
+        MediaPortal.Util.Picture.RenderImage(_backgroundSlide.Texture, x, y, width, height, _zoomWidth, _zoomHeight, _zoomLeftBackground, _zoomTopBackground, true);
 
         //MediaPortal.Util.Picture.DrawLine(10,10,300,300,0xffffffff);
         //MediaPortal.Util.Picture.DrawRectangle( new Rectangle(100,100,30,30),0xaaff0000,true);
@@ -557,7 +829,7 @@ namespace MediaPortal.GUI.Pictures
 
       //	g_graphicsContext.Get3DDevice()->UpdateOverlay(m_pSurfaceBackGround, &source, &dest, true, 0x00010001);
 
-      if (_currentTexture != null)
+      if (_currentSlide != null)
       {
         // render the new picture
         bool bResult = false;
@@ -598,22 +870,8 @@ namespace MediaPortal.GUI.Pictures
 
         if (bResult)
         {
-          if (null == _currentTexture) return;
-          if (null != _backgroundTexture)
-          {
-            _backgroundTexture.Dispose();
-            _backgroundTexture = null;
-          }
-          _backgroundTexture = _currentTexture;
-          _widthBackground = _widthCurrentTexture;
-          _heightBackground = _heightCurrentTexture;
-          _zoomFactorBackground = _currentZoomFactor;
-          _zoomLeftBackground = _currentZoomleftFactor;
-          _zoomTopBackgroundd = _currentZoomTopFactor;
-          _zoomTypeBackground = _currentZoomType;
-          _backgroundSlideFileName = _currentSlideFileName;
-          _currentTexture = null;
-          _slideTime = (int)(DateTime.Now.Ticks / 10000);
+          if (null == _currentSlide) return;
+          PushCurrentTextureToBackground();
         }
       }
       else
@@ -657,8 +915,8 @@ namespace MediaPortal.GUI.Pictures
         GUIControl.SetControlLabel(GetID, LABEL_ROW2, "");
 
         string strZoomInfo;
-        //strZoomInfo=String.Format("{0}% ({1} , {2})", (int)(_userZoomLevel*100.0f), (int)_zoomLeftBackground, (int)_zoomTopBackgroundd);
-        strZoomInfo = String.Format("{0}% ({1} , {2})", (int)(_zoomFactorBackground * 100.0f), (int)_zoomLeftBackground, (int)_zoomTopBackgroundd);
+        //strZoomInfo=String.Format("{0}% ({1} , {2})", (int)(_userZoomLevel*100.0f), (int)_zoomLeft, (int)_zoomTop);
+        strZoomInfo = String.Format("{0}% ({1} , {2})", (int)(_zoomFactorBackground * 100.0f), (int)_zoomLeftBackground, (int)_zoomTopBackground);
 
         GUIControl.SetControlLabel(GetID, LABEL_ROW2_EXTRA, strZoomInfo);
       }
@@ -666,9 +924,9 @@ namespace MediaPortal.GUI.Pictures
       if (_infoVisible || _isLoadingRawPicture)
       {
         string strFileInfo, strSlideInfo;
-        string strFileName = System.IO.Path.GetFileName(_backgroundSlideFileName);
-        if (_trueSizeTexture)
-          strFileInfo = String.Format("{0} ({1}x{2}) ", strFileName, _widthBackground - 2, _heightBackground - 2);
+        string strFileName = System.IO.Path.GetFileName(_backgroundSlide.FilePath);
+        if (_backgroundSlide.TrueSizeTexture)
+          strFileInfo = String.Format("{0} ({1}x{2}) ", strFileName, _backgroundSlide.Width - 2, _backgroundSlide.Height - 2);
         else
           strFileInfo = String.Format("{0}", strFileName);
 
@@ -680,7 +938,7 @@ namespace MediaPortal.GUI.Pictures
 
 
         GUIControl.SetControlLabel(GetID, LABEL_ROW1, strFileInfo);
-        strSlideInfo = String.Format("{0}/{1}", 1 + _currentSlide, _slideList.Count);
+        strSlideInfo = String.Format("{0}/{1}", 1 + _currentSlideIndex, _slideList.Count);
         GUIControl.SetControlLabel(GetID, LABEL_ROW2, strSlideInfo);
 
         if (!_zoomInfoVisible)
@@ -691,13 +949,28 @@ namespace MediaPortal.GUI.Pictures
       base.Render(timePassed);
     }
 
-
+    private void PushCurrentTextureToBackground()
+    {
+      if (null != _backgroundSlide)
+      {
+        //_backgroundSlide.Texture.Dispose();
+        _backgroundSlide = null;
+      }
+      _backgroundSlide = _currentSlide;
+      _zoomFactorBackground = _currentZoomFactor;
+      _zoomLeftBackground = _currentZoomLeft;
+      _zoomTopBackground = _currentZoomTop;
+      _zoomTypeBackground = _currentZoomType;
+      _currentSlide = null;
+      _slideTime = (int)(DateTime.Now.Ticks / 10000);
+    }
+ 
     #endregion
 
     #region public members
     public bool Playing
     {
-      get { return _backgroundTexture != null; }
+      get { return _backgroundSlide != null; }
     }
 
     public int Count
@@ -723,17 +996,13 @@ namespace MediaPortal.GUI.Pictures
 
     public void Select(string strFile)
     {
-      using (PictureDatabase dbs = new PictureDatabase())
+      for (int i = 0; i < _slideList.Count; ++i)
       {
-        for (int i = 0; i < _slideList.Count; ++i)
+        string strSlide = _slideList[i];
+        if (strSlide == strFile)
         {
-          string strSlide = _slideList[i];
-          if (strSlide == strFile)
-          {
-            _currentSlide = i - 1;
-            _rotation = dbs.GetRotation(strSlide);
-            return;
-          }
+          _currentSlideIndex = i - 1;
+          return;
         }
       }
     }
@@ -793,34 +1062,31 @@ namespace MediaPortal.GUI.Pictures
       _isSlideShow = false;
       _isPaused = false;
 
-      _rotation = 0;
       _zoomFactorBackground = _defaultZoomFactor;
       _currentZoomFactor = _defaultZoomFactor;
       _kenBurnsEffect = 0;
       _isPictureZoomed = false;
-      _zoomLeftBackground = 0;
-      _zoomTopBackgroundd = 0;
-      _currentZoomleftFactor = 0;
-      _currentZoomTopFactor = 0;
+      _currentZoomLeft = 0;
+      _currentZoomTop = 0;
+      _currentZoomLeft = 0;
+      _currentZoomTop = 0;
       _frameCounter = 0;
-      _currentSlide = -1;
+      _currentSlideIndex = -1;
       _lastSlideShown = -1;
-      _backgroundSlideFileName = "";
-      _currentSlideFileName = "";
       _slideTime = 0;
       _userZoomLevel = 1.0f;
       _lastSegmentIndex = -1;
 
-      if (null != _backgroundTexture)
+      if (null != _backgroundSlide)
       {
-        _backgroundTexture.Dispose();
-        _backgroundTexture = null;
+        //_backgroundSlide.Texture.Dispose();
+        _backgroundSlide = null;
       }
 
-      if (null != _currentTexture)
+      if (null != _currentSlide)
       {
-        _currentTexture.Dispose();
-        _currentTexture = null;
+        //_currentSlide.Texture.Dispose();
+        _currentSlide = null;
       }
 
       if (_isBackgroundMusicPlaying)
@@ -831,45 +1097,45 @@ namespace MediaPortal.GUI.Pictures
 
     #region private members
 
-    Texture GetSlide(bool bTrueSize, out float dwWidth, out float dwHeight, out string strSlide)
-    {
-      dwWidth = 0;
-      dwHeight = 0;
-      strSlide = "";
-      if (_slideList.Count == 0) return null;
+    //Texture GetSlide(bool bTrueSize, out float dwWidth, out float dwHeight, out string strSlide)
+    //{
+    //  dwWidth = 0;
+    //  dwHeight = 0;
+    //  strSlide = "";
+    //  if (_slideList.Count == 0) return null;
 
-      _rotation = 0;
-      _currentZoomFactor = 1.0f;
-      _kenBurnsEffect = 0;
-      _currentZoomleftFactor = 0;
-      _currentZoomTopFactor = 0;
-      _zoomInfoVisible = false;
+    //  _rotation = 0;
+    //  _currentZoomFactor = 1.0f;
+    //  _kenBurnsEffect = 0;
+    //  _currentZoomleftFactor = 0;
+    //  _currentZoomTopFactor = 0;
+    //  _zoomInfoVisible = false;
 
-      strSlide = _slideList[_currentSlide];
-      _log.Info("Next Slide: {0}/{1} : {2}", _currentSlide + 1, _slideList.Count, strSlide);
-      using (PictureDatabase dbs = new PictureDatabase())
-      {
-        _rotation = dbs.GetRotation(strSlide);
-      }
-      int iMaxWidth = GUIGraphicsContext.OverScanWidth;
-      int iMaxHeight = GUIGraphicsContext.OverScanHeight;
+    //  strSlide = _slideList[_currentSlide];
+    //  _log.Info("Next Slide: {0}/{1} : {2}", _currentSlide + 1, _slideList.Count, strSlide);
+    //  using (PictureDatabase dbs = new PictureDatabase())
+    //  {
+    //    _rotation = dbs.GetRotation(strSlide);
+    //  }
+    //  int iMaxWidth = GUIGraphicsContext.OverScanWidth;
+    //  int iMaxHeight = GUIGraphicsContext.OverScanHeight;
 
-      _trueSizeTexture = bTrueSize;
-      if (bTrueSize)
-      {
-        iMaxWidth = MAX_PICTURE_WIDTH;
-        iMaxHeight = MAX_PICTURE_HEIGHT;
-      }
+    //  _trueSizeTexture = bTrueSize;
+    //  if (bTrueSize)
+    //  {
+    //    iMaxWidth = MAX_PICTURE_WIDTH;
+    //    iMaxHeight = MAX_PICTURE_HEIGHT;
+    //  }
 
-      int X, Y;
-      Texture texture = MediaPortal.Util.Picture.Load(strSlide, _rotation, iMaxWidth, iMaxHeight, true, false, true, out X, out Y);
-      dwWidth = X;
-      dwHeight = Y;
+    //  int X, Y;
+    //  Texture texture = MediaPortal.Util.Picture.Load(strSlide, _rotation, iMaxWidth, iMaxHeight, true, false, true, out X, out Y);
+    //  dwWidth = X;
+    //  dwHeight = Y;
 
-      CalculateBestZoom(dwWidth, dwHeight);
-      _currentZoomFactor = _defaultZoomFactor;
-      return texture;
-    }
+    //  CalculateBestZoom(dwWidth, dwHeight);
+    //  _currentZoomFactor = _defaultZoomFactor;
+    //  return texture;
+    //}
 
     void ShowNext()
     {
@@ -882,39 +1148,52 @@ namespace MediaPortal.GUI.Pictures
         _update = true;
 
       // check image transition
-      if (_currentTexture != null)
-        return;
+      if (_currentSlide != null)
+        PushCurrentTextureToBackground();
 
-      _currentSlide++;
+      _currentSlideIndex = NextSlideIndex(jump, _currentSlideIndex);
 
-      if (jump)
-      {
-        while (_currentSlide < _slideList.Count && object.ReferenceEquals(_slideList[++_currentSlide], SegmentIndicator) == false) ;
-
-        _currentSlide++;
-      }
-      else if (_lastSegmentIndex != -1)
-      {
-        if (object.ReferenceEquals(_slideList[_currentSlide], SegmentIndicator))
-          _currentSlide++;
-      }
-
-      if (_currentSlide >= _slideList.Count)
+      if (_currentSlideIndex == 0)
       {
         if (_autoRepeat)
         {
-          _currentSlide = 0;
-
           if (_autoShuffle)
             Shuffle();
         }
         else
+        {
           ShowPreviousWindow();
+          return;
+        }
       }
 
       // Reset slide time
       _slideTime = (int)(DateTime.Now.Ticks / 10000);
       _frameCounter = 0;
+    }
+
+    private int NextSlideIndex(bool jump, int slideIndex)
+    {
+      slideIndex++;
+
+      if (jump)
+      {
+        while (slideIndex < _slideList.Count && object.ReferenceEquals(_slideList[++slideIndex], SegmentIndicator) == false) ;
+
+        slideIndex++;
+      }
+      else if (_lastSegmentIndex != -1)
+      {
+        if (object.ReferenceEquals(_slideList[slideIndex], SegmentIndicator))
+          slideIndex++;
+      }
+
+      if (slideIndex >= _slideList.Count)
+      {
+        slideIndex = 0;
+      }
+
+      return slideIndex;
     }
 
     void ShowPrevious()
@@ -928,30 +1207,38 @@ namespace MediaPortal.GUI.Pictures
         _update = true;
 
       // check image transition
-      if (_currentTexture != null)
-        return;
+      if (_currentSlide != null)
+        PushCurrentTextureToBackground();
 
-      _currentSlide--;
+      _currentSlideIndex = PreviousSlideIndex(jump, _currentSlideIndex);
 
-      if (jump)
-      {
-        while (_currentSlide >= 0 && object.ReferenceEquals(_slideList[_currentSlide], SegmentIndicator) == false)
-          _currentSlide--;
-
-        _currentSlide++;
-      }
-      else if (_lastSegmentIndex != -1)
-      {
-        if (_currentSlide > 0 && object.ReferenceEquals(_slideList[_currentSlide], SegmentIndicator))
-          _currentSlide--;
-      }
-
-      if (_currentSlide < 0)
-        _currentSlide = _slideList.Count - 1;
+      //PrefetchNextSlide();
 
       // Reset slide time
       _slideTime = (int)(DateTime.Now.Ticks / 10000);
       _frameCounter = 0;
+    }
+
+    private int PreviousSlideIndex(bool jump, int slideIndex)
+    {
+      slideIndex--;
+
+      if (jump)
+      {
+        while (slideIndex >= 0 && object.ReferenceEquals(_slideList[slideIndex], SegmentIndicator) == false)
+          slideIndex--;
+
+        slideIndex++;
+      }
+      else if (_lastSegmentIndex != -1)
+      {
+        if (slideIndex > 0 && object.ReferenceEquals(_slideList[slideIndex], SegmentIndicator))
+          slideIndex--;
+      }
+
+      if (slideIndex < 0)
+        slideIndex = _slideList.Count - 1;
+      return slideIndex;
     }
 
     #region render transition methods
@@ -997,9 +1284,9 @@ namespace MediaPortal.GUI.Pictures
       bool bResult = false;
 
       float x, y, width, height;
-      GetOutputRect(_widthCurrentTexture, _heightCurrentTexture, _currentZoomFactor, out x, out y, out width, out height);
-      if (_currentZoomTopFactor + _zoomHeight > _heightCurrentTexture) _zoomHeight = _heightCurrentTexture - _currentZoomTopFactor;
-      if (_currentZoomleftFactor + _zoomWidth > _widthCurrentTexture) _zoomWidth = _widthCurrentTexture - _currentZoomleftFactor;
+      GetOutputRect(_currentSlide.Width, _currentSlide.Height, _currentZoomFactor, out x, out y, out width, out height);
+      if (_currentZoomTop + _zoomHeight > _currentSlide.Height) _zoomHeight = _currentSlide.Height - _currentZoomTop;
+      if (_currentZoomLeft + _zoomWidth > _currentSlide.Width) _zoomWidth = _currentSlide.Width - _currentZoomLeft;
 
       float iStep = width / _slideShowTransistionFrames;
       if (0 == iStep) iStep = 1;
@@ -1009,7 +1296,7 @@ namespace MediaPortal.GUI.Pictures
         iExpandWidth = width;
         bResult = true;
       }
-      MediaPortal.Util.Picture.RenderImage(ref _currentTexture, x, y, iExpandWidth, height, _widthCurrentTexture, _heightCurrentTexture, 0, 0, false);
+      MediaPortal.Util.Picture.RenderImage(_currentSlide.Texture, x, y, iExpandWidth, height, _currentSlide.Width, _currentSlide.Height, 0, 0, false);
       return bResult;
     }
 
@@ -1018,9 +1305,9 @@ namespace MediaPortal.GUI.Pictures
     {
       bool bResult = false;
       float x, y, width, height;
-      GetOutputRect(_widthCurrentTexture, _heightCurrentTexture, _currentZoomFactor, out x, out y, out width, out height);
-      if (_currentZoomTopFactor + _zoomHeight > _heightCurrentTexture) _zoomHeight = _heightCurrentTexture - _currentZoomTopFactor;
-      if (_currentZoomleftFactor + _zoomWidth > _widthCurrentTexture) _zoomWidth = _widthCurrentTexture - _currentZoomleftFactor;
+      GetOutputRect(_currentSlide.Width, _currentSlide.Height, _currentZoomFactor, out x, out y, out width, out height);
+      if (_currentZoomTop + _zoomHeight > _currentSlide.Height) _zoomHeight = _currentSlide.Height - _currentZoomTop;
+      if (_currentZoomLeft + _zoomWidth > _currentSlide.Width) _zoomWidth = _currentSlide.Width - _currentZoomLeft;
 
       float iStep = width / _slideShowTransistionFrames;
       if (0 == iStep) iStep = 1;
@@ -1030,7 +1317,7 @@ namespace MediaPortal.GUI.Pictures
         iPosX = x;
         bResult = true;
       }
-      MediaPortal.Util.Picture.RenderImage(ref _currentTexture, iPosX, y, width, height, _widthCurrentTexture, _heightCurrentTexture, 0, 0, false);
+      MediaPortal.Util.Picture.RenderImage(_currentSlide.Texture, iPosX, y, width, height, _currentSlide.Width, _currentSlide.Height, 0, 0, false);
       return bResult;
     }
 
@@ -1039,9 +1326,9 @@ namespace MediaPortal.GUI.Pictures
     {
       bool bResult = false;
       float x, y, width, height;
-      GetOutputRect(_widthCurrentTexture, _heightCurrentTexture, _currentZoomFactor, out x, out y, out width, out height);
-      if (_currentZoomTopFactor + _zoomHeight > _heightCurrentTexture) _zoomHeight = _heightCurrentTexture - _currentZoomTopFactor;
-      if (_currentZoomleftFactor + _zoomWidth > _widthCurrentTexture) _zoomWidth = _widthCurrentTexture - _currentZoomleftFactor;
+      GetOutputRect(_currentSlide.Width, _currentSlide.Height, _currentZoomFactor, out x, out y, out width, out height);
+      if (_currentZoomTop + _zoomHeight > _currentSlide.Height) _zoomHeight = _currentSlide.Height - _currentZoomTop;
+      if (_currentZoomLeft + _zoomWidth > _currentSlide.Width) _zoomWidth = _currentSlide.Width - _currentZoomLeft;
 
       float iStep = width / _slideShowTransistionFrames;
       if (0 == iStep) iStep = 1;
@@ -1051,7 +1338,7 @@ namespace MediaPortal.GUI.Pictures
         posx = x;
         bResult = true;
       }
-      MediaPortal.Util.Picture.RenderImage(ref _currentTexture, posx, y, width, height, _widthCurrentTexture, _heightCurrentTexture, 0, 0, false);
+      MediaPortal.Util.Picture.RenderImage(_currentSlide.Texture, posx, y, width, height, _currentSlide.Width, _currentSlide.Height, 0, 0, false);
       return bResult;
     }
 
@@ -1060,9 +1347,9 @@ namespace MediaPortal.GUI.Pictures
     {
       bool bResult = false;
       float x, y, width, height;
-      GetOutputRect(_widthCurrentTexture, _heightCurrentTexture, _currentZoomFactor, out x, out y, out width, out height);
-      if (_currentZoomTopFactor + _zoomHeight > _heightCurrentTexture) _zoomHeight = _heightCurrentTexture - _currentZoomTopFactor;
-      if (_currentZoomleftFactor + _zoomWidth > _widthCurrentTexture) _zoomWidth = _widthCurrentTexture - _currentZoomleftFactor;
+      GetOutputRect(_currentSlide.Width, _currentSlide.Height, _currentZoomFactor, out x, out y, out width, out height);
+      if (_currentZoomTop + _zoomHeight > _currentSlide.Height) _zoomHeight = _currentSlide.Height - _currentZoomTop;
+      if (_currentZoomLeft + _zoomWidth > _currentSlide.Width) _zoomWidth = _currentSlide.Width - _currentZoomLeft;
 
       float iStep = height / _slideShowTransistionFrames;
       if (0 == iStep) iStep = 1;
@@ -1072,7 +1359,7 @@ namespace MediaPortal.GUI.Pictures
         posy = y;
         bResult = true;
       }
-      MediaPortal.Util.Picture.RenderImage(ref _currentTexture, x, posy, width, height, _widthCurrentTexture, _heightCurrentTexture, 0, 0, false);
+      MediaPortal.Util.Picture.RenderImage(_currentSlide.Texture, x, posy, width, height, _currentSlide.Width, _currentSlide.Height, 0, 0, false);
       return bResult;
     }
 
@@ -1081,9 +1368,9 @@ namespace MediaPortal.GUI.Pictures
     {
       bool bResult = false;
       float x, y, width, height;
-      GetOutputRect(_widthCurrentTexture, _heightCurrentTexture, _currentZoomFactor, out x, out y, out width, out height);
-      if (_currentZoomTopFactor + _zoomHeight > _heightCurrentTexture) _zoomHeight = _heightCurrentTexture - _currentZoomTopFactor;
-      if (_currentZoomleftFactor + _zoomWidth > _widthCurrentTexture) _zoomWidth = _widthCurrentTexture - _currentZoomleftFactor;
+      GetOutputRect(_currentSlide.Width, _currentSlide.Height, _currentZoomFactor, out x, out y, out width, out height);
+      if (_currentZoomTop + _zoomHeight > _currentSlide.Height) _zoomHeight = _currentSlide.Height - _currentZoomTop;
+      if (_currentZoomLeft + _zoomWidth > _currentSlide.Width) _zoomWidth = _currentSlide.Width - _currentZoomLeft;
 
       float iStep = height / _slideShowTransistionFrames;
       if (0 == iStep) iStep = 1;
@@ -1093,7 +1380,7 @@ namespace MediaPortal.GUI.Pictures
         posy = y;
         bResult = true;
       }
-      MediaPortal.Util.Picture.RenderImage(ref _currentTexture, x, posy, width, height, _widthCurrentTexture, _heightCurrentTexture, 0, 0, false);
+      MediaPortal.Util.Picture.RenderImage(_currentSlide.Texture, x, posy, width, height, _currentSlide.Width, _currentSlide.Height, 0, 0, false);
       return bResult;
     }
 
@@ -1103,9 +1390,9 @@ namespace MediaPortal.GUI.Pictures
     {
       bool bResult = false;
       float x, y, width, height;
-      GetOutputRect(_widthCurrentTexture, _heightCurrentTexture, _currentZoomFactor, out x, out y, out width, out height);
-      if (_currentZoomTopFactor + _zoomHeight > _heightCurrentTexture) _zoomHeight = _heightCurrentTexture - _currentZoomTopFactor;
-      if (_currentZoomleftFactor + _zoomWidth > _widthCurrentTexture) _zoomWidth = _widthCurrentTexture - _currentZoomleftFactor;
+      GetOutputRect(_currentSlide.Width, _currentSlide.Height, _currentZoomFactor, out x, out y, out width, out height);
+      if (_currentZoomTop + _zoomHeight > _currentSlide.Height) _zoomHeight = _currentSlide.Height - _currentZoomTop;
+      if (_currentZoomLeft + _zoomWidth > _currentSlide.Width) _zoomWidth = _currentSlide.Width - _currentZoomLeft;
 
       float iStep = height / _slideShowTransistionFrames;
       if (0 == iStep) iStep = 1;
@@ -1115,7 +1402,7 @@ namespace MediaPortal.GUI.Pictures
         newheight = height;
         bResult = true;
       }
-      MediaPortal.Util.Picture.RenderImage(ref _currentTexture, x, y, width, newheight, _widthCurrentTexture, _heightCurrentTexture, 0, 0, false);
+      MediaPortal.Util.Picture.RenderImage(_currentSlide.Texture, x, y, width, newheight, _currentSlide.Width, _currentSlide.Height, 0, 0, false);
       return bResult;
     }
 
@@ -1124,9 +1411,9 @@ namespace MediaPortal.GUI.Pictures
     {
       bool bResult = false;
       float x, y, width, height;
-      GetOutputRect(_widthCurrentTexture, _heightCurrentTexture, _currentZoomFactor, out x, out y, out width, out height);
-      if (_currentZoomTopFactor + _zoomHeight > _heightCurrentTexture) _zoomHeight = _heightCurrentTexture - _currentZoomTopFactor;
-      if (_currentZoomleftFactor + _zoomWidth > _widthCurrentTexture) _zoomWidth = _widthCurrentTexture - _currentZoomleftFactor;
+      GetOutputRect(_currentSlide.Width, _currentSlide.Height, _currentZoomFactor, out x, out y, out width, out height);
+      if (_currentZoomTop + _zoomHeight > _currentSlide.Height) _zoomHeight = _currentSlide.Height - _currentZoomTop;
+      if (_currentZoomLeft + _zoomWidth > _currentSlide.Width) _zoomWidth = _currentSlide.Width - _currentZoomLeft;
 
       float iStep = width / _slideShowTransistionFrames;
       if (0 == iStep) iStep = 1;
@@ -1139,7 +1426,7 @@ namespace MediaPortal.GUI.Pictures
 
       //right align the texture
       float posx = x + width - newwidth;
-      MediaPortal.Util.Picture.RenderImage(ref _currentTexture, posx, y, newwidth, height, _widthCurrentTexture, _heightCurrentTexture, 0, 0, false);
+      MediaPortal.Util.Picture.RenderImage(_currentSlide.Texture, posx, y, newwidth, height, _currentSlide.Width, _currentSlide.Height, 0, 0, false);
       return bResult;
     }
 
@@ -1149,9 +1436,9 @@ namespace MediaPortal.GUI.Pictures
     {
       bool bResult = false;
       float x, y, width, height;
-      GetOutputRect(_widthCurrentTexture, _heightCurrentTexture, _currentZoomFactor, out x, out y, out width, out height);
-      if (_currentZoomTopFactor + _zoomHeight > _heightCurrentTexture) _zoomHeight = _heightCurrentTexture - _currentZoomTopFactor;
-      if (_currentZoomleftFactor + _zoomWidth > _widthCurrentTexture) _zoomWidth = _widthCurrentTexture - _currentZoomleftFactor;
+      GetOutputRect(_currentSlide.Width, _currentSlide.Height, _currentZoomFactor, out x, out y, out width, out height);
+      if (_currentZoomTop + _zoomHeight > _currentSlide.Height) _zoomHeight = _currentSlide.Height - _currentZoomTop;
+      if (_currentZoomLeft + _zoomWidth > _currentSlide.Width) _zoomWidth = _currentSlide.Width - _currentZoomLeft;
 
       float iStep = height / _slideShowTransistionFrames;
       if (0 == iStep) iStep = 1;
@@ -1164,7 +1451,7 @@ namespace MediaPortal.GUI.Pictures
 
       //bottom align the texture
       float posy = y + height - newheight;
-      MediaPortal.Util.Picture.RenderImage(ref _currentTexture, x, posy, width, newheight, _widthCurrentTexture, _heightCurrentTexture, 0, 0, false);
+      MediaPortal.Util.Picture.RenderImage(_currentSlide.Texture, x, posy, width, newheight, _currentSlide.Width, _currentSlide.Height, 0, 0, false);
       return bResult;
     }
 
@@ -1173,9 +1460,9 @@ namespace MediaPortal.GUI.Pictures
     {
       bool bResult = false;
       float x, y, width, height;
-      GetOutputRect(_widthCurrentTexture, _heightCurrentTexture, _currentZoomFactor, out x, out y, out width, out height);
-      if (_currentZoomTopFactor + _zoomHeight > _heightCurrentTexture) _zoomHeight = _heightCurrentTexture - _currentZoomTopFactor;
-      if (_currentZoomleftFactor + _zoomWidth > _widthCurrentTexture) _zoomWidth = _widthCurrentTexture - _currentZoomleftFactor;
+      GetOutputRect(_currentSlide.Width, _currentSlide.Height, _currentZoomFactor, out x, out y, out width, out height);
+      if (_currentZoomTop + _zoomHeight > _currentSlide.Height) _zoomHeight = _currentSlide.Height - _currentZoomTop;
+      if (_currentZoomLeft + _zoomWidth > _currentSlide.Width) _zoomWidth = _currentSlide.Width - _currentZoomLeft;
 
       float iStepX = width / _slideShowTransistionFrames;
       float iStepY = height / _slideShowTransistionFrames;
@@ -1198,7 +1485,7 @@ namespace MediaPortal.GUI.Pictures
       float posx = x + (width - newwidth) / 2;
       float posy = y + (height - newheight) / 2;
 
-      MediaPortal.Util.Picture.RenderImage(ref _currentTexture, posx, posy, newwidth, newheight, _widthCurrentTexture, _heightCurrentTexture, 0, 0, false);
+      MediaPortal.Util.Picture.RenderImage(_currentSlide.Texture, posx, posy, newwidth, newheight, _currentSlide.Width, _currentSlide.Height, 0, 0, false);
       return bResult;
     }
 
@@ -1208,9 +1495,9 @@ namespace MediaPortal.GUI.Pictures
       bool bResult = false;
 
       float x, y, width, height;
-      GetOutputRect(_widthBackground, _heightBackground, _zoomFactorBackground, out x, out y, out width, out height);
-      if (_zoomTopBackgroundd + _zoomHeight > _heightBackground) _zoomHeight = _heightBackground - _zoomTopBackgroundd;
-      if (_zoomLeftBackground + _zoomWidth > _widthBackground) _zoomWidth = _widthBackground - _zoomLeftBackground;
+      GetOutputRect(_backgroundSlide.Width, _backgroundSlide.Height, _zoomFactorBackground, out x, out y, out width, out height);
+      if (_zoomTopBackground + _zoomHeight > _backgroundSlide.Height) _zoomHeight = _backgroundSlide.Height - _zoomTopBackground;
+      if (_zoomLeftBackground + _zoomWidth > _backgroundSlide.Width) _zoomWidth = _backgroundSlide.Width - _zoomLeftBackground;
 
       float iStep = 0xff / _slideShowTransistionFrames;
       if (_useKenBurns) iStep = 0xff / KENBURNS_XFADE_FRAMES;
@@ -1230,18 +1517,18 @@ namespace MediaPortal.GUI.Pictures
       lColorDiffuse <<= 24;
       lColorDiffuse |= 0xffffff;
 
-      MediaPortal.Util.Picture.RenderImage(ref _backgroundTexture, x, y, width, height, _zoomWidth, _zoomHeight, _zoomLeftBackground, _zoomTopBackgroundd, lColorDiffuse);
+      MediaPortal.Util.Picture.RenderImage(_backgroundSlide.Texture, x, y, width, height, _zoomWidth, _zoomHeight, _zoomLeftBackground, _zoomTopBackground, lColorDiffuse);
 
       //next render new image
-      GetOutputRect(_widthCurrentTexture, _heightCurrentTexture, _currentZoomFactor, out x, out y, out width, out height);
-      if (_currentZoomTopFactor + _zoomHeight > _heightCurrentTexture) _zoomHeight = _heightCurrentTexture - _currentZoomTopFactor;
-      if (_currentZoomleftFactor + _zoomWidth > _widthCurrentTexture) _zoomWidth = _widthCurrentTexture - _currentZoomleftFactor;
+      GetOutputRect(_currentSlide.Width, _currentSlide.Height, _currentZoomFactor, out x, out y, out width, out height);
+      if (_currentZoomTop + _zoomHeight > _currentSlide.Height) _zoomHeight = _currentSlide.Height - _currentZoomTop;
+      if (_currentZoomLeft + _zoomWidth > _currentSlide.Width) _zoomWidth = _currentSlide.Width - _currentZoomLeft;
 
       lColorDiffuse = (iAlpha);
       lColorDiffuse <<= 24;
       lColorDiffuse |= 0xffffff;
 
-      MediaPortal.Util.Picture.RenderImage(ref _currentTexture, x, y, width, height, _zoomWidth, _zoomHeight, _currentZoomleftFactor, _currentZoomTopFactor, lColorDiffuse);
+      MediaPortal.Util.Picture.RenderImage(_currentSlide.Texture, x, y, width, height, _zoomWidth, _zoomHeight, _currentZoomLeft, _currentZoomTop, lColorDiffuse);
       return bResult;
     }
 
@@ -1289,10 +1576,13 @@ namespace MediaPortal.GUI.Pictures
       }
 
       // Check new rectangle
-      if (_zoomTopBackgroundd > (_heightBackground - _zoomHeight)) _zoomTopBackgroundd = (_heightBackground - _zoomHeight);
-      if (_zoomLeftBackground > (_widthBackground - _zoomWidth)) _zoomLeftBackground = (_widthBackground - _zoomWidth);
-      if (_zoomTopBackgroundd < 0) _zoomTopBackgroundd = 0;
-      if (_zoomLeftBackground < 0) _zoomLeftBackground = 0;
+      if (_backgroundSlide != null)
+      {
+        if (_zoomTopBackground > (_backgroundSlide.Height - _zoomHeight)) _zoomTopBackground = (_backgroundSlide.Height - _zoomHeight);
+        if (_zoomLeftBackground > (_backgroundSlide.Width - _zoomWidth)) _zoomLeftBackground = (_backgroundSlide.Width - _zoomWidth);
+        if (_zoomTopBackground < 0) _zoomTopBackground = 0;
+        if (_zoomLeftBackground < 0) _zoomLeftBackground = 0;
+      }
 
       if (iEffect != 0)
       {
@@ -1553,20 +1843,20 @@ namespace MediaPortal.GUI.Pictures
               switch (_endPoint)
               {
                 case 8:
-                  iDestY = (float)_heightBackground / 2;
+                  iDestY = (float)_backgroundSlide.Height / 2;
                   iDestX = (float)_zoomWidth / 2;
                   break;
                 case 4:
-                  iDestY = (float)_heightBackground / 2;
-                  iDestX = (float)_widthBackground - (float)_zoomWidth / 2;
+                  iDestY = (float)_backgroundSlide.Height / 2;
+                  iDestX = (float)_backgroundSlide.Width - (float)_zoomWidth / 2;
                   break;
                 case 2:
                   iDestY = (float)_zoomHeight / 2;
-                  iDestX = (float)_widthBackground / 2;
+                  iDestX = (float)_backgroundSlide.Width / 2;
                   break;
                 case 6:
-                  iDestY = (float)_heightBackground - (float)_zoomHeight / 2;
-                  iDestX = (float)_widthBackground / 2;
+                  iDestY = (float)_backgroundSlide.Height - (float)_zoomHeight / 2;
+                  iDestX = (float)_backgroundSlide.Width / 2;
                   break;
                 case 1:
                   iDestY = (float)_zoomHeight / 2;
@@ -1574,20 +1864,20 @@ namespace MediaPortal.GUI.Pictures
                   break;
                 case 3:
                   iDestY = (float)_zoomHeight / 2;
-                  iDestX = (float)_widthBackground - (float)_zoomWidth / 2;
+                  iDestX = (float)_backgroundSlide.Width - (float)_zoomWidth / 2;
                   break;
                 case 7:
-                  iDestY = (float)_heightBackground - (float)_zoomHeight / 2;
+                  iDestY = (float)_backgroundSlide.Height - (float)_zoomHeight / 2;
                   iDestX = (float)_zoomWidth / 2;
                   break;
                 case 5:
-                  iDestY = (float)_heightBackground - (float)_zoomHeight / 2;
-                  iDestX = (float)_widthBackground - (float)_zoomWidth / 2;
+                  iDestY = (float)_backgroundSlide.Height - (float)_zoomHeight / 2;
+                  iDestX = (float)_backgroundSlide.Width - (float)_zoomWidth / 2;
                   break;
               }
 
-              _panYChange = (iDestY - (_zoomTopBackgroundd + (float)_zoomHeight / 2)) / iNrOfFramesPerEffect; // Travel Y;
-              _panXChange = (iDestX - (_zoomLeftBackground + (float)_zoomWidth / 2)) / iNrOfFramesPerEffect; // Travel Y;
+              _panYChange = (iDestY - (_currentZoomTop + (float)_zoomHeight / 2)) / iNrOfFramesPerEffect; // Travel Y;
+              _panXChange = (iDestX - (_currentZoomLeft + (float)_zoomWidth / 2)) / iNrOfFramesPerEffect; // Travel Y;
             }
 
             PanBackGround(_panXChange, _panYChange);
@@ -1614,12 +1904,12 @@ namespace MediaPortal.GUI.Pictures
       if ((fPanX == 0.0f) && (fPanY == 0.0f)) return false;
 
       _zoomLeftBackground += fPanX;
-      _zoomTopBackgroundd += fPanY;
+      _zoomTopBackground += fPanY;
 
-      if (_zoomTopBackgroundd < 0) return false;
+      if (_zoomTopBackground < 0) return false;
       if (_zoomLeftBackground < 0) return false;
-      if (_zoomTopBackgroundd > (_heightBackground - _zoomHeight)) return false;
-      if (_zoomLeftBackground > (_widthBackground - _zoomWidth)) return false;
+      if (_zoomTopBackground > (_backgroundSlide.Height - _zoomHeight)) return false;
+      if (_zoomLeftBackground > (_backgroundSlide.Width - _zoomWidth)) return false;
 
       return true;
     }
@@ -1703,21 +1993,21 @@ namespace MediaPortal.GUI.Pictures
       // delete current picture
       GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
       if (null == dlgYesNo) return;
-      if (_backgroundSlideFileName.Length == 0) return;
+      if (_backgroundSlide == null || _backgroundSlide.FilePath.Length == 0) return;
       bool bPause = _isPaused;
       _isPaused = true;
-      string strFileName = System.IO.Path.GetFileName(_backgroundSlideFileName);
+      string strFileName = System.IO.Path.GetFileName(_backgroundSlide.FilePath);
       dlgYesNo.SetHeading(GUILocalizeStrings.Get(664));
-      dlgYesNo.SetLine(1, String.Format("{0}/{1}", 1 + _currentSlide, _slideList.Count));
+      dlgYesNo.SetLine(1, String.Format("{0}/{1}", 1 + _currentSlideIndex, _slideList.Count));
       dlgYesNo.SetLine(2, strFileName);
       dlgYesNo.SetLine(3, "");
       dlgYesNo.DoModal(GetID);
 
       _isPaused = bPause;
       if (!dlgYesNo.IsConfirmed) return;
-      if (MediaPortal.Util.Utils.FileDelete(_backgroundSlideFileName) == true)
+      if (MediaPortal.Util.Utils.FileDelete(_backgroundSlide.FilePath) == true)
       {
-        if (_currentSlide < _slideList.Count) _slideList.RemoveAt(_currentSlide);
+        if (_currentSlideIndex < _slideList.Count) _slideList.RemoveAt(_currentSlideIndex);
 
         _slideTime = (int)(DateTime.Now.Ticks / 10000);
         _lastSlideShown = -1;
@@ -1728,7 +2018,7 @@ namespace MediaPortal.GUI.Pictures
     void OnShowInfo()
     {
       GUIDialogExif exifDialog = (GUIDialogExif)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_EXIF);
-      exifDialog.FileName = _backgroundSlideFileName;
+      exifDialog.FileName = _backgroundSlide.FilePath;
       exifDialog.DoModal(GetID);
     }
 
@@ -1754,43 +2044,45 @@ namespace MediaPortal.GUI.Pictures
 
     void DoRotate()
     {
-      _rotation++;
-      if (_rotation >= 4)
+      int rotation = _backgroundSlide.Rotation;
+      rotation++;
+      if (rotation >= 4)
       {
-        _rotation = 0;
+        rotation = 0;
       }
 
       using (PictureDatabase dbs = new PictureDatabase())
       {
-        dbs.SetRotation(_backgroundSlideFileName, _rotation);
+        dbs.SetRotation(_backgroundSlide.FilePath, rotation);
       }
 
-      if (null != _currentTexture)
+      if (null != _currentSlide)
       {
-        _currentTexture.Dispose();
-        _currentTexture = null;
+        //_currentSlide.Texture.Dispose();
+        _currentSlide = null;
       }
-      if (_backgroundSlideFileName.Length == 0) return;
+      if (_backgroundSlide == null || _backgroundSlide.FilePath.Length == 0) return;
 
+      LoadCurrentSlide();
 
-      int iMaxWidth = GUIGraphicsContext.OverScanWidth;
-      int iMaxHeight = GUIGraphicsContext.OverScanHeight;
-      int X, Y;
-      _currentTexture = MediaPortal.Util.Picture.Load(_backgroundSlideFileName, _rotation, iMaxWidth, iMaxHeight, true, true, out X, out Y);
-      _widthCurrentTexture = X;
-      _heightCurrentTexture = Y;
-      _currentSlideFileName = _backgroundSlideFileName;
-      _zoomFactorBackground = _defaultZoomFactor;
-      _kenBurnsEffect = 0;
-      _userZoomLevel = 1.0f;
-      _isPictureZoomed = false;
-      _zoomLeftBackground = 0;
-      _zoomTopBackgroundd = 0;
-      _slideTime = (int)(DateTime.Now.Ticks / 10000);
-      _frameCounter = 0;
+      //int iMaxWidth = GUIGraphicsContext.OverScanWidth;
+      //int iMaxHeight = GUIGraphicsContext.OverScanHeight;
+      //int X, Y;
+      //_currentTexture = MediaPortal.Util.Picture.Load(_backgroundSlideFileName, _rotation, iMaxWidth, iMaxHeight, true, true, out X, out Y);
+      //_widthCurrentTexture = X;
+      //_heightCurrentTexture = Y;
+      //_currentSlideFileName = _backgroundSlideFileName;
+      //_zoomFactorBackground = _defaultZoomFactor;
+      //_kenBurnsEffect = 0;
+      //_userZoomLevel = 1.0f;
+      //_isPictureZoomed = false;
+      //_zoomLeftBackground = 0;
+      //_zoomTopBackgroundd = 0;
+      //_slideTime = (int)(DateTime.Now.Ticks / 10000);
+      //_frameCounter = 0;
       _transitionMethod = 9;
 
-      DeleteThumb(_backgroundSlideFileName);
+      DeleteThumb(_backgroundSlide.FilePath);
     }
 
     void GetOutputRect(float iSourceWidth, float iSourceHeight, float fZoomLevel, out float x, out float y, out float width, out float height)
@@ -1848,16 +2140,16 @@ namespace MediaPortal.GUI.Pictures
       // Start and End point positions along the picture rectangle
       // Point zoom in/out only works if the selected Point is at the border
       // example:  "m_dwWidthBackGround == m_iZoomLeft + _zoomWidth"  and zooming to the left (iZoomType=4)
-      float middlex = _widthCurrentTexture / 2;
-      float middley = _heightCurrentTexture / 2;
-      float xend = _widthCurrentTexture;
-      float yend = _heightCurrentTexture;
+      float middlex = _currentSlide.Width / 2;
+      float middley = _currentSlide.Height / 2;
+      float xend = _currentSlide.Width;
+      float yend = _currentSlide.Height;
 
       float x, y, width, height;
       _currentZoomFactor = fZoom;
-      GetOutputRect(_widthCurrentTexture, _heightCurrentTexture, _currentZoomFactor, out x, out y, out width, out height);
-      if (_currentZoomTopFactor + _zoomHeight > _heightCurrentTexture) _zoomHeight = _heightCurrentTexture - _currentZoomTopFactor;
-      if (_currentZoomleftFactor + _zoomWidth > _widthCurrentTexture) _zoomWidth = _widthCurrentTexture - _currentZoomleftFactor;
+      GetOutputRect(_currentSlide.Width, _currentSlide.Height, _currentZoomFactor, out x, out y, out width, out height);
+      if (_currentZoomTop + _zoomHeight > _currentSlide.Height) _zoomHeight = _currentSlide.Height - _currentZoomTop;
+      if (_currentZoomLeft + _zoomWidth > _currentSlide.Width) _zoomWidth = _currentSlide.Width - _currentZoomLeft;
 
       switch (_currentZoomType)
       {
@@ -1872,52 +2164,48 @@ namespace MediaPortal.GUI.Pictures
           * 8: // Heigth centered, Left unchanged            
           * */
         case 0: // centered, centered
-          _currentZoomleftFactor = middlex - _zoomWidth * 0.5f;
-          _currentZoomTopFactor = middley - _zoomHeight * 0.5f;
+          _currentZoomLeft = middlex - _zoomWidth * 0.5f;
+          _currentZoomTop = middley - _zoomHeight * 0.5f;
           break;
         case 2: // Width centered, Top unchanged
-          _currentZoomleftFactor = middlex - _zoomWidth * 0.5f;
+          _currentZoomLeft = middlex - _zoomWidth * 0.5f;
           break;
         case 8: // Heigth centered, Left unchanged
-          _currentZoomTopFactor = middley - _zoomHeight * 0.5f;
+          _currentZoomTop = middley - _zoomHeight * 0.5f;
           break;
         case 6: // Widht centered, Bottom unchanged
-          _currentZoomleftFactor = middlex - _zoomWidth * 0.5f;
-          _currentZoomTopFactor = yend - _zoomHeight;
+          _currentZoomLeft = middlex - _zoomWidth * 0.5f;
+          _currentZoomTop = yend - _zoomHeight;
           break;
         case 4: // Height centered, Right unchanged
-          _currentZoomTopFactor = middley - _zoomHeight * 0.5f;
-          _currentZoomleftFactor = xend - _zoomWidth;
+          _currentZoomTop = middley - _zoomHeight * 0.5f;
+          _currentZoomLeft = xend - _zoomWidth;
           break;
         case 1: // Top Left unchanged
           break;
         case 3: // Top Right unchanged
-          _currentZoomleftFactor = xend - _zoomWidth;
+          _currentZoomLeft = xend - _zoomWidth;
           break;
         case 7: // Bottom Left unchanged          
-          _currentZoomTopFactor = yend - _zoomHeight;
+          _currentZoomTop = yend - _zoomHeight;
           break;
         case 5: // Bottom Right unchanged
-          _currentZoomTopFactor = yend - _zoomHeight;
-          _currentZoomleftFactor = xend - _zoomWidth;
+          _currentZoomTop = yend - _zoomHeight;
+          _currentZoomLeft = xend - _zoomWidth;
           break;
       }
-      if (_currentZoomleftFactor > _widthCurrentTexture - _zoomWidth) _currentZoomleftFactor = (_widthCurrentTexture - _zoomWidth);
-      if (_currentZoomTopFactor > _heightCurrentTexture - _zoomHeight) _currentZoomTopFactor = (_heightCurrentTexture - _zoomHeight);
-      if (_currentZoomleftFactor < 0) _currentZoomleftFactor = 0;
-      if (_currentZoomTopFactor < 0) _currentZoomTopFactor = 0;
+      if (_currentZoomLeft > _currentSlide.Width - _zoomWidth) _currentZoomLeft = (_currentSlide.Width - _zoomWidth);
+      if (_currentZoomTop > _currentSlide.Height - _zoomHeight) _currentZoomTop = (_currentSlide.Height - _zoomHeight);
+      if (_currentZoomLeft < 0) _currentZoomLeft = 0;
+      if (_currentZoomTop < 0) _currentZoomTop = 0;
     }
 
     void LoadRawPictureThread()
     {
       // load picture
-      float width, height;
-      string slideName;
-      _backgroundTexture = GetSlide(true, out width, out height, out slideName);
+      string slideFilePath = _slideList[_currentSlideIndex];
+      _backgroundSlide = new SlidePicture(slideFilePath, true);
       _isLoadingRawPicture = false;
-      _widthBackground = width;
-      _heightBackground = height;
-      _currentSlideFileName = slideName;
     }
     void ZoomBackGround(float fZoom)
     {
@@ -1926,7 +2214,7 @@ namespace MediaPortal.GUI.Pictures
 
       _isPictureZoomed = (_userZoomLevel != 1.0f);
       // Load raw picture when zooming
-      if (!_trueSizeTexture && _isPictureZoomed)
+      if (!_backgroundSlide.TrueSizeTexture && _isPictureZoomed)
       {
         _zoomInfoVisible = true;
         _isLoadingRawPicture = true;
@@ -1941,7 +2229,7 @@ namespace MediaPortal.GUI.Pictures
             GUIWindowManager.Process();
 
           // load picture
-          //_backgroundTexture=GetSlide(true, out _widthBackground,out _heightBackground, out _currentSlideFileName);              
+          //_backgroundTexture=GetSlide(true, out _backgroundSlide.Width,out _backgroundSlide.Height, out _currentSlideFileName);              
           //_isLoadingRawPicture=false;
         }
         fZoom = _defaultZoomFactor * _userZoomLevel;
@@ -1951,14 +2239,14 @@ namespace MediaPortal.GUI.Pictures
       // Point zoom in/out only works if the selected Point is at the border
       // example:  "m_dwWidthBackGround == m_iZoomLeft + _zoomWidth"  and zooming to the left (iZoomType=4)
       float middlex = _zoomLeftBackground + _zoomWidth / 2;
-      float middley = _zoomTopBackgroundd + _zoomHeight / 2;
-      float xend = _widthBackground;
-      float yend = _heightBackground;
+      float middley = _zoomTopBackground + _zoomHeight / 2;
+      float xend = _backgroundSlide.Width;
+      float yend = _backgroundSlide.Height;
 
       _zoomFactorBackground = fZoom;
 
       float x, y, width, height;
-      GetOutputRect(_widthBackground, _heightBackground, _zoomFactorBackground, out x, out y, out width, out height);
+      GetOutputRect(_backgroundSlide.Width, _backgroundSlide.Height, _zoomFactorBackground, out x, out y, out width, out height);
 
       if (_isPictureZoomed) _zoomTypeBackground = 0;
       switch (_zoomTypeBackground)
@@ -1975,20 +2263,20 @@ namespace MediaPortal.GUI.Pictures
            * */
         case 0: // centered, centered
           _zoomLeftBackground = middlex - _zoomWidth * 0.5f;
-          _zoomTopBackgroundd = middley - _zoomHeight * 0.5f;
+          _zoomTopBackground = middley - _zoomHeight * 0.5f;
           break;
         case 2: // Width centered, Top unchanged
           _zoomLeftBackground = middlex - _zoomWidth * 0.5f;
           break;
         case 8: // Heigth centered, Left unchanged
-          _zoomTopBackgroundd = middley - _zoomHeight * 0.5f;
+          _zoomTopBackground = middley - _zoomHeight * 0.5f;
           break;
         case 6: // Widht centered, Bottom unchanged
           _zoomLeftBackground = middlex - _zoomWidth * 0.5f;
-          _zoomTopBackgroundd = yend - _zoomHeight;
+          _zoomTopBackground = yend - _zoomHeight;
           break;
         case 4: // Height centered, Right unchanged
-          _zoomTopBackgroundd = middley - _zoomHeight * 0.5f;
+          _zoomTopBackground = middley - _zoomHeight * 0.5f;
           _zoomLeftBackground = xend - _zoomWidth;
           break;
         case 1: // Top Left unchanged
@@ -1997,17 +2285,17 @@ namespace MediaPortal.GUI.Pictures
           _zoomLeftBackground = xend - _zoomWidth;
           break;
         case 7: // Bottom Left unchanged          
-          _zoomTopBackgroundd = yend - _zoomHeight;
+          _zoomTopBackground = yend - _zoomHeight;
           break;
         case 5: // Bottom Right unchanged
-          _zoomTopBackgroundd = yend - _zoomHeight;
+          _zoomTopBackground = yend - _zoomHeight;
           _zoomLeftBackground = xend - _zoomWidth;
           break;
       }
-      if (_zoomLeftBackground > _widthBackground - _zoomWidth) _zoomLeftBackground = (_widthBackground - _zoomWidth);
-      if (_zoomTopBackgroundd > _heightBackground - _zoomHeight) _zoomTopBackgroundd = (_heightBackground - _zoomHeight);
+      if (_zoomLeftBackground > _backgroundSlide.Width - _zoomWidth) _zoomLeftBackground = (_backgroundSlide.Width - _zoomWidth);
+      if (_zoomTopBackground > _backgroundSlide.Height - _zoomHeight) _zoomTopBackground = (_backgroundSlide.Height - _zoomHeight);
       if (_zoomLeftBackground < 0) _zoomLeftBackground = 0;
-      if (_zoomTopBackgroundd < 0) _zoomTopBackgroundd = 0;
+      if (_zoomTopBackground < 0) _zoomTopBackground = 0;
     }
 
     void LoadSettings()
@@ -2094,18 +2382,18 @@ namespace MediaPortal.GUI.Pictures
     {
       GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
       if (dlg == null) return;
-                
-       //get albumart
+
+      //get albumart
       string albumart = g_Player.CurrentFile;
-      int e = albumart.LastIndexOf(@"\")+1;
+      int e = albumart.LastIndexOf(@"\") + 1;
       albumart = albumart.Remove(e);
-      if (_currentSlideFileName.Contains(albumart))
-          albumart = string.Empty;
+      if (_currentSlide.FilePath.Contains(albumart))
+        albumart = string.Empty;
       else
       {
-          albumart = albumart + "folder.jpg";
-          if (!File.Exists(albumart))
-              albumart = string.Empty;
+        albumart = albumart + "folder.jpg";
+        if (!File.Exists(albumart))
+          albumart = string.Empty;
       }
       // get Sonf-info        
       MediaPortal.TagReader.MusicTag tag = MediaPortal.TagReader.TagReader.ReadTag(g_Player.CurrentFile);
@@ -2114,7 +2402,7 @@ namespace MediaPortal.GUI.Pictures
       dlg.ClearAll();
       dlg.SetImage(albumart);
       dlg.SetHeading(4540);
-      dlg.SetText(tag.Title +"\n"+ tag.Artist + "\n" + tag.Album);
+      dlg.SetText(tag.Title + "\n" + tag.Artist + "\n" + tag.Album);
       dlg.TimeOut = 5;
       dlg.DoModal(GUIWindowManager.ActiveWindow);
     }

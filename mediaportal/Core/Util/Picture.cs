@@ -274,7 +274,8 @@ namespace MediaPortal.Util
     /// <param name="iTextureTop">y (top) offset in texture</param>
     /// <param name="bHiQuality">true :render in hi quality but slow, 
     ///                          false:render in lo quality but fast,  </param>
-    static public void RenderImage(ref Texture texture, float x, float y, float nw, float nh, float iTextureWidth, float iTextureHeight, float iTextureLeft, float iTextureTop, bool bHiQuality)
+    //static public void RenderImage(ref Texture texture, float x, float y, float nw, float nh, float iTextureWidth, float iTextureHeight, float iTextureLeft, float iTextureTop, bool bHiQuality)
+    static public void RenderImage(Texture texture, float x, float y, float nw, float nh, float iTextureWidth, float iTextureHeight, float iTextureLeft, float iTextureTop, bool bHiQuality)
     {
       if (texture == null) return;
       if (texture.Disposed) return;
@@ -415,7 +416,8 @@ namespace MediaPortal.Util
     /// <param name="iTextureTop">y (top) offset in texture</param>
     /// <param name="bHiQuality">true :render in hi quality but slow, 
     ///                          false:render in lo quality but fast,  </param>
-    static public void RenderImage(ref Texture texture, int x, int y, int nw, int nh, int iTextureWidth, int iTextureHeight, int iTextureLeft, int iTextureTop, bool bHiQuality)
+    //static public void RenderImage(ref Texture texture, int x, int y, int nw, int nh, int iTextureWidth, int iTextureHeight, int iTextureLeft, int iTextureTop, bool bHiQuality)
+    static public void RenderImage(Texture texture, int x, int y, int nw, int nh, int iTextureWidth, int iTextureHeight, int iTextureLeft, int iTextureTop, bool bHiQuality)
     {
       if (texture == null) return;
       if (texture.Disposed) return;
@@ -556,7 +558,8 @@ namespace MediaPortal.Util
     /// <param name="iTextureLeft">x (left) offset in texture</param>
     /// <param name="iTextureTop">y (top) offset in texture</param>
     /// <param name="lColorDiffuse">diffuse color</param>
-    static public void RenderImage(ref Texture texture, float x, float y, float nw, float nh, float iTextureWidth, float iTextureHeight, float iTextureLeft, float iTextureTop, long lColorDiffuse)
+    //static public void RenderImage(ref Texture texture, float x, float y, float nw, float nh, float iTextureWidth, float iTextureHeight, float iTextureLeft, float iTextureTop, long lColorDiffuse)
+    static public void RenderImage(Texture texture, float x, float y, float nw, float nh, float iTextureWidth, float iTextureHeight, float iTextureLeft, float iTextureTop, long lColorDiffuse)
     {
       if (texture == null) return;
       if (texture.Disposed) return;
@@ -696,7 +699,8 @@ namespace MediaPortal.Util
     /// <param name="iTextureLeft">x (left) offset in texture</param>
     /// <param name="iTextureTop">y (top) offset in texture</param>
     /// <param name="lColorDiffuse">diffuse color</param>
-    static public void RenderImage(ref Texture texture, int x, int y, int nw, int nh, int iTextureWidth, int iTextureHeight, int iTextureLeft, int iTextureTop, long lColorDiffuse)
+    //static public void RenderImage(ref Texture texture, int x, int y, int nw, int nh, int iTextureWidth, int iTextureHeight, int iTextureLeft, int iTextureTop, long lColorDiffuse)
+    static public void RenderImage(Texture texture, int x, int y, int nw, int nh, int iTextureWidth, int iTextureHeight, int iTextureLeft, int iTextureTop, long lColorDiffuse)
     {
       if (texture == null) return;
       if (texture.Disposed) return;

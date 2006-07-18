@@ -328,7 +328,7 @@ namespace WindowPlugins.GUIPrograms
         }
         x = x + deltaX;
         y = y + deltaY;
-        Picture.RenderImage(ref curTexture, (int)x, (int)y, curWidth, curHeight, textureWidth, textureHeight, 0, 0, true);
+        Picture.RenderImage(curTexture, (int)x, (int)y, curWidth, curHeight, textureWidth, textureHeight, 0, 0, true);
       }
     }
 

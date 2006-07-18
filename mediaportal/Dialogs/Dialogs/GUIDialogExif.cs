@@ -278,7 +278,7 @@ namespace MediaPortal.Dialogs
 
       GUIFontManager.Present();
       GUIGraphicsContext.GetOutputRect(m_iTextureWidth, m_iTextureHeight, imgPicture.Width, imgPicture.Height, out width, out height);
-      MediaPortal.Util.Picture.RenderImage(ref m_pTexture, (int)x, (int)y, width, height, m_iTextureWidth, m_iTextureHeight, 0, 0, true);
+      MediaPortal.Util.Picture.RenderImage(m_pTexture, (int)x, (int)y, width, height, m_iTextureWidth, m_iTextureHeight, 0, 0, true);
     }
 
 

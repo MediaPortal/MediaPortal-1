@@ -369,7 +369,7 @@ namespace MediaPortal.GUI.Music
         GUIGraphicsContext.GetOutputRect(coverArtTextureWidth, coverArtTextureHeight, maxWidth, maxHeight, out width, out height);
 
         GUIFontManager.Present();
-        MediaPortal.Util.Picture.RenderImage(ref coverArtTexture, (int)x, (int)y, width, height, coverArtTextureWidth, coverArtTextureHeight, 0, 0, true);
+        MediaPortal.Util.Picture.RenderImage(coverArtTexture, (int)x, (int)y, width, height, coverArtTextureWidth, coverArtTextureHeight, 0, 0, true);
       }
     }
 

@@ -18,10 +18,9 @@ namespace WindowPlugins.GUISettings.Epg
   /// </summary>
   public class GUIWizardEpgSelect : GUIEpgSelectBase
   {
-    [SkinControlAttribute(5)]
-    protected GUIButtonControl btnNext = null;
-    [SkinControlAttribute(25)]
-    protected GUIButtonControl btnBack = null;
+    [SkinControlAttribute(5)]    protected GUIButtonControl btnNext = null;
+    [SkinControlAttribute(25)]   protected GUIButtonControl btnBack = null;
+
     public GUIWizardEpgSelect()
     {
 

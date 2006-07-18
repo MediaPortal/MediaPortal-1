@@ -286,6 +286,16 @@ namespace MediaPortal.Database
 				{
 					strReturn += "'";
 				}
+        // fixes picture db stuff - might break other things!
+        //if (k == '\\')
+        //  try
+        //  {
+        //   if (strTxt[i-1] == '\\')
+        //    strReturn += "";           
+        //  }
+        //  catch
+        //  {
+        //  }
 				if((byte)k==0)// remove 0-bytes from the string
 					k=(char)32;
 
