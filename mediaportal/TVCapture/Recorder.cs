@@ -145,6 +145,7 @@ namespace MediaPortal.TV.Recording
     static public void Start(CommandProcessor processor)
     {
       if (Running) return;//if we are initialized already then no need todo anything
+      _log.Info("Recorder: start");
       _state = State.Initializing;
       _commandProcessor = processor;
       RecorderProperties.Init();
@@ -217,6 +218,7 @@ namespace MediaPortal.TV.Recording
     static public void Stop()
     {
       if (!Running) return;
+      _log.Info("Recorder: stop");
       //unsubscribe from events
       GUIWindowManager.OnActivateWindow -= new GUIWindowManager.WindowActivationHandler(GUIWindowManager_OnActivateWindow);
       GUIWindowManager.Receivers -= new SendMessageHandler(Recorder.OnMessage);
@@ -1081,6 +1083,9 @@ namespace MediaPortal.TV.Recording
       switch (message.Message)
       {
 
+        case GUIMessage.MessageType.GUI_MSG_RECORDER_STOP:
+          Stop();
+          break;
         case GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED:
           _progressBarTimer = DateTime.MinValue;
           break;
