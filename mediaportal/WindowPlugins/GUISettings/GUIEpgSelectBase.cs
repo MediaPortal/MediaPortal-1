@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+//using System.Windows.Forms;
 using System.IO;
 using System.Xml;
 using MediaPortal.Util;
@@ -174,17 +175,25 @@ namespace WindowPlugins.GUISettings.Epg
 
       for (int i = 0; i < listGrabbers.Count; ++i)
       {
-        GUIListItem item = listGrabbers[i];
-        if (item.Label.Length > 0 && item.Label2.Length > 0)
+        try
         {
-          EPGConfigData data = new EPGConfigData();
-          data.DisplayName = item.Label;
-          data.ChannelID = item.Path;
-          ChannelInfo selChannel = (ChannelInfo)_epgChannels[item.ItemId];
-          GrabberInfo gInfo = (GrabberInfo)selChannel.GrabberList.GetByIndex(0);
-          data.PrimaryGrabberID = gInfo.GrabberID;
-          config.Add(data);
+          GUIListItem item = listGrabbers[i];
+          if (item.Label.Length > 0 && item.Label2.Length > 0)
+          {
+            EPGConfigData data = new EPGConfigData();
+            data.DisplayName = item.Label;
+            data.ChannelID = item.Path;
+            ChannelInfo selChannel = (ChannelInfo)_epgChannels[item.ItemId];
+            GrabberInfo gInfo = (GrabberInfo)selChannel.GrabberList.GetByIndex(0);
+            data.PrimaryGrabberID = gInfo.GrabberID;
+            config.Add(data);
+          }
         }
+        catch (Exception ex)
+        {
+          //MessageBox.Show("Your mapping is invalid! Error code: " + i );
+        }
+
       }
       config.Save();
     }
