@@ -35,6 +35,8 @@ namespace MediaPortal.GUI.Library
   {
     [XMLSkinElement("textcolor")]
     protected long _textColor = 0xFFFFFFFF;
+		[XMLSkinElement("textcolorNoFocus")]
+		protected long _textColorNoFocus = 0xFFFFFFFF;
     [XMLSkinElement("disabledcolor")]
     protected long _disabledColor = 0xFF606060;
     [XMLSkinElement("label")]
@@ -228,7 +230,7 @@ namespace MediaPortal.GUI.Library
 
         _imageBackground.Render(timePassed);
 
-        long dwTextColor = _textColor;
+        long dwTextColor = Focus ? _textColor: _textColorNoFocus;
 
         //	User has moved left...
         if (_leftSelected)
@@ -347,7 +349,7 @@ namespace MediaPortal.GUI.Library
           if (Disabled || _subItemList.Count == 0)
             _labelControl.TextColor = _disabledColor;
           else
-            _labelControl.TextColor = _textColor;
+            _labelControl.TextColor = Focus ? _textColor:_textColorNoFocus;
           _labelControl.Label = _label;
           _labelControl.Render(timePassed);
         }

@@ -43,6 +43,8 @@ namespace MediaPortal.GUI.Library
     protected string _label = "";
     [XMLSkinElement("textcolor")]
     protected long _textColor = 0xFFFFFFFF;
+		[XMLSkinElement("textcolorNoFocus")]
+		protected long _textColorNoFocus = 0xFFFFFFFF;
     [XMLSkinElement("disabledcolor")]
     protected long _disabledColor = 0xFF606060;
     [XMLSkinElement("hyperlink")]
@@ -212,7 +214,7 @@ namespace MediaPortal.GUI.Library
       _labelControl.Width = labelWidth;
       _labelControl.TextAlignment = _textAlignment;
       _labelControl.Label = _label;
-      _labelControl.TextColor = Disabled ? _disabledColor : _textColor;
+			_labelControl.TextColor = Disabled ? _disabledColor : Focus? _textColor : _textColorNoFocus;
 
       // render the text on the button
       int x = 0;

@@ -36,6 +36,7 @@ namespace MediaPortal.GUI.Library
 		[XMLSkinElement("font")]			protected string	_fontName;
 		[XMLSkinElement("label")]			protected string	_label="";
 		[XMLSkinElement("textcolor")]		protected long  	_textColor=0xFFFFFFFF;
+		[XMLSkinElement("textcolorNoFocus")] protected long _textColorNoFocus = 0xFFFFFFFF;
 		[XMLSkinElement("disabledcolor")]	protected long  _disabledColor=0xFF606060;
 		[XMLSkinElement("hyperlink")]		protected int       _hyperLinkWindowId=-1;
 		[XMLSkinElement("action")]			protected int       _actionId=-1;
@@ -199,7 +200,7 @@ namespace MediaPortal.GUI.Library
 			else
 			{
 				_labelControl.Label=_label;
-				_labelControl.TextColor=_textColor;
+				_labelControl.TextColor= Focus ? _textColor : _textColorNoFocus;
 				_labelControl.SetPosition(_textOffsetX+_positionX, _textOffsetY+_positionY);
 				_labelControl.Render(timePassed);
 			}
