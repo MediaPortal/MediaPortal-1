@@ -1186,7 +1186,7 @@ namespace MediaPortal.GUI.Pictures
         {
           if (dlgProgress != null)
           {
-            string fileName = String.Format(GUILocalizeStrings.Get(519) + ": {0}", item.Label);
+            string fileName = String.Format(GUILocalizeStrings.Get(110) + ": {0}", item.Label);
             dlgProgress.SetLine(1, fileName);
             dlgProgress.Progress();
             if (dlgProgress.IsCanceled) break;
