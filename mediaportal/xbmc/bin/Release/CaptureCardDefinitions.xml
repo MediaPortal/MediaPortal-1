@@ -359,7 +359,24 @@
       </connections>
     </tv>
   </capturecard>
+
+  <capturecard commercialname="Lifeview TV Walker DVB-T" capturename="Lifeview M9207 BDA Digital Capture" devid="vid_10FD&amp;pid_0513">
+    <capabilities tv="true" radio="false" mpeg2="false" mce="false" sw="true" bda="true"/>
+    <tv>
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"/>
+        <filter cat="tunerdevice"     name="Lifeview M9207 BDA Digital Tuner"   checkdevice="true"/>
+        <filter cat="capture"         name="Lifeview M9207 BDA Digital Capture" checkdevice="true"/>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
  
+
   <capturecard commercialname="Lifeview FlyDVB-T" capturename="713x BDA Digital Capture" devid="ven_1131&amp;dev_7134&amp;subsys_03015168&amp;rev_01">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
     <tv>
