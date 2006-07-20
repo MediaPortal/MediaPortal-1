@@ -9,53 +9,71 @@
 		<italic>[yes|no]</italic>
 		<start>start character (numeric) default : 0</start>
 		<end>end character (numeric) default : 255</end>
-	</font>
+	</font> 
   !-->
   <font>
     <name>font9</name>
     <filename>Lucida Sans Unicode</filename>
     <height>9</height>
+    <start>0</start>
+    <end>1536</end>    
   </font>
   <font>
     <name>font8</name>
     <filename>Lucida Sans Unicode</filename>
     <height>8</height>
+    <start>0</start>
+    <end>1536</end>    
   </font>
   <font>
     <name>font10</name>
     <filename>Lucida Sans Unicode</filename>
     <height>10</height>
+    <start>0</start>
+    <end>1536</end>    
   </font>
   <font>
     <name>font10bold</name>
     <filename>Lucida Sans Unicode</filename>
     <height>10</height>
     <bold>yes</bold>
+    <start>0</start>
+    <end>1536</end>    
   </font>
   <font>
     <name>font11</name>
     <filename>Lucida Sans Unicode</filename>
     <height>11</height>
+    <start>0</start>
+    <end>1536</end>    
   </font>
   <font>
     <name>font12</name>
     <filename>Lucida Sans Unicode</filename>
     <height>12</height>
+    <start>0</start>
+    <end>1536</end>    
   </font>
   <font>
     <name>font13</name>
     <filename>Lucida Sans Unicode</filename>
     <height>13</height>
+    <start>0</start>
+    <end>1536</end>
   </font>
   <font>
     <name>font14</name>
     <filename>Lucida Sans Unicode</filename>
     <height>14</height>
+    <start>0</start>
+    <end>1536</end>
   </font>
   <font>
     <name>font16</name>
     <filename>Lucida Sans Unicode</filename>
     <height>16</height>
+    <start>0</start>
+    <end>1536</end>
   </font>
   <font>
     <name>font18</name>
@@ -66,32 +84,44 @@
     <name>font20</name>
     <filename>Lucida Sans Unicode</filename>
     <height>20</height>
+    <start>0</start>
+    <end>1536</end>    
   </font>
   <font>
     <name>font22</name>
     <filename>Lucida Sans Unicode</filename>
     <height>22</height>
+    <start>0</start>
+    <end>1536</end>    
   </font>
   <font>
     <name>font40</name>
     <filename>Lucida Sans Unicode</filename>
     <height>40</height>
+    <start>0</start>
+    <end>1536</end>    
   </font>
   <font>
     <name>fonthomeselected</name>
     <filename>Lucida Sans Unicode</filename>
     <height>16</height>
     <bold>yes</bold>
+    <start>0</start>
+    <end>1536</end>    
   </font>
   <font>
     <name>fonthomeunselected</name>
     <filename>Lucida Sans Unicode</filename>
     <height>16</height>
+    <start>0</start>
+    <end>1536</end>    
   </font>
   <font>
     <name>dingbats</name>
     <filename>dingbats</filename>
     <height>24</height>
+    <start>0</start>
+    <end>1536</end>
   </font>
   <font>
 	<start>48</start>
@@ -118,5 +148,7 @@
   	  <name>fontSVT</name>
   	  <filename>Courier New</filename>
   	  <height>13</height>
+    <start>0</start>
+    <end>1536</end>
   </font>
 </fonts>
