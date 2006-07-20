@@ -855,7 +855,7 @@
    </string>
    <string>
       <id>283</id>
-      <value>Search Results</value>
+      <value>Search results</value>
    </string>
    <string>
       <id>284</id>
@@ -5029,6 +5029,18 @@
       <id>30007</id>
       <value>Search other videos by this artist</value>
    </string>
+   <string>
+      <id>30008</id>
+      <value>Rank</value>
+   </string>
+   <string>
+      <id>30009</id>
+      <value>Page</value>
+   </string>
+   <string>
+      <id>30010</id>
+      <value>Search results for {0} - Page {1} </value>
+   </string>           
                     
    <string>
       <id>99845</id>

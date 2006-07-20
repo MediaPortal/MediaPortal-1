@@ -4999,7 +4999,7 @@
    </string>
    <string Prefix="Meine ">
       <id>30000</id>
-      <value>Musik-Videos</value>
+      <value>Musikvideos</value>
    </string>
    <string>
       <id>30001</id>
@@ -5029,7 +5029,19 @@
       <id>30007</id>
       <value>Suche weitere Videos dieses Künstlers</value>
    </string>
-           
+   <string>
+      <id>30008</id>
+      <value>Platz</value>
+   </string>
+   <string>
+      <id>30009</id>
+      <value>Seite</value>
+   </string>
+   <string>
+      <id>30010</id>
+      <value>Suchergebnisse für {0} - Seite {1} </value>
+   </string>         
+            
    <string>
       <id>99845</id>
       <value>Suche bei TV.com</value>

@@ -697,7 +697,7 @@ namespace MediaPortal.GUI.Video
       YahooTrailers.RSSView = false;
       letterview = false;
       poster.SetFileName(GUIGraphicsContext.Skin + @"\media\" + backgroundposter);
-      GUIPropertyManager.SetProperty("#title", GUILocalizeStrings.Get(5902));
+      GUIPropertyManager.SetProperty("#title", GUILocalizeStrings.Get(5902)); //Show which movies?
 
       string[] MainListOptions = new string[15];
       MainListOptions[0] = GUILocalizeStrings.Get(5903);

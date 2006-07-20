@@ -210,11 +210,11 @@
          <onright>50</onright>
          <onup>27</onup>
          <ondown>29</ondown>
-         <label>209</label>
+         <label>210</label>
       </control>
       <control>
          <type>button</type>
-         <description>Playlist Button</description>
+         <description>Playlist Button next</description>
          <id>29</id>
          <posX>30</posX>
          <posY>190</posY>
@@ -223,7 +223,7 @@
          <onright>50</onright>
          <onup>28</onup>
          <ondown>30</ondown>
-         <label>210</label>
+         <label>209</label>
       </control>
       <control>
          <type>button</type>

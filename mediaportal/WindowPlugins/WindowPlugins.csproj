@@ -312,6 +312,20 @@
     <Compile Include="GUIMSNPlugin\MessengerSetup.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="GUIMusicVideos\GUIMusicVideoPlayList.cs" />
+    <Compile Include="GUIMusicVideos\GUIMusicVideo.cs" />
+    <Compile Include="GUIMusicVideos\GUIMusicVideoSetupFavoritesForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUIMusicVideos\GUIMusicVideoSetupFavoritesForm.designer.cs">
+      <DependentUpon>GUIMusicVideoSetupFavoritesForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUIMusicVideos\GUIMusicVideoSetupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUIMusicVideos\GUIMusicVideoSetupForm.designer.cs">
+      <DependentUpon>GUIMusicVideoSetupForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="GUIMusic\GUICoverArtGrabberProgress.cs" />
     <Compile Include="GUIMusic\GUICoverArtGrabberResults.cs" />
     <Compile Include="GUIMusic\GUIMusicPlayingNow.cs" />
@@ -946,6 +960,14 @@
     </EmbeddedResource>
     <EmbeddedResource Include="GUIMSNPlugin\MessengerSetup.resx">
       <DependentUpon>MessengerSetup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUIMusicVideos\GUIMusicVideoSetupFavoritesForm.resx">
+      <DependentUpon>GUIMusicVideoSetupFavoritesForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUIMusicVideos\GUIMusicVideoSetupForm.resx">
+      <DependentUpon>GUIMusicVideoSetupForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="GUIMyMail\MailDetailSetup.resx">
       <DependentUpon>MailDetailSetup.cs</DependentUpon>

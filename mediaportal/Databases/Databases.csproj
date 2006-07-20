@@ -209,6 +209,17 @@
     </Compile>
     <Compile Include="Folders\IFolderSettings.cs" />
     <Compile Include="Folders\ADO\FolderSettingAdo.cs" />
+    <Compile Include="MusicVideos\MusicVideoDatabase.cs" />
+    <Compile Include="MusicVideos\MusicVideoDatabaseTest.cs" />
+    <Compile Include="MusicVideos\YahooFavorites.cs" />
+    <Compile Include="MusicVideos\YahooGenres.cs" />
+    <Compile Include="MusicVideos\YahooNewVideos.cs" />
+    <Compile Include="MusicVideos\YahooSearch.cs" />
+    <Compile Include="MusicVideos\YahooSettings.cs" />
+    <Compile Include="MusicVideos\YahooSite.cs" />
+    <Compile Include="MusicVideos\YahooTopVideos.cs" />
+    <Compile Include="MusicVideos\YahooUtil.cs" />
+    <Compile Include="MusicVideos\YahooVideo.cs" />
     <Compile Include="Music\AlbumInfo.cs">
       <SubType>Code</SubType>
     </Compile>
