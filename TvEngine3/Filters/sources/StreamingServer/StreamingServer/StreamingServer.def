@@ -1,0 +1,8 @@
+LIBRARY     StreamServer
+
+EXPORTS
+StreamSetup			@1
+StreamRun			@2
+StreamAddTs			@3
+StreamAddMpg		@4
+StreamRemove		@5

@@ -1,0 +1,413 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{FF9AAD68-BBE0-41F7-9183-F2B8474B9224}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SetupTv</RootNamespace>
+    <AssemblyName>SetupTv</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="IdeaBlade.Persistence, Version=3.1.4.4, Culture=neutral, PublicKeyToken=287b5094865421c0, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\TVDatabase\references\IdeaBlade.Persistence.dll</HintPath>
+    </Reference>
+    <Reference Include="IdeaBlade.Persistence.Rdb, Version=3.1.4.4, Culture=neutral, PublicKeyToken=287b5094865421c0, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\TVDatabase\references\IdeaBlade.Persistence.Rdb.dll</HintPath>
+    </Reference>
+    <Reference Include="IdeaBlade.Rdb, Version=3.1.4.4, Culture=neutral, PublicKeyToken=287b5094865421c0, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\TVDatabase\references\IdeaBlade.Rdb.dll</HintPath>
+    </Reference>
+    <Reference Include="IdeaBlade.Util, Version=3.1.4.4, Culture=neutral, PublicKeyToken=287b5094865421c0, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\TVDatabase\references\IdeaBlade.Util.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Runtime.Remoting, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Program Files\Reference Assemblies\Microsoft\WinFX\v3.0\System.Runtime.Remoting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SectionSettings.resx">
+      <DependentUpon>SectionSettings.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\CardAnalog.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>CardAnalog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\CardAtsc.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>CardAtsc.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\CardDvbC.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>CardDvbC.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\CardDvbS.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>CardDvbS.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\CardDvbT.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>CardDvbT.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\GroupNameForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>GroupNameForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\TestService.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>TestService.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\TvEpgGrabber.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>TvEpgGrabber.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\RadioChannelMapping.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>RadioChannelMapping.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\RadioChannels.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>RadioChannels.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\TvCards.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>TvCards.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\TvChannelMapping.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>TvChannelMapping.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\TVChannels.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>TVChannels.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\TvGroups.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>TvGroups.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SettingsForm.resx">
+      <DependentUpon>SettingsForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SetupDatabaseForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>SetupDatabaseForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserInterfaceControls\DataGridBooleanNoNull.resx">
+      <DependentUpon>DataGridBooleanNoNull.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserInterfaceControls\MPBeveledLine.resx">
+      <DependentUpon>MPBeveledLine.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserInterfaceControls\MPGradientLabel.resx">
+      <DependentUpon>MPGradientLabel.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserInterfaceControls\MPGroupBox.resx">
+      <DependentUpon>MPGroupBox.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserInterfaceControls\MPNumericTextBox.resx">
+      <DependentUpon>MPNumericTextBox.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserInterfaceControls\MWTreeView.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WizardForm.resx">
+      <DependentUpon>WizardForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="SectionSettings.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\CardAnalog.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\CardAnalog.Designer.cs">
+      <DependentUpon>CardAnalog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\CardAtsc.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\CardAtsc.Designer.cs">
+      <DependentUpon>CardAtsc.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\CardDvbC.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\CardDvbC.Designer.cs">
+      <DependentUpon>CardDvbC.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\CardDvbS.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\CardDvbS.Designer.cs">
+      <DependentUpon>CardDvbS.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\CardDvbT.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\CardDvbT.Designer.cs">
+      <DependentUpon>CardDvbT.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\FormEditChannel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Sections\FormEditChannel.Designer.cs">
+      <DependentUpon>FormEditChannel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\GroupNameForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Sections\GroupNameForm.Designer.cs">
+      <DependentUpon>GroupNameForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\RadioEpgGrabber.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\RadioEpgGrabber.Designer.cs">
+      <DependentUpon>RadioEpgGrabber.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\Servers.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\Servers.Designer.cs">
+      <DependentUpon>Servers.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\TvRecording.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\TvRecording.Designer.cs">
+      <DependentUpon>TvRecording.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\TestService.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\TestService.Designer.cs">
+      <DependentUpon>TestService.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\TvEpgGrabber.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\TvEpgGrabber.Designer.cs">
+      <DependentUpon>TvEpgGrabber.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\RadioChannelMapping.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\RadioChannelMapping.Designer.cs">
+      <DependentUpon>RadioChannelMapping.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\RadioChannels.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\RadioChannels.Designer.cs">
+      <DependentUpon>RadioChannels.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\TvCards.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\TvCards.Designer.cs">
+      <DependentUpon>TvCards.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\TvChannelMapping.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\TvChannelMapping.Designer.cs">
+      <DependentUpon>TvChannelMapping.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\TVChannels.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\TVChannels.Designer.cs">
+      <DependentUpon>TVChannels.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\TvGroups.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\TvGroups.Designer.cs">
+      <DependentUpon>TvGroups.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SectionTreeNode.cs" />
+    <Compile Include="ServiceHelper.cs" />
+    <Compile Include="SettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SetupDatabaseForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SetupDatabaseForm.Designer.cs">
+      <DependentUpon>SetupDatabaseForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Startup.cs" />
+    <Compile Include="UserInterfaceControls\DataGridBooleanNoNull.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterfaceControls\EventArgs.cs" />
+    <Compile Include="UserInterfaceControls\ImageTextComparer.cs" />
+    <Compile Include="UserInterfaceControls\ListViewItemComparer.cs" />
+    <Compile Include="UserInterfaceControls\MPBeveledLine.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserInterfaceControls\MPButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterfaceControls\MPCheckBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterfaceControls\MPComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterfaceControls\MPContextMenuStrip.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterfaceControls\MPGradientLabel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserInterfaceControls\MPGroupBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterfaceControls\MPLabel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterfaceControls\MPListView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterfaceControls\MPListViewSortOnColumn.cs" />
+    <Compile Include="UserInterfaceControls\MPNumericTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterfaceControls\MPRadioButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterfaceControls\MPTabControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterfaceControls\MPTabPage.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterfaceControls\MPTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterfaceControls\MPToolTip.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterfaceControls\MWCommon.cs" />
+    <Compile Include="UserInterfaceControls\MWEnums.cs" />
+    <Compile Include="UserInterfaceControls\MWTreeNodeWrapper.cs" />
+    <Compile Include="UserInterfaceControls\MWTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Util.cs" />
+    <Compile Include="WizardForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DirectShowLib\DirectShowLib.csproj">
+      <Project>{0D1BA455-CE59-4133-8EAA-1A1E82F8AA12}</Project>
+      <Name>DirectShowLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TvControl\TvControl.csproj">
+      <Project>{0DB878C6-1B68-4DC5-B6EF-564B7C08486F}</Project>
+      <Name>TvControl</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TVDatabase\TvBusinessLayer\TvBusinessLayer.csproj">
+      <Project>{58C35C9D-F18D-40F2-8024-24E50D01E9C5}</Project>
+      <Name>TvBusinessLayer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TVDatabase\TVDatabase.csproj">
+      <Project>{0FD8DEAE-37A4-49CC-A7BE-E86E0E0D85BD}</Project>
+      <Name>TVDatabase</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj">
+      <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>
+      <Name>TvLibrary.Interfaces</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="database.sql" />
+    <EmbeddedResource Include="Sections\RadioEpgGrabber.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>RadioEpgGrabber.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\TvRecording.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>TvRecording.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Sections\FormEditChannel.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>FormEditChannel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\Servers.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>Servers.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="upgrade.sql" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

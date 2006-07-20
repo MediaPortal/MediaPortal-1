@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ideaBlade xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" useDeclarativeTransactions="false" version="1.03">
+  <useDTC>false</useDTC>
+  <copyLocal>false</copyLocal>
+  <logging>
+    <archiveLogs>false</archiveLogs>
+    <logFile>DebugLog.xml</logFile>
+    <usesSeparateAppDomain>false</usesSeparateAppDomain>
+    <port>0</port>
+  </logging>
+  <rdbKey name="default" databaseProduct="Unknown">
+    <connection>Provider=SQLOLEDB.1;Password=sa;Persist Security Info=True;User ID=sa;Initial Catalog=TvLibrary;Data Source=PCEBECKERS</connection>
+    <probeAssemblyName>TVDatabase</probeAssemblyName>
+  </rdbKey>
+  <remoting>
+    <remotePersistenceEnabled>false</remotePersistenceEnabled>
+    <remoteBaseURL>http://localhost</remoteBaseURL>
+    <serverPort>9009</serverPort>
+    <serviceName>PersistenceServer</serviceName>
+    <serverDetectTimeoutMilliseconds>-1</serverDetectTimeoutMilliseconds>
+    <proxyPort>0</proxyPort>
+  </remoting>
+  <appUpdater />
+</ideaBlade>

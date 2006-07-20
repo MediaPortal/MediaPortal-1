@@ -1,0 +1,234 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+using System.Threading;
+using DirectShowLib;
+using IdeaBlade.Persistence;
+using IdeaBlade.Rdb;
+using IdeaBlade.Persistence.Rdb;
+using IdeaBlade.Util;
+
+using TvDatabase;
+
+using TvControl;
+using TvLibrary;
+using TvLibrary.Log;
+using TvLibrary.Interfaces;
+using TvLibrary.Implementations;
+
+namespace SetupTv.Sections
+{
+  public partial class CardAnalog : SectionSettings
+  {
+    int _cardNumber;
+
+    public CardAnalog()
+      : this("Analog")
+    {
+    }
+    public CardAnalog(string name)
+      : base(name)
+    {
+    }
+
+    public CardAnalog(string name, int cardNumber)
+      : base(name)
+    {
+      _cardNumber = cardNumber;
+      InitializeComponent();
+      base.Text = name;
+      Init();
+
+    }
+    void Init()
+    {
+      CountryCollection countries = new CountryCollection();
+      for (int i = 0; i < countries.Countries.Length; ++i)
+      {
+        mpComboBoxCountry.Items.Add(countries.Countries[i]);
+      }
+      mpComboBoxCountry.SelectedIndex = 0;
+      mpComboBoxSource.Items.Add(TunerInputType.Antenna);
+      mpComboBoxSource.Items.Add(TunerInputType.Cable);
+      mpComboBoxSource.SelectedIndex = 0;
+    }
+
+    void UpdateStatus()
+    {
+      mpLabelTunerLocked.Text = "No";
+      if (RemoteControl.Instance.TunerLocked(_cardNumber))
+        mpLabelTunerLocked.Text = "Yes";
+
+      AnalogChannel channel = RemoteControl.Instance.CurrentChannel(_cardNumber) as AnalogChannel;
+      if (channel == null)
+        mpLabelChannel.Text = "none";
+      else
+        mpLabelChannel.Text = String.Format("#{0} {1}", channel.ChannelNumber, channel.Name);
+    }
+
+    public override void OnSectionActivated()
+    {
+      base.OnSectionActivated();
+      UpdateStatus();
+      TvBusinessLayer layer = new TvBusinessLayer();
+      mpComboBoxCountry.SelectedIndex = Int32.Parse(layer.GetSetting("analog" + _cardNumber.ToString() + "Country", "0").Value);
+      mpComboBoxSource.SelectedIndex = Int32.Parse(layer.GetSetting("analog" + _cardNumber.ToString() + "Source", "0").Value);
+    }
+    public override void OnSectionDeActivated()
+    {
+      base.OnSectionDeActivated();
+      TvBusinessLayer layer = new TvBusinessLayer();
+      layer.GetSetting("analog" + _cardNumber.ToString() + "Country", "0").Value = mpComboBoxCountry.SelectedIndex.ToString();
+      layer.GetSetting("analog" + _cardNumber.ToString() + "Source", "0").Value = mpComboBoxSource.SelectedIndex.ToString();
+      DatabaseManager.Instance.SaveChanges();
+    }
+
+    private void mpButtonScan_Click(object sender, EventArgs e)
+    {
+      Thread scanThread = new Thread(new ThreadStart(DoTvScan));
+      scanThread.Start();
+    }
+    void DoTvScan()
+    {
+      try
+      {
+        RemoteControl.Instance.EpgGrabberEnabled = false;
+        TvBusinessLayer layer = new TvBusinessLayer();
+        Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
+        mpComboBoxCountry.Enabled = false;
+        mpComboBoxSource.Enabled = false;
+        mpButtonScanRadio.Enabled = false;
+        mpButtonScanTv.Enabled = false;
+        UpdateStatus();
+        mpListView1.Items.Clear();
+        CountryCollection countries = new CountryCollection();
+        RemoteControl.Instance.Tune(_cardNumber, new AnalogChannel());
+        int minChannel = RemoteControl.Instance.MinChannel(_cardNumber);
+        int maxChannel = RemoteControl.Instance.MaxChannel(_cardNumber);
+        for (int channelNr = minChannel; channelNr <= maxChannel; channelNr++)
+        {
+          float percent = ((float)((channelNr - minChannel)) / (maxChannel-minChannel));
+          percent *= 100f;
+          if (percent > 100f) percent = 100f;
+          progressBar1.Value = (int)percent;
+          AnalogChannel channel = new AnalogChannel();
+          if (mpComboBoxSource.SelectedIndex == 0)
+            channel.TunerSource = TunerInputType.Antenna;
+          else
+            channel.TunerSource = TunerInputType.Cable;
+          channel.Country = countries.Countries[mpComboBoxCountry.SelectedIndex];
+          channel.ChannelNumber = channelNr;
+          channel.IsTv = true;
+          channel.IsRadio = false;
+
+          IChannel[] channels = RemoteControl.Instance.Scan(_cardNumber, channel);
+          UpdateStatus();
+          if (channels == null) continue;
+          if (channels.Length == 0) continue;
+
+          channel = (AnalogChannel)channels[0];
+          if (channel.Name == "") channel.Name = String.Format(channel.ChannelNumber.ToString());
+          ListViewItem item = mpListView1.Items.Add(channel.ChannelNumber.ToString());
+          item.SubItems.Add(channel.Name);
+          mpListView1.EnsureVisible(mpListView1.Items.Count - 1);
+
+          Channel dbChannel = layer.AddChannel(channel.Name);
+          dbChannel.IsTv = channel.IsTv;
+          dbChannel.IsRadio = channel.IsRadio;
+          layer.AddTuningDetails(dbChannel, channel);
+
+
+          layer.MapChannelToCard(card, dbChannel);
+        }
+
+        progressBar1.Value = 100;
+        mpComboBoxCountry.Enabled = true;
+        mpComboBoxSource.Enabled = true;
+        mpButtonScanRadio.Enabled = true;
+        mpButtonScanTv.Enabled = true;
+        DatabaseManager.Instance.SaveChanges();
+
+      }
+      finally
+      {
+        RemoteControl.Instance.EpgGrabberEnabled = true;
+      }
+    }
+
+    private void mpButtonScanRadio_Click(object sender, EventArgs e)
+    {
+      Thread scanThread = new Thread(new ThreadStart(DoRadioScan));
+      scanThread.Start();
+    }
+    void DoRadioScan()
+    {
+      try
+      {
+        RemoteControl.Instance.EpgGrabberEnabled = false;
+        TvBusinessLayer layer = new TvBusinessLayer();
+        Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
+        mpComboBoxCountry.Enabled = false;
+        mpComboBoxSource.Enabled = false;
+        mpButtonScanRadio.Enabled = false;
+        mpButtonScanTv.Enabled = false;
+        UpdateStatus();
+        mpListView1.Items.Clear();
+        CountryCollection countries = new CountryCollection();
+
+        for (int freq = 87500000; freq < 108000000; freq += 100000)
+        {
+          float percent = ((float)(freq - 87500000)) / (108000000f - 87500000f);
+          percent *= 100f;
+          if (percent > 100f) percent = 100f;
+          progressBar1.Value = (int)percent;
+          AnalogChannel channel = new AnalogChannel();
+          channel.IsRadio = true;
+          if (mpComboBoxSource.SelectedIndex == 0)
+            channel.TunerSource = TunerInputType.Antenna;
+          else
+            channel.TunerSource = TunerInputType.Cable;
+          channel.Country = countries.Countries[mpComboBoxCountry.SelectedIndex];
+          channel.Frequency = freq;
+          channel.IsTv = false;
+          channel.IsRadio = true;
+
+          RemoteControl.Instance.Tune(_cardNumber, channel);
+          UpdateStatus();
+          if (RemoteControl.Instance.TunerLocked(_cardNumber))
+          {
+            ListViewItem item = mpListView1.Items.Add(channel.Frequency.ToString());
+            mpListView1.EnsureVisible(mpListView1.Items.Count - 1);
+          }
+
+          channel.Name = String.Format("{0}", freq);
+          Channel dbChannel = layer.AddChannel(channel.Name);
+          dbChannel.IsTv = channel.IsTv;
+          dbChannel.IsRadio = channel.IsRadio;
+          layer.AddTuningDetails(dbChannel, channel);
+
+          layer.MapChannelToCard(card, dbChannel);
+        }
+
+        progressBar1.Value = 100;
+        mpComboBoxCountry.Enabled = true;
+        mpComboBoxSource.Enabled = true;
+        mpButtonScanRadio.Enabled = true;
+        mpButtonScanTv.Enabled = true;
+        DatabaseManager.Instance.SaveChanges();
+
+      }
+      catch (Exception ex)
+      {
+        Log.Write(ex);
+      }
+      finally
+      {
+        RemoteControl.Instance.EpgGrabberEnabled = true;
+      }
+    }
+  }
+}

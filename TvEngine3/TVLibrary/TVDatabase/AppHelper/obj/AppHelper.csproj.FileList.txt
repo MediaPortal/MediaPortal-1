@@ -1,0 +1,6 @@
+bin\Release\IdeaBlade.ibconfig
+bin\Release\AppHelper.dll
+bin\Release\AppHelper.pdb
+obj\Release\ResolveAssemblyReference.cache
+obj\Release\AppHelper.dll
+obj\Release\AppHelper.pdb

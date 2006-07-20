@@ -1,0 +1,222 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+using TvLibrary.Interfaces;
+using TvLibrary.Implementations.DVB;
+using TvLibrary.Implementations.Analog;
+using System.Runtime.InteropServices;
+using DirectShowLib;
+using DirectShowLib.BDA;
+
+namespace TvLibrary.Implementations
+{
+  /// <summary>
+  /// this class will enumerate all TV devices
+  /// and create the correct ITVCards
+  /// </summary>
+  public class TvCardCollection
+  {
+    List<ITVCard> _cards;
+
+    /// <summary>
+    /// ctor
+    /// </summary>
+    public TvCardCollection()
+    {
+      Log.Log.WriteFile("----------------------------");
+      _cards = new List<ITVCard>();
+      DetectCards();
+    }
+
+    bool ConnectFilter(IFilterGraph2 graphBuilder, IBaseFilter networkFilter, IBaseFilter tunerFilter)
+    {
+      IPin pinOut = DsFindPin.ByDirection(networkFilter, PinDirection.Output, 0);
+      IPin pinIn = DsFindPin.ByDirection(tunerFilter, PinDirection.Input, 0);
+      int hr = graphBuilder.Connect(pinOut, pinIn);
+      return (hr == 0);
+
+    }
+    /// <summary>
+    /// Enumerate all tvcard devices and add them to the list
+    /// </summary>
+    void DetectCards()
+    {
+      DsDevice[] devices;
+      devices = DsDevice.GetDevicesOfCat(FilterCategory.LegacyAmFilterCategory);
+      for (int i = 0; i < devices.Length; ++i)
+      {
+        if (String.Compare(devices[i].Name, "B2C2 MPEG-2 Source", true) == 0)
+        {
+          Log.Log.WriteFile("Detected SkyStar 2 card");
+          TvCardDvbSS2 card = new TvCardDvbSS2(devices[i]);
+          _cards.Add(card);
+          break;
+        }
+      }
+
+      devices = DsDevice.GetDevicesOfCat(FilterCategory.BDASourceFiltersCategory);
+      if (devices.Length > 0)
+      {
+        ITuningSpace tuningSpace;
+        ILocator locator;
+        IFilterGraph2 graphBuilder = (IFilterGraph2)new FilterGraph();
+        DsROTEntry rotEntry = new DsROTEntry(graphBuilder);
+
+        //DVBT
+        Guid networkProviderClsId = typeof(DVBTNetworkProvider).GUID;
+        IBaseFilter networkDVBT = FilterGraphTools.AddFilterFromClsid(graphBuilder, networkProviderClsId, "DVBT Network Provider");
+
+        tuningSpace = (ITuningSpace)new DVBTuningSpace();
+        tuningSpace.put_UniqueName("DVBC TuningSpace");
+        tuningSpace.put_FriendlyName("DVBC TuningSpace");
+        tuningSpace.put__NetworkType(typeof(DVBTNetworkProvider).GUID);
+        ((IDVBTuningSpace)tuningSpace).put_SystemType(DVBSystemType.Terrestrial);
+
+        locator = (ILocator)new DVBTLocator();
+        locator.put_CarrierFrequency(-1);
+        locator.put_InnerFEC(FECMethod.MethodNotSet);
+        locator.put_InnerFECRate(BinaryConvolutionCodeRate.RateNotSet);
+        locator.put_Modulation(ModulationType.ModNotSet);
+        locator.put_OuterFEC(FECMethod.MethodNotSet);
+        locator.put_OuterFECRate(BinaryConvolutionCodeRate.RateNotSet);
+        locator.put_SymbolRate(-1);
+        tuningSpace.put_DefaultLocator(locator);
+        ((ITuner)networkDVBT).put_TuningSpace(tuningSpace);
+
+        //DVBS
+        networkProviderClsId = typeof(DVBSNetworkProvider).GUID;
+        IBaseFilter networkDVBS = FilterGraphTools.AddFilterFromClsid(graphBuilder, networkProviderClsId, "DVBS Network Provider");
+
+        tuningSpace = (ITuningSpace)new DVBSTuningSpace();
+        tuningSpace.put_UniqueName("DVBC TuningSpace");
+        tuningSpace.put_FriendlyName("DVBC TuningSpace");
+        tuningSpace.put__NetworkType(typeof(DVBSNetworkProvider).GUID);
+        ((IDVBSTuningSpace)tuningSpace).put_SystemType(DVBSystemType.Satellite);
+
+        locator = (ILocator)new DVBTLocator();
+        locator.put_CarrierFrequency(-1);
+        locator.put_InnerFEC(FECMethod.MethodNotSet);
+        locator.put_InnerFECRate(BinaryConvolutionCodeRate.RateNotSet);
+        locator.put_Modulation(ModulationType.ModNotSet);
+        locator.put_OuterFEC(FECMethod.MethodNotSet);
+        locator.put_OuterFECRate(BinaryConvolutionCodeRate.RateNotSet);
+        locator.put_SymbolRate(-1);
+        tuningSpace.put_DefaultLocator(locator);
+        ((ITuner)networkDVBS).put_TuningSpace(tuningSpace);
+
+        //ATSC
+        networkProviderClsId = typeof(ATSCNetworkProvider).GUID;
+        IBaseFilter networkATSC = FilterGraphTools.AddFilterFromClsid(graphBuilder, networkProviderClsId, "ATSC Network Provider");
+
+        tuningSpace = (ITuningSpace)new ATSCTuningSpace();
+        tuningSpace.put_UniqueName("ATSC TuningSpace");
+        tuningSpace.put_FriendlyName("ATSC TuningSpace");
+        ((IATSCTuningSpace)tuningSpace).put_MaxChannel(10000);
+        ((IATSCTuningSpace)tuningSpace).put_MaxMinorChannel(10000);
+        ((IATSCTuningSpace)tuningSpace).put_MinChannel(0);
+        ((IATSCTuningSpace)tuningSpace).put_MinMinorChannel(0);
+        ((IATSCTuningSpace)tuningSpace).put_MinPhysicalChannel(0);
+        ((IATSCTuningSpace)tuningSpace).put_InputType(TunerInputType.Antenna);
+
+
+        locator = (IATSCLocator)new ATSCLocator();
+        locator.put_CarrierFrequency(-1);
+        locator.put_InnerFEC(FECMethod.MethodNotSet);
+        locator.put_InnerFECRate(BinaryConvolutionCodeRate.RateNotSet);
+        locator.put_Modulation(ModulationType.ModNotSet);
+        locator.put_OuterFEC(FECMethod.MethodNotSet);
+        locator.put_OuterFECRate(BinaryConvolutionCodeRate.RateNotSet);
+        locator.put_SymbolRate(-1);
+        locator.put_CarrierFrequency(-1);
+        ((IATSCLocator)locator).put_PhysicalChannel(-1);
+        ((IATSCLocator)locator).put_TSID(-1);
+        tuningSpace.put_DefaultLocator(locator);
+        ((ITuner)networkATSC).put_TuningSpace(tuningSpace);
+
+        //DVBC
+        networkProviderClsId = typeof(DVBCNetworkProvider).GUID;
+        IBaseFilter networkDVBC = FilterGraphTools.AddFilterFromClsid(graphBuilder, networkProviderClsId, "DVBC Network Provider");
+
+        tuningSpace = (ITuningSpace)new DVBTuningSpace();
+        tuningSpace.put_UniqueName("DVBC TuningSpace");
+        tuningSpace.put_FriendlyName("DVBC TuningSpace");
+        tuningSpace.put__NetworkType(typeof(DVBCNetworkProvider).GUID);
+        ((IDVBTuningSpace)tuningSpace).put_SystemType(DVBSystemType.Cable);
+
+        locator = (ILocator)new DVBCLocator();
+        locator.put_CarrierFrequency(-1);
+        locator.put_InnerFEC(FECMethod.MethodNotSet);
+        locator.put_InnerFECRate(BinaryConvolutionCodeRate.RateNotSet);
+        locator.put_Modulation(ModulationType.ModNotSet);
+        locator.put_OuterFEC(FECMethod.MethodNotSet);
+        locator.put_OuterFECRate(BinaryConvolutionCodeRate.RateNotSet);
+        locator.put_SymbolRate(-1);
+        tuningSpace.put_DefaultLocator(locator);
+        ((ITuner)networkDVBC).put_TuningSpace(tuningSpace);
+
+        for (int i = 0; i < devices.Length; i++)
+        {
+
+          string name = devices[i].Name.ToLower();
+          //Log.Log.WriteFile("Found card:{0}", name);
+          //Console.ReadLine();
+          IBaseFilter tmp;
+          graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
+          if (ConnectFilter(graphBuilder, networkDVBT, tmp))
+          {
+            Log.Log.WriteFile("Detected DVB-T card:{0}", name);
+            TvCardDVBT dvbtCard = new TvCardDVBT(devices[i]);
+            _cards.Add(dvbtCard);
+          }
+          else if (ConnectFilter(graphBuilder, networkDVBC, tmp))
+          {
+            Log.Log.WriteFile("Detected DVB-C card:{0}", name);
+            TvCardDVBC dvbcCard = new TvCardDVBC(devices[i]);
+            _cards.Add(dvbcCard);
+          }
+          else if (ConnectFilter(graphBuilder, networkDVBS, tmp))
+          {
+            Log.Log.WriteFile("Detected DVB-S card:{0}", name);
+            TvCardDVBS dvbsCard = new TvCardDVBS(devices[i]);
+            _cards.Add(dvbsCard);
+          }
+          else if (ConnectFilter(graphBuilder, networkATSC, tmp))
+          {
+            Log.Log.WriteFile("Detected ATSC card:{0}", name);
+            TvCardATSC dvbsCard = new TvCardATSC(devices[i]);
+            _cards.Add(dvbsCard);
+          }
+          graphBuilder.RemoveFilter(tmp);
+          Release.ComObject("tmp filter",tmp);
+        }
+        FilterGraphTools.RemoveAllFilters(graphBuilder);
+        Release.ComObject("dvb provider",networkDVBC);
+        Release.ComObject("atsc provider", networkATSC);
+        Release.ComObject("dvbs provider", networkDVBS);
+        Release.ComObject("dvbt provider", networkDVBT);
+        rotEntry.Dispose();
+        Release.ComObject("graph builder", graphBuilder);
+
+      }
+      devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSTVTuner);
+      for (int i = 0; i < devices.Length; i++)
+      {
+        string name = devices[i].Name.ToLower();
+        Log.Log.WriteFile("Detected analog card:{0}", name);
+        TvCardAnalog analogCard = new TvCardAnalog(devices[i]);
+        _cards.Add(analogCard);
+      }
+    }
+
+    /// <summary>
+    /// returns the list of cards present...
+    /// </summary>
+    public List<ITVCard> Cards
+    {
+      get
+      {
+        return _cards;
+      }
+    }
+  }
+}

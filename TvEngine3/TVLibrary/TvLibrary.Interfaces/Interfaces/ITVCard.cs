@@ -1,0 +1,203 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+using TvLibrary.Epg;
+using TvLibrary.Teletext;
+using DirectShowLib.SBE;
+namespace TvLibrary.Interfaces
+{
+  public interface ITVCard
+  {
+    #region properties
+    /// <summary>
+    /// Gets/sets the card name
+    /// </summary>
+    string Name { get;set;}
+
+    /// <summary>
+    /// Gets/sets the card device
+    /// </summary>
+    string DevicePath { get;}
+
+    /// <summary>
+    /// gets the current filename used for timeshifting
+    /// </summary>
+    string TimeShiftFileName { get;}
+
+    /// <summary>
+    /// returns the date/time when timeshifting has been started for the card specified
+    /// </summary>
+    /// <returns>DateTime containg the date/time when timeshifting was started</returns>
+    DateTime StartOfTimeShift { get;}
+
+    /// <summary>
+    /// returns the date/time when recording has been started for the card specified
+    /// </summary>
+    /// <returns>DateTime containg the date/time when recording was started</returns>
+    DateTime RecordingStarted { get;}
+
+
+    /// <summary>
+    /// Method to check if card can tune to the channel specified
+    /// </summary>
+    /// <returns>true if card can tune to the channel otherwise false</returns>
+    bool CanTune(IChannel channel);
+
+    /// <summary>
+    /// Returns true when unscrambled audio/video is received otherwise false
+    /// </summary>
+    /// <returns>true of false</returns>
+    bool IsReceivingAudioVideo{get;}
+
+    /// <summary>
+    /// gets the current filename used for recording
+    /// </summary>
+    string FileName { get;}
+
+    /// <summary>
+    /// returns true if card is currently recording
+    /// </summary>
+    bool IsRecording { get;}
+
+    /// <summary>
+    /// returns true if card is currently timeshifting
+    /// </summary>
+    bool IsTimeShifting { get;}
+
+    /// <summary>
+    /// returns true if card is currently grabbing the epg
+    /// </summary>
+    bool IsEpgGrabbing { get;}
+
+    /// <summary>
+    /// returns true if card is currently scanning
+    /// </summary>
+    bool IsScanning { get;set;}
+
+    /// <summary>
+    /// returns the IChannel to which the card is currently tuned
+    /// </summary>
+    IChannel Channel { get;}
+
+    /// <summary>
+    /// returns the min/max channel numbers for analog cards
+    /// </summary>
+    int MinChannel { get;}
+    int MaxChannel { get;}
+    #endregion
+
+    #region epg & scanning
+    /// <summary>
+    /// returns the ITVScanning interface used for scanning channels
+    /// </summary>
+    ITVScanning ScanningInterface { get;}
+
+    /// <summary>
+    /// returns the ITVEPG interface used for grabbing the epg
+    /// </summary>
+    ITVEPG EpgInterface { get;}
+
+    #endregion
+
+    #region teletext
+    /// <summary>
+    /// Turn on/off teletext grabbing
+    /// </summary>
+    bool GrabTeletext { get;set;}
+
+    /// <summary>
+    /// returns the ITeletext interface used for retrieving the teletext pages
+    /// </summary>
+    ITeletext TeletextDecoder { get;}
+
+    /// <summary>
+    /// Property which returns true when the current channel contains teletext
+    /// </summary>
+    bool HasTeletext { get;}
+    #endregion
+
+    #region tuning & recording
+    /// <summary>
+    /// tune the card to the channel specified by IChannel
+    /// </summary>
+    /// <param name="channel">channel to tune</param>
+    /// <returns></returns>
+    bool TuneScan(IChannel channel);
+    bool Tune(IChannel channel);
+
+    /// <summary>
+    /// Starts timeshifting. Note card has to be tuned first
+    /// </summary>
+    /// <param name="fileName">filename used for the timeshiftbuffer</param>
+    /// <returns></returns>
+    bool StartTimeShifting(string fileName);
+
+    /// <summary>
+    /// Stops timeshifting
+    /// </summary>
+    /// <returns></returns>
+    bool StopTimeShifting();
+
+    /// <summary>
+    /// Starts recording
+    /// </summary>
+    /// <param name="recordingType">Recording type (content or reference)</param>
+    /// <param name="fileName">filename to which to recording should be saved</param>
+    /// <param name="startTime">time the recording should start (0=now)</param>
+    /// <returns></returns>
+    bool StartRecording(RecordingType recordingType, string fileName, long startTime);
+
+    /// <summary>
+    /// Stop recording
+    /// </summary>
+    /// <returns></returns>
+    bool StopRecording();
+    #endregion
+
+    #region audio streams
+    /// <summary>
+    /// returns the list of available audio streams
+    /// </summary>
+    List<IAudioStream> AvailableAudioStreams { get;}
+
+    /// <summary>
+    /// get/set the current selected audio stream
+    /// </summary>
+    IAudioStream CurrentAudioStream { get;set;}
+    #endregion
+
+    #region quality control
+    /// <summary>
+    /// Get/Set the quality
+    /// </summary>
+    IQuality Quality { get;set;}
+
+    /// <summary>
+    /// Property which returns true if card supports quality control
+    /// </summary>
+    bool SupportsQualityControl { get;}
+    #endregion
+
+    #region properties
+    /// <summary>
+    /// When the tuner is locked onto a signal this property will return true
+    /// otherwise false
+    /// </summary>
+    bool IsTunerLocked { get;}
+
+    /// <summary>
+    /// returns the signal quality
+    /// </summary>
+    int SignalQuality { get;}
+
+    /// <summary>
+    /// returns the signal level
+    /// </summary>
+    int SignalLevel { get;}
+    #endregion
+
+    #region idisposable
+    void Dispose();
+    #endregion
+  }
+}

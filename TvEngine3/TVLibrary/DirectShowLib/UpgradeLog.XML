@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="DirectShowLib">
+</Property><Property Name="Solution File" Value="C:\erwin\DirectShowLibV1-2\src\DirectShowLib.sln">
+</Property><Property Name="Date" Value="woensdag 4 januari 2006">
+</Property><Property Name="Time" Value="9:04">
+</Property></Properties><Event ErrorLevel="0" Project="" Source="DirectShowLib.sln" Description="File successfully backed up as C:\erwin\DirectShowLibV1-2\src\Backup\DirectShowLib.sln">
+</Event><Event ErrorLevel="0" Project="DirectShowLib" Source="DirectShowLib.csproj" Description="Project file successfully backed up as C:\erwin\DirectShowLibV1-2\src\Backup\DirectShowLib.csproj">
+</Event><Event ErrorLevel="0" Project="DirectShowLib" Source="amstream.cs" Description="File successfully backed up as C:\erwin\DirectShowLibV1-2\src\Backup\amstream.cs">
+</Event><Event ErrorLevel="0" Project="DirectShowLib" Source="amvideo.cs" Description="File successfully backed up as C:\erwin\DirectShowLibV1-2\src\Backup\amvideo.cs">
+</Event><Event ErrorLevel="0" Project="DirectShowLib" Source="AssemblyInfo.cs" Description="File successfully backed up as C:\erwin\DirectShowLibV1-2\src\Backup\AssemblyInfo.cs">
+</Event><Event ErrorLevel="0" Project="DirectShowLib" Source="austream.cs" Description="File successfully backed up as C:\erwin\DirectShowLibV1-2\src\Backup\austream.cs">
+</Event><Event ErrorLevel="0" Project="DirectShowLib" Source="AxCore.cs" Description="File successfully backed up as C:\erwin\DirectShowLibV1-2\src\Backup\AxCore.cs">
+</Event><Event ErrorLevel="0" Project="DirectShowLib" Source="AXExtend.cs" Description="File successfully backed up as C:\erwin\DirectShowLibV1-2\src\Backup\AXExtend.cs">
+</Event><Event ErrorLevel="0" Project="DirectShowLib" Source="BDAIface.cs" Description="File successfully backed up as C:\erwin\DirectShowLibV1-2\src\Backup\BDAIface.cs">
+</Event><Event ErrorLevel="0" Project="DirectShowLib" Source="Bdatif.cs" Description="File successfully backed up as C:\erwin\DirectShowLibV1-2\src\Backup\Bdatif.cs">
+</Event><Event ErrorLevel="0" Project="DirectShowLib" Source="BDATypes.cs" Description="File successfully backed up as C:\erwin\DirectShowLibV1-2\src\Backup\BDATypes.cs">
+</Event><Event ErrorLevel="0" Project="DirectShowLib" Source="Control.cs" Description="File successfully backed up as C:\erwin\DirectShowLibV1-2\src\Backup\Control.cs">
+</Event><Event ErrorLevel="0" Project="DirectShowLib" Source="DES.cs" Description="File successfully backed up as C:\erwin\DirectShowLibV1-2\src\Backup\DES.cs">
+</Event><Event ErrorLevel="0" Project="DirectShowLib" Source="DevEnum.cs" Description="File successfully backed up as C:\erwin\DirectShowLibV1-2\src\Backup\DevEnum.cs">
+</Event><Event ErrorLevel="0" Project="DirectShowLib" Source="DMODShow.cs" Description="File successfully backed up as C:\erwin\DirectShowLibV1-2\src\Backup\DMODShow.cs">
+</Event><Event ErrorLevel="0" Project="DirectShowLib" Source="DsUtils.cs" Description="File successfully backed up as C:\erwin\DirectShowLibV1-2\src\Backup\DsUtils.cs">
+</Event><Event ErrorLevel="0" Project="DirectShowLib" Source="DVDIf.cs" Description="File successfully backed up as C:\erwin\DirectShowLibV1-2\src\Backup\DVDIf.cs">
+</Event><Event ErrorLevel="0" Project="DirectShowLib" Source="DynGraph.cs" Description="File successfully backed up as C:\erwin\DirectShowLibV1-2\src\Backup\DynGraph.cs">
+</Event><Event ErrorLevel="0" Project="DirectShowLib" Source="EvCode.cs" Description="File successfully backed up as C:\erwin\DirectShowLibV1-2\src\Backup\EvCode.cs">
+</Event><Event ErrorLevel="0" Project="DirectShowLib" Source="IL21Dec.cs" Description="File successfully backed up as C:\erwin\DirectShowLibV1-2\src\Backup\IL21Dec.cs">
+</Event><Event ErrorLevel="0" Project="DirectShowLib" Source="MediaObj.cs" Description="File successfully backed up as C:\erwin\DirectShowLibV1-2\src\Backup\MediaObj.cs">
+</Event><Event ErrorLevel="0" Project="DirectShowLib" Source="MediaParam.cs" Description="File successfully backed up as C:\erwin\DirectShowLibV1-2\src\Backup\MediaParam.cs">
+</Event><Event ErrorLevel="0" Project="DirectShowLib" Source="Misc.cs" Description="File successfully backed up as C:\erwin\DirectShowLibV1-2\src\Backup\Misc.cs">
+</Event><Event ErrorLevel="0" Project="DirectShowLib" Source="Mixerocx.cs" Description="File successfully backed up as C:\erwin\DirectShowLibV1-2\src\Backup\Mixerocx.cs">
+</Event><Event ErrorLevel="0" Project="DirectShowLib" Source="mmstream.cs" Description="File successfully backed up as C:\erwin\DirectShowLibV1-2\src\Backup\mmstream.cs">
+</Event><Event ErrorLevel="0" Project="DirectShowLib" Source="mpconfig.cs" Description="File successfully backed up as C:\erwin\DirectShowLibV1-2\src\Backup\mpconfig.cs">
+</Event><Event ErrorLevel="0" Project="DirectShowLib" Source="Mpeg2Data.cs" Description="File successfully backed up as C:\erwin\DirectShowLibV1-2\src\Backup\Mpeg2Data.cs">
+</Event><Event ErrorLevel="0" Project="DirectShowLib" Source="other.cs" Description="File successfully backed up as C:\erwin\DirectShowLibV1-2\src\Backup\other.cs">
+</Event><Event ErrorLevel="0" Project="DirectShowLib" Source="PlayList.cs" Description="File successfully backed up as C:\erwin\DirectShowLibV1-2\src\Backup\PlayList.cs">
+</Event><Event ErrorLevel="0" Project="DirectShowLib" Source="QEdit.cs" Description="File successfully backed up as C:\erwin\DirectShowLibV1-2\src\Backup\QEdit.cs">
+</Event><Event ErrorLevel="0" Project="DirectShowLib" Source="qnetwork.cs" Description="File successfully backed up as C:\erwin\DirectShowLibV1-2\src\Backup\qnetwork.cs">
+</Event><Event ErrorLevel="0" Project="DirectShowLib" Source="RegBag.cs" Description="File successfully backed up as C:\erwin\DirectShowLibV1-2\src\Backup\RegBag.cs">
+</Event><Event ErrorLevel="0" Project="DirectShowLib" Source="Sbe.cs" Description="File successfully backed up as C:\erwin\DirectShowLibV1-2\src\Backup\Sbe.cs">
+</Event><Event ErrorLevel="0" Project="DirectShowLib" Source="Tuner.cs" Description="File successfully backed up as C:\erwin\DirectShowLibV1-2\src\Backup\Tuner.cs">
+</Event><Event ErrorLevel="0" Project="DirectShowLib" Source="TvRatings.cs" Description="File successfully backed up as C:\erwin\DirectShowLibV1-2\src\Backup\TvRatings.cs">
+</Event><Event ErrorLevel="0" Project="DirectShowLib" Source="Uuids.cs" Description="File successfully backed up as C:\erwin\DirectShowLibV1-2\src\Backup\Uuids.cs">
+</Event><Event ErrorLevel="0" Project="DirectShowLib" Source="Vidcap.cs" Description="File successfully backed up as C:\erwin\DirectShowLibV1-2\src\Backup\Vidcap.cs">
+</Event><Event ErrorLevel="0" Project="DirectShowLib" Source="VidPort.cs" Description="File successfully backed up as C:\erwin\DirectShowLibV1-2\src\Backup\VidPort.cs">
+</Event><Event ErrorLevel="0" Project="DirectShowLib" Source="Vmr9.cs" Description="File successfully backed up as C:\erwin\DirectShowLibV1-2\src\Backup\Vmr9.cs">
+</Event><Event ErrorLevel="0" Project="DirectShowLib" Source="VmRender.cs" Description="File successfully backed up as C:\erwin\DirectShowLibV1-2\src\Backup\VmRender.cs">
+</Event><Event ErrorLevel="0" Project="DirectShowLib" Source="DirectShowLib.csproj" Description="Project converted successfully">
+</Event><Event ErrorLevel="3" Project="DirectShowLib" Source="DirectShowLib.csproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="" Source="DirectShowLib.sln" Description="Solution converted successfully">
+</Event><Event ErrorLevel="3" Project="" Source="DirectShowLib.sln" Description="Converted">
+</Event><Event ErrorLevel="0" Project="DirectShowLib" Source="DirectShowLib.csproj" Description="Scan complete: Upgrade not required for project files.">
+</Event></UpgradeLog>
