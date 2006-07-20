@@ -192,6 +192,7 @@ namespace WindowPlugins.GUISettings.Epg
         catch (Exception ex)
         {
           //MessageBox.Show("Your mapping is invalid! Error code: " + i );
+          _log.Error("GUIWizard: Invalid mapping!", ex);
         }
 
       }

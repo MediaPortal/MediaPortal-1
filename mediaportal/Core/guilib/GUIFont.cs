@@ -459,6 +459,7 @@ namespace MediaPortal.GUI.Library
       }
       catch ( Exception exp )
       {
+        _log.Error(exp);
         return "";
       }
     }
