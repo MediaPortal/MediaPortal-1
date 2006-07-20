@@ -373,7 +373,7 @@ namespace MediaPortal.GUI.Library
       CachedTexture.Frame frame = _listTextures[_currentFrameNumber];
       // Check the delay.
       int dwDelay = frame.Duration;
-      int iMaxLoops = 0;
+      //int iMaxLoops = 0;
       frame = null;
 
       // Default delay = 100;
