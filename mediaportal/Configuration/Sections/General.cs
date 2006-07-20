@@ -247,7 +247,7 @@ namespace MediaPortal.Configuration.Sections
             "Use mouse left double click as right click",
             "Hide taskbar in fullscreen mode",
             "MediaPortal always on top",
-            "Use Exclusive DirectX Mode for fullscreen tv/video",
+            "Use Exclusive DirectX mode - avoids tearing",
             "Enable GUI sound effects",
             "Blank screen in fullscreen mode when MediaPortal is idle",
             "Turn off monitor when blanking screen",
