@@ -110,6 +110,7 @@ namespace MediaPortal.GUI.MusicVideos
       this.textBoxFavoriteName.Name = "textBoxFavoriteName";
       this.textBoxFavoriteName.Size = new System.Drawing.Size(173, 20);
       this.textBoxFavoriteName.TabIndex = 4;
+      this.textBoxFavoriteName.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBoxFavoriteName_KeyUp);
       // 
       // SetupFavoriteForm
       // 

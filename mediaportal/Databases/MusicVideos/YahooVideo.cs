@@ -31,11 +31,11 @@ namespace MediaPortal.MusicVideos.Database
 {
   public class YahooVideo
   {
-    public string songName;
-    public string artistName;
-    public string songId;
-    public string artistId;
-    public string countryId;
+    public string _yahooVideoSongName;
+    public string _yahooVideoArtistName;
+    public string _yahooVideoSongId;
+    public string _yahooVideoArtistId;
+    public string _yahooVideoCountryId;
     //public string videoUrl;
   }
 }

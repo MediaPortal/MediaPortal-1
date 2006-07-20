@@ -94,9 +94,14 @@ namespace MediaPortal.Music.Database
 
     static bool TreatFolderAsAlbum = false;
     static bool ScanForVariousArtists = true;
-    //bool AppendPrefixToSortableNameEnd = true;
+        //bool AppendPrefixToSortableNameEnd = true;
 
-    string[] ArtistNamePrefixes = new string[] { "the", "les" };
+        string[] ArtistNamePrefixes = new string[]
+            {
+                "the",
+                "les",
+            };
+
 
     // An event that clients can use to be notified whenever the
     // elements of the list change.
@@ -253,11 +258,12 @@ namespace MediaPortal.Music.Database
 
         if (null == m_db) return -1;
         string name2 = strArtist1.ToLower().Trim();
-        name2 = Regex.Replace(name2, @"[^a-z0-9]*", string.Empty);
+        //commented for hebrew - seems to work..
+        //name2 = Regex.Replace(name2, @"[^a-z0-9]*", string.Empty);
         foreach (CArtistCache artist in m_artistCache)
         {
           string name1 = artist.strArtist.ToLower().Trim();
-          name1 = Regex.Replace(name1, @"[^a-z0-9]*", string.Empty);
+          //name1 = Regex.Replace(name1, @"[^a-z0-9]*", string.Empty);
           if (name1.Equals(name2))
             return artist.idArtist;
         }
@@ -521,11 +527,12 @@ namespace MediaPortal.Music.Database
 
         if (null == m_db) return -1;
         string name2 = strAlbum.ToLower().Trim();
-        name2 = Regex.Replace(name2, @"[^a-z0-9]*", string.Empty);
+        // for hebrew
+        //name2 = Regex.Replace(name2, @"[^a-z0-9]*", string.Empty);
         foreach (AlbumInfoCache album in m_albumCache)
         {
           string name1 = album.Album.ToLower().Trim();
-          name1 = Regex.Replace(name1, @"[^a-z0-9]*", string.Empty);
+          //name1 = Regex.Replace(name1, @"[^a-z0-9]*", string.Empty);
 
           if (lPathId != -1)
           {

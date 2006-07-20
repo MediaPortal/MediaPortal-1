@@ -45,6 +45,7 @@ namespace MediaPortal.Music.Database
 		int idArtist=-1;
 		int Id=-1;
 		bool favorite=false;
+      string m_strDateModified = "";
 
     public Song()
 		{
@@ -67,6 +68,7 @@ namespace MediaPortal.Music.Database
 			newsong.idArtist=idArtist;
 			newsong.Id=Id;
 			newsong.favorite=Favorite;
+            newsong.DateModified = DateModified;
       return newsong;
     }
 
@@ -87,6 +89,7 @@ namespace MediaPortal.Music.Database
       m_iYear=0;
       m_iTimedPlayed=0;
 			m_irating=0;
+            m_strDateModified = "";
     }
 
     public string FileName
@@ -166,37 +169,42 @@ namespace MediaPortal.Music.Database
     {
       get { return m_iTimedPlayed;}
       set {m_iTimedPlayed=value;}
-		}
-		public int Rating
-		{
-			get { return m_irating;}
-			set {m_irating=value;}
-		}
-		public bool Favorite
-		{
-			get { return favorite;}
-			set {favorite=value;}
-		}
-		public int albumId
-		{
-			get { return idAlbum;}
-			set {idAlbum=value;}
-		}
-		public int genreId
-		{
-			get { return idGenre;}
-			set {idGenre=value;}
-		}
-		public int artistId
-		{
-			get { return idArtist;}
-			set {idArtist=value;}
-		}
-		public int songId
-		{
-			get { return Id;}
-			set {Id=value;}
-		}
+	}
+	public int Rating
+	{
+		get { return m_irating;}
+		set {m_irating=value;}
+	}
+	public bool Favorite
+	{
+		get { return favorite;}
+		set {favorite=value;}
+	}
+	public int albumId
+	{
+		get { return idAlbum;}
+		set {idAlbum=value;}
+	}
+	public int genreId
+	{
+		get { return idGenre;}
+		set {idGenre=value;}
+	}
+	public int artistId
+	{
+		get { return idArtist;}
+		set {idArtist=value;}
+	}
+	public int songId
+	{
+		get { return Id;}
+		set {Id=value;}
+	}
+      public string DateModified
+    {
+      get { return m_strDateModified; }
+      set { m_strDateModified = value; }
+    }
   }
 	public class SongMap
 	{

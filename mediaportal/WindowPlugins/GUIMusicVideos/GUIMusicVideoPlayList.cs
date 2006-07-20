@@ -112,11 +112,11 @@ namespace MediaPortal.GUI.MusicVideos
 
         YahooUtil loUtil = YahooUtil.getInstance();
         YahooVideo loVideo = moPlayList[miPlayListIndex];
-        //Log.Write("{0}",video.countryId);
-        YahooSite loSite = loUtil.getYahooSiteById(loVideo.countryId);
+        //Log.Write("{0}",video._yahooSiteCountryId);
+        YahooSite loSite = loUtil.getYahooSiteById(loVideo._yahooVideoCountryId);
         //Log.Write("2");
         YahooSettings loSetting = YahooSettings.getInstance();
-        string lsVideoLink = loUtil.getVideoMMSUrl(loVideo, loSetting.msDefaultBitRate);
+        string lsVideoLink = loUtil.getVideoMMSUrl(loVideo, loSetting._defaultBitRate);
         //Log.Write("3");
         lsVideoLink = lsVideoLink.Substring(0, lsVideoLink.Length - 2) + "&txe=.wmv";
 
@@ -131,8 +131,8 @@ namespace MediaPortal.GUI.MusicVideos
         msCurrentUrl = lsVideoLink;
         //Log.Write("1 - {0}",GUIPropertyManager.GetProperty("#Play.Current.Title"));
         //Log.Write("2 - {0}",GUIPropertyManager.GetProperty("#Play.Current.File"));
-        //GUIPropertyManager.SetProperty("#Play.Current.Title", loVideo.songName);
-        //GUIPropertyManager.SetProperty("#Play.Current.File", loVideo.songName);
+        //GUIPropertyManager.SetProperty("#Play.Current.Title", loVideo._yahooVideoSongName);
+        //GUIPropertyManager.SetProperty("#Play.Current.File", loVideo._yahooVideoSongName);
       }
     }
     public void Stop()
@@ -161,7 +161,6 @@ namespace MediaPortal.GUI.MusicVideos
       //Log.Write("",isPlayListLoaded(),);
       if (isPlayListLoaded() && mbPLayingState)
       {
-
         if (getNextSongIndex())
         {
           Play();
@@ -230,7 +229,6 @@ namespace MediaPortal.GUI.MusicVideos
       //Log.Write("PlayList Count:{0}", moPlayList.Count);
       if (miPlayListIndex > 0 && miPlayListIndex < moPlayList.Count)
       {
-
         miPlayListIndex--;
         return true;
       }
@@ -243,23 +241,25 @@ namespace MediaPortal.GUI.MusicVideos
       {
         return false;
       }
-
     }
+
     public List<YahooVideo> getPlayListVideos()
     {
       return moPlayList;
     }
+
     public void repeat(bool fbRepeat)
     {
       mbRepeat = fbRepeat;
     }
+
     public bool getRepeatState()
     {
       return mbRepeat;
     }
+
     public void shuffle()
     {
-
       if (moPlayList == null || moPlayList.Count == 0) { return; }
       if (mbPLayingState)
       {
@@ -274,8 +274,7 @@ namespace MediaPortal.GUI.MusicVideos
       {
         loCurVideo = moPlayList[miPlayListIndex];
       }
-
-
+      
       for (int i = 0; i < count; i++)
       {
         YahooVideo loVideo = moPlayList[i];
@@ -294,8 +293,8 @@ namespace MediaPortal.GUI.MusicVideos
         //Log.Write("Playing song index changing from {0} to {1}", miPlayListIndex, liPos);
         miPlayListIndex = liPos;
       }
-
     }
+
     public int getPlayListIndex()
     {
       //Log.Write("MusicVideoPlaylist - getPlayListIndex()");

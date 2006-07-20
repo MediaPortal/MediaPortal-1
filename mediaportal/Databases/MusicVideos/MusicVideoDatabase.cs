@@ -167,7 +167,7 @@ namespace MediaPortal.MusicVideos.Database
 
       string lsFavID = (String)loResultSet.GetColumn(0)[0];
 
-      lsSQL = string.Format("insert into FAVORITE_VIDEOS(SONG_NM,SONG_ID,ARTIST_NM,ARTIST_ID,COUNTRY,FAVORITE_ID)VALUES('{0}','{1}','{2}','{3}','{4}','{5}')", foVideo.songName.Replace("'", "''"), foVideo.songId, foVideo.artistName.Replace("'", "''"), foVideo.artistId, foVideo.countryId, lsFavID);
+      lsSQL = string.Format("insert into FAVORITE_VIDEOS(SONG_NM,SONG_ID,ARTIST_NM,ARTIST_ID,COUNTRY,FAVORITE_ID)VALUES('{0}','{1}','{2}','{3}','{4}','{5}')", foVideo._yahooVideoSongName.Replace("'", "''"), foVideo._yahooVideoSongId, foVideo._yahooVideoArtistName.Replace("'", "''"), foVideo._yahooVideoArtistId, foVideo._yahooVideoCountryId, lsFavID);
       m_db.Execute(lsSQL);
       if (m_db.ChangedRows() > 0)
       {
@@ -187,8 +187,8 @@ namespace MediaPortal.MusicVideos.Database
 
       string lsFavID = (String)loResultSet.GetColumn(0)[0];
       //Log.Write("fav id = {0}",lsFavID);
-      //Log.Write("song id = {0}", foVideo.songId);
-      lsSQL = string.Format("delete from FAVORITE_VIDEOS where SONG_ID='{0}' and FAVORITE_ID = {1}", foVideo.songId, lsFavID);
+      //Log.Write("song id = {0}", foVideo._yahooVideoSongId);
+      lsSQL = string.Format("delete from FAVORITE_VIDEOS where SONG_ID='{0}' and FAVORITE_ID = {1}", foVideo._yahooVideoSongId, lsFavID);
       m_db.Execute(lsSQL);
       if (m_db.ChangedRows() > 0)
       {
@@ -224,15 +224,15 @@ namespace MediaPortal.MusicVideos.Database
         YahooVideo loVideo = new YahooVideo();
         IEnumerator en = loRow.GetEnumerator();
         en.MoveNext();
-        loVideo.songName = (String)en.Current;
+        loVideo._yahooVideoSongName = (String)en.Current;
         en.MoveNext();
-        loVideo.songId = (String)en.Current;
+        loVideo._yahooVideoSongId = (String)en.Current;
         en.MoveNext();
-        loVideo.artistName = (String)en.Current;
+        loVideo._yahooVideoArtistName = (String)en.Current;
         en.MoveNext();
-        loVideo.artistId = (String)en.Current;
+        loVideo._yahooVideoArtistId = (String)en.Current;
         en.MoveNext();
-        loVideo.countryId = (String)en.Current;
+        loVideo._yahooVideoCountryId = (String)en.Current;
         loFavoriteList.Add(loVideo);
 
       }
@@ -256,11 +256,11 @@ namespace MediaPortal.MusicVideos.Database
           if (loXmlreader.NodeType == XmlNodeType.Element && loXmlreader.Name == "SONG")
           {
             loVideo = new YahooVideo();
-            loVideo.artistId = loXmlreader.GetAttribute("ArtistId");
-            loVideo.artistName = loXmlreader.GetAttribute("Artist");
-            loVideo.songId = loXmlreader.GetAttribute("SongId");
-            loVideo.songName = loXmlreader.GetAttribute("SongTitle");
-            loVideo.countryId = loXmlreader.GetAttribute("CtryId");
+            loVideo._yahooVideoArtistId = loXmlreader.GetAttribute("ArtistId");
+            loVideo._yahooVideoArtistName = loXmlreader.GetAttribute("Artist");
+            loVideo._yahooVideoSongId = loXmlreader.GetAttribute("SongId");
+            loVideo._yahooVideoSongName = loXmlreader.GetAttribute("SongTitle");
+            loVideo._yahooVideoCountryId = loXmlreader.GetAttribute("CtryId");
             Log.Write("found favorite:{0}", loVideo.ToString());
             loFavoriteList.Add(loVideo);
           }

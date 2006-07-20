@@ -35,42 +35,46 @@ namespace MediaPortal.MusicVideos.Database
 {
   public class YahooGenres
   {
-    private Dictionary<string, string> moGenreList;
-    public ArrayList moSortedGenreList;
-    public List<YahooVideo> moGenreVideoList = new List<YahooVideo>();
-    private int miCurrentPage = 0;
-    private String msCountryName;
-    private String msCurrentGenreId;
-    private bool mbNextPageFlag = false;
-    private bool mbPreviousPageFlag = false;
-    public Regex moRegex = new Regex("href=\"genrehub.asp\\?genreID=[^=]*=(\\d+)");
+    private Dictionary<string, string> _yahooGenreList;
+    public ArrayList _yahooSortedGenreList;
+    public List<YahooVideo> _yahooGenreVideoList = new List<YahooVideo>();
+    private int _yahooCurrentPage = 0;
+    private String _yahooCountryName;
+    private String _yahooCurrentGenreId;
+    private bool _yahooNextPageFlag = false;
+    private bool _yahooPreviousPageFlag = false;
+    public Regex _yahooRegex = new Regex("href=\"genrehub.asp\\?genreID=[^=]*=(\\d+)");
+
     public bool hasNext()
     {
-      return mbNextPageFlag;
+      return _yahooNextPageFlag;
     }
+
     public bool hasPrevious()
     {
-      return mbPreviousPageFlag;
+      return _yahooPreviousPageFlag;
     }
+
     public YahooGenres()
     {
       loadGenres();
     }
+
     private void loadGenres()
     {
-      moGenreList = new Dictionary<string, string>();
+      _yahooGenreList = new Dictionary<string, string>();
       YahooUtil loUtil = YahooUtil.getInstance();
       YahooSettings loSettings = YahooSettings.getInstance();
-      msCountryName = loSettings.msDefaultCountryName;
-      YahooSite loSite = loSettings.moYahooSiteTable[loSettings.msDefaultCountryName];
-      string lsCntryId = loSite.countryId;
-      string lsGenreListUrl = loSite.GenreListURL;
+      _yahooCountryName = loSettings._defaultCountryName;
+      YahooSite loSite = loSettings._yahooSiteTable[loSettings._defaultCountryName];
+      string lsCntryId = loSite._yahooSiteCountryId;
+      string lsGenreListUrl = loSite._yahooSiteGenreListURL;
       //byte[] HTMLbuffer;
       string lsHtml = loUtil.getHTMLData(lsGenreListUrl);
       //string lsHtml = Encoding.UTF8.GetString(HTMLbuffer);
       //Log.Write("{0}", lsHtml);
       //Log.Write("{0}",lsHtml);
-      //Regex loGenreRegex = new Regex("http://" + loSite.countryId + ".rd.yahoo.com/launch/mv/hp/genre/(\\w+)/\\*http://[\\.\\w]+/genrehub.asp?genreID=(\\d+)");
+      //Regex loGenreRegex = new Regex("http://" + loSite._yahooSiteCountryId + ".rd.yahoo.com/launch/mv/hp/genre/(\\w+)/\\*http://[\\.\\w]+/genrehub.asp?genreID=(\\d+)");
       Regex loGenreRegex = new Regex("([\\w,&,;,\\-,/]*)/\\*http://[\\.,\\w]*music.yahoo.com[\\s.]+/musicvideos/genrehub.asp\\?genreID=(\\d+)");
       MatchCollection loGenreMatches = loGenreRegex.Matches(lsHtml);
       //Genre loGenre;       
@@ -99,34 +103,36 @@ namespace MediaPortal.MusicVideos.Database
           Log.Write(e);
         }
 
-        if (!moGenreList.ContainsValue(lsGenreId))
+        if (!_yahooGenreList.ContainsValue(lsGenreId))
         {
           Log.Write("Adding genre id:{0}", lsGenreId);
           Log.Write("Adding genre name:{0}", lsGenreName);
-          moGenreList.Add(lsGenreName, lsGenreId);
+          _yahooGenreList.Add(lsGenreName, lsGenreId);
           Log.Write("Genre found with name:{0} and id:{0}", lsGenreName, lsGenreId);
         }
         else
         {
           Log.Write("found a duplicate genre:{0}", lsGenreName);
         }
-        moSortedGenreList = new ArrayList(moGenreList.Keys);
-        moSortedGenreList.Sort();
+        _yahooSortedGenreList = new ArrayList(_yahooGenreList.Keys);
+        _yahooSortedGenreList.Sort();
       }
     }
+
     public void loadNextVideos()
     {
       if (hasNext())
       {
-        miCurrentPage++;
+        _yahooCurrentPage++;
         loadGenreVideos();
       }
     }
+
     public void loadPreviousVideos()
     {
       if (hasPrevious())
       {
-        miCurrentPage--;
+        _yahooCurrentPage--;
         loadGenreVideos();
       }
     }
@@ -134,36 +140,38 @@ namespace MediaPortal.MusicVideos.Database
     private void loadGenreVideos()
     {
       YahooUtil loUtil = YahooUtil.getInstance();
-      YahooSite loSite = loUtil.getYahooSite(msCountryName); ;
-      string lsGenreUrl = loSite.GenreURL + msCurrentGenreId + "&p=" + miCurrentPage;
-      //string lsGenreUrl = "http://music.yahoo.com/musicvideos/genrehub.asp?genreID=" + msCurrentGenreId; //+ "&p=" + miCurrentPage;
+      YahooSite loSite = loUtil.getYahooSite(_yahooCountryName); ;
+      string lsGenreUrl = loSite._yahooSiteGenreURL + _yahooCurrentGenreId + "&p=" + _yahooCurrentPage;
+      //string lsGenreUrl = "http://music.yahoo.com/musicvideos/genrehub.asp?genreID=" + _yahooCurrentGenreId; //+ "&p=" + _yahooCurrentPage;
       string lsHtml = loUtil.getHTMLData(lsGenreUrl);
       Log.Write("genre url={0}", lsGenreUrl);
-      moGenreVideoList = loUtil.getVideoList(lsHtml, loSite.countryId, loUtil.moArtistRegex, loUtil.moSongRegex);
-      Log.Write("video count ={0}", moGenreVideoList.Count);
+      _yahooGenreVideoList = loUtil.getVideoList(lsHtml, loSite._yahooSiteCountryId, loUtil._yahooArtistRegex, loUtil._yahooSongRegex);
+      Log.Write("video count ={0}", _yahooGenreVideoList.Count);
       setNavigationFlags(lsHtml);
       //Log.Write("{0}",lsHtml);
     }
+
     public void loadFirstGenreVideos(string fsGenreName)
     {
-      miCurrentPage = 1;
+      _yahooCurrentPage = 1;
       //List<YahooVideo> loGenreVideos = null;
-      if (moGenreList[fsGenreName] == null)
+      if (_yahooGenreList[fsGenreName] == null)
       {
         Log.Write("Genre not found in list.");
         return; ;
       }
-      msCurrentGenreId = moGenreList[fsGenreName];
+      _yahooCurrentGenreId = _yahooGenreList[fsGenreName];
       loadGenreVideos();
 
 
     }
+
     private void setNavigationFlags(String fsHtml)
     {
       GroupCollection loGrpCol = null;
       MatchCollection loMatches = null;
       int liPageIndex = 0;
-      loMatches = moRegex.Matches(fsHtml);
+      loMatches = _yahooRegex.Matches(fsHtml);
 
       bool lbNextSet = false;
       bool lbPrevSet = false;
@@ -174,14 +182,14 @@ namespace MediaPortal.MusicVideos.Database
 
         loGrpCol = loMatches[i].Groups;
         liPageIndex = Convert.ToInt32(loGrpCol[1].Value);
-        if (liPageIndex > miCurrentPage)
+        if (liPageIndex > _yahooCurrentPage)
         {
-          mbNextPageFlag = true;
+          _yahooNextPageFlag = true;
           lbNextSet = true;
         }
         else
         {
-          mbPreviousPageFlag = true;
+          _yahooPreviousPageFlag = true;
           lbPrevSet = true;
 
         }
@@ -189,16 +197,17 @@ namespace MediaPortal.MusicVideos.Database
       }
       if (lbNextSet == false)
       {
-        mbNextPageFlag = false;
+        _yahooNextPageFlag = false;
       }
       if (lbPrevSet == false)
       {
-        mbPreviousPageFlag = false;
+        _yahooPreviousPageFlag = false;
       }
     }
+
     public int getCurrentPageNumber()
     {
-      return miCurrentPage;
+      return _yahooCurrentPage;
     }
   }
 

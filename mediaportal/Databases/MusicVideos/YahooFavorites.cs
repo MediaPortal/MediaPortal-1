@@ -37,10 +37,10 @@ namespace MediaPortal.MusicVideos.Database
 {
   public class YahooFavorites
   {
-    public List<YahooVideo> moFavoriteList = new List<YahooVideo>();
+    public List<YahooVideo> _yahooFavoriteList = new List<YahooVideo>();
     //protected Dictionary<string, List<YahooVideo>> moFavoriteTable;
-    protected bool mbNameEnabled = false;
-    protected string msSelectedFavoriteName = "Default";
+    //protected bool mbNameEnabled = false;
+    protected string _selectedFavoriteSet = "Default";
 
 
     public YahooFavorites()
@@ -55,23 +55,23 @@ namespace MediaPortal.MusicVideos.Database
     }
     public void setSelectedFavorite(string fsFavoriteName)
     {
-      msSelectedFavoriteName = fsFavoriteName;
+      _selectedFavoriteSet = fsFavoriteName;
     }
     public string getSelectedFavorite()
     {
-      return msSelectedFavoriteName;
+      return _selectedFavoriteSet;
     }
     public List<YahooVideo> getFavoriteVideos()
     {
       MusicVideoDatabase loDb = MusicVideoDatabase.getInstance();
-      return loDb.getFavoriteVideos(msSelectedFavoriteName);
+      return loDb.getFavoriteVideos(_selectedFavoriteSet);
     }
 
     public void loadFavorites()
     {
-      //if (moFavoriteList == null || moFavoriteList.Count < 1)
+      //if (_yahooFavoriteList == null || _yahooFavoriteList.Count < 1)
       //{
-      //    moFavoriteList = new List<YahooVideo>();
+      //    _yahooFavoriteList = new List<YahooVideo>();
       //    moFavoriteTable = new Dictionary<string,List<YahooVideo>>();
       //    string lsCurrentName = msDefaultFavoriteName;
       //    try
@@ -83,9 +83,9 @@ namespace MediaPortal.MusicVideos.Database
       //        {
       //            if(loXmlreader.NodeType == XmlNodeType.Element && loXmlreader.Name == "Favorite"){
       //                mbNameEnabled = true;
-      //                if (moFavoriteList.Count > 0)
+      //                if (_yahooFavoriteList.Count > 0)
       //                {
-      //                    moFavoriteTable.Add(lsCurrentName, moFavoriteList);
+      //                    moFavoriteTable.Add(lsCurrentName, _yahooFavoriteList);
       //                }
       //                lsCurrentName = loXmlreader.GetAttribute("name");
       //                Log.Write("Xml name = {0}",lsCurrentName);
@@ -95,13 +95,13 @@ namespace MediaPortal.MusicVideos.Database
       //            if (loXmlreader.NodeType == XmlNodeType.Element && loXmlreader.Name == "SONG")
       //            {
       //                loVideo = new YahooVideo();
-      //                loVideo.artistId = loXmlreader.GetAttribute("ArtistId");
-      //                loVideo.artistName = loXmlreader.GetAttribute("Artist");
-      //                loVideo.songId = loXmlreader.GetAttribute("SongId");
-      //                loVideo.songName = loXmlreader.GetAttribute("SongTitle");
-      //                loVideo.countryId = loXmlreader.GetAttribute("CtryId");
+      //                loVideo._yahooVideoArtistId = loXmlreader.GetAttribute("ArtistId");
+      //                loVideo._yahooVideoArtistName = loXmlreader.GetAttribute("Artist");
+      //                loVideo._yahooVideoSongId = loXmlreader.GetAttribute("SongId");
+      //                loVideo._yahooVideoSongName = loXmlreader.GetAttribute("SongTitle");
+      //                loVideo._yahooSiteCountryId = loXmlreader.GetAttribute("CtryId");
       //                Log.Write("found favorite:{0}", loVideo.ToString());
-      //                moFavoriteList.Add(loVideo);
+      //                _yahooFavoriteList.Add(loVideo);
       //            }
       //        }
       //        loXmlreader.Close();
@@ -189,14 +189,14 @@ namespace MediaPortal.MusicVideos.Database
       try
       {
         MusicVideoDatabase loDb = MusicVideoDatabase.getInstance();
-        bool lbAdded = loDb.addFavoriteVideo(msSelectedFavoriteName, video);
+        bool lbAdded = loDb.addFavoriteVideo(_selectedFavoriteSet, video);
         if (lbAdded)
         {
-          moFavoriteList.Add(video);
+          _yahooFavoriteList.Add(video);
         }
         else
         {
-          Log.Write("{0} could not be added to favorite {1}.", video.songName, msSelectedFavoriteName);
+          Log.Write("{0} could not be added to favorite {1}.", video._yahooVideoSongName, _selectedFavoriteSet);
         }
 
       }
@@ -213,16 +213,16 @@ namespace MediaPortal.MusicVideos.Database
       try
       {
         MusicVideoDatabase loDb = MusicVideoDatabase.getInstance();
-        bool lbRemoved = loDb.removeFavoriteVideo(video, msSelectedFavoriteName);
+        bool lbRemoved = loDb.removeFavoriteVideo(video, _selectedFavoriteSet);
         if (lbRemoved)
         {
-          moFavoriteList.Remove(video);
+          _yahooFavoriteList.Remove(video);
         }
         else
         {
-          Log.Write("{0} could not be removed from favorite {1}", video.songName, msSelectedFavoriteName);
+          Log.Write("{0} could not be removed from favorite {1}", video._yahooVideoSongName, _selectedFavoriteSet);
         }
-        moFavoriteList.Remove(video);
+        _yahooFavoriteList.Remove(video);
 
       }
       catch (Exception e)
