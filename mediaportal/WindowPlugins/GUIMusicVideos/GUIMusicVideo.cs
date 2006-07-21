@@ -914,7 +914,7 @@ namespace MediaPortal.GUI.MusicVideos
       loSite = loUtil.getYahooSiteById(video._yahooVideoCountryId);
       lsVideoLink = loUtil.getVideoMMSUrl(video, _yahooSettings._defaultBitRate);
       lsVideoLink = lsVideoLink.Substring(0, lsVideoLink.Length - 2) + "&txe=.wmv";
-      if (g_Player.PlayAudioStream(lsVideoLink))
+      if (g_Player.PlayVideoStream(lsVideoLink))
       {
         //Log.Write("Playing Video:{0}", video._yahooVideoSongName);
         GUIGraphicsContext.IsFullScreenVideo = true;

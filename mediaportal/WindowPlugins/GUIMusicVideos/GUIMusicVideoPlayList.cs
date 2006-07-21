@@ -120,7 +120,7 @@ namespace MediaPortal.GUI.MusicVideos
         //Log.Write("3");
         lsVideoLink = lsVideoLink.Substring(0, lsVideoLink.Length - 2) + "&txe=.wmv";
 
-        g_Player.PlayAudioStream(lsVideoLink);
+        g_Player.PlayVideoStream(lsVideoLink);
         //g_Player.Play(lsVideoLink);
         //g_Player.
         //g_Player.FullScreen = true;

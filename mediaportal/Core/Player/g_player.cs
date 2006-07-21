@@ -461,6 +461,7 @@ namespace MediaPortal.Player
         Starting = false;
       }
     }
+
     //Added by juvinious 19/02/2005
     public static bool PlayVideoStream(string strURL)
     {
@@ -485,15 +486,15 @@ namespace MediaPortal.Player
           GUIGraphicsContext.form.Invalidate(true);
           _player = null;
         }
-        int iUseVMR9inMYMovies = 0;
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-        {
-          iUseVMR9inMYMovies = xmlreader.GetValueAsInt("movieplayer", "vmr9", 0);
-        }
-        if (iUseVMR9inMYMovies == 0)
-          _player = new Player.VideoPlayerVMR7();
-        else
-          _player = new Player.VideoPlayerVMR9();
+        //int iUseVMR9inMYMovies = 0;
+        //using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        //{
+        //  iUseVMR9inMYMovies = xmlreader.GetValueAsInt("movieplayer", "vmr9", 1);
+        //}
+        //if (iUseVMR9inMYMovies == 0)
+        //  _player = new Player.VideoPlayerVMR7();
+        //else
+        _player = new Player.VideoPlayerVMR9();
 
         _player = CachePreviousPlayer(_player);
         bool bResult = _player.Play(strURL);
@@ -503,7 +504,7 @@ namespace MediaPortal.Player
           _player.Release();
           _player = null;
           _subs = null;
-          GC.Collect(); GC.Collect(); GC.Collect();
+          GC.Collect(); // what was that about??? GC.Collect(); GC.Collect();
         }
         else if (_player.Playing)
         {
@@ -518,6 +519,7 @@ namespace MediaPortal.Player
         Starting = false;
       }
     }
+
     static IPlayer CachePreviousPlayer(IPlayer newPlayer)
     {
       IPlayer player = newPlayer;
@@ -943,11 +945,11 @@ namespace MediaPortal.Player
       {
         if (Step >= 3600)
         {
-        // check for 'full' hours
-        if ( (Convert.ToSingle(Step) / 3600 ) > 1 && (Convert.ToSingle(Step) / 3600) != 2 && (Convert.ToSingle(Step) / 3600) != 3 )
-          return "+ " + Convert.ToString(Step / 60) + " " + GUILocalizeStrings.Get(2998);// "min"
-        else
-          return "+ " + Convert.ToString(Step / 3600) + " " + GUILocalizeStrings.Get(2997);// "hrs"
+          // check for 'full' hours
+          if ((Convert.ToSingle(Step) / 3600) > 1 && (Convert.ToSingle(Step) / 3600) != 2 && (Convert.ToSingle(Step) / 3600) != 3)
+            return "+ " + Convert.ToString(Step / 60) + " " + GUILocalizeStrings.Get(2998);// "min"
+          else
+            return "+ " + Convert.ToString(Step / 3600) + " " + GUILocalizeStrings.Get(2997);// "hrs"
         }
         else
           if (Step >= 60)
@@ -959,7 +961,7 @@ namespace MediaPortal.Player
       {
         if (Step <= -3600)
         {
-        if ( (Convert.ToSingle(Step) / 3600) < -1 && (Convert.ToSingle(Step) / 3600) != -2 && (Convert.ToSingle(Step) / 3600) != -3 )
+          if ((Convert.ToSingle(Step) / 3600) < -1 && (Convert.ToSingle(Step) / 3600) != -2 && (Convert.ToSingle(Step) / 3600) != -3)
             return "- " + Convert.ToString(Math.Abs(Step / 60)) + " " + GUILocalizeStrings.Get(2998);// "min"
           else
             return "- " + Convert.ToString(Math.Abs(Step / 3600)) + " " + GUILocalizeStrings.Get(2997);// "hrs"
