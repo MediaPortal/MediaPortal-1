@@ -376,12 +376,13 @@ namespace MediaPortal.Player
           control.Count(out streamCount);
           if (streamCount > 0)
           {
-            _log.Info("streams:{0}, enable stream 1", streamCount);
-            control.Enable(1, AMStreamSelectEnableFlags.EnableAll);
+            _log.Info("streams:{0}", streamCount);
+            //control.Enable(1, AMStreamSelectEnableFlags.EnableAll);
             _log.Info("get duration", streamCount);
             UpdateDuration();
             double dPos = _duration;
             _log.Info("_duration:{0}", _duration);
+            dPos -= 2;
             if (dPos >= 0 && CurrentPosition < dPos)
             {
               if (_duration > 4)
