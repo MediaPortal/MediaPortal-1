@@ -57,8 +57,7 @@ namespace MediaPortal.GUI.MusicVideos
           this.groupBoxMusicVideoSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
           this.countryList = new System.Windows.Forms.ComboBox();
           this.label1 = new System.Windows.Forms.Label();
-          this.groupBoxFavs = new System.Windows.Forms.GroupBox();
-          this.labelNote = new MediaPortal.UserInterface.Controls.MPLabel();
+          this.groupBox2 = new System.Windows.Forms.GroupBox();
           this.DeleteBtn = new System.Windows.Forms.Button();
           this.AddBtn = new System.Windows.Forms.Button();
           this.EditBtn = new System.Windows.Forms.Button();
@@ -70,7 +69,7 @@ namespace MediaPortal.GUI.MusicVideos
           this.bitrate56 = new System.Windows.Forms.RadioButton();
           this.DoneBtn = new System.Windows.Forms.Button();
           this.groupBoxMusicVideoSettings.SuspendLayout();
-          this.groupBoxFavs.SuspendLayout();
+          this.groupBox2.SuspendLayout();
           this.groupBoxBitRateSetting.SuspendLayout();
           this.SuspendLayout();
           // 
@@ -78,7 +77,7 @@ namespace MediaPortal.GUI.MusicVideos
           // 
           this.groupBoxMusicVideoSettings.Controls.Add(this.countryList);
           this.groupBoxMusicVideoSettings.Controls.Add(this.label1);
-          this.groupBoxMusicVideoSettings.Controls.Add(this.groupBoxFavs);
+          this.groupBoxMusicVideoSettings.Controls.Add(this.groupBox2);
           this.groupBoxMusicVideoSettings.Controls.Add(this.groupBoxBitRateSetting);
           this.groupBoxMusicVideoSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
           this.groupBoxMusicVideoSettings.Location = new System.Drawing.Point(12, 12);
@@ -106,33 +105,24 @@ namespace MediaPortal.GUI.MusicVideos
           this.label1.TabIndex = 10;
           this.label1.Text = "Default country";
           // 
-          // groupBoxFavs
+          // groupBox2
           // 
-          this.groupBoxFavs.Controls.Add(this.labelNote);
-          this.groupBoxFavs.Controls.Add(this.DeleteBtn);
-          this.groupBoxFavs.Controls.Add(this.AddBtn);
-          this.groupBoxFavs.Controls.Add(this.EditBtn);
-          this.groupBoxFavs.Controls.Add(this.FavoriteList);
-          this.groupBoxFavs.Location = new System.Drawing.Point(15, 29);
-          this.groupBoxFavs.Name = "groupBoxFavs";
-          this.groupBoxFavs.Size = new System.Drawing.Size(221, 197);
-          this.groupBoxFavs.TabIndex = 8;
-          this.groupBoxFavs.TabStop = false;
-          this.groupBoxFavs.Text = "User favorites sets";
-          // 
-          // labelNote
-          // 
-          this.labelNote.Location = new System.Drawing.Point(11, 151);
-          this.labelNote.Name = "labelNote";
-          this.labelNote.Size = new System.Drawing.Size(203, 40);
-          this.labelNote.TabIndex = 12;
-          this.labelNote.Text = "Note: This allows to define independant sets of favorites for each family member";
+          this.groupBox2.Controls.Add(this.DeleteBtn);
+          this.groupBox2.Controls.Add(this.AddBtn);
+          this.groupBox2.Controls.Add(this.EditBtn);
+          this.groupBox2.Controls.Add(this.FavoriteList);
+          this.groupBox2.Location = new System.Drawing.Point(15, 29);
+          this.groupBox2.Name = "groupBox2";
+          this.groupBox2.Size = new System.Drawing.Size(205, 197);
+          this.groupBox2.TabIndex = 8;
+          this.groupBox2.TabStop = false;
+          this.groupBox2.Text = "User favorite files";
           // 
           // DeleteBtn
           // 
-          this.DeleteBtn.Location = new System.Drawing.Point(158, 117);
+          this.DeleteBtn.Location = new System.Drawing.Point(143, 159);
           this.DeleteBtn.Name = "DeleteBtn";
-          this.DeleteBtn.Size = new System.Drawing.Size(50, 21);
+          this.DeleteBtn.Size = new System.Drawing.Size(50, 25);
           this.DeleteBtn.TabIndex = 7;
           this.DeleteBtn.Text = "Delete";
           this.DeleteBtn.UseVisualStyleBackColor = true;
@@ -140,9 +130,9 @@ namespace MediaPortal.GUI.MusicVideos
           // 
           // AddBtn
           // 
-          this.AddBtn.Location = new System.Drawing.Point(13, 117);
+          this.AddBtn.Location = new System.Drawing.Point(13, 159);
           this.AddBtn.Name = "AddBtn";
-          this.AddBtn.Size = new System.Drawing.Size(50, 21);
+          this.AddBtn.Size = new System.Drawing.Size(50, 25);
           this.AddBtn.TabIndex = 6;
           this.AddBtn.Text = "Add";
           this.AddBtn.UseVisualStyleBackColor = true;
@@ -150,9 +140,9 @@ namespace MediaPortal.GUI.MusicVideos
           // 
           // EditBtn
           // 
-          this.EditBtn.Location = new System.Drawing.Point(87, 117);
+          this.EditBtn.Location = new System.Drawing.Point(78, 159);
           this.EditBtn.Name = "EditBtn";
-          this.EditBtn.Size = new System.Drawing.Size(50, 21);
+          this.EditBtn.Size = new System.Drawing.Size(50, 25);
           this.EditBtn.TabIndex = 5;
           this.EditBtn.Text = "Edit";
           this.EditBtn.UseVisualStyleBackColor = true;
@@ -164,10 +154,9 @@ namespace MediaPortal.GUI.MusicVideos
           this.FavoriteList.Location = new System.Drawing.Point(13, 22);
           this.FavoriteList.MultiSelect = false;
           this.FavoriteList.Name = "FavoriteList";
-          this.FavoriteList.Size = new System.Drawing.Size(195, 89);
+          this.FavoriteList.Size = new System.Drawing.Size(180, 131);
           this.FavoriteList.TabIndex = 3;
           this.FavoriteList.UseCompatibleStateImageBehavior = false;
-          this.FavoriteList.View = System.Windows.Forms.View.List;
           // 
           // groupBoxBitRateSetting
           // 
@@ -249,7 +238,7 @@ namespace MediaPortal.GUI.MusicVideos
           this.Load += new System.EventHandler(this.SetupForm_Load);
           this.groupBoxMusicVideoSettings.ResumeLayout(false);
           this.groupBoxMusicVideoSettings.PerformLayout();
-          this.groupBoxFavs.ResumeLayout(false);
+          this.groupBox2.ResumeLayout(false);
           this.groupBoxBitRateSetting.ResumeLayout(false);
           this.groupBoxBitRateSetting.PerformLayout();
           this.ResumeLayout(false);
@@ -262,7 +251,7 @@ namespace MediaPortal.GUI.MusicVideos
       private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxMusicVideoSettings;
       private System.Windows.Forms.ComboBox countryList;
       private System.Windows.Forms.Label label1;
-      private System.Windows.Forms.GroupBox groupBoxFavs;
+      private System.Windows.Forms.GroupBox groupBox2;
       private System.Windows.Forms.Button DeleteBtn;
       private System.Windows.Forms.Button AddBtn;
       private System.Windows.Forms.Button EditBtn;
@@ -273,6 +262,5 @@ namespace MediaPortal.GUI.MusicVideos
       private System.Windows.Forms.RadioButton bitrate128;
       private System.Windows.Forms.RadioButton bitrate56;
       private System.Windows.Forms.Button DoneBtn;
-      private MediaPortal.UserInterface.Controls.MPLabel labelNote;
     }
 }

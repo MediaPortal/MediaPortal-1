@@ -31,13 +31,14 @@ namespace MediaPortal.MusicVideos.Database
 {
   public class YahooSite
   {
-    public string _yahooSiteCountryId;
-    public string _yahooSiteCountryName;
-    public string _yahooSiteSearchURL;
-    public string _yahooSiteTopURL;
-    public string _yahooSiteNewURL;      
-    public string _yahooSiteGenreListURL;
-    public string _yahooSiteGenreURL;
+    public string countryId;
+    public string countryName;
+    public string SearchURL;
+    public string TopURL;
+    public string NewURL;
+    //public string MainURL;       
+    public string GenreListURL;
+    public string GenreURL;
     //public string BrowseURL;
     //public string BiographyURL;
   }

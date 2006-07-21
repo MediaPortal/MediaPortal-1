@@ -61,7 +61,7 @@ namespace MediaPortal.GUI.MusicVideos
     }
     public void SongEnded(g_Player.MediaType type, string filename)
     {
-      //Log.Write("MusicVideoPlaylist - EventArgs song ended received");
+      Log.Write("MusicVideoPlaylist - EventArgs song ended received");
       if (mbPLayingState && msCurrentUrl.Equals(filename))
       {
         PlayNext();
@@ -76,9 +76,9 @@ namespace MediaPortal.GUI.MusicVideos
 
     public void PlayerStopped(g_Player.MediaType type, int stoptime, string filename)
     {
-      //Log.Write("Playing  {0}",g_Player.CurrentFile);
-      //Log.Write("PlayList {0}",miPlayListIndex);
-      //Log.Write("MusicVideoPlaylist - EventArgs stop play received");
+      Log.Write("Playing  {0}",g_Player.CurrentFile);
+      Log.Write("PlayList {0}",miPlayListIndex);
+      Log.Write("MusicVideoPlaylist - EventArgs stop play received");
       mbPLayingState = false;
     }
     public void AddAllToPlayList(List<YahooVideo> foVideoList)
@@ -91,7 +91,7 @@ namespace MediaPortal.GUI.MusicVideos
     }
     public void Play()
     {
-      //Log.Write("MusicVideoPlaylist - Play()");
+      Log.Write("MusicVideoPlaylist - Play()");
       if (isPlayListLoaded())
       {
         if (miPlayListIndex == -1)
@@ -112,27 +112,27 @@ namespace MediaPortal.GUI.MusicVideos
 
         YahooUtil loUtil = YahooUtil.getInstance();
         YahooVideo loVideo = moPlayList[miPlayListIndex];
-        //Log.Write("{0}",video._yahooSiteCountryId);
-        YahooSite loSite = loUtil.getYahooSiteById(loVideo._yahooVideoCountryId);
-        //Log.Write("2");
+        //Log.Write("{0}",video.countryId);
+        YahooSite loSite = loUtil.getYahooSiteById(loVideo.countryId);
+        Log.Write("2");
         YahooSettings loSetting = YahooSettings.getInstance();
-        string lsVideoLink = loUtil.getVideoMMSUrl(loVideo, loSetting._defaultBitRate);
-        //Log.Write("3");
+        string lsVideoLink = loUtil.getVideoMMSUrl(loVideo, loSetting.msDefaultBitRate);
+        Log.Write("3");
         lsVideoLink = lsVideoLink.Substring(0, lsVideoLink.Length - 2) + "&txe=.wmv";
 
-        g_Player.PlayVideoStream(lsVideoLink);
+        g_Player.PlayAudioStream(lsVideoLink);
         //g_Player.Play(lsVideoLink);
         //g_Player.
         //g_Player.FullScreen = true;
         GUIGraphicsContext.IsFullScreenVideo = true;
         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
         mbPLayingState = true;
-        //Log.Write("Now Playing index:{0}", miPlayListIndex);
+        Log.Write("Now Playing index:{0}", miPlayListIndex);
         msCurrentUrl = lsVideoLink;
-        //Log.Write("1 - {0}",GUIPropertyManager.GetProperty("#Play.Current.Title"));
-        //Log.Write("2 - {0}",GUIPropertyManager.GetProperty("#Play.Current.File"));
-        //GUIPropertyManager.SetProperty("#Play.Current.Title", loVideo._yahooVideoSongName);
-        //GUIPropertyManager.SetProperty("#Play.Current.File", loVideo._yahooVideoSongName);
+        Log.Write("1 - {0}",GUIPropertyManager.GetProperty("#Play.Current.Title"));
+        Log.Write("2 - {0}",GUIPropertyManager.GetProperty("#Play.Current.File"));
+        //GUIPropertyManager.SetProperty("#Play.Current.Title", loVideo.songName);
+        //GUIPropertyManager.SetProperty("#Play.Current.File", loVideo.songName);
       }
     }
     public void Stop()
@@ -142,7 +142,7 @@ namespace MediaPortal.GUI.MusicVideos
     }
     public void Play(int fiPlaylistIndex)
     {
-      //Log.Write("MusicVideoPlaylist - Play(int)");
+      Log.Write("MusicVideoPlaylist - Play(int)");
       if (fiPlaylistIndex > -1 && fiPlaylistIndex < moPlayList.Count)
       {
         miPlayListIndex = fiPlaylistIndex;
@@ -157,10 +157,11 @@ namespace MediaPortal.GUI.MusicVideos
     }
     public void PlayNext()
     {
-      //Log.Write("MusicVideoPlaylist - PlayNext()");
+      Log.Write("MusicVideoPlaylist - PlayNext()");
       //Log.Write("",isPlayListLoaded(),);
       if (isPlayListLoaded() && mbPLayingState)
       {
+
         if (getNextSongIndex())
         {
           Play();
@@ -174,7 +175,7 @@ namespace MediaPortal.GUI.MusicVideos
     }
     public void PlayPrevious()
     {
-      //Log.Write("MusicVideoPlaylist - PlayPrevious()");
+      Log.Write("MusicVideoPlaylist - PlayPrevious()");
       if (isPlayListLoaded() && mbPLayingState)
       {
         if (getPreviousSongIndex())
@@ -194,7 +195,7 @@ namespace MediaPortal.GUI.MusicVideos
     }
     private bool getNextSongIndex()
     {
-      // Log.Write("GetNextSongIndex - current playing index:{0}", miPlayListIndex);
+       Log.Write("GetNextSongIndex - current playing index:{0}", miPlayListIndex);
       //Log.Write("PlayList Count:{0}", moPlayList.Count);
       if (miPlayListIndex >= -1 && miPlayListIndex < moPlayList.Count - 1)
       {
@@ -225,10 +226,11 @@ namespace MediaPortal.GUI.MusicVideos
     }
     private bool getPreviousSongIndex()
     {
-      //Log.Write("GetPreviousSongIndex - current playing index:{0}", miPlayListIndex);
+      Log.Write("GetPreviousSongIndex - current playing index:{0}", miPlayListIndex);
       //Log.Write("PlayList Count:{0}", moPlayList.Count);
       if (miPlayListIndex > 0 && miPlayListIndex < moPlayList.Count)
       {
+
         miPlayListIndex--;
         return true;
       }
@@ -241,25 +243,23 @@ namespace MediaPortal.GUI.MusicVideos
       {
         return false;
       }
-    }
 
+    }
     public List<YahooVideo> getPlayListVideos()
     {
       return moPlayList;
     }
-
     public void repeat(bool fbRepeat)
     {
       mbRepeat = fbRepeat;
     }
-
     public bool getRepeatState()
     {
       return mbRepeat;
     }
-
     public void shuffle()
     {
+
       if (moPlayList == null || moPlayList.Count == 0) { return; }
       if (mbPLayingState)
       {
@@ -274,7 +274,8 @@ namespace MediaPortal.GUI.MusicVideos
       {
         loCurVideo = moPlayList[miPlayListIndex];
       }
-      
+
+
       for (int i = 0; i < count; i++)
       {
         YahooVideo loVideo = moPlayList[i];
@@ -293,8 +294,8 @@ namespace MediaPortal.GUI.MusicVideos
         //Log.Write("Playing song index changing from {0} to {1}", miPlayListIndex, liPos);
         miPlayListIndex = liPos;
       }
-    }
 
+    }
     public int getPlayListIndex()
     {
       //Log.Write("MusicVideoPlaylist - getPlayListIndex()");

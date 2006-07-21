@@ -41,29 +41,29 @@ namespace MediaPortal.MusicVideos.Database
             //loDb.deleteAllVideo("Default", MyMusicVideos.MusicVideoDatabase.MusicVideoTypes.FAVORITE, "");
             //loDb.createVideoCat("Default",MyMusicVideos.MusicVideoDatabase.MusicVideoTypes.FAVORITE,"");
             //YahooVideo loVideo = new YahooVideo();
-            //loVideo._yahooVideoArtistId = "2";
-            //loVideo._yahooVideoArtistName="Greg";
-            //loVideo._yahooVideoSongId = "3";
-            //loVideo._yahooVideoSongName ="get workin";
+            //loVideo.artistId = "2";
+            //loVideo.artistName="Greg";
+            //loVideo.songId = "3";
+            //loVideo.songName ="get workin";
             //loDb.AddVideo(loVideo, "Default", MyMusicVideos.MusicVideoDatabase.MusicVideoTypes.FAVORITE);
 
 
-            //loVideo._yahooVideoArtistId = "3";
-            //loVideo._yahooVideoArtistName = "Greg";
-            //loVideo._yahooVideoSongId = "4";
-            //loVideo._yahooVideoSongName = "get workin";
+            //loVideo.artistId = "3";
+            //loVideo.artistName = "Greg";
+            //loVideo.songId = "4";
+            //loVideo.songName = "get workin";
             //loDb.AddVideo(loVideo, "Default", MyMusicVideos.MusicVideoDatabase.MusicVideoTypes.FAVORITE);
 
-            //loVideo._yahooVideoArtistId = "4";
-            //loVideo._yahooVideoArtistName = "Greg";
-            //loVideo._yahooVideoSongId = "5";
-            //loVideo._yahooVideoSongName = "get workin";
+            //loVideo.artistId = "4";
+            //loVideo.artistName = "Greg";
+            //loVideo.songId = "5";
+            //loVideo.songName = "get workin";
             //loDb.AddVideo(loVideo, "Default", MyMusicVideos.MusicVideoDatabase.MusicVideoTypes.FAVORITE);
 
-            //loVideo._yahooVideoArtistId = "5";
-            //loVideo._yahooVideoArtistName = "Greg";
-            //loVideo._yahooVideoSongId = "6";
-            //loVideo._yahooVideoSongName = "get workin";
+            //loVideo.artistId = "5";
+            //loVideo.artistName = "Greg";
+            //loVideo.songId = "6";
+            //loVideo.songName = "get workin";
             //loDb.AddVideo(loVideo, "Default", MyMusicVideos.MusicVideoDatabase.MusicVideoTypes.FAVORITE);
             
             

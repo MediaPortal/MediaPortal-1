@@ -37,59 +37,57 @@ namespace MediaPortal.MusicVideos.Database
   public class YahooTopVideos//:GUIWindow
   {
 
-    private List<YahooVideo> _yahooTopVideoList = new List<YahooVideo>();
+    private List<YahooVideo> moTopVideoList = new List<YahooVideo>();
     //private int WINDOW_ID = 473555;
     //private DateTime moLastImportTopVideoDt;
     //private Boolean mbTopVideoLoaded = false;
     //private string msLastTopVideoRunCountry;
-    private int _yahooLastPageNoLoaded = 0;
-    private string _yahooCountry;
-
+    private int miLastPageNoLoaded = 0;
+    private string msCountry;
     public YahooTopVideos(string fsCountry)
     {
-      _yahooCountry = fsCountry;
+      msCountry = fsCountry;
     }
-
     public List<YahooVideo> getLastLoadedList()
     {
-      return _yahooTopVideoList;
+      return moTopVideoList;
     }
-
     public List<YahooVideo> loadFirstPage()
     {
       loadTopVideos(1);
-      _yahooLastPageNoLoaded = 1;
-      return _yahooTopVideoList;
-    }
+      miLastPageNoLoaded = 1;
+      return moTopVideoList;
 
+    }
     public bool hasMorePages()
     {
-      return _yahooLastPageNoLoaded < 5;
+      return miLastPageNoLoaded < 5;
     }
-
     public bool hasPreviousPage()
     {
-      return _yahooLastPageNoLoaded > 1;
+      return miLastPageNoLoaded > 1;
     }
-
     public List<YahooVideo> loadNextPage()
     {
       if (hasMorePages())
       {
-        loadTopVideos(_yahooLastPageNoLoaded + 1);
-        _yahooLastPageNoLoaded++;
+        loadTopVideos(miLastPageNoLoaded + 1);
+        miLastPageNoLoaded++;
       }
-      return _yahooTopVideoList;
-    }
 
+      return moTopVideoList;
+
+    }
     public List<YahooVideo> loadPreviousPage()
     {
-      if (_yahooLastPageNoLoaded > 1)
+      if (miLastPageNoLoaded > 1)
       {
-        loadTopVideos(_yahooLastPageNoLoaded - 1);
-        _yahooLastPageNoLoaded--;
+        loadTopVideos(miLastPageNoLoaded - 1);
+        miLastPageNoLoaded--;
       }
-      return _yahooTopVideoList;
+
+      return moTopVideoList;
+
     }
 
     //#region GUIWindow Overrides
@@ -114,13 +112,16 @@ namespace MediaPortal.MusicVideos.Database
     //    Log.Write("YahooTopVideos onPageLoad.");
     //    //load the top videos
     //    YahooSettings loSettings= YahooSettings.getInstance();
-    //    loadTopVideos(loSettings._defaultCountryName);
+    //    loadTopVideos(loSettings.msDefaultCountryName);
     //}
+
+
+
     //#endregion
     private void loadTopVideos(int fiPageNo)
     {
       YahooUtil loUtil = YahooUtil.getInstance();
-      
+      Log.Write("in loadTopVideos");
       //if (mbTopVideoLoaded && fsCountryName == msLastTopVideoRunCountry)
       //{
       //    TimeSpan loDataDiff = DateTime.Now - moLastImportTopVideoDt;
@@ -130,25 +131,31 @@ namespace MediaPortal.MusicVideos.Database
       //        return;
       //    }
       //}
-      if (_yahooTopVideoList == null)
-        _yahooTopVideoList = new List<YahooVideo>();
+      if (moTopVideoList == null)
+      {
+        moTopVideoList = new List<YahooVideo>();
+      }
       else
-        _yahooTopVideoList.Clear();
+      {
+        moTopVideoList.Clear();
+      }
 
-      YahooSite loSite = loUtil.getYahooSite(_yahooCountry);
+      YahooSite loSite = loUtil.getYahooSite(msCountry);
+      //msLastTopVideoRunCountry = loSite.countryName;
 
       string HTMLdownload;
+      //for (int i = 1; i <= 5; i++)
+      //{
 
-      HTMLdownload = loUtil.getHTMLData(loSite._yahooSiteTopURL + "?p=" + fiPageNo);
-      _yahooTopVideoList.AddRange(loUtil.getVideoList(HTMLdownload, loSite._yahooSiteCountryId, loUtil._yahooArtistRegex, loUtil._yahooSongRegex));
+      HTMLdownload = loUtil.getHTMLData(loSite.TopURL + "?p=" + fiPageNo);
+      moTopVideoList.AddRange(loUtil.getVideoList(HTMLdownload, loSite.countryId, loUtil.moArtistRegex, loUtil.moSongRegex));
 
     }
-
     public void loadAllTopVideos()
     {
       YahooUtil loUtil = YahooUtil.getInstance();
       Log.Write("in loadTopVideos");
-      //if (mbTopVideoLoaded && _yahooCountry == msLastTopVideoRunCountry)
+      //if (mbTopVideoLoaded && msCountry == msLastTopVideoRunCountry)
       ///if(mbTopVideoLoaded)
       ///{
       ///    TimeSpan loDataDiff = DateTime.Now - moLastImportTopVideoDt;
@@ -158,10 +165,14 @@ namespace MediaPortal.MusicVideos.Database
       ///         return;
       ///     }
       /// }
-      if (_yahooTopVideoList == null)
-        _yahooTopVideoList = new List<YahooVideo>();
+      if (moTopVideoList == null)
+      {
+        moTopVideoList = new List<YahooVideo>();
+      }
       else
-        _yahooTopVideoList.Clear();
+      {
+        moTopVideoList.Clear();
+      }
       //GUIDialogProgress loProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
       //loProgress.SetHeading("Yahoo Download");
       //loProgress.SetLine(1, "Importing Top Videos.");
@@ -169,14 +180,15 @@ namespace MediaPortal.MusicVideos.Database
       //loProgress.StartModal(4734);
       //loProgress.Progress();
       //loProgress.ShowProgressBar(true);
-      YahooSite loSite = loUtil.getYahooSite(_yahooCountry);
-      //msLastTopVideoRunCountry = loSite._yahooSiteCountryName;
+      YahooSite loSite = loUtil.getYahooSite(msCountry);
+      //msLastTopVideoRunCountry = loSite.countryName;
 
       string HTMLdownload;
       for (int i = 1; i <= 5; i++)
       {
-        HTMLdownload = loUtil.getHTMLData(loSite._yahooSiteTopURL + "?p=" + i);
-        _yahooTopVideoList.AddRange(loUtil.getVideoList(HTMLdownload, loSite._yahooSiteCountryId, loUtil._yahooArtistRegex, loUtil._yahooSongRegex));
+
+        HTMLdownload = loUtil.getHTMLData(loSite.TopURL + "?p=" + i);
+        moTopVideoList.AddRange(loUtil.getVideoList(HTMLdownload, loSite.countryId, loUtil.moArtistRegex, loUtil.moSongRegex));
         //loProgress.SetPercentage(i * 20);
         //loProgress.Progress();
       }
@@ -184,16 +196,15 @@ namespace MediaPortal.MusicVideos.Database
       //loProgress.Close();
       ///moLastImportTopVideoDt = DateTime.Now;
       ///mbTopVideoLoaded = true;
-    }
 
+    }
     public int getFirstVideoRank()
     {
-      return ((_yahooLastPageNoLoaded - 1) * _yahooTopVideoList.Count) + 1;
+      return ((miLastPageNoLoaded - 1) * moTopVideoList.Count) + 1;
     }
-
     public int getLastVideoRank()
     {
-      return _yahooLastPageNoLoaded * _yahooTopVideoList.Count;
+      return miLastPageNoLoaded * moTopVideoList.Count;
     }
 
   }

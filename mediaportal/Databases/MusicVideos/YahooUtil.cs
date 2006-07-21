@@ -44,18 +44,17 @@ namespace MediaPortal.MusicVideos.Database
     private static YahooUtil instance;
     private Hashtable loEscapes = new Hashtable();
     private static bool _workerCompleted = true;
-    private string _HTMLdownload;										   // Hold HTML for parsing or misc
+    private string HTMLdownload;										   // Hold HTML for parsing or misc
 
-    public Regex _yahooSongRegex = new Regex(":play\\w+\\((\\d+)\\S+ class=\"listheader\" title=\"([^\"]*)");
-    public Regex _yahooSearchSongRegex = new Regex(":play\\w+\\((\\d+)\\S+ title=\"([^\"]*)");
-    //private Regex _yahooArtistRegex = new Regex("/ar-(\\d+)-+\\S+\" title=\"([^>\"]*)");
-    public Regex _yahooArtistRegex = new Regex("<td class=\"listitem\"><\\ba href=\"http://[\\.\\w]+/ar-(\\d*)-+[^\"]*\" title=\"([^\"]*)\\b*|\\bfont title=\"([^\"]*)\\b*");
 
+    public Regex moSongRegex = new Regex(":play\\w+\\((\\d+)\\S+ class=\"listheader\" title=\"([^\"]*)");
+    public Regex moSearchSongRegex = new Regex(":play\\w+\\((\\d+)\\S+ title=\"([^\"]*)");
+    //private Regex moArtistRegex = new Regex("/ar-(\\d+)-+\\S+\" title=\"([^>\"]*)");
+    public Regex moArtistRegex = new Regex("<td class=\"listitem\"><\\ba href=\"http://[\\.\\w]+/ar-(\\d*)-+[^\"]*\" title=\"([^\"]*)\\b*|\\bfont title=\"([^\"]*)\\b*");
     private YahooUtil()
     {
       init();
     }
-
     public static YahooUtil getInstance()
     {
       if (instance == null)
@@ -64,25 +63,24 @@ namespace MediaPortal.MusicVideos.Database
       }
       return instance;
     }
-
     //public void setYahooSites(List<YahooSite> foYahooSiteList)
     //{
-    //    _yahooSiteTable = new Dictionary<string,YahooSite>();
+    //    moYahooSiteTable = new Dictionary<string,YahooSite>();
     //    foreach (YahooSite loSite in foYahooSiteList)
     //    {
-    //        _yahooSiteTable.Add(loSite._yahooSiteCountryName, loSite);
+    //        moYahooSiteTable.Add(loSite.countryName, loSite);
     //if(loSite.)
     //  }
-    //_yahooSiteTable.
+    //moYahooSiteTable.
     //}
 
     public YahooSite getYahooSiteById(string fsCountryId)
     {
       YahooSite loSite = new YahooSite();
       YahooSettings loSettings = YahooSettings.getInstance();
-      foreach (YahooSite loTempSite in loSettings._yahooSiteTable.Values)
+      foreach (YahooSite loTempSite in loSettings.moYahooSiteTable.Values)
       {
-        if (loTempSite._yahooSiteCountryId == fsCountryId)
+        if (loTempSite.countryId == fsCountryId)
         {
           loSite = loTempSite;
           break;
@@ -90,25 +88,26 @@ namespace MediaPortal.MusicVideos.Database
       }
       return loSite;
     }
-
     public YahooSite getYahooSite(string fsCountryName)
     {
       YahooSettings loSettings = YahooSettings.getInstance();
-      return (YahooSite)loSettings._yahooSiteTable[fsCountryName];
+      return (YahooSite)loSettings.moYahooSiteTable[fsCountryName];
     }
-
     private string getVideoUrl(YahooVideo foVideo, string fsBitRate)
     {
-      YahooSite loSite = getYahooSite(foVideo._yahooVideoCountryId);
+      YahooSite loSite = getYahooSite(foVideo.countryId);
       string lsVideoUrl;
       //get the video hash here
-      string lsVideoHash = getMediaHash(foVideo._yahooVideoSongId, loSite._yahooSiteCountryId);
+      string lsVideoHash = getMediaHash(foVideo.songId, loSite.countryId);
       Log.Write("Hash ={0}", lsVideoHash);
-      if (loSite._yahooSiteCountryId == "us")
-        lsVideoUrl = "http://launchtoday.launch.yahoo.com/player/medialog.asp?vid=" + foVideo._yahooVideoSongId;
+      if (loSite.countryId == "us")
+      {
+        lsVideoUrl = "http://launchtoday.launch.yahoo.com/player/medialog.asp?vid=" + foVideo.songId;
+      }
       else
-        lsVideoUrl = "http://launchtoday." + loSite._yahooSiteCountryId + ".launch.yahoo.com/player/medialog.asp?vid=" + foVideo._yahooVideoSongId;
-
+      {
+        lsVideoUrl = "http://launchtoday." + loSite.countryId + ".launch.yahoo.com/player/medialog.asp?vid=" + foVideo.songId;
+      }
       //lsVideoUrl += "&bw=" + CURRENT_BR + "&mf=1&pid=505&ps=0&p1=2&p2=21&p3=2&rpid=35&pv=10&bp=Windows%2520NT&csid=791020104&uid=1886812234&pguid=einsJELEt4VkQCKMov00bg&etid=0&uguid=3e5u3891dirro&fcv=";
       lsVideoUrl += "&bw=" + fsBitRate + "&mf=1&pid=505&ps=0&p1=2&p2=21&p3=2&rpid=35&pv=10&bp=Windows%2520NT&csid=791020104&uid=1886812234&pguid=einsJELEt4VkQCKMov00bg&etid=0&uguid=3e5u3891dirro&fcv=";
       lsVideoUrl += "&mh=" + lsVideoHash;
@@ -119,14 +118,17 @@ namespace MediaPortal.MusicVideos.Database
       string HTMLdownload = getHTMLData(lsVideoUrl);
 
       if (HTMLdownload.IndexOf("makeplaylist.dll") > -1)
+      {
         //get the mms url
         HTMLdownload = getHTMLData(HTMLdownload);
+      }
       else
+      {
         Console.WriteLine("MMS url lnot found");
-
+      }
       return HTMLdownload;
-    }
 
+    }
     public string getHTMLData(string fsURL)
     {
       BackgroundWorker worker = new BackgroundWorker();
@@ -139,43 +141,46 @@ namespace MediaPortal.MusicVideos.Database
         while (_workerCompleted == false)
           GUIWindowManager.Process();
       }
-      return _HTMLdownload;
+      return HTMLdownload;
     }
-
     private string downloadHtml(String fsUrl)
     {
       byte[] HTMLbuffer;
-      String lsURL = "http://de.music.yahoo.com/musicvideos/lists/top.asp?p=1";
-      if (fsUrl != null)
-        lsURL = fsUrl;
+      String lsURL = fsUrl;
       WebClient loWebClient = new WebClient();
       loWebClient.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
       HTMLbuffer = loWebClient.DownloadData(lsURL);
 
-      _HTMLdownload = Encoding.UTF8.GetString(HTMLbuffer);
-      _HTMLdownload = convertHtmlToText(_HTMLdownload);
-      return _HTMLdownload;
-    }
+      HTMLdownload = Encoding.UTF8.GetString(HTMLbuffer);
+      HTMLdownload = convertHtmlToText(HTMLdownload);
+      return HTMLdownload;
 
+    }
     public void DownloadWorker(object sender, DoWorkEventArgs e)
     {
-      _HTMLdownload = downloadHtml((String)e.Argument);
-      _workerCompleted = true;
-      //return _HTMLdownload;
-    }
 
+      HTMLdownload = downloadHtml((String)e.Argument);
+      _workerCompleted = true;
+      //return HTMLdownload;
+    }
     public string getMediaHash(string fsVideoId, string fsCountryId)
     {
       string lsHashUrl;
       if (fsCountryId == "us")
+      {
         lsHashUrl = "http://launchtoday.launch.yahoo.com/player/default.asp?cid=613&vid=" + fsVideoId + "&sx=default.xml&ps=&bw=&fs=&tw=calmv&vo=";
+
+      }
       else
+      {
         lsHashUrl = "http://launchtoday." + fsCountryId + ".launch.yahoo.com/player/default.asp?cid=613&vid=" + fsVideoId + "&sx=default.xml&ps=&bw=&fs=&tw=calmv&vo=";
+      }
 
       //HttpWebResponse webresponse = null;
       string lsVideoHash = "";
       try
       {
+
         WebClient loClient1 = new WebClient();
 
         string lsCookie = "LYC=l_v=2&l_lv=9&l_l=p2e34hp&l_s=zq40yquvwq3vu3w30suqwsszryzzwwwu&l_lid=1ba4l1m&l_r=8s&l_lc=0_1_64_0_-1&l_gv=ngupt&l_um=0_1_0_0_0&l_mv=310_100; B=9e0q77l1c33ef&b=2; Q=q1=Q0qGuBUAoKBwcA--&q2=Q0pEsg--; F=a=0BzJn5QsvTO3rLVlvWVAcfM4_SKGNXbMaDwbYSG4XHl490MT9VDJwQA9vY9D&b=vXKL; U=mt=YuEA0Z2MhYpEVeygH0pyuUy5Txv4.1ZC7ytO&ux=T/vXDB&un=8h0v1t0p1r28v; todayIntro=1%3B; YMRAD=1201477343*0_0_102_1_0_58_1_0_559_1_0_487_1_0_571_1; C=mg=1; FPB=clud6jt40118pe6c; MVUserInfo3=355_10; l%5FPD3=124; PH=phl=5JD_YwTPsMe2QtHozdftiUKjT7aZpmR9JD0twYWWLV_hdADnCA--; I=ir=f7&in=61d66adc&i1=BhABqH; LYS=l_fh=0&l_vo=myla; HP=1; Y=v=1&n=dg0jitu5o5o3l&l=p2e34hp/o&p=m2h0d1n413000300&r=8s&lg=us&intl=us&np=1; T=z=2wiYDB223YDBfUzqmbHT.GqNDM2BjY3MzBPMjFOTjU-&a=QAE&sk=DAAfFyVJKSVY.I&d=c2wBTXpReEFURXdORGM0TlRZNU9USS0BYQFRQUUBdGlwAU9xVFp1QQF6egEyd2lZREJnV0E-; playerFullVersion=10.0.0.3646; PVL=2157574_2155908_2164174_16215423_22669575_22920551_15726467_2157084_24193964_23759637_2160653_8659755_24566123_2171468_8676023_2144758_2167821_22725021_20835316_23355378_2157673_17042678_2155265_22420117|26_34_34_26_26_26_34_26_26_26_26_33_26_26_33_34_26_26_26_26_26_33_26_26; pmmczSC9D78OQONK1GM2B78CVG78KJ4=2; pmmcBSC9D78OQONK1GM2B78CVG78KJ4=0; PVL=";
@@ -183,14 +188,21 @@ namespace MediaPortal.MusicVideos.Database
         loClient1.Headers.Add("Cookie", lsCookie);
         byte[] buffer1 = loClient1.DownloadData(lsHashUrl);
         string lsHtml = Encoding.ASCII.GetString(buffer1);
-        
+
+
         Regex loHashRegex = new Regex("var mediaHash = '(.+?)';");
         MatchCollection loMc = loHashRegex.Matches(lsHtml);
 
         if (loMc.Count > 0)
+        {
           lsVideoHash = loMc[0].Groups[1].Value;
+          //Console.WriteLine();
+        }
         else
+        {
           lsVideoHash = "";
+
+        }
       }
       catch (Exception e)
       {
@@ -199,7 +211,6 @@ namespace MediaPortal.MusicVideos.Database
 
       return lsVideoHash;
     }
-
     public List<YahooVideo> getVideoList(string fsHtml, string fsCountryId, Regex foArtistRegex, Regex foSongRegex)
     //public ArrayList getVideoList(string fsHtml, string fsCountryId)
     {
@@ -211,9 +222,11 @@ namespace MediaPortal.MusicVideos.Database
       GroupCollection loArtistGrpCol = null;
       MatchCollection loSongMatches = null;
       MatchCollection loArtistMatches = null;
-
+      // YahooSite loSite = (YahooSite)moYahooSiteTable[btncountry.SelectedLabel];
+      // string countryId = loSite.countryId;
       loArtistMatches = foArtistRegex.Matches(fsHtml);
       loSongMatches = foSongRegex.Matches(fsHtml);
+
 
       if (loArtistMatches.Count == loSongMatches.Count)
       {
@@ -224,23 +237,29 @@ namespace MediaPortal.MusicVideos.Database
           loVideoInfo = new YahooVideo();
           loSongGrpCol = loSongMatches[i].Groups;
           loArtistGrpCol = loArtistMatches[i].Groups;
-          loVideoInfo._yahooVideoSongId = loSongGrpCol[1].Value;
-          loVideoInfo._yahooVideoSongName = loSongGrpCol[2].Value;
-          loVideoInfo._yahooVideoArtistId = loArtistGrpCol[1].Value;
-          loVideoInfo._yahooVideoCountryId = fsCountryId;
-
+          loVideoInfo.songId = loSongGrpCol[1].Value;
+          loVideoInfo.songName = loSongGrpCol[2].Value;
+          loVideoInfo.artistId = loArtistGrpCol[1].Value;
+          loVideoInfo.countryId = fsCountryId;
           if (loArtistGrpCol[2].Value != "")
-            loVideoInfo._yahooVideoArtistName = loArtistGrpCol[2].Value;
+          {
+            loVideoInfo.artistName = loArtistGrpCol[2].Value;
+          }
           else if (loArtistGrpCol[3].Value != "")
-            loVideoInfo._yahooVideoArtistName = loArtistGrpCol[3].Value;
+          {
+            loVideoInfo.artistName = loArtistGrpCol[3].Value;
+          }
           else
-            loVideoInfo._yahooVideoArtistName = " ";
+          {
+            loVideoInfo.artistName = " ";
+          }
+
 
           //reformat the song name
-          loVideoInfo._yahooVideoSongName = loVideoInfo._yahooVideoSongName.Replace("Live@LAUNCH Exclusive Performance", "LIVE");
-          loVideoInfo._yahooVideoSongName = loVideoInfo._yahooVideoSongName.Replace("@LAUNCH Exclusive Performance", "LIVE");
-          loVideoInfo._yahooVideoSongName = loVideoInfo._yahooVideoSongName.Replace("LAUNCH Exclusive Performance", "LIVE");
-          loVideoInfo._yahooVideoSongName = loVideoInfo._yahooVideoSongName.Replace("LAUNCH Exclusive Interview", "Interview");
+          loVideoInfo.songName = loVideoInfo.songName.Replace("Live@LAUNCH Exclusive Performance", "LIVE");
+          loVideoInfo.songName = loVideoInfo.songName.Replace("@LAUNCH Exclusive Performance", "LIVE");
+          loVideoInfo.songName = loVideoInfo.songName.Replace("LAUNCH Exclusive Performance", "LIVE");
+          loVideoInfo.songName = loVideoInfo.songName.Replace("LAUNCH Exclusive Interview", "Interview");
 
           loVideoList.Add(loVideoInfo);
         }
@@ -249,21 +268,25 @@ namespace MediaPortal.MusicVideos.Database
       {
         Log.Write("Number of artist found doesn't equal number of songs.Artist count={0} song count={1}", loArtistMatches.Count, loSongMatches.Count);
       }
+
       return loVideoList;
     }
-
     public string getVideoMMSUrl(YahooVideo foVideo, string fsBitRate)
     {
-      YahooSite loSite = getYahooSiteById(foVideo._yahooVideoCountryId);
+
+      YahooSite loSite = getYahooSiteById(foVideo.countryId);
       string lsVideoUrl;
       //get the video hash here
-      string lsVideoHash = getMediaHash(foVideo._yahooVideoSongId, loSite._yahooSiteCountryId);
+      string lsVideoHash = getMediaHash(foVideo.songId, loSite.countryId);
       Log.Write("Hash ={0}", lsVideoHash);
-      if (loSite._yahooSiteCountryId == "us")
-        lsVideoUrl = "http://launchtoday.launch.yahoo.com/player/medialog.asp?vid=" + foVideo._yahooVideoSongId;
+      if (loSite.countryId == "us")
+      {
+        lsVideoUrl = "http://launchtoday.launch.yahoo.com/player/medialog.asp?vid=" + foVideo.songId;
+      }
       else
-        lsVideoUrl = "http://launchtoday." + loSite._yahooSiteCountryId + ".launch.yahoo.com/player/medialog.asp?vid=" + foVideo._yahooVideoSongId;
-
+      {
+        lsVideoUrl = "http://launchtoday." + loSite.countryId + ".launch.yahoo.com/player/medialog.asp?vid=" + foVideo.songId;
+      }
       //lsVideoUrl += "&bw=" + CURRENT_BR + "&mf=1&pid=505&ps=0&p1=2&p2=21&p3=2&rpid=35&pv=10&bp=Windows%2520NT&csid=791020104&uid=1886812234&pguid=einsJELEt4VkQCKMov00bg&etid=0&uguid=3e5u3891dirro&fcv=";
       lsVideoUrl += "&bw=" + fsBitRate + "&mf=1&pid=505&ps=0&p1=2&p2=21&p3=2&rpid=35&pv=10&bp=Windows%2520NT&csid=791020104&uid=1886812234&pguid=einsJELEt4VkQCKMov00bg&etid=0&uguid=3e5u3891dirro&fcv=";
       lsVideoUrl += "&mh=" + lsVideoHash;
@@ -271,23 +294,24 @@ namespace MediaPortal.MusicVideos.Database
       Log.Write("Using BitRate:{0}", fsBitRate);
       Log.Write("url={0}", lsVideoUrl);
 
-      _HTMLdownload = downloadHtml(lsVideoUrl);
-      //_HTMLdownload = this._HTMLdownload;
+      HTMLdownload = downloadHtml(lsVideoUrl);
+      //HTMLdownload = this.HTMLdownload;
 
-      if (_HTMLdownload.IndexOf("makeplaylist.dll") > -1)
+      if (HTMLdownload.IndexOf("makeplaylist.dll") > -1)
       {
         //get the mms url
-        //_HTMLdownload = getHTMLData(_HTMLdownload);
-        _HTMLdownload = downloadHtml(_HTMLdownload);
-        //_HTMLdownload = this._HTMLdownload;
+        //HTMLdownload = getHTMLData(HTMLdownload);
+        HTMLdownload = downloadHtml(HTMLdownload);
+        //HTMLdownload = this.HTMLdownload;
       }
       else
       {
         Console.WriteLine("MMS url lnot found");
       }
-      return _HTMLdownload;
-    }
+      return HTMLdownload;
 
+
+    }
     public void getArtistImage(String fsArtistId, YahooSite foSite)
     {
       String lsArtistUrl = "http://music.yahoo.com/ar-" + fsArtistId + "-bio";
@@ -300,16 +324,17 @@ namespace MediaPortal.MusicVideos.Database
       //moviename = moviename.Replace(":", "-");
       wc.DownloadFile(lsImageUrl, @"thumbs\MPTemp -" + fsArtistId + ".jpg");
     }
-
     private string convertHtmlToText(String fsHtml)
     {
       foreach (string lsKey in loEscapes.Keys)
       {
+
         fsHtml = fsHtml.Replace(lsKey, loEscapes[lsKey].ToString());
+
       }
       return fsHtml;
-    }
 
+    }
     private void init()
     {
       //loEsc"&quot;",       "\"");    //# quote

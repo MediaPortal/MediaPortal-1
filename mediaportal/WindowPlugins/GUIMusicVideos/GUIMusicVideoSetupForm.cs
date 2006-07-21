@@ -47,17 +47,17 @@ namespace MediaPortal.GUI.MusicVideos
     {
       YahooSettings loSettings = YahooSettings.getInstance();
       //int liItemIndex = 1;
-      foreach (string lskey in loSettings._yahooSiteTable.Keys)
+      foreach (string lskey in loSettings.moYahooSiteTable.Keys)
       {
         countryList.Items.Add(lskey);
-        if (lskey == loSettings._defaultCountryName)
+        if (lskey == loSettings.msDefaultCountryName)
         {
           countryList.SelectedIndex = countryList.Items.Count - 1;
         }
       }
 
       //}
-      switch (loSettings._defaultBitRate)
+      switch (loSettings.msDefaultBitRate)
       {
         case "56":
           {
@@ -96,23 +96,23 @@ namespace MediaPortal.GUI.MusicVideos
       YahooSettings loSettings = YahooSettings.getInstance();
       if (bitrate56.Checked)
       {
-        loSettings._defaultBitRate = "56";
+        loSettings.msDefaultBitRate = "56";
       }
       else if (bitrate128.Checked)
       {
-        loSettings._defaultBitRate = "128";
+        loSettings.msDefaultBitRate = "128";
       }
       else if (bitrate300.Checked)
       {
-        loSettings._defaultBitRate = "300";
+        loSettings.msDefaultBitRate = "300";
       }
       else if (bitrate768.Checked)
       {
-        loSettings._defaultBitRate = "768";
+        loSettings.msDefaultBitRate = "768";
       }
       String lsSelCountry = Convert.ToString(countryList.SelectedItem);
 
-      loSettings._defaultCountryName = lsSelCountry;
+      loSettings.msDefaultCountryName = lsSelCountry;
       loSettings.saveSettings();
       this.Close();
     }

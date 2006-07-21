@@ -35,11 +35,11 @@ namespace MediaPortal.MusicVideos.Database
   public class YahooSettings
   {
     private static YahooSettings instance = new YahooSettings();
-    public Dictionary<string, YahooSite> _yahooSiteTable;
-    //public Hashtable _yahooSiteTable;
-    public List<string> _bitRateList;
-    public string _defaultBitRate;
-    public string _defaultCountryName;
+    public Dictionary<string, YahooSite> moYahooSiteTable;
+    //public Hashtable moYahooSiteTable;
+    public List<string> moBitRateList;
+    public string msDefaultBitRate;
+    public string msDefaultCountryName;
 
     private YahooSettings()
     {
@@ -59,16 +59,16 @@ namespace MediaPortal.MusicVideos.Database
       XmlTextReader loXmlreader = null;
       try
       {
-        if (_yahooSiteTable == null || _yahooSiteTable.Count < 1)
+        if (moYahooSiteTable == null || moYahooSiteTable.Count < 1)
         {
           Log.Write("YahooSettings: loading settings");
-          //_yahooSiteTable = new Dictionary<string, YahooSite>();
-          _yahooSiteTable = new Dictionary<string, YahooSite>();
-          _bitRateList = new List<string>();
-          Log.Write("Yahoo Settings: {0}", _bitRateList == null);
+          //moYahooSiteTable = new Dictionary<string, YahooSite>();
+          moYahooSiteTable = new Dictionary<string, YahooSite>();
+          moBitRateList = new List<string>();
+          Log.Write("Yahoo Settings: {0}", moBitRateList == null);
           YahooSite loSite;
           string lsValue;
-          using (loXmlreader = new XmlTextReader("MusicVideoSettings.xml"))
+          using (loXmlreader = new XmlTextReader("MyMusicVideoSettings.xml"))
           //using (MediaPortal.Profile.Settings loXmlreader = new MediaPortal.Profile.Settings("MusicVideoSettings.xml"))
           {
             while (loXmlreader.Read())
@@ -78,20 +78,20 @@ namespace MediaPortal.MusicVideos.Database
                 loSite = new YahooSite();
                 //Log.Write("found country {0}", loXmlreader.GetAttribute("name"));
                 //Log.Write("Yahoo Settings: found country {0}", loXmlreader.GetValueAsString("name"));
-                loSite._yahooSiteCountryName = loXmlreader.GetAttribute("name");
-                loSite._yahooSiteCountryId = loXmlreader.GetAttribute("id");
-                loSite._yahooSiteNewURL = loXmlreader.GetAttribute("newURL");
-                loSite._yahooSiteTopURL = loXmlreader.GetAttribute("topURL");
-                loSite._yahooSiteSearchURL = loXmlreader.GetAttribute("searchURL");
-                loSite._yahooSiteGenreListURL = loXmlreader.GetAttribute("_yahooSiteGenreListURL");
-                loSite._yahooSiteGenreURL = loXmlreader.GetAttribute("_yahooSiteGenreURL");
-                _yahooSiteTable.Add(loSite._yahooSiteCountryName, loSite);
+                loSite.countryName = loXmlreader.GetAttribute("name");
+                loSite.countryId = loXmlreader.GetAttribute("id");
+                loSite.NewURL = loXmlreader.GetAttribute("newURL");
+                loSite.TopURL = loXmlreader.GetAttribute("topURL");
+                loSite.SearchURL = loXmlreader.GetAttribute("searchURL");
+                loSite.GenreListURL = loXmlreader.GetAttribute("GenreListURL");
+                loSite.GenreURL = loXmlreader.GetAttribute("GenreURL");
+                moYahooSiteTable.Add(loSite.countryName, loSite);
                 if (loXmlreader.GetAttribute("default").Equals("Y"))
                 {
-                  _defaultCountryName = loSite._yahooSiteCountryName;
+                  msDefaultCountryName = loSite.countryName;
                 }
 
-                Log.Write("Yahoo Settings: Site created with name:{0},id={1},top={2},search={3}", loSite._yahooSiteCountryName, loSite._yahooSiteCountryId, loSite._yahooSiteTopURL, loSite._yahooSiteSearchURL);
+                Log.Write("Yahoo Settings: Site created with name:{0},id={1},top={2},search={3}", loSite.countryName, loSite.countryId, loSite.TopURL, loSite.SearchURL);
               }
               else if (loXmlreader.Name == "bitrate")
               {
@@ -101,13 +101,13 @@ namespace MediaPortal.MusicVideos.Database
                   if (loXmlreader.GetAttribute("default").Equals("Y"))
                   {
                     lsValue = loXmlreader.ReadString();
-                    _bitRateList.Add(lsValue);
-                    _defaultBitRate = lsValue;
+                    moBitRateList.Add(lsValue);
+                    msDefaultBitRate = lsValue;
                   }
                   else
                   {
                     lsValue = loXmlreader.ReadString();
-                    _bitRateList.Add(lsValue);
+                    moBitRateList.Add(lsValue);
                   }
                 }
 
@@ -142,75 +142,86 @@ namespace MediaPortal.MusicVideos.Database
       Log.Write("Yahoo Settings: saving settings.");
       try
       {
-        string filename = "MusicVideoSettings.xml";
+        string filename = "MyMusicVideoSettings.xml";
 
-        using (loReader = new XmlTextReader(filename))          
+        loReader = new XmlTextReader(filename);
+
+        XmlDocument xmlDoc = new XmlDocument();
+
+        try
         {
-
-          XmlDocument xmlDoc = new XmlDocument();
-
-          try
-          {
-            xmlDoc.Load(loReader);
-            loReader.Close();
-          }
-          catch (System.IO.FileNotFoundException)
-          {
-            Log.Write("Yahoo Settings: MusicVideoSettings.xml not found.");
-            //if file is not found, create a new xml file
-            //XmlTextWriter xmlWriter = new XmlTextWriter(filename, System.Text.Encoding.UTF8);
-            //xmlWriter.Formatting = Formatting.Indented;
-            //xmlWriter.WriteProcessingInstruction("xml", "version='1.0' encoding='UTF-8'");
-            //xmlWriter.WriteStartElement("FAVOURITES");
-
-            //xmlWriter.Close();
-            //xmlDoc.Load(filename);
-            return;
-          }
-          XmlNode root = xmlDoc.DocumentElement;
-
-          XmlNodeList xmlNodeList = xmlDoc.GetElementsByTagName("country");
-
-          XmlAttribute defaultAttribute;
-          XmlAttribute nameAttribute;
-          foreach (XmlNode xmlNode in xmlNodeList)
-          {
-            nameAttribute = xmlNode.Attributes["name"];
-
-            defaultAttribute = xmlNode.Attributes["default"];
-
-            //Log.Write("name attribute={0}-", nameAttribute.Value);
-            //Log.Write("current_country={0}-", _defaultCountryName);
-            if (nameAttribute.Value == _defaultCountryName)
-              defaultAttribute.Value = "Y";
-            else
-              defaultAttribute.Value = "N";
-          }
-
-          xmlNodeList = xmlDoc.GetElementsByTagName("bitrate");
-
-          string lsCurrentBitRate;
-          foreach (XmlNode xmlNode in xmlNodeList)
-          {
-            defaultAttribute = xmlNode.Attributes["default"];
-            lsCurrentBitRate = xmlNode.InnerXml;
-
-            if (lsCurrentBitRate == _defaultBitRate)
-              defaultAttribute.Value = "Y";
-            else
-              defaultAttribute.Value = "N";
-          }
-
-          xmlDoc.Save(filename);
-
-          //_yahooFavoriteList.Remove(video);
-
+          xmlDoc.Load(loReader);
+          loReader.Close();
         }
+        catch (System.IO.FileNotFoundException)
+        {
+          Log.Write("Yahoo Settings: MyMusicVideoSettings.xml not found.");
+          //if file is not found, create a new xml file
+          //XmlTextWriter xmlWriter = new XmlTextWriter(filename, System.Text.Encoding.UTF8);
+          //xmlWriter.Formatting = Formatting.Indented;
+          //xmlWriter.WriteProcessingInstruction("xml", "version='1.0' encoding='UTF-8'");
+          //xmlWriter.WriteStartElement("FAVOURITES");
+
+          //xmlWriter.Close();
+          //xmlDoc.Load(filename);
+          return;
+        }
+        XmlNode root = xmlDoc.DocumentElement;
+
+        XmlNodeList xmlNodeList = xmlDoc.GetElementsByTagName("country");
+
+        XmlAttribute defaultAttribute;
+        XmlAttribute nameAttribute;
+        foreach (XmlNode xmlNode in xmlNodeList)
+        {
+          nameAttribute = xmlNode.Attributes["name"];
+
+          defaultAttribute = xmlNode.Attributes["default"];
+
+          //Log.Write("name attribute={0}-", nameAttribute.Value);
+          //Log.Write("current_country={0}-", msDefaultCountryName);
+          if (nameAttribute.Value == msDefaultCountryName)
+            defaultAttribute.Value = "Y";
+          else
+            defaultAttribute.Value = "N";
+        }
+
+        xmlNodeList = xmlDoc.GetElementsByTagName("bitrate");
+
+        string lsCurrentBitRate;
+        foreach (XmlNode xmlNode in xmlNodeList)
+        {
+          defaultAttribute = xmlNode.Attributes["default"];
+          lsCurrentBitRate = xmlNode.InnerXml;
+
+          if (lsCurrentBitRate == msDefaultBitRate)
+            defaultAttribute.Value = "Y";
+          else
+            defaultAttribute.Value = "N";
+        }
+
+        xmlDoc.Save(filename);
+
+        //moFavoriteList.Remove(video);
+
       }
       catch (Exception e)
       {
         Log.Write(e);
         Log.Write("Yahoo Settings: save settings failed.");
+      }
+      finally
+      {
+        try
+        {
+          loReader.Close();
+          Log.Write("Yahoo Settings: save settings - reader closed");
+          loReader = null;
+        }
+        catch (Exception ex)
+        {
+          Log.Write("Yahoo Settings: Exception - {0}", ex);
+        }
       }
     }
   }

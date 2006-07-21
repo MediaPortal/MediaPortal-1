@@ -38,25 +38,23 @@ namespace MediaPortal.MusicVideos.Database
   public class YahooNewVideos//:GUIWindow
   {
 
-    public List<YahooVideo> _yahooNewVideoList = new List<YahooVideo>();
+    public List<YahooVideo> moNewVideoList = new List<YahooVideo>();
     //public List<YahooVideo> moNextVideoList = new List<YahooVideo>();
     //private int WINDOW_ID = 473555;
     //private DateTime moLastImportNewVideoDt;
     //private Boolean mbNewVideoLoaded = false;
     //private string msLastNewVideoRunCountry;
-    private int _yahooCurrentPage = 0;
-    private bool _yahooNextPageFlag = false;
-    private bool _yahooPreviousPageFlag = false;
-    public Regex _yahooRegex = new Regex("href=\"\\w+.asp\\?p=(\\d+)");
-
-
+    private int miCurrentPage = 0;
+    private bool mbNextPageFlag = false;
+    private bool mbPreviousPageFlag = false;
+    public Regex moRegex = new Regex("href=\"\\w+.asp\\?p=(\\d+)");
     public bool hasNext()
     {
-      return _yahooNextPageFlag;
+      return mbNextPageFlag;
     }
     public bool hasPrevious()
     {
-      return _yahooPreviousPageFlag;
+      return mbPreviousPageFlag;
     }
 
     private void loadVideos(String fsCountryName)
@@ -65,58 +63,54 @@ namespace MediaPortal.MusicVideos.Database
 
       Log.Write("in loadNewVideos");
 
-      if (_yahooNewVideoList == null)
+      if (moNewVideoList == null)
       {
-        _yahooNewVideoList = new List<YahooVideo>();
+        moNewVideoList = new List<YahooVideo>();
       }
       else
       {
-        _yahooNewVideoList.Clear();
+        moNewVideoList.Clear();
       }
       YahooSite loSite = loUtil.getYahooSite(fsCountryName);
-      //msLastNewVideoRunCountry = loSite._yahooSiteCountryName;
+      //msLastNewVideoRunCountry = loSite.countryName;
 
       string lsHtml;
 
-      lsHtml = loUtil.getHTMLData(loSite._yahooSiteNewURL + "?p=" + _yahooCurrentPage);
-      _yahooNewVideoList.AddRange(loUtil.getVideoList(lsHtml, loSite._yahooSiteCountryId, loUtil._yahooArtistRegex, loUtil._yahooSongRegex));
+      lsHtml = loUtil.getHTMLData(loSite.NewURL + "?p=" + miCurrentPage);
+      moNewVideoList.AddRange(loUtil.getVideoList(lsHtml, loSite.countryId, loUtil.moArtistRegex, loUtil.moSongRegex));
       //moLastImportNewVideoDt = DateTime.Now;
       //mbNewVideoLoaded = true;
       setNavigationFlags(lsHtml);
     }
-
     public void loadNextVideos(String fsCountryName)
     {
       if (hasNext())
       {
-        _yahooCurrentPage++;
+        miCurrentPage++;
         loadVideos(fsCountryName);
       }
 
     }
-
     public void loadPreviousVideos(String fsCountryName)
     {
       if (hasPrevious())
       {
-        _yahooCurrentPage--;
+        miCurrentPage--;
         loadVideos(fsCountryName);
       }
 
     }
-
     public void loadNewVideos(string fsCountryName)
     {
-      _yahooCurrentPage = 1;
+      miCurrentPage = 1;
       loadVideos(fsCountryName);
     }
-
     private void setNavigationFlags(String fsHtml)
     {
       GroupCollection loGrpCol = null;
       MatchCollection loMatches = null;
       int liPageIndex = 0;
-      loMatches = _yahooRegex.Matches(fsHtml);
+      loMatches = moRegex.Matches(fsHtml);
 
       bool lbNextSet = false;
       bool lbPrevSet = false;
@@ -127,14 +121,14 @@ namespace MediaPortal.MusicVideos.Database
 
         loGrpCol = loMatches[i].Groups;
         liPageIndex = Convert.ToInt32(loGrpCol[1].Value);
-        if (liPageIndex > _yahooCurrentPage)
+        if (liPageIndex > miCurrentPage)
         {
-          _yahooNextPageFlag = true;
+          mbNextPageFlag = true;
           lbNextSet = true;
         }
         else
         {
-          _yahooPreviousPageFlag = true;
+          mbPreviousPageFlag = true;
           lbPrevSet = true;
 
         }
@@ -142,17 +136,16 @@ namespace MediaPortal.MusicVideos.Database
       }
       if (lbNextSet == false)
       {
-        _yahooNextPageFlag = false;
+        mbNextPageFlag = false;
       }
       if (lbPrevSet == false)
       {
-        _yahooPreviousPageFlag = false;
+        mbPreviousPageFlag = false;
       }
     }
-
     public int getCurrentPageNumber()
     {
-      return _yahooCurrentPage;
+      return miCurrentPage;
     }
 
   }

@@ -31,88 +31,79 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.MusicVideos.Database
 {
-
   public class YahooSearch
   {
-    public List<YahooVideo> _yahooLastSearchResult;
-    private int _yahooCurrentPage = 0;
-    private bool _yahooNextPageFlag = false;
-    private bool _yahooPreviousPageFlag = false;
-    public Regex _yahooRegex = new Regex("/search/\\?m=video&p=[^&]*&b=(\\d+)");
-    private String _yahooSearchUrl = "";
-    private String _yahooCountryName = "";
-    private String _yahooLastSearchText = "";
-
+    public List<YahooVideo> moLastSearchResult;
+    private int miCurrentPage = 0;
+    private bool mbNextPageFlag = false;
+    private bool mbPreviousPageFlag = false;
+    public Regex moRegex = new Regex("/search/\\?m=video&p=[^&]*&b=(\\d+)");
+    private String msSearchUrl = "";
+    private String msCountryName = "";
+    private String msLastSearchText = "";
     public YahooSearch(String fsCountry)
     {
-      _yahooCountryName = fsCountry;
+      msCountryName = fsCountry;
     }
-
     public bool hasNext()
     {
-      return _yahooNextPageFlag;
+      return mbNextPageFlag;
     }
-
     public bool hasPrevious()
     {
-      return _yahooPreviousPageFlag;
+      return mbPreviousPageFlag;
     }
-
     public void loadNextVideos()
     {
       if (hasNext())
       {
-        _yahooCurrentPage += 25;
+        miCurrentPage += 25;
         loadVideos();
       }
 
     }
-
     public void loadPreviousVideos()
     {
       if (hasPrevious())
       {
-        _yahooCurrentPage -= 25;
+        miCurrentPage -= 25;
         loadVideos();
       }
 
     }
-
     public void searchVideos(string fsSearchText)
     {
-      _yahooLastSearchText = fsSearchText;
-      _yahooLastSearchResult = new List<YahooVideo>();
-      if (fsSearchText == "" || fsSearchText == null) return;//return _yahooLastSearchResult;
+      msLastSearchText = fsSearchText;
+      moLastSearchResult = new List<YahooVideo>();
+      if (fsSearchText == "" || fsSearchText == null) return;//return moLastSearchResult;
       fsSearchText = fsSearchText.Replace(" ", "%20");
 
       YahooSettings loSettings = YahooSettings.getInstance();
-      YahooSite loSite = loSettings._yahooSiteTable[_yahooCountryName];
+      YahooSite loSite = loSettings.moYahooSiteTable[msCountryName];
 
-      _yahooSearchUrl = loSite._yahooSiteSearchURL + fsSearchText + "&b=";
-      _yahooCurrentPage = 1;
+      msSearchUrl = loSite.SearchURL + fsSearchText + "&b=";
+      miCurrentPage = 1;
       loadVideos();
 
     }
-
     private void loadVideos()
     {
       YahooSettings loSettings = YahooSettings.getInstance();
-      YahooSite loSite = loSettings._yahooSiteTable[_yahooCountryName];
+      YahooSite loSite = loSettings.moYahooSiteTable[msCountryName];
       YahooUtil loUtil = YahooUtil.getInstance();
-      string lsHtml = loUtil.getHTMLData(_yahooSearchUrl + _yahooCurrentPage);
-      List<YahooVideo> loTempResultList = loUtil.getVideoList(lsHtml, loSite._yahooSiteCountryId, loUtil._yahooArtistRegex, loUtil._yahooSearchSongRegex);
+      string lsHtml = loUtil.getHTMLData(msSearchUrl + miCurrentPage);
+      List<YahooVideo> loTempResultList = loUtil.getVideoList(lsHtml, loSite.countryId, loUtil.moArtistRegex, loUtil.moSearchSongRegex);
       Log.Write("search returned {0} videos", loTempResultList.Count);
 
-      _yahooLastSearchResult = loTempResultList;
+      moLastSearchResult = loTempResultList;
       setNavigationFlags(lsHtml);
     }
-
     private void setNavigationFlags(String fsHtml)
     {
       GroupCollection loGrpCol = null;
       MatchCollection loMatches = null;
       int liPageIndex = 0;
-      loMatches = _yahooRegex.Matches(fsHtml);
+      loMatches = moRegex.Matches(fsHtml);
 
       bool lbNextSet = false;
       bool lbPrevSet = false;
@@ -123,14 +114,14 @@ namespace MediaPortal.MusicVideos.Database
 
         loGrpCol = loMatches[i].Groups;
         liPageIndex = Convert.ToInt32(loGrpCol[1].Value);
-        if (liPageIndex > _yahooCurrentPage)
+        if (liPageIndex > miCurrentPage)
         {
-          _yahooNextPageFlag = true;
+          mbNextPageFlag = true;
           lbNextSet = true;
         }
         else
         {
-          _yahooPreviousPageFlag = true;
+          mbPreviousPageFlag = true;
           lbPrevSet = true;
 
         }
@@ -138,23 +129,20 @@ namespace MediaPortal.MusicVideos.Database
       }
       if (lbNextSet == false)
       {
-        _yahooNextPageFlag = false;
+        mbNextPageFlag = false;
       }
       if (lbPrevSet == false)
       {
-        _yahooPreviousPageFlag = false;
+        mbPreviousPageFlag = false;
       }
     }
-
     public int getCurrentPageNumber()
     {
-      return _yahooCurrentPage;
+      return miCurrentPage;
     }
-
     public string getLastSearchText()
     {
-      return _yahooLastSearchText;
+      return msLastSearchText;
     }
-
   }
 }

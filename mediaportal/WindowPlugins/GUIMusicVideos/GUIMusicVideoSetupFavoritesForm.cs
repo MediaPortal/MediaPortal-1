@@ -61,14 +61,5 @@ namespace MediaPortal.GUI.MusicVideos
             this.DialogResult = DialogResult.Cancel;
             this.Close();
         }
-
-      private void textBoxFavoriteName_KeyUp(object sender, KeyEventArgs e)
-      {
-        if (e.KeyCode == Keys.Return)
-        {
-          this.DialogResult = DialogResult.OK;
-          this.Close();
-        }
-      }
     }
 }
