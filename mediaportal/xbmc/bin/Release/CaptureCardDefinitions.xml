@@ -14004,7 +14004,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="KWorld 310U USB" capturename="BDA 2881 Capture" devid="vid_eb1a&amp;pid_a310&amp;mi_00">
+  <capturecard commercialname="KWorld 310U USB (ATSC)" capturename="BDA 2881 Capture" devid="vid_eb1a&amp;pid_a310&amp;mi_00">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"/>
@@ -14048,6 +14048,179 @@
       <connections>
         <connection sourcefilter="networkprovider"  sourcepin="0" sinkfilter="tunerdevice"  sinkpin="0" />
         <connection sourcefilter="tunerdevice"      sourcepin="0" sinkfilter="capture"      sinkpin="0" />
+      </connections>
+    </tv>
+  </capturecard>
+  
+  <capturecard commercialname="Pinnacle PCTV Dual DVB-T Pro PCI 2000i - Tuner 1" capturename="Pinnacle RoyalTS Capture" devid="ven_11bd&amp;dev_0040&amp;subsys_004411bd&amp;rev_00">
+     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+     <tv>
+       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+       <filters>
+         <filter cat="networkprovider" name="Microsoft DVBT Network Provider" checkdevice="false"/>
+         <filter cat="tunerdevice"     name="Pinnacle RoyalTS Tuner"          checkdevice="true"/>
+         <filter cat="capture"         name="Pinnacle RoyalTS Capture"        checkdevice="true"/>
+       </filters>
+       <connections>
+         <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"  sinkpin="0"/>
+         <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"      sinkpin="0"/>
+       </connections>
+     </tv>
+   </capturecard>
+  
+  <capturecard commercialname="Pinnacle PCTV Dual DVB-T Pro PCI 2000i - Tuner 2" capturename="Pinnacle RoyalTS Capture" devid="ven_11bd&amp;dev_0041&amp;subsys_004411bd&amp;rev_00">
+     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+     <tv>
+       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+       <filters>
+         <filter cat="networkprovider" name="Microsoft DVBT Network Provider" checkdevice="false"/>
+         <filter cat="tunerdevice"     name="Pinnacle RoyalTS Tuner"          checkdevice="true"/>
+         <filter cat="capture"         name="Pinnacle RoyalTS Capture"        checkdevice="true"/>
+       </filters>
+       <connections>
+         <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"  sinkpin="0"/>
+         <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"      sinkpin="0"/>
+       </connections>
+     </tv>
+  </capturecard>
+
+  <capturecard commercialname="Hauppauge HVR-900 (Digital)" capturename="WinTV HVR-900 BDA Capture" devid="vid_2040&amp;pid_6502">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider"	name="Microsoft DVBT Network Provider"	checkdevice="false"/>
+        <filter cat="tunerdevice"     name="WinTV HVR-900 BDA Tuner"			    checkdevice="true"/>
+        <filter cat="capture"         name="WinTV HVR-900 BDA Capture"		    checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"  sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"      sourcepin="0" sinkfilter="capture"      sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Hauppauge HVR-900 (Analogue)" capturename="WinTV HVR-900 Capture" devid="vid_2040&amp;pid_6502">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"     name="WinTV HVR-900 TVTuner"          checkdevice="true"/>
+        <filter cat="tvaudio"     name="WinTV HVR-900 TVAudio"          checkdevice="true"/>
+        <filter cat="crossbar"    name="WinTV HVR-900 Crossbar"         checkdevice="true"/>
+        <filter cat="capture"     name="WinTV HVR-900 Capture"          checkdevice="true"/>
+        <filter cat="audcapture"  name="WinTV HVR-900"                  checkdevice="true"/>
+        <filter cat="encoder"     name="MainConcept (MCE) MPEG Encoder" checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"    sourcepin="0" sinkfilter="crossbar"   sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"    sourcepin="1" sinkfilter="tvaudio"    sinkpin="0"/>
+        <connection sourcefilter="tvaudio"    sourcepin="0" sinkfilter="crossbar"   sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"   sourcepin="0" sinkfilter="capture"    sinkpin="0"/>
+        <connection sourcefilter="crossbar"   sourcepin="1" sinkfilter="audcapture" sinkpin="0"/>
+        <connection sourcefilter="capture"    sourcepin="0" sinkfilter="encoder"    sinkpin="0"/>
+        <connection sourcefilter="audcapture" sourcepin="0" sinkfilter="encoder"    sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Power Color Theater 550 Pro" capturename="ATI AVStream Analog Capture" devid="ven_1002&amp;dev_4d53&amp;subsys_a3481002&amp;rev_00">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"   name="ATI AVStream Analog Tuner"      checkdevice="true"/>
+        <filter cat="tvaudio"   name="ATI AVStream Analog TV Audio"   checkdevice="true"/>
+        <filter cat="crossbar"  name="ATI AVStream Analog Xbar"       checkdevice="true"/>
+        <filter cat="capture"   name="ATI AVStream Analog Capture"    checkdevice="true"/>
+        <filter cat="mux"       name="ATI AVStream MPEG2 Multiplexer" checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"	sinkpin="0"/>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"	sinkpin="0"/>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"	sinkpin="1"/>
+        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="mux"		  sinkpin="0"/>
+        <connection sourcefilter="capture"  sourcepin="4" sinkfilter="mux"		  sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="KWorld 310U USB (DVB-T)" capturename="BDA 2881 Capture" devid="vid_eb1a&amp;pid_e310&amp;mi_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"/>
+        <filter cat="tunerdevice"     name="BDA 2881 TVTuner"                 checkdevice="true"/>
+        <filter cat="capture"         name="BDA 2881 Capture"                 checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="NVIDIA DualTV MCE - Tuner 1" capturename="NVIDIA DualTV PCM Capture" devid="ven_1745&amp;dev_2010&amp;subsys_201010de&amp;rev_00">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"  name="NVIDIA DualTV Tuner"				checkdevice="true"/>
+        <filter cat="tvaudio"  name="NVIDIA DualTV TVAudio"			checkdevice="true"/>
+        <filter cat="crossbar" name="NVIDIA DualTV CrossBar"		checkdevice="true"/>
+        <filter cat="capture"  name="NVIDIA DualTV PCM Capture" checkdevice="true"/>
+        <filter cat="encoder"  name="NVIDIA DualTV Encoder"			checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"	sinkpin="0"/>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"	sinkpin="0"/>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"	sinkpin="1"/>
+        <connection sourcefilter="capture"  sourcepin="0" sinkfilter="encoder"	sinkpin="0"/>
+        <connection sourcefilter="capture"  sourcepin="1" sinkfilter="encoder"	sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="NVIDIA DualTV MCE - Tuner 2" capturename="NVIDIA DualTV PCM Capture 2" devid="ven_1745&amp;dev_2010&amp;subsys_201010de&amp;rev_00">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"  name="NVIDIA DualTV Tuner 2"				checkdevice="true"/>
+        <filter cat="tvaudio"  name="NVIDIA DualTV TVAudio 2"			checkdevice="true"/>
+        <filter cat="crossbar" name="NVIDIA DualTV CrossBar 2"		checkdevice="true"/>
+        <filter cat="capture"  name="NVIDIA DualTV PCM Capture 2" checkdevice="true"/>
+        <filter cat="encoder"  name="NVIDIA DualTV Encoder 2"			checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"	sinkpin="0"/>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"	sinkpin="0"/>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"	sinkpin="1"/>
+        <connection sourcefilter="capture"  sourcepin="0" sinkfilter="encoder"	sinkpin="0"/>
+        <connection sourcefilter="capture"  sourcepin="1" sinkfilter="encoder"	sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Compro VideoMate DVB-T200a" capturename="VideoMate BDA Digital Capture" devid="ven_1131&amp;dev_7130&amp;subsys_c901185b&amp;rev_01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"	checkdevice="false"/>
+        <filter cat="tunerdevice"     name="VideoMate BDA DVBT Tuner"			checkdevice="true"/>
+        <filter cat="capture"         name="VideoMate BDA Digital Capture"		checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
       </connections>
     </tv>
   </capturecard>
