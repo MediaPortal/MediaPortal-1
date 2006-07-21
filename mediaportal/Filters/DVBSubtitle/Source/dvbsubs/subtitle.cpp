@@ -20,11 +20,11 @@
  *
  */
 
-//#define _AFXDLL
+#define _AFXDLL
 #include <stdlib.h>
 #include <string>
-//#include <afx.h>
-//#include <afxwin.h>
+#include <afx.h>
+#include <afxwin.h>
 #include "subtitle.h"
 
 extern void Log(const char *fmt, ...);
@@ -75,7 +75,7 @@ int CSubtitle::RenderBitmap( unsigned char* buffer, char *file_name, unsigned ch
 	uint8_t colorData( 0 );
 	long position( 0 );
   m_FirstScanline = -1;
-/*	BITMAPINFOHEADER bmi;
+	BITMAPINFOHEADER bmi;
 	BITMAPFILEHEADER bfi;
 
 	ZeroMemory(&bmi,sizeof(BITMAPINFOHEADER));
@@ -92,8 +92,8 @@ int CSubtitle::RenderBitmap( unsigned char* buffer, char *file_name, unsigned ch
 	bfi.bfReserved1		= 0;
 	bfi.bfReserved2		= 0;
 	bfi.bfOffBits		= (DWORD) (sizeof(bfi)+sizeof(bmi.biSize));
-*/	
-	for( int i = 0 ; i < m_Bitmap.bmHeight * m_Bitmap.bmWidth; i++ )
+
+  for( int i = 0 ; i < m_Bitmap.bmHeight * m_Bitmap.bmWidth; i++ )
 	{
 		for( int j = 0 ; j < 3 ; j++ )
 		{
@@ -126,16 +126,16 @@ int CSubtitle::RenderBitmap( unsigned char* buffer, char *file_name, unsigned ch
 	strcpy( file_name_tmp, "d:\\test_output\\" );
 	strncat( file_name_tmp, file_name, 29 );
 
-	FILE* file = fopen( file_name_tmp, "w+" );
-//	CFile file;
+//	FILE* file = fopen( file_name_tmp, "w+" );
+	CFile file;
 	
-//	if (!file.Open(file_name_tmp,CFile::modeWrite|CFile::modeCreate))
+	if (!file.Open(file_name_tmp,CFile::modeWrite|CFile::modeCreate))
 	if(!file)
 		return 1;
 
-//	file.Write(&bfi, sizeof(bfi));
+	file.Write(&bfi, sizeof(bfi));
 //	 Create debug PPM image file
-	fprintf( file, "P3 %d %d %d\n", m_Bitmap.bmWidth, m_Bitmap.bmHeight, col_count - 1 );
+/*	fprintf( file, "P3 %d %d %d\n", m_Bitmap.bmWidth, m_Bitmap.bmHeight, col_count - 1 );
 	
 	for( int k = 0 ; k < m_Bitmap.bmHeight * m_Bitmap.bmWidth * 3 ; k++ )
 	{
@@ -146,12 +146,13 @@ int CSubtitle::RenderBitmap( unsigned char* buffer, char *file_name, unsigned ch
 
 		fprintf( file, "%d ", m_Data[k] );
 	}
-	//file.Write(&bmi, sizeof(bmi));
-	//file.Write(m_Data, bmi.biSizeImage);
-	//file.Close();
+*/
+	file.Write(&bmi, sizeof(bmi));
+	file.Write(m_Data, bmi.biSizeImage);
+	file.Close();
 
-	fprintf( file, "\n" );	
-	fclose(file);
+//	fprintf( file, "\n" );	
+//	fclose(file);
 
 	return 0;
 }
