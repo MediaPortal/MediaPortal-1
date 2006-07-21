@@ -5031,15 +5031,15 @@
    </string>
    <string>
       <id>30008</id>
-      <value>Rank</value>
+      <value>rank</value>
    </string>
    <string>
       <id>30009</id>
-      <value>Page</value>
+      <value>page</value>
    </string>
    <string>
       <id>30010</id>
-      <value>Search results for {0} - Page {1} </value>
+      <value>Search results for {0} - page {1} </value>
    </string>           
                     
    <string>

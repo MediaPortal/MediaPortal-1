@@ -101,6 +101,13 @@ namespace MediaPortal.Player
           if (strVideoCodec.Length > 0) videoCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strVideoCodec);
           if (strAudioCodec.Length > 0) audioCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strAudioCodec);
         }
+        // doesn't help for Music Videos to start..
+        //if (extension.Equals(".wmv"))
+        //{
+        //  videoCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, "WMVideo Decoder DMO");
+        //  audioCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, "WMAudio Decoder DMO");
+        //}
+
         if (bAddFFDshow) ffdShowFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, "ffdshow raw video filter");
         if (strAudiorenderer.Length > 0) audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(graphBuilder, strAudiorenderer, false);
 

@@ -467,13 +467,16 @@ namespace MediaPortal.Player
     {
       try
       {
+        Starting = true;
+
         //stop radio
         GUIMessage msgRadio = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_RADIO, 0, 0, 0, 0, 0, null);
         GUIWindowManager.SendMessage(msgRadio);
 
-        Starting = true;
         _currentStep = Steps.Sec0;
         _seekTimer = DateTime.MinValue;
+        if (strURL == null) return false;
+        if (strURL.Length == 0) return false;
         _isInitalized = true;
         _subs = null;
         _log.Info("g_Player.PlayVideoStream({0})", strURL);
@@ -485,6 +488,7 @@ namespace MediaPortal.Player
           CachePlayer();
           GUIGraphicsContext.form.Invalidate(true);
           _player = null;
+          GC.Collect(); GC.Collect(); GC.Collect(); GC.Collect();
         }
         //int iUseVMR9inMYMovies = 0;
         //using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
@@ -497,14 +501,26 @@ namespace MediaPortal.Player
         _player = new Player.VideoPlayerVMR9();
 
         _player = CachePreviousPlayer(_player);
-        bool bResult = _player.Play(strURL);
-        if (!bResult)
+        bool isPlaybackPossible = _player.Play(strURL);
+        if (!isPlaybackPossible)
         {
           _log.Info("player:ended");
           _player.Release();
           _player = null;
           _subs = null;
-          GC.Collect(); // what was that about??? GC.Collect(); GC.Collect();
+          GC.Collect(); GC.Collect(); GC.Collect();
+          //2nd try
+
+          _player = new Player.VideoPlayerVMR9();
+          isPlaybackPossible = _player.Play(strURL);
+          if (!isPlaybackPossible)
+          {
+            _log.Info("player2:ended");
+            _player.Release();
+            _player = null;
+            _subs = null;
+            GC.Collect(); GC.Collect(); GC.Collect();
+          }
         }
         else if (_player.Playing)
         {
@@ -512,7 +528,7 @@ namespace MediaPortal.Player
           OnStarted();
         }
         _isInitalized = false;
-        return bResult;
+        return isPlaybackPossible;
       }
       finally
       {
@@ -572,7 +588,7 @@ namespace MediaPortal.Player
         _seekTimer = DateTime.MinValue;
         if (strFile == null) return false;
         if (strFile.Length == 0) return false;
-        _isInitalized = true;
+        _isInitalized = true;        
         _subs = null;
         _log.Info("g_Player.Play({0})", strFile);
         if (_player != null)
@@ -582,7 +598,7 @@ namespace MediaPortal.Player
           _player.Stop();
           CachePlayer();
           _player = null;
-          GC.Collect(); GC.Collect(); GC.Collect(); GC.Collect();
+          GC.Collect(); GC.Collect(); GC.Collect(); GC.Collect(); //?? ms-help://MS.VSCC.v80/MS.MSDN.v80/MS.NETDEVFX.v20.de/cpref2/html/M_System_GC_Collect_1_804c5d7d.htm
         }
         if (!MediaPortal.Util.Utils.IsAVStream(strFile) && MediaPortal.Util.Utils.IsVideo(strFile))
         {
@@ -603,8 +619,8 @@ namespace MediaPortal.Player
 
             _player = new DVDPlayer9();
             _player = CachePreviousPlayer(_player);
-            bool bResult = _player.Play(strFile);
-            if (!bResult)
+            bool _isPlaybackPossible = _player.Play(strFile);
+            if (!_isPlaybackPossible)
             {
               _log.Info("player:ended");
               _player.Release();
@@ -622,7 +638,7 @@ namespace MediaPortal.Player
               GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
             }
             _isInitalized = false;
-            return bResult;
+            return _isPlaybackPossible;
           }
         }
         _player = _factory.Create(strFile);
