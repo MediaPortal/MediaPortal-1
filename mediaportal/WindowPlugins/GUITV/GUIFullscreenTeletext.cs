@@ -403,11 +403,13 @@ namespace MediaPortal.GUI.TV
           imgTeletext.IsVisible = true;
           imgTeletext.Centered = false;
           imgTeletext.KeepAspectRatio = false;
-          int left = GUIGraphicsContext.Width / 20; // 5%
-          int top = GUIGraphicsContext.Height / 20; // 5%
+          int width = (int)((float)GUIGraphicsContext.Width * GUIGraphicsContext.ZoomHorizontal);
+          int height = (int)((float)GUIGraphicsContext.Height * GUIGraphicsContext.ZoomVertical);
+          int left = width / 20; // 5%
+          int top = height / 20; // 5%
           imgTeletext.SetPosition(left, top);
-          imgTeletext.Width = GUIGraphicsContext.Width - (2 * left);
-          imgTeletext.Height = GUIGraphicsContext.Height - (2 * top);
+          imgTeletext.Width = width - (2 * left);
+          imgTeletext.Height = height - (2 * top);
         }
       }
       catch (Exception ex)
