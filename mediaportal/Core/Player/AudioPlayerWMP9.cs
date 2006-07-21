@@ -58,7 +58,7 @@ namespace MediaPortal.Player
     static AxWMPLib.AxWindowsMediaPlayer _wmp10Player = null;
     bool _needUpdate = true;
     bool _notifyPlaying = true;
-    // bool _bufferCompleted = true;
+    bool _bufferCompleted = true;
     protected ILog _log;
 
     public AudioPlayerWMP9()
@@ -214,9 +214,11 @@ namespace MediaPortal.Player
       if (_wmp10Player.cdromCollection == null) return false;
       VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
 
+      // trying to fix crash of MusicVideos on end of first song
+      //if (_wmp10Player.PlayStateChange != null)
       _wmp10Player.PlayStateChange += new AxWMPLib._WMPOCXEvents_PlayStateChangeEventHandler(OnPlayStateChange);
 
-      // _wmp10Player.Buffering += new AxWMPLib._WMPOCXEvents_BufferingEventHandler(OnBuffering);
+      _wmp10Player.Buffering += new AxWMPLib._WMPOCXEvents_BufferingEventHandler(OnBuffering);
 
       //_wmp10Player.enableContextMenu = false;
       //_wmp10Player.Ctlenabled = false;
@@ -280,38 +282,38 @@ namespace MediaPortal.Player
       _wmp10Player.ClientSize = new Size(0, 0);
       _wmp10Player.Visible = false;
 
-//      // When file is internetstream
-//      if (_wmp10Player.URL.StartsWith("http") || _wmp10Player.URL.StartsWith("mms") ||
-//            _wmp10Player.URL.StartsWith("HTTP") || _wmp10Player.URL.StartsWith("MMS"))
-//      {
-//        _bufferCompleted = false;
-//        using (WaitCursor waitcursor = new WaitCursor())
-//        {
-//          GUIGraphicsContext.Overlay = false;
-//          while (_bufferCompleted != true)
-//          {
-//            {
-//              // if true then could not load stream 
-//              if (_wmp10Player.playState.Equals(WMPLib.WMPPlayState.wmppsReady))
-//              {
-//                _bufferCompleted = true;
-//              }
-//              if (GUIGraphicsContext.Overlay)
-//              {
-//                GUIGraphicsContext.Overlay = false;
-//              }
-//              _graphState = PlayState.Playing;
-//              GUIWindowManager.Process();
-//            }
-//          }
-//         GUIGraphicsContext.Overlay = true;
-//        }
-//        if (_bufferCompleted && _wmp10Player.playState.Equals(WMPLib.WMPPlayState.wmppsReady))
-//        {
-//          _log.Info("Audioplayer: failed to load {0}", strFile);
-//          return false;
-//        }
-//      }
+      // When file is internetstream
+      if (_wmp10Player.URL.StartsWith("http") || _wmp10Player.URL.StartsWith("mms") ||
+            _wmp10Player.URL.StartsWith("HTTP") || _wmp10Player.URL.StartsWith("MMS"))
+      {
+        _bufferCompleted = false;
+        using (WaitCursor waitcursor = new WaitCursor())
+        {
+          GUIGraphicsContext.Overlay = false;
+          while (_bufferCompleted != true)
+          {
+            {
+              // if true then could not load stream 
+              if (_wmp10Player.playState.Equals(WMPLib.WMPPlayState.wmppsReady))
+              {
+                _bufferCompleted = true;
+              }
+              if (GUIGraphicsContext.Overlay)
+              {
+                GUIGraphicsContext.Overlay = false;
+              }
+              _graphState = PlayState.Playing;
+              GUIWindowManager.Process();
+            }
+          }
+          GUIGraphicsContext.Overlay = true;
+        }
+        if (_bufferCompleted && _wmp10Player.playState.Equals(WMPLib.WMPPlayState.wmppsReady))
+        {
+          _log.Info("Audioplayer: failed to load {0}", strFile);
+          return false;
+        }
+      }
 
       GUIMessage msgPb = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
       msgPb.Label = strFile;
@@ -342,18 +344,18 @@ namespace MediaPortal.Player
       }
     }
 
-//    private void OnBuffering(object sender, AxWMPLib._WMPOCXEvents_BufferingEvent e)
-//    {
-//      if (e.start)
-//      {
-//        _bufferCompleted = false;
-//      }
-//      if (!e.start)
-//      {
-//        _bufferCompleted = true;
-//      }
-//    }
-//
+    private void OnBuffering(object sender, AxWMPLib._WMPOCXEvents_BufferingEvent e)
+    {
+      if (e.start)
+      {
+        _bufferCompleted = false;
+      }
+      if (!e.start)
+      {
+        _bufferCompleted = true;
+      }
+    }
+
     void SongEnded(bool bManualStop)
     {
       // this is triggered only if movie has ended
@@ -365,10 +367,12 @@ namespace MediaPortal.Player
       _currentFile = "";
       if (_wmp10Player != null)
       {
-//        _bufferCompleted = true;
+        _bufferCompleted = true;
         _wmp10Player.ClientSize = new Size(0, 0);
         _wmp10Player.Visible = false;
-        _wmp10Player.PlayStateChange -= new AxWMPLib._WMPOCXEvents_PlayStateChangeEventHandler(OnPlayStateChange);
+        // trying to fix crash of MusicVideos on end of first song
+        //if (_wmp10Player.PlayStateChange != null)
+          _wmp10Player.PlayStateChange -= new AxWMPLib._WMPOCXEvents_PlayStateChangeEventHandler(OnPlayStateChange);        
       }
       //GUIGraphicsContext.IsFullScreenVideo=false;
       GUIGraphicsContext.IsPlaying = false;
