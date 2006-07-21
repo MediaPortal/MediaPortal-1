@@ -366,7 +366,9 @@ namespace MediaPortal.Player
         return;
       if (GUIGraphicsContext.InVmr9Render)
         return;
+      
       //_log.Info("1");
+      /*
       if (_startingUp && _isLive)
       {
         IAMStreamSelect control = _fileSource as IAMStreamSelect;
@@ -376,26 +378,32 @@ namespace MediaPortal.Player
           control.Count(out streamCount);
           if (streamCount > 0)
           {
-            _log.Info("streams:{0}", streamCount);
-            //control.Enable(1, AMStreamSelectEnableFlags.EnableAll);
-            _log.Info("get duration", streamCount);
             UpdateDuration();
-            double dPos = _duration;
-            _log.Info("_duration:{0}", _duration);
-            dPos -= 2;
-            if (dPos >= 0 && CurrentPosition < dPos)
+            _log.Info("streams:{0} duration:{1}", streamCount,_duration);
+            if (_duration > 1)
             {
-              if (_duration > 4)
+              _log.Info("enable stream 1");
+              control.Enable(1, AMStreamSelectEnableFlags.EnableAll);
+              _log.Info("get duration", streamCount);
+              UpdateDuration();
+              double dPos = _duration;
+              _log.Info("_duration:{0}", _duration);
+              dPos -= 2;
+              if (dPos >= 0 && CurrentPosition < dPos)
               {
-                _log.Info("seek:{0}/{0}", dPos, _duration);
-                SeekAbsolute(dPos);
-                _log.Info("seek:{0}/{0} done", dPos, _duration);
+                if (_duration > 4)
+                {
+                  _log.Info("seek:{0}/{0}", dPos, _duration);
+                  SeekAbsolute(dPos);
+                  _log.Info("seek:{0}/{0} done", dPos, _duration);
+                }
               }
+              _startingUp = false;
             }
-            _startingUp = false;
           }
         }
-      }
+      }*/
+      _startingUp = false;
       TimeSpan ts = DateTime.Now - _updateTimer;
       if (ts.TotalMilliseconds >= 800 || iSpeed != 1)
       {

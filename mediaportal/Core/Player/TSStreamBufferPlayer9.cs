@@ -116,6 +116,8 @@ namespace MediaPortal.Player
     };
     #endregion
     VMR9Util _vmr9 = null;
+    IPin _pinAudio = null;
+    IPin _pinVideo = null;
     public TStreamBufferPlayer9()
     {
     }
@@ -167,13 +169,13 @@ namespace MediaPortal.Player
         _log.Info("TSStreamBufferPlayer9: add _vmr9");
 
         _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
-        #region vmr9
+        #region add vmr9
         _vmr9 = new VMR9Util();
         _vmr9.AddVMR9(_graphBuilder);
         _vmr9.Enable(false);
         #endregion
 
-        #region codecs
+        #region add codecs
 
         _log.Info("TSStreamBufferPlayer9: add codecs");
 
@@ -218,10 +220,14 @@ namespace MediaPortal.Player
         //DirectShowUtil.RenderOutputPins(_graphBuilder, (IBaseFilter)_fileSource);
         #endregion
 
-        #region tsfilesource settings
-        _log.Info("TSStreamBufferPlayer9:initialize tsfilesource");
-        bool autoMode = true;         // let tsfilesource control demux and build graph
+        bool autoMode = true;         // let tsfilesource control demux 
         bool supplyMediaType = true;  // supply media type during load
+        bool autoBuildGraph = true;
+        if (_isLive)
+          autoBuildGraph = true;
+
+        #region set tsfilesource settings
+        _log.Info("TSStreamBufferPlayer9:initialize tsfilesource");
         try
         {
           using (RegistryKey hklm = Registry.LocalMachine)
@@ -287,65 +293,62 @@ namespace MediaPortal.Player
 
         #endregion
 
-
-        #region add mpeg-2 demux
+        #region add mpeg-2 demux filter
+        _log.Info("TSStreamBufferPlayer9:add mpeg-2 demultiplexer to graph");
         MPEG2Demultiplexer demux = new MPEG2Demultiplexer();
-
         _mpegDemux = (IBaseFilter)demux;
         hr = _graphBuilder.AddFilter(_mpegDemux, "MPEG-2 Demultiplexer");
         #endregion
 
         #region create mpeg2 demux pins
-        _log.Info("TSStreamBufferPlayer9:create pins");
-
-        //create mpeg-2 demux output pins
-        IPin pinAudio;
-        IPin pinVideo;
-        IMpeg2Demultiplexer demuxer = _mpegDemux as IMpeg2Demultiplexer;
-        AMMediaType mpegAudioOut = new AMMediaType();
-        mpegAudioOut.majorType = MediaType.Audio;
-        mpegAudioOut.subType = MediaSubType.Mpeg2Audio;
-        mpegAudioOut.sampleSize = 0;
-        mpegAudioOut.temporalCompression = false;
-        mpegAudioOut.fixedSizeSamples = true;
-        mpegAudioOut.unkPtr = IntPtr.Zero;
-        mpegAudioOut.formatType = FormatType.WaveEx;
-        mpegAudioOut.formatSize = MPEG1AudioFormat.GetLength(0);
-        mpegAudioOut.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mpegAudioOut.formatSize);
-        System.Runtime.InteropServices.Marshal.Copy(MPEG1AudioFormat, 0, mpegAudioOut.formatPtr, mpegAudioOut.formatSize);
-        _log.Info("TSStreamBufferPlayer9:created audio output pin");
-        hr = demuxer.CreateOutputPin(mpegAudioOut, "Audio", out pinAudio);
-        if (hr != 0)
+        if (_isLive)
         {
-          _log.Error("TSStreamBufferPlayer9 FAILED to create audio output pin on demuxer");
-          return false;
-        }
+          _log.Info("TSStreamBufferPlayer9:create audio/video pins");
+          //create mpeg-2 demux output pins
+          IMpeg2Demultiplexer demuxer = _mpegDemux as IMpeg2Demultiplexer;
+          AMMediaType mpegAudioOut = new AMMediaType();
+          mpegAudioOut.majorType = MediaType.Audio;
+          mpegAudioOut.subType = MediaSubType.Mpeg2Audio;
+          mpegAudioOut.sampleSize = 0;
+          mpegAudioOut.temporalCompression = false;
+          mpegAudioOut.fixedSizeSamples = true;
+          mpegAudioOut.unkPtr = IntPtr.Zero;
+          mpegAudioOut.formatType = FormatType.WaveEx;
+          mpegAudioOut.formatSize = MPEG1AudioFormat.GetLength(0);
+          mpegAudioOut.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mpegAudioOut.formatSize);
+          System.Runtime.InteropServices.Marshal.Copy(MPEG1AudioFormat, 0, mpegAudioOut.formatPtr, mpegAudioOut.formatSize);
+          _log.Info("TSStreamBufferPlayer9:created audio output pin");
+          hr = demuxer.CreateOutputPin(mpegAudioOut, "Audio", out _pinAudio);
+          if (hr != 0)
+          {
+            _log.Error("TSStreamBufferPlayer9 FAILED to create audio output pin on demuxer");
+            return false;
+          }
+          AMMediaType mpegVideoOut = new AMMediaType();
+          mpegVideoOut.majorType = MediaType.Video;
+          mpegVideoOut.subType = MediaSubType.Mpeg2Video;
 
-        AMMediaType mpegVideoOut = new AMMediaType();
-        mpegVideoOut.majorType = MediaType.Video;
-        mpegVideoOut.subType = MediaSubType.Mpeg2Video;
+          Size FrameSize = new Size(100, 100);
+          mpegVideoOut.unkPtr = IntPtr.Zero;
+          mpegVideoOut.sampleSize = 0;
+          mpegVideoOut.temporalCompression = false;
+          mpegVideoOut.fixedSizeSamples = true;
 
-        Size FrameSize = new Size(100, 100);
-        mpegVideoOut.unkPtr = IntPtr.Zero;
-        mpegVideoOut.sampleSize = 0;
-        mpegVideoOut.temporalCompression = false;
-        mpegVideoOut.fixedSizeSamples = true;
+          //Mpeg2ProgramVideo=new byte[Mpeg2ProgramVideo.GetLength(0)];
+          mpegVideoOut.formatType = FormatType.Mpeg2Video;
+          mpegVideoOut.formatSize = Mpeg2ProgramVideo.GetLength(0);
+          mpegVideoOut.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mpegVideoOut.formatSize);
+          System.Runtime.InteropServices.Marshal.Copy(Mpeg2ProgramVideo, 0, mpegVideoOut.formatPtr, mpegVideoOut.formatSize);
 
-        //Mpeg2ProgramVideo=new byte[Mpeg2ProgramVideo.GetLength(0)];
-        mpegVideoOut.formatType = FormatType.Mpeg2Video;
-        mpegVideoOut.formatSize = Mpeg2ProgramVideo.GetLength(0);
-        mpegVideoOut.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mpegVideoOut.formatSize);
-        System.Runtime.InteropServices.Marshal.Copy(Mpeg2ProgramVideo, 0, mpegVideoOut.formatPtr, mpegVideoOut.formatSize);
-
-        _log.Info("TSStreamBufferPlayer9:created video output pin");
-        hr = demuxer.CreateOutputPin(mpegVideoOut, "Video", out pinVideo);
-        if (hr != 0)
-        {
-          _log.Error("TSStreamBufferPlayer9 FAILED to create video output pin on demuxer");
-          return false;
+          _log.Info("TSStreamBufferPlayer9:created video output pin");
+          hr = demuxer.CreateOutputPin(mpegVideoOut, "Video", out _pinVideo);
+          if (hr != 0)
+          {
+            _log.Error("TSStreamBufferPlayer9 FAILED to create video output pin on demuxer");
+            return false;
+          }
         }
         #endregion
-
 
         #region load file in tsfilesource
         //call the load() on tsfilesource. This is needed so tsfilesource will configure itself
@@ -384,10 +387,11 @@ namespace MediaPortal.Player
           _log.Error("TSStreamBufferPlayer9:Failed to open file:{0} :0x{1:x}", filename, hr);
           return false;
         }
-        
+
         #endregion
 
-        if (_isLive && (autoMode == false))
+
+        if (autoBuildGraph == false)
         {
           #region connect tsfilesource->demux
           _log.Info("TSStreamBufferPlayer9:connect tsfilesource->mpeg2 demux");
@@ -415,8 +419,9 @@ namespace MediaPortal.Player
           #endregion
 
           #region map demux pids
+
           _log.Info("TSStreamBufferPlayer9: map pid 0xe0->video pin");
-          IMPEG2StreamIdMap pStreamId = (IMPEG2StreamIdMap)pinVideo;
+          IMPEG2StreamIdMap pStreamId = (IMPEG2StreamIdMap)_pinVideo;
           hr = pStreamId.MapStreamId(0xe0, MPEG2Program.ElementaryStream, 0, 0);
           if (hr != 0)
           {
@@ -424,7 +429,7 @@ namespace MediaPortal.Player
             return false;
           }
           _log.Info("TSStreamBufferPlayer9: map audio 0xc0->audio pin");
-          pStreamId = (IMPEG2StreamIdMap)pinAudio;
+          pStreamId = (IMPEG2StreamIdMap)_pinAudio;
           hr = pStreamId.MapStreamId(0xc0, MPEG2Program.ElementaryStream, 0, 0);
           if (hr != 0)
           {
@@ -437,14 +442,14 @@ namespace MediaPortal.Player
 
           #region render demux audio/video pins
           _log.Info("TSStreamBufferPlayer9:render video output pin");
-          hr = _graphBuilder.Render(pinAudio);
+          hr = _graphBuilder.Render(_pinAudio);
           if (hr != 0)
           {
             _log.Info("TSStreamBufferPlayer9:failed to render video output pin:{0:X}", hr);
           }
 
           _log.Info("TSStreamBufferPlayer9:render audio output pin");
-          hr = _graphBuilder.Render(pinVideo);
+          hr = _graphBuilder.Render(_pinVideo);
           if (hr != 0)
           {
             _log.Info("TSStreamBufferPlayer9:failed to render audio output pin:{0:X}", hr);
@@ -565,6 +570,16 @@ namespace MediaPortal.Player
           _log.Info("TSStreamBufferPlayer9: vmr9 dispose");
           _vmr9.Dispose();
           _vmr9 = null;
+        }
+        if (_pinAudio != null)
+        {
+          Marshal.ReleaseComObject(_pinAudio);
+          _pinAudio = null;
+        }
+        if (_pinVideo != null)
+        {
+          Marshal.ReleaseComObject(_pinVideo);
+          _pinVideo = null;
         }
         if (_videoCodecFilter != null)
         {
