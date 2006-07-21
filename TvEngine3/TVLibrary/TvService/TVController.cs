@@ -1720,7 +1720,7 @@ namespace TvService
                     Log.Write("timeshifting fileSize:{0}", fileSize);
                   }
                   fileSize = newfileSize;
-                  if (fileSize >= 8192 /* * 1024 *1024*/) // 3meg ..
+                  if (fileSize >= 3 * 1024 /**1024*/) // 3meg ..
                   {
                     TimeSpan ts = DateTime.Now - timeStart;
                     Log.Write("timeshifting fileSize:{0} {1}", fileSize, ts.TotalMilliseconds);
@@ -1732,7 +1732,7 @@ namespace TvService
           }
           System.Threading.Thread.Sleep(100);
           TimeSpan timeOut = DateTime.Now - timeStart;
-          if (timeOut.TotalMilliseconds >= 5000)
+          if (timeOut.TotalMilliseconds >= 15000)
           {
             Log.Write("timeshifting fileSize:{0} TIMEOUT", fileSize);
             return;

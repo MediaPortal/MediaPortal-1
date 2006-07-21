@@ -1219,11 +1219,11 @@ namespace TvPlugin
     }
     static void SeekToEnd()
     {
-      _log.Info("tvhome:seektoend");
-      double pos = g_Player.Duration - 2;
-      if (pos >= 0 && g_Player.CurrentPosition < pos)
+      double pos = g_Player.Duration;
+      _log.Info("tvhome:seektoend dur:{0} pos:{1}", g_Player.Duration, g_Player.CurrentPosition);
+      if (pos >= 0 && g_Player.CurrentPosition < pos-4)
       {
-        g_Player.SeekAbsolute(g_Player.Duration - 2);
+        g_Player.SeekAbsolute(g_Player.Duration );
       }
     }
   }
