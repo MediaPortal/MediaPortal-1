@@ -5003,7 +5003,7 @@
    </string>
    <string>
       <id>30001</id>
-      <value>Mest ønsket</value>
+      <value>Mest sett</value>
    </string>
    <string>
       <id>30002</id>
@@ -5029,6 +5029,18 @@
       <id>30007</id>
       <value>Søke etter andre videoer fra denne artisten</value>
    </string>
+   <string>
+      <id>30008</id>
+      <value>rangert fra</value>
+   </string>
+   <string>
+      <id>30009</id>
+      <value>Side</value>
+   </string>
+   <string>
+      <id>30010</id>
+      <value>Søke resultat for {0} - Side {1} </value>
+   </string> 
    <string>
       <id>99845</id>
       <value>TV.com sjekk</value>
