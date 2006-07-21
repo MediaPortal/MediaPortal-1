@@ -326,6 +326,16 @@ namespace MediaPortal.Util
       return false;
     }
 
+    static public bool IsAVStream(string strPath)
+    {
+      if (strPath == null) return false;
+      if (strPath.ToLower().IndexOf("rtsp:") >= 0) return true;
+      if (strPath.ToLower().IndexOf("http:") >= 0) return true;
+      if (strPath.ToLower().IndexOf("https:") >= 0) return true;
+      if (strPath.ToLower().IndexOf("mms:") >= 0) return true;
+      return false;
+    }
+
     static public bool IsAudio(string strPath)
     {
       if (strPath == null) return false;

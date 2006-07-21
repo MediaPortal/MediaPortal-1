@@ -162,7 +162,7 @@ namespace MediaPortal.Player
         newPlayer = new Player.TStreamBufferPlayer9();
         return newPlayer;
       }
-      if (MediaPortal.Util.Utils.IsVideo(fileName))
+      if (!MediaPortal.Util.Utils.IsAVStream(fileName) && MediaPortal.Util.Utils.IsVideo(fileName))
       {
         newPlayer = new Player.VideoPlayerVMR9();
         return newPlayer;

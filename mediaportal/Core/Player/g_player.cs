@@ -584,7 +584,7 @@ namespace MediaPortal.Player
           _player = null;
           GC.Collect(); GC.Collect(); GC.Collect(); GC.Collect();
         }
-        if (MediaPortal.Util.Utils.IsVideo(strFile))
+        if (!MediaPortal.Util.Utils.IsAVStream(strFile) && MediaPortal.Util.Utils.IsVideo(strFile))
         {
           if (MediaPortal.Util.Utils.PlayMovie(strFile))
           {
