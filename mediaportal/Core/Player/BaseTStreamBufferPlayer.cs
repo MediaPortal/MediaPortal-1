@@ -361,7 +361,6 @@ namespace MediaPortal.Player
 
     public override void Process()
     {
-      VMR9Util.g_vmr9.Process();
       if (!Playing)
         return;
       if (GUIGraphicsContext.InVmr9Render)
