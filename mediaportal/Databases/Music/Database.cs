@@ -94,7 +94,7 @@ namespace MediaPortal.Music.Database
 
     static bool TreatFolderAsAlbum = false;
     static bool ScanForVariousArtists = true;
-        //bool AppendPrefixToSortableNameEnd = true;
+    //bool AppendPrefixToSortableNameEnd = true;
 
         string[] ArtistNamePrefixes = new string[]
             {
@@ -258,7 +258,7 @@ namespace MediaPortal.Music.Database
 
         if (null == m_db) return -1;
         string name2 = strArtist1.ToLower().Trim();
-        //commented for hebrew - seems to work..
+        //commented for hebrew - seems to work.. Previous SQLite Releases had a bug here
         //name2 = Regex.Replace(name2, @"[^a-z0-9]*", string.Empty);
         foreach (CArtistCache artist in m_artistCache)
         {
@@ -527,7 +527,7 @@ namespace MediaPortal.Music.Database
 
         if (null == m_db) return -1;
         string name2 = strAlbum.ToLower().Trim();
-        // for hebrew
+        // for hebrew and other languages
         //name2 = Regex.Replace(name2, @"[^a-z0-9]*", string.Empty);
         foreach (AlbumInfoCache album in m_albumCache)
         {
