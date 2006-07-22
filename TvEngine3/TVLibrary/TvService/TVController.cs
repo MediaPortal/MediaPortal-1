@@ -838,6 +838,10 @@ namespace TvService
             RemoteControl.HostName = _allDbscards[cardId].Server.HostName;
             return RemoteControl.Instance.Tune(cardId, channel);
           }
+          if (CurrentChannel(cardId) != null)
+          {
+            if (CurrentChannel(cardId).Equals(channel)) return true;
+          }
           return _localCards[cardId].Tune(channel);
         }
       }
@@ -1008,10 +1012,18 @@ namespace TvService
           {
             _epgGrabber.Stop();
           }
+          if (_localCards[cardId].IsTimeShifting)
+          {
+            _clientReferenceCount[cardId]++;
+            Log.Write("  refcount: card:{0} count:{1}", cardId, _clientReferenceCount[cardId]);
+            return true;
+          }
+
           bool result = _localCards[cardId].StartTimeShifting(fileName);
           if (result == true)
           {
             _clientReferenceCount[cardId]++;
+            Log.Write("  refcount: card:{0} count:{1}", cardId, _clientReferenceCount[cardId]);
             fileName += ".tsbuffer";
             WaitForTimeShiftFile(cardId, fileName);
             if (System.IO.File.Exists(fileName))
@@ -1052,6 +1064,7 @@ namespace TvService
             return RemoteControl.Instance.StopTimeShifting(cardId);
           }
           _clientReferenceCount[cardId]--;
+          Log.Write("  refcount: card:{0} count:{1}", cardId, _clientReferenceCount[cardId]);
           if (_clientReferenceCount[cardId] <= 0)
           {
             _clientReferenceCount[cardId] = 0;
@@ -1317,6 +1330,7 @@ namespace TvService
             if (CurrentChannelName(keyPair.Value.IdCard) == channelName)
             {
               _clientReferenceCount[keyPair.Value.IdCard]++;
+              Log.Write("  refcount: card:{0} count:{1}", keyPair.Value.IdCard, _clientReferenceCount[keyPair.Value.IdCard]);
               card = new VirtualCard(keyPair.Value.IdCard, Dns.GetHostName());
               return true;
             }

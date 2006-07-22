@@ -260,6 +260,7 @@ namespace TvPlugin
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
+      DatabaseManager.FillCache();
 
 
       //DiskManagement.ImportDvrMsFiles();

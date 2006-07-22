@@ -465,7 +465,10 @@ namespace TvPlugin
               Log.Write("TVOSD:stop");
               if (TVHome.Card.IsRecording)
               {
-                TVHome.Card.StopRecording();
+
+                int id = TVHome.Card.RecordingScheduleId;
+                if (id > 0)
+                  TVHome.TvServer.StopRecordingSchedule(id);
               }
               //GUIWindowManager.ShowPreviousWindow();							// go back to the previous window
             }

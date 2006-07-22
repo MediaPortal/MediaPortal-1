@@ -348,7 +348,9 @@ namespace TvPlugin
             }
             else
             {
-              TVHome.Card.StopRecording();
+              int id=TVHome.Card.RecordingScheduleId;
+              if (id>0)
+                TVHome.TvServer.StopRecordingSchedule(id);
             }
           }
           break;
@@ -774,7 +776,10 @@ namespace TvPlugin
           //yes then stop recording
           Navigator.UpdateCurrentChannel();
 
-          TVHome.Card.StopRecording();
+
+          int id = TVHome.Card.RecordingScheduleId;
+          if (id > 0)
+            TVHome.TvServer.StopRecordingSchedule(id);
 
           // and re-start viewing.... 
           _log.Info("tv home stoprecording chan:{0}", Navigator.CurrentChannel);

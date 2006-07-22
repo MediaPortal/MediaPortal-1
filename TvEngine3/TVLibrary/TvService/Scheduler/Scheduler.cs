@@ -382,26 +382,18 @@ namespace TvService
         if (cardInfo.Card.RecordingFolder == String.Empty)
           cardInfo.Card.RecordingFolder = System.IO.Directory.GetCurrentDirectory();
 
-        if (false == _controller.IsTimeShifting(cardInfo.Id))
-        {
-          Log.Write("Scheduler : record, first tune to channel");
-          if (false == _controller.Tune(cardInfo.Id, cardInfo.TuningDetail)) return false;
-          Log.Write("Scheduler : record, now start timeshift");
-          string timeshiftFileName = String.Format(@"{0}\live{1}.ts", cardInfo.Card.RecordingFolder, cardInfo.Id);
-          if (false == _controller.StartTimeShifting(cardInfo.Id, timeshiftFileName)) return false;
-        }
-        else
-        {
-          Log.Write("Scheduler : record, tune to channel");
-          if (false == _controller.Tune(cardInfo.Id, cardInfo.TuningDetail)) return false;
-        }
+        Log.Write("Scheduler : record, first tune to channel");
+        if (false == _controller.Tune(cardInfo.Id, cardInfo.TuningDetail)) return false;
+        Log.Write("Scheduler : record, now start timeshift");
+        string timeshiftFileName = String.Format(@"{0}\live{1}.ts", cardInfo.Card.RecordingFolder, cardInfo.Id);
+        if (false == _controller.StartTimeShifting(cardInfo.Id, timeshiftFileName)) return false;
 
         recording.MakeFileName(cardInfo.Card.RecordingFolder);
         recording.CardInfo = cardInfo;
         Log.Write("Scheduler : record to {0}", recording.FileName);
         if (false == _controller.StartRecording(cardInfo.Id, recording.FileName, false, 0)) return false;
         _recordingsInProgressList.Add(recording);
-        Log.Write("recList:count:{0} add scheduleid:{1} card:{2}", _recordingsInProgressList.Count, recording.Schedule.IdSchedule,recording.CardInfo.Card.Name);
+        Log.Write("recList:count:{0} add scheduleid:{1} card:{2}", _recordingsInProgressList.Count, recording.Schedule.IdSchedule, recording.CardInfo.Card.Name);
       }
       catch (Exception ex)
       {
@@ -428,15 +420,15 @@ namespace TvService
       _controller.StopTimeShifting(recording.CardInfo.Id);
 
       EntityList<Server> servers = DatabaseManager.Instance.GetEntities<Server>();
-      Server ourServer=null;
-      foreach(Server server in servers)
+      Server ourServer = null;
+      foreach (Server server in servers)
       {
-        if (server.HostName==Dns.GetHostName())
-          ourServer=server;
+        if (server.HostName == Dns.GetHostName())
+          ourServer = server;
       }
       Recording newRec = Recording.Create();
       newRec.IdChannel = recording.Schedule.IdChannel;
-      newRec.StartTime=recording.Program.StartTime;
+      newRec.StartTime = recording.Program.StartTime;
       newRec.EndTime = recording.Program.EndTime;
       newRec.FileName = recording.FileName;
       newRec.Title = recording.Program.Title;
@@ -530,7 +522,7 @@ namespace TvService
       Log.Write("recList:StopRecordingOnCard{0}", cardId);
       foreach (RecordingDetail rec in _recordingsInProgressList)
       {
-        if (rec.CardInfo.Id==cardId)
+        if (rec.CardInfo.Id == cardId)
         {
           StopRecord(rec);
           return;
