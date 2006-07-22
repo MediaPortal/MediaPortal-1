@@ -145,7 +145,7 @@ namespace MediaPortal.GUI.MusicVideos
 
     public string PluginName()
     {
-      return "My Music Videos";
+      return "My Music Videos ";
     }
 
     public bool DefaultEnabled()
