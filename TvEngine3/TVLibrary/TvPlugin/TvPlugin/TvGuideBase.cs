@@ -2308,7 +2308,7 @@ namespace TvPlugin
       if (_currentProgram == null) return;
       if (isItemSelected)
       {
-        if (_currentProgram.IsRunningAt(DateTime.Now) ||_currentProgram.EndTime <= DateTime.Now)
+        if (_currentProgram.IsRunningAt(DateTime.Now) || _currentProgram.EndTime <= DateTime.Now)
         {
           //view this channel
           if (g_Player.Playing && g_Player.IsTVRecording)
@@ -2317,10 +2317,83 @@ namespace TvPlugin
           }
           try
           {
-            TVHome.ViewChannelAndCheck(_currentChannel);
-            if (TVHome.Card.IsTimeShifting && TVHome.Card.ChannelName == _currentProgram.Channel.Name)
+            if (TVHome.TvServer.IsAnyCardRecording())
             {
-              GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+              // If you select the program which is currently recording open a dialog to ask if you want to see it from the beginning
+              // imagine a sports event where you do not want to see the live point to be spoiled
+
+              // here a check is needed of _currentTitle == Recorder.CurrentTVRecording.Title
+              bool recMatchFound = false;
+              foreach (Schedule rec in _recordingList)
+              {
+                if (rec.ProgramName.Equals(_currentProgram.Title))
+                {
+                  recMatchFound = true;
+
+                  _log.Info("TVGuide: clicked on a currently running recording");
+                  GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+                  if (dlg == null)
+                    return;
+
+                  dlg.Reset();
+                  dlg.SetHeading(_currentProgram.Title);
+                  dlg.AddLocalizedString(979); //Play recording from beginning
+                  dlg.AddLocalizedString(980); //Play recording from live point
+                  dlg.DoModal(GetID);
+
+                  if (dlg.SelectedLabel == -1)
+                    return;
+                  if (_recordingList != null)
+                  {
+                    _log.Info("TVGuide: Found current program {0} in recording list", _currentTitle);
+                    switch (dlg.SelectedId)
+                    {
+                      case 979: // Play recording from beginning                          
+                        //@todo:
+                        //string filename = Recorder.GetRecordingFileName(rec);
+                        //if (filename != String.Empty)
+                        //{
+                        //  _log.Info("TVGuide: Play recording {0} from start", _currentTitle);
+                        //  g_Player.Play(filename);
+                        //  if (g_Player.Playing)
+                        //  {
+                        //    GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+                        //    return;
+                        //  }
+                        //}
+                        break;
+
+                      case 980: // Play recording from live point
+                        TVHome.ViewChannel(rec.Channel.Name);
+                        if (g_Player.Playing)
+                        {
+                          _log.Info("TVGuide: Show recording {0} at live point", _currentTitle);
+                          g_Player.SeekAsolutePercentage(99);
+                        }
+                        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+                        return;
+                    }
+                  }
+                  else
+                    _log.Info("EPG: _recordingList was not available");
+                }
+              }
+              if (recMatchFound == false)
+              {
+                TVHome.ViewChannelAndCheck(_currentProgram.Channel.Name);
+                if (g_Player.Playing)
+                {
+                  GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+                }
+              }
+            }
+            else
+            {
+              TVHome.ViewChannelAndCheck(_currentProgram.Channel.Name);
+              if (g_Player.Playing)
+              {
+                GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+              }
             }
           }
           finally
