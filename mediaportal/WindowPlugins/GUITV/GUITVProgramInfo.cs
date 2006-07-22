@@ -218,7 +218,7 @@ namespace MediaPortal.GUI.TV
     {
       recOrg = null;
       List<TVRecording> recordings = new List<TVRecording>();
-      TVDatabase.GetRecordings(ref recordings);
+      TVDatabase.GetRecordings(ref recordings, rec);
       foreach ( TVRecording record in recordings )
       {
         if ( record.Canceled > 0 )
