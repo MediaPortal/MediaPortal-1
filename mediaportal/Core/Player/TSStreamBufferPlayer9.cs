@@ -220,11 +220,15 @@ namespace MediaPortal.Player
         //DirectShowUtil.RenderOutputPins(_graphBuilder, (IBaseFilter)_fileSource);
         #endregion
 
-        bool autoMode = true;         // let tsfilesource control demux 
+        bool demuxControl = true;     // let tsfilesource control demux 
         bool supplyMediaType = true;  // supply media type during load
-        bool autoBuildGraph = true;
-        if (_isLive)
+        bool autoBuildGraph = false;   // true: let tsfilesource create graph, else we do it ourselves
+        if (_isLive == false)
+        {
+          demuxControl = true;
+          supplyMediaType = false;
           autoBuildGraph = true;
+        }
 
         #region set tsfilesource settings
         _log.Info("TSStreamBufferPlayer9:initialize tsfilesource");
@@ -234,13 +238,11 @@ namespace MediaPortal.Player
           {
             using (RegistryKey settings = hklm.OpenSubKey(@"SOFTWARE\TSFileSource\settings\default", true))
             {
-              byte[] valueOneZeroZeroZero = new byte[4];
-              byte[] valueZeroZeroZeroZero = new byte[4];
+              byte[] clockType = new byte[4] { 3, 0, 0, 0 };
+              byte[] programSid = new byte[4] { 0, 0, 0, 0 };
               byte[] value1Zeros = new byte[4];
               byte[] valueZero = new byte[1];
               byte[] valueOne = new byte[1];
-              valueOneZeroZeroZero[0] = 3; valueOneZeroZeroZero[1] = valueOneZeroZeroZero[2] = valueOneZeroZeroZero[3] = 0;
-              valueZeroZeroZeroZero[0] = valueZeroZeroZeroZero[1] = valueZeroZeroZeroZero[2] = valueZeroZeroZeroZero[3] = 0;
               valueZero[0] = 0;
               valueOne[0] = 1;
 
@@ -249,11 +251,11 @@ namespace MediaPortal.Player
               // 1=tsfilesource
               // 2=demux
               // 3=audio renderer
-              settings.SetValue("clockType", valueOneZeroZeroZero, RegistryValueKind.Binary);
+              settings.SetValue("clockType", clockType, RegistryValueKind.Binary);
               settings.SetValue("enableAC3", valueZero, RegistryValueKind.Binary);
               settings.SetValue("enableAudio2", valueZero, RegistryValueKind.Binary);
 
-              if (_isLive && (autoMode == false))
+              if (demuxControl == false)
               {
                 _log.Info("set tsfilesource to manual mode");
                 settings.SetValue("enableAuto", valueZero, RegistryValueKind.Binary);
@@ -272,7 +274,7 @@ namespace MediaPortal.Player
               settings.SetValue("enableROT", valueZero, RegistryValueKind.Binary);
               settings.SetValue("enableTSPin", valueZero, RegistryValueKind.Binary);
               settings.SetValue("enableTxtPin", valueZero, RegistryValueKind.Binary);
-              settings.SetValue("ProgramSID", valueZeroZeroZeroZero, RegistryValueKind.Binary);
+              settings.SetValue("ProgramSID", programSid, RegistryValueKind.Binary);
             }
           }
         }
@@ -294,14 +296,18 @@ namespace MediaPortal.Player
         #endregion
 
         #region add mpeg-2 demux filter
-        _log.Info("TSStreamBufferPlayer9:add mpeg-2 demultiplexer to graph");
-        MPEG2Demultiplexer demux = new MPEG2Demultiplexer();
-        _mpegDemux = (IBaseFilter)demux;
-        hr = _graphBuilder.AddFilter(_mpegDemux, "MPEG-2 Demultiplexer");
+
+        if (autoBuildGraph == false)
+        {
+          _log.Info("TSStreamBufferPlayer9:add mpeg-2 demultiplexer to graph");
+          MPEG2Demultiplexer demux = new MPEG2Demultiplexer();
+          _mpegDemux = (IBaseFilter)demux;
+          hr = _graphBuilder.AddFilter(_mpegDemux, "MPEG-2 Demultiplexer");
+        }
         #endregion
 
         #region create mpeg2 demux pins
-        if (_isLive)
+        if (autoBuildGraph==false)
         {
           _log.Info("TSStreamBufferPlayer9:create audio/video pins");
           //create mpeg-2 demux output pins
@@ -361,7 +367,7 @@ namespace MediaPortal.Player
           return false;
         }
         //_log.Info("TSStreamBufferPlayer9: open file:{0}",filename);
-        if (_isLive && (supplyMediaType))
+        if (supplyMediaType)
         {
           _log.Info("TSStreamBufferPlayer9: open file with mediatype:{0}", filename);
           AMMediaType mpeg2ProgramStream = new AMMediaType();

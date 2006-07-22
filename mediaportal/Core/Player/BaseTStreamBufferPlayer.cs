@@ -366,11 +366,61 @@ namespace MediaPortal.Player
         return;
       if (GUIGraphicsContext.InVmr9Render)
         return;
-      
+
       //_log.Info("1");
-      /*
+      
       if (_startingUp && _isLive)
       {
+        ushort pgmCount=0;
+        ushort pgmNumber = 0;
+        ushort audioPid=0;
+        ushort videoPid = 0;
+        ushort pcrPid = 0;
+        long duration = 0;
+        ITSFileSource tsInterface = _fileSource as ITSFileSource;
+        tsInterface.GetAudioPid(ref audioPid);
+        tsInterface.GetVideoPid(ref videoPid);
+        tsInterface.GetPCRPid(ref pcrPid);
+        tsInterface.GetPgmCount(ref pgmCount);
+        tsInterface.GetDuration(ref duration);
+        if (pgmCount > 0)
+        {
+          tsInterface.GetPgmNumb(ref pgmNumber);
+          _log.Info("programs:{0} duration:{1} current pgm:{2}", pgmCount, duration, pgmNumber);
+          _log.Info("video:{0:X} audio:{1:X} pcr:{2:X}", videoPid, audioPid, pcrPid);
+          if (pgmNumber != 1)
+          {
+            tsInterface.SetPgmNumb(1);
+            _log.Info("selected prgm number 1");
+          }
+          _mediaCtrl.Stop();
+          _mediaCtrl.Run();
+          _startingUp = false;
+          /*
+          UpdateDuration();
+          if (_duration > 0)
+          {
+            _log.Info("duration:{0}",_duration);
+            double pos = _duration - 2;
+            if (pos > 0)
+            {
+              if (VMR9Util.g_vmr9 != null)
+              {
+                VMR9Util.g_vmr9.FrameCounter = 123;
+                VMR9Util.g_vmr9.Process();
+              }
+              SeekAbsolute(_duration);
+
+              if (VMR9Util.g_vmr9 != null)
+              {
+                VMR9Util.g_vmr9.FrameCounter = 123;
+                VMR9Util.g_vmr9.Process();
+              }
+            }
+            _startingUp = false;
+          }*/
+        }
+        /*
         IAMStreamSelect control = _fileSource as IAMStreamSelect;
         if (control != null)
         {
@@ -379,7 +429,7 @@ namespace MediaPortal.Player
           if (streamCount > 0)
           {
             UpdateDuration();
-            _log.Info("streams:{0} duration:{1}", streamCount,_duration);
+            _log.Info("streams:{0} duration:{1}", streamCount, _duration);
             if (_duration > 1)
             {
               _log.Info("enable stream 1");
@@ -388,22 +438,17 @@ namespace MediaPortal.Player
               UpdateDuration();
               double dPos = _duration;
               _log.Info("_duration:{0}", _duration);
-              dPos -= 2;
               if (dPos >= 0 && CurrentPosition < dPos)
               {
-                if (_duration > 4)
-                {
-                  _log.Info("seek:{0}/{0}", dPos, _duration);
-                  SeekAbsolute(dPos);
-                  _log.Info("seek:{0}/{0} done", dPos, _duration);
-                }
+                _log.Info("seek:{0}/{0}", dPos, _duration);
+                SeekAbsolute(dPos);
+                _log.Info("seek:{0}/{0} done", dPos, _duration);
               }
               _startingUp = false;
             }
           }
-        }
-      }*/
-      _startingUp = false;
+        }*/
+      }
       TimeSpan ts = DateTime.Now - _updateTimer;
       if (ts.TotalMilliseconds >= 800 || iSpeed != 1)
       {
