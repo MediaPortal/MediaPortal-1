@@ -272,6 +272,17 @@ namespace TvService
     }
 
     /// <summary>
+    /// Gets the card Id for a card
+    /// </summary>
+    /// <param name="cardId">Index of the card.</param>
+    /// <value>id of card</value>
+    public int CardId(int cardIndex)
+    {
+      EntityList<Card> cards = DatabaseManager.Instance.GetEntities<Card>();
+      return cards[cardIndex].IdCard;
+    }
+
+    /// <summary>
     /// Gets the type of card.
     /// </summary>
     /// <param name="cardId">Index of the card.</param>
@@ -1432,8 +1443,8 @@ namespace TvService
       try
       {
         DatabaseManager.Instance.ClearQueryCache();
-        Dispose();
-        Init();
+        //Dispose();
+        //Init();
         if (_scheduler != null)
         {
           _scheduler.ResetTimer();

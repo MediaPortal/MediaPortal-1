@@ -29,6 +29,13 @@ namespace TvControl
     int Cards { get;}
 
     /// <summary>
+    /// Gets the card Id for a card
+    /// </summary>
+    /// <param name="cardId">Index of the card.</param>
+    /// <value>id of card</value>
+    int CardId(int cardIndex);
+
+    /// <summary>
     /// Gets the type of card (analog,dvbc,dvbs,dvbt,atsc)
     /// </summary>
     /// <param name="cardId">Index of the card.</param>

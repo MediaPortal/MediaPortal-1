@@ -51,6 +51,7 @@ namespace TvDatabase
     }
     static public void FillCache()
     {
+      DatabaseManager.Instance.ClearQueryCache();
       EntityList<Setting> sett = DatabaseManager.Instance.GetEntities<Setting>();
       EntityList<GroupMap> grpmaps = DatabaseManager.Instance.GetEntities<GroupMap>();
       EntityList<Channel> maps = DatabaseManager.Instance.GetEntities<Channel>();

@@ -188,6 +188,8 @@ namespace TvPlugin
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
+      DatabaseManager.Instance.ClearQueryCache();
+      DatabaseManager.FillCache();
       //@      ConflictManager.OnConflictsUpdated += new MediaPortal.TV.Recording.ConflictManager.OnConflictsUpdatedHandler(ConflictManager_OnConflictsUpdated);
 
       LoadSettings();
@@ -477,9 +479,11 @@ namespace TvPlugin
             item.IconImageBig = strLogo;
             item.IconImage = strLogo;
           }
+          item.PinImage = "";
           VirtualCard card;
           if (RemoteControl.Instance.IsRecordingSchedule(rec.IdSchedule, out card))
           {
+            _log.Info("recording:{0}, {1} ", rec.IdSchedule, card.Name);
             if (rec.ScheduleType != (int)ScheduleRecordingType.Once)
               item.PinImage = Thumbs.TvRecordingSeriesIcon;
             else
@@ -487,6 +491,7 @@ namespace TvPlugin
           }
           else
           {
+            _log.Info("not recording:{0}", rec.IdSchedule);
             //@
             /*if (ConflictManager.IsConflict(rec))
             {
@@ -809,6 +814,7 @@ namespace TvPlugin
                   schedule.Schedule = rec;
                   DatabaseManager.Instance.SaveChanges();
                   RemoteControl.Instance.OnNewSchedule();
+                  DatabaseManager.FillCache();
                 }
               }
             }
@@ -820,6 +826,7 @@ namespace TvPlugin
               schedule.Schedule = rec;
               DatabaseManager.Instance.SaveChanges();
               RemoteControl.Instance.OnNewSchedule();
+              DatabaseManager.FillCache();
             }
             LoadDirectory();
           }
@@ -852,6 +859,7 @@ namespace TvPlugin
             {
               rec.Delete();
               RemoteControl.Instance.OnNewSchedule();
+              DatabaseManager.FillCache();
             }
             LoadDirectory();
           }
@@ -966,6 +974,7 @@ namespace TvPlugin
         }
         DatabaseManager.SaveChanges();
         RemoteControl.Instance.OnNewSchedule();
+        DatabaseManager.FillCache();
         LoadDirectory();
 
       }
@@ -1132,6 +1141,7 @@ namespace TvPlugin
       rec.ProgramName = GUILocalizeStrings.Get(413) + " (" + rec.Channel.Name + ")";
       DatabaseManager.SaveChanges();
       RemoteControl.Instance.OnNewSchedule();
+      DatabaseManager.FillCache();
       LoadDirectory();
     }
 
@@ -1166,6 +1176,7 @@ namespace TvPlugin
           rec.Canceled = Schedule.MinSchedule;
           DatabaseManager.SaveChanges();
           RemoteControl.Instance.OnNewSchedule();
+          DatabaseManager.FillCache();
           LoadDirectory();
         }
       }
@@ -1206,16 +1217,16 @@ namespace TvPlugin
     {
       int iCleaned = 0;
       EntityList<Schedule> itemlist = DatabaseManager.Instance.GetEntities<Schedule>();
+      itemlist.ShouldRemoveDeletedEntities = false;
       foreach (Schedule rec in itemlist)
       {
-        //@
-        /*
         if (rec.IsDone() || rec.Canceled != Schedule.MinSchedule)
         {
           iCleaned++;
-          TVDatabase.RemoveRecording(rec);
-        }*/
+          rec.DeleteAll();
+        }
       }
+      DatabaseManager.FillCache();
       GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
       LoadDirectory();
       if (pDlgOK != null)
@@ -1261,15 +1272,16 @@ namespace TvPlugin
         schedule.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
         schedule.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
-      GUIPropertyManager.SetProperty("#TV.Scheduled.Title", prog.Title);
       GUIPropertyManager.SetProperty("#TV.Scheduled.Time", strTime);
       if (prog != null)
       {
+        GUIPropertyManager.SetProperty("#TV.Scheduled.Title", prog.Title);
         GUIPropertyManager.SetProperty("#TV.Scheduled.Description", prog.Description);
         GUIPropertyManager.SetProperty("#TV.Scheduled.Genre", prog.Genre);
       }
       else
       {
+        GUIPropertyManager.SetProperty("#TV.Scheduled.Title", "");
         GUIPropertyManager.SetProperty("#TV.Scheduled.Description", String.Empty);
         GUIPropertyManager.SetProperty("#TV.Scheduled.Genre", String.Empty);
       }

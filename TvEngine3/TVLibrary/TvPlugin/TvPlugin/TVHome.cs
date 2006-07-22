@@ -283,9 +283,10 @@ namespace TvPlugin
             bool isRecording = false;
             for (int i = 0; i < RemoteControl.Instance.Cards; ++i)
             {
-              if (RemoteControl.Instance.IsRecording(i))
+              int id = RemoteControl.Instance.CardId(i);
+              if (RemoteControl.Instance.IsRecording(id))
               {
-                if (RemoteControl.Instance.CurrentChannel(i).Name == channel)
+                if (RemoteControl.Instance.CurrentChannel(id).Name == channel)
                 {
                   isRecording = true;
                   break;
@@ -663,6 +664,7 @@ namespace TvPlugin
         }
         return;
       }
+        /*
       else
       {
         if (g_Player.IsTV)
@@ -674,7 +676,7 @@ namespace TvPlugin
             return;
           }
         }
-      }
+      }*/
 
 
       btnChannel.Disabled = false;
@@ -1522,9 +1524,10 @@ namespace TvPlugin
         // then get & use that channel
         for (int i = 0; i < RemoteControl.Instance.Cards; ++i)
         {
-          if (RemoteControl.Instance.IsRecording(i))
+          int id = RemoteControl.Instance.CardId(i);
+          if (RemoteControl.Instance.IsRecording(id))
           {
-            newChannel = RemoteControl.Instance.CurrentChannel(i).Name;
+            newChannel = RemoteControl.Instance.CurrentChannel(id).Name;
           }
         }
       }

@@ -400,6 +400,8 @@ namespace TvService
         recording.CardInfo = cardInfo;
         Log.Write("Scheduler : record to {0}", recording.FileName);
         if (false == _controller.StartRecording(cardInfo.Id, recording.FileName, false, 0)) return false;
+        _recordingsInProgressList.Add(recording);
+        Log.Write("recList:count:{0} add scheduleid:{1} card:{2}", _recordingsInProgressList.Count, recording.Schedule.IdSchedule,recording.CardInfo.Card.Name);
       }
       catch (Exception ex)
       {
@@ -412,7 +414,6 @@ namespace TvService
           _tvController.Unlock(cardInfo.Id);
         }
       }
-      _recordingsInProgressList.Add(recording);
       return true;
     }
 
@@ -434,7 +435,7 @@ namespace TvService
           ourServer=server;
       }
       Recording newRec = Recording.Create();
-      newRec.Channel = recording.Program.Channel;
+      newRec.IdChannel = recording.Schedule.IdChannel;
       newRec.StartTime=recording.Program.StartTime;
       newRec.EndTime = recording.Program.EndTime;
       newRec.FileName = recording.FileName;
@@ -445,12 +446,15 @@ namespace TvService
       newRec.KeepUntil = (int)recording.Schedule.KeepMethod;
       newRec.TimesWatched = 0;
       newRec.Server = ourServer;
+      Log.Write("recList:count:{0} DEL scheduleid:{1} card:{2}", _recordingsInProgressList.Count, recording.Schedule.IdSchedule, recording.CardInfo.Card.Name);
+
+      DatabaseManager.Instance.SaveChanges();
 
       PostProcessing processor = new PostProcessing();
       processor.Process(recording);
       if ((ScheduleRecordingType)recording.Schedule.ScheduleType == ScheduleRecordingType.Once)
       {
-        recording.Schedule.Delete();
+        recording.Schedule.DeleteAll();
       }
       else
       {
@@ -458,6 +462,7 @@ namespace TvService
       }
       DatabaseManager.Instance.SaveChanges();
       _recordingsInProgressList.Remove(recording);
+
     }
 
     /// <summary>
@@ -486,6 +491,8 @@ namespace TvService
     /// <param name="idSchedule">database schedule id</param>
     public void StopRecordingSchedule(int idSchedule)
     {
+      Log.Write("recList:StopRecordingSchedule{0}", idSchedule);
+
       foreach (RecordingDetail rec in _recordingsInProgressList)
       {
         if (rec.Schedule.IdSchedule == idSchedule)
@@ -520,6 +527,7 @@ namespace TvService
     /// <param name="cardId">id of the card</param>
     public void StopRecordingOnCard(int cardId)
     {
+      Log.Write("recList:StopRecordingOnCard{0}", cardId);
       foreach (RecordingDetail rec in _recordingsInProgressList)
       {
         if (rec.CardInfo.Id==cardId)

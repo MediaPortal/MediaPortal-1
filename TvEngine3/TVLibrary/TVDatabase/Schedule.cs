@@ -359,6 +359,19 @@ namespace TvDatabase
         return true;
       }
     }
+    /// <summary>
+    /// Checks whether this recording is finished and can be deleted
+    /// 
+    /// </summary>
+    /// <returns>true:Recording is finished can be deleted
+    ///          false:Recording is not done yet, or needs to be done multiple times
+    /// </returns>
+    public bool IsDone()
+    {
+      if (ScheduleType != (int)ScheduleRecordingType.Once) return false;
+      if (DateTime.Now > EndTime) return true;
+      return false;
+    }
   }
 
 }
