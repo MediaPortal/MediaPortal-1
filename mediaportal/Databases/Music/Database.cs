@@ -258,12 +258,11 @@ namespace MediaPortal.Music.Database
 
         if (null == m_db) return -1;
         string name2 = strArtist1.ToLower().Trim();
-        //commented for hebrew - seems to work.. Previous SQLite Releases had a bug here
-        //name2 = Regex.Replace(name2, @"[^a-z0-9]*", string.Empty);
+        name2 = Regex.Replace(name2, @"[^a-z0-9]*", string.Empty);
         foreach (CArtistCache artist in m_artistCache)
         {
           string name1 = artist.strArtist.ToLower().Trim();
-          //name1 = Regex.Replace(name1, @"[^a-z0-9]*", string.Empty);
+          name1 = Regex.Replace(name1, @"[^a-z0-9]*", string.Empty);
           if (name1.Equals(name2))
             return artist.idArtist;
         }
@@ -527,12 +526,11 @@ namespace MediaPortal.Music.Database
 
         if (null == m_db) return -1;
         string name2 = strAlbum.ToLower().Trim();
-        // for hebrew and other languages
-        //name2 = Regex.Replace(name2, @"[^a-z0-9]*", string.Empty);
+        name2 = Regex.Replace(name2, @"[^a-z0-9]*", string.Empty);
         foreach (AlbumInfoCache album in m_albumCache)
         {
           string name1 = album.Album.ToLower().Trim();
-          //name1 = Regex.Replace(name1, @"[^a-z0-9]*", string.Empty);
+          name1 = Regex.Replace(name1, @"[^a-z0-9]*", string.Empty);
 
           if (lPathId != -1)
           {
