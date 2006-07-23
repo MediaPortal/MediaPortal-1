@@ -392,8 +392,6 @@ namespace MediaPortal.Player
             tsInterface.SetPgmNumb(1);
             _log.Info("selected prgm number 1");
           }
-          _mediaCtrl.Stop();
-          _mediaCtrl.Run();
           _startingUp = false;
           /*
           UpdateDuration();

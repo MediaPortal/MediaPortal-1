@@ -229,13 +229,12 @@ namespace MediaPortal.Player
           _videoCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strVideoCodec);
         if (strAudioCodec.Length > 0)
           _audioCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strAudioCodec);
-        if (strAudioRenderer.Length > 0)
-          _audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(_graphBuilder, strAudioRenderer, false);
-        if (bAddFFDshow)
-          _ffdShowFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, "ffdshow raw video filter");
+        //        if (strAudioRenderer.Length > 0)
+        //          _audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(_graphBuilder, strAudioRenderer, false);
+        //if (bAddFFDshow)
+        //_ffdShowFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, "ffdshow raw video filter");
 
-        // render output pins of SBE
-        //DirectShowUtil.RenderOutputPins(_graphBuilder, (IBaseFilter)_fileSource);
+
         #endregion
 
         bool demuxControl = true;     // let tsfilesource control demux 
@@ -249,6 +248,7 @@ namespace MediaPortal.Player
         }
 
         #region set tsfilesource settings
+        
         _log.Info("TSStreamBufferPlayer9:initialize tsfilesource");
         try
         {
@@ -303,8 +303,7 @@ namespace MediaPortal.Player
 
         _fileSource = new TsFileSource();
         _log.Info("TSStreamBufferPlayer9:add tsfilesource to graph");
-        IBaseFilter tsBaseFilter = (IBaseFilter)_fileSource;
-        int hr = _graphBuilder.AddFilter(tsBaseFilter, "TsFileSource");
+        int hr = _graphBuilder.AddFilter((IBaseFilter)_fileSource, "TsFileSource");
         if (hr != 0)
         {
           _log.Error("TSStreamBufferPlayer9:Failed to add SBE to graph");
@@ -318,8 +317,7 @@ namespace MediaPortal.Player
         if (autoBuildGraph == false)
         {
           _log.Info("TSStreamBufferPlayer9:add mpeg-2 demultiplexer to graph");
-          MPEG2Demultiplexer demux = new MPEG2Demultiplexer();
-          _mpegDemux = (IBaseFilter)demux;
+          _mpegDemux = (IBaseFilter)new MPEG2Demultiplexer();
           hr = _graphBuilder.AddFilter(_mpegDemux, "MPEG-2 Demultiplexer");
         }
         #endregion
@@ -393,7 +391,7 @@ namespace MediaPortal.Player
         {
           #region connect tsfilesource->demux
           _log.Info("TSStreamBufferPlayer9:connect tsfilesource->mpeg2 demux");
-          IPin pinTsOut = DsFindPin.ByDirection(tsBaseFilter, PinDirection.Output, 0);
+          IPin pinTsOut = DsFindPin.ByDirection((IBaseFilter)_fileSource, PinDirection.Output, 0);
           if (pinTsOut == null)
           {
             _log.Info("TSStreamBufferPlayer9:failed to find output pin of tsfilesource");
@@ -469,6 +467,7 @@ namespace MediaPortal.Player
         {
           _log.Error("Unable to get IMediaSeeking interface#1");
         }
+
         if (_audioRendererFilter != null)
         {
           IMediaFilter mp = _graphBuilder as IMediaFilter;
