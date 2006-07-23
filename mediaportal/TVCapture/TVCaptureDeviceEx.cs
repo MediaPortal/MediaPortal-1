@@ -1168,16 +1168,16 @@ namespace MediaPortal.TV.Recording
       }
       log.Info("TVCapture.StartTimeShifting() Card:{0} :{1}", ID, channelName);
       TVChannel channel = GetChannel(channelName);
+      _lastChannelChange = DateTime.Now;
 
       if (_currentGraphState == State.Timeshifting)
       {
+        _timeTimeshiftingStarted = DateTime.Now;
         if (_currentGraph.GetChannelNumber() != channel.Number)
-        {
+        {          
           if (!_currentGraph.ShouldRebuildGraph(channel))
-          {
-            _timeTimeshiftingStarted = DateTime.Now;
-            _currentGraph.TuneChannel(channel);
-            _lastChannelChange = DateTime.Now;
+          {            
+            _currentGraph.TuneChannel(channel);            
             _currentTvChannelName = channelName;
             return true;
           }
