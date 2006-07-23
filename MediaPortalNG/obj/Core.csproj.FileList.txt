@@ -1,0 +1,27 @@
+D:\Programme\Microsoft SDKs\Windows\v6.0\Samples\WPFSamples\Demos\Particles\Csharp\obj\Debug\CoreWindow.baml
+D:\Programme\Microsoft SDKs\Windows\v6.0\Samples\WPFSamples\Demos\Particles\Csharp\obj\Debug\CoreWindow.g.cs
+D:\Programme\Microsoft SDKs\Windows\v6.0\Samples\WPFSamples\Demos\Particles\Csharp\obj\Debug\app.g.cs
+D:\Programme\Microsoft SDKs\Windows\v6.0\Samples\WPFSamples\Demos\Particles\Csharp\obj\Debug\SDKSample_MarkupCompile.cache
+obj\Debug\ResolveAssemblyReference.cache
+.\bin\Debug\MediaPortal.exe
+.\bin\Debug\MediaPortal.pdb
+E:\MPNG\MPNG\Csharp\obj\Debug\CoreWindow.baml
+E:\MPNG\MPNG\Csharp\obj\Debug\CoreExtensions\home.baml
+E:\MPNG\MPNG\Csharp\obj\Debug\CoreWindow.g.cs
+E:\MPNG\MPNG\Csharp\obj\Debug\CoreExtensions\home.g.cs
+E:\MPNG\MPNG\Csharp\obj\Debug\app.g.cs
+E:\MPNG\MPNG\Csharp\obj\Debug\MediaPortal_MarkupCompile.cache
+obj\Debug\MediaPortal.g.resources
+obj\Debug\MediaPortal.exe
+obj\Debug\MediaPortal.pdb
+E:\MPNG\MPNG\Csharp\obj\Debug\Welcome.baml
+E:\MPNG\MPNG\Csharp\obj\Debug\Welcome.g.cs
+E:\MPNG\MPNG\Csharp\obj\Debug\MediaPortal_Content.g.cs
+E:\MPNG\obj\Debug\CoreWindow.baml
+E:\MPNG\obj\Debug\CoreExtensions\home.baml
+E:\MPNG\obj\Debug\Welcome.baml
+E:\MPNG\obj\Debug\CoreWindow.g.cs
+E:\MPNG\obj\Debug\CoreExtensions\home.g.cs
+E:\MPNG\obj\Debug\Welcome.g.cs
+E:\MPNG\obj\Debug\app.g.cs
+E:\MPNG\obj\Debug\MediaPortal_MarkupCompile.cache

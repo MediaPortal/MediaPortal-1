@@ -1,0 +1,12 @@
+﻿<Page x:Class="MediaPortal.Welcome"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Background="Blue"
+    Name="myWindow" >
+
+  <StackPanel Margin="20,0,0,0">
+    <TextBlock Margin="0,30,0,0" FontSize="36" FontFamily="Arial" FontWeight="Bold">Welcome to MediaPortal NG</TextBlock>
+    <TextBlock Margin="0,30,0,0" FontSize="36" FontFamily="Arial" FontWeight="Bold">(click the mouse!)</TextBlock>
+
+  </StackPanel>
+</Page>
