@@ -350,7 +350,7 @@
 		<imageFolder>icon_empty_nofocus.png</imageFolder>
 		<imageFolderFocus>icon_empty_focus.png</imageFolderFocus>
 		<font>font13</font>
-		<selectedColor>ffffffff</selectedColor>
+		<selectedColor>FFF8BC70</selectedColor>
 		<textcolor>ffffffff</textcolor>
 		<colordiffuse>ffffffff</colordiffuse>
 		<remoteColor>ffFFA075</remoteColor>
@@ -394,7 +394,7 @@
 		<imageFolder>icon_empty_nofocus.png</imageFolder>
 		<imageFolderFocus>icon_empty_focus.png</imageFolderFocus>
 		<font>font13</font>
-		<selectedColor>ffffffff</selectedColor>
+		<selectedColor>FFF8BC70</selectedColor>
 		<textcolor>ffffffff</textcolor>
 		<colordiffuse>ffffffff</colordiffuse>
 		<remoteColor>ffFFA075</remoteColor>

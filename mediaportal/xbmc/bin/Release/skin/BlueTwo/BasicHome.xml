@@ -45,6 +45,7 @@
 			<hoverHeight>230</hoverHeight>
 			<label>665</label>
   		<textcolor>00ffffff</textcolor>
+			<textcolorNoFocus>00ffffff</textcolorNoFocus>
 			<onleft>6</onleft>
 			<onright>3</onright>
 			<onup>21</onup>
@@ -68,6 +69,7 @@
 			<hoverHeight>230</hoverHeight>
 			<label>3</label>
   		<textcolor>00ffffff</textcolor>
+			<textcolorNoFocus>00ffffff</textcolorNoFocus>
 			<onleft>2</onleft>
 			<onright>4</onright>
 			<onup>21</onup>
@@ -91,6 +93,7 @@
 			<hoverHeight>230</hoverHeight>
 			<label>605</label>
   		<textcolor>00ffffff</textcolor>
+			<textcolorNoFocus>00ffffff</textcolorNoFocus>
 			<onleft>3</onleft>
 			<onright>5</onright>
 			<onup>21</onup>
@@ -114,6 +117,7 @@
 			<hoverHeight>230</hoverHeight>
 			<label>2</label>
   		<textcolor>00ffffff</textcolor>
+			<textcolorNoFocus>00ffffff</textcolorNoFocus>
 			<onleft>4</onleft>
 			<onright>6</onright>
 			<onup>21</onup>
@@ -137,6 +141,7 @@
 			<hoverHeight>230</hoverHeight>
 			<label>1</label>
   		<textcolor>00ffffff</textcolor>
+			<textcolorNoFocus>00ffffff</textcolorNoFocus>
 			<onleft>5</onleft>
 			<onright>2</onright>
 			<onup>21</onup>
