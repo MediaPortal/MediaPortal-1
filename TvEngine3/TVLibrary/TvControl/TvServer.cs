@@ -34,6 +34,20 @@ namespace TvControl
     }
 
     /// <summary>
+    /// Returns if any card is recording
+    /// </summary>
+    /// <returns>true if any card is recording, otherwise false</returns>
+    public bool IsAnyCardRecording()
+    {
+      for (int i = 0; i < RemoteControl.Instance.Cards; ++i)
+      {
+        int id=RemoteControl.Instance.CardId(i);
+        if (RemoteControl.Instance.IsRecording(id)) return true;
+      }
+      return false;
+    }
+
+    /// <summary>
     /// Start timeshifting on a specific channel
     /// </summary>
     /// <param name="channelName">Name of the channel</param>

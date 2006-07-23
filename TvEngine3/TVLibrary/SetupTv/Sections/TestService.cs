@@ -19,7 +19,7 @@ namespace SetupTv.Sections
 {
   public partial class TestService : SectionSettings
   {
-
+    Player _player;
     public TestService()
       : this("Manual Control")
     {
@@ -105,11 +105,19 @@ namespace SetupTv.Sections
       VirtualCard card = GetCardTimeShiftingChannel(channel);
       if (card != null)
       {
+        if (_player != null)
+        {
+          _player.Stop();
+          _player = null;
+        }
         card.StopTimeShifting();
       }
       else
       {
         server.StartTimeShifting(channel, out card);
+        _player = new Player();
+        _player.Play(card.TimeShiftFileName,this.Handle);
+
       }
     }
 

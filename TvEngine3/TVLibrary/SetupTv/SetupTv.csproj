@@ -217,6 +217,7 @@
     <Compile Include="Sections\GroupNameForm.Designer.cs">
       <DependentUpon>GroupNameForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Sections\player.cs" />
     <Compile Include="Sections\RadioEpgGrabber.cs">
       <SubType>UserControl</SubType>
     </Compile>
