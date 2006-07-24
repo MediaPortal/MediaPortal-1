@@ -65,9 +65,14 @@
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="skin.xaml" />
-  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildBinPath)\Microsoft.WinFX.targets" />
+  <ProjectExtensions>
+    <InteractiveDesigner>
+      <ProjectExtensions>
+        <Version>0.03</Version>
+      </ProjectExtensions>
+    </InteractiveDesigner>
+    <VisualStudio />
+  </ProjectExtensions>
 </Project>

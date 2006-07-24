@@ -5,7 +5,13 @@
 
   <Canvas>
  
-     <Image Name="id0" Canvas.Left="100" Canvas.Top="100" Source="{Binding Path=Tag}"></Image>
+     <Image Name="id911" 
+            Width="225" 
+       Height="230" 
+       Canvas.Left="100" 
+       Canvas.Top="100" 
+       Source="{DynamicResource hover_my music.png}">
+     </Image>
     
     <Button Name="launch0"
             Canvas.Left="100"

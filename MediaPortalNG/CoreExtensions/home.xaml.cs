@@ -33,9 +33,9 @@ namespace MediaPortal
         {
             _skinMediaPath = System.IO.Directory.GetCurrentDirectory() + @"\BlueTwo\Media\";
             // set image
-            id0.Source = new BitmapImage(new Uri(_skinMediaPath + @"hover_musicvideo.png"));
-            id0.Width = 225;
-            id0.Height = 230;
+            //id0.Source = new BitmapImage(new Uri(_skinMediaPath + @"hover_musicvideo.png"));
+            //id0.Width = 225;
+            //id0.Height = 230;
             DoubleAnimation anim = new DoubleAnimation(1.0f, new Duration(new TimeSpan(0, 0, 0,0,500)));
            this.BeginAnimation(Page.OpacityProperty, anim);
         }
@@ -44,12 +44,11 @@ namespace MediaPortal
         {
             DoubleAnimation anim = new DoubleAnimation(225, 0, new Duration(new TimeSpan(0, 0, 2)));
             anim.AutoReverse = true;
-            id0.BeginAnimation(Image.WidthProperty,anim);
+            id911.BeginAnimation(Image.WidthProperty,anim);
 
         }
         public void MPNG(object sender, RoutedEventArgs e)
         {
-            id0.Source = new BitmapImage(new Uri(_skinMediaPath + @"preview.png"));
         }
  
     }
