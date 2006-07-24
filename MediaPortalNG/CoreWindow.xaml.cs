@@ -37,7 +37,7 @@ namespace MediaPortal
         void Core_Navigating(object sender, NavigatingCancelEventArgs e)
         {
             object content = e.Content;
-            if (content.GetType() == typeof(MediaPortal.Welcome))
+            if (content.GetType() == typeof(MediaPortal.HomeExtension))
             {
                 // we get here on navigating
             }
@@ -45,7 +45,7 @@ namespace MediaPortal
 
         void Core_Loaded(object sender, RoutedEventArgs e)
         {
-            LoadWelcomeScreen();
+            LoadHome();
         }
 
          public void LoadSkin()
@@ -74,15 +74,7 @@ namespace MediaPortal
            //     }
            // }
            //  sw.Close();
-           //int a = 1;
            
-        }
-
-        public void LoadWelcomeScreen()
-        {
-            Welcome welcome=new Welcome(this.Resources);
-            welcome.InitializeComponent();
-            this.Navigate(welcome);
         }
 
         public void LoadHome()
