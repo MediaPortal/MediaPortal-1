@@ -1292,22 +1292,24 @@ namespace TvPlugin
     public ChannelNavigator()
     {
       // Load all groups
+      _log.Info("ChannelNavigator::ctor()");
       string ipadres = "localhost";
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         ipadres = xmlreader.GetValueAsString("tvservice", "hostname", "");
         if (ipadres == "")
         {
+          _log.Info("Remote control: hostname not specified on mediaportal.xml!");
           xmlreader.SetValue("tvservice", "hostname", "localhost");
           ipadres = "localhost";
           MediaPortal.Profile.Settings.SaveCache();
         }
       }
       RemoteControl.HostName = ipadres;
+      _log.Info("Remote control:master server :{0}",RemoteControl.HostName);
 
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
-      _log.Info("ChannelNavigator::ctor()");
       ReLoad();
     }
     public void ReLoad()

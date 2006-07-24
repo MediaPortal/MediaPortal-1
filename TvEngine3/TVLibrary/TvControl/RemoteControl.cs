@@ -36,6 +36,7 @@ namespace TvControl
         {
           if (_tvControl != null) return _tvControl;
           _tvControl = (IController)Activator.GetObject(typeof(IController), String.Format("tcp://{0}:31456/TvControl", _hostName));
+          int card=_tvControl.Cards;
           return _tvControl;
         }
         catch (Exception)
