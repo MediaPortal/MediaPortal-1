@@ -65,6 +65,7 @@ namespace TvControl
       get
       {
         if (_cardId < 0) return CardType.Analog;
+        RemoteControl.HostName = _server;
         return RemoteControl.Instance.Type(_cardId);
       }
     }
@@ -79,6 +80,7 @@ namespace TvControl
       get
       {
         if (_cardId < 0) return "";
+        RemoteControl.HostName = _server;
         return RemoteControl.Instance.CardName(_cardId);
       }
     }
@@ -93,6 +95,7 @@ namespace TvControl
       get
       {
         if (_cardId < 0) return "";
+        RemoteControl.HostName = _server;
         return RemoteControl.Instance.CardDevice(_cardId);
       }
     }
@@ -108,6 +111,7 @@ namespace TvControl
       get
       {
         if (_cardId < 0) return "";
+        RemoteControl.HostName = _server;
         return RemoteControl.Instance.FileName(_cardId);
       }
     }
@@ -122,11 +126,13 @@ namespace TvControl
       get
       {
         if (_cardId < 0) return null;
+        RemoteControl.HostName = _server;
         return RemoteControl.Instance.GetCurrentAudioStream(_cardId);
       }
       set
       {
-        if (_cardId < 0) return ;
+        if (_cardId < 0) return;
+        RemoteControl.HostName = _server;
         RemoteControl.Instance.SetCurrentAudioStream(_cardId, value);
       }
     }
@@ -136,6 +142,7 @@ namespace TvControl
       get
       {
         if (_cardId < 0) return null;
+        RemoteControl.HostName = _server;
         return RemoteControl.Instance.AvailableAudioStreams(_cardId);
       }
     }
@@ -150,6 +157,7 @@ namespace TvControl
       get
       {
         if (_cardId < 0) return -1;
+        RemoteControl.HostName = _server;
         return RemoteControl.Instance.GetRecordingSchedule(_cardId);
       }
     }
@@ -165,6 +173,7 @@ namespace TvControl
       get
       {
         if (_cardId < 0) return "";
+        RemoteControl.HostName = _server;
         return RemoteControl.Instance.GetStreamingUrl(_cardId);
       }
     }
@@ -180,11 +189,13 @@ namespace TvControl
       get
       {
         if (_cardId < 0) return false;
+        RemoteControl.HostName = _server;
         return RemoteControl.Instance.IsGrabbingTeletext(_cardId);
       }
       set
       {
-        if (_cardId < 0) return ;
+        if (_cardId < 0) return;
+        RemoteControl.HostName = _server;
         RemoteControl.Instance.GrabTeletext(_cardId, value);
       }
     }
@@ -199,6 +210,7 @@ namespace TvControl
       get
       {
         if (_cardId < 0) return false;
+        RemoteControl.HostName = _server;
         return RemoteControl.Instance.HasTeletext(_cardId);
       }
     }
@@ -213,6 +225,7 @@ namespace TvControl
       get
       {
         if (_cardId < 0) return false;
+        RemoteControl.HostName = _server;
         return RemoteControl.Instance.IsGrabbingEpg(_cardId);
       }
     }
@@ -227,6 +240,7 @@ namespace TvControl
       get
       {
         if (_cardId < 0) return false;
+        RemoteControl.HostName = _server;
         return RemoteControl.Instance.IsRecording(_cardId);
       }
     }
@@ -241,6 +255,7 @@ namespace TvControl
       get
       {
         if (_cardId < 0) return false;
+        RemoteControl.HostName = _server;
         return RemoteControl.Instance.IsScanning(_cardId);
       }
     }
@@ -255,6 +270,7 @@ namespace TvControl
       get
       {
         if (_cardId < 0) return false;
+        RemoteControl.HostName = _server;
         return RemoteControl.Instance.IsScrambled(_cardId);
       }
     }
@@ -269,6 +285,7 @@ namespace TvControl
       get
       {
         if (_cardId < 0) return false;
+        RemoteControl.HostName = _server;
         return RemoteControl.Instance.IsTimeShifting(_cardId);
       }
     }
@@ -283,6 +300,7 @@ namespace TvControl
       get
       {
         if (_cardId < 0) return 0;
+        RemoteControl.HostName = _server;
         return RemoteControl.Instance.MinChannel(_cardId);
       }
     }
@@ -297,6 +315,7 @@ namespace TvControl
       get
       {
         if (_cardId < 0) return 0;
+        RemoteControl.HostName = _server;
         return RemoteControl.Instance.MaxChannel(_cardId);
       }
     }
@@ -310,6 +329,7 @@ namespace TvControl
       get
       {
         if (_cardId < 0) return "";
+        RemoteControl.HostName = _server;
         return RemoteControl.Instance.TimeShiftFileName(_cardId);
       }
     }
@@ -324,6 +344,7 @@ namespace TvControl
       get
       {
         if (_cardId < 0) return DateTime.MinValue;
+        RemoteControl.HostName = _server;
         return RemoteControl.Instance.TimeShiftStarted(_cardId);
       }
     }
@@ -338,6 +359,7 @@ namespace TvControl
       get
       {
         if (_cardId < 0) return DateTime.MinValue;
+        RemoteControl.HostName = _server;
         return RemoteControl.Instance.RecordingStarted(_cardId);
       }
     }
@@ -352,6 +374,7 @@ namespace TvControl
       get
       {
         if (_cardId < 0) return false;
+        RemoteControl.HostName = _server;
         return RemoteControl.Instance.TunerLocked(_cardId);
       }
     }
@@ -366,6 +389,7 @@ namespace TvControl
       get
       {
         if (_cardId < 0) return "";
+        RemoteControl.HostName = _server;
         return RemoteControl.Instance.CurrentChannelName(_cardId);
       }
     }
@@ -381,6 +405,7 @@ namespace TvControl
       get
       {
         if (_cardId < 0) return null;
+        RemoteControl.HostName = _server;
         return RemoteControl.Instance.CurrentChannel(_cardId);
       }
     }
@@ -395,6 +420,7 @@ namespace TvControl
       get
       {
         if (_cardId < 0) return 0;
+        RemoteControl.HostName = _server;
         return RemoteControl.Instance.SignalLevel(_cardId);
       }
     }
@@ -409,6 +435,7 @@ namespace TvControl
       get
       {
         if (_cardId < 0) return 0;
+        RemoteControl.HostName = _server;
         return RemoteControl.Instance.SignalQuality(_cardId);
       }
     }
@@ -424,6 +451,7 @@ namespace TvControl
     public byte[] GetTeletextPage(int pageNumber, int subPageNumber)
     {
       if (_cardId < 0) return new byte[] { 1 };
+      RemoteControl.HostName = _server;
       return RemoteControl.Instance.GetTeletextPage(_cardId, pageNumber, subPageNumber);
     }
 
@@ -433,7 +461,8 @@ namespace TvControl
     /// <returns></returns>
     public void GrabEpg()
     {
-      if (_cardId < 0) return ;
+      if (_cardId < 0) return;
+      RemoteControl.HostName = _server;
       RemoteControl.Instance.GrabEpg(_cardId);
     }
 
@@ -444,6 +473,7 @@ namespace TvControl
     public IChannel[] Scan(IChannel channel)
     {
       if (_cardId < 0) return null;
+      RemoteControl.HostName = _server;
       return RemoteControl.Instance.Scan(_cardId, channel);
     }
 
@@ -454,6 +484,7 @@ namespace TvControl
     public void StopTimeShifting()
     {
       if (_cardId < 0) return;
+      RemoteControl.HostName = _server;
       RemoteControl.Instance.StopTimeShifting(_cardId);
     }
 
@@ -464,6 +495,7 @@ namespace TvControl
     public void StopRecording()
     {
       if (_cardId < 0) return;
+      RemoteControl.HostName = _server;
       RemoteControl.Instance.StopRecording(_cardId);
     }
     /// <summary>
@@ -475,6 +507,7 @@ namespace TvControl
     public bool StartRecording(string fileName, bool contentRecording, long startTime)
     {
       if (_cardId < 0) return false;
+      RemoteControl.HostName = _server;
       return RemoteControl.Instance.StartRecording(_cardId, fileName, contentRecording, startTime);
     }
 
@@ -486,6 +519,7 @@ namespace TvControl
     public int SubPageCount(int pageNumber)
     {
       if (_cardId < 0) return -1;
+      RemoteControl.HostName = _server;
       return RemoteControl.Instance.SubPageCount(_cardId, pageNumber);
     }
 
@@ -496,7 +530,8 @@ namespace TvControl
     /// <returns>timespan containing the rotation time</returns>
     public TimeSpan TeletextRotation(int pageNumber)
     {
-      if (_cardId < 0) return new TimeSpan(0,0,0,15);
+      if (_cardId < 0) return new TimeSpan(0, 0, 0, 15);
+      RemoteControl.HostName = _server;
       return RemoteControl.Instance.TeletextRotation(_cardId, pageNumber);
     }
     #endregion
