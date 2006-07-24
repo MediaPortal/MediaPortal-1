@@ -103,6 +103,7 @@ namespace MediaPortal.GUI.TV
     static System.IO.FileSystemWatcher _tvGuideFileWatcher = null;
     bool _needUpdate = false;
     bool _autoTurnOnTv = false;
+    bool _disableXMLTVImportOption = false;
     DateTime m_dtStartTime = DateTime.Now;
     bool _useColorsForGenres = false;
     ArrayList _colorList = new ArrayList();
@@ -172,6 +173,7 @@ namespace MediaPortal.GUI.TV
         _cursorX = xmlreader.GetValueAsInt("tvguide", "ypos", 0);
         _channelOffset = xmlreader.GetValueAsInt("tvguide", "yoffset", 0);
         _autoTurnOnTv = xmlreader.GetValueAsBool("mytv", "autoturnontv", false);
+        _disableXMLTVImportOption = xmlreader.GetValueAsBool("plugins", "TV Movie Clickfinder", false);
       }
     }
 
@@ -2222,7 +2224,8 @@ namespace MediaPortal.GUI.TV
         {
           dlg.AddLocalizedString(264);// Record
         }
-        dlg.AddLocalizedString(937);// Reload tvguide
+        if (! _disableXMLTVImportOption)
+          dlg.AddLocalizedString(937);// Reload tvguide
         dlg.AddLocalizedString(971);// Group
 
         dlg.DoModal(GetID);
@@ -2292,6 +2295,7 @@ namespace MediaPortal.GUI.TV
       Update(true);
       SetFocus();
     }
+
     void ShowProgramInfo()
     {
       if (_currentProgram == null) return;
