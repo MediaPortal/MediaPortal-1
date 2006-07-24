@@ -2315,16 +2315,28 @@ namespace MediaPortal.Configuration.Sections
 
       int itemCount = listViewTvChannels.Items.Count;
       int deletedChans = 0;
+      int loopedNTimes = 0;
+      bool containsScrambledChannels = true;
 
       _log.Info("Scanning {0} channels for scrambled status", Convert.ToString(itemCount));
-      for (int index = 0; index < itemCount; index++)
-        if (((TelevisionChannel)listViewTvChannels.Items[index].Tag).Scrambled) // channel is scrambled
-        {
-          _log.Info("Deleting scrambled channel: {0}", ( (TelevisionChannel)listViewTvChannels.Items[index].Tag ).Name);
-          listViewTvChannels.Items.RemoveAt(index);
-          itemCount -= 1;
-          deletedChans += 1;
-        }
+
+      while (containsScrambledChannels)
+      {
+        loopedNTimes += 1;        
+        for (int index = 0; index < itemCount; index++)
+          if (((TelevisionChannel)listViewTvChannels.Items[index].Tag).Scrambled) // channel is scrambled
+          {
+            _log.Info("Deleting scrambled channel: {0}", ((TelevisionChannel)listViewTvChannels.Items[index].Tag).Name);
+            listViewTvChannels.Items.RemoveAt(index);
+            itemCount -= 1;
+            deletedChans += 1;
+          }
+        containsScrambledChannels = false;
+        _log.Info("Looped list {0} time(s) to delete all scrambled channels", Convert.ToString(loopedNTimes));
+        for (int index = 0; index < listViewTvChannels.Items.Count; index++)
+          if (((TelevisionChannel)listViewTvChannels.Items[index].Tag).Scrambled)
+            containsScrambledChannels = true;
+      }
 
       SaveSettings();
       _log.Info("Deleted {0} scrambled channels", Convert.ToString(deletedChans));
