@@ -31,7 +31,16 @@ namespace MediaPortal
             this.Background = Brushes.Black;
             this.Title = "MediaPortalNG";
             this.Show();
+            this.Navigating += new NavigatingCancelEventHandler(Core_Navigating);
+        }
 
+        void Core_Navigating(object sender, NavigatingCancelEventArgs e)
+        {
+            object content = e.Content;
+            if (content.GetType() == typeof(MediaPortal.Welcome))
+            {
+                // we get here on navigating
+            }
         }
 
         void Core_Loaded(object sender, RoutedEventArgs e)
@@ -42,13 +51,30 @@ namespace MediaPortal
          public void LoadSkin()
         {
             string path = Directory.GetCurrentDirectory();
-            string pathMedia = path + @"\BlueTwo\Media\";
-            string pathSkin = path + @"\BlueTwo\skin.xaml";
-             // load the skin defs
+            string pathSkinElements = path + @"\BlueTwo\skinElements.xaml";
+            string pathSkinImages = path + @"\BlueTwo\skinImages.xaml";
+            // load the skin defs
             ResourceDictionary dict = new ResourceDictionary();
-            dict.Source = new System.Uri(pathSkin);
+            // load elements resources
+             dict.Source = new System.Uri(pathSkinElements);
             this.Resources.MergedDictionaries.Add(dict);
-
+             // load image resources
+            dict = new ResourceDictionary(); 
+            dict.Source = new System.Uri(pathSkinImages);
+            this.Resources.MergedDictionaries.Add(dict);
+            // FileInfo fi;
+           // StreamWriter sw=File.CreateText("E:\\skinMedia.xaml");
+           // DirectoryInfo di = new DirectoryInfo(pathMedia);
+           // if (di.Exists)
+           // {
+           //     FileInfo[] fis=di.GetFiles("*.*");
+           //     foreach (FileInfo f in fis)
+           //     {
+           //         sw.WriteLine("<BitmapImage x:Key=" + ((char)34) + f.Name + ((char)34) + " UriSource=" + ((char)34) + "Media\\" +  f.Name + ((char)34) + "/>");
+           //     }
+           // }
+           //  sw.Close();
+           //int a = 1;
            
         }
 
