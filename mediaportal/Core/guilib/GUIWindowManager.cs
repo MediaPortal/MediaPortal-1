@@ -1149,7 +1149,9 @@ namespace MediaPortal.GUI.Library
                 if (((ISetupForm)PluginManager.SetupForms[x]).GetWindowId() == windowId)
                 {
                   _log.Info("WindowManager::setup...");
-                  PluginManager.SetupForms[x] = frm;
+                  PluginManager.SetupForms.RemoveAt(x);
+                  break;
+                  //PluginManager.SetupForms[x] = frm;
                 }
               }
             }
