@@ -114,6 +114,7 @@ namespace TestApp
     protected IPin _pinAudio;
     IMediaControl _mediaCtrl;
     protected IVideoWindow _videoWin = null;
+    bool _paused = false;
     public bool Play(string fileName, Form form)
     {
       fileName += ".tsbuffer";
@@ -274,6 +275,46 @@ namespace TestApp
     {
       _videoWin.put_Visible(OABool.False);
       _mediaCtrl.Stop();
+
+      if (_pinAudio != null)
+      {
+        Marshal.ReleaseComObject(_pinAudio); _pinAudio = null;
+      }
+      if (_pinVideo != null)
+      {
+        Marshal.ReleaseComObject(_pinVideo); _pinVideo = null;
+      }
+      if (_mpegDemux != null)
+      {
+        Marshal.ReleaseComObject(_mpegDemux); _mpegDemux = null;
+      }
+      if (_tsFileSource != null)
+      {
+        Marshal.ReleaseComObject(_tsFileSource); _tsFileSource = null;
+      }
+      if (_rotEntry != null)
+      {
+        _rotEntry.Dispose(); _rotEntry = null;
+      }
+
+      if (_graphBuilder != null)
+      {
+        Marshal.ReleaseComObject(_graphBuilder); _graphBuilder = null;
+      }
+    }
+
+    public bool Paused
+    {
+      get
+      {
+        return _paused;
+      }
+      set
+      {
+        _paused = value;
+        if (_paused) _mediaCtrl.Pause();
+        else _mediaCtrl.Run();
+      }
     }
     AMMediaType GetAudioMpg2Media()
     {
