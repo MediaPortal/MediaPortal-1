@@ -31,5 +31,15 @@
             Click="MPNG">
       MediaPortal
     </Button>
+
+	  <CheckBox Name="launch2"
+		Canvas.Left="100"
+		Canvas.Top="110" 
+		Height="40"
+		Width="225"
+		Style="{StaticResource GUIToggleButton}" 
+		Click="MPNG">
+		  MediaPortal
+	  </CheckBox>
   </Canvas>
 </Page>
