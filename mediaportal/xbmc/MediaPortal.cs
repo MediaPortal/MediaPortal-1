@@ -2797,6 +2797,9 @@ public class MediaPortalApp : D3DApp, IRender
     _log.Info("Main: Init players");
     g_Player.Init();
 
+    //hoppy on IRC - needed for firedtv remote
+    GUIGraphicsContext.ActiveForm = Handle;
+
     // Initialize Input Devices
     InputDevices.Init();
 
