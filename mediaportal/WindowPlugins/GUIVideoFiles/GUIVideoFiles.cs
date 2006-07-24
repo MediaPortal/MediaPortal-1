@@ -1130,8 +1130,7 @@ namespace MediaPortal.GUI.Video
           // autoplay to play the DVD without user intervention
           if (System.IO.File.Exists(strDir + @"\VIDEO_TS\VIDEO_TS.IFO"))
           {
-            strFile = strDir + @"\VIDEO_TS\VIDEO_TS.IFO";
-            strMovie =  MediaPortal.Util.Utils.GetDriveName(strFile);
+            strMovie =  MediaPortal.Util.Utils.GetDriveName(strDir);
           }
         }
       }
@@ -1159,6 +1158,10 @@ namespace MediaPortal.GUI.Video
       // Use DVD label as movie name
       if ( MediaPortal.Util.Utils.IsDVD(pItem.Path) && (pItem.DVDLabel != String.Empty))
       {
+        if (System.IO.File.Exists(pItem.Path + @"\VIDEO_TS\VIDEO_TS.IFO"))
+        {
+          strFile = pItem.Path + @"\VIDEO_TS\VIDEO_TS.IFO";
+        }
         strMovie = pItem.DVDLabel;
       }
       IMDBMovie movieDetails = new IMDBMovie();
