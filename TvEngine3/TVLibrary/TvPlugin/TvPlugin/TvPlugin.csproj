@@ -28,17 +28,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Core, Version=1.0.2369.23518, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="Core, Version=1.0.2396.11941, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>References\Core.dll</HintPath>
+      <HintPath>..\..\..\..\mediaportal\xbmc\bin\Release\Core.dll</HintPath>
     </Reference>
-    <Reference Include="Databases, Version=1.0.2389.33544, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="Databases, Version=1.0.2396.11943, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>References\Databases.dll</HintPath>
+      <HintPath>..\..\..\..\mediaportal\xbmc\bin\Release\Databases.dll</HintPath>
     </Reference>
     <Reference Include="Dialogs, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>References\Dialogs.dll</HintPath>
+      <HintPath>..\..\..\..\mediaportal\xbmc\bin\Release\plugins\windows\Dialogs.dll</HintPath>
     </Reference>
     <Reference Include="IdeaBlade.Persistence, Version=3.1.4.4, Culture=neutral, PublicKeyToken=287b5094865421c0, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -71,7 +71,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="Utils, Version=1.0.2378.12136, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>References\Utils.dll</HintPath>
+      <HintPath>..\..\..\..\mediaportal\xbmc\bin\Release\Utils.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

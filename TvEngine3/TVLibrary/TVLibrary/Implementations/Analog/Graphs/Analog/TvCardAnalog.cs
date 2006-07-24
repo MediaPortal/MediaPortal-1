@@ -206,11 +206,13 @@ namespace TvLibrary.Implementations.Analog
         {
           if (analogChannel.IsRadio)
           {
+            Log.Log.WriteFile("analog:  set to FM radio");
             tvTuner.put_Mode(AMTunerModeType.FMRadio);
             _pinVideo.Disconnect();
           }
           else
           {
+            Log.Log.WriteFile("analog:  set to TV");
             FilterGraphTools.ConnectPin(_graphBuilder, _pinVideo, _filterMpegMuxer, 0);
             tvTuner.put_Mode(AMTunerModeType.TV);
           }
@@ -233,10 +235,12 @@ namespace TvLibrary.Implementations.Analog
       {
         if (channel.IsRadio)
         {
+          Log.Log.WriteFile("analog:  set to FM radio");
           tvTuner.put_Mode(AMTunerModeType.FMRadio);
         }
         else
         {
+          Log.Log.WriteFile("analog:  set to TV");
           tvTuner.put_Mode(AMTunerModeType.TV);
         }
         tvTuner.put_TuningSpace(analogChannel.Country.Id);
@@ -250,14 +254,16 @@ namespace TvLibrary.Implementations.Analog
         _teletextDecoder.ClearBuffer();
         _teletextDecoder.ClearTeletextChannelName();
       }
-      int frequency;
-      tvTuner.get_VideoFrequency(out frequency);
+      int videoFrequency;
+      int audioFrequency;
+      tvTuner.get_VideoFrequency(out videoFrequency);
+      tvTuner.get_AudioFrequency(out audioFrequency);
       _lastSignalUpdate = DateTime.MinValue;
       _tunerLocked = false;
       _currentChannel = analogChannel;
       if (_graphState == GraphState.Idle)
         _graphState = GraphState.Created;
-      Log.Log.WriteFile("Analog: Tuned to {0} Hz locked:{1}", frequency, IsTunerLocked);
+      Log.Log.WriteFile("Analog: Tuned to video:{0} Hz audio:{1} Hz locked:{1}", videoFrequency, audioFrequency, IsTunerLocked);
       _lastSignalUpdate = DateTime.MinValue;
       _previousChannel = analogChannel;
       return true;
