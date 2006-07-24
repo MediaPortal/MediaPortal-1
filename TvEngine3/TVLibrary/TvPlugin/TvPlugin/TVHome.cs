@@ -30,6 +30,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.Windows.Forms;
+using System.Net;
+using System.Net.Sockets;
 using AMS.Profile;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
@@ -62,7 +64,7 @@ namespace TvPlugin
 
     };
 
-    static ChannelNavigator m_navigator = new ChannelNavigator();
+    static ChannelNavigator m_navigator;
     static TVUtil _util;
     static VirtualCard _card = null;
     DateTime _updateTimer = DateTime.Now;
@@ -97,6 +99,14 @@ namespace TvPlugin
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
       _log.Info("TVHome:ctor");
+      try
+      {
+        m_navigator = new ChannelNavigator();
+      }
+      catch (Exception ex)
+      {
+        _log.Error(ex);
+      }
       GetID = (int)GUIWindow.Window.WINDOW_TV;
       Application.ApplicationExit += new EventHandler(Application_ApplicationExit);
     }
@@ -1292,15 +1302,18 @@ namespace TvPlugin
     public ChannelNavigator()
     {
       // Load all groups
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
       _log.Info("ChannelNavigator::ctor()");
-      string ipadres = "localhost";
+      string ipadres = Dns.GetHostName();
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         ipadres = xmlreader.GetValueAsString("tvservice", "hostname", "");
         if (ipadres == "")
         {
+          ipadres = Dns.GetHostName();
           _log.Info("Remote control: hostname not specified on mediaportal.xml!");
-          xmlreader.SetValue("tvservice", "hostname", "localhost");
+          xmlreader.SetValue("tvservice", "hostname", ipadres);
           ipadres = "localhost";
           MediaPortal.Profile.Settings.SaveCache();
         }
@@ -1308,8 +1321,6 @@ namespace TvPlugin
       RemoteControl.HostName = ipadres;
       _log.Info("Remote control:master server :{0}",RemoteControl.HostName);
 
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
       ReLoad();
     }
     public void ReLoad()
