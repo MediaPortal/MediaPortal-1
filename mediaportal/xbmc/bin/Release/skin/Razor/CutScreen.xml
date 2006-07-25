@@ -114,7 +114,7 @@
 		   	<onup>24</onup>
 		   	<ondown>24</ondown>
 			<font>font10</font>
-		   	<label></label>
+		   	<label>#currentplaytime</label>
 	   	</control>
 	   	<control>
 		   	<type>button</type>
@@ -301,5 +301,35 @@
 		   	<action>18</action>
 		   	<textureFocus>video_window_focus.png</textureFocus>
 	   	</control>
+		<control>
+        <type>label</type>
+        <id>102</id>
+        <posX>300</posX>
+        <posY>500</posY>
+      </control>
+      <control>
+        <type>statusbar</type>
+        <id>103</id>
+        <posX>300</posX>
+        <posY>520</posY>
+        <width>350</width>
+        <height>20</height>
+        <texturebg>statusbar_back.png</texturebg>
+        <midtexture>statusbar_mid.png</midtexture>
+        <lefttexture>statusbar_left.png</lefttexture>
+        <righttexture>statusbar_right.png</righttexture>
+      </control>
+      <control>
+        <type>progress</type>
+        <id>104</id>
+        <posX>100</posX>
+        <posY>730</posY>
+        <width>250</width>
+        <height>10</height>
+        <texturebg>progress_back.png</texturebg>
+        <midtexture>progress_mid.png</midtexture>
+        <lefttexture>statusbar_left.png</lefttexture>
+        <righttexture>statusbar_right.png</righttexture>
+      </control>
    	</controls>
 </window>
