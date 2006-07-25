@@ -298,6 +298,27 @@ namespace MediaPortal.Music.Database
         _DateTimePlayed.ToString("s");
     }
 
+    // Can throw Int32.Parse and DateTime.Parse exceptions
+    public static Song ParseFromLine(string cacheLine)
+    {
+      string[] arr = cacheLine.Split('\t');
+      if (arr.Length == 6)
+      {
+        Song song = new Song();
+        song.Artist = arr[0];
+        song.Title = arr[1];
+        song.Album = arr[2];
+        song.MusicBrainzID = arr[3];
+        song.Duration = Int32.Parse(arr[4]);
+        song.DateTimePlayed = DateTime.Parse(arr[5]);
+        return song;
+      }
+      else
+      {
+        throw new Exception("Bad song format: " + cacheLine);
+      }
+    }
+
     public string GetPostData(int index)
     {
       // Generate POST data for updates:

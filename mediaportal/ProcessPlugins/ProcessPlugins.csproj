@@ -233,6 +233,9 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="AudioScrobbler\AudioscrobblerPlugin.cs" />
+    <Compile Include="AudioScrobbler\AudioscrobblerBase.cs" />
+    <Compile Include="AudioScrobbler\CryptoConvert.cs" />
     <Compile Include="CallerId\ISDN\CallerIdISDN.cs">
       <SubType>Code</SubType>
     </Compile>
