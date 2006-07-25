@@ -19,37 +19,44 @@
  *
  */
 using System;
+using System.Text;
 
 namespace MediaPortal.Music.Database
 {
-	/// <summary>
-	/// 
-	/// </summary>
+  /// <summary>
+  /// 
+  /// </summary>
   [Serializable()]
-	public class Song
-	{
 
+  public enum SongStatus { Init, Loaded, Cached, Submitted }
 
-    string m_strFileName="";
-    string m_strTitle="";
-    string m_strArtist="";
-    string m_strAlbum="";
-    string m_strGenre="";
-    int m_iTrack=0;
-    int m_iDuration=0;
-    int m_iYear=0;
-    int m_iTimedPlayed=0;
-		int m_irating=0;
-		int idGenre=-1;
-		int idAlbum=-1;
-		int idArtist=-1;
-		int Id=-1;
-		bool favorite=false;
-      string m_strDateModified = "";
+  public class Song
+  {
+    string m_strFileName = "";
+    string m_strTitle = "";
+    string m_strArtist = "";
+    string m_strAlbum = "";
+    string m_strGenre = "";
+    int m_iTrack = 0;
+    int m_iDuration = 0;
+    int m_iYear = 0;
+    int m_iTimedPlayed = 0;
+    int m_irating = 0;
+    int idGenre = -1;
+    int idAlbum = -1;
+    int idArtist = -1;
+    int Id = -1;
+    bool favorite = false;
+    string m_strDateModified = "";
+    DateTime _DateTimePlayed;
+    SongStatus _audioScrobblerStatus;
+    bool _audioScrobblerProcessed;
+    string _musicBrainzID;
 
     public Song()
-		{
-		}
+    {
+    }
+
     public Song Clone()
     {
       Song newsong = new Song();
@@ -62,153 +69,270 @@ namespace MediaPortal.Music.Database
       newsong.Title = Title;
       newsong.Track = Track;
       newsong.Year = Year;
-			newsong.Rating=Rating;
-			newsong.idGenre=idGenre;
-			newsong.idAlbum=idAlbum;
-			newsong.idArtist=idArtist;
-			newsong.Id=Id;
-			newsong.favorite=Favorite;
-            newsong.DateModified = DateModified;
+      newsong.Rating = Rating;
+      newsong.idGenre = idGenre;
+      newsong.idAlbum = idAlbum;
+      newsong.idArtist = idArtist;
+      newsong.Id = Id;
+      newsong.favorite = Favorite;
+      newsong.DateModified = DateModified;
+      newsong.DateTimePlayed = DateTimePlayed;
+      newsong.AudioScrobblerStatus = AudioScrobblerStatus;
+      newsong.AudioScrobblerProcessed = AudioScrobblerProcessed;
+      newsong.MusicBrainzID = MusicBrainzID;
+
       return newsong;
     }
 
-    public void Clear() 
-		{
-			favorite=false;
-			idGenre=-1;
-			idAlbum=-1;
-			idArtist=-1;
-			Id=-1;
-      m_strFileName="";
-      m_strTitle="";
-      m_strArtist="";
-      m_strAlbum="";
-      m_strGenre="";
-      m_iTrack=0;
-      m_iDuration=0;
-      m_iYear=0;
-      m_iTimedPlayed=0;
-			m_irating=0;
-            m_strDateModified = "";
+    public void Clear()
+    {
+      favorite = false;
+      idGenre = -1;
+      idAlbum = -1;
+      idArtist = -1;
+      Id = -1;
+      m_strFileName = "";
+      m_strTitle = "";
+      m_strArtist = "";
+      m_strAlbum = "";
+      m_strGenre = "";
+      m_iTrack = 0;
+      m_iDuration = 0;
+      m_iYear = 0;
+      m_iTimedPlayed = 0;
+      m_irating = 0;
+      m_strDateModified = "";
+      _DateTimePlayed = DateTime.MinValue;
+      _audioScrobblerStatus = SongStatus.Init;
+      _audioScrobblerProcessed = false;
+      _musicBrainzID = "";
     }
 
     public string FileName
     {
-      get { return m_strFileName;}
-      set {m_strFileName=value;}
+      get { return m_strFileName; }
+      set { m_strFileName = value; }
     }
+
     public string Title
     {
-      get { return m_strTitle;}
-      set {m_strTitle=value;}
+      get { return m_strTitle; }
+      set { m_strTitle = value; }
     }
+
     public string Artist
     {
-      get { return m_strArtist;}
-      set {
-				m_strArtist=value;
-				//remove 01. artist name
-				if (m_strArtist.Length>4)
-				{
-					if (Char.IsDigit(m_strArtist[0]) &&
-						Char.IsDigit(m_strArtist[1]) &&
-						m_strArtist[2]=='.' &&
-						m_strArtist[3]==' ')
-					{
-						m_strArtist=m_strArtist.Substring(4);
-					}
-				}
-				//remove artist name [dddd]
-				int pos=m_strArtist.IndexOf("[");
-				if (pos > 0)
-				{
-					m_strArtist=m_strArtist.Substring(pos);
-				}
-				m_strArtist=m_strArtist.Trim();
-			}
+      get { return m_strArtist; }
+      set
+      {
+        m_strArtist = value;
+        //remove 01. artist name
+        if (m_strArtist.Length > 4)
+        {
+          if (Char.IsDigit(m_strArtist[0]) &&
+              Char.IsDigit(m_strArtist[1]) &&
+              m_strArtist[2] == '.' &&
+              m_strArtist[3] == ' ')
+          {
+            m_strArtist = m_strArtist.Substring(4);
+          }
+        }
+        //remove artist name [dddd]
+        int pos = m_strArtist.IndexOf("[");
+        if (pos > 0)
+        {
+          m_strArtist = m_strArtist.Substring(pos);
+        }
+        m_strArtist = m_strArtist.Trim();
+      }
     }
+
     public string Album
     {
-      get { return m_strAlbum;}
-      set {m_strAlbum=value;}
+      get { return m_strAlbum; }
+      set { m_strAlbum = value; }
     }
+
     public string Genre
     {
-      get { return m_strGenre;}
-      set {m_strGenre=value;}
+      get { return m_strGenre; }
+      set { m_strGenre = value; }
     }
+
     public int Track
     {
-      get { return m_iTrack;}
-      set {
-				m_iTrack=value;
-				if (m_iTrack<0) m_iTrack=0;
-			}
+      get { return m_iTrack; }
+      set
+      {
+        m_iTrack = value;
+        if (m_iTrack < 0)
+          m_iTrack = 0;
+      }
     }
+
     public int Duration
     {
-      get { return m_iDuration;}
-      set {
-				m_iDuration=value;
-				if (m_iDuration<0) m_iDuration=0;
-			}
+      get { return m_iDuration; }
+      set
+      {
+        m_iDuration = value;
+        if (m_iDuration < 0)
+          m_iDuration = 0;
+      }
     }
+
     public int Year
     {
-      get { return m_iYear;}
-      set {
-				m_iYear=value;
-				if (m_iYear<0) m_iYear=0;
-				else
-				{
-					if (m_iYear>0 && m_iYear < 100) m_iYear+=1900;
-				}
-			}
+      get { return m_iYear; }
+      set
+      {
+        m_iYear = value;
+        if (m_iYear < 0)
+          m_iYear = 0;
+        else
+        {
+          if (m_iYear > 0 && m_iYear < 100)
+            m_iYear += 1900;
+        }
+      }
     }
+
     public int TimesPlayed
     {
-      get { return m_iTimedPlayed;}
-      set {m_iTimedPlayed=value;}
-	}
-	public int Rating
-	{
-		get { return m_irating;}
-		set {m_irating=value;}
-	}
-	public bool Favorite
-	{
-		get { return favorite;}
-		set {favorite=value;}
-	}
-	public int albumId
-	{
-		get { return idAlbum;}
-		set {idAlbum=value;}
-	}
-	public int genreId
-	{
-		get { return idGenre;}
-		set {idGenre=value;}
-	}
-	public int artistId
-	{
-		get { return idArtist;}
-		set {idArtist=value;}
-	}
-	public int songId
-	{
-		get { return Id;}
-		set {Id=value;}
-	}
-      public string DateModified
+      get { return m_iTimedPlayed; }
+      set { m_iTimedPlayed = value; }
+    }
+
+    public int Rating
+    {
+      get { return m_irating; }
+      set { m_irating = value; }
+    }
+
+    public bool Favorite
+    {
+      get { return favorite; }
+      set { favorite = value; }
+    }
+
+    public int albumId
+    {
+      get { return idAlbum; }
+      set { idAlbum = value; }
+    }
+
+    public int genreId
+    {
+      get { return idGenre; }
+      set { idGenre = value; }
+    }
+
+    public int artistId
+    {
+      get { return idArtist; }
+      set { idArtist = value; }
+    }
+
+    public int songId
+    {
+      get { return Id; }
+      set { Id = value; }
+    }
+
+    public string DateModified
     {
       get { return m_strDateModified; }
       set { m_strDateModified = value; }
     }
+
+    public DateTime DateTimePlayed
+    {
+      get { return _DateTimePlayed; }
+      set { _DateTimePlayed = value; }
+    }
+
+    public SongStatus AudioScrobblerStatus
+    {
+      get { return _audioScrobblerStatus; }
+      set { _audioScrobblerStatus = value; }
+    }
+
+    public bool AudioScrobblerProcessed
+    {
+      get { return _audioScrobblerProcessed; }
+      set { _audioScrobblerProcessed = value; }
+    }
+
+    public string MusicBrainzID
+    {
+      get { return _musicBrainzID; }
+      set { _musicBrainzID = value; }
+    }
+
+
+    public string ToShortString()
+    {
+      StringBuilder s = new StringBuilder();
+
+      if (m_strTitle != "")
+        s.Append(m_strTitle);
+      else
+        s.Append("(Untitled)");
+
+      if (m_strArtist != "")
+        s.Append(" - " + m_strArtist);
+
+      if (m_strAlbum != "")
+        s.Append(" (" + m_strAlbum + ")");
+
+      return s.ToString();
+    }
+
+    public override string ToString()
+    {
+      return m_strArtist + "\t" +
+        m_strTitle + "\t" +
+        m_strAlbum + "\t" +
+        _musicBrainzID + "\t" +
+        m_iDuration + "\t" +
+        _DateTimePlayed.ToString("s");
+    }
+
+    public string GetPostData(int index)
+    {
+      // Generate POST data for updates:
+      //	u - username
+      //	s - md5 response
+      //	a - artist
+      //	t - title
+      //	b - album
+      //	m - musicbrainz id
+      //	l - length (secs)
+      //	i - time (UTC)
+
+      string queueTime = String.Format("{0:0000}-{1:00}-{2:00} {3:00}:{4:00}:{5:00}",
+                                       _DateTimePlayed.Year,
+                                       _DateTimePlayed.Month,
+                                       _DateTimePlayed.Day,
+                                       _DateTimePlayed.Hour,
+                                       _DateTimePlayed.Minute,
+                                       _DateTimePlayed.Second);
+
+      return String.Format("a[{0}]={1}&t[{0}]={2}&b[{0}]={3}&m[{0}]={4}&l[{0}]={5}&i[{0}]={6}",
+                           index,
+                           System.Web.HttpUtility.UrlEncode(m_strArtist),
+                           System.Web.HttpUtility.UrlEncode(m_strTitle),
+                           System.Web.HttpUtility.UrlEncode(m_strAlbum),
+                           System.Web.HttpUtility.UrlEncode(_musicBrainzID),
+                           m_iDuration,
+                           System.Web.HttpUtility.UrlEncode(queueTime));
+    }
   }
-	public class SongMap
-	{
-		public string m_strPath;
-		public Song   m_song;
-	}
+
+
+  public class SongMap
+  {
+    public string m_strPath;
+    public Song m_song;
+  }
 }
