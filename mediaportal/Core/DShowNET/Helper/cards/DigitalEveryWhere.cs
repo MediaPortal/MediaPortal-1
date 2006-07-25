@@ -183,6 +183,11 @@ namespace DShowNET
     bool _isDigitalEverywhere;
     bool _hasCAM;
     bool _isInitialized;
+
+    int _prevDisEqcType = -1;
+    int _prevFrequency = -1;
+    int _prevPolarisation = -1;
+
     #endregion
 
     public DigitalEverywhere(IBaseFilter filter)
@@ -695,6 +700,12 @@ namespace DShowNET
     }
     public void SendDiseqCommand(int disEqcType, int frequency, int switchingFrequency, int polarisation)
     {
+      if (_prevDisEqcType == disEqcType && _prevFrequency == frequency && _prevPolarisation == polarisation)
+      {
+        _log.Info("FireDTV: Skipping DiSEqC command for type={0}, freq={1}, pol={2}", disEqcType, frequency, polarisation);
+        return;
+      }
+
       int antennaNr = 1;
       switch (disEqcType)
       {
@@ -782,6 +793,13 @@ namespace DShowNET
         if (hr != 0)
         {
           _log.Error("FireDTV:SendDiseqCommand() not supported");
+        }
+        else
+        {
+          _prevDisEqcType = disEqcType;
+          _prevFrequency = frequency;
+          _prevPolarisation = polarisation;
+          //System.Threading.Thread.Sleep(250);
         }
       }
       finally
