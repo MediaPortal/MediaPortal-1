@@ -121,6 +121,7 @@ namespace MediaPortal.Player
 
     protected bool _startingUp;
     protected ILog _log;
+    protected bool _isRadio = false;
     #endregion
 
     #region ctor/dtor
@@ -128,6 +129,16 @@ namespace MediaPortal.Player
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+    }
+    public BaseTStreamBufferPlayer(g_Player.MediaType type)
+    {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+      _isRadio = false;
+      if (type == g_Player.MediaType.Radio)
+      {
+        _isRadio = true;
+      }
     }
     #endregion
 
@@ -358,6 +369,7 @@ namespace MediaPortal.Player
     {
       get { return _state == PlayState.Ended; }
     }
+    
 
     public override void Process()
     {
@@ -991,9 +1003,16 @@ namespace MediaPortal.Player
     }
 
 
+    public override bool IsRadio
+    {
+      get
+      {
+        return _isRadio;
+      }
+    }
     public override bool HasVideo
     {
-      get { return true; }
+      get { return (_isRadio==false); }
     }
 
 

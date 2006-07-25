@@ -139,6 +139,10 @@ namespace MediaPortal.Player
     public TStreamBufferPlayer9()
     {
     }
+    public TStreamBufferPlayer9(g_Player.MediaType type)
+      : base(type)
+    {
+    }
 
     protected override void OnInitialized()
     {
@@ -188,9 +192,12 @@ namespace MediaPortal.Player
 
         _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
         #region add vmr9
-        _vmr9 = new VMR9Util();
-        _vmr9.AddVMR9(_graphBuilder);
-        _vmr9.Enable(false);
+        if (_isRadio == false)
+        {
+          _vmr9 = new VMR9Util();
+          _vmr9.AddVMR9(_graphBuilder);
+          _vmr9.Enable(false);
+        }
         #endregion
 
         #region add codecs
@@ -225,8 +232,11 @@ namespace MediaPortal.Player
             GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom14to9;
 
         }
-        if (strVideoCodec.Length > 0)
-          _videoCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strVideoCodec);
+        if (_isRadio == false)
+        {
+          if (strVideoCodec.Length > 0)
+            _videoCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strVideoCodec);
+        }
         if (strAudioCodec.Length > 0)
           _audioCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strAudioCodec);
         //        if (strAudioRenderer.Length > 0)
@@ -248,7 +258,7 @@ namespace MediaPortal.Player
         }
 
         #region set tsfilesource settings
-        
+
         _log.Info("TSStreamBufferPlayer9:initialize tsfilesource");
         try
         {
@@ -336,12 +346,15 @@ namespace MediaPortal.Player
             _log.Error("TSStreamBufferPlayer9 FAILED to create audio output pin on demuxer");
             return false;
           }
-          _log.Info("TSStreamBufferPlayer9:created video output pin");
-          hr = demuxer.CreateOutputPin(GetVideoMpg2Media(), "Video", out _pinVideo);
-          if (hr != 0)
+          if (_isRadio == false)
           {
-            _log.Error("TSStreamBufferPlayer9 FAILED to create video output pin on demuxer");
-            return false;
+            _log.Info("TSStreamBufferPlayer9:created video output pin");
+            hr = demuxer.CreateOutputPin(GetVideoMpg2Media(), "Video", out _pinVideo);
+            if (hr != 0)
+            {
+              _log.Error("TSStreamBufferPlayer9 FAILED to create video output pin on demuxer");
+              return false;
+            }
           }
         }
         #endregion
@@ -415,14 +428,17 @@ namespace MediaPortal.Player
           #endregion
 
           #region map demux pids
-
-          _log.Info("TSStreamBufferPlayer9: map pid 0xe0->video pin");
-          IMPEG2StreamIdMap pStreamId = (IMPEG2StreamIdMap)_pinVideo;
-          hr = pStreamId.MapStreamId(0xe0, MPEG2Program.ElementaryStream, 0, 0);
-          if (hr != 0)
+          IMPEG2StreamIdMap pStreamId;
+          if (_isRadio == false)
           {
-            _log.Error("TSStreamBufferPlayer9: failed to map pid 0xe0->video pin");
-            return false;
+            _log.Info("TSStreamBufferPlayer9: map pid 0xe0->video pin");
+            pStreamId = (IMPEG2StreamIdMap)_pinVideo;
+            hr = pStreamId.MapStreamId(0xe0, MPEG2Program.ElementaryStream, 0, 0);
+            if (hr != 0)
+            {
+              _log.Error("TSStreamBufferPlayer9: failed to map pid 0xe0->video pin");
+              return false;
+            }
           }
           _log.Info("TSStreamBufferPlayer9: map audio 0xc0->audio pin");
           pStreamId = (IMPEG2StreamIdMap)_pinAudio;
@@ -437,18 +453,21 @@ namespace MediaPortal.Player
 
 
           #region render demux audio/video pins
-          _log.Info("TSStreamBufferPlayer9:render video output pin");
+          _log.Info("TSStreamBufferPlayer9:render audio output pin");
           hr = _graphBuilder.Render(_pinAudio);
           if (hr != 0)
           {
             _log.Info("TSStreamBufferPlayer9:failed to render video output pin:{0:X}", hr);
           }
 
-          _log.Info("TSStreamBufferPlayer9:render audio output pin");
-          hr = _graphBuilder.Render(_pinVideo);
-          if (hr != 0)
+          if (_isRadio == false)
           {
-            _log.Info("TSStreamBufferPlayer9:failed to render audio output pin:{0:X}", hr);
+            _log.Info("TSStreamBufferPlayer9:render video output pin");
+            hr = _graphBuilder.Render(_pinVideo);
+            if (hr != 0)
+            {
+              _log.Info("TSStreamBufferPlayer9:failed to render audio output pin:{0:X}", hr);
+            }
           }
           #endregion
 
@@ -477,13 +496,17 @@ namespace MediaPortal.Player
 
         if (autoBuildGraph == false)
         {
-          _log.Info("TSStreamBufferPlayer9: map pid 0xe0->video pin");
-          IMPEG2StreamIdMap pStreamId = (IMPEG2StreamIdMap)_pinVideo;
-          hr = pStreamId.MapStreamId(0xe0, MPEG2Program.ElementaryStream, 0, 0);
-          if (hr != 0)
+          IMPEG2StreamIdMap pStreamId;
+          if (_isRadio == false)
           {
-            _log.Error("TSStreamBufferPlayer9: failed to map pid 0xe0->video pin");
-            return false;
+            _log.Info("TSStreamBufferPlayer9: map pid 0xe0->video pin");
+            pStreamId = (IMPEG2StreamIdMap)_pinVideo;
+            hr = pStreamId.MapStreamId(0xe0, MPEG2Program.ElementaryStream, 0, 0);
+            if (hr != 0)
+            {
+              _log.Error("TSStreamBufferPlayer9: failed to map pid 0xe0->video pin");
+              return false;
+            }
           }
           _log.Info("TSStreamBufferPlayer9: map audio 0xc0->audio pin");
           pStreamId = (IMPEG2StreamIdMap)_pinAudio;
@@ -501,22 +524,25 @@ namespace MediaPortal.Player
 
         //_log.Info("TSStreamBufferPlayer9: set Deinterlace");
 
-        if (!_vmr9.IsVMR9Connected)
+        if (_isRadio == false)
         {
-          while (true)
+          if (!_vmr9.IsVMR9Connected)
           {
-            Application.DoEvents();
-            System.Threading.Thread.Sleep(100);
+            while (true)
+            {
+              Application.DoEvents();
+              System.Threading.Thread.Sleep(100);
+            }
+
+            //_vmr9 is not supported, switch to overlay
+            _log.Info("TSStreamBufferPlayer9: switch to overlay");
+            _mediaCtrl = null;
+            Cleanup();
+            return base.GetInterfaces(filename);
           }
 
-          //_vmr9 is not supported, switch to overlay
-          _log.Info("TSStreamBufferPlayer9: switch to overlay");
-          _mediaCtrl = null;
-          Cleanup();
-          return base.GetInterfaces(filename);
+          _vmr9.SetDeinterlaceMode();
         }
-
-        _vmr9.SetDeinterlaceMode();
         return true;
 
       }
@@ -600,8 +626,7 @@ namespace MediaPortal.Player
         }
         if (_videoCodecFilter != null)
         {
-          while ((hr = Marshal.ReleaseComObject(_videoCodecFilter)) > 0)
-            ;
+          while ((hr = Marshal.ReleaseComObject(_videoCodecFilter)) > 0);
           _videoCodecFilter = null;
         }
         if (_audioCodecFilter != null)

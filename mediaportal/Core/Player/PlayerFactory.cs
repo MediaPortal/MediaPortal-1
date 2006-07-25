@@ -201,5 +201,92 @@ namespace MediaPortal.Player
       return newPlayer;
 
     }
+
+    public IPlayer Create(string fileName, g_Player.MediaType type)
+    {
+      IPlayer newPlayer = null;
+      if (fileName.ToLower().IndexOf("rtsp:") >= 0)
+      {
+        return new RTSPPlayer();
+      }
+      string extension = System.IO.Path.GetExtension(fileName).ToLower();
+      if (extension != ".tv" && extension != ".sbe" && extension != ".dvr-ms"
+              && fileName.ToLower().IndexOf(".tsbuffer") < 0
+              && fileName.ToLower().IndexOf("radio.tsbuffer") < 0)
+      {
+        newPlayer = GetExternalPlayer(fileName);
+        if (newPlayer != null)
+        {
+          if (!GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindow))
+          {
+            _log.Info("PlayerFactory: Disabling DX9 exclusive mode");
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
+            GUIWindowManager.SendMessage(msg);
+          }
+          return newPlayer;
+        }
+      }
+
+      if (MediaPortal.Util.Utils.IsVideo(fileName))
+      {
+        if (extension == ".tv" || extension == ".sbe" || extension == ".dvr-ms")
+        {
+          if (extension == ".sbe" || extension == ".dvr-ms")
+          {
+            //GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TIMESHIFT, 0, 0, 0, 0, 0, null);
+            //GUIWindowManager.SendMessage(msg);
+          }
+
+          newPlayer = new Player.StreamBufferPlayer9();
+          return newPlayer;
+        }
+      }
+      if (extension == ".tsbuffer" || extension == ".ts")
+      {
+        if (fileName.ToLower().IndexOf("radio.tsbuffer") >= 0)
+          return new Player.BaseTStreamBufferPlayer(type);
+
+        newPlayer = new Player.TStreamBufferPlayer9(type);
+        return newPlayer;
+      }
+      if (!MediaPortal.Util.Utils.IsAVStream(fileName) && MediaPortal.Util.Utils.IsVideo(fileName))
+      {
+        newPlayer = new Player.VideoPlayerVMR9();
+        return newPlayer;
+      }
+
+      if (extension == ".radio")
+      {
+        newPlayer = new Player.RadioTuner();
+        return newPlayer;
+      }
+
+      if (MediaPortal.Util.Utils.IsCDDA(fileName))
+      {
+        newPlayer = new Player.AudioPlayerWMP9();
+
+        return newPlayer;
+      }
+
+      if (MediaPortal.Util.Utils.IsAudio(fileName))
+      {
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        {
+          string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "Windows Media Player 9");
+          if (String.Compare(strAudioPlayer, "Windows Media Player 9", true) == 0)
+          {
+            newPlayer = new Player.AudioPlayerWMP9();
+            return newPlayer;
+          }
+          newPlayer = new Player.AudioPlayerVMR7();
+          return newPlayer;
+        }
+      }
+
+
+      newPlayer = new Player.AudioPlayerWMP9();
+      return newPlayer;
+
+    }
   }
 }

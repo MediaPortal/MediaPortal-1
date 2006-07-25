@@ -10,5 +10,9 @@ namespace MediaPortal.Player
     {
       return new DummyPlayer(fileName);
     }
+    public IPlayer Create(string fileName,g_Player.MediaType type)
+    {
+      return new DummyPlayer(fileName);
+    }
   }
 }
