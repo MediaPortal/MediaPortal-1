@@ -2278,24 +2278,36 @@ namespace MediaPortal.TV.Recording
         int lnbswMHZ = 0;
         int cbandMHZ = 0;
         int circularMHZ = 0;
-        int _lnbNumber = 0;
-        if ( ch.DiSEqC == null )
-          _lnbNumber = ch.CurrentLNB;
-        else
-          _lnbNumber = ch.DiSEqC;
+
+        int config, dlnb1, dlnb2, dlnb3, dlnb4;
+        config = dlnb1 = dlnb2 = dlnb3 = dlnb4 = 0;
+
+        // determine which LNB setup is to be used
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename))
+        {
+          dlnb1 = xmlreader.GetValueAsInt("dvbs", "diseqc", 0);
+          dlnb2 = xmlreader.GetValueAsInt("dvbs", "diseqc2", 0);
+          dlnb3 = xmlreader.GetValueAsInt("dvbs", "diseqc3", 0);
+          dlnb4 = xmlreader.GetValueAsInt("dvbs", "diseqc4", 0);
+        }
+        if (ch.DiSEqC == dlnb1)
+          config = 1;
+        else if (ch.DiSEqC == dlnb2)
+          config = 2;
+        else if (ch.DiSEqC == dlnb3)
+          config = 3;
+        else if (ch.DiSEqC == dlnb4)
+          config = 4;
 
         using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename) )
         {
+          // read global LNB settings
           lnb0MHZ = xmlreader.GetValueAsInt("dvbs", "LNB0", 9750);
           lnb1MHZ = xmlreader.GetValueAsInt("dvbs", "LNB1", 10600);
           lnbswMHZ = xmlreader.GetValueAsInt("dvbs", "Switch", 11700);
           cbandMHZ = xmlreader.GetValueAsInt("dvbs", "CBand", 5150);
           circularMHZ = xmlreader.GetValueAsInt("dvbs", "Circular", 10750);
-          // #DM old switch method below was incorrect, it took the DiSEqC tuning value instead of the actual LNB number #
-          //switch (ch.DiSEqC)
-          // #DM we now use the LNB number to determine the DiSEqC tuning values #
-          //int _lnbNumber = ch.CurrentLNB;
-          switch ( _lnbNumber )
+          switch (config)
           {
             case 1:
               // config a
@@ -2327,9 +2339,13 @@ namespace MediaPortal.TV.Recording
               _log.Info("DVBGraph: using profile diseqc 4 LNB:{0} kHz diseqc:{1} lnbKind:{2}", lnbKhz, diseqc, lnbKind);
               //
               break;
+            default:
+              _log.Warn("DVBGraph: unknown DiSEqC config {0}; using defaults: LNB:{1} kHz diseqc:{2} lnbKind:{3}", ch.DiSEqC, lnbKhz, diseqc, lnbKind);
+              break;
           }// switch(disNo)
         }//using(MediaPortal.Profile.Xml xmlreader=new MediaPortal.Profile.Xml(m_cardFilename))
 
+        /*
         switch ( lnbKind )
         {
           case 0: // KU-Band
@@ -2339,33 +2355,26 @@ namespace MediaPortal.TV.Recording
           case 2: // Circular-Band
             break;
         }
-
+         */
 
         // LNB switch frequency
-        ch.LnbSwitchFrequency = lnbswMHZ * 1000;//so 11700000
+        ch.LnbSwitchFrequency = lnbswMHZ * 1000; // so 11700000
 
         if ( ch.Frequency >= lnbswMHZ * 1000 )
         {
-          //set LNB frequency to high band
-          ch.LNBFrequency = lnb1MHZ;//10600
+          // set LNB frequency to high band
+          ch.LNBFrequency = lnb1MHZ; // 10600
         }
         else
         {
-          //set LNB frequency to lo band
-          ch.LNBFrequency = lnb0MHZ;//9750
+          // set LNB frequency to lo band
+          ch.LNBFrequency = lnb0MHZ; // 9750
         }
         lowOsc = lnb0MHZ;
         hiOsc = lnb1MHZ;
-        //#DM We cheat here and force 22KHz if the xml info is not read.
-        if ( lnbKhz == -1 )
-          lnbKhzTone = 22;
-        else
-          lnbKhzTone = lnbKhz;
-        //#DM Checks to see if xml values have been read, if not takes DB values for DiSEqC
-        if ( diseqc == -1 )
-          diseqcUsed = ch.DiSEqC;
-        else
-          diseqcUsed = diseqc;
+        lnbKhzTone = lnbKhz;
+        diseqcUsed = diseqc;
+
         _log.Info("DVBGraph: LNB Settings: freq={0} lnbKHz={1} lnbFreq={2} diseqc={3}", ch.Frequency, ch.LnbSwitchFrequency, ch.LNBFrequency, diseqcUsed);
       }
       catch ( Exception )
@@ -3923,7 +3932,7 @@ namespace MediaPortal.TV.Recording
             if ( newchannel.IsScrambled )
               scrambled = 1;
             RadioDatabase.MapDVBSChannel(newchannel.ID, newchannel.Frequency, newchannel.Symbolrate,
-              newchannel.FEC, newchannel.LnbSwitchFrequency, 0, newchannel.ProgramNumber,
+              newchannel.FEC, newchannel.LnbSwitchFrequency, newchannel.DiSEqC, newchannel.ProgramNumber,
               0, newchannel.ServiceProvider, newchannel.ServiceName,
               0, 0, newchannel.AudioPid, newchannel.VideoPid, newchannel.AC3Pid,
               0, 0, 0, 0, scrambled,
