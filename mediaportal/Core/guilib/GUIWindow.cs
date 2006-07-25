@@ -1294,7 +1294,8 @@ namespace MediaPortal.GUI.Library
         else
         {
           // no control selected
-          LooseFocus();
+          //LooseFocus();
+					control.Focus = false;
         }
       }
     }
