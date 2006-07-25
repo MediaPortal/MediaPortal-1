@@ -1,29 +1,26 @@
 <settings>
   <countries>
-    <country default="N" name="USA" id="us" newURL="http://launch.yahoo.com/musicvideos/lists/new.asp" topURL="http://launch.yahoo.com/musicvideos/lists/top.asp" GenreListURL="http://launch.yahoo.com/musicvideos/" GenreURL="http://launch.yahoo.com/musicvideos/genrehub.asp?genreID=" searchURL="http://search.launch.yahoo.com/launch/search/?m=video&amp;p=">
+    <country name="USA" id="us" newURL="http://launch.yahoo.com/musicvideos/lists/new.asp" topURL="http://launch.yahoo.com/musicvideos/lists/top.asp" GenreListURL="http://launch.yahoo.com/musicvideos/" GenreURL="http://launch.yahoo.com/musicvideos/genrehub.asp?genreID=" searchURL="http://search.launch.yahoo.com/launch/search/?m=video&amp;p=">
     </country>
-    <country default="N" name="UK" id="uk" newURL="http://uk.music.yahoo.com/musicvideos/lists/new.asp" topURL="http://uk.music.yahoo.com/musicvideos/lists/top.asp" GenreListURL="http://uk.music.yahoo.com/musicvideos/" GenreURL="http://uk.music.yahoo.com/musicvideos/genrehub.asp?genreID=" searchURL="http://search.uk.music.yahoo.com/launch/search/?m=video&amp;p=">
+    <country name="UK" id="uk" newURL="http://uk.music.yahoo.com/musicvideos/lists/new.asp" topURL="http://uk.music.yahoo.com/musicvideos/lists/top.asp" GenreListURL="http://uk.music.yahoo.com/musicvideos/" GenreURL="http://uk.music.yahoo.com/musicvideos/genrehub.asp?genreID=" searchURL="http://search.uk.music.yahoo.com/launch/search/?m=video&amp;p=">
     </country>
-    <country default="N" name="Canada" id="ca" newURL="http://ca.music.yahoo.com/musicvideos/lists/new.asp" topURL="http://ca.music.yahoo.com/musicvideos/lists/top.asp" GenreListURL="http://ca.music.yahoo.com/musicvideos/" GenreURL="http://ca.music.yahoo.com/musicvideos/genrehub.asp?genreID=" searchURL="http://search.ca.music.yahoo.com/launch/search/?m=video&amp;p=">
+    <country name="Canada" id="ca" newURL="http://ca.music.yahoo.com/musicvideos/lists/new.asp" topURL="http://ca.music.yahoo.com/musicvideos/lists/top.asp" GenreListURL="http://ca.music.yahoo.com/musicvideos/" GenreURL="http://ca.music.yahoo.com/musicvideos/genrehub.asp?genreID=" searchURL="http://search.ca.music.yahoo.com/launch/search/?m=video&amp;p=">
     </country>
-    <country default="N" name="Australia" id="au" newURL="http://au.music.yahoo.com/musicvideos/lists/new.asp" topURL="http://au.music.yahoo.com/musicvideos/lists/top.asp" GenreListURL="http://au.music.yahoo.com/musicvideos/" GenreURL="http://au.music.yahoo.com/musicvideos/genrehub.asp?genreID=" searchURL="http://search.au.music.yahoo.com/launch/search/?m=video&amp;p=">
+    <country name="Australia" id="au" newURL="http://au.music.yahoo.com/musicvideos/lists/new.asp" topURL="http://au.music.yahoo.com/musicvideos/lists/top.asp" GenreListURL="http://au.music.yahoo.com/musicvideos/" GenreURL="http://au.music.yahoo.com/musicvideos/genrehub.asp?genreID=" searchURL="http://search.au.music.yahoo.com/launch/search/?m=video&amp;p=">
     </country>
-    <country default="Y" name="Germany" id="de" newURL="http://de.music.yahoo.com/musicvideos/lists/new.asp" topURL="http://de.music.yahoo.com/musicvideos/lists/top.asp" GenreListURL="http://de.music.yahoo.com/musicvideos/" GenreURL="http://de.music.yahoo.com/musicvideos/genrehub.asp?genreID=" searchURL="http://search.de.music.yahoo.com/launch/search/?m=video&amp;p=">
+    <country name="Germany" id="de" newURL="http://de.music.yahoo.com/musicvideos/lists/new.asp" topURL="http://de.music.yahoo.com/musicvideos/lists/top.asp" GenreListURL="http://de.music.yahoo.com/musicvideos/" GenreURL="http://de.music.yahoo.com/musicvideos/genrehub.asp?genreID=" searchURL="http://search.de.music.yahoo.com/launch/search/?m=video&amp;p=">
     </country>
-    <country default="N" name="Spain" id="sp" newURL="http://es.music.yahoo.com/musicvideos/lists/new.asp" topURL="http://es.music.yahoo.com/musicvideos/lists/top.asp" GenreListURL="http://es.music.yahoo.com/musicvideos/" GenreURL="http://es.music.yahoo.com/musicvideos/genrehub.asp?genreID=" searchURL="http://search.es.music.yahoo.com/launch/search/?m=video&amp;p=">
+    <country name="Spain" id="sp" newURL="http://es.music.yahoo.com/musicvideos/lists/new.asp" topURL="http://es.music.yahoo.com/musicvideos/lists/top.asp" GenreListURL="http://es.music.yahoo.com/musicvideos/" GenreURL="http://es.music.yahoo.com/musicvideos/genrehub.asp?genreID=" searchURL="http://search.es.music.yahoo.com/launch/search/?m=video&amp;p=">
     </country>
-    <country default="N" name="France" id="fr" newURL="http://fr.music.yahoo.com/musicvideos/lists/new.asp" topURL="http://fr.music.yahoo.com/musicvideos/lists/top.asp" GenreListURL="http://fr.music.yahoo.com/musicvideos/" GenreURL="http://fr.music.yahoo.com/musicvideos/genrehub.asp?genreID=" searchURL="http://search.fr.music.yahoo.com/launch/search/?m=video&amp;p=">
+    <country name="France" id="fr" newURL="http://fr.music.yahoo.com/musicvideos/lists/new.asp" topURL="http://fr.music.yahoo.com/musicvideos/lists/top.asp" GenreListURL="http://fr.music.yahoo.com/musicvideos/" GenreURL="http://fr.music.yahoo.com/musicvideos/genrehub.asp?genreID=" searchURL="http://search.fr.music.yahoo.com/launch/search/?m=video&amp;p=">
     </country>
-    <country default="N" name="Italy" id="it" newURL="http://it.music.yahoo.com/musicvideos/lists/new.asp" topURL="http://it.music.yahoo.com/musicvideos/lists/top.asp" GenreListURL="http://it.music.yahoo.com/musicvideos/" GenreURL="http://it.music.yahoo.com/musicvideos/genrehub.asp?genreID=" searchURL="http://search.it.music.yahoo.com/launch/search/?m=video&amp;p=">
-    </country>
-    <!--
-		<country default="N" name="USA" id="us" topURL="" searchURL = ""></country>
-		-->
+    <country name="Italy" id="it" newURL="http://it.music.yahoo.com/musicvideos/lists/new.asp" topURL="http://it.music.yahoo.com/musicvideos/lists/top.asp" GenreListURL="http://it.music.yahoo.com/musicvideos/" GenreURL="http://it.music.yahoo.com/musicvideos/genrehub.asp?genreID=" searchURL="http://search.it.music.yahoo.com/launch/search/?m=video&amp;p=">
+    </country>    
   </countries>
   <bitrates>
-    <bitrate default="N">56</bitrate>
-    <bitrate default="N">128</bitrate>
-    <bitrate default="N">300</bitrate>
-    <bitrate default="Y">768</bitrate>
+    <bitrate >56</bitrate>
+    <bitrate >128</bitrate>
+    <bitrate >300</bitrate>
+    <bitrate >768</bitrate>
   </bitrates>
 </settings>

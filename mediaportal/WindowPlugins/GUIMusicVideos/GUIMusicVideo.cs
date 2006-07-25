@@ -37,6 +37,8 @@ using MediaPortal.Dialogs;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.MusicVideos.Database;
+using MediaPortal.Utils.Services;
+using System.ComponentModel;
 
 namespace MediaPortal.GUI.MusicVideos
 {
@@ -133,14 +135,22 @@ namespace MediaPortal.GUI.MusicVideos
     //String lsSelectedCountry = "";
     public int CURRENT_STATE = (int)State.HOME;
     int miSelectedIndex = 0;
-    YahooVideo loCurrentPlayingVideo;
+        YahooVideo moCurrentPlayingVideo;
     string msSelectedGenre;
+      protected ILog moLog;
     #endregion
+     
+      public GUIMusicVideos()
+      {
+          ServiceProvider loServices = GlobalServiceProvider.Instance;
+          moLog = loServices.Get<ILog>();          
+      }
+
 
     #region ISetupForm Members
     public bool CanEnable()
     {
-      return false;
+      return true;
     }
 
     public string PluginName()
@@ -195,6 +205,7 @@ namespace MediaPortal.GUI.MusicVideos
     }
     #endregion
 
+
     #region GUIWindow Overrides
 
     public override int GetID
@@ -204,9 +215,8 @@ namespace MediaPortal.GUI.MusicVideos
     }
 
     public override bool Init()
-    {
+    {      
       return Load(GUIGraphicsContext.Skin + @"\mymusicvideos.xml");
-
     }
 
     protected override void OnPageDestroy(int new_windowId)
@@ -217,10 +227,14 @@ namespace MediaPortal.GUI.MusicVideos
 
     public override void OnAction(Action action)
     {
-      Log.Write("action wID = {0}",action.wID);
+        if (action.wID != Action.ActionType.ACTION_MOUSE_MOVE)
+        {
+            moLog.Info("action wID = {0}", action.wID);
+        }
+      
       if (action.wID == Action.ActionType.ACTION_NEXT_ITEM)
       {
-        Log.Write("Next item values: {0},{1},{2},{3}", action.fAmount1, action.fAmount2, action.m_key.KeyCode, action.IsUserAction());
+        moLog.Info("Next item values: {0},{1},{2},{3}", action.fAmount1, action.fAmount2, action.m_key.KeyCode, action.IsUserAction());
         MusicVideoPlaylist.getInstance().PlayNext();
         listSongs.SelectedListItemIndex = MusicVideoPlaylist.getInstance().getPlayListIndex();
       }
@@ -245,12 +259,14 @@ namespace MediaPortal.GUI.MusicVideos
       }
 
       base.OnAction(action);
-    }
-
+    }    
     public override bool OnMessage(GUIMessage message)
     {
-
-      Log.Write("Message = {0}", message.Message);
+        if (GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS_CHANGED != message.Message
+            && GUIMessage.MessageType.GUI_MSG_SETFOCUS != message.Message)
+        {
+            moLog.Info("Message = {0}", message.Message);
+        }
 
       if (GUIMessage.MessageType.GUI_MSG_SETFOCUS == message.Message)
       {
@@ -273,26 +289,41 @@ namespace MediaPortal.GUI.MusicVideos
 
       return base.OnMessage(message);
     }
+        protected override void OnPreviousWindow()
+        {
+            if (g_Player.Playing)
+            {
+                moLog.Info("in OnPreviousWindow and g_player is playing");
+                if (MusicVideoPlaylist.getInstance().isPlaying())
+                {
+                    moCurrentPlayingVideo = MusicVideoPlaylist.getInstance().getCurrentPlayingVideo();
+                }
+
+                GUIPropertyManager.SetProperty("#Play.Current.Title", moCurrentPlayingVideo.artistName + "-" + moCurrentPlayingVideo.songName);
+                //GUIPropertyManager.SetProperty("#Play.Current.File", loVideo.songName);
+            }
+            base.OnPreviousWindow();
+        }
     protected override void OnPageLoad()
     {
       if (moSettings == null)
       {
         moSettings = YahooSettings.getInstance();
       }
-      Log.Write("Image filename = '{0}'", imgCountry.FileName);
+      moLog.Info("Image filename = '{0}'", imgCountry.FileName);
       if (String.IsNullOrEmpty(imgCountry.FileName))
       {
-        Log.Write("Updating country image");
+        moLog.Info("Updating country image");
         YahooUtil loUtil = YahooUtil.getInstance();
         string lsCountryId = loUtil.getYahooSite(moSettings.msDefaultCountryName).countryId;
-        Log.Write("country image -country id = {0}", lsCountryId);
+        moLog.Info("country image -country id = {0}", lsCountryId);
         imgCountry.SetFileName(GUIGraphicsContext.Skin + @"\media\" + lsCountryId + ".png");
       }
 
       if (CURRENT_STATE == (int)State.HOME)
       {
         EnableHomeButtons();
-        moGenre = new YahooGenres();
+        //moGenre = new YahooGenres();
         this.LooseFocus();
         btnTop.Focus = true;
       }
@@ -333,12 +364,30 @@ namespace MediaPortal.GUI.MusicVideos
         //labelSelected.Label = "Press Menu or F9 for more options.";
 
       }
+            if (g_Player.Playing)
+            {
+                if (MusicVideoPlaylist.getInstance().isPlaying())
+                {
+                    moCurrentPlayingVideo = MusicVideoPlaylist.getInstance().getCurrentPlayingVideo();
+                }
+                if (moCurrentPlayingVideo != null)
+                {
+                    GUIPropertyManager.SetProperty("#Play.Current.Title", moCurrentPlayingVideo.artistName + " - " + moCurrentPlayingVideo.songName);
+                }
+            }
 
     }
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
-      Log.Write("GUIMusicVideo: Clicked control = {0}", control);
-      if (control == listSongs)
+      //moLog.Info("GUIMusicVideo: Clicked control = {0}", control);
+        moLog.Info("GUIMusicVideo: Clicked");
+        if (actionType == Action.ActionType.ACTION_QUEUE_ITEM)
+        {
+            moLog.Info("Caught on Queue action for list item {0}",listSongs.SelectedListItemIndex);
+            OnQueueItem();
+            return;
+        }
+        if (control == listSongs)
       {
         miSelectedIndex = listSongs.SelectedListItemIndex;
         if (CURRENT_STATE == (int)State.PLAYLIST)
@@ -388,11 +437,28 @@ namespace MediaPortal.GUI.MusicVideos
       }
       else if (control == btnPlayAll)
       {
+          
+          //BackgroundWorker worker = new BackgroundWorker();          
+          //PlayListLoader loLoader = new PlayListLoader();
+          //worker.DoWork += new DoWorkEventHandler(loLoader.LoadWorker);
+          //worker.RunWorkerAsync(getStateVideoList());
+          //using (WaitCursor cursor = new WaitCursor())
+          //{
+           //   while (loLoader.mbFirstVideoLoaded == false)
+                  //moLog.Info("loLoader.mbFirstVideoLoaded = " + loLoader.mbFirstVideoLoaded);
+                    //moLog.Info("PlayListCount = " + PlayListPlayer.SingletonPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO).Count);
+          //        GUIWindowManager.Process();
+          //}
+          //moLog.Info("PlayListCount = " + PlayListPlayer.SingletonPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO_TEMP).Count);
+          //PlayListPlayer.SingletonPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO_TEMP;
+          //PlayListPlayer.SingletonPlayer.PlayNext();
+          //////////////
         MusicVideoPlaylist.getInstance().AddAllToPlayList(getStateVideoList());
         CURRENT_STATE = (int)State.PLAYLIST;
         MusicVideoPlaylist.getInstance().Play();
         listSongs.SelectedListItemIndex = MusicVideoPlaylist.getInstance().getPlayListIndex();
-        miSelectedIndex = MusicVideoPlaylist.getInstance().getPlayListIndex();
+        miSelectedIndex = MusicVideoPlaylist.getInstance().getPlayListIndex();        
+          //////////////
         //btnPlayAll.Focus = false;
         //this.LooseFocus();
 
@@ -411,7 +477,7 @@ namespace MediaPortal.GUI.MusicVideos
       }
       else if (control == btnPlayListStop)
       {
-        Log.Write("GUIMusicVideo: Playlist Stop button clicked.");
+        moLog.Info("GUIMusicVideo: Playlist Stop button clicked.");
         MusicVideoPlaylist.getInstance().Stop();
       }
       else if (control == btnPlayListNext)
@@ -501,7 +567,7 @@ namespace MediaPortal.GUI.MusicVideos
           dlgSel.SetHeading(GUILocalizeStrings.Get(924)); // Menu 
           dlgSel.DoModal(GetID);
           int liSelectedIdx = dlgSel.SelectedId;
-          Log.Write("you selected action :{0}", liSelectedIdx);
+          moLog.Info("you selected action :{0}", liSelectedIdx);
           switch (liSelectedIdx)
           {
             case 1:
@@ -518,7 +584,7 @@ namespace MediaPortal.GUI.MusicVideos
               {
                 //prompt user for favorite list to add to
                 string lsSelectedFav = promptForFavoriteList();
-                Log.Write("adding to favorites.");
+                moLog.Info("adding to favorites.");
                 if (moFavoriteManager == null)
                 {
                   moFavoriteManager = new YahooFavorites();
@@ -611,7 +677,7 @@ namespace MediaPortal.GUI.MusicVideos
         {
           return "";
         }
-        Log.Write("you selected genre :{0}", dlgSel.SelectedLabelText);
+        moLog.Info("you selected genre :{0}", dlgSel.SelectedLabelText);
         lsSelectedGenre = dlgSel.SelectedLabelText;
       }
       return lsSelectedGenre;
@@ -642,7 +708,7 @@ namespace MediaPortal.GUI.MusicVideos
           {
             return "";
           }
-          Log.Write("you selected favorite :{0}", dlgSel.SelectedLabelText);
+          moLog.Info("you selected favorite :{0}", dlgSel.SelectedLabelText);
           lsSelectedFav = dlgSel.SelectedLabelText;
         }
       }
@@ -673,7 +739,7 @@ namespace MediaPortal.GUI.MusicVideos
         {
           return;
         }
-        Log.Write("you selected country :{0}", dlgSel.SelectedLabelText);
+        moLog.Info("you selected country :{0}", dlgSel.SelectedLabelText);
         moSettings.msDefaultCountryName = dlgSel.SelectedLabelText;
         moTopVideos = new YahooTopVideos(moSettings.msDefaultCountryName);
         RefreshPage();
@@ -685,13 +751,13 @@ namespace MediaPortal.GUI.MusicVideos
       miSelectedIndex = 0;
 
       CURRENT_STATE = (int)State.NEW;
-      Log.Write("button new clicked");
+      moLog.Info("button new clicked");
       if (moNewVideos == null)
       {
         moNewVideos = new YahooNewVideos();
       }
       moNewVideos.loadNewVideos(moSettings.msDefaultCountryName);
-      Log.Write("The new video page has next video ={0}", moNewVideos.hasNext());
+      moLog.Info("The new video page has next video ={0}", moNewVideos.hasNext());
       if (moNewVideos.hasNext())
         btnNextPage.Disabled = false;
       else
@@ -704,17 +770,18 @@ namespace MediaPortal.GUI.MusicVideos
     private void onClickGenre()
     {
       miSelectedIndex = 0;
-      msSelectedGenre = promptForGenre();
+      if (moGenre == null)
+          moGenre = new YahooGenres();
+
+        msSelectedGenre = promptForGenre();
       if (String.IsNullOrEmpty(msSelectedGenre))
       {
         return;
       }
       CURRENT_STATE = (int)State.GENRE;
 
-      Log.Write("button GENRE clicked");
-      if (moGenre == null)
-        moGenre = new YahooGenres();
-
+      moLog.Info("button GENRE clicked");
+      
       moGenre.loadFirstGenreVideos(msSelectedGenre);
 
       if (moGenre.hasNext())
@@ -725,7 +792,17 @@ namespace MediaPortal.GUI.MusicVideos
       btnPreviousPage.Disabled = true;
       refreshStage2Screen(String.Format("{0} {1} - {2} {3} ", GUILocalizeStrings.Get(174), msSelectedGenre, GUILocalizeStrings.Get(30009), moGenre.getCurrentPageNumber()));
     }
-
+      private void OnQueueItem()
+      {
+          if (CURRENT_STATE != (int)State.PLAYLIST)
+          {
+              MusicVideoPlaylist.getInstance().AddToPlayList(getSelectedVideo());
+          }
+      }
+      //private void DeQueueItem()
+      //{
+      //    MusicVideoPlaylist.getInstance().(getSelectedVideo);
+     // }
     private void SearchVideos(bool fbClicked, String fsSearchTxt)
     {
       DisableAllButtons();
@@ -740,7 +817,9 @@ namespace MediaPortal.GUI.MusicVideos
       miSelectedIndex = 0;
       CURRENT_STATE = (int)State.SEARCH;
       if (moYahooSearch == null)
+            {
         moYahooSearch = new YahooSearch(moSettings.msDefaultCountryName);
+            }
 
       //clear the list
       listSongs.Clear();
@@ -816,8 +895,8 @@ namespace MediaPortal.GUI.MusicVideos
 //          labelState.Label = String.Format("Genre: {0} - Page {1} ", msSelectedGenre, moGenre.getCurrentPageNumber());
           break;
       }
-      Log.Write("The video page has next video ={0}", lbNext);
-      Log.Write("The video page has previous video ={0}", lbPrevious);
+      moLog.Info("The video page has next video ={0}", lbNext);
+      moLog.Info("The video page has previous video ={0}", lbPrevious);
 
       btnNextPage.Disabled = !lbNext;
       btnPreviousPage.Disabled = !lbPrevious;
@@ -858,8 +937,8 @@ namespace MediaPortal.GUI.MusicVideos
           labelState.Label = String.Format("{0} {1} - {2} {3} ", GUILocalizeStrings.Get(174), msSelectedGenre, GUILocalizeStrings.Get(30009), moGenre.getCurrentPageNumber());
           break;
       }
-      Log.Write("The video page has next video ={0}", lbNext);
-      Log.Write("The video page has previous video ={0}", lbPrevious);
+      moLog.Info("The video page has next video ={0}", lbNext);
+      moLog.Info("The video page has previous video ={0}", lbPrevious);
 
       btnNextPage.Disabled = !lbNext;
       btnPreviousPage.Disabled = !lbPrevious;
@@ -920,7 +999,7 @@ namespace MediaPortal.GUI.MusicVideos
     }
     private void refreshScreenVideoList()
     {
-      Log.Write("Refreshing video list on screen");
+      moLog.Info("Refreshing video list on screen");
       List<YahooVideo> loCurrentDisplayVideoList = getStateVideoList();
       DisplayVideoList(loCurrentDisplayVideoList);
       listSongs.SelectedListItemIndex = miSelectedIndex;
@@ -960,22 +1039,31 @@ namespace MediaPortal.GUI.MusicVideos
     }
     void playVideo(YahooVideo video)
     {
-      Log.Write("in playVideo()");
+      moLog.Info("in playVideo()");
       string lsVideoLink = null;
       YahooSite loSite;
       YahooUtil loUtil = YahooUtil.getInstance();
       loSite = loUtil.getYahooSiteById(video.countryId);
       lsVideoLink = loUtil.getVideoMMSUrl(video, moSettings.msDefaultBitRate);
       lsVideoLink = lsVideoLink.Substring(0, lsVideoLink.Length - 2) + "&txe=.wmv";
-      if (g_Player.PlayAudioStream(lsVideoLink))
+      if (moSettings.mbUseVMR9)
       {
-        Log.Write("Playing Video:{0}", video.songName);
-        GUIGraphicsContext.IsFullScreenVideo = true;
-        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+          g_Player.PlayVideoStream(lsVideoLink);
       }
       else
       {
-        Log.Write("GUIMusicVideo: Unable to play {0}", lsVideoLink);
+          g_Player.PlayAudioStream(lsVideoLink);
+      }
+      if (g_Player.Playing)
+      {
+        moLog.Info("Playing Video:{0}", video.songName);
+        GUIGraphicsContext.IsFullScreenVideo = true;
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+                moCurrentPlayingVideo = video;
+      }
+      else
+      {
+        moLog.Info("GUIMusicVideo: Unable to play {0}", lsVideoLink);
       }
     }
 

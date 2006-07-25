@@ -114,13 +114,19 @@ namespace MediaPortal.GUI.MusicVideos
         YahooVideo loVideo = moPlayList[miPlayListIndex];
         //Log.Write("{0}",video.countryId);
         YahooSite loSite = loUtil.getYahooSiteById(loVideo.countryId);
-        Log.Write("2");
+        
         YahooSettings loSetting = YahooSettings.getInstance();
         string lsVideoLink = loUtil.getVideoMMSUrl(loVideo, loSetting.msDefaultBitRate);
-        Log.Write("3");
+        
         lsVideoLink = lsVideoLink.Substring(0, lsVideoLink.Length - 2) + "&txe=.wmv";
-
-        g_Player.PlayAudioStream(lsVideoLink);
+        if (loSetting.mbUseVMR9)
+        {
+            g_Player.PlayVideoStream(lsVideoLink);
+        }
+        else
+        {
+            g_Player.PlayAudioStream(lsVideoLink);
+        }
         //g_Player.Play(lsVideoLink);
         //g_Player.
         //g_Player.FullScreen = true;
@@ -301,6 +307,18 @@ namespace MediaPortal.GUI.MusicVideos
       //Log.Write("MusicVideoPlaylist - getPlayListIndex()");
       return miPlayListIndex;
     }
-  }
+        public YahooVideo getCurrentPlayingVideo()
+        {
+            if (mbPLayingState)
+            {
+                return moPlayList[miPlayListIndex];
+            }
+            return null;
+        }
+        public bool isPlaying()
+        {
+            return mbPLayingState;
+        }
 
+    }
 }

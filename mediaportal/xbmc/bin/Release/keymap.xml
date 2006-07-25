@@ -1107,4 +1107,20 @@
       <description>delete item</description>
     </action>
   </window>
+  <window>
+    <id>4734</id>
+    <description>MyMusicVideo</description>
+    <action>
+      <id>34</id>
+      <key>Y</key>
+      <sound />
+      <description>Add item to Playlist</description>
+    </action>
+    <action>
+      <id>14</id>
+      <key>F8</key>
+      <sound />
+      <description>Skip Next</description>
+    </action>
+  </window>
 </keymap>
