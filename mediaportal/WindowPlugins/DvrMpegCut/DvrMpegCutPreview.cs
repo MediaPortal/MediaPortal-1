@@ -32,6 +32,7 @@ using System.Collections;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
+using MediaPortal;
 using DirectShowLib.SBE;
 using DirectShowLib;
 using DShowNET.Helper;
@@ -80,6 +81,10 @@ namespace DvrMpegCutMP
     protected GUISliderControl positionSld = null;
     [SkinControlAttribute(101)]
     protected GUIListControl videoListLct = null;
+    [SkinControlAttribute(102)]
+    protected GUILabelControl progressLbl = null;
+    [SkinControlAttribute(103)]
+    protected GUIStatusbarControl progressBar = null;
     #endregion
 
     #region Own variables
@@ -92,8 +97,11 @@ namespace DvrMpegCutMP
     FileInfo inFilename;
     FileInfo outFilename;
     FileTypes cutType;
-    //Thread cutThread;
+    Thread cutThread;
     IStreamBufferRecComp recCompcut = null;
+    System.Timers.Timer cutProgressTime;
+    bool cutFinished = false;
+   // int videoLength;
 
     //EMode eMode = EMode.E_CUT;
     EMode eMode = EMode.E_TRIM;
@@ -149,26 +157,29 @@ namespace DvrMpegCutMP
         g_Player.Play(inFilename.FullName);
         //g_Player.Pause();
         durationOld = g_Player.Duration;
-        oldLenghtLbl.Label = TimeCalc(durationOld);
-        newLenghtLbl.Label = TimeCalc(durationNew);
+        oldLenghtLbl.Label = MediaPortal.Util.Utils.SecondsToHMSString((int)durationOld);
+        newLenghtLbl.Label = MediaPortal.Util.Utils.SecondsToHMSString((int)durationNew);
         //postitionSld.Percentage = 100;
         //postitionSld.SpinType = GUISpinControl.SpinType.SPIN_CONTROL_TYPE_FLOAT;
-        //postitionSld.SetFloatRange(0, (float)dauerAlt);
-        //postitionSld.FloatInterval = (float)0.5;
+        //positionSld.SetFloatRange(0, (float)durationOld);
+       // positionSld.FloatInterval = (float)0.5;
+       // positionSld.SpinType = GUISpinControl.SpinType.Float;
         positionSld.Percentage = 0;
         //schneideListeLct.Width = 350;
         //schneideListeLct.Height = 200;
         //	}
         //	else
         //		System.Windows.Forms.MessageBox.Show("Datei nicht vorhanden");
+        progressBar.Percentage = 0;
+        progressBar.IsVisible = false;
+        progressLbl.Label = "0";
+        progressLbl.IsVisible = false;
       }
       catch (Exception ex)
       {
         _log.Error("DvrMpegCut: (OnPageLoad) " + ex.StackTrace);
       }
       //schneideListeLct.Add(new GUIListItem("Test"));
-
-
     }
 
     protected override void OnPageDestroy(int new_windowId)
@@ -179,38 +190,87 @@ namespace DvrMpegCutMP
       base.OnPageDestroy(new_windowId);
     }
 
+    public override void OnAction(Action action)
+    {
+      //code send by Davide
+     /* switch (action.wID)
+      {
+        case Action.ActionType.ACTION_STOP:
+          g_Player.Stop();
+          break;
+        case Action.ActionType.ACTION_PAUSE:
+          g_Player.Pause();
+          break;
+        case Action.ActionType.ACTION_PLAY:
+          GUIGraphicsContext.VMR9Allowed = true;
+          GUIGraphicsContext.IsFullScreenVideo = false;
+          GUIWindowManager.ActiveWindow = (int)GUIWindow.Window.WINDOW_TV;
+          if (videoWindow != null)
+          {
+            GUIGraphicsContext.VideoWindow = new System.Drawing.Rectangle(videoWindow.XPosition, videoWindow.YPosition, videoWindow.Width, videoWindow.Height);
+            //Log.Write("Test " +videoWindow.XPosition  + " " + videoWindow.Width + " " + videoWindow.Height);
+          }
+          g_Player.FullScreen = false;
+          g_Player.Play(inFilename.FullName);
+          break;
+        case Action.ActionType.ACTION_REWIND:
+          g_Player.SeekAbsolute((double)(g_Player.CurrentPosition - 5.0));
+          break;
+        case Action.ActionType.ACTION_STEP_BACK:
+          g_Player.SeekAbsolute((double)(g_Player.CurrentPosition - 30.0));
+          break;
+        case Action.ActionType.ACTION_PREV_ITEM:
+          g_Player.SeekAbsolute((double)(g_Player.CurrentPosition - 2.0));
+          break;
+        case Action.ActionType.ACTION_FORWARD:
+          g_Player.SeekAbsolute((double)(g_Player.CurrentPosition + 5.0));
+          break;
+        case Action.ActionType.ACTION_STEP_FORWARD:
+          g_Player.SeekAbsolute((double)(g_Player.CurrentPosition + 30.0));
+          break;
+        case Action.ActionType.ACTION_NEXT_ITEM:
+          g_Player.SeekAbsolute((double)(g_Player.CurrentPosition + 2.0));
+          break;
+      }*/
+
+       base.OnAction(action);
+    }
+
     protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
     {
       if (control == cutBtn)
       {
         Cut();
       }
-      //if (control == cancelBtn)
-      //{
-      //  if (cutThread != null)
-      //  {
-      //    cutThread.Abort();
-      //    MessageBox(GUILocalizeStrings.Get(2091), GUILocalizeStrings.Get(510));
-      //  }
-      //}
+      if (control == cancelBtn)
+      {
+        if (cutThread != null)
+        {
+          cutThread.Abort();
+          cutProgressTime.Stop();
+          MessageBox(GUILocalizeStrings.Get(2091), GUILocalizeStrings.Get(510));
+          progressBar.IsVisible = false;
+          progressLbl.IsVisible = true;
+        }
+      }
       if (control == startBtn)
       {
         startCut = g_Player.CurrentPosition;
-        startPosLbl.Label = TimeCalc(startCut);
+        startPosLbl.Label = MediaPortal.Util.Utils.SecondsToHMSString((int)startCut);
       }
       if (control == endBtn)
       {
         endCut = g_Player.CurrentPosition;
-        endPosLbl.Label = TimeCalc(endCut);
+        endPosLbl.Label = MediaPortal.Util.Utils.SecondsToHMSString((int)endCut);
       }
       if (control == addBtn)
       {
         if (startCut < endCut)
         {
           cutList.Add((startCut.ToString() + ":" + endCut.ToString()));
-          videoListLct.Add(new GUIListItem(TimeCalc(startCut) + " - " + TimeCalc(endCut)));
+          videoListLct.Add(new GUIListItem(MediaPortal.Util.Utils.SecondsToHMSString((int)startCut) + " - " + MediaPortal.Util.Utils.SecondsToHMSString((int)endCut)));
           durationNew += (endCut - startCut);
-          newLenghtLbl.Label = TimeCalc(durationNew);
+          newLenghtLbl.Label = MediaPortal.Util.Utils.SecondsToHMSString((int)durationNew);
           startPosLbl.Label = "";
           endPosLbl.Label = "";
           if (iCount < NR_OF_SPILTER_TIME_STAMPS)
@@ -247,14 +307,14 @@ namespace DvrMpegCutMP
         //System.Windows.Forms.MessageBox.Show(postitionSld.Percentage);
         //g_Player.PauseGraph();
         //vmrPlayer.SeekAbsolute(postitionSld.FloatValue);
-        //g_Player.SeekAbsolute(postitionSld.FloatValue);
+        //g_Player.SeekAbsolute(positionSld.FloatValue);
         g_Player.SeekAbsolute((double)((durationOld / 100) * positionSld.Percentage));
         //g_Player.ContinueGraph();
       }
       //postitionSld.Percentage = (int)((100 / dauerAlt) * g_Player.CurrentPosition);
-      string temp = TimeCalc(g_Player.CurrentPosition);
+     // string temp = TimeCalc(g_Player.CurrentPosition);
       //aktPosition;
-      currentPosLbl.Label = temp;//aktPosition.ToString();
+     // currentPosLbl.Label = temp;//aktPosition.ToString();
       base.OnClicked(controlId, control, actionType);
     }
     #endregion
@@ -264,7 +324,6 @@ namespace DvrMpegCutMP
       Unknown,
       Dvrms,
       Mpeg,
-
     }
 
     private void GetFiletype()
@@ -313,12 +372,16 @@ namespace DvrMpegCutMP
     #region cutmethods
     protected void Cut()
     {
+      g_Player.Release();
       switch (cutType)
       {
         case FileTypes.Dvrms:
-          //cutThread = new Thread(new ThreadStart(CutDvrms));
-          //cutThread.Start();
-          CutDvrms();
+          cutThread = new Thread(new ThreadStart(CutDvrms));
+          //cutThread.SetApartmentState(ApartmentState.STA);
+          //cutThread.IsBackground = true;
+          cutThread.Priority = ThreadPriority.BelowNormal;
+          cutThread.Start();
+         // CutDvrms();
           break;
         case FileTypes.Mpeg:
           CutMpeg();
@@ -332,19 +395,19 @@ namespace DvrMpegCutMP
 
     private void CutDvrms()
     {
-      g_Player.Release();
-
       try
       {
         recCompcut = (IStreamBufferRecComp)DShowNET.Helper.ClassId.CoCreateInstance(DShowNET.Helper.ClassId.RecComp);
-
         if (recCompcut != null)
         {
-          //to not to change the database the outputfile has the same name 
-          outFilename = new FileInfo(inFilename.FullName);
+          CutProgressTime();
+          string outPath = inFilename.FullName;
           //rename the source file ------------later this could be configurable to delete it
           //TODO behavior if the renamed sourcefile (_original) exists
           inFilename.MoveTo(inFilename.FullName.Replace(".dvr-ms", "_original.dvr-ms"));
+          //to not to change the database the outputfile has the same name 
+          outFilename = new FileInfo(outPath);
+         
 
           if (outFilename.Exists)
           {
@@ -360,24 +423,35 @@ namespace DvrMpegCutMP
           }
           recCompcut.Close();
           Marshal.ReleaseComObject((object)recCompcut);
+          cutFinished = true;
+          progressLbl.Label = "100";
+          progressBar.Percentage = 100;
           MessageBox(GUILocalizeStrings.Get(2083), GUILocalizeStrings.Get(2111)); //Dvrms:Finished to cut the video file , Finished !
+          progressBar.IsVisible = false;
+          progressLbl.IsVisible = false;
 
         }
       }
       catch (Exception e)
       {
         _log.Error("DvrMpegCut: (CutDvrms) " + e.StackTrace);
+        if (cutProgressTime != null)
+        {
+          cutProgressTime.Stop();
+          progressBar.IsVisible = false;
+          progressLbl.IsVisible = false;
+        }
       }
     }
 
     private void CutMpeg()
     {
-      g_Player.Release();
       outFilename = new FileInfo(inFilename.FullName);
       int tmp = inFilename.FullName.LastIndexOf('.');
       string newInFilename = inFilename.FullName.Remove(tmp) + "_original" + inFilename.Extension;
       inFilename.MoveTo(newInFilename);
       Mpeg2Splitter cMpeg2Splitter = new Mpeg2Splitter();
+      //CutProgressTime();
       if (eMode == EMode.E_CUT)
       {
         cMpeg2Splitter.Cut(inFilename.FullName, outFilename.FullName, ref tStamp, iCount);
@@ -386,25 +460,57 @@ namespace DvrMpegCutMP
       {
         cMpeg2Splitter.Trim(inFilename.FullName, outFilename.FullName, ref tStamp[0]);
       }
+      cutFinished = true;
+      progressLbl.Label = "100";
+      progressBar.Percentage = 100;
       MessageBox(GUILocalizeStrings.Get(2082), GUILocalizeStrings.Get(2111));
+      progressBar.IsVisible = false;
+      progressLbl.IsVisible = false;
+    }
+
+    private void CutProgressTime()
+    {
+      cutFinished = false;
+      cutProgressTime = new System.Timers.Timer(1000);
+      cutProgressTime.Elapsed += new System.Timers.ElapsedEventHandler(cutProgressTime_Elapsed);
+      progressBar.Percentage = 0;
+      progressBar.IsVisible = true;
+      progressLbl.IsVisible = true;
+      cutProgressTime.Start();
+    }
+
+    void cutProgressTime_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+    {
+      if (!cutFinished)
+      {
+        int progress;
+        recCompcut.GetCurrentLength(out progress);
+        int percent = System.Convert.ToInt32((progress * 100) / durationNew);
+        progressBar.Percentage = percent;
+        progressLbl.Label = percent.ToString();
+        
+      }
+      else
+        cutProgressTime.Stop();
     }
     #endregion
 
     /// <summary>
     /// Converts the time in sec to hh:mm:ss format
     /// </summary>
+    /// <remarks>now using: MediaPortal.Util.Utils.SecondsToHMSString()</remarks>
     /// <param name="timeSec">time in sec</param>
     /// <returns>time in hh:mm:ss</returns>
     private string TimeCalc(double timeSec)
     {
-      double hr, min, sec;
+      int hr, min, sec;
       string hr_ = "", min_ = "", sec_ = "";
       //calc min
-      min = timeSec / 60;
+      min = (int)timeSec / 60;
       //only sec
       if (min < 1)
       {
-        sec = timeSec;
+        sec = (int)timeSec;
         hr_ = "00";
         min_ = "00";
         if (sec < 10)
@@ -412,10 +518,10 @@ namespace DvrMpegCutMP
         else
           sec_ = Convert.ToInt32(sec).ToString();
       }
-      //lower than one hour
+      //less than one hour
       if (min >= 1 && min < 60)
       {
-        sec = timeSec % 60;
+        sec = (int)timeSec % 60;
         hr_ = "00";
         if (min < 10)
           min_ = "0" + Convert.ToInt32(min).ToString();
@@ -429,9 +535,9 @@ namespace DvrMpegCutMP
       //more than one hour
       if (min >= 60)
       {
-        sec = timeSec % 60;
-        hr = min / 60;
-        min = min % 60;
+        sec = (int)timeSec % 60;
+        hr = (int)min / 60;
+        min = (int)min % 60;
         if (min < 10)
           min_ = "0" + Convert.ToInt32(min).ToString();
         else

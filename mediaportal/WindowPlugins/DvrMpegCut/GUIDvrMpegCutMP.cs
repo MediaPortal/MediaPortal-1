@@ -55,6 +55,8 @@ namespace DvrMpegCutMP
 		int cntDrives = 0;
 		string[] drives = new string[maxDrives];
 		string currentFolder = "";
+    string lastUsedFolder = "";
+    VirtualDirectory directory = new VirtualDirectory();
 		ArrayList extensions;
 		DvrMpegCutPreview cutScr;
 		#endregion
@@ -102,6 +104,7 @@ namespace DvrMpegCutMP
 				extensions.Add(".mpg");
 				videoListLct.Clear();
 				videoListLct.UpdateLayout();
+        LoadShares();
 				LoadDrives();
 			}
 			catch (Exception e)
@@ -138,15 +141,17 @@ namespace DvrMpegCutMP
 				else if (item.Label.Substring(1, 1) == ":")  // is a drive
 				{
 					currentFolder = item.Label;
-					if (currentFolder != String.Empty)
-						LoadListControl(currentFolder, extensions);
-					else
+          if (currentFolder != String.Empty)
+            LoadListControl(currentFolder, extensions);
+          else
+            LoadShares();
 						LoadDrives();
 				}
 				else
 					LoadListControl(item.Path, extensions);
 				if (item.Path == "")
 				{
+          LoadShares();
 					LoadDrives();
 				}
 			}
@@ -226,11 +231,11 @@ namespace DvrMpegCutMP
 				if (folder != null && folder != "")
 					folder = MediaPortal.Util.Utils.RemoveTrailingSlash(folder);
 				
-				VirtualDirectory Directory;
+				//directory;
 				ArrayList itemlist;
-				Directory = new VirtualDirectory();
-				Directory.SetExtensions(exts);
-				itemlist = Directory.GetDirectory(folder);
+				//directory = new VirtualDirectory();
+				directory.SetExtensions(exts);
+				itemlist = directory.GetDirectory(folder);
 				videoListLct.Clear();
 				foreach (GUIListItem item in itemlist)
 				{
@@ -264,8 +269,78 @@ namespace DvrMpegCutMP
 			{
 				_log.Error("DvrMpegCut: (LoadListControl) "+ ex.Message);
 			}
-
 		}
+
+    private void LoadShares()
+    {
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+        //ShowTrailerButton = xmlreader.GetValueAsBool("plugins", "My Trailers", true);
+       // fileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
+        //fileMenuPinCode = Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", String.Empty));
+        directory.Clear();
+        videoListLct.Clear();
+        string strDefault = xmlreader.GetValueAsString("movies", "default", String.Empty);
+        for (int i = 0; i < 20; i++)
+        {
+          string strShareName = String.Format("sharename{0}", i);
+          string strSharePath = String.Format("sharepath{0}", i);
+          string strPincode = String.Format("pincode{0}", i);
+
+          string shareType = String.Format("sharetype{0}", i);
+          string shareServer = String.Format("shareserver{0}", i);
+          string shareLogin = String.Format("sharelogin{0}", i);
+          string sharePwd = String.Format("sharepassword{0}", i);
+          string sharePort = String.Format("shareport{0}", i);
+          string remoteFolder = String.Format("shareremotepath{0}", i);
+          string shareViewPath = String.Format("shareview{0}", i);
+
+          Share share = new Share();
+          share.Name = xmlreader.GetValueAsString("movies", strShareName, String.Empty);
+          share.Path = xmlreader.GetValueAsString("movies", strSharePath, String.Empty);
+          string pinCode = Utils.DecryptPin(xmlreader.GetValueAsString("movies", strPincode, string.Empty));
+          if (pinCode != string.Empty)
+            share.Pincode = Convert.ToInt32(pinCode);
+          else
+            share.Pincode = -1;
+
+          share.IsFtpShare = xmlreader.GetValueAsBool("movies", shareType, false);
+          share.FtpServer = xmlreader.GetValueAsString("movies", shareServer, String.Empty);
+          share.FtpLoginName = xmlreader.GetValueAsString("movies", shareLogin, String.Empty);
+          share.FtpPassword = xmlreader.GetValueAsString("movies", sharePwd, String.Empty);
+          share.FtpPort = xmlreader.GetValueAsInt("movies", sharePort, 21);
+          share.FtpFolder = xmlreader.GetValueAsString("movies", remoteFolder, "/");
+          share.DefaultView = (Share.Views)xmlreader.GetValueAsInt("movies", shareViewPath, (int)Share.Views.List);
+
+          if (share.Name.Length > 0)
+          {
+            if (strDefault == share.Name)
+            {
+              share.Default = true;
+              if (currentFolder.Length == 0)
+              {
+                currentFolder = share.Path;
+              //  m_strDirectoryStart = share.Path;
+              }
+            }
+            directory.Add(share);
+          }
+          else break;
+        }
+        //m_askBeforePlayingDVDImage = xmlreader.GetValueAsBool("daemon", "askbeforeplaying", false);
+      }
+      
+      ArrayList itemlist = new ArrayList();
+      itemlist = directory.GetRoot();
+      foreach (GUIListItem item in itemlist)
+      {
+       // GUIListItem pItem = new GUIListItem(item.FileInfo.Name);
+       // pItem.FileInfo = item.FileInfo;
+      //  pItem.IsFolder = false;
+       // pItem.Path = String.Format(@"{0}\{1}", folder, item.FileInfo.Name);
+        videoListLct.Add(item);
+      }
+    }
 
 		protected void ToCutScreen(string filepath)
 		{
