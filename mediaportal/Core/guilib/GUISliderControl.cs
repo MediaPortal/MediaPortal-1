@@ -345,12 +345,12 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public float FloatValue
     {
-      get { return _floatInterval; }
+      get { return _floatValue; }// <--(I think this was intended) changed from: get { return _floatInterval; } 
       set
       {
         if (value >= _floatStartValue && value <= _floatEndValue)
         {
-          _floatInterval = value;
+          _floatValue = value;// <--(I think this was intended) changed from: _floatInterval = value;
         }
       }
     }
