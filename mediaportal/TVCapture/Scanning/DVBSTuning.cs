@@ -292,7 +292,6 @@ namespace MediaPortal.TV.Scanning
       if (IsFinished()) return;
       DVBChannel newchan = new DVBChannel();
       newchan.NetworkID = -1;
-      newchan.CurrentLNB = _currentDiseqc;
       newchan.TransportStreamID = -1;
       newchan.ProgramNumber = -1;
 

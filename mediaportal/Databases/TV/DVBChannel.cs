@@ -131,18 +131,6 @@ namespace MediaPortal.TV.Database
 			{m_idChannel=value;}
 		}		
 		
-     public int CurrentLNB
-     {
-       get
-     {
-         return _currentLNB;
-       }
-       set
-       {
-         _currentLNB = value;
-       }
-     }
-
 		[BrowsableAttribute(true),Category("Service Data"),
 		ReadOnly(true)]
 		public bool HasEITSchedule
