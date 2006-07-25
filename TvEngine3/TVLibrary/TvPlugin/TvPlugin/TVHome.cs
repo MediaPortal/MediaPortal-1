@@ -41,6 +41,7 @@ using MediaPortal.Utils.Services;
 
 using TvDatabase;
 using TvControl;
+using TvLibrary.Interfaces;
 
 using IdeaBlade.Persistence;
 using IdeaBlade.Rdb;
@@ -1222,16 +1223,20 @@ namespace TvPlugin
       if (TVHome.Card.IsScrambled) return;
       _log.Info("tvhome:startplay");
       string timeshiftFileName = TVHome.Card.TimeShiftFileName;
+      IChannel channel = TVHome.Card.Channel;
+      g_Player.MediaType mediaType = g_Player.MediaType.TV;
+      if (channel.IsRadio)
+        mediaType = g_Player.MediaType.Radio;
       if (System.IO.File.Exists(timeshiftFileName))
       {
         _log.Info("tvhome:startplay:{0}", timeshiftFileName);
-        g_Player.Play(timeshiftFileName);
+        g_Player.Play(timeshiftFileName, mediaType);
       }
       else
       {
         timeshiftFileName = TVHome.Card.RTSPUrl;
         _log.Info("tvhome:startplay:{0}", timeshiftFileName);
-        g_Player.Play(timeshiftFileName);
+        g_Player.Play(timeshiftFileName, mediaType);
       }
     }
     static void SeekToEnd()
@@ -1309,7 +1314,7 @@ namespace TvPlugin
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         ipadres = xmlreader.GetValueAsString("tvservice", "hostname", "");
-        if (ipadres == "")
+        if (ipadres == "" || ipadres == "localhost")
         {
           ipadres = Dns.GetHostName();
           _log.Info("Remote control: hostname not specified on mediaportal.xml!");
