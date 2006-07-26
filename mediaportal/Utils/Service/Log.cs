@@ -140,7 +140,7 @@ namespace MediaPortal.Utils.Services
 
         // Build the log message
         // Add time stamp
-				message.Write(DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString());
+				message.Write(DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString()+ " " + String.Format("{0:000}",DateTime.Now.Millisecond));
         // Add LogLevel
 				message.Write(" [" + GetLevelName(logLevel) + "] ");
         // Write Log Message
