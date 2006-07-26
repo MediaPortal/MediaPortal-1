@@ -6,7 +6,9 @@
   <!-- Skin BlueTwo -->
 
   <!-- GUI Elements -->
-
+ 
+  
+          
   <Style x:Key="PageBackground" TargetType="{x:Type Page}">
     <Setter Property="Background">
       <Setter.Value>
@@ -14,6 +16,58 @@
       </Setter.Value>
     </Setter>
   </Style>
+  
+  <Style x:Key="GUIListcontrolItems" TargetType="{x:Type ListBoxItem}">
+    <Setter Property="Foreground" Value="Transparent"/>
+    <Setter Property="Width" Value="425"/>
+    <Setter Property="OverridesDefaultStyle" Value="False"/>
+    <Setter Property="BorderBrush" Value="Transparent"/>
+    <Setter Property="Background">
+      <Setter.Value>
+        <ImageBrush ImageSource="Media\list_sub_nofocus.png" />
+      </Setter.Value>    
+    </Setter>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ListBoxItem}">
+          <Border 
+            Width="425" 
+            Height="32"
+            Background="{TemplateBinding Background}" 
+            >
+            <DockPanel Width="425" Height="32">
+              <Image Margin="8,0" Source="{DynamicResource defaultFolderBack.png}" Width="16" Height="16"/>
+              <TextBlock
+                  Foreground="White"
+                  Height="32" 
+                  Width="420" 
+                  Text="Test"
+                  Margin="5,4" 
+                  FontSize="18">
+              </TextBlock>
+            </DockPanel>
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsSelected" Value="true">
+              <Setter Property="Background">
+                <Setter.Value>
+                  <ImageBrush ImageSource="Media\list_sub_focus.png" />
+                </Setter.Value>
+              </Setter>
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="true">
+              <Setter Property="Background">
+                <Setter.Value>
+                  <ImageBrush ImageSource="Media\list_sub_focus.png" />
+                </Setter.Value>
+              </Setter>
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+   </Style>
+
 
   <Style x:Key="GUIButton" TargetType="{x:Type Button}">
     <Setter Property="SnapsToDevicePixels" Value="true"/>
@@ -156,4 +210,34 @@
     </Setter>
   </Style>
 
+  <Style x:Key="GUIListControl" TargetType="{x:Type ListBox}">
+    <Setter Property="Background" Value="Transparent"/>
+    <Setter Property="BorderBrush" Value="Transparent"/>
+    <Setter Property="BorderThickness" Value="0,0,0,0"/>
+    <Setter Property="Foreground" Value="Transparent"/>
+    <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden"/>
+    <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Hidden"/>
+    <Setter Property="ScrollViewer.CanContentScroll" Value="True"/>
+    <Setter Property="VerticalContentAlignment" Value="Center"/>
+    <Setter Property="ItemContainerStyle" Value="{DynamicResource GUIListcontrolItems}"/>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ListBox}">
+          <Border Background="Transparent" SnapsToDevicePixels="True" >
+            <ScrollViewer Focusable="True" x:Name="ScrollViewer" Padding="{TemplateBinding Padding}">
+              <ItemsPresenter x:Name="ItemsPresenter" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+            </ScrollViewer>
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsSelected" Value="True">
+              <Setter Property="Background" Value="Blue"/>
+            </Trigger>
+            <Trigger Property="IsGrouping" Value="True">
+              <Setter Property="ScrollViewer.CanContentScroll" Value="False"/>
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
 </ResourceDictionary>

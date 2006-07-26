@@ -33,6 +33,8 @@
     <Reference Include="System.Printing" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Runtime.Serialization" />
+    <Page Include="skinElements.xaml" />
+    <Page Include="skinImages.xaml" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="app.xaml" />

@@ -26,7 +26,8 @@ namespace MediaPortal
             this.Opacity = 0.0f;
             this.Resources = dict;
             this.Loaded += new RoutedEventHandler(HomeExtension_Loaded);
-           
+            this.Height = 608;
+            this.Width = 720;
         }
 
         void HomeExtension_Loaded(object sender, RoutedEventArgs e)
@@ -38,14 +39,14 @@ namespace MediaPortal
             //id0.Height = 230;
             DoubleAnimation anim = new DoubleAnimation(1.0f, new Duration(new TimeSpan(0, 0, 0,0,500)));
            this.BeginAnimation(Page.OpacityProperty, anim);
+           lv1.Items.Add("MediaPortal");
+           lv1.Items.Add("MediaPortal NG");
+           lv1.Items.Add("Test Item");
+
         }
 
         public void Launch_Wizard(object sender,RoutedEventArgs e)
         {
-            DoubleAnimation anim = new DoubleAnimation(225, 0, new Duration(new TimeSpan(0, 0, 2)));
-            anim.AutoReverse = true;
-            id911.BeginAnimation(Image.WidthProperty,anim);
-
         }
         public void MPNG(object sender, RoutedEventArgs e)
         {

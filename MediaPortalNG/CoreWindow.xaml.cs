@@ -20,7 +20,7 @@ namespace MediaPortal
     public class Core : NavigationWindow
     {
         public char chr34=((char)34);
-        
+        public XmlNode defNodes;
         /// <summary>
         /// The MediaPortal core. The Core always loads the HomeExtension as start point.
         /// </summary>
@@ -31,7 +31,7 @@ namespace MediaPortal
             this.ShowsNavigationUI = true;
             // params
             this.Width = 720;
-            this.Height = 608;
+            this.Height = 670;
             this.Background = Brushes.Black;
             this.Title = "MediaPortalNG";
             this.Show();
@@ -95,21 +95,40 @@ namespace MediaPortal
             string header2="xmlns:x=" + chr34 + "http://schemas.microsoft.com/winfx/2006/xaml" + chr34 ;
             string header3="Style=" + chr34 + "{StaticResource PageBackground}" + chr34 ;
             string header4="x:Class=" + chr34 + "MediaPortal.HomeExtension" + chr34 + ">";
-            string file = "mytvhome";
+            string file = "mymusicsongs";
             // the skin
-            System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
+            XmlDocument doc = new System.Xml.XmlDocument();
+            XmlDocument defaults = new XmlDocument();
+            XmlDocument commonFacade = new XmlDocument();
 
-            // the common.window.xml
-            System.Xml.XmlDocument commonWindow = new System.Xml.XmlDocument();
+            // the common.window.xml/ common.settings.xml
+            XmlDocument commonWindow = new System.Xml.XmlDocument();
 
             doc.Load(path + @"\"+file+".xml");
-            commonWindow.Load(path + @"\common.window.xml");
+            defaults.Load(path + @"\" + "references.xml");
 
-
-            string test = doc.NameTable.Get("controls");
+            //string test = doc.NameTable.Get("controls");
             // for skin file
-            System.Xml.XmlNodeList nodes =doc.GetElementsByTagName("controls");
-            XmlNode node = nodes.Item(0);
+            XmlNode node =doc.GetElementsByTagName("controls").Item(0);
+            XmlNode listCtrls = null;// commonFacade.GetElementsByTagName("controls").Item(0);
+
+            defNodes = defaults.GetElementsByTagName("controls").Item(0);
+
+            foreach (XmlNode property in node.ChildNodes)
+            {
+                if (property.Name == "import")
+                {
+                    if (property.InnerText == "common.window.xml" ||
+                        property.InnerText == "common.settings.xml")
+                        commonWindow.Load(path + @"\" + property.InnerText);
+                    else
+                    {
+                        commonFacade.Load(path + @"\common.facade.xml");
+                    }
+                }
+            }
+
+            listCtrls = commonFacade.GetElementsByTagName("controls").Item(0);
             
             // for common.xxxxxx.xml file
             System.Xml.XmlNodeList nodesCW =commonWindow.GetElementsByTagName("controls");
@@ -123,6 +142,7 @@ namespace MediaPortal
             sw.WriteLine(sw.NewLine);
             sw.WriteLine("<Canvas>");
 
+            //string test = GetDefaultValue("button", "posX", defNodes);
             //if (di.Exists)
             //{
             //    FileInfo[] fis = di.GetFiles("*.*");
@@ -131,9 +151,9 @@ namespace MediaPortal
             //        sw.WriteLine("<BitmapImage x:Key=" + ((char)34) + f.Name + ((char)34) + " UriSource=" + ((char)34) + "Media\\" + f.Name + ((char)34) + "/>");
             //    }
             //}
+
             XmlNode group = null;
-            bool loopGroup = false;
-             
+          
             // process the defines
             foreach (XmlNode child in node.ParentNode)
             {
@@ -165,27 +185,25 @@ namespace MediaPortal
                 foreach(XmlNode control1 in node.ChildNodes)
                 {
                     XmlNode control = control1;
-                    if (group != null)
-                    {
-                        control = group;
-                        loopGroup = true;
-                        group = null;
-                    }
                     if (control.ChildNodes.Count > 0)
                     {
-                       if(loopGroup==false)
-                        foreach (XmlNode property in control.ChildNodes)
+                        if (group==null)
                         {
-                            if (property.InnerText == "group")
+                            foreach (XmlNode property in control.ChildNodes)
                             {
-                                group = property;
-                                break;
-                            }
+                                if (property.InnerText == "group")
+                                {
+                                    group = property;
+                                    break;
+                                }
 
-                            XAMLWriter(sw, property, control);
-                        }//foreach (XmlNode property in control.ChildNodes)
-                        else
+                                XAMLWriter(sw, property, control);
+                            }//foreach (XmlNode property in control.ChildNodes)
+                        }
+                        if(group!=null)
                         {
+                            control = group;
+                            group = null;
                             int xVal = -1;
                             int yVal = -1;
                             bool loop = true;
@@ -212,17 +230,82 @@ namespace MediaPortal
                             {
                                 foreach (XmlNode property in control.ChildNodes)
                                 {
-                                    XAMLWriter(sw, property, control,xVal,yVal);
+                                    XAMLWriter(sw, property, control, xVal, yVal);
                                 }
                                 if (yVal > 0)
-                                    yVal += 32;
+                                    yVal += Convert.ToInt32(GetDefaultValue("button","height",defNodes));
                                 control = control.NextSibling;
                             } while (control != null);
-                            loopGroup = false;
                         }
                     };//if (control.ChildNodes.Count > 0)
                 };//foreach(XmlNode control in node.ChildNodes)
             }
+            //
+            //
+            group = null;
+            if (listCtrls != null)
+            {
+                foreach (XmlNode control1 in listCtrls.ChildNodes)
+                {
+                    XmlNode control = control1;
+                    if (control.ChildNodes.Count > 0)
+                    {
+                        if (group == null)
+                        {
+                            foreach (XmlNode property in control.ChildNodes)
+                            {
+                                if (property.InnerText == "group")
+                                {
+                                    group = property;
+                                    break;
+                                }
+
+                                XAMLWriter(sw, property, control);
+                            }//foreach (XmlNode property in control.ChildNodes)
+                        }
+                        if (group != null)
+                        {
+                            control = group;
+                            group = null;
+                            int xVal = -1;
+                            int yVal = -1;
+                            bool loop = true;
+                            do
+                            {
+                                if (control.Name == "posX")
+                                {
+                                    xVal = Convert.ToInt32(control.InnerText);
+                                }
+
+                                if (control.Name == "posY")
+                                {
+                                    yVal = Convert.ToInt32(control.InnerText);
+                                }
+
+                                if (control.Name == "control")
+                                {
+                                    loop = false;
+                                }
+                                else
+                                    control = control.NextSibling;
+                            } while (loop == true);
+                            do
+                            {
+                                foreach (XmlNode child in control.ChildNodes)
+                                {
+                                   foreach(XmlNode property in child.ChildNodes)
+                                    XAMLWriter(sw, property, control, xVal, yVal);
+                                }
+                                if (yVal > 0)
+                                    yVal += Convert.ToInt32(GetDefaultValue("button", "height", defNodes));
+                                control = control.NextSibling;
+                            } while (control != null);
+                        }
+                    };//if (control.ChildNodes.Count > 0)
+                };//foreach(XmlNode control in node.ChildNodes)
+            }
+
+            //
             sw.WriteLine("</Canvas>");
             sw.WriteLine("</Page>");
             sw.Close();
@@ -258,6 +341,21 @@ namespace MediaPortal
                 y += baseY;
                 posx = x.ToString();
                 posy = y.ToString();
+            }
+            // process list control
+            if (property.InnerText == "listcontrol" && property.Name == "type")
+            {
+                sw.WriteLine("  <!-- " + FindNodeByName("description", parent) + " -->");
+                sw.WriteLine("<ListView");
+                sw.WriteLine("  Canvas.Top=" + chr34 + GetDefaultValue("listcontrol", "posY", defNodes) + chr34);
+                sw.WriteLine("  Canvas.Left=" + chr34 + GetDefaultValue("listcontrol", "posX", defNodes) + chr34);
+                sw.WriteLine("  Width=" + chr34 + GetDefaultValue("listcontrol", "width", defNodes) + chr34);
+                sw.WriteLine("  Height=" + chr34 + GetDefaultValue("listcontrol", "height", defNodes) + chr34);
+                sw.WriteLine("  Style="+chr34+"{DynamicResource GUIListControl}" + chr34 );
+                sw.WriteLine("/>");
+                sw.WriteLine(sw.NewLine);
+                return;
+                
             }
             // process image
             if (property.InnerText == "image" && property.Name == "type")
@@ -296,6 +394,8 @@ namespace MediaPortal
                 sw.WriteLine("  <!-- " + FindNodeByName("description", parent) + " -->");
                 sw.WriteLine("<TextBlock");
                 string foreColor = FindNodeByName("textcolor", parent);
+                if (foreColor == "")
+                    foreColor = GetDefaultValue("label", "textcolor", defNodes);
                 try
                 {
 
@@ -343,8 +443,7 @@ namespace MediaPortal
             // process button
             if (property.InnerText == "button" && property.Name == "type")
             {
-                
-                sw.WriteLine("  <!-- " + FindNodeByName("description", parent) + " -->");
+               sw.WriteLine("  <!-- " + FindNodeByName("description", parent) + " -->");
                 sw.WriteLine("<Button");
                 string labelText = FindNodeByName("label", parent);
                 if (labelText == "")
@@ -360,16 +459,49 @@ namespace MediaPortal
                 if (FindNodeByName("width", parent) != "")
                     sw.WriteLine("  Width=" + chr34 + FindNodeByName("width", parent) + chr34);
                 else
-                    sw.WriteLine("  Width=" + chr34 + "190" + chr34);
+                    sw.WriteLine("  Width=" + chr34 + GetDefaultValue("button","width",defNodes) + chr34);
 
                 if (FindNodeByName("height", parent) != "")
                     sw.WriteLine("  Height=" + chr34 + FindNodeByName("height", parent) + chr34);
                 else
-                    sw.WriteLine("  Height=" + chr34 + "32" + chr34);
+                    sw.WriteLine("  Height=" + chr34 + GetDefaultValue("button", "height", defNodes) + chr34);
 
                 sw.WriteLine("  Style=" + chr34 + "{DynamicResource GUIButton}" + chr34);
                 sw.WriteLine("  Tag=" + chr34 + "##id::" + FindNodeByName("id", parent) + "//##keycontrol::" + onLeft + onRight + onUp + onDown + "//##metadata::" + metaData + chr34);
                 sw.WriteLine(">"+labelText+"</Button>");
+                sw.WriteLine(sw.NewLine);
+                return;
+            }
+            // process button
+            if (property.InnerText == "togglebutton" && property.Name == "type")
+            {
+
+                sw.WriteLine("  <!-- " + FindNodeByName("description", parent) + " -->");
+                sw.WriteLine("<CheckBox");
+                string labelText = FindNodeByName("label", parent);
+                if (labelText == "")
+                    labelText = "textField";
+
+                if (Convert.ToInt32(labelText) > 0)
+                    metaData = "labelNum:" + labelText;
+
+                sw.WriteLine("  Canvas.Top=" + chr34 + posy + chr34);
+                sw.WriteLine("  Canvas.Left=" + chr34 + posx + chr34);
+                sw.WriteLine("  Visibility=" + chr34 + (FindNodeByName("visible", parent) == "no" ? "Hidden" : "Visible") + chr34);
+
+                if (FindNodeByName("width", parent) != "")
+                    sw.WriteLine("  Width=" + chr34 + FindNodeByName("width", parent) + chr34);
+                else
+                    sw.WriteLine("  Width=" + chr34 + GetDefaultValue("togglebutton", "width", defNodes) + chr34);
+
+                if (FindNodeByName("height", parent) != "")
+                    sw.WriteLine("  Height=" + chr34 + FindNodeByName("height", parent) + chr34);
+                else
+                    sw.WriteLine("  Height=" + chr34 + GetDefaultValue("togglebutton", "height", defNodes) + chr34);
+
+                sw.WriteLine("  Style=" + chr34 + "{DynamicResource GUIToggleButton}" + chr34);
+                sw.WriteLine("  Tag=" + chr34 + "##id::" + FindNodeByName("id", parent) + "//##keycontrol::" + onLeft + onRight + onUp + onDown + "//##metadata::" + metaData + chr34);
+                sw.WriteLine(">" + labelText + "</CheckBox>");
                 sw.WriteLine(sw.NewLine);
                 return;
             }
@@ -418,6 +550,32 @@ namespace MediaPortal
             return "";
         }
 
+        private string GetDefaultValue(string type, string property, XmlNode defaults)
+        {
+            XmlNode found=null;
+
+            foreach (XmlNode prop in defaults.ChildNodes)
+            {
+                foreach (XmlNode loop in prop.ChildNodes)
+                {
+                    if (loop.Name == "type" && loop.InnerText == type)
+                    {
+                        found = prop;
+                    }
+                }
+           }
+           if (found == null)
+               return "";
+           
+           string result="";
+           foreach (XmlNode loop in found.ChildNodes)
+           {
+               if (loop.Name == property)
+                   result = loop.InnerText;
+           }
+           int a = 1;
+           return result;
+        }
  
     }
 }

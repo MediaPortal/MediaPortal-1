@@ -3,43 +3,159 @@
       Style="{StaticResource PageBackground}" 
       x:Class="MediaPortal.HomeExtension">
 
+
+
   <Canvas>
- 
-     <Image Name="id911" 
-            Width="225" 
-       Height="230" 
-       Canvas.Left="100" 
-       Canvas.Top="100" 
-       Source="{DynamicResource hover_my music.png}">
-     </Image>
-    
-    <Button Name="launch0"
-            Canvas.Left="100"
-            Canvas.Top="10" 
-            Height="40"
-            Width="225"
-            Style="{StaticResource GUIButton}" 
-            Click="Launch_Wizard">Launch the Wizard
-    </Button>
+    <!--  -->
+    <TextBlock
+      Text="134"
+      Canvas.Top="70"
+      Foreground="White"
+      Visibility="Visible"
+      Canvas.Left="0"
+      Width="250"
+      TextAlignment="Right"
+      FontSize="16"
+      Tag="##id::1//##keycontrol::onleft:;onright:;onup:;ondown://##metadata::"
+/>
 
-    <Button Name="launch1"
-            Canvas.Left="100"
-            Canvas.Top="60" 
-            Height="40"
-            Width="225"
-            Style="{StaticResource GUIButton}" 
-            Click="MPNG">
-      MediaPortal
-    </Button>
 
-	  <CheckBox Name="launch2"
-		Canvas.Left="100"
-		Canvas.Top="110" 
-		Height="40"
-		Width="225"
-		Style="{StaticResource GUIToggleButton}" 
-		Click="MPNG">
-		  MediaPortal
-	  </CheckBox>
+    <!--  -->
+    <Image
+      Canvas.Top="20"
+      Canvas.Left="60"
+      Source="{DynamicResource music_logo.png}"
+      Visibility="Visible"
+      Tag="##id::1//##keycontrol::onleft:;onright:;onup:;ondown://##metadata::"
+/>
+
+
+    <!--  -->
+    <Image
+      Canvas.Top="370"
+      Canvas.Left="75"
+      Source="{DynamicResource hover_my music.png}"
+      Visibility="Visible"
+      Tag="##id::1//##keycontrol::onleft:;onright:;onup:;ondown://##metadata::"
+/>
+
+
+    <!-- View-As button -->
+    <Button
+      Canvas.Top="97"
+      Canvas.Left="60"
+      Visibility="Visible"
+      Width="190"
+      Height="32"
+      Style="{DynamicResource GUIButton}"
+      Tag="##id::2//##keycontrol::onleft:2;onright:50;onup:17;ondown:3//##metadata::labelNum:100"
+>100</Button>
+
+
+    <!-- Switch View -->
+    <Button
+      Canvas.Top="161"
+      Canvas.Left="60"
+      Visibility="Visible"
+      Width="190"
+      Height="32"
+      Style="{DynamicResource GUIButton}"
+      Tag="##id::6//##keycontrol::onleft:6;onright:50;onup:3;ondown:12//##metadata::labelNum:457"
+>457</Button>
+
+
+    <!-- Search -->
+    <Button
+      Canvas.Top="193"
+      Canvas.Left="60"
+      Visibility="Visible"
+      Width="190"
+      Height="32"
+      Style="{DynamicResource GUIButton}"
+      Tag="##id::12//##keycontrol::onleft:12;onright:50;onup:6;ondown:9//##metadata::labelNum:137"
+>137</Button>
+
+
+    <!-- Play CD -->
+    <Button
+      Canvas.Top="225"
+      Canvas.Left="60"
+      Visibility="Visible"
+      Width="190"
+      Height="32"
+      Style="{DynamicResource GUIButton}"
+      Tag="##id::9//##keycontrol::onleft:9;onright:50;onup:12;ondown:13//##metadata::labelNum:890"
+>890</Button>
+
+
+    <!-- Eject Disc -->
+    <Button
+      Canvas.Top="257"
+      Canvas.Left="60"
+      Visibility="Visible"
+      Width="190"
+      Height="32"
+      Style="{DynamicResource GUIButton}"
+      Tag="##id::13//##keycontrol::onleft:13;onright:50;onup:9;ondown:11//##metadata::labelNum:654"
+>654</Button>
+
+
+    <!-- Divider image -->
+    <Image
+      Canvas.Top="289"
+      Canvas.Left="60"
+      Source="{DynamicResource hbar1.png}"
+      Visibility="Visible"
+      Tag="##id::999//##keycontrol::onleft:;onright:;onup:;ondown://##metadata::"
+/>
+
+
+    <!-- Now playing button -->
+    <Button
+      Canvas.Top="321"
+      Canvas.Left="60"
+      Visibility="Visible"
+      Width="190"
+      Height="32"
+      Style="{DynamicResource GUIButton}"
+      Tag="##id::11//##keycontrol::onleft:11;onright:50;onup:13;ondown:8//##metadata::labelNum:4540"
+>4540</Button>
+
+
+    <!-- Playlists button -->
+    <Button
+      Canvas.Top="353"
+      Canvas.Left="60"
+      Visibility="Visible"
+      Width="190"
+      Height="32"
+      Style="{DynamicResource GUIButton}"
+      Tag="##id::8//##keycontrol::onleft:8;onright:50;onup:11;ondown:10//##metadata::labelNum:4555"
+>4555</Button>
+
+
+    <!-- My Playlists -->
+    <Button
+      Canvas.Top="385"
+      Canvas.Left="60"
+      Visibility="Visible"
+      Width="190"
+      Height="32"
+      Style="{DynamicResource GUIButton}"
+      Tag="##id::10//##keycontrol::onleft:10;onright:50;onup:8;ondown:99//##metadata::labelNum:983"
+>983</Button>
+
+    <!-- composite control consisting of a list control and a thumbnail panel -->
+    <ListView
+      Name="lv1" 
+      Canvas.Top="97"
+      Canvas.Left="260"
+      Width="425"
+      Height="459"
+      Style="{DynamicResource GUIListControl}"
+      >
+     </ListView>
+
   </Canvas>
 </Page>
+
