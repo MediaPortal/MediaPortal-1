@@ -776,13 +776,17 @@ namespace MediaPortal
       GUIGraphicsContext.DirectXPresentParameters = presentParams;
     }
 
-    public bool SwitchFullScreenOrWindowed(bool bWindowed, bool bRemoveHandler)
+    /// <summary>
+    /// Switch between full screen and window depending on parameter
+    /// </summary>
+    /// 
+    public void SwitchFullScreenOrWindowed(bool bWindowed)
     {
       if (!useExclusiveDirectXMode)
-        return true;
+        return;
 
-      if (bRemoveHandler)
-        GUIGraphicsContext.DX9Device.DeviceReset -= new EventHandler(this.OnDeviceReset);
+      // Temporary remove the handler
+      GUIGraphicsContext.DX9Device.DeviceReset -= new EventHandler(this.OnDeviceReset);
 
       if (bWindowed)
         _log.Info("D3D: Switch to windowed mode - Playing media: {0}", g_Player.Playing);
@@ -795,13 +799,11 @@ namespace MediaPortal
       {
         GUIGraphicsContext.DX9Device.Reset(presentParams);
 
-        if (bRemoveHandler)
-          GUIGraphicsContext.DX9Device.DeviceReset += new EventHandler(this.OnDeviceReset);
-
         if (windowed)
-          TopMost = alwaysOnTop;
+          _log.Info("D3D: Switched to windowed mode successfully");
+        else
+          _log.Info("D3D: Switched to fullscreen mode successfully");
 
-        this.Activate();
       }
       catch (Exception ex)
       {
@@ -819,19 +821,14 @@ namespace MediaPortal
         catch (Exception)
         { }
 
-        if (bRemoveHandler)
-          GUIGraphicsContext.DX9Device.DeviceReset += new EventHandler(this.OnDeviceReset);
-
-        this.Activate();
-        return false;
       }
 
-      if (windowed)
-        _log.Info("D3D: Switched to windowed mode successfully");
-      else
-        _log.Info("D3D: Switched to fullscreen mode successfully");
+      GUIGraphicsContext.DX9Device.DeviceReset += new EventHandler(this.OnDeviceReset);
 
-      return true;
+      if (windowed)
+        TopMost = alwaysOnTop;
+      this.Activate();
+
     }
 
 
@@ -1723,7 +1720,7 @@ namespace MediaPortal
       g_Player.Stop();
 
       if (!GUIGraphicsContext.DX9Device.PresentationParameters.Windowed)
-        SwitchFullScreenOrWindowed(true, true);
+        SwitchFullScreenOrWindowed(true);
 
       _autoHideMouse = false;
       Cursor.Show();
@@ -1913,8 +1910,6 @@ namespace MediaPortal
     {
       _log.Info("D3D: Fullscreen / windowed mode toggled");
 
-      GUIGraphicsContext.DX9Device.DeviceReset -= new EventHandler(this.OnDeviceReset);
-
       isMaximized = !isMaximized;
 
       GUITextureManager.CleanupThumbs();
@@ -1943,7 +1938,7 @@ namespace MediaPortal
                   this.ClientSize.Width, this.ClientSize.Height,
                   Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
 
-        SwitchFullScreenOrWindowed(false, false);
+        SwitchFullScreenOrWindowed(false);
       }
       else
       {
@@ -1968,9 +1963,8 @@ namespace MediaPortal
                   this.ClientSize.Width, this.ClientSize.Height,
                   Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
 
-        SwitchFullScreenOrWindowed(true, false);
+        SwitchFullScreenOrWindowed(true);
       }
-      GUIGraphicsContext.DX9Device.DeviceReset += new EventHandler(this.OnDeviceReset);
       OnDeviceReset(null, null);
     }
 
@@ -2372,7 +2366,7 @@ namespace MediaPortal
       g_Player.Stop();
 
       if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false)
-        SwitchFullScreenOrWindowed(true, true);
+        SwitchFullScreenOrWindowed(true);
 
       using (Settings xmlreader = new Settings("MediaPortal.xml"))
         xmlreader.Clear();
@@ -2385,7 +2379,7 @@ namespace MediaPortal
       g_Player.Stop();
 
       if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false)
-        SwitchFullScreenOrWindowed(true, true);
+        SwitchFullScreenOrWindowed(true);
 
       using (Settings xmlreader = new Settings("MediaPortal.xml"))
         xmlreader.Clear();
@@ -2398,7 +2392,7 @@ namespace MediaPortal
       g_Player.Stop();
 
       if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false)
-        SwitchFullScreenOrWindowed(true, true);
+        SwitchFullScreenOrWindowed(true);
 
       using (Settings xmlreader = new Settings("MediaPortal.xml"))
         xmlreader.Clear();
@@ -2411,7 +2405,7 @@ namespace MediaPortal
       g_Player.Stop();
 
       if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false)
-        SwitchFullScreenOrWindowed(true, true);
+        SwitchFullScreenOrWindowed(true);
 
       using (Settings xmlreader = new Settings("MediaPortal.xml"))
         xmlreader.Clear();
@@ -2424,7 +2418,7 @@ namespace MediaPortal
       g_Player.Stop();
 
       if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false)
-        SwitchFullScreenOrWindowed(true, true);
+        SwitchFullScreenOrWindowed(true);
 
       using (Settings xmlreader = new Settings("MediaPortal.xml"))
         xmlreader.Clear();

@@ -688,7 +688,7 @@ public class MediaPortalApp : D3DApp, IRender
     if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false && isMaximized)
     {
       _log.Info("Main: Switching to windowed mode");
-      SwitchFullScreenOrWindowed(true, true);
+      SwitchFullScreenOrWindowed(true);
     }
   }
 
@@ -2424,51 +2424,23 @@ public class MediaPortalApp : D3DApp, IRender
       case GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED:
         bool fullscreen = (message.Param1 != 0);
         _log.Info("Main: DX exclusive mode: {0}", fullscreen && isMaximized);
-        message.Param1 = 0; //not full screen
-        if (isMaximized == false)
-        {
+        if (isMaximized == false || GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
           return;
-        }
-        if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
-        {
-          return;
-        }
 
-        /*
-                GUIWaitCursor.Dispose();
-                GUITextureManager.CleanupThumbs();
-                GUITextureManager.Dispose();
-                GUIFontManager.Dispose();
-        */
         if (fullscreen)
         {
           //switch to fullscreen mode
           _log.Info("Main: Goto fullscreen: {0}", GUIGraphicsContext.DX9Device.PresentationParameters.Windowed);
-          if (!GUIGraphicsContext.DX9Device.PresentationParameters.Windowed)
-          {
-            message.Param1 = 1;
-          }
-          else
-          {
-            SwitchFullScreenOrWindowed(false, true);
-            if (!GUIGraphicsContext.DX9Device.PresentationParameters.Windowed)
-            {
-              message.Param1 = 1;
-            }
-          }
+          if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed)
+            SwitchFullScreenOrWindowed(false);
         }
         else
         {
           //switch to windowed mode
           _log.Info("Main: Goto windowed mode: {0}", GUIGraphicsContext.DX9Device.PresentationParameters.Windowed);
-          if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed)
-          {
-            return;
-          }
-          SwitchFullScreenOrWindowed(true, true);
+          if (!GUIGraphicsContext.DX9Device.PresentationParameters.Windowed)
+            SwitchFullScreenOrWindowed(true);
         }
-        //GUIWindowManager.OnResize();
-        //GUIWindowManager.ActivateWindow(GUIWindowManager.ActiveWindow);
         break;
 
       case GUIMessage.MessageType.GUI_MSG_GETFOCUS:
