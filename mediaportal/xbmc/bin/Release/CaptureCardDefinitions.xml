@@ -10307,7 +10307,7 @@
   <capturecard commercialname="KWorld PVR-TV 883" capturename="Conexant 2388x Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_088317de&amp;rev_05">
     <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
     <tv>
-      <interface cat="encoder" video="" audio="" mpeg2="0"/>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
       <filters>
         <filter cat="tvtuner"     name="Conexant 2388x Tuner"			    checkdevice="true"/>
         <filter cat="tvaudio"     name="Conexant 2388x TvAudio"		    checkdevice="true"/>
@@ -10334,7 +10334,7 @@
   <capturecard commercialname="KWorld PVR-TV 883" capturename="Conexant 2388x Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_088217de&amp;rev_05">
     <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
     <tv>
-      <interface cat="encoder" video="" audio="" mpeg2="0"/>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
       <filters>
         <filter cat="tvtuner"     name="Conexant 2388x Tuner"			    checkdevice="true"/>
         <filter cat="tvaudio"     name="Conexant 2388x TvAudio"		    checkdevice="true"/>
@@ -10361,7 +10361,7 @@
   <capturecard commercialname="KWorld PVR-TV 883" capturename="Conexant 2388x Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_00000000&amp;rev_05">
     <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
     <tv>
-      <interface cat="encoder" video="" audio="" mpeg2="0"/>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
       <filters>
         <filter cat="tvtuner"     name="Conexant 2388x Tuner"			    checkdevice="true"/>
         <filter cat="tvaudio"     name="Conexant 2388x TvAudio"		    checkdevice="true"/>
