@@ -25,6 +25,7 @@
 
 using System;
 using System.IO;
+using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
@@ -37,10 +38,7 @@ namespace ProcessPlugins.Audioscrobbler
 {
 
   public class AudioscrobblerPlugin : ISetupForm, IPlugin
-  { 
-    private string _asUserName = "";
-    private string _asPassword = "";
-        
+  {         
     /* If the position varies by more than this between tick events, then
        the user is skipping through the song and it won't be submitted.
        This is the most sensitive setting!  There may be problems
@@ -64,8 +62,8 @@ namespace ProcessPlugins.Audioscrobbler
     private int alertTime;
     // check for skipping
     private int lastPosition;
-    private bool pluginEnabled;
-    private bool showUpgrade;
+    public bool _doSubmit = true;
+
  
    // store arguments from Audioscrobbler events
     //private SubmitEventArgs lastSubmitArgs;
@@ -73,161 +71,7 @@ namespace ProcessPlugins.Audioscrobbler
 
     private AudioscrobblerBase scrobbler;
 
-
-    #region Serialisation
-    protected void LoadSettings()
-    {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-      {
-        _asUserName = xmlreader.GetValueAsString("audioscrobbler", "username", "");
-        _asPassword = xmlreader.GetValueAsString("audioscrobbler", "password", "");
-      }
-    }
-    #endregion
-
-    //private uint StatusID; //< Required by the Gtk.Statusbar.
-    //private Gtk.TextTag italicTag;
-    //private Gtk.TextTag boldTag;
-
-    //public override void Initialize(IPlayer player)
-    //{
-      //this.player = player;
-
-      //// where to write the log and queue files
-      //string pluginDir = GetPluginDir();
-      //// attempt to open the log file
-      
-      //// Add listeners for Muine events
-      //player.SongChangedEvent  += new SongChangedEventHandler(OnSongChangedEvent);
-      //player.TickEvent         += new TickEventHandler(OnTickEvent);
-      //player.StateChangedEvent += new StateChangedEventHandler(OnStateChangedEvent);
-
-      //InitialiseUI();
-
-      // get AS username and password
-      //string username = "";
-      //string password = "";
-      ////gconfClient = new GConf.Client();
-      //try {
-      //  username = (string)gconfClient.Get(GCONF_USERNAME);
-      //  password = (string)gconfClient.Get(GCONF_PASSWORD);
-      //} catch (Exception e) {
-      //  // add dummy entries here so the user can find them
-      //  //gconfClient.Set(GCONF_USERNAME, username);
-      //  //gconfClient.Set(GCONF_PASSWORD, password);
-      //}
-
-      // other AS preferences
-      //showUpgrade = true;
-      //try {
-      //  showUpgrade = (bool)gconfClient.Get(GCONF_UPGRADE);
-      //} catch (Exception e) {
-      //  gconfClient.Set(GCONF_UPGRADE, showUpgrade);
-      //}
-
-      //skipThreshold = 2;
-      //try {
-      //  skipThreshold = (int)gconfClient.Get(GCONF_SKIP_THRESHOLD);
-      //} catch (Exception e) {
-      //  gconfClient.Set(GCONF_SKIP_THRESHOLD, skipThreshold);
-      //}
-
-      // is the plugin enabled?
-      //pluginEnabled = true;
-      //try {
-      //  pluginEnabled = (bool)gconfClient.Get(GCONF_ENABLED);
-      //} catch (Exception e) {
-      //  gconfClient.Set(GCONF_ENABLED, pluginEnabled);
-      //}
-
-      // let us know whenever the gconf stuff changes
-      //gconfClient.AddNotify(GCONF_USERNAME, 
-      //                      new GConf.NotifyEventHandler(OnNameChangedEvent));
-      //gconfClient.AddNotify(GCONF_PASSWORD, 
-      //                      new GConf.NotifyEventHandler(OnPassChangedEvent));
-      //gconfClient.AddNotify(GCONF_UPGRADE, 
-      //                      new GConf.NotifyEventHandler(OnUpgradeChangedEvent));
-      //gconfClient.AddNotify(GCONF_ENABLED, 
-      //                      new GConf.NotifyEventHandler(OnEnabledChangedEvent));
-
-
-
-
-
-    //  currentSong = null;
-    //  queued      = false;
-    //  alertTime   = INFINITE_TIME;
-    //  scrobbler   = new GAudioscrobbler(username, password, pluginDir);
-    //  StatusID    = StatusBar.GetContextId("message");
-    //  StatusBar.Push(StatusID, "Ready.");
-
-    //  // catch events from Audioscobbler object
-    //  scrobbler.AuthErrorEventLazy    += OnAuthErrorEvent;
-    //  scrobbler.NetworkErrorEventLazy += OnNetworkErrorEvent;
-    //  scrobbler.SubmitEventLazy       += OnSubmitEvent;
-    //  scrobbler.ConnectEvent          += OnConnectEvent;
-    //  scrobbler.DisconnectEvent       += OnDisconnectEvent;
-
-    //  // connect to Audioscrobbler (in a new thread)
-    //  if (pluginEnabled) {
-    //    StatusBar.Pop(StatusID);
-    //    StatusBar.Push(StatusID, "Connecting...");
-    //    OnConnectButtonClicked(null, null);
-    //  }
-
-    //  Global.Log(0, "AudioscrobblerPlugin.Initialise", "Finished");
-    //}
-
-    //private void InitialiseUI()
-    //{
-    //  Global.Log(0, "AudioscrobblerPlugin.InitialiseUI", "Starting");
-    //  // set up the preferences UI - code reuse thanks to Fernando Herrera
-    //  Gtk.ActionEntry [] actionEntries = new Gtk.ActionEntry [] {
-    //    new Gtk.ActionEntry ("SetAudioscrobblerDetails", null, "Audioscrobbler...", "", null, new EventHandler(OnAudioscrobblerWindow))
-    //  };
-    //  Gtk.ActionGroup actionGroup = new Gtk.ActionGroup("AudioscrobblerActions");
-    //  actionGroup.Add(actionEntries);
-    
-    //  player.UIManager.InsertActionGroup(actionGroup, -1);
-    //  player.UIManager.AddUi(this.player.UIManager.NewMergeId(),
-    //                         "/MenuBar/FileMenu/ExtraFileActions",
-    //                         "AudioscrobblerMenuItem",
-    //                         "SetAudioscrobblerDetails",
-    //                         Gtk.UIManagerItemType.Menuitem,
-    //                         false);
-    
-    //  Glade.XML glade = new Glade.XML(null, "Audioscrobbler.glade", "Window", null);
-    //  glade.Autoconnect(this);
-
-    //  // add tags for bold and italic text in the history buffer
-    //  italicTag = new Gtk.TextTag("italic");
-    //  italicTag.Style = Pango.Style.Italic;
-    //  TextHistory.Buffer.TagTable.Add(italicTag);
-
-    //  boldTag = new Gtk.TextTag("bold");
-    //  boldTag.Weight = Pango.Weight.Bold;
-    //  TextHistory.Buffer.TagTable.Add(boldTag);    
-
-    //  SubmitTimeLabel.Text = "Nothing to submit.";
-    //  Global.Log(0, "AudioscrobblerPlugin.InitialiseUI", "Finished");
-    //}
-
-    // Figure out where we should put the log and cache files
-    //private string GetPluginDir()
-    //{
-    //  string retVal = "/tmp"; // if all else fails we can store the queue here
-    //  try {
-    //    retVal = Path.Combine (Gnome.User.DirGet(), "muine");
-    //  } catch (Exception e) {
-    //    Console.WriteLine("AudioscrobblerPlugin Warning: Couldn't find $HOME directory\nCache and log files will be stored in /tmp");
-    //  }
-    //  return retVal;
-    //}
-
-    //
-    // Properties
-    //
-
+    #region Properties
     /* The number of seconds at which the current song will be queued */
     public int AlertTime
     {
@@ -251,111 +95,65 @@ namespace ProcessPlugins.Audioscrobbler
       }
     }
 
-    //
-    // UI events
-    //
-
-    private void OnAudioscrobblerWindow(object sender, EventArgs args)
-    {
-      //ShowAudioscrobblerWindow();
-    }
-
-    /* ShowAudioscrobblerWindow
-       This function is suitable as a delegate in the idle loop */
-    //private bool ShowAudioscrobblerWindow ()
-    //{
-    //  // set the text in the input boxes
-    //  UsernameBox.Text = scrobbler.Username;
-    //  PasswordBox.Text = scrobbler.Password;
-    //  CheckShowUpgrade.Active = showUpgrade;
-    //  CheckEnable.Active = pluginEnabled;
-    //  Window.Show();
-    //  return false;
-    //}
-    
-
-
-
-    private void OnDisconnectButtonClicked(object sender, EventArgs args)
+    private void OnManualDisconnect(object sender, EventArgs args)
     {
       scrobbler.Disconnect();
     }
 
-    private void OnConnectButtonClicked(object sender, EventArgs args)
+    private void OnManualConnect(object sender, EventArgs args)
     {
       scrobbler.Connect();
     }
 
-    private void OnClearCacheButtonClicked(object sender, EventArgs args)
+    private void OnManualClearCache(object sender, EventArgs args)
     {
       scrobbler.ClearQueue();
       //CacheSizeLabel.Text = scrobbler.QueueLength.ToString();
       AddToHistory("Cache cleared", null);
     }
+    
+    //private void OnNameChangedEvent(string ASUsername)
+    //{
+    //  scrobbler.Username = ASUsername;
+    //}
 
-    // 
-    // GConf events
-    //
-
-    private void OnNameChangedEvent(string ASUsername)
-    {
-      scrobbler.Username = ASUsername;
-    }
-
-    private void OnPassChangedEvent(string ASPassword)
-    {
-      scrobbler.Password = ASPassword;
-    }
+    //private void OnPassChangedEvent(string ASPassword)
+    //{
+    //  scrobbler.Password = ASPassword;
+    //}
 
     private void OnEnabledChangedEvent(bool isEnabled)
     {
       if (isEnabled)
-        OnConnectButtonClicked(null, null);
+        OnManualConnect(null, null);
       else {
         scrobbler.Disconnect();
       }
     }
+    #endregion
 
-    private void OnUpgradeChangedEvent(bool ShowUpgrade)
-    {
-      showUpgrade = ShowUpgrade;
-    }
-
-    //
-    // Audioscrobbler events
-    //
-
+    #region Audioscrobbler events
     private void OnAuthErrorEvent(AuthErrorEventArgs args)
     {
       string report = "Audioscrobbler did not recognize your username/password."
                     + " Please check your details (File/Audioscrobbler...)";
       ShowErrorMessage(report);
-      OnDisconnectButtonClicked(null, null);
+      OnManualDisconnect(null, null);
     }
 
     private void OnNetworkErrorEvent(NetworkErrorEventArgs args)
     {
       //StatusBar.Pop(StatusID);
       //StatusBar.Push(StatusID, args.Details);
-      //OnDisconnectButtonClicked(null, null);
-    }
-
-    private void OnUpdateAvailableEvent(UpdateAvailableEventArgs args)
-    {
-      //if (!CheckShowUpgrade.Active)
-        //return;
-      string report = "A new version of the Audioscrobbler plugin is"
-                    + "available at:\n" + args.version;
-      ShowErrorMessage(report);
+      OnManualDisconnect(null, null);
     }
     
     private void OnSubmitEvent (SubmitEventArgs args)
     {
-      //CacheSizeLabel.Text = scrobbler.QueueLength.ToString();
       string title = args.song.Artist + " - " + args.song.Title;
-      //StatusBar.Pop(StatusID);
+
       //StatusBar.Push(StatusID, "Submitted: " + title);
-      //SubmitTimeLabel.Text = "Nothing to submit.";
+
       // Consider the song to be submitted if a connection was made -
       // AS can't reject individual songs.
       AddToHistory("Submitted", args.song);
@@ -372,19 +170,32 @@ namespace ProcessPlugins.Audioscrobbler
       //StatusBar.Pop(StatusID);
       //StatusBar.Push(StatusID, "Disconnected.");
     }
+    #endregion
 
+    #region MediaPortal events
+    void OnThreadMessage(GUIMessage message)
+    {
+      switch (message.Message)
+      {
+        case GUIMessage.MessageType.GUI_MSG_PLAYING_10SEC:
 
-    //
-    // Muine events
-    //
-    private void OnSongChangedEvent(Song song)
+          string strFile = message.Label;
+          if (MediaPortal.Util.Utils.IsAudio(strFile))
+          {
+            OnTickEvent(10);
+          }
+          break;
+      }
+    }
+
+    public void OnSongChangedEvent(Song song)
     {
       //Global.Log(0, "Plugin.OnSongChangedEvent", "Start");
       queued      = false;
       alertTime   = INFINITE_TIME;
       currentSong = null;
-    
-      if (!pluginEnabled || song == null)
+
+      if (!_doSubmit || song == null)
         return;
 
       currentSong = new Song();
@@ -415,7 +226,7 @@ namespace ProcessPlugins.Audioscrobbler
       //Global.Log(0, "Plugin.OnSongChangedEvent", "End");
     }
 
-    private void OnStateChangedEvent(bool playing)
+    public void OnStateChangedEvent(bool playing)
     {
       if (playing && currentSong != null &&
           currentSong.DateTimePlayed == DateTime.MinValue)
@@ -423,36 +234,24 @@ namespace ProcessPlugins.Audioscrobbler
         // we've started the player - note the time
         currentSong.DateTimePlayed = DateTime.UtcNow;
       }
-    }  
+    }
 
-    private void OnTickEvent(int position)
+    public void OnTickEvent(int position)
     {
-      if (!pluginEnabled)
+      if (!_doSubmit)
         return;
     
       // attempt to detect skipping
-      if (currentSong != null &&
-          alertTime < INFINITE_TIME && 
-          position > lastPosition + skipThreshold) {
-//        Global.Log(1, "Plugin.OnTickEvent", "Skipping detected " +
-//                   "(from " + lastPosition + " to " + position + ")" +
-//                   " - not queueing");
+      if (currentSong != null && alertTime < INFINITE_TIME && position > lastPosition + skipThreshold)
+      {
+//        _log.Info("Audioscrobbler: OnTickEvent {0}", "Skipping detected from " + lastPosition + " to " + position + ") - not queueing");
         alertTime = INFINITE_TIME;
-//        SubmitTimeLabel.Text = "Skipping detected. Not submitting the current song.";
         AddToHistory("Ignored (skipping)", currentSong);
       }
 
-      // update the time-to-submission label
-      //if (Window.Visible && position != lastPosition && 
-      //    !queued && alertTime > position && alertTime != INFINITE_TIME)
-      //  UpdateSubmitTimeLabel(alertTime - position);
-
       // then actually queue the song if we're that far along
-      if (!queued && 
-          position >= alertTime && 
-          alertTime > 14 && position > 14 && // stop double queueing bug?
-          currentSong != null) {
-        //SubmitTimeLabel.Text = "Submitting...";
+      if (!queued && position >= alertTime && alertTime > 14 && position > 14 && currentSong != null)
+      {
         scrobbler.pushQueue(currentSong);
         queued = true;
       }
@@ -464,26 +263,15 @@ namespace ProcessPlugins.Audioscrobbler
       */
       lastPosition = position;
     }
+    #endregion
 
-
-    //
-    // Utilities.
-    //
-    
+    #region Utilities
     /**
      * Show a dialog box with the message from Audioscrobbler.
      */
     private bool ShowErrorMessage (string message)
     {
-      //MessageBox md =
-      //  new MessageBox(player.Window, 
-      //                         Gtk.DialogFlags.DestroyWithParent,
-      //                         Gtk.MessageType.Info, 
-      //                         Gtk.ButtonsType.Close, 
-      //                         message);
-      //md.Modal = false;
-      //md.Run ();
-      //md.Destroy();
+//      _log.Info("Audioscrobbler: ShowErrorMessage {0}", message);
       return false;
     }
     
@@ -516,7 +304,6 @@ namespace ProcessPlugins.Audioscrobbler
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       ILog _log = services.Get<ILog>();
-
       if (desc != "")
       {
         _log.Info("Audioscrobbler: {0}", desc);
@@ -525,12 +312,22 @@ namespace ProcessPlugins.Audioscrobbler
       if (song != null)
         _log.Info("Audioscrobbler: {0}", song.ToShortString());
     }
+    #endregion
 
     #region IPlugin Members
 
     public void Start()
     {
-      //_timer.Enabled = true;
+      currentSong = null;
+      queued = false;
+      alertTime = INFINITE_TIME;
+      scrobbler = new AudioscrobblerBase();
+
+      // connect to Audioscrobbler (in a new thread)
+      if (_doSubmit)
+      {
+        OnManualConnect(null, null);
+      }
     }
 
     public void Stop()
@@ -544,7 +341,7 @@ namespace ProcessPlugins.Audioscrobbler
 
     public bool CanEnable()
     {
-      return false;
+      return true;
     }
 
     public string Description()

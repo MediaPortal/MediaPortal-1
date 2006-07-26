@@ -32,7 +32,7 @@ using System.Threading;
 using System.Timers;
 using System.Text;
 using MediaPortal.Music.Database;
-
+using MediaPortal.GUI.Library;
 
 namespace ProcessPlugins.Audioscrobbler 
 {
@@ -163,8 +163,8 @@ namespace ProcessPlugins.Audioscrobbler
     const int    HANDSHAKE_INTERVAL  = 30;     //< In minutes.
     const int    CONNECT_WAIT_TIME   = 2;      //< Min secs between connects.
     const int    SUBMIT_INTERVAL     = 120;    //< Seconds.
-    const string CLIENT_NAME         = "MediaPortal";
-    const string CLIENT_VERSION      = "0.1.6";
+    const string CLIENT_NAME         = "ark";
+    const string CLIENT_VERSION      = "1.4";
     const string SCROBBLER_URL       = "http://post.audioscrobbler.com";
     const string PROTOCOL_VERSION    = "1.1";
     const string CACHEFILE_NAME      = "audioscrobbler-cache.txt";
@@ -172,7 +172,7 @@ namespace ProcessPlugins.Audioscrobbler
     // Client-specific config variables.
     private string              username;
     private string              password;
-    private string              pluginDir;
+
     private string              cacheFile;
     
     // Other internal properties.
@@ -191,17 +191,17 @@ namespace ProcessPlugins.Audioscrobbler
     private string              md5challenge;
     private string              submitUrl;
 
-    /**
+    /*
      * Constructor.
-     * \param username The Audioscrobbler account name.
-     * \param password The password for the given account.
-     * \param dir A local directory in which the queue can be cached.
      */
-    public AudioscrobblerBase(string username_, string password_, string plugindir_)
+    public AudioscrobblerBase()
     {
-      username             = username_;
-      password             = password_;
-      pluginDir            = plugindir_;
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+        username = xmlreader.GetValueAsString("audioscrobbler", "username", "");
+        password = xmlreader.GetValueAsString("audioscrobbler", "password", "");
+      }
+
       connected            = false;
       queue                = new ArrayList();
       queueLock            = new Object();
@@ -211,7 +211,7 @@ namespace ProcessPlugins.Audioscrobbler
       handshakeInterval    = new TimeSpan(0, HANDSHAKE_INTERVAL, 0);
       lastConnectAttempt   = DateTime.MinValue;
       minConnectWaitTime   = new TimeSpan(0, 0, CONNECT_WAIT_TIME);
-      cacheFile            = pluginDir + "/" + CACHEFILE_NAME;
+      cacheFile            = CACHEFILE_NAME;
       
       // Loading the queue should be fast - no thread required
       LoadQueue();
@@ -235,7 +235,6 @@ namespace ProcessPlugins.Audioscrobbler
           this.username = value;
           // allow a new handshake to occur
           lastHandshake = DateTime.MinValue;
-//          Global.Log(1, "GAudioscrobbler.Username", "New username: " + username);
         }
       }
     }
@@ -253,7 +252,7 @@ namespace ProcessPlugins.Audioscrobbler
           this.password = value;
           // allow a new handshake to occur
           lastHandshake = DateTime.MinValue;
-//          Global.Log(1, "GAudioscrobbler.Password", "Password changed");
+//          Log.Write("AudioscrobblerBase.Password", "Password changed");
         }
       }
     }
@@ -290,13 +289,13 @@ namespace ProcessPlugins.Audioscrobbler
      * songs are submitted to Audioscrobbler.
      */
     public void Connect ()
-    {
-      // Global.Log(0, "GAudioscrobbler.Connect", "Start");
+    {    
+      Log.Write("AudioscrobblerBase.Connect", "Start");
       // Try to submit all queued songs immediately.
       StartSubmitQueueThread();
       // From now on, try to submit queued songs periodically.
       InitSubmitTimer();
-      // Global.Log(0, "GAudioscrobbler.Connect", "End");
+      Log.Write("AudioscrobblerBase.Connect", "End");
     }
 
     /**
@@ -305,12 +304,12 @@ namespace ProcessPlugins.Audioscrobbler
      */
     public void Disconnect ()
     {
-      // Global.Log(0, "GAudioscrobbler.Disconnect", "Start");
+      Log.Write("AudioscrobblerBase.Disconnect", "Start");
       if (submitTimer != null)
         submitTimer.Close();
       connected = false;
       TriggerDisconnectEvent(new DisconnectEventArgs());
-      // Global.Log(0, "GAudioscrobbler.Disconnect", "End");
+      Log.Write("AudioscrobblerBase.Disconnect", "End");
     }
     
     /**
@@ -320,7 +319,7 @@ namespace ProcessPlugins.Audioscrobbler
     public void pushQueue(Song song_)
     {
       string logmessage = "Adding to queue: " + song_.ToShortString();
-      // Global.Log(1, "GAudioscrobbler.pushQueue", logmessage);
+      Log.Write("AudioscrobblerBase.pushQueue", logmessage);
 
       // Enqueue the song.
       song_.AudioScrobblerStatus = SongStatus.Cached;
@@ -336,7 +335,7 @@ namespace ProcessPlugins.Audioscrobbler
       // Reset the submit timer.
       submitTimer.Close();
       InitSubmitTimer();
-      // Global.Log(0, "GAudioscrobbler.pushQueue", "Finish");
+      Log.Write("AudioscrobblerBase.pushQueue", "Finish");
     }
 
     /**
@@ -356,7 +355,7 @@ namespace ProcessPlugins.Audioscrobbler
      ***************************************************/
     public void TriggerAuthErrorEvent (AuthErrorEventArgs args_)
     {
-      // Global.Log(0, "GAudioscrobbler.EmitAuthErrorEvent", "Start");
+      Log.Write("AudioscrobblerBase.TriggerAuthErrorEvent", "Start");
       //if (AuthErrorEvent != null)
       //  AuthErrorEvent(args_);
       //if (AuthErrorEventLazy == null)
@@ -364,12 +363,12 @@ namespace ProcessPlugins.Audioscrobbler
       //Functor func =
       //  EventQueue.BindOne<AuthErrorEventArgs>(AuthErrorEventLazy, args_);
       //eventQueue.Queue(func);
-      // Global.Log(0, "GAudioscrobbler.EmitAuthErrorEvent", "End");
+      Log.Write("AudioscrobblerBase.TriggerAuthErrorEvent", "End");
     }
 
     public void TriggerNetworkErrorEvent (NetworkErrorEventArgs args_)
     {
-      // Global.Log(0, "GAudioscrobbler.EmitNetworkErrorEvent", "Start");
+      Log.Write("AudioscrobblerBase.TriggerNetworkErrorEvent", "Start");
       //if (NetworkErrorEvent != null)
       //  NetworkErrorEvent(args_);
       //if (NetworkErrorEventLazy == null)
@@ -378,12 +377,12 @@ namespace ProcessPlugins.Audioscrobbler
       //  EventQueue.BindOne<NetworkErrorEventArgs>(NetworkErrorEventLazy,
       //                                                  args_);
       //eventQueue.Queue(func);
-      // Global.Log(0, "GAudioscrobbler.EmitNetworkErrorEvent", "End");
+      Log.Write("AudioscrobblerBase.TriggerNetworkErrorEvent", "End");
     }
 
     public void TriggerSubmitEvent (SubmitEventArgs args_)
     {
-      // Global.Log(0, "GAudioscrobbler.EmitSubmitEvent", "Start");
+      Log.Write("AudioscrobblerBase.TriggerSubmitEvent", "Start");
       //if (SubmitEvent != null)
       //  SubmitEvent(args_);
       //if (SubmitEventLazy == null)
@@ -391,25 +390,12 @@ namespace ProcessPlugins.Audioscrobbler
       //Functor func =
       //  EventQueue.BindOne<SubmitEventArgs>(SubmitEventLazy, args_);
       //eventQueue.Queue(func);
-      // Global.Log(0, "GAudioscrobbler.EmitSubmitEvent", "End");
+      Log.Write("AudioscrobblerBase.TriggerSubmitEvent", "End");
     }
-
-    public void TriggerUpdateAvailableEvent (UpdateAvailableEventArgs args_)
-    {
-      // Global.Log(0, "GAudioscrobbler.EmitUpdateAvailableEvent", "Start");
-      //if (UpdateAvailableEvent != null)
-      //  UpdateAvailableEvent(args_);
-      //if (UpdateAvailableEventLazy == null)
-      //  return;
-      //Functor func =
-      //  EventQueue.BindOne<UpdateAvailableEventArgs>(UpdateAvailableEventLazy, args_);
-      //eventQueue.Queue(func);
-      // Global.Log(0, "GAudioscrobbler.EmitUpdateAvailableEvent", "End");
-    }
-
+    
     public void TriggerConnectEvent (ConnectEventArgs args_)
     {
-      // Global.Log(0, "GAudioscrobbler.EmitConnectEvent", "Start");
+      Log.Write("AudioscrobblerBase.TriggerConnectEvent", "Start");
       //if (ConnectEvent != null)
       //  ConnectEvent(args_);
       //if (ConnectEventLazy == null)
@@ -417,12 +403,12 @@ namespace ProcessPlugins.Audioscrobbler
       //Functor func =
       //  EventQueue.BindOne<ConnectEventArgs>(ConnectEventLazy, args_);
       //eventQueue.Queue(func);
-      // Global.Log(0, "GAudioscrobbler.EmitConnectEvent", "End");
+      Log.Write("AudioscrobblerBase.TriggerConnectEvent", "End");
     }
 
     public void TriggerDisconnectEvent (DisconnectEventArgs args_)
     {
-      // Global.Log(0, "GAudioscrobbler.EmitDisconnectEvent", "Start");
+      Log.Write("AudioscrobblerBase.TriggerDisconnectEvent", "Start");
       //if (DisconnectEvent != null)
       //  DisconnectEvent(args_);
       //if (DisconnectEventLazy == null)
@@ -430,7 +416,7 @@ namespace ProcessPlugins.Audioscrobbler
       //Functor func =
       //  EventQueue.BindOne<DisconnectEventArgs>(DisconnectEventLazy, args_);
       //eventQueue.Queue(func);
-      // Global.Log(0, "GAudioscrobbler.EmitDisconnectEvent", "End");
+      Log.Write("AudioscrobblerBase.TriggerDisconnectEvent", "End");
     }
 
 
@@ -446,7 +432,7 @@ namespace ProcessPlugins.Audioscrobbler
      */
     private bool DoHandshake () 
     {
-      // Global.Log(0, "GAudioscrobbler.DoHandshake", "Start");
+      Log.Write("AudioscrobblerBase.DoHandshake", "Start");
       
       // Handle uninitialized username/password.
       if (username == "" || password == "") {
@@ -459,11 +445,11 @@ namespace ProcessPlugins.Audioscrobbler
       if (DateTime.Now < lastHandshake.Add(handshakeInterval)) {
         string nexthandshake = lastHandshake.Add(handshakeInterval).ToString();
         string logmessage    = "Next handshake due at " + nexthandshake;
-        // Global.Log(0, "GAudioscrobbler.DoHandshake", logmessage);
+        Log.Write("AudioscrobblerBase.DoHandshake", logmessage);
         return true;
       }
 
-      // Global.Log(1, "GAudioscrobbler.DoHandshake", "Attempting handshake");
+      Log.Write("AudioscrobblerBase.DoHandshake", "Attempting handshake");
       string url = SCROBBLER_URL
                  + "?hs=true"
                  + "&p=" + PROTOCOL_VERSION
@@ -475,7 +461,7 @@ namespace ProcessPlugins.Audioscrobbler
       bool success = GetResponse(url, "");
       
       if (!success) {
-        // Global.Log(1, "GAudioscrobbler.DoHandshake", "Handshake failed");
+        Log.Write("AudioscrobblerBase.DoHandshake", "Handshake failed");
         return false;
       }
 
@@ -486,7 +472,7 @@ namespace ProcessPlugins.Audioscrobbler
       }
 
       lastHandshake = DateTime.Now;
-      // Global.Log(0, "GAudioscrobbler.DoHandshake", "Handshake successful");
+      Log.Write("AudioscrobblerBase.DoHandshake", "Handshake successful");
       return true;
     }
 
@@ -498,7 +484,7 @@ namespace ProcessPlugins.Audioscrobbler
      */
     private bool GetResponse(string url_, string postdata_)
     {
-      // Global.Log(0, "GAudioscrobbler.GetResponse", "Start");
+      Log.Write("AudioscrobblerBase.GetResponse", "Start");
 
       // Enforce a minimum wait time between connects.
       DateTime nextconnect = lastConnectAttempt.Add(minConnectWaitTime);
@@ -506,7 +492,7 @@ namespace ProcessPlugins.Audioscrobbler
         TimeSpan waittime    = nextconnect - DateTime.Now;
         string   logmessage  = "Connects too fast. Sleeping until "
                              + nextconnect.ToString();
-        // Global.Log(1, "GAudioscrobbler.GetResponse", logmessage);
+        Log.Write("AudioscrobblerBase.GetResponse", logmessage);
         Thread.Sleep(waittime);
       }
       lastConnectAttempt = DateTime.Now;
@@ -524,14 +510,14 @@ namespace ProcessPlugins.Audioscrobbler
         args.Details = "Connection to the Audioscrobbler server failed.";
         TriggerNetworkErrorEvent(args);
         string logmessage = "WebRequest.Create failed: " + e.Message;
-        // Global.Log(1, "GAudioscrobbler.GetResponse", logmessage);
+        Log.Write("AudioscrobblerBase.GetResponse", logmessage);
         return false;
       }
 
       // Attach POST data to the request, if any.
       if (postdata_ != "") {
-        // Global.Log(1, "GAudioscrobbler.GetResponse", "POST to " + url_ );
-        // Global.Log(1, "GAudioscrobbler.GetResponse", "Data: "   + postdata_ );
+        Log.Write("AudioscrobblerBase.GetResponse", "POST to " + url_ );
+        Log.Write("AudioscrobblerBase.GetResponse", "Data: "   + postdata_ );
         string logmessage = "Connecting to '" + url_ + "\nData: " + postdata_;
         
         // TODO: what is the illegal characters warning all about?
@@ -551,13 +537,13 @@ namespace ProcessPlugins.Audioscrobbler
           args.Details = "Error while trying to submit to Audioscrobbler.";
           TriggerNetworkErrorEvent(args);
           logmessage = "HttpWebRequest.GetRequestStream: " + e.Message;
-          // Global.Log(1, "GAudioscrobbler.GetResponse", logmessage);
+          Log.Write("AudioscrobblerBase.GetResponse", logmessage);
           return false;
         }
       }
 
       // Create the response object.
-      // Global.Log(1, "GAudioscrobbler.GetResponse", "Waiting for response");
+      Log.Write("AudioscrobblerBase.GetResponse", "Waiting for response");
       StreamReader reader = null;
       try {
         HttpWebResponse response = (HttpWebResponse)request.GetResponse();
@@ -571,7 +557,7 @@ namespace ProcessPlugins.Audioscrobbler
         args.Details = "Error while waiting for Audioscrobbler response.";
         TriggerNetworkErrorEvent(args);
         string logmessage = "HttpWebRequest.GetResponse: " + e.Message;
-        // Global.Log(1, "GAudioscrobbler.GetResponse", logmessage);
+        Log.Write("AudioscrobblerBase.GetResponse", logmessage);
         return false;
       }
 
@@ -583,14 +569,14 @@ namespace ProcessPlugins.Audioscrobbler
        * FAILED
        * BADUSER / BADAUTH
        */
-      // Global.Log(1, "GAudioscrobbler.GetResponse", "Response received");
+      Log.Write("AudioscrobblerBase.GetResponse", "Response received");
       string respType = reader.ReadLine();
       if (respType == null) {
         NetworkErrorType      type = NetworkErrorType.EmptyResponse;
         NetworkErrorEventArgs args = new NetworkErrorEventArgs(type);
         args.Details = "Empty response from Audioscrobbler server.";
         TriggerNetworkErrorEvent(args);
-        // Global.Log(1, "GAudioscrobbler.GetResponse", args.Details);
+        Log.Write("AudioscrobblerBase.GetResponse", args.Details);
         return false;
       }
 
@@ -600,7 +586,7 @@ namespace ProcessPlugins.Audioscrobbler
       if (respType.StartsWith("UPTODATE"))
         success = parse_success = parseUpToDateMessage(respType, reader);
       else if (respType.StartsWith("UPDATE"))
-        success = parse_success = parseUpdateMessage(respType, reader);
+        Log.Write("AudioscrobblerBase.GetResponse", "UPDATE needed!");
       else if (respType.StartsWith("OK"))
         success = parse_success = parseOkMessage(respType, reader);
       else if (respType.StartsWith("FAILED"))
@@ -610,7 +596,7 @@ namespace ProcessPlugins.Audioscrobbler
         parse_success = parseBadUserMessage(respType, reader);
       else {
         string logmessage = "** CRITICAL ** Unknown response " + respType;
-        // Global.Log(2, "GAudioscrobbler.GetResponse", logmessage);
+        Log.Write("AudioscrobblerBase.GetResponse", logmessage);
       }
 
       if (!parse_success) {
@@ -621,7 +607,7 @@ namespace ProcessPlugins.Audioscrobbler
         return false;
       }
 
-      // Global.Log(0, "GAudioscrobbler.GetResponse", "End");
+      Log.Write("AudioscrobblerBase.GetResponse", "End");
       return success;
     }
 
@@ -646,17 +632,17 @@ namespace ProcessPlugins.Audioscrobbler
      */
     private void SubmitQueue ()
     {
-      // Global.Log(0, "GAudioscrobbler.SubmitQueue", "Start");
+      Log.Write("AudioscrobblerBase.SubmitQueue", "Start");
 
       // Make sure that a connection is possible.
       if (!DoHandshake()) {
-        // Global.Log(1, "GAudioscrobbler.SubmitQueue", "Handshake failed.");
+        Log.Write("AudioscrobblerBase.SubmitQueue", "Handshake failed.");
         return;
       }
 
       // If the queue is empty, nothing else to do today.
       if (queue.Count <= 0) {
-        // Global.Log(0, "GAudioscrobbler.SubmitQueue", "Queue is empty");
+        Log.Write("AudioscrobblerBase.SubmitQueue", "Queue is empty");
         return;
       }
 
@@ -686,7 +672,7 @@ namespace ProcessPlugins.Audioscrobbler
 
         // Submit or die.
         if (!GetResponse(submitUrl, postData)) {
-          // Global.Log(1, "GAudioscrobbler.SubmitQueue", "Submit failed.");
+          Log.Write("AudioscrobblerBase.SubmitQueue", "Submit failed.");
           return;
         }
 
@@ -697,7 +683,7 @@ namespace ProcessPlugins.Audioscrobbler
         }
 
         // Send an event for each of the submitted songs.
-        // Global.Log(0, "GAudioscrobbler.SubmitQueue", "Sending SubmitEvents");
+        Log.Write("AudioscrobblerBase.SubmitQueue", "Sending SubmitEvents");
         foreach (Song song in songs) {
           song.AudioScrobblerStatus = SongStatus.Submitted;
           SubmitEventArgs args = new SubmitEventArgs(song);
@@ -708,7 +694,7 @@ namespace ProcessPlugins.Audioscrobbler
         SaveQueue();
       }
 
-      // Global.Log(0, "GAudioscrobbler.SubmitQueue", "End");
+      Log.Write("AudioscrobblerBase.SubmitQueue", "End");
     }
 
 
@@ -717,49 +703,40 @@ namespace ProcessPlugins.Audioscrobbler
      ***************************************************/
     private bool parseUpToDateMessage(string type_, StreamReader reader_)
     {
-      // Global.Log(0, "GAudioscrobbler.parseUpToDateMessage", "Called.");
+      Log.Write("AudioscrobblerBase.parseUpToDateMessage", "Called.");
       try {
         md5challenge = reader_.ReadLine().Trim();
         submitUrl    = reader_.ReadLine().Trim();
       } catch (Exception e) {
         string logmessage = "Failed to parse UPTODATE response: " + e.Message;
-        // Global.Log(2, "GAudioscrobbler.parseUpToDateMessage", logmessage);
+        Log.Write("AudioscrobblerBase.parseUpToDateMessage", logmessage);
         md5challenge = "";
         return false;
       }
       return true;
     }
 
-    private bool parseUpdateMessage(string type_, StreamReader reader_)
-    {
-      string version = type_.Substring(7);
-      UpdateAvailableEventArgs args = new UpdateAvailableEventArgs(version);
-      TriggerUpdateAvailableEvent(args);
-      parseUpToDateMessage(type_, reader_);
-      return true;
-    }
-
     private bool parseOkMessage(string type_, StreamReader reader_)
     {
-      // Global.Log(0, "GAudioscrobbler.parseOkMessage", "Called.");
+      Log.Write("AudioscrobblerBase.parseOkMessage", "Called.");
       return true;
     }
 
     private bool parseFailedMessage(string type_, StreamReader reader_)
     {
-      // Global.Log(0, "GAudioscrobbler.parseFailedMessage", "Called.");
+      Log.Write("AudioscrobblerBase.parseFailedMessage", "Called.");
       string logmessage = "";
       if (type_.Length > 7)
         logmessage = "FAILED: " + type_.Substring(7);
       else
         logmessage = "FAILED";
-      // Global.Log(2, "GAudioscrobbler.parseFailedMessage", logmessage);
+      Log.Write("AudioscrobblerBase.parseFailedMessage", logmessage);
       return false;
     }
 
     private bool parseBadUserMessage(string type_, StreamReader reader_)
     {
-      // Global.Log(0, "GAudioscrobbler.parseBadUserMessage", "Called.");
+      Log.Write("AudioscrobblerBase.parseBadUserMessage", "Called.");
       AuthErrorEventArgs args = new AuthErrorEventArgs();
       TriggerAuthErrorEvent(args);
       return true;
@@ -775,7 +752,7 @@ namespace ProcessPlugins.Audioscrobbler
       try {
         fs = new FileStream(cacheFile, FileMode.OpenOrCreate, FileAccess.Read, FileShare.Read);
       } catch (Exception e) {
-        // Global.Log(2, "GAudioscrobbler.LoadQueue", "Unable to open cache file:\n" + e.Message);
+        Log.Write("AudioscrobblerBase.LoadQueue", "Unable to open cache file:\n" + e.Message);
         return false;
       }
 
@@ -798,12 +775,12 @@ namespace ProcessPlugins.Audioscrobbler
             queueEvent(LoadedEventLazy, args);
             */
           } catch (Exception e) {
-            // Global.Log(2, "GAudioscrobbler.LoadQueue", "Unable to parse the cached song:\n" + e.Message + "\n" + line);
+            Log.Write("AudioscrobblerBase.LoadQueue", "Unable to parse the cached song:\n" + e.Message + "\n" + line);
           }
         }
       }
       file.Close();
-      // Global.Log(1, "GAudioscrobbler.LoadQueue", "Loaded " + queue.Count + " songs from the cache");
+      Log.Write("AudioscrobblerBase.LoadQueue", "Loaded " + queue.Count + " songs from the cache");
 
       return true;
     }
@@ -815,7 +792,7 @@ namespace ProcessPlugins.Audioscrobbler
       try {
         fs = new FileStream(cacheFile, FileMode.Create, FileAccess.Write);
       } catch (Exception e) {
-        // Global.Log(2, "GAudioscrobbler.SaveQueue", "Unable to open queue file:\n" + e.Message);
+        Log.Write("AudioscrobblerBase.SaveQueue", "Unable to open queue file:\n" + e.Message);
         return;
       }
 
@@ -826,8 +803,7 @@ namespace ProcessPlugins.Audioscrobbler
           try {
             file.WriteLine(s.ToString());
           } catch (IOException e) {
-            // Global.Log(2, "GAudioscrobbler.SaveQueue", "Failed to write queue to file:\n" + 
-                //e.Message);
+            Log.Write("AudioscrobblerBase.SaveQueue", "Failed to write queue to file:\n" + e.Message);
           }
         }
       }
@@ -838,6 +814,7 @@ namespace ProcessPlugins.Audioscrobbler
     /***************************************************
      * Utilities.
      ***************************************************/
+
     private void InitSubmitTimer()
     {
       submitTimer          = new System.Timers.Timer();
@@ -865,5 +842,5 @@ namespace ProcessPlugins.Audioscrobbler
 
       return md5response;    
     }
-  } // class GAudioscrobbler
-} // namespace GAudioscrobbler
+  } // class AudioscrobblerBase
+} // namespace AudioscrobblerBase
