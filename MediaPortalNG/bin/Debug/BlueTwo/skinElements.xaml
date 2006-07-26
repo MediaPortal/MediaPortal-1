@@ -6,9 +6,7 @@
   <!-- Skin BlueTwo -->
 
   <!-- GUI Elements -->
- 
-  
-          
+           
   <Style x:Key="PageBackground" TargetType="{x:Type Page}">
     <Setter Property="Background">
       <Setter.Value>
@@ -19,8 +17,9 @@
   
   <Style x:Key="GUIListcontrolItems" TargetType="{x:Type ListBoxItem}">
     <Setter Property="Foreground" Value="Transparent"/>
-    <Setter Property="Width" Value="425"/>
-    <Setter Property="OverridesDefaultStyle" Value="False"/>
+    <Setter Property="Width" Value="432"/>
+    <Setter Property="Height" Value="32"/>
+    <Setter Property="OverridesDefaultStyle" Value="true"/>
     <Setter Property="BorderBrush" Value="Transparent"/>
     <Setter Property="Background">
       <Setter.Value>
@@ -34,6 +33,7 @@
             Width="425" 
             Height="32"
             Background="{TemplateBinding Background}" 
+            Padding="0,0,0,0"
             >
             <DockPanel Width="425" Height="32">
               <Image Margin="8,0" Source="{DynamicResource defaultFolderBack.png}" Width="16" Height="16"/>
@@ -41,10 +41,13 @@
                   Foreground="White"
                   Height="32" 
                   Width="420" 
-                  Text="Test"
                   Margin="5,4" 
-                  FontSize="18">
+                  FontSize="18"
+                  Text="{TemplateBinding Content}">
               </TextBlock>
+              <ContentPresenter x:Name="ContentSite" 
+                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
             </DockPanel>
           </Border>
           <ControlTemplate.Triggers>
