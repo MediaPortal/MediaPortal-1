@@ -30,11 +30,12 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using System.Windows.Forms;
-using MediaPortal.Utils.Services;
 using MediaPortal.GUI.Library;
 using MediaPortal.Music.Database;
+using MediaPortal.Utils.Services;
+using MediaPortal.Player;
 
-namespace ProcessPlugins.Audioscrobbler 
+namespace MediaPortal.Audioscrobbler 
 {
 
   public class AudioscrobblerPlugin : ISetupForm, IPlugin
@@ -43,6 +44,7 @@ namespace ProcessPlugins.Audioscrobbler
        the user is skipping through the song and it won't be submitted.
        This is the most sensitive setting!  There may be problems
     */
+//    private const int WindowID = 11124; //The ID for this plugin
     private int skipThreshold = 2;
     private const int STARTED_LATE = 5;
   
@@ -173,7 +175,8 @@ namespace ProcessPlugins.Audioscrobbler
     #endregion
 
     #region MediaPortal events
-    void OnThreadMessage(GUIMessage message)
+
+    public void OnThreadMessage(GUIMessage message)
     {
       switch (message.Message)
       {
@@ -186,6 +189,7 @@ namespace ProcessPlugins.Audioscrobbler
           }
           break;
       }
+      return;
     }
 
     public void OnSongChangedEvent(Song song)
@@ -240,28 +244,36 @@ namespace ProcessPlugins.Audioscrobbler
     {
       if (!_doSubmit)
         return;
-    
-      // attempt to detect skipping
-      if (currentSong != null && alertTime < INFINITE_TIME && position > lastPosition + skipThreshold)
-      {
-//        _log.Info("Audioscrobbler: OnTickEvent {0}", "Skipping detected from " + lastPosition + " to " + position + ") - not queueing");
-        alertTime = INFINITE_TIME;
-        AddToHistory("Ignored (skipping)", currentSong);
-      }
 
-      // then actually queue the song if we're that far along
-      if (!queued && position >= alertTime && alertTime > 14 && position > 14 && currentSong != null)
-      {
-        scrobbler.pushQueue(currentSong);
-        queued = true;
-      }
+      MusicDatabase dbs = new MusicDatabase();
+      currentSong = new Song();
+      string strFile = g_Player.Player.CurrentFile;
+      bool songFound = dbs.GetSongByFileName(strFile, ref currentSong);
 
-      /* We don't set lastPosition back to 0 in SongChanged.  
-         This avoids problems where songs start late.  It might also 
-         mean the user can somehow start a song late and skipping won't 
-         be detected
-      */
-      lastPosition = position;
+      if (songFound)
+      {
+        // attempt to detect skipping
+        if (currentSong != null && alertTime < INFINITE_TIME && position > lastPosition + skipThreshold)
+        {
+          //        _log.Info("Audioscrobbler: OnTickEvent {0}", "Skipping detected from " + lastPosition + " to " + position + ") - not queueing");
+          alertTime = INFINITE_TIME;
+          AddToHistory("Ignored (skipping)", currentSong);
+        }
+
+        // then actually queue the song if we're that far along
+        if (!queued && position >= alertTime && alertTime > 14 && position > 14 && currentSong != null)
+        {
+          scrobbler.pushQueue(currentSong);
+          queued = true;
+        }
+
+        /* We don't set lastPosition back to 0 in SongChanged.  
+           This avoids problems where songs start late.  It might also 
+           mean the user can somehow start a song late and skipping won't 
+           be detected
+        */
+        lastPosition = position;
+      }
     }
     #endregion
 
@@ -322,6 +334,8 @@ namespace ProcessPlugins.Audioscrobbler
       queued = false;
       alertTime = INFINITE_TIME;
       scrobbler = new AudioscrobblerBase();
+      //GUIWindowManager.OnNewAction += new OnActionHandler(GUIWindowManager_OnNewAction);
+      GUIWindowManager.Receivers += new SendMessageHandler(OnThreadMessage);
 
       // connect to Audioscrobbler (in a new thread)
       if (_doSubmit)
@@ -329,6 +343,16 @@ namespace ProcessPlugins.Audioscrobbler
         OnManualConnect(null, null);
       }
     }
+
+    // Make sure we get all of the ACTION_PLAY events (OnAction only receives the ACTION_PLAY event when 
+    // the player is not playing)...
+    //void GUIWindowManager_OnNewAction(Action action)
+    //{
+    //  if ((action.wID == Action.ActionType.ACTION_PLAY || action.wID == Action.ActionType.ACTION_MUSIC_PLAY))
+    //  {
+
+    //  }
+    //}
 
     public void Stop()
     {
@@ -341,7 +365,7 @@ namespace ProcessPlugins.Audioscrobbler
 
     public bool CanEnable()
     {
-      return true;
+      return false;
     }
 
     public string Description()

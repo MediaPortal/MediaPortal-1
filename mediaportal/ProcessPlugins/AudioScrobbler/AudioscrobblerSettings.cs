@@ -32,7 +32,7 @@ using System.Text;
 using System.Windows.Forms;
 
 
-namespace ProcessPlugins.AudioScrobbler
+namespace MediaPortal.AudioScrobbler
 {
   public partial class AudioscrobblerSettings : Form
   {

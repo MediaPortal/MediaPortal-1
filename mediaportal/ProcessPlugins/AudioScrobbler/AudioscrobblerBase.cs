@@ -34,7 +34,7 @@ using System.Text;
 using MediaPortal.Music.Database;
 using MediaPortal.GUI.Library;
 
-namespace ProcessPlugins.Audioscrobbler 
+namespace MediaPortal.Audioscrobbler 
 {
   //
   // Callback argument types.

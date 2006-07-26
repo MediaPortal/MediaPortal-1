@@ -23,7 +23,7 @@
 
 #endregion
 
-namespace ProcessPlugins.AudioScrobbler
+namespace MediaPortal.AudioScrobbler
 {
   partial class AudioscrobblerSettings
   {

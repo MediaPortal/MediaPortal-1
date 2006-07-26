@@ -31,7 +31,7 @@ using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace ProcessPlugins.Audioscrobbler
+namespace MediaPortal.Audioscrobbler
 {
 
 #if INSIDE_CORLIB
