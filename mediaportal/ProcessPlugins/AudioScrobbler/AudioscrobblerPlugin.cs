@@ -23,10 +23,9 @@
 
 #endregion
 
-
 using System;
 using System.IO;
-using System.Collections;
+using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using System.Windows.Forms;
@@ -37,26 +36,21 @@ using MediaPortal.Music.Database;
 namespace ProcessPlugins.Audioscrobbler 
 {
 
-  public class AudioscrobblerPlugin : IPlugin, ISetupForm 
-  {  
-    private const int STARTED_LATE = 5;
-
-    // gconf key locations
-    private const string GCONF_USERNAME = "/apps/muine/plugins/audioscrobbler/username";
-    private const string GCONF_PASSWORD = "/apps/muine/plugins/audioscrobbler/password";
-    private const string GCONF_ENABLED = "/apps/muine/plugins/audioscrobbler/enabled";
-    private const string GCONF_UPGRADE = "/apps/muine/plugins/audioscrobbler/upgrade_alerts";
-    private const string GCONF_SKIP_THRESHOLD = "/apps/muine/plugins/audioscrobbler/skip_threshold";
-
+  public class AudioscrobblerPlugin : ISetupForm, IPlugin
+  { 
+    private string _asUserName = "";
+    private string _asPassword = "";
+        
     /* If the position varies by more than this between tick events, then
        the user is skipping through the song and it won't be submitted.
        This is the most sensitive setting!  There may be problems
     */
-    private int skipThreshold;
+    private int skipThreshold = 2;
+    private const int STARTED_LATE = 5;
   
     // songs longer or shorter than this won't be submitted
     private const int MIN_DURATION = 30;
-    private const int MAX_DURATION = 1800;
+    private const int MAX_DURATION = 2700;
 
     private const int INFINITE_TIME = Int32.MaxValue;
 
@@ -74,36 +68,22 @@ namespace ProcessPlugins.Audioscrobbler
     private bool showUpgrade;
  
    // store arguments from Audioscrobbler events
-    private SubmitEventArgs lastSubmitArgs;
-    private bool lastConnectArgs;
+    //private SubmitEventArgs lastSubmitArgs;
+    //private bool lastConnectArgs;
 
-    //private IPlayer player;
-    //private GConf.Client gconfClient;
     private AudioscrobblerBase scrobbler;
 
-    //[Glade.Widget]
-    //private Gtk.Entry UsernameBox;
-    //[Glade.Widget]
-    //private Gtk.Entry PasswordBox;
-    //[Glade.Widget]
-    //private Gtk.Window Window;
 
-    //[Glade.Widget]
-    //private Gtk.CheckButton CheckEnable;
-    //[Glade.Widget]
-    //private Gtk.CheckButton CheckShowUpgrade;
-    //[Glade.Widget]
-    //private Gtk.Label CacheSizeLabel;
-    //[Glade.Widget]
-    //private Gtk.Label SubmitTimeLabel;
-    //[Glade.Widget]
-    //private Gtk.TextView TextHistory;
-    //[Glade.Widget]
-    //private Gtk.Button DisconnectButton;
-    //[Glade.Widget]
-    //private Gtk.Button ConnectButton;
-    //[Glade.Widget]
-    //private Gtk.Statusbar StatusBar;
+    #region Serialisation
+    protected void LoadSettings()
+    {
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+        _asUserName = xmlreader.GetValueAsString("audioscrobbler", "username", "");
+        _asPassword = xmlreader.GetValueAsString("audioscrobbler", "password", "");
+      }
+    }
+    #endregion
 
     //private uint StatusID; //< Required by the Gtk.Statusbar.
     //private Gtk.TextTag italicTag;
@@ -528,7 +508,7 @@ namespace ProcessPlugins.Audioscrobbler
       else
         return 240;
 
-      return INFINITE_TIME;
+      //return INFINITE_TIME;
     }
 
     // Add a message to the submissions history text area
@@ -604,12 +584,13 @@ namespace ProcessPlugins.Audioscrobbler
 
     public bool HasSetup()
     {
-      return false;
+      return true;
     }
 
     public void ShowPlugin()
     {
-      //
+      Form assetup = new AudioScrobbler.AudioscrobblerSettings();
+      assetup.ShowDialog();
     }
 
     #endregion

@@ -23,7 +23,6 @@
 
 #endregion
 
-
 using System;
 using System.Collections;
 using System.IO;
@@ -129,20 +128,6 @@ namespace ProcessPlugins.Audioscrobbler
     }
   }
 
-
-  //
-  // Real magic.
-  //
-  /**
-   * This class provides asynchronous access to the Audioscrobbler service.
-   *
-   * All "*Lazy" events are guaranteed to be called from the Glib main loop,
-   * thus they are not synchronous with the thread triggering the call.
-   *
-   * All other events on the other hand are sent synchronously from within
-   * the executing thread. There is no guarantee that this thread is the
-   * main thread.
-   */
   public class AudioscrobblerBase
   {
   //public delegate TRet Functor<TRet>();
@@ -178,17 +163,17 @@ namespace ProcessPlugins.Audioscrobbler
     const int    HANDSHAKE_INTERVAL  = 30;     //< In minutes.
     const int    CONNECT_WAIT_TIME   = 2;      //< Min secs between connects.
     const int    SUBMIT_INTERVAL     = 120;    //< Seconds.
-    const string CLIENT_NAME         = "mne";
+    const string CLIENT_NAME         = "MediaPortal";
     const string CLIENT_VERSION      = "0.1.6";
     const string SCROBBLER_URL       = "http://post.audioscrobbler.com";
     const string PROTOCOL_VERSION    = "1.1";
-    const string QUEUEFILE_NAME      = "scrobbler-queue.txt";
+    const string CACHEFILE_NAME      = "audioscrobbler-cache.txt";
     
     // Client-specific config variables.
     private string              username;
     private string              password;
     private string              pluginDir;
-    private string              queueFile;
+    private string              cacheFile;
     
     // Other internal properties.
     private ArrayList           queue;
@@ -226,7 +211,7 @@ namespace ProcessPlugins.Audioscrobbler
       handshakeInterval    = new TimeSpan(0, HANDSHAKE_INTERVAL, 0);
       lastConnectAttempt   = DateTime.MinValue;
       minConnectWaitTime   = new TimeSpan(0, 0, CONNECT_WAIT_TIME);
-      queueFile            = pluginDir + "/" + QUEUEFILE_NAME;
+      cacheFile            = pluginDir + "/" + CACHEFILE_NAME;
       
       // Loading the queue should be fast - no thread required
       LoadQueue();
@@ -788,7 +773,7 @@ namespace ProcessPlugins.Audioscrobbler
     {
       FileStream fs;
       try {
-        fs = new FileStream(queueFile, FileMode.OpenOrCreate, FileAccess.Read, FileShare.Read);
+        fs = new FileStream(cacheFile, FileMode.OpenOrCreate, FileAccess.Read, FileShare.Read);
       } catch (Exception e) {
         // Global.Log(2, "GAudioscrobbler.LoadQueue", "Unable to open cache file:\n" + e.Message);
         return false;
@@ -828,7 +813,7 @@ namespace ProcessPlugins.Audioscrobbler
     {
       FileStream fs;
       try {
-        fs = new FileStream(queueFile, FileMode.Create, FileAccess.Write);
+        fs = new FileStream(cacheFile, FileMode.Create, FileAccess.Write);
       } catch (Exception e) {
         // Global.Log(2, "GAudioscrobbler.SaveQueue", "Unable to open queue file:\n" + e.Message);
         return;

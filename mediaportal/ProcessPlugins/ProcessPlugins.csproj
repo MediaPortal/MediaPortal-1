@@ -236,6 +236,12 @@
     <Compile Include="AudioScrobbler\AudioscrobblerPlugin.cs" />
     <Compile Include="AudioScrobbler\AudioscrobblerBase.cs" />
     <Compile Include="AudioScrobbler\CryptoConvert.cs" />
+    <Compile Include="AudioScrobbler\AudioscrobblerSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AudioScrobbler\AudioscrobblerSettings.Designer.cs">
+      <DependentUpon>AudioscrobblerSettings.cs</DependentUpon>
+    </Compile>
     <Compile Include="CallerId\ISDN\CallerIdISDN.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -406,6 +412,10 @@
     <Compile Include="TvMovie\TvMovieDatabase.cs" />
     <Compile Include="TvMovie\TvMovie.cs" />
     <Compile Include="TvNotifies\NotifyManager.cs" />
+    <EmbeddedResource Include="AudioScrobbler\AudioscrobblerSettings.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>AudioscrobblerSettings.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="CallerId\ISDN\ISDNSetupForm.resx">
       <DependentUpon>ISDNSetupForm.cs</DependentUpon>
     </EmbeddedResource>
