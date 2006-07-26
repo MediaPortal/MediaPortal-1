@@ -2548,12 +2548,16 @@ namespace TvLibrary.Implementations.DVB
       {
         if (_graphRunning == false) return false;
         if (_filterTsWriter == null) return false;
+        if (_currentChannel == null) return false;
         ITsWriter writer = (ITsWriter)_filterTsWriter;
         int yesNo;
         writer.IsAudioEncrypted(out yesNo);
         if (yesNo == 1) return false;
-        writer.IsVideoEncrypted(out yesNo);
-        if (yesNo == 1) return false;
+        if (_currentChannel.IsTv)
+        {
+          writer.IsVideoEncrypted(out yesNo);
+          if (yesNo == 1) return false;
+        }
         return true;
       }
     }
