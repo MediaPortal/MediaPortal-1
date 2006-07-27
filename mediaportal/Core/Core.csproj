@@ -287,6 +287,7 @@
     <Compile Include="UserInterfaceControls\MPToolTip.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Util\CryptoConvert.cs" />
     <Compile Include="Util\HTMLParser.cs" />
     <Compile Include="Util\IMPawardsSearch.cs" />
     <Compile Include="Util\ProcessLock.cs" />

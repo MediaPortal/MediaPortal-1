@@ -234,8 +234,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="AudioScrobbler\AudioscrobblerPlugin.cs" />
-    <Compile Include="AudioScrobbler\AudioscrobblerBase.cs" />
-    <Compile Include="AudioScrobbler\CryptoConvert.cs" />
     <Compile Include="AudioScrobbler\AudioscrobblerSettings.cs">
       <SubType>Form</SubType>
     </Compile>

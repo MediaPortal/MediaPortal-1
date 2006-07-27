@@ -38,7 +38,6 @@ using MediaPortal.Player;
 
 namespace MediaPortal.Audioscrobbler 
 {
-
   public class AudioscrobblerPlugin : ISetupForm, IPlugin
   {
     private int _timerTickSecs = 15;

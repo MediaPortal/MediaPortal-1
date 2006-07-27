@@ -85,5 +85,17 @@ namespace MediaPortal.AudioScrobbler
       {
       }      
     }
+
+    private void linkLabelNewUser_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    {
+      this.linkLabelNewUser.Links[linkLabelNewUser.Links.IndexOf(e.Link)].Visited = true;
+      try
+      {
+        Help.ShowHelp(this, "https://www.last.fm/join/");
+      }
+      catch
+      {
+      }  
+    }
   }
 }
