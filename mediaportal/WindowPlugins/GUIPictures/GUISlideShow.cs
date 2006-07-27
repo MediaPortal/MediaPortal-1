@@ -2428,7 +2428,7 @@ namespace MediaPortal.GUI.Pictures
      string albumart = g_Player.CurrentFile;
      int e = albumart.LastIndexOf(@"\") + 1;
      albumart = albumart.Remove(e);
-     if (_currentSlide.FilePath.Contains(albumart))
+     if (_slideList[_currentSlideIndex].Contains(albumart))
        albumart = string.Empty;
      else
      {
@@ -2436,7 +2436,7 @@ namespace MediaPortal.GUI.Pictures
        if (!File.Exists(albumart))
          albumart = string.Empty;
      }
-     // get Sonf-info
+     // get Song-info
      MediaPortal.TagReader.MusicTag tag = MediaPortal.TagReader.TagReader.ReadTag(g_Player.CurrentFile);
      // Show Dialog
      dlg.Reset();
