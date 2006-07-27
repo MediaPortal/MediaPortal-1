@@ -6,6 +6,7 @@
 
 
   <Canvas>
+ 
     <!--  -->
     <TextBlock
       Text="134"
@@ -21,7 +22,7 @@
 
 
     <!--  -->
-    <Image
+    <Image Stretch="Uniform"
       Canvas.Top="20"
       Canvas.Left="60"
       Source="{DynamicResource music_logo.png}"
@@ -31,7 +32,7 @@
 
 
     <!--  -->
-    <Image
+    <Image Stretch="Uniform"
       Canvas.Top="370"
       Canvas.Left="75"
       Source="{DynamicResource hover_my music.png}"
@@ -48,6 +49,7 @@
       Width="190"
       Height="32"
       Style="{DynamicResource GUIButton}"
+      Click="MPNG" 
       Tag="##id::2//##keycontrol::onleft:2;onright:50;onup:17;ondown:3//##metadata::labelNum:100"
 >100</Button>
 
@@ -101,7 +103,7 @@
 
 
     <!-- Divider image -->
-    <Image
+    <Image Stretch="Uniform"
       Canvas.Top="289"
       Canvas.Left="60"
       Source="{DynamicResource hbar1.png}"
@@ -141,6 +143,7 @@
       Visibility="Visible"
       Width="190"
       Height="32"
+      Click="MPNG" 
       Style="{DynamicResource GUIButton}"
       Tag="##id::10//##keycontrol::onleft:10;onright:50;onup:8;ondown:99//##metadata::labelNum:983"
 >983</Button>
@@ -150,11 +153,13 @@
       Name="lv1" 
       Canvas.Top="97"
       Canvas.Left="260"
-      Width="425"
-      Height="459"
-      Style="{DynamicResource GUIListControl}"
+      Width="460"
+      Height="471"
+      Style="{DynamicResource GUIThumbnailControl}"
       >
-     </ListView>
+
+    </ListView>
+
 
   </Canvas>
 </Page>

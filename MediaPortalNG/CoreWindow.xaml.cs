@@ -67,6 +67,7 @@ namespace MediaPortal
             dict = new ResourceDictionary(); 
             dict.Source = new System.Uri(pathSkinImages);
             this.Resources.MergedDictionaries.Add(dict);
+            
             // FileInfo fi;
            // StreamWriter sw=File.CreateText("E:\\skinMedia.xaml");
            // DirectoryInfo di = new DirectoryInfo(pathMedia);

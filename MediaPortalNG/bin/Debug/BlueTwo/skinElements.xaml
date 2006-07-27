@@ -78,8 +78,6 @@
   
   <Style x:Key="GUIListcontrolItems" TargetType="{x:Type ListBoxItem}">
     <Setter Property="Foreground" Value="Transparent"/>
-    <Setter Property="Width" Value="432"/>
-    <Setter Property="Height" Value="32"/>
     <Setter Property="OverridesDefaultStyle" Value="true"/>
     <Setter Property="BorderBrush" Value="Transparent"/>    
     <Setter Property="Background">
@@ -91,17 +89,13 @@
       <Setter.Value>
         <ControlTemplate TargetType="{x:Type ListBoxItem}">
           <Border 
-            Width="425" 
-            Height="32"
             Background="{TemplateBinding Background}" 
             Padding="0,0,0,0"
             >
-            <DockPanel Width="425" Height="32">
+            <DockPanel>
               <Image Margin="8,0" Source="{DynamicResource defaultFolderBack.png}" Width="16" Height="16"/>
               <TextBlock
                   Foreground="White"
-                  Height="32" 
-                  Width="420" 
                   Margin="5,4" 
                   FontSize="18"
                   Text="{TemplateBinding Content}">
@@ -132,6 +126,60 @@
     </Setter>
    </Style>
 
+  <Style x:Key="GUIThumbnailItems" TargetType="{x:Type ListBoxItem}">
+    <Setter Property="Foreground" Value="Transparent"/>
+    <Setter Property="Width" Value="110"/>
+    <Setter Property="Height" Value="144"/>
+    <Setter Property="OverridesDefaultStyle" Value="true"/>
+    <Setter Property="BorderBrush" Value="Transparent"/>
+    <Setter Property="Background">
+      <Setter.Value>
+        <ImageBrush ImageSource="Media\icon_empty_nofocus.png" Stretch="Uniform"/>
+      </Setter.Value>
+    </Setter>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ListBoxItem}">
+          <Border 
+            Background="{TemplateBinding Background}" 
+            Padding="0,0"
+            >
+            <StackPanel>
+              <Grid Margin="0,0,0,0" Grid.Row="0" Grid.Column="0" x:Name="ThumbnailPanel">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="108"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                  <RowDefinition Height="108"/>
+                  <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Image VerticalAlignment="Center" HorizontalAlignment="Center" Stretch="Uniform" Name="ThumbnailImage" Grid.Column="0" Grid.Row="0" Margin="8,0" Source="{DynamicResource defaultFolderBack.png}" Width="16" Height="16"/>
+                <TextBlock DockPanel.Dock="Bottom" 
+                    Foreground="White"
+                    Margin="0,14" 
+                    FontSize="18"
+                    Grid.Column="0" Grid.Row="1" 
+                    Text="{TemplateBinding Content}">
+                </TextBlock>
+                <ContentPresenter x:Name="ContentSite" 
+                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+              </Grid>
+            </StackPanel>
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="true">
+              <Setter Property="Background">
+                <Setter.Value>
+                  <ImageBrush ImageSource="Media\icon_empty_focus.png" Stretch="Uniform"/>
+                </Setter.Value>
+              </Setter>
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
 
   <Style x:Key="GUIButton" TargetType="{x:Type Button}">
     <Setter Property="SnapsToDevicePixels" Value="true"/>
@@ -274,24 +322,21 @@
     </Setter>
   </Style>
 
-  <Style x:Key="GUIListControl" TargetType="{x:Type ListBox}">
+  <!-- Listcontrol -->
+  <Style x:Key="GUIListControl" TargetType="{x:Type ListView}">
     <Setter Property="Background" Value="Transparent"/>
     <Setter Property="BorderBrush" Value="Transparent"/>
     <Setter Property="BorderThickness" Value="0,0,0,0"/>
     <Setter Property="Foreground" Value="Transparent"/>
     <Setter Property="ScrollViewer.CanContentScroll" Value="True"/>
-    <Setter Property="VerticalContentAlignment" Value="Center"/>
     <Setter Property="ItemContainerStyle" Value="{DynamicResource GUIListcontrolItems}"/>
     <Setter Property="Template">
       <Setter.Value>
-        <ControlTemplate TargetType="{x:Type ListBox}">
-          <Border Background="Transparent" SnapsToDevicePixels="True" >
+        <ControlTemplate TargetType="{x:Type ListView}">
+          <Border Background="Transparent" SnapsToDevicePixels="True">
             <ScrollViewer VerticalScrollBarVisibility="Visible" 
 								HorizontalScrollBarVisibility="Disabled">
-              <StackPanel  
-                IsItemsHost="True" 
-                Orientation="Vertical" 
-                HorizontalAlignment="Left" />
+              <StackPanel IsItemsHost="true" Orientation="Vertical"/>
               <ScrollViewer.Style>
                 <Style TargetType="{x:Type ScrollViewer}">
                   <Setter Property="Template">
@@ -310,7 +355,63 @@
                             </Grid.RowDefinitions>
                             <RepeatButton Grid.Column="2" Grid.Row="0" Command="ScrollBar.PageUpCommand" Style="{DynamicResource UpScroll}"/>
                             <RepeatButton Grid.Column="1" Grid.Row="0" Command="ScrollBar.PageDownCommand" Style="{DynamicResource DownScroll}"/>
-                            <TextBlock Margin="1,0,0,10" TextAlignment="Right" Foreground="White" FontSize="18" Grid.Column="0" Grid.Row="1" Text="0/0" Name="__Footer"/>
+                            <TextBlock Padding="2,2,2,0"  TextAlignment="Right" Foreground="White" FontSize="18" Grid.Column="0" Grid.Row="1" Text="0/0" Name="__Footer"/>
+                          </Grid>
+                        </StackPanel>
+                      </ControlTemplate>
+                    </Setter.Value>
+                  </Setter>
+                </Style>
+              </ScrollViewer.Style>
+            </ScrollViewer>
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsSelected" Value="True">
+              <Setter Property="Background" Value="Blue"/>
+            </Trigger>
+            <Trigger Property="IsGrouping" Value="True">
+              <Setter Property="ScrollViewer.CanContentScroll" Value="False"/>
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <!-- -->
+  <Style x:Key="GUIThumbnailControl" TargetType="{x:Type ListView}">
+    <Setter Property="Background" Value="Transparent"/>
+    <Setter Property="BorderBrush" Value="Transparent"/>
+    <Setter Property="BorderThickness" Value="0,0,0,0"/>
+    <Setter Property="Foreground" Value="Transparent"/>
+    <Setter Property="ScrollViewer.CanContentScroll" Value="True"/>
+    <Setter Property="ItemContainerStyle" Value="{DynamicResource GUIThumbnailItems}"/>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ListView}">
+          <Border Background="Transparent" SnapsToDevicePixels="True">
+            <ScrollViewer VerticalScrollBarVisibility="Visible" 
+								HorizontalScrollBarVisibility="Disabled">
+              <WrapPanel IsItemsHost="true" />
+              <ScrollViewer.Style>
+                <Style TargetType="{x:Type ScrollViewer}">
+                  <Setter Property="Template">
+                    <Setter.Value>
+                      <ControlTemplate>
+                        <StackPanel>
+                          <ScrollContentPresenter Height="432" Content="{TemplateBinding ScrollViewer.Content}" />
+                          <Grid Width="425" Height="28" Margin="0,0,0,0" Grid.Row="0" Grid.Column="0" x:Name="HeaderPanel">
+                            <Grid.ColumnDefinitions>
+                              <ColumnDefinition Width="*"/>
+                              <ColumnDefinition Width="28"/>
+                              <ColumnDefinition Width="28"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                              <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <RepeatButton Grid.Column="2" Grid.Row="0" Command="ScrollBar.PageUpCommand" Style="{DynamicResource UpScroll}"/>
+                            <RepeatButton Grid.Column="1" Grid.Row="0" Command="ScrollBar.PageDownCommand" Style="{DynamicResource DownScroll}"/>
+                            <TextBlock Padding="2,2,2,0"  TextAlignment="Right" Foreground="White" FontSize="18" Grid.Column="0" Grid.Row="1" Text="0/0" Name="__Footer"/>
                           </Grid>
                         </StackPanel>
                       </ControlTemplate>
