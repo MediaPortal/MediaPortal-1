@@ -1475,6 +1475,7 @@ public class MediaPortalApp : D3DApp, IRender
           {
             _log.Info("Main: Using GUI as background");
             GUIGraphicsContext.ShowBackground = true;
+            GUIGraphicsContext.Overlay = true;
           }
           return;
 
