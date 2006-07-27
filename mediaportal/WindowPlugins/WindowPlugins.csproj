@@ -312,7 +312,8 @@
     <Compile Include="GUIMSNPlugin\MessengerSetup.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="GUIMusicVideos\GUIMusicVideoPlayList.cs" />
+    <Compile Include="GUIMusicVideos\GUIMusicVideoPlaylist.cs" />
+    <Compile Include="GUIMusicVideos\GUIMusicVideoPlayListOld.cs" />
     <Compile Include="GUIMusicVideos\GUIMusicVideo.cs" />
     <Compile Include="GUIMusicVideos\GUIMusicVideoSetupFavoritesForm.cs">
       <SubType>Form</SubType>

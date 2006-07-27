@@ -210,7 +210,10 @@
     <Compile Include="Folders\IFolderSettings.cs" />
     <Compile Include="Folders\ADO\FolderSettingAdo.cs" />
     <Compile Include="MusicVideos\MusicVideoDatabase.cs" />
-    <Compile Include="MusicVideos\MusicVideoDatabaseTest.cs" />
+    <Compile Include="MusicVideos\MusicVideoDatabaseTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MusicVideos\MVPlayListItem.cs" />
     <Compile Include="MusicVideos\YahooFavorites.cs" />
     <Compile Include="MusicVideos\YahooGenres.cs" />
     <Compile Include="MusicVideos\YahooNewVideos.cs" />
