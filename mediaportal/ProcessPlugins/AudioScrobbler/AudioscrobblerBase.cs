@@ -34,166 +34,138 @@ using System.Text;
 using MediaPortal.Music.Database;
 using MediaPortal.GUI.Library;
 
-namespace MediaPortal.Audioscrobbler 
+namespace MediaPortal.Audioscrobbler
 {
-  //
-  // Callback argument types.
-  //
-  public enum NetworkErrorType {
+  #region Callback argument types
+  public enum NetworkErrorType
+  {
     ConnectFailed,
     SubmitFailed,
     NoResponse,
     EmptyResponse,
     InvalidResponse
   }
-    
-  /**
-   * A class of this type is passed with every ErrorEvent.
-   */
+
+  /// <summary>
+  /// A class of this type is passed with every ErrorEvent.
+  /// </summary>
   public abstract class ErrorEventArgs
   {
     public object Error;
     public string Details;
 
-    public ErrorEventArgs (object error_)
+    public ErrorEventArgs(object error_)
     {
       Error = error_;
     }
   }
 
-  /**
-   * Specialization for network related error events.
-   */
+  /// <summary>
+  /// Specialization for network related error events.
+  /// </summary>
   public class NetworkErrorEventArgs : ErrorEventArgs
   {
-    public NetworkErrorEventArgs (object error_)
-    : base(error_)
+    public NetworkErrorEventArgs(object error_)
+      : base(error_)
     {
     }
   }
 
-  /**
-   * A class of this type is passed with every AuthErrorEvent.
-   */
+  /// <summary>
+  /// A class of this type is passed with every AuthErrorEvent
+  /// </summary>
   public class AuthErrorEventArgs
   {
-    public AuthErrorEventArgs ()
+    public AuthErrorEventArgs()
     {
     }
   }
 
-  /**
-   * A class of this type is passed with every ConnectEvent.
-   */
+  /// <summary>
+  /// A class of this type is passed with every ConnectEvent
+  /// </summary>
   public class ConnectEventArgs
   {
-    public ConnectEventArgs ()
+    public ConnectEventArgs()
     {
     }
   }
 
-  /**
-   * A class of this type is passed with every DisconnectEvent.
-   */
+  /// <summary>
+  /// A class of this type is passed with every DisconnectEvent
+  /// </summary>
   public class DisconnectEventArgs
   {
-    public DisconnectEventArgs ()
+    public DisconnectEventArgs()
     {
     }
   }
 
-  /**
-   * A class of this type is passed with every SubmitEvent.
-   */
+  /// <summary>
+  /// A class of this type is passed with every SubmitEvent
+  /// </summary>
   public class SubmitEventArgs
   {
     public Song song;
 
-    public SubmitEventArgs (Song song_)
+    public SubmitEventArgs(Song song_)
     {
       song = song_;
     }
   }
 
-  /**
-   * A class of this type is passed with every UpdateAvailableEvent.
-   */
-  public class UpdateAvailableEventArgs
-  {
-    public string version;
-    
-    public UpdateAvailableEventArgs (string version_)
-    {
-      version = version_;
-    }
-  }
+  //public class UpdateAvailableEventArgs
+  //{
+  //  public string version;
+
+  //  public UpdateAvailableEventArgs(string version_)
+  //  {
+  //    version = version_;
+  //  }
+  //}
+  #endregion
 
   public class AudioscrobblerBase
   {
-  //public delegate TRet Functor<TRet>();
-  //public delegate TRet Functor<TRet, TArg1>(TArg1 arg1);
+    #region Constants
+    const int MAX_QUEUE_SIZE = 1000;
+    const int HANDSHAKE_INTERVAL = 30;     //< In minutes.
+    const int CONNECT_WAIT_TIME = 2;      //< Min secs between connects.
+    const int SUBMIT_INTERVAL = 120;    //< Seconds.
+    const string CLIENT_NAME = "ark";
+    const string CLIENT_VERSION = "1.4";
+    const string SCROBBLER_URL = "http://post.audioscrobbler.com";
+    const string PROTOCOL_VERSION = "1.1";
+    const string CACHEFILE_NAME = "audioscrobbler-cache.txt";
+    #endregion
 
-    /// Called whenever a network error occurs.
-    //public event Functor<NetworkErrorEventArgs> NetworkErrorEvent;
-    //public event Functor<NetworkErrorEventArgs> NetworkErrorEventLazy;
-
-
-    /// Called whenever an authentication failure happened.
-    //public event Functor<AuthErrorEventArgs> AuthErrorEvent;
-    //public event Functor<AuthErrorEventArgs> AuthErrorEventLazy;
-
-    /// Called whenever the handshake (login) was successful.
-    //public event Functor<ConnectEventArgs> ConnectEvent;
-    //public event Functor<ConnectEventArgs> ConnectEventLazy;
-
-    /// Called whenever the connection was successfully terminated.
-    //public event Functor<DisconnectEventArgs> DisconnectEvent;
-    //public event Functor<DisconnectEventArgs> DisconnectEventLazy;
-    
-    /// Called whenever a song was successfully submitted.
-    //public event Functor<SubmitEventArgs> SubmitEvent;
-    //public event Functor<SubmitEventArgs> SubmitEventLazy;
-    
-    /// Called when availibility of a client update was detected.
-    //public event Functor<UpdateAvailableEventArgs> UpdateAvailableEvent;
-    //public event Functor<UpdateAvailableEventArgs> UpdateAvailableEventLazy;
-    
-    // Constants.
-    const int    MAX_QUEUE_SIZE      = 1000;
-    const int    HANDSHAKE_INTERVAL  = 30;     //< In minutes.
-    const int    CONNECT_WAIT_TIME   = 2;      //< Min secs between connects.
-    const int    SUBMIT_INTERVAL     = 120;    //< Seconds.
-    const string CLIENT_NAME         = "ark";
-    const string CLIENT_VERSION      = "1.4";
-    const string SCROBBLER_URL       = "http://post.audioscrobbler.com";
-    const string PROTOCOL_VERSION    = "1.1";
-    const string CACHEFILE_NAME      = "audioscrobbler-cache.txt";
-    
+    #region Variables
     // Client-specific config variables.
-    private string              username;
-    private string              password;
+    private string username;
+    private string password;
 
-    private string              cacheFile;
-    
+    private string cacheFile;
+
     // Other internal properties.
-    private ArrayList           queue;
-    private Object              queueLock;
-//    private EventQueue          eventQueue;
-    private Object              submitLock;
-    private DateTime            lastHandshake;        //< last successful attempt.
-    private TimeSpan            handshakeInterval;
-    private DateTime            lastConnectAttempt;
-    private TimeSpan            minConnectWaitTime;
+    private ArrayList queue;
+    private Object queueLock;
+    //    private EventQueue          eventQueue;
+    private Object submitLock;
+    private DateTime lastHandshake;        //< last successful attempt.
+    private TimeSpan handshakeInterval;
+    private DateTime lastConnectAttempt;
+    private TimeSpan minConnectWaitTime;
     private System.Timers.Timer submitTimer;
-    private bool                connected;
-    
-    // Data received by the Audioscrobbler service.
-    private string              md5challenge;
-    private string              submitUrl;
+    private bool connected;
 
-    /*
-     * Constructor.
-     */
+    // Data received by the Audioscrobbler service.
+    private string md5challenge;
+    private string submitUrl;
+    #endregion
+
+    /// <summary>
+    /// ctor
+    /// </summary>
     public AudioscrobblerBase()
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
@@ -202,128 +174,128 @@ namespace MediaPortal.Audioscrobbler
         password = xmlreader.GetValueAsString("audioscrobbler", "password", "");
       }
 
-      connected            = false;
-      queue                = new ArrayList();
-      queueLock            = new Object();
+      connected = false;
+      queue = new ArrayList();
+      queueLock = new Object();
       //eventQueue           = new EventQueue();
-      submitLock           = new Object();
-      lastHandshake        = DateTime.MinValue;
-      handshakeInterval    = new TimeSpan(0, HANDSHAKE_INTERVAL, 0);
-      lastConnectAttempt   = DateTime.MinValue;
-      minConnectWaitTime   = new TimeSpan(0, 0, CONNECT_WAIT_TIME);
-      cacheFile            = CACHEFILE_NAME;
-      
+      submitLock = new Object();
+      lastHandshake = DateTime.MinValue;
+      handshakeInterval = new TimeSpan(0, HANDSHAKE_INTERVAL, 0);
+      lastConnectAttempt = DateTime.MinValue;
+      minConnectWaitTime = new TimeSpan(0, 0, CONNECT_WAIT_TIME);
+      cacheFile = CACHEFILE_NAME;
+
       // Loading the queue should be fast - no thread required
       LoadQueue();
     }
     
 
-    /***************************************************
-     * Public getters and setters.
-     ***************************************************/
-    /**
-     * The Audioscrobbler account name.
-     */
+    #region Public getters and setters
+    /// <summary>
+    /// The last.fm account name
+    /// </summary>
     public string Username
     {
-      get {
+      get
+      {
         return username;
       }
-      set {
+      set
+      {
         // don't attempt to reconnect if nothing has changed
-        if (value != this.username) {
+        if (value != this.username)
+        {
           this.username = value;
           // allow a new handshake to occur
           lastHandshake = DateTime.MinValue;
         }
       }
     }
-  
-    /**
-     * The Audioscrobbler password.
-     */
+
+    /// <summary>
+    /// Password for account on last.fm
+    /// </summary>
     public string Password
     {
-      get {
+      get
+      {
         return password;
       }
-      set {
-        if (value != this.password) {
+      set
+      {
+        if (value != this.password)
+        {
           this.password = value;
           // allow a new handshake to occur
           lastHandshake = DateTime.MinValue;
-//          Log.Write("AudioscrobblerBase.Password", "Password changed");
+          //          Log.Write("AudioscrobblerBase.Password", "Password changed");
         }
       }
     }
 
-    /**
-     * Check connected status.
-     * \return True if currently connected, false otherwise.
-     */
+    /// <summary>
+    /// Check connected status - returns true if currently connected, false otherwise.
+    /// </summary>
     public bool Connected
     {
-      get {
+      get
+      {
         return connected;
       }
     }
 
-    /**
-     * Returns the number of songs in the queue.
-     */
+    /// <summary>
+    /// Returns the number of songs in the queue
+    /// </summary>
     public int QueueLength
     {
-      get {
+      get
+      {
         return queue.Count;
       }
     }
+    #endregion
 
-
-    /***************************************************
-     * Public methods.
-     ***************************************************/
-    /**
-     * Connect to the Audioscrobbler service.
-     * The service stays connected until Disconnect() is called, the object
-     * is destroyed, or an error occurs. As long as connected, any enqueued
-     * songs are submitted to Audioscrobbler.
-     */
-    public void Connect ()
-    {    
-      Log.Write("AudioscrobblerBase.Connect", "Start");
+    #region Public methods.
+    /// <summary>
+    /// Connect to the Audioscrobbler service. While connected any queued songs are submitted to Audioscrobbler.
+    /// </summary>
+    public void Connect()
+    {
+      //Log.Write("AudioscrobblerBase.Connect: {0}", "Start");
       // Try to submit all queued songs immediately.
       StartSubmitQueueThread();
       // From now on, try to submit queued songs periodically.
       InitSubmitTimer();
-      Log.Write("AudioscrobblerBase.Connect", "End");
+      //Log.Write("AudioscrobblerBase.Connect: {0}", "End");
     }
 
-    /**
-     * Disconnect from the Audioscrobbler service, however, already running
-     * transactions are still completed.
-     */
-    public void Disconnect ()
+    /// <summary>
+    /// Disconnect from the Audioscrobbler service, however, already running transactions are still completed.
+    /// </summary>
+    public void Disconnect()
     {
-      Log.Write("AudioscrobblerBase.Disconnect", "Start");
+      //Log.Write("AudioscrobblerBase.Disconnect: {0}", "Start");
       if (submitTimer != null)
         submitTimer.Close();
       connected = false;
       TriggerDisconnectEvent(new DisconnectEventArgs());
-      Log.Write("AudioscrobblerBase.Disconnect", "End");
+      //Log.Write("AudioscrobblerBase.Disconnect: {0}", "End");
     }
-    
-    /**
-     * Push the given song on the queue.
-     * \param song The song to be enqueued.
-     */
+
+    /// <summary>
+    /// Push the given song on the queue.
+    /// </summary>
+    /// <param name="song_">The song to be enqueued.</param>
     public void pushQueue(Song song_)
     {
       string logmessage = "Adding to queue: " + song_.ToShortString();
-      Log.Write("AudioscrobblerBase.pushQueue", logmessage);
+      Log.Write("AudioscrobblerBase.pushQueue: {0}", logmessage);
 
       // Enqueue the song.
       song_.AudioScrobblerStatus = SongStatus.Cached;
-      lock (queueLock) {
+      lock (queueLock)
+      {
         while (queue.Count > MAX_QUEUE_SIZE)
           queue.RemoveAt(0);
         queue.Add(song_);
@@ -335,121 +307,104 @@ namespace MediaPortal.Audioscrobbler
       // Reset the submit timer.
       submitTimer.Close();
       InitSubmitTimer();
-      Log.Write("AudioscrobblerBase.pushQueue", "Finish");
+      Log.Write("AudioscrobblerBase.pushQueue: {0}", "Finish");
     }
 
-    /**
-     * Clears the queue. Also clears the cached queue from the disk.
-     */
-    public void ClearQueue ()
+
+
+    /// <summary>
+    /// Clears the queue. Also clears the cached queue from the disk.
+    /// </summary>
+    public void ClearQueue()
     {
-      lock (queueLock) {
+      lock (queueLock)
+      {
         queue.Clear();
         SaveQueue();
       }
     }
+    #endregion
 
-
-    /***************************************************
-     * Public event triggers.
-     ***************************************************/
-    public void TriggerAuthErrorEvent (AuthErrorEventArgs args_)
+    #region Public event triggers
+    public void TriggerAuthErrorEvent(AuthErrorEventArgs args_)
     {
-      Log.Write("AudioscrobblerBase.TriggerAuthErrorEvent", "Start");
+      //Disconnect();
+      //Log.Write("AudioscrobblerBase.TriggerAuthErrorEvent: {0}", "Start");
       //if (AuthErrorEvent != null)
       //  AuthErrorEvent(args_);
       //if (AuthErrorEventLazy == null)
       //  return;
-      //Functor func =
-      //  EventQueue.BindOne<AuthErrorEventArgs>(AuthErrorEventLazy, args_);
-      //eventQueue.Queue(func);
-      Log.Write("AudioscrobblerBase.TriggerAuthErrorEvent", "End");
+      //Log.Write("AudioscrobblerBase.TriggerAuthErrorEvent: {0}", "End");
     }
 
-    public void TriggerNetworkErrorEvent (NetworkErrorEventArgs args_)
+    public void TriggerNetworkErrorEvent(NetworkErrorEventArgs args_)
     {
-      Log.Write("AudioscrobblerBase.TriggerNetworkErrorEvent", "Start");
+      //Log.Write("AudioscrobblerBase.TriggerNetworkErrorEvent: {0}", "Start");
       //if (NetworkErrorEvent != null)
       //  NetworkErrorEvent(args_);
       //if (NetworkErrorEventLazy == null)
       //  return;
-      //Functor func =
-      //  EventQueue.BindOne<NetworkErrorEventArgs>(NetworkErrorEventLazy,
-      //                                                  args_);
-      //eventQueue.Queue(func);
-      Log.Write("AudioscrobblerBase.TriggerNetworkErrorEvent", "End");
+      //Log.Write("AudioscrobblerBase.TriggerNetworkErrorEvent: {0}", "End");
     }
 
-    public void TriggerSubmitEvent (SubmitEventArgs args_)
+    public void TriggerSubmitEvent(SubmitEventArgs args_)
     {
-      Log.Write("AudioscrobblerBase.TriggerSubmitEvent", "Start");
+      //Log.Write("AudioscrobblerBase.TriggerSubmitEvent: {0}", "Start");
       //if (SubmitEvent != null)
       //  SubmitEvent(args_);
       //if (SubmitEventLazy == null)
       //  return;
-      //Functor func =
-      //  EventQueue.BindOne<SubmitEventArgs>(SubmitEventLazy, args_);
-      //eventQueue.Queue(func);
-      Log.Write("AudioscrobblerBase.TriggerSubmitEvent", "End");
+      //Log.Write("AudioscrobblerBase.TriggerSubmitEvent: {0}", "End");
     }
-    
-    public void TriggerConnectEvent (ConnectEventArgs args_)
+
+    public void TriggerConnectEvent(ConnectEventArgs args_)
     {
-      Log.Write("AudioscrobblerBase.TriggerConnectEvent", "Start");
+      //Log.Write("AudioscrobblerBase.TriggerConnectEvent: {0}", "Start");
       //if (ConnectEvent != null)
       //  ConnectEvent(args_);
       //if (ConnectEventLazy == null)
       //  return;
-      //Functor func =
-      //  EventQueue.BindOne<ConnectEventArgs>(ConnectEventLazy, args_);
-      //eventQueue.Queue(func);
-      Log.Write("AudioscrobblerBase.TriggerConnectEvent", "End");
+      //Log.Write("AudioscrobblerBase.TriggerConnectEvent: {0}", "End");
     }
 
-    public void TriggerDisconnectEvent (DisconnectEventArgs args_)
+    public void TriggerDisconnectEvent(DisconnectEventArgs args_)
     {
-      Log.Write("AudioscrobblerBase.TriggerDisconnectEvent", "Start");
+      //Log.Write("AudioscrobblerBase.TriggerDisconnectEvent: {0}", "Start");
       //if (DisconnectEvent != null)
       //  DisconnectEvent(args_);
       //if (DisconnectEventLazy == null)
       //  return;
-      //Functor func =
-      //  EventQueue.BindOne<DisconnectEventArgs>(DisconnectEventLazy, args_);
-      //eventQueue.Queue(func);
-      Log.Write("AudioscrobblerBase.TriggerDisconnectEvent", "End");
+      //Log.Write("AudioscrobblerBase.TriggerDisconnectEvent: {0}", "End");
     }
+    #endregion
 
-
-    /***************************************************
-     * Networking related functions.
-     ***************************************************/
-    /**
-     * Handshake with the Audioscrobbler service. This does not require
-     * a username and a password, it only checks connectivity.
-     * Still, we ensure that a username and password were given,
-     * because otherwise making a connection would not make sense.
-     * \return True if the connection was successful, false otherwise.
-     */
-    private bool DoHandshake () 
+    #region Networking related functions
+    /// <summary>
+    /// Handshake with the Audioscrobbler service
+    /// </summary>
+    /// <returns>True if the connection was successful, false otherwise</returns>
+    private bool DoHandshake()
     {
-      Log.Write("AudioscrobblerBase.DoHandshake", "Start");
-      
+      //Log.Write("AudioscrobblerBase.DoHandshake: {0}", "Start");
+
       // Handle uninitialized username/password.
-      if (username == "" || password == "") {
+      if (username == "" || password == "")
+      {
         AuthErrorEventArgs args = new AuthErrorEventArgs();
         TriggerAuthErrorEvent(args);
         return false;
       }
-      
+
       // Check whether we had a *successful* handshake recently.
-      if (DateTime.Now < lastHandshake.Add(handshakeInterval)) {
+      if (DateTime.Now < lastHandshake.Add(handshakeInterval))
+      {
         string nexthandshake = lastHandshake.Add(handshakeInterval).ToString();
-        string logmessage    = "Next handshake due at " + nexthandshake;
-        Log.Write("AudioscrobblerBase.DoHandshake", logmessage);
+        string logmessage = "Next handshake due at " + nexthandshake;
+        Log.Write("AudioscrobblerBase.DoHandshake: {0}", logmessage);
         return true;
       }
 
-      Log.Write("AudioscrobblerBase.DoHandshake", "Attempting handshake");
+      Log.Write("AudioscrobblerBase.DoHandshake: {0}", "Attempting handshake");
       string url = SCROBBLER_URL
                  + "?hs=true"
                  + "&p=" + PROTOCOL_VERSION
@@ -459,105 +414,117 @@ namespace MediaPortal.Audioscrobbler
 
       // Parse handshake response
       bool success = GetResponse(url, "");
-      
-      if (!success) {
-        Log.Write("AudioscrobblerBase.DoHandshake", "Handshake failed");
+
+      if (!success)
+      {
+        Log.Write("AudioscrobblerBase.DoHandshake: {0}", "Handshake failed");
+        TriggerAuthErrorEvent(new AuthErrorEventArgs());
         return false;
       }
 
       // Send the event.
-      if (!connected) {
+      if (!connected)
+      {
         connected = true;
         TriggerConnectEvent(new ConnectEventArgs());
       }
 
       lastHandshake = DateTime.Now;
-      Log.Write("AudioscrobblerBase.DoHandshake", "Handshake successful");
+      Log.Write("AudioscrobblerBase.DoHandshake: {0}", "Handshake successful");
       return true;
     }
-
-    /**
-     * Executes the given HTTP request and parses the response of the server.
-     * \param url The url to open.
-     * \param postdata Data to be sent via HTTP POST, an empty string for GET.
-     * \return True if the request was successfully completed, false otherwise.
-     */
+    
+    /// <summary>
+    /// Executes the given HTTP request and parses the response of the server.
+    /// </summary>
+    /// <param name="url_">The url to open</param>
+    /// <param name="postdata_">Data to be sent via HTTP POST, an empty string for GET</param>
+    /// <returns>True if the request was successfully completed, false otherwise</returns>
     private bool GetResponse(string url_, string postdata_)
     {
-      Log.Write("AudioscrobblerBase.GetResponse", "Start");
+      //Log.Write("AudioscrobblerBase.GetResponse: {0}", "Start");
 
       // Enforce a minimum wait time between connects.
       DateTime nextconnect = lastConnectAttempt.Add(minConnectWaitTime);
-      if (DateTime.Now < nextconnect) {
-        TimeSpan waittime    = nextconnect - DateTime.Now;
-        string   logmessage  = "Connects too fast. Sleeping until "
+      if (DateTime.Now < nextconnect)
+      {
+        TimeSpan waittime = nextconnect - DateTime.Now;
+        string logmessage = "Connects too fast. Sleeping until "
                              + nextconnect.ToString();
-        Log.Write("AudioscrobblerBase.GetResponse", logmessage);
+        Log.Write("AudioscrobblerBase.GetResponse: {0}", logmessage);
         Thread.Sleep(waittime);
       }
       lastConnectAttempt = DateTime.Now;
 
       // Connect.
       HttpWebRequest request = null;
-      try {
+      try
+      {
         request = (HttpWebRequest)WebRequest.Create(url_);
         if (request == null)
-          throw(new Exception());
+          throw (new Exception());
       }
-      catch (Exception e) {
-        NetworkErrorType      type = NetworkErrorType.ConnectFailed;
+      catch (Exception e)
+      {
+        NetworkErrorType type = NetworkErrorType.ConnectFailed;
         NetworkErrorEventArgs args = new NetworkErrorEventArgs(type);
         args.Details = "Connection to the Audioscrobbler server failed.";
         TriggerNetworkErrorEvent(args);
         string logmessage = "WebRequest.Create failed: " + e.Message;
-        Log.Write("AudioscrobblerBase.GetResponse", logmessage);
+        Log.Write("AudioscrobblerBase.GetResponse: {0}", logmessage);
         return false;
       }
 
       // Attach POST data to the request, if any.
-      if (postdata_ != "") {
-        Log.Write("AudioscrobblerBase.GetResponse", "POST to " + url_ );
-        Log.Write("AudioscrobblerBase.GetResponse", "Data: "   + postdata_ );
+      if (postdata_ != "")
+      {
+        Log.Write("AudioscrobblerBase.GetResponse: POST to {0}", url_);
+        Log.Write("AudioscrobblerBase.GetResponse: Data: {0}", postdata_);
         string logmessage = "Connecting to '" + url_ + "\nData: " + postdata_;
-        
+
         // TODO: what is the illegal characters warning all about?
         byte[] postHeaderBytes = Encoding.UTF8.GetBytes(postdata_);
-        request.Method        = "POST";
+        request.Method = "POST";
         request.ContentLength = postHeaderBytes.Length;
-        request.ContentType   = "application/x-www-form-urlencoded";
-        
+        request.ContentType = "application/x-www-form-urlencoded";
+
         // Create stream writer - this can also fail if we aren't connected
-        try {
+        try
+        {
           Stream requestStream = request.GetRequestStream();
           requestStream.Write(postHeaderBytes, 0, postHeaderBytes.Length);
           requestStream.Close();
-        } catch (Exception e) {
-          NetworkErrorType      type = NetworkErrorType.SubmitFailed;
+        }
+        catch (Exception e)
+        {
+          NetworkErrorType type = NetworkErrorType.SubmitFailed;
           NetworkErrorEventArgs args = new NetworkErrorEventArgs(type);
           args.Details = "Error while trying to submit to Audioscrobbler.";
           TriggerNetworkErrorEvent(args);
           logmessage = "HttpWebRequest.GetRequestStream: " + e.Message;
-          Log.Write("AudioscrobblerBase.GetResponse", logmessage);
+          Log.Write("AudioscrobblerBase.GetResponse: {0}", logmessage);
           return false;
         }
       }
 
       // Create the response object.
-      Log.Write("AudioscrobblerBase.GetResponse", "Waiting for response");
+      Log.Write("AudioscrobblerBase.GetResponse: {0}", "Waiting for response");
       StreamReader reader = null;
-      try {
+      try
+      {
         HttpWebResponse response = (HttpWebResponse)request.GetResponse();
         if (response == null)
-          throw(new Exception());
+          throw (new Exception());
         reader = new StreamReader(response.GetResponseStream());
       }
-      catch (Exception e) {
-        NetworkErrorType      type = NetworkErrorType.NoResponse;
+      catch (Exception e)
+      {
+        NetworkErrorType type = NetworkErrorType.NoResponse;
         NetworkErrorEventArgs args = new NetworkErrorEventArgs(type);
         args.Details = "Error while waiting for Audioscrobbler response.";
         TriggerNetworkErrorEvent(args);
         string logmessage = "HttpWebRequest.GetResponse: " + e.Message;
-        Log.Write("AudioscrobblerBase.GetResponse", logmessage);
+        Log.Write("AudioscrobblerBase.GetResponse: {0}", logmessage);
         return false;
       }
 
@@ -569,24 +536,25 @@ namespace MediaPortal.Audioscrobbler
        * FAILED
        * BADUSER / BADAUTH
        */
-      Log.Write("AudioscrobblerBase.GetResponse", "Response received");
+      Log.Write("AudioscrobblerBase.GetResponse: {0}", "Response received");
       string respType = reader.ReadLine();
-      if (respType == null) {
-        NetworkErrorType      type = NetworkErrorType.EmptyResponse;
+      if (respType == null)
+      {
+        NetworkErrorType type = NetworkErrorType.EmptyResponse;
         NetworkErrorEventArgs args = new NetworkErrorEventArgs(type);
         args.Details = "Empty response from Audioscrobbler server.";
         TriggerNetworkErrorEvent(args);
-        Log.Write("AudioscrobblerBase.GetResponse", args.Details);
+        Log.Write("AudioscrobblerBase.GetResponse: {0}", args.Details);
         return false;
       }
 
       // Parse the response.
-      bool success       = false;
+      bool success = false;
       bool parse_success = false;
       if (respType.StartsWith("UPTODATE"))
         success = parse_success = parseUpToDateMessage(respType, reader);
       else if (respType.StartsWith("UPDATE"))
-        Log.Write("AudioscrobblerBase.GetResponse", "UPDATE needed!");
+        Log.Write("AudioscrobblerBase.GetResponse: {0}", "UPDATE needed!");
       else if (respType.StartsWith("OK"))
         success = parse_success = parseOkMessage(respType, reader);
       else if (respType.StartsWith("FAILED"))
@@ -594,97 +562,107 @@ namespace MediaPortal.Audioscrobbler
       else if (respType.StartsWith("BADUSER") ||
                respType.StartsWith("BADAUTH"))
         parse_success = parseBadUserMessage(respType, reader);
-      else {
+      else
+      {
         string logmessage = "** CRITICAL ** Unknown response " + respType;
-        Log.Write("AudioscrobblerBase.GetResponse", logmessage);
+        Log.Write("AudioscrobblerBase.GetResponse: {0}", logmessage);
       }
 
-      if (!parse_success) {
-        NetworkErrorType      type = NetworkErrorType.InvalidResponse;
+      if (!parse_success)
+      {
+        NetworkErrorType type = NetworkErrorType.InvalidResponse;
         NetworkErrorEventArgs args = new NetworkErrorEventArgs(type);
         args.Details = "Unknown response from Audioscrobbler server.";
         TriggerNetworkErrorEvent(args);
         return false;
       }
 
-      Log.Write("AudioscrobblerBase.GetResponse", "End");
+      //Log.Write("AudioscrobblerBase.GetResponse: {0}", "End");
       return success;
     }
 
-    void OnSubmitTimerTick (object trash_, ElapsedEventArgs args_)
+    void OnSubmitTimerTick(object trash_, ElapsedEventArgs args_)
     {
-      StartSubmitQueueThread ();
+      StartSubmitQueueThread();
     }
-    
-    /**
-     * Creates a thread to submit all queued songs.
-     */
-    private void StartSubmitQueueThread ()
+
+    /// <summary>
+    /// Creates a thread to submit all queued songs.
+    /// </summary>
+    private void StartSubmitQueueThread()
     {
-      Thread thread       = new Thread (new ThreadStart(SubmitQueue));
+      Thread thread = new Thread(new ThreadStart(SubmitQueue));
       thread.IsBackground = true;
-      thread.Priority     = ThreadPriority.BelowNormal;
+      thread.Priority = ThreadPriority.BelowNormal;
       thread.Start();
     }
-    
-    /**
-     * Submit all queued songs to the Audioscrobbler service.
-     */
-    private void SubmitQueue ()
+
+    /// <summary>
+    /// Submit all queued songs to the Audioscrobbler service
+    /// </summary>
+    private void SubmitQueue()
     {
-      Log.Write("AudioscrobblerBase.SubmitQueue", "Start");
+      //Log.Write("AudioscrobblerBase.SubmitQueue: {0}", "Start");
 
       // Make sure that a connection is possible.
-      if (!DoHandshake()) {
-        Log.Write("AudioscrobblerBase.SubmitQueue", "Handshake failed.");
+      if (!DoHandshake())
+      {
+        Log.Write("AudioscrobblerBase.SubmitQueue: {0}", "Handshake failed.");
         return;
       }
 
       // If the queue is empty, nothing else to do today.
-      if (queue.Count <= 0) {
-        Log.Write("AudioscrobblerBase.SubmitQueue", "Queue is empty");
+      if (queue.Count <= 0)
+      {
+        Log.Write("AudioscrobblerBase.SubmitQueue: {0}", "Queue is empty");
         return;
       }
 
       // Only one thread should attempt to run through the queue at a time.
-      lock (submitLock) {
+      lock (submitLock)
+      {
         // Save the queue now since connecting to AS may time out, which
         // takes time, and the user could quit, losing one valuable song...
         SaveQueue();
 
         // Create a copy of queue since it might change.
-        Song[] songs   = null;
-        lock (queueLock) {
-          songs   = (Song[])queue.ToArray(typeof(Song));
+        Song[] songs = null;
+        lock (queueLock)
+        {
+          songs = (Song[])queue.ToArray(typeof(Song));
         }
 
         // Build POST data from the username and the password.
         string webUsername = System.Web.HttpUtility.UrlEncode(username);
-        string md5resp     = HashPassword();
-        string postData    = "u=" + webUsername + "&s=" + md5resp;
+        string md5resp = HashPassword();
+        string postData = "u=" + webUsername + "&s=" + md5resp;
 
         // Append the songs to be submitted.
         int n_songs = 0;
-        foreach (Song song in songs) {
+        foreach (Song song in songs)
+        {
           postData += "&" + song.GetPostData(n_songs);
           n_songs++;
         }
 
         // Submit or die.
-        if (!GetResponse(submitUrl, postData)) {
-          Log.Write("AudioscrobblerBase.SubmitQueue", "Submit failed.");
+        if (!GetResponse(submitUrl, postData))
+        {
+          Log.Write("AudioscrobblerBase.SubmitQueue: {0}", "Submit failed.");
           return;
         }
 
         // Remove the submitted songs from the queue.
-        lock (queueLock) {
+        lock (queueLock)
+        {
           for (int i = 0; i < n_songs; i++)
             queue.RemoveAt(0);
         }
 
         // Send an event for each of the submitted songs.
-        Log.Write("AudioscrobblerBase.SubmitQueue", "Sending SubmitEvents");
-        foreach (Song song in songs) {
+        Log.Write("AudioscrobblerBase.SubmitQueue: {0}", "Sending SubmitEvents");
+        foreach (Song song in songs)
+        {
           song.AudioScrobblerStatus = SongStatus.Submitted;
           SubmitEventArgs args = new SubmitEventArgs(song);
           TriggerSubmitEvent(args);
@@ -694,22 +672,23 @@ namespace MediaPortal.Audioscrobbler
         SaveQueue();
       }
 
-      Log.Write("AudioscrobblerBase.SubmitQueue", "End");
+      //Log.Write("AudioscrobblerBase.SubmitQueue: {0}", "End");
     }
+    #endregion
 
-
-    /***************************************************
-     * Audioscrobbler response parsers.
-     ***************************************************/
+    #region Audioscrobbler response parsers.
     private bool parseUpToDateMessage(string type_, StreamReader reader_)
     {
-      Log.Write("AudioscrobblerBase.parseUpToDateMessage", "Called.");
-      try {
+      Log.Write("AudioscrobblerBase.parseUpToDateMessage: {0}", "Called.");
+      try
+      {
         md5challenge = reader_.ReadLine().Trim();
-        submitUrl    = reader_.ReadLine().Trim();
-      } catch (Exception e) {
+        submitUrl = reader_.ReadLine().Trim();
+      }
+      catch (Exception e)
+      {
         string logmessage = "Failed to parse UPTODATE response: " + e.Message;
-        Log.Write("AudioscrobblerBase.parseUpToDateMessage", logmessage);
+        Log.Write("AudioscrobblerBase.parseUpToDateMessage: {0}", logmessage);
         md5challenge = "";
         return false;
       }
@@ -718,41 +697,42 @@ namespace MediaPortal.Audioscrobbler
 
     private bool parseOkMessage(string type_, StreamReader reader_)
     {
-      Log.Write("AudioscrobblerBase.parseOkMessage", "Called.");
+      Log.Write("AudioscrobblerBase.parseOkMessage: {0}", "Called.");
       return true;
     }
 
     private bool parseFailedMessage(string type_, StreamReader reader_)
     {
-      Log.Write("AudioscrobblerBase.parseFailedMessage", "Called.");
+      Log.Write("AudioscrobblerBase.parseFailedMessage: {0}", "Called.");
       string logmessage = "";
       if (type_.Length > 7)
         logmessage = "FAILED: " + type_.Substring(7);
       else
         logmessage = "FAILED";
-      Log.Write("AudioscrobblerBase.parseFailedMessage", logmessage);
+      Log.Write("AudioscrobblerBase.parseFailedMessage: {0}", logmessage);
       return false;
     }
 
     private bool parseBadUserMessage(string type_, StreamReader reader_)
     {
-      Log.Write("AudioscrobblerBase.parseBadUserMessage", "Called.");
+      Log.Write("AudioscrobblerBase.parseBadUserMessage: {0}", "Called.");
       AuthErrorEventArgs args = new AuthErrorEventArgs();
       TriggerAuthErrorEvent(args);
       return true;
     }
+    #endregion
 
-
-    /***************************************************
-     * Filesystem access.
-     ***************************************************/
+    #region Filesystem access
     private bool LoadQueue()
     {
       FileStream fs;
-      try {
+      try
+      {
         fs = new FileStream(cacheFile, FileMode.OpenOrCreate, FileAccess.Read, FileShare.Read);
-      } catch (Exception e) {
-        Log.Write("AudioscrobblerBase.LoadQueue", "Unable to open cache file:\n" + e.Message);
+      }
+      catch (Exception e)
+      {
+        Log.Write("AudioscrobblerBase.LoadQueue: Unable to open cache file: {0}", e.Message);
         return false;
       }
 
@@ -760,9 +740,12 @@ namespace MediaPortal.Audioscrobbler
       String line;
       // this lock isn't strictly necessary - this is only called once in
       // the constructor
-      lock (queueLock) {
-        while ((line = file.ReadLine()) != null) {
-          try {
+      lock (queueLock)
+      {
+        while ((line = file.ReadLine()) != null)
+        {
+          try
+          {
             Song s = Song.ParseFromLine(line);
             s.AudioScrobblerStatus = SongStatus.Loaded;
             queue.Add(s);
@@ -774,13 +757,16 @@ namespace MediaPortal.Audioscrobbler
               LoadedEvent(args);
             queueEvent(LoadedEventLazy, args);
             */
-          } catch (Exception e) {
-            Log.Write("AudioscrobblerBase.LoadQueue", "Unable to parse the cached song:\n" + e.Message + "\n" + line);
+          }
+          catch (Exception e)
+          {
+            Log.Write("AudioscrobblerBase.LoadQueue: Unable to parse the cached song: : {0}", line);
+            Log.Write("AudioscrobblerBase.LoadQueue: Unable to parse the cached song: : {0}", e.Message);
           }
         }
       }
       file.Close();
-      Log.Write("AudioscrobblerBase.LoadQueue", "Loaded " + queue.Count + " songs from the cache");
+      Log.Write("AudioscrobblerBase.LoadQueue: Songs loaded from cache: {0}", queue.Count);
 
       return true;
     }
@@ -789,35 +775,40 @@ namespace MediaPortal.Audioscrobbler
     private void SaveQueue()
     {
       FileStream fs;
-      try {
+      try
+      {
         fs = new FileStream(cacheFile, FileMode.Create, FileAccess.Write);
-      } catch (Exception e) {
-        Log.Write("AudioscrobblerBase.SaveQueue", "Unable to open queue file:\n" + e.Message);
+      }
+      catch (Exception e)
+      {
+        Log.Write("AudioscrobblerBase.SaveQueue: Unable to open queue file: {0}", e.Message);
         return;
       }
 
       StreamWriter file = new StreamWriter(fs);
       // lock this - it should be quick with buffered output anyway
-      lock (queueLock) {
-        foreach (Song s in queue) {
-          try {
+      lock (queueLock)
+      {
+        foreach (Song s in queue)
+        {
+          try
+          {
             file.WriteLine(s.ToString());
-          } catch (IOException e) {
-            Log.Write("AudioscrobblerBase.SaveQueue", "Failed to write queue to file:\n" + e.Message);
+          }
+          catch (IOException e)
+          {
+            Log.Write("AudioscrobblerBase.SaveQueue: Failed to write queue to file: {0}", e.Message);
           }
         }
       }
       file.Close();
     }
+    #endregion
 
-
-    /***************************************************
-     * Utilities.
-     ***************************************************/
-
+    #region Utilities
     private void InitSubmitTimer()
     {
-      submitTimer          = new System.Timers.Timer();
+      submitTimer = new System.Timers.Timer();
       submitTimer.Interval = SUBMIT_INTERVAL * 1000;
       submitTimer.Elapsed += new ElapsedEventHandler(OnSubmitTimerTick);
       submitTimer.Start();
@@ -830,17 +821,18 @@ namespace MediaPortal.Audioscrobbler
       // The MD5 response is md5(md5(password) + challenge), where MD5
       // is the ascii-encoded MD5 representation, and + represents
       // concatenation.
-    
+
       MD5 hash = MD5.Create();
       UTF8Encoding encoding = new UTF8Encoding();
       byte[] barr = hash.ComputeHash(encoding.GetBytes(password));
-      
+
       string tmp = CryptoConvert.ToHex(barr).ToLower();
-    
+
       barr = hash.ComputeHash(encoding.GetBytes(tmp + md5challenge));
       string md5response = CryptoConvert.ToHex(barr).ToLower();
 
-      return md5response;    
+      return md5response;
     }
+    #endregion
   } // class AudioscrobblerBase
 } // namespace AudioscrobblerBase

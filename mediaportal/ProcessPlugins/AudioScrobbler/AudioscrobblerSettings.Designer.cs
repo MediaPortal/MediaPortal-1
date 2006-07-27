@@ -62,6 +62,7 @@ namespace MediaPortal.AudioScrobbler
       this.buttonCancel = new MediaPortal.UserInterface.Controls.MPButton();
       this.groupBoxASSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.checkBoxTeamStats = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.linkLabelMPGroup = new System.Windows.Forms.LinkLabel();
       this.groupBoxAccount.SuspendLayout();
       this.groupBoxASSettings.SuspendLayout();
       this.SuspendLayout();
@@ -117,7 +118,8 @@ namespace MediaPortal.AudioScrobbler
       // 
       // buttonOk
       // 
-      this.buttonOk.Location = new System.Drawing.Point(205, 219);
+      this.buttonOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonOk.Location = new System.Drawing.Point(205, 214);
       this.buttonOk.Name = "buttonOk";
       this.buttonOk.Size = new System.Drawing.Size(75, 23);
       this.buttonOk.TabIndex = 1;
@@ -127,7 +129,8 @@ namespace MediaPortal.AudioScrobbler
       // 
       // buttonCancel
       // 
-      this.buttonCancel.Location = new System.Drawing.Point(124, 219);
+      this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonCancel.Location = new System.Drawing.Point(124, 214);
       this.buttonCancel.Name = "buttonCancel";
       this.buttonCancel.Size = new System.Drawing.Size(75, 23);
       this.buttonCancel.TabIndex = 2;
@@ -137,11 +140,12 @@ namespace MediaPortal.AudioScrobbler
       // 
       // groupBoxASSettings
       // 
+      this.groupBoxASSettings.Controls.Add(this.linkLabelMPGroup);
       this.groupBoxASSettings.Controls.Add(this.checkBoxTeamStats);
       this.groupBoxASSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxASSettings.Location = new System.Drawing.Point(12, 139);
       this.groupBoxASSettings.Name = "groupBoxASSettings";
-      this.groupBoxASSettings.Size = new System.Drawing.Size(268, 65);
+      this.groupBoxASSettings.Size = new System.Drawing.Size(268, 63);
       this.groupBoxASSettings.TabIndex = 3;
       this.groupBoxASSettings.TabStop = false;
       this.groupBoxASSettings.Text = "Settings";
@@ -151,18 +155,30 @@ namespace MediaPortal.AudioScrobbler
       this.checkBoxTeamStats.AutoSize = true;
       this.checkBoxTeamStats.Enabled = false;
       this.checkBoxTeamStats.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxTeamStats.Location = new System.Drawing.Point(16, 28);
+      this.checkBoxTeamStats.Location = new System.Drawing.Point(16, 42);
       this.checkBoxTeamStats.Name = "checkBoxTeamStats";
       this.checkBoxTeamStats.Size = new System.Drawing.Size(181, 17);
       this.checkBoxTeamStats.TabIndex = 0;
       this.checkBoxTeamStats.Text = "Participate the MediaPortal group";
       this.checkBoxTeamStats.UseVisualStyleBackColor = true;
+      this.checkBoxTeamStats.Visible = false;
+      // 
+      // linkLabelMPGroup
+      // 
+      this.linkLabelMPGroup.AutoSize = true;
+      this.linkLabelMPGroup.Location = new System.Drawing.Point(13, 26);
+      this.linkLabelMPGroup.Name = "linkLabelMPGroup";
+      this.linkLabelMPGroup.Size = new System.Drawing.Size(213, 13);
+      this.linkLabelMPGroup.TabIndex = 1;
+      this.linkLabelMPGroup.TabStop = true;
+      this.linkLabelMPGroup.Text = "Please join the MediaPortal group on last.fm";
+      this.linkLabelMPGroup.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelMPGroup_LinkClicked);
       // 
       // AudioscrobblerSettings
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(292, 254);
+      this.ClientSize = new System.Drawing.Size(292, 249);
       this.Controls.Add(this.groupBoxASSettings);
       this.Controls.Add(this.buttonCancel);
       this.Controls.Add(this.buttonOk);
@@ -190,5 +206,6 @@ namespace MediaPortal.AudioScrobbler
     private MediaPortal.UserInterface.Controls.MPLabel labelPassword;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxASSettings;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxTeamStats;
+    private System.Windows.Forms.LinkLabel linkLabelMPGroup;
   }
 }

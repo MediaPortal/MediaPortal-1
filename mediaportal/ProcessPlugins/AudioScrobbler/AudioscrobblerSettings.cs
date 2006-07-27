@@ -72,5 +72,18 @@ namespace MediaPortal.AudioScrobbler
       SaveSettings();
       this.Close();
     }
+
+    private void linkLabelMPGroup_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    {
+      // Determine which link was clicked within the LinkLabel.
+      this.linkLabelMPGroup.Links[linkLabelMPGroup.Links.IndexOf(e.Link)].Visited = true;
+      try
+      {
+        Help.ShowHelp(this, "http://www.last.fm/group/MediaPortal%2BUsers");
+      }
+      catch
+      {
+      }      
+    }
   }
 }
