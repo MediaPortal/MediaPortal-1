@@ -109,6 +109,7 @@ namespace MediaPortal.Playlists
     PlayList _videoPlayList = new PlayList();
     PlayList _tempVideoPlayList = new PlayList();
     PlayList _emptyPlayList = new PlayList();
+    PlayList _musicVideoPlayList = new PlayList();
     bool _repeatPlayList = true;
     protected ILog _log;
 
@@ -472,6 +473,8 @@ namespace MediaPortal.Playlists
           return _videoPlayList;
         case PlayListType.PLAYLIST_VIDEO_TEMP:
           return _tempVideoPlayList;
+          case PlayListType.PLAYLIST_MUSIC_VIDEO:
+              return _musicVideoPlayList;
         default:
           _emptyPlayList.Clear();
           return _emptyPlayList;

@@ -122,6 +122,22 @@ namespace MediaPortal.Player
       {
         return new RTSPPlayer();
       }
+      if (fileName.StartsWith("mms:") && fileName.EndsWith(".ymvp"))
+      {
+          bool useVMR9;
+          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+          {
+              useVMR9 = xmlreader.GetValueAsBool("musicvideo", "useVMR9", true);
+          }
+          if (useVMR9)
+          {
+              return new VideoPlayerVMR9();
+          }
+          else
+          {
+              return new AudioPlayerWMP9();
+          }
+      }
       string extension = System.IO.Path.GetExtension(fileName).ToLower();
       if (extension != ".tv" && extension != ".sbe" && extension != ".dvr-ms"
               && fileName.ToLower().IndexOf(".tsbuffer") < 0

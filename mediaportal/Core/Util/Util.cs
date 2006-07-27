@@ -305,6 +305,7 @@ namespace MediaPortal.Util
     {
       if (strPath == null) return false;
       if (strPath.ToLower().IndexOf("rtsp:") >= 0) return true;
+      if (strPath.ToLower().StartsWith("mms:") && strPath.ToLower().EndsWith(".ymvp")) return true;
       try
       {
         if (!System.IO.Path.HasExtension(strPath)) return false;

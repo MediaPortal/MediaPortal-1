@@ -53,7 +53,7 @@ namespace MediaPortal.Playlists
             set { _itemType = value; }
         }
 
-        public string FileName
+        public virtual string FileName
         {
             get { return _fileName; }
             set
