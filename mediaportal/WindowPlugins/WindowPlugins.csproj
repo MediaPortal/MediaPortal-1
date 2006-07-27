@@ -312,8 +312,6 @@
     <Compile Include="GUIMSNPlugin\MessengerSetup.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="GUIMusicVideos\GUIMusicVideoPlaylist.cs" />
-    <Compile Include="GUIMusicVideos\GUIMusicVideoPlayListOld.cs" />
     <Compile Include="GUIMusicVideos\GUIMusicVideo.cs" />
     <Compile Include="GUIMusicVideos\GUIMusicVideoSetupFavoritesForm.cs">
       <SubType>Form</SubType>
@@ -327,6 +325,7 @@
     <Compile Include="GUIMusicVideos\GUIMusicVideoSetupForm.designer.cs">
       <DependentUpon>GUIMusicVideoSetupForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="GUIMusicVideos\GUIMusicVideoPlaylist.cs" />
     <Compile Include="GUIMusic\GUICoverArtGrabberProgress.cs" />
     <Compile Include="GUIMusic\GUICoverArtGrabberResults.cs" />
     <Compile Include="GUIMusic\GUIMusicPlayingNow.cs" />

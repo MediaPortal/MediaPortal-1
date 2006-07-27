@@ -235,14 +235,14 @@ namespace MediaPortal.GUI.MusicVideos
 
             if (action.wID == Action.ActionType.ACTION_NEXT_ITEM)
             {
-                moLog.Info("Next item values: {0},{1},{2},{3}", action.fAmount1, action.fAmount2, action.m_key.KeyCode, action.IsUserAction());
-                MusicVideoPlaylist.getInstance().PlayNext();
-                listSongs.SelectedListItemIndex = MusicVideoPlaylist.getInstance().getPlayListIndex();
+                //moLog.Info("Next item values: {0},{1},{2},{3}", action.fAmount1, action.fAmount2, action.m_key.KeyCode, action.IsUserAction());
+                //MusicVideoPlaylist.getInstance().PlayNext();
+                //listSongs.SelectedListItemIndex = MusicVideoPlaylist.getInstance().getPlayListIndex();
             }
             if (action.wID == Action.ActionType.ACTION_PREV_ITEM)
             {
-                MusicVideoPlaylist.getInstance().PlayPrevious();
-                listSongs.SelectedListItemIndex = MusicVideoPlaylist.getInstance().getPlayListIndex();
+                //MusicVideoPlaylist.getInstance().PlayPrevious();
+                //listSongs.SelectedListItemIndex = MusicVideoPlaylist.getInstance().getPlayListIndex();
             }
             if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU && CURRENT_STATE != (int)State.HOME)
             {
@@ -295,10 +295,10 @@ namespace MediaPortal.GUI.MusicVideos
             if (g_Player.Playing)
             {
                 moLog.Info("in OnPreviousWindow and g_player is playing");
-                if (MusicVideoPlaylist.getInstance().isPlaying())
-                {
-                    moCurrentPlayingVideo = MusicVideoPlaylist.getInstance().getCurrentPlayingVideo();
-                }
+                //if (MusicVideoPlaylist.getInstance().isPlaying())
+                //{
+                //    moCurrentPlayingVideo = MusicVideoPlaylist.getInstance().getCurrentPlayingVideo();
+                //}
 
                 GUIPropertyManager.SetProperty("#Play.Current.Title", moCurrentPlayingVideo.artistName + "-" + moCurrentPlayingVideo.songName);
                 //GUIPropertyManager.SetProperty("#Play.Current.File", loVideo.songName);
@@ -353,7 +353,7 @@ namespace MediaPortal.GUI.MusicVideos
                     labelState.Label = GUILocalizeStrings.Get(136); //"PlayList";
                     DisableAllButtons();
                     enablePlaylistButtons();
-                    miSelectedIndex = MusicVideoPlaylist.getInstance().getPlayListIndex();
+                    //miSelectedIndex = MusicVideoPlaylist.getInstance().getPlayListIndex();
                     refreshScreenVideoList();
                 }
                 else if (CURRENT_STATE == (int)State.GENRE)
@@ -367,10 +367,10 @@ namespace MediaPortal.GUI.MusicVideos
             }
             if (g_Player.Playing)
             {
-                if (MusicVideoPlaylist.getInstance().isPlaying())
-                {
-                    moCurrentPlayingVideo = MusicVideoPlaylist.getInstance().getCurrentPlayingVideo();
-                }
+                //if (MusicVideoPlaylist.getInstance().isPlaying())
+                //{
+                 //   moCurrentPlayingVideo = MusicVideoPlaylist.getInstance().getCurrentPlayingVideo();
+                //}
                 if (moCurrentPlayingVideo != null)
                 {
                     GUIPropertyManager.SetProperty("#Play.Current.Title", moCurrentPlayingVideo.artistName + " - " + moCurrentPlayingVideo.songName);
@@ -391,14 +391,14 @@ namespace MediaPortal.GUI.MusicVideos
             if (control == listSongs)
             {
                 miSelectedIndex = listSongs.SelectedListItemIndex;
-                if (CURRENT_STATE == (int)State.PLAYLIST)
-                {
-                    MusicVideoPlaylist.getInstance().Play(miSelectedIndex);
-                }
-                else
-                {
+                //if (CURRENT_STATE == (int)State.PLAYLIST)
+                //{
+                //    MusicVideoPlaylist.getInstance().Play(miSelectedIndex);
+                //}
+                //else
+                //{
                     playVideo(getSelectedVideo());
-                }
+                //}
 
             }
             else if (control == btnTop)
@@ -473,27 +473,27 @@ namespace MediaPortal.GUI.MusicVideos
             }
             else if (control == btnPlayListPlay)
             {
-                MusicVideoPlaylist.getInstance().Play();
-                listSongs.SelectedListItemIndex = MusicVideoPlaylist.getInstance().getPlayListIndex();
-                miSelectedIndex = MusicVideoPlaylist.getInstance().getPlayListIndex();
+                //MusicVideoPlaylist.getInstance().Play();
+                //listSongs.SelectedListItemIndex = MusicVideoPlaylist.getInstance().getPlayListIndex();
+                //miSelectedIndex = MusicVideoPlaylist.getInstance().getPlayListIndex();
                 //btnPlayListPlay.Focus = false;
             }
             else if (control == btnPlayListStop)
             {
                 moLog.Info("GUIMusicVideo: Playlist Stop button clicked.");
-                MusicVideoPlaylist.getInstance().Stop();
+                //MusicVideoPlaylist.getInstance().Stop();
             }
             else if (control == btnPlayListNext)
             {
-                MusicVideoPlaylist.getInstance().PlayNext();
-                listSongs.SelectedListItemIndex = MusicVideoPlaylist.getInstance().getPlayListIndex();
-                miSelectedIndex = MusicVideoPlaylist.getInstance().getPlayListIndex();
+                //MusicVideoPlaylist.getInstance().PlayNext();
+                //listSongs.SelectedListItemIndex = MusicVideoPlaylist.getInstance().getPlayListIndex();
+                //miSelectedIndex = MusicVideoPlaylist.getInstance().getPlayListIndex();
             }
             else if (control == btnPlayListPrevious)
             {
-                MusicVideoPlaylist.getInstance().PlayPrevious();
-                listSongs.SelectedListItemIndex = MusicVideoPlaylist.getInstance().getPlayListIndex();
-                miSelectedIndex = MusicVideoPlaylist.getInstance().getPlayListIndex();
+                //MusicVideoPlaylist.getInstance().PlayPrevious();
+                //listSongs.SelectedListItemIndex = MusicVideoPlaylist.getInstance().getPlayListIndex();
+                //miSelectedIndex = MusicVideoPlaylist.getInstance().getPlayListIndex();
             }
             else if (control == btnPlayListBack)
             {
@@ -508,22 +508,22 @@ namespace MediaPortal.GUI.MusicVideos
             }
             else if (control == btnPlayListRepeat)
             {
-                MusicVideoPlaylist loPlayList = MusicVideoPlaylist.getInstance();
+                //MusicVideoPlaylist loPlayList = MusicVideoPlaylist.getInstance();
 
-                loPlayList.repeat(!loPlayList.getRepeatState());
+                //loPlayList.repeat(!loPlayList.getRepeatState());
                 //btnPlayListRepeat.
             }
             else if (control == btnPlayListShuffle)
             {
-                MusicVideoPlaylist loPlayList = MusicVideoPlaylist.getInstance();
-                loPlayList.shuffle();
-                DisplayVideoList(loPlayList.getPlayListVideos());
-                listSongs.SelectedListItemIndex = loPlayList.getPlayListIndex();
-                miSelectedIndex = MusicVideoPlaylist.getInstance().getPlayListIndex();
+                //MusicVideoPlaylist loPlayList = MusicVideoPlaylist.getInstance();
+                //loPlayList.shuffle();
+                //DisplayVideoList(loPlayList.getPlayListVideos());
+                //listSongs.SelectedListItemIndex = loPlayList.getPlayListIndex();
+                //miSelectedIndex = MusicVideoPlaylist.getInstance().getPlayListIndex();
             }
             else if (control == btnPlayListClear)
             {
-                MusicVideoPlaylist.getInstance().Clear();
+                //MusicVideoPlaylist.getInstance().Clear();
                 listSongs.Clear();
             }
             else if (control == btnNextPage)
@@ -1031,7 +1031,7 @@ namespace MediaPortal.GUI.MusicVideos
                     loCurrentDisplayVideoList = moFavoriteManager.getFavoriteVideos();
                     break;
                 case (int)State.PLAYLIST:
-                    loCurrentDisplayVideoList = MusicVideoPlaylist.getInstance().getPlayListVideos();
+                    //loCurrentDisplayVideoList = MusicVideoPlaylist.getInstance().getPlayListVideos();
                     break;
                 case (int)State.GENRE:
                     loCurrentDisplayVideoList = moGenre.moGenreVideoList;
@@ -1216,7 +1216,7 @@ namespace MediaPortal.GUI.MusicVideos
             btnPlayListStop.Visible = true;
             btnPlayListShuffle.Visible = true;
             btnPlayListRepeat.Visible = true;
-            btnPlayListRepeat.Selected = MusicVideoPlaylist.getInstance().getRepeatState();
+            //btnPlayListRepeat.Selected = MusicVideoPlaylist.getInstance().getRepeatState();
             btnPlayListClear.Visible = true;
             listSongs.NavigateLeft = btnPlayListBack.GetID;
             listSongs.NavigateRight = btnPlayListBack.GetID;
