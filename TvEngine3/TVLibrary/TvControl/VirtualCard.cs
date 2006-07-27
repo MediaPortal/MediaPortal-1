@@ -18,6 +18,7 @@ namespace TvControl
     #region variables
     int _cardId=-1;
     string _server;
+    string _recordingFolder;
     #endregion
 
     #region ctor
@@ -55,6 +56,23 @@ namespace TvControl
       }
     }
 
+    /// <summary>
+    /// gets/sets the recording folder for the card
+    /// </summary>
+    public string RecordingFolder
+    {
+      get
+      {
+        return _recordingFolder;
+      }
+      set
+      {
+        _recordingFolder = value;
+        if (_recordingFolder == String.Empty)
+          _recordingFolder = System.IO.Directory.GetCurrentDirectory();
+
+      }
+    }
     /// <summary>
     /// Gets the type of card (analog,dvbc,dvbs,dvbt,atsc)
     /// </summary>

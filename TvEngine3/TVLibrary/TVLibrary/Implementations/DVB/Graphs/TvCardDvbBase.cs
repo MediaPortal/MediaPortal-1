@@ -2438,6 +2438,7 @@ namespace TvLibrary.Implementations.DVB
         if (!CheckThreadId()) return;
         List<IAudioStream> streams = AvailableAudioStreams;
         DVBAudioStream audioStream = (DVBAudioStream)value;
+        Log.Log.WriteFile("dvb: setaudiostream:{0}", audioStream);
         SetupDemuxerPin(_pinAudioTimeShift, audioStream.Pid, (int)MediaSampleContent.ElementaryStream, true);
         _currentAudioStream = audioStream;
       }

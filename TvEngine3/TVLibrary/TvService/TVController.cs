@@ -1265,6 +1265,7 @@ namespace TvService
 
     public void SetCurrentAudioStream(int cardId, IAudioStream stream)
     {
+      Log.WriteFile("controller: setaudiostream:{0} {1}", cardId,stream);
       if (_allDbscards[cardId].Server.HostName != Dns.GetHostName())
       {
         RemoteControl.HostName = _allDbscards[cardId].Server.HostName;
@@ -1332,6 +1333,7 @@ namespace TvService
               _clientReferenceCount[keyPair.Value.IdCard]++;
               Log.Write("  refcount: card:{0} count:{1}", keyPair.Value.IdCard, _clientReferenceCount[keyPair.Value.IdCard]);
               card = new VirtualCard(keyPair.Value.IdCard, Dns.GetHostName());
+              card.RecordingFolder = keyPair.Value.RecordingFolder;
               return true;
             }
           }
@@ -1359,6 +1361,7 @@ namespace TvService
 
         Log.Write("Controller:StartTimeShifting started on card:{0} to {1}", cardId, timeshiftFileName);
         card = new VirtualCard(cardId, Dns.GetHostName());
+        card.RecordingFolder = _allDbscards[cardId].RecordingFolder;
         return true;
       }
       catch (Exception ex)
@@ -1390,6 +1393,7 @@ namespace TvService
             if (CurrentChannelName(keyPair.Value.IdCard) == channel)
             {
               card = new VirtualCard(keyPair.Value.IdCard, Dns.GetHostName());
+              card.RecordingFolder = keyPair.Value.RecordingFolder;
               return true;
             }
           }
@@ -1420,6 +1424,7 @@ namespace TvService
         if (!_scheduler.IsRecordingSchedule(idSchedule, out cardId)) return false;
 
         card = new VirtualCard(cardId, Dns.GetHostName());
+        card.RecordingFolder =_allDbscards[cardId].RecordingFolder;
         return true;
       }
       catch (Exception ex)

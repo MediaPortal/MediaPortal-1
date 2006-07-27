@@ -1833,6 +1833,7 @@ namespace TvPlugin
 
     void CreateDatabaseConfigFile(string connectionString)
     {
+      _log.Info("Remote control:sql server :{0}", connectionString);
       using (FileStream stream = new FileStream("ideablade.ibconfig", FileMode.OpenOrCreate, FileAccess.ReadWrite))
       {
         using (StreamWriter writer = new StreamWriter(stream))
