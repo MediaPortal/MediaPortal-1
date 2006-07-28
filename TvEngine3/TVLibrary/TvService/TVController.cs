@@ -1265,7 +1265,7 @@ namespace TvService
 
     public void SetCurrentAudioStream(int cardId, IAudioStream stream)
     {
-      Log.WriteFile("controller: setaudiostream:{0} {1}", cardId,stream);
+      Log.WriteFile("controller: setaudiostream:{0} {1}", cardId, stream);
       if (_allDbscards[cardId].Server.HostName != Dns.GetHostName())
       {
         RemoteControl.HostName = _allDbscards[cardId].Server.HostName;
@@ -1317,7 +1317,7 @@ namespace TvService
     /// <returns>true if timeshifting has started, otherwise false</returns>
     public bool StartTimeShifting(string channelName, out VirtualCard card)
     {
-      Log.Write("Controller:StartTimeShifting {0}",channelName);
+      Log.Write("Controller:StartTimeShifting {0}", channelName);
       card = null;
       try
       {
@@ -1424,7 +1424,7 @@ namespace TvService
         if (!_scheduler.IsRecordingSchedule(idSchedule, out cardId)) return false;
 
         card = new VirtualCard(cardId, Dns.GetHostName());
-        card.RecordingFolder =_allDbscards[cardId].RecordingFolder;
+        card.RecordingFolder = _allDbscards[cardId].RecordingFolder;
         return true;
       }
       catch (Exception ex)
@@ -1750,7 +1750,7 @@ namespace TvService
                     Log.Write("timeshifting fileSize:{0}", fileSize);
                   }
                   fileSize = newfileSize;
-                  if (fileSize >= 4 * 1024 ) // 3meg ..
+                  if (fileSize >= 4 * 1024) // 3meg ..
                   {
                     TimeSpan ts = DateTime.Now - timeStart;
                     Log.Write("timeshifting fileSize:{0} {1}", fileSize, ts.TotalMilliseconds);

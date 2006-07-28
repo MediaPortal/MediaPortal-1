@@ -137,7 +137,7 @@ namespace SetupTv.Sections
         card = GetCardTimeShiftingChannel(channel);
         if (card != null)
         {
-          string fileName = Utils.MakeFileName(String.Format(@"{0}\{1}.mpg",card.RecordingFolder, channel));
+          string fileName = String.Format(@"{0}\{1}.mpg", card.RecordingFolder, Utils.MakeFileName(channel));
           card.StartRecording(fileName, true, 0);
         }
       }
@@ -304,7 +304,9 @@ namespace SetupTv.Sections
         {
           if (RemoteControl.Instance.CurrentChannelName(card.IdCard) == channelName)
           {
-            return new VirtualCard(card.IdCard, RemoteControl.HostName);
+            VirtualCard vcard=new VirtualCard(card.IdCard, RemoteControl.HostName);
+            vcard.RecordingFolder = card.RecordingFolder;
+            return vcard;
           }
         }
       }
@@ -325,7 +327,9 @@ namespace SetupTv.Sections
         {
           if (RemoteControl.Instance.CurrentChannelName(card.IdCard) == channel)
           {
-            return new VirtualCard(card.IdCard, RemoteControl.HostName);
+            VirtualCard vcard = new VirtualCard(card.IdCard, RemoteControl.HostName);
+            vcard.RecordingFolder = card.RecordingFolder;
+            return vcard;
           }
         }
       }

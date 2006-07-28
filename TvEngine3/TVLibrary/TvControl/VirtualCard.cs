@@ -31,6 +31,7 @@ namespace TvControl
     {
       _cardId = cardId;
       _server = server;
+      _recordingFolder = System.IO.Directory.GetCurrentDirectory();
     }
     #endregion
 
