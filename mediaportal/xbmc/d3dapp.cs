@@ -1924,6 +1924,10 @@ namespace MediaPortal
           Win32API.EnableStartBar(false);
           Win32API.ShowStartBar(false);
         }
+        // Disable DeviceReset event handler, so it's not called when we resize
+        // (Event handler is reinstated in SwitchFullScreenOrWindowed)
+        GUIGraphicsContext.DX9Device.DeviceReset -= new EventHandler(this.OnDeviceReset);
+
         this.FormBorderStyle = FormBorderStyle.None;
         this.MaximizeBox = false;
         this.MinimizeBox = false;
@@ -2360,7 +2364,7 @@ namespace MediaPortal
       // Associate the front buffer to back buffer with specified caps
       m_ddback = m_ddfront.GetAttachedSurface(caps);
     }
-
+    
     private void televisionMenuItem_Click(object sender, EventArgs e)
     {
       g_Player.Stop();
