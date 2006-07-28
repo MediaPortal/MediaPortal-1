@@ -115,8 +115,22 @@ namespace SetupTv.Sections
       else
       {
         server.StartTimeShifting(channel, out card);
-        _player = new Player();
-        _player.Play(card.TimeShiftFileName,this.Handle);
+        if (!card.IsScrambled)
+        {
+          if (System.IO.File.Exists(card.TimeShiftFileName))
+          {
+            try
+            {
+              _player = new Player();
+              _player.Play(card.TimeShiftFileName, this.Handle);
+            }
+            catch (Exception)
+            {
+              _player.Stop();
+              _player = null;
+            }
+          }
+        }
 
       }
     }

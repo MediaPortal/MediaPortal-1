@@ -271,9 +271,14 @@ namespace SetupTv.Sections
     }
     public void Stop()
     {
-      _videoWin.put_Visible(OABool.False);
-      _mediaCtrl.Stop();
-
+      if (_videoWin != null)
+      {
+        _videoWin.put_Visible(OABool.False);
+      }
+      if (_mediaCtrl != null)
+      {
+        _mediaCtrl.Stop();
+      }
       if (_pinAudio != null)
       {
         Marshal.ReleaseComObject(_pinAudio); _pinAudio = null;
