@@ -52,9 +52,8 @@ namespace MediaPortal
                       
                          if(o.ToString().StartsWith("System.Windows.Controls.TextBlock"))
                          {
-                             string tag = ((TextBlock)o).Tag.ToString();
-                             string label=Core.SplitElementTag(tag, "labelNum","##metadata");
-                             ((TextBlock)o).Text = Core.GetLocalizedString("id", n.ToString(), "value", node);
+
+                             ((TextBlock)o).Text = Core.GetLocalizedString("id", ((TextBlock)o).Text, "value", node);
                          }
 
                          if (o.ToString().StartsWith("System.Windows.Controls.Button"))
