@@ -138,7 +138,6 @@ namespace MediaPortal.Subtitle
         m_font=new GUIFont("subFont",_fontName,m_iFontSize,style);
         m_font.Load();
         m_font.InitializeDeviceObjects();
-        m_font.RestoreDeviceObjects();
       }
     }
 
