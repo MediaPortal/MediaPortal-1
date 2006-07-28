@@ -26,7 +26,6 @@ namespace MediaPortal
         /// </summary>
         public Core()
         {
-            LoadSkin();
             this.Loaded += new RoutedEventHandler(Core_Loaded);
             this.ShowsNavigationUI = true;
             // params
@@ -53,22 +52,11 @@ namespace MediaPortal
             LoadHome();
         }
 
+        /*
          public void LoadSkin()
         {
-            string path = Directory.GetCurrentDirectory();
-            string pathSkinElements = path + @"\BlueTwo\skinElements.xaml";
-            string pathSkinImages = path + @"\BlueTwo\skinImages.xaml";
-            // load the skin defs
-            ResourceDictionary dict = new ResourceDictionary();
-            // load elements resources
-             dict.Source = new System.Uri(pathSkinElements);
-            this.Resources.MergedDictionaries.Add(dict);
-             // load image resources
-            dict = new ResourceDictionary(); 
-            dict.Source = new System.Uri(pathSkinImages);
-            this.Resources.MergedDictionaries.Add(dict);
             
-            // FileInfo fi;
+           // FileInfo fi;
            // StreamWriter sw=File.CreateText("E:\\skinMedia.xaml");
            // DirectoryInfo di = new DirectoryInfo(pathMedia);
            // if (di.Exists)
@@ -76,12 +64,13 @@ namespace MediaPortal
            //     FileInfo[] fis=di.GetFiles("*.*");
            //     foreach (FileInfo f in fis)
            //     {
-           //         sw.WriteLine("<BitmapImage x:Key=" + ((char)34) + f.Name + ((char)34) + " UriSource=" + ((char)34) + "Media\\" +  f.Name + ((char)34) + "/>");
+           //         sw.WriteLine("<BitmapImage x:Key=" + ((char)34) + f.Name + ((char)34) + " UriSource=" + ((char)34) + "BlueTwo\Media\\" +  f.Name + ((char)34) + "/>");
            //     }
            // }
            //  sw.Close();
            
         }
+         */
 
         public void LoadHome()
         {
@@ -149,7 +138,7 @@ namespace MediaPortal
             //    FileInfo[] fis = di.GetFiles("*.*");
             //    foreach (FileInfo f in fis)
             //    {
-            //        sw.WriteLine("<BitmapImage x:Key=" + ((char)34) + f.Name + ((char)34) + " UriSource=" + ((char)34) + "Media\\" + f.Name + ((char)34) + "/>");
+            //        sw.WriteLine("<BitmapImage x:Key=" + ((char)34) + f.Name + ((char)34) + " UriSource=" + ((char)34) + "BlueTwo\Media\\" + f.Name + ((char)34) + "/>");
             //    }
             //}
 
