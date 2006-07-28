@@ -22,6 +22,7 @@ namespace MediaPortal
         private ScrollViewer sv;
         public string _skinMediaPath;
         private bool viewThumbNails = true;
+        private Core _core;
         public HomeExtension(ResourceDictionary dict)
         {
             InitializeComponent();
@@ -31,8 +32,45 @@ namespace MediaPortal
            
             this.Height = 608;
             this.Width = 720;
+            _core = (Core)this.Parent;
+
+            ApplyLanguage("German");
         }
 
+        private void ApplyLanguage(string lang)
+        {
+            System.Xml.XmlDocument langFile = new System.Xml.XmlDocument();
+            langFile.Load(System.IO.Directory.GetCurrentDirectory()+@"\language\"+lang+@"\strings.xml");
+            System.Xml.XmlNode node = langFile.GetElementsByTagName("strings").Item(0);
+            if (node != null)
+            {
+                for (int n = 0; n < 9999; n++)
+                {
+                   object o=this.FindName("id" + n.ToString());
+                    if (o != null)
+                    {
+                      
+                         if(o.ToString().StartsWith("System.Windows.Controls.TextBlock"))
+                         {
+                             string tag = ((TextBlock)o).Tag.ToString();
+                             string label=Core.SplitElementTag(tag, "labelNum","##metadata");
+                             ((TextBlock)o).Text = Core.GetLocalizedString("id", n.ToString(), "value", node);
+                         }
+
+                         if (o.ToString().StartsWith("System.Windows.Controls.Button"))
+                         {
+                             string tag = ((Button)o).Tag.ToString();
+                             string label=Core.SplitElementTag(tag, "labelNum","##metadata");
+                             ((Button)o).Content = Core.GetLocalizedString("id", label, "value", node);
+                         }
+                        
+                    }
+                }
+                int count=VisualTreeHelper.GetChildrenCount(this);
+                int a = 0;
+            }
+
+        }
 
         void HomeExtension_Loaded(object sender, RoutedEventArgs e)
         {

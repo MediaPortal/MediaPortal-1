@@ -2,15 +2,15 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       Style="{StaticResource PageBackground}" 
       x:Class="MediaPortal.HomeExtension">
- 
+
 
 
 
   <Canvas>
- 
     <!--  -->
     <TextBlock
-      Text="134"
+      Name="id1"
+      Text="1"
       Canvas.Top="70"
       Foreground="White"
       Visibility="Visible"
@@ -23,20 +23,22 @@
 
 
     <!--  -->
-    <Image Stretch="Uniform"
+    <Image
+      Name="id1_0"
       Canvas.Top="20"
       Canvas.Left="60"
-      Source="{DynamicResource music_logo.png}"
+      Source="{DynamicResource pictures_logo.png}"
       Visibility="Visible"
       Tag="##id::1//##keycontrol::onleft:;onright:;onup:;ondown://##metadata::"
 />
 
 
     <!--  -->
-    <Image Stretch="Uniform"
+    <Image
+      Name="id1_0_1"
       Canvas.Top="370"
       Canvas.Left="75"
-      Source="{DynamicResource hover_my music.png}"
+      Source="{DynamicResource hover_my pictures.png}"
       Visibility="Visible"
       Tag="##id::1//##keycontrol::onleft:;onright:;onup:;ondown://##metadata::"
 />
@@ -44,123 +46,78 @@
 
     <!-- View-As button -->
     <Button
+      Name="id2"
       Canvas.Top="97"
       Canvas.Left="60"
       Visibility="Visible"
       Width="190"
       Height="32"
       Style="{DynamicResource GUIButton}"
-      Click="MPNG" 
-      Tag="##id::2//##keycontrol::onleft:2;onright:50;onup:17;ondown:3//##metadata::labelNum:100"
+      Tag="##id::2//##keycontrol::onleft:;onright:50;onup:17;ondown://##metadata::labelNum:100"
 >100</Button>
 
 
-    <!-- Switch View -->
+    <!-- SlideShow button -->
     <Button
+      Name="id6"
       Canvas.Top="161"
       Canvas.Left="60"
       Visibility="Visible"
       Width="190"
       Height="32"
       Style="{DynamicResource GUIButton}"
-      Tag="##id::6//##keycontrol::onleft:6;onright:50;onup:3;ondown:12//##metadata::labelNum:457"
->457</Button>
+      Tag="##id::6//##keycontrol::onleft:;onright:;onup:;ondown://##metadata::labelNum:108"
+>108</Button>
 
 
-    <!-- Search -->
+    <!-- Recursive Slideshow -->
     <Button
+      Name="id7"
       Canvas.Top="193"
       Canvas.Left="60"
       Visibility="Visible"
       Width="190"
       Height="32"
       Style="{DynamicResource GUIButton}"
-      Tag="##id::12//##keycontrol::onleft:12;onright:50;onup:6;ondown:9//##metadata::labelNum:137"
->137</Button>
+      Tag="##id::7//##keycontrol::onleft:;onright:;onup:;ondown://##metadata::labelNum:361"
+>361</Button>
 
 
-    <!-- Play CD -->
+    <!-- Create Thumbnails -->
     <Button
+      Name="id8"
       Canvas.Top="225"
       Canvas.Left="60"
       Visibility="Visible"
       Width="190"
       Height="32"
       Style="{DynamicResource GUIButton}"
-      Tag="##id::9//##keycontrol::onleft:9;onright:50;onup:12;ondown:13//##metadata::labelNum:890"
->890</Button>
+      Tag="##id::8//##keycontrol::onleft:;onright:;onup:;ondown://##metadata::labelNum:109"
+>109</Button>
 
 
-    <!-- Eject Disc -->
+    <!-- Rotate -->
     <Button
+      Name="id9"
       Canvas.Top="257"
       Canvas.Left="60"
       Visibility="Visible"
       Width="190"
       Height="32"
       Style="{DynamicResource GUIButton}"
-      Tag="##id::13//##keycontrol::onleft:13;onright:50;onup:9;ondown:11//##metadata::labelNum:654"
->654</Button>
+      Tag="##id::9//##keycontrol::onleft:;onright:;onup:;ondown:99//##metadata::labelNum:735"
+>735</Button>
 
-
-    <!-- Divider image -->
-    <Image Stretch="Uniform"
-      Canvas.Top="289"
-      Canvas.Left="60"
-      Source="{DynamicResource hbar1.png}"
-      Visibility="Visible"
-      Tag="##id::999//##keycontrol::onleft:;onright:;onup:;ondown://##metadata::"
-/>
-
-
-    <!-- Now playing button -->
-    <Button
-      Canvas.Top="321"
-      Canvas.Left="60"
-      Visibility="Visible"
-      Width="190"
-      Height="32"
-      Style="{DynamicResource GUIButton}"
-      Tag="##id::11//##keycontrol::onleft:11;onright:50;onup:13;ondown:8//##metadata::labelNum:4540"
->4540</Button>
-
-
-    <!-- Playlists button -->
-    <Button
-      Canvas.Top="353"
-      Canvas.Left="60"
-      Visibility="Visible"
-      Width="190"
-      Height="32"
-      Style="{DynamicResource GUIButton}"
-      Tag="##id::8//##keycontrol::onleft:8;onright:50;onup:11;ondown:10//##metadata::labelNum:4555"
->4555</Button>
-
-
-    <!-- My Playlists -->
-    <Button
-      Name="test" 
-      Canvas.Top="385"
-      Canvas.Left="60"
-      Visibility="Visible"
-      Width="190"
-      Height="32"
-      Click="MPNG" 
-      Style="{DynamicResource GUIButton}"
-      Tag="##id::10//##keycontrol::onleft:10;onright:50;onup:8;ondown:99//##metadata::labelNum:983"
->983</Button>
 
     <!-- composite control consisting of a list control and a thumbnail panel -->
     <ListView
-      Name="lv1" 
+      Name="lv1"
       Canvas.Top="97"
       Canvas.Left="260"
-      Width="460"
-      Height="471"
-      Style="{StaticResource GUIListControl}"
-      >
-
-    </ListView>
+      Width="425"
+      Height="459"
+      Style="{DynamicResource GUIListControl}"
+/>
 
 
   </Canvas>

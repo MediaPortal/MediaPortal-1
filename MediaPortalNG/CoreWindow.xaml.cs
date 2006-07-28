@@ -21,6 +21,7 @@ namespace MediaPortal
     {
         public char chr34=((char)34);
         public XmlNode defNodes;
+        public System.Collections.ArrayList idArray;
         /// <summary>
         /// The MediaPortal core. The Core always loads the HomeExtension as start point.
         /// </summary>
@@ -85,11 +86,13 @@ namespace MediaPortal
             string header2="xmlns:x=" + chr34 + "http://schemas.microsoft.com/winfx/2006/xaml" + chr34 ;
             string header3="Style=" + chr34 + "{StaticResource PageBackground}" + chr34 ;
             string header4="x:Class=" + chr34 + "MediaPortal.HomeExtension" + chr34 + ">";
-            string file = "mymusicsongs";
+            string file = "mypics";
             // the skin
             XmlDocument doc = new System.Xml.XmlDocument();
             XmlDocument defaults = new XmlDocument();
             XmlDocument commonFacade = new XmlDocument();
+            idArray = new System.Collections.ArrayList();
+
 
             // the common.window.xml/ common.settings.xml
             XmlDocument commonWindow = new System.Xml.XmlDocument();
@@ -337,6 +340,24 @@ namespace MediaPortal
             {
                 sw.WriteLine("  <!-- " + FindNodeByName("description", parent) + " -->");
                 sw.WriteLine("<ListView");
+                string id="id" + FindNodeByName("id", parent);
+
+                if (idArray.IndexOf(id) >= 0)
+                {
+                    int n = 0;
+                    bool loop=true;
+                    do
+                    {
+                        id += "_" + n.ToString();
+                        if (idArray.IndexOf(id) >= 0)
+                            n++;
+                        else
+                            loop = false;
+                    } while (loop == true);
+
+                }
+                idArray.Add(id);
+                sw.WriteLine("  Name=" + chr34 + id+ chr34);
                 sw.WriteLine("  Canvas.Top=" + chr34 + GetDefaultValue("listcontrol", "posY", defNodes) + chr34);
                 sw.WriteLine("  Canvas.Left=" + chr34 + GetDefaultValue("listcontrol", "posX", defNodes) + chr34);
                 sw.WriteLine("  Width=" + chr34 + GetDefaultValue("listcontrol", "width", defNodes) + chr34);
@@ -361,8 +382,27 @@ namespace MediaPortal
 
                 if (FindNodeByName("texture", parent) == "background.png")
                     return;//skin background image
+
                 sw.WriteLine("  <!-- " + FindNodeByName("description", parent) + " -->");
                 sw.WriteLine("<Image");
+                string id = "id" + FindNodeByName("id", parent);
+
+                if (idArray.IndexOf(id) >= 0)
+                {
+                    int n = 0;
+                    bool loop = true;
+                    do
+                    {
+                        id += "_" + n.ToString();
+                        if (idArray.IndexOf(id) >= 0)
+                            n++;
+                        else
+                            loop = false;
+                    } while (loop == true);
+
+                }
+                idArray.Add(id);
+                sw.WriteLine("  Name=" + chr34 + id + chr34); 
                 sw.WriteLine("  Canvas.Top=" + chr34 + posy + chr34);
                 sw.WriteLine("  Canvas.Left=" + chr34 + posx + chr34);
                 if (FindNodeByName("width", parent) != "")
@@ -383,6 +423,24 @@ namespace MediaPortal
             {
                 sw.WriteLine("  <!-- " + FindNodeByName("description", parent) + " -->");
                 sw.WriteLine("<TextBlock");
+                string id = "id" + FindNodeByName("id", parent);
+
+                if (idArray.IndexOf(id) >= 0)
+                {
+                    int n = 0;
+                    bool loop = true;
+                    do
+                    {
+                        id += "_" + n.ToString();
+                        if (idArray.IndexOf(id) >= 0)
+                            n++;
+                        else
+                            loop = false;
+                    } while (loop == true);
+
+                }
+                idArray.Add(id);
+                sw.WriteLine("  Name=" + chr34 + id + chr34); 
                 string foreColor = FindNodeByName("textcolor", parent);
                 if (foreColor == "")
                     foreColor = GetDefaultValue("label", "textcolor", defNodes);
@@ -442,6 +500,24 @@ namespace MediaPortal
                 if (Convert.ToInt32(labelText) > 0)
                     metaData = "labelNum:" + labelText;
 
+                string id = "id" + FindNodeByName("id", parent);
+
+                if (idArray.IndexOf(id) >= 0)
+                {
+                    int n = 0;
+                    bool loop = true;
+                    do
+                    {
+                        id += "_" + n.ToString();
+                        if (idArray.IndexOf(id) >= 0)
+                            n++;
+                        else
+                            loop = false;
+                    } while (loop == true);
+
+                }
+                idArray.Add(id);
+                sw.WriteLine("  Name=" + chr34 + id + chr34); 
                 sw.WriteLine("  Canvas.Top=" + chr34 + posy + chr34);
                 sw.WriteLine("  Canvas.Left=" + chr34 + posx + chr34);
                 sw.WriteLine("  Visibility=" + chr34 + (FindNodeByName("visible", parent) == "no" ? "Hidden" : "Visible") + chr34);
@@ -475,6 +551,24 @@ namespace MediaPortal
                 if (Convert.ToInt32(labelText) > 0)
                     metaData = "labelNum:" + labelText;
 
+                string id = "id" + FindNodeByName("id", parent);
+
+                if (idArray.IndexOf(id) >= 0)
+                {
+                    int n = 0;
+                    bool loop = true;
+                    do
+                    {
+                        id += "_" + n.ToString();
+                        if (idArray.IndexOf(id) >= 0)
+                            n++;
+                        else
+                            loop = false;
+                    } while (loop == true);
+
+                }
+                idArray.Add(id);
+                sw.WriteLine("  Name=" + chr34 + id + chr34); 
                 sw.WriteLine("  Canvas.Top=" + chr34 + posy + chr34);
                 sw.WriteLine("  Canvas.Left=" + chr34 + posx + chr34);
                 sw.WriteLine("  Visibility=" + chr34 + (FindNodeByName("visible", parent) == "no" ? "Hidden" : "Visible") + chr34);
@@ -566,6 +660,64 @@ namespace MediaPortal
            int a = 1;
            return result;
         }
- 
+
+        public static string GetLocalizedString(string nodeName,string type, string property, XmlNode defaults)
+        {
+            XmlNode found = null;
+
+            foreach (XmlNode prop in defaults.ChildNodes)
+            {
+                foreach (XmlNode loop in prop.ChildNodes)
+                {
+                    if (loop.Name == nodeName && loop.InnerText == type)
+                    {
+                        found = prop;
+                    }
+                }
+            }
+            if (found == null)
+                return "";
+            
+            string prefix="";
+            foreach(XmlAttribute attrib in found.Attributes)
+            {
+                if (attrib.Name == "Prefix")
+                    prefix = attrib.Value;
+
+            }
+            
+            string result = "";
+            foreach (XmlNode loop in found.ChildNodes)
+            {
+                if (loop.Name == property)
+                    result = loop.InnerText;
+            }
+            int a = 1;
+            return prefix+result;
+        }
+
+        public static string SplitElementTag(string tag,string returnValue,string data)
+        {
+            string[] splitt = tag.Split(new string[] { "//" },StringSplitOptions.RemoveEmptyEntries);
+            if (splitt.Length > 0)
+            {
+                foreach (string splitString in splitt)
+                {
+                    string[] props = splitString.Split(new string[] { "::" }, StringSplitOptions.RemoveEmptyEntries);
+                    
+                    if (props.Length > 1)
+                    {
+                        if (props[0]==data && props[1].StartsWith(returnValue))
+                        {
+                            string[] values = props[1].Split(new char[] { ':' });
+                            if (values.Length == 2)
+                                return values[1];
+                        }
+                    }
+                }
+            }
+            int a=1;
+            return "";
+        }
     }
 }
