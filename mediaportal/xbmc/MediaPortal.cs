@@ -979,7 +979,6 @@ public class MediaPortalApp : D3DApp, IRender
       splashScreen.SetInformation("Initializing fonts...");
     }
     GUIFontManager.InitializeDeviceObjects();
-    GUIFontManager.RestoreDeviceObjects();
 
     if (splashScreen != null)
     {
