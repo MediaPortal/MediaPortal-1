@@ -444,8 +444,6 @@ namespace TvLibrary.Implementations.DVB
         throw new TvException("Unable to start graph");
       }
 
-      _pmtTimer.Enabled = true;
-      _graphRunning = true;
       _epgGrabbing = false;
       if (_tsFileSink != null)
       {
@@ -453,6 +451,8 @@ namespace TvLibrary.Implementations.DVB
       }
       DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
       SetAnalyzerMapping(channel.PmtPid);
+      _pmtTimer.Enabled = true;
+      _graphRunning = true;
 
     }
 

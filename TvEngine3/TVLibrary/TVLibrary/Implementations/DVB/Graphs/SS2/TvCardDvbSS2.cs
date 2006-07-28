@@ -1,3 +1,4 @@
+//#define FORM
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -94,7 +95,13 @@ namespace TvLibrary.Implementations.DVB
     protected int _signalQuality;
     protected int _signalLevel;
     protected DateTime _lastSignalUpdate;
+
+#if FORM
+    protected bool _newPMT = false;
+    System.Windows.Forms.Timer _pmtTimer = new System.Windows.Forms.Timer();
+#else
     System.Timers.Timer _pmtTimer = new System.Timers.Timer();
+#endif
     protected int _pmtVersion;
     protected ChannelInfo _channelInfo;
     string _timeshiftFileName;
@@ -230,7 +237,12 @@ namespace TvLibrary.Implementations.DVB
       _tsHelper = new TSHelperTools();
       _pmtTimer.Enabled = false;
       _pmtTimer.Interval = 100;
+
+#if FORM
+      _pmtTimer.Tick += new EventHandler(_pmtTimer_ElapsedForm);
+#else
       _pmtTimer.Elapsed += new System.Timers.ElapsedEventHandler(_pmtTimer_Elapsed);
+#endif
     }
     #endregion
 
@@ -481,16 +493,18 @@ namespace TvLibrary.Implementations.DVB
         throw new TvException("Unable to start graph");
       }
 
-      _pmtTimer.Enabled = true;
-      _graphRunning = true;
       _epgGrabbing = false;
       if (_tsFileSink != null)
       {
         _dateTimeShiftStarted = DateTime.Now;
       }
       DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
-      SetAnalyzerMapping(channel.PmtPid);
-
+      if (channel != null)
+      {
+        SetAnalyzerMapping(channel.PmtPid);
+      }
+      _graphRunning = true;
+      _pmtTimer.Enabled = true;
     }
 
     /// <summary>
@@ -499,6 +513,7 @@ namespace TvLibrary.Implementations.DVB
     protected void StopGraph()
     {
       if (!CheckThreadId()) return;
+      Log.Log.WriteFile("ss2:StopGraph()");
       if (_epgGrabbing)
       {
         _epgGrabbing = false;
@@ -675,7 +690,7 @@ namespace TvLibrary.Implementations.DVB
       if (!CheckThreadId()) return;
       Log.Log.WriteFile("ss2:AddAnalyzerFilter");
       _filterAnalyzer = (IBaseFilter)new MPStreamAnalyzer();
-      int hr = _graphBuilder.AddFilter(_filterAnalyzer, "Analyzer");
+      int hr = _graphBuilder.AddFilter(_filterAnalyzer, "MPSA Analyzer");
       if (hr != 0)
       {
         Log.Log.WriteFile("ss2:AddAnalyzerFilter returns:0x{0:X}", hr);
@@ -692,10 +707,26 @@ namespace TvLibrary.Implementations.DVB
       mediaType.subType = MediaSubType.None;
       mediaType.formatType = FormatType.None;
 
-      demuxer.CreateOutputPin(mediaType, "SI", out _pinAnalyzerSI);
-      demuxer.CreateOutputPin(mediaType, "D2", out _pinAnalyzerD2);
-      demuxer.CreateOutputPin(mediaType, "D3", out _pinAnalyzerD3);
-      demuxer.CreateOutputPin(mediaType, "EPG", out _pinAnalyzerEPG);
+      hr = demuxer.CreateOutputPin(mediaType, "SI", out _pinAnalyzerSI);
+      if (hr != 0)
+      {
+        Log.Log.WriteFile("ss2: Unable to create SI pin");
+      }
+      hr = demuxer.CreateOutputPin(mediaType, "D2", out _pinAnalyzerD2);
+      if (hr != 0)
+      {
+        Log.Log.WriteFile("ss2: Unable to create d2 pin");
+      }
+      hr = demuxer.CreateOutputPin(mediaType, "D3", out _pinAnalyzerD3);
+      if (hr != 0)
+      {
+        Log.Log.WriteFile("ss2: Unable to create D3 pin");
+      }
+      hr = demuxer.CreateOutputPin(mediaType, "EPG", out _pinAnalyzerEPG);
+      if (hr != 0)
+      {
+        Log.Log.WriteFile("ss2: Unable to create EPG pin");
+      }
       FilterGraphTools.ConnectPin(_graphBuilder, _pinAnalyzerSI, _filterAnalyzer, 0);
       FilterGraphTools.ConnectPin(_graphBuilder, _pinAnalyzerD2, _filterAnalyzer, 1);
       FilterGraphTools.ConnectPin(_graphBuilder, _pinAnalyzerD3, _filterAnalyzer, 2);
@@ -813,7 +844,7 @@ namespace TvLibrary.Implementations.DVB
         demuxer.CreateOutputPin(FilterGraphTools.GetAudioMpg2Media(), "Audio", out _pinAudioTimeShift);
       }
 #else
-
+      /*
       // Connect the 5 MPEG-2 Demux output pins
       for (int i = 0; i < 5; i++)
       {
@@ -847,7 +878,7 @@ namespace TvLibrary.Implementations.DVB
           if (releasePin)
             Release.ComObject("mpeg2 demux pin:" + i.ToString(), pinOut);
         }
-      }
+      }*/
 #endif
 
       if (_filterTsWriter == null)
@@ -858,6 +889,7 @@ namespace TvLibrary.Implementations.DVB
         IPin pin = DsFindPin.ByDirection(_filterTsWriter, PinDirection.Input, 0);
         _graphBuilder.Connect(pinTee, pin);
         Release.ComObject("pinTsWriterIn", pin);
+        Release.ComObject("pinTee", pinTee);
       }
     }
 
@@ -1085,56 +1117,108 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="pmtPid">pid of the PMT</param>
     protected void SetAnalyzerMapping(int pmtPid)
     {
-      if (!CheckThreadId()) return;
-      //do grab epg, pat,sdt or nit when not timeshifting
-
-      _streamAnalyzer.Scanning(0);
-      DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
-      if (_graphState == GraphState.TimeShifting || _graphState == GraphState.Recording)
+      try
       {
-        Log.Log.WriteFile("ss2:SetAnalyzerMapping TS pid:{0:X} {1:X}", pmtPid, channel.ServiceId);
-        SetupDemuxerPin(_pinAnalyzerEPG, 0x2000, (int)MediaSampleContent.Mpeg2PSI, true);
-        SetupDemuxerPin(_pinAnalyzerD2, 0x2000, (int)MediaSampleContent.Mpeg2PSI, true);
-        SetupDemuxerPin(_pinAnalyzerD3, 0x2000, (int)MediaSampleContent.Mpeg2PSI, true);
-        SetupDemuxerPin(_pinAnalyzerSI, pmtPid, (int)MediaSampleContent.Mpeg2PSI, true);
-      }
-      else
-      {
-        Log.Log.WriteFile("ss2:SetAnalyzerMapping scan/epg pid:{0:X} {1:X}", pmtPid, channel.ServiceId);
-        SetupDemuxerPin(_pinAnalyzerEPG, 0x12, (int)MediaSampleContent.Mpeg2PSI, true);
-        SetupDemuxerPin(_pinAnalyzerD2, 0xd2, (int)MediaSampleContent.Mpeg2PSI, true);
-        SetupDemuxerPin(_pinAnalyzerD3, 0xd3, (int)MediaSampleContent.Mpeg2PSI, true);
-
-
-
-        if (pmtPid >= 0 && pmtPid <= 0x1ffb)
+        if (!CheckThreadId()) return;
+        Log.Log.WriteFile("ss2:SetAnalyzerMapping {0:X}", pmtPid);
+        if (_streamAnalyzer == null)
         {
-          int[] pids = new int[4];
-          pids[0] = 0x0;
-          pids[1] = 0x10;
-          pids[2] = 0x11;
-          pids[3] = pmtPid;
-          SetupDemuxerPids(_pinAnalyzerSI, pids, 4, (int)MediaSampleContent.Mpeg2PSI, true);
+          Log.Log.WriteFile("ss2:  no stream analyzer interface");
+          return;
+        }
+        if (_pinAnalyzerSI == null)
+        {
+          Log.Log.WriteFile("ss2:  no mpsa pin");
+          return;
+        }
+        if (_pinAnalyzerD2 == null)
+        {
+          Log.Log.WriteFile("ss2:  no d2 pin");
+          return;
+        }
+        if (_pinAnalyzerD3 == null)
+        {
+          Log.Log.WriteFile("ss2:  no d3 pin");
+          return;
+        }
+        if (_pinAnalyzerEPG == null)
+        {
+          Log.Log.WriteFile("ss2:  no epg pin");
+          return;
+        }
+
+        //do grab epg, pat,sdt or nit when not timeshifting
+
+        Log.Log.WriteFile("ss2:  disable mpsa");
+        _streamAnalyzer.Scanning(0);
+        DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
+        if (channel == null)
+        {
+          Log.Log.WriteFile("ss2:  no channel");
+          return;
+        }
+
+        Log.Log.WriteFile("ss2:  mpsa disabled");
+        if (_graphState == GraphState.TimeShifting || _graphState == GraphState.Recording)
+        {
+          Log.Log.WriteFile("ss2:SetAnalyzerMapping TS pid:{0:X}", pmtPid);
+          SetupDemuxerPin(_pinAnalyzerEPG, 0x2000, (int)MediaSampleContent.Mpeg2PSI, true);
+          SetupDemuxerPin(_pinAnalyzerD2, 0x2000, (int)MediaSampleContent.Mpeg2PSI, true);
+          SetupDemuxerPin(_pinAnalyzerD3, 0x2000, (int)MediaSampleContent.Mpeg2PSI, true);
+          SetupDemuxerPin(_pinAnalyzerSI, pmtPid, (int)MediaSampleContent.Mpeg2PSI, true);
+          Log.Log.WriteFile("ss2:SetAnalyzerMapping ok");
         }
         else
         {
-          int[] pids = new int[3];
-          pids[0] = 0x0;
-          pids[1] = 0x10;
-          pids[2] = 0x11;
-          SetupDemuxerPids(_pinAnalyzerSI, pids, 3, (int)MediaSampleContent.Mpeg2PSI, true);
+          Log.Log.WriteFile("ss2:SetAnalyzerMapping scan/epg pid:{0:X}", pmtPid);
+          SetupDemuxerPin(_pinAnalyzerEPG, 0x12, (int)MediaSampleContent.Mpeg2PSI, true);
+          SetupDemuxerPin(_pinAnalyzerD2, 0xd2, (int)MediaSampleContent.Mpeg2PSI, true);
+          SetupDemuxerPin(_pinAnalyzerD3, 0xd3, (int)MediaSampleContent.Mpeg2PSI, true);
+          Log.Log.WriteFile("ss2:SetAnalyzerMapping ok");
+
+
+          Log.Log.WriteFile("ss2:setpids");
+          if (pmtPid >= 0 && pmtPid <= 0x1ffb)
+          {
+            int[] pids = new int[4];
+            pids[0] = 0x0;
+            pids[1] = 0x10;
+            pids[2] = 0x11;
+            pids[3] = pmtPid;
+            SetupDemuxerPids(_pinAnalyzerSI, pids, 4, (int)MediaSampleContent.Mpeg2PSI, true);
+          }
+          else
+          {
+            int[] pids = new int[3];
+            pids[0] = 0x0;
+            pids[1] = 0x10;
+            pids[2] = 0x11;
+            SetupDemuxerPids(_pinAnalyzerSI, pids, 3, (int)MediaSampleContent.Mpeg2PSI, true);
+          }
+          Log.Log.WriteFile("ss2:pids set");
         }
+
+        Log.Log.WriteFile("ss2:  set mpsa callback");
+        _streamAnalyzer.SetPMTCallback(this);
+        Log.Log.WriteFile("ss2:  reset mpsa parser");
+        _streamAnalyzer.ResetParser();
+        Log.Log.WriteFile("ss2:  reset mpsa pids");
+        _streamAnalyzer.ResetPids();
+        Log.Log.WriteFile("ss2:  disable mpsa atsc mode");
+        _streamAnalyzer.UseATSC(0);
+        if (channel != null)
+        {
+          Log.Log.WriteFile("ss2:  set mpsa service id");
+          _streamAnalyzer.SetPMTProgramNumber(channel.ServiceId);
+        }
+        Log.Log.WriteFile("ss2:  enable mpsa");
+        _streamAnalyzer.Scanning(1);
+        Log.Log.WriteFile("ss2:SetAnalyzerMapping done");
       }
-      _streamAnalyzer.SetPMTCallback(this);
-      _streamAnalyzer.ResetParser();
-      _streamAnalyzer.ResetPids();
-      _streamAnalyzer.UseATSC(0);
-      if (channel != null)
+      catch (Exception ex)
       {
-        _streamAnalyzer.SetPMTProgramNumber(channel.ServiceId);
+        Log.Log.Write(ex);
       }
-      _streamAnalyzer.Scanning(1);
-      Log.Log.WriteFile("ss2:SetAnalyzerMapping done");
     }
 
 
@@ -1670,12 +1754,14 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public bool TuneScan(IChannel channel)
     {
+      Log.Log.WriteFile("ss2:TuneScan({0})", channel);
       bool result = Tune(channel);
       RunGraph();
       return result;
     }
     public bool Tune(IChannel channel)
     {
+      Log.Log.WriteFile("ss2:Tune({0})", channel);
       if (_epgGrabbing)
       {
         _epgGrabbing = false;
@@ -1710,7 +1796,6 @@ namespace TvLibrary.Implementations.DVB
         hiBand = false;
       }
 
-      Log.Log.WriteFile("ss2:  Tune:{0}", channel);
       int frequency = (int)dvbsChannel.Frequency;
       if (frequency > 13000)
         frequency /= 1000;
@@ -1827,6 +1912,11 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.WriteFile("ss2:SetLnbFrequency() failed:0x{0:X}", hr);
         return false;
       }
+
+#if FORM
+      _newPMT = false;
+#endif
+      _currentAudioStream = null;
       hr = _interfaceB2C2TunerCtrl.SetTunerStatus();
       _interfaceB2C2TunerCtrl.CheckLock();
       if (((uint)hr) == (uint)0x90010115)
@@ -2141,6 +2231,7 @@ namespace TvLibrary.Implementations.DVB
     {
       if (_graphBuilder == null) return;
       if (!CheckThreadId()) return;
+      
 
       if (_epgGrabbing)
       {
@@ -2291,7 +2382,7 @@ namespace TvLibrary.Implementations.DVB
         if (_newPMT)
         {
           SendPmtToCam();
-          _newPMT=false;
+          _newPMT = false;
         }
 #endif
 
@@ -2457,7 +2548,7 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.WriteFile("ss2:OnPMTReceived()");
         if (_graphRunning == false) return 0;
 #if FORM
-      _newPMT=true;
+        _newPMT = true;
 #else
         SendPmtToCam();
 #endif
