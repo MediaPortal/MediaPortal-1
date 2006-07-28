@@ -31,10 +31,11 @@ using System.Security.Cryptography;
 using System.Threading;
 using System.Timers;
 using System.Text;
+using MediaPortal.Util;
 using MediaPortal.Music.Database;
 using MediaPortal.GUI.Library;
 
-namespace MediaPortal.Audioscrobbler
+namespace MediaPortal.Music.Database
 {
   #region Callback argument types
   public enum NetworkErrorType
