@@ -23,6 +23,7 @@ using System;
 using System.Text;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
@@ -301,12 +302,7 @@ namespace MediaPortal.GUI.Library
 
     public void Present()
     {
-      if (!_fontAdded)
-      {
-        Restore();
-        return;
-      }
-      else if (ID >= 0)
+      if (ID >= 0)
       {
         FontEnginePresent3D(ID);
       }
@@ -475,11 +471,6 @@ namespace MediaPortal.GUI.Library
     /// <param name="flags">Font render flags.</param>
     protected void DrawText(float xpos, float ypos, Color color, string text, RenderFlags flags, int maxWidth)
     {
-      if (!_fontAdded)
-      {
-        Restore();
-        return;
-      }
       if (text == null) return;
       if (text.Length == 0) return;
       if (xpos <= 0) return;
@@ -552,11 +543,7 @@ namespace MediaPortal.GUI.Library
     {
       textwidth = 0.0f;
       textheight = 0.0f;
-      if (!_fontAdded)
-      {
-        Restore();
-        return;
-      }
+
       if (null == text || text == String.Empty) return;
 
       float fRowWidth = 0.0f;
@@ -620,227 +607,175 @@ namespace MediaPortal.GUI.Library
       return true;
     }
 
+    Bitmap CreateFontBitmap()
+    {
+      // Create a bitmap on which to measure the alphabet
+      Bitmap bmp = new Bitmap(1, 1, PixelFormat.Format32bppArgb);
+      Graphics g = Graphics.FromImage(bmp);
+      bool width = true;
+
+      g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+      g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+      g.TextContrast = 0;
+
+      // Establish the font and texture size
+      _textureScale = 1.0f; // Draw fonts into texture without scaling
+
+      // Calculate the dimensions for the smallest power-of-two texture which
+      // can hold all the printable characters
+      _textureWidth = _textureHeight = 256;
+      for (; ; )
+      {
+        try
+        {
+          // Measure the alphabet
+          PaintAlphabet(g, true);
+        }
+        catch (System.InvalidOperationException)
+        {
+          // Scale up the texture size and try again
+          if(width)
+            _textureWidth *= 2;
+          else
+            _textureHeight *= 2;
+          width = !width;
+          continue;
+        }
+        break;
+      }
+
+      // If requested texture is too big, use a smaller texture and smaller font,
+      // and scale up when rendering.
+      Direct3D.Caps d3dCaps = GUIGraphicsContext.DX9Device.DeviceCaps;
+
+      // If the needed texture is too large for the video card...
+      if (_textureWidth > d3dCaps.MaxTextureWidth)
+      {
+        // Scale the font size down to fit on the largest possible texture
+        _textureScale = (float)d3dCaps.MaxTextureWidth / (float)_textureWidth;
+        _textureWidth = _textureHeight = d3dCaps.MaxTextureWidth;
+
+        for (; ; )
+        {
+          // Create a new, smaller font
+          _fontHeight = (int)Math.Floor(_fontHeight * _textureScale);
+          _systemFont = new System.Drawing.Font(_systemFont.Name, _fontHeight, _systemFont.Style);
+
+          try
+          {
+            // Measure the alphabet
+            PaintAlphabet(g, true);
+          }
+          catch (System.InvalidOperationException)
+          {
+            // If that still doesn't fit, scale down again and continue
+            _textureScale *= 0.9F;
+            continue;
+          }
+
+          break;
+        }
+      }
+     Trace.WriteLine("font:" + _fontName + " " + _fileName + " height:" + _fontHeight.ToString() + " " + _textureWidth.ToString() + "x" + _textureHeight.ToString());
+     
+      // Release the bitmap used for measuring and create one for drawing
+
+     bmp = new Bitmap(_textureWidth, _textureHeight, PixelFormat.Format32bppArgb);
+     g = Graphics.FromImage(bmp);
+
+     g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+     g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+     g.TextContrast = 0;
+     _textureCoords = new float[(10 + _EndCharacter - _StartCharacter), 4];
+     // Draw the alphabet
+     PaintAlphabet(g, false);
+     _textureCoords[_EndCharacter - _StartCharacter, 0] = _spacingPerChar;
+     _textureCoords[_EndCharacter - _StartCharacter + 1, 0] = _textureScale;
+     return bmp;
+    }
+
     /// <summary>
-    /// Initialize the device objects.
+    /// Initialize the device objects. Load the texture or if it does not exist, create it.
     /// </summary>
     public void InitializeDeviceObjects()
     {
-      ReloadFont();
-    }
+      BinaryFormatter b = new BinaryFormatter();
+      Stream s;
 
-    void ReloadFont()
-    {
-      _textureScale = 1.0f; // Draw fonts into texture without scaling
+      string strCache = String.Format(@"{0}\fonts\{1}_{2}.dds", GUIGraphicsContext.Skin, _fontName, _fontHeight);
 
-      int colorKey = 0;
-      System.Drawing.Imaging.PixelFormat pixelFormat = System.Drawing.Imaging.PixelFormat.Format32bppArgb;
-      // Create a directory to cache the font bitmaps
-      string strCache = String.Format(@"{0}\fonts\", GUIGraphicsContext.Skin);
-      try
+      // If file does not exist
+      if (!System.IO.File.Exists(strCache))
       {
-        System.IO.Directory.CreateDirectory(strCache);
+        _log.Info("TextureLoader.CreateFile {0}", strCache);
+        // Make sure directory exists
+        try
+        {
+          System.IO.Directory.CreateDirectory(String.Format(@"{0}\fonts\", GUIGraphicsContext.Skin));
+        }
+        catch (Exception) { }
+
+        // Create bitmap with the fonts
+        Bitmap bmp = CreateFontBitmap();
+
+        // Save bitmap to stream
+        MemoryStream imageStream = new System.IO.MemoryStream();
+        bmp.Save(imageStream, ImageFormat.Bmp);
+ 
+        // Reset and load from steam
+        imageStream.Position = 0;
+        ImageInformation info = new ImageInformation();
+        _textureFont = TextureLoader.FromStream(GUIGraphicsContext.DX9Device,
+                                  imageStream, (int)imageStream.Length,
+                                  0, 0, //width/height
+                                  1,//miplevels
+                                  0,
+                                  Format.Dxt3,
+                                  Pool.Managed,
+                                  Filter.None,
+                                  Filter.None,
+                                  0,
+                                  ref info);
+
+        // Finally save texture and texture coords to disk
+        TextureLoader.Save(strCache, ImageFileFormat.Dds, _textureFont);
+        s = File.Open(strCache + ".bxml", FileMode.CreateNew, FileAccess.ReadWrite);
+        b.Serialize(s, (object)_textureCoords);
+        s.Close();
+        _log.Info("Saving font:{0} height:{1} texture:{2}x{3} chars:[{4}-{5}] miplevels:{6}", _fontName, _fontHeight, _textureWidth, _textureHeight, _StartCharacter, _EndCharacter, _textureFont.LevelCount);
+ 
       }
-      catch (Exception) { }
-      strCache = String.Format(@"{0}\fonts\{1}_{2}.png", GUIGraphicsContext.Skin, _fontName, _fontHeight);
-
-      // If the cached bitmap file exists load from file.
-
-      bool SupportsCompressedTextures = Manager.CheckDeviceFormat(GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal,
-                                                                GUIGraphicsContext.DX9Device.DeviceCaps.DeviceType,
-                                                                GUIGraphicsContext.DX9Device.DisplayMode.Format,
-                                                                Usage.None,
-                                                                ResourceType.Textures,
-                                                                Format.Dxt3);
-      if (System.IO.File.Exists(strCache))
+      else
       {
-        bool bExists = true;
+        ImageInformation info = new ImageInformation();
+        _textureFont = TextureLoader.FromFile(GUIGraphicsContext.DX9Device,
+                                          strCache,
+                                          0, 0, //width/height
+                                          1,//miplevels
+                                          0,
+                                          Format.Unknown,
+                                          Pool.Managed,
+                                          Filter.None,
+                                          Filter.None,
+                                          0,
+                                          ref info);
 
-        if (File.Exists(strCache + "_2.bxml"))
-        {
-          try
-          {
-            using (Stream r = File.Open(strCache + "_2.bxml", FileMode.Open, FileAccess.Read))
-            {
-              // deserialize persons
-              BinaryFormatter c = new BinaryFormatter();
-              try
-              {
-                _textureCoords = (float[,])c.Deserialize(r);
-              }
-              catch (Exception)
-              {
-                bExists = false;
-              }
-              int iLen = _textureCoords.GetLength(0);
-              if (iLen != 10 + _EndCharacter - _StartCharacter)
-              {
-                bExists = false;
-              }
-              r.Close();
-            }
-          }
-          catch (Exception)
-          {
-            bExists = false;
-          }
-        }
-        if (bExists && _textureCoords != null)
-        {
-          Format fmt = Format.Unknown;
-          if (SupportsCompressedTextures) fmt = Format.Dxt3;
-          _spacingPerChar = (int)_textureCoords[_EndCharacter - _StartCharacter, 0];
+        s = File.Open(strCache + ".bxml", FileMode.Open, FileAccess.Read);
+        _textureCoords = (float[,])b.Deserialize(s);
+        s.Close();
+        _spacingPerChar = (int)_textureCoords[_EndCharacter - _StartCharacter, 0];
+        _textureScale = _textureCoords[_EndCharacter - _StartCharacter + 1, 0];
+        _textureHeight = info.Height;
+        _textureWidth = info.Width;
 
-          // load coords
-          ImageInformation info = new ImageInformation();
-          _textureFont = TextureLoader.FromFile(GUIGraphicsContext.DX9Device,
-                                            strCache,
-                                            0, 0, //width/height
-                                            1,//miplevels
-                                            0,
-                                            fmt,
-                                            Pool.Managed,
-                                            Filter.None,
-                                            Filter.None,
-                                            colorKey,
-                                            ref info);
-
-          _textureFont.Disposing += new EventHandler(_textureFont_Disposing);
-          _textureHeight = info.Height;
-          _textureWidth = info.Width;
-          RestoreDeviceObjects();
-          _log.Info("  Loaded font:{0} height:{1} texture:{2}x{3} chars:[{4}-{5}] miplevels:{6}",
-            _fontName, _fontHeight, _textureWidth, _textureWidth, _StartCharacter, _EndCharacter, _textureFont.LevelCount);
-          SetFontEgine();
-          return;
-        }
+        _log.Info("  Loaded font:{0} height:{1} texture:{2}x{3} chars:[{4}-{5}] miplevels:{6}",_fontName, _fontHeight, _textureWidth, _textureHeight, _StartCharacter, _EndCharacter, _textureFont.LevelCount);
+  
       }
-      // If not generate it.
-      _textureCoords = new float[(10 + _EndCharacter - _StartCharacter), 4];
-
-      // Create a bitmap on which to measure the alphabet
-      using (Bitmap bmp = new Bitmap(1, 1, pixelFormat))
-      {
-        using (Graphics g = Graphics.FromImage(bmp))
-        {
-          g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-          g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
-          g.TextContrast = 0;
-
-          // Establish the font and texture size
-          _textureScale = 1.0f; // Draw fonts into texture without scaling
-
-          // Calculate the dimensions for the smallest power-of-two texture which
-          // can hold all the printable characters
-          _textureWidth = _textureHeight = 256;
-          for (; ; )
-          {
-            try
-            {
-              // Measure the alphabet
-              PaintAlphabet(g, true);
-            }
-            catch (System.InvalidOperationException)
-            {
-              // Scale up the texture size and try again
-              _textureWidth *= 2;
-              _textureHeight *= 2;
-              continue;
-            }
-            break;
-          }
-
-          // If requested texture is too big, use a smaller texture and smaller font,
-          // and scale up when rendering.
-          Direct3D.Caps d3dCaps = GUIGraphicsContext.DX9Device.DeviceCaps;
-
-          // If the needed texture is too large for the video card...
-          if (_textureWidth > d3dCaps.MaxTextureWidth)
-          {
-            // Scale the font size down to fit on the largest possible texture
-            _textureScale = (float)d3dCaps.MaxTextureWidth / (float)_textureWidth;
-            _textureWidth = _textureHeight = d3dCaps.MaxTextureWidth;
-
-            for (; ; )
-            {
-              // Create a new, smaller font
-              _fontHeight = (int)Math.Floor(_fontHeight * _textureScale);
-              _systemFont = new System.Drawing.Font(_systemFont.Name, _fontHeight, _systemFont.Style);
-
-              try
-              {
-                // Measure the alphabet
-                PaintAlphabet(g, true);
-              }
-              catch (System.InvalidOperationException)
-              {
-                // If that still doesn't fit, scale down again and continue
-                _textureScale *= 0.9F;
-                continue;
-              }
-
-              break;
-            }
-          }
-        }
-      }
-
-
-      Trace.WriteLine("font:" + _fontName + " " + _fileName + " height:" + _fontHeight.ToString() + " " + _textureWidth.ToString() + "x" + _textureHeight.ToString());
-      // Release the bitmap used for measuring and create one for drawing
-
-      using (Bitmap bmp = new Bitmap(_textureWidth, _textureHeight, pixelFormat))
-      {
-        using (Graphics g = Graphics.FromImage(bmp))
-        {
-          g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-          g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
-          g.TextContrast = 0;
-
-          // Draw the alphabet
-          PaintAlphabet(g, false);
-
-          // Create a new texture for the font from the bitmap we just created
-          try
-          {
-            bmp.Save(strCache);
-            Format fmt = Format.Unknown;
-            if (SupportsCompressedTextures) fmt = Format.Dxt3;
-
-            ImageInformation info = new ImageInformation();
-            _textureFont = TextureLoader.FromFile(GUIGraphicsContext.DX9Device,
-                                              strCache,
-                                              0, 0, //width/height
-                                              1,//miplevels
-                                              0,
-                                              fmt,
-                                              Pool.Managed,
-                                              Filter.None,
-                                              Filter.None,
-                                              (int)colorKey,
-                                              ref info);
-            _textureFont.Disposing += new EventHandler(_textureFont_Disposing);
-            _textureCoords[_EndCharacter - _StartCharacter, 0] = _spacingPerChar;
-            try
-            {
-              System.IO.File.Delete(strCache + "_2.bxml");
-            }
-            catch (Exception) { }
-
-            using (Stream s = File.Open(strCache + "_2.bxml", FileMode.CreateNew, FileAccess.ReadWrite))
-            {
-              BinaryFormatter b = new BinaryFormatter();
-              b.Serialize(s, (object)_textureCoords);
-              s.Close();
-            }
-          }
-          catch (Exception ex)
-          {
-            string strLine = ex.Message;
-          }
-        }
-      }
+      _textureFont.Disposing += new EventHandler(_textureFont_Disposing);
       SetFontEgine();
     }
+
+
 
     void _textureFont_Disposing(object sender, EventArgs e)
     {
@@ -852,32 +787,9 @@ namespace MediaPortal.GUI.Library
       }
       _fontAdded = false;
     }
-    void Restore()
-    {
-      _log.Info("GUIFont:restore font:{0} {1}", ID, _fontName);
-      Format fmt = Format.Unknown;
-      int colorKey = 0;
-      string strCache = String.Format(@"{0}\fonts\{1}_{2}.png", GUIGraphicsContext.Skin, _fontName, _fontHeight);
-      ImageInformation info = new ImageInformation();
-      _textureFont = TextureLoader.FromFile(GUIGraphicsContext.DX9Device,
-                                        strCache,
-                                        0, 0, //width/height
-                                        1,//miplevels
-                                        0,
-                                        fmt,
-                                        Pool.Managed,
-                                        Filter.None,
-                                        Filter.None,
-                                        colorKey,
-                                        ref info);
-      _textureFont.Disposing += new EventHandler(_textureFont_Disposing);
-      SetFontEgine();
-    }
-    public void RestoreDeviceObjects()
-    {
-    }
+
     /// <summary>
-    /// Restore the font after a device has been reset.
+    /// Load the font into the font engine
     /// </summary>
     public void SetFontEgine()
     {
