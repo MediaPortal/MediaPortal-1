@@ -31,11 +31,16 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
+using MediaPortal.Music.Database;
+
 
 namespace MediaPortal.AudioScrobbler
 {
   public partial class AudioscrobblerSettings : Form
   {
+    private AudioscrobblerBase scrobbler;
+    List<Song> songList = null;
+
     public AudioscrobblerSettings()
     {
       InitializeComponent();
@@ -47,8 +52,8 @@ namespace MediaPortal.AudioScrobbler
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
-        textBoxASUser.Text = xmlreader.GetValueAsString("audioscrobbler", "username", "");
-        maskedTextBoxASPass.Text = xmlreader.GetValueAsString("audioscrobbler", "password", "");
+        textBoxASUsername.Text = xmlreader.GetValueAsString("audioscrobbler", "username", "");
+        maskedTextBoxASPassword.Text = xmlreader.GetValueAsString("audioscrobbler", "password", "");
       }
     }
 
@@ -56,8 +61,8 @@ namespace MediaPortal.AudioScrobbler
     {
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
-        xmlwriter.SetValue("audioscrobbler", "username", textBoxASUser.Text);
-        xmlwriter.SetValue("audioscrobbler", "password", maskedTextBoxASPass.Text);        
+        xmlwriter.SetValue("audioscrobbler", "username", textBoxASUsername.Text);
+        xmlwriter.SetValue("audioscrobbler", "password", maskedTextBoxASPassword.Text);        
       }
     }
     #endregion
@@ -96,6 +101,25 @@ namespace MediaPortal.AudioScrobbler
       catch
       {
       }  
+    }
+
+    private void buttonRefreshRecent_Click(object sender, EventArgs e)
+    {
+      buttonRefreshRecent.Enabled = false;
+      listViewRecentTracks.Clear();
+      songList = new List<Song>();      
+      songList = getXMLData(lastFMFeed.recenttracks);
+      for (int i = 0; i < songList.Count; i++)
+        listViewRecentTracks.Items.Add(songList[i].ToShortString());
+      buttonRefreshRecent.Enabled = true;
+    }
+
+    private List<Song> getXMLData(lastFMFeed feed_)
+    {
+      scrobbler = new AudioscrobblerBase();
+      scrobbler.Disconnect();
+      //scrobbler.ParseXMLDoc(@"C:\recenttracks.xml", "name");
+      return scrobbler.ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + scrobbler.Username + "/" + "recenttracks.xml", @"//recenttracks/track", feed_);
     }
   }
 }

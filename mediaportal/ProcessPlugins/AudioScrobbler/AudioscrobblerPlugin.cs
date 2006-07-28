@@ -212,7 +212,7 @@ namespace MediaPortal.Audioscrobbler
     /// Gets called if you skip to other tracks - mainly to set the alert time
     /// </summary>
     /// <param name="currentSong">accepts the current playing Song reference</param>
-    public void OnSongChangedEvent(ref Song currentSong)
+    public void OnSongChangedEvent(Song currentSong)
     {
       queued = false;
       alertTime   = INFINITE_TIME;
@@ -255,7 +255,7 @@ namespace MediaPortal.Audioscrobbler
             currentSong.DateTimePlayed = DateTime.UtcNow;
             // avoid false skip detection
             lastPosition = Convert.ToInt32(g_Player.Player.CurrentPosition);
-            OnSongChangedEvent(ref currentSong);
+            OnSongChangedEvent(currentSong);
           }
         }
         else // Track was paused

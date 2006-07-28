@@ -25,12 +25,14 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Timers;
 using System.Text;
+using System.Xml;
 using MediaPortal.Util;
 using MediaPortal.Music.Database;
 using MediaPortal.GUI.Library;
@@ -38,6 +40,17 @@ using MediaPortal.GUI.Library;
 namespace MediaPortal.Music.Database
 {
   #region Callback argument types
+  public enum lastFMFeed
+  {
+    recenttracks,
+    weeklyartistchart,
+    weeklytrackchart,
+    topartists,
+    toptracks,
+    friends,
+    neighbours
+  }
+
   public enum NetworkErrorType
   {
     ConnectFailed,
@@ -148,6 +161,7 @@ namespace MediaPortal.Music.Database
     private string cacheFile;
 
     // Other internal properties.
+    List<Song> songList = null;
     private ArrayList queue;
     private Object queueLock;
     //    private EventQueue          eventQueue;
@@ -674,6 +688,53 @@ namespace MediaPortal.Music.Database
       }
 
       //Log.Write("AudioscrobblerBase.SubmitQueue: {0}", "End");
+    }
+
+    
+    public List<Song> ParseXMLDoc(string xmlFileInput, string queryNodePath, lastFMFeed xmlfeed)
+    {
+      songList = new List<Song>();
+      try
+      {				
+				XmlDocument doc = new XmlDocument ();
+
+				doc.Load (xmlFileInput);
+        XmlNodeList nodes = doc.SelectNodes(queryNodePath);
+
+        foreach (XmlNode node in nodes)
+        {
+          Song nodeSong = new Song();
+          foreach (XmlNode child in node.ChildNodes)
+          {
+            switch(xmlfeed)
+            {
+              case (lastFMFeed.recenttracks):
+                {
+                  if (child.Name == "artist" && child.ChildNodes.Count != 0)
+                  {
+                    Log.Write(String.Format("{0} - {1}: {2}", "XMLPARSER", "artist", child.ChildNodes[0].Value));
+                    nodeSong.Artist = child.ChildNodes[0].Value;
+                  }
+                  else if (child.Name == "name" && child.ChildNodes.Count != 0)
+                    nodeSong.Title = child.ChildNodes[0].Value;
+                  else if (child.Name == "mbid" && child.ChildNodes.Count != 0)
+                    nodeSong.MusicBrainzID = child.ChildNodes[0].Value;
+                  //else if (child.Name == "url" && child.ChildNodes.Count != 0)
+                  //  nodeSong. = child.ChildNodes[0].Value;
+                  else if (child.Name == "date" && child.ChildNodes.Count != 0)
+                    nodeSong.DateTimePlayed = Convert.ToDateTime(child.ChildNodes[0].Value);
+                }
+                break;
+            } //switch
+          }
+          songList.Add(nodeSong);
+        }
+      }
+      catch
+      {
+        // input nice exception here...
+      }
+      return songList;  
     }
     #endregion
 
