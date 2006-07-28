@@ -249,7 +249,6 @@ namespace WindowPlugins.GUISettings
       GUITextureManager.Init();
       GUIFontManager.LoadFonts(GUIGraphicsContext.Skin + @"\fonts.xml");
       GUIFontManager.InitializeDeviceObjects();
-      GUIFontManager.RestoreDeviceObjects();
       GUIControlFactory.ClearReferences();
       GUIControlFactory.LoadReferences(GUIGraphicsContext.Skin + @"\references.xml");
       GUIWindowManager.OnResize();
