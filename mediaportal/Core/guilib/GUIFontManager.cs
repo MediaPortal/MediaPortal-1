@@ -213,25 +213,5 @@ namespace MediaPortal.GUI.Library
 				font.InitializeDeviceObjects();
 			}
 		}
-
-		/// <summary>
-		/// Restores the device objects of the GUIFonts.
-		/// </summary>
-		static public void RestoreDeviceObjects()
-		{
-			IntPtr upDevice = DShowNET.Helper.DirectShowUtil.GetUnmanagedDevice(GUIGraphicsContext.DX9Device);
-
-			unsafe
-			{
-				FontEngineSetDevice(upDevice.ToPointer());
-			}
-			if (GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING) return;
-
-			foreach (GUIFont font in _listFonts)
-			{
-				font.RestoreDeviceObjects();
-			}
-
-		}
 	}
 }
