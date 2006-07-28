@@ -62,7 +62,12 @@ namespace MediaPortal
                              string label=Core.SplitElementTag(tag, "labelNum","##metadata");
                              ((Button)o).Content = Core.GetLocalizedString("id", label, "value", node);
                          }
-                        
+                         if (o.ToString().StartsWith("System.Windows.Controls.CheckBox"))
+                         {
+                             string tag = ((CheckBox)o).Tag.ToString();
+                             string label = Core.SplitElementTag(tag, "labelNum", "##metadata");
+                             ((CheckBox)o).Content = Core.GetLocalizedString("id", label, "value", node);
+                         }
                     }
                 }
                 int count=VisualTreeHelper.GetChildrenCount(this);

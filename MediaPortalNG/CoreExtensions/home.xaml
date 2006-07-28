@@ -3,9 +3,6 @@
       Style="{StaticResource PageBackground}" 
       x:Class="MediaPortal.HomeExtension">
 
-
-
-
   <Canvas>
     <!--  -->
     <TextBlock
@@ -55,6 +52,19 @@
       Style="{DynamicResource GUIButton}"
       Tag="##id::2//##keycontrol::onleft:;onright:50;onup:17;ondown://##metadata::labelNum:100"
 >100</Button>
+
+
+    <!--  -->
+    <Button
+      Name="id3"
+      Canvas.Top="129"
+      Canvas.Left="60"
+      Visibility="Visible"
+      Width="190"
+      Height="32"
+      Style="{DynamicResource GUISortButton}"
+      Tag="##id::3//##keycontrol::onleft:;onright:;onup:;ondown://##metadata::labelNum:103"
+>103</Button>
 
 
     <!-- SlideShow button -->
@@ -122,4 +132,3 @@
 
   </Canvas>
 </Page>
-

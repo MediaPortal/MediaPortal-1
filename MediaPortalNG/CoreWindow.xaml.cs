@@ -538,6 +538,55 @@ namespace MediaPortal
                 sw.WriteLine(sw.NewLine);
                 return;
             }
+            if (property.InnerText == "sortbutton" && property.Name == "type")
+            {
+                sw.WriteLine("  <!-- " + FindNodeByName("description", parent) + " -->");
+                sw.WriteLine("<Button");
+                string labelText = FindNodeByName("label", parent);
+                if (labelText == "")
+                    labelText = "textField";
+
+                if (Convert.ToInt32(labelText) > 0)
+                    metaData = "labelNum:" + labelText;
+
+                string id = "id" + FindNodeByName("id", parent);
+
+                if (idArray.IndexOf(id) >= 0)
+                {
+                    int n = 0;
+                    bool loop = true;
+                    do
+                    {
+                        id += "_" + n.ToString();
+                        if (idArray.IndexOf(id) >= 0)
+                            n++;
+                        else
+                            loop = false;
+                    } while (loop == true);
+
+                }
+                idArray.Add(id);
+                sw.WriteLine("  Name=" + chr34 + id + chr34);
+                sw.WriteLine("  Canvas.Top=" + chr34 + posy + chr34);
+                sw.WriteLine("  Canvas.Left=" + chr34 + posx + chr34);
+                sw.WriteLine("  Visibility=" + chr34 + (FindNodeByName("visible", parent) == "no" ? "Hidden" : "Visible") + chr34);
+
+                if (FindNodeByName("width", parent) != "")
+                    sw.WriteLine("  Width=" + chr34 + FindNodeByName("width", parent) + chr34);
+                else
+                    sw.WriteLine("  Width=" + chr34 + GetDefaultValue("button", "width", defNodes) + chr34);
+
+                if (FindNodeByName("height", parent) != "")
+                    sw.WriteLine("  Height=" + chr34 + FindNodeByName("height", parent) + chr34);
+                else
+                    sw.WriteLine("  Height=" + chr34 + GetDefaultValue("button", "height", defNodes) + chr34);
+
+                sw.WriteLine("  Style=" + chr34 + "{DynamicResource GUISortButton}" + chr34);
+                sw.WriteLine("  Tag=" + chr34 + "##id::" + FindNodeByName("id", parent) + "//##keycontrol::" + onLeft + onRight + onUp + onDown + "//##metadata::" + metaData + chr34);
+                sw.WriteLine(">" + labelText + "</Button>");
+                sw.WriteLine(sw.NewLine);
+                return;
+            }
             // process button
             if (property.InnerText == "togglebutton" && property.Name == "type")
             {
@@ -692,7 +741,6 @@ namespace MediaPortal
                 if (loop.Name == property)
                     result = loop.InnerText;
             }
-            int a = 1;
             return prefix+result;
         }
 
@@ -716,7 +764,6 @@ namespace MediaPortal
                     }
                 }
             }
-            int a=1;
             return "";
         }
     }
