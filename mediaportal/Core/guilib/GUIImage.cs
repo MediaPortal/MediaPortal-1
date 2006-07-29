@@ -353,6 +353,16 @@ namespace MediaPortal.GUI.Library
 			_currentFrameNumber   = 0;
 		}
 
+		public bool AnimationRunning
+		{
+			get
+			{
+				if (_listTextures == null) return false;
+				if (_listTextures.Length <= 1) return false;
+				if (_currentFrameNumber + 1 >= _listTextures.Length) return false;
+				return true;
+			}
+		}
     /// <summary>
     /// This function will do the animation (when texture is an animated gif)
     /// by switching from frame 1->frame2->frame 3->...
@@ -372,7 +382,8 @@ namespace MediaPortal.GUI.Library
 
       CachedTexture.Frame frame = _listTextures[_currentFrameNumber];
       // Check the delay.
-      int dwDelay = frame.Duration;
+			int dwDelay = 0;
+			if (frame != null) dwDelay = frame.Duration;
       //int iMaxLoops = 0;
       frame = null;
 
