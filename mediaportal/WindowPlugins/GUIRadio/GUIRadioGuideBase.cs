@@ -94,7 +94,6 @@ namespace MediaPortal.GUI.Radio
     long _currentStartTime = 0;
     long _currentEndTime = 0;
     TVProgram _currentProgram = null;
-    static string _tvGuideFileName;
     bool _needUpdate = false;
     DateTime m_dtStartTime = DateTime.Now;
     bool _useColorsForGenres = false;
@@ -186,12 +185,8 @@ namespace MediaPortal.GUI.Radio
 
     protected void Initialize()
     {
-      _log.Info("StartImportXML: Initialize");
-      _tvGuideFileName = "xmltv";
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
-        _tvGuideFileName = xmlreader.GetValueAsString("xmltv", "folder", "xmltv");
-        _tvGuideFileName = MediaPortal.Util.Utils.RemoveTrailingSlash(_tvGuideFileName);
         _useColorsForGenres = xmlreader.GetValueAsBool("xmltv", "colors", false);
       }
 
