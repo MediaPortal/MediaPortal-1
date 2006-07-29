@@ -29,6 +29,8 @@
 #include <windows.h>
 #include <stdio.h>
 
+extern void LogDebug(const char *fmt, ...) ;
+
 MultiFileWriter::MultiFileWriter() :
 	m_hTSBufferFile(INVALID_HANDLE_VALUE),
 	m_pTSBufferFileName(NULL),
@@ -42,12 +44,14 @@ MultiFileWriter::MultiFileWriter() :
 	m_maxTSFileSize((__int64) ((__int64)1048576 *(__int64)250)),	//250Mb
 	m_chunkReserve((__int64) ((__int64)1048576 *(__int64)250)) //250Mb
 {
+	LogDebug("MultiFileWriter: ctor .");
 	m_pCurrentTSFile = new FileWriter();
 	m_pCurrentTSFile->SetChunkReserve(TRUE, m_chunkReserve, m_maxTSFileSize);
 }
 
 MultiFileWriter::~MultiFileWriter()
 {
+	LogDebug("MultiFileWriter: dtor .");
 	CloseFile();
 	if (m_pTSBufferFileName)
 		delete m_pTSBufferFileName;
@@ -67,11 +71,20 @@ HRESULT MultiFileWriter::GetFileName(LPOLESTR *lpszFileName)
 
 HRESULT MultiFileWriter::OpenFile(LPCWSTR pszFileName)
 {
+	char fileName[2048];
+	for (int i=0; i < wcslen(pszFileName)*2;i+=2)
+	{
+		fileName[i/2]=((char*)pszFileName)[i];
+		fileName[i/2+1]=0;
+	}
+	char* t = (char*)pszFileName;
+	LogDebug("MultiFileWriter: OpenFile %s",fileName);
 	USES_CONVERSION;
 
 	// Is the file already opened
 	if (m_hTSBufferFile != INVALID_HANDLE_VALUE)
 	{
+		LogDebug("MultiFileWriter: OpenFile file already open");
 		return E_FAIL;
 	}
 
@@ -79,8 +92,10 @@ HRESULT MultiFileWriter::OpenFile(LPCWSTR pszFileName)
 	CheckPointer(pszFileName,E_POINTER);
 
 	if(wcslen(pszFileName) > MAX_PATH)
+	{
+		LogDebug("MultiFileWriter: OpenFile filename too long");
 		return ERROR_FILENAME_EXCED_RANGE;
-
+	}
 	// Take a copy of the filename
 	if (m_pTSBufferFileName)
 	{
@@ -89,14 +104,19 @@ HRESULT MultiFileWriter::OpenFile(LPCWSTR pszFileName)
 	}
 	m_pTSBufferFileName = new WCHAR[1+lstrlenW(pszFileName)];
 	if (m_pTSBufferFileName == NULL)
+	{
+		LogDebug("MultiFileWriter: OpenFile out of memory");
 		return E_OUTOFMEMORY;
+	}
 	wcscpy(m_pTSBufferFileName, pszFileName);
 	
 	//check disk space first
 	__int64 llDiskSpaceAvailable = 0;
 	if (SUCCEEDED(GetAvailableDiskSpace(&llDiskSpaceAvailable)) && (__int64)llDiskSpaceAvailable < (__int64)(m_maxTSFileSize*2))
+	{
+		LogDebug("MultiFileWriter: OpenFile not enough diskspace");
 		return E_FAIL;
-
+	}
 	TCHAR *pFileName = NULL;
 
 	// Try to open the file
@@ -109,7 +129,8 @@ HRESULT MultiFileWriter::OpenFile(LPCWSTR pszFileName)
 								 NULL);                     // Template
 
 	if (m_hTSBufferFile == INVALID_HANDLE_VALUE)
-	{
+	{	
+				LogDebug("MultiFileWriter: OpenFile failed to create file");
         DWORD dwErr = GetLastError();
         return HRESULT_FROM_WIN32(dwErr);
 	}
@@ -124,6 +145,7 @@ HRESULT MultiFileWriter::OpenFile(LPCWSTR pszFileName)
 HRESULT MultiFileWriter::CloseFile()
 {
 	CAutoLock lock(&m_Lock);
+	LogDebug("MultiFileWriter: CloseFile");
 
 	if (m_hTSBufferFile == INVALID_HANDLE_VALUE)
 	{
@@ -164,7 +186,7 @@ HRESULT MultiFileWriter::Write(PBYTE pbData, ULONG lDataLength)
 
 	if (m_pCurrentTSFile->IsFileInvalid())
 	{
-		::OutputDebugString(TEXT("Creating first file\n"));
+		LogDebug("MultiFileWriter:Creating first file");
 		if FAILED(hr = PrepareTSFile())
 			return hr;
 	}
@@ -211,6 +233,7 @@ HRESULT MultiFileWriter::PrepareTSFile()
 	USES_CONVERSION;
 	HRESULT hr;
 
+	LogDebug("MultiFileWriter:PrepareTSFile()");
 	::OutputDebugString(TEXT("PrepareTSFile()\n"));
 
 //	m_pCurrentTSFile->FlushFile())
@@ -249,17 +272,26 @@ HRESULT MultiFileWriter::PrepareTSFile()
 				if (m_tsFileNames.size() < m_maxTSFiles)
 				{
 					if (hr != 0x80070020) // ERROR_SHARING_VIOLATION
+					{
 						::OutputDebugString(TEXT("Failed to reopen old file. Unexpected reason. Trying to create a new file.\n"));
+						LogDebug("MultiFileWriter:PrepareTSFile:Failed to reopen old file. Unexpected reason. Trying to create a new file.");
+					}
 
 					hr = CreateNewTSFile();
 				}
 				else
 				{
 					if (hr != 0x80070020) // ERROR_SHARING_VIOLATION
+					{
 						::OutputDebugString(TEXT("Failed to reopen old file. Unexpected reason. Dropping data!\n"));
-					else
-						::OutputDebugString(TEXT("Failed to reopen old file. It's currently in use. Dropping data!\n"));
+						LogDebug("MultiFileWriter:PrepareTSFile:Failed to reopen old file. Unexpected reason. Dropping data!");
 
+					}
+					else
+					{
+						::OutputDebugString(TEXT("Failed to reopen old file. It's currently in use. Dropping data!\n"));
+						LogDebug("MultiFileWriter:PrepareTSFile:Failed to reopen old file. It's currently in use. Dropping data!\n");
+					}
 					Sleep(500);
 				}
 			}
@@ -281,12 +313,27 @@ HRESULT MultiFileWriter::CreateNewTSFile()
 	LPWSTR pFilename = new wchar_t[MAX_PATH];
 	WIN32_FIND_DATA findData;
 	HANDLE handleFound = INVALID_HANDLE_VALUE;
-
+	LogDebug("MultiFileWriter:CreateNewTSFile");
+	char fileName[2048];
+	
 	while (TRUE)
 	{
 		// Create new filename
 		m_currentFilenameId++;
 		swprintf(pFilename, L"%s%i.ts", m_pTSBufferFileName, m_currentFilenameId);
+
+		for (int i=0; i < wcslen(m_pTSBufferFileName)*2;i+=2)
+		{
+			fileName[i/2]=((char*)m_pTSBufferFileName)[i];
+			fileName[i/2+1]=0;
+		}
+		LogDebug("MultiFileWriter:CreateNewTSFile:tsbufferfile: %s",fileName);
+
+		for (int i=0; i < wcslen(pFilename)*2;i+=2)
+		{
+			fileName[i/2]=((char*)pFilename)[i];
+			fileName[i/2+1]=0;
+		}
 
 		// Check if file already exists
 		handleFound = FindFirstFile(W2T(pFilename), &findData);
@@ -294,6 +341,7 @@ HRESULT MultiFileWriter::CreateNewTSFile()
 			break;
 
 		::OutputDebugString(TEXT("Newly generated filename already exists.\n"));
+		LogDebug("MultiFileWriter:CreateNewTSFile:Newly generated filename %s already exists.",fileName);
 
 		// If it exists we loop and try the next number
 		FindClose(handleFound);
@@ -302,6 +350,7 @@ HRESULT MultiFileWriter::CreateNewTSFile()
 	if FAILED(hr = m_pCurrentTSFile->SetFileName(pFilename))
 	{
 		::OutputDebugString(TEXT("Failed to set filename for new file.\n"));
+		LogDebug("MultiFileWriter:CreateNewTSFile:Failed to set filename %s for new file.",fileName);
 		delete[] pFilename;
 		return hr;
 	}
@@ -309,6 +358,7 @@ HRESULT MultiFileWriter::CreateNewTSFile()
 	if FAILED(hr = m_pCurrentTSFile->OpenFile())
 	{
 		::OutputDebugString(TEXT("Failed to open new file\n"));
+		LogDebug("MultiFileWriter:CreateNewTSFile:Failed to open new file %s",fileName);
 		delete[] pFilename;
 		return hr;
 	}
@@ -319,6 +369,7 @@ HRESULT MultiFileWriter::CreateNewTSFile()
 	wchar_t msg[MAX_PATH];
 	swprintf((LPWSTR)&msg, L"New file created : %s\n", pFilename);
 	::OutputDebugString(W2T((LPWSTR)&msg));
+	LogDebug("MultiFileWriter:CreateNewTSFile:New file created %s",fileName);
 
 	return S_OK;
 }
@@ -328,11 +379,19 @@ HRESULT MultiFileWriter::ReuseTSFile()
 	USES_CONVERSION;
 	HRESULT hr;
 
+	char fileName[2048];
 	LPWSTR pFilename = m_tsFileNames.at(0);
+
+	for (int i=0; i < wcslen(pFilename)*2;i+=2)
+	{
+		fileName[i/2]=((char*)pFilename)[i];
+		fileName[i/2+1]=0;
+	}
 
 	if FAILED(hr = m_pCurrentTSFile->SetFileName(pFilename))
 	{
 		::OutputDebugString(TEXT("Failed to set filename to reuse old file\n"));
+		LogDebug("MultiFileWriter:Failed to set filename to reuse old file %s",fileName);
 		return hr;
 	}
 
@@ -359,6 +418,7 @@ HRESULT MultiFileWriter::ReuseTSFile()
 	wchar_t msg[MAX_PATH];
 	swprintf((LPWSTR)&msg, L"Old file reused : %s\n", pFilename);
 	::OutputDebugString(W2T((LPWSTR)&msg));
+	LogDebug("MultiFileWriter:Old file reused %s",fileName);
 
 	return S_OK;
 }
@@ -408,6 +468,7 @@ HRESULT MultiFileWriter::CleanupFiles()
 {
 	USES_CONVERSION;
 
+	LogDebug("MultiFileWriter:CleanupFiles()");
 	m_filesAdded = 0;
 	m_filesRemoved = 0;
 	m_currentFilenameId = 0;
@@ -415,10 +476,17 @@ HRESULT MultiFileWriter::CleanupFiles()
 	// Check if .tsbuffer file is being read by something.
 	if (IsFileLocked(m_pTSBufferFileName) == TRUE)
 		return S_OK;
+	char fileName[2048];
 
 	std::vector<LPWSTR>::iterator it;
 	for (it = m_tsFileNames.begin() ; it < m_tsFileNames.end() ; it++ )
 	{
+		for (int i=0; i < wcslen(*it)*2;i+=2)
+		{
+			fileName[i/2]=((char*)*it)[i];
+			fileName[i/2+1]=0;
+		}
+
 		if (IsFileLocked(*it) == TRUE)
 		{
 			// If any of the files are being read then we won't
@@ -426,6 +494,8 @@ HRESULT MultiFileWriter::CleanupFiles()
 			wchar_t msg[MAX_PATH];
 			swprintf((LPWSTR)&msg, L"CleanupFiles: A file is still locked : %s\n", *it);
 			::OutputDebugString(W2T((LPWSTR)&msg));
+			LogDebug("MultiFileWriter:CleanupFiles: A file is still locked : %s",fileName);
+
 			return S_OK;
 		}
 	}
@@ -434,11 +504,17 @@ HRESULT MultiFileWriter::CleanupFiles()
 
 	for (it = m_tsFileNames.begin() ; it < m_tsFileNames.end() ; it++ )
 	{
+		for (int i=0; i < wcslen(*it)*2;i+=2)
+		{
+			fileName[i/2]=((char*)*it)[i];
+			fileName[i/2+1]=0;
+		}
 		if (DeleteFile(W2T(*it)))
 		{
 			wchar_t msg[MAX_PATH];
 			swprintf((LPWSTR)&msg, L"Failed to delete file %s : 0x%x\n", *it, GetLastError());
 			::OutputDebugString(W2T((LPWSTR)&msg));
+			LogDebug("MultiFileWriter:CleanupFiles: Failed to delete file %s",fileName);
 		}
 		delete[] *it;
 	}
@@ -449,6 +525,7 @@ HRESULT MultiFileWriter::CleanupFiles()
 		wchar_t msg[MAX_PATH];
 		swprintf((LPWSTR)&msg, L"Failed to delete tsbuffer file : 0x%x\n", GetLastError());
 		::OutputDebugString(W2T((LPWSTR)&msg));
+		LogDebug("MultiFileWriter:CleanupFiles: Failed to delete tsbuffer file : 0x%x\n", GetLastError());
 	}
 	m_filesAdded = 0;
 	m_filesRemoved = 0;

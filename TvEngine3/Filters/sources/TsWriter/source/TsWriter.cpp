@@ -250,6 +250,7 @@ STDMETHODIMP CDumpInputPin::ReceiveCanBlock()
 //
 STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 {
+	return S_OK;
 	try
 	{
 		if (pSample==NULL) 

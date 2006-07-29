@@ -121,8 +121,8 @@ namespace SetupTv.Sections
           {
             try
             {
-              _player = new Player();
-              _player.Play(card.TimeShiftFileName, this.Handle);
+              //_player = new Player();
+              //_player.Play(card.TimeShiftFileName, this.Handle);
             }
             catch (Exception)
             {

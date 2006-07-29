@@ -78,6 +78,11 @@ namespace TvLibrary.Implementations.DVB
     {
       return base.GetHashCode() ^ _language.GetHashCode() ^ _streamType.GetHashCode()  ^_audioMode.GetHashCode();
     }
+    public override string ToString()
+    {
+      return String.Format("mode:{0} type:{1} language:{2}",
+          AudioMode, StreamType, Language);
+    }
   }
 }
 

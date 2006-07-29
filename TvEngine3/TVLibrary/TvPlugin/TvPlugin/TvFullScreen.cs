@@ -1515,6 +1515,11 @@ namespace TvPlugin
       if ((dlg.SelectedLabel >= 0) && (dlg.SelectedLabel < streams.Length))
       {
         TVHome.Card.AudioStream=streams[dlg.SelectedLabel];
+        if (g_Player.Paused == false)
+        {
+          g_Player.Pause();
+          g_Player.Pause();
+        }
       }
     }
 

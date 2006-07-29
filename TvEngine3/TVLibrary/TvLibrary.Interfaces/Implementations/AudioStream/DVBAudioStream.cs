@@ -78,6 +78,11 @@ namespace TvLibrary.Implementations.DVB
       if (_language == stream.Language && _streamType == stream.StreamType && _pid == stream.Pid) return true;
       return false;
     }
+    public override string ToString()
+    {
+      return String.Format("pid:{0:X} language:{1} type:{2}",
+        Pid, Language, StreamType);
+    }
     public override int GetHashCode()
     {
       return base.GetHashCode() ^ _language.GetHashCode() ^_streamType.GetHashCode() ^ _pid.GetHashCode();

@@ -1053,7 +1053,7 @@ namespace TvLibrary.Implementations.DVB
       {
         string monikerPowerDirectorMuxer = @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{7F2BBEAF-E11C-4D39-90E8-938FB5A86045}";
         string monikerPowerDvdMuxer = @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{6770E328-9B73-40C5-91E6-E2F321AEDE57}";
-        _filterMpegMuxerTimeShift = Marshal.BindToMoniker(monikerPowerDvdMuxer) as IBaseFilter;
+        _filterMpegMuxerTimeShift = Marshal.BindToMoniker(monikerPowerDirectorMuxer) as IBaseFilter;
         int hr = _graphBuilder.AddFilter(_filterMpegMuxerTimeShift, "TimeShift MPEG Muxer");
         if (hr != 0)
         {
@@ -1065,7 +1065,6 @@ namespace TvLibrary.Implementations.DVB
           FilterGraphTools.ConnectPin(_graphBuilder, _pinVideoTimeShift, _filterMpegMuxerTimeShift, 0);
         }
         FilterGraphTools.ConnectPin(_graphBuilder, _pinAudioTimeShift, _filterMpegMuxerTimeShift, 1);
-
       }
       catch (Exception ex)
       {
@@ -2441,6 +2440,7 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.WriteFile("dvb: setaudiostream:{0}", audioStream);
         SetupDemuxerPin(_pinAudioTimeShift, audioStream.Pid, (int)MediaSampleContent.ElementaryStream, true);
         _currentAudioStream = audioStream;
+        
       }
     }
     #endregion

@@ -27,6 +27,7 @@
 #include "FileWriter.h"
 #include <atlbase.h>
 
+extern void LogDebug(const char *fmt, ...) ;
 FileWriter::FileWriter() :
 	m_hFile(INVALID_HANDLE_VALUE),
 	m_pFileName(0),
