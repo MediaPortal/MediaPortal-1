@@ -200,7 +200,7 @@ namespace MediaPortal.GUI.TV
 
     protected void Initialize()
     {
-      _log.Info("StartImportXML: Initialize");
+      _log.Info("TvGuide StartImportXML: Initialize");
       _tvGuideFileName = "xmltv";
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
