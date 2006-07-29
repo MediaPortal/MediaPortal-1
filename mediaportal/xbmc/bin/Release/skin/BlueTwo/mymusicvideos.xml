@@ -1,58 +1,19 @@
 <window>
    <id>4734</id>
    <defaultcontrol>1000</defaultcontrol>
-   <allowoverlay>yes</allowoverlay>
-   <define>#header.hover:hover_musicvideo.png</define>
-
+   <allowoverlay>yes</allowoverlay>   
+   <define>#header.label:30000</define>
    <controls>
-      <control>
-         <type>image</type>
-         <description>background image</description>
-         <id>1</id>
-         <posX>0</posX>
-         <posY>0</posY>
-         <texture>background.png</texture>
-      </control>
-      <control>
-         <type>label</type>
-         <description>My Launch text label</description>
-         <id>1</id>
-         <posX>30</posX>
-         <posY>50</posY>
-         <label>30000</label>
-         <font>font16</font>
-         <textcolor>ffffffff</textcolor>
-      </control>
-      <control>
-         <type>label</type>
-         <description>Selected item Label</description>
-         <id>101</id>
-         <posX>560</posX>
-         <posY>70</posY>
-         <label>#selecteditem</label>
-         <font>font14</font>
-         <align>right</align>
-         <textcolor>ffffffff</textcolor>
-      </control>
-      <control>
-         <type>label</type>
-         <description>State label</description>
-         <id>100</id>
-         <posX>360</posX>
-         <posY>50</posY>
-         <label>-</label>
-         <font>font16</font>
-         <textcolor>ffffffff</textcolor>
-      </control>
+   <import>common.window.xml</import>
       <control>
          <type>button</type>
          <description>Top Videos button</description>
          <id>2</id>
-         <posX>30</posX>
-         <posY>85</posY>
+         <posX>60</posX>
+         <posY>97</posY>
          <onleft>2</onleft>
          <onright>50</onright>
-         <onup>38</onup>
+         <onup>39</onup>
          <ondown>7</ondown>
          <label>30001</label>
       </control>
@@ -60,23 +21,35 @@
          <type>button</type>
          <description>New Videos button</description>
          <id>7</id>
-         <posX>30</posX>
-         <posY>120</posY>
+         <posX>60</posX>
+         <posY>131</posY>
          <onleft>7</onleft>
          <onright>50</onright>
          <onup>2</onup>
-         <ondown>25</ondown>
+         <ondown>37</ondown>
          <label>30002</label>
       </control>
       <control>
          <type>button</type>
+         <description>Genre button</description>
+         <id>37</id>
+         <posX>60</posX>
+         <posY>165</posY>
+         <onleft>24</onleft>
+         <onright>50</onright>
+         <onup>7</onup>
+         <ondown>3</ondown>
+         <label>725</label>         
+      </control>      
+      <control>
+         <type>button</type>
          <description>Search button</description>
          <id>3</id>
-         <posX>30</posX>
-         <posY>190</posY>
+         <posX>60</posX>
+         <posY>199</posY>
          <onleft>3</onleft>
          <onright>50</onright>
-         <onup>25</onup>
+         <onup>37</onup>
          <ondown>6</ondown>
          <label>137</label>
       </control>
@@ -84,209 +57,102 @@
          <type>button</type>
          <description>favorite button</description>
          <id>6</id>
-         <posX>30</posX>
-         <posY>225</posY>
+         <posX>60</posX>
+         <posY>233</posY>
          <onleft>6</onleft>
          <onright>50</onright>
          <onup>3</onup>
-         <ondown>37</ondown>
+         <ondown>38</ondown>
          <label>932</label>
       </control>      
       <control>
          <type>button</type>
-         <description>Genre button</description>
-         <id>37</id>
-         <posX>30</posX>
-         <posY>260</posY>
+         <description>country button</description>
+         <id>38</id>
+         <posX>60</posX>
+         <posY>267</posY>
          <onleft>24</onleft>
          <onright>50</onright>
          <onup>6</onup>
-         <ondown>38</ondown>
-         <label>725</label>         
-      </control>
-      <control>
-         <type>button</type>
-         <description>country button</description>
-         <id>38</id>
-         <posX>30</posX>
-         <posY>295</posY>
-         <onleft>24</onleft>
-         <onright>50</onright>
-         <onup>37</onup>
-         <ondown>2</ondown>
-         <label>200026</label>         
-      </control>
-      <control>
-         <type>button</type>
-         <description>back button</description>
-         <id>9</id>
-         <posX>30</posX>
-         <posY>85</posY>
-         <onleft>50</onleft>
-         <onright>50</onright>
-         <onup>35</onup>
-         <ondown>8</ondown>
-         <label>712</label>
-      </control>
-      <control>
-         <type>button</type>
-         <description>Play all button</description>
-         <id>8</id>
-         <posX>30</posX>
-         <posY>120</posY>
-         <onleft>50</onleft>
-         <onright>50</onright>
-         <onup>9</onup>
          <ondown>25</ondown>
-         <label>30003</label>
+         <label>200026</label>         
       </control>
       <control>
          <type>button</type>
          <description>Playlist Button</description>
          <id>25</id>
-         <posX>30</posX>
-         <posY>155</posY>
+         <posX>60</posX>
+         <posY>301</posY>
          <onleft>50</onleft>
          <onright>50</onright>
-         <onup>7</onup>
-         <ondown>3</ondown>
+         <onup>38</onup>
+         <ondown>39</ondown>
          <label>136</label>
+      </control>      
+      <control>
+         <type>button</type>
+         <description>my playlist button</description>
+         <id>39</id>
+         <posX>60</posX>
+         <posY>335</posY>
+         <onleft>24</onleft>
+         <onright>50</onright>
+         <onup>25</onup>
+         <ondown>2</ondown>
+         <label>983</label>         
+      </control>
+      <control>
+         <type>button</type>
+         <description>back button</description>
+         <id>9</id>
+         <posX>60</posX>
+         <posY>97</posY>
+         <onleft>50</onleft>
+         <onright>50</onright>
+         <onup>39</onup>
+         <ondown>34</ondown>
+         <label>712</label>
       </control>
       <control>
          <type>button</type>
          <description>list nav Button</description>
          <id>34</id>
-         <posX>30</posX>
-         <posY>305</posY>
+         <posX>60</posX>
+         <posY>131</posY>
          <onleft>50</onleft>
          <onright>50</onright>
-         <onup>25</onup>
+         <onup>9</onup>
          <ondown>35</ondown>
          <label>30005</label>
-      </control>
-      <control>
+       </control>
+       <control>
          <type>button</type>
          <description>list nav Button</description>
          <id>35</id>
-         <posX>30</posX>
-         <posY>340</posY>
+         <posX>60</posX>
+         <posY>165</posY>
          <onleft>50</onleft>
          <onright>50</onright>
          <onup>34</onup>
-         <ondown>9</ondown>
+         <ondown>8</ondown>
          <label>30004</label>
       </control>
       <control>
          <type>button</type>
-         <description>playlist back button</description>
-         <id>26</id>
-         <posX>30</posX>
-         <posY>85</posY>
+         <description>Play all button</description>
+         <id>8</id>
+         <posX>60</posX>
+         <posY>199</posY>
          <onleft>50</onleft>
          <onright>50</onright>
-         <onup>33</onup>
-         <ondown>27</ondown>
-         <label>712</label>
-      </control>
-      <control>
-         <type>button</type>
-         <description>Playlist Button next</description>
-         <id>27</id>
-         <posX>30</posX>
-         <posY>120</posY>
-         <onleft>50</onleft>
-         <onright>50</onright>
-         <onup>26</onup>
-         <ondown>28</ondown>
-         <label>208</label>
-      </control>
-      <control>
-         <type>button</type>
-         <description>Playlist Button previous</description>
-         <id>28</id>
-         <posX>30</posX>
-         <posY>155</posY>
-         <onleft>50</onleft>
-         <onright>50</onright>
-         <onup>27</onup>
-         <ondown>29</ondown>
-         <label>210</label>
-      </control>
-      <control>
-         <type>button</type>
-         <description>Playlist Button next</description>
-         <id>29</id>
-         <posX>30</posX>
-         <posY>190</posY>
-         <visible>no</visible>
-         <onleft>50</onleft>
-         <onright>50</onright>
-         <onup>28</onup>
-         <ondown>30</ondown>
-         <label>209</label>
-      </control>
-      <control>
-         <type>button</type>
-         <description>Playlist Button Stop</description>
-         <id>30</id>
-         <posX>30</posX>
-         <posY>235</posY>
-         <visible>no</visible>
-         <onleft>50</onleft>
-         <onright>50</onright>
-         <onup>29</onup>
-         <ondown>31</ondown>
-         <label>30006</label>
-      </control>
-      <control>
-         <type>button</type>
-         <description>Playlist Button Shuffle</description>
-         <id>31</id>
-         <posX>30</posX>
-         <posY>270</posY>
-         <onleft>50</onleft>
-         <onright>50</onright>
-         <onup>30</onup>
-         <ondown>32</ondown>
-         <label>191</label>
-      </control>
-      <control>
-         <type>togglebutton</type>
-         <description>Playlist Button Repeat</description>
-         <id>32</id>
-         <posX>30</posX>
-         <posY>305</posY>
-         <onleft>32</onleft>
-         <onright>50</onright>
-         <onup>31</onup>
-         <ondown>33</ondown>
-         <label>486</label>
-         <textureFocus>togglebutton-on-focus.png</textureFocus>
-	 <textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
-	 <AltTextureFocus>togglebutton-off-focus.png</AltTextureFocus>
-         <AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
-         <width>190</width>
-	 <height>32</height>
-      </control>
-      <control>
-         <type>button</type>
-         <description>clear Playlist Button</description>
-         <id>33</id>
-         <posX>30</posX>
-         <posY>340</posY>
-         <visible>no</visible>
-         <onleft>50</onleft>
-         <onright>50</onright>
-         <onup>32</onup>
-         <ondown>26</ondown>
-         <label>192</label>
-      </control>
+         <onup>35</onup>
+         <ondown>25</ondown>
+         <label>30003</label>
+      </control>     
       <control>
          <type>listcontrol</type>
          <description>listcontrol</description>
          <id>50</id>
-         <posX>260</posX>
-         <posY>97</posY>
          <onleft>2</onleft>
          <onright>50</onright>
          <onup>2</onup>
@@ -323,8 +189,8 @@
       <control>
          <type>image</type>
          <id>36</id>
-         <posX>8</posX>
-         <posY>512</posY>
+         <posX>65</posX>
+         <posY>369</posY>
          <texture></texture>
       </control>
    </controls>

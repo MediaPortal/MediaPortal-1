@@ -12,14 +12,7 @@
       <width>720</width>
       <height>576</height>
       <texture>background.png</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <id>1</id>
-      <posX>75</posX>
-      <posY>370</posY>
-      <texture>hover_my music.png</texture>
-    </control>
+    </control>    
     <control>
       <type>image</type>
       <id>1</id>

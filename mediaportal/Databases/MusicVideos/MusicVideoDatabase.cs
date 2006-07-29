@@ -33,6 +33,7 @@ using SQLite.NET;
 using System.Xml;
 using System.IO;
 using MediaPortal.MusicVideos;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.MusicVideos.Database
 {
@@ -45,9 +46,12 @@ namespace MediaPortal.MusicVideos.Database
     private SQLiteClient m_db;
 
     private static MusicVideoDatabase Instance;
+    private ILog moLog;
 
     private MusicVideoDatabase()
     {
+        ServiceProvider loServices = GlobalServiceProvider.Instance;
+        moLog = loServices.Get<ILog>();
       bool dbExists;
       try
       {
@@ -61,14 +65,19 @@ namespace MediaPortal.MusicVideos.Database
         m_db = new SQLiteClient(@"database\MusicVideoDatabaseV3.db3");
 
         MediaPortal.Database.DatabaseUtility.SetPragmas(m_db);
+         
         if (!dbExists)
         {
           CreateTables();
         }
+        if (arePlaylistTablesCreated() == false)
+        {
+            createPlayListTables();
+        }
       }
       catch (SQLiteException ex)
       {
-        Console.Write("Recipedatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        moLog.Info("database exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
       }
     }
 
@@ -80,7 +89,32 @@ namespace MediaPortal.MusicVideos.Database
       }
       return Instance;
     }
+      private bool arePlaylistTablesCreated()
+      {
+          if(m_db==null){
+            return false;
+          }
+          SQLiteResultSet loResultSet = m_db.Execute("SELECT name FROM sqlite_master WHERE type='table' AND name='PLAYLIST'");
+          if (loResultSet.Rows.Count > 0) return true;
+          return false;
+      }
+      private void createPlayListTables()
+      {
+          if (m_db == null)
+          {
+              return;
+          }
+          try
+          {
+              m_db.Execute("CREATE TABLE PLAYLIST_VIDEOS(PLAY_INDX integer,SONG_NM text,SONG_ID text,ARTIST_NM text,ARTIST_ID text,COUNTRY text,PLAYLIST_ID integer)\n");
+              m_db.Execute("CREATE TABLE PLAYLIST(PLAYLIST_ID integer primary key,PLAYLIST_NM text)\n");
+          }
+          catch (Exception e)
+          {
+              moLog.Info(e.ToString());
+          }
 
+      }
     private void CreateTables()
     {
       if (m_db == null)
@@ -112,12 +146,20 @@ namespace MediaPortal.MusicVideos.Database
       }
       catch (Exception e)
       {
-        Log.Write(e);
+        moLog.Info(e.ToString());
       }
     }
 
     public bool createFavorite(string fsName)
     {
+        ArrayList loFavList = getFavorites();
+        foreach (String lsFavName in loFavList)
+        {
+            if (lsFavName.Equals(fsName))
+            {
+                return false;
+            }
+        }
       string lsSQL = String.Format("insert into FAVORITE(FAVORITE_NM) VALUES('{0}')", fsName.Replace("'", "''"));
       m_db.Execute(lsSQL);
       if (m_db.ChangedRows() > 0)
@@ -129,7 +171,7 @@ namespace MediaPortal.MusicVideos.Database
         return false;
       }
     }
-
+      
     public bool DeleteFavorite(string fsName)
     {
       string lsSQL = String.Format(" delete from FAVORITE where FAVORITE_NM='{0}'", fsName.Replace("'", "''"));
@@ -144,6 +186,7 @@ namespace MediaPortal.MusicVideos.Database
       }
 
     }
+      
 
     public bool updateFavorite(string fsOldName, String fsNewName)
     {
@@ -167,6 +210,13 @@ namespace MediaPortal.MusicVideos.Database
 
       string lsFavID = (String)loResultSet.GetColumn(0)[0];
 
+     //check if the video is already in the favorite list
+      lsSQL = string.Format("select SONG_ID from FAVORITE_VIDEOS where SONG_ID='{0}' AND COUNTRY='{1}' and FAVORITE_ID=''", foVideo.songId, foVideo.countryId, lsFavID);
+      loResultSet = m_db.Execute(lsSQL);
+      if (loResultSet.Rows.Count > 0)
+      {
+          return false;
+      }
       lsSQL = string.Format("insert into FAVORITE_VIDEOS(SONG_NM,SONG_ID,ARTIST_NM,ARTIST_ID,COUNTRY,FAVORITE_ID)VALUES('{0}','{1}','{2}','{3}','{4}','{5}')", foVideo.songName.Replace("'", "''"), foVideo.songId, foVideo.artistName.Replace("'", "''"), foVideo.artistId, foVideo.countryId, lsFavID);
       m_db.Execute(lsSQL);
       if (m_db.ChangedRows() > 0)
@@ -179,6 +229,7 @@ namespace MediaPortal.MusicVideos.Database
       }
 
     }
+      
 
     public bool removeFavoriteVideo(YahooVideo foVideo, string fsFavoriteNm)
     {
@@ -186,8 +237,8 @@ namespace MediaPortal.MusicVideos.Database
       SQLiteResultSet loResultSet = m_db.Execute(lsSQL);
 
       string lsFavID = (String)loResultSet.GetColumn(0)[0];
-      //Log.Write("fav id = {0}",lsFavID);
-      //Log.Write("song id = {0}", foVideo.songId);
+      //moLog.Info("fav id = {0}",lsFavID);
+      //moLog.Info("song id = {0}", foVideo.songId);
       lsSQL = string.Format("delete from FAVORITE_VIDEOS where SONG_ID='{0}' and FAVORITE_ID = {1}", foVideo.songId, lsFavID);
       m_db.Execute(lsSQL);
       if (m_db.ChangedRows() > 0)
@@ -200,6 +251,7 @@ namespace MediaPortal.MusicVideos.Database
       }
 
     }
+     
 
     public ArrayList getFavorites()
     {
@@ -209,6 +261,7 @@ namespace MediaPortal.MusicVideos.Database
       return loResultSet.GetColumn(0);
     }
 
+    
     public List<YahooVideo> getFavoriteVideos(string fsFavoriteNm)
     {
       List<YahooVideo> loFavoriteList = new List<YahooVideo>();
@@ -239,41 +292,166 @@ namespace MediaPortal.MusicVideos.Database
 
       return loFavoriteList;
     }
-
-    private List<YahooVideo> parseOldFavoriteFile()
-    {
-      XmlTextReader loXmlreader = null;
-      List<YahooVideo> loFavoriteList = new List<YahooVideo>();
-      //moFavoriteTable = new Dictionary<string,List<YahooVideo>>();
-      //string lsCurrentName = msDefaultFavoriteName;
-      try
+      private List<YahooVideo> parseOldFavoriteFile()
       {
-        loXmlreader = new XmlTextReader("MusicVideoFavorites.xml");
-        YahooVideo loVideo;
-
-        while (loXmlreader.Read())
-        {
-          if (loXmlreader.NodeType == XmlNodeType.Element && loXmlreader.Name == "SONG")
+          XmlTextReader loXmlreader = null;
+          List<YahooVideo> loFavoriteList = new List<YahooVideo>();
+          //moFavoriteTable = new Dictionary<string,List<YahooVideo>>();
+          //string lsCurrentName = msDefaultFavoriteName;
+          try
           {
-            loVideo = new YahooVideo();
-            loVideo.artistId = loXmlreader.GetAttribute("ArtistId");
-            loVideo.artistName = loXmlreader.GetAttribute("Artist");
-            loVideo.songId = loXmlreader.GetAttribute("SongId");
-            loVideo.songName = loXmlreader.GetAttribute("SongTitle");
-            loVideo.countryId = loXmlreader.GetAttribute("CtryId");
-            Log.Write("found favorite:{0}", loVideo.ToString());
-            loFavoriteList.Add(loVideo);
+              loXmlreader = new XmlTextReader("MusicVideoFavorites.xml");
+              YahooVideo loVideo;
+
+              while (loXmlreader.Read())
+              {
+                  if (loXmlreader.NodeType == XmlNodeType.Element && loXmlreader.Name == "SONG")
+                  {
+                      loVideo = new YahooVideo();
+                      loVideo.artistId = loXmlreader.GetAttribute("ArtistId");
+                      loVideo.artistName = loXmlreader.GetAttribute("Artist");
+                      loVideo.songId = loXmlreader.GetAttribute("SongId");
+                      loVideo.songName = loXmlreader.GetAttribute("SongTitle");
+                      loVideo.countryId = loXmlreader.GetAttribute("CtryId");
+                      moLog.Info("found favorite:{0}", loVideo.ToString());
+                      loFavoriteList.Add(loVideo);
+                  }
+              }
+              loXmlreader.Close();
           }
+          catch (Exception e) { moLog.Info(e.ToString()); }
+          finally
+          {
+              loXmlreader.Close();
+              moLog.Info("old parse closed.");
+          }
+          return loFavoriteList;
+      }
+
+    public bool addPlayListVideo(string fsPlaylistNm, YahooVideo foVideo, int fiIndex)
+    {
+        //get the favorite id
+        string lsSQL = String.Format("select PLAYLIST_ID from PLAYLIST where PLAYLIST_NM='{0}'", fsPlaylistNm.Replace("'", "''"));
+        SQLiteResultSet loResultSet = m_db.Execute(lsSQL);
+
+        string lsPlaylistID = (String)loResultSet.GetColumn(0)[0];
+
+        lsSQL = string.Format("insert into PLAYLIST_VIDEOS(PLAY_INDX,SONG_NM,SONG_ID,ARTIST_NM,ARTIST_ID,COUNTRY,PLAYLIST_ID)VALUES('{0}','{1}','{2}','{3}','{4}','{5}','{6}')", fiIndex, foVideo.songName.Replace("'", "''"), foVideo.songId, foVideo.artistName.Replace("'", "''"), foVideo.artistId, foVideo.countryId, lsPlaylistID);
+        m_db.Execute(lsSQL);
+        if (m_db.ChangedRows() > 0)
+        {
+            return true;
         }
-        loXmlreader.Close();
-      }
-      catch (Exception e) { Log.Write(e); }
-      finally
-      {
-        loXmlreader.Close();
-        Log.Write("old parse closed.");
-      }
-      return loFavoriteList;
+        else
+        {
+            return false;
+        }
+
     }
+    public bool removePlaylistVideo(YahooVideo foVideo, string fsPlaylistNm)
+    {
+        string lsSQL = String.Format("select PLAYLIST_ID from PLAYLIST where PLAYLIST_NM='{0}'", fsPlaylistNm.Replace("'", "''"));
+        SQLiteResultSet loResultSet = m_db.Execute(lsSQL);
+
+        string lsPlaylistID = (String)loResultSet.GetColumn(0)[0];
+        //moLog.Info("fav id = {0}",lsFavID);
+        //moLog.Info("song id = {0}", foVideo.songId);
+        lsSQL = string.Format("delete from PLAYLIST_VIDEOS where SONG_ID='{0}' and PLAYLIST_ID = {1}", foVideo.songId, lsPlaylistID);
+        m_db.Execute(lsSQL);
+        if (m_db.ChangedRows() > 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+
+    }
+    public ArrayList getPlaylists()
+    {
+        //createFavorite("Default2");
+        string lsSQL = string.Format("select playlist_nm from playlist");
+        SQLiteResultSet loResultSet = m_db.Execute(lsSQL);
+        return loResultSet.GetColumn(0);
+    }
+
+      public List<YahooVideo> getPlayListVideos(string fsPlaylistNm)
+      {
+          List<YahooVideo> loPlaylist = new List<YahooVideo>();
+          string lsSQL = String.Format("select PLAYLIST_ID from PLAYLIST where PLAYLIST_NM='{0}'", fsPlaylistNm.Replace("'", "''"));
+          SQLiteResultSet loResultSet = m_db.Execute(lsSQL);
+
+          string lsPlaylistID = (String)loResultSet.GetColumn(0)[0];
+          lsSQL = string.Format("select SONG_NM,SONG_ID,ARTIST_NM,ARTIST_ID,COUNTRY from PLAYLIST_VIDEOS where PLAYLIST_ID={0} order by PLAY_INDX", lsPlaylistID);
+          loResultSet = m_db.Execute(lsSQL);
+
+          foreach (ArrayList loRow in loResultSet.RowsList)
+          {
+              YahooVideo loVideo = new YahooVideo();
+              IEnumerator en = loRow.GetEnumerator();
+              en.MoveNext();
+              loVideo.songName = (String)en.Current;
+              en.MoveNext();
+              loVideo.songId = (String)en.Current;
+              en.MoveNext();
+              loVideo.artistName = (String)en.Current;
+              en.MoveNext();
+              loVideo.artistId = (String)en.Current;
+              en.MoveNext();
+              loVideo.countryId = (String)en.Current;
+              loPlaylist.Add(loVideo);
+
+          }
+
+          return loPlaylist;
+      }
+      public bool DeletePlaylist(string fsName)
+      {
+          string lsSQL = String.Format("select PLAYLIST_ID from PLAYLIST where PLAYLIST_NM='{0}'", fsName.Replace("'", "''"));
+          SQLiteResultSet loResultSet = m_db.Execute(lsSQL);
+          if (loResultSet.RowsList.Count == 0) { return true; }
+          string lsPlaylistID = (String)loResultSet.GetColumn(0)[0];
+          lsSQL = String.Format(" delete from PLAYLIST where PLAYLIST_NM='{0}'", fsName.Replace("'", "''"));
+          m_db.Execute(lsSQL);
+          if (m_db.ChangedRows() > 0)
+          {
+              lsSQL = String.Format(" delete from PLAYLIST_VIDEOS where PLAYLIST_ID='{0}'",lsPlaylistID);
+              loResultSet = m_db.Execute(lsSQL);
+              //loResultSet.
+              return true;
+          }
+          else
+          {
+              return false;
+          }
+
+      }
+
+      public bool createPlayList(string fsName)
+      {
+          //ArrayList loList = getPlaylists();
+          //foreach (String lsName in loList)
+          //{
+          //    if (lsName.Equals(fsName))
+          //    {
+          DeletePlaylist(fsName);                  
+          //    }
+          //}
+          string lsSQL = String.Format("insert into PLAYLIST(PLAYLIST_NM) VALUES('{0}')", fsName.Replace("'", "''"));
+          m_db.Execute(lsSQL);
+          if (m_db.ChangedRows() > 0)
+          {
+              return true;
+          }
+          else
+          {
+              return false;
+          }
+      }
+
+
+
+    
   }
 }
