@@ -52,6 +52,7 @@ namespace MediaPortal.Music.Database
     SongStatus _audioScrobblerStatus;
     bool _audioScrobblerProcessed;
     string _musicBrainzID;
+    string _strURL = "";
 
     public Song()
     {
@@ -80,6 +81,7 @@ namespace MediaPortal.Music.Database
       newsong.AudioScrobblerStatus = AudioScrobblerStatus;
       newsong.AudioScrobblerProcessed = AudioScrobblerProcessed;
       newsong.MusicBrainzID = MusicBrainzID;
+      newsong.URL = URL;
 
       return newsong;
     }
@@ -106,6 +108,7 @@ namespace MediaPortal.Music.Database
       _audioScrobblerStatus = SongStatus.Init;
       _audioScrobblerProcessed = false;
       _musicBrainzID = "";
+      _strURL = "";
     }
 
     public string FileName
@@ -269,6 +272,11 @@ namespace MediaPortal.Music.Database
       set { _musicBrainzID = value; }
     }
 
+    public string URL
+    {
+      get { return _strURL; }
+      set { _strURL = value; }
+    }
 
     public string ToShortString()
     {
@@ -284,6 +292,22 @@ namespace MediaPortal.Music.Database
 
       if (m_strAlbum != "")
         s.Append(" (" + m_strAlbum + ")");
+
+      return s.ToString();
+    }
+
+    public string ToLastFMString()
+    {
+      StringBuilder s = new StringBuilder();
+
+      if (m_strTitle != "")
+        s.Append(m_strTitle + " - ");
+
+      if (m_strArtist != "")
+        s.Append(m_strArtist);
+
+      if (m_iTimedPlayed > 0)
+        s.Append(" (Played: " + Convert.ToString(m_iTimedPlayed) + " times)");
 
       return s.ToString();
     }

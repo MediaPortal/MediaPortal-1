@@ -70,6 +70,12 @@ namespace MediaPortal.AudioScrobbler
       this.tabPageRecent = new System.Windows.Forms.TabPage();
       this.buttonRefreshRecent = new MediaPortal.UserInterface.Controls.MPButton();
       this.listViewRecentTracks = new MediaPortal.UserInterface.Controls.MPListView();
+      this.tabPageTopArtists = new System.Windows.Forms.TabPage();
+      this.buttonArtistsRefresh = new MediaPortal.UserInterface.Controls.MPButton();
+      this.listViewTopArtists = new MediaPortal.UserInterface.Controls.MPListView();
+      this.tabPageTopTracks = new System.Windows.Forms.TabPage();
+      this.buttonTopTracks = new MediaPortal.UserInterface.Controls.MPButton();
+      this.listViewTopTracks = new MediaPortal.UserInterface.Controls.MPListView();
       this.linkLabelMPGroup = new System.Windows.Forms.LinkLabel();
       this.linkLabelNewUser = new System.Windows.Forms.LinkLabel();
       this.labelPassword = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -82,6 +88,8 @@ namespace MediaPortal.AudioScrobbler
       this.tabPageAccount.SuspendLayout();
       this.groupBoxAccount.SuspendLayout();
       this.tabPageRecent.SuspendLayout();
+      this.tabPageTopArtists.SuspendLayout();
+      this.tabPageTopTracks.SuspendLayout();
       this.SuspendLayout();
       // 
       // buttonOk
@@ -128,6 +136,9 @@ namespace MediaPortal.AudioScrobbler
       // 
       this.tabControlASSettings.Controls.Add(this.tabPageAccount);
       this.tabControlASSettings.Controls.Add(this.tabPageRecent);
+      this.tabControlASSettings.Controls.Add(this.tabPageTopArtists);
+      this.tabControlASSettings.Controls.Add(this.tabPageTopTracks);
+      this.tabControlASSettings.HotTrack = true;
       this.tabControlASSettings.Location = new System.Drawing.Point(-1, 55);
       this.tabControlASSettings.Name = "tabControlASSettings";
       this.tabControlASSettings.SelectedIndex = 0;
@@ -169,7 +180,7 @@ namespace MediaPortal.AudioScrobbler
       this.linkLabel1.Location = new System.Drawing.Point(27, 121);
       this.linkLabel1.Name = "linkLabel1";
       this.linkLabel1.Size = new System.Drawing.Size(213, 13);
-      this.linkLabel1.TabIndex = 5;
+      this.linkLabel1.TabIndex = 2;
       this.linkLabel1.TabStop = true;
       this.linkLabel1.Text = "Please join the MediaPortal group on last.fm";
       // 
@@ -180,7 +191,7 @@ namespace MediaPortal.AudioScrobbler
       this.linkLabel2.Location = new System.Drawing.Point(84, 23);
       this.linkLabel2.Name = "linkLabel2";
       this.linkLabel2.Size = new System.Drawing.Size(58, 13);
-      this.linkLabel2.TabIndex = 4;
+      this.linkLabel2.TabIndex = 3;
       this.linkLabel2.TabStop = true;
       this.linkLabel2.Text = "New user..";
       // 
@@ -190,7 +201,7 @@ namespace MediaPortal.AudioScrobbler
       this.mpLabel1.Location = new System.Drawing.Point(16, 67);
       this.mpLabel1.Name = "mpLabel1";
       this.mpLabel1.Size = new System.Drawing.Size(53, 13);
-      this.mpLabel1.TabIndex = 3;
+      this.mpLabel1.TabIndex = 0;
       this.mpLabel1.Text = "Password";
       // 
       // mpLabel2
@@ -199,7 +210,7 @@ namespace MediaPortal.AudioScrobbler
       this.mpLabel2.Location = new System.Drawing.Point(16, 23);
       this.mpLabel2.Name = "mpLabel2";
       this.mpLabel2.Size = new System.Drawing.Size(55, 13);
-      this.mpLabel2.TabIndex = 2;
+      this.mpLabel2.TabIndex = 0;
       this.mpLabel2.Text = "Username";
       // 
       // textBoxASUsername
@@ -210,7 +221,7 @@ namespace MediaPortal.AudioScrobbler
       this.textBoxASUsername.Location = new System.Drawing.Point(16, 41);
       this.textBoxASUsername.Name = "textBoxASUsername";
       this.textBoxASUsername.Size = new System.Drawing.Size(243, 20);
-      this.textBoxASUsername.TabIndex = 1;
+      this.textBoxASUsername.TabIndex = 0;
       // 
       // maskedTextBoxASPassword
       // 
@@ -221,7 +232,7 @@ namespace MediaPortal.AudioScrobbler
       this.maskedTextBoxASPassword.Name = "maskedTextBoxASPassword";
       this.maskedTextBoxASPassword.PasswordChar = '*';
       this.maskedTextBoxASPassword.Size = new System.Drawing.Size(243, 20);
-      this.maskedTextBoxASPassword.TabIndex = 0;
+      this.maskedTextBoxASPassword.TabIndex = 1;
       // 
       // tabPageRecent
       // 
@@ -247,14 +258,85 @@ namespace MediaPortal.AudioScrobbler
       // 
       // listViewRecentTracks
       // 
-      this.listViewRecentTracks.AllowDrop = true;
-      this.listViewRecentTracks.AllowRowReorder = true;
+      this.listViewRecentTracks.AllowColumnReorder = true;
+      this.listViewRecentTracks.AllowRowReorder = false;
       this.listViewRecentTracks.Location = new System.Drawing.Point(6, 12);
       this.listViewRecentTracks.Name = "listViewRecentTracks";
+      this.listViewRecentTracks.ShowGroups = false;
       this.listViewRecentTracks.Size = new System.Drawing.Size(275, 239);
       this.listViewRecentTracks.TabIndex = 0;
       this.listViewRecentTracks.UseCompatibleStateImageBehavior = false;
       this.listViewRecentTracks.View = System.Windows.Forms.View.List;
+      // 
+      // tabPageTopArtists
+      // 
+      this.tabPageTopArtists.Controls.Add(this.buttonArtistsRefresh);
+      this.tabPageTopArtists.Controls.Add(this.listViewTopArtists);
+      this.tabPageTopArtists.Location = new System.Drawing.Point(4, 22);
+      this.tabPageTopArtists.Name = "tabPageTopArtists";
+      this.tabPageTopArtists.Size = new System.Drawing.Size(287, 286);
+      this.tabPageTopArtists.TabIndex = 2;
+      this.tabPageTopArtists.Text = "Top artists";
+      this.tabPageTopArtists.UseVisualStyleBackColor = true;
+      // 
+      // buttonArtistsRefresh
+      // 
+      this.buttonArtistsRefresh.Location = new System.Drawing.Point(202, 257);
+      this.buttonArtistsRefresh.Name = "buttonArtistsRefresh";
+      this.buttonArtistsRefresh.Size = new System.Drawing.Size(75, 23);
+      this.buttonArtistsRefresh.TabIndex = 3;
+      this.buttonArtistsRefresh.Text = "Refresh";
+      this.buttonArtistsRefresh.UseVisualStyleBackColor = true;
+      this.buttonArtistsRefresh.Click += new System.EventHandler(this.buttonArtistsRefresh_Click);
+      // 
+      // listViewTopArtists
+      // 
+      this.listViewTopArtists.Activation = System.Windows.Forms.ItemActivation.OneClick;
+      this.listViewTopArtists.AllowColumnReorder = true;
+      this.listViewTopArtists.AllowRowReorder = false;
+      this.listViewTopArtists.AutoArrange = false;
+      this.listViewTopArtists.Location = new System.Drawing.Point(6, 12);
+      this.listViewTopArtists.Name = "listViewTopArtists";
+      this.listViewTopArtists.ShowGroups = false;
+      this.listViewTopArtists.Size = new System.Drawing.Size(275, 239);
+      this.listViewTopArtists.TabIndex = 2;
+      this.listViewTopArtists.UseCompatibleStateImageBehavior = false;
+      this.listViewTopArtists.View = System.Windows.Forms.View.List;
+      // 
+      // tabPageTopTracks
+      // 
+      this.tabPageTopTracks.Controls.Add(this.buttonTopTracks);
+      this.tabPageTopTracks.Controls.Add(this.listViewTopTracks);
+      this.tabPageTopTracks.Location = new System.Drawing.Point(4, 22);
+      this.tabPageTopTracks.Name = "tabPageTopTracks";
+      this.tabPageTopTracks.Size = new System.Drawing.Size(287, 286);
+      this.tabPageTopTracks.TabIndex = 3;
+      this.tabPageTopTracks.Text = "Top tracks";
+      this.tabPageTopTracks.UseVisualStyleBackColor = true;
+      // 
+      // buttonTopTracks
+      // 
+      this.buttonTopTracks.Location = new System.Drawing.Point(202, 257);
+      this.buttonTopTracks.Name = "buttonTopTracks";
+      this.buttonTopTracks.Size = new System.Drawing.Size(75, 23);
+      this.buttonTopTracks.TabIndex = 5;
+      this.buttonTopTracks.Text = "Refresh";
+      this.buttonTopTracks.UseVisualStyleBackColor = true;
+      this.buttonTopTracks.Click += new System.EventHandler(this.buttonTopTracks_Click);
+      // 
+      // listViewTopTracks
+      // 
+      this.listViewTopTracks.Activation = System.Windows.Forms.ItemActivation.OneClick;
+      this.listViewTopTracks.AllowColumnReorder = true;
+      this.listViewTopTracks.AllowRowReorder = false;
+      this.listViewTopTracks.AutoArrange = false;
+      this.listViewTopTracks.Location = new System.Drawing.Point(6, 12);
+      this.listViewTopTracks.Name = "listViewTopTracks";
+      this.listViewTopTracks.ShowGroups = false;
+      this.listViewTopTracks.Size = new System.Drawing.Size(275, 239);
+      this.listViewTopTracks.TabIndex = 4;
+      this.listViewTopTracks.UseCompatibleStateImageBehavior = false;
+      this.listViewTopTracks.View = System.Windows.Forms.View.List;
       // 
       // linkLabelMPGroup
       // 
@@ -336,6 +418,8 @@ namespace MediaPortal.AudioScrobbler
       this.groupBoxAccount.ResumeLayout(false);
       this.groupBoxAccount.PerformLayout();
       this.tabPageRecent.ResumeLayout(false);
+      this.tabPageTopArtists.ResumeLayout(false);
+      this.tabPageTopTracks.ResumeLayout(false);
       this.ResumeLayout(false);
 
     }
@@ -364,5 +448,11 @@ namespace MediaPortal.AudioScrobbler
     private System.Windows.Forms.MaskedTextBox maskedTextBoxASPass;
     private MediaPortal.UserInterface.Controls.MPButton buttonRefreshRecent;
     private MediaPortal.UserInterface.Controls.MPListView listViewRecentTracks;
+    private System.Windows.Forms.TabPage tabPageTopArtists;
+    private MediaPortal.UserInterface.Controls.MPButton buttonArtistsRefresh;
+    private MediaPortal.UserInterface.Controls.MPListView listViewTopArtists;
+    private System.Windows.Forms.TabPage tabPageTopTracks;
+    private MediaPortal.UserInterface.Controls.MPButton buttonTopTracks;
+    private MediaPortal.UserInterface.Controls.MPListView listViewTopTracks;
   }
 }

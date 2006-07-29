@@ -29,9 +29,11 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
+using System.Web.Security;
 using System.Windows.Forms;
 
 using MediaPortal.Music.Database;
+using MediaPortal.Util;
 
 
 namespace MediaPortal.AudioScrobbler
@@ -52,8 +54,29 @@ namespace MediaPortal.AudioScrobbler
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
-        textBoxASUsername.Text = xmlreader.GetValueAsString("audioscrobbler", "username", "");
-        maskedTextBoxASPassword.Text = xmlreader.GetValueAsString("audioscrobbler", "password", "");
+        textBoxASUsername.Text = xmlreader.GetValueAsString("audioscrobbler", "user", "");
+        if (textBoxASUsername.Text == "")
+        {
+          tabControlASSettings.TabPages.RemoveAt(3);
+          tabControlASSettings.TabPages.RemoveAt(2);
+          tabControlASSettings.TabPages.RemoveAt(1);
+        }
+          
+        EncryptDecrypt Crypter = new EncryptDecrypt();
+        string tmpPass;
+        tmpPass = xmlreader.GetValueAsString("audioscrobbler", "pass", "");
+        if (tmpPass != String.Empty)
+        {
+          try
+          {
+            EncryptDecrypt DCrypter = new EncryptDecrypt();
+            maskedTextBoxASPassword.Text = DCrypter.Decrypt(tmpPass);
+          }
+          catch (Exception ex)
+          {
+            //Log.Write("Audioscrobbler: Password decryption failed {0}", ex.Message);
+          }
+        }
       }
     }
 
@@ -61,8 +84,16 @@ namespace MediaPortal.AudioScrobbler
     {
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
-        xmlwriter.SetValue("audioscrobbler", "username", textBoxASUsername.Text);
-        xmlwriter.SetValue("audioscrobbler", "password", maskedTextBoxASPassword.Text);        
+        xmlwriter.SetValue("audioscrobbler", "user", textBoxASUsername.Text);
+        try
+        {
+          EncryptDecrypt Crypter = new EncryptDecrypt();
+          xmlwriter.SetValue("audioscrobbler", "pass", Crypter.Encrypt(maskedTextBoxASPassword.Text));
+        }
+        catch (Exception ex)
+        {
+          //Log.Write("Audioscrobbler: Password encryption failed {0}", ex.Message);
+        }
       }
     }
     #endregion
@@ -107,11 +138,33 @@ namespace MediaPortal.AudioScrobbler
     {
       buttonRefreshRecent.Enabled = false;
       listViewRecentTracks.Clear();
-      songList = new List<Song>();      
+      songList = new List<Song>();
       songList = getXMLData(lastFMFeed.recenttracks);
       for (int i = 0; i < songList.Count; i++)
         listViewRecentTracks.Items.Add(songList[i].ToShortString());
       buttonRefreshRecent.Enabled = true;
+    }
+
+    private void buttonArtistsRefresh_Click(object sender, EventArgs e)
+    {
+      buttonArtistsRefresh.Enabled = false;
+      listViewTopArtists.Clear();
+      songList = new List<Song>();
+      songList = getXMLData(lastFMFeed.topartists);
+      for (int i = 0; i < songList.Count; i++)
+        listViewTopArtists.Items.Add(songList[i].ToLastFMString());
+      buttonArtistsRefresh.Enabled = true;
+    }
+
+    private void buttonTopTracks_Click(object sender, EventArgs e)
+    {
+      buttonTopTracks.Enabled = false;
+      listViewTopTracks.Clear();
+      songList = new List<Song>();
+      songList = getXMLData(lastFMFeed.toptracks);
+      for (int i = 0; i < songList.Count; i++)
+        listViewTopTracks.Items.Add(songList[i].ToLastFMString());
+      buttonTopTracks.Enabled = true;
     }
 
     private List<Song> getXMLData(lastFMFeed feed_)
@@ -119,7 +172,20 @@ namespace MediaPortal.AudioScrobbler
       scrobbler = new AudioscrobblerBase();
       scrobbler.Disconnect();
       //scrobbler.ParseXMLDoc(@"C:\recenttracks.xml", "name");
-      return scrobbler.ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + scrobbler.Username + "/" + "recenttracks.xml", @"//recenttracks/track", feed_);
+      switch (feed_)
+      {
+        case lastFMFeed.recenttracks:
+          return scrobbler.ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + scrobbler.Username + "/" + "recenttracks.xml", @"//recenttracks/track", feed_);
+        case lastFMFeed.topartists:
+          return scrobbler.ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + scrobbler.Username + "/" + "topartists.xml", @"//topartists/artist", feed_);
+        case lastFMFeed.toptracks:
+          return scrobbler.ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + scrobbler.Username + "/" + "toptracks.xml", @"//toptracks/track", feed_);
+        default:
+          return scrobbler.ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + scrobbler.Username + "/" + "recenttracks.xml", @"//recenttracks/track", feed_);
+      }
+
+      
     }
+
   }
 }

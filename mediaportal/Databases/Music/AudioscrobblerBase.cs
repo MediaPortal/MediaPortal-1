@@ -184,10 +184,24 @@ namespace MediaPortal.Music.Database
     public AudioscrobblerBase()
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-      {
-        username = xmlreader.GetValueAsString("audioscrobbler", "username", "");
-        password = xmlreader.GetValueAsString("audioscrobbler", "password", "");
+      {        
+        username = xmlreader.GetValueAsString("audioscrobbler", "user", "");
+        string tmpPass;
+        tmpPass = xmlreader.GetValueAsString("audioscrobbler", "pass", "");
+        if (tmpPass != String.Empty)
+        {
+          try
+          {
+            EncryptDecrypt Crypter = new EncryptDecrypt();
+            password = Crypter.Decrypt(tmpPass);
+          }
+          catch (Exception ex)
+          {
+            Log.Write("Audioscrobbler: Password decryption failed {0}", ex.Message);
+          }
+        }
       }
+      
 
       connected = false;
       queue = new ArrayList();
@@ -695,10 +709,10 @@ namespace MediaPortal.Music.Database
     {
       songList = new List<Song>();
       try
-      {				
-				XmlDocument doc = new XmlDocument ();
+      {
+        XmlDocument doc = new XmlDocument();
 
-				doc.Load (xmlFileInput);
+        doc.Load(xmlFileInput);
         XmlNodeList nodes = doc.SelectNodes(queryNodePath);
 
         foreach (XmlNode node in nodes)
@@ -706,25 +720,56 @@ namespace MediaPortal.Music.Database
           Song nodeSong = new Song();
           foreach (XmlNode child in node.ChildNodes)
           {
-            switch(xmlfeed)
+            switch (xmlfeed)
             {
               case (lastFMFeed.recenttracks):
                 {
-                  if (child.Name == "artist" && child.ChildNodes.Count != 0)
-                  {
-                    Log.Write(String.Format("{0} - {1}: {2}", "XMLPARSER", "artist", child.ChildNodes[0].Value));
-                    nodeSong.Artist = child.ChildNodes[0].Value;
-                  }
+                  if (child.Name == "artist" && child.ChildNodes.Count != 0)                                    
+                    nodeSong.Artist = child.ChildNodes[0].Value;                  
                   else if (child.Name == "name" && child.ChildNodes.Count != 0)
                     nodeSong.Title = child.ChildNodes[0].Value;
                   else if (child.Name == "mbid" && child.ChildNodes.Count != 0)
                     nodeSong.MusicBrainzID = child.ChildNodes[0].Value;
-                  //else if (child.Name == "url" && child.ChildNodes.Count != 0)
-                  //  nodeSong. = child.ChildNodes[0].Value;
+                  else if (child.Name == "url" && child.ChildNodes.Count != 0)
+                    nodeSong.URL = child.ChildNodes[0].Value;
                   else if (child.Name == "date" && child.ChildNodes.Count != 0)
                     nodeSong.DateTimePlayed = Convert.ToDateTime(child.ChildNodes[0].Value);
                 }
                 break;
+              case (lastFMFeed.topartists):
+                {
+                  if (child.Name == "name" && child.ChildNodes.Count != 0)
+                    nodeSong.Artist = child.ChildNodes[0].Value;
+                  //else if (child.Name == "name" && child.ChildNodes.Count != 0)
+                  //  nodeSong.Title = child.ChildNodes[0].Value;
+                  else if (child.Name == "mbid" && child.ChildNodes.Count != 0)
+                    nodeSong.MusicBrainzID = child.ChildNodes[0].Value;
+                  else if (child.Name == "playcount" && child.ChildNodes.Count != 0)
+                    nodeSong.TimesPlayed = Convert.ToInt32(child.ChildNodes[0].Value);
+                  else if (child.Name == "url" && child.ChildNodes.Count != 0)
+                    nodeSong.URL = child.ChildNodes[0].Value;
+                }
+                break;
+              case (lastFMFeed.weeklyartistchart):
+                goto case lastFMFeed.topartists;
+
+              case (lastFMFeed.toptracks):
+                {
+                  if (child.Name == "artist" && child.ChildNodes.Count != 0)
+                    nodeSong.Artist = child.ChildNodes[0].Value;
+                  else if (child.Name == "name" && child.ChildNodes.Count != 0)
+                    nodeSong.Title = child.ChildNodes[0].Value;
+                  else if (child.Name == "mbid" && child.ChildNodes.Count != 0)
+                    nodeSong.MusicBrainzID = child.ChildNodes[0].Value;
+                  else if (child.Name == "playcount" && child.ChildNodes.Count != 0)
+                    nodeSong.TimesPlayed = Convert.ToInt32(child.ChildNodes[0].Value);
+                  else if (child.Name == "url" && child.ChildNodes.Count != 0)
+                    nodeSong.URL = child.ChildNodes[0].Value;
+                }
+                break;
+              case (lastFMFeed.weeklytrackchart):
+                goto case lastFMFeed.toptracks;
+
             } //switch
           }
           songList.Add(nodeSong);

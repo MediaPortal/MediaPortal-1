@@ -391,6 +391,7 @@ namespace MediaPortal.Audioscrobbler
     {
       OnManualDisconnect(null, null);
       startStopSongCheckTimer(false);
+      scrobbler = null;
     }
 
     #endregion
@@ -434,7 +435,7 @@ namespace MediaPortal.Audioscrobbler
 
     public string PluginName()
     {
-      return "AudioScrobbler";
+      return "Audioscrobbler";
     }
 
     public bool HasSetup()
