@@ -369,7 +369,7 @@ namespace MediaPortal.Player
     {
       get { return _state == PlayState.Ended; }
     }
-    
+
 
     public override void Process()
     {
@@ -379,12 +379,12 @@ namespace MediaPortal.Player
         return;
 
       //_log.Info("1");
-      
+
       if (_startingUp && _isLive)
       {
-        ushort pgmCount=0;
+        ushort pgmCount = 0;
         ushort pgmNumber = 0;
-        ushort audioPid=0;
+        ushort audioPid = 0;
         ushort videoPid = 0;
         ushort pcrPid = 0;
         long duration = 0;
@@ -946,7 +946,12 @@ namespace MediaPortal.Player
           dTimeInSecs += fContentStart;
           long lTime = (long)dTimeInSecs;
           _log.Info("set positions");
+          if (VMR9Util.g_vmr9 != null)
+            VMR9Util.g_vmr9.FrameCounter = 123;
           int hr = _mediaSeeking.SetPositions(new DsLong(lTime), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
+
+          if (VMR9Util.g_vmr9 != null)
+            VMR9Util.g_vmr9.FrameCounter = 123;
           _log.Info("set positions done");
           if (hr != 0)
           {
@@ -1012,7 +1017,7 @@ namespace MediaPortal.Player
     }
     public override bool HasVideo
     {
-      get { return (_isRadio==false); }
+      get { return (_isRadio == false); }
     }
 
 
