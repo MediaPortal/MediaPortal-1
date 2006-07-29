@@ -559,7 +559,7 @@ namespace TvLibrary.Implementations.DVB
       {
         Log.Log.WriteFile("ss2:DeleteAllPIDs() failed pid:0x2000");
       }
-      if (pids.Count == 0)
+      if (pids.Count == 0||true)
       {
         Log.Log.WriteFile("ss2:hw pids:all");
         int added = SetPidToPin(_interfaceB2C2DataCtrl, 0, PID_CAPTURE_ALL_INCLUDING_NULLS);
@@ -1149,7 +1149,6 @@ namespace TvLibrary.Implementations.DVB
 
         //do grab epg, pat,sdt or nit when not timeshifting
 
-        Log.Log.WriteFile("ss2:  disable mpsa");
         _streamAnalyzer.Scanning(0);
         DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
         if (channel == null)
@@ -1158,7 +1157,6 @@ namespace TvLibrary.Implementations.DVB
           return;
         }
 
-        Log.Log.WriteFile("ss2:  mpsa disabled");
         if (_graphState == GraphState.TimeShifting || _graphState == GraphState.Recording)
         {
           Log.Log.WriteFile("ss2:SetAnalyzerMapping TS pid:{0:X}", pmtPid);
@@ -1174,10 +1172,6 @@ namespace TvLibrary.Implementations.DVB
           SetupDemuxerPin(_pinAnalyzerEPG, 0x12, (int)MediaSampleContent.Mpeg2PSI, true);
           SetupDemuxerPin(_pinAnalyzerD2, 0xd2, (int)MediaSampleContent.Mpeg2PSI, true);
           SetupDemuxerPin(_pinAnalyzerD3, 0xd3, (int)MediaSampleContent.Mpeg2PSI, true);
-          Log.Log.WriteFile("ss2:SetAnalyzerMapping ok");
-
-
-          Log.Log.WriteFile("ss2:setpids");
           if (pmtPid >= 0 && pmtPid <= 0x1ffb)
           {
             int[] pids = new int[4];
@@ -1195,23 +1189,16 @@ namespace TvLibrary.Implementations.DVB
             pids[2] = 0x11;
             SetupDemuxerPids(_pinAnalyzerSI, pids, 3, (int)MediaSampleContent.Mpeg2PSI, true);
           }
-          Log.Log.WriteFile("ss2:pids set");
         }
 
-        Log.Log.WriteFile("ss2:  set mpsa callback");
         _streamAnalyzer.SetPMTCallback(this);
-        Log.Log.WriteFile("ss2:  reset mpsa parser");
         _streamAnalyzer.ResetParser();
-        Log.Log.WriteFile("ss2:  reset mpsa pids");
         _streamAnalyzer.ResetPids();
-        Log.Log.WriteFile("ss2:  disable mpsa atsc mode");
         _streamAnalyzer.UseATSC(0);
         if (channel != null)
         {
-          Log.Log.WriteFile("ss2:  set mpsa service id");
           _streamAnalyzer.SetPMTProgramNumber(channel.ServiceId);
         }
-        Log.Log.WriteFile("ss2:  enable mpsa");
         _streamAnalyzer.Scanning(1);
         Log.Log.WriteFile("ss2:SetAnalyzerMapping done");
       }
@@ -1942,10 +1929,12 @@ namespace TvLibrary.Implementations.DVB
 
       if (_currentChannel.IsTv)
       {
+        Log.Log.WriteFile("ss2:connect video pin");
         FilterGraphTools.ConnectPin(_graphBuilder, _pinVideoTimeShift, _filterMpegMuxerTimeShift, 0);
       }
       else
       {
+        Log.Log.WriteFile("ss2:disconnect video pin");
         _pinVideoTimeShift.Disconnect();
       }
       SetAnalyzerMapping(dvbsChannel.PmtPid);
@@ -2582,7 +2571,7 @@ namespace TvLibrary.Implementations.DVB
             {
               if (_pmtVersion != version)
               {
-
+                Log.Log.WriteFile("ss2: SendPmtToCam() version={0}", version);
                 _channelInfo = new ChannelInfo();
                 _channelInfo.DecodePmt(pmt);
                 _channelInfo.network_pmt_PID = channel.PmtPid;
