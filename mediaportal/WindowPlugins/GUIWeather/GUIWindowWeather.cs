@@ -1135,6 +1135,10 @@ namespace MediaPortal.GUI.Weather
           localizedWord = GUILocalizeStrings.Get(557);
         else if ( String.Compare(tokenSplit, "Storm", true) == 0 || String.Compare(tokenSplit, "Gale", true) == 0 || String.Compare(tokenSplit, "Tempest", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(599);
+        else if (String.Compare(tokenSplit, "in the Vicinity", true) == 0)
+          localizedWord = GUILocalizeStrings.Get(559);
+        else if (String.Compare(tokenSplit, "Clearing", true) == 0)
+          localizedWord = GUILocalizeStrings.Get(560);
 
         if (localizedWord == String.Empty)
           localizedWord = tokenSplit;	//if not found, let fallback

@@ -1886,6 +1886,14 @@
       <value>Kein Wind</value>
    </string>
    <string>
+      <id>559</id>
+      <value>in der Nähe</value>
+   </string> 
+   <string>
+      <id>560</id>
+      <value>aufklarend</value>
+   </string>
+   <string>
       <id>590</id>
       <value>Übersicht</value>
    </string>

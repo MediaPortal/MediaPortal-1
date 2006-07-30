@@ -1886,6 +1886,14 @@
       <value>No wind</value>
    </string>
    <string>
+      <id>559</id>
+      <value>in the vicinity</value>
+   </string> 
+   <string>
+      <id>560</id>
+      <value>Clearing</value>
+   </string>     
+   <string>
       <id>590</id>
       <value>P. 100</value>
    </string>
