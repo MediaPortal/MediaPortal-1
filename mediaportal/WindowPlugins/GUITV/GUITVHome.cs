@@ -538,21 +538,9 @@ namespace MediaPortal.GUI.TV
         return;
       _updateTimer = DateTime.Now;
 
-      if ( ( Recorder.CommandProcessor != null ) && ( Recorder.CommandProcessor.IsBusy ) )
-      {
-        btnChannel.Disabled = true;
-        btnGroup.Disabled = true;
-        btnRecord.Disabled = true;
-        btnTvOnOff.Disabled = true;
+      // Don't update while busy - Will make it look bad!
+      if (Recorder.CommandProcessor.IsBusy)
         return;
-      }
-      else
-      {
-        btnChannel.Disabled = false;
-        btnGroup.Disabled = false;
-        btnRecord.Disabled = false;
-        btnTvOnOff.Disabled = false;
-      }
 
       // Let the navigator zap channel if needed
       Navigator.CheckChannelChange();
@@ -632,7 +620,7 @@ namespace MediaPortal.GUI.TV
           Navigator.UpdateCurrentChannel();
         }
       }
-      UpdateStateOfButtons();
+     // UpdateStateOfButtons();
     }
 
     /// <summary>
@@ -683,13 +671,6 @@ namespace MediaPortal.GUI.TV
           }
         }
       }
-    }
-
-    // updates the channel button so it shows the currently selected tv channel
-    void UpdateChannelButton()
-    {
-      btnTeletext.IsVisible = Recorder.HasTeletext();
-
     }
 
     void UpdateRecordingIndicator()
