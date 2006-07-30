@@ -41,6 +41,7 @@ using Direct3D = Microsoft.DirectX.Direct3D;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
 using MediaPortal.Utils.Services;
+using System.Threading;
 
 namespace MediaPortal.GUI.TV
 {
@@ -614,10 +615,7 @@ namespace MediaPortal.GUI.TV
           Navigator.UpdateCurrentChannel();
           Recorder.StopRecording();
 
-          // and re-start viewing.... 
-          _log.Info("tv home stoprecording chan:{0}", Navigator.CurrentChannel);
-          ViewChannel(Navigator.CurrentChannel);
-          Navigator.UpdateCurrentChannel();
+          // No need to  re-start viewing, because the recorder starts to play TS file
         }
       }
      // UpdateStateOfButtons();
@@ -856,57 +854,6 @@ namespace MediaPortal.GUI.TV
     static public void OnLastViewedChannel()
     {
       Navigator.ZapToLastViewedChannel();
-    }
-
-    /// <summary>
-    /// Returns true if the specified window belongs to the my tv plugin
-    /// </summary>
-    /// <param name="windowId">id of window</param>
-    /// <returns>
-    /// true: belongs to the my tv plugin
-    /// false: does not belong to the my tv plugin</returns>
-    static public bool IsTVWindow( int windowId )
-    {
-      if ( windowId == (int)GUIWindow.Window.WINDOW_TV )
-        return true;
-      if ( windowId == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN )
-        return true;
-      if ( windowId == (int)GUIWindow.Window.WINDOW_TVGUIDE )
-        return true;
-      if ( windowId == (int)GUIWindow.Window.WINDOW_RECORDEDTV )
-        return true;
-      if ( windowId == (int)GUIWindow.Window.WINDOW_RECORDEDTVCHANNEL )
-        return true;
-      if ( windowId == (int)GUIWindow.Window.WINDOW_RECORDEDTVGENRE )
-        return true;
-      if ( windowId == (int)GUIWindow.Window.WINDOW_SCHEDULER )
-        return true;
-      if ( windowId == (int)GUIWindow.Window.WINDOW_SEARCHTV )
-        return true;
-      if ( windowId == (int)GUIWindow.Window.WINDOW_TELETEXT )
-        return true;
-      if ( windowId == (int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT )
-        return true;
-      if ( windowId == (int)GUIWindow.Window.WINDOW_TV_SCHEDULER_PRIORITIES )
-        return true;
-      if ( windowId == (int)GUIWindow.Window.WINDOW_TV_CONFLICTS )
-        return true;
-      if ( windowId == (int)GUIWindow.Window.WINDOW_TV_COMPRESS_MAIN )
-        return true;
-      if ( windowId == (int)GUIWindow.Window.WINDOW_TV_COMPRESS_AUTO )
-        return true;
-      if ( windowId == (int)GUIWindow.Window.WINDOW_TV_COMPRESS_COMPRESS )
-        return true;
-      if ( windowId == (int)GUIWindow.Window.WINDOW_TV_COMPRESS_COMPRESS_STATUS )
-        return true;
-      if ( windowId == (int)GUIWindow.Window.WINDOW_TV_COMPRESS_SETTINGS )
-        return true;
-      if ( windowId == (int)GUIWindow.Window.WINDOW_TV_NO_SIGNAL )
-        return true;
-      if ( windowId == (int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO )
-        return true;
-
-      return false;
     }
 
     static public bool IsTVOn
