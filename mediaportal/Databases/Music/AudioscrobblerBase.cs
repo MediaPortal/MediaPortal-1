@@ -144,8 +144,8 @@ namespace MediaPortal.Music.Database
     #region Constants
     const int MAX_QUEUE_SIZE = 1000;
     const int HANDSHAKE_INTERVAL = 30;     //< In minutes.
-    const int CONNECT_WAIT_TIME = 2;      //< Min secs between connects.
-    const int SUBMIT_INTERVAL = 120;    //< Seconds.
+    const int CONNECT_WAIT_TIME = 5;      //< Min secs between connects.
+    const int SUBMIT_INTERVAL = 180;    //< Seconds.
     const string CLIENT_NAME = "ark";
     const string CLIENT_VERSION = "1.4";
     const string SCROBBLER_URL = "http://post.audioscrobbler.com";
@@ -427,13 +427,13 @@ namespace MediaPortal.Music.Database
       // Check whether we had a *successful* handshake recently.
       if (DateTime.Now < lastHandshake.Add(handshakeInterval))
       {
-        string nexthandshake = lastHandshake.Add(handshakeInterval).ToString();
-        string logmessage = "Next handshake due at " + nexthandshake;
-        Log.Write("AudioscrobblerBase.DoHandshake: {0}", logmessage);
+       // string nexthandshake = lastHandshake.Add(handshakeInterval).ToString();
+        //string logmessage = "Next handshake due at " + nexthandshake;
+        //Log.Write("AudioscrobblerBase.DoHandshake: {0}", logmessage);
         return true;
       }
 
-      Log.Write("AudioscrobblerBase.DoHandshake: {0}", "Attempting handshake");
+      //Log.Write("AudioscrobblerBase.DoHandshake: {0}", "Attempting handshake");
       string url = SCROBBLER_URL
                  + "?hs=true"
                  + "&p=" + PROTOCOL_VERSION
@@ -478,7 +478,7 @@ namespace MediaPortal.Music.Database
       if (DateTime.Now < nextconnect)
       {
         TimeSpan waittime = nextconnect - DateTime.Now;
-        string logmessage = "Connects too fast. Sleeping until "
+        string logmessage = "Avoiding too fast connects. Sleeping until "
                              + nextconnect.ToString();
         Log.Write("AudioscrobblerBase.GetResponse: {0}", logmessage);
         Thread.Sleep(waittime);
@@ -507,8 +507,8 @@ namespace MediaPortal.Music.Database
       // Attach POST data to the request, if any.
       if (postdata_ != "")
       {
-        Log.Write("AudioscrobblerBase.GetResponse: POST to {0}", url_);
-        Log.Write("AudioscrobblerBase.GetResponse: Data: {0}", postdata_);
+        //Log.Write("AudioscrobblerBase.GetResponse: POST to {0}", url_);
+        Log.Write("AudioscrobblerBase.GetResponse: Submitting data: {0}", postdata_);
         string logmessage = "Connecting to '" + url_ + "\nData: " + postdata_;
 
         // TODO: what is the illegal characters warning all about?
@@ -537,7 +537,7 @@ namespace MediaPortal.Music.Database
       }
 
       // Create the response object.
-      Log.Write("AudioscrobblerBase.GetResponse: {0}", "Waiting for response");
+      //Log.Write("AudioscrobblerBase.GetResponse: {0}", "Waiting for response");
       StreamReader reader = null;
       try
       {
@@ -643,7 +643,7 @@ namespace MediaPortal.Music.Database
       // If the queue is empty, nothing else to do today.
       if (queue.Count <= 0)
       {
-        Log.Write("AudioscrobblerBase.SubmitQueue: {0}", "Queue is empty");
+        //Log.Write("AudioscrobblerBase.SubmitQueue: {0}", "Queue is empty");
         return;
       }
 
@@ -689,7 +689,7 @@ namespace MediaPortal.Music.Database
         }
 
         // Send an event for each of the submitted songs.
-        Log.Write("AudioscrobblerBase.SubmitQueue: {0}", "Sending SubmitEvents");
+        //Log.Write("AudioscrobblerBase.SubmitQueue: {0}", "Sending SubmitEvents");
         foreach (Song song in songs)
         {
           song.AudioScrobblerStatus = SongStatus.Submitted;
@@ -804,25 +804,27 @@ namespace MediaPortal.Music.Database
 
     private bool parseOkMessage(string type_, StreamReader reader_)
     {
-      Log.Write("AudioscrobblerBase.parseOkMessage: {0}", "Called.");
+      Log.Write("AudioscrobblerBase.parseOkMessage: {0}", "Action successfully completed.");
       return true;
     }
 
     private bool parseFailedMessage(string type_, StreamReader reader_)
     {
-      Log.Write("AudioscrobblerBase.parseFailedMessage: {0}", "Called.");
+      //Log.Write("AudioscrobblerBase.parseFailedMessage: {0}", "Called.");
       string logmessage = "";
       if (type_.Length > 7)
         logmessage = "FAILED: " + type_.Substring(7);
       else
-        logmessage = "FAILED";
+        logmessage = "FAILED";      
       Log.Write("AudioscrobblerBase.parseFailedMessage: {0}", logmessage);
+      if (logmessage == "FAILED: Plugin bug: Not all request variables are set")
+        Log.Write("AudioscrobblerBase: A server error may have occured - {0}", "read: http://www.last.fm/forum/21713/_/116514");
       return false;
     }
 
     private bool parseBadUserMessage(string type_, StreamReader reader_)
     {
-      Log.Write("AudioscrobblerBase.parseBadUserMessage: {0}", "Called.");
+      Log.Write("AudioscrobblerBase.parseBadUserMessage: {0}", "PLEASE CHECK YOUR ACCOUNT CONFIG!");
       AuthErrorEventArgs args = new AuthErrorEventArgs();
       TriggerAuthErrorEvent(args);
       return true;

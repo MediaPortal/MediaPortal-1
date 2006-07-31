@@ -978,7 +978,8 @@ namespace MediaPortal.TV.Recording
             if (_tunerStatistics[i] != null)
             {
               while ((hr = Marshal.ReleaseComObject(_tunerStatistics[i])) > 0) ;
-              if (hr != 0) _log.Info("DVBGraphBDA:ReleaseComObject(tunerstat):{0}", hr);
+              if (hr != 0)
+                _log.Info("DVBGraphBDA:ReleaseComObject(tunerstat):{0}", hr);
               _tunerStatistics[i] = null;
             }
           }
@@ -1097,56 +1098,64 @@ namespace MediaPortal.TV.Recording
         {
           //_log.Info("free dvbanalyzer");
           while ((hr = Marshal.ReleaseComObject(_filterDvbAnalyzer)) > 0) ;
-          if (hr != 0) _log.Info("ReleaseComObject(_filterDvbAnalyzer):{0}", hr);
+          if (hr != 0)
+            _log.Info("ReleaseComObject(_filterDvbAnalyzer):{0}", hr);
           _filterDvbAnalyzer = null;
         }
         if (_filterCaptureDevice != null)
         {
           //_log.Info("free dvbanalyzer");
           while ((hr = Marshal.ReleaseComObject(_filterCaptureDevice)) > 0) ;
-          if (hr != 0) _log.Info("ReleaseComObject(_filterCaptureDevice):{0}", hr);
+          if (hr != 0)
+            _log.Info("ReleaseComObject(_filterCaptureDevice):{0}", hr);
           _filterCaptureDevice = null;
         }
         if (_filterMpeg2Demultiplexer != null)
         {
           //_log.Info("free dvbanalyzer");
           while ((hr = Marshal.ReleaseComObject(_filterMpeg2Demultiplexer)) > 0) ;
-          if (hr != 0) _log.Info("ReleaseComObject(_filterMpeg2Demultiplexer):{0}", hr);
+          if (hr != 0)
+            _log.Info("ReleaseComObject(_filterMpeg2Demultiplexer):{0}", hr);
           _filterMpeg2Demultiplexer = null;
         }
         if (_filterNetworkProvider != null)
         {
           //_log.Info("free dvbanalyzer");
           while ((hr = Marshal.ReleaseComObject(_filterNetworkProvider)) > 0) ;
-          if (hr != 0) _log.Info("ReleaseComObject(_filterNetworkProvider):{0}", hr);
+          if (hr != 0)
+            _log.Info("ReleaseComObject(_filterNetworkProvider):{0}", hr);
           _filterNetworkProvider = null;
         }
         if (_filterSampleGrabber != null)
         {
           //_log.Info("free dvbanalyzer");
           while ((hr = Marshal.ReleaseComObject(_filterSampleGrabber)) > 0) ;
-          if (hr != 0) _log.Info("ReleaseComObject(_filterSampleGrabber):{0}", hr);
+          if (hr != 0)
+            _log.Info("ReleaseComObject(_filterSampleGrabber):{0}", hr);
           _filterSampleGrabber = null;
         }
         if (_filterSmartTee != null)
         {
           //_log.Info("free dvbanalyzer");
           while ((hr = Marshal.ReleaseComObject(_filterSmartTee)) > 0) ;
-          if (hr != 0) _log.Info("ReleaseComObject(_filterSmartTee):{0}", hr);
+          if (hr != 0)
+            _log.Info("ReleaseComObject(_filterSmartTee):{0}", hr);
           _filterSmartTee = null;
         }
         if (_filterTIF != null)
         {
           //_log.Info("free dvbanalyzer");
           while ((hr = Marshal.ReleaseComObject(_filterTIF)) > 0) ;
-          if (hr != 0) _log.Info("ReleaseComObject(_filterTIF):{0}", hr);
+          if (hr != 0)
+            _log.Info("ReleaseComObject(_filterTIF):{0}", hr);
           _filterTIF = null;
         }
         if (_filterTunerDevice != null)
         {
           //_log.Info("free dvbanalyzer");
           while ((hr = Marshal.ReleaseComObject(_filterTunerDevice)) > 0) ;
-          if (hr != 0) _log.Info("ReleaseComObject(_filterTunerDevice):{0}", hr);
+          if (hr != 0)
+            _log.Info("ReleaseComObject(_filterTunerDevice):{0}", hr);
           _filterTunerDevice = null;
         }
 
@@ -1154,7 +1163,8 @@ namespace MediaPortal.TV.Recording
         {
           //_log.Info("free dvbanalyzer");
           while ((hr = Marshal.ReleaseComObject(m_mpeg2Analyzer)) > 0) ;
-          if (hr != 0) _log.Info("ReleaseComObject(m_mpeg2Analyzer):{0}", hr);
+          if (hr != 0)
+            _log.Info("ReleaseComObject(m_mpeg2Analyzer):{0}", hr);
           m_mpeg2Analyzer = null;
         }
 
