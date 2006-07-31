@@ -15,6 +15,7 @@
 		</control>
       		<control>
 			<type>button</type>
+						<description>cut</description>
       			<id>24</id>
       			<posX>56</posX>
          		<posY>107</posY>
@@ -29,12 +30,13 @@
         		<posX>56</posX>
          		<posY>137</posY>
          		<onup>24</onup>
-         		<ondown>24</ondown>
+         		<ondown>101</ondown>
 			<onright>100</onright>
          		<label>510</label>
       		</control>
 	   	<control>
 		   	<type>label</type>
+		   	<description>Title</description>
 		   	<posX>160</posX>
 		   	<posY>55</posY>
 			<align>left</align>
@@ -44,7 +46,7 @@
 		<control>
 			<description>scrolling info label</description> 
 			<type>fadelabel</type> 
-			<posX>210</posX> 
+			<posX>200</posX> 
 			<posY>55</posY>
 			<width>435</width>
 			<align>left</align>  
@@ -54,6 +56,7 @@
 		</control>
       		<control>
          		<type>label</type>
+						<description>old duration</description>
          		<id>26</id>
          		<posX>58</posX>
          		<posY>180</posY>
@@ -115,7 +118,7 @@
 		   	<type>button</type>
 		   	<description>Hinzufügen</description>
 		   	<id>28</id>
-		   	<posX>505</posX>
+		   	<posX>515</posX>
 		   	<posY>410</posY>
 		   	<width>120</width>
 			<height>28</height>
@@ -127,7 +130,7 @@
 	   	<control>
 		   	<type>label</type>
 		   	<label>Hinzufügen</label>
-		   	<posX>560</posX>
+		   	<posX>575</posX>
 		   	<posY>423</posY>
 			<align>center</align>
 		   	<label>2093</label>
@@ -136,9 +139,9 @@
 		   	<type>button</type>
 		   	<description>Start</description>
 		   	<id>29</id>
-		   	<posX>315</posX>
+		   	<posX>313</posX>
 		   	<posY>410</posY>
-		   	<width>80</width>
+		   	<width>94</width>
 			<height>28</height>
 		   	<onup>34</onup>
 			<ondown>29</ondown>
@@ -147,7 +150,8 @@
 	   	</control>
 	   	<control>
 		   	<type>label</type>
-		   	<posX>355</posX>
+		   	<label>Start</label>
+		   	<posX>358</posX>
 		   	<posY>423</posY>
 			<align>center</align>
 		   	<label>2084</label>
@@ -165,9 +169,9 @@
 		   	<type>button</type>
 		   	<description>Ende</description>
 		   	<id>30</id>
-		   	<posX>406</posX>
+		   	<posX>415</posX>
 		   	<posY>410</posY>
-		   	<width>90</width>
+		   	<width>94</width>
 			<height>28</height>
 		   	<onup>31</onup>
 			<ondown>30</ondown>
@@ -179,7 +183,7 @@
 	   	<control>
 		   	<type>label</type>
 		   	<label>End</label>
-		   	<posX>450</posX>
+		   	<posX>460</posX>
 		   	<posY>423</posY>
 			<align>center</align>
 		   	<label>2085</label>
@@ -256,10 +260,10 @@
 		   	<width>180</width>
 		   	<height>250</height>
 		   	<label>Schneideliste</label>
-		   	<onleft>26</onleft>
+		   	<onleft>100</onleft>
 		   	<onright>100</onright>
-		   	<onup>2</onup>
-		   	<ondown>2</ondown>
+		   	<onup>24</onup>
+		   	<ondown>24</ondown>
 			<font>font12</font>
 	   	</control>
 	   	<control>
@@ -293,35 +297,43 @@
 		   	<action>18</action>
 		   	<textureFocus>video_window_focus.png</textureFocus>
 	   	</control>
-      <control>
-        <type>label</type>
-        <id>102</id>
-        <posX>300</posX>
-        <posY>500</posY>
-      </control>
-      <control>
-        <type>statusbar</type>
-        <id>103</id>
-        <posX>300</posX>
-        <posY>520</posY>
-        <width>350</width>
-        <height>20</height>
-        <texturebg>statusbar_back.png</texturebg>
-        <midtexture>statusbar_mid.png</midtexture>
-        <lefttexture>statusbar_left.png</lefttexture>
-        <righttexture>statusbar_right.png</righttexture>
-      </control>
-      <control>
-        <type>progress</type>
-        <id>104</id>
-        <posX>100</posX>
-        <posY>530</posY>
-        <width>250</width>
-        <height>10</height>
-        <texturebg>progress_back.png</texturebg>
-        <midtexture>progress_mid.png</midtexture>
-        <lefttexture>statusbar_left.png</lefttexture>
-        <righttexture>statusbar_right.png</righttexture>
-      </control>
-   	</controls>
+      		<control>
+        		<type>label</type>
+        		<id>102</id>
+        		<posX>300</posX>
+        		<posY>500</posY>
+      		</control>
+      		<control>
+        		<type>statusbar</type>
+        		<id>103</id>
+        		<posX>300</posX>
+        		<posY>520</posY>
+        		<width>350</width>
+        		<height>20</height>
+        		<texturebg>statusbar_back.png</texturebg>
+        		<midtexture>statusbar_mid.png</midtexture>
+        		<lefttexture>statusbar_left.png</lefttexture>
+        		<righttexture>statusbar_right.png</righttexture>
+      		</control>
+      		<control>
+        		<type>progress</type>
+        		<id>104</id>
+        		<posX>300</posX>
+        		<posY>520</posY>
+            <width>350</width>
+        		<texturebg>progress_back.png</texturebg>
+        		<midtexture>osd_progress_mid.png</midtexture>
+        		<lefttexture>osd_progress_left.png</lefttexture>
+        		<righttexture>osd_progress_right.png</righttexture>
+      		</control>
+			<control>
+				<type>label</type>
+				<description>edit cutpoint</description>
+				<id>105</id>
+				<posX>300</posX>
+				<posY>500</posY>
+				<align>left</align>
+				<label>2075</label>
+			</control>
+   		</controls>
 </window>
