@@ -4205,6 +4205,76 @@
       <id>2225</id>
       <value>Verzeichnis angelegt!</value>
    </string>
+	<!-- Wikipedia Strings -->
+	<string>
+		<id>2500</id>
+		<value>Kein Suchbegriff eingegeben!</value>
+	</string>
+	<string>
+		<id>2501</id>
+		<value>Bitte einen Suchbegriff eingeben!</value>
+	</string>
+	<string>
+		<id>2502</id>
+		<value>Lokalisierte Wikipedia wählen:</value>
+	</string>
+	<string>
+		<id>2503</id>
+		<value>Gewählte Wikipedia:</value>
+	</string>
+	<string>
+		<id>2504</id>
+		<value>Sorry, leider keine Artikel für diesen Suchbegriff gefunden...</value>
+	</string>
+	<string>
+		<id>2505</id>
+		<value>Links zu anderen Artikeln:</value>
+	</string>
+	<string>
+		<id>2506</id>
+		<value>Keine Links von aus diesem Artikel.</value>
+	</string>
+	<string>
+		<id>2507</id>
+		<value>Bilder aus diesem Artikel:</value>
+	</string>
+	<string>
+		<id>2508</id>
+		<value>Keine Bilder in diesem Artikel vorhanden.</value>
+	</string>
+	<string>
+		<id>2509</id>
+		<value>Dies ist nur eine Weiterleitung.</value>
+	</string>
+	<string>
+		<id>2510</id>
+		<value>Bitte ein Weiterleitungsziel aus der Linkliste wählen.</value>
+	</string>
+	<string>
+		<id>2600</id>
+		<value>Englisch</value>
+	</string>
+	<string>
+		<id>2601</id>
+		<value>Deutsch</value>
+	</string>
+	<string>
+		<id>2602</id>
+		<value>Französisch</value>
+	</string>
+	<string>
+		<id>2603</id>
+		<value>Holländisch</value>
+	</string>
+	<string>
+		<id>2604</id>
+		<value>Norwegisch</value>
+	</string>
+	<string>
+		<id>2605</id>
+		<value>Schwedisch</value>
+	</string>
+	<!-- End of Wikipedia Strings -->
    <string>
       <id>2997</id>
       <value>Std</value>

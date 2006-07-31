@@ -931,6 +931,8 @@
     <Compile Include="GUIWeather\GUIWindowWeather.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="GUIWikipedia\GUIWikipedia.cs" />
+    <Compile Include="GUIWikipedia\WikipediaArticle.cs" />
     <Compile Include="GUIX10\ApplianceConfiguration.cs">
       <SubType>Code</SubType>
     </Compile>

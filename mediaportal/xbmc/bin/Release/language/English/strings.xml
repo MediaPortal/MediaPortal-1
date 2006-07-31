@@ -4205,6 +4205,76 @@
       <id>2225</id>
       <value>Folder created</value>
    </string>
+	<!-- Wikipedia Strings -->
+	<string>
+		<id>2500</id>
+		<value>No searchterm entered!</value>
+	</string>
+	<string>
+		<id>2501</id>
+		<value>Please enter a valid searchterm!</value>
+	</string>
+	<string>
+		<id>2502</id>
+		<value>Select your local Wikipedia:</value>
+	</string>
+	<string>
+		<id>2503</id>
+		<value>Selected Wikipedia:</value>
+	</string>
+	<string>
+		<id>2504</id>
+		<value>Sorry, no Article was found for your searchterm...</value>
+	</string>
+	<string>
+		<id>2505</id>
+		<value>Links to other articles:</value>
+	</string>
+	<string>
+		<id>2506</id>
+		<value>No Links from this article.</value>
+	</string>
+	<string>
+		<id>2507</id>
+		<value>Images from this article:</value>
+	</string>
+	<string>
+		<id>2508</id>
+		<value>No Images referenced in this article.</value>
+	</string>
+	<string>
+		<id>2509</id>
+		<value>This page is only a redirect.</value>
+	</string>
+	<string>
+		<id>2510</id>
+		<value>Please chose the redirect aim from the link list.</value>
+	</string>
+	<string>
+		<id>2600</id>
+		<value>English</value>
+	</string>
+	<string>
+		<id>2601</id>
+		<value>German</value>
+	</string>
+	<string>
+		<id>2602</id>
+		<value>French</value>
+	</string>
+	<string>
+		<id>2603</id>
+		<value>Dutch</value>
+	</string>
+	<string>
+		<id>2604</id>
+		<value>Norwegian</value>
+	</string>
+	<string>
+		<id>2605</id>
+		<value>Swedish</value>
+	</string>
+	<!-- End of Wikipedia Strings -->
    <string>
       <id>2997</id>
       <value>h</value>
