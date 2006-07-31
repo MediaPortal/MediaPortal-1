@@ -3849,6 +3849,30 @@
       <id>2054</id>
       <value>No Entry!</value>
    </string>
+	<string>
+		<id>2074</id>
+		<value>Please, choose the files you would like to join:</value>
+	</string>
+	<string>
+		<id>2075</id>
+		<value>Define the new cutpoints</value>
+	</string>
+	<string>
+		<id>2076</id>
+		<value>Edit</value>
+	</string>
+	<string>
+		<id>2077</id>
+		<value>Cut</value>
+	</string>
+	<string>
+		<id>2078</id>
+		<value>Join</value>
+	</string>
+	<string>
+		<id>2079</id>
+		<value>Start Joining</value>
+	</string>
    <string>
       <id>2080</id>
       <value>Unsupported filetype</value>

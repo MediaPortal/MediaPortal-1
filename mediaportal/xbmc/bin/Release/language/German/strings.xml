@@ -3849,6 +3849,30 @@
       <id>2054</id>
       <value>Kein Eintrag!</value>
    </string>
+	<string>
+		<id>2074</id>
+		<value>Welche Dateien sollen zusammengefügt werden:</value>
+	</string>
+	<string>
+		<id>2075</id>
+		<value>Gebe die neuen Schnittpunkte an</value>
+	</string>
+	<string>
+		<id>2076</id>
+		<value>Bearbeiten</value>
+	</string>
+	<string>
+		<id>2077</id>
+		<value>Schneiden</value>
+	</string>
+	<string>
+		<id>2078</id>
+		<value>Zusammenfügen</value>
+	</string>
+	<string>
+		<id>2079</id>
+		<value>Jetzt zusammenfügen</value>
+	</string>
    <string>
       <id>2080</id>
       <value>Video-Typ wird nicht unterstützt</value>
