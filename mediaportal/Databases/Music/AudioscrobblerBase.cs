@@ -145,9 +145,9 @@ namespace MediaPortal.Music.Database
     const int MAX_QUEUE_SIZE = 1000;
     const int HANDSHAKE_INTERVAL = 30;     //< In minutes.
     const int CONNECT_WAIT_TIME = 5;      //< Min secs between connects.
-    const int SUBMIT_INTERVAL = 180;    //< Seconds.
-    const string CLIENT_NAME = "ark";
-    const string CLIENT_VERSION = "1.4";
+    int SUBMIT_INTERVAL = 30;    //< Seconds.
+    const string CLIENT_NAME = "tst";
+    const string CLIENT_VERSION = "1.0";
     const string SCROBBLER_URL = "http://post.audioscrobbler.com";
     const string PROTOCOL_VERSION = "1.1";
     const string CACHEFILE_NAME = "audioscrobbler-cache.txt";
@@ -166,6 +166,7 @@ namespace MediaPortal.Music.Database
     private Object queueLock;
     //    private EventQueue          eventQueue;
     private Object submitLock;
+    private int _antiHammerCount = 0;
     private DateTime lastHandshake;        //< last successful attempt.
     private TimeSpan handshakeInterval;
     private DateTime lastConnectAttempt;
@@ -319,7 +320,7 @@ namespace MediaPortal.Music.Database
     public void pushQueue(Song song_)
     {
       string logmessage = "Adding to queue: " + song_.ToShortString();
-      Log.Write("AudioscrobblerBase.pushQueue: {0}", logmessage);
+      Log.Write("AudioscrobblerBase: {0}", logmessage);
 
       // Enqueue the song.
       song_.AudioScrobblerStatus = SongStatus.Cached;
@@ -336,7 +337,7 @@ namespace MediaPortal.Music.Database
       // Reset the submit timer.
       submitTimer.Close();
       InitSubmitTimer();
-      Log.Write("AudioscrobblerBase.pushQueue: {0}", "Finish");
+      //Log.Write("AudioscrobblerBase.pushQueue: {0}", "Finish");
     }
 
 
@@ -358,7 +359,7 @@ namespace MediaPortal.Music.Database
     public void TriggerAuthErrorEvent(AuthErrorEventArgs args_)
     {
       //Disconnect();
-      //Log.Write("AudioscrobblerBase.TriggerAuthErrorEvent: {0}", "Start");
+      Log.Write("AudioscrobblerBase.TriggerAuthErrorEvent: {0}", "username or password not set");
       //if (AuthErrorEvent != null)
       //  AuthErrorEvent(args_);
       //if (AuthErrorEventLazy == null)
@@ -446,8 +447,8 @@ namespace MediaPortal.Music.Database
 
       if (!success)
       {
-        Log.Write("AudioscrobblerBase.DoHandshake: {0}", "Handshake failed");
-        TriggerAuthErrorEvent(new AuthErrorEventArgs());
+        Log.Write("AudioscrobblerBase: {0}", "Handshake failed");
+        //TriggerAuthErrorEvent(new AuthErrorEventArgs());
         return false;
       }
 
@@ -459,7 +460,7 @@ namespace MediaPortal.Music.Database
       }
 
       lastHandshake = DateTime.Now;
-      Log.Write("AudioscrobblerBase.DoHandshake: {0}", "Handshake successful");
+      Log.Write("AudioscrobblerBase: {0}", "Handshake successful");
       return true;
     }
     
@@ -480,7 +481,7 @@ namespace MediaPortal.Music.Database
         TimeSpan waittime = nextconnect - DateTime.Now;
         string logmessage = "Avoiding too fast connects. Sleeping until "
                              + nextconnect.ToString();
-        Log.Write("AudioscrobblerBase.GetResponse: {0}", logmessage);
+        Log.Write("AudioscrobblerBase: {0}", logmessage);
         Thread.Sleep(waittime);
       }
       lastConnectAttempt = DateTime.Now;
@@ -508,7 +509,7 @@ namespace MediaPortal.Music.Database
       if (postdata_ != "")
       {
         //Log.Write("AudioscrobblerBase.GetResponse: POST to {0}", url_);
-        Log.Write("AudioscrobblerBase.GetResponse: Submitting data: {0}", postdata_);
+        Log.Write("AudioscrobblerBase: Submitting data: {0}", postdata_);
         string logmessage = "Connecting to '" + url_ + "\nData: " + postdata_;
 
         // TODO: what is the illegal characters warning all about?
@@ -565,7 +566,7 @@ namespace MediaPortal.Music.Database
        * FAILED
        * BADUSER / BADAUTH
        */
-      Log.Write("AudioscrobblerBase.GetResponse: {0}", "Response received");
+      Log.Write("AudioscrobblerBase: {0}", "Response received");
       string respType = reader.ReadLine();
       if (respType == null)
       {
@@ -580,22 +581,27 @@ namespace MediaPortal.Music.Database
       // Parse the response.
       bool success = false;
       bool parse_success = false;
+
       if (respType.StartsWith("UPTODATE"))
         success = parse_success = parseUpToDateMessage(respType, reader);
       else if (respType.StartsWith("UPDATE"))
-        Log.Write("AudioscrobblerBase.GetResponse: {0}", "UPDATE needed!");
+        Log.Write("AudioscrobblerBase: {0}", "UPDATE needed!");
       else if (respType.StartsWith("OK"))
         success = parse_success = parseOkMessage(respType, reader);
       else if (respType.StartsWith("FAILED"))
-        parse_success = parseFailedMessage(respType, reader);
-      else if (respType.StartsWith("BADUSER") ||
-               respType.StartsWith("BADAUTH"))
-        parse_success = parseBadUserMessage(respType, reader);
+        success = parse_success = parseFailedMessage(respType, reader);
+      else if (respType.StartsWith("BADUSER") || respType.StartsWith("BADAUTH"))
+        parse_success = parseBadUserMessage(respType, reader);      
       else
       {
         string logmessage = "** CRITICAL ** Unknown response " + respType;
-        Log.Write("AudioscrobblerBase.GetResponse: {0}", logmessage);
+        Log.Write("AudioscrobblerBase: {0}", logmessage);
       }
+
+      // read next line to look for an interval
+      while ((respType = reader.ReadLine()) != null)
+        if (respType.StartsWith("INTERVAL"))
+          parse_success = parseIntervalMessage(respType, reader);
 
       if (!parse_success)
       {
@@ -636,7 +642,7 @@ namespace MediaPortal.Music.Database
       // Make sure that a connection is possible.
       if (!DoHandshake())
       {
-        Log.Write("AudioscrobblerBase.SubmitQueue: {0}", "Handshake failed.");
+        Log.Write("AudioscrobblerBase: {0}", "Handshake failed.");
         return;
       }
 
@@ -677,7 +683,7 @@ namespace MediaPortal.Music.Database
         // Submit or die.
         if (!GetResponse(submitUrl, postData))
         {
-          Log.Write("AudioscrobblerBase.SubmitQueue: {0}", "Submit failed.");
+          Log.Write("AudioscrobblerBase: {0}", "Submit failed.");
           return;
         }
 
@@ -785,8 +791,7 @@ namespace MediaPortal.Music.Database
 
     #region Audioscrobbler response parsers.
     private bool parseUpToDateMessage(string type_, StreamReader reader_)
-    {
-      Log.Write("AudioscrobblerBase.parseUpToDateMessage: {0}", "Called.");
+    {      
       try
       {
         md5challenge = reader_.ReadLine().Trim();
@@ -799,12 +804,13 @@ namespace MediaPortal.Music.Database
         md5challenge = "";
         return false;
       }
+      Log.Write("AudioscrobblerBase: {0}", "Your client is up to date.");
       return true;
     }
 
     private bool parseOkMessage(string type_, StreamReader reader_)
     {
-      Log.Write("AudioscrobblerBase.parseOkMessage: {0}", "Action successfully completed.");
+      Log.Write("AudioscrobblerBase: {0}", "Action successfully completed.");
       return true;
     }
 
@@ -816,17 +822,38 @@ namespace MediaPortal.Music.Database
         logmessage = "FAILED: " + type_.Substring(7);
       else
         logmessage = "FAILED";      
-      Log.Write("AudioscrobblerBase.parseFailedMessage: {0}", logmessage);
+      Log.Write("AudioscrobblerBase: {0}", logmessage);
       if (logmessage == "FAILED: Plugin bug: Not all request variables are set")
-        Log.Write("AudioscrobblerBase: A server error may have occured - {0}", "read: http://www.last.fm/forum/21713/_/116514");
+        Log.Write("AudioscrobblerBase: A server error may have occured / if you receive this often a proxy may truncate your request - {0}", "read: http://www.last.fm/forum/24/_/74505/1#f808273");
       return false;
     }
 
     private bool parseBadUserMessage(string type_, StreamReader reader_)
     {
-      Log.Write("AudioscrobblerBase.parseBadUserMessage: {0}", "PLEASE CHECK YOUR ACCOUNT CONFIG!");
+      Log.Write("AudioscrobblerBase: {0}", "PLEASE CHECK YOUR ACCOUNT CONFIG! - re-trying handshake now");
       AuthErrorEventArgs args = new AuthErrorEventArgs();
-      TriggerAuthErrorEvent(args);
+      if (_antiHammerCount < 5)
+      {
+        DoHandshake();
+        _antiHammerCount += 1;
+      }
+      //TriggerAuthErrorEvent(args);
+      return true;
+    }
+
+    private bool parseIntervalMessage(string type_, StreamReader reader_)
+    {
+      string logmessage = "";
+      if (type_.Length > 9)
+      {
+        int newInterval = Convert.ToInt32(type_.Substring(9));
+        logmessage = "last.fm's servers currently allow an interval of: " + Convert.ToString(newInterval) + " sec";
+        if (newInterval > 30)
+          SUBMIT_INTERVAL = newInterval;
+      }
+      else
+        logmessage = "INTERVAL";
+      Log.Write("AudioscrobblerBase: {0}", logmessage);
       return true;
     }
     #endregion
@@ -841,7 +868,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception e)
       {
-        Log.Write("AudioscrobblerBase.LoadQueue: Unable to open cache file: {0}", e.Message);
+        Log.Write("AudioscrobblerBase: Unable to open cache file: {0}", e.Message);
         return false;
       }
 
@@ -869,13 +896,13 @@ namespace MediaPortal.Music.Database
           }
           catch (Exception e)
           {
-            Log.Write("AudioscrobblerBase.LoadQueue: Unable to parse the cached song: : {0}", line);
-            Log.Write("AudioscrobblerBase.LoadQueue: Unable to parse the cached song: : {0}", e.Message);
+            Log.Write("AudioscrobblerBase: Unable to parse the cached song: : {0}", line);
+            Log.Write("AudioscrobblerBase: Unable to parse the cached song: : {0}", e.Message);
           }
         }
       }
       file.Close();
-      Log.Write("AudioscrobblerBase.LoadQueue: Songs loaded from cache: {0}", queue.Count);
+      Log.Write("AudioscrobblerBase: Songs loaded from cache: {0}", queue.Count);
 
       return true;
     }
@@ -890,7 +917,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception e)
       {
-        Log.Write("AudioscrobblerBase.SaveQueue: Unable to open queue file: {0}", e.Message);
+        Log.Write("AudioscrobblerBase: Unable to open queue file: {0}", e.Message);
         return;
       }
 
@@ -906,7 +933,7 @@ namespace MediaPortal.Music.Database
           }
           catch (IOException e)
           {
-            Log.Write("AudioscrobblerBase.SaveQueue: Failed to write queue to file: {0}", e.Message);
+            Log.Write("AudioscrobblerBase: Failed to write queue to file: {0}", e.Message);
           }
         }
       }

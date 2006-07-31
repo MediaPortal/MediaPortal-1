@@ -329,8 +329,8 @@ namespace MediaPortal.Audioscrobbler
       else
         SongCheckTimer.Stop();
     }
-    
-    // Logic about when we should submit a song to Audioscrobbler
+
+    // Logic about when we should submit a song to Audioscrobbler - http://www.audioscrobbler.net/wiki/Protocol1.1   
     private int GetAlertTime()
     {
       if (currentSong.Duration > MAX_DURATION) {
