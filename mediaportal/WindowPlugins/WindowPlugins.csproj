@@ -282,8 +282,10 @@
     </Compile>
     <Compile Include="DvrMpegCut\DvrMpegCutMPSetup.cs" />
     <Compile Include="DvrMpegCut\DvrMpegCutPreview.cs" />
+    <Compile Include="DvrMpegCut\DvrMsModifier.cs" />
     <Compile Include="DvrMpegCut\GUIDvrMpegCutMP.cs" />
     <Compile Include="DvrMpegCut\Mpeg2Splitter.cs" />
+    <Compile Include="DvrMpegCut\TimeDomain.cs" />
     <Compile Include="GUIAlarm\Alarm.cs">
       <SubType>Code</SubType>
     </Compile>
