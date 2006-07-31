@@ -10102,9 +10102,9 @@
         <filter cat="tvaudio"		  name="ProVideo TV Audio (Proteus)"              checkdevice="true"/>
         <filter cat="crossbar"		name="ProVideo Crossbar (Proteus)"              checkdevice="true"/>
         <filter cat="capture"		  name="ProVideo Proteus (7134)WDM Video Capture"	checkdevice="true"/>
-        <filter cat="videncoder"	name="CyberLink MPEG Video Encoder"             checkdevice="false"/>
-        <filter cat="audencoder"	name="CyberLink MPEG Audio Encoder"		          checkdevice="false"/>
-        <filter cat="mux"			    name="CyberLink MPEG Muxer"                     checkdevice="false"/>
+        <filter cat="videncoder"	name="%videoencoder%"                           checkdevice="false"/>
+        <filter cat="audencoder"	name="%audioencoder%"                           checkdevice="false"/>
+        <filter cat="mux"			    name="%mpegmux%"                                checkdevice="false"/>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
@@ -10114,8 +10114,8 @@
         <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"/>
         <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
         <connection sourcefilter="capture"		sourcepin="3" sinkfilter="audencoder"	sinkpin="0"/>
-        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
-        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
       </connections>
     </tv>
   </capturecard>
@@ -14168,11 +14168,11 @@
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"  name="NVIDIA DualTV Tuner"				checkdevice="true"/>
-        <filter cat="tvaudio"  name="NVIDIA DualTV TVAudio"			checkdevice="true"/>
-        <filter cat="crossbar" name="NVIDIA DualTV CrossBar"		checkdevice="true"/>
-        <filter cat="capture"  name="NVIDIA DualTV YUV Capture" checkdevice="true"/>
-        <filter cat="encoder"  name="NVIDIA DualTV Encoder"			checkdevice="true"/>
+        <filter cat="tvtuner"  name="NVIDIA DualTV Tuner"     checkdevice="true"/>
+        <filter cat="tvaudio"  name="NVIDIA DualTV TVAudio"		checkdevice="true"/>
+        <filter cat="crossbar" name="NVIDIA DualTV CrossBar"	checkdevice="true"/>
+        <filter cat="capture"  name="NVIDIA DualTV Capture"   checkdevice="true"/>
+        <filter cat="encoder"  name="NVIDIA DualTV Encoder"		checkdevice="true"/>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%tvtuner%"/>
@@ -14191,11 +14191,11 @@
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"  name="NVIDIA DualTV Tuner 2"				checkdevice="true"/>
-        <filter cat="tvaudio"  name="NVIDIA DualTV TVAudio 2"			checkdevice="true"/>
-        <filter cat="crossbar" name="NVIDIA DualTV CrossBar 2"		checkdevice="true"/>
-        <filter cat="capture"  name="NVIDIA DualTV YUV Capture 2" checkdevice="true"/>
-        <filter cat="encoder"  name="NVIDIA DualTV Encoder 2"			checkdevice="true"/>
+        <filter cat="tvtuner"  name="NVIDIA DualTV Tuner 2"     checkdevice="true"/>
+        <filter cat="tvaudio"  name="NVIDIA DualTV TVAudio 2"		checkdevice="true"/>
+        <filter cat="crossbar" name="NVIDIA DualTV CrossBar 2"	checkdevice="true"/>
+        <filter cat="capture"  name="NVIDIA DualTV Capture 2"   checkdevice="true"/>
+        <filter cat="encoder"  name="NVIDIA DualTV Encoder 2"		checkdevice="true"/>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%tvtuner%"/>
@@ -14385,6 +14385,59 @@
         <connection sourcefilter="capture"    sourcepin="2" sinkfilter="audencoder" sinkpin="1"/>
         <connection sourcefilter="videncoder" sourcepin="0" sinkfilter="mux"        sinkpin="0"/>
         <connection sourcefilter="audencoder" sourcepin="1" sinkfilter="mux"        sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="LifeView FlyVideo 3000" capturename="LifeView FlyVideo WDM Video Capture" devid="ven_1131&amp;dev_7134&amp;subsys_01385168&amp;rev_01">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		  name="LifeView FlyVideo Philips TV Tuner"   checkdevice="true"/>
+        <filter cat="tvaudio"		  name="LifeView FlyVideo TV Audio"			      checkdevice="true"/>
+        <filter cat="crossbar"    name="LifeView FlyVideo Crossbar"			      checkdevice="true"/>
+        <filter cat="capture"     name="LifeView FlyVideo WDM Video Capture"  checkdevice="true"/>
+        <filter cat="videncoder"	name="%videoencoder%"					              checkdevice="false"/>
+        <filter cat="audencoder"	name="%audioencoder%"					              checkdevice="false"/>
+        <filter cat="mux"         name="%mpegmux%"						                checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="3" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="VideoHome TVChamp 713X" capturename="TVChamp" devid="ven_1131&amp;dev_7130&amp;subsys_20011131&amp;rev_01">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		  name="PhTVTune PAL BG"            checkdevice="true"/>
+        <filter cat="crossbar"    name="Cap7130 Crossbar (Proteus)"	checkdevice="true"/>
+        <filter cat="capture"     name="TVChamp"                    checkdevice="true"/>
+        <filter cat="audcapture"	name="%soundcard%"  					    checkdevice="false"/>
+        <filter cat="videncoder"	name="%videoencoder%"					    checkdevice="false"/>
+        <filter cat="audencoder"	name="%audioencoder%"					    checkdevice="false"/>
+        <filter cat="mux"         name="%mpegmux%"						      checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="0"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="crossbar"		sinkpin="3"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
       </connections>
     </tv>
   </capturecard>

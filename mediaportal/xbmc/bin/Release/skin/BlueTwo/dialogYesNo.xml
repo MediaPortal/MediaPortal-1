@@ -68,7 +68,7 @@
       <id>10</id>
       <posX>400</posX>
       <posY>350</posY>
-      <textXOff>38</textXOff>
+      <textXOff>30</textXOff>
       <textYOff>7</textYOff>
       <width>105</width>
       <height>38</height>
@@ -86,7 +86,7 @@
       <id>11</id>
       <posX>260</posX>
       <posY>350</posY>
-      <textXOff>34</textXOff>
+      <textXOff>32</textXOff>
       <textYOff>7</textYOff>
       <width>105</width>
       <height>38</height>

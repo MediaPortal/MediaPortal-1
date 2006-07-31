@@ -90,7 +90,7 @@
 		<id>10</id> 
 		<posX>660</posX> 
 		<posY>440</posY> 
-		<textXOff>105</textXOff>
+		<textXOff>85</textXOff>
 		<textYOff>20</textYOff>  
 		<width>240</width> 
 		<height>76</height>
@@ -110,7 +110,7 @@
 		<id>11</id> 
 		<posX>375</posX> 
 		<posY>440</posY>
-		<textXOff>115</textXOff>
+		<textXOff>90</textXOff>
 		<textYOff>20</textYOff>     
 		<width>249</width> 
 		<height>76</height>
