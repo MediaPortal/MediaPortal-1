@@ -28,7 +28,7 @@ using MediaPortal.Player;
 using MediaPortal.Util;
 using DirectShowLib.SBE;
 
-namespace DvrMpegCutMP
+namespace WindowPlugins.DvrMpegCut
 {
 	public class GUIDvrMpegCutMP : GUIWindow
 	{
@@ -36,6 +36,8 @@ namespace DvrMpegCutMP
 		
 
 		#region GUIControls
+		[SkinControlAttribute(23)]
+		protected GUILabelControl titelLbl = null;
 		[SkinControlAttribute(24)]
 		protected GUIButtonControl backBtn = null;
 		//[SkinControlAttribute(25)]
@@ -46,8 +48,14 @@ namespace DvrMpegCutMP
 		protected GUILabelControl oldDurationLbl = null;
 		[SkinControlAttribute(101)]
 		protected GUIListControl videoListLct = null;
+    [SkinControlAttribute(102)]
+    protected GUISpinControl joinCutSpinCtrl = null;
 		[SkinControlAttribute(99)]
 		protected GUIVideoControl videoWindow = null;
+    [SkinControlAttribute(103)]
+    protected GUIListControl joinListCtrl = null;
+    [SkinControlAttribute(104)]
+    protected GUIButtonControl startJoinBtn = null;
 		#endregion
 
 		#region Own Variables
@@ -59,6 +67,7 @@ namespace DvrMpegCutMP
     VirtualDirectory directory = new VirtualDirectory();
 		ArrayList extensions;
 		DvrMpegCutPreview cutScr;
+		List<System.IO.FileInfo> joiningList;
 		#endregion
 
 		public GUIDvrMpegCutMP()
@@ -104,6 +113,15 @@ namespace DvrMpegCutMP
 				extensions.Add(".mpg");
 				videoListLct.Clear();
 				videoListLct.UpdateLayout();
+        startJoinBtn.IsEnabled = false;
+        joinListCtrl.IsVisible = false;
+				if (joinCutSpinCtrl.GetLabel() == "Zusammenfügen")
+				{
+					joinListCtrl.IsVisible = true;
+					startJoinBtn.IsEnabled = true;
+					titelLbl.Label = GUILocalizeStrings.Get(2074);
+				}
+				joiningList = new List<System.IO.FileInfo>();
         LoadShares();
 				LoadDrives();
 			}
@@ -135,7 +153,14 @@ namespace DvrMpegCutMP
 				//System.Windows.Forms.MessageBox.Show(item.Path);
 				if (!item.IsFolder)
 				{
-					ToCutScreen(item.Path);
+					if (joinCutSpinCtrl.GetLabel() == GUILocalizeStrings.Get(2077))	//Cut
+					  ToCutScreen(item.Path);
+					if (joinCutSpinCtrl.GetLabel() == GUILocalizeStrings.Get(2078))	//join
+          {
+						joiningList.Add(new System.IO.FileInfo(item.Path));
+             // joinListCtrl.Add(new GUIListItem(item.Path));
+						LoadJoinList();		
+          }
 				}
 
 				else if (item.Label.Substring(1, 1) == ":")  // is a drive
@@ -155,7 +180,44 @@ namespace DvrMpegCutMP
 					LoadDrives();
 				}
 			}
+
+      if (control == joinCutSpinCtrl)
+      {
+        if (joinCutSpinCtrl.GetLabel() == GUILocalizeStrings.Get(2078))		//join
+        {
+          joinListCtrl.IsVisible = true;
+          startJoinBtn.IsEnabled = true;
+					titelLbl.Label = GUILocalizeStrings.Get(2074);
+        }
+        if(joinCutSpinCtrl.GetLabel() == GUILocalizeStrings.Get(2077))		//cut
+        {
+          joinListCtrl.IsVisible = false;
+          startJoinBtn.IsEnabled = false;
+					titelLbl.Label = GUILocalizeStrings.Get(2092);
+        }
+      }
+
+      if (control == startJoinBtn)
+      {
+        DvrMsModifier mod = new DvrMsModifier();
+				if (joiningList[0] != null && joiningList[1] != null)
+					mod.JoinDvr(joiningList);
+				//else
+					//System.Windows.Forms.MessageBox.Show("keineDatei");
+      }
+
+
+      //System.Windows.Forms.MessageBox.Show(controlId.ToString() + "::" + control.Name + "::" + actionType.ToString());
 			base.OnClicked(controlId, control, actionType);
+		}
+
+		private void LoadJoinList()
+		{
+			joinListCtrl.Clear();
+			foreach (System.IO.FileInfo file in joiningList)
+			{
+				joinListCtrl.Add(new GUIListItem(file.FullName));
+			}
 		}
 
 		#endregion
@@ -270,6 +332,26 @@ namespace DvrMpegCutMP
 				_log.Error("DvrMpegCut: (LoadListControl) "+ ex.Message);
 			}
 		}
+
+    protected override void OnShowContextMenu()
+    {
+      GUIListItem selected =  joinListCtrl.SelectedListItem;
+      if (selected == null) return;
+      else
+      {
+       /* GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+        if (dlg == null) return;
+        dlg.Reset();
+        dlg.SetHeading(924); // menu
+        dlg.Add("Löschen");
+        dlg.DoModal(GetID);
+        if (dlg.SelectedId == -1) return;*/
+				joiningList.RemoveAt(joinListCtrl.SelectedListItemIndex);
+				LoadJoinList();
+        //joinListCtrl.RemoveSubItem(joinListCtrl.SelectedListItemIndex);//joinListCtrl.SelectedListItem.);//SelectedLabelText);
+				//System.Windows.Forms.MessageBox.Show(selected.Label + "::" + joinListCtrl.SelectedItem.ToString() + "::" + joinListCtrl.SelectedListItemIndex.ToString());
+      }
+    }
 
     private void LoadShares()
     {
