@@ -79,6 +79,7 @@
     <Compile Include="Interfaces\Analyzer\IStreamAnalyzer.cs" />
     <Compile Include="Interfaces\Analyzer\ITsChannelScan.cs" />
     <Compile Include="Interfaces\Analyzer\ITsEpgScanner.cs" />
+    <Compile Include="Interfaces\Analyzer\ITsPmtGrabber.cs" />
     <Compile Include="Interfaces\Analyzer\ITsVideoAnalyzer.cs" />
     <Compile Include="Interfaces\TsFileSink\ITsFileSink.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

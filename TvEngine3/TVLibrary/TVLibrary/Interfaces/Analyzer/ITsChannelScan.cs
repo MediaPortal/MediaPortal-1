@@ -11,7 +11,10 @@ namespace TvLibrary.Interfaces.Analyzer
   public interface ITsChannelScan
   {
     [PreserveSig]
-    int Reset();
+    int Start();
+
+    [PreserveSig]
+    int Stop();
 
     [PreserveSig]
     int GetCount(out short channelCount);

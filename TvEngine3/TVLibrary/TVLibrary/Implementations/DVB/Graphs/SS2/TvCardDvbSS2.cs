@@ -87,6 +87,7 @@ namespace TvLibrary.Implementations.DVB
     protected bool _hasTeletext = false;
     protected ITsEpgScanner _interfaceEpgGrabber;
     protected ITsChannelScan _interfaceChannelScan;
+    protected ITsPmtGrabber _interfacePmtGrabber;
     protected IStreamAnalyzer _streamAnalyzer;
     protected bool _graphRunning;
     protected bool _epgGrabbing;
@@ -890,6 +891,7 @@ namespace TvLibrary.Implementations.DVB
         Release.ComObject("pinTee", pinTee);
         _interfaceChannelScan = (ITsChannelScan)_filterTsAnalyzer;
         _interfaceEpgGrabber = (ITsEpgScanner)_filterAnalyzer;
+        _interfacePmtGrabber = (ITsPmtGrabber)_filterTsAnalyzer;
       }
     }
 
@@ -1191,13 +1193,13 @@ namespace TvLibrary.Implementations.DVB
           }
         }
 
-        _streamAnalyzer.SetPMTCallback(this);
+        _interfacePmtGrabber.SetCallBack(this);
         _streamAnalyzer.ResetParser();
         _streamAnalyzer.ResetPids();
         _streamAnalyzer.UseATSC(0);
         if (channel != null)
         {
-          _streamAnalyzer.SetPMTProgramNumber(channel.ServiceId);
+          _interfacePmtGrabber.SetPmtPid(channel.PmtPid);
         }
         _streamAnalyzer.Scanning(1);
         Log.Log.WriteFile("ss2:SetAnalyzerMapping done");
@@ -2563,7 +2565,7 @@ namespace TvLibrary.Implementations.DVB
         IntPtr pmtMem = Marshal.AllocCoTaskMem(4096);// max. size for pmt
         try
         {
-          int pmtLength = _streamAnalyzer.GetPMTData(pmtMem);
+          int pmtLength = _interfacePmtGrabber.GetPMTData(pmtMem);
           if (pmtLength != -1)
           {
             byte[] pmt = new byte[pmtLength];
