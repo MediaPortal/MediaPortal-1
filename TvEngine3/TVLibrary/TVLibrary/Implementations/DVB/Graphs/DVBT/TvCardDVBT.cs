@@ -58,7 +58,6 @@ namespace TvLibrary.Implementations.DVB
         AddTransportStreamFiltersToGraph();
 
         //        ConnectFilters();
-        AddAnalyzerFilter();
         AddSampleGrabber();
         GetTunerSignalStatistics();
 

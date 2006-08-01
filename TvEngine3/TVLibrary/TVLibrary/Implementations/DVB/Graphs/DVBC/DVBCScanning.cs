@@ -38,13 +38,6 @@ namespace TvLibrary.Implementations.DVB
     {
       _card.SendHwPids(pids);
     }
-    protected override IPin PinAnalyzerSI
-    {
-      get
-      {
-        return _card.PinAnalyzerSI;
-      }
-    }
 
     protected override void ResetSignalUpdate()
     {

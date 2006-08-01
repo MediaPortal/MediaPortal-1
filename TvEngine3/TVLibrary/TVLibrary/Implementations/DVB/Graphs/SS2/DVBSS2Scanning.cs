@@ -35,13 +35,6 @@ namespace TvLibrary.Implementations.DVB
     {
       return _card.StreamAnalyzer;
     }
-    protected override IPin PinAnalyzerSI
-    {
-      get
-      {
-        return _card.PinAnalyzerSI;
-      }
-    }
     protected override void SetHwPids(ArrayList pids)
     {
       _card.SendHWPids(pids);
