@@ -18,5 +18,41 @@ namespace TvLibrary.Implementations.DVB.Structures
     public bool isTeletext;
     public bool isDVBSubtitle;
     public string teletextLANG;
+
+    public void AudioPid(int audioPid, string audioLanguage)
+    {
+      pid = audioPid;
+      language = audioLanguage;
+      stream_type = 3;
+      isAudio = true;
+    }
+
+    public void Ac3Pid(int ac3Pid, string audioLanguage)
+    {
+      pid = ac3Pid;
+      language = audioLanguage;
+      stream_type = 0;
+      isAC3Audio = true;
+    }
+
+    public void VideoPid(int videoPid)
+    {
+      pid = videoPid;
+      language = "";
+      stream_type = 1;
+      isVideo = true;
+    }
+    public void TeletextPid(int teletextPid)
+    {
+      pid = teletextPid;
+      language = "";
+      isTeletext = true;
+    }
+    public void SubtitlePid(int subtitlePid)
+    {
+      pid = subtitlePid;
+      language = "";
+      isDVBSubtitle = true;
+    }
   }
 }

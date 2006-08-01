@@ -40,6 +40,10 @@ namespace TvLibrary.Implementations.DVB.Structures
     {
       pids = new ArrayList();
     }
+    public void AddPid(PidInfo info)
+    {
+      pids.Add(info);
+    }
     public void Decode(IntPtr data)
     {
       byte[] da = new byte[600];

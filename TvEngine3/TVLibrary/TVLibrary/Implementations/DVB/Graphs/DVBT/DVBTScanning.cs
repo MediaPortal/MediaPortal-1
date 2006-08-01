@@ -30,7 +30,7 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
-    protected override IStreamAnalyzer GetAnalyzer()
+    protected override ITsChannelScan GetAnalyzer()
     {
       return _card.StreamAnalyzer;
     }

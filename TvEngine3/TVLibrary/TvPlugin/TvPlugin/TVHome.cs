@@ -1231,6 +1231,10 @@ namespace TvPlugin
       {
         _log.Info("tvhome:startplay:{0}", timeshiftFileName);
         g_Player.Play(timeshiftFileName, mediaType);
+        if (g_Player.Duration > 20)
+        {
+          SeekToEnd();
+        }
       }
       else
       {

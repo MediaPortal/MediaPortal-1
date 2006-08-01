@@ -26,7 +26,7 @@ namespace TvLibrary.Implementations.DVB
     protected class MpFileWriter { }
 
     [ComImport, Guid("fc50bed6-fe38-42d3-b831-771690091a6e")]
-    protected class TsWriter { }
+    protected class MpTsAnalyzer { }
 
     [DllImport("dvblib.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
     protected static extern int SetupDemuxerPin(IPin pin, int pid, int elementaryStream, bool unmapOtherPins);
@@ -61,7 +61,7 @@ namespace TvLibrary.Implementations.DVB
     protected IBaseFilter _filterMpegMuxerTimeShiftAnalyzer = null;
     protected IBaseFilter _filterMpeg2DemuxTs = null;
 #endif
-    protected IBaseFilter _filterTsWriter;
+    protected IBaseFilter _filterTsAnalyzer;
     protected IBaseFilter _filterTIF = null;
     protected IBaseFilter _filterSectionsAndTables = null;
     protected IBaseFilter _filterAnalyzer = null;
@@ -85,8 +85,8 @@ namespace TvLibrary.Implementations.DVB
 
     protected DVBTeletext _teletextDecoder;
     protected bool _hasTeletext = false;
-    protected IEPGGrabber _dvbGrabber;
-    protected IMHWGrabber _mhwGrabber;
+    protected ITsEpgScanner _interfaceEpgGrabber;
+    protected ITsChannelScan _interfaceChannelScan;
     protected IStreamAnalyzer _streamAnalyzer;
     protected bool _graphRunning;
     protected bool _epgGrabbing;
@@ -733,8 +733,6 @@ namespace TvLibrary.Implementations.DVB
       FilterGraphTools.ConnectPin(_graphBuilder, _pinAnalyzerEPG, _filterAnalyzer, 3);
 
       _streamAnalyzer = (IStreamAnalyzer)_filterAnalyzer;
-      _dvbGrabber = (IEPGGrabber)_filterAnalyzer;
-      _mhwGrabber = (IMHWGrabber)_filterAnalyzer;
     }
 
     /// <summary>
@@ -881,15 +879,17 @@ namespace TvLibrary.Implementations.DVB
       }*/
 #endif
 
-      if (_filterTsWriter == null)
+      if (_filterTsAnalyzer == null)
       {
-        _filterTsWriter = (IBaseFilter)new TsWriter();
-        _graphBuilder.AddFilter(_filterTsWriter, "TSWriter");
+        _filterTsAnalyzer = (IBaseFilter)new MpTsAnalyzer();
+        _graphBuilder.AddFilter(_filterTsAnalyzer, "MediaPortal Ts Analyzer");
         IPin pinTee = DsFindPin.ByDirection(_infTeeMain, PinDirection.Output, 1);
-        IPin pin = DsFindPin.ByDirection(_filterTsWriter, PinDirection.Input, 0);
+        IPin pin = DsFindPin.ByDirection(_filterTsAnalyzer, PinDirection.Input, 0);
         _graphBuilder.Connect(pinTee, pin);
-        Release.ComObject("pinTsWriterIn", pin);
+        Release.ComObject("pinMpTsAnalyzerIn", pin);
         Release.ComObject("pinTee", pinTee);
+        _interfaceChannelScan = (ITsChannelScan)_filterTsAnalyzer;
+        _interfaceEpgGrabber = (ITsEpgScanner)_filterAnalyzer;
       }
     }
 
@@ -1121,7 +1121,7 @@ namespace TvLibrary.Implementations.DVB
       {
         if (!CheckThreadId()) return;
         Log.Log.WriteFile("ss2:SetAnalyzerMapping {0:X}", pmtPid);
-        if (_streamAnalyzer == null)
+        if (_interfaceChannelScan == null)
         {
           Log.Log.WriteFile("ss2:  no stream analyzer interface");
           return;
@@ -1218,7 +1218,7 @@ namespace TvLibrary.Implementations.DVB
       //if (!CheckThreadId()) return;
       Log.Log.WriteFile("ss2:SetMpegPidMapping");
 
-      ITsWriter writer = (ITsWriter)_filterTsWriter;
+      ITsVideoAnalyzer writer = (ITsVideoAnalyzer)_filterTsAnalyzer;
       ArrayList hwPids = new ArrayList();
       hwPids.Add((ushort)0x0);//PAT
       hwPids.Add((ushort)0x1);//CAT
@@ -1385,9 +1385,9 @@ namespace TvLibrary.Implementations.DVB
     {
       if (!CheckThreadId()) return;
       if (_graphState == GraphState.Idle) return;
-      if (_dvbGrabber == null || _mhwGrabber == null) return;
-      _dvbGrabber.GrabEPG();
-      _mhwGrabber.GrabMHW();
+      if (_interfaceEpgGrabber == null ) return;
+      _interfaceEpgGrabber.GrabEPG();
+      _interfaceEpgGrabber.GrabMHW();
       _epgGrabbing = true;
     }
     int getUTC(int val)
@@ -1412,15 +1412,15 @@ namespace TvLibrary.Implementations.DVB
 
 
           bool dvbReady, mhwReady;
-          _dvbGrabber.IsEPGReady(out dvbReady);
-          _mhwGrabber.IsMHWReady(out mhwReady);
+          _interfaceEpgGrabber.IsEPGReady(out dvbReady);
+          _interfaceEpgGrabber.IsMHWReady(out mhwReady);
           if (dvbReady == false || mhwReady == false) return null;
 
           List<EpgChannel> epgChannels = new List<EpgChannel>();
           if (mhwReady)
           {
             short titleCount;
-            _mhwGrabber.GetMHWTitleCount(out titleCount);
+            _interfaceEpgGrabber.GetMHWTitleCount(out titleCount);
             Log.Log.WriteFile("mhw ready {0}", titleCount);
             for (int i = 0; i < titleCount; ++i)
             {
@@ -1429,10 +1429,10 @@ namespace TvLibrary.Implementations.DVB
               uint datestart = 0, timestart = 0;
               IntPtr ptrTitle, ptrProgramName;
               IntPtr ptrChannelName, ptrSummary, ptrTheme;
-              _mhwGrabber.GetMHWTitle((short)i, ref id, ref transportid, ref networkid, ref channelnr, ref programid, ref themeid, ref PPV, ref summaries, ref duration, ref datestart, ref timestart, out ptrTitle, out ptrProgramName);
-              _mhwGrabber.GetMHWChannel(channelnr, ref channelid, ref networkid, ref transportid, out ptrChannelName);
-              _mhwGrabber.GetMHWSummary(programid, out ptrSummary);
-              _mhwGrabber.GetMHWTheme(themeid, out ptrTheme);
+              _interfaceEpgGrabber.GetMHWTitle((short)i, ref id, ref transportid, ref networkid, ref channelnr, ref programid, ref themeid, ref PPV, ref summaries, ref duration, ref datestart, ref timestart, out ptrTitle, out ptrProgramName);
+              _interfaceEpgGrabber.GetMHWChannel(channelnr, ref channelid, ref networkid, ref transportid, out ptrChannelName);
+              _interfaceEpgGrabber.GetMHWSummary(programid, out ptrSummary);
+              _interfaceEpgGrabber.GetMHWTheme(themeid, out ptrTheme);
 
               string channelName, title, programName, summary, theme;
               channelName = Marshal.PtrToStringAnsi(ptrChannelName);
@@ -1503,10 +1503,10 @@ namespace TvLibrary.Implementations.DVB
             ushort networkid = 0;
             ushort transportid = 0;
             ushort serviceid = 0;
-            _dvbGrabber.GetEPGChannelCount(out channelCount);
+            _interfaceEpgGrabber.GetEPGChannelCount(out channelCount);
             for (uint x = 0; x < channelCount; ++x)
             {
-              _dvbGrabber.GetEPGChannel((uint)x, ref networkid, ref transportid, ref serviceid);
+              _interfaceEpgGrabber.GetEPGChannel((uint)x, ref networkid, ref transportid, ref serviceid);
               EpgChannel epgChannel = new EpgChannel();
               DVBBaseChannel chan = new DVBBaseChannel();
               chan.NetworkId = networkid;
@@ -1516,7 +1516,7 @@ namespace TvLibrary.Implementations.DVB
 
 
               uint eventCount = 0;
-              _dvbGrabber.GetEPGEventCount((uint)x, out eventCount);
+              _interfaceEpgGrabber.GetEPGEventCount((uint)x, out eventCount);
               for (uint i = 0; i < eventCount; ++i)
               {
                 uint start_time_MJD = 0, start_time_UTC = 0, duration = 0, languageId = 0, languageCount = 0;
@@ -1524,7 +1524,7 @@ namespace TvLibrary.Implementations.DVB
                 IntPtr ptrTitle = IntPtr.Zero;
                 IntPtr ptrDesc = IntPtr.Zero;
                 IntPtr ptrGenre = IntPtr.Zero;
-                _dvbGrabber.GetEPGEvent((uint)x, (uint)i, out languageCount, out start_time_MJD, out start_time_UTC, out duration, out ptrGenre);
+                _interfaceEpgGrabber.GetEPGEvent((uint)x, (uint)i, out languageCount, out start_time_MJD, out start_time_UTC, out duration, out ptrGenre);
                 genre = Marshal.PtrToStringAnsi(ptrGenre);
 
                 int duration_hh = getUTC((int)((duration >> 16)) & 255);
@@ -1564,7 +1564,7 @@ namespace TvLibrary.Implementations.DVB
                   //EPGEvent newEvent = new EPGEvent(genre, dtStart, dtEnd);
                   for (int z = 0; z < languageCount; ++z)
                   {
-                    _dvbGrabber.GetEPGLanguage((uint)x, (uint)i, (uint)z, out languageId, out ptrTitle, out ptrDesc);
+                    _interfaceEpgGrabber.GetEPGLanguage((uint)x, (uint)i, (uint)z, out languageId, out ptrTitle, out ptrDesc);
                     title = Marshal.PtrToStringAnsi(ptrTitle);
                     description = Marshal.PtrToStringAnsi(ptrDesc);
                     string language = String.Empty;
@@ -2117,9 +2117,9 @@ namespace TvLibrary.Implementations.DVB
         DVBAudioStream audioStream = (DVBAudioStream)value;
         SetupDemuxerPin(_pinAudioTimeShift, audioStream.Pid, (int)MediaSampleContent.ElementaryStream, true);
         _currentAudioStream = audioStream;
-        if (_filterTsWriter != null)
+        if (_filterTsAnalyzer != null)
         {
-          ITsWriter writer = (ITsWriter)_filterTsWriter;
+          ITsVideoAnalyzer writer = (ITsVideoAnalyzer)_filterTsAnalyzer;
           writer.SetAudioPid(audioStream.Pid);
         }
       }
@@ -2185,13 +2185,13 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// returns the IStreamAnalyzer interface for the graph
+    /// returns the ITsChannelScan interface for the graph
     /// </summary>
-    public IStreamAnalyzer StreamAnalyzer
+    public ITsChannelScan StreamAnalyzer
     {
       get
       {
-        return _streamAnalyzer;
+        return _interfaceChannelScan;
       }
     }
     /// <summary>
@@ -2245,9 +2245,8 @@ namespace TvLibrary.Implementations.DVB
 
       FilterGraphTools.RemoveAllFilters(_graphBuilder);
 
-      _streamAnalyzer = null;
-      _dvbGrabber = null;
-      _mhwGrabber = null;
+      _interfaceChannelScan = null;
+      _interfaceEpgGrabber = null;
       _interfaceB2C2DataCtrl = null;
       _interfaceB2C2TunerCtrl = null; ;
       DeleteTimeShiftingGraph();
@@ -2291,13 +2290,13 @@ namespace TvLibrary.Implementations.DVB
       {
         Release.ComObject("MPEG2 mux filter", _filterMpegMuxerTimeShift); _filterMpegMuxerTimeShift = null;
       }
-      if (_filterTsWriter != null)
+      if (_filterTsAnalyzer != null)
       {
-        Release.ComObject("_filterTsWriter", _filterTsWriter); _filterTsWriter = null;
+        Release.ComObject("_filterMpTsAnalyzer", _filterTsAnalyzer); _filterTsAnalyzer = null;
       }
       if (_infTeeMain != null)
       {
-        Release.ComObject("_filterTsWriter", _infTeeMain); _infTeeMain = null;
+        Release.ComObject("_filterMpTsAnalyzer", _infTeeMain); _infTeeMain = null;
       }
 
       if (_pinTTX != null)
@@ -2383,8 +2382,8 @@ namespace TvLibrary.Implementations.DVB
         if (_epgGrabbing)
         {
           bool dvbReady, mhwReady;
-          _dvbGrabber.IsEPGReady(out dvbReady);
-          _mhwGrabber.IsMHWReady(out mhwReady);
+          _interfaceEpgGrabber.IsEPGReady(out dvbReady);
+          _interfaceEpgGrabber.IsMHWReady(out mhwReady);
           if (dvbReady && mhwReady)
           {
             _epgGrabbing = false;
