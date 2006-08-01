@@ -2625,6 +2625,51 @@ namespace MediaPortal.Music.Database
                     }
                     catch (Exception) { }
                   }
+                  // Code for creating thumbs for genre and artists
+                  // by using the thumb of the first item of a gerne / artist having a thumb
+
+                  // The genre may contains unallowed chars
+                  string strGenre = MediaPortal.Util.Utils.FilterFileName(song.Genre);
+
+                  // Sometimes the genre contains a number code in brackets -> remove that
+                  // (code borrowed from addGenre() method)
+                  if (String.Compare(strGenre.Substring(0, 1), "(") == 0)
+                  {
+                    bool FixedTheCode = false;
+                    for (int i = 1; (i < 10 && i < strGenre.Length & !FixedTheCode); ++i)
+                    {
+                      if (String.Compare(strGenre.Substring(i, 1), ")") == 0)
+                      {
+                        strGenre = strGenre.Substring(i + 1, (strGenre.Length - i - 1));
+                        FixedTheCode = true;
+                      }
+                    }
+                  }
+                  // Now the genre is clean and sober -> build a filename out of it
+                  string genreThumb = MediaPortal.Util.Utils.GetCoverArtName(Thumbs.MusicGenre, strGenre); 
+
+                  if (!System.IO.File.Exists(genreThumb))
+                  {
+                    // thumb for this genre does not exist yet -> simply use the folderThumb from above
+                    // and copy it to thumbs\music\gerne\<genre>.jpg 
+                    try
+                    {
+                      System.IO.File.Copy(strSmallThumb, genreThumb, true);
+                      System.IO.File.SetAttributes(genreThumb, System.IO.File.GetAttributes(genreThumb) | System.IO.FileAttributes.Hidden);
+                    }
+                    catch (Exception) { }
+                  }
+                  // same logic for the artists thumbs 
+                  string artistThumb = MediaPortal.Util.Utils.GetCoverArtName(Thumbs.MusicArtists, MediaPortal.Util.Utils.FilterFileName(song.Artist)); 
+                  if (!System.IO.File.Exists(artistThumb))
+                  {
+                    try
+                    {
+                      System.IO.File.Copy(strSmallThumb, artistThumb, true);
+                      System.IO.File.SetAttributes(artistThumb, System.IO.File.GetAttributes(artistThumb) | System.IO.FileAttributes.Hidden);
+                    }
+                    catch (Exception) { }
+                  }
                 }
               }
             }
