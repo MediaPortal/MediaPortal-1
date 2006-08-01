@@ -204,8 +204,7 @@ namespace MediaPortal.Music.Database
             Log.Write("Audioscrobbler: Password decryption failed {0}", ex.Message);
           }
         }
-      }
-      
+      }      
 
       connected = false;
       queue = new ArrayList();
@@ -361,6 +360,19 @@ namespace MediaPortal.Music.Database
         SaveQueue();
       }
     }
+
+    /// <summary>
+    /// Clears the queue and tries adds cached files again.
+    /// </summary>
+    public void ResetQueue()
+    {
+      lock (queueLock)
+      {
+        queue.Clear();
+        LoadQueue();
+      }
+    }
+
     #endregion
 
     #region Public event triggers
@@ -420,8 +432,8 @@ namespace MediaPortal.Music.Database
       if (_antiHammerCount < 5)
       {
         _antiHammerCount = _antiHammerCount + 1;
-        DoHandshake();        
-        SUBMIT_INTERVAL = SUBMIT_INTERVAL * _antiHammerCount;
+        DoHandshake();
+        SUBMIT_INTERVAL = SUBMIT_INTERVAL * _antiHammerCount * 2;
         // prevent null argument exception
         if (SUBMIT_INTERVAL == 0)
           SUBMIT_INTERVAL = 120;
@@ -431,7 +443,12 @@ namespace MediaPortal.Music.Database
           submitTimer.Close();
           InitSubmitTimer();
         }
-        Log.Write("AudioscrobblerBase: falling back to safe mode: new interval: {0} sec", Convert.ToString(SUBMIT_INTERVAL));        
+        Log.Write("AudioscrobblerBase: falling back to safe mode: new interval: {0} sec", Convert.ToString(SUBMIT_INTERVAL));
+      }
+      else
+      {
+        ResetQueue();
+        Log.Write("AudioscrobblerBase: 5 errors. Reset queue - current items: {0}", Convert.ToString(QueueLength));
       }
     }
 
@@ -489,6 +506,7 @@ namespace MediaPortal.Music.Database
       }
 
       lastHandshake = DateTime.Now;
+      // reset to leave "safe mode"
       _antiHammerCount = 0;
       Log.Write("AudioscrobblerBase: {0}", "Handshake successful");
       return true;
