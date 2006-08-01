@@ -48,7 +48,8 @@ namespace MediaPortal.Music.Database
     topartists,
     toptracks,
     friends,
-    neighbours
+    neighbours,
+    similar
   }
 
   public enum NetworkErrorType
@@ -164,13 +165,14 @@ namespace MediaPortal.Music.Database
     List<Song> songList = null;
     private ArrayList queue;
     private Object queueLock;
-    //    private EventQueue          eventQueue;
     private Object submitLock;
     private int _antiHammerCount = 0;
     private DateTime lastHandshake;        //< last successful attempt.
     private TimeSpan handshakeInterval;
     private DateTime lastConnectAttempt;
+    private DateTime spamCheck;
     private TimeSpan minConnectWaitTime;
+    private bool _disableTimerThread;
     private System.Timers.Timer submitTimer;
     private bool connected;
 
@@ -185,7 +187,8 @@ namespace MediaPortal.Music.Database
     public AudioscrobblerBase()
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-      {        
+      {
+        _disableTimerThread = xmlreader.GetValueAsBool("audioscrobbler", "disabletimerthread", true);
         username = xmlreader.GetValueAsString("audioscrobbler", "user", "");
         string tmpPass;
         tmpPass = xmlreader.GetValueAsString("audioscrobbler", "pass", "");
@@ -210,6 +213,7 @@ namespace MediaPortal.Music.Database
       //eventQueue           = new EventQueue();
       submitLock = new Object();
       lastHandshake = DateTime.MinValue;
+      spamCheck = DateTime.MinValue;
       handshakeInterval = new TimeSpan(0, HANDSHAKE_INTERVAL, 0);
       lastConnectAttempt = DateTime.MinValue;
       minConnectWaitTime = new TimeSpan(0, 0, CONNECT_WAIT_TIME);
@@ -331,13 +335,17 @@ namespace MediaPortal.Music.Database
         queue.Add(song_);
       }
 
-      // Try to submit immediately.
-      StartSubmitQueueThread();
+      if (_antiHammerCount == 0)
+      {
+        // Try to submit immediately.
+        StartSubmitQueueThread();
 
-      // Reset the submit timer.
-      submitTimer.Close();
-      InitSubmitTimer();
-      //Log.Write("AudioscrobblerBase.pushQueue: {0}", "Finish");
+        // Reset the submit timer.
+        submitTimer.Close();
+        InitSubmitTimer();
+      }
+      else
+        Log.Write("AudioscrobblerBase: {0}", "direct submit cancelled because of BadAuth event");
     }
 
 
@@ -406,6 +414,27 @@ namespace MediaPortal.Music.Database
       //  return;
       //Log.Write("AudioscrobblerBase.TriggerDisconnectEvent: {0}", "End");
     }
+
+    public void TriggerSafeModeEvent()
+    {
+      if (_antiHammerCount < 5)
+      {
+        _antiHammerCount = _antiHammerCount + 1;
+        DoHandshake();        
+        SUBMIT_INTERVAL = SUBMIT_INTERVAL * _antiHammerCount;
+        // prevent null argument exception
+        if (SUBMIT_INTERVAL == 0)
+          SUBMIT_INTERVAL = 120;
+        // reset the timer
+        if (submitTimer != null)
+        {
+          submitTimer.Close();
+          InitSubmitTimer();
+        }
+        Log.Write("AudioscrobblerBase: falling back to safe mode: new interval: {0} sec", Convert.ToString(SUBMIT_INTERVAL));        
+      }
+    }
+
     #endregion
 
     #region Networking related functions
@@ -460,6 +489,7 @@ namespace MediaPortal.Music.Database
       }
 
       lastHandshake = DateTime.Now;
+      _antiHammerCount = 0;
       Log.Write("AudioscrobblerBase: {0}", "Handshake successful");
       return true;
     }
@@ -566,7 +596,7 @@ namespace MediaPortal.Music.Database
        * FAILED
        * BADUSER / BADAUTH
        */
-      Log.Write("AudioscrobblerBase: {0}", "Response received");
+      // Log.Write("AudioscrobblerBase: {0}", "Response received");
       string respType = reader.ReadLine();
       if (respType == null)
       {
@@ -618,7 +648,8 @@ namespace MediaPortal.Music.Database
 
     void OnSubmitTimerTick(object trash_, ElapsedEventArgs args_)
     {
-      StartSubmitQueueThread();
+      if (!_disableTimerThread || _antiHammerCount > 0)
+        StartSubmitQueueThread();
     }
 
     /// <summary>
@@ -674,10 +705,17 @@ namespace MediaPortal.Music.Database
 
         // Append the songs to be submitted.
         int n_songs = 0;
+        
         foreach (Song song in songs)
         {
-          postData += "&" + song.GetPostData(n_songs);
-          n_songs++;
+          if (Convert.ToDateTime(song.getQueueTime()) > spamCheck)
+          {
+            spamCheck = Convert.ToDateTime(song.getQueueTime());
+            postData += "&" + song.GetPostData(n_songs);
+            n_songs++;
+          }
+          else
+            Log.Write("AudioscrobblerBase: Spam protection - obmitting song: {0}", song.ToShortString());
         }
 
         // Submit or die.
@@ -754,11 +792,12 @@ namespace MediaPortal.Music.Database
                     nodeSong.TimesPlayed = Convert.ToInt32(child.ChildNodes[0].Value);
                   else if (child.Name == "url" && child.ChildNodes.Count != 0)
                     nodeSong.URL = child.ChildNodes[0].Value;
+                  else if (child.Name == "match" && child.ChildNodes.Count != 0)
+                    nodeSong.LastFMMatch = child.ChildNodes[0].Value;
                 }
                 break;
               case (lastFMFeed.weeklyartistchart):
                 goto case lastFMFeed.topartists;
-
               case (lastFMFeed.toptracks):
                 {
                   if (child.Name == "artist" && child.ChildNodes.Count != 0)
@@ -775,6 +814,8 @@ namespace MediaPortal.Music.Database
                 break;
               case (lastFMFeed.weeklytrackchart):
                 goto case lastFMFeed.toptracks;
+              case (lastFMFeed.similar):
+                goto case lastFMFeed.topartists;
 
             } //switch
           }
@@ -823,8 +864,9 @@ namespace MediaPortal.Music.Database
       else
         logmessage = "FAILED";      
       Log.Write("AudioscrobblerBase: {0}", logmessage);
-      if (logmessage == "FAILED: Plugin bug: Not all request variables are set")
+      if (logmessage == "FAILED: Plugin bug: Not all request variables are set")      
         Log.Write("AudioscrobblerBase: A server error may have occured / if you receive this often a proxy may truncate your request - {0}", "read: http://www.last.fm/forum/24/_/74505/1#f808273");
+      TriggerSafeModeEvent();
       return false;
     }
 
@@ -832,11 +874,7 @@ namespace MediaPortal.Music.Database
     {
       Log.Write("AudioscrobblerBase: {0}", "PLEASE CHECK YOUR ACCOUNT CONFIG! - re-trying handshake now");
       AuthErrorEventArgs args = new AuthErrorEventArgs();
-      if (_antiHammerCount < 5)
-      {
-        DoHandshake();
-        _antiHammerCount += 1;
-      }
+      TriggerSafeModeEvent();
       //TriggerAuthErrorEvent(args);
       return true;
     }

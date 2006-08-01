@@ -82,6 +82,8 @@ namespace MediaPortal.AudioScrobbler
       this.labelUser = new MediaPortal.UserInterface.Controls.MPLabel();
       this.textBoxASUser = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.maskedTextBoxASPass = new System.Windows.Forms.MaskedTextBox();
+      this.groupBoxOptions = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.checkBoxdisableTimerThread = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.panelPicBox.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxASLogo)).BeginInit();
       this.tabControlASSettings.SuspendLayout();
@@ -90,6 +92,7 @@ namespace MediaPortal.AudioScrobbler
       this.tabPageRecent.SuspendLayout();
       this.tabPageTopArtists.SuspendLayout();
       this.tabPageTopTracks.SuspendLayout();
+      this.groupBoxOptions.SuspendLayout();
       this.SuspendLayout();
       // 
       // buttonOk
@@ -147,6 +150,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       // tabPageAccount
       // 
+      this.tabPageAccount.Controls.Add(this.groupBoxOptions);
       this.tabPageAccount.Controls.Add(this.groupBoxAccount);
       this.tabPageAccount.Location = new System.Drawing.Point(4, 22);
       this.tabPageAccount.Name = "tabPageAccount";
@@ -259,6 +263,7 @@ namespace MediaPortal.AudioScrobbler
       // listViewRecentTracks
       // 
       this.listViewRecentTracks.AllowColumnReorder = true;
+      this.listViewRecentTracks.AllowDrop = true;
       this.listViewRecentTracks.AllowRowReorder = false;
       this.listViewRecentTracks.Location = new System.Drawing.Point(6, 12);
       this.listViewRecentTracks.Name = "listViewRecentTracks";
@@ -293,6 +298,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       this.listViewTopArtists.Activation = System.Windows.Forms.ItemActivation.OneClick;
       this.listViewTopArtists.AllowColumnReorder = true;
+      this.listViewTopArtists.AllowDrop = true;
       this.listViewTopArtists.AllowRowReorder = false;
       this.listViewTopArtists.AutoArrange = false;
       this.listViewTopArtists.Location = new System.Drawing.Point(6, 12);
@@ -328,6 +334,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       this.listViewTopTracks.Activation = System.Windows.Forms.ItemActivation.OneClick;
       this.listViewTopTracks.AllowColumnReorder = true;
+      this.listViewTopTracks.AllowDrop = true;
       this.listViewTopTracks.AllowRowReorder = false;
       this.listViewTopTracks.AutoArrange = false;
       this.listViewTopTracks.Location = new System.Drawing.Point(6, 12);
@@ -398,6 +405,28 @@ namespace MediaPortal.AudioScrobbler
       this.maskedTextBoxASPass.Size = new System.Drawing.Size(236, 20);
       this.maskedTextBoxASPass.TabIndex = 0;
       // 
+      // groupBoxOptions
+      // 
+      this.groupBoxOptions.Controls.Add(this.checkBoxdisableTimerThread);
+      this.groupBoxOptions.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxOptions.Location = new System.Drawing.Point(6, 156);
+      this.groupBoxOptions.Name = "groupBoxOptions";
+      this.groupBoxOptions.Size = new System.Drawing.Size(271, 86);
+      this.groupBoxOptions.TabIndex = 2;
+      this.groupBoxOptions.TabStop = false;
+      this.groupBoxOptions.Text = "Options";
+      // 
+      // checkBoxdisableTimerThread
+      // 
+      this.checkBoxdisableTimerThread.AutoSize = true;
+      this.checkBoxdisableTimerThread.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxdisableTimerThread.Location = new System.Drawing.Point(16, 28);
+      this.checkBoxdisableTimerThread.Name = "checkBoxdisableTimerThread";
+      this.checkBoxdisableTimerThread.Size = new System.Drawing.Size(241, 17);
+      this.checkBoxdisableTimerThread.TabIndex = 0;
+      this.checkBoxdisableTimerThread.Text = "Do direct submits only (may avoid spam errors)";
+      this.checkBoxdisableTimerThread.UseVisualStyleBackColor = true;
+      // 
       // AudioscrobblerSettings
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -420,6 +449,8 @@ namespace MediaPortal.AudioScrobbler
       this.tabPageRecent.ResumeLayout(false);
       this.tabPageTopArtists.ResumeLayout(false);
       this.tabPageTopTracks.ResumeLayout(false);
+      this.groupBoxOptions.ResumeLayout(false);
+      this.groupBoxOptions.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -454,5 +485,7 @@ namespace MediaPortal.AudioScrobbler
     private System.Windows.Forms.TabPage tabPageTopTracks;
     private MediaPortal.UserInterface.Controls.MPButton buttonTopTracks;
     private MediaPortal.UserInterface.Controls.MPListView listViewTopTracks;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxOptions;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxdisableTimerThread;
   }
 }

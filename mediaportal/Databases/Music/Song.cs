@@ -53,6 +53,7 @@ namespace MediaPortal.Music.Database
     bool _audioScrobblerProcessed;
     string _musicBrainzID;
     string _strURL = "";
+    string _lastFMMatch = "";
 
     public Song()
     {
@@ -82,6 +83,7 @@ namespace MediaPortal.Music.Database
       newsong.AudioScrobblerProcessed = AudioScrobblerProcessed;
       newsong.MusicBrainzID = MusicBrainzID;
       newsong.URL = URL;
+      newsong.LastFMMatch = LastFMMatch;
 
       return newsong;
     }
@@ -109,6 +111,7 @@ namespace MediaPortal.Music.Database
       _audioScrobblerProcessed = false;
       _musicBrainzID = "";
       _strURL = "";
+      _lastFMMatch = "";
     }
 
     public string FileName
@@ -278,6 +281,12 @@ namespace MediaPortal.Music.Database
       set { _strURL = value; }
     }
 
+    public string LastFMMatch
+    {
+      get { return _lastFMMatch; }
+      set { _lastFMMatch = value; }
+    }
+
     public string ToShortString()
     {
       StringBuilder s = new StringBuilder();
@@ -343,6 +352,18 @@ namespace MediaPortal.Music.Database
       }
     }
 
+    public string getQueueTime()
+    {
+      string queueTime = String.Format("{0:0000}-{1:00}-{2:00} {3:00}:{4:00}:{5:00}",
+                                 _DateTimePlayed.Year,
+                                 _DateTimePlayed.Month,
+                                 _DateTimePlayed.Day,
+                                 _DateTimePlayed.Hour,
+                                 _DateTimePlayed.Minute,
+                                 _DateTimePlayed.Second);
+      return queueTime;
+    }
+
     public string GetPostData(int index)
     {
       // Generate POST data for updates:
@@ -355,14 +376,6 @@ namespace MediaPortal.Music.Database
       //	l - length (secs)
       //	i - time (UTC)
 
-      string queueTime = String.Format("{0:0000}-{1:00}-{2:00} {3:00}:{4:00}:{5:00}",
-                                       _DateTimePlayed.Year,
-                                       _DateTimePlayed.Month,
-                                       _DateTimePlayed.Day,
-                                       _DateTimePlayed.Hour,
-                                       _DateTimePlayed.Minute,
-                                       _DateTimePlayed.Second);
-
       return String.Format("a[{0}]={1}&t[{0}]={2}&b[{0}]={3}&m[{0}]={4}&l[{0}]={5}&i[{0}]={6}",
                            index,
                            System.Web.HttpUtility.UrlEncode(m_strArtist),
@@ -370,7 +383,7 @@ namespace MediaPortal.Music.Database
                            System.Web.HttpUtility.UrlEncode(m_strAlbum),
                            System.Web.HttpUtility.UrlEncode(_musicBrainzID),
                            m_iDuration,
-                           System.Web.HttpUtility.UrlEncode(queueTime));
+                           System.Web.HttpUtility.UrlEncode(getQueueTime()));
     }
   }
 
