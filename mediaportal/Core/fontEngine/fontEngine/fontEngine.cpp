@@ -502,7 +502,7 @@ void FontEnginePresentTextures()
 				{
 					m_iVertexBuffersUpdated++;
 					CUSTOMVERTEX* pVertices;
-					texture->pVertexBuffer->Lock( 0, 0, (void**)&pVertices, D3DLOCK_DISCARD ) ;
+					texture->pVertexBuffer->Lock( 0, 0, (void**)&pVertices, 0 ) ;
 					memcpy(pVertices,texture->vertices, (texture->iv)*sizeof(CUSTOMVERTEX));
 					texture->pVertexBuffer->Unlock();
 				}
@@ -864,7 +864,7 @@ void FontEnginePresent3D(int fontNumber)
 			{
 				m_iFontVertexBuffersUpdated++;
 				CUSTOMVERTEX* pVertices;
-				font->pVertexBuffer->Lock( 0, 0, (void**)&pVertices, D3DLOCK_DISCARD ) ;
+				font->pVertexBuffer->Lock( 0, 0, (void**)&pVertices, 0 ) ;
 				memcpy(pVertices,font->vertices, (font->iv)*sizeof(CUSTOMVERTEX));
 				font->pVertexBuffer->Unlock();
 			}
