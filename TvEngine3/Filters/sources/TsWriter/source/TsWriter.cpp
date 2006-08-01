@@ -26,12 +26,13 @@
 #include <streams.h>
 #include <initguid.h>
 #include "TsWriter.h"
+#include "tsheader.h"
 
 // Setup data
 const AMOVIESETUP_MEDIATYPE sudPinTypes =
 {
-	&MEDIATYPE_Stream,            // Major type
-	&MEDIASUBTYPE_MPEG2_TRANSPORT          // Minor type
+	&MEDIATYPE_Stream,							// Major type
+	&MEDIASUBTYPE_MPEG2_TRANSPORT   // Minor type
 };
 
 const AMOVIESETUP_PIN sudPins =
@@ -49,13 +50,19 @@ const AMOVIESETUP_PIN sudPins =
 
 const AMOVIESETUP_FILTER sudDump =
 {
-    &CLSID_TsWriter,          // Filter CLSID
+    &CLSID_MpTsFilter,          // Filter CLSID
     L"MediaPortal Ts Writer",   // String name
     MERIT_DO_NOT_USE,           // Filter merit
     1,                          // Number pins
     &sudPins                    // Pin details
 };
 
+void DumpTs(byte* tspacket)
+{
+	FILE* fp=fopen("dump.ts", "ab+");
+	fwrite(tspacket,1,188,fp);
+	fclose(fp);
+}
 void LogDebug(const char *fmt, ...) 
 {
 #ifndef DEBUG
@@ -86,19 +93,16 @@ void LogDebug(const char *fmt, ...)
 //  Object creation stuff
 //
 CFactoryTemplate g_Templates[]= {
-    L"MediaPortal Ts Writer", &CLSID_TsWriter, CDump::CreateInstance, NULL, &sudDump
+    L"MediaPortal Ts Writer", &CLSID_MpTsFilter, CMpTs::CreateInstance, NULL, &sudDump
 };
 int g_cTemplates = 1;
 
 
 // Constructor
 
-CDumpFilter::CDumpFilter(CDump *pDump,
-                         LPUNKNOWN pUnk,
-                         CCritSec *pLock,
-                         HRESULT *phr) :
-    CBaseFilter(NAME("TsWriter"), pUnk, pLock, CLSID_TsWriter),
-    m_pDump(pDump)
+CMpTsFilter::CMpTsFilter(CMpTs *pDump,LPUNKNOWN pUnk,CCritSec *pLock,HRESULT *phr) :
+    CBaseFilter(NAME("TsWriter"), pUnk, pLock, CLSID_MpTsFilter),
+    m_pWriterFilter(pDump)
 {
 }
 
@@ -106,20 +110,23 @@ CDumpFilter::CDumpFilter(CDump *pDump,
 //
 // GetPin
 //
-CBasePin * CDumpFilter::GetPin(int n)
+CBasePin * CMpTsFilter::GetPin(int n)
 {
-    if (n == 0) {
-        return m_pDump->m_pPin;
-    } else {
-        return NULL;
-    }
+  if (n == 0) 
+	{
+      return m_pWriterFilter->m_pPin;
+  } 
+	else 
+	{
+      return NULL;
+  }
 }
 
 
 //
 // GetPinCount
 //
-int CDumpFilter::GetPinCount()
+int CMpTsFilter::GetPinCount()
 {
     return 1;
 }
@@ -130,15 +137,11 @@ int CDumpFilter::GetPinCount()
 //
 // Overriden to close the dump file
 //
-STDMETHODIMP CDumpFilter::Stop()
+STDMETHODIMP CMpTsFilter::Stop()
 {
-    CAutoLock cObjectLock(m_pLock);
-	
-	LogDebug("CDumpFilter::Stop()");
-	//m_pDump->Log(TEXT("graph Stop() called"),true);
-
-    
-    return CBaseFilter::Stop();
+  CAutoLock cObjectLock(m_pLock);
+	LogDebug("CMpTsFilter::Stop()");
+  return CBaseFilter::Stop();
 }
 
 
@@ -147,25 +150,25 @@ STDMETHODIMP CDumpFilter::Stop()
 //
 // Overriden to open the dump file
 //
-STDMETHODIMP CDumpFilter::Pause()
+STDMETHODIMP CMpTsFilter::Pause()
 {
-	LogDebug("CDumpFilter::Pause()");
-    CAutoLock cObjectLock(m_pLock);
+	LogDebug("CMpTsFilter::Pause()");
+  CAutoLock cObjectLock(m_pLock);
 
-    if (m_pDump)
-    {
-        // GraphEdit calls Pause() before calling Stop() for this filter.
-        // If we have encountered a write error (such as disk full),
-        // then stopping the graph could cause our log to be deleted
-        // (because the current log file handle would be invalid).
-        // 
-        // To preserve the log, don't open/create the log file on pause
-        // if we have previously encountered an error.  The write error
-        // flag gets cleared when setting a new log file name or
-        // when restarting the graph with Run().
-    }
+  if (m_pWriterFilter)
+  {
+      // GraphEdit calls Pause() before calling Stop() for this filter.
+      // If we have encountered a write error (such as disk full),
+      // then stopping the graph could cause our log to be deleted
+      // (because the current log file handle would be invalid).
+      // 
+      // To preserve the log, don't open/create the log file on pause
+      // if we have previously encountered an error.  The write error
+      // flag gets cleared when setting a new log file name or
+      // when restarting the graph with Run().
+  }
 
-    return CBaseFilter::Pause();
+  return CBaseFilter::Pause();
 }
 
 
@@ -174,38 +177,29 @@ STDMETHODIMP CDumpFilter::Pause()
 //
 // Overriden to open the dump file
 //
-STDMETHODIMP CDumpFilter::Run(REFERENCE_TIME tStart)
+STDMETHODIMP CMpTsFilter::Run(REFERENCE_TIME tStart)
 {
-	LogDebug("CDumpFilter::Run()");
+	LogDebug("CMpTsFilter::Run()");
   CAutoLock cObjectLock(m_pLock);
 
-	m_pDump->ResetAnalyer();
 
   return CBaseFilter::Run(tStart);
 }
 
 
 //
-//  Definition of CDumpInputPin
+//  Definition of CMpTsFilterPin
 //
-CDumpInputPin::CDumpInputPin(CDump *pDump,
-                             LPUNKNOWN pUnk,
-                             CBaseFilter *pFilter,
-                             CCritSec *pLock,
-                             CCritSec *pReceiveLock,
-                             HRESULT *phr) :
-
-    CRenderedInputPin(NAME("CDumpInputPin"),
+CMpTsFilterPin::CMpTsFilterPin(CMpTs *pDump,LPUNKNOWN pUnk,CBaseFilter *pFilter,CCritSec *pLock,CCritSec *pReceiveLock,HRESULT *phr) 
+:CRenderedInputPin(NAME("CMpTsFilterPin"),
                   pFilter,                   // Filter
                   pLock,                     // Locking
                   phr,                       // Return code
                   L"Input"),                 // Pin name
     m_pReceiveLock(pReceiveLock),
-    m_pDump(pDump)
+    m_pWriterFilter(pDump)
 {
-	LogDebug("CDumpInputPin:ctor");
-	
-
+	LogDebug("CMpTsFilterPin:ctor");
 }
 
 
@@ -214,7 +208,7 @@ CDumpInputPin::CDumpInputPin(CDump *pDump,
 //
 // Check if the pin can support this specific proposed type and format
 //
-HRESULT CDumpInputPin::CheckMediaType(const CMediaType *)
+HRESULT CMpTsFilterPin::CheckMediaType(const CMediaType *)
 {
     return S_OK;
 }
@@ -225,9 +219,8 @@ HRESULT CDumpInputPin::CheckMediaType(const CMediaType *)
 //
 // Break a connection
 //
-HRESULT CDumpInputPin::BreakConnect()
+HRESULT CMpTsFilterPin::BreakConnect()
 {
-
     return CRenderedInputPin::BreakConnect();
 }
 
@@ -237,7 +230,7 @@ HRESULT CDumpInputPin::BreakConnect()
 //
 // We don't hold up source threads on Receive
 //
-STDMETHODIMP CDumpInputPin::ReceiveCanBlock()
+STDMETHODIMP CMpTsFilterPin::ReceiveCanBlock()
 {
     return S_FALSE;
 }
@@ -248,9 +241,8 @@ STDMETHODIMP CDumpInputPin::ReceiveCanBlock()
 //
 // Do something with this media sample
 //
-STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
+STDMETHODIMP CMpTsFilterPin::Receive(IMediaSample *pSample)
 {
-	return S_OK;
 	try
 	{
 		if (pSample==NULL) 
@@ -266,7 +258,6 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 		long sampleLen=pSample->GetActualDataLength();
 		if (sampleLen<=0)
 		{
-			
 			LogDebug("receive samplelen:%d",sampleLen);
 			return S_OK;
 		}
@@ -277,8 +268,7 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 			LogDebug("receive cannot get samplepointer");
 			return S_OK;
 		}
-		m_pDump->Analyze(pbData,sampleLen);
-
+		OnRawData(pbData, sampleLen);
 	}
 	catch(...)
 	{
@@ -287,17 +277,19 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
   return S_OK;
 }
 
-//
-// EndOfStream
-//
-STDMETHODIMP CDumpInputPin::EndOfStream(void)
+void CMpTsFilterPin::OnTsPacket(byte* tsPacket)
+{
+	m_pWriterFilter->AnalyzeTsPacket(tsPacket);
+}
+
+STDMETHODIMP CMpTsFilterPin::EndOfStream(void)
 {
     CAutoLock lock(m_pReceiveLock);
     return CRenderedInputPin::EndOfStream();
 
 } // EndOfStream
 
-void CDumpInputPin::Reset()
+void CMpTsFilterPin::Reset()
 {
 		LogDebug("Reset()...");
 }
@@ -307,28 +299,22 @@ void CDumpInputPin::Reset()
 //
 // Called when we are seeked
 //
-STDMETHODIMP CDumpInputPin::NewSegment(REFERENCE_TIME tStart,
-                                       REFERENCE_TIME tStop,
-                                       double dRate)
+STDMETHODIMP CMpTsFilterPin::NewSegment(REFERENCE_TIME tStart,REFERENCE_TIME tStop,double dRate)
 {
     return S_OK;
-
 } // NewSegment
 
 
 //
-//  CDump class
+//  CMpTs class
 //
-CDump::CDump(LPUNKNOWN pUnk, HRESULT *phr) :
-    CUnknown(NAME("CDump"), pUnk),
-    m_pFilter(NULL),
-    m_pPin(NULL)
+CMpTs::CMpTs(LPUNKNOWN pUnk, HRESULT *phr) 
+:CUnknown(NAME("CMpTs"), pUnk),m_pFilter(NULL),m_pPin(NULL)
 {
-		LogDebug("CDump::ctor()");
-
+		LogDebug("CMpTs::ctor()");
 		DeleteFile("TsWriter.log");
 
-    m_pFilter = new CDumpFilter(this, GetOwner(), &m_Lock, phr);
+    m_pFilter = new CMpTsFilter(this, GetOwner(), &m_Lock, phr);
     if (m_pFilter == NULL) 
 		{
         if (phr)
@@ -336,18 +322,17 @@ CDump::CDump(LPUNKNOWN pUnk, HRESULT *phr) :
         return;
     }
 
-    m_pPin = new CDumpInputPin(this,GetOwner(),
-                               m_pFilter,
-                               &m_Lock,
-                               &m_ReceiveLock,
-                               phr);
-    if (m_pPin == NULL) {
+    m_pPin = new CMpTsFilterPin(this,GetOwner(),m_pFilter,&m_Lock,&m_ReceiveLock,phr);
+    if (m_pPin == NULL) 
+		{
         if (phr)
             *phr = E_OUTOFMEMORY;
         return;
     }
 
-		ResetAnalyer();
+		m_pVideoAnalyzer = new CVideoAnalyzer(GetOwner(),phr);
+		m_pChannelScanner= new CChannelScan(GetOwner(),phr);
+		m_pEpgScanner = new CEpgScanner(GetOwner(),phr);
 }
 
 
@@ -355,12 +340,13 @@ CDump::CDump(LPUNKNOWN pUnk, HRESULT *phr) :
 
 // Destructor
 
-CDump::~CDump()
+CMpTs::~CMpTs()
 {
-
     delete m_pPin;
     delete m_pFilter;
-
+		delete m_pVideoAnalyzer;
+		delete m_pChannelScanner;
+		delete m_pEpgScanner;
 }
 
 
@@ -369,12 +355,13 @@ CDump::~CDump()
 //
 // Provide the way for COM to create a dump filter
 //
-CUnknown * WINAPI CDump::CreateInstance(LPUNKNOWN punk, HRESULT *phr)
+CUnknown * WINAPI CMpTs::CreateInstance(LPUNKNOWN punk, HRESULT *phr)
 {
     ASSERT(phr);
     
-    CDump *pNewObject = new CDump(punk, phr);
-    if (pNewObject == NULL) {
+    CMpTs *pNewObject = new CMpTs(punk, phr);
+    if (pNewObject == NULL) 
+		{
         if (phr)
             *phr = E_OUTOFMEMORY;
     }
@@ -389,21 +376,30 @@ CUnknown * WINAPI CDump::CreateInstance(LPUNKNOWN punk, HRESULT *phr)
 //
 // Override this to say what interfaces we support where
 //
-STDMETHODIMP CDump::NonDelegatingQueryInterface(REFIID riid, void ** ppv)
+STDMETHODIMP CMpTs::NonDelegatingQueryInterface(REFIID riid, void ** ppv)
 {
     CheckPointer(ppv,E_POINTER);
     CAutoLock lock(&m_Lock);
 
     // Do we have this interface
-	if (riid == IID_IMPFileRecord)
+	if (riid == IID_ITSVideoAnalyzer)
 	{
-		return GetInterface((ITsWriter*)this, ppv);
+		return GetInterface((ITsVideoAnalyzer*)m_pVideoAnalyzer, ppv);
 	}
-    else if (riid == IID_IBaseFilter || riid == IID_IMediaFilter || riid == IID_IPersist) {
-        return m_pFilter->NonDelegatingQueryInterface(riid, ppv);
-    } 
+	else if (riid == IID_ITSChannelScan)
+	{
+		return GetInterface((ITSChannelScan*)m_pChannelScanner, ppv);
+	}
+	else if (riid == IID_ITsEpgScanner)
+	{
+		return GetInterface((ITsEpgScanner*)m_pEpgScanner, ppv);
+	}
+  else if (riid == IID_IBaseFilter || riid == IID_IMediaFilter || riid == IID_IPersist) 
+	{
+      return m_pFilter->NonDelegatingQueryInterface(riid, ppv);
+  } 
 
-    return CUnknown::NonDelegatingQueryInterface(riid, ppv);
+  return CUnknown::NonDelegatingQueryInterface(riid, ppv);
 
 } // NonDelegatingQueryInterface
 
@@ -441,181 +437,44 @@ STDAPI DllUnregisterServer()
 //
 extern "C" BOOL WINAPI DllEntryPoint(HINSTANCE, ULONG, LPVOID);
 
-BOOL APIENTRY DllMain(HANDLE hModule, 
-                      DWORD  dwReason, 
-                      LPVOID lpReserved)
+BOOL APIENTRY DllMain(HANDLE hModule, DWORD  dwReason, LPVOID lpReserved)
 {
 	return DllEntryPoint((HINSTANCE)(hModule), dwReason, lpReserved);
 }
 
 
-
-STDMETHODIMP CDump::SetVideoPid( int videoPid)
+void CMpTs::AnalyzeTsPacket(byte* tsPacket)
 {
-	m_videoPid=videoPid;
-	LogDebug("videopid:%x",m_videoPid);
-	ResetAnalyer();
-	return S_OK;
-}
-STDMETHODIMP CDump::GetVideoPid( int* videoPid)
-{
-	*videoPid=m_videoPid;
-	return S_OK;
-}
-
-HRESULT CDump::GetTSHeader(BYTE *data,TSHeader *header)
-{
-	header->SyncByte=data[0];
-	header->TransportError=(data[1] & 0x80)>0?true:false;
-	header->PayloadUnitStart=(data[1] & 0x40)>0?true:false;
-	header->TransportPriority=(data[1] & 0x20)>0?true:false;
-	header->Pid=((data[1] & 0x1F) <<8)+data[2];
-	header->TScrambling=data[3] & 0xC0;
-	header->AdaptionControl=(data[3]>>4) & 0x3;
-	header->ContinuityCounter=data[3] & 0x0F;
-	return S_OK;
-}
-STDMETHODIMP CDump::SetAudioPid( int audioPid)
-{
-	m_audioPid=audioPid;
-	LogDebug("audiopid:%x",audioPid);
-	ResetAnalyer();
-	return S_OK;
-}
-STDMETHODIMP CDump::GetAudioPid( int* audioPid)
-{
-	*audioPid=m_audioPid;
-	return S_OK;
-}
-
-STDMETHODIMP CDump::IsVideoEncrypted( int* yesNo)
-{
-	*yesNo = (m_bVideoEncrypted?1:0);
-	return S_OK;
-}
-STDMETHODIMP CDump::IsAudioEncrypted( int* yesNo)
-{
-	*yesNo = (m_bAudioEncrypted?1:0);
-	return S_OK;
-}
-
-STDMETHODIMP CDump::ResetAnalyer()
-{
-		m_bInitAudio=TRUE;
-		m_bInitVideo=TRUE;
-		m_bVideoEncrypted=TRUE;
-		m_bAudioEncrypted=TRUE;
-		m_audioTimer=GetTickCount();
-		m_videoTimer=GetTickCount();
-		return S_OK;
-}
-
-int CDump::FindOffset(BYTE* pbData, int nLen)
-{
-	for (int i=0; i < nLen;i++)
+	/*
+	CTsHeader header(tsPacket);
+	if (header.Pid==0||header.Pid==0x10||header.Pid==0x11||header.Pid==0x12||header.Pid==0xd2||header.Pid==0xd3)
 	{
-		if (i+5*188 > nLen) break;
-		{
-			if (pbData[i]==0x47 && pbData[i+188]==0x47 && pbData[i+2*188]==0x47 && pbData[i+3*188]==0x47 && pbData[i+4*188]==0x47)
-			{
-				return i;
-			}
-		}
+		DumpTs(tsPacket);
+	}*/
+	try
+	{
+		m_pVideoAnalyzer->OnTsPacket(tsPacket);
 	}
-	return -1;
-}
-
-void CDump::LogHeader(TSHeader& header)
-{
-	LogDebug("  SyncByte         :%x", header.SyncByte);
-	LogDebug("  TransportError   :%x", header.TransportError);
-	LogDebug("  PayloadUnitStart :%d", header.PayloadUnitStart);
-	LogDebug("  TransportPriority:%x", header.TransportPriority);
-	LogDebug("  Pid              :%x", header.Pid);
-	LogDebug("  TScrambling      :%x", header.TScrambling);
-	LogDebug("  AdaptionControl  :%x", header.AdaptionControl);
-	LogDebug("  ContinuityCounter:%x", header.ContinuityCounter);
-
-}
-void CDump::Analyze(BYTE* pbData, int nLen)
-{
-
-	int i=FindOffset(pbData,nLen);
-	if (i<0) return;
-
-	bool gotVideo=false;
-	bool gotAudio=false;
-	TSHeader  header;
-	int pktCounter=0;
-	for (; i < nLen;i+=188)
+	catch(...)
 	{
-		pktCounter++;
-		GetTSHeader(&pbData[i],&header);
-		if (header.SyncByte!=0x47) return;
-		if (header.TransportError==true) return;
-		if (header.ContinuityCounter!=0)  continue;
-		if (gotVideo && gotAudio) return;
-		BOOL scrambled= (header.TScrambling!=0);
-		if (header.Pid==m_audioPid) 
-		{
-			gotAudio=true;
-			//LogDebug("audio:%x",header.TScrambling);
-			if (TRUE==scrambled)
-			{
-				m_audioTimer=GetTickCount();
-			}
+		LogDebug("exception in video analyzer");
+	}
 
-			if (scrambled != m_bAudioEncrypted || m_bInitAudio)
-			{
-				m_bInitAudio=FALSE;
-				if (FALSE == scrambled)
-				{
-					DWORD timeSpan=GetTickCount()-m_audioTimer;
-					if (timeSpan > 150)
-					{
-						LogDebug("audio pid %x unscrambled", m_audioPid);
-						m_bAudioEncrypted=scrambled;
-						//LogHeader(header);
-					}
-				}
-				else
-				{
-						LogDebug("audio pid %x scrambled %i", m_audioPid,pktCounter);
-					//LogHeader(header);
-					m_bAudioEncrypted=scrambled;
-				}
-			}
-		}
+	try
+	{
+		m_pChannelScanner->OnTsPacket(tsPacket);
+	}
+	catch(...)
+	{
+		LogDebug("exception in channel scanner");
+	}
 
-		if (header.Pid==m_videoPid) 
-		{
-			gotVideo=true;
-			//LogDebug("video:%x",header.TScrambling);
-			if (TRUE==scrambled)
-			{
-				m_videoTimer=GetTickCount();
-			}
-
-			if (scrambled != m_bVideoEncrypted || m_bInitVideo)
-			{
-				m_bInitVideo=FALSE;
-				if (FALSE == scrambled)
-				{
-					DWORD timeSpan=GetTickCount()-m_videoTimer;
-					if (timeSpan > 150)
-					{
-						LogDebug("video pid %x unscrambled", m_videoPid);
-						//LogHeader(header);
-						m_bVideoEncrypted=scrambled;
-					}
-				}
-				else
-				{
-					LogDebug("video pid %x scrambled %i", m_videoPid,pktCounter);
-					//LogHeader(header);
-					m_bVideoEncrypted=scrambled;
-				}
-			}
-		}
+	try
+	{
+		m_pEpgScanner->OnTsPacket(tsPacket);
+	}
+	catch(...)
+	{
+		LogDebug("exception in epg scanner");
 	}
 }

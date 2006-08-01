@@ -1,48 +1,47 @@
-//------------------------------------------------------------------------------
-// File: Dump.h
-//
-// Desc: DirectShow sample code - definitions for dump renderer.
-//
-// Copyright (c) Microsoft Corporation.  All rights reserved.
-//------------------------------------------------------------------------------
+/* 
+ *	Copyright (C) 2005 Team MediaPortal
+ *	http://www.team-mediaportal.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+#include "packetsync.h"
+#include "multiplexer.h"
+#include "videoanalyzer.h"
+#include "channelscan.h"
+#include "epgscanner.h"
 #include <map>
 using namespace std;
 
-class CDumpInputPin;
-class CDump;
-class CDumpFilter;
+class CMpTsFilterPin;
+class CMpTs;
+class CMpTsFilter;
 
-DEFINE_GUID(CLSID_TsWriter, 0xfc50bed6, 0xfe38, 0x42d3, 0xb8, 0x31, 0x77, 0x16, 0x90, 0x9, 0x1a, 0x6e);
+DEFINE_GUID(CLSID_MpTsFilter, 0xfc50bed6, 0xfe38, 0x42d3, 0xb8, 0x31, 0x77, 0x16, 0x90, 0x9, 0x1a, 0x6e);
 
-DEFINE_GUID(IID_IMPFileRecord,0x59f8d617, 0x92fd, 0x48d5, 0x8f, 0x6d, 0xa9, 0x7b, 0xfd, 0x95, 0xc4, 0x48);
-
-// interface
-DECLARE_INTERFACE_(ITsWriter, IUnknown)
-{
-	STDMETHOD(SetVideoPid)(THIS_ int videoPid)PURE;
-	STDMETHOD(GetVideoPid)(THIS_ int* videoPid)PURE;
-	
-	STDMETHOD(SetAudioPid)(THIS_ int audioPid)PURE;
-	STDMETHOD(GetAudioPid)(THIS_ int* audioPid)PURE;
-	
-	STDMETHOD(IsVideoEncrypted)(THIS_ int* yesNo)PURE;
-	STDMETHOD(IsAudioEncrypted)(THIS_ int* yesNo)PURE;
-
-	STDMETHOD(ResetAnalyer)(THIS_)PURE;
-};
 // Main filter object
 
-class CDumpFilter : public CBaseFilter
+class CMpTsFilter : public CBaseFilter
 {
-    CDump * const m_pDump;
+    CMpTs * const m_pWriterFilter;
 
 public:
 
     // Constructor
-    CDumpFilter(CDump *pDump,
-                LPUNKNOWN pUnk,
-                CCritSec *pLock,
-                HRESULT *phr);
+    CMpTsFilter(CMpTs *pDump,LPUNKNOWN pUnk,CCritSec *pLock,HRESULT *phr);
 
     // Pin enumeration
     CBasePin * GetPin(int n);
@@ -57,18 +56,13 @@ public:
 
 //  Pin object
 
-class CDumpInputPin : public CRenderedInputPin
+class CMpTsFilterPin : public CRenderedInputPin,public CPacketSync
 {
-    CDump    * const	m_pDump;           // Main renderer object
-    CCritSec * const	m_pReceiveLock;    // Sample critical section
+    CMpTs*	const	m_pWriterFilter;   // Main renderer object
+    CCritSec*		const	m_pReceiveLock;    // Sample critical section
 public:
 
-    CDumpInputPin(CDump *pDump,
-                  LPUNKNOWN pUnk,
-                  CBaseFilter *pFilter,
-                  CCritSec *pLock,
-                  CCritSec *pReceiveLock,
-                  HRESULT *phr);
+    CMpTsFilterPin(CMpTs *pDump,LPUNKNOWN pUnk,CBaseFilter *pFilter,CCritSec *pLock,CCritSec *pReceiveLock,HRESULT *phr);
 
     // Do something with this media sample
     STDMETHODIMP Receive(IMediaSample *pSample);
@@ -86,64 +80,38 @@ public:
 		void			Reset();
     // Track NewSegment
     STDMETHODIMP NewSegment(REFERENCE_TIME tStart,REFERENCE_TIME tStop,double dRate);
+
+		//CPacketSync overrides
+		void OnTsPacket(byte* tsPacket);
 private:
 	CCritSec		m_section;
 };
 
 
-//  CDump object which has filter and pin members
+//  CMpTs object which has filter and pin members
 
-class CDump : public CUnknown, public ITsWriter
+class CMpTs : public CUnknown
 {
-	typedef struct TSHeader
-	{
-		BYTE SyncByte			;
-		bool TransportError		;
-		bool PayloadUnitStart	;
-		bool TransportPriority	;
-		unsigned short Pid		;
-		BYTE TScrambling		;
-		BYTE AdaptionControl	;
-		BYTE ContinuityCounter	;
-	};
 
-    friend class CDumpFilter;
-    friend class CDumpInputPin;
-    CDumpFilter*	m_pFilter;       // Methods for filter interfaces
-    CDumpInputPin*	m_pPin;          // A simple rendered input pin
+    friend class CMpTsFilter;
+    friend class CMpTsFilterPin;
+    CMpTsFilter*	m_pFilter;       // Methods for filter interfaces
+    CMpTsFilterPin*	m_pPin;          // A simple rendered input pin
     CCritSec 		m_Lock;                // Main renderer critical section
     CCritSec 		m_ReceiveLock;         // Sublock for received samples
 public:
     DECLARE_IUNKNOWN
 
-    CDump(LPUNKNOWN pUnk, HRESULT *phr);
-    ~CDump();
+    CMpTs(LPUNKNOWN pUnk, HRESULT *phr);
+    ~CMpTs();
 
-		STDMETHODIMP SetVideoPid( int videoPid);
-		STDMETHODIMP GetVideoPid( int* videoPid);
-		
-		STDMETHODIMP SetAudioPid( int audioPid);
-		STDMETHODIMP GetAudioPid( int* audioPid);
-		
-		STDMETHODIMP IsVideoEncrypted( int* yesNo);
-		STDMETHODIMP IsAudioEncrypted( int* yesNo);
-		STDMETHODIMP ResetAnalyer();
     static CUnknown * WINAPI CreateInstance(LPUNKNOWN punk, HRESULT *phr);
 
-		void Analyze(BYTE* pbData, int nLen);
-		int FindOffset(BYTE* pbData, int nLen);
-		void LogHeader(TSHeader& header);
+		void AnalyzeTsPacket(byte* tsPacket);
 private:
-		HRESULT GetTSHeader(BYTE *data,TSHeader *header);
-		int m_videoPid;
-		int m_audioPid;
-		BOOL m_bAudioEncrypted;
-		BOOL m_bVideoEncrypted;
-		DWORD m_audioTimer;
-		DWORD m_videoTimer;
-		BOOL m_bInitAudio;
-		BOOL m_bInitVideo;
     // Overriden to say what interfaces we support where
     STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void ** ppv);
-
+		CVideoAnalyzer* m_pVideoAnalyzer;
+		CChannelScan*   m_pChannelScanner;
+		CEpgScanner*		m_pEpgScanner;
 };
