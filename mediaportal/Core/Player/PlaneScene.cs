@@ -97,6 +97,7 @@ namespace MediaPortal.Player
     VertexBuffer _vertexBuffer;
     uint _surfaceAdress, _textureAddress;
 
+    int _scanlinesToRemove = 0;
     int _arVideoWidth = 4;
     int _arVideoHeight = 3;
     int _prevVideoWidth = 0;
@@ -130,6 +131,9 @@ namespace MediaPortal.Player
       _blackImage = new GUIImage(0);
       _blackImage.SetFileName("black.bmp");
       _blackImage.AllocResources();
+
+      using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        _scanlinesToRemove = xmlReader.GetValueAsInt("mytv", "scanlinestoremove", 0);
     }
     #endregion
 
@@ -363,6 +367,11 @@ namespace MediaPortal.Player
         if (_destinationRect.Height < 10) return false;
         if (_sourceRect.Width < 10) return false;
         if (_sourceRect.Height < 10) return false;
+
+        // Some capture cards capture teletext information that appears as a moving line at the top
+        // Remove those by croping the picture
+        _sourceRect.Y += _scanlinesToRemove;
+        _sourceRect.Height -= _scanlinesToRemove;
 
         _log.Info("PlaneScene: video WxH  : {0}x{1}", videoSize.Width, videoSize.Height);
         _log.Info("PlaneScene: video AR   : {0}:{1}", _arVideoWidth, _arVideoHeight);
