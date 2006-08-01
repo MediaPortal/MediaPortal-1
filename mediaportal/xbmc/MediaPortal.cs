@@ -679,33 +679,27 @@ public class MediaPortalApp : D3DApp, IRender
     _suspended = true;
     InputDevices.Stop();
 
-    _log.Info("Main OnSuspend: Stopping playback");
+    _log.Info("Main: Stopping playback");
     g_Player.Stop();
-    _log.Info("Main OnSuspend: Stopping recorder");
+    _log.Info("Main: Stopping recorder");
     Recorder.Stop();
 
     //switch to windowed mode
-   // if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false && isMaximized)
-   // {
-   //   _log.Info("Main OnSuspend: Switching to windowed mode");
-   //   SwitchFullScreenOrWindowed(true);
-   // }
+    if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false && isMaximized)
+    {
+      _log.Info("Main: Switching to windowed mode");
+      SwitchFullScreenOrWindowed(true);
+    }
   }
 
   //called when windows wakes up again
   void OnResume()
   {
     if (!_suspended) return;
-
-    _log.Info("Main OnResume: reset device");
-    
-    // Reset the device before we do anything
-    SwitchFullScreenOrWindowed(GUIGraphicsContext.DX9Device.PresentationParameters.Windowed);
     _suspended = false;
-    OnDeviceReset(null, null);
-    
-    _log.Info("Main OnResume: Switch to home screen");
+    _log.Info("Main: Switch to home screen");
     GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
+    //_suspended = false;
 
     EXECUTION_STATE oldState = EXECUTION_STATE.ES_CONTINUOUS;
     bool turnMonitorOn = false;
@@ -1098,8 +1092,6 @@ public class MediaPortalApp : D3DApp, IRender
 
   protected override void Render(float timePassed)
   {
-    if (_suspended)
-      return;
     if (reentrant)
     {
       _log.Info("Main: DX9 re-entrant"); //remove
