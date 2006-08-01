@@ -97,6 +97,7 @@ void CSectionDecoder::OnTsPacket(byte* tsPacket)
 
     //LogDebug("%x:%x %x %x %x %d/%d len:%d ",m_pid,m_tableId,network_id,transport_stream_id,current_next_indicator,section_number,last_section_number,section_length);
 
+		m_section.Length=section_length+start+3;
     m_section.NetworkId=network_id;
     m_section.TransportId=transport_stream_id;
     m_section.Version=version_number;

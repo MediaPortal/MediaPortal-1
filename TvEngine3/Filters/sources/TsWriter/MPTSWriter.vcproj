@@ -231,6 +231,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\source\PmtGrabber.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\source\TsWriter.cpp"
 				>
 			</File>
@@ -369,6 +373,10 @@
 			</File>
 			<File
 				RelativePath=".\source\EpgScanner.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\PmtGrabber.h"
 				>
 			</File>
 			<File

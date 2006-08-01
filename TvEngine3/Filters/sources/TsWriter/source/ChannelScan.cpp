@@ -35,13 +35,21 @@ extern void LogDebug(const char *fmt, ...) ;
 CChannelScan::CChannelScan(LPUNKNOWN pUnk, HRESULT *phr) 
 :CUnknown( NAME ("MpTsChannelScan"), pUnk)
 {
+	m_bIsParsing=false;
 }
 CChannelScan::~CChannelScan(void)
 {
 }
 
-STDMETHODIMP CChannelScan::Reset()
+STDMETHODIMP CChannelScan::Start()
 {
+	m_patParser.Reset();
+	m_bIsParsing=true;
+	return S_OK;
+}
+STDMETHODIMP CChannelScan::Stop()
+{
+	m_bIsParsing=false;
 	m_patParser.Reset();
 	return S_OK;
 }
@@ -145,5 +153,8 @@ STDMETHODIMP CChannelScan::GetChannel(int index,
 
 void CChannelScan::OnTsPacket(byte* tsPacket)
 {
-	m_patParser.OnTsPacket(tsPacket);
+	if (m_bIsParsing)
+	{
+		m_patParser.OnTsPacket(tsPacket);
+	}
 }

@@ -14,5 +14,6 @@ public:
   int    SectionPos;
   int    BufferPos;
   int    SectionLength;
+	int    Length;
   byte   Data[4096];
 };

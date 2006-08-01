@@ -21,4 +21,5 @@ void CSection::Reset()
   NetworkId=-1;
   TransportId=0;
   LastSectionNumber=0;
+	Length=0;
 }

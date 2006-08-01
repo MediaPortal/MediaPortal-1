@@ -26,7 +26,8 @@ DEFINE_GUID(IID_ITSChannelScan, 0x1663dc42, 0xd169, 0x41da, 0xbc, 0xe2, 0xee, 0x
 
 DECLARE_INTERFACE_(ITSChannelScan, IUnknown)
 {
-	STDMETHOD(Reset)(THIS_)PURE;
+	STDMETHOD(Start)(THIS_)PURE;
+	STDMETHOD(Stop)(THIS_)PURE;
 	STDMETHOD(GetCount)(THIS_ int* channelCount)PURE;
 	STDMETHOD(GetChannel)(THIS_ int index,
 										 int* networkId,
@@ -67,7 +68,8 @@ public:
 	
   DECLARE_IUNKNOWN
 	
-	STDMETHODIMP Reset();
+	STDMETHODIMP Start();
+	STDMETHODIMP Stop();
 	STDMETHODIMP GetCount(int* channelCount);
 	STDMETHODIMP GetChannel(int index,
 										 int* networkId,
@@ -101,4 +103,5 @@ public:
 	void OnTsPacket(byte* tsPacket);
 private:
 	CPatParser m_patParser;
+	bool m_bIsParsing;
 };

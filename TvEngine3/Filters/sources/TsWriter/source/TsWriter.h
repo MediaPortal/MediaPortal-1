@@ -23,6 +23,8 @@
 #include "videoanalyzer.h"
 #include "channelscan.h"
 #include "epgscanner.h"
+#include "pmtgrabber.h"
+
 #include <map>
 using namespace std;
 
@@ -114,4 +116,5 @@ private:
 		CVideoAnalyzer* m_pVideoAnalyzer;
 		CChannelScan*   m_pChannelScanner;
 		CEpgScanner*		m_pEpgScanner;
+		CPmtGrabber*		m_pPmtGrabber;
 };
