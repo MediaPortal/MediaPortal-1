@@ -173,6 +173,7 @@ namespace MediaPortal.Music.Database
     private DateTime spamCheck;
     private TimeSpan minConnectWaitTime;
     private bool _disableTimerThread;
+    private bool _useDebugLog;
     private System.Timers.Timer submitTimer;
     private bool connected;
 
@@ -188,6 +189,7 @@ namespace MediaPortal.Music.Database
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
+        _useDebugLog = xmlreader.GetValueAsBool("audioscrobbler", "usedebuglog", false);
         _disableTimerThread = xmlreader.GetValueAsBool("audioscrobbler", "disabletimerthread", true);
         username = xmlreader.GetValueAsString("audioscrobbler", "user", "");
         string tmpPass;
@@ -331,7 +333,13 @@ namespace MediaPortal.Music.Database
       {
         while (queue.Count > MAX_QUEUE_SIZE)
           queue.RemoveAt(0);
+
+        // prevent double adds        
+        //if (!queue.Contains(song_))
         queue.Add(song_);
+        //else
+        //  if (_useDebugLog)
+        //    Log.Write("AudioscrobblerBase: detected double add of {0}", song_.ToShortString());
       }
 
       if (_antiHammerCount == 0)
@@ -344,7 +352,8 @@ namespace MediaPortal.Music.Database
         InitSubmitTimer();
       }
       else
-        Log.Write("AudioscrobblerBase: {0}", "direct submit cancelled because of BadAuth event");
+        if (_useDebugLog)
+          Log.Write("AudioscrobblerBase: {0}", "direct submit cancelled because of BadAuth event");
     }
 
 
@@ -433,7 +442,7 @@ namespace MediaPortal.Music.Database
       {
         _antiHammerCount = _antiHammerCount + 1;
         DoHandshake();
-        SUBMIT_INTERVAL = SUBMIT_INTERVAL * _antiHammerCount * 2;
+        SUBMIT_INTERVAL = SUBMIT_INTERVAL * _antiHammerCount;
         // prevent null argument exception
         if (SUBMIT_INTERVAL == 0)
           SUBMIT_INTERVAL = 120;
@@ -723,9 +732,10 @@ namespace MediaPortal.Music.Database
 
         // Append the songs to be submitted.
         int n_songs = 0;
+        int n_totalsongs = 0;
         
         foreach (Song song in songs)
-        {
+        {          
           if (Convert.ToDateTime(song.getQueueTime()) > spamCheck)
           {
             spamCheck = Convert.ToDateTime(song.getQueueTime());
@@ -733,7 +743,19 @@ namespace MediaPortal.Music.Database
             n_songs++;
           }
           else
-            Log.Write("AudioscrobblerBase: Spam protection - obmitting song: {0}", song.ToShortString());
+          {
+            if (_useDebugLog)
+              Log.Write("AudioscrobblerBase: Spam protection - obmitting song: {0}", songs[n_totalsongs].ToShortString());
+          }
+          n_totalsongs++;
+        }
+
+        if (!postData.Contains("&a[0]"))
+        {
+          if (_useDebugLog)
+            Log.Write("AudioscrobblerBase: postData did not contain info for {0}", "latest song");
+          ClearQueue();
+          return;
         }
 
         // Submit or die.
