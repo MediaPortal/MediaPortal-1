@@ -184,10 +184,10 @@ namespace TvLibrary.Implementations.DVB
         return false;
       }
       DVBCChannel oldChannel = _currentChannel as DVBCChannel;
-      //if (_currentChannel != null)
-      //{
-      //  if (oldChannel.Equals(channel)) return true;
-      //}
+      if (_currentChannel != null)
+      {
+        if (oldChannel.Equals(channel)) return true;
+      }
       if (_graphState == GraphState.Idle)
       {
         BuildGraph();

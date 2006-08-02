@@ -30,6 +30,7 @@ DECLARE_INTERFACE_(ITsTimeshifting, IUnknown)
 {
 	STDMETHOD(SetPcrPid)(THIS_ int pcrPid)PURE;
 	STDMETHOD(AddPesStream)(THIS_ int pid)PURE;
+	STDMETHOD(RemovePesStream)(THIS_ int pid)PURE;
 	
   STDMETHOD(SetTimeShiftingFileName)(THIS_ char* pszFileName)PURE;
   STDMETHOD(Start)(THIS_ )PURE;
@@ -45,6 +46,7 @@ public:
 	
 	STDMETHODIMP SetPcrPid(int pcrPid);
 	STDMETHODIMP AddPesStream(int pid);
+	STDMETHODIMP RemovePesStream(int pid);
 	STDMETHODIMP SetTimeShiftingFileName(char* pszFileName);
 	STDMETHODIMP Start();
 	STDMETHODIMP Stop();

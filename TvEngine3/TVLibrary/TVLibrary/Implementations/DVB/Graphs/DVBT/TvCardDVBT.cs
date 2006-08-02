@@ -190,11 +190,11 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.WriteFile("Channel is not a DVBT channel!!! {0}", channel.GetType().ToString());
           return false;
         }
-        //DVBTChannel oldChannel = _currentChannel as DVBTChannel;
-        //if (_currentChannel != null)
-        //{
-        //  if (oldChannel.Equals(channel)) return true;
-        //}
+        DVBTChannel oldChannel = _currentChannel as DVBTChannel;
+        if (_currentChannel != null)
+        {
+          if (oldChannel.Equals(channel)) return true;
+        }
         if (_graphState == GraphState.Idle)
         {
           BuildGraph();

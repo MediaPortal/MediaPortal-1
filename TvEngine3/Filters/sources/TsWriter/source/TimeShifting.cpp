@@ -53,21 +53,29 @@ void CTimeShifting::OnTsPacket(byte* tsPacket)
 
 STDMETHODIMP CTimeShifting::SetPcrPid(int pcrPid)
 {
-	LogDebug("Recorder:pcr pid:%x",pcrPid);
+	LogDebug("Timeshifter:pcr pid:%x",pcrPid);
 	m_multiPlexer.SetPcrPid(pcrPid);
 	return S_OK;
 }
 STDMETHODIMP CTimeShifting::AddPesStream(int pid)
 {
-	LogDebug("Recorder:add pes stream pid:%x",pid);
+	LogDebug("Timeshifter:add pes stream pid:%x",pid);
 	m_multiPlexer.AddPesStream(pid);
 	return S_OK;
 }
+STDMETHODIMP CTimeShifting::RemovePesStream(int pid)
+{
+	LogDebug("Recorder:remove pes stream pid:%x",pid);
+	m_multiPlexer.RemovePesStream(pid);
+	return S_OK;
+}
+
 STDMETHODIMP CTimeShifting::SetTimeShiftingFileName(char* pszFileName)
 {
 	m_multiPlexer.Reset();
 	strcpy(m_szFileName,pszFileName);
 	strcat(m_szFileName,".tsbuffer");
+	LogDebug("Timeshifter:set filename:%s",m_szFileName);
 	return S_OK;
 }
 STDMETHODIMP CTimeShifting::Start()
@@ -80,19 +88,20 @@ STDMETHODIMP CTimeShifting::Start()
 	m_pTimeShiftFile = new MultiFileWriter();
 	if (FAILED(m_pTimeShiftFile->OpenFile(wstrFileName))) 
 	{
+		LogDebug("Timeshifter:failed to open filename:%s",m_szFileName);
 		m_pTimeShiftFile->CloseFile();
 		delete m_pTimeShiftFile;
 		m_pTimeShiftFile=NULL;
 		return E_FAIL;
 	}
 
-	LogDebug("Recorder:Start timeshifting:'%s'",m_szFileName);
+	LogDebug("Timeshifter:Start timeshifting:'%s'",m_szFileName);
 	m_bTimeShifting=true;
 	return S_OK;
 }
 STDMETHODIMP CTimeShifting::Stop()
 {
-	LogDebug("Recorder:Stop timeshifting:'%s'",m_szFileName);
+	LogDebug("Timeshifter:Stop timeshifting:'%s'",m_szFileName);
 	m_bTimeShifting=false;
 	m_multiPlexer.Reset();
 	if (m_pTimeShiftFile!=NULL)

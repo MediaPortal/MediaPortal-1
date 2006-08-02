@@ -30,6 +30,7 @@ DECLARE_INTERFACE_(ITsRecorder, IUnknown)
 {
 	STDMETHOD(SetPcrPid)(THIS_ int pcrPid)PURE;
 	STDMETHOD(AddPesStream)(THIS_ int pid)PURE;
+	STDMETHOD(RemovePesStream)(THIS_ int pid)PURE;
 	
   STDMETHOD(SetRecordingFileName)(THIS_ char* pszFileName)PURE;
   STDMETHOD(StartRecord)(THIS_ )PURE;
@@ -45,6 +46,7 @@ public:
 	
 	STDMETHODIMP SetPcrPid(int pcrPid);
 	STDMETHODIMP AddPesStream(int pid);
+	STDMETHODIMP RemovePesStream(int pid);
 	STDMETHODIMP SetRecordingFileName(char* pszFileName);
 	STDMETHODIMP StartRecord();
 	STDMETHODIMP StopRecord();

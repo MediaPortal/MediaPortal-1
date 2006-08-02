@@ -63,6 +63,14 @@ STDMETHODIMP CRecorder::AddPesStream(int pid)
 	m_multiPlexer.AddPesStream(pid);
 	return S_OK;
 }
+
+STDMETHODIMP CRecorder::RemovePesStream(int pid)
+{
+	LogDebug("Recorder:remove pes stream pid:%x",pid);
+	m_multiPlexer.RemovePesStream(pid);
+	return S_OK;
+}
+
 STDMETHODIMP CRecorder::SetRecordingFileName(char* pszFileName)
 {
 	m_multiPlexer.Reset();

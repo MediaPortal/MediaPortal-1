@@ -192,11 +192,11 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.WriteFile("Channel is not a ATSC channel!!! {0}", channel.GetType().ToString());
           return false;
         }
-        //ATSCChannel oldChannel = _currentChannel as ATSCChannel;
-        //if (_currentChannel != null)
-          //{
-        //  if (oldChannel.Equals(channel)) return true;
-        //}
+        ATSCChannel oldChannel = _currentChannel as ATSCChannel;
+        if (_currentChannel != null)
+        {
+          if (oldChannel.Equals(channel)) return true;
+        }
         if (_graphState == GraphState.Idle)
         {
           BuildGraph();

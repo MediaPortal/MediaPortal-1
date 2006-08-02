@@ -40,6 +40,7 @@ public:
 	void SetPcrPid(int pcrPid);
 	int  GetPcrPid();
 	void AddPesStream(int pid);
+	void RemovePesStream(int pid);
 	void OnTsPacket(byte* tsPacket);
 	void Reset();
 	void SetFileWriterCallBack(IFileWriter* callback);

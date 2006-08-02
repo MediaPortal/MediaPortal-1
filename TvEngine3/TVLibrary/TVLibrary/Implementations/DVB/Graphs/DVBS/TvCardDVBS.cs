@@ -197,11 +197,11 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.WriteFile("Channel is not a DVBS channel!!! {0}", channel.GetType().ToString());
         return false;
       }
-      //DVBSChannel oldChannel = _currentChannel as DVBSChannel;
-      //if (_currentChannel != null)
-      //{
-      //  if (oldChannel.Equals(channel)) return true;
-      //}
+      DVBSChannel oldChannel = _currentChannel as DVBSChannel;
+      if (_currentChannel != null)
+      {
+        if (oldChannel.Equals(channel)) return true;
+      }
       if (dvbsChannel.SwitchingFrequency < 10)
       {
         dvbsChannel.SwitchingFrequency = 11700000;

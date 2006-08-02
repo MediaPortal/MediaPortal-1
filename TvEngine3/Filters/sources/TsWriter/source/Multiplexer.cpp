@@ -60,6 +60,22 @@ int CMultiplexer::GetPcrPid()
 	return m_pcrDecoder.GetPcrPid();
 }
 
+void CMultiplexer::RemovePesStream(int pid)
+{
+	ivecPesDecoders it;
+	it=m_pesDecoders.begin(); 
+	while (it != m_pesDecoders.end())
+	{
+		CPesDecoder* decoder=*it;
+		if (decoder->GetPid()==pid) 
+		{
+			delete[] decoder;
+			m_pesDecoders.erase(it);
+			return;
+		}
+		++it;
+	}
+}
 void CMultiplexer::AddPesStream(int pid)
 {
 	ivecPesDecoders it;
@@ -93,10 +109,10 @@ void CMultiplexer::OnTsPacket(byte* tsPacket)
 			
 			if (decoder->GetStreamId()==0xe0)
 			{
-				LogDebug("stream 0xe0 %d",m_videoPacketCounter);
+				//LogDebug("stream 0xe0 %d",m_videoPacketCounter);
 				if ((m_videoPacketCounter%30)==0)
 				{	
-					LogDebug("write pack header %x %x",m_pcrDecoder.PcrHigh(),m_pcrDecoder.PcrLow());
+					//LogDebug("write pack header %x %x",m_pcrDecoder.PcrHigh(),m_pcrDecoder.PcrLow());
 					byte buffer[20];
 					int packLen=WritePackHeader(m_pcrDecoder.PcrHigh(), m_pcrDecoder.PcrLow(),4000000,buffer);
 					if (m_pCallback!=NULL)
@@ -108,7 +124,7 @@ void CMultiplexer::OnTsPacket(byte* tsPacket)
 					//fwrite(buffer,1,systemLen,m_fp);
 				}
 				m_videoPacketCounter++;
-				LogDebug("write video pid %x peslen:%x",decoder->GetPid(), pesLength);
+				//LogDebug("write video pid %x peslen:%x",decoder->GetPid(), pesLength);
 				if (m_pCallback!=NULL)
 				{
 					m_pCallback->Write(pesPacket,pesLength);
@@ -116,10 +132,10 @@ void CMultiplexer::OnTsPacket(byte* tsPacket)
 			}
 			else 
 			{
-				LogDebug("stream 0xc0 %d",m_videoPacketCounter);
+				//LogDebug("stream 0xc0 %d",m_videoPacketCounter);
 				if (m_videoPacketCounter>0)
 				{
-					LogDebug("write audio pid %x peslen:%x",decoder->GetPid(), pesLength);
+					//LogDebug("write audio pid %x peslen:%x",decoder->GetPid(), pesLength);
 					if (m_pCallback!=NULL)
 					{
 						m_pCallback->Write(pesPacket,pesLength);

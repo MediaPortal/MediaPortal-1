@@ -15,6 +15,8 @@ namespace TvLibrary.Interfaces.Analyzer
     [PreserveSig]
     int AddPesStream(short pid);
     [PreserveSig]
+    int RemovePesStream(short pid);
+    [PreserveSig]
     int SetRecordingFileName([In, MarshalAs(UnmanagedType.LPStr)]			string fileName);
     [PreserveSig]
     int StartRecord();

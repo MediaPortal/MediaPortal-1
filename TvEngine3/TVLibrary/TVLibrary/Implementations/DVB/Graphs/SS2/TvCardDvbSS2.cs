@@ -22,8 +22,6 @@ namespace TvLibrary.Implementations.DVB
   public class TvCardDvbSS2 : ITVCard, IDisposable, ISampleGrabberCB, IPMTCallback
   {
     #region imports
-    [ComImport, Guid("DB35F5ED-26B2-4A2A-92D3-852E145BF32D")]
-    protected class MpFileWriter { }
 
     [ComImport, Guid("fc50bed6-fe38-42d3-b831-771690091a6e")]
     protected class MpTsAnalyzer { }
@@ -55,12 +53,8 @@ namespace TvLibrary.Implementations.DVB
     protected IBaseFilter _infTeeMain = null;
     protected IBaseFilter _filterB2C2Adapter;
     protected IBaseFilter _filterNetworkProvider = null;
-    protected IBaseFilter _filterMpegMuxerTimeShift = null;
     protected IBaseFilter _filterMpeg2DemuxTif = null;
-#if MULTI_DEMUX
-    protected IBaseFilter _filterMpegMuxerTimeShiftAnalyzer = null;
-    protected IBaseFilter _filterMpeg2DemuxTs = null;
-#endif
+
     protected IBaseFilter _filterTIF = null;
     protected IBaseFilter _filterSectionsAndTables = null;
     protected IBaseFilter _filterTsAnalyzer;
@@ -76,15 +70,13 @@ namespace TvLibrary.Implementations.DVB
     DVBSkyStar2Helper.IB2C2MPEG2TunerCtrl2 _interfaceB2C2TunerCtrl;
     
     protected IPin _pinTTX;
-    protected IPin _pinAudioTimeShift;
-    protected IPin _pinVideoTimeShift;
 
     protected DVBTeletext _teletextDecoder;
     protected bool _hasTeletext = false;
     protected ITsEpgScanner _interfaceEpgGrabber;
     protected ITsChannelScan _interfaceChannelScan;
     protected ITsPmtGrabber _interfacePmtGrabber;
-    protected IStreamAnalyzer _streamAnalyzer;
+    
     protected bool _graphRunning;
     protected bool _epgGrabbing;
     protected int _managedThreadId;
@@ -92,6 +84,7 @@ namespace TvLibrary.Implementations.DVB
     protected int _signalQuality;
     protected int _signalLevel;
     protected DateTime _lastSignalUpdate;
+    protected bool _startTimeShifting = false;
 
 #if FORM
     protected bool _newPMT = false;
@@ -319,10 +312,8 @@ namespace TvLibrary.Implementations.DVB
       ConnectMainTee();
       ConnectMpeg2DemuxersToMainTee();
 
-      CreateDemuxerPins();
       GetVideoAudioPins();
 
-      AddAnalyzerFilter();
       AddSampleGrabber();
       SendHWPids(new ArrayList());
       _graphState = GraphState.Created;
@@ -355,32 +346,10 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
-    protected void CreateDemuxerPins()
-    {
-      if (!CheckThreadId()) return;
-      if (_filterMpeg2DemuxTif == null) return;
-      Log.Log.WriteFile("ss2:CreateDemuxerPins");
-      int hr = 0;
-      IMpeg2Demultiplexer demuxer = (IMpeg2Demultiplexer)_filterMpeg2DemuxTif;
-      hr = demuxer.CreateOutputPin(FilterGraphTools.GetVideoMpg2Media(), "video", out _pinVideoTimeShift);
-      if (hr != 0)
-      {
-        Log.Log.WriteFile("ss2:FAILED to create video output pin on demuxer");
-        throw new TvException("unable to create video output pin on demuxer");
-      }
-      hr = demuxer.CreateOutputPin(FilterGraphTools.GetAudioMpg2Media(), "audio", out _pinAudioTimeShift);
-      if (hr != 0)
-      {
-        Log.Log.WriteFile("ss2: FAILED to create audio output pin on demuxer");
-        throw new TvException("unable to create audio output pin on demuxer");
-      }
-    }
-
+    
     protected void CreateTimeShiftingGraph()
     {
       Log.Log.WriteFile("ss2:CreateTimeShiftingGraph()");
-      AddMpegMuxer(_currentChannel.IsTv);
-      AddTsFileSink();
     }
 
     protected void DeleteTimeShiftingGraph()
@@ -393,12 +362,6 @@ namespace TvLibrary.Implementations.DVB
         _graphBuilder.RemoveFilter((IBaseFilter)_tsFileSink);
         Release.ComObject("tsFileSink filter", _tsFileSink);
         _tsFileSink = null;
-      }
-
-      if (_filterMpegMuxerTimeShift != null)
-      {
-        _graphBuilder.RemoveFilter(_filterMpegMuxerTimeShift);
-        Release.ComObject("MPEG2 mux filter", _filterMpegMuxerTimeShift); _filterMpegMuxerTimeShift = null;
       }
 
     }
@@ -424,33 +387,30 @@ namespace TvLibrary.Implementations.DVB
           throw new TvException("Unable to start timeshifting to " + fileName);
         }
       }
-      if (_tsFileSink != null)
+      if (_filterTsAnalyzer != null)
       {
-        IMPRecord record = _tsFileSink as IMPRecord;
-        record.SetTimeShiftFileName(fileName);
-        record.StartTimeShifting();
-
-
-        /*ITsFileSink sink = _tsFileSink as ITsFileSink;
-        if (sink != null)
+        Log.Log.WriteFile("dvb:SetTimeShiftFileName: uses .mpg");
+        ITsRecorder record = _filterTsAnalyzer as ITsRecorder;
+        hr = record.SetRecordingFileName(fileName);
+        DVBBaseChannel dvbChannel = _currentChannel as DVBBaseChannel;
+        record.SetPcrPid((short)dvbChannel.PcrPid);
+        foreach (PidInfo info in _channelInfo.pids)
         {
-          sink.SetChunkReserve(256 * 1024 * 1024);
-          sink.SetMaxTSFiles(100);
-          sink.SetMaxTSFileSize(256 * 1024 * 1024);
-          sink.SetMinTSFiles(4);
-          sink.SetRegSettings();
+          if (info.isAC3Audio || info.isAudio || info.isVideo)
+          {
+            record.AddPesStream((short)info.pid);
+          }
         }
-        Log.Log.WriteFile("ss2:SetTimeShiftFileName: uses .ts");
-        IFileSinkFilter interfaceFile = _tsFileSink as IFileSinkFilter;
-
-        //set filename
-        AMMediaType mt = new AMMediaType();
-        hr = interfaceFile.SetFileName(fileName, mt);
         if (hr != 0)
         {
-          Log.Log.WriteFile("ss2:SetTimeShiftFileName  returns:0x{0:X}", hr);
-          throw new TvException("Unable to start timeshifting to " + fileName);
-        }*/
+          Log.Log.WriteFile("dvb:SetRecordingFileName failed:{0:X}", hr);
+        }
+        hr = record.StartRecord();
+        if (hr != 0)
+        {
+          Log.Log.WriteFile("dvb:StartRecord failed:{0:X}", hr);
+        }
+
       }
 
     }
@@ -523,6 +483,7 @@ namespace TvLibrary.Implementations.DVB
       _graphRunning = false;
       _epgGrabbing = false;
       _isScanning = false;
+      _startTimeShifting = false;
       _dateTimeShiftStarted = DateTime.MinValue;
       _dateRecordingStarted = DateTime.MinValue;
       if (_graphBuilder == null) return;
@@ -659,32 +620,6 @@ namespace TvLibrary.Implementations.DVB
 
     }
 
-    /// <summary>
-    /// adds the TsFileSink filter to the graph
-    /// </summary>
-    protected void AddTsFileSink()
-    {
-      if (!CheckThreadId()) return;
-      Log.Log.WriteFile("ss2:AddTsFileSink");
-      _tsFileSink = (IBaseFilter)new MpFileWriter();
-      int hr = _graphBuilder.AddFilter((IBaseFilter)_tsFileSink, "TsFileSink");
-      if (hr != 0)
-      {
-        Log.Log.WriteFile("ss2:AddTsFileSink returns:0x{0:X}", hr);
-        throw new TvException("Unable to add TsFileSink");
-      }
-
-      IPin pin = DsFindPin.ByDirection(_filterMpegMuxerTimeShift, PinDirection.Output, 0);
-      FilterGraphTools.ConnectPin(_graphBuilder, pin, (IBaseFilter)_tsFileSink, 0);
-      Release.ComObject("mpegmux pinin", pin);
-    }
-
-    /// <summary>
-    /// adds the Mediaportal Stream Analyzer filter to the graph
-    /// </summary>
-    protected void AddAnalyzerFilter()
-    { 
-    }
 
     /// <summary>
     /// adds the mpeg-2 demultiplexer filter to the graph
@@ -703,27 +638,8 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.WriteFile("ss2:AddMpeg2DemuxerTif returns:0x{0:X}", hr);
         throw new TvException("Unable to add MPEG2 demultiplexer for tif");
       }
-      //multi demux
 
-#if MULTI_DEMUX
-      _filterMpegMuxerTimeShiftAnalyzer = (IBaseFilter)new MPEG2Demultiplexer();
 
-      hr = _graphBuilder.AddFilter(_filterMpegMuxerTimeShiftAnalyzer, "Analyzer MPEG2 Demultiplexer");
-      if (hr != 0)
-      {
-        Log.Log.WriteFile("ss2:AddMpeg2DemuxerDemux returns:0x{0:X}", hr);
-        throw new TvException("Unable to add MPEG2 demultiplexer for analyzer");
-      }
-
-      _filterMpeg2DemuxTs = (IBaseFilter)new MPEG2Demultiplexer();
-      hr = _graphBuilder.AddFilter(_filterMpeg2DemuxTs, "Timeshift MPEG2 Demultiplexer");
-      if (hr != 0)
-      {
-        Log.Log.WriteFile("ss2:AddMpeg2DemuxerDemux returns:0x{0:X}", hr);
-        throw new TvException("Unable to add MPEG2 demultiplexer for analyzer");
-      }
-
-#endif
       _infTeeMain = (IBaseFilter)new InfTee();
       hr = _graphBuilder.AddFilter(_infTeeMain, "Main Inf Tee");
       if (hr != 0)
@@ -749,28 +665,7 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.WriteFile("ss2:Add main InfTee returns:0x{0:X}", hr);
         throw new TvException("Unable to add  mainInfTee");
       }
-#if MULTI_DEMUX
-      mainTeeOut = DsFindPin.ByDirection(_infTeeMain, PinDirection.Output, 1);
-      demuxPinIn = DsFindPin.ByDirection(_filterMpegMuxerTimeShiftAnalyzer, PinDirection.Input, 0);
-      hr = _graphBuilder.Connect(mainTeeOut, demuxPinIn);
-      Release.ComObject("maintee pin0", mainTeeOut);
-      Release.ComObject("analyzer demux pinin", demuxPinIn);
-      if (hr != 0)
-      {
-        Log.Log.WriteFile("ss2:Add main InfTee returns:0x{0:X}", hr);
-        throw new TvException("Unable to add  mainInfTee");
-      }
-      mainTeeOut = DsFindPin.ByDirection(_infTeeMain, PinDirection.Output, 2);
-      demuxPinIn = DsFindPin.ByDirection(_filterMpeg2DemuxTs, PinDirection.Input, 0);
-      hr = _graphBuilder.Connect(mainTeeOut, demuxPinIn);
-      Release.ComObject("maintee pin0", mainTeeOut);
-      Release.ComObject("mpg demux pinin", demuxPinIn);
-      if (hr != 0)
-      {
-        Log.Log.WriteFile("ss2:Add main InfTee returns:0x{0:X}", hr);
-        throw new TvException("Unable to add  mainInfTee");
-      }
-#endif
+
     }
 
     protected void GetVideoAudioPins()
@@ -778,58 +673,6 @@ namespace TvLibrary.Implementations.DVB
       if (!CheckThreadId()) return;
       //multi demux
       Log.Log.WriteFile("ss2:GetVideoAudioPins()");
-#if MULTI_DEMUX
-      Log.Log.WriteFile("GetVideoAudioPins");
-      IMpeg2Demultiplexer demuxer = (IMpeg2Demultiplexer)_filterMpeg2DemuxTs;
-      if (_pinVideoTimeShift == null)
-      {
-        Log.Log.WriteFile("Create video pin");
-        demuxer.CreateOutputPin(FilterGraphTools.GetVideoMpg2Media(), "Video", out _pinVideoTimeShift);
-      }
-
-      if (_pinAudioTimeShift == null)
-      {
-        Log.Log.WriteFile("Create audio pin");
-        demuxer.CreateOutputPin(FilterGraphTools.GetAudioMpg2Media(), "Audio", out _pinAudioTimeShift);
-      }
-#else
-      /*
-      // Connect the 5 MPEG-2 Demux output pins
-      for (int i = 0; i < 5; i++)
-      {
-        IPin pinOut = DsFindPin.ByDirection(_filterMpeg2DemuxTif, PinDirection.Output, i);
-        if (pinOut != null)
-        {
-          IEnumMediaTypes enumMedia;
-          pinOut.EnumMediaTypes(out enumMedia);
-          bool releasePin = true;
-          while (true)
-          {
-            int fetched;
-            AMMediaType[] mediaTypes = new AMMediaType[2];
-            enumMedia.Next(1, mediaTypes, out fetched);
-            if (fetched != 1) break;
-            if (mediaTypes[0].majorType == MediaType.Video)
-            {
-              releasePin = false;
-              _pinVideoTimeShift = pinOut;
-              Log.Log.WriteFile("ss2:videopin:{0}", i);
-            }
-            if (mediaTypes[0].majorType == MediaType.Audio)
-            {
-              releasePin = false;
-              _pinAudioTimeShift = pinOut;
-              Log.Log.WriteFile("ss2:audiopin:{0}", i);
-            }
-            DsUtils.FreeAMMediaType(mediaTypes[0]);
-          }
-          Release.ComObject("IEnumMedia mpeg2 demux", enumMedia);
-          if (releasePin)
-            Release.ComObject("mpeg2 demux pin:" + i.ToString(), pinOut);
-        }
-      }*/
-#endif
-
       if (_filterTsAnalyzer == null)
       {
         _filterTsAnalyzer = (IBaseFilter)new MpTsAnalyzer();
@@ -860,11 +703,7 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.WriteFile("ss2:AddSampleGrabber returns:0x{0:X}", hr);
         throw new TvException("Unable to add Add sample grabber");
       }
-#if MULTI_DEMUX
-      IMpeg2Demultiplexer demuxer = (IMpeg2Demultiplexer)_filterMpegMuxerTimeShiftAnalyzer;
-#else
       IMpeg2Demultiplexer demuxer = (IMpeg2Demultiplexer)_filterMpeg2DemuxTif;
-#endif
       AMMediaType mediaType = new AMMediaType();
       mediaType.majorType = MediaType.Mpeg2Sections;
       mediaType.subType = MediaSubType.None;
@@ -881,38 +720,6 @@ namespace TvLibrary.Implementations.DVB
       sampleInterface.SetMediaType(mt);
       sampleInterface.SetBufferSamples(false);
     }
-
-    protected void AddMpegMuxer(bool isTv)
-    {
-      if (!CheckThreadId()) return;
-      if (_filterMpegMuxerTimeShift != null) return;
-      Log.Log.WriteFile("ss2:AddMpegMuxer()");
-      try
-      {
-        string monikerPowerDirectorMuxer = @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{7F2BBEAF-E11C-4D39-90E8-938FB5A86045}";
-        string monikerPowerDvdMuxer = @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{6770E328-9B73-40C5-91E6-E2F321AEDE57}";
-        _filterMpegMuxerTimeShift = Marshal.BindToMoniker(monikerPowerDvdMuxer) as IBaseFilter;
-        int hr = _graphBuilder.AddFilter(_filterMpegMuxerTimeShift, "TimeShift MPEG Muxer");
-        if (hr != 0)
-        {
-          Log.Log.WriteFile("ss2:AddMpegMuxer returns:0x{0:X}", hr);
-          throw new TvException("Unable to add Cyberlink MPEG Muxer");
-        }
-
-        if (isTv)
-        {
-          FilterGraphTools.ConnectPin(_graphBuilder, _pinVideoTimeShift, _filterMpegMuxerTimeShift, 0);
-        }
-        FilterGraphTools.ConnectPin(_graphBuilder, _pinAudioTimeShift, _filterMpegMuxerTimeShift, 1);
-
-      }
-      catch (Exception ex)
-      {
-        Log.Log.Write(ex);
-        throw new TvException("Cyberlink MPEG Muxer filter (mpgmux.ax) not installed");
-      }
-    }
-
 
     public void ResetSignalUpdate()
     {
@@ -1137,11 +944,6 @@ namespace TvLibrary.Implementations.DVB
 
           if (_currentAudioStream.Pid == pmtData.pid)
           {
-            if (_pinAudioTimeShift != null)
-            {
-              Log.Log.WriteFile("    map TS audio pid:0x{0:X} type:{1} language:{2}", pmtData.pid, _currentAudioStream.StreamType, _currentAudioStream.Language);
-              SetupDemuxerPin(_pinAudioTimeShift, pmtData.pid, (int)MediaSampleContent.ElementaryStream, true);
-            }
             hwPids.Add((ushort)pmtData.pid);
             writer.SetAudioPid(pmtData.pid);
           }
@@ -1149,11 +951,6 @@ namespace TvLibrary.Implementations.DVB
 
         if (pmtData.isVideo)
         {
-          if (_pinVideoTimeShift != null)
-          {
-            Log.Log.WriteFile("    map TS video pid:0x{0:X}", pmtData.pid);
-            SetupDemuxerPin(_pinVideoTimeShift, pmtData.pid, (int)MediaSampleContent.ElementaryStream, true);
-          }
           hwPids.Add((ushort)pmtData.pid);
           writer.SetVideoPid(pmtData.pid);
           if (info.pcr_pid > 0 && info.pcr_pid != pmtData.pid)
@@ -1168,6 +965,23 @@ namespace TvLibrary.Implementations.DVB
         SendHWPids(hwPids);
       }
 
+      if (_startTimeShifting)
+      {
+        Log.Log.WriteFile("dvb: set timeshifting pids");
+        _startTimeShifting = false;
+        ITsTimeShift record = _filterTsAnalyzer as ITsTimeShift;
+        DVBBaseChannel dvbChannel = _currentChannel as DVBBaseChannel;
+        record.SetPcrPid((short)dvbChannel.PcrPid);
+        foreach (PidInfo pidInfo in info.pids)
+        {
+          if (pidInfo.isAC3Audio || pidInfo.isAudio || pidInfo.isVideo)
+          {
+            record.AddPesStream((short)pidInfo.pid);
+          }
+        }
+        Log.Log.WriteFile("dvb: start timeshifting");
+        record.Start();
+      }
     }
     #endregion
 
@@ -1646,11 +1460,18 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.WriteFile("Channel is not a DVBS channel!!! {0}", channel.GetType().ToString());
         return false;
       }
+
+      DVBSChannel oldChannel = _currentChannel as DVBSChannel;
+      if (_currentChannel != null)
+      {
+        if (oldChannel.Equals(channel)) return true;
+      }
       _currentChannel = channel;
       if (_graphState == GraphState.Idle)
       {
         BuildGraph();
       }
+      _startTimeShifting = false;
       int lnbFrequency = 10600000;
       bool hiBand = true;
       if (dvbsChannel.Frequency >= 11700000)
@@ -1808,16 +1629,6 @@ namespace TvLibrary.Implementations.DVB
       SendHWPids(new ArrayList());
 
 
-      if (_currentChannel.IsTv)
-      {
-        Log.Log.WriteFile("ss2:connect video pin");
-        FilterGraphTools.ConnectPin(_graphBuilder, _pinVideoTimeShift, _filterMpegMuxerTimeShift, 0);
-      }
-      else
-      {
-        Log.Log.WriteFile("ss2:disconnect video pin");
-        _pinVideoTimeShift.Disconnect();
-      }
       SetAnalyzerMapping(dvbsChannel.PmtPid);
       Log.Log.WriteFile("ss2:tune done");
       return true;
@@ -1855,9 +1666,6 @@ namespace TvLibrary.Implementations.DVB
       }
       if (_graphState == GraphState.Created)
       {
-        StopGraph();
-        CreateTimeShiftingGraph();
-        //AddStreamBufferSink(fileName);
         SetTimeShiftFileName(fileName);
       }
 
@@ -1880,7 +1688,6 @@ namespace TvLibrary.Implementations.DVB
         return true;
       }
       StopGraph();
-      DeleteTimeShiftingGraph();
       _graphState = GraphState.Created;
       return true;
     }
@@ -1963,46 +1770,33 @@ namespace TvLibrary.Implementations.DVB
     {
       get
       {
-        if (!CheckThreadId()) return null;
-        if (_pinAudioTimeShift == null) return null;
-        List<IAudioStream> streams = AvailableAudioStreams;
-        IntPtr pids = Marshal.AllocCoTaskMem(30 * sizeof(int));
-        IntPtr elementary_stream = Marshal.AllocCoTaskMem(30 * sizeof(int));
-        Int32 pidCount = 30;
-        try
-        {
-          GetPidMapping(_pinAudioTimeShift, pids, elementary_stream, ref pidCount);
-          foreach (DVBAudioStream stream in streams)
-          {
-            for (int i = 0; i < pidCount; ++i)
-            {
-              int pid = Marshal.ReadInt32(pids, i * 4);
-              if (pid == stream.Pid)
-              {
-                return stream;
-              }
-            }
-          }
-          return null;
-        }
-        finally
-        {
-          Marshal.FreeCoTaskMem(pids);
-          Marshal.FreeCoTaskMem(elementary_stream);
-        }
+        return _currentAudioStream;
       }
       set
       {
         if (!CheckThreadId()) return;
         List<IAudioStream> streams = AvailableAudioStreams;
         DVBAudioStream audioStream = (DVBAudioStream)value;
-        SetupDemuxerPin(_pinAudioTimeShift, audioStream.Pid, (int)MediaSampleContent.ElementaryStream, true);
-        _currentAudioStream = audioStream;
         if (_filterTsAnalyzer != null)
         {
           ITsVideoAnalyzer writer = (ITsVideoAnalyzer)_filterTsAnalyzer;
           writer.SetAudioPid(audioStream.Pid);
+
+          ITsTimeShift timeshift = _filterTsAnalyzer as ITsTimeShift;
+          if (_currentAudioStream != null)
+          {
+            timeshift.RemovePesStream((short)_currentAudioStream.Pid);
+          }
+          timeshift.AddPesStream((short)audioStream.Pid);
+
+          ITsRecorder recorder = _filterTsAnalyzer as ITsRecorder;
+          if (_currentAudioStream != null)
+          {
+            recorder.RemovePesStream((short)_currentAudioStream.Pid);
+          }
+          recorder.AddPesStream((short)audioStream.Pid);
         }
+        _currentAudioStream = audioStream;
       }
     }
     #endregion
@@ -2155,11 +1949,7 @@ namespace TvLibrary.Implementations.DVB
       {
         Release.ComObject("tsFileSink filter", _tsFileSink); _tsFileSink = null;
       }
-
-      if (_filterMpegMuxerTimeShift != null)
-      {
-        Release.ComObject("MPEG2 mux filter", _filterMpegMuxerTimeShift); _filterMpegMuxerTimeShift = null;
-      }
+ 
       if (_filterTsAnalyzer != null)
       {
         Release.ComObject("_filterMpTsAnalyzer", _filterTsAnalyzer); _filterTsAnalyzer = null;
@@ -2172,14 +1962,6 @@ namespace TvLibrary.Implementations.DVB
       if (_pinTTX != null)
       {
         Release.ComObject("TTX pin", _pinTTX); _pinTTX = null;
-      }
-      if (_pinAudioTimeShift != null)
-      {
-        Release.ComObject("Audio pin", _pinAudioTimeShift); _pinAudioTimeShift = null;
-      }
-      if (_pinVideoTimeShift != null)
-      {
-        Release.ComObject("Video pin", _pinVideoTimeShift); _pinVideoTimeShift = null;
       }
       _rotEntry.Dispose();
       if (_capBuilder != null)
