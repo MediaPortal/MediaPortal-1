@@ -78,6 +78,13 @@ STDMETHODIMP CRecorder::StartRecord()
 
 	m_pRecordFile = new FileWriter();
 	m_pRecordFile->SetFileName( wstrFileName);
+	if (FAILED(m_pRecordFile->OpenFile())) 
+	{
+		m_pRecordFile->CloseFile();
+		delete m_pRecordFile;
+		m_pRecordFile=NULL;
+		return E_FAIL;
+	}
 
 	LogDebug("Recorder:Start Recording:'%s'",m_szFileName);
 	m_bRecording=true;
