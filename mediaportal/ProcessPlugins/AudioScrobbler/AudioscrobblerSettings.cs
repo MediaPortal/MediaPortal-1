@@ -199,27 +199,32 @@ namespace MediaPortal.AudioScrobbler
       similarList = new List<Song>();
 
       songList = scrobbler.ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + scrobbler.Username + "/" + "topartists.xml", @"//topartists/artist", lastFMFeed.topartists);
-      progressBarSuggestions.PerformStep();      
-      
-      for (int i = 0; i <= 7; i++)
-      {
-        similarList.AddRange(scrobbler.ParseXMLDocForSimilarArtists(songList[i].ToURLArtistString()));
-        progressBarSuggestions.PerformStep();
-      }
+      progressBarSuggestions.PerformStep();
 
-      for (int i = 0; i < similarList.Count; i++)
+      if (songList.Count > 7)
       {
-        //if (!listViewSuggestions.Items.ContainsKey(similarList[i].ToLastFMString()))
-        //  listViewSuggestions.Items.Add(similarList[i].ToLastFMString());
-        bool foundDoubleEntry = false;
-        for (int j = 0; j < listViewSuggestions.Items.Count; j++)
+        for (int i = 0; i <= 7; i++)
         {
-          if (listViewSuggestions.Items[j].Text == similarList[i].ToLastFMString())
-            foundDoubleEntry = true;
+          similarList.AddRange(scrobbler.ParseXMLDocForSimilarArtists(songList[i].ToURLArtistString()));
+          progressBarSuggestions.PerformStep();
         }
-        if (!foundDoubleEntry)
-          listViewSuggestions.Items.Add(similarList[i].ToLastFMString());
+
+        for (int i = 0; i < similarList.Count; i++)
+        {
+          //if (!listViewSuggestions.Items.ContainsKey(similarList[i].ToLastFMString()))
+          //  listViewSuggestions.Items.Add(similarList[i].ToLastFMString());
+          bool foundDoubleEntry = false;
+          for (int j = 0; j < listViewSuggestions.Items.Count; j++)
+          {
+            if (listViewSuggestions.Items[j].Text == similarList[i].ToLastFMString())
+              foundDoubleEntry = true;
+          }
+          if (!foundDoubleEntry)
+            listViewSuggestions.Items.Add(similarList[i].ToLastFMString());
+        }
       }
+      else
+        listViewSuggestions.Items.Add("Not enough overall top artists found");
       progressBarSuggestions.PerformStep();      
       progressBarSuggestions.Visible = false;
       trackBarArtistMatch.Show();
