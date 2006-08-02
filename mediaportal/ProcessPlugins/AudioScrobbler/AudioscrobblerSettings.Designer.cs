@@ -61,6 +61,9 @@ namespace MediaPortal.AudioScrobbler
       this.tabControlASSettings = new System.Windows.Forms.TabControl();
       this.tabPageAccount = new System.Windows.Forms.TabPage();
       this.groupBoxOptions = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.buttonClearCache = new MediaPortal.UserInterface.Controls.MPButton();
+      this.checkBoxLogVerbose = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxDismissOnError = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxdisableTimerThread = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBoxAccount = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.linkLabel1 = new System.Windows.Forms.LinkLabel();
@@ -78,21 +81,19 @@ namespace MediaPortal.AudioScrobbler
       this.tabPageTopTracks = new System.Windows.Forms.TabPage();
       this.buttonTopTracks = new MediaPortal.UserInterface.Controls.MPButton();
       this.listViewTopTracks = new MediaPortal.UserInterface.Controls.MPListView();
+      this.tabPageSuggestions = new System.Windows.Forms.TabPage();
+      this.labelArtistMatch = new System.Windows.Forms.Label();
+      this.trackBarArtistMatch = new System.Windows.Forms.TrackBar();
+      this.progressBarSuggestions = new System.Windows.Forms.ProgressBar();
+      this.buttonRefreshSuggestions = new MediaPortal.UserInterface.Controls.MPButton();
+      this.listViewSuggestions = new MediaPortal.UserInterface.Controls.MPListView();
       this.linkLabelMPGroup = new System.Windows.Forms.LinkLabel();
       this.linkLabelNewUser = new System.Windows.Forms.LinkLabel();
       this.labelPassword = new MediaPortal.UserInterface.Controls.MPLabel();
       this.labelUser = new MediaPortal.UserInterface.Controls.MPLabel();
       this.textBoxASUser = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.maskedTextBoxASPass = new System.Windows.Forms.MaskedTextBox();
-      this.checkBoxDismissOnError = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.checkBoxLogVerbose = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.buttonClearCache = new MediaPortal.UserInterface.Controls.MPButton();
-      this.tabPageSuggestions = new System.Windows.Forms.TabPage();
-      this.buttonRefreshSuggestions = new MediaPortal.UserInterface.Controls.MPButton();
-      this.listViewSuggestions = new MediaPortal.UserInterface.Controls.MPListView();
-      this.progressBarSuggestions = new System.Windows.Forms.ProgressBar();
-      this.trackBarArtistMatch = new System.Windows.Forms.TrackBar();
-      this.labelArtistMatch = new System.Windows.Forms.Label();
+      this.labelTrackBarValue = new MediaPortal.UserInterface.Controls.MPLabel();
       this.panelPicBox.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxASLogo)).BeginInit();
       this.tabControlASSettings.SuspendLayout();
@@ -186,6 +187,38 @@ namespace MediaPortal.AudioScrobbler
       this.groupBoxOptions.TabStop = false;
       this.groupBoxOptions.Text = "Options";
       // 
+      // buttonClearCache
+      // 
+      this.buttonClearCache.Location = new System.Drawing.Point(16, 93);
+      this.buttonClearCache.Name = "buttonClearCache";
+      this.buttonClearCache.Size = new System.Drawing.Size(241, 23);
+      this.buttonClearCache.TabIndex = 3;
+      this.buttonClearCache.Text = "Clear cache";
+      this.buttonClearCache.UseVisualStyleBackColor = true;
+      this.buttonClearCache.Click += new System.EventHandler(this.buttonClearCache_Click);
+      // 
+      // checkBoxLogVerbose
+      // 
+      this.checkBoxLogVerbose.AutoSize = true;
+      this.checkBoxLogVerbose.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxLogVerbose.Location = new System.Drawing.Point(16, 66);
+      this.checkBoxLogVerbose.Name = "checkBoxLogVerbose";
+      this.checkBoxLogVerbose.Size = new System.Drawing.Size(135, 17);
+      this.checkBoxLogVerbose.TabIndex = 2;
+      this.checkBoxLogVerbose.Text = "Show debug log entries";
+      this.checkBoxLogVerbose.UseVisualStyleBackColor = true;
+      // 
+      // checkBoxDismissOnError
+      // 
+      this.checkBoxDismissOnError.AutoSize = true;
+      this.checkBoxDismissOnError.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxDismissOnError.Location = new System.Drawing.Point(16, 43);
+      this.checkBoxDismissOnError.Name = "checkBoxDismissOnError";
+      this.checkBoxDismissOnError.Size = new System.Drawing.Size(228, 17);
+      this.checkBoxDismissOnError.TabIndex = 1;
+      this.checkBoxDismissOnError.Text = "Dismiss cached song on error and continue";
+      this.checkBoxDismissOnError.UseVisualStyleBackColor = true;
+      // 
       // checkBoxdisableTimerThread
       // 
       this.checkBoxdisableTimerThread.AutoSize = true;
@@ -263,6 +296,7 @@ namespace MediaPortal.AudioScrobbler
       this.textBoxASUsername.Name = "textBoxASUsername";
       this.textBoxASUsername.Size = new System.Drawing.Size(243, 20);
       this.textBoxASUsername.TabIndex = 0;
+      this.textBoxASUsername.Leave += new System.EventHandler(this.textBoxASUsername_Leave);
       // 
       // maskedTextBoxASPassword
       // 
@@ -382,6 +416,83 @@ namespace MediaPortal.AudioScrobbler
       this.listViewTopTracks.UseCompatibleStateImageBehavior = false;
       this.listViewTopTracks.View = System.Windows.Forms.View.List;
       // 
+      // tabPageSuggestions
+      // 
+      this.tabPageSuggestions.Controls.Add(this.labelTrackBarValue);
+      this.tabPageSuggestions.Controls.Add(this.labelArtistMatch);
+      this.tabPageSuggestions.Controls.Add(this.trackBarArtistMatch);
+      this.tabPageSuggestions.Controls.Add(this.progressBarSuggestions);
+      this.tabPageSuggestions.Controls.Add(this.buttonRefreshSuggestions);
+      this.tabPageSuggestions.Controls.Add(this.listViewSuggestions);
+      this.tabPageSuggestions.Location = new System.Drawing.Point(4, 22);
+      this.tabPageSuggestions.Name = "tabPageSuggestions";
+      this.tabPageSuggestions.Size = new System.Drawing.Size(287, 286);
+      this.tabPageSuggestions.TabIndex = 4;
+      this.tabPageSuggestions.Text = "Suggestions";
+      this.tabPageSuggestions.UseVisualStyleBackColor = true;
+      // 
+      // labelArtistMatch
+      // 
+      this.labelArtistMatch.AutoSize = true;
+      this.labelArtistMatch.Location = new System.Drawing.Point(9, 262);
+      this.labelArtistMatch.Name = "labelArtistMatch";
+      this.labelArtistMatch.Size = new System.Drawing.Size(48, 13);
+      this.labelArtistMatch.TabIndex = 10;
+      this.labelArtistMatch.Text = "Match %";
+      // 
+      // trackBarArtistMatch
+      // 
+      this.trackBarArtistMatch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.trackBarArtistMatch.AutoSize = false;
+      this.trackBarArtistMatch.BackColor = System.Drawing.SystemColors.Window;
+      this.trackBarArtistMatch.LargeChange = 10;
+      this.trackBarArtistMatch.Location = new System.Drawing.Point(63, 257);
+      this.trackBarArtistMatch.Maximum = 100;
+      this.trackBarArtistMatch.Minimum = 50;
+      this.trackBarArtistMatch.Name = "trackBarArtistMatch";
+      this.trackBarArtistMatch.Size = new System.Drawing.Size(99, 23);
+      this.trackBarArtistMatch.SmallChange = 5;
+      this.trackBarArtistMatch.TabIndex = 9;
+      this.trackBarArtistMatch.TickFrequency = 10;
+      this.trackBarArtistMatch.Value = 90;
+      this.trackBarArtistMatch.ValueChanged += new System.EventHandler(this.trackBarArtistMatch_ValueChanged);
+      // 
+      // progressBarSuggestions
+      // 
+      this.progressBarSuggestions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.progressBarSuggestions.Location = new System.Drawing.Point(6, 257);
+      this.progressBarSuggestions.Name = "progressBarSuggestions";
+      this.progressBarSuggestions.Size = new System.Drawing.Size(190, 23);
+      this.progressBarSuggestions.TabIndex = 8;
+      this.progressBarSuggestions.Visible = false;
+      // 
+      // buttonRefreshSuggestions
+      // 
+      this.buttonRefreshSuggestions.Location = new System.Drawing.Point(202, 257);
+      this.buttonRefreshSuggestions.Name = "buttonRefreshSuggestions";
+      this.buttonRefreshSuggestions.Size = new System.Drawing.Size(75, 23);
+      this.buttonRefreshSuggestions.TabIndex = 7;
+      this.buttonRefreshSuggestions.Text = "Refresh";
+      this.buttonRefreshSuggestions.UseVisualStyleBackColor = true;
+      this.buttonRefreshSuggestions.Click += new System.EventHandler(this.buttonRefreshSuggestions_Click);
+      // 
+      // listViewSuggestions
+      // 
+      this.listViewSuggestions.Activation = System.Windows.Forms.ItemActivation.OneClick;
+      this.listViewSuggestions.AllowColumnReorder = true;
+      this.listViewSuggestions.AllowDrop = true;
+      this.listViewSuggestions.AllowRowReorder = false;
+      this.listViewSuggestions.AutoArrange = false;
+      this.listViewSuggestions.Location = new System.Drawing.Point(6, 12);
+      this.listViewSuggestions.Name = "listViewSuggestions";
+      this.listViewSuggestions.ShowGroups = false;
+      this.listViewSuggestions.Size = new System.Drawing.Size(275, 239);
+      this.listViewSuggestions.TabIndex = 6;
+      this.listViewSuggestions.UseCompatibleStateImageBehavior = false;
+      this.listViewSuggestions.View = System.Windows.Forms.View.List;
+      // 
       // linkLabelMPGroup
       // 
       this.linkLabelMPGroup.AutoSize = true;
@@ -442,111 +553,15 @@ namespace MediaPortal.AudioScrobbler
       this.maskedTextBoxASPass.Size = new System.Drawing.Size(236, 20);
       this.maskedTextBoxASPass.TabIndex = 0;
       // 
-      // checkBoxDismissOnError
+      // labelTrackBarValue
       // 
-      this.checkBoxDismissOnError.AutoSize = true;
-      this.checkBoxDismissOnError.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxDismissOnError.Location = new System.Drawing.Point(16, 43);
-      this.checkBoxDismissOnError.Name = "checkBoxDismissOnError";
-      this.checkBoxDismissOnError.Size = new System.Drawing.Size(228, 17);
-      this.checkBoxDismissOnError.TabIndex = 1;
-      this.checkBoxDismissOnError.Text = "Dismiss cached song on error and continue";
-      this.checkBoxDismissOnError.UseVisualStyleBackColor = true;
-      // 
-      // checkBoxLogVerbose
-      // 
-      this.checkBoxLogVerbose.AutoSize = true;
-      this.checkBoxLogVerbose.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxLogVerbose.Location = new System.Drawing.Point(16, 66);
-      this.checkBoxLogVerbose.Name = "checkBoxLogVerbose";
-      this.checkBoxLogVerbose.Size = new System.Drawing.Size(135, 17);
-      this.checkBoxLogVerbose.TabIndex = 2;
-      this.checkBoxLogVerbose.Text = "Show debug log entries";
-      this.checkBoxLogVerbose.UseVisualStyleBackColor = true;
-      // 
-      // buttonClearCache
-      // 
-      this.buttonClearCache.Location = new System.Drawing.Point(16, 93);
-      this.buttonClearCache.Name = "buttonClearCache";
-      this.buttonClearCache.Size = new System.Drawing.Size(241, 23);
-      this.buttonClearCache.TabIndex = 3;
-      this.buttonClearCache.Text = "Clear cache";
-      this.buttonClearCache.UseVisualStyleBackColor = true;
-      this.buttonClearCache.Click += new System.EventHandler(this.buttonClearCache_Click);
-      // 
-      // tabPageSuggestions
-      // 
-      this.tabPageSuggestions.Controls.Add(this.labelArtistMatch);
-      this.tabPageSuggestions.Controls.Add(this.trackBarArtistMatch);
-      this.tabPageSuggestions.Controls.Add(this.progressBarSuggestions);
-      this.tabPageSuggestions.Controls.Add(this.buttonRefreshSuggestions);
-      this.tabPageSuggestions.Controls.Add(this.listViewSuggestions);
-      this.tabPageSuggestions.Location = new System.Drawing.Point(4, 22);
-      this.tabPageSuggestions.Name = "tabPageSuggestions";
-      this.tabPageSuggestions.Size = new System.Drawing.Size(287, 286);
-      this.tabPageSuggestions.TabIndex = 4;
-      this.tabPageSuggestions.Text = "Suggestions";
-      this.tabPageSuggestions.UseVisualStyleBackColor = true;
-      // 
-      // buttonRefreshSuggestions
-      // 
-      this.buttonRefreshSuggestions.Location = new System.Drawing.Point(202, 257);
-      this.buttonRefreshSuggestions.Name = "buttonRefreshSuggestions";
-      this.buttonRefreshSuggestions.Size = new System.Drawing.Size(75, 23);
-      this.buttonRefreshSuggestions.TabIndex = 7;
-      this.buttonRefreshSuggestions.Text = "Refresh";
-      this.buttonRefreshSuggestions.UseVisualStyleBackColor = true;
-      this.buttonRefreshSuggestions.Click += new System.EventHandler(this.buttonRefreshSuggestions_Click);
-      // 
-      // listViewSuggestions
-      // 
-      this.listViewSuggestions.Activation = System.Windows.Forms.ItemActivation.OneClick;
-      this.listViewSuggestions.AllowColumnReorder = true;
-      this.listViewSuggestions.AllowDrop = true;
-      this.listViewSuggestions.AllowRowReorder = false;
-      this.listViewSuggestions.AutoArrange = false;
-      this.listViewSuggestions.Location = new System.Drawing.Point(6, 12);
-      this.listViewSuggestions.Name = "listViewSuggestions";
-      this.listViewSuggestions.ShowGroups = false;
-      this.listViewSuggestions.Size = new System.Drawing.Size(275, 239);
-      this.listViewSuggestions.TabIndex = 6;
-      this.listViewSuggestions.UseCompatibleStateImageBehavior = false;
-      this.listViewSuggestions.View = System.Windows.Forms.View.List;
-      // 
-      // progressBarSuggestions
-      // 
-      this.progressBarSuggestions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.progressBarSuggestions.Location = new System.Drawing.Point(6, 257);
-      this.progressBarSuggestions.Name = "progressBarSuggestions";
-      this.progressBarSuggestions.Size = new System.Drawing.Size(190, 23);
-      this.progressBarSuggestions.TabIndex = 8;
-      this.progressBarSuggestions.Visible = false;
-      // 
-      // trackBarArtistMatch
-      // 
-      this.trackBarArtistMatch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.trackBarArtistMatch.AutoSize = false;
-      this.trackBarArtistMatch.LargeChange = 10;
-      this.trackBarArtistMatch.Location = new System.Drawing.Point(63, 257);
-      this.trackBarArtistMatch.Maximum = 100;
-      this.trackBarArtistMatch.Minimum = 50;
-      this.trackBarArtistMatch.Name = "trackBarArtistMatch";
-      this.trackBarArtistMatch.Size = new System.Drawing.Size(133, 23);
-      this.trackBarArtistMatch.SmallChange = 5;
-      this.trackBarArtistMatch.TabIndex = 9;
-      this.trackBarArtistMatch.TickFrequency = 10;
-      this.trackBarArtistMatch.Value = 90;
-      // 
-      // labelArtistMatch
-      // 
-      this.labelArtistMatch.AutoSize = true;
-      this.labelArtistMatch.Location = new System.Drawing.Point(9, 262);
-      this.labelArtistMatch.Name = "labelArtistMatch";
-      this.labelArtistMatch.Size = new System.Drawing.Size(48, 13);
-      this.labelArtistMatch.TabIndex = 10;
-      this.labelArtistMatch.Text = "Match %";
+      this.labelTrackBarValue.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.labelTrackBarValue.AutoSize = true;
+      this.labelTrackBarValue.Location = new System.Drawing.Point(168, 262);
+      this.labelTrackBarValue.Name = "labelTrackBarValue";
+      this.labelTrackBarValue.Size = new System.Drawing.Size(19, 13);
+      this.labelTrackBarValue.TabIndex = 11;
+      this.labelTrackBarValue.Text = "90";
       // 
       // AudioscrobblerSettings
       // 
@@ -620,5 +635,6 @@ namespace MediaPortal.AudioScrobbler
     private System.Windows.Forms.ProgressBar progressBarSuggestions;
     private System.Windows.Forms.TrackBar trackBarArtistMatch;
     private System.Windows.Forms.Label labelArtistMatch;
+    private MediaPortal.UserInterface.Controls.MPLabel labelTrackBarValue;
   }
 }

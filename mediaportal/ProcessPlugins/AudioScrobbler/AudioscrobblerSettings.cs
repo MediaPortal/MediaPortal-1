@@ -61,9 +61,10 @@ namespace MediaPortal.AudioScrobbler
         textBoxASUsername.Text = xmlreader.GetValueAsString("audioscrobbler", "user", "");
         if (textBoxASUsername.Text == "")
         {
+          tabControlASSettings.TabPages.RemoveAt(4);
           tabControlASSettings.TabPages.RemoveAt(3);
           tabControlASSettings.TabPages.RemoveAt(2);
-          tabControlASSettings.TabPages.RemoveAt(1);
+          tabControlASSettings.TabPages.RemoveAt(1);          
         }
           
         EncryptDecrypt Crypter = new EncryptDecrypt();
@@ -188,18 +189,19 @@ namespace MediaPortal.AudioScrobbler
       scrobbler.Disconnect();
       scrobbler.ArtistMatchPercent = trackBarArtistMatch.Value;
       trackBarArtistMatch.Hide();
-      labelArtistMatch.Hide();      
-      progressBarSuggestions.Show();      
+      labelArtistMatch.Hide();
+      labelTrackBarValue.Hide();
+      progressBarSuggestions.Value = 0;
+      progressBarSuggestions.Visible = true;
       listViewSuggestions.Clear();
       progressBarSuggestions.PerformStep();
       songList = new List<Song>();
       similarList = new List<Song>();
 
       songList = scrobbler.ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + scrobbler.Username + "/" + "topartists.xml", @"//topartists/artist", lastFMFeed.topartists);
-      progressBarSuggestions.PerformStep();
-      progressBarSuggestions.PerformStep();
+      progressBarSuggestions.PerformStep();      
       
-      for (int i = 0; i <= 6; i++)
+      for (int i = 0; i <= 7; i++)
       {
         similarList.AddRange(scrobbler.ParseXMLDocForSimilarArtists(songList[i].ToURLArtistString()));
         progressBarSuggestions.PerformStep();
@@ -207,14 +209,23 @@ namespace MediaPortal.AudioScrobbler
 
       for (int i = 0; i < similarList.Count; i++)
       {
-        if (!listViewSuggestions.Items.ContainsKey(similarList[i].ToLastFMString()))
+        //if (!listViewSuggestions.Items.ContainsKey(similarList[i].ToLastFMString()))
+        //  listViewSuggestions.Items.Add(similarList[i].ToLastFMString());
+        bool foundDoubleEntry = false;
+        for (int j = 0; j < listViewSuggestions.Items.Count; j++)
+        {
+          if (listViewSuggestions.Items[j].Text == similarList[i].ToLastFMString())
+            foundDoubleEntry = true;
+        }
+        if (!foundDoubleEntry)
           listViewSuggestions.Items.Add(similarList[i].ToLastFMString());
       }
-      progressBarSuggestions.PerformStep();
-      buttonRefreshSuggestions.Enabled = true;
-      progressBarSuggestions.Hide();
+      progressBarSuggestions.PerformStep();      
+      progressBarSuggestions.Visible = false;
       trackBarArtistMatch.Show();
       labelArtistMatch.Show();
+      labelTrackBarValue.Show();
+      buttonRefreshSuggestions.Enabled = true;
     }
 
     private List<Song> getXMLData(lastFMFeed feed_)
@@ -234,6 +245,23 @@ namespace MediaPortal.AudioScrobbler
         default:
           return scrobbler.ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + scrobbler.Username + "/" + "recenttracks.xml", @"//recenttracks/track", feed_);
       }      
+    }
+
+    private void textBoxASUsername_Leave(object sender, EventArgs e)
+    {
+      if (textBoxASUsername.Text != "")
+      {
+        //tabControlASSettings.Enabled = true;
+        //tabControlASSettings.TabPages[1].Show();
+        //tabControlASSettings.TabPages[2].Show();
+        //tabControlASSettings.TabPages[3].Show();
+        //tabControlASSettings.TabPages[4].Show();
+      }
+    }
+
+    private void trackBarArtistMatch_ValueChanged(object sender, EventArgs e)
+    {
+      labelTrackBarValue.Text = Convert.ToString(trackBarArtistMatch.Value);
     }
 
   }
