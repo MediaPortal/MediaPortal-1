@@ -25,6 +25,7 @@
 #include "epgscanner.h"
 #include "pmtgrabber.h"
 #include "recorder.h"
+#include "timeshifting.h"
 
 #include <map>
 using namespace std;
@@ -119,4 +120,5 @@ private:
 		CEpgScanner*		m_pEpgScanner;
 		CPmtGrabber*		m_pPmtGrabber;
 		CRecorder*			m_pRecorder;
+		CTimeShifting*	m_pTimeShifting;
 };

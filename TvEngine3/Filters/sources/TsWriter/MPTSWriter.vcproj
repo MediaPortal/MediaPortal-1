@@ -239,7 +239,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\source\Recorder.h"
+				RelativePath=".\source\TimeShifting.cpp"
 				>
 			</File>
 			<File
@@ -385,6 +385,14 @@
 			</File>
 			<File
 				RelativePath=".\source\PmtGrabber.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\Recorder.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\TimeShifting.h"
 				>
 			</File>
 			<File

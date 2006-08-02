@@ -335,6 +335,7 @@ CMpTs::CMpTs(LPUNKNOWN pUnk, HRESULT *phr)
 		m_pEpgScanner = new CEpgScanner(GetOwner(),phr);
 		m_pPmtGrabber = new CPmtGrabber(GetOwner(),phr);
 		m_pRecorder = new CRecorder(GetOwner(),phr);
+		m_pTimeShifting= new CTimeShifting(GetOwner(),phr);
 }
 
 
@@ -351,6 +352,7 @@ CMpTs::~CMpTs()
 		delete m_pEpgScanner;
 		delete m_pPmtGrabber;
 		delete m_pRecorder;
+		delete m_pTimeShifting;
 }
 
 
@@ -405,6 +407,10 @@ STDMETHODIMP CMpTs::NonDelegatingQueryInterface(REFIID riid, void ** ppv)
 	else if (riid == IID_ITsRecorder)
 	{
 		return GetInterface((ITsRecorder*)m_pRecorder, ppv);
+	}
+	else if (riid == IID_ITsTimeshifting)
+	{
+		return GetInterface((ITsTimeshifting*)m_pTimeShifting, ppv);
 	}
   else if (riid == IID_IBaseFilter || riid == IID_IMediaFilter || riid == IID_IPersist) 
 	{
@@ -506,5 +512,14 @@ void CMpTs::AnalyzeTsPacket(byte* tsPacket)
 	{
 		LogDebug("exception in recorder");
 	}
+	try
+	{
+		m_pTimeShifting->OnTsPacket(tsPacket);
+	}
+	catch(...)
+	{
+		LogDebug("exception in timeshifter");
+	}
+	
 	
 }
