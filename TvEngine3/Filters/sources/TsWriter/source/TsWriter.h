@@ -24,6 +24,7 @@
 #include "channelscan.h"
 #include "epgscanner.h"
 #include "pmtgrabber.h"
+#include "recorder.h"
 
 #include <map>
 using namespace std;
@@ -117,4 +118,5 @@ private:
 		CChannelScan*   m_pChannelScanner;
 		CEpgScanner*		m_pEpgScanner;
 		CPmtGrabber*		m_pPmtGrabber;
+		CRecorder*			m_pRecorder;
 };

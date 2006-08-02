@@ -26,6 +26,12 @@
 
 using namespace std;
 
+class IFileWriter
+{
+public:
+	virtual void Write(byte* buffer, int len)=0;
+};
+
 class CMultiplexer
 {
 public:
@@ -35,14 +41,15 @@ public:
 	int  GetPcrPid();
 	void AddPesStream(int pid);
 	void OnTsPacket(byte* tsPacket);
-
+	void Reset();
+	void SetFileWriterCallBack(IFileWriter* callback);
 private:
 	int WritePackHeader(__int64 pcrHi, int pcrLow, unsigned int muxRate, byte* pBuffer);
 	int WriteSystemHeader(byte* pBuffer);
 	CPcrDecoder m_pcrDecoder;
-  CPatParser m_patParser;
+  
 	vector<CPesDecoder*> m_pesDecoders;
 	typedef vector<CPesDecoder*>::iterator ivecPesDecoders;
-	FILE* m_fp;
+	IFileWriter* m_pCallback;
 	int m_videoPacketCounter;
 };

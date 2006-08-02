@@ -24,13 +24,22 @@ void LogDebug(const char *fmt, ...) ;
 
 CMultiplexer::CMultiplexer()
 {
-	m_fp=NULL;
+	m_pCallback=NULL;
+	
 	m_videoPacketCounter=0;
 }
 
 CMultiplexer::~CMultiplexer()
 {
-  m_patParser.Dump();
+}
+
+void CMultiplexer::SetFileWriterCallBack(IFileWriter* callback)
+{
+	m_pCallback=callback;
+}
+void CMultiplexer::Reset()
+{
+	m_videoPacketCounter=0;
 	ivecPesDecoders it;
 	for (it=m_pesDecoders.begin(); it != m_pesDecoders.end();++it)
 	{
@@ -69,7 +78,6 @@ void CMultiplexer::AddPesStream(int pid)
 
 void CMultiplexer::OnTsPacket(byte* tsPacket)
 {
-  m_patParser.OnTsPacket(tsPacket);
 	m_pcrDecoder.OnTsPacket(tsPacket);
   
 	if (m_pcrDecoder.PcrHigh()==0 && m_pcrDecoder.PcrLow()==0) return;
@@ -82,10 +90,7 @@ void CMultiplexer::OnTsPacket(byte* tsPacket)
 			byte* pesPacket = decoder->GetPesPacket();
 			int   pesLength = decoder->GetPesPacketLength();
 
-			if (m_fp==NULL)
-			{	
-				m_fp = fopen("1.mpg","wb+");
-			}
+			
 			if (decoder->GetStreamId()==0xe0)
 			{
 				LogDebug("stream 0xe0 %d",m_videoPacketCounter);
@@ -94,14 +99,20 @@ void CMultiplexer::OnTsPacket(byte* tsPacket)
 					LogDebug("write pack header %x %x",m_pcrDecoder.PcrHigh(),m_pcrDecoder.PcrLow());
 					byte buffer[20];
 					int packLen=WritePackHeader(m_pcrDecoder.PcrHigh(), m_pcrDecoder.PcrLow(),4000000,buffer);
-					fwrite(buffer,1,packLen,m_fp);
+					if (m_pCallback!=NULL)
+					{
+						m_pCallback->Write(buffer,packLen);
+					}
 
 					//int systemLen=WriteSystemHeader(buffer);
 					//fwrite(buffer,1,systemLen,m_fp);
 				}
 				m_videoPacketCounter++;
 				LogDebug("write video pid %x peslen:%x",decoder->GetPid(), pesLength);
-				fwrite(pesPacket,1,pesLength,m_fp);
+				if (m_pCallback!=NULL)
+				{
+					m_pCallback->Write(pesPacket,pesLength);
+				}
 			}
 			else 
 			{
@@ -109,7 +120,10 @@ void CMultiplexer::OnTsPacket(byte* tsPacket)
 				if (m_videoPacketCounter>0)
 				{
 					LogDebug("write audio pid %x peslen:%x",decoder->GetPid(), pesLength);
-					fwrite(pesPacket,1,pesLength,m_fp);
+					if (m_pCallback!=NULL)
+					{
+						m_pCallback->Write(pesPacket,pesLength);
+					}
 				}
 			}
 		}

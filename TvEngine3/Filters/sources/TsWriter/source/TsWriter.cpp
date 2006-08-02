@@ -334,6 +334,7 @@ CMpTs::CMpTs(LPUNKNOWN pUnk, HRESULT *phr)
 		m_pChannelScanner= new CChannelScan(GetOwner(),phr);
 		m_pEpgScanner = new CEpgScanner(GetOwner(),phr);
 		m_pPmtGrabber = new CPmtGrabber(GetOwner(),phr);
+		m_pRecorder = new CRecorder(GetOwner(),phr);
 }
 
 
@@ -349,6 +350,7 @@ CMpTs::~CMpTs()
 		delete m_pChannelScanner;
 		delete m_pEpgScanner;
 		delete m_pPmtGrabber;
+		delete m_pRecorder;
 }
 
 
@@ -399,7 +401,10 @@ STDMETHODIMP CMpTs::NonDelegatingQueryInterface(REFIID riid, void ** ppv)
 	else if (riid == IID_IPmtGrabber)
 	{
 		return GetInterface((IPmtGrabber*)m_pPmtGrabber, ppv);
-		
+	}
+	else if (riid == IID_ITsRecorder)
+	{
+		return GetInterface((ITsRecorder*)m_pRecorder, ppv);
 	}
   else if (riid == IID_IBaseFilter || riid == IID_IMediaFilter || riid == IID_IPersist) 
 	{
@@ -492,6 +497,14 @@ void CMpTs::AnalyzeTsPacket(byte* tsPacket)
 	catch(...)
 	{
 		LogDebug("exception in pmt grabber");
+	}
+	try
+	{
+		m_pRecorder->OnTsPacket(tsPacket);
+	}
+	catch(...)
+	{
+		LogDebug("exception in recorder");
 	}
 	
 }

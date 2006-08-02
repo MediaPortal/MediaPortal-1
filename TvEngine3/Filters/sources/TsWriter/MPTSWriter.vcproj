@@ -235,6 +235,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\source\Recorder.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\Recorder.h"
+				>
+			</File>
+			<File
 				RelativePath=".\source\TsWriter.cpp"
 				>
 			</File>
