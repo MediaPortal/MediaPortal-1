@@ -243,7 +243,16 @@ namespace Wikipedia
           iStart = tempParsedArticle.IndexOf("&lt;!--");
           iEnd = tempParsedArticle.IndexOf("--&gt;", iStart) + 6;
 
-          builder.Remove(iStart, iEnd - iStart);
+          try
+          {
+            builder.Remove(iStart, iEnd - iStart);
+          }
+          catch (Exception e)
+          {
+            _log.Error(e.ToString());
+            _log.Error(builder.ToString());
+          }
+
           tempParsedArticle = builder.ToString();
         }
 
@@ -253,11 +262,28 @@ namespace Wikipedia
         {
           builder = new StringBuilder(tempParsedArticle);
           iStart = tempParsedArticle.IndexOf("{{");
+          int iStart2 = iStart;
           iEnd = tempParsedArticle.IndexOf("}}") + 2;
 
-          builder.Remove(iStart, iEnd - iStart);
+          // Between {{ and }} we can again have inner sets of {{ and }}
+          while (tempParsedArticle.IndexOf("{{", iStart2 + 2) >= 0 && tempParsedArticle.IndexOf("{{", iStart2 + 2) < iEnd)
+          {
+            iStart2 = tempParsedArticle.IndexOf("{{", iStart2 + 2);
+            iEnd = tempParsedArticle.IndexOf("}}", iStart2) + 2;
+            iEnd = tempParsedArticle.IndexOf("}}", iEnd) + 2;
+          }       
+
+          try
+          {
+            builder.Remove(iStart, iEnd - iStart);
+          }
+          catch (Exception e)
+          {
+            _log.Error(e.ToString());
+            _log.Error(builder.ToString());
+          }
+
           tempParsedArticle = builder.ToString();
-          //tempParsedArticle = tempParsedArticle.Substring(0, iStart) + tempParsedArticle.Substring(iEnd, tempParsedArticle.Length - iEnd);
         }
 
         // surrounded by {| and |} is (atm) unusable stuff.
@@ -268,9 +294,17 @@ namespace Wikipedia
           iStart = tempParsedArticle.IndexOf("{|");
           iEnd = tempParsedArticle.IndexOf("|}") + 2;
 
-          builder.Remove(iStart, iEnd - iStart);
+          try
+          {
+            builder.Remove(iStart, iEnd - iStart);
+          }
+          catch (Exception e)
+          {
+            _log.Error(e.ToString());
+            _log.Error(builder.ToString());
+          }
+
           tempParsedArticle = builder.ToString();
-          //tempParsedArticle = tempParsedArticle.Substring(0, iStart) + tempParsedArticle.Substring(iEnd, tempParsedArticle.Length - iEnd);
         }
 
         // Remove web references.
@@ -278,10 +312,19 @@ namespace Wikipedia
         while (tempParsedArticle.IndexOf("&lt;ref&gt;") >= 0)
         {
           builder = new StringBuilder(tempParsedArticle);
-          iStart = tempParsedArticle.IndexOf("&lt;ref&gt;");
+          iStart = tempParsedArticle.IndexOf("&lt;ref");
           iEnd = tempParsedArticle.IndexOf("&lt;/ref&gt;") + 12;
 
-          builder.Remove(iStart, iEnd - iStart);
+          try
+          {
+            builder.Remove(iStart, iEnd - iStart);
+          }
+          catch (Exception e)
+          {
+            _log.Error(e.ToString());
+            _log.Error(builder.ToString());
+          }
+
           tempParsedArticle = builder.ToString();
         }
 
@@ -291,6 +334,11 @@ namespace Wikipedia
         builder.Replace("&lt;br style=&quot;clear:both&quot;/&gt;", "\n");
         builder.Replace("&lt;br style=&quot;clear:left&quot;/&gt;", "\n");
         builder.Replace("&lt;br style=&quot;clear:right&quot;/&gt;", "\n");
+
+        // Remove <sup>
+        _log.Debug("Wikipedia: Remove <sup>.");
+        builder.Replace("&lt;sup&gt;", "^");
+        builder.Replace("&lt;/sup&gt;", "");
 
         // surrounded by ''' and ''' is bold text, atm also unusable.
         _log.Debug("Wikipedia: Remove \'\'\'.");
@@ -334,7 +382,15 @@ namespace Wikipedia
         _log.Debug("Wikipedia: Remove &amp;.");
         builder.Replace("&amp;", "&");
 
+        // Remove (too many) newlines
+        _log.Debug("Wikipedia: Remove (too many) newlines.");
+        builder.Replace("\n\n", "\n");
+
         tempParsedArticle = builder.ToString();
+
+        // For Debug purposes it is nice to see how the whole article text is parsed until here
+        //_log.Debug(tempParsedArticle);
+
         this.unparsedArticle = tempParsedArticle;
       }
     }
@@ -354,7 +410,7 @@ namespace Wikipedia
 
         // Descriptions of images can contain links!
         // [[Bild:Hannover Merian.png|thumb|[[Matthäus Merian|Merian]]-Kupferstich um 1650, im Vordergrund Windmühle auf dem [[Lindener Berg]]]]
-        while (tempParsedArticle.IndexOf("[[", disturbingLink + 2) < iEnd)
+        while (tempParsedArticle.IndexOf("[[", disturbingLink + 2) >= 0 && tempParsedArticle.IndexOf("[[", disturbingLink + 2) < iEnd)
         {
           disturbingLink = tempParsedArticle.IndexOf("[[", disturbingLink + 2);
           iEnd = tempParsedArticle.IndexOf("]]", disturbingLink) + 2;

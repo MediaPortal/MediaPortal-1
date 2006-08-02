@@ -346,7 +346,7 @@ namespace Wikipedia
           language = "Swedish";
           break;
       }
-      if (searchtermLabel.Label != string.Empty)
+      if (searchtermLabel.Label != string.Empty && searchtermLabel.Label != "Wikipedia")
       {
         _wikilog.Info("Wikipedia: language changed to {0}. Display article {1} again.", language, searchtermLabel.Label);
         GetAndDisplayArticle(searchtermLabel.Label);
