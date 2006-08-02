@@ -42,6 +42,7 @@ namespace MediaPortal.AudioScrobbler
   {
     private AudioscrobblerBase scrobbler;
     List<Song> songList = null;
+    List<Song> similarList = null;
 
     public AudioscrobblerSettings()
     {
@@ -55,6 +56,8 @@ namespace MediaPortal.AudioScrobbler
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         checkBoxdisableTimerThread.Checked = xmlreader.GetValueAsBool("audioscrobbler", "disabletimerthread", true);
+        checkBoxDismissOnError.Checked = xmlreader.GetValueAsBool("audioscrobbler", "dismisscacheonerror", true);
+        checkBoxLogVerbose.Checked = xmlreader.GetValueAsBool("audioscrobbler", "usedebuglog", false);
         textBoxASUsername.Text = xmlreader.GetValueAsString("audioscrobbler", "user", "");
         if (textBoxASUsername.Text == "")
         {
@@ -86,6 +89,9 @@ namespace MediaPortal.AudioScrobbler
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         xmlwriter.SetValueAsBool("audioscrobbler", "disabletimerthread", checkBoxdisableTimerThread.Checked);
+        xmlwriter.SetValueAsBool("audioscrobbler", "dismisscacheonerror", checkBoxDismissOnError.Checked);         
+        xmlwriter.SetValueAsBool("audioscrobbler", "usedebuglog", checkBoxLogVerbose.Checked);
+
         xmlwriter.SetValue("audioscrobbler", "user", textBoxASUsername.Text);
         try
         {
@@ -136,6 +142,12 @@ namespace MediaPortal.AudioScrobbler
       }  
     }
 
+    private void buttonClearCache_Click(object sender, EventArgs e)
+    {
+      scrobbler = new AudioscrobblerBase();
+      scrobbler.ClearQueue();
+    }
+
     private void buttonRefreshRecent_Click(object sender, EventArgs e)
     {
       buttonRefreshRecent.Enabled = false;
@@ -169,6 +181,42 @@ namespace MediaPortal.AudioScrobbler
       buttonTopTracks.Enabled = true;
     }
 
+    private void buttonRefreshSuggestions_Click(object sender, EventArgs e)
+    {
+      buttonRefreshSuggestions.Enabled = false;
+      scrobbler = new AudioscrobblerBase();
+      scrobbler.Disconnect();
+      scrobbler.ArtistMatchPercent = trackBarArtistMatch.Value;
+      trackBarArtistMatch.Hide();
+      labelArtistMatch.Hide();      
+      progressBarSuggestions.Show();      
+      listViewSuggestions.Clear();
+      progressBarSuggestions.PerformStep();
+      songList = new List<Song>();
+      similarList = new List<Song>();
+
+      songList = scrobbler.ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + scrobbler.Username + "/" + "topartists.xml", @"//topartists/artist", lastFMFeed.topartists);
+      progressBarSuggestions.PerformStep();
+      progressBarSuggestions.PerformStep();
+      
+      for (int i = 0; i <= 6; i++)
+      {
+        similarList.AddRange(scrobbler.ParseXMLDocForSimilarArtists(songList[i].ToURLArtistString()));
+        progressBarSuggestions.PerformStep();
+      }
+
+      for (int i = 0; i < similarList.Count; i++)
+      {
+        if (!listViewSuggestions.Items.ContainsKey(similarList[i].ToLastFMString()))
+          listViewSuggestions.Items.Add(similarList[i].ToLastFMString());
+      }
+      progressBarSuggestions.PerformStep();
+      buttonRefreshSuggestions.Enabled = true;
+      progressBarSuggestions.Hide();
+      trackBarArtistMatch.Show();
+      labelArtistMatch.Show();
+    }
+
     private List<Song> getXMLData(lastFMFeed feed_)
     {
       scrobbler = new AudioscrobblerBase();
@@ -182,11 +230,10 @@ namespace MediaPortal.AudioScrobbler
           return scrobbler.ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + scrobbler.Username + "/" + "topartists.xml", @"//topartists/artist", feed_);
         case lastFMFeed.toptracks:
           return scrobbler.ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + scrobbler.Username + "/" + "toptracks.xml", @"//toptracks/track", feed_);
+
         default:
           return scrobbler.ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + scrobbler.Username + "/" + "recenttracks.xml", @"//recenttracks/track", feed_);
-      }
-
-      
+      }      
     }
 
   }

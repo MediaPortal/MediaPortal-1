@@ -143,7 +143,7 @@ namespace MediaPortal.Music.Database
   public class AudioscrobblerBase
   {
     #region Constants
-    const int MAX_QUEUE_SIZE = 1000;
+    const int MAX_QUEUE_SIZE = 10;
     const int HANDSHAKE_INTERVAL = 30;     //< In minutes.
     const int CONNECT_WAIT_TIME = 5;      //< Min secs between connects.
     int SUBMIT_INTERVAL = 30;    //< Seconds.
@@ -163,6 +163,7 @@ namespace MediaPortal.Music.Database
 
     // Other internal properties.
     List<Song> songList = null;
+    private Thread submitThread;
     private ArrayList queue;
     private Object queueLock;
     private Object submitLock;
@@ -173,6 +174,7 @@ namespace MediaPortal.Music.Database
     private DateTime spamCheck;
     private TimeSpan minConnectWaitTime;
     private bool _disableTimerThread;
+    private bool _dismissOnError;
     private bool _useDebugLog;
     private System.Timers.Timer submitTimer;
     private bool connected;
@@ -180,6 +182,10 @@ namespace MediaPortal.Music.Database
     // Data received by the Audioscrobbler service.
     private string md5challenge;
     private string submitUrl;
+
+    // Similar intelligence params
+    private int _minimumArtistMatchPercent = 90;
+
     #endregion
 
     /// <summary>
@@ -190,6 +196,7 @@ namespace MediaPortal.Music.Database
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         _useDebugLog = xmlreader.GetValueAsBool("audioscrobbler", "usedebuglog", false);
+        _dismissOnError = xmlreader.GetValueAsBool("audioscrobbler", "dismisscacheonerror", true);
         _disableTimerThread = xmlreader.GetValueAsBool("audioscrobbler", "disabletimerthread", true);
         username = xmlreader.GetValueAsString("audioscrobbler", "user", "");
         string tmpPass;
@@ -291,6 +298,25 @@ namespace MediaPortal.Music.Database
     }
     #endregion
 
+    /// <summary>
+    /// Allows to change the minimum match percentage to include similar artists
+    /// </summary>
+    public int ArtistMatchPercent
+    {
+      get
+      {
+        return _minimumArtistMatchPercent;
+      }
+      set
+      {
+        if (value != _minimumArtistMatchPercent)
+        {
+          _minimumArtistMatchPercent = value;
+          Log.Write("AudioscrobblerBase: minimum match for similar artists set to {0}", Convert.ToString(_minimumArtistMatchPercent));
+        }
+      }
+    }
+
     #region Public methods.
     /// <summary>
     /// Connect to the Audioscrobbler service. While connected any queued songs are submitted to Audioscrobbler.
@@ -299,7 +325,8 @@ namespace MediaPortal.Music.Database
     {
       //Log.Write("AudioscrobblerBase.Connect: {0}", "Start");
       // Try to submit all queued songs immediately.
-      StartSubmitQueueThread();
+      if (!_disableTimerThread)
+        StartSubmitQueueThread();
       // From now on, try to submit queued songs periodically.
       InitSubmitTimer();
       //Log.Write("AudioscrobblerBase.Connect: {0}", "End");
@@ -335,11 +362,11 @@ namespace MediaPortal.Music.Database
           queue.RemoveAt(0);
 
         // prevent double adds        
-        //if (!queue.Contains(song_))
+        if (!queue.Contains(song_))
         queue.Add(song_);
-        //else
-        //  if (_useDebugLog)
-        //    Log.Write("AudioscrobblerBase: detected double add of {0}", song_.ToShortString());
+        else
+          if (_useDebugLog)
+            Log.Write("AudioscrobblerBase: detected double add of {0}", song_.ToShortString());
       }
 
       if (_antiHammerCount == 0)
@@ -353,7 +380,7 @@ namespace MediaPortal.Music.Database
       }
       else
         if (_useDebugLog)
-          Log.Write("AudioscrobblerBase: {0}", "direct submit cancelled because of BadAuth event");
+          Log.Write("AudioscrobblerBase: {0}", "direct submit cancelled because of previous errors");
     }
 
 
@@ -441,7 +468,7 @@ namespace MediaPortal.Music.Database
       if (_antiHammerCount < 5)
       {
         _antiHammerCount = _antiHammerCount + 1;
-        DoHandshake();
+        DoHandshake(true);
         SUBMIT_INTERVAL = SUBMIT_INTERVAL * _antiHammerCount;
         // prevent null argument exception
         if (SUBMIT_INTERVAL == 0)
@@ -454,10 +481,10 @@ namespace MediaPortal.Music.Database
         }
         Log.Write("AudioscrobblerBase: falling back to safe mode: new interval: {0} sec", Convert.ToString(SUBMIT_INTERVAL));
       }
-      else
+      if (_dismissOnError)
       {
-        ResetQueue();
-        Log.Write("AudioscrobblerBase: 5 errors. Reset queue - current items: {0}", Convert.ToString(QueueLength));
+        ClearQueue();
+        Log.Write("AudioscrobblerBase: {0}", "Cleared queue");
       }
     }
 
@@ -468,7 +495,7 @@ namespace MediaPortal.Music.Database
     /// Handshake with the Audioscrobbler service
     /// </summary>
     /// <returns>True if the connection was successful, false otherwise</returns>
-    private bool DoHandshake()
+    private bool DoHandshake(bool forceNow_)
     {
       //Log.Write("AudioscrobblerBase.DoHandshake: {0}", "Start");
 
@@ -480,15 +507,18 @@ namespace MediaPortal.Music.Database
         return false;
       }
 
-      // Check whether we had a *successful* handshake recently.
-      if (DateTime.Now < lastHandshake.Add(handshakeInterval))
+      if (!forceNow_)
       {
-       // string nexthandshake = lastHandshake.Add(handshakeInterval).ToString();
-        //string logmessage = "Next handshake due at " + nexthandshake;
-        //Log.Write("AudioscrobblerBase.DoHandshake: {0}", logmessage);
-        return true;
+        // Check whether we had a *successful* handshake recently.
+        if (DateTime.Now < lastHandshake.Add(handshakeInterval))
+        {
+          string nexthandshake = lastHandshake.Add(handshakeInterval).ToString();
+          string logmessage = "Next handshake due at " + nexthandshake;
+          if (_useDebugLog)
+            Log.Write("AudioscrobblerBase: {0}", logmessage);
+          return true;
+        }
       }
-
       //Log.Write("AudioscrobblerBase.DoHandshake: {0}", "Attempting handshake");
       string url = SCROBBLER_URL
                  + "?hs=true"
@@ -517,6 +547,19 @@ namespace MediaPortal.Music.Database
       lastHandshake = DateTime.Now;
       // reset to leave "safe mode"
       _antiHammerCount = 0;
+      if (_disableTimerThread && forceNow_)
+        if (submitThread.IsAlive)
+        {
+          try
+          {
+            Log.Write("AudioscrobblerBase: {0}", "trying to kill submit thread (no longer needed)");
+            StopSubmitQueueThread();
+          }
+          catch(Exception ex)
+          {
+            Log.Write("AudioscrobblerBase: result of thread.Abort - {0}", ex.Message);
+          }
+        }
       Log.Write("AudioscrobblerBase: {0}", "Handshake successful");
       return true;
     }
@@ -535,10 +578,11 @@ namespace MediaPortal.Music.Database
       DateTime nextconnect = lastConnectAttempt.Add(minConnectWaitTime);
       if (DateTime.Now < nextconnect)
       {
-        TimeSpan waittime = nextconnect - DateTime.Now;
+        TimeSpan waittime = nextconnect - DateTime.Now;        
         string logmessage = "Avoiding too fast connects. Sleeping until "
                              + nextconnect.ToString();
-        Log.Write("AudioscrobblerBase: {0}", logmessage);
+        if (_useDebugLog)
+          Log.Write("AudioscrobblerBase: {0}", logmessage);
         Thread.Sleep(waittime);
       }
       lastConnectAttempt = DateTime.Now;
@@ -595,7 +639,8 @@ namespace MediaPortal.Music.Database
       }
 
       // Create the response object.
-      //Log.Write("AudioscrobblerBase.GetResponse: {0}", "Waiting for response");
+      if (_useDebugLog)
+        Log.Write("AudioscrobblerBase: {0}", "Waiting for response");
       StreamReader reader = null;
       try
       {
@@ -623,7 +668,8 @@ namespace MediaPortal.Music.Database
        * FAILED
        * BADUSER / BADAUTH
        */
-      // Log.Write("AudioscrobblerBase: {0}", "Response received");
+      if (_useDebugLog)
+        Log.Write("AudioscrobblerBase: {0}", "Response received");
       string respType = reader.ReadLine();
       if (respType == null)
       {
@@ -684,10 +730,16 @@ namespace MediaPortal.Music.Database
     /// </summary>
     private void StartSubmitQueueThread()
     {
-      Thread thread = new Thread(new ThreadStart(SubmitQueue));
-      thread.IsBackground = true;
-      thread.Priority = ThreadPriority.BelowNormal;
-      thread.Start();
+      submitThread = new Thread(new ThreadStart(SubmitQueue));
+      submitThread.IsBackground = true;
+      submitThread.Priority = ThreadPriority.BelowNormal;
+      submitThread.Start();
+    }
+
+    private void StopSubmitQueueThread()
+    {
+      if (submitThread != null)
+        submitThread.Abort();
     }
 
     /// <summary>
@@ -698,7 +750,7 @@ namespace MediaPortal.Music.Database
       //Log.Write("AudioscrobblerBase.SubmitQueue: {0}", "Start");
 
       // Make sure that a connection is possible.
-      if (!DoHandshake())
+      if (!DoHandshake(false))
       {
         Log.Write("AudioscrobblerBase: {0}", "Handshake failed.");
         return;
@@ -707,7 +759,8 @@ namespace MediaPortal.Music.Database
       // If the queue is empty, nothing else to do today.
       if (queue.Count <= 0)
       {
-        //Log.Write("AudioscrobblerBase.SubmitQueue: {0}", "Queue is empty");
+        if (_useDebugLog)
+          Log.Write("AudioscrobblerBase: {0}", "Queue is empty");
         return;
       }
 
@@ -754,7 +807,10 @@ namespace MediaPortal.Music.Database
         {
           if (_useDebugLog)
             Log.Write("AudioscrobblerBase: postData did not contain info for {0}", "latest song");
-          ClearQueue();
+          if (_dismissOnError)
+            ClearQueue();
+          else
+            ResetQueue();
           return;
         }
 
@@ -768,7 +824,7 @@ namespace MediaPortal.Music.Database
         // Remove the submitted songs from the queue.
         lock (queueLock)
         {
-          for (int i = 0; i < n_songs; i++)
+          for (int i = 0; i < n_totalsongs; i++)
             queue.RemoveAt(0);
         }
 
@@ -788,6 +844,44 @@ namespace MediaPortal.Music.Database
       //Log.Write("AudioscrobblerBase.SubmitQueue: {0}", "End");
     }
 
+    public List<Song> ParseXMLDocForSimilarArtists(string artist_)
+    {
+      songList = new List<Song>();
+      try
+      {
+        XmlDocument doc = new XmlDocument();
+
+        doc.Load(@"http://ws.audioscrobbler.com/1.0/artist/" + artist_ + "/" + "similar.xml");
+        XmlNodeList nodes = doc.SelectNodes(@"//similarartists/artist");
+
+        foreach (XmlNode node in nodes)
+        {
+          Song nodeSong = new Song();
+          foreach (XmlNode child in node.ChildNodes)
+          {
+            if (child.Name == "name" && child.ChildNodes.Count != 0)
+              nodeSong.Artist = child.ChildNodes[0].Value;
+            //else if (child.Name == "name" && child.ChildNodes.Count != 0)
+            //  nodeSong.Title = child.ChildNodes[0].Value;
+            else if (child.Name == "mbid" && child.ChildNodes.Count != 0)
+              nodeSong.MusicBrainzID = child.ChildNodes[0].Value;
+            //else if (child.Name == "playcount" && child.ChildNodes.Count != 0)
+            //  nodeSong.TimesPlayed = Convert.ToInt32(child.ChildNodes[0].Value);
+            else if (child.Name == "url" && child.ChildNodes.Count != 0)
+              nodeSong.URL = child.ChildNodes[0].Value;
+            else if (child.Name == "match" && child.ChildNodes.Count != 0)
+              nodeSong.LastFMMatch = child.ChildNodes[0].Value;
+          }
+          if (Convert.ToInt32(nodeSong.LastFMMatch) > _minimumArtistMatchPercent)
+            songList.Add(nodeSong);
+        }
+      }
+      catch
+      {
+        // input nice exception here...
+      }
+      return songList;
+    }
     
     public List<Song> ParseXMLDoc(string xmlFileInput, string queryNodePath, lastFMFeed xmlfeed)
     {

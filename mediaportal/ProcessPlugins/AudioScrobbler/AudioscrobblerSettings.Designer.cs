@@ -60,6 +60,8 @@ namespace MediaPortal.AudioScrobbler
       this.pictureBoxASLogo = new System.Windows.Forms.PictureBox();
       this.tabControlASSettings = new System.Windows.Forms.TabControl();
       this.tabPageAccount = new System.Windows.Forms.TabPage();
+      this.groupBoxOptions = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.checkBoxdisableTimerThread = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBoxAccount = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.linkLabel1 = new System.Windows.Forms.LinkLabel();
       this.linkLabel2 = new System.Windows.Forms.LinkLabel();
@@ -82,17 +84,26 @@ namespace MediaPortal.AudioScrobbler
       this.labelUser = new MediaPortal.UserInterface.Controls.MPLabel();
       this.textBoxASUser = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.maskedTextBoxASPass = new System.Windows.Forms.MaskedTextBox();
-      this.groupBoxOptions = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.checkBoxdisableTimerThread = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxDismissOnError = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxLogVerbose = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.buttonClearCache = new MediaPortal.UserInterface.Controls.MPButton();
+      this.tabPageSuggestions = new System.Windows.Forms.TabPage();
+      this.buttonRefreshSuggestions = new MediaPortal.UserInterface.Controls.MPButton();
+      this.listViewSuggestions = new MediaPortal.UserInterface.Controls.MPListView();
+      this.progressBarSuggestions = new System.Windows.Forms.ProgressBar();
+      this.trackBarArtistMatch = new System.Windows.Forms.TrackBar();
+      this.labelArtistMatch = new System.Windows.Forms.Label();
       this.panelPicBox.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxASLogo)).BeginInit();
       this.tabControlASSettings.SuspendLayout();
       this.tabPageAccount.SuspendLayout();
+      this.groupBoxOptions.SuspendLayout();
       this.groupBoxAccount.SuspendLayout();
       this.tabPageRecent.SuspendLayout();
       this.tabPageTopArtists.SuspendLayout();
       this.tabPageTopTracks.SuspendLayout();
-      this.groupBoxOptions.SuspendLayout();
+      this.tabPageSuggestions.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.trackBarArtistMatch)).BeginInit();
       this.SuspendLayout();
       // 
       // buttonOk
@@ -141,6 +152,7 @@ namespace MediaPortal.AudioScrobbler
       this.tabControlASSettings.Controls.Add(this.tabPageRecent);
       this.tabControlASSettings.Controls.Add(this.tabPageTopArtists);
       this.tabControlASSettings.Controls.Add(this.tabPageTopTracks);
+      this.tabControlASSettings.Controls.Add(this.tabPageSuggestions);
       this.tabControlASSettings.HotTrack = true;
       this.tabControlASSettings.Location = new System.Drawing.Point(-1, 55);
       this.tabControlASSettings.Name = "tabControlASSettings";
@@ -160,6 +172,31 @@ namespace MediaPortal.AudioScrobbler
       this.tabPageAccount.Text = "Account";
       this.tabPageAccount.UseVisualStyleBackColor = true;
       // 
+      // groupBoxOptions
+      // 
+      this.groupBoxOptions.Controls.Add(this.buttonClearCache);
+      this.groupBoxOptions.Controls.Add(this.checkBoxLogVerbose);
+      this.groupBoxOptions.Controls.Add(this.checkBoxDismissOnError);
+      this.groupBoxOptions.Controls.Add(this.checkBoxdisableTimerThread);
+      this.groupBoxOptions.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxOptions.Location = new System.Drawing.Point(6, 147);
+      this.groupBoxOptions.Name = "groupBoxOptions";
+      this.groupBoxOptions.Size = new System.Drawing.Size(271, 128);
+      this.groupBoxOptions.TabIndex = 2;
+      this.groupBoxOptions.TabStop = false;
+      this.groupBoxOptions.Text = "Options";
+      // 
+      // checkBoxdisableTimerThread
+      // 
+      this.checkBoxdisableTimerThread.AutoSize = true;
+      this.checkBoxdisableTimerThread.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxdisableTimerThread.Location = new System.Drawing.Point(16, 20);
+      this.checkBoxdisableTimerThread.Name = "checkBoxdisableTimerThread";
+      this.checkBoxdisableTimerThread.Size = new System.Drawing.Size(241, 17);
+      this.checkBoxdisableTimerThread.TabIndex = 0;
+      this.checkBoxdisableTimerThread.Text = "Do direct submits only (may avoid spam errors)";
+      this.checkBoxdisableTimerThread.UseVisualStyleBackColor = true;
+      // 
       // groupBoxAccount
       // 
       this.groupBoxAccount.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
@@ -173,7 +210,7 @@ namespace MediaPortal.AudioScrobbler
       this.groupBoxAccount.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxAccount.Location = new System.Drawing.Point(6, 6);
       this.groupBoxAccount.Name = "groupBoxAccount";
-      this.groupBoxAccount.Size = new System.Drawing.Size(275, 144);
+      this.groupBoxAccount.Size = new System.Drawing.Size(275, 135);
       this.groupBoxAccount.TabIndex = 1;
       this.groupBoxAccount.TabStop = false;
       this.groupBoxAccount.Text = "last.fm account";
@@ -181,7 +218,7 @@ namespace MediaPortal.AudioScrobbler
       // linkLabel1
       // 
       this.linkLabel1.AutoSize = true;
-      this.linkLabel1.Location = new System.Drawing.Point(27, 121);
+      this.linkLabel1.Location = new System.Drawing.Point(27, 113);
       this.linkLabel1.Name = "linkLabel1";
       this.linkLabel1.Size = new System.Drawing.Size(213, 13);
       this.linkLabel1.TabIndex = 2;
@@ -247,7 +284,7 @@ namespace MediaPortal.AudioScrobbler
       this.tabPageRecent.Padding = new System.Windows.Forms.Padding(3);
       this.tabPageRecent.Size = new System.Drawing.Size(287, 286);
       this.tabPageRecent.TabIndex = 1;
-      this.tabPageRecent.Text = "Recent tracks";
+      this.tabPageRecent.Text = "Recent";
       this.tabPageRecent.UseVisualStyleBackColor = true;
       // 
       // buttonRefreshRecent
@@ -281,7 +318,7 @@ namespace MediaPortal.AudioScrobbler
       this.tabPageTopArtists.Name = "tabPageTopArtists";
       this.tabPageTopArtists.Size = new System.Drawing.Size(287, 286);
       this.tabPageTopArtists.TabIndex = 2;
-      this.tabPageTopArtists.Text = "Top artists";
+      this.tabPageTopArtists.Text = "Artists";
       this.tabPageTopArtists.UseVisualStyleBackColor = true;
       // 
       // buttonArtistsRefresh
@@ -317,7 +354,7 @@ namespace MediaPortal.AudioScrobbler
       this.tabPageTopTracks.Name = "tabPageTopTracks";
       this.tabPageTopTracks.Size = new System.Drawing.Size(287, 286);
       this.tabPageTopTracks.TabIndex = 3;
-      this.tabPageTopTracks.Text = "Top tracks";
+      this.tabPageTopTracks.Text = "Tracks";
       this.tabPageTopTracks.UseVisualStyleBackColor = true;
       // 
       // buttonTopTracks
@@ -405,27 +442,111 @@ namespace MediaPortal.AudioScrobbler
       this.maskedTextBoxASPass.Size = new System.Drawing.Size(236, 20);
       this.maskedTextBoxASPass.TabIndex = 0;
       // 
-      // groupBoxOptions
+      // checkBoxDismissOnError
       // 
-      this.groupBoxOptions.Controls.Add(this.checkBoxdisableTimerThread);
-      this.groupBoxOptions.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxOptions.Location = new System.Drawing.Point(6, 156);
-      this.groupBoxOptions.Name = "groupBoxOptions";
-      this.groupBoxOptions.Size = new System.Drawing.Size(271, 86);
-      this.groupBoxOptions.TabIndex = 2;
-      this.groupBoxOptions.TabStop = false;
-      this.groupBoxOptions.Text = "Options";
+      this.checkBoxDismissOnError.AutoSize = true;
+      this.checkBoxDismissOnError.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxDismissOnError.Location = new System.Drawing.Point(16, 43);
+      this.checkBoxDismissOnError.Name = "checkBoxDismissOnError";
+      this.checkBoxDismissOnError.Size = new System.Drawing.Size(228, 17);
+      this.checkBoxDismissOnError.TabIndex = 1;
+      this.checkBoxDismissOnError.Text = "Dismiss cached song on error and continue";
+      this.checkBoxDismissOnError.UseVisualStyleBackColor = true;
       // 
-      // checkBoxdisableTimerThread
+      // checkBoxLogVerbose
       // 
-      this.checkBoxdisableTimerThread.AutoSize = true;
-      this.checkBoxdisableTimerThread.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxdisableTimerThread.Location = new System.Drawing.Point(16, 28);
-      this.checkBoxdisableTimerThread.Name = "checkBoxdisableTimerThread";
-      this.checkBoxdisableTimerThread.Size = new System.Drawing.Size(241, 17);
-      this.checkBoxdisableTimerThread.TabIndex = 0;
-      this.checkBoxdisableTimerThread.Text = "Do direct submits only (may avoid spam errors)";
-      this.checkBoxdisableTimerThread.UseVisualStyleBackColor = true;
+      this.checkBoxLogVerbose.AutoSize = true;
+      this.checkBoxLogVerbose.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxLogVerbose.Location = new System.Drawing.Point(16, 66);
+      this.checkBoxLogVerbose.Name = "checkBoxLogVerbose";
+      this.checkBoxLogVerbose.Size = new System.Drawing.Size(135, 17);
+      this.checkBoxLogVerbose.TabIndex = 2;
+      this.checkBoxLogVerbose.Text = "Show debug log entries";
+      this.checkBoxLogVerbose.UseVisualStyleBackColor = true;
+      // 
+      // buttonClearCache
+      // 
+      this.buttonClearCache.Location = new System.Drawing.Point(16, 93);
+      this.buttonClearCache.Name = "buttonClearCache";
+      this.buttonClearCache.Size = new System.Drawing.Size(241, 23);
+      this.buttonClearCache.TabIndex = 3;
+      this.buttonClearCache.Text = "Clear cache";
+      this.buttonClearCache.UseVisualStyleBackColor = true;
+      this.buttonClearCache.Click += new System.EventHandler(this.buttonClearCache_Click);
+      // 
+      // tabPageSuggestions
+      // 
+      this.tabPageSuggestions.Controls.Add(this.labelArtistMatch);
+      this.tabPageSuggestions.Controls.Add(this.trackBarArtistMatch);
+      this.tabPageSuggestions.Controls.Add(this.progressBarSuggestions);
+      this.tabPageSuggestions.Controls.Add(this.buttonRefreshSuggestions);
+      this.tabPageSuggestions.Controls.Add(this.listViewSuggestions);
+      this.tabPageSuggestions.Location = new System.Drawing.Point(4, 22);
+      this.tabPageSuggestions.Name = "tabPageSuggestions";
+      this.tabPageSuggestions.Size = new System.Drawing.Size(287, 286);
+      this.tabPageSuggestions.TabIndex = 4;
+      this.tabPageSuggestions.Text = "Suggestions";
+      this.tabPageSuggestions.UseVisualStyleBackColor = true;
+      // 
+      // buttonRefreshSuggestions
+      // 
+      this.buttonRefreshSuggestions.Location = new System.Drawing.Point(202, 257);
+      this.buttonRefreshSuggestions.Name = "buttonRefreshSuggestions";
+      this.buttonRefreshSuggestions.Size = new System.Drawing.Size(75, 23);
+      this.buttonRefreshSuggestions.TabIndex = 7;
+      this.buttonRefreshSuggestions.Text = "Refresh";
+      this.buttonRefreshSuggestions.UseVisualStyleBackColor = true;
+      this.buttonRefreshSuggestions.Click += new System.EventHandler(this.buttonRefreshSuggestions_Click);
+      // 
+      // listViewSuggestions
+      // 
+      this.listViewSuggestions.Activation = System.Windows.Forms.ItemActivation.OneClick;
+      this.listViewSuggestions.AllowColumnReorder = true;
+      this.listViewSuggestions.AllowDrop = true;
+      this.listViewSuggestions.AllowRowReorder = false;
+      this.listViewSuggestions.AutoArrange = false;
+      this.listViewSuggestions.Location = new System.Drawing.Point(6, 12);
+      this.listViewSuggestions.Name = "listViewSuggestions";
+      this.listViewSuggestions.ShowGroups = false;
+      this.listViewSuggestions.Size = new System.Drawing.Size(275, 239);
+      this.listViewSuggestions.TabIndex = 6;
+      this.listViewSuggestions.UseCompatibleStateImageBehavior = false;
+      this.listViewSuggestions.View = System.Windows.Forms.View.List;
+      // 
+      // progressBarSuggestions
+      // 
+      this.progressBarSuggestions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.progressBarSuggestions.Location = new System.Drawing.Point(6, 257);
+      this.progressBarSuggestions.Name = "progressBarSuggestions";
+      this.progressBarSuggestions.Size = new System.Drawing.Size(190, 23);
+      this.progressBarSuggestions.TabIndex = 8;
+      this.progressBarSuggestions.Visible = false;
+      // 
+      // trackBarArtistMatch
+      // 
+      this.trackBarArtistMatch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.trackBarArtistMatch.AutoSize = false;
+      this.trackBarArtistMatch.LargeChange = 10;
+      this.trackBarArtistMatch.Location = new System.Drawing.Point(63, 257);
+      this.trackBarArtistMatch.Maximum = 100;
+      this.trackBarArtistMatch.Minimum = 50;
+      this.trackBarArtistMatch.Name = "trackBarArtistMatch";
+      this.trackBarArtistMatch.Size = new System.Drawing.Size(133, 23);
+      this.trackBarArtistMatch.SmallChange = 5;
+      this.trackBarArtistMatch.TabIndex = 9;
+      this.trackBarArtistMatch.TickFrequency = 10;
+      this.trackBarArtistMatch.Value = 90;
+      // 
+      // labelArtistMatch
+      // 
+      this.labelArtistMatch.AutoSize = true;
+      this.labelArtistMatch.Location = new System.Drawing.Point(9, 262);
+      this.labelArtistMatch.Name = "labelArtistMatch";
+      this.labelArtistMatch.Size = new System.Drawing.Size(48, 13);
+      this.labelArtistMatch.TabIndex = 10;
+      this.labelArtistMatch.Text = "Match %";
       // 
       // AudioscrobblerSettings
       // 
@@ -444,13 +565,16 @@ namespace MediaPortal.AudioScrobbler
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxASLogo)).EndInit();
       this.tabControlASSettings.ResumeLayout(false);
       this.tabPageAccount.ResumeLayout(false);
+      this.groupBoxOptions.ResumeLayout(false);
+      this.groupBoxOptions.PerformLayout();
       this.groupBoxAccount.ResumeLayout(false);
       this.groupBoxAccount.PerformLayout();
       this.tabPageRecent.ResumeLayout(false);
       this.tabPageTopArtists.ResumeLayout(false);
       this.tabPageTopTracks.ResumeLayout(false);
-      this.groupBoxOptions.ResumeLayout(false);
-      this.groupBoxOptions.PerformLayout();
+      this.tabPageSuggestions.ResumeLayout(false);
+      this.tabPageSuggestions.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.trackBarArtistMatch)).EndInit();
       this.ResumeLayout(false);
 
     }
@@ -487,5 +611,14 @@ namespace MediaPortal.AudioScrobbler
     private MediaPortal.UserInterface.Controls.MPListView listViewTopTracks;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxOptions;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxdisableTimerThread;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxLogVerbose;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxDismissOnError;
+    private MediaPortal.UserInterface.Controls.MPButton buttonClearCache;
+    private System.Windows.Forms.TabPage tabPageSuggestions;
+    private MediaPortal.UserInterface.Controls.MPButton buttonRefreshSuggestions;
+    private MediaPortal.UserInterface.Controls.MPListView listViewSuggestions;
+    private System.Windows.Forms.ProgressBar progressBarSuggestions;
+    private System.Windows.Forms.TrackBar trackBarArtistMatch;
+    private System.Windows.Forms.Label labelArtistMatch;
   }
 }

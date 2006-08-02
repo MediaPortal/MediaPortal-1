@@ -321,6 +321,11 @@ namespace MediaPortal.Music.Database
       return s.ToString();
     }
 
+    public string ToURLArtistString()
+    {
+      return System.Web.HttpUtility.UrlEncode(m_strArtist);
+    }
+
     public override string ToString()
     {
       return m_strArtist + "\t" +
