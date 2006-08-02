@@ -14537,4 +14537,50 @@
       </connections>
     </tv>
   </capturecard>
+
+  <capturecard commercialname="Nebula DigiTV USB" capturename="Nebula DigiTV USB BDA Filter" devid="vid_0547&amp;pid_0201">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="tunerdevice" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"/>
+        <filter cat="tunerdevice"     name="Nebula DigiTV USB BDA Filter"     checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Hauppauge WinTV Nova-T 500 MCE (Tuner 1)" capturename="Nova-DT DVB-T Capture (Dev1 Path0) " devid="vid_2040&amp;9951&amp;mi_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider"	name="Microsoft DVBT Network Provider"	    checkdevice="false"/>
+        <filter cat="tunerdevice"		  name="Nova-DT DVB-T Tuner (Dev1 Path0) "	  checkdevice="true"/>
+        <filter cat="capture"			    name="Nova-DT DVB-T Capture (Dev1 Path0) "	checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"      sourcepin="0" sinkfilter="capture"		  sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Hauppauge WinTV Nova-T 500 MCE (Tuner 2)" capturename="Nova-DT DVB-T Capture (Dev1 Path1) " devid="vid_2040&amp;9951&amp;mi_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider"	name="Microsoft DVBT Network Provider"	    checkdevice="false"/>
+        <filter cat="tunerdevice"		  name="Nova-DT DVB-T Tuner (Dev1 Path1) "	  checkdevice="true"/>
+        <filter cat="capture"			    name="Nova-DT DVB-T Capture (Dev1 Path1) "	checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"      sourcepin="0" sinkfilter="capture"		  sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
 </capturecards>
