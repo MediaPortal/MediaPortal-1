@@ -214,14 +214,6 @@ namespace TvLibrary.Implementations.DVB
 
         _currentChannel = channel;
 
-        if (_currentChannel.IsTv)
-        {
-          FilterGraphTools.ConnectPin(_graphBuilder, _pinVideoTimeShift, _filterMpegMuxerTimeShift, 0);
-        }
-        else
-        {
-          _pinVideoTimeShift.Disconnect();
-        }
         SetAnalyzerMapping(dvbtChannel.PmtPid);
       }
       catch (Exception ex)
@@ -263,10 +255,6 @@ namespace TvLibrary.Implementations.DVB
         }
         if (_graphState == GraphState.Created)
         {
-          string extension = System.IO.Path.GetExtension(fileName).ToLower();
-          StopGraph();
-
-          CreateTimeShiftingGraph();
           SetTimeShiftFileName(fileName);
         }
 
@@ -296,7 +284,6 @@ namespace TvLibrary.Implementations.DVB
           return true;
         }
         StopGraph();
-        DeleteTimeShiftingGraph();
 
         _graphState = GraphState.Created;
 
