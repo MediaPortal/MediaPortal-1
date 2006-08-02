@@ -383,6 +383,8 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
 		viewportWholeScreen.Y=0;
 		viewportWholeScreen.Width =m_iScreenWidth;
 		viewportWholeScreen.Height=m_iScreenHeight;
+    viewportWholeScreen.MaxZ = 1.0; 
+    viewportWholeScreen.MinZ = 0.0;
 		m_pDevice->SetViewport(&viewportWholeScreen);
 
 		FontEnginePresentTextures();
@@ -505,6 +507,7 @@ void FontEnginePresentTextures()
 					texture->pVertexBuffer->Lock( 0, 0, (void**)&pVertices, 0 ) ;
 					memcpy(pVertices,texture->vertices, (texture->iv)*sizeof(CUSTOMVERTEX));
 					texture->pVertexBuffer->Unlock();
+          texture->updateVertexBuffer=false;
 				}
 
 				DWORD dwValue=1;
@@ -544,7 +547,7 @@ void FontEnginePresentTextures()
 		}
 		texture->dwNumTriangles = 0;
 		texture->iv = 0;
-		texture->updateVertexBuffer=false;
+		//texture->updateVertexBuffer=false;
 		textureZ[i]=0;
 		for (int rect=0; rect < 200; ++rect)
 		{
