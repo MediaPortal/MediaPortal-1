@@ -29,11 +29,15 @@ CPcrDecoder::CPcrDecoder(void)
 	m_pcrPid=-1;
 	m_pcrHigh=0;
 	m_pcrLow=0;
-
 }
 
 CPcrDecoder::~CPcrDecoder(void)
 {
+}
+void CPcrDecoder::Reset()
+{
+	m_pcrHigh=0;
+	m_pcrLow=0;
 }
 
 void CPcrDecoder::SetPcrPid(int pid)

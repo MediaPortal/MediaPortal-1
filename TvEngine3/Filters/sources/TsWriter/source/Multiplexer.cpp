@@ -21,6 +21,7 @@
 #include <windows.h>
 #include "multiplexer.h"
 void LogDebug(const char *fmt, ...) ;
+#define PACK_HEADER_INTERVAL 10
 
 CMultiplexer::CMultiplexer()
 {
@@ -39,6 +40,7 @@ void CMultiplexer::SetFileWriterCallBack(IFileWriter* callback)
 }
 void CMultiplexer::Reset()
 {
+	LogDebug("mux: reset");
 	m_videoPacketCounter=0;
 	ivecPesDecoders it;
 	for (it=m_pesDecoders.begin(); it != m_pesDecoders.end();++it)
@@ -47,11 +49,12 @@ void CMultiplexer::Reset()
 		delete decoder;
 	}
 	m_pesDecoders.clear();
+	m_pcrDecoder.Reset();
 }
 
 void CMultiplexer::SetPcrPid(int pcrPid)
 {
-	LogDebug("mux pcr pid:%x", pcrPid);
+	LogDebug("mux: set pcr pid:%x", pcrPid);
 	m_pcrDecoder.SetPcrPid(pcrPid);
 }
 
@@ -62,6 +65,7 @@ int CMultiplexer::GetPcrPid()
 
 void CMultiplexer::RemovePesStream(int pid)
 {
+	LogDebug("mux: remove pes pid:%x", pid);
 	ivecPesDecoders it;
 	it=m_pesDecoders.begin(); 
 	while (it != m_pesDecoders.end())
@@ -85,7 +89,7 @@ void CMultiplexer::AddPesStream(int pid)
 		if (decoder->GetPid()==pid) return;
 	}
 	
-	LogDebug("mux pes pid:%x", pid);
+	LogDebug("mux: add pes pid:%x", pid);
 	CPesDecoder* decoder = new CPesDecoder();
 	decoder->SetPid(pid);
 	m_pesDecoders.push_back(decoder);
@@ -105,40 +109,38 @@ void CMultiplexer::OnTsPacket(byte* tsPacket)
 		{
 			byte* pesPacket = decoder->GetPesPacket();
 			int   pesLength = decoder->GetPesPacketLength();
-
-			
-			if (decoder->GetStreamId()==0xe0)
+			if (pesLength>0)
 			{
-				//LogDebug("stream 0xe0 %d",m_videoPacketCounter);
-				if ((m_videoPacketCounter%30)==0)
-				{	
-					//LogDebug("write pack header %x %x",m_pcrDecoder.PcrHigh(),m_pcrDecoder.PcrLow());
-					byte buffer[20];
-					int packLen=WritePackHeader(m_pcrDecoder.PcrHigh(), m_pcrDecoder.PcrLow(),4000000,buffer);
-					if (m_pCallback!=NULL)
-					{
-						m_pCallback->Write(buffer,packLen);
+				if (decoder->GetStreamId()==0xe0)
+				{
+					//LogDebug("stream 0xe0 %d",m_videoPacketCounter);
+					if ((m_videoPacketCounter % PACK_HEADER_INTERVAL)==0)
+					{	
+						//LogDebug("write pack header %x %x",m_pcrDecoder.PcrHigh(),m_pcrDecoder.PcrLow());
+						byte buffer[20];
+						int packLen=WritePackHeader(m_pcrDecoder.PcrHigh(), m_pcrDecoder.PcrLow(),4000000,buffer);
+						if (m_pCallback!=NULL)
+						{
+							m_pCallback->Write(buffer,	packLen);
+						}
 					}
-
-					//int systemLen=WriteSystemHeader(buffer);
-					//fwrite(buffer,1,systemLen,m_fp);
-				}
-				m_videoPacketCounter++;
-				//LogDebug("write video pid %x peslen:%x",decoder->GetPid(), pesLength);
-				if (m_pCallback!=NULL)
-				{
-					m_pCallback->Write(pesPacket,pesLength);
-				}
-			}
-			else 
-			{
-				//LogDebug("stream 0xc0 %d",m_videoPacketCounter);
-				if (m_videoPacketCounter>0)
-				{
-					//LogDebug("write audio pid %x peslen:%x",decoder->GetPid(), pesLength);
+					m_videoPacketCounter++;
+					//LogDebug("write video pid %x peslen:%x",decoder->GetPid(), pesLength);
 					if (m_pCallback!=NULL)
 					{
-						m_pCallback->Write(pesPacket,pesLength);
+						m_pCallback->Write(pesPacket, pesLength);
+					}
+				}
+				else 
+				{
+					//LogDebug("stream 0xc0 %d",m_videoPacketCounter);
+					if (m_videoPacketCounter>0)
+					{
+						//LogDebug("write audio pid %x peslen:%x",decoder->GetPid(), pesLength);
+						if (m_pCallback!=NULL)
+						{
+							m_pCallback->Write(pesPacket,pesLength);
+						}
 					}
 				}
 			}

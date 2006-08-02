@@ -25,9 +25,10 @@ class CPcrDecoder
 public:
 	CPcrDecoder(void);
 	virtual ~CPcrDecoder(void);
-	void SetPcrPid(int pid);
+	void	SetPcrPid(int pid);
 	int		GetPcrPid();
-	void OnTsPacket(byte* tsPacket);
+	void	Reset();
+	void	OnTsPacket(byte* tsPacket);
 
 	__int64 PcrHigh();
 	int     PcrLow();
