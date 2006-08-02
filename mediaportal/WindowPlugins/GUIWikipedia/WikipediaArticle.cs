@@ -41,16 +41,20 @@ namespace Wikipedia
   /// </summary>
   public class WikipediaArticle
   {
+    #region vars
     private string WikipediaURL = "http://en.wikipedia.org/wiki/Special:Export/";
     private string imagePattern = "Image";
     private string title = string.Empty;
     private string unparsedArticle = string.Empty;
     private string parsedArticle = string.Empty;
+    private string language = "Default";
     private ArrayList linkArray = new ArrayList();
     private ArrayList imageArray = new ArrayList();
-
+    private ArrayList imagedescArray = new ArrayList();
     private ILog _log;
+    #endregion
 
+    #region constructors
     /// <summary>This constructor creates a new WikipediaArticle</summary>
     /// <summary>Searchterm and language need to be given</summary>
     /// <param name="title">The article's title</param>
@@ -78,6 +82,7 @@ namespace Wikipedia
     public WikipediaArticle() : this(string.Empty, "Default")
     {
     }
+    #endregion
 
     /// <summary>Gets the current MP language from mediaportal.xml and sets the Wikipedia URL accordingly</summary>
     private void SetLanguage(string language)
@@ -87,6 +92,7 @@ namespace Wikipedia
         MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml");
         language = xmlreader.GetValueAsString("skin", "language", "English");
       }
+      this.language = language;
       switch (language)
       {
         case "English":
@@ -126,24 +132,35 @@ namespace Wikipedia
     /// <returns>String: parsed article</returns>
     public string GetArticleText()
     {
-      if (parsedArticle == string.Empty)
-        return "Nothing found";
-      else
         return parsedArticle;
     }
 
-    /// <summary>Returns the parsed article text.</summary>
+    /// <summary>Returns all names of images.</summary>
     /// <returns>StringArray: images used in this article</returns>
     public ArrayList GetImageArray()
     {
       return imageArray;
     }
 
-    /// <summary>Returns the parsed article text.</summary>
+    /// <summary>Returns all descriptions of images.</summary>
+    /// <returns>StringArray: images used in this article</returns>
+    public ArrayList GetImagedescArray()
+    {
+      return imagedescArray;
+    }
+
+    /// <summary>Returns the titles of all linked articles.</summary>
     /// <returns>StringArray: titles of linked (internal) Wikipedia articles</returns>
     public ArrayList GetLinkArray()
     {
       return linkArray;
+    }
+
+    /// <summary>Returns the currently active language.</summary>
+    /// <returns>String: language</returns>
+    public string GetLanguage()
+    {
+      return language;
     }
 
     /// <summary>Downloads the xml content from Wikipedia and cuts metadata like version info.</summary>
@@ -343,11 +360,42 @@ namespace Wikipedia
           iEnd = tempParsedArticle.IndexOf("]]", disturbingLink) + 2;
           iEnd = tempParsedArticle.IndexOf("]]", iEnd) + 2;
         }        
-
         // Extract the Text
         string keyword = tempParsedArticle.Substring(iStart, iEnd - iStart);
-        this.imageArray.Add(keyword);
-        _log.Debug("Wikipedia: Image added: {0}", keyword);
+        
+        //Remove all links from the image description.
+        while (keyword.IndexOf("[[", 2) >= 0)
+        {
+          int iStartlink = keyword.IndexOf("[[", 2);
+          int iEndlink = keyword.IndexOf("]]", iStartlink) + 2;
+          // Extract the Text
+          string linkkeyword = keyword.Substring(iStartlink, iEndlink - iStartlink);
+
+          // Parse Links to other keywords.
+          // 1st type of keywords is like [[article|displaytext]]	
+          // for the 2nd the article and displayed text are equal [[article]].
+          if (linkkeyword.IndexOf("|") > 0)
+            linkkeyword = linkkeyword.Substring(linkkeyword.IndexOf("|") + 1, linkkeyword.IndexOf("]]") - linkkeyword.IndexOf("|") - 1);
+          else
+            linkkeyword = linkkeyword.Substring(linkkeyword.IndexOf("[[") + 2, linkkeyword.IndexOf("]]") - linkkeyword.IndexOf("[[") - 2);
+          
+          keyword = keyword.Substring(0, iStartlink) + linkkeyword + keyword.Substring(iEndlink, keyword.Length - iEndlink);
+        }
+
+        int iStartname = keyword.IndexOf(":") + 1;
+        int iEndname = keyword.IndexOf("|");
+        string imagename = keyword.Substring(iStartname, iEndname - iStartname);
+
+        //Image names must not contain spaces!
+        imagename = imagename.Replace(" ", "_");
+
+        int iStartdesc = keyword.LastIndexOf("|") + 1;
+        int iEnddesc = keyword.LastIndexOf("]]");
+        string imagedesc = keyword.Substring(iStartdesc, iEnddesc - iStartdesc); ;
+
+        this.imageArray.Add(imagename);
+        this.imagedescArray.Add(imagedesc);
+        _log.Debug("Wikipedia: Image added: {0}, {1}", imagedesc, imagename);
 
         tempParsedArticle = tempParsedArticle.Substring(0, iStart) + tempParsedArticle.Substring(iEnd, tempParsedArticle.Length - iEnd);
       }

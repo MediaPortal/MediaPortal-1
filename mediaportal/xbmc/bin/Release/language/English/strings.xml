@@ -4275,6 +4275,26 @@
 		<value>Please chose the redirect aim from the link list.</value>
 	</string>
 	<string>
+		<id>2511</id>
+		<value>Links</value>
+	</string>
+	<string>
+		<id>2512</id>
+		<value>Can't display image.</value>
+	</string>
+	<string>
+		<id>2513</id>
+		<value>Please have a look at the logfile.</value>
+	</string>
+	<string>
+		<id>2514</id>
+		<value>Back to the text</value>
+	</string>
+	<string>
+		<id>2515</id>
+		<value>Images</value>
+	</string>
+	<string>
 		<id>2600</id>
 		<value>English</value>
 	</string>

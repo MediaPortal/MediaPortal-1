@@ -42,20 +42,35 @@ namespace Wikipedia
 	/// Windowplugin to search in Wikipedia and display articles using the MP Wikipedia Classes.
 	/// </summary>
 	public class GUIWikipedia : GUIWindow, ISetupForm
-	{
-		[SkinControlAttribute(10)]			protected GUIButtonControl buttonSearch=null;
-		[SkinControlAttribute(11)]			protected GUIButtonControl buttonLocal=null;
+  {
+    #region SkinControls
+    [SkinControlAttribute(10)]
+    protected GUIButtonControl buttonSearch = null;
+		[SkinControlAttribute(11)]
+    protected GUIButtonControl buttonLocal = null;
+    [SkinControlAttribute(14)]
+    protected GUIButtonControl buttonBack = null;
+		[SkinControlAttribute(12)]
+    protected GUIButtonControl buttonLinks = null;
+		[SkinControlAttribute(13)]
+    protected GUIButtonControl buttonImages = null;
 
-		[SkinControlAttribute(12)]			protected GUIButtonControl buttonLinks=null;
-		[SkinControlAttribute(13)]			protected GUIButtonControl buttonImages=null;
+		[SkinControlAttribute(4)]
+    protected GUILabelControl searchtermLabel = null;
+    [SkinControlAttribute(5)]
+    protected GUILabelControl imagedescLabel = null;
+		[SkinControlAttribute(20)]
+    protected GUITextControl txtArticle = null;
 
-		[SkinControlAttribute(4)]			  protected GUILabelControl  searchtermLabel=null;
-		[SkinControlAttribute(20)]			protected GUITextControl   txtArticle=null;
+    [SkinControlAttribute(25)]
+    protected GUIImage imageControl = null;
+    #endregion
 
     private string language = "Default";
     private string articletext = string.Empty;
     private ArrayList linkArray = new ArrayList();
-    private ArrayList imageArray = new ArrayList();
+    private ArrayList imagenameArray = new ArrayList();
+    private ArrayList imagedescArray = new ArrayList();
 
     private ILog _wikilog;
 
@@ -97,13 +112,13 @@ namespace Wikipedia
 		}	
 
 		// get ID of windowplugin belonging to this setup
-		public int    GetWindowId() 
+		public int GetWindowId() 
 		{
 			return 4711;
 		}	
 		
 		// Indicates if plugin is enabled by default;
-		public bool   DefaultEnabled()
+		public bool DefaultEnabled()
 		{
 			return false;
 		}	
@@ -155,7 +170,8 @@ namespace Wikipedia
 			if(File.Exists(GUIGraphicsContext.Skin + @"\media\wikipedia_logo.png") == false)
 				Utils.ExportEmbeddedResource("Wikipedia.Assets.wikipedia_logo.png", GUIGraphicsContext.Skin + @"\media\wikipedia_logo.png");
 
-			return Load(GUIGraphicsContext.Skin+@"\wikipedia.xml");
+      bool bResult = Load(GUIGraphicsContext.Skin + @"\wikipedia.xml");
+      return bResult;
 		}
 
 		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
@@ -190,7 +206,7 @@ namespace Wikipedia
         else
         {
           GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-          dlg.SetHeading("Error");
+          dlg.SetHeading(GUILocalizeStrings.Get(257)); // Error
           dlg.SetLine(1, GUILocalizeStrings.Get(2500)); // No searchterm entered!
           dlg.SetLine(2, String.Empty);
           dlg.SetLine(3, GUILocalizeStrings.Get(2501)); // Please enter a valid searchterm!
@@ -248,7 +264,7 @@ namespace Wikipedia
         else
         {
           GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-          dlg.SetHeading("Error");
+          dlg.SetHeading(GUILocalizeStrings.Get(257)); // Error
           dlg.SetLine(1, GUILocalizeStrings.Get(2506)); // No Links from this article.
           dlg.DoModal(GUIWindowManager.ActiveWindow);
         }
@@ -257,36 +273,51 @@ namespace Wikipedia
 			// The Button containing a list of all images from the article
       if (control == buttonImages)
       {
-        if (imageArray.Count > 0)
+        if (imagedescArray.Count > 0)
         {
           // Create a new selection dialog.
           GUIDialogMenu pDlgOK = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
           if (pDlgOK != null)
           {
             pDlgOK.Reset();
-            pDlgOK.SetHeading(GUILocalizeStrings.Get(2508)); //Images from this article
+            pDlgOK.SetHeading(GUILocalizeStrings.Get(2507)); //Images from this article
 
             // Add all the images from the imagearray.
-            foreach (string image in imageArray)
+            foreach (string image in imagedescArray)
             {
               pDlgOK.Add(image);
             }
             pDlgOK.DoModal(GetID);
             if (pDlgOK.SelectedLabel >= 0)
             {
-              _wikilog.Info("Wikipedia: new search from the image array: {0}", pDlgOK.SelectedLabelText);
-              //TODO: get images
-              //GetAndDisplayArticle(pDlgOK.SelectedLabelText);
+              _wikilog.Info("Wikipedia: new search from the image array: {0}", imagedescArray[pDlgOK.SelectedId - 1]);
+              GetAndDisplayImage(imagenameArray[pDlgOK.SelectedId - 1].ToString(), imagedescArray[pDlgOK.SelectedId - 1].ToString());
             }
           }
         }
         else
         {
           GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-          dlg.SetHeading("Error");
+          dlg.SetHeading(GUILocalizeStrings.Get(257)); // Error
           dlg.SetLine(1, GUILocalizeStrings.Get(2508)); // No Images referenced in this article.
           dlg.DoModal(GUIWindowManager.ActiveWindow);
         }
+      }
+      // Back to the text button to switch from image view
+      if (control == buttonBack)
+      {
+        if (!txtArticle.IsVisible)
+          GUIControl.ShowControl(GetID, txtArticle.GetID);
+        if (imageControl.IsVisible)
+          GUIControl.HideControl(GetID, imageControl.GetID);
+        if (!searchtermLabel.IsVisible)
+          GUIControl.ShowControl(GetID, searchtermLabel.GetID);
+        if (imagedescLabel.IsVisible)
+          GUIControl.HideControl(GetID, imagedescLabel.GetID);
+        if (imagedescLabel.IsVisible)
+          GUIControl.HideControl(GetID, imagedescLabel.GetID);
+        if (buttonBack.IsVisible)
+          GUIControl.HideControl(GetID, buttonBack.GetID);
       }
 			base.OnClicked (controlId, control, actionType);
 		}
@@ -321,8 +352,39 @@ namespace Wikipedia
         GetAndDisplayArticle(searchtermLabel.Label);
       }
     }
-		
-		// The main function.
+
+    private void GetAndDisplayImage(string imagename, string imagedesc)
+    {
+      WikipediaImage image = new WikipediaImage(imagename, language);
+      string imagefilename = image.GetImageFilename();
+      _wikilog.Info("Wikipedia: Trying to display image file: {0}", imagefilename);
+
+      if (imagefilename != string.Empty && System.IO.File.Exists(imagefilename))
+      {
+        if (txtArticle.IsVisible)
+          GUIControl.HideControl(GetID, txtArticle.GetID);
+        if (!imageControl.IsVisible)
+          GUIControl.ShowControl(GetID, imageControl.GetID);
+        if (searchtermLabel.IsVisible)
+          GUIControl.HideControl(GetID, searchtermLabel.GetID);
+        if (!imagedescLabel.IsVisible)
+          GUIControl.ShowControl(GetID, imagedescLabel.GetID);
+        if (!buttonBack.IsVisible)
+          GUIControl.ShowControl(GetID, buttonBack.GetID);
+        imagedescLabel.Label = imagedesc;
+        imageControl.SetFileName(imagefilename);
+      }
+      else
+      {
+        GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+        dlg.SetHeading(GUILocalizeStrings.Get(257)); // Error
+        dlg.SetLine(1, GUILocalizeStrings.Get(2512)); // Can't display image.
+        dlg.SetLine(2, GUILocalizeStrings.Get(2513)); // Please have a look at the logfile.
+        dlg.DoModal(GUIWindowManager.ActiveWindow);
+      }
+    }
+    
+    // The main function.
 		void GetAndDisplayArticle(string searchterm)
 		{	
 			BackgroundWorker worker = new BackgroundWorker();
@@ -342,13 +404,28 @@ namespace Wikipedia
 			using(WaitCursor cursor = new WaitCursor())
 			lock(this)
 			{
-				linkArray.Clear();
-				imageArray.Clear();
+        if (!txtArticle.IsVisible)
+          GUIControl.ShowControl(GetID, txtArticle.GetID);
+        if (imageControl.IsVisible)
+          GUIControl.HideControl(GetID, imageControl.GetID);
+        if (!searchtermLabel.IsVisible)
+          GUIControl.ShowControl(GetID, searchtermLabel.GetID);
+        if (imagedescLabel.IsVisible)
+          GUIControl.HideControl(GetID, imagedescLabel.GetID);
+        if (imagedescLabel.IsVisible)
+          GUIControl.HideControl(GetID, imagedescLabel.GetID);
+        if (buttonBack.IsVisible)
+          GUIControl.HideControl(GetID, buttonBack.GetID);
+        linkArray.Clear();
+				imagenameArray.Clear();
+        imagedescArray.Clear();
 				searchtermLabel.Label = e.Argument.ToString();
         WikipediaArticle article = new WikipediaArticle(e.Argument.ToString(), language);
         articletext = article.GetArticleText();
         linkArray = article.GetLinkArray();
-        imageArray = article.GetImageArray();
+        imagenameArray = article.GetImageArray();
+        imagedescArray = article.GetImagedescArray();
+        language = article.GetLanguage();
 
         if(articletext == "REDIRECT")
           txtArticle.Label = GUILocalizeStrings.Get(2509) + "\n" + GUILocalizeStrings.Get(2510); //This page is only a redirect. Please chose the redirect aim from the link list.

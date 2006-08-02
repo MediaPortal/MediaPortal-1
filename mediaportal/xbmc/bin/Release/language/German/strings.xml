@@ -4275,6 +4275,26 @@
 		<value>Bitte ein Weiterleitungsziel aus der Linkliste wählen.</value>
 	</string>
 	<string>
+		<id>2511</id>
+		<value>Verlinkte Artikel</value>
+	</string>
+	<string>
+		<id>2512</id>
+		<value>Kann das Bild nicht anzeigen.</value>
+	</string>
+	<string>
+		<id>2513</id>
+		<value>Bitte die Logdatei ansehen.</value>
+	</string>
+	<string>
+		<id>2514</id>
+		<value>Zurück zum Text</value>
+	</string>
+	<string>
+		<id>2515</id>
+		<value>Bilder</value>
+	</string>
+	<string>
 		<id>2600</id>
 		<value>Englisch</value>
 	</string>

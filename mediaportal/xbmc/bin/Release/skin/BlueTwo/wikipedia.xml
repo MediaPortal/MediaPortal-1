@@ -1,45 +1,56 @@
 <window>
-   <id>4711</id>
-   <defaultcontrol>2</defaultcontrol>
-   <allowoverlay>yes</allowoverlay>
-   <controls>
-      <control>
-         <type>image</type>
-         <description>Background</description>
-         <id>1</id>
-         <posX>0</posX>
-         <posY>0</posY>
-         <width>720</width>
-         <height>576</height>
-         <texture>background.png</texture>
-      </control>
-      <control>
-         <type>image</type>
-         <description>wikipedia text logo</description>
-         <id>2</id>
-         <posX>60</posX>
-         <posY>20</posY>
-         <texture>wikipedia_logo.png</texture>
-      </control>
-      <control>
-         <type>image</type>
-         <description>Reading buddy</description>
-         <id>3</id>
-         <posX>75</posX>
-         <posY>370</posY>
-         <texture>hover_wikipedia.png</texture>
-      </control>
-      <control>
-         <type>label</type>
-         <description>Text: Wikipedia/Searchterm</description>
-         <id>4</id>
-         <posX>250</posX>
-         <posY>70</posY>
-         <label>Wikipedia</label>
-         <font>font16</font>
-         <align>right</align>
-      </control>
-      <control>
+<id>4711</id>
+<defaultcontrol>10</defaultcontrol>
+<allowoverlay>yes</allowoverlay>
+<controls>
+    <control>
+        <type>image</type>
+        <description>Background</description>
+        <id>1</id>
+        <posX>0</posX>
+        <posY>0</posY>
+        <width>720</width>
+        <height>576</height>
+		<texture>background.png</texture>
+    </control>
+    <control>
+        <type>image</type>
+        <description>wikipedia text logo</description>
+        <id>2</id>
+        <posX>60</posX>
+        <posY>20</posY>
+        <texture>wikipedia_logo.png</texture>
+    </control>
+    <control>
+        <type>image</type>
+        <description>Reading buddy</description>
+        <id>3</id>
+        <posX>75</posX>
+        <posY>370</posY>
+        <texture>hover_wikipedia.png</texture>
+    </control>
+    <control>
+        <type>label</type>
+        <description>Article title/searchterm</description>
+        <id>4</id>
+        <posX>250</posX>
+        <posY>70</posY>
+        <label>Wikipedia</label>
+        <font>font16</font>
+        <align>right</align>
+    </control>
+	<control>
+        <type>label</type>
+        <description>Image description</description>
+        <id>5</id>
+        <posX>250</posX>
+        <posY>70</posY>
+        <label>Wikipedia</label>
+        <font>font16</font>
+        <align>right</align>
+		<visible>no</visible>		
+    </control>
+    <control>
          <type>button</type>
          <description>Search Button</description>
          <id>10</id>
@@ -49,7 +60,7 @@
          <onright>20</onright>
          <onup>14</onup>
          <ondown>11</ondown>
-         <label>Search</label>
+         <label>137</label>
       </control>
       <control>
          <type>button</type>
@@ -60,52 +71,81 @@
          <onleft>20</onleft>
          <onright>20</onright>
          <onup>10</onup>
-         <ondown>12</ondown>
-         <label>Select local Wikipedia</label>
+         <ondown>14</ondown>
+         <label>200025</label>
       </control>
+	<control>
+        <type>button</type>
+        <description>Back to the text (when viewing an image)</description>
+        <id>14</id>
+        <posX>60</posX>
+        <posY>165</posY>
+        <onleft>20</onleft>
+        <onright>20</onright>
+        <onup>11</onup>
+        <ondown>12</ondown>
+		<label>2514</label>
+		<visible>no</visible>
+    </control>
+	<control>
+        <type>button</type>
+        <description>Links Button</description>
+        <id>12</id>
+        <posX>60</posX>
+        <posY>199</posY>
+        <onleft>20</onleft>
+        <onright>20</onright>
+        <onup>14</onup>
+        <ondown>13</ondown>
+        <label>2511</label>
+    </control>
+    <control>
+        <type>button</type>
+        <description>Images Button</description>
+        <id>13</id>
+        <posX>60</posX>
+        <posY>233</posY>
+        <onleft>20</onleft>
+        <onright>20</onright>
+        <onup>12</onup>
+        <ondown>10</ondown>
+        <label>2515</label>
+    </control>
 
-	  <control>
-         <type>button</type>
-         <description>Links Button</description>
-         <id>12</id>
-         <posX>60</posX>
-         <posY>199</posY>
-         <onleft>20</onleft>
-         <onright>20</onright>
-         <onup>11</onup>
-         <ondown>13</ondown>
-         <label>Links</label>
+    <control>
+		<description>Here is the article text displayed</description>
+        <type>textbox</type>
+        <id>20</id>
+        <posX>264</posX>
+        <posY>72</posY>
+        <width>440</width>
+        <height>466</height>
+        <spinWidth>16</spinWidth>
+        <spinColor>ffffffff</spinColor>
+        <image>icon-folder.png</image>
+        <spinHeight>16</spinHeight>
+        <spinPosY>530</spinPosY>
+        <spinPosX>610</spinPosX>
+        <text></text>
+        <SpinPosX>264</SpinPosX>
+        <SpinPosY>538</SpinPosY>
       </control>
-      <control>
-         <type>button</type>
-         <description>Images Button</description>
-         <id>13</id>
-         <posX>60</posX>
-         <posY>233</posY>
-         <onleft>20</onleft>
-         <onright>20</onright>
-         <onup>12</onup>
-         <ondown>10</ondown>
-         <label>Images</label>
-      </control>
-
-      <control>
-	 <description>Here is the article text displayed</description>
-         <type>textbox</type>
-         <id>20</id>
-         <posX>264</posX>
-         <posY>72</posY>
-         <width>440</width>
-         <height>466</height>
-         <spinWidth>16</spinWidth>
-         <spinColor>ffffffff</spinColor>
-         <image>icon-folder.png</image>
-         <spinHeight>16</spinHeight>
-         <spinPosY>530</spinPosY>
-         <spinPosX>610</spinPosX>
-         <text></text>
-         <SpinPosX>264</SpinPosX>
-         <SpinPosY>538</SpinPosY>
-      </control>
-   </controls>
+	  
+	<control>		
+		<description>Article Image</description>
+		<type>image</type>
+		<id>25</id>
+		<posX>264</posX>
+		<posY>72</posY>
+		<width>440</width>
+		<height>466</height>
+		<texture></texture>
+		<visible>no</visible>
+		<colorkey>00000000</colorkey>
+		<colordiffuse>White</colordiffuse>
+		<filtered>yes</filtered>
+		<centered>yes</centered>
+		<keepaspectratio>yes</keepaspectratio>
+	</control>	
+</controls>
 </window>
