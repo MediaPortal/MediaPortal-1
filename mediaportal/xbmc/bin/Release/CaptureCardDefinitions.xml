@@ -12943,7 +12943,7 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"     name="Mini DualTV USB, Digital TVTuner" checkdevice="true"/>
+        <filter cat="tvtuner"     name="Mini DualTV USB, Analog TVTuner"  checkdevice="true"/>
         <filter cat="tvaudio"     name="Mini DualTV USB, Analog TVAudio"  checkdevice="true"/>
         <filter cat="crossbar"    name="Mini DualTV USB, Analog Crossbar" checkdevice="true"/>
         <filter cat="capture"     name="Mini DualTV USB, Analog Capture"  checkdevice="true"/>
@@ -12953,9 +12953,9 @@
         <filter cat="mux"         name="%mpegmux%"                        checkdevice="false"/>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"    sourcepin="0" sinkfilter="crossbar"	  sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"    sourcepin="0" sinkfilter="crossbar"	  sinkpin="2"/>
         <connection sourcefilter="tvtuner"    sourcepin="1" sinkfilter="tvaudio"	  sinkpin="0"/>
-        <connection sourcefilter="tvaudio"    sourcepin="0" sinkfilter="crossbar"	  sinkpin="%audiotuner%"/>
+        <connection sourcefilter="tvaudio"    sourcepin="0" sinkfilter="crossbar"	  sinkpin="4"/>
         <connection sourcefilter="crossbar"   sourcepin="0" sinkfilter="capture"	  sinkpin="0"/>
         <connection sourcefilter="crossbar"   sourcepin="1" sinkfilter="capture"	  sinkpin="1"/>
         <connection sourcefilter="capture"    sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
