@@ -295,10 +295,8 @@ namespace MediaPortal.Music.Database
         s.Append(m_strTitle);
       else
         s.Append("(Untitled)");
-
       if (m_strArtist != "")
         s.Append(" - " + m_strArtist);
-
       if (m_strAlbum != "")
         s.Append(" (" + m_strAlbum + ")");
 
@@ -311,12 +309,27 @@ namespace MediaPortal.Music.Database
 
       if (m_strTitle != "")
         s.Append(m_strTitle + " - ");
-
       if (m_strArtist != "")
         s.Append(m_strArtist);
-
       if (m_iTimedPlayed > 0)
         s.Append(" (Played: " + Convert.ToString(m_iTimedPlayed) + " times)");
+
+      return s.ToString();
+    }
+
+    public string ToLastFMMatchString(bool showURL_)
+    {
+      StringBuilder s = new StringBuilder();
+      if (m_strArtist != "")
+        s.Append(m_strArtist);
+      if (_lastFMMatch != "")
+        if (_lastFMMatch.IndexOf(".") == -1)
+          s.Append(" (Match: " + _lastFMMatch + "%)");
+        else
+          s.Append(" (Match: " + _lastFMMatch.Remove(_lastFMMatch.IndexOf(".") + 2) + "%)");
+      if (showURL_)
+        if (_strURL != "")
+          s.Append(" (Link: " + _strURL + ")");
 
       return s.ToString();
     }

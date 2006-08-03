@@ -383,7 +383,34 @@ namespace MediaPortal.Music.Database
           Log.Write("AudioscrobblerBase: {0}", "direct submit cancelled because of previous errors");
     }
 
+    public List<Song> getAudioScrobblerFeed(lastFMFeed feed_, string asUser_)
+    {
+      if (asUser_ == "")
+        asUser_ = Username;
+      switch (feed_)
+      {
+        case lastFMFeed.recenttracks:
+          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "recenttracks.xml", @"//recenttracks/track", feed_);
+        case lastFMFeed.topartists:
+          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "topartists.xml", @"//topartists/artist", feed_);
+        case lastFMFeed.weeklyartistchart:
+          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "weeklyartistchart.xml", @"//weeklyartistchart/artist", feed_);
+        case lastFMFeed.toptracks:
+          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "toptracks.xml", @"//toptracks/track", feed_);
+        case lastFMFeed.weeklytrackchart:
+          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "weeklytrackchart.xml", @"//weeklytrackchart/track", feed_);
+        case lastFMFeed.neighbours:
+          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "neighbours.xml", @"//neighbours/user", feed_);
+        default:
+          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "recenttracks.xml", @"//recenttracks/track", feed_);
+      }
+    }
 
+    public List<Song> getSimilarArtists(string Artist_)
+    {
+      // todo limits
+      return ParseXMLDocForSimilarArtists(Artist_);
+    }
 
     /// <summary>
     /// Clears the queue. Also clears the cached queue from the disk.
@@ -844,7 +871,7 @@ namespace MediaPortal.Music.Database
       //Log.Write("AudioscrobblerBase.SubmitQueue: {0}", "End");
     }
 
-    public List<Song> ParseXMLDocForSimilarArtists(string artist_)
+    private List<Song> ParseXMLDocForSimilarArtists(string artist_)
     {
       songList = new List<Song>();
       try
@@ -861,12 +888,8 @@ namespace MediaPortal.Music.Database
           {
             if (child.Name == "name" && child.ChildNodes.Count != 0)
               nodeSong.Artist = child.ChildNodes[0].Value;
-            //else if (child.Name == "name" && child.ChildNodes.Count != 0)
-            //  nodeSong.Title = child.ChildNodes[0].Value;
             else if (child.Name == "mbid" && child.ChildNodes.Count != 0)
               nodeSong.MusicBrainzID = child.ChildNodes[0].Value;
-            //else if (child.Name == "playcount" && child.ChildNodes.Count != 0)
-            //  nodeSong.TimesPlayed = Convert.ToInt32(child.ChildNodes[0].Value);
             else if (child.Name == "url" && child.ChildNodes.Count != 0)
               nodeSong.URL = child.ChildNodes[0].Value;
             else if (child.Name == "match" && child.ChildNodes.Count != 0)
@@ -882,8 +905,8 @@ namespace MediaPortal.Music.Database
       }
       return songList;
     }
-    
-    public List<Song> ParseXMLDoc(string xmlFileInput, string queryNodePath, lastFMFeed xmlfeed)
+
+    private List<Song> ParseXMLDoc(string xmlFileInput, string queryNodePath, lastFMFeed xmlfeed)
     {
       songList = new List<Song>();
       try
@@ -902,8 +925,8 @@ namespace MediaPortal.Music.Database
             {
               case (lastFMFeed.recenttracks):
                 {
-                  if (child.Name == "artist" && child.ChildNodes.Count != 0)                                    
-                    nodeSong.Artist = child.ChildNodes[0].Value;                  
+                  if (child.Name == "artist" && child.ChildNodes.Count != 0)
+                    nodeSong.Artist = child.ChildNodes[0].Value;
                   else if (child.Name == "name" && child.ChildNodes.Count != 0)
                     nodeSong.Title = child.ChildNodes[0].Value;
                   else if (child.Name == "mbid" && child.ChildNodes.Count != 0)
@@ -946,6 +969,16 @@ namespace MediaPortal.Music.Database
                     nodeSong.URL = child.ChildNodes[0].Value;
                 }
                 break;
+              case (lastFMFeed.neighbours):
+                {
+                  if (node.Attributes["username"].Value != "")
+                    nodeSong.Artist = node.Attributes["username"].Value;
+                  if (child.Name == "url" && child.ChildNodes.Count != 0)
+                    nodeSong.URL = child.ChildNodes[0].Value;
+                  else if (child.Name == "match" && child.ChildNodes.Count != 0)
+                    nodeSong.LastFMMatch = child.ChildNodes[0].Value;
+                }
+                break;
               case (lastFMFeed.weeklytrackchart):
                 goto case lastFMFeed.toptracks;
               case (lastFMFeed.similar):
@@ -960,8 +993,9 @@ namespace MediaPortal.Music.Database
       {
         // input nice exception here...
       }
-      return songList;  
+      return songList;
     }
+
     #endregion
 
     #region Audioscrobbler response parsers.

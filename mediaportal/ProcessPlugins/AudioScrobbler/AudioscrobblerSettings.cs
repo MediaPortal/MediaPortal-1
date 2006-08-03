@@ -61,6 +61,9 @@ namespace MediaPortal.AudioScrobbler
         textBoxASUsername.Text = xmlreader.GetValueAsString("audioscrobbler", "user", "");
         if (textBoxASUsername.Text == "")
         {
+          tabControlASSettings.TabPages.RemoveAt(7);
+          tabControlASSettings.TabPages.RemoveAt(6);
+          tabControlASSettings.TabPages.RemoveAt(5);
           tabControlASSettings.TabPages.RemoveAt(4);
           tabControlASSettings.TabPages.RemoveAt(3);
           tabControlASSettings.TabPages.RemoveAt(2);
@@ -82,6 +85,8 @@ namespace MediaPortal.AudioScrobbler
             //Log.Write("Audioscrobbler: Password decryption failed {0}", ex.Message);
           }
         }
+        scrobbler = new AudioscrobblerBase();
+        scrobbler.Disconnect();
       }
     }
 
@@ -102,7 +107,7 @@ namespace MediaPortal.AudioScrobbler
         catch (Exception ex)
         {
           //Log.Write("Audioscrobbler: Password encryption failed {0}", ex.Message);
-        }
+        }        
       }
     }
     #endregion
@@ -145,7 +150,6 @@ namespace MediaPortal.AudioScrobbler
 
     private void buttonClearCache_Click(object sender, EventArgs e)
     {
-      scrobbler = new AudioscrobblerBase();
       scrobbler.ClearQueue();
     }
 
@@ -153,8 +157,8 @@ namespace MediaPortal.AudioScrobbler
     {
       buttonRefreshRecent.Enabled = false;
       listViewRecentTracks.Clear();
-      songList = new List<Song>();
-      songList = getXMLData(lastFMFeed.recenttracks);
+      songList = new List<Song>(); ;
+      songList = scrobbler.getAudioScrobblerFeed(lastFMFeed.recenttracks, "");
       for (int i = 0; i < songList.Count; i++)
         listViewRecentTracks.Items.Add(songList[i].ToShortString());
       buttonRefreshRecent.Enabled = true;
@@ -165,10 +169,21 @@ namespace MediaPortal.AudioScrobbler
       buttonArtistsRefresh.Enabled = false;
       listViewTopArtists.Clear();
       songList = new List<Song>();
-      songList = getXMLData(lastFMFeed.topartists);
+      songList = scrobbler.getAudioScrobblerFeed(lastFMFeed.topartists, "");
       for (int i = 0; i < songList.Count; i++)
         listViewTopArtists.Items.Add(songList[i].ToLastFMString());
       buttonArtistsRefresh.Enabled = true;
+    }
+
+    private void buttonRefreshWeeklyArtists_Click(object sender, EventArgs e)
+    {
+      buttonRefreshWeeklyArtists.Enabled = false;
+      listViewWeeklyArtists.Clear();
+      songList = new List<Song>();
+      songList = scrobbler.getAudioScrobblerFeed(lastFMFeed.weeklyartistchart, "");
+      for (int i = 0; i < songList.Count; i++)
+        listViewWeeklyArtists.Items.Add(songList[i].ToLastFMString());
+      buttonRefreshWeeklyArtists.Enabled = true;
     }
 
     private void buttonTopTracks_Click(object sender, EventArgs e)
@@ -176,36 +191,62 @@ namespace MediaPortal.AudioScrobbler
       buttonTopTracks.Enabled = false;
       listViewTopTracks.Clear();
       songList = new List<Song>();
-      songList = getXMLData(lastFMFeed.toptracks);
+      songList = scrobbler.getAudioScrobblerFeed(lastFMFeed.toptracks, "");
       for (int i = 0; i < songList.Count; i++)
         listViewTopTracks.Items.Add(songList[i].ToLastFMString());
       buttonTopTracks.Enabled = true;
     }
 
+    private void buttonRefreshWeeklyTracks_Click(object sender, EventArgs e)
+    {
+      buttonRefreshWeeklyTracks.Enabled = false;
+      listViewWeeklyTracks.Clear();
+      songList = new List<Song>();
+      songList = scrobbler.getAudioScrobblerFeed(lastFMFeed.weeklytrackchart, "");
+      for (int i = 0; i < songList.Count; i++)
+        listViewWeeklyTracks.Items.Add(songList[i].ToLastFMString());
+      buttonRefreshWeeklyTracks.Enabled = true;
+    }
+
+    private void changeControlsSuggestions(bool runningNow_)
+    {
+      if (runningNow_)
+      {
+        buttonRefreshSuggestions.Enabled = false;
+        trackBarArtistMatch.Hide();
+        labelArtistMatch.Hide();
+        labelTrackBarValue.Hide();
+        progressBarSuggestions.Value = 0;
+        progressBarSuggestions.Visible = true;
+        listViewSuggestions.Clear();
+      }
+      else
+      {
+        progressBarSuggestions.Visible = false;
+        trackBarArtistMatch.Show();
+        labelArtistMatch.Show();
+        labelTrackBarValue.Show();
+        buttonRefreshSuggestions.Enabled = true;
+      }
+    }
+
     private void buttonRefreshSuggestions_Click(object sender, EventArgs e)
     {
-      buttonRefreshSuggestions.Enabled = false;
-      scrobbler = new AudioscrobblerBase();
-      scrobbler.Disconnect();
+      changeControlsSuggestions(true);
       scrobbler.ArtistMatchPercent = trackBarArtistMatch.Value;
-      trackBarArtistMatch.Hide();
-      labelArtistMatch.Hide();
-      labelTrackBarValue.Hide();
-      progressBarSuggestions.Value = 0;
-      progressBarSuggestions.Visible = true;
-      listViewSuggestions.Clear();
+
       progressBarSuggestions.PerformStep();
       songList = new List<Song>();
       similarList = new List<Song>();
 
-      songList = scrobbler.ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + scrobbler.Username + "/" + "topartists.xml", @"//topartists/artist", lastFMFeed.topartists);
+      songList = scrobbler.getAudioScrobblerFeed(lastFMFeed.topartists, "");
       progressBarSuggestions.PerformStep();
 
       if (songList.Count > 7)
       {
         for (int i = 0; i <= 7; i++)
         {
-          similarList.AddRange(scrobbler.ParseXMLDocForSimilarArtists(songList[i].ToURLArtistString()));
+          similarList.AddRange(scrobbler.getSimilarArtists(songList[i].ToURLArtistString()));
           progressBarSuggestions.PerformStep();
         }
 
@@ -216,40 +257,28 @@ namespace MediaPortal.AudioScrobbler
           bool foundDoubleEntry = false;
           for (int j = 0; j < listViewSuggestions.Items.Count; j++)
           {
-            if (listViewSuggestions.Items[j].Text == similarList[i].ToLastFMString())
+            if (listViewSuggestions.Items[j].Text == similarList[i].ToLastFMMatchString(false))
               foundDoubleEntry = true;
           }
           if (!foundDoubleEntry)
-            listViewSuggestions.Items.Add(similarList[i].ToLastFMString());
+            listViewSuggestions.Items.Add(similarList[i].ToLastFMMatchString(false));
         }
       }
       else
         listViewSuggestions.Items.Add("Not enough overall top artists found");
-      progressBarSuggestions.PerformStep();      
-      progressBarSuggestions.Visible = false;
-      trackBarArtistMatch.Show();
-      labelArtistMatch.Show();
-      labelTrackBarValue.Show();
-      buttonRefreshSuggestions.Enabled = true;
+      progressBarSuggestions.PerformStep();
+      changeControlsSuggestions(false);
     }
 
-    private List<Song> getXMLData(lastFMFeed feed_)
+    private void buttonRefreshNeighbours_Click(object sender, EventArgs e)
     {
-      scrobbler = new AudioscrobblerBase();
-      scrobbler.Disconnect();
-      //scrobbler.ParseXMLDoc(@"C:\recenttracks.xml", "name");
-      switch (feed_)
-      {
-        case lastFMFeed.recenttracks:
-          return scrobbler.ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + scrobbler.Username + "/" + "recenttracks.xml", @"//recenttracks/track", feed_);
-        case lastFMFeed.topartists:
-          return scrobbler.ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + scrobbler.Username + "/" + "topartists.xml", @"//topartists/artist", feed_);
-        case lastFMFeed.toptracks:
-          return scrobbler.ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + scrobbler.Username + "/" + "toptracks.xml", @"//toptracks/track", feed_);
-
-        default:
-          return scrobbler.ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + scrobbler.Username + "/" + "recenttracks.xml", @"//recenttracks/track", feed_);
-      }      
+      buttonRefreshNeighbours.Enabled = false;
+      listViewNeighbours.Clear();
+      songList = new List<Song>();
+      songList = scrobbler.getAudioScrobblerFeed(lastFMFeed.neighbours, "");
+      for (int i = 0; i < songList.Count; i++)
+        listViewNeighbours.Items.Add(songList[i].ToLastFMMatchString(false));
+      buttonRefreshNeighbours.Enabled = true;
     }
 
     private void textBoxASUsername_Leave(object sender, EventArgs e)
