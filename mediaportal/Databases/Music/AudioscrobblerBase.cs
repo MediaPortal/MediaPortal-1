@@ -156,6 +156,8 @@ namespace MediaPortal.Music.Database
       minConnectWaitTime = new TimeSpan(0, 0, CONNECT_WAIT_TIME);
       cacheFile = CACHEFILE_NAME;
 
+      Log.Write("AudioscrobblerBase: new scrobbler - debuglog={0} dismiss={1} directonly={2}", Convert.ToString(_useDebugLog),Convert.ToString(_dismissOnError),Convert.ToString(_disableTimerThread));
+
       // Loading the queue should be fast - no thread required
       LoadQueue();
     }
@@ -287,29 +289,31 @@ namespace MediaPortal.Music.Database
         while (queue.Count > MAX_QUEUE_SIZE)
           queue.RemoveAt(0);
 
-        // prevent double adds        
-        if (!queue.Contains(song_))
+        //// prevent double adds        
+        //if (!queue.Contains(song_))
         queue.Add(song_);
-        else
-          if (_useDebugLog)
-            Log.Write("AudioscrobblerBase: detected double add of {0}", song_.ToShortString());
+        //else
+        //  if (_useDebugLog)
+        //    Log.Write("AudioscrobblerBase: detected double add of {0}", song_.ToShortString());
       }
 
       if (_antiHammerCount == 0)
       {
         if (_disableTimerThread)
-          if (submitThread.IsAlive)
-          {
-            try
+          if (submitThread != null)
+            if (submitThread.IsAlive)
             {
-              Log.Write("AudioscrobblerBase: {0}", "trying to kill submit thread (no longer needed)");
-              StopSubmitQueueThread();
+              try
+              {
+                Log.Write("AudioscrobblerBase: {0}", "trying to kill submit thread (no longer needed)");
+                StopSubmitQueueThread();
+              }
+              catch (Exception ex)
+              {
+                Log.Write("AudioscrobblerBase: result of thread.Abort - {0}", ex.Message);
+              }
             }
-            catch (Exception ex)
-            {
-              Log.Write("AudioscrobblerBase: result of thread.Abort - {0}", ex.Message);
-            }
-          }
+        
         // Try to submit immediately.
         StartSubmitQueueThread();
 
@@ -687,8 +691,7 @@ namespace MediaPortal.Music.Database
             n_songs++;
           }
           else
-          {
-            Log.Write("AudioscrobblerBase: Spam protection triggered - {0}", (Convert.ToString(n_totalsongs)));
+          {            
             if (_useDebugLog)
             {
               Log.Write("AudioscrobblerBase: Spam protection - obmitting song: {0}", songs[n_totalsongs].ToShortString());
@@ -701,6 +704,8 @@ namespace MediaPortal.Music.Database
               {
               }
             }
+            else
+              Log.Write("AudioscrobblerBase: Spam protection triggered - {0}", (Convert.ToString(n_totalsongs)));
           }
           n_totalsongs++;
         }
