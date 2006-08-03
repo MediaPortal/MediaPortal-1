@@ -360,9 +360,6 @@
     <Compile Include="Sections\Filters.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\FireDTVRemote.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Sections\General.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -672,9 +669,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Filters.resx">
       <DependentUpon>Filters.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\FireDTVRemote.resx">
-      <DependentUpon>FireDTVRemote.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\General.resx">
       <DependentUpon>General.cs</DependentUpon>

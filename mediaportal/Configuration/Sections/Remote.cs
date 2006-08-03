@@ -47,6 +47,7 @@ namespace MediaPortal.Configuration.Sections
   {
 
     #region Fields & Constants
+    MediaPortal.RemoteControls.FireDTV.FireDTVControl fireDTV = null;
 
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxMceEnabled;
     private System.Windows.Forms.PictureBox pictureBoxMceUsa;
@@ -66,7 +67,6 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPLabel labelHcw1000msec;
     private MediaPortal.UserInterface.Controls.MPLabel labelHcw20msec;
     private MediaPortal.UserInterface.Controls.MPButton buttonHcwMapping;
-    private MediaPortal.Configuration.Sections.FireDtvRemote fireDtvRemote;
     private MediaPortal.UserInterface.Controls.MPTabControl tabControlRemotes;
     private MediaPortal.UserInterface.Controls.MPTabPage tabPageFireDtv;
     private System.Windows.Forms.PictureBox pictureBoxMceEurope;
@@ -142,6 +142,17 @@ namespace MediaPortal.Configuration.Sections
     private LinkLabel linkLabelIRTransConfig;
     private MediaPortal.UserInterface.Controls.MPLabel labelIrTransNoteWarning;
     const string errHcwMissingExe = "IR application not found. You might want to use it to control external applications.\nReinstall the Hauppauge IR drivers to fix this problem.";
+
+    // FireDTV controls
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxFireDTVRecieiverSettings;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxFireDTVSettings;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxFireDTVReceiverGeneral;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxFireDTVEnabled;
+    private MediaPortal.UserInterface.Controls.MPLabel labelFireDTVReceiver;
+    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxFireDTVReceiver;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxFireDTVExtendedLogging;
+    private MediaPortal.UserInterface.Controls.MPButton buttonFireDTVMapping;
+    private MediaPortal.UserInterface.Controls.MPLabel labelFireDTVModel;
 
     #endregion
 
@@ -341,13 +352,48 @@ namespace MediaPortal.Configuration.Sections
 
         #endregion
 
+        #region FireDTV
+
+        // Is the FireDTV remote enabled
+        this.checkBoxFireDTVEnabled.Checked = xmlreader.GetValueAsBool("remote", "FireDTV", false);
+
+        // Fill combobox with list of availabe FireDTV recievers
+        try
+        {
+          fireDTV = new MediaPortal.RemoteControls.FireDTV.FireDTVControl((IntPtr)0);
+          if (fireDTV.OpenDrivers())
+          {
+            comboBoxFireDTVReceiver.DataSource = fireDTV.SourceFilters;
+            comboBoxFireDTVReceiver.DisplayMember = "FriendlyName";
+            comboBoxFireDTVReceiver.ValueMember = "Name";
+          }
+        }
+        catch (Exception e)
+        {
+          //Log.Write("FireDTVRemote: Exception during setting combo {0}",e.Message);
+        }
+
+        // Set the rest of the controls
+        checkBoxFireDTVExtendedLogging.Checked = xmlreader.GetValueAsBool("remote", "FireDTVVerboseLog", false);
+        string deviceName = xmlreader.GetValueAsString("remote", "FireDTVDeviceName", string.Empty);
+        try
+        {
+          if ((deviceName != null) && (!deviceName.Equals(string.Empty)))
+            comboBoxFireDTVReceiver.SelectedValue = deviceName;
+        }
+        catch (InvalidOperationException ex)
+        {
+          //Log.Write("FireDTV: Error setting device name - device unplugged?! - {0}", ex.Message);
+        }
+
+        // Enable/Disable the controls
+        buttonFireDTVMapping.Enabled = checkBoxFireDTVEnabled.Checked;
+        checkBoxFireDTVExtendedLogging.Enabled = checkBoxFireDTVEnabled.Checked;
+        comboBoxFireDTVReceiver.Enabled = checkBoxFireDTVEnabled.Checked;
+        groupBoxFireDTVSettings.Enabled = checkBoxFireDTVEnabled.Checked;
+        groupBoxFireDTVRecieiverSettings.Enabled = checkBoxFireDTVEnabled.Checked;
+        #endregion
       }
-
-      #region FireDTV
-
-      fireDtvRemote.LoadSettings();
-
-      #endregion
     }
 
     public override void SaveSettings()
@@ -403,13 +449,15 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("remote", "IRTransVerboseLog", checkBoxIrTransExtendedLogging.Checked);
 
         #endregion
+
+        #region FireDTV
+        // Load FireDTV specific settings.
+        xmlwriter.SetValueAsBool("remote", "FireDTV", checkBoxFireDTVEnabled.Checked);
+        xmlwriter.SetValue("remote", "FireDTVDeviceName", this.comboBoxFireDTVReceiver.SelectedValue);
+        xmlwriter.SetValue("remote", "FireDTVVerboseLog", checkBoxFireDTVExtendedLogging.Checked);
+        #endregion
       }
 
-      #region FireDTV
-
-      fireDtvRemote.SaveSettings();
-
-      #endregion
     }
 
     #endregion
@@ -521,10 +569,16 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxIrTransEnabled = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.buttonIrTransMapping = new MediaPortal.UserInterface.Controls.MPButton();
       this.tabPageFireDtv = new MediaPortal.UserInterface.Controls.MPTabPage();
-      this.fireDtvRemote = new MediaPortal.Configuration.Sections.FireDtvRemote();
+      this.groupBoxFireDTVRecieiverSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.labelFireDTVModel = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelFireDTVReceiver = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.comboBoxFireDTVReceiver = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.groupBoxFireDTVSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.checkBoxFireDTVExtendedLogging = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.groupBoxFireDTVReceiverGeneral = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.buttonFireDTVMapping = new MediaPortal.UserInterface.Controls.MPButton();
+      this.checkBoxFireDTVEnabled = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-      this.labelIrTransNoteWarning = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.linkLabelIRTransConfig = new System.Windows.Forms.LinkLabel();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMceUsa)).BeginInit();
       this.tabControlRemotes.SuspendLayout();
       this.tabPageMce.SuspendLayout();
@@ -551,6 +605,9 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxIrTransServerSettings.SuspendLayout();
       this.groupBoxIrTransGeneral.SuspendLayout();
       this.tabPageFireDtv.SuspendLayout();
+      this.groupBoxFireDTVRecieiverSettings.SuspendLayout();
+      this.groupBoxFireDTVSettings.SuspendLayout();
+      this.groupBoxFireDTVReceiverGeneral.SuspendLayout();
       this.SuspendLayout();
       // 
       // pictureBoxMceUsa
@@ -1501,7 +1558,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabPageFireDtv
       // 
-      this.tabPageFireDtv.Controls.Add(this.fireDtvRemote);
+      this.tabPageFireDtv.Controls.Add(this.groupBoxFireDTVRecieiverSettings);
+      this.tabPageFireDtv.Controls.Add(this.groupBoxFireDTVSettings);
+      this.tabPageFireDtv.Controls.Add(this.groupBoxFireDTVReceiverGeneral);
       this.tabPageFireDtv.Location = new System.Drawing.Point(4, 22);
       this.tabPageFireDtv.Name = "tabPageFireDtv";
       this.tabPageFireDtv.Size = new System.Drawing.Size(464, 374);
@@ -1509,37 +1568,113 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageFireDtv.Text = "FireDTV";
       this.tabPageFireDtv.UseVisualStyleBackColor = true;
       // 
-      // fireDtvRemote
+      // groupBoxFireDTVRecieiverSettings
       // 
-      this.fireDtvRemote.AutoScroll = true;
-      this.fireDtvRemote.Location = new System.Drawing.Point(0, 0);
-      this.fireDtvRemote.Name = "fireDtvRemote";
-      this.fireDtvRemote.Size = new System.Drawing.Size(520, 368);
-      this.fireDtvRemote.TabIndex = 0;
+      this.groupBoxFireDTVRecieiverSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxFireDTVRecieiverSettings.Controls.Add(this.labelFireDTVModel);
+      this.groupBoxFireDTVRecieiverSettings.Controls.Add(this.labelFireDTVReceiver);
+      this.groupBoxFireDTVRecieiverSettings.Controls.Add(this.comboBoxFireDTVReceiver);
+      this.groupBoxFireDTVRecieiverSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxFireDTVRecieiverSettings.Location = new System.Drawing.Point(12, 136);
+      this.groupBoxFireDTVRecieiverSettings.Name = "groupBoxFireDTVRecieiverSettings";
+      this.groupBoxFireDTVRecieiverSettings.Size = new System.Drawing.Size(440, 80);
+      this.groupBoxFireDTVRecieiverSettings.TabIndex = 2;
+      this.groupBoxFireDTVRecieiverSettings.TabStop = false;
+      this.groupBoxFireDTVRecieiverSettings.Text = "Receiver Settings";
+      // 
+      // labelFireDTVModel
+      // 
+      this.labelFireDTVModel.AutoSize = true;
+      this.labelFireDTVModel.Location = new System.Drawing.Point(81, 52);
+      this.labelFireDTVModel.Name = "labelFireDTVModel";
+      this.labelFireDTVModel.Size = new System.Drawing.Size(233, 13);
+      this.labelFireDTVModel.TabIndex = 2;
+      this.labelFireDTVModel.Text = "Multiple FireDTV can be connected, select one.";
+      // 
+      // labelFireDTVReceiver
+      // 
+      this.labelFireDTVReceiver.AutoSize = true;
+      this.labelFireDTVReceiver.Location = new System.Drawing.Point(16, 24);
+      this.labelFireDTVReceiver.Name = "labelFireDTVReceiver";
+      this.labelFireDTVReceiver.Size = new System.Drawing.Size(53, 13);
+      this.labelFireDTVReceiver.TabIndex = 1;
+      this.labelFireDTVReceiver.Text = "Receiver:";
+      // 
+      // comboBoxFireDTVReceiver
+      // 
+      this.comboBoxFireDTVReceiver.BorderColor = System.Drawing.Color.Empty;
+      this.comboBoxFireDTVReceiver.DisplayMember = "FriendlyName";
+      this.comboBoxFireDTVReceiver.FormattingEnabled = true;
+      this.comboBoxFireDTVReceiver.Location = new System.Drawing.Point(84, 20);
+      this.comboBoxFireDTVReceiver.Name = "comboBoxFireDTVReceiver";
+      this.comboBoxFireDTVReceiver.Size = new System.Drawing.Size(168, 21);
+      this.comboBoxFireDTVReceiver.TabIndex = 0;
+      this.comboBoxFireDTVReceiver.ValueMember = "Name";
+      // 
+      // groupBoxFireDTVSettings
+      // 
+      this.groupBoxFireDTVSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxFireDTVSettings.Controls.Add(this.checkBoxFireDTVExtendedLogging);
+      this.groupBoxFireDTVSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxFireDTVSettings.Location = new System.Drawing.Point(12, 72);
+      this.groupBoxFireDTVSettings.Name = "groupBoxFireDTVSettings";
+      this.groupBoxFireDTVSettings.Size = new System.Drawing.Size(440, 56);
+      this.groupBoxFireDTVSettings.TabIndex = 1;
+      this.groupBoxFireDTVSettings.TabStop = false;
+      this.groupBoxFireDTVSettings.Text = "Settings";
+      // 
+      // checkBoxFireDTVExtendedLogging
+      // 
+      this.checkBoxFireDTVExtendedLogging.AutoSize = true;
+      this.checkBoxFireDTVExtendedLogging.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxFireDTVExtendedLogging.Location = new System.Drawing.Point(16, 24);
+      this.checkBoxFireDTVExtendedLogging.Name = "checkBoxFireDTVExtendedLogging";
+      this.checkBoxFireDTVExtendedLogging.Size = new System.Drawing.Size(106, 17);
+      this.checkBoxFireDTVExtendedLogging.TabIndex = 0;
+      this.checkBoxFireDTVExtendedLogging.Text = "Extended logging";
+      this.checkBoxFireDTVExtendedLogging.UseVisualStyleBackColor = true;
+      // 
+      // groupBoxFireDTVRecieiverGeneral
+      // 
+      this.groupBoxFireDTVReceiverGeneral.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxFireDTVReceiverGeneral.Controls.Add(this.buttonFireDTVMapping);
+      this.groupBoxFireDTVReceiverGeneral.Controls.Add(this.checkBoxFireDTVEnabled);
+      this.groupBoxFireDTVReceiverGeneral.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxFireDTVReceiverGeneral.Location = new System.Drawing.Point(12, 8);
+      this.groupBoxFireDTVReceiverGeneral.Name = "groupBoxFireDTVRecieiverGeneral";
+      this.groupBoxFireDTVReceiverGeneral.Size = new System.Drawing.Size(440, 56);
+      this.groupBoxFireDTVReceiverGeneral.TabIndex = 0;
+      this.groupBoxFireDTVReceiverGeneral.TabStop = false;
+      // 
+      // buttonFireDTVMapping
+      // 
+      this.buttonFireDTVMapping.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonFireDTVMapping.Location = new System.Drawing.Point(352, 20);
+      this.buttonFireDTVMapping.Name = "buttonFireDTVMapping";
+      this.buttonFireDTVMapping.Size = new System.Drawing.Size(72, 22);
+      this.buttonFireDTVMapping.TabIndex = 1;
+      this.buttonFireDTVMapping.Text = "Mapping";
+      this.buttonFireDTVMapping.UseVisualStyleBackColor = true;
+      this.buttonFireDTVMapping.Click += new System.EventHandler(this.buttonFireDTVMapping_Click);
+      // 
+      // checkBoxFireDTVEnabled
+      // 
+      this.checkBoxFireDTVEnabled.AutoSize = true;
+      this.checkBoxFireDTVEnabled.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxFireDTVEnabled.Location = new System.Drawing.Point(16, 24);
+      this.checkBoxFireDTVEnabled.Name = "checkBoxFireDTVEnabled";
+      this.checkBoxFireDTVEnabled.Size = new System.Drawing.Size(126, 17);
+      this.checkBoxFireDTVEnabled.TabIndex = 0;
+      this.checkBoxFireDTVEnabled.Text = "Use FireDTV receiver";
+      this.checkBoxFireDTVEnabled.UseVisualStyleBackColor = true;
+      this.checkBoxFireDTVEnabled.CheckedChanged += new System.EventHandler(this.checkBoxFireDTVEnabled_CheckedChanged);
       // 
       // toolTip
       // 
       this.toolTip.ShowAlways = true;
-      // 
-      // labelIrTransNoteWarning
-      // 
-      this.labelIrTransNoteWarning.Location = new System.Drawing.Point(16, 124);
-      this.labelIrTransNoteWarning.Name = "labelIrTransNoteWarning";
-      this.labelIrTransNoteWarning.Size = new System.Drawing.Size(412, 32);
-      this.labelIrTransNoteWarning.TabIndex = 9;
-      this.labelIrTransNoteWarning.Text = "You have to modify \\Program Files\\Irtrans\\remotes\\apps.cfg  or actions will be ex" +
-          "ecuted twice.";
-      // 
-      // linkLabelIRTransConfig
-      // 
-      this.linkLabelIRTransConfig.AutoSize = true;
-      this.linkLabelIRTransConfig.Location = new System.Drawing.Point(95, 138);
-      this.linkLabelIRTransConfig.Name = "linkLabelIRTransConfig";
-      this.linkLabelIRTransConfig.Size = new System.Drawing.Size(132, 13);
-      this.linkLabelIRTransConfig.TabIndex = 11;
-      this.linkLabelIRTransConfig.TabStop = true;
-      this.linkLabelIRTransConfig.Text = "Look here for more details.";
-      this.linkLabelIRTransConfig.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelIRTransConfig_LinkClicked);
       // 
       // Remote
       // 
@@ -1587,6 +1722,12 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxIrTransGeneral.ResumeLayout(false);
       this.groupBoxIrTransGeneral.PerformLayout();
       this.tabPageFireDtv.ResumeLayout(false);
+      this.groupBoxFireDTVRecieiverSettings.ResumeLayout(false);
+      this.groupBoxFireDTVRecieiverSettings.PerformLayout();
+      this.groupBoxFireDTVSettings.ResumeLayout(false);
+      this.groupBoxFireDTVSettings.PerformLayout();
+      this.groupBoxFireDTVReceiverGeneral.ResumeLayout(false);
+      this.groupBoxFireDTVReceiverGeneral.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -1637,7 +1778,7 @@ namespace MediaPortal.Configuration.Sections
       InputMappingForm dlg;
 
       dlg = new InputMappingForm("Microsoft MCE");
-      
+
       dlg.ShowDialog(this);
     }
 
@@ -1825,6 +1966,31 @@ namespace MediaPortal.Configuration.Sections
 
     #region Form control commands FireDTV
 
+    /// <summary>
+    /// Open the dialogbox for changing the inputmap.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void buttonFireDTVMapping_Click(object sender, EventArgs e)
+    {
+      InputMappingForm dlg = new InputMappingForm("FireDTV");
+      dlg.ShowDialog(this);
+    }
+
+    /// <summary>
+    /// Toggle the FireDTV Setting on/off when enable checkbox is toggled.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void checkBoxFireDTVEnabled_CheckedChanged(object sender, EventArgs e)
+    {
+      buttonFireDTVMapping.Enabled = checkBoxFireDTVEnabled.Checked;
+      groupBoxFireDTVSettings.Enabled = checkBoxFireDTVEnabled.Checked;
+      groupBoxFireDTVRecieiverSettings.Enabled = checkBoxFireDTVEnabled.Checked;
+      checkBoxFireDTVExtendedLogging.Enabled = checkBoxFireDTVEnabled.Checked;
+      comboBoxFireDTVReceiver.Enabled = checkBoxFireDTVEnabled.Checked;
+    }
+
     #endregion
 
     #region Form control commands General HID
@@ -1896,6 +2062,7 @@ namespace MediaPortal.Configuration.Sections
       System.Diagnostics.Process.Start("http://wiki.team-mediaportal.com/MediaPortalSetup_Remote/IRTrans");
     }
     #endregion
-   }
+
+  }
 
 }

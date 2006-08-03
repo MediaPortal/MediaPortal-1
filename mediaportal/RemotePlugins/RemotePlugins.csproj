@@ -160,9 +160,6 @@
     <Compile Include="Remotes\FireDTV\FireDTVRemote.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Remotes\FireDTV\MPRemoteInterface.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Remotes\HcwRemote\HcwRemote.cs">
       <SubType>Code</SubType>
     </Compile>

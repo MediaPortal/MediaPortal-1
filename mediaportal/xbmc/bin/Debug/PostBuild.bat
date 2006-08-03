@@ -125,9 +125,6 @@ copy ..\..\..\TaskScheduler.dll .
 copy ..\..\..\AxInterop.WMPLib.dll .
 copy ..\..\..\Interop.WMPLib.dll .
 
-copy ..\..\..\FireDTVKeyMap.XML .
-copy ..\..\..\FireDTVKeyMap.XML.Schema .
-
 
 copy ..\..\..\WebEPG\WebEPG\bin\debug\WebEPG.dll .
 copy ..\..\..\Utils\bin\debug\Utils.dll .
