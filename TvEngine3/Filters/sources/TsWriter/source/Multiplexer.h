@@ -45,12 +45,15 @@ public:
 	void Reset();
 	void SetFileWriterCallBack(IFileWriter* callback);
 private:
-	int WritePackHeader(__int64 pcrHi, int pcrLow, unsigned int muxRate, byte* pBuffer);
-	int WriteSystemHeader(byte* pBuffer);
+  void WritePes(byte* pesPacket, int nLen);
+  void SplitPesPacket(byte* pesPacket, int nLen);
+	int  WritePackHeader(__int64 pcrHi, int pcrLow, unsigned int muxRate, byte* pBuffer);
+	int  WriteSystemHeader(byte* pBuffer);
 	CPcrDecoder m_pcrDecoder;
   
 	vector<CPesDecoder*> m_pesDecoders;
 	typedef vector<CPesDecoder*>::iterator ivecPesDecoders;
 	IFileWriter* m_pCallback;
 	int m_videoPacketCounter;
+  byte* m_pesPacket;
 };

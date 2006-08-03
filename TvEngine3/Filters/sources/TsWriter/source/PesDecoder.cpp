@@ -103,10 +103,10 @@ bool CPesDecoder::OnTsPacket(byte* tsPacket)
 	//header.LogHeader();
 	if ( header.AdaptionFieldOnly() ) 
 	{
-		//LogDebug("skip:AdaptionFieldOnly");
+		LogDebug("skip:AdaptionFieldOnly");
 		return false;
 	}
-
+ 
 	int pos = header.PayLoadStart;
 
 	bool result=false;
@@ -116,23 +116,19 @@ bool CPesDecoder::OnTsPacket(byte* tsPacket)
 		{
 			if (m_pesBuffer[0]==0 && m_pesBuffer[1]==0 && m_pesBuffer[2]==1)
 			{
-				unsigned int pesPacketLen=6+(m_pesBuffer[4]*256)+(m_pesBuffer[5]);
-				//for video PES the packet length is 0
-				if (pesPacketLen==6) 
-					pesPacketLen=m_iPesBufferPos;
-				if (pesPacketLen>0)
-				{
-					OnNewPesPacket(m_pesBuffer, pesPacketLen);
-					result=true;
-				}
+				OnNewPesPacket(m_pesBuffer, m_iPesBufferPos);
+				result=true;
 			}
 		}
 		m_iPesBufferPos=0;
-		memset(m_pesBuffer,0,MAX_PES_PACKET);
+		memset(m_pesBuffer,0xff,MAX_PES_PACKET);
 	}
 	else
 	{
-		if (m_iPesBufferPos==0) return  false;
+		if (m_iPesBufferPos==0)
+    {
+      return  false;
+    }
 	}
 	if (m_iPesBufferPos+188-pos >= MAX_PES_PACKET)
 	{
@@ -146,18 +142,13 @@ bool CPesDecoder::OnTsPacket(byte* tsPacket)
 	return result;
 }
 
+
 void CPesDecoder::OnNewPesPacket(byte* pesPacket, int nLen)
-{
-	memcpy(m_pesPacket,pesPacket,nLen);
-	m_pespacketLen=nLen;
-	if (m_pesPacket[4]==0 && m_pesPacket[5]==0)
-	{
-		//packet length can be 0 for video-pes packets 
-		int len=nLen-6;
-		m_pesPacket[4]=((len>>8)&0xff);
-		m_pesPacket[5]=(len&0xff);
-	}
-	//LogDebug("pesdecoder pid:%x OnNewPesPacket %x.%x.%x.%x.%x.%x len:%x",m_pid, 
-	//				pesPacket[0],pesPacket[1],pesPacket[2],pesPacket[3],pesPacket[4],pesPacket[5],nLen);
-	//fwrite(pesPacket,1,nLen,m_fp);
+{   
+  if (pesPacket[4]==0 && pesPacket[5]==0)
+  {
+    while (pesPacket[nLen-1]==0 && pesPacket[nLen-2]==0 && pesPacket[nLen-3]==0 && nLen>4) nLen-=3;
+  }
+  memcpy(m_pesPacket,pesPacket,nLen);
+  m_pespacketLen=nLen;
 }
