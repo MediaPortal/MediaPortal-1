@@ -128,45 +128,6 @@ namespace MediaPortal.Audioscrobbler
     }
     #endregion
 
-    #region Audioscrobbler events
-    private void OnAuthErrorEvent(AuthErrorEventArgs args)
-    {
-      string report = "Audioscrobbler did not recognize your username/password."
-                    + " Please check your details (File/Audioscrobbler...)";
-      MessageBox.Show(report);
-      OnManualDisconnect(null, null);
-    }
-
-    private void OnNetworkErrorEvent(NetworkErrorEventArgs args)
-    {
-      //StatusBar.Pop(StatusID);
-      //StatusBar.Push(StatusID, args.Details);
-      OnManualDisconnect(null, null);
-    }
-    
-    private void OnSubmitEvent (SubmitEventArgs args)
-    {
-      string title = args.song.Artist + " - " + args.song.Title;
-
-      //StatusBar.Push(StatusID, "Submitted: " + title);
-
-      // Consider the song to be submitted if a connection was made -
-      // AS can't reject individual songs.
-      AddToHistory("Submitted", args.song);
-    }
-  
-    private void OnConnectEvent(ConnectEventArgs args)
-    {
-      //StatusBar.Pop(StatusID);
-      //StatusBar.Push(StatusID, "Connected.");
-    }
-
-    private void OnDisconnectEvent(DisconnectEventArgs args)
-    {
-      //StatusBar.Pop(StatusID);
-      //StatusBar.Push(StatusID, "Disconnected.");
-    }
-    #endregion
 
     #region MediaPortal events
     //public void OnThreadMessage(GUIMessage message)

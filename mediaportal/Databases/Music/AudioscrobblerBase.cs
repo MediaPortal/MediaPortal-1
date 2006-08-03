@@ -52,69 +52,7 @@ namespace MediaPortal.Music.Database
     similar
   }
 
-  public enum NetworkErrorType
-  {
-    ConnectFailed,
-    SubmitFailed,
-    NoResponse,
-    EmptyResponse,
-    InvalidResponse
-  }
 
-  /// <summary>
-  /// A class of this type is passed with every ErrorEvent.
-  /// </summary>
-  public abstract class ErrorEventArgs
-  {
-    public object Error;
-    public string Details;
-
-    public ErrorEventArgs(object error_)
-    {
-      Error = error_;
-    }
-  }
-
-  /// <summary>
-  /// Specialization for network related error events.
-  /// </summary>
-  public class NetworkErrorEventArgs : ErrorEventArgs
-  {
-    public NetworkErrorEventArgs(object error_)
-      : base(error_)
-    {
-    }
-  }
-
-  /// <summary>
-  /// A class of this type is passed with every AuthErrorEvent
-  /// </summary>
-  public class AuthErrorEventArgs
-  {
-    public AuthErrorEventArgs()
-    {
-    }
-  }
-
-  /// <summary>
-  /// A class of this type is passed with every ConnectEvent
-  /// </summary>
-  public class ConnectEventArgs
-  {
-    public ConnectEventArgs()
-    {
-    }
-  }
-
-  /// <summary>
-  /// A class of this type is passed with every DisconnectEvent
-  /// </summary>
-  public class DisconnectEventArgs
-  {
-    public DisconnectEventArgs()
-    {
-    }
-  }
 
   /// <summary>
   /// A class of this type is passed with every SubmitEvent
@@ -129,15 +67,6 @@ namespace MediaPortal.Music.Database
     }
   }
 
-  //public class UpdateAvailableEventArgs
-  //{
-  //  public string version;
-
-  //  public UpdateAvailableEventArgs(string version_)
-  //  {
-  //    version = version_;
-  //  }
-  //}
   #endregion
 
   public class AudioscrobblerBase
@@ -337,12 +266,9 @@ namespace MediaPortal.Music.Database
     /// </summary>
     public void Disconnect()
     {
-      //Log.Write("AudioscrobblerBase.Disconnect: {0}", "Start");
       if (submitTimer != null)
         submitTimer.Close();
       connected = false;
-      TriggerDisconnectEvent(new DisconnectEventArgs());
-      //Log.Write("AudioscrobblerBase.Disconnect: {0}", "End");
     }
 
     /// <summary>
@@ -371,6 +297,19 @@ namespace MediaPortal.Music.Database
 
       if (_antiHammerCount == 0)
       {
+        if (_disableTimerThread)
+          if (submitThread.IsAlive)
+          {
+            try
+            {
+              Log.Write("AudioscrobblerBase: {0}", "trying to kill submit thread (no longer needed)");
+              StopSubmitQueueThread();
+            }
+            catch (Exception ex)
+            {
+              Log.Write("AudioscrobblerBase: result of thread.Abort - {0}", ex.Message);
+            }
+          }
         // Try to submit immediately.
         StartSubmitQueueThread();
 
@@ -401,6 +340,8 @@ namespace MediaPortal.Music.Database
           return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "weeklytrackchart.xml", @"//weeklytrackchart/track", feed_);
         case lastFMFeed.neighbours:
           return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "neighbours.xml", @"//neighbours/user", feed_);
+        case lastFMFeed.friends:
+          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "friends.xml", @"//friends/user", feed_);
         default:
           return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "recenttracks.xml", @"//recenttracks/track", feed_);
       }
@@ -425,12 +366,13 @@ namespace MediaPortal.Music.Database
     }
 
     /// <summary>
-    /// Clears the queue and tries adds cached files again.
+    /// Clears the queue and tries to add cached files again.
     /// </summary>
     public void ResetQueue()
     {
       lock (queueLock)
       {
+        SaveQueue();
         queue.Clear();
         LoadQueue();
       }
@@ -438,57 +380,8 @@ namespace MediaPortal.Music.Database
 
     #endregion
 
+
     #region Public event triggers
-    public void TriggerAuthErrorEvent(AuthErrorEventArgs args_)
-    {
-      //Disconnect();
-      Log.Write("AudioscrobblerBase.TriggerAuthErrorEvent: {0}", "username or password not set");
-      //if (AuthErrorEvent != null)
-      //  AuthErrorEvent(args_);
-      //if (AuthErrorEventLazy == null)
-      //  return;
-      //Log.Write("AudioscrobblerBase.TriggerAuthErrorEvent: {0}", "End");
-    }
-
-    public void TriggerNetworkErrorEvent(NetworkErrorEventArgs args_)
-    {
-      //Log.Write("AudioscrobblerBase.TriggerNetworkErrorEvent: {0}", "Start");
-      //if (NetworkErrorEvent != null)
-      //  NetworkErrorEvent(args_);
-      //if (NetworkErrorEventLazy == null)
-      //  return;
-      //Log.Write("AudioscrobblerBase.TriggerNetworkErrorEvent: {0}", "End");
-    }
-
-    public void TriggerSubmitEvent(SubmitEventArgs args_)
-    {
-      //Log.Write("AudioscrobblerBase.TriggerSubmitEvent: {0}", "Start");
-      //if (SubmitEvent != null)
-      //  SubmitEvent(args_);
-      //if (SubmitEventLazy == null)
-      //  return;
-      //Log.Write("AudioscrobblerBase.TriggerSubmitEvent: {0}", "End");
-    }
-
-    public void TriggerConnectEvent(ConnectEventArgs args_)
-    {
-      //Log.Write("AudioscrobblerBase.TriggerConnectEvent: {0}", "Start");
-      //if (ConnectEvent != null)
-      //  ConnectEvent(args_);
-      //if (ConnectEventLazy == null)
-      //  return;
-      //Log.Write("AudioscrobblerBase.TriggerConnectEvent: {0}", "End");
-    }
-
-    public void TriggerDisconnectEvent(DisconnectEventArgs args_)
-    {
-      //Log.Write("AudioscrobblerBase.TriggerDisconnectEvent: {0}", "Start");
-      //if (DisconnectEvent != null)
-      //  DisconnectEvent(args_);
-      //if (DisconnectEventLazy == null)
-      //  return;
-      //Log.Write("AudioscrobblerBase.TriggerDisconnectEvent: {0}", "End");
-    }
 
     public void TriggerSafeModeEvent()
     {
@@ -507,6 +400,11 @@ namespace MediaPortal.Music.Database
           InitSubmitTimer();
         }
         Log.Write("AudioscrobblerBase: falling back to safe mode: new interval: {0} sec", Convert.ToString(SUBMIT_INTERVAL));
+      }
+      else
+      {
+        ResetQueue();
+        Log.Write("AudioscrobblerBase: reset queue - loading {0} songs", Convert.ToString(queue.Count));
       }
       if (_dismissOnError)
       {
@@ -529,8 +427,7 @@ namespace MediaPortal.Music.Database
       // Handle uninitialized username/password.
       if (username == "" || password == "")
       {
-        AuthErrorEventArgs args = new AuthErrorEventArgs();
-        TriggerAuthErrorEvent(args);
+        Log.Write("AudioscrobblerBase: {0}", "user and password not defined");
         return false;
       }
 
@@ -546,6 +443,7 @@ namespace MediaPortal.Music.Database
           return true;
         }
       }
+
       //Log.Write("AudioscrobblerBase.DoHandshake: {0}", "Attempting handshake");
       string url = SCROBBLER_URL
                  + "?hs=true"
@@ -559,8 +457,7 @@ namespace MediaPortal.Music.Database
 
       if (!success)
       {
-        Log.Write("AudioscrobblerBase: {0}", "Handshake failed");
-        //TriggerAuthErrorEvent(new AuthErrorEventArgs());
+        Log.Write("AudioscrobblerBase: {0}", "Handshake failed");        
         return false;
       }
 
@@ -568,25 +465,12 @@ namespace MediaPortal.Music.Database
       if (!connected)
       {
         connected = true;
-        TriggerConnectEvent(new ConnectEventArgs());
       }
 
       lastHandshake = DateTime.Now;
       // reset to leave "safe mode"
       _antiHammerCount = 0;
-      if (_disableTimerThread && forceNow_)
-        if (submitThread.IsAlive)
-        {
-          try
-          {
-            Log.Write("AudioscrobblerBase: {0}", "trying to kill submit thread (no longer needed)");
-            StopSubmitQueueThread();
-          }
-          catch(Exception ex)
-          {
-            Log.Write("AudioscrobblerBase: result of thread.Abort - {0}", ex.Message);
-          }
-        }
+
       Log.Write("AudioscrobblerBase: {0}", "Handshake successful");
       return true;
     }
@@ -624,10 +508,6 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception e)
       {
-        NetworkErrorType type = NetworkErrorType.ConnectFailed;
-        NetworkErrorEventArgs args = new NetworkErrorEventArgs(type);
-        args.Details = "Connection to the Audioscrobbler server failed.";
-        TriggerNetworkErrorEvent(args);
         string logmessage = "WebRequest.Create failed: " + e.Message;
         Log.Write("AudioscrobblerBase.GetResponse: {0}", logmessage);
         return false;
@@ -655,10 +535,6 @@ namespace MediaPortal.Music.Database
         }
         catch (Exception e)
         {
-          NetworkErrorType type = NetworkErrorType.SubmitFailed;
-          NetworkErrorEventArgs args = new NetworkErrorEventArgs(type);
-          args.Details = "Error while trying to submit to Audioscrobbler.";
-          TriggerNetworkErrorEvent(args);
           logmessage = "HttpWebRequest.GetRequestStream: " + e.Message;
           Log.Write("AudioscrobblerBase.GetResponse: {0}", logmessage);
           return false;
@@ -678,10 +554,6 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception e)
       {
-        NetworkErrorType type = NetworkErrorType.NoResponse;
-        NetworkErrorEventArgs args = new NetworkErrorEventArgs(type);
-        args.Details = "Error while waiting for Audioscrobbler response.";
-        TriggerNetworkErrorEvent(args);
         string logmessage = "HttpWebRequest.GetResponse: " + e.Message;
         Log.Write("AudioscrobblerBase.GetResponse: {0}", logmessage);
         return false;
@@ -700,11 +572,7 @@ namespace MediaPortal.Music.Database
       string respType = reader.ReadLine();
       if (respType == null)
       {
-        NetworkErrorType type = NetworkErrorType.EmptyResponse;
-        NetworkErrorEventArgs args = new NetworkErrorEventArgs(type);
-        args.Details = "Empty response from Audioscrobbler server.";
-        TriggerNetworkErrorEvent(args);
-        Log.Write("AudioscrobblerBase.GetResponse: {0}", args.Details);
+        Log.Write("AudioscrobblerBase.GetResponse: {0}", "Empty response from Audioscrobbler server.");
         return false;
       }
 
@@ -735,10 +603,6 @@ namespace MediaPortal.Music.Database
 
       if (!parse_success)
       {
-        NetworkErrorType type = NetworkErrorType.InvalidResponse;
-        NetworkErrorEventArgs args = new NetworkErrorEventArgs(type);
-        args.Details = "Unknown response from Audioscrobbler server.";
-        TriggerNetworkErrorEvent(args);
         return false;
       }
 
@@ -801,7 +665,7 @@ namespace MediaPortal.Music.Database
         // Create a copy of queue since it might change.
         Song[] songs = null;
         lock (queueLock)
-        {
+        {          
           songs = (Song[])queue.ToArray(typeof(Song));
         }
 
@@ -824,8 +688,19 @@ namespace MediaPortal.Music.Database
           }
           else
           {
+            Log.Write("AudioscrobblerBase: Spam protection triggered - {0}", (Convert.ToString(n_totalsongs)));
             if (_useDebugLog)
+            {
               Log.Write("AudioscrobblerBase: Spam protection - obmitting song: {0}", songs[n_totalsongs].ToShortString());
+              try
+              {
+                Log.Write("AudioscrobblerBase: Spam protection -1 {0}", songs[n_totalsongs-1].ToShortString());
+                Log.Write("AudioscrobblerBase: Spam protection +1 {0}", songs[n_totalsongs+1].ToShortString());
+              }
+              catch (Exception)
+              {
+              }
+            }
           }
           n_totalsongs++;
         }
@@ -856,19 +731,14 @@ namespace MediaPortal.Music.Database
         }
 
         // Send an event for each of the submitted songs.
-        //Log.Write("AudioscrobblerBase.SubmitQueue: {0}", "Sending SubmitEvents");
         foreach (Song song in songs)
         {
           song.AudioScrobblerStatus = SongStatus.Submitted;
-          SubmitEventArgs args = new SubmitEventArgs(song);
-          TriggerSubmitEvent(args);
         }
 
         // Save again.
         SaveQueue();
       }
-
-      //Log.Write("AudioscrobblerBase.SubmitQueue: {0}", "End");
     }
 
     private List<Song> ParseXMLDocForSimilarArtists(string artist_)
@@ -979,6 +849,16 @@ namespace MediaPortal.Music.Database
                     nodeSong.LastFMMatch = child.ChildNodes[0].Value;
                 }
                 break;
+              case (lastFMFeed.friends):
+                {
+                  if (node.Attributes["username"].Value != "")
+                    nodeSong.Artist = node.Attributes["username"].Value;
+                  if (child.Name == "url" && child.ChildNodes.Count != 0)
+                    nodeSong.URL = child.ChildNodes[0].Value;
+                  //else if (child.Name == "connections" && child.ChildNodes.Count != 0)
+                  //  nodeSong.LastFMMatch = child.ChildNodes[0].Value;
+                }
+                break;
               case (lastFMFeed.weeklytrackchart):
                 goto case lastFMFeed.toptracks;
               case (lastFMFeed.similar):
@@ -1041,9 +921,7 @@ namespace MediaPortal.Music.Database
     private bool parseBadUserMessage(string type_, StreamReader reader_)
     {
       Log.Write("AudioscrobblerBase: {0}", "PLEASE CHECK YOUR ACCOUNT CONFIG! - re-trying handshake now");
-      AuthErrorEventArgs args = new AuthErrorEventArgs();
       TriggerSafeModeEvent();
-      //TriggerAuthErrorEvent(args);
       return true;
     }
 
@@ -1089,16 +967,19 @@ namespace MediaPortal.Music.Database
           try
           {
             Song s = Song.ParseFromLine(line);
-            s.AudioScrobblerStatus = SongStatus.Loaded;
-            queue.Add(s);
 
+            bool alreadyIn = false;
+            for (int i = 0; i < queue.Count; i++)
+              if (queue[i].Equals(s))
+                alreadyIn = true;
+            if (!alreadyIn)
+            {
+              s.AudioScrobblerStatus = SongStatus.Loaded;
+              queue.Add(s);
+            }
+            else
+              Log.Write("AudioscrobblerBase: ignoring double entry from cache: {0}", s.ToShortString());
 
-            /*FIXME: Maybe, but the user shouldn't have to care actually.
-            LoadedEventArgs args = new LoadedEventArgs(song);
-            if (LoadedEvent != null)
-              LoadedEvent(args);
-            queueEvent(LoadedEventLazy, args);
-            */
           }
           catch (Exception e)
           {

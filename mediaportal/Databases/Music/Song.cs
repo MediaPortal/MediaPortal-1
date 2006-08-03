@@ -324,12 +324,12 @@ namespace MediaPortal.Music.Database
         s.Append(m_strArtist);
       if (_lastFMMatch != "")
         if (_lastFMMatch.IndexOf(".") == -1)
-          s.Append(" (Match: " + _lastFMMatch + "%)");
+          s.Append(" (match: " + _lastFMMatch + "%)");
         else
-          s.Append(" (Match: " + _lastFMMatch.Remove(_lastFMMatch.IndexOf(".") + 2) + "%)");
+          s.Append(" (match: " + _lastFMMatch.Remove(_lastFMMatch.IndexOf(".") + 2) + "%)");
       if (showURL_)
         if (_strURL != "")
-          s.Append(" (Link: " + _strURL + ")");
+          s.Append(" (link: " + _strURL + ")");
 
       return s.ToString();
     }
