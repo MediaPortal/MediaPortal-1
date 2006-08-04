@@ -112,17 +112,7 @@ namespace MediaPortal.AudioScrobbler
     }
     #endregion
 
-    private void buttonCancel_Click(object sender, EventArgs e)
-    {
-      this.Close();
-    }
-
-    private void buttonOk_Click(object sender, EventArgs e)
-    {
-      SaveSettings();
-      this.Close();
-    }
-
+    #region control events
     private void linkLabelMPGroup_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
       // Determine which link was clicked within the LinkLabel.
@@ -145,7 +135,38 @@ namespace MediaPortal.AudioScrobbler
       }
       catch
       {
-      }  
+      }
+    }
+
+    private void textBoxASUsername_Leave(object sender, EventArgs e)
+    {
+      if (textBoxASUsername.Text != "")
+      {
+        //tabControlASSettings.Enabled = true;
+        //tabControlASSettings.TabPages[1].Show();
+        //tabControlASSettings.TabPages[2].Show();
+        //tabControlASSettings.TabPages[3].Show();
+        //tabControlASSettings.TabPages[4].Show();
+      }
+    }   
+
+    private void trackBarArtistMatch_ValueChanged(object sender, EventArgs e)
+    {
+      labelTrackBarValue.Text = Convert.ToString(trackBarArtistMatch.Value);
+    }
+    #endregion
+
+    #region Button events
+
+    private void buttonCancel_Click(object sender, EventArgs e)
+    {
+      this.Close();
+    }
+
+    private void buttonOk_Click(object sender, EventArgs e)
+    {
+      SaveSettings();
+      this.Close();
     }
 
     private void buttonClearCache_Click(object sender, EventArgs e)
@@ -280,23 +301,7 @@ namespace MediaPortal.AudioScrobbler
         listViewNeighbours.Items.Add(songList[i].ToLastFMMatchString(false));
       buttonRefreshNeighbours.Enabled = true;
     }
-
-    private void textBoxASUsername_Leave(object sender, EventArgs e)
-    {
-      if (textBoxASUsername.Text != "")
-      {
-        //tabControlASSettings.Enabled = true;
-        //tabControlASSettings.TabPages[1].Show();
-        //tabControlASSettings.TabPages[2].Show();
-        //tabControlASSettings.TabPages[3].Show();
-        //tabControlASSettings.TabPages[4].Show();
-      }
-    }
-
-    private void trackBarArtistMatch_ValueChanged(object sender, EventArgs e)
-    {
-      labelTrackBarValue.Text = Convert.ToString(trackBarArtistMatch.Value);
-    }
+    #endregion
 
   }
 }

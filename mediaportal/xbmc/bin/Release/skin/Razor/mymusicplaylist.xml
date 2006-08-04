@@ -66,35 +66,25 @@
 				<onleft>23</onleft>
 				<onright>50</onright>
 				<onup>22</onup>
-				<ondown>24</ondown>		
+				<ondown>27</ondown>		
 			</control>
+
 			<control>
-				<description>Next button</description>
-				<type>button</type>
-				<id>24</id>
+				<description>last.fm button</description>
+				<type>togglebutton</type>
+				<id>27</id>
 				<posY>297</posY>
-				<label>209</label>
-				<onleft>24</onleft>
-				<onright>50</onright>
+				<label>Scrobble!</label>
 				<onup>23</onup>
-				<ondown>25</ondown>		
-			</control>
-			<control>
-				<description>Previous button</description>
-				<type>button</type>
-				<id>25</id>
-				<posY>337</posY>
-				<label>210</label>
-				<onleft>25</onleft>
+				<ondown>26</ondown>
+				<onleft>27</onleft>
 				<onright>50</onright>
-				<onup>24</onup>
-				<ondown>26</ondown>		
 			</control>
 			<control>
 				<description>Party Shuffle Mode button</description>
 				<type>togglebutton</type>
 				<id>26</id>
-				<posY>377</posY>
+				<posY>337</posY>
 				<label>16001</label>
 				<onup>25</onup>
 				<ondown>99</ondown>

@@ -227,7 +227,6 @@ namespace MediaPortal.Music.Database
         return queue.Count;
       }
     }
-    #endregion
 
     /// <summary>
     /// Allows to change the minimum match percentage to include similar artists
@@ -247,6 +246,7 @@ namespace MediaPortal.Music.Database
         }
       }
     }
+    #endregion
 
     #region Public methods.
     /// <summary>
@@ -383,8 +383,7 @@ namespace MediaPortal.Music.Database
     }
 
     #endregion
-
-
+    
     #region Public event triggers
 
     public void TriggerSafeModeEvent()
