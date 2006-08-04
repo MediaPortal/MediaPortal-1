@@ -134,12 +134,15 @@ void CMultiplexer::OnTsPacket(byte* tsPacket)
 			int   pesLength = decoder->GetPesPacketLength();
 			if (pesLength>0)
 			{
-				if (decoder->GetStreamId()==0xe0)
+				//is it a video stream
+				if (decoder->GetStreamId()>=0xe0 && decoder->GetStreamId() <=0xef)
 				{
+					//yes
           bool writeToDisk=true;
+					// is this the first video packet?
           if (m_videoPacketCounter==0)
           {
-            // make sure we start the file with a mpeg-2 sequence header...
+            // yes, then start the file with a mpeg-2 sequence header...
             writeToDisk=false;
             for (int x=6; x < pesLength-3;++x)
             {
@@ -156,11 +159,14 @@ void CMultiplexer::OnTsPacket(byte* tsPacket)
 					  m_videoPacketCounter++;
 					  SplitPesPacket(pesPacket,pesLength);
           }
-					
 				}
 				else 
 				{
-					if (m_videoPacketCounter>0)
+					//audio stream (or private stream)
+
+					// wait for first video packet 
+					// if we only have 1 stream then just write it...
+					if (m_videoPacketCounter>0 || m_pesDecoders.size()==1)
 					{
 						SplitPesPacket(pesPacket,pesLength);
 					}
