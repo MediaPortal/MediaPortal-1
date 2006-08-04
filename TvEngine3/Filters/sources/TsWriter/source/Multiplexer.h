@@ -23,6 +23,7 @@
 #include "pesdecoder.h"
 #include "patparser.h"
 #include <vector>
+#include <map>
 
 using namespace std;
 
@@ -45,15 +46,24 @@ public:
 	void Reset();
 	void SetFileWriterCallBack(IFileWriter* callback);
 private:
-  void WritePes(byte* pesPacket, int nLen);
+  class CStreamBuffer
+  {
+    public:
+      byte* m_pesPacket;
+      int   m_ipesBufferPos;
+      CStreamBuffer();
+      virtual ~CStreamBuffer();
+  };
+
   void SplitPesPacket(byte* pesPacket, int nLen);
-	int  WritePackHeader(__int64 pcrHi, int pcrLow, unsigned int muxRate, byte* pBuffer);
-	int  WriteSystemHeader(byte* pBuffer);
+	int  WritePackHeader();
 	CPcrDecoder m_pcrDecoder;
   
 	vector<CPesDecoder*> m_pesDecoders;
 	typedef vector<CPesDecoder*>::iterator ivecPesDecoders;
+	map<int,CStreamBuffer*> m_mapStreamBuffer;
+	typedef map<int,CStreamBuffer*>::iterator imapStreamBuffer;
 	IFileWriter* m_pCallback;
 	int m_videoPacketCounter;
-  byte* m_pesPacket;
+  byte* m_pesBuffer;
 };

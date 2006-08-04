@@ -21,20 +21,31 @@
 #include <windows.h>
 #include "multiplexer.h"
 void LogDebug(const char *fmt, ...) ;
-#define PACK_HEADER_INTERVAL 10
-#define MAX_PES_PACKET_LENGTH 0xa000
+#define MAX_PES_PACKET_LENGTH 0x7ec
+#define PES_HEADER_LENGTH 6
+#define PACK_HEADER_LENGTH 14
+
+CMultiplexer::CStreamBuffer::CStreamBuffer()
+{
+  m_ipesBufferPos=0;
+  m_pesPacket = new byte[0x50000];
+}
+CMultiplexer::CStreamBuffer::~CStreamBuffer()
+{
+  delete[] m_pesPacket;
+}
 
 CMultiplexer::CMultiplexer()
 {
+  m_pesBuffer = new byte[0x10000];
 	m_pCallback=NULL;
-	
-	m_videoPacketCounter=0;
-  m_pesPacket = new byte[0x10000];
+  Reset();
 }
 
 CMultiplexer::~CMultiplexer()
 {
-  delete [] m_pesPacket;
+  delete [] m_pesBuffer;
+  Reset();
 }
 
 void CMultiplexer::SetFileWriterCallBack(IFileWriter* callback)
@@ -52,6 +63,13 @@ void CMultiplexer::Reset()
 		CPesDecoder* decoder=*it;
 		delete decoder;
 	}
+  imapStreamBuffer im;
+	for (im=m_mapStreamBuffer.begin(); im != m_mapStreamBuffer.end();++im)
+	{
+		CStreamBuffer* buffer=im->second;
+		delete buffer;
+	}
+  m_mapStreamBuffer.clear();
 	m_pesDecoders.clear();
 	m_pcrDecoder.Reset();
 }
@@ -84,6 +102,7 @@ void CMultiplexer::RemovePesStream(int pid)
 		++it;
 	}
 }
+
 void CMultiplexer::AddPesStream(int pid)
 {
 	ivecPesDecoders it;
@@ -134,15 +153,6 @@ void CMultiplexer::OnTsPacket(byte* tsPacket)
 
           if (writeToDisk)
           {
-					  if ((m_videoPacketCounter % PACK_HEADER_INTERVAL)==0)
-					  {	
-						  byte buffer[20];
-						  int packLen=WritePackHeader(m_pcrDecoder.PcrHigh(), m_pcrDecoder.PcrLow(),4000000/50,buffer);
-						  if (m_pCallback!=NULL)
-						  {
-							  m_pCallback->Write(buffer,	packLen);
-						  }
-					  }
 					  m_videoPacketCounter++;
 					  SplitPesPacket(pesPacket,pesLength);
           }
@@ -160,103 +170,12 @@ void CMultiplexer::OnTsPacket(byte* tsPacket)
 	}
 }
 
-void CMultiplexer::SplitPesPacket(byte* pesPacket, int sectionLength)
+int CMultiplexer::WritePackHeader()
 {
-  if (sectionLength > (MAX_PES_PACKET_LENGTH-32))
-  {
-    int markerCount=0;
-    int markers[1000];
-    for (int i=0; i < sectionLength;++i)
-    {
-      if (pesPacket[i]==0 && pesPacket[i+1]==0 && pesPacket[i+2]==1)
-      {
-        markers[markerCount++]=i;
-      }
-    }
-    markers[markerCount++]=sectionLength;
-
-    int headerLength;
-    int pesLength=0;
-    int start=0;
-    for (int i=0; i < markerCount;++i)
-    {
-      if (markers[i]-start > (MAX_PES_PACKET_LENGTH-32) )
-      {
-        int newLen=markers[i-1]-start;
-        if (start==0)
-        {
-          memcpy(m_pesPacket, pesPacket, newLen);
-          headerLength=0;
-          for (int x=6; x < newLen-3;++x)
-          {
-            if (m_pesPacket[x]==0 && m_pesPacket[x+1]==0 && m_pesPacket[x+2]==1)
-            {
-              headerLength=x;
-              break;
-            }
-          }
-          if (headerLength==0)
-          {
-            int x=1;
-          }
-        }
-        else
-        {
-          memcpy(&m_pesPacket[headerLength], &pesPacket[start], newLen);
-          newLen+=headerLength;
-        }
-		    
-        int len= newLen-6;
-		    m_pesPacket[4]=((len>>8)&0xff);
-		    m_pesPacket[5]=(len&0xff);
-        WritePes(m_pesPacket, newLen);
-        start=markers[i-1];
-      }
-    }
-
-    if (start < sectionLength)
-    {
-      int newLen=sectionLength-start;
-      memcpy(&m_pesPacket[headerLength], &pesPacket[start], newLen);
-      newLen+=headerLength;
-      int len= newLen-6;
-	    m_pesPacket[4]=((len>>8)&0xff);
-	    m_pesPacket[5]=(len&0xff);
-      WritePes(m_pesPacket, newLen);
-    }
-    return;
-  }
-
-	memcpy(m_pesPacket,pesPacket,sectionLength);
-	//if (m_pesPacket[4]==0 && m_pesPacket[5]==0)
-	{
-		//packet length can be 0 for video-pes packets 
-		int len=sectionLength-6;
-		m_pesPacket[4]=((len>>8)&0xff);
-		m_pesPacket[5]=(len&0xff);
-	}
-  WritePes(m_pesPacket,sectionLength);
-}
-
-
-void CMultiplexer::WritePes(byte* pesPacket, int nLen)
-{
-  if (nLen>MAX_PES_PACKET_LENGTH)
-  {
-    int x=1;
-  }
-  int len=6+(pesPacket[4]<<8) + (pesPacket[5]);
-  if (len!=nLen)
-  {
-    int xxx=1;
-  }
-  if (m_pCallback!=NULL)
-	{
-		m_pCallback->Write(pesPacket, nLen);
-	}
-}
-int CMultiplexer::WritePackHeader(__int64 pcrHi, int pcrLow, unsigned int muxRate,byte* pBuffer)
-{
+  __int64 pcrHi=m_pcrDecoder.PcrHigh();
+  int pcrLow=m_pcrDecoder.PcrLow();
+  int muxRate=4000000/50;
+  byte pBuffer[0x20];
 	//pack header
 	pBuffer[0]=0;
 	pBuffer[1]=0;
@@ -280,83 +199,81 @@ int CMultiplexer::WritePackHeader(__int64 pcrHi, int pcrLow, unsigned int muxRat
 
 	//13 pack stuffing length
 	pBuffer[13]=0xf8;
-	return 14;
+  if (m_pCallback!=NULL)
+  {
+	  m_pCallback->Write((byte*)pBuffer,	PACK_HEADER_LENGTH);
+  }
+  return PACK_HEADER_LENGTH;
 }
 
-int CMultiplexer::WriteSystemHeader(byte* pBuffer)
+
+
+void CMultiplexer::SplitPesPacket(byte* pesPacket, int sectionLength)
 {
-	//system-header-start-code
-	pBuffer[0]=0;							//32			0-3
-	pBuffer[1]=0;
-	pBuffer[2]=1;
-	pBuffer[3]=0xbb;
-	
-	//header_length						//16			4-5
-	int headerLength=18-6;
+  if (m_pCallback==NULL) return;
+  int streamId=pesPacket[3];
+  CStreamBuffer* buffer;
+  imapStreamBuffer imap = m_mapStreamBuffer.find(streamId);
+  if (imap==m_mapStreamBuffer.end())
+  {
+     buffer = new CStreamBuffer();
+     m_mapStreamBuffer[streamId]=buffer;
+  }
+  else
+  {
+    buffer=imap->second;
+  }
+  int headerLen=pesPacket[8];
+  sectionLength -= (headerLen+9);
+  int start=buffer->m_ipesBufferPos;
 
-	int marker_bit=1;
-	int rate_bound=8000000; //value of the mux_rate field coded in any pack Program Stream
-	int audio_bound=1;//integer from 0 to 32 greater than or equal to the maximum number of audio streams in the 
-	int fixed_flag =0;//0=VBR, 1=CBR
-	int CSPS_flag=0;  //bit flag.  If its value is set to '1' the ISO/IEC 13818 Program Stream meets the constraints defined in clause 2.5.7.9
-	int system_audio_lock_flag=0;//The system_audio_lock_flag is a 1 bit flag indicating that there is a specified, constant rational relationship between the audio sampling rate and the system clock frequency in the system target decoderThe system_audio_lock_flag is a 1 bit flag indicating that there is a specified, constant rational relationship between the audio sampling rate and the system clock frequency in the system target decoder
-	int system_video_lock_flag=0;//The system_video_lock_flag is a 1 bit flag indicating that there is a specified, constant rational relationship between the video picture rate and the system clock frequency in the system target decoder
-	int video_bound=1; //The video_bound is an integer in the inclusive range from 0 to 16 greater than or equal to the maximum number of ISO/IEC 13818-2 streams 
-	int reserved_byte =0xff;
-	int buffer_bound_scale_audio=0;
-	int buffer_bound_scale_video=1;
-	int buffer_size_bound_audio=100;
-	int buffer_size_bound_video=100;
-	
-	pBuffer[4]= ((headerLength>>8)&0xff);
-	pBuffer[5]= (headerLength &0xff);
-	pBuffer[6]= (marker_bit<<7) + ((rate_bound>>15)&0x7f);
-	pBuffer[7]= (rate_bound>>7)&0xff;
-	pBuffer[8]= marker_bit + ((rate_bound&0x7f)<<1);
-	pBuffer[9]= ((audio_bound&0x3f)<<2) + (fixed_flag<<1) +CSPS_flag;
-	pBuffer[10]=(system_audio_lock_flag<<7) + (system_video_lock_flag<<7) + (video_bound&0x3f);
-	pBuffer[11]=reserved_byte;
+  byte* data=&buffer->m_pesPacket[buffer->m_ipesBufferPos];
+  memcpy( &buffer->m_pesPacket[buffer->m_ipesBufferPos], &pesPacket[headerLen+9],sectionLength);
+  buffer->m_ipesBufferPos+=sectionLength;
+  if (buffer->m_ipesBufferPos < 0x800) return;
 
-	pBuffer[12]=0xc0;
-	pBuffer[13]=(3<<6) + ((buffer_bound_scale_audio&1)<<5) + ((buffer_size_bound_audio>>8)&0x1f);
-	pBuffer[14]=(buffer_size_bound_audio & 0x7f);
+  int offset=0;
+  while (offset+0x800 < buffer->m_ipesBufferPos)
+  {
+    WritePackHeader();
+    if (offset==0)
+    {
+      byte* data=m_pesBuffer;
+      int len = (0x800-PACK_HEADER_LENGTH) - 6;
+      len -=3;
+      len-=headerLen;
 
-	pBuffer[15]=0xe0;
-	pBuffer[16]=(3<<6) + ((buffer_bound_scale_video&1)<<5) + ((buffer_size_bound_video>>8)&0x1f);
-	pBuffer[17]=(buffer_size_bound_video & 0x7f);
-
-
-
-	// 6           7      8         9         10         11
-	//76543210 76543210 76543210	76543210	76543210	76543210
-	//MRRRRRRR RRRRRRRR RRRRRRRM	AAAAAAFC	AVMVVVVV	RRRRRRRR
-	//marker bit							1					6		0x80
-	//rate_bound							22
-	//marker bit							1
-	//audio_bound							6
-	//fixed flag							1
-	//CSPS_flag								1
-	//system_audio_lock_flag	1
-	//system_video_lock_flag	1
-	//marker_bit							1
-	//video_bound							5
-	//reserved_byte						8
-	//while (nextbits () == '1') 
-	//{
-	//	0					1					2
-	//	76543210 76543210 76543210 
-	//	SSSSSSSS 11BSSSSS SSSSSSSS 
-	//	stream_id										8						0
-	//	'11'												2						1
-	//	P-STD_buffer_bound_scale		1
-	//	P-STD_buffer_size_bound			13					2
-	//}
-	//P-STD_buffer_bound_scale -- 0=audio,1=video	
-	//P-STD_buffer_size_bound 
-	//P-STD_buffer_size_bound measures the buffer size bound in units of 128 bytes. If 
-	//If P-STD_buffer_bound_scale has the value '0' then P-STD_buffer_size_bound measures the buffer size bound in units of 128 bytes. 
-	//if P-STD_buffer_bound_scale has the value '1' then P-STD_buffer_size_bound measures the buffer size bound in units of 1024 bytes.  Thus:
-
-
-	return 18;
+      memcpy(m_pesBuffer, pesPacket, headerLen+9);
+      memcpy(&m_pesBuffer[headerLen+9],&buffer->m_pesPacket[offset],len);
+      m_pesBuffer[4]=0x7;
+      m_pesBuffer[5]=0xec;
+	    m_pCallback->Write(m_pesBuffer, MAX_PES_PACKET_LENGTH + PES_HEADER_LENGTH);
+      offset += len;
+      
+    }
+    else
+    {
+      // 0   1  2  3  4 5  6  7  8  9
+      // 00 00 01 e0 07 ec 81 00 00 DD DD DD DD
+      int len = (0x800-PACK_HEADER_LENGTH) - 6;
+      len -=3;
+      m_pesBuffer[0]=0;
+      m_pesBuffer[1]=0;
+      m_pesBuffer[2]=1;
+      m_pesBuffer[3]=pesPacket[3];
+      m_pesBuffer[4]=0x7;
+      m_pesBuffer[5]=0xec;
+      m_pesBuffer[6]=0x81;
+      m_pesBuffer[7]=0;
+      m_pesBuffer[8]=0;
+      memcpy(&m_pesBuffer[9], &buffer->m_pesPacket[offset],len);
+	    m_pCallback->Write(m_pesBuffer, MAX_PES_PACKET_LENGTH + PES_HEADER_LENGTH);
+      offset += len;
+    }
+  }
+  if (offset < buffer->m_ipesBufferPos)
+  {
+      memcpy(buffer->m_pesPacket, &buffer->m_pesPacket[offset],buffer->m_ipesBufferPos-offset);
+      buffer->m_ipesBufferPos=buffer->m_ipesBufferPos-offset;
+  }
 }
