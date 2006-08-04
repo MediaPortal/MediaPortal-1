@@ -552,11 +552,11 @@
 	</string>
 	<string>
 		<id>206</id>
-		<value>Elvet</value>
+		<value>Szereplők</value>
 	</string>
 	<string>
 		<id>207</id>
-		<value>Rajzol</value>
+		<value>Ismertető</value>
 	</string>
 	<string>
 		<id>208</id>
@@ -2392,11 +2392,11 @@
 	</string>
 	<string>
 		<id>729</id>
-		<value>Bizonyosodj meg, hogy VMR9-et vagy ilyen típusú fájlt használsz</value>
+		<value>Nem megfelelő formátumú videó!</value>
 	</string>
 	<string>
 		<id>730</id>
-		<value>Ez ütemezett felvétel. Ha törli</value>
+		<value>Ez ütemezett felvétel. Ha törlöd</value>
 	</string>
 	<string>
 		<id>731</id>
@@ -2404,7 +2404,7 @@
 	</string>
 	<string>
 		<id>732</id>
-		<value>Biztos benne?</value>
+		<value>Biztos vagy benne?</value>
 	</string>
 	<string>
 		<id>733</id>
@@ -2476,7 +2476,7 @@
 	</string>
 	<string>
 		<id>800</id>
-		<value>Indításnál</value>
+		<value>Kezdődik</value>
 	</string>
 	<string>
 		<id>801</id>
@@ -3096,11 +3096,11 @@
 	</string>
 	<string>
 		<id>1001</id>
-		<value>Az Xvid-be való áttömörítéshez szükséges az</value>
+		<value>Az Xvid-be való áttömörítéshez szükséges</value>
 	</string>
 	<string>
 		<id>1002</id>
-		<value>Elecard MPEG2 video decoder feltelepítésére</value>
+		<value>MPEG2 video decoder feltelepítése</value>
 	</string>
 	<string>
 		<id>1003</id>
@@ -3116,7 +3116,7 @@
 	</string>
 	<string>
 		<id>1006</id>
-		<value>Engedélyezze a felvétel megkezdését</value>
+		<value>Engedélyezd a felvétel megkezdését</value>
 	</string>
 	<string>
 		<id>1007</id>
@@ -5194,7 +5194,7 @@
   </string>   
 <string>
     <id>2090</id>
-    <value>Dvr-MpegCut</value>
+    <value>Dvr-Mpeg vágó</value>
   </string>
 <string>
     <id>2091</id>
@@ -5682,7 +5682,6 @@
       <id>9999</id>
       <value>Óra:</value>
    </string>         
-
   <string>
       <id>1018</id>
       <value>A műsor elkezdődik {0} percen belül</value>
@@ -5691,13 +5690,136 @@
       <id>1019</id>
       <value>A műsor hamarosan kezdődik</value>
    </string>      	
-
  <string>
       <id>599</id>
       <value>Zavar</value>
    </string>
-
-
-
+ <string>
+      <id>1190</id>
+      <value>Zoom 14:9</value>
+   </string>  
+<string Prefix="My ">
+      <id>30000</id>
+      <value>Videóklipek</value>
+   </string>
+   <string>
+      <id>30001</id>
+      <value>Legjobban keresett</value>
+   </string>
+   <string>
+      <id>30002</id>
+      <value>Új a Yahoo -n</value>
+   </string>
+   <string>
+      <id>30003</id>
+      <value>Összes lejátszása</value>
+   </string>   
+   <string>
+      <id>30004</id>
+      <value>Elöző oldal</value>
+   </string>
+   <string>
+      <id>30005</id>
+      <value>Következő oldal</value>
+   </string>
+   <string>
+      <id>30006</id>
+      <value>Stop</value>
+   </string>
+   <string>
+      <id>30007</id>
+      <value>További videók keresése ettől az előadótól</value>
+   </string>
+   <string>
+      <id>30008</id>
+      <value>Rang</value>
+   </string>
+   <string>
+      <id>30009</id>
+      <value>Oldal</value>
+   </string>
+   <string>
+      <id>30010</id>
+      <value>Keresési találatok {0} -ra - {1} oldal</value>
+   </string>           
+ <string>
+      <id>559</id>
+      <value>körzetben</value>
+   </string> 
+   <string>
+      <id>560</id>
+      <value>Kitisztul</value>
+   </string> 
+   <!-- Wikipedia Strings -->
+	<string>
+		<id>2500</id>
+		<value>No searchterm entered!</value>
+	</string>
+	<string>
+		<id>2501</id>
+		<value>Please enter a valid searchterm!</value>
+	</string>
+	<string>
+		<id>2502</id>
+		<value>Select your local Wikipedia:</value>
+	</string>
+	<string>
+		<id>2503</id>
+		<value>Selected Wikipedia:</value>
+	</string>
+	<string>
+		<id>2504</id>
+		<value>Sorry, no Article was found for your searchterm...</value>
+	</string>
+	<string>
+		<id>2505</id>
+		<value>Links to other articles:</value>
+	</string>
+	<string>
+		<id>2506</id>
+		<value>No Links from this article.</value>
+	</string>
+	<string>
+		<id>2507</id>
+		<value>Images from this article:</value>
+	</string>
+	<string>
+		<id>2508</id>
+		<value>No Images referenced in this article.</value>
+	</string>
+	<string>
+		<id>2509</id>
+		<value>This page is only a redirect.</value>
+	</string>
+	<string>
+		<id>2510</id>
+		<value>Please chose the redirect aim from the link list.</value>
+	</string>
+	<string>
+		<id>2600</id>
+		<value>English</value>
+	</string>
+	<string>
+		<id>2601</id>
+		<value>German</value>
+	</string>
+	<string>
+		<id>2602</id>
+		<value>French</value>
+	</string>
+	<string>
+		<id>2603</id>
+		<value>Dutch</value>
+	</string>
+	<string>
+		<id>2604</id>
+		<value>Norwegian</value>
+	</string>
+	<string>
+		<id>2605</id>
+		<value>Swedish</value>
+	</string>
+	<!-- End of Wikipedia Strings -->
+  
 </strings>
 

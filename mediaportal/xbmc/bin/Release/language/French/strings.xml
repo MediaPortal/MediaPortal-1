@@ -27,7 +27,7 @@
 	</string>
 	<string>
 		<id>6</id>
-		<value>MediaPortal svn build</value>
+		<value>XBOX Media Center CVS build</value>
 	</string>
 	<string>
 		<id>7</id>
@@ -1763,7 +1763,7 @@
 	</string>
 	<string>
 		<id>519</id>
-		<value>Sous-titres off </value>
+		<value>Sous-titres off</value>
 	</string>
 	<string>
 		<id>529</id>
@@ -1862,12 +1862,20 @@
 		<value>NNO</value>
 	</string>
 	<string>
+		<id>553</id>
+		<value>Tard </value>
+	</string>
+	<string>
 		<id>554</id>
 		<value>très</value>
 	</string>
 	<string>
 		<id>555</id>
 		<value>De {0} à {1} {2}</value>
+	</string>
+	<string>
+		<id>556</id>
+		<value>divers</value>
 	</string>
 	<string>
 		<id>557</id>
@@ -1878,16 +1886,24 @@
 		<value>Aucun vent</value>
 	</string>
 	<string>
+		<id>559</id>
+		<value>à proximité </value>
+	</string>
+	<string>
+		<id>560</id>
+		<value>Dégagement </value>
+	</string>
+	<string>
 		<id>590</id>
-		<value>ID:590</value>
+		<value>P. 100</value>
 	</string>
 	<string>
 		<id>591</id>
-		<value>ID:591</value>
+		<value>P. 200</value>
 	</string>
 	<string>
 		<id>592</id>
-		<value>ID:592</value>
+		<value>P. 300</value>
 	</string>
 	<string>
 		<id>593</id>
@@ -1904,6 +1920,10 @@
 	<string>
 		<id>596</id>
 		<value>Attente page {0}/{1}&#8230;</value>
+	</string>
+	<string>
+		<id>599</id>
+		<value>Tempête</value>
 	</string>
 	<string>
 		<id>600</id>
@@ -2566,12 +2586,16 @@
 		<value>Démarrer la TV dans la section MyTV automatiquement</value>
 	</string>
 	<string>
+		<id>776</id>
+		<value>Ne pas démarrer / basculer sur la TV automatiquement</value>
+	</string>
+	<string>
 		<id>777</id>
 		<value>Mode d'utilisation du Timeshift</value>
 	</string>
 	<string>
 		<id>778</id>
-		<value>Démarrer avec le timeshift automatiquement sélectionné</value>
+		<value>Démarrer avec le timeshift automatique</value>
 	</string>
 	<string>
 		<id>779</id>
@@ -2583,11 +2607,11 @@
 	</string>
 	<string>
 		<id>781</id>
-		<value>Enregistrement rapide </value>
+		<value>Enregistrement rapide</value>
 	</string>
 	<string>
 		<id>782</id>
-		<value>Enregistrement avançé </value>
+		<value>Enregistrement avançé</value>
 	</string>
 	<string>
 		<id>798</id>
@@ -3287,7 +3311,7 @@
 	</string>
 	<string>
 		<id>1019</id>
-		<value>Le programme est sur le point de commencer </value>
+		<value>Le programme est sur le point de commencer</value>
 	</string>
 	<string>
 		<id>1020</id>
@@ -4779,7 +4803,7 @@
 	</string>
 	<string>
 		<id>9997</id>
-		<value>Secondes: </value>
+		<value>Secondes:</value>
 	</string>
 	<string>
 		<id>9998</id>
@@ -4787,7 +4811,7 @@
 	</string>
 	<string>
 		<id>9999</id>
-		<value>Heures</value>
+		<value>Heures:</value>
 	</string>
 	<string>
 		<id>10100</id>
@@ -4971,7 +4995,7 @@
 	</string>
 	<string>
 		<id>30005</id>
-		<value>Prochaine page </value>
+		<value>Prochaine page</value>
 	</string>
 	<string>
 		<id>30006</id>
@@ -4980,6 +5004,18 @@
 	<string>
 		<id>30007</id>
 		<value>Rechercher d'autres clips de cet artiste</value>
+	</string>
+	<string>
+		<id>30008</id>
+		<value>rang </value>
+	</string>
+	<string>
+		<id>30009</id>
+		<value>page </value>
+	</string>
+	<string>
+		<id>30010</id>
+		<value>Résultats de la recherche pour {0} - page {1}</value>
 	</string>
 	<string>
 		<id>99845</id>
@@ -5391,7 +5427,7 @@
 	</string>
 	<string>
 		<id>102005</id>
-		<value>Vidéo pleinécran</value>
+		<value>Vidéo plein écran</value>
 	</string>
 	<string>
 		<id>102006</id>
