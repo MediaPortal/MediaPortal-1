@@ -67,6 +67,7 @@ namespace MediaPortal.AudioScrobbler
       this.tabControlSettings = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPageLastFMSettings = new System.Windows.Forms.TabPage();
       this.groupBoxMusicSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.checkBoxScrobbleDefault = new System.Windows.Forms.CheckBox();
       this.labelPercRandHint = new MediaPortal.UserInterface.Controls.MPLabel();
       this.labelPercRand = new MediaPortal.UserInterface.Controls.MPLabel();
       this.labelRandomness = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -112,7 +113,10 @@ namespace MediaPortal.AudioScrobbler
       this.tabPageWeeklyTracks = new System.Windows.Forms.TabPage();
       this.buttonRefreshWeeklyTracks = new MediaPortal.UserInterface.Controls.MPButton();
       this.listViewWeeklyTracks = new MediaPortal.UserInterface.Controls.MPListView();
-      this.checkBoxScrobbleDefault = new System.Windows.Forms.CheckBox();
+      this.numericUpDownSimilarArtist = new System.Windows.Forms.NumericUpDown();
+      this.numericUpDownTracksPerArtist = new System.Windows.Forms.NumericUpDown();
+      this.labelSimilarArtistsUpDown = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelTracksPerArtistUpDown = new MediaPortal.UserInterface.Controls.MPLabel();
       this.panelPicBox.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxASLogo)).BeginInit();
       this.tabControlSettings.SuspendLayout();
@@ -131,6 +135,8 @@ namespace MediaPortal.AudioScrobbler
       this.tabPageWeeklyArtists.SuspendLayout();
       this.tabPageTopTracks.SuspendLayout();
       this.tabPageWeeklyTracks.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSimilarArtist)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTracksPerArtist)).BeginInit();
       this.SuspendLayout();
       // 
       // buttonOk
@@ -258,6 +264,10 @@ namespace MediaPortal.AudioScrobbler
       // 
       // groupBoxMusicSettings
       // 
+      this.groupBoxMusicSettings.Controls.Add(this.labelTracksPerArtistUpDown);
+      this.groupBoxMusicSettings.Controls.Add(this.labelSimilarArtistsUpDown);
+      this.groupBoxMusicSettings.Controls.Add(this.numericUpDownTracksPerArtist);
+      this.groupBoxMusicSettings.Controls.Add(this.numericUpDownSimilarArtist);
       this.groupBoxMusicSettings.Controls.Add(this.checkBoxScrobbleDefault);
       this.groupBoxMusicSettings.Controls.Add(this.labelPercRandHint);
       this.groupBoxMusicSettings.Controls.Add(this.labelPercRand);
@@ -270,6 +280,16 @@ namespace MediaPortal.AudioScrobbler
       this.groupBoxMusicSettings.TabIndex = 5;
       this.groupBoxMusicSettings.TabStop = false;
       this.groupBoxMusicSettings.Text = "My Music settings";
+      // 
+      // checkBoxScrobbleDefault
+      // 
+      this.checkBoxScrobbleDefault.AutoSize = true;
+      this.checkBoxScrobbleDefault.Location = new System.Drawing.Point(17, 27);
+      this.checkBoxScrobbleDefault.Name = "checkBoxScrobbleDefault";
+      this.checkBoxScrobbleDefault.Size = new System.Drawing.Size(191, 17);
+      this.checkBoxScrobbleDefault.TabIndex = 4;
+      this.checkBoxScrobbleDefault.Text = "Scrobble mode enabled per default";
+      this.checkBoxScrobbleDefault.UseVisualStyleBackColor = true;
       // 
       // labelPercRandHint
       // 
@@ -798,15 +818,67 @@ namespace MediaPortal.AudioScrobbler
       this.listViewWeeklyTracks.UseCompatibleStateImageBehavior = false;
       this.listViewWeeklyTracks.View = System.Windows.Forms.View.List;
       // 
-      // checkBoxScrobbleDefault
+      // numericUpDownSimilarArtist
       // 
-      this.checkBoxScrobbleDefault.AutoSize = true;
-      this.checkBoxScrobbleDefault.Location = new System.Drawing.Point(17, 19);
-      this.checkBoxScrobbleDefault.Name = "checkBoxScrobbleDefault";
-      this.checkBoxScrobbleDefault.Size = new System.Drawing.Size(144, 17);
-      this.checkBoxScrobbleDefault.TabIndex = 4;
-      this.checkBoxScrobbleDefault.Text = "Scrobble default enabled";
-      this.checkBoxScrobbleDefault.UseVisualStyleBackColor = true;
+      this.numericUpDownSimilarArtist.Location = new System.Drawing.Point(17, 60);
+      this.numericUpDownSimilarArtist.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+      this.numericUpDownSimilarArtist.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      this.numericUpDownSimilarArtist.Name = "numericUpDownSimilarArtist";
+      this.numericUpDownSimilarArtist.Size = new System.Drawing.Size(44, 20);
+      this.numericUpDownSimilarArtist.TabIndex = 5;
+      this.numericUpDownSimilarArtist.Value = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
+      // 
+      // numericUpDownTracksPerArtist
+      // 
+      this.numericUpDownTracksPerArtist.Location = new System.Drawing.Point(17, 91);
+      this.numericUpDownTracksPerArtist.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+      this.numericUpDownTracksPerArtist.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      this.numericUpDownTracksPerArtist.Name = "numericUpDownTracksPerArtist";
+      this.numericUpDownTracksPerArtist.Size = new System.Drawing.Size(44, 20);
+      this.numericUpDownTracksPerArtist.TabIndex = 6;
+      this.numericUpDownTracksPerArtist.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      // 
+      // labelSimilarArtistsUpDown
+      // 
+      this.labelSimilarArtistsUpDown.AutoSize = true;
+      this.labelSimilarArtistsUpDown.Location = new System.Drawing.Point(67, 62);
+      this.labelSimilarArtistsUpDown.Name = "labelSimilarArtistsUpDown";
+      this.labelSimilarArtistsUpDown.Size = new System.Drawing.Size(155, 13);
+      this.labelSimilarArtistsUpDown.TabIndex = 7;
+      this.labelSimilarArtistsUpDown.Text = "consider this many similar artists";
+      // 
+      // labelTracksPerArtistUpDown
+      // 
+      this.labelTracksPerArtistUpDown.AutoSize = true;
+      this.labelTracksPerArtistUpDown.Location = new System.Drawing.Point(67, 93);
+      this.labelTracksPerArtistUpDown.Name = "labelTracksPerArtistUpDown";
+      this.labelTracksPerArtistUpDown.Size = new System.Drawing.Size(150, 13);
+      this.labelTracksPerArtistUpDown.TabIndex = 8;
+      this.labelTracksPerArtistUpDown.Text = "add this many  tracks per artist";
       // 
       // AudioscrobblerSettings
       // 
@@ -843,6 +915,8 @@ namespace MediaPortal.AudioScrobbler
       this.tabPageWeeklyArtists.ResumeLayout(false);
       this.tabPageTopTracks.ResumeLayout(false);
       this.tabPageWeeklyTracks.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSimilarArtist)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTracksPerArtist)).EndInit();
       this.ResumeLayout(false);
 
     }
@@ -908,5 +982,9 @@ namespace MediaPortal.AudioScrobbler
     private MediaPortal.UserInterface.Controls.MPLabel labelPercRandHint;
     private MediaPortal.UserInterface.Controls.MPLabel labelPercRand;
     private System.Windows.Forms.CheckBox checkBoxScrobbleDefault;
+    private System.Windows.Forms.NumericUpDown numericUpDownSimilarArtist;
+    private System.Windows.Forms.NumericUpDown numericUpDownTracksPerArtist;
+    private MediaPortal.UserInterface.Controls.MPLabel labelTracksPerArtistUpDown;
+    private MediaPortal.UserInterface.Controls.MPLabel labelSimilarArtistsUpDown;
   }
 }

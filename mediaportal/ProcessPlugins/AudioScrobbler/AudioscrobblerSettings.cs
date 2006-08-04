@@ -61,16 +61,13 @@ namespace MediaPortal.AudioScrobbler
         checkBoxLogVerbose.Checked = xmlreader.GetValueAsBool("audioscrobbler", "usedebuglog", false);
         trackBarRandomness.Value = xmlreader.GetValueAsInt("audioscrobbler", "randomness", 77);
         checkBoxScrobbleDefault.Checked = xmlreader.GetValueAsBool("audioscrobbler", "scrobbledefault", false);
+        numericUpDownSimilarArtist.Value = xmlreader.GetValueAsInt("audioscrobbler", "similarartistscount", 3);
+        numericUpDownTracksPerArtist.Value = xmlreader.GetValueAsInt("audioscrobbler", "tracksperartistscount", 1);
+
         textBoxASUsername.Text = xmlreader.GetValueAsString("audioscrobbler", "user", "");
         if (textBoxASUsername.Text == "")
         {
-          tabControlASSettings.Enabled = false;
-          //tabControlASSettings.TabPages.RemoveAt(6);
-          //tabControlASSettings.TabPages.RemoveAt(5);
-          //tabControlASSettings.TabPages.RemoveAt(4);
-          //tabControlASSettings.TabPages.RemoveAt(3);
-          //tabControlASSettings.TabPages.RemoveAt(2);
-          //tabControlASSettings.TabPages.RemoveAt(1);          
+          tabControlASSettings.Enabled = false;    
         }
           
         EncryptDecrypt Crypter = new EncryptDecrypt();
@@ -101,7 +98,9 @@ namespace MediaPortal.AudioScrobbler
         xmlwriter.SetValueAsBool("audioscrobbler", "dismisscacheonerror", checkBoxDismissOnError.Checked);         
         xmlwriter.SetValueAsBool("audioscrobbler", "usedebuglog", checkBoxLogVerbose.Checked);
         xmlwriter.SetValue("audioscrobbler", "randomness", trackBarRandomness.Value);
-        xmlwriter.SetValueAsBool("audioscrobbler", "scrobbledefault", checkBoxScrobbleDefault.Checked);         
+        xmlwriter.SetValueAsBool("audioscrobbler", "scrobbledefault", checkBoxScrobbleDefault.Checked);
+        xmlwriter.SetValue("audioscrobbler", "similarartistscount", numericUpDownSimilarArtist.Value);
+        xmlwriter.SetValue("audioscrobbler", "tracksperartistscount", numericUpDownTracksPerArtist.Value); 
 
         xmlwriter.SetValue("audioscrobbler", "user", textBoxASUsername.Text);
         try
@@ -155,12 +154,13 @@ namespace MediaPortal.AudioScrobbler
     {
       labelTrackBarValue.Text = Convert.ToString(trackBarArtistMatch.Value);
     }
-    #endregion
 
     private void trackBarRandomness_ValueChanged(object sender, EventArgs e)
     {
       labelPercRand.Text = Convert.ToString(trackBarRandomness.Value);
     }
+
+    #endregion
 
     #region Button events
 

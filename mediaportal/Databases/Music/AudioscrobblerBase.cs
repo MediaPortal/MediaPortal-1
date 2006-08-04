@@ -57,15 +57,15 @@ namespace MediaPortal.Music.Database
   /// <summary>
   /// A class of this type is passed with every SubmitEvent
   /// </summary>
-  public class SubmitEventArgs
-  {
-    public Song song;
+  //public class SubmitEventArgs
+  //{
+  //  public Song song;
 
-    public SubmitEventArgs(Song song_)
-    {
-      song = song_;
-    }
-  }
+  //  public SubmitEventArgs(Song song_)
+  //  {
+  //    song = song_;
+  //  }
+  //}
 
   #endregion
 
@@ -158,8 +158,8 @@ namespace MediaPortal.Music.Database
       lastConnectAttempt = DateTime.MinValue;
       minConnectWaitTime = new TimeSpan(0, 0, CONNECT_WAIT_TIME);
       cacheFile = CACHEFILE_NAME;
-
-      Log.Write("AudioscrobblerBase: new scrobbler - debuglog={0} dismiss={1} directonly={2}", Convert.ToString(_useDebugLog),Convert.ToString(_dismissOnError),Convert.ToString(_disableTimerThread));
+      if (_useDebugLog)
+        Log.Write("AudioscrobblerBase: new scrobbler - debuglog={0} dismiss={1} directonly={2}", Convert.ToString(_useDebugLog),Convert.ToString(_dismissOnError),Convert.ToString(_disableTimerThread));
 
       // Loading the queue should be fast - no thread required
       LoadQueue();
@@ -1170,7 +1170,8 @@ namespace MediaPortal.Music.Database
         }
       }
       file.Close();
-      Log.Write("AudioscrobblerBase: Songs loaded from cache: {0}", queue.Count);
+      if (_useDebugLog)
+        Log.Write("AudioscrobblerBase: Songs loaded from cache: {0}", queue.Count);
 
       return true;
     }

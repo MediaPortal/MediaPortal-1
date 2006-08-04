@@ -52,8 +52,8 @@ namespace MediaPortal.GUI.Music
     string m_strCurrentFile = String.Empty;
     VirtualDirectory m_directory = new VirtualDirectory();
     const int MaxNumPShuffleSongPredict = 12;
-    const int _maxScrobbledSongsPerArtist = 1;
-    const int _maxScrobbledArtistsForSongs = 4;
+    int _maxScrobbledSongsPerArtist = 1;
+    int _maxScrobbledArtistsForSongs = 4;
     private bool PShuffleOn = false;
     private bool ScrobblerOn = false;
     private bool _enableScrobbling = false;
@@ -86,6 +86,8 @@ namespace MediaPortal.GUI.Music
       {
         _enableScrobbling = xmlreader.GetValueAsBool("plugins", "audioscrobbler", false);
         ScrobblerOn = xmlreader.GetValueAsBool("audioscrobbler", "scrobbledefault", false);
+        _maxScrobbledArtistsForSongs = xmlreader.GetValueAsInt("audioscrobbler", "similarartistscount", 3);
+        _maxScrobbledSongsPerArtist = xmlreader.GetValueAsInt("audioscrobbler", "tracksperartistscount", 1);
       }
       //added by Sam
       GUIWindowManager.Receivers += new SendMessageHandler(this.OnThreadMessage);

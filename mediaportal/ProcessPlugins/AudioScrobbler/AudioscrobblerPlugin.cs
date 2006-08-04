@@ -43,7 +43,7 @@ namespace MediaPortal.Audioscrobbler
     private int _timerTickSecs = 15;
     private int skipThreshold = 2;
     // maybe increase after introduction of x-fading
-    private const int STARTED_LATE = 5;
+    private const int STARTED_LATE = 10;
   
     // songs longer or shorter than this won't be submitted
     private const int MIN_DURATION = 30;
@@ -161,11 +161,6 @@ namespace MediaPortal.Audioscrobbler
       {
         OnStateChangedEvent(true);
       }
-      //// if music is started via "OK / Enter"
-      //if (action.wID == Action.ActionType.ACTION_SELECT_ITEM)
-      //  if (g_Player.Playing)
-      //    if (g_Player.IsMusic)
-      //      OnStateChangedEvent(true);
     }
 
 
