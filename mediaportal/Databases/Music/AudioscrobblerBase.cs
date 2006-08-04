@@ -129,6 +129,7 @@ namespace MediaPortal.Music.Database
         _useDebugLog = xmlreader.GetValueAsBool("audioscrobbler", "usedebuglog", false);
         _dismissOnError = xmlreader.GetValueAsBool("audioscrobbler", "dismisscacheonerror", true);
         _disableTimerThread = xmlreader.GetValueAsBool("audioscrobbler", "disabletimerthread", true);
+        _randomNessPercent = xmlreader.GetValueAsInt("audioscrobbler", "randomness", 77);
         username = xmlreader.GetValueAsString("audioscrobbler", "user", "");
         string tmpPass;
         tmpPass = xmlreader.GetValueAsString("audioscrobbler", "pass", "");
@@ -404,10 +405,15 @@ namespace MediaPortal.Music.Database
         // make sure we do not get an endless loop
         if (similarArtists.Count > _limitRandomListCount)
         {
+          int minRandValue = _limitRandomListCount;
+          int calcRandValue = (similarArtists.Count - 1) * _randomNessPercent / 100;
           while (artistsAdded < _limitRandomListCount)
           {
             bool foundDoubleEntry = false;
-            randomPosition = rand.Next(0, (similarArtists.Count - 1) * _randomNessPercent / 100);
+            if (calcRandValue > minRandValue)
+              randomPosition = rand.Next(0, calcRandValue);
+            else              
+              randomPosition = rand.Next(0, minRandValue);
             // loop current list to find out if randomPos was already inserted
             for (int j = 0; j < randomSimilarArtists.Count; j++)
             {
@@ -448,11 +454,11 @@ namespace MediaPortal.Music.Database
         // make sure we do not get an endless loop
         if (myNeighbours.Count > _limitRandomListCount)
         {
+          int minRandValue = _limitRandomListCount;
+          int calcRandValue = (myNeighbours.Count - 1) * _randomNessPercent / 100;
           while (neighboursAdded < _limitRandomListCount)
           {
             bool foundDoubleEntry = false;
-            int minRandValue = _limitRandomListCount + 2; // speed things up avoiding too much double hits
-            int calcRandValue = (myNeighbours.Count - 1) * _randomNessPercent / 100;
             if (calcRandValue > minRandValue)
               randomPosition = rand.Next(0, calcRandValue);
             else
@@ -482,15 +488,15 @@ namespace MediaPortal.Music.Database
             {
               // get _limitRandomListCount artists for each random neighbour
               int artistsAdded = 0;
+              int minRandAValue = _limitRandomListCount;
+              int calcRandAValue = (myNeighboorsArtists.Count - 1) * _randomNessPercent / 100;
               while (artistsAdded < _limitRandomListCount)
               {
                 bool foundDoubleEntry = false;
-                int minRandValue = _limitRandomListCount + 2; // speed things up avoiding too much double hits
-                int calcRandValue = (myNeighboorsArtists.Count - 1) * _randomNessPercent / 100;
-                if (calcRandValue > minRandValue)
-                  randomPosition = rand.Next(0, calcRandValue);
+                if (calcRandAValue > minRandAValue)
+                  randomPosition = rand.Next(0, calcRandAValue);
                 else
-                  randomPosition = rand.Next(0, minRandValue);
+                  randomPosition = rand.Next(0, minRandAValue);
 
                 for (int j = 0; j < myRandomNeighboorsArtists.Count; j++)
                 {

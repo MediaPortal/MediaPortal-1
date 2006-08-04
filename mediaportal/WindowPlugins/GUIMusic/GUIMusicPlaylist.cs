@@ -83,8 +83,10 @@ namespace MediaPortal.GUI.Music
       m_strDirectory = System.IO.Directory.GetCurrentDirectory();
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
         _enableScrobbling = xmlreader.GetValueAsBool("plugins", "audioscrobbler", false);
-            
+        ScrobblerOn = xmlreader.GetValueAsBool("audioscrobbler", "scrobbledefault", false);
+      }
       //added by Sam
       GUIWindowManager.Receivers += new SendMessageHandler(this.OnThreadMessage);
       return Load(GUIGraphicsContext.Skin + @"\myMusicplaylist.xml");
@@ -155,6 +157,9 @@ namespace MediaPortal.GUI.Music
     {
       base.OnPageLoad();
       facadeView.View = GUIFacadeControl.ViewMode.Playlist;
+
+      if (ScrobblerOn)
+        btnScrobble.Selected = true;
 
       LoadDirectory(String.Empty);
       if (m_iItemSelected >= 0)
@@ -265,28 +270,19 @@ namespace MediaPortal.GUI.Music
           //get state of button
           if (btnScrobble.Selected)
           {
-            // Clear the existing playlist before entering Scrobble mode
-            //ClearPlayList();
-
             ScrobblerOn = true;
             PShuffleOn = false;
-            // Fill playlist here!
-            //LoadDirectory(String.Empty);
-            //GUIListItem item = facadeView[0];
-            //if (item != null)
-            //  item.Shaded = false;
-            //playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
-            //playlistPlayer.Reset();
-            //playlistPlayer.Play(0);
+
+            PlayList playList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
+
+            if (playList != null && playList.Count == 1)
+            {
+              OnScrobble();
+            }
           }
           else
             ScrobblerOn = false;
-        //}
-        //else
-        //{
-        //  ScrobblerOn = false;
-        //  btnScrobble.Selected = false;
-        //}
+
         if (facadeView.PlayListView != null)
         {
           // Prevent the currently playing track from being scrolled off the top 
@@ -506,39 +502,7 @@ namespace MediaPortal.GUI.Music
         case GUIMessage.MessageType.GUI_MSG_PLAYING_10SEC:
           if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC && ScrobblerOn == true) // && playlistPlayer.CurrentSong != 0)
           {
-            AudioscrobblerBase ascrobbler = new AudioscrobblerBase();
-            ascrobbler.Disconnect();
-            MusicDatabase dbs = new MusicDatabase();
-            Song current10SekSong = new Song();
-            List<Song> scrobbledArtists = new List<Song>();
-            string strFile = g_Player.Player.CurrentFile;
-            bool songFound = dbs.GetSongByFileName(strFile, ref current10SekSong);
-            if (songFound)
-            {
-              ascrobbler.ArtistMatchPercent = 75;
-              scrobbledArtists = ascrobbler.getSimilarArtists(current10SekSong.Artist, true);
-
-              if (scrobbledArtists.Count < _maxScrobbledArtistsForSongs)
-              {
-                ascrobbler.ArtistMatchPercent = 50;
-                scrobbledArtists = ascrobbler.getSimilarArtists(current10SekSong.Artist, true);
-              }
-              if (scrobbledArtists.Count < _maxScrobbledArtistsForSongs)
-              {
-                if (scrobbledArtists.Count > 0)
-                  for (int i = 0; i < scrobbledArtists.Count; i++)
-                    ScrobbleSimilarArtists(scrobbledArtists[i].Artist);
-              }
-              else // finally enough artists
-              {
-                // add random factor for list here
-                for (int i = 0; i < _maxScrobbledArtistsForSongs; i++)
-                {
-                  ScrobbleSimilarArtists(scrobbledArtists[i].Artist);
-                }
-              }
-              LoadDirectory(String.Empty);
-            }
+            OnScrobble();
           }
           break;
       }
@@ -1099,6 +1063,49 @@ namespace MediaPortal.GUI.Music
     }
 
     //added by rtv
+    void OnScrobble()
+    {
+      AudioscrobblerBase ascrobbler = new AudioscrobblerBase();
+      ascrobbler.Disconnect();
+      MusicDatabase dbs = new MusicDatabase();
+      Song current10SekSong = new Song();
+      List<Song> scrobbledArtists = new List<Song>();
+      string strFile = g_Player.Player.CurrentFile;
+      bool songFound = dbs.GetSongByFileName(strFile, ref current10SekSong);
+      if (songFound)
+      {
+        ascrobbler.ArtistMatchPercent = 75;
+        scrobbledArtists = ascrobbler.getSimilarArtists(current10SekSong.Artist, true);
+
+        if (scrobbledArtists.Count < _maxScrobbledArtistsForSongs)
+        {
+          ascrobbler.ArtistMatchPercent = 50;
+          scrobbledArtists = ascrobbler.getSimilarArtists(current10SekSong.Artist, true);
+        }
+        if (scrobbledArtists.Count < _maxScrobbledArtistsForSongs)
+        {
+          ascrobbler.ArtistMatchPercent = 25;
+          scrobbledArtists = ascrobbler.getSimilarArtists(current10SekSong.Artist, true);
+        }
+        if (scrobbledArtists.Count < _maxScrobbledArtistsForSongs)
+        {
+          if (scrobbledArtists.Count > 0)
+            for (int i = 0; i < scrobbledArtists.Count; i++)
+              ScrobbleSimilarArtists(scrobbledArtists[i].Artist);
+        }
+        else // finally enough artists
+        {
+          // add random factor for list here
+          for (int i = 0; i < _maxScrobbledArtistsForSongs; i++)
+          {
+            ScrobbleSimilarArtists(scrobbledArtists[i].Artist);
+          }
+        }
+        LoadDirectory(String.Empty);
+        SelectCurrentPlayingSong();
+      }
+    }
+
     void ScrobbleSimilarArtists(string Artist_)
     {
       MusicDatabase dbs = new MusicDatabase();
@@ -1125,14 +1132,18 @@ namespace MediaPortal.GUI.Music
       if (songsCount < _maxScrobbledSongsPerArtist)
         return;
 
-      // TODO: add randomness here
+      Random rand = new Random();
+      int randomPosition;
+
       while (songsAdded < _maxScrobbledSongsPerArtist)
       {
-        if (AddRandomSongToPlaylist(ref songs[j]))
+        randomPosition = rand.Next(0, songsCount-1);
+        if (AddRandomSongToPlaylist(ref songs[randomPosition]))
           songsAdded++;
 
         j++;
-        if (j >= songsCount)
+        // avoid too many re-tries on existing songs.
+        if (j > songsCount * 2)
           return;
       }    
     }

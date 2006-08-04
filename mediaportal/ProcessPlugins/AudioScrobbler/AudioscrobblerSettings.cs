@@ -59,16 +59,18 @@ namespace MediaPortal.AudioScrobbler
         checkBoxdisableTimerThread.Checked = xmlreader.GetValueAsBool("audioscrobbler", "disabletimerthread", true);
         checkBoxDismissOnError.Checked = xmlreader.GetValueAsBool("audioscrobbler", "dismisscacheonerror", true);
         checkBoxLogVerbose.Checked = xmlreader.GetValueAsBool("audioscrobbler", "usedebuglog", false);
+        trackBarRandomness.Value = xmlreader.GetValueAsInt("audioscrobbler", "randomness", 77);
+        checkBoxScrobbleDefault.Checked = xmlreader.GetValueAsBool("audioscrobbler", "scrobbledefault", false);
         textBoxASUsername.Text = xmlreader.GetValueAsString("audioscrobbler", "user", "");
         if (textBoxASUsername.Text == "")
         {
-          tabControlASSettings.TabPages.RemoveAt(7);
-          tabControlASSettings.TabPages.RemoveAt(6);
-          tabControlASSettings.TabPages.RemoveAt(5);
-          tabControlASSettings.TabPages.RemoveAt(4);
-          tabControlASSettings.TabPages.RemoveAt(3);
-          tabControlASSettings.TabPages.RemoveAt(2);
-          tabControlASSettings.TabPages.RemoveAt(1);          
+          tabControlASSettings.Enabled = false;
+          //tabControlASSettings.TabPages.RemoveAt(6);
+          //tabControlASSettings.TabPages.RemoveAt(5);
+          //tabControlASSettings.TabPages.RemoveAt(4);
+          //tabControlASSettings.TabPages.RemoveAt(3);
+          //tabControlASSettings.TabPages.RemoveAt(2);
+          //tabControlASSettings.TabPages.RemoveAt(1);          
         }
           
         EncryptDecrypt Crypter = new EncryptDecrypt();
@@ -98,6 +100,8 @@ namespace MediaPortal.AudioScrobbler
         xmlwriter.SetValueAsBool("audioscrobbler", "disabletimerthread", checkBoxdisableTimerThread.Checked);
         xmlwriter.SetValueAsBool("audioscrobbler", "dismisscacheonerror", checkBoxDismissOnError.Checked);         
         xmlwriter.SetValueAsBool("audioscrobbler", "usedebuglog", checkBoxLogVerbose.Checked);
+        xmlwriter.SetValue("audioscrobbler", "randomness", trackBarRandomness.Value);
+        xmlwriter.SetValueAsBool("audioscrobbler", "scrobbledefault", checkBoxScrobbleDefault.Checked);         
 
         xmlwriter.SetValue("audioscrobbler", "user", textBoxASUsername.Text);
         try
@@ -143,19 +147,20 @@ namespace MediaPortal.AudioScrobbler
     {
       if (textBoxASUsername.Text != "")
       {
-        //tabControlASSettings.Enabled = true;
-        //tabControlASSettings.TabPages[1].Show();
-        //tabControlASSettings.TabPages[2].Show();
-        //tabControlASSettings.TabPages[3].Show();
-        //tabControlASSettings.TabPages[4].Show();
+        tabControlASSettings.Enabled = true;
       }
-    }   
+    }
 
     private void trackBarArtistMatch_ValueChanged(object sender, EventArgs e)
     {
       labelTrackBarValue.Text = Convert.ToString(trackBarArtistMatch.Value);
     }
     #endregion
+
+    private void trackBarRandomness_ValueChanged(object sender, EventArgs e)
+    {
+      labelPercRand.Text = Convert.ToString(trackBarRandomness.Value);
+    }
 
     #region Button events
 
@@ -355,5 +360,6 @@ namespace MediaPortal.AudioScrobbler
     }
 
     #endregion
+
   }
 }
