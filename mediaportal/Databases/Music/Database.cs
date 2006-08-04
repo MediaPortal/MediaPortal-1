@@ -1360,6 +1360,14 @@ namespace MediaPortal.Music.Database
           case 3:
             strSQL = String.Format("select * from artist where strArtist like '{0}' ", strArtist2);
             break;
+          case 4:            
+            strArtist2.Replace('ä', '%');
+            strArtist2.Replace('ö', '%');
+            strArtist2.Replace('ü', '%');
+            strArtist2.Replace('/', '%');
+            strArtist2.Replace('-', '%');
+            strSQL = String.Format("select * from artist where strArtist like '%{0}%' ", strArtist2);
+            break;
           default:
             return false;
         }

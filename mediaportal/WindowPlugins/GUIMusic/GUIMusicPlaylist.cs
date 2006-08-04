@@ -516,12 +516,12 @@ namespace MediaPortal.GUI.Music
             if (songFound)
             {
               ascrobbler.ArtistMatchPercent = 75;
-              scrobbledArtists = ascrobbler.getSimilarArtists(current10SekSong.Artist);
+              scrobbledArtists = ascrobbler.getSimilarArtists(current10SekSong.Artist, false);
 
               if (scrobbledArtists.Count < _maxScrobbledArtistsForSongs)
               {
                 ascrobbler.ArtistMatchPercent = 50;
-                scrobbledArtists = ascrobbler.getSimilarArtists(current10SekSong.Artist);
+                scrobbledArtists = ascrobbler.getSimilarArtists(current10SekSong.Artist, false);
               }
               if (scrobbledArtists.Count < _maxScrobbledArtistsForSongs)
               {
@@ -537,6 +537,7 @@ namespace MediaPortal.GUI.Music
                   ScrobbleSimilarArtists(scrobbledArtists[i].Artist);
                 }
               }
+              LoadDirectory(String.Empty);
             }
           }
           break;
@@ -1133,10 +1134,7 @@ namespace MediaPortal.GUI.Music
         j++;
         if (j >= songsCount)
           return;
-      }
-
-      // TODO: decide of this should be placed in calling function
-      LoadDirectory(String.Empty);
+      }    
     }
     
 

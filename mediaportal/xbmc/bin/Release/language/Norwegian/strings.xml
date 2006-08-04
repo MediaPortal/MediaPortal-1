@@ -1795,7 +1795,7 @@
    </string>
    <string>
       <id>536</id>
-      <value>ø</value>
+      <value>Ø</value>
    </string>
    <string>
       <id>537</id>
@@ -1807,11 +1807,11 @@
    </string>
    <string>
       <id>539</id>
-      <value>Nø</value>
+      <value>NØ</value>
    </string>
    <string>
       <id>540</id>
-      <value>Sø</value>
+      <value>SØ</value>
    </string>
    <string>
       <id>541</id>
@@ -1827,19 +1827,19 @@
    </string>
    <string>
       <id>544</id>
-      <value>NNø</value>
+      <value>NNØ</value>
    </string>
    <string>
       <id>545</id>
-      <value>øNø</value>
+      <value>ØNØ</value>
    </string>
    <string>
       <id>546</id>
-      <value>øSø</value>
+      <value>ØSØ</value>
    </string>
    <string>
       <id>547</id>
-      <value>SSø</value>
+      <value>SSØ</value>
    </string>
    <string>
       <id>548</id>
@@ -1884,6 +1884,14 @@
    <string>
       <id>558</id>
       <value>Ingen vind</value>
+   </string>
+   <string>
+      <id>559</id>
+      <value>i nærheten</value>
+   </string> 
+   <string>
+      <id>560</id>
+      <value>Klarner</value>
    </string>
    <string>
       <id>590</id>
@@ -3841,6 +3849,30 @@
       <id>2054</id>
       <value>Ingen innslag!</value>
    </string>
+	<string>
+		<id>2074</id>
+		<value>Vennligst, velg den filen du vil spleise inn:</value>
+	</string>
+	<string>
+		<id>2075</id>
+		<value>Definere nye kutt punkter</value>
+	</string>
+	<string>
+		<id>2076</id>
+		<value>Redigere</value>
+	</string>
+	<string>
+		<id>2077</id>
+		<value>Kutt</value>
+	</string>
+	<string>
+		<id>2078</id>
+		<value>Lim inn</value>
+	</string>
+	<string>
+		<id>2079</id>
+		<value>Start Spleising</value>
+	</string>
    <string>
       <id>2080</id>
       <value>Ugyldig filtype</value>
@@ -4197,6 +4229,96 @@
       <id>2225</id>
       <value>Opprettet katalog</value>
    </string>
+	<!-- Wikipedia Strings -->
+	<string>
+		<id>2500</id>
+		<value>Ingen søkerstreng skrevet inn!</value>
+	</string>
+	<string>
+		<id>2501</id>
+		<value>Vennligst skriv inn en gyldig søkerstreng!</value>
+	</string>
+	<string>
+		<id>2502</id>
+		<value>Velg din lokale Wikipedia:</value>
+	</string>
+	<string>
+		<id>2503</id>
+		<value>Valgte Wikipedia:</value>
+	</string>
+	<string>
+		<id>2504</id>
+		<value>Beklager, ingen artikler funnet for din søkerstreng...</value>
+	</string>
+	<string>
+		<id>2505</id>
+		<value>Linker til andre artikler:</value>
+	</string>
+	<string>
+		<id>2506</id>
+		<value>Ingen linker fra denne artikkelen.</value>
+	</string>
+	<string>
+		<id>2507</id>
+		<value>Bilder fra denne artikkelen:</value>
+	</string>
+	<string>
+		<id>2508</id>
+		<value>Ingen bilde refferanse fra denne artikkel.</value>
+	</string>
+	<string>
+		<id>2509</id>
+		<value>Denne siden er bare en videreføring.</value>
+	</string>
+	<string>
+		<id>2510</id>
+		<value>Vennligst velg videreføring fra link listen.</value>
+	</string>
+<string>
+		<id>2511</id>
+		<value>Linker</value>
+	</string>
+	<string>
+		<id>2512</id>
+		<value>Kan ikke vise bilde.</value>
+	</string>
+	<string>
+		<id>2513</id>
+		<value>Vennlighst ta en titt i log filen.</value>
+	</string>
+	<string>
+		<id>2514</id>
+		<value>Tilbake til tekst</value>
+	</string>
+	<string>
+		<id>2515</id>
+		<value>Bilder</value>
+	</string>
+	<string>
+		<id>2600</id>
+		<value>Engelsk</value>
+	</string>
+	<string>
+		<id>2601</id>
+		<value>Tysk</value>
+	</string>
+	<string>
+		<id>2602</id>
+		<value>Fransk</value>
+	</string>
+	<string>
+		<id>2603</id>
+		<value>Nederlandsk</value>
+	</string>
+	<string>
+		<id>2604</id>
+		<value>Norsk</value>
+	</string>
+	<string>
+		<id>2605</id>
+		<value>Svensk</value>
+	</string>
+	<!-- End of Wikipedia Strings -->
    <string>
       <id>2997</id>
       <value>t</value>

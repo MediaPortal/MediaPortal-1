@@ -312,7 +312,7 @@ namespace MediaPortal.Music.Database
       if (m_strArtist != "")
         s.Append(m_strArtist);
       if (m_iTimedPlayed > 0)
-        s.Append(" (Played: " + Convert.ToString(m_iTimedPlayed) + " times)");
+        s.Append(" (played: " + Convert.ToString(m_iTimedPlayed) + " times)");
 
       return s.ToString();
     }

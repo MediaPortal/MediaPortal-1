@@ -72,15 +72,6 @@ namespace MediaPortal.AudioScrobbler
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.textBoxASUsername = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.maskedTextBoxASPassword = new System.Windows.Forms.MaskedTextBox();
-      this.tabPageRecent = new System.Windows.Forms.TabPage();
-      this.buttonRefreshRecent = new MediaPortal.UserInterface.Controls.MPButton();
-      this.listViewRecentTracks = new MediaPortal.UserInterface.Controls.MPListView();
-      this.tabPageTopArtists = new System.Windows.Forms.TabPage();
-      this.buttonArtistsRefresh = new MediaPortal.UserInterface.Controls.MPButton();
-      this.listViewTopArtists = new MediaPortal.UserInterface.Controls.MPListView();
-      this.tabPageTopTracks = new System.Windows.Forms.TabPage();
-      this.buttonTopTracks = new MediaPortal.UserInterface.Controls.MPButton();
-      this.listViewTopTracks = new MediaPortal.UserInterface.Controls.MPListView();
       this.tabPageSuggestions = new System.Windows.Forms.TabPage();
       this.labelTrackBarValue = new MediaPortal.UserInterface.Controls.MPLabel();
       this.labelArtistMatch = new System.Windows.Forms.Label();
@@ -88,35 +79,46 @@ namespace MediaPortal.AudioScrobbler
       this.progressBarSuggestions = new System.Windows.Forms.ProgressBar();
       this.buttonRefreshSuggestions = new MediaPortal.UserInterface.Controls.MPButton();
       this.listViewSuggestions = new MediaPortal.UserInterface.Controls.MPListView();
+      this.tabPageRecent = new System.Windows.Forms.TabPage();
+      this.buttonRefreshRecent = new MediaPortal.UserInterface.Controls.MPButton();
+      this.listViewRecentTracks = new MediaPortal.UserInterface.Controls.MPListView();
+      this.tabPageNeighbours = new System.Windows.Forms.TabPage();
+      this.buttonRefreshNeighbours = new MediaPortal.UserInterface.Controls.MPButton();
+      this.listViewNeighbours = new MediaPortal.UserInterface.Controls.MPListView();
+      this.tabPageTopArtists = new System.Windows.Forms.TabPage();
+      this.buttonArtistsRefresh = new MediaPortal.UserInterface.Controls.MPButton();
+      this.listViewTopArtists = new MediaPortal.UserInterface.Controls.MPListView();
+      this.tabPageWeeklyArtists = new System.Windows.Forms.TabPage();
+      this.buttonRefreshWeeklyArtists = new MediaPortal.UserInterface.Controls.MPButton();
+      this.listViewWeeklyArtists = new MediaPortal.UserInterface.Controls.MPListView();
+      this.tabPageTopTracks = new System.Windows.Forms.TabPage();
+      this.buttonTopTracks = new MediaPortal.UserInterface.Controls.MPButton();
+      this.listViewTopTracks = new MediaPortal.UserInterface.Controls.MPListView();
+      this.tabPageWeeklyTracks = new System.Windows.Forms.TabPage();
+      this.buttonRefreshWeeklyTracks = new MediaPortal.UserInterface.Controls.MPButton();
+      this.listViewWeeklyTracks = new MediaPortal.UserInterface.Controls.MPListView();
       this.linkLabelMPGroup = new System.Windows.Forms.LinkLabel();
       this.linkLabelNewUser = new System.Windows.Forms.LinkLabel();
       this.labelPassword = new MediaPortal.UserInterface.Controls.MPLabel();
       this.labelUser = new MediaPortal.UserInterface.Controls.MPLabel();
       this.textBoxASUser = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.maskedTextBoxASPass = new System.Windows.Forms.MaskedTextBox();
-      this.tabPageWeeklyArtists = new System.Windows.Forms.TabPage();
-      this.tabPageWeeklyTracks = new System.Windows.Forms.TabPage();
-      this.tabPageNeighbours = new System.Windows.Forms.TabPage();
-      this.buttonRefreshNeighbours = new MediaPortal.UserInterface.Controls.MPButton();
-      this.listViewNeighbours = new MediaPortal.UserInterface.Controls.MPListView();
-      this.buttonRefreshWeeklyArtists = new MediaPortal.UserInterface.Controls.MPButton();
-      this.listViewWeeklyArtists = new MediaPortal.UserInterface.Controls.MPListView();
-      this.buttonRefreshWeeklyTracks = new MediaPortal.UserInterface.Controls.MPButton();
-      this.listViewWeeklyTracks = new MediaPortal.UserInterface.Controls.MPListView();
+      this.buttonRefreshNeigboursArtists = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonNeighboursFilter = new MediaPortal.UserInterface.Controls.MPButton();
       this.panelPicBox.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxASLogo)).BeginInit();
       this.tabControlASSettings.SuspendLayout();
       this.tabPageAccount.SuspendLayout();
       this.groupBoxOptions.SuspendLayout();
       this.groupBoxAccount.SuspendLayout();
-      this.tabPageRecent.SuspendLayout();
-      this.tabPageTopArtists.SuspendLayout();
-      this.tabPageTopTracks.SuspendLayout();
       this.tabPageSuggestions.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.trackBarArtistMatch)).BeginInit();
-      this.tabPageWeeklyArtists.SuspendLayout();
-      this.tabPageWeeklyTracks.SuspendLayout();
+      this.tabPageRecent.SuspendLayout();
       this.tabPageNeighbours.SuspendLayout();
+      this.tabPageTopArtists.SuspendLayout();
+      this.tabPageWeeklyArtists.SuspendLayout();
+      this.tabPageTopTracks.SuspendLayout();
+      this.tabPageWeeklyTracks.SuspendLayout();
       this.SuspendLayout();
       // 
       // buttonOk
@@ -324,113 +326,6 @@ namespace MediaPortal.AudioScrobbler
       this.maskedTextBoxASPassword.Size = new System.Drawing.Size(243, 20);
       this.maskedTextBoxASPassword.TabIndex = 1;
       // 
-      // tabPageRecent
-      // 
-      this.tabPageRecent.Controls.Add(this.buttonRefreshRecent);
-      this.tabPageRecent.Controls.Add(this.listViewRecentTracks);
-      this.tabPageRecent.Location = new System.Drawing.Point(4, 22);
-      this.tabPageRecent.Name = "tabPageRecent";
-      this.tabPageRecent.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPageRecent.Size = new System.Drawing.Size(287, 286);
-      this.tabPageRecent.TabIndex = 1;
-      this.tabPageRecent.Text = "Recent";
-      this.tabPageRecent.UseVisualStyleBackColor = true;
-      // 
-      // buttonRefreshRecent
-      // 
-      this.buttonRefreshRecent.Location = new System.Drawing.Point(202, 257);
-      this.buttonRefreshRecent.Name = "buttonRefreshRecent";
-      this.buttonRefreshRecent.Size = new System.Drawing.Size(75, 23);
-      this.buttonRefreshRecent.TabIndex = 1;
-      this.buttonRefreshRecent.Text = "Refresh";
-      this.buttonRefreshRecent.UseVisualStyleBackColor = true;
-      this.buttonRefreshRecent.Click += new System.EventHandler(this.buttonRefreshRecent_Click);
-      // 
-      // listViewRecentTracks
-      // 
-      this.listViewRecentTracks.AllowColumnReorder = true;
-      this.listViewRecentTracks.AllowDrop = true;
-      this.listViewRecentTracks.AllowRowReorder = false;
-      this.listViewRecentTracks.Location = new System.Drawing.Point(6, 12);
-      this.listViewRecentTracks.Name = "listViewRecentTracks";
-      this.listViewRecentTracks.ShowGroups = false;
-      this.listViewRecentTracks.Size = new System.Drawing.Size(275, 239);
-      this.listViewRecentTracks.TabIndex = 0;
-      this.listViewRecentTracks.UseCompatibleStateImageBehavior = false;
-      this.listViewRecentTracks.View = System.Windows.Forms.View.List;
-      // 
-      // tabPageTopArtists
-      // 
-      this.tabPageTopArtists.Controls.Add(this.buttonArtistsRefresh);
-      this.tabPageTopArtists.Controls.Add(this.listViewTopArtists);
-      this.tabPageTopArtists.Location = new System.Drawing.Point(4, 22);
-      this.tabPageTopArtists.Name = "tabPageTopArtists";
-      this.tabPageTopArtists.Size = new System.Drawing.Size(287, 286);
-      this.tabPageTopArtists.TabIndex = 2;
-      this.tabPageTopArtists.Text = "Artists";
-      this.tabPageTopArtists.UseVisualStyleBackColor = true;
-      // 
-      // buttonArtistsRefresh
-      // 
-      this.buttonArtistsRefresh.Location = new System.Drawing.Point(202, 257);
-      this.buttonArtistsRefresh.Name = "buttonArtistsRefresh";
-      this.buttonArtistsRefresh.Size = new System.Drawing.Size(75, 23);
-      this.buttonArtistsRefresh.TabIndex = 3;
-      this.buttonArtistsRefresh.Text = "Refresh";
-      this.buttonArtistsRefresh.UseVisualStyleBackColor = true;
-      this.buttonArtistsRefresh.Click += new System.EventHandler(this.buttonArtistsRefresh_Click);
-      // 
-      // listViewTopArtists
-      // 
-      this.listViewTopArtists.Activation = System.Windows.Forms.ItemActivation.OneClick;
-      this.listViewTopArtists.AllowColumnReorder = true;
-      this.listViewTopArtists.AllowDrop = true;
-      this.listViewTopArtists.AllowRowReorder = false;
-      this.listViewTopArtists.AutoArrange = false;
-      this.listViewTopArtists.Location = new System.Drawing.Point(6, 12);
-      this.listViewTopArtists.Name = "listViewTopArtists";
-      this.listViewTopArtists.ShowGroups = false;
-      this.listViewTopArtists.Size = new System.Drawing.Size(275, 239);
-      this.listViewTopArtists.TabIndex = 2;
-      this.listViewTopArtists.UseCompatibleStateImageBehavior = false;
-      this.listViewTopArtists.View = System.Windows.Forms.View.List;
-      // 
-      // tabPageTopTracks
-      // 
-      this.tabPageTopTracks.Controls.Add(this.buttonTopTracks);
-      this.tabPageTopTracks.Controls.Add(this.listViewTopTracks);
-      this.tabPageTopTracks.Location = new System.Drawing.Point(4, 22);
-      this.tabPageTopTracks.Name = "tabPageTopTracks";
-      this.tabPageTopTracks.Size = new System.Drawing.Size(287, 286);
-      this.tabPageTopTracks.TabIndex = 3;
-      this.tabPageTopTracks.Text = "Tracks";
-      this.tabPageTopTracks.UseVisualStyleBackColor = true;
-      // 
-      // buttonTopTracks
-      // 
-      this.buttonTopTracks.Location = new System.Drawing.Point(202, 257);
-      this.buttonTopTracks.Name = "buttonTopTracks";
-      this.buttonTopTracks.Size = new System.Drawing.Size(75, 23);
-      this.buttonTopTracks.TabIndex = 5;
-      this.buttonTopTracks.Text = "Refresh";
-      this.buttonTopTracks.UseVisualStyleBackColor = true;
-      this.buttonTopTracks.Click += new System.EventHandler(this.buttonTopTracks_Click);
-      // 
-      // listViewTopTracks
-      // 
-      this.listViewTopTracks.Activation = System.Windows.Forms.ItemActivation.OneClick;
-      this.listViewTopTracks.AllowColumnReorder = true;
-      this.listViewTopTracks.AllowDrop = true;
-      this.listViewTopTracks.AllowRowReorder = false;
-      this.listViewTopTracks.AutoArrange = false;
-      this.listViewTopTracks.Location = new System.Drawing.Point(6, 12);
-      this.listViewTopTracks.Name = "listViewTopTracks";
-      this.listViewTopTracks.ShowGroups = false;
-      this.listViewTopTracks.Size = new System.Drawing.Size(275, 239);
-      this.listViewTopTracks.TabIndex = 4;
-      this.listViewTopTracks.UseCompatibleStateImageBehavior = false;
-      this.listViewTopTracks.View = System.Windows.Forms.View.List;
-      // 
       // tabPageSuggestions
       // 
       this.tabPageSuggestions.Controls.Add(this.labelTrackBarValue);
@@ -518,6 +413,217 @@ namespace MediaPortal.AudioScrobbler
       this.listViewSuggestions.UseCompatibleStateImageBehavior = false;
       this.listViewSuggestions.View = System.Windows.Forms.View.List;
       // 
+      // tabPageRecent
+      // 
+      this.tabPageRecent.Controls.Add(this.buttonRefreshRecent);
+      this.tabPageRecent.Controls.Add(this.listViewRecentTracks);
+      this.tabPageRecent.Location = new System.Drawing.Point(4, 22);
+      this.tabPageRecent.Name = "tabPageRecent";
+      this.tabPageRecent.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPageRecent.Size = new System.Drawing.Size(287, 286);
+      this.tabPageRecent.TabIndex = 1;
+      this.tabPageRecent.Text = "Recent";
+      this.tabPageRecent.UseVisualStyleBackColor = true;
+      // 
+      // buttonRefreshRecent
+      // 
+      this.buttonRefreshRecent.Location = new System.Drawing.Point(202, 257);
+      this.buttonRefreshRecent.Name = "buttonRefreshRecent";
+      this.buttonRefreshRecent.Size = new System.Drawing.Size(75, 23);
+      this.buttonRefreshRecent.TabIndex = 1;
+      this.buttonRefreshRecent.Text = "Refresh";
+      this.buttonRefreshRecent.UseVisualStyleBackColor = true;
+      this.buttonRefreshRecent.Click += new System.EventHandler(this.buttonRefreshRecent_Click);
+      // 
+      // listViewRecentTracks
+      // 
+      this.listViewRecentTracks.AllowColumnReorder = true;
+      this.listViewRecentTracks.AllowDrop = true;
+      this.listViewRecentTracks.AllowRowReorder = false;
+      this.listViewRecentTracks.Location = new System.Drawing.Point(6, 12);
+      this.listViewRecentTracks.Name = "listViewRecentTracks";
+      this.listViewRecentTracks.ShowGroups = false;
+      this.listViewRecentTracks.Size = new System.Drawing.Size(275, 239);
+      this.listViewRecentTracks.TabIndex = 0;
+      this.listViewRecentTracks.UseCompatibleStateImageBehavior = false;
+      this.listViewRecentTracks.View = System.Windows.Forms.View.List;
+      // 
+      // tabPageNeighbours
+      // 
+      this.tabPageNeighbours.Controls.Add(this.buttonNeighboursFilter);
+      this.tabPageNeighbours.Controls.Add(this.buttonRefreshNeigboursArtists);
+      this.tabPageNeighbours.Controls.Add(this.buttonRefreshNeighbours);
+      this.tabPageNeighbours.Controls.Add(this.listViewNeighbours);
+      this.tabPageNeighbours.Location = new System.Drawing.Point(4, 22);
+      this.tabPageNeighbours.Name = "tabPageNeighbours";
+      this.tabPageNeighbours.Size = new System.Drawing.Size(287, 286);
+      this.tabPageNeighbours.TabIndex = 7;
+      this.tabPageNeighbours.Text = "Neighbours";
+      this.tabPageNeighbours.UseVisualStyleBackColor = true;
+      // 
+      // buttonRefreshNeighbours
+      // 
+      this.buttonRefreshNeighbours.Location = new System.Drawing.Point(202, 257);
+      this.buttonRefreshNeighbours.Name = "buttonRefreshNeighbours";
+      this.buttonRefreshNeighbours.Size = new System.Drawing.Size(75, 23);
+      this.buttonRefreshNeighbours.TabIndex = 3;
+      this.buttonRefreshNeighbours.Text = "Refresh";
+      this.buttonRefreshNeighbours.UseVisualStyleBackColor = true;
+      this.buttonRefreshNeighbours.Click += new System.EventHandler(this.buttonRefreshNeighbours_Click);
+      // 
+      // listViewNeighbours
+      // 
+      this.listViewNeighbours.AllowColumnReorder = true;
+      this.listViewNeighbours.AllowDrop = true;
+      this.listViewNeighbours.AllowRowReorder = false;
+      this.listViewNeighbours.Location = new System.Drawing.Point(6, 12);
+      this.listViewNeighbours.Name = "listViewNeighbours";
+      this.listViewNeighbours.ShowGroups = false;
+      this.listViewNeighbours.Size = new System.Drawing.Size(275, 239);
+      this.listViewNeighbours.TabIndex = 2;
+      this.listViewNeighbours.UseCompatibleStateImageBehavior = false;
+      this.listViewNeighbours.View = System.Windows.Forms.View.List;
+      // 
+      // tabPageTopArtists
+      // 
+      this.tabPageTopArtists.Controls.Add(this.buttonArtistsRefresh);
+      this.tabPageTopArtists.Controls.Add(this.listViewTopArtists);
+      this.tabPageTopArtists.Location = new System.Drawing.Point(4, 22);
+      this.tabPageTopArtists.Name = "tabPageTopArtists";
+      this.tabPageTopArtists.Size = new System.Drawing.Size(287, 286);
+      this.tabPageTopArtists.TabIndex = 2;
+      this.tabPageTopArtists.Text = "Artists";
+      this.tabPageTopArtists.UseVisualStyleBackColor = true;
+      // 
+      // buttonArtistsRefresh
+      // 
+      this.buttonArtistsRefresh.Location = new System.Drawing.Point(202, 257);
+      this.buttonArtistsRefresh.Name = "buttonArtistsRefresh";
+      this.buttonArtistsRefresh.Size = new System.Drawing.Size(75, 23);
+      this.buttonArtistsRefresh.TabIndex = 3;
+      this.buttonArtistsRefresh.Text = "Refresh";
+      this.buttonArtistsRefresh.UseVisualStyleBackColor = true;
+      this.buttonArtistsRefresh.Click += new System.EventHandler(this.buttonArtistsRefresh_Click);
+      // 
+      // listViewTopArtists
+      // 
+      this.listViewTopArtists.Activation = System.Windows.Forms.ItemActivation.OneClick;
+      this.listViewTopArtists.AllowColumnReorder = true;
+      this.listViewTopArtists.AllowDrop = true;
+      this.listViewTopArtists.AllowRowReorder = false;
+      this.listViewTopArtists.AutoArrange = false;
+      this.listViewTopArtists.Location = new System.Drawing.Point(6, 12);
+      this.listViewTopArtists.Name = "listViewTopArtists";
+      this.listViewTopArtists.ShowGroups = false;
+      this.listViewTopArtists.Size = new System.Drawing.Size(275, 239);
+      this.listViewTopArtists.TabIndex = 2;
+      this.listViewTopArtists.UseCompatibleStateImageBehavior = false;
+      this.listViewTopArtists.View = System.Windows.Forms.View.List;
+      // 
+      // tabPageWeeklyArtists
+      // 
+      this.tabPageWeeklyArtists.Controls.Add(this.buttonRefreshWeeklyArtists);
+      this.tabPageWeeklyArtists.Controls.Add(this.listViewWeeklyArtists);
+      this.tabPageWeeklyArtists.Location = new System.Drawing.Point(4, 22);
+      this.tabPageWeeklyArtists.Name = "tabPageWeeklyArtists";
+      this.tabPageWeeklyArtists.Size = new System.Drawing.Size(287, 286);
+      this.tabPageWeeklyArtists.TabIndex = 5;
+      this.tabPageWeeklyArtists.Text = "Weekly artists";
+      this.tabPageWeeklyArtists.UseVisualStyleBackColor = true;
+      // 
+      // buttonRefreshWeeklyArtists
+      // 
+      this.buttonRefreshWeeklyArtists.Location = new System.Drawing.Point(202, 257);
+      this.buttonRefreshWeeklyArtists.Name = "buttonRefreshWeeklyArtists";
+      this.buttonRefreshWeeklyArtists.Size = new System.Drawing.Size(75, 23);
+      this.buttonRefreshWeeklyArtists.TabIndex = 3;
+      this.buttonRefreshWeeklyArtists.Text = "Refresh";
+      this.buttonRefreshWeeklyArtists.UseVisualStyleBackColor = true;
+      this.buttonRefreshWeeklyArtists.Click += new System.EventHandler(this.buttonRefreshWeeklyArtists_Click);
+      // 
+      // listViewWeeklyArtists
+      // 
+      this.listViewWeeklyArtists.AllowColumnReorder = true;
+      this.listViewWeeklyArtists.AllowDrop = true;
+      this.listViewWeeklyArtists.AllowRowReorder = false;
+      this.listViewWeeklyArtists.Location = new System.Drawing.Point(6, 12);
+      this.listViewWeeklyArtists.Name = "listViewWeeklyArtists";
+      this.listViewWeeklyArtists.ShowGroups = false;
+      this.listViewWeeklyArtists.Size = new System.Drawing.Size(275, 239);
+      this.listViewWeeklyArtists.TabIndex = 2;
+      this.listViewWeeklyArtists.UseCompatibleStateImageBehavior = false;
+      this.listViewWeeklyArtists.View = System.Windows.Forms.View.List;
+      // 
+      // tabPageTopTracks
+      // 
+      this.tabPageTopTracks.Controls.Add(this.buttonTopTracks);
+      this.tabPageTopTracks.Controls.Add(this.listViewTopTracks);
+      this.tabPageTopTracks.Location = new System.Drawing.Point(4, 22);
+      this.tabPageTopTracks.Name = "tabPageTopTracks";
+      this.tabPageTopTracks.Size = new System.Drawing.Size(287, 286);
+      this.tabPageTopTracks.TabIndex = 3;
+      this.tabPageTopTracks.Text = "Tracks";
+      this.tabPageTopTracks.UseVisualStyleBackColor = true;
+      // 
+      // buttonTopTracks
+      // 
+      this.buttonTopTracks.Location = new System.Drawing.Point(202, 257);
+      this.buttonTopTracks.Name = "buttonTopTracks";
+      this.buttonTopTracks.Size = new System.Drawing.Size(75, 23);
+      this.buttonTopTracks.TabIndex = 5;
+      this.buttonTopTracks.Text = "Refresh";
+      this.buttonTopTracks.UseVisualStyleBackColor = true;
+      this.buttonTopTracks.Click += new System.EventHandler(this.buttonTopTracks_Click);
+      // 
+      // listViewTopTracks
+      // 
+      this.listViewTopTracks.Activation = System.Windows.Forms.ItemActivation.OneClick;
+      this.listViewTopTracks.AllowColumnReorder = true;
+      this.listViewTopTracks.AllowDrop = true;
+      this.listViewTopTracks.AllowRowReorder = false;
+      this.listViewTopTracks.AutoArrange = false;
+      this.listViewTopTracks.Location = new System.Drawing.Point(6, 12);
+      this.listViewTopTracks.Name = "listViewTopTracks";
+      this.listViewTopTracks.ShowGroups = false;
+      this.listViewTopTracks.Size = new System.Drawing.Size(275, 239);
+      this.listViewTopTracks.TabIndex = 4;
+      this.listViewTopTracks.UseCompatibleStateImageBehavior = false;
+      this.listViewTopTracks.View = System.Windows.Forms.View.List;
+      // 
+      // tabPageWeeklyTracks
+      // 
+      this.tabPageWeeklyTracks.Controls.Add(this.buttonRefreshWeeklyTracks);
+      this.tabPageWeeklyTracks.Controls.Add(this.listViewWeeklyTracks);
+      this.tabPageWeeklyTracks.Location = new System.Drawing.Point(4, 22);
+      this.tabPageWeeklyTracks.Name = "tabPageWeeklyTracks";
+      this.tabPageWeeklyTracks.Size = new System.Drawing.Size(287, 286);
+      this.tabPageWeeklyTracks.TabIndex = 6;
+      this.tabPageWeeklyTracks.Text = "Weekly tracks";
+      this.tabPageWeeklyTracks.UseVisualStyleBackColor = true;
+      // 
+      // buttonRefreshWeeklyTracks
+      // 
+      this.buttonRefreshWeeklyTracks.Location = new System.Drawing.Point(202, 257);
+      this.buttonRefreshWeeklyTracks.Name = "buttonRefreshWeeklyTracks";
+      this.buttonRefreshWeeklyTracks.Size = new System.Drawing.Size(75, 23);
+      this.buttonRefreshWeeklyTracks.TabIndex = 3;
+      this.buttonRefreshWeeklyTracks.Text = "Refresh";
+      this.buttonRefreshWeeklyTracks.UseVisualStyleBackColor = true;
+      this.buttonRefreshWeeklyTracks.Click += new System.EventHandler(this.buttonRefreshWeeklyTracks_Click);
+      // 
+      // listViewWeeklyTracks
+      // 
+      this.listViewWeeklyTracks.AllowColumnReorder = true;
+      this.listViewWeeklyTracks.AllowDrop = true;
+      this.listViewWeeklyTracks.AllowRowReorder = false;
+      this.listViewWeeklyTracks.Location = new System.Drawing.Point(6, 12);
+      this.listViewWeeklyTracks.Name = "listViewWeeklyTracks";
+      this.listViewWeeklyTracks.ShowGroups = false;
+      this.listViewWeeklyTracks.Size = new System.Drawing.Size(275, 239);
+      this.listViewWeeklyTracks.TabIndex = 2;
+      this.listViewWeeklyTracks.UseCompatibleStateImageBehavior = false;
+      this.listViewWeeklyTracks.View = System.Windows.Forms.View.List;
+      // 
       // linkLabelMPGroup
       // 
       this.linkLabelMPGroup.AutoSize = true;
@@ -578,107 +684,27 @@ namespace MediaPortal.AudioScrobbler
       this.maskedTextBoxASPass.Size = new System.Drawing.Size(236, 20);
       this.maskedTextBoxASPass.TabIndex = 0;
       // 
-      // tabPageWeeklyArtists
+      // buttonRefreshNeigboursArtists
       // 
-      this.tabPageWeeklyArtists.Controls.Add(this.buttonRefreshWeeklyArtists);
-      this.tabPageWeeklyArtists.Controls.Add(this.listViewWeeklyArtists);
-      this.tabPageWeeklyArtists.Location = new System.Drawing.Point(4, 22);
-      this.tabPageWeeklyArtists.Name = "tabPageWeeklyArtists";
-      this.tabPageWeeklyArtists.Size = new System.Drawing.Size(287, 286);
-      this.tabPageWeeklyArtists.TabIndex = 5;
-      this.tabPageWeeklyArtists.Text = "Weekly artists";
-      this.tabPageWeeklyArtists.UseVisualStyleBackColor = true;
+      this.buttonRefreshNeigboursArtists.Enabled = false;
+      this.buttonRefreshNeigboursArtists.Location = new System.Drawing.Point(6, 257);
+      this.buttonRefreshNeigboursArtists.Name = "buttonRefreshNeigboursArtists";
+      this.buttonRefreshNeigboursArtists.Size = new System.Drawing.Size(90, 23);
+      this.buttonRefreshNeigboursArtists.TabIndex = 4;
+      this.buttonRefreshNeigboursArtists.Text = "Get their artists";
+      this.buttonRefreshNeigboursArtists.UseVisualStyleBackColor = true;
+      this.buttonRefreshNeigboursArtists.Click += new System.EventHandler(this.buttonRefreshNeigboursArtists_Click);
       // 
-      // tabPageWeeklyTracks
+      // buttonNeighboursFilter
       // 
-      this.tabPageWeeklyTracks.Controls.Add(this.buttonRefreshWeeklyTracks);
-      this.tabPageWeeklyTracks.Controls.Add(this.listViewWeeklyTracks);
-      this.tabPageWeeklyTracks.Location = new System.Drawing.Point(4, 22);
-      this.tabPageWeeklyTracks.Name = "tabPageWeeklyTracks";
-      this.tabPageWeeklyTracks.Size = new System.Drawing.Size(287, 286);
-      this.tabPageWeeklyTracks.TabIndex = 6;
-      this.tabPageWeeklyTracks.Text = "Weekly tracks";
-      this.tabPageWeeklyTracks.UseVisualStyleBackColor = true;
-      // 
-      // tabPageNeighbours
-      // 
-      this.tabPageNeighbours.Controls.Add(this.buttonRefreshNeighbours);
-      this.tabPageNeighbours.Controls.Add(this.listViewNeighbours);
-      this.tabPageNeighbours.Location = new System.Drawing.Point(4, 22);
-      this.tabPageNeighbours.Name = "tabPageNeighbours";
-      this.tabPageNeighbours.Size = new System.Drawing.Size(287, 286);
-      this.tabPageNeighbours.TabIndex = 7;
-      this.tabPageNeighbours.Text = "Neighbours";
-      this.tabPageNeighbours.UseVisualStyleBackColor = true;
-      // 
-      // buttonRefreshNeighbours
-      // 
-      this.buttonRefreshNeighbours.Location = new System.Drawing.Point(202, 257);
-      this.buttonRefreshNeighbours.Name = "buttonRefreshNeighbours";
-      this.buttonRefreshNeighbours.Size = new System.Drawing.Size(75, 23);
-      this.buttonRefreshNeighbours.TabIndex = 3;
-      this.buttonRefreshNeighbours.Text = "Refresh";
-      this.buttonRefreshNeighbours.UseVisualStyleBackColor = true;
-      this.buttonRefreshNeighbours.Click += new System.EventHandler(this.buttonRefreshNeighbours_Click);
-      // 
-      // listViewNeighbours
-      // 
-      this.listViewNeighbours.AllowColumnReorder = true;
-      this.listViewNeighbours.AllowDrop = true;
-      this.listViewNeighbours.AllowRowReorder = false;
-      this.listViewNeighbours.Location = new System.Drawing.Point(6, 12);
-      this.listViewNeighbours.Name = "listViewNeighbours";
-      this.listViewNeighbours.ShowGroups = false;
-      this.listViewNeighbours.Size = new System.Drawing.Size(275, 239);
-      this.listViewNeighbours.TabIndex = 2;
-      this.listViewNeighbours.UseCompatibleStateImageBehavior = false;
-      this.listViewNeighbours.View = System.Windows.Forms.View.List;
-      // 
-      // buttonRefreshWeeklyArtists
-      // 
-      this.buttonRefreshWeeklyArtists.Location = new System.Drawing.Point(202, 257);
-      this.buttonRefreshWeeklyArtists.Name = "buttonRefreshWeeklyArtists";
-      this.buttonRefreshWeeklyArtists.Size = new System.Drawing.Size(75, 23);
-      this.buttonRefreshWeeklyArtists.TabIndex = 3;
-      this.buttonRefreshWeeklyArtists.Text = "Refresh";
-      this.buttonRefreshWeeklyArtists.UseVisualStyleBackColor = true;
-      this.buttonRefreshWeeklyArtists.Click += new System.EventHandler(this.buttonRefreshWeeklyArtists_Click);
-      // 
-      // listViewWeeklyArtists
-      // 
-      this.listViewWeeklyArtists.AllowColumnReorder = true;
-      this.listViewWeeklyArtists.AllowDrop = true;
-      this.listViewWeeklyArtists.AllowRowReorder = false;
-      this.listViewWeeklyArtists.Location = new System.Drawing.Point(6, 12);
-      this.listViewWeeklyArtists.Name = "listViewWeeklyArtists";
-      this.listViewWeeklyArtists.ShowGroups = false;
-      this.listViewWeeklyArtists.Size = new System.Drawing.Size(275, 239);
-      this.listViewWeeklyArtists.TabIndex = 2;
-      this.listViewWeeklyArtists.UseCompatibleStateImageBehavior = false;
-      this.listViewWeeklyArtists.View = System.Windows.Forms.View.List;
-      // 
-      // buttonRefreshWeeklyTracks
-      // 
-      this.buttonRefreshWeeklyTracks.Location = new System.Drawing.Point(202, 257);
-      this.buttonRefreshWeeklyTracks.Name = "buttonRefreshWeeklyTracks";
-      this.buttonRefreshWeeklyTracks.Size = new System.Drawing.Size(75, 23);
-      this.buttonRefreshWeeklyTracks.TabIndex = 3;
-      this.buttonRefreshWeeklyTracks.Text = "Refresh";
-      this.buttonRefreshWeeklyTracks.UseVisualStyleBackColor = true;
-      this.buttonRefreshWeeklyTracks.Click += new System.EventHandler(this.buttonRefreshWeeklyTracks_Click);
-      // 
-      // listViewWeeklyTracks
-      // 
-      this.listViewWeeklyTracks.AllowColumnReorder = true;
-      this.listViewWeeklyTracks.AllowDrop = true;
-      this.listViewWeeklyTracks.AllowRowReorder = false;
-      this.listViewWeeklyTracks.Location = new System.Drawing.Point(6, 12);
-      this.listViewWeeklyTracks.Name = "listViewWeeklyTracks";
-      this.listViewWeeklyTracks.ShowGroups = false;
-      this.listViewWeeklyTracks.Size = new System.Drawing.Size(275, 239);
-      this.listViewWeeklyTracks.TabIndex = 2;
-      this.listViewWeeklyTracks.UseCompatibleStateImageBehavior = false;
-      this.listViewWeeklyTracks.View = System.Windows.Forms.View.List;
+      this.buttonNeighboursFilter.Enabled = false;
+      this.buttonNeighboursFilter.Location = new System.Drawing.Point(102, 257);
+      this.buttonNeighboursFilter.Name = "buttonNeighboursFilter";
+      this.buttonNeighboursFilter.Size = new System.Drawing.Size(75, 23);
+      this.buttonNeighboursFilter.TabIndex = 5;
+      this.buttonNeighboursFilter.Text = "Suggestions";
+      this.buttonNeighboursFilter.UseVisualStyleBackColor = true;
+      this.buttonNeighboursFilter.Click += new System.EventHandler(this.buttonNeighboursFilter_Click);
       // 
       // AudioscrobblerSettings
       // 
@@ -701,15 +727,15 @@ namespace MediaPortal.AudioScrobbler
       this.groupBoxOptions.PerformLayout();
       this.groupBoxAccount.ResumeLayout(false);
       this.groupBoxAccount.PerformLayout();
-      this.tabPageRecent.ResumeLayout(false);
-      this.tabPageTopArtists.ResumeLayout(false);
-      this.tabPageTopTracks.ResumeLayout(false);
       this.tabPageSuggestions.ResumeLayout(false);
       this.tabPageSuggestions.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.trackBarArtistMatch)).EndInit();
-      this.tabPageWeeklyArtists.ResumeLayout(false);
-      this.tabPageWeeklyTracks.ResumeLayout(false);
+      this.tabPageRecent.ResumeLayout(false);
       this.tabPageNeighbours.ResumeLayout(false);
+      this.tabPageTopArtists.ResumeLayout(false);
+      this.tabPageWeeklyArtists.ResumeLayout(false);
+      this.tabPageTopTracks.ResumeLayout(false);
+      this.tabPageWeeklyTracks.ResumeLayout(false);
       this.ResumeLayout(false);
 
     }
@@ -765,5 +791,7 @@ namespace MediaPortal.AudioScrobbler
     private MediaPortal.UserInterface.Controls.MPListView listViewWeeklyArtists;
     private MediaPortal.UserInterface.Controls.MPButton buttonRefreshWeeklyTracks;
     private MediaPortal.UserInterface.Controls.MPListView listViewWeeklyTracks;
+    private MediaPortal.UserInterface.Controls.MPButton buttonRefreshNeigboursArtists;
+    private MediaPortal.UserInterface.Controls.MPButton buttonNeighboursFilter;
   }
 }

@@ -24,6 +24,7 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -267,7 +268,7 @@ namespace MediaPortal.AudioScrobbler
       {
         for (int i = 0; i <= 7; i++)
         {
-          similarList.AddRange(scrobbler.getSimilarArtists(songList[i].ToURLArtistString()));
+          similarList.AddRange(scrobbler.getSimilarArtists(songList[i].ToURLArtistString(), false));
           progressBarSuggestions.PerformStep();
         }
 
@@ -297,11 +298,62 @@ namespace MediaPortal.AudioScrobbler
       listViewNeighbours.Clear();
       songList = new List<Song>();
       songList = scrobbler.getAudioScrobblerFeed(lastFMFeed.neighbours, "");
-      for (int i = 0; i < songList.Count; i++)
-        listViewNeighbours.Items.Add(songList[i].ToLastFMMatchString(false));
+      
+      for (int i = 0; i < songList.Count; i++)        
+        listViewNeighbours.Items.Add(songList[i].ToLastFMString());
       buttonRefreshNeighbours.Enabled = true;
-    }
-    #endregion
 
+      if (listViewNeighbours.Items.Count > 0)
+        buttonRefreshNeigboursArtists.Enabled = true;
+      else
+        buttonRefreshNeigboursArtists.Enabled = false;
+    }
+
+    private void buttonRefreshNeigboursArtists_Click(object sender, EventArgs e)
+    {
+      buttonRefreshNeigboursArtists.Enabled = false;
+      listViewNeighbours.Clear();
+      songList = new List<Song>();
+      songList = scrobbler.getNeighboursArtists(false);
+
+      for (int i = 0; i < songList.Count; i++)
+        listViewNeighbours.Items.Add(songList[i].ToLastFMString());
+      buttonRefreshNeigboursArtists.Enabled = true;
+      if (listViewNeighbours.Items.Count > 0)
+        buttonNeighboursFilter.Enabled = true;
+      else
+        buttonNeighboursFilter.Enabled = false;
+    }
+
+    private void buttonNeighboursFilter_Click(object sender, EventArgs e)
+    {
+//      buttonNeighboursFilter.Enabled = false;
+      listViewNeighbours.Clear();
+      tabControlASSettings.Enabled = false;
+      ArrayList artistsInDB = new ArrayList();
+      songList = new List<Song>();
+      songList = scrobbler.getNeighboursArtists(false);
+
+      for (int i = 0; i < songList.Count; i++)
+      {
+        MusicDatabase mdb = new MusicDatabase();
+        if (!mdb.GetArtists(4, songList[i].Artist, ref artistsInDB))
+        {
+          bool foundDoubleEntry = false;
+          for (int j = 0; j < listViewNeighbours.Items.Count; j++)
+          {
+            if (listViewNeighbours.Items[j].Text == songList[i].Artist)
+              foundDoubleEntry = true;
+          }
+          if (!foundDoubleEntry)
+            listViewNeighbours.Items.Add(songList[i].Artist);
+        }          
+        //else
+        //  MessageBox.Show("Artist " + songList[i].Artist + " already in DB!");
+      }
+      tabControlASSettings.Enabled = true;
+    }
+
+    #endregion
   }
 }

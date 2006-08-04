@@ -76,8 +76,8 @@ namespace MediaPortal.Music.Database
     const int HANDSHAKE_INTERVAL = 30;     //< In minutes.
     const int CONNECT_WAIT_TIME = 5;      //< Min secs between connects.
     int SUBMIT_INTERVAL = 30;    //< Seconds.
-    const string CLIENT_NAME = "tst";
-    const string CLIENT_VERSION = "1.0";
+    const string CLIENT_NAME = "mpm"; //assigned by Russ Garrett from Last.fm Ltd.
+    const string CLIENT_VERSION = "0.1";
     const string SCROBBLER_URL = "http://post.audioscrobbler.com";
     const string PROTOCOL_VERSION = "1.1";
     const string CACHEFILE_NAME = "audioscrobbler-cache.txt";
@@ -351,10 +351,21 @@ namespace MediaPortal.Music.Database
       }
     }
 
-    public List<Song> getSimilarArtists(string Artist_)
+    public List<Song> getSimilarArtists(string Artist_, bool randomizeList_)
     {
       // todo limits
       return ParseXMLDocForSimilarArtists(Artist_);
+    }
+
+    public List<Song> getNeighboursArtists(bool randomizeList_)
+    {
+      List<Song> myNeighboors = new List<Song>();
+      List<Song> myNeighboorsArtists = new List<Song>();
+      myNeighboors = getAudioScrobblerFeed(lastFMFeed.neighbours, "");
+      if (myNeighboors.Count > 4)
+        for (int i = 0; i < 4; i++)
+          myNeighboorsArtists.AddRange(getAudioScrobblerFeed(lastFMFeed.topartists, myNeighboors[i].Artist));
+      return myNeighboorsArtists;
     }
 
     /// <summary>
