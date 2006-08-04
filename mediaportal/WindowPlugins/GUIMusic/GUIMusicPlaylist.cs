@@ -516,12 +516,12 @@ namespace MediaPortal.GUI.Music
             if (songFound)
             {
               ascrobbler.ArtistMatchPercent = 75;
-              scrobbledArtists = ascrobbler.getSimilarArtists(current10SekSong.Artist, false);
+              scrobbledArtists = ascrobbler.getSimilarArtists(current10SekSong.Artist, true);
 
               if (scrobbledArtists.Count < _maxScrobbledArtistsForSongs)
               {
                 ascrobbler.ArtistMatchPercent = 50;
-                scrobbledArtists = ascrobbler.getSimilarArtists(current10SekSong.Artist, false);
+                scrobbledArtists = ascrobbler.getSimilarArtists(current10SekSong.Artist, true);
               }
               if (scrobbledArtists.Count < _maxScrobbledArtistsForSongs)
               {

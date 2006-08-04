@@ -113,7 +113,9 @@ namespace MediaPortal.Music.Database
     private string submitUrl;
 
     // Similar intelligence params
-    private int _minimumArtistMatchPercent = 90;
+    private int _minimumArtistMatchPercent = 85;
+    private int _limitRandomListCount = 5;
+    private int _randomNessPercent = 75;
 
     #endregion
 
@@ -147,7 +149,7 @@ namespace MediaPortal.Music.Database
       connected = false;
       queue = new ArrayList();
       queueLock = new Object();
-      //eventQueue           = new EventQueue();
+      //eventQueue           = new EventQueue(); random
       submitLock = new Object();
       lastHandshake = DateTime.MinValue;
       spamCheck = DateTime.MinValue;
@@ -242,7 +244,45 @@ namespace MediaPortal.Music.Database
         if (value != _minimumArtistMatchPercent)
         {
           _minimumArtistMatchPercent = value;
-          Log.Write("AudioscrobblerBase: minimum match for similar artists set to {0}", Convert.ToString(_minimumArtistMatchPercent));
+          if (_useDebugLog)
+            Log.Write("AudioscrobblerBase: minimum match for similar artists set to {0}", Convert.ToString(_minimumArtistMatchPercent));
+        }
+      }
+    }
+
+    public int LimitRandomListCount
+    {
+      get
+      {
+        return _limitRandomListCount;
+      }
+      set
+      {
+        if (value != _limitRandomListCount)
+        {
+          _limitRandomListCount = value;
+          if (_useDebugLog)
+            Log.Write("AudioscrobblerBase: limit for random result lists set to {0}", Convert.ToString(_limitRandomListCount));
+        }
+      }
+    }
+
+    public int RandomNessPercent
+    {
+      get
+      {
+        return _randomNessPercent;
+      }
+      set
+      {
+        if (value != _randomNessPercent)
+        {
+          if (value == 0)
+            _randomNessPercent = 1;
+          else
+            _randomNessPercent = value;
+          if (_useDebugLog)
+            Log.Write("AudioscrobblerBase: percentage of randomness set to {0}", Convert.ToString(_randomNessPercent));
         }
       }
     }
@@ -352,20 +392,140 @@ namespace MediaPortal.Music.Database
     }
 
     public List<Song> getSimilarArtists(string Artist_, bool randomizeList_)
-    {
-      // todo limits
-      return ParseXMLDocForSimilarArtists(Artist_);
+    {      
+      if (randomizeList_)
+      {
+        Random rand = new Random();
+        List<Song> similarArtists = new List<Song>();
+        List<Song> randomSimilarArtists = new List<Song>();
+        similarArtists = ParseXMLDocForSimilarArtists(Artist_);
+        int artistsAdded = 0;
+        int randomPosition;
+        // make sure we do not get an endless loop
+        if (similarArtists.Count > _limitRandomListCount)
+        {
+          while (artistsAdded < _limitRandomListCount)
+          {
+            bool foundDoubleEntry = false;
+            randomPosition = rand.Next(0, (similarArtists.Count - 1) * _randomNessPercent / 100);
+            // loop current list to find out if randomPos was already inserted
+            for (int j = 0; j < randomSimilarArtists.Count; j++)
+            {
+              if (randomSimilarArtists.Contains(similarArtists[randomPosition]))
+                foundDoubleEntry = true;
+            }
+            // new item therefore add it
+            if (!foundDoubleEntry)
+            {
+              randomSimilarArtists.Add(similarArtists[randomPosition]);
+              artistsAdded++;
+            }
+          }
+          // enough similar artists
+          return randomSimilarArtists;
+        } 
+        else
+          // limit not reached - return all Artists
+          return similarArtists;
+      }
+      else
+        return ParseXMLDocForSimilarArtists(Artist_);
     }
 
     public List<Song> getNeighboursArtists(bool randomizeList_)
     {
-      List<Song> myNeighboors = new List<Song>();
+      List<Song> myNeighbours = new List<Song>();
+      List<Song> myRandomNeighbours = new List<Song>();
       List<Song> myNeighboorsArtists = new List<Song>();
-      myNeighboors = getAudioScrobblerFeed(lastFMFeed.neighbours, "");
-      if (myNeighboors.Count > 4)
-        for (int i = 0; i < 4; i++)
-          myNeighboorsArtists.AddRange(getAudioScrobblerFeed(lastFMFeed.topartists, myNeighboors[i].Artist));
-      return myNeighboorsArtists;
+      List<Song> myRandomNeighboorsArtists = new List<Song>();
+      myNeighbours = getAudioScrobblerFeed(lastFMFeed.neighbours, "");
+
+      if (randomizeList_)
+      {
+        Random rand = new Random();
+        int neighboursAdded = 0;
+        int randomPosition;
+        // make sure we do not get an endless loop
+        if (myNeighbours.Count > _limitRandomListCount)
+        {
+          while (neighboursAdded < _limitRandomListCount)
+          {
+            bool foundDoubleEntry = false;
+            int minRandValue = _limitRandomListCount + 2; // speed things up avoiding too much double hits
+            int calcRandValue = (myNeighbours.Count - 1) * _randomNessPercent / 100;
+            if (calcRandValue > minRandValue)
+              randomPosition = rand.Next(0, calcRandValue);
+            else
+              randomPosition = rand.Next(0, minRandValue);
+
+            // loop current list to find out if randomPos was already inserted
+            for (int j = 0; j < myRandomNeighbours.Count; j++)
+            {
+              if (myRandomNeighbours.Contains(myNeighbours[randomPosition]))
+                foundDoubleEntry = true;
+            }
+            // new item therefore add it
+            if (!foundDoubleEntry)
+            {
+              myRandomNeighbours.Add(myNeighbours[randomPosition]);
+              neighboursAdded++;
+            }
+          }
+          // now _limitRandomListCount random neighbours are added
+          // get artists for these neighbours  
+          for (int n = 0; n < myRandomNeighbours.Count; n++)
+          {            
+            myNeighboorsArtists = getAudioScrobblerFeed(lastFMFeed.topartists, myRandomNeighbours[n].Artist);
+
+            // make sure the neighbour has enough top artists
+            if (myNeighboorsArtists.Count > _limitRandomListCount)
+            {
+              // get _limitRandomListCount artists for each random neighbour
+              int artistsAdded = 0;
+              while (artistsAdded < _limitRandomListCount)
+              {
+                bool foundDoubleEntry = false;
+                int minRandValue = _limitRandomListCount + 2; // speed things up avoiding too much double hits
+                int calcRandValue = (myNeighboorsArtists.Count - 1) * _randomNessPercent / 100;
+                if (calcRandValue > minRandValue)
+                  randomPosition = rand.Next(0, calcRandValue);
+                else
+                  randomPosition = rand.Next(0, minRandValue);
+
+                for (int j = 0; j < myRandomNeighboorsArtists.Count; j++)
+                {
+                  if (myRandomNeighboorsArtists.Contains(myNeighboorsArtists[randomPosition]))
+                    foundDoubleEntry = true;
+                }
+                // new item therefore add it
+                if (!foundDoubleEntry)
+                {
+                  myRandomNeighboorsArtists.Add(myNeighboorsArtists[randomPosition]);
+                  artistsAdded++;
+                }
+              }
+            }
+          }
+          return myRandomNeighboorsArtists;
+
+        }
+        else
+        // limit not reached - return all neighbours artists          
+        {
+          for (int i = 0; i < myNeighboorsArtists.Count; i++)
+            myNeighboorsArtists.AddRange(getAudioScrobblerFeed(lastFMFeed.topartists, myNeighbours[i].Artist));
+          return myNeighboorsArtists;
+        }
+
+      }
+      // do not randomize
+      else
+      {
+        if (myNeighbours.Count > 4)
+          for (int i = 0; i < 4; i++)
+            myNeighboorsArtists.AddRange(getAudioScrobblerFeed(lastFMFeed.topartists, myNeighbours[i].Artist));
+        return myNeighboorsArtists;
+      }
     }
 
     /// <summary>
