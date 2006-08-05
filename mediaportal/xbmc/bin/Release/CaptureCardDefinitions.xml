@@ -14469,7 +14469,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="AVerMedia BDA DVBT Tuner" capturename="AVerMedia BDA Digital Capture" devid="ven_1131&amp;dev_7133&amp;subsys_e8361461&amp;rev_d1">
+  <capturecard commercialname="AVerMedia M115S (Digital)" capturename="AVerMedia BDA Digital Capture" devid="ven_1131&amp;dev_7133&amp;subsys_e8361461&amp;rev_d1">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"/>
@@ -14485,8 +14485,31 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="WinFast DV2000" capturename="WinFast DV2000 WDM Video Capture" devid="ven_109e&amp;dev_036e&amp;subsys_6608107d&amp;rev_11">
-    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
+  <capturecard commercialname="AVerMedia M115S (Analogue)" capturename="AVerMedia BDA Analog Capture" devid="ven_1131&amp;dev_7133&amp;subsys_e8361461&amp;rev_d1">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"  name="AVerMedia BDA Analog TV Tuner" checkdevice="true"/>
+        <filter cat="tvaudio"  name="AVerMedia BDA Analog TV Audio"	checkdevice="true"/>
+        <filter cat="crossbar" name="AVerMedia BDA Analog Xbar"		checkdevice="true"/>
+        <filter cat="capture"  name="AVerMedia BDA Analog Capture"	checkdevice="true"/>
+        <filter cat="encoder"  name="AVerMedia BDA MPEG PS Encoder"	checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar"	sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"	sinkpin="0"/>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar"	sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"	sinkpin="0"/>
+        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"	sinkpin="1"/>
+        <connection sourcefilter="capture"	sourcepin="4" sinkfilter="encoder"	sinkpin="0"/>
+        <connection sourcefilter="capture"	sourcepin="5" sinkfilter="encoder"	sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="WinFast DV2000" capturename="WinFast DV2000 WDM Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_6620107d&amp;rev_05">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
       <filters>
@@ -14496,7 +14519,7 @@
         <filter cat="capture"		  name="WinFast DV2000 WDM Video Capture" checkdevice="true"/>
         <filter cat="audcapture"	name="%soundcard%"							        checkdevice="true"/>
         <filter cat="videncoder"	name="LeadTek MPEG Video Encoder"			  checkdevice="false"/>
-        <filter cat="audencoder"	name="LeadTek Audio Encoder"				    checkdevice="false"/>
+        <filter cat="audencoder"	name="Leadtek MPEG Audio Encoder"				checkdevice="false"/>
         <filter cat="mux"			    name="Leadtek MPEG Muxer"					      checkdevice="false"/>
       </filters>
       <connections>
@@ -14580,6 +14603,158 @@
       <connections>
         <connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
         <connection sourcefilter="tunerdevice"      sourcepin="0" sinkfilter="capture"		  sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="AverMedia AverTV GO" capturename="AVerMedia AVerTV WDM Video Capture (878)" devid="ven_109e&amp;dev_036e&amp;subsys_00081461&amp;rev_11">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		  name="AVerMedia, AVerTV TvTuner (878)"            checkdevice="true"/>
+        <filter cat="tvaudio"		  name="AVerMedia, AVerTV WDM Audio Capture (878)"  checkdevice="true"/>
+        <filter cat="crossbar"		name="AVerMedia, AVerTV Crossbar (878)"           checkdevice="true"/>
+        <filter cat="capture"		  name="AVerMedia, AVerTV WDM Video Capture (878)"  checkdevice="true"/>
+        <filter cat="audcapture"	name="%soundcard%"							                  checkdevice="true"/>
+        <filter cat="videncoder"	name="%videoencoder%"					                    checkdevice="false"/>
+        <filter cat="audencoder"	name="%audioencoder%"					                    checkdevice="false"/>
+        <filter cat="mux"         name="%mpegmux%"						                      checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Freecom DVB-T USB Stick" capturename="USB Digital-TV Device Capture" devid="vid_14aa&amp;pid_0226&amp;mi_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"/>
+        <filter cat="tunerdevice"     name="USB Digital-TV Receiver"          checkdevice="true"/>
+        <filter cat="capture"         name="USB Digital-TV Device Capture"    checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0"  sinkfilter="tunerdevice"  sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0"  sinkfilter="capture"      sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Freecom DVB-T USB Stick" capturename="Digital-TV Device Capture" devid="vid_14aa&amp;pid_0221&amp;mi_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"/>
+        <filter cat="tunerdevice"     name="Digital-TV Receiver"              checkdevice="true"/>
+        <filter cat="capture"         name="Digital-TV Device Capture"        checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0"  sinkfilter="tunerdevice"  sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0"  sinkfilter="capture"      sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="TVBOX USB Capture Device" capturename="TVBOX Capture" devid="vid_10fd&amp;pid_0518&amp;mi_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		  name="TVBOX TvTuner"  checkdevice="true"/>
+        <filter cat="tvaudio"		  name="TVBOX TvAudio"  checkdevice="true"/>
+        <filter cat="crossbar"		name="TVBOX Crossbar" checkdevice="true"/>
+        <filter cat="capture"		  name="TVBOX Capture"  checkdevice="true"/>
+        <filter cat="audcapture"	name="%soundcard%"		checkdevice="true"/>
+        <filter cat="videncoder"	name="%videoencoder%"	checkdevice="false"/>
+        <filter cat="audencoder"	name="%audioencoder%"	checkdevice="false"/>
+        <filter cat="mux"         name="%mpegmux%"			checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Cinergy 200/250 USB" capturename="Cinergy 200/250 Video (PAL)" devid="vid_0ccd&amp;pid_0036&amp;mi_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="true" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		  name="Cinergy 200/250 USB Tuner (PAL)"	checkdevice="true"/>
+        <filter cat="tvaudio"		  name="Cinergy 200/250 USB TVAudio"			checkdevice="true"/>
+        <filter cat="crossbar"		name="Cinergy 200/250 USB Crossbar"			checkdevice="true"/>
+        <filter cat="capture"		  name="Cinergy 200/250 Video (PAL)"	    checkdevice="true"/>
+        <filter cat="audcapture"	name="%soundcard%"							        checkdevice="true"/>
+        <filter cat="videncoder"	name="%videoencoder%"	                  checkdevice="false"/>
+        <filter cat="audencoder"	name="%audioencoder%"	                  checkdevice="false"/>
+        <filter cat="mux"         name="%mpegmux%"			                  checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Creatix CTX 946 (Digital)" capturename="713x BDA Digital Capture" devid="ven_1131&amp;dev_7134&amp;subsys_500016be&amp;rev_01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"/>
+        <filter cat="tunerdevice"     name="713x BDA DVBT Tuner"                checkdevice="true"/>
+        <filter cat="capture"         name="713x BDA Digital Capture"           checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"		  sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Creatix CTX 946 (Analogue)" capturename="713x BDA Analog Capture" devid="ven_1131&amp;dev_7134&amp;subsys_500016be&amp;rev_01">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		name="713x BDA Analog Tv Tuner" checkdevice="true"/>
+        <filter cat="tvaudio"		name="713x BDA Analog TV Audio"	checkdevice="true"/>
+        <filter cat="crossbar"	name="713x BDA Analog Xbar"		  checkdevice="true"/>
+        <filter cat="capture"		name="713x BDA Analog Capture"	checkdevice="true"/>
+        <filter cat="mux"			  name="713x BDA MPEG PS Encoder"	checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"/>
+        <connection sourcefilter="capture"		sourcepin="4" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="5" sinkfilter="mux"	      sinkpin="1"/>
       </connections>
     </tv>
   </capturecard>
