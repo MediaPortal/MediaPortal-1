@@ -115,7 +115,7 @@ namespace MediaPortal.Music.Database
     private string submitUrl;
 
     // Similar intelligence params
-    private int _minimumArtistMatchPercent = 85;
+    private int _minimumArtistMatchPercent = 25;
     private int _limitRandomListCount = 5;
     private int _randomNessPercent = 75;
 

@@ -66,6 +66,18 @@
 				<onleft>23</onleft>
 				<onright>50</onright>
 				<onup>22</onup>
+				<ondown>28</ondown>		
+			</control>
+
+			<control>
+				<description>Scrobble mode button</description>
+				<type>button</type>
+				<id>28</id>
+				<posY>297</posY>
+				<label>208</label>
+				<onleft>28</onleft>
+				<onright>50</onright>
+				<onup>23</onup>
 				<ondown>27</ondown>		
 			</control>
 
@@ -73,9 +85,9 @@
 				<description>last.fm button</description>
 				<type>togglebutton</type>
 				<id>27</id>
-				<posY>297</posY>
+				<posY>337</posY>
 				<label>Scrobble!</label>
-				<onup>23</onup>
+				<onup>28</onup>
 				<ondown>26</ondown>
 				<onleft>27</onleft>
 				<onright>50</onright>
@@ -84,7 +96,7 @@
 				<description>Party Shuffle Mode button</description>
 				<type>togglebutton</type>
 				<id>26</id>
-				<posY>337</posY>
+				<posY>377</posY>
 				<label>16001</label>
 				<onup>25</onup>
 				<ondown>99</ondown>

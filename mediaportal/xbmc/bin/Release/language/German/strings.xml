@@ -5162,8 +5162,29 @@
    <string>
       <id>30010</id>
       <value>Suchergebnisse für {0} - Seite {1} </value>
-   </string>         
-            
+   </string>
+
+   <string>
+      <id>33000</id>
+      <value>Scrobble!</value>
+   </string>
+   <string>
+      <id>33001</id>
+      <value>Scrobble: Ähnlich</value>
+   </string>
+   <string>
+      <id>33002</id>
+      <value>Scrobble: Nachbarn</value>
+   </string>
+   <string>
+      <id>33003</id>
+      <value>Scrobble: Markierte</value>
+   </string>
+   <string>
+      <id>33004</id>
+      <value>Scrobble: Verlauf</value>
+   </string>
+
    <string>
       <id>99845</id>
       <value>Suche bei TV.com</value>

@@ -42,6 +42,15 @@ namespace MediaPortal.GUI.Music
   /// </summary>
   public class GUIMusicPlayList : GUIMusicBaseWindow
   {
+    public enum ScrobbleMode
+    {
+      Similar = 0,
+      Neighbours = 1,
+      Tags = 2,
+      Recent = 3,      
+      //Random = 4,
+    }
+
     #region Base variabeles
     DirectoryHistory m_history = new DirectoryHistory();
     string m_strDirectory = String.Empty;
@@ -59,6 +68,8 @@ namespace MediaPortal.GUI.Music
     private bool _enableScrobbling = false;
     #endregion
 
+    protected ScrobbleMode currentScrobbleMode = ScrobbleMode.Similar;
+
     [SkinControlAttribute(20)]    protected GUIButtonControl btnShuffle = null;
     [SkinControlAttribute(21)]    protected GUIButtonControl btnSave = null;
     [SkinControlAttribute(22)]    protected GUIButtonControl btnClear = null;
@@ -67,7 +78,8 @@ namespace MediaPortal.GUI.Music
     //[SkinControlAttribute(25)]        protected GUIButtonControl btnPrevious = null;
     [SkinControlAttribute(26)]    protected GUIToggleButtonControl btnPartyShuffle = null;
     [SkinControlAttribute(27)]    protected GUIToggleButtonControl btnScrobble = null;
-
+    [SkinControlAttribute(28)]    protected GUIButtonControl btnScrobbleMode = null;
+    
 
     public GUIMusicPlayList()
     {
@@ -84,7 +96,7 @@ namespace MediaPortal.GUI.Music
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
-        _enableScrobbling = xmlreader.GetValueAsBool("plugins", "audioscrobbler", false);
+        _enableScrobbling = xmlreader.GetValueAsBool("plugins", "Audioscrobbler", false);
         ScrobblerOn = xmlreader.GetValueAsBool("audioscrobbler", "scrobbledefault", false);
         _maxScrobbledArtistsForSongs = xmlreader.GetValueAsInt("audioscrobbler", "similarartistscount", 3);
         _maxScrobbledSongsPerArtist = xmlreader.GetValueAsInt("audioscrobbler", "tracksperartistscount", 1);
@@ -189,6 +201,46 @@ namespace MediaPortal.GUI.Music
     protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
     {
       base.OnClicked(controlId, control, actionType);
+
+      if (control == btnScrobbleMode)
+      {
+        bool shouldContinue = false;
+        do
+        {
+          shouldContinue = false;
+          switch (currentScrobbleMode)
+          {
+            case ScrobbleMode.Similar:
+              currentScrobbleMode = ScrobbleMode.Neighbours;
+              btnScrobbleMode.Label = GUILocalizeStrings.Get(33002);
+              if (_enableScrobbling)
+                shouldContinue = false;
+              else
+                shouldContinue = true;
+              break;
+
+            case ScrobbleMode.Neighbours:
+              currentScrobbleMode = ScrobbleMode.Tags;
+              btnScrobbleMode.Label = GUILocalizeStrings.Get(33003);
+              shouldContinue = true;
+              break;
+            case ScrobbleMode.Tags:
+              currentScrobbleMode = ScrobbleMode.Recent;
+              btnScrobbleMode.Label = GUILocalizeStrings.Get(33004);
+              shouldContinue = true;
+              break;
+            case ScrobbleMode.Recent:
+              currentScrobbleMode = ScrobbleMode.Similar;
+              btnScrobbleMode.Label = GUILocalizeStrings.Get(33001);
+              shouldContinue = false;
+              break;
+          }
+        } while (shouldContinue);
+                
+        GUIControl.FocusControl(GetID, controlId);
+        return;
+      }//if (control == btnScrobbleMode)
+
       if (control == btnShuffle)
       {
         ShufflePlayList();
@@ -1076,31 +1128,37 @@ namespace MediaPortal.GUI.Music
       bool songFound = dbs.GetSongByFileName(strFile, ref current10SekSong);
       if (songFound)
       {
-        ascrobbler.ArtistMatchPercent = 75;
-        scrobbledArtists = ascrobbler.getSimilarArtists(current10SekSong.Artist, true);
+        switch (currentScrobbleMode)
+        {
+          case ScrobbleMode.Similar:
+            //ascrobbler.ArtistMatchPercent = 75;
+            scrobbledArtists = ascrobbler.getSimilarArtists(current10SekSong.Artist, true);
+            break;
 
-        if (scrobbledArtists.Count < _maxScrobbledArtistsForSongs)
-        {
-          ascrobbler.ArtistMatchPercent = 50;
-          scrobbledArtists = ascrobbler.getSimilarArtists(current10SekSong.Artist, true);
+          case ScrobbleMode.Neighbours:
+            scrobbledArtists = ascrobbler.getNeighboursArtists(true);
+            break;
         }
-        if (scrobbledArtists.Count < _maxScrobbledArtistsForSongs)
-        {
-          ascrobbler.ArtistMatchPercent = 25;
-          scrobbledArtists = ascrobbler.getSimilarArtists(current10SekSong.Artist, true);
-        }
+
         if (scrobbledArtists.Count < _maxScrobbledArtistsForSongs)
         {
           if (scrobbledArtists.Count > 0)
             for (int i = 0; i < scrobbledArtists.Count; i++)
               ScrobbleSimilarArtists(scrobbledArtists[i].Artist);
         }
-        else // finally enough artists
+        else // enough artists
         {
-          // add random factor for list here
-          for (int i = 0; i < _maxScrobbledArtistsForSongs; i++)
+          int addedSimilarSongs = 0;
+          int loops = 0;
+          // we WANT to get songs from _maxScrobbledArtistsForSongs
+          while (addedSimilarSongs < _maxScrobbledArtistsForSongs)
           {
-            ScrobbleSimilarArtists(scrobbledArtists[i].Artist);
+            if (ScrobbleSimilarArtists(scrobbledArtists[loops].Artist))
+              addedSimilarSongs++;
+            loops++;
+            // okay okay seems like there aren't enough files to add
+            if (loops > 10 * _maxScrobbledArtistsForSongs)
+              break;
           }
         }
         LoadDirectory(String.Empty);
@@ -1108,20 +1166,15 @@ namespace MediaPortal.GUI.Music
       }
     }
 
-    void ScrobbleSimilarArtists(string Artist_)
+    bool ScrobbleSimilarArtists(string Artist_)
     {
       MusicDatabase dbs = new MusicDatabase();
-
       PlayList list = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
-
-      //int i;
       ArrayList similarSongList = new ArrayList();
       Song[] songs = null;
       int songsCount = 0;
       int songsAdded = 0;
       int j = 0;
-      //i = list.Count;
-      
 
       dbs.GetSongsByArtist(Artist_, ref similarSongList);
       songs = (Song[])similarSongList.ToArray(typeof(Song));
@@ -1132,7 +1185,7 @@ namespace MediaPortal.GUI.Music
       }
       // exit if not enough songs were found
       if (songsCount < _maxScrobbledSongsPerArtist)
-        return;
+        return false;
 
       Random rand = new Random();
       int randomPosition;
@@ -1145,9 +1198,11 @@ namespace MediaPortal.GUI.Music
 
         j++;
         // avoid too many re-tries on existing songs.
-        if (j > songsCount * 3)
-          return;
-      }    
+        if (j > songsCount * 10)
+          break;
+      }
+      // _maxScrobbledSongsPerArtist are inserted      
+      return true;
     }
     
 

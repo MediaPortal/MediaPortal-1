@@ -73,14 +73,10 @@ namespace MediaPortal.GUI.Music
 
     protected MusicViewHandler handler;
     protected MusicDatabase m_database;
-    [SkinControlAttribute(50)]
-    protected GUIFacadeControl facadeView = null;
-    [SkinControlAttribute(2)]
-    protected GUIButtonControl btnViewAs = null;
-    [SkinControlAttribute(3)]
-    protected GUISortButtonControl btnSortBy = null;
-    [SkinControlAttribute(6)]
-    protected GUIButtonControl btnViews = null;
+    [SkinControlAttribute(50)]    protected GUIFacadeControl facadeView = null;
+    [SkinControlAttribute(2)]    protected GUIButtonControl btnViewAs = null;
+    [SkinControlAttribute(3)]    protected GUISortButtonControl btnSortBy = null;
+    [SkinControlAttribute(6)]    protected GUIButtonControl btnViews = null;
 
     const string defaultTrackTag = "[%track%. ][%artist% - ][%title%]";
     const string albumTrackTag = "[%track%. ][%artist% - ][%title%]";

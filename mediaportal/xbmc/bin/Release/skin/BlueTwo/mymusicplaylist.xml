@@ -123,6 +123,19 @@
         <onleft>23</onleft>
         <onright>50</onright>
         <onup>22</onup>
+        <ondown>28</ondown>
+      </control>
+
+      <control>
+        <description>scrobble mode button</description>
+        <type>button</type>
+        <id>28</id>
+        <posX>60</posX>
+        <posY>267</posY>
+        <label>33001</label>
+        <onleft>28</onleft>
+        <onright>50</onright>
+        <onup>23</onup>
         <ondown>27</ondown>
       </control>
 
@@ -131,7 +144,7 @@
         <type>togglebutton</type>
         <id>27</id>
         <posX>60</posX>
-        <posY>267</posY>
+        <posY>301</posY>
         <width>190</width>
         <height>32</height>
         <textXOff>10</textXOff>
@@ -140,14 +153,14 @@
         <textcolor>ffffffff</textcolor>
         <colordiffuse>ffffffff</colordiffuse>
         <disabledcolor>60ffffff</disabledcolor>
-        <label>Scrobble!</label>
+        <label>33000</label>
         <AltTextureFocus>togglebutton-off-focus.png</AltTextureFocus>
         <AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
         <textureFocus>togglebutton-on-focus.png</textureFocus>
         <textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
-        <onleft>27</onleft>
+        <onleft>24</onleft>
         <onright>50</onright>
-        <onup>23</onup>
+        <onup>28</onup>
         <ondown>26</ondown>
       </control>
 
@@ -156,7 +169,7 @@
         <type>togglebutton</type>
         <id>26</id>
         <posX>60</posX>
-        <posY>301</posY>
+        <posY>335</posY>
         <width>190</width>
         <height>32</height>
         <textXOff>10</textXOff>
