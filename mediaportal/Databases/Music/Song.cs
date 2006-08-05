@@ -53,6 +53,7 @@ namespace MediaPortal.Music.Database
     bool _audioScrobblerProcessed;
     string _musicBrainzID;
     string _strURL = "";
+    string _webImage = "";
     string _lastFMMatch = "";
 
     public Song()
@@ -83,6 +84,7 @@ namespace MediaPortal.Music.Database
       newsong.AudioScrobblerProcessed = AudioScrobblerProcessed;
       newsong.MusicBrainzID = MusicBrainzID;
       newsong.URL = URL;
+      newsong.WebImage = WebImage;
       newsong.LastFMMatch = LastFMMatch;
 
       return newsong;
@@ -111,6 +113,7 @@ namespace MediaPortal.Music.Database
       _audioScrobblerProcessed = false;
       _musicBrainzID = "";
       _strURL = "";
+      _webImage = "";
       _lastFMMatch = "";
     }
 
@@ -279,6 +282,12 @@ namespace MediaPortal.Music.Database
     {
       get { return _strURL; }
       set { _strURL = value; }
+    }
+
+    public string WebImage
+    {
+      get { return _webImage; }
+      set { _webImage = value; }
     }
 
     public string LastFMMatch

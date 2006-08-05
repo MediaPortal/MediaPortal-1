@@ -31,9 +31,10 @@ using System.Net;
 using System.Text;
 using System.Timers;
 using System.Windows.Forms;
+
 using MediaPortal.GUI.Library;
 using MediaPortal.Music.Database;
-using MediaPortal.Utils.Services;
+//using MediaPortal.Utils.Services;
 using MediaPortal.Player;
 
 namespace MediaPortal.Audioscrobbler 
@@ -104,8 +105,8 @@ namespace MediaPortal.Audioscrobbler
     private void OnManualClearCache(object sender, EventArgs args)
     {
       scrobbler.ClearQueue();
-      //CacheSizeLabel.Text = scrobbler.QueueLength.ToString();
-      AddToHistory("Cache cleared", null);
+      //CacheSizeLabel.Text = scrobbler.QueueLength.ToString(); 
+      Log.Write("Audioscrobbler plugin: {0}", "Cache cleared");
     }
     
     //private void OnNameChangedEvent(string ASUsername)
@@ -171,14 +172,17 @@ namespace MediaPortal.Audioscrobbler
     public void OnSongChangedEvent(Song currentSong)
     {
       queued = false;
-      alertTime   = INFINITE_TIME;
+      alertTime = INFINITE_TIME;
 
       if (!_doSubmit || currentSong == null)
-        return;      
+        return;
 
       // Only submit if we have reasonable info about the song
       if (currentSong.Artist == "" || currentSong.Title == "")
+      {
+        Log.Write("Audioscrobbler plugin: {0}", "no tags found ignoring song");
         return;
+      }
 
       // Don't queue if the song didn't start at 0
       if (Convert.ToInt32(g_Player.Player.CurrentPosition) <= (STARTED_LATE + _timerTickSecs))
@@ -187,6 +191,8 @@ namespace MediaPortal.Audioscrobbler
         currentSong.AudioScrobblerStatus = SongStatus.Loaded;
         return;
       }
+      else
+        Log.Write("Audioscrobbler plugin: {0}", "song started late - ignoring");
     }
     
     /// <summary>
@@ -218,6 +224,7 @@ namespace MediaPortal.Audioscrobbler
         {
           // avoid false skip detection
           lastPosition = Convert.ToInt32(g_Player.Player.CurrentPosition);
+          Log.Write("Audioscrobbler plugin: {0}", "track paused - avoid skip protection");
         }
       }
     }
@@ -246,22 +253,18 @@ namespace MediaPortal.Audioscrobbler
             {
               //        _log.Info("Audioscrobbler: OnTickEvent {0}", "Skipping detected from " + lastPosition + " to " + position + ") - not queueing");
               alertTime = INFINITE_TIME;
-              AddToHistory("Ignored (skipping)", currentSong);
+              Log.Write("Audioscrobbler plugin: song was forwarded - ignoring {0}", currentSong.ToShortString());              
             }
 
             // then actually queue the song if we're that far along
             if (position >= alertTime && alertTime > 14)
             {
+              Log.Write("Audioscrobbler plugin: queuing song: {0}", currentSong.ToShortString());
               scrobbler.pushQueue(currentSong);
-              queued = true;
+              queued = true;              
               currentSong.AudioScrobblerStatus = SongStatus.Cached;
             }
 
-            /* We don't set lastPosition back to 0 in SongChanged.  
-               This avoids problems where songs start late.  It might also 
-               mean the user can somehow start a song late and skipping won't 
-               be detected
-            */
             lastPosition = position;
           }
         }
@@ -278,6 +281,7 @@ namespace MediaPortal.Audioscrobbler
         SongCheckTimer = new System.Timers.Timer();
       if (startNow)
       {
+        Log.Write("Audioscrobbler plugin: {0}", "starting check timer");
         SongCheckTimer.Interval = _timerTickSecs * 1000;
         SongCheckTimer.Elapsed += new ElapsedEventHandler(OnTickEvent);
         SongCheckTimer.Start();
@@ -291,12 +295,12 @@ namespace MediaPortal.Audioscrobbler
     {
       if (currentSong.Duration > MAX_DURATION) {
         //SubmitTimeLabel.Text = "Current song is too long. Not submitting.";
-        AddToHistory("Ignored (too long)", currentSong);
+        Log.Write("Audioscrobbler plugin: ignoring long song {0}", currentSong.ToShortString());
         return INFINITE_TIME;
       }
       else if (currentSong.Duration < MIN_DURATION) {
         //SubmitTimeLabel.Text = "Current song is too short. Not submitting.";
-        AddToHistory("Ignored (too short)", currentSong);
+        Log.Write("Audioscrobbler plugin: ignoring short song {0}", currentSong.ToShortString());
         return INFINITE_TIME;
       }
 
@@ -310,19 +314,6 @@ namespace MediaPortal.Audioscrobbler
       //return INFINITE_TIME;
     }
 
-    // Add a message to the submissions history text area
-    private void AddToHistory(string desc, Song song)
-    {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      ILog _log = services.Get<ILog>();
-      if (desc != "")
-      {
-        _log.Info("Audioscrobbler: desc: {0}", desc);
-      }
-    
-      if (song != null)
-        _log.Info("Audioscrobbler: song: {0}", song.ToShortString());
-    }
     #endregion
 
     #region IPlugin Members

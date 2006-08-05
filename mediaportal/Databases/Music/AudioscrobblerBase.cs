@@ -943,6 +943,8 @@ namespace MediaPortal.Music.Database
               nodeSong.MusicBrainzID = child.ChildNodes[0].Value;
             else if (child.Name == "url" && child.ChildNodes.Count != 0)
               nodeSong.URL = child.ChildNodes[0].Value;
+            else if (child.Name == "image" && child.ChildNodes.Count != 0)
+              nodeSong.WebImage = child.ChildNodes[0].Value;
             else if (child.Name == "match" && child.ChildNodes.Count != 0)
               nodeSong.LastFMMatch = child.ChildNodes[0].Value;
           }
@@ -1028,6 +1030,8 @@ namespace MediaPortal.Music.Database
                     nodeSong.URL = child.ChildNodes[0].Value;
                   else if (child.Name == "match" && child.ChildNodes.Count != 0)
                     nodeSong.LastFMMatch = child.ChildNodes[0].Value;
+                  else if (child.Name == "image" && child.ChildNodes.Count != 0)
+                    nodeSong.WebImage = child.ChildNodes[0].Value;
                 }
                 break;
               case (lastFMFeed.friends):
@@ -1036,6 +1040,8 @@ namespace MediaPortal.Music.Database
                     nodeSong.Artist = node.Attributes["username"].Value;
                   if (child.Name == "url" && child.ChildNodes.Count != 0)
                     nodeSong.URL = child.ChildNodes[0].Value;
+                  else if (child.Name == "image" && child.ChildNodes.Count != 0)
+                    nodeSong.WebImage = child.ChildNodes[0].Value;
                   //else if (child.Name == "connections" && child.ChildNodes.Count != 0)
                   //  nodeSong.LastFMMatch = child.ChildNodes[0].Value;
                 }

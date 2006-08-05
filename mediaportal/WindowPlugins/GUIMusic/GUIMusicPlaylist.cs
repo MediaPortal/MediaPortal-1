@@ -1145,7 +1145,7 @@ namespace MediaPortal.GUI.Music
 
         j++;
         // avoid too many re-tries on existing songs.
-        if (j > songsCount * 2)
+        if (j > songsCount * 3)
           return;
       }    
     }
