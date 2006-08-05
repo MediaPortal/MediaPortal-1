@@ -39,7 +39,7 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Music.Database
 {
-  #region Callback argument types
+  #region argument types
   public enum lastFMFeed
   {
     recenttracks,
@@ -49,7 +49,9 @@ namespace MediaPortal.Music.Database
     toptracks,
     friends,
     neighbours,
-    similar
+    similar,
+    toptags,
+    artisttags,
   }
 
 
@@ -125,7 +127,7 @@ namespace MediaPortal.Music.Database
     public AudioscrobblerBase()
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-      {
+      {        
         _useDebugLog = xmlreader.GetValueAsBool("audioscrobbler", "usedebuglog", false);
         _dismissOnError = xmlreader.GetValueAsBool("audioscrobbler", "dismisscacheonerror", true);
         _disableTimerThread = xmlreader.GetValueAsBool("audioscrobbler", "disabletimerthread", true);
@@ -386,7 +388,9 @@ namespace MediaPortal.Music.Database
         case lastFMFeed.neighbours:
           return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "neighbours.xml", @"//neighbours/user", feed_);
         case lastFMFeed.friends:
-          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "friends.xml", @"//friends/user", feed_);
+          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "friends.xml", @"//friends/user", feed_);        
+        case lastFMFeed.toptags:
+          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "tags.xml", @"//toptags/tag", feed_);
         default:
           return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "recenttracks.xml", @"//recenttracks/track", feed_);
       }
@@ -857,32 +861,32 @@ namespace MediaPortal.Music.Database
         // Append the songs to be submitted.
         int n_songs = 0;
         int n_totalsongs = 0;
-        
+
         foreach (Song song in songs)
-        {          
-          if (Convert.ToDateTime(song.getQueueTime()) > spamCheck)
-          {
-            spamCheck = Convert.ToDateTime(song.getQueueTime());
-            postData += "&" + song.GetPostData(n_songs);
-            n_songs++;
-          }
-          else
-          {            
-            if (_useDebugLog)
-            {
-              Log.Write("AudioscrobblerBase: Spam protection - obmitting song: {0}", songs[n_totalsongs].ToShortString());
-              try
-              {
-                Log.Write("AudioscrobblerBase: Spam protection -1 {0}", songs[n_totalsongs-1].ToShortString());
-                Log.Write("AudioscrobblerBase: Spam protection +1 {0}", songs[n_totalsongs+1].ToShortString());
-              }
-              catch (Exception)
-              {
-              }
-            }
-            else
-              Log.Write("AudioscrobblerBase: Spam protection triggered - {0}", (Convert.ToString(n_totalsongs)));
-          }
+        {
+          //          if (Convert.ToDateTime(song.getQueueTime()) > spamCheck)
+          //        {
+          spamCheck = Convert.ToDateTime(song.getQueueTime());
+          postData += "&" + song.GetPostData(n_songs);
+          n_songs++;
+          //      }
+          //else
+          //{            
+          //  if (_useDebugLog)
+          //  {
+          //    Log.Write("AudioscrobblerBase: Spam protection - obmitting song: {0}", songs[n_totalsongs].ToShortString());
+          //    try
+          //    {
+          //      Log.Write("AudioscrobblerBase: Spam protection -1 {0}", songs[n_totalsongs-1].ToShortString());
+          //      Log.Write("AudioscrobblerBase: Spam protection +1 {0}", songs[n_totalsongs+1].ToShortString());
+          //    }
+          //    catch (Exception)
+          //    {
+          //    }
+          //  }
+          //  else
+          //    Log.Write("AudioscrobblerBase: Spam protection triggered - {0}", (Convert.ToString(n_totalsongs)));
+          //}
           n_totalsongs++;
         }
 
@@ -1017,6 +1021,16 @@ namespace MediaPortal.Music.Database
                   else if (child.Name == "mbid" && child.ChildNodes.Count != 0)
                     nodeSong.MusicBrainzID = child.ChildNodes[0].Value;
                   else if (child.Name == "playcount" && child.ChildNodes.Count != 0)
+                    nodeSong.TimesPlayed = Convert.ToInt32(child.ChildNodes[0].Value);
+                  else if (child.Name == "url" && child.ChildNodes.Count != 0)
+                    nodeSong.URL = child.ChildNodes[0].Value;
+                }
+                break;
+              case (lastFMFeed.toptags):
+                {
+                  if (child.Name == "name" && child.ChildNodes.Count != 0)
+                    nodeSong.Artist = child.ChildNodes[0].Value;
+                  else if (child.Name == "count" && child.ChildNodes.Count != 0)
                     nodeSong.TimesPlayed = Convert.ToInt32(child.ChildNodes[0].Value);
                   else if (child.Name == "url" && child.ChildNodes.Count != 0)
                     nodeSong.URL = child.ChildNodes[0].Value;

@@ -56,6 +56,7 @@ namespace MediaPortal.AudioScrobbler
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
+        checkBoxEnableSubmits.Checked = xmlreader.GetValueAsBool("audioscrobbler", "submitsenabled", true);
         checkBoxdisableTimerThread.Checked = xmlreader.GetValueAsBool("audioscrobbler", "disabletimerthread", true);
         checkBoxDismissOnError.Checked = xmlreader.GetValueAsBool("audioscrobbler", "dismisscacheonerror", true);
         checkBoxLogVerbose.Checked = xmlreader.GetValueAsBool("audioscrobbler", "usedebuglog", false);
@@ -94,6 +95,7 @@ namespace MediaPortal.AudioScrobbler
     {
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
+        xmlwriter.SetValueAsBool("audioscrobbler", "submitsenabled", checkBoxEnableSubmits.Checked);
         xmlwriter.SetValueAsBool("audioscrobbler", "disabletimerthread", checkBoxdisableTimerThread.Checked);
         xmlwriter.SetValueAsBool("audioscrobbler", "dismisscacheonerror", checkBoxDismissOnError.Checked);         
         xmlwriter.SetValueAsBool("audioscrobbler", "usedebuglog", checkBoxLogVerbose.Checked);
@@ -178,6 +180,17 @@ namespace MediaPortal.AudioScrobbler
     private void buttonClearCache_Click(object sender, EventArgs e)
     {
       scrobbler.ClearQueue();
+    }
+
+    private void buttonTagsRefresh_Click(object sender, EventArgs e)
+    {
+      buttonTagsRefresh.Enabled = false;
+      listViewTags.Clear();
+      songList = new List<Song>();      
+      songList = scrobbler.getAudioScrobblerFeed(lastFMFeed.toptags, "");
+      for (int i = 0; i < songList.Count; i++)
+        listViewTags.Items.Add(songList[i].ToLastFMString());
+      buttonTagsRefresh.Enabled = true;
     }
 
     private void buttonRefreshRecent_Click(object sender, EventArgs e)

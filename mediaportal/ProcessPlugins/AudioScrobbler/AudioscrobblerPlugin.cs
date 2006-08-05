@@ -328,6 +328,14 @@ namespace MediaPortal.Audioscrobbler
       //GUIWindowManager.Receivers += new SendMessageHandler(OnThreadMessage);
       startStopSongCheckTimer(true);
       // connect to Audioscrobbler (in a new thread)
+
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+        _doSubmit = xmlreader.GetValueAsBool("audioscrobbler", "submitsenabled", true);
+      }
+
+      Log.Write("Audioscrobbler plugin: submitting songs: {0}", Convert.ToString(_doSubmit));
+
       if (_doSubmit)
       {
         OnManualConnect(null, null);
