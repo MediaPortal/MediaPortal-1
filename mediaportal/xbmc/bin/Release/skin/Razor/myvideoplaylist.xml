@@ -125,6 +125,16 @@
 				        <onup>2</onup>
 				        <ondown>2</ondown>
 			        </control>
+							<control>
+								<description>playlist control</description>
+								<type>playlistcontrol</type>
+								<id>53</id>
+								<onleft>2</onleft>
+								<onright>2</onright>
+								<onup>2</onup>
+								<ondown>2</ondown>
+								<textcolor>FFFFFFFF</textcolor>
+						</control>
 		    </control>	
 		</control>
 	</controls>

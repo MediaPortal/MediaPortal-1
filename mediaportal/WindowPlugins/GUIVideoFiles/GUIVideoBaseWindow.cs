@@ -54,6 +54,10 @@ namespace MediaPortal.GUI.Video
     protected bool m_bSortAscending;
     protected bool m_bSortAscendingRoot;
     protected VideoViewHandler handler;
+		protected string _playListPath = String.Empty;
+		protected string _currentFolder = String.Empty;
+		protected string _lastFolder = String.Empty;
+
 
     [SkinControlAttribute(50)]
     protected GUIFacadeControl facadeView = null;
@@ -67,7 +71,8 @@ namespace MediaPortal.GUI.Video
     protected GUIButtonControl btnPlayDVD = null;
     [SkinControlAttribute(7)]
     protected GUIButtonControl btnTrailers = null;
-    
+		[SkinControlAttribute(9)]
+		protected GUIButtonControl btnPlaylistFolder = null;
 
     protected PlayListPlayer playlistPlayer;
 
@@ -121,7 +126,9 @@ namespace MediaPortal.GUI.Video
         currentSortMethodRoot = (VideoSort.SortMethod)xmlreader.GetValueAsInt(SerializeName, "sortmethodroot", (int)VideoSort.SortMethod.Name);
         m_bSortAscending = xmlreader.GetValueAsBool(SerializeName, "sortasc", true);
         m_bSortAscendingRoot = xmlreader.GetValueAsBool(SerializeName, "sortascroot", true);
-
+				
+				_playListPath = xmlreader.GetValueAsString("movies", "playlists", String.Empty);
+				_playListPath = MediaPortal.Util.Utils.RemoveTrailingSlash(_playListPath);
         
       }
 
@@ -299,6 +306,21 @@ namespace MediaPortal.GUI.Video
           OnQueueItem(iItem);
         }
       }
+
+			if (control == btnPlaylistFolder)
+			{
+				if (_currentFolder != _playListPath)
+				{
+					_lastFolder = _currentFolder;
+					_currentFolder = _playListPath;
+				}
+				else
+				{
+					_currentFolder = _lastFolder;
+				}
+				LoadDirectory(_currentFolder);
+				return;
+			}
     }
 
     protected void SelectCurrentItem()
@@ -455,7 +477,8 @@ namespace MediaPortal.GUI.Video
     }
     protected void SwitchView()
     {
-      switch (CurrentView)
+			if (facadeView == null) return;
+			switch (CurrentView)
       {
         case View.List:
           facadeView.View = GUIFacadeControl.ViewMode.List;

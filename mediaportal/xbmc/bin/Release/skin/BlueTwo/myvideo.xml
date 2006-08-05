@@ -59,7 +59,13 @@
 				<id>8</id>
 				<hyperlink>5900</hyperlink>
 				<label>5906</label>
-        <ondown>99</ondown>
+			</control>
+			<control>
+				<description>My Playlists</description>
+				<type>button</type>
+				<id>9</id>
+				<label>983</label>
+				<ondown>99</ondown>
 			</control>
 		</control>
 		<import>common.facade.xml</import>

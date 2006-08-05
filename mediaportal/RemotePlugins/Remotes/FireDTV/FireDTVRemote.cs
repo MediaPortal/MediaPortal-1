@@ -127,7 +127,7 @@ namespace MediaPortal.RemoteControls
 
     public void DeInit()
     {
-      _fireDTV.CloseDrivers();
+      if (_fireDTV != null) _fireDTV.CloseDrivers();
     }
 
     public bool WndProc(ref System.Windows.Forms.Message msg, out MediaPortal.GUI.Library.Action action, out char key, out System.Windows.Forms.Keys keyCode)

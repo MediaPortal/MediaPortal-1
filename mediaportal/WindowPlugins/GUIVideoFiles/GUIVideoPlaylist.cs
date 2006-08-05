@@ -27,6 +27,7 @@ using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.Dialogs;
 using MediaPortal.Video.Database;
+using MediaPortal.MusicVideos.Database;
 
 
 namespace MediaPortal.GUI.Video
@@ -60,15 +61,15 @@ namespace MediaPortal.GUI.Video
 		{
 			GetID = (int)GUIWindow.Window.WINDOW_VIDEO_PLAYLIST;
       playlistPlayer = PlayListPlayer.SingletonPlayer;
+			m_directory.AddDrives();
+			m_directory.SetExtensions(MediaPortal.Util.Utils.VideoExtensions);
+			m_directory.AddExtension(".m3u");
     }
 
 		public override bool Init()
 		{
 			currentFolder = System.IO.Directory.GetCurrentDirectory();
-			bool result= Load(GUIGraphicsContext.Skin + @"\myvideoplaylist.xml");
-			m_directory.AddDrives();
-			m_directory.SetExtensions(MediaPortal.Util.Utils.VideoExtensions);
-			return result;
+			return Load(GUIGraphicsContext.Skin + @"\myvideoplaylist.xml");
 		}
 
 		protected override string SerializeName
@@ -84,10 +85,34 @@ namespace MediaPortal.GUI.Video
 		#region BaseWindow Members
 		public override void OnAction(Action action)
 		{
-			if (action.wID == Action.ActionType.ACTION_SHOW_PLAYLIST)
+			switch (action.wID)
 			{
-				GUIWindowManager.ShowPreviousWindow();
-				return;
+				case Action.ActionType.ACTION_SHOW_PLAYLIST:
+					GUIWindowManager.ShowPreviousWindow();
+					return;
+			  case Action.ActionType.ACTION_MOVE_SELECTED_ITEM_UP:   MovePlayListItemUp();   break;
+			  case Action.ActionType.ACTION_MOVE_SELECTED_ITEM_DOWN: MovePlayListItemDown(); break;
+			  case Action.ActionType.ACTION_DELETE_SELECTED_ITEM:    DeletePlayListItem();   break;
+			  // Handle case where playlist has been stopped and we receive a player action.
+			  // This allows us to restart the playback proccess...
+				case Action.ActionType.ACTION_MUSIC_PLAY:
+				case Action.ActionType.ACTION_NEXT_ITEM:
+				case Action.ActionType.ACTION_PAUSE:
+				case Action.ActionType.ACTION_PREV_ITEM:
+					if (playlistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_MUSIC_VIDEO)
+					{
+						playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC_VIDEO;
+						if (g_Player.CurrentFile == "")
+						{
+							PlayList playList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_VIDEO);
+							if (playList != null && playList.Count > 0)
+							{
+								playlistPlayer.Play(0);
+								UpdateButtonStates();
+							}
+						}
+					}
+					break;
 			}
 
 			base.OnAction(action);
@@ -97,6 +122,8 @@ namespace MediaPortal.GUI.Video
 		{
 			base.OnPageLoad ();
 			LoadSettings();
+			facadeView.View = GUIFacadeControl.ViewMode.Playlist;
+
 			LoadDirectory(String.Empty);
 			if ((previousControlId == facadeView.GetID) && facadeView.Count <= 0)
 			{
@@ -115,8 +142,8 @@ namespace MediaPortal.GUI.Video
 		}
 		protected override void OnPageDestroy(int newWindowId)
 		{
-			base.OnPageDestroy (newWindowId);
 			currentSelectedItem = facadeView.SelectedListItemIndex;
+			base.OnPageDestroy (newWindowId);
 		}
 
 		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
@@ -523,5 +550,125 @@ namespace MediaPortal.GUI.Video
         }
       }
     }
+
+		private void MovePlayListItemUp()
+		{
+			if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_NONE)
+				playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC_VIDEO;
+
+			if (playlistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_MUSIC_VIDEO
+					|| facadeView.View != GUIFacadeControl.ViewMode.Playlist
+					|| facadeView.PlayListView == null)
+			{
+				return;
+			}
+
+			int iItem = facadeView.SelectedListItemIndex;
+
+			// Prevent moving backwards past the top song in the list
+
+			PlayList playList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_VIDEO);
+			playList.MovePlayListItemUp(iItem);
+			int selectedIndex = facadeView.MoveItemUp(iItem, true);
+
+			if (iItem == playlistPlayer.CurrentSong)
+				playlistPlayer.CurrentSong = selectedIndex;
+
+			facadeView.SelectedListItemIndex = selectedIndex;
+			UpdateButtonStates();
+
+		}
+
+		private void MovePlayListItemDown()
+		{
+			if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_NONE)
+				playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC_VIDEO;
+
+			if (playlistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_MUSIC_VIDEO
+					|| facadeView.View != GUIFacadeControl.ViewMode.Playlist
+					|| facadeView.PlayListView == null)
+			{
+				return;
+			}
+
+			int iItem = facadeView.SelectedListItemIndex;
+			PlayList playList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_VIDEO);
+
+			// Prevent moving fowards past the last song in the list
+			// as this would cause the currently playing song to scroll
+			// off of the list view...
+
+			playList.MovePlayListItemDown(iItem);
+			int selectedIndex = facadeView.MoveItemDown(iItem, true);
+
+			if (iItem == playlistPlayer.CurrentSong)
+				playlistPlayer.CurrentSong = selectedIndex;
+
+			facadeView.SelectedListItemIndex = selectedIndex;
+
+			UpdateButtonStates();
+
+		}
+
+		private void DeletePlayListItem()
+		{
+			if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_NONE)
+				playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC_VIDEO;
+
+			if (playlistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_MUSIC_VIDEO
+					|| facadeView.View != GUIFacadeControl.ViewMode.Playlist
+					|| facadeView.PlayListView == null)
+			{
+				return;
+			}
+
+			int iItem = facadeView.SelectedListItemIndex;
+
+			string currentFile = g_Player.CurrentFile;
+			GUIListItem item = facadeView[iItem];
+			PlayList loPlayList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_VIDEO);
+			string strFileName = string.Empty;
+			MVPlayListItem loItemToDelete = null;
+			foreach (MVPlayListItem loItem in loPlayList)
+			{
+				YahooVideo loVideo = loItem.YahooVideo;
+				//string lsDesc = loVideo.artistName + " - " + loVideo.songName;
+				if (loVideo.songId.Equals(item.Path))
+				{
+					loItemToDelete = loItem;
+				}
+			}
+			RemovePlayListItem(iItem);
+			if (loItemToDelete != null)
+			{
+				loItemToDelete.UpdateUrl = false;
+				if (currentFile.Length > 0 && currentFile == item.Path)
+				{
+					string nextTrackPath = PlayListPlayer.SingletonPlayer.GetNext();
+
+					if (nextTrackPath.Length == 0)
+						g_Player.Stop();
+
+					else
+					{
+						if (iItem == facadeView.Count)
+							playlistPlayer.Play(iItem - 1);
+
+						else
+							playlistPlayer.PlayNext();
+					}
+				}
+				loItemToDelete.UpdateUrl = true;
+			}
+
+			if (facadeView.Count == 0)
+				g_Player.Stop();
+
+			else
+				facadeView.PlayListView.SelectedListItemIndex = iItem;
+
+			UpdateButtonStates();
+		}
+
 	}
 }
