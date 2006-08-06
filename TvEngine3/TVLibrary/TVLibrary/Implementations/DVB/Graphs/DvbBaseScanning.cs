@@ -1,4 +1,4 @@
-l using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -91,11 +91,11 @@ namespace TvLibrary.Implementations.DVB
       DateTime startTime = DateTime.Now;
       while (true)
       {
+        System.Threading.Thread.Sleep(100);
         ResetSignalUpdate();
         if (_card.IsTunerLocked) break;
         TimeSpan ts = DateTime.Now - startTime;
-        if (ts.TotalMilliseconds >= 5000) break;
-        System.Threading.Thread.Sleep(100);
+        if (ts.TotalMilliseconds >= 2000) break;
       }
       if (_card.IsTunerLocked == false)
       {
@@ -109,9 +109,9 @@ namespace TvLibrary.Implementations.DVB
         startTime = DateTime.Now;
         while (true)
         {
-          ResetSignalUpdate();
-          if (_card.SignalQuality >= 60) break;
           System.Threading.Thread.Sleep(100);
+          ResetSignalUpdate();
+          if (_card.SignalQuality >= 30) break;
           TimeSpan ts = DateTime.Now - startTime;
           if (ts.TotalMilliseconds >= 2000) break;
         }
@@ -120,11 +120,11 @@ namespace TvLibrary.Implementations.DVB
         short channelCount;
         while (true)
         {
+          System.Threading.Thread.Sleep(100);
           _analyzer.GetCount(out channelCount);
           if (channelCount > 0) break;
           TimeSpan ts = DateTime.Now - startTime;
           if (ts.TotalMilliseconds > 2000) break;
-          System.Threading.Thread.Sleep(100);
         }
         if (channelCount == 0)
         {
@@ -252,6 +252,10 @@ namespace TvLibrary.Implementations.DVB
                   channelsFound.Add(dvbChannel);
                 }
               }
+            }
+            if ((i%10)==0)
+            {
+              System.Threading.Thread.Sleep(50);
             }
           }
           if (found >= channelCount) break;

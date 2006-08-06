@@ -229,7 +229,11 @@ namespace TvLibrary.Implementations.DVB
       _currentAudioStream = null;
 
       //Log.Log.WriteFile("dvb:SubmitTuneRequest");
-
+      if (_interfaceEpgGrabber != null)
+      {
+        _interfaceEpgGrabber.Reset();
+      }
+      
       int hr = 0;
       hr = (_filterNetworkProvider as ITuner).put_TuneRequest(tuneRequest);
       if (hr != 0)

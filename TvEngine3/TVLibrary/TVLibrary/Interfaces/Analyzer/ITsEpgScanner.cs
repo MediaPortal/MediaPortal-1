@@ -52,5 +52,8 @@ namespace TvLibrary.Interfaces.Analyzer
 
     [PreserveSig]
     int GetMHWTheme(Int16 themeId, out IntPtr theme);
+
+    [PreserveSig]
+    int Reset();
   }
 }

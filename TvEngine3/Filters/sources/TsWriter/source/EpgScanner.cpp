@@ -34,16 +34,25 @@ extern void LogDebug(const char *fmt, ...) ;
 CEpgScanner::CEpgScanner(LPUNKNOWN pUnk, HRESULT *phr) 
 :CUnknown( NAME ("MpTsEpgScanner"), pUnk)
 {
+	m_bGrabbing=false;
 }
 
 CEpgScanner::~CEpgScanner(void)
 {
+}
+STDMETHODIMP CEpgScanner::Reset()
+{
+	LogDebug("analyzer CEpgScanner::reset");
+	m_bGrabbing=false;
+	m_epgParser.Reset();
+	return S_OK;
 }
 STDMETHODIMP CEpgScanner::GrabEPG()
 {
 	try
 	{
 		LogDebug("EpgScanner::GrabEPG");
+		m_bGrabbing=true;
 		m_epgParser.GrabEPG();
 	}
 	catch(...)
@@ -135,6 +144,7 @@ STDMETHODIMP CEpgScanner::GrabMHW()
 	try
 	{
 		//LogDebug("EpgScanner::GrabMHW");
+		m_bGrabbing=true;
 		m_mhwParser.GrabEPG();
 	}
 	catch(...)
@@ -231,8 +241,15 @@ void CEpgScanner::OnTsPacket(byte* tsPacket)
 {
 	try
 	{
-		m_epgParser.OnTsPacket(tsPacket);
-		m_mhwParser.OnTsPacket(tsPacket);
+		if (m_bGrabbing)
+		{
+			m_epgParser.OnTsPacket(tsPacket);
+			m_mhwParser.OnTsPacket(tsPacket);
+			if (m_epgParser.IsEPGReady() && m_mhwParser.IsEPGReady())
+			{
+				m_bGrabbing=false;
+			}
+		}
 	}
 	catch(...)
 	{

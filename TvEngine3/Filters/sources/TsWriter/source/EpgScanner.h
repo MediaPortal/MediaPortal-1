@@ -28,7 +28,7 @@ DEFINE_GUID(IID_ITsEpgScanner, 0x5cdac655, 0xd9fb, 0x4c71, 0x81, 0x19, 0xdd, 0x7
 DECLARE_INTERFACE_(ITsEpgScanner, IUnknown)
 {
 	//epg
-	STDMETHOD(GrabEPG)()PURE;
+	STDMETHOD(GrabEPG)(THIS_)PURE;
 	STDMETHOD(IsEPGReady) (THIS_ BOOL* yesNo)PURE;
 	STDMETHOD(GetEPGChannelCount) (THIS_ ULONG* channelCount)PURE;
 	STDMETHOD(GetEPGEventCount) (THIS_ ULONG channel, ULONG* eventCount)PURE;
@@ -44,7 +44,7 @@ DECLARE_INTERFACE_(ITsEpgScanner, IUnknown)
 	STDMETHOD(GetMHWChannel)(THIS_ WORD channelNr, WORD* channelId, WORD* networkId, WORD* transportId, char** channelName)PURE;
 	STDMETHOD(GetMHWSummary)(THIS_ WORD programId, char** summary)PURE;
 	STDMETHOD(GetMHWTheme)(THIS_ WORD themeId, char** theme)PURE;
-
+	STDMETHOD(Reset)(THIS_)PURE;
 };
 
 class CEpgScanner: public CUnknown, public ITsEpgScanner
@@ -71,9 +71,12 @@ public:
 	STDMETHODIMP GetMHWChannel(WORD channelNr, WORD* channelId, WORD* networkId, WORD* transportId, char** channelName);
 	STDMETHODIMP GetMHWSummary(WORD programId, char** summary);
 	STDMETHODIMP GetMHWTheme(WORD themeId, char** theme);
+	STDMETHODIMP Reset();
 
 	void OnTsPacket(byte* tsPacket);
 protected:
 	CEpgParser m_epgParser;
 	CMhwParser m_mhwParser;
+private:
+	bool m_bGrabbing;
 };

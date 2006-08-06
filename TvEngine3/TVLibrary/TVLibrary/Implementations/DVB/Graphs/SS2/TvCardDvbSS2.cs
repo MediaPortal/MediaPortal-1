@@ -1480,6 +1480,10 @@ namespace TvLibrary.Implementations.DVB
       {
         BuildGraph();
       }
+      if (_interfaceEpgGrabber != null)
+      {
+        _interfaceEpgGrabber.Reset();
+      }
       _startTimeShifting = false;
       int lnbFrequency = 10600000;
       bool hiBand = true;
