@@ -53,62 +53,117 @@ void CTimeShifting::OnTsPacket(byte* tsPacket)
 
 STDMETHODIMP CTimeShifting::SetPcrPid(int pcrPid)
 {
-	LogDebug("Timeshifter:pcr pid:%x",pcrPid);
-	m_multiPlexer.SetPcrPid(pcrPid);
+	try
+	{
+		LogDebug("Timeshifter:pcr pid:%x",pcrPid);
+		m_multiPlexer.SetPcrPid(pcrPid);
+	}
+	catch(...)
+	{
+		LogDebug("Timeshifter:SetPcrPid exception");
+	}
 	return S_OK;
 }
 STDMETHODIMP CTimeShifting::AddPesStream(int pid)
 {
-	LogDebug("Timeshifter:add pes stream pid:%x",pid);
-	m_multiPlexer.AddPesStream(pid);
+	try
+	{
+		LogDebug("Timeshifter:add pes stream pid:%x",pid);
+		m_multiPlexer.AddPesStream(pid);
+	}
+	catch(...)
+	{
+		LogDebug("Timeshifter:AddPesStream exception");
+	}
 	return S_OK;
 }
 STDMETHODIMP CTimeShifting::RemovePesStream(int pid)
 {
-	LogDebug("Recorder:remove pes stream pid:%x",pid);
-	m_multiPlexer.RemovePesStream(pid);
+	try
+	{
+		LogDebug("Recorder:remove pes stream pid:%x",pid);
+		m_multiPlexer.RemovePesStream(pid);
+	}
+	catch(...)
+	{
+		LogDebug("Timeshifter:RemovePesStream exception");
+	}
 	return S_OK;
 }
 
 STDMETHODIMP CTimeShifting::SetTimeShiftingFileName(char* pszFileName)
 {
-	m_multiPlexer.Reset();
-	strcpy(m_szFileName,pszFileName);
-	strcat(m_szFileName,".tsbuffer");
-	LogDebug("Timeshifter:set filename:%s",m_szFileName);
+	try
+	{
+		m_multiPlexer.Reset();
+		strcpy(m_szFileName,pszFileName);
+		strcat(m_szFileName,".tsbuffer");
+		LogDebug("Timeshifter:set filename:%s",m_szFileName);
+	}
+	catch(...)
+	{
+		LogDebug("Timeshifter:SetTimeShiftingFileName exception");
+	}
 	return S_OK;
 }
 STDMETHODIMP CTimeShifting::Start()
 {
-	if (strlen(m_szFileName)==0) return E_FAIL;
-	::DeleteFile((LPCTSTR) m_szFileName);
-	WCHAR wstrFileName[2048];
-	MultiByteToWideChar(CP_ACP,0,m_szFileName,-1,wstrFileName,1+strlen(m_szFileName));
-
-	m_pTimeShiftFile = new MultiFileWriter();
-	if (FAILED(m_pTimeShiftFile->OpenFile(wstrFileName))) 
+	try
 	{
-		LogDebug("Timeshifter:failed to open filename:%s",m_szFileName);
-		m_pTimeShiftFile->CloseFile();
-		delete m_pTimeShiftFile;
-		m_pTimeShiftFile=NULL;
-		return E_FAIL;
-	}
+		if (strlen(m_szFileName)==0) return E_FAIL;
+		::DeleteFile((LPCTSTR) m_szFileName);
+		WCHAR wstrFileName[2048];
+		MultiByteToWideChar(CP_ACP,0,m_szFileName,-1,wstrFileName,1+strlen(m_szFileName));
 
-	LogDebug("Timeshifter:Start timeshifting:'%s'",m_szFileName);
-	m_bTimeShifting=true;
+		m_pTimeShiftFile = new MultiFileWriter();
+		if (FAILED(m_pTimeShiftFile->OpenFile(wstrFileName))) 
+		{
+			LogDebug("Timeshifter:failed to open filename:%s",m_szFileName);
+			m_pTimeShiftFile->CloseFile();
+			delete m_pTimeShiftFile;
+			m_pTimeShiftFile=NULL;
+			return E_FAIL;
+		}
+
+		LogDebug("Timeshifter:Start timeshifting:'%s'",m_szFileName);
+		m_bTimeShifting=true;
+	}
+	catch(...)
+	{
+		LogDebug("Timeshifter:Start timeshifting exception");
+	}
+	return S_OK;
+}
+STDMETHODIMP CTimeShifting::Reset()
+{
+	try
+	{
+		LogDebug("Timeshifter:Reset");
+		m_multiPlexer.Reset();
+	}
+	catch(...)
+	{
+		LogDebug("Timeshifter:Reset timeshifting exception");
+	}
 	return S_OK;
 }
 STDMETHODIMP CTimeShifting::Stop()
 {
-	LogDebug("Timeshifter:Stop timeshifting:'%s'",m_szFileName);
-	m_bTimeShifting=false;
-	m_multiPlexer.Reset();
-	if (m_pTimeShiftFile!=NULL)
+	try
 	{
-		m_pTimeShiftFile->CloseFile();
-		delete m_pTimeShiftFile;
-		m_pTimeShiftFile=NULL;
+		LogDebug("Timeshifter:Stop timeshifting:'%s'",m_szFileName);
+		m_bTimeShifting=false;
+		m_multiPlexer.Reset();
+		if (m_pTimeShiftFile!=NULL)
+		{
+			m_pTimeShiftFile->CloseFile();
+			delete m_pTimeShiftFile;
+			m_pTimeShiftFile=NULL;
+		}
+	}
+	catch(...)
+	{
+		LogDebug("Timeshifter:Stop timeshifting exception");
 	}
 	return S_OK;
 }
@@ -116,9 +171,16 @@ STDMETHODIMP CTimeShifting::Stop()
 
 void CTimeShifting::Write(byte* buffer, int len)
 {
-	if (!m_bTimeShifting) return;
-	if (m_pTimeShiftFile!=NULL)
+	try
 	{
-		m_pTimeShiftFile->Write(buffer,len);
+		if (!m_bTimeShifting) return;
+		if (m_pTimeShiftFile!=NULL)
+		{
+			m_pTimeShiftFile->Write(buffer,len);
+		}
+	}
+	catch(...)
+	{
+		LogDebug("Timeshifter:Write exception");
 	}
 }

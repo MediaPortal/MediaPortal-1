@@ -35,6 +35,7 @@ DECLARE_INTERFACE_(ITsTimeshifting, IUnknown)
   STDMETHOD(SetTimeShiftingFileName)(THIS_ char* pszFileName)PURE;
   STDMETHOD(Start)(THIS_ )PURE;
   STDMETHOD(Stop)(THIS_ )PURE;
+  STDMETHOD(Reset)(THIS_ )PURE;
 };
 
 class CTimeShifting: public CUnknown, public ITsTimeshifting, public IFileWriter
@@ -50,6 +51,7 @@ public:
 	STDMETHODIMP SetTimeShiftingFileName(char* pszFileName);
 	STDMETHODIMP Start();
 	STDMETHODIMP Stop();
+	STDMETHODIMP Reset();
 
 	void OnTsPacket(byte* tsPacket);
 	void Write(byte* buffer, int len);

@@ -41,44 +41,93 @@ CVideoAnalyzer::~CVideoAnalyzer(void)
   
 STDMETHODIMP CVideoAnalyzer::SetVideoPid( int videoPid)
 {
-	LogDebug("analyzer videopid:%x",videoPid);
-	m_videoAudioAnalyzer.SetVideoPid(videoPid);
-	m_videoAudioAnalyzer.Reset();
+	try
+	{
+		LogDebug("analyzer videopid:%x",videoPid);
+		m_videoAudioAnalyzer.SetVideoPid(videoPid);
+		m_videoAudioAnalyzer.Reset();
+	}
+	catch(...)
+	{
+		LogDebug("analyzer CVideoAnalyzer::SetVideoPid exception");
+	}
 	return S_OK;
 }
 STDMETHODIMP CVideoAnalyzer::GetVideoPid( int* videoPid)
 {
-	*videoPid=m_videoAudioAnalyzer.GetVideoPid();
+	try
+	{
+		*videoPid=m_videoAudioAnalyzer.GetVideoPid();
+	}
+	catch(...)
+	{
+		LogDebug("analyzer CVideoAnalyzer::GetVideoPid exception");
+	}
 	return S_OK;
 }
 
 STDMETHODIMP CVideoAnalyzer::SetAudioPid( int audioPid)
 {
-	LogDebug("analyzer audiopid:%x",audioPid);
-	m_videoAudioAnalyzer.SetAudioPid(audioPid);
-	m_videoAudioAnalyzer.Reset();
+	try
+	{
+		LogDebug("analyzer audiopid:%x",audioPid);
+		m_videoAudioAnalyzer.SetAudioPid(audioPid);
+		m_videoAudioAnalyzer.Reset();
+	}
+	catch(...)
+	{
+		LogDebug("analyzer CVideoAnalyzer::SetAudioPid exception");
+	}
 	return S_OK;
 }
 STDMETHODIMP CVideoAnalyzer::GetAudioPid( int* audioPid)
 {
-	*audioPid=m_videoAudioAnalyzer.GetAudioPid();
+	try
+	{
+		*audioPid=m_videoAudioAnalyzer.GetAudioPid();
+	}
+	catch(...)
+	{
+		LogDebug("analyzer CVideoAnalyzer::GetAudioPid exception");
+	}
 	return S_OK;
 }
 
 STDMETHODIMP CVideoAnalyzer::IsVideoEncrypted( int* yesNo)
 {
-	*yesNo = (m_videoAudioAnalyzer.IsVideoScrambled()?1:0);
+	try
+	{
+		*yesNo = (m_videoAudioAnalyzer.IsVideoScrambled()?1:0);
+	}
+	catch(...)
+	{
+		LogDebug("analyzer CVideoAnalyzer::IsVideoEncrypted exception");
+	}
 	return S_OK;
 }
 STDMETHODIMP CVideoAnalyzer::IsAudioEncrypted( int* yesNo)
 {
-	*yesNo = (m_videoAudioAnalyzer.IsAudioScrambled()?1:0);
+	try
+	{
+		*yesNo = (m_videoAudioAnalyzer.IsAudioScrambled()?1:0);
+	}
+	catch(...)
+	{
+		LogDebug("analyzer CVideoAnalyzer::IsAudioEncrypted exception");
+	}
 	return S_OK;
 }
 
 STDMETHODIMP CVideoAnalyzer::Reset()
 {
-	m_videoAudioAnalyzer.Reset();
+	try
+	{
+		m_videoAudioAnalyzer.Reset();
+	}
+	catch(...)
+	{
+		LogDebug("analyzer CVideoAnalyzer::Reset exception");
+	}
 	return S_OK;
 }
 

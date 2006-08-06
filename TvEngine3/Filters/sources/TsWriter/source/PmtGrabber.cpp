@@ -46,11 +46,18 @@ CPmtGrabber::~CPmtGrabber(void)
 
 STDMETHODIMP CPmtGrabber::SetPmtPid( int pmtPid)
 {
-	LogDebug("pmtgrabber: grab pmt:%x", pmtPid);
-	CSectionDecoder::Reset();
-	CSectionDecoder::SetPid(pmtPid);
-	CSectionDecoder::SetTableId(2);
-	m_iPmtVersion=-1;
+	try
+	{
+		LogDebug("pmtgrabber: grab pmt:%x", pmtPid);
+		CSectionDecoder::Reset();
+		CSectionDecoder::SetPid(pmtPid);
+		CSectionDecoder::SetTableId(2);
+		m_iPmtVersion=-1;
+	}
+	catch(...)
+	{
+		LogDebug("CPmtGrabber::SetPmtPid exception");
+	}
 	return S_OK;
 }
 
@@ -67,31 +74,46 @@ void CPmtGrabber::OnTsPacket(byte* tsPacket)
 	if (GetPid()<=0) return;
 	
 	CSectionDecoder::OnTsPacket(tsPacket);
+
 }
 
 void CPmtGrabber::OnNewSection(CSection& section)
 {
-	if (section.Version == m_iPmtVersion) return;
-	LogDebug("pmtgrabber: got pmt version:%d %d", section.Version,m_iPmtVersion);
-	m_iPmtVersion=section.Version;
-	m_iPmtLength=section.SectionLength+3;
-
-	CTsHeader header(section.Data);
-	int start=header.PayLoadStart+1;
-	memcpy(m_pmtData,&section.Data[start],m_iPmtLength);
-	if (m_pCallback!=NULL)
+	try
 	{
-		LogDebug("pmtgrabber: do calback");
-		m_pCallback->OnPMTReceived();
+		if (section.Version == m_iPmtVersion) return;
+		LogDebug("pmtgrabber: got pmt version:%d %d", section.Version,m_iPmtVersion);
+		m_iPmtVersion=section.Version;
+		m_iPmtLength=section.SectionLength+3;
+
+		CTsHeader header(section.Data);
+		int start=header.PayLoadStart+1;
+		memcpy(m_pmtData,&section.Data[start],m_iPmtLength);
+		if (m_pCallback!=NULL)
+		{
+			LogDebug("pmtgrabber: do calback");
+			m_pCallback->OnPMTReceived();
+		}
+	}
+	catch(...)
+	{
+		LogDebug("CPmtGrabber::OnNewSection exception");
 	}
 }
 
 STDMETHODIMP CPmtGrabber::GetPMTData(BYTE *pmtData)
 {
-	if (m_iPmtLength>0)
+	try
 	{
-		memcpy(pmtData,m_pmtData,m_iPmtLength);
-		return m_iPmtLength;
+		if (m_iPmtLength>0)
+		{
+			memcpy(pmtData,m_pmtData,m_iPmtLength);
+			return m_iPmtLength;
+		}
+	}
+	catch(...)
+	{
+		LogDebug("CPmtGrabber::GetPMTData exception");
 	}
 	return 0;
 }

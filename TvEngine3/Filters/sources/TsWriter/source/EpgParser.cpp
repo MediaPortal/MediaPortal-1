@@ -90,8 +90,15 @@ void CEpgParser::OnTsPacket(byte* tsPacket)
 
 void CEpgParser::OnNewSection(int pid, int tableId, CSection& sections)
 {
-  //LogDebug("epg new section pid:%x tableid:%x onid:%x sid:%x",pid,tableId,sections.NetworkId,sections.TransportId);
-  byte* section=&(sections.Data[5]);
-  int sectionLength=sections.SectionLength;
-  m_epgDecoder.DecodeEPG(section,	sectionLength);
+	try
+	{
+		//LogDebug("epg new section pid:%x tableid:%x onid:%x sid:%x len:%x",pid,tableId,sections.NetworkId,sections.TransportId,sections.SectionLength);
+		byte* section=&(sections.Data[5]);
+		int sectionLength=sections.SectionLength;
+		m_epgDecoder.DecodeEPG(section,	sectionLength);
+	}
+	catch(...)
+	{
+		LogDebug("exception in CEpgParser::OnNewSection");
+	}
 }

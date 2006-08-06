@@ -11,22 +11,22 @@ namespace TvLibrary.Interfaces.Analyzer
   public interface ITsVideoAnalyzer
   {
     [PreserveSig]
-    int SetVideoPid(int videoPid);
+    int SetVideoPid(short videoPid);
 
     [PreserveSig]
-    int GetVideoPid(out int videoPid);
+    int GetVideoPid(out short videoPid);
 
     [PreserveSig]
-    int SetAudioPid(int audioPid);
+    int SetAudioPid(short audioPid);
 
     [PreserveSig]
-    int GetAudioPid(out int audioPid);
+    int GetAudioPid(out short audioPid);
 
     [PreserveSig]
-    int IsVideoEncrypted(out int yesNo);
+    int IsVideoEncrypted(out short yesNo);
 
     [PreserveSig]
-    int IsAudioEncrypted(out int yesNo);
+    int IsAudioEncrypted(out short yesNo);
 
     [PreserveSig]
     int Reset();

@@ -103,7 +103,6 @@ bool CPesDecoder::OnTsPacket(byte* tsPacket)
 	//header.LogHeader();
 	if ( header.AdaptionFieldOnly() ) 
 	{
-		LogDebug("skip:AdaptionFieldOnly");
 		return false;
 	}
  

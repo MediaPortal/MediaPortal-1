@@ -109,6 +109,10 @@ void CSectionDecoder::OnTsPacket(byte* tsPacket)
     m_section.BufferPos=0;
 		m_iContinuityCounter=header.ContinuityCounter;
 
+		if (m_section.BufferPos+188>=MAX_SECTION_LENGTH)
+		{
+			return;
+		}
     memcpy(&m_section.Data[m_section.BufferPos], tsPacket, 188);
 		m_section.BufferPos+=188;
     m_section.SectionPos+= 188-(start+3);
@@ -133,6 +137,15 @@ void CSectionDecoder::OnTsPacket(byte* tsPacket)
 
 		int start=header.PayLoadStart;
     int len=188-start;
+		
+		if (m_section.BufferPos+len>=MAX_SECTION_LENGTH)
+		{
+			return;
+		}
+		if (len <=0)
+		{
+			return;
+		}
 		memcpy(&m_section.Data[m_section.BufferPos], &tsPacket[start], len);
 		m_section.BufferPos += (len);
     m_section.SectionPos+= (len);

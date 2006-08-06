@@ -945,14 +945,14 @@ namespace TvLibrary.Implementations.DVB
           if (_currentAudioStream.Pid == pmtData.pid)
           {
             hwPids.Add((ushort)pmtData.pid);
-            writer.SetAudioPid(pmtData.pid);
+            writer.SetAudioPid((short)pmtData.pid);
           }
         }
 
         if (pmtData.isVideo)
         {
           hwPids.Add((ushort)pmtData.pid);
-          writer.SetVideoPid(pmtData.pid);
+          writer.SetVideoPid((short)pmtData.pid);
           if (info.pcr_pid > 0 && info.pcr_pid != pmtData.pid)
           {
             hwPids.Add((ushort)info.pcr_pid);
@@ -1780,7 +1780,7 @@ namespace TvLibrary.Implementations.DVB
         if (_filterTsAnalyzer != null)
         {
           ITsVideoAnalyzer writer = (ITsVideoAnalyzer)_filterTsAnalyzer;
-          writer.SetAudioPid(audioStream.Pid);
+          writer.SetAudioPid((short)audioStream.Pid);
 
           ITsTimeShift timeshift = _filterTsAnalyzer as ITsTimeShift;
           if (_currentAudioStream != null)

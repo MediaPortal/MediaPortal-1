@@ -1,5 +1,6 @@
 #pragma once
 
+#define MAX_SECTION_LENGTH 4300
 class CSection
 {
 public:
@@ -15,5 +16,5 @@ public:
   int    BufferPos;
   int    SectionLength;
 	int    Length;
-  byte   Data[4096];
+  byte   Data[MAX_SECTION_LENGTH];
 };
