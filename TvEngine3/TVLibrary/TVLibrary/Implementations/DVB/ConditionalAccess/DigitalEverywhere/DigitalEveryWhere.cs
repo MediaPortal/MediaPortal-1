@@ -654,7 +654,7 @@ namespace TvLibrary.Implementations.DVB
           antennaNr = 1;
           break;
         case DisEqcType.SimpleB: // Simple B
-          antennaNr = 1;
+          antennaNr = 2;
           break;
         case DisEqcType.Level1AA: // Level 1 A/A
           antennaNr = 1;
