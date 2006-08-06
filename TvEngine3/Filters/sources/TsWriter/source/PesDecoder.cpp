@@ -24,7 +24,7 @@
 #include "TsHeader.h"
 #include "packetsync.h"
 
-#define MAX_PES_PACKET 128000
+#define MAX_PES_PACKET 256000
 
 extern void LogDebug(const char *fmt, ...) ;
 
@@ -35,7 +35,7 @@ CPesDecoder::CPesDecoder()
 	m_pesBuffer = new byte[MAX_PES_PACKET];
 	m_pesPacket = new byte[MAX_PES_PACKET];
 	m_pespacketLen=0;
-	m_iPesBufferPos=0;
+	m_iPesBufferPos=-1;
 //	m_fp=NULL;
 }
 
@@ -54,7 +54,7 @@ CPesDecoder::~CPesDecoder(void)
 void CPesDecoder::Reset()
 {
 	//LogDebug("pes decoder pid:%x reset",m_pid);
-	m_iPesBufferPos=0;
+	m_iPesBufferPos=-1;
 }
 
 int CPesDecoder::GetPid()
@@ -95,11 +95,17 @@ bool CPesDecoder::OnTsPacket(byte* tsPacket)
 	CTsHeader  header(tsPacket);
 	if (header.SyncByte != TS_PACKET_SYNC) 
 	{
-		//LogDebug("pesdecoder pid:%x sync error", m_pid);
+		LogDebug("pesdecoder pid:%x sync error", m_pid);
+		return false;
+	}
+	if (header.TransportError ) 
+	{
+		LogDebug("pesdecoder pid:%x transport error", m_pid);
 		return false;
 	}
 	if (header.Pid != m_pid) return false;
-
+	BOOL scrambled= (header.TScrambling!=0);
+	if (scrambled) return false;
 	//header.LogHeader();
 	if ( header.AdaptionFieldOnly() ) 
 	{
@@ -115,16 +121,27 @@ bool CPesDecoder::OnTsPacket(byte* tsPacket)
 		{
 			if (m_pesBuffer[0]==0 && m_pesBuffer[1]==0 && m_pesBuffer[2]==1)
 			{
+//				LogDebug("pes pid:%x size:%x", m_pid,m_iPesBufferPos);
 				OnNewPesPacket(m_pesBuffer, m_iPesBufferPos);
 				result=true;
 			}
 		}
-		m_iPesBufferPos=0;
-		memset(m_pesBuffer,0xff,MAX_PES_PACKET);
+		if (tsPacket[pos]!=0 || tsPacket[pos+1] !=0 || tsPacket[pos+2] !=1)
+		{
+			m_iPesBufferPos=-1;	
+			LogDebug("pes pid:%x, not a pes packet %0.2x%0.2x%0.2x%0.2x%0.2x%0.2x%0.2x%0.2x%0.2x%0.2x%0.2x%0.2x%0.2x%0.2x%0.2x%0.2x%0.2x%0.2x%0.2x%0.2x%0.2x",
+				m_pid,tsPacket[0],tsPacket[1],tsPacket[2],tsPacket[3],tsPacket[4],tsPacket[5],tsPacket[6],tsPacket[7],tsPacket[8],tsPacket[9],tsPacket[10]
+			,tsPacket[11],tsPacket[12],tsPacket[13],tsPacket[14],tsPacket[15],tsPacket[16],tsPacket[17],tsPacket[18],tsPacket[19],tsPacket[20]);
+		}
+		else
+		{
+			m_iPesBufferPos=0;
+		}
+		//memset(m_pesBuffer,0xff,MAX_PES_PACKET);
 	}
 	else
 	{
-		if (m_iPesBufferPos==0)
+		if (m_iPesBufferPos<0)
     {
       return  false;
     }
@@ -144,10 +161,10 @@ bool CPesDecoder::OnTsPacket(byte* tsPacket)
 
 void CPesDecoder::OnNewPesPacket(byte* pesPacket, int nLen)
 {   
-  if (pesPacket[4]==0 && pesPacket[5]==0)
-  {
-    while (pesPacket[nLen-1]==0 && pesPacket[nLen-2]==0 && pesPacket[nLen-3]==0 && nLen>4) nLen-=3;
-  }
+ // if (pesPacket[4]==0 && pesPacket[5]==0)
+ // {
+ //   while (pesPacket[nLen-1]==0 && pesPacket[nLen-2]==0 && pesPacket[nLen-3]==0 && nLen>4) nLen-=3;
+ // }
   memcpy(m_pesPacket,pesPacket,nLen);
   m_pespacketLen=nLen;
 }

@@ -180,7 +180,7 @@ int CMultiplexer::WritePackHeader()
 {
   __int64 pcrHi=m_pcrDecoder.PcrHigh();
   int pcrLow=m_pcrDecoder.PcrLow();
-  int muxRate=4000000/50;
+  int muxRate=(6*1024*1024)/50; //6MB/s
   byte pBuffer[0x20];
 	//pack header
 	pBuffer[0]=0;
