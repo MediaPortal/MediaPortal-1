@@ -101,7 +101,7 @@ namespace TvLibrary.Implementations.DVB
     {
       if (_digitalEveryWhere != null)
       {
-        _digitalEveryWhere.SendDiseqCommand(channel);
+        _digitalEveryWhere.SendDiseqcCommand(channel);
       }
     }
     public void SendPids(DVBBaseChannel channel,ArrayList pids)

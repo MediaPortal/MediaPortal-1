@@ -293,7 +293,7 @@ namespace TvLibrary.Implementations.DVB
         log += String.Format("0x{0:X} ", byData[i]);
       }
 
-//      Log.Log.WriteFile(log);
+      //      Log.Log.WriteFile(log);
       hr = propertySet.Set(propertyGuid, propId, _ptrDataInstance, 1036, _ptrDataReturned, 1036);
 
       if (hr != 0)
@@ -523,7 +523,7 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.WriteFile("FireDTV:GetDriverVersion() failed 0x{0:X}", hr);
         return String.Empty;
       }
-//      Log.Log.WriteFile("count:{0}", byteCount);
+      //      Log.Log.WriteFile("count:{0}", byteCount);
 
       string version = String.Empty;
 
@@ -532,7 +532,7 @@ namespace TvLibrary.Implementations.DVB
         char ch;
         byte k = Marshal.ReadByte(_ptrDataReturned, i);
 
-       // Log.Log.WriteFile("{0} = 0x{1:X} = {2} = {3}",
+        // Log.Log.WriteFile("{0} = 0x{1:X} = {2} = {3}",
         //         i, k, k, (char)k);
         if (k < 0x20)
           ch = '.';
@@ -643,7 +643,7 @@ namespace TvLibrary.Implementations.DVB
       }
       return true;
     }
-    public void SendDiseqCommand(DVBSChannel channel)
+    public void SendDiseqcCommand(DVBSChannel channel)
     {
       int antennaNr = 1;
       switch (channel.DisEqc)
@@ -672,66 +672,66 @@ namespace TvLibrary.Implementations.DVB
       //"01,02,03,04,05,06,07,08,09,0a,0b,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,"	
       Log.Log.WriteFile("FireDTV SendDiseqcCommand() diseqc:{0}, antenna:{1} frequency:{2}, switching frequency:{3}, polarisation:{4}",
               channel.DisEqc, antennaNr, channel.Frequency, channel.SwitchingFrequency, channel.Polarisation);
-      IntPtr ptrCmd = Marshal.AllocCoTaskMem(25);
-      try
+      
+      Marshal.WriteByte(_ptrDataInstance, 0, 0xFF);//Voltage;
+      Marshal.WriteByte(_ptrDataInstance, 1, 0xFF);//ContTone;
+      Marshal.WriteByte(_ptrDataInstance, 2, 0xFF);//Burst;
+      Marshal.WriteByte(_ptrDataInstance, 3, 0x01);//NrDiseqcCmds;
+
+      Marshal.WriteByte(_ptrDataInstance, 4, 0x04);//diseqc command 1. length=4
+      Marshal.WriteByte(_ptrDataInstance, 5, 0xE0);//diseqc command 1. uFraming=0xe0
+      Marshal.WriteByte(_ptrDataInstance, 6, 0x10);//diseqc command 1. uAddress=0x10
+      Marshal.WriteByte(_ptrDataInstance, 7, 0x38);//diseqc command 1. uCommand=0x38
+
+      // for the write to port group 0 command:
+      // data 0 : low nibble specifies the values of each bit
+      //		bit		0    :  0= low band,   1 = high band
+      //    bit   1    :  0= horizontal, 1 = vertical
+      //    bits  2..3 :  antenna number (0-3)
+      //    bit   4-7  : specifices which bits are valid , 0XF means all bits are valid and should be set)
+      byte uContTone;
+      if (channel.Frequency < channel.SwitchingFrequency)
       {
-        Marshal.WriteByte(ptrCmd, 0, 0xFF);//Voltage;
-        Marshal.WriteByte(ptrCmd, 1, 0xFF);//ContTone;
-        Marshal.WriteByte(ptrCmd, 2, 0xFF);//Burst;
-        Marshal.WriteByte(ptrCmd, 3, 0x01);//NrDiseqcCmds;
-
-        Marshal.WriteByte(ptrCmd, 4, 0x04);//diseqc command 1. length=4
-        Marshal.WriteByte(ptrCmd, 5, 0xE0);//diseqc command 1. uFraming=0xe0
-        Marshal.WriteByte(ptrCmd, 6, 0x10);//diseqc command 1. uAddress=0x10
-        Marshal.WriteByte(ptrCmd, 7, 0x38);//diseqc command 1. uCommand=0x38
-
-        // for the write to port group 0 command:
-        // data 0 : low nibble specifies the values of each bit
-        //		bit		0    :  0= low band,   1 = high band
-        //    bit   1    :  0= horizontal, 1 = vertical
-        //    bits  2..3 :  antenna number (0-3)
-        //    bit   4-7  : specifices which bits are valid , 0XF means all bits are valid and should be set)
-        byte uContTone;
-        if (channel.Frequency < channel.SwitchingFrequency)
-        {
-          // We are in Low Band
-          uContTone = 0;
-        }
-        else
-        {
-          // We are in High Band
-          uContTone = 1;
-        }
-        byte cmd = 0xf0;
-        cmd |= (byte)(((antennaNr - 1) * 4) & 0x0F);
-        cmd |= (byte)(uContTone == 1 ? 1 : 0);
-        cmd |= (byte)(channel.Polarisation == Polarisation.LinearV ? 2 : 0);
-        Marshal.WriteByte(ptrCmd, 8, cmd);
-
-        DirectShowLib.IKsPropertySet propertySet = _filterTuner as DirectShowLib.IKsPropertySet;
-        Guid propertyGuid = KSPROPSETID_Firesat;
-        KSPropertySupport isTypeSupported = 0;
-        int hr = propertySet.QuerySupported(propertyGuid, (int)KSPROPERTY_FIRESAT_LNB_CONTROL, out isTypeSupported);
-        if (hr != 0 || (isTypeSupported & KSPropertySupport.Set) == 0)
-        {
-          Log.Log.WriteFile("FireDTV:SendDiseqCommand() not supported");
-          return;
-        }
-
-        string txt = "";
-        for (int i = 0; i < 10; ++i)
-          txt += String.Format("0x{0:X} ", Marshal.ReadByte(ptrCmd, i));
-//        Log.Log.WriteFile("FireDTV:SendDiseq: {0}", txt);
-
-        hr = propertySet.Set(propertyGuid, KSPROPERTY_FIRESAT_LNB_CONTROL, ptrCmd, 10, ptrCmd, 10);
-        if (hr != 0)
-        {
-          Log.Log.WriteFile("FireDTV:SendDiseqCommand() not supported");
-        }
+        // We are in Low Band
+        uContTone = 0;
       }
-      finally
+      else
       {
-        Marshal.FreeCoTaskMem(ptrCmd);
+        // We are in High Band
+        uContTone = 1;
+      }
+      byte cmd = 0xf0;
+      cmd |= (byte)(((antennaNr - 1) * 4) & 0x0F);
+      cmd |= (byte)(uContTone == 1 ? 1 : 0);
+      cmd |= (byte)(channel.Polarisation == Polarisation.LinearV ? 2 : 0);
+      Marshal.WriteByte(_ptrDataInstance, 8, cmd);
+
+      Guid propertyGuid = KSPROPSETID_Firesat;
+      int propId = KSPROPERTY_FIRESAT_LNB_CONTROL;
+      DirectShowLib.IKsPropertySet propertySet = _filterTuner as DirectShowLib.IKsPropertySet;
+      KSPropertySupport isTypeSupported;
+      if (propertySet == null)
+      {
+        Log.Log.WriteFile("FireDTV:SendDiseqcCommand() properySet=null");
+        return;
+      }
+
+      int hr = propertySet.QuerySupported(propertyGuid, propId, out isTypeSupported);
+      if (hr != 0 || (isTypeSupported & KSPropertySupport.Set) == 0)
+      {
+        Log.Log.WriteFile("FireDTV:SendDiseqcCommand() set is not supported {0:X} {1}", hr, (int)isTypeSupported);
+        return;
+      }
+
+      string txt = "";
+      for (int i = 0; i < 10; ++i)
+        txt += String.Format("0x{0:X} ", Marshal.ReadByte(_ptrDataInstance, i));
+      Log.Log.WriteFile("FireDTV:SendDiseq: {0}", txt);
+
+      hr = propertySet.Set(propertyGuid, propId, _ptrDataInstance, 25, _ptrDataInstance, 25);
+      if (hr != 0)
+      {
+        Log.Log.WriteFile("FireDTV:SendDiseqcCommand() failed:{0:X}",hr);
       }
     }
   }
