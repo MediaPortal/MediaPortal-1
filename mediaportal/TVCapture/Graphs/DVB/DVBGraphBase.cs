@@ -2279,6 +2279,7 @@ namespace MediaPortal.TV.Recording
         int cbandMHZ = 0;
         int circularMHZ = 0;
 
+        /*
         int config, dlnb1, dlnb2, dlnb3, dlnb4;
         config = dlnb1 = dlnb2 = dlnb3 = dlnb4 = 0;
 
@@ -2298,6 +2299,7 @@ namespace MediaPortal.TV.Recording
           config = 3;
         else if (ch.DiSEqC == dlnb4)
           config = 4;
+        */
 
         using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename) )
         {
@@ -2307,9 +2309,10 @@ namespace MediaPortal.TV.Recording
           lnbswMHZ = xmlreader.GetValueAsInt("dvbs", "Switch", 11700);
           cbandMHZ = xmlreader.GetValueAsInt("dvbs", "CBand", 5150);
           circularMHZ = xmlreader.GetValueAsInt("dvbs", "Circular", 10750);
-          switch (config)
+          switch (ch.DiSEqC)
           {
             case 1:
+            case 3:
               // config a
               lnbKhz = xmlreader.GetValueAsInt("dvbs", "lnb", 22);
               diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc", 1);
@@ -2317,13 +2320,14 @@ namespace MediaPortal.TV.Recording
               _log.Info("DVBGraph: using profile diseqc 1 LNB:{0} kHz diseqc:{1} lnbKind:{2}", lnbKhz, diseqc, lnbKind);
               break;
             case 2:
+            case 4:
               // config b
               lnbKhz = xmlreader.GetValueAsInt("dvbs", "lnb2", 22);
               diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc2", 1);
               lnbKind = xmlreader.GetValueAsInt("dvbs", "lnbKind2", 0);
               _log.Info("DVBGraph: using profile diseqc 2 LNB:{0} kHz diseqc:{1} lnbKind:{2}", lnbKhz, diseqc, lnbKind);
               break;
-            case 3:
+            case 5:
               // config c
               lnbKhz = xmlreader.GetValueAsInt("dvbs", "lnb3", 22);
               diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc3", 1);
@@ -2331,7 +2335,7 @@ namespace MediaPortal.TV.Recording
               _log.Info("DVBGraph: using profile diseqc 3 LNB:{0} kHz diseqc:{1} lnbKind:{2}", lnbKhz, diseqc, lnbKind);
               break;
             //
-            case 4:
+            case 6:
               // config d
               lnbKhz = xmlreader.GetValueAsInt("dvbs", "lnb4", 22);
               diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc4", 1);
