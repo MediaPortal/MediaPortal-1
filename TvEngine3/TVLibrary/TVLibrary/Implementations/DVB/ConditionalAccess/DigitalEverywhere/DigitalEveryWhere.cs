@@ -670,8 +670,6 @@ namespace TvLibrary.Implementations.DVB
           break;
       }
       //"01,02,03,04,05,06,07,08,09,0a,0b,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,"	
-      Log.Log.WriteFile("FireDTV SendDiseqcCommand() diseqc:{0}, antenna:{1} frequency:{2}, switching frequency:{3}, polarisation:{4}",
-              channel.DisEqc, antennaNr, channel.Frequency, channel.SwitchingFrequency, channel.Polarisation);
       
       Marshal.WriteByte(_ptrDataInstance, 0, 0xFF);//Voltage;
       Marshal.WriteByte(_ptrDataInstance, 1, 0xFF);//ContTone;
@@ -690,7 +688,22 @@ namespace TvLibrary.Implementations.DVB
       //    bits  2..3 :  antenna number (0-3)
       //    bit   4-7  : specifices which bits are valid , 0XF means all bits are valid and should be set)
       byte uContTone;
-      if (channel.Frequency < channel.SwitchingFrequency)
+      int lnbFrequency = 10600000;
+      bool hiBand = true;
+      if (channel.Frequency >= 11700000)
+      {
+        lnbFrequency = 10600000;
+        hiBand = true;
+      }
+      else
+      {
+        lnbFrequency = 9750000;
+        hiBand = false;
+      }
+      Log.Log.WriteFile("FireDTV SendDiseqcCommand() diseqc:{0}, antenna:{1} frequency:{2}, lnb frequency:{3}, polarisation:{4} hiband:{5}",
+              channel.DisEqc, antennaNr, channel.Frequency, lnbFrequency, channel.Polarisation,hiBand);
+
+      if (hiBand==false)
       {
         // We are in Low Band
         uContTone = 0;
