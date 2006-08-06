@@ -62,7 +62,7 @@ namespace MediaPortal.AudioScrobbler
         checkBoxLogVerbose.Checked = xmlreader.GetValueAsBool("audioscrobbler", "usedebuglog", false);
         trackBarRandomness.Value = xmlreader.GetValueAsInt("audioscrobbler", "randomness", 77);
         checkBoxScrobbleDefault.Checked = xmlreader.GetValueAsBool("audioscrobbler", "scrobbledefault", false);
-        numericUpDownSimilarArtist.Value = xmlreader.GetValueAsInt("audioscrobbler", "similarartistscount", 3);
+        numericUpDownSimilarArtist.Value = xmlreader.GetValueAsInt("audioscrobbler", "similarartistscount", 2);
         numericUpDownTracksPerArtist.Value = xmlreader.GetValueAsInt("audioscrobbler", "tracksperartistscount", 1);
 
         textBoxASUsername.Text = xmlreader.GetValueAsString("audioscrobbler", "user", "");

@@ -61,6 +61,7 @@ namespace MediaPortal.GUI.Music
     string m_strCurrentFile = String.Empty;
     VirtualDirectory m_directory = new VirtualDirectory();
     const int MaxNumPShuffleSongPredict = 12;
+    int _totalScrobbledSongs = 0;
     int _maxScrobbledSongsPerArtist = 1;
     int _maxScrobbledArtistsForSongs = 4;
     private bool PShuffleOn = false;
@@ -1130,6 +1131,9 @@ namespace MediaPortal.GUI.Music
         if (playList.Count == 0 && currentScrobbleMode == ScrobbleMode.Neighbours)
         {
           OnScrobble();
+          GUIListItem item = facadeView[0];
+          if (item != null)
+            item.Shaded = false;
           playlistPlayer.Reset();
           playlistPlayer.Play(0);
         }
@@ -1178,7 +1182,7 @@ namespace MediaPortal.GUI.Music
             addedSimilarSongs++;
           loops++;
           // okay okay seems like there aren't enough files to add
-          if (loops > 10 * _maxScrobbledArtistsForSongs)
+          if (loops == scrobbledArtists.Count - 1)
             break;
         }
       }
@@ -1215,11 +1219,14 @@ namespace MediaPortal.GUI.Music
       {
         randomPosition = rand.Next(0, songsCount-1);
         if (AddRandomSongToPlaylist(ref songs[randomPosition]))
+        {
           songsAdded++;
+          _totalScrobbledSongs++;
+        }
 
         j++;
         // avoid too many re-tries on existing songs.
-        if (j > songsCount * 10)
+        if (j > songsCount * 5)
           break;
       }
       // _maxScrobbledSongsPerArtist are inserted      

@@ -53,22 +53,7 @@ namespace MediaPortal.Music.Database
     toptags,
     artisttags,
   }
-
-
-
-  /// <summary>
-  /// A class of this type is passed with every SubmitEvent
-  /// </summary>
-  //public class SubmitEventArgs
-  //{
-  //  public Song song;
-
-  //  public SubmitEventArgs(Song song_)
-  //  {
-  //    song = song_;
-  //  }
-  //}
-
+  
   #endregion
 
   public class AudioscrobblerBase
@@ -104,6 +89,7 @@ namespace MediaPortal.Music.Database
     private DateTime lastConnectAttempt;
     private DateTime spamCheck;
     private TimeSpan minConnectWaitTime;
+    private bool _queueUnclean;
     private bool _disableTimerThread;
     private bool _dismissOnError;
     private bool _useDebugLog;
@@ -155,7 +141,7 @@ namespace MediaPortal.Music.Database
       //eventQueue           = new EventQueue(); random
       submitLock = new Object();
       lastHandshake = DateTime.MinValue;
-      spamCheck = DateTime.MinValue;
+      spamCheck = DateTime.MinValue;      
       handshakeInterval = new TimeSpan(0, HANDSHAKE_INTERVAL, 0);
       lastConnectAttempt = DateTime.MinValue;
       minConnectWaitTime = new TimeSpan(0, 0, CONNECT_WAIT_TIME);
@@ -323,7 +309,8 @@ namespace MediaPortal.Music.Database
     public void pushQueue(Song song_)
     {
       string logmessage = "Adding to queue: " + song_.ToShortString();
-      Log.Write("AudioscrobblerBase: {0}", logmessage);
+      if (_useDebugLog)
+        Log.Write("AudioscrobblerBase: {0}", logmessage);
 
       // Enqueue the song.
       song_.AudioScrobblerStatus = SongStatus.Cached;
@@ -547,6 +534,7 @@ namespace MediaPortal.Music.Database
       {
         queue.Clear();
         SaveQueue();
+        _queueUnclean = false;
       }
     }
 
@@ -560,6 +548,7 @@ namespace MediaPortal.Music.Database
         SaveQueue();
         queue.Clear();
         LoadQueue();
+        _queueUnclean = false;
       }
     }
 
@@ -828,8 +817,17 @@ namespace MediaPortal.Music.Database
       if (!DoHandshake(false))
       {
         Log.Write("AudioscrobblerBase: {0}", "Handshake failed.");
+        lock (submitLock)
+        {
+          // Save the queue now since the connection might come back...
+          SaveQueue();
+          _queueUnclean = true;
+        }
         return;
       }
+
+      if (_queueUnclean)
+        ResetQueue();
 
       // If the queue is empty, nothing else to do today.
       if (queue.Count <= 0)
@@ -947,8 +945,9 @@ namespace MediaPortal.Music.Database
         // Remove the submitted songs from the queue.
         lock (queueLock)
         {
-          for (int i = 0; i < n_totalsongs; i++)
-            queue.RemoveAt(0);
+          //for (int i = 0; i < n_totalsongs; i++)
+          //  queue.RemoveAt(0);
+          ClearQueue();
         }
 
         // Send an event for each of the submitted songs.
@@ -956,9 +955,6 @@ namespace MediaPortal.Music.Database
         {
           song.AudioScrobblerStatus = SongStatus.Submitted;
         }
-
-        // Save again.
-        SaveQueue();
       }
     }
 
