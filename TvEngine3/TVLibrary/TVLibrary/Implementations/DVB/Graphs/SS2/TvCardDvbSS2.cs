@@ -60,7 +60,6 @@ namespace TvLibrary.Implementations.DVB
     protected IBaseFilter _filterTsAnalyzer;
     protected StreamBufferSink _filterStreamBufferSink;
     protected IBaseFilter _filterGrabber;
-    protected IBaseFilter _tsFileSink = null;
 
 
 
@@ -68,7 +67,7 @@ namespace TvLibrary.Implementations.DVB
     protected IStreamBufferRecordControl _recorder;
     DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3 _interfaceB2C2DataCtrl;
     DVBSkyStar2Helper.IB2C2MPEG2TunerCtrl2 _interfaceB2C2TunerCtrl;
-    
+
     protected IPin _pinTTX;
 
     protected DVBTeletext _teletextDecoder;
@@ -76,7 +75,7 @@ namespace TvLibrary.Implementations.DVB
     protected ITsEpgScanner _interfaceEpgGrabber;
     protected ITsChannelScan _interfaceChannelScan;
     protected ITsPmtGrabber _interfacePmtGrabber;
-    
+
     protected bool _graphRunning;
     protected bool _epgGrabbing;
     protected int _managedThreadId;
@@ -346,26 +345,6 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
-    
-    protected void CreateTimeShiftingGraph()
-    {
-      Log.Log.WriteFile("ss2:CreateTimeShiftingGraph()");
-    }
-
-    protected void DeleteTimeShiftingGraph()
-    {
-      Log.Log.WriteFile("ss2:DeleteTimeShiftingGraph()");
-      if (_tsFileSink != null)
-      {
-        IMPRecord record = _tsFileSink as IMPRecord;
-        record.StopTimeShifting();
-        _graphBuilder.RemoveFilter((IBaseFilter)_tsFileSink);
-        Release.ComObject("tsFileSink filter", _tsFileSink);
-        _tsFileSink = null;
-      }
-
-    }
-
     /// <summary>
     /// sets the filename used for timeshifting
     /// </summary>
@@ -374,45 +353,44 @@ namespace TvLibrary.Implementations.DVB
     {
       if (!CheckThreadId()) return;
       _timeshiftFileName = fileName;
-      Log.Log.WriteFile("ss2:SetTimeShiftFileName:{0}", fileName);
+      Log.Log.WriteFile("dvb:SetTimeShiftFileName:{0}", fileName);
       int hr;
       if (_filterStreamBufferSink != null)
       {
-        //Log.Log.WriteFile("ss2:SetTimeShiftFileName: uses dvr-ms");
+        //Log.Log.WriteFile("dvb:SetTimeShiftFileName: uses dvr-ms");
         IStreamBufferSink init = (IStreamBufferSink)_filterStreamBufferSink;
         hr = init.LockProfile(fileName);
         if (hr != 0)
         {
-          Log.Log.WriteFile("ss2:SetTimeShiftFileName  returns:0x{0:X}", hr);
+          Log.Log.WriteFile("dvb:SetTimeShiftFileName  returns:0x{0:X}", hr);
           throw new TvException("Unable to start timeshifting to " + fileName);
         }
       }
       if (_filterTsAnalyzer != null)
       {
-        Log.Log.WriteFile("dvb:SetTimeShiftFileName: uses .mpg");
-        ITsRecorder record = _filterTsAnalyzer as ITsRecorder;
-        hr = record.SetRecordingFileName(fileName);
-        DVBBaseChannel dvbChannel = _currentChannel as DVBBaseChannel;
-        record.SetPcrPid((short)dvbChannel.PcrPid);
-        foreach (PidInfo info in _channelInfo.pids)
+        ITsTimeShift record = _filterTsAnalyzer as ITsTimeShift;
+        record.SetTimeShiftingFileName(fileName);
+        if (_channelInfo.pids.Count == 0)
         {
-          if (info.isAC3Audio || info.isAudio || info.isVideo)
+          Log.Log.WriteFile("dvb:SetTimeShiftFileName no pmt received yet");
+          _startTimeShifting = true;
+        }
+        else
+        {
+          Log.Log.WriteFile("dvb:SetTimeShiftFileName fill in pids");
+          _startTimeShifting = false;
+          DVBBaseChannel dvbChannel = _currentChannel as DVBBaseChannel;
+          record.SetPcrPid((short)dvbChannel.PcrPid);
+          foreach (PidInfo info in _channelInfo.pids)
           {
-            record.AddPesStream((short)info.pid);
+            if (info.isAC3Audio || info.isAudio || info.isVideo)
+            {
+              record.AddPesStream((short)info.pid);
+            }
           }
+          record.Start();
         }
-        if (hr != 0)
-        {
-          Log.Log.WriteFile("dvb:SetRecordingFileName failed:{0:X}", hr);
-        }
-        hr = record.StartRecord();
-        if (hr != 0)
-        {
-          Log.Log.WriteFile("dvb:StartRecord failed:{0:X}", hr);
-        }
-
       }
-
     }
 
     /// <summary>
@@ -425,7 +403,7 @@ namespace TvLibrary.Implementations.DVB
       (_graphBuilder as IMediaControl).GetState(10, out state);
       if (state == FilterState.Running) return;
 
-      Log.Log.WriteFile("ss2:RunGraph");
+      Log.Log.WriteFile("dvb:RunGraph");
       _teletextDecoder.ClearBuffer();
       _pmtVersion = -1;
 
@@ -446,22 +424,17 @@ namespace TvLibrary.Implementations.DVB
       hr = (_graphBuilder as IMediaControl).Run();
       if (hr < 0 || hr > 1)
       {
-        Log.Log.WriteFile("ss2:RunGraph returns:0x{0:X}", hr);
+        Log.Log.WriteFile("dvb:RunGraph returns:0x{0:X}", hr);
         throw new TvException("Unable to start graph");
       }
 
       _epgGrabbing = false;
-      if (_tsFileSink != null)
-      {
-        _dateTimeShiftStarted = DateTime.Now;
-      }
+      _dateTimeShiftStarted = DateTime.Now;
       DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
-      if (channel != null)
-      {
-        SetAnalyzerMapping(channel.PmtPid);
-      }
-      _graphRunning = true;
+      SetAnalyzerMapping(channel.PmtPid);
       _pmtTimer.Enabled = true;
+      _graphRunning = true;
+
     }
 
     /// <summary>
@@ -470,39 +443,46 @@ namespace TvLibrary.Implementations.DVB
     protected void StopGraph()
     {
       if (!CheckThreadId()) return;
-      Log.Log.WriteFile("ss2:StopGraph()");
       if (_epgGrabbing)
       {
         _epgGrabbing = false;
         if (OnEpgReceived != null)
         {
-          Log.Log.WriteFile("ss2:cancel epg->stop graph");
+          Log.Log.WriteFile("dvb:cancel epg->stop graph");
           OnEpgReceived(this, null);
         }
       }
       _graphRunning = false;
       _epgGrabbing = false;
       _isScanning = false;
-      _startTimeShifting = false;
       _dateTimeShiftStarted = DateTime.MinValue;
       _dateRecordingStarted = DateTime.MinValue;
       if (_graphBuilder == null) return;
       FilterState state;
       (_graphBuilder as IMediaControl).GetState(10, out state);
       _pmtTimer.Enabled = false;
+      _startTimeShifting = false;
       _pmtVersion = -1;
+      _channelInfo = new ChannelInfo();
+      if (_filterTsAnalyzer != null)
+      {
+        ITsRecorder recorder = _filterTsAnalyzer as ITsRecorder;
+        recorder.StopRecord();
+        ITsTimeShift timeshift = _filterTsAnalyzer as ITsTimeShift;
+        timeshift.Stop();
+      }
       if (_teletextDecoder != null)
       {
         _teletextDecoder.ClearBuffer();
       }
       if (state == FilterState.Stopped) return;
-      Log.Log.WriteFile("ss2:StopGraph");
+      Log.Log.WriteFile("dvb:StopGraph");
       int hr = 0;
       //hr = (_graphBuilder as IMediaControl).StopWhenReady();
       hr = (_graphBuilder as IMediaControl).Stop();
       if (hr < 0 || hr > 1)
       {
-        Log.Log.WriteFile("ss2:RunGraph returns:0x{0:X}", hr);
+        Log.Log.WriteFile("dvb:RunGraph returns:0x{0:X}", hr);
         throw new TvException("Unable to stop graph");
       }
     }
@@ -517,7 +497,7 @@ namespace TvLibrary.Implementations.DVB
       {
         Log.Log.WriteFile("ss2:DeleteAllPIDs() failed pid:0x2000");
       }
-      if (pids.Count == 0||true)
+      if (pids.Count == 0 || true)
       {
         Log.Log.WriteFile("ss2:hw pids:all");
         int added = SetPidToPin(_interfaceB2C2DataCtrl, 0, PID_CAPTURE_ALL_INCLUDING_NULLS);
@@ -967,7 +947,7 @@ namespace TvLibrary.Implementations.DVB
 
       if (_startTimeShifting)
       {
-        Log.Log.WriteFile("dvb: set timeshifting pids");
+        Log.Log.WriteFile("ss2: set timeshifting pids");
         _startTimeShifting = false;
         ITsTimeShift record = _filterTsAnalyzer as ITsTimeShift;
         DVBBaseChannel dvbChannel = _currentChannel as DVBBaseChannel;
@@ -979,8 +959,26 @@ namespace TvLibrary.Implementations.DVB
             record.AddPesStream((short)pidInfo.pid);
           }
         }
-        Log.Log.WriteFile("dvb: start timeshifting");
+        Log.Log.WriteFile("ss2: start timeshifting");
         record.Start();
+      }
+      else if (_graphState == GraphState.TimeShifting || _graphState == GraphState.Recording)
+      {
+        Log.Log.WriteFile("ss2: set timeshifting pids");
+        ITsTimeShift record = _filterTsAnalyzer as ITsTimeShift;
+        DVBBaseChannel dvbChannel = _currentChannel as DVBBaseChannel;
+        if (dvbChannel != null)
+        {
+          record.Reset();
+          record.SetPcrPid((short)dvbChannel.PcrPid);
+          foreach (PidInfo pidInfo in info.pids)
+          {
+            if (pidInfo.isAC3Audio || pidInfo.isAudio || pidInfo.isVideo)
+            {
+              record.AddPesStream((short)pidInfo.pid);
+            }
+          }
+        }
       }
     }
     #endregion
@@ -997,7 +995,7 @@ namespace TvLibrary.Implementations.DVB
     protected void StartRecord(string fileName, RecordingType recordingType, ref long startTime)
     {
       if (!CheckThreadId()) return;
-      Log.Log.WriteFile("ss2:StartRecord({0})", fileName);
+      Log.Log.WriteFile("dvb:StartRecord({0})", fileName);
 
       int hr;
       if (_filterStreamBufferSink != null)
@@ -1007,7 +1005,7 @@ namespace TvLibrary.Implementations.DVB
         hr = sink.CreateRecorder(fileName, recordingType, out  pRecordingIUnknown);
         if (hr != 0)
         {
-          Log.Log.WriteFile("ss2: Unable to create recorder:0x{0:X}", hr);
+          Log.Log.WriteFile("dvb:Analog: Unable to create recorder:0x{0:X}", hr);
           throw new TvException("Unable to create recorder");
         }
         _recorder = pRecordingIUnknown as IStreamBufferRecordControl;
@@ -1019,25 +1017,36 @@ namespace TvLibrary.Implementations.DVB
         bool started, stopped;
         int result;
         _recorder.GetRecordingStatus(out result, out started, out stopped);
-        Log.Log.WriteFile("ss2:Recording started:{0} stopped:{1}", started, stopped);
+        Log.Log.WriteFile("dvb:Recording started:{0} stopped:{1}", started, stopped);
         return;
       }
-      if (_tsFileSink != null)
+      if (_filterTsAnalyzer != null)
       {
-        Log.Log.WriteFile("ss2:SetRecordingFileName: uses .mpg");
-        IMPRecord record = _tsFileSink as IMPRecord;
+        Log.Log.WriteFile("dvb:SetRecordingFileName: uses .mpg");
+        ITsRecorder record = _filterTsAnalyzer as ITsRecorder;
         hr = record.SetRecordingFileName(fileName);
+        DVBBaseChannel dvbChannel = _currentChannel as DVBBaseChannel;
+        record.SetPcrPid((short)dvbChannel.PcrPid);
+        foreach (PidInfo info in _channelInfo.pids)
+        {
+          if (info.isAC3Audio || info.isAudio || info.isVideo)
+          {
+            record.AddPesStream((short)info.pid);
+          }
+        }
         if (hr != 0)
         {
-          Log.Log.WriteFile("ss2:SetRecordingFileName failed:{0:X}", hr);
+          Log.Log.WriteFile("dvb:SetRecordingFileName failed:{0:X}", hr);
         }
         hr = record.StartRecord();
         if (hr != 0)
         {
-          Log.Log.WriteFile("ss2:StartRecord failed:{0:X}", hr);
+          Log.Log.WriteFile("dvb:StartRecord failed:{0:X}", hr);
         }
-      } _dateRecordingStarted = DateTime.Now;
 
+      }
+
+      _dateRecordingStarted = DateTime.Now;
     }
 
 
@@ -1049,22 +1058,22 @@ namespace TvLibrary.Implementations.DVB
     {
       if (!CheckThreadId()) return;
       int hr;
-      Log.Log.WriteFile("ss2:StopRecord()");
+      Log.Log.WriteFile("dvb:StopRecord()");
       if (_recorder != null)
       {
         hr = _recorder.Stop(1);
         if (hr != 0)
         {
-          Log.Log.WriteFile("ss2:Stop record:0x{0:X}", hr);
+          Log.Log.WriteFile("dvb:Stop record:0x{0:X}", hr);
           throw new TvException("Unable to stop recording");
         }
         Release.ComObject("recorder", _recorder);
         _recorder = null;
       }
 
-      if (_tsFileSink != null)
+      if (_filterTsAnalyzer != null)
       {
-        IMPRecord record = _tsFileSink as IMPRecord;
+        ITsRecorder record = _filterTsAnalyzer as ITsRecorder;
         record.StopRecord();
 
       }
@@ -1080,7 +1089,7 @@ namespace TvLibrary.Implementations.DVB
     {
       if (!CheckThreadId()) return;
       if (_graphState == GraphState.Idle) return;
-      if (_interfaceEpgGrabber == null ) return;
+      if (_interfaceEpgGrabber == null) return;
       _interfaceEpgGrabber.GrabEPG();
       _interfaceEpgGrabber.GrabMHW();
       _epgGrabbing = true;
@@ -1889,7 +1898,7 @@ namespace TvLibrary.Implementations.DVB
     {
       if (_graphBuilder == null) return;
       if (!CheckThreadId()) return;
-      
+
 
       if (_epgGrabbing)
       {
@@ -1913,7 +1922,6 @@ namespace TvLibrary.Implementations.DVB
       _interfaceEpgGrabber = null;
       _interfaceB2C2DataCtrl = null;
       _interfaceB2C2TunerCtrl = null; ;
-      DeleteTimeShiftingGraph();
 
       if (_recorder != null)
       {
@@ -1945,11 +1953,7 @@ namespace TvLibrary.Implementations.DVB
         Release.ComObject("secions&tables filter", _filterSectionsAndTables); _filterSectionsAndTables = null;
       }
 
-      if (_tsFileSink != null)
-      {
-        Release.ComObject("tsFileSink filter", _tsFileSink); _tsFileSink = null;
-      }
- 
+
       if (_filterTsAnalyzer != null)
       {
         Release.ComObject("_filterMpTsAnalyzer", _filterTsAnalyzer); _filterTsAnalyzer = null;

@@ -1634,7 +1634,7 @@ namespace TvLibrary.Implementations.DVB
       }
       if (_filterTsAnalyzer != null)
       {
-        Log.Log.WriteFile("dvb:SetTimeShiftFileName: uses .mpg");
+        Log.Log.WriteFile("dvb:SetRecordingFileName: uses .mpg");
         ITsRecorder record = _filterTsAnalyzer as ITsRecorder;
         hr = record.SetRecordingFileName(fileName);
         DVBBaseChannel dvbChannel = _currentChannel as DVBBaseChannel;
