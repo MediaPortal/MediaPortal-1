@@ -225,11 +225,11 @@ namespace TvLibrary.Implementations.DVB
       _tuneRequest.put_Locator(locator);
 
 
-      SubmitTuneRequest(_tuneRequest);
       if (_conditionalAccess != null)
       {
         _conditionalAccess.SendDiseqcCommand(dvbsChannel);
       }
+      SubmitTuneRequest(_tuneRequest);
 
 
       _currentChannel = channel;
