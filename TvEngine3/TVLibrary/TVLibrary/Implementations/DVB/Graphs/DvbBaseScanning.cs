@@ -1,4 +1,4 @@
-using System;
+l using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -93,15 +93,13 @@ namespace TvLibrary.Implementations.DVB
       {
         ResetSignalUpdate();
         if (_card.IsTunerLocked) break;
-        Application.DoEvents();
         TimeSpan ts = DateTime.Now - startTime;
-        if (ts.TotalMilliseconds >= 1000) break;
-        System.Threading.Thread.Sleep(50);
-        Application.DoEvents();
+        if (ts.TotalMilliseconds >= 5000) break;
+        System.Threading.Thread.Sleep(100);
       }
       if (_card.IsTunerLocked == false)
       {
-        Log.Log.WriteFile("Scan no signal detected");
+        Log.Log.WriteFile("Scan no signal detected: locked:{0} signal level:{1} signal quality:{2}", _card.IsTunerLocked, _card.SignalLevel, _card.SignalQuality);
         return null;
       }
       Log.Log.WriteFile("Signal detected, wait for good signal quality");
@@ -111,13 +109,11 @@ namespace TvLibrary.Implementations.DVB
         startTime = DateTime.Now;
         while (true)
         {
-          Application.DoEvents();
           ResetSignalUpdate();
           if (_card.SignalQuality >= 60) break;
-          System.Threading.Thread.Sleep(50);
-          Application.DoEvents();
+          System.Threading.Thread.Sleep(100);
           TimeSpan ts = DateTime.Now - startTime;
-          if (ts.TotalMilliseconds >= 1000) break;
+          if (ts.TotalMilliseconds >= 2000) break;
         }
         Log.Log.WriteFile("Tuner locked:{0} signal level:{1} signal quality:{2}", _card.IsTunerLocked, _card.SignalLevel, _card.SignalQuality);
         startTime = DateTime.Now;
@@ -127,8 +123,8 @@ namespace TvLibrary.Implementations.DVB
           _analyzer.GetCount(out channelCount);
           if (channelCount > 0) break;
           TimeSpan ts = DateTime.Now - startTime;
-          if (ts.TotalMilliseconds > 1000) break;
-          Application.DoEvents();
+          if (ts.TotalMilliseconds > 2000) break;
+          System.Threading.Thread.Sleep(100);
         }
         if (channelCount == 0)
         {

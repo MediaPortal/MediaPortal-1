@@ -670,7 +670,7 @@ namespace TvLibrary.Implementations.DVB
           break;
       }
       //"01,02,03,04,05,06,07,08,09,0a,0b,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,"	
-      
+
       Marshal.WriteByte(_ptrDataInstance, 0, 0xFF);//Voltage;
       Marshal.WriteByte(_ptrDataInstance, 1, 0xFF);//ContTone;
       Marshal.WriteByte(_ptrDataInstance, 2, 0xFF);//Burst;
@@ -683,11 +683,10 @@ namespace TvLibrary.Implementations.DVB
 
       // for the write to port group 0 command:
       // data 0 : low nibble specifies the values of each bit
-      //		bit		0    :  0= low band,   1 = high band
-      //    bit   1    :  0= horizontal, 1 = vertical
-      //    bits  2..3 :  antenna number (0-3)
-      //    bit   4-7  : specifices which bits are valid , 0XF means all bits are valid and should be set)
-      byte uContTone;
+      //		bit		0    :  (1)      0= low band,   1 = high band
+      //    bit   1    :  (2)      0= horizontal, 1 = vertical
+      //    bits  2..3 :  (4.8.10) antenna number (0-3)
+      //    bit   4-7  :           specifices which bits are valid , 0XF means all bits are valid and should be set)
       int lnbFrequency = 10600000;
       bool hiBand = true;
       if (channel.Frequency >= 11700000)
@@ -701,22 +700,13 @@ namespace TvLibrary.Implementations.DVB
         hiBand = false;
       }
       Log.Log.WriteFile("FireDTV SendDiseqcCommand() diseqc:{0}, antenna:{1} frequency:{2}, lnb frequency:{3}, polarisation:{4} hiband:{5}",
-              channel.DisEqc, antennaNr, channel.Frequency, lnbFrequency, channel.Polarisation,hiBand);
+              channel.DisEqc, antennaNr, channel.Frequency, lnbFrequency, channel.Polarisation, hiBand);
 
-      if (hiBand==false)
-      {
-        // We are in Low Band
-        uContTone = 0;
-      }
-      else
-      {
-        // We are in High Band
-        uContTone = 1;
-      }
+
       byte cmd = 0xf0;
-      cmd |= (byte)(((antennaNr - 1) * 4) & 0x0F);
-      cmd |= (byte)(uContTone == 1 ? 1 : 0);
-      cmd |= (byte)(channel.Polarisation == Polarisation.LinearV ? 2 : 0);
+      cmd |= (byte)(hiBand ? 1 : 0);
+      cmd |= (byte)((channel.Polarisation == Polarisation.LinearV) ? 2 : 0);
+      cmd |= (byte)((antennaNr - 1) << 2);
       Marshal.WriteByte(_ptrDataInstance, 8, cmd);
 
       Guid propertyGuid = KSPROPSETID_Firesat;
@@ -744,7 +734,7 @@ namespace TvLibrary.Implementations.DVB
       hr = propertySet.Set(propertyGuid, propId, _ptrDataInstance, 25, _ptrDataInstance, 25);
       if (hr != 0)
       {
-        Log.Log.WriteFile("FireDTV:SendDiseqcCommand() failed:{0:X}",hr);
+        Log.Log.WriteFile("FireDTV:SendDiseqcCommand() failed:{0:X}", hr);
       }
     }
   }
