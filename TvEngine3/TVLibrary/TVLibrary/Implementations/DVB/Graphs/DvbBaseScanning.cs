@@ -99,7 +99,7 @@ namespace TvLibrary.Implementations.DVB
       }
       if (_card.IsTunerLocked == false)
       {
-        Log.Log.WriteFile("Scan no signal detected: locked:{0} signal level:{1} signal quality:{2}", _card.IsTunerLocked, _card.SignalLevel, _card.SignalQuality);
+        Log.Log.WriteFile("Scan! no signal detected: locked:{0} signal level:{1} signal quality:{2}", _card.IsTunerLocked, _card.SignalLevel, _card.SignalQuality);
         return null;
       }
       Log.Log.WriteFile("Signal detected, wait for good signal quality");
@@ -128,7 +128,8 @@ namespace TvLibrary.Implementations.DVB
         }
         if (channelCount == 0)
         {
-          Log.Log.WriteFile("Scan timeout...found no channels tuner locked:{0} signal level:{1} signal quality:{2}", _card.IsTunerLocked, _card.SignalLevel, _card.SignalQuality);
+          _analyzer.GetCount(out channelCount);
+          Log.Log.WriteFile("Scan! timeout...found no channels tuner locked:{0} signal level:{1} signal quality:{2} {3}", _card.IsTunerLocked, _card.SignalLevel, _card.SignalQuality,channelCount);
           return new List<IChannel>();
         }
         short networkId;
@@ -243,6 +244,8 @@ namespace TvLibrary.Implementations.DVB
                 pidInfo.SubtitlePid(subtitlePid);
                 info.AddPid(pidInfo);
               }
+              startTime = DateTime.Now;
+              bool isTvRadioChannel = false;
               if (info.serviceType == (int)ServiceType.Video || info.serviceType == (int)ServiceType.Mpeg4Stream ||
                   info.serviceType == (int)ServiceType.Audio || info.serviceType == (int)ServiceType.H264Stream)
               {
@@ -250,7 +253,13 @@ namespace TvLibrary.Implementations.DVB
                 if (dvbChannel != null)
                 {
                   channelsFound.Add(dvbChannel);
+                  isTvRadioChannel = true;
                 }
+              }
+              if (!isTvRadioChannel)
+              {
+                Log.Log.Write("Found Unknown: {0} {1} type:{2} onid:{3:X} tsid:{4:X} sid:{5:X}", 
+                  info.service_provider_name,info.service_name,info.serviceType,info.networkID,info.transportStreamID,info.serviceID);
               }
             }
             if ((i%10)==0)
@@ -263,7 +272,10 @@ namespace TvLibrary.Implementations.DVB
           if (ts.TotalMilliseconds > 4000) break;
           System.Threading.Thread.Sleep(100);
         } // while true
-        Log.Log.Write("Got {0} from {1} channels", found, channelCount);
+        if (found != channelCount)
+          Log.Log.Write("Scan! Got {0} from {1} channels", found, channelCount);
+        else
+          Log.Log.Write("Scan Got {0} from {1} channels", found, channelCount);
         return channelsFound;
       }
       finally

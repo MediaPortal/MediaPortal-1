@@ -705,7 +705,7 @@ namespace TvLibrary.Implementations.DVB
 
       byte cmd = 0xf0;
       cmd |= (byte)(hiBand ? 1 : 0);
-      cmd |= (byte)((channel.Polarisation == Polarisation.LinearV) ? 2 : 0);
+      cmd |= (byte)((channel.Polarisation == Polarisation.LinearH) ? 2 : 0);
       cmd |= (byte)((antennaNr - 1) << 2);
       Marshal.WriteByte(_ptrDataInstance, 8, cmd);
 

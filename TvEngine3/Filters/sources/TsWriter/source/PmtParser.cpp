@@ -25,13 +25,17 @@
 void LogDebug(const char *fmt, ...) ;
 CPmtParser::CPmtParser()
 {
+	_isFound=false;
 }
 
 CPmtParser::~CPmtParser(void)
 {
 }
 
-
+bool CPmtParser::Ready()
+{
+	return _isFound;
+}
 CPidTable& CPmtParser::GetPidInfo()
 {
   return m_pidInfo;
@@ -59,7 +63,12 @@ void CPmtParser::OnNewSection(CSection& sections)
   int pointer = 12;
   int len1 = section_length - pointer;
   int x;
-	
+
+	if (!_isFound)
+	{
+		LogDebug("got pmt:%x service id:%x", GetPid(), program_number);
+		_isFound=true;	
+	}
   // loop 1
   while (len2 > 0)
   {

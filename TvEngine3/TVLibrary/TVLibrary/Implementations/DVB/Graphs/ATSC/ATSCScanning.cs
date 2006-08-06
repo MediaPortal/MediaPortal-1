@@ -57,7 +57,7 @@ namespace TvLibrary.Implementations.DVB
       atscChannel.PmtPid = info.network_pmt_PID;
       atscChannel.PcrPid = info.pcr_pid;
       atscChannel.FreeToAir = !info.scrambled;
-      Log.Log.Write("Found:{1}", atscChannel);
+      Log.Log.Write("Found: {1}", atscChannel);
       return atscChannel;
     }
   }

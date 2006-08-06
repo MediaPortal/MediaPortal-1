@@ -35,7 +35,7 @@ public:
 	void  OnNewSection(CSection** sections, int maxSections);
 
   int   Count();
-  CChannelInfo& GetChannelInfo(int index);
+  bool  GetChannelInfo(int serviceId,CChannelInfo& info);
 
 private:
   void DecodeServiceLocationDescriptor( byte* buf,int start,CChannelInfo& channelInfo);

@@ -62,7 +62,7 @@ namespace TvLibrary.Implementations.DVB
       dvbsChannel.PcrPid = info.pcr_pid;
       dvbsChannel.DisEqc = tuningChannel.DisEqc;
       dvbsChannel.FreeToAir = !info.scrambled;
-      Log.Log.Write("Found:{0}", dvbsChannel);
+      Log.Log.Write("Found: {0}", dvbsChannel);
       return dvbsChannel;
     }
 

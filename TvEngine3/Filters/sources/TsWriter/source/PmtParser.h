@@ -31,8 +31,9 @@ public:
   virtual ~CPmtParser(void);
   CPidTable& GetPidInfo();
 	void  OnNewSection(CSection& sections);
-  
+  bool  Ready();
 private:
   int m_pmtPid;
   CPidTable m_pidInfo;
+	bool _isFound;
 };

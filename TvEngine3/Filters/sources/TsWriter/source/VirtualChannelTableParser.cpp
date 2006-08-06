@@ -47,9 +47,17 @@ int CVirtualChannelTableParser::Count()
 {
   return m_vecChannels.size();
 }
-CChannelInfo& CVirtualChannelTableParser::GetChannelInfo(int index)
+bool CVirtualChannelTableParser::GetChannelInfo(int serviceId,CChannelInfo& info)
 {
-  return m_vecChannels[index];
+	for (int i=0; i < m_vecChannels.size();++i)
+	{
+		if (m_vecChannels[i].ServiceId==serviceId)
+		{
+		 info=m_vecChannels[i];
+		 return true;
+		}
+	}
+	return false;
 }
 
 void CVirtualChannelTableParser::OnNewSection(CSection** sections, int maxSections)

@@ -47,6 +47,7 @@ void  CPatParser::CleanUp()
 
 void  CPatParser::Reset()
 {
+//	Dump();
 	LogDebug("PatParser:Reset()");
 	CSectionDecoder::Reset();
   CleanUp();
@@ -56,41 +57,51 @@ void  CPatParser::Reset()
  
 int CPatParser::Count()
 {
-  if ( m_vctParser.Count() > 0) 
-  {
-    return m_vctParser.Count();
-  }
-  return m_sdtParser.Count();
+  return m_pmtParsers.size();
 }
 
 bool CPatParser::GetChannel(int index, CChannelInfo& info)
 {
+	static CChannelInfo unknownChannel;
   if (index < 0 || index >Count()) 
 	{
 		LogDebug("CPatParser::GetChannel(%d) invalid index", index);
 		return false;
 	}
+
+  CPmtParser* parser=m_pmtParsers[index];
+	if (false==parser->Ready()) 
+	{
+		return false;
+	}
+
+  CPidTable& table=parser->GetPidInfo();
   if ( m_vctParser.Count() > 0) 
   {
-    info=m_vctParser.GetChannelInfo(index);
+		if (m_vctParser.GetChannelInfo(table.ServiceId,info))
+		{
+			info.PidTable = table;
+			return true;
+		}
   }
-  else
+	if (m_sdtParser.Count()>0)
   {
-    info=m_sdtParser.GetChannelInfo(index);
+    if (m_sdtParser.GetChannelInfo(table.ServiceId,info))
+		{
+			info.PidTable = table;
+			return true;
+		}
   }
-
-  for (int i=0; i < m_pmtParsers.size();++i)
-  {
-    CPmtParser* parser=m_pmtParsers[i];
-    CPidTable& table=parser->GetPidInfo();
-		
-    if (table.ServiceId == info.ServiceId)
-    {
-      info.PidTable = table;
-      return true;
-    }
-  }
-  return false;
+/*
+	sprintf(unknownChannel.ProviderName,"unknown");
+	sprintf(unknownChannel.ServiceName,"%x", table.ServiceId);
+	unknownChannel.PidTable=table;
+	unknownChannel.ServiceType=0;
+	unknownChannel.NetworkId=0xfff;
+	unknownChannel.TransportId=0xfff;
+	unknownChannel.ServiceId=table.ServiceId;
+	info=unknownChannel;*/
+	return false;
 }
 
 void CPatParser::OnTsPacket(byte* tsPacket)
@@ -146,13 +157,13 @@ void CPatParser::OnNewSection(CSection& sections)
 			  break;
 		  }
 	  }
-	  if (!found)
+	  if (!found && pmtPid>0x12)
 	  {
 		  CPmtParser* pmtParser = new CPmtParser();
 		  pmtParser->SetTableId(2);
 		  pmtParser->SetPid(pmtPid);
 		  m_pmtParsers.push_back( pmtParser );
-		  //LogDebug("  add pmt:%x",pmtPid);
+			LogDebug("  add pmt# %d pid: %x",m_pmtParsers.size(), pmtPid);
 	  }
   }
 }

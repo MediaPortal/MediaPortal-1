@@ -41,7 +41,7 @@ public:
 	void  OnNewSection(CSection& sections);
   void  Reset();
   int   Count();
-  CChannelInfo& GetChannelInfo(int index);
+	bool GetChannelInfo(int serviceId,CChannelInfo& info);
 
 private:
   void DVB_GetService(BYTE *b,ServiceData *serviceData);

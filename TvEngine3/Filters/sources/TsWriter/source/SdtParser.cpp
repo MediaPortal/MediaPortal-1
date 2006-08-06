@@ -44,9 +44,17 @@ int CSdtParser::Count()
 {
   return m_vecChannels.size();
 }
-CChannelInfo& CSdtParser::GetChannelInfo(int index)
+bool CSdtParser::GetChannelInfo(int serviceId,CChannelInfo& info)
 {
-  return m_vecChannels[index];
+	for (int i=0; i < m_vecChannels.size();++i)
+	{
+		if (m_vecChannels[i].ServiceId==serviceId)
+		{
+		 info=m_vecChannels[i];
+		 return true;
+		}
+	}
+	return false;
 }
 
 void  CSdtParser::OnNewSection(CSection& sections)
@@ -137,8 +145,8 @@ void  CSdtParser::OnNewSection(CSection& sections)
         if (!found)
         {
           m_vecChannels.push_back(info);
-//          LogDebug("  sdt: provider:'%s' channel:'%s' onid:0x%x tsid:0x%x sid:%x", 
-//             serviceData.Provider,serviceData.Name,original_network_id, transport_stream_id,service_id);
+          LogDebug("  sdt: provider:'%s' channel:'%s' onid:0x%x tsid:0x%x sid:%x", 
+            serviceData.Provider,serviceData.Name,original_network_id, transport_stream_id,service_id);
         }
 		  }
 		  else

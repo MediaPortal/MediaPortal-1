@@ -214,7 +214,7 @@ namespace TvLibrary.Channels
       {
         line = "tv:";
       }
-      line += String.Format("{0}:{1} Freq:{2} ONID:{3} TSID:{4} SID:{5} PMT:{6:X} FTA:{7}",
+      line += String.Format("{0} {1} Freq:{2} ONID:{3} TSID:{4} SID:{5} PMT:{6:X} FTA:{7}",
         Provider,Name, Frequency,NetworkId, TransportId, ServiceId, PmtPid, FreeToAir);
       return line;
     }

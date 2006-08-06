@@ -60,7 +60,7 @@ namespace TvLibrary.Implementations.DVB
       dvbcChannel.PmtPid = info.network_pmt_PID;
       dvbcChannel.PcrPid = info.pcr_pid;
       dvbcChannel.FreeToAir = !info.scrambled;
-      Log.Log.Write("Found:{0}",dvbcChannel);
+      Log.Log.Write("Found: {0}",dvbcChannel);
       return dvbcChannel;
     }
   }
