@@ -115,7 +115,7 @@ namespace MediaPortal.Music.Database
     private string submitUrl;
 
     // Similar intelligence params
-    private int _minimumArtistMatchPercent = 25;
+    private int _minimumArtistMatchPercent = 50;
     private int _limitRandomListCount = 5;
     private int _randomNessPercent = 75;
 
@@ -861,8 +861,44 @@ namespace MediaPortal.Music.Database
         // Append the songs to be submitted.
         int n_songs = 0;
         int n_totalsongs = 0;
+        
+        // Prevent spam errors due to false order
+        bool unsorted = true;
+        bool foundEarlierSong = false;
+        spamCheck = DateTime.UtcNow;  
+        DateTime lastAddedTime = DateTime.MinValue;
+        List<Song> sortedSongs = new List<Song>();
+        
+        // someone doing this nicer please? Don't shoot me :)
+        while (unsorted)
+        {
+          foundEarlierSong = false;
+         // get earliest play time
+          foreach (Song unsortedSong in songs)
+          {            
+            if (lastAddedTime < unsortedSong.DateTimePlayed)
+              if (unsortedSong.DateTimePlayed < spamCheck)
+              {
+                spamCheck = unsortedSong.DateTimePlayed;
+                foundEarlierSong = true;
+              }
+          }
+          // add the earliest song to the sorted List
+          foreach (Song unsortedSong in songs)
+          {
+            if (unsortedSong.DateTimePlayed == spamCheck)
+            {
+              sortedSongs.Add(unsortedSong);
+              lastAddedTime = unsortedSong.DateTimePlayed;
+              spamCheck = DateTime.UtcNow;
+            }
+          }
+          if (!foundEarlierSong)
+            unsorted = false;
+        }
 
-        foreach (Song song in songs)
+//        foreach (Song song in songs)
+        foreach (Song song in sortedSongs)
         {
           //          if (Convert.ToDateTime(song.getQueueTime()) > spamCheck)
           //        {
