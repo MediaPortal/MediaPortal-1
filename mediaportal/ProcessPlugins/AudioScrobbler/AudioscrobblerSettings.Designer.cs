@@ -68,6 +68,8 @@ namespace MediaPortal.AudioScrobbler
       this.tabPageLastFMSettings = new System.Windows.Forms.TabPage();
       this.groupBoxMusicSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.groupBoxAdvOptions = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.labelTracksArtistHint = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelsimilarArtistsHint = new MediaPortal.UserInterface.Controls.MPLabel();
       this.labelTracksPerArtistUpDown = new MediaPortal.UserInterface.Controls.MPLabel();
       this.labelSimilarArtistsUpDown = new MediaPortal.UserInterface.Controls.MPLabel();
       this.numericUpDownTracksPerArtist = new System.Windows.Forms.NumericUpDown();
@@ -78,6 +80,7 @@ namespace MediaPortal.AudioScrobbler
       this.labelRandomness = new MediaPortal.UserInterface.Controls.MPLabel();
       this.trackBarRandomness = new System.Windows.Forms.TrackBar();
       this.groupBoxOptions = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.checkBoxEnableSubmits = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.buttonClearCache = new MediaPortal.UserInterface.Controls.MPButton();
       this.checkBoxLogVerbose = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxDismissOnError = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -121,9 +124,7 @@ namespace MediaPortal.AudioScrobbler
       this.tabPageTags = new System.Windows.Forms.TabPage();
       this.buttonTagsRefresh = new MediaPortal.UserInterface.Controls.MPButton();
       this.listViewTags = new MediaPortal.UserInterface.Controls.MPListView();
-      this.labelsimilarArtistsHint = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.labelTracksArtistHint = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.checkBoxEnableSubmits = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.comboBoxNeighbourMode = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.panelPicBox.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxASLogo)).BeginInit();
       this.tabControlSettings.SuspendLayout();
@@ -303,6 +304,22 @@ namespace MediaPortal.AudioScrobbler
       this.groupBoxAdvOptions.TabStop = false;
       this.groupBoxAdvOptions.Text = "Advanced options (do not change for fun)";
       // 
+      // labelTracksArtistHint
+      // 
+      this.labelTracksArtistHint.Location = new System.Drawing.Point(6, 108);
+      this.labelTracksArtistHint.Name = "labelTracksArtistHint";
+      this.labelTracksArtistHint.Size = new System.Drawing.Size(224, 30);
+      this.labelTracksArtistHint.TabIndex = 14;
+      this.labelTracksArtistHint.Text = "Changing not recommended!\r\nResult: many tracks from the same artist";
+      // 
+      // labelsimilarArtistsHint
+      // 
+      this.labelsimilarArtistsHint.Location = new System.Drawing.Point(6, 43);
+      this.labelsimilarArtistsHint.Name = "labelsimilarArtistsHint";
+      this.labelsimilarArtistsHint.Size = new System.Drawing.Size(224, 30);
+      this.labelsimilarArtistsHint.TabIndex = 13;
+      this.labelsimilarArtistsHint.Text = "Increase if you do not get enough songs\r\nLower if the playlist grows too fast";
+      // 
       // labelTracksPerArtistUpDown
       // 
       this.labelTracksPerArtistUpDown.AutoSize = true;
@@ -360,7 +377,7 @@ namespace MediaPortal.AudioScrobbler
       this.numericUpDownSimilarArtist.Size = new System.Drawing.Size(44, 20);
       this.numericUpDownSimilarArtist.TabIndex = 9;
       this.numericUpDownSimilarArtist.Value = new decimal(new int[] {
-            3,
+            2,
             0,
             0,
             0});
@@ -430,6 +447,17 @@ namespace MediaPortal.AudioScrobbler
       this.groupBoxOptions.TabIndex = 4;
       this.groupBoxOptions.TabStop = false;
       this.groupBoxOptions.Text = "Scrobbler options";
+      // 
+      // checkBoxEnableSubmits
+      // 
+      this.checkBoxEnableSubmits.AutoSize = true;
+      this.checkBoxEnableSubmits.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxEnableSubmits.Location = new System.Drawing.Point(16, 20);
+      this.checkBoxEnableSubmits.Name = "checkBoxEnableSubmits";
+      this.checkBoxEnableSubmits.Size = new System.Drawing.Size(239, 17);
+      this.checkBoxEnableSubmits.TabIndex = 4;
+      this.checkBoxEnableSubmits.Text = "Improve my profile at last.fm - submits enabled";
+      this.checkBoxEnableSubmits.UseVisualStyleBackColor = true;
       // 
       // buttonClearCache
       // 
@@ -620,6 +648,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       // tabPageNeighbours
       // 
+      this.tabPageNeighbours.Controls.Add(this.comboBoxNeighbourMode);
       this.tabPageNeighbours.Controls.Add(this.buttonNeighboursFilter);
       this.tabPageNeighbours.Controls.Add(this.buttonRefreshNeigboursArtists);
       this.tabPageNeighbours.Controls.Add(this.buttonRefreshNeighbours);
@@ -936,32 +965,21 @@ namespace MediaPortal.AudioScrobbler
       this.listViewTags.UseCompatibleStateImageBehavior = false;
       this.listViewTags.View = System.Windows.Forms.View.List;
       // 
-      // labelsimilarArtistsHint
+      // comboBoxNeighbourMode
       // 
-      this.labelsimilarArtistsHint.Location = new System.Drawing.Point(6, 43);
-      this.labelsimilarArtistsHint.Name = "labelsimilarArtistsHint";
-      this.labelsimilarArtistsHint.Size = new System.Drawing.Size(224, 30);
-      this.labelsimilarArtistsHint.TabIndex = 13;
-      this.labelsimilarArtistsHint.Text = "Increase if you do not get enough songs\r\nLower if the playlist grows too fast";
-      // 
-      // labelTracksArtistHint
-      // 
-      this.labelTracksArtistHint.Location = new System.Drawing.Point(6, 108);
-      this.labelTracksArtistHint.Name = "labelTracksArtistHint";
-      this.labelTracksArtistHint.Size = new System.Drawing.Size(224, 30);
-      this.labelTracksArtistHint.TabIndex = 14;
-      this.labelTracksArtistHint.Text = "Changing not recommended!\r\nResult: many tracks from the same artist";
-      // 
-      // checkBoxEnableSubmits
-      // 
-      this.checkBoxEnableSubmits.AutoSize = true;
-      this.checkBoxEnableSubmits.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxEnableSubmits.Location = new System.Drawing.Point(16, 20);
-      this.checkBoxEnableSubmits.Name = "checkBoxEnableSubmits";
-      this.checkBoxEnableSubmits.Size = new System.Drawing.Size(239, 17);
-      this.checkBoxEnableSubmits.TabIndex = 4;
-      this.checkBoxEnableSubmits.Text = "Improve my profile at last.fm - submits enabled";
-      this.checkBoxEnableSubmits.UseVisualStyleBackColor = true;
+      this.comboBoxNeighbourMode.BorderColor = System.Drawing.Color.Empty;
+      this.comboBoxNeighbourMode.Enabled = false;
+      this.comboBoxNeighbourMode.FormattingEnabled = true;
+      this.comboBoxNeighbourMode.Items.AddRange(new object[] {
+            "Recent",
+            "Top",
+            "Weekly"});
+      this.comboBoxNeighbourMode.Location = new System.Drawing.Point(452, 183);
+      this.comboBoxNeighbourMode.Name = "comboBoxNeighbourMode";
+      this.comboBoxNeighbourMode.Size = new System.Drawing.Size(75, 21);
+      this.comboBoxNeighbourMode.TabIndex = 6;
+      this.comboBoxNeighbourMode.Text = "Weekly";
+      this.comboBoxNeighbourMode.SelectedIndexChanged += new System.EventHandler(this.comboBoxNeighbourMode_SelectedIndexChanged);
       // 
       // AudioscrobblerSettings
       // 
@@ -1079,5 +1097,6 @@ namespace MediaPortal.AudioScrobbler
     private MediaPortal.UserInterface.Controls.MPLabel labelTracksArtistHint;
     private MediaPortal.UserInterface.Controls.MPLabel labelsimilarArtistsHint;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxEnableSubmits;
+    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxNeighbourMode;
   }
 }

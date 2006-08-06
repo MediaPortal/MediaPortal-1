@@ -64,6 +64,7 @@ namespace MediaPortal.AudioScrobbler
         checkBoxScrobbleDefault.Checked = xmlreader.GetValueAsBool("audioscrobbler", "scrobbledefault", false);
         numericUpDownSimilarArtist.Value = xmlreader.GetValueAsInt("audioscrobbler", "similarartistscount", 2);
         numericUpDownTracksPerArtist.Value = xmlreader.GetValueAsInt("audioscrobbler", "tracksperartistscount", 1);
+                
 
         textBoxASUsername.Text = xmlreader.GetValueAsString("audioscrobbler", "user", "");
         if (textBoxASUsername.Text == "")
@@ -87,7 +88,7 @@ namespace MediaPortal.AudioScrobbler
           }
         }
         scrobbler = new AudioscrobblerBase();
-        scrobbler.Disconnect();
+        scrobbler.Disconnect();        
       }
     }
 
@@ -160,6 +161,22 @@ namespace MediaPortal.AudioScrobbler
     private void trackBarRandomness_ValueChanged(object sender, EventArgs e)
     {
       labelPercRand.Text = Convert.ToString(trackBarRandomness.Value);
+    }
+
+    private void comboBoxNeighbourMode_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      switch (comboBoxNeighbourMode.SelectedIndex)
+      {
+        case 0:
+          scrobbler.CurrentNeighbourMode = lastFMFeed.recenttracks;
+          break;
+        case 1:
+          scrobbler.CurrentNeighbourMode = lastFMFeed.topartists;
+          break;
+        case 2:
+          scrobbler.CurrentNeighbourMode = lastFMFeed.weeklyartistchart;
+          break;
+      }
     }
 
     #endregion
@@ -316,15 +333,21 @@ namespace MediaPortal.AudioScrobbler
       listViewNeighbours.Clear();
       songList = new List<Song>();
       songList = scrobbler.getAudioScrobblerFeed(lastFMFeed.neighbours, "");
-      
-      for (int i = 0; i < songList.Count; i++)        
+
+      for (int i = 0; i < songList.Count; i++)
         listViewNeighbours.Items.Add(songList[i].ToLastFMString());
       buttonRefreshNeighbours.Enabled = true;
 
       if (listViewNeighbours.Items.Count > 0)
+      {
         buttonRefreshNeigboursArtists.Enabled = true;
+        comboBoxNeighbourMode.Enabled = true;
+      }
       else
+      {
         buttonRefreshNeigboursArtists.Enabled = false;
+        comboBoxNeighbourMode.Enabled = false;
+      }
     }
 
     private void buttonRefreshNeigboursArtists_Click(object sender, EventArgs e)

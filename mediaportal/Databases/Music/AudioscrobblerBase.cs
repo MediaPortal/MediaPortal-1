@@ -100,10 +100,13 @@ namespace MediaPortal.Music.Database
     private string md5challenge;
     private string submitUrl;
 
-    // Similar intelligence params
+    // Similar mode intelligence params
     private int _minimumArtistMatchPercent = 50;
     private int _limitRandomListCount = 5;
     private int _randomNessPercent = 75;
+
+    // Neighbour mode intelligence params
+    private lastFMFeed _currentNeighbourMode = lastFMFeed.weeklyartistchart;
 
     #endregion
 
@@ -275,6 +278,24 @@ namespace MediaPortal.Music.Database
         }
       }
     }
+
+    public lastFMFeed CurrentNeighbourMode
+    {
+      get
+      {
+        return _currentNeighbourMode;
+      }
+      set
+      {
+        if (value != _currentNeighbourMode)
+        {
+          _currentNeighbourMode = value;
+          if (_useDebugLog)
+            Log.Write("AudioscrobblerBase: {0}", "CurrentNeighbourMode changed");
+        }
+      }
+    }
+    
     #endregion
 
     #region Public methods.
@@ -427,7 +448,7 @@ namespace MediaPortal.Music.Database
       }
       else
         return ParseXMLDocForSimilarArtists(Artist_);
-    }
+    }    
 
     public List<Song> getNeighboursArtists(bool randomizeList_)
     {
@@ -472,7 +493,7 @@ namespace MediaPortal.Music.Database
           // get artists for these neighbours  
           for (int n = 0; n < myRandomNeighbours.Count; n++)
           {            
-            myNeighboorsArtists = getAudioScrobblerFeed(lastFMFeed.topartists, myRandomNeighbours[n].Artist);
+            myNeighboorsArtists = getAudioScrobblerFeed(_currentNeighbourMode, myRandomNeighbours[n].Artist);
 
             // make sure the neighbour has enough top artists
             if (myNeighboorsArtists.Count > _limitRandomListCount)
@@ -510,7 +531,7 @@ namespace MediaPortal.Music.Database
         // limit not reached - return all neighbours artists          
         {
           for (int i = 0; i < myNeighboorsArtists.Count; i++)
-            myNeighboorsArtists.AddRange(getAudioScrobblerFeed(lastFMFeed.topartists, myNeighbours[i].Artist));
+            myNeighboorsArtists.AddRange(getAudioScrobblerFeed(_currentNeighbourMode, myNeighbours[i].Artist));
           return myNeighboorsArtists;
         }
 
@@ -520,7 +541,7 @@ namespace MediaPortal.Music.Database
       {
         if (myNeighbours.Count > 4)
           for (int i = 0; i < 4; i++)
-            myNeighboorsArtists.AddRange(getAudioScrobblerFeed(lastFMFeed.topartists, myNeighbours[i].Artist));
+            myNeighboorsArtists.AddRange(getAudioScrobblerFeed(_currentNeighbourMode, myNeighbours[i].Artist));
         return myNeighboorsArtists;
       }
     }
