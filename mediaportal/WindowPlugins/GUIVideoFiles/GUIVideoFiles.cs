@@ -1952,7 +1952,6 @@ namespace MediaPortal.GUI.Video
       if (windowId == (int)GUIWindow.Window.WINDOW_VIDEO_GENRE) return true;
       if (windowId == (int)GUIWindow.Window.WINDOW_VIDEO_INFO) return true;
       if (windowId == (int)GUIWindow.Window.WINDOW_VIDEO_PLAYLIST) return true;
-      if (windowId == (int)GUIWindow.Window.WINDOW_VIDEO_SERIESINFO) return true;
       if (windowId == (int)GUIWindow.Window.WINDOW_VIDEO_TITLE) return true;
       if (windowId == (int)GUIWindow.Window.WINDOW_VIDEO_YEAR) return true;
       if (windowId == (int)GUIWindow.Window.WINDOW_VIDEOS) return true;
@@ -1975,7 +1974,6 @@ namespace MediaPortal.GUI.Video
       if (windowId == (int)GUIWindow.Window.WINDOW_VIDEO_GENRE) return true;
       if (windowId == (int)GUIWindow.Window.WINDOW_VIDEO_INFO) return true;
       if (windowId == (int)GUIWindow.Window.WINDOW_VIDEO_PLAYLIST) return true;
-      if (windowId == (int)GUIWindow.Window.WINDOW_VIDEO_SERIESINFO) return true;
       if (windowId == (int)GUIWindow.Window.WINDOW_VIDEO_YEAR) return true;
       if (windowId == (int)GUIWindow.Window.WINDOW_VIDEOS) return true;
       return false;
