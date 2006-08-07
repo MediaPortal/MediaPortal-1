@@ -26,6 +26,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
+
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Player;
@@ -67,6 +69,8 @@ namespace MediaPortal.GUI.Music
     private bool PShuffleOn = false;
     private bool ScrobblerOn = false;
     private bool _enableScrobbling = false;
+    private Thread ScrobbleThread;
+    private Object ScrobbleLock;
     #endregion
 
     protected ScrobbleMode currentScrobbleMode = ScrobbleMode.Similar;
@@ -102,6 +106,7 @@ namespace MediaPortal.GUI.Music
         _maxScrobbledArtistsForSongs = xmlreader.GetValueAsInt("audioscrobbler", "similarartistscount", 3);
         _maxScrobbledSongsPerArtist = xmlreader.GetValueAsInt("audioscrobbler", "tracksperartistscount", 1);
       }
+      ScrobbleLock = new object();
       //added by Sam
       GUIWindowManager.Receivers += new SendMessageHandler(this.OnThreadMessage);
       return Load(GUIGraphicsContext.Skin + @"\myMusicplaylist.xml");
@@ -553,7 +558,7 @@ namespace MediaPortal.GUI.Music
         case GUIMessage.MessageType.GUI_MSG_PLAYING_10SEC:
           if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC && ScrobblerOn == true) // && playlistPlayer.CurrentSong != 0)
           {
-            OnScrobble();
+            StartScrobbleThread();
           }
           break;
       }
@@ -1114,6 +1119,14 @@ namespace MediaPortal.GUI.Music
     }
 
     //added by rtv
+    private void StartScrobbleThread()
+    {
+      ScrobbleThread = new Thread(new ThreadStart(ScrobbleLookupThread));
+      ScrobbleThread.IsBackground = true;
+      ScrobbleThread.Priority = ThreadPriority.BelowNormal;
+      ScrobbleThread.Start();
+    }
+
     void CheckScrobbleInstantStart()
     {
       if (ScrobblerOn)
@@ -1125,22 +1138,24 @@ namespace MediaPortal.GUI.Music
           // if scrobbling gets activated after 10 sec event nothing would happen without this
           if (playList.Count == 1 && g_Player.CurrentPosition > 10)
           {
-            OnScrobble();
+            StartScrobbleThread();
           }
         }
         if (playList.Count == 0 && currentScrobbleMode == ScrobbleMode.Neighbours)
         {
-          OnScrobble();
-          GUIListItem item = facadeView[0];
-          if (item != null)
-            item.Shaded = false;
-          playlistPlayer.Reset();
-          playlistPlayer.Play(0);
+          StartScrobbleThread();
+
+          // must not be used any longer since the thread may not be finished
+          //GUIListItem item = facadeView[0];
+          //if (item != null)
+          //  item.Shaded = false;
+          //playlistPlayer.Reset();
+          //playlistPlayer.Play(0);
         }
       }
     }
 
-    void OnScrobble()
+    void ScrobbleLookupThread()
     {
       AudioscrobblerBase ascrobbler = new AudioscrobblerBase();
       ascrobbler.Disconnect();
@@ -1156,12 +1171,18 @@ namespace MediaPortal.GUI.Music
           if (songFound)
           {
             //ascrobbler.ArtistMatchPercent = 75;
-            scrobbledArtists = ascrobbler.getSimilarArtists(current10SekSong.Artist, true);
+            lock (ScrobbleLock)
+            {
+              scrobbledArtists = ascrobbler.getSimilarArtists(current10SekSong.Artist, true);
+            }
           }
           break;
 
         case ScrobbleMode.Neighbours:
-          scrobbledArtists = ascrobbler.getNeighboursArtists(true);
+          lock (ScrobbleLock)
+          {
+            scrobbledArtists = ascrobbler.getNeighboursArtists(true);
+          }
           break;
       }
 
