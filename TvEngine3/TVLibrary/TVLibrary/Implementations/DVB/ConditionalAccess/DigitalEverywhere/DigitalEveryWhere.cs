@@ -168,11 +168,14 @@ namespace TvLibrary.Implementations.DVB
 
     IntPtr _ptrDataInstance;
     IntPtr _ptrDataReturned;
+
+    DVBSChannel _previousChannel = null;
     #endregion
 
     public DigitalEverywhere(IBaseFilter tunerFilter, IBaseFilter captureFilter)
     //: base(filter)
     {
+      _previousChannel = null;
       _filterTuner = tunerFilter;
       _hasCAM = false;
       _isInitialized = false;
@@ -645,6 +648,18 @@ namespace TvLibrary.Implementations.DVB
     }
     public void SendDiseqcCommand(DVBSChannel channel)
     {
+      if (_previousChannel != null)
+      {
+        if (_previousChannel.Frequency == channel.Frequency &&
+            _previousChannel.DisEqc == channel.DisEqc &&
+            _previousChannel.Polarisation == channel.Polarisation)
+        {
+          Log.Log.WriteFile("FireDTV: already tuned to diseqc:{0}, frequency:{1}, polarisation:{2}",
+              channel.DisEqc, channel.Frequency, channel.Polarisation);
+          return;
+        }
+      }
+      _previousChannel = channel;
       int antennaNr = 1;
       switch (channel.DisEqc)
       {
