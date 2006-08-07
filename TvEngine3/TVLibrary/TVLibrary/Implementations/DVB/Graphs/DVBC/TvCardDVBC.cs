@@ -56,7 +56,6 @@ namespace TvLibrary.Implementations.DVB
         AddAndConnectBDABoardFilters(_device);
         AddTransportStreamFiltersToGraph();
 
-        AddSampleGrabber();
         GetTunerSignalStatistics();
         //CreateTimeShiftingGraph();
         _graphState = GraphState.Created;

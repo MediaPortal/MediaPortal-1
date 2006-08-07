@@ -356,6 +356,7 @@ namespace TvLibrary.Teletext
         //        Log.Write(ex);
       }
       //System.Diagnostics.Trace.WriteLine(_line);
+      //Log.Log.WriteFile(_line);
     }//void Decode(byte[] rowData)
     #endregion
 

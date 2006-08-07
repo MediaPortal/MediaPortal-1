@@ -336,6 +336,7 @@ CMpTs::CMpTs(LPUNKNOWN pUnk, HRESULT *phr)
 		m_pPmtGrabber = new CPmtGrabber(GetOwner(),phr);
 		m_pRecorder = new CRecorder(GetOwner(),phr);
 		m_pTimeShifting= new CTimeShifting(GetOwner(),phr);
+		m_pTeletextGrabber= new CTeletextGrabber(GetOwner(),phr);
 }
 
 
@@ -353,6 +354,7 @@ CMpTs::~CMpTs()
 		delete m_pPmtGrabber;
 		delete m_pRecorder;
 		delete m_pTimeShifting;
+		delete m_pTeletextGrabber;
 }
 
 
@@ -411,6 +413,10 @@ STDMETHODIMP CMpTs::NonDelegatingQueryInterface(REFIID riid, void ** ppv)
 	else if (riid == IID_ITsTimeshifting)
 	{
 		return GetInterface((ITsTimeshifting*)m_pTimeShifting, ppv);
+	}
+	else if (riid == IID_ITeletextGrabber)
+	{
+		return GetInterface((ITeletextGrabber*)m_pTeletextGrabber, ppv);
 	}
   else if (riid == IID_IBaseFilter || riid == IID_IMediaFilter || riid == IID_IPersist) 
 	{
@@ -519,6 +525,14 @@ void CMpTs::AnalyzeTsPacket(byte* tsPacket)
 	catch(...)
 	{
 		LogDebug("exception in timeshifter");
+	}
+	try
+	{
+		m_pTeletextGrabber->OnTsPacket(tsPacket);
+	}
+	catch(...)
+	{
+		LogDebug("exception in teletext grabber");
 	}
 	
 	

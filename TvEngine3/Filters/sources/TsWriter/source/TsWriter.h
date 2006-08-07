@@ -26,6 +26,7 @@
 #include "pmtgrabber.h"
 #include "recorder.h"
 #include "timeshifting.h"
+#include "teletextgrabber.h"
 
 #include <map>
 using namespace std;
@@ -121,4 +122,5 @@ private:
 		CPmtGrabber*		m_pPmtGrabber;
 		CRecorder*			m_pRecorder;
 		CTimeShifting*	m_pTimeShifting;
+		CTeletextGrabber*	m_pTeletextGrabber;
 };

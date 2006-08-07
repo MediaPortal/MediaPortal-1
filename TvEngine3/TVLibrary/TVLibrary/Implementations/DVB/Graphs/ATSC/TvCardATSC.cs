@@ -56,7 +56,6 @@ namespace TvLibrary.Implementations.DVB
         AddTransportStreamFiltersToGraph();
 
         
-        AddSampleGrabber();
         GetTunerSignalStatistics();
         _graphState = GraphState.Created;
       }
