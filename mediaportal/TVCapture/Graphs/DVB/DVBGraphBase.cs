@@ -2279,28 +2279,6 @@ namespace MediaPortal.TV.Recording
         int cbandMHZ = 0;
         int circularMHZ = 0;
 
-        /*
-        int config, dlnb1, dlnb2, dlnb3, dlnb4;
-        config = dlnb1 = dlnb2 = dlnb3 = dlnb4 = 0;
-
-        // determine which LNB setup is to be used
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename))
-        {
-          dlnb1 = xmlreader.GetValueAsInt("dvbs", "diseqc", 0);
-          dlnb2 = xmlreader.GetValueAsInt("dvbs", "diseqc2", 0);
-          dlnb3 = xmlreader.GetValueAsInt("dvbs", "diseqc3", 0);
-          dlnb4 = xmlreader.GetValueAsInt("dvbs", "diseqc4", 0);
-        }
-        if (ch.DiSEqC == dlnb1)
-          config = 1;
-        else if (ch.DiSEqC == dlnb2)
-          config = 2;
-        else if (ch.DiSEqC == dlnb3)
-          config = 3;
-        else if (ch.DiSEqC == dlnb4)
-          config = 4;
-        */
-
         using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename) )
         {
           // read global LNB settings
@@ -2312,7 +2290,6 @@ namespace MediaPortal.TV.Recording
           switch (ch.DiSEqC)
           {
             case 1:
-            case 3:
               // config a
               lnbKhz = xmlreader.GetValueAsInt("dvbs", "lnb", 22);
               diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc", 1);
@@ -2320,14 +2297,13 @@ namespace MediaPortal.TV.Recording
               _log.Info("DVBGraph: using profile diseqc 1 LNB:{0} kHz diseqc:{1} lnbKind:{2}", lnbKhz, diseqc, lnbKind);
               break;
             case 2:
-            case 4:
               // config b
               lnbKhz = xmlreader.GetValueAsInt("dvbs", "lnb2", 22);
               diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc2", 1);
               lnbKind = xmlreader.GetValueAsInt("dvbs", "lnbKind2", 0);
               _log.Info("DVBGraph: using profile diseqc 2 LNB:{0} kHz diseqc:{1} lnbKind:{2}", lnbKhz, diseqc, lnbKind);
               break;
-            case 5:
+            case 3:
               // config c
               lnbKhz = xmlreader.GetValueAsInt("dvbs", "lnb3", 22);
               diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc3", 1);
@@ -2335,7 +2311,7 @@ namespace MediaPortal.TV.Recording
               _log.Info("DVBGraph: using profile diseqc 3 LNB:{0} kHz diseqc:{1} lnbKind:{2}", lnbKhz, diseqc, lnbKind);
               break;
             //
-            case 6:
+            case 4:
               // config d
               lnbKhz = xmlreader.GetValueAsInt("dvbs", "lnb4", 22);
               diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc4", 1);
@@ -2344,7 +2320,7 @@ namespace MediaPortal.TV.Recording
               //
               break;
             default:
-              _log.Warn("DVBGraph: unknown DiSEqC config {0}; using defaults: LNB:{1} kHz diseqc:{2} lnbKind:{3}", ch.DiSEqC, lnbKhz, diseqc, lnbKind);
+              _log.Warn("DVBGraph: unknown LNB#:{0}; using defaults: LNB:{1} kHz diseqc:{2} lnbKind:{3}", ch.DiSEqC, lnbKhz, diseqc, lnbKind);
               break;
           }// switch(disNo)
         }//using(MediaPortal.Profile.Xml xmlreader=new MediaPortal.Profile.Xml(m_cardFilename))
@@ -2376,10 +2352,12 @@ namespace MediaPortal.TV.Recording
         }
         lowOsc = lnb0MHZ;
         hiOsc = lnb1MHZ;
-        lnbKhzTone = lnbKhz;
-        diseqcUsed = diseqc;
+        if (lnbKhz != -1 )
+          lnbKhzTone = lnbKhz;
+        if (diseqc != -1)
+          diseqcUsed = diseqc;
 
-        _log.Info("DVBGraph: LNB Settings: freq={0} lnbKHz={1} lnbFreq={2} diseqc={3}", ch.Frequency, ch.LnbSwitchFrequency, ch.LNBFrequency, diseqcUsed);
+        _log.Info("DVBGraph: LNB#{0} Settings: freq={1} lnbKHz={2} lnbFreq={3} diseqc={4}", ch.DiSEqC, ch.Frequency, ch.LnbSwitchFrequency, ch.LNBFrequency, diseqcUsed);
       }
       catch ( Exception )
       {

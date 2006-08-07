@@ -1422,7 +1422,7 @@ namespace MediaPortal.TV.Recording
       }//using(MediaPortal.Profile.Xml xmlreader=new MediaPortal.Profile.Xml(_cardFilename))
 
       // set values to dvbchannel-object
-      _currentTuningObject.DiSEqC = diseqc;
+      _currentTuningObject.DiSEqC = disNo;
       // set the lnb parameter
       if (_currentTuningObject.Frequency >= lnbswMHZ * 1000)
       {
