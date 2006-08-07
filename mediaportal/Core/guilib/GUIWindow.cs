@@ -209,7 +209,6 @@ namespace MediaPortal.GUI.Library
       WINDOW_DIALOG_TEXT = 7900,
       WINDOW_SUNCLOCK = 8000,
       WINDOW_TRAILERS = 5900,
-      WINDOW_VIDEO_SERIESINFO = 3885 // inker - special video info page for episode info (tv.com parser)
 
       // IMPORTANT!!! WHEN ADDING NEW WINDOW IDs,
       // ADD DIALOGS TO InputMappingForm.cs BLACKLIST!!!
