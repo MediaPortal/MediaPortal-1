@@ -136,8 +136,8 @@ namespace MediaPortal.GUI.Settings
     {
       using(MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
-        m_iSpeedHorizontal=xmlreader.GetValueAsInt("general","scrollspeedhorizontal",5);
-        m_iSpeedVertical=xmlreader.GetValueAsInt("general","scrollspeedvertical",5);
+        m_iSpeedHorizontal=xmlreader.GetValueAsInt("general","scrollspeedhorizontal",8);
+        m_iSpeedVertical=xmlreader.GetValueAsInt("general","scrollspeedvertical",2);
       }
       
     }
@@ -148,7 +148,7 @@ namespace MediaPortal.GUI.Settings
       {
         xmlwriter.SetValue("general","scrollspeedhorizontal",m_iSpeedHorizontal.ToString());
         xmlwriter.SetValue("general","scrollspeedvertical",m_iSpeedVertical.ToString());
-        xmlwriter.SetValue("screen","maxfps",GUIGraphicsContext.MaxFPS);
+        xmlwriter.SetValue("screen", "maxguifps", GUIGraphicsContext.MaxFPS);
       }
     }
     #endregion

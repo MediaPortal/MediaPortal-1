@@ -292,10 +292,10 @@ namespace MediaPortal.GUI.Library
 
       using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
-        m_iMaxFPS = xmlReader.GetValueAsInt("screen", "maxfps", 50);
+        m_iMaxFPS = xmlReader.GetValueAsInt("screen", "maxguifps", 25);
         SyncFrameTime();
-        m_iScrollSpeedVertical = xmlReader.GetValueAsInt("general", "scrollspeedvertical", 5);
-        m_iScrollSpeedHorizontal = xmlReader.GetValueAsInt("general", "scrollspeedhorizontal", 5);
+        m_iScrollSpeedVertical = xmlReader.GetValueAsInt("general", "scrollspeedvertical", 8);
+        m_iScrollSpeedHorizontal = xmlReader.GetValueAsInt("general", "scrollspeedhorizontal", 2);
         m_bAnimations = xmlReader.GetValueAsBool("general", "animations", true);
         turnOffMonitor = xmlReader.GetValueAsBool("general", "turnoffmonitor", false);
       }

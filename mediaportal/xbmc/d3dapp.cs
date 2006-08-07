@@ -2685,8 +2685,9 @@ namespace MediaPortal
 
         StartFrameClock();
         FullRender();
-        //if (g_Player.Playing /*&& !g_Player.IsExternalPlayer*/ && g_Player.IsMusic)
-        if (g_Player.Playing /*&& !g_Player.IsExternalPlayer*/ && g_Player.IsMusic && !g_Player.HasVideo)
+        //if (g_Player.Playing /*&& !g_Player.IsExternalPlayer*/ && g_Player.IsMusic)         
+        //if (g_Player.Playing /*&& !g_Player.IsExternalPlayer*/ && g_Player.IsMusic && !g_Player.HasVideo)
+        if (g_Player.Playing && !g_Player.IsExternalPlayer && !g_Player.IsMusic && !g_Player.HasVideo)
         {
           if (GUIGraphicsContext.CurrentFPS < GUIGraphicsContext.MaxFPS)
             loopCount++;

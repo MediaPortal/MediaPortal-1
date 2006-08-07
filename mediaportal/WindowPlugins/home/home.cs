@@ -88,7 +88,7 @@ namespace MediaPortal.GUI.Home
     private int m_iOffset1 = 0;
     private int m_iOffset2 = 0;
     private int m_iMiddle = 0;
-    const int MAX_FRAMES = 9;
+    int MAX_FRAMES = 5;
 
     bool fixedScroll = false;
     bool backButtons = false;
@@ -175,6 +175,7 @@ namespace MediaPortal.GUI.Home
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         m_iDateLayout = xmlreader.GetValueAsInt("home", "datelayout", 0);
+        MAX_FRAMES = xmlreader.GetValueAsInt("home", "scrollspeed", 6);
         m_bAllowScroll = xmlreader.GetValueAsBool("home", "scroll", true);
         fixedScroll = xmlreader.GetValueAsBool("home", "scrollfixed", false);		// fix scrollbar in the middle of menu
         useMenus = xmlreader.GetValueAsBool("home", "usemenus", false);						// use new menu handling
