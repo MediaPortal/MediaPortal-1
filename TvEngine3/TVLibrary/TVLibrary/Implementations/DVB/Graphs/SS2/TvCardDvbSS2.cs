@@ -19,7 +19,7 @@ using TvLibrary.Helper;
 
 namespace TvLibrary.Implementations.DVB
 {
-  public class TvCardDvbSS2 : ITVCard, IDisposable, ISampleGrabberCB, IPMTCallback
+  public class TvCardDvbSS2 : ITVCard, IDisposable, ITeletextCallBack, IPMTCallback
   {
     #region imports
 
@@ -59,7 +59,7 @@ namespace TvLibrary.Implementations.DVB
     protected IBaseFilter _filterSectionsAndTables = null;
     protected IBaseFilter _filterTsAnalyzer;
     protected StreamBufferSink _filterStreamBufferSink;
-    protected IBaseFilter _filterGrabber;
+    
 
 
 
@@ -68,7 +68,6 @@ namespace TvLibrary.Implementations.DVB
     DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3 _interfaceB2C2DataCtrl;
     DVBSkyStar2Helper.IB2C2MPEG2TunerCtrl2 _interfaceB2C2TunerCtrl;
 
-    protected IPin _pinTTX;
 
     protected DVBTeletext _teletextDecoder;
     protected bool _hasTeletext = false;
@@ -99,9 +98,6 @@ namespace TvLibrary.Implementations.DVB
     protected DateTime _dateRecordingStarted = DateTime.MinValue;
     #region teletext
     protected bool _grabTeletext = false;
-    protected int _restBufferLen;
-    protected byte[] _restBuffer;
-    protected IntPtr _ptrRestBuffer;
     protected TSHelperTools.TSHeader _packetHeader;
     protected TSHelperTools _tsHelper = new TSHelperTools();
     #endregion
@@ -219,9 +215,6 @@ namespace TvLibrary.Implementations.DVB
       _tunerDevice = device;
       _graphState = GraphState.Idle;
       _teletextDecoder = new DVBTeletext();
-      _restBufferLen = 0;
-      _restBuffer = new byte[4096];
-      _ptrRestBuffer = Marshal.AllocCoTaskMem(200);
       _packetHeader = new TSHelperTools.TSHeader();
       _tsHelper = new TSHelperTools();
       _pmtTimer.Enabled = false;
@@ -313,7 +306,6 @@ namespace TvLibrary.Implementations.DVB
 
       GetVideoAudioPins();
 
-      AddSampleGrabber();
       SendHWPids(new ArrayList());
       _graphState = GraphState.Created;
     }
@@ -668,38 +660,6 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
-    /// <summary>
-    /// adds the sample grabber filter to the graph
-    /// </summary>
-    protected void AddSampleGrabber()
-    {
-      if (!CheckThreadId()) return;
-
-      Log.Log.WriteFile("ss2:AddSampleGrabber");
-      _filterGrabber = (IBaseFilter)new SampleGrabber();
-      int hr = _graphBuilder.AddFilter(_filterGrabber, "Sample Grabber");
-      if (hr != 0)
-      {
-        Log.Log.WriteFile("ss2:AddSampleGrabber returns:0x{0:X}", hr);
-        throw new TvException("Unable to add Add sample grabber");
-      }
-      IMpeg2Demultiplexer demuxer = (IMpeg2Demultiplexer)_filterMpeg2DemuxTif;
-      AMMediaType mediaType = new AMMediaType();
-      mediaType.majorType = MediaType.Mpeg2Sections;
-      mediaType.subType = MediaSubType.None;
-      mediaType.formatType = FormatType.None;
-      demuxer.CreateOutputPin(mediaType, "TTX", out _pinTTX);
-      FilterGraphTools.ConnectPin(_graphBuilder, _pinTTX, _filterGrabber, 0);
-
-      AMMediaType mt = new AMMediaType();
-      mt.majorType = MediaType.Stream;
-      mt.subType = MediaSubType.Mpeg2Transport;
-      ISampleGrabber sampleInterface = (ISampleGrabber)_filterGrabber;
-
-      sampleInterface.SetCallback(this, 1);
-      sampleInterface.SetMediaType(mt);
-      sampleInterface.SetBufferSamples(false);
-    }
 
     public void ResetSignalUpdate()
     {
@@ -729,90 +689,23 @@ namespace TvLibrary.Implementations.DVB
       _signalQuality = quality;
       _signalLevel = level;
     }
-
-
-    #region ISampleGrabberCB Members
+    #region ITeletextCallBack Members
 
     /// <summary>
-    /// callback from the samplegrabber filter when it received a new sample
+    /// callback from the TsWriter filter when it received a new teletext packets
     /// </summary>
-    /// <param name="SampleTime"></param>
-    /// <param name="pSample"></param>
+    /// <param name="data">teletext data</param>
     /// <returns></returns>
-    public int SampleCB(double SampleTime, IMediaSample pSample)
-    {
-
-      return 0;
-    }
-    /// <summary>
-    /// callback from the samplegrabber filter when it received a new sample
-    /// The method decodes the transport stream packets and if it
-    /// contains teletext packets, sends them to the teletext decoder
-    /// </summary>
-    /// <param name="SampleTime"></param>
-    /// <param name="pBuffer"></param>
-    /// <param name="BufferLen"></param>
-    /// <returns></returns>
-    public int BufferCB(double SampleTime, IntPtr pBuffer, int BufferLen)
+    public int OnTeletextReceived(IntPtr data, short packetCount)
     {
       try
       {
-
-        int off = -1;
-        if (_restBufferLen > 0)
+        for (int i = 0; i < packetCount; ++i)
         {
-          int len = 188 - _restBufferLen;	//remaining bytes of packet
-          if (len > 0 && len < BufferLen)
-          {
-            if (_restBufferLen >= 0 && _restBufferLen + len < 200)
-            {
+          IntPtr packetPtr = new IntPtr(data.ToInt32() + i * 188);
+          ProcessPacket(packetPtr);
+        }
 
-              //copy the remaining bytes 
-              Marshal.Copy(pBuffer, _restBuffer, _restBufferLen, len);
-              Marshal.Copy(_restBuffer, 0, _ptrRestBuffer, 188);
-
-              ProcessPacket(_ptrRestBuffer);
-
-              //set offset ...
-              if (Marshal.ReadByte(pBuffer, len) == 0x47 && Marshal.ReadByte(pBuffer, len + 188) == 0x47 && Marshal.ReadByte(pBuffer, len + 2 * 188) == 0x47)
-              {
-                off = len;
-              }
-            }
-            else _restBufferLen = 0;
-          }
-          else _restBufferLen = 0;
-        }
-        if (off == -1)
-        {
-          //no then find first 3 transport packets in mediasample
-          for (int i = 0; i < BufferLen - 2 * 188; ++i)
-          {
-            if (Marshal.ReadByte(pBuffer, i) == 0x47 && Marshal.ReadByte(pBuffer, i + 188) == 0x47 && Marshal.ReadByte(pBuffer, i + 2 * 188) == 0x47)
-            {
-              //found first 3 ts packets
-              //set the offset
-              off = i;
-              break;
-            }
-          }
-        }
-        for (uint t = (uint)off; t < BufferLen; t += 188)
-        {
-          if (t + 188 > BufferLen) break;
-          ProcessPacket((IntPtr)((int)pBuffer + t));
-        }
-        if (_restBufferLen > 0)
-        {
-          _restBufferLen /= 188;
-          _restBufferLen *= 188;
-          _restBufferLen = (BufferLen - off) - _restBufferLen;
-          if (_restBufferLen > 0 && _restBufferLen < 188)
-          {
-            //copy the incomplete packet in the rest buffer
-            Marshal.Copy((IntPtr)((int)pBuffer + BufferLen - _restBufferLen), _restBuffer, 0, _restBufferLen);
-          }
-        }
       }
       catch (Exception ex)
       {
@@ -820,6 +713,8 @@ namespace TvLibrary.Implementations.DVB
       }
       return 0;
     }
+
+
     /// <summary>
     /// processes a single transport packet
     /// Called from BufferCB
@@ -906,7 +801,11 @@ namespace TvLibrary.Implementations.DVB
         if (pmtData.isTeletext)
         {
           Log.Log.WriteFile("    map teletext pid:0x{0:X}", pmtData.pid);
-          SetupDemuxerPin(_pinTTX, pmtData.pid, (int)MediaSampleContent.TransportPacket, true);
+          if (GrabTeletext)
+          {
+            ITsTeletextGrabber grabber = (ITsTeletextGrabber)_filterTsAnalyzer;
+            grabber.SetTeletextPid((short)pmtData.pid);
+          }
           hwPids.Add((ushort)pmtData.pid);
           _hasTeletext = true;
         }
@@ -1412,6 +1311,33 @@ namespace TvLibrary.Implementations.DVB
       set
       {
         _grabTeletext = value;
+        ITsTeletextGrabber grabber = (ITsTeletextGrabber)_filterTsAnalyzer;
+        if (_grabTeletext)
+        {
+          int teletextPid = -1;
+          foreach (PidInfo pidInfo in _channelInfo.pids)
+          {
+            if (pidInfo.isTeletext)
+            {
+              teletextPid = pidInfo.pid;
+              break;
+            }
+          }
+
+          if (teletextPid == -1)
+          {
+            grabber.Stop();
+            _grabTeletext = false;
+            return;
+          }
+          grabber.SetCallBack(this);
+          grabber.SetTeletextPid((short)teletextPid);
+          grabber.Start();
+        }
+        else
+        {
+          grabber.Stop();
+        }
       }
     }
 
@@ -1936,10 +1862,7 @@ namespace TvLibrary.Implementations.DVB
       {
         Release.ComObject("StreamBufferSink filter", _filterStreamBufferSink); _filterStreamBufferSink = null;
       }
-      if (_filterGrabber != null)
-      {
-        Release.ComObject("Grabber filter", _filterGrabber); _filterGrabber = null;
-      }
+
       if (_filterMpeg2DemuxTif != null)
       {
         Release.ComObject("MPEG2 demux filter", _filterMpeg2DemuxTif); _filterMpeg2DemuxTif = null;
@@ -1967,10 +1890,6 @@ namespace TvLibrary.Implementations.DVB
         Release.ComObject("_filterMpTsAnalyzer", _infTeeMain); _infTeeMain = null;
       }
 
-      if (_pinTTX != null)
-      {
-        Release.ComObject("TTX pin", _pinTTX); _pinTTX = null;
-      }
       _rotEntry.Dispose();
       if (_capBuilder != null)
       {
@@ -1993,8 +1912,6 @@ namespace TvLibrary.Implementations.DVB
         _teletextDecoder = null;
       }
 
-      Marshal.FreeCoTaskMem(_ptrRestBuffer);
-      _ptrRestBuffer = IntPtr.Zero;
     }
 
     #endregion
