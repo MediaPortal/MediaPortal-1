@@ -800,12 +800,6 @@
     <Compile Include="GUITrailers\TrailersUtility.cs" />
     <Compile Include="GUITrailers\TSRVodTrailers.cs" />
     <Compile Include="GUITrailers\YahooTrailers.cs" />
-    <Compile Include="GUITVCom\TVcomSettings.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUITVCom\tvComSetupForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="GUITV\GUIFullscreenTeletext.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -881,9 +875,6 @@
     <Compile Include="GUITV\GUITVZapOSD.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="GUITVCom\episode_info.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="GUIVideoFiles\GUIVideoArtistInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -915,9 +906,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="GUIVideoFiles\GUIVideoTopOverlay.cs" />
-    <Compile Include="GUITVCom\tvDotComParser.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="GUIVideoFiles\VideoSort.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1050,9 +1038,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="GUITrailers\GUITrailersSetupForm.resx">
       <DependentUpon>GUITrailersSetupForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="GUITVCom\tvComSetupForm.resx">
-      <DependentUpon>tvComSetupForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GUIX10\ApplianceForm.resx">
       <DependentUpon>ApplianceForm.cs</DependentUpon>
