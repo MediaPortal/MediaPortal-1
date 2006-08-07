@@ -207,7 +207,9 @@ namespace MediaPortal.GUI.Library
       // no fading
       else
       {
-        if (!_allowScrolling)
+				long color = _textColor;
+				if (Dimmed) color &= DimColor;
+				if (!_allowScrolling)
         {
           _currentLabelIndex = 0;
           _scrollPosition = 0;
@@ -216,7 +218,7 @@ namespace MediaPortal.GUI.Library
           _currentFrame = 0;
         }
         // render the text
-        bool bDone = RenderText(timePassed, (float) _positionX, (float) _positionY, (float) _width, _textColor, strLabel);
+        bool bDone = RenderText(timePassed, (float) _positionX, (float) _positionY, (float) _width, color, strLabel);
         if (bDone)
         {
           _currentLabelIndex++;
@@ -314,8 +316,11 @@ namespace MediaPortal.GUI.Library
       float fTextHeight = 0, fTextWidth = 0;
 
       if (_font == null) return true;
-      //Get the text width.
+			//Get the text width.
       _font.GetTextExtent(wszText, ref fTextWidth, ref fTextHeight);
+
+			long color = _textColor;
+			if (Dimmed) color &= DimColor;
 
       float fPosCX = fPosX;
       float fPosCY = fPosY;
@@ -423,7 +428,7 @@ namespace MediaPortal.GUI.Library
             int xpos = (int)(fPosX - fwt - _scrollPosititionX + _scrollOffset);
             _labelControl.Label = szText;
             _labelControl.Width = (int) (fMaxWidth - 50 + _scrollPosititionX - _scrollOffset); 
-            _labelControl.TextColor = dwTextColor;
+            _labelControl.TextColor = color;
             _labelControl.SetPosition(xpos, (int) fPosY);
             _labelControl.TextAlignment = Alignment.ALIGN_LEFT;
             _labelControl.Render(timePassed);
@@ -435,7 +440,7 @@ namespace MediaPortal.GUI.Library
             // 1) reduce maxwidth to ensure faded right edge is drawn
             // 2) compensate the Width to ensure the faded right edge does not move
             _labelControl.Width = (int) (fMaxWidth - 50 + _scrollPosititionX - _scrollOffset); 
-            _labelControl.TextColor = dwTextColor;
+            _labelControl.TextColor = color;
             int xpos = (int) (fPosX - _scrollPosititionX + _scrollOffset);
             //            _log.Info("fPosX, _scrollPosititionX, _scrollOffset, xpos: {0} {1} {2} {3}", fPosX, _scrollPosititionX, _scrollOffset, xpos);
             //            _log.Info("szText {0}", szText);
@@ -460,7 +465,7 @@ namespace MediaPortal.GUI.Library
           {
             _labelControl.Width = (int) fMaxWidth - 50;
           }
-          _labelControl.TextColor = dwTextColor;
+          _labelControl.TextColor = color;
           _labelControl.SetPosition((int) fPosX, (int) fPosY);
           _labelControl.Render(timePassed);
         }

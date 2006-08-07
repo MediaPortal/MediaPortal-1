@@ -182,6 +182,26 @@ namespace MediaPortal.GUI.Library
       GUIGraphicsContext.ScaleVertical(ref _topTextureOffsetY);
     }
 
+		public override bool Dimmed
+		{
+			get	{	return base.Dimmed;	}
+			set
+			{
+				base.Dimmed = value;
+				if (_imageTop != null)   _imageTop.Dimmed = value;
+				if (_imageLogo != null) _imageLogo.Dimmed = value;
+				if (_imageBottom != null) _imageBottom.Dimmed = value;
+				if (_imageTick != null) _imageTick.Dimmed = value;
+				if (_imageFillBackground != null) _imageFillBackground.Dimmed = value;
+				if (_imageFill1 != null) _imageFill1.Dimmed = value;
+				if (_imageFill2 != null) _imageFill2.Dimmed = value;
+				if (_imageFill3 != null) _imageFill3.Dimmed = value;
+				if (_imageLeft != null) _imageLeft.Dimmed = value;
+				if (_imageMid != null) _imageMid.Dimmed = value;
+				if (_imageRight != null) _imageRight.Dimmed = value;
+			}
+		}
+
     public override void Render(float timePassed)
     {
       if (GUIGraphicsContext.EditMode == false)

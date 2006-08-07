@@ -124,6 +124,19 @@ namespace MediaPortal.GUI.Library
       _imageRight.SetPosition(_positionX, _positionY);
     }
 
+		public override bool Dimmed
+		{
+			get	{	return base.Dimmed;	}
+			set
+			{
+				base.Dimmed = value;
+				if (_imageBackGround != null) _imageBackGround.Dimmed = value;
+				if (_imageLeft != null) _imageLeft.Dimmed = value;
+				if (_imageMid != null) _imageMid.Dimmed = value;
+				if (_imageRight != null) _imageRight.Dimmed = value;
+			}
+		}
+
     /// <summary>
     /// Renders the progress control.
     /// </summary>

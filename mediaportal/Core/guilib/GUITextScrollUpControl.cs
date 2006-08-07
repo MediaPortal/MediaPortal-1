@@ -172,7 +172,9 @@ namespace MediaPortal.GUI.Library
         newviewport.MaxZ = 1.0f;
         GUIGraphicsContext.DX9Device.Viewport = newviewport;
       }
-      for (int i = 0; i < 1 + _itemsPerPage; i++)
+			long color = _textColor;
+			if (Dimmed) color &= DimColor;
+			for (int i = 0; i < 1 + _itemsPerPage; i++)
       {
         // render each line
         int dwPosX = _positionX;
@@ -216,9 +218,9 @@ namespace MediaPortal.GUI.Library
             _font.GetTextExtent(wszText2.Trim(), ref fTextWidth, ref fTextHeight);
             dMaxWidth -= (int) (fTextWidth);
 
-            _font.DrawTextWidth((float) dwPosX + dMaxWidth, (float) dwPosY + ioffy, _textColor, wszText2.Trim(), fTextWidth, GUIControl.Alignment.ALIGN_LEFT);
+            _font.DrawTextWidth((float) dwPosX + dMaxWidth, (float) dwPosY + ioffy, color, wszText2.Trim(), fTextWidth, GUIControl.Alignment.ALIGN_LEFT);
           }
-          _font.DrawTextWidth((float) dwPosX, (float) dwPosY + ioffy, _textColor, wszText1.Trim(), (float) dMaxWidth, GUIControl.Alignment.ALIGN_LEFT);
+          _font.DrawTextWidth((float) dwPosX, (float) dwPosY + ioffy, color, wszText1.Trim(), (float) dMaxWidth, GUIControl.Alignment.ALIGN_LEFT);
           //            _log.Info("dw _positionY, dwPosY, _yPositionScroll, _scrollOffset: {0} {1} {2} {3}", _positionY, dwPosY, _yPositionScroll, _scrollOffset);
           //            _log.Info("dw wszText1.Trim() {0}", wszText1.Trim());
 

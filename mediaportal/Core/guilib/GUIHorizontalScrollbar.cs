@@ -87,6 +87,18 @@ namespace MediaPortal.GUI.Library
       _imageRight.DimColor = DimColor;
     }
 
+		public override bool Dimmed
+		{
+			get {	return base.Dimmed;	}
+			set
+			{
+				base.Dimmed = value;
+				if (_imageBackGround != null) _imageBackGround.Dimmed = value;
+				if (_imageLeft != null) _imageLeft.Dimmed = value;
+				if (_imageRight != null) _imageRight.Dimmed = value;
+			}
+		}
+
     /// Renders the control.
     /// </summary>
     public override void Render(float timePassed)

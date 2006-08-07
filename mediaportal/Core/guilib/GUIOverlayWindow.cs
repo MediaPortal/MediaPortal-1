@@ -132,5 +132,32 @@ namespace MediaPortal.GUI.Library
 		{
 			return false;
 		}
+
+		protected override void OnMouseMove(int cx, int cy, Action action)
+		{
+			for (int i = Children.Count - 1; i >= 0; i--)
+			{
+				GUIControl control = (GUIControl)Children[i];
+				bool bFocus;
+				int controlID;
+				if (control.HitTest(cx, cy, out controlID, out bFocus))
+				{
+					if (!bFocus)
+					{
+						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, controlID, 0, 0, null);
+						OnMessage(msg);
+						control.HitTest(cx, cy, out controlID, out bFocus);
+					}
+					control.OnAction(action);
+					return;
+				}
+				else
+				{
+					// no control selected
+					control.Focus = false;
+				}
+			}
+			Focused = false;
+		}
 	}
 }
