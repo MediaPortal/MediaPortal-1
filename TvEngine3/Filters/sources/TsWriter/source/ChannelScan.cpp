@@ -124,7 +124,7 @@ STDMETHODIMP CChannelScan::GetChannel(int index,
 		*transportId=0;
 		*serviceId=0;
 		*pmtPid=0;
-		*lcn=-1;
+		*lcn=10000;
 
 		CChannelInfo info;
 		info.Reset();
