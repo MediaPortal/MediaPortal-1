@@ -27,6 +27,7 @@ namespace TvLibrary.Interfaces.Analyzer
                        out short majorChannel,
                        out short minorChannel,
                        out short frequency,
+                       out short lcn,
                        out short EIT_schedule_flag,
                        out short EIT_present_following_flag,
                        out short runningStatus,

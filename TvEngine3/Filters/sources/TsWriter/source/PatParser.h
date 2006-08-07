@@ -23,6 +23,7 @@
 #include "sectiondecoder.h"
 #include "PmtParser.h"
 #include "sdtParser.h"
+#include "NitDecoder.h"
 #include "channelinfo.h"
 #include "VirtualChannelTableParser.h"
 #include <vector>
@@ -44,6 +45,7 @@ public:
 private:
   CVirtualChannelTableParser m_vctParser;
   CSdtParser  m_sdtParser;
+	CNITDecoder m_nitDecoder;
   void        CleanUp();
 
   vector<CPmtParser*> m_pmtParsers;

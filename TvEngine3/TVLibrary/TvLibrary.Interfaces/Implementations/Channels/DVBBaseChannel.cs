@@ -20,6 +20,7 @@ namespace TvLibrary.Channels
     int _transportId;
     int _pmtPid;
     int _pcrPid;
+    int _lcn;
     bool _isRadio;
     bool _isTv;
     bool _freeToAir;
@@ -37,12 +38,24 @@ namespace TvLibrary.Channels
       _networkId = -1;
       _serviceId = -1;
       _transportId = -1;
+      _lcn = 10000;
     }
 
     #region properties
     /// <summary>
     /// gets/set the pid of the PCR
     /// </summary>
+    public int LogicalChannelNumber
+    {
+      get
+      {
+        return _lcn;
+      }
+      set
+      {
+        _lcn = value;
+      }
+    }
     public int PcrPid
     {
       get
@@ -214,8 +227,8 @@ namespace TvLibrary.Channels
       {
         line = "tv:";
       }
-      line += String.Format("{0} {1} Freq:{2} ONID:{3} TSID:{4} SID:{5} PMT:{6:X} FTA:{7}",
-        Provider,Name, Frequency,NetworkId, TransportId, ServiceId, PmtPid, FreeToAir);
+      line += String.Format("{0} {1} Freq:{2} ONID:{3} TSID:{4} SID:{5} PMT:{6:X} FTA:{7} LCN:{8}",
+        Provider,Name, Frequency,NetworkId, TransportId, ServiceId, PmtPid, FreeToAir,LogicalChannelNumber);
       return line;
     }
 

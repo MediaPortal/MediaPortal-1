@@ -44,6 +44,7 @@ namespace TvLibrary.Implementations.DVB
       ATSCChannel tuningChannel = (ATSCChannel)_card.Channel;
       ATSCChannel atscChannel = new ATSCChannel();
       atscChannel.Name = info.service_name;
+      atscChannel.LogicalChannelNumber = info.LCN;
       atscChannel.Provider = info.service_provider_name;
       atscChannel.SymbolRate = tuningChannel.SymbolRate;
       atscChannel.ModulationType = tuningChannel.ModulationType;

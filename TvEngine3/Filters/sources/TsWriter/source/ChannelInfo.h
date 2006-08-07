@@ -39,6 +39,7 @@ public:
   int FreeCAMode;
   int ServiceType;
   int Modulation;
+	int LCN;
   char ProviderName[255];
   char ServiceName[255];
 

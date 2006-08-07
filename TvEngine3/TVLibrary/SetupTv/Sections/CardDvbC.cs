@@ -298,6 +298,11 @@ namespace SetupTv.Sections
             {
               dbChannel.GrabEpg = false;
             }
+            dbChannel.SortOrder = 10000;
+            if (channel.LogicalChannelNumber >= 0)
+            {
+              dbChannel.SortOrder = channel.LogicalChannelNumber;
+            }
             layer.AddTuningDetails(dbChannel, channel);
             if (channel.IsTv)
             {

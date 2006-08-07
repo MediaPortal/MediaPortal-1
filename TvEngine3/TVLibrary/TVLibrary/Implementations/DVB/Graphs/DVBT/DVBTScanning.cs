@@ -48,6 +48,7 @@ namespace TvLibrary.Implementations.DVB
       DVBTChannel tuningChannel = (DVBTChannel)_card.Channel;
       DVBTChannel dvbtChannel = new DVBTChannel();
       dvbtChannel.Name = info.service_name;
+      dvbtChannel.LogicalChannelNumber = info.LCN;
       dvbtChannel.Provider = info.service_provider_name;
       dvbtChannel.BandWidth = tuningChannel.BandWidth;
       dvbtChannel.Frequency = tuningChannel.Frequency;

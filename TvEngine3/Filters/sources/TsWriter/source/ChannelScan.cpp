@@ -86,6 +86,7 @@ STDMETHODIMP CChannelScan::GetChannel(int index,
 									 int* majorChannel,
 									 int* minorChannel,
 									 int* frequency,
+									 int* lcn,
 									 int* EIT_schedule_flag,
 									 int* EIT_present_following_flag,
 									 int* runningStatus,
@@ -123,6 +124,7 @@ STDMETHODIMP CChannelScan::GetChannel(int index,
 		*transportId=0;
 		*serviceId=0;
 		*pmtPid=0;
+		*lcn=-1;
 
 		CChannelInfo info;
 		info.Reset();
@@ -142,6 +144,7 @@ STDMETHODIMP CChannelScan::GetChannel(int index,
 			sAudioLang3[1]=info.PidTable.Lang3_2;
 			sAudioLang3[2]=info.PidTable.Lang3_3;
 			sAudioLang3[3]=0;
+			*lcn=info.LCN;
 			*networkId=info.NetworkId;
 			*transportId=info.TransportId;
 			*serviceId=info.ServiceId;

@@ -243,10 +243,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\source\TeletextGrabber.h"
-				>
-			</File>
-			<File
 				RelativePath=".\source\TimeShifting.cpp"
 				>
 			</File>
@@ -283,6 +279,10 @@
 				</File>
 				<File
 					RelativePath=".\source\MhwParser.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\source\NITDecoder.cpp"
 					>
 				</File>
 				<File
@@ -400,6 +400,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\source\TeletextGrabber.h"
+				>
+			</File>
+			<File
 				RelativePath=".\source\TimeShifting.h"
 				>
 			</File>
@@ -468,6 +472,10 @@
 				</File>
 				<File
 					RelativePath=".\source\MhwParser.h"
+					>
+				</File>
+				<File
+					RelativePath=".\source\NITDecoder.h"
 					>
 				</File>
 				<File

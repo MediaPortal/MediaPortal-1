@@ -48,6 +48,7 @@ namespace TvLibrary.Implementations.DVB
       DVBSChannel tuningChannel = (DVBSChannel)_card.Channel;
       DVBSChannel dvbsChannel = new DVBSChannel();
       dvbsChannel.Name = info.service_name;
+      dvbsChannel.LogicalChannelNumber = info.LCN;
       dvbsChannel.Provider = info.service_provider_name;
       dvbsChannel.SymbolRate = tuningChannel.SymbolRate;
       dvbsChannel.Polarisation = tuningChannel.Polarisation;

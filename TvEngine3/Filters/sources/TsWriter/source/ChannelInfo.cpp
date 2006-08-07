@@ -32,6 +32,7 @@ CChannelInfo::~CChannelInfo(void)
 
 void CChannelInfo::Reset()
 {
+	LCN=10000;
   NetworkId=0;
   TransportId=0;
   ServiceId=0;

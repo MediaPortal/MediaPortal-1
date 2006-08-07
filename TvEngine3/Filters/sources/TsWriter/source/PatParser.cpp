@@ -53,10 +53,12 @@ void  CPatParser::Reset()
   CleanUp();
   m_vctParser.Reset();
   m_sdtParser.Reset();
+	m_nitDecoder.Reset();
 }
  
 int CPatParser::Count()
 {
+	if (m_nitDecoder.Ready()==false) return 0;
   return m_pmtParsers.size();
 }
 
@@ -81,6 +83,7 @@ bool CPatParser::GetChannel(int index, CChannelInfo& info)
 		if (m_vctParser.GetChannelInfo(table.ServiceId,info))
 		{
 			info.PidTable = table;
+			info.LCN=m_nitDecoder.GetLogicialChannelNumber(info.NetworkId,info.TransportId,info.ServiceId);
 			return true;
 		}
   }
@@ -89,6 +92,7 @@ bool CPatParser::GetChannel(int index, CChannelInfo& info)
     if (m_sdtParser.GetChannelInfo(table.ServiceId,info))
 		{
 			info.PidTable = table;
+			info.LCN=m_nitDecoder.GetLogicialChannelNumber(info.NetworkId,info.TransportId,info.ServiceId);
 			return true;
 		}
   }
@@ -106,6 +110,7 @@ bool CPatParser::GetChannel(int index, CChannelInfo& info)
 
 void CPatParser::OnTsPacket(byte* tsPacket)
 {
+	m_nitDecoder.OnTsPacket(tsPacket);
   m_vctParser.OnTsPacket(tsPacket);
   m_sdtParser.OnTsPacket(tsPacket);
   for (int i=0; i < m_pmtParsers.size();++i)

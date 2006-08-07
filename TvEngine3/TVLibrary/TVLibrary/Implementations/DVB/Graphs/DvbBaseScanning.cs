@@ -162,6 +162,7 @@ namespace TvLibrary.Implementations.DVB
         string strAudioLanguage2 = "";
         string strAudioLanguage3 = "";
         int found = 0;
+        short lcn = -1;
         bool[] channelFound = new bool[channelCount];
         List<IChannel> channelsFound = new List<IChannel>();
         startTime = DateTime.Now;
@@ -175,7 +176,7 @@ namespace TvLibrary.Implementations.DVB
             serviceId = 0;
             _analyzer.GetChannel((short)i,
                   out networkId, out transportId, out serviceId, out majorChannel, out minorChannel,
-                  out frequency, out EIT_schedule_flag, out EIT_present_following_flag, out runningStatus,
+                  out frequency, out lcn,out EIT_schedule_flag, out EIT_present_following_flag, out runningStatus,
                   out freeCAMode, out serviceType, out modulation, out providerName, out serviceName,
                   out pcrPid, out pmtPid, out videoPid, out audio1Pid, out audio2Pid, out audio3Pid,
                   out ac3Pid, out  audioLanguage1, out audioLanguage2, out audioLanguage3, out teletextPid, out subtitlePid);
@@ -190,6 +191,7 @@ namespace TvLibrary.Implementations.DVB
               info.majorChannel = majorChannel;
               info.minorChannel = minorChannel;
               info.freq = frequency;
+              info.LCN = lcn;
               info.eitSchedule = (EIT_schedule_flag != 0);
               info.eitPreFollow = (EIT_present_following_flag != 0);
               info.serviceType = serviceType;
