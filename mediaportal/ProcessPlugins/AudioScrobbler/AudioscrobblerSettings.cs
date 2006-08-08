@@ -63,15 +63,14 @@ namespace MediaPortal.AudioScrobbler
         trackBarRandomness.Value = xmlreader.GetValueAsInt("audioscrobbler", "randomness", 77);
         checkBoxScrobbleDefault.Checked = xmlreader.GetValueAsBool("audioscrobbler", "scrobbledefault", false);
         numericUpDownSimilarArtist.Value = xmlreader.GetValueAsInt("audioscrobbler", "similarartistscount", 2);
-        numericUpDownTracksPerArtist.Value = xmlreader.GetValueAsInt("audioscrobbler", "tracksperartistscount", 1);
-                
+        numericUpDownTracksPerArtist.Value = xmlreader.GetValueAsInt("audioscrobbler", "tracksperartistscount", 1);     
 
         textBoxASUsername.Text = xmlreader.GetValueAsString("audioscrobbler", "user", "");
         if (textBoxASUsername.Text == "")
         {
-          tabControlASSettings.Enabled = false;    
+          tabControlASSettings.Enabled = false;
         }
-          
+
         EncryptDecrypt Crypter = new EncryptDecrypt();
         string tmpPass;
         tmpPass = xmlreader.GetValueAsString("audioscrobbler", "pass", "");
@@ -88,7 +87,32 @@ namespace MediaPortal.AudioScrobbler
           }
         }
         scrobbler = new AudioscrobblerBase();
-        scrobbler.Disconnect();        
+        scrobbler.Disconnect();
+        int tmpNMode = xmlreader.GetValueAsInt("audioscrobbler", "neighbourmode", 1);
+
+        switch (tmpNMode)
+        {
+          case 3:
+            scrobbler.CurrentNeighbourMode = lastFMFeed.topartists;
+            comboBoxNeighbourMode.SelectedIndex = 0;
+            comboBoxNModeSelect.SelectedIndex = 0;
+            break;
+          case 1:
+            scrobbler.CurrentNeighbourMode = lastFMFeed.weeklyartistchart;
+            comboBoxNeighbourMode.SelectedIndex = 1;
+            comboBoxNModeSelect.SelectedIndex = 1;
+            break;
+          case 0:
+            scrobbler.CurrentNeighbourMode = lastFMFeed.recenttracks;
+            comboBoxNeighbourMode.SelectedIndex = 2;
+            comboBoxNModeSelect.SelectedIndex = 2;
+            break;
+          default:
+            scrobbler.CurrentNeighbourMode = lastFMFeed.weeklyartistchart;
+            comboBoxNeighbourMode.SelectedIndex = 1;
+            comboBoxNModeSelect.SelectedIndex = 1;
+            break;
+        }
       }
     }
 
@@ -98,12 +122,13 @@ namespace MediaPortal.AudioScrobbler
       {
         xmlwriter.SetValueAsBool("audioscrobbler", "submitsenabled", checkBoxEnableSubmits.Checked);
         xmlwriter.SetValueAsBool("audioscrobbler", "disabletimerthread", checkBoxdisableTimerThread.Checked);
-        xmlwriter.SetValueAsBool("audioscrobbler", "dismisscacheonerror", checkBoxDismissOnError.Checked);         
+        xmlwriter.SetValueAsBool("audioscrobbler", "dismisscacheonerror", checkBoxDismissOnError.Checked);
         xmlwriter.SetValueAsBool("audioscrobbler", "usedebuglog", checkBoxLogVerbose.Checked);
         xmlwriter.SetValue("audioscrobbler", "randomness", trackBarRandomness.Value);
         xmlwriter.SetValueAsBool("audioscrobbler", "scrobbledefault", checkBoxScrobbleDefault.Checked);
         xmlwriter.SetValue("audioscrobbler", "similarartistscount", numericUpDownSimilarArtist.Value);
-        xmlwriter.SetValue("audioscrobbler", "tracksperartistscount", numericUpDownTracksPerArtist.Value); 
+        xmlwriter.SetValue("audioscrobbler", "tracksperartistscount", numericUpDownTracksPerArtist.Value);
+        xmlwriter.SetValue("audioscrobbler", "neighbourmode", (int)scrobbler.CurrentNeighbourMode); 
 
         xmlwriter.SetValue("audioscrobbler", "user", textBoxASUsername.Text);
         try
@@ -114,7 +139,7 @@ namespace MediaPortal.AudioScrobbler
         catch (Exception ex)
         {
           //Log.Write("Audioscrobbler: Password encryption failed {0}", ex.Message);
-        }        
+        }
       }
     }
     #endregion
@@ -130,7 +155,7 @@ namespace MediaPortal.AudioScrobbler
       }
       catch
       {
-      }      
+      }
     }
 
     private void linkLabelNewUser_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -168,17 +193,32 @@ namespace MediaPortal.AudioScrobbler
       switch (comboBoxNeighbourMode.SelectedIndex)
       {
         case 0:
-          scrobbler.CurrentNeighbourMode = lastFMFeed.recenttracks;
-          break;
-        case 1:
           scrobbler.CurrentNeighbourMode = lastFMFeed.topartists;
           break;
-        case 2:
+        case 1:
           scrobbler.CurrentNeighbourMode = lastFMFeed.weeklyartistchart;
+          break;
+        case 2:
+          scrobbler.CurrentNeighbourMode = lastFMFeed.recenttracks;
           break;
       }
     }
 
+    private void comboBoxNModeSelect_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      switch (comboBoxNModeSelect.SelectedIndex)
+      {
+        case 0:
+          scrobbler.CurrentNeighbourMode = lastFMFeed.topartists;
+          break;
+        case 1:
+          scrobbler.CurrentNeighbourMode = lastFMFeed.weeklyartistchart;
+          break;
+        case 2:
+          scrobbler.CurrentNeighbourMode = lastFMFeed.recenttracks;
+          break;
+      }
+    }
     #endregion
 
     #region Button events
@@ -203,7 +243,7 @@ namespace MediaPortal.AudioScrobbler
     {
       buttonTagsRefresh.Enabled = false;
       listViewTags.Clear();
-      songList = new List<Song>();      
+      songList = new List<Song>();
       songList = scrobbler.getAudioScrobblerFeed(lastFMFeed.toptags, "");
       for (int i = 0; i < songList.Count; i++)
         listViewTags.Items.Add(songList[i].ToLastFMString());
@@ -368,7 +408,7 @@ namespace MediaPortal.AudioScrobbler
 
     private void buttonNeighboursFilter_Click(object sender, EventArgs e)
     {
-//      buttonNeighboursFilter.Enabled = false;
+      //      buttonNeighboursFilter.Enabled = false;
       listViewNeighbours.Clear();
       tabControlASSettings.Enabled = false;
       ArrayList artistsInDB = new ArrayList();
@@ -388,7 +428,7 @@ namespace MediaPortal.AudioScrobbler
           }
           if (!foundDoubleEntry)
             listViewNeighbours.Items.Add(songList[i].Artist);
-        }          
+        }
         //else
         //  MessageBox.Show("Artist " + songList[i].Artist + " already in DB!");
       }

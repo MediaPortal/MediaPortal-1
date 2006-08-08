@@ -121,6 +121,24 @@ namespace MediaPortal.Music.Database
         _dismissOnError = xmlreader.GetValueAsBool("audioscrobbler", "dismisscacheonerror", true);
         _disableTimerThread = xmlreader.GetValueAsBool("audioscrobbler", "disabletimerthread", true);
         _randomNessPercent = xmlreader.GetValueAsInt("audioscrobbler", "randomness", 77);
+        int tmpNMode = xmlreader.GetValueAsInt("audioscrobbler", "neighbourmode", 1);
+
+        switch (tmpNMode)
+        {
+          case 3:
+            _currentNeighbourMode = lastFMFeed.topartists;
+            break;
+          case 1:
+            _currentNeighbourMode = lastFMFeed.weeklyartistchart;
+            break;
+          case 0:
+            _currentNeighbourMode = lastFMFeed.recenttracks;
+            break;
+          default:
+            _currentNeighbourMode = lastFMFeed.weeklyartistchart;
+            break;
+        }
+
         username = xmlreader.GetValueAsString("audioscrobbler", "user", "");
         string tmpPass;
         tmpPass = xmlreader.GetValueAsString("audioscrobbler", "pass", "");

@@ -170,4 +170,25 @@
         gg==
 </value>
   </data>
+  <data name="labelPluginBannerHint.Text" xml:space="preserve">
+    <value>Last.fm is a free service which offers a powerful 
+database to compare your music taste with 
+other people.
+
+This plugin "fills" your profile - like a music journal.
+
+Last.fm weekly generates stats and musical 
+neighbours which share your music interests.
+
+Based on these statistical data My Music is able 
+to automatically fill your playlist with songs you
+will like - enjoy it!</value>
+  </data>
+  <data name="labelNModeDesc.Text" xml:space="preserve">
+    <value>"Overall top artists" will get you many long-term preferred artists
+
+"Weekly top artists" will get you also new artists your neighbours are trying out
+
+"Recent artists" increases this behaviour but might result in not enough alternatives</value>
+  </data>
 </root>
