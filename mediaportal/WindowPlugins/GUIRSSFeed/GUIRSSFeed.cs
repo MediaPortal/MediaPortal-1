@@ -276,7 +276,7 @@ namespace MediaPortal.GUI.RSS
 
         long startTime = Environment.TickCount;
         dlgProgress.SetHeading(704);
-        dlgProgress.SetLine(1, GUILocalizeStrings.Get(705) + m_strSiteName);
+        dlgProgress.SetLine(1, GUILocalizeStrings.Get(705) + " " + m_strSiteName);
         dlgProgress.SetLine(2, "");
         dlgProgress.SetLine(3, "");
         dlgProgress.ShowProgressBar(false);
