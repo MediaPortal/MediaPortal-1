@@ -21,6 +21,11 @@
 #pragma once
 #include "epgparser.h"
 #include "mhwparser.h"
+#include "criticalsection.h"
+#include "entercriticalsection.h"
+
+using namespace Mediaportal;
+
 // {5CDAC655-D9FB-4c71-8119-DD07FE86A9CE}
 DEFINE_GUID(IID_ITsEpgScanner, 0x5cdac655, 0xd9fb, 0x4c71, 0x81, 0x19, 0xdd, 0x7, 0xfe, 0x86, 0xa9, 0xce);
 
@@ -79,4 +84,5 @@ protected:
 	CMhwParser m_mhwParser;
 private:
 	bool m_bGrabbing;
+	CCriticalSection m_section;
 };

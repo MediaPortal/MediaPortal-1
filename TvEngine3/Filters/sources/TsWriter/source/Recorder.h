@@ -21,6 +21,10 @@
 #pragma once
 #include "multiplexer.h"
 #include "filewriter.h"
+#include "criticalsection.h"
+#include "entercriticalsection.h"
+
+using namespace Mediaportal;
 
 // {B45662E3-2749-4a34-993A-0C1659E86E83}
 DEFINE_GUID(IID_ITsRecorder,0xb45662e3, 0x2749, 0x4a34, 0x99, 0x3a, 0xc, 0x16, 0x59, 0xe8, 0x6e, 0x83);
@@ -58,4 +62,5 @@ private:
 	bool				 m_bRecording;
 	char				 m_szFileName[2048];
 	FileWriter* m_pRecordFile;
+	CCriticalSection m_section;
 };

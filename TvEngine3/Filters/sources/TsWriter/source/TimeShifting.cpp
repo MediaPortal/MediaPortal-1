@@ -44,6 +44,7 @@ CTimeShifting::~CTimeShifting(void)
 
 void CTimeShifting::OnTsPacket(byte* tsPacket)
 {
+	CEnterCriticalSection enter(m_section);
 	if (m_bTimeShifting)
 	{
 		m_multiPlexer.OnTsPacket(tsPacket);
@@ -53,6 +54,7 @@ void CTimeShifting::OnTsPacket(byte* tsPacket)
 
 STDMETHODIMP CTimeShifting::SetPcrPid(int pcrPid)
 {
+	CEnterCriticalSection enter(m_section);
 	try
 	{
 		LogDebug("Timeshifter:pcr pid:%x",pcrPid);
@@ -66,6 +68,7 @@ STDMETHODIMP CTimeShifting::SetPcrPid(int pcrPid)
 }
 STDMETHODIMP CTimeShifting::AddPesStream(int pid)
 {
+	CEnterCriticalSection enter(m_section);
 	try
 	{
 		LogDebug("Timeshifter:add pes stream pid:%x",pid);
@@ -79,6 +82,7 @@ STDMETHODIMP CTimeShifting::AddPesStream(int pid)
 }
 STDMETHODIMP CTimeShifting::RemovePesStream(int pid)
 {
+	CEnterCriticalSection enter(m_section);
 	try
 	{
 		LogDebug("Recorder:remove pes stream pid:%x",pid);
@@ -93,6 +97,7 @@ STDMETHODIMP CTimeShifting::RemovePesStream(int pid)
 
 STDMETHODIMP CTimeShifting::SetTimeShiftingFileName(char* pszFileName)
 {
+	CEnterCriticalSection enter(m_section);
 	try
 	{
 		m_multiPlexer.Reset();
@@ -108,6 +113,7 @@ STDMETHODIMP CTimeShifting::SetTimeShiftingFileName(char* pszFileName)
 }
 STDMETHODIMP CTimeShifting::Start()
 {
+	CEnterCriticalSection enter(m_section);
 	try
 	{
 		if (strlen(m_szFileName)==0) return E_FAIL;
@@ -136,6 +142,7 @@ STDMETHODIMP CTimeShifting::Start()
 }
 STDMETHODIMP CTimeShifting::Reset()
 {
+	CEnterCriticalSection enter(m_section);
 	try
 	{
 		LogDebug("Timeshifter:Reset");
@@ -149,6 +156,7 @@ STDMETHODIMP CTimeShifting::Reset()
 }
 STDMETHODIMP CTimeShifting::Stop()
 {
+	CEnterCriticalSection enter(m_section);
 	try
 	{
 		LogDebug("Timeshifter:Stop timeshifting:'%s'",m_szFileName);
@@ -171,6 +179,7 @@ STDMETHODIMP CTimeShifting::Stop()
 
 void CTimeShifting::Write(byte* buffer, int len)
 {
+	CEnterCriticalSection enter(m_section);
 	try
 	{
 		if (!m_bTimeShifting) return;

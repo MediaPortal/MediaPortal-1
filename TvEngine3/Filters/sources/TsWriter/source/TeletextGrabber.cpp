@@ -50,6 +50,7 @@ CTeletextGrabber::~CTeletextGrabber(void)
 
 STDMETHODIMP CTeletextGrabber::SetTeletextPid( int teletextPid)
 {
+	CEnterCriticalSection enter(m_section);
 	try
 	{
 		LogDebug("TeletextGrabber: set pid:%x", teletextPid);
@@ -64,6 +65,7 @@ STDMETHODIMP CTeletextGrabber::SetTeletextPid( int teletextPid)
 
 STDMETHODIMP CTeletextGrabber::SetCallBack( ITeletextCallBack* callback)
 {
+	CEnterCriticalSection enter(m_section);
 	LogDebug("TeletextGrabber: set callback:%x", callback);
 	m_pCallback=callback;
 	return S_OK;
@@ -71,6 +73,7 @@ STDMETHODIMP CTeletextGrabber::SetCallBack( ITeletextCallBack* callback)
 
 STDMETHODIMP CTeletextGrabber::Start( )
 {
+	CEnterCriticalSection enter(m_section);
 	LogDebug("TeletextGrabber: start");
 	m_iPacketCounter=0;
 	m_bRunning=true;
@@ -79,6 +82,7 @@ STDMETHODIMP CTeletextGrabber::Start( )
 
 STDMETHODIMP CTeletextGrabber::Stop( )
 {
+	CEnterCriticalSection enter(m_section);
 	LogDebug("TeletextGrabber: stop");
 	m_bRunning=false;
 	return S_OK;
@@ -89,6 +93,7 @@ void CTeletextGrabber::OnTsPacket(byte* tsPacket)
 	if (!m_bRunning) return;
 	if (m_pCallback==NULL) return;
 	if (m_iTeletextPid<=0) return;
+	CEnterCriticalSection enter(m_section);
 	CTsHeader header(tsPacket);
 	if (header.SyncByte!=0x47) return;
 	if (header.TransportError!=0) return;

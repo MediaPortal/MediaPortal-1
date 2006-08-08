@@ -44,6 +44,8 @@ CRecorder::~CRecorder(void)
 
 void CRecorder::OnTsPacket(byte* tsPacket)
 {
+	
+	CEnterCriticalSection enter(m_section);
 	if (m_bRecording)
 	{
 		m_multiPlexer.OnTsPacket(tsPacket);
@@ -53,12 +55,14 @@ void CRecorder::OnTsPacket(byte* tsPacket)
 
 STDMETHODIMP CRecorder::SetPcrPid(int pcrPid)
 {
+	CEnterCriticalSection enter(m_section);
 	LogDebug("Recorder:pcr pid:%x",pcrPid);
 	m_multiPlexer.SetPcrPid(pcrPid);
 	return S_OK;
 }
 STDMETHODIMP CRecorder::AddPesStream(int pid)
 {
+	CEnterCriticalSection enter(m_section);
 	LogDebug("Recorder:add pes stream pid:%x",pid);
 	m_multiPlexer.AddPesStream(pid);
 	return S_OK;
@@ -66,6 +70,7 @@ STDMETHODIMP CRecorder::AddPesStream(int pid)
 
 STDMETHODIMP CRecorder::RemovePesStream(int pid)
 {
+	CEnterCriticalSection enter(m_section);
 	LogDebug("Recorder:remove pes stream pid:%x",pid);
 	m_multiPlexer.RemovePesStream(pid);
 	return S_OK;
@@ -73,12 +78,14 @@ STDMETHODIMP CRecorder::RemovePesStream(int pid)
 
 STDMETHODIMP CRecorder::SetRecordingFileName(char* pszFileName)
 {
+	CEnterCriticalSection enter(m_section);
 	m_multiPlexer.Reset();
 	strcpy(m_szFileName,pszFileName);
 	return S_OK;
 }
 STDMETHODIMP CRecorder::StartRecord()
 {
+	CEnterCriticalSection enter(m_section);
 	if (strlen(m_szFileName)==0) return E_FAIL;
 	::DeleteFile((LPCTSTR) m_szFileName);
 	WCHAR wstrFileName[2048];
@@ -100,6 +107,7 @@ STDMETHODIMP CRecorder::StartRecord()
 }
 STDMETHODIMP CRecorder::StopRecord()
 {
+	CEnterCriticalSection enter(m_section);
 	LogDebug("Recorder:Stop Recording:'%s'",m_szFileName);
 	m_bRecording=false;
 	m_multiPlexer.Reset();
@@ -115,6 +123,7 @@ STDMETHODIMP CRecorder::StopRecord()
 
 void CRecorder::Write(byte* buffer, int len)
 {
+	CEnterCriticalSection enter(m_section);
 	if (!m_bRecording) return;
 	if (m_pRecordFile!=NULL)
 	{

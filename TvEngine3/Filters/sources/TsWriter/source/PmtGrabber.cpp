@@ -48,6 +48,7 @@ STDMETHODIMP CPmtGrabber::SetPmtPid( int pmtPid)
 {
 	try
 	{
+			CEnterCriticalSection enter(m_section);
 		LogDebug("pmtgrabber: grab pmt:%x", pmtPid);
 		CSectionDecoder::Reset();
 		CSectionDecoder::SetPid(pmtPid);
@@ -63,6 +64,7 @@ STDMETHODIMP CPmtGrabber::SetPmtPid( int pmtPid)
 
 STDMETHODIMP CPmtGrabber::SetCallBack( IPMTCallback* callback)
 {
+	CEnterCriticalSection enter(m_section);
 	LogDebug("pmtgrabber: set callback:%x", callback);
 	m_pCallback=callback;
 	return S_OK;
@@ -73,6 +75,7 @@ void CPmtGrabber::OnTsPacket(byte* tsPacket)
 	if (m_pCallback==NULL) return;
 	if (GetPid()<=0) return;
 	
+	CEnterCriticalSection enter(m_section);
 	CSectionDecoder::OnTsPacket(tsPacket);
 
 }
@@ -82,6 +85,7 @@ void CPmtGrabber::OnNewSection(CSection& section)
 	try
 	{
 		if (section.Version == m_iPmtVersion) return;
+	  CEnterCriticalSection enter(m_section);
 		LogDebug("pmtgrabber: got pmt version:%d %d", section.Version,m_iPmtVersion);
 		m_iPmtVersion=section.Version;
 		m_iPmtLength=section.SectionLength+3;
@@ -105,6 +109,7 @@ STDMETHODIMP CPmtGrabber::GetPMTData(BYTE *pmtData)
 {
 	try
 	{
+	  CEnterCriticalSection enter(m_section);
 		if (m_iPmtLength>0)
 		{
 			memcpy(pmtData,m_pmtData,m_iPmtLength);

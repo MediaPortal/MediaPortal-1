@@ -19,6 +19,11 @@
  *
  */
 #pragma once
+#include "criticalsection.h"
+#include "entercriticalsection.h"
+
+using namespace Mediaportal;
+
 // {9A9E7592-A178-4a63-A210-910FD7FFEC8C}
 DEFINE_GUID(IID_ITeletextGrabber, 0x9a9e7592, 0xa178, 0x4a63, 0xa2, 0x10, 0x91, 0xf, 0xd7, 0xff, 0xec, 0x8c);
 
@@ -55,4 +60,5 @@ private:
 	bool		m_bRunning;
 	byte*   m_pBuffer;
 	int		  m_iPacketCounter;
+	CCriticalSection m_section;
 };

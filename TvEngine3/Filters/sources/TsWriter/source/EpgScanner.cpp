@@ -42,6 +42,7 @@ CEpgScanner::~CEpgScanner(void)
 }
 STDMETHODIMP CEpgScanner::Reset()
 {
+	CEnterCriticalSection enter(m_section);
 	LogDebug("analyzer CEpgScanner::reset");
 	m_bGrabbing=false;
 	m_epgParser.Reset();
@@ -49,6 +50,7 @@ STDMETHODIMP CEpgScanner::Reset()
 }
 STDMETHODIMP CEpgScanner::GrabEPG()
 {
+	CEnterCriticalSection enter(m_section);
 	try
 	{
 		LogDebug("EpgScanner::GrabEPG");
@@ -63,6 +65,7 @@ STDMETHODIMP CEpgScanner::GrabEPG()
 }
 STDMETHODIMP CEpgScanner::IsEPGReady(BOOL* yesNo)
 {
+	CEnterCriticalSection enter(m_section);
 	try
 	{
 		*yesNo=m_epgParser.IsEPGReady();
@@ -75,6 +78,7 @@ STDMETHODIMP CEpgScanner::IsEPGReady(BOOL* yesNo)
 }
 STDMETHODIMP CEpgScanner::GetEPGChannelCount( ULONG* channelCount)
 {
+	CEnterCriticalSection enter(m_section);
 	try
 	{
 		//LogDebug("EpgScanner::GetEPGChannelCount");
@@ -88,6 +92,7 @@ STDMETHODIMP CEpgScanner::GetEPGChannelCount( ULONG* channelCount)
 }
 STDMETHODIMP CEpgScanner::GetEPGEventCount( ULONG channel,  ULONG* eventCount)
 {
+	CEnterCriticalSection enter(m_section);
 	try
 	{
 		//LogDebug("EpgScanner::GetEPGEventCount");
@@ -101,6 +106,7 @@ STDMETHODIMP CEpgScanner::GetEPGEventCount( ULONG channel,  ULONG* eventCount)
 }
 STDMETHODIMP CEpgScanner::GetEPGChannel( ULONG channel,  WORD* networkId,  WORD* transportid, WORD* service_id  )
 {
+	CEnterCriticalSection enter(m_section);
 	try
 	{
 		//LogDebug("EpgScanner::GetEPGChannel");
@@ -114,6 +120,7 @@ STDMETHODIMP CEpgScanner::GetEPGChannel( ULONG channel,  WORD* networkId,  WORD*
 }
 STDMETHODIMP CEpgScanner::GetEPGEvent( ULONG channel,  ULONG eventid,ULONG* language, ULONG* dateMJD, ULONG* timeUTC, ULONG* duration, char** genre    )
 {
+	CEnterCriticalSection enter(m_section);
 	try
 	{
 		//LogDebug("EpgScanner::GetEPGEvent");
@@ -127,6 +134,7 @@ STDMETHODIMP CEpgScanner::GetEPGEvent( ULONG channel,  ULONG eventid,ULONG* lang
 }
 STDMETHODIMP CEpgScanner::GetEPGLanguage(THIS_ ULONG channel, ULONG eventid,ULONG languageIndex,ULONG* language,char** eventText, char** eventDescription    )
 {
+	CEnterCriticalSection enter(m_section);
 	try
 	{
 		//LogDebug("EpgScanner::GetEPGLanguage");
@@ -141,6 +149,7 @@ STDMETHODIMP CEpgScanner::GetEPGLanguage(THIS_ ULONG channel, ULONG eventid,ULON
 
 STDMETHODIMP CEpgScanner::GrabMHW()
 {
+	CEnterCriticalSection enter(m_section);
 	try
 	{
 		//LogDebug("EpgScanner::GrabMHW");
@@ -155,6 +164,7 @@ STDMETHODIMP CEpgScanner::GrabMHW()
 }
 STDMETHODIMP CEpgScanner::IsMHWReady(BOOL* yesNo)
 {
+	CEnterCriticalSection enter(m_section);
 	try
 	{
 		*yesNo=FALSE;
@@ -172,6 +182,7 @@ STDMETHODIMP CEpgScanner::IsMHWReady(BOOL* yesNo)
 }
 STDMETHODIMP CEpgScanner::GetMHWTitleCount(WORD* count)
 {
+	CEnterCriticalSection enter(m_section);
 	try
 	{
 		//LogDebug("EpgScanner::GetMHWTitleCount");
@@ -185,6 +196,7 @@ STDMETHODIMP CEpgScanner::GetMHWTitleCount(WORD* count)
 }
 STDMETHODIMP CEpgScanner::GetMHWTitle(WORD program, WORD* id, WORD* transportId, WORD* networkId, WORD* channelId, WORD* programId, WORD* themeId, WORD* PPV, BYTE* Summaries, WORD* duration, ULONG* dateStart, ULONG* timeStart,char** title,char** programName)
 {	
+	CEnterCriticalSection enter(m_section);
 	try
 	{
 		//LogDebug("EpgScanner::GetMHWTitle");
@@ -198,6 +210,7 @@ STDMETHODIMP CEpgScanner::GetMHWTitle(WORD program, WORD* id, WORD* transportId,
 }
 STDMETHODIMP CEpgScanner::GetMHWChannel(WORD channelNr, WORD* channelId,WORD* networkId, WORD* transportId, char** channelName)
 {
+	CEnterCriticalSection enter(m_section);
 	try
 	{
 		//LogDebug("EpgScanner::GetMHWChannel");
@@ -211,6 +224,7 @@ STDMETHODIMP CEpgScanner::GetMHWChannel(WORD channelNr, WORD* channelId,WORD* ne
 }
 STDMETHODIMP CEpgScanner::GetMHWSummary(WORD programId, char** summary)
 {
+	CEnterCriticalSection enter(m_section);
 	try
 	{
 		//LogDebug("EpgScanner::GetMHWSummary");
@@ -226,6 +240,7 @@ STDMETHODIMP CEpgScanner::GetMHWTheme(WORD themeId, char** theme)
 {
 	try
 	{
+		CEnterCriticalSection enter(m_section);
 		//LogDebug("EpgScanner::GetMHWTheme");
 		m_mhwParser.GetTheme(themeId, theme);
 	}
@@ -243,6 +258,7 @@ void CEpgScanner::OnTsPacket(byte* tsPacket)
 	{
 		if (m_bGrabbing)
 		{
+			CEnterCriticalSection enter(m_section);
 			m_epgParser.OnTsPacket(tsPacket);
 			m_mhwParser.OnTsPacket(tsPacket);
 			if (m_epgParser.IsEPGReady() && m_mhwParser.IsEPGReady())

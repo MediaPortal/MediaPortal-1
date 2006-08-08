@@ -21,6 +21,10 @@
 #pragma once
 #include "sectiondecoder.h"
 #include "section.h"
+#include "criticalsection.h"
+#include "entercriticalsection.h"
+
+using namespace Mediaportal;
 
 // {6E714740-803D-4175-BEF6-67246BDF1855}
 DEFINE_GUID(IID_IPmtGrabber,0x6e714740, 0x803d, 0x4175, 0xbe, 0xf6, 0x67, 0x24, 0x6b, 0xdf, 0x18, 0x55);
@@ -56,4 +60,5 @@ private:
 	byte					m_pmtData[4096];
 	int						m_iPmtVersion;
 	int						m_iPmtLength;
+	CCriticalSection m_section;
 };

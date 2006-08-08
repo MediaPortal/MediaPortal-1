@@ -19,6 +19,10 @@
  *
  */
 #include "patparser.h"
+#include "criticalsection.h"
+#include "entercriticalsection.h"
+
+using namespace Mediaportal;
 
 #pragma once
 // {1663DC42-D169-41da-BCE2-EEEC482CB9FB}
@@ -106,4 +110,5 @@ public:
 private:
 	CPatParser m_patParser;
 	bool m_bIsParsing;
+	CCriticalSection m_section;
 };

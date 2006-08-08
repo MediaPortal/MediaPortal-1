@@ -43,6 +43,7 @@ CChannelScan::~CChannelScan(void)
 
 STDMETHODIMP CChannelScan::Start()
 {
+	CEnterCriticalSection enter(m_section);
 	try
 	{
 		m_patParser.Reset();
@@ -56,6 +57,7 @@ STDMETHODIMP CChannelScan::Start()
 }
 STDMETHODIMP CChannelScan::Stop()
 {
+	CEnterCriticalSection enter(m_section);
 	try
 	{
 		m_bIsParsing=false;
@@ -69,6 +71,7 @@ STDMETHODIMP CChannelScan::Stop()
 }
 STDMETHODIMP CChannelScan::GetCount(int* channelCount)
 {
+	CEnterCriticalSection enter(m_section);
 	try
 	{
 		*channelCount=m_patParser.Count();
@@ -113,6 +116,7 @@ STDMETHODIMP CChannelScan::GetChannel(int index,
 	static char sAudioLang1[10];
 	static char sAudioLang2[10];
 	static char sAudioLang3[10];
+	CEnterCriticalSection enter(m_section);
 	try
 	{
 		strcpy(sServiceName,"");
@@ -184,6 +188,7 @@ STDMETHODIMP CChannelScan::GetChannel(int index,
 
 void CChannelScan::OnTsPacket(byte* tsPacket)
 {
+	CEnterCriticalSection enter(m_section);
 	if (m_bIsParsing)
 	{
 		m_patParser.OnTsPacket(tsPacket);
