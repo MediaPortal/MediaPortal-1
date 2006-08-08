@@ -55,29 +55,43 @@ void StreamRemove( char* streamName)
 
 void StreamAddTs(char* streamName, char* fileName)
 {
-	Log("Stream server: add stream %s filename:%s", streamName,fileName);
-  //add a stream...
-  UsageEnvironment& env = rtspServer->envir(); 
-  ServerMediaSession* sms= ServerMediaSession::createNew(env, streamName,streamName,STREAM_DESCRIPTION,false);
-  TsFileSinkDemux* demux= TsFileSinkDemux::createNew(env, fileName, false);
-  sms->addSubsession(demux->newVideoServerMediaSubsession(false));
-  sms->addSubsession(demux->newAudioServerMediaSubsession());
-  rtspServer->addServerMediaSession(sms);
-  
-  announceStream(rtspServer, sms, streamName, fileName);
+	try
+	{
+		Log("Stream server: add stream %s filename:%s", streamName,fileName);
+		//add a stream...
+		UsageEnvironment& env = rtspServer->envir(); 
+		ServerMediaSession* sms= ServerMediaSession::createNew(env, streamName,streamName,STREAM_DESCRIPTION,false);
+		TsFileSinkDemux* demux= TsFileSinkDemux::createNew(env, fileName, false);
+		sms->addSubsession(demux->newVideoServerMediaSubsession(false));
+		sms->addSubsession(demux->newAudioServerMediaSubsession());
+		rtspServer->addServerMediaSession(sms);
+	  
+		announceStream(rtspServer, sms, streamName, fileName);
+	}
+	catch(...)
+	{
+		Log("Stream server: unable to add stream %s filename:%s", streamName,fileName);
+	}
 }
 void StreamAddMpg(char* streamName, char* fileName)
 {
-	Log("Stream server: add stream %s filename:%s", streamName,fileName);
-  //add a stream...
-  UsageEnvironment& env = rtspServer->envir(); 
-  ServerMediaSession* sms= ServerMediaSession::createNew(env, streamName,streamName,STREAM_DESCRIPTION,false);
-  MPEG1or2FileServerDemux* demux= MPEG1or2FileServerDemux::createNew(env, fileName, false);
-  sms->addSubsession(demux->newVideoServerMediaSubsession(false));
-  sms->addSubsession(demux->newAudioServerMediaSubsession());
-  rtspServer->addServerMediaSession(sms);
-  
-  announceStream(rtspServer, sms, streamName, fileName);
+	try
+	{
+		Log("Stream server: add stream %s filename:%s", streamName,fileName);
+		//add a stream...
+		UsageEnvironment& env = rtspServer->envir(); 
+		ServerMediaSession* sms= ServerMediaSession::createNew(env, streamName,streamName,STREAM_DESCRIPTION,false);
+		MPEG1or2FileServerDemux* demux= MPEG1or2FileServerDemux::createNew(env, fileName, false);
+		sms->addSubsession(demux->newVideoServerMediaSubsession(false));
+		sms->addSubsession(demux->newAudioServerMediaSubsession());
+		rtspServer->addServerMediaSession(sms);
+	  
+		announceStream(rtspServer, sms, streamName, fileName);
+	}
+	catch(...)
+	{
+		Log("Stream server: unable to add stream %s filename:%s", streamName,fileName);
+	}
 }
 
 void announceStream(RTSPServer* rtspServer, ServerMediaSession* sms,char * streamName, char * inputFileName) 
