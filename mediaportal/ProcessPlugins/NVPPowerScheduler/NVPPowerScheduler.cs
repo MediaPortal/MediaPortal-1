@@ -547,7 +547,7 @@ namespace MediaPortal.PowerScheduler
               {
                 tmpNextStarttime = new DateTime(earliestStarttime.Year, earliestStarttime.Month, earliestStarttime.Day,
                                                 tmpNextStarttime.Hour, tmpNextStarttime.Minute, tmpNextStarttime.Second, 0);
-                while (tmpNextStarttime.Ticks < earliestStarttime.Ticks) tmpNextStarttime.AddDays(1);
+								while (tmpNextStarttime.Ticks < earliestStarttime.Ticks) tmpNextStarttime = tmpNextStarttime.AddDays(1);
                 
                 if (m_bExtensiveLog)
                   _log.Info(" PowerScheduler:  Next date/time:{0} Type:Daily     {1}  {2} ",
