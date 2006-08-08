@@ -1355,9 +1355,28 @@ namespace TvPlugin
           if (group.GroupName == GUILocalizeStrings.Get(972))
           {
             found = true;
+            TvBusinessLayer layer = new TvBusinessLayer();
+            foreach (Channel channel in channels)
+            {
+              bool groupContainsChannel = false;
+              foreach (GroupMap map in group.GroupMaps)
+              {
+                if (map.Channel.IdChannel == channel.IdChannel)
+                {
+                  groupContainsChannel = true;
+                  break;
+                }
+              }
+              if (!groupContainsChannel)
+              {
+                layer.AddChannelToGroup(channel, GUILocalizeStrings.Get(972));
+                DatabaseManager.SaveChanges();
+              }
+            }
             break;
           }
         }
+
         if (!found)
         {
           TvBusinessLayer layer = new TvBusinessLayer();

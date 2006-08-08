@@ -43,7 +43,7 @@ namespace SetupTv.Sections
       EntityList<Channel> channels = DatabaseManager.Instance.GetEntities<Channel>(query);
       foreach (Channel ch in channels)
       {
-        //if (ch.IsTv == false) continue;
+        if (ch.IsTv == false) continue;
         mpComboBoxChannels.Items.Add(ch.Name);
 
       }
