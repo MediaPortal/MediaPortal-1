@@ -142,7 +142,7 @@ namespace Wikipedia
 		///          false : plugin does not need its own button on home</returns>
 		public bool   GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage) 
 		{
-			strButtonText = PluginName();
+			strButtonText = GUILocalizeStrings.Get(2606);
 			strButtonImage = "";
 			strButtonImageFocus = "";
 			strPictureImage = "";
