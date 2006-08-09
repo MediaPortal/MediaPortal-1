@@ -196,6 +196,20 @@ namespace MediaPortal.GUI.Library
 			}
 		}
 
+    		/// <summary>
+		/// Sets the device and the FVF.
+		/// </summary>
+    static public void SetDevice()
+    {
+      _log.Info("  fonts.SetDevice()");
+      IntPtr upDevice = DShowNET.Helper.DirectShowUtil.GetUnmanagedDevice(GUIGraphicsContext.DX9Device);
+
+      unsafe
+      {
+        FontEngineSetDevice(upDevice.ToPointer());
+      }
+    }
+
 		/// <summary>
 		/// Initializes the device objects of the GUIFonts.
 		/// </summary>
