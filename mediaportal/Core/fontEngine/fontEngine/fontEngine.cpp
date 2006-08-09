@@ -149,11 +149,30 @@ void FontEngineInitialize(int screenWidth, int screenHeight)
 	}
 }
 //*******************************************************************************************************************
+void FontEngineSetDevice(void* device)
+{
+	m_pDevice = (LPDIRECT3DDEVICE9)device;
+
+	m_Filter = D3DTEXF_NONE;
+
+	D3DCAPS9 caps;
+    ZeroMemory(&caps, sizeof(caps));
+	m_pDevice->GetDeviceCaps(&caps);
+	if((caps.StretchRectFilterCaps&D3DPTFILTERCAPS_MINFLINEAR)
+	&& (caps.StretchRectFilterCaps&D3DPTFILTERCAPS_MAGFLINEAR))
+		m_Filter = D3DTEXF_LINEAR;
+  m_pDevice->SetFVF( D3DFVF_CUSTOMVERTEX );
+}
+
+//*******************************************************************************************************************
 void FontEngineRemoveTexture(int textureNo)
 {
 	//char log[128];
 	//sprintf(log,"FontEngineRemoveTexture(%d)\n", textureNo);
 	//Log(log);
+  // Important to set it to NULL otherwise the textures, etc. will not be freed on release
+  m_pDevice->SetStreamSource(0, NULL, 0, 0 );
+
 	if (textureNo < 0 || textureNo>=MAX_TEXTURES) return;
 	textureData[textureNo].hashCode=-1;
 	textureData[textureNo].dwNumTriangles=0;
@@ -373,11 +392,13 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
 		}
 	}
 
+  //save original viewport
+  D3DVIEWPORT9 viewport;
+	m_pDevice->GetViewport(&viewport);
+ 
+
 	if (needRedraw)
 	{
-		D3DVIEWPORT9 orgViewPort;
-		m_pDevice->GetViewport(&orgViewPort);
-
 		D3DVIEWPORT9 viewportWholeScreen;
 		viewportWholeScreen.X=0;
 		viewportWholeScreen.Y=0;
@@ -387,8 +408,9 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
     viewportWholeScreen.MinZ = 0.0;
 		m_pDevice->SetViewport(&viewportWholeScreen);
 
+
 		FontEnginePresentTextures();
-		m_pDevice->SetViewport(&orgViewPort);
+		m_pDevice->SetViewport(&viewport);
 	}
 	texture=&textureData[textureNo];
 	if (texture->iv==0)
@@ -408,7 +430,6 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
 		return;
 	}
 	
-
 	float xpos=x;
 	float xpos2=x+nw;
 	float ypos=y;
@@ -419,8 +440,7 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
 	float ty1=voff;
 	float ty2=voff+vmax;
 	
-	D3DVIEWPORT9 viewport;
-	m_pDevice->GetViewport(&viewport);
+
 	if (viewport.X>0 || viewport.Y>0)
 	{
 		float w=(xpos2-xpos) ;
@@ -514,17 +534,9 @@ void FontEnginePresentTextures()
 				if (dwValueAlphaBlend!=dwValue)				
 				{
 					m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE ,dwValue);
-					/*
-					m_pDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-					m_pDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-					m_pDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
-					m_pDevice->SetSamplerState(1, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-					m_pDevice->SetSamplerState(1, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-					m_pDevice->SetSamplerState(1, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);*/
 					dwValueAlphaBlend=dwValue;
 				}
 				m_pDevice->SetTexture(0, texture->pTexture);
-				m_pDevice->SetFVF( D3DFVF_CUSTOMVERTEX );
 				m_pDevice->SetStreamSource(0, texture->pVertexBuffer, 0, sizeof(CUSTOMVERTEX) );
 				m_pDevice->SetIndices( texture->pIndexBuffer );
 				m_pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 
@@ -534,8 +546,6 @@ void FontEnginePresentTextures()
 												0,					 //StartIndex,
 												texture->dwNumTriangles //MaxPrimitives
 												);
-
-				m_pDevice->SetTexture(0, NULL);
 			}
 		}
 		catch(...)
@@ -570,19 +580,7 @@ void FontEnginePresentTextures()
 
 }
 
-void FontEngineSetDevice(void* device)
-{
-	m_pDevice = (LPDIRECT3DDEVICE9)device;
 
-	m_Filter = D3DTEXF_NONE;
-
-	D3DCAPS9 caps;
-    ZeroMemory(&caps, sizeof(caps));
-	m_pDevice->GetDeviceCaps(&caps);
-	if((caps.StretchRectFilterCaps&D3DPTFILTERCAPS_MINFLINEAR)
-	&& (caps.StretchRectFilterCaps&D3DPTFILTERCAPS_MAGFLINEAR))
-		m_Filter = D3DTEXF_LINEAR;
-}
 
 //*******************************************************************************************************************
 void FontEngineAddFont( int fontNumber,void* fontTexture, int firstChar, int endChar, float textureScale, float textureWidth, float textureHeight, float fSpacingPerChar,int maxVertices)
@@ -736,6 +734,7 @@ void FontEngineDrawText3D(int fontNumber, void* textVoid, int xposStart, int ypo
 	xpos = fStartX;
 	ypos = fStartY;
 	lineNr=0;
+
 	for (int i=0; i < (int)wcslen(text);++i)
 	{
         WCHAR c=text[i];
@@ -871,10 +870,9 @@ void FontEnginePresent3D(int fontNumber)
 				font->pVertexBuffer->Unlock();
 			}
 			m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE ,1);
-
+ 
 			m_pDevice->SetTexture(0, font->pTexture);
 			m_pDevice->SetStreamSource(0, font->pVertexBuffer, 0, sizeof(CUSTOMVERTEX) );
-			m_pDevice->SetFVF( D3DFVF_CUSTOMVERTEX );
 			m_pDevice->SetIndices( font->pIndexBuffer );
 			m_pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 
 											0,					 //baseVertexIndex,
@@ -883,7 +881,6 @@ void FontEnginePresent3D(int fontNumber)
 											0,					 //StartIndex,
 											font->dwNumTriangles //MaxPrimitives
 											);
-			m_pDevice->SetTexture(0, NULL);
 			font->dwNumTriangles = 0;
 			font->iv = 0;
 			font->updateVertexBuffer=false;
@@ -900,10 +897,12 @@ void FontEnginePresent3D(int fontNumber)
 	}
 }
 
-
+ 
 //*******************************************************************************************************************
 void FontEngineRemoveFont(int fontNumber)
 {
+  // Important to set it to NULL  otherwise the textures, etc. will not be freed on release
+  m_pDevice->SetStreamSource(0, NULL, 0, 0 );
 	if (fontNumber< 0 || fontNumber>=MAX_FONTS) return;
 	if (fontData[fontNumber].pVertexBuffer!=NULL) 
 	{
