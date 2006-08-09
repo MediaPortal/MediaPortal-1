@@ -35,8 +35,13 @@
       Name="id1_0_1"
       Canvas.Top="370"
       Canvas.Left="75"
+      Stretch="None" 
+      HorizontalAlignment="Left" 
+      VerticalAlignment="Top" 
       Source="{DynamicResource hover_my pictures.png}"
+      Style="{StaticResource GUIImage}" 
       Visibility="Visible"
+      
       Tag="##id::1//##keycontrol::onleft:;onright:;onup:;ondown://##metadata::"
 />
 
@@ -50,6 +55,7 @@
       Width="190"
       Height="32"
       Style="{DynamicResource GUIButton}"
+      Click="MPNG" 
       Tag="##id::2//##keycontrol::onleft:;onright:50;onup:17;ondown://##metadata::labelNum:100"
 >100</Button>
 
@@ -125,7 +131,7 @@
       Canvas.Top="97"
       Canvas.Left="260"
       Width="425"
-      Height="459"
+      Height="479"
       Style="{DynamicResource GUIListControl}"
 />
 

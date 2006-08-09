@@ -18,10 +18,9 @@ namespace MediaPortal
     public partial class HomeExtension :  Page
     {
 
-
         private ScrollViewer sv;
         public string _skinMediaPath;
-        private bool viewThumbNails = true;
+        private int viewThumbNails = 0;
         private Core _core;
         public HomeExtension(ResourceDictionary dict)
         {
@@ -33,8 +32,28 @@ namespace MediaPortal
             this.Height = 608;
             this.Width = 720;
             _core = (Core)this.Parent;
-
+            lv1.SelectionChanged += new SelectionChangedEventHandler(lv1_SelectionChanged);
+            
             ApplyLanguage("German");
+        }
+
+        void lv1_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+            int c = VisualTreeHelper.GetChildrenCount(lv1);
+            Border b = (Border)VisualTreeHelper.GetChild(lv1, 0);
+            sv = (ScrollViewer)VisualTreeHelper.GetChild(b, 0);
+            if (c > 0)
+            {
+                Image tb = (Image)sv.Template.FindName("PreviewImage", sv);
+                if (tb != null && lv1.SelectedItem.GetType()==typeof(Image))
+                {
+                    tb.Source = ((Image)lv1.SelectedItem).Source;
+                    tb.Width = 325;
+                    tb.Height = 263;
+                }
+            } 
+
         }
 
         private void ApplyLanguage(string lang)
@@ -71,7 +90,6 @@ namespace MediaPortal
                     }
                 }
                 int count=VisualTreeHelper.GetChildrenCount(this);
-                int a = 0;
             }
 
         }
@@ -84,33 +102,22 @@ namespace MediaPortal
             this.BeginAnimation(Page.OpacityProperty, anim);
 
             //
-            lv1.Items.Add("frodo");
-            lv1.Items.Add("dman");
-            lv1.Items.Add("mpod");
-            lv1.Items.Add("agree");
-            lv1.Items.Add("mediaportal");
-            lv1.Items.Add("Annie Lenox");
-            lv1.Items.Add("What the heck");
-            lv1.Items.Add("some numbers:");
-            lv1.Items.Add("1");
-            lv1.Items.Add("2");
-            lv1.Items.Add("3");
-            lv1.Items.Add("4");
-            lv1.Items.Add("5");
-            lv1.Items.Add("6");
-            lv1.Items.Add("7");
-            lv1.Items.Add("8");
-            lv1.Items.Add("9");
-            lv1.Items.Add("10");
-            lv1.Items.Add("11");
-            lv1.Items.Add("12");
-            lv1.Items.Add("13");
-            lv1.Items.Add("14");
-            lv1.Items.Add("15");
-            lv1.Items.Add("16");
-
-
-
+            string folderPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyPictures);
+            string[] files=System.IO.Directory.GetFiles(folderPath);
+            foreach (string fi in files)
+            {
+                System.IO.FileInfo fInfo = new System.IO.FileInfo(fi);
+                Image img = new Image();
+                try
+                {
+                    img.Source = new BitmapImage(new Uri(fInfo.FullName));
+                    img.Tag = fInfo.Name;
+                    lv1.Items.Add(img);
+                }
+                catch { }
+            }
+            // media
+ 
         }
 
         public void Launch_Wizard(object sender,RoutedEventArgs e)
@@ -121,19 +128,29 @@ namespace MediaPortal
             if (lv1 == null)
                 return;
             lv1.Style = null;
-
-            if (viewThumbNails == true)
+            
+            if (viewThumbNails == 0)
             {
                 lv1.Style = (Style)lv1.FindResource("GUIListControl");
                 lv1.ApplyTemplate();
-                viewThumbNails = false;
+                viewThumbNails = 1;
             }
-            else
+            else 
+
+            if(viewThumbNails==1)
             {
                 lv1.Style = (Style)lv1.FindResource("GUIThumbnailControl");
                 lv1.ApplyTemplate();
-                viewThumbNails = true;
+                viewThumbNails = 2;
             }
+            else
+                if (viewThumbNails == 2)
+                {
+                    lv1.Style = (Style)lv1.FindResource("GUIFilmstripControl");
+                    lv1.ApplyTemplate();
+                    viewThumbNails = 0;
+
+                }
             try
             {
                 // example to get the elements from an style and apply the template

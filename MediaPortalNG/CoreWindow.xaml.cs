@@ -22,6 +22,8 @@ namespace MediaPortal
         public char chr34=((char)34);
         public XmlNode defNodes;
         public System.Collections.ArrayList idArray;
+        public System.Collections.ArrayList typeArray;
+        public string currentFile;
         /// <summary>
         /// The MediaPortal core. The Core always loads the HomeExtension as start point.
         /// </summary>
@@ -49,29 +51,66 @@ namespace MediaPortal
 
         void Core_Loaded(object sender, RoutedEventArgs e)
         {
-            ParseSkinXML(Directory.GetCurrentDirectory() + @"\BlueTwo\");
+            
+            //DirectoryInfo di = new DirectoryInfo(Directory.GetCurrentDirectory()+@"\BlueTwo\");
+            //FileInfo[] fi = di.GetFiles("*.xml");
+            //typeArray = new System.Collections.ArrayList();
+            //foreach (FileInfo i in fi)
+            //{
+            //    currentFile = i.Name;
+            //    ParseSkinXML(Directory.GetCurrentDirectory() + @"\BlueTwo\",i.Name);
+            //}
+            //typeArray.Sort();
+            //StreamWriter sw = new StreamWriter(@"E:\elements.txt");
+            //foreach (string t in typeArray)
+            //    sw.WriteLine(t);
+            //sw.Close();
             LoadHome();
+            LoadSkin();
+            
         }
 
-        /*
+        
          public void LoadSkin()
         {
             
-           // FileInfo fi;
-           // StreamWriter sw=File.CreateText("E:\\skinMedia.xaml");
-           // DirectoryInfo di = new DirectoryInfo(pathMedia);
-           // if (di.Exists)
-           // {
-           //     FileInfo[] fis=di.GetFiles("*.*");
-           //     foreach (FileInfo f in fis)
-           //     {
-           //         sw.WriteLine("<BitmapImage x:Key=" + ((char)34) + f.Name + ((char)34) + " UriSource=" + ((char)34) + "BlueTwo\Media\\" +  f.Name + ((char)34) + "/>");
-           //     }
-           // }
-           //  sw.Close();
-           
+            //FileInfo fi;
+
+            //StreamWriter sw=File.CreateText("E:\\skinImages1.xaml");
+            //DirectoryInfo di = new DirectoryInfo("E:\\MPNG\\bin\\Debug\\BlueTwo\\Media\\");
+            //if (di.Exists)
+            //{
+            //    FileInfo[] fis=di.GetFiles("*.*");
+            //    foreach (FileInfo f in fis)
+            //    {
+            //        try
+            //        {
+            //            BitmapImage bmp = new BitmapImage(new Uri(f.FullName));
+            //            int width = (int)bmp.Width;
+            //            int height = (int)bmp.Height;
+            //            if (bmp.DpiX < 96)
+            //            {
+            //                width = ((int)(width * bmp.DpiX)) / 96;
+
+            //            }
+            //            if (bmp.DpiY < 96)
+            //            {
+            //                height = ((int)(height * bmp.DpiY)) / 96;
+
+            //            }
+            //            if (f.Name == "hover_my pictures.png")
+            //            {
+            //                int a = 0;
+            //            }
+            //            sw.WriteLine("<BitmapImage x:Key=" + ((char)34) + f.Name + ((char)34) + " UriSource=" + ((char)34) + "BlueTwo\\Media\\" + f.Name + ((char)34) + " DecodePixelWidth="+chr34+width.ToString()+chr34+" DecodePixelHeight="+chr34+height.ToString()+chr34+"/>");
+            //        }
+            //        catch { }
+            //    }
+            //}
+            // sw.Close();
+        
         }
-         */
+         
 
         public void LoadHome()
         {
@@ -80,13 +119,12 @@ namespace MediaPortal
             this.Navigate(home);
         }
 
-        private void ParseSkinXML(string path)
+        private void ParseSkinXML(string path,string file)
         {
             string header1 = "<Page xmlns=" + chr34 + "http://schemas.microsoft.com/winfx/2006/xaml/presentation" + chr34;
             string header2="xmlns:x=" + chr34 + "http://schemas.microsoft.com/winfx/2006/xaml" + chr34 ;
             string header3="Style=" + chr34 + "{StaticResource PageBackground}" + chr34 ;
             string header4="x:Class=" + chr34 + "MediaPortal.HomeExtension" + chr34 + ">";
-            string file = "mypics";
             // the skin
             XmlDocument doc = new System.Xml.XmlDocument();
             XmlDocument defaults = new XmlDocument();
@@ -97,7 +135,7 @@ namespace MediaPortal
             // the common.window.xml/ common.settings.xml
             XmlDocument commonWindow = new System.Xml.XmlDocument();
 
-            doc.Load(path + @"\"+file+".xml");
+            doc.Load(path + @"\"+file);
             defaults.Load(path + @"\" + "references.xml");
 
             //string test = doc.NameTable.Get("controls");
@@ -107,6 +145,7 @@ namespace MediaPortal
 
             defNodes = defaults.GetElementsByTagName("controls").Item(0);
 
+            if(node!=null)
             foreach (XmlNode property in node.ChildNodes)
             {
                 if (property.Name == "import")
@@ -148,6 +187,7 @@ namespace MediaPortal
             XmlNode group = null;
           
             // process the defines
+            if(node!=null)
             foreach (XmlNode child in node.ParentNode)
             {
                 if (child.Name == "define")
@@ -321,21 +361,34 @@ namespace MediaPortal
             string posy="";
             if (baseX == -1 && baseY == -1)
             {
-                int x = (FindNodeByName("posX", parent) != "" ? Convert.ToInt32(FindNodeByName("posX", parent)) : 0);
-                int y = (FindNodeByName("posX", parent) != "" ? Convert.ToInt32(FindNodeByName("posY", parent)) : 0);
-                posx = x.ToString();
-                posy = y.ToString();
+                try
+                {
+                    int x = (FindNodeByName("posX", parent) != "" ? Convert.ToInt32(FindNodeByName("posX", parent)) : 0);
+                    int y = (FindNodeByName("posX", parent) != "" ? Convert.ToInt32(FindNodeByName("posY", parent)) : 0);
+                    posx = x.ToString();
+                    posy = y.ToString();
+                }
+                catch { }
             }
             else
             {
-                int x = (FindNodeByName("posX", parent) != "" ? Convert.ToInt32(FindNodeByName("posX", parent)) : 0);
-                int y = (FindNodeByName("posX", parent) != "" ? Convert.ToInt32(FindNodeByName("posY", parent)) : 0);
-                x += baseX;
-                y += baseY;
-                posx = x.ToString();
-                posy = y.ToString();
+                try
+                {
+                    int x = (FindNodeByName("posX", parent) != "" ? Convert.ToInt32(FindNodeByName("posX", parent)) : 0);
+                    int y = (FindNodeByName("posX", parent) != "" ? Convert.ToInt32(FindNodeByName("posY", parent)) : 0);
+                    x += baseX;
+                    y += baseY;
+                    posx = x.ToString();
+                    posy = y.ToString();
+                }
+                catch { }
             }
             // process list control
+            if (property.Name == "type")
+            {
+                if (typeArray.Contains(property.InnerText + " " + currentFile) == false)
+                    typeArray.Add(property.InnerText+" "+currentFile);
+            }
             if (property.InnerText == "listcontrol" && property.Name == "type")
             {
                 sw.WriteLine("  <!-- " + FindNodeByName("description", parent) + " -->");
@@ -497,9 +550,12 @@ namespace MediaPortal
                 if (labelText == "")
                     labelText = "textField";
 
-                if (Convert.ToInt32(labelText) > 0)
-                    metaData = "labelNum:" + labelText;
-
+                try
+                {
+                    if (Convert.ToInt32(labelText) > 0)
+                        metaData = "labelNum:" + labelText;
+                }
+                catch { }
                 string id = "id" + FindNodeByName("id", parent);
 
                 if (idArray.IndexOf(id) >= 0)
@@ -546,9 +602,12 @@ namespace MediaPortal
                 if (labelText == "")
                     labelText = "textField";
 
-                if (Convert.ToInt32(labelText) > 0)
-                    metaData = "labelNum:" + labelText;
-
+                try
+                {
+                    if (Convert.ToInt32(labelText) > 0)
+                        metaData = "labelNum:" + labelText;
+                }
+                catch { }
                 string id = "id" + FindNodeByName("id", parent);
 
                 if (idArray.IndexOf(id) >= 0)
@@ -597,9 +656,12 @@ namespace MediaPortal
                 if (labelText == "")
                     labelText = "textField";
 
-                if (Convert.ToInt32(labelText) > 0)
-                    metaData = "labelNum:" + labelText;
-
+                try
+                {
+                    if (Convert.ToInt32(labelText) > 0)
+                        metaData = "labelNum:" + labelText;
+                }
+                catch { }
                 string id = "id" + FindNodeByName("id", parent);
 
                 if (idArray.IndexOf(id) >= 0)
@@ -706,7 +768,6 @@ namespace MediaPortal
                if (loop.Name == property)
                    result = loop.InnerText;
            }
-           int a = 1;
            return result;
         }
 

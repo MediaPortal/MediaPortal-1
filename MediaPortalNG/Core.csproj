@@ -9,6 +9,8 @@
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{907A5C3C-B130-4D1F-A9FC-6ECBD9160E92}</ProjectGuid>
+<XamlDebuggingInformation>true</XamlDebuggingInformation>
+
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <Optimize>false</Optimize>

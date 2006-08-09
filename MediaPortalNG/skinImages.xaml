@@ -127,7 +127,7 @@
 <BitmapImage x:Key="hover_my mail.png" UriSource="BlueTwo\Media\hover_my mail.png"/>
 <BitmapImage x:Key="hover_my music.png" UriSource="BlueTwo\Media\hover_my music.png"/>
 <BitmapImage x:Key="hover_my news.png" UriSource="BlueTwo\Media\hover_my news.png"/>
-<BitmapImage x:Key="hover_my pictures.png" UriSource="BlueTwo\Media\hover_my pictures.png"/>
+<BitmapImage x:Key="hover_my pictures.png" DecodePixelWidth="121" DecodePixelHeight="168" UriSource="BlueTwo\Media\hover_my pictures.png"/>
 <BitmapImage x:Key="hover_my plugins.png" UriSource="BlueTwo\Media\hover_my plugins.png"/>
 <BitmapImage x:Key="hover_my programs.png" UriSource="BlueTwo\Media\hover_my programs.png"/>
 <BitmapImage x:Key="hover_my radio.png" UriSource="BlueTwo\Media\hover_my radio.png"/>

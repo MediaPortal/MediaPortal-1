@@ -7,16 +7,27 @@
   <!-- Skin BlueTwo -->
 
   <!-- GUI Elements -->
- 
+  <Style x:Key="GUIImage" TargetType="{x:Type Image}"></Style> 
   
   <Style x:Key="PageBackground" TargetType="{x:Type Page}">
     <Setter Property="Background">
       <Setter.Value>
-        <ImageBrush ImageSource="BlueTwo\Media\background.png"/>
+        <ImageBrush ImageSource="BlueTwo\\Media\\background.png"/>
       </Setter.Value>
     </Setter>
   </Style>
 
+  <Style x:Key="FocusStyle" >
+   <Setter Property="Control.Template">
+     <Setter.Value>
+        <ControlTemplate>
+          <Rectangle Stroke="Transparent" StrokeThickness="0" Margin="0" SnapsToDevicePixels="True">
+          </Rectangle>
+        </ControlTemplate>
+    </Setter.Value>
+  </Setter>
+  </Style>
+  
   <Style x:Key="GUISortButtonStyle" TargetType="{x:Type CheckBox}">
     <Setter Property="SnapsToDevicePixels" Value="true"/>
     <Setter Property="OverridesDefaultStyle" Value="true"/>
@@ -45,7 +56,7 @@
               </MultiTrigger.Conditions>
               <Setter TargetName="Border" Property="Background">
                 <Setter.Value>
-                  <ImageBrush ImageSource="BlueTwo\Media\arrow_round_up_focus.png" Stretch="Uniform"/>
+                  <ImageBrush ImageSource="BlueTwo\\Media\\arrow_round_up_focus.png" Stretch="Uniform"/>
                 </Setter.Value>
               </Setter>
             </MultiTrigger>
@@ -56,7 +67,7 @@
               </MultiTrigger.Conditions>
               <Setter TargetName="Border" Property="Background">
                 <Setter.Value>
-                  <ImageBrush ImageSource="BlueTwo\Media\arrow_round_down_focus.png" Stretch="Uniform"/>
+                  <ImageBrush ImageSource="BlueTwo\\Media\\arrow_round_down_focus.png" Stretch="Uniform"/>
                 </Setter.Value>
               </Setter>
             </MultiTrigger>
@@ -67,7 +78,7 @@
               </MultiTrigger.Conditions>
               <Setter TargetName="Border" Property="Background">
                 <Setter.Value>
-                  <ImageBrush ImageSource="BlueTwo\Media\arrow_round_up_nofocus.png" Stretch="Uniform"/>
+                  <ImageBrush ImageSource="BlueTwo\\Media\\arrow_round_up_nofocus.png" Stretch="Uniform"/>
                 </Setter.Value>
               </Setter>
             </MultiTrigger>
@@ -78,7 +89,7 @@
               </MultiTrigger.Conditions>
               <Setter TargetName="Border" Property="Background">
                 <Setter.Value>
-                  <ImageBrush ImageSource="BlueTwo\Media\arrow_round_down_nofocus.png" Stretch="Uniform"/>
+                  <ImageBrush ImageSource="BlueTwo\\Media\\arrow_round_down_nofocus.png" Stretch="Uniform"/>
                 </Setter.Value>
               </Setter>
             </MultiTrigger>
@@ -89,9 +100,10 @@
   </Style>
 
   <Style x:Key="UpScroll" TargetType="{x:Type RepeatButton}">
+    <Setter Property="FocusVisualStyle" Value="{DynamicResource FocusStyle}"/>
     <Setter Property="Background">
       <Setter.Value>
-        <ImageBrush ImageSource="BlueTwo\Media\page_up_nofocus.png"/>
+        <ImageBrush ImageSource="BlueTwo\\Media\\page_up_nofocus.png"/>
       </Setter.Value>
     </Setter>
     <Setter Property="Template">
@@ -110,7 +122,7 @@
       <Trigger Property="IsMouseOver" Value="true">
         <Setter Property="Background">
           <Setter.Value>
-            <ImageBrush ImageSource="BlueTwo\Media\page_up_focus.png" />
+            <ImageBrush ImageSource="BlueTwo\\Media\\page_up_focus.png" />
           </Setter.Value>
         </Setter>
       </Trigger>
@@ -118,9 +130,10 @@
   </Style>
 
   <Style x:Key="DownScroll" TargetType="{x:Type RepeatButton}">
+    <Setter Property="FocusVisualStyle" Value="{DynamicResource FocusStyle}"/>
     <Setter Property="Background">
       <Setter.Value>
-        <ImageBrush ImageSource="BlueTwo\Media\page_down_nofocus.png"/>
+        <ImageBrush ImageSource="BlueTwo\\Media\\page_down_nofocus.png"/>
       </Setter.Value>
     </Setter>
     <Setter Property="Template">
@@ -138,7 +151,7 @@
       <Trigger Property="IsMouseOver" Value="true">
         <Setter Property="Background">
           <Setter.Value>
-            <ImageBrush ImageSource="BlueTwo\Media\page_down_focus.png" />
+            <ImageBrush ImageSource="BlueTwo\\Media\\page_down_focus.png" />
           </Setter.Value>
         </Setter>
       </Trigger>
@@ -150,43 +163,54 @@
     <Setter Property="Foreground" Value="Transparent"/>
     <Setter Property="OverridesDefaultStyle" Value="true"/>
     <Setter Property="BorderBrush" Value="Transparent"/>
-    <Setter Property="Background">
-      <Setter.Value>
-        <ImageBrush ImageSource="BlueTwo\Media\list_sub_nofocus.png" />
-      </Setter.Value>
-    </Setter>
+    <Setter Property="BorderThickness" Value="0,0,0,0"/>
+    <Setter Property="Background" Value="Transparent"/>
+    <Setter Property="FocusVisualStyle" Value="{DynamicResource FocusStyle}"/>
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="{x:Type ListBoxItem}">
           <Border 
             Background="{TemplateBinding Background}" 
-            Padding="0,0,0,0"
             >
             <DockPanel>
-              <Image Margin="8,0" Source="{DynamicResource defaultFolderBack.png}" Width="16" Height="16"/>
-              <TextBlock
-                  Foreground="White"
-                  Margin="5,4" 
-                  FontSize="18"
-                  Text="{TemplateBinding Content}">
-              </TextBlock>
-              <ContentPresenter x:Name="ContentSite" 
-                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
-                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+              <Grid Margin="0,0" x:Name="ListControlPanel">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="20" />
+                  <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                  <RowDefinition Height="32"/>
+                </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="1" 
+                       Margin="4" 
+                Foreground="White"
+                FontSize="18"
+                Text="{Binding Tag}"
+                VerticalAlignment="Center"
+                >
+            </TextBlock>
+                <ContentPresenter x:Name="ContentSite" 
+                 Grid.Row="0" 
+                 Grid.Column="0" 
+                 Margin="4" 
+                 HorizontalAlignment="Center" 
+                 VerticalAlignment="Center"/>
+              </Grid>
+
             </DockPanel>
           </Border>
           <ControlTemplate.Triggers>
-            <Trigger Property="IsSelected" Value="true">
-              <Setter Property="Background">
-                <Setter.Value>
-                  <ImageBrush ImageSource="BlueTwo\Media\list_sub_focus.png" />
-                </Setter.Value>
-              </Setter>
-            </Trigger>
             <Trigger Property="IsMouseOver" Value="true">
-              <Setter Property="Background">
+              <Setter TargetName="ListControlPanel" Property="Background">
                 <Setter.Value>
-                  <ImageBrush ImageSource="BlueTwo\Media\list_sub_focus.png" />
+                  <ImageBrush ImageSource="BlueTwo\\Media\\list_sub_focus.png" />
+                </Setter.Value>
+                </Setter>
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="false">
+              <Setter TargetName="ListControlPanel" Property="Background">
+                <Setter.Value>
+                  <ImageBrush ImageSource="BlueTwo\\Media\\list_sub_nofocus.png" />
                 </Setter.Value>
               </Setter>
             </Trigger>
@@ -195,56 +219,114 @@
       </Setter.Value>
     </Setter>
   </Style>
-
-  <Style x:Key="GUIThumbnailItems" TargetType="{x:Type ListBoxItem}">
+ 
+  <Style x:Key="GUIFilmstripItems" TargetType="{x:Type ListBoxItem}">
     <Setter Property="Foreground" Value="Transparent"/>
-    <Setter Property="Width" Value="110"/>
-    <Setter Property="Height" Value="144"/>
     <Setter Property="OverridesDefaultStyle" Value="true"/>
     <Setter Property="BorderBrush" Value="Transparent"/>
-    <Setter Property="Background">
-      <Setter.Value>
-        <ImageBrush ImageSource="BlueTwo\Media\icon_empty_nofocus.png" Stretch="Uniform"/>
-      </Setter.Value>
-    </Setter>
+    <Setter Property="FocusVisualStyle" Value="{DynamicResource FocusStyle}"/>
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="{x:Type ListBoxItem}">
-          <Border 
-            Background="{TemplateBinding Background}" 
-            Padding="0,0"
-            >
-            <StackPanel>
-              <Grid Margin="0,0,0,0" Grid.Row="0" Grid.Column="0" x:Name="ThumbnailPanel">
+          <Border Background="Transparent">
+            <StackPanel Margin="0" x:Name="ThumbnailPanel">
+              <Grid Margin="0,0,10,0" >
                 <Grid.ColumnDefinitions>
-                  <ColumnDefinition Width="108"/>
+                  <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
-                  <RowDefinition Height="108"/>
+                  <RowDefinition Height="70"/>
                   <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <Image VerticalAlignment="Center" HorizontalAlignment="Center" Stretch="Uniform" Name="ThumbnailImage" Grid.Column="0" Grid.Row="0" Margin="8,0" Source="{DynamicResource defaultFolderBack.png}" Width="16" Height="16"/>
-                <TextBlock DockPanel.Dock="Bottom" 
+                 <TextBlock x:Name="ImageText"
                     Foreground="White"
-                    Margin="0,14" 
-                    FontSize="18"
-                    Grid.Column="0" Grid.Row="1" 
-                    Text="{TemplateBinding Content}">
+                    Margin="0,8" 
+                    FontSize="16"
+                    Grid.Row="1" 
+                    Text="{Binding Tag}">
                 </TextBlock>
-                <ContentPresenter x:Name="ContentSite" 
-                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
-                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                <StackPanel Grid.Row="0" Width="74" Height="74" x:Name="ContentRect">
+                  <ContentPresenter Width="64" Height="64" Grid.Row="0" Grid.Column="0" x:Name="ContentSite"  
+                    HorizontalAlignment="Center" 
+                    VerticalAlignment="Center"/>
+                </StackPanel>
               </Grid>
             </StackPanel>
           </Border>
           <ControlTemplate.Triggers>
             <Trigger Property="IsMouseOver" Value="true">
-              <Setter Property="Background">
+              <Setter TargetName="ContentRect" Property="Background">
                 <Setter.Value>
-                  <ImageBrush ImageSource="BlueTwo\Media\icon_empty_focus.png" Stretch="Uniform"/>
+                  <ImageBrush ImageSource="BlueTwo\\Media\\icon_empty_focus.png" Stretch="Uniform"/>
                 </Setter.Value>
               </Setter>
             </Trigger>
+            <Trigger Property="IsMouseOver" Value="false">
+              <Setter TargetName="ContentRect" Property="Background">
+                <Setter.Value>
+                  <ImageBrush ImageSource="BlueTwo\\Media\\icon_empty_nofocus.png" Stretch="Uniform"/>
+                </Setter.Value>
+              </Setter>
+            </Trigger>
+
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+
+  <Style x:Key="GUIThumbnailItems" TargetType="{x:Type ListBoxItem}">
+    <Setter Property="Foreground" Value="Transparent"/>
+    <Setter Property="OverridesDefaultStyle" Value="true"/>
+    <Setter Property="BorderBrush" Value="Transparent"/>
+    <Setter Property="FocusVisualStyle" Value="{DynamicResource FocusStyle}"/>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ListBoxItem}">
+          <Border 
+            Background="Transparent" 
+            >
+            <StackPanel Margin="0">
+              <Grid Margin="0,0,10,0" Grid.Row="0" Grid.Column="0" x:Name="ThumbnailPanel">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="108" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                  <RowDefinition Height="108"/>
+                  <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBlock 
+                    Foreground="White"
+                    Margin="0,2" 
+                    FontSize="16"
+                    Grid.Column="0" Grid.Row="1" 
+                    Text="{Binding Tag}">
+                </TextBlock>
+                <StackPanel Grid.Row="0" Width="108" Height="108" x:Name="ContentRect">
+                  <ContentPresenter Margin="8,8" Grid.Row="0" Grid.Column="0" x:Name="ContentSite"  
+                    HorizontalAlignment="Center" 
+                    VerticalAlignment="Center"/>
+                </StackPanel>
+              </Grid>
+            </StackPanel>
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="true">
+              <Setter TargetName="ContentRect" Property="Background">
+                <Setter.Value>
+                  <ImageBrush ImageSource="BlueTwo\\Media\\icon_empty_focus.png" Stretch="Uniform"/>
+                </Setter.Value>
+              </Setter>
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="false">
+              <Setter TargetName="ContentRect" Property="Background">
+                <Setter.Value>
+                  <ImageBrush ImageSource="BlueTwo\\Media\\icon_empty_nofocus.png" Stretch="Uniform"/>
+                </Setter.Value>
+              </Setter>
+            </Trigger>
+
           </ControlTemplate.Triggers>
         </ControlTemplate>
       </Setter.Value>
@@ -259,10 +341,11 @@
     <Setter Property="MinWidth" Value="75"/>
     <Setter Property="FontSize" Value="18"/>
     <Setter Property="Foreground" Value="White" />
+    <Setter Property="FocusVisualStyle" Value="{DynamicResource FocusStyle}"/>
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="{x:Type Button}">
-          <Border 
+          <Border
             x:Name="Border"  
             CornerRadius="0" 
             BorderThickness="0"
@@ -286,21 +369,21 @@
             <Trigger Property="IsMouseOver" Value="true">
               <Setter TargetName="Border" Property="Background">
                 <Setter.Value>
-                  <ImageBrush ImageSource="BlueTwo\Media\button_green_focus_165x32.png"/>
+                  <ImageBrush ImageSource="BlueTwo\\Media\\button_green_focus_165x32.png"/>
                 </Setter.Value>
               </Setter>
             </Trigger>
             <Trigger Property="IsMouseOver" Value="false">
               <Setter TargetName="Border" Property="Background">
                 <Setter.Value>
-                  <ImageBrush ImageSource="BlueTwo\Media\button_green_nofocus_165x32.png"/>
+                  <ImageBrush ImageSource="BlueTwo\\Media\\button_green_nofocus_165x32.png"/>
                 </Setter.Value>
               </Setter>
             </Trigger>
             <Trigger Property="IsPressed" Value="true">
               <Setter TargetName="Border" Property="Background">
                 <Setter.Value>
-                  <ImageBrush ImageSource="BlueTwo\Media\button_green_focus_165x32.png"/>
+                  <ImageBrush ImageSource="BlueTwo\\Media\\button_green_focus_165x32.png"/>
                 </Setter.Value>
               </Setter>
               <Setter TargetName="Border" Property="Opacity" Value="0.5"></Setter>
@@ -323,6 +406,7 @@
     <Setter Property="MinWidth" Value="75"/>
     <Setter Property="FontSize" Value="18"/>
     <Setter Property="Foreground" Value="White" />
+    <Setter Property="FocusVisualStyle" Value="{DynamicResource FocusStyle}"/>
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="{x:Type Button}">
@@ -335,49 +419,45 @@
               Margin="8,0"
               HorizontalAlignment="Left"
               VerticalAlignment="Center"
-              RecognizesAccessKey="True"/>
+              />
           </Border>
           <ControlTemplate.Triggers>
-            <Trigger Property="IsKeyboardFocused" Value="true">
-              <Setter TargetName="Border" Property="BorderBrush" Value="Black" />
-            </Trigger>
             <Trigger Property="IsDefaulted" Value="true">
-              <Setter TargetName="Border" Property="BorderBrush" Value="Black" />
+              <Setter TargetName="Border" Property="Background" Value="Black" />
             </Trigger>
             <Trigger Property="IsMouseOver" Value="true">
               <Setter TargetName="Border" Property="Background">
                 <Setter.Value>
-                  <ImageBrush ImageSource="BlueTwo\Media\button_green_focus_165x32.png"/>
+                  <ImageBrush ImageSource="BlueTwo\\Media\\button_green_focus_165x32.png"/>
                 </Setter.Value>
               </Setter>
             </Trigger>
             <Trigger Property="IsMouseOver" Value="false">
               <Setter TargetName="Border" Property="Background">
                 <Setter.Value>
-                  <ImageBrush ImageSource="BlueTwo\Media\button_green_nofocus_165x32.png"/>
+                  <ImageBrush ImageSource="BlueTwo\\Media\\button_green_nofocus_165x32.png"/>
                 </Setter.Value>
               </Setter>
             </Trigger>
+              <Trigger Property="IsKeyboardFocused" Value="True">
+                <Setter TargetName="Border" Property="Background">
+                  <Setter.Value>
+                    <ImageBrush ImageSource="BlueTwo\\Media\\button_green_focus_165x32.png"/>
+                  </Setter.Value>
+                </Setter>              
+              </Trigger>
             <Trigger Property="IsPressed" Value="true">
               <Setter TargetName="Border" Property="Background">
                 <Setter.Value>
-                  <ImageBrush ImageSource="BlueTwo\Media\button_green_focus_165x32.png"/>
+                  <ImageBrush ImageSource="BlueTwo\\Media\\button_green_focus_165x32.png"/>
                 </Setter.Value>
               </Setter>
-              <Setter TargetName="Border" Property="Opacity" Value="0.5"></Setter>
-            </Trigger>
-            <Trigger Property="IsEnabled" Value="false">
-              <Setter TargetName="Border" Property="Background" Value="Yellow" />
-              <Setter TargetName="Border" Property="BorderBrush" Value="Transparent" />
-              <Setter Property="Foreground" Value="Black"/>
             </Trigger>
           </ControlTemplate.Triggers>
         </ControlTemplate>
       </Setter.Value>
     </Setter>
   </Style>
-
-  
   
   <Style x:Key="GUIToggleButton" TargetType="{x:Type CheckBox}">
     <Setter Property="SnapsToDevicePixels" Value="true"/>
@@ -386,6 +466,7 @@
     <Setter Property="MinWidth" Value="75"/>
     <Setter Property="FontSize" Value="18"/>
     <Setter Property="Foreground" Value="White" />
+    <Setter Property="FocusVisualStyle" Value="{DynamicResource FocusStyle}"/>
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="{x:Type CheckBox}">
@@ -411,7 +492,7 @@
               </MultiTrigger.Conditions>
               <Setter TargetName="Border" Property="Background">
                 <Setter.Value>
-                  <ImageBrush ImageSource="BlueTwo\Media\togglebutton-on-focus.png"/>
+                  <ImageBrush ImageSource="BlueTwo\\Media\\togglebutton-on-focus.png"/>
                 </Setter.Value>
               </Setter>
             </MultiTrigger>
@@ -422,7 +503,7 @@
               </MultiTrigger.Conditions>
               <Setter TargetName="Border" Property="Background">
                 <Setter.Value>
-                  <ImageBrush ImageSource="BlueTwo\Media\togglebutton-off-focus.png"/>
+                  <ImageBrush ImageSource="BlueTwo\\Media\\togglebutton-off-focus.png"/>
                 </Setter.Value>
               </Setter>
             </MultiTrigger>
@@ -433,7 +514,7 @@
               </MultiTrigger.Conditions>
               <Setter TargetName="Border" Property="Background">
                 <Setter.Value>
-                  <ImageBrush ImageSource="BlueTwo\Media\togglebutton-on-nofocus.png"/>
+                  <ImageBrush ImageSource="BlueTwo\\Media\\togglebutton-on-nofocus.png"/>
                 </Setter.Value>
               </Setter>
             </MultiTrigger>
@@ -444,7 +525,7 @@
               </MultiTrigger.Conditions>
               <Setter TargetName="Border" Property="Background">
                 <Setter.Value>
-                  <ImageBrush ImageSource="BlueTwo\Media\togglebutton-off-nofocus.png"/>
+                  <ImageBrush ImageSource="BlueTwo\\Media\\togglebutton-off-nofocus.png"/>
                 </Setter.Value>
               </Setter>
             </MultiTrigger>
@@ -461,13 +542,13 @@
 
    
   <!-- Listcontrol -->
+  
   <Style x:Key="GUIListControl" TargetType="{x:Type ListView}">
     <Setter Property="Background" Value="Transparent"/>
     <Setter Property="BorderBrush" Value="Transparent"/>
     <Setter Property="BorderThickness" Value="0,0,0,0"/>
     <Setter Property="Foreground" Value="Transparent"/>
-    <Setter Property="Width" Value="425"/>
-    <Setter Property="Height" Value="459"/>
+    <Setter Property="FocusVisualStyle" Value="{DynamicResource FocusStyle}"/>
     <Setter Property="ScrollViewer.CanContentScroll" Value="True"/>
     <Setter Property="ItemContainerStyle" Value="{StaticResource GUIListcontrolItems}"/>
     <Setter Property="Template">
@@ -476,15 +557,17 @@
           <Border Background="Transparent" SnapsToDevicePixels="True">
             <ScrollViewer VerticalScrollBarVisibility="Visible" 
 								HorizontalScrollBarVisibility="Disabled">
-              <StackPanel IsItemsHost="true" Orientation="Vertical"/>
+              <StackPanel IsItemsHost="true" />
               <ScrollViewer.Style>
-                 <Style TargetType="{x:Type ScrollViewer}">
-               <Setter Property="Template">
+                <Style TargetType="{x:Type ScrollViewer}">
+                  <Setter Property="FocusVisualStyle" Value="{DynamicResource FocusStyle}"/>
+                  <Setter Property="Template">
                   <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ScrollViewer}">
+                      <Border Padding="0,8">
                         <StackPanel>
                           <ScrollContentPresenter Height="416" Content="{TemplateBinding ScrollViewer.Content}" />
-                          <Grid Width="425" Height="28" Margin="0,0,0,0" Grid.Row="0" Grid.Column="0" x:Name="HeaderPanel">
+                          <Grid Width="425" Height="28" Margin="0,0,0,0" Grid.Row="1" Grid.Column="1" x:Name="HeaderPanel">
                             <Grid.ColumnDefinitions>
                               <ColumnDefinition Width="*"/>
                               <ColumnDefinition Width="100"/>
@@ -497,9 +580,10 @@
                             <RepeatButton Grid.Column="2" Grid.Row="0" Command="ScrollBar.PageUpCommand" Style="{DynamicResource UpScroll}"/>
                             <RepeatButton Grid.Column="3" Grid.Row="0" Command="ScrollBar.PageDownCommand" Style="{DynamicResource DownScroll}"/>
                             <TextBlock Padding="2,2,2,0"  TextAlignment="Right" Foreground="White" FontSize="18" Grid.Column="1" Grid.Row="0" Text="0/0" Name="pageCount"/>
-                            <TextBlock Padding="2,2,2,0"  TextAlignment="Left" Foreground="White" FontSize="18" Grid.Column="0" Grid.Row="0" Text="{Binding Source=ObjectCount}" x:Name="objCount"></TextBlock>
+                            <TextBlock Padding="2,2,2,0"  TextAlignment="Left" Foreground="White" FontSize="18" Grid.Column="0" Grid.Row="0" Text="0" x:Name="objCount"></TextBlock>
                           </Grid>
                         </StackPanel>
+                      </Border>
                     </ControlTemplate>
                   </Setter.Value>
                 </Setter>
@@ -508,9 +592,7 @@
             </ScrollViewer>
           </Border>
           <ControlTemplate.Triggers>
-            <Trigger Property="IsSelected" Value="True">
-              <Setter Property="Background" Value="Blue"/>
-            </Trigger>
+            
             <Trigger Property="IsGrouping" Value="True">
               <Setter Property="ScrollViewer.CanContentScroll" Value="False"/>
             </Trigger>
@@ -527,6 +609,7 @@
     <Setter Property="BorderThickness" Value="0,0,0,0"/>
     <Setter Property="Foreground" Value="Transparent"/>
     <Setter Property="ScrollViewer.CanContentScroll" Value="True"/>
+    <Setter Property="FocusVisualStyle" Value="{DynamicResource FocusStyle}"/>
     <Setter Property="ItemContainerStyle" Value="{DynamicResource GUIThumbnailItems}"/>
     <Setter Property="Template">
       <Setter.Value>
@@ -537,14 +620,16 @@
               <WrapPanel IsItemsHost="true" />
               <ScrollViewer.Style>
                 <Style TargetType="{x:Type ScrollViewer}">
+                  <Setter Property="FocusVisualStyle" Value="{DynamicResource FocusStyle}"/>
                   <Setter Property="Template">
                     <Setter.Value>
                       <ControlTemplate>
                         <StackPanel>
-                          <ScrollContentPresenter Height="432" Content="{TemplateBinding ScrollViewer.Content}" />
+                          <ScrollContentPresenter Height="400" Content="{TemplateBinding ScrollViewer.Content}" />
                           <Grid Width="425" Height="28" Margin="0,0,0,0" Grid.Row="0" Grid.Column="0" x:Name="HeaderPanel">
                             <Grid.ColumnDefinitions>
                               <ColumnDefinition Width="*"/>
+                              <ColumnDefinition Width="100"/>
                               <ColumnDefinition Width="28"/>
                               <ColumnDefinition Width="28"/>
                             </Grid.ColumnDefinitions>
@@ -552,8 +637,9 @@
                               <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
                             <RepeatButton Grid.Column="2" Grid.Row="0" Command="ScrollBar.PageUpCommand" Style="{DynamicResource UpScroll}"/>
-                            <RepeatButton Grid.Column="1" Grid.Row="0" Command="ScrollBar.PageDownCommand" Style="{DynamicResource DownScroll}"/>
-                            <TextBlock Padding="2,2,2,0"  TextAlignment="Right" Foreground="White" FontSize="18" Grid.Column="0" Grid.Row="1" Text="0/0" Name="__Footer"/>
+                            <RepeatButton Grid.Column="3" Grid.Row="0" Command="ScrollBar.PageDownCommand" Style="{DynamicResource DownScroll}"/>
+                            <TextBlock Padding="2,2,2,0"  TextAlignment="Right" Foreground="White" FontSize="18" Grid.Column="1" Grid.Row="0" Text="0/0" Name="pageCount"/>
+                            <TextBlock Padding="2,2,2,0"  TextAlignment="Left" Foreground="White" FontSize="18" Grid.Column="0" Grid.Row="0" Text="{Binding Source=ObjectCount}" x:Name="objCount"></TextBlock>
                           </Grid>
                         </StackPanel>
                       </ControlTemplate>
@@ -565,7 +651,7 @@
           </Border>
           <ControlTemplate.Triggers>
             <Trigger Property="IsSelected" Value="True">
-              <Setter Property="Background" Value="Blue"/>
+              <Setter Property="Background" Value="Transparent"/>
             </Trigger>
             <Trigger Property="IsGrouping" Value="True">
               <Setter Property="ScrollViewer.CanContentScroll" Value="False"/>
@@ -575,4 +661,82 @@
       </Setter.Value>
     </Setter>
   </Style>
+
+  <Style x:Key="GUIFilmstripControl" TargetType="{x:Type ListView}">
+    <Setter Property="OverridesDefaultStyle" Value="true"/>
+    <Setter Property="Background" Value="Transparent"/>
+    <Setter Property="BorderBrush" Value="Transparent"/>
+    <Setter Property="BorderThickness" Value="0,0,0,0"/>
+    <Setter Property="Foreground" Value="Transparent"/>
+    <Setter Property="ScrollViewer.CanContentScroll" Value="True"/>
+    <Setter Property="FocusVisualStyle" Value="{DynamicResource FocusStyle}"/>
+    <Setter Property="ItemContainerStyle" Value="{DynamicResource GUIFilmstripItems}"/>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ListView}">
+          <Border Background="Transparent" SnapsToDevicePixels="True">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" 
+								HorizontalScrollBarVisibility="Auto" >
+              <WrapPanel IsItemsHost="true" Orientation="Horizontal"/>
+              <ScrollViewer.Style>
+                <Style TargetType="{x:Type ScrollViewer}">
+                  <Setter Property="FocusVisualStyle" Value="{DynamicResource FocusStyle}"/>
+                  <Setter Property="Template">
+                    <Setter.Value>
+                      <ControlTemplate>
+                        <StackPanel x:Name="mainContent">
+                          <Grid Width="425" Height="440" Margin="0,0,0,0" Grid.Row="0" Grid.Column="0" x:Name="xxPanel">
+                            <Grid.ColumnDefinitions>
+                              <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                              <RowDefinition Height="*"/>
+                              <RowDefinition Height="140"/>
+                            </Grid.RowDefinitions>
+                            <ScrollContentPresenter Margin="4,4,4,4" Grid.Row="1" Height="140" Content="{TemplateBinding ScrollViewer.Content}" />
+                            <Image Grid.Row="0" Canvas.Left="290" Canvas.Top="97" Width="370" Height="312" Source="{DynamicResource filmstrip_bg.png}"/>
+                            <Image Grid.Row="0" Canvas.Left="300" Canvas.Top="113" Width="325" Height="263" x:Name="PreviewImage" />
+                          </Grid>
+                          <Grid Width="425" Height="28" Margin="0,0,0,0" Grid.Row="0" Grid.Column="0" x:Name="HeaderPanel">
+                            <Grid.ColumnDefinitions>
+                              <ColumnDefinition Width="*"/>
+                              <ColumnDefinition Width="100"/>
+                              <ColumnDefinition Width="28"/>
+                              <ColumnDefinition Width="28"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                              <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <RepeatButton Grid.Column="2" Grid.Row="0" Command="ScrollBar.PageLeftCommand" Style="{DynamicResource UpScroll}"/>
+                            <RepeatButton Grid.Column="3" Grid.Row="0" Command="ScrollBar.PageRightCommand" Style="{DynamicResource DownScroll}"/>
+                            <TextBlock Padding="2,2,2,0"  TextAlignment="Right" Foreground="White" FontSize="18" Grid.Column="1" Grid.Row="0" Text="0/0" Name="pageCount"/>
+                            <TextBlock Padding="2,2,2,0"  TextAlignment="Left" Foreground="White" FontSize="18" Grid.Column="0" Grid.Row="0" Text="0" x:Name="objCount"></TextBlock>
+                          </Grid>
+                        </StackPanel>
+                        <ControlTemplate.Triggers>
+                          <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="PreviewImage" Property="Source"  Value="{Binding Path=ThumbnailImage}"/>
+                          </Trigger>
+                        </ControlTemplate.Triggers>
+                      </ControlTemplate>
+                    </Setter.Value>
+                  </Setter>
+                </Style>
+              </ScrollViewer.Style>
+            </ScrollViewer>
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsSelected" Value="True">
+              <Setter Property="Background" Value="Transparent"/>
+            </Trigger>
+            <Trigger Property="IsGrouping" Value="True">
+              <Setter Property="ScrollViewer.CanContentScroll" Value="False"/>
+            </Trigger>
+
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  
 </ResourceDictionary>
