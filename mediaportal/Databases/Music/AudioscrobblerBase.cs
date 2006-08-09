@@ -118,7 +118,7 @@ namespace MediaPortal.Music.Database
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {        
         _useDebugLog = xmlreader.GetValueAsBool("audioscrobbler", "usedebuglog", false);
-        _dismissOnError = xmlreader.GetValueAsBool("audioscrobbler", "dismisscacheonerror", true);
+        _dismissOnError = xmlreader.GetValueAsBool("audioscrobbler", "dismisscacheonerror", false);
         _disableTimerThread = xmlreader.GetValueAsBool("audioscrobbler", "disabletimerthread", true);
         _randomNessPercent = xmlreader.GetValueAsInt("audioscrobbler", "randomness", 77);
         int tmpNMode = xmlreader.GetValueAsInt("audioscrobbler", "neighbourmode", 1);
@@ -573,13 +573,14 @@ namespace MediaPortal.Music.Database
       {
         try
         {
-          queue.Clear();
+          if (queue.Count > 0)
+            queue.Clear();
           SaveQueue();
           _queueUnclean = false;
         }
         catch (Exception ex)
         {
-          Log.Write("AudioscrobblerBase: Exception on clearing queue {0}", ex.Message);
+          Log.Write("AudioscrobblerBase: clear queue exception", ex.Message);
         }
       }
     }
@@ -606,6 +607,7 @@ namespace MediaPortal.Music.Database
     {
       if (_antiHammerCount < 5)
       {
+        _queueUnclean = true;
         _antiHammerCount = _antiHammerCount + 1;
         DoHandshake(true);
         SUBMIT_INTERVAL = SUBMIT_INTERVAL * _antiHammerCount;
@@ -740,14 +742,14 @@ namespace MediaPortal.Music.Database
         string logmessage = "Connecting to '" + url_ + "\nData: " + postdata_;
 
         // TODO: what is the illegal characters warning all about?
-        byte[] postHeaderBytes = Encoding.UTF8.GetBytes(postdata_);
-        request.Method = "POST";
-        request.ContentLength = postHeaderBytes.Length;
-        request.ContentType = "application/x-www-form-urlencoded";
-
-        // Create stream writer - this can also fail if we aren't connected
         try
         {
+          byte[] postHeaderBytes = Encoding.UTF8.GetBytes(postdata_);
+          request.Method = "POST";
+          request.ContentLength = postHeaderBytes.Length;
+          request.ContentType = "application/x-www-form-urlencoded";
+
+          // Create stream writer - this can also fail if we aren't connected
           Stream requestStream = request.GetRequestStream();
           requestStream.Write(postHeaderBytes, 0, postHeaderBytes.Length);
           requestStream.Close();
@@ -788,37 +790,44 @@ namespace MediaPortal.Music.Database
        */
       if (_useDebugLog)
         Log.Write("AudioscrobblerBase: {0}", "Response received");
-      string respType = reader.ReadLine();
-      if (respType == null)
-      {
-        Log.Write("AudioscrobblerBase.GetResponse: {0}", "Empty response from Audioscrobbler server.");
-        return false;
-      }
 
-      // Parse the response.
       bool success = false;
       bool parse_success = false;
-
-      if (respType.StartsWith("UPTODATE"))
-        success = parse_success = parseUpToDateMessage(respType, reader);
-      else if (respType.StartsWith("UPDATE"))
-        Log.Write("AudioscrobblerBase: {0}", "UPDATE needed!");
-      else if (respType.StartsWith("OK"))
-        success = parse_success = parseOkMessage(respType, reader);
-      else if (respType.StartsWith("FAILED"))
-        success = parse_success = parseFailedMessage(respType, reader);
-      else if (respType.StartsWith("BADUSER") || respType.StartsWith("BADAUTH"))
-        parse_success = parseBadUserMessage(respType, reader);      
-      else
+      try
       {
-        string logmessage = "** CRITICAL ** Unknown response " + respType;
-        Log.Write("AudioscrobblerBase: {0}", logmessage);
-      }
+        string respType = reader.ReadLine();
+        if (respType == null)
+        {
+          Log.Write("AudioscrobblerBase.GetResponse: {0}", "Empty response from Audioscrobbler server.");
+          return false;
+        }
 
-      // read next line to look for an interval
-      while ((respType = reader.ReadLine()) != null)
-        if (respType.StartsWith("INTERVAL"))
-          parse_success = parseIntervalMessage(respType, reader);
+        // Parse the response.
+        if (respType.StartsWith("UPTODATE"))
+          success = parse_success = parseUpToDateMessage(respType, reader);
+        else if (respType.StartsWith("UPDATE"))
+          Log.Write("AudioscrobblerBase: {0}", "UPDATE needed!");
+        else if (respType.StartsWith("OK"))
+          success = parse_success = parseOkMessage(respType, reader);
+        else if (respType.StartsWith("FAILED"))
+          parse_success = parseFailedMessage(respType, reader);
+        else if (respType.StartsWith("BADUSER") || respType.StartsWith("BADAUTH"))
+          parse_success = parseBadUserMessage(respType, reader);
+        else
+        {
+          string logmessage = "** CRITICAL ** Unknown response " + respType;
+          Log.Write("AudioscrobblerBase: {0}", logmessage);
+        }
+
+        // read next line to look for an interval
+        while ((respType = reader.ReadLine()) != null)
+          if (respType.StartsWith("INTERVAL"))
+            parse_success = parseIntervalMessage(respType, reader);
+      }
+      catch (Exception ex)
+      {
+        Log.Write("AudioscrobblerBase: Exception on reading response lines - {0}", ex.Message);
+      }
 
       if (!parse_success)
       {
@@ -944,29 +953,10 @@ namespace MediaPortal.Music.Database
 //        foreach (Song song in songs)
         foreach (Song song in sortedSongs)
         {
-          //          if (Convert.ToDateTime(song.getQueueTime()) > spamCheck)
-          //        {
           spamCheck = Convert.ToDateTime(song.getQueueTime());
           postData += "&" + song.GetPostData(n_songs);
           n_songs++;
-          //      }
-          //else
-          //{            
-          //  if (_useDebugLog)
-          //  {
-          //    Log.Write("AudioscrobblerBase: Spam protection - obmitting song: {0}", songs[n_totalsongs].ToShortString());
-          //    try
-          //    {
-          //      Log.Write("AudioscrobblerBase: Spam protection -1 {0}", songs[n_totalsongs-1].ToShortString());
-          //      Log.Write("AudioscrobblerBase: Spam protection +1 {0}", songs[n_totalsongs+1].ToShortString());
-          //    }
-          //    catch (Exception)
-          //    {
-          //    }
-          //  }
-          //  else
-          //    Log.Write("AudioscrobblerBase: Spam protection triggered - {0}", (Convert.ToString(n_totalsongs)));
-          //}
+
           n_totalsongs++;
         }
 
@@ -993,7 +983,14 @@ namespace MediaPortal.Music.Database
         {
           //for (int i = 0; i < n_totalsongs; i++)
           //  queue.RemoveAt(0);
-          ClearQueue();
+          try
+          {
+            ClearQueue();
+          }
+          catch (Exception ex)
+          {
+            Log.Write("AudioscrobblerBase: submit thread clearing cache - {0}", ex.Message);
+          }
         }
 
         // Send an event for each of the submitted songs.
@@ -1184,17 +1181,26 @@ namespace MediaPortal.Music.Database
 
     private bool parseFailedMessage(string type_, StreamReader reader_)
     {
-      //Log.Write("AudioscrobblerBase.parseFailedMessage: {0}", "Called.");
-      string logmessage = "";
-      if (type_.Length > 7)
-        logmessage = "FAILED: " + type_.Substring(7);
-      else
-        logmessage = "FAILED";      
-      Log.Write("AudioscrobblerBase: {0}", logmessage);
-      if (logmessage == "FAILED: Plugin bug: Not all request variables are set")      
-        Log.Write("AudioscrobblerBase: A server error may have occured / if you receive this often a proxy may truncate your request - {0}", "read: http://www.last.fm/forum/24/_/74505/1#f808273");
-      TriggerSafeModeEvent();
-      return false;
+      try
+      {
+        //Log.Write("AudioscrobblerBase.parseFailedMessage: {0}", "Called.");
+        string logmessage = "";
+        if (type_.Length > 7)
+          logmessage = "FAILED: " + type_.Substring(7);
+        else
+          logmessage = "FAILED";
+        Log.Write("AudioscrobblerBase: {0}", logmessage);
+        if (logmessage == "FAILED: Plugin bug: Not all request variables are set")
+          Log.Write("AudioscrobblerBase: A server error may have occured / if you receive this often a proxy may truncate your request - {0}", "read: http://www.last.fm/forum/24/_/74505/1#f808273");
+        TriggerSafeModeEvent();
+        return true;
+      }
+      catch (Exception e)
+      {
+        string logmessage = "Failed to parse FAILED response: " + e.Message;
+        Log.Write("AudioscrobblerBase.parseFailedMessage: {0}", logmessage);
+        return false;
+      }
     }
 
     private bool parseBadUserMessage(string type_, StreamReader reader_)
@@ -1206,17 +1212,25 @@ namespace MediaPortal.Music.Database
 
     private bool parseIntervalMessage(string type_, StreamReader reader_)
     {
-      string logmessage = "";
-      if (type_.Length > 9)
+      try
       {
-        int newInterval = Convert.ToInt32(type_.Substring(9));
-        logmessage = "last.fm's servers currently allow an interval of: " + Convert.ToString(newInterval) + " sec";
-        if (newInterval > 30)
-          SUBMIT_INTERVAL = newInterval;
+        string logmessage = "";
+        if (type_.Length > 9)
+        {
+          int newInterval = Convert.ToInt32(type_.Substring(9));
+          logmessage = "last.fm's servers currently allow an interval of: " + Convert.ToString(newInterval) + " sec";
+          if (newInterval > 30)
+            SUBMIT_INTERVAL = newInterval;
+        }
+        else
+          logmessage = "INTERVAL";
+        Log.Write("AudioscrobblerBase: {0}", logmessage);
       }
-      else
-        logmessage = "INTERVAL";
-      Log.Write("AudioscrobblerBase: {0}", logmessage);
+      catch (Exception ex)
+      {
+        string logmessage = "Failed to parse INTERVAL response: " + ex.Message;
+        Log.Write("AudioscrobblerBase.parseIntervalMessage: {0}", logmessage);
+      }
       return true;
     }
     #endregion

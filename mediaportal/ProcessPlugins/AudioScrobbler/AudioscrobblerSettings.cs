@@ -58,7 +58,7 @@ namespace MediaPortal.AudioScrobbler
       {
         checkBoxEnableSubmits.Checked = xmlreader.GetValueAsBool("audioscrobbler", "submitsenabled", true);
         checkBoxdisableTimerThread.Checked = xmlreader.GetValueAsBool("audioscrobbler", "disabletimerthread", true);
-        checkBoxDismissOnError.Checked = xmlreader.GetValueAsBool("audioscrobbler", "dismisscacheonerror", true);
+        checkBoxDismissOnError.Checked = xmlreader.GetValueAsBool("audioscrobbler", "dismisscacheonerror", false);
         checkBoxLogVerbose.Checked = xmlreader.GetValueAsBool("audioscrobbler", "usedebuglog", false);
         trackBarRandomness.Value = xmlreader.GetValueAsInt("audioscrobbler", "randomness", 77);
         checkBoxScrobbleDefault.Checked = xmlreader.GetValueAsBool("audioscrobbler", "scrobbledefault", false);
