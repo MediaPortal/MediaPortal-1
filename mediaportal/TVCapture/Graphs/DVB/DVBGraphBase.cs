@@ -690,7 +690,7 @@ namespace MediaPortal.TV.Recording
         if ( strValue.Equals("panscan") )
           GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.PanScan43;
         if ( strValue.Equals("zoom149") )
-          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom14to9;
+          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom149;
 
       }
 
