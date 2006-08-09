@@ -398,51 +398,53 @@ namespace MediaPortal.GUI.Music
     protected override void UpdateButtonStates()
     {
       base.UpdateButtonStates();
-
-      if (facadeView.Count > 0)
+      if (facadeView != null)
       {
-        btnClear.Disabled = false;
-        btnPlay.Disabled = false;
-        if (g_Player.Playing && playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC)
+        if (facadeView.Count > 0)
         {
-          //btnNext.Disabled = false;
-          //btnPrevious.Disabled = false;
-          btnSave.Disabled = false;
+          btnClear.Disabled = false;
+          btnPlay.Disabled = false;
+          if (g_Player.Playing && playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC)
+          {
+            //btnNext.Disabled = false;
+            //btnPrevious.Disabled = false;
+            btnSave.Disabled = false;
+          }
+          else
+          {
+            //btnNext.Disabled = true;
+            //btnPrevious.Disabled = true;
+            btnSave.Disabled = true;
+          }
         }
         else
         {
+          btnClear.Disabled = true;
+          btnPlay.Disabled = true;
           //btnNext.Disabled = true;
           //btnPrevious.Disabled = true;
-          btnSave.Disabled = true;
         }
-      }
-      else
-      {
-        btnClear.Disabled = true;
-        btnPlay.Disabled = true;        
-        //btnNext.Disabled = true;
-        //btnPrevious.Disabled = true;
-      }
 
-      //if (_enableScrobbling)
-      //  btnScrobble.Disabled = false;
-      //else
-      //  btnScrobble.Disabled = true;
+        //if (_enableScrobbling)
+        //  btnScrobble.Disabled = false;
+        //else
+        //  btnScrobble.Disabled = true;
 
-      //disable shuffle/save/previous if party shuffle is on
-      if (btnPartyShuffle.Selected)
-      {
-        btnShuffle.Disabled = true;
-        btnPlay.Disabled = true;
-        btnClear.Disabled = true;
-        btnSave.Disabled = true;
-        btnScrobble.Disabled = true;
-        //btnPrevious.Disabled = true;
-      }
-      else
-      {
-        btnScrobble.Disabled = false;
-        btnShuffle.Disabled = false;
+        //disable shuffle/save/previous if party shuffle is on
+        if (btnPartyShuffle.Selected)
+        {
+          btnShuffle.Disabled = true;
+          btnPlay.Disabled = true;
+          btnClear.Disabled = true;
+          btnSave.Disabled = true;
+          btnScrobble.Disabled = true;
+          //btnPrevious.Disabled = true;
+        }
+        else
+        {
+          btnScrobble.Disabled = false;
+          btnShuffle.Disabled = false;
+        }
       }
     }
 
@@ -1176,7 +1178,14 @@ namespace MediaPortal.GUI.Music
             //ascrobbler.ArtistMatchPercent = 75;
             lock (ScrobbleLock)
             {
-              scrobbledArtists = ascrobbler.getSimilarArtists(current10SekSong.Artist, true);
+              try
+              {
+                scrobbledArtists = ascrobbler.getSimilarArtists(current10SekSong.Artist, true);
+              }
+              catch (Exception ex)
+              {
+                Log.Write("ScrobbleLookupThread: exception on lookup - {0}", ex.Message);
+              }
             }
           }
           break;
@@ -1184,7 +1193,14 @@ namespace MediaPortal.GUI.Music
         case ScrobbleMode.Neighbours:
           lock (ScrobbleLock)
           {
-            scrobbledArtists = ascrobbler.getNeighboursArtists(true);
+            try
+            {
+              scrobbledArtists = ascrobbler.getNeighboursArtists(true);
+            }
+            catch (Exception ex)
+            {
+              Log.Write("ScrobbleLookupThread: exception on lookup - {0}", ex.Message);
+            }
           }
           break;
       }

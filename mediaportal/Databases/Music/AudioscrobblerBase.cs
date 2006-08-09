@@ -571,9 +571,16 @@ namespace MediaPortal.Music.Database
     {
       lock (queueLock)
       {
-        queue.Clear();
-        SaveQueue();
-        _queueUnclean = false;
+        try
+        {
+          queue.Clear();
+          SaveQueue();
+          _queueUnclean = false;
+        }
+        catch (Exception ex)
+        {
+          Log.Write("AudioscrobblerBase: Exception on clearing queue {0}", ex.Message);
+        }
       }
     }
 
