@@ -1078,9 +1078,9 @@ public class MediaPortalApp : D3DApp, IRender
         GUIWindowManager.ActivateWindow(GUIWindowManager.ActiveWindow);
         GUIWindowManager.OnDeviceRestored();
       }
+      // Must set the FVF after reset
+      GUIFontManager.SetDevice();
       _log.Info("Main: Resetting DX9 device done");
-      //g_Player.PositionX++;
-      //g_Player.PositionX--;
     }
   }
 
@@ -2441,6 +2441,8 @@ public class MediaPortalApp : D3DApp, IRender
           if (!GUIGraphicsContext.DX9Device.PresentationParameters.Windowed)
             SwitchFullScreenOrWindowed(true);
         }
+        // Must set the FVF after reset
+        GUIFontManager.SetDevice();
         break;
 
       case GUIMessage.MessageType.GUI_MSG_GETFOCUS:
