@@ -1079,7 +1079,7 @@ namespace MediaPortal.TV.Recording
 
           int lowOsc, hiOsc, disEqcUsed, lnbKhzTone;
           //#DM - I think the new driver allows for expanded DiSEqC support so lets try it :) #
-          //if (ch.DiSEqC < 1) ch.DiSEqC = 1;
+          if (ch.DiSEqC < 1) ch.DiSEqC = 1;
           //if (ch.DiSEqC > 4) ch.DiSEqC = 4;
           GetDisEqcSettings(ref ch, out lowOsc, out hiOsc, out lnbKhzTone, out disEqcUsed);
           if (ch.LNBFrequency >= frequency)
