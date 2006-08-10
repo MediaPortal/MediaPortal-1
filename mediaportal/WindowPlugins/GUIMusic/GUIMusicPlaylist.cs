@@ -1127,6 +1127,7 @@ namespace MediaPortal.GUI.Music
     private void StartScrobbleThread()
     {
       ScrobbleThread = new Thread(new ThreadStart(ScrobbleLookupThread));
+      // allow windows to kill the thread if the main app was closed
       ScrobbleThread.IsBackground = true;
       ScrobbleThread.Priority = ThreadPriority.BelowNormal;
       ScrobbleThread.Start();
@@ -1149,13 +1150,6 @@ namespace MediaPortal.GUI.Music
         if (playList.Count == 0 && currentScrobbleMode == ScrobbleMode.Neighbours)
         {
           StartScrobbleThread();
-
-          // must not be used any longer since the thread may not be finished
-          //GUIListItem item = facadeView[0];
-          //if (item != null)
-          //  item.Shaded = false;
-          //playlistPlayer.Reset();
-          //playlistPlayer.Play(0);
         }
       }
     }

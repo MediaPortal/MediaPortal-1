@@ -650,11 +650,12 @@ namespace MediaPortal.AudioScrobbler
       this.trackBarRandomness.Maximum = 100;
       this.trackBarRandomness.Minimum = 25;
       this.trackBarRandomness.Name = "trackBarRandomness";
-      this.trackBarRandomness.Size = new System.Drawing.Size(264, 45);
+      this.trackBarRandomness.Size = new System.Drawing.Size(264, 48);
       this.trackBarRandomness.SmallChange = 5;
       this.trackBarRandomness.TabIndex = 0;
       this.trackBarRandomness.TickFrequency = 15;
       this.trackBarRandomness.Value = 77;
+      this.trackBarRandomness.ValueChanged += new System.EventHandler(this.trackBarRandomness_ValueChanged);
       // 
       // tabPageLiveData
       // 

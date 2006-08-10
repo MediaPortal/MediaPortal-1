@@ -34,6 +34,7 @@ using System.Timers;
 using System.Text;
 using System.Xml;
 using MediaPortal.Util;
+
 using MediaPortal.Music.Database;
 using MediaPortal.GUI.Library;
 
@@ -168,7 +169,7 @@ namespace MediaPortal.Music.Database
       minConnectWaitTime = new TimeSpan(0, 0, CONNECT_WAIT_TIME);
       cacheFile = CACHEFILE_NAME;
       if (_useDebugLog)
-        Log.Write("AudioscrobblerBase: new scrobbler - debuglog={0} dismiss={1} directonly={2}", Convert.ToString(_useDebugLog),Convert.ToString(_dismissOnError),Convert.ToString(_disableTimerThread));
+        Log.Write("AudioscrobblerBase: new scrobbler for {3} - debuglog={0} dismiss={1} directonly={2}", Convert.ToString(_useDebugLog),Convert.ToString(_dismissOnError),Convert.ToString(_disableTimerThread), Username);
 
       // Loading the queue should be fast - no thread required
       LoadQueue();
