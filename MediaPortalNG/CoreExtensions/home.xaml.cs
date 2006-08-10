@@ -22,6 +22,9 @@ namespace MediaPortal
         public string _skinMediaPath;
         private int viewThumbNails = 0;
         private Core _core;
+        private int selectButtonIndex = 0;
+        private System.Collections.ArrayList selectButtonList;
+
         public HomeExtension(ResourceDictionary dict)
         {
             InitializeComponent();
@@ -35,6 +38,15 @@ namespace MediaPortal
             lv1.SelectionChanged += new SelectionChangedEventHandler(lv1_SelectionChanged);
             
             ApplyLanguage("German");
+            selectButtonList = new System.Collections.ArrayList();
+
+            selectButtonList.Add("A");
+            selectButtonList.Add("B");
+            selectButtonList.Add("C");
+            selectButtonList.Add("D");
+            selectButtonList.Add("E");
+            selectButtonList.Add("F");
+
         }
 
         void lv1_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -87,6 +99,12 @@ namespace MediaPortal
                              string label = Core.SplitElementTag(tag, "labelNum", "##metadata");
                              ((CheckBox)o).Content = Core.GetLocalizedString("id", label, "value", node);
                          }
+                         if (o.ToString().StartsWith("System.Windows.Controls.ComboBox"))
+                         {
+                             string tag = ((ComboBox)o).Tag.ToString();
+                             string label = Core.SplitElementTag(tag, "labelNum", "##metadata");
+                             ((ComboBox)o).Text = Core.GetLocalizedString("id", label, "value", node);
+                         }
                     }
                 }
                 int count=VisualTreeHelper.GetChildrenCount(this);
@@ -120,9 +138,79 @@ namespace MediaPortal
  
         }
 
-        public void Launch_Wizard(object sender,RoutedEventArgs e)
+
+        public void selectButton(object sender,RoutedEventArgs e)
         {
+            // example for an gui-selectbutton
+                       
+            Button b = (Button)e.OriginalSource;
+            Button contentButton = (Button)e.Source;
+
+            TextBlock tb = (TextBlock)b.Template.FindName("SelectContent", b);
+            Button left =(Button) b.Template.FindName("LeftButton", b);
+            Button right =(Button) b.Template.FindName("RightButton", b);
+            ContentPresenter cp =(ContentPresenter) b.Template.FindName("ButtonContent", b);
+            if (b == null)
+                return;
+
+
+            if(contentButton.Equals(b)==false && contentButton!=null)
+                tb = (TextBlock)contentButton.Template.FindName("SelectContent", contentButton);
+
+            if (tb != null)
+            {
+                tb.Text = (string)selectButtonList[selectButtonIndex];
+            }
+
+            if (b.Name == "RightButton")
+            {
+                selectButtonIndex += 1;
+                if (selectButtonIndex > selectButtonList.Count-1)
+                    selectButtonIndex = 0;
+                tb.Text = (string)selectButtonList[selectButtonIndex];
+                
+                // do some additional useful stuff here, like sorting an list etc...
+
+            }
+            if (b.Name == "LeftButton")
+            {
+                selectButtonIndex -= 1;
+                if (selectButtonIndex <0)
+                    selectButtonIndex = selectButtonList.Count - 1;
+                tb.Text = (string)selectButtonList[selectButtonIndex];
+
+                // do some additional useful stuff here, like sorting an list etc...           
+            }
+            
+            if (b.Name == "id3")
+            {
+                if (cp.Visibility == Visibility.Visible)
+                {
+                    if (tb != null)
+                        tb.Visibility = Visibility.Visible;
+                    if (left != null)
+                        left.Visibility = Visibility.Visible;
+                    if (right != null)
+                        right.Visibility = Visibility.Visible;
+                    if (cp != null)
+                        cp.Visibility = Visibility.Hidden;
+                }
+                else
+                {
+                    if (tb != null)
+                        tb.Visibility = Visibility.Hidden;
+                    if (left != null)
+                        left.Visibility = Visibility.Hidden;
+                    if (right != null)
+                        right.Visibility = Visibility.Hidden;
+                    if (cp != null)
+                        cp.Visibility = Visibility.Visible;
+                }
+ 
+            }
+            int a = 1; 
         }
+
         public void MPNG(object sender, RoutedEventArgs e)
         {
             if (lv1 == null)

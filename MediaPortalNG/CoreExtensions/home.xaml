@@ -68,7 +68,8 @@
       Visibility="Visible"
       Width="190"
       Height="32"
-      Style="{DynamicResource GUISortButton}"
+      Style="{DynamicResource GUISelectButton}"
+      Click="selectButton" 
       Tag="##id::3//##keycontrol::onleft:;onright:;onup:;ondown://##metadata::labelNum:103"
 >103</Button>
 

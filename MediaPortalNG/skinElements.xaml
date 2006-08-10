@@ -7,6 +7,8 @@
   <!-- Skin BlueTwo -->
 
   <!-- GUI Elements -->
+
+   
   <Style x:Key="GUIImage" TargetType="{x:Type Image}"></Style> 
   
   <Style x:Key="PageBackground" TargetType="{x:Type Page}">
@@ -99,6 +101,88 @@
     </Setter>
   </Style>
 
+  <Style x:Key="LeftButton" TargetType="{x:Type Button}">
+    <Setter Property="SnapsToDevicePixels" Value="true"/>
+    <Setter Property="OverridesDefaultStyle" Value="true"/>
+    <Setter Property="Height" Value="16"/>
+    <Setter Property="Width" Value="18"/>
+    <Setter Property="FontSize" Value="18"/>
+    <Setter Property="Foreground" Value="Transparent" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type Button}">
+          <Border x:Name="Border" 
+           CornerRadius="0" 
+           BorderThickness="0"
+           BorderBrush="Transparent">
+            <ContentPresenter 
+              Margin="8,0"
+              HorizontalAlignment="Center"
+              VerticalAlignment="Center"
+              RecognizesAccessKey="True"/>
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="true">
+              <Setter TargetName="Border" Property="Background">
+                <Setter.Value>
+                  <ImageBrush ImageSource="BlueTwo\\Media\\arrow_round_left_focus.png" Stretch="Uniform"/>
+                </Setter.Value>
+              </Setter>
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="false">
+              <Setter TargetName="Border" Property="Background">
+                <Setter.Value>
+                  <ImageBrush ImageSource="BlueTwo\\Media\\arrow_round_left_nofocus.png" Stretch="Uniform"/>
+                </Setter.Value>
+              </Setter>
+            </Trigger>
+           </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style x:Key="RightButton" TargetType="{x:Type Button}">
+    <Setter Property="SnapsToDevicePixels" Value="true"/>
+    <Setter Property="OverridesDefaultStyle" Value="true"/>
+    <Setter Property="Height" Value="16"/>
+    <Setter Property="Width" Value="18"/>
+    <Setter Property="FontSize" Value="18"/>
+    <Setter Property="Foreground" Value="Transparent" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type Button}">
+          <Border x:Name="Border" 
+           CornerRadius="0" 
+           BorderThickness="0"
+           BorderBrush="Transparent">
+            <ContentPresenter 
+              Margin="8,0"
+              HorizontalAlignment="Center"
+              VerticalAlignment="Center"
+              RecognizesAccessKey="True"/>
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="true">
+              <Setter TargetName="Border" Property="Background">
+                <Setter.Value>
+                  <ImageBrush ImageSource="BlueTwo\\Media\\arrow_round_right_focus.png" Stretch="Uniform"/>
+                </Setter.Value>
+              </Setter>
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="false">
+              <Setter TargetName="Border" Property="Background">
+                <Setter.Value>
+                  <ImageBrush ImageSource="BlueTwo\\Media\\arrow_round_right_nofocus.png" Stretch="Uniform"/>
+                </Setter.Value>
+              </Setter>
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
   <Style x:Key="UpScroll" TargetType="{x:Type RepeatButton}">
     <Setter Property="FocusVisualStyle" Value="{DynamicResource FocusStyle}"/>
     <Setter Property="Background">
@@ -117,8 +201,7 @@
         </ControlTemplate>
       </Setter.Value>
     </Setter>
-
-    <Style.Triggers>
+     <Style.Triggers>
       <Trigger Property="IsMouseOver" Value="true">
         <Setter Property="Background">
           <Setter.Value>
@@ -332,9 +415,8 @@
       </Setter.Value>
     </Setter>
   </Style>
-  
-  
-  <Style x:Key="GUISortButton" TargetType="{x:Type Button}">
+
+   <Style x:Key="GUISortButton" TargetType="{x:Type Button}">
     <Setter Property="SnapsToDevicePixels" Value="true"/>
     <Setter Property="OverridesDefaultStyle" Value="true"/>
     <Setter Property="MinHeight" Value="23"/>
@@ -387,6 +469,75 @@
                 </Setter.Value>
               </Setter>
               <Setter TargetName="Border" Property="Opacity" Value="0.5"></Setter>
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="false">
+              <Setter TargetName="Border" Property="Background" Value="Yellow" />
+              <Setter TargetName="Border" Property="BorderBrush" Value="Transparent" />
+              <Setter Property="Foreground" Value="Black"/>
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style x:Key="GUISelectButton" TargetType="{x:Type Button}">
+    <Setter Property="SnapsToDevicePixels" Value="true"/>
+    <Setter Property="OverridesDefaultStyle" Value="true"/>
+    <Setter Property="MinHeight" Value="23"/>
+    <Setter Property="MinWidth" Value="75"/>
+    <Setter Property="FontSize" Value="18"/>
+    <Setter Property="Foreground" Value="White" />
+    <Setter Property="FocusVisualStyle" Value="{DynamicResource FocusStyle}"/>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type Button}">
+          <Border
+            x:Name="Border"  
+            CornerRadius="0" 
+            BorderThickness="0"
+            BorderBrush="Transparent">
+            <DockPanel Margin="5">
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="24"/>
+                  <ColumnDefinition Width="*"/>
+                  <ColumnDefinition Width="24"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                  <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <ContentPresenter x:Name="ButtonContent" Grid.Column="1" 
+                Margin="0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                RecognizesAccessKey="True"/>
+                <TextBlock Visibility="Hidden" x:Name="SelectContent" Grid.Column="1"/>
+                <Button Visibility="Hidden" Grid.Column="0" x:Name="LeftButton" Width="16" Height="16" Style="{StaticResource LeftButton}"/>
+                <Button Visibility="Hidden" Grid.Column="2" x:Name="RightButton" Width="16" Height="16" Style="{StaticResource RightButton}"/>
+              </Grid>
+            </DockPanel>
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsKeyboardFocused" Value="true">
+              <Setter TargetName="Border" Property="BorderBrush" Value="Black" />
+            </Trigger>
+            <Trigger Property="IsDefaulted" Value="true">
+              <Setter TargetName="Border" Property="BorderBrush" Value="Black" />
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="true">
+              <Setter TargetName="Border" Property="Background">
+                <Setter.Value>
+                  <ImageBrush ImageSource="BlueTwo\\Media\\button_green_focus_165x32.png"/>
+                </Setter.Value>
+              </Setter>
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="false">
+              <Setter TargetName="Border" Property="Background">
+                <Setter.Value>
+                  <ImageBrush ImageSource="BlueTwo\\Media\\button_green_nofocus_165x32.png"/>
+                </Setter.Value>
+              </Setter>
             </Trigger>
             <Trigger Property="IsEnabled" Value="false">
               <Setter TargetName="Border" Property="Background" Value="Yellow" />
@@ -458,6 +609,8 @@
       </Setter.Value>
     </Setter>
   </Style>
+
+ 
   
   <Style x:Key="GUIToggleButton" TargetType="{x:Type CheckBox}">
     <Setter Property="SnapsToDevicePixels" Value="true"/>
@@ -567,7 +720,7 @@
                       <Border Padding="0,8">
                         <StackPanel>
                           <ScrollContentPresenter Height="416" Content="{TemplateBinding ScrollViewer.Content}" />
-                          <Grid Width="425" Height="28" Margin="0,0,0,0" Grid.Row="1" Grid.Column="1" x:Name="HeaderPanel">
+                          <Grid Width="425" Height="28" Margin="0,0,0,0" x:Name="HeaderPanel">
                             <Grid.ColumnDefinitions>
                               <ColumnDefinition Width="*"/>
                               <ColumnDefinition Width="100"/>
@@ -739,4 +892,5 @@
     </Setter>
   </Style>
   
+
 </ResourceDictionary>
