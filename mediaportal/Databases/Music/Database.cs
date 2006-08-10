@@ -130,11 +130,13 @@ namespace MediaPortal.Music.Database
 
     static public SQLiteClient m_db = null;
     static ILog _log;
+    static IConfig _config;
 
     static MusicDatabase()
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
@@ -150,18 +152,16 @@ namespace MediaPortal.Music.Database
       try
       {
         // Open database
-        String strPath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.
-          GetExecutingAssembly().Location);
         try
         {
-          System.IO.Directory.CreateDirectory(strPath + @"\database");
+          System.IO.Directory.CreateDirectory(_config.Get(Config.Options.DatabasePath));
         }
         catch (Exception) { }
 
-        if (!File.Exists(@"database\musicdatabase5.db3"))
+        if (!File.Exists(_config.Get(Config.Options.DatabasePath) + "musicdatabase5.db3"))
           _log.Info("**** Please rescan your music shares ****");
 
-        m_db = new SQLiteClient(@"database\musicdatabase5.db3");
+        m_db = new SQLiteClient(_config.Get(Config.Options.DatabasePath) + "musicdatabase5.db3");
 
         DatabaseUtility.SetPragmas(m_db);
 
@@ -2410,9 +2410,8 @@ namespace MediaPortal.Music.Database
         OnDatabaseReorgChanged(MyArgs);
         UpdateSortableArtistNames();
 
-        // Check for a database backup and delete it if it exists
-        string basePath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-        string backupDbPath = Path.Combine(basePath + @"\database", "musicdatabase4.db3.bak");
+        // Check for a database backup and delete it if it exists       
+        string backupDbPath = Path.Combine(_config.Get(Config.Options.DatabasePath), "musicdatabase4.db3.bak");
 
         if (File.Exists(backupDbPath))
         {

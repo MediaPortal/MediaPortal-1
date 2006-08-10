@@ -149,7 +149,8 @@ public class MediaPortalApp : D3DApp, IRender
   private static RestartOptions restartOptions = RestartOptions.Reboot;
   private static bool useRestartOptions = false;
   new private static ILog _log;
-
+  private static IConfig _config;
+  
   #region main()
 
   //NProf doesnt work if the [STAThread] attribute is set
@@ -165,7 +166,15 @@ public class MediaPortalApp : D3DApp, IRender
     AddExceptionHandler();
 #endif
     ServiceProvider services = GlobalServiceProvider.Instance;
-    LogFile logFile = new LogFile("MediaPortal");
+    _config = new Config(Application.StartupPath);
+    if (!_config.LoadConfig())
+    {
+      MessageBox.Show("Missing or Invalid MediaPortalPath.xml file. MediaPortal cannot run without that file.","MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
+      return;
+    }
+    services.Add<IConfig>(_config);
+    
+    LogFile logFile = new LogFile(_config.Get(Config.Options.LogPath),"MediaPortal");
     _log = new MediaPortal.Utils.Services.Log(logFile.GetSharedStream(), MediaPortal.Utils.Services.Log.Level.Debug);
     services.Add<ILog>(_log);
 
@@ -959,7 +968,7 @@ public class MediaPortalApp : D3DApp, IRender
     {
       splashScreen.SetInformation("Loading strings...");
     }
-    GUIGraphicsContext.Skin = @"skin\" + m_strSkin;
+    GUIGraphicsContext.Skin = m_strSkin;
     GUIGraphicsContext.ActiveForm = Handle;
     GUILocalizeStrings.Load(@"language\" + m_strLanguage + @"\strings.xml");
 
@@ -972,7 +981,7 @@ public class MediaPortalApp : D3DApp, IRender
     {
       splashScreen.SetInformation("Loading fonts...");
     }
-    GUIFontManager.LoadFonts(@"skin\" + m_strSkin + @"\fonts.xml");
+    GUIFontManager.LoadFonts(_config.Get(Config.Options.SkinPath) + m_strSkin + @"\fonts.xml");
 
     if (splashScreen != null)
     {

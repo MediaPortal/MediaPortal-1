@@ -40,17 +40,19 @@ namespace MediaPortal.Player
     static ArrayList _externalPlayerList = new ArrayList();
     static bool _externalPlayersLoaded = false;
     static ILog _log;
+    static IConfig _config;
 
     public PlayerFactory()
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
     }
 
     private void LoadExternalPlayers()
     {
       _log.Info("Loading external players plugins");
-      string[] fileList = System.IO.Directory.GetFiles(@"plugins\ExternalPlayers", "*.dll");
+      string[] fileList = System.IO.Directory.GetFiles(_config.Get(Config.Options.PluginsPath) + "ExternalPlayers", "*.dll");
       foreach (string fileName in fileList)
       {
         try

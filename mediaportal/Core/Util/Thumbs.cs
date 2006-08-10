@@ -19,6 +19,7 @@
  *
  */
 using System;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Util
 {
@@ -27,35 +28,37 @@ namespace MediaPortal.Util
 	/// </summary>
 	public class Thumbs
 	{
+    static ServiceProvider services = GlobalServiceProvider.Instance;
+    static IConfig _config = services.Get<IConfig>();
 
 		static public readonly string TvNotifyIcon="tvguide_notify_button.png";
 		static public readonly string TvRecordingIcon="tvguide_record_button.png";
 		static public readonly string TvRecordingSeriesIcon="tvguide_recordserie_button.png";
 		static public readonly string TvConflictRecordingIcon="tvguide_recordconflict_button.png";
 
-		static public readonly string MusicAlbum=@"thumbs\music\albums";
-		static public readonly string MusicArtists=@"thumbs\music\artists";
-		static public readonly string MusicGenre=@"thumbs\music\genre";
+    static public readonly string MusicAlbum = _config.Get(Config.Options.ThumbsPath) + @"music\albums";
+    static public readonly string MusicArtists = _config.Get(Config.Options.ThumbsPath) + @"music\artists";
+    static public readonly string MusicGenre = _config.Get(Config.Options.ThumbsPath) + @"music\genre";
 
-		static public readonly string MovieTitle=@"thumbs\Videos\Title";
-		static public readonly string MovieActors=@"thumbs\Videos\Actors";
-		static public readonly string MovieGenre=@"thumbs\Videos\genre";
+    static public readonly string MovieTitle = _config.Get(Config.Options.ThumbsPath) + @"Videos\Title";
+    static public readonly string MovieActors = _config.Get(Config.Options.ThumbsPath) + @"Videos\Actors";
+    static public readonly string MovieGenre = _config.Get(Config.Options.ThumbsPath) + @"Videos\genre";
 
-		static public readonly string TVChannel=@"thumbs\tv\logos";
-		static public readonly string TVShows=@"thumbs\tv\shows";
+    static public readonly string TVChannel = _config.Get(Config.Options.ThumbsPath) + @"tv\logos";
+    static public readonly string TVShows = _config.Get(Config.Options.ThumbsPath) + @"tv\shows";
 
-		static public readonly string Radio=@"Thumbs\Radio";
-		static public readonly string Pictures=@"Thumbs\Pictures";
-		static public readonly string Yac=@"Thumbs\yac";
-		
+    static public readonly string Radio = _config.Get(Config.Options.ThumbsPath) + @"Radio";
+    static public readonly string Pictures = _config.Get(Config.Options.ThumbsPath) + @"Pictures";
+    static public readonly string Yac = _config.Get(Config.Options.ThumbsPath) + @"yac";
+
 		static public void CreateFolders()
 		{
 				try
 				{
-					System.IO.Directory.CreateDirectory(@"thumbs");
-					System.IO.Directory.CreateDirectory(@"thumbs\music");
-					System.IO.Directory.CreateDirectory(@"thumbs\videos");
-					System.IO.Directory.CreateDirectory(@"thumbs\tv");
+					System.IO.Directory.CreateDirectory(_config.Get(Config.Options.ThumbsPath));
+          System.IO.Directory.CreateDirectory(_config.Get(Config.Options.ThumbsPath) + "music");
+          System.IO.Directory.CreateDirectory(_config.Get(Config.Options.ThumbsPath) + "videos");
+          System.IO.Directory.CreateDirectory(_config.Get(Config.Options.ThumbsPath) + "tv");
 					System.IO.Directory.CreateDirectory(MusicAlbum);
 					System.IO.Directory.CreateDirectory(MusicArtists);
 					System.IO.Directory.CreateDirectory(MusicGenre);

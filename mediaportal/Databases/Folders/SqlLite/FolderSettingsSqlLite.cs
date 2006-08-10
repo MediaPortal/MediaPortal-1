@@ -38,17 +38,19 @@ namespace Databases.Folders
 	{
     public SQLiteClient m_db=null;
     protected ILog _log;
+    protected IConfig _config;
 
     public FolderSettingsSqlLite()
 		{
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
 
       try 
       {
         // Open database
         _log.Info("open folderdatabase");
-        m_db = new SQLiteClient(@"database\FolderDatabase3.db3");
+        m_db = new SQLiteClient(_config.Get(Config.Options.DatabasePath) + "FolderDatabase3.db3");
 
         DatabaseUtility.SetPragmas(m_db);
         DatabaseUtility.AddTable(m_db, "tblPath", "CREATE TABLE tblPath ( idPath integer primary key, strPath text)");

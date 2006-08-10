@@ -127,6 +127,7 @@ namespace MediaPortal.GUI.Library
     static Size videoSize;
     static bool hasFocus = false;
     static ILog _log;
+    static IConfig _config;
 
     const uint SC_MONITORPOWER = 0xF170;
     const uint WM_SYSCOMMAND = 0x0112;
@@ -145,6 +146,7 @@ namespace MediaPortal.GUI.Library
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
     }
 
     /// <summary>
@@ -509,7 +511,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     static public string Skin
     {
-      set { m_strSkin = value; }
+      set { m_strSkin = _config.Get(Config.Options.SkinPath) + value; }
       get { return m_strSkin; }
     }
 
