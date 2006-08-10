@@ -46,7 +46,12 @@ namespace MediaPortal
             selectButtonList.Add("D");
             selectButtonList.Add("E");
             selectButtonList.Add("F");
+            id3.Click += new RoutedEventHandler(id3_Click);
 
+        }
+
+        void id3_Click(object sender, RoutedEventArgs e)
+        {
         }
 
         void lv1_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -142,73 +147,68 @@ namespace MediaPortal
         public void selectButton(object sender,RoutedEventArgs e)
         {
             // example for an gui-selectbutton
-                       
-            Button b = (Button)e.OriginalSource;
-            Button contentButton = (Button)e.Source;
+            CheckBox cb = (CheckBox)sender;
+            ControlTemplate t = ((CheckBox)sender).Template;
+            ControlTemplate rtp=(ControlTemplate)(((CheckBox)sender).FindResource("SelectButtonPressed"));
+            ControlTemplate rtr=(ControlTemplate)(((CheckBox)sender).FindResource("SelectButtonReleased"));
+            TextBlock tb = null;
 
-            TextBlock tb = (TextBlock)b.Template.FindName("SelectContent", b);
-            Button left =(Button) b.Template.FindName("LeftButton", b);
-            Button right =(Button) b.Template.FindName("RightButton", b);
-            ContentPresenter cp =(ContentPresenter) b.Template.FindName("ButtonContent", b);
-            if (b == null)
+            if(rtr==null || rtp==null || t==null) 
                 return;
 
 
-            if(contentButton.Equals(b)==false && contentButton!=null)
-                tb = (TextBlock)contentButton.Template.FindName("SelectContent", contentButton);
 
-            if (tb != null)
+            if (cb.IsChecked == true)
             {
-                tb.Text = (string)selectButtonList[selectButtonIndex];
+                if (t.Equals(rtp) == false)
+                {
+                    cb.Template = rtp;
+                    cb.ApplyTemplate();
+                    tb = (TextBlock)cb.Template.FindName("SelectContent", cb);
+                    if (tb != null)
+                        tb.Text = (string)selectButtonList[selectButtonIndex];
+
+                    return;
+                }              
+            }
+            else
+            {
+                if (t.Equals(rtp) )
+                {
+                    cb.Template = rtr;
+                    cb.ApplyTemplate();
+                    return;
+                }
+
             }
 
-            if (b.Name == "RightButton")
-            {
-                selectButtonIndex += 1;
-                if (selectButtonIndex > selectButtonList.Count-1)
-                    selectButtonIndex = 0;
-                tb.Text = (string)selectButtonList[selectButtonIndex];
-                
-                // do some additional useful stuff here, like sorting an list etc...
 
-            }
-            if (b.Name == "LeftButton")
+            Button left=(Button)t.FindName("LeftButton", cb);
+            Button right = (Button)t.FindName("RightButton", cb);
+            Button source=(Button)e.OriginalSource;
+
+            tb = (TextBlock)cb.Template.FindName("SelectContent", cb);
+
+            if (tb==null || left == null || right == null || source==null)
+                return;
+            
+
+            if (source.Equals(left))
             {
                 selectButtonIndex -= 1;
-                if (selectButtonIndex <0)
+                if (selectButtonIndex < 0)
                     selectButtonIndex = selectButtonList.Count - 1;
                 tb.Text = (string)selectButtonList[selectButtonIndex];
+            }
 
-                // do some additional useful stuff here, like sorting an list etc...           
-            }
-            
-            if (b.Name == "id3")
+            if (source.Equals(right))
             {
-                if (cp.Visibility == Visibility.Visible)
-                {
-                    if (tb != null)
-                        tb.Visibility = Visibility.Visible;
-                    if (left != null)
-                        left.Visibility = Visibility.Visible;
-                    if (right != null)
-                        right.Visibility = Visibility.Visible;
-                    if (cp != null)
-                        cp.Visibility = Visibility.Hidden;
-                }
-                else
-                {
-                    if (tb != null)
-                        tb.Visibility = Visibility.Hidden;
-                    if (left != null)
-                        left.Visibility = Visibility.Hidden;
-                    if (right != null)
-                        right.Visibility = Visibility.Hidden;
-                    if (cp != null)
-                        cp.Visibility = Visibility.Visible;
-                }
- 
+                selectButtonIndex += 1;
+                if (selectButtonIndex > selectButtonList.Count - 1)
+                    selectButtonIndex = 0;
+                tb.Text = (string)selectButtonList[selectButtonIndex];
             }
-            int a = 1; 
+
         }
 
         public void MPNG(object sender, RoutedEventArgs e)

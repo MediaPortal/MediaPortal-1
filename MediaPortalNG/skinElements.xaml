@@ -7,7 +7,92 @@
   <!-- Skin BlueTwo -->
 
   <!-- GUI Elements -->
+  <ControlTemplate x:Key="SelectButtonPressed" TargetType="{x:Type CheckBox}">
+    <Border
+      x:Name="Border"  
+      CornerRadius="0" 
+      BorderThickness="0"
+      BorderBrush="Transparent">
+      <DockPanel Margin="5">
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="24"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="24"/>
+          </Grid.ColumnDefinitions>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+          </Grid.RowDefinitions>
+          <TextBlock x:Name="SelectContent" Grid.Column="1"/>
+          <Button ClickMode="Press" Grid.Column="0" x:Name="LeftButton" Width="16" Height="16" Style="{DynamicResource LeftButton}"/>
+          <Button ClickMode="Press" Grid.Column="2" x:Name="RightButton" Width="16" Height="16" Style="{DynamicResource RightButton}"/>
+        </Grid>
+      </DockPanel>
+    </Border>
+    <ControlTemplate.Triggers>
+      <Trigger Property="IsKeyboardFocused" Value="true">
+        <Setter TargetName="Border" Property="BorderBrush" Value="Black" />
+      </Trigger>
+      <Trigger Property="IsMouseOver" Value="true">
+        <Setter TargetName="Border" Property="Background">
+          <Setter.Value>
+            <ImageBrush ImageSource="BlueTwo\\Media\\button_green_focus_165x32.png"/>
+          </Setter.Value>
+        </Setter>
+      </Trigger>
+      <Trigger Property="IsMouseOver" Value="false">
+        <Setter TargetName="Border" Property="Background">
+          <Setter.Value>
+            <ImageBrush ImageSource="BlueTwo\\Media\\button_green_nofocus_165x32.png"/>
+          </Setter.Value>
+        </Setter>
+      </Trigger>
+      <Trigger Property="IsEnabled" Value="false">
+        <Setter TargetName="Border" Property="Background" Value="Yellow" />
+        <Setter TargetName="Border" Property="BorderBrush" Value="Transparent" />
+        <Setter Property="Foreground" Value="Black"/>
+      </Trigger>
+    </ControlTemplate.Triggers>
+  </ControlTemplate>
 
+  <ControlTemplate x:Key="SelectButtonReleased" TargetType="{x:Type CheckBox}">
+    <Border
+      x:Name="Border"  
+      CornerRadius="0" 
+      BorderThickness="0"
+      BorderBrush="Transparent">
+        <ContentPresenter 
+                  Margin="8,0"
+                  HorizontalAlignment="Left"
+                  VerticalAlignment="Center"
+                  RecognizesAccessKey="True"/>
+    </Border>
+    <ControlTemplate.Triggers>
+      <Trigger Property="IsKeyboardFocused" Value="true">
+        <Setter TargetName="Border" Property="BorderBrush" Value="Black" />
+      </Trigger>
+      <Trigger Property="IsMouseOver" Value="true">
+        <Setter TargetName="Border" Property="Background">
+          <Setter.Value>
+            <ImageBrush ImageSource="BlueTwo\\Media\\button_green_focus_165x32.png"/>
+          </Setter.Value>
+        </Setter>
+      </Trigger>
+      <Trigger Property="IsMouseOver" Value="false">
+        <Setter TargetName="Border" Property="Background">
+          <Setter.Value>
+            <ImageBrush ImageSource="BlueTwo\\Media\\button_green_nofocus_165x32.png"/>
+          </Setter.Value>
+        </Setter>
+      </Trigger>
+      <Trigger Property="IsEnabled" Value="false">
+        <Setter TargetName="Border" Property="Background" Value="Yellow" />
+        <Setter TargetName="Border" Property="BorderBrush" Value="Transparent" />
+        <Setter Property="Foreground" Value="Black"/>
+      </Trigger>
+      
+    </ControlTemplate.Triggers>
+  </ControlTemplate>
    
   <Style x:Key="GUIImage" TargetType="{x:Type Image}"></Style> 
   
@@ -481,73 +566,16 @@
     </Setter>
   </Style>
 
-  <Style x:Key="GUISelectButton" TargetType="{x:Type Button}">
+  <Style x:Key="GUISelectButton" TargetType="{x:Type CheckBox}">
     <Setter Property="SnapsToDevicePixels" Value="true"/>
     <Setter Property="OverridesDefaultStyle" Value="true"/>
     <Setter Property="MinHeight" Value="23"/>
     <Setter Property="MinWidth" Value="75"/>
     <Setter Property="FontSize" Value="18"/>
     <Setter Property="Foreground" Value="White" />
+    <Setter Property="ClickMode" Value="Press" />
     <Setter Property="FocusVisualStyle" Value="{DynamicResource FocusStyle}"/>
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate TargetType="{x:Type Button}">
-          <Border
-            x:Name="Border"  
-            CornerRadius="0" 
-            BorderThickness="0"
-            BorderBrush="Transparent">
-            <DockPanel Margin="5">
-              <Grid>
-                <Grid.ColumnDefinitions>
-                  <ColumnDefinition Width="24"/>
-                  <ColumnDefinition Width="*"/>
-                  <ColumnDefinition Width="24"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                  <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <ContentPresenter x:Name="ButtonContent" Grid.Column="1" 
-                Margin="0,0"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Center"
-                RecognizesAccessKey="True"/>
-                <TextBlock Visibility="Hidden" x:Name="SelectContent" Grid.Column="1"/>
-                <Button Visibility="Hidden" Grid.Column="0" x:Name="LeftButton" Width="16" Height="16" Style="{StaticResource LeftButton}"/>
-                <Button Visibility="Hidden" Grid.Column="2" x:Name="RightButton" Width="16" Height="16" Style="{StaticResource RightButton}"/>
-              </Grid>
-            </DockPanel>
-          </Border>
-          <ControlTemplate.Triggers>
-            <Trigger Property="IsKeyboardFocused" Value="true">
-              <Setter TargetName="Border" Property="BorderBrush" Value="Black" />
-            </Trigger>
-            <Trigger Property="IsDefaulted" Value="true">
-              <Setter TargetName="Border" Property="BorderBrush" Value="Black" />
-            </Trigger>
-            <Trigger Property="IsMouseOver" Value="true">
-              <Setter TargetName="Border" Property="Background">
-                <Setter.Value>
-                  <ImageBrush ImageSource="BlueTwo\\Media\\button_green_focus_165x32.png"/>
-                </Setter.Value>
-              </Setter>
-            </Trigger>
-            <Trigger Property="IsMouseOver" Value="false">
-              <Setter TargetName="Border" Property="Background">
-                <Setter.Value>
-                  <ImageBrush ImageSource="BlueTwo\\Media\\button_green_nofocus_165x32.png"/>
-                </Setter.Value>
-              </Setter>
-            </Trigger>
-            <Trigger Property="IsEnabled" Value="false">
-              <Setter TargetName="Border" Property="Background" Value="Yellow" />
-              <Setter TargetName="Border" Property="BorderBrush" Value="Transparent" />
-              <Setter Property="Foreground" Value="Black"/>
-            </Trigger>
-          </ControlTemplate.Triggers>
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
+    <Setter Property="Template" Value="{DynamicResource SelectButtonReleased}"/>
   </Style>
   
   <Style x:Key="GUIButton" TargetType="{x:Type Button}">

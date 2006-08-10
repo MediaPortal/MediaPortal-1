@@ -61,7 +61,7 @@
 
 
     <!--  -->
-    <Button
+    <CheckBox
       Name="id3"
       Canvas.Top="129"
       Canvas.Left="60"
@@ -71,7 +71,7 @@
       Style="{DynamicResource GUISelectButton}"
       Click="selectButton" 
       Tag="##id::3//##keycontrol::onleft:;onright:;onup:;ondown://##metadata::labelNum:103"
->103</Button>
+>103</CheckBox>
 
 
     <!-- SlideShow button -->
