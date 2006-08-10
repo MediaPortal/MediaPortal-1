@@ -261,8 +261,8 @@ namespace MediaPortal.Audioscrobbler
             if (position >= alertTime && alertTime > 14)
             {
               Log.Write("Audioscrobbler plugin: queuing song: {0}", currentSong.ToShortString());
-              //scrobbler.pushQueue(currentSong);
-              asengine.AddSongToScrobblerQueue(currentSong);
+              scrobbler.pushQueue(currentSong);
+              //asengine.AddSongToScrobblerQueue(currentSong);
               queued = true;              
               currentSong.AudioScrobblerStatus = SongStatus.Cached;
             }
