@@ -172,6 +172,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 		CRefTime timeStamp=referenceTime - m_rtStart; 
 		REFERENCE_TIME refTimeStamp=(REFERENCE_TIME)timeStamp;
 		pSample->SetTime(&refTimeStamp,NULL);
+#if DEBUG
 		char buf[100];
 		sprintf(buf,"  A: %05.2f %05.2f %05.2f %05.2f %d %d (%d)\n",
 					(dStartTime/1000.0),
@@ -180,7 +181,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 					(timeStamp.Millisecs()/1000.0),
 					demux.VideoPacketCount(), demux.AudioPacketCount(),m_bDropPackets);
 		::OutputDebugString(buf);
-		
+#endif		
 	}
 
 	pSample->SetActualDataLength(buffer->Length());

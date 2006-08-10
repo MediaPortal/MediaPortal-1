@@ -224,6 +224,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
 		
 		REFERENCE_TIME refTimeStamp=(REFERENCE_TIME)timeStamp;
 		pSample->SetTime(&refTimeStamp,NULL);
+#if DEBUG
 		char buf[100];
 		sprintf(buf,"  V: %05.2f %05.2f %05.2f %05.2f %d %d\n",
 					(dStartTime/1000.0),
@@ -232,6 +233,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
 					(timeStamp.Millisecs()/1000.0),
 					demux.VideoPacketCount(), demux.AudioPacketCount());
 		::OutputDebugString(buf);
+#endif
 	}
 	delete buffer;
 
