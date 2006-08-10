@@ -179,6 +179,9 @@ namespace MediaPortal.Music.Database
       }
     }
 
+    /// <summary>
+    /// Length of song in total seconds
+    /// </summary>
     public int Duration
     {
       get { return m_iDuration; }
@@ -254,6 +257,9 @@ namespace MediaPortal.Music.Database
       set { m_strDateModified = value; }
     }
 
+    /// <summary>
+    /// Last UTC time the song was played
+    /// </summary>
     public DateTime DateTimePlayed
     {
       get { return _DateTimePlayed; }

@@ -66,6 +66,7 @@ namespace MediaPortal.Audioscrobbler
     public bool _doSubmit = true;
 
     private AudioscrobblerBase scrobbler;
+    private AudioscrobblerEngine asengine;
     private System.Timers.Timer SongCheckTimer;
 
     #region Properties
@@ -214,7 +215,7 @@ namespace MediaPortal.Audioscrobbler
           if (songFound)
           {
             currentSong.AudioScrobblerStatus = SongStatus.Init;
-            currentSong.DateTimePlayed = DateTime.UtcNow;
+            currentSong.DateTimePlayed = DateTime.UtcNow - TimeSpan.FromSeconds(g_Player.CurrentPosition);
             // avoid false skip detection
             lastPosition = Convert.ToInt32(g_Player.Player.CurrentPosition);
             OnSongChangedEvent(currentSong);
@@ -260,7 +261,8 @@ namespace MediaPortal.Audioscrobbler
             if (position >= alertTime && alertTime > 14)
             {
               Log.Write("Audioscrobbler plugin: queuing song: {0}", currentSong.ToShortString());
-              scrobbler.pushQueue(currentSong);
+              //scrobbler.pushQueue(currentSong);
+              asengine.AddSongToScrobblerQueue(currentSong);
               queued = true;              
               currentSong.AudioScrobblerStatus = SongStatus.Cached;
             }
@@ -320,6 +322,7 @@ namespace MediaPortal.Audioscrobbler
 
     public void Start()
     {
+      asengine = new AudioscrobblerEngine();
       currentSong = null;
       queued = false;
       alertTime = INFINITE_TIME;
@@ -332,7 +335,26 @@ namespace MediaPortal.Audioscrobbler
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         _doSubmit = xmlreader.GetValueAsBool("audioscrobbler", "submitsenabled", true);
+        string tmpUser, tmpPass;
+        tmpUser = xmlreader.GetValueAsString("audioscrobbler", "user", "");
+
+        tmpPass = xmlreader.GetValueAsString("audioscrobbler", "pass", "");
+        if (tmpPass != String.Empty)
+        {
+          try
+          {
+            EncryptDecrypt Crypter = new EncryptDecrypt();
+            tmpPass = Crypter.Decrypt(tmpPass);
+          }
+          catch (Exception ex)
+          {
+            Log.Write("Audioscrobbler: Password decryption failed {0}", ex.Message);
+          }
+        }
+        asengine.SetUserPassword(tmpUser, tmpPass);
+        asengine.Start();
       }
+
 
       Log.Write("Audioscrobbler plugin: submitting songs: {0}", Convert.ToString(_doSubmit));
 
@@ -344,6 +366,8 @@ namespace MediaPortal.Audioscrobbler
 
     public void Stop()
     {
+      asengine.Stop();
+      asengine = null;
       OnManualDisconnect(null, null);
       startStopSongCheckTimer(false);
       scrobbler = null;

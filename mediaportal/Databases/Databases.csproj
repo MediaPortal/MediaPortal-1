@@ -239,6 +239,7 @@
     <Compile Include="Music\Database.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Music\AudioscrobblerEngine.cs" />
     <Compile Include="Music\MusicAlbumInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -251,6 +252,7 @@
     <Compile Include="Music\MusicSong.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Music\AudioscrobblerQueue.cs" />
     <Compile Include="Music\Song.cs">
       <SubType>Code</SubType>
     </Compile>
