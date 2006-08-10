@@ -30,10 +30,10 @@ using System.Text;
 using System.Timers;
 using System.Security.Cryptography;
 using System.Collections;
-using System.Runtime.InteropServices;
 using System.Web;
 
 using MediaPortal.Util;
+using MediaPortal.Utils.Web;
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Music.Database
@@ -50,22 +50,11 @@ namespace MediaPortal.Music.Database
       WAITING_FOR_RESP
     };
 
-    [Flags]
-    enum ConnectionState : int
-    {
-      INTERNET_CONNECTION_MODEM = 0x1,
-      INTERNET_CONNECTION_LAN = 0x2,
-      INTERNET_CONNECTION_PROXY = 0x4,
-      INTERNET_RAS_INSTALLED = 0x10,
-      INTERNET_CONNECTION_OFFLINE = 0x20,
-      INTERNET_CONNECTION_CONFIGURED = 0x40
-    }
-
-    const int TICK_INTERVAL = 2000; /* 2 seconds */
+    const int TICK_INTERVAL = 5000; /* 5 seconds */
     const int FAILURE_LOG_MINUTES = 5; /* 5 minute delay on logging failure to upload information */
     const int RETRY_SECONDS = 60; /* 60 second delay for transmission retries */
-    const string CLIENT_ID = "mpm";
-    const string CLIENT_VERSION = "0.1";
+    const string CLIENT_ID = "tst";
+    const string CLIENT_VERSION = "1.0";
     const string SCROBBLER_URL = "http://post.audioscrobbler.com/";
     const string SCROBBLER_VERSION = "1.1";
 
@@ -83,17 +72,12 @@ namespace MediaPortal.Music.Database
 
     AudioscrobblerQueue queue;
 
-    bool connected = false;
+    bool Connected = false;
     //bool queued; /* if current_track has been queued */
 
     WebRequest current_web_req;
     IAsyncResult current_async_result;
     State state;
-
-    // check connectivity http://www.developerfusion.co.uk/show/5346/
-    [DllImport("wininet.dll", CharSet = CharSet.Auto)]
-    static extern bool InternetGetConnectedState(ref ConnectionState lpdwFlags, int dwReserved); 
-
 
     public AudioscrobblerEngine()
     {
@@ -102,19 +86,7 @@ namespace MediaPortal.Music.Database
       state = State.IDLE;
       queue = new AudioscrobblerQueue();
     }
-
-    bool CheckInternetConnection(bool force)
-    {
-      if (!connected || force)
-      {
-        ConnectionState Description = 0;
-        string connState = InternetGetConnectedState(ref Description, 0).ToString();
-        connected = Convert.ToBoolean(connState);
-        Log.Write("AudioscrobblerEngine: check connection - {0}", Description.ToString());
-      }
-      return connected;
-    }
-
+    
     private void InitEngineTimer()
     {
       engineTimer = new System.Timers.Timer();
@@ -132,6 +104,15 @@ namespace MediaPortal.Music.Database
       //  timeout_id = Timeout.Add(TICK_INTERVAL, StateTransitionHandler);
       //}
       //queue.Load();
+      /* if we're not connected, don't bother doing anything
+      * involving the network. */
+      CheckConnections inet = new CheckConnections();
+      Connected = inet.Connected;
+      Log.Write("AudioscrobblerEngine: start");
+      //Log.Write("AudioscrobblerEngine: connection HasProxy - {0}", Convert.ToString(inet.HasProxy));
+      //Log.Write("AudioscrobblerEngine: connection IsDialUp - {0}", Convert.ToString(inet.IsDialUp));
+      //Log.Write("AudioscrobblerEngine: connection IsLAN - {0}", Convert.ToString(inet.IsLAN));
+
       InitEngineTimer();
     }
 
@@ -194,10 +175,8 @@ namespace MediaPortal.Music.Database
     }
 
     void StateTransitionHandler(object trash_, ElapsedEventArgs args_)
-    {
-      /* if we're not connected, don't bother doing anything
-       * involving the network. */
-      if (!CheckInternetConnection(false))
+    {      
+      if (!Connected)
         return;
 
       /* and address changes in our engine state */
@@ -227,7 +206,8 @@ namespace MediaPortal.Music.Database
         case State.WAITING_FOR_RESP:
         case State.WAITING_FOR_REQ_STREAM:
           timeoutTicks++;
-          if (timeoutTicks * TICK_INTERVAL > 20000)
+          Log.Write("AudioscrobblerEngine: current request results - CompletedSynchronously: {0} / IsCompleted: {1}", Convert.ToString(current_async_result.CompletedSynchronously), Convert.ToString(current_async_result.IsCompleted));
+          if (timeoutTicks * TICK_INTERVAL > 30000)
           {
             Log.Write("AudioscrobblerEngine: current request timed out - {0}", "aborting..");
             current_web_req.Abort();
@@ -285,7 +265,7 @@ namespace MediaPortal.Music.Database
       state = State.WAITING_FOR_REQ_STREAM;
       Log.Write("AudioscrobblerEngine: submitting - {0}", ts);
       current_async_result = current_web_req.BeginGetRequestStream(TransmitGetRequestStream, ts);
-      ts = null;
+
       if (current_async_result == null)
       {
         next_interval = DateTime.Now + new TimeSpan(0, 0, RETRY_SECONDS);
@@ -469,51 +449,61 @@ namespace MediaPortal.Music.Database
 
       string line;
 
-      line = sr.ReadLine();
-      if (line.StartsWith("FAILED"))
+      try
       {
-        Log.Write("AudioscrobblerEngine: sign-on failed - {0}", line.Substring("FAILED".Length).Trim());
-      }
-      else if (line.StartsWith("BADUSER"))
-      {
-        Log.Write("AudioscrobblerEngine: sign-on failed - {0}", "unrecognized user/password");
-      }
-      else if (line.StartsWith("UPDATE"))
-      {
-        Log.Write("AudioscrobblerEngine: plugin needs an update");
-        success = true;
-      }
-      else if (line.StartsWith("UPTODATE"))
-      {
-        Log.Write("AudioscrobblerEngine: signed on");
-        success = true;
-      }
+        line = sr.ReadLine();
+        if (line == null || line == string.Empty)
+          return;
 
-      /* read the challenge string and post url, if
-       * this was a successful handshake */
-      if (success == true)
-      {
-        string challenge = sr.ReadLine().Trim();
-        post_url = sr.ReadLine().Trim();
+        if (line.StartsWith("FAILED"))
+        {
+          Log.Write("AudioscrobblerEngine: sign-on failed - {0}", line.Substring("FAILED".Length).Trim());
+        }
+        else if (line.StartsWith("BADUSER"))
+        {
+          Log.Write("AudioscrobblerEngine: sign-on failed - {0}", "unrecognized user/password");
+        }
+        else if (line.StartsWith("UPDATE"))
+        {
+          Log.Write("AudioscrobblerEngine: plugin needs an update");
+          success = true;
+        }
+        else if (line.StartsWith("UPTODATE"))
+        {
+          Log.Write("AudioscrobblerEngine: signed on");
+          success = true;
+        }
 
-        security_token = MD5Encode(md5_pass + challenge);
-        //Console.WriteLine ("security token = {0}", security_token);
-      }
+        /* read the challenge string and post url, if
+         * this was a successful handshake */
+        if (success == true)
+        {
+          string challenge = sr.ReadLine().Trim();
+          post_url = sr.ReadLine().Trim();
 
-      /* read the trailing interval */
-      line = sr.ReadLine();
-      if (line.StartsWith("INTERVAL"))
-      {
-        int interval_seconds = Int32.Parse(line.Substring("INTERVAL".Length));
-        next_interval = DateTime.Now + new TimeSpan(0, 0, interval_seconds);
-      }
-      else
-      {
-        Log.Write("AudioscrobblerEngine: No INTERVAL received");
-      }
+          security_token = MD5Encode(md5_pass + challenge);
+          //Console.WriteLine ("security token = {0}", security_token);
+        }
 
-      /* XXX we shouldn't just try to handshake again for BADUSER */
-      state = success ? State.IDLE : State.NEED_HANDSHAKE;
+        /* read the trailing interval */
+        line = sr.ReadLine();
+        if (line.StartsWith("INTERVAL"))
+        {
+          int interval_seconds = Int32.Parse(line.Substring("INTERVAL".Length));
+          next_interval = DateTime.Now + new TimeSpan(0, 0, interval_seconds);
+        }
+        else
+        {
+          Log.Write("AudioscrobblerEngine: No INTERVAL received");
+        }
+
+        /* XXX we shouldn't just try to handshake again for BADUSER */
+        state = success ? State.IDLE : State.NEED_HANDSHAKE;
+      }
+      catch (Exception ex)
+      {
+        Log.Write("AudioscrobblerEngine: excption reading response - {0}", ex.Message);
+      }
     }
   }
 }

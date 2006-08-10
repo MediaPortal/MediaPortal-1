@@ -122,6 +122,7 @@
     <Compile Include="Time\BasicTime.cs" />
     <Compile Include="Time\TimeRange.cs" />
     <Compile Include="Time\WorldTimeZone.cs" />
+    <Compile Include="Web\Check\CheckConnections.cs" />
     <Compile Include="Web\http\HTTPRequest.cs" />
     <Compile Include="Web\http\HTTPAuth.cs" />
     <Compile Include="Web\http\HTMLCache.cs">
