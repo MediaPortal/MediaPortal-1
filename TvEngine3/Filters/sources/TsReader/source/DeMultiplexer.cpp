@@ -44,7 +44,9 @@ CDeMultiplexer::~CDeMultiplexer()
 
 void CDeMultiplexer::Reset()
 {
+	::OutputDebugStringA("CDeMultiplexer::Reset()\n");
 	CAutoLock lock(m_section);
+	
 	m_iBufferPosWrite=0;
 	m_iBufferPosRead=0;
 	m_iBytesInBuffer=0;
@@ -70,6 +72,14 @@ void CDeMultiplexer::Reset()
 	m_vecVideoBuffers.clear();
 }
 
+int CDeMultiplexer::VideoPacketCount()
+{
+	return m_vecVideoBuffers.size();
+}
+int CDeMultiplexer::AudioPacketCount()
+{
+	return m_vecAudioBuffers.size();
+}
 CBuffer* CDeMultiplexer::GetAudio()
 {
 	CAutoLock lock(m_section);
@@ -227,14 +237,19 @@ void CDeMultiplexer::Parse()
 					len -=3;
 					CBuffer* pBuffer= new CBuffer();
 					Copy(len, pBuffer->Data());
+					double pts=0,dts=0;
 					if (headerLen>0)
 					{
-						double pts,dts;
 						m_pcrDecoder.GetPtsDts(header,pts,dts);
-						if (pts>0) m_ptsTime=pts;
-						if (dts>0) m_dtsTime=dts;
 					}
-					pBuffer->Set(m_pcrTime,m_ptsTime, m_dtsTime,len);
+					pBuffer->Set(m_pcrTime,pts,dts,len);
+					/*if (m_vecAudioBuffers.size()>=2)
+					{
+						ivecBuffer it=m_vecAudioBuffers.begin();
+						CBuffer* pBuf=*it;
+						delete pBuf;
+						m_vecAudioBuffers.erase(it);
+					}*/
 					m_vecAudioBuffers.push_back(pBuffer);
 					Advance(len);
 					return;
@@ -260,14 +275,12 @@ void CDeMultiplexer::Parse()
 					len -=3;
 					CBuffer* pBuffer= new CBuffer();
 					Copy(len, pBuffer->Data());
+					double pts=0,dts=0;
 					if (headerLen>0)
 					{
-						double pts,dts;
 						m_pcrDecoder.GetPtsDts(header,pts,dts);
-						if (pts>0) m_ptsTime=pts;
-						if (dts>0) m_dtsTime=dts;
 					}
-					pBuffer->Set(m_pcrTime,m_ptsTime, m_dtsTime,len);
+					pBuffer->Set(m_pcrTime,pts,dts,len);
 					m_vecVideoBuffers.push_back(pBuffer);
 					Advance(len);
 					return;

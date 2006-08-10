@@ -80,3 +80,9 @@ double CBuffer::Dts()
 {
 	return m_dtsTime;
 }
+
+void CBuffer::Add(CBuffer* pBuffer)
+{
+	memcpy(&m_pBuffer[m_iLength], pBuffer->Data(), pBuffer->Length());
+	m_iLength+=pBuffer->Length();
+}

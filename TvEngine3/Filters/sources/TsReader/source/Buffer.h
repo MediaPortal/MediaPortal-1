@@ -20,7 +20,7 @@
  */
 #pragma once
 
-#define MAX_BUFFER_SIZE 16384
+#define MAX_BUFFER_SIZE 0x10000
 class CBuffer
 {
 public:
@@ -28,6 +28,7 @@ public:
 	~CBuffer(void);
 	int		 Length();
 	byte*  Data();
+	void   Add(CBuffer* pBuffer);    
 	double Pcr();
 	double Pts();
 	double Dts();

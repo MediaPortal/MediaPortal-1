@@ -21,6 +21,7 @@
 
 #include <streams.h>
 #include "tsreader.h"
+#include "AudioPin.h"
 #include "Videopin.h"
 
 BYTE g_Mpeg2ProgramVideo[]= {
@@ -103,8 +104,9 @@ extern void LogDebug(const char *fmt, ...) ;
 CVideoPin::CVideoPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCritSec* section) :
 	CSourceStream(NAME("pinVideo"), phr, pFilter, L"Video"),
 	m_pTsReaderFilter(pFilter),
-	CSourceSeeking(NAME("pinVideo"),pUnk,phr,section)
+	m_section(section)
 {
+	m_rtStart=0;
 }
 
 CVideoPin::~CVideoPin()
@@ -113,13 +115,13 @@ CVideoPin::~CVideoPin()
 }
 STDMETHODIMP CVideoPin::NonDelegatingQueryInterface( REFIID riid, void ** ppv )
 {
+	if (riid == IID_IAsyncReader)
+  {
+		int x=1;
+	}
   if (riid == IID_IMediaSeeking)
   {
-      return CSourceSeeking::NonDelegatingQueryInterface( riid, ppv );
-  }
-  if (riid == IID_IMediaPosition)
-  {
-		return CSourceSeeking::NonDelegatingQueryInterface( riid, ppv );
+		return GetInterface((IMediaSeeking*)this, ppv);
   }
   return CSourceStream::NonDelegatingQueryInterface(riid, ppv);
 }
@@ -187,68 +189,72 @@ HRESULT CVideoPin::CompleteConnect(IPin *pReceivePin)
 
 HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
 {
+//	::OutputDebugStringA("CVideoPin::FillBuffer()\n");
 	CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
 	CBuffer* buffer=demux.GetVideo();
 	if (buffer==NULL)
 	{
 		pSample->SetActualDataLength(0);
+		::OutputDebugStringA("CVideoPin::FillBuffer() no video\n");
 		return NOERROR;
 	}
 	byte* pSampleBuffer;
 	HRESULT hr = pSample->GetPointer(&pSampleBuffer);
 	if (FAILED(hr))
 	{
+		::OutputDebugStringA("CVideoPin::FillBuffer() invalid ptr\n");
 		return hr;
 	}
 
 	pSample->SetActualDataLength(buffer->Length());
 	memcpy(pSampleBuffer, buffer->Data(), buffer->Length());
 
-	double presentationTime=buffer->Pts() - m_pTsReaderFilter->GetStartTime();
-	REFERENCE_TIME referenceTime=MILLISECONDS_TO_100NS_UNITS(presentationTime);
-	//referenceTime-=m_rtStart;
-	pSample->SetMediaTime(&referenceTime,&referenceTime);
 	pSample->SetDiscontinuity(m_bDiscontinuity);
-	m_bDiscontinuity=FALSE;
+
+	CRefTime streamTime;
+	m_pTsReaderFilter->StreamTime(streamTime);
+	double dStreamTime=streamTime.Millisecs();
+	double dStartTime= m_rtStart.Millisecs();
+
+	if (buffer->Pts()>0)
+	{
+		long presentationTime=(long)(buffer->Pts() - m_pTsReaderFilter->GetStartTime());
+		CRefTime referenceTime(presentationTime);
+		CRefTime timeStamp=referenceTime - m_rtStart; 
+		
+		REFERENCE_TIME refTimeStamp=(REFERENCE_TIME)timeStamp;
+		pSample->SetTime(&refTimeStamp,NULL);
+		char buf[100];
+		sprintf(buf,"  V: %05.2f %05.2f %05.2f %05.2f %d %d\n",
+					(dStartTime/1000.0),
+					(dStreamTime/1000.0), 
+					(referenceTime.Millisecs()/1000.0),
+					(timeStamp.Millisecs()/1000.0),
+					demux.VideoPacketCount(), demux.AudioPacketCount());
+		::OutputDebugString(buf);
+	}
 	delete buffer;
 
+	m_bDiscontinuity=FALSE;
+//	::OutputDebugStringA("CVideoPin::FillBuffer() done\n");
   return NOERROR;
 }
 
-// CSourceSeeking
-HRESULT CVideoPin::ChangeStart()
-{
 
-	m_pTsReaderFilter->Seek(m_rtStart);
-	FlushOutput();
-	return S_OK;
-}
-HRESULT CVideoPin::ChangeStop()
-{
-	FlushOutput();
-	return S_OK;
-}
-HRESULT CVideoPin::ChangeRate()
-{
-	FlushOutput();
-	return S_OK;
-}
-
-void CVideoPin::SetDuration()
-{
-	REFERENCE_TIME refTime;
-	m_pTsReaderFilter->GetDuration(&refTime);
-	m_rtDuration=refTime;
-	m_rtStop=refTime;
-}
 
 HRESULT CVideoPin::OnThreadStartPlay()
 {    
+	::OutputDebugString("CVideoPin::OnThreadStartPlay()\n");
+	REFERENCE_TIME pStop;
+	double dRate;
 	m_bDiscontinuity = TRUE;
-  return DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
+	m_pTsReaderFilter->GetAudioPin()->GetStopPosition(&pStop);
+	m_pTsReaderFilter->GetAudioPin()->GetRate(&dRate);
+  return DeliverNewSegment(m_rtStart, pStop, dRate);
 }
 void CVideoPin::FlushOutput()
 {
+		::OutputDebugString("CAudioPin::FlushOutput()\n");
 	if (ThreadExists()) 
   {
     DeliverBeginFlush();
@@ -256,4 +262,82 @@ void CVideoPin::FlushOutput()
     DeliverEndFlush();
     Run();
   }
+}
+void CVideoPin::SetStart(CRefTime rtStartTime)
+{
+	m_rtStart=rtStartTime;
+	double startTime=m_rtStart/UNITS;
+	char buf[100];
+	sprintf(buf,"CVideoPin::SetStart %x %05.2f\n",(DWORD)m_rtStart,startTime);
+	::OutputDebugString(buf);
+	FlushOutput();
+}
+
+HRESULT CVideoPin::GetCapabilities(DWORD *pCapabilities)
+{
+	return m_pTsReaderFilter->GetAudioPin()->GetCapabilities(pCapabilities);
+}
+HRESULT CVideoPin::CheckCapabilities(DWORD *pCapabilities)
+{
+	return m_pTsReaderFilter->GetAudioPin()->CheckCapabilities(pCapabilities);
+}
+HRESULT CVideoPin::IsFormatSupported(const GUID *pFormat)
+{
+	return m_pTsReaderFilter->GetAudioPin()->IsFormatSupported(pFormat);
+}
+HRESULT CVideoPin::QueryPreferredFormat(GUID *pFormat)
+{
+	return m_pTsReaderFilter->GetAudioPin()->QueryPreferredFormat(pFormat);
+}
+HRESULT CVideoPin::GetTimeFormat(GUID *pFormat)
+{
+	return m_pTsReaderFilter->GetAudioPin()->GetTimeFormat(pFormat);
+}
+HRESULT CVideoPin::IsUsingTimeFormat(const GUID *pFormat)
+{
+	return m_pTsReaderFilter->GetAudioPin()->IsUsingTimeFormat(pFormat);
+}
+HRESULT CVideoPin::SetTimeFormat(const GUID *pFormat)
+{
+	return m_pTsReaderFilter->GetAudioPin()->SetTimeFormat(pFormat);
+}
+HRESULT CVideoPin::GetDuration(LONGLONG *pDuration)
+{
+	return m_pTsReaderFilter->GetAudioPin()->GetDuration(pDuration);
+}
+HRESULT CVideoPin::GetStopPosition(LONGLONG *pStop)
+{
+	return m_pTsReaderFilter->GetAudioPin()->GetStopPosition(pStop);
+}
+HRESULT CVideoPin::GetCurrentPosition(LONGLONG *pCurrent)
+{
+	return m_pTsReaderFilter->GetAudioPin()->GetCurrentPosition(pCurrent);
+}
+HRESULT CVideoPin::ConvertTimeFormat(LONGLONG *pTarget,const GUID *pTargetFormat,LONGLONG Source,const GUID *pSourceFormat)
+{
+	return m_pTsReaderFilter->GetAudioPin()->ConvertTimeFormat(pTarget,pTargetFormat,Source,pSourceFormat);
+}
+HRESULT CVideoPin::SetPositions( /* [out][in] */ LONGLONG *pCurrent,DWORD dwCurrentFlags,/* [out][in] */ LONGLONG *pStop,DWORD dwStopFlags)
+{
+	return S_OK;
+}
+HRESULT CVideoPin::GetPositions(LONGLONG *pCurrent,LONGLONG *pStop)
+{
+	return m_pTsReaderFilter->GetAudioPin()->GetPositions(pCurrent,pStop);
+}
+HRESULT CVideoPin::GetAvailable(LONGLONG *pEarliest,LONGLONG *pLatest)
+{
+	return m_pTsReaderFilter->GetAudioPin()->GetAvailable(pEarliest,pLatest);
+}
+HRESULT CVideoPin::SetRate( double dRate)
+{
+	return S_OK;
+}
+HRESULT CVideoPin::GetRate(double *pdRate)
+{
+	return m_pTsReaderFilter->GetAudioPin()->GetRate(pdRate);
+}
+HRESULT CVideoPin::GetPreroll(LONGLONG *pllPreroll)
+{
+	return m_pTsReaderFilter->GetAudioPin()->GetPreroll(pllPreroll);
 }

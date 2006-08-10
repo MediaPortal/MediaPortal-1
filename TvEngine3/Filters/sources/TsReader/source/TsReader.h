@@ -60,7 +60,8 @@ public:
 	STDMETHODIMP Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt);
 	STDMETHODIMP GetCurFile(LPOLESTR * ppszFileName,AM_MEDIA_TYPE *pmt);
 	STDMETHODIMP GetDuration(REFERENCE_TIME *dur);
-	double GetStartTime();
+	double		GetStartTime();
+	CAudioPin* GetAudioPin();
 	CDeMultiplexer& GetDemultiplexer();
 	void Seek(CRefTime& seekTime);
 private:

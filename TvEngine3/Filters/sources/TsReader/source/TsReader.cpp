@@ -245,7 +245,6 @@ double CTsReaderFilter::UpdateDuration()
 	m_fileReader.SetFilePointer(-8192LL,FILE_END);
 	m_endTime=m_pcrDecoder.GetPcr(true);
 
-	m_pVideoPin->SetDuration();
 	m_pAudioPin->SetDuration();
 	return (m_endTime- m_startTime);
 }
@@ -270,6 +269,7 @@ double CTsReaderFilter::GetStartTime()
 
 void CTsReaderFilter::Seek(CRefTime& seekTime)
 {
+	::OutputDebugStringA("CTsReaderFilter::Seek()\n");
 	double duration=(m_endTime-m_startTime);
 	double seektime=(double)seekTime.Millisecs();
 	double percent=seektime/duration;
@@ -279,7 +279,13 @@ void CTsReaderFilter::Seek(CRefTime& seekTime)
 	__int64 fileDuration=end-start;
 	percent *= ((double)fileDuration);
 	m_fileReader.setFilePointer((__int64)percent,FILE_BEGIN);
-	m_demultiplexer.Reset();
+//	m_pAudioPin->SetStart(seekTime);
+	m_pVideoPin->SetStart(seekTime);
+}
+
+CAudioPin* CTsReaderFilter::GetAudioPin()
+{
+	return m_pAudioPin;
 }
 
 ////////////////////////////////////////////////////////////////////////

@@ -33,6 +33,8 @@ public:
 
 	CBuffer* GetAudio();
 	CBuffer* GetVideo();
+	int VideoPacketCount();
+	int AudioPacketCount();
 	void Require();
 	void Parse();
 	void Reset();

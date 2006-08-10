@@ -43,12 +43,15 @@ public:
 	HRESULT ChangeRate();
 
 	HRESULT OnThreadStartPlay();
+	void SetStart(CRefTime rtStartTime);
 
 	void SetDuration();
 	void FlushOutput();
 protected:
 	BOOL m_bDiscontinuity;
 	CTsReaderFilter *	const m_pTsReaderFilter;
+	CCritSec* m_section;
+	bool			m_bDropPackets;
 };
 
 #endif
