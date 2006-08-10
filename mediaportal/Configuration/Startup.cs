@@ -86,6 +86,14 @@ namespace MediaPortal.Configuration
     public void Start()
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
+      IConfig _config = new Config(Application.StartupPath);
+      if (!_config.LoadConfig())
+      {
+        MessageBox.Show("Missing or Invalid MediaPortalPath.xml file. MediaPortal cannot run without that file.", "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        return;
+      }
+      services.Add<IConfig>(_config);
+
       ILog log = new MediaPortal.Utils.Services.Log("Configuration", MediaPortal.Utils.Services.Log.Level.Debug);
       services.Add<ILog>(log);
 
@@ -95,6 +103,8 @@ namespace MediaPortal.Configuration
       log.Info("Assembly creation time: {0} (UTC)", mpFi.LastWriteTimeUtc.ToUniversalTime());
 
       Form applicationForm = null;
+
+      Thumbs.CreateFolders();
 
       switch (startupMode)
       {
@@ -124,7 +134,7 @@ namespace MediaPortal.Configuration
       try
       {
 
-        Thumbs.CreateFolders();
+        
 
         AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
         System.Windows.Forms.Application.EnableVisualStyles();
