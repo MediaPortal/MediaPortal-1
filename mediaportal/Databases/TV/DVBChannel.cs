@@ -110,7 +110,6 @@ namespace MediaPortal.TV.Database
 		int m_minorChannel;
 		int m_majorChannel;
 		int m_SubtitlePID=-1;
-    int _currentLNB;
 		//
 		[BrowsableAttribute(true),ReadOnly(true)]
 		public int SubtitlePid
