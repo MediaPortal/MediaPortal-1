@@ -6,4 +6,7 @@
     Width="720"
     Height="608"
     >
+  <NavigationWindow.Triggers>
+
+  </NavigationWindow.Triggers>
  </NavigationWindow>

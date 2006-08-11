@@ -27,6 +27,7 @@ namespace MediaPortal
 
         public HomeExtension(ResourceDictionary dict)
         {
+            
             InitializeComponent();
             this.ShowsNavigationUI = true;
             this.Opacity = 0.0f;
@@ -34,8 +35,8 @@ namespace MediaPortal
             this.Height = 608;
             this.Width = 720;
             _core = (Core)this.Parent;
-            lv1.SelectionChanged += new SelectionChangedEventHandler(lv1_SelectionChanged);
-            
+            lv1.SelectionChanged += new SelectionChangedEventHandler(lv1_SelectionChanged);       
+
             ApplyLanguage("German");
             selectButtonList = new System.Collections.ArrayList();
 
@@ -120,10 +121,9 @@ namespace MediaPortal
         {
 
             _skinMediaPath = System.IO.Directory.GetCurrentDirectory() + @"\BlueTwo\BlueTwo\Media\";
-            DoubleAnimation anim = new DoubleAnimation(1.0f, new Duration(new TimeSpan(0, 0, 0, 0, 500)));
-            this.BeginAnimation(Page.OpacityProperty, anim);
-
+            this.Opacity = 1.0f;
             //
+            
             string folderPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyPictures);
             string[] files=System.IO.Directory.GetFiles(folderPath);
             foreach (string fi in files)
