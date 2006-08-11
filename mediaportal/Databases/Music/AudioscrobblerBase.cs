@@ -40,23 +40,6 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Music.Database
 {
-  #region argument types
-  public enum lastFMFeed
-  {
-    recenttracks,
-    weeklyartistchart,
-    weeklytrackchart,
-    topartists,
-    toptracks,
-    friends,
-    neighbours,
-    similar,
-    toptags,
-    artisttags,
-  }
-  
-  #endregion
-
   public class AudioscrobblerBase
   {
     #region Constants
@@ -68,7 +51,6 @@ namespace MediaPortal.Music.Database
     const string CLIENT_VERSION = "0.1";
     const string SCROBBLER_URL = "http://post.audioscrobbler.com";
     const string PROTOCOL_VERSION = "1.1";
-    const string CACHEFILE_NAME = "audioscrobbler-cache.txt";
     #endregion
 
     #region Variables
@@ -76,38 +58,29 @@ namespace MediaPortal.Music.Database
     private string username;
     private string password;
 
-    private string cacheFile;
+    //private string cacheFile;
 
-    // Other internal properties.
-    List<Song> songList = null;
+    // Other internal properties.    
     private Thread submitThread;
-    private ArrayList queue;
+    AudioscrobblerQueue queue;
     private Object queueLock;
     private Object submitLock;
     private int _antiHammerCount = 0;
     private DateTime lastHandshake;        //< last successful attempt.
     private TimeSpan handshakeInterval;
     private DateTime lastConnectAttempt;
-    private DateTime spamCheck;
+
     private TimeSpan minConnectWaitTime;
-    private bool _queueUnclean;
+
     private bool _disableTimerThread;
     private bool _dismissOnError;
     private bool _useDebugLog;
     private System.Timers.Timer submitTimer;
-    private bool connected;
+    private bool _signedIn;
 
     // Data received by the Audioscrobbler service.
     private string md5challenge;
     private string submitUrl;
-
-    // Similar mode intelligence params
-    private int _minimumArtistMatchPercent = 50;
-    private int _limitRandomListCount = 5;
-    private int _randomNessPercent = 75;
-
-    // Neighbour mode intelligence params
-    private lastFMFeed _currentNeighbourMode = lastFMFeed.weeklyartistchart;
 
     #endregion
 
@@ -117,28 +90,10 @@ namespace MediaPortal.Music.Database
     public AudioscrobblerBase()
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-      {        
+      {
         _useDebugLog = xmlreader.GetValueAsBool("audioscrobbler", "usedebuglog", false);
         _dismissOnError = xmlreader.GetValueAsBool("audioscrobbler", "dismisscacheonerror", false);
         _disableTimerThread = xmlreader.GetValueAsBool("audioscrobbler", "disabletimerthread", true);
-        _randomNessPercent = xmlreader.GetValueAsInt("audioscrobbler", "randomness", 77);
-        int tmpNMode = xmlreader.GetValueAsInt("audioscrobbler", "neighbourmode", 1);
-
-        switch (tmpNMode)
-        {
-          case 3:
-            _currentNeighbourMode = lastFMFeed.topartists;
-            break;
-          case 1:
-            _currentNeighbourMode = lastFMFeed.weeklyartistchart;
-            break;
-          case 0:
-            _currentNeighbourMode = lastFMFeed.recenttracks;
-            break;
-          default:
-            _currentNeighbourMode = lastFMFeed.weeklyartistchart;
-            break;
-        }
 
         username = xmlreader.GetValueAsString("audioscrobbler", "user", "");
         string tmpPass;
@@ -155,26 +110,24 @@ namespace MediaPortal.Music.Database
             Log.Write("Audioscrobbler: Password decryption failed {0}", ex.Message);
           }
         }
-      }      
+      }
 
-      connected = false;
-      queue = new ArrayList();
+
+      queue = new AudioscrobblerQueue();
+
       queueLock = new Object();
-      //eventQueue           = new EventQueue(); random
       submitLock = new Object();
+
+      _signedIn = false;
       lastHandshake = DateTime.MinValue;
-      spamCheck = DateTime.MinValue;      
       handshakeInterval = new TimeSpan(0, HANDSHAKE_INTERVAL, 0);
       lastConnectAttempt = DateTime.MinValue;
       minConnectWaitTime = new TimeSpan(0, 0, CONNECT_WAIT_TIME);
-      cacheFile = CACHEFILE_NAME;
-      if (_useDebugLog)
-        Log.Write("AudioscrobblerBase: new scrobbler for {3} - debuglog={0} dismiss={1} directonly={2}", Convert.ToString(_useDebugLog),Convert.ToString(_dismissOnError),Convert.ToString(_disableTimerThread), Username);
 
-      // Loading the queue should be fast - no thread required
-      LoadQueue();
+      if (_useDebugLog)
+        Log.Write("AudioscrobblerBase: new scrobbler for {0} with {1} cached songs - debuglog={2} directonly={3}", Username, Convert.ToString(queue.Count), Convert.ToString(_useDebugLog), Convert.ToString(_disableTimerThread));
+
     }
-    
 
     #region Public getters and setters
     /// <summary>
@@ -226,7 +179,7 @@ namespace MediaPortal.Music.Database
     {
       get
       {
-        return connected;
+        return _signedIn;
       }
     }
 
@@ -241,80 +194,6 @@ namespace MediaPortal.Music.Database
       }
     }
 
-    /// <summary>
-    /// Allows to change the minimum match percentage to include similar artists
-    /// </summary>
-    public int ArtistMatchPercent
-    {
-      get
-      {
-        return _minimumArtistMatchPercent;
-      }
-      set
-      {
-        if (value != _minimumArtistMatchPercent)
-        {
-          _minimumArtistMatchPercent = value;
-          if (_useDebugLog)
-            Log.Write("AudioscrobblerBase: minimum match for similar artists set to {0}", Convert.ToString(_minimumArtistMatchPercent));
-        }
-      }
-    }
-
-    public int LimitRandomListCount
-    {
-      get
-      {
-        return _limitRandomListCount;
-      }
-      set
-      {
-        if (value != _limitRandomListCount)
-        {
-          _limitRandomListCount = value;
-          if (_useDebugLog)
-            Log.Write("AudioscrobblerBase: limit for random result lists set to {0}", Convert.ToString(_limitRandomListCount));
-        }
-      }
-    }
-
-    public int RandomNessPercent
-    {
-      get
-      {
-        return _randomNessPercent;
-      }
-      set
-      {
-        if (value != _randomNessPercent)
-        {
-          if (value == 0)
-            _randomNessPercent = 1;
-          else
-            _randomNessPercent = value;
-          if (_useDebugLog)
-            Log.Write("AudioscrobblerBase: percentage of randomness set to {0}", Convert.ToString(_randomNessPercent));
-        }
-      }
-    }
-
-    public lastFMFeed CurrentNeighbourMode
-    {
-      get
-      {
-        return _currentNeighbourMode;
-      }
-      set
-      {
-        if (value != _currentNeighbourMode)
-        {
-          _currentNeighbourMode = value;
-          if (_useDebugLog)
-            Log.Write("AudioscrobblerBase: {0}", "CurrentNeighbourMode changed");
-        }
-      }
-    }
-    
     #endregion
 
     #region Public methods.
@@ -339,7 +218,8 @@ namespace MediaPortal.Music.Database
     {
       if (submitTimer != null)
         submitTimer.Close();
-      connected = false;
+      queue.Save();
+      _signedIn = false;
     }
 
     /// <summary>
@@ -356,15 +236,7 @@ namespace MediaPortal.Music.Database
       song_.AudioScrobblerStatus = SongStatus.Cached;
       lock (queueLock)
       {
-        while (queue.Count > MAX_QUEUE_SIZE)
-          queue.RemoveAt(0);
-
-        //// prevent double adds        
-        //if (!queue.Contains(song_))
         queue.Add(song_);
-        //else
-        //  if (_useDebugLog)
-        //    Log.Write("AudioscrobblerBase: detected double add of {0}", song_.ToShortString());
       }
 
       if (_antiHammerCount == 0)
@@ -395,220 +267,14 @@ namespace MediaPortal.Music.Database
         if (_useDebugLog)
           Log.Write("AudioscrobblerBase: {0}", "direct submit cancelled because of previous errors");
     }
+       
 
-    public List<Song> getAudioScrobblerFeed(lastFMFeed feed_, string asUser_)
-    {
-      if (asUser_ == "")
-        asUser_ = Username;
-      switch (feed_)
-      {
-        case lastFMFeed.recenttracks:
-          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "recenttracks.xml", @"//recenttracks/track", feed_);
-        case lastFMFeed.topartists:
-          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "topartists.xml", @"//topartists/artist", feed_);
-        case lastFMFeed.weeklyartistchart:
-          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "weeklyartistchart.xml", @"//weeklyartistchart/artist", feed_);
-        case lastFMFeed.toptracks:
-          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "toptracks.xml", @"//toptracks/track", feed_);
-        case lastFMFeed.weeklytrackchart:
-          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "weeklytrackchart.xml", @"//weeklytrackchart/track", feed_);
-        case lastFMFeed.neighbours:
-          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "neighbours.xml", @"//neighbours/user", feed_);
-        case lastFMFeed.friends:
-          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "friends.xml", @"//friends/user", feed_);        
-        case lastFMFeed.toptags:
-          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "tags.xml", @"//toptags/tag", feed_);
-        default:
-          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "recenttracks.xml", @"//recenttracks/track", feed_);
-      }
-    }
-
-    public List<Song> getSimilarArtists(string Artist_, bool randomizeList_)
-    {      
-      if (randomizeList_)
-      {
-        Random rand = new Random();
-        List<Song> similarArtists = new List<Song>();
-        List<Song> randomSimilarArtists = new List<Song>();
-        similarArtists = ParseXMLDocForSimilarArtists(Artist_);
-        int artistsAdded = 0;
-        int randomPosition;
-        // make sure we do not get an endless loop
-        if (similarArtists.Count > _limitRandomListCount)
-        {
-          int minRandValue = _limitRandomListCount;
-          int calcRandValue = (similarArtists.Count - 1) * _randomNessPercent / 100;
-          while (artistsAdded < _limitRandomListCount)
-          {
-            bool foundDoubleEntry = false;
-            if (calcRandValue > minRandValue)
-              randomPosition = rand.Next(0, calcRandValue);
-            else              
-              randomPosition = rand.Next(0, minRandValue);
-            // loop current list to find out if randomPos was already inserted
-            for (int j = 0; j < randomSimilarArtists.Count; j++)
-            {
-              if (randomSimilarArtists.Contains(similarArtists[randomPosition]))
-                foundDoubleEntry = true;
-            }
-            // new item therefore add it
-            if (!foundDoubleEntry)
-            {
-              randomSimilarArtists.Add(similarArtists[randomPosition]);
-              artistsAdded++;
-            }
-          }
-          // enough similar artists
-          return randomSimilarArtists;
-        } 
-        else
-          // limit not reached - return all Artists
-          return similarArtists;
-      }
-      else
-        return ParseXMLDocForSimilarArtists(Artist_);
-    }    
-
-    public List<Song> getNeighboursArtists(bool randomizeList_)
-    {
-      List<Song> myNeighbours = new List<Song>();
-      List<Song> myRandomNeighbours = new List<Song>();
-      List<Song> myNeighboorsArtists = new List<Song>();
-      List<Song> myRandomNeighboorsArtists = new List<Song>();
-      myNeighbours = getAudioScrobblerFeed(lastFMFeed.neighbours, "");
-
-      if (randomizeList_)
-      {
-        Random rand = new Random();
-        int neighboursAdded = 0;
-        int randomPosition;
-        // make sure we do not get an endless loop
-        if (myNeighbours.Count > _limitRandomListCount)
-        {
-          int minRandValue = _limitRandomListCount;
-          int calcRandValue = (myNeighbours.Count - 1) * _randomNessPercent / 100;
-          while (neighboursAdded < _limitRandomListCount)
-          {
-            bool foundDoubleEntry = false;
-            if (calcRandValue > minRandValue)
-              randomPosition = rand.Next(0, calcRandValue);
-            else
-              randomPosition = rand.Next(0, minRandValue);
-
-            // loop current list to find out if randomPos was already inserted
-            for (int j = 0; j < myRandomNeighbours.Count; j++)
-            {
-              if (myRandomNeighbours.Contains(myNeighbours[randomPosition]))
-                foundDoubleEntry = true;
-            }
-            // new item therefore add it
-            if (!foundDoubleEntry)
-            {
-              myRandomNeighbours.Add(myNeighbours[randomPosition]);
-              neighboursAdded++;
-            }
-          }
-          // now _limitRandomListCount random neighbours are added
-          // get artists for these neighbours  
-          for (int n = 0; n < myRandomNeighbours.Count; n++)
-          {            
-            myNeighboorsArtists = getAudioScrobblerFeed(_currentNeighbourMode, myRandomNeighbours[n].Artist);
-
-            // make sure the neighbour has enough top artists
-            if (myNeighboorsArtists.Count > _limitRandomListCount)
-            {
-              // get _limitRandomListCount artists for each random neighbour
-              int artistsAdded = 0;
-              int minRandAValue = _limitRandomListCount;
-              int calcRandAValue = (myNeighboorsArtists.Count - 1) * _randomNessPercent / 100;
-              while (artistsAdded < _limitRandomListCount)
-              {
-                bool foundDoubleEntry = false;
-                if (calcRandAValue > minRandAValue)
-                  randomPosition = rand.Next(0, calcRandAValue);
-                else
-                  randomPosition = rand.Next(0, minRandAValue);
-
-                for (int j = 0; j < myRandomNeighboorsArtists.Count; j++)
-                {
-                  if (myRandomNeighboorsArtists.Contains(myNeighboorsArtists[randomPosition]))
-                    foundDoubleEntry = true;
-                }
-                // new item therefore add it
-                if (!foundDoubleEntry)
-                {
-                  myRandomNeighboorsArtists.Add(myNeighboorsArtists[randomPosition]);
-                  artistsAdded++;
-                }
-              }
-            }
-          }
-          return myRandomNeighboorsArtists;
-
-        }
-        else
-        // limit not reached - return all neighbours artists          
-        {
-          for (int i = 0; i < myNeighboorsArtists.Count; i++)
-            myNeighboorsArtists.AddRange(getAudioScrobblerFeed(_currentNeighbourMode, myNeighbours[i].Artist));
-          return myNeighboorsArtists;
-        }
-
-      }
-      // do not randomize
-      else
-      {
-        if (myNeighbours.Count > 4)
-          for (int i = 0; i < 4; i++)
-            myNeighboorsArtists.AddRange(getAudioScrobblerFeed(_currentNeighbourMode, myNeighbours[i].Artist));
-        return myNeighboorsArtists;
-      }
-    }
-
-    /// <summary>
-    /// Clears the queue. Also clears the cached queue from the disk.
-    /// </summary>
-    public void ClearQueue()
-    {
-      lock (queueLock)
-      {
-        try
-        {
-          if (queue.Count > 0)
-            queue.Clear();
-          SaveQueue();
-          _queueUnclean = false;
-        }
-        catch (Exception ex)
-        {
-          Log.Write("AudioscrobblerBase: clear queue exception", ex.Message);
-        }
-      }
-    }
-
-    /// <summary>
-    /// Clears the queue and tries to add cached files again.
-    /// </summary>
-    public void ResetQueue()
-    {
-      lock (queueLock)
-      {
-        SaveQueue();
-        queue.Clear();
-        LoadQueue();
-        _queueUnclean = false;
-      }
-    }
-
-    #endregion
-    
     #region Public event triggers
 
     public void TriggerSafeModeEvent()
     {
       if (_antiHammerCount < 5)
       {
-        _queueUnclean = true;
         _antiHammerCount = _antiHammerCount + 1;
         DoHandshake(true);
         SUBMIT_INTERVAL = SUBMIT_INTERVAL * _antiHammerCount;
@@ -623,16 +289,6 @@ namespace MediaPortal.Music.Database
         }
         Log.Write("AudioscrobblerBase: falling back to safe mode: new interval: {0} sec", Convert.ToString(SUBMIT_INTERVAL));
       }
-      else
-      {
-        ResetQueue();
-        Log.Write("AudioscrobblerBase: reset queue - loading {0} songs", Convert.ToString(queue.Count));
-      }
-      if (_dismissOnError)
-      {
-        ClearQueue();
-        Log.Write("AudioscrobblerBase: {0}", "Cleared queue");
-      }
     }
 
     #endregion
@@ -644,12 +300,10 @@ namespace MediaPortal.Music.Database
     /// <returns>True if the connection was successful, false otherwise</returns>
     private bool DoHandshake(bool forceNow_)
     {
-      //Log.Write("AudioscrobblerBase.DoHandshake: {0}", "Start");
-
       // Handle uninitialized username/password.
       if (username == "" || password == "")
       {
-        Log.Write("AudioscrobblerBase: {0}", "user and password not defined");
+        Log.Write("AudioscrobblerBase: {0}", "user or password not defined");
         return false;
       }
 
@@ -684,10 +338,8 @@ namespace MediaPortal.Music.Database
       }
 
       // Send the event.
-      if (!connected)
-      {
-        connected = true;
-      }
+      if (!_signedIn)
+        _signedIn = true;
 
       lastHandshake = DateTime.Now;
       // reset to leave "safe mode"
@@ -697,6 +349,7 @@ namespace MediaPortal.Music.Database
       return true;
     }
     
+
     /// <summary>
     /// Executes the given HTTP request and parses the response of the server.
     /// </summary>
@@ -705,8 +358,6 @@ namespace MediaPortal.Music.Database
     /// <returns>True if the request was successfully completed, false otherwise</returns>
     private bool GetResponse(string url_, string postdata_)
     {
-      //Log.Write("AudioscrobblerBase.GetResponse: {0}", "Start");
-
       // Enforce a minimum wait time between connects.
       DateTime nextconnect = lastConnectAttempt.Add(minConnectWaitTime);
       if (DateTime.Now < nextconnect)
@@ -781,14 +432,7 @@ namespace MediaPortal.Music.Database
         return false;
       }
 
-      /* At this point we are connected.  Now we get the first line of the
-       * response. That should be one of the following:
-       * UPTODATE
-       * UPDATE
-       * OK
-       * FAILED
-       * BADUSER / BADAUTH
-       */
+      // now we are connected
       if (_useDebugLog)
         Log.Write("AudioscrobblerBase: {0}", "Response received");
 
@@ -838,6 +482,7 @@ namespace MediaPortal.Music.Database
       //Log.Write("AudioscrobblerBase.GetResponse: {0}", "End");
       return success;
     }
+    #endregion
 
     void OnSubmitTimerTick(object trash_, ElapsedEventArgs args_)
     {
@@ -867,24 +512,14 @@ namespace MediaPortal.Music.Database
     /// </summary>
     private void SubmitQueue()
     {
-      //Log.Write("AudioscrobblerBase.SubmitQueue: {0}", "Start");
+      int _submittedSongs = 0;
 
       // Make sure that a connection is possible.
       if (!DoHandshake(false))
       {
         Log.Write("AudioscrobblerBase: {0}", "Handshake failed.");
-        lock (submitLock)
-        {
-          // Save the queue now since the connection might come back...
-          SaveQueue();
-          _queueUnclean = true;
-        }
         return;
       }
-
-      if (_queueUnclean)
-        ResetQueue();
-
       // If the queue is empty, nothing else to do today.
       if (queue.Count <= 0)
       {
@@ -898,77 +533,28 @@ namespace MediaPortal.Music.Database
       {
         // Save the queue now since connecting to AS may time out, which
         // takes time, and the user could quit, losing one valuable song...
-        SaveQueue();
-
-        // Create a copy of queue since it might change.
-        Song[] songs = null;
-        lock (queueLock)
-        {          
-          songs = (Song[])queue.ToArray(typeof(Song));
-        }
+        queue.Save();
 
         // Build POST data from the username and the password.
         string webUsername = System.Web.HttpUtility.UrlEncode(username);
         string md5resp = HashPassword();
         string postData = "u=" + webUsername + "&s=" + md5resp;
 
-        // Append the songs to be submitted.
-        int n_songs = 0;
-        int n_totalsongs = 0;
-        
-        // Prevent spam errors due to false order
-        bool unsorted = true;
-        bool foundEarlierSong = false;
-        spamCheck = DateTime.UtcNow;  
-        DateTime lastAddedTime = DateTime.MinValue;
-        List<Song> sortedSongs = new List<Song>();
-        
-        // someone doing this nicer please? Don't shoot me :)
-        while (unsorted)
-        {
-          foundEarlierSong = false;
-         // get earliest play time
-          foreach (Song unsortedSong in songs)
-          {            
-            if (lastAddedTime < unsortedSong.DateTimePlayed)
-              if (unsortedSong.DateTimePlayed < spamCheck)
-              {
-                spamCheck = unsortedSong.DateTimePlayed;
-                foundEarlierSong = true;
-              }
-          }
-          // add the earliest song to the sorted List
-          foreach (Song unsortedSong in songs)
-          {
-            if (unsortedSong.DateTimePlayed == spamCheck)
-            {
-              sortedSongs.Add(unsortedSong);
-              lastAddedTime = unsortedSong.DateTimePlayed;
-              spamCheck = DateTime.UtcNow;
-            }
-          }
-          if (!foundEarlierSong)
-            unsorted = false;
-        }
+        StringBuilder sb = new StringBuilder();
 
-//        foreach (Song song in songs)
-        foreach (Song song in sortedSongs)
-        {
-          spamCheck = Convert.ToDateTime(song.getQueueTime());
-          postData += "&" + song.GetPostData(n_songs);
-          n_songs++;
+        sb.Append(postData);
+        sb.Append(queue.GetTransmitInfo(out _submittedSongs));
 
-          n_totalsongs++;
-        }
+        postData = sb.ToString();
 
         if (!postData.Contains("&a[0]"))
         {
           if (_useDebugLog)
             Log.Write("AudioscrobblerBase: postData did not contain info for {0}", "latest song");
-          if (_dismissOnError)
-            ClearQueue();
-          else
-            ResetQueue();
+          //if (_dismissOnError)
+          //  ClearQueue();
+          //else
+          //  ResetQueue();
           return;
         }
 
@@ -982,175 +568,17 @@ namespace MediaPortal.Music.Database
         // Remove the submitted songs from the queue.
         lock (queueLock)
         {
-          //for (int i = 0; i < n_totalsongs; i++)
-          //  queue.RemoveAt(0);
           try
           {
-            ClearQueue();
+            queue.RemoveRange(0, _submittedSongs);
+            queue.Save();
           }
           catch (Exception ex)
           {
             Log.Write("AudioscrobblerBase: submit thread clearing cache - {0}", ex.Message);
           }
         }
-
-        // Send an event for each of the submitted songs.
-        foreach (Song song in songs)
-        {
-          song.AudioScrobblerStatus = SongStatus.Submitted;
-        }
       }
-    }
-
-    private List<Song> ParseXMLDocForSimilarArtists(string artist_)
-    {
-      songList = new List<Song>();
-      try
-      {
-        XmlDocument doc = new XmlDocument();
-
-        doc.Load(@"http://ws.audioscrobbler.com/1.0/artist/" + artist_ + "/" + "similar.xml");
-        XmlNodeList nodes = doc.SelectNodes(@"//similarartists/artist");
-
-        foreach (XmlNode node in nodes)
-        {
-          Song nodeSong = new Song();
-          foreach (XmlNode child in node.ChildNodes)
-          {
-            if (child.Name == "name" && child.ChildNodes.Count != 0)
-              nodeSong.Artist = child.ChildNodes[0].Value;
-            else if (child.Name == "mbid" && child.ChildNodes.Count != 0)
-              nodeSong.MusicBrainzID = child.ChildNodes[0].Value;
-            else if (child.Name == "url" && child.ChildNodes.Count != 0)
-              nodeSong.URL = child.ChildNodes[0].Value;
-            else if (child.Name == "image" && child.ChildNodes.Count != 0)
-              nodeSong.WebImage = child.ChildNodes[0].Value;
-            else if (child.Name == "match" && child.ChildNodes.Count != 0)
-              nodeSong.LastFMMatch = child.ChildNodes[0].Value;
-          }
-          if (Convert.ToInt32(nodeSong.LastFMMatch) > _minimumArtistMatchPercent)
-            songList.Add(nodeSong);
-        }
-      }
-      catch
-      {
-        // input nice exception here...
-      }
-      return songList;
-    }
-
-    private List<Song> ParseXMLDoc(string xmlFileInput, string queryNodePath, lastFMFeed xmlfeed)
-    {
-      songList = new List<Song>();
-      try
-      {
-        XmlDocument doc = new XmlDocument();
-
-        doc.Load(xmlFileInput);
-        XmlNodeList nodes = doc.SelectNodes(queryNodePath);
-
-        foreach (XmlNode node in nodes)
-        {
-          Song nodeSong = new Song();
-          foreach (XmlNode child in node.ChildNodes)
-          {
-            switch (xmlfeed)
-            {
-              case (lastFMFeed.recenttracks):
-                {
-                  if (child.Name == "artist" && child.ChildNodes.Count != 0)
-                    nodeSong.Artist = child.ChildNodes[0].Value;
-                  else if (child.Name == "name" && child.ChildNodes.Count != 0)
-                    nodeSong.Title = child.ChildNodes[0].Value;
-                  else if (child.Name == "mbid" && child.ChildNodes.Count != 0)
-                    nodeSong.MusicBrainzID = child.ChildNodes[0].Value;
-                  else if (child.Name == "url" && child.ChildNodes.Count != 0)
-                    nodeSong.URL = child.ChildNodes[0].Value;
-                  else if (child.Name == "date" && child.ChildNodes.Count != 0)
-                    nodeSong.DateTimePlayed = Convert.ToDateTime(child.ChildNodes[0].Value);
-                }
-                break;
-              case (lastFMFeed.topartists):
-                {
-                  if (child.Name == "name" && child.ChildNodes.Count != 0)
-                    nodeSong.Artist = child.ChildNodes[0].Value;
-                  //else if (child.Name == "name" && child.ChildNodes.Count != 0)
-                  //  nodeSong.Title = child.ChildNodes[0].Value;
-                  else if (child.Name == "mbid" && child.ChildNodes.Count != 0)
-                    nodeSong.MusicBrainzID = child.ChildNodes[0].Value;
-                  else if (child.Name == "playcount" && child.ChildNodes.Count != 0)
-                    nodeSong.TimesPlayed = Convert.ToInt32(child.ChildNodes[0].Value);
-                  else if (child.Name == "url" && child.ChildNodes.Count != 0)
-                    nodeSong.URL = child.ChildNodes[0].Value;
-                  else if (child.Name == "match" && child.ChildNodes.Count != 0)
-                    nodeSong.LastFMMatch = child.ChildNodes[0].Value;
-                }
-                break;
-              case (lastFMFeed.weeklyartistchart):
-                goto case lastFMFeed.topartists;
-              case (lastFMFeed.toptracks):
-                {
-                  if (child.Name == "artist" && child.ChildNodes.Count != 0)
-                    nodeSong.Artist = child.ChildNodes[0].Value;
-                  else if (child.Name == "name" && child.ChildNodes.Count != 0)
-                    nodeSong.Title = child.ChildNodes[0].Value;
-                  else if (child.Name == "mbid" && child.ChildNodes.Count != 0)
-                    nodeSong.MusicBrainzID = child.ChildNodes[0].Value;
-                  else if (child.Name == "playcount" && child.ChildNodes.Count != 0)
-                    nodeSong.TimesPlayed = Convert.ToInt32(child.ChildNodes[0].Value);
-                  else if (child.Name == "url" && child.ChildNodes.Count != 0)
-                    nodeSong.URL = child.ChildNodes[0].Value;
-                }
-                break;
-              case (lastFMFeed.toptags):
-                {
-                  if (child.Name == "name" && child.ChildNodes.Count != 0)
-                    nodeSong.Artist = child.ChildNodes[0].Value;
-                  else if (child.Name == "count" && child.ChildNodes.Count != 0)
-                    nodeSong.TimesPlayed = Convert.ToInt32(child.ChildNodes[0].Value);
-                  else if (child.Name == "url" && child.ChildNodes.Count != 0)
-                    nodeSong.URL = child.ChildNodes[0].Value;
-                }
-                break;
-              case (lastFMFeed.neighbours):
-                {
-                  if (node.Attributes["username"].Value != "")
-                    nodeSong.Artist = node.Attributes["username"].Value;
-                  if (child.Name == "url" && child.ChildNodes.Count != 0)
-                    nodeSong.URL = child.ChildNodes[0].Value;
-                  else if (child.Name == "match" && child.ChildNodes.Count != 0)
-                    nodeSong.LastFMMatch = child.ChildNodes[0].Value;
-                  else if (child.Name == "image" && child.ChildNodes.Count != 0)
-                    nodeSong.WebImage = child.ChildNodes[0].Value;
-                }
-                break;
-              case (lastFMFeed.friends):
-                {
-                  if (node.Attributes["username"].Value != "")
-                    nodeSong.Artist = node.Attributes["username"].Value;
-                  if (child.Name == "url" && child.ChildNodes.Count != 0)
-                    nodeSong.URL = child.ChildNodes[0].Value;
-                  else if (child.Name == "image" && child.ChildNodes.Count != 0)
-                    nodeSong.WebImage = child.ChildNodes[0].Value;
-                  //else if (child.Name == "connections" && child.ChildNodes.Count != 0)
-                  //  nodeSong.LastFMMatch = child.ChildNodes[0].Value;
-                }
-                break;
-              case (lastFMFeed.weeklytrackchart):
-                goto case lastFMFeed.toptracks;
-              case (lastFMFeed.similar):
-                goto case lastFMFeed.topartists;
-
-            } //switch
-          }
-          songList.Add(nodeSong);
-        }
-      }
-      catch
-      {
-        // input nice exception here...
-      }
-      return songList;
     }
 
     #endregion
@@ -1233,93 +661,6 @@ namespace MediaPortal.Music.Database
         Log.Write("AudioscrobblerBase.parseIntervalMessage: {0}", logmessage);
       }
       return true;
-    }
-    #endregion
-
-    #region Filesystem access
-    private bool LoadQueue()
-    {
-      FileStream fs;
-      try
-      {
-        fs = new FileStream(cacheFile, FileMode.OpenOrCreate, FileAccess.Read, FileShare.Read);
-      }
-      catch (Exception e)
-      {
-        Log.Write("AudioscrobblerBase: Unable to open cache file: {0}", e.Message);
-        return false;
-      }
-
-      StreamReader file = new StreamReader(fs);
-      String line;
-      // this lock isn't strictly necessary - this is only called once in
-      // the constructor
-      lock (queueLock)
-      {
-        while ((line = file.ReadLine()) != null)
-        {
-          try
-          {
-            Song s = Song.ParseFromLine(line);
-
-            bool alreadyIn = false;
-            for (int i = 0; i < queue.Count; i++)
-              if (queue[i].Equals(s))
-                alreadyIn = true;
-            if (!alreadyIn)
-            {
-              s.AudioScrobblerStatus = SongStatus.Loaded;
-              queue.Add(s);
-            }
-            else
-              Log.Write("AudioscrobblerBase: ignoring double entry from cache: {0}", s.ToShortString());
-
-          }
-          catch (Exception e)
-          {
-            Log.Write("AudioscrobblerBase: Unable to parse the cached song: : {0}", line);
-            Log.Write("AudioscrobblerBase: Unable to parse the cached song: : {0}", e.Message);
-          }
-        }
-      }
-      file.Close();
-      if (_useDebugLog)
-        Log.Write("AudioscrobblerBase: Songs loaded from cache: {0}", queue.Count);
-
-      return true;
-    }
-
-
-    private void SaveQueue()
-    {
-      FileStream fs;
-      try
-      {
-        fs = new FileStream(cacheFile, FileMode.Create, FileAccess.Write);
-      }
-      catch (Exception e)
-      {
-        Log.Write("AudioscrobblerBase: Unable to open queue file: {0}", e.Message);
-        return;
-      }
-
-      StreamWriter file = new StreamWriter(fs);
-      // lock this - it should be quick with buffered output anyway
-      lock (queueLock)
-      {
-        foreach (Song s in queue)
-        {
-          try
-          {
-            file.WriteLine(s.ToString());
-          }
-          catch (IOException e)
-          {
-            Log.Write("AudioscrobblerBase: Failed to write queue to file: {0}", e.Message);
-          }
-        }
-      }
-      file.Close();
     }
     #endregion
 

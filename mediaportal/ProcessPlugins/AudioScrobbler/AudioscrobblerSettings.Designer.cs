@@ -71,7 +71,6 @@ namespace MediaPortal.AudioScrobbler
       this.linkLabel2 = new System.Windows.Forms.LinkLabel();
       this.groupBoxOptions = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.checkBoxEnableSubmits = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.buttonClearCache = new MediaPortal.UserInterface.Controls.MPButton();
       this.checkBoxLogVerbose = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxDismissOnError = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxdisableTimerThread = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -293,7 +292,7 @@ namespace MediaPortal.AudioScrobbler
       // linkLabel1
       // 
       this.linkLabel1.AutoSize = true;
-      this.linkLabel1.Location = new System.Drawing.Point(310, 258);
+      this.linkLabel1.Location = new System.Drawing.Point(305, 268);
       this.linkLabel1.Name = "linkLabel1";
       this.linkLabel1.Size = new System.Drawing.Size(213, 13);
       this.linkLabel1.TabIndex = 6;
@@ -304,7 +303,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       this.linkLabel2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.linkLabel2.AutoSize = true;
-      this.linkLabel2.Location = new System.Drawing.Point(310, 230);
+      this.linkLabel2.Location = new System.Drawing.Point(305, 240);
       this.linkLabel2.Name = "linkLabel2";
       this.linkLabel2.Size = new System.Drawing.Size(104, 13);
       this.linkLabel2.TabIndex = 5;
@@ -314,14 +313,13 @@ namespace MediaPortal.AudioScrobbler
       // groupBoxOptions
       // 
       this.groupBoxOptions.Controls.Add(this.checkBoxEnableSubmits);
-      this.groupBoxOptions.Controls.Add(this.buttonClearCache);
       this.groupBoxOptions.Controls.Add(this.checkBoxLogVerbose);
       this.groupBoxOptions.Controls.Add(this.checkBoxDismissOnError);
       this.groupBoxOptions.Controls.Add(this.checkBoxdisableTimerThread);
       this.groupBoxOptions.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxOptions.Location = new System.Drawing.Point(10, 147);
+      this.groupBoxOptions.Location = new System.Drawing.Point(10, 129);
       this.groupBoxOptions.Name = "groupBoxOptions";
-      this.groupBoxOptions.Size = new System.Drawing.Size(275, 145);
+      this.groupBoxOptions.Size = new System.Drawing.Size(275, 77);
       this.groupBoxOptions.TabIndex = 4;
       this.groupBoxOptions.TabStop = false;
       this.groupBoxOptions.Text = "Scrobbler options";
@@ -330,28 +328,18 @@ namespace MediaPortal.AudioScrobbler
       // 
       this.checkBoxEnableSubmits.AutoSize = true;
       this.checkBoxEnableSubmits.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxEnableSubmits.Location = new System.Drawing.Point(16, 37);
+      this.checkBoxEnableSubmits.Location = new System.Drawing.Point(16, 22);
       this.checkBoxEnableSubmits.Name = "checkBoxEnableSubmits";
       this.checkBoxEnableSubmits.Size = new System.Drawing.Size(239, 17);
       this.checkBoxEnableSubmits.TabIndex = 4;
       this.checkBoxEnableSubmits.Text = "Improve my profile at last.fm - submits enabled";
       this.checkBoxEnableSubmits.UseVisualStyleBackColor = true;
       // 
-      // buttonClearCache
-      // 
-      this.buttonClearCache.Location = new System.Drawing.Point(16, 108);
-      this.buttonClearCache.Name = "buttonClearCache";
-      this.buttonClearCache.Size = new System.Drawing.Size(241, 23);
-      this.buttonClearCache.TabIndex = 3;
-      this.buttonClearCache.Text = "Clear cache";
-      this.buttonClearCache.UseVisualStyleBackColor = true;
-      this.buttonClearCache.Click += new System.EventHandler(this.buttonClearCache_Click);
-      // 
       // checkBoxLogVerbose
       // 
       this.checkBoxLogVerbose.AutoSize = true;
       this.checkBoxLogVerbose.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxLogVerbose.Location = new System.Drawing.Point(16, 70);
+      this.checkBoxLogVerbose.Location = new System.Drawing.Point(16, 45);
       this.checkBoxLogVerbose.Name = "checkBoxLogVerbose";
       this.checkBoxLogVerbose.Size = new System.Drawing.Size(135, 17);
       this.checkBoxLogVerbose.TabIndex = 2;
@@ -362,7 +350,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       this.checkBoxDismissOnError.AutoSize = true;
       this.checkBoxDismissOnError.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxDismissOnError.Location = new System.Drawing.Point(16, 60);
+      this.checkBoxDismissOnError.Location = new System.Drawing.Point(16, 53);
       this.checkBoxDismissOnError.Name = "checkBoxDismissOnError";
       this.checkBoxDismissOnError.Size = new System.Drawing.Size(228, 17);
       this.checkBoxDismissOnError.TabIndex = 1;
@@ -374,7 +362,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       this.checkBoxdisableTimerThread.AutoSize = true;
       this.checkBoxdisableTimerThread.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxdisableTimerThread.Location = new System.Drawing.Point(6, 20);
+      this.checkBoxdisableTimerThread.Location = new System.Drawing.Point(6, 13);
       this.checkBoxdisableTimerThread.Name = "checkBoxdisableTimerThread";
       this.checkBoxdisableTimerThread.Size = new System.Drawing.Size(241, 17);
       this.checkBoxdisableTimerThread.TabIndex = 0;
@@ -393,7 +381,7 @@ namespace MediaPortal.AudioScrobbler
       this.groupBoxAccount.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxAccount.Location = new System.Drawing.Point(10, 6);
       this.groupBoxAccount.Name = "groupBoxAccount";
-      this.groupBoxAccount.Size = new System.Drawing.Size(275, 135);
+      this.groupBoxAccount.Size = new System.Drawing.Size(275, 117);
       this.groupBoxAccount.TabIndex = 3;
       this.groupBoxAccount.TabStop = false;
       this.groupBoxAccount.Text = "Last.fm account";
@@ -401,7 +389,7 @@ namespace MediaPortal.AudioScrobbler
       // mpLabel1
       // 
       this.mpLabel1.AutoSize = true;
-      this.mpLabel1.Location = new System.Drawing.Point(16, 67);
+      this.mpLabel1.Location = new System.Drawing.Point(16, 63);
       this.mpLabel1.Name = "mpLabel1";
       this.mpLabel1.Size = new System.Drawing.Size(53, 13);
       this.mpLabel1.TabIndex = 0;
@@ -410,7 +398,7 @@ namespace MediaPortal.AudioScrobbler
       // mpLabel2
       // 
       this.mpLabel2.AutoSize = true;
-      this.mpLabel2.Location = new System.Drawing.Point(16, 23);
+      this.mpLabel2.Location = new System.Drawing.Point(16, 19);
       this.mpLabel2.Name = "mpLabel2";
       this.mpLabel2.Size = new System.Drawing.Size(55, 13);
       this.mpLabel2.TabIndex = 0;
@@ -421,7 +409,7 @@ namespace MediaPortal.AudioScrobbler
       this.textBoxASUsername.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxASUsername.BorderColor = System.Drawing.Color.Empty;
-      this.textBoxASUsername.Location = new System.Drawing.Point(16, 41);
+      this.textBoxASUsername.Location = new System.Drawing.Point(16, 37);
       this.textBoxASUsername.Name = "textBoxASUsername";
       this.textBoxASUsername.Size = new System.Drawing.Size(243, 20);
       this.textBoxASUsername.TabIndex = 0;
@@ -432,7 +420,7 @@ namespace MediaPortal.AudioScrobbler
       this.maskedTextBoxASPassword.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.maskedTextBoxASPassword.Culture = new System.Globalization.CultureInfo("");
-      this.maskedTextBoxASPassword.Location = new System.Drawing.Point(16, 85);
+      this.maskedTextBoxASPassword.Location = new System.Drawing.Point(16, 81);
       this.maskedTextBoxASPassword.Name = "maskedTextBoxASPassword";
       this.maskedTextBoxASPassword.PasswordChar = '*';
       this.maskedTextBoxASPassword.Size = new System.Drawing.Size(243, 20);
@@ -650,7 +638,7 @@ namespace MediaPortal.AudioScrobbler
       this.trackBarRandomness.Maximum = 100;
       this.trackBarRandomness.Minimum = 25;
       this.trackBarRandomness.Name = "trackBarRandomness";
-      this.trackBarRandomness.Size = new System.Drawing.Size(264, 48);
+      this.trackBarRandomness.Size = new System.Drawing.Size(264, 45);
       this.trackBarRandomness.SmallChange = 5;
       this.trackBarRandomness.TabIndex = 0;
       this.trackBarRandomness.TickFrequency = 15;
@@ -1146,7 +1134,6 @@ namespace MediaPortal.AudioScrobbler
     private MediaPortal.UserInterface.Controls.MPButton buttonRefreshWeeklyTracks;
     private MediaPortal.UserInterface.Controls.MPListView listViewWeeklyTracks;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxOptions;
-    private MediaPortal.UserInterface.Controls.MPButton buttonClearCache;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxLogVerbose;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxDismissOnError;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxdisableTimerThread;

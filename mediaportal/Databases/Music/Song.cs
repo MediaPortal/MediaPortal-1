@@ -364,27 +364,6 @@ namespace MediaPortal.Music.Database
         _DateTimePlayed.ToString("s");
     }
 
-    // Can throw Int32.Parse and DateTime.Parse exceptions
-    public static Song ParseFromLine(string cacheLine)
-    {
-      string[] arr = cacheLine.Split('\t');
-      if (arr.Length == 6)
-      {
-        Song song = new Song();
-        song.Artist = arr[0];
-        song.Title = arr[1];
-        song.Album = arr[2];
-        song.MusicBrainzID = arr[3];
-        song.Duration = Int32.Parse(arr[4]);
-        song.DateTimePlayed = DateTime.Parse(arr[5]);
-        return song;
-      }
-      else
-      {
-        throw new Exception("Bad song format: " + cacheLine);
-      }
-    }
-
     public string getQueueTime()
     {
       string queueTime = String.Format("{0:0000}-{1:00}-{2:00} {3:00}:{4:00}:{5:00}",
@@ -397,27 +376,27 @@ namespace MediaPortal.Music.Database
       return queueTime;
     }
 
-    public string GetPostData(int index)
-    {
-      // Generate POST data for updates:
-      //	u - username
-      //	s - md5 response
-      //	a - artist
-      //	t - title
-      //	b - album
-      //	m - musicbrainz id
-      //	l - length (secs)
-      //	i - time (UTC)
+    //public string GetPostData(int index)
+    //{
+    //  // Generate POST data for updates:
+    //  //	u - username
+    //  //	s - md5 response
+    //  //	a - artist
+    //  //	t - title
+    //  //	b - album
+    //  //	m - musicbrainz id
+    //  //	l - length (secs)
+    //  //	i - time (UTC)
 
-      return String.Format("a[{0}]={1}&t[{0}]={2}&b[{0}]={3}&m[{0}]={4}&l[{0}]={5}&i[{0}]={6}",
-                           index,
-                           System.Web.HttpUtility.UrlEncode(m_strArtist),
-                           System.Web.HttpUtility.UrlEncode(m_strTitle),
-                           System.Web.HttpUtility.UrlEncode(m_strAlbum),
-                           System.Web.HttpUtility.UrlEncode(_musicBrainzID),
-                           m_iDuration,
-                           System.Web.HttpUtility.UrlEncode(getQueueTime()));
-    }
+    //  return String.Format("a[{0}]={1}&t[{0}]={2}&b[{0}]={3}&m[{0}]={4}&l[{0}]={5}&i[{0}]={6}",
+    //                       index,
+    //                       System.Web.HttpUtility.UrlEncode(m_strArtist),
+    //                       System.Web.HttpUtility.UrlEncode(m_strTitle),
+    //                       System.Web.HttpUtility.UrlEncode(m_strAlbum),
+    //                       System.Web.HttpUtility.UrlEncode(_musicBrainzID),
+    //                       m_iDuration,
+    //                       System.Web.HttpUtility.UrlEncode(getQueueTime()));
+    //}
   }
 
 

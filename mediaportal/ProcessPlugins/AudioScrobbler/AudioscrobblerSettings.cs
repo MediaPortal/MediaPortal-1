@@ -41,7 +41,7 @@ namespace MediaPortal.AudioScrobbler
 {
   public partial class AudioscrobblerSettings : Form
   {
-    private AudioscrobblerBase scrobbler;
+    private AudioscrobblerUtils lastFmLookup;
     List<Song> songList = null;
     List<Song> similarList = null;
 
@@ -86,29 +86,28 @@ namespace MediaPortal.AudioScrobbler
             //Log.Write("Audioscrobbler: Password decryption failed {0}", ex.Message);
           }
         }
-        scrobbler = new AudioscrobblerBase();
-        scrobbler.Disconnect();
+        lastFmLookup = new AudioscrobblerUtils();
         int tmpNMode = xmlreader.GetValueAsInt("audioscrobbler", "neighbourmode", 1);
 
         switch (tmpNMode)
         {
           case 3:
-            scrobbler.CurrentNeighbourMode = lastFMFeed.topartists;
+            lastFmLookup.CurrentNeighbourMode = lastFMFeed.topartists;
             comboBoxNeighbourMode.SelectedIndex = 0;
             comboBoxNModeSelect.SelectedIndex = 0;
             break;
           case 1:
-            scrobbler.CurrentNeighbourMode = lastFMFeed.weeklyartistchart;
+            lastFmLookup.CurrentNeighbourMode = lastFMFeed.weeklyartistchart;
             comboBoxNeighbourMode.SelectedIndex = 1;
             comboBoxNModeSelect.SelectedIndex = 1;
             break;
           case 0:
-            scrobbler.CurrentNeighbourMode = lastFMFeed.recenttracks;
+            lastFmLookup.CurrentNeighbourMode = lastFMFeed.recenttracks;
             comboBoxNeighbourMode.SelectedIndex = 2;
             comboBoxNModeSelect.SelectedIndex = 2;
             break;
           default:
-            scrobbler.CurrentNeighbourMode = lastFMFeed.weeklyartistchart;
+            lastFmLookup.CurrentNeighbourMode = lastFMFeed.weeklyartistchart;
             comboBoxNeighbourMode.SelectedIndex = 1;
             comboBoxNModeSelect.SelectedIndex = 1;
             break;
@@ -128,7 +127,7 @@ namespace MediaPortal.AudioScrobbler
         xmlwriter.SetValueAsBool("audioscrobbler", "scrobbledefault", checkBoxScrobbleDefault.Checked);
         xmlwriter.SetValue("audioscrobbler", "similarartistscount", numericUpDownSimilarArtist.Value);
         xmlwriter.SetValue("audioscrobbler", "tracksperartistscount", numericUpDownTracksPerArtist.Value);
-        xmlwriter.SetValue("audioscrobbler", "neighbourmode", (int)scrobbler.CurrentNeighbourMode); 
+        xmlwriter.SetValue("audioscrobbler", "neighbourmode", (int)lastFmLookup.CurrentNeighbourMode); 
 
         xmlwriter.SetValue("audioscrobbler", "user", textBoxASUsername.Text);
         try
@@ -193,13 +192,13 @@ namespace MediaPortal.AudioScrobbler
       switch (comboBoxNeighbourMode.SelectedIndex)
       {
         case 0:
-          scrobbler.CurrentNeighbourMode = lastFMFeed.topartists;
+          lastFmLookup.CurrentNeighbourMode = lastFMFeed.topartists;
           break;
         case 1:
-          scrobbler.CurrentNeighbourMode = lastFMFeed.weeklyartistchart;
+          lastFmLookup.CurrentNeighbourMode = lastFMFeed.weeklyartistchart;
           break;
         case 2:
-          scrobbler.CurrentNeighbourMode = lastFMFeed.recenttracks;
+          lastFmLookup.CurrentNeighbourMode = lastFMFeed.recenttracks;
           break;
       }
     }
@@ -209,13 +208,13 @@ namespace MediaPortal.AudioScrobbler
       switch (comboBoxNModeSelect.SelectedIndex)
       {
         case 0:
-          scrobbler.CurrentNeighbourMode = lastFMFeed.topartists;
+          lastFmLookup.CurrentNeighbourMode = lastFMFeed.topartists;
           break;
         case 1:
-          scrobbler.CurrentNeighbourMode = lastFMFeed.weeklyartistchart;
+          lastFmLookup.CurrentNeighbourMode = lastFMFeed.weeklyartistchart;
           break;
         case 2:
-          scrobbler.CurrentNeighbourMode = lastFMFeed.recenttracks;
+          lastFmLookup.CurrentNeighbourMode = lastFMFeed.recenttracks;
           break;
       }
     }
@@ -234,17 +233,12 @@ namespace MediaPortal.AudioScrobbler
       this.Close();
     }
 
-    private void buttonClearCache_Click(object sender, EventArgs e)
-    {
-      scrobbler.ClearQueue();
-    }
-
     private void buttonTagsRefresh_Click(object sender, EventArgs e)
     {
       buttonTagsRefresh.Enabled = false;
       listViewTags.Clear();
       songList = new List<Song>();
-      songList = scrobbler.getAudioScrobblerFeed(lastFMFeed.toptags, "");
+      songList = lastFmLookup.getAudioScrobblerFeed(lastFMFeed.toptags, "");
       for (int i = 0; i < songList.Count; i++)
         listViewTags.Items.Add(songList[i].ToLastFMString());
       buttonTagsRefresh.Enabled = true;
@@ -255,7 +249,7 @@ namespace MediaPortal.AudioScrobbler
       buttonRefreshRecent.Enabled = false;
       listViewRecentTracks.Clear();
       songList = new List<Song>(); ;
-      songList = scrobbler.getAudioScrobblerFeed(lastFMFeed.recenttracks, "");
+      songList = lastFmLookup.getAudioScrobblerFeed(lastFMFeed.recenttracks, "");
       for (int i = 0; i < songList.Count; i++)
         listViewRecentTracks.Items.Add(songList[i].ToShortString());
       buttonRefreshRecent.Enabled = true;
@@ -266,7 +260,7 @@ namespace MediaPortal.AudioScrobbler
       buttonArtistsRefresh.Enabled = false;
       listViewTopArtists.Clear();
       songList = new List<Song>();
-      songList = scrobbler.getAudioScrobblerFeed(lastFMFeed.topartists, "");
+      songList = lastFmLookup.getAudioScrobblerFeed(lastFMFeed.topartists, "");
       for (int i = 0; i < songList.Count; i++)
         listViewTopArtists.Items.Add(songList[i].ToLastFMString());
       buttonArtistsRefresh.Enabled = true;
@@ -277,7 +271,7 @@ namespace MediaPortal.AudioScrobbler
       buttonRefreshWeeklyArtists.Enabled = false;
       listViewWeeklyArtists.Clear();
       songList = new List<Song>();
-      songList = scrobbler.getAudioScrobblerFeed(lastFMFeed.weeklyartistchart, "");
+      songList = lastFmLookup.getAudioScrobblerFeed(lastFMFeed.weeklyartistchart, "");
       for (int i = 0; i < songList.Count; i++)
         listViewWeeklyArtists.Items.Add(songList[i].ToLastFMString());
       buttonRefreshWeeklyArtists.Enabled = true;
@@ -288,7 +282,7 @@ namespace MediaPortal.AudioScrobbler
       buttonTopTracks.Enabled = false;
       listViewTopTracks.Clear();
       songList = new List<Song>();
-      songList = scrobbler.getAudioScrobblerFeed(lastFMFeed.toptracks, "");
+      songList = lastFmLookup.getAudioScrobblerFeed(lastFMFeed.toptracks, "");
       for (int i = 0; i < songList.Count; i++)
         listViewTopTracks.Items.Add(songList[i].ToLastFMString());
       buttonTopTracks.Enabled = true;
@@ -299,7 +293,7 @@ namespace MediaPortal.AudioScrobbler
       buttonRefreshWeeklyTracks.Enabled = false;
       listViewWeeklyTracks.Clear();
       songList = new List<Song>();
-      songList = scrobbler.getAudioScrobblerFeed(lastFMFeed.weeklytrackchart, "");
+      songList = lastFmLookup.getAudioScrobblerFeed(lastFMFeed.weeklytrackchart, "");
       for (int i = 0; i < songList.Count; i++)
         listViewWeeklyTracks.Items.Add(songList[i].ToLastFMString());
       buttonRefreshWeeklyTracks.Enabled = true;
@@ -330,20 +324,20 @@ namespace MediaPortal.AudioScrobbler
     private void buttonRefreshSuggestions_Click(object sender, EventArgs e)
     {
       changeControlsSuggestions(true);
-      scrobbler.ArtistMatchPercent = trackBarArtistMatch.Value;
+      lastFmLookup.ArtistMatchPercent = trackBarArtistMatch.Value;
 
       progressBarSuggestions.PerformStep();
       songList = new List<Song>();
       similarList = new List<Song>();
 
-      songList = scrobbler.getAudioScrobblerFeed(lastFMFeed.topartists, "");
+      songList = lastFmLookup.getAudioScrobblerFeed(lastFMFeed.topartists, "");
       progressBarSuggestions.PerformStep();
 
       if (songList.Count > 7)
       {
         for (int i = 0; i <= 7; i++)
         {
-          similarList.AddRange(scrobbler.getSimilarArtists(songList[i].ToURLArtistString(), false));
+          similarList.AddRange(lastFmLookup.getSimilarArtists(songList[i].ToURLArtistString(), false));
           progressBarSuggestions.PerformStep();
         }
 
@@ -372,7 +366,7 @@ namespace MediaPortal.AudioScrobbler
       buttonRefreshNeighbours.Enabled = false;
       listViewNeighbours.Clear();
       songList = new List<Song>();
-      songList = scrobbler.getAudioScrobblerFeed(lastFMFeed.neighbours, "");
+      songList = lastFmLookup.getAudioScrobblerFeed(lastFMFeed.neighbours, "");
 
       for (int i = 0; i < songList.Count; i++)
         listViewNeighbours.Items.Add(songList[i].ToLastFMString());
@@ -395,7 +389,7 @@ namespace MediaPortal.AudioScrobbler
       buttonRefreshNeigboursArtists.Enabled = false;
       listViewNeighbours.Clear();
       songList = new List<Song>();
-      songList = scrobbler.getNeighboursArtists(false);
+      songList = lastFmLookup.getNeighboursArtists(false);
 
       for (int i = 0; i < songList.Count; i++)
         listViewNeighbours.Items.Add(songList[i].ToLastFMString());
@@ -413,7 +407,7 @@ namespace MediaPortal.AudioScrobbler
       tabControlASSettings.Enabled = false;
       ArrayList artistsInDB = new ArrayList();
       songList = new List<Song>();
-      songList = scrobbler.getNeighboursArtists(false);
+      songList = lastFmLookup.getNeighboursArtists(false);
 
       for (int i = 0; i < songList.Count; i++)
       {

@@ -1156,8 +1156,7 @@ namespace MediaPortal.GUI.Music
 
     void ScrobbleLookupThread()
     {
-      AudioscrobblerBase ascrobbler = new AudioscrobblerBase();
-      ascrobbler.Disconnect();
+      AudioscrobblerUtils ascrobbler = new AudioscrobblerUtils();
       MusicDatabase dbs = new MusicDatabase();
       Song current10SekSong = new Song();
       List<Song> scrobbledArtists = new List<Song>();

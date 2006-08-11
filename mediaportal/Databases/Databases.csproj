@@ -235,11 +235,11 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Music\AudioscrobblerBase.cs" />
+    <Compile Include="Music\AudioscrobblerUtils.cs" />
     <Compile Include="Music\AWSECommerceService.cs" />
     <Compile Include="Music\Database.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Music\AudioscrobblerEngine.cs" />
     <Compile Include="Music\MusicAlbumInfo.cs">
       <SubType>Code</SubType>
     </Compile>

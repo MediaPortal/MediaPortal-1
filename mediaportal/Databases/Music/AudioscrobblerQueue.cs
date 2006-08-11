@@ -39,13 +39,14 @@ namespace MediaPortal.Music.Database
 
     class QueuedTrack
     {
-      public QueuedTrack(Song track, DateTime start_time)
+      #region public getters
+      public QueuedTrack(Song track)
       {
         this.artist = track.Artist;
         this.album = track.Album;
         this.title = track.Title;
         this.duration = (int)track.Duration;
-        this.start_time = start_time.ToUniversalTime();
+        this.start_time = track.DateTimePlayed;
       }
 
       public QueuedTrack(string artist, string album,
@@ -78,6 +79,7 @@ namespace MediaPortal.Music.Database
       {
         get { return duration; }
       }
+      #endregion
 
       string artist;
       string album;
@@ -93,7 +95,7 @@ namespace MediaPortal.Music.Database
     public AudioscrobblerQueue()
     {
       //xml_path = System.IO.Path.Combine (Paths.UserPluginDirectory, "AudioscrobblerQueue.xml");
-      xml_path = "AudioscrobblerQueue.xml";
+      xml_path = "AudioscrobblerCache.xml";
       queue = new ArrayList();
 
       Load();
@@ -189,7 +191,8 @@ namespace MediaPortal.Music.Database
       for (i = 0; i < queue.Count; i++)
       {
         /* we queue a maximum of 10 tracks per request */
-        if (i == 9) break;
+        if (i == 9)
+          break;
 
         QueuedTrack track = (QueuedTrack)queue[i];
 
@@ -208,9 +211,9 @@ namespace MediaPortal.Music.Database
       return sb.ToString();
     }
 
-    public void Add(Song track, DateTime started_at)
+    public void Add(Song track)
     {
-      queue.Add(new QueuedTrack(track, started_at));
+      queue.Add(new QueuedTrack(track));
       dirty = true;
     }
 

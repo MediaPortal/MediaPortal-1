@@ -66,7 +66,7 @@ namespace MediaPortal.Audioscrobbler
     public bool _doSubmit = true;
 
     private AudioscrobblerBase scrobbler;
-    private AudioscrobblerEngine asengine;
+    
     private System.Timers.Timer SongCheckTimer;
 
     #region Properties
@@ -102,13 +102,6 @@ namespace MediaPortal.Audioscrobbler
     {
       scrobbler.Connect();
     }
-
-    private void OnManualClearCache(object sender, EventArgs args)
-    {
-      scrobbler.ClearQueue();
-      //CacheSizeLabel.Text = scrobbler.QueueLength.ToString(); 
-      Log.Write("Audioscrobbler plugin: {0}", "Cache cleared");
-    }
     
     //private void OnNameChangedEvent(string ASUsername)
     //{
@@ -129,7 +122,6 @@ namespace MediaPortal.Audioscrobbler
       }
     }
     #endregion
-
 
     #region MediaPortal events
     //public void OnThreadMessage(GUIMessage message)
@@ -261,8 +253,7 @@ namespace MediaPortal.Audioscrobbler
             if (position >= alertTime && alertTime > 14)
             {
               Log.Write("Audioscrobbler plugin: queuing song: {0}", currentSong.ToShortString());
-              scrobbler.pushQueue(currentSong);
-              //asengine.AddSongToScrobblerQueue(currentSong);
+              scrobbler.pushQueue(currentSong);              
               queued = true;              
               currentSong.AudioScrobblerStatus = SongStatus.Cached;
             }
@@ -319,43 +310,20 @@ namespace MediaPortal.Audioscrobbler
     #endregion
 
     #region IPlugin Members
-
     public void Start()
     {
-      asengine = new AudioscrobblerEngine();
       currentSong = null;
       queued = false;
       alertTime = INFINITE_TIME;
       scrobbler = new AudioscrobblerBase();
       GUIWindowManager.OnNewAction += new OnActionHandler(OnNewAction);
-      //GUIWindowManager.Receivers += new SendMessageHandler(OnThreadMessage);
+
       startStopSongCheckTimer(true);
-      // connect to Audioscrobbler (in a new thread)
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         _doSubmit = xmlreader.GetValueAsBool("audioscrobbler", "submitsenabled", true);
-        string tmpUser, tmpPass;
-        tmpUser = xmlreader.GetValueAsString("audioscrobbler", "user", "");
-
-        tmpPass = xmlreader.GetValueAsString("audioscrobbler", "pass", "");
-        if (tmpPass != String.Empty)
-        {
-          try
-          {
-            EncryptDecrypt Crypter = new EncryptDecrypt();
-            tmpPass = Crypter.Decrypt(tmpPass);
-          }
-          catch (Exception ex)
-          {
-            Log.Write("Audioscrobbler: Password decryption failed {0}", ex.Message);
-          }
-        }
-        asengine.SetUserPassword(tmpUser, tmpPass);
-        asengine.Start();
-      }
-
-
+      }      
       Log.Write("Audioscrobbler plugin: submitting songs: {0}", Convert.ToString(_doSubmit));
 
       if (_doSubmit)
@@ -366,8 +334,6 @@ namespace MediaPortal.Audioscrobbler
 
     public void Stop()
     {
-      asengine.Stop();
-      asengine = null;
       OnManualDisconnect(null, null);
       startStopSongCheckTimer(false);
       scrobbler = null;
