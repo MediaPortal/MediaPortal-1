@@ -3,7 +3,7 @@
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   >
 
-
+ 
   <!-- Skin BlueTwo -->
 
   <!-- GUI Elements -->
@@ -326,6 +326,68 @@
     </Style.Triggers>
   </Style>
 
+  <!-- small ones-->
+
+  <Style x:Key="UpScrollSmall" TargetType="{x:Type RepeatButton}">
+    <Setter Property="FocusVisualStyle" Value="{DynamicResource FocusStyle}"/>
+    <Setter Property="Background">
+      <Setter.Value>
+        <ImageBrush ImageSource="BlueTwo\\Media\\arrow_round_up_nofocus.png"/>
+      </Setter.Value>
+    </Setter>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type RepeatButton}">
+          <Border 
+            Width="16" 
+            Height="16"
+            Background="{TemplateBinding Background}" 
+            Padding="0,0,0,0"/>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+    <Style.Triggers>
+      <Trigger Property="IsMouseOver" Value="true">
+        <Setter Property="Background">
+          <Setter.Value>
+            <ImageBrush ImageSource="BlueTwo\\Media\\arrow_round_up_focus.png" />
+          </Setter.Value>
+        </Setter>
+      </Trigger>
+    </Style.Triggers>
+  </Style>
+
+  <Style x:Key="DownScrollSmall" TargetType="{x:Type RepeatButton}">
+    <Setter Property="FocusVisualStyle" Value="{DynamicResource FocusStyle}"/>
+    <Setter Property="Background">
+      <Setter.Value>
+        <ImageBrush ImageSource="BlueTwo\\Media\\arrow_round_down_nofocus.png"/>
+      </Setter.Value>
+    </Setter>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type RepeatButton}">
+          <Border 
+            Width="16" 
+            Height="16"
+            Background="{TemplateBinding Background}" 
+            Padding="0,0,0,0"/>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+    <Style.Triggers>
+      <Trigger Property="IsMouseOver" Value="true">
+        <Setter Property="Background">
+          <Setter.Value>
+            <ImageBrush ImageSource="BlueTwo\\Media\\arrow_round_down_focus.png" />
+          </Setter.Value>
+        </Setter>
+      </Trigger>
+    </Style.Triggers>
+  </Style>
+
+
+  <!---->
 
   <Style x:Key="GUIListcontrolItems" TargetType="{x:Type ListBoxItem}">
     <Setter Property="Foreground" Value="Transparent"/>

@@ -9,8 +9,7 @@
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{907A5C3C-B130-4D1F-A9FC-6ECBD9160E92}</ProjectGuid>
-<XamlDebuggingInformation>true</XamlDebuggingInformation>
-
+    <XamlDebuggingInformation>true</XamlDebuggingInformation>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <Optimize>false</Optimize>
@@ -56,6 +55,7 @@
       <SubType>
       </SubType>
     </Page>
+    <Compile Include="SpinControl.cs" />
     <Compile Include="CoreExtensions\home.xaml.cs">
       <DependentUpon>home.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -71,6 +71,9 @@
     <Content Include="skinImages.xaml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="SpinControl.xaml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildBinPath)\Microsoft.WinFX.targets" />

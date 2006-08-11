@@ -1,6 +1,7 @@
 ﻿<Page xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       Style="{StaticResource PageBackground}" 
+      xmlns:ctrl="clr-namespace:MediaPortal"
       x:Class="MediaPortal.HomeExtension">
 
   <Canvas>
@@ -136,6 +137,12 @@
       Style="{DynamicResource GUIListControl}"
 />
 
+    <ctrl:GUISpinControl 
+      x:Name="upDown1"  
+      TextSize="18" 
+      Canvas.Top="280"
+      Canvas.Left="60">
+    </ctrl:GUISpinControl>
 
   </Canvas>
 </Page>

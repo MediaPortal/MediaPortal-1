@@ -31,7 +31,6 @@ namespace MediaPortal
             this.ShowsNavigationUI = true;
             this.Opacity = 0.0f;
             this.Loaded += new RoutedEventHandler(HomeExtension_Loaded);
-           
             this.Height = 608;
             this.Width = 720;
             _core = (Core)this.Parent;
@@ -46,14 +45,14 @@ namespace MediaPortal
             selectButtonList.Add("D");
             selectButtonList.Add("E");
             selectButtonList.Add("F");
-            id3.Click += new RoutedEventHandler(id3_Click);
+
+            upDown1.SetMinValue(10);
+            upDown1.SetMaxValue(25);
+           
 
         }
 
-        void id3_Click(object sender, RoutedEventArgs e)
-        {
-        }
-
+ 
         void lv1_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
@@ -182,11 +181,9 @@ namespace MediaPortal
 
             }
 
-
             Button left=(Button)t.FindName("LeftButton", cb);
             Button right = (Button)t.FindName("RightButton", cb);
             Button source=(Button)e.OriginalSource;
-
             tb = (TextBlock)cb.Template.FindName("SelectContent", cb);
 
             if (tb==null || left == null || right == null || source==null)
