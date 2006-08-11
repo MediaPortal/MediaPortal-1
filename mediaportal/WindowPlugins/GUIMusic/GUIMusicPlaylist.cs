@@ -27,6 +27,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using System.Text;
 
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
@@ -81,7 +82,7 @@ namespace MediaPortal.GUI.Music
     [SkinControlAttribute(23)]    protected GUIButtonControl btnPlay = null;
     //[SkinControlAttribute(24)]        protected GUIButtonControl btnNext = null;
     //[SkinControlAttribute(25)]        protected GUIButtonControl btnPrevious = null;
-    [SkinControlAttribute(26)]    protected GUIToggleButtonControl btnPartyShuffle = null;
+    //[SkinControlAttribute(26)]    protected GUIToggleButtonControl btnPartyShuffle = null;
     [SkinControlAttribute(27)]    protected GUIToggleButtonControl btnScrobble = null;
     [SkinControlAttribute(28)]    protected GUIButtonControl btnScrobbleMode = null;
     
@@ -264,66 +265,11 @@ namespace MediaPortal.GUI.Music
       {
         playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
         playlistPlayer.Reset();
-        if (PShuffleOn == true)
-        {
-          for (int i = 0; i < facadeView.SelectedListItemIndex; i++)
-          {
-            playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Remove(facadeView[i].Path);
-          }
-          UpdatePartyShuffle();
-          //LoadDirectory(String.Empty);
-          playlistPlayer.Play(0);
-        }
-        else
-        {
-          playlistPlayer.Play(facadeView.SelectedListItemIndex);
-        }
-        UpdateButtonStates();
-      }
-      //else if (control == btnNext)
-      //{
-      //    playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
-      //    playlistPlayer.PlayNext();
-      //    SelectCurrentPlayingSong();
-      //}
-      //else if (control == btnPrevious)
-      //{
-      //    playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
-      //    playlistPlayer.PlayPrevious();
-      //    SelectCurrentPlayingSong();
-      //}
-      else if (control == btnPartyShuffle)
-      {
-        //get state of button
-        if (btnPartyShuffle.Selected)
-        {
-          // Clear the existing playlist before entering Party Shuffle mode
-          ClearPlayList();
-
-          PShuffleOn = true;
-          ScrobblerOn = false;
-          UpdatePartyShuffle();
-          LoadDirectory(String.Empty);
-          GUIListItem item = facadeView[0];
-          if (item != null)
-            item.Shaded = false;
-          playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
-          playlistPlayer.Reset();
-          playlistPlayer.Play(0);
-        }
-        else
-          PShuffleOn = false;
-
-        if (facadeView.PlayListView != null)
-        {
-          // Prevent the currently playing track from being scrolled off the top 
-          // or bottom of the screen when other items are re-ordered
-          facadeView.PlayListView.AllowLastVisibleListItemDown = !PShuffleOn;
-          facadeView.PlayListView.AllowMoveFirstVisibleListItemUp = !PShuffleOn;
-        }
+        playlistPlayer.Play(facadeView.SelectedListItemIndex);
 
         UpdateButtonStates();
       }
+
       else if (control == btnScrobble)
       {
         //if (_enableScrobbling)
@@ -332,8 +278,6 @@ namespace MediaPortal.GUI.Music
         if (btnScrobble.Selected)
         {
           ScrobblerOn = true;
-          PShuffleOn = false;
-
           CheckScrobbleInstantStart();
         }
         else
@@ -374,12 +318,12 @@ namespace MediaPortal.GUI.Music
           {
             //	global playlist changed outside playlist window
             //added by Sam
-            //if party shuffle...
-            if (PShuffleOn)// || ScrobblerOn)
-            {
-              LoadDirectory(String.Empty);
-              UpdateButtonStates();
-            }
+            ////if party shuffle...
+            //if (PShuffleOn)// || ScrobblerOn)
+            //{
+            //  LoadDirectory(String.Empty);
+            //  UpdateButtonStates();
+            //}
             //ended changes
 
             if (m_iLastControl == facadeView.GetID && facadeView.Count <= 0)
@@ -406,14 +350,10 @@ namespace MediaPortal.GUI.Music
           btnPlay.Disabled = false;
           if (g_Player.Playing && playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC)
           {
-            //btnNext.Disabled = false;
-            //btnPrevious.Disabled = false;
             btnSave.Disabled = false;
           }
           else
           {
-            //btnNext.Disabled = true;
-            //btnPrevious.Disabled = true;
             btnSave.Disabled = true;
           }
         }
@@ -421,29 +361,6 @@ namespace MediaPortal.GUI.Music
         {
           btnClear.Disabled = true;
           btnPlay.Disabled = true;
-          //btnNext.Disabled = true;
-          //btnPrevious.Disabled = true;
-        }
-
-        //if (_enableScrobbling)
-        //  btnScrobble.Disabled = false;
-        //else
-        //  btnScrobble.Disabled = true;
-
-        //disable shuffle/save/previous if party shuffle is on
-        if (btnPartyShuffle.Selected)
-        {
-          btnShuffle.Disabled = true;
-          btnPlay.Disabled = true;
-          btnClear.Disabled = true;
-          btnSave.Disabled = true;
-          btnScrobble.Disabled = true;
-          //btnPrevious.Disabled = true;
-        }
-        else
-        {
-          btnScrobble.Disabled = false;
-          btnShuffle.Disabled = false;
         }
       }
     }
@@ -456,46 +373,12 @@ namespace MediaPortal.GUI.Music
       if (item.IsFolder)
         return;
 
-      //added/changed by Sam
-      //check if party shuffle is on
-      if (PShuffleOn)// || ScrobblerOn)
-      {
-        if (g_Player.Playing && playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC)
-        {
-          for (int i = 1; i < facadeView.SelectedListItemIndex; i++)
-          {
-            playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Remove(facadeView[i].Path);
-          }
-          //LoadDirectory(String.Empty);
-          if (PShuffleOn)
-            UpdatePartyShuffle();
-          LoadDirectory(String.Empty);
-        }
-        else
-        {
-          for (int i = 0; i < facadeView.SelectedListItemIndex; i++)
-          {
-            playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Remove(facadeView[i].Path);
-          }
-          if (PShuffleOn)
-            UpdatePartyShuffle();
-          //LoadDirectory(String.Empty);
-          playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
-          playlistPlayer.Reset();
-          playlistPlayer.Play(0);
-        }
-      }
-      //otherwise if party shuffle is not on, do this...
-      else
-      {
-        string strPath = item.Path;
-        playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
-        playlistPlayer.Reset();
-        playlistPlayer.Play(iItem);
-        SelectCurrentPlayingSong();
-        UpdateButtonStates();
-      }
-      //ended changes
+      string strPath = item.Path;
+      playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
+      playlistPlayer.Reset();
+      playlistPlayer.Play(iItem);
+      SelectCurrentPlayingSong();
+      UpdateButtonStates();
     }
 
     protected override void OnQueueItem(int iItem)
@@ -530,14 +413,7 @@ namespace MediaPortal.GUI.Music
         case GUIMessage.MessageType.GUI_MSG_PLAYBACK_ENDED:
           if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC)
           {
-            if (PShuffleOn)// || ScrobblerOn)
-            {
-              PlayList pl = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
-              pl.Remove(pl[0].FileName);
-              if (PShuffleOn)
-                UpdatePartyShuffle();
-              playlistPlayer.CurrentSong = 0;
-            }
+//
           }
           break;
 
@@ -545,15 +421,7 @@ namespace MediaPortal.GUI.Music
         case GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED:
           if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC && playlistPlayer.CurrentSong != 0)
           {
-            if (PShuffleOn)// || ScrobblerOn)
-            {
-              PlayList pl = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
-              pl.Remove(pl[0].FileName);
-              if (PShuffleOn)
-                UpdatePartyShuffle();
-              playlistPlayer.CurrentSong = 0;
-              LoadDirectory(String.Empty);
-            }
+//
           }
           break;
         // delaying internet lookups for smooth playback start
@@ -739,53 +607,19 @@ namespace MediaPortal.GUI.Music
 
     void ClearPlayList()
     {
-      //added/changed by Sam
-      //if party shuffle
-      if (PShuffleOn)// || ScrobblerOn)
-      {
-        if (g_Player.Playing && playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC)
-        {
-          for (int i = 1; i < facadeView.Count; i++)
-          {
-            playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Remove(facadeView[i].Path);
-          }
-        }
-        else
-        {
-          for (int i = 0; i < facadeView.Count; i++)
-          {
-            playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Remove(facadeView[i].Path);
-          }
-        }
-        if (PShuffleOn)
-          UpdatePartyShuffle();
-        LoadDirectory(String.Empty);
-      }
-      //otherwise, if not party shuffle...
-      else
-      {
-        ClearFileItems();
-        playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Clear();
-        if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC)
-          playlistPlayer.Reset();
-        LoadDirectory(String.Empty);
-        UpdateButtonStates();
-        GUIControl.FocusControl(GetID, btnViewAs.GetID);
-      }
-      //ended changes
+      ClearFileItems();
+      playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Clear();
+      if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC)
+        playlistPlayer.Reset();
+      LoadDirectory(String.Empty);
+      UpdateButtonStates();
+      GUIControl.FocusControl(GetID, btnViewAs.GetID);
+
     }
 
 
     void RemovePlayListItem(int iItem)
     {
-      //added by Sam
-      if (g_Player.Playing && playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC)
-      {
-        if (PShuffleOn)// || ScrobblerOn)
-          if (iItem == 0)
-            return;
-      }
-
       GUIListItem pItem = facadeView[iItem];
       if (pItem == null)
         return;
@@ -795,8 +629,8 @@ namespace MediaPortal.GUI.Music
 
       //added by Sam
       //check if party shuffle is on
-      if (PShuffleOn)
-        UpdatePartyShuffle();
+      //if (PShuffleOn)
+      //  UpdatePartyShuffle();
 
       LoadDirectory(m_strDirectory);
       UpdateButtonStates();
@@ -834,9 +668,7 @@ namespace MediaPortal.GUI.Music
             playlistPlayer.CurrentSong = i;
         }
       }
-
       LoadDirectory(m_strDirectory);
-
       SelectCurrentPlayingSong();
     }
 
@@ -917,8 +749,15 @@ namespace MediaPortal.GUI.Music
       //add to playlist
       PlayListItem playlistItem = new PlayListItem();
       playlistItem.Type = Playlists.PlayListItem.PlayListItemType.Audio;
+      StringBuilder sb = new StringBuilder();
+
       playlistItem.FileName = song.FileName;
-      playlistItem.Description = song.Track + ". " + song.Artist + " - " + song.Title;
+      sb.Append(song.Track);
+      sb.Append(". ");
+      sb.Append(song.Artist);
+      sb.Append(" - ");
+      sb.Append(song.Title);
+      playlistItem.Description = sb.ToString();
       playlistItem.Duration = song.Duration;
 
       MusicTag tag = new MusicTag();
@@ -990,11 +829,6 @@ namespace MediaPortal.GUI.Music
 
       int iItem = facadeView.SelectedListItemIndex;
 
-      // Prevent moving backwards past the top song in the list
-      if (ScrobblerOn)// || PShuffleOn)
-        if (iItem == 0)
-          return;
-
       PlayList playList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
       playList.MovePlayListItemUp(iItem);
       int selectedIndex = facadeView.MoveItemUp(iItem, true);
@@ -1004,22 +838,6 @@ namespace MediaPortal.GUI.Music
 
       facadeView.SelectedListItemIndex = selectedIndex;
       UpdateButtonStates();
-
-      if (PShuffleOn)// || ScrobblerOn)
-      {
-        // If the item we moved is now the first item in the list view should remove it from the 
-        // playlist so the CurrentSong is the first item displayed...
-        if (selectedIndex == 0)
-        {
-          playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Remove(facadeView[0].Path);
-          playlistPlayer.CurrentSong = 0;
-          if (PShuffleOn)
-            UpdatePartyShuffle();
-          LoadDirectory(String.Empty);
-          SelectCurrentPlayingSong();
-          facadeView.SelectedListItemIndex = 1;
-        }
-      }
     }
 
     private void MovePlayListItemDown()
@@ -1037,43 +855,13 @@ namespace MediaPortal.GUI.Music
       int iItem = facadeView.SelectedListItemIndex;
       PlayList playList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
 
-      // Prevent moving fowards past the last song in the list
-      // as this would cause the currently playing song to scroll
-      // off of the list view...
-      if (PShuffleOn)// || ScrobblerOn)
-        if (iItem == playList.Count - 1)
-          return;
-
       playList.MovePlayListItemDown(iItem);
       int selectedIndex = facadeView.MoveItemDown(iItem, true);
 
       if (iItem == playlistPlayer.CurrentSong)
         playlistPlayer.CurrentSong = selectedIndex;
 
-      if (PShuffleOn)// || ScrobblerOn)
-        if (selectedIndex == MaxNumPShuffleSongPredict - 1)
-          facadeView.SelectedListItemIndex = MaxNumPShuffleSongPredict - 2;
-        else
-          facadeView.SelectedListItemIndex = selectedIndex;
-
       UpdateButtonStates();
-
-      if (PShuffleOn)// || ScrobblerOn)
-      {
-        if (selectedIndex == playlistPlayer.CurrentSong)
-        {
-          for (int i = 0; i < selectedIndex; i++)
-          {
-            playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Remove(facadeView[i].Path);
-          }
-
-          playlistPlayer.CurrentSong = 0;
-          if (PShuffleOn)
-            UpdatePartyShuffle();
-          LoadDirectory(String.Empty);
-          SelectCurrentPlayingSong();
-        }
-      }
     }
 
     private void DeletePlayListItem()
@@ -1118,9 +906,6 @@ namespace MediaPortal.GUI.Music
         facadeView.PlayListView.SelectedListItemIndex = iItem;
 
       UpdateButtonStates();
-
-      if (PShuffleOn == true)
-        UpdatePartyShuffle();
     }
 
     //added by rtv

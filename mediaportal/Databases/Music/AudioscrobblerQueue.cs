@@ -34,9 +34,8 @@ using System.Xml;
 
 namespace MediaPortal.Music.Database
 {
-  internal class AudioscrobblerQueue
+  class AudioscrobblerQueue
   {
-
     class QueuedTrack
     {
       #region public getters
@@ -87,18 +86,21 @@ namespace MediaPortal.Music.Database
       int duration;
       DateTime start_time;
     }
-
+    
     ArrayList queue;
     string xml_path;
     bool dirty;
 
-    public AudioscrobblerQueue()
+    /// <summary>
+    /// ctor
+    /// </summary>
+    /// <param name="queueUserFilePath_">the user specific cachefile</param>
+    public AudioscrobblerQueue(string queueUserFilePath_)
     {
-      //xml_path = System.IO.Path.Combine (Paths.UserPluginDirectory, "AudioscrobblerQueue.xml");
-      xml_path = "AudioscrobblerCache.xml";
+      xml_path = queueUserFilePath_;
       queue = new ArrayList();
 
-      Load();
+      LoadQueue();
     }
 
     public void Save()
@@ -117,12 +119,12 @@ namespace MediaPortal.Music.Database
       writer.WriteStartElement("AudioscrobblerQueue");
       foreach (QueuedTrack track in queue)
       {
-        writer.WriteStartElement("QueuedTrack");
+        writer.WriteStartElement("CachedSong");
         writer.WriteElementString("Artist", track.Artist);
         writer.WriteElementString("Album", track.Album);
         writer.WriteElementString("Title", track.Title);
         writer.WriteElementString("Duration", track.Duration.ToString());
-        writer.WriteElementString("StartTime", Convert.ToString(track.StartTime));
+        writer.WriteElementString("Playtime", Convert.ToString(track.StartTime));
         writer.WriteEndElement(); // Track
       }
       writer.WriteEndElement(); // AudioscrobblerQueue
@@ -130,13 +132,13 @@ namespace MediaPortal.Music.Database
       writer.Close();
     }
 
-    public void Load()
+    public void LoadQueue()
     {
       queue.Clear();
 
       try
       {
-        string query = "//AudioscrobblerQueue/QueuedTrack";
+        string query = "//AudioscrobblerQueue/CachedSong";
         XmlDocument doc = new XmlDocument();
 
         doc.Load(xml_path);
@@ -168,7 +170,7 @@ namespace MediaPortal.Music.Database
             {
               duration = Convert.ToInt32(child.ChildNodes[0].Value);
             }
-            else if (child.Name == "StartTime" && child.ChildNodes.Count != 0)
+            else if (child.Name == "Playtime" && child.ChildNodes.Count != 0)
             {
               string time = (child.ChildNodes[0].Value);
               start_time = Convert.ToDateTime(time);

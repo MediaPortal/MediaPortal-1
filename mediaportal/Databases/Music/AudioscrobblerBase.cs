@@ -33,8 +33,8 @@ using System.Threading;
 using System.Timers;
 using System.Text;
 using System.Xml;
-using MediaPortal.Util;
 
+using MediaPortal.Util;
 using MediaPortal.Music.Database;
 using MediaPortal.GUI.Library;
 
@@ -89,6 +89,25 @@ namespace MediaPortal.Music.Database
     /// </summary>
     public AudioscrobblerBase()
     {
+      LoadSettings();
+
+      queue = new AudioscrobblerQueue("Trackcache-" + Username + ".xml");
+
+      queueLock = new Object();
+      submitLock = new Object();
+
+      _signedIn = false;
+      lastHandshake = DateTime.MinValue;
+      handshakeInterval = new TimeSpan(0, HANDSHAKE_INTERVAL, 0);
+      lastConnectAttempt = DateTime.MinValue;
+      minConnectWaitTime = new TimeSpan(0, 0, CONNECT_WAIT_TIME);
+
+      if (_useDebugLog)
+        Log.Write("AudioscrobblerBase: new scrobbler for {0} with {1} cached songs - debuglog={2} directonly={3}", Username, Convert.ToString(queue.Count), Convert.ToString(_useDebugLog), Convert.ToString(_disableTimerThread));
+    }
+
+    void LoadSettings()
+    {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         _useDebugLog = xmlreader.GetValueAsBool("audioscrobbler", "usedebuglog", false);
@@ -111,22 +130,6 @@ namespace MediaPortal.Music.Database
           }
         }
       }
-
-
-      queue = new AudioscrobblerQueue();
-
-      queueLock = new Object();
-      submitLock = new Object();
-
-      _signedIn = false;
-      lastHandshake = DateTime.MinValue;
-      handshakeInterval = new TimeSpan(0, HANDSHAKE_INTERVAL, 0);
-      lastConnectAttempt = DateTime.MinValue;
-      minConnectWaitTime = new TimeSpan(0, 0, CONNECT_WAIT_TIME);
-
-      if (_useDebugLog)
-        Log.Write("AudioscrobblerBase: new scrobbler for {0} with {1} cached songs - debuglog={2} directonly={3}", Username, Convert.ToString(queue.Count), Convert.ToString(_useDebugLog), Convert.ToString(_disableTimerThread));
-
     }
 
     #region Public getters and setters

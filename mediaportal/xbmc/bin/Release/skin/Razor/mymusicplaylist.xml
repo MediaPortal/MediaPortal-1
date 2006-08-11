@@ -93,15 +93,16 @@
 				<onright>50</onright>
 			</control>
 			<control>
-				<description>Party Shuffle Mode button</description>
-				<type>togglebutton</type>
+			        <description>Now Playing button</description>
+			        <type>button</type>
 				<id>26</id>
 				<posY>377</posY>
-				<label>16001</label>
-				<onup>25</onup>
+				<label>4540</label>
+				<onup>27</onup>
 				<ondown>99</ondown>
 				<onleft>26</onleft>
 				<onright>50</onright>
+				<hyperlink>510</hyperlink>
 			</control>
 		</control>
 		<control>
