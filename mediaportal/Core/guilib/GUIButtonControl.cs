@@ -79,11 +79,10 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("hoverHeight")]
     protected int _hoverHeight;
 				
-    protected GUIImage _hoverImage;
-
     protected int _frameCounter = 0;
-    protected GUIImage _imageFocused = null;
-    protected GUIImage _imageNonFocused = null;
+    protected GUIControl _imageFocused = null;
+    protected GUIControl _imageNonFocused = null;
+		protected GUIControl _hoverImage = null;
     protected GUILabelControl _labelControl = null;
 
     public GUIButtonControl(int dwParentID)
@@ -117,12 +116,12 @@ namespace MediaPortal.GUI.Library
     public override void FinalizeConstruction()
     {
       base.FinalizeConstruction();
-      _imageFocused = new GUIImage(_parentControlId, _controlId, _positionX, _positionY,
+			_imageFocused = LoadTextureControl(_parentControlId, _controlId, _positionX, _positionY,
         _width, _height, _focusedTextureName, 0);
       _imageFocused.ParentControl = this;
       _imageFocused.DimColor = DimColor;
 
-      _imageNonFocused = new GUIImage(_parentControlId, _controlId, _positionX, _positionY,
+			_imageNonFocused = LoadTextureControl(_parentControlId, _controlId, _positionX, _positionY,
         _width, _height, _nonFocusedTextureName, 0);
       _imageNonFocused.ParentControl = this;
       _imageNonFocused.DimColor = DimColor;
@@ -130,13 +129,13 @@ namespace MediaPortal.GUI.Library
       if (_hoverFilename != string.Empty)
       {
          GUIGraphicsContext.ScaleRectToScreenResolution(ref _hoverX, ref _hoverY, ref _hoverWidth, ref _hoverHeight);
-        _hoverImage = new GUIImage(_parentControlId, _controlId, _hoverX, _hoverY, _hoverWidth, _hoverHeight, _hoverFilename, 0);
-        _hoverImage.Filtering = false;
+				 _hoverImage = LoadTextureControl(_parentControlId, _controlId, _hoverX, _hoverY, _hoverWidth, _hoverHeight, _hoverFilename, 0);
+        //_hoverImage.Filtering = false;
         _hoverImage.ParentControl = this;
       }
 
-      _imageFocused.Filtering = false;
-      _imageNonFocused.Filtering = false;
+      //_imageFocused.Filtering = false;
+      //_imageNonFocused.Filtering = false;
 			      
 			GUILocalizeStrings.LocalizeLabel(ref _label);
       _labelControl = new GUILabelControl(_parentControlId, 0, _positionX, _positionY, _width, _height, _fontName, _label, _textColor, GUIControl.Alignment.ALIGN_LEFT, false);
@@ -144,6 +143,30 @@ namespace MediaPortal.GUI.Library
       _labelControl.DimColor = DimColor;
       _labelControl.ParentControl = this;
     }
+
+		/// <summary>
+		/// This method loads the texture Image, it can be either GUIImage or GUIAnimation
+		/// </summary>
+		protected GUIControl LoadTextureControl(int parentID, int controlId, int posX, int posY, int width, int height, string texture, long colorKey)
+		{
+			if (texture.Contains(".xml"))
+			{
+				GUIControl ctl = LoadControl(texture);
+				if (ctl != null) 
+				{
+				  ctl.ParentID = parentID;
+					ctl.GetID = controlId;
+					ctl.SetPosition(posX, posY);
+					ctl.Width = width;
+					ctl.Height = height;
+					return ctl;
+				}
+			}
+			GUIImage image = new GUIImage(parentID, controlId, posX, posY, width, height, texture, colorKey);
+			image.Filtering = false;
+			return image;
+		}
+
 
     /// <summary>
     /// This method gets called when the control is created and all properties has been set
@@ -168,11 +191,11 @@ namespace MediaPortal.GUI.Library
           GUIPropertyManager.SetProperty("#highlightedbutton", Label);
 					if (value == true)
 					{
-						if (_imageFocused != null) _imageFocused.BeginAnimation();
+						//if (_imageFocused != null) _imageFocused.BeginAnimation();
 					}
 					else
 					{
-						if (_imageNonFocused != null) _imageNonFocused.BeginAnimation();
+						//if (_imageNonFocused != null) _imageNonFocused.BeginAnimation();
 					}
         }
 
@@ -420,7 +443,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public string TexutureNoFocusName
     {
-      get { return _imageNonFocused.FileName; }
+			get { return _nonFocusedTextureName; } //_imageNonFocused.FileName; }
     }
 
     /// <summary>
@@ -428,7 +451,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public string TexutureFocusName
     {
-      get { return _imageFocused.FileName; }
+			get { return _focusedTextureName; }  //_imageFocused.FileName; }
     }
 
     /// <summary>

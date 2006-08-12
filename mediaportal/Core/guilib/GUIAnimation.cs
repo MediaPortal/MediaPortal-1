@@ -171,6 +171,44 @@ namespace MediaPortal.GUI.Library
       _images = null;
     }
 
+		public override void SetPosition(int dwPosX, int dwPosY)
+		{
+			base.SetPosition(dwPosX, dwPosY);
+			if (_images == null) return;
+			for (int index = 0; index < _images.Length; index++)
+				_images[index].SetPosition(dwPosX, dwPosY);
+		}
+
+		public override int Width
+		{
+			get
+			{
+				return base.Width;
+			}
+			set
+			{
+				base.Width = value;
+				if (_images == null) return;
+				for (int index = 0; index < _images.Length; index++)
+					_images[index].Width = value;
+			}
+		}
+
+		public override int Height
+		{
+			get
+			{
+				return base.Height;
+			}
+			set
+			{
+				base.Height = value;
+				if (_images == null) return;
+				for (int index = 0; index < _images.Length; index++)
+					_images[index].Height = value;
+			}
+		}
+
 		public override bool OnMessage(GUIMessage message)
 		{
 			foreach (GUIMessage.MessageType triggerMsg in _triggerList)

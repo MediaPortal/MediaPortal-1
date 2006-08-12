@@ -29,6 +29,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
+using System.Xml;
 using MediaPortal.Drawing;
 using MediaPortal.Drawing.Layouts;
 using MediaPortal.Utils.Services;
@@ -1153,6 +1154,45 @@ namespace MediaPortal.GUI.Library
       base.Height = h;
       DoUpdate();
     }
+
+		public GUIControl LoadControl(string xmlFilename)
+		{
+			XmlDocument doc = new XmlDocument();
+			doc.Load(GUIGraphicsContext.Skin + "\\" + xmlFilename);
+
+			if (doc.DocumentElement == null) return null;
+			if (doc.DocumentElement.Name != "window") return null;
+
+			// Load Definitions
+			Hashtable table = new Hashtable();
+			try
+			{
+				foreach (XmlNode node in doc.SelectNodes("/window/define"))
+				{
+					string[] tokens = node.InnerText.Split(':');
+					if (tokens.Length < 2) continue;
+					table[tokens[0]] = tokens[1];
+				}
+			}
+			catch (Exception e)
+			{
+				_log.Info("LoadDefines: {0}", e.Message);
+			}
+
+			foreach (XmlNode controlNode in doc.DocumentElement.SelectNodes("/window/controls/control"))
+			{
+				try
+				{
+					GUIControl newControl = GUIControlFactory.Create(_windowId, controlNode, table);
+					if (newControl != null) return newControl;
+				}
+				catch (Exception ex)
+				{
+					_log.Error("Unable to load control: {0}", ex.ToString());
+				}
+			}
+			return null;
+		}
 
     public string SubType
     {
