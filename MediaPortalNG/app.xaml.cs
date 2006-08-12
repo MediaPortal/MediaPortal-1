@@ -21,7 +21,8 @@ namespace MediaPortal
             // load image resources
             dict = new ResourceDictionary();
             dict.Source = new System.Uri(path + "\\skinImages.xaml");
-            this.Resources.MergedDictionaries.Add(dict);
+            this.Resources.MergedDictionaries.Add(dict); 
+
             Core mpCore = new Core();
        }
  

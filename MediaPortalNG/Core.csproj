@@ -55,6 +55,7 @@
       <SubType>
       </SubType>
     </Page>
+    <Compile Include="SelectButton.cs" />
     <Compile Include="SpinControl.cs" />
     <Compile Include="CoreExtensions\home.xaml.cs">
       <DependentUpon>home.xaml</DependentUpon>
@@ -71,9 +72,6 @@
     <Content Include="skinImages.xaml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Include="SpinControl.xaml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildBinPath)\Microsoft.WinFX.targets" />

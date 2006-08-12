@@ -22,8 +22,6 @@ namespace MediaPortal
         public string _skinMediaPath;
         private int viewThumbNails = 0;
         private Core _core;
-        private int selectButtonIndex = 0;
-        private System.Collections.ArrayList selectButtonList;
 
         public HomeExtension(ResourceDictionary dict)
         {
@@ -38,18 +36,18 @@ namespace MediaPortal
             lv1.SelectionChanged += new SelectionChangedEventHandler(lv1_SelectionChanged);       
 
             ApplyLanguage("German");
-            selectButtonList = new System.Collections.ArrayList();
-
-            selectButtonList.Add("A");
-            selectButtonList.Add("B");
-            selectButtonList.Add("C");
-            selectButtonList.Add("D");
-            selectButtonList.Add("E");
-            selectButtonList.Add("F");
 
             upDown1.SetMinValue(10);
             upDown1.SetMaxValue(25);
+
+            select1.AddItem("Test 1");
+            select1.AddItem("Test 2");
+            select1.AddItem("ABC");
+            select1.AddItem("123");
+            select1.AddItem("HUH?");
+
            
+
 
         }
 
@@ -145,68 +143,7 @@ namespace MediaPortal
 
         public void selectButton(object sender,RoutedEventArgs e)
         {
-            // example for an gui-selectbutton
-            CheckBox cb = (CheckBox)sender;
-            ControlTemplate t = ((CheckBox)sender).Template;
-            ControlTemplate rtp=(ControlTemplate)(((CheckBox)sender).FindResource("SelectButtonPressed"));
-            ControlTemplate rtr=(ControlTemplate)(((CheckBox)sender).FindResource("SelectButtonReleased"));
-            TextBlock tb = null;
-
-            if(rtr==null || rtp==null || t==null) 
-                return;
-
-
-
-            if (cb.IsChecked == true)
-            {
-                if (t.Equals(rtp) == false)
-                {
-                    cb.Template = rtp;
-                    cb.ApplyTemplate();
-                    tb = (TextBlock)cb.Template.FindName("SelectContent", cb);
-                    if (tb != null)
-                        tb.Text = (string)selectButtonList[selectButtonIndex];
-
-                    return;
-                }              
-            }
-            else
-            {
-                if (t.Equals(rtp) )
-                {
-                    cb.Template = rtr;
-                    cb.ApplyTemplate();
-                    return;
-                }
-
-            }
-
-            Button left=(Button)t.FindName("LeftButton", cb);
-            Button right = (Button)t.FindName("RightButton", cb);
-            Button source=(Button)e.OriginalSource;
-            tb = (TextBlock)cb.Template.FindName("SelectContent", cb);
-
-            if (tb==null || left == null || right == null || source==null)
-                return;
-            
-
-            if (source.Equals(left))
-            {
-                selectButtonIndex -= 1;
-                if (selectButtonIndex < 0)
-                    selectButtonIndex = selectButtonList.Count - 1;
-                tb.Text = (string)selectButtonList[selectButtonIndex];
-            }
-
-            if (source.Equals(right))
-            {
-                selectButtonIndex += 1;
-                if (selectButtonIndex > selectButtonList.Count - 1)
-                    selectButtonIndex = 0;
-                tb.Text = (string)selectButtonList[selectButtonIndex];
-            }
-
-        }
+       }
 
         public void MPNG(object sender, RoutedEventArgs e)
         {

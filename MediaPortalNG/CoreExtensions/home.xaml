@@ -46,7 +46,7 @@
                     <SolidColorBrush Color="Transparent" />
                   </GeometryDrawing.Brush>
                   <GeometryDrawing.Pen>
-                    <Pen Thickness="0.01" Brush="DarkGray" />
+                    <Pen Thickness="0.005" Brush="Transparent" />
                   </GeometryDrawing.Pen>
                 </GeometryDrawing>
 
@@ -61,7 +61,7 @@
                     <Pen Thickness="0.01" Brush="DarkGray" />
                   </GeometryDrawing.Pen>
                 </GeometryDrawing>
-
+                
                 <GeometryDrawing>
                   <GeometryDrawing.Geometry>
                     <RectangleGeometry Rect="0.44,0.25,0.22,0.65" RadiusX="0.10" RadiusY="0.10"/>
@@ -148,17 +148,17 @@
 
 
       <!--  -->
-      <CheckBox
+      <Button
         Name="id3"
         Canvas.Top="129"
         Canvas.Left="60"
         Visibility="Visible"
         Width="190"
         Height="32"
-        Style="{DynamicResource GUISelectButton}"
+        Style="{DynamicResource GUIButton}"
         Click="selectButton" 
         Tag="##id::3//##keycontrol::onleft:;onright:;onup:;ondown://##metadata::labelNum:103"
->103</CheckBox>
+>103</Button>
 
 
       <!-- SlideShow button -->
@@ -225,9 +225,20 @@
 
       <ctrl:GUISpinControl 
         x:Name="upDown1"  
-        TextSize="18" 
+        FontSize="18" 
+        Foreground="White" 
         Canvas.Top="280"
         Canvas.Left="60">
       </ctrl:GUISpinControl>
+
+    <ctrl:GUISelectButton 
+  x:Name="select1"
+  Content="Click me ;)" 
+  Width="190" 
+  Height="32" 
+  Canvas.Top="320"
+  Canvas.Left="60">
+    </ctrl:GUISelectButton>
+    
   </Canvas>
 </Page>
