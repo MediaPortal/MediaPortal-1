@@ -242,6 +242,7 @@ namespace MediaPortal.GUI.Video
       dlg.Add(GUILocalizeStrings.Get(925)); //delete
       dlg.Add(GUILocalizeStrings.Get(368)); //IMDB
       dlg.Add(GUILocalizeStrings.Get(208)); //play
+			dlg.Add(GUILocalizeStrings.Get(926)); //add to playlist
 
       dlg.DoModal(GetID);
       if (dlg.SelectedLabel == -1) return;
@@ -258,6 +259,9 @@ namespace MediaPortal.GUI.Video
         case 2: // play
           OnClick(itemNo);
           break;
+				case 3: //add to playlist
+					OnQueueItem(itemNo);
+					break;
       }
     }
 
