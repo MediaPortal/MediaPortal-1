@@ -74,6 +74,8 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
 
         public void SetCustomCharacters(int[][] customCharacters)
         {
+            if (customCharacters == null)
+                return;
             disp_write_data2(CGROM_ADDR >> 11);
             disp_write_command(0x22);
             disp_write_data2(CGROM_ADDR); /* disp_set_addr(CGROM_ADDR); */

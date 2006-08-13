@@ -364,7 +364,7 @@ namespace ProcessPlugins.ExternalDisplay
             set { m_TranslateTo = value; }
         }
 
-        private int[][] m_CustomCharacters;
+        private int[][] m_CustomCharacters = new int[0][];
 
         [XmlArray]
         [XmlArrayItem("CustomCharacter")]

@@ -59,6 +59,8 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
         /// </summary>
         public void SetCustomCharacters(int[][] customCharacters)
         {
+            if (customCharacters==null)
+                return;
             // Begin ADDED/MODIFIED
             CGRam();
 
