@@ -3,6 +3,8 @@ using System.Xml.Serialization;
 
 namespace ProcessPlugins.ExternalDisplay.Setting
 {
+    /// <summary>Class for getting Windows Performance Counter values</summary>
+    /// <author>JoeDalton</author>
     [Serializable]
     public class PerformanceCounter : Value
     {

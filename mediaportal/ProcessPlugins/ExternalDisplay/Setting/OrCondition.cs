@@ -29,6 +29,7 @@ namespace ProcessPlugins.ExternalDisplay.Setting
     /// The OrCondition evaluates all its nested <seealso cref="Condition"/>s. If one of the nested 
     /// conditions evaluates to true, the OrCondition is true
     /// </summary>
+    /// <author>JoeDalton</author>
     [XmlType("Or")]
     [Serializable]
     public class OrCondition : Condition

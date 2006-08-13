@@ -28,6 +28,7 @@ namespace ProcessPlugins.ExternalDisplay.Setting
     /// <summary>
     /// The abstract base class for all conditions
     /// </summary>
+    /// <author>JoeDalton</author>
     [XmlInclude(typeof(NotNullCondition))]
     [XmlInclude(typeof(IsNullCondition))]
     [XmlInclude(typeof(AndCondition))]

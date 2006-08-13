@@ -30,6 +30,7 @@ namespace ProcessPlugins.ExternalDisplay.Setting
     /// <summary>
     /// This class represents a single display line
     /// </summary>
+    /// <author>JoeDalton</author>
     [Serializable]
     public class Line
     {

@@ -26,7 +26,8 @@ namespace ProcessPlugins.ExternalDisplay
   /// <summary>
   /// Wrapper class for the Windows HighPerformanceCounter.
   /// </summary>
-  public class HighPerformanceCounter
+    /// <author>JoeDalton</author>
+    public class HighPerformanceCounter
   {
     private static long frequency;
     private long start;

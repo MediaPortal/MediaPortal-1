@@ -21,20 +21,21 @@
 
 namespace ProcessPlugins.ExternalDisplay
 {
-	/// <summary>
-	/// Specifies the possible MediaPortal statusses
-	/// </summary>
-	public enum Status
-	{
-    Idle = 0,
-    PlayingTV,
-    PlayingMusic,
-    PlayingVideo,
-    PlayingDVD,
-    PlayingRadio,
-    PlayingRecording,
-    Timeshifting,
-    Action,
-    Any
-	}
+    /// <summary>
+    /// Specifies the possible MediaPortal statusses
+    /// </summary>
+    /// <author>JoeDalton</author>
+    public enum Status
+    {
+        Idle = 0,
+        PlayingTV,
+        PlayingMusic,
+        PlayingVideo,
+        PlayingDVD,
+        PlayingRadio,
+        PlayingRecording,
+        Timeshifting,
+        Action,
+        Any
+    }
 }

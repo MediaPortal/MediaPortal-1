@@ -255,49 +255,46 @@
     <Compile Include="CallerId\YAC\CallerIdPlugin.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ExternalDisplay\Clipboard.cs">
+    <Compile Include="ExternalDisplay\Drivers\BaseDisplay.cs" />
+    <Compile Include="ExternalDisplay\Drivers\Clipboard.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ExternalDisplay\BaseDisplay.cs" />
-    <Compile Include="ExternalDisplay\CrystalFontz634.cs" />
-    <Compile Include="ExternalDisplay\DebugForm.cs">
+    <Compile Include="ExternalDisplay\Drivers\CrystalFontz634.cs" />
+    <Compile Include="ExternalDisplay\Drivers\DebugForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ExternalDisplay\DisplayHandler.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ExternalDisplay\DLLInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="ExternalDisplay\ExternalDisplay.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ExternalDisplay\Girder.cs">
+    <Compile Include="ExternalDisplay\Drivers\Girder.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ExternalDisplay\HD44780.cs" />
+    <Compile Include="ExternalDisplay\Drivers\HD44780.cs" />
     <Compile Include="ExternalDisplay\HighPerformanceCounter.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ExternalDisplay\IDisplay.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ExternalDisplay\iMON.cs">
+    <Compile Include="ExternalDisplay\Drivers\iMON.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ExternalDisplay\IO.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ExternalDisplay\LCDHypeWrapper.cs">
+    <Compile Include="ExternalDisplay\Drivers\LCDHypeWrapper.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ExternalDisplay\MediaPad.cs">
+    <Compile Include="ExternalDisplay\Drivers\MediaPad.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ExternalDisplay\None.cs">
+    <Compile Include="ExternalDisplay\Drivers\None.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ExternalDisplay\NoritakeGU7000.cs" />
+    <Compile Include="ExternalDisplay\Drivers\NoritakeGU7000.cs" />
     <Compile Include="ExternalDisplay\PropertyBrowser.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -314,6 +311,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ExternalDisplay\Setting\FixedValue.cs" />
+    <Compile Include="ExternalDisplay\Setting\Image.cs" />
     <Compile Include="ExternalDisplay\Setting\IsNullCondition.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -348,7 +346,8 @@
     <Compile Include="ExternalDisplay\Status.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ExternalDisplay\VLSYSLis2.cs">
+    <Compile Include="ExternalDisplay\Drivers\T6963C.cs" />
+    <Compile Include="ExternalDisplay\Drivers\VLSYSLis2.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DiskManagement\DiskManagement.cs" />
@@ -417,7 +416,7 @@
     <EmbeddedResource Include="CallerId\ISDN\ISDNSetupForm.resx">
       <DependentUpon>ISDNSetupForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ExternalDisplay\DebugForm.resx">
+    <EmbeddedResource Include="ExternalDisplay\Drivers\DebugForm.resx">
       <DependentUpon>DebugForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ExternalDisplay\PropertyBrowser.resx">

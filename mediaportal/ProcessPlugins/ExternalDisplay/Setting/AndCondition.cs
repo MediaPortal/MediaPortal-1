@@ -29,6 +29,7 @@ namespace ProcessPlugins.ExternalDisplay.Setting
     /// This class represents an AND condition.  Every nested condition needs to evaluate to true, 
     /// in order for this condition to evalue to true
     /// </summary>
+    /// <author>JoeDalton</author>
     [XmlType("And")]
     [Serializable]
     public class AndCondition : Condition

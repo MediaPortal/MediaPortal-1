@@ -34,6 +34,7 @@ namespace ProcessPlugins.ExternalDisplay.Setting
     /// condition.  Only if all triggers match the message will be sent to the 
     /// <see cref="DisplayHandler"/> who is responsible for formatting it and sending it to the display.
     /// </remarks>
+    /// <author>JoeDalton</author>
     [Serializable]
     public class Message
     {
@@ -66,6 +67,9 @@ namespace ProcessPlugins.ExternalDisplay.Setting
         [DefaultValue(null)]
         public Condition Condition = null;
 
+        [XmlElement("Image", typeof(Image))]
+        public List<Image> Images = new List<Image>();
+
         /// <summary>
         /// Process the message
         /// </summary>
@@ -77,8 +81,9 @@ namespace ProcessPlugins.ExternalDisplay.Setting
             {
                 for (int i = 0; i < Lines.Count; i++)
                 {
-                    _keeper.SetLine(i, (Line) Lines[i]);
+                    _keeper.SetLine(i, Lines[i]);
                 }
+                _keeper.Images = Images;
                 return true;
             }
             return false;

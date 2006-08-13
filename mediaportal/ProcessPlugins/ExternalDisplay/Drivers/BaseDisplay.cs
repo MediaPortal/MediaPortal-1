@@ -19,23 +19,29 @@
  *
  */
 
-using System;
 using MediaPortal.Utils.Services;
 
 namespace ProcessPlugins.ExternalDisplay
 {
-  /// <summary>
-  /// The common interface for all displays that this plug-in supports
-  /// </summary>
-  /// <author>James</author>
-  public class BaseDisplay
-  {
-    protected ILog _log;
-
-    protected BaseDisplay()
+    /// <summary>
+    /// The common interface for all displays that this plug-in supports
+    /// </summary>
+    /// <author>James</author>
+    /// <author>JoeDalton</author>
+    public abstract class BaseDisplay
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
+        private ILog _log;
+
+        protected ILog Log
+        {
+            get
+            {
+                if (_log == null)
+                {
+                    _log = GlobalServiceProvider.Instance.Get<ILog>();
+                }
+                return _log;
+            }
+        }
     }
-  }
 }

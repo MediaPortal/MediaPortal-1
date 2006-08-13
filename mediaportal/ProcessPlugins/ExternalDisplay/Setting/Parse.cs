@@ -31,6 +31,7 @@ namespace ProcessPlugins.ExternalDisplay.Setting
     /// <remarks>
     /// When the Parse is evaluated all references to properties are replaces by their property values.
     /// </remarks>
+    /// <author>JoeDalton</author>
     [Serializable]
     public class Parse : Value
     {

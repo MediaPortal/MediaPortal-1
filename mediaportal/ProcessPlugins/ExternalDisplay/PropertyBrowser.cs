@@ -28,189 +28,202 @@ using System.ComponentModel;
 using System.Data;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
+using MediaPortal.UserInterface.Controls;
 
 namespace ProcessPlugins.ExternalDisplay
 {
-  /// <summary>
-  /// This form displays a list of all properties that MediaPortal exposes and their values.
-  /// </summary>
-  /// <remarks>
-  /// It is show when the user checks the "Show Property Browser" checkbox in the plugin 
-  /// setup form.
-  /// </remarks>
-  /// <author>JoeDalton</author>
-  public class PropertyBrowser : Form
-  {
-    private delegate void SetStatusDelegate(Status status);
-    private delegate void SetActiveWindowDelegate(GUIWindow.Window _window);
-    private DataGrid dataGrid1;
-    private IContainer components = null;
-    private Panel panel1;
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
-    private MediaPortal.UserInterface.Controls.MPTextBox txtActiveWindow;
-    private MediaPortal.UserInterface.Controls.MPLabel label2;
-    private MediaPortal.UserInterface.Controls.MPTextBox txtStatus;
-    private DataTable properties = null;
-
-    public PropertyBrowser()
-    {
-      //
-      // Required for Windows Form Designer support
-      //
-      InitializeComponent();
-    }
-
     /// <summary>
-    /// Clean up any resources being used.
+    /// This form displays a list of all properties that MediaPortal exposes and their values.
     /// </summary>
-    protected override void Dispose(bool disposing)
+    /// <remarks>
+    /// It is show when the user checks the "Show Property Browser" checkbox in the plugin 
+    /// setup form.
+    /// </remarks>
+    /// <author>JoeDalton</author>
+    public class PropertyBrowser : Form
     {
-      if (disposing)
-      {
-        if (components != null)
+        private delegate void SetStatusDelegate(Status status);
+
+        private delegate void SetActiveWindowDelegate(GUIWindow.Window _window);
+
+        private DataGrid dataGrid1;
+        private IContainer components = null;
+        private Panel panel1;
+        private MPLabel label1;
+        private MPTextBox txtActiveWindow;
+        private MPLabel label2;
+        private MPTextBox txtStatus;
+        private DataTable properties = null;
+
+        public PropertyBrowser()
         {
-          components.Dispose();
+            //
+            // Required for Windows Form Designer support
+            //
+            InitializeComponent();
         }
-      }
-      base.Dispose(disposing);
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (components != null)
+                {
+                    components.Dispose();
+                }
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            this.components = new System.ComponentModel.Container();
+            this.dataGrid1 = new System.Windows.Forms.DataGrid();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.txtActiveWindow = new MediaPortal.UserInterface.Controls.MPTextBox();
+            this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
+            this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
+            this.txtStatus = new MediaPortal.UserInterface.Controls.MPTextBox();
+            ((System.ComponentModel.ISupportInitialize) (this.dataGrid1)).BeginInit();
+            this.panel1.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // dataGrid1
+            // 
+            this.dataGrid1.DataMember = "";
+            this.dataGrid1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGrid1.HeaderForeColor = System.Drawing.SystemColors.ControlText;
+            this.dataGrid1.Location = new System.Drawing.Point(0, 0);
+            this.dataGrid1.Name = "dataGrid1";
+            this.dataGrid1.Size = new System.Drawing.Size(336, 254);
+            this.dataGrid1.TabIndex = 0;
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.txtStatus);
+            this.panel1.Controls.Add(this.label2);
+            this.panel1.Controls.Add(this.txtActiveWindow);
+            this.panel1.Controls.Add(this.label1);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel1.Location = new System.Drawing.Point(0, 254);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(336, 64);
+            this.panel1.TabIndex = 1;
+            // 
+            // txtActiveWindow
+            // 
+            this.txtActiveWindow.Location = new System.Drawing.Point(96, 8);
+            this.txtActiveWindow.Name = "txtActiveWindow";
+            this.txtActiveWindow.ReadOnly = true;
+            this.txtActiveWindow.Size = new System.Drawing.Size(232, 20);
+            this.txtActiveWindow.TabIndex = 1;
+            this.txtActiveWindow.Text = "";
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(8, 8);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(80, 23);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Active Window";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(8, 32);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(80, 23);
+            this.label2.TabIndex = 2;
+            this.label2.Text = "Status";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // txtStatus
+            // 
+            this.txtStatus.Location = new System.Drawing.Point(96, 32);
+            this.txtStatus.Name = "txtStatus";
+            this.txtStatus.ReadOnly = true;
+            this.txtStatus.Size = new System.Drawing.Size(232, 20);
+            this.txtStatus.TabIndex = 3;
+            this.txtStatus.Text = "";
+            // 
+            // PropertyBrowser
+            // 
+            this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+            this.ClientSize = new System.Drawing.Size(336, 318);
+            this.Controls.Add(this.dataGrid1);
+            this.Controls.Add(this.panel1);
+            this.Name = "PropertyBrowser";
+            this.Text = "Property Browser";
+            this.TopMost = true;
+            this.Load += new System.EventHandler(this.PropertyBrowser_Load);
+            ((System.ComponentModel.ISupportInitialize) (this.dataGrid1)).EndInit();
+            this.panel1.ResumeLayout(false);
+            this.ResumeLayout(false);
+        }
+
+        #endregion
+
+        public void SetStatus(Status _status)
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new SetStatusDelegate(SetStatus), _status);
+            }
+            txtStatus.Text = _status.ToString();
+        }
+
+        public void SetActiveWindow(GUIWindow.Window _window)
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new SetActiveWindowDelegate(SetActiveWindow), _window);
+            }
+            txtActiveWindow.Text = _window.ToString();
+        }
+
+        private void PropertyBrowser_Load(object sender, EventArgs e)
+        {
+            properties = new DataTable("Properties");
+            DataColumn key = properties.Columns.Add("Key", typeof(string));
+            properties.Columns.Add("Value", typeof(string));
+            properties.PrimaryKey = new DataColumn[] {key};
+            dataGrid1.DataSource = properties;
+            GUIPropertyManager.OnPropertyChanged +=
+                new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
+            //Initialize some properties (because they are set before we attached our eventhandler)
+            GUIPropertyManager_OnPropertyChanged("#currentmodule", GUIPropertyManager.GetProperty("#currentmodule"));
+        }
+
+        /// <summary>
+        /// The eventhandler for the event that the GUIPropertyManager raises when a property
+        /// changes value
+        /// </summary>
+        /// <param name="tag">The name of the property that was changed</param>
+        /// <param name="value">The new value of the property</param>
+        private void GUIPropertyManager_OnPropertyChanged(string tag, string value)
+        {
+            if (properties == null)
+            {
+                return;
+            }
+            DataRow r = properties.Rows.Find(tag);
+            if (r == null)
+            {
+                properties.Rows.Add(new object[] {tag, value});
+            }
+            else
+            {
+                r["Value"] = value;
+            }
+        }
     }
-
-    #region Windows Form Designer generated code
-    /// <summary>
-    /// Required method for Designer support - do not modify
-    /// the contents of this method with the code editor.
-    /// </summary>
-    private void InitializeComponent()
-    {
-      this.components = new System.ComponentModel.Container();
-      this.dataGrid1 = new System.Windows.Forms.DataGrid();
-      this.panel1 = new System.Windows.Forms.Panel();
-      this.txtActiveWindow = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.txtStatus = new MediaPortal.UserInterface.Controls.MPTextBox();
-      ((System.ComponentModel.ISupportInitialize)(this.dataGrid1)).BeginInit();
-      this.panel1.SuspendLayout();
-      this.SuspendLayout();
-      // 
-      // dataGrid1
-      // 
-      this.dataGrid1.DataMember = "";
-      this.dataGrid1.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.dataGrid1.HeaderForeColor = System.Drawing.SystemColors.ControlText;
-      this.dataGrid1.Location = new System.Drawing.Point(0, 0);
-      this.dataGrid1.Name = "dataGrid1";
-      this.dataGrid1.Size = new System.Drawing.Size(336, 254);
-      this.dataGrid1.TabIndex = 0;
-      // 
-      // panel1
-      // 
-      this.panel1.Controls.Add(this.txtStatus);
-      this.panel1.Controls.Add(this.label2);
-      this.panel1.Controls.Add(this.txtActiveWindow);
-      this.panel1.Controls.Add(this.label1);
-      this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-      this.panel1.Location = new System.Drawing.Point(0, 254);
-      this.panel1.Name = "panel1";
-      this.panel1.Size = new System.Drawing.Size(336, 64);
-      this.panel1.TabIndex = 1;
-      // 
-      // txtActiveWindow
-      // 
-      this.txtActiveWindow.Location = new System.Drawing.Point(96, 8);
-      this.txtActiveWindow.Name = "txtActiveWindow";
-      this.txtActiveWindow.ReadOnly = true;
-      this.txtActiveWindow.Size = new System.Drawing.Size(232, 20);
-      this.txtActiveWindow.TabIndex = 1;
-      this.txtActiveWindow.Text = "";
-      // 
-      // label1
-      // 
-      this.label1.Location = new System.Drawing.Point(8, 8);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(80, 23);
-      this.label1.TabIndex = 0;
-      this.label1.Text = "Active Window";
-      this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // label2
-      // 
-      this.label2.Location = new System.Drawing.Point(8, 32);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(80, 23);
-      this.label2.TabIndex = 2;
-      this.label2.Text = "Status";
-      this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // txtStatus
-      // 
-      this.txtStatus.Location = new System.Drawing.Point(96, 32);
-      this.txtStatus.Name = "txtStatus";
-      this.txtStatus.ReadOnly = true;
-      this.txtStatus.Size = new System.Drawing.Size(232, 20);
-      this.txtStatus.TabIndex = 3;
-      this.txtStatus.Text = "";
-      // 
-      // PropertyBrowser
-      // 
-      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-      this.ClientSize = new System.Drawing.Size(336, 318);
-      this.Controls.Add(this.dataGrid1);
-      this.Controls.Add(this.panel1);
-      this.Name = "PropertyBrowser";
-      this.Text = "Property Browser";
-      this.TopMost = true;
-      this.Load += new System.EventHandler(this.PropertyBrowser_Load);
-      ((System.ComponentModel.ISupportInitialize)(this.dataGrid1)).EndInit();
-      this.panel1.ResumeLayout(false);
-      this.ResumeLayout(false);
-
-    }
-    #endregion
-
-    public void SetStatus(Status _status)
-    {
-      if (InvokeRequired)
-        Invoke(new SetStatusDelegate(SetStatus), _status);
-      txtStatus.Text = _status.ToString();
-    }
-
-    public void SetActiveWindow(GUIWindow.Window _window)
-    {
-      if (InvokeRequired)
-        Invoke(new SetActiveWindowDelegate(SetActiveWindow), _window);
-      txtActiveWindow.Text = _window.ToString();
-    }
-
-    private void PropertyBrowser_Load(object sender, EventArgs e)
-    {
-      properties = new DataTable("Properties");
-      DataColumn key = properties.Columns.Add("Key", typeof(string));
-      properties.Columns.Add("Value", typeof(string));
-      properties.PrimaryKey = new DataColumn[] { key };
-      dataGrid1.DataSource = properties;
-      GUIPropertyManager.OnPropertyChanged += new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
-      //Initialize some properties (because they are set before we attached our eventhandler)
-      GUIPropertyManager_OnPropertyChanged("#currentmodule", GUIPropertyManager.GetProperty("#currentmodule"));
-    }
-
-    /// <summary>
-    /// The eventhandler for the event that the GUIPropertyManager raises when a property
-    /// changes value
-    /// </summary>
-    /// <param name="tag">The name of the property that was changed</param>
-    /// <param name="value">The new value of the property</param>
-    private void GUIPropertyManager_OnPropertyChanged(string tag, string value)
-    {
-      if (properties == null)
-        return;
-      DataRow r = properties.Rows.Find(tag);
-      if (r == null)
-        properties.Rows.Add(new object[] { tag, value });
-      else
-        r["Value"] = value;
-    }
-
-  }
-
 }

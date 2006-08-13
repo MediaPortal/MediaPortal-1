@@ -27,6 +27,7 @@ namespace ProcessPlugins.ExternalDisplay.Setting
     /// <summary>
     /// The Property class represents a single property reference.
     /// </summary>
+    /// <author>JoeDalton</author>
     [Serializable]
     public class Property : FixedValue
     {

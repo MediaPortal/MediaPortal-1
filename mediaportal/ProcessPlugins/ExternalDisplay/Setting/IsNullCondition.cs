@@ -27,6 +27,7 @@ namespace ProcessPlugins.ExternalDisplay.Setting
     /// <summary>
     /// The IsNullCondition evaluates a property and returns <b>true</b> if the property is empty
     /// </summary>
+    /// <author>JoeDalton</author>
     [XmlType("IsNull")]
     [Serializable]
     public class IsNullCondition : Condition

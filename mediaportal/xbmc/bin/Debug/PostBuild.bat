@@ -62,18 +62,6 @@ copy ..\..\..\Microsoft.DirectX.Direct3DX.dll .
 copy ..\..\..\Microsoft.DirectX.DirectDraw.dll .
 copy ..\..\..\Microsoft.DirectX.dll .
 copy ..\..\..\Microsoft.DirectX.DirectInput.dll .
-rem ExternalDisplay plugin LCD driver DLLs
-
-rem usbuirt driver should only reside in windows\system32
-rem copy ..\..\..\FTD2XX.DLL .
-copy ..\..\..\SG_VFD.dll .
-copy ..\..\..\inpout32.dll .
-rem if not exist LUI\. mkdir LUI
-rem copy ..\..\..\LUI.dll LUI\.
-copy ..\..\..\Communications.dll .
-copy ..\..\..\Interop.GIRDERLib.dll .
-copy ..\..\..\MediaPadLayer.dll .
-rem 
 copy ..\..\..\KCS.Utilities.dll .
 rem copy ..\..\..\X10Plugin.* .
 copy ..\..\..\X10Unified.* .
@@ -132,3 +120,23 @@ copy ..\..\..\Utils\bin\debug\Utils.dll .
 copy ..\..\..\WebEPG\WebEPG-xmltv\bin\debug\WebEPG-xmltv.exe WebEPG.exe
 copy ..\..\..\WebEPG\WebEPG-conf\bin\debug\WebEPG-conf.exe .
 copy ..\..\..\WebEPG\WebEPG-channels\bin\debug\WebEPG-channels.exe .
+rem ---------------------
+rem Begin ExternalDisplay
+rem ---------------------
+rem - plugin LCD driver DLLs
+rem usbuirt driver should only reside in windows\system32
+rem copy ..\..\..\FTD2XX.DLL .
+copy ..\..\..\SG_VFD.dll .
+copy ..\..\..\inpout32.dll .
+rem if not exist LUI\. mkdir LUI
+rem copy ..\..\..\LUI.dll LUI\.
+copy ..\..\..\Communications.dll .
+copy ..\..\..\Interop.GIRDERLib.dll .
+copy ..\..\..\MediaPadLayer.dll .
+rem - LCDHype drivers
+xcopy ..\Release\plugins\process\LCDDrivers\*.* plugins\process\LCDDrivers /E /I /R /K /Y
+rem - Copy ExternalDisplay graphics
+xcopy ..\release\Thumbs\ExternalDisplay\*.* .\Thumbs\ExternalDisplay /E /I /R /K /Y
+rem -------------------
+rem End ExternalDisplay
+rem -------------------

@@ -28,6 +28,7 @@ namespace ProcessPlugins.ExternalDisplay.Setting
     /// <summary>
     /// The Text class represents either a fixed text, or a reference to a translatable resource string.
     /// </summary>
+    /// <author>JoeDalton</author>
     [Serializable]
     public class Text : FixedValue
     {

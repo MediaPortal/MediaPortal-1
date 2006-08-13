@@ -28,6 +28,7 @@ namespace ProcessPlugins.ExternalDisplay.Setting
     /// <summary>
     /// The abstract base class for all values.
     /// </summary>
+    /// <author>JoeDalton</author>
     [XmlInclude(typeof(Property))]
     [XmlInclude(typeof(Text))]
     [XmlInclude(typeof(Parse))]
