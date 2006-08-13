@@ -103,6 +103,7 @@ int							m_iVertexBuffersUpdated=0;
 int							m_iFontVertexBuffersUpdated=0;
 int							m_iScreenWidth=0;
 int							m_iScreenHeight=0;
+DWORD           m_alphaBlend = -1;
 
 void Log(char* txt)
 {
@@ -162,6 +163,22 @@ void FontEngineSetDevice(void* device)
 	&& (caps.StretchRectFilterCaps&D3DPTFILTERCAPS_MAGFLINEAR))
 		m_Filter = D3DTEXF_LINEAR;
   m_pDevice->SetFVF( D3DFVF_CUSTOMVERTEX );
+}
+
+//*******************************************************************************************************************
+
+void FontEngineSetAlphaBlend(DWORD alphaBlend)
+{
+  //char log[128];
+
+  if(alphaBlend!=m_alphaBlend)
+  {
+    m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE ,alphaBlend);
+    m_alphaBlend = alphaBlend;
+    //sprintf(log,"FontEngineSetAlphaBlend(%d)\n", alphaBlend);
+	  //Log(log);
+
+  }
 }
 
 //*******************************************************************************************************************
@@ -509,7 +526,6 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
 void FontEnginePresentTextures()
 {
 
-	DWORD dwValueAlphaBlend=0;
 	for (int i=0; i < textureCount; ++i)
 	{
 		int index=textureZ[i];
@@ -529,13 +545,11 @@ void FontEnginePresentTextures()
 					texture->pVertexBuffer->Unlock();
 				}
 
-				DWORD dwValue=1;
-				if (!texture->useAlphaBlend) dwValue=0;
-				if (dwValueAlphaBlend!=dwValue)				
-				{
-					m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE ,dwValue);
-					dwValueAlphaBlend=dwValue;
-				}
+        if(texture->useAlphaBlend)
+          FontEngineSetAlphaBlend(TRUE);
+        else
+          FontEngineSetAlphaBlend(FALSE);
+
 				m_pDevice->SetTexture(0, texture->pTexture);
 				m_pDevice->SetStreamSource(0, texture->pVertexBuffer, 0, sizeof(CUSTOMVERTEX) );
 				m_pDevice->SetIndices( texture->pIndexBuffer );
@@ -869,8 +883,9 @@ void FontEnginePresent3D(int fontNumber)
 				memcpy(pVertices,font->vertices, (font->iv)*sizeof(CUSTOMVERTEX));
 				font->pVertexBuffer->Unlock();
 			}
-			m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE ,1);
- 
+
+      FontEngineSetAlphaBlend(1);
+
 			m_pDevice->SetTexture(0, font->pTexture);
 			m_pDevice->SetStreamSource(0, font->pVertexBuffer, 0, sizeof(CUSTOMVERTEX) );
 			m_pDevice->SetIndices( font->pIndexBuffer );
@@ -941,6 +956,8 @@ void FontEngineSetTexture(void* surface)
 	//pTexture->Release();
 }
 
+
+
 void FontEngineDrawSurface(int fx, int fy, int nw, int nh, 
 						   int dstX, int dstY, int dstWidth, int dstHeight,
 						   void* surface)
@@ -948,6 +965,8 @@ void FontEngineDrawSurface(int fx, int fy, int nw, int nh,
 	try
 	{
 		IDirect3DSurface9* pBackBuffer;
+
+    FontEngineSetAlphaBlend(FALSE);
 		m_pDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &pBackBuffer);
 
 		LPDIRECT3DSURFACE9 pSurface = (LPDIRECT3DSURFACE9)surface;
