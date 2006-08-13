@@ -97,7 +97,8 @@ namespace MediaPortal.Player
     VertexBuffer _vertexBuffer;
     uint _surfaceAdress, _textureAddress;
 
-    int _scanlinesToRemove = 0;
+    int _topscanlinesToRemove = 0;
+    int _bottomscanlinesToRemove = 0;
     int _arVideoWidth = 4;
     int _arVideoHeight = 3;
     int _prevVideoWidth = 0;
@@ -133,7 +134,10 @@ namespace MediaPortal.Player
       _blackImage.AllocResources();
 
       using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-        _scanlinesToRemove = xmlReader.GetValueAsInt("mytv", "scanlinestoremove", 0);
+      {
+        _topscanlinesToRemove = xmlReader.GetValueAsInt("mytv", "topscanlinestoremove", 0);
+        _bottomscanlinesToRemove = xmlReader.GetValueAsInt("mytv", "bottomscanlinestoremove", 0);
+      }
     }
     #endregion
 
@@ -370,8 +374,11 @@ namespace MediaPortal.Player
 
         // Some capture cards capture teletext information that appears as a moving line at the top
         // Remove those by croping the picture
-        _sourceRect.Y += _scanlinesToRemove;
-        _sourceRect.Height -= _scanlinesToRemove;
+
+        _sourceRect.Y += _topscanlinesToRemove;
+        _sourceRect.Height -= _topscanlinesToRemove;
+        _sourceRect.Height -= _bottomscanlinesToRemove;
+        _log.Info("PlaneScene: video crop : {0}, {1}", _topscanlinesToRemove, _bottomscanlinesToRemove);
 
         _log.Info("PlaneScene: video WxH  : {0}x{1}", videoSize.Width, videoSize.Height);
         _log.Info("PlaneScene: video AR   : {0}:{1}", _arVideoWidth, _arVideoHeight);
@@ -822,7 +829,6 @@ namespace MediaPortal.Player
       if (texAddr == 0) return;
       unsafe
       {
-        GUIGraphicsContext.DX9Device.SetRenderState(RenderStates.AlphaBlendEnable, false);
         IntPtr ptr = new IntPtr(texAddr);
         FontEngineDrawSurface(_sourceRect.Left, _sourceRect.Top, _sourceRect.Width, _sourceRect.Height,
                               _destinationRect.Left, _destinationRect.Top, _destinationRect.Width, _destinationRect.Height,
