@@ -80,9 +80,9 @@ namespace MediaPortal.GUI.Library
     protected int _hoverHeight;
 				
     protected int _frameCounter = 0;
-    protected GUIControl _imageFocused = null;
-    protected GUIControl _imageNonFocused = null;
-		protected GUIControl _hoverImage = null;
+    protected GUIAnimation _imageFocused = null;
+		protected GUIAnimation _imageNonFocused = null;
+		protected GUIAnimation _hoverImage = null;
     protected GUILabelControl _labelControl = null;
 
     public GUIButtonControl(int dwParentID)
@@ -116,28 +116,28 @@ namespace MediaPortal.GUI.Library
     public override void FinalizeConstruction()
     {
       base.FinalizeConstruction();
-			_imageFocused = LoadTextureControl(_parentControlId, _controlId, _positionX, _positionY,
-        _width, _height, _focusedTextureName, 0);
+			_imageFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _focusedTextureName);
       _imageFocused.ParentControl = this;
+			_imageFocused.Filtering = false;
       _imageFocused.DimColor = DimColor;
+			_imageFocused.ColourDiffuse = ColourDiffuse;
 
-			_imageNonFocused = LoadTextureControl(_parentControlId, _controlId, _positionX, _positionY,
-        _width, _height, _nonFocusedTextureName, 0);
+			_imageNonFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _nonFocusedTextureName);
       _imageNonFocused.ParentControl = this;
+			_imageNonFocused.Filtering = false;
       _imageNonFocused.DimColor = DimColor;
+			_imageNonFocused.ColourDiffuse = ColourDiffuse;
 
       if (_hoverFilename != string.Empty)
       {
          GUIGraphicsContext.ScaleRectToScreenResolution(ref _hoverX, ref _hoverY, ref _hoverWidth, ref _hoverHeight);
-				 _hoverImage = LoadTextureControl(_parentControlId, _controlId, _hoverX, _hoverY, _hoverWidth, _hoverHeight, _hoverFilename, 0);
-        //_hoverImage.Filtering = false;
+				 _hoverImage = LoadAnimationControl(_parentControlId, _controlId, _hoverX, _hoverY, _hoverWidth, _hoverHeight, _hoverFilename);
         _hoverImage.ParentControl = this;
+				_hoverImage.DimColor = DimColor;
+				_hoverImage.ColourDiffuse = ColourDiffuse;
       }
 
-      //_imageFocused.Filtering = false;
-      //_imageNonFocused.Filtering = false;
-			      
-			GUILocalizeStrings.LocalizeLabel(ref _label);
+      GUILocalizeStrings.LocalizeLabel(ref _label);
       _labelControl = new GUILabelControl(_parentControlId, 0, _positionX, _positionY, _width, _height, _fontName, _label, _textColor, GUIControl.Alignment.ALIGN_LEFT, false);
       _labelControl.TextAlignment = _textAlignment;
       _labelControl.DimColor = DimColor;
@@ -145,30 +145,6 @@ namespace MediaPortal.GUI.Library
     }
 
 		/// <summary>
-		/// This method loads the texture Image, it can be either GUIImage or GUIAnimation
-		/// </summary>
-		protected GUIControl LoadTextureControl(int parentID, int controlId, int posX, int posY, int width, int height, string texture, long colorKey)
-		{
-			if (texture.Contains(".xml"))
-			{
-				GUIControl ctl = LoadControl(texture);
-				if (ctl != null) 
-				{
-				  ctl.ParentID = parentID;
-					ctl.GetID = controlId;
-					ctl.SetPosition(posX, posY);
-					ctl.Width = width;
-					ctl.Height = height;
-					return ctl;
-				}
-			}
-			GUIImage image = new GUIImage(parentID, controlId, posX, posY, width, height, texture, colorKey);
-			image.Filtering = false;
-			return image;
-		}
-
-
-    /// <summary>
     /// This method gets called when the control is created and all properties has been set
     /// It allows the control to scale itself to the current screen resolution
     /// </summary>
@@ -186,16 +162,16 @@ namespace MediaPortal.GUI.Library
       }
       set
       {
-        if (value != base.Focus && value)
+        if (value != IsFocused)
         {
-          GUIPropertyManager.SetProperty("#highlightedbutton", Label);
-					if (value == true)
+          if (value == true)
 					{
-						//if (_imageFocused != null) _imageFocused.BeginAnimation();
+						if (_imageFocused != null) _imageFocused.Begin();
+						GUIPropertyManager.SetProperty("#highlightedbutton", Label);
 					}
 					else
 					{
-						//if (_imageNonFocused != null) _imageNonFocused.BeginAnimation();
+						if (_imageNonFocused != null) _imageNonFocused.Begin();
 					}
         }
 
@@ -335,7 +311,7 @@ namespace MediaPortal.GUI.Library
     /// <returns>true if the message was handled, false if it wasnt</returns>
     public override bool OnMessage(GUIMessage message)
     {
-      // Handle the GUI_MSG_LABEL_SET message
+			// Handle the GUI_MSG_LABEL_SET message
       if (message.TargetControlId == GetID)
       {
         if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_SET)

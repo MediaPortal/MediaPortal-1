@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
@@ -1155,13 +1156,15 @@ namespace MediaPortal.GUI.Library
       DoUpdate();
     }
 
-		public GUIControl LoadControl(string xmlFilename)
+		public List<GUIControl> LoadControl(string xmlFilename)
 		{
 			XmlDocument doc = new XmlDocument();
 			doc.Load(GUIGraphicsContext.Skin + "\\" + xmlFilename);
+			List<GUIControl> listControls= new List<GUIControl>();
 
-			if (doc.DocumentElement == null) return null;
-			if (doc.DocumentElement.Name != "window") return null;
+
+			if (doc.DocumentElement == null) return listControls;
+			if (doc.DocumentElement.Name != "window") return listControls;
 
 			// Load Definitions
 			Hashtable table = new Hashtable();
@@ -1184,14 +1187,34 @@ namespace MediaPortal.GUI.Library
 				try
 				{
 					GUIControl newControl = GUIControlFactory.Create(_windowId, controlNode, table);
-					if (newControl != null) return newControl;
+					if (newControl != null) listControls.Add(newControl);
 				}
 				catch (Exception ex)
 				{
 					_log.Error("Unable to load control: {0}", ex.ToString());
 				}
 			}
-			return null;
+			return listControls;
+		}
+
+		public GUIAnimation LoadAnimationControl(int parentID, int controlId, int posX, int posY, int width, int height, string texture)
+		{
+			if (texture.Contains(".xml"))
+			{
+				List<GUIControl> list = LoadControl(texture);
+				foreach (GUIControl control in list)
+				{
+					GUIAnimation animation = control as GUIAnimation;
+					if (animation != null)
+					{
+						animation.SetPosition(posX, posY);
+						animation.Width = width;
+						animation.Height = height;
+						return animation;
+					}
+				}
+			}
+		  return new GUIAnimation(parentID, controlId, posX, posY, width, height, texture);
 		}
 
     public string SubType

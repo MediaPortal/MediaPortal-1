@@ -40,8 +40,8 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("disabledcolor")]		protected long		_disabledColor=0xFF606060;
     [XMLSkinElement("align")]				protected Alignment _alignment=Alignment.ALIGN_RIGHT;  
     [XMLSkinElement("shadow")]				protected bool		_shadow=false;
-		protected GUIImage	_imageCheckMarkFocused=null;
-		protected GUIImage	_imageCheckMarkNonFocused=null;
+		protected GUIAnimation	_imageCheckMarkFocused=null;
+		protected GUIAnimation	_imageCheckMarkNonFocused=null;
 		protected GUIFont   _font=null;
 		protected Rectangle _rectangle=new Rectangle();
 	  public GUICheckMarkControl (int dwParentID) : base(dwParentID)
@@ -80,16 +80,14 @@ namespace MediaPortal.GUI.Library
 	  public override void FinalizeConstruction()
 	  {
 		  base.FinalizeConstruction ();
-		  
-		  _imageCheckMarkFocused = new GUIImage
-			  (_parentControlId, _controlId, _positionX, _positionY,
-			   _checkMarkWidth, _checkMarkHeight, _checkMarkFocusTextureName ,0);
+
+			_imageCheckMarkFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY,
+			   _checkMarkWidth, _checkMarkHeight, _checkMarkFocusTextureName);
       _imageCheckMarkFocused.ParentControl = this;
       _imageCheckMarkFocused.DimColor = DimColor;
-		  
-		  _imageCheckMarkNonFocused = new GUIImage
-			  (_parentControlId, _controlId, _positionX, _positionY,
-			   _checkMarkWidth, _checkMarkHeight, _checkMarkNoFocusTextureName,0);
+
+			_imageCheckMarkNonFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY,
+			   _checkMarkWidth, _checkMarkHeight, _checkMarkNoFocusTextureName);
       _imageCheckMarkNonFocused.ParentControl = this;
       _imageCheckMarkNonFocused.DimColor = DimColor;
 		  
@@ -98,7 +96,31 @@ namespace MediaPortal.GUI.Library
 		  
 		  GUILocalizeStrings.LocalizeLabel(ref _label);
 	  }
-	   
+
+		public override bool Focus
+		{
+			get
+			{
+				return base.Focus;
+			}
+			set
+			{
+				if (value != IsFocused)
+				{
+					if (value == true)
+					{
+						if (_imageCheckMarkFocused != null) _imageCheckMarkFocused.Begin();
+					}
+					else
+					{
+						if (_imageCheckMarkNonFocused != null) _imageCheckMarkNonFocused.Begin();
+					}
+				}
+				base.Focus = value;
+			}
+
+		}
+
 		/// <summary>
 		/// Renders the GUICheckMarkControl.
 		/// </summary>

@@ -65,13 +65,13 @@ namespace MediaPortal.GUI.Library
     protected int _textOffsetX2 = 0;
     [XMLSkinElement("textYOff2")]
     protected int _textOffsetY2 = 0;
-    protected GUIImage _imageBackground = null;
-    protected GUIImage _imageLeft = null;
-    protected GUIImage _imageLeftFocus = null;
-    protected GUIImage _imageRight = null;
-    protected GUIImage _imageRightFocus = null;
-    protected GUIImage _imageFocused = null;
-    protected GUIImage _imageNonFocused = null;
+    protected GUIAnimation _imageBackground = null;
+    protected GUIAnimation _imageLeft = null;
+    protected GUIAnimation _imageLeftFocus = null;
+    protected GUIAnimation _imageRight = null;
+    protected GUIAnimation _imageRightFocus = null;
+    protected GUIAnimation _imageFocused = null;
+    protected GUIAnimation _imageNonFocused = null;
     protected GUIFont _font = null;
     protected bool _showSelect = false;
 
@@ -140,31 +140,31 @@ namespace MediaPortal.GUI.Library
       int x1 = 16;
       int y1 = 16;
       GUIGraphicsContext.ScalePosToScreenResolution(ref x1, ref y1);
-      _imageFocused = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _textureFocusName, 0);
+			_imageFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _textureFocusName);
       _imageFocused.ParentControl = this;
       _imageFocused.DimColor = DimColor;
 
-      _imageNonFocused = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _textureNoFocusName, 0);
+			_imageNonFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _textureNoFocusName);
       _imageNonFocused.ParentControl = this;
       _imageNonFocused.DimColor = DimColor;
 
-      _imageBackground = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _backgroundTextureName, 0);
+			_imageBackground = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _backgroundTextureName);
       _imageBackground.ParentControl = this;
       _imageBackground.DimColor = DimColor;
 
-      _imageLeft = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, x1, y1, _leftTextureName, 0);
+			_imageLeft = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, x1, y1, _leftTextureName);
       _imageLeft.DimColor = DimColor;
       _imageLeft.ParentControl = this;
 
-      _imageLeftFocus = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, x1, y1, _leftFocusName, 0);
+			_imageLeftFocus = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, x1, y1, _leftFocusName);
       _imageLeftFocus.ParentControl = this;
       _imageLeftFocus.DimColor = DimColor;
 
-      _imageRight = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, x1, y1, _rightTextureName, 0);
+			_imageRight = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, x1, y1, _rightTextureName);
       _imageRight.ParentControl = this;
       _imageRight.DimColor = DimColor;
 
-      _imageRightFocus = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, x1, y1, _rightFocusName, 0);
+			_imageRightFocus = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, x1, y1, _rightFocusName);
       _imageRightFocus.ParentControl = this;
       _imageRightFocus.DimColor = DimColor;
 

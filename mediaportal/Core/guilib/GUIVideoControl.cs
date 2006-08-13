@@ -39,7 +39,7 @@ namespace MediaPortal.GUI.Library
 		GUIImage image;
 		[XMLSkinElement("textureFocus")]	protected string	_focusedTextureName="";
 		[XMLSkinElement("action")]			protected int		_actionId=-1;
-		protected GUIImage _imageFocusRectangle=null;
+		protected GUIAnimation _imageFocusRectangle=null;
 		
 		protected Rectangle[] _videoWindows= new Rectangle[1];
 	
@@ -55,7 +55,7 @@ namespace MediaPortal.GUI.Library
 		public override void FinalizeConstruction()
 		{
 			base.FinalizeConstruction ();
-			_imageFocusRectangle = new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height, _focusedTextureName ,0);
+			_imageFocusRectangle = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _focusedTextureName);
 			image = new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height, "black.bmp" ,1);
 
       _imageFocusRectangle.ParentControl = this;

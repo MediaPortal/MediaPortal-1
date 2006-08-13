@@ -30,17 +30,17 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class GUITVProgressControl : GUIControl
   {
-    GUIImage _imageTop = null;
-    GUIImage _imageLogo = null;
-    GUIImage _imageBottom = null;
-    GUIImage _imageTick = null;
-    GUIImage _imageFillBackground = null;
-    GUIImage _imageFill1 = null;
-    GUIImage _imageFill2 = null;
-    GUIImage _imageFill3 = null;
-    GUIImage _imageLeft = null;
-    GUIImage _imageMid = null;
-    GUIImage _imageRight = null;
+    GUIAnimation _imageTop = null;
+		GUIAnimation _imageLogo = null;
+		GUIAnimation _imageBottom = null;
+		GUIAnimation _imageTick = null;
+		GUIAnimation _imageFillBackground = null;
+		GUIAnimation _imageFill1 = null;
+		GUIAnimation _imageFill2 = null;
+		GUIAnimation _imageFill3 = null;
+		GUIAnimation _imageLeft = null;
+		GUIAnimation _imageMid = null;
+		GUIAnimation _imageRight = null;
     int _percentage1 = 0;
     int _percentage2 = 0;
     int _percentage3 = 0;
@@ -139,16 +139,16 @@ namespace MediaPortal.GUI.Library
       if (_tickFill3TextureName == null) _tickFill3TextureName = String.Empty;
       if (_fillBackGroundTextureName == null) _fillBackGroundTextureName = String.Empty;
       if (_logoTextureName == null) _logoTextureName = String.Empty;
-      _imageTop = new GUIImage(_parentControlId, _controlId, 0, 0, 0, 0, _topTextureName, 0);
-      _imageBottom = new GUIImage(_parentControlId, _controlId, 0, 0, 0, 0, _bottomTextureName, 0);
-      _imageLeft = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _leftTextureName, 0);
-      _imageMid = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _midTextureName, 0);
-      _imageRight = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _rightTextureName, 0);
-      _imageTick = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _tickTextureName, 0);
-      _imageFill1 = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _tickFill1TextureName, 0);
-      _imageFill2 = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _tickFill2TextureName, 0);
-      _imageFill3 = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _tickFill3TextureName, 0);
-      _imageFillBackground = new GUIImage(_parentControlId, _controlId, 0, 0, 0, 0, _fillBackGroundTextureName, 0);
+      _imageTop = LoadAnimationControl(_parentControlId, _controlId, 0, 0, 0, 0, _topTextureName);
+			_imageBottom = LoadAnimationControl(_parentControlId, _controlId, 0, 0, 0, 0, _bottomTextureName);
+			_imageLeft = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _leftTextureName);
+			_imageMid = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _midTextureName);
+			_imageRight = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _rightTextureName);
+			_imageTick = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _tickTextureName);
+			_imageFill1 = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _tickFill1TextureName);
+			_imageFill2 = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _tickFill2TextureName);
+			_imageFill3 = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _tickFill3TextureName);
+			_imageFillBackground = LoadAnimationControl(_parentControlId, _controlId, 0, 0, 0, 0, _fillBackGroundTextureName);
       _imageTop.KeepAspectRatio = false;
       _imageBottom.KeepAspectRatio = false;
       _imageMid.KeepAspectRatio = false;
@@ -168,7 +168,7 @@ namespace MediaPortal.GUI.Library
       _imageFill2.ParentControl = this;
       _imageFill3.ParentControl = this;
       _imageFillBackground.ParentControl = this;
-      _imageLogo = new GUIImage(_parentControlId, _controlId, 0, 0, 0, 0, _logoTextureName, 0);
+			_imageLogo = LoadAnimationControl(_parentControlId, _controlId, 0, 0, 0, 0, _logoTextureName);
       _imageLogo.ParentControl = this;
       FontName = _fontName;
     }

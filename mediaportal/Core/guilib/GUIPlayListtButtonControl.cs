@@ -92,17 +92,17 @@ namespace MediaPortal.GUI.Library
         private static ActiveButton _LastActiveButton = ActiveButton.None;
         private static bool _SuppressActiveButtonReset = false;
 
-        private GUIImage ImgUpButtonNormal = null;
-        private GUIImage ImgUpButtonFocused = null;
-        private GUIImage ImgUpButtonDisabled = null;
+        private GUIAnimation ImgUpButtonNormal = null;
+        private GUIAnimation ImgUpButtonFocused = null;
+        private GUIAnimation ImgUpButtonDisabled = null;
 
-        private GUIImage ImgDownButtonNormal = null;
-        private GUIImage ImgDownButtonFocused = null;
-        private GUIImage ImgDownButtonDisabled = null;
+        private GUIAnimation ImgDownButtonNormal = null;
+        private GUIAnimation ImgDownButtonFocused = null;
+        private GUIAnimation ImgDownButtonDisabled = null;
 
-        private GUIImage ImgDeleteButtonNormal = null;
-        private GUIImage ImgDeleteButtonFocused = null;
-        private GUIImage ImgDeleteButtonDisabled = null;
+        private GUIAnimation ImgDeleteButtonNormal = null;
+        private GUIAnimation ImgDeleteButtonFocused = null;
+        private GUIAnimation ImgDeleteButtonDisabled = null;
 
         private bool _UpButtonEnabled = true;
         private bool _DownButtonEnabled = true;
@@ -299,8 +299,8 @@ namespace MediaPortal.GUI.Library
         public override void FinalizeConstruction()
         {
             base.FinalizeConstruction();
-            ImgUpButtonNormal = new GUIImage(WindowId, WindowId + 10000, UpBtnXOffset, UpBtnYOffset, UpBtnWidth, UpBtnHeight, TextureMoveUpFileName, 0);
-            ImgUpButtonFocused = new GUIImage(WindowId, WindowId + 10001, 0, 0, UpBtnWidth, UpBtnHeight, TextureMoveUpFocusedFileName, 0);
+						ImgUpButtonNormal = LoadAnimationControl(WindowId, WindowId + 10000, UpBtnXOffset, UpBtnYOffset, UpBtnWidth, UpBtnHeight, TextureMoveUpFileName);
+						ImgUpButtonFocused = LoadAnimationControl(WindowId, WindowId + 10001, 0, 0, UpBtnWidth, UpBtnHeight, TextureMoveUpFocusedFileName);
             ImgUpButtonNormal.ParentControl = this;
             ImgUpButtonFocused.ParentControl = this;
             ImgUpButtonNormal.DimColor = DimColor;
@@ -308,8 +308,8 @@ namespace MediaPortal.GUI.Library
             ImgUpButtonNormal.BringIntoView();
             ImgUpButtonFocused.BringIntoView();
 
-            ImgDownButtonNormal = new GUIImage(WindowId, WindowId + 10003, DownBtnXOffset, DownBtnYOffset, DownBtnWidth, DownBtnHeight, TextureMoveDownFileName, 0);
-            ImgDownButtonFocused = new GUIImage(WindowId, WindowId + 10004, 0, 0, DownBtnWidth, DownBtnHeight, TextureMoveDownFocusedFileName, 0);
+						ImgDownButtonNormal = LoadAnimationControl(WindowId, WindowId + 10003, DownBtnXOffset, DownBtnYOffset, DownBtnWidth, DownBtnHeight, TextureMoveDownFileName);
+						ImgDownButtonFocused = LoadAnimationControl(WindowId, WindowId + 10004, 0, 0, DownBtnWidth, DownBtnHeight, TextureMoveDownFocusedFileName);
             ImgDownButtonNormal.ParentControl = this;
             ImgDownButtonFocused.ParentControl = this;
             ImgDownButtonNormal.DimColor = DimColor;
@@ -317,8 +317,8 @@ namespace MediaPortal.GUI.Library
             ImgDownButtonNormal.BringIntoView();
             ImgDownButtonFocused.BringIntoView();
 
-            ImgDeleteButtonNormal = new GUIImage(WindowId, WindowId + 10006, DeleteBtnXOffset, DeleteBtnYOffset, DeleteBtnWidth, DeleteBtnHeight, TextureDeleteFileName, 0);
-            ImgDeleteButtonFocused = new GUIImage(WindowId, WindowId + 10007, 0, 0, DeleteBtnWidth, DeleteBtnHeight, TextureDeleteFocusedFileName, 0);
+						ImgDeleteButtonNormal = LoadAnimationControl(WindowId, WindowId + 10006, DeleteBtnXOffset, DeleteBtnYOffset, DeleteBtnWidth, DeleteBtnHeight, TextureDeleteFileName);
+						ImgDeleteButtonFocused = LoadAnimationControl(WindowId, WindowId + 10007, 0, 0, DeleteBtnWidth, DeleteBtnHeight, TextureDeleteFocusedFileName);
             ImgDeleteButtonNormal.ParentControl = this;
             ImgDeleteButtonFocused.ParentControl = this;
             ImgDeleteButtonNormal.DimColor = DimColor;
@@ -750,7 +750,7 @@ namespace MediaPortal.GUI.Library
         /// <param name="width"></param>
         /// <param name="height"></param>
         /// <returns>GUIImage</returns>
-        private GUIImage CreateDisableButtonImage(string skinFolderImagePath, string origImageFileName, int parentId, int id, int xOffset, int yOffset, int width, int height)
+        private GUIAnimation CreateDisableButtonImage(string skinFolderImagePath, string origImageFileName, int parentId, int id, int xOffset, int yOffset, int width, int height)
         {
             string imagePath = System.IO.Path.Combine(skinFolderImagePath, origImageFileName);
 
@@ -762,11 +762,11 @@ namespace MediaPortal.GUI.Library
             string baseImgFileName = System.IO.Path.GetFileNameWithoutExtension(origImageFileName);
             string dimmedImgFileName = baseImgFileName + "_dimmed" + ext;
             string fullImagePath = System.IO.Path.Combine(skinFolderImagePath, dimmedImgFileName);
-            GUIImage guiImg = null;
+            GUIAnimation guiImg = null;
 
             // If the dimmed image already exists, use it to create the GUIImage
             if (System.IO.File.Exists(fullImagePath))
-                guiImg = new GUIImage(parentId, id, xOffset, yOffset, width, height, dimmedImgFileName, 0);
+                guiImg = LoadAnimationControl(parentId, id, xOffset, yOffset, width, height, dimmedImgFileName);
 
             else
             {
@@ -795,7 +795,7 @@ namespace MediaPortal.GUI.Library
                 origImg.Dispose();
 
                 if (System.IO.File.Exists(fullImagePath))
-                    guiImg = new GUIImage(parentId, id, xOffset, yOffset, width, height, dimmedImgFileName, 0);
+									guiImg = LoadAnimationControl(parentId, id, xOffset, yOffset, width, height, dimmedImgFileName);
 
                 newImg.Dispose();
             }

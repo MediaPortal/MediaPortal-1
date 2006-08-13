@@ -36,9 +36,9 @@ namespace MediaPortal.GUI.Library
     string _leftTextureName;
     [XMLSkinElement("righttexture")]
     string _rightTextureName;
-    GUIImage _imageBackGround = null;
-    GUIImage _imageLeft = null;
-    GUIImage _imageRight = null;
+    GUIAnimation _imageBackGround = null;
+    GUIAnimation _imageLeft = null;
+    GUIAnimation _imageRight = null;
     float _percentage = 0;
     int _startX = 0;
     int _endX = 0;
@@ -75,14 +75,14 @@ namespace MediaPortal.GUI.Library
       if (_backgroundTextureName == null) _backgroundTextureName = "";
       if (_rightTextureName == null) _rightTextureName = "";
       if (_leftTextureName == null) _leftTextureName = "";
-      _imageBackGround = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _backgroundTextureName, 0);
+			_imageBackGround = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _backgroundTextureName);
       _imageBackGround.ParentControl = this;
       _imageBackGround.DimColor = DimColor;
 
-      _imageLeft = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _leftTextureName, 0);
+			_imageLeft = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _leftTextureName);
       _imageLeft.ParentControl = this;
       _imageLeft.DimColor = DimColor;
-      _imageRight = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _rightTextureName, 0);
+			_imageRight = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _rightTextureName);
       _imageRight.ParentControl = this;
       _imageRight.DimColor = DimColor;
     }

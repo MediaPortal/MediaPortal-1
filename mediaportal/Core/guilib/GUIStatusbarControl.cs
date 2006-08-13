@@ -39,10 +39,10 @@ namespace MediaPortal.GUI.Library
 		[XMLSkinElement("midtexture")]		string   _midTextureName;
 		[XMLSkinElement("righttexture")]	string	 _rightTextureName;
 		[XMLSkinElement("posYTop")]			string	 _top;
-		GUIImage _imageBackground=null;
-		GUIImage _imageLeft=null;
-		GUIImage _imageMid=null;
-		GUIImage _imageRight=null;
+		GUIAnimation _imageBackground=null;
+		GUIAnimation _imageLeft=null;
+		GUIAnimation _imageMid=null;
+		GUIAnimation _imageRight=null;
 		int      _percentage=0;
 		bool                          _containsProperty=false;
 			
@@ -82,10 +82,10 @@ namespace MediaPortal.GUI.Library
 		public override void FinalizeConstruction()
 		{
 			base.FinalizeConstruction ();
-			_imageBackground = new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height,_backgroundTextureName,0);
-			_imageLeft		  = new GUIImage(_parentControlId, _controlId, _positionX, _positionY,0, 0,_leftTextureName,0);
-			_imageMid		  = new GUIImage(_parentControlId, _controlId, _positionX, _positionY,0, 0,_midTextureName,0);
-			_imageRight	  = new GUIImage(_parentControlId, _controlId, _positionX, _positionY,0, 0,_rightTextureName,0);
+			_imageBackground = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _backgroundTextureName);
+			_imageLeft = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _leftTextureName);
+			_imageMid = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _midTextureName);
+			_imageRight = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _rightTextureName);
 
 
       _imageBackground.ParentControl = this;

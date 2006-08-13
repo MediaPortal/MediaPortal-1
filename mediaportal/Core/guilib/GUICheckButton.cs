@@ -53,9 +53,9 @@ namespace MediaPortal.GUI.Library
 		[XMLSkinElement("MarkOffsetY")]			protected int		markOffsetY=0;
 
 		protected int       _frameCounter=0;
-		protected GUIImage	_imageFocused=null;
-		protected GUIImage  _imageNonFocused=null; 
-		protected GUILabelControl     _labelControl=null;
+		protected GUIAnimation _imageFocused=null;
+		protected GUIAnimation _imageNonFocused = null; 
+		protected GUILabelControl _labelControl=null;
 		protected GUICheckMarkControl checkMark=null;
 
 		public GUICheckButton(int dwParentID) : base(dwParentID)
@@ -96,12 +96,12 @@ namespace MediaPortal.GUI.Library
 		public override void FinalizeConstruction()
 		{
 			base.FinalizeConstruction();
-			_imageFocused  = new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height, _focusedTextureName,0);
+			_imageFocused  = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY,_width, _height, _focusedTextureName);
       _imageFocused.ParentControl = this;
       _imageFocused.Filtering = false;
       _imageFocused.DimColor = DimColor;
 
-			_imageNonFocused= new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height, _nonFocusedTextureName,0);
+			_imageNonFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _nonFocusedTextureName);
       _imageNonFocused.ParentControl = this;
 			_imageNonFocused.Filtering=false;
       _imageNonFocused.DimColor = DimColor;
@@ -134,9 +134,17 @@ namespace MediaPortal.GUI.Library
 			}
 			set
 			{
-				if (value != IsFocused && value)
+				if (value != IsFocused)
 				{
-					GUIPropertyManager.SetProperty("#highlightedbutton", Label);
+					if (value == true)
+					{
+						if (_imageFocused != null) _imageFocused.Begin();
+						GUIPropertyManager.SetProperty("#highlightedbutton", Label);
+					}
+					else
+					{
+						if (_imageNonFocused != null) _imageNonFocused.Begin();
+					}
 				}
 				base.Focus = value;
 				checkMark.Focus=value;

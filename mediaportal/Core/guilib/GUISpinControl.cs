@@ -77,10 +77,10 @@ namespace MediaPortal.GUI.Library
 		protected float     _floatInterval=0.1f;
 		protected ArrayList _listLabels = new ArrayList ();
 		protected ArrayList _listValues= new ArrayList ();
-		protected GUIImage _imageSpinUp=null;
-		protected GUIImage _imageSpinDown=null;
-		protected GUIImage _imageSpinUpFocus=null;
-		protected GUIImage _imageSpinDownFocus=null;
+		protected GUIAnimation _imageSpinUp=null;
+		protected GUIAnimation _imageSpinDown=null;
+		protected GUIAnimation _imageSpinUpFocus=null;
+		protected GUIAnimation _imageSpinDownFocus=null;
 	  
     
 		protected GUIFont  _font=null;
@@ -109,19 +109,19 @@ namespace MediaPortal.GUI.Library
 	  public override void FinalizeConstruction()
 	  {
 		  base.FinalizeConstruction();
-		  _imageSpinUp		= new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height,_upTextureName,0);
+			_imageSpinUp = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _upTextureName);
       _imageSpinUp.ParentControl = this;
       _imageSpinUp.DimColor = DimColor;
 
-		  _imageSpinDown		= new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height,_downTextureName,0);
+			_imageSpinDown = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _downTextureName);
       _imageSpinDown.ParentControl = this;
       _imageSpinDown.DimColor = DimColor;
 
-      _imageSpinUpFocus = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _upTextureNameFocus, 0);
+			_imageSpinUpFocus = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _upTextureNameFocus);
       _imageSpinUpFocus.ParentControl = this;
       _imageSpinUpFocus.DimColor = DimColor;
-      
-      _imageSpinDownFocus = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _downTextureNameFocus, 0);
+
+			_imageSpinDownFocus = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _downTextureNameFocus);
       _imageSpinDownFocus.ParentControl = this;
       _imageSpinDownFocus.DimColor = DimColor;
 
@@ -703,7 +703,20 @@ namespace MediaPortal.GUI.Library
     {
       get { return base.Focus;}
       set 
-      { 
+      {
+				if (value != IsFocused)
+				{
+					if (value == true)
+					{
+						if (_imageSpinDownFocus != null) _imageSpinDownFocus.Begin();
+						if (_imageSpinUpFocus != null) _imageSpinUpFocus.Begin();
+					}
+					else
+					{
+						if (_imageSpinDown != null) _imageSpinDown.Begin();
+						if (_imageSpinUp != null) _imageSpinUp.Begin();
+					}
+				}
         base.Focus=value;
         if(!IsFocused)
         {

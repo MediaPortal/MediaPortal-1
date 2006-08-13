@@ -44,10 +44,10 @@ namespace MediaPortal.GUI.Library
     string _midTextureName;
     [XMLSkinElement("righttexture")]
     string _rightTextureName;
-    GUIImage _imageBackGround = null;
-    GUIImage _imageLeft = null;
-    GUIImage _imageMid = null;
-    GUIImage _imageRight = null;
+    GUIAnimation _imageBackGround = null;
+    GUIAnimation _imageLeft = null;
+    GUIAnimation _imageMid = null;
+    GUIAnimation _imageRight = null;
     int _percentage = 0;
     bool _containsProperty = false;
 
@@ -89,19 +89,19 @@ namespace MediaPortal.GUI.Library
     public override void FinalizeConstruction()
     {
       base.FinalizeConstruction();
-      _imageBackGround = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _backgroundTextureName, 0);
+			_imageBackGround = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _backgroundTextureName);
       _imageBackGround.ParentControl = this;
       _imageBackGround.DimColor = DimColor;
 
-      _imageLeft = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _leftTextureName, 0);
+			_imageLeft = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _leftTextureName);
       _imageLeft.ParentControl = this;
       _imageLeft.DimColor = DimColor;
 
-      _imageMid = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _midTextureName, 0);
+			_imageMid = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _midTextureName);
       _imageMid.ParentControl = this;
       _imageMid.DimColor = DimColor;
 
-      _imageRight = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _rightTextureName, 0);
+			_imageRight = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _rightTextureName);
       _imageRight.ParentControl = this;
       _imageRight.DimColor = DimColor;
 

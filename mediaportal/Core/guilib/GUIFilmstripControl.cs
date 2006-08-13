@@ -162,8 +162,8 @@ namespace MediaPortal.GUI.Library
     int _offset = 0;
     GUIFont _font = null;
     GUISpinControl _upDownControl = null;
-    GUIImage _imageFolder = null;
-    GUIImage _imageFolderFocus = null;
+    GUIAnimation _imageFolder = null;
+    GUIAnimation _imageFolderFocus = null;
     GUIListControl.ListType _listType = GUIListControl.ListType.CONTROL_LIST;
     int _cursorX = 0;
     int _columns;
@@ -187,8 +187,8 @@ namespace MediaPortal.GUI.Library
     protected GUIverticalScrollbar _horizontalScrollbar = null;
     protected string _brackedText;
     protected string _scollText;
-    GUIImage _imageBackground;
-    GUIImage _imageInfo;
+    GUIAnimation _imageBackground;
+    GUIAnimation _imageInfo;
     DateTime _idleTimer = DateTime.Now;
     bool _infoChanged = false;
     string _newInfoImageName = "";
@@ -241,11 +241,11 @@ namespace MediaPortal.GUI.Library
     {
       base.FinalizeConstruction();
       if (_positionY > _positionY && _spinControlPositionY < _positionY + _height) _spinControlPositionY = _positionY + _height;
-      _imageFolder = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _itemWidth, _itemHeight, _imageFolderName, 0);
+      _imageFolder = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _itemWidth, _itemHeight, _imageFolderName);
       _imageFolder.ParentControl = this;
       _imageFolder.DimColor = DimColor;
 
-      _imageFolderFocus = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _itemWidth, _itemHeight, _imageFolderNameFocus, 0);
+			_imageFolderFocus = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _itemWidth, _itemHeight, _imageFolderNameFocus);
       _imageFolderFocus.ParentControl = this;
       _imageFolderFocus.DimColor = DimColor;
 
@@ -264,15 +264,16 @@ namespace MediaPortal.GUI.Library
       _upDownControl.Orientation = GUISpinControl.eOrientation.Horizontal;
       _upDownControl.SetReverse(true);
 
-      _imageBackground = new GUIImage(0, 0, _backGroundPositionX, _backGroundPositionY, _backGroundWidth, _backGroundHeight, _backgroundTextureName, 0);
+			_imageBackground = LoadAnimationControl(0, 0, _backGroundPositionX, _backGroundPositionY, _backGroundWidth, _backGroundHeight, _backgroundTextureName);
       _imageBackground.ParentControl = this;
       _imageBackground.DimColor = DimColor;
 
-      _imageInfo = new GUIImage(0, 0, _infoImagePositionX, _infoImagePositionY, _infoImageWidth, _infoImageHeight, _infoImageName, 0);
+			_imageInfo = LoadAnimationControl(0, 0, _infoImagePositionX, _infoImagePositionY, _infoImageWidth, _infoImageHeight, _infoImageName);
       _imageInfo.ParentControl = this;
       _imageInfo.Filtering = true;
       _imageInfo.KeepAspectRatio = true;
-      _imageInfo.Centered = true;
+			_imageInfo.HorizontalAlignment = MediaPortal.Drawing.HorizontalAlignment.Center;
+			_imageInfo.VerticalAlignment = MediaPortal.Drawing.VerticalAlignment.Center;
       _imageInfo.DimColor = DimColor;
 
       SetThumbDimensionsLow(_thumbNailPositionX, _thumbNailPositionY, _thumbNailWidth, _thumbNailHeight);
@@ -2124,7 +2125,14 @@ namespace MediaPortal.GUI.Library
     public override bool Focus
     {
       get { return IsFocused; }
-      set { if (IsFocused != value) base.Focus = value; }
+			set
+			{
+				if (IsFocused != value && value)
+				{
+					if (_showTexture == true) _imageFolderFocus.Begin();
+				}
+				base.Focus = value; 
+			}
     }
 
     public void Add(GUIListItem item)

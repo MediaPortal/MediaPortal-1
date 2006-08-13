@@ -35,10 +35,10 @@ namespace MediaPortal.GUI.Library
     protected string _alternativeFocusTextureName = "";
     [XMLSkinElement("AltTextureNoFocus")]
     protected string _alternativeNonFocusTextureName = "";
-    protected GUIImage _imageFocused = null;
-    protected GUIImage _imageNonFocused = null;
-    protected GUIImage _imageAlternativeFocused = null;
-    protected GUIImage _imageAlternativeNonFocused = null;
+    protected GUIAnimation _imageFocused = null;
+    protected GUIAnimation _imageNonFocused = null;
+    protected GUIAnimation _imageAlternativeFocused = null;
+    protected GUIAnimation _imageAlternativeNonFocused = null;
     protected int _frameCounter = 0;
     [XMLSkinElement("font")]
     protected string _fontName;
@@ -77,16 +77,16 @@ namespace MediaPortal.GUI.Library
     {
       base.FinalizeConstruction();
 
-      _imageFocused = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _focusedTextureName, 0);
+			_imageFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _focusedTextureName);
       _imageFocused.ParentControl = this;
 
-      _imageNonFocused = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _nonFocusedTextureName, 0);
+			_imageNonFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _nonFocusedTextureName);
       _imageNonFocused.ParentControl = this;
 
-      _imageAlternativeFocused = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _alternativeFocusTextureName, 0);
+			_imageAlternativeFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _alternativeFocusTextureName);
       _imageAlternativeFocused.ParentControl = this;
 
-      _imageAlternativeNonFocused = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _alternativeNonFocusTextureName, 0);
+			_imageAlternativeNonFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _alternativeNonFocusTextureName);
       _imageAlternativeNonFocused.ParentControl = this;
       if (_fontName != "" && _fontName != "-")
         _font = GUIFontManager.GetFont(_fontName);

@@ -57,9 +57,9 @@ namespace MediaPortal.GUI.Library
     protected float _floatInterval = 0.1f;
     protected ArrayList _listLabels = new ArrayList();
     protected ArrayList _listValues = new ArrayList();
-    protected GUIImage _imageBackGround = null;
-    protected GUIImage _imageMid = null;
-    protected GUIImage _imageMidFocus = null;
+    protected GUIAnimation _imageBackGround = null;
+    protected GUIAnimation _imageMid = null;
+    protected GUIAnimation _imageMidFocus = null;
 
 
 
@@ -94,15 +94,15 @@ namespace MediaPortal.GUI.Library
     public override void FinalizeConstruction()
     {
       base.FinalizeConstruction();
-      _imageBackGround = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _backgroundTextureName, 0);
+      _imageBackGround = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _backgroundTextureName);
       _imageBackGround.ParentControl = this;
       _imageBackGround.DimColor = DimColor;
 
-      _imageMid = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _sliderTextureName, 0);
+			_imageMid = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _sliderTextureName);
       _imageMid.ParentControl = this;
       _imageMid.DimColor = DimColor;
 
-      _imageMidFocus = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _sliderFocusTextureName, 0);
+			_imageMidFocus = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _sliderFocusTextureName);
       _imageMidFocus.ParentControl = this;
       _imageMidFocus.DimColor = DimColor;
     }
