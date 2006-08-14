@@ -70,8 +70,6 @@ namespace TvLibrary.Implementations.DVB
 
     [ComImport, Guid("3E8868CB-5FE8-402C-AA90-CB1AC6AE3240")]
     protected class CyberLinkDumpFilter { };
-    [ComImport, Guid("FA8A68B2-C864-4ba2-AD53-D3876A87494B")]
-    protected class StreamBufferConfig { }
 
     #endregion
 
@@ -99,8 +97,6 @@ namespace TvLibrary.Implementations.DVB
     protected IBaseFilter _filterTIF = null;
     protected IBaseFilter _filterSectionsAndTables = null;
 
-    protected StreamBufferSink _filterStreamBufferSink;
-    protected IStreamBufferRecordControl _recorder;
     protected DsDevice _tunerDevice = null;
     protected DsDevice _captureDevice = null;
     protected DVBTeletext _teletextDecoder;
@@ -171,23 +167,7 @@ namespace TvLibrary.Implementations.DVB
       _packetHeader = new TSHelperTools.TSHeader();
       _tsHelper = new TSHelperTools();
       _channelInfo = new ChannelInfo();
-
-      //create registry keys needed by the streambuffer engine for timeshifting/recording
-      try
-      {
-        using (RegistryKey hkcu = Registry.CurrentUser)
-        {
-          RegistryKey newKey = hkcu.CreateSubKey(@"Software\MediaPortal");
-          newKey.Close();
-          using (RegistryKey hklm = Registry.LocalMachine)
-          {
-            newKey = hklm.CreateSubKey(@"Software\MediaPortal");
-            newKey.Close();
-          }
-        }
-
-      }
-      catch (Exception) { }
+ 
 
     }
     protected bool CheckThreadId()
@@ -253,17 +233,6 @@ namespace TvLibrary.Implementations.DVB
       _timeshiftFileName = fileName;
       Log.Log.WriteFile("dvb:SetTimeShiftFileName:{0}", fileName);
       int hr;
-      if (_filterStreamBufferSink != null)
-      {
-        //Log.Log.WriteFile("dvb:SetTimeShiftFileName: uses dvr-ms");
-        IStreamBufferSink init = (IStreamBufferSink)_filterStreamBufferSink;
-        hr = init.LockProfile(fileName);
-        if (hr != 0)
-        {
-          Log.Log.WriteFile("dvb:SetTimeShiftFileName  returns:0x{0:X}", hr);
-          throw new TvException("Unable to start timeshifting to " + fileName);
-        }
-      }
       if (_filterTsAnalyzer != null)
       {
         ITsTimeShift record = _filterTsAnalyzer as ITsTimeShift;
@@ -676,84 +645,6 @@ namespace TvLibrary.Implementations.DVB
     }
     #endregion
 
-    /// <summary>
-    /// adds the streambuffer sink filter to the graph
-    /// </summary>
-    protected void AddStreamBufferSink(string fileName)
-    {
-      if (!CheckThreadId()) return;
-      Log.Log.WriteFile("dvb:dvb:AddStreamBufferSink");
-      _filterStreamBufferSink = new StreamBufferSink();
-      int hr = _graphBuilder.AddFilter((IBaseFilter)_filterStreamBufferSink, "SBE Sink");
-
-      if (hr != 0)
-      {
-        Log.Log.WriteFile("dvb:dvb:AddStreamBufferSink returns:0x{0:X}", hr);
-        throw new TvException("Unable to add Stream buffer engine");
-      }
-      string directory = "";
-      int slashPosition = fileName.LastIndexOf(@"\");
-      if (slashPosition >= 0)
-      {
-        directory = fileName.Substring(0, slashPosition);
-      }
-      else
-      {
-        directory = System.IO.Path.GetFullPath(fileName);
-        slashPosition = directory.LastIndexOf(@"\");
-        if (slashPosition >= 0)
-          directory = directory.Substring(0, slashPosition);
-        else directory = "";
-      }
-
-
-      StreamBufferConfig streamConfig = new StreamBufferConfig();
-
-      IStreamBufferInitialize streamBufferInit = streamConfig as IStreamBufferInitialize;
-      if (streamBufferInit != null)
-      {
-        IntPtr subKey = IntPtr.Zero;
-        IntPtr HKEY = (IntPtr)unchecked((int)0x80000002L);
-        RegOpenKeyEx(HKEY, "SOFTWARE\\MediaPortal", 0, 0x3f, out subKey);
-        hr = streamBufferInit.SetHKEY(subKey);
-        IntPtr[] sids = new IntPtr[2];
-        sids[0] = SidHelper.GetSidPtr("Everyone");
-        if (sids[0] != IntPtr.Zero)
-        {
-          Log.Log.WriteFile("dvb:analog:SetSID for everyone");
-          hr = streamBufferInit.SetSIDs(1, sids);
-          if (hr != 0)
-          {
-            Log.Log.WriteFile("dvb:analog:SetSIDs returns:{0:X}", hr);
-          }
-          Marshal.FreeHGlobal(sids[0]);
-        }
-      }
-      else
-      {
-        Log.Log.WriteFile("dvb:analog:Unable to get IStreamBufferInitialize");
-      }
-
-      IStreamBufferConfigure streamBufferConfig = streamConfig as IStreamBufferConfigure;
-      if (streamBufferConfig != null)
-      {
-        Log.Log.WriteFile("dvb:analog:SetBackingFileCount min=6, max=8");
-        streamBufferConfig.SetBackingFileCount(6, 8);
-        Log.Log.WriteFile("dvb:analog:SetDirectory:{0}", directory);
-        if (directory != String.Empty)
-        {
-          hr = streamBufferConfig.SetDirectory(directory);
-          if (hr != 0)
-          {
-            Log.Log.WriteFile("dvb:analog:FAILED to set timeshift folder to:{0} {1:X}", directory, hr);
-          }
-        }
-      }
-      else
-      {
-        Log.Log.WriteFile("dvb:analog:Unable to get IStreamBufferConfigure");
-      }
-    }
 
 
     /// <summary>
@@ -1099,15 +990,6 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.WriteFile("  free...");
       _interfaceChannelScan = null;
       _interfaceEpgGrabber = null;
-      if (_recorder != null)
-      {
-        Release.ComObject("recorder filter", _recorder); _recorder = null;
-      }
-
-      if (_filterStreamBufferSink != null)
-      {
-        Release.ComObject("StreamBufferSink filter", _filterStreamBufferSink); _filterStreamBufferSink = null;
-      }
 
 #if MULTI_DEMUX
       if (_filterMpeg2DemuxTs != null)
@@ -1593,28 +1475,6 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.WriteFile("dvb:StartRecord({0})", fileName);
 
       int hr;
-      if (_filterStreamBufferSink != null)
-      {
-        object pRecordingIUnknown;
-        IStreamBufferSink sink = (IStreamBufferSink)_filterStreamBufferSink;
-        hr = sink.CreateRecorder(fileName, recordingType, out  pRecordingIUnknown);
-        if (hr != 0)
-        {
-          Log.Log.WriteFile("dvb:Analog: Unable to create recorder:0x{0:X}", hr);
-          throw new TvException("Unable to create recorder");
-        }
-        _recorder = pRecordingIUnknown as IStreamBufferRecordControl;
-        hr = _recorder.Start(ref startTime);
-        if (hr != 0)
-        {
-          throw new TvException("Unable to start recording");
-        }
-        bool started, stopped;
-        int result;
-        _recorder.GetRecordingStatus(out result, out started, out stopped);
-        Log.Log.WriteFile("dvb:Recording started:{0} stopped:{1}", started, stopped);
-        return;
-      }
       if (_filterTsAnalyzer != null)
       {
         Log.Log.WriteFile("dvb:SetRecordingFileName: uses .mpg");
@@ -1654,17 +1514,6 @@ namespace TvLibrary.Implementations.DVB
       if (!CheckThreadId()) return;
       int hr;
       Log.Log.WriteFile("dvb:StopRecord()");
-      if (_recorder != null)
-      {
-        hr = _recorder.Stop(1);
-        if (hr != 0)
-        {
-          Log.Log.WriteFile("dvb:Stop record:0x{0:X}", hr);
-          throw new TvException("Unable to stop recording");
-        }
-        Release.ComObject("recorder", _recorder);
-        _recorder = null;
-      }
 
       if (_filterTsAnalyzer != null)
       {
