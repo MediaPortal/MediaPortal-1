@@ -27,6 +27,7 @@ using System;
 using System.IO;
 using System.Collections;
 using System.Globalization;
+
 using MediaPortal.GUI.Library;
 using MediaPortal.Dialogs;
 
@@ -72,6 +73,7 @@ namespace WindowPlugins.GUISettings
 
     public override bool Init()
     {
+      //SkinDirectory = GUIGraphicsContext.Skin.Remove(GUIGraphicsContext.Skin.LastIndexOf(@"\"));
       return Load(GUIGraphicsContext.Skin + @"\settings_general.xml");
     }
 
@@ -241,7 +243,7 @@ namespace WindowPlugins.GUISettings
     {
       SaveSettings();
       int selectedSkinIndex = btnSkin.SelectedItem;
-      GUIGraphicsContext.Skin = @"skin\" + btnSkin.SelectedLabel;
+      GUIGraphicsContext.Skin = btnSkin.SelectedLabel;
 
       //FreeResources();
       GUITextureManager.Clear();
