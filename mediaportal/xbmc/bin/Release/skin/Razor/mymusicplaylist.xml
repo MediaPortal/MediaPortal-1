@@ -78,16 +78,28 @@
 				<onleft>28</onleft>
 				<onright>50</onright>
 				<onup>23</onup>
-				<ondown>27</ondown>		
+				<ondown>29</ondown>		
 			</control>
+
+		        <control>
+		     		<description>scrobble user button</description>
+			        <type>button</type>
+			        <id>29</id>
+			        <posY>337</posY>
+		        	<label>Scrobbler: </label>
+			        <onleft>29</onleft>
+			        <onright>50</onright>
+			        <onup>28</onup>
+		        	<ondown>27</ondown>
+                        </control>
 
 			<control>
 				<description>last.fm button</description>
 				<type>togglebutton</type>
 				<id>27</id>
-				<posY>337</posY>
+				<posY>377</posY>
 				<label>Scrobble!</label>
-				<onup>28</onup>
+				<onup>29</onup>
 				<ondown>26</ondown>
 				<onleft>27</onleft>
 				<onright>50</onright>
@@ -96,7 +108,7 @@
 			        <description>Now Playing button</description>
 			        <type>button</type>
 				<id>26</id>
-				<posY>377</posY>
+				<posY>417</posY>
 				<label>4540</label>
 				<onup>27</onup>
 				<ondown>99</ondown>

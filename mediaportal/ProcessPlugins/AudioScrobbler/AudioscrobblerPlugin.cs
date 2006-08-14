@@ -64,8 +64,6 @@ namespace MediaPortal.Audioscrobbler
     private int lastPosition = 0;
     
     public bool _doSubmit = true;
-
-    private AudioscrobblerBase scrobbler;
     
     private System.Timers.Timer SongCheckTimer;
 
@@ -86,21 +84,21 @@ namespace MediaPortal.Audioscrobbler
       }
     }
 
-    public AudioscrobblerBase Audioscrobbler
-    {
-      get {
-        return scrobbler;
-      }
-    }
+    //public static AudioscrobblerBase Audioscrobbler
+    //{
+    //  get {
+    //    return scrobbler;
+    //  }
+    //}
 
     private void OnManualDisconnect(object sender, EventArgs args)
     {
-      scrobbler.Disconnect();
+      AudioscrobblerBase.Disconnect();
     }
 
     private void OnManualConnect(object sender, EventArgs args)
     {
-      scrobbler.Connect();
+      AudioscrobblerBase.Connect();
     }
     
     //private void OnNameChangedEvent(string ASUsername)
@@ -118,7 +116,7 @@ namespace MediaPortal.Audioscrobbler
       if (isEnabled)
         OnManualConnect(null, null);
       else {
-        scrobbler.Disconnect();
+        AudioscrobblerBase.Disconnect();
       }
     }
     #endregion
@@ -253,7 +251,7 @@ namespace MediaPortal.Audioscrobbler
             if (position >= alertTime && alertTime > 14)
             {
               Log.Write("Audioscrobbler plugin: queuing song: {0}", currentSong.ToShortString());
-              scrobbler.pushQueue(currentSong);              
+              AudioscrobblerBase.pushQueue(currentSong);              
               queued = true;              
               currentSong.AudioScrobblerStatus = SongStatus.Cached;
             }
@@ -315,7 +313,7 @@ namespace MediaPortal.Audioscrobbler
       currentSong = null;
       queued = false;
       alertTime = INFINITE_TIME;
-      scrobbler = new AudioscrobblerBase();
+      
       GUIWindowManager.OnNewAction += new OnActionHandler(OnNewAction);
 
       startStopSongCheckTimer(true);
@@ -335,8 +333,7 @@ namespace MediaPortal.Audioscrobbler
     public void Stop()
     {
       OnManualDisconnect(null, null);
-      startStopSongCheckTimer(false);
-      scrobbler = null;
+      startStopSongCheckTimer(false);      
     }
 
     #endregion

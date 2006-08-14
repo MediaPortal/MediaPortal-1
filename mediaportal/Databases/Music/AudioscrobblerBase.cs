@@ -40,13 +40,13 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Music.Database
 {
-  public class AudioscrobblerBase
+  public static class AudioscrobblerBase
   {
     #region Constants
     const int MAX_QUEUE_SIZE = 10;
     const int HANDSHAKE_INTERVAL = 30;     //< In minutes.
     const int CONNECT_WAIT_TIME = 5;      //< Min secs between connects.
-    int SUBMIT_INTERVAL = 30;    //< Seconds.
+    static int SUBMIT_INTERVAL = 30;    //< Seconds.
     const string CLIENT_NAME = "mpm"; //assigned by Russ Garrett from Last.fm Ltd.
     const string CLIENT_VERSION = "0.1";
     const string SCROBBLER_URL = "http://post.audioscrobbler.com";
@@ -55,58 +55,49 @@ namespace MediaPortal.Music.Database
 
     #region Variables
     // Client-specific config variables.
-    private string username;
-    private string password;
+    private static string username;
+    private static string password;
 
     //private string cacheFile;
 
     // Other internal properties.    
-    private Thread submitThread;
-    AudioscrobblerQueue queue;
-    private Object queueLock;
-    private Object submitLock;
-    private int _antiHammerCount = 0;
-    private DateTime lastHandshake;        //< last successful attempt.
-    private TimeSpan handshakeInterval;
-    private DateTime lastConnectAttempt;
+    private static Thread submitThread;
+    static AudioscrobblerQueue queue;
+    private static Object queueLock;
+    private static Object submitLock;
+    private static int _antiHammerCount = 0;
+    private static DateTime lastHandshake;        //< last successful attempt.
+    private static TimeSpan handshakeInterval;
+    private static DateTime lastConnectAttempt;
 
-    private TimeSpan minConnectWaitTime;
+    private static TimeSpan minConnectWaitTime;
 
-    private bool _disableTimerThread;
-    private bool _dismissOnError;
-    private bool _useDebugLog;
-    private System.Timers.Timer submitTimer;
-    private bool _signedIn;
+    private static bool _disableTimerThread;
+    private static bool _dismissOnError;
+    private static bool _useDebugLog;
+    private static System.Timers.Timer submitTimer;
+    private static bool _signedIn;
 
     // Data received by the Audioscrobbler service.
-    private string md5challenge;
-    private string submitUrl;
+    private static string md5challenge;
+    private static string submitUrl;
 
     #endregion
 
     /// <summary>
     /// ctor
     /// </summary>
-    public AudioscrobblerBase()
+    static AudioscrobblerBase()
     {
       LoadSettings();
 
-      queue = new AudioscrobblerQueue("Trackcache-" + Username + ".xml");
-
-      queueLock = new Object();
-      submitLock = new Object();
-
-      _signedIn = false;
-      lastHandshake = DateTime.MinValue;
-      handshakeInterval = new TimeSpan(0, HANDSHAKE_INTERVAL, 0);
-      lastConnectAttempt = DateTime.MinValue;
-      minConnectWaitTime = new TimeSpan(0, 0, CONNECT_WAIT_TIME);
-
       if (_useDebugLog)
         Log.Write("AudioscrobblerBase: new scrobbler for {0} with {1} cached songs - debuglog={2} directonly={3}", Username, Convert.ToString(queue.Count), Convert.ToString(_useDebugLog), Convert.ToString(_disableTimerThread));
+    //    else
+    //Log.Write("AudioscrobblerBase: new scrobbler for {0} - debuglog={1} directonly={2}", Username, Convert.ToString(_useDebugLog), Convert.ToString(_disableTimerThread));
     }
 
-    void LoadSettings()
+    static void LoadSettings()
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
@@ -130,13 +121,23 @@ namespace MediaPortal.Music.Database
           }
         }
       }
+      queue = new AudioscrobblerQueue("Trackcache-" + Username + ".xml");
+
+      queueLock = new Object();
+      submitLock = new Object();
+
+      _signedIn = false;
+      lastHandshake = DateTime.MinValue;
+      handshakeInterval = new TimeSpan(0, HANDSHAKE_INTERVAL, 0);
+      lastConnectAttempt = DateTime.MinValue;
+      minConnectWaitTime = new TimeSpan(0, 0, CONNECT_WAIT_TIME);
     }
 
     #region Public getters and setters
     /// <summary>
     /// The last.fm account name
     /// </summary>
-    public string Username
+    public static string Username
     {
       get
       {
@@ -145,9 +146,9 @@ namespace MediaPortal.Music.Database
       set
       {
         // don't attempt to reconnect if nothing has changed
-        if (value != this.username)
+        if (value != username)
         {
-          this.username = value;
+          username = value;
           // allow a new handshake to occur
           lastHandshake = DateTime.MinValue;
         }
@@ -157,7 +158,7 @@ namespace MediaPortal.Music.Database
     /// <summary>
     /// Password for account on last.fm
     /// </summary>
-    public string Password
+    public static string Password
     {
       get
       {
@@ -165,9 +166,9 @@ namespace MediaPortal.Music.Database
       }
       set
       {
-        if (value != this.password)
+        if (value != password)
         {
-          this.password = value;
+          password = value;
           // allow a new handshake to occur
           lastHandshake = DateTime.MinValue;
           //          Log.Write("AudioscrobblerBase.Password", "Password changed");
@@ -178,7 +179,7 @@ namespace MediaPortal.Music.Database
     /// <summary>
     /// Check connected status - returns true if currently connected, false otherwise.
     /// </summary>
-    public bool Connected
+    public static bool Connected
     {
       get
       {
@@ -189,7 +190,7 @@ namespace MediaPortal.Music.Database
     /// <summary>
     /// Returns the number of songs in the queue
     /// </summary>
-    public int QueueLength
+    public static int QueueLength
     {
       get
       {
@@ -203,7 +204,7 @@ namespace MediaPortal.Music.Database
     /// <summary>
     /// Connect to the Audioscrobbler service. While connected any queued songs are submitted to Audioscrobbler.
     /// </summary>
-    public void Connect()
+    public static void Connect()
     {
       //Log.Write("AudioscrobblerBase.Connect: {0}", "Start");
       // Try to submit all queued songs immediately.
@@ -217,7 +218,7 @@ namespace MediaPortal.Music.Database
     /// <summary>
     /// Disconnect from the Audioscrobbler service, however, already running transactions are still completed.
     /// </summary>
-    public void Disconnect()
+    public static void Disconnect()
     {
       if (submitTimer != null)
         submitTimer.Close();
@@ -225,11 +226,51 @@ namespace MediaPortal.Music.Database
       _signedIn = false;
     }
 
+    public static void ChangeUser(string scrobbleUser_, string scrobblePassword_)
+    {
+      string olduser = username;
+      string oldpass = password;
+      if (username != scrobbleUser_)
+      {
+        queue.Save();
+        queue = null;        
+        md5challenge = "";
+        string tmpPass = "";
+        try
+        {
+          EncryptDecrypt Crypter = new EncryptDecrypt();
+          tmpPass = Crypter.Decrypt(scrobblePassword_);
+        }
+        catch (Exception ex)
+        {
+          Log.Write("Audioscrobbler: warning on password decryption {0}", ex.Message);
+        }
+        username = scrobbleUser_;
+        password = tmpPass;
+        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        {
+          xmlwriter.SetValue("audioscrobbler", "user", username);
+          xmlwriter.SetValue("audioscrobbler", "pass", password);
+        }
+
+        if (!DoHandshake(true))
+        {
+          Log.Write("AudioscrobblerBase: {0}", "ChangeUser failed - using previous account");
+          username = olduser;
+          password = oldpass;
+        }
+        else
+        {
+          LoadSettings();
+          Log.Write("AudioscrobblerBase: Changed user to {0} - loaded {1} queue items", scrobbleUser_, queue.Count);
+        }
+      }
+    }
     /// <summary>
     /// Push the given song on the queue.
     /// </summary>
     /// <param name="song_">The song to be enqueued.</param>
-    public void pushQueue(Song song_)
+    public static void pushQueue(Song song_)
     {
       string logmessage = "Adding to queue: " + song_.ToShortString();
       if (_useDebugLog)
@@ -274,7 +315,7 @@ namespace MediaPortal.Music.Database
 
     #region Public event triggers
 
-    public void TriggerSafeModeEvent()
+    public static void TriggerSafeModeEvent()
     {
       if (_antiHammerCount < 5)
       {
@@ -301,7 +342,7 @@ namespace MediaPortal.Music.Database
     /// Handshake with the Audioscrobbler service
     /// </summary>
     /// <returns>True if the connection was successful, false otherwise</returns>
-    private bool DoHandshake(bool forceNow_)
+    private static bool DoHandshake(bool forceNow_)
     {
       // Handle uninitialized username/password.
       if (username == "" || password == "")
@@ -359,7 +400,7 @@ namespace MediaPortal.Music.Database
     /// <param name="url_">The url to open</param>
     /// <param name="postdata_">Data to be sent via HTTP POST, an empty string for GET</param>
     /// <returns>True if the request was successfully completed, false otherwise</returns>
-    private bool GetResponse(string url_, string postdata_)
+    private static bool GetResponse(string url_, string postdata_)
     {
       // Enforce a minimum wait time between connects.
       DateTime nextconnect = lastConnectAttempt.Add(minConnectWaitTime);
@@ -395,8 +436,7 @@ namespace MediaPortal.Music.Database
         //Log.Write("AudioscrobblerBase.GetResponse: POST to {0}", url_);
         Log.Write("AudioscrobblerBase: Submitting data: {0}", postdata_);
         string logmessage = "Connecting to '" + url_ + "\nData: " + postdata_;
-
-        // TODO: what is the illegal characters warning all about?
+                
         try
         {
           byte[] postHeaderBytes = Encoding.UTF8.GetBytes(postdata_);
@@ -487,7 +527,7 @@ namespace MediaPortal.Music.Database
     }
     #endregion
 
-    void OnSubmitTimerTick(object trash_, ElapsedEventArgs args_)
+    static void OnSubmitTimerTick(object trash_, ElapsedEventArgs args_)
     {
       if (!_disableTimerThread || _antiHammerCount > 0)
         StartSubmitQueueThread();
@@ -496,7 +536,7 @@ namespace MediaPortal.Music.Database
     /// <summary>
     /// Creates a thread to submit all queued songs.
     /// </summary>
-    private void StartSubmitQueueThread()
+    private static void StartSubmitQueueThread()
     {
       submitThread = new Thread(new ThreadStart(SubmitQueue));
       submitThread.IsBackground = true;
@@ -504,7 +544,7 @@ namespace MediaPortal.Music.Database
       submitThread.Start();
     }
 
-    private void StopSubmitQueueThread()
+    private static void StopSubmitQueueThread()
     {
       if (submitThread != null)
         submitThread.Abort();
@@ -513,7 +553,7 @@ namespace MediaPortal.Music.Database
     /// <summary>
     /// Submit all queued songs to the Audioscrobbler service
     /// </summary>
-    private void SubmitQueue()
+    private static void SubmitQueue()
     {
       int _submittedSongs = 0;
 
@@ -587,7 +627,7 @@ namespace MediaPortal.Music.Database
     #endregion
 
     #region Audioscrobbler response parsers.
-    private bool parseUpToDateMessage(string type_, StreamReader reader_)
+    private static bool parseUpToDateMessage(string type_, StreamReader reader_)
     {      
       try
       {
@@ -605,13 +645,13 @@ namespace MediaPortal.Music.Database
       return true;
     }
 
-    private bool parseOkMessage(string type_, StreamReader reader_)
+    private static bool parseOkMessage(string type_, StreamReader reader_)
     {
       Log.Write("AudioscrobblerBase: {0}", "Action successfully completed.");
       return true;
     }
 
-    private bool parseFailedMessage(string type_, StreamReader reader_)
+    private static bool parseFailedMessage(string type_, StreamReader reader_)
     {
       try
       {
@@ -635,14 +675,14 @@ namespace MediaPortal.Music.Database
       }
     }
 
-    private bool parseBadUserMessage(string type_, StreamReader reader_)
+    private static bool parseBadUserMessage(string type_, StreamReader reader_)
     {
       Log.Write("AudioscrobblerBase: {0}", "PLEASE CHECK YOUR ACCOUNT CONFIG! - re-trying handshake now");
       TriggerSafeModeEvent();
       return true;
     }
 
-    private bool parseIntervalMessage(string type_, StreamReader reader_)
+    private static bool parseIntervalMessage(string type_, StreamReader reader_)
     {
       try
       {
@@ -668,7 +708,7 @@ namespace MediaPortal.Music.Database
     #endregion
 
     #region Utilities
-    private void InitSubmitTimer()
+    private static void InitSubmitTimer()
     {
       submitTimer = new System.Timers.Timer();
       submitTimer.Interval = SUBMIT_INTERVAL * 1000;
@@ -676,7 +716,7 @@ namespace MediaPortal.Music.Database
       submitTimer.Start();
     }
 
-    private string HashPassword()
+    private static string HashPassword()
     {
       // generate MD5 response from user's password
 

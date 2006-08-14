@@ -65,7 +65,8 @@ namespace MediaPortal.AudioScrobbler
         numericUpDownSimilarArtist.Value = xmlreader.GetValueAsInt("audioscrobbler", "similarartistscount", 2);
         numericUpDownTracksPerArtist.Value = xmlreader.GetValueAsInt("audioscrobbler", "tracksperartistscount", 1);     
 
-        textBoxASUsername.Text = xmlreader.GetValueAsString("audioscrobbler", "user", "");
+        textBoxASUsername.Text = xmlreader.GetValueAsString("audioscrobbler", "user", "");        
+
         if (textBoxASUsername.Text == "")
         {
           tabControlASSettings.Enabled = false;
@@ -127,18 +128,24 @@ namespace MediaPortal.AudioScrobbler
         xmlwriter.SetValueAsBool("audioscrobbler", "scrobbledefault", checkBoxScrobbleDefault.Checked);
         xmlwriter.SetValue("audioscrobbler", "similarartistscount", numericUpDownSimilarArtist.Value);
         xmlwriter.SetValue("audioscrobbler", "tracksperartistscount", numericUpDownTracksPerArtist.Value);
-        xmlwriter.SetValue("audioscrobbler", "neighbourmode", (int)lastFmLookup.CurrentNeighbourMode); 
+        xmlwriter.SetValue("audioscrobbler", "neighbourmode", (int)lastFmLookup.CurrentNeighbourMode);
 
         xmlwriter.SetValue("audioscrobbler", "user", textBoxASUsername.Text);
+        string tmpPass = "";
         try
         {
           EncryptDecrypt Crypter = new EncryptDecrypt();
-          xmlwriter.SetValue("audioscrobbler", "pass", Crypter.Encrypt(maskedTextBoxASPassword.Text));
+          tmpPass = Crypter.Encrypt(maskedTextBoxASPassword.Text);
         }
         catch (Exception ex)
         {
           //Log.Write("Audioscrobbler: Password encryption failed {0}", ex.Message);
         }
+        xmlwriter.SetValue("audioscrobbler", "pass", tmpPass);
+
+        MusicDatabase mdb = new MusicDatabase();
+        // checks and adds the user if necessary + updates the password;
+        mdb.AddScrobbleUserPassword(Convert.ToString(mdb.AddScrobbleUser(textBoxASUsername.Text)), tmpPass);
       }
     }
     #endregion

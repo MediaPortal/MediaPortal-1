@@ -1367,7 +1367,7 @@
    </string>
    <string>
       <id>414</id>
-      <value>Keine Vorschau für dieses Album!</value>
+      <value>Kein Kommentar zum Album vorhanden!</value>
    </string>
    <string>
       <id>415</id>
@@ -5188,7 +5188,10 @@
       <id>33004</id>
       <value>Scrobble: Verlauf</value>
    </string>
-
+   <string>
+      <id>33005</id>
+      <value>Benutzer: </value>
+   </string>
    <string>
       <id>100000</id>
       <value>Hauptmenü</value>

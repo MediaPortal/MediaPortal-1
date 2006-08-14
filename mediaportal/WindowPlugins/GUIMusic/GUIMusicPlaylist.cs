@@ -62,14 +62,15 @@ namespace MediaPortal.GUI.Music
     int m_nTempPlayListWindow = 0;
     string m_strTempPlayListDirectory = String.Empty;
     string m_strCurrentFile = String.Empty;
+    string _currentScrobbleUser = String.Empty;
     VirtualDirectory m_directory = new VirtualDirectory();
     const int MaxNumPShuffleSongPredict = 12;
     int _totalScrobbledSongs = 0;
     int _maxScrobbledSongsPerArtist = 1;
-    int _maxScrobbledArtistsForSongs = 4;
-    private bool PShuffleOn = false;
+    int _maxScrobbledArtistsForSongs = 4;    
     private bool ScrobblerOn = false;
     private bool _enableScrobbling = false;
+    private AudioscrobblerUtils ascrobbler;
     private Thread ScrobbleThread;
     private Object ScrobbleLock;
     #endregion
@@ -85,6 +86,7 @@ namespace MediaPortal.GUI.Music
     //[SkinControlAttribute(26)]    protected GUIToggleButtonControl btnPartyShuffle = null;
     [SkinControlAttribute(27)]    protected GUIToggleButtonControl btnScrobble = null;
     [SkinControlAttribute(28)]    protected GUIButtonControl btnScrobbleMode = null;
+    [SkinControlAttribute(29)]    protected GUIButtonControl btnScrobbleUser = null;
     
 
     public GUIMusicPlayList()
@@ -106,7 +108,9 @@ namespace MediaPortal.GUI.Music
         ScrobblerOn = xmlreader.GetValueAsBool("audioscrobbler", "scrobbledefault", false);
         _maxScrobbledArtistsForSongs = xmlreader.GetValueAsInt("audioscrobbler", "similarartistscount", 3);
         _maxScrobbledSongsPerArtist = xmlreader.GetValueAsInt("audioscrobbler", "tracksperartistscount", 1);
+        _currentScrobbleUser = xmlreader.GetValueAsString("audioscrobbler", "user", "Username");
       }
+      ascrobbler = new AudioscrobblerUtils();
       ScrobbleLock = new object();
       //added by Sam
       GUIWindowManager.Receivers += new SendMessageHandler(this.OnThreadMessage);
@@ -182,6 +186,8 @@ namespace MediaPortal.GUI.Music
       if (ScrobblerOn)
         btnScrobble.Selected = true;
 
+      btnScrobbleUser.Label = GUILocalizeStrings.Get(33005) + _currentScrobbleUser;      
+
       LoadDirectory(String.Empty);
       if (m_iItemSelected >= 0)
       {
@@ -208,6 +214,50 @@ namespace MediaPortal.GUI.Music
     protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
     {
       base.OnClicked(controlId, control, actionType);
+
+      if (control == btnScrobbleUser)
+      {
+        MusicDatabase mdb = new MusicDatabase();
+        List<string> scrobbleusers = new List<string>();
+
+        scrobbleusers = mdb.GetAllScrobbleUsers();
+        // no users in database
+        if (scrobbleusers.Count == 0)
+          return;
+        //for (int i = 0; i < scrobbleusers.Count; i++)       
+        GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+        if (dlg != null)
+        {
+          dlg.Reset();
+          dlg.SetHeading(GUILocalizeStrings.Get(924));//Menu
+          int selected = 0;
+          int count = 0;
+          foreach (string scrobbler in scrobbleusers)
+          {
+            dlg.Add(scrobbler);
+            if (scrobbler == _currentScrobbleUser)
+              selected = count;
+            count++;
+          }
+          dlg.SelectedLabel = selected;
+        }
+        dlg.DoModal(GetID);
+        if (dlg.SelectedLabel < 0)
+          return;
+
+        if (_currentScrobbleUser != dlg.SelectedLabelText)
+        {
+          _currentScrobbleUser = dlg.SelectedLabelText;
+          btnScrobbleUser.Label = GUILocalizeStrings.Get(33005) + _currentScrobbleUser;
+
+          AudioscrobblerBase.ChangeUser(_currentScrobbleUser, mdb.AddScrobbleUserPassword(Convert.ToString(mdb.AddScrobbleUser(_currentScrobbleUser)), ""));
+
+          //Log.Write("***DEBUG*** - chosen scrobbleuser: {0}", _currentScrobbleUser);
+        }
+
+        GUIControl.FocusControl(GetID, controlId);
+        return;
+      }//if (control == btnScrobbleUser)
 
       if (control == btnScrobbleMode)
       {
@@ -940,8 +990,7 @@ namespace MediaPortal.GUI.Music
     }
 
     void ScrobbleLookupThread()
-    {
-      AudioscrobblerUtils ascrobbler = new AudioscrobblerUtils();
+    {      
       MusicDatabase dbs = new MusicDatabase();
       Song current10SekSong = new Song();
       List<Song> scrobbledArtists = new List<Song>();

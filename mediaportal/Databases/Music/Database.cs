@@ -158,22 +158,38 @@ namespace MediaPortal.Music.Database
         }
         catch (Exception) { }
 
-        if (!File.Exists(_config.Get(Config.Options.DatabasePath) + "musicdatabase5.db3"))
-          _log.Info("**** Please rescan your music shares ****");
+        if (!File.Exists(_config.Get(Config.Options.DatabasePath) + "MusicDatabaseV6.db3"))
 
-        m_db = new SQLiteClient(_config.Get(Config.Options.DatabasePath) + "musicdatabase5.db3");
+          if (File.Exists(_config.Get(Config.Options.DatabasePath) + "musicdatabase5.db3"))
+          {
+            File.Copy((_config.Get(Config.Options.DatabasePath) + "musicdatabase5.db3"), (_config.Get(Config.Options.DatabasePath) + "MusicDatabaseV6.db3"), false);
+
+          }
+          else
+            _log.Info("**** Please rescan your music shares ****");
+
+        m_db = new SQLiteClient(_config.Get(Config.Options.DatabasePath) + "MusicDatabaseV6.db3");
 
         DatabaseUtility.SetPragmas(m_db);
 
         DatabaseUtility.AddTable(m_db, "artist", "CREATE TABLE artist ( idArtist integer primary key, strArtist text, strSortName text)");
         DatabaseUtility.AddTable(m_db, "album", "CREATE TABLE album ( idAlbum integer primary key, idArtist integer, strAlbum text, iNumArtists integer)");
 
-        DatabaseUtility.AddTable(m_db, "album", "CREATE TABLE album ( idAlbum integer primary key, idArtist integer, strAlbum text)");
+        //DatabaseUtility.AddTable(m_db, "album", "CREATE TABLE album ( idAlbum integer primary key, idArtist integer, strAlbum text)");
         DatabaseUtility.AddTable(m_db, "genre", "CREATE TABLE genre ( idGenre integer primary key, strGenre text)");
         DatabaseUtility.AddTable(m_db, "path", "CREATE TABLE path ( idPath integer primary key,  strPath text)");
         DatabaseUtility.AddTable(m_db, "albuminfo", "CREATE TABLE albuminfo ( idAlbumInfo integer primary key, idAlbum integer, idArtist integer,iYear integer, idGenre integer, strTones text, strStyles text, strReview text, strImage text, strTracks text, iRating integer)");
         DatabaseUtility.AddTable(m_db, "artistinfo", "CREATE TABLE artistinfo ( idArtistInfo integer primary key, idArtist integer, strBorn text, strYearsActive text, strGenres text, strTones text, strStyles text, strInstruments text, strImage text, strAMGBio text, strAlbums text, strCompilations text, strSingles text, strMisc text)");
         DatabaseUtility.AddTable(m_db, "song", "CREATE TABLE song ( idSong integer primary key, idArtist integer, idAlbum integer, idGenre integer, idPath integer, strTitle text, iTrack integer, iDuration integer, iYear integer, dwFileNameCRC text, strFileName text, iTimesPlayed integer, iRating integer, favorite integer)");
+
+        DatabaseUtility.AddTable(m_db, "scrobbleusers", "CREATE TABLE scrobbleusers ( idScrobbleUser integer primary key, strUsername text, strPassword text)");
+        DatabaseUtility.AddTable(m_db, "scrobblesettings", "CREATE TABLE scrobblesettings ( idScrobbleSettings integer primary key, idScrobbleUser integer, iAddArtists integer, iAddTracks integer, iNeighbourMode integer, iRandomness integer, iScrobbleDefault integer, iSubmitOn integer, iDebugLog integer)");
+        DatabaseUtility.AddTable(m_db, "scrobblemode", "CREATE TABLE scrobblemode ( idScrobbleMode integer primary key, idScrobbleUser integer, iSortID integer, strModeName text)");
+        DatabaseUtility.AddTable(m_db, "scrobbletags", "CREATE TABLE scrobbletags ( idScrobbleTag integer primary key, idScrobbleMode integer, iSortID integer, strTagName text)");
+
+        //CREATE TABLE scrobbletags (idMode NUMERIC, idTag INTEGER PRIMARY KEY, idUser NUMERIC, SortId NUMERIC, TagName TEXT);
+
+
       }
 
       catch (Exception ex)
@@ -3397,5 +3413,109 @@ namespace MediaPortal.Music.Database
         }
       }
     }
+
+
+
+    // by rtv
+
+    public int AddScrobbleUser(string userName_)
+    {
+      string strSQL;
+      try
+      {
+        if (userName_ == null) return -1;
+        if (userName_.Length == 0) return -1;
+        string strUserName = userName_;
+
+        DatabaseUtility.RemoveInvalidChars(ref strUserName);
+        if (null == m_db) return -1;
+
+        SQLiteResultSet results;
+        strSQL = String.Format("select * from scrobbleusers where strUsername like '{0}'", strUserName);
+        results = m_db.Execute(strSQL);
+        if (results.Rows.Count == 0)
+        {
+          // doesnt exists, add it
+          strSQL = String.Format("insert into scrobbleusers (idScrobbleUser , strUsername) values ( NULL, '{0}' )", strUserName);
+          m_db.Execute(strSQL);
+          _log.Info("MusicDatabase: added scrobbleuser {0} with ID {1}", strUserName, Convert.ToString(m_db.LastInsertID()));
+          return m_db.LastInsertID();
+        }
+        else
+          return DatabaseUtility.GetAsInt(results, 0, "idScrobbleUser");        
+      }
+      catch (Exception ex)
+      {
+        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+      return -1;
+    }
+
+    public string AddScrobbleUserPassword(string userID_, string userPassword_)
+    {
+      string strSQL;
+      try
+      {
+        if (userPassword_ == null || userID_ == null)
+          return string.Empty;
+        if (userID_.Length == 0)
+          return string.Empty;
+        string strUserPassword = userPassword_;
+
+        DatabaseUtility.RemoveInvalidChars(ref strUserPassword);
+        if (null == m_db)
+          return string.Empty;
+
+        SQLiteResultSet results;
+        strSQL = String.Format("select * from scrobbleusers where idScrobbleUser = '{0}'", userID_);
+        results = m_db.Execute(strSQL);
+        // user doesn't exist therefore no password to change
+        if (results.Rows.Count == 0)
+          return string.Empty;
+        
+        if (DatabaseUtility.Get(results, 0, "strPassword") == strUserPassword)
+          // password didn't change
+          return userPassword_;
+        // set new password
+        else
+        {
+          // if no password was given = fetch it
+          if (userPassword_ == "")
+            return DatabaseUtility.Get(results, 0, "strPassword");
+          else
+          {
+            strSQL = String.Format("update scrobbleusers set strPassword='{0}' where idScrobbleUser like '{1}'", strUserPassword, userID_);
+            m_db.Execute(strSQL);
+            return userPassword_;
+          }
+        }        
+      }
+      catch (Exception ex)
+      {
+        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+      return string.Empty;
+    }
+
+    public List<string> GetAllScrobbleUsers()
+    {
+      SQLiteResultSet results;
+      List<string> scrobbleUsers = new List<string>();
+
+      strSQL = "select * from scrobbleusers";
+      results = m_db.Execute(strSQL);
+
+      if (results.Rows.Count != 0)
+      {
+        for (int i = 0; i < results.Rows.Count; i++)
+          scrobbleUsers.Add(DatabaseUtility.Get(results, i, "strUsername"));
+      }
+      // what else?
+
+      return scrobbleUsers;
+    }
+
   }
 }
