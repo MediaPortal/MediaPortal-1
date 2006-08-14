@@ -225,6 +225,13 @@ namespace MediaPortal.AudioScrobbler
           break;
       }
     }
+
+    private void textBoxTagToSearch_KeyUp(object sender, KeyEventArgs e)
+    {
+      if (e.KeyCode == Keys.Enter)
+        buttonGetTaggedArtists_Click(sender, e);
+    }
+
     #endregion
 
     #region Button events
@@ -245,10 +252,21 @@ namespace MediaPortal.AudioScrobbler
       buttonTagsRefresh.Enabled = false;
       listViewTags.Clear();
       songList = new List<Song>();
-      songList = lastFmLookup.getAudioScrobblerFeed(lastFMFeed.toptags, "");
+      songList = lastFmLookup.getAudioScrobblerFeed(lastFMFeed.toptags, "");      
       for (int i = 0; i < songList.Count; i++)
         listViewTags.Items.Add(songList[i].ToLastFMString());
       buttonTagsRefresh.Enabled = true;
+    }
+
+    private void buttonGetTaggedArtists_Click(object sender, EventArgs e)
+    {
+      buttonGetTaggedArtists.Enabled = false;
+      listViewTags.Clear();
+      songList = new List<Song>();
+      songList = lastFmLookup.getTaggedArtists(System.Web.HttpUtility.UrlEncode(textBoxTagToSearch.Text), false);
+      for (int i = 0; i < songList.Count; i++)
+        listViewTags.Items.Add(songList[i].ToLastFMMatchString(false));
+      buttonGetTaggedArtists.Enabled = true;
     }
 
     private void buttonRefreshRecent_Click(object sender, EventArgs e)

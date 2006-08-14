@@ -45,6 +45,10 @@ namespace MediaPortal.Music.Database
     similar,
     toptags,
     artisttags,
+    chartstoptags,
+    taggedartists,
+    taggedalbums,
+    taggedtracks
   }
   #endregion
 
@@ -203,9 +207,57 @@ namespace MediaPortal.Music.Database
           return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "friends.xml", @"//friends/user", feed_);
         case lastFMFeed.toptags:
           return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "tags.xml", @"//toptags/tag", feed_);
+        case lastFMFeed.chartstoptags:
+          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/tag/toptags.xml", @"//toptags/tag", feed_);
         default:
           return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "recenttracks.xml", @"//recenttracks/track", feed_);
       }
+    }
+
+    public List<Song> getTaggedArtists(string taggedWith_, bool randomizeList_)
+    {
+      if (randomizeList_)
+      {
+        Random rand = new Random();
+        List<Song> taggedArtists = new List<Song>();
+        List<Song> randomTaggedArtists = new List<Song>();
+        taggedArtists = ParseXMLDocForTaggedArtists(taggedWith_);
+        int artistsAdded = 0;
+        int randomPosition;
+        // make sure we do not get an endless loop
+        if (taggedArtists.Count > _limitRandomListCount)
+        {
+          int minRandValue = _limitRandomListCount;
+          int calcRandValue = (taggedArtists.Count - 1) * _randomNessPercent / 100;
+          while (artistsAdded < _limitRandomListCount)
+          {
+            bool foundDoubleEntry = false;
+            if (calcRandValue > minRandValue)
+              randomPosition = rand.Next(0, calcRandValue);
+            else
+              randomPosition = rand.Next(0, minRandValue);
+            // loop current list to find out if randomPos was already inserted
+            for (int j = 0; j < randomTaggedArtists.Count; j++)
+            {
+              if (randomTaggedArtists.Contains(taggedArtists[randomPosition]))
+                foundDoubleEntry = true;
+            }
+            // new item therefore add it
+            if (!foundDoubleEntry)
+            {
+              randomTaggedArtists.Add(taggedArtists[randomPosition]);
+              artistsAdded++;
+            }
+          }
+          // enough similar artists
+          return randomTaggedArtists;
+        }
+        else
+          // limit not reached - return all Artists
+          return taggedArtists;
+      }
+      else
+        return ParseXMLDocForTaggedArtists(taggedWith_);
     }
 
     public List<Song> getSimilarArtists(string Artist_, bool randomizeList_)
@@ -388,6 +440,41 @@ namespace MediaPortal.Music.Database
       return songList;
     }
 
+    private List<Song> ParseXMLDocForTaggedArtists(string taggedWith_)
+    {
+      songList = new List<Song>();
+      try
+      {
+        XmlDocument doc = new XmlDocument();
+        doc.Load(@"http://ws.audioscrobbler.com/1.0/tag/" + taggedWith_ + "/topartists.xml");
+        XmlNodeList nodes = doc.SelectNodes(@"//tag/artist");
+
+        foreach (XmlNode node in nodes)
+        {
+          Song nodeSong = new Song();
+          foreach (XmlNode child in node.ChildNodes)
+          {
+            if (node.Attributes["name"].Value != "")
+              nodeSong.Artist = node.Attributes["name"].Value;
+            else if (child.Name == "mbid" && child.ChildNodes.Count != 0)
+              nodeSong.MusicBrainzID = child.ChildNodes[0].Value;
+            else if (child.Name == "url" && child.ChildNodes.Count != 0)
+              nodeSong.URL = child.ChildNodes[0].Value;
+            else if (child.Name == "image" && child.ChildNodes.Count != 0)
+              nodeSong.WebImage = child.ChildNodes[0].Value;
+            if (node.Attributes["count"].Value != "")
+              nodeSong.TimesPlayed = Convert.ToInt32(node.Attributes["count"].Value);
+          }
+          songList.Add(nodeSong);
+        }
+      }
+      catch
+      {
+        // input nice exception here...
+      }
+      return songList;
+    }
+
     private List<Song> ParseXMLDoc(string xmlFileInput, string queryNodePath, lastFMFeed xmlfeed)
     {
       songList = new List<Song>();
@@ -459,6 +546,17 @@ namespace MediaPortal.Music.Database
                     nodeSong.TimesPlayed = Convert.ToInt32(child.ChildNodes[0].Value);
                   else if (child.Name == "url" && child.ChildNodes.Count != 0)
                     nodeSong.URL = child.ChildNodes[0].Value;
+                }
+                break;
+              // doesn't work atm
+              case (lastFMFeed.chartstoptags):
+                {
+                  if (node.Attributes["name"].Value != "")
+                    nodeSong.Artist = node.Attributes["name"].Value;
+                  if (node.Attributes["count"].Value != "")
+                    nodeSong.TimesPlayed = Convert.ToInt32(node.Attributes["count"].Value);
+                  if (node.Attributes["url"].Value != "")
+                    nodeSong.URL = node.Attributes["url"].Value;
                 }
                 break;
               case (lastFMFeed.neighbours):

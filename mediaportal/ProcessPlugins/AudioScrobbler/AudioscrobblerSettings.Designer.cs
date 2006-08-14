@@ -130,6 +130,8 @@ namespace MediaPortal.AudioScrobbler
       this.tabPageTags = new System.Windows.Forms.TabPage();
       this.buttonTagsRefresh = new MediaPortal.UserInterface.Controls.MPButton();
       this.listViewTags = new MediaPortal.UserInterface.Controls.MPListView();
+      this.buttonGetTaggedArtists = new MediaPortal.UserInterface.Controls.MPButton();
+      this.textBoxTagToSearch = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.panelPicBox.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxASLogo)).BeginInit();
       this.tabControlSettings.SuspendLayout();
@@ -672,7 +674,6 @@ namespace MediaPortal.AudioScrobbler
       this.tabControlASSettings.SelectedIndex = 0;
       this.tabControlASSettings.Size = new System.Drawing.Size(550, 292);
       this.tabControlASSettings.TabIndex = 6;
-      this.tabControlASSettings.Click += new System.EventHandler(this.buttonRefreshWeeklyArtists_Click);
       // 
       // tabPageRecent
       // 
@@ -926,6 +927,7 @@ namespace MediaPortal.AudioScrobbler
       this.buttonRefreshWeeklyArtists.TabIndex = 3;
       this.buttonRefreshWeeklyArtists.Text = "Refresh";
       this.buttonRefreshWeeklyArtists.UseVisualStyleBackColor = true;
+      this.buttonRefreshWeeklyArtists.Click += new System.EventHandler(this.buttonRefreshWeeklyArtists_Click);
       // 
       // listViewWeeklyArtists
       // 
@@ -1012,6 +1014,8 @@ namespace MediaPortal.AudioScrobbler
       // 
       // tabPageTags
       // 
+      this.tabPageTags.Controls.Add(this.textBoxTagToSearch);
+      this.tabPageTags.Controls.Add(this.buttonGetTaggedArtists);
       this.tabPageTags.Controls.Add(this.buttonTagsRefresh);
       this.tabPageTags.Controls.Add(this.listViewTags);
       this.tabPageTags.Location = new System.Drawing.Point(4, 22);
@@ -1043,6 +1047,26 @@ namespace MediaPortal.AudioScrobbler
       this.listViewTags.TabIndex = 2;
       this.listViewTags.UseCompatibleStateImageBehavior = false;
       this.listViewTags.View = System.Windows.Forms.View.List;
+      // 
+      // buttonGetTaggedArtists
+      // 
+      this.buttonGetTaggedArtists.Location = new System.Drawing.Point(452, 239);
+      this.buttonGetTaggedArtists.Name = "buttonGetTaggedArtists";
+      this.buttonGetTaggedArtists.Size = new System.Drawing.Size(75, 23);
+      this.buttonGetTaggedArtists.TabIndex = 4;
+      this.buttonGetTaggedArtists.Text = "Get tagged";
+      this.buttonGetTaggedArtists.UseVisualStyleBackColor = true;
+      this.buttonGetTaggedArtists.Click += new System.EventHandler(this.buttonGetTaggedArtists_Click);
+      // 
+      // textBoxTagToSearch
+      // 
+      this.textBoxTagToSearch.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxTagToSearch.Location = new System.Drawing.Point(452, 213);
+      this.textBoxTagToSearch.Name = "textBoxTagToSearch";
+      this.textBoxTagToSearch.Size = new System.Drawing.Size(75, 20);
+      this.textBoxTagToSearch.TabIndex = 5;
+      this.textBoxTagToSearch.Text = "Metal";
+      this.textBoxTagToSearch.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBoxTagToSearch_KeyUp);
       // 
       // AudioscrobblerSettings
       // 
@@ -1086,6 +1110,7 @@ namespace MediaPortal.AudioScrobbler
       this.tabPageTopTracks.ResumeLayout(false);
       this.tabPageWeeklyTracks.ResumeLayout(false);
       this.tabPageTags.ResumeLayout(false);
+      this.tabPageTags.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -1168,5 +1193,7 @@ namespace MediaPortal.AudioScrobbler
     private System.Windows.Forms.LinkLabel linkLabel1;
     private System.Windows.Forms.LinkLabel linkLabel2;
     private MediaPortal.UserInterface.Controls.MPLabel labelPluginBannerHint;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxTagToSearch;
+    private MediaPortal.UserInterface.Controls.MPButton buttonGetTaggedArtists;
   }
 }
