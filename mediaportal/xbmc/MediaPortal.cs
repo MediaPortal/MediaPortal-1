@@ -724,8 +724,6 @@ public class MediaPortalApp : D3DApp, IRender
       }
     }
 
-    InputDevices.Init();
-
     if (Recorder.Running) return;
     if (_onResumeRunning)
     {
@@ -739,6 +737,9 @@ public class MediaPortalApp : D3DApp, IRender
     {
       SetThreadExecutionState(oldState);
     }
+
+    InputDevices.Init();
+
     _onResumeRunning = false;
   }
 
