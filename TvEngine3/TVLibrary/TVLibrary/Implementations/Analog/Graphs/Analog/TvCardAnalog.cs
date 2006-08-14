@@ -184,6 +184,11 @@ namespace TvLibrary.Implementations.Analog
       bool result = Tune(channel);
       return result;
     }
+    /// <summary>
+    /// Tunes the specified channel.
+    /// </summary>
+    /// <param name="channel">The channel.</param>
+    /// <returns></returns>
     public bool Tune(IChannel channel)
     {
       Log.Log.WriteFile("analog:  Tune:{0}", channel);
@@ -263,10 +268,38 @@ namespace TvLibrary.Implementations.Analog
       _currentChannel = analogChannel;
       if (_graphState == GraphState.Idle)
         _graphState = GraphState.Created;
-      Log.Log.WriteFile("Analog: Tuned to video:{0} Hz audio:{1} Hz locked:{1}", videoFrequency, audioFrequency, IsTunerLocked);
+      Log.Log.WriteFile("Analog: Tuned to video:{0} Hz audio:{1} Hz locked:{2}", videoFrequency, audioFrequency, IsTunerLocked);
       _lastSignalUpdate = DateTime.MinValue;
       _previousChannel = analogChannel;
       return true;
+    }
+    /// <summary>
+    /// Gets the video frequency.
+    /// </summary>
+    /// <value>The video frequency.</value>
+    public int VideoFrequency
+    {
+      get
+      {
+        IAMTVTuner tvTuner = _filterTvTuner as IAMTVTuner;
+        int videoFrequency;
+        tvTuner.get_VideoFrequency(out videoFrequency);
+        return videoFrequency;
+      }
+    }
+    /// <summary>
+    /// Gets the audio frequency.
+    /// </summary>
+    /// <value>The audio frequency.</value>
+    public int AudioFrequency
+    {
+      get
+      {
+        IAMTVTuner tvTuner = _filterTvTuner as IAMTVTuner;
+        int audioFrequency;
+        tvTuner.get_AudioFrequency(out audioFrequency);
+        return audioFrequency;
+      }
     }
 
     /// <summary>
@@ -433,6 +466,10 @@ namespace TvLibrary.Implementations.Analog
     #endregion
 
 
+    /// <summary>
+    /// Toes the string.
+    /// </summary>
+    /// <returns></returns>
     public override string ToString()
     {
       return _name;

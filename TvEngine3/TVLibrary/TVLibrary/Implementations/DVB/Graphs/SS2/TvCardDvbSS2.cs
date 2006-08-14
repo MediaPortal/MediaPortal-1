@@ -88,7 +88,7 @@ namespace TvLibrary.Implementations.DVB
     System.Timers.Timer _pmtTimer = new System.Timers.Timer();
 #endif
     protected int _pmtVersion;
-    protected ChannelInfo _channelInfo;
+    protected ChannelInfo _channelInfo = new ChannelInfo();
     string _timeshiftFileName;
     protected bool _isScanning = false;
     protected DateTime _dateTimeShiftStarted = DateTime.MinValue;
@@ -347,6 +347,11 @@ namespace TvLibrary.Implementations.DVB
       if (_filterTsAnalyzer != null)
       {
         ITsTimeShift record = _filterTsAnalyzer as ITsTimeShift;
+        if (record == null)
+        {
+          Log.Log.WriteFile("dvb:unable to get ITsTimeShift");
+          throw new TvException("unable to get ITsTimeShift");
+        }
         record.SetTimeShiftingFileName(fileName);
         if (_channelInfo.pids.Count == 0)
         {
@@ -358,15 +363,18 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.WriteFile("dvb:SetTimeShiftFileName fill in pids");
           _startTimeShifting = false;
           DVBBaseChannel dvbChannel = _currentChannel as DVBBaseChannel;
-          record.SetPcrPid((short)dvbChannel.PcrPid);
-          foreach (PidInfo info in _channelInfo.pids)
+          if (_currentChannel != null)
           {
-            if (info.isAC3Audio || info.isAudio || info.isVideo)
+            record.SetPcrPid((short)dvbChannel.PcrPid);
+            foreach (PidInfo info in _channelInfo.pids)
             {
-              record.AddPesStream((short)info.pid);
+              if (info.isAC3Audio || info.isAudio || info.isVideo)
+              {
+                record.AddPesStream((short)info.pid);
+              }
             }
+            record.Start();
           }
-          record.Start();
         }
       }
     }

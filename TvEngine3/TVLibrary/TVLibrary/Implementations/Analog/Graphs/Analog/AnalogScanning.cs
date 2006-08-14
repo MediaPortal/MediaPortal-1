@@ -13,11 +13,20 @@ namespace TvLibrary.Implementations.Analog
   public class AnalogScanning : ITVScanning
   {
     TvCardAnalog _card;
+    long _previousFrequency = 0;
+    /// <summary>
+    /// Initializes a new instance of the <see cref="T:AnalogScanning"/> class.
+    /// </summary>
+    /// <param name="card">The card.</param>
     public AnalogScanning(TvCardAnalog card)
     {
       _card = card;
     }
 
+    /// <summary>
+    /// returns the tv card used
+    /// </summary>
+    /// <value></value>
     public ITVCard TvCard
     {
       get
@@ -25,14 +34,26 @@ namespace TvLibrary.Implementations.Analog
         return _card;
       }
     }
+    /// <summary>
+    /// Disposes this instance.
+    /// </summary>
     public void Dispose()
     {
     }
 
+    /// <summary>
+    /// resets the scanner
+    /// </summary>
     public void Reset()
     {
+      _previousFrequency = 0;
     }
 
+    /// <summary>
+    /// Tunes to the channel specified and will start scanning for any channel
+    /// </summary>
+    /// <param name="channel">channel to tune to</param>
+    /// <returns>list of channels found</returns>
     public List<IChannel> Scan(IChannel channel)
     {
       _card.IsScanning = true;
@@ -41,6 +62,17 @@ namespace TvLibrary.Implementations.Analog
       _card.GrabTeletext = true;
       if (_card.IsTunerLocked)
       {
+        if (channel.IsTv)
+        {
+          if (_card.VideoFrequency == _previousFrequency) return new List<IChannel>();
+          _previousFrequency = _card.VideoFrequency;
+        }
+        else
+        {
+          if (_card.AudioFrequency == _previousFrequency) return new List<IChannel>();
+          _previousFrequency = _card.AudioFrequency;
+        }
+
         if (_card.GrabTeletext)
         {
           _card.TeletextDecoder.ClearTeletextChannelName();
