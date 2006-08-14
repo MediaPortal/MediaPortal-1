@@ -51,13 +51,17 @@ namespace ProcessPlugins.TvMovie
       if (!_database.WasUpdated)
         return;
 
-      GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_DISABLEGUIDEREFRESH, 0, 0, 0, 0, 0, null);
-      GUIGraphicsContext.SendMessage(message);
-     
+      TVDatabase.SupressEvents = true;
+
+      //GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_DISABLEGUIDEREFRESH, 0, 0, 0, 0, 0, null);
+      //GUIGraphicsContext.SendMessage(message);
+
       _database.Import();
 
-      message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ENABLEGUIDEREFRESH, 0, 0, 0, 0, 0, null);
-      GUIGraphicsContext.SendMessage(message);
+      //message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ENABLEGUIDEREFRESH, 0, 0, 0, 0, 0, null);
+      //GUIGraphicsContext.SendMessage(message);
+
+      TVDatabase.SupressEvents = false;
     }
 
 
