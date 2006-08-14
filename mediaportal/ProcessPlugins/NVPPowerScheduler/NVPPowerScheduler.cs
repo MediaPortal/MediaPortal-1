@@ -306,6 +306,7 @@ namespace MediaPortal.PowerScheduler
         _log.Info("   - Recorder.IsRecording() = " + Recorder.IsRecording().ToString());
         _log.Info("   - Recorder.IsRadio()     = " + Recorder.IsRadio().ToString());
         _log.Info("   - g_Player.Playing       = " + g_Player.Playing.ToString());
+				_log.Info("   - Database Update        = " + TVDatabase.SupressEvents.ToString());
       }
 
       // when the active window has changed check if 
@@ -321,14 +322,15 @@ namespace MediaPortal.PowerScheduler
           bool enableShutdown = true;
           //are we playing something?
           if (
-              //(g_Player.Playing && g_Player.IsRadio) ||  //are we playing internet radio?
+              //(g_Player.Playing && g_Player.IsRadio) ||  // are we playing internet radio?
               //(g_Player.Playing && g_Player.IsMusic) ||  // are we playing music? 
-              (g_Player.Playing)                     ||   // are we playing something ? 
-              (Recorder.IsRadio())                   ||  //are we playing analog or digital radio?    
-              (Recorder.IsRecording()) )                 //are we recording something? 
+              (g_Player.Playing)                     ||    // are we playing something ? 
+              (Recorder.IsRadio())                   ||    // are we playing analog or digital radio?    
+              (Recorder.IsRecording())               )     // are we recording something? 
+						  
           {
             //yes -> then disable shutdown
-            if (m_bExtensiveLog) _log.Info(" PowerScheduler: shutdown disabled - we are playing something");
+            if (m_bExtensiveLog) _log.Info(" PowerScheduler: shutdown disabled - we are playing something or a DB update is running");
             ResetShutdownTimer(0);
             enableShutdown = false;
             m_iActiveWindow = -1; //check again next time
@@ -381,7 +383,13 @@ namespace MediaPortal.PowerScheduler
             abortshutdown = true;
           }
         }
-        if (abortshutdown)
+				if (TVDatabase.SupressEvents == true)         // is there a DataBase UpDate (e.g EPG data import) running?
+				{
+					_log.Info("PowerScheduler: Shutdown process aborted by TVDatabase");
+					abortshutdown = true;
+				}
+				
+				if (abortshutdown)
           return;
 
         //g_Player.Stop();
