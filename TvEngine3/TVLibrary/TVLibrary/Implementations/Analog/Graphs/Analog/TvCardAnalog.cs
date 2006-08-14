@@ -282,15 +282,8 @@ namespace TvLibrary.Implementations.Analog
       {
         string extension = System.IO.Path.GetExtension(fileName).ToLower();
         StopGraph();
-        if (extension == ".mpg" || extension == ".mpeg" || extension == ".ts")
-        {
-          AddMpegMuxer(_currentChannel.IsTv);
-          AddTsFileSink(_currentChannel.IsTv);
-        }
-        else
-        {
-          AddStreamBufferSink(fileName);
-        }
+        AddMpegMuxer(_currentChannel.IsTv);
+        AddTsFileSink(_currentChannel.IsTv);
         ConnectFilters();
         SetTimeShiftFileName(fileName);
       }

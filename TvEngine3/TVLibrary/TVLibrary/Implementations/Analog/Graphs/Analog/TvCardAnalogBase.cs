@@ -22,9 +22,6 @@ namespace TvLibrary.Implementations.Analog
 
     #region constants
 
-    [ComImport, Guid("FA8A68B2-C864-4ba2-AD53-D3876A87494B")]
-    protected class StreamBufferConfig { }
-
     //KSCATEGORY_ENCODER
     public static readonly Guid AMKSEncoder = new Guid("19689BF6-C384-48fd-AD51-90E58C79F70B");
     //STATIC_KSCATEGORY_MULTIPLEXER
@@ -69,7 +66,6 @@ namespace TvLibrary.Implementations.Analog
     protected IBaseFilter _filterVideoEncoder = null;
     protected IBaseFilter _filterAudioEncoder = null;
     protected IBaseFilter _filterMultiplexer = null;
-    protected StreamBufferSink _filterStreamBufferSink = null;
     protected IBaseFilter _filterMpeg2Demux = null;
     protected IBaseFilter _filterGrabber = null;
     protected IBaseFilter _filterWstDecoder = null;
@@ -83,7 +79,6 @@ namespace TvLibrary.Implementations.Analog
     protected IPin _pinAudio = null;
     protected IPin _pinLPCM = null;
     protected IPin _pinVBI = null;
-    protected IStreamBufferRecordControl _recorder;
     protected DVBTeletext _teletextDecoder;
     protected string _fileName;
     protected bool _grabTeletext = false;
@@ -1190,80 +1185,6 @@ namespace TvLibrary.Implementations.Analog
       }
     }
 
-    protected void AddStreamBufferSink(string fileName)
-    {
-      if (!CheckThreadId()) return;
-      Log.Log.WriteFile("analog: AddStreamBufferSink");
-      _filterStreamBufferSink = new StreamBufferSink();
-      int hr = _graphBuilder.AddFilter((IBaseFilter)_filterStreamBufferSink, "SBE Sink");
-      if (hr != 0)
-      {
-        Log.Log.WriteFile("analog: AddStreamBufferSink returns:0x{0:X}", hr);
-        throw new TvException("Unable to add Stream buffer engine");
-      }
-
-      string directory = "";
-      int slashPosition = fileName.LastIndexOf(@"\");
-      if (slashPosition >= 0)
-      {
-        directory = fileName.Substring(0, slashPosition);
-      }
-      else
-      {
-        directory = System.IO.Path.GetFullPath(fileName);
-        slashPosition = directory.LastIndexOf(@"\");
-        if (slashPosition >= 0)
-          directory = directory.Substring(0, slashPosition);
-        else directory = "";
-      }
-
-      StreamBufferConfig streamConfig = new StreamBufferConfig();
-
-      IStreamBufferInitialize streamBufferInit = streamConfig as IStreamBufferInitialize;
-      if (streamBufferInit != null)
-      {
-        IntPtr subKey = IntPtr.Zero;
-        IntPtr HKEY = (IntPtr)unchecked((int)0x80000002L);
-        RegOpenKeyEx(HKEY, "SOFTWARE\\MediaPortal", 0, 0x3f, out subKey);
-        hr = streamBufferInit.SetHKEY(subKey);
-        IntPtr[] sids = new IntPtr[2];
-        sids[0] = SidHelper.GetSidPtr("Everyone");
-        if (sids[0] != IntPtr.Zero)
-        {
-          Log.Log.WriteFile("analog:SetSID for everyone");
-          hr = streamBufferInit.SetSIDs(1, sids);
-          if (hr != 0)
-          {
-            Log.Log.WriteFile("analog:SetSIDs returns:{0:X}", hr);
-          }
-          Marshal.FreeHGlobal(sids[0]);
-        }
-      }
-      else
-      {
-        Log.Log.WriteFile("analog:Unable to get IStreamBufferInitialize");
-      }
-
-      IStreamBufferConfigure streamBufferConfig = streamConfig as IStreamBufferConfigure;
-      if (streamBufferConfig != null)
-      {
-        Log.Log.WriteFile("analog:SetBackingFileCount min=6, max=8");
-        streamBufferConfig.SetBackingFileCount(6, 8);
-        Log.Log.WriteFile("analog:SetDirectory:{0}", directory);
-        if (directory != String.Empty)
-        {
-          hr = streamBufferConfig.SetDirectory(directory);
-          if (hr != 0)
-          {
-            Log.Log.WriteFile("analog:FAILED to set timeshift folder to:{0} {1:X}", directory, hr);
-          }
-        }
-      }
-      else
-      {
-        Log.Log.WriteFile("analog:Unable to get IStreamBufferConfigure");
-      }
-    }
     void AddMpeg2Demultiplexer()
     {
       if (!CheckThreadId()) return;
@@ -1309,31 +1230,6 @@ namespace TvLibrary.Implementations.Analog
     protected void ConnectFilters()
     {
       if (!CheckThreadId()) return;
-      if (_filterStreamBufferSink == null) return;
-      IPin pinIn = DsFindPin.ByDirection((IBaseFilter)_filterStreamBufferSink, PinDirection.Input, 0);
-      int hr = _graphBuilder.Connect(_pinVideo, pinIn);
-      Release.ComObject("streambuffer pin0", pinIn);
-      if (hr != 0)
-      {
-        Log.Log.WriteFile("analog: stream buffer sink pin 1 failed :0x{0:X}", hr);
-        throw new TvException("Unable to connect video pin to stream buffer sink");
-      }
-      pinIn = DsFindPin.ByDirection((IBaseFilter)_filterStreamBufferSink, PinDirection.Input, 1);
-      hr = _graphBuilder.Connect(_pinAudio, pinIn);
-      Release.ComObject("streambuffer pin1", pinIn);
-      if (hr != 0)
-      {
-        Log.Log.WriteFile("analog: stream buffer sink pin 2 failed :0x{0:X}", hr);
-        throw new TvException("Unable to connect audio pin to stream buffer sink");
-      }
-      pinIn = DsFindPin.ByDirection((IBaseFilter)_filterStreamBufferSink, PinDirection.Input, 2);
-      hr = _graphBuilder.Connect(_pinLPCM, pinIn);
-      Release.ComObject("streambuffer pin2", pinIn);
-      if (hr != 0)
-      {
-        Log.Log.WriteFile("analog: stream buffer sink pin 3 failed :0x{0:X}", hr);
-        throw new TvException("Unable to connect lpcm pin to stream buffer sink");
-      }
     }
 
     /// <summary>
@@ -1346,17 +1242,6 @@ namespace TvLibrary.Implementations.Analog
       _timeshiftFileName = fileName;
       Log.Log.WriteFile("analog:SetTimeShiftFileName:{0}", fileName);
       int hr;
-      if (_filterStreamBufferSink != null)
-      {
-        Log.Log.WriteFile("analog:SetTimeShiftFileName: uses dvr-ms");
-        IStreamBufferSink init = (IStreamBufferSink)_filterStreamBufferSink;
-        hr = init.LockProfile(fileName);
-        if (hr != 0)
-        {
-          Log.Log.WriteFile("analog:SetTimeShiftFileName  returns:0x{0:X}", hr);
-          throw new TvException("Unable to start timeshifting to " + fileName);
-        }
-      }
       if (_tsFileSink != null)
       {
         Log.Log.WriteFile("analog:SetTimeShiftFileName: uses .ts");
@@ -1755,28 +1640,6 @@ namespace TvLibrary.Implementations.Analog
       if (!CheckThreadId()) return;
       Log.Log.WriteFile("analog:StartRecord({0})", fileName);
       int hr;
-      if (_filterStreamBufferSink != null)
-      {
-        object pRecordingIUnknown;
-        IStreamBufferSink sink = (IStreamBufferSink)_filterStreamBufferSink;
-        hr = sink.CreateRecorder(fileName, recordingType, out  pRecordingIUnknown);
-        if (hr != 0)
-        {
-          Log.Log.WriteFile("analog: Unable to create recorder:0x{0:X}", hr);
-          throw new TvException("Unable to create recorder");
-        }
-        _recorder = pRecordingIUnknown as IStreamBufferRecordControl;
-        hr = _recorder.Start(ref startTime);
-        if (hr != 0)
-        {
-          throw new TvException("Unable to start recording");
-        }
-        bool started, stopped;
-        int result;
-        _recorder.GetRecordingStatus(out result, out started, out stopped);
-        Log.Log.WriteFile("analog:Recording started:{0} stopped:{1}", started, stopped);
-        return;
-      }
       if (_tsFileSink != null)
       {
         Log.Log.WriteFile("dvb:SetRecording: uses .mpg");
@@ -1797,17 +1660,6 @@ namespace TvLibrary.Implementations.Analog
       if (!CheckThreadId()) return;
       int hr;
       Log.Log.WriteFile("analog:StopRecord()");
-      if (_recorder != null)
-      {
-        hr = _recorder.Stop(1);
-        if (hr != 0)
-        {
-          Log.Log.WriteFile("analog:Stop record:0x{0:X}", hr);
-          throw new TvException("Unable to stop recording");
-        }
-        Release.ComObject("recorder", _recorder);
-        _recorder = null;
-      }
 
       if (_tsFileSink != null)
       {
@@ -1887,10 +1739,6 @@ namespace TvLibrary.Implementations.Analog
 
       FilterGraphTools.RemoveAllFilters(_graphBuilder);
 
-      if (_recorder != null)
-      {
-        Release.ComObject("recorder filter", _recorder); _recorder = null;
-      }
 
       if (_filterTvTuner != null)
       {
@@ -1916,11 +1764,6 @@ namespace TvLibrary.Implementations.Analog
       {
         Release.ComObject("audio encoder filter", _filterAudioEncoder);
         _filterAudioEncoder = null;
-      }
-      if (_filterStreamBufferSink != null)
-      {
-        Release.ComObject("streambuffer sink filter", _filterStreamBufferSink);
-        _filterStreamBufferSink = null;
       }
       if (_filterMpeg2Demux != null)
       {
@@ -2256,12 +2099,6 @@ namespace TvLibrary.Implementations.Analog
     #endregion
     protected void DeleteTimeShifting()
     {
-      if (_filterStreamBufferSink != null)
-      {
-        _graphBuilder.RemoveFilter((IBaseFilter)_filterStreamBufferSink);
-        Release.ComObject("streambuffer sink filter", _filterStreamBufferSink); ;
-        _filterStreamBufferSink = null;
-      }
 
       if (_tsFileSink != null)
       {
