@@ -124,7 +124,7 @@ STDMETHODIMP CTimeShifting::Start()
 		m_pTimeShiftFile = new MultiFileWriter();
 		if (FAILED(m_pTimeShiftFile->OpenFile(wstrFileName))) 
 		{
-			LogDebug("Timeshifter:failed to open filename:%s",m_szFileName);
+			LogDebug("Timeshifter:failed to open filename:%s %d",m_szFileName,GetLastError());
 			m_pTimeShiftFile->CloseFile();
 			delete m_pTimeShiftFile;
 			m_pTimeShiftFile=NULL;

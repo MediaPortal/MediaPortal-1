@@ -24,7 +24,7 @@
 #include "TsHeader.h"
 #include "packetsync.h"
 
-#define MAX_PES_PACKET 256000
+#define MAX_PES_PACKET 0x80000
 
 extern void LogDebug(const char *fmt, ...) ;
 
