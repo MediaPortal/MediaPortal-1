@@ -10,7 +10,7 @@
     </country>
     <country name="Germany" id="de" newURL="http://de.music.yahoo.com/musicvideos/lists/new.asp" topURL="http://de.music.yahoo.com/musicvideos/lists/top.asp" GenreListURL="http://de.music.yahoo.com/musicvideos/" GenreURL="http://de.music.yahoo.com/musicvideos/genrehub.asp?genreID=" searchURL="http://search.de.music.yahoo.com/launch/search/?m=video&amp;p=">
     </country>
-    <country name="Spain" id="sp" newURL="http://es.music.yahoo.com/musicvideos/lists/new.asp" topURL="http://es.music.yahoo.com/musicvideos/lists/top.asp" GenreListURL="http://es.music.yahoo.com/musicvideos/" GenreURL="http://es.music.yahoo.com/musicvideos/genrehub.asp?genreID=" searchURL="http://search.es.music.yahoo.com/launch/search/?m=video&amp;p=">
+    <country name="Spain" id="es" newURL="http://es.music.yahoo.com/musicvideos/lists/new.asp" topURL="http://es.music.yahoo.com/musicvideos/lists/top.asp" GenreListURL="http://es.music.yahoo.com/musicvideos/" GenreURL="http://es.music.yahoo.com/musicvideos/genrehub.asp?genreID=" searchURL="http://search.es.music.yahoo.com/launch/search/?m=video&amp;p=">
     </country>
     <country name="France" id="fr" newURL="http://fr.music.yahoo.com/musicvideos/lists/new.asp" topURL="http://fr.music.yahoo.com/musicvideos/lists/top.asp" GenreListURL="http://fr.music.yahoo.com/musicvideos/" GenreURL="http://fr.music.yahoo.com/musicvideos/genrehub.asp?genreID=" searchURL="http://search.fr.music.yahoo.com/launch/search/?m=video&amp;p=">
     </country>
