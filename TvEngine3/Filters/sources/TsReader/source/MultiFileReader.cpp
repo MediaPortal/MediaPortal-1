@@ -37,6 +37,7 @@ MultiFileReader::MultiFileReader()
 	m_TSFileId = 0;
 	m_bReadOnly = 1;
 	m_bDelay = 0;
+  m_bDebugOutput=true;
 }
 
 MultiFileReader::~MultiFileReader()
@@ -263,12 +264,29 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
 	m_TSBufferFile.SetFilePointer(0, FILE_BEGIN);
 	
 	__int64 currentPosition;
-	m_TSBufferFile.Read((LPBYTE)&currentPosition, sizeof(currentPosition), &bytesRead);
+	if (!SUCCEEDED(m_TSBufferFile.Read((LPBYTE)&currentPosition, sizeof(currentPosition), &bytesRead)))
+  {
+    return S_FALSE;
+  }
 
-	long filesAdded, filesRemoved;
-	m_TSBufferFile.Read((LPBYTE)&filesAdded, sizeof(filesAdded), &bytesRead);
-	m_TSBufferFile.Read((LPBYTE)&filesRemoved, sizeof(filesRemoved), &bytesRead);
+	long filesAdded=0, filesRemoved=0;
+	if (!SUCCEEDED(m_TSBufferFile.Read((LPBYTE)&filesAdded, sizeof(filesAdded), &bytesRead)))
+  {
+    return S_FALSE;
+  }
+	if (!SUCCEEDED(m_TSBufferFile.Read((LPBYTE)&filesRemoved, sizeof(filesRemoved), &bytesRead)))
+  {
+    return S_FALSE;
+  }
 
+  if (filesAdded>10)
+  {
+    ASSERT(0);
+  }
+  if (filesRemoved>10)
+  {
+    ASSERT(0);
+  }
 	if ((m_filesAdded != filesAdded) || (m_filesRemoved != filesRemoved))
 	{
 		long filesToRemove = filesRemoved - m_filesRemoved;

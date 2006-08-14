@@ -36,7 +36,7 @@ public:
 	int VideoPacketCount();
 	int AudioPacketCount();
 	void Require();
-	void Parse();
+	bool Parse();
 	void Reset();
 private:
 	vector<CBuffer*> m_vecAudioBuffers;

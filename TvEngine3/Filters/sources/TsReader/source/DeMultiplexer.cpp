@@ -44,7 +44,7 @@ CDeMultiplexer::~CDeMultiplexer()
 
 void CDeMultiplexer::Reset()
 {
-	::OutputDebugStringA("CDeMultiplexer::Reset()\n");
+	//::OutputDebugStringA("CDeMultiplexer::Reset()\n");
 	CAutoLock lock(m_section);
 	
 	m_iBufferPosWrite=0;
@@ -83,34 +83,83 @@ int CDeMultiplexer::AudioPacketCount()
 CBuffer* CDeMultiplexer::GetAudio()
 {
 	CAutoLock lock(m_section);
+   if (m_iBytesInBuffer<0)
+  {
+    ASSERT(0);
+  }
+  if (m_iBytesInBuffer > BUFFER_LENGTH)
+  {
+    ASSERT(0);
+  }
 	while (m_vecAudioBuffers.size() < 1) 
 	{
-		Parse();
+		if (Parse()==false) return NULL;
 	}
 	if (m_vecAudioBuffers.size() > 0) 
 	{
 		ivecBuffer i = m_vecAudioBuffers.begin();
 		CBuffer* buffer= *i;
 		m_vecAudioBuffers.erase(i);
+    
+    if (m_iBytesInBuffer<0)
+    {
+      ASSERT(0);
+    }
+    if (m_iBytesInBuffer > BUFFER_LENGTH)
+    {
+      ASSERT(0);
+    }
 		return buffer;
 	}
+   if (m_iBytesInBuffer<0)
+  {
+    ASSERT(0);
+  }
+  if (m_iBytesInBuffer > BUFFER_LENGTH)
+  {
+    ASSERT(0);
+  }
 	return NULL;
 }
 
 CBuffer* CDeMultiplexer::GetVideo()
-{
+{ 
 	CAutoLock lock(m_section);
+  if (m_iBytesInBuffer<0)
+  {
+    ASSERT(0);
+  }
+  if (m_iBytesInBuffer > BUFFER_LENGTH)
+  {
+    ASSERT(0);
+  }
 	while (m_vecVideoBuffers.size() < 1) 
 	{
-		Parse();
+		if (Parse()==false) return NULL;
 	}
 	if (m_vecVideoBuffers.size() > 0) 
 	{
 		ivecBuffer i = m_vecVideoBuffers.begin();
 		CBuffer* buffer= *i;
 		m_vecVideoBuffers.erase(i);
+    if (m_iBytesInBuffer<0)
+    {
+      ASSERT(0);
+    }
+    if (m_iBytesInBuffer > BUFFER_LENGTH)
+    {
+      ASSERT(0);
+    }
 		return buffer;
 	}
+  if (m_iBytesInBuffer<0)
+  {
+    ASSERT(0);
+  }
+  if (m_iBytesInBuffer > BUFFER_LENGTH)
+  {
+    ASSERT(0);
+  }
 	return NULL;
 }
 
@@ -130,28 +179,62 @@ void CDeMultiplexer::Require()
 	}
 
 
+  if (len+m_iBytesInBuffer > BUFFER_LENGTH)
+  {
+    ASSERT(0);
+  }
+  if (len+m_iBufferPosWrite > BUFFER_LENGTH)
+  {
+    ASSERT(0);
+  }
 
+  int prevPosWrite=m_iBufferPosWrite;
+  int prevBytesInBuffer=m_iBytesInBuffer;
+	ULONG bytesRead=0;
 	if (len>0)
 	{
-		
-		ULONG bytesRead;
-		m_reader.Read(&m_pBuffer[m_iBufferPosWrite],len,&bytesRead);
-
-		m_iBytesInBuffer+=bytesRead;
-		m_iBufferPosWrite+=bytesRead;
-		if (m_iBufferPosWrite>=BUFFER_LENGTH) 
-		{
-			m_iBufferPosWrite=0;
-		}
+		if (SUCCEEDED(m_reader.Read(&m_pBuffer[m_iBufferPosWrite],len,&bytesRead)))
+    {
+      if (bytesRead>0)
+      {
+        if (bytesRead!=len)
+        {
+          ASSERT(0);
+        }
+		    m_iBytesInBuffer+=bytesRead;
+		    m_iBufferPosWrite+=bytesRead;
+		    if (m_iBufferPosWrite>=BUFFER_LENGTH) 
+		    {
+			    m_iBufferPosWrite=0;
+		    }
+      }
+    }
 	}
+  if (m_iBytesInBuffer< 0)
+  {
+        ASSERT(0);
+  }
+  if (m_iBytesInBuffer>BUFFER_LENGTH)
+  {
+        ASSERT(0);
+  }
 	
 }
 
 byte CDeMultiplexer::Next(int len)
 {
+  if (m_iBytesInBuffer<=0)
+  {
+    ASSERT(0);
+  }
+  if (m_iBytesInBuffer > BUFFER_LENGTH)
+  {
+    ASSERT(0);
+  }
+
 	if (len >m_iBytesInBuffer)
 	{
-		int x=1;
+		ASSERT(0);
 	}
 	int pos=m_iBufferPosRead+len;
 	if (pos >= BUFFER_LENGTH)
@@ -161,24 +244,44 @@ byte CDeMultiplexer::Next(int len)
 
 void CDeMultiplexer::Advance(int len)
 {
+  if (m_iBytesInBuffer<=0)
+  {
+    ASSERT(0);
+  }
+  if (m_iBytesInBuffer > BUFFER_LENGTH)
+  {
+    ASSERT(0);
+  }
 	if (len >m_iBytesInBuffer)
 	{
-		int x=1;
+		ASSERT(0);
 	}
 	int pos=m_iBufferPosRead+len;
 	if (pos >= BUFFER_LENGTH)
 		pos-=BUFFER_LENGTH;
 	m_iBufferPosRead=pos;
+  if (m_iBytesInBuffer<len)
+  {
+    ASSERT(0);
+  }
 	m_iBytesInBuffer-=len;
 }
 
 int CDeMultiplexer::BufferLength()
 {
+  if (m_iBytesInBuffer > BUFFER_LENGTH)
+  {
+    ASSERT(0);
+  }
 	return m_iBytesInBuffer;
 }
 
 void CDeMultiplexer::Copy(int len, byte* destination)
 {
+  if (len < 0 || len >=MAX_BUFFER_SIZE)
+  {
+    ASSERT(0);
+  }
 	if (BufferLength() < len)
 	{
 		Require();
@@ -190,19 +293,63 @@ void CDeMultiplexer::Copy(int len, byte* destination)
 	else
 	{
 		int len1=BUFFER_LENGTH-m_iBufferPosRead;
+    
+  
 		memcpy(destination,&m_pBuffer[m_iBufferPosRead],len1);
 		memcpy(&destination[len1],&m_pBuffer[0],len-len1);
 	}
 	
 }
 
-void CDeMultiplexer::Parse()
+bool CDeMultiplexer::Parse()
 {
 	byte header[1200];
 	if (BufferLength() < 0x100)
 	{
 		Require();
+    if (BufferLength()==0) return false;
 	}
+  
+  if (m_iBytesInBuffer<=0)
+  {
+    ASSERT(0);
+  }
+  if (m_iBytesInBuffer > BUFFER_LENGTH)
+  {
+    ASSERT(0);
+  }
+	while (m_vecAudioBuffers.size()>=2)
+	{
+		ivecBuffer it=m_vecAudioBuffers.begin();
+		CBuffer* pBuf=*it;
+		delete pBuf;
+		m_vecAudioBuffers.erase(it);
+	}
+  
+  if (m_iBytesInBuffer<=0)
+  {
+    ASSERT(0);
+  }
+  if (m_iBytesInBuffer > BUFFER_LENGTH)
+  {
+    ASSERT(0);
+  }
+	while (m_vecVideoBuffers.size()>=500)
+	{
+		ivecBuffer it=m_vecVideoBuffers.begin();
+		CBuffer* pBuf=*it;
+		delete pBuf;
+		m_vecVideoBuffers.erase(it);
+	}
+
+  if (m_iBytesInBuffer<=0)
+  {
+    ASSERT(0);
+  }
+  if (m_iBytesInBuffer > BUFFER_LENGTH)
+  {
+    ASSERT(0);
+  }
 	while (BufferLength() >= 50)
 	{
 		if (Next(0)==0 && Next(1)==0 && Next(2)==1)
@@ -243,16 +390,9 @@ void CDeMultiplexer::Parse()
 						m_pcrDecoder.GetPtsDts(header,pts,dts);
 					}
 					pBuffer->Set(m_pcrTime,pts,dts,len);
-					/*if (m_vecAudioBuffers.size()>=2)
-					{
-						ivecBuffer it=m_vecAudioBuffers.begin();
-						CBuffer* pBuf=*it;
-						delete pBuf;
-						m_vecAudioBuffers.erase(it);
-					}*/
 					m_vecAudioBuffers.push_back(pBuffer);
 					Advance(len);
-					return;
+					return true;
 				}
 				break;
 				
@@ -283,7 +423,7 @@ void CDeMultiplexer::Parse()
 					pBuffer->Set(m_pcrTime,pts,dts,len);
 					m_vecVideoBuffers.push_back(pBuffer);
 					Advance(len);
-					return;
+					return true;
 				}
 				break;
 
@@ -297,4 +437,5 @@ void CDeMultiplexer::Parse()
 			Advance(1);
 		}
 	}
+  return true;
 }

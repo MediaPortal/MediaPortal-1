@@ -68,6 +68,7 @@ protected:
 	CTsReaderFilter *	const m_pTsReaderFilter;
 	CCritSec* m_section;
 	CRefTime m_rtStart;
+  bool m_bDropPackets;
 };
 
 #endif

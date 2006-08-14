@@ -107,6 +107,7 @@ CVideoPin::CVideoPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCri
 	m_section(section)
 {
 	m_rtStart=0;
+  m_bDropPackets=false;
 }
 
 CVideoPin::~CVideoPin()
@@ -190,26 +191,31 @@ HRESULT CVideoPin::CompleteConnect(IPin *pReceivePin)
 HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
 {
 //	::OutputDebugStringA("CVideoPin::FillBuffer()\n");
+  
+  if (m_pTsReaderFilter->IsSeeking())
+  {
+	  pSample->SetActualDataLength(0);
+	  pSample->SetDiscontinuity(TRUE);
+    return NOERROR;
+  }
+
 	CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
 	CBuffer* buffer=demux.GetVideo();
 	if (buffer==NULL)
 	{
+	  pSample->SetDiscontinuity(TRUE);
 		pSample->SetActualDataLength(0);
-		::OutputDebugStringA("CVideoPin::FillBuffer() no video\n");
+		//::OutputDebugStringA("CVideoPin::FillBuffer() no video\n");
 		return NOERROR;
 	}
 	byte* pSampleBuffer;
 	HRESULT hr = pSample->GetPointer(&pSampleBuffer);
 	if (FAILED(hr))
 	{
-		::OutputDebugStringA("CVideoPin::FillBuffer() invalid ptr\n");
+		//::OutputDebugStringA("CVideoPin::FillBuffer() invalid ptr\n");
 		return hr;
 	}
 
-	pSample->SetActualDataLength(buffer->Length());
-	memcpy(pSampleBuffer, buffer->Data(), buffer->Length());
-
-	pSample->SetDiscontinuity(m_bDiscontinuity);
 
 	CRefTime streamTime;
 	m_pTsReaderFilter->StreamTime(streamTime);
@@ -221,12 +227,15 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
 		long presentationTime=(long)(buffer->Pts() - m_pTsReaderFilter->GetStartTime());
 		CRefTime referenceTime(presentationTime);
 		CRefTime timeStamp=referenceTime - m_rtStart; 
-		
+    //if (timeStamp.Millisecs()<0) 
+    //  m_bDropPackets=true;
+    //else
+    //  m_bDropPackets=false;
 		REFERENCE_TIME refTimeStamp=(REFERENCE_TIME)timeStamp;
 		pSample->SetTime(&refTimeStamp,NULL);
-#if DEBUG
+#ifndef DEBUG
 		char buf[100];
-		sprintf(buf,"  V: %05.2f %05.2f %05.2f %05.2f %d %d\n",
+		sprintf(buf,"  A: ST:%05.2f CT:%05.2f FT:%05.2f TS:%05.2f v:%d a:%d (%d)\n",
 					(dStartTime/1000.0),
 					(dStreamTime/1000.0), 
 					(referenceTime.Millisecs()/1000.0),
@@ -235,6 +244,17 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
 		::OutputDebugString(buf);
 #endif
 	}
+  if (m_bDropPackets)
+  {
+    pSample->SetActualDataLength(0);
+    pSample->SetDiscontinuity(TRUE);
+  }
+  else
+  {
+	  pSample->SetActualDataLength(buffer->Length());
+	  memcpy(pSampleBuffer, buffer->Data(), buffer->Length());
+	  pSample->SetDiscontinuity(m_bDiscontinuity);
+  }
 	delete buffer;
 
 	m_bDiscontinuity=FALSE;
@@ -246,7 +266,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
 
 HRESULT CVideoPin::OnThreadStartPlay()
 {    
-	::OutputDebugString("CVideoPin::OnThreadStartPlay()\n");
+	//::OutputDebugString("CVideoPin::OnThreadStartPlay()\n");
 	REFERENCE_TIME pStop;
 	double dRate;
 	m_bDiscontinuity = TRUE;
@@ -256,7 +276,7 @@ HRESULT CVideoPin::OnThreadStartPlay()
 }
 void CVideoPin::FlushOutput()
 {
-		::OutputDebugString("CAudioPin::FlushOutput()\n");
+		//::OutputDebugString("CAudioPin::FlushOutput()\n");
 	if (ThreadExists()) 
   {
     DeliverBeginFlush();
@@ -269,9 +289,9 @@ void CVideoPin::SetStart(CRefTime rtStartTime)
 {
 	m_rtStart=rtStartTime;
 	double startTime=m_rtStart/UNITS;
-	char buf[100];
-	sprintf(buf,"CVideoPin::SetStart %x %05.2f\n",(DWORD)m_rtStart,startTime);
-	::OutputDebugString(buf);
+	//char buf[100];
+	//sprintf(buf,"CVideoPin::SetStart %x %05.2f\n",(DWORD)m_rtStart,startTime);
+	//::OutputDebugString(buf);
 	FlushOutput();
 }
 

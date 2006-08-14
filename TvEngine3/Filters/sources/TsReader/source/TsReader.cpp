@@ -107,10 +107,12 @@ CUnknown * WINAPI CTsReaderFilter::CreateInstance(LPUNKNOWN punk, HRESULT *phr)
 CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr) :
 	CSource(NAME("CTsReaderFilter"), pUnk, CLSID_TSReader),
 	m_pAudioPin(NULL),
-	m_pcrDecoder(m_fileReader),
+	m_pcrDecoder(m_fileDuration),
 	m_demultiplexer(m_fileReader,&m_section)
 {
 
+  m_seeking=false;
+  m_dwTickCount=0;
 	m_pAudioPin = new CAudioPin(GetOwner(), this, phr,&m_section);
 	m_pVideoPin = new CVideoPin(GetOwner(), this, phr,&m_section);
 
@@ -182,6 +184,7 @@ STDMETHODIMP CTsReaderFilter::Stop()
 
 		LogDebug("CTsReaderFilter::Stop()");
 		m_fileReader.CloseFile();
+    m_fileDuration.CloseFile();
 		return CSource::Stop();
 }
 
@@ -207,9 +210,14 @@ STDMETHODIMP CTsReaderFilter::GetDuration(REFERENCE_TIME *dur)
 }
 STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt)
 {
+  m_dwTickCount=0;
 	wcscpy(m_fileName,pszFileName);
 	m_fileReader.SetFileName(m_fileName);
 	m_fileReader.OpenFile();
+
+  m_fileDuration.SetFileName(m_fileName);
+	m_fileDuration.OpenFile();
+
 	UpdateDuration();
 	m_fileReader.SetFilePointer(0LL,FILE_BEGIN);
 	return S_OK;
@@ -238,14 +246,18 @@ STDMETHODIMP CTsReaderFilter::GetCurFile(LPOLESTR * ppszFileName,AM_MEDIA_TYPE *
 
 double CTsReaderFilter::UpdateDuration()
 {
+  if (m_seeking) return (m_endTime- m_startTime);
+  DWORD dwTicks=GetTickCount()-m_dwTickCount;
+  if (dwTicks<1000) return (m_endTime- m_startTime);
 	// determine first PCR...
-	m_fileReader.SetFilePointer(0LL,FILE_BEGIN);
+	m_fileDuration.SetFilePointer(0LL,FILE_BEGIN);
 	m_startTime=m_pcrDecoder.GetPcr();
 
-	m_fileReader.SetFilePointer(-8192LL,FILE_END);
+	m_fileDuration.SetFilePointer(-8192LL,FILE_END);
 	m_endTime=m_pcrDecoder.GetPcr(true);
 
 	m_pAudioPin->SetDuration();
+  m_dwTickCount=GetTickCount();
 	return (m_endTime- m_startTime);
 }
 
@@ -269,7 +281,9 @@ double CTsReaderFilter::GetStartTime()
 
 void CTsReaderFilter::Seek(CRefTime& seekTime)
 {
-	::OutputDebugStringA("CTsReaderFilter::Seek()\n");
+  m_seeking=true;
+  CAutoLock lock(&m_section);
+	//::OutputDebugStringA("CTsReaderFilter::Seek()\n");
 	double duration=(m_endTime-m_startTime);
 	double seektime=(double)seekTime.Millisecs();
 	double percent=seektime/duration;
@@ -278,9 +292,15 @@ void CTsReaderFilter::Seek(CRefTime& seekTime)
 	m_fileReader.GetFileSize(&start,&end);
 	__int64 fileDuration=end-start;
 	percent *= ((double)fileDuration);
-	m_fileReader.setFilePointer((__int64)percent,FILE_BEGIN);
+  __int64 filePos=(__int64)percent;
+  if (filePos<0 || filePos>end)
+  {
+    ASSERT(0);
+  }
+	m_fileReader.setFilePointer(filePos,FILE_BEGIN);
 //	m_pAudioPin->SetStart(seekTime);
 	m_pVideoPin->SetStart(seekTime);
+  m_seeking=false;
 }
 
 CAudioPin* CTsReaderFilter::GetAudioPin()
@@ -288,6 +308,10 @@ CAudioPin* CTsReaderFilter::GetAudioPin()
 	return m_pAudioPin;
 }
 
+bool CTsReaderFilter::IsSeeking()
+{
+  return m_seeking;
+}
 ////////////////////////////////////////////////////////////////////////
 //
 // Exported entry points for registration and unregistration 
