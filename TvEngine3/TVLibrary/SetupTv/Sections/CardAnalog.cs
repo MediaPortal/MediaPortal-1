@@ -73,6 +73,7 @@ namespace SetupTv.Sections
     public override void OnSectionActivated()
     {
       base.OnSectionActivated();
+      mpComboBoxSensitivity.SelectedIndex = 1;
       UpdateStatus();
       TvBusinessLayer layer = new TvBusinessLayer();
       mpComboBoxCountry.SelectedIndex = Int32.Parse(layer.GetSetting("analog" + _cardNumber.ToString() + "Country", "0").Value);
@@ -164,8 +165,37 @@ namespace SetupTv.Sections
       Thread scanThread = new Thread(new ThreadStart(DoRadioScan));
       scanThread.Start();
     }
+
+    int SignalStrength(int sensitivity)
+    {
+      int i = 0;
+      for (i = 0; i < sensitivity * 2; i++)
+      {
+        if (!RemoteControl.Instance.TunerLocked(_cardNumber))
+        {
+          break;
+        }
+        System.Threading.Thread.Sleep(50);
+      }
+      return ((i * 50) / sensitivity);
+    }
     void DoRadioScan()
     {
+      int sensitivity = 1;
+      switch (mpComboBoxSensitivity.Text)
+      {
+        case "High":
+          sensitivity = 10;
+          break;
+
+        case "Medium":
+          sensitivity = 2;
+          break;
+
+        case "Low":
+          sensitivity = 1;
+          break;
+      }
       try
       {
         RemoteControl.Instance.EpgGrabberEnabled = false;
@@ -174,6 +204,7 @@ namespace SetupTv.Sections
         mpComboBoxCountry.Enabled = false;
         mpComboBoxSource.Enabled = false;
         mpButtonScanRadio.Enabled = false;
+        mpComboBoxSensitivity.Enabled = false;
         mpButtonScanTv.Enabled = false;
         UpdateStatus();
         mpListView1.Items.Clear();
@@ -198,19 +229,20 @@ namespace SetupTv.Sections
 
           RemoteControl.Instance.Tune(_cardNumber, channel);
           UpdateStatus();
-          if (RemoteControl.Instance.TunerLocked(_cardNumber))
+          if (SignalStrength(sensitivity) == 100)
           {
             ListViewItem item = mpListView1.Items.Add(channel.Frequency.ToString());
             mpListView1.EnsureVisible(mpListView1.Items.Count - 1);
+
+
+            channel.Name = String.Format("{0}", freq);
+            Channel dbChannel = layer.AddChannel(channel.Name);
+            dbChannel.IsTv = channel.IsTv;
+            dbChannel.IsRadio = channel.IsRadio;
+            layer.AddTuningDetails(dbChannel, channel);
+
+            layer.MapChannelToCard(card, dbChannel);
           }
-
-          channel.Name = String.Format("{0}", freq);
-          Channel dbChannel = layer.AddChannel(channel.Name);
-          dbChannel.IsTv = channel.IsTv;
-          dbChannel.IsRadio = channel.IsRadio;
-          layer.AddTuningDetails(dbChannel, channel);
-
-          layer.MapChannelToCard(card, dbChannel);
         }
 
         progressBar1.Value = 100;
@@ -218,6 +250,7 @@ namespace SetupTv.Sections
         mpComboBoxSource.Enabled = true;
         mpButtonScanRadio.Enabled = true;
         mpButtonScanTv.Enabled = true;
+        mpComboBoxSensitivity.Enabled = true;
         DatabaseManager.Instance.SaveChanges();
 
       }
@@ -229,6 +262,11 @@ namespace SetupTv.Sections
       {
         RemoteControl.Instance.EpgGrabberEnabled = true;
       }
+    }
+
+    private void mpBeveledLine1_Load(object sender, EventArgs e)
+    {
+
     }
   }
 }

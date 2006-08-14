@@ -14,6 +14,7 @@ namespace TvLibrary.Implementations.Analog
   {
     TvCardAnalog _card;
     long _previousFrequency = 0;
+    int _radioSensitivity = 1;
     /// <summary>
     /// Initializes a new instance of the <see cref="T:AnalogScanning"/> class.
     /// </summary>
@@ -50,6 +51,22 @@ namespace TvLibrary.Implementations.Analog
     }
 
     /// <summary>
+    /// Property to set Radio tuning sensitivity.
+    /// sensitivity range from 1MHz for value 1 to 0.1MHZ for value 10
+    /// </summary>
+    public int RadioSensitivity
+    {
+      get
+      {
+        return _radioSensitivity;
+      }
+      set
+      {
+        _radioSensitivity = value;
+      }
+    }
+
+    /// <summary>
     /// Tunes to the channel specified and will start scanning for any channel
     /// </summary>
     /// <param name="channel">channel to tune to</param>
@@ -66,11 +83,6 @@ namespace TvLibrary.Implementations.Analog
         {
           if (_card.VideoFrequency == _previousFrequency) return new List<IChannel>();
           _previousFrequency = _card.VideoFrequency;
-        }
-        else
-        {
-          if (_card.AudioFrequency == _previousFrequency) return new List<IChannel>();
-          _previousFrequency = _card.AudioFrequency;
         }
 
         if (_card.GrabTeletext)

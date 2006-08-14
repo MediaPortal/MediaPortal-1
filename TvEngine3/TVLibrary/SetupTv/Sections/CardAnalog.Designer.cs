@@ -43,20 +43,23 @@ namespace SetupTv.Sections
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
       this.progressBar1 = new System.Windows.Forms.ProgressBar();
+      this.mpLabel4 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpComboBoxSensitivity = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.SuspendLayout();
       // 
       // mpBeveledLine1
       // 
-      this.mpBeveledLine1.Location = new System.Drawing.Point(17, 15);
+      this.mpBeveledLine1.Location = new System.Drawing.Point(17, 3);
       this.mpBeveledLine1.Name = "mpBeveledLine1";
-      this.mpBeveledLine1.Size = new System.Drawing.Size(423, 43);
+      this.mpBeveledLine1.Size = new System.Drawing.Size(423, 80);
       this.mpBeveledLine1.TabIndex = 0;
+      this.mpBeveledLine1.Load += new System.EventHandler(this.mpBeveledLine1_Load);
       // 
       // mpComboBoxCountry
       // 
       this.mpComboBoxCountry.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboBoxCountry.FormattingEnabled = true;
-      this.mpComboBoxCountry.Location = new System.Drawing.Point(81, 24);
+      this.mpComboBoxCountry.Location = new System.Drawing.Point(74, 12);
       this.mpComboBoxCountry.Name = "mpComboBoxCountry";
       this.mpComboBoxCountry.Size = new System.Drawing.Size(175, 21);
       this.mpComboBoxCountry.TabIndex = 1;
@@ -64,7 +67,7 @@ namespace SetupTv.Sections
       // mpLabel1
       // 
       this.mpLabel1.AutoSize = true;
-      this.mpLabel1.Location = new System.Drawing.Point(29, 31);
+      this.mpLabel1.Location = new System.Drawing.Point(22, 19);
       this.mpLabel1.Name = "mpLabel1";
       this.mpLabel1.Size = new System.Drawing.Size(46, 13);
       this.mpLabel1.TabIndex = 2;
@@ -73,7 +76,7 @@ namespace SetupTv.Sections
       // mpLabel2
       // 
       this.mpLabel2.AutoSize = true;
-      this.mpLabel2.Location = new System.Drawing.Point(259, 31);
+      this.mpLabel2.Location = new System.Drawing.Point(252, 19);
       this.mpLabel2.Name = "mpLabel2";
       this.mpLabel2.Size = new System.Drawing.Size(44, 13);
       this.mpLabel2.TabIndex = 3;
@@ -83,7 +86,7 @@ namespace SetupTv.Sections
       // 
       this.mpComboBoxSource.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboBoxSource.FormattingEnabled = true;
-      this.mpComboBoxSource.Location = new System.Drawing.Point(310, 24);
+      this.mpComboBoxSource.Location = new System.Drawing.Point(303, 12);
       this.mpComboBoxSource.Name = "mpComboBoxSource";
       this.mpComboBoxSource.Size = new System.Drawing.Size(121, 21);
       this.mpComboBoxSource.TabIndex = 4;
@@ -111,7 +114,7 @@ namespace SetupTv.Sections
       // label12
       // 
       this.label12.AutoSize = true;
-      this.label12.Location = new System.Drawing.Point(22, 61);
+      this.label12.Location = new System.Drawing.Point(21, 86);
       this.label12.Name = "label12";
       this.label12.Size = new System.Drawing.Size(73, 13);
       this.label12.TabIndex = 7;
@@ -120,7 +123,7 @@ namespace SetupTv.Sections
       // mpLabelTunerLocked
       // 
       this.mpLabelTunerLocked.AutoSize = true;
-      this.mpLabelTunerLocked.Location = new System.Drawing.Point(110, 61);
+      this.mpLabelTunerLocked.Location = new System.Drawing.Point(109, 86);
       this.mpLabelTunerLocked.Name = "mpLabelTunerLocked";
       this.mpLabelTunerLocked.Size = new System.Drawing.Size(19, 13);
       this.mpLabelTunerLocked.TabIndex = 8;
@@ -129,7 +132,7 @@ namespace SetupTv.Sections
       // mpLabel3
       // 
       this.mpLabel3.AutoSize = true;
-      this.mpLabel3.Location = new System.Drawing.Point(164, 61);
+      this.mpLabel3.Location = new System.Drawing.Point(163, 86);
       this.mpLabel3.Name = "mpLabel3";
       this.mpLabel3.Size = new System.Drawing.Size(86, 13);
       this.mpLabel3.TabIndex = 9;
@@ -138,7 +141,7 @@ namespace SetupTv.Sections
       // mpLabelChannel
       // 
       this.mpLabelChannel.AutoSize = true;
-      this.mpLabelChannel.Location = new System.Drawing.Point(256, 61);
+      this.mpLabelChannel.Location = new System.Drawing.Point(255, 86);
       this.mpLabelChannel.Name = "mpLabelChannel";
       this.mpLabelChannel.Size = new System.Drawing.Size(0, 13);
       this.mpLabelChannel.TabIndex = 10;
@@ -150,9 +153,9 @@ namespace SetupTv.Sections
       this.mpListView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2});
-      this.mpListView1.Location = new System.Drawing.Point(17, 106);
+      this.mpListView1.Location = new System.Drawing.Point(17, 129);
       this.mpListView1.Name = "mpListView1";
-      this.mpListView1.Size = new System.Drawing.Size(434, 207);
+      this.mpListView1.Size = new System.Drawing.Size(434, 184);
       this.mpListView1.TabIndex = 11;
       this.mpListView1.UseCompatibleStateImageBehavior = false;
       this.mpListView1.View = System.Windows.Forms.View.Details;
@@ -168,15 +171,39 @@ namespace SetupTv.Sections
       // 
       // progressBar1
       // 
-      this.progressBar1.Location = new System.Drawing.Point(17, 87);
+      this.progressBar1.Location = new System.Drawing.Point(16, 112);
       this.progressBar1.Name = "progressBar1";
       this.progressBar1.Size = new System.Drawing.Size(328, 10);
       this.progressBar1.TabIndex = 12;
+      // 
+      // mpLabel4
+      // 
+      this.mpLabel4.AutoSize = true;
+      this.mpLabel4.Location = new System.Drawing.Point(240, 46);
+      this.mpLabel4.Name = "mpLabel4";
+      this.mpLabel4.Size = new System.Drawing.Size(57, 13);
+      this.mpLabel4.TabIndex = 14;
+      this.mpLabel4.Text = "Sensitivity:";
+      // 
+      // mpComboBoxSensitivity
+      // 
+      this.mpComboBoxSensitivity.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.mpComboBoxSensitivity.FormattingEnabled = true;
+      this.mpComboBoxSensitivity.Items.AddRange(new object[] {
+            "Low",
+            "Medium",
+            "High"});
+      this.mpComboBoxSensitivity.Location = new System.Drawing.Point(303, 43);
+      this.mpComboBoxSensitivity.Name = "mpComboBoxSensitivity";
+      this.mpComboBoxSensitivity.Size = new System.Drawing.Size(121, 21);
+      this.mpComboBoxSensitivity.TabIndex = 15;
       // 
       // CardAnalog
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.Controls.Add(this.mpComboBoxSensitivity);
+      this.Controls.Add(this.mpLabel4);
       this.Controls.Add(this.progressBar1);
       this.Controls.Add(this.mpListView1);
       this.Controls.Add(this.mpLabelChannel);
@@ -214,5 +241,7 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ColumnHeader columnHeader1;
     private System.Windows.Forms.ColumnHeader columnHeader2;
     private System.Windows.Forms.ProgressBar progressBar1;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel4;
+    private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxSensitivity;
   }
 }
