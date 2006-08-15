@@ -50,13 +50,14 @@ namespace TvService
       applicationPath = System.IO.Path.GetFullPath(applicationPath);
       applicationPath = System.IO.Path.GetDirectoryName(applicationPath);
       System.IO.Directory.SetCurrentDirectory(applicationPath);
-      Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
       InitializeComponent();
     }
 
     protected override void OnStart(string[] args)
     {
       Log.WriteFile("TV service started");
+      Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
+      AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
       Process currentProcess = Process.GetCurrentProcess();
       //currentProcess.PriorityClass = ProcessPriorityClass.High;
       _controller = new TVController();
@@ -129,7 +130,13 @@ namespace TvService
     }
     public static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
     {
+      Log.WriteFile("Tvservice stopped due to a thread exception");
       Log.Write(e.Exception);
+    }
+
+    void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+    {
+      Log.WriteFile("Tvservice stopped due to a app domain exception {0}",e.ExceptionObject);
     }
 
   }
