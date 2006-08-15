@@ -320,6 +320,7 @@ namespace MediaPortal.InputDevices
               _lastExecutedCommandCount = _sameCommandCount;
               _lastCommand = newCommand;
               //Send command to application...
+              _inputHandler.MapAction(newCommand);
               //if (!_inputHandler.MapAction(newCommand))
                 //_log.Info("HCW: No mapping found");
               //else
