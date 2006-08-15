@@ -163,15 +163,7 @@ namespace Wikipedia
 
 		public override bool Init()
 		{
-			// extract our assets to the current skin folder if they don't already exist
-			if(File.Exists(GUIGraphicsContext.Skin + @"\wikipedia.xml") == false)
-				Utils.ExportEmbeddedResource("Wikipedia.Assets.wikipedia.xml", GUIGraphicsContext.Skin + @"\wikipedia.xml");
-
-			if(File.Exists(GUIGraphicsContext.Skin + @"\media\wikipedia_logo.png") == false)
-				Utils.ExportEmbeddedResource("Wikipedia.Assets.wikipedia_logo.png", GUIGraphicsContext.Skin + @"\media\wikipedia_logo.png");
-
-      bool bResult = Load(GUIGraphicsContext.Skin + @"\wikipedia.xml");
-      return bResult;
+      return Load(GUIGraphicsContext.Skin + @"\wikipedia.xml");
 		}
 
 		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
