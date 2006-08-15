@@ -31,7 +31,7 @@ using MediaPortal.Util;
 using System.Threading;
 using System.Collections;
 using System.IO;
-using MediaPortal.Utils.Services;
+//using MediaPortal.Utils.Services;
 
 namespace MediaPortal.InputDevices
 {
@@ -68,7 +68,7 @@ namespace MediaPortal.InputDevices
     const int PBT_APMRESUMEAUTOMATIC = 0x0012;
     const int PBT_APMRESUMECRITICAL = 0x0006;
 
-    protected ILog _log;
+    //protected ILog _log;
 
     /// <summary>
     /// HCW control enabled
@@ -82,8 +82,8 @@ namespace MediaPortal.InputDevices
     /// </summary>
     public HcwRemote()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
+      //ServiceProvider services = GlobalServiceProvider.Instance;
+      //_log = services.Get<ILog>();
     }
 
 
@@ -134,17 +134,17 @@ namespace MediaPortal.InputDevices
 
         if (!hcwDriverUpToDate)
         {
-          _log.Info("HCW: ==============================================================================================");
-          _log.Info("HCW: Your remote control driver components are not up to date! To avoid problems, you should");
-          _log.Info("HCW: get the latest Hauppauge drivers here: http://www.hauppauge.co.uk/board/showthread.php?p=25253");
-          _log.Info("HCW: ==============================================================================================");
+          //_log.Info("HCW: ==============================================================================================");
+          //_log.Info("HCW: Your remote control driver components are not up to date! To avoid problems, you should");
+          //_log.Info("HCW: get the latest Hauppauge drivers here: http://www.hauppauge.co.uk/board/showthread.php?p=25253");
+          //_log.Info("HCW: ==============================================================================================");
         }
 
         _inputHandler = new InputHandler("Hauppauge HCW");
         if (!_inputHandler.IsLoaded)
         {
           _controlEnabled = false;
-          _log.Info("HCW: Error loading default mapping file - please reinstall MediaPortal");
+          //_log.Info("HCW: Error loading default mapping file - please reinstall MediaPortal");
         }
       }
 
@@ -156,14 +156,14 @@ namespace MediaPortal.InputDevices
         _connection.ReceiveEvent += new UdpHelper.Connection.ReceiveEventHandler(OnReceive);
 
         Process process = Process.GetCurrentProcess();
-        _log.Info("Process: {0}", process.ProcessName);
+        //_log.Info("Process: {0}", process.ProcessName);
 
         Process procHelper = new Process();
         procHelper.StartInfo.FileName = string.Format("{0}\\HcwHelper.exe", System.Windows.Forms.Application.StartupPath);
         procHelper.Start();
         if (_allowExternal)
         {
-          _log.Info("HCW: AllowExternal");
+          //_log.Info("HCW: AllowExternal");
           MediaPortal.Util.Utils.OnStartExternal += new MediaPortal.Util.Utils.UtilEventHandler(OnStartExternal);
           MediaPortal.Util.Utils.OnStopExternal += new MediaPortal.Util.Utils.UtilEventHandler(OnStopExternal);
         }
@@ -242,10 +242,10 @@ namespace MediaPortal.InputDevices
 
     void OnReceive(string strReceive)
     {
-      if (_logVerbose) _log.Info("HCW: received: {0}", strReceive);
+      //if (_logVerbose) _log.Info("HCW: received: {0}", strReceive);
 
       string msg = strReceive.Split('~')[0];
-      if (_logVerbose) _log.Info("HCW: Accepted: {0}", msg);
+      //if (_logVerbose) _log.Info("HCW: Accepted: {0}", msg);
       switch (msg.Split('|')[0])
       {
         case "CMD":
@@ -254,8 +254,8 @@ namespace MediaPortal.InputDevices
             DateTime sentTime = DateTime.FromBinary(Convert.ToInt64(msg.Split('|')[2]));
             int newCommand = Convert.ToInt16(msg.Split('|')[1]);
 
-            if (_logVerbose) _log.Info("HCW: elapsed time: {0}", ((TimeSpan)(sentTime - _lastTime)).Milliseconds);
-            if (_logVerbose) _log.Info("HCW: sameCommandCount: {0}", _sameCommandCount.ToString());
+            //if (_logVerbose) _log.Info("HCW: elapsed time: {0}", ((TimeSpan)(sentTime - _lastTime)).Milliseconds);
+            //if (_logVerbose) _log.Info("HCW: sameCommandCount: {0}", _sameCommandCount.ToString());
 
             if (_lastCommand == newCommand)
             {
@@ -264,11 +264,11 @@ namespace MediaPortal.InputDevices
               if ((sentTime - _lastTime) > _buttonRelease)
               {
                 _sameCommandCount = 0;   // new session with this button
-                if (_logVerbose) _log.Info("HCW: same command, timeout true");
+                //if (_logVerbose) _log.Info("HCW: same command, timeout true");
               }
               else
               {
-                if (_logVerbose) _log.Info("HCW: same command, timeout false");
+                //if (_logVerbose) _log.Info("HCW: same command, timeout false");
                 _sameCommandCount++;   // button release time not elapsed
               }
             }
@@ -311,7 +311,7 @@ namespace MediaPortal.InputDevices
                 keyCode == 48))   //48 = pause button
               {
                 executeKey = false;
-                if (_logVerbose) _log.Info("HCW: doubleclick supressed: {0}", newCommand.ToString());
+                //if (_logVerbose) _log.Info("HCW: doubleclick supressed: {0}", newCommand.ToString());
               }
             }
 
@@ -320,10 +320,10 @@ namespace MediaPortal.InputDevices
               _lastExecutedCommandCount = _sameCommandCount;
               _lastCommand = newCommand;
               //Send command to application...
-              if (!_inputHandler.MapAction(newCommand))
-                _log.Info("HCW: No mapping found");
-              else
-                if (_logVerbose) _log.Info("HCW: repeat filter accepted: {0}", newCommand.ToString());
+              //if (!_inputHandler.MapAction(newCommand))
+                //_log.Info("HCW: No mapping found");
+              //else
+                //if (_logVerbose) _log.Info("HCW: repeat filter accepted: {0}", newCommand.ToString());
             }
             _lastTime = sentTime;
           }
@@ -331,7 +331,7 @@ namespace MediaPortal.InputDevices
         case "APP":
           if (msg.Split('|')[1] == "STOP")
           {
-            if (_logVerbose) _log.Info("HCW: received STOP from HcwHelper");
+            //if (_logVerbose) _log.Info("HCW: received STOP from HcwHelper");
             _controlEnabled = false;
             _exit = true;
             StopHcw();
@@ -386,14 +386,14 @@ namespace MediaPortal.InputDevices
               switch ((int)msg.WParam)
               {
                 case WA_INACTIVE:
-                  if (_logVerbose) _log.Info("HCW: lost focus");
+                  //if (_logVerbose) _log.Info("HCW: lost focus");
                   {
                     StopHcw();
                     return true;
                   }
                 case WA_ACTIVE:
                 case WA_CLICKACTIVE:
-                  if (_logVerbose) _log.Info("HCW: got focus");
+                  //if (_logVerbose) _log.Info("HCW: got focus");
                   {
                     StartHcw();
                     return true;
