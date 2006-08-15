@@ -183,9 +183,8 @@ STDMETHODIMP CTsReaderFilter::Stop()
 		CAutoLock cObjectLock(m_pLock);
 
 		LogDebug("CTsReaderFilter::Stop()");
-		m_fileReader.CloseFile();
-    m_fileDuration.CloseFile();
-		return CSource::Stop();
+		HRESULT hr=CSource::Stop();
+		return hr;
 }
 
 STDMETHODIMP CTsReaderFilter::Pause()
