@@ -128,14 +128,14 @@ namespace MediaPortal.AudioScrobbler
       this.buttonRefreshWeeklyTracks = new MediaPortal.UserInterface.Controls.MPButton();
       this.listViewWeeklyTracks = new MediaPortal.UserInterface.Controls.MPListView();
       this.tabPageTags = new System.Windows.Forms.TabPage();
+      this.checkBoxTagRandomize = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.buttonTaggedTracks = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonTaggedAlbums = new MediaPortal.UserInterface.Controls.MPButton();
       this.labelTagDesc = new MediaPortal.UserInterface.Controls.MPLabel();
       this.textBoxTagToSearch = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.buttonGetTaggedArtists = new MediaPortal.UserInterface.Controls.MPButton();
       this.buttonTagsRefresh = new MediaPortal.UserInterface.Controls.MPButton();
       this.listViewTags = new MediaPortal.UserInterface.Controls.MPListView();
-      this.buttonTaggedAlbums = new MediaPortal.UserInterface.Controls.MPButton();
-      this.buttonTaggedTracks = new MediaPortal.UserInterface.Controls.MPButton();
-      this.checkBoxTagRandomize = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.panelPicBox.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxASLogo)).BeginInit();
       this.tabControlSettings.SuspendLayout();
@@ -333,6 +333,8 @@ namespace MediaPortal.AudioScrobbler
       // checkBoxEnableSubmits
       // 
       this.checkBoxEnableSubmits.AutoSize = true;
+      this.checkBoxEnableSubmits.Checked = true;
+      this.checkBoxEnableSubmits.CheckState = System.Windows.Forms.CheckState.Checked;
       this.checkBoxEnableSubmits.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxEnableSubmits.Location = new System.Drawing.Point(16, 22);
       this.checkBoxEnableSubmits.Name = "checkBoxEnableSubmits";
@@ -544,7 +546,7 @@ namespace MediaPortal.AudioScrobbler
       this.numericUpDownSimilarArtist.Size = new System.Drawing.Size(44, 20);
       this.numericUpDownSimilarArtist.TabIndex = 9;
       this.numericUpDownSimilarArtist.Value = new decimal(new int[] {
-            2,
+            3,
             0,
             0,
             0});
@@ -1033,6 +1035,39 @@ namespace MediaPortal.AudioScrobbler
       this.tabPageTags.Text = "Tags";
       this.tabPageTags.UseVisualStyleBackColor = true;
       // 
+      // checkBoxTagRandomize
+      // 
+      this.checkBoxTagRandomize.AutoSize = true;
+      this.checkBoxTagRandomize.Checked = true;
+      this.checkBoxTagRandomize.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxTagRandomize.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxTagRandomize.Location = new System.Drawing.Point(454, 161);
+      this.checkBoxTagRandomize.Name = "checkBoxTagRandomize";
+      this.checkBoxTagRandomize.Size = new System.Drawing.Size(73, 17);
+      this.checkBoxTagRandomize.TabIndex = 9;
+      this.checkBoxTagRandomize.Text = "Random 5";
+      this.checkBoxTagRandomize.UseVisualStyleBackColor = true;
+      // 
+      // buttonTaggedTracks
+      // 
+      this.buttonTaggedTracks.Location = new System.Drawing.Point(452, 239);
+      this.buttonTaggedTracks.Name = "buttonTaggedTracks";
+      this.buttonTaggedTracks.Size = new System.Drawing.Size(83, 23);
+      this.buttonTaggedTracks.TabIndex = 8;
+      this.buttonTaggedTracks.Text = "Get tracks";
+      this.buttonTaggedTracks.UseVisualStyleBackColor = true;
+      this.buttonTaggedTracks.Click += new System.EventHandler(this.buttonTaggedTracks_Click);
+      // 
+      // buttonTaggedAlbums
+      // 
+      this.buttonTaggedAlbums.Location = new System.Drawing.Point(452, 210);
+      this.buttonTaggedAlbums.Name = "buttonTaggedAlbums";
+      this.buttonTaggedAlbums.Size = new System.Drawing.Size(83, 23);
+      this.buttonTaggedAlbums.TabIndex = 7;
+      this.buttonTaggedAlbums.Text = "Get albums";
+      this.buttonTaggedAlbums.UseVisualStyleBackColor = true;
+      this.buttonTaggedAlbums.Click += new System.EventHandler(this.buttonTaggedAlbums_Click);
+      // 
       // labelTagDesc
       // 
       this.labelTagDesc.AutoSize = true;
@@ -1084,39 +1119,6 @@ namespace MediaPortal.AudioScrobbler
       this.listViewTags.TabIndex = 2;
       this.listViewTags.UseCompatibleStateImageBehavior = false;
       this.listViewTags.View = System.Windows.Forms.View.List;
-      // 
-      // buttonTaggedAlbums
-      // 
-      this.buttonTaggedAlbums.Location = new System.Drawing.Point(452, 210);
-      this.buttonTaggedAlbums.Name = "buttonTaggedAlbums";
-      this.buttonTaggedAlbums.Size = new System.Drawing.Size(83, 23);
-      this.buttonTaggedAlbums.TabIndex = 7;
-      this.buttonTaggedAlbums.Text = "Get albums";
-      this.buttonTaggedAlbums.UseVisualStyleBackColor = true;
-      this.buttonTaggedAlbums.Click += new System.EventHandler(this.buttonTaggedAlbums_Click);
-      // 
-      // buttonTaggedTracks
-      // 
-      this.buttonTaggedTracks.Location = new System.Drawing.Point(452, 239);
-      this.buttonTaggedTracks.Name = "buttonTaggedTracks";
-      this.buttonTaggedTracks.Size = new System.Drawing.Size(83, 23);
-      this.buttonTaggedTracks.TabIndex = 8;
-      this.buttonTaggedTracks.Text = "Get tracks";
-      this.buttonTaggedTracks.UseVisualStyleBackColor = true;
-      this.buttonTaggedTracks.Click += new System.EventHandler(this.buttonTaggedTracks_Click);
-      // 
-      // checkBoxTagRandomize
-      // 
-      this.checkBoxTagRandomize.AutoSize = true;
-      this.checkBoxTagRandomize.Checked = true;
-      this.checkBoxTagRandomize.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.checkBoxTagRandomize.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxTagRandomize.Location = new System.Drawing.Point(454, 161);
-      this.checkBoxTagRandomize.Name = "checkBoxTagRandomize";
-      this.checkBoxTagRandomize.Size = new System.Drawing.Size(73, 17);
-      this.checkBoxTagRandomize.TabIndex = 9;
-      this.checkBoxTagRandomize.Text = "Random 5";
-      this.checkBoxTagRandomize.UseVisualStyleBackColor = true;
       // 
       // AudioscrobblerSettings
       // 

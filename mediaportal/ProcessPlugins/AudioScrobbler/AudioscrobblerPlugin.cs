@@ -312,6 +312,7 @@ namespace MediaPortal.Audioscrobbler
     {
       currentSong = null;
       queued = false;
+      string currentUser = "";
       alertTime = INFINITE_TIME;
       
       GUIWindowManager.OnNewAction += new OnActionHandler(OnNewAction);
@@ -320,8 +321,12 @@ namespace MediaPortal.Audioscrobbler
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
-        _doSubmit = xmlreader.GetValueAsBool("audioscrobbler", "submitsenabled", true);
+        currentUser = xmlreader.GetValueAsString("audioscrobbler", "user", "");
       }      
+
+      MusicDatabase mdb = new MusicDatabase();
+      _doSubmit = (mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(currentUser)), "iSubmitOn", -1) == 1) ? true : false;
+
       Log.Write("Audioscrobbler plugin: submitting songs: {0}", Convert.ToString(_doSubmit));
 
       if (_doSubmit)

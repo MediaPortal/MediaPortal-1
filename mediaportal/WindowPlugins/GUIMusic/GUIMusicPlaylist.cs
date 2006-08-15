@@ -105,11 +105,13 @@ namespace MediaPortal.GUI.Music
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         _enableScrobbling = xmlreader.GetValueAsBool("plugins", "Audioscrobbler", false);
-        ScrobblerOn = xmlreader.GetValueAsBool("audioscrobbler", "scrobbledefault", false);
+        //ScrobblerOn = xmlreader.GetValueAsBool("audioscrobbler", "scrobbledefault", false);
         _maxScrobbledArtistsForSongs = xmlreader.GetValueAsInt("audioscrobbler", "similarartistscount", 3);
         _maxScrobbledSongsPerArtist = xmlreader.GetValueAsInt("audioscrobbler", "tracksperartistscount", 1);
         _currentScrobbleUser = xmlreader.GetValueAsString("audioscrobbler", "user", "Username");
       }
+      MusicDatabase mdb = new MusicDatabase();
+      ScrobblerOn = (mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(_currentScrobbleUser)), "iScrobbleDefault", -1) == 1) ? true : false;
       ascrobbler = new AudioscrobblerUtils();
       ScrobbleLock = new object();
       //added by Sam

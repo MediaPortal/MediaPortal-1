@@ -73,7 +73,6 @@ namespace MediaPortal.Music.Database
     private static TimeSpan minConnectWaitTime;
 
     private static bool _disableTimerThread;
-    private static bool _dismissOnError;
     private static bool _useDebugLog;
     private static System.Timers.Timer submitTimer;
     private static bool _signedIn;
@@ -92,7 +91,7 @@ namespace MediaPortal.Music.Database
       LoadSettings();
 
       if (_useDebugLog)
-        Log.Write("AudioscrobblerBase: new scrobbler for {0} with {1} cached songs - debuglog={2} directonly={3}", Username, Convert.ToString(queue.Count), Convert.ToString(_useDebugLog), Convert.ToString(_disableTimerThread));
+        Log.Write("AudioscrobblerBase: new scrobbler for {0} with {1} cached songs - debuglog={2}", Username, Convert.ToString(queue.Count), Convert.ToString(_useDebugLog));
     //    else
     //Log.Write("AudioscrobblerBase: new scrobbler for {0} - debuglog={1} directonly={2}", Username, Convert.ToString(_useDebugLog), Convert.ToString(_disableTimerThread));
     }
@@ -101,8 +100,8 @@ namespace MediaPortal.Music.Database
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
-        _useDebugLog = xmlreader.GetValueAsBool("audioscrobbler", "usedebuglog", false);
-        _dismissOnError = xmlreader.GetValueAsBool("audioscrobbler", "dismisscacheonerror", false);
+        //_useDebugLog = xmlreader.GetValueAsBool("audioscrobbler", "usedebuglog", false);
+        //_dismissOnError = xmlreader.GetValueAsBool("audioscrobbler", "dismisscacheonerror", false);
         _disableTimerThread = xmlreader.GetValueAsBool("audioscrobbler", "disabletimerthread", true);
 
         username = xmlreader.GetValueAsString("audioscrobbler", "user", "");
@@ -121,6 +120,10 @@ namespace MediaPortal.Music.Database
           }
         }
       }
+
+      MusicDatabase mdb = new MusicDatabase();
+      _useDebugLog = (mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(username)), "iDebugLog", -1) == 1) ? true : false;
+
       queue = new AudioscrobblerQueue("Trackcache-" + Username + ".xml");
 
       queueLock = new Object();

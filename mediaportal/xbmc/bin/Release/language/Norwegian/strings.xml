@@ -263,7 +263,7 @@
    </string>
    <string>
       <id>134</id>
-      <value>Sanger</value>
+      <value>Vis alle</value>
    </string>
    <string>
       <id>135</id>
@@ -4654,6 +4654,7 @@
    <string>
       <id>5918</id>
       <value>Télévision Suisse Romande VOD</value>
+
    </string>
    <string>
       <id>5919</id>
@@ -5187,6 +5188,10 @@
    <string>
       <id>33004</id>
       <value>Scrobble: Siste</value>
+   </string>
+   <string>
+      <id>33005</id>
+      <value>Konto: </value>
    </string>
    <string>
       <id>99845</id>

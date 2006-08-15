@@ -3499,6 +3499,66 @@ namespace MediaPortal.Music.Database
       return string.Empty;
     }
 
+    public int AddScrobbleUserSettings(string userID_, string fieldName_, int fieldValue_)
+    {
+      string strSQL;
+      string currentSettingID;
+      try
+      {
+        if (fieldName_ == null || userID_ == null || userID_ == "-1")
+          return -1;
+        if (userID_.Length == 0 || fieldName_.Length == 0)
+          return -1;
+
+        SQLiteResultSet results;
+
+        strSQL = String.Format("select idScrobbleSettings, idScrobbleUser from scrobblesettings where idScrobbleUser = '{0}'", userID_);
+        results = m_db.Execute(strSQL);        
+        currentSettingID = DatabaseUtility.Get(results, 0, "idScrobbleSettings");
+        _log.Info("MusicDatabase: updating settings with ID {0}", currentSettingID);
+
+        // setting doesn't exist - add it
+        if (results.Rows.Count == 0)
+        {
+          strSQL = String.Format("insert into scrobblesettings (idScrobbleSettings, idScrobbleUser, " + fieldName_ + ") values ( NULL, '{0}', '{1}')", userID_, fieldValue_);
+          m_db.Execute(strSQL);
+          _log.Info("MusicDatabase: added scrobblesetting {0} ({1}) for userid {2}", Convert.ToString(m_db.LastInsertID()), fieldName_, userID_);
+          if (fieldValue_ > -1)
+            return m_db.LastInsertID();
+          else
+            return fieldValue_;
+        }
+        else
+        {
+          strSQL = String.Format("select " + fieldName_ + " from scrobblesettings where idScrobbleSettings = '{0}'", currentSettingID);
+          results = m_db.Execute(strSQL);
+
+          if (DatabaseUtility.GetAsInt(results, 0, fieldName_) == fieldValue_)
+            // setting didn't change
+            return fieldValue_;
+          // set new value
+          else
+          {
+            // if no value was given = fetch it
+            if (fieldValue_ == -1)
+              return DatabaseUtility.GetAsInt(results, 0, fieldName_);
+            else
+            {
+              strSQL = String.Format("update scrobblesettings set " + fieldName_ + "='{0}' where idScrobbleSettings like '{1}'", fieldValue_, currentSettingID);
+              m_db.Execute(strSQL);
+              return fieldValue_;
+            }
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+      return -1;
+    }
+
     public List<string> GetAllScrobbleUsers()
     {
       SQLiteResultSet results;
