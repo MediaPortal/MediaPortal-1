@@ -30,7 +30,7 @@ using System.Runtime.InteropServices;
 using Microsoft.Win32;
 using MediaPortal.GUI.Library;
 using System.IO;
-//using MediaPortal.Utils.Services;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.InputDevices
 {
@@ -92,12 +92,12 @@ namespace MediaPortal.InputDevices
 
     #endregion
 
-    //static  ILog _log;
+    static  ILog _log;
 
     static irremote()
     {
-      //ServiceProvider services = GlobalServiceProvider.Instance;
-      //_log = services.Get<ILog>();
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
     }
 
     public static string CurrentVersion = "2.49.23332";
@@ -122,7 +122,7 @@ namespace MediaPortal.InputDevices
       }
       catch (Exception ex)
       {
-        //_log.Info("HCW: Exception while querying remote: {0}", ex.Message);
+        _log.Info("HCW: Exception while querying remote: {0}", ex.Message);
       }
       return result;
     }
@@ -157,7 +157,7 @@ namespace MediaPortal.InputDevices
       }
       catch (System.NullReferenceException)
       {
-        //_log.Info("HCW: Could not find registry entries for driver components! (Not installed?)");
+        _log.Info("HCW: Could not find registry entries for driver components! (Not installed?)");
       }
       return dllPath;
     }
