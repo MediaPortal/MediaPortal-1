@@ -1009,7 +1009,7 @@ namespace MediaPortal.GUI.Music
             {
               try
               {
-                scrobbledArtists = ascrobbler.getSimilarArtists(current10SekSong.Artist, true);
+                scrobbledArtists = ascrobbler.getSimilarArtists(current10SekSong.ToURLArtistString(), true);
               }
               catch (Exception ex)
               {

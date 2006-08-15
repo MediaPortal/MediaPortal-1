@@ -427,7 +427,9 @@ namespace MediaPortal.AudioScrobbler
       // 
       this.maskedTextBoxASPassword.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.maskedTextBoxASPassword.BeepOnError = true;
       this.maskedTextBoxASPassword.Culture = new System.Globalization.CultureInfo("");
+      this.maskedTextBoxASPassword.HideSelection = false;
       this.maskedTextBoxASPassword.Location = new System.Drawing.Point(16, 81);
       this.maskedTextBoxASPassword.Name = "maskedTextBoxASPassword";
       this.maskedTextBoxASPassword.PasswordChar = '*';
@@ -646,7 +648,7 @@ namespace MediaPortal.AudioScrobbler
       this.trackBarRandomness.Maximum = 100;
       this.trackBarRandomness.Minimum = 25;
       this.trackBarRandomness.Name = "trackBarRandomness";
-      this.trackBarRandomness.Size = new System.Drawing.Size(264, 40);
+      this.trackBarRandomness.Size = new System.Drawing.Size(264, 45);
       this.trackBarRandomness.SmallChange = 5;
       this.trackBarRandomness.TabIndex = 0;
       this.trackBarRandomness.TickFrequency = 15;

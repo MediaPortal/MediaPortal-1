@@ -341,8 +341,12 @@ namespace MediaPortal.Music.Database
         if (m_strAlbum != "")
           s.Append(" - " + m_strAlbum);
         else
+        {
           if (m_strTitle != "")
             s.Append(" - " + m_strTitle);
+          if (m_strGenre != "")
+            s.Append(" (tagged: " + m_strGenre + ")");
+        }
       }
       else
         if (m_strAlbum != "")

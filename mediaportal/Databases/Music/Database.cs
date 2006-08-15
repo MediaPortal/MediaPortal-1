@@ -3515,14 +3515,14 @@ namespace MediaPortal.Music.Database
         strSQL = String.Format("select idScrobbleSettings, idScrobbleUser from scrobblesettings where idScrobbleUser = '{0}'", userID_);
         results = m_db.Execute(strSQL);        
         currentSettingID = DatabaseUtility.Get(results, 0, "idScrobbleSettings");
-        _log.Info("MusicDatabase: updating settings with ID {0}", currentSettingID);
+        //_log.Info("MusicDatabase: updating settings with ID {0}", currentSettingID);
 
         // setting doesn't exist - add it
         if (results.Rows.Count == 0)
         {
           strSQL = String.Format("insert into scrobblesettings (idScrobbleSettings, idScrobbleUser, " + fieldName_ + ") values ( NULL, '{0}', '{1}')", userID_, fieldValue_);
           m_db.Execute(strSQL);
-          _log.Info("MusicDatabase: added scrobblesetting {0} ({1}) for userid {2}", Convert.ToString(m_db.LastInsertID()), fieldName_, userID_);
+          _log.Info("MusicDatabase: added scrobblesetting {0} for userid {1}", Convert.ToString(m_db.LastInsertID()), userID_);
           if (fieldValue_ > -1)
             return m_db.LastInsertID();
           else
@@ -3533,7 +3533,7 @@ namespace MediaPortal.Music.Database
           strSQL = String.Format("select " + fieldName_ + " from scrobblesettings where idScrobbleSettings = '{0}'", currentSettingID);
           results = m_db.Execute(strSQL);
 
-          if (DatabaseUtility.GetAsInt(results, 0, fieldName_) == fieldValue_)
+          if (DatabaseUtility.GetAsInt( results, 0, fieldName_) == fieldValue_)
             // setting didn't change
             return fieldValue_;
           // set new value

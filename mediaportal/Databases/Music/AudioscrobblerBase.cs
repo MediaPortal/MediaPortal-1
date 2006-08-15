@@ -106,7 +106,12 @@ namespace MediaPortal.Music.Database
 
         username = xmlreader.GetValueAsString("audioscrobbler", "user", "");
         string tmpPass;
-        tmpPass = xmlreader.GetValueAsString("audioscrobbler", "pass", "");
+        //tmpPass = xmlreader.GetValueAsString("audioscrobbler", "pass", "");
+        MusicDatabase mdb = new MusicDatabase();
+
+        tmpPass = mdb.AddScrobbleUserPassword(Convert.ToString(mdb.AddScrobbleUser(username)), "");
+        _useDebugLog = (mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(username)), "iDebugLog", -1) == 1) ? true : false;
+
         if (tmpPass != String.Empty)
         {
           try
@@ -119,10 +124,7 @@ namespace MediaPortal.Music.Database
             Log.Write("Audioscrobbler: Password decryption failed {0}", ex.Message);
           }
         }
-      }
-
-      MusicDatabase mdb = new MusicDatabase();
-      _useDebugLog = (mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(username)), "iDebugLog", -1) == 1) ? true : false;
+      }  
 
       queue = new AudioscrobblerQueue("Trackcache-" + Username + ".xml");
 
@@ -253,7 +255,7 @@ namespace MediaPortal.Music.Database
         using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
         {
           xmlwriter.SetValue("audioscrobbler", "user", username);
-          xmlwriter.SetValue("audioscrobbler", "pass", password);
+          //xmlwriter.SetValue("audioscrobbler", "pass", password);
         }
 
         if (!DoHandshake(true))
@@ -380,7 +382,7 @@ namespace MediaPortal.Music.Database
 
       if (!success)
       {
-        Log.Write("AudioscrobblerBase: {0}", "Handshake failed");        
+        Log.Write("AudioscrobblerBase: {0}", "Handshake failed");
         return false;
       }
 
@@ -392,7 +394,8 @@ namespace MediaPortal.Music.Database
       // reset to leave "safe mode"
       _antiHammerCount = 0;
 
-      Log.Write("AudioscrobblerBase: {0}", "Handshake successful");
+      if (_useDebugLog)
+        Log.Write("AudioscrobblerBase: {0}", "Handshake successful");
       return true;
     }
     
@@ -631,7 +634,7 @@ namespace MediaPortal.Music.Database
 
     #region Audioscrobbler response parsers.
     private static bool parseUpToDateMessage(string type_, StreamReader reader_)
-    {      
+    {
       try
       {
         md5challenge = reader_.ReadLine().Trim();
@@ -644,7 +647,8 @@ namespace MediaPortal.Music.Database
         md5challenge = "";
         return false;
       }
-      Log.Write("AudioscrobblerBase: {0}", "Your client is up to date.");
+      if (_useDebugLog)
+        Log.Write("AudioscrobblerBase: {0}", "Your client is up to date.");
       return true;
     }
 
@@ -664,7 +668,8 @@ namespace MediaPortal.Music.Database
           logmessage = "FAILED: " + type_.Substring(7);
         else
           logmessage = "FAILED";
-        Log.Write("AudioscrobblerBase: {0}", logmessage);
+        if (_useDebugLog)
+          Log.Write("AudioscrobblerBase: {0}", logmessage);
         if (logmessage == "FAILED: Plugin bug: Not all request variables are set")
           Log.Write("AudioscrobblerBase: A server error may have occured / if you receive this often a proxy may truncate your request - {0}", "read: http://www.last.fm/forum/24/_/74505/1#f808273");
         TriggerSafeModeEvent();
@@ -693,7 +698,8 @@ namespace MediaPortal.Music.Database
         if (type_.Length > 9)
         {
           int newInterval = Convert.ToInt32(type_.Substring(9));
-          logmessage = "last.fm's servers currently allow an interval of: " + Convert.ToString(newInterval) + " sec";
+          if (_useDebugLog)
+            logmessage = "last.fm's servers currently allow an interval of: " + Convert.ToString(newInterval) + " sec";
           if (newInterval > 30)
             SUBMIT_INTERVAL = newInterval;
         }

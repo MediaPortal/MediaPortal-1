@@ -48,7 +48,9 @@ namespace MediaPortal.Music.Database
     chartstoptags,
     taggedartists,
     taggedalbums,
-    taggedtracks
+    taggedtracks,
+    topartisttags,
+    toptracktags
   }
   #endregion
 
@@ -212,6 +214,19 @@ namespace MediaPortal.Music.Database
         default:
           return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "recenttracks.xml", @"//recenttracks/track", feed_);
       }
+    }
+
+    public List<Song> getTagsForArtist(string artistToSearch_)
+    {
+      string urlArtist = System.Web.HttpUtility.UrlEncode(artistToSearch_);
+      return ParseXMLDocForUsedTags(urlArtist, "", lastFMFeed.topartisttags);
+    }
+
+    public List<Song> getTagsForTrack(string artistToSearch_, string trackToSearch_)
+    {
+      string urlArtist = System.Web.HttpUtility.UrlEncode(artistToSearch_);
+      string urlTrack = System.Web.HttpUtility.UrlEncode(trackToSearch_);
+      return ParseXMLDocForUsedTags(urlArtist, urlTrack, lastFMFeed.toptracktags);
     }
 
     public List<Song> getSimilarToTag(lastFMFeed searchType_, string taggedWith_, bool randomizeList_)
@@ -431,6 +446,65 @@ namespace MediaPortal.Music.Database
           }
           if (Convert.ToInt32(nodeSong.LastFMMatch) > _minimumArtistMatchPercent)
             songList.Add(nodeSong);
+        }
+      }
+      catch
+      {
+        // input nice exception here...
+      }
+      return songList;
+    }
+
+    /// <summary>
+    /// Parses an artist or track for its most used tags
+    /// </summary>
+    /// <param name="artist_">artist to search</param>
+    /// <param name="track_">track to search</param>
+    /// <param name="searchType_">topartisttags or toptracktags</param>
+    /// <returns>List of Song</returns>
+    private List<Song> ParseXMLDocForUsedTags(string artist_, string track_, lastFMFeed searchType_)
+    {
+      songList = new List<Song>();
+      try
+      {
+        XmlDocument doc = new XmlDocument();
+        XmlNodeList nodes;
+        switch (searchType_)
+        {
+          case lastFMFeed.topartisttags:
+            doc.Load(@"http://ws.audioscrobbler.com/1.0/artist/" + artist_ + "/toptags.xml");
+            nodes = doc.SelectNodes(@"//toptags/tag");
+            break;
+          case lastFMFeed.toptracktags:
+            doc.Load(@"http://ws.audioscrobbler.com/1.0/track/" + artist_ + "/" + track_ + "/toptags.xml");
+            nodes = doc.SelectNodes(@"//toptags/tag");
+            break;
+
+          default:
+            doc.Load(@"http://ws.audioscrobbler.com/1.0/artist/" + artist_ + "/toptags.xml");
+            nodes = doc.SelectNodes(@"//toptags/tag");
+            break;
+        }
+
+        foreach (XmlNode node in nodes)
+        {
+          Song nodeSong = new Song();
+          foreach (XmlNode child in node.ChildNodes)
+          {
+            //if (doc.Attributes["artist"].Value != "")
+            //  nodeSong.Artist = doc.Attributes["artist"].Value;
+            //if (doc.Attributes["track"].Value != "")
+            //  nodeSong.Title = doc.Attributes["track"].Value;
+            nodeSong.Artist = artist_;
+            nodeSong.Title = track_;
+            if (child.Name == "name" && child.ChildNodes.Count != 0)
+              nodeSong.Genre = child.ChildNodes[0].Value;
+            if (child.Name == "url" && child.ChildNodes.Count != 0)
+              nodeSong.URL = child.ChildNodes[0].Value;
+            if (child.Name == "count" && child.ChildNodes.Count != 0)
+              nodeSong.TimesPlayed = Convert.ToInt32(child.ChildNodes[0].Value);
+          }
+          songList.Add(nodeSong);
         }
       }
       catch
