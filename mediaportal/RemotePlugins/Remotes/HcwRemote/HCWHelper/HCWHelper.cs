@@ -305,7 +305,7 @@ namespace MediaPortal.InputDevices.HcwHelper
       if (!File.Exists(dllPath + "irremote.DLL"))
         dllPath = string.Empty;
 
-      if (dllPath == string.Empty)
+      //if (dllPath == string.Empty)
         //_log.Info("HCWHelper: Could not find registry entries for driver components! (Not installed?)");
       return dllPath;
     }
