@@ -294,6 +294,10 @@ void CDeMultiplexer::Copy(int len, byte* destination)
 	{
 		Require();
 	}
+	if (BufferLength() < len)
+	{
+		ASSERT(0);
+	}
 	if (m_iBufferPosRead+len <= BUFFER_LENGTH)
 	{
 		memcpy(destination,&m_pBuffer[m_iBufferPosRead],len);
@@ -406,6 +410,21 @@ bool CDeMultiplexer::Parse()
 				
 				//video
 				case 0xe0:
+				case 0xe1:
+				case 0xe2:
+				case 0xe3:
+				case 0xe4:
+				case 0xe5:
+				case 0xe6:
+				case 0xe7:
+				case 0xe8:
+				case 0xe9:
+				case 0xea:
+				case 0xeb:
+				case 0xec:
+				case 0xed:
+				case 0xee:
+				case 0xef:
 				{
 					m_streamId=0xe0;
 					int len=(Next(4)<<8) + Next(5);
