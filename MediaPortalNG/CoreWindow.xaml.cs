@@ -24,6 +24,7 @@ namespace MediaPortal
         public System.Collections.ArrayList idArray;
         public System.Collections.ArrayList typeArray;
         public string currentFile;
+        private HomeExtension _home;
         /// <summary>
         /// The MediaPortal core. The Core always loads the HomeExtension as start point.
         /// </summary>
@@ -38,6 +39,19 @@ namespace MediaPortal
             this.Title = "MediaPortalNG";
             this.Show();
             this.Navigating += new NavigatingCancelEventHandler(Core_Navigating);
+            this.KeyDown += new System.Windows.Input.KeyEventHandler(Core_KeyDown);
+            _home = new HomeExtension(this.Resources);
+            _home.InitializeComponent();
+            this.Navigate(_home);
+        }
+
+        void Core_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (_home!=null)
+            {
+                _home.HandleKeyDown(sender, e);
+                e.Handled = true;
+            }
         }
 
         void Core_Navigating(object sender, NavigatingCancelEventArgs e)
@@ -52,22 +66,8 @@ namespace MediaPortal
         void Core_Loaded(object sender, RoutedEventArgs e)
         {
             
-            //DirectoryInfo di = new DirectoryInfo(Directory.GetCurrentDirectory()+@"\BlueTwo\");
-            //FileInfo[] fi = di.GetFiles("*.xml");
-            //typeArray = new System.Collections.ArrayList();
-            //foreach (FileInfo i in fi)
-            //{
-            //    currentFile = i.Name;
-            //    ParseSkinXML(Directory.GetCurrentDirectory() + @"\BlueTwo\",i.Name);
-            //}
-            //typeArray.Sort();
-            //StreamWriter sw = new StreamWriter(@"E:\elements.txt");
-            //foreach (string t in typeArray)
-            //    sw.WriteLine(t);
-            //sw.Close();
-            LoadHome();
             LoadSkin();
-            
+
         }
 
         
@@ -111,13 +111,6 @@ namespace MediaPortal
         
         }
          
-
-        public void LoadHome()
-        {
-            HomeExtension home = new HomeExtension(this.Resources);
-            home.InitializeComponent();
-            this.Navigate(home);
-        }
 
         private void ParseSkinXML(string path,string file)
         {
@@ -826,6 +819,16 @@ namespace MediaPortal
                 }
             }
             return "";
+        }
+
+        internal void LoadPlugin(Type pluginType)
+        {
+            if (pluginType == typeof(MyPictures))
+            {
+                MyPictures myPic = new MyPictures(this.Resources);
+                myPic.InitializeComponent();
+                this.Navigate(myPic);
+            }
         }
     }
 }

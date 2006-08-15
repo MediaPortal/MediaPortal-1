@@ -55,6 +55,10 @@
       <SubType>
       </SubType>
     </Page>
+    <Compile Include="GUIPlugin.cs" />
+    <Compile Include="Plugins\mypictures.xaml.cs">
+      <DependentUpon>mypictures.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SelectButton.cs" />
     <Compile Include="SpinControl.cs" />
     <Compile Include="CoreExtensions\home.xaml.cs">
@@ -72,6 +76,9 @@
     <Content Include="skinImages.xaml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Plugins\mypictures.xaml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildBinPath)\Microsoft.WinFX.targets" />

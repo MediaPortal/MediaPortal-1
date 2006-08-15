@@ -16,6 +16,7 @@ namespace MediaPortal
         private System.Collections.ArrayList _items;
         private int _selectedItem;
         private static bool _selectOpen;
+        private static int _selectionFieldWidth;
 
         public GUISelectButton()
         {
@@ -24,11 +25,19 @@ namespace MediaPortal
             InitializeCommands();
         }
 
-        public void openCloseClick(object sender, RoutedEventArgs e)
-        {
-            int a = 0;
-        }
 
+        public int SelectionFieldWidth
+        {
+            get
+            {
+                return _selectionFieldWidth;
+            }
+            set
+            {
+                _selectionFieldWidth = value;
+            }
+        }
+ 
         public void AddItem(object item)
         {
             _items.Add(item);
@@ -139,6 +148,8 @@ namespace MediaPortal
         private static void OnOpenCloseSelect(object sender, ExecutedRoutedEventArgs e)
         {
             GUISelectButton control = sender as GUISelectButton;
+            _selectionFieldWidth = ((int)control.Width) - 50;
+
             if (control != null)
             {
                 ControlTemplate t = control.Template;

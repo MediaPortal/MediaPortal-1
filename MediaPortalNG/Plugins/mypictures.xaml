@@ -1,0 +1,244 @@
+﻿<Page xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Style="{StaticResource PageBackground}" 
+      xmlns:ctrl="clr-namespace:MediaPortal"
+      x:Class="MediaPortal.MyPictures"
+      Name="mypictures"
+      >
+  <Page.Triggers>
+    <EventTrigger RoutedEvent="Page.Loaded">
+      <BeginStoryboard Name="backgroundAnimationsBeginStoryboard">
+        <Storyboard >
+          <DoubleAnimation 
+            Storyboard.TargetName="mainPanel"
+            Storyboard.TargetProperty="(Canvas.Background).(DrawingBrush.Transform).(RotateTransform.CenterX)"
+            From="0" To="360" Duration="0:2:30" RepeatBehavior="Forever" 
+            AutoReverse="True"/>
+          <DoubleAnimation 
+            Storyboard.TargetName="mainPanel"
+            Storyboard.TargetProperty="(Canvas.Background).(DrawingBrush.Transform).(RotateTransform.Angle)"
+            From="0" To="360" Duration="0:2:30" RepeatBehavior="Forever" 
+            AutoReverse="True"/>
+          <RectAnimation 
+            Storyboard.TargetName="mainPanel"
+            Storyboard.TargetProperty="(Canvas.Background).(DrawingBrush.Viewport)"
+            From="0,0,200,200" To="0,0,180,180" Duration="0:0:10" RepeatBehavior="Forever" 
+            AutoReverse="True"/>
+
+        </Storyboard>
+      </BeginStoryboard>
+    </EventTrigger>
+  </Page.Triggers>
+  <Canvas Name="mainPanel">
+      <Canvas.Background>
+
+        <DrawingBrush TileMode="Tile" Opacity="0.12" 
+          Viewport="0,0,200,200" ViewportUnits="Absolute">
+          <DrawingBrush.Drawing>
+            <DrawingGroup>
+              <DrawingGroup.Children>
+
+                <GeometryDrawing>
+                  <GeometryDrawing.Geometry>
+                    <RectangleGeometry Rect="0,0,1,1" />
+                  </GeometryDrawing.Geometry>
+                  <GeometryDrawing.Brush>
+                    <SolidColorBrush Color="Transparent" />
+                  </GeometryDrawing.Brush>
+                  <GeometryDrawing.Pen>
+                    <Pen Thickness="0.005" Brush="Transparent" />
+                  </GeometryDrawing.Pen>
+                </GeometryDrawing>
+
+                <GeometryDrawing>
+                  <GeometryDrawing.Geometry>
+                    <RectangleGeometry Rect="0.17,0.25,0.22,0.65" RadiusX="0.10" RadiusY="0.10"/>
+                  </GeometryDrawing.Geometry>
+                  <GeometryDrawing.Brush>
+                    <SolidColorBrush Color="Transparent" />
+                  </GeometryDrawing.Brush>
+                  <GeometryDrawing.Pen>
+                    <Pen Thickness="0.01" Brush="DarkGray" />
+                  </GeometryDrawing.Pen>
+                </GeometryDrawing>
+                
+                <GeometryDrawing>
+                  <GeometryDrawing.Geometry>
+                    <RectangleGeometry Rect="0.44,0.25,0.22,0.65" RadiusX="0.10" RadiusY="0.10"/>
+                  </GeometryDrawing.Geometry>
+                  <GeometryDrawing.Brush>
+                    <SolidColorBrush Color="Transparent" />
+                  </GeometryDrawing.Brush>
+                  <GeometryDrawing.Pen>
+                    <Pen Thickness="0.01" Brush="DarkGray" />
+                  </GeometryDrawing.Pen>
+                </GeometryDrawing>
+
+                <GeometryDrawing Brush="Transparent">
+                  <GeometryDrawing.Geometry>
+                    <EllipseGeometry Center="0.83,0.40" RadiusX="0.14" RadiusY="0.14" />
+                  </GeometryDrawing.Geometry>
+                  <GeometryDrawing.Pen>
+                    <Pen Thickness="0.01" Brush="DarkGray" />
+                  </GeometryDrawing.Pen>
+                </GeometryDrawing>
+
+                </DrawingGroup.Children>
+            </DrawingGroup>
+          </DrawingBrush.Drawing>
+          <DrawingBrush.Transform>
+            <RotateTransform CenterX="0.5" CenterY="0.5" />
+          </DrawingBrush.Transform>
+        </DrawingBrush>
+      </Canvas.Background>
+      <!--  -->
+      <TextBlock
+        Name="id1"
+        Text="1"
+        Canvas.Top="70"
+        Foreground="White"
+        Visibility="Visible"
+        Canvas.Left="0"
+        Width="250"
+        TextAlignment="Right"
+        FontSize="16"
+        Tag="##id::1//##keycontrol::onleft:;onright:;onup:;ondown://##metadata::"
+/>
+
+
+      <!--  -->
+      <Image
+        Name="id1_0"
+        Canvas.Top="20"
+        Canvas.Left="60"
+        Source="{DynamicResource pictures_logo.png}"
+        Visibility="Visible"
+        Tag="##id::1//##keycontrol::onleft:;onright:;onup:;ondown://##metadata::"
+/>
+
+
+      <!--  -->
+      <Image
+        Name="id1_0_1"
+        Canvas.Top="370"
+        Canvas.Left="75"
+        Stretch="None" 
+        HorizontalAlignment="Left" 
+        VerticalAlignment="Top" 
+        Source="{DynamicResource hover_my pictures.png}"
+        Style="{StaticResource GUIImage}" 
+        Visibility="Visible"
+      
+        Tag="##id::1//##keycontrol::onleft:;onright:;onup:;ondown://##metadata::"
+/>
+
+
+      <!-- View-As button -->
+      <Button
+        Name="id2"
+        Canvas.Top="97"
+        Canvas.Left="60"
+        Visibility="Visible"
+        Width="190"
+        Height="32"
+        Style="{DynamicResource GUIButton}"
+        Click="MPNG" 
+        Tag="##id::2//##keycontrol::onleft:;onright:50;onup:17;ondown://##metadata::labelNum:100"
+>100</Button>
+
+
+      <!--  -->
+      <Button
+        Name="id3"
+        Canvas.Top="129"
+        Canvas.Left="60"
+        Visibility="Visible"
+        Width="190"
+        Height="32"
+        Style="{DynamicResource GUIButton}"
+        Click="selectButton" 
+        Tag="##id::3//##keycontrol::onleft:;onright:;onup:;ondown://##metadata::labelNum:103"
+>103</Button>
+
+
+      <!-- SlideShow button -->
+      <Button
+        Name="id6"
+        Canvas.Top="161"
+        Canvas.Left="60"
+        Visibility="Visible"
+        Width="190"
+        Height="32"
+        Style="{DynamicResource GUIButton}"
+        Tag="##id::6//##keycontrol::onleft:;onright:;onup:;ondown://##metadata::labelNum:108"
+>108</Button>
+
+
+      <!-- Recursive Slideshow -->
+      <Button
+        Name="id7"
+        Canvas.Top="193"
+        Canvas.Left="60"
+        Visibility="Visible"
+        Width="190"
+        Height="32"
+        Style="{DynamicResource GUIButton}"
+        Tag="##id::7//##keycontrol::onleft:;onright:;onup:;ondown://##metadata::labelNum:361"
+>361</Button>
+
+
+      <!-- Create Thumbnails -->
+      <Button
+        Name="id8"
+        Canvas.Top="225"
+        Canvas.Left="60"
+        Visibility="Visible"
+        Width="190"
+        Height="32"
+        Style="{DynamicResource GUIButton}"
+        Tag="##id::8//##keycontrol::onleft:;onright:;onup:;ondown://##metadata::labelNum:109"
+>109</Button>
+
+
+      <!-- Rotate -->
+      <Button
+        Name="id9"
+        Canvas.Top="257"
+        Canvas.Left="60"
+        Visibility="Visible"
+        Width="190"
+        Height="32"
+        Style="{DynamicResource GUIButton}"
+        Tag="##id::9//##keycontrol::onleft:;onright:;onup:;ondown:99//##metadata::labelNum:735"
+>735</Button>
+
+
+      <!-- composite control consisting of a list control and a thumbnail panel -->
+      <ListView
+        Name="lv1"
+        Canvas.Top="97"
+        Canvas.Left="260"
+        Width="425"
+        Height="479"
+        Style="{DynamicResource GUIListControl}"
+/>
+
+      <ctrl:GUISpinControl 
+        x:Name="upDown1"  
+        FontSize="18" 
+        Foreground="White" 
+        Canvas.Top="280"
+        Canvas.Left="60">
+      </ctrl:GUISpinControl>
+
+    <ctrl:GUISelectButton 
+  x:Name="select1"
+  Content="Click me ;)" 
+  Width="190" 
+  Height="32" 
+  Canvas.Top="320"
+  Canvas.Left="60">
+    </ctrl:GUISelectButton>
+    
+  </Canvas>
+</Page>

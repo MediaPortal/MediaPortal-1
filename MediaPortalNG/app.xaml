@@ -19,13 +19,13 @@
           <Grid >
             <Grid.ColumnDefinitions>
               <ColumnDefinition Width="16"/>
-              <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=SelectionFieldWidth}"/>
               <ColumnDefinition Width="16"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
               <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <TextBlock Margin="4" Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=SelectedItem}" x:Name="SelectContent" Grid.Column="1"/>
+            <TextBlock Margin="5" Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=SelectedItem}" x:Name="SelectContent" Grid.Column="1"/>
             <Button Command="{x:Static ctrl:GUISelectButton.PreviousCommand}" ClickMode="Press" Grid.Column="0" x:Name="LeftButton" Width="16" Height="16" Style="{DynamicResource LeftButton}"/>
             <Button Command="{x:Static ctrl:GUISelectButton.NextCommand}" ClickMode="Press" Grid.Column="2" x:Name="RightButton" Width="16" Height="16" Style="{DynamicResource RightButton}"/>
           </Grid>
