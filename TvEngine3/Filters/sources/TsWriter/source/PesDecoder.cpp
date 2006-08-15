@@ -24,7 +24,6 @@
 #include "TsHeader.h"
 #include "packetsync.h"
 
-#define MAX_PES_PACKET 0x80000
 
 extern void LogDebug(const char *fmt, ...) ;
 
@@ -90,6 +89,7 @@ int	CPesDecoder::GetPesPacketLength()
 }
 bool CPesDecoder::OnTsPacket(byte* tsPacket)
 {
+  if (tsPacket==NULL) return false;
 	if (m_pid==-1) return false;
 	
 	CTsHeader  header(tsPacket);
@@ -153,6 +153,7 @@ bool CPesDecoder::OnTsPacket(byte* tsPacket)
 		return  false;
 	}
 	//LogDebug("copy %d>%d-%d", pos,m_iPesBufferPos,m_iPesBufferPos+188-pos);
+  
 	memcpy(&m_pesBuffer[m_iPesBufferPos], &tsPacket[pos], 188-pos);
 	m_iPesBufferPos += (188-pos);
 	return result;
@@ -161,10 +162,13 @@ bool CPesDecoder::OnTsPacket(byte* tsPacket)
 
 void CPesDecoder::OnNewPesPacket(byte* pesPacket, int nLen)
 {   
- // if (pesPacket[4]==0 && pesPacket[5]==0)
- // {
- //   while (pesPacket[nLen-1]==0 && pesPacket[nLen-2]==0 && pesPacket[nLen-3]==0 && nLen>4) nLen-=3;
- // }
+  if (pesPacket==NULL) return;
+  if (nLen<=0) return;
+  if (nLen > MAX_PES_PACKET)
+  {
+    LogDebug("pesdecoder::OnNewPesPacket pid:%x invalid pes packet len:%d",m_pid, nLen);
+    return;
+  }
   memcpy(m_pesPacket,pesPacket,nLen);
   m_pespacketLen=nLen;
 }

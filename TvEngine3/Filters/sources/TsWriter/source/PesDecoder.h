@@ -20,6 +20,7 @@
  */
 #pragma once
 
+#define MAX_PES_PACKET 0x80000
 class CPesDecoder
 {
 public:

@@ -21,14 +21,16 @@
 #include <windows.h>
 #include "multiplexer.h"
 void LogDebug(const char *fmt, ...) ;
+
+#define MAX_PES_BUFFER_LENGTH 0x10000
 #define MAX_PES_PACKET_LENGTH 0x7ec
-#define PES_HEADER_LENGTH 6
-#define PACK_HEADER_LENGTH 14
+#define PES_HEADER_LENGTH     6
+#define PACK_HEADER_LENGTH    14
 
 CMultiplexer::CStreamBuffer::CStreamBuffer()
 {
   m_ipesBufferPos=0;
-  m_pesPacket = new byte[0x50000];
+  m_pesPacket = new byte[MAX_PES_PACKET];
 }
 CMultiplexer::CStreamBuffer::~CStreamBuffer()
 {
@@ -37,7 +39,7 @@ CMultiplexer::CStreamBuffer::~CStreamBuffer()
 
 CMultiplexer::CMultiplexer()
 {
-  m_pesBuffer = new byte[0x10000];
+  m_pesBuffer = new byte[MAX_PES_BUFFER_LENGTH];
 	m_pCallback=NULL;
   Reset();
 }
@@ -233,7 +235,22 @@ void CMultiplexer::SplitPesPacket(byte* pesPacket, int sectionLength)
   sectionLength -= (headerLen+9);
   int start=buffer->m_ipesBufferPos;
 
-  byte* data=&buffer->m_pesPacket[buffer->m_ipesBufferPos];
+  if (buffer->m_ipesBufferPos < 0)
+  {
+    LogDebug("CMultiplexer::SplitPesPacket: pesbufferPos<0");
+    return;
+  }
+  if (buffer->m_ipesBufferPos  >= MAX_PES_PACKET)
+  {
+    LogDebug("CMultiplexer::SplitPesPacket: pesbufferPos>MAX_PES_PACKET");
+    return;
+  }
+  if (buffer->m_ipesBufferPos+sectionLength  >= MAX_PES_PACKET)
+  {
+    LogDebug("CMultiplexer::SplitPesPacket: pes packet overflow1");
+    return;
+  }
+  //byte* data=&buffer->m_pesPacket[buffer->m_ipesBufferPos];
   memcpy( &buffer->m_pesPacket[buffer->m_ipesBufferPos], &pesPacket[headerLen+9],sectionLength);
   buffer->m_ipesBufferPos+=sectionLength;
   if (buffer->m_ipesBufferPos < 0x800) return;
@@ -244,11 +261,27 @@ void CMultiplexer::SplitPesPacket(byte* pesPacket, int sectionLength)
     WritePackHeader();
     if (offset==0)
     {
-      byte* data=m_pesBuffer;
+     // byte* data=m_pesBuffer;
       int len = (0x800-PACK_HEADER_LENGTH) - 6;
       len -=3;
       len-=headerLen;
 
+      if (headerLen+9>=MAX_PES_BUFFER_LENGTH) 
+      {
+        LogDebug("CMultiplexer::SplitPesPacket pes buffer overflow1");
+        return;
+      }
+      if (headerLen+9+len>=MAX_PES_BUFFER_LENGTH) 
+      {
+        LogDebug("CMultiplexer::SplitPesPacket pes buffer overflow2");
+        return;
+      }
+      
+      if (offset+len  >= MAX_PES_PACKET)
+      {
+        LogDebug("CMultiplexer::SplitPesPacket: pes packet overflow2");
+        return;
+      }
       memcpy(m_pesBuffer, pesPacket, headerLen+9);
       memcpy(&m_pesBuffer[headerLen+9],&buffer->m_pesPacket[offset],len);
       m_pesBuffer[4]=0x7;
@@ -272,6 +305,17 @@ void CMultiplexer::SplitPesPacket(byte* pesPacket, int sectionLength)
       m_pesBuffer[6]=0x81;
       m_pesBuffer[7]=0;
       m_pesBuffer[8]=0;
+      
+      if (len+9>=MAX_PES_BUFFER_LENGTH) 
+      {
+        LogDebug("CMultiplexer::SplitPesPacket pes buffer overflow3");
+        return;
+      }
+      if (offset+len  >= MAX_PES_PACKET)
+      {
+        LogDebug("CMultiplexer::SplitPesPacket: pes packet overflow3");
+        return;
+      }
       memcpy(&m_pesBuffer[9], &buffer->m_pesPacket[offset],len);
 	    m_pCallback->Write(m_pesBuffer, MAX_PES_PACKET_LENGTH + PES_HEADER_LENGTH);
       offset += len;
@@ -279,6 +323,12 @@ void CMultiplexer::SplitPesPacket(byte* pesPacket, int sectionLength)
   }
   if (offset < buffer->m_ipesBufferPos)
   {
+    
+      if (offset+(buffer->m_ipesBufferPos-offset)  >= MAX_PES_PACKET)
+      {
+        LogDebug("CMultiplexer::SplitPesPacket: pes packet overflow4");
+        return;
+      }
       memcpy(buffer->m_pesPacket, &buffer->m_pesPacket[offset],buffer->m_ipesBufferPos-offset);
       buffer->m_ipesBufferPos=buffer->m_ipesBufferPos-offset;
   }

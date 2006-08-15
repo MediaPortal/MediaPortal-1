@@ -183,6 +183,8 @@ void CTimeShifting::Write(byte* buffer, int len)
 	try
 	{
 		if (!m_bTimeShifting) return;
+    if (buffer==NULL) return;
+    if (len <=0) return;
 		if (m_pTimeShiftFile!=NULL)
 		{
 			m_pTimeShiftFile->Write(buffer,len);
