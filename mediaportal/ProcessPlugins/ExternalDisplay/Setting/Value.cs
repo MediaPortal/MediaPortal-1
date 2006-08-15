@@ -32,7 +32,8 @@ namespace ProcessPlugins.ExternalDisplay.Setting
     [XmlInclude(typeof(Property))]
     [XmlInclude(typeof(Text))]
     [XmlInclude(typeof(Parse))]
-    [XmlInclude(typeof(ProcessPlugins.ExternalDisplay.Setting.PerformanceCounter))]
+    [XmlInclude(typeof(PerformanceCounter))]
+    [XmlInclude(typeof(TextProgressBar))]
     [Serializable]
     public abstract class Value
     {

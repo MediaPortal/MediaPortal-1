@@ -591,7 +591,7 @@ namespace ProcessPlugins.ExternalDisplay
                 new Parse(", from the album #Play.Current.Album", new NotNullCondition("#Play.Current.Album")));
             msg.Lines.Add(line);
             line = new Line();
-            line.values.Add(new Parse("#currentplaytime/#duration"));
+            line.values.Add(new TextProgressBar("#currentplaytime","#duration",16));
             line.values.Add(new Text(" (#112)", new NotNullCondition("#paused")));
             msg.Lines.Add(line);
             _settings.Messages.Add(msg);

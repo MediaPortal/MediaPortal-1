@@ -337,6 +337,7 @@
     <Compile Include="ExternalDisplay\Setting\Text.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ExternalDisplay\Setting\TextProgressBar.cs" />
     <Compile Include="ExternalDisplay\Setting\Value.cs">
       <SubType>Code</SubType>
     </Compile>

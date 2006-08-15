@@ -73,7 +73,8 @@ namespace ProcessPlugins.ExternalDisplay.Setting
         [XmlElement("Text", typeof(Text))]
         [XmlElement("Property", typeof(Property))]
         [XmlElement("Parse", typeof(Parse))]
-        [XmlElement("PerformanceCounter",typeof(ProcessPlugins.ExternalDisplay.Setting.PerformanceCounter))]
+        [XmlElement("PerformanceCounter", typeof(PerformanceCounter))]
+        [XmlElement("TextProgressBar", typeof(TextProgressBar))]
         public List<Value> values = new List<Value>();
 
         /// <summary>
