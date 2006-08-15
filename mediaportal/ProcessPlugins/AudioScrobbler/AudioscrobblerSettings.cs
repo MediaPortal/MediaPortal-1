@@ -263,10 +263,32 @@ namespace MediaPortal.AudioScrobbler
       buttonGetTaggedArtists.Enabled = false;
       listViewTags.Clear();
       songList = new List<Song>();
-      songList = lastFmLookup.getTaggedArtists(System.Web.HttpUtility.UrlEncode(textBoxTagToSearch.Text), false);
+      songList = lastFmLookup.getSimilarToTag(lastFMFeed.taggedartists, System.Web.HttpUtility.UrlEncode(textBoxTagToSearch.Text), checkBoxTagRandomize.Checked);
       for (int i = 0; i < songList.Count; i++)
         listViewTags.Items.Add(songList[i].ToLastFMMatchString(false));
       buttonGetTaggedArtists.Enabled = true;
+    }
+
+    private void buttonTaggedAlbums_Click(object sender, EventArgs e)
+    {
+      buttonTaggedAlbums.Enabled = false;
+      listViewTags.Clear();
+      songList = new List<Song>();
+      songList = lastFmLookup.getSimilarToTag(lastFMFeed.taggedalbums, System.Web.HttpUtility.UrlEncode(textBoxTagToSearch.Text), checkBoxTagRandomize.Checked);
+      for (int i = 0; i < songList.Count; i++)
+        listViewTags.Items.Add(songList[i].ToLastFMMatchString(false));
+      buttonTaggedAlbums.Enabled = true;
+    }
+
+    private void buttonTaggedTracks_Click(object sender, EventArgs e)
+    {
+      buttonTaggedTracks.Enabled = false;
+      listViewTags.Clear();
+      songList = new List<Song>();
+      songList = lastFmLookup.getSimilarToTag(lastFMFeed.taggedtracks, System.Web.HttpUtility.UrlEncode(textBoxTagToSearch.Text), checkBoxTagRandomize.Checked);
+      for (int i = 0; i < songList.Count; i++)
+        listViewTags.Items.Add(songList[i].ToLastFMMatchString(false));
+      buttonTaggedTracks.Enabled = true;
     }
 
     private void buttonRefreshRecent_Click(object sender, EventArgs e)

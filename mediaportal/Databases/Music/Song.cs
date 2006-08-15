@@ -336,7 +336,17 @@ namespace MediaPortal.Music.Database
     {
       StringBuilder s = new StringBuilder();
       if (m_strArtist != "")
+      {
         s.Append(m_strArtist);
+        if (m_strAlbum != "")
+          s.Append(" - " + m_strAlbum);
+        else
+          if (m_strTitle != "")
+            s.Append(" - " + m_strTitle);
+      }
+      else
+        if (m_strAlbum != "")
+          s.Append(m_strAlbum);
       if (_lastFMMatch != "")
         if (_lastFMMatch.IndexOf(".") == -1)
           s.Append(" (match: " + _lastFMMatch + "%)");

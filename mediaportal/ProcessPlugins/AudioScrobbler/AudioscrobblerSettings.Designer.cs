@@ -128,10 +128,14 @@ namespace MediaPortal.AudioScrobbler
       this.buttonRefreshWeeklyTracks = new MediaPortal.UserInterface.Controls.MPButton();
       this.listViewWeeklyTracks = new MediaPortal.UserInterface.Controls.MPListView();
       this.tabPageTags = new System.Windows.Forms.TabPage();
+      this.labelTagDesc = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxTagToSearch = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.buttonGetTaggedArtists = new MediaPortal.UserInterface.Controls.MPButton();
       this.buttonTagsRefresh = new MediaPortal.UserInterface.Controls.MPButton();
       this.listViewTags = new MediaPortal.UserInterface.Controls.MPListView();
-      this.buttonGetTaggedArtists = new MediaPortal.UserInterface.Controls.MPButton();
-      this.textBoxTagToSearch = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.buttonTaggedAlbums = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonTaggedTracks = new MediaPortal.UserInterface.Controls.MPButton();
+      this.checkBoxTagRandomize = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.panelPicBox.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxASLogo)).BeginInit();
       this.tabControlSettings.SuspendLayout();
@@ -640,7 +644,7 @@ namespace MediaPortal.AudioScrobbler
       this.trackBarRandomness.Maximum = 100;
       this.trackBarRandomness.Minimum = 25;
       this.trackBarRandomness.Name = "trackBarRandomness";
-      this.trackBarRandomness.Size = new System.Drawing.Size(264, 45);
+      this.trackBarRandomness.Size = new System.Drawing.Size(264, 40);
       this.trackBarRandomness.SmallChange = 5;
       this.trackBarRandomness.TabIndex = 0;
       this.trackBarRandomness.TickFrequency = 15;
@@ -1014,6 +1018,10 @@ namespace MediaPortal.AudioScrobbler
       // 
       // tabPageTags
       // 
+      this.tabPageTags.Controls.Add(this.checkBoxTagRandomize);
+      this.tabPageTags.Controls.Add(this.buttonTaggedTracks);
+      this.tabPageTags.Controls.Add(this.buttonTaggedAlbums);
+      this.tabPageTags.Controls.Add(this.labelTagDesc);
       this.tabPageTags.Controls.Add(this.textBoxTagToSearch);
       this.tabPageTags.Controls.Add(this.buttonGetTaggedArtists);
       this.tabPageTags.Controls.Add(this.buttonTagsRefresh);
@@ -1025,11 +1033,40 @@ namespace MediaPortal.AudioScrobbler
       this.tabPageTags.Text = "Tags";
       this.tabPageTags.UseVisualStyleBackColor = true;
       // 
+      // labelTagDesc
+      // 
+      this.labelTagDesc.AutoSize = true;
+      this.labelTagDesc.Location = new System.Drawing.Point(452, 117);
+      this.labelTagDesc.Name = "labelTagDesc";
+      this.labelTagDesc.Size = new System.Drawing.Size(62, 13);
+      this.labelTagDesc.TabIndex = 6;
+      this.labelTagDesc.Text = "Search tag:";
+      // 
+      // textBoxTagToSearch
+      // 
+      this.textBoxTagToSearch.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxTagToSearch.Location = new System.Drawing.Point(454, 135);
+      this.textBoxTagToSearch.Name = "textBoxTagToSearch";
+      this.textBoxTagToSearch.Size = new System.Drawing.Size(81, 20);
+      this.textBoxTagToSearch.TabIndex = 5;
+      this.textBoxTagToSearch.Text = "Viking Metal";
+      this.textBoxTagToSearch.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBoxTagToSearch_KeyUp);
+      // 
+      // buttonGetTaggedArtists
+      // 
+      this.buttonGetTaggedArtists.Location = new System.Drawing.Point(452, 181);
+      this.buttonGetTaggedArtists.Name = "buttonGetTaggedArtists";
+      this.buttonGetTaggedArtists.Size = new System.Drawing.Size(83, 23);
+      this.buttonGetTaggedArtists.TabIndex = 4;
+      this.buttonGetTaggedArtists.Text = "Get artists";
+      this.buttonGetTaggedArtists.UseVisualStyleBackColor = true;
+      this.buttonGetTaggedArtists.Click += new System.EventHandler(this.buttonGetTaggedArtists_Click);
+      // 
       // buttonTagsRefresh
       // 
       this.buttonTagsRefresh.Location = new System.Drawing.Point(452, 12);
       this.buttonTagsRefresh.Name = "buttonTagsRefresh";
-      this.buttonTagsRefresh.Size = new System.Drawing.Size(75, 23);
+      this.buttonTagsRefresh.Size = new System.Drawing.Size(83, 23);
       this.buttonTagsRefresh.TabIndex = 3;
       this.buttonTagsRefresh.Text = "Refresh";
       this.buttonTagsRefresh.UseVisualStyleBackColor = true;
@@ -1048,25 +1085,38 @@ namespace MediaPortal.AudioScrobbler
       this.listViewTags.UseCompatibleStateImageBehavior = false;
       this.listViewTags.View = System.Windows.Forms.View.List;
       // 
-      // buttonGetTaggedArtists
+      // buttonTaggedAlbums
       // 
-      this.buttonGetTaggedArtists.Location = new System.Drawing.Point(452, 239);
-      this.buttonGetTaggedArtists.Name = "buttonGetTaggedArtists";
-      this.buttonGetTaggedArtists.Size = new System.Drawing.Size(75, 23);
-      this.buttonGetTaggedArtists.TabIndex = 4;
-      this.buttonGetTaggedArtists.Text = "Get tagged";
-      this.buttonGetTaggedArtists.UseVisualStyleBackColor = true;
-      this.buttonGetTaggedArtists.Click += new System.EventHandler(this.buttonGetTaggedArtists_Click);
+      this.buttonTaggedAlbums.Location = new System.Drawing.Point(452, 210);
+      this.buttonTaggedAlbums.Name = "buttonTaggedAlbums";
+      this.buttonTaggedAlbums.Size = new System.Drawing.Size(83, 23);
+      this.buttonTaggedAlbums.TabIndex = 7;
+      this.buttonTaggedAlbums.Text = "Get albums";
+      this.buttonTaggedAlbums.UseVisualStyleBackColor = true;
+      this.buttonTaggedAlbums.Click += new System.EventHandler(this.buttonTaggedAlbums_Click);
       // 
-      // textBoxTagToSearch
+      // buttonTaggedTracks
       // 
-      this.textBoxTagToSearch.BorderColor = System.Drawing.Color.Empty;
-      this.textBoxTagToSearch.Location = new System.Drawing.Point(452, 213);
-      this.textBoxTagToSearch.Name = "textBoxTagToSearch";
-      this.textBoxTagToSearch.Size = new System.Drawing.Size(75, 20);
-      this.textBoxTagToSearch.TabIndex = 5;
-      this.textBoxTagToSearch.Text = "Metal";
-      this.textBoxTagToSearch.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBoxTagToSearch_KeyUp);
+      this.buttonTaggedTracks.Location = new System.Drawing.Point(452, 239);
+      this.buttonTaggedTracks.Name = "buttonTaggedTracks";
+      this.buttonTaggedTracks.Size = new System.Drawing.Size(83, 23);
+      this.buttonTaggedTracks.TabIndex = 8;
+      this.buttonTaggedTracks.Text = "Get tracks";
+      this.buttonTaggedTracks.UseVisualStyleBackColor = true;
+      this.buttonTaggedTracks.Click += new System.EventHandler(this.buttonTaggedTracks_Click);
+      // 
+      // checkBoxTagRandomize
+      // 
+      this.checkBoxTagRandomize.AutoSize = true;
+      this.checkBoxTagRandomize.Checked = true;
+      this.checkBoxTagRandomize.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxTagRandomize.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxTagRandomize.Location = new System.Drawing.Point(454, 161);
+      this.checkBoxTagRandomize.Name = "checkBoxTagRandomize";
+      this.checkBoxTagRandomize.Size = new System.Drawing.Size(73, 17);
+      this.checkBoxTagRandomize.TabIndex = 9;
+      this.checkBoxTagRandomize.Text = "Random 5";
+      this.checkBoxTagRandomize.UseVisualStyleBackColor = true;
       // 
       // AudioscrobblerSettings
       // 
@@ -1195,5 +1245,9 @@ namespace MediaPortal.AudioScrobbler
     private MediaPortal.UserInterface.Controls.MPLabel labelPluginBannerHint;
     private MediaPortal.UserInterface.Controls.MPTextBox textBoxTagToSearch;
     private MediaPortal.UserInterface.Controls.MPButton buttonGetTaggedArtists;
+    private MediaPortal.UserInterface.Controls.MPLabel labelTagDesc;
+    private MediaPortal.UserInterface.Controls.MPButton buttonTaggedAlbums;
+    private MediaPortal.UserInterface.Controls.MPButton buttonTaggedTracks;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxTagRandomize;
   }
 }

@@ -214,14 +214,14 @@ namespace MediaPortal.Music.Database
       }
     }
 
-    public List<Song> getTaggedArtists(string taggedWith_, bool randomizeList_)
+    public List<Song> getSimilarToTag(lastFMFeed searchType_, string taggedWith_, bool randomizeList_)
     {
       if (randomizeList_)
       {
         Random rand = new Random();
         List<Song> taggedArtists = new List<Song>();
         List<Song> randomTaggedArtists = new List<Song>();
-        taggedArtists = ParseXMLDocForTaggedArtists(taggedWith_);
+        taggedArtists = ParseXMLDocForTags(taggedWith_, searchType_);
         int artistsAdded = 0;
         int randomPosition;
         // make sure we do not get an endless loop
@@ -257,7 +257,7 @@ namespace MediaPortal.Music.Database
           return taggedArtists;
       }
       else
-        return ParseXMLDocForTaggedArtists(taggedWith_);
+        return ParseXMLDocForTags(taggedWith_, searchType_);
     }
 
     public List<Song> getSimilarArtists(string Artist_, bool randomizeList_)
@@ -440,28 +440,66 @@ namespace MediaPortal.Music.Database
       return songList;
     }
 
-    private List<Song> ParseXMLDocForTaggedArtists(string taggedWith_)
+    private List<Song> ParseXMLDocForTags(string taggedWith_, lastFMFeed searchType_)
     {
       songList = new List<Song>();
       try
       {
         XmlDocument doc = new XmlDocument();
-        doc.Load(@"http://ws.audioscrobbler.com/1.0/tag/" + taggedWith_ + "/topartists.xml");
-        XmlNodeList nodes = doc.SelectNodes(@"//tag/artist");
+        XmlNodeList nodes;
+        switch (searchType_)
+        {
+          case lastFMFeed.taggedartists:
+            doc.Load(@"http://ws.audioscrobbler.com/1.0/tag/" + taggedWith_ + "/topartists.xml");
+            nodes = doc.SelectNodes(@"//tag/artist");
+            break;
+          case lastFMFeed.taggedalbums:
+            doc.Load(@"http://ws.audioscrobbler.com/1.0/tag/" + taggedWith_ + "/topalbums.xml");
+            nodes = doc.SelectNodes(@"//tag/album");
+            break;
+          case lastFMFeed.taggedtracks:
+            doc.Load(@"http://ws.audioscrobbler.com/1.0/tag/" + taggedWith_ + "/toptracks.xml");
+            nodes = doc.SelectNodes(@"//tag/track");
+            break;
+          default:
+            doc.Load(@"http://ws.audioscrobbler.com/1.0/tag/" + taggedWith_ + "/topartists.xml");
+            nodes = doc.SelectNodes(@"//tag/artist");
+            break;
+        }
 
         foreach (XmlNode node in nodes)
         {
           Song nodeSong = new Song();
           foreach (XmlNode child in node.ChildNodes)
           {
-            if (node.Attributes["name"].Value != "")
-              nodeSong.Artist = node.Attributes["name"].Value;
-            else if (child.Name == "mbid" && child.ChildNodes.Count != 0)
+            switch (searchType_)
+            {
+              case lastFMFeed.taggedartists:
+                if (node.Attributes["name"].Value != "")
+                  nodeSong.Artist = node.Attributes["name"].Value;
+                if (child.Name == "image" && child.ChildNodes.Count != 0)
+                  nodeSong.WebImage = child.ChildNodes[0].Value;
+                break;
+              case lastFMFeed.taggedalbums:
+                if (node.Attributes["name"].Value != "")
+                  nodeSong.Album = node.Attributes["name"].Value;
+                if (child.Name == "artist" && child.ChildNodes.Count != 0)
+                  if (child.Attributes["name"].Value != "")
+                    nodeSong.Artist = child.Attributes["name"].Value;
+                break;
+              case lastFMFeed.taggedtracks:
+                if (node.Attributes["name"].Value != "")
+                  nodeSong.Title = node.Attributes["name"].Value;
+                if (child.Name == "artist" && child.ChildNodes.Count != 0)
+                  if (child.Attributes["name"].Value != "")
+                    nodeSong.Artist = child.Attributes["name"].Value;
+                break;
+
+            }
+            if (child.Name == "mbid" && child.ChildNodes.Count != 0)
               nodeSong.MusicBrainzID = child.ChildNodes[0].Value;
-            else if (child.Name == "url" && child.ChildNodes.Count != 0)
+            if (child.Name == "url" && child.ChildNodes.Count != 0)
               nodeSong.URL = child.ChildNodes[0].Value;
-            else if (child.Name == "image" && child.ChildNodes.Count != 0)
-              nodeSong.WebImage = child.ChildNodes[0].Value;
             if (node.Attributes["count"].Value != "")
               nodeSong.TimesPlayed = Convert.ToInt32(node.Attributes["count"].Value);
           }
