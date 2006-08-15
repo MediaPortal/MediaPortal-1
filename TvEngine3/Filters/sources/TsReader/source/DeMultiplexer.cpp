@@ -199,7 +199,7 @@ void CDeMultiplexer::Require()
       {
         if (bytesRead!=len)
         {
-          ASSERT(0);
+            Sleep(50);
         }
 		    m_iBytesInBuffer+=bytesRead;
 		    m_iBufferPosWrite+=bytesRead;
@@ -208,6 +208,14 @@ void CDeMultiplexer::Require()
 			    m_iBufferPosWrite=0;
 		    }
       }
+      else
+      { 
+        Sleep(50);
+      }
+    }
+    else
+    {
+      Sleep(50);
     }
 	}
   if (m_iBytesInBuffer< 0)

@@ -44,7 +44,7 @@ extern void LogDebug(const char *fmt, ...) ;
 CAudioPin::CAudioPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCritSec* section) :
 	CSourceStream(NAME("pinAudio"), phr, pFilter, L"Audio"),
 	m_pTsReaderFilter(pFilter),
-	CSourceSeeking(NAME("pinAudio"),pUnk,phr,section),
+  CMediaSeeking(NAME("pinAudio"),pUnk,phr,section),
 	m_section(section)
 {
 	m_bDropPackets=false;
@@ -63,11 +63,11 @@ STDMETHODIMP CAudioPin::NonDelegatingQueryInterface( REFIID riid, void ** ppv )
 	}
   if (riid == IID_IMediaSeeking)
   {
-      return CSourceSeeking::NonDelegatingQueryInterface( riid, ppv );
+      return CMediaSeeking::NonDelegatingQueryInterface( riid, ppv );
   }
   if (riid == IID_IMediaPosition)
   {
-		return CSourceSeeking::NonDelegatingQueryInterface( riid, ppv );
+		return CMediaSeeking::NonDelegatingQueryInterface( riid, ppv );
   }
   return CSourceStream::NonDelegatingQueryInterface(riid, ppv);
 }
@@ -220,7 +220,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
   return NOERROR;
 }
 
-// CSourceSeeking
+// CMediaSeeking
 HRESULT CAudioPin::ChangeStart()
 {
 	double startTime=m_rtStart/UNITS;

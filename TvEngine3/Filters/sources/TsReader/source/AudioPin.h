@@ -21,8 +21,9 @@
 #ifndef __AudioPin_H
 #define __AudioPin_H
 #include "tsreader.h"
+#include "mediaseeking.h"
 
-class CAudioPin : public CSourceStream, public CSourceSeeking
+class CAudioPin : public CSourceStream, public CMediaSeeking
 {
 public:
 	CAudioPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCritSec* section);
