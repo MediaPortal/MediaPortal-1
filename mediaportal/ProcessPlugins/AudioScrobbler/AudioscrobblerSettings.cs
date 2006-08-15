@@ -68,21 +68,23 @@ namespace MediaPortal.AudioScrobbler
         else
         {
           textBoxASUsername.Text = tmpuser;
-          //EncryptDecrypt Crypter = new EncryptDecrypt();
-          //string tmpPass;
-          //tmpPass = xmlreader.GetValueAsString("audioscrobbler", "pass", "");
-          //if (tmpPass != String.Empty)
-          //{
-          //  try
-          //  {
-          //    EncryptDecrypt DCrypter = new EncryptDecrypt();
-          //    maskedTextBoxASPassword.Text = DCrypter.Decrypt(tmpPass);
-          //  }
-          //  catch (Exception)
-          //  {
-          //    //Log.Write("Audioscrobbler: Password decryption failed {0}", ex.Message);
-          //  }
-          //}
+          MusicDatabase mdb = new MusicDatabase();
+          tmppass = mdb.AddScrobbleUserPassword(Convert.ToString(mdb.AddScrobbleUser(tmpuser)), "");
+
+          EncryptDecrypt Crypter = new EncryptDecrypt();
+
+          if (tmppass != String.Empty)
+          {
+            try
+            {
+              EncryptDecrypt DCrypter = new EncryptDecrypt();
+              maskedTextBoxASPassword.Text = DCrypter.Decrypt(tmppass);
+            }
+            catch (Exception)
+            {
+              //Log.Write("Audioscrobbler: Password decryption failed {0}", ex.Message);
+            }
+          }
 
           CheckOrSetDefaultDBSettings(tmpuser);
           // run twice for now - 1st run = inserting -1 / 2nd run = setting defaults
@@ -90,11 +92,6 @@ namespace MediaPortal.AudioScrobbler
 
           int tmpNMode = 1;
           int tmpRand = 77;
-          MusicDatabase mdb = new MusicDatabase();
-          //Log.Write("DEBUG **** : {0}", tmpuser);
-          tmppass = mdb.AddScrobbleUserPassword(Convert.ToString(mdb.AddScrobbleUser(tmpuser)), "");
-          //Log.Write("DEBUG **** : {0}", tmppass);
-          maskedTextBoxASPass.Text = tmppass;
 
           checkBoxLogVerbose.Checked = (mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(tmpuser)), "iDebugLog", -1) == 1) ? true : false;
           tmpRand = mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(tmpuser)), "iRandomness", -1);
