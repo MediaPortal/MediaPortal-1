@@ -49,9 +49,10 @@ namespace MediaPortal.GUI.Music
     {
       Similar = 0,
       Neighbours = 1,
-      Tags = 2,
-      Recent = 3,      
-      //Random = 4,
+      Friends = 2,
+      Tags = 3,
+      Recent = 4,      
+      Random = 5,
     }
 
     #region Base variabeles
@@ -106,12 +107,17 @@ namespace MediaPortal.GUI.Music
       {
         _enableScrobbling = xmlreader.GetValueAsBool("plugins", "Audioscrobbler", false);
         //ScrobblerOn = xmlreader.GetValueAsBool("audioscrobbler", "scrobbledefault", false);
-        _maxScrobbledArtistsForSongs = xmlreader.GetValueAsInt("audioscrobbler", "similarartistscount", 3);
-        _maxScrobbledSongsPerArtist = xmlreader.GetValueAsInt("audioscrobbler", "tracksperartistscount", 1);
+        //_maxScrobbledArtistsForSongs = xmlreader.GetValueAsInt("audioscrobbler", "similarartistscount", 3);
+        //_maxScrobbledSongsPerArtist = xmlreader.GetValueAsInt("audioscrobbler", "tracksperartistscount", 1);
         _currentScrobbleUser = xmlreader.GetValueAsString("audioscrobbler", "user", "Username");
       }
       MusicDatabase mdb = new MusicDatabase();
       ScrobblerOn = (mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(_currentScrobbleUser)), "iScrobbleDefault", -1) == 1) ? true : false;
+      _maxScrobbledArtistsForSongs = mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(_currentScrobbleUser)), "iAddArtists", -1);
+      _maxScrobbledSongsPerArtist = mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(_currentScrobbleUser)), "iAddTracks", -1);
+      // make sure it has valid defaults
+      _maxScrobbledArtistsForSongs = (_maxScrobbledArtistsForSongs > 0) ? _maxScrobbledArtistsForSongs : 3;
+      _maxScrobbledSongsPerArtist = (_maxScrobbledSongsPerArtist > 0) ? _maxScrobbledSongsPerArtist : 1;
       ascrobbler = new AudioscrobblerUtils();
       ScrobbleLock = new object();
       //added by Sam
@@ -279,6 +285,14 @@ namespace MediaPortal.GUI.Music
               break;
 
             case ScrobbleMode.Neighbours:
+              currentScrobbleMode = ScrobbleMode.Friends;
+              btnScrobbleMode.Label = GUILocalizeStrings.Get(33003);
+              //if (_enableScrobbling)
+              //  shouldContinue = false;
+              //else
+                shouldContinue = true;
+              break;
+            case ScrobbleMode.Friends:
               currentScrobbleMode = ScrobbleMode.Tags;
               btnScrobbleMode.Label = GUILocalizeStrings.Get(33003);
               shouldContinue = true;
@@ -286,9 +300,17 @@ namespace MediaPortal.GUI.Music
             case ScrobbleMode.Tags:
               currentScrobbleMode = ScrobbleMode.Recent;
               btnScrobbleMode.Label = GUILocalizeStrings.Get(33004);
-              shouldContinue = true;
+              //if (_enableScrobbling)
+              //  shouldContinue = false;
+              //else
+                shouldContinue = true;
               break;
             case ScrobbleMode.Recent:
+              currentScrobbleMode = ScrobbleMode.Random;
+              btnScrobbleMode.Label = GUILocalizeStrings.Get(33001);
+              shouldContinue = false;
+              break;
+            case ScrobbleMode.Random:
               currentScrobbleMode = ScrobbleMode.Similar;
               btnScrobbleMode.Label = GUILocalizeStrings.Get(33001);
               shouldContinue = false;
