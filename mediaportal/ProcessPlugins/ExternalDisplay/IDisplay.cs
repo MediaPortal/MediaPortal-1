@@ -1,3 +1,5 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
  *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.Drawing;
@@ -75,16 +79,43 @@ namespace ProcessPlugins.ExternalDisplay
         /// <param name="backLight">Backlight on?</param>
         /// <param name="contrast">Contrast</param>
         void Setup(string port, int lines, int cols, int delay, int linesG, int colsG, int timeG, bool backLight,
-                        int contrast);
+                   int contrast);
 
         /// <summary>
         /// Initializes display
         /// </summary>
         void Initialize();
 
+        /// <summary>
+        /// Cleans up all your mess.  
+        /// </summary>
+        /// <remarks>
+        /// The plugin will call this method when MP shuts down.  So here is the place to clear the display and 
+        /// close any open ports you use.
+        /// </remarks>
         void CleanUp();
-        
+
+        /// <summary>
+        /// Returns whether the display is disabled.
+        /// </summary>
+        /// <value>A <b>bool</b> indicating whether the display is disabled or not.</value>
+        /// <seealso cref="ErrorMessage"/>
+        /// <remarks>
+        /// The plugin configuration will create an instance of each display it knows of, so it is important 
+        /// to try and catch as much errors as possible that could occur during the display initialization (driver not
+        /// installed, port not found, etc...).  If any problems occur set the IsDisabled property to true.  This will
+        /// prohibit the user from choosing this display.  The value of the <see cref="ErrorMessage"/> property 
+        /// will be displayed to the user.
+        /// </remarks>
         bool IsDisabled { get; }
+
+        /// <summary>
+        /// Returns the reason why the display was disabled.
+        /// </summary>
+        /// <value>
+        /// The errormessage to display to the user.
+        /// </value>
+        /// <seealso cref="IsDisabled"/>
         string ErrorMessage { get; }
 
         /// <summary>
@@ -93,7 +124,7 @@ namespace ProcessPlugins.ExternalDisplay
         /// <param name="customCharacters">A 2 dimensional array of integers.  The first dimension represents
         /// the characters, the second array the lines for each character</param>
         void SetCustomCharacters(int[][] customCharacters);
-        
+
         /// <summary>
         /// Draws an image on the display
         /// </summary>
