@@ -724,18 +724,15 @@ public class MediaPortalApp : D3DApp, IRender
       }
     }
 
-    if (Recorder.Running) return;
-    if (_onResumeRunning)
+    if (!Recorder.Running && !_onResumeRunning)
     {
-      _log.Info("Main: OnResume - Recorder.Running: {0}", Recorder.Running);
-      return;
-    }
-    _onResumeRunning = true;
-    _log.Info("Main: Starting recorder");
-    Recorder.Start();
-    if (turnMonitorOn)
-    {
-      SetThreadExecutionState(oldState);
+      _onResumeRunning = true;
+      _log.Info("Main: Starting recorder");
+      Recorder.Start();
+      if (turnMonitorOn)
+      {
+        SetThreadExecutionState(oldState);
+      }
     }
 
     InputDevices.Init();
