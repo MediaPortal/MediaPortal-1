@@ -186,7 +186,7 @@ namespace MediaPortal.Configuration.Sections
       // This call is required by the Windows Form Designer.
       InitializeComponent();
       views = new ArrayList();
-      FileInfo fi = new FileInfo("MusicViews.xml");
+      FileInfo fi = new FileInfo(base._config.Get(Config.Options.ConfigPath) + "MusicViews.xml");
       if (fi.Exists)
       {
         try
@@ -632,7 +632,7 @@ namespace MediaPortal.Configuration.Sections
       if (settingsChanged)
         try
         {
-          using (FileStream fileStream = new FileStream("musicViews.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
+          using (FileStream fileStream = new FileStream(base._config.Get(Config.Options.ConfigPath) + "musicViews.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
           {
             SoapFormatter formatter = new SoapFormatter();
             formatter.Serialize(fileStream, views);

@@ -82,6 +82,7 @@ namespace MediaPortal.Configuration
     private DirectInputRemote dinputRemote;
 
     protected ILog _log;
+    protected IConfig _config;
     //
     // Hashtable where we store each added tree node/section for faster access
     //
@@ -98,6 +99,7 @@ namespace MediaPortal.Configuration
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
 
       _log.Info("SettingsForm constructor");
       //
@@ -118,7 +120,7 @@ namespace MediaPortal.Configuration
       //
 
       string strLanguage;
-      using (Settings xmlreader = new Settings("MediaPortal.xml"))
+      using (Settings xmlreader = new Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         strLanguage = xmlreader.GetValueAsString("skin", "language", "English");
       }
@@ -686,7 +688,7 @@ namespace MediaPortal.Configuration
     {
       int MaximumShares = 20;
       //Do we have 1 or more music,picture,video shares?
-      using (Settings xmlreader = new Settings("MediaPortal.xml"))
+      using (Settings xmlreader = new Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         string playlistFolder = xmlreader.GetValueAsString("music", "playlists", "");
         if (playlistFolder == String.Empty)

@@ -108,6 +108,7 @@ namespace MediaPortal.Util
 
     static char[] crypt = new char[10] { 'G', 'D', 'J', 'S', 'I', 'B', 'T', 'P', 'W', 'Q' };
     static ILog _log;
+    static IConfig _config;
 
     // singleton. Dont allow any instance of this class
     private Utils()
@@ -118,8 +119,9 @@ namespace MediaPortal.Util
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         m_bHideExtensions = xmlreader.GetValueAsBool("general", "hideextensions", true);
 

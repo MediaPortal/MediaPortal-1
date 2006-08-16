@@ -38,6 +38,7 @@ using MediaPortal.Util;
 using MediaPortal.GUI.Library;
 using MediaPortal.Database;
 using MediaPortal.Music.Database;
+using MediaPortal.Utils.Services;
 #pragma warning disable 108
 
 namespace MediaPortal.Configuration.Sections
@@ -136,7 +137,7 @@ namespace MediaPortal.Configuration.Sections
         /// </summary>
         public override void LoadSettings()
         {
-            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
             {
                 buildThumbsCheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "buildThumbs", false);
                 folderAsAlbumCheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "treatFolderAsAlbum", false);
@@ -149,7 +150,7 @@ namespace MediaPortal.Configuration.Sections
         /// </summary>
         public override void SaveSettings()
         {
-            using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+          using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
             {
                 xmlwriter.SetValueAsBool("musicfiles", "buildThumbs", buildThumbsCheckBox.Checked);
 

@@ -31,6 +31,7 @@ using System.Windows.Forms;
 
 using MediaPortal.RedEyeIR;
 using MediaPortal.GUI.Library;
+using MediaPortal.Utils.Services;
 #pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
@@ -91,7 +92,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         inputCheckBox.Checked = xmlreader.GetValueAsString("RedEye", "internal", "false") == "true";
         CommandDelayCombo.Text = xmlreader.GetValueAsString("RedEye", "delay", "300");
@@ -102,7 +103,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         xmlwriter.SetValue("RedEye", "internal", inputCheckBox.Checked ? "true" : "false");
         xmlwriter.SetValue("RedEye", "commport", CommPortCombo.Text);

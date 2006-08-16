@@ -32,14 +32,16 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Globalization;
 using MediaPortal.Util;
+using MediaPortal.Utils.Services;
+
 #pragma warning disable 108
 
 namespace MediaPortal.Configuration.Sections
 {
   public class Skin : MediaPortal.Configuration.SectionSettings
   {
-    const string SkinDirectory = @"skin\";
-    const string LanguageDirectory = @"language\";
+    private  string SkinDirectory; 
+    private string LanguageDirectory; 
 
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxAppearance;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxSkin;
@@ -63,7 +65,8 @@ namespace MediaPortal.Configuration.Sections
     public Skin( string name )
       : base(name)
     {
-
+      SkinDirectory = base._config.Get(MediaPortal.Utils.Services.Config.Options.SkinPath);
+      LanguageDirectory = base._config.Get(MediaPortal.Utils.Services.Config.Options.LanguagePath);
       // This call is required by the Windows Form Designer.
       InitializeComponent();
 
@@ -133,7 +136,7 @@ namespace MediaPortal.Configuration.Sections
 
         foreach ( string folder in folders )
         {
-          string fileName = folder.Substring(@"language\".Length);
+          string fileName = folder.Substring(folder.LastIndexOf(@"\") + 1);
 
           //
           // Exclude cvs folder
@@ -226,7 +229,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void LoadSettings()
     {
-      using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml") )
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         checkBoxUsePrefix.Checked = xmlreader.GetValueAsBool("general", "myprefix", true);
         checkBoxlangRTL.Checked = xmlreader.GetValueAsBool("skin", "rtllang", false);
@@ -251,7 +254,7 @@ namespace MediaPortal.Configuration.Sections
     {
       if ( listViewAvailableSkins.SelectedItems.Count == 0 )
         return;
-      using ( MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml") )
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         string prevSkin = xmlwriter.GetValueAsString("skin", "name", "BlueTwo");
         if ( prevSkin != listViewAvailableSkins.SelectedItems[0].Text )

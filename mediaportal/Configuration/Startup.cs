@@ -38,6 +38,9 @@ namespace MediaPortal.Configuration
   /// </summary>
   public class Startup
   {
+    private static ILog log;
+    private static IConfig _config;
+
     enum StartupMode
     {
       Normal,
@@ -53,7 +56,19 @@ namespace MediaPortal.Configuration
     /// <param name="arguments"></param>
     public Startup(string[] arguments)
     {
-      if (!System.IO.File.Exists("mediaportal.xml"))
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _config = new Config(Application.StartupPath);
+      if (!_config.LoadConfig())
+      {
+        MessageBox.Show("Missing or Invalid MediaPortalPath.xml file. MediaPortal cannot run without that file.", "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        return;
+      }
+      services.Add<IConfig>(_config);
+
+      log = new MediaPortal.Utils.Services.Log("Configuration", MediaPortal.Utils.Services.Log.Level.Debug);
+      services.Add<ILog>(log);
+
+      if (!System.IO.File.Exists(_config.Get(Config.Options.ConfigPath) + "mediaportal.xml"))
         startupMode = StartupMode.Wizard;
 
       else if (arguments != null)
@@ -85,18 +100,6 @@ namespace MediaPortal.Configuration
     /// </summary>
     public void Start()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      IConfig _config = new Config(Application.StartupPath);
-      if (!_config.LoadConfig())
-      {
-        MessageBox.Show("Missing or Invalid MediaPortalPath.xml file. MediaPortal cannot run without that file.", "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        return;
-      }
-      services.Add<IConfig>(_config);
-
-      ILog log = new MediaPortal.Utils.Services.Log("Configuration", MediaPortal.Utils.Services.Log.Level.Debug);
-      services.Add<ILog>(log);
-
       log.Info("Configuration is starting up");
 
       FileInfo mpFi = new FileInfo(Assembly.GetExecutingAssembly().Location);

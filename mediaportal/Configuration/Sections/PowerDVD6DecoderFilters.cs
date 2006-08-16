@@ -30,6 +30,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using System.Runtime.InteropServices;
+using MediaPortal.Utils.Services;
 
 #pragma warning disable 108
 
@@ -609,7 +610,7 @@ namespace MediaPortal.Configuration.Sections
 
           }
         }
-      /*using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      /*using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         xmlwriter.SetValue("videocodec", "", audioRendererComboBox.Text);
       }*/
@@ -621,7 +622,7 @@ namespace MediaPortal.Configuration.Sections
           if (checkBoxUIUseHVA.Checked) regUIUseHVA = 1;
           else regUIUseHVA = 0;
           subkey.SetValue("UIUseHVA", regUIUseHVA);
-          using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+          using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
           {
             xmlwriter.SetValue("videocodec", "cyberlink", regUIUseHVA);
           }

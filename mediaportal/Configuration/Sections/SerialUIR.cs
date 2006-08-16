@@ -30,6 +30,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using MediaPortal.SerialIR;
 using MediaPortal.GUI.Library;
+using MediaPortal.Utils.Services;
 
 #pragma warning disable 108
 
@@ -106,7 +107,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         initialize = false;
         inputCheckBox.Checked = xmlreader.GetValueAsString("SerialUIR", "internal", "false") == "true";
@@ -132,7 +133,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         xmlwriter.SetValue("SerialUIR", "internal", inputCheckBox.Checked ? "true" : "false");
         xmlwriter.SetValue("SerialUIR", "baudrate", BaudRateCombo.Text);

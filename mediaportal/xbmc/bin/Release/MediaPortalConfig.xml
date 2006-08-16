@@ -39,6 +39,10 @@
   <Dir id = "SkinPath">
     <Path>skin\</Path>
   </Dir>
+    <!-- The Path were the Language files are located -->
+  <Dir id = "LanguagePath">
+    <Path>language\</Path>
+  </Dir>
   <!-- The Path for the databases -->
   <Dir id = "DatabasePath">
     <Path>database\</Path>

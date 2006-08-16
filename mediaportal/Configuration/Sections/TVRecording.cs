@@ -27,6 +27,7 @@ using System;
 using System.Windows.Forms;
 using System.Globalization;
 using MediaPortal.Util;
+using MediaPortal.Utils.Services;
 #pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
@@ -667,7 +668,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         startTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("capture", "prerecord", 5));
         endTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("capture", "postrecord", 5));
@@ -695,7 +696,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         xmlwriter.SetValue("capture", "prerecord", startTextBox.Text);
         xmlwriter.SetValue("capture", "postrecord", endTextBox.Text);
@@ -774,7 +775,7 @@ namespace MediaPortal.Configuration.Sections
           }
         }
         labelQuota.Text = MediaPortal.Util.Utils.GetSize((long)quota);
-        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
         {
           long longQuota = (long)quota;
           longQuota /= 1024; // kbyte
@@ -783,7 +784,7 @@ namespace MediaPortal.Configuration.Sections
       }
       else
       {
-        using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
         {
           string quotaText = xmlReader.GetValueAsString("freediskspace", drive[0].ToString(), "51200");
           float quota = (float)Int32.Parse(quotaText);

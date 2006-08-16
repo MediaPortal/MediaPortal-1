@@ -35,7 +35,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
 using MediaPortal.TV.Scanning;
-
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Configuration.Sections
 {
@@ -269,7 +269,7 @@ namespace MediaPortal.Configuration.Sections
               }
           }
       }
-      string[] files = System.IO.Directory.GetFiles(System.IO.Directory.GetCurrentDirectory() + @"\Tuningparameters", "*.dvbc");
+      string[] files = System.IO.Directory.GetFiles(base._config.Get(Config.Options.ConfigPath) + "Tuningparameters", "*.dvbc");
       Array.Sort(files);
       foreach (string file in files)
       {

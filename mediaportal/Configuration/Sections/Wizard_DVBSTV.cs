@@ -838,7 +838,7 @@ namespace MediaPortal.Configuration.Sections
     protected override String[] GetScanParameters()
     {
       int m_diseqcLoops = 1;
-      string filename = String.Format(@"database\card_{0}.xml", _card.FriendlyName);
+      string filename = String.Format(base._config.Get(Config.Options.DatabasePath) + "card_{0}.xml", _card.FriendlyName);
       if (useLNB2.Checked) m_diseqcLoops++;
       if (useLNB3.Checked) m_diseqcLoops++;
       if (useLNB4.Checked) m_diseqcLoops++;
@@ -899,7 +899,7 @@ namespace MediaPortal.Configuration.Sections
         return;
       }
       _log.Info("load DVBS:{0}", _card.FriendlyName);
-      string filename = String.Format(@"database\card_{0}.xml", _card.FriendlyName);
+      string filename = String.Format(base._config.Get(Config.Options.DatabasePath) + "card_{0}.xml", _card.FriendlyName);
 
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename))
@@ -1081,7 +1081,7 @@ namespace MediaPortal.Configuration.Sections
     public override void SaveSettings()
     {
       _log.Info("Save DVBS:{0}", _card.FriendlyName);
-      string filename = String.Format(@"database\card_{0}.xml", _card.FriendlyName);
+      string filename = String.Format(base._config.Get(Config.Options.DatabasePath) + "card_{0}.xml", _card.FriendlyName);
       // save settings
 
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(filename))

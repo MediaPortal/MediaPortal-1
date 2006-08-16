@@ -32,6 +32,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using System.Runtime.InteropServices;
+using MediaPortal.Utils.Services;
 
 #pragma warning disable 108
 
@@ -502,7 +503,7 @@ namespace MediaPortal.Configuration.Sections
             regValue = (Int32)subkey.GetValue("EnableDXVA", 1);
             if (regValue == 0) checkBoxDxVA.Checked = false;
             if (regValue == 1) checkBoxDxVA.Checked = true;
-            using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+            using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
             {
               xmlwriter.SetValue("videocodec", "nvidia", regValue);
             }

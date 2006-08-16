@@ -35,6 +35,7 @@ namespace MediaPortal.Utils.Services
       BasePath,
       LogPath,
       SkinPath,
+      LanguagePath,
       DatabasePath,
       PluginsPath,
       ThumbsPath,

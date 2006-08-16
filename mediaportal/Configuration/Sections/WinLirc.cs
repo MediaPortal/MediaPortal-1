@@ -31,6 +31,7 @@ using System.Windows.Forms;
 
 using MediaPortal.WINLIRC;
 using MediaPortal.GUI.Library;
+using MediaPortal.Utils.Services;
 #pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
@@ -81,7 +82,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         inputCheckBox.Checked = xmlreader.GetValueAsString("WINLIRC", "enabled", "true") == "true";
         pathToWinlircTextBox.Text = xmlreader.GetValueAsString("WINLIRC", "winlircpath", "");
@@ -97,7 +98,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         xmlwriter.SetValue("WINLIRC", "enabled", inputCheckBox.Checked ? "true" : "false");
         xmlwriter.SetValue("WINLIRC", "winlircpath", pathToWinlircTextBox.Text);

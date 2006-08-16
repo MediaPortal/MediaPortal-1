@@ -337,9 +337,9 @@ namespace MediaPortal.Configuration.Sections
 			ServiceProvider services = GlobalServiceProvider.Instance;
 			_log = services.Get<ILog>();
 
-			if (File.Exists("capturecards.xml"))
+      if (File.Exists(base._config.Get(Config.Options.ConfigPath) + "capturecards.xml"))
       {
-        using (FileStream fileStream = new FileStream("capturecards.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+        using (FileStream fileStream = new FileStream(base._config.Get(Config.Options.ConfigPath) + "capturecards.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
         {
           try
           {
@@ -374,7 +374,7 @@ namespace MediaPortal.Configuration.Sections
 
     void SaveCaptureCards(ArrayList availableCards)
     {
-      using (FileStream fileStream = new FileStream("capturecards.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
+      using (FileStream fileStream = new FileStream(base._config.Get(Config.Options.ConfigPath) + "capturecards.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
       {
         //
         // Create Soap Formatter
@@ -468,9 +468,9 @@ namespace MediaPortal.Configuration.Sections
             cd.Priority = 10;
             captureCards.Add(cd);
 
-            string filename = String.Format(@"database\card_{0}.xml", cd.FriendlyName);
+            string filename = String.Format(base._config.Get(Config.Options.DatabasePath) + "card_{0}.xml", cd.FriendlyName);
             // save settings for get the filename in mp.xml
-            using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+            using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
             {
               xmlwriter.SetValue("dvb_ts_cards", "filename", filename);
             }
@@ -497,9 +497,9 @@ namespace MediaPortal.Configuration.Sections
             cd.Priority = 10;
             captureCards.Add(cd);
 
-            string filename = String.Format(@"database\card_{0}.xml", cd.FriendlyName);
+            string filename = String.Format(base._config.Get(Config.Options.DatabasePath) + "card_{0}.xml", cd.FriendlyName);
             // save settings for get the filename in mp.xml
-            using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+            using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
             {
               xmlwriter.SetValue("dvb_ts_cards", "filename", filename);
             }

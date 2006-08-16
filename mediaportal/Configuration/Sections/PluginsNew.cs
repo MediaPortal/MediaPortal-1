@@ -254,7 +254,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
-      using (Settings xmlreader = new Settings("MediaPortal.xml"))
+      using (Settings xmlreader = new Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
         foreach (ListViewItem item in listViewPlugins.Items)
         {
           ItemTag itemTag = (ItemTag)item.Tag;
@@ -288,7 +288,7 @@ namespace MediaPortal.Configuration.Sections
     public override void SaveSettings()
     {
       LoadAll();
-      using (Settings xmlwriter = new Settings("MediaPortal.xml"))
+      using (Settings xmlwriter = new Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
         foreach (ListViewItem item in listViewPlugins.Items)
         {
           ItemTag itemTag = (ItemTag)item.Tag;

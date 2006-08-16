@@ -29,6 +29,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using MediaPortal.Util;
+using MediaPortal.Utils.Services;
 
 #pragma warning disable 108
 
@@ -55,7 +56,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         string defaultShare = xmlreader.GetValueAsString("movies", "default", "");
         RememberLastFolder = xmlreader.GetValueAsBool("movies", "rememberlastfolder", false);
@@ -110,7 +111,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         string defaultShare = String.Empty;
 
