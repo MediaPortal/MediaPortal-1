@@ -749,10 +749,6 @@
             </ScrollViewer>
           </Border>
           <ControlTemplate.Triggers>
-            
-            <Trigger Property="IsGrouping" Value="True">
-              <Setter Property="ScrollViewer.CanContentScroll" Value="False"/>
-            </Trigger>
           </ControlTemplate.Triggers>
         </ControlTemplate>
       </Setter.Value>
