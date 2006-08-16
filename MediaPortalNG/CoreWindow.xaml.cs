@@ -77,7 +77,7 @@ namespace MediaPortal
             //FileInfo fi;
 
             //StreamWriter sw=File.CreateText("E:\\skinImages1.xaml");
-            //DirectoryInfo di = new DirectoryInfo("E:\\MPNG\\bin\\Debug\\BlueTwo\\Media\\");
+            //DirectoryInfo di = new DirectoryInfo("E:\\MPNG\\bin\\Debug\\Media\");
             //if (di.Exists)
             //{
             //    FileInfo[] fis=di.GetFiles("*.*");
@@ -98,11 +98,11 @@ namespace MediaPortal
             //                height = ((int)(height * bmp.DpiY)) / 96;
 
             //            }
-            //            if (f.Name == "hover_my pictures.png")
+            //            if (f.Name == "hover_my pictures.png}")
             //            {
             //                int a = 0;
             //            }
-            //            sw.WriteLine("<BitmapImage x:Key=" + ((char)34) + f.Name + ((char)34) + " UriSource=" + ((char)34) + "BlueTwo\\Media\\" + f.Name + ((char)34) + " DecodePixelWidth="+chr34+width.ToString()+chr34+" DecodePixelHeight="+chr34+height.ToString()+chr34+"/>");
+            //            sw.WriteLine("<BitmapImage x:Key=" + ((char)34) + f.Name + ((char)34) + " UriSource=" + ((char)34) + "Media\" + f.Name + ((char)34) + " DecodePixelWidth="+chr34+width.ToString()+chr34+" DecodePixelHeight="+chr34+height.ToString()+chr34+"/>");
             //        }
             //        catch { }
             //    }
@@ -173,7 +173,7 @@ namespace MediaPortal
             //    FileInfo[] fis = di.GetFiles("*.*");
             //    foreach (FileInfo f in fis)
             //    {
-            //        sw.WriteLine("<BitmapImage x:Key=" + ((char)34) + f.Name + ((char)34) + " UriSource=" + ((char)34) + "BlueTwo\Media\\" + f.Name + ((char)34) + "/>");
+            //        sw.WriteLine("<BitmapImage x:Key=" + ((char)34) + f.Name + ((char)34) + " UriSource=" + ((char)34) + "Media\\" + f.Name + ((char)34) + "/>");
             //    }
             //}
 
@@ -426,7 +426,7 @@ namespace MediaPortal
                 else
                     texture = FindNodeByName("texture", parent);
 
-                if (FindNodeByName("texture", parent) == "background.png")
+                if (FindNodeByName("texture", parent) == "background.png}")
                     return;//skin background image
 
                 sw.WriteLine("  <!-- " + FindNodeByName("description", parent) + " -->");

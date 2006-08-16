@@ -1,6 +1,6 @@
-﻿<Page xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+<Page xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      Style="{StaticResource PageBackground}" 
+      Style="{DynamicResource PageBackground}" 
       xmlns:ctrl="clr-namespace:MediaPortal"
       x:Class="MediaPortal.MyPictures"
       Name="mypictures"

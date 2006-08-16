@@ -1,11 +1,12 @@
-﻿<Page 
+<Page 
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   Style="{StaticResource PageBackground}"
   x:Class="MediaPortal.HomeExtension"
-  xmlns:ctrl="clr-namespace:MediaPortal">
+  
+  xmlns:ctrl="clr-namespace:MediaPortal" Width="720" Height="576" Opacity="0.967268992449301">
+  
   <Page.Resources>
-
  
     <!-- Items-Style -->
     <Style x:Key="MainMenuItemsSmall" TargetType="{x:Type ListBoxItem}">
@@ -79,27 +80,7 @@
               </StackPanel>
             </Border>
             <ControlTemplate.Triggers>
-              <Trigger Property="IsSelected" Value="True">
-                <Trigger.EnterActions>
-                  <BeginStoryboard>
-                    <Storyboard TargetName="HoverImage" TargetProperty="Opacity">
-                      <DoubleAnimation 
-                        From="0.7" To="1.0" 
-                        Duration="0:0:2" 
-                        AutoReverse="True" 
-                        RepeatBehavior="Forever" />
-                    </Storyboard>
-                  </BeginStoryboard>
-                  <BeginStoryboard>
-                    <Storyboard TargetName="PluginNameText" TargetProperty="FontSize">
-                      <DoubleAnimation 
-                        From="10" To="24" 
-                        Duration="0:0:1" 
-                        AutoReverse="False"/>
-                    </Storyboard>
-                  </BeginStoryboard>
-                </Trigger.EnterActions>
-              </Trigger>
+ 
             </ControlTemplate.Triggers>
           </ControlTemplate>
         </Setter.Value>
@@ -196,15 +177,12 @@
               </ScrollViewer>
             </Border>
             <ControlTemplate.Triggers>
-
-              <Trigger Property="IsGrouping" Value="True">
-                <Setter Property="ScrollViewer.CanContentScroll" Value="False"/>
-              </Trigger>
             </ControlTemplate.Triggers>
           </ControlTemplate>
         </Setter.Value>
       </Setter>
     </Style>
+ 
 
   </Page.Resources>
 
@@ -216,10 +194,9 @@
               Canvas.Left="30"
               Width="720"
               Height="576"
-              Style="{StaticResource MainMenuControl}"
-              >
-
-    </ListView>
+              Style="{DynamicResource MainMenuControl}"
+              Background="{x:Null}"
+              />
 
 
 
@@ -228,7 +205,7 @@
     <Image
     Name="id1_0"
       Canvas.Top="120"
-      Canvas.Left="0"
+      Canvas.Left="-3"
       Width="310"
       Height="375"
       Source="{DynamicResource background_glass_hoover_area.png}"
@@ -271,8 +248,7 @@
       
       />
 
-
-    <Path 
+  <Path 
       Opacity="0.3" 
       Canvas.Top="370" 
       Canvas.Left="50" 
@@ -290,6 +266,7 @@
           Softness="0.35" />
       </Path.BitmapEffect>
     </Path>
+  
 
   </Canvas>
 </Page>

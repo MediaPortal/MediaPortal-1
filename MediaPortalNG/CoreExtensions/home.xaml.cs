@@ -234,7 +234,7 @@ namespace MediaPortal
         void HomeExtension_Loaded(object sender, RoutedEventArgs e)
         {
 
-            _skinMediaPath = System.IO.Directory.GetCurrentDirectory() + @"\BlueTwo\BlueTwo\Media\";
+            _skinMediaPath = System.IO.Directory.GetCurrentDirectory() + @"\Media\";
             this.Opacity = 1.0f;
             //
             

@@ -13,7 +13,7 @@
   <Style x:Key="PageBackground" TargetType="{x:Type Page}">
     <Setter Property="Background">
       <Setter.Value>
-        <ImageBrush ImageSource="BlueTwo\\Media\\background.png"/>
+        <ImageBrush ImageSource="{DynamicResource background.png}"/>
       </Setter.Value>
     </Setter>
   </Style>
@@ -57,7 +57,7 @@
               </MultiTrigger.Conditions>
               <Setter TargetName="Border" Property="Background">
                 <Setter.Value>
-                  <ImageBrush ImageSource="BlueTwo\\Media\\arrow_round_up_focus.png" Stretch="Uniform"/>
+                  <ImageBrush ImageSource="{DynamicResource arrow_round_up_focus.png}" Stretch="Uniform"/>
                 </Setter.Value>
               </Setter>
             </MultiTrigger>
@@ -68,7 +68,7 @@
               </MultiTrigger.Conditions>
               <Setter TargetName="Border" Property="Background">
                 <Setter.Value>
-                  <ImageBrush ImageSource="BlueTwo\\Media\\arrow_round_down_focus.png" Stretch="Uniform"/>
+                  <ImageBrush ImageSource="{DynamicResource arrow_round_down_focus.png}" Stretch="Uniform"/>
                 </Setter.Value>
               </Setter>
             </MultiTrigger>
@@ -79,7 +79,7 @@
               </MultiTrigger.Conditions>
               <Setter TargetName="Border" Property="Background">
                 <Setter.Value>
-                  <ImageBrush ImageSource="BlueTwo\\Media\\arrow_round_up_nofocus.png" Stretch="Uniform"/>
+                  <ImageBrush ImageSource="{DynamicResource arrow_round_up_nofocus.png}" Stretch="Uniform"/>
                 </Setter.Value>
               </Setter>
             </MultiTrigger>
@@ -90,7 +90,7 @@
               </MultiTrigger.Conditions>
               <Setter TargetName="Border" Property="Background">
                 <Setter.Value>
-                  <ImageBrush ImageSource="BlueTwo\\Media\\arrow_round_down_nofocus.png" Stretch="Uniform"/>
+                  <ImageBrush ImageSource="{DynamicResource arrow_round_down_nofocus.png}" Stretch="Uniform"/>
                 </Setter.Value>
               </Setter>
             </MultiTrigger>
@@ -124,14 +124,14 @@
             <Trigger Property="IsMouseOver" Value="true">
               <Setter TargetName="Border" Property="Background">
                 <Setter.Value>
-                  <ImageBrush ImageSource="BlueTwo\\Media\\arrow_round_left_focus.png" Stretch="Uniform"/>
+                  <ImageBrush ImageSource="{DynamicResource arrow_round_left_focus.png}" Stretch="Uniform"/>
                 </Setter.Value>
               </Setter>
             </Trigger>
             <Trigger Property="IsMouseOver" Value="false">
               <Setter TargetName="Border" Property="Background">
                 <Setter.Value>
-                  <ImageBrush ImageSource="BlueTwo\\Media\\arrow_round_left_nofocus.png" Stretch="Uniform"/>
+                  <ImageBrush ImageSource="{DynamicResource arrow_round_left_nofocus.png}" Stretch="Uniform"/>
                 </Setter.Value>
               </Setter>
             </Trigger>
@@ -165,14 +165,14 @@
             <Trigger Property="IsMouseOver" Value="true">
               <Setter TargetName="Border" Property="Background">
                 <Setter.Value>
-                  <ImageBrush ImageSource="BlueTwo\\Media\\arrow_round_right_focus.png" Stretch="Uniform"/>
+                  <ImageBrush ImageSource="{DynamicResource arrow_round_right_focus.png}" Stretch="Uniform"/>
                 </Setter.Value>
               </Setter>
             </Trigger>
             <Trigger Property="IsMouseOver" Value="false">
               <Setter TargetName="Border" Property="Background">
                 <Setter.Value>
-                  <ImageBrush ImageSource="BlueTwo\\Media\\arrow_round_right_nofocus.png" Stretch="Uniform"/>
+                  <ImageBrush ImageSource="{DynamicResource arrow_round_right_nofocus.png}" Stretch="Uniform"/>
                 </Setter.Value>
               </Setter>
             </Trigger>
@@ -186,7 +186,7 @@
     <Setter Property="FocusVisualStyle" Value="{DynamicResource FocusStyle}"/>
     <Setter Property="Background">
       <Setter.Value>
-        <ImageBrush ImageSource="BlueTwo\\Media\\page_up_nofocus.png"/>
+        <ImageBrush ImageSource="{DynamicResource page_up_nofocus.png}"/>
       </Setter.Value>
     </Setter>
     <Setter Property="Template">
@@ -204,7 +204,7 @@
       <Trigger Property="IsMouseOver" Value="true">
         <Setter Property="Background">
           <Setter.Value>
-            <ImageBrush ImageSource="BlueTwo\\Media\\page_up_focus.png" />
+            <ImageBrush ImageSource="{DynamicResource page_up_focus.png}" />
           </Setter.Value>
         </Setter>
       </Trigger>
@@ -215,7 +215,7 @@
     <Setter Property="FocusVisualStyle" Value="{DynamicResource FocusStyle}"/>
     <Setter Property="Background">
       <Setter.Value>
-        <ImageBrush ImageSource="BlueTwo\\Media\\page_down_nofocus.png"/>
+        <ImageBrush ImageSource="{DynamicResource page_down_nofocus.png}"/>
       </Setter.Value>
     </Setter>
     <Setter Property="Template">
@@ -233,7 +233,7 @@
       <Trigger Property="IsMouseOver" Value="true">
         <Setter Property="Background">
           <Setter.Value>
-            <ImageBrush ImageSource="BlueTwo\\Media\\page_down_focus.png" />
+            <ImageBrush ImageSource="{DynamicResource page_down_focus.png}" />
           </Setter.Value>
         </Setter>
       </Trigger>
@@ -246,7 +246,7 @@
     <Setter Property="FocusVisualStyle" Value="{DynamicResource FocusStyle}"/>
     <Setter Property="Background">
       <Setter.Value>
-        <ImageBrush ImageSource="BlueTwo\\Media\\arrow_round_up_nofocus.png"/>
+        <ImageBrush ImageSource="{DynamicResource arrow_round_up_nofocus.png}"/>
       </Setter.Value>
     </Setter>
     <Setter Property="Template">
@@ -264,7 +264,7 @@
       <Trigger Property="IsMouseOver" Value="true">
         <Setter Property="Background">
           <Setter.Value>
-            <ImageBrush ImageSource="BlueTwo\\Media\\arrow_round_up_focus.png" />
+            <ImageBrush ImageSource="{DynamicResource arrow_round_up_focus.png}" />
           </Setter.Value>
         </Setter>
       </Trigger>
@@ -275,7 +275,7 @@
     <Setter Property="FocusVisualStyle" Value="{DynamicResource FocusStyle}"/>
     <Setter Property="Background">
       <Setter.Value>
-        <ImageBrush ImageSource="BlueTwo\\Media\\arrow_round_down_nofocus.png"/>
+        <ImageBrush ImageSource="{DynamicResource arrow_round_down_nofocus.png}"/>
       </Setter.Value>
     </Setter>
     <Setter Property="Template">
@@ -293,7 +293,7 @@
       <Trigger Property="IsMouseOver" Value="true">
         <Setter Property="Background">
           <Setter.Value>
-            <ImageBrush ImageSource="BlueTwo\\Media\\arrow_round_down_focus.png" />
+            <ImageBrush ImageSource="{DynamicResource arrow_round_down_focus.png}" />
           </Setter.Value>
         </Setter>
       </Trigger>
@@ -347,14 +347,14 @@
             <Trigger Property="IsMouseOver" Value="true">
               <Setter TargetName="ListControlPanel" Property="Background">
                 <Setter.Value>
-                  <ImageBrush ImageSource="BlueTwo\\Media\\list_sub_focus.png" />
+                  <ImageBrush ImageSource="{DynamicResource list_sub_focus.png}" />
                 </Setter.Value>
                 </Setter>
             </Trigger>
             <Trigger Property="IsMouseOver" Value="false">
               <Setter TargetName="ListControlPanel" Property="Background">
                 <Setter.Value>
-                  <ImageBrush ImageSource="BlueTwo\\Media\\list_sub_nofocus.png" />
+                  <ImageBrush ImageSource="{DynamicResource list_sub_nofocus.png}" />
                 </Setter.Value>
               </Setter>
             </Trigger>
@@ -401,14 +401,14 @@
             <Trigger Property="IsMouseOver" Value="true">
               <Setter TargetName="ContentRect" Property="Background">
                 <Setter.Value>
-                  <ImageBrush ImageSource="BlueTwo\\Media\\icon_empty_focus.png" Stretch="Uniform"/>
+                  <ImageBrush ImageSource="{DynamicResource icon_empty_focus.png}" Stretch="Uniform"/>
                 </Setter.Value>
               </Setter>
             </Trigger>
             <Trigger Property="IsMouseOver" Value="false">
               <Setter TargetName="ContentRect" Property="Background">
                 <Setter.Value>
-                  <ImageBrush ImageSource="BlueTwo\\Media\\icon_empty_nofocus.png" Stretch="Uniform"/>
+                  <ImageBrush ImageSource="{DynamicResource icon_empty_nofocus.png}" Stretch="Uniform"/>
                 </Setter.Value>
               </Setter>
             </Trigger>
@@ -459,14 +459,14 @@
             <Trigger Property="IsMouseOver" Value="true">
               <Setter TargetName="ContentRect" Property="Background">
                 <Setter.Value>
-                  <ImageBrush ImageSource="BlueTwo\\Media\\icon_empty_focus.png" Stretch="Uniform"/>
+                  <ImageBrush ImageSource="{DynamicResource icon_empty_focus.png}" Stretch="Uniform"/>
                 </Setter.Value>
               </Setter>
             </Trigger>
             <Trigger Property="IsMouseOver" Value="false">
               <Setter TargetName="ContentRect" Property="Background">
                 <Setter.Value>
-                  <ImageBrush ImageSource="BlueTwo\\Media\\icon_empty_nofocus.png" Stretch="Uniform"/>
+                  <ImageBrush ImageSource="{DynamicResource icon_empty_nofocus.png}" Stretch="Uniform"/>
                 </Setter.Value>
               </Setter>
             </Trigger>
@@ -512,21 +512,21 @@
             <Trigger Property="IsMouseOver" Value="true">
               <Setter TargetName="Border" Property="Background">
                 <Setter.Value>
-                  <ImageBrush ImageSource="BlueTwo\\Media\\button_green_focus_165x32.png"/>
+                  <ImageBrush ImageSource="{DynamicResource button_green_focus_165x32.png}"/>
                 </Setter.Value>
               </Setter>
             </Trigger>
             <Trigger Property="IsMouseOver" Value="false">
               <Setter TargetName="Border" Property="Background">
                 <Setter.Value>
-                  <ImageBrush ImageSource="BlueTwo\\Media\\button_green_nofocus_165x32.png"/>
+                  <ImageBrush ImageSource="{DynamicResource button_green_nofocus_165x32.png}"/>
                 </Setter.Value>
               </Setter>
             </Trigger>
             <Trigger Property="IsPressed" Value="true">
               <Setter TargetName="Border" Property="Background">
                 <Setter.Value>
-                  <ImageBrush ImageSource="BlueTwo\\Media\\button_green_focus_165x32.png"/>
+                  <ImageBrush ImageSource="{DynamicResource button_green_focus_165x32.png}"/>
                 </Setter.Value>
               </Setter>
               <Setter TargetName="Border" Property="Opacity" Value="0.5"></Setter>
@@ -583,28 +583,28 @@
             <Trigger Property="IsMouseOver" Value="true">
               <Setter TargetName="Border" Property="Background">
                 <Setter.Value>
-                  <ImageBrush ImageSource="BlueTwo\\Media\\button_green_focus_165x32.png"/>
+                  <ImageBrush ImageSource="{DynamicResource button_green_focus_165x32.png}"/>
                 </Setter.Value>
               </Setter>
             </Trigger>
             <Trigger Property="IsMouseOver" Value="false">
               <Setter TargetName="Border" Property="Background">
                 <Setter.Value>
-                  <ImageBrush ImageSource="BlueTwo\\Media\\button_green_nofocus_165x32.png"/>
+                  <ImageBrush ImageSource="{DynamicResource button_green_nofocus_165x32.png}"/>
                 </Setter.Value>
               </Setter>
             </Trigger>
               <Trigger Property="IsKeyboardFocused" Value="True">
                 <Setter TargetName="Border" Property="Background">
                   <Setter.Value>
-                    <ImageBrush ImageSource="BlueTwo\\Media\\button_green_focus_165x32.png"/>
+                    <ImageBrush ImageSource="{DynamicResource button_green_focus_165x32.png}"/>
                   </Setter.Value>
                 </Setter>              
               </Trigger>
             <Trigger Property="IsPressed" Value="true">
               <Setter TargetName="Border" Property="Background">
                 <Setter.Value>
-                  <ImageBrush ImageSource="BlueTwo\\Media\\button_green_focus_165x32.png"/>
+                  <ImageBrush ImageSource="{DynamicResource button_green_focus_165x32.png}"/>
                 </Setter.Value>
               </Setter>
             </Trigger>
@@ -649,7 +649,7 @@
               </MultiTrigger.Conditions>
               <Setter TargetName="Border" Property="Background">
                 <Setter.Value>
-                  <ImageBrush ImageSource="BlueTwo\\Media\\togglebutton-on-focus.png"/>
+                  <ImageBrush ImageSource="{DynamicResource togglebutton-on-focus.png}"/>
                 </Setter.Value>
               </Setter>
             </MultiTrigger>
@@ -660,7 +660,7 @@
               </MultiTrigger.Conditions>
               <Setter TargetName="Border" Property="Background">
                 <Setter.Value>
-                  <ImageBrush ImageSource="BlueTwo\\Media\\togglebutton-off-focus.png"/>
+                  <ImageBrush ImageSource="{DynamicResource togglebutton-off-focus.png}"/>
                 </Setter.Value>
               </Setter>
             </MultiTrigger>
@@ -671,7 +671,7 @@
               </MultiTrigger.Conditions>
               <Setter TargetName="Border" Property="Background">
                 <Setter.Value>
-                  <ImageBrush ImageSource="BlueTwo\\Media\\togglebutton-on-nofocus.png"/>
+                  <ImageBrush ImageSource="{DynamicResource togglebutton-on-nofocus.png}"/>
                 </Setter.Value>
               </Setter>
             </MultiTrigger>
@@ -682,7 +682,7 @@
               </MultiTrigger.Conditions>
               <Setter TargetName="Border" Property="Background">
                 <Setter.Value>
-                  <ImageBrush ImageSource="BlueTwo\\Media\\togglebutton-off-nofocus.png"/>
+                  <ImageBrush ImageSource="{DynamicResource togglebutton-off-nofocus.png}"/>
                 </Setter.Value>
               </Setter>
             </MultiTrigger>
