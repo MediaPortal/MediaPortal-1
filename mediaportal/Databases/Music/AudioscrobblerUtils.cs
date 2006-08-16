@@ -139,10 +139,24 @@ namespace MediaPortal.Music.Database
       int retval = 0;
       try
       {
-        if (x.TimesPlayed < y.TimesPlayed)
-          retval = 1;
+        if (x.TimesPlayed == null || x.TimesPlayed == 0)
+          //if (y.TimesPlayed != null && y.TimesPlayed >= 0)
+          //{
+          //  return 1;
+          //}
+          //else
+          return 0;
+
+        if (y.TimesPlayed == null || y.TimesPlayed == 0)
+          return 0;
+
+        if (x.TimesPlayed == y.TimesPlayed)
+          return 0;
         else
-          retval = -1;
+          if (x.TimesPlayed < y.TimesPlayed)
+            retval = 1;
+          else
+            retval = -1;
 
         if (retval != 0)
         {
@@ -476,9 +490,9 @@ namespace MediaPortal.Music.Database
             {
               if (myNeighboorsArtists[0].LastFMMatch != String.Empty)
                 myNeighboorsArtists.Sort(CompareSongsByMatch);
-              //else
-              //  if (myNeighboorsArtists[0].TimesPlayed >= 0)
-              //    myNeighboorsArtists.Sort(CompareSongsByTimesPlayed);
+              else
+                if (myNeighboorsArtists[0].TimesPlayed >= 0)
+                  myNeighboorsArtists.Sort(CompareSongsByTimesPlayed);
             }
             // make sure the neighbour has enough top artists
             if (myNeighboorsArtists.Count > _limitRandomListCount)
@@ -523,9 +537,9 @@ namespace MediaPortal.Music.Database
             {
               if (myNeighboorsArtists[0].LastFMMatch != String.Empty)
                 myNeighboorsArtists.Sort(CompareSongsByMatch);
-              //else
-              //  if (myNeighboorsArtists[0].TimesPlayed >= 0)
-              //    myNeighboorsArtists.Sort(CompareSongsByTimesPlayed);
+              else
+                if (myNeighboorsArtists[0].TimesPlayed >= 0)
+                  myNeighboorsArtists.Sort(CompareSongsByTimesPlayed);
             }
 
             // make sure the neighbour has enough top artists
