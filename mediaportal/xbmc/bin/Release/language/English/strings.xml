@@ -5192,6 +5192,14 @@
       <id>33005</id>
       <value>Account: </value>
    </string>
+   <string>
+      <id>33006</id>
+      <value>Scrobble: Friends</value>
+   </string>
+   <string>
+      <id>33007</id>
+      <value>Scrobble: Offline</value>
+   </string>      
                  
    <string>
       <id>100000</id>

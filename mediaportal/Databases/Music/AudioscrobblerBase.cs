@@ -698,14 +698,14 @@ namespace MediaPortal.Music.Database
         if (type_.Length > 9)
         {
           int newInterval = Convert.ToInt32(type_.Substring(9));
-          if (_useDebugLog)
-            logmessage = "last.fm's servers currently allow an interval of: " + Convert.ToString(newInterval) + " sec";
+          logmessage = "last.fm's servers currently allow an interval of: " + Convert.ToString(newInterval) + " sec";
           if (newInterval > 30)
             SUBMIT_INTERVAL = newInterval;
         }
         else
           logmessage = "INTERVAL";
-        Log.Write("AudioscrobblerBase: {0}", logmessage);
+        if (_useDebugLog)
+          Log.Write("AudioscrobblerBase: {0}", logmessage);
       }
       catch (Exception ex)
       {

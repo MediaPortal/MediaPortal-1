@@ -286,10 +286,10 @@ namespace MediaPortal.GUI.Music
 
             case ScrobbleMode.Neighbours:
               currentScrobbleMode = ScrobbleMode.Friends;
-              btnScrobbleMode.Label = GUILocalizeStrings.Get(33003);
-              //if (_enableScrobbling)
-              //  shouldContinue = false;
-              //else
+              btnScrobbleMode.Label = GUILocalizeStrings.Get(33006);
+              if (_enableScrobbling)
+                shouldContinue = false;
+              else
                 shouldContinue = true;
               break;
             case ScrobbleMode.Friends:
@@ -307,8 +307,8 @@ namespace MediaPortal.GUI.Music
               break;
             case ScrobbleMode.Recent:
               currentScrobbleMode = ScrobbleMode.Random;
-              btnScrobbleMode.Label = GUILocalizeStrings.Get(33001);
-              shouldContinue = false;
+              btnScrobbleMode.Label = GUILocalizeStrings.Get(33007);
+              shouldContinue = true;
               break;
             case ScrobbleMode.Random:
               currentScrobbleMode = ScrobbleMode.Similar;
@@ -1006,10 +1006,11 @@ namespace MediaPortal.GUI.Music
             StartScrobbleThread();
           }
         }
-        if (playList.Count == 0 && currentScrobbleMode == ScrobbleMode.Neighbours)
-        {
-          StartScrobbleThread();
-        }
+        if (playList.Count == 0)
+          if (currentScrobbleMode == ScrobbleMode.Neighbours || currentScrobbleMode == ScrobbleMode.Friends)
+          {
+            StartScrobbleThread();
+          }
       }
     }
 
@@ -1047,6 +1048,20 @@ namespace MediaPortal.GUI.Music
             try
             {
               scrobbledArtists = ascrobbler.getNeighboursArtists(true);
+            }
+            catch (Exception ex)
+            {
+              Log.Write("ScrobbleLookupThread: exception on lookup - {0}", ex.Message);
+            }
+          }
+          break;
+
+        case ScrobbleMode.Friends:
+          lock (ScrobbleLock)
+          {
+            try
+            {
+              scrobbledArtists = ascrobbler.getFriendsArtists(true);
             }
             catch (Exception ex)
             {

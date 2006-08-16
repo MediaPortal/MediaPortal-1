@@ -77,6 +77,90 @@ namespace MediaPortal.Music.Database
       LoadSettings();
     }
 
+    private static int CompareSongsByMatch(Song x, Song y)
+    {
+      try
+      {
+        if (x.LastFMMatch == null)
+        {
+          if (y.LastFMMatch == null)
+          {
+            // If x is null and y is null, they're equal
+            return 0;
+          }
+          else
+          {
+            // If x is null and y is not null, y is greater
+            return 1;
+          }
+        }
+        else
+        {
+          // If x is not null...
+          if (y.LastFMMatch == null)
+          // ...and y is null, x is greater.
+          {
+            return -1;
+          }
+          else
+          {
+            // ...and y is not null, compare 
+            int retval = 0;
+            if (x.LastFMMatch != String.Empty && y.LastFMMatch != String.Empty)
+            {
+              if (Convert.ToInt32(x.LastFMMatch) < Convert.ToInt32(x.LastFMMatch))
+                retval = 1;
+              else
+                retval = -1;
+            }
+            else
+              return 0;
+
+            if (retval != 0)
+            {
+              return retval;
+            }
+            else
+            {
+              return 0;
+            }
+          }
+        }
+      }
+      catch (Exception)
+      {
+        return 0;
+      }
+    }
+
+    private static int CompareSongsByTimesPlayed(Song x, Song y)
+    {
+      // ...and y is not null, compare 
+      int retval = 0;
+      try
+      {
+        if (x.TimesPlayed < y.TimesPlayed)
+          retval = 1;
+        else
+          retval = -1;
+
+        if (retval != 0)
+        {
+          return retval;
+        }
+        else
+        {
+          return 0;
+        }
+      }
+
+      catch (Exception)
+      {
+        return 0;
+      }
+    }
+
+
     #region Serialization
     void LoadSettings()
     {
@@ -323,11 +407,33 @@ namespace MediaPortal.Music.Database
 
     public List<Song> getNeighboursArtists(bool randomizeList_)
     {
+      return getOthersArtists(randomizeList_, lastFMFeed.neighbours);
+    }
+
+    public List<Song> getFriendsArtists(bool randomizeList_)
+    {
+      return getOthersArtists(randomizeList_, lastFMFeed.friends);
+    }
+
+    #endregion
+
+
+    private List<Song> getOthersArtists(bool randomizeList_, lastFMFeed neighbourOrFriend_)
+    {
       List<Song> myNeighbours = new List<Song>();
       List<Song> myRandomNeighbours = new List<Song>();
       List<Song> myNeighboorsArtists = new List<Song>();
       List<Song> myRandomNeighboorsArtists = new List<Song>();
-      myNeighbours = getAudioScrobblerFeed(lastFMFeed.neighbours, "");
+
+      switch (neighbourOrFriend_)
+      {
+        case lastFMFeed.neighbours:
+          myNeighbours = getAudioScrobblerFeed(lastFMFeed.neighbours, "");
+          break;
+        case lastFMFeed.friends:
+          myNeighbours = getAudioScrobblerFeed(lastFMFeed.friends, "");
+          break;
+      }     
 
       if (randomizeList_)
       {
@@ -366,6 +472,14 @@ namespace MediaPortal.Music.Database
           {
             myNeighboorsArtists = getAudioScrobblerFeed(_currentNeighbourMode, myRandomNeighbours[n].Artist);
 
+            if (myNeighboorsArtists.Count > 0)
+            {
+              if (myNeighboorsArtists[0].LastFMMatch != String.Empty)
+                myNeighboorsArtists.Sort(CompareSongsByMatch);
+              //else
+              //  if (myNeighboorsArtists[0].TimesPlayed >= 0)
+              //    myNeighboorsArtists.Sort(CompareSongsByTimesPlayed);
+            }
             // make sure the neighbour has enough top artists
             if (myNeighboorsArtists.Count > _limitRandomListCount)
             {
@@ -399,11 +513,51 @@ namespace MediaPortal.Music.Database
 
         }
         else
-        // limit not reached - return all neighbours artists          
+        // limit not reached - return all neighbours random artists          
         {
-          for (int i = 0; i < myNeighboorsArtists.Count; i++)
-            myNeighboorsArtists.AddRange(getAudioScrobblerFeed(_currentNeighbourMode, myNeighbours[i].Artist));
-          return myNeighboorsArtists;
+          for (int i = 0; i < myNeighbours.Count; i++)
+          {
+            // sort by match needed
+            myNeighboorsArtists = getAudioScrobblerFeed(_currentNeighbourMode, myNeighbours[i].Artist);
+            if (myNeighboorsArtists.Count > 0)
+            {
+              if (myNeighboorsArtists[0].LastFMMatch != String.Empty)
+                myNeighboorsArtists.Sort(CompareSongsByMatch);
+              //else
+              //  if (myNeighboorsArtists[0].TimesPlayed >= 0)
+              //    myNeighboorsArtists.Sort(CompareSongsByTimesPlayed);
+            }
+
+            // make sure the neighbour has enough top artists
+            if (myNeighboorsArtists.Count > _limitRandomListCount)
+            {
+              // get _limitRandomListCount artists for each neighbour
+              int artistsAdded = 0;
+              int minRandAValue = _limitRandomListCount;
+              int calcRandAValue = (myNeighboorsArtists.Count - 1) * _randomNessPercent / 100;
+              while (artistsAdded < _limitRandomListCount)
+              {
+                bool foundDoubleEntry = false;
+                if (calcRandAValue > minRandAValue)
+                  randomPosition = rand.Next(0, calcRandAValue);
+                else
+                  randomPosition = rand.Next(0, minRandAValue);
+
+                for (int j = 0; j < myNeighboorsArtists.Count; j++)
+                {
+                  if (myRandomNeighboorsArtists.Contains(myNeighboorsArtists[randomPosition]))
+                    foundDoubleEntry = true;
+                }
+                // new item therefore add it
+                if (!foundDoubleEntry)
+                {
+                  myRandomNeighboorsArtists.Add(myNeighboorsArtists[randomPosition]);
+                  artistsAdded++;
+                }
+              }
+            }
+          }
+          return myRandomNeighboorsArtists;
         }
 
       }
@@ -416,7 +570,6 @@ namespace MediaPortal.Music.Database
         return myNeighboorsArtists;
       }
     }
-    #endregion
 
     private List<Song> ParseXMLDocForSimilarArtists(string artist_)
     {

@@ -54,15 +54,10 @@ namespace MediaPortal.AudioScrobbler
     private void InitializeComponent()
     {
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AudioscrobblerSettings));
-      this.buttonOk = new MediaPortal.UserInterface.Controls.MPButton();
-      this.buttonCancel = new MediaPortal.UserInterface.Controls.MPButton();
       this.panelPicBox = new System.Windows.Forms.Panel();
       this.pictureBoxASLogo = new System.Windows.Forms.PictureBox();
       this.linkLabelMPGroup = new System.Windows.Forms.LinkLabel();
       this.linkLabelNewUser = new System.Windows.Forms.LinkLabel();
-      this.labelPassword = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.labelUser = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.textBoxASUser = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.maskedTextBoxASPass = new System.Windows.Forms.MaskedTextBox();
       this.tabControlSettings = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPageLastFMSettings = new System.Windows.Forms.TabPage();
@@ -136,6 +131,11 @@ namespace MediaPortal.AudioScrobbler
       this.buttonGetTaggedArtists = new MediaPortal.UserInterface.Controls.MPButton();
       this.buttonTagsRefresh = new MediaPortal.UserInterface.Controls.MPButton();
       this.listViewTags = new MediaPortal.UserInterface.Controls.MPListView();
+      this.buttonCancel = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonOk = new MediaPortal.UserInterface.Controls.MPButton();
+      this.labelPassword = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelUser = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxASUser = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.panelPicBox.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxASLogo)).BeginInit();
       this.tabControlSettings.SuspendLayout();
@@ -160,28 +160,6 @@ namespace MediaPortal.AudioScrobbler
       this.tabPageWeeklyTracks.SuspendLayout();
       this.tabPageTags.SuspendLayout();
       this.SuspendLayout();
-      // 
-      // buttonOk
-      // 
-      this.buttonOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonOk.Location = new System.Drawing.Point(507, 391);
-      this.buttonOk.Name = "buttonOk";
-      this.buttonOk.Size = new System.Drawing.Size(75, 23);
-      this.buttonOk.TabIndex = 1;
-      this.buttonOk.Text = "Save";
-      this.buttonOk.UseVisualStyleBackColor = true;
-      this.buttonOk.Click += new System.EventHandler(this.buttonOk_Click);
-      // 
-      // buttonCancel
-      // 
-      this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonCancel.Location = new System.Drawing.Point(426, 391);
-      this.buttonCancel.Name = "buttonCancel";
-      this.buttonCancel.Size = new System.Drawing.Size(75, 23);
-      this.buttonCancel.TabIndex = 2;
-      this.buttonCancel.Text = "Cancel";
-      this.buttonCancel.UseVisualStyleBackColor = true;
-      this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
       // 
       // panelPicBox
       // 
@@ -221,34 +199,6 @@ namespace MediaPortal.AudioScrobbler
       this.linkLabelNewUser.TabIndex = 4;
       this.linkLabelNewUser.TabStop = true;
       this.linkLabelNewUser.Text = "New user..";
-      // 
-      // labelPassword
-      // 
-      this.labelPassword.AutoSize = true;
-      this.labelPassword.Location = new System.Drawing.Point(16, 67);
-      this.labelPassword.Name = "labelPassword";
-      this.labelPassword.Size = new System.Drawing.Size(53, 13);
-      this.labelPassword.TabIndex = 3;
-      this.labelPassword.Text = "Password";
-      // 
-      // labelUser
-      // 
-      this.labelUser.AutoSize = true;
-      this.labelUser.Location = new System.Drawing.Point(16, 23);
-      this.labelUser.Name = "labelUser";
-      this.labelUser.Size = new System.Drawing.Size(55, 13);
-      this.labelUser.TabIndex = 2;
-      this.labelUser.Text = "Username";
-      // 
-      // textBoxASUser
-      // 
-      this.textBoxASUser.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.textBoxASUser.BorderColor = System.Drawing.Color.Empty;
-      this.textBoxASUser.Location = new System.Drawing.Point(16, 41);
-      this.textBoxASUser.Name = "textBoxASUser";
-      this.textBoxASUser.Size = new System.Drawing.Size(236, 20);
-      this.textBoxASUser.TabIndex = 1;
       // 
       // maskedTextBoxASPass
       // 
@@ -584,9 +534,9 @@ namespace MediaPortal.AudioScrobbler
       this.labelNModeCombo.AutoSize = true;
       this.labelNModeCombo.Location = new System.Drawing.Point(14, 143);
       this.labelNModeCombo.Name = "labelNModeCombo";
-      this.labelNModeCombo.Size = new System.Drawing.Size(85, 13);
+      this.labelNModeCombo.Size = new System.Drawing.Size(130, 13);
       this.labelNModeCombo.TabIndex = 8;
-      this.labelNModeCombo.Text = "Neighbour mode";
+      this.labelNModeCombo.Text = "Neighbour / Friends mode";
       // 
       // comboBoxNModeSelect
       // 
@@ -596,9 +546,9 @@ namespace MediaPortal.AudioScrobbler
             "Overall top artists",
             "Weekly top artists",
             "Recent artists"});
-      this.comboBoxNModeSelect.Location = new System.Drawing.Point(122, 140);
+      this.comboBoxNModeSelect.Location = new System.Drawing.Point(150, 140);
       this.comboBoxNModeSelect.Name = "comboBoxNModeSelect";
-      this.comboBoxNModeSelect.Size = new System.Drawing.Size(138, 21);
+      this.comboBoxNModeSelect.Size = new System.Drawing.Size(110, 21);
       this.comboBoxNModeSelect.TabIndex = 7;
       this.comboBoxNModeSelect.Text = "Weekly top artists";
       this.comboBoxNModeSelect.SelectedIndexChanged += new System.EventHandler(this.comboBoxNModeSelect_SelectedIndexChanged);
@@ -1121,6 +1071,56 @@ namespace MediaPortal.AudioScrobbler
       this.listViewTags.TabIndex = 2;
       this.listViewTags.UseCompatibleStateImageBehavior = false;
       this.listViewTags.View = System.Windows.Forms.View.List;
+      // 
+      // buttonCancel
+      // 
+      this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonCancel.Location = new System.Drawing.Point(426, 391);
+      this.buttonCancel.Name = "buttonCancel";
+      this.buttonCancel.Size = new System.Drawing.Size(75, 23);
+      this.buttonCancel.TabIndex = 2;
+      this.buttonCancel.Text = "Cancel";
+      this.buttonCancel.UseVisualStyleBackColor = true;
+      this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
+      // 
+      // buttonOk
+      // 
+      this.buttonOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonOk.Location = new System.Drawing.Point(507, 391);
+      this.buttonOk.Name = "buttonOk";
+      this.buttonOk.Size = new System.Drawing.Size(75, 23);
+      this.buttonOk.TabIndex = 1;
+      this.buttonOk.Text = "Save";
+      this.buttonOk.UseVisualStyleBackColor = true;
+      this.buttonOk.Click += new System.EventHandler(this.buttonOk_Click);
+      // 
+      // labelPassword
+      // 
+      this.labelPassword.AutoSize = true;
+      this.labelPassword.Location = new System.Drawing.Point(16, 67);
+      this.labelPassword.Name = "labelPassword";
+      this.labelPassword.Size = new System.Drawing.Size(53, 13);
+      this.labelPassword.TabIndex = 3;
+      this.labelPassword.Text = "Password";
+      // 
+      // labelUser
+      // 
+      this.labelUser.AutoSize = true;
+      this.labelUser.Location = new System.Drawing.Point(16, 23);
+      this.labelUser.Name = "labelUser";
+      this.labelUser.Size = new System.Drawing.Size(55, 13);
+      this.labelUser.TabIndex = 2;
+      this.labelUser.Text = "Username";
+      // 
+      // textBoxASUser
+      // 
+      this.textBoxASUser.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxASUser.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxASUser.Location = new System.Drawing.Point(16, 41);
+      this.textBoxASUser.Name = "textBoxASUser";
+      this.textBoxASUser.Size = new System.Drawing.Size(236, 20);
+      this.textBoxASUser.TabIndex = 1;
       // 
       // AudioscrobblerSettings
       // 
