@@ -1,0 +1,811 @@
+<?xml version="1.0" encoding="euc-kr"?>
+<strings>
+	<characters></characters>
+	<string>
+		<id>0</id>
+		<value>프로그램</value>
+	</string>
+	<string>
+		<id>1</id>
+		<value>그림</value>
+	</string>
+	<string>
+		<id>2</id>
+		<value>음악</value>
+	</string>
+	<string>
+		<id>3</id>
+		<value>비디오</value>
+	</string>
+	<string>
+		<id>4</id>
+		<value>TV 가이드</value>
+	</string>
+	<string>
+		<id>5</id>
+		<value>설정</value>
+	</string>
+	<string>
+		<id>6</id>
+		<value>XBOX 미디어센터 CVS 빌드</value>
+	</string>
+	<string>
+		<id>7</id>
+		<value>파일</value>
+	</string>
+	<string>
+		<id>8</id>
+		<value>날씨</value>
+	</string>
+	<string>
+		<id>9</id>
+		<value>뉴스</value>
+	</string>
+	<string>
+		<id>10</id>
+		<value>요리</value>
+	</string>
+	<string>
+		<id>11</id>
+		<value>월요일</value>
+	</string>
+	<string>
+		<id>12</id>
+		<value>화요일</value>
+	</string>
+	<string>
+		<id>13</id>
+		<value>수요일</value>
+	</string>
+	<string>
+		<id>14</id>
+		<value>목요일</value>
+	</string>
+	<string>
+		<id>15</id>
+		<value>금요일</value>
+	</string>
+	<string>
+		<id>16</id>
+		<value>토요일</value>
+	</string>
+	<string>
+		<id>17</id>
+		<value>일요일</value>
+	</string>
+	<string>
+		<id>21</id>
+		<value>1월</value>
+	</string>
+	<string>
+		<id>22</id>
+		<value>2월</value>
+	</string>
+	<string>
+		<id>23</id>
+		<value>3월</value>
+	</string>
+	<string>
+		<id>24</id>
+		<value>4월</value>
+	</string>
+	<string>
+		<id>25</id>
+		<value>5월</value>
+	</string>
+	<string>
+		<id>26</id>
+		<value>6월</value>
+	</string>
+	<string>
+		<id>27</id>
+		<value>7월</value>
+	</string>
+	<string>
+		<id>28</id>
+		<value>8월</value>
+	</string>
+	<string>
+		<id>29</id>
+		<value>9월</value>
+	</string>
+	<string>
+		<id>30</id>
+		<value>10월</value>
+	</string>
+	<string>
+		<id>31</id>
+		<value>11월</value>
+	</string>
+	<string>
+		<id>32</id>
+		<value>12월</value>
+	</string>
+	<string>
+		<id>50</id>
+		<value>DVD</value>
+	</string>
+	<string>
+		<id>100</id>
+		<value>보기: 아이콘</value>
+	</string>
+	<string>
+		<id>101</id>
+		<value>보기: 목록</value>
+	</string>
+	<string>
+		<id>102</id>
+		<value>스캔</value>
+	</string>
+	<string>
+		<id>103</id>
+		<value>정렬: 이름순</value>
+	</string>
+	<string>
+		<id>104</id>
+		<value>정렬: 날짜순</value>
+	</string>
+	<string>
+		<id>105</id>
+		<value>정렬: 크기순</value>
+	</string>
+	<string>
+		<id>106</id>
+		<value>아니오</value>
+	</string>
+	<string>
+		<id>107</id>
+		<value>예</value>
+	</string>
+	<string>
+		<id>108</id>
+		<value>슬라이드쇼</value>
+	</string>
+	<string>
+		<id>109</id>
+		<value>작은그림 생성</value>
+	</string>
+	<string>
+		<id>110</id>
+		<value>썸네일 생성</value>
+	</string>
+	<string>
+		<id>111</id>
+		<value>바로가기</value>
+	</string>
+	<string>
+		<id>112</id>
+		<value>정지됨</value>
+	</string>
+	<string>
+		<id>113</id>
+		<value>파일 : 원본</value>
+	</string>
+	<string>
+		<id>114</id>
+		<value>파일 : 대상</value>
+	</string>
+	<string>
+		<id>115</id>
+		<value>복사</value>
+	</string>
+	<string>
+		<id>116</id>
+		<value>이동</value>
+	</string>
+	<string>
+		<id>117</id>
+		<value>삭제</value>
+	</string>
+	<string>
+		<id>118</id>
+		<value>이름변경</value>
+	</string>
+	<string>
+		<id>119</id>
+		<value>새 폴더</value>
+	</string>
+	<string>
+		<id>120</id>
+		<value>파일 복사 확인</value>
+	</string>
+	<string>
+		<id>121</id>
+		<value>파일 이동 확인</value>
+	</string>
+	<string>
+		<id>122</id>
+		<value>파일 삭제 확인</value>
+	</string>
+	<string>
+		<id>123</id>
+		<value>이 파일들을 복사하시겠습니까?</value>
+	</string>
+	<string>
+		<id>124</id>
+		<value>아 파일들을 이동하시겠습니까?</value>
+	</string>
+	<string>
+		<id>125</id>
+		<value>이 파일들을 삭제하시겠습니까?</value>
+	</string>
+	<string>
+		<id>126</id>
+		<value>상태</value>
+	</string>
+	<string>
+		<id>127</id>
+		<value>객체</value>
+	</string>
+	<string>
+		<id>128</id>
+		<value>일반</value>
+	</string>
+	<string>
+		<id>129</id>
+		<value>슬라이드쇼</value>
+	</string>
+	<string>
+		<id>130</id>
+		<value>시스템 정보</value>
+	</string>
+	<string>
+		<id>131</id>
+		<value>화면</value>
+	</string>
+	<string>
+		<id>132</id>
+		<value>앨범</value>
+	</string>
+	<string>
+		<id>133</id>
+		<value>음악가</value>
+	</string>
+	<string>
+		<id>134</id>
+		<value>공유</value>
+	</string>
+	<string>
+		<id>135</id>
+		<value>장르</value>
+	</string>
+	<string>
+		<id>136</id>
+		<value>플레이리스트</value>
+	</string>
+	<string>
+		<id>137</id>
+		<value>검색</value>
+	</string>
+	<string>
+		<id>138</id>
+		<value>시스템 정보</value>
+	</string>
+	<string>
+		<id>139</id>
+		<value>온도</value>
+	</string>
+	<string>
+		<id>140</id>
+		<value>CPU</value>
+	</string>
+	<string>
+		<id>141</id>
+		<value>GPU</value>
+	</string>
+	<string>
+		<id>142</id>
+		<value>시간</value>
+	</string>
+	<string>
+		<id>143</id>
+		<value>현재:</value>
+	</string>
+	<string>
+		<id>144</id>
+		<value>빌드:</value>
+	</string>
+	<string>
+		<id>145</id>
+		<value>네트워크:</value>
+	</string>
+	<string>
+		<id>146</id>
+		<value>형식:</value>
+	</string>
+	<string>
+		<id>147</id>
+		<value>고정</value>
+	</string>
+	<string>
+		<id>148</id>
+		<value>DHCP</value>
+	</string>
+	<string>
+		<id>149</id>
+		<value>MAC</value>
+	</string>
+	<string>
+		<id>150</id>
+		<value>IP:</value>
+	</string>
+	<string>
+		<id>151</id>
+		<value>링크:</value>
+	</string>
+	<string>
+		<id>152</id>
+		<value>단방향 송신</value>
+	</string>
+	<string>
+		<id>153</id>
+		<value>양방향 송신</value>
+	</string>
+	<string>
+		<id>154</id>
+		<value>저장장치</value>
+	</string>
+	<string>
+		<id>155</id>
+		<value>드라이브</value>
+	</string>
+	<string>
+		<id>156</id>
+		<value>사용가능한</value>
+	</string>
+	<string>
+		<id>157</id>
+		<value>비디오</value>
+	</string>
+	<string>
+		<id>158</id>
+		<value>사용가능한 메모리</value>
+	</string>
+	<string>
+		<id>159</id>
+		<value>링크 없음</value>
+	</string>
+	<string>
+		<id>160</id>
+		<value>사용가능한</value>
+	</string>
+	<string>
+		<id>161</id>
+		<value>사용가능하지 않은</value>
+	</string>
+	<string>
+		<id>162</id>
+		<value>트레이 열기</value>
+	</string>
+	<string>
+		<id>163</id>
+		<value>읽는 중</value>
+	</string>
+	<string>
+		<id>164</id>
+		<value>디스크 없음</value>
+	</string>
+	<string>
+		<id>165</id>
+		<value>디스크 존재</value>
+	</string>
+	<string>
+		<id>166</id>
+		<value>스킨:</value>
+	</string>
+	<string>
+		<id>167</id>
+		<value>FTP 서버:</value>
+	</string>
+	<string>
+		<id>168</id>
+		<value>동기화 시간</value>
+	</string>
+	<string>
+		<id>169</id>
+		<value>화면 크기</value>
+	</string>
+	<string>
+		<id>170</id>
+		<value>앨범</value>
+	</string>
+	<string>
+		<id>171</id>
+		<value>음악가</value>
+	</string>
+	<string>
+		<id>172</id>
+		<value>발매일</value>
+	</string>
+	<string>
+		<id>173</id>
+		<value>등급</value>
+	</string>
+	<string>
+		<id>174</id>
+		<value>장르</value>
+	</string>
+	<string>
+		<id>175</id>
+		<value>톤</value>
+	</string>
+	<string>
+		<id>176</id>
+		<value>스타일</value>
+	</string>
+	<string>
+		<id>177</id>
+		<value>리뷰</value>
+	</string>
+	<string>
+		<id>178</id>
+		<value>트랙</value>
+	</string>
+	<d>
+		<value>확인</value>
+	</string>
+	<string>
+		<id>187</id>
+		<value>앨범이 발견되지 않았습니다.</value>
+	</string>
+	<string>
+		<id>188</id>
+		<value>모두 선택</value>
+	</string>
+	<string>
+		<id>189</id>
+		<value>미디어 정보 탐색</value>
+	</string>
+	<string>
+		<id>190</id>
+		<value>저장</value>
+	</string>
+	<string>
+		<id>191</id>
+		<value>섞기</value>
+	</string>
+	<string>
+		<id>192</id>
+		<value>지우기</value>
+	</string>
+	<string>
+		<id>193</id>
+		<value>탐색</value>
+	</string>
+	<string>
+		<id>194</id>
+		<value>검색 중...</value>
+	</string>
+	<string>
+		<id>195</id>
+		<value>IMDB정보가 발견되지 않았습니다!</value>
+	</string>
+	<string>
+		<id>196</id>
+		<value>영화 선택:</value>
+	</string>
+	<string>
+		<id>197</id>
+		<value>IMDB 정보 조회</value>
+	</string>
+	<string>
+		<id>198</id>
+		<value>영화 상세정보 내려받는 중</value>
+	</string>
+	<string>
+		<id>199</id>
+		<value>감독</value>
+	</string>
+	<string>
+		<id>200</id>
+		<value>작가</value>
+	</string>
+	<string>
+		<id>201</id>
+		<value>년도</value>
+	</string>
+	<string>
+		<id>202</id>
+		<value>태그라인</value>
+	</string>
+	<string>
+		<id>203</id>
+		<value>줄거리 개요</value>
+	</string>
+	<string>
+		<id>204</id>
+		<value>등급</value>
+	</string>
+	<string>
+		<id>205</id>
+		<value>표</value>
+	</string>
+	<string>
+		<id>206</id>
+		<value>출연</value>
+	</string>
+	<string>
+		<id>207</id>
+		<value>줄거리</value>
+	</string>
+	<string>
+		<id>208</id>
+		<value>재생</value>
+	</string>
+	<string>
+		<id>209</id>
+		<value>다음</value>
+	</string>
+	<string>
+		<id>210</id>
+		<value>이전</value>
+	</string>
+	<string>
+		<id>211</id>
+		<value>응용프로그램 검색 중</value>
+	</string>
+	<string>
+		<id>212</id>
+		<value>응용포그램 검색됨</value>
+	</string>
+	<string>
+		<id>213</id>
+		<value>UI 조정</value>
+	</string>
+	<string>
+		<id>214</id>
+		<value>화면 조정</value>
+	</string>
+	<string>
+		<id>215</id>
+		<value>부드럽게</value>
+	</string>
+	<string>
+		<id>216</id>
+		<value>확대</value>
+	</string>
+	<string>
+		<id>217</id>
+		<value>늘이기</value>
+	</string>
+	<string>
+		<id>218</id>
+		<value>DVD 드라이드</value>
+	</string>
+	<string>
+		<id>219</id>
+		<value>디스크를 삽입하십시요</value>
+	</string>
+	<string>
+		<id>220</id>
+		<value>원격 공유</value>
+	</string>
+	<string>
+		<id>221</id>
+		<value>네트워크가 연결되지 않았습니다</value>
+	</string>
+	<string>
+		<id>222</id>
+		<value>취소</value>
+	</string>
+	<string>
+		<id>223</id>
+		<value>와이드스크린 자동 전환</value>
+	</string>
+	<string>
+		<id>224</id>
+		<value>속도</value>
+	</string>
+	<string>
+		<id>225</id>
+		<value>전환 시간</value>
+	</string>
+	<string>
+		<id>226</id>
+		<value>PAL60 사용 가능</value>
+	</string>
+	<string>
+		<id>227</id>
+		<value>CDDB 사용 가능</value>
+	</string>
+	<string>
+		<id>228</id>
+		<value>시작시 플레이리스트 섞기</value>
+	</string>
+	<string>
+		<id>229</id>
+		<value>HD 다운 타임 (분)</value>
+	</string>
+	<string>
+		<id>230</id>
+		<value>필터</value>
+	</string>
+	<string>
+		<id>231</id>
+		<value>없음</value>
+	</string>
+	<string>
+		<id>232</id>
+		<value>포인트</value>
+	</string>
+	<string>
+		<id>233</id>
+		<value>선점형</value>
+	</string>
+	<string>
+		<id>234</id>
+		<value>이방성</value>
+	</string>
+	<string>
+		<id>237</id>
+		<value>축소</value>
+	</string>
+	<string>
+		<id>238</id>
+		<value>확대</value>
+	</string>
+	<string>
+		<id>240</id>
+		<value>DVD-Video 자동 재생</value>
+	</string>
+	<string>
+		<id>241</id>
+		<value>VCD/SVCD 자동 재생</value>
+	</string>
+	<string>
+		<id>242</id>
+		<value>Audio-CD 자동 재생</value>
+	</string>
+	<string>
+		<id>243</id>
+		<value>XBOX 게임자동 실행</value>
+	</string>
+	<string>
+		<id>244</id>
+		<value>비디오 자동 재생</value>
+	</string>
+	<string>
+		<id>245</id>
+		<value>음약 자동 재생</value>
+	</string>
+	<string>
+		<id>246</id>
+		<value>사진 자동 보기</value>
+	</string>
+	<string>
+		<id>247</id>
+		<value>스크립트</value>
+	</string>
+	<string>
+		<id>248</id>
+		<value>언어</value>
+	</string>
+	<string>
+		<id>249</id>
+		<value>음악</value>
+	</string>
+	<string>
+		<id>250</id>
+		<value>시각화</value>
+	</string>
+	<string>
+		<id>251</id>
+		<value>디렉토리를 지정하세요</value>
+	</string>
+	<string>
+		<id>252</id>
+		<value>모든 스피커 사용</value>
+	</string>
+	<string>
+		<id>253</id>
+		<value>채널수</value>
+	</string>
+	<string>
+		<id>259</id>
+		<value>시작</value>
+	</string>
+	<string>
+		<id>261</id>
+		<value>시직 대기중</value>
+	</string>
+	<string>
+		<id>263</id>
+		<value>HTTP 서버</value>
+	</string>
+	<string>
+		<id>266</id>
+		<value>정렬: 트랙순</value>
+	</string>
+	<string>
+		<id>267</id>
+		<value>정렬: 시간순</value>
+	</string>
+	<string>
+		<id>268</id>
+		<value>정렬: 재목순</value>
+	</string>
+	<string>
+		<id>269</id>
+		<value>정력: 음악가순</value>
+	</string>
+	<string>
+		<id>270</id>
+		<value>정렬: 앨범순</value>
+	</string>
+	<string>
+		<id>272</id>
+		<value>왼쪽 위 초과주사 보정</value>
+	</string>
+	<string>
+		<id>273</id>
+		<value>오른쪽 아래 초과주사 보정</value>
+	</string>
+	<string>
+		<id>274</id>
+		<value>자막 위치</value>
+	</string>
+	<string>
+		<id>276</id>
+		<value>- 주의! - 최상의 화질을 위해서는 0,0으로 놓으십시요,줄어든 화면을 맞출때 변경하십시요.</value>
+	</string>
+	<string>
+		<id>277</id>
+		<value>자막위치를 변경하려면 막대를 이동하십시요</value>
+	</string>
+	<string>
+		<id>279</id>
+		<value>설정을 불러올 수 없음</value>
+	</string>
+	<string>
+		<id>281</id>
+		<value>.xml 파일을 확인하십시요.</value>
+	</string>
+	<string>
+		<id>282</id>
+		<value>%i개 항목 검색됨</value>
+	</string>
+	<string>
+		<id>283</id>
+		<value>검색 결과</value>
+	</string>
+	<string>
+		<id>284</id>
+		<value>검색된 결과 없음</value>
+	</string>
+	<string>
+		<id>287</id>
+		<value>자막</value>
+	</string>
+	<string>
+		<id>288</id>
+		<value>글꼴</value>
+	</string>
+	<string>
+		<id>289</id>
+		<value>크기</value>
+	</string>
+	<string>
+		<id>291</id>
+		<value>화면</value>
+	</string>
+	<string>
+		<id>292</id>
+		<value>소리</value>
+	</string>
+	<string>
+		<id>293</id>
+		<value>자막</value>
+	</string>
+	<string>
+		<id>294</id>
+		<value>책갈피 생성</value>
+	</string>
+	<string>
+		<id>295</id>
+		<value>책갈피 반족</value>
+	</string>
+	<string>
+		<id>296</id>
+		<value>책갈피 삭제</value>
+	</string>
+</strings>
