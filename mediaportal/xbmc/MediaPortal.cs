@@ -325,6 +325,10 @@ public class MediaPortalApp : D3DApp, IRender
         {
           IMessageFilter filter = new ThreadMessageFilter(app);
           Application.AddMessageFilter(filter);
+
+          // Initialize Input Devices
+          InputDevices.Init();
+
           try
           {
             //app.PreRun();
@@ -2780,9 +2784,6 @@ public class MediaPortalApp : D3DApp, IRender
 
     //hoppy on IRC - needed for firedtv remote
     GUIGraphicsContext.ActiveForm = Handle;
-
-    // Initialize Input Devices
-    InputDevices.Init();
 
     //  hook ProcessExit for a chance to clean up when closed peremptorily
 
