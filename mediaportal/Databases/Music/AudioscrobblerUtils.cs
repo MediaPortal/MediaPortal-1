@@ -180,11 +180,12 @@ namespace MediaPortal.Music.Database
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
-        _randomNessPercent = xmlreader.GetValueAsInt("audioscrobbler", "randomness", 77);
-        _useDebugLog = xmlreader.GetValueAsBool("audioscrobbler", "usedebuglog", false);
+        MusicDatabase mdb = new MusicDatabase();
         _defaultUser = xmlreader.GetValueAsString("audioscrobbler", "user", "");
-        int tmpNMode = xmlreader.GetValueAsInt("audioscrobbler", "neighbourmode", 1);
-
+        _useDebugLog = (mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(_defaultUser)), "iDebugLog", -1) == 1) ? true : false;
+        int tmpRand = mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(_defaultUser)), "iRandomness", -1);        
+        int tmpNMode = mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(_defaultUser)), "iNeighbourMode", -1);
+        
         switch (tmpNMode)
         {
           case 3:
@@ -200,6 +201,7 @@ namespace MediaPortal.Music.Database
             _currentNeighbourMode = lastFMFeed.weeklyartistchart;
             break;
         }
+        _randomNessPercent = (tmpRand >= 25) ? tmpRand : 25;
       }
     }
 
@@ -499,9 +501,12 @@ namespace MediaPortal.Music.Database
             {
               // get _limitRandomListCount artists for each random neighbour
               int artistsAdded = 0;
+              int artistsPerNeighbour = _limitRandomListCount / myNeighbours.Count;
+              // make sure there is at least one song per neighbour
+              artistsPerNeighbour = artistsPerNeighbour > 1 ? artistsPerNeighbour : 1;
               int minRandAValue = _limitRandomListCount;
               int calcRandAValue = (myNeighboorsArtists.Count - 1) * _randomNessPercent / 100;
-              while (artistsAdded < _limitRandomListCount)
+              while (artistsAdded <= artistsPerNeighbour)
               {
                 bool foundDoubleEntry = false;
                 if (calcRandAValue > minRandAValue)
@@ -547,9 +552,12 @@ namespace MediaPortal.Music.Database
             {
               // get _limitRandomListCount artists for each neighbour
               int artistsAdded = 0;
+              int artistsPerNeighbour = _limitRandomListCount / myNeighbours.Count;
+              // make sure there is at least one song per neighbour
+              artistsPerNeighbour = artistsPerNeighbour > 1 ? artistsPerNeighbour : 1;
               int minRandAValue = _limitRandomListCount;
               int calcRandAValue = (myNeighboorsArtists.Count - 1) * _randomNessPercent / 100;
-              while (artistsAdded < _limitRandomListCount)
+              while (artistsAdded <= artistsPerNeighbour)
               {
                 bool foundDoubleEntry = false;
                 if (calcRandAValue > minRandAValue)

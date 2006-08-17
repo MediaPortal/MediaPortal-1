@@ -45,11 +45,11 @@ namespace MediaPortal.Music.Database
         this.album = track.Album;
         this.title = track.Title;
         this.duration = (int)track.Duration;
-        this.start_time = track.DateTimePlayed;
+        this.start_time = track.getQueueTime();
       }
 
       public QueuedTrack(string artist, string album,
-                string title, int duration, DateTime start_time)
+                string title, int duration, string start_time)
       {
         this.artist = artist;
         this.album = album;
@@ -58,7 +58,7 @@ namespace MediaPortal.Music.Database
         this.start_time = start_time;
       }
 
-      public DateTime StartTime
+      public string StartTime
       {
         get { return start_time; }
       }
@@ -84,7 +84,7 @@ namespace MediaPortal.Music.Database
       string album;
       string title;
       int duration;
-      DateTime start_time;
+      string start_time;
     }
     
     ArrayList queue;
@@ -124,7 +124,7 @@ namespace MediaPortal.Music.Database
         writer.WriteElementString("Album", track.Album);
         writer.WriteElementString("Title", track.Title);
         writer.WriteElementString("Duration", track.Duration.ToString());
-        writer.WriteElementString("Playtime", Convert.ToString(track.StartTime));
+        writer.WriteElementString("Playtime", track.StartTime);
         writer.WriteEndElement(); // Track
       }
       writer.WriteEndElement(); // AudioscrobblerQueue
@@ -150,7 +150,7 @@ namespace MediaPortal.Music.Database
           string album = "";
           string title = "";
           int duration = 0;
-          DateTime start_time = new DateTime(0);
+          string start_time = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") ;
 
           foreach (XmlNode child in node.ChildNodes)
           {
@@ -172,8 +172,7 @@ namespace MediaPortal.Music.Database
             }
             else if (child.Name == "Playtime" && child.ChildNodes.Count != 0)
             {
-              string time = (child.ChildNodes[0].Value);
-              start_time = Convert.ToDateTime(time);
+              start_time = (child.ChildNodes[0].Value);              
             }
           }
 
@@ -205,7 +204,7 @@ namespace MediaPortal.Music.Database
              HttpUtility.UrlEncode(track.Album),
              "" /* musicbrainz id */,
              track.Duration.ToString(),
-             HttpUtility.UrlEncode(track.StartTime.ToString("yyyy-MM-dd HH:mm:ss")),
+             HttpUtility.UrlEncode(track.StartTime),
              i);
       }
 
