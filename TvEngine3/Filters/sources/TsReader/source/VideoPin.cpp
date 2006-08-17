@@ -192,14 +192,15 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
 {
 //	::OutputDebugStringA("CVideoPin::FillBuffer()\n");
   
+	CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
   if (m_pTsReaderFilter->IsSeeking())
   {
+    LogDebug("video:fillbuffer");
 	  pSample->SetActualDataLength(0);
 	  pSample->SetDiscontinuity(TRUE);
     return NOERROR;
   }
 
-	CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
 	CBuffer* buffer=demux.GetVideo();
 	if (buffer==NULL)
 	{
@@ -274,25 +275,31 @@ HRESULT CVideoPin::OnThreadStartPlay()
 	m_pTsReaderFilter->GetAudioPin()->GetRate(&dRate);
   return DeliverNewSegment(m_rtStart, pStop, dRate);
 }
-void CVideoPin::FlushOutput()
+
+void CVideoPin::FlushStart()
 {
-		//::OutputDebugString("CAudioPin::FlushOutput()\n");
 	if (ThreadExists()) 
   {
+    LogDebug("-- video:DeliverBeginFlush()");
     DeliverBeginFlush();
+		LogDebug("-- video:stop()");
     Stop();
-    DeliverEndFlush();
-    Run();
   }
+}
+void CVideoPin::FlushStop()
+{
+		LogDebug("-- video:DeliverEndFlush()");
+    DeliverEndFlush();
+		LogDebug("-- video:Pause()");
+    Pause();
+		LogDebug("-- video:FlushOutput done");
 }
 void CVideoPin::SetStart(CRefTime rtStartTime)
 {
+	LogDebug("-- video:SetStart");
 	m_rtStart=rtStartTime;
 	double startTime=m_rtStart/UNITS;
-	//char buf[100];
-	//sprintf(buf,"CVideoPin::SetStart %x %05.2f\n",(DWORD)m_rtStart,startTime);
-	//::OutputDebugString(buf);
-	FlushOutput();
+	LogDebug("-- video:SetStart done");
 }
 
 HRESULT CVideoPin::GetCapabilities(DWORD *pCapabilities)

@@ -45,6 +45,11 @@ CBuffer::~CBuffer()
 	m_iLength=0;
 }
 
+void CBuffer::SetLength(int len)
+{
+  m_iLength=len;
+}
+
 int CBuffer::Length()
 {
 	return m_iLength;
@@ -60,12 +65,11 @@ byte* CBuffer::Data()
 
 }
 
-void CBuffer::Set(double pcrTime, double ptsTime, double dtsTime,int length)
+void CBuffer::Set(double pcrTime, double ptsTime, double dtsTime)
 {
 	m_pcrTime=pcrTime;
 	m_ptsTime=ptsTime;
 	m_dtsTime=dtsTime;
-	m_iLength=length;
 }
 
 double CBuffer::Pcr()

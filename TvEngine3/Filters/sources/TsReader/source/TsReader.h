@@ -57,14 +57,15 @@ private:
 
 public:
 	// IFileSourceFilter
-	STDMETHODIMP Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt);
-	STDMETHODIMP GetCurFile(LPOLESTR * ppszFileName,AM_MEDIA_TYPE *pmt);
-	STDMETHODIMP GetDuration(REFERENCE_TIME *dur);
+	STDMETHODIMP    Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt);
+	STDMETHODIMP    GetCurFile(LPOLESTR * ppszFileName,AM_MEDIA_TYPE *pmt);
+	STDMETHODIMP    GetDuration(REFERENCE_TIME *dur);
 	double		      GetStartTime();
 	CAudioPin*      GetAudioPin();
 	bool            IsSeeking();
 	CDeMultiplexer& GetDemultiplexer();
 	void            Seek(CRefTime& seekTime);
+  void            SeekDone();
 	double          UpdateDuration();
 private:
 	CAudioPin*	    m_pAudioPin;;

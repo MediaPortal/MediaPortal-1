@@ -61,7 +61,8 @@ public:
 
 	HRESULT OnThreadStartPlay();
 	void SetStart(CRefTime rtStartTime);
-	void FlushOutput();
+	void FlushStart();
+	void FlushStop();
 
 protected:
 	BOOL m_bDiscontinuity;

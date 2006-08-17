@@ -1,6 +1,7 @@
 #include <streams.h>
 #include "mediaseeking.h"
 
+extern void LogDebug(const char *fmt, ...) ;
 // -- CMediaSeeking implementation ------------
 
 CMediaSeeking::CMediaSeeking(
@@ -132,6 +133,7 @@ HRESULT CMediaSeeking::ConvertTimeFormat( LONGLONG * pTarget, const GUID * pTarg
 HRESULT CMediaSeeking::SetPositions( LONGLONG * pCurrent,  DWORD CurrentFlags
                       , LONGLONG * pStop,  DWORD StopFlags )
 {
+  LogDebug("CMediaSeeking::SetPositions");
     DWORD StopPosBits = StopFlags & AM_SEEKING_PositioningBitsMask;
     DWORD StartPosBits = CurrentFlags & AM_SEEKING_PositioningBitsMask;
 

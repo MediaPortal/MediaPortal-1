@@ -32,7 +32,8 @@ public:
 	double Pcr();
 	double Pts();
 	double Dts();
-	void	 Set(double pcrTime, double ptsTime, double dtsTime,int length);
+	void	 Set(double pcrTime, double ptsTime, double dtsTime);
+  void   SetLength(int len);
 private:
 	double m_pcrTime;
 	double m_dtsTime;

@@ -28,7 +28,7 @@ using namespace std;
 class CDeMultiplexer
 {
 public:
-	CDeMultiplexer(MultiFileReader& reader, CCritSec* section);
+	CDeMultiplexer(MultiFileReader& reader);
 	virtual ~CDeMultiplexer(void);
 
 	CBuffer* GetAudio();
@@ -39,11 +39,11 @@ public:
 	bool Parse();
 	void Reset();
 private:
+  CCritSec m_section;
 	vector<CBuffer*> m_vecAudioBuffers;
 	vector<CBuffer*> m_vecVideoBuffers;
 	typedef vector<CBuffer*>::iterator ivecBuffer;
 	MultiFileReader& m_reader;
-	CCritSec* m_section;
 	byte		 Next(int len);
 	void		 Advance(int len);
 	int      BufferLength();
@@ -57,4 +57,6 @@ private:
 	int			 m_iBytesInBuffer;
 	int      m_streamId;
 	CPcrDecoder m_pcrDecoder;
+  CBuffer* m_pVideoBuffer;
+  CBuffer* m_pAudioBuffer;
 };

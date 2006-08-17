@@ -47,13 +47,15 @@ public:
 	void SetStart(CRefTime rtStartTime);
 
 	void SetDuration();
-	void FlushOutput();
+	void FlushStart();
+	void FlushStop();
 protected:
 	CRefTime	m_refStartTime;
 	BOOL m_bDiscontinuity;
 	CTsReaderFilter *	const m_pTsReaderFilter;
 	CCritSec* m_section;
-	bool			m_bDropPackets;
+	bool	m_bDropPackets;
+  bool  m_bDropSeek;
 };
 
 #endif

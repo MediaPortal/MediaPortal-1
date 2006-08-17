@@ -115,7 +115,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr) :
 	CSource(NAME("CTsReaderFilter"), pUnk, CLSID_TSReader),
 	m_pAudioPin(NULL),
 	m_pcrDecoder(m_fileDuration),
-	m_demultiplexer(m_fileReader,&m_section)
+	m_demultiplexer(m_fileReader)
 {
 
 	LogDebug("CTsReaderFilter::ctor");
@@ -238,7 +238,7 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
 	do
 	{
 		m_dwTickCount=0;
-		dTime=UpdateDuration();
+		dTime=UpdateDuration()/1000.0;
 		if (dTime<1) Sleep(50);
 		maxCount++;
 		if (maxCount>50)
@@ -309,9 +309,17 @@ double CTsReaderFilter::GetStartTime()
 
 void CTsReaderFilter::Seek(CRefTime& seekTime)
 {
+  if (m_seeking)
+  {
+    ASSERT(0);
+  }
   m_seeking=true;
+	LogDebug("-- CTsReaderFilter::Seek(%d)", seekTime.Millisecs());
   CAutoLock lock(&m_section);
-	LogDebug("CTsReaderFilter::Seek(%d)", seekTime.Millisecs());
+  m_pAudioPin->FlushStart();
+  m_pVideoPin->FlushStart();
+
+  m_pVideoPin->SetStart(seekTime);
 	//::OutputDebugStringA("CTsReaderFilter::Seek()\n");
 	double duration=(m_endTime-m_startTime);
 	double seektime=(double)seekTime.Millisecs();
@@ -331,14 +339,12 @@ void CTsReaderFilter::Seek(CRefTime& seekTime)
 		m_fileReader.setFilePointer(filePos,FILE_BEGIN);
 		m_fileDuration.setFilePointer(filePos,FILE_BEGIN);
 		double dtimeSeeked=m_pcrDecoder.GetPcr()-m_startTime;
-		LogDebug("seek %05.2f ->%05.2f", seektime/1000.0,dtimeSeeked/1000.0);
+		LogDebug("-- seek %05.2f ->%05.2f", seektime/1000.0,dtimeSeeked/1000.0);
 		if (dtimeSeeked>=seektime) break;
 		filePos+=0x50000;
 	} while (true);
 
-//	m_pAudioPin->SetStart(seekTime);
-	m_pVideoPin->SetStart(seekTime);
-  m_seeking=false;
+	LogDebug("-- CTsReaderFilter::seek done");
 }
 
 CAudioPin* CTsReaderFilter::GetAudioPin()
@@ -349,6 +355,13 @@ CAudioPin* CTsReaderFilter::GetAudioPin()
 bool CTsReaderFilter::IsSeeking()
 {
   return m_seeking;
+}
+void CTsReaderFilter::SeekDone()
+{
+  m_seeking=false;
+  m_pAudioPin->FlushStop();
+  m_pVideoPin->FlushStop();
+	LogDebug("-- CTsReaderFilter::SeekDone");
 }
 ////////////////////////////////////////////////////////////////////////
 //

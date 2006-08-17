@@ -22,14 +22,16 @@
 #include "demultiplexer.h"
 #include "buffer.h"
 
-#define BUFFER_LENGTH 0x1000
+#define OUTPUT_PACKET_LENGTH 0x6000
+#define BUFFER_LENGTH        0x1000
 
-CDeMultiplexer::CDeMultiplexer(MultiFileReader& reader, CCritSec* section)
+CDeMultiplexer::CDeMultiplexer(MultiFileReader& reader)
 :m_reader(reader)
 ,m_pcrDecoder(reader)
-,m_section(section)
 {
 	m_pBuffer = new byte[BUFFER_LENGTH];
+  m_pVideoBuffer = new CBuffer();
+  m_pAudioBuffer = new CBuffer();
 	m_iBufferPosWrite=0;
 	m_iBufferPosRead=0;
 	m_iBytesInBuffer=0;
@@ -40,13 +42,19 @@ CDeMultiplexer::CDeMultiplexer(MultiFileReader& reader, CCritSec* section)
 CDeMultiplexer::~CDeMultiplexer()
 {
 	delete[] m_pBuffer;
+  delete m_pVideoBuffer;
+  delete m_pAudioBuffer;
 }
 
 void CDeMultiplexer::Reset()
 {
 	//::OutputDebugStringA("CDeMultiplexer::Reset()\n");
-	CAutoLock lock(m_section);
+	CAutoLock lock(&m_section);
 	
+  delete m_pAudioBuffer;
+  delete m_pVideoBuffer;
+  m_pVideoBuffer = new CBuffer();
+  m_pAudioBuffer = new CBuffer();
 	m_iBufferPosWrite=0;
 	m_iBufferPosRead=0;
 	m_iBytesInBuffer=0;
@@ -82,7 +90,7 @@ int CDeMultiplexer::AudioPacketCount()
 }
 CBuffer* CDeMultiplexer::GetAudio()
 {
-	CAutoLock lock(m_section);
+	CAutoLock lock(&m_section);
    if (m_iBytesInBuffer<0)
   {
     ASSERT(0);
@@ -124,7 +132,7 @@ CBuffer* CDeMultiplexer::GetAudio()
 
 CBuffer* CDeMultiplexer::GetVideo()
 { 
-	CAutoLock lock(m_section);
+	CAutoLock lock(&m_section);
   if (m_iBytesInBuffer<0)
   {
     ASSERT(0);
@@ -394,17 +402,38 @@ bool CDeMultiplexer::Parse()
 					byteKar=Next(0);
 					len -=headerLen;
 					len -=3;
-					CBuffer* pBuffer= new CBuffer();
-					Copy(len, pBuffer->Data());
+
 					double pts=0,dts=0;
 					if (headerLen>0)
 					{
 						m_pcrDecoder.GetPtsDts(header,pts,dts);
 					}
-					pBuffer->Set(m_pcrTime,pts,dts,len);
-					m_vecAudioBuffers.push_back(pBuffer);
+          
+          bool newAudioPacket=false;
+          if (pts!=0)
+          {
+            if (m_pAudioBuffer->Length()>0)
+            {
+					    m_vecAudioBuffers.push_back(m_pAudioBuffer);
+              m_pAudioBuffer = new CBuffer();
+              newAudioPacket=true;
+            }
+					  m_pAudioBuffer->Set(m_pcrTime,pts,dts);
+          }
+          if (m_pAudioBuffer->Length()>OUTPUT_PACKET_LENGTH)
+          {
+					    m_vecAudioBuffers.push_back(m_pAudioBuffer);
+              m_pAudioBuffer = new CBuffer();
+					    m_pAudioBuffer->Set(m_pcrTime,pts,dts);
+              newAudioPacket=true;
+          }
+          byte* pData=m_pAudioBuffer->Data();
+          int bufLen=m_pAudioBuffer->Length();
+					Copy(len, &pData[bufLen] );
+          m_pAudioBuffer->SetLength(len+bufLen);
+
 					Advance(len);
-					return true;
+          if (newAudioPacket) return true;
 				}
 				break;
 				
@@ -440,17 +469,36 @@ bool CDeMultiplexer::Parse()
 					 byteKar=Next(0);
 					len -=headerLen;
 					len -=3;
-					CBuffer* pBuffer= new CBuffer();
-					Copy(len, pBuffer->Data());
 					double pts=0,dts=0;
 					if (headerLen>0)
 					{
 						m_pcrDecoder.GetPtsDts(header,pts,dts);
 					}
-					pBuffer->Set(m_pcrTime,pts,dts,len);
-					m_vecVideoBuffers.push_back(pBuffer);
+          bool newVideoPacket=false;
+          if (pts!=0)
+          {
+            if (m_pVideoBuffer->Length()>0)
+            {
+					    m_vecVideoBuffers.push_back(m_pVideoBuffer);
+              m_pVideoBuffer = new CBuffer();
+              newVideoPacket=true;
+            }
+					  m_pVideoBuffer->Set(m_pcrTime,pts,dts);
+          }
+          if (m_pVideoBuffer->Length()>OUTPUT_PACKET_LENGTH)
+          {
+					    m_vecVideoBuffers.push_back(m_pVideoBuffer);
+              m_pVideoBuffer = new CBuffer();
+					    m_pVideoBuffer->Set(m_pcrTime,pts,dts);
+              newVideoPacket=true;
+          }
+          byte* pData=m_pVideoBuffer->Data();
+          int bufLen=m_pVideoBuffer->Length();
+					Copy(len, &pData[bufLen] );
+          m_pVideoBuffer->SetLength(len+bufLen);
+
 					Advance(len);
-					return true;
+          if (newVideoPacket) return true;
 				}
 				break;
 
