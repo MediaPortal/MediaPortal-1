@@ -5,28 +5,7 @@
       Name="mypics"
       >
   <Page.Triggers>
-    <EventTrigger RoutedEvent="Page.Loaded">
-      <BeginStoryboard Name="backgroundAnimationsBeginStoryboard">
-        <Storyboard >
-          <DoubleAnimation 
-            Storyboard.TargetName="mainPanel"
-            Storyboard.TargetProperty="(Canvas.Background).(DrawingBrush.Transform).(RotateTransform.CenterX)"
-            From="0" To="360" Duration="0:2:30" RepeatBehavior="Forever" 
-            AutoReverse="True"/>
-          <DoubleAnimation 
-            Storyboard.TargetName="mainPanel"
-            Storyboard.TargetProperty="(Canvas.Background).(DrawingBrush.Transform).(RotateTransform.Angle)"
-            From="0" To="360" Duration="0:2:30" RepeatBehavior="Forever" 
-            AutoReverse="True"/>
-          <RectAnimation 
-            Storyboard.TargetName="mainPanel"
-            Storyboard.TargetProperty="(Canvas.Background).(DrawingBrush.Viewport)"
-            From="0,0,200,200" To="0,0,180,180" Duration="0:0:10" RepeatBehavior="Forever" 
-            AutoReverse="True"/>
-
-        </Storyboard>
-      </BeginStoryboard>
-    </EventTrigger>
+ 
   </Page.Triggers>
   <Canvas Name="mainPanel" Width="720" Height="576" Style="{DynamicResource PageBackground}">
  
