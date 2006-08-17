@@ -85,6 +85,12 @@ namespace MediaPortal.RemoteControls
 
     #endregion
 
+    public FireDTVRemote()
+    {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+    }
+
     /// <summary>
     /// Initialise the FireDTV remote
     /// </summary>
@@ -96,7 +102,6 @@ namespace MediaPortal.RemoteControls
         ServiceProvider services = GlobalServiceProvider.Instance;
         _log = services.Get<ILog>();
         _config = services.Get<IConfig>();
-        _log.Info("FireDTVRemote: Init FireDTV Remote?");
         // first read the configuration, to determine the initialisation is needed
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
         {
@@ -104,7 +109,6 @@ namespace MediaPortal.RemoteControls
           _name = xmlreader.GetValueAsString("remote", "FireDTVDeviceName", string.Empty);
           if (!_enabled) return;
         }
-        _log.Info("FireDTVRemote: Enabled!");
 
         // load the default input mapping
         _inputHandler = new InputHandler("FireDTV");
@@ -123,11 +127,11 @@ namespace MediaPortal.RemoteControls
       }
       catch (FileNotFoundException eFileNotFound)
       {
-        _log.Error(eFileNotFound.Message);
+        _log.Error(eFileNotFound);
       }
       catch (FireDTVException eFireDTV)
       {
-        _log.Error(eFireDTV.Message);
+        _log.Error(eFireDTV);
       }
     }
 
@@ -159,11 +163,9 @@ namespace MediaPortal.RemoteControls
           break;
 
         case FireDTVConstants.FireDTVWindowMessages.RemoteControlEvent:
-          _log.Info("FireDTVRemote: RemoteControlEvent");
           if (_enabled)
           {
             int remoteKeyCode = msg.LParam.ToInt32();
-            _log.Info("FireDTVRemote: (non-verbose) RemoteControlEvent {0}", remoteKeyCode);
             if (_logVerbose) _log.Info("FireDTVRemote: RemoteControlEvent {0}", remoteKeyCode);
 
             if (!_inputHandler.MapAction(remoteKeyCode))

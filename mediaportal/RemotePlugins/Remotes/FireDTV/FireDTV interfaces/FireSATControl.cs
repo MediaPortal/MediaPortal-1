@@ -31,6 +31,8 @@ using System.Runtime.InteropServices;
 using Microsoft.Win32;
 using System.Reflection;
 using System.IO;
+using MediaPortal.Util;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.RemoteControls.FireDTV
 {
@@ -382,25 +384,37 @@ namespace MediaPortal.RemoteControls.FireDTV
     /// <param name="windowHandle"></param>
     public FireDTVControl(IntPtr windowHandle)
     {
+      // get logger
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+
       // try to locate the FireDTV installation directory
       using (RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\DigitalEverywhere\\FireDTV"))
       {
         try
         {
-          if (rkey != null)
+          if (rkey == null)
+          {
+            _log.Error("FireDTVRemote: Trying to enable FireDTV remote, but software not installed!");
+            return;
+          }
+          else
           {
             string dllPath = rkey.GetValue("InstallFolder").ToString();
             string fullDllPath = string.Format("{0}{1}", dllPath.Substring(0, dllPath.LastIndexOf('\\') + 1), "Tools\\");
             bool _apiFound = File.Exists(fullDllPath + "FiresatApi.dll");
             if (!_apiFound)
+            {
+              _log.Error("FireDTVRemote: Trying to enable FireDTV remote, but dll not found!");
               return;
-            MediaPortal.GUI.Library.Log.Write("FireDTVRemote: DLL found in directory: {0}", fullDllPath);
+            }
+            _log.Info("FireDTVRemote: DLL found in directory: {0}", fullDllPath);
             FireDTVControl.SetDllDirectory(fullDllPath);
           }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-          MediaPortal.GUI.Library.Log.Write("FireDTVRemote: unable to determine firedtv directory");
+          _log.Error("FireDTVRemote: Trying to enable FireDTV remote, but failed to find dll with error: {0}",ex.Message);
           return;
         }
       }
@@ -429,7 +443,6 @@ namespace MediaPortal.RemoteControls.FireDTV
     [System.Diagnostics.DebuggerStepThrough]
     internal void InitializeLibrary()
     {
-      MediaPortal.GUI.Library.Log.Write("FireDTV: init start");
       if (!LibrayInitialized)
       {
         try
@@ -438,25 +451,18 @@ namespace MediaPortal.RemoteControls.FireDTV
           if ((FireDTVConstants.FireDTVStatusCodes)returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
             throw new FireDTVInitializationException("Initilization Failure (" + returnCode.ToString() + ")");
           LibrayInitialized = true;
-          MediaPortal.GUI.Library.Log.Write("FireDTV: dll initialized");
-
+          _log.Info("FireDTV: dll initialized");
         }
         catch (Exception e)
         {
-          MediaPortal.GUI.Library.Log.Write("FireDTV: error initializing {0}", e.Message);
-
+          _log.Error("FireDTV: error initializing {0}", e.Message);
         }
-
       }
-      MediaPortal.GUI.Library.Log.Write("FireDTV: init stop");
-
     }
     #endregion
     #region FireDTV Open/Close Device
     internal uint OpenWDMDevice(int deviceIndex)
     {
-      MediaPortal.GUI.Library.Log.Write("FireDTV: Open WDM start");
-
       uint DeviceHandle;
       uint returnCode = FireDTVAPI.FS_OpenWDMDeviceHandle((uint)deviceIndex, out DeviceHandle);
       if ((FireDTVConstants.FireDTVStatusCodes)returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
@@ -466,8 +472,6 @@ namespace MediaPortal.RemoteControls.FireDTV
 
     internal uint OpenBDADevice(int deviceIndex)
     {
-      MediaPortal.GUI.Library.Log.Write("FireDTV: open BDA start");
-
       uint DeviceHandle;
       uint returnCode = FireDTVAPI.FS_OpenBDADeviceHandle((uint)deviceIndex, out DeviceHandle);
       if ((FireDTVConstants.FireDTVStatusCodes)returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
@@ -543,6 +547,7 @@ namespace MediaPortal.RemoteControls.FireDTV
     #endregion
     #endregion
     #region Private Variables
+    private ILog _log;
     private bool LibrayInitialized = false;
     private bool NotificationsRegistered = false;
     private IntPtr _windowHandle = (IntPtr)0;
@@ -591,22 +596,20 @@ namespace MediaPortal.RemoteControls.FireDTV
     /// <returns>true if success</returns>
     public bool OpenDrivers()
     {
-      MediaPortal.GUI.Library.Log.Write("FireDTV: OpenDriver start");
-
       if (!LibrayInitialized)
         return false;
 
       int BDADriverCount = getBDACount();
       int WDMDriverCount = getWDMCount();
 
-      MediaPortal.GUI.Library.Log.Write("FireDTV: BDA {0}, WMA {1}", BDADriverCount, WDMDriverCount);
+      _log.Info("FireDTV: BDA {0}, WMA {1}", BDADriverCount, WDMDriverCount);
 
 
       for (int BDACount = 0; BDACount < BDADriverCount; BDACount++)
       {
         FireDTVSourceFilterInfo bdaSourceFilter = new FireDTVSourceFilterInfo(OpenBDADevice(BDACount), _windowHandle);
         if (bdaSourceFilter != null)
-          MediaPortal.GUI.Library.Log.Write("FireDTV: add BDA Source {0}", bdaSourceFilter.ToString());
+          _log.Info("FireDTV: add BDA Source {0}", bdaSourceFilter.ToString());
 
         _sourceFilterCollection.Add(bdaSourceFilter);
       }
@@ -615,12 +618,9 @@ namespace MediaPortal.RemoteControls.FireDTV
       {
         FireDTVSourceFilterInfo wdmSourceFilter = new FireDTVSourceFilterInfo(OpenWDMDevice(WDMCount), _windowHandle);
         if (wdmSourceFilter != null)
-          MediaPortal.GUI.Library.Log.Write("FireDTV: add WDM Source");
+          _log.Info("FireDTV: add WDM Source");
         _sourceFilterCollection.Add(wdmSourceFilter);
       }
-
-      MediaPortal.GUI.Library.Log.Write("FireDTV: Open Driver stop");
-
       return true;
     }
 
