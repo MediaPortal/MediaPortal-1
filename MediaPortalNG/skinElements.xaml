@@ -10,8 +10,10 @@
    
   <Style x:Key="GUIImage" TargetType="{x:Type Image}"></Style> 
   
-  <Style x:Key="PageBackground" TargetType="{x:Type Page}">
-    <Setter Property="Background">
+  <Style x:Key="PageBackground" TargetType="{x:Type Canvas}">
+     <Setter Property="Width" Value="720"/>
+     <Setter Property="Height" Value="576"/>
+     <Setter Property="Background">
       <Setter.Value>
         <ImageBrush ImageSource="{DynamicResource background.png}"/>
       </Setter.Value>

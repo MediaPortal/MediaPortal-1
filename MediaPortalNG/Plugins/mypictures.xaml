@@ -3,7 +3,7 @@
       Style="{DynamicResource PageBackground}" 
       xmlns:ctrl="clr-namespace:MediaPortal"
       x:Class="MediaPortal.MyPictures"
-      Name="mypictures"
+      Name="mypics"
       >
   <Page.Triggers>
     <EventTrigger RoutedEvent="Page.Loaded">
@@ -29,68 +29,8 @@
       </BeginStoryboard>
     </EventTrigger>
   </Page.Triggers>
-  <Canvas Name="mainPanel">
-      <Canvas.Background>
-
-        <DrawingBrush TileMode="Tile" Opacity="0.12" 
-          Viewport="0,0,200,200" ViewportUnits="Absolute">
-          <DrawingBrush.Drawing>
-            <DrawingGroup>
-              <DrawingGroup.Children>
-
-                <GeometryDrawing>
-                  <GeometryDrawing.Geometry>
-                    <RectangleGeometry Rect="0,0,1,1" />
-                  </GeometryDrawing.Geometry>
-                  <GeometryDrawing.Brush>
-                    <SolidColorBrush Color="Transparent" />
-                  </GeometryDrawing.Brush>
-                  <GeometryDrawing.Pen>
-                    <Pen Thickness="0.005" Brush="Transparent" />
-                  </GeometryDrawing.Pen>
-                </GeometryDrawing>
-
-                <GeometryDrawing>
-                  <GeometryDrawing.Geometry>
-                    <RectangleGeometry Rect="0.17,0.25,0.22,0.65" RadiusX="0.10" RadiusY="0.10"/>
-                  </GeometryDrawing.Geometry>
-                  <GeometryDrawing.Brush>
-                    <SolidColorBrush Color="Transparent" />
-                  </GeometryDrawing.Brush>
-                  <GeometryDrawing.Pen>
-                    <Pen Thickness="0.01" Brush="DarkGray" />
-                  </GeometryDrawing.Pen>
-                </GeometryDrawing>
-                
-                <GeometryDrawing>
-                  <GeometryDrawing.Geometry>
-                    <RectangleGeometry Rect="0.44,0.25,0.22,0.65" RadiusX="0.10" RadiusY="0.10"/>
-                  </GeometryDrawing.Geometry>
-                  <GeometryDrawing.Brush>
-                    <SolidColorBrush Color="Transparent" />
-                  </GeometryDrawing.Brush>
-                  <GeometryDrawing.Pen>
-                    <Pen Thickness="0.01" Brush="DarkGray" />
-                  </GeometryDrawing.Pen>
-                </GeometryDrawing>
-
-                <GeometryDrawing Brush="Transparent">
-                  <GeometryDrawing.Geometry>
-                    <EllipseGeometry Center="0.83,0.40" RadiusX="0.14" RadiusY="0.14" />
-                  </GeometryDrawing.Geometry>
-                  <GeometryDrawing.Pen>
-                    <Pen Thickness="0.01" Brush="DarkGray" />
-                  </GeometryDrawing.Pen>
-                </GeometryDrawing>
-
-                </DrawingGroup.Children>
-            </DrawingGroup>
-          </DrawingBrush.Drawing>
-          <DrawingBrush.Transform>
-            <RotateTransform CenterX="0.5" CenterY="0.5" />
-          </DrawingBrush.Transform>
-        </DrawingBrush>
-      </Canvas.Background>
+  <Canvas Name="mainPanel" Style="{DynamicResource PageBackground}">
+ 
       <!--  -->
       <TextBlock
         Name="id1"
@@ -135,7 +75,7 @@
 
       <!-- View-As button -->
       <Button
-        Name="id2"
+        x:Name="mypictures1"
         Canvas.Top="97"
         Canvas.Left="60"
         Visibility="Visible"
@@ -144,7 +84,8 @@
         Style="{DynamicResource GUIButton}"
         Click="MPNG" 
         Tag="##id::2//##keycontrol::onleft:;onright:50;onup:17;ondown://##metadata::labelNum:100"
->100</Button>
+Content="100"
+/>
 
 
       <!--  -->

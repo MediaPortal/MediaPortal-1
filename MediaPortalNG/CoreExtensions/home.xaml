@@ -1,7 +1,6 @@
 <Page 
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-  Style="{StaticResource PageBackground}"
   x:Class="MediaPortal.HomeExtension"
   
   xmlns:ctrl="clr-namespace:MediaPortal" Width="720" Height="576" Opacity="0.967268992449301">
@@ -186,7 +185,7 @@
 
   </Page.Resources>
 
-  <Canvas>
+  <Canvas Name="mainPanel" Style="{DynamicResource PageBackground}">
     <!-- menu background image -->
 
     <ListView Name="lv"
