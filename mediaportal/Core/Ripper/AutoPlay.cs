@@ -46,6 +46,7 @@ namespace MediaPortal.Ripper
     static string m_dvd = "No";
     static string m_audiocd = "No";
     static ILog _log;
+    static IConfig _config;
 
     enum MediaType
     {
@@ -73,6 +74,7 @@ namespace MediaPortal.Ripper
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
 
       m_dvd = "No";
       m_audiocd = "No";
@@ -107,7 +109,7 @@ namespace MediaPortal.Ripper
 
     private static void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         m_dvd = xmlreader.GetValueAsString("dvdplayer", "autoplay", "Ask");
         m_audiocd = xmlreader.GetValueAsString("audioplayer", "autoplay", "No");

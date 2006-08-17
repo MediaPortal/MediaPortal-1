@@ -808,7 +808,7 @@ namespace MediaPortal.Util
         CRCTool crc = new CRCTool();
         crc.Init(CRCTool.CRCCode.CRC32);
         ulong dwcrc = crc.calc(strLine);
-        string strRet = System.IO.Path.GetFullPath(String.Format("thumbs\\{0}.jpg", dwcrc));
+        string strRet = System.IO.Path.GetFullPath(String.Format("{0}{1}.jpg", _config.Get(Config.Options.ThumbsPath),dwcrc));
         return strRet;
       }
       catch (Exception)
@@ -952,7 +952,7 @@ namespace MediaPortal.Util
 
     static public bool PlayDVD()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         string strPath = xmlreader.GetValueAsString("dvdplayer", "path", "");
         string strParams = xmlreader.GetValueAsString("dvdplayer", "arguments", "");
@@ -1015,7 +1015,7 @@ namespace MediaPortal.Util
           strFile.IndexOf("record2.") > 0 || strFile.IndexOf("record3.") > 0 ||
           strFile.IndexOf("record4.") > 0 || strFile.IndexOf("record5.") > 0) return false;
 
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
         {
           bool bInternal = xmlreader.GetValueAsBool("movieplayer", "internal", true);
           if (bInternal) return false;

@@ -10,11 +10,13 @@ namespace DShowNET.Helper
   public class CrossBar
   {
     static ILog _log;
+    static IConfig _config;
 
     static CrossBar()
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
     }
 
     /// <summary>
@@ -252,7 +254,7 @@ namespace DShowNET.Helper
       int videoSVHS = 1;
       int videoRgb = 1;
 
-      string filename = String.Format(@"database\card_{0}.xml", cardName);
+      string filename = String.Format(_config.Get(Config.Options.DatabasePath) + "card_{0}.xml", cardName);
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename))
       {
         audioCVBS1 = 1 + xmlreader.GetValueAsInt("mapping", "audio1", 0);

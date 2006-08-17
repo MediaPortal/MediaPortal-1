@@ -89,12 +89,14 @@ namespace MediaPortal.WINLIRC
 		protected bool m_bInitRetry = true;
 		protected int m_IRdelay = 300;
     protected ILog _log;
+    protected IConfig _config;
 		
 
 		public WinLirc()
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
 
 			Init();
 		}
@@ -103,7 +105,7 @@ namespace MediaPortal.WINLIRC
 		{
 			_log.Info("Initialising WinLirc...");
 			//load settings
-			using(MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
 			{
 				m_bEnabled = xmlreader.GetValueAsString("WINLIRC", "enabled", "false") == "true";
 				if(m_bEnabled == false)

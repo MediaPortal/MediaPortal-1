@@ -192,11 +192,13 @@ namespace MediaPortal.Core.Transcoding
 		protected const int WS_CLIPCHILDREN	= 0x02000000;
 		protected const int WS_CLIPSIBLINGS	= 0x04000000;
     private ILog _log;
+    private IConfig _config;
 
 		public TranscodeToWMV()
 		{
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
 		}
 
 		public void CreateProfile(Size videoSize, int bitRate, int FPS)
@@ -242,7 +244,7 @@ namespace MediaPortal.Core.Transcoding
 				//add mpeg2 audio/video codecs
 				string strVideoCodec=@"DScaler Mpeg2 Video Decoder";
         string strAudioCodec = "MPA Decoder Filter";
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
 				{
 					//strVideoCodec=xmlreader.GetValueAsString("mytv","videocodec","MPEG2Dec Filter");
 				}

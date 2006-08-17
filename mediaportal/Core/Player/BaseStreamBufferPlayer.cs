@@ -119,6 +119,7 @@ namespace MediaPortal.Player
     protected MediaPortal.GUI.Library.Geometry.Type _geometry = MediaPortal.GUI.Library.Geometry.Type.Normal;
     protected bool _seekToBegin = false;
     protected ILog _log;
+    protected IConfig _config;
     #endregion
 
     #region ctor/dtor
@@ -126,6 +127,7 @@ namespace MediaPortal.Player
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
     }
     #endregion
 
@@ -160,7 +162,7 @@ namespace MediaPortal.Player
       _minBackingFiles = 6;
       _maxBackingFiles = 8;
       int iTimeShiftBuffer = 30;
-      using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml") )
+      using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml") )
       {
         iTimeShiftBuffer = xmlreader.GetValueAsInt("capture", "timeshiftbuffer", 30);
         if ( iTimeShiftBuffer < 5 )
@@ -1198,7 +1200,7 @@ namespace MediaPortal.Player
         string strAudioCodec = "";
         string strAudiorenderer = "";
         bool bAddFFDshow = false;
-        using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml") )
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
         {
           bAddFFDshow = xmlreader.GetValueAsBool("mytv", "ffdshow", false);
           strVideoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "");

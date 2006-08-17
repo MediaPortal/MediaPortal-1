@@ -36,8 +36,9 @@ namespace MediaPortal.Subtitle
       {
         ServiceProvider services = GlobalServiceProvider.Instance;
         ILog log = services.Get<ILog>();
+        IConfig _config = services.Get<IConfig>();
         log.Info("loading subtitle plugins");
-        string[] strFiles=System.IO.Directory.GetFiles(@"plugins\subtitle", "*.dll");
+        string[] strFiles=System.IO.Directory.GetFiles(_config.Get(Config.Options.PluginsPath) + "subtitle", "*.dll");
         foreach (string strFile in strFiles)
         {
           try

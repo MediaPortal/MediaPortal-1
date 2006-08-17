@@ -40,6 +40,7 @@ namespace MediaPortal.Utils.Services
       PluginsPath,
       ThumbsPath,
       CachePath,
+      WeatherPath,
       ConfigPath
     }
 

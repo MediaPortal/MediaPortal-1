@@ -81,6 +81,7 @@ namespace DShowNET.Helper
     bool _isOverlayWindowVisible = false;
     int _recorderId = -1;
     protected ILog _log;
+    protected IConfig _config;
     #endregion
 
     #region dshowhelper.dll Imports
@@ -186,6 +187,7 @@ namespace DShowNET.Helper
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
 
       _graphBuilderInterface = graphBuilder;
       _sizeFrame = framesize;
@@ -708,7 +710,7 @@ namespace DShowNET.Helper
         }
 
         int iTimeShiftBuffer = 30;
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
         {
           iTimeShiftBuffer = xmlreader.GetValueAsInt("capture", "timeshiftbuffer", 30);
           if (iTimeShiftBuffer < 5) iTimeShiftBuffer = 5;

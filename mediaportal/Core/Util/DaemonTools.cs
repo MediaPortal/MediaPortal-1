@@ -21,6 +21,8 @@
 using System;
 using System.Diagnostics;
 using MediaPortal.GUI.Library;
+using MediaPortal.Utils.Services;
+
 namespace MediaPortal.Util
 {
 	/// <summary>
@@ -36,7 +38,9 @@ namespace MediaPortal.Util
 
     static DaemonTools()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      IConfig _config = services.Get<IConfig>();
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         _Enabled= xmlreader.GetValueAsBool("daemon", "enabled", false);
         _Path= xmlreader.GetValueAsString("daemon", "path", "");

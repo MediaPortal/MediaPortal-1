@@ -124,7 +124,7 @@ namespace MediaPortal.Configuration
       {
         strLanguage = xmlreader.GetValueAsString("skin", "language", "English");
       }
-      GUILocalizeStrings.Load(@"language\" + strLanguage + @"\strings.xml");
+      GUILocalizeStrings.Load(_config.Get(Config.Options.LanguagePath) + strLanguage + @"\strings.xml");
 
       _log.Info("add project section");
       Project project = new Project();

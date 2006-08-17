@@ -26,6 +26,7 @@
 using System;
 using DirectShowLib;
 using MediaPortal.Profile;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.GUI.Library
 {
@@ -51,8 +52,10 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
+        ServiceProvider services = GlobalServiceProvider.Instance;
+        IConfig _config = services.Get<IConfig>();
         if (_noSignalTimeOut == -1)
-          using (Settings xmlreader = new Settings("MediaPortal.xml"))
+          using (Settings xmlreader = new Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
             _noSignalTimeOut = xmlreader.GetValueAsInt("debug", "nosignaltimeout", 5);
 
         return _noSignalTimeOut;

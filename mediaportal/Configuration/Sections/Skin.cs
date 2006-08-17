@@ -259,14 +259,14 @@ namespace MediaPortal.Configuration.Sections
         string prevSkin = xmlwriter.GetValueAsString("skin", "name", "BlueTwo");
         if ( prevSkin != listViewAvailableSkins.SelectedItems[0].Text )
         {
-          MediaPortal.Util.Utils.DeleteFiles(@"skin\" + listViewAvailableSkins.Text + @"\fonts", "*");
+          MediaPortal.Util.Utils.DeleteFiles(_config.Get(Config.Options.SkinPath) + listViewAvailableSkins.Text + @"\fonts", "*");
         }
         xmlwriter.SetValue("skin", "name", listViewAvailableSkins.SelectedItems[0].Text);
         // Set language
         string prevLanguage = xmlwriter.GetValueAsString("skin", "language", "English");
         string skin = xmlwriter.GetValueAsString("skin", "name", "BlueTwo");
         if ( prevLanguage != languageComboBox.Text )
-          MediaPortal.Util.Utils.DeleteFiles(@"skin\" + skin + @"\fonts", "*");
+          MediaPortal.Util.Utils.DeleteFiles(_config.Get(Config.Options.SkinPath) + skin + @"\fonts", "*");
 
         xmlwriter.SetValue("skin", "language", languageComboBox.Text);
         xmlwriter.SetValueAsBool("skin", "rtllang", checkBoxlangRTL.Checked);

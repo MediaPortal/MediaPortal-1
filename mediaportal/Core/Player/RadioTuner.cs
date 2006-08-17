@@ -49,11 +49,13 @@ namespace MediaPortal.Player
     string m_strAudioDevice = "";
     string m_strLineInput = "";
     protected ILog _log;
+    protected IConfig _config;
 
     public RadioTuner()
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
     }
 
     public override bool Play(string strFile)
@@ -68,7 +70,7 @@ namespace MediaPortal.Player
 
         int iTunerCountry = 31;
         string strTunerType = "Antenna";
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
         {
           m_bInternal = xmlreader.GetValueAsBool("radio", "internal", true);
           strPlayerFile = xmlreader.GetValueAsString("radio", "player", "");

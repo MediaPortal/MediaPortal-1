@@ -85,6 +85,7 @@ namespace MediaPortal.Player
     static ArrayList _seekStepList = new ArrayList();
     static public bool configLoaded = false;
     static ILog _log;
+    static IConfig _config;
     #endregion
 
     #region events
@@ -107,6 +108,7 @@ namespace MediaPortal.Player
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
     }
     public static Player.IPlayer Player
     {
@@ -128,7 +130,7 @@ namespace MediaPortal.Player
     {
       ArrayList StepArray = new ArrayList();
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
         foreach (string token in (xmlreader.GetValueAsString("movieplayer", "skipsteps", "0;1;1;0;1;1;1;0;1;1;1;0;1;0;1;0").Split(new char[] { ',', ';', ' ' })))
         {
           if (token == string.Empty)
@@ -368,7 +370,7 @@ namespace MediaPortal.Player
         }
         _isInitalized = true;
         int iUseVMR9 = 0;
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
         {
           iUseVMR9 = xmlreader.GetValueAsInt("dvdplayer", "vmr9", 0);
         }
@@ -491,7 +493,7 @@ namespace MediaPortal.Player
           GC.Collect(); GC.Collect(); GC.Collect(); GC.Collect();
         }
         //int iUseVMR9inMYMovies = 0;
-        //using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        //using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
         //{
         //  iUseVMR9inMYMovies = xmlreader.GetValueAsInt("movieplayer", "vmr9", 1);
         //}
@@ -612,7 +614,7 @@ namespace MediaPortal.Player
           {
 
             int iUseVMR9 = 0;
-            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
             {
               iUseVMR9 = xmlreader.GetValueAsInt("dvdplayer", "vmr9", 0);
             }
@@ -720,7 +722,7 @@ namespace MediaPortal.Player
           {
 
             int iUseVMR9 = 0;
-            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
             {
               iUseVMR9 = xmlreader.GetValueAsInt("dvdplayer", "vmr9", 0);
             }

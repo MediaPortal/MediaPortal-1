@@ -109,11 +109,11 @@ namespace MediaPortal.Configuration.Sections
 
     private void EnumeratePlugins()
     {
-      EnumeratePluginDirectory(@"plugins\windows");
-      EnumeratePluginDirectory(@"plugins\subtitle");
-      EnumeratePluginDirectory(@"plugins\tagreaders");
-      EnumeratePluginDirectory(@"plugins\externalplayers");
-      EnumeratePluginDirectory(@"plugins\process");
+      EnumeratePluginDirectory(_config.Get(Config.Options.PluginsPath) + "windows");
+      EnumeratePluginDirectory(_config.Get(Config.Options.PluginsPath) + "subtitle");
+      EnumeratePluginDirectory(_config.Get(Config.Options.PluginsPath) + "tagreaders");
+      EnumeratePluginDirectory(_config.Get(Config.Options.PluginsPath) + "externalplayers");
+      EnumeratePluginDirectory(_config.Get(Config.Options.PluginsPath) + "process");
     }
 
     private void EnumeratePluginDirectory(string directory)

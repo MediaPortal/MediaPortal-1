@@ -174,6 +174,7 @@ namespace MediaPortal.GUI.Library
     #region variables
     List<PackedTexture> _packedTextures;
     private ILog _log;
+    private IConfig _config;
     #endregion
 
     #region ctor/dtor
@@ -181,6 +182,7 @@ namespace MediaPortal.GUI.Library
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
     }
     #endregion
 
@@ -217,7 +219,7 @@ namespace MediaPortal.GUI.Library
     bool LoadPackedSkin(string skinName)
     {
       string packedXml = String.Format(@"{0}\packedgfx2.bxml", skinName);
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         if (xmlreader.GetValueAsBool("debug", "skincaching", true) && File.Exists(packedXml))
         {
@@ -252,9 +254,9 @@ namespace MediaPortal.GUI.Library
 
       _packedTextures = new List<PackedTexture>();
       string[] files1 = System.IO.Directory.GetFiles(String.Format(@"{0}\media", skinName), "*.png");
-      string[] files2 = System.IO.Directory.GetFiles(@"thumbs\tv\logos", "*.png");
-      string[] files3 = System.IO.Directory.GetFiles(@"weather\64x64", "*.png");
-      string[] files4 = System.IO.Directory.GetFiles(@"weather\128x128", "*.png");
+      string[] files2 = System.IO.Directory.GetFiles(_config.Get(Config.Options.ThumbsPath) + @"tv\logos", "*.png");
+      string[] files3 = System.IO.Directory.GetFiles(_config.Get(Config.Options.WeatherPath) + "64x64", "*.png");
+      string[] files4 = System.IO.Directory.GetFiles(_config.Get(Config.Options.WeatherPath) + "128x128", "*.png");
       string[] files5 = System.IO.Directory.GetFiles(String.Format(@"{0}\media\tetris", skinName), "*.png");
       string[] files = new string[files1.Length + files2.Length + files3.Length + files4.Length + files5.Length];
 

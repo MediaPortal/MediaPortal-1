@@ -1463,7 +1463,7 @@ namespace MediaPortal.Configuration.Sections
 
       if (dialogResult == DialogResult.Yes)
       {
-        string database = @"database\VideoDatabaseV5.db3";
+        string database = _config.Get(Config.Options.DatabasePath) + "VideoDatabaseV5.db3";
         if (File.Exists(database))
         {
           VideoDatabase.Dispose();

@@ -121,6 +121,7 @@ namespace MediaPortal.Player
 
     protected bool _startingUp;
     protected ILog _log;
+    protected IConfig _config;
     protected bool _isRadio = false;
     #endregion
 
@@ -129,6 +130,7 @@ namespace MediaPortal.Player
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
     }
     public BaseTStreamBufferPlayer(g_Player.MediaType type)
     {
@@ -1183,7 +1185,7 @@ namespace MediaPortal.Player
         string strAudioCodec = "";
         string strAudiorenderer = "";
         bool bAddFFDshow = false;
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
         {
           bAddFFDshow = xmlreader.GetValueAsBool("mytv", "ffdshow", false);
           strVideoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "");

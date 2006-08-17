@@ -45,6 +45,7 @@ namespace MediaPortal.GUI.Library
     static List<DownloadedImage> _cacheDownload = new List<DownloadedImage>();
     static TexturePacker _packer = new TexturePacker();
     static ILog _log;
+    static IConfig _config;
 
     // singleton. Dont allow any instance of this class
     private GUITextureManager()
@@ -55,6 +56,7 @@ namespace MediaPortal.GUI.Library
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
     }
 
     ~GUITextureManager()
@@ -81,7 +83,7 @@ namespace MediaPortal.GUI.Library
       }
       _cacheDownload.Clear();
 
-      string[] files = System.IO.Directory.GetFiles("thumbs", "MPTemp*.*");
+      string[] files = System.IO.Directory.GetFiles(_config.Get(Config.Options.ThumbsPath), "MPTemp*.*");
       if (files != null)
       {
         foreach (string file in files)
@@ -581,8 +583,8 @@ namespace MediaPortal.GUI.Library
       if (fileName == String.Empty) return;
 
       //dont dispose radio/tv logo's since they are used by the overlay windows
-      if (fileName.ToLower().IndexOf(@"thumbs\tv\logos") >= 0) return;
-      if (fileName.ToLower().IndexOf(@"thumbs\radio") >= 0) return;
+      if (fileName.ToLower().IndexOf(_config.Get(Config.Options.ThumbsPath) + @"tv\logos") >= 0) return;
+      if (fileName.ToLower().IndexOf(_config.Get(Config.Options.ThumbsPath) + @"radio") >= 0) return;
       try
       {
         bool continueRemoving = false;
@@ -647,8 +649,8 @@ namespace MediaPortal.GUI.Library
       if (fileName.Length == 0) return false;
       if (fileName == "-") return false;
 
-      if (fileName.ToLower().IndexOf(@"thumbs\tv\logos") >= 0) return false;
-      if (fileName.ToLower().IndexOf(@"thumbs\radio") >= 0) return false;
+      if (fileName.ToLower().IndexOf(_config.Get(Config.Options.ThumbsPath) + @"tv\logos") >= 0) return false;
+      if (fileName.ToLower().IndexOf(_config.Get(Config.Options.ThumbsPath) + "radio") >= 0) return false;
 
       /* Temporary: (textures that are disposed)
        * - all not skin images

@@ -112,11 +112,13 @@ namespace MediaPortal.Playlists
     PlayList _musicVideoPlayList = new PlayList();
     bool _repeatPlayList = true;
     protected ILog _log;
+    protected IConfig _config;
 
     public PlayListPlayer()
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
     }
 
     static private PlayListPlayer singletonPlayer = new PlayListPlayer();
@@ -445,7 +447,7 @@ namespace MediaPortal.Playlists
         {
           _currentPlayList = value;
           _entriesNotFound = 0;
-          using (Settings settings = new Settings("MediaPortal.xml"))
+          using (Settings settings = new Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
           {
             if (value == PlayListType.PLAYLIST_MUSIC || value == PlayListType.PLAYLIST_MUSIC_TEMP)
             {

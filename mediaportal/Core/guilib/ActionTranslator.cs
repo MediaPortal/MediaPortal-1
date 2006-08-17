@@ -66,10 +66,12 @@ namespace MediaPortal.GUI.Library
     /// <returns>True if the load was successfull, false if it failed.</returns>
     static public bool Load()
     {
-      mapWindows.Clear();
-      string strFilename="keymap.xml";
       ServiceProvider services = GlobalServiceProvider.Instance;
       ILog log = services.Get<ILog>();
+      IConfig _config = services.Get<IConfig>();
+
+      mapWindows.Clear();
+      string strFilename= _config.Get(Config.Options.ConfigPath) + "keymap.xml";
       log.Info("  Load key mapping from {0}", strFilename);
       try
       {

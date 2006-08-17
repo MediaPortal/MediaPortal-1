@@ -60,7 +60,7 @@ namespace MediaPortal.Configuration
       _config = new Config(Application.StartupPath);
       if (!_config.LoadConfig())
       {
-        MessageBox.Show("Missing or Invalid MediaPortalPath.xml file. MediaPortal cannot run without that file.", "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        MessageBox.Show("Missing or Invalid MediaPortalConfig.xml file. MediaPortal cannot run without that file.", "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
         return;
       }
       services.Add<IConfig>(_config);

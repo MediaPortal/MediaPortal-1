@@ -38,11 +38,13 @@ namespace MediaPortal.GUI.Library
     static bool windowPluginsLoaded=false;
     static bool nonWindowPluginsLoaded=false;
     static ILog _log;
+    static IConfig _config;
 
     static PluginManager()
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
     }
 
     static public ArrayList GUIPlugins
@@ -83,11 +85,11 @@ namespace MediaPortal.GUI.Library
       _log.Info("  PlugInManager.Load()");
       try
       {
-        System.IO.Directory.CreateDirectory(@"plugins");
-        System.IO.Directory.CreateDirectory(@"plugins\process");
+        System.IO.Directory.CreateDirectory(_config.Get(Config.Options.PluginsPath));
+        System.IO.Directory.CreateDirectory(_config.Get(Config.Options.PluginsPath) + "process");
       }
       catch(Exception){}
-      string[] strFiles=System.IO.Directory.GetFiles(@"plugins\process", "*.dll");
+      string[] strFiles=System.IO.Directory.GetFiles(_config.Get(Config.Options.PluginsPath) + "process", "*.dll");
       foreach (string strFile in strFiles)
       {
         LoadPlugin(strFile);
@@ -100,13 +102,13 @@ namespace MediaPortal.GUI.Library
       _log.Info("  LoadWindowPlugins()");
       try
       {
-        System.IO.Directory.CreateDirectory(@"plugins");
-        System.IO.Directory.CreateDirectory(@"plugins\windows");
+        System.IO.Directory.CreateDirectory(_config.Get(Config.Options.PluginsPath));
+        System.IO.Directory.CreateDirectory(_config.Get(Config.Options.PluginsPath) + "windows");
       }
       catch(Exception){}
-      LoadWindowPlugin(@"plugins\windows\WindowPlugins.dll");//need to load this first!!!
+      LoadWindowPlugin(_config.Get(Config.Options.PluginsPath) + @"windows\WindowPlugins.dll");//need to load this first!!!
 
-      string [] strFiles=System.IO.Directory.GetFiles(@"plugins\windows", "*.dll");
+      string [] strFiles=System.IO.Directory.GetFiles(_config.Get(Config.Options.PluginsPath) + "windows", "*.dll");
       foreach (string strFile in strFiles)
       {
         if (strFile.ToLower().IndexOf("windowplugins.dll") >= 0) continue;
@@ -394,7 +396,7 @@ namespace MediaPortal.GUI.Library
       if (strDllname.IndexOf("WindowPlugins.dll")>=0) return true;
       if (strDllname.IndexOf("ProcessPlugins.dll")>=0) return true;
 
-      using (MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         // from the assembly name check the reference to plugin name
         // if available check to see if the plugin is enabled
@@ -409,7 +411,7 @@ namespace MediaPortal.GUI.Library
     static public bool IsWindowPlugInEnabled(string strType)
     {
 
-      using (MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         bool bEnabled=xmlreader.GetValueAsBool("pluginswindows",strType,true);
         return bEnabled;
@@ -419,7 +421,7 @@ namespace MediaPortal.GUI.Library
     static public bool IsPluginNameEnabled(string strPluginName)
     {
 
-      using (MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         bool bEnabled=xmlreader.GetValueAsBool("plugins",strPluginName,true);
         return bEnabled;
@@ -429,7 +431,7 @@ namespace MediaPortal.GUI.Library
 
     static public bool PluginEntryExists(string strPluginName)
     {
-      using (MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         string val = xmlreader.GetValueAsString("plugins", strPluginName, "");
         return (val != "");

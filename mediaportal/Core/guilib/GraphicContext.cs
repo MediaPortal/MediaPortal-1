@@ -210,7 +210,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     static public void Save()
     {
-      string strFileName = String.Format("ScreenCalibration{0}x{1}", Width, Height);
+      string strFileName = String.Format(_config.Get(Config.Options.ConfigPath) + "ScreenCalibration{0}x{1}", Width, Height);
       if (Fullscreen)
         strFileName += ".fs.xml";
       else
@@ -261,7 +261,7 @@ namespace MediaPortal.GUI.Library
       ZoomHorizontal = 1.0f;
       ZoomVertical = 1.0f;
 
-      string strFileName = String.Format("ScreenCalibration{0}x{1}", Width, Height);
+      string strFileName = String.Format(_config.Get(Config.Options.ConfigPath) + "ScreenCalibration{0}x{1}", Width, Height);
       if (Fullscreen)
         strFileName += ".fs.xml";
       else
@@ -292,7 +292,7 @@ namespace MediaPortal.GUI.Library
         m_fZoomVertical /= 10000f;
       }
 
-      using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         m_iMaxFPS = xmlReader.GetValueAsInt("screen", "maxguifps", 25);
         SyncFrameTime();

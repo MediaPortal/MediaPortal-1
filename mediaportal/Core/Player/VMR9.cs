@@ -114,6 +114,7 @@ namespace MediaPortal.Player
     Vmr9PlayState currentVmr9State = Vmr9PlayState.Playing;
     //bool _useRGBmode = false;
     private ILog _log;
+    private IConfig _config;
     #endregion
 
     #region ctor
@@ -124,6 +125,7 @@ namespace MediaPortal.Player
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
 
       _useVmr9 = true;
       _log.InfoThread("vmr9:ctor()");
@@ -499,7 +501,7 @@ namespace MediaPortal.Player
     {
       if (!_isVmr9Initialized) return;
       int DeInterlaceMode = 3;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         //None
         //Bob
@@ -513,7 +515,7 @@ namespace MediaPortal.Player
     {
       if (!_isVmr9Initialized) return;
       int DeInterlaceMode = 3;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         //None
         //Bob

@@ -151,12 +151,14 @@ namespace MediaPortal.Player
     protected const int WM_MOUSEMOVE = 0x0200;
     protected const int WM_LBUTTONUP = 0x0202;
     protected ILog _log;
+    protected IConfig _config;
 
     ArrayList _mouseMsg;
     public DVDPlayer()
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
     }
 
     public override void WndProc(ref Message m)
@@ -372,7 +374,7 @@ namespace MediaPortal.Player
           return false;
         }
 
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
         {
           _audioLanguage = xmlreader.GetValueAsString("dvdplayer", "audiolanguage", "english");
           _subtitleLanguage = xmlreader.GetValueAsString("dvdplayer", "subtitlelanguage", "english");
@@ -594,7 +596,7 @@ namespace MediaPortal.Player
       string aspectRatioMode = "";
       string displayMode = "";
       bool useAC3Filter = false;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         dvdNavigator = xmlreader.GetValueAsString("dvdplayer", "navigator", "DVD Navigator");
         aspectRatioMode = xmlreader.GetValueAsString("dvdplayer", "armode", "").ToLower();
@@ -1579,7 +1581,7 @@ namespace MediaPortal.Player
         m_geometry.ScreenWidth = nw;
         m_geometry.ScreenHeight = nh;
         m_geometry.ARType = GUIGraphicsContext.ARType;
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
         {
           bool bUseAR = xmlreader.GetValueAsBool("dvdplayer", "pixelratiocorrection", false);
           if (bUseAR) m_geometry.PixelRatio = GUIGraphicsContext.PixelRatio;
@@ -1963,7 +1965,7 @@ namespace MediaPortal.Player
       string strAudioCodec = "";
       string strAudiorenderer = "";
       bool bAddFFDshow = false;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         bAddFFDshow = xmlreader.GetValueAsBool("dvdplayer", "ffdshow", false);
         strVideoCodec = xmlreader.GetValueAsString("dvdplayer", "videocodec", "");

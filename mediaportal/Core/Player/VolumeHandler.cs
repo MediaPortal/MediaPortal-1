@@ -33,6 +33,7 @@ namespace MediaPortal.Player
   {
     #region Vars
     protected ILog _log;
+    protected static IConfig _config;
     #endregion
 
     #region Constructors
@@ -45,11 +46,12 @@ namespace MediaPortal.Player
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
 
 			bool isDigital = true;
       //string mixerControlledComponent = "Wave";
 
-			using(MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
 			{
 				int levelStyle = reader.GetValueAsInt("volume", "startupstyle", 0);
 
@@ -77,7 +79,7 @@ namespace MediaPortal.Player
 
 		static VolumeHandler CreateInstance()
 		{
-			using(MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
 			{
 				int volumeStyle = reader.GetValueAsInt("volume", "handler", 0);
 
@@ -103,7 +105,7 @@ namespace MediaPortal.Player
 			if (_instance==null) return;
 			if(_instance._mixer != null)
 			{
-				using(MediaPortal.Profile.Settings writer = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings writer = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
 					writer.SetValue("volume", "lastknown", _instance._mixer.Volume);
 
 				_instance._mixer.Dispose();

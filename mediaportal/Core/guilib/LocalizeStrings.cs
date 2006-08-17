@@ -37,10 +37,10 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class GUILocalizeStrings
   {
-    const string LanguageDirectory = @"language\";
     private static string[] m_Languages = null;
     protected static ILog _log;
-
+    protected static IConfig _config;
+    static string LanguageDirectory; 
     static System.Collections.Generic.Dictionary<int, string> m_mapStrings = new System.Collections.Generic.Dictionary<int, string>();
 
     // singleton. Dont allow any instance of this class
@@ -72,7 +72,7 @@ namespace MediaPortal.GUI.Library
     {
       bool isPrefixEnabled = true;
 
-      using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
         isPrefixEnabled = reader.GetValueAsBool("general", "myprefix", true);
 
       if (strFileName == null) return false;
@@ -147,18 +147,20 @@ namespace MediaPortal.GUI.Library
     /// </returns>
     static public bool Load(string strFileName)
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-
       if (strFileName == null) return false;
       if (strFileName == String.Empty) return false;
       System.Collections.Generic.Dictionary<int, string> mapEnglish = new System.Collections.Generic.Dictionary<int, string>();
       m_mapStrings.Clear();
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
+      LanguageDirectory = _config.Get(Config.Options.LanguagePath);
+
       _log.Info("  load localized strings from:{0}", strFileName);
       // load the text for the current language
       LoadMap(strFileName, ref m_mapStrings, true);
       //load the text for the english language
-      LoadMap(@"language\English\strings.xml", ref mapEnglish, false);
+      LoadMap(_config.Get(Config.Options.LanguagePath) + @"English\strings.xml", ref mapEnglish, false);
 
       // check if current language contains an entry for each textline found
       // in the english version
@@ -276,7 +278,7 @@ namespace MediaPortal.GUI.Library
 
         foreach (string folder in folders)
         {
-          string fileName = folder.Substring(@"language\".Length);
+          string fileName = folder.Substring(folder.LastIndexOf(@"\") + 1);
 
           //
           // Exclude cvs folder

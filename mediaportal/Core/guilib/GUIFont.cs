@@ -97,6 +97,7 @@ namespace MediaPortal.GUI.Library
     private static bool logfonts = false;
     private bool _useRTLLang;
     private ILog _log;
+    private IConfig _config;
     #endregion
     #region ctors
     /// <summary>
@@ -106,6 +107,7 @@ namespace MediaPortal.GUI.Library
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
       LoadSettings();
     }
     /// <summary>
@@ -145,7 +147,7 @@ namespace MediaPortal.GUI.Library
 
     private void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       _useRTLLang = xmlreader.GetValueAsBool("skin", "rtllang", false);
     }
 

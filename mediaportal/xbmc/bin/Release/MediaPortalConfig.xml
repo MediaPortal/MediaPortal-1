@@ -31,6 +31,10 @@
   <Dir id = "PluginsPath">
     <Path>plugins\</Path>
   </Dir>
+    <!-- The Path were all the Weather related files are located. -->
+  <Dir id = "WeatherPath">
+    <Path>weather\</Path>
+  </Dir>
   <!-- The Path were the log files should be written to -->
   <Dir id = "LogPath">
     <Path>log\</Path>

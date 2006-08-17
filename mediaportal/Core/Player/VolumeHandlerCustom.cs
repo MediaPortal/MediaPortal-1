@@ -29,7 +29,7 @@ namespace MediaPortal.Player
 
 		public VolumeHandlerCustom()
 		{
-			using(MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
 			{
 				string text = reader.GetValueAsString("volume", "table", string.Empty);
 

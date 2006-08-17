@@ -70,6 +70,7 @@ namespace MediaPortal.RedEyeIR
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
 		}
 
 		public delegate void OnRemoteCommand(object command);
@@ -86,6 +87,7 @@ namespace MediaPortal.RedEyeIR
 		static RedEye instance = null;
 		private string currentChannel = "0";
     protected ILog _log;
+    protected IConfig _config;
 
 		public OnRemoteCommand RemoteCommandCallback
 		{
@@ -253,7 +255,7 @@ namespace MediaPortal.RedEyeIR
 		{
 			try
 			{
-				using(MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
 				{
 					recInternalCommands = xmlreader.GetValueAsString("RedEye", "internal", "false") == "true";
 					commport        = xmlreader.GetValueAsString("RedEye", "commport",     "COM1:");

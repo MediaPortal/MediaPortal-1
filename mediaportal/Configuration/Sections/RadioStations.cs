@@ -776,9 +776,9 @@ namespace MediaPortal.Configuration.Sections
 			_log = services.Get<ILog>();
 
 			comboBoxCard.Items.Clear();
-      if (File.Exists("capturecards.xml"))
+      if (File.Exists(base._config.Get(Config.Options.ConfigPath) + "capturecards.xml"))
       {
-        using (FileStream fileStream = new FileStream("capturecards.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+        using (FileStream fileStream = new FileStream(base._config.Get(Config.Options.ConfigPath) + "capturecards.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
         {
           try
           {

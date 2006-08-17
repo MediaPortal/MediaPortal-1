@@ -37,6 +37,7 @@ namespace MediaPortal.TagReader
 	{
     static ArrayList m_readers=new ArrayList();
     static ILog _log;
+    static IConfig _config;
 		
 		/// <summary>
 		/// Constructor
@@ -46,9 +47,10 @@ namespace MediaPortal.TagReader
 		{
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
 
       _log.Info("Loading tag reader plugins");
-      string[] strFiles=System.IO.Directory.GetFiles(@"plugins\tagreaders", "*.dll");
+      string[] strFiles=System.IO.Directory.GetFiles(_config.Get(Config.Options.PluginsPath) + "tagreaders", "*.dll");
       foreach (string strFile in strFiles)
       {
         try

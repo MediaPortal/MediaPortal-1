@@ -110,6 +110,7 @@ namespace MediaPortal.Player
     int _debugStep = 0;
     GUIImage _blackImage;
     protected ILog _log;
+    protected IConfig _config;
     #endregion
 
     #region ctor
@@ -117,6 +118,7 @@ namespace MediaPortal.Player
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
 
       //	_log.Info("PlaneScene: ctor()");
 
@@ -133,7 +135,7 @@ namespace MediaPortal.Player
       _blackImage.SetFileName("black.bmp");
       _blackImage.AllocResources();
 
-      using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         _topscanlinesToRemove = xmlReader.GetValueAsInt("mytv", "topscanlinestoremove", 0);
         _bottomscanlinesToRemove = xmlReader.GetValueAsInt("mytv", "bottomscanlinestoremove", 0);

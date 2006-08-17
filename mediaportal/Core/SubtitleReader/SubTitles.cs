@@ -22,6 +22,7 @@ using System;
 using System.Drawing;
 using System.Collections;
 using MediaPortal.GUI.Library;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Subtitle
 {
@@ -121,7 +122,9 @@ namespace MediaPortal.Subtitle
     #region Serialisation
     public void LoadSettings()
     {
-      using(MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      IConfig _config = services.Get<IConfig>();
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         string strTmp="";
         _fontName=xmlreader.GetValueAsString("subtitles","fontface","Arial");

@@ -88,7 +88,7 @@ namespace MediaPortal.Player
         string strAudioCodec = "";
         string strAudiorenderer = "";
         bool bAddFFDshow = false;
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
         {
           bAddFFDshow = xmlreader.GetValueAsBool("movieplayer", "ffdshow", false);
           strVideoCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2videocodec", "");
@@ -143,7 +143,7 @@ namespace MediaPortal.Player
         if (vobSub != null)
         {
           string defaultLanguage;
-          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
           {
             string strTmp = "";
             string strFont = xmlreader.GetValueAsString("subtitles", "fontface", "Arial");

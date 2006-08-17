@@ -70,7 +70,7 @@ namespace MediaPortal.Player
       int codecValue = 0;
       string codecType = "";
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         dvdDNavigator = xmlreader.GetValueAsString("dvdplayer", "navigator", "DVD Navigator");
         aspectRatio = xmlreader.GetValueAsString("dvdplayer", "armode", "").ToLower();
@@ -146,7 +146,7 @@ namespace MediaPortal.Player
 
         _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
 
-        /*using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        /*using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
         {
           _vmr9.UseRGBMode(xmlreader.GetValueAsBool("dvdplayer", "usergbmode", false));
         }*/
@@ -280,7 +280,7 @@ namespace MediaPortal.Player
     {
       if (_graphBuilder == null) return;
       int hr;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         int codecValue = 0;
         string codecType = "";

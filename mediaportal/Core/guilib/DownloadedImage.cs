@@ -43,11 +43,13 @@ namespace MediaPortal.GUI.Library
 		DateTime  _dateDownloaded=DateTime.MinValue;
 		int       _cacheMinutes = 60*30; //30minutes
     protected ILog _log;
+    protected IConfig _config;
 
 		public DownloadedImage(string url)
 		{
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
 
 			URL=url;
 			int pos=url.LastIndexOf("/");
@@ -60,9 +62,9 @@ namespace MediaPortal.GUI.Library
 			int x=0;
 			while (true)
 			{
-				string tempFile=String.Format(@"thumbs\MPTemp{0}.gif",x);
-				string tempFile2=String.Format(@"thumbs\MPTemp{0}.jpg",x);
-				string tempFile3=String.Format(@"thumbs\MPTemp{0}.bmp",x);
+				string tempFile=String.Format(_config.Get(Config.Options.ThumbsPath) + "MPTemp{0}.gif",x);
+        string tempFile2 = String.Format(_config.Get(Config.Options.ThumbsPath) + "MPTemp{0}.jpg", x);
+        string tempFile3 = String.Format(_config.Get(Config.Options.ThumbsPath) + "MPTemp{0}.bmp", x);
 				if (!System.IO.File.Exists(tempFile) && 
 					!System.IO.File.Exists(tempFile2) &&
 					!System.IO.File.Exists(tempFile3))

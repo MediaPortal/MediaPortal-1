@@ -429,13 +429,8 @@ namespace MediaPortal.Configuration.Sections
 
             if (dialogResult == DialogResult.Yes)
             {
-                string database = @"database\musicdatabase4.db3";
+              string database = _config.Get(Config.Options.DatabasePath) + "MusicDatabaseV6.db3";
                 
-                if (File.Exists(database))
-                    File.Delete(database);
-
-                database = @"database\musicdatabase5.db3";
-
                 if (File.Exists(database))
                     File.Delete(database);
 

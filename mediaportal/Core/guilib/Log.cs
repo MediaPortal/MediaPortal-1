@@ -22,6 +22,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.GUI.Library
 {
@@ -31,6 +32,8 @@ namespace MediaPortal.GUI.Library
   public class Log
   {
     static DateTime _previousDate;
+    static IConfig _config;
+
     public enum LogType
     {
       Log,
@@ -52,8 +55,11 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     static Log()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _config = services.Get<IConfig>();
+
       _previousDate = DateTime.Now.Date;
-      System.IO.Directory.CreateDirectory("log");
+      System.IO.Directory.CreateDirectory(_config.Get(Config.Options.LogPath));
       //BackupLogFiles();
     }
     public static void BackupLogFiles()
@@ -146,23 +152,23 @@ namespace MediaPortal.GUI.Library
 
     static string GetFileName(LogType type)
     {
-      string fname = @"log\MediaPortal2.log";
+      string fname = _config.Get(Config.Options.LogPath) + "MediaPortal2.log";
       switch (type)
       {
         case LogType.Recorder:
-          fname = @"log\recorder2.log";
+          fname = _config.Get(Config.Options.LogPath) + "recorder2.log";
           break;
         case LogType.Error:
-          fname = @"log\error2.log";
+          fname = _config.Get(Config.Options.LogPath) + "error2.log";
           break;
         case LogType.EPG:
-          fname = @"log\epg2.log";
+          fname = _config.Get(Config.Options.LogPath) + "epg2.log";
           break;
         case LogType.TVCom:
-          fname = @"log\TVCom2.log";
+          fname = _config.Get(Config.Options.LogPath) + "TVCom2.log";
           break;
         case LogType.VMR9:
-          fname = @"log\vmr92.log";
+          fname = _config.Get(Config.Options.LogPath) + "vmr92.log";
           break;
       }
       return fname;

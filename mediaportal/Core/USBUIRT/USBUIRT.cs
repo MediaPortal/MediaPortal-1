@@ -196,6 +196,7 @@ namespace MediaPortal.IR
     private string lastIRCodeSent = string.Empty;
     //private bool                            lastIRCodeSentWasToggle = false;
     protected ILog _log;
+    protected IConfig _config;
     #endregion
 
     #region jumpTo enums
@@ -445,6 +446,7 @@ namespace MediaPortal.IR
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
 
       try
       {
@@ -531,7 +533,7 @@ namespace MediaPortal.IR
     #region serialisation
     private void Initialize()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         ReceiveEnabled = xmlreader.GetValueAsBool("USBUIRT", "internal", false);
         TransmitEnabled = xmlreader.GetValueAsBool("USBUIRT", "external", false);
