@@ -75,6 +75,18 @@ namespace MediaPortal.Player
         return false;
       }
     }
+
+    /// <summary>
+    /// Property which indicate if we're playing an audio CD or not
+    /// </summary>
+    public virtual bool IsCDA
+    {
+      get
+      {
+        return false;
+      }
+    }
+
     /// <summary>
     /// Property which indicate if we're playing a DVD or not
     /// </summary>

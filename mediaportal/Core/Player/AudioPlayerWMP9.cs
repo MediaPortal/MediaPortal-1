@@ -54,6 +54,7 @@ namespace MediaPortal.Player
     string _currentFile = "";
     PlayState _graphState = PlayState.Init;
     bool _isFullScreen = false;
+    bool _isCDA = false;
     int _positionX = 10, _positionY = 10, _videoWidth = 100, _videoHeight = 100;
     static AxWMPLib.AxWindowsMediaPlayer _wmp10Player = null;
     bool _needUpdate = true;
@@ -122,80 +123,84 @@ namespace MediaPortal.Player
 
     }
 
-    static public ArrayList GetCDTracks()
-    {
-      GUIListItem item;
-      ArrayList list = new ArrayList();
-      item = new GUIListItem();
-      item.IsFolder = true;
-      item.Label = "..";
-      item.Label2 = "";
-      item.Path = "";
-      MediaPortal.Util.Utils.SetDefaultIcons(item);
-      MediaPortal.Util.Utils.SetThumbnails(ref item);
-      list.Add(item);
+    // no longer used?
+    //static public ArrayList GetCDTracks()
+    //{
+    //  GUIListItem item;
+    //  ArrayList list = new ArrayList();
+    //  item = new GUIListItem();
+    //  item.IsFolder = true;
+    //  item.Label = "..";
+    //  item.Label2 = "";
+    //  item.Path = "";
+    //  MediaPortal.Util.Utils.SetDefaultIcons(item);
+    //  MediaPortal.Util.Utils.SetThumbnails(ref item);
+    //  list.Add(item);
 
-      CreateInstance();
-      if (_wmp10Player.cdromCollection.count <= 0) return list;
-      if (_wmp10Player.cdromCollection.count <= 0) return list;
-
-
-      WMPLib.IWMPCdrom cdrom = _wmp10Player.cdromCollection.Item(0);
-
-      if (cdrom == null) return list;
-      if (cdrom.Playlist == null) return list;
+    //  CreateInstance();
+    //  if (_wmp10Player.cdromCollection.count <= 0) return list;
+    //  if (_wmp10Player.cdromCollection.count <= 0) return list;
 
 
-      for (int iTrack = 0; iTrack < cdrom.Playlist.count; iTrack++)
-      {
-        try
-        {
-          MusicTag tag = new MusicTag();
-          WMPLib.IWMPMedia media = cdrom.Playlist.get_Item(iTrack);
-          item = new GUIListItem();
-          item.IsFolder = false;
-          item.Label = media.name;
-          item.Label2 = "";
-          item.Path = String.Format("cdda:{0}", iTrack);
-          item.FileInfo = null;
+    //  WMPLib.IWMPCdrom cdrom = _wmp10Player.cdromCollection.Item(0);
 
-          for (int i = 0; i < media.attributeCount; ++i)
-          {
-            string strAttr = media.getAttributeName(i);
-            string strValue = media.getItemInfo(strAttr);
-            if (String.Compare("album", strAttr, true) == 0) tag.Album = strValue;
-            if (String.Compare("actor", strAttr, true) == 0) tag.Artist = strValue;
-            if (String.Compare("artist", strAttr, true) == 0) tag.Artist = strValue;
-            if (String.Compare("style", strAttr, true) == 0) tag.Genre = strValue;
-            if (String.Compare("releasedate", strAttr, true) == 0)
-            {
-              try
-              {
-                tag.Year = Convert.ToInt32(strValue.Substring(0, 4));
-              }
-              catch (Exception)
-              {
-              }
-            }
-          }
-          tag.Title = media.name;
-          tag.Duration = (int)media.duration;
-          tag.Track = iTrack + 1;
-          //tag.Comment  =
-          //tag.Year     =
-          //tag.Genre    =
-          item.MusicTag = tag;
-          list.Add(item);
-        }
-        catch (Exception)
-        {
-        }
-      }
-      return list;
-    }
+    //  if (cdrom == null) return list;
+    //  if (cdrom.Playlist == null) return list;
+
+
+    //  for (int iTrack = 0; iTrack < cdrom.Playlist.count; iTrack++)
+    //  {
+    //    try
+    //    {
+    //      MusicTag tag = new MusicTag();
+    //      WMPLib.IWMPMedia media = cdrom.Playlist.get_Item(iTrack);
+    //      item = new GUIListItem();
+    //      item.IsFolder = false;
+    //      item.Label = media.name;
+    //      item.Label2 = "";
+    //      item.Path = String.Format("cdda:{0}", iTrack);
+    //      item.FileInfo = null;
+
+    //      for (int i = 0; i < media.attributeCount; ++i)
+    //      {
+    //        string strAttr = media.getAttributeName(i);
+    //        string strValue = media.getItemInfo(strAttr);
+    //        if (String.Compare("album", strAttr, true) == 0) tag.Album = strValue;
+    //        if (String.Compare("actor", strAttr, true) == 0) tag.Artist = strValue;
+    //        if (String.Compare("artist", strAttr, true) == 0) tag.Artist = strValue;
+    //        if (String.Compare("style", strAttr, true) == 0) tag.Genre = strValue;
+    //        if (String.Compare("releasedate", strAttr, true) == 0)
+    //        {
+    //          try
+    //          {
+    //            tag.Year = Convert.ToInt32(strValue.Substring(0, 4));
+    //          }
+    //          catch (Exception)
+    //          {
+    //          }
+    //        }
+    //      }
+    //      tag.Title = media.name;
+    //      tag.Duration = (int)media.duration;
+    //      tag.Track = iTrack + 1;
+    //      //tag.Comment  =
+    //      //tag.Year     =
+    //      //tag.Genre    =
+    //      item.MusicTag = tag;
+    //      list.Add(item);          
+    //    }
+    //    catch (Exception)
+    //    {
+    //    }
+
+    //  }
+    //  _isCDA = true;
+    //  return list;
+    //}
 
     public override bool Play(string strFile)
     {
+      _isCDA = false;
       _graphState = PlayState.Init;
       _currentFile = strFile;
 
@@ -229,8 +234,8 @@ namespace MediaPortal.Player
         if (iTrack > _wmp10Player.cdromCollection.Item(0).Playlist.count) return false;
         _wmp10Player.currentMedia = _wmp10Player.cdromCollection.Item(0).Playlist.get_Item(iTrack - 1);
         if (_wmp10Player.currentMedia == null) return false;
-
-        _log.Info("Audioplayer:play track:{0}/{1}", iTrack, _wmp10Player.cdromCollection.Item(0).Playlist.count);
+        _isCDA = true;
+        _log.Info("Audioplayer: play track:{0}/{1}", iTrack, _wmp10Player.cdromCollection.Item(0).Playlist.count);
       }
       else if (strFile.IndexOf(".cda") >= 0)
       {
@@ -270,6 +275,7 @@ namespace MediaPortal.Player
         _log.Info("Audioplayer:play {0}", strFile);*/
         //_wmp10Player.URL=strFile;
         _currentFile = strFile;
+        _isCDA = true;
       }
       else
       {
@@ -363,6 +369,8 @@ namespace MediaPortal.Player
         GUIGraphicsContext.IsFullScreenVideo = false;
       _log.Info("Audioplayer:ended {0} {1}", _currentFile, bManualStop);
       _currentFile = "";
+      _isCDA = false;
+
       if (_wmp10Player != null)
       {
         _bufferCompleted = true;
@@ -504,6 +512,13 @@ namespace MediaPortal.Player
       get { return true; }
     }
 
+    public override bool IsCDA
+    {
+      get
+      {
+        return _isCDA;
+      }
+    }
 
     #region IDisposable Members
 

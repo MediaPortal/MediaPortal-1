@@ -199,6 +199,16 @@ namespace MediaPortal.Audioscrobbler
         // Track has changed
         if (g_Player.CurrentFile != currentSong.FileName)
         {
+          if (g_Player.IsCDA)
+          {
+            // no CD text information available
+            if (g_Player.CurrentFile.IndexOf("Track") > 0 && g_Player.CurrentFile.IndexOf(".cda") > 0)
+            {
+              Log.Write("Audioscrobbler plugin: AudioCD detected - {0}", "ignoring song");
+              return;
+            }
+          }
+
           MusicDatabase dbs = new MusicDatabase();
           string strFile = g_Player.Player.CurrentFile;
           bool songFound = dbs.GetSongByFileName(strFile, ref currentSong);
@@ -210,13 +220,16 @@ namespace MediaPortal.Audioscrobbler
             lastPosition = Convert.ToInt32(g_Player.Player.CurrentPosition);
             OnSongChangedEvent(currentSong);
           }
+          else
+            Log.Write("Audioscrobbler plugin: database does not contain track - ignoring song: {0}", currentSong.ToShortString());
+
         }
         else // Track was paused
         {
           // avoid false skip detection
           lastPosition = Convert.ToInt32(g_Player.Player.CurrentPosition);
           Log.Write("Audioscrobbler plugin: {0}", "track paused - avoid skip protection");
-        }
+        }        
       }
     }
 

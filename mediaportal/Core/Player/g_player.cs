@@ -280,6 +280,15 @@ namespace MediaPortal.Player
       return false;
     }
 
+    public static bool IsCDA
+    {
+      get
+      {
+        if (_player == null) return false;
+        return _player.IsCDA;
+      }
+    }
+
     public static bool IsDVD
     {
       get
