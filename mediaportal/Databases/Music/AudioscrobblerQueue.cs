@@ -48,8 +48,7 @@ namespace MediaPortal.Music.Database
         this.start_time = track.getQueueTime();
       }
 
-      public QueuedTrack(string artist, string album,
-                string title, int duration, string start_time)
+      public QueuedTrack(string artist, string album, string title, int duration, string start_time)
       {
         this.artist = artist;
         this.album = album;

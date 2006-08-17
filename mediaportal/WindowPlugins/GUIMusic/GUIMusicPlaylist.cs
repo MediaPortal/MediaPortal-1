@@ -77,7 +77,8 @@ namespace MediaPortal.GUI.Music
     #endregion
 
     protected ScrobbleMode currentScrobbleMode = ScrobbleMode.Similar;
-
+    protected offlineMode  currentOfflineMode  = offlineMode.random;
+    
     [SkinControlAttribute(20)]    protected GUIButtonControl btnShuffle = null;
     [SkinControlAttribute(21)]    protected GUIButtonControl btnSave = null;
     [SkinControlAttribute(22)]    protected GUIButtonControl btnClear = null;
@@ -110,6 +111,23 @@ namespace MediaPortal.GUI.Music
         //_maxScrobbledArtistsForSongs = xmlreader.GetValueAsInt("audioscrobbler", "similarartistscount", 3);
         //_maxScrobbledSongsPerArtist = xmlreader.GetValueAsInt("audioscrobbler", "tracksperartistscount", 1);
         _currentScrobbleUser = xmlreader.GetValueAsString("audioscrobbler", "user", "Username");
+        int tmpRMode = xmlreader.GetValueAsInt("audioscrobbler", "offlinemode", 0);
+
+        switch (tmpRMode)
+        {
+          case 0:
+            currentOfflineMode = offlineMode.random;
+            break;
+          case 1:
+            currentOfflineMode = offlineMode.timesplayed;
+            break;
+          case 2:
+            currentOfflineMode = offlineMode.favorites;
+            break;
+          default:
+            currentOfflineMode = offlineMode.random;
+            break;
+        }
       }
       MusicDatabase mdb = new MusicDatabase();
       ScrobblerOn = (mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(_currentScrobbleUser)), "iScrobbleDefault", -1) == 1) ? true : false;
@@ -1070,7 +1088,21 @@ namespace MediaPortal.GUI.Music
           {
             try
             {
-              scrobbledArtists = ascrobbler.getRandomTracks();
+              switch (currentOfflineMode)
+              {
+                case offlineMode.random:
+                  scrobbledArtists = ascrobbler.getRandomTracks();
+                  break;
+                case offlineMode.timesplayed:
+                  scrobbledArtists = ascrobbler.getUnhearedTracks();
+                  break;
+                case offlineMode.favorites:
+                  scrobbledArtists = ascrobbler.getFavoriteTracks();
+                  break;
+                default:
+                  scrobbledArtists = ascrobbler.getRandomTracks();
+                  break;
+              }
             }
             catch (Exception ex)
             {

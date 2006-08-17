@@ -221,7 +221,8 @@ namespace MediaPortal.Audioscrobbler
             OnSongChangedEvent(currentSong);
           }
           else
-            Log.Write("Audioscrobbler plugin: database does not contain track - ignoring song: {0}", currentSong.ToShortString());
+            if (g_Player.IsMusic)
+              Log.Write("Audioscrobbler plugin: database does not contain track - ignoring song: {0}", currentSong.ToShortString());
 
         }
         else // Track was paused

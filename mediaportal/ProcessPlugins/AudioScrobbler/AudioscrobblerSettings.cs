@@ -59,6 +59,7 @@ namespace MediaPortal.AudioScrobbler
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         tmpuser = xmlreader.GetValueAsString("audioscrobbler", "user", "");
+        comboBoxOfflineMode.SelectedIndex = xmlreader.GetValueAsInt("audioscrobbler", "offlinemode", 0);        
 
         if (tmpuser == "")
         {
@@ -98,12 +99,11 @@ namespace MediaPortal.AudioScrobbler
           checkBoxEnableSubmits.Checked = (mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(tmpuser)), "iSubmitOn", -1) == 1) ? true : false;
           checkBoxScrobbleDefault.Checked = (mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(tmpuser)), "iScrobbleDefault", -1) == 1) ? true : false;
           numericUpDownSimilarArtist.Value = mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(tmpuser)), "iAddArtists", -1);
-          numericUpDownTracksPerArtist.Value = mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(tmpuser)), "iAddTracks", -1);
+          //numericUpDownTracksPerArtist.Value = mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(tmpuser)), "iAddTracks", -1);
           tmpNMode = mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(tmpuser)), "iNeighbourMode", -1);
 
           trackBarRandomness.Value = (tmpRand >= 25) ? tmpRand : 25;
-          lastFmLookup = new AudioscrobblerUtils();
-          //int tmpNMode = xmlreader.GetValueAsInt("audioscrobbler", "neighbourmode", 1);
+          lastFmLookup = new AudioscrobblerUtils();          
 
           switch (tmpNMode)
           {
@@ -192,6 +192,7 @@ namespace MediaPortal.AudioScrobbler
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         xmlwriter.SetValue("audioscrobbler", "user", textBoxASUsername.Text);
+        xmlwriter.SetValue("audioscrobbler", "offlinemode", comboBoxOfflineMode.SelectedIndex);
         string tmpPass = "";
         try
         {
@@ -214,8 +215,8 @@ namespace MediaPortal.AudioScrobbler
           randomness = trackBarRandomness.Value;
         if (numericUpDownSimilarArtist != null)
           artisttoadd = (int)numericUpDownSimilarArtist.Value;
-        if (numericUpDownTracksPerArtist != null)
-          trackstoadd = (int)numericUpDownTracksPerArtist.Value;
+        //if (numericUpDownTracksPerArtist != null)
+        //  trackstoadd = (int)numericUpDownTracksPerArtist.Value;
         if (lastFmLookup != null)
           neighbourmode = (int)lastFmLookup.CurrentNeighbourMode;
 
@@ -561,6 +562,28 @@ namespace MediaPortal.AudioScrobbler
     }
 
     #endregion
+
+    private void trackBarRandomness_MouseHover(object sender, EventArgs e)
+    {
+      toolTipRandomness.SetToolTip(trackBarRandomness, "If you lower the percentage value you'll get results more similar");
+      toolTipRandomness.Active = true;
+    }
+
+    private void trackBarRandomness_MouseLeave(object sender, EventArgs e)
+    {
+      toolTipRandomness.Active = false;
+    }
+
+    private void labelSimilarArtistsUpDown_MouseHover(object sender, EventArgs e)
+    {
+      toolTipRandomness.SetToolTip(labelSimilarArtistsUpDown, "Increase if you do not get enough songs - lower if the playlist grows too fast");
+      toolTipRandomness.Active = true;
+    }
+
+    private void labelSimilarArtistsUpDown_MouseLeave(object sender, EventArgs e)
+    {
+      toolTipRandomness.Active = false;
+    }
 
   }
 }

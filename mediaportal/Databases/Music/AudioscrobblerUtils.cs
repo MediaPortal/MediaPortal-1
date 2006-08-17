@@ -53,11 +53,11 @@ namespace MediaPortal.Music.Database
     toptracktags
   }
 
-  public enum offlineMode
+  public enum offlineMode: int
   {
-    random,
-    timesplayed,
-    favorites,    
+    random = 0,
+    timesplayed = 1,
+    favorites = 2,
   }
   #endregion
 
@@ -73,6 +73,8 @@ namespace MediaPortal.Music.Database
 
     // Neighbour mode intelligence params
     private lastFMFeed _currentNeighbourMode = lastFMFeed.weeklyartistchart;
+
+    private offlineMode _currentOfflineMode = offlineMode.random;
 
     List<Song> songList = null;
 
@@ -190,6 +192,7 @@ namespace MediaPortal.Music.Database
       {
         MusicDatabase mdb = new MusicDatabase();
         _defaultUser = xmlreader.GetValueAsString("audioscrobbler", "user", "");
+        int tmpRMode = xmlreader.GetValueAsInt("audioscrobbler", "offlinemode", 0);
         _useDebugLog = (mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(_defaultUser)), "iDebugLog", -1) == 1) ? true : false;
         int tmpRand = mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(_defaultUser)), "iRandomness", -1);
         int tmpNMode = mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(_defaultUser)), "iNeighbourMode", -1);
@@ -197,18 +200,23 @@ namespace MediaPortal.Music.Database
         switch (tmpNMode)
         {
           case 3:
-            _currentNeighbourMode = lastFMFeed.topartists;
-            break;
+            _currentNeighbourMode = lastFMFeed.topartists; break;
           case 1:
-            _currentNeighbourMode = lastFMFeed.weeklyartistchart;
-            break;
+            _currentNeighbourMode = lastFMFeed.weeklyartistchart; break;
           case 0:
-            _currentNeighbourMode = lastFMFeed.recenttracks;
-            break;
+            _currentNeighbourMode = lastFMFeed.recenttracks; break;
           default:
-            _currentNeighbourMode = lastFMFeed.weeklyartistchart;
-            break;
+            _currentNeighbourMode = lastFMFeed.weeklyartistchart; break;
         }
+
+        switch (tmpRMode)
+        {
+          case 0: _currentOfflineMode = offlineMode.random; break;
+          case 1: _currentOfflineMode = offlineMode.timesplayed; break;
+          case 2: _currentOfflineMode = offlineMode.favorites; break;
+          default: _currentOfflineMode = offlineMode.random; break;
+        }
+
         _randomNessPercent = (tmpRand >= 25) ? tmpRand : 25;
       }
     }
@@ -459,15 +467,15 @@ namespace MediaPortal.Music.Database
     #region internal fetch routines
     private List<Song> fetchRandomTracks(offlineMode randomMode_)
     {
-      int addedSongs = 0;      
-      Random thisOne = new Random();
+      int addedSongs = 0;
+      //      Random thisOne = new Random();
       MusicDatabase dbs = new MusicDatabase();
       List<Song> songList = new List<Song>();
       Song randomSong = new Song();
       Song lookupSong = new Song();
 
       // fetch more than needed since there could be double entries
-      while (addedSongs < _limitRandomListCount * 3)
+      while (addedSongs < _limitRandomListCount * 2)
       {
         lookupSong.Clear();
 
@@ -475,7 +483,12 @@ namespace MediaPortal.Music.Database
         randomSong = lookupSong.Clone();
 
         // dirty hack to improve .NET's shitty random.next()
-        if (thisOne.Next(0, 6) == 1)
+        //if (thisOne.Next(0, 6) == thisOne.Next(0, 6))
+        bool found = false;
+        for (int i = 0; i < songList.Count; i++)
+          if (songList[i].Artist == randomSong.Artist)
+            found = true;
+        if (!found)
         {
           switch (randomMode_)
           {

@@ -53,6 +53,7 @@ namespace MediaPortal.AudioScrobbler
     /// </summary>
     private void InitializeComponent()
     {
+      this.components = new System.ComponentModel.Container();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AudioscrobblerSettings));
       this.panelPicBox = new System.Windows.Forms.Panel();
       this.pictureBoxASLogo = new System.Windows.Forms.PictureBox();
@@ -75,20 +76,9 @@ namespace MediaPortal.AudioScrobbler
       this.textBoxASUsername = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.maskedTextBoxASPassword = new System.Windows.Forms.MaskedTextBox();
       this.tabPageMusicSettings = new System.Windows.Forms.TabPage();
-      this.labelBannerHint = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.groupBoxAdvOptions = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.labelTracksArtistHint = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.labelsimilarArtistsHint = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.labelTracksPerArtistUpDown = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.labelSimilarArtistsUpDown = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.numericUpDownTracksPerArtist = new System.Windows.Forms.NumericUpDown();
-      this.numericUpDownSimilarArtist = new System.Windows.Forms.NumericUpDown();
+      this.groupBoxOfflineMode = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.groupBoxMusicSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.labelNModeDesc = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.labelNModeCombo = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.comboBoxNModeSelect = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.checkBoxScrobbleDefault = new System.Windows.Forms.CheckBox();
-      this.labelPercRandHint = new MediaPortal.UserInterface.Controls.MPLabel();
       this.labelPercRand = new MediaPortal.UserInterface.Controls.MPLabel();
       this.labelRandomness = new MediaPortal.UserInterface.Controls.MPLabel();
       this.trackBarRandomness = new System.Windows.Forms.TrackBar();
@@ -136,6 +126,13 @@ namespace MediaPortal.AudioScrobbler
       this.labelPassword = new MediaPortal.UserInterface.Controls.MPLabel();
       this.labelUser = new MediaPortal.UserInterface.Controls.MPLabel();
       this.textBoxASUser = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.groupBoxNeighbourFriend = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.labelNModeDesc = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.comboBoxNModeSelect = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.toolTipRandomness = new System.Windows.Forms.ToolTip(this.components);
+      this.labelSimilarArtistsUpDown = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.numericUpDownSimilarArtist = new System.Windows.Forms.NumericUpDown();
+      this.comboBoxOfflineMode = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.panelPicBox.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxASLogo)).BeginInit();
       this.tabControlSettings.SuspendLayout();
@@ -143,9 +140,7 @@ namespace MediaPortal.AudioScrobbler
       this.groupBoxOptions.SuspendLayout();
       this.groupBoxAccount.SuspendLayout();
       this.tabPageMusicSettings.SuspendLayout();
-      this.groupBoxAdvOptions.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTracksPerArtist)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSimilarArtist)).BeginInit();
+      this.groupBoxOfflineMode.SuspendLayout();
       this.groupBoxMusicSettings.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.trackBarRandomness)).BeginInit();
       this.tabPageLiveData.SuspendLayout();
@@ -159,6 +154,8 @@ namespace MediaPortal.AudioScrobbler
       this.tabPageTopTracks.SuspendLayout();
       this.tabPageWeeklyTracks.SuspendLayout();
       this.tabPageTags.SuspendLayout();
+      this.groupBoxNeighbourFriend.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSimilarArtist)).BeginInit();
       this.SuspendLayout();
       // 
       // panelPicBox
@@ -388,8 +385,8 @@ namespace MediaPortal.AudioScrobbler
       // 
       // tabPageMusicSettings
       // 
-      this.tabPageMusicSettings.Controls.Add(this.labelBannerHint);
-      this.tabPageMusicSettings.Controls.Add(this.groupBoxAdvOptions);
+      this.tabPageMusicSettings.Controls.Add(this.groupBoxNeighbourFriend);
+      this.tabPageMusicSettings.Controls.Add(this.groupBoxOfflineMode);
       this.tabPageMusicSettings.Controls.Add(this.groupBoxMusicSettings);
       this.tabPageMusicSettings.Location = new System.Drawing.Point(4, 22);
       this.tabPageMusicSettings.Name = "tabPageMusicSettings";
@@ -399,182 +396,46 @@ namespace MediaPortal.AudioScrobbler
       this.tabPageMusicSettings.Text = "MyMusic settings";
       this.tabPageMusicSettings.UseVisualStyleBackColor = true;
       // 
-      // labelBannerHint
+      // groupBoxOfflineMode
       // 
-      this.labelBannerHint.Location = new System.Drawing.Point(304, 12);
-      this.labelBannerHint.Name = "labelBannerHint";
-      this.labelBannerHint.Size = new System.Drawing.Size(247, 72);
-      this.labelBannerHint.TabIndex = 8;
-      this.labelBannerHint.Text = "The pre-configured values should work well for you without any changes - just try" +
-          " the plugin!\r\n\r\nAfter you get used to it you may change these values to your nee" +
-          "ds.";
-      // 
-      // groupBoxAdvOptions
-      // 
-      this.groupBoxAdvOptions.Controls.Add(this.labelTracksArtistHint);
-      this.groupBoxAdvOptions.Controls.Add(this.labelsimilarArtistsHint);
-      this.groupBoxAdvOptions.Controls.Add(this.labelTracksPerArtistUpDown);
-      this.groupBoxAdvOptions.Controls.Add(this.labelSimilarArtistsUpDown);
-      this.groupBoxAdvOptions.Controls.Add(this.numericUpDownTracksPerArtist);
-      this.groupBoxAdvOptions.Controls.Add(this.numericUpDownSimilarArtist);
-      this.groupBoxAdvOptions.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxAdvOptions.Location = new System.Drawing.Point(291, 131);
-      this.groupBoxAdvOptions.Name = "groupBoxAdvOptions";
-      this.groupBoxAdvOptions.Size = new System.Drawing.Size(258, 161);
-      this.groupBoxAdvOptions.TabIndex = 7;
-      this.groupBoxAdvOptions.TabStop = false;
-      this.groupBoxAdvOptions.Text = "Advanced options (do not change for fun)";
-      // 
-      // labelTracksArtistHint
-      // 
-      this.labelTracksArtistHint.Location = new System.Drawing.Point(11, 120);
-      this.labelTracksArtistHint.Name = "labelTracksArtistHint";
-      this.labelTracksArtistHint.Size = new System.Drawing.Size(224, 30);
-      this.labelTracksArtistHint.TabIndex = 14;
-      this.labelTracksArtistHint.Text = "Changing not recommended!\r\nResult: many tracks from the same artist";
-      // 
-      // labelsimilarArtistsHint
-      // 
-      this.labelsimilarArtistsHint.Location = new System.Drawing.Point(11, 50);
-      this.labelsimilarArtistsHint.Name = "labelsimilarArtistsHint";
-      this.labelsimilarArtistsHint.Size = new System.Drawing.Size(224, 30);
-      this.labelsimilarArtistsHint.TabIndex = 13;
-      this.labelsimilarArtistsHint.Text = "Increase if you do not get enough songs\r\nLower if the playlist grows too fast";
-      // 
-      // labelTracksPerArtistUpDown
-      // 
-      this.labelTracksPerArtistUpDown.AutoSize = true;
-      this.labelTracksPerArtistUpDown.Location = new System.Drawing.Point(64, 99);
-      this.labelTracksPerArtistUpDown.Name = "labelTracksPerArtistUpDown";
-      this.labelTracksPerArtistUpDown.Size = new System.Drawing.Size(150, 13);
-      this.labelTracksPerArtistUpDown.TabIndex = 12;
-      this.labelTracksPerArtistUpDown.Text = "add this many  tracks per artist";
-      // 
-      // labelSimilarArtistsUpDown
-      // 
-      this.labelSimilarArtistsUpDown.AutoSize = true;
-      this.labelSimilarArtistsUpDown.Location = new System.Drawing.Point(64, 29);
-      this.labelSimilarArtistsUpDown.Name = "labelSimilarArtistsUpDown";
-      this.labelSimilarArtistsUpDown.Size = new System.Drawing.Size(155, 13);
-      this.labelSimilarArtistsUpDown.TabIndex = 11;
-      this.labelSimilarArtistsUpDown.Text = "consider this many similar artists";
-      // 
-      // numericUpDownTracksPerArtist
-      // 
-      this.numericUpDownTracksPerArtist.Location = new System.Drawing.Point(14, 97);
-      this.numericUpDownTracksPerArtist.Maximum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-      this.numericUpDownTracksPerArtist.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-      this.numericUpDownTracksPerArtist.Name = "numericUpDownTracksPerArtist";
-      this.numericUpDownTracksPerArtist.Size = new System.Drawing.Size(44, 20);
-      this.numericUpDownTracksPerArtist.TabIndex = 10;
-      this.numericUpDownTracksPerArtist.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-      // 
-      // numericUpDownSimilarArtist
-      // 
-      this.numericUpDownSimilarArtist.Location = new System.Drawing.Point(14, 27);
-      this.numericUpDownSimilarArtist.Maximum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-      this.numericUpDownSimilarArtist.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-      this.numericUpDownSimilarArtist.Name = "numericUpDownSimilarArtist";
-      this.numericUpDownSimilarArtist.Size = new System.Drawing.Size(44, 20);
-      this.numericUpDownSimilarArtist.TabIndex = 9;
-      this.numericUpDownSimilarArtist.Value = new decimal(new int[] {
-            3,
-            0,
-            0,
-            0});
+      this.groupBoxOfflineMode.Controls.Add(this.comboBoxOfflineMode);
+      this.groupBoxOfflineMode.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxOfflineMode.Location = new System.Drawing.Point(291, 186);
+      this.groupBoxOfflineMode.Name = "groupBoxOfflineMode";
+      this.groupBoxOfflineMode.Size = new System.Drawing.Size(258, 58);
+      this.groupBoxOfflineMode.TabIndex = 7;
+      this.groupBoxOfflineMode.TabStop = false;
+      this.groupBoxOfflineMode.Text = "Offline mode";
       // 
       // groupBoxMusicSettings
       // 
-      this.groupBoxMusicSettings.Controls.Add(this.labelNModeDesc);
-      this.groupBoxMusicSettings.Controls.Add(this.labelNModeCombo);
-      this.groupBoxMusicSettings.Controls.Add(this.comboBoxNModeSelect);
+      this.groupBoxMusicSettings.Controls.Add(this.labelSimilarArtistsUpDown);
+      this.groupBoxMusicSettings.Controls.Add(this.numericUpDownSimilarArtist);
       this.groupBoxMusicSettings.Controls.Add(this.checkBoxScrobbleDefault);
-      this.groupBoxMusicSettings.Controls.Add(this.labelPercRandHint);
       this.groupBoxMusicSettings.Controls.Add(this.labelPercRand);
       this.groupBoxMusicSettings.Controls.Add(this.labelRandomness);
       this.groupBoxMusicSettings.Controls.Add(this.trackBarRandomness);
       this.groupBoxMusicSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxMusicSettings.Location = new System.Drawing.Point(10, 6);
       this.groupBoxMusicSettings.Name = "groupBoxMusicSettings";
-      this.groupBoxMusicSettings.Size = new System.Drawing.Size(275, 286);
+      this.groupBoxMusicSettings.Size = new System.Drawing.Size(275, 174);
       this.groupBoxMusicSettings.TabIndex = 6;
       this.groupBoxMusicSettings.TabStop = false;
-      this.groupBoxMusicSettings.Text = "My Music settings";
-      // 
-      // labelNModeDesc
-      // 
-      this.labelNModeDesc.Location = new System.Drawing.Point(14, 166);
-      this.labelNModeDesc.Name = "labelNModeDesc";
-      this.labelNModeDesc.Size = new System.Drawing.Size(246, 117);
-      this.labelNModeDesc.TabIndex = 9;
-      this.labelNModeDesc.Text = resources.GetString("labelNModeDesc.Text");
-      // 
-      // labelNModeCombo
-      // 
-      this.labelNModeCombo.AutoSize = true;
-      this.labelNModeCombo.Location = new System.Drawing.Point(14, 143);
-      this.labelNModeCombo.Name = "labelNModeCombo";
-      this.labelNModeCombo.Size = new System.Drawing.Size(130, 13);
-      this.labelNModeCombo.TabIndex = 8;
-      this.labelNModeCombo.Text = "Neighbour / Friends mode";
-      // 
-      // comboBoxNModeSelect
-      // 
-      this.comboBoxNModeSelect.BorderColor = System.Drawing.Color.Empty;
-      this.comboBoxNModeSelect.FormattingEnabled = true;
-      this.comboBoxNModeSelect.Items.AddRange(new object[] {
-            "Overall top artists",
-            "Weekly top artists",
-            "Recent artists"});
-      this.comboBoxNModeSelect.Location = new System.Drawing.Point(150, 140);
-      this.comboBoxNModeSelect.Name = "comboBoxNModeSelect";
-      this.comboBoxNModeSelect.Size = new System.Drawing.Size(110, 21);
-      this.comboBoxNModeSelect.TabIndex = 7;
-      this.comboBoxNModeSelect.Text = "Weekly top artists";
-      this.comboBoxNModeSelect.SelectedIndexChanged += new System.EventHandler(this.comboBoxNModeSelect_SelectedIndexChanged);
+      this.groupBoxMusicSettings.Text = "My Music global settings";
       // 
       // checkBoxScrobbleDefault
       // 
       this.checkBoxScrobbleDefault.AutoSize = true;
-      this.checkBoxScrobbleDefault.Location = new System.Drawing.Point(17, 20);
+      this.checkBoxScrobbleDefault.Location = new System.Drawing.Point(17, 25);
       this.checkBoxScrobbleDefault.Name = "checkBoxScrobbleDefault";
       this.checkBoxScrobbleDefault.Size = new System.Drawing.Size(191, 17);
       this.checkBoxScrobbleDefault.TabIndex = 4;
       this.checkBoxScrobbleDefault.Text = "Scrobble mode enabled per default";
       this.checkBoxScrobbleDefault.UseVisualStyleBackColor = true;
       // 
-      // labelPercRandHint
-      // 
-      this.labelPercRandHint.Location = new System.Drawing.Point(14, 95);
-      this.labelPercRandHint.Name = "labelPercRandHint";
-      this.labelPercRandHint.Size = new System.Drawing.Size(255, 35);
-      this.labelPercRandHint.TabIndex = 3;
-      this.labelPercRandHint.Text = "If you lower the percentage value you\'ll get \r\nsuggestions which are more similar" +
-          " to each other";
-      // 
       // labelPercRand
       // 
-      this.labelPercRand.Location = new System.Drawing.Point(204, 44);
+      this.labelPercRand.Location = new System.Drawing.Point(204, 95);
       this.labelPercRand.Name = "labelPercRand";
       this.labelPercRand.Size = new System.Drawing.Size(56, 13);
       this.labelPercRand.TabIndex = 2;
@@ -584,7 +445,7 @@ namespace MediaPortal.AudioScrobbler
       // labelRandomness
       // 
       this.labelRandomness.AutoSize = true;
-      this.labelRandomness.Location = new System.Drawing.Point(14, 44);
+      this.labelRandomness.Location = new System.Drawing.Point(14, 95);
       this.labelRandomness.Name = "labelRandomness";
       this.labelRandomness.Size = new System.Drawing.Size(104, 13);
       this.labelRandomness.TabIndex = 1;
@@ -594,16 +455,18 @@ namespace MediaPortal.AudioScrobbler
       // 
       this.trackBarRandomness.BackColor = System.Drawing.SystemColors.Window;
       this.trackBarRandomness.LargeChange = 25;
-      this.trackBarRandomness.Location = new System.Drawing.Point(5, 58);
+      this.trackBarRandomness.Location = new System.Drawing.Point(17, 111);
       this.trackBarRandomness.Maximum = 100;
       this.trackBarRandomness.Minimum = 25;
       this.trackBarRandomness.Name = "trackBarRandomness";
-      this.trackBarRandomness.Size = new System.Drawing.Size(264, 45);
+      this.trackBarRandomness.Size = new System.Drawing.Size(243, 45);
       this.trackBarRandomness.SmallChange = 5;
       this.trackBarRandomness.TabIndex = 0;
       this.trackBarRandomness.TickFrequency = 15;
       this.trackBarRandomness.Value = 77;
+      this.trackBarRandomness.MouseLeave += new System.EventHandler(this.trackBarRandomness_MouseLeave);
       this.trackBarRandomness.ValueChanged += new System.EventHandler(this.trackBarRandomness_ValueChanged);
+      this.trackBarRandomness.MouseHover += new System.EventHandler(this.trackBarRandomness_MouseHover);
       // 
       // tabPageLiveData
       // 
@@ -1122,6 +985,94 @@ namespace MediaPortal.AudioScrobbler
       this.textBoxASUser.Size = new System.Drawing.Size(236, 20);
       this.textBoxASUser.TabIndex = 1;
       // 
+      // groupBoxNeighbourFriend
+      // 
+      this.groupBoxNeighbourFriend.Controls.Add(this.labelNModeDesc);
+      this.groupBoxNeighbourFriend.Controls.Add(this.comboBoxNModeSelect);
+      this.groupBoxNeighbourFriend.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxNeighbourFriend.Location = new System.Drawing.Point(291, 6);
+      this.groupBoxNeighbourFriend.Name = "groupBoxNeighbourFriend";
+      this.groupBoxNeighbourFriend.Size = new System.Drawing.Size(258, 174);
+      this.groupBoxNeighbourFriend.TabIndex = 8;
+      this.groupBoxNeighbourFriend.TabStop = false;
+      this.groupBoxNeighbourFriend.Text = "Neighbours / Friends mode";
+      // 
+      // labelNModeDesc
+      // 
+      this.labelNModeDesc.Location = new System.Drawing.Point(13, 55);
+      this.labelNModeDesc.Name = "labelNModeDesc";
+      this.labelNModeDesc.Size = new System.Drawing.Size(236, 110);
+      this.labelNModeDesc.TabIndex = 12;
+      this.labelNModeDesc.Text = resources.GetString("labelNModeDesc.Text");
+      // 
+      // comboBoxNModeSelect
+      // 
+      this.comboBoxNModeSelect.BorderColor = System.Drawing.Color.Empty;
+      this.comboBoxNModeSelect.FormattingEnabled = true;
+      this.comboBoxNModeSelect.Items.AddRange(new object[] {
+            "Overall top artists",
+            "Weekly top artists",
+            "Recent artists"});
+      this.comboBoxNModeSelect.Location = new System.Drawing.Point(14, 23);
+      this.comboBoxNModeSelect.Name = "comboBoxNModeSelect";
+      this.comboBoxNModeSelect.Size = new System.Drawing.Size(228, 21);
+      this.comboBoxNModeSelect.TabIndex = 10;
+      this.comboBoxNModeSelect.Text = "Weekly top artists";
+      // 
+      // toolTipRandomness
+      // 
+      this.toolTipRandomness.Active = false;
+      this.toolTipRandomness.AutoPopDelay = 5000;
+      this.toolTipRandomness.InitialDelay = 250;
+      this.toolTipRandomness.ReshowDelay = 100;
+      this.toolTipRandomness.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
+      this.toolTipRandomness.ToolTipTitle = "Randomness";
+      // 
+      // labelSimilarArtistsUpDown
+      // 
+      this.labelSimilarArtistsUpDown.AutoSize = true;
+      this.labelSimilarArtistsUpDown.Location = new System.Drawing.Point(67, 55);
+      this.labelSimilarArtistsUpDown.Name = "labelSimilarArtistsUpDown";
+      this.labelSimilarArtistsUpDown.Size = new System.Drawing.Size(178, 13);
+      this.labelSimilarArtistsUpDown.TabIndex = 17;
+      this.labelSimilarArtistsUpDown.Text = "consider songs from this many artists";
+      // 
+      // numericUpDownSimilarArtist
+      // 
+      this.numericUpDownSimilarArtist.Location = new System.Drawing.Point(17, 53);
+      this.numericUpDownSimilarArtist.Maximum = new decimal(new int[] {
+            6,
+            0,
+            0,
+            0});
+      this.numericUpDownSimilarArtist.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      this.numericUpDownSimilarArtist.Name = "numericUpDownSimilarArtist";
+      this.numericUpDownSimilarArtist.Size = new System.Drawing.Size(44, 20);
+      this.numericUpDownSimilarArtist.TabIndex = 16;
+      this.numericUpDownSimilarArtist.Value = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
+      // 
+      // comboBoxOfflineMode
+      // 
+      this.comboBoxOfflineMode.BorderColor = System.Drawing.Color.Empty;
+      this.comboBoxOfflineMode.FormattingEnabled = true;
+      this.comboBoxOfflineMode.Items.AddRange(new object[] {
+            "Full random",
+            "Never played before",
+            "Only favorite songs"});
+      this.comboBoxOfflineMode.Location = new System.Drawing.Point(14, 24);
+      this.comboBoxOfflineMode.Name = "comboBoxOfflineMode";
+      this.comboBoxOfflineMode.Size = new System.Drawing.Size(228, 21);
+      this.comboBoxOfflineMode.TabIndex = 11;
+      this.comboBoxOfflineMode.Text = "Full random";
+      // 
       // AudioscrobblerSettings
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1145,10 +1096,7 @@ namespace MediaPortal.AudioScrobbler
       this.groupBoxAccount.ResumeLayout(false);
       this.groupBoxAccount.PerformLayout();
       this.tabPageMusicSettings.ResumeLayout(false);
-      this.groupBoxAdvOptions.ResumeLayout(false);
-      this.groupBoxAdvOptions.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTracksPerArtist)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSimilarArtist)).EndInit();
+      this.groupBoxOfflineMode.ResumeLayout(false);
       this.groupBoxMusicSettings.ResumeLayout(false);
       this.groupBoxMusicSettings.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.trackBarRandomness)).EndInit();
@@ -1165,6 +1113,8 @@ namespace MediaPortal.AudioScrobbler
       this.tabPageWeeklyTracks.ResumeLayout(false);
       this.tabPageTags.ResumeLayout(false);
       this.tabPageTags.PerformLayout();
+      this.groupBoxNeighbourFriend.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSimilarArtist)).EndInit();
       this.ResumeLayout(false);
 
     }
@@ -1227,23 +1177,12 @@ namespace MediaPortal.AudioScrobbler
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxEnableSubmits;
     private MediaPortal.UserInterface.Controls.MPComboBox comboBoxNeighbourMode;
     private System.Windows.Forms.TabPage tabPageMusicSettings;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxAdvOptions;
-    private MediaPortal.UserInterface.Controls.MPLabel labelTracksArtistHint;
-    private MediaPortal.UserInterface.Controls.MPLabel labelsimilarArtistsHint;
-    private MediaPortal.UserInterface.Controls.MPLabel labelTracksPerArtistUpDown;
-    private MediaPortal.UserInterface.Controls.MPLabel labelSimilarArtistsUpDown;
-    private System.Windows.Forms.NumericUpDown numericUpDownTracksPerArtist;
-    private System.Windows.Forms.NumericUpDown numericUpDownSimilarArtist;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxOfflineMode;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxMusicSettings;
     private System.Windows.Forms.CheckBox checkBoxScrobbleDefault;
-    private MediaPortal.UserInterface.Controls.MPLabel labelPercRandHint;
     private MediaPortal.UserInterface.Controls.MPLabel labelPercRand;
     private MediaPortal.UserInterface.Controls.MPLabel labelRandomness;
     private System.Windows.Forms.TrackBar trackBarRandomness;
-    private MediaPortal.UserInterface.Controls.MPLabel labelBannerHint;
-    private MediaPortal.UserInterface.Controls.MPLabel labelNModeCombo;
-    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxNModeSelect;
-    private MediaPortal.UserInterface.Controls.MPLabel labelNModeDesc;
     private System.Windows.Forms.LinkLabel linkLabel1;
     private System.Windows.Forms.LinkLabel linkLabel2;
     private MediaPortal.UserInterface.Controls.MPLabel labelPluginBannerHint;
@@ -1253,5 +1192,12 @@ namespace MediaPortal.AudioScrobbler
     private MediaPortal.UserInterface.Controls.MPButton buttonTaggedAlbums;
     private MediaPortal.UserInterface.Controls.MPButton buttonTaggedTracks;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxTagRandomize;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxNeighbourFriend;
+    private MediaPortal.UserInterface.Controls.MPLabel labelNModeDesc;
+    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxNModeSelect;
+    private System.Windows.Forms.ToolTip toolTipRandomness;
+    private MediaPortal.UserInterface.Controls.MPLabel labelSimilarArtistsUpDown;
+    private System.Windows.Forms.NumericUpDown numericUpDownSimilarArtist;
+    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxOfflineMode;
   }
 }
