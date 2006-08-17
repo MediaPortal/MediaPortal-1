@@ -960,13 +960,17 @@ namespace MediaPortal.Music.Database
 
         if (null == m_db) return false;
 
+        Random rand = new Random();
         string strSQL;
-        int maxIDSong, rndIDSong;
+        int maxIDSong, rndIDSong, manIDSong;
         strSQL = String.Format("select * from song ORDER BY idSong DESC LIMIT 1");
         SQLiteResultSet results;
         results = m_db.Execute(strSQL);
         maxIDSong = DatabaseUtility.GetAsInt(results, 0, "idSong");
-        rndIDSong = new System.Random().Next(maxIDSong);
+        // random is shitty - giving a similar result if called twice fast
+        rndIDSong = rand.Next(0, maxIDSong);  
+        manIDSong = rndIDSong * 5 / 3 - 666;
+        rndIDSong = (manIDSong > 0 && manIDSong <= maxIDSong) ? manIDSong : rndIDSong;
 
         strSQL = String.Format("select * from song,album,genre,artist,path where song.idPath=path.idPath and song.idAlbum=album.idAlbum and song.idGenre=genre.idGenre and song.idArtist=artist.idArtist and idSong={0}", rndIDSong);
 

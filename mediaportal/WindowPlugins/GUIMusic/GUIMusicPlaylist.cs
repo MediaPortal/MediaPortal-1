@@ -308,7 +308,7 @@ namespace MediaPortal.GUI.Music
             case ScrobbleMode.Recent:
               currentScrobbleMode = ScrobbleMode.Random;
               btnScrobbleMode.Label = GUILocalizeStrings.Get(33007);
-              shouldContinue = true;
+              shouldContinue = false;
               break;
             case ScrobbleMode.Random:
               currentScrobbleMode = ScrobbleMode.Similar;
@@ -422,14 +422,10 @@ namespace MediaPortal.GUI.Music
         {
           btnClear.Disabled = false;
           btnPlay.Disabled = false;
-          if (g_Player.Playing && playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC)
-          {
+          if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC)
             btnSave.Disabled = false;
-          }
           else
-          {
             btnSave.Disabled = true;
-          }
         }
         else
         {
@@ -1007,7 +1003,7 @@ namespace MediaPortal.GUI.Music
           }
         }
         if (playList.Count == 0)
-          if (currentScrobbleMode == ScrobbleMode.Neighbours || currentScrobbleMode == ScrobbleMode.Friends)
+          if (currentScrobbleMode != ScrobbleMode.Similar)
           {
             StartScrobbleThread();
           }
@@ -1036,7 +1032,7 @@ namespace MediaPortal.GUI.Music
               }
               catch (Exception ex)
               {
-                Log.Write("ScrobbleLookupThread: exception on lookup - {0}", ex.Message);
+                Log.Write("ScrobbleLookupThread: exception on lookup Similar - {0}", ex.Message);
               }
             }
           }
@@ -1051,7 +1047,7 @@ namespace MediaPortal.GUI.Music
             }
             catch (Exception ex)
             {
-              Log.Write("ScrobbleLookupThread: exception on lookup - {0}", ex.Message);
+              Log.Write("ScrobbleLookupThread: exception on lookup Neighbours - {0}", ex.Message);
             }
           }
           break;
@@ -1065,7 +1061,20 @@ namespace MediaPortal.GUI.Music
             }
             catch (Exception ex)
             {
-              Log.Write("ScrobbleLookupThread: exception on lookup - {0}", ex.Message);
+              Log.Write("ScrobbleLookupThread: exception on lookup - Friends {0}", ex.Message);
+            }
+          }
+          break;
+        case ScrobbleMode.Random:
+          lock (ScrobbleLock)
+          {
+            try
+            {
+              scrobbledArtists = ascrobbler.getRandomTracks();
+            }
+            catch (Exception ex)
+            {
+              Log.Write("ScrobbleLookupThread: exception on lookup - Random {0}", ex.Message);
             }
           }
           break;

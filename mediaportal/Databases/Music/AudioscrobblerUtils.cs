@@ -52,6 +52,13 @@ namespace MediaPortal.Music.Database
     topartisttags,
     toptracktags
   }
+
+  public enum offlineMode
+  {
+    random,
+    timesplayed,
+    favorites,    
+  }
   #endregion
 
   public class AudioscrobblerUtils
@@ -63,7 +70,7 @@ namespace MediaPortal.Music.Database
     private int _minimumArtistMatchPercent = 50;
     private int _limitRandomListCount = 5;
     private int _randomNessPercent = 75;
-        
+
     // Neighbour mode intelligence params
     private lastFMFeed _currentNeighbourMode = lastFMFeed.weeklyartistchart;
 
@@ -77,6 +84,7 @@ namespace MediaPortal.Music.Database
       LoadSettings();
     }
 
+    #region SongComparer
     private static int CompareSongsByMatch(Song x, Song y)
     {
       try
@@ -139,7 +147,7 @@ namespace MediaPortal.Music.Database
       int retval = 0;
       try
       {
-        if (x.TimesPlayed == null || x.TimesPlayed == 0)
+        if (x.TimesPlayed == 0)
           //if (y.TimesPlayed != null && y.TimesPlayed >= 0)
           //{
           //  return 1;
@@ -147,7 +155,7 @@ namespace MediaPortal.Music.Database
           //else
           return 0;
 
-        if (y.TimesPlayed == null || y.TimesPlayed == 0)
+        if (y.TimesPlayed == 0)
           return 0;
 
         if (x.TimesPlayed == y.TimesPlayed)
@@ -173,7 +181,7 @@ namespace MediaPortal.Music.Database
         return 0;
       }
     }
-
+    #endregion
 
     #region Serialization
     void LoadSettings()
@@ -183,9 +191,9 @@ namespace MediaPortal.Music.Database
         MusicDatabase mdb = new MusicDatabase();
         _defaultUser = xmlreader.GetValueAsString("audioscrobbler", "user", "");
         _useDebugLog = (mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(_defaultUser)), "iDebugLog", -1) == 1) ? true : false;
-        int tmpRand = mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(_defaultUser)), "iRandomness", -1);        
+        int tmpRand = mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(_defaultUser)), "iRandomness", -1);
         int tmpNMode = mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(_defaultUser)), "iNeighbourMode", -1);
-        
+
         switch (tmpNMode)
         {
           case 3:
@@ -431,7 +439,69 @@ namespace MediaPortal.Music.Database
       return getOthersArtists(randomizeList_, lastFMFeed.friends);
     }
 
+    public List<Song> getRandomTracks()
+    {
+      return fetchRandomTracks(offlineMode.random);
+    }
+
+    public List<Song> getUnhearedTracks()
+    {
+      return fetchRandomTracks(offlineMode.timesplayed);
+    }
+
+    public List<Song> getFavoriteTracks()
+    {
+      return fetchRandomTracks(offlineMode.favorites);
+    }
+
     #endregion
+
+    #region internal fetch routines
+    private List<Song> fetchRandomTracks(offlineMode randomMode_)
+    {
+      int addedSongs = 0;      
+      Random thisOne = new Random();
+      MusicDatabase dbs = new MusicDatabase();
+      List<Song> songList = new List<Song>();
+      Song randomSong = new Song();
+      Song lookupSong = new Song();
+
+      // fetch more than needed since there could be double entries
+      while (addedSongs < _limitRandomListCount * 3)
+      {
+        lookupSong.Clear();
+
+        dbs.GetRandomSong(ref lookupSong);
+        randomSong = lookupSong.Clone();
+
+        // dirty hack to improve .NET's shitty random.next()
+        if (thisOne.Next(0, 6) == 1)
+        {
+          switch (randomMode_)
+          {
+            case offlineMode.timesplayed:
+              if (randomSong.TimesPlayed == 0)
+              {
+                songList.Add(randomSong);
+                addedSongs++;
+              }
+              break;
+            case offlineMode.favorites:
+              if (randomSong.Favorite)
+              {
+                songList.Add(randomSong);
+                addedSongs++;
+              }
+              break;
+            case offlineMode.random:
+              songList.Add(randomSong);
+              addedSongs++;
+              break;
+          }
+        }
+      }
+      return songList;
+    }
 
 
     private List<Song> getOthersArtists(bool randomizeList_, lastFMFeed neighbourOrFriend_)
@@ -449,7 +519,7 @@ namespace MediaPortal.Music.Database
         case lastFMFeed.friends:
           myNeighbours = getAudioScrobblerFeed(lastFMFeed.friends, "");
           break;
-      }     
+      }
 
       if (randomizeList_)
       {
@@ -592,7 +662,9 @@ namespace MediaPortal.Music.Database
         return myNeighboorsArtists;
       }
     }
+    #endregion
 
+    #region XML - Parsers
     private List<Song> ParseXMLDocForSimilarArtists(string artist_)
     {
       songList = new List<Song>();
@@ -886,5 +958,7 @@ namespace MediaPortal.Music.Database
       }
       return songList;
     }
+    #endregion
+
   }
 }
