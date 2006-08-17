@@ -133,11 +133,10 @@ namespace MediaPortal.Player
     protected int _videoHeight = 100;
     protected bool _updateNeeded = false;
     protected bool _fullScreen = true;
-    protected string _audioLanguage = "";
-    protected string _subtitleLanguage = "";
-    protected bool _subtitlesEnabled = true;
+    private string _defaultAudioLanguage = "";
+    private string _defaultSubtitleLanguage = "";
+    protected bool _forceSubtitles = true;
     protected bool _freeNavigator = false;
-    protected int _currentAudioStream = -1;
     protected bool _menuOn = false;
     protected int _UOPs;
     protected string _currentFile;
@@ -206,9 +205,9 @@ namespace MediaPortal.Player
       _videoWidth = 100;
       _videoHeight = 100;
       _speed = 1;
-      _audioLanguage = "";
-      _subtitleLanguage = "";
-      _subtitlesEnabled = true;
+      _defaultAudioLanguage = null;
+      _defaultSubtitleLanguage = null;
+      _forceSubtitles = true;
       _aspectRatio = MediaPortal.GUI.Library.Geometry.Type.Normal;
       _speed = 1;
       _currentTime = 0;
@@ -257,94 +256,6 @@ namespace MediaPortal.Player
 
     #endregion
 
-    public void SelectAudioLanguage(string language)
-    {
-      int streamsAvailable = 0;
-      int currentStream = 0;
-      _log.Info("DVDPlayer:SelectAudioLanguage:" + language);
-      int hr = _dvdInfo.GetCurrentAudio(out streamsAvailable, out currentStream);
-      if (hr < 0)
-      {
-        _log.Error("DVDPlayer:GetCurrentAudio() failed");
-        return;
-      }
-      _log.Info("DVDPlayer:found {0} audiostreams", streamsAvailable.ToString());
-      if (streamsAvailable <= 0) return;
-      foreach (CultureInfo ci in CultureInfo.GetCultures(CultureTypes.NeutralCultures))
-      {
-        if (String.Compare(ci.EnglishName, language, true) == 0)
-        {
-          for (int i = 0; i < streamsAvailable; ++i)
-          {
-            int audioLanguage;
-            hr = _dvdInfo.GetAudioLanguage(i, out audioLanguage);
-            if (hr == 0)
-            {
-              if (ci.LCID == (audioLanguage & 0x3ff))
-              {
-                _audioLanguage = language;
-                hr = _dvdCtrl.SelectAudioStream(i, DvdCmdFlags.None, out _cmdOption);
-                if (hr == 0)
-                  _log.Info("DVDPlayer:Selected audio stream:{0}", language);
-                else
-                  _log.Error("DVDPlayer:SelectAudioStream() failed");
-                return;
-              }
-            }
-            else _log.Error("DVDPlayer:GetAudioLanguage() failed");
-          }
-        }
-      }
-    }
-
-    public void SelectSubtitleLanguage(string strSubtitleLanguage)
-    {
-      int streamsAvailable = 0;
-      int currentStream = 0;
-      bool isDisabled;
-      _log.Info("DVDPlayer:SelectSubtitleLanguage:" + strSubtitleLanguage);
-      int hr = _dvdInfo.GetCurrentSubpicture(out streamsAvailable, out currentStream, out isDisabled);
-      if (hr < 0)
-      {
-        _log.Error("DVDPlayer:GetCurrentSubpicture() failed");
-        return;
-      }
-      _log.Info("DVDPlayer:found {0} subpicture streams", streamsAvailable.ToString());
-      if (streamsAvailable <= 0) return;
-      foreach (CultureInfo ci in CultureInfo.GetCultures(CultureTypes.NeutralCultures))
-      {
-        if (String.Compare(ci.EnglishName, strSubtitleLanguage, true) == 0)
-        {
-          for (int i = 0; i < streamsAvailable; ++i)
-          {
-            int subtitleLanguage;
-            hr = _dvdInfo.GetSubpictureLanguage(i, out subtitleLanguage);
-            if (hr == 0)
-            {
-              if (ci.LCID == (subtitleLanguage & 0x3ff))
-              {
-                _subtitleLanguage = strSubtitleLanguage;
-                hr = _dvdCtrl.SelectSubpictureStream(i, DvdCmdFlags.None, out _cmdOption);
-                if (hr == 0)
-                {
-                  hr = _dvdCtrl.SetSubpictureState(_subtitlesEnabled, DvdCmdFlags.None, out _cmdOption);
-                  if (hr == 0)
-                  {
-                    _log.Info("DVDPlayer:switched subs to:" + strSubtitleLanguage);
-                  }
-                  else _log.Error("DVDPlayer:SetSubpictureState() failed");
-                }
-                else _log.Error("DVDPlayer:SelectSubpictureStream() failed");
-
-                return;
-              }
-            }
-            else _log.Error("DVDPlayer:GetSubpictureLanguage() failed");
-          }
-        }
-      }
-    }
-
     /// <summary> handling the very first start of dvd playback. </summary>
     bool FirstPlayDvd(string file)
     {
@@ -376,9 +287,9 @@ namespace MediaPortal.Player
 
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
         {
-          _audioLanguage = xmlreader.GetValueAsString("dvdplayer", "audiolanguage", "english");
-          _subtitleLanguage = xmlreader.GetValueAsString("dvdplayer", "subtitlelanguage", "english");
-          _subtitlesEnabled = xmlreader.GetValueAsBool("dvdplayer", "showsubtitles", true);
+          _defaultAudioLanguage = xmlreader.GetValueAsString("dvdplayer", "audiolanguage", "english");
+          _defaultSubtitleLanguage = xmlreader.GetValueAsString("dvdplayer", "subtitlelanguage", "english");
+          _forceSubtitles = xmlreader.GetValueAsBool("dvdplayer", "showsubtitles", true);
         }
 
         SetDefaultLanguages();
@@ -809,8 +720,6 @@ namespace MediaPortal.Player
             case EventCode.DvdSubPicictureStreamChange:
               {
                 _log.Info("EVT:DvdSubPicture Changed to:{0} Enabled:{1}", p1, p2);
-                //_subtitleLanguage = p1.ToString();
-                //_subtitlesEnabled=(p2!=0);											
               }
               break;
 
@@ -818,7 +727,10 @@ namespace MediaPortal.Player
               {
                 _log.Info("EVT:DvdChaptStart:{0}", p1);
                 _currChapter = p1;
-                SelectSubtitleLanguage(_subtitleLanguage);
+                // Dhu?! Path to disaster, what about multiple tracks of same lang.
+                // The DVD graph should remember language setting, if not it's a bug
+                // in the DVD software.
+                // SelectSubtitleLanguage(_subtitleLanguage);
                 DvdHMSFTimeCode totaltime = new DvdHMSFTimeCode();
                 DvdTimeCodeFlags ulTimeCodeFlags;
                 _dvdInfo.GetTotalTitleTime(totaltime, out ulTimeCodeFlags);
@@ -832,7 +744,10 @@ namespace MediaPortal.Player
               {
                 _log.Info("EVT:DvdTitleChange:{0}", p1);
                 _currTitle = p1;
-                SelectSubtitleLanguage(_subtitleLanguage);
+                // Dhu?! Path to disaster, what about multiple tracks of same lang.
+                // The DVD graph should remember language setting, if not it's a bug
+                // in the DVD software.
+                // SelectSubtitleLanguage(_subtitleLanguage);
 
                 DvdHMSFTimeCode totaltime = new DvdHMSFTimeCode();
                 DvdTimeCodeFlags ulTimeCodeFlags;
@@ -1406,10 +1321,9 @@ namespace MediaPortal.Player
       return true;
     }
 
-
     public override bool SetResumeState(byte[] resumeData)
     {
-      if (resumeData.Length > 0)
+      if ((resumeData != null) && (resumeData.Length > 0))
       {
         _log.Info("DVDPlayer::SetResumeState() begin");
         IDvdState dvdState;
@@ -1764,13 +1678,16 @@ namespace MediaPortal.Player
       return false;
     }
 
-    void SetDefaultLanguages()
+    /// <summary>
+    /// Set the default languages of the 
+    /// </summary>
+    private void SetDefaultLanguages()
     {
       _log.Info("SetDefaultLanguages");
       // Flip: Added more detailed message
       int setError = 0;
       string errorText = "";
-      int lCID = GetLCID(_audioLanguage);
+      int lCID = GetLCID(_defaultAudioLanguage);
       if (lCID >= 0)
       {
         setError = 0;
@@ -1791,9 +1708,10 @@ namespace MediaPortal.Player
         }
 
 
-        _log.Info("DVDPlayer:Set default language:{0} {1} {2}", _audioLanguage, lCID, errorText);
+        _log.Info("DVDPlayer:Set default language:{0} {1} {2}", _defaultAudioLanguage, lCID, errorText);
       }
-      lCID = GetLCID(_subtitleLanguage);
+      // For now, the default menu language is the same as the subtitle language
+      lCID = GetLCID(_defaultSubtitleLanguage);
       if (lCID >= 0)
       {
         setError = 0;
@@ -1812,9 +1730,9 @@ namespace MediaPortal.Player
             errorText = "Unknown Error. " + setError;
             break;
         }
-        _log.Info("DVDPlayer:Set default menu language:{0} {1} {2}", _subtitleLanguage, lCID, errorText);
+        _log.Info("DVDPlayer:Set default menu language:{0} {1} {2}", _defaultSubtitleLanguage, lCID, errorText);
       }
-      lCID = GetLCID(_subtitleLanguage);
+      lCID = GetLCID(_defaultSubtitleLanguage);
       if (lCID >= 0)
       {
         setError = 0;
@@ -1833,14 +1751,15 @@ namespace MediaPortal.Player
             errorText = "Unknown Error. " + setError;
             break;
         }
-        _log.Info("DVDPlayer:Set subtitle language:{0} {1} {2}", _subtitleLanguage, lCID, errorText);
+        _log.Info("DVDPlayer:Set default subtitle language:{0} {1} {2}", _defaultSubtitleLanguage, lCID, errorText);
       }
 
-      _dvdCtrl.SetSubpictureState(_subtitlesEnabled, DvdCmdFlags.None, out _cmdOption);
+      // Force subtitles if this option is set in the configuration
+      _dvdCtrl.SetSubpictureState(_forceSubtitles, DvdCmdFlags.None, out _cmdOption);
 
     }
 
-    int GetLCID(string language)
+    static int GetLCID(string language)
     {
       if (language == null) return -1;
       if (language.Length == 0) return -1;
@@ -1890,8 +1809,6 @@ namespace MediaPortal.Player
       set
       {
         _dvdCtrl.SelectAudioStream(value, DvdCmdFlags.None, out _cmdOption);
-        _audioLanguage = AudioLanguage(value);
-        _currentAudioStream = value;
       }
     }
 
@@ -1912,6 +1829,9 @@ namespace MediaPortal.Player
       return Strings.Unknown;
     }
 
+    /// <summary>
+    /// Get the number of available subpictures
+    /// </summary>
     public override int SubtitleStreams
     {
       get
@@ -1924,23 +1844,42 @@ namespace MediaPortal.Player
         return 1;
       }
     }
+
+    /// <summary>
+    /// Get/Set the current subpicture ID
+    /// </summary>
     public override int CurrentSubtitleStream
     {
       get
       {
-        int streamsAvailable = 0;
-        int currentStream = 0;
-        bool isDisabled;
-        int hr = _dvdInfo.GetCurrentSubpicture(out streamsAvailable, out currentStream, out isDisabled);
-        if (hr == 0) return currentStream;
-        return 0;
+        int pulStreamsAvailable, pulCurrentStream;
+        bool pbIsDisabled;
+        int hr = _dvdInfo.GetCurrentSubpicture(out pulStreamsAvailable, out pulCurrentStream, out pbIsDisabled);
+        if (hr != 0)
+        {
+          _log.Error("DVDPlayer:CurrentSubtitleStream:Unable to get current subpicture with code {0}", hr);
+          return 0;
+        }
+        //_log.Debug("DVDPlayer:CurrentSubtitleStream:Getting subpicture state: streams {0},stream {1}, enabled {2}", pulStreamsAvailable, pulCurrentStream, !pbIsDisabled);
+        return pulCurrentStream;
       }
       set
       {
         int hr = _dvdCtrl.SelectSubpictureStream(value, DvdCmdFlags.None, out _cmdOption);
-        _subtitleLanguage = SubtitleLanguage(value);
+        if (hr != 0)
+        {
+          _log.Error("DVDPlayer:CurrentSubtitleStream:Unable to set current subpicture with code {0}", hr);
+          return;
+        }
+        //_log.Debug("DVDPlayer:CurrentSubtitleStream:Setting subpicture stream: stream {0}", value);
       }
     }
+
+    /// <summary>
+    /// Translate the subpicture ID to a human readable string.
+    /// </summary>
+    /// <param name="iStream">Subpicture ID</param>
+    /// <returns>Human readable string representing the subpicture</returns>
     public override string SubtitleLanguage(int iStream)
     {
       int iLanguage;
@@ -1954,7 +1893,10 @@ namespace MediaPortal.Player
             return ci.EnglishName;
           }
         }
+        _log.Error("DVDPlayer:Failed translating subpicture ID to string");
+        return Strings.Unknown;
       }
+      _log.Error("DVDPlayer:Failed translating subpicture ID to string with error code {0}", hr);
       return Strings.Unknown;
     }
 
@@ -1980,35 +1922,35 @@ namespace MediaPortal.Player
 
     }
 
+    /// <summary>
+    /// Enable/Disable the subpictures
+    /// </summary>
     public override bool EnableSubtitle
     {
       get
       {
-        return _subtitlesEnabled;
+        int pulStreamsAvailable,pulCurrentStream;
+        bool pbIsDisabled;
+        int hr = _dvdInfo.GetCurrentSubpicture(out pulStreamsAvailable, out pulCurrentStream, out pbIsDisabled);
+        if (hr != 0)
+        {
+          _log.Error("DVDPlayer:EnableSubtitle:Unable to get subpicture state (enabled/disabled) with code {0}", hr);
+          return false;
+        }
+        //_log.Debug("DVDPlayer:EnableSubtitle:Getting subpicture state: streams {0},stream {1}, enabled {2}", pulStreamsAvailable, pulCurrentStream, !pbIsDisabled);
+        return !pbIsDisabled;
       }
       set
       {
-        _subtitlesEnabled = value;
-        _dvdCtrl.SetSubpictureState(_subtitlesEnabled, DvdCmdFlags.None, out _cmdOption);
+        int hr = _dvdCtrl.SetSubpictureState(value, DvdCmdFlags.None, out _cmdOption);
+        if (hr != 0)
+        {
+          _log.Error("DVDPlayer:EnableSubtitle:Unable to set subpicture state (enabled/disabled) with code {0}", hr);
+          return;
+        }
+        //_log.Debug("DVDPlayer:EnableSubtitle:Setting subpicture state to enabled {0}", value);
       }
     }
-    /*
-    public override int GetHDC()
-    {
-      if (m_ovMgr!=null)
-      {
-        return m_ovMgr.GetHDC();
-      }
-      return 0;
-    }
-    public override void ReleaseHDC(int HDC)
-    {
-      if (m_ovMgr!=null)
-      {
-        m_ovMgr.ReleaseDC(HDC);
-      }
-    }*/
-
 
     protected virtual void SetVideoPosition(System.Drawing.Rectangle destination)
     {

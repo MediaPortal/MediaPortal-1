@@ -1048,13 +1048,14 @@ namespace MediaPortal.GUI.TV
       string strActiveLabel = GUILocalizeStrings.Get(461);		// "[active]"
 
       // cycle through each subtitle and add it to our list control
+      int currentSubtitleStream = g_Player.CurrentSubtitleStream;
       for (int i = 0; i < iValue; ++i)
       {
         string strItem;
         string strLang = g_Player.SubtitleLanguage(i);
         int ipos = strLang.IndexOf("(");
         if (ipos > 0) strLang = strLang.Substring(0, ipos);
-        if (g_Player.CurrentSubtitleStream == i)		// this subtitle is active, show as such
+        if (currentSubtitleStream == i)		// this subtitle is active, show as such
         {
           // formats to 'Subtitle X [active]'
           strItem = String.Format(strLang + " " + strActiveLabel);	// this audio stream is active, show as such
