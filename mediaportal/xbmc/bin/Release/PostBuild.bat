@@ -27,10 +27,12 @@ if exist ..\..\..\lame_enc.dll copy ..\..\..\lame_enc.dll .
 copy ..\..\..\MPSA.ax .
 copy ..\..\..\TSFileSource.ax .
 copy ..\..\..\MPTSWriter.ax .
+copy ..\..\..\cdxareader.ax .
 copy ..\..\..\ttBdaDrvApi_Dll.dll .
 regsvr32 /s MPSA.ax
 regsvr32 /s TSFileSource.ax
 regsvr32 /s MPTSWriter.ax
+regsvr32 /s cdxareader.ax
 
 if not exist TTPremiumBoot\. mkdir TTPremiumBoot
 if not exist TTPremiumBoot\21\. mkdir TTPremiumBoot\21
