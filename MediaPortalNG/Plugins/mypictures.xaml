@@ -1,6 +1,5 @@
 <Page xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      Style="{DynamicResource PageBackground}" 
       xmlns:ctrl="clr-namespace:MediaPortal"
       x:Class="MediaPortal.MyPictures"
       Name="mypics"
@@ -29,7 +28,7 @@
       </BeginStoryboard>
     </EventTrigger>
   </Page.Triggers>
-  <Canvas Name="mainPanel" Style="{DynamicResource PageBackground}">
+  <Canvas Name="mainPanel" Width="720" Height="576" Style="{DynamicResource PageBackground}">
  
       <!--  -->
       <TextBlock
