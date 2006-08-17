@@ -40,6 +40,9 @@ namespace MediaPortal.Player
 
     public VolumeHandler() : this(LoadFromRegistry())
 		{
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
 		}
 
 		public VolumeHandler(int[] volumeTable)
@@ -79,6 +82,8 @@ namespace MediaPortal.Player
 
 		static VolumeHandler CreateInstance()
 		{
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _config = services.Get<IConfig>();
       using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
 			{
 				int volumeStyle = reader.GetValueAsInt("volume", "handler", 0);
