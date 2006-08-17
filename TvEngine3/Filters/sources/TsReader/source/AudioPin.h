@@ -49,6 +49,7 @@ public:
 	void SetDuration();
 	void FlushOutput();
 protected:
+	CRefTime	m_refStartTime;
 	BOOL m_bDiscontinuity;
 	CTsReaderFilter *	const m_pTsReaderFilter;
 	CCritSec* m_section;

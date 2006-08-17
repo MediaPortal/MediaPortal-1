@@ -31,7 +31,7 @@
 
 void LogDebug(const char *fmt, ...) 
 {
-#ifndef DEBUG
+#ifdef DEBUG
 	va_list ap;
 	va_start(ap,fmt);
 
@@ -51,6 +51,13 @@ void LogDebug(const char *fmt, ...)
 			systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
 			buffer);
 		fclose(fp);
+
+		char buf[1000];
+		sprintf(buf,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d %s\n",
+			systemTime.wDay, systemTime.wMonth, systemTime.wYear,
+			systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
+			buffer);
+		::OutputDebugString(buf);
 	}
 #endif
 };
@@ -179,7 +186,10 @@ int CTsReaderFilter::GetPinCount()
 
 STDMETHODIMP CTsReaderFilter::Run(REFERENCE_TIME tStart)
 {
-	LogDebug("CTsReaderFilter::Run()");
+	CRefTime runTime=tStart;
+	double msec=(double)runTime.Millisecs();
+	msec/=1000.0;
+	LogDebug("CTsReaderFilter::Run(%05.2f)",msec);
   CAutoLock cObjectLock(m_pLock);
 	return CSource::Run(tStart);
 }
@@ -301,7 +311,7 @@ void CTsReaderFilter::Seek(CRefTime& seekTime)
 {
   m_seeking=true;
   CAutoLock lock(&m_section);
-	LogDebug("CTsReaderFilter::Seek(%d", seekTime.Millisecs());
+	LogDebug("CTsReaderFilter::Seek(%d)", seekTime.Millisecs());
 	//::OutputDebugStringA("CTsReaderFilter::Seek()\n");
 	double duration=(m_endTime-m_startTime);
 	double seektime=(double)seekTime.Millisecs();
@@ -316,7 +326,16 @@ void CTsReaderFilter::Seek(CRefTime& seekTime)
   {
     ASSERT(0);
   }
-	m_fileReader.setFilePointer(filePos,FILE_BEGIN);
+	do
+	{
+		m_fileReader.setFilePointer(filePos,FILE_BEGIN);
+		m_fileDuration.setFilePointer(filePos,FILE_BEGIN);
+		double dtimeSeeked=m_pcrDecoder.GetPcr()-m_startTime;
+		LogDebug("seek %05.2f ->%05.2f", seektime/1000.0,dtimeSeeked/1000.0);
+		if (dtimeSeeked>=seektime) break;
+		filePos+=0x50000;
+	} while (true);
+
 //	m_pAudioPin->SetStart(seekTime);
 	m_pVideoPin->SetStart(seekTime);
   m_seeking=false;

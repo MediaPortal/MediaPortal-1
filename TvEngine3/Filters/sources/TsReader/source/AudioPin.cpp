@@ -47,6 +47,7 @@ CAudioPin::CAudioPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCri
   CMediaSeeking(NAME("pinAudio"),pUnk,phr,section),
 	m_section(section)
 {
+	m_refStartTime=m_rtStart;
 	m_bDropPackets=false;
 	m_rtStart=0;
 }
@@ -223,6 +224,13 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 // CMediaSeeking
 HRESULT CAudioPin::ChangeStart()
 {
+	LogDebug("--seek start");
+	if (m_refStartTime==m_rtStart) 
+	{
+		LogDebug("--skip seek");
+		return S_OK;
+	}
+	m_refStartTime=m_rtStart;
 	double startTime=m_rtStart/UNITS;
 	CAutoLock lock(m_pTsReaderFilter->pStateLock());
 	char buf[100];
@@ -230,6 +238,7 @@ HRESULT CAudioPin::ChangeStart()
 	//::OutputDebugString(buf);
 	m_pTsReaderFilter->Seek(m_rtStart);
 	FlushOutput();
+	LogDebug("--seek done");
 	//::OutputDebugStringA("CAudioPin::ChangeStart done()\n");
 	return S_OK;
 }
