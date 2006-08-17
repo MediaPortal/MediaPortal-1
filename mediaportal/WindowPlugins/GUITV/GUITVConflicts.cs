@@ -347,7 +347,7 @@ namespace MediaPortal.GUI.TV
             break;
           case TVRecording.RecordingType.EveryTimeOnThisChannel:
             item.Label = rec.Title;
-            item.Label2 = GUILocalizeStrings.Get(650);
+            item.Label2 = GUILocalizeStrings.Get(650, new object[] { rec.Channel });
             break;
           case TVRecording.RecordingType.EveryTimeOnEveryChannel:
             item.Label = rec.Title;
@@ -406,36 +406,6 @@ namespace MediaPortal.GUI.TV
         }
       }
 
-    }
-
-    string GetRecType(TVRecording.RecordingType recType)
-    {
-      string strType = String.Empty;
-      switch (recType)
-      {
-        case TVRecording.RecordingType.Daily:
-          strType = GUILocalizeStrings.Get(648);//daily
-          break;
-        case TVRecording.RecordingType.EveryTimeOnEveryChannel:
-          strType = GUILocalizeStrings.Get(651);//Everytime on any channel
-          break;
-        case TVRecording.RecordingType.EveryTimeOnThisChannel:
-          strType = GUILocalizeStrings.Get(650);//Everytime on this channel
-          break;
-        case TVRecording.RecordingType.Once:
-          strType = GUILocalizeStrings.Get(647);//Once
-          break;
-        case TVRecording.RecordingType.WeekDays:
-          strType = GUILocalizeStrings.Get(680);//Mon-Fri
-          break;
-        case TVRecording.RecordingType.WeekEnds:
-          strType = GUILocalizeStrings.Get(1050);//Sat-Sun
-          break;
-        case TVRecording.RecordingType.Weekly:
-          strType = GUILocalizeStrings.Get(679);//Weekly
-          break;
-      }
-      return strType;
     }
     #endregion
 

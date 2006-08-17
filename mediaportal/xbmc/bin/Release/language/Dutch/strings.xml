@@ -1983,7 +1983,7 @@
 	</string>
 	<string>
 		<id>650</id>
-		<value>Iedere keer op dit kanaal</value>
+		<value>Iedere keer op {0}</value>
 	</string>
 	<string>
 		<id>651</id>

@@ -2127,7 +2127,7 @@
 	</string>
 	<string>
 		<id>650</id>
-		<value>A chaque fois sur cette chaîne</value>
+		<value>A chaque fois sur {0}</value>
 	</string>
 	<string>
 		<id>651</id>

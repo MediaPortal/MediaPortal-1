@@ -386,8 +386,8 @@ namespace MediaPortal.GUI.TV
           }
 
         case SortMethod.Type:
-          item1.Label2 = GetRecType(rec1.RecType);
-          item2.Label2 = GetRecType(rec2.RecType);
+          item1.Label2 = GetRecType(rec1);
+          item2.Label2 = GetRecType(rec2);
           if (rec1.RecType != rec2.RecType)
           {
             if (m_bSortAscending)
@@ -685,7 +685,7 @@ namespace MediaPortal.GUI.TV
                 break;
               case TVRecording.RecordingType.EveryTimeOnThisChannel:
                 item.Label = rec.Title;
-                item.Label2 = GUILocalizeStrings.Get(650);
+                item.Label2 = GUILocalizeStrings.Get(650, new object[] { rec.Channel } );
                 break;
               case TVRecording.RecordingType.EveryTimeOnEveryChannel:
                 item.Label = rec.Title;
@@ -1140,10 +1140,10 @@ namespace MediaPortal.GUI.TV
       }
     }
 
-    string GetRecType(TVRecording.RecordingType recType)
+    string GetRecType(TVRecording rec)
     {
       string strType = String.Empty;
-      switch (recType)
+      switch (rec.RecType)
       {
         case TVRecording.RecordingType.Daily:
           strType = GUILocalizeStrings.Get(648);//daily
@@ -1152,7 +1152,7 @@ namespace MediaPortal.GUI.TV
           strType = GUILocalizeStrings.Get(651);//Everytime on any channel
           break;
         case TVRecording.RecordingType.EveryTimeOnThisChannel:
-          strType = GUILocalizeStrings.Get(650);//Everytime on this channel
+          strType = GUILocalizeStrings.Get(650, new object[] { rec.Channel } );//Everytime on this channel
           break;
         case TVRecording.RecordingType.Once:
           strType = GUILocalizeStrings.Get(647);//Once

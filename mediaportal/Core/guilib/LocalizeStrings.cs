@@ -181,6 +181,36 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
+    /// Get the translation for a given id and format the sting with
+    /// the given parameters
+    /// </summary>
+    /// <param name="dwCode">id of text</param>
+    /// <param name="parameters">parameters used in the formating</param>
+    /// <returns>
+    /// string containing the translated text
+    /// </returns>
+    static public string Get(int dwCode,object[] parameters)
+    {
+      string translation = Get(dwCode);
+      // if parameters or the translation is null, return the translation.
+      if((translation == null) || (parameters == null)) {
+        return translation;
+      }
+      // return the formatted string. If formatting fails, log the error
+      // and return the unformatted string.
+      try
+      {
+        return String.Format(translation, parameters);
+      }
+      catch(System.FormatException e) {
+        _log.Error("Error formatting translation with id {0}", dwCode);
+        _log.Error("Unformatted translation: {0}", translation);
+        _log.Error(e);
+        return translation;
+      }
+    }
+
+    /// <summary>
     /// Get the translation for a given id
     /// </summary>
     /// <param name="dwCode">id of text</param>

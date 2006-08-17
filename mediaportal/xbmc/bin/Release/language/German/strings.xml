@@ -2127,7 +2127,7 @@
    </string>
    <string>
       <id>650</id>
-      <value>Immer auf diesem Kanal</value>
+      <value>Immer auf {0}</value>
    </string>
    <string>
       <id>651</id>
