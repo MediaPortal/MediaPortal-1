@@ -63,7 +63,10 @@ namespace MediaPortal.AudioScrobbler
 
         if (tmpuser == "")
         {
-          tabControlASSettings.Enabled = false;
+          tabControlLiveFeeds.Enabled = false;
+          tabControlSettings.TabPages.RemoveAt(1);
+          tabControlSettings.TabPages.RemoveAt(1);
+          labelNoUser.Visible = true;
         }
         // only load settings if a user is present
         else
@@ -235,6 +238,59 @@ namespace MediaPortal.AudioScrobbler
     #endregion
 
     #region control events
+
+    // Implements the manual sorting of items by columns.
+    class ListViewItemComparer : IComparer
+    {
+      private int col;
+      public ListViewItemComparer()
+      {
+        col = 0;
+      }
+      public ListViewItemComparer(int column)
+      {
+        col = column;
+      }
+      public int Compare(object x, object y)
+      {
+        try
+        {
+          if (Convert.ToInt16(((ListViewItem)y).SubItems[col].Text) == Convert.ToInt16(((ListViewItem)x).SubItems[col].Text))
+            return 0;
+          if (Convert.ToInt16(((ListViewItem)y).SubItems[col].Text) > Convert.ToInt16(((ListViewItem)x).SubItems[col].Text))
+            return 1;
+          else
+            return -1;
+        }
+        catch (Exception)
+        {
+          return 0;
+        }
+      }
+    }
+
+    private void trackBarRandomness_MouseHover(object sender, EventArgs e)
+    {
+      toolTipRandomness.SetToolTip(trackBarRandomness, "If you lower the percentage value you'll get results more similar");
+      toolTipRandomness.Active = true;
+    }
+
+    private void trackBarRandomness_MouseLeave(object sender, EventArgs e)
+    {
+      toolTipRandomness.Active = false;
+    }
+
+    private void labelSimilarArtistsUpDown_MouseHover(object sender, EventArgs e)
+    {
+      toolTipRandomness.SetToolTip(labelSimilarArtistsUpDown, "Increase if you do not get enough songs - lower if the playlist grows too fast");
+      toolTipRandomness.Active = true;
+    }
+
+    private void labelSimilarArtistsUpDown_MouseLeave(object sender, EventArgs e)
+    {
+      toolTipRandomness.Active = false;
+    }
+
     private void linkLabelMPGroup_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
       // Determine which link was clicked within the LinkLabel.
@@ -264,7 +320,7 @@ namespace MediaPortal.AudioScrobbler
     {
       if (textBoxASUsername.Text != "")
       {
-        tabControlASSettings.Enabled = true;
+        //tabControlASSettings.Enabled = true;
       }
     }
 
@@ -318,6 +374,56 @@ namespace MediaPortal.AudioScrobbler
 
     #endregion
 
+    private ListViewItem BuildListViewItemSingleTag(Song song_)
+    {
+      ListViewItem listItem = new ListViewItem(song_.Artist);          
+      listItem.SubItems.Add(Convert.ToString(song_.TimesPlayed));
+      listItem.Tag = song_;
+      return listItem;
+    }
+
+    private ListViewItem BuildListViewArtist(Song song_, bool showPlayed_, bool showMatch_)
+    {
+      ListViewItem listItem = new ListViewItem(song_.Artist);
+      if (showPlayed_)
+        listItem.SubItems.Add(Convert.ToString(song_.TimesPlayed));
+      if (showMatch_)
+        listItem.SubItems.Add(song_.LastFMMatch);
+      listItem.Tag = song_;
+      return listItem;
+    }
+
+    private ListViewItem BuildListViewArtistAlbum(Song song_)
+    {
+      ListViewItem listItem = new ListViewItem(song_.Artist);      
+      listItem.SubItems.Add(song_.Album);
+      listItem.SubItems.Add(Convert.ToString(song_.TimesPlayed));
+      listItem.Tag = song_;
+      return listItem;
+    }
+
+    private ListViewItem BuildListViewTrackArtist(Song song_, bool showPlayed_, bool showDate_)
+    {
+      ListViewItem listItem = new ListViewItem(song_.Title);
+      listItem.SubItems.Add(song_.Artist);
+      if (showPlayed_)
+        listItem.SubItems.Add(Convert.ToString(song_.TimesPlayed));
+      if (showDate_)
+        listItem.SubItems.Add(song_.getQueueTime());
+      listItem.Tag = song_;
+      return listItem;
+    }
+
+    private ListViewItem BuildListViewFullTrack(Song song_)
+    {
+      ListViewItem listItem = new ListViewItem(song_.Title);
+      listItem.SubItems.Add(song_.Artist);
+      listItem.SubItems.Add(song_.Album);
+      listItem.SubItems.Add(Convert.ToString(song_.TimesPlayed));
+      listItem.Tag = song_;
+      return listItem;
+    }
+
     #region Button events
 
     private void buttonCancel_Click(object sender, EventArgs e)
@@ -335,10 +441,15 @@ namespace MediaPortal.AudioScrobbler
     {
       buttonTagsRefresh.Enabled = false;
       listViewTags.Clear();
+      ListViewItem listItem = new ListViewItem();
       songList = new List<Song>();
-      songList = lastFmLookup.getAudioScrobblerFeed(lastFMFeed.toptags, "");      
+      songList = lastFmLookup.getAudioScrobblerFeed(lastFMFeed.toptags, "");
+      listViewTags.BeginUpdate();
+      listViewTags.Columns.Add("Your tags", 170);
+      listViewTags.Columns.Add("Popularity", 70); 
       for (int i = 0; i < songList.Count; i++)
-        listViewTags.Items.Add(songList[i].ToLastFMString());
+        listViewTags.Items.Add(BuildListViewItemSingleTag(songList[i]));        
+      listViewTags.EndUpdate();
       buttonTagsRefresh.Enabled = true;
     }
 
@@ -348,9 +459,10 @@ namespace MediaPortal.AudioScrobbler
       listViewTags.Clear();
       songList = new List<Song>();
       songList = lastFmLookup.getSimilarToTag(lastFMFeed.taggedartists, System.Web.HttpUtility.UrlEncode(textBoxTagToSearch.Text), checkBoxTagRandomize.Checked);
-//      songList = lastFmLookup.getTagsForTrack("Metallica","Battery");
+      listViewTags.Columns.Add("Artist", 170);
+      listViewTags.Columns.Add("Popularity", 70);
       for (int i = 0; i < songList.Count; i++)
-        listViewTags.Items.Add(songList[i].ToLastFMMatchString(false));
+        listViewTags.Items.Add(BuildListViewArtist(songList[i], true, false));
       buttonGetTaggedArtists.Enabled = true;
     }
 
@@ -360,8 +472,11 @@ namespace MediaPortal.AudioScrobbler
       listViewTags.Clear();
       songList = new List<Song>();
       songList = lastFmLookup.getSimilarToTag(lastFMFeed.taggedalbums, System.Web.HttpUtility.UrlEncode(textBoxTagToSearch.Text), checkBoxTagRandomize.Checked);
+      listViewTags.Columns.Add("Artist", 170);
+      listViewTags.Columns.Add("Album", 170);
+      listViewTags.Columns.Add("Popularity", 70); 
       for (int i = 0; i < songList.Count; i++)
-        listViewTags.Items.Add(songList[i].ToLastFMMatchString(false));
+        listViewTags.Items.Add(BuildListViewArtistAlbum(songList[i]));
       buttonTaggedAlbums.Enabled = true;
     }
 
@@ -371,8 +486,11 @@ namespace MediaPortal.AudioScrobbler
       listViewTags.Clear();
       songList = new List<Song>();
       songList = lastFmLookup.getSimilarToTag(lastFMFeed.taggedtracks, System.Web.HttpUtility.UrlEncode(textBoxTagToSearch.Text), checkBoxTagRandomize.Checked);
+      listViewTags.Columns.Add("Track", 170);
+      listViewTags.Columns.Add("Artist", 170);
+      listViewTags.Columns.Add("Popularity", 70);
       for (int i = 0; i < songList.Count; i++)
-        listViewTags.Items.Add(songList[i].ToLastFMMatchString(false));
+        listViewTags.Items.Add(BuildListViewTrackArtist(songList[i], true, false));
       buttonTaggedTracks.Enabled = true;
     }
 
@@ -382,8 +500,12 @@ namespace MediaPortal.AudioScrobbler
       listViewRecentTracks.Clear();
       songList = new List<Song>(); ;
       songList = lastFmLookup.getAudioScrobblerFeed(lastFMFeed.recenttracks, "");
+      listViewRecentTracks.Columns.Add("Track", 155);
+      listViewRecentTracks.Columns.Add("Artist", 155);
+      listViewRecentTracks.Columns.Add("Date", 115);
+      
       for (int i = 0; i < songList.Count; i++)
-        listViewRecentTracks.Items.Add(songList[i].ToShortString());
+        listViewRecentTracks.Items.Add(BuildListViewTrackArtist(songList[i], false, true));
       buttonRefreshRecent.Enabled = true;
     }
 
@@ -393,8 +515,10 @@ namespace MediaPortal.AudioScrobbler
       listViewTopArtists.Clear();
       songList = new List<Song>();
       songList = lastFmLookup.getAudioScrobblerFeed(lastFMFeed.topartists, "");
+      listViewTopArtists.Columns.Add("Artist", 200);
+      listViewTopArtists.Columns.Add("Play count", 100);
       for (int i = 0; i < songList.Count; i++)
-        listViewTopArtists.Items.Add(songList[i].ToLastFMString());
+        listViewTopArtists.Items.Add(BuildListViewArtist(songList[i], true, false));
       buttonArtistsRefresh.Enabled = true;
     }
 
@@ -404,8 +528,10 @@ namespace MediaPortal.AudioScrobbler
       listViewWeeklyArtists.Clear();
       songList = new List<Song>();
       songList = lastFmLookup.getAudioScrobblerFeed(lastFMFeed.weeklyartistchart, "");
+      listViewWeeklyArtists.Columns.Add("Artist", 200);
+      listViewWeeklyArtists.Columns.Add("Play count", 100);
       for (int i = 0; i < songList.Count; i++)
-        listViewWeeklyArtists.Items.Add(songList[i].ToLastFMString());
+        listViewWeeklyArtists.Items.Add(BuildListViewArtist(songList[i], true, false));
       buttonRefreshWeeklyArtists.Enabled = true;
     }
 
@@ -415,8 +541,11 @@ namespace MediaPortal.AudioScrobbler
       listViewTopTracks.Clear();
       songList = new List<Song>();
       songList = lastFmLookup.getAudioScrobblerFeed(lastFMFeed.toptracks, "");
+      listViewTopTracks.Columns.Add("Track", 170);
+      listViewTopTracks.Columns.Add("Artist", 170);
+      listViewTopTracks.Columns.Add("Play count", 70);
       for (int i = 0; i < songList.Count; i++)
-        listViewTopTracks.Items.Add(songList[i].ToLastFMString());
+        listViewTopTracks.Items.Add(BuildListViewTrackArtist(songList[i], true, false));
       buttonTopTracks.Enabled = true;
     }
 
@@ -426,8 +555,11 @@ namespace MediaPortal.AudioScrobbler
       listViewWeeklyTracks.Clear();
       songList = new List<Song>();
       songList = lastFmLookup.getAudioScrobblerFeed(lastFMFeed.weeklytrackchart, "");
+      listViewWeeklyTracks.Columns.Add("Track", 170);
+      listViewWeeklyTracks.Columns.Add("Artist", 170);
+      listViewWeeklyTracks.Columns.Add("Play count", 70);
       for (int i = 0; i < songList.Count; i++)
-        listViewWeeklyTracks.Items.Add(songList[i].ToLastFMString());
+        listViewWeeklyTracks.Items.Add(BuildListViewTrackArtist(songList[i], true, false));
       buttonRefreshWeeklyTracks.Enabled = true;
     }
 
@@ -465,6 +597,9 @@ namespace MediaPortal.AudioScrobbler
       songList = lastFmLookup.getAudioScrobblerFeed(lastFMFeed.topartists, "");
       progressBarSuggestions.PerformStep();
 
+      listViewSuggestions.Columns.Add("Artist", 250);
+      listViewSuggestions.Columns.Add("Match", 100);
+
       if (songList.Count > 7)
       {
         for (int i = 0; i <= 7; i++)
@@ -475,17 +610,19 @@ namespace MediaPortal.AudioScrobbler
 
         for (int i = 0; i < similarList.Count; i++)
         {
-          //if (!listViewSuggestions.Items.ContainsKey(similarList[i].ToLastFMString()))
-          //  listViewSuggestions.Items.Add(similarList[i].ToLastFMString());
           bool foundDoubleEntry = false;
           for (int j = 0; j < listViewSuggestions.Items.Count; j++)
           {
-            if (listViewSuggestions.Items[j].Text == similarList[i].ToLastFMMatchString(false))
+            if (listViewSuggestions.Items[j].Text == similarList[i].Artist)
               foundDoubleEntry = true;
           }
           if (!foundDoubleEntry)
-            listViewSuggestions.Items.Add(similarList[i].ToLastFMMatchString(false));
+            listViewSuggestions.Items.Add(BuildListViewArtist(similarList[i], false, true));
         }
+        //listViewSuggestions.Sorting = SortOrder.Descending;
+        //listViewSuggestions.AllowColumnReorder = true;
+        listViewSuggestions.ListViewItemSorter = new ListViewItemComparer(1);
+
       }
       else
         listViewSuggestions.Items.Add("Not enough overall top artists found");
@@ -500,8 +637,11 @@ namespace MediaPortal.AudioScrobbler
       songList = new List<Song>();
       songList = lastFmLookup.getAudioScrobblerFeed(lastFMFeed.neighbours, "");
 
+      listViewNeighbours.Columns.Add("Your neighbours", 250);
+      listViewNeighbours.Columns.Add("Match", 100);
+
       for (int i = 0; i < songList.Count; i++)
-        listViewNeighbours.Items.Add(songList[i].ToLastFMString());
+        listViewNeighbours.Items.Add(BuildListViewArtist(songList[i], false, true));
       buttonRefreshNeighbours.Enabled = true;
 
       if (listViewNeighbours.Items.Count > 0)
@@ -522,12 +662,26 @@ namespace MediaPortal.AudioScrobbler
       listViewNeighbours.Clear();
       songList = new List<Song>();
       songList = lastFmLookup.getNeighboursArtists(false);
+      listViewNeighbours.Columns.Add("Artist", 170);
+      listViewNeighbours.Columns.Add("Play count", 70);
 
       for (int i = 0; i < songList.Count; i++)
-        listViewNeighbours.Items.Add(songList[i].ToLastFMString());
+      {
+        bool foundDoubleEntry = false;
+        for (int j = 0; j < listViewNeighbours.Items.Count; j++)
+        {
+          if (listViewNeighbours.Items[j].Text == songList[i].Artist)
+            foundDoubleEntry = true;
+        }
+        if (!foundDoubleEntry)
+          listViewNeighbours.Items.Add(BuildListViewArtist(songList[i], true, false));
+      }
       buttonRefreshNeigboursArtists.Enabled = true;
       if (listViewNeighbours.Items.Count > 0)
+      {
+        listViewNeighbours.ListViewItemSorter = new ListViewItemComparer(1);
         buttonNeighboursFilter.Enabled = true;
+      }
       else
         buttonNeighboursFilter.Enabled = false;
     }
@@ -536,11 +690,11 @@ namespace MediaPortal.AudioScrobbler
     {
       //      buttonNeighboursFilter.Enabled = false;
       listViewNeighbours.Clear();
-      tabControlASSettings.Enabled = false;
+      tabControlLiveFeeds.Enabled = false;
       ArrayList artistsInDB = new ArrayList();
       songList = new List<Song>();
       songList = lastFmLookup.getNeighboursArtists(false);
-
+      listViewNeighbours.Columns.Add("Artist", 170);
       for (int i = 0; i < songList.Count; i++)
       {
         MusicDatabase mdb = new MusicDatabase();
@@ -553,37 +707,15 @@ namespace MediaPortal.AudioScrobbler
               foundDoubleEntry = true;
           }
           if (!foundDoubleEntry)
-            listViewNeighbours.Items.Add(songList[i].Artist);
+            listViewNeighbours.Items.Add(BuildListViewArtist(songList[i], false, false));
         }
         //else
         //  MessageBox.Show("Artist " + songList[i].Artist + " already in DB!");
       }
-      tabControlASSettings.Enabled = true;
+      tabControlLiveFeeds.Enabled = true;
     }
 
     #endregion
-
-    private void trackBarRandomness_MouseHover(object sender, EventArgs e)
-    {
-      toolTipRandomness.SetToolTip(trackBarRandomness, "If you lower the percentage value you'll get results more similar");
-      toolTipRandomness.Active = true;
-    }
-
-    private void trackBarRandomness_MouseLeave(object sender, EventArgs e)
-    {
-      toolTipRandomness.Active = false;
-    }
-
-    private void labelSimilarArtistsUpDown_MouseHover(object sender, EventArgs e)
-    {
-      toolTipRandomness.SetToolTip(labelSimilarArtistsUpDown, "Increase if you do not get enough songs - lower if the playlist grows too fast");
-      toolTipRandomness.Active = true;
-    }
-
-    private void labelSimilarArtistsUpDown_MouseLeave(object sender, EventArgs e)
-    {
-      toolTipRandomness.Active = false;
-    }
-
+    
   }
 }
