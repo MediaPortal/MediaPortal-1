@@ -5200,6 +5200,34 @@
       <id>33007</id>
       <value>Scrobble: Offline</value>
    </string>
+   <string>
+      <id>33010</id>
+      <value>Füge automatisch zur Liste hinzu:</value>
+   </string>      
+   <string>
+      <id>33011</id>
+      <value>Ähnliche Titel</value>
+   </string>
+   <string>
+      <id>33012</id>
+      <value>Titel von musikalischen Nachbarn</value>
+   </string>
+   <string>
+      <id>33013</id>
+      <value>Titel nach gewähltem Kriterium</value>
+   </string>
+   <string>
+      <id>33014</id>
+      <value>Titel aus dem Verlauf</value>
+   </string>
+   <string>
+      <id>33016</id>
+      <value>Titel von Freunden bei Last.fm</value>
+   </string>
+   <string>
+      <id>33017</id>
+      <value>Zufällige Titel</value>
+   </string>  
       
    <string>
       <id>100000</id>

@@ -204,6 +204,7 @@ namespace MediaPortal.GUI.Music
       base.OnAction(action);
     }
 
+
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
@@ -236,6 +237,7 @@ namespace MediaPortal.GUI.Music
       m_iItemSelected = facadeView.SelectedListItemIndex;
       base.OnPageDestroy(newWindowId);
     }
+
 
     protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
     {
@@ -285,58 +287,80 @@ namespace MediaPortal.GUI.Music
         return;
       }//if (control == btnScrobbleUser)
 
+
       if (control == btnScrobbleMode)
       {
         bool shouldContinue = false;
         do
         {
           shouldContinue = false;
-          switch (currentScrobbleMode)
+          GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+          if (dlg != null)
           {
-            case ScrobbleMode.Similar:
-              currentScrobbleMode = ScrobbleMode.Neighbours;
-              btnScrobbleMode.Label = GUILocalizeStrings.Get(33002);
-              if (_enableScrobbling)
-                shouldContinue = false;
-              else
-                shouldContinue = true;
-              break;
+            dlg.Reset();
+            dlg.SetHeading(GUILocalizeStrings.Get(33010)); // Automatically fill playlist with
 
-            case ScrobbleMode.Neighbours:
-              currentScrobbleMode = ScrobbleMode.Friends;
-              btnScrobbleMode.Label = GUILocalizeStrings.Get(33006);
-              if (_enableScrobbling)
-                shouldContinue = false;
-              else
-                shouldContinue = true;
-              break;
-            case ScrobbleMode.Friends:
-              currentScrobbleMode = ScrobbleMode.Tags;
-              btnScrobbleMode.Label = GUILocalizeStrings.Get(33003);
-              shouldContinue = true;
-              break;
-            case ScrobbleMode.Tags:
-              currentScrobbleMode = ScrobbleMode.Recent;
-              btnScrobbleMode.Label = GUILocalizeStrings.Get(33004);
-              //if (_enableScrobbling)
-              //  shouldContinue = false;
-              //else
-                shouldContinue = true;
-              break;
-            case ScrobbleMode.Recent:
-              currentScrobbleMode = ScrobbleMode.Random;
-              btnScrobbleMode.Label = GUILocalizeStrings.Get(33007);
-              shouldContinue = false;
-              break;
-            case ScrobbleMode.Random:
-              currentScrobbleMode = ScrobbleMode.Similar;
-              btnScrobbleMode.Label = GUILocalizeStrings.Get(33001);
-              shouldContinue = false;
-              break;
+            dlg.Add(GUILocalizeStrings.Get(33011)); // similar tracks
+            dlg.Add(GUILocalizeStrings.Get(33017)); // random tracks
+            if (_enableScrobbling)
+            {
+              dlg.Add(GUILocalizeStrings.Get(33012)); // tracks your neighbours like
+              dlg.Add(GUILocalizeStrings.Get(33016)); // tracks your friends like
+              //dlg.Add(GUILocalizeStrings.Get(33014)); // tracks played recently
+              //dlg.Add(GUILocalizeStrings.Get(33013)); // tracks suiting configured tag {0}
+            }
+
+            dlg.DoModal(GetID);
+            if (dlg.SelectedLabel < 0)
+              return;
+
+            switch (dlg.SelectedId)
+            {
+              case 1:
+                currentScrobbleMode = ScrobbleMode.Similar;
+                btnScrobbleMode.Label = GUILocalizeStrings.Get(33001);
+                break;
+              case 2:
+                currentScrobbleMode = ScrobbleMode.Random;
+                btnScrobbleMode.Label = GUILocalizeStrings.Get(33007);
+                break;
+              case 3:
+                currentScrobbleMode = ScrobbleMode.Neighbours;
+                btnScrobbleMode.Label = GUILocalizeStrings.Get(33002);
+                break;
+              case 4:
+                currentScrobbleMode = ScrobbleMode.Friends;
+                btnScrobbleMode.Label = GUILocalizeStrings.Get(33006);
+                break;
+              case 5:
+                currentScrobbleMode = ScrobbleMode.Recent;
+                btnScrobbleMode.Label = GUILocalizeStrings.Get(33004);
+                break;
+              case 6:
+                currentScrobbleMode = ScrobbleMode.Tags;
+                btnScrobbleMode.Label = GUILocalizeStrings.Get(33003);
+                break;
+              default:
+                currentScrobbleMode = ScrobbleMode.Random;
+                btnScrobbleMode.Label = GUILocalizeStrings.Get(33007);
+                break;
+            }
+
+            if (currentScrobbleMode == ScrobbleMode.Random)
+              if (currentOfflineMode == offlineMode.favorites)
+              {
+                MusicDatabase checkdb = new MusicDatabase();
+                if (checkdb.GetNumOfFavorites() <= _maxScrobbledArtistsForSongs * 2)
+                {
+                  shouldContinue = true;
+                  Log.Write("Audioscrobbler playlist: Cannot activate offline mode: favorites because there are not enough tracks");
+                }
+              }
           }
+
         } while (shouldContinue);
 
-        CheckScrobbleInstantStart();  
+        CheckScrobbleInstantStart();
         GUIControl.FocusControl(GetID, controlId);
         return;
       }//if (control == btnScrobbleMode)
@@ -366,7 +390,7 @@ namespace MediaPortal.GUI.Music
       {
         //if (_enableScrobbling)
         //{
-          //get state of button
+        //get state of button
         if (btnScrobble.Selected)
         {
           ScrobblerOn = true;
@@ -376,13 +400,13 @@ namespace MediaPortal.GUI.Music
           ScrobblerOn = false;
 
         if (facadeView.PlayListView != null)
-        //{
-        //  // Prevent the currently playing track from being scrolled off the top 
-        //  // or bottom of the screen when other items are re-ordered
-        //  facadeView.PlayListView.AllowLastVisibleListItemDown = !ScrobblerOn;
-        //  facadeView.PlayListView.AllowMoveFirstVisibleListItemUp = !ScrobblerOn;
-        //}
-        UpdateButtonStates();
+          //{
+          //  // Prevent the currently playing track from being scrolled off the top 
+          //  // or bottom of the screen when other items are re-ordered
+          //  facadeView.PlayListView.AllowLastVisibleListItemDown = !ScrobblerOn;
+          //  facadeView.PlayListView.AllowMoveFirstVisibleListItemUp = !ScrobblerOn;
+          //}
+          UpdateButtonStates();
       }
     }
 

@@ -1033,9 +1033,32 @@ namespace MediaPortal.Music.Database
         _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
-
       return 0;
+    }
 
+    // added by rtv
+    public int GetNumOfFavorites()
+    {
+      try
+      {
+        if (null == m_db)
+          return 0;
+
+        string strSQL;
+        int NumOfSongs;
+        strSQL = String.Format("select count(*) from song where favorite > 0");
+        SQLiteResultSet results;
+        results = m_db.Execute(strSQL);
+        SQLiteResultSet.Row row = results.Rows[0];
+        NumOfSongs = Int32.Parse(row.fields[0]);
+        return NumOfSongs;
+      }
+      catch (Exception ex)
+      {
+        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+      return 0;
     }
 
     //added by Sam
