@@ -269,7 +269,7 @@ namespace MediaPortal.Configuration.Sections
               }
           }
       }
-      string[] files = System.IO.Directory.GetFiles(base._config.Get(Config.Options.ConfigPath) + "Tuningparameters", "*.dvbc");
+      string[] files = System.IO.Directory.GetFiles(base._config.Get(Config.Options.BasePath) + "Tuningparameters", "*.dvbc");
       Array.Sort(files);
       foreach (string file in files)
       {
@@ -286,7 +286,7 @@ namespace MediaPortal.Configuration.Sections
       {
           String[] parameters = new String[1];
           string countryName = (string)cbCountry.SelectedItem;
-          parameters[0] = @"Tuningparameters\" + countryName;
+          parameters[0] = base._config.Get(Config.Options.BasePath) + @"Tuningparameters\" + countryName;
           return parameters;
       }
 

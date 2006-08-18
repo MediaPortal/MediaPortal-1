@@ -109,6 +109,7 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel3;
     protected ILog _log;
+    protected IConfig _config;
 
 
     public Wizard_DVBSTV()
@@ -122,6 +123,7 @@ namespace MediaPortal.Configuration.Sections
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
 
       _card = null;
       // This call is required by the Windows Form Designer.
@@ -752,7 +754,7 @@ namespace MediaPortal.Configuration.Sections
       ts.SatName = fileName;
 
       string line;
-      System.IO.TextReader tin = System.IO.File.OpenText(@"Tuningparameters\" + fileName);
+      System.IO.TextReader tin = System.IO.File.OpenText(_config.Get(Config.Options.BasePath) + @"Tuningparameters\" + fileName);
       while (true)
       {
         line = tin.ReadLine();
@@ -797,7 +799,7 @@ namespace MediaPortal.Configuration.Sections
       cbTransponder2.Items.Clear();
       cbTransponder3.Items.Clear();
       cbTransponder4.Items.Clear();
-      string[] files = System.IO.Directory.GetFiles(System.IO.Directory.GetCurrentDirectory() + @"\Tuningparameters", "*.tpl");
+      string[] files = System.IO.Directory.GetFiles(_config.Get(Config.Options.BasePath) + @"\Tuningparameters", "*.tpl");
       Transponder[] transponders = new Transponder[files.Length];
       int trans = 0;
       foreach (string file in files)
@@ -838,28 +840,28 @@ namespace MediaPortal.Configuration.Sections
     protected override String[] GetScanParameters()
     {
       int m_diseqcLoops = 1;
-      string filename = String.Format(base._config.Get(Config.Options.DatabasePath) + "card_{0}.xml", _card.FriendlyName);
+      string filename = String.Format(_config.Get(Config.Options.DatabasePath) + "card_{0}.xml", _card.FriendlyName);
       if (useLNB2.Checked) m_diseqcLoops++;
       if (useLNB3.Checked) m_diseqcLoops++;
       if (useLNB4.Checked) m_diseqcLoops++;
       String[] parameters = new String[m_diseqcLoops];
       Transponder ts = (Transponder)cbTransponder.SelectedItem;
-      parameters[0] = @"Tuningparameters\" + ts.FileName;
+      parameters[0] = _config.Get(Config.Options.BasePath) + @"Tuningparameters\" + ts.FileName;
 
       if (useLNB2.Checked)
       {
         ts = (Transponder)cbTransponder2.SelectedItem;
-        parameters[1] = @"Tuningparameters\" + ts.FileName;
+        parameters[1] = _config.Get(Config.Options.BasePath) + @"Tuningparameters\" + ts.FileName;
       }
       if (useLNB3.Checked)
       {
         ts = (Transponder)cbTransponder3.SelectedItem;
-        parameters[2] = @"Tuningparameters\" + ts.FileName;
+        parameters[2] = _config.Get(Config.Options.BasePath) + @"Tuningparameters\" + ts.FileName;
       }
       if (useLNB4.Checked)
       {
         ts = (Transponder)cbTransponder4.SelectedItem;
-        parameters[3] = @"Tuningparameters\" + ts.FileName;
+        parameters[3] = _config.Get(Config.Options.BasePath) + @"Tuningparameters\" + ts.FileName;
       }
       return parameters;
     }
@@ -899,7 +901,7 @@ namespace MediaPortal.Configuration.Sections
         return;
       }
       _log.Info("load DVBS:{0}", _card.FriendlyName);
-      string filename = String.Format(base._config.Get(Config.Options.DatabasePath) + "card_{0}.xml", _card.FriendlyName);
+      string filename = String.Format(_config.Get(Config.Options.DatabasePath) + "card_{0}.xml", _card.FriendlyName);
 
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename))
@@ -1081,7 +1083,7 @@ namespace MediaPortal.Configuration.Sections
     public override void SaveSettings()
     {
       _log.Info("Save DVBS:{0}", _card.FriendlyName);
-      string filename = String.Format(base._config.Get(Config.Options.DatabasePath) + "card_{0}.xml", _card.FriendlyName);
+      string filename = String.Format(_config.Get(Config.Options.DatabasePath) + "card_{0}.xml", _card.FriendlyName);
       // save settings
 
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(filename))
