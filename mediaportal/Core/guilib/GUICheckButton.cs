@@ -45,8 +45,8 @@ namespace MediaPortal.GUI.Library
 		[XMLSkinElement("textYOff")]		protected int       _textOffsetY=0;
 		[XMLSkinElement("application")]		protected string    _application="";
 		[XMLSkinElement("arguments")]		protected string    _arguments="";
-		[XMLSkinElement("textureCheckmarkNoFocus")] protected string	_checkMarkNoFocusTextureName;
-		[XMLSkinElement("textureCheckmark")]	protected string	_checkMarkFocusTextureName;
+		[XMLSkinElement("textureCheckmarkNoFocus")] protected string	_checkMarkNoFocusTextureName = String.Empty;
+		[XMLSkinElement("textureCheckmark")]	protected string	_checkMarkFocusTextureName = String.Empty;
 		[XMLSkinElement("MarkWidth")]			protected int		_checkMarkWidth;
 		[XMLSkinElement("MarkHeight")]			protected int		_checkMarkHeight;
 		[XMLSkinElement("MarkOffsetX")]			protected int		markOffsetX=0;

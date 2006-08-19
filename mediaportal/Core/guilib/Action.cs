@@ -156,6 +156,7 @@ namespace MediaPortal.GUI.Library
       ACTION_MOVE_SELECTED_ITEM_DOWN = 117, // move selected playlist item down
       ACTION_DELETE_SELECTED_ITEM = 118,    // delete selected playlist item
       ACTION_NEXT_SUBTITLE = 119,           // switches to next available subtitle
+			ACTION_SHOW_ACTIONMENU = 120,         // show the action menue for the current window 
       ACTION_MOUSE_MOVE = 2000,
       ACTION_MOUSE_CLICK = 2001,
       ACTION_MOUSE_DOUBLECLICK = 2002,

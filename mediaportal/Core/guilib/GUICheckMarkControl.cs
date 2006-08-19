@@ -30,8 +30,8 @@ namespace MediaPortal.GUI.Library
   public class GUICheckMarkControl: GUIControl
   {
 		//TODO: make use of GUILabelControl for drawing text
-		[XMLSkinElement("textureCheckmarkNoFocus")] protected string	_checkMarkNoFocusTextureName;
-		[XMLSkinElement("textureCheckmark")]	protected string	_checkMarkFocusTextureName;
+		[XMLSkinElement("textureCheckmarkNoFocus")] protected string	_checkMarkNoFocusTextureName = String.Empty;
+		[XMLSkinElement("textureCheckmark")]	protected string	_checkMarkFocusTextureName = String.Empty;
 		[XMLSkinElement("MarkWidth")]			protected int		_checkMarkWidth;
 		[XMLSkinElement("MarkHeight")]			protected int		_checkMarkHeight;
 		[XMLSkinElement("font")]				protected string	_fontName;

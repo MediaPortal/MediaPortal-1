@@ -1199,7 +1199,7 @@ namespace MediaPortal.GUI.Library
 
 		public GUIAnimation LoadAnimationControl(int parentID, int controlId, int posX, int posY, int width, int height, string texture)
 		{
-			if (texture.Contains(".xml"))
+			if ((texture != null) && (texture.Contains(".xml")))
 			{
 				List<GUIControl> list = LoadControl(texture);
 				foreach (GUIControl control in list)
