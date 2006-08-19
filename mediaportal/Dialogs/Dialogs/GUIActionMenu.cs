@@ -86,7 +86,11 @@ namespace MediaPortal.Dialogs
 			{
 				foreach (GUIControl childControl in Children)
         {
-					if (listControl == childControl) Children.Remove(childControl);
+					if (listControl == childControl)
+					{
+						Children.Remove(childControl);
+						break;
+					}
 				}
 			}
 			_list.Clear();
@@ -107,7 +111,6 @@ namespace MediaPortal.Dialogs
 				_parentWin = null;
       }
       GUIWindowManager.IsSwitchingToNewWindow = false;
-			RemoveControls();
     }
 
     #region Base Dialog Members
@@ -134,8 +137,8 @@ namespace MediaPortal.Dialogs
         GUIWindowManager.Process();
       }
       GUIGraphicsContext.Overlay = _prevOverlay;
-      FreeResources();
-      DeInitControls();
+      //FreeResources();
+      //DeInitControls();
       GUILayerManager.UnRegisterLayer(this);
       if (wasRouted)
       {
@@ -170,7 +173,15 @@ namespace MediaPortal.Dialogs
 				return;
 			}
 
-			if (_running && _parentWin != null) _parentWin.OnAction(action);
+			if (_running && _parentWin != null)
+			{
+				switch (action.wID)
+				{
+					case Action.ActionType.ACTION_SELECT_ITEM:
+				    _parentWin.OnAction(action);
+					  break;
+			  }
+			}
 
 			base.OnAction(action);
 		}
@@ -182,6 +193,7 @@ namespace MediaPortal.Dialogs
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           {
             _running = false;
+						RemoveControls();
             return true;
           }
 
@@ -191,13 +203,14 @@ namespace MediaPortal.Dialogs
             base.OnMessage(message);
             int parentWindowId = GUIWindowManager.ActiveWindow;
             GUIWindow parentWindow = GUIWindowManager.GetWindow(parentWindowId);
-
             GUIGraphicsContext.Overlay = parentWindow.IsOverlayAllowed;
           }
           return true;
+			
+				case GUIMessage.MessageType.GUI_MSG_CLICKED:
+					if (_running && _parentWin != null) _parentWin.OnMessage(message);
+					break;
       }
-
-			if (_running && _parentWin != null) _parentWin.OnMessage(message);
 
       return base.OnMessage(message);
     }

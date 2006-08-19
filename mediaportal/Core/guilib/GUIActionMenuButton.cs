@@ -101,7 +101,7 @@ namespace MediaPortal.GUI.Library
 						GUIWindow win = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_ACTIONMENU);
 					  if (win != null)
 				   	{
-					  	Action newAction = new Action(Action.ActionType.ACTION_SHOW_ACTIONMENU, ParentID, 0);
+					  	Action newAction = new Action(Action.ActionType.ACTION_SHOW_ACTIONMENU, ParentID, GetID);
 						  newAction.m_SoundFileName = _layoutFile;
 						  win.OnAction(newAction);
 					  }
