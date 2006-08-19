@@ -12305,7 +12305,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Asus WiFiâ€“TV Analogue" capturename="713x BDA Analog Capture" devid="ven_1131&amp;dev_7133&amp;subsys_818c1043&amp;rev_d0">
+  <capturecard commercialname="Asus WiFi–TV Analogue" capturename="713x BDA Analog Capture" devid="ven_1131&amp;dev_7133&amp;subsys_818c1043&amp;rev_d0">
     <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
