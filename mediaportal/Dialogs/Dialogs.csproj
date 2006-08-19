@@ -141,7 +141,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Dialogs\GUIActionMenu.cs" />
     <Compile Include="Dialogs\GUIDialogDateTime.cs">
       <SubType>Code</SubType>
     </Compile>
