@@ -133,6 +133,10 @@ namespace MediaPortal.AudioScrobbler
       this.textBoxASUser = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.toolTipRandomness = new System.Windows.Forms.ToolTip(this.components);
       this.checkBoxLimitPlaylist = new System.Windows.Forms.CheckBox();
+      this.groupBoxSimilarMode = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.checkBoxDisableRandom = new System.Windows.Forms.CheckBox();
+      this.checkBoxPreferUnheard = new System.Windows.Forms.CheckBox();
+      this.checkBoxReAddArtist = new System.Windows.Forms.CheckBox();
       this.panelPicBox.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxASLogo)).BeginInit();
       this.tabControlSettings.SuspendLayout();
@@ -156,6 +160,7 @@ namespace MediaPortal.AudioScrobbler
       this.tabPageTopTracks.SuspendLayout();
       this.tabPageWeeklyTracks.SuspendLayout();
       this.tabPageTags.SuspendLayout();
+      this.groupBoxSimilarMode.SuspendLayout();
       this.SuspendLayout();
       // 
       // panelPicBox
@@ -372,6 +377,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       // tabPageMusicSettings
       // 
+      this.tabPageMusicSettings.Controls.Add(this.groupBoxSimilarMode);
       this.tabPageMusicSettings.Controls.Add(this.groupBoxNeighbourFriend);
       this.tabPageMusicSettings.Controls.Add(this.groupBoxOfflineMode);
       this.tabPageMusicSettings.Controls.Add(this.groupBoxMusicSettings);
@@ -388,9 +394,9 @@ namespace MediaPortal.AudioScrobbler
       this.groupBoxNeighbourFriend.Controls.Add(this.labelNModeDesc);
       this.groupBoxNeighbourFriend.Controls.Add(this.comboBoxNModeSelect);
       this.groupBoxNeighbourFriend.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxNeighbourFriend.Location = new System.Drawing.Point(291, 6);
+      this.groupBoxNeighbourFriend.Location = new System.Drawing.Point(288, 117);
       this.groupBoxNeighbourFriend.Name = "groupBoxNeighbourFriend";
-      this.groupBoxNeighbourFriend.Size = new System.Drawing.Size(258, 174);
+      this.groupBoxNeighbourFriend.Size = new System.Drawing.Size(260, 174);
       this.groupBoxNeighbourFriend.TabIndex = 8;
       this.groupBoxNeighbourFriend.TabStop = false;
       this.groupBoxNeighbourFriend.Text = "Neighbours / Friends mode";
@@ -422,9 +428,9 @@ namespace MediaPortal.AudioScrobbler
       // 
       this.groupBoxOfflineMode.Controls.Add(this.comboBoxOfflineMode);
       this.groupBoxOfflineMode.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxOfflineMode.Location = new System.Drawing.Point(291, 186);
+      this.groupBoxOfflineMode.Location = new System.Drawing.Point(10, 232);
       this.groupBoxOfflineMode.Name = "groupBoxOfflineMode";
-      this.groupBoxOfflineMode.Size = new System.Drawing.Size(258, 58);
+      this.groupBoxOfflineMode.Size = new System.Drawing.Size(260, 59);
       this.groupBoxOfflineMode.TabIndex = 7;
       this.groupBoxOfflineMode.TabStop = false;
       this.groupBoxOfflineMode.Text = "Offline mode";
@@ -439,7 +445,7 @@ namespace MediaPortal.AudioScrobbler
             "Only favorite songs"});
       this.comboBoxOfflineMode.Location = new System.Drawing.Point(14, 24);
       this.comboBoxOfflineMode.Name = "comboBoxOfflineMode";
-      this.comboBoxOfflineMode.Size = new System.Drawing.Size(228, 21);
+      this.comboBoxOfflineMode.Size = new System.Drawing.Size(229, 21);
       this.comboBoxOfflineMode.TabIndex = 11;
       this.comboBoxOfflineMode.Text = "Full random";
       // 
@@ -455,7 +461,7 @@ namespace MediaPortal.AudioScrobbler
       this.groupBoxMusicSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxMusicSettings.Location = new System.Drawing.Point(10, 6);
       this.groupBoxMusicSettings.Name = "groupBoxMusicSettings";
-      this.groupBoxMusicSettings.Size = new System.Drawing.Size(275, 174);
+      this.groupBoxMusicSettings.Size = new System.Drawing.Size(260, 174);
       this.groupBoxMusicSettings.TabIndex = 6;
       this.groupBoxMusicSettings.TabStop = false;
       this.groupBoxMusicSettings.Text = "My Music global settings";
@@ -465,9 +471,9 @@ namespace MediaPortal.AudioScrobbler
       this.labelSimilarArtistsUpDown.AutoSize = true;
       this.labelSimilarArtistsUpDown.Location = new System.Drawing.Point(67, 79);
       this.labelSimilarArtistsUpDown.Name = "labelSimilarArtistsUpDown";
-      this.labelSimilarArtistsUpDown.Size = new System.Drawing.Size(178, 13);
+      this.labelSimilarArtistsUpDown.Size = new System.Drawing.Size(129, 13);
       this.labelSimilarArtistsUpDown.TabIndex = 17;
-      this.labelSimilarArtistsUpDown.Text = "consider songs from this many artists";
+      this.labelSimilarArtistsUpDown.Text = "try to add this many songs";
       // 
       // numericUpDownSimilarArtist
       // 
@@ -503,7 +509,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       // labelPercRand
       // 
-      this.labelPercRand.Location = new System.Drawing.Point(204, 111);
+      this.labelPercRand.Location = new System.Drawing.Point(187, 111);
       this.labelPercRand.Name = "labelPercRand";
       this.labelPercRand.Size = new System.Drawing.Size(56, 13);
       this.labelPercRand.TabIndex = 2;
@@ -527,7 +533,7 @@ namespace MediaPortal.AudioScrobbler
       this.trackBarRandomness.Maximum = 100;
       this.trackBarRandomness.Minimum = 25;
       this.trackBarRandomness.Name = "trackBarRandomness";
-      this.trackBarRandomness.Size = new System.Drawing.Size(243, 45);
+      this.trackBarRandomness.Size = new System.Drawing.Size(226, 45);
       this.trackBarRandomness.SmallChange = 5;
       this.trackBarRandomness.TabIndex = 0;
       this.trackBarRandomness.TickFrequency = 15;
@@ -1066,10 +1072,56 @@ namespace MediaPortal.AudioScrobbler
       this.checkBoxLimitPlaylist.CheckState = System.Windows.Forms.CheckState.Checked;
       this.checkBoxLimitPlaylist.Location = new System.Drawing.Point(17, 52);
       this.checkBoxLimitPlaylist.Name = "checkBoxLimitPlaylist";
-      this.checkBoxLimitPlaylist.Size = new System.Drawing.Size(153, 17);
+      this.checkBoxLimitPlaylist.Size = new System.Drawing.Size(178, 17);
       this.checkBoxLimitPlaylist.TabIndex = 18;
-      this.checkBoxLimitPlaylist.Text = "Limit playlist items to ca. 50";
+      this.checkBoxLimitPlaylist.Text = "Softly limit playlist items to ca. 50";
       this.checkBoxLimitPlaylist.UseVisualStyleBackColor = true;
+      // 
+      // groupBoxSimilarMode
+      // 
+      this.groupBoxSimilarMode.Controls.Add(this.checkBoxReAddArtist);
+      this.groupBoxSimilarMode.Controls.Add(this.checkBoxPreferUnheard);
+      this.groupBoxSimilarMode.Controls.Add(this.checkBoxDisableRandom);
+      this.groupBoxSimilarMode.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxSimilarMode.Location = new System.Drawing.Point(288, 6);
+      this.groupBoxSimilarMode.Name = "groupBoxSimilarMode";
+      this.groupBoxSimilarMode.Size = new System.Drawing.Size(260, 84);
+      this.groupBoxSimilarMode.TabIndex = 12;
+      this.groupBoxSimilarMode.TabStop = false;
+      this.groupBoxSimilarMode.Text = "Similar mode";
+      // 
+      // checkBoxDisableRandom
+      // 
+      this.checkBoxDisableRandom.AutoSize = true;
+      this.checkBoxDisableRandom.Location = new System.Drawing.Point(23, 61);
+      this.checkBoxDisableRandom.Name = "checkBoxDisableRandom";
+      this.checkBoxDisableRandom.Size = new System.Drawing.Size(231, 17);
+      this.checkBoxDisableRandom.TabIndex = 19;
+      this.checkBoxDisableRandom.Text = "Disable random factor - prefer best matches";
+      this.checkBoxDisableRandom.UseVisualStyleBackColor = true;
+      this.checkBoxDisableRandom.Visible = false;
+      // 
+      // checkBoxPreferUnheard
+      // 
+      this.checkBoxPreferUnheard.AutoSize = true;
+      this.checkBoxPreferUnheard.Location = new System.Drawing.Point(14, 52);
+      this.checkBoxPreferUnheard.Name = "checkBoxPreferUnheard";
+      this.checkBoxPreferUnheard.Size = new System.Drawing.Size(190, 17);
+      this.checkBoxPreferUnheard.TabIndex = 20;
+      this.checkBoxPreferUnheard.Text = "Prefer songs you haven\'t heard yet";
+      this.checkBoxPreferUnheard.UseVisualStyleBackColor = true;
+      // 
+      // checkBoxReAddArtist
+      // 
+      this.checkBoxReAddArtist.AutoSize = true;
+      this.checkBoxReAddArtist.Checked = true;
+      this.checkBoxReAddArtist.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxReAddArtist.Location = new System.Drawing.Point(14, 25);
+      this.checkBoxReAddArtist.Name = "checkBoxReAddArtist";
+      this.checkBoxReAddArtist.Size = new System.Drawing.Size(220, 17);
+      this.checkBoxReAddArtist.TabIndex = 21;
+      this.checkBoxReAddArtist.Text = "Remember start track - avoid style drifting";
+      this.checkBoxReAddArtist.UseVisualStyleBackColor = true;
       // 
       // AudioscrobblerSettings
       // 
@@ -1113,6 +1165,8 @@ namespace MediaPortal.AudioScrobbler
       this.tabPageWeeklyTracks.ResumeLayout(false);
       this.tabPageTags.ResumeLayout(false);
       this.tabPageTags.PerformLayout();
+      this.groupBoxSimilarMode.ResumeLayout(false);
+      this.groupBoxSimilarMode.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -1197,5 +1251,9 @@ namespace MediaPortal.AudioScrobbler
     private MediaPortal.UserInterface.Controls.MPComboBox comboBoxOfflineMode;
     private MediaPortal.UserInterface.Controls.MPLabel labelNoUser;
     private System.Windows.Forms.CheckBox checkBoxLimitPlaylist;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxSimilarMode;
+    private System.Windows.Forms.CheckBox checkBoxDisableRandom;
+    private System.Windows.Forms.CheckBox checkBoxPreferUnheard;
+    private System.Windows.Forms.CheckBox checkBoxReAddArtist;
   }
 }

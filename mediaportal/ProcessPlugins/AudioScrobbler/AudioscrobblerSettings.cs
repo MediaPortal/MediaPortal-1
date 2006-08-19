@@ -62,6 +62,9 @@ namespace MediaPortal.AudioScrobbler
 
         checkBoxLimitPlaylist.Checked = xmlreader.GetValueAsBool("audioscrobbler", "playlistlimit", true);
         comboBoxOfflineMode.SelectedIndex = xmlreader.GetValueAsInt("audioscrobbler", "offlinemode", 0);
+        checkBoxDisableRandom.Checked = xmlreader.GetValueAsBool("audioscrobbler", "usesimilarrandom", true) ? false : true;
+        checkBoxPreferUnheard.Checked = xmlreader.GetValueAsBool("audioscrobbler", "prefersimilarunheared", false);
+        checkBoxReAddArtist.Checked = xmlreader.GetValueAsBool("audioscrobbler", "rememberstartartist", true);
 
         if (tmpuser == "")
         {
@@ -203,7 +206,14 @@ namespace MediaPortal.AudioScrobbler
           // temporary to avoid db change
           xmlwriter.SetValue("audioscrobbler", "offlinemode", comboBoxOfflineMode.SelectedIndex);
           xmlwriter.SetValueAsBool("audioscrobbler", "playlistlimit", checkBoxLimitPlaylist.Checked);
-          
+          xmlwriter.SetValueAsBool("audioscrobbler", "prefersimilarunheared", checkBoxPreferUnheard.Checked);
+          xmlwriter.SetValueAsBool("audioscrobbler", "rememberstartartist", checkBoxReAddArtist.Checked);
+
+          if (checkBoxDisableRandom.Checked)
+            xmlwriter.SetValueAsBool("audioscrobbler", "usesimilarrandom", false);
+          else
+            xmlwriter.SetValueAsBool("audioscrobbler", "usesimilarrandom", true);
+
           string tmpPass = "";
           string tmpUserID = "";
           try
