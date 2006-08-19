@@ -62,14 +62,13 @@ namespace MediaPortal.AudioScrobbler
       this.maskedTextBoxASPass = new System.Windows.Forms.MaskedTextBox();
       this.tabControlSettings = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPageLastFMSettings = new System.Windows.Forms.TabPage();
+      this.labelNoUser = new MediaPortal.UserInterface.Controls.MPLabel();
       this.labelPluginBannerHint = new MediaPortal.UserInterface.Controls.MPLabel();
       this.linkLabel1 = new System.Windows.Forms.LinkLabel();
       this.linkLabel2 = new System.Windows.Forms.LinkLabel();
       this.groupBoxOptions = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.checkBoxEnableSubmits = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxLogVerbose = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.checkBoxDismissOnError = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.checkBoxdisableTimerThread = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBoxAccount = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -133,7 +132,6 @@ namespace MediaPortal.AudioScrobbler
       this.labelUser = new MediaPortal.UserInterface.Controls.MPLabel();
       this.textBoxASUser = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.toolTipRandomness = new System.Windows.Forms.ToolTip(this.components);
-      this.labelNoUser = new MediaPortal.UserInterface.Controls.MPLabel();
       this.panelPicBox.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxASLogo)).BeginInit();
       this.tabControlSettings.SuspendLayout();
@@ -236,6 +234,18 @@ namespace MediaPortal.AudioScrobbler
       this.tabPageLastFMSettings.Text = "Plugin settings";
       this.tabPageLastFMSettings.UseVisualStyleBackColor = true;
       // 
+      // labelNoUser
+      // 
+      this.labelNoUser.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.labelNoUser.ForeColor = System.Drawing.SystemColors.ControlText;
+      this.labelNoUser.Location = new System.Drawing.Point(23, 256);
+      this.labelNoUser.Name = "labelNoUser";
+      this.labelNoUser.Size = new System.Drawing.Size(262, 36);
+      this.labelNoUser.TabIndex = 8;
+      this.labelNoUser.Text = "No user configured yet - you\'ll see more options after saving your login credenti" +
+          "als!";
+      this.labelNoUser.Visible = false;
+      // 
       // labelPluginBannerHint
       // 
       this.labelPluginBannerHint.Location = new System.Drawing.Point(305, 12);
@@ -269,8 +279,6 @@ namespace MediaPortal.AudioScrobbler
       // 
       this.groupBoxOptions.Controls.Add(this.checkBoxEnableSubmits);
       this.groupBoxOptions.Controls.Add(this.checkBoxLogVerbose);
-      this.groupBoxOptions.Controls.Add(this.checkBoxDismissOnError);
-      this.groupBoxOptions.Controls.Add(this.checkBoxdisableTimerThread);
       this.groupBoxOptions.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxOptions.Location = new System.Drawing.Point(10, 129);
       this.groupBoxOptions.Name = "groupBoxOptions";
@@ -302,30 +310,6 @@ namespace MediaPortal.AudioScrobbler
       this.checkBoxLogVerbose.TabIndex = 2;
       this.checkBoxLogVerbose.Text = "Show debug log entries";
       this.checkBoxLogVerbose.UseVisualStyleBackColor = true;
-      // 
-      // checkBoxDismissOnError
-      // 
-      this.checkBoxDismissOnError.AutoSize = true;
-      this.checkBoxDismissOnError.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxDismissOnError.Location = new System.Drawing.Point(16, 53);
-      this.checkBoxDismissOnError.Name = "checkBoxDismissOnError";
-      this.checkBoxDismissOnError.Size = new System.Drawing.Size(228, 17);
-      this.checkBoxDismissOnError.TabIndex = 1;
-      this.checkBoxDismissOnError.Text = "Dismiss cached song on error and continue";
-      this.checkBoxDismissOnError.UseVisualStyleBackColor = true;
-      this.checkBoxDismissOnError.Visible = false;
-      // 
-      // checkBoxdisableTimerThread
-      // 
-      this.checkBoxdisableTimerThread.AutoSize = true;
-      this.checkBoxdisableTimerThread.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxdisableTimerThread.Location = new System.Drawing.Point(6, 13);
-      this.checkBoxdisableTimerThread.Name = "checkBoxdisableTimerThread";
-      this.checkBoxdisableTimerThread.Size = new System.Drawing.Size(241, 17);
-      this.checkBoxdisableTimerThread.TabIndex = 0;
-      this.checkBoxdisableTimerThread.Text = "Do direct submits only (may avoid spam errors)";
-      this.checkBoxdisableTimerThread.UseVisualStyleBackColor = true;
-      this.checkBoxdisableTimerThread.Visible = false;
       // 
       // groupBoxAccount
       // 
@@ -431,6 +415,7 @@ namespace MediaPortal.AudioScrobbler
       this.comboBoxNModeSelect.Size = new System.Drawing.Size(228, 21);
       this.comboBoxNModeSelect.TabIndex = 10;
       this.comboBoxNModeSelect.Text = "Weekly top artists";
+      this.comboBoxNModeSelect.SelectedIndexChanged += new System.EventHandler(this.comboBoxNModeSelect_SelectedIndexChanged);
       // 
       // groupBoxOfflineMode
       // 
@@ -540,7 +525,7 @@ namespace MediaPortal.AudioScrobbler
       this.trackBarRandomness.Maximum = 100;
       this.trackBarRandomness.Minimum = 25;
       this.trackBarRandomness.Name = "trackBarRandomness";
-      this.trackBarRandomness.Size = new System.Drawing.Size(243, 40);
+      this.trackBarRandomness.Size = new System.Drawing.Size(243, 45);
       this.trackBarRandomness.SmallChange = 5;
       this.trackBarRandomness.TabIndex = 0;
       this.trackBarRandomness.TickFrequency = 15;
@@ -677,6 +662,7 @@ namespace MediaPortal.AudioScrobbler
       // listViewNeighbours
       // 
       this.listViewNeighbours.AllowColumnReorder = true;
+      this.listViewNeighbours.AllowDrop = true;
       this.listViewNeighbours.AllowRowReorder = false;
       this.listViewNeighbours.Location = new System.Drawing.Point(6, 12);
       this.listViewNeighbours.Name = "listViewNeighbours";
@@ -798,6 +784,7 @@ namespace MediaPortal.AudioScrobbler
       // listViewTopArtists
       // 
       this.listViewTopArtists.AllowColumnReorder = true;
+      this.listViewTopArtists.AllowDrop = true;
       this.listViewTopArtists.AllowRowReorder = false;
       this.listViewTopArtists.AutoArrange = false;
       this.listViewTopArtists.Location = new System.Drawing.Point(6, 12);
@@ -832,6 +819,7 @@ namespace MediaPortal.AudioScrobbler
       // listViewWeeklyArtists
       // 
       this.listViewWeeklyArtists.AllowColumnReorder = true;
+      this.listViewWeeklyArtists.AllowDrop = true;
       this.listViewWeeklyArtists.AllowRowReorder = false;
       this.listViewWeeklyArtists.Location = new System.Drawing.Point(6, 12);
       this.listViewWeeklyArtists.Name = "listViewWeeklyArtists";
@@ -865,6 +853,7 @@ namespace MediaPortal.AudioScrobbler
       // listViewTopTracks
       // 
       this.listViewTopTracks.AllowColumnReorder = true;
+      this.listViewTopTracks.AllowDrop = true;
       this.listViewTopTracks.AllowRowReorder = false;
       this.listViewTopTracks.Location = new System.Drawing.Point(6, 12);
       this.listViewTopTracks.Name = "listViewTopTracks";
@@ -898,6 +887,7 @@ namespace MediaPortal.AudioScrobbler
       // listViewWeeklyTracks
       // 
       this.listViewWeeklyTracks.AllowColumnReorder = true;
+      this.listViewWeeklyTracks.AllowDrop = true;
       this.listViewWeeklyTracks.AllowRowReorder = false;
       this.listViewWeeklyTracks.Location = new System.Drawing.Point(6, 12);
       this.listViewWeeklyTracks.Name = "listViewWeeklyTracks";
@@ -1067,18 +1057,6 @@ namespace MediaPortal.AudioScrobbler
       this.toolTipRandomness.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
       this.toolTipRandomness.ToolTipTitle = "Randomness";
       // 
-      // labelNoUser
-      // 
-      this.labelNoUser.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.labelNoUser.ForeColor = System.Drawing.SystemColors.ControlText;
-      this.labelNoUser.Location = new System.Drawing.Point(23, 256);
-      this.labelNoUser.Name = "labelNoUser";
-      this.labelNoUser.Size = new System.Drawing.Size(262, 36);
-      this.labelNoUser.TabIndex = 8;
-      this.labelNoUser.Text = "No user configured yet - you\'ll see more options after saving your login credenti" +
-          "als!";
-      this.labelNoUser.Visible = false;
-      // 
       // AudioscrobblerSettings
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1170,8 +1148,6 @@ namespace MediaPortal.AudioScrobbler
     private MediaPortal.UserInterface.Controls.MPListView listViewWeeklyTracks;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxOptions;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxLogVerbose;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxDismissOnError;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxdisableTimerThread;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxAccount;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;

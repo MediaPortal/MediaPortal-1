@@ -106,11 +106,11 @@ namespace MediaPortal.Configuration.Sections
       this.ffdshowCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.topscanlinesTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.bottomscanlinesTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.topscanlinesTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpGroupBox3.SuspendLayout();
       this.mpGroupBox1.SuspendLayout();
       this.SuspendLayout();
@@ -124,7 +124,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox3.Location = new System.Drawing.Point(0, 0);
       this.mpGroupBox3.Name = "mpGroupBox3";
-      this.mpGroupBox3.Size = new System.Drawing.Size(472, 96);
+      this.mpGroupBox3.Size = new System.Drawing.Size(472, 113);
       this.mpGroupBox3.TabIndex = 0;
       this.mpGroupBox3.TabStop = false;
       this.mpGroupBox3.Text = "Settings";
@@ -133,7 +133,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.ffdshowCheckBox.AutoSize = true;
       this.ffdshowCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.ffdshowCheckBox.Location = new System.Drawing.Point(16, 64);
+      this.ffdshowCheckBox.Location = new System.Drawing.Point(19, 77);
       this.ffdshowCheckBox.Name = "ffdshowCheckBox";
       this.ffdshowCheckBox.Size = new System.Drawing.Size(182, 17);
       this.ffdshowCheckBox.TabIndex = 1;
@@ -146,10 +146,11 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.label3.Location = new System.Drawing.Point(16, 24);
       this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(440, 32);
+      this.label3.Size = new System.Drawing.Size(440, 45);
       this.label3.TabIndex = 0;
-      this.label3.Text = "Note that you need to install ffdshow separately to make any this option work. Pl" +
-          "ease read the MediaPortal manual for more information.";
+      this.label3.Text = "Note: you need to install ffdshow separately to make this option work. Please rea" +
+          "d the MediaPortal manual for more information. In most cases you just want a bet" +
+          "ter mpeg decoder.";
       // 
       // mpGroupBox1
       // 
@@ -161,31 +162,24 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.Controls.Add(this.topscanlinesTextBox);
       this.mpGroupBox1.Controls.Add(this.mpLabel1);
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox1.Location = new System.Drawing.Point(0, 104);
+      this.mpGroupBox1.Location = new System.Drawing.Point(0, 119);
       this.mpGroupBox1.Name = "mpGroupBox1";
       this.mpGroupBox1.Size = new System.Drawing.Size(472, 112);
       this.mpGroupBox1.TabIndex = 1;
       this.mpGroupBox1.TabStop = false;
-      this.mpGroupBox1.Text = "Croping";
+      this.mpGroupBox1.Text = "Cropping";
       // 
-      // label1
+      // bottomscanlinesTextBox
       // 
-      this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(16, 48);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(123, 13);
-      this.label1.TabIndex = 3;
-      this.label1.Text = "Top scanlines to remove";
-      // 
-      // mpLabel1
-      // 
-      this.mpLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.bottomscanlinesTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpLabel1.Location = new System.Drawing.Point(16, 24);
-      this.mpLabel1.Name = "mpLabel1";
-      this.mpLabel1.Size = new System.Drawing.Size(440, 24);
-      this.mpLabel1.TabIndex = 0;
-      this.mpLabel1.Text = "MediaPortal can crop the picture for you if you need to remove unwanted video.";
+      this.bottomscanlinesTextBox.BorderColor = System.Drawing.Color.Empty;
+      this.bottomscanlinesTextBox.Location = new System.Drawing.Point(184, 80);
+      this.bottomscanlinesTextBox.MaxLength = 3;
+      this.bottomscanlinesTextBox.Name = "bottomscanlinesTextBox";
+      this.bottomscanlinesTextBox.Size = new System.Drawing.Size(26, 20);
+      this.bottomscanlinesTextBox.TabIndex = 5;
+      this.bottomscanlinesTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       // 
       // mpLabel2
       // 
@@ -195,6 +189,15 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabel2.Size = new System.Drawing.Size(137, 13);
       this.mpLabel2.TabIndex = 4;
       this.mpLabel2.Text = "Bottom scanlines to remove";
+      // 
+      // label1
+      // 
+      this.label1.AutoSize = true;
+      this.label1.Location = new System.Drawing.Point(16, 48);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(123, 13);
+      this.label1.TabIndex = 3;
+      this.label1.Text = "Top scanlines to remove";
       // 
       // topscanlinesTextBox
       // 
@@ -208,17 +211,16 @@ namespace MediaPortal.Configuration.Sections
       this.topscanlinesTextBox.TabIndex = 2;
       this.topscanlinesTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       // 
-      // bottomscanlinesTextBox
+      // mpLabel1
       // 
-      this.bottomscanlinesTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.mpLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.bottomscanlinesTextBox.BorderColor = System.Drawing.Color.Empty;
-      this.bottomscanlinesTextBox.Location = new System.Drawing.Point(184, 80);
-      this.bottomscanlinesTextBox.MaxLength = 3;
-      this.bottomscanlinesTextBox.Name = "bottomscanlinesTextBox";
-      this.bottomscanlinesTextBox.Size = new System.Drawing.Size(26, 20);
-      this.bottomscanlinesTextBox.TabIndex = 5;
-      this.bottomscanlinesTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.mpLabel1.Location = new System.Drawing.Point(16, 24);
+      this.mpLabel1.Name = "mpLabel1";
+      this.mpLabel1.Size = new System.Drawing.Size(440, 24);
+      this.mpLabel1.TabIndex = 0;
+      this.mpLabel1.Text = "MediaPortal can crop the picture for you if you see \"noise\" lines of the overscan" +
+          " area";
       // 
       // TVPostProcessing
       // 

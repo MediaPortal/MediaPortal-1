@@ -222,6 +222,8 @@ namespace MediaPortal.AudioScrobbler
         //  trackstoadd = (int)numericUpDownTracksPerArtist.Value;
         if (lastFmLookup != null)
           neighbourmode = (int)lastFmLookup.CurrentNeighbourMode;
+        else
+          MediaPortal.GUI.Library.Log.Write("DEBUG *** lastFMLookup was null. neighbourmode: {0}", Convert.ToString(neighbourmode));
 
         MusicDatabase mdb = new MusicDatabase();
         // checks and adds the user if necessary + updates the password;
@@ -232,7 +234,7 @@ namespace MediaPortal.AudioScrobbler
         mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(textBoxASUsername.Text)), "iScrobbleDefault", scrobbledefault);
         mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(textBoxASUsername.Text)), "iAddArtists", artisttoadd);
         mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(textBoxASUsername.Text)), "iAddTracks", trackstoadd);
-        mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(textBoxASUsername.Text)), "iNeighbourMode", neighbourmode);
+        mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(textBoxASUsername.Text)), "iNeighbourMode", neighbourmode);     
       }
     }
     #endregion

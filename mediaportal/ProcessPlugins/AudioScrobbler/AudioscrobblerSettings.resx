@@ -170,6 +170,13 @@
         gg==
 </value>
   </data>
+  <data name="labelNModeDesc.Text" xml:space="preserve">
+    <value>"Overall top artists" will get you many long-term preferred artists
+
+"Weekly top artists" will get you also new artists your neighbours / friends are trying out
+
+"Recent artists" increases this behaviour but might result in not enough alternatives</value>
+  </data>
   <data name="labelPluginBannerHint.Text" xml:space="preserve">
     <value>Last.fm is a free service which offers a powerful 
 database to compare your music taste with 
@@ -183,13 +190,6 @@ neighbours which share your music interests.
 Based on these statistical data My Music is able 
 to automatically fill your playlist with songs you
 will like - enjoy it!</value>
-  </data>
-  <data name="labelNModeDesc.Text" xml:space="preserve">
-    <value>"Overall top artists" will get you many long-term preferred artists
-
-"Weekly top artists" will get you also new artists your neighbours / friends are trying out
-
-"Recent artists" increases this behaviour but might result in not enough alternatives</value>
   </data>
   <metadata name="toolTipRandomness.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>

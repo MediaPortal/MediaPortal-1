@@ -251,7 +251,8 @@ namespace MediaPortal.InputDevices
 
     public void Stop()
     {
-      _diListener.StopListener();
+      if (_diListener != null)
+        _diListener.StopListener();
     }
 
     public string SelectedDeviceGUID
@@ -641,8 +642,11 @@ namespace MediaPortal.InputDevices
 
     void FreeListener()
     {
-      _diListener.OnStateChange -= new MediaPortal.DirectInputListener.diStateChange(diListener_OnStateChange);
-      _diListener = null;
+      if (_diListener != null)
+      {
+        _diListener.OnStateChange -= new MediaPortal.DirectInputListener.diStateChange(diListener_OnStateChange);
+        _diListener = null;
+      }
     }
 
     void diListener_OnStateChange(object sender, JoystickState state)
