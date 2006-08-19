@@ -59,7 +59,9 @@ namespace MediaPortal.AudioScrobbler
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         tmpuser = xmlreader.GetValueAsString("audioscrobbler", "user", "");
-        comboBoxOfflineMode.SelectedIndex = xmlreader.GetValueAsInt("audioscrobbler", "offlinemode", 0);        
+
+        checkBoxLimitPlaylist.Checked = xmlreader.GetValueAsBool("audioscrobbler", "playlistlimit", true);
+        comboBoxOfflineMode.SelectedIndex = xmlreader.GetValueAsInt("audioscrobbler", "offlinemode", 0);
 
         if (tmpuser == "")
         {
@@ -192,49 +194,58 @@ namespace MediaPortal.AudioScrobbler
       int trackstoadd = 1;
       int neighbourmode = 1;
 
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      if (textBoxASUsername.Text != String.Empty)
       {
-        xmlwriter.SetValue("audioscrobbler", "user", textBoxASUsername.Text);
-        xmlwriter.SetValue("audioscrobbler", "offlinemode", comboBoxOfflineMode.SelectedIndex);
-        string tmpPass = "";
-        try
+        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
         {
-          EncryptDecrypt Crypter = new EncryptDecrypt();
-          tmpPass = Crypter.Encrypt(maskedTextBoxASPassword.Text);
-        }
-        catch (Exception)
-        {
-          //Log.Write("Audioscrobbler: Password encryption failed {0}", ex.Message);
-        }
-        //xmlwriter.SetValue("audioscrobbler", "pass", tmpPass);
+          xmlwriter.SetValue("audioscrobbler", "user", textBoxASUsername.Text);
 
-        if (checkBoxLogVerbose != null)
-          usedebuglog = checkBoxLogVerbose.Checked ? 1 : 0;
-        if (checkBoxEnableSubmits != null)
-          submitsenabled = checkBoxEnableSubmits.Checked ? 1 : 0;
-        if (checkBoxScrobbleDefault != null)
-          scrobbledefault = checkBoxScrobbleDefault.Checked ? 1 : 0;
-        if (trackBarRandomness != null)
-          randomness = trackBarRandomness.Value;
-        if (numericUpDownSimilarArtist != null)
-          artisttoadd = (int)numericUpDownSimilarArtist.Value;
-        //if (numericUpDownTracksPerArtist != null)
-        //  trackstoadd = (int)numericUpDownTracksPerArtist.Value;
-        if (lastFmLookup != null)
-          neighbourmode = (int)lastFmLookup.CurrentNeighbourMode;
-        else
-          MediaPortal.GUI.Library.Log.Write("DEBUG *** lastFMLookup was null. neighbourmode: {0}", Convert.ToString(neighbourmode));
+          // temporary to avoid db change
+          xmlwriter.SetValue("audioscrobbler", "offlinemode", comboBoxOfflineMode.SelectedIndex);
+          xmlwriter.SetValueAsBool("audioscrobbler", "playlistlimit", checkBoxLimitPlaylist.Checked);
+          
+          string tmpPass = "";
+          string tmpUserID = "";
+          try
+          {
+            EncryptDecrypt Crypter = new EncryptDecrypt();
+            tmpPass = Crypter.Encrypt(maskedTextBoxASPassword.Text);
+          }
+          catch (Exception)
+          {
+            //Log.Write("Audioscrobbler: Password encryption failed {0}", ex.Message);
+          }
+          //xmlwriter.SetValue("audioscrobbler", "pass", tmpPass);
 
-        MusicDatabase mdb = new MusicDatabase();
-        // checks and adds the user if necessary + updates the password;
-        mdb.AddScrobbleUserPassword(Convert.ToString(mdb.AddScrobbleUser(textBoxASUsername.Text)), tmpPass);
-        mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(textBoxASUsername.Text)), "iDebugLog", usedebuglog);
-        mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(textBoxASUsername.Text)), "iRandomness", randomness);
-        mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(textBoxASUsername.Text)), "iSubmitOn", submitsenabled);
-        mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(textBoxASUsername.Text)), "iScrobbleDefault", scrobbledefault);
-        mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(textBoxASUsername.Text)), "iAddArtists", artisttoadd);
-        mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(textBoxASUsername.Text)), "iAddTracks", trackstoadd);
-        mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(textBoxASUsername.Text)), "iNeighbourMode", neighbourmode);     
+          if (checkBoxLogVerbose != null)
+            usedebuglog = checkBoxLogVerbose.Checked ? 1 : 0;
+          if (checkBoxEnableSubmits != null)
+            submitsenabled = checkBoxEnableSubmits.Checked ? 1 : 0;
+          if (checkBoxScrobbleDefault != null)
+            scrobbledefault = checkBoxScrobbleDefault.Checked ? 1 : 0;
+          if (trackBarRandomness != null)
+            randomness = trackBarRandomness.Value;
+          if (numericUpDownSimilarArtist != null)
+            artisttoadd = (int)numericUpDownSimilarArtist.Value;
+          //if (numericUpDownTracksPerArtist != null)
+          //  trackstoadd = (int)numericUpDownTracksPerArtist.Value;
+          if (lastFmLookup != null)
+            neighbourmode = (int)lastFmLookup.CurrentNeighbourMode;
+          else
+            MediaPortal.GUI.Library.Log.Write("DEBUG *** lastFMLookup was null. neighbourmode: {0}", Convert.ToString(neighbourmode));
+
+          MusicDatabase mdb = new MusicDatabase();
+          // checks and adds the user if necessary + updates the password;
+          mdb.AddScrobbleUserPassword(Convert.ToString(mdb.AddScrobbleUser(textBoxASUsername.Text)), tmpPass);
+          tmpUserID = Convert.ToString(mdb.AddScrobbleUser(textBoxASUsername.Text));
+          mdb.AddScrobbleUserSettings(tmpUserID, "iDebugLog", usedebuglog);
+          mdb.AddScrobbleUserSettings(tmpUserID, "iRandomness", randomness);
+          mdb.AddScrobbleUserSettings(tmpUserID, "iSubmitOn", submitsenabled);
+          mdb.AddScrobbleUserSettings(tmpUserID, "iScrobbleDefault", scrobbledefault);
+          mdb.AddScrobbleUserSettings(tmpUserID, "iAddArtists", artisttoadd);
+          mdb.AddScrobbleUserSettings(tmpUserID, "iAddTracks", trackstoadd);
+          mdb.AddScrobbleUserSettings(tmpUserID, "iNeighbourMode", neighbourmode);
+        }
       }
     }
     #endregion

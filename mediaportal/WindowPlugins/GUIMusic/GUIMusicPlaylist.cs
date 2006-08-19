@@ -65,12 +65,14 @@ namespace MediaPortal.GUI.Music
     string m_strCurrentFile = String.Empty;
     string _currentScrobbleUser = String.Empty;
     VirtualDirectory m_directory = new VirtualDirectory();
-    const int MaxNumPShuffleSongPredict = 12;
+    //const int MaxNumPShuffleSongPredict = 12;
     int _totalScrobbledSongs = 0;
     int _maxScrobbledSongsPerArtist = 1;
-    int _maxScrobbledArtistsForSongs = 4;    
+    int _maxScrobbledArtistsForSongs = 4;
+    int _maxNumberOfPlaylistItems = 50;
     private bool ScrobblerOn = false;
     private bool _enableScrobbling = false;
+    private bool _enablePlaylistLimit = false;
     private AudioscrobblerUtils ascrobbler;
     private Thread ScrobbleThread;
     private Object ScrobbleLock;
@@ -106,11 +108,11 @@ namespace MediaPortal.GUI.Music
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
-        _enableScrobbling = xmlreader.GetValueAsBool("plugins", "Audioscrobbler", false);
-        //ScrobblerOn = xmlreader.GetValueAsBool("audioscrobbler", "scrobbledefault", false);
-        //_maxScrobbledArtistsForSongs = xmlreader.GetValueAsInt("audioscrobbler", "similarartistscount", 3);
-        //_maxScrobbledSongsPerArtist = xmlreader.GetValueAsInt("audioscrobbler", "tracksperartistscount", 1);
+        _enableScrobbling = xmlreader.GetValueAsBool("plugins", "Audioscrobbler", false);               
         _currentScrobbleUser = xmlreader.GetValueAsString("audioscrobbler", "user", "Username");
+
+        // temporary to avoid db change
+        _enablePlaylistLimit = xmlreader.GetValueAsBool("audioscrobbler", "playlistlimit", true);
         int tmpRMode = xmlreader.GetValueAsInt("audioscrobbler", "offlinemode", 0);
 
         switch (tmpRMode)
@@ -525,7 +527,17 @@ namespace MediaPortal.GUI.Music
         case GUIMessage.MessageType.GUI_MSG_PLAYBACK_ENDED:
           if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC)
           {
-//
+            if (ScrobblerOn && _enablePlaylistLimit)
+            {
+              PlayList currentPlaylist = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
+              while (currentPlaylist.Count > _maxNumberOfPlaylistItems)
+              {
+                if (playlistPlayer.CurrentSong > 0)
+                  RemovePlayListItem(0);
+                else
+                  return;
+              }
+            }
           }
           break;
 
@@ -889,42 +901,42 @@ namespace MediaPortal.GUI.Music
     }
 
     //added by Sam
-    void UpdatePartyShuffle()
-    {
-      MusicDatabase dbs = new MusicDatabase();
+    //void UpdatePartyShuffle()
+    //{
+    //  MusicDatabase dbs = new MusicDatabase();
 
-      PlayList list = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
-      if (list.Count >= MaxNumPShuffleSongPredict)
-        return;
+    //  PlayList list = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
+    //  if (list.Count >= MaxNumPShuffleSongPredict)
+    //    return;
 
-      int i;
-      Song song = new Song();
-      //if not enough songs, add all available songs
-      if (dbs.GetNumOfSongs() < MaxNumPShuffleSongPredict)
-      {
-        List<Song> songs = new List<Song>();
-        dbs.GetAllSongs(ref songs);
+    //  int i;
+    //  Song song = new Song();
+    //  //if not enough songs, add all available songs
+    //  if (dbs.GetNumOfSongs() < MaxNumPShuffleSongPredict)
+    //  {
+    //    List<Song> songs = new List<Song>();
+    //    dbs.GetAllSongs(ref songs);
 
-        for (i = 0; i < songs.Count; i++)
-        {
-          song = songs[i];
-          AddRandomSongToPlaylist(ref song);
-        }
-      }
-      //otherwise add until number of songs = MaxNumPShuffleSongPredict
-      else
-      {
-        i = list.Count;
-        while (i < MaxNumPShuffleSongPredict)
-        {
-          song.Clear();
-          dbs.GetRandomSong(ref song);
-          AddRandomSongToPlaylist(ref song);
-          i = list.Count;
-        }
-      }
-      //LoadDirectory(String.Empty); - will cause errors when playlist screen is not active
-    }
+    //    for (i = 0; i < songs.Count; i++)
+    //    {
+    //      song = songs[i];
+    //      AddRandomSongToPlaylist(ref song);
+    //    }
+    //  }
+    //  //otherwise add until number of songs = MaxNumPShuffleSongPredict
+    //  else
+    //  {
+    //    i = list.Count;
+    //    while (i < MaxNumPShuffleSongPredict)
+    //    {
+    //      song.Clear();
+    //      dbs.GetRandomSong(ref song);
+    //      AddRandomSongToPlaylist(ref song);
+    //      i = list.Count;
+    //    }
+    //  }
+    //  //LoadDirectory(String.Empty); - will cause errors when playlist screen is not active
+    //}
 
 
     private void MovePlayListItemUp()
@@ -1053,115 +1065,123 @@ namespace MediaPortal.GUI.Music
     }
 
     void ScrobbleLookupThread()
-    {      
-      MusicDatabase dbs = new MusicDatabase();
-      Song current10SekSong = new Song();
-      List<Song> scrobbledArtists = new List<Song>();
-
-      switch (currentScrobbleMode)
+    {
+      PlayList currentPlaylist = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
+      // ignore list count if setting is disabled
+      _maxNumberOfPlaylistItems = _enablePlaylistLimit ? _maxNumberOfPlaylistItems : int.MaxValue;
+      if (currentPlaylist.Count < _maxNumberOfPlaylistItems + _maxScrobbledArtistsForSongs)
       {
-        case ScrobbleMode.Similar:
-          string strFile = g_Player.Player.CurrentFile;
-          bool songFound = dbs.GetSongByFileName(strFile, ref current10SekSong);
-          if (songFound)
-          {
-            //ascrobbler.ArtistMatchPercent = 75;
+        MusicDatabase dbs = new MusicDatabase();
+        Song current10SekSong = new Song();
+        List<Song> scrobbledArtists = new List<Song>();
+
+        switch (currentScrobbleMode)
+        {
+          case ScrobbleMode.Similar:
+            string strFile = g_Player.Player.CurrentFile;
+            bool songFound = dbs.GetSongByFileName(strFile, ref current10SekSong);
+            if (songFound)
+            {
+              //ascrobbler.ArtistMatchPercent = 75;
+              lock (ScrobbleLock)
+              {
+                try
+                {
+                  scrobbledArtists = ascrobbler.getSimilarArtists(current10SekSong.ToURLArtistString(), true);
+                }
+                catch (Exception ex)
+                {
+                  Log.Write("ScrobbleLookupThread: exception on lookup Similar - {0}", ex.Message);
+                }
+              }
+            }
+            break;
+
+          case ScrobbleMode.Neighbours:
             lock (ScrobbleLock)
             {
               try
               {
-                scrobbledArtists = ascrobbler.getSimilarArtists(current10SekSong.ToURLArtistString(), true);
+                scrobbledArtists = ascrobbler.getNeighboursArtists(true);
               }
               catch (Exception ex)
               {
-                Log.Write("ScrobbleLookupThread: exception on lookup Similar - {0}", ex.Message);
+                Log.Write("ScrobbleLookupThread: exception on lookup Neighbours - {0}", ex.Message);
               }
             }
-          }
-          break;
+            break;
 
-        case ScrobbleMode.Neighbours:
-          lock (ScrobbleLock)
-          {
-            try
+          case ScrobbleMode.Friends:
+            lock (ScrobbleLock)
             {
-              scrobbledArtists = ascrobbler.getNeighboursArtists(true);
-            }
-            catch (Exception ex)
-            {
-              Log.Write("ScrobbleLookupThread: exception on lookup Neighbours - {0}", ex.Message);
-            }
-          }
-          break;
-
-        case ScrobbleMode.Friends:
-          lock (ScrobbleLock)
-          {
-            try
-            {
-              scrobbledArtists = ascrobbler.getFriendsArtists(true);
-            }
-            catch (Exception ex)
-            {
-              Log.Write("ScrobbleLookupThread: exception on lookup - Friends {0}", ex.Message);
-            }
-          }
-          break;
-        case ScrobbleMode.Random:
-          lock (ScrobbleLock)
-          {
-            try
-            {
-              switch (currentOfflineMode)
+              try
               {
-                case offlineMode.random:
-                  scrobbledArtists = ascrobbler.getRandomTracks();
-                  break;
-                case offlineMode.timesplayed:
-                  scrobbledArtists = ascrobbler.getUnhearedTracks();
-                  break;
-                case offlineMode.favorites:
-                  scrobbledArtists = ascrobbler.getFavoriteTracks();
-                  break;
-                default:
-                  scrobbledArtists = ascrobbler.getRandomTracks();
-                  break;
+                scrobbledArtists = ascrobbler.getFriendsArtists(true);
+              }
+              catch (Exception ex)
+              {
+                Log.Write("ScrobbleLookupThread: exception on lookup - Friends {0}", ex.Message);
               }
             }
-            catch (Exception ex)
+            break;
+          case ScrobbleMode.Random:
+            lock (ScrobbleLock)
             {
-              Log.Write("ScrobbleLookupThread: exception on lookup - Random {0}", ex.Message);
+              try
+              {
+                switch (currentOfflineMode)
+                {
+                  case offlineMode.random:
+                    scrobbledArtists = ascrobbler.getRandomTracks();
+                    break;
+                  case offlineMode.timesplayed:
+                    scrobbledArtists = ascrobbler.getUnhearedTracks();
+                    break;
+                  case offlineMode.favorites:
+                    scrobbledArtists = ascrobbler.getFavoriteTracks();
+                    break;
+                  default:
+                    scrobbledArtists = ascrobbler.getRandomTracks();
+                    break;
+                }
+              }
+              catch (Exception ex)
+              {
+                Log.Write("ScrobbleLookupThread: exception on lookup - Random {0}", ex.Message);
+              }
             }
-          }
-          break;
-      }
-
-      if (scrobbledArtists.Count < _maxScrobbledArtistsForSongs)
-      {
-        if (scrobbledArtists.Count > 0)
-          for (int i = 0; i < scrobbledArtists.Count; i++)
-            ScrobbleSimilarArtists(scrobbledArtists[i].Artist);
-      }
-      else // enough artists
-      {
-        int addedSimilarSongs = 0;
-        int loops = 0;
-        // we WANT to get songs from _maxScrobbledArtistsForSongs
-        while (addedSimilarSongs < _maxScrobbledArtistsForSongs)
-        {
-          if (ScrobbleSimilarArtists(scrobbledArtists[loops].Artist))
-            addedSimilarSongs++;
-          loops++;
-          // okay okay seems like there aren't enough files to add
-          if (loops == scrobbledArtists.Count - 1)
             break;
         }
+
+        if (scrobbledArtists.Count < _maxScrobbledArtistsForSongs)
+        {
+          if (scrobbledArtists.Count > 0)
+            for (int i = 0; i < scrobbledArtists.Count; i++)
+              ScrobbleSimilarArtists(scrobbledArtists[i].Artist);
+        }
+        else // enough artists
+        {
+          int addedSimilarSongs = 0;
+          int loops = 0;
+          // we WANT to get songs from _maxScrobbledArtistsForSongs
+          while (addedSimilarSongs < _maxScrobbledArtistsForSongs)
+          {
+            if (ScrobbleSimilarArtists(scrobbledArtists[loops].Artist))
+              addedSimilarSongs++;
+            loops++;
+            // okay okay seems like there aren't enough files to add
+            if (loops == scrobbledArtists.Count - 1)
+              break;
+          }
+        }
+        if (facadeView != null)
+        {
+          LoadDirectory(String.Empty);
+          SelectCurrentPlayingSong();
+        }
       }
-      if (facadeView != null)
-      {
-        LoadDirectory(String.Empty);
-        SelectCurrentPlayingSong();
-      }
+      else
+        Log.Write("ScrobbleLookupThread: too many items ({0}) in playlist, pausing...", Convert.ToString(currentPlaylist.Count));
     }
 
     bool ScrobbleSimilarArtists(string Artist_)

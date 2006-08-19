@@ -132,6 +132,7 @@ namespace MediaPortal.AudioScrobbler
       this.labelUser = new MediaPortal.UserInterface.Controls.MPLabel();
       this.textBoxASUser = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.toolTipRandomness = new System.Windows.Forms.ToolTip(this.components);
+      this.checkBoxLimitPlaylist = new System.Windows.Forms.CheckBox();
       this.panelPicBox.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxASLogo)).BeginInit();
       this.tabControlSettings.SuspendLayout();
@@ -444,6 +445,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       // groupBoxMusicSettings
       // 
+      this.groupBoxMusicSettings.Controls.Add(this.checkBoxLimitPlaylist);
       this.groupBoxMusicSettings.Controls.Add(this.labelSimilarArtistsUpDown);
       this.groupBoxMusicSettings.Controls.Add(this.numericUpDownSimilarArtist);
       this.groupBoxMusicSettings.Controls.Add(this.checkBoxScrobbleDefault);
@@ -461,7 +463,7 @@ namespace MediaPortal.AudioScrobbler
       // labelSimilarArtistsUpDown
       // 
       this.labelSimilarArtistsUpDown.AutoSize = true;
-      this.labelSimilarArtistsUpDown.Location = new System.Drawing.Point(67, 55);
+      this.labelSimilarArtistsUpDown.Location = new System.Drawing.Point(67, 79);
       this.labelSimilarArtistsUpDown.Name = "labelSimilarArtistsUpDown";
       this.labelSimilarArtistsUpDown.Size = new System.Drawing.Size(178, 13);
       this.labelSimilarArtistsUpDown.TabIndex = 17;
@@ -469,7 +471,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       // numericUpDownSimilarArtist
       // 
-      this.numericUpDownSimilarArtist.Location = new System.Drawing.Point(17, 53);
+      this.numericUpDownSimilarArtist.Location = new System.Drawing.Point(17, 77);
       this.numericUpDownSimilarArtist.Maximum = new decimal(new int[] {
             6,
             0,
@@ -501,7 +503,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       // labelPercRand
       // 
-      this.labelPercRand.Location = new System.Drawing.Point(204, 95);
+      this.labelPercRand.Location = new System.Drawing.Point(204, 111);
       this.labelPercRand.Name = "labelPercRand";
       this.labelPercRand.Size = new System.Drawing.Size(56, 13);
       this.labelPercRand.TabIndex = 2;
@@ -511,7 +513,7 @@ namespace MediaPortal.AudioScrobbler
       // labelRandomness
       // 
       this.labelRandomness.AutoSize = true;
-      this.labelRandomness.Location = new System.Drawing.Point(14, 95);
+      this.labelRandomness.Location = new System.Drawing.Point(14, 111);
       this.labelRandomness.Name = "labelRandomness";
       this.labelRandomness.Size = new System.Drawing.Size(104, 13);
       this.labelRandomness.TabIndex = 1;
@@ -521,7 +523,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       this.trackBarRandomness.BackColor = System.Drawing.SystemColors.Window;
       this.trackBarRandomness.LargeChange = 25;
-      this.trackBarRandomness.Location = new System.Drawing.Point(17, 111);
+      this.trackBarRandomness.Location = new System.Drawing.Point(17, 127);
       this.trackBarRandomness.Maximum = 100;
       this.trackBarRandomness.Minimum = 25;
       this.trackBarRandomness.Name = "trackBarRandomness";
@@ -1057,6 +1059,18 @@ namespace MediaPortal.AudioScrobbler
       this.toolTipRandomness.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
       this.toolTipRandomness.ToolTipTitle = "Randomness";
       // 
+      // checkBoxLimitPlaylist
+      // 
+      this.checkBoxLimitPlaylist.AutoSize = true;
+      this.checkBoxLimitPlaylist.Checked = true;
+      this.checkBoxLimitPlaylist.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxLimitPlaylist.Location = new System.Drawing.Point(17, 52);
+      this.checkBoxLimitPlaylist.Name = "checkBoxLimitPlaylist";
+      this.checkBoxLimitPlaylist.Size = new System.Drawing.Size(153, 17);
+      this.checkBoxLimitPlaylist.TabIndex = 18;
+      this.checkBoxLimitPlaylist.Text = "Limit playlist items to ca. 50";
+      this.checkBoxLimitPlaylist.UseVisualStyleBackColor = true;
+      // 
       // AudioscrobblerSettings
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1182,5 +1196,6 @@ namespace MediaPortal.AudioScrobbler
     private System.Windows.Forms.NumericUpDown numericUpDownSimilarArtist;
     private MediaPortal.UserInterface.Controls.MPComboBox comboBoxOfflineMode;
     private MediaPortal.UserInterface.Controls.MPLabel labelNoUser;
+    private System.Windows.Forms.CheckBox checkBoxLimitPlaylist;
   }
 }
