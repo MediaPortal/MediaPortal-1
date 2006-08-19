@@ -1,4 +1,4 @@
-﻿<?xml version="1.0"?>
+<?xml version="1.0"?>
 <capturecards>
   <capturecard commercialname="Hauppauge WinTV USB" capturename="Hauppauge WinTV USB Pro Capture" devid="vid_0573&amp;pid_4d21">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
@@ -14574,6 +14574,22 @@
       </connections>
     </tv>
   </capturecard>
+  
+  <capturecard commercialname="Nebula DigiTV PCI" capturename="Nebula DigiTV PCI BDA Capture Filter" devid="ven_109e&amp;dev_0878&amp;subsys_01010071&amp;rev_11"> 
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/> 
+    <tv> 
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/> 
+      <filters> 
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider" checkdevice="false"/> 
+        <filter cat="tunerdevice" name="Nebula DigiTV PCI BDA Tuner Filter" checkdevice="true"/> 
+        <filter cat="capture" name="Nebula DigiTV PCI BDA Capture Filter" checkdevice="true"/> 
+      </filters> 
+      <connections> 
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/> 
+        <connection sourcefilter="tunerdevice" sourcepin="0" sinkfilter="capture" sinkpin="0"/> 
+      </connections> 
+    </tv> 
+  </capturecard>  
 
   <capturecard commercialname="Hauppauge WinTV Nova-T 500 MCE (Tuner 1)" capturename="Nova-DT DVB-T Capture (Dev1 Path0) " devid="vid_2040&amp;9951&amp;mi_00">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
