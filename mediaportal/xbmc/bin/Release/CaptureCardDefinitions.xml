@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+﻿<?xml version="1.0"?>
 <capturecards>
   <capturecard commercialname="Hauppauge WinTV USB" capturename="Hauppauge WinTV USB Pro Capture" devid="vid_0573&amp;pid_4d21">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
@@ -12305,7 +12305,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Asus WiFi�TV Analogue" capturename="713x BDA Analog Capture" devid="ven_1131&amp;dev_7133&amp;subsys_818c1043&amp;rev_d0">
+  <capturecard commercialname="Asus WiFi–TV Analogue" capturename="713x BDA Analog Capture" devid="ven_1131&amp;dev_7133&amp;subsys_818c1043&amp;rev_d0">
     <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
