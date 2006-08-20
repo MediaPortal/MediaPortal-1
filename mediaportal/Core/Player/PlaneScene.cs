@@ -99,6 +99,8 @@ namespace MediaPortal.Player
 
     int _topscanlinesToRemove = 0;
     int _bottomscanlinesToRemove = 0;
+    int _leftcolumnsToRemove = 0;
+    int _rightcolumnsToRemove = 0;
     int _arVideoWidth = 4;
     int _arVideoHeight = 3;
     int _prevVideoWidth = 0;
@@ -139,6 +141,8 @@ namespace MediaPortal.Player
       {
         _topscanlinesToRemove = xmlReader.GetValueAsInt("mytv", "topscanlinestoremove", 0);
         _bottomscanlinesToRemove = xmlReader.GetValueAsInt("mytv", "bottomscanlinestoremove", 0);
+        _leftcolumnsToRemove = xmlReader.GetValueAsInt("mytv", "leftcolumnstoremove", 0);
+        _rightcolumnsToRemove = xmlReader.GetValueAsInt("mytv", "rightcolumnstoremove", 0);
       }
     }
     #endregion
@@ -374,13 +378,19 @@ namespace MediaPortal.Player
         if (_sourceRect.Width < 10) return false;
         if (_sourceRect.Height < 10) return false;
 
-        // Some capture cards capture teletext information that appears as a moving line at the top
-        // Remove those by croping the picture
+        // Some capture cards capture too much of the video source
+        // Remove unwanted video by croping the picture
 
         _sourceRect.Y += _topscanlinesToRemove;
         _sourceRect.Height -= _topscanlinesToRemove;
         _sourceRect.Height -= _bottomscanlinesToRemove;
-        _log.Info("PlaneScene: video crop : {0}, {1}", _topscanlinesToRemove, _bottomscanlinesToRemove);
+
+        _sourceRect.X += _leftcolumnsToRemove;
+        _sourceRect.Width -= _leftcolumnsToRemove;
+        _sourceRect.Width -= _rightcolumnsToRemove;
+
+        _log.Info("PlaneScene: crop T, B  : {0}, {1}", _topscanlinesToRemove, _bottomscanlinesToRemove);
+        _log.Info("PlaneScene: crop L, R  : {0}, {1}", _leftcolumnsToRemove, _rightcolumnsToRemove);
 
         _log.Info("PlaneScene: video WxH  : {0}x{1}", videoSize.Width, videoSize.Height);
         _log.Info("PlaneScene: video AR   : {0}:{1}", _arVideoWidth, _arVideoHeight);
