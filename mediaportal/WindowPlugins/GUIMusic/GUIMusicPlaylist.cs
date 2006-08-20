@@ -249,6 +249,7 @@ namespace MediaPortal.GUI.Music
 
             if (playList != null && playList.Count > 0)
             {
+              ClearScrobbleStartTrack();
               playlistPlayer.Play(0);
               UpdateButtonStates();
             }
@@ -594,6 +595,10 @@ namespace MediaPortal.GUI.Music
           }
           break;
 
+        case GUIMessage.MessageType.GUI_MSG_PLAYBACK_STOPPED:
+          ClearScrobbleStartTrack();
+          break;
+
         //special case for when the next button is pressed - stopping the prev song does not cause a Playback_Ended event
         case GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED:
           if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC && playlistPlayer.CurrentSong != 0)
@@ -775,7 +780,11 @@ namespace MediaPortal.GUI.Music
       }
     }
 
-
+    void ClearScrobbleStartTrack()
+    {
+      if (_rememberStartTrack && _scrobbleStartTrack != null)
+        _scrobbleStartTrack = null;
+    }
 
     void ClearFileItems()
     {
@@ -788,6 +797,7 @@ namespace MediaPortal.GUI.Music
       playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Clear();
       if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC)
         playlistPlayer.Reset();
+      ClearScrobbleStartTrack();
       LoadDirectory(String.Empty);
       UpdateButtonStates();
       GUIControl.FocusControl(GetID, btnViewAs.GetID);
@@ -1131,7 +1141,7 @@ namespace MediaPortal.GUI.Music
         switch (currentScrobbleMode)
         {
           case ScrobbleMode.Similar:
-            if (_rememberStartTrack)
+            if (_rememberStartTrack && _scrobbleStartTrack != null)
               if (_totalScrobbledSongs > REINSERT_AFTER_THIS_MANY_SONGS)
               {
                 _totalScrobbledSongs = 0;
