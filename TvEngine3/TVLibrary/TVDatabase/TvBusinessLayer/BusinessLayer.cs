@@ -140,6 +140,7 @@ namespace TvDatabase
     {
       channel.Delete();
     }
+
     public Channel GetChannelByName(string name)
     {
       Channel channel = DatabaseManager.Instance.GetNullEntity<Channel>();
@@ -153,45 +154,50 @@ namespace TvDatabase
 
     public Setting GetSetting(string tagName, string defaultValue)
     {
-      Setting Setting = DatabaseManager.Instance.GetNullEntity<Setting>();
+      if (defaultValue == null) return null;
+      if (tagName == null) return null;
+      if (tagName == "") return null;
       EntityQuery query = new EntityQuery(typeof(Setting));
-      query.AddClause(Setting.TagColumn.ColumnName, EntityQueryOp.EQ, tagName);
-      EntityList<Setting> Settings = DatabaseManager.Instance.GetEntities<Setting>(query);
-      if (Settings == null)
+      query.AddClause(Setting.TagEntityColumn.ColumnName, EntityQueryOp.EQ, tagName);
+      EntityList<Setting> settingsFound = DatabaseManager.Instance.GetEntities<Setting>(query);
+      if (settingsFound == null)
       {
         Setting set = Setting.Create();
         set.Tag = tagName;
         set.Value = defaultValue;
         return set;
       }
-      if (Settings.Count == 0)
+      if (settingsFound.Count == 0)
       {
         Setting set = Setting.Create();
         set.Tag = tagName;
         set.Value = defaultValue;
         return set;
       }
-      return Settings[0];
+      return settingsFound[0];
     }
     public Setting GetSetting(string tagName)
     {
-      Setting Setting = DatabaseManager.Instance.GetNullEntity<Setting>();
+      if (tagName == null) return null;
+      if (tagName == "") return null;
       EntityQuery query = new EntityQuery(typeof(Setting));
-      query.AddClause(Setting.TagColumn.ColumnName, EntityQueryOp.EQ, tagName);
-      EntityList<Setting> Settings = DatabaseManager.Instance.GetEntities<Setting>(query);
-      if (Settings == null)
+      query.AddClause(Setting.TagEntityColumn.ColumnName, EntityQueryOp.EQ, tagName);
+      EntityList<Setting> settingsFound = DatabaseManager.Instance.GetEntities<Setting>(query);
+      if (settingsFound == null)
       {
         Setting set = Setting.Create();
         set.Tag = tagName;
+        set.Value = "";
         return set;
       }
-      if (Settings.Count == 0)
+      if (settingsFound.Count == 0)
       {
         Setting set = Setting.Create();
         set.Tag = tagName;
+        set.Value = "";
         return set;
       }
-      return Settings[0];
+      return settingsFound[0];
     }
 
     public List<IChannel> GetTuningChannelByName(string name)

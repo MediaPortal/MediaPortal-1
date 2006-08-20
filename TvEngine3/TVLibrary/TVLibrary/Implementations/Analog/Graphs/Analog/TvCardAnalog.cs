@@ -55,7 +55,7 @@ namespace TvLibrary.Implementations.Analog
     {
       get
       {
-        return _fileName;
+        return _recordingFileName;
       }
     }
 
@@ -363,7 +363,7 @@ namespace TvLibrary.Implementations.Analog
       StartRecord(fileName, recordingType, ref startTime);
 
 
-      _fileName = fileName;
+      _recordingFileName = fileName;
       Log.Log.WriteFile("Analog:Started recording on {0}", startTime);
       _graphState = GraphState.Recording;
       return true;
@@ -379,7 +379,7 @@ namespace TvLibrary.Implementations.Analog
       Log.Log.WriteFile("Analog:StopRecording");
       StopRecord();
       _graphState = GraphState.TimeShifting;
-      _fileName = "";
+      _recordingFileName = "";
       return true;
     }
     #endregion

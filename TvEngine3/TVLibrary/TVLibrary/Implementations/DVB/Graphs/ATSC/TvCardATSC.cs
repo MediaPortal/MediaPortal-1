@@ -152,7 +152,7 @@ namespace TvLibrary.Implementations.DVB
     {
       get
       {
-        return _fileName;
+        return _recordingFileName;
       }
     }
     public bool IsRecording
@@ -288,7 +288,7 @@ namespace TvLibrary.Implementations.DVB
       {
         throw new TvException("Card must be timeshifting before starting recording");
       }
-      _fileName = fileName;
+      _recordingFileName = fileName;
 
       _graphState = GraphState.Recording;
       StartRecord(fileName, recordingType, ref startTime);

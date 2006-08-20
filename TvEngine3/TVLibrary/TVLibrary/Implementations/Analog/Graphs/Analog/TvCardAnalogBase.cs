@@ -80,7 +80,7 @@ namespace TvLibrary.Implementations.Analog
     protected IPin _pinLPCM = null;
     protected IPin _pinVBI = null;
     protected DVBTeletext _teletextDecoder;
-    protected string _fileName;
+    protected string _recordingFileName;
     protected bool _grabTeletext = false;
     protected int _managedThreadId;
     protected DateTime _lastSignalUpdate;
@@ -1665,8 +1665,8 @@ namespace TvLibrary.Implementations.Analog
       {
         IMPRecord record = _tsFileSink as IMPRecord;
         record.StopRecord();
-
       }
+      _recordingFileName = "";
     }
     #endregion
 
@@ -1711,6 +1711,8 @@ namespace TvLibrary.Implementations.Analog
       Log.Log.WriteFile("analog: StopGraph");
       _teletextDecoder.ClearBuffer();
       _isScanning = false;
+      _recordingFileName = "";
+      _timeshiftFileName = "";
       _dateTimeShiftStarted = DateTime.MinValue;
       _dateRecordingStarted = DateTime.MinValue;
       int hr = 0;

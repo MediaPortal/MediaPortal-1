@@ -109,7 +109,7 @@ namespace TvLibrary.Implementations.DVB
     protected int _signalLevel;
     protected string _name;
     protected string _devicePath;
-    protected string _fileName;
+    protected string _recordingFileName;
     protected IChannel _currentChannel;
     protected IBaseFilter _filterTsAnalyzer;
 
@@ -405,6 +405,7 @@ namespace TvLibrary.Implementations.DVB
       _pmtTimer.Enabled = false;
       _startTimeShifting = false;
       _pmtVersion = -1;
+      _recordingFileName = "";
       _channelInfo = new ChannelInfo();
       if (_filterTsAnalyzer != null)
       {
@@ -1521,6 +1522,7 @@ namespace TvLibrary.Implementations.DVB
         record.StopRecord();
 
       }
+      _recordingFileName = "";
     }
     #endregion
 

@@ -160,7 +160,7 @@ namespace TvLibrary.Implementations.DVB
     {
       get
       {
-        return _fileName;
+        return _recordingFileName;
       }
     }
     public bool IsRecording
@@ -326,7 +326,7 @@ namespace TvLibrary.Implementations.DVB
         _graphState = GraphState.Recording;
         StartRecord(fileName, recordingType, ref startTime);
 
-        _fileName = fileName;
+        _recordingFileName = fileName;
         Log.Log.WriteFile("Started recording on {0}", startTime);
 
         return true;

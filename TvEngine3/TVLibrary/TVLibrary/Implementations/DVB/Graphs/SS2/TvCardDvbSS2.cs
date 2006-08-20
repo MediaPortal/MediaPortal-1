@@ -44,7 +44,7 @@ namespace TvLibrary.Implementations.DVB
 
     #region variables
     protected DsDevice _tunerDevice;
-    protected string _fileName;
+    protected string _recordingFileName;
     GraphState _graphState;
     protected IChannel _currentChannel;
     protected IFilterGraph2 _graphBuilder;
@@ -448,6 +448,7 @@ namespace TvLibrary.Implementations.DVB
       (_graphBuilder as IMediaControl).GetState(10, out state);
       _pmtTimer.Enabled = false;
       _startTimeShifting = false;
+      _recordingFileName = "";
       _pmtVersion = -1;
       _channelInfo = new ChannelInfo();
       if (_filterTsAnalyzer != null)
@@ -1116,7 +1117,7 @@ namespace TvLibrary.Implementations.DVB
     {
       get
       {
-        return _fileName;
+        return _recordingFileName;
       }
     }
 
@@ -1529,7 +1530,7 @@ namespace TvLibrary.Implementations.DVB
       {
         throw new TvException("Card must be timeshifting before starting recording");
       }
-      _fileName = fileName;
+      _recordingFileName = fileName;
       StartRecord(fileName, recordingType, ref startTime);
       Log.Log.WriteFile("ss2:Started recording on {0}", startTime);
       _graphState = GraphState.Recording;
@@ -1545,6 +1546,7 @@ namespace TvLibrary.Implementations.DVB
       if (!CheckThreadId()) return false;
       if (_graphState != GraphState.Recording) return false;
       StopRecord();
+      _recordingFileName = "";
       _graphState = GraphState.TimeShifting;
       return true;
     }
