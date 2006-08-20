@@ -141,8 +141,14 @@ namespace MediaPortal
         }
 
 
-        public void selectButton(object sender,RoutedEventArgs e)
+        public void showDialog(object sender,RoutedEventArgs e)
         {
+            GUIDialog dial = new GUIDialog("Test-Context",(Core)this.Parent);
+            dial.AddMenuItem("Entry 1");
+            dial.AddMenuItem("Entry 2");
+            dial.AddMenuItem("Entry 3");
+            dial.AddMenuItem("Entry 4");
+            dial.ShowDialog();
        }
 
         public void MPNG(object sender, RoutedEventArgs e)

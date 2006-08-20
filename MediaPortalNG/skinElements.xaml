@@ -6,8 +6,38 @@
   <!-- Skin BlueTwo -->
 
   <!-- GUI Elements -->
- 
-   
+  <Style x:Key="ContextMenuStyle" TargetType="{x:Type Window}">
+    <Setter Property="Width" Value="546"/>
+    <Setter Property="Height" Value="366"/>
+    <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="{x:Type Window}">
+            <Border x:Name="Border" 
+             CornerRadius="0" 
+             BorderThickness="0"
+             BorderBrush="Transparent">
+              <Border.Background>
+                <ImageBrush ImageSource="{DynamicResource context_background.png}"/>
+              </Border.Background>
+              <StackPanel Margin="30,40">
+                  <TextBlock 
+                    Foreground="White" 
+                    FontSize="18" 
+                    x:Name="ContextTitle"/>
+                
+                  <ListView 
+                    x:Name="ContextItemsControl" 
+                    Style="{DynamicResource GUIListControl}"
+                        >
+                  </ListView>
+              </StackPanel>
+            </Border>
+          </ControlTemplate>
+        </Setter.Value>
+    </Setter>
+  </Style>
+  
+  
   <Style x:Key="GUIImage" TargetType="{x:Type Image}"></Style> 
   
   <Style x:Key="PageBackground" TargetType="{x:Type Canvas}">

@@ -3,12 +3,10 @@
       xmlns:ctrl="clr-namespace:MediaPortal"
       x:Class="MediaPortal.MyPictures"
       Name="mypics"
+      xmlns:d="http://schemas.microsoft.com/expression/interactivedesigner/2006" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
       >
-  <Page.Triggers>
  
-  </Page.Triggers>
   <Canvas Name="mainPanel" Width="720" Height="576" Style="{DynamicResource PageBackground}">
- 
       <!--  -->
       <TextBlock
         Name="id1"
@@ -36,37 +34,27 @@
 
 
       <!--  -->
-      <Image
-        Name="id1_0_1"
-        Canvas.Top="370"
-        Canvas.Left="75"
-        Stretch="None" 
-        HorizontalAlignment="Left" 
-        VerticalAlignment="Top" 
-        Source="{DynamicResource hover_my pictures.png}"
-        Style="{StaticResource GUIImage}" 
-        Visibility="Visible"
-      
-        Tag="##id::1//##keycontrol::onleft:;onright:;onup:;ondown://##metadata::"
-/>
 
 
       <!-- View-As button -->
-      <Button
-        x:Name="mypictures1"
-        Canvas.Top="97"
-        Canvas.Left="60"
-        Visibility="Visible"
-        Width="190"
-        Height="32"
-        Style="{DynamicResource GUIButton}"
-        Click="MPNG" 
-        Tag="##id::2//##keycontrol::onleft:;onright:50;onup:17;ondown://##metadata::labelNum:100"
-Content="100"
-/>
 
 
       <!--  -->
+
+
+   <Button
+      x:Name="mypictures1"
+      Canvas.Top="97"
+      Canvas.Left="60"
+      Visibility="Visible"
+      Width="190"
+      Height="32"
+      Style="{DynamicResource GUIButton}"
+      Click="MPNG" 
+      Tag="##id::2//##keycontrol::onleft:;onright:50;onup:17;ondown://##metadata::labelNum:100"
+>100</Button>
+
+
       <Button
         Name="id3"
         Canvas.Top="129"
@@ -75,12 +63,11 @@ Content="100"
         Width="190"
         Height="32"
         Style="{DynamicResource GUIButton}"
-        Click="selectButton" 
+        Click="showDialog" 
         Tag="##id::3//##keycontrol::onleft:;onright:;onup:;ondown://##metadata::labelNum:103"
 >103</Button>
 
 
-      <!-- SlideShow button -->
       <Button
         Name="id6"
         Canvas.Top="161"
@@ -93,7 +80,6 @@ Content="100"
 >108</Button>
 
 
-      <!-- Recursive Slideshow -->
       <Button
         Name="id7"
         Canvas.Top="193"
@@ -106,7 +92,6 @@ Content="100"
 >361</Button>
 
 
-      <!-- Create Thumbnails -->
       <Button
         Name="id8"
         Canvas.Top="225"
@@ -119,7 +104,6 @@ Content="100"
 >109</Button>
 
 
-      <!-- Rotate -->
       <Button
         Name="id9"
         Canvas.Top="257"
@@ -132,7 +116,6 @@ Content="100"
 >735</Button>
 
 
-      <!-- composite control consisting of a list control and a thumbnail panel -->
       <ListView
         Name="lv1"
         Canvas.Top="97"
@@ -155,7 +138,7 @@ Content="100"
   Content="Click me ;)" 
   Width="190" 
   Height="32" 
-  Canvas.Top="320"
+  Canvas.Top="327"
   Canvas.Left="60">
     </ctrl:GUISelectButton>
     
