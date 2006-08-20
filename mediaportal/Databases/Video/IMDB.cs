@@ -29,9 +29,11 @@ using System.IO;
 using System.Net;
 using System.Web;
 using System.Text;
+using System.Text.RegularExpressions;
 using MediaPortal.GUI.Library;
 using MediaPortal.Utils.Services;
 using MediaPortal.Util;
+
 
 namespace MediaPortal.Video.Database
 {
@@ -1086,7 +1088,6 @@ namespace MediaPortal.Video.Database
           iImage += ("<img border=\"0\" alt=\"" + movieTitle + "\" title=\"" + movieTitle + "\" src=\"").Length;
         }
         int iRating = strBody.IndexOf("User Rating:</b>");
-        int iCast = strBody.IndexOf("first billed only: </b></td></tr>");
         int iCred = strBody.IndexOf("redited cast:"); // Complete credited cast or Credited cast
         int iTop = strBody.IndexOf("top 250:");
         int iYear = strBody.IndexOf("/Sections/Years/");
@@ -1222,56 +1223,39 @@ namespace MediaPortal.Video.Database
         }
 
         //cast
-        if (iCast < 0)
+        string RegCastBlock = @"first\sbilled\sonly.*?more";
+        string RegActorAndRole = @"href=./name.*?>(?<actor>.*?)<.*?\.\.\.\..*?middle.>(?<role>.*?)<";
+
+        Match castBlock = Regex.Match(strBody, RegCastBlock);
+        if(!castBlock.Success)
+          castBlock = Regex.Match(strBody, @"Credited\scast.*?more");
+
+        string strCastBlock = castBlock.Value;
+
+        MatchCollection mc = Regex.Matches(strCastBlock, RegActorAndRole);
+
+        string strActor = string.Empty;
+        string strRole = string.Empty;
+
+        foreach(Match m in mc)
         {
-          iCast = iCred;
+          strActor = string.Empty;
+          strActor = m.Groups["actor"].Value;
+          strActor = MediaPortal.Util.Utils.stripHTMLtags(strActor).Trim();
+          strActor = HttpUtility.HtmlDecode(strActor); 
+
+          strRole = string.Empty;
+          strRole = m.Groups["role"].Value;
+          strRole = MediaPortal.Util.Utils.stripHTMLtags(strRole).Trim();
+          strRole = HttpUtility.HtmlDecode(strRole);
+
+          movieDetails.Cast += strActor;
+          if (strRole != string.Empty)
+            movieDetails.Cast += " as " + strRole;
+
+          movieDetails.Cast += "\n";
         }
-        if (iCast >= 0)
-        {
-          int iRealEnd = strBody.IndexOf("&nbsp;", iCast);
-          iStart = strBody.IndexOf("<a href", iCast);
-          iEnd = iCast;
 
-          if (iRealEnd >= 0 && iStart >= 0 && iEnd >= 0)
-          {
-            while (iRealEnd > iStart)
-            {
-              //string strurl = "";
-              string actor = "";
-              string role = "";
-
-              // actor
-              iEnd = strBody.IndexOf("</a>", iStart);
-              iEnd += 4;
-              string strTmp = strBody.Substring(iStart, iEnd - iStart);
-
-              iEnd += 1;
-
-              actor = ParseAHREFIMDB(strTmp, 0, "");
-
-              // role
-
-              iStart = strBody.IndexOf("<td valign=\"top\">", iEnd);
-              iStart += "<td valign=\"top\">".Length;
-
-              iEnd = strBody.IndexOf("</td>", iStart);
-              role = strTmp = strBody.Substring(iStart, iEnd - iStart);
-              iEnd += 1;
-              role = MediaPortal.Util.Utils.stripHTMLtags(role).Trim();
-              role = HttpUtility.HtmlDecode(role);  // remove HTML entities
-
-              // add to cast
-              movieDetails.Cast += actor.Trim();
-              if (role.Length != 0) // Role not always listed
-                movieDetails.Cast += " as " + role;
-
-              movieDetails.Cast += "\n";
-
-              // next actor
-              iStart = strBody.IndexOf("<a href", iEnd);
-            }
-          }
-        }
         int iRunTime = strBody.IndexOf("Runtime:");
         if (iRunTime > 0)
         {
