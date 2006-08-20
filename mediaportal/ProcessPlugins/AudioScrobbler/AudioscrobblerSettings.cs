@@ -63,7 +63,7 @@ namespace MediaPortal.AudioScrobbler
         checkBoxLimitPlaylist.Checked = xmlreader.GetValueAsBool("audioscrobbler", "playlistlimit", true);
         comboBoxOfflineMode.SelectedIndex = xmlreader.GetValueAsInt("audioscrobbler", "offlinemode", 0);
         checkBoxDisableRandom.Checked = xmlreader.GetValueAsBool("audioscrobbler", "usesimilarrandom", true) ? false : true;
-        checkBoxPreferUnheard.Checked = xmlreader.GetValueAsBool("audioscrobbler", "prefersimilarunheared", false);
+        trackBarConsiderCount.Value = xmlreader.GetValueAsInt("audioscrobbler", "prefercount", 2);
         checkBoxReAddArtist.Checked = xmlreader.GetValueAsBool("audioscrobbler", "rememberstartartist", true);
 
         if (tmpuser == "")
@@ -206,7 +206,7 @@ namespace MediaPortal.AudioScrobbler
           // temporary to avoid db change
           xmlwriter.SetValue("audioscrobbler", "offlinemode", comboBoxOfflineMode.SelectedIndex);
           xmlwriter.SetValueAsBool("audioscrobbler", "playlistlimit", checkBoxLimitPlaylist.Checked);
-          xmlwriter.SetValueAsBool("audioscrobbler", "prefersimilarunheared", checkBoxPreferUnheard.Checked);
+          xmlwriter.SetValue("audioscrobbler", "prefercount", trackBarConsiderCount.Value);
           xmlwriter.SetValueAsBool("audioscrobbler", "rememberstartartist", checkBoxReAddArtist.Checked);
 
           if (checkBoxDisableRandom.Checked)
@@ -385,6 +385,25 @@ namespace MediaPortal.AudioScrobbler
           break;
         case 2:
           lastFmLookup.CurrentNeighbourMode = lastFMFeed.recenttracks;
+          break;
+      }
+    }
+
+    private void trackBarConsiderCount_ValueChanged(object sender, EventArgs e)
+    {
+      switch (trackBarConsiderCount.Value)
+      {
+        case 0:
+          labelPlaycountHint.Text = "add only unheard tracks for artist";
+          break;
+        case 1:
+          labelPlaycountHint.Text = "add only rarely heard tracks for artist";
+          break;
+        case 2:
+          labelPlaycountHint.Text = "add totally random tracks for artist";
+          break;
+        case 3:
+          labelPlaycountHint.Text = "add only popular tracks for artist";
           break;
       }
     }

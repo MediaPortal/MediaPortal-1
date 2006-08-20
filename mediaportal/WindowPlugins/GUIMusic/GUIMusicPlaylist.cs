@@ -40,6 +40,8 @@ using MediaPortal.Dialogs;
 
 namespace MediaPortal.GUI.Music
 {
+
+
   /// <summary>
   /// Summary description for Class1.
   /// </summary>
@@ -53,6 +55,47 @@ namespace MediaPortal.GUI.Music
       Tags = 3,
       Recent = 4,      
       Random = 5,
+    }
+
+    private static int CompareSongsByTimesPlayed(Song x, Song y)
+    {
+      // ...and y is not null, compare 
+      int retval = 0;
+      try
+      {
+        if (x.TimesPlayed == 0)
+          //if (y.TimesPlayed != null && y.TimesPlayed >= 0)
+          //{
+          //  return 1;
+          //}
+          //else
+          return 0;
+
+        if (y.TimesPlayed == 0)
+          return 0;
+
+        if (x.TimesPlayed == y.TimesPlayed)
+          return 0;
+        else
+          if (x.TimesPlayed < y.TimesPlayed)
+            retval = 1;
+          else
+            retval = -1;
+
+        if (retval != 0)
+        {
+          return retval;
+        }
+        else
+        {
+          return 0;
+        }
+      }
+
+      catch (Exception)
+      {
+        return 0;
+      }
     }
 
     // add the beginning artist again to avoid drifting away in style.
@@ -73,12 +116,12 @@ namespace MediaPortal.GUI.Music
     int _totalScrobbledSongs = 0;
     int _maxScrobbledSongsPerArtist = 1;
     int _maxScrobbledArtistsForSongs = 4;
+    int _preferCountForTracks = 2;
     int _maxNumberOfPlaylistItems = 50;
     private bool ScrobblerOn = false;
     private bool _enableScrobbling = false;
     private bool _enablePlaylistLimit = false;
-    private bool _useSimilarRandom = true;
-    private bool _preferSimilarUnheared = false;
+    private bool _useSimilarRandom = true;    
     private bool _rememberStartTrack = true;
     private AudioscrobblerUtils ascrobbler;
     private Thread ScrobbleThread;
@@ -121,7 +164,7 @@ namespace MediaPortal.GUI.Music
         // temporary to avoid db change
         _enablePlaylistLimit = xmlreader.GetValueAsBool("audioscrobbler", "playlistlimit", true);
         _useSimilarRandom = xmlreader.GetValueAsBool("audioscrobbler", "usesimilarrandom", false);
-        _preferSimilarUnheared = xmlreader.GetValueAsBool("audioscrobbler", "prefersimilarunheared", false);
+        _preferCountForTracks = xmlreader.GetValueAsInt("audioscrobbler", "prefercount", 2);
         _rememberStartTrack = xmlreader.GetValueAsBool("audioscrobbler", "rememberstartartist", true);
         int tmpRMode = xmlreader.GetValueAsInt("audioscrobbler", "offlinemode", 0);
 
@@ -1185,7 +1228,7 @@ namespace MediaPortal.GUI.Music
         {
           int addedSimilarSongs = 0;
           int loops = 0;
-          bool previousSimilarUnheardState = _preferSimilarUnheared;
+          int previouspreferCount = _preferCountForTracks;
           // we WANT to get songs from _maxScrobbledArtistsForSongs
           while (addedSimilarSongs < _maxScrobbledArtistsForSongs)
           {
@@ -1195,16 +1238,16 @@ namespace MediaPortal.GUI.Music
             // okay okay seems like there aren't enough files to add
             if (loops == scrobbledArtists.Count - 1)
               // make sure we get a few songs at least...
-              if (_preferSimilarUnheared)
+              if (_preferCountForTracks != 2)
               {
-                _preferSimilarUnheared = false;
-                Log.Write("ScrobbleLookupThread: could not find enough unheard songs - temporarily accepting known songs");
+                _preferCountForTracks = 2;
+                Log.Write("ScrobbleLookupThread: could not find enough songs - temporarily accepting all songs");
                 loops = 0;
               }
               else
                 break;
           }
-          _preferSimilarUnheared = previousSimilarUnheardState;
+          _preferCountForTracks = previouspreferCount;
         }
         if (facadeView != null)
         {
@@ -1223,17 +1266,15 @@ namespace MediaPortal.GUI.Music
       ArrayList similarSongList = new ArrayList();
       List<Song> songList = new List<Song>();
       Song[] songs = null;
+      double avgPlayCount = 0;
       int songsAdded = 0;
-      int unheared = 0;
       int j = 0;
 
       dbs.GetSongsByArtist(Artist_, ref similarSongList);
       songs = (Song[])similarSongList.ToArray(typeof(Song));
-            
+
       foreach (Song singlesong in songs)
       {
-        if (singlesong.TimesPlayed == 0)
-          unheared++;
         songList.Add(singlesong);
       }
 
@@ -1241,27 +1282,58 @@ namespace MediaPortal.GUI.Music
       if (songList.Count < _maxScrobbledSongsPerArtist)
         return false;
 
-      // delete known songs from list
-      if (_preferSimilarUnheared)
-        if (unheared > _maxScrobbledSongsPerArtist)
-        {
+      // lookup how many times this artist's songs were played
+      avgPlayCount = dbs.GetAVGPlayCountForArtist(Artist_);
+
+      switch (_preferCountForTracks)
+      {
+        case 0:
+          // delete all heard songs
           for (int s = 0; s < songList.Count; s++)
-          {
             if (songList[s].TimesPlayed > 0)
               songList.RemoveAt(s);
-          }
-        }
-        else
-          return false;
+          break;
+        case 1:
+          // delete all well known songs
+          if (avgPlayCount < 0.5)
+            goto case 0;
+          else
+            for (int s = 0; s < songList.Count; s++)
+              // song was played more often than average
+              if (songList[s].TimesPlayed > avgPlayCount)
+                // give 1x played songs a chance...
+                if (songList[s].TimesPlayed > 1)
+                  songList.RemoveAt(s);
+          break;
+        case 2:
+          break;
+        case 3:
+          // delete all rarely heard songs
+          for (int s = 0; s < songList.Count; s++)
+            if (songList[s].TimesPlayed < avgPlayCount + 2)
+              songList.RemoveAt(s);
+          songList.Sort(CompareSongsByTimesPlayed);
+          break;
+      }
+
+      // check if there are still enough songs
+      if (songList.Count < _maxScrobbledSongsPerArtist)
+        return false;
 
       Random rand = new Random();
       int randomPosition;
 
       while (songsAdded < _maxScrobbledSongsPerArtist)
       {
-        randomPosition = rand.Next(0, songList.Count - 1);
+        if (_preferCountForTracks == 3)
+          randomPosition = rand.Next(0, songList.Count / 2);
+        else
+          randomPosition = rand.Next(0, songList.Count - 1);
+
         Song refSong = new Song();
+
         refSong = songList[randomPosition];
+
         if (AddRandomSongToPlaylist(ref refSong))
         {
           songsAdded++;
@@ -1270,6 +1342,12 @@ namespace MediaPortal.GUI.Music
 
         j++;
         // avoid too many re-tries on existing songs.
+        //if (_preferCountForTracks == 3)
+        //{
+        //  if (j > songList.Count - 1)
+        //    break;
+        //}
+        //else
         if (j > songList.Count * 5)
           break;
       }

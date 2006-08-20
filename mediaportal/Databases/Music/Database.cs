@@ -1061,6 +1061,35 @@ namespace MediaPortal.Music.Database
       return 0;
     }
 
+    // added by rtv
+    public double GetAVGPlayCountForArtist(string artist_)
+    {
+      try
+      {
+        if (null == m_db || artist_.Length == 0)
+          return 0;
+
+        string strSQL;
+        string strArtist = artist_;
+        double AVGPlayCount;
+
+        DatabaseUtility.RemoveInvalidChars(ref strArtist);
+        strSQL = String.Format("select avg(iTimesPlayed) from song where strfilename like '%{0}%'", strArtist);
+        SQLiteResultSet results;
+        results = m_db.Execute(strSQL);
+        SQLiteResultSet.Row row = results.Rows[0];
+        // needed for any other country with different decimal separator
+        AVGPlayCount = Double.Parse(row.fields[0], NumberStyles.AllowDecimalPoint, new CultureInfo("en-US"));
+        return AVGPlayCount;
+      }
+      catch (Exception ex)
+      {
+        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+      return 0;
+    }
+
     //added by Sam
     public bool GetAllSongs(ref List<Song> songs)
     {
