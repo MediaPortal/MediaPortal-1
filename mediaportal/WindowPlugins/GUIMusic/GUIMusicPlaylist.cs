@@ -1131,8 +1131,8 @@ namespace MediaPortal.GUI.Music
     {
       PlayList currentPlaylist = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
       // ignore list count if setting is disabled
-      _maxNumberOfPlaylistItems = _enablePlaylistLimit ? _maxNumberOfPlaylistItems : int.MaxValue;
-      if (currentPlaylist.Count < _maxNumberOfPlaylistItems + _maxScrobbledArtistsForSongs)
+      _maxNumberOfPlaylistItems = _enablePlaylistLimit ? _maxNumberOfPlaylistItems : Int16.MaxValue;
+      if (currentPlaylist.Count < (_maxNumberOfPlaylistItems + _maxScrobbledArtistsForSongs))
       {
         MusicDatabase dbs = new MusicDatabase();
         Song current10SekSong = new Song();
