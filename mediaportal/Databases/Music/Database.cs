@@ -865,20 +865,24 @@ namespace MediaPortal.Music.Database
         string strPath, strFName;
         DatabaseUtility.Split(strFileName, out strPath, out strFName);
 
-        if (null == m_db) return false;
+        if (null == m_db)
+          return false;
 
         CRCTool crc = new CRCTool();
         crc.Init(CRCTool.CRCCode.CRC32);
         ulong dwCRC = crc.calc(strFileName1);
 
         string strSQL;
-        strSQL = String.Format("select * from song,album,genre,artist,path where song.idPath=path.idPath and song.idAlbum=album.idAlbum and song.idGenre=genre.idGenre and song.idArtist=artist.idArtist and dwFileNameCRC like '{0}' and strPath like '{1}'",
-                              dwCRC,
-                              strPath);
+        //strSQL = String.Format("select * from song,album,genre,artist,path where song.idPath=path.idPath and song.idAlbum=album.idAlbum and song.idGenre=genre.idGenre and song.idArtist=artist.idArtist and dwFileNameCRC like '{0}' and strPath like '{1}'",
+        //                      dwCRC,
+        //                      strPath);
+
+        strSQL = String.Format("SELECT * FROM song AS s INNER JOIN artist AS a ON s.idArtist = a.idArtist INNER JOIN album AS b ON s.idAlbum = b.idAlbum INNER JOIN genre AS g ON s.idGenre = g.idGenre INNER JOIN path AS p ON s.idPath = p.idPath  where dwFileNameCRC like '{0}' and strPath like '{1}'", dwCRC, strPath);
 
         SQLiteResultSet results;
         results = m_db.Execute(strSQL);
-        if (results.Rows.Count == 0) return false;
+        if (results.Rows.Count == 0)
+          return false;
         song.Artist = DatabaseUtility.Get(results, 0, "artist.strArtist");
         song.Album = DatabaseUtility.Get(results, 0, "album.strAlbum");
         song.Genre = DatabaseUtility.Get(results, 0, "genre.strGenre");
@@ -962,7 +966,7 @@ namespace MediaPortal.Music.Database
 
         Random rand = new Random();
         string strSQL;
-        int maxIDSong, rndIDSong, manIDSong;
+        int maxIDSong, rndIDSong;
         strSQL = String.Format("select * from song ORDER BY idSong DESC LIMIT 1");
         SQLiteResultSet results;
         results = m_db.Execute(strSQL);
@@ -1079,7 +1083,8 @@ namespace MediaPortal.Music.Database
         results = m_db.Execute(strSQL);
         SQLiteResultSet.Row row = results.Rows[0];
         // needed for any other country with different decimal separator
-        AVGPlayCount = Double.Parse(row.fields[0], NumberStyles.AllowDecimalPoint, new CultureInfo("en-US"));
+        //AVGPlayCount = Double.Parse( row.fields[0], NumberStyles.Number, new CultureInfo("en-US"));
+        Double.TryParse(row.fields[0], NumberStyles.Number, new CultureInfo("en-US"), out AVGPlayCount);
         return AVGPlayCount;
       }
       catch (Exception ex)
