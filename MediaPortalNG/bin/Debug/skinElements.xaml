@@ -19,18 +19,41 @@
               <Border.Background>
                 <ImageBrush ImageSource="{DynamicResource context_background.png}"/>
               </Border.Background>
-              <StackPanel Margin="30,40">
-                  <TextBlock 
+              <Grid Margin="28,28" >
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*"/>
+                  <ColumnDefinition Width="44"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                  <RowDefinition Height="44"/>
+                  <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBlock  
+                    HorizontalAlignment="Left" 
+                    VerticalAlignment="Center"       
+                    Grid.Column="0" 
+                    Grid.Row="0" 
                     Foreground="White" 
                     FontSize="18" 
                     x:Name="ContextTitle"/>
                 
+                  <Button 
+                    Grid.Column="1" 
+                    Grid.Row="0" 
+                    Canvas.Top="10" 
+                    Canvas.Right="540" 
+                    x:Name="CloseButton" 
+                    Style="{DynamicResource DialogCloseButton}" 
+                    Width="32" 
+                    Height="32"/>
+                
                   <ListView 
+                    Grid.ColumnSpan="2" 
+                    Grid.Row="1" 
                     x:Name="ContextItemsControl" 
-                    Style="{DynamicResource GUIListControl}"
-                        >
+                    Style="{DynamicResource ContextListView}">
                   </ListView>
-              </StackPanel>
+              </Grid>
             </Border>
           </ControlTemplate>
         </Setter.Value>
@@ -646,7 +669,55 @@
     </Setter>
   </Style>
 
- 
+  <Style x:Key="DialogCloseButton" TargetType="{x:Type Button}">
+    <Setter Property="SnapsToDevicePixels" Value="true"/>
+    <Setter Property="OverridesDefaultStyle" Value="true"/>
+    <Setter Property="MinHeight" Value="42"/>
+    <Setter Property="MinWidth" Value="42"/>
+    <Setter Property="FontSize" Value="1"/>
+    <Setter Property="Foreground" Value="Transparent" />
+    <Setter Property="FocusVisualStyle" Value="{DynamicResource FocusStyle}"/>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type Button}">
+          <Border 
+            x:Name="Border"  
+            CornerRadius="0" 
+            BorderThickness="0"
+            BorderBrush="Transparent">
+            <ContentPresenter 
+              Margin="8,0"
+              HorizontalAlignment="Left"
+              VerticalAlignment="Center"
+              />
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsDefaulted" Value="true">
+              <Setter TargetName="Border" Property="Background" Value="Black" />
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="true">
+              <Setter TargetName="Border" Property="Background">
+                <Setter.Value>
+                  <ImageBrush ImageSource="{DynamicResource dialogue_shutdown_focus.png}"/>
+                </Setter.Value>
+              </Setter>
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="false">
+              <Setter TargetName="Border" Property="Background">
+                <Setter.Value>
+                  <ImageBrush ImageSource="{DynamicResource dialogue_shutdown_nofocus.png}"/>
+                </Setter.Value>
+              </Setter>
+            </Trigger>
+            <Trigger Property="IsPressed" Value="true">
+              <Setter TargetName="Border" Property="Opacity" Value="0.5">
+              </Setter>
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
   
   <Style x:Key="GUIToggleButton" TargetType="{x:Type CheckBox}">
     <Setter Property="SnapsToDevicePixels" Value="true"/>
@@ -787,6 +858,59 @@
     </Setter>
   </Style>
 
+  <!-- ContextMenu LisView -->
+  <Style x:Key="ContextListView" TargetType="{x:Type ListView}">
+    <Setter Property="Background" Value="Transparent"/>
+    <Setter Property="BorderBrush" Value="Transparent"/>
+    <Setter Property="BorderThickness" Value="0,0,0,0"/>
+    <Setter Property="Foreground" Value="Transparent"/>
+    <Setter Property="FocusVisualStyle" Value="{DynamicResource FocusStyle}"/>
+    <Setter Property="ScrollViewer.CanContentScroll" Value="True"/>
+    <Setter Property="ItemContainerStyle" Value="{StaticResource GUIListcontrolItems}"/>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ListView}">
+          <Border Background="Transparent" SnapsToDevicePixels="True">
+            <ScrollViewer VerticalScrollBarVisibility="Visible" 
+								HorizontalScrollBarVisibility="Disabled">
+              <StackPanel IsItemsHost="true" />
+              <ScrollViewer.Style>
+                <Style TargetType="{x:Type ScrollViewer}">
+                  <Setter Property="FocusVisualStyle" Value="{DynamicResource FocusStyle}"/>
+                  <Setter Property="Template">
+                    <Setter.Value>
+                      <ControlTemplate TargetType="{x:Type ScrollViewer}">
+                        <Border Padding="0,8">
+                          <StackPanel>
+                            <ScrollContentPresenter Height="224" Content="{TemplateBinding ScrollViewer.Content}" />
+                            <Grid Width="490" Height="28" Margin="0,3,0,0" x:Name="HeaderPanel">
+                              <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="32"/>
+                                <ColumnDefinition Width="32"/>
+                              </Grid.ColumnDefinitions>
+                              <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                              </Grid.RowDefinitions>
+                              <RepeatButton HorizontalAlignment="Left" Grid.Column="2" Grid.Row="0" Command="ScrollBar.PageUpCommand" Style="{DynamicResource UpScroll}"/>
+                              <RepeatButton HorizontalAlignment="Left" Grid.Column="3" Grid.Row="0" Command="ScrollBar.PageDownCommand" Style="{DynamicResource DownScroll}"/>
+                            </Grid>
+                          </StackPanel>
+                        </Border>
+                      </ControlTemplate>
+                    </Setter.Value>
+                  </Setter>
+                </Style>
+              </ScrollViewer.Style>
+            </ScrollViewer>
+          </Border>
+          <ControlTemplate.Triggers>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
   <!-- -->
   <Style x:Key="GUIThumbnailControl" TargetType="{x:Type ListView}">
     <Setter Property="Background" Value="Transparent"/>

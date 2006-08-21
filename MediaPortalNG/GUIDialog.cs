@@ -14,6 +14,7 @@ namespace MediaPortal
         private ListView _popupLV;
         private string _dialogTitle;
         private int _selectedItem;
+        private Button _closeButton;
 
         public int SelectedItem
         {
@@ -28,7 +29,7 @@ namespace MediaPortal
             set { _dialogTitle = value; }
         }
 
-        public GUIDialog(string titleText,Core parentWindow)
+        public GUIDialog(string titleText, Core parentWindow)
         {
             _selectedItem = -1;
             DialogTitle = titleText;
@@ -39,15 +40,24 @@ namespace MediaPortal
             this.AllowsTransparency = true;
             this.ApplyTemplate();
             // get the objects
-            _popupLV=(ListView)this.Template.FindName("ContextItemsControl", this);
+            _closeButton = (Button)this.Template.FindName("CloseButton", this);
+            _popupLV = (ListView)this.Template.FindName("ContextItemsControl", this);
             TextBlock tb = (TextBlock)this.Template.FindName("ContextTitle", this);
-            
+
             if (tb != null)
                 tb.Text = DialogTitle;
 
-            if(_popupLV!=null)
+            if (_popupLV != null)
                 _popupLV.SelectionChanged += new SelectionChangedEventHandler(_popupLV_SelectionChanged);
-            
+
+            if (_closeButton != null)
+                _closeButton.Click += new RoutedEventHandler(_closeButton_Click);
+        }
+
+        void _closeButton_Click(object sender, RoutedEventArgs e)
+        {
+            SelectedItem = -1;
+            this.DialogResult = false;
         }
 
         void _popupLV_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -60,12 +70,12 @@ namespace MediaPortal
             this.DialogResult = true;
         }
 
-        new public bool ShowDialog()
+        new public int ShowDialog()
         {
             this.Owner.Opacity = 0.3f;
             bool val = (bool)base.ShowDialog();
             this.Owner.Opacity = 1.0f;
-            return val;
+            return _selectedItem;
 
         }
 

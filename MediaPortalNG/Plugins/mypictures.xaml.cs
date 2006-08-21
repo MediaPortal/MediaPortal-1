@@ -37,7 +37,7 @@ namespace MediaPortal
 
             ApplyLanguage("German");
 
-            upDown1.SetMinValue(10);
+            upDown1.SetMinValue(0);
             upDown1.SetMaxValue(25);
 
             select1.AddItem("Test 1");
@@ -148,7 +148,19 @@ namespace MediaPortal
             dial.AddMenuItem("Entry 2");
             dial.AddMenuItem("Entry 3");
             dial.AddMenuItem("Entry 4");
-            dial.ShowDialog();
+            dial.AddMenuItem("Entry 5");
+            dial.AddMenuItem("Entry 6");
+            dial.AddMenuItem("Entry 7");
+            dial.AddMenuItem("Entry 8");
+            dial.AddMenuItem("Entry 9");
+            dial.AddMenuItem("Entry 10");
+            dial.AddMenuItem("Entry 11");
+            dial.AddMenuItem("Entry 12");
+
+            // res holds the selected item
+            int res=dial.ShowDialog();
+            if(res>=0)
+                upDown1.Value = res+1;
        }
 
         public void MPNG(object sender, RoutedEventArgs e)
