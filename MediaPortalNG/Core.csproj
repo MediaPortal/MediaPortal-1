@@ -55,13 +55,13 @@
       <SubType>
       </SubType>
     </Page>
-    <Compile Include="SelectButton.cs" />
+    <Compile Include="GUISelectButton.cs" />
     <Compile Include="GUIPlugin.cs" />
     <Compile Include="Plugins\mypictures.xaml.cs">
       <DependentUpon>mypictures.xaml</DependentUpon>
     </Compile>
     <Compile Include="GUIDialog.cs" />
-    <Compile Include="SpinControl.cs" />
+    <Compile Include="GUISpinControl.cs" />
     <Compile Include="CoreExtensions\home.xaml.cs">
       <DependentUpon>home.xaml</DependentUpon>
       <SubType>Code</SubType>

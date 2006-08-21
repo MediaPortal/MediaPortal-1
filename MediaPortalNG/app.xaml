@@ -11,8 +11,8 @@
         <ResourceDictionary Source="skinImages.xaml" />
       </ResourceDictionary.MergedDictionaries>
 
- 
-      
+
+   
     <!-- ControlTemplates for GUISelectButton -->
       <ControlTemplate x:Key="SelectOpen" TargetType="{x:Type ctrl:GUISelectButton}">
         <Border

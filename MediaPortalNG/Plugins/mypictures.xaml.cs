@@ -157,10 +157,16 @@ namespace MediaPortal
             dial.AddMenuItem("Entry 11");
             dial.AddMenuItem("Entry 12");
 
+            pb1.Maximum = 25;
+            pb1.Minimum = 0;
+           
             // res holds the selected item
             int res=dial.ShowDialog();
-            if(res>=0)
-                upDown1.Value = res+1;
+            if (res >= 0)
+            {
+                pb1.Value = res + 1;
+                upDown1.Value = res + 1;
+            }
        }
 
         public void MPNG(object sender, RoutedEventArgs e)

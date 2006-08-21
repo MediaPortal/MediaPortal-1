@@ -6,6 +6,9 @@
   <!-- Skin BlueTwo -->
 
   <!-- GUI Elements -->
+
+ 
+  
   <Style x:Key="ContextMenuStyle" TargetType="{x:Type Window}">
     <Setter Property="Width" Value="546"/>
     <Setter Property="Height" Value="366"/>
@@ -59,7 +62,33 @@
         </Setter.Value>
     </Setter>
   </Style>
-  
+
+  <Style x:Key="GUIProgressBar" TargetType="{x:Type ProgressBar}">
+    <Setter Property="Foreground" Value="Transparent"/>
+    <Setter Property="Background" Value="LightGray"/>
+    <Setter Property="BorderBrush" Value="Transparent"/>
+    <Setter Property="BorderThickness" Value="0"/>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ProgressBar}">
+            <Border Background="{TemplateBinding Background}" x:Name="Border" SnapsToDevicePixels="True" BorderBrush="Transparent" BorderThickness="0" CornerRadius="0">
+                  <DockPanel Margin="0" x:Name="PART_Track" LastChildFill="False">
+                    <Rectangle x:Name="PART_Indicator">
+                      <Rectangle.Fill>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                          <GradientStop Offset="0" Color="#FF7FC377"/>
+                          <GradientStop Offset="0.498" Color="#FF3EA53A"/>
+                          <GradientStop Offset="0.499" Color="#FF0C8E06"/>
+                          <GradientStop Offset="0.894" Color="#FF0EBC0C"/>
+                        </LinearGradientBrush>                        
+                      </Rectangle.Fill>
+                    </Rectangle>
+                  </DockPanel>
+                </Border>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+</Style>
   
   <Style x:Key="GUIImage" TargetType="{x:Type Image}"></Style> 
   

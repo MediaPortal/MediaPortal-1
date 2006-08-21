@@ -141,6 +141,15 @@
   Canvas.Top="327"
   Canvas.Left="60">
     </ctrl:GUISelectButton>
+
+    <ProgressBar 
+      x:Name="pb1" 
+      Width="190"
+      Height="24"
+      Canvas.Top="380"
+      Canvas.Left="60"
+      Style="{DynamicResource GUIProgressBar}"
+      />
     
   </Canvas>
 </Page>
