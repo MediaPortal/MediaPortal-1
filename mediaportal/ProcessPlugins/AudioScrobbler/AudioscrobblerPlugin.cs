@@ -199,19 +199,37 @@ namespace MediaPortal.Audioscrobbler
         // Track has changed
         if (g_Player.CurrentFile != currentSong.FileName)
         {
+          bool songFound = false;
           if (g_Player.IsCDA)
           {
             // no CD text information available
             if (g_Player.CurrentFile.IndexOf("Track") > 0 && g_Player.CurrentFile.IndexOf(".cda") > 0)
             {
-              Log.Write("Audioscrobbler plugin: AudioCD detected - {0}", "ignoring song");
-              return;
+              //              Log.Write("Audioscrobbler plugin: AudioCD detected - {0}", "ignoring song");
+              currentSong.Artist = GUIPropertyManager.GetProperty("#Play.Current.Artist");
+              currentSong.Title = GUIPropertyManager.GetProperty("#Play.Current.Title");
+              currentSong.Album = GUIPropertyManager.GetProperty("#Play.Current.Album");
+              //currentSong.Track = Int32.Parse(GUIPropertyManager.GetProperty("#Play.Current.Track"), System.Globalization.NumberStyles.AllowDecimalPoint, new System.Globalization.CultureInfo("en-US"));
+              //currentSong.Track = Int32.Parse(GUIPropertyManager.GetProperty("#Play.Current.Track"), System.Globalization.NumberStyles.Integer, new System.Globalization.CultureInfo("en-US"));
+              //currentSong.Year = Convert.ToInt32(GUIPropertyManager.GetProperty("#Play.Current.Year"));
+              //currentSong.Duration = Int32.Parse(GUIPropertyManager.GetProperty("#Play.Current.Duration"), System.Globalization.NumberStyles.Integer, new System.Globalization.CultureInfo("en-US"));
+              currentSong.Duration = Convert.ToInt32(g_Player.Duration);
+              currentSong.Genre = GUIPropertyManager.GetProperty("#Play.Current.Genre");
+              //currentSong.FileName = GUIPropertyManager.GetProperty("#Play.Current.File");
+              currentSong.FileName = g_Player.CurrentFile;
+
+              songFound = currentSong.Artist != "" ? true : false;
+              //return;
             }
           }
+          else
+          {
+            // local DB file
+            MusicDatabase dbs = new MusicDatabase();
+            string strFile = g_Player.Player.CurrentFile;
+            songFound = dbs.GetSongByFileName(strFile, ref currentSong);
+          }
 
-          MusicDatabase dbs = new MusicDatabase();
-          string strFile = g_Player.Player.CurrentFile;
-          bool songFound = dbs.GetSongByFileName(strFile, ref currentSong);
           if (songFound)
           {
             currentSong.AudioScrobblerStatus = SongStatus.Init;
@@ -220,9 +238,11 @@ namespace MediaPortal.Audioscrobbler
             lastPosition = Convert.ToInt32(g_Player.Player.CurrentPosition);
             OnSongChangedEvent(currentSong);
           }
+          // DB lookup of song failed
           else
             if (g_Player.IsMusic)
               Log.Write("Audioscrobbler plugin: database does not contain track - ignoring song: {0}", currentSong.ToShortString());
+
 
         }
         else // Track was paused
@@ -230,7 +250,7 @@ namespace MediaPortal.Audioscrobbler
           // avoid false skip detection
           lastPosition = Convert.ToInt32(g_Player.Player.CurrentPosition);
           Log.Write("Audioscrobbler plugin: {0}", "track paused - avoid skip protection");
-        }        
+        }
       }
     }
 
