@@ -4655,6 +4655,7 @@
       <id>5918</id>
       <value>Télévision Suisse Romande VOD</value>
 
+
    </string>
    <string>
       <id>5919</id>
@@ -5192,6 +5193,42 @@
    <string>
       <id>33005</id>
       <value>Konto: </value>
+   </string>
+   <string>
+      <id>33006</id>
+      <value>Scrobble: Venner</value>
+   </string>
+   <string>
+      <id>33007</id>
+      <value>Scrobble: Frakoblet</value>
+   </string>
+   <string>
+      <id>33010</id>
+      <value>Automatisk fyll spilleliste med</value>
+   </string>      
+   <string>
+      <id>33011</id>
+      <value>Lignende spor</value>
+   </string>
+   <string>
+      <id>33012</id>
+      <value>Spor dine naboer liker</value>
+   </string>
+   <string>
+      <id>33013</id>
+      <value>Spor etter valgt tag</value>
+   </string>
+   <string>
+      <id>33014</id>
+      <value>Spor spilt i det siste</value>
+   </string>
+   <string>
+      <id>33016</id>
+      <value>Spor som dine venner liker</value>
+   </string>
+   <string>
+      <id>33017</id>
+      <value>Blandede spor</value>
    </string>
    <string>
       <id>99845</id>
