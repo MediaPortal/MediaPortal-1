@@ -4,10 +4,16 @@
 >
  
   <!-- Skin BlueTwo -->
+  <!-- Brushes -->
+  <LinearGradientBrush x:Key="GreenBackground" StartPoint="0,0" EndPoint="0,1">
+    <GradientStop Offset="0" Color="#FF7FC377"/>
+    <GradientStop Offset="0.498" Color="#FF3EA53A"/>
+    <GradientStop Offset="0.499" Color="#FF0C8E06"/>
+    <GradientStop Offset="0.894" Color="#FF0EBC0C"/>
+  </LinearGradientBrush>
 
   <!-- GUI Elements -->
 
- 
   
   <Style x:Key="ContextMenuStyle" TargetType="{x:Type Window}">
     <Setter Property="Width" Value="546"/>
@@ -73,16 +79,7 @@
         <ControlTemplate TargetType="{x:Type ProgressBar}">
             <Border Background="{TemplateBinding Background}" x:Name="Border" SnapsToDevicePixels="True" BorderBrush="Transparent" BorderThickness="0" CornerRadius="0">
                   <DockPanel Margin="0" x:Name="PART_Track" LastChildFill="False">
-                    <Rectangle x:Name="PART_Indicator">
-                      <Rectangle.Fill>
-                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                          <GradientStop Offset="0" Color="#FF7FC377"/>
-                          <GradientStop Offset="0.498" Color="#FF3EA53A"/>
-                          <GradientStop Offset="0.499" Color="#FF0C8E06"/>
-                          <GradientStop Offset="0.894" Color="#FF0EBC0C"/>
-                        </LinearGradientBrush>                        
-                      </Rectangle.Fill>
-                    </Rectangle>
+                    <Rectangle x:Name="PART_Indicator" Fill="{DynamicResource GreenBackground}"/>
                   </DockPanel>
                 </Border>
         </ControlTemplate>

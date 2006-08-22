@@ -31,7 +31,16 @@
                     Foreground="DarkGray"
                     Text="{Binding PluginName}">
                   </TextBlock>
-                  <Image Opacity="0.7" Grid.Row="1" Source="{Binding Path=PluginHover}" Width="70" Height="120"/>
+                  <Image Opacity="0.7" Grid.Row="1" Source="{Binding Path=PluginHover}" Width="70" Height="120">
+                    <Image.BitmapEffect>
+                      <DropShadowBitmapEffect
+                          ShadowDepth="8"
+                          Direction="300"
+                          Color="Black"
+                          Opacity="0.5"
+                          Softness="0.3" />
+                    </Image.BitmapEffect>
+                  </Image>
                 </Grid>
               </StackPanel>
             </Border>
@@ -74,12 +83,17 @@
                         Softness="0.25" />
                     </TextBlock.BitmapEffect>
                   </TextBlock>
-                  <Image Name="HoverImage" Grid.Row="1" Source="{Binding Path=PluginHover}" Width="140" Height="190"/>
+                  <Image Name="HoverImage" Grid.Row="1" Source="{Binding Path=PluginHover}" Width="100" Height="140">
+                    <Image.BitmapEffect>
+                      <OuterGlowBitmapEffect GlowColor="White" GlowSize="14" Noise="0" Opacity="0.6"/>
+                    </Image.BitmapEffect>
+                    </Image>
+                  
                 </Grid>
               </StackPanel>
             </Border>
             <ControlTemplate.Triggers>
- 
+
             </ControlTemplate.Triggers>
           </ControlTemplate>
         </Setter.Value>
@@ -104,7 +118,7 @@
             <Border Background="Transparent" SnapsToDevicePixels="True">
               <ScrollViewer VerticalScrollBarVisibility="Visible" 
                   HorizontalScrollBarVisibility="Visible">
-                <WrapPanel ItemWidth="230" ItemHeight="170" IsItemsHost="true" Orientation="Horizontal"/>
+                <WrapPanel ItemWidth="230" ItemHeight="150" IsItemsHost="true" Orientation="Horizontal"/>
                 <ScrollViewer.Style>
                   <Style TargetType="{x:Type ScrollViewer}">
                     <Setter Property="Template">
@@ -121,9 +135,8 @@
                                 <Grid.RowDefinitions>
                                   <RowDefinition Height="70"/>
                                   <RowDefinition Height="100"/>
+                                  <RowDefinition Height="150"/>
                                   <RowDefinition Height="170"/>
-                                  <RowDefinition Height="100"/>
-                                  <RowDefinition Height="70"/>
                                 </Grid.RowDefinitions>
 
                                 <!-- date & time-->
@@ -136,9 +149,8 @@
                                   <Grid.RowDefinitions>
                                     <RowDefinition Height="30"/>
                                     <RowDefinition/>
-                                  </Grid.RowDefinitions>
-                                  <ListBoxItem Name="PrevItem" Grid.Row="2" Grid.Column="1" Style="{DynamicResource MainMenuItemsSmall}" >                                  
-                                  </ListBoxItem>
+                                  </Grid.RowDefinitions>                             
+                                  <ListBoxItem Name="PrevItem" Grid.Row="2" Grid.Column="1" Style="{DynamicResource MainMenuItemsSmall}" />                                  
                                 </Grid>
                                 
                                 <!-- Next Item -->
@@ -154,17 +166,34 @@
                                   <ListBoxItem Name="NextItem" Grid.Row="1" Grid.Column="0" Style="{DynamicResource MainMenuItemsSmall}" >
                                   </ListBoxItem>
                                 </Grid>
-                                <Rectangle Grid.Column="1" Grid.Row="2">
+                                <StackPanel Grid.Column="1" Grid.Row="2" x:Name="Drawings" Opacity="1">
+                                  <ScrollContentPresenter Grid.Column="1" Grid.Row="2" Content="{TemplateBinding ScrollViewer.Content}" />
+                                </StackPanel>
+                                  <Rectangle Height="145" Grid.Column="1" Grid.Row="3" Grid.RowSpan="2">
                                   <Rectangle.Fill>
-                                  <RadialGradientBrush>
-                                    <RadialGradientBrush.GradientStops>
-                                      <GradientStop Color="#ffff" Offset="0"/>
-                                      <GradientStop Color="#0fff" Offset="1"/>
-                                    </RadialGradientBrush.GradientStops>
-                                  </RadialGradientBrush>
+                                    <VisualBrush x:Name="ReflectionBrush" 
+                                      Stretch="None" AlignmentX="Left" AlignmentY="Top"
+                                      Opacity="0.3"
+                                      Visual="{Binding ElementName=Drawings}">
+                                      <VisualBrush.RelativeTransform>
+                                        <TransformGroup>
+                                          <ScaleTransform ScaleX="1" ScaleY="-1" />
+                                          <TranslateTransform  Y="1" />
+                                        </TransformGroup>
+                                      </VisualBrush.RelativeTransform>
+                                    </VisualBrush>
                                   </Rectangle.Fill>
+                                    <Rectangle.OpacityMask>
+                                      <LinearGradientBrush StartPoint="0.0,0" EndPoint="0.0,1">
+                                        <LinearGradientBrush.GradientStops>
+                                          <GradientStop Color="#FF000000" Offset="0.0" />
+                                          <GradientStop Color="#00000000" Offset="1" />
+                                        </LinearGradientBrush.GradientStops>
+                                      </LinearGradientBrush>
+                                    </Rectangle.OpacityMask>                                 
                                 </Rectangle>
-                                <ScrollContentPresenter Grid.Column="1" Grid.Row="2" Content="{TemplateBinding ScrollViewer.Content}" />
+ 
+                            
                               </Grid>
                             </StackPanel>
                           </Border>
@@ -234,7 +263,15 @@
       Source="{DynamicResource mplogo.png}"
       Visibility="Visible"
       Tag="##id::1000//##keycontrol::onleft:;onright:;onup:;ondown://##metadata::"
-/>
+>
+      <Image.BitmapEffect>
+        <DropShadowBitmapEffect
+                                ShadowDepth="4"
+                                Direction="270"
+                                Color="Black"
+                                Opacity="0.5"
+                                Softness="0.25" />      </Image.BitmapEffect>
+    </Image>
 
     <TextBlock 
       Grid.Row="2" 
@@ -247,25 +284,7 @@
       
       />
 
-  <Path 
-      Opacity="0.3" 
-      Canvas.Top="370" 
-      Canvas.Left="50" 
-      Stroke="LightGray"
-      StrokeThickness="1" 
-      Fill="#77999999" 
-      HorizontalAlignment="Center" 
-      Name="path" >
-      <Path.BitmapEffect>
-        <DropShadowBitmapEffect
-          ShadowDepth="6"
-          Direction="270"
-          Color="Black"
-          Opacity="0.5"
-          Softness="0.35" />
-      </Path.BitmapEffect>
-    </Path>
-  
+ 
 
   </Canvas>
 </Page>

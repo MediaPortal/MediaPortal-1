@@ -49,26 +49,25 @@ namespace MediaPortal
             myPictures.GUIPluginObject = typeof(MyPictures);
             myPictures.PluginName = "My Pictures";
             myPictures.PluginText = "pictures";
-            myPictures.PluginHover = (BitmapImage)FindResource("hover_my pictures.png");
+            myPictures.PluginHover = (BitmapImage)FindResource("defaultPictureBig.png");
 
             GUIPlugin myMusic = new GUIPlugin();
             myMusic.GUIPluginObject = typeof(MyPictures);
             myMusic.PluginName = "My Music";
             myMusic.PluginText = "music";
-            myMusic.PluginHover = (BitmapImage)FindResource("hover_my music.png");
+            myMusic.PluginHover = (BitmapImage)FindResource("defaultAudioBig.png");
 
 
             GUIPlugin myTV = new GUIPlugin();
             myTV.GUIPluginObject = typeof(MyPictures);
             myTV.PluginName = "My TV";
             myTV.PluginText = "tv";
-            myTV.PluginHover = (BitmapImage)FindResource("hover_my tv.png");
-
+            myTV.PluginHover = (BitmapImage)FindResource("defaultVideoBig.png");
             GUIPlugin myVid = new GUIPlugin();
             myVid.GUIPluginObject = typeof(MyPictures);
             myVid.PluginName = "My Videos";
             myVid.PluginText = "videos";
-            myVid.PluginHover = (BitmapImage)FindResource("hover_my videos.png");
+            myVid.PluginHover = (BitmapImage)FindResource("defaultVideoBig.png");
            
             plugList.Add(myPictures);
             plugList.Add(myMusic);
@@ -81,6 +80,8 @@ namespace MediaPortal
             ScrollViewer sv = (ScrollViewer)VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(lv, 0), 0);
             sv.ApplyTemplate();
 
+      
+            
             // set previous item object
             _prevItem = (ListBoxItem)sv.Template.FindName("PrevItem", sv);
             _prevItem.ApplyTemplate();
@@ -94,7 +95,6 @@ namespace MediaPortal
             lv.Focusable = false;
             lv.KeyDown += new System.Windows.Input.KeyEventHandler(lv_KeyDown);
             lv.SelectedItem = lv.Items[0];
-            path.LayoutUpdated += new EventHandler(path_LayoutUpdated);
         }
 
         void path_LayoutUpdated(object sender, EventArgs e)
@@ -264,7 +264,7 @@ namespace MediaPortal
 
             Geometry geometry = formattedText.BuildGeometry(new Point(0, 0));
             PathGeometry pathGeometry = geometry.GetFlattenedPathGeometry();
-            path.Data = pathGeometry;
+           // path.Data = pathGeometry;
         }
  
     }
