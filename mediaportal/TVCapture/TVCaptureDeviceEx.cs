@@ -569,6 +569,10 @@ namespace MediaPortal.TV.Recording
       get { return _currentTvChannelName; }
       set
       {
+        ServiceProvider services = GlobalServiceProvider.Instance;
+        log = services.Get<ILog>();
+        _config = services.Get<IConfig>();
+
         if (value == null)
           value = GetFirstChannel();
         else if (value != null && value.Length == 0)
