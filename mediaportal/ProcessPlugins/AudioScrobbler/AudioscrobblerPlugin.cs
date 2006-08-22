@@ -354,11 +354,12 @@ namespace MediaPortal.Audioscrobbler
       
       GUIWindowManager.OnNewAction += new OnActionHandler(OnNewAction);
 
-      startStopSongCheckTimer(true);
-
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
       _config = services.Get<IConfig>();
+
+      startStopSongCheckTimer(true);
+
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         currentUser = xmlreader.GetValueAsString("audioscrobbler", "user", "");
