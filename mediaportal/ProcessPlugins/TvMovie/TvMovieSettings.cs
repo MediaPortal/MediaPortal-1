@@ -145,6 +145,7 @@ namespace ProcessPlugins.TvMovie
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         checkBoxUseShortDesc.Checked = xmlreader.GetValueAsBool("tvmovie", "shortprogramdesc", false);
+        checkBoxAdditionalInfo.Checked = xmlreader.GetValueAsBool("tvmovie", "extenddescription", false);
         checkBoxShowAudioFormat.Checked = xmlreader.GetValueAsBool("tvmovie", "showaudioformat", false);
         checkBoxSlowImport.Checked = xmlreader.GetValueAsBool("tvmovie", "slowimport", false);
       }
@@ -156,6 +157,7 @@ namespace ProcessPlugins.TvMovie
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         xmlwriter.SetValueAsBool("tvmovie", "shortprogramdesc", checkBoxUseShortDesc.Checked);
+        xmlwriter.SetValueAsBool("tvmovie", "extenddescription", checkBoxAdditionalInfo.Checked);
         xmlwriter.SetValueAsBool("tvmovie", "showaudioformat", checkBoxShowAudioFormat.Checked);
         xmlwriter.SetValueAsBool("tvmovie", "slowimport", checkBoxSlowImport.Checked);
       }
@@ -457,6 +459,22 @@ namespace ProcessPlugins.TvMovie
         treeViewChannels.SelectedNode.Text = string.Format("{0} ({1}-{2})", channelInfo.Name, channelInfo.Start, channelInfo.End);
       else
         treeViewChannels.SelectedNode.Text = string.Format("{0}", channelInfo.Name);
+    }
+
+    private void checkBoxUseShortDesc_CheckedChanged(object sender, EventArgs e)
+    {
+      if (checkBoxUseShortDesc.Checked)
+      {
+        checkBoxAdditionalInfo.Checked = false;
+        checkBoxAdditionalInfo.Enabled = false;
+      }
+      checkBoxAdditionalInfo.Enabled = true;
+    }
+
+    private void checkBoxAdditionalInfo_CheckedChanged(object sender, EventArgs e)
+    {
+      if (checkBoxAdditionalInfo.Checked)
+        checkBoxUseShortDesc.Checked = false;
     }
 
   }

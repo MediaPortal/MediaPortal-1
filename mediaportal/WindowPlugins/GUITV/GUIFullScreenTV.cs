@@ -593,8 +593,7 @@ namespace MediaPortal.GUI.TV
         case Action.ActionType.ACTION_REWIND:
           {
             if ( g_Player.IsTimeShifting )
-            {
-              g_Player.Speed = MediaPortal.Util.Utils.GetNextRewindSpeed(g_Player.Speed);
+            {              
               if (g_Player.Paused)
               {
                 if (g_Player.CanSeek)
@@ -606,6 +605,8 @@ namespace MediaPortal.GUI.TV
                   }
                 }
               }
+              else
+                g_Player.Speed = MediaPortal.Util.Utils.GetNextRewindSpeed(g_Player.Speed);
 
               ScreenStateChanged();
               UpdateGUI();
@@ -615,24 +616,22 @@ namespace MediaPortal.GUI.TV
 
         case Action.ActionType.ACTION_FORWARD:
           {
-            if ( g_Player.IsTimeShifting )
+            if (g_Player.IsTimeShifting)
             {
-              g_Player.Speed = MediaPortal.Util.Utils.GetNextForwardSpeed(g_Player.Speed);
               if (g_Player.Paused)
               {
                 if (g_Player.CanSeek)
                 {
                   double dPos = g_Player.CurrentPosition;
                   if (g_Player.Duration - dPos > 1)
-                  {
                     g_Player.SeekAbsolute(dPos + 0.25d);
-                  }
                 }
               }
+              else
+                g_Player.Speed = MediaPortal.Util.Utils.GetNextForwardSpeed(g_Player.Speed);
 
               ScreenStateChanged();
               UpdateGUI();
-
             }
           }
           break;

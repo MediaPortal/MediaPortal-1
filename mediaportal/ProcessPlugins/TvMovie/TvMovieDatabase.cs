@@ -24,17 +24,19 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Data;
 using System.Data.OleDb;
-using MediaPortal.TV.Database;
-using System.Collections;
-using Microsoft.Win32;
-using System.IO;
-using System.Xml;
 using System.Diagnostics;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
+using System.IO;
+using System.Text;
 using System.Threading;
+using System.Xml;
+using Microsoft.Win32;
+
+using MediaPortal.GUI.Library;
+using MediaPortal.TV.Database;
+using MediaPortal.Util;
 using MediaPortal.Utils.Services;
 
 namespace ProcessPlugins.TvMovie
@@ -400,6 +402,7 @@ namespace ProcessPlugins.TvMovie
     private int ImportStation(string stationName, ArrayList channelNames)
     {
       bool useShortProgramDesc = false;
+      bool extendDescription = false;
       bool showAudioFormat = false;
       bool slowImport = false;
       string sqlSelect = string.Empty;
@@ -411,6 +414,7 @@ namespace ProcessPlugins.TvMovie
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         useShortProgramDesc = xmlreader.GetValueAsBool("tvmovie", "shortprogramdesc", false);
+        extendDescription = xmlreader.GetValueAsBool("tvmovie", "extenddescription", false);
         showAudioFormat = xmlreader.GetValueAsBool("tvmovie", "showaudioformat", false);
         slowImport = xmlreader.GetValueAsBool("tvmovie", "slowimport", false);
       }
@@ -521,6 +525,23 @@ namespace ProcessPlugins.TvMovie
               epgEntry.Repeat = "Repeat";
             if (starRating != -1)
               epgEntry.StarRating = string.Format("{0}/5", starRating);
+
+            if (extendDescription)
+            {
+              StringBuilder sb = new StringBuilder();
+
+              if (epgEntry.Episode != String.Empty)
+                sb.Append("Folge: " + epgEntry.Episode + "\n");
+              if (starRating != -1)
+                sb.Append("Wertung: " + string.Format("{0}/5", starRating) + "\n");
+              sb.Append(epgEntry.Description + "\n");
+              if (epgEntry.Classification != String.Empty && epgEntry.Classification != "0")
+                sb.Append("FSK: " + epgEntry.Classification + "\n");
+              if (epgEntry.Date != String.Empty)
+                sb.Append("Jahr: " + epgEntry.Date + "\n");
+
+              epgEntry.Description = sb.ToString();
+            }
 
             TVDatabase.UpdateProgram(epgEntry);
             if (slowImport)

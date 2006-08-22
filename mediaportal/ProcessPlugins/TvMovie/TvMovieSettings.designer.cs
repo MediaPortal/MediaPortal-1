@@ -71,6 +71,7 @@ namespace ProcessPlugins.TvMovie
       this.pictureBox1 = new System.Windows.Forms.PictureBox();
       this.mpTabControl = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPageMapChannels = new MediaPortal.UserInterface.Controls.MPTabPage();
+      this.labelNote = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tabPageSettings = new System.Windows.Forms.TabPage();
       this.mpGroupBoxDescriptions = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.checkBoxSlowImport = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -79,7 +80,7 @@ namespace ProcessPlugins.TvMovie
       this.checkBoxUseShortDesc = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpBeveledLine1 = new MediaPortal.UserInterface.Controls.MPBeveledLine();
       this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
-      this.labelNote = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.checkBoxAdditionalInfo = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBoxMapping.SuspendLayout();
       this.panelTimeSpan.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
@@ -101,7 +102,7 @@ namespace ProcessPlugins.TvMovie
       this.treeViewChannels.ShowNodeToolTips = true;
       this.treeViewChannels.ShowPlusMinus = false;
       this.treeViewChannels.ShowRootLines = false;
-      this.treeViewChannels.Size = new System.Drawing.Size(240, 168);
+      this.treeViewChannels.Size = new System.Drawing.Size(240, 193);
       this.treeViewChannels.Sorted = true;
       this.treeViewChannels.TabIndex = 1;
       this.treeViewChannels.DoubleClick += new System.EventHandler(this.treeViewStations_DoubleClick);
@@ -117,7 +118,7 @@ namespace ProcessPlugins.TvMovie
       this.treeViewStations.ShowNodeToolTips = true;
       this.treeViewStations.ShowPlusMinus = false;
       this.treeViewStations.ShowRootLines = false;
-      this.treeViewStations.Size = new System.Drawing.Size(168, 200);
+      this.treeViewStations.Size = new System.Drawing.Size(168, 216);
       this.treeViewStations.Sorted = true;
       this.treeViewStations.TabIndex = 2;
       this.treeViewStations.DoubleClick += new System.EventHandler(this.listBoxTvMovieChannels_DoubleClick);
@@ -146,7 +147,7 @@ namespace ProcessPlugins.TvMovie
       this.groupBoxMapping.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxMapping.Location = new System.Drawing.Point(16, 16);
       this.groupBoxMapping.Name = "groupBoxMapping";
-      this.groupBoxMapping.Size = new System.Drawing.Size(472, 264);
+      this.groupBoxMapping.Size = new System.Drawing.Size(472, 280);
       this.groupBoxMapping.TabIndex = 5;
       this.groupBoxMapping.TabStop = false;
       this.groupBoxMapping.Text = "Map Channels to TV Movie Stations";
@@ -159,9 +160,9 @@ namespace ProcessPlugins.TvMovie
       this.panelTimeSpan.Controls.Add(this.maskedTextBoxTimeStart);
       this.panelTimeSpan.Controls.Add(this.label1);
       this.panelTimeSpan.Controls.Add(this.maskedTextBoxTimeEnd);
-      this.panelTimeSpan.Location = new System.Drawing.Point(64, 224);
+      this.panelTimeSpan.Location = new System.Drawing.Point(64, 247);
       this.panelTimeSpan.Name = "panelTimeSpan";
-      this.panelTimeSpan.Size = new System.Drawing.Size(139, 23);
+      this.panelTimeSpan.Size = new System.Drawing.Size(139, 27);
       this.panelTimeSpan.TabIndex = 7;
       this.panelTimeSpan.Visible = false;
       // 
@@ -169,7 +170,7 @@ namespace ProcessPlugins.TvMovie
       // 
       this.maskedTextBoxTimeStart.AsciiOnly = true;
       this.maskedTextBoxTimeStart.CutCopyMaskFormat = System.Windows.Forms.MaskFormat.IncludePromptAndLiterals;
-      this.maskedTextBoxTimeStart.Location = new System.Drawing.Point(0, 0);
+      this.maskedTextBoxTimeStart.Location = new System.Drawing.Point(0, 4);
       this.maskedTextBoxTimeStart.Mask = "90:00";
       this.maskedTextBoxTimeStart.Name = "maskedTextBoxTimeStart";
       this.maskedTextBoxTimeStart.PromptChar = '0';
@@ -184,7 +185,7 @@ namespace ProcessPlugins.TvMovie
       // label1
       // 
       this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(63, 4);
+      this.label1.Location = new System.Drawing.Point(63, 8);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(10, 13);
       this.label1.TabIndex = 7;
@@ -194,7 +195,7 @@ namespace ProcessPlugins.TvMovie
       // 
       this.maskedTextBoxTimeEnd.AsciiOnly = true;
       this.maskedTextBoxTimeEnd.CutCopyMaskFormat = System.Windows.Forms.MaskFormat.IncludePromptAndLiterals;
-      this.maskedTextBoxTimeEnd.Location = new System.Drawing.Point(80, 0);
+      this.maskedTextBoxTimeEnd.Location = new System.Drawing.Point(80, 4);
       this.maskedTextBoxTimeEnd.Mask = "90:00";
       this.maskedTextBoxTimeEnd.Name = "maskedTextBoxTimeEnd";
       this.maskedTextBoxTimeEnd.PromptChar = '0';
@@ -303,6 +304,17 @@ namespace ProcessPlugins.TvMovie
       this.tabPageMapChannels.Text = "Map Channels";
       this.tabPageMapChannels.UseVisualStyleBackColor = true;
       // 
+      // labelNote
+      // 
+      this.labelNote.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.labelNote.AutoSize = true;
+      this.labelNote.Location = new System.Drawing.Point(266, 301);
+      this.labelNote.Name = "labelNote";
+      this.labelNote.Size = new System.Drawing.Size(223, 13);
+      this.labelNote.TabIndex = 6;
+      this.labelNote.Text = "Note: Use doubleclick to map/unmap stations";
+      this.labelNote.TextAlign = System.Drawing.ContentAlignment.TopRight;
+      // 
       // tabPageSettings
       // 
       this.tabPageSettings.Controls.Add(this.mpGroupBoxDescriptions);
@@ -319,7 +331,7 @@ namespace ProcessPlugins.TvMovie
       // 
       this.mpGroupBoxDescriptions.Controls.Add(this.checkBoxSlowImport);
       this.mpGroupBoxDescriptions.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBoxDescriptions.Location = new System.Drawing.Point(16, 104);
+      this.mpGroupBoxDescriptions.Location = new System.Drawing.Point(16, 139);
       this.mpGroupBoxDescriptions.Name = "mpGroupBoxDescriptions";
       this.mpGroupBoxDescriptions.Size = new System.Drawing.Size(472, 56);
       this.mpGroupBoxDescriptions.TabIndex = 13;
@@ -339,12 +351,13 @@ namespace ProcessPlugins.TvMovie
       // 
       // mpGroupBoxGeneral
       // 
+      this.mpGroupBoxGeneral.Controls.Add(this.checkBoxAdditionalInfo);
       this.mpGroupBoxGeneral.Controls.Add(this.checkBoxShowAudioFormat);
       this.mpGroupBoxGeneral.Controls.Add(this.checkBoxUseShortDesc);
       this.mpGroupBoxGeneral.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBoxGeneral.Location = new System.Drawing.Point(16, 16);
       this.mpGroupBoxGeneral.Name = "mpGroupBoxGeneral";
-      this.mpGroupBoxGeneral.Size = new System.Drawing.Size(472, 80);
+      this.mpGroupBoxGeneral.Size = new System.Drawing.Size(472, 100);
       this.mpGroupBoxGeneral.TabIndex = 0;
       this.mpGroupBoxGeneral.TabStop = false;
       this.mpGroupBoxGeneral.Text = "General";
@@ -353,7 +366,7 @@ namespace ProcessPlugins.TvMovie
       // 
       this.checkBoxShowAudioFormat.AutoSize = true;
       this.checkBoxShowAudioFormat.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxShowAudioFormat.Location = new System.Drawing.Point(16, 48);
+      this.checkBoxShowAudioFormat.Location = new System.Drawing.Point(16, 71);
       this.checkBoxShowAudioFormat.Name = "checkBoxShowAudioFormat";
       this.checkBoxShowAudioFormat.Size = new System.Drawing.Size(112, 17);
       this.checkBoxShowAudioFormat.TabIndex = 12;
@@ -370,6 +383,7 @@ namespace ProcessPlugins.TvMovie
       this.checkBoxUseShortDesc.TabIndex = 11;
       this.checkBoxUseShortDesc.Text = "Use short descriptions";
       this.checkBoxUseShortDesc.UseVisualStyleBackColor = true;
+      this.checkBoxUseShortDesc.CheckedChanged += new System.EventHandler(this.checkBoxUseShortDesc_CheckedChanged);
       // 
       // mpBeveledLine1
       // 
@@ -387,16 +401,17 @@ namespace ProcessPlugins.TvMovie
       this.openFileDialog.Filter = "TV Movie Database|*.mdb";
       this.openFileDialog.RestoreDirectory = true;
       // 
-      // labelNote
+      // checkBoxAdditionalInfo
       // 
-      this.labelNote.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.labelNote.AutoSize = true;
-      this.labelNote.Location = new System.Drawing.Point(256, 296);
-      this.labelNote.Name = "labelNote";
-      this.labelNote.Size = new System.Drawing.Size(223, 13);
-      this.labelNote.TabIndex = 6;
-      this.labelNote.Text = "Note: Use doubleclick to map/unmap stations";
-      this.labelNote.TextAlign = System.Drawing.ContentAlignment.TopRight;
+      this.checkBoxAdditionalInfo.AutoSize = true;
+      this.checkBoxAdditionalInfo.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxAdditionalInfo.Location = new System.Drawing.Point(16, 48);
+      this.checkBoxAdditionalInfo.Name = "checkBoxAdditionalInfo";
+      this.checkBoxAdditionalInfo.Size = new System.Drawing.Size(222, 17);
+      this.checkBoxAdditionalInfo.TabIndex = 13;
+      this.checkBoxAdditionalInfo.Text = "Put additional info into the description field";
+      this.checkBoxAdditionalInfo.UseVisualStyleBackColor = true;
+      this.checkBoxAdditionalInfo.CheckedChanged += new System.EventHandler(this.checkBoxAdditionalInfo_CheckedChanged);
       // 
       // TvMovieSettings
       // 
@@ -465,6 +480,7 @@ namespace ProcessPlugins.TvMovie
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBoxDescriptions;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxSlowImport;
     private MediaPortal.UserInterface.Controls.MPLabel labelNote;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAdditionalInfo;
   }
 }
 
