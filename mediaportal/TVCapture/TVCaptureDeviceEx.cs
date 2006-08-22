@@ -1768,6 +1768,10 @@ namespace MediaPortal.TV.Recording
     {
       if (_friendlyName != null && _friendlyName != String.Empty)
       {
+        ServiceProvider services = GlobalServiceProvider.Instance;
+        ILog log = services.Get<ILog>();
+        IConfig _config = services.Get<IConfig>();
+
         string filename = String.Format(_config.Get(Config.Options.DatabasePath) + @"card_{0}.xml", _friendlyName);
         using (MediaPortal.Profile.Settings xmlWriter = new MediaPortal.Profile.Settings(filename))
         {
