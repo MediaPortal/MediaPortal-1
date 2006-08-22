@@ -312,7 +312,7 @@ namespace ProcessPlugins.TvMovie
       {
         XmlDocument doc = new XmlDocument();
         doc.Load(_xmlFile);
-        XmlNodeList listChannels = doc.DocumentElement.SelectNodes("/channellist/channel");
+        XmlNodeList listChannels = doc.DocumentElement.SelectNodes("//channellist/channel");
         foreach (XmlNode channel in listChannels)
         {
           string channelName = (string)channel.Attributes["name"].Value;
@@ -324,37 +324,42 @@ namespace ProcessPlugins.TvMovie
             foreach (XmlNode station in listStations)
             {
               string stationName = (string)station.Attributes["name"].Value;
-              TreeNode stationNode = (TreeNode)FindStation(stationName).Clone();
-              ChannelInfo channelInfo = new ChannelInfo();
-              if (stationNode != null)
+              if (FindStation(stationName) != null)
               {
-                XmlNode timesharing = station.SelectSingleNode("timesharing");
-                string start = "00:00";
-                string end = "00:00";
-                if (timesharing != null)
+                TreeNode stationNode = (TreeNode)FindStation(stationName).Clone();
+                ChannelInfo channelInfo = new ChannelInfo();
+                if (stationNode != null)
                 {
-                  start = timesharing.Attributes["start"].Value;
-                  end = timesharing.Attributes["end"].Value;
+                  XmlNode timesharing = station.SelectSingleNode("timesharing");
+                  string start = "00:00";
+                  string end = "00:00";
+                  if (timesharing != null)
+                  {
+                    start = timesharing.Attributes["start"].Value;
+                    end = timesharing.Attributes["end"].Value;
+                  }
+
+                  if (start != "00:00" || end != "00:00")
+                    stationNode.Text = string.Format("{0} ({1}-{2})", stationName, start, end);
+                  else
+                    stationNode.Text = string.Format("{0}", stationName);
+
+                  channelInfo.Start = start;
+                  channelInfo.End = end;
+                  channelInfo.Name = stationName;
+
+                  stationNode.Tag = channelInfo;
+
+                  if (listStations.Count > 1)
+                    stationNode.ForeColor = Color.Green;
+                  else
+                    stationNode.ForeColor = Color.Blue;
+                  channelNode.Nodes.Add(stationNode);
+                  channelNode.Expand();
                 }
-
-                if (start != "00:00" || end != "00:00")
-                  stationNode.Text = string.Format("{0} ({1}-{2})", stationName, start, end);
-                else
-                  stationNode.Text = string.Format("{0}", stationName);
-
-                channelInfo.Start = start;
-                channelInfo.End = end;
-                channelInfo.Name = stationName;
-
-                stationNode.Tag = channelInfo;
-
-                if (listStations.Count > 1)
-                  stationNode.ForeColor = Color.Green;
-                else
-                  stationNode.ForeColor = Color.Blue;
-                channelNode.Nodes.Add(stationNode);
-                channelNode.Expand();
               }
+              else
+                log.Warn("TVMovie plugin: Channel {0} no longer present in Database - ignoring", stationName);
             }
           }
         }
