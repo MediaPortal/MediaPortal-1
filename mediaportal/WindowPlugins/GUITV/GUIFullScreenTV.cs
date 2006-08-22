@@ -595,8 +595,17 @@ namespace MediaPortal.GUI.TV
             if ( g_Player.IsTimeShifting )
             {
               g_Player.Speed = MediaPortal.Util.Utils.GetNextRewindSpeed(g_Player.Speed);
-              if ( g_Player.Paused )
-                g_Player.Pause();
+              if (g_Player.Paused)
+              {
+                if (g_Player.CanSeek)
+                {
+                  double dPos = g_Player.CurrentPosition;
+                  if (dPos > 1)
+                  {
+                    g_Player.SeekAbsolute(dPos - 0.25d);
+                  }
+                }
+              }
 
               ScreenStateChanged();
               UpdateGUI();
@@ -609,8 +618,17 @@ namespace MediaPortal.GUI.TV
             if ( g_Player.IsTimeShifting )
             {
               g_Player.Speed = MediaPortal.Util.Utils.GetNextForwardSpeed(g_Player.Speed);
-              if ( g_Player.Paused )
-                g_Player.Pause();
+              if (g_Player.Paused)
+              {
+                if (g_Player.CanSeek)
+                {
+                  double dPos = g_Player.CurrentPosition;
+                  if (g_Player.Duration - dPos > 1)
+                  {
+                    g_Player.SeekAbsolute(dPos + 0.25d);
+                  }
+                }
+              }
 
               ScreenStateChanged();
               UpdateGUI();

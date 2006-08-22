@@ -603,15 +603,37 @@ namespace MediaPortal.GUI.Video
 
         case Action.ActionType.ACTION_REWIND:
           {
-            g_Player.Speed = MediaPortal.Util.Utils.GetNextRewindSpeed(g_Player.Speed);
-
+            if (g_Player.Paused)
+            {
+              if (g_Player.CanSeek)
+              {
+                double dPos = g_Player.CurrentPosition;
+                if (dPos > 1)
+                {
+                  g_Player.SeekAbsolute(dPos - 0.25d);
+                }
+              }
+            }
+            else
+              g_Player.Speed = MediaPortal.Util.Utils.GetNextRewindSpeed(g_Player.Speed);
           }
           break;
 
         case Action.ActionType.ACTION_FORWARD:
           {
-            g_Player.Speed = MediaPortal.Util.Utils.GetNextForwardSpeed(g_Player.Speed);
-
+            if (g_Player.Paused)
+            {
+              if (g_Player.CanSeek)
+              {
+                double dPos = g_Player.CurrentPosition;
+                if (g_Player.Duration - dPos > 1)
+                {
+                  g_Player.SeekAbsolute(dPos + 0.25d);
+                }
+              }
+            }
+            else
+              g_Player.Speed = MediaPortal.Util.Utils.GetNextForwardSpeed(g_Player.Speed);            
           }
           break;
 
