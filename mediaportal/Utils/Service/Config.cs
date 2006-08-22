@@ -53,62 +53,82 @@ namespace MediaPortal.Utils.Services
 
     /// <summary>
     /// Load the content of the Config File into the dictionary
+    /// First we look for the file in MyDocuments of the logged on user. If file is not there or invalid, 
+    /// we use the one from the MediaPortal InstallPath.
     /// </summary>
     /// <returns></returns>
     public bool LoadConfig()
     {
-      // For the beginning we asume that it is located in the MP install path. need to think further what's the best method to store it
-      //
+      if (LoadPath(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Team MediaPortal\"))
+        return true;
+      else if (LoadPath(Get(Options.BasePath)))
+        return true;
+      else 
+        return false;
+    }
+
+    /// <summary>
+    /// Load the Path information from the Config File into the dictionary
+    /// </summary>
+    /// <returns></returns>
+    private bool LoadPath(string configDir)
+    {
       // Make sure the file exists before we try to do any processing
-      //
-      string strFileName = Get(Options.BasePath) + "MediaPortalConfig.xml";
+      string strFileName = configDir + "MediaPortalConfig.xml";
       if (File.Exists(strFileName))
       {
-        XmlDocument xml = new XmlDocument();
-        xml.Load(strFileName);
-        if (xml.DocumentElement == null)
+        try
         {
-          return false;
-        }
-        XmlNodeList dirList = xml.DocumentElement.SelectNodes("/Config/Dir");
-        if (dirList == null || dirList.Count == 0)
-        {
-          return false;
-        }
-        foreach (XmlNode nodeDir in dirList)
-        {
-          if (nodeDir.Attributes != null)
+          XmlDocument xml = new XmlDocument();
+          xml.Load(strFileName);
+          if (xml.DocumentElement == null)
           {
-            XmlNode dirId = nodeDir.Attributes.GetNamedItem("id");
-            if (dirId != null && dirId.InnerText != null && dirId.InnerText.Length > 0)
+            return false;
+          }
+          XmlNodeList dirList = xml.DocumentElement.SelectNodes("/Config/Dir");
+          if (dirList == null || dirList.Count == 0)
+          {
+            return false;
+          }
+          foreach (XmlNode nodeDir in dirList)
+          {
+            if (nodeDir.Attributes != null)
             {
-              XmlNode path = nodeDir.SelectSingleNode("Path");
-              if (path != null)
+              XmlNode dirId = nodeDir.Attributes.GetNamedItem("id");
+              if (dirId != null && dirId.InnerText != null && dirId.InnerText.Length > 0)
               {
-                string strPath = path.InnerText;
-                // Check to see, if the location was specified with an absolute or relative oath.
-                // In case of relative path, prefix it with the startuppath                 
-                if (!Path.IsPathRooted(path.InnerText))
+                XmlNode path = nodeDir.SelectSingleNode("Path");
+                if (path != null)
                 {
-                  strPath = Get(Options.BasePath) + path.InnerText;
-                }
-                // See if we got a slash at the end. If not add one.
-                if (!strPath.EndsWith(@"\"))
-                  strPath += @"\";
-                try
-                {
-                  Set((Options)Enum.Parse(typeof(Options), dirId.InnerText), strPath);
-                }
-                catch (Exception)
-                {
-                  return false;
+                  string strPath = path.InnerText;
+                  // Check to see, if the location was specified with an absolute or relative oath.
+                  // In case of relative path, prefix it with the startuppath                 
+                  if (!Path.IsPathRooted(path.InnerText))
+                  {
+                    strPath = Get(Options.BasePath) + path.InnerText;
+                  }
+                  // See if we got a slash at the end. If not add one.
+                  if (!strPath.EndsWith(@"\"))
+                    strPath += @"\";
+                  try
+                  {
+                    Set((Options)Enum.Parse(typeof(Options), dirId.InnerText), strPath);
+                  }
+                  catch (Exception)
+                  {
+                    return false;
+                  }
                 }
               }
             }
-          }
 
+          }
+          return true;
         }
-        return true;
+        catch (Exception) 
+        {
+          return false;
+        }
       }
       return false;
     }
