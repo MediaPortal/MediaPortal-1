@@ -38,8 +38,17 @@ namespace MediaPortal.TVGuideScheduler
     public static void Main(string[] options)
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
-      ILog log = services.Get<ILog>();
-      IConfig _config = services.Get<IConfig>();
+      IConfig _config = new Config(System.IO.Directory.GetCurrentDirectory());
+      if (!_config.LoadConfig())
+      {
+        Console.WriteLine("Missing or Invalid MediaPortalConfig.xml file. MediaPortal cannot run without that file.");
+        return;
+      }
+      services.Add<IConfig>(_config);
+
+      LogFile logFile = new LogFile(_config.Get(Config.Options.LogPath), "MediaPortal");
+      ILog log = new MediaPortal.Utils.Services.Log(logFile.GetSharedStream(), MediaPortal.Utils.Services.Log.Level.Debug);
+      services.Add<ILog>(log);
 
       string grabber = null;
       int grabberDays;

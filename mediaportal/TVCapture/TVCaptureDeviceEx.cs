@@ -628,6 +628,7 @@ namespace MediaPortal.TV.Recording
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       ILog log = services.Get<ILog>();
+      IConfig _config = services.Get<IConfig>();
 
       if (_currentGraphState != State.Viewing) return false;
       bool result = false;
@@ -656,6 +657,7 @@ namespace MediaPortal.TV.Recording
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       ILog log = services.Get<ILog>();
+      IConfig _config = services.Get<IConfig>();
 
       if (channelName == null || channelName.Length == 0)
       {
@@ -914,6 +916,7 @@ namespace MediaPortal.TV.Recording
 
       ServiceProvider services = GlobalServiceProvider.Instance;
       ILog log = services.Get<ILog>();
+      IConfig _config = services.Get<IConfig>();
       log.Info("TVCapture.StopRecording() Card:{0}", ID);
       // todo : stop recorder
       _currentGraph.StopRecording();
@@ -987,6 +990,7 @@ namespace MediaPortal.TV.Recording
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       ILog log = services.Get<ILog>();
+      IConfig _config = services.Get<IConfig>();
 
       if (_currentGraphState != State.Initialized && _currentGraphState != State.Timeshifting)
       {
@@ -1043,6 +1047,7 @@ namespace MediaPortal.TV.Recording
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       ILog log = services.Get<ILog>();
+      IConfig _config = services.Get<IConfig>();
 
       // set postrecording status
       if (IsRecording)
@@ -1092,6 +1097,7 @@ namespace MediaPortal.TV.Recording
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       ILog log = services.Get<ILog>();
+      IConfig _config = services.Get<IConfig>();
 
       log.Info("TVCapture.Stop() Card:{0}", ID);
       StopRecording();
@@ -1110,6 +1116,7 @@ namespace MediaPortal.TV.Recording
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       ILog log = services.Get<ILog>();
+      IConfig _config = services.Get<IConfig>();
 
       if (Allocated) return false;
       if (_currentGraph == null)
@@ -1138,6 +1145,7 @@ namespace MediaPortal.TV.Recording
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       ILog log = services.Get<ILog>();
+      IConfig _config = services.Get<IConfig>();
 
       if (_currentGraph != null)
       {
@@ -1162,6 +1170,7 @@ namespace MediaPortal.TV.Recording
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       ILog log = services.Get<ILog>();
+      IConfig _config = services.Get<IConfig>();
 
       StopEpgGrabbing();
       StopRadio();
@@ -1230,6 +1239,7 @@ namespace MediaPortal.TV.Recording
 
       ServiceProvider services = GlobalServiceProvider.Instance;
       ILog log = services.Get<ILog>();
+      IConfig _config = services.Get<IConfig>();
       //stopping timeshifting will also remove the live.tv file 
       log.Info("TVCapture.StopTimeShifting() Card:{0}", ID);
       bool result = _currentGraph.StopTimeShifting();
@@ -1247,6 +1257,7 @@ namespace MediaPortal.TV.Recording
 
       ServiceProvider services = GlobalServiceProvider.Instance;
       ILog log = services.Get<ILog>();
+      IConfig _config = services.Get<IConfig>();
       log.Info("TVCapture.Tune({0}", channel.Name);
       _currentGraph.TuneChannel(channel);
       _lastChannelChange = DateTime.Now;
@@ -1416,6 +1427,7 @@ namespace MediaPortal.TV.Recording
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       ILog log = services.Get<ILog>();
+      IConfig _config = services.Get<IConfig>();
       log.Info("TvCaptureDevice:RebuildGraph() Card:{0} chan:{1}", ID, _currentTvChannelName);
 
       //stop playback of this channel
@@ -1510,6 +1522,7 @@ namespace MediaPortal.TV.Recording
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       ILog log = services.Get<ILog>();
+      IConfig _config = services.Get<IConfig>();
       log.Info("TVCapture.StartRecording() Card:{0}  content:{1}", ID, recording.IsContentRecording);
 
       TVProgram prog = null;
