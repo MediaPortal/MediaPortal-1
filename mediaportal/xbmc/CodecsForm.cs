@@ -35,6 +35,7 @@ using DShowNET;
 using DShowNET.Helper;
 using DirectShowLib;
 using Microsoft.Win32;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal
 {
@@ -56,6 +57,7 @@ namespace MediaPortal
     private System.Windows.Forms.LinkLabel LinkLabel4;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBox1;
     private MediaPortal.UserInterface.Controls.MPButton button1;
+    static IConfig _config;
 
     /// <summary>
     /// Required designer variable.
@@ -64,6 +66,8 @@ namespace MediaPortal
 
     public CodecsForm()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _config = services.Get<IConfig>();
       //
       // Required for Windows Form Designer support
       //
@@ -255,7 +259,7 @@ namespace MediaPortal
 
     private void button1_Click(object sender, System.EventArgs e)
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         xmlreader.SetValueAsBool("general", "checkcodecs", !checkBox1.Checked);
       }
@@ -290,7 +294,7 @@ namespace MediaPortal
 
     public bool AreCodecsInstalled()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         bool checkCodecs = xmlreader.GetValueAsBool("general", "checkcodecs", true);
         if (!checkCodecs) return true;

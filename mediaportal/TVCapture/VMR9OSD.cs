@@ -41,9 +41,10 @@ namespace MediaPortal.TV.Recording
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
 
       ReadSkinFile();
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         int alpha = xmlreader.GetValueAsInt("vmr9OSDSkin", "alphaValue", 10);
         if (alpha > 0)
@@ -108,6 +109,7 @@ namespace MediaPortal.TV.Recording
 
     bool _legacyVolumeOsd = false;
     protected ILog _log;
+    protected IConfig _config;
 
     #endregion
 

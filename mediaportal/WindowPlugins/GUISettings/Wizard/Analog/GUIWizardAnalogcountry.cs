@@ -66,7 +66,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 
 		void DoScan(GUIListItem item)
 		{
-			using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
 			{
 				xmlwriter.SetValue("capture", "countryname", item.Label);
 				xmlwriter.SetValue("capture", "country", item.ItemId.ToString());

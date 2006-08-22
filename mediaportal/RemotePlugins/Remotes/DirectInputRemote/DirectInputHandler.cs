@@ -118,11 +118,13 @@ namespace MediaPortal.InputDevices
     public event diStateChangeText OnStateChangeText = null;
 
     protected ILog _log;
+    protected IConfig _config;
 
     public DirectInputHandler()
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
 
       //
       // TODO: Add constructor logic here
@@ -607,7 +609,7 @@ namespace MediaPortal.InputDevices
 
     public void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         _active = xmlreader.GetValueAsBool("remote", "DirectInput", false);
         string strGUID = xmlreader.GetValueAsString("remote", "DirectInputDeviceGUID", "");
@@ -623,7 +625,7 @@ namespace MediaPortal.InputDevices
 
     public void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         xmlwriter.SetValueAsBool("remote", "DirectInput", _active);
         xmlwriter.SetValue("remote", "DirectInputDeviceGUID", SelectedDeviceGUID);

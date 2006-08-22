@@ -49,12 +49,14 @@ namespace MediaPortal.HCWBlaster
 
 		private HCWIRBlaster irblaster;
     protected ILog _log;
+    protected IConfig _config;
 		#region MPInteraction
 
 		public HCWBlaster()
 		{
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
 			//
 			//irblaster = new HCWIRBlaster();
 		}
@@ -90,7 +92,7 @@ namespace MediaPortal.HCWBlaster
 
 		private void LoadSettings()
 		{
-			using(MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+			using(MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
 			{
 				_ExLogging = xmlreader.GetValueAsBool("HCWBlaster", "ExtendedLogging", false);
 			}

@@ -97,7 +97,7 @@ namespace MediaPortal.GUI.Music
     {
       playlistPlayer = PlayListPlayer.SingletonPlayer;
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         string playNowJumpTo = xmlreader.GetValueAsString("musicmisc", "playnowjumpto", "nowplaying");
        
@@ -166,7 +166,7 @@ namespace MediaPortal.GUI.Music
 
     protected virtual void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         currentView = (View)xmlreader.GetValueAsInt(SerializeName, "view", (int)View.List);
         currentViewRoot = (View)xmlreader.GetValueAsInt(SerializeName, "viewroot", (int)View.List);
@@ -188,7 +188,7 @@ namespace MediaPortal.GUI.Music
 
     protected virtual void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         xmlwriter.SetValue(SerializeName, "view", (int)currentView);
         xmlwriter.SetValue(SerializeName, "viewroot", (int)currentViewRoot);
@@ -556,7 +556,7 @@ namespace MediaPortal.GUI.Music
       SaveSettings();
 
       // Save view
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         xmlwriter.SetValue("music", "startWindow", MusicState.StartWindow.ToString());
         xmlwriter.SetValue("music", "startview", MusicState.View);

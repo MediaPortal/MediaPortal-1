@@ -87,6 +87,7 @@ namespace MediaPortal.TV.Database
     Stats m_stats = new Stats();
     int _backgroundDelay = 0;
     protected ILog _log;
+    protected IConfig _config;
 
     static bool m_bImport = false;
     public XMLTVImport()
@@ -98,6 +99,7 @@ namespace MediaPortal.TV.Database
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
 
       _backgroundDelay = backgroundDelay;
     }
@@ -123,7 +125,7 @@ namespace MediaPortal.TV.Database
       TVDatabase.SupressEvents = true;
       bool bUseTimeZone = false;
       int iTimeZoneCorrection = 0;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         bUseTimeZone = xmlreader.GetValueAsBool("xmltv", "usetimezone", true);
         int hours = xmlreader.GetValueAsInt("xmltv", "timezonecorrectionhours", 0);
@@ -252,7 +254,7 @@ namespace MediaPortal.TV.Database
                       if (nodeSrc != null)
                       {
                         string strURL = htmlUtil.ConvertHTMLToAnsi(nodeSrc.InnerText);
-                        string strLogoPng = MediaPortal.Util.Utils.GetCoverArtName(@"thumbs\tv\logos", chan.Name);
+                        string strLogoPng = MediaPortal.Util.Utils.GetCoverArtName(_config.Get(Config.Options.ThumbsPath) + @"tv\logos", chan.Name);
                         if (!System.IO.File.Exists(strLogoPng))
                         {
                           MediaPortal.Util.Utils.DownLoadImage(strURL, strLogoPng, System.Drawing.Imaging.ImageFormat.Png);

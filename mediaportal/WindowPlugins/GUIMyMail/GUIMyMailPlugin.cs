@@ -98,7 +98,6 @@ namespace MyMail
     ArrayList m_strUserName = new ArrayList();
     ArrayList m_strUserPass = new ArrayList();
     ArrayList m_knownMails = new ArrayList();
-
     #endregion
     #region ISetupForm
     public bool HasSetup()
@@ -473,7 +472,7 @@ namespace MyMail
     }
     void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         xmlwriter.SetValueAsBool("mymail", "autoCheck", m_bAutoCheck);
       }
@@ -482,7 +481,7 @@ namespace MyMail
     }
     void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         int boxCount = 0;
         MailBox tmpBox;

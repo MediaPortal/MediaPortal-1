@@ -29,6 +29,7 @@ using MediaPortal.Database;
 using Programs.Utils;
 using ProgramsDatabase;
 using SQLite.NET;
+using MediaPortal.Utils.Services;
 
 namespace WindowPlugins.GUIPrograms
 {
@@ -40,10 +41,13 @@ namespace WindowPlugins.GUIPrograms
     ViewDefinition currentView = null;
     int currentLevel = 0;
     ArrayList views = new ArrayList();
+    static IConfig _config;
 
     public ProgramViewHandler()
     {
-      if (!System.IO.File.Exists("programViews3.xml"))
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _config = services.Get<IConfig>();
+      if (!System.IO.File.Exists(_config.Get(Config.Options.ConfigPath) + "programViews3.xml"))
       {
         FilterDefinition filter1 = null;
         FilterDefinition filter2 = null;
@@ -113,7 +117,7 @@ namespace WindowPlugins.GUIPrograms
         listViews.Add(viewMostLaunched);
         listViews.Add(viewMostRecentlyLaunched);
 
-        using(FileStream fileStream = new FileStream("programViews2.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
+        using (FileStream fileStream = new FileStream(_config.Get(Config.Options.ConfigPath) + "programViews2.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
         {
           SoapFormatter formatter = new SoapFormatter();
           formatter.Serialize(fileStream, listViews);
@@ -121,9 +125,9 @@ namespace WindowPlugins.GUIPrograms
         }
         
       }
-      if (System.IO.File.Exists("programViews2.xml"))
+      if (System.IO.File.Exists(_config.Get(Config.Options.ConfigPath) + "programViews2.xml"))
       {
-        using (FileStream fileStream = new FileStream("programViews2.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+        using (FileStream fileStream = new FileStream(_config.Get(Config.Options.ConfigPath) + "programViews2.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
         {
           try
           {

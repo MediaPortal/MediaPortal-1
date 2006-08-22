@@ -49,6 +49,7 @@ namespace Wikipedia
     private string imagelocal = string.Empty;
 
     private ILog _log;
+    private IConfig _config;
     #endregion
 
     #region constructors
@@ -60,6 +61,7 @@ namespace Wikipedia
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
       SetLanguage(language);
       this.imagename = imagename;
       GetImageUrl();
@@ -86,7 +88,7 @@ namespace Wikipedia
     {
       if (language == "Default")
       {
-        MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml");
+        MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml");
         language = xmlreader.GetValueAsString("skin", "language", "English");
       }
       switch (language)
@@ -122,7 +124,7 @@ namespace Wikipedia
     /// <returns>String: filename of the downloaded image.</returns>
     public string GetImageFilename()
     {
-      string imagelocal = Application.StartupPath + @"\thumbs\wikipedia\" + imagename;
+      string imagelocal = _config.Get(Config.Options.ThumbsPath) + @"wikipedia\" + imagename;
       return imagelocal;
     }
 

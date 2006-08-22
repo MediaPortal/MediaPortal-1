@@ -83,9 +83,9 @@ namespace MediaPortal.GUI.Settings.Wizard
 						cardsDetected+="SkyStar 2 DVB-S";
 
 
-						string filename=String.Format(@"database\card_{0}.xml",cd.FriendlyName);
+            string filename = String.Format(_config.Get(MediaPortal.Utils.Services.Config.Options.DatabasePath) + "card_{0}.xml", cd.FriendlyName);
 						// save settings for get the filename in mp.xml
-						using(MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+            using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
 						{
 							xmlwriter.SetValue("dvb_ts_cards","filename",filename);
 						}
@@ -115,9 +115,9 @@ namespace MediaPortal.GUI.Settings.Wizard
             cardsDetected += "Techno Trend Premium";
 
 
-            string filename = String.Format(@"database\card_{0}.xml", cd.FriendlyName);
+            string filename = String.Format(_config.Get(MediaPortal.Utils.Services.Config.Options.DatabasePath) + "card_{0}.xml", cd.FriendlyName);
             // save settings for get the filename in mp.xml
-            using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+            using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
             {
               xmlwriter.SetValue("dvb_ts_cards", "filename", filename);
             }
@@ -165,7 +165,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 
 		void SaveCaptureCards(ArrayList availableCards)
 		{
-			using(FileStream fileStream = new FileStream("capturecards.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
+      using (FileStream fileStream = new FileStream(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "capturecards.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
 			{
 				SoapFormatter formatter = new SoapFormatter();
 				formatter.Serialize(fileStream, availableCards);

@@ -51,6 +51,7 @@ namespace MediaPortal.InputDevices
     bool _isLoaded = false;
     bool _basicHome = false;
     protected ILog _log;
+    protected IConfig _config;
 
     /// <summary>
     /// Mapping successful loaded
@@ -134,8 +135,9 @@ namespace MediaPortal.InputDevices
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
 
-      using (Profile.Settings xmlreader = new Profile.Settings("MediaPortal.xml"))
+      using (Profile.Settings xmlreader = new Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
         _basicHome = xmlreader.GetValueAsBool("general", "startbasichome", false);
 
       string xmlPath = GetXmlPath(deviceXmlName);
@@ -182,7 +184,7 @@ namespace MediaPortal.InputDevices
     public string GetXmlPath(string deviceXmlName)
     {
       string path = string.Empty;
-      string pathCustom = "InputDeviceMappings\\custom\\" + deviceXmlName + ".xml";
+      string pathCustom = _config.Get(Config.Options.CustomInputDevicePath) + deviceXmlName + ".xml";
       string pathDefault = "InputDeviceMappings\\defaults\\" + deviceXmlName + ".xml";
 
       if (System.IO.File.Exists(pathCustom) && CheckXmlFile(pathCustom))

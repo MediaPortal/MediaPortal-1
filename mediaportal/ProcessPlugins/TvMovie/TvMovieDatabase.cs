@@ -47,7 +47,7 @@ namespace ProcessPlugins.TvMovie
     private ArrayList _channelList = null;
     private int _programsCounter = 0;
 
-    private const string _xmlFile = "TVMovieMapping.xml";
+    static string _xmlFile;
 
 
     public delegate void ProgramsChanged(int value, int maximum, string text);
@@ -55,6 +55,7 @@ namespace ProcessPlugins.TvMovie
     public delegate void StationsChanged(int value, int maximum, string text);
     public event StationsChanged OnStationsChanged;
     protected ILog _log;
+    protected IConfig _config;
 
  
     private struct Mapping
@@ -225,6 +226,8 @@ namespace ProcessPlugins.TvMovie
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
+      _xmlFile = _config.Get(Config.Options.ConfigPath) + "TVMovieMapping.xml";
 
       string dataProviderString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source={0}";
 
@@ -405,7 +408,7 @@ namespace ProcessPlugins.TvMovie
       if (_databaseConnection == null)
         return 0;
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         useShortProgramDesc = xmlreader.GetValueAsBool("tvmovie", "shortprogramdesc", false);
         showAudioFormat = xmlreader.GetValueAsBool("tvmovie", "showaudioformat", false);
@@ -546,7 +549,7 @@ namespace ProcessPlugins.TvMovie
           else
             return false;
 
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
           if (Convert.ToInt64(xmlreader.GetValueAsString("tvmovie", "lastupdate", "0")) == lastUpdate)
             return false;
 
@@ -621,7 +624,7 @@ namespace ProcessPlugins.TvMovie
             lastUpdate = Convert.ToInt64(regLastUpdate.Substring(8));
           }
 
-        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
           xmlwriter.SetValue("tvmovie", "lastupdate", lastUpdate);
 
         MediaPortal.Profile.Settings.SaveCache();

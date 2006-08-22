@@ -56,7 +56,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 		void DoScan(string country, int id)
 		{
 			GUIPropertyManager.SetProperty("#WizardCountry",country);
-			using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
 			{
 				xmlwriter.SetValue("capture", "countryname", country);
 				xmlwriter.SetValue("capture", "country", id.ToString());

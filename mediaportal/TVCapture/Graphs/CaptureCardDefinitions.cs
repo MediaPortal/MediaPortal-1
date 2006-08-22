@@ -275,9 +275,10 @@ namespace TVCapture
 
       ServiceProvider services = GlobalServiceProvider.Instance;
       ILog log = services.Get<ILog>();
+      IConfig _config = services.Get<IConfig>();
 
       XmlDocument doc = new XmlDocument();
-      if (!System.IO.File.Exists(@"CaptureCardDefinitions.xml"))
+      if (!System.IO.File.Exists(_config.Get(Config.Options.ConfigPath) + "CaptureCardDefinitions.xml"))
       {
         log.Info(" Error: CaptureCardDefinitions.xml file not found!");
         log.Info("CaptureCardDefinitions:ctor OUT");
@@ -286,7 +287,7 @@ namespace TVCapture
 
       try
       {
-        doc.Load("CaptureCardDefinitions.xml");
+        doc.Load(_config.Get(Config.Options.ConfigPath) + "CaptureCardDefinitions.xml");
       }
       catch (Exception ex)
       {

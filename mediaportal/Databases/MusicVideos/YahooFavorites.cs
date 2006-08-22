@@ -31,6 +31,7 @@ using System.Xml;
 using System.IO;
 using MediaPortal.GUI.Library;
 using MediaPortal.MusicVideos.Database;
+using MediaPortal.Utils.Services;
 
 
 namespace MediaPortal.MusicVideos.Database
@@ -41,11 +42,14 @@ namespace MediaPortal.MusicVideos.Database
     //protected Dictionary<string, List<YahooVideo>> moFavoriteTable;
     protected bool mbNameEnabled = false;
     protected string msSelectedFavoriteName = "Default";
-
+    static IConfig _config;
+    static ILog _log;
 
     public YahooFavorites()
     {
-
+      ServiceProvider loServices = GlobalServiceProvider.Instance;
+      _log = loServices.Get<ILog>();
+      _config = loServices.Get<IConfig>();
     }
 
     public ArrayList getFavoriteNames()
@@ -118,8 +122,8 @@ namespace MediaPortal.MusicVideos.Database
 
       try
       {
-        string filename = "MusicVideoFavorites.xml";
-        string newfilename = "MusicVideoFavorites.xml.arc";
+        string filename = _config.Get(Config.Options.ConfigPath) + "MusicVideoFavorites.xml";
+        string newfilename = _config.Get(Config.Options.ConfigPath) + "MusicVideoFavorites.xml.arc";
         //rename the file
         File.Move(filename, newfilename);
 
@@ -140,7 +144,7 @@ namespace MediaPortal.MusicVideos.Database
         }
         catch (System.IO.FileNotFoundException)
         {
-          Log.Write("in FileNotFound.");
+          _log.Debug("in FileNotFound.");
           //if file is not found, create a new xml file
           XmlTextWriter xmlWriter = new XmlTextWriter(filename, System.Text.Encoding.UTF8);
           xmlWriter.Formatting = Formatting.Indented;
@@ -177,15 +181,15 @@ namespace MediaPortal.MusicVideos.Database
       }
       catch (Exception e)
       {
-        Log.Write(e);
-        Log.Write("failed.");
+        _log.Error(e);
+        _log.Error("failed.");
       }
 
     }
     public void addFavorite(YahooVideo video)
     {
 
-      Log.Write("in addFav.");
+      _log.Debug("in addFav.");
       try
       {
         MusicVideoDatabase loDb = MusicVideoDatabase.getInstance();
@@ -196,20 +200,20 @@ namespace MediaPortal.MusicVideos.Database
         }
         else
         {
-          Log.Write("{0} could not be added to favorite {1}.", video.songName, msSelectedFavoriteName);
+          _log.Error("{0} could not be added to favorite {1}.", video.songName, msSelectedFavoriteName);
         }
 
       }
       catch (Exception e)
       {
-        Log.Write(e);
-        Log.Write("failed.");
+        _log.Error(e);
+        _log.Error("failed.");
       }
     }
     public void removeFavorite(YahooVideo video)
     {
 
-      Log.Write("in removeFav.");
+      _log.Debug("in removeFav.");
       try
       {
         MusicVideoDatabase loDb = MusicVideoDatabase.getInstance();
@@ -220,15 +224,15 @@ namespace MediaPortal.MusicVideos.Database
         }
         else
         {
-          Log.Write("{0} could not be removed from favorite {1}", video.songName, msSelectedFavoriteName);
+          _log.Debug("{0} could not be removed from favorite {1}", video.songName, msSelectedFavoriteName);
         }
         moFavoriteList.Remove(video);
 
       }
       catch (Exception e)
       {
-        Log.Write(e);
-        Log.Write("failed.");
+        _log.Error(e);
+        _log.Error("failed.");
       }
     }
   }

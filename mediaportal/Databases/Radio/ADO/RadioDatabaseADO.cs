@@ -35,14 +35,16 @@ namespace MediaPortal.Radio.Database
   {
     SqlConnection _connection;
     protected ILog _log;
+    protected IConfig _config;
 
     public RadioDatabaseADO()
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
 
       string connectionString;
-      using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings("mediaportal.xml"))
+      using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "mediaportal.xml"))
       {
         connectionString = reader.GetValueAsString("database", "connectionstring", SqlServerUtility.DefaultConnectionString);
       }

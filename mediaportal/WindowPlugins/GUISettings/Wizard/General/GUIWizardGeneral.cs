@@ -82,7 +82,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 
 		void LoadSettings()
 		{
-			using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
 			{
                 OnInternetAccess(xmlreader.GetValueAsBool("general", "internetaccess", true));
 								OnUsageType(true);
@@ -93,7 +93,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 
 		void OnNextPage()
 		{
-			using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
 			{
 				xmlwriter.SetValueAsBool("general", "internetaccess", cmInternetYes.Selected);
 

@@ -86,13 +86,15 @@ namespace MediaPortal.MusicImport
 
     Thread EncodeThread;
     static ILog _log;
+    static IConfig _config;
 
     public MusicImport()
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         mp3VBR = xmlreader.GetValueAsBool("musicimport", "mp3vbr", true);
         mp3MONO = xmlreader.GetValueAsBool("musicimport", "mp3mono", false);
@@ -222,7 +224,7 @@ namespace MediaPortal.MusicImport
     {
       string strInput = string.Empty;
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
         strInput = xmlreader.GetValueAsString("musicimport", "format", "%artist%\\%album%\\%track% %title%");
 
       string fileFormat = string.Empty;

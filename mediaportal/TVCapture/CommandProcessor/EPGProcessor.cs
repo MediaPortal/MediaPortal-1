@@ -47,10 +47,16 @@ namespace MediaPortal.TV.Recording
     bool _autoGrabEpg = false;
     DateTime _epgTimer = DateTime.MinValue;
     List<TVChannel> _tvChannelsList = new List<TVChannel>();
+    protected ILog log;
+    protected IConfig _config;
+
     public EPGProcessor()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
       TVDatabase.GetChannels(ref _tvChannelsList);
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         _autoGrabEpg = xmlreader.GetValueAsBool("xmltv", "epgdvb", true);
       }
@@ -111,8 +117,6 @@ namespace MediaPortal.TV.Recording
             if (ts.TotalHours > 2)
             {
               //grab the epg
-              ServiceProvider services = GlobalServiceProvider.Instance;
-              ILog log = services.Get<ILog>();
               log.Info("auto-epg: card:{0} grab epg for channel:{1} expected:{2} hours, last event in tv guide:{3} {4}, last grab :{5} {6}",
                           card.CommercialName,
                           chan.Name, chan.EpgHours, prog.EndTime.ToShortDateString(), prog.EndTime.ToLongTimeString(),

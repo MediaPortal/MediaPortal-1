@@ -36,6 +36,7 @@ namespace WindowPlugins.GUIPrograms
     static XmlNodeList NodeList = null;
     static XmlElement rootElement = null; 
     static ILog _log;
+    static IConfig _config;
 
     static public int NodeCount
     {
@@ -127,13 +128,14 @@ namespace WindowPlugins.GUIPrograms
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
 
-      if (System.IO.File.Exists("FileDetailContents.xml"))
+      if (System.IO.File.Exists(_config.Get(Config.Options.ConfigPath) + "FileDetailContents.xml"))
       {
         try
         {
           XmlDocument document = new XmlDocument();
-          document.Load("FileDetailContents.xml");
+          document.Load(_config.Get(Config.Options.ConfigPath) + "FileDetailContents.xml");
           rootElement = document.DocumentElement;
           if ((rootElement != null) && (rootElement.Name.Equals("contentprofiles")))
           {

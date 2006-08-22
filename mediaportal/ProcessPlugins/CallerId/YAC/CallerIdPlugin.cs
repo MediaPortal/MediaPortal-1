@@ -47,11 +47,13 @@ namespace ProcessPlugins.CallerId
 		private const string SUCCESS_LOADED_AREACODE_XML = "xml file loaded";
 		private Hashtable areaCodeLookup;
     protected ILog _log;
+    protected IConfig _config;
 
 		public CallerIdPlugin()
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
 		}
 
 		private Hashtable AreaCodeToLocationMap
@@ -60,7 +62,7 @@ namespace ProcessPlugins.CallerId
 			{
 				if (areaCodeLookup == null)
 				{
-					string areaCodeXMLFile = "yac-area-codes.xml";
+          string areaCodeXMLFile = _config.Get(Config.Options.ConfigPath) + "yac-area-codes.xml";
 					string npa, location;
 					Hashtable temp = new Hashtable();
 

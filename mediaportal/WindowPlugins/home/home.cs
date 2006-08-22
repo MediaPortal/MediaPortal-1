@@ -172,7 +172,7 @@ namespace MediaPortal.GUI.Home
     {
       base.OnWindowLoaded();
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         m_iDateLayout = xmlreader.GetValueAsInt("home", "datelayout", 0);
         MAX_FRAMES = xmlreader.GetValueAsInt("home", "scrollspeed", 5);
@@ -318,7 +318,7 @@ namespace MediaPortal.GUI.Home
           break;
 
         case GUIMessage.MessageType.GUI_MSG_WRONG_PASSWORD:
-          using (Profile.Settings xmlreader = new Profile.Settings("MediaPortal.xml"))
+          using (Profile.Settings xmlreader = new Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
           {
             if (!xmlreader.GetValueAsBool("general", "hidewrongpin", false))
             {
@@ -1227,7 +1227,7 @@ namespace MediaPortal.GUI.Home
         foreach (ISetupForm setup in plugins)
         {
 
-          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
           {
             bool bHomeDefault = setup.DefaultEnabled();
             bool inhome;

@@ -86,8 +86,8 @@ namespace MediaPortal.RedEyeIR
 		private const string remotefile = "remotevalues.xml";
 		static RedEye instance = null;
 		private string currentChannel = "0";
-    protected ILog _log;
-    protected IConfig _config;
+    static ILog _log;
+    static IConfig _config;
 
 		public OnRemoteCommand RemoteCommandCallback
 		{
@@ -176,6 +176,9 @@ namespace MediaPortal.RedEyeIR
 		{
 			try
 			{
+        ServiceProvider services = GlobalServiceProvider.Instance;
+        _log = services.Get<ILog>();
+        _config = services.Get<IConfig>();
 				if (instance == null)
 					instance = new RedEye(remoteCommandCallback);
 			}

@@ -166,6 +166,7 @@ namespace home
     private MediaPortal.UserInterface.Controls.MPComboBox comboBox3;
     private MediaPortal.UserInterface.Controls.MPButton addConfig;
     protected ILog _log;
+    protected IConfig _config;
 
     #region plugin vars
     public bool CanEnable()		// Indicates whether plugin can be enabled/disabled
@@ -222,6 +223,7 @@ namespace home
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
 
       //
       // Required for Windows Form Designer support
@@ -1373,7 +1375,7 @@ namespace home
     private void SaveAll_Click(object sender, System.EventArgs e)
     {
       saveTree(treeView, Application.StartupPath + @"\menu2.bin");
-      using (MediaPortal.Profile.Settings xmlWriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlWriter = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         int iLayout = 0;
         if (radioButton2.Checked) iLayout = 1;
@@ -1396,7 +1398,7 @@ namespace home
 
     private void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         int iLayout = xmlreader.GetValueAsInt("home", "datelayout", 0);
         if (iLayout == 0) radioButton1.Checked = true;
@@ -1449,7 +1451,7 @@ namespace home
           if (l1 > 0)
           {
             strBtnFile = name.Substring(l1 + 1, (l2 - l1) - 1);
-            pictureBox1.Image = Image.FromFile(System.IO.Directory.GetCurrentDirectory() + "\\skin\\" + skinName + "\\media\\" + strBtnFile, true);
+            pictureBox1.Image = Image.FromFile(_config.Get(Config.Options.SkinPath) + skinName + "\\media\\" + strBtnFile, true);
             groupBox3.Text = strBtnFile;
           }
           label3.Text = "Tag Type";
@@ -1487,7 +1489,7 @@ namespace home
                 label8.Text = "Description";
                 textBox6.Text = tag.description;
                 groupBox3.Text = tag.picture;
-                pictureBox1.Image = Image.FromFile(System.IO.Directory.GetCurrentDirectory() + "\\skin\\" + skinName + "\\media\\" + tag.picture, true);
+                pictureBox1.Image = Image.FromFile(_config.Get(Config.Options.SkinPath) + skinName + "\\media\\" + tag.picture, true);
               }
               break;
             }
@@ -1562,11 +1564,11 @@ namespace home
 
     private void EnumeratePlugins()
     {
-      EnumeratePluginDirectory(@"plugins\windows");
-      EnumeratePluginDirectory(@"plugins\subtitle");
-      EnumeratePluginDirectory(@"plugins\tagreaders");
-      EnumeratePluginDirectory(@"plugins\externalplayers");
-      EnumeratePluginDirectory(@"plugins\process");
+      EnumeratePluginDirectory(_config.Get(Config.Options.PluginsPath) + "windows");
+      EnumeratePluginDirectory(_config.Get(Config.Options.PluginsPath) + "subtitle");
+      EnumeratePluginDirectory(_config.Get(Config.Options.PluginsPath) + "tagreaders");
+      EnumeratePluginDirectory(_config.Get(Config.Options.PluginsPath) + "externalplayers");
+      EnumeratePluginDirectory(_config.Get(Config.Options.PluginsPath) + "process");
     }
 
     private void LoadPlugins()
@@ -1796,7 +1798,7 @@ namespace home
       openFileDialog1.RestoreDirectory = true;
       openFileDialog1.DefaultExt = ".png";
       openFileDialog1.FileName = "hover*";
-      openFileDialog1.InitialDirectory = System.IO.Directory.GetCurrentDirectory() + "\\skin\\" + skinName + "\\media";
+      openFileDialog1.InitialDirectory = _config.Get(Config.Options.ConfigPath) + skinName + "\\media";
       if (openFileDialog1.ShowDialog(this) == DialogResult.OK)
       {
         string appName = openFileDialog1.FileName;
@@ -2377,7 +2379,7 @@ namespace home
       {
         AddSpecial.Enabled = true;
         SpecialFunctions.Enabled = true;
-        string scriptdir = System.IO.Directory.GetCurrentDirectory() + "\\" + "scripts";
+        string scriptdir = _config.Get(Config.Options.BasePath) + "scripts";
         if (!Directory.Exists(scriptdir))
         {
           SpecialFunctions.Items.Clear();

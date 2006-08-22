@@ -95,11 +95,13 @@ namespace MediaPortal.TV.Recording
     bool _isTuning = false;
     protected string _lastError = String.Empty;
     protected ILog _log;
+    protected IConfig _config;
 
     public SinkGraph()
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
     }
 
     /// <summary>
@@ -735,7 +737,7 @@ namespace MediaPortal.TV.Recording
       _mpeg2DemuxHelper.StartViewing(GUIGraphicsContext.ActiveForm, _vmr9);
 
       DirectShowUtil.EnableDeInterlace(_graphBuilderInterface);
-      using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml") )
+      using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml") )
       {
         string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "normal");
         if ( strValue.Equals("zoom") )
@@ -906,7 +908,7 @@ namespace MediaPortal.TV.Recording
       string strAudioRenderer = "";
       bool bAddFFDshow = false;
 
-      using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml") )
+      using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml") )
       {
         bAddFFDshow = xmlreader.GetValueAsBool("mytv", "ffdshow", false);
         strVideoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "");
@@ -1464,7 +1466,7 @@ namespace MediaPortal.TV.Recording
     {
       if ( _videoCaptureHelper == null )
         return;
-      string filename = String.Format(@"database\card_{0}.xml", _card.FriendlyName);
+      string filename = String.Format(_config.Get(Config.Options.DatabasePath) + "card_{0}.xml", _card.FriendlyName);
       using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename) )
       {
         string frameRate = xmlreader.GetValueAsString("analog", "framerate", "25 fps (PAL/SECAM)");
@@ -1498,7 +1500,7 @@ namespace MediaPortal.TV.Recording
     }
     protected void SetQuality( int Quality )
     {
-      string filename = String.Format(@"database\card_{0}.xml", _card.FriendlyName);
+      string filename = String.Format(_config.Get(Config.Options.DatabasePath) + "card_{0}.xml", _card.FriendlyName);
       using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename) )
       {
         bool enabled = xmlreader.GetValueAsBool("quality", "enabled", false);

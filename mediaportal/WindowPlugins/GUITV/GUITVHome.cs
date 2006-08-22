@@ -105,7 +105,7 @@ namespace MediaPortal.GUI.TV
       if ( _settingsLoaded )
         return;
       _settingsLoaded = true;
-      using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml") )
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         m_navigator.LoadSettings(xmlreader);
         _isTvOn = xmlreader.GetValueAsBool("mytv", "tvon", false);
@@ -132,7 +132,7 @@ namespace MediaPortal.GUI.TV
 
     void SaveSettings()
     {
-      using ( MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml") )
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         m_navigator.SaveSettings(xmlwriter);
         xmlwriter.SetValueAsBool("mytv", "tvon", _isTvOn);

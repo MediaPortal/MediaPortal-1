@@ -235,6 +235,7 @@ namespace MediaPortal.GUI.Library
     protected bool _isOverlayAllowed = true;
     private Object instance;
     protected ILog _log;
+    protected IConfig _config;
 
     //-1=default from topbar.xml 
     // 0=flase from skin.xml
@@ -254,6 +255,7 @@ namespace MediaPortal.GUI.Library
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
     }
 
     /// <summary>

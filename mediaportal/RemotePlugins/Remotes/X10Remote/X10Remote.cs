@@ -46,16 +46,18 @@ namespace MediaPortal.InputDevices
     bool _x10UseChannelControl = false;
     int _x10Channel = 0;
     protected ILog _log;
+    protected IConfig _config;
 
     public X10Remote()
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
     }
 
     public void Init(IntPtr hwnd)
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         _controlEnabled = xmlreader.GetValueAsBool("remote", "X10", false);
         _x10Medion = xmlreader.GetValueAsBool("remote", "X10Medion", true);

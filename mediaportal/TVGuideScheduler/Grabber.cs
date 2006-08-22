@@ -21,6 +21,7 @@
 
 using System;
 using System.Text;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.TVGuideScheduler
 {
@@ -34,9 +35,14 @@ namespace MediaPortal.TVGuideScheduler
 		int m_intOffset;
 		int m_intGuidedays;
 
+    static IConfig _config;
+
 
 		public Grabber(string xmltvGrabberName)
 		{
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _config = services.Get<IConfig>();
+
 			m_strGrabberName = xmltvGrabberName;
       GetSettings();
       SetDefaults(m_strGrabberName);
@@ -190,7 +196,7 @@ namespace MediaPortal.TVGuideScheduler
 		private void GetSettings()
 		{
 			string grabberOutput=null;
-			using(MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
+			using(MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
 			{
 				grabberOutput=xmlreader.GetValueAsString("xmltv", "folder","xmltv");
 				m_intGuidedays=xmlreader.GetValueAsInt("xmltv", "daystokeep",7);

@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Text;
 using MediaPortal.GUI.Library;
 using MediaPortal.TV.Database;
+using MediaPortal.Utils.Services;
 
 namespace ProcessPlugins.TVNotifies
 {
@@ -37,14 +38,18 @@ namespace ProcessPlugins.TVNotifies
     // flag indicating that notifies have been added/changed/removed
     bool _notifiesListChanged;
     int _preNotifyConfig;
+    static IConfig _config;
     //list of all notifies (alert me n minutes before program starts)
     List<TVNotify> _notifiesList;
 
     public NotifyManager()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _config = services.Get<IConfig>();
+
       _notifiesList = new List<TVNotify>();
       TVDatabase.OnNotifiesChanged += new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(OnNotifiesChanged);
-      using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml") )
+      using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml") )
         _preNotifyConfig = xmlreader.GetValueAsInt("movieplayer", "notifyTVBefore", 300);
       _timer = new System.Windows.Forms.Timer();
       // check every 15 seconds for notifies

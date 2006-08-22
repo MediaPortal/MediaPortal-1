@@ -62,11 +62,13 @@ namespace MediaPortal.TV.Recording
     int _postRecordInterval = 0;
     DateTime _scheduleTimer;
     protected ILog _log;
+    protected IConfig _config;
 
     public Scheduler()
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
 
       _recordingsListChanged = false;
       _recordingsList = new List<TVRecording>();
@@ -80,7 +82,7 @@ namespace MediaPortal.TV.Recording
       _preRecordInterval = 0;
       _postRecordInterval = 0;
       //m_bAlwaysTimeshift=false;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         _preRecordInterval = xmlreader.GetValueAsInt("capture", "prerecord", 5);
         _postRecordInterval = xmlreader.GetValueAsInt("capture", "postrecord", 5);

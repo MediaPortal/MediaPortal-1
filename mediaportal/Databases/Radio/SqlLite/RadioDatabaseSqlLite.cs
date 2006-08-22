@@ -34,11 +34,13 @@ namespace MediaPortal.Radio.Database
   {
     public SQLiteClient m_db = null;
     protected ILog _log;
+    protected IConfig _config;
 
     public RadioDatabaseSqlLite()
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
 
       Open();
     }
@@ -60,13 +62,12 @@ namespace MediaPortal.Radio.Database
         // Open database
         _log.Info("open radiodatabase");
 
-        String strPath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
         try
         {
-          System.IO.Directory.CreateDirectory(strPath + @"\database");
+          System.IO.Directory.CreateDirectory(_config.Get(Config.Options.DatabasePath));
         }
         catch (Exception) { }
-        m_db = new SQLiteClient(strPath + @"\database\RadioDatabase4.db3");
+        m_db = new SQLiteClient(_config.Get(Config.Options.DatabasePath) + "RadioDatabase4.db3");
 
         if (m_db != null)
         {

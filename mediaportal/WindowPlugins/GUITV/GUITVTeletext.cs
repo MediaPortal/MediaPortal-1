@@ -73,14 +73,14 @@ namespace MediaPortal.GUI.TV
 		#region Serialisation
 		void LoadSettings()
 		{
-			using (MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
 			{
 			}
 		}
 
 		void SaveSettings()
 		{
-			using (MediaPortal.Profile.Settings   xmlwriter=new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
 			{
 			}
 		}

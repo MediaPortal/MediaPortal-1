@@ -41,6 +41,7 @@ namespace ProgramsDatabase
     static Applist mAppList = null;
     static ProgramViewHandler viewHandler = null;
     static ILog _log;
+    static IConfig _config;
 
     // singleton. Dont allow any instance of this class
     private ProgramDatabase(){}
@@ -50,16 +51,17 @@ namespace ProgramsDatabase
 
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
 
       try
       {
         // Open database
         try
         {
-          Directory.CreateDirectory("database");
+          Directory.CreateDirectory(_config.Get(Config.Options.DatabasePath));
         }
         catch (Exception){}
-        sqlDB = new SQLiteClient(@"database\ProgramDatabaseV4.db3");
+        sqlDB = new SQLiteClient(_config.Get(Config.Options.DatabasePath) + "ProgramDatabaseV4.db3");
 
         MediaPortal.Database.DatabaseUtility.SetPragmas(sqlDB);
 

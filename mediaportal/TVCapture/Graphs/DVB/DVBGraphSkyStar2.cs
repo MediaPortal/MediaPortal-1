@@ -172,7 +172,7 @@ namespace MediaPortal.TV.Recording
     public DVBGraphSkyStar2(TVCaptureDevice pCard)
       : base(pCard)
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         _cardType = xmlreader.GetValueAsString("DVBSS2", "cardtype", "");
       }
@@ -1283,7 +1283,7 @@ namespace MediaPortal.TV.Recording
       int cbandMHZ = 0;
       int circularMHZ = 0;
 
-      string filename = String.Format(@"database\card_{0}.xml", _card.FriendlyName);
+      string filename = String.Format(_config.Get(MediaPortal.Utils.Services.Config.Options.DatabasePath) + "card_{0}.xml", _card.FriendlyName);
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename))
       {
         lnb0MHZ = xmlreader.GetValueAsInt("dvbs", "LNB0", 9750);
@@ -1357,7 +1357,7 @@ namespace MediaPortal.TV.Recording
     protected override void SetupDiseqc(int disNo)
     {
       if (_currentTuningObject == null) return;
-      string filename = String.Format(@"database\card_{0}.xml", _card.FriendlyName);
+      string filename = String.Format(_config.Get(MediaPortal.Utils.Services.Config.Options.DatabasePath) + "card_{0}.xml", _card.FriendlyName);
 
       int lnbKhz = 0;
       int lnbKhzVal = 0;

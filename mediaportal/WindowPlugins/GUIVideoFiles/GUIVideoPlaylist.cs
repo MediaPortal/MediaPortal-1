@@ -511,7 +511,7 @@ namespace MediaPortal.GUI.Video
 			if (GetKeyboard(ref playlistFileName))
 			{
         string playListPath = String.Empty;
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
         {
           playListPath = xmlreader.GetValueAsString("movies","playlists",String.Empty);
           playListPath = MediaPortal.Util.Utils.RemoveTrailingSlash(playListPath);

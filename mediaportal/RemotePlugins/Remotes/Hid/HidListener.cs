@@ -38,11 +38,13 @@ namespace MediaPortal.InputDevices
     bool logVerbose = false;           // Verbose logging
     InputHandler _inputHandler;
     protected ILog _log;
+    protected IConfig _config;
 
     public HidListener()
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
     }
 
     public void Init(IntPtr hwnd)
@@ -52,7 +54,7 @@ namespace MediaPortal.InputDevices
 
     void Init()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         controlEnabled = xmlreader.GetValueAsBool("remote", "HID", false);
         logVerbose = xmlreader.GetValueAsBool("remote", "HIDVerboseLog", false);

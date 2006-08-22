@@ -36,7 +36,6 @@ using XihSolutions.DotMSN;
 using XihSolutions.DotMSN.Core;
 using XihSolutions.DotMSN.DataTransfer;
 
-
 namespace MediaPortal.GUI.MSN
 {
   /// <summary>
@@ -106,7 +105,7 @@ namespace MediaPortal.GUI.MSN
     public override void PreInit()
     {
       bool autosignin = false;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         autosignin = xmlreader.GetValueAsInt("MSNmessenger", "autosignin", 0) != 0;
       }
@@ -721,7 +720,7 @@ namespace MediaPortal.GUI.MSN
       _log.Info("MSN:Start MSN");
       string emailadres = "";
       string password = "";
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         emailadres = xmlreader.GetValueAsString("MSNmessenger", "email", "");
         password = xmlreader.GetValueAsString("MSNmessenger", "password", "");
@@ -763,7 +762,7 @@ namespace MediaPortal.GUI.MSN
           _messenger.Credentials.ClientCode = "Q1P7W2E4J9R8U3S5";
           _messenger.Credentials.ClientID = "msmsgs@msnmsgr.com";
           _log.Info("MSN: email:{0} pwd:*********", emailadres);
-          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
           {
             bool useProxy = xmlreader.GetValueAsBool("MSNmessenger", "useproxy", false);
             if (useProxy)

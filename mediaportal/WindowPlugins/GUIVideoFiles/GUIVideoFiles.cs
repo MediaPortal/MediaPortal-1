@@ -185,7 +185,7 @@ namespace MediaPortal.GUI.Video
 
       LoadSettings();
       bool result = Load(GUIGraphicsContext.Skin + @"\myVideo.xml");
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         _isFuzzyMatching = xmlreader.GetValueAsBool("movies", "fuzzyMatching", false);
         VideoState.StartWindow = xmlreader.GetValueAsInt("movies", "startWindow", GetID);
@@ -198,7 +198,7 @@ namespace MediaPortal.GUI.Video
     protected override void LoadSettings()
     {
 			base.LoadSettings();
-			using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         ShowTrailerButton = xmlreader.GetValueAsBool("plugins", "My Trailers", true);
         fileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
@@ -410,7 +410,7 @@ namespace MediaPortal.GUI.Video
         }
       }
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
         if (xmlreader.GetValueAsBool("movies", "rememberlastfolder", false))
           xmlreader.SetValue("movies", "lastfolder", folderName);
 

@@ -39,6 +39,7 @@ namespace MediaPortal.TVGuideScheduler
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       ILog log = services.Get<ILog>();
+      IConfig _config = services.Get<IConfig>();
 
       string grabber = null;
       int grabberDays;
@@ -51,7 +52,7 @@ namespace MediaPortal.TVGuideScheduler
       string FileToImport = null;
       bool RunConfig = false;
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         grabber = xmlreader.GetValueAsString("xmltv", "grabber", "tv_grab_uk_rt");
         multiGrab = xmlreader.GetValueAsString("xmltv", "advanced", "yes");

@@ -28,6 +28,7 @@ using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Topbar
 {
@@ -46,9 +47,12 @@ namespace MediaPortal.Topbar
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.Container components = null;
+    static IConfig _config;
 
     public TopBarSetupForm()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _config = services.Get<IConfig>();
       //
       // Required for Windows Form Designer support
       //
@@ -158,7 +162,7 @@ namespace MediaPortal.Topbar
 
     private void TopBarSetup_Load(object sender, System.EventArgs e)
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         textTimeOut.Text = xmlreader.GetValueAsString("TopBar", "autohidetimeout", "15");
 
@@ -172,7 +176,7 @@ namespace MediaPortal.Topbar
 
     private void buttonOk_Click(object sender, System.EventArgs e)
     {
-      using (MediaPortal.Profile.Settings xmlWriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlWriter = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         xmlWriter.SetValue("TopBar", "autohidetimeout", textTimeOut.Text);
 

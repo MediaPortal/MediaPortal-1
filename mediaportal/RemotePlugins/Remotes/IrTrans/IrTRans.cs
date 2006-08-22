@@ -51,6 +51,7 @@ namespace MediaPortal.InputDevices
     int irTransServerPort = 21000;
     bool logVerbose = false;
     protected ILog _log;
+    protected IConfig _config;
     #endregion
 
     #region Enums and Structure
@@ -98,6 +99,7 @@ namespace MediaPortal.InputDevices
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
     }
 
     /// <summary>
@@ -107,7 +109,7 @@ namespace MediaPortal.InputDevices
     /// <param name="hwnd"></param>
     public void Init(IntPtr hwnd)
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         irTransEnabled = xmlreader.GetValueAsBool("remote", "IRTrans", false);
         remoteModel = xmlreader.GetValueAsString("remote", "IRTransRemoteModel", "mediacenter");

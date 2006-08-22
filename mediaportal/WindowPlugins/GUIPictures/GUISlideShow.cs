@@ -2341,7 +2341,7 @@ namespace MediaPortal.GUI.Pictures
 
    void LoadSettings()
    {
-     using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+     using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
      {
        _speed = xmlreader.GetValueAsInt("pictures", "speed", 3);
        _slideShowTransistionFrames = xmlreader.GetValueAsInt("pictures", "transition", 20);
@@ -2376,7 +2376,7 @@ namespace MediaPortal.GUI.Pictures
 
      if (_musicFileExtensions == null)
      {
-       using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+       using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
          _musicFileExtensions = reader.GetValueAsString("music", "extensions", ".mp3,.pls,.wpl").Split(',');
      }
 

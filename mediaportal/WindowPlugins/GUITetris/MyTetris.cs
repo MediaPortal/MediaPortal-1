@@ -35,6 +35,7 @@ using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
 
 using Tetris;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Games.Tetris
 {
@@ -44,6 +45,8 @@ namespace MediaPortal.Games.Tetris
   public class MyTetris : GUIWindow, ISetupForm, IShowPlugin
   {
     #region Construction, initialization & cleanup
+
+    new static IConfig _config;
 
     public MyTetris()
     {
@@ -95,7 +98,7 @@ namespace MediaPortal.Games.Tetris
 
       public void Load()
       {
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
         {
           m_bMusic = xmlreader.GetValueAsBool("tetris", "music", true);
           m_bSound = xmlreader.GetValueAsBool("tetris", "sound", true);
@@ -111,7 +114,7 @@ namespace MediaPortal.Games.Tetris
 
       public void Save()
       {
-        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
         {
           xmlwriter.SetValueAsBool("tetris", "music", m_bMusic);
           xmlwriter.SetValueAsBool("tetris", "sound", m_bSound);
@@ -126,6 +129,8 @@ namespace MediaPortal.Games.Tetris
 
     public override bool Init()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _config = services.Get<IConfig>();
       // pre-register the control class so that the factory knows how to create it
       GUIControlFactory.RegisterControl("tetris", typeof(MyTetrisControl));
 

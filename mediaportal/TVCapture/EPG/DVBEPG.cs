@@ -82,6 +82,7 @@ namespace MediaPortal.TV.Recording
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
 
       m_cardType = (int)EPGCard.Invalid;
     }
@@ -90,6 +91,7 @@ namespace MediaPortal.TV.Recording
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
 
       m_cardType = card;
       m_networkType = NetworkType.DVBS;
@@ -99,12 +101,13 @@ namespace MediaPortal.TV.Recording
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
       //
       // TODO: Fügen Sie hier die Konstruktorlogik hinzu
       //
       m_cardType = card;
       m_networkType = networkType;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         m_languagesToGrab = xmlreader.GetValueAsString("epg-grabbing", "grabLanguages", "");
       }
@@ -130,6 +133,7 @@ namespace MediaPortal.TV.Recording
     MediaPortal.UserInterface.Controls.MPLabel m_mhwTitles;
     bool m_isLocked = false;
     protected ILog _log;
+    protected IConfig _config;
 
     // mhw
     public struct Programm

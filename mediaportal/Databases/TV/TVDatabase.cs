@@ -104,6 +104,7 @@ namespace MediaPortal.TV.Database
     static public event OnChangedHandler OnNotifiesChanged = null;
     static public event OnChangedHandler OnChannelsChanged = null;
     static ILog _log;
+    static IConfig _config;
 
     /// <summary>
     /// private constructor to prevent any instance of this class
@@ -119,6 +120,7 @@ namespace MediaPortal.TV.Database
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
 
       Open();
     }
@@ -131,15 +133,13 @@ namespace MediaPortal.TV.Database
           // Open database
           _log.Info("opening tvdatabase");
 
-          String strPath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.
-            GetExecutingAssembly().Location);
           try
           {
-            System.IO.Directory.CreateDirectory(strPath + @"\database");
+            System.IO.Directory.CreateDirectory(_config.Get(Config.Options.DatabasePath));
           }
           catch (Exception) { }
           //Upgrade();
-          m_db = new SQLiteClient(strPath + @"\database\TVDatabaseV21.db3");
+          m_db = new SQLiteClient(_config.Get(Config.Options.DatabasePath) + "TVDatabaseV21.db3");
           if (m_db != null)
           {
             DatabaseUtility.SetPragmas(m_db);

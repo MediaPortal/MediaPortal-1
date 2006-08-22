@@ -45,7 +45,9 @@ namespace ProcessPlugins.TvMovie
 
     #region Membervariables
 
-    string _xmlFile = "TVMovieMapping.xml";
+    string _xmlFile; 
+    static ILog log;
+    static IConfig _config;
 
     #endregion
 
@@ -88,6 +90,11 @@ namespace ProcessPlugins.TvMovie
     /// </summary>
     public TvMovieSettings()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
+      _xmlFile = _config.Get(Config.Options.ConfigPath) + "TVMovieMapping.xml";
+
       InitializeComponent();
       LoadStations();
       LoadMapping();
@@ -135,7 +142,7 @@ namespace ProcessPlugins.TvMovie
 
     private void LoadOptions()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         checkBoxUseShortDesc.Checked = xmlreader.GetValueAsBool("tvmovie", "shortprogramdesc", false);
         checkBoxShowAudioFormat.Checked = xmlreader.GetValueAsBool("tvmovie", "showaudioformat", false);
@@ -146,7 +153,7 @@ namespace ProcessPlugins.TvMovie
 
     private void SaveOptions()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         xmlwriter.SetValueAsBool("tvmovie", "shortprogramdesc", checkBoxUseShortDesc.Checked);
         xmlwriter.SetValueAsBool("tvmovie", "showaudioformat", checkBoxShowAudioFormat.Checked);
@@ -291,9 +298,6 @@ namespace ProcessPlugins.TvMovie
     /// </summary>
     private void LoadMapping()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      ILog log = services.Get<ILog>();
-
       if (!File.Exists(_xmlFile))
       {
         log.Info("TVMovie: Mapping file \"{0}\" does not exist, using empty list", _xmlFile);

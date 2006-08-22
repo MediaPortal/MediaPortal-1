@@ -184,12 +184,15 @@ namespace WindowPlugins.GUIPrograms
 
     public ProgramViews(string name)
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      ILog log = services.Get<ILog>();
+      IConfig _config = services.Get<IConfig>();
       // This call is required by the Windows Form Designer.
       InitializeComponent();
       views = new ArrayList();
-      if (System.IO.File.Exists("programViews2.xml"))
+      if (System.IO.File.Exists(_config.Get(Config.Options.ConfigPath) + "programViews2.xml"))
       {
-        using (FileStream fileStream = new FileStream("programViews2.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+        using (FileStream fileStream = new FileStream(_config.Get(Config.Options.ConfigPath) + "programViews2.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
         {
           try
           {
@@ -204,9 +207,6 @@ namespace WindowPlugins.GUIPrograms
       }
       else
       {
-        ServiceProvider services = GlobalServiceProvider.Instance;
-        ILog log = services.Get<ILog>();
-
         log.Info("Warning: no programViews2.xml found!");
       }
       LoadViews();

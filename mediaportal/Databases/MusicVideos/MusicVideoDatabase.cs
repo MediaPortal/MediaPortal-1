@@ -47,11 +47,13 @@ namespace MediaPortal.MusicVideos.Database
 
     private static MusicVideoDatabase Instance;
     private ILog moLog;
+    private IConfig _config;
 
     private MusicVideoDatabase()
     {
-        ServiceProvider loServices = GlobalServiceProvider.Instance;
-        moLog = loServices.Get<ILog>();
+      ServiceProvider loServices = GlobalServiceProvider.Instance;
+      moLog = loServices.Get<ILog>();
+      _config = loServices.Get<IConfig>();
       bool dbExists;
       try
       {
@@ -61,8 +63,8 @@ namespace MediaPortal.MusicVideos.Database
           System.IO.Directory.CreateDirectory("database");
         }
         catch (Exception) { }
-        dbExists = System.IO.File.Exists(@"database\MusicVideoDatabaseV3.db3");
-        m_db = new SQLiteClient(@"database\MusicVideoDatabaseV3.db3");
+        dbExists = System.IO.File.Exists(_config.Get(Config.Options.DatabasePath) + "MusicVideoDatabaseV3.db3");
+        m_db = new SQLiteClient(_config.Get(Config.Options.DatabasePath) + "MusicVideoDatabaseV3.db3");
 
         MediaPortal.Database.DatabaseUtility.SetPragmas(m_db);
          
@@ -300,7 +302,7 @@ namespace MediaPortal.MusicVideos.Database
           //string lsCurrentName = msDefaultFavoriteName;
           try
           {
-              loXmlreader = new XmlTextReader("MusicVideoFavorites.xml");
+            loXmlreader = new XmlTextReader(_config.Get(Config.Options.ConfigPath) + "MusicVideoFavorites.xml");
               YahooVideo loVideo;
 
               while (loXmlreader.Read())

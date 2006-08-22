@@ -73,7 +73,8 @@ namespace MediaPortal.GUI.Alarm
     //constants
     private const int _MaxAlarms = 20;
 
-    protected ILog _log;
+    static ILog _log;
+    static IConfig _config;
     #endregion
 
     #region Public Enumerations
@@ -124,6 +125,7 @@ namespace MediaPortal.GUI.Alarm
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
 
       playlistPlayer = PlayListPlayer.SingletonPlayer;
     }
@@ -787,7 +789,10 @@ namespace MediaPortal.GUI.Alarm
     {
       AlarmCollection Alarms = new AlarmCollection();
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         for (int i = 0; i < _MaxAlarms; i++)
         {
@@ -849,7 +854,7 @@ namespace MediaPortal.GUI.Alarm
     {
       int id = alarmToSave.Id;
 
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
 
         xmlwriter.SetValue("alarm", "alarmName" + id, alarmToSave.Name);
@@ -882,7 +887,7 @@ namespace MediaPortal.GUI.Alarm
     /// <returns>true if suceeded</returns>
     public static bool DeleteAlarm(int id)
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         xmlwriter.RemoveEntry("alarm", "alarmName" + id);
         xmlwriter.RemoveEntry("alarm", "alarmEnabled" + id);
@@ -915,7 +920,7 @@ namespace MediaPortal.GUI.Alarm
         string tempText;
         for (int i = 0; i < _MaxAlarms; i++)
         {
-          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
           {
             tempText = xmlreader.GetValueAsString("alarm", "alarmName" + i, "");
             if (tempText.Length == 0)
@@ -1046,7 +1051,7 @@ namespace MediaPortal.GUI.Alarm
     {
       get
       {
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
         {
           return MediaPortal.Util.Utils.RemoveTrailingSlash(xmlreader.GetValueAsString("alarm", "alarmSoundsFolder", ""));
         }
@@ -1060,7 +1065,7 @@ namespace MediaPortal.GUI.Alarm
 
       get
       {
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
         {
           return MediaPortal.Util.Utils.RemoveTrailingSlash(xmlreader.GetValueAsString("music", "playlists", ""));
         }
@@ -1074,7 +1079,7 @@ namespace MediaPortal.GUI.Alarm
     {
       get
       {
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
         {
           return xmlreader.GetValueAsInt("alarm", "alarmTimeout", 60);
         }
@@ -1088,7 +1093,7 @@ namespace MediaPortal.GUI.Alarm
     {
       get
       {
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
         {
           return xmlreader.GetValueAsInt("alarm", "alarmRepeatSeconds", 120);
         }
@@ -1102,7 +1107,7 @@ namespace MediaPortal.GUI.Alarm
     {
       get
       {
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
         {
           return xmlreader.GetValueAsInt("alarm", "alarmRepeatCount", 5);
         }
@@ -1116,7 +1121,7 @@ namespace MediaPortal.GUI.Alarm
     {
       get
       {
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
         {
           return xmlreader.GetValueAsBool("alarm", "alarmAlarmVolEnable", false);
         }
@@ -1130,7 +1135,7 @@ namespace MediaPortal.GUI.Alarm
     {
       get
       {
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
         {
           return xmlreader.GetValueAsInt("alarm", "alarmAlarmVol", 0);
         }

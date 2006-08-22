@@ -42,9 +42,15 @@ namespace ProcessPlugins.DiskSpace
   /// </summary>
   public class DiskManagement : IPlugin, ISetupForm 
   {
+    static ILog log;
+    static IConfig _config;
     System.Windows.Forms.Timer _timer;
     public DiskManagement()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
+
       _timer = new System.Windows.Forms.Timer();
       _timer.Interval = 15*60*1000;
       _timer.Enabled = false;
@@ -102,7 +108,7 @@ namespace ProcessPlugins.DiskSpace
     bool OutOfDiskSpace(string drive)
     {
       ulong minimiumFreeDiskSpace = 0;
-      using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         string quotaText = xmlReader.GetValueAsString("freediskspace", drive[0].ToString(), "51200");
         minimiumFreeDiskSpace = (ulong)Int32.Parse(quotaText);
@@ -157,9 +163,7 @@ namespace ProcessPlugins.DiskSpace
 
       List<RecordingFileInfo> recordings = GetRecordingsOnDrive(drive);
       if (recordings.Count == 0) return;
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      ILog log = services.Get<ILog>();
-
+ 
       log.Info("Recorder: not enough free space on drive:{0}.", drive);
       log.Info("Recorder: found {0} recordings on drive:{0}", recordings.Count, drive);
 

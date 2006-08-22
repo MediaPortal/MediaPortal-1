@@ -101,7 +101,7 @@ namespace MediaPortal.GUI.Music
         protected override void LoadSettings()
         {
             base.LoadSettings();
-            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
             {
                 string strDefault = xmlreader.GetValueAsString("music", "default", String.Empty);
                 _shareList.Clear();

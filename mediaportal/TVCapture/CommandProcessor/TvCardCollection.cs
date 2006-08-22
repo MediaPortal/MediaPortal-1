@@ -61,13 +61,15 @@ namespace MediaPortal.TV.Recording
     // list of all tv cards installed
     protected List<TVCaptureDevice> _tvcards = new List<TVCaptureDevice>();
     protected ILog _log;
+    protected IConfig _config;
 
     public TvCardCollection()
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
 			
-			using (FileStream fileStream = new FileStream("capturecards.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+			using (FileStream fileStream = new FileStream(_config.Get(Config.Options.ConfigPath) + "capturecards.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
       {
         try
         {

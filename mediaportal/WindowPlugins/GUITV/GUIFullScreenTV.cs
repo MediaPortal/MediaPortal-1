@@ -203,7 +203,7 @@ namespace MediaPortal.GUI.TV
 
     public override bool Init()
     {
-      using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml") )
+      using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml") )
       {
         _useVMR9Zap = xmlreader.GetValueAsBool("general", "useVMR9ZapOSD", false);
         _notifyTVTimeout = xmlreader.GetValueAsInt("movieplayer", "notifyTVTimeout", 15);
@@ -215,7 +215,7 @@ namespace MediaPortal.GUI.TV
     #region serialisation
     void LoadSettings()
     {
-      using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml") )
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         _isMsnChatPopup = ( xmlreader.GetValueAsInt("MSNmessenger", "popupwindow", 0) == 1 );
         _timeOsdOnscreen = 1000 * xmlreader.GetValueAsInt("movieplayer", "osdtimeout", 5);
@@ -254,7 +254,7 @@ namespace MediaPortal.GUI.TV
     //		}
     void SaveSettings()
     {
-      using ( MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml") )
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         GUITVHome.Navigator.SaveSettings(xmlwriter);
         switch ( GUIGraphicsContext.ARType )

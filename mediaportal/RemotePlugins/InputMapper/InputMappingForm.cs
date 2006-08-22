@@ -72,6 +72,7 @@ namespace MediaPortal.InputDevices
     bool changedSettings = false;
 
     protected ILog _log;
+    protected IConfig _config;
 
     class Data
     {
@@ -158,6 +159,7 @@ namespace MediaPortal.InputDevices
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
       //
       // Required for Windows Form Designer support
       //
@@ -736,8 +738,8 @@ namespace MediaPortal.InputDevices
         treeMapping.Nodes.Clear();
         XmlDocument doc = new XmlDocument();
         string path = "InputDeviceMappings\\defaults\\" + xmlFile;
-        if (!defaults && File.Exists("InputDeviceMappings\\custom\\" + xmlFile))
-          path = "InputDeviceMappings\\custom\\" + xmlFile;
+        if (!defaults && File.Exists(_config.Get(Config.Options.CustomInputDevicePath) + xmlFile))
+          path = _config.Get(Config.Options.CustomInputDevicePath) + xmlFile;
         if (!File.Exists(path))
         {
           MessageBox.Show("Can't locate mapping file " + xmlFile + "\n\nMake sure it exists in /InputDeviceMappings/defaults", "Mapping file missing", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -889,7 +891,7 @@ namespace MediaPortal.InputDevices
       catch (Exception ex)
       {
         _log.Error(ex);
-        File.Delete("InputDeviceMappings\\custom\\" + xmlFile);
+        File.Delete(_config.Get(Config.Options.CustomInputDevicePath) + xmlFile);
         LoadMapping(xmlFile, true);
       }
     }
@@ -900,7 +902,7 @@ namespace MediaPortal.InputDevices
       try
 #endif
       {
-        DirectoryInfo dir = Directory.CreateDirectory("InputDeviceMappings\\custom");
+        DirectoryInfo dir = Directory.CreateDirectory(_config.Get(Config.Options.CustomInputDevicePath));
       }
 #if !DEBUG
       catch
@@ -911,7 +913,7 @@ namespace MediaPortal.InputDevices
       //try
 #endif
       {
-        XmlTextWriter writer = new XmlTextWriter("InputDeviceMappings\\custom\\" + xmlFile, System.Text.Encoding.UTF8);
+        XmlTextWriter writer = new XmlTextWriter(_config.Get(Config.Options.CustomInputDevicePath) + xmlFile, System.Text.Encoding.UTF8);
         writer.Formatting = Formatting.Indented;
         writer.Indentation = 1;
         writer.IndentChar = (char)9;
@@ -1599,8 +1601,8 @@ namespace MediaPortal.InputDevices
 
     private void buttonDefault_Click(object sender, System.EventArgs e)
     {
-      if (File.Exists("InputDeviceMappings\\custom\\" + inputClassName + ".xml"))
-        File.Delete("InputDeviceMappings\\custom\\" + inputClassName + ".xml");
+      if (File.Exists(_config.Get(Config.Options.CustomInputDevicePath) + inputClassName + ".xml"))
+        File.Delete(_config.Get(Config.Options.CustomInputDevicePath) + inputClassName + ".xml");
       LoadMapping(inputClassName + ".xml", true);
     }
 

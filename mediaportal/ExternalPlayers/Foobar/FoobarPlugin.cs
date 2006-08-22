@@ -109,6 +109,7 @@ namespace MediaPortal.FoobarPlugin
     private bool m_bStoppedManualy = false;
     private bool _notifyPlaying = false;
     private bool _isCDA = false;
+    static IConfig _config;
 
     /// <summary>
     /// Empty constructor.  Nothing to initialize 
@@ -136,6 +137,7 @@ namespace MediaPortal.FoobarPlugin
           RunProgram(m_execPath, m_startupparameter);
           ServiceProvider services = GlobalServiceProvider.Instance;
           ILog log = services.Get<ILog>();
+          _config = services.Get<IConfig>();
           log.Info("ExternalPlayers: Started foobar2000 with {0}", m_startupparameter);
           ShowWindow(mpHwnd, SW_RESTORE);
           SetForegroundWindow(mpHwnd);
@@ -192,7 +194,7 @@ namespace MediaPortal.FoobarPlugin
       string windowName = null;
       string startupparameter = null;
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         // extensions to play by this player
         strExt = xmlreader.GetValueAsString("foobarplugin", "enabledextensions", "");

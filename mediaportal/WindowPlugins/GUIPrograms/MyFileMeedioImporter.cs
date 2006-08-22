@@ -37,6 +37,7 @@ namespace ProgramsDatabase
     private AppItem m_App = null;
     private SQLiteClient sqlDB = null;
     private ILog _log;
+    private IConfig _config;
 
     // event: read new file
     public delegate void MlfEventHandler(string strLine, int curPos, int maxPos);
@@ -46,6 +47,7 @@ namespace ProgramsDatabase
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
     }
 
 

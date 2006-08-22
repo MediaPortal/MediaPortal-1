@@ -169,7 +169,7 @@ public class MediaPortalApp : D3DApp, IRender
     _config = new Config(Application.StartupPath);
     if (!_config.LoadConfig())
     {
-      MessageBox.Show("Missing or Invalid MediaPortalPath.xml file. MediaPortal cannot run without that file.","MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
+      MessageBox.Show("Missing or Invalid MediaPortalConfig.xml file. MediaPortal cannot run without that file.","MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
       return;
     }
     services.Add<IConfig>(_config);
@@ -202,7 +202,7 @@ public class MediaPortalApp : D3DApp, IRender
       Directory.SetCurrentDirectory(applicationPath);
       _log.Info("Main: Set current directory to: {0}", applicationPath);
       //check if mediaportal has been configured
-      if (!File.Exists("mediaportal.xml"))
+      if (!File.Exists(_config.Get(Config.Options.ConfigPath) + "mediaportal.xml"))
       {
         //no, then start configuration.exe in wizard form
         System.Diagnostics.Process.Start("configuration.exe", @"/wizard");
@@ -446,7 +446,7 @@ public class MediaPortalApp : D3DApp, IRender
   public MediaPortalApp()
   {
     // check to load plugins
-    using (Settings xmlreader = new Settings("MediaPortal.xml"))
+    using (Settings xmlreader = new Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
     {
       useScreenSaver = xmlreader.GetValueAsBool("general", "screensaver", true);
       timeScreenSaver = xmlreader.GetValueAsInt("general", "screensavertime", 60);
@@ -457,7 +457,7 @@ public class MediaPortalApp : D3DApp, IRender
     _log.Info("Main: Checking for running MediaPortal instance");
 
     _log.Info(@"Main: Deleting old log\capture.log");
-    Utils.FileDelete(@"log\capture.log");
+    Utils.FileDelete(_config.Get(Config.Options.LogPath) + "capture.log");
     if (Screen.PrimaryScreen.Bounds.Width > 720)
     {
       MinimumSize = new Size(720 + 8, 576 + 27);
@@ -475,7 +475,7 @@ public class MediaPortalApp : D3DApp, IRender
 
     try
     {
-      using (Settings xmlreader = new Settings("MediaPortal.xml"))
+      using (Settings xmlreader = new Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         m_strSkin = xmlreader.GetValueAsString("skin", "name", "BlueTwo");
         m_strLanguage = xmlreader.GetValueAsString("skin", "language", "English");
@@ -716,7 +716,7 @@ public class MediaPortalApp : D3DApp, IRender
 
     EXECUTION_STATE oldState = EXECUTION_STATE.ES_CONTINUOUS;
     bool turnMonitorOn = false;
-    using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+    using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
     {
       turnMonitorOn = xmlreader.GetValueAsBool("general", "turnmonitoronafterresume", false);
       if (turnMonitorOn)
@@ -844,7 +844,7 @@ public class MediaPortalApp : D3DApp, IRender
     tMouseClickTimer.Elapsed += new ElapsedEventHandler(tMouseClickTimer_Elapsed);
     tMouseClickTimer.SynchronizingObject = this;
 
-    using (Settings xmlreader = new Settings("MediaPortal.xml"))
+    using (Settings xmlreader = new Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
     {
       string strDefault = xmlreader.GetValueAsString("myradio", "default", "");
       if (strDefault != "")
@@ -972,7 +972,7 @@ public class MediaPortalApp : D3DApp, IRender
     }
     GUIGraphicsContext.Skin = m_strSkin;
     GUIGraphicsContext.ActiveForm = Handle;
-    GUILocalizeStrings.Load(@"language\" + m_strLanguage + @"\strings.xml");
+    GUILocalizeStrings.Load(_config.Get(Config.Options.LanguagePath) + m_strLanguage + @"\strings.xml");
 
     if (splashScreen != null)
     {
@@ -1020,7 +1020,7 @@ public class MediaPortalApp : D3DApp, IRender
 
     _log.Info("Main: Activating windowmanager");
     // Edit Michel
-    using (Settings xmlreader = new Settings("MediaPortal.xml"))
+    using (Settings xmlreader = new Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
     {
       startWithBasicHome = xmlreader.GetValueAsBool("general", "startbasichome", false);
     }
@@ -1079,7 +1079,7 @@ public class MediaPortalApp : D3DApp, IRender
     {
       _log.Info("Main: Resetting DX9 device");
       GUIWaitCursor.Dispose();
-      GUIFontManager.LoadFonts(@"skin\" + m_strSkin + @"\fonts.xml");
+      GUIFontManager.LoadFonts(_config.Get(Config.Options.SkinPath) + m_strSkin + @"\fonts.xml");
       GUIFontManager.InitializeDeviceObjects();
       if (GUIGraphicsContext.DX9Device != null)
       {
@@ -2739,7 +2739,7 @@ public class MediaPortalApp : D3DApp, IRender
     //
     // Only load the USBUIRT device if it has been enabled in the configuration
     //
-    using (Settings xmlreader = new Settings("MediaPortal.xml"))
+    using (Settings xmlreader = new Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
     {
       bool inputEnabled = xmlreader.GetValueAsBool("USBUIRT", "internal", false);
       bool outputEnabled = xmlreader.GetValueAsBool("USBUIRT", "external", false);
@@ -2827,20 +2827,20 @@ public class MediaPortalApp : D3DApp, IRender
 #else
 #if AUTOUPDATE
         UpdaterConfiguration config = UpdaterConfiguration.Instance;
-				config.Logging.LogPath = System.IO.Directory.GetCurrentDirectory() + @"\log\updatelog.log";
-				config.Applications[0].Client.BaseDir = System.IO.Directory.GetCurrentDirectory();
-				config.Applications[0].Client.TempDir = System.IO.Directory.GetCurrentDirectory() + @"\temp";
-				config.Applications[0].Client.XmlFile = System.IO.Directory.GetCurrentDirectory() + @"\MediaPortal.exe.config";
-				config.Applications[0].Server.ServerManifestFileDestination = System.IO.Directory.GetCurrentDirectory() + @"\xml\ServerManifest.xml";
+				config.Logging.LogPath = _config.Get(Config.Options.LogPath) + "updatelog.log";
+				config.Applications[0].Client.BaseDir = _config.Get(Config.Options.BasePath)
+				config.Applications[0].Client.TempDir =  _config.Get(Config.Options.BasePath) + "temp";
+				config.Applications[0].Client.XmlFile =  _config.Get(Config.Options.BasePath) + "MediaPortal.exe.config";
+				config.Applications[0].Server.ServerManifestFileDestination =  _config.Get(Config.Options.BasePath) + @"xml\ServerManifest.xml";
 				
 				try
 				{
-					System.IO.Directory.CreateDirectory(config.Applications[0].Client.BaseDir + @"\temp");
-					System.IO.Directory.CreateDirectory(config.Applications[0].Client.BaseDir + @"\xml");
-					System.IO.Directory.CreateDirectory(config.Applications[0].Client.BaseDir + @"\log");
+					System.IO.Directory.CreateDirectory(config.Applications[0].Client.BaseDir + @"temp");
+					System.IO.Directory.CreateDirectory(config.Applications[0].Client.BaseDir + @"xml");
+					System.IO.Directory.CreateDirectory(config.Applications[0].Client.BaseDir + @"log");
 				}
 				catch(Exception){}
-				Utils.DeleteFiles(config.Applications[0].Client.BaseDir + @"\log", "*.log");
+				Utils.DeleteFiles(config.Applications[0].Client.BaseDir + "log", "*.log");
 				ClientApplicationInfo clientInfo = ClientApplicationInfo.Deserialize("MediaPortal.exe.config");
 				clientInfo.AppFolderName = System.IO.Directory.GetCurrentDirectory();
 				ClientApplicationInfo.Save("MediaPortal.exe.config",clientInfo.AppFolderName, clientInfo.InstalledVersion);
@@ -2862,7 +2862,7 @@ public class MediaPortalApp : D3DApp, IRender
     }
     catch (Exception)
     { }
-    using (Settings xmlreader = new Settings("MediaPortal.xml"))
+    using (Settings xmlreader = new Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
     {
       m_iDateLayout = xmlreader.GetValueAsInt("home", "datelayout", 0);
     }

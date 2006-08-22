@@ -39,6 +39,9 @@ namespace MediaPortal.TV.Recording
     #region vars
     static ArrayList queue = new ArrayList();
     static Thread WorkerThread = null;
+    static ILog log;
+    static IConfig _config;
+
     public enum Status
     {
       Waiting,
@@ -115,7 +118,12 @@ namespace MediaPortal.TV.Recording
       int bitRate, FPS, Priority, QualityIndex, ScreenSizeIndex, Type, AutoHours;
       bool deleteOriginal, AutoDeleteOriginal, AutoCompress;
       Size ScreenSize = new Size(0, 0);
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
+
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         bitRate = xmlreader.GetValueAsInt("compression", "bitrate", 4);
         FPS = xmlreader.GetValueAsInt("compression", "fps", 1);
@@ -327,8 +335,6 @@ namespace MediaPortal.TV.Recording
             {
               if (transcording.status == Status.Busy)
                 transcording.status = Status.Error;
-              ServiceProvider services = GlobalServiceProvider.Instance;
-              ILog log = services.Get<ILog>();
               log.Error(ex);
             }
           }

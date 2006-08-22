@@ -176,6 +176,7 @@ namespace MediaPortal.Video.Database
     int[] aLimits;		// contains the limit for searchresults
     string[] aDatabases;		// contains the name of the database, e.g. IMDB
     private ILog _log;
+    private IConfig _config;
 
     IProgress m_progress;
     // constructor
@@ -188,6 +189,7 @@ namespace MediaPortal.Video.Database
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
 
       m_progress = progress;
       // load the settings
@@ -198,7 +200,7 @@ namespace MediaPortal.Video.Database
     private void LoadSettings()
     {
       // getting available databases and limits
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         int iNumber = xmlreader.GetValueAsInt("moviedatabase", "number", 0);
         if (iNumber <= 0)

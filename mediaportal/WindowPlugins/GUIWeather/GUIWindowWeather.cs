@@ -206,8 +206,8 @@ namespace MediaPortal.GUI.Weather
       //loop here as well
       for (int i = 0; i < NUM_DAYS; i++)
       {
-        _forecast[i].iconImageNameLow = @"weather\64x64\na.png";
-        _forecast[i].iconImageNameHigh = @"weather\128x128\na.png";
+        _forecast[i].iconImageNameLow = _config.Get(MediaPortal.Utils.Services.Config.Options.WeatherPath) + @"64x64\na.png";
+        _forecast[i].iconImageNameHigh = _config.Get(MediaPortal.Utils.Services.Config.Options.WeatherPath) + @"128x128\na.png";
         _forecast[i].Overview = String.Empty;
         _forecast[i].Day = String.Empty;
         _forecast[i].High = String.Empty;
@@ -572,7 +572,7 @@ namespace MediaPortal.GUI.Weather
     void LoadSettings()
     {
       _listLocations.Clear();
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         _locationCode = xmlreader.GetValueAsString("weather", "location", String.Empty);
         _temperatureFarenheit = xmlreader.GetValueAsString("weather", "temperature", "C");
@@ -630,7 +630,7 @@ namespace MediaPortal.GUI.Weather
 
     void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         xmlwriter.SetValue("weather", "location", _locationCode);
         xmlwriter.SetValue("weather", "temperature", _temperatureFarenheit);
@@ -895,7 +895,7 @@ namespace MediaPortal.GUI.Weather
 
       bool skipConnectionTest = false;
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
         skipConnectionTest = xmlreader.GetValueAsBool("weather", "skipconnectiontest", false);
 
       _log.Info("MyWeather.SkipConnectionTest: {0}", skipConnectionTest);
@@ -1294,7 +1294,7 @@ namespace MediaPortal.GUI.Weather
         _nowUpdated = RelocalizeDateTime(_nowUpdated);
 
         GetInteger(element, "icon", out tempInteger);
-        _nowIcon = String.Format(@"weather\128x128\{0}.png", tempInteger);
+        _nowIcon = String.Format(_config.Get(MediaPortal.Utils.Services.Config.Options.WeatherPath) + @"128x128\{0}.png", tempInteger);
 
         GetString(element, "t", out _nowCond, String.Empty);			//current condition
         _nowCond = LocalizeOverview(_nowCond);
@@ -1378,8 +1378,8 @@ namespace MediaPortal.GUI.Weather
             if (null != pDayTimeElement)
             {
               GetInteger(pDayTimeElement, "icon", out tempInteger);
-              _forecast[i].iconImageNameLow = String.Format("weather\\64x64\\{0}.png", tempInteger);
-              _forecast[i].iconImageNameHigh = String.Format("weather\\128x128\\{0}.png", tempInteger);
+              _forecast[i].iconImageNameLow = String.Format(_config.Get(MediaPortal.Utils.Services.Config.Options.WeatherPath) + "64x64\\{0}.png", tempInteger);
+              _forecast[i].iconImageNameHigh = String.Format(_config.Get(MediaPortal.Utils.Services.Config.Options.WeatherPath) + "128x128\\{0}.png", tempInteger);
               GetString(pDayTimeElement, "t", out  _forecast[i].Overview, String.Empty);
               _forecast[i].Overview = LocalizeOverview(_forecast[i].Overview);
               SplitLongString(ref _forecast[i].Overview, 6, 15);

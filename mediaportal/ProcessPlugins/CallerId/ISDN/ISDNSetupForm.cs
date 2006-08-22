@@ -28,6 +28,7 @@ using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
+using MediaPortal.Utils.Services;
 
 namespace ProcessPlugins.CallerId
 {
@@ -45,6 +46,7 @@ namespace ProcessPlugins.CallerId
     private System.Windows.Forms.NumericUpDown numericUpDownTimeOut;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxTimeOut;
     private CheckBox checkBoxOutlook;
+    static IConfig _config;
     /// <summary>
     /// Required designer variable.
     /// </summary>
@@ -52,6 +54,8 @@ namespace ProcessPlugins.CallerId
 
     public ISDNSetupForm()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _config = services.Get<IConfig>();
       //
       // Required for Windows Form Designer support
       //
@@ -60,7 +64,7 @@ namespace ProcessPlugins.CallerId
       //
       // TODO: Add any constructor code after InitializeComponent call
       //
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         checkBoxOutlook.Checked = xmlreader.GetValueAsBool("isdn", "useoutlook", false);
         checkBoxTimeOut.Checked = (xmlreader.GetValueAsInt("isdn", "timeout", 0) > 0);
@@ -225,7 +229,7 @@ namespace ProcessPlugins.CallerId
 
     private void okButton_Click(object sender, System.EventArgs e)
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         xmlwriter.SetValueAsBool("isdn", "useoutlook", checkBoxOutlook.Checked);
         xmlwriter.SetValueAsBool("isdn", "stopmedia", checkBoxStopMedia.Checked);

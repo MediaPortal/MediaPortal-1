@@ -41,6 +41,7 @@ namespace MediaPortal.Utils.Services
       ThumbsPath,
       CachePath,
       WeatherPath,
+      CustomInputDevicePath,
       ConfigPath
     }
 

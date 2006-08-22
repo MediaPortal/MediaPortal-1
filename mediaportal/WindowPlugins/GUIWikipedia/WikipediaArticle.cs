@@ -52,6 +52,7 @@ namespace Wikipedia
     private ArrayList imageArray = new ArrayList();
     private ArrayList imagedescArray = new ArrayList();
     private ILog _log;
+    private IConfig _config;
     #endregion
 
     #region constructors
@@ -63,6 +64,7 @@ namespace Wikipedia
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
       SetLanguage(language);
       this.title = title;
       GetWikipediaXML();
@@ -89,7 +91,7 @@ namespace Wikipedia
     {
       if (language == "Default")
       {
-        MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml");
+        MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml");
         language = xmlreader.GetValueAsString("skin", "language", "English");
       }
       this.language = language;

@@ -130,6 +130,7 @@ namespace MediaPortal
     internal static string _fullscreenOverride = string.Empty;
 
     protected ILog _log;
+    protected IConfig _config;
 
     protected Caps Caps
     {
@@ -296,6 +297,7 @@ namespace MediaPortal
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
 
 #if PERFCOUNTER
       _perfCounterCpu = new PerformanceCounter();
@@ -336,7 +338,7 @@ namespace MediaPortal
       showCursorWhenFullscreen = false;
       bool debugChangeDeviceHack = false;
 
-      using (Settings xmlreader = new Settings("MediaPortal.xml"))
+      using (Settings xmlreader = new Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         useExclusiveDirectXMode = xmlreader.GetValueAsBool("general", "exclusivemode", true);
         autoHideTaskbar = xmlreader.GetValueAsBool("general", "hidetaskbar", true);
@@ -420,7 +422,7 @@ namespace MediaPortal
         storedLocation = this.Location;
         oldBounds = new Rectangle(Bounds.X, Bounds.Y, Bounds.Width, Bounds.Height);
 
-        using (Settings xmlreader = new Settings("MediaPortal.xml"))
+        using (Settings xmlreader = new Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
         {
           string strStartFull;
           if (_fullscreenOverride == "yes")
@@ -1726,7 +1728,7 @@ namespace MediaPortal
       Cursor.Show();
       Invalidate(true);
 
-      using (Settings xmlreader = new Settings("MediaPortal.xml"))
+      using (Settings xmlreader = new Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
         xmlreader.Clear();
 
       MediaPortal.Util.Utils.StartProcess("Configuration.exe", "", false, false);
@@ -2372,7 +2374,7 @@ namespace MediaPortal
       if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false)
         SwitchFullScreenOrWindowed(true);
 
-      using (Settings xmlreader = new Settings("MediaPortal.xml"))
+      using (Settings xmlreader = new Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
         xmlreader.Clear();
 
       Process.Start("configuration.exe", @"/wizard /section=wizards\television.xml");
@@ -2385,7 +2387,7 @@ namespace MediaPortal
       if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false)
         SwitchFullScreenOrWindowed(true);
 
-      using (Settings xmlreader = new Settings("MediaPortal.xml"))
+      using (Settings xmlreader = new Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
         xmlreader.Clear();
 
       Process.Start("configuration.exe", @"/wizard /section=wizards\pictures.xml");
@@ -2398,7 +2400,7 @@ namespace MediaPortal
       if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false)
         SwitchFullScreenOrWindowed(true);
 
-      using (Settings xmlreader = new Settings("MediaPortal.xml"))
+      using (Settings xmlreader = new Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
         xmlreader.Clear();
 
       Process.Start("configuration.exe", @"/wizard /section=wizards\music.xml");
@@ -2411,7 +2413,7 @@ namespace MediaPortal
       if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false)
         SwitchFullScreenOrWindowed(true);
 
-      using (Settings xmlreader = new Settings("MediaPortal.xml"))
+      using (Settings xmlreader = new Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
         xmlreader.Clear();
 
       Process.Start("configuration.exe", @"/wizard /section=wizards\movies.xml");
@@ -2424,7 +2426,7 @@ namespace MediaPortal
       if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false)
         SwitchFullScreenOrWindowed(true);
 
-      using (Settings xmlreader = new Settings("MediaPortal.xml"))
+      using (Settings xmlreader = new Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
         xmlreader.Clear();
 
       Process.Start("configuration.exe", @"/wizard /section=wizards\dvd.xml");

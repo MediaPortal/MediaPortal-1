@@ -123,6 +123,7 @@ namespace MediaPortal.GUI.TV
     static bool _workerThreadRunning = false;
 
     new static ILog _log;
+    new static IConfig _config;
     #endregion
 
     #region ctor
@@ -130,6 +131,7 @@ namespace MediaPortal.GUI.TV
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
 
       _colorList.Add(Color.Red);
       _colorList.Add(Color.Green);
@@ -167,7 +169,7 @@ namespace MediaPortal.GUI.TV
     #region Serialisation
     void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         _currentTvChannel = xmlreader.GetValueAsString("tvguide", "channel", String.Empty);
         _cursorX = xmlreader.GetValueAsInt("tvguide", "ypos", 0);
@@ -179,7 +181,7 @@ namespace MediaPortal.GUI.TV
 
     void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         xmlwriter.SetValue("tvguide", "channel", _currentTvChannel);
         xmlwriter.SetValue("tvguide", "ypos", _cursorX.ToString());
@@ -202,7 +204,7 @@ namespace MediaPortal.GUI.TV
     {
       _log.Info("TvGuide StartImportXML: Initialize");
       _tvGuideFileName = "xmltv";
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         _tvGuideFileName = xmlreader.GetValueAsString("xmltv", "folder", "xmltv");
         _tvGuideFileName = MediaPortal.Util.Utils.RemoveTrailingSlash(_tvGuideFileName);
@@ -788,7 +790,7 @@ namespace MediaPortal.GUI.TV
     protected void CheckNewTVGuide()
     {
       bool shouldImportTvGuide = false;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         string strTmp = String.Empty;
         strTmp = xmlreader.GetValueAsString("tvguide", "date", String.Empty);
@@ -2192,7 +2194,7 @@ namespace MediaPortal.GUI.TV
         //
         if (File.Exists(_tvGuideFileName))
         {
-          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
           {
             string strFileTime = System.IO.File.GetLastWriteTime(_tvGuideFileName).ToString();
             xmlreader.SetValue("tvguide", "date", strFileTime);

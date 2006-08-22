@@ -29,7 +29,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBC
     {
       listCountries.Clear();
       XmlDocument doc = new XmlDocument();
-      string[] files = System.IO.Directory.GetFiles(System.IO.Directory.GetCurrentDirectory() + @"\Tuningparameters");
+      string[] files = System.IO.Directory.GetFiles(_config.Get(MediaPortal.Utils.Services.Config.Options.BasePath) + "Tuningparameters");
       foreach (string file in files)
       {
         if (file.ToLower().IndexOf(".dvbc") >= 0)

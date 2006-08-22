@@ -46,11 +46,13 @@ namespace MediaPortal.MPExTuneCmd
 		private static string s_TuneParam	= "";
 		private const string  s_version     = "0.1";
     protected ILog _log;
+    protected IConfig _config;
 
 		public MPExTuneCmd()
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
 		}
 
 		public void Start()
@@ -73,7 +75,7 @@ namespace MediaPortal.MPExTuneCmd
 
 		private void LoadSettings()
 		{
-			using(MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+			using(MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
 			{
 				s_TuneCmd = xmlreader.GetValueAsString("MPExTuneCmd","commandloc","C:\\dtvcon\\dtvcmd.exe");
 				s_TuneParam = xmlreader.GetValueAsString("MPExTuneCmd","commanddelim","");

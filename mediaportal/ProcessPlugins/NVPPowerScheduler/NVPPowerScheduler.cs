@@ -69,6 +69,7 @@ namespace MediaPortal.PowerScheduler
     // near in time pending recordings
     static private System.Windows.Forms.Timer m_SDTimer = new System.Windows.Forms.Timer();
     static ILog _log;
+    static IConfig _config;
 
 		private const int WM_POWERBROADCAST = 0x0218;
 		private const int PBT_APMQUERYSUSPEND = 0x0000;
@@ -91,6 +92,7 @@ namespace MediaPortal.PowerScheduler
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
     }
 
     # region Main program
@@ -464,7 +466,7 @@ namespace MediaPortal.PowerScheduler
     {
       _log.Info("PowerScheduler: version 0.3");
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         m_iStartupInterval = xmlreader.GetValueAsInt("powerscheduler", "wakeupinterval", 1);
         m_iShutdownInterval = xmlreader.GetValueAsInt("powerscheduler", "shutdowninterval", 3);

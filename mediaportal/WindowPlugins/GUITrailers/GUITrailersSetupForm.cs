@@ -28,6 +28,7 @@ using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.GUI.Video
 {
@@ -51,6 +52,7 @@ namespace MediaPortal.GUI.Video
     private MediaPortal.UserInterface.Controls.MPGroupBox TsrVodnbrOfResultGrpBox;
     private MediaPortal.UserInterface.Controls.MPRadioButton radioButton2;
     private MediaPortal.UserInterface.Controls.MPRadioButton rbnmbOfResultsDef;
+    static IConfig _config;
     /// <summary>
     /// Required designer variable.
     /// </summary>
@@ -58,6 +60,8 @@ namespace MediaPortal.GUI.Video
 
     public GUITrailersSetupForm()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _config = services.Get<IConfig>();
       //
       // Required for Windows Form Designer support
       //
@@ -323,7 +327,7 @@ namespace MediaPortal.GUI.Video
 
     private void GUITrailersSetupForm_Load(object sender, System.EventArgs e)
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         if (xmlreader.GetValue("mytrailers", "speed") == "300")
           checkBox300.Checked = true;
@@ -360,7 +364,7 @@ namespace MediaPortal.GUI.Video
 
     private void button1_Click(object sender, System.EventArgs e)
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         if (checkBox300.Checked == true)
           xmlwriter.SetValue("mytrailers", "speed", "300".ToString());

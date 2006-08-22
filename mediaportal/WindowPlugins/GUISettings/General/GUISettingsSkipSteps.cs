@@ -89,7 +89,7 @@ namespace WindowPlugins.GUISettings
       _log.Info("GUISkipSteps: {0}", "Load settings");
       ArrayList StepArray = new ArrayList();
 
-      using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml") )
+      using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml") )
         foreach ( string token in ( xmlreader.GetValueAsString("movieplayer", "skipsteps", "0;1;1;0;1;1;1;0;1;1;1;0;1;0;1;0").Split(new char[] { ',', ';', ' ' }) ) )
         {
           if ( token == string.Empty )
@@ -144,7 +144,7 @@ namespace WindowPlugins.GUISettings
                          ( Convert.ToInt16(checkMarkButtonStep14.Selected) ).ToString() + ";" +
                          ( Convert.ToInt16(checkMarkButtonStep15.Selected) ).ToString() + ";" +
                          ( Convert.ToInt16(checkMarkButtonStep16.Selected) ).ToString();
-      using ( MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml") )
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         xmlwriter.SetValue("movieplayer", "skipsteps", skipSteps);
       }

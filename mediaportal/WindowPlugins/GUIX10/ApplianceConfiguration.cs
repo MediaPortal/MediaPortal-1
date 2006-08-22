@@ -21,6 +21,7 @@
 
 using System;
 using System.Collections;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.GUI.X10Plugin
 {
@@ -36,10 +37,12 @@ namespace MediaPortal.GUI.X10Plugin
 		public int m_CM17COMPort = 1;
 
 		public const string DEFAULT_LOCATION = "Default location";
+    private IConfig _config;
 
 		public ApplianceConfiguration()
 		{
-			
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _config = services.Get<IConfig>();
 		}
 
 		/// <summary>
@@ -49,7 +52,7 @@ namespace MediaPortal.GUI.X10Plugin
 		{
 			m_locations.Clear();
 			m_X10Appliances.Clear();
-			using( MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
+			using( MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
 			{
 				int i = 0;
 				while(true)
@@ -101,7 +104,7 @@ namespace MediaPortal.GUI.X10Plugin
 		/// </summary>
 		public void SaveSettings()
 		{
-			using(MediaPortal.Profile.Settings   xmlwriter=new MediaPortal.Profile.Settings("MediaPortal.xml"))
+			using(MediaPortal.Profile.Settings   xmlwriter=new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
 			{
 				int i=0;
 				foreach (X10Appliance sx10 in m_X10Appliances)

@@ -120,7 +120,7 @@ namespace MediaPortal.TV.Recording
     public DVBGraphTTPremium(TVCaptureDevice pCard)
       : base(pCard)
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         _cardType = xmlreader.GetValueAsString("DVBTTPremium", "cardtype", "");
         _cardFilename = xmlreader.GetValueAsString("dvb_ts_cards", "filename", "");

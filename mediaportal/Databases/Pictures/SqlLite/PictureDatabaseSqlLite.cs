@@ -38,11 +38,13 @@ namespace MediaPortal.Picture.Database
     bool disposed = false;
     SQLiteClient m_db = null;
     protected ILog _log;
+    protected IConfig _config;
 
     public PictureDatabaseSqlLite()
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
 
       Open();
     }
@@ -55,15 +57,12 @@ namespace MediaPortal.Picture.Database
         try
         {
           // Open database
-
-          String strPath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.
-            GetExecutingAssembly().Location);
           try
           {
-            System.IO.Directory.CreateDirectory(strPath + @"\database");
+            System.IO.Directory.CreateDirectory(_config.Get(Config.Options.DatabasePath));
           }
           catch (Exception) { }
-          m_db = new SQLiteClient(strPath + @"\database\PictureDatabase.db3");
+          m_db = new SQLiteClient(_config.Get(Config.Options.DatabasePath) + "PictureDatabase.db3");
 
           DatabaseUtility.SetPragmas(m_db);
           CreateTables();

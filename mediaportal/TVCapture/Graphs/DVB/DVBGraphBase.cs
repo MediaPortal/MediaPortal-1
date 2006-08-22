@@ -316,6 +316,7 @@ namespace MediaPortal.TV.Recording
     protected string _currentTimeShiftFileName;
     protected string _lastError = String.Empty;
     protected ILog _log;
+    protected IConfig _config;
 
 #if DUMP
 		System.IO.FileStream fileout;
@@ -331,6 +332,7 @@ namespace MediaPortal.TV.Recording
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
 
       _card = pCard;
       _cardId = pCard.ID;
@@ -338,13 +340,13 @@ namespace MediaPortal.TV.Recording
 
       try
       {
-        System.IO.Directory.CreateDirectory("database");
+        System.IO.Directory.CreateDirectory(_config.Get(Config.Options.DatabasePath));
       }
       catch ( Exception ) { }
 
       try
       {
-        System.IO.Directory.CreateDirectory(@"database\pmt");
+        System.IO.Directory.CreateDirectory(_config.Get(Config.Options.DatabasePath) + "pmt");
       }
       catch ( Exception ) { }
       //create registry keys needed by the streambuffer engine for timeshifting/recording
@@ -674,7 +676,7 @@ namespace MediaPortal.TV.Recording
       }
 
       _isGraphRunning = true;
-      using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml") )
+      using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml") )
       {
         string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "normal");
         if ( strValue.Equals("zoom") )
@@ -1293,7 +1295,7 @@ namespace MediaPortal.TV.Recording
       string strAudioCodec = "";
       string strAudioRenderer = "";
       bool bAddFFDshow = false;
-      using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml") )
+      using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml") )
       {
         bAddFFDshow = xmlreader.GetValueAsBool("mytv", "ffdshow", false);
         strVideoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "");
@@ -1318,7 +1320,7 @@ namespace MediaPortal.TV.Recording
       string strAudioCodec = "";
       string strAudioRenderer = "";
       bool bAddFFDshow = false;
-      using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml") )
+      using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml") )
       {
         bAddFFDshow = xmlreader.GetValueAsBool("mytv", "ffdshow", false);
         strVideoCodec = xmlreader.GetValueAsString("mytv", "videocodecMPEG4", "Elecard AVC/H.264 Decoder DMO");
@@ -1350,7 +1352,7 @@ namespace MediaPortal.TV.Recording
       try
       {
         int iTimeShiftBuffer = 30;
-        using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml") )
+        using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml") )
         {
           iTimeShiftBuffer = xmlreader.GetValueAsInt("capture", "timeshiftbuffer", 30);
           if ( iTimeShiftBuffer < 5 )
@@ -1996,7 +1998,7 @@ namespace MediaPortal.TV.Recording
           if ( _cardProperties.IsCISupported() )
           {
             string camType = "";
-            string filename = String.Format(@"database\card_{0}.xml", _card.FriendlyName);
+            string filename = String.Format(_config.Get(Config.Options.DatabasePath) + "card_{0}.xml", _card.FriendlyName);
             using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename) )
             {
               camType = xmlreader.GetValueAsString("dvbs", "cam", "Viaccess");
@@ -2203,7 +2205,7 @@ namespace MediaPortal.TV.Recording
             if ( _cardProperties.IsCISupported() )
             {
               string camType = "";
-              string filename = String.Format(@"database\card_{0}.xml", _card.FriendlyName);
+              string filename = String.Format(_config.Get(Config.Options.DatabasePath) + "card_{0}.xml", _card.FriendlyName);
               using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename) )
               {
                 camType = xmlreader.GetValueAsString("dvbs", "cam", "Viaccess");
@@ -2267,7 +2269,7 @@ namespace MediaPortal.TV.Recording
       lnbKhzTone = 0;
       try
       {
-        string filename = String.Format(@"database\card_{0}.xml", _card.FriendlyName);
+        string filename = String.Format(_config.Get(Config.Options.DatabasePath) + "card_{0}.xml", _card.FriendlyName);
 
         int lnbKhz = -1;
         int diseqc = -1;

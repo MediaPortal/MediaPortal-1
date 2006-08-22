@@ -56,7 +56,7 @@ namespace MediaPortal.GUI.TV
 
 		void LoadSettings()
 		{
-			using(MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
 			{
 				spinBitrate.Value = xmlreader.GetValueAsInt("compression","bitrate",4);
 				spinFPS.Value		 = xmlreader.GetValueAsInt("compression","fps",1);
@@ -71,8 +71,8 @@ namespace MediaPortal.GUI.TV
 
 		void SaveSettings()
 		{
-			
-			using(MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
+
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
 			{
 				xmlreader.SetValue("compression","bitrate",spinBitrate.Value);
 				xmlreader.SetValue("compression","fps",spinFPS.Value);

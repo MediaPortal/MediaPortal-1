@@ -30,6 +30,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using System.Text;
 using System.IO;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.MPExTuneCmd
 {
@@ -45,6 +46,7 @@ namespace MediaPortal.MPExTuneCmd
     private MediaPortal.UserInterface.Controls.MPButton cancel_button;
     private MediaPortal.UserInterface.Controls.MPTextBox MPExTuneCmdDelim;
     private MediaPortal.UserInterface.Controls.MPLabel label2;
+    static IConfig _config;
     /// <summary>
     /// Required designer variable.
     /// </summary>
@@ -52,6 +54,8 @@ namespace MediaPortal.MPExTuneCmd
 
     public MPExTuneCmdForm()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _config = services.Get<IConfig>();
       //
       // Required for Windows Form Designer support
       //
@@ -79,7 +83,7 @@ namespace MediaPortal.MPExTuneCmd
 
     private void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         MpExTuneCmdLoc.Text = xmlreader.GetValueAsString("MPExTuneCmd", "commandloc", "C:\\dtvcon\\dtvcmd.exe");
         MPExTuneCmdDelim.Text = xmlreader.GetValueAsString("MPExTuneCmd", "commanddelim", "#");
@@ -88,7 +92,7 @@ namespace MediaPortal.MPExTuneCmd
 
     private bool SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         xmlwriter.SetValue("MPExTuneCmd", "commandloc", MpExTuneCmdLoc.Text);
         xmlwriter.SetValue("MPExTuneCmd", "commanddelim", MPExTuneCmdDelim.Text);

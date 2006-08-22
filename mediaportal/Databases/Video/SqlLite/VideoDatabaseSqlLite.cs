@@ -35,12 +35,14 @@ namespace MediaPortal.Video.Database
   {
     public SQLiteClient m_db = null;
     protected ILog _log;
+    protected IConfig _config;
 
     #region ctor
     public VideoDatabaseSqlLite()
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
 
       Open();
     }
@@ -53,14 +55,13 @@ namespace MediaPortal.Video.Database
       try
       {
         // Open database
-        String strPath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.
-          GetExecutingAssembly().Location);
+        String strPath = _config.Get(Config.Options.DatabasePath);
         try
         {
-          System.IO.Directory.CreateDirectory(strPath + @"\database");
+          System.IO.Directory.CreateDirectory(strPath);
         }
         catch (Exception) { }
-        m_db = new SQLiteClient(strPath + @"\database\VideoDatabaseV5.db3");
+        m_db = new SQLiteClient(strPath + @"VideoDatabaseV5.db3");
         DatabaseUtility.SetPragmas(m_db);
         CreateTables();
 

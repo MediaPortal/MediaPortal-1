@@ -30,7 +30,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBT
 		{
 			listCountries.Clear();
             XmlDocument doc = new XmlDocument();
-            doc.Load("Tuningparameters/dvbt.xml");
+            doc.Load(_config.Get(MediaPortal.Utils.Services.Config.Options.BasePath) + "Tuningparameters/dvbt.xml");
             XPathNavigator nav = doc.CreateNavigator();
 
             // Ensure we are at the root node

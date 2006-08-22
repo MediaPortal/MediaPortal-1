@@ -28,6 +28,7 @@ using SQLite.NET;
 using MediaPortal.GUI.View;
 using MediaPortal.GUI.Library;
 using MediaPortal.Video.Database;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.GUI.Video
 {
@@ -40,10 +41,12 @@ namespace MediaPortal.GUI.Video
 
 		ViewDefinition currentView;
 		int						 currentLevel=0;
-		ArrayList      views=new ArrayList();					
+		ArrayList      views=new ArrayList();
 		public VideoViewHandler()
 		{
-			if (!System.IO.File.Exists("videoViews.xml"))
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      IConfig _config = services.Get<IConfig>();
+      if (!System.IO.File.Exists(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "videoViews.xml"))
 			{
 				//genres
 				FilterDefinition filter1,filter2;
@@ -82,7 +85,7 @@ namespace MediaPortal.GUI.Video
 				listViews.Add(viewTitles);
 				listViews.Add(viewYears);
 
-				using(FileStream fileStream = new FileStream("videoViews.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
+        using (FileStream fileStream = new FileStream(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "videoViews.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
         {
           ArrayList list = new ArrayList();
           foreach (ViewDefinition view in listViews)
@@ -95,7 +98,7 @@ namespace MediaPortal.GUI.Video
 
 			try
 			{
-				using(FileStream fileStream = new FileStream("videoViews.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+        using (FileStream fileStream = new FileStream(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "videoViews.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
 				{
 					try
 					{

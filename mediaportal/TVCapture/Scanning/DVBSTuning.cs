@@ -55,11 +55,13 @@ namespace MediaPortal.TV.Scanning
     int _currentDiseqc = 1;
     //bool _reentrant = false;
     protected ILog _log;
+    protected IConfig _config;
 
     public DVBSTuning()
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
     }
 
     #region ITuning Members
@@ -93,7 +95,7 @@ namespace MediaPortal.TV.Scanning
     }
     void GetNumberOfDiseqcs(TVCaptureDevice card)
     {
-      string filename = String.Format(@"database\card_{0}.xml", card.FriendlyName);
+      string filename = String.Format(_config.Get(Config.Options.DatabasePath) + "card_{0}.xml", card.FriendlyName);
       //
       // load card settings to check diseqc
       _diseqcLoops = 1;

@@ -157,6 +157,8 @@ namespace MediaPortal.TV.Recording
     [NonSerialized]
     static Hashtable _devices = new Hashtable();
 
+    static ILog log;
+    static IConfig _config;
     /// <summary>
     /// #MW#
     /// </summary>
@@ -185,7 +187,12 @@ namespace MediaPortal.TV.Recording
     {
       int countryCode = 31;
       string tunerInput = "Antenna";
-      using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
+
+      using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         tunerInput = xmlReader.GetValueAsString("capture", "tuner", "Antenna");
         countryCode = xmlReader.GetValueAsInt("capture", "country", 31);
@@ -569,8 +576,6 @@ namespace MediaPortal.TV.Recording
 
         if (value.Equals(_currentTvChannelName)) return;//nothing todo
 
-        ServiceProvider services = GlobalServiceProvider.Instance;
-        ILog log = services.Get<ILog>();
         log.Info("TVCapture: change channel to :{0}", value);
         if (IsTimeShifting || IsRecording)
         {
@@ -916,7 +921,7 @@ namespace MediaPortal.TV.Recording
       _recordedTvObject.End = MediaPortal.Util.Utils.datetolong(DateTime.Now);
       TVDatabase.AddRecordedTV(_recordedTvObject);
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         bool addMovieToDatabase = xmlreader.GetValueAsBool("capture", "addrecordingstomoviedatabase", true);
         if (addMovieToDatabase)
@@ -1543,7 +1548,7 @@ namespace MediaPortal.TV.Recording
 
         timeProgStart = currentRunningProgram.StartTime;
 
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
           if (isMovie)
             strInput = xmlreader.GetValueAsString("capture", "moviesformat", string.Empty);
           else
@@ -1724,7 +1729,7 @@ namespace MediaPortal.TV.Recording
     {
       try
       {
-        string filename = String.Format(@"database\card_{0}.xml", _friendlyName);
+        string filename = String.Format(_config.Get(Config.Options.DatabasePath) + "card_{0}.xml", _friendlyName);
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename))
         {
           int contrast = xmlreader.GetValueAsInt("tv", "contrast", -1);
@@ -1746,7 +1751,7 @@ namespace MediaPortal.TV.Recording
     {
       if (_friendlyName != null && _friendlyName != String.Empty)
       {
-        string filename = String.Format(@"database\card_{0}.xml", _friendlyName);
+        string filename = String.Format(_config.Get(Config.Options.DatabasePath) + @"card_{0}.xml", _friendlyName);
         using (MediaPortal.Profile.Settings xmlWriter = new MediaPortal.Profile.Settings(filename))
         {
           xmlWriter.SetValue("tv", "contrast", GUIGraphicsContext.Contrast);

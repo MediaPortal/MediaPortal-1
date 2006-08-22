@@ -68,6 +68,7 @@ namespace ProcessPlugins.CallerId
     ISDNWatch ISDNWatch;
 
     static ILog _log;
+    static IConfig _config;
 
     static private Hashtable AreaCodeLookup
     {
@@ -75,7 +76,7 @@ namespace ProcessPlugins.CallerId
       {
         if (areaCodeLookup == null)
         {
-          string areaCodeXMLFile = "ISDNCodes.xml";
+          string areaCodeXMLFile = _config.Get(Config.Options.ConfigPath) + "ISDNCodes.xml";
           string areaCode, location;
           Hashtable areaTable = new Hashtable();
           areaTable.Add("", Strings.Unknown);
@@ -124,7 +125,7 @@ namespace ProcessPlugins.CallerId
       {
         if (countryCodeLookup == null)
         {
-          string countryCodeXMLFile = "ISDNCodes.xml";
+          string countryCodeXMLFile = _config.Get(Config.Options.ConfigPath) + "ISDNCodes.xml";
           string countryCode, country;
           Hashtable countryTable = new Hashtable();
           countryTable.Add("+", Strings.Unknown);
@@ -168,7 +169,7 @@ namespace ProcessPlugins.CallerId
       {
         if (countryTranslator == null)
         {
-          string translatorXMLFile = "ISDNCodes.xml";
+          string translatorXMLFile = _config.Get(Config.Options.ConfigPath) + "ISDNCodes.xml";
           string countryShort, countryLong;
           Hashtable translatorTable = new Hashtable();
           translatorTable.Add(Strings.Unknown, Strings.Unknown);
@@ -210,6 +211,7 @@ namespace ProcessPlugins.CallerId
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
     }
 
     #region ISetupForm Members
@@ -300,7 +302,7 @@ namespace ProcessPlugins.CallerId
         _log.Info("ISDN: CAPI error. No ISDN card installed? Caller-ID disabled.");
       }
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         useOutlook    = xmlreader.GetValueAsBool("isdn", "useoutlook", false);
         stopMedia     = xmlreader.GetValueAsBool("isdn", "stopmedia", true);

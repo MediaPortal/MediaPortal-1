@@ -33,6 +33,7 @@ using SQLite.NET;
 using MediaPortal.GUI.View;
 using MediaPortal.GUI.Library;
 using MediaPortal.Music.Database;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.GUI.Music
 {
@@ -47,9 +48,13 @@ namespace MediaPortal.GUI.Music
         int currentLevel = 0;
         MusicDatabase database;
         List<ViewDefinition> views = new List<ViewDefinition>();
+        static IConfig _config;
+
         public MusicViewHandler()
         {
-            if (!System.IO.File.Exists("musicviews.xml"))
+            ServiceProvider services = GlobalServiceProvider.Instance;
+            _config = services.Get<IConfig>();
+            if (!System.IO.File.Exists(_config.Get(Config.Options.ConfigPath) + "musicviews.xml"))
             {
                 //genres
                 FilterDefinition filter1, filter2, filter3;
@@ -115,7 +120,7 @@ namespace MediaPortal.GUI.Music
                 listViews.Add(viewFavorites);
                 listViews.Add(viewAllSongs);
 
-                using (FileStream fileStream = new FileStream("musicViews.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
+                using (FileStream fileStream = new FileStream(_config.Get(Config.Options.ConfigPath) + "musicViews.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
                 {
                     ArrayList list = new ArrayList();
                     foreach (ViewDefinition view in listViews)
@@ -127,7 +132,7 @@ namespace MediaPortal.GUI.Music
             }
 
             database = new MusicDatabase();
-            using (FileStream fileStream = new FileStream("musicViews.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            using (FileStream fileStream = new FileStream(_config.Get(Config.Options.ConfigPath) + "musicViews.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 try
                 {

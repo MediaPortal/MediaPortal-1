@@ -2081,7 +2081,7 @@ namespace MediaPortal.TV.Recording
 
     protected void SetupAntennae5v()
     {
-        string filename = String.Format(@"database\card_{0}.xml", _card.FriendlyName);
+        string filename = String.Format(_config.Get(MediaPortal.Utils.Services.Config.Options.DatabasePath) + "card_{0}.xml", _card.FriendlyName);
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename))
         {
             bool isAntennae5vEnabled = xmlreader.GetValueAsBool("general", "Antennae5v", false);
@@ -2095,7 +2095,7 @@ namespace MediaPortal.TV.Recording
 
     protected override void SendHWPids(ArrayList pids)
     {
-      string filename = String.Format(@"database\card_{0}.xml", _card.FriendlyName);
+      string filename = String.Format(_config.Get(MediaPortal.Utils.Services.Config.Options.DatabasePath) + "card_{0}.xml", _card.FriendlyName);
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename))
       {
         bool isHardwareFilteringEnabled = xmlreader.GetValueAsBool("general", "hwfiltering", false);

@@ -69,6 +69,7 @@ namespace MediaPortal.InputDevices
     const int PBT_APMRESUMECRITICAL = 0x0006;
 
     protected ILog _log;
+    protected IConfig _config;
 
     /// <summary>
     /// HCW control enabled
@@ -84,6 +85,7 @@ namespace MediaPortal.InputDevices
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
     }
 
 
@@ -99,7 +101,7 @@ namespace MediaPortal.InputDevices
     public void Init()
     {
       _exit = false;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         _controlEnabled = xmlreader.GetValueAsBool("remote", "HCW", false);
         _allowExternal = xmlreader.GetValueAsBool("remote", "HCWAllowExternal", false);
@@ -189,7 +191,7 @@ namespace MediaPortal.InputDevices
 
         if (!_exit)
         {
-          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
             _controlEnabled = xmlreader.GetValueAsBool("remote", "HCW", false);
           if (_controlEnabled)
             Process.Start(System.Windows.Forms.Application.StartupPath + @"\HcwHelper.exe");

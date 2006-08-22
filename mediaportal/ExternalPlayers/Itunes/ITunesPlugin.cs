@@ -49,11 +49,13 @@ namespace MediaPortal.ITunesPlayer
     private string[] m_supportedExtensions = new string[0];
     private bool _notifyPlaying = false;
     protected ILog _log;
+    protected IConfig _config;
 
     public ITunesPlugin()
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
     }
 
     public override string Description()
@@ -133,7 +135,7 @@ namespace MediaPortal.ITunesPlayer
     private void readConfig()
     {
       string strExt = null;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         strExt = xmlreader.GetValueAsString("itunesplugin", "enabledextensions", "");
       }

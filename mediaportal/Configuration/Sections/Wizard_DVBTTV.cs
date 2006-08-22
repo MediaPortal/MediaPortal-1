@@ -36,6 +36,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
 using MediaPortal.TV.Scanning;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Configuration.Sections
 {
@@ -51,7 +52,7 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel3;
-
+    protected IConfig _config;
 
     public Wizard_DVBTTV()
       : this("DVBT TV")
@@ -61,6 +62,9 @@ namespace MediaPortal.Configuration.Sections
     public Wizard_DVBTTV(string name)
       : base(name)
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _config = services.Get<IConfig>();
+
       // This call is required by the Windows Form Designer.
       InitializeComponent();
       _card = null;
@@ -270,7 +274,7 @@ namespace MediaPortal.Configuration.Sections
             }
         }
         XmlDocument doc = new XmlDocument();
-        doc.Load("Tuningparameters/dvbt.xml");
+        doc.Load(_config.Get(Config.Options.BasePath) + @"Tuningparameters\dvbt.xml");
         XPathNavigator nav = doc.CreateNavigator();
 
         // Ensure we are at the root node

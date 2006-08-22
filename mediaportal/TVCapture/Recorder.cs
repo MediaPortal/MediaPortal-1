@@ -78,6 +78,7 @@ namespace MediaPortal.TV.Recording
     static double _lastPosition = 0;
     static CommandProcessor _commandProcessor;
     static ILog _log;
+    static IConfig _config;
 		static Object thisLock = new Object();
     #endregion
 
@@ -113,6 +114,7 @@ namespace MediaPortal.TV.Recording
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
     }
     #endregion
 
@@ -149,7 +151,7 @@ namespace MediaPortal.TV.Recording
       _state = State.Initializing;
       _commandProcessor = processor;
       RecorderProperties.Init();
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         if (_commandProcessor != null) _commandProcessor.TVChannelName = xmlreader.GetValueAsString("mytv", "channel", String.Empty);
       }

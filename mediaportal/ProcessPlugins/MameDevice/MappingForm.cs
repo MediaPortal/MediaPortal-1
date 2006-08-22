@@ -55,6 +55,8 @@ namespace MediaPortal.InputDevices
     string[] processList = new string[] { "CLOSE", "KILL" };
 
     string inputClassName;
+    static IConfig _config;
+    static ILog log;
 
     class Data
     {
@@ -115,6 +117,10 @@ namespace MediaPortal.InputDevices
 
     public MappingForm(string name)
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
+
       //
       // Required for Windows Form Designer support
       //
@@ -512,8 +518,8 @@ namespace MediaPortal.InputDevices
       treeMapping.Nodes.Clear();
       XmlDocument doc = new XmlDocument();
       string path = "InputDeviceMappings\\defaults\\" + xmlFile;
-      if (!defaults && File.Exists("InputDeviceMappings\\custom\\" + xmlFile))
-        path = "InputDeviceMappings\\custom\\" + xmlFile;
+      if (!defaults && File.Exists(_config.Get(Config.Options.CustomInputDevicePath) + xmlFile))
+        path = _config.Get(Config.Options.CustomInputDevicePath) + xmlFile;
       doc.Load(path);
       XmlNodeList listRemotes = doc.DocumentElement.SelectNodes("/mappings/remote");
 
@@ -667,12 +673,9 @@ namespace MediaPortal.InputDevices
 
     bool SaveMapping(string xmlFile)
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      ILog log = services.Get<ILog>();
-
       try
       {
-        DirectoryInfo dir = Directory.CreateDirectory("InputDeviceMappings\\custom");
+        DirectoryInfo dir = Directory.CreateDirectory(_config.Get(Config.Options.CustomInputDevicePath));
       }
       catch
       {
@@ -682,7 +685,7 @@ namespace MediaPortal.InputDevices
         "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
       try
       {
-        XmlTextWriter writer = new XmlTextWriter("InputDeviceMappings\\custom\\" + xmlFile, System.Text.Encoding.UTF8);
+        XmlTextWriter writer = new XmlTextWriter(_config.Get(Config.Options.CustomInputDevicePath) + xmlFile, System.Text.Encoding.UTF8);
         writer.Formatting = Formatting.Indented;
         writer.Indentation = 1;
         writer.IndentChar = (char)9;

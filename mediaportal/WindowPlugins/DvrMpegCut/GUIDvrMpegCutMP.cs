@@ -33,7 +33,6 @@ namespace WindowPlugins.DvrMpegCut
 	public class GUIDvrMpegCutMP : GUIWindow
 	{
 		readonly int windowID = 170601;
-		
 
 		#region GUIControls
 		[SkinControlAttribute(23)]
@@ -355,7 +354,7 @@ namespace WindowPlugins.DvrMpegCut
 
     private void LoadShares()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         //ShowTrailerButton = xmlreader.GetValueAsBool("plugins", "My Trailers", true);
        // fileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);

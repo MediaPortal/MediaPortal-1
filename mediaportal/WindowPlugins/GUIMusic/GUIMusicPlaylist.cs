@@ -156,7 +156,7 @@ namespace MediaPortal.GUI.Music
     {
       m_strDirectory = System.IO.Directory.GetCurrentDirectory();
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         _enableScrobbling = xmlreader.GetValueAsBool("plugins", "Audioscrobbler", false);               
         _currentScrobbleUser = xmlreader.GetValueAsString("audioscrobbler", "user", "Username");
@@ -867,7 +867,7 @@ namespace MediaPortal.GUI.Music
       {
         string strPath = System.IO.Path.GetFileNameWithoutExtension(strNewFileName);
         string strPlayListPath = String.Empty;
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
         {
           strPlayListPath = xmlreader.GetValueAsString("music", "playlists", String.Empty);
           strPlayListPath = MediaPortal.Util.Utils.RemoveTrailingSlash(strPlayListPath);

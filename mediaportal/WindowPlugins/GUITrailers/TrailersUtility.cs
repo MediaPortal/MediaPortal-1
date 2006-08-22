@@ -15,6 +15,7 @@ namespace MediaPortal.GUI.Video
 	public class TrailersUtility
 	{
 		string _downloadedText		= string.Empty;
+    static IConfig _config;
 
 		public void GetWebPage(string url, out string HTMLDownload) // Get url and put in string
 		{
@@ -80,18 +81,17 @@ namespace MediaPortal.GUI.Video
 					// Download Poster
 					WebClient wc = new WebClient();
 					moviename = moviename.Replace(":","-");
-					wc.DownloadFile(downloadurl, @"thumbs\MPTemp -"+moviename + ".jpg");
+					wc.DownloadFile(downloadurl, _config.Get(Config.Options.ThumbsPath) + "MPTemp -"+moviename + ".jpg");
 
-					while(System.IO.File.Exists(@"thumbs\MPTemp -"+moviename + ".jpg")!=true)
+          while (System.IO.File.Exists(_config.Get(Config.Options.ThumbsPath) + "MPTemp -" + moviename + ".jpg") != true)
 						GUIWindowManager.Process();
 				}
 		}
 
         public TrailersUtility()
 		{
-			//
-			// TODO: Add constructor logic here
-			//
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _config = services.Get<IConfig>();
 		}
 	}
 }
