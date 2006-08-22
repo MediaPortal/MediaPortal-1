@@ -32,7 +32,7 @@ using System.Drawing;
 using System.Text;
 using System.Web.Security;
 using System.Windows.Forms;
-
+using MediaPortal.Utils.Services;
 using MediaPortal.Music.Database;
 using MediaPortal.Util;
 
@@ -45,8 +45,14 @@ namespace MediaPortal.AudioScrobbler
     List<Song> songList = null;
     List<Song> similarList = null;
 
+    private static ILog _log;
+    private static IConfig _config;
+
     public AudioscrobblerSettings()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
       InitializeComponent();
       LoadSettings();
     }
@@ -56,7 +62,7 @@ namespace MediaPortal.AudioScrobbler
     {
       string tmpuser = "";
       string tmppass = "";
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         tmpuser = xmlreader.GetValueAsString("audioscrobbler", "user", "");
 
@@ -91,7 +97,7 @@ namespace MediaPortal.AudioScrobbler
             }
             catch (Exception)
             {
-              //Log.Write("Audioscrobbler: Password decryption failed {0}", ex.Message);
+              //_log.Info("Audioscrobbler: Password decryption failed {0}", ex.Message);
             }
           }
 
@@ -147,43 +153,43 @@ namespace MediaPortal.AudioScrobbler
       if (mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(userName_)), "iDebugLog", -1) == -1)
       {
         mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(userName_)), "iDebugLog", 0);
-        //Log.Write("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iDebugLog");
+        //_log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iDebugLog");
       }
       // set randomness
       if (mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(userName_)), "iRandomness", -1) < 1)
       {
         mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(userName_)), "iRandomness", 77);
-        //Log.Write("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iRandomness");
+        //_log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iRandomness");
       }     
       // enable scrobbling
       if (mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(userName_)), "iSubmitOn", -1) == -1)
       {
         mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(userName_)), "iSubmitOn", 1);
-        //Log.Write("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iSubmitOn");
+        //_log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iSubmitOn");
       }
       // disable Scrobble On on startup
       if (mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(userName_)), "iScrobbleDefault", -1) == -1)
       {
         mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(userName_)), "iScrobbleDefault", 0);
-        //Log.Write("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iScrobbleDefault");
+        //_log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iScrobbleDefault");
       }
       // consider 3 artists to add
       if (mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(userName_)), "iAddArtists", -1) < 1)
       {
         mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(userName_)), "iAddArtists", 3);
-        //Log.Write("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iAddArtists");
+        //_log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iAddArtists");
       }
       // consider adding 1 track per artist
       if (mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(userName_)), "iAddTracks", -1) < 1)
       {
         mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(userName_)), "iAddTracks", 1);
-        //Log.Write("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iAddTracks");
+        //_log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iAddTracks");
       }
       // set neighbour mode to weekly artists
       if (mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(userName_)), "iNeighbourMode", -1) == -1)
       {
         mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(userName_)), "iNeighbourMode", 1);
-        //Log.Write("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iNeighbourMode");
+        //_log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iNeighbourMode");
       }
     }
 
@@ -199,7 +205,7 @@ namespace MediaPortal.AudioScrobbler
 
       if (textBoxASUsername.Text != String.Empty)
       {
-        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
         {
           xmlwriter.SetValue("audioscrobbler", "user", textBoxASUsername.Text);
 
@@ -223,7 +229,7 @@ namespace MediaPortal.AudioScrobbler
           }
           catch (Exception)
           {
-            //Log.Write("Audioscrobbler: Password encryption failed {0}", ex.Message);
+            //_log.Info("Audioscrobbler: Password encryption failed {0}", ex.Message);
           }
           //xmlwriter.SetValue("audioscrobbler", "pass", tmpPass);
 
@@ -242,7 +248,7 @@ namespace MediaPortal.AudioScrobbler
           if (lastFmLookup != null)
             neighbourmode = (int)lastFmLookup.CurrentNeighbourMode;
           else
-            MediaPortal.GUI.Library.Log.Write("DEBUG *** lastFMLookup was null. neighbourmode: {0}", Convert.ToString(neighbourmode));
+            _log.Info("DEBUG *** lastFMLookup was null. neighbourmode: {0}", Convert.ToString(neighbourmode));
 
           MusicDatabase mdb = new MusicDatabase();
           // checks and adds the user if necessary + updates the password;

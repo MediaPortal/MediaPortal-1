@@ -6,6 +6,10 @@
    ATTENTION: Never change anything in the <Dir> element as this may cause MediaPortal to fail.
    If you don't know what that means at all, leave the default settings. 
 
+   Don't change this file itself.
+   copy it to MyDocuments\Team MediaPortal and modify it there.
+   If you made an error, the original copy in the MediaPortal Installation Path is used.
+
    Valid Values for the <Path> element are:
    <Path></Path>
    =============

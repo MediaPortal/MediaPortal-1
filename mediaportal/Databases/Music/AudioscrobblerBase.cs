@@ -37,6 +37,7 @@ using System.Xml;
 using MediaPortal.Util;
 using MediaPortal.Music.Database;
 using MediaPortal.GUI.Library;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Music.Database
 {
@@ -80,7 +81,8 @@ namespace MediaPortal.Music.Database
     // Data received by the Audioscrobbler service.
     private static string md5challenge;
     private static string submitUrl;
-
+    private static ILog _log;
+    private static IConfig _config;
     #endregion
 
     /// <summary>
@@ -88,17 +90,20 @@ namespace MediaPortal.Music.Database
     /// </summary>
     static AudioscrobblerBase()
     {
+       ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
       LoadSettings();
 
       if (_useDebugLog)
-        Log.Write("AudioscrobblerBase: new scrobbler for {0} with {1} cached songs - debuglog={2}", Username, Convert.ToString(queue.Count), Convert.ToString(_useDebugLog));
+        _log.Info("AudioscrobblerBase: new scrobbler for {0} with {1} cached songs - debuglog={2}", Username, Convert.ToString(queue.Count), Convert.ToString(_useDebugLog));
     //    else
-    //Log.Write("AudioscrobblerBase: new scrobbler for {0} - debuglog={1} directonly={2}", Username, Convert.ToString(_useDebugLog), Convert.ToString(_disableTimerThread));
+    //_log.Info("AudioscrobblerBase: new scrobbler for {0} - debuglog={1} directonly={2}", Username, Convert.ToString(_useDebugLog), Convert.ToString(_disableTimerThread));
     }
 
     static void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         //_useDebugLog = xmlreader.GetValueAsBool("audioscrobbler", "usedebuglog", false);
         //_dismissOnError = xmlreader.GetValueAsBool("audioscrobbler", "dismisscacheonerror", false);
@@ -121,7 +126,7 @@ namespace MediaPortal.Music.Database
           }
           catch (Exception ex)
           {
-            Log.Write("Audioscrobbler: Password decryption failed {0}", ex.Message);
+            _log.Info("Audioscrobbler: Password decryption failed {0}", ex.Message);
           }
         }
       }  
@@ -176,7 +181,7 @@ namespace MediaPortal.Music.Database
           password = value;
           // allow a new handshake to occur
           lastHandshake = DateTime.MinValue;
-          //          Log.Write("AudioscrobblerBase.Password", "Password changed");
+          //          _log.Info("AudioscrobblerBase.Password", "Password changed");
         }
       }
     }
@@ -211,13 +216,13 @@ namespace MediaPortal.Music.Database
     /// </summary>
     public static void Connect()
     {
-      //Log.Write("AudioscrobblerBase.Connect: {0}", "Start");
+      //_log.Info("AudioscrobblerBase.Connect: {0}", "Start");
       // Try to submit all queued songs immediately.
       if (!_disableTimerThread)
         StartSubmitQueueThread();
       // From now on, try to submit queued songs periodically.
       InitSubmitTimer();
-      //Log.Write("AudioscrobblerBase.Connect: {0}", "End");
+      //_log.Info("AudioscrobblerBase.Connect: {0}", "End");
     }
 
     /// <summary>
@@ -248,11 +253,11 @@ namespace MediaPortal.Music.Database
         }
         catch (Exception ex)
         {
-          Log.Write("Audioscrobbler: warning on password decryption {0}", ex.Message);
+          _log.Info("Audioscrobbler: warning on password decryption {0}", ex.Message);
         }
         username = scrobbleUser_;
         password = tmpPass;
-        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
         {
           xmlwriter.SetValue("audioscrobbler", "user", username);
           //xmlwriter.SetValue("audioscrobbler", "pass", password);
@@ -260,14 +265,14 @@ namespace MediaPortal.Music.Database
 
         if (!DoHandshake(true))
         {
-          Log.Write("AudioscrobblerBase: {0}", "ChangeUser failed - using previous account");
+          _log.Info("AudioscrobblerBase: {0}", "ChangeUser failed - using previous account");
           username = olduser;
           password = oldpass;
         }
         else
         {
           LoadSettings();
-          Log.Write("AudioscrobblerBase: Changed user to {0} - loaded {1} queue items", scrobbleUser_, queue.Count);
+          _log.Info("AudioscrobblerBase: Changed user to {0} - loaded {1} queue items", scrobbleUser_, queue.Count);
         }
       }
     }
@@ -279,7 +284,7 @@ namespace MediaPortal.Music.Database
     {
       string logmessage = "Adding to queue: " + song_.ToShortString();
       if (_useDebugLog)
-        Log.Write("AudioscrobblerBase: {0}", logmessage);
+        _log.Info("AudioscrobblerBase: {0}", logmessage);
 
       // Enqueue the song.
       song_.AudioScrobblerStatus = SongStatus.Cached;
@@ -296,12 +301,12 @@ namespace MediaPortal.Music.Database
             {
               try
               {
-                Log.Write("AudioscrobblerBase: {0}", "trying to kill submit thread (no longer needed)");
+                _log.Info("AudioscrobblerBase: {0}", "trying to kill submit thread (no longer needed)");
                 StopSubmitQueueThread();
               }
               catch (Exception ex)
               {
-                Log.Write("AudioscrobblerBase: result of thread.Abort - {0}", ex.Message);
+                _log.Info("AudioscrobblerBase: result of thread.Abort - {0}", ex.Message);
               }
             }
         
@@ -314,7 +319,7 @@ namespace MediaPortal.Music.Database
       }
       else
         if (_useDebugLog)
-          Log.Write("AudioscrobblerBase: {0}", "direct submit cancelled because of previous errors");
+          _log.Info("AudioscrobblerBase: {0}", "direct submit cancelled because of previous errors");
     }
        
 
@@ -336,7 +341,7 @@ namespace MediaPortal.Music.Database
           submitTimer.Close();
           InitSubmitTimer();
         }
-        Log.Write("AudioscrobblerBase: falling back to safe mode: new interval: {0} sec", Convert.ToString(SUBMIT_INTERVAL));
+        _log.Info("AudioscrobblerBase: falling back to safe mode: new interval: {0} sec", Convert.ToString(SUBMIT_INTERVAL));
       }
     }
 
@@ -352,7 +357,7 @@ namespace MediaPortal.Music.Database
       // Handle uninitialized username/password.
       if (username == "" || password == "")
       {
-        Log.Write("AudioscrobblerBase: {0}", "user or password not defined");
+        _log.Info("AudioscrobblerBase: {0}", "user or password not defined");
         return false;
       }
 
@@ -364,12 +369,12 @@ namespace MediaPortal.Music.Database
           string nexthandshake = lastHandshake.Add(handshakeInterval).ToString();
           string logmessage = "Next handshake due at " + nexthandshake;
           if (_useDebugLog)
-            Log.Write("AudioscrobblerBase: {0}", logmessage);
+            _log.Info("AudioscrobblerBase: {0}", logmessage);
           return true;
         }
       }
 
-      //Log.Write("AudioscrobblerBase.DoHandshake: {0}", "Attempting handshake");
+      //_log.Info("AudioscrobblerBase.DoHandshake: {0}", "Attempting handshake");
       string url = SCROBBLER_URL
                  + "?hs=true"
                  + "&p=" + PROTOCOL_VERSION
@@ -382,7 +387,7 @@ namespace MediaPortal.Music.Database
 
       if (!success)
       {
-        Log.Write("AudioscrobblerBase: {0}", "Handshake failed");
+        _log.Info("AudioscrobblerBase: {0}", "Handshake failed");
         return false;
       }
 
@@ -395,7 +400,7 @@ namespace MediaPortal.Music.Database
       _antiHammerCount = 0;
 
       if (_useDebugLog)
-        Log.Write("AudioscrobblerBase: {0}", "Handshake successful");
+        _log.Info("AudioscrobblerBase: {0}", "Handshake successful");
       return true;
     }
     
@@ -416,7 +421,7 @@ namespace MediaPortal.Music.Database
         string logmessage = "Avoiding too fast connects. Sleeping until "
                              + nextconnect.ToString();
         if (_useDebugLog)
-          Log.Write("AudioscrobblerBase: {0}", logmessage);
+          _log.Info("AudioscrobblerBase: {0}", logmessage);
         Thread.Sleep(waittime);
       }
       lastConnectAttempt = DateTime.Now;
@@ -432,15 +437,15 @@ namespace MediaPortal.Music.Database
       catch (Exception e)
       {
         string logmessage = "WebRequest.Create failed: " + e.Message;
-        Log.Write("AudioscrobblerBase.GetResponse: {0}", logmessage);
+        _log.Info("AudioscrobblerBase.GetResponse: {0}", logmessage);
         return false;
       }
 
       // Attach POST data to the request, if any.
       if (postdata_ != "")
       {
-        //Log.Write("AudioscrobblerBase.GetResponse: POST to {0}", url_);
-        Log.Write("AudioscrobblerBase: Submitting data: {0}", postdata_);
+        //_log.Info("AudioscrobblerBase.GetResponse: POST to {0}", url_);
+        _log.Info("AudioscrobblerBase: Submitting data: {0}", postdata_);
         string logmessage = "Connecting to '" + url_ + "\nData: " + postdata_;
                 
         try
@@ -458,14 +463,14 @@ namespace MediaPortal.Music.Database
         catch (Exception e)
         {
           logmessage = "HttpWebRequest.GetRequestStream: " + e.Message;
-          Log.Write("AudioscrobblerBase.GetResponse: {0}", logmessage);
+          _log.Info("AudioscrobblerBase.GetResponse: {0}", logmessage);
           return false;
         }
       }
 
       // Create the response object.
       if (_useDebugLog)
-        Log.Write("AudioscrobblerBase: {0}", "Waiting for response");
+        _log.Info("AudioscrobblerBase: {0}", "Waiting for response");
       StreamReader reader = null;
       try
       {
@@ -477,13 +482,13 @@ namespace MediaPortal.Music.Database
       catch (Exception e)
       {
         string logmessage = "HttpWebRequest.GetResponse: " + e.Message;
-        Log.Write("AudioscrobblerBase.GetResponse: {0}", logmessage);
+        _log.Info("AudioscrobblerBase.GetResponse: {0}", logmessage);
         return false;
       }
 
       // now we are connected
       if (_useDebugLog)
-        Log.Write("AudioscrobblerBase: {0}", "Response received");
+        _log.Info("AudioscrobblerBase: {0}", "Response received");
 
       bool success = false;
       bool parse_success = false;
@@ -492,7 +497,7 @@ namespace MediaPortal.Music.Database
         string respType = reader.ReadLine();
         if (respType == null)
         {
-          Log.Write("AudioscrobblerBase.GetResponse: {0}", "Empty response from Audioscrobbler server.");
+          _log.Info("AudioscrobblerBase.GetResponse: {0}", "Empty response from Audioscrobbler server.");
           return false;
         }
 
@@ -500,7 +505,7 @@ namespace MediaPortal.Music.Database
         if (respType.StartsWith("UPTODATE"))
           success = parse_success = parseUpToDateMessage(respType, reader);
         else if (respType.StartsWith("UPDATE"))
-          Log.Write("AudioscrobblerBase: {0}", "UPDATE needed!");
+          _log.Info("AudioscrobblerBase: {0}", "UPDATE needed!");
         else if (respType.StartsWith("OK"))
           success = parse_success = parseOkMessage(respType, reader);
         else if (respType.StartsWith("FAILED"))
@@ -510,7 +515,7 @@ namespace MediaPortal.Music.Database
         else
         {
           string logmessage = "** CRITICAL ** Unknown response " + respType;
-          Log.Write("AudioscrobblerBase: {0}", logmessage);
+          _log.Info("AudioscrobblerBase: {0}", logmessage);
         }
 
         // read next line to look for an interval
@@ -520,7 +525,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        Log.Write("AudioscrobblerBase: Exception on reading response lines - {0}", ex.Message);
+        _log.Info("AudioscrobblerBase: Exception on reading response lines - {0}", ex.Message);
       }
 
       if (!parse_success)
@@ -528,7 +533,7 @@ namespace MediaPortal.Music.Database
         return false;
       }
 
-      //Log.Write("AudioscrobblerBase.GetResponse: {0}", "End");
+      //_log.Info("AudioscrobblerBase.GetResponse: {0}", "End");
       return success;
     }
     #endregion
@@ -566,14 +571,14 @@ namespace MediaPortal.Music.Database
       // Make sure that a connection is possible.
       if (!DoHandshake(false))
       {
-        Log.Write("AudioscrobblerBase: {0}", "Handshake failed.");
+        _log.Info("AudioscrobblerBase: {0}", "Handshake failed.");
         return;
       }
       // If the queue is empty, nothing else to do today.
       if (queue.Count <= 0)
       {
         if (_useDebugLog)
-          Log.Write("AudioscrobblerBase: {0}", "Queue is empty");
+          _log.Info("AudioscrobblerBase: {0}", "Queue is empty");
         return;
       }
 
@@ -599,7 +604,7 @@ namespace MediaPortal.Music.Database
         if (!postData.Contains("&a[0]"))
         {
           if (_useDebugLog)
-            Log.Write("AudioscrobblerBase: postData did not contain info for {0}", "latest song");
+            _log.Info("AudioscrobblerBase: postData did not contain info for {0}", "latest song");
           //if (_dismissOnError)
           //  ClearQueue();
           //else
@@ -610,7 +615,7 @@ namespace MediaPortal.Music.Database
         // Submit or die.
         if (!GetResponse(submitUrl, postData))
         {
-          Log.Write("AudioscrobblerBase: {0}", "Submit failed.");
+          _log.Info("AudioscrobblerBase: {0}", "Submit failed.");
           return;
         }
 
@@ -624,7 +629,7 @@ namespace MediaPortal.Music.Database
           }
           catch (Exception ex)
           {
-            Log.Write("AudioscrobblerBase: submit thread clearing cache - {0}", ex.Message);
+            _log.Info("AudioscrobblerBase: submit thread clearing cache - {0}", ex.Message);
           }
         }
       }
@@ -643,18 +648,18 @@ namespace MediaPortal.Music.Database
       catch (Exception e)
       {
         string logmessage = "Failed to parse UPTODATE response: " + e.Message;
-        Log.Write("AudioscrobblerBase.parseUpToDateMessage: {0}", logmessage);
+        _log.Info("AudioscrobblerBase.parseUpToDateMessage: {0}", logmessage);
         md5challenge = "";
         return false;
       }
       if (_useDebugLog)
-        Log.Write("AudioscrobblerBase: {0}", "Your client is up to date.");
+        _log.Info("AudioscrobblerBase: {0}", "Your client is up to date.");
       return true;
     }
 
     private static bool parseOkMessage(string type_, StreamReader reader_)
     {
-      Log.Write("AudioscrobblerBase: {0}", "Action successfully completed.");
+      _log.Info("AudioscrobblerBase: {0}", "Action successfully completed.");
       return true;
     }
 
@@ -662,30 +667,30 @@ namespace MediaPortal.Music.Database
     {
       try
       {
-        //Log.Write("AudioscrobblerBase.parseFailedMessage: {0}", "Called.");
+        //_log.Info("AudioscrobblerBase.parseFailedMessage: {0}", "Called.");
         string logmessage = "";
         if (type_.Length > 7)
           logmessage = "FAILED: " + type_.Substring(7);
         else
           logmessage = "FAILED";
         if (_useDebugLog)
-          Log.Write("AudioscrobblerBase: {0}", logmessage);
+          _log.Info("AudioscrobblerBase: {0}", logmessage);
         if (logmessage == "FAILED: Plugin bug: Not all request variables are set")
-          Log.Write("AudioscrobblerBase: A server error may have occured / if you receive this often a proxy may truncate your request - {0}", "read: http://www.last.fm/forum/24/_/74505/1#f808273");
+          _log.Info("AudioscrobblerBase: A server error may have occured / if you receive this often a proxy may truncate your request - {0}", "read: http://www.last.fm/forum/24/_/74505/1#f808273");
         TriggerSafeModeEvent();
         return true;
       }
       catch (Exception e)
       {
         string logmessage = "Failed to parse FAILED response: " + e.Message;
-        Log.Write("AudioscrobblerBase.parseFailedMessage: {0}", logmessage);
+        _log.Info("AudioscrobblerBase.parseFailedMessage: {0}", logmessage);
         return false;
       }
     }
 
     private static bool parseBadUserMessage(string type_, StreamReader reader_)
     {
-      Log.Write("AudioscrobblerBase: {0}", "PLEASE CHECK YOUR ACCOUNT CONFIG! - re-trying handshake now");
+      _log.Info("AudioscrobblerBase: {0}", "PLEASE CHECK YOUR ACCOUNT CONFIG! - re-trying handshake now");
       TriggerSafeModeEvent();
       return true;
     }
@@ -705,12 +710,12 @@ namespace MediaPortal.Music.Database
         else
           logmessage = "INTERVAL";
         if (_useDebugLog)
-          Log.Write("AudioscrobblerBase: {0}", logmessage);
+          _log.Info("AudioscrobblerBase: {0}", logmessage);
       }
       catch (Exception ex)
       {
         string logmessage = "Failed to parse INTERVAL response: " + ex.Message;
-        Log.Write("AudioscrobblerBase.parseIntervalMessage: {0}", logmessage);
+        _log.Info("AudioscrobblerBase.parseIntervalMessage: {0}", logmessage);
       }
       return true;
     }

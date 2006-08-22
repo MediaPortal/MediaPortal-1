@@ -177,9 +177,13 @@ public class MediaPortalApp : D3DApp, IRender
     LogFile logFile = new LogFile(_config.Get(Config.Options.LogPath),"MediaPortal");
     _log = new MediaPortal.Utils.Services.Log(logFile.GetSharedStream(), MediaPortal.Utils.Services.Log.Level.Debug);
     services.Add<ILog>(_log);
-
     //Log.BackupLogFiles();
     _log.Info("Main: MediaPortal is starting up");
+    _log.Info("Main: Using Directories:");
+    foreach (string options in Enum.GetNames(typeof(Config.Options)))
+    {
+      _log.Info("{0} - {1}",options, _config.Get((Config.Options)Enum.Parse(typeof(Config.Options),options)));
+    }
 
     FileInfo mpFi = new FileInfo(Assembly.GetExecutingAssembly().Location);
     _log.Info("Main: Assembly creation time: {0} (UTC)", mpFi.LastWriteTimeUtc.ToUniversalTime());

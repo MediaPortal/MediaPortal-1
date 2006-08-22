@@ -67,7 +67,11 @@ namespace MediaPortal.Configuration
 
       log = new MediaPortal.Utils.Services.Log("Configuration", MediaPortal.Utils.Services.Log.Level.Debug);
       services.Add<ILog>(log);
-
+      log.Info("Using Directories:");
+      foreach (string options in Enum.GetNames(typeof(Config.Options)))
+      {
+        log.Info("{0} - {1}", options, _config.Get((Config.Options)Enum.Parse(typeof(Config.Options), options)));
+      }
       if (!System.IO.File.Exists(_config.Get(Config.Options.ConfigPath) + "mediaportal.xml"))
         startupMode = StartupMode.Wizard;
 

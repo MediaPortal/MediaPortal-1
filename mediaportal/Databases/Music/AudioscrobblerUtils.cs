@@ -29,6 +29,7 @@ using System.Text;
 using System.Xml;
 
 using MediaPortal.GUI.Library;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Music.Database
 {
@@ -78,11 +79,17 @@ namespace MediaPortal.Music.Database
 
     List<Song> songList = null;
 
+    private static ILog _log;
+    private static IConfig _config;
+
     /// <summary>
     /// ctor
     /// </summary>
     public AudioscrobblerUtils()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
       LoadSettings();
     }
 
@@ -188,7 +195,7 @@ namespace MediaPortal.Music.Database
     #region Serialization
     void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         MusicDatabase mdb = new MusicDatabase();
         _defaultUser = xmlreader.GetValueAsString("audioscrobbler", "user", "");
@@ -239,7 +246,7 @@ namespace MediaPortal.Music.Database
         {
           _minimumArtistMatchPercent = value;
           if (_useDebugLog)
-            Log.Write("AudioscrobblerBase: minimum match for similar artists set to {0}", Convert.ToString(_minimumArtistMatchPercent));
+            _log.Info("AudioscrobblerBase: minimum match for similar artists set to {0}", Convert.ToString(_minimumArtistMatchPercent));
         }
       }
     }
@@ -256,7 +263,7 @@ namespace MediaPortal.Music.Database
         {
           _limitRandomListCount = value;
           if (_useDebugLog)
-            Log.Write("AudioscrobblerBase: limit for random result lists set to {0}", Convert.ToString(_limitRandomListCount));
+            _log.Info("AudioscrobblerBase: limit for random result lists set to {0}", Convert.ToString(_limitRandomListCount));
         }
       }
     }
@@ -276,7 +283,7 @@ namespace MediaPortal.Music.Database
           else
             _randomNessPercent = value;
           if (_useDebugLog)
-            Log.Write("AudioscrobblerBase: percentage of randomness set to {0}", Convert.ToString(_randomNessPercent));
+            _log.Info("AudioscrobblerBase: percentage of randomness set to {0}", Convert.ToString(_randomNessPercent));
         }
       }
     }
@@ -293,7 +300,7 @@ namespace MediaPortal.Music.Database
         {
           _currentNeighbourMode = value;
           if (_useDebugLog)
-            Log.Write("AudioscrobblerBase: {0}", "CurrentNeighbourMode changed");
+            _log.Info("AudioscrobblerBase: {0}", "CurrentNeighbourMode changed");
         }
       }
     }
