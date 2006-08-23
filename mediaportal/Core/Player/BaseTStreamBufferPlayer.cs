@@ -136,6 +136,7 @@ namespace MediaPortal.Player
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
       _isRadio = false;
       if (type == g_Player.MediaType.Radio)
       {

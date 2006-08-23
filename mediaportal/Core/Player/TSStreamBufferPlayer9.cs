@@ -137,6 +137,7 @@ namespace MediaPortal.Player
     IPin _pinAudio = null;
     IPin _pinVideo = null;
     public TStreamBufferPlayer9()
+      :base()
     {
     }
     public TStreamBufferPlayer9(g_Player.MediaType type)
@@ -203,7 +204,6 @@ namespace MediaPortal.Player
         #region add codecs
 
         _log.Info("TSStreamBufferPlayer9: add codecs");
-
         // add preferred video & audio codecs
         string strVideoCodec = "";
         string strAudioCodec = "";
@@ -626,7 +626,7 @@ namespace MediaPortal.Player
         }
         if (_videoCodecFilter != null)
         {
-          while ((hr = Marshal.ReleaseComObject(_videoCodecFilter)) > 0);
+          while ((hr = Marshal.ReleaseComObject(_videoCodecFilter)) > 0) ;
           _videoCodecFilter = null;
         }
         if (_audioCodecFilter != null)
