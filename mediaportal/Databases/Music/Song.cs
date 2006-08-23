@@ -26,10 +26,9 @@ namespace MediaPortal.Music.Database
   /// <summary>
   /// 
   /// </summary>
-  [Serializable()]
-
   public enum SongStatus { Init, Loaded, Cached, Submitted }
 
+  [Serializable()]
   public class Song
   {
     string m_strFileName = "";
