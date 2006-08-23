@@ -27,15 +27,6 @@ void LogDebug(const char *fmt, ...) ;
 #define PES_HEADER_LENGTH     6
 #define PACK_HEADER_LENGTH    14
 
-CMultiplexer::CStreamBuffer::CStreamBuffer()
-{
-  m_ipesBufferPos=0;
-  m_pesPacket = new byte[MAX_PES_PACKET];
-}
-CMultiplexer::CStreamBuffer::~CStreamBuffer()
-{
-  delete[] m_pesPacket;
-}
 
 CMultiplexer::CMultiplexer()
 {
@@ -58,20 +49,13 @@ void CMultiplexer::SetFileWriterCallBack(IFileWriter* callback)
 void CMultiplexer::Reset()
 {
 	LogDebug("mux: reset");
-	m_videoPacketCounter=0;
+	m_videoPacketCounter= 0;
 	ivecPesDecoders it;
 	for (it=m_pesDecoders.begin(); it != m_pesDecoders.end();++it)
 	{
 		CPesDecoder* decoder=*it;
 		delete decoder;
 	}
-  imapStreamBuffer im;
-	for (im=m_mapStreamBuffer.begin(); im != m_mapStreamBuffer.end();++im)
-	{
-		CStreamBuffer* buffer=im->second;
-		delete buffer;
-	}
-  m_mapStreamBuffer.clear();
 	m_pesDecoders.clear();
 	m_pcrDecoder.Reset();
 }
@@ -95,7 +79,7 @@ void CMultiplexer::RemovePesStream(int pid)
 	while (it != m_pesDecoders.end())
 	{
 		CPesDecoder* decoder=*it;
-		if (decoder->GetPid()==pid) 
+		if (decoder->GetPid()== pid) 
 		{
 			delete[] decoder;
 			m_pesDecoders.erase(it);
@@ -111,12 +95,13 @@ void CMultiplexer::AddPesStream(int pid)
 	for (it=m_pesDecoders.begin(); it != m_pesDecoders.end();++it)
 	{
 		CPesDecoder* decoder=*it;
-		if (decoder->GetPid()==pid) return;
+		if (decoder->GetPid()== pid) return;
 	}
 	
 	LogDebug("mux: add pes pid:%x", pid);
-	CPesDecoder* decoder = new CPesDecoder();
+	CPesDecoder* decoder = new CPesDecoder(this);
 	decoder->SetPid(pid);
+	decoder->SetMaxLength(0x7f2);
 	m_pesDecoders.push_back(decoder);
 }
 
@@ -125,59 +110,61 @@ void CMultiplexer::OnTsPacket(byte* tsPacket)
 {
 	m_pcrDecoder.OnTsPacket(tsPacket);
   
-	if (m_pcrDecoder.PcrHigh()==0 && m_pcrDecoder.PcrLow()==0) return;
+	if (m_pcrDecoder.PcrHigh()== 0 && m_pcrDecoder.PcrLow()== 0) return;
 	ivecPesDecoders it;
 	for (it=m_pesDecoders.begin(); it != m_pesDecoders.end();++it)
 	{
 		CPesDecoder* decoder=*it;
-		if (decoder->OnTsPacket(tsPacket))
-		{
-			byte* pesPacket = decoder->GetPesPacket();
-			int   pesLength = decoder->GetPesPacketLength();
-			if (pesLength>0)
-			{
-				//is it a video stream
-				if (decoder->GetStreamId()>=0xe0 && decoder->GetStreamId() <=0xef)
-				{
-					//yes
-          bool writeToDisk=true;
-					// is this the first video packet?
-          if (m_videoPacketCounter==0)
-          {
-            // yes, then start the file with a mpeg-2 sequence header...
-            writeToDisk=false;
-            for (int x=6; x < pesLength-3;++x)
-            {
-              if (pesPacket[x]==0 && pesPacket[x+1]==0 && pesPacket[x+2]==1 && pesPacket[x+3]==0xb3)
-              {
-                writeToDisk=true;
-                break;
-              }
-            }
-          }
-
-          if (writeToDisk)
-          {
-					  m_videoPacketCounter++;
-					  SplitPesPacket(pesPacket,pesLength);
-          }
-				}
-				else 
-				{
-					//audio stream (or private stream)
-
-					// wait for first video packet 
-					// if we only have 1 stream then just write it...
-					if (m_videoPacketCounter>0 || m_pesDecoders.size()==1)
-					{
-						SplitPesPacket(pesPacket,pesLength);
-					}
-				}
-			}
-		}
+		decoder->OnTsPacket(tsPacket);
 	}
 }
 
+
+void CMultiplexer::OnNewPesPacket(int streamId,byte* pesPacket, int pesLength, bool isStart)
+{
+//	LogDebug("OnNewPesPacket streamid:%x len:%x start:%d", streamId,pesLength,isStart);
+	if (pesLength<=0) return;
+	//is it a video stream
+	if (streamId>= 0xe0 && streamId <= 0xef)
+	{
+		//yes
+    bool writeToDisk=true;
+		// is this the first video packet?
+		if (m_videoPacketCounter== 0)
+    {
+      // yes, then start the file with a mpeg-2 sequence header...
+      writeToDisk=false;
+			if (isStart)
+			{
+				for (int x=6; x < pesLength-3;++x)
+				{
+					if (pesPacket[x] == 0 && pesPacket[x+1] == 0 && pesPacket[x+2] == 1 && pesPacket[x+3] == 0xb3)
+					{
+						writeToDisk=true;
+						break;
+					}
+				}
+			}
+    }
+
+    if (writeToDisk)
+    {
+		  m_videoPacketCounter++;
+		  SplitPesPacket(streamId,pesPacket,pesLength,isStart);
+    }
+	}
+	else 
+	{
+		//audio stream (or private stream)
+
+		// wait for first video packet 
+		// if we only have 1 stream then just write it...
+		if (m_videoPacketCounter>0 || m_pesDecoders.size()== 1)
+		{
+			SplitPesPacket(streamId,pesPacket,pesLength,isStart);
+		}
+	}
+}
 int CMultiplexer::WritePackHeader()
 {
   __int64 pcrHi=m_pcrDecoder.PcrHigh();
@@ -185,28 +172,28 @@ int CMultiplexer::WritePackHeader()
   int muxRate=(6*1024*1024)/50; //6MB/s
   byte pBuffer[0x20];
 	//pack header
-	pBuffer[0]=0;
-	pBuffer[1]=0;
-	pBuffer[2]=1;
-	pBuffer[3]=0xba;
+	pBuffer[0] = 0;
+	pBuffer[1] = 0;
+	pBuffer[2] = 1;
+	pBuffer[3] = 0xba;
 	// 4             5     6         7      8       9        10        11       12       13
 	//76543210  76543210 76543210 76543210 76543210 76543210 76543210 76543210 76543210 76543210
 	//01PPPMPP  PPPPPPPP PPPPPMPP PPPPPPPP PPPPPMEE EEEEEEEM RRRRRRRR RRRRRRRR RRRRRRMM VVVVVSSS
 	//4..9 = pcr 33bits / 9 bits
-	pBuffer[4]= ((pcrHi >> 28)  & 0x3) + 4 + (((pcrHi >> 30) & 7) << 3)+ 0x40;
-	pBuffer[5]= (pcrHi >> 20)  & 0xff;
-	pBuffer[6]= ((pcrHi >> 13) & 0x3) + 4 + ( ( (pcrHi >> 15) & 0x1f) <<3);
-	pBuffer[7]= (pcrHi >> 5) & 0xff;
-	pBuffer[8]= ((pcrLow >> 7) & 3) + 4 + ((pcrHi & 0x1f)<<3);
-	pBuffer[9]= ((pcrLow & 0x7f) << 1) +1 ;
+	pBuffer[4] = ((pcrHi >> 28)  & 0x3) + 4 + (((pcrHi >> 30) & 7) << 3)+ 0x40;
+	pBuffer[5] = (pcrHi >> 20)  & 0xff;
+	pBuffer[6] = ((pcrHi >> 13) & 0x3) + 4 + ( ( (pcrHi >> 15) & 0x1f) <<3);
+	pBuffer[7] = (pcrHi >> 5) & 0xff;
+	pBuffer[8] = ((pcrLow >> 7) & 3) + 4 + ((pcrHi & 0x1f)<<3);
+	pBuffer[9] = ((pcrLow & 0x7f) << 1) +1 ;
 
 	//10..12 = mux rate
-	pBuffer[10]= (muxRate >> 14) & 0xff;
-	pBuffer[11]= (muxRate >> 6) & 0xff;
-	pBuffer[12]=((muxRate & 0x3f) << 2)+3;
+	pBuffer[10] = (muxRate >> 14) & 0xff;
+	pBuffer[11] = (muxRate >> 6) & 0xff;
+	pBuffer[12] =((muxRate & 0x3f) << 2)+3;
 
 	//13 pack stuffing length
-	pBuffer[13]=0xf8;
+	pBuffer[13] = 0xf8;
   if (m_pCallback!=NULL)
   {
 	  m_pCallback->Write((byte*)pBuffer,	PACK_HEADER_LENGTH);
@@ -216,120 +203,43 @@ int CMultiplexer::WritePackHeader()
 
 
 
-void CMultiplexer::SplitPesPacket(byte* pesPacket, int sectionLength)
+void CMultiplexer::SplitPesPacket(int streamId,byte* pesPacket, int sectionLength,bool isStart)
 {
   if (m_pCallback==NULL) return;
-  int streamId=pesPacket[3];
-  CStreamBuffer* buffer;
-  imapStreamBuffer imap = m_mapStreamBuffer.find(streamId);
-  if (imap==m_mapStreamBuffer.end())
-  {
-     buffer = new CStreamBuffer();
-     m_mapStreamBuffer[streamId]=buffer;
+  WritePackHeader();
+	if (isStart)
+	{
+      pesPacket[4] = 0x7;
+      pesPacket[5] = 0xec;
+	    m_pCallback->Write(pesPacket, sectionLength);
+	}	
+	else if (sectionLength==0x7e9)
+	{
+      m_pesBuffer[0] = 0;
+      m_pesBuffer[1] = 0;
+      m_pesBuffer[2] = 1;
+			m_pesBuffer[3] = streamId;
+      m_pesBuffer[4] = 0x7;
+      m_pesBuffer[5] = 0xec;
+      m_pesBuffer[6] = 0x81;
+      m_pesBuffer[7] = 0;
+      m_pesBuffer[8] = 0;
+	    m_pCallback->Write(m_pesBuffer, 9);
+	    m_pCallback->Write(pesPacket, sectionLength);
   }
   else
   {
-    buffer=imap->second;
-  }
-  int headerLen=pesPacket[8];
-  sectionLength -= (headerLen+9);
-  int start=buffer->m_ipesBufferPos;
-
-  if (buffer->m_ipesBufferPos < 0)
-  {
-    LogDebug("CMultiplexer::SplitPesPacket: pesbufferPos<0");
-    return;
-  }
-  if (buffer->m_ipesBufferPos  >= MAX_PES_PACKET)
-  {
-    LogDebug("CMultiplexer::SplitPesPacket: pesbufferPos>MAX_PES_PACKET");
-    return;
-  }
-  if (buffer->m_ipesBufferPos+sectionLength  >= MAX_PES_PACKET)
-  {
-    LogDebug("CMultiplexer::SplitPesPacket: pes packet overflow1");
-    return;
-  }
-  //byte* data=&buffer->m_pesPacket[buffer->m_ipesBufferPos];
-  memcpy( &buffer->m_pesPacket[buffer->m_ipesBufferPos], &pesPacket[headerLen+9],sectionLength);
-  buffer->m_ipesBufferPos+=sectionLength;
-  if (buffer->m_ipesBufferPos < 0x800) return;
-
-  int offset=0;
-  while (offset+0x800 < buffer->m_ipesBufferPos)
-  {
-    WritePackHeader();
-    if (offset==0)
-    {
-     // byte* data=m_pesBuffer;
-      int len = (0x800-PACK_HEADER_LENGTH) - 6;
-      len -=3;
-      len-=headerLen;
-
-      if (headerLen+9>=MAX_PES_BUFFER_LENGTH) 
-      {
-        LogDebug("CMultiplexer::SplitPesPacket pes buffer overflow1");
-        return;
-      }
-      if (headerLen+9+len>=MAX_PES_BUFFER_LENGTH) 
-      {
-        LogDebug("CMultiplexer::SplitPesPacket pes buffer overflow2");
-        return;
-      }
-      
-      if (offset+len  >= MAX_PES_PACKET)
-      {
-        LogDebug("CMultiplexer::SplitPesPacket: pes packet overflow2");
-        return;
-      }
-      memcpy(m_pesBuffer, pesPacket, headerLen+9);
-      memcpy(&m_pesBuffer[headerLen+9],&buffer->m_pesPacket[offset],len);
-      m_pesBuffer[4]=0x7;
-      m_pesBuffer[5]=0xec;
-	    m_pCallback->Write(m_pesBuffer, MAX_PES_PACKET_LENGTH + PES_HEADER_LENGTH);
-      offset += len;
-      
-    }
-    else
-    {
-      // 0   1  2  3  4 5  6  7  8  9
-      // 00 00 01 e0 07 ec 81 00 00 DD DD DD DD
-      int len = (0x800-PACK_HEADER_LENGTH) - 6;
-      len -=3;
-      m_pesBuffer[0]=0;
-      m_pesBuffer[1]=0;
-      m_pesBuffer[2]=1;
-      m_pesBuffer[3]=pesPacket[3];
-      m_pesBuffer[4]=0x7;
-      m_pesBuffer[5]=0xec;
-      m_pesBuffer[6]=0x81;
-      m_pesBuffer[7]=0;
-      m_pesBuffer[8]=0;
-      
-      if (len+9>=MAX_PES_BUFFER_LENGTH) 
-      {
-        LogDebug("CMultiplexer::SplitPesPacket pes buffer overflow3");
-        return;
-      }
-      if (offset+len  >= MAX_PES_PACKET)
-      {
-        LogDebug("CMultiplexer::SplitPesPacket: pes packet overflow3");
-        return;
-      }
-      memcpy(&m_pesBuffer[9], &buffer->m_pesPacket[offset],len);
-	    m_pCallback->Write(m_pesBuffer, MAX_PES_PACKET_LENGTH + PES_HEADER_LENGTH);
-      offset += len;
-    }
-  }
-  if (offset < buffer->m_ipesBufferPos)
-  {
-    
-      if (offset+(buffer->m_ipesBufferPos-offset)  >= MAX_PES_PACKET)
-      {
-        LogDebug("CMultiplexer::SplitPesPacket: pes packet overflow4");
-        return;
-      }
-      memcpy(buffer->m_pesPacket, &buffer->m_pesPacket[offset],buffer->m_ipesBufferPos-offset);
-      buffer->m_ipesBufferPos=buffer->m_ipesBufferPos-offset;
+      int len=0x7ec-(0x7e9-sectionLength);
+      m_pesBuffer[0] = 0;
+      m_pesBuffer[1] = 0;
+      m_pesBuffer[2] = 1;
+			m_pesBuffer[3] = streamId;
+      m_pesBuffer[4] = (len>>8)&0xff;
+      m_pesBuffer[5] = (len&0xff);
+      m_pesBuffer[6] = 0x81;
+      m_pesBuffer[7] = 0;
+      m_pesBuffer[8] = 0;
+	    m_pCallback->Write(m_pesBuffer, 9);
+	    m_pCallback->Write(pesPacket, sectionLength);
   }
 }

@@ -33,7 +33,7 @@ public:
 	virtual void Write(byte* buffer, int len)=0;
 };
 
-class CMultiplexer
+class CMultiplexer : public CPesCallback
 {
 public:
 	CMultiplexer(void);
@@ -45,24 +45,15 @@ public:
 	void OnTsPacket(byte* tsPacket);
 	void Reset();
 	void SetFileWriterCallBack(IFileWriter* callback);
+	void OnNewPesPacket(int streamid,byte* data, int len, bool isStart);
 private:
-  class CStreamBuffer
-  {
-    public:
-      byte* m_pesPacket;
-      int   m_ipesBufferPos;
-      CStreamBuffer();
-      virtual ~CStreamBuffer();
-  };
 
-  void SplitPesPacket(byte* pesPacket, int nLen);
+  void SplitPesPacket(int streamId,byte* pesPacket, int nLen,bool isStart);
 	int  WritePackHeader();
 	CPcrDecoder m_pcrDecoder;
   
 	vector<CPesDecoder*> m_pesDecoders;
 	typedef vector<CPesDecoder*>::iterator ivecPesDecoders;
-	map<int,CStreamBuffer*> m_mapStreamBuffer;
-	typedef map<int,CStreamBuffer*>::iterator imapStreamBuffer;
 	IFileWriter* m_pCallback;
 	int m_videoPacketCounter;
   byte* m_pesBuffer;

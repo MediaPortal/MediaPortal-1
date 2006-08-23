@@ -21,25 +21,30 @@
 #pragma once
 
 #define MAX_PES_PACKET 0x80000
+class CPesCallback
+{
+public:
+	virtual void OnNewPesPacket(int streamId,byte* data, int len, bool isStart)=0;
+};
+
 class CPesDecoder
 {
 public:
-	CPesDecoder(void);
+	CPesDecoder(CPesCallback* callback);
 	virtual ~CPesDecoder(void);
+	void					SetMaxLength(int len);
 	void					SetPid(int pid);
 	int						GetPid();
 	bool					OnTsPacket(byte* tsPacket);
 	void					Reset();
-	virtual void	OnNewPesPacket(byte* pesPacket, int nLen);
-	byte*					GetPesPacket();
-	int						GetPesPacketLength();
 	int						GetStreamId();
+
 private:
+	CPesCallback* m_pCallback;
 	unsigned long m_packets;
 	int					  m_pid;
 	byte*					m_pesBuffer;
-	int						m_iPesBufferPos;
-	//FILE*					m_fp;
-	byte *			  m_pesPacket;
-	int						m_pespacketLen;
+	int						m_iWritePos;
+	int						m_iMaxLength;
+	int						m_iStreamId;
 };
