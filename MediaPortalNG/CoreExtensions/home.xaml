@@ -3,7 +3,7 @@
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   x:Class="MediaPortal.HomeExtension"
   
-  xmlns:ctrl="clr-namespace:MediaPortal" Width="720" Height="576" Opacity="0.967268992449301">
+  xmlns:ctrl="clr-namespace:MediaPortal" Width="720" Height="576" Opacity="1">
   
   <Page.Resources>
  
@@ -273,15 +273,14 @@
                                 Softness="0.25" />      </Image.BitmapEffect>
     </Image>
 
-    <TextBlock 
+    <ctrl:GUIDateTime 
       Grid.Row="2" 
       Grid.Column="0" 
-      FontSize="18" 
-      Foreground="White"  
-      Text="Donnerstag, 21:30"
       Canvas.Top="120"
-      Canvas.Left="40"
-      
+      Canvas.Left="40" 
+      Width="300"
+      FontSize="18"
+      Foreground="White"
       />
 
  

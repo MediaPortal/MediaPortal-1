@@ -58,7 +58,9 @@
 
         </ControlTemplate.Triggers>
       </ControlTemplate>
-
+      
+      
+ 
       <!-- GUISpinControl Resource -->
       <Style TargetType="{x:Type ctrl:GUISpinControl}">
         <Setter Property="HorizontalAlignment" Value="Center"/>

@@ -110,7 +110,8 @@ namespace MediaPortal
             // sw.Close();
         
         }
-         
+
+ 
 
         private void ParseSkinXML(string path,string file)
         {

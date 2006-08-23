@@ -97,9 +97,6 @@ namespace MediaPortal
             lv.SelectedItem = lv.Items[0];
         }
 
-        void path_LayoutUpdated(object sender, EventArgs e)
-        {      
-        }
 
         public void HandleKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {

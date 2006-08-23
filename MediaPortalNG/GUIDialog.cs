@@ -10,7 +10,6 @@ namespace MediaPortal
     public partial class GUIDialog : Window
     {
 
-        private string _popupTitle;
         private ListView _popupLV;
         private string _dialogTitle;
         private int _selectedItem;
