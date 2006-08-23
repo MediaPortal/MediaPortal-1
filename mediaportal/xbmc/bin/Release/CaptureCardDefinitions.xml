@@ -5639,8 +5639,8 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
       <filters> 
         <filter cat="networkprovider"	name="Microsoft DVBT Network Provider"		checkdevice="false"/> 
-        <filter cat="tunerdevice"		name="Cinergy Hybrid T USB XS Tuner"		checkdevice="true"/> 
-        <filter cat="capture"			name="Cinergy Hybrid T USB XS (Digital)"	checkdevice="true"/> 
+        <filter cat="tunerdevice"		  name="Cinergy Hybrid T USB XS Tuner"		  checkdevice="true"/> 
+        <filter cat="capture"			    name="Cinergy Hybrid T USB XS (Digital)"	checkdevice="true"/> 
       </filters> 
       <connections> 
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/> 
@@ -5655,8 +5655,8 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
       <filters> 
         <filter cat="networkprovider"	name="Microsoft DVBT Network Provider"	checkdevice="false"/> 
-        <filter cat="tunerdevice"		name="Cinergy 1400 DVB-S TS"			checkdevice="true"/> 
-        <filter cat="capture"			name="Cinergy 1400 DVB-T Capture (BDA)"	checkdevice="true"/> 
+        <filter cat="tunerdevice"     name="Cinergy 1400 DVB-T TS"			      checkdevice="true"/> 
+        <filter cat="capture"			    name="Cinergy 1400 DVB-T Capture (BDA)"	checkdevice="true"/> 
       </filters> 
       <connections> 
          <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/> 
