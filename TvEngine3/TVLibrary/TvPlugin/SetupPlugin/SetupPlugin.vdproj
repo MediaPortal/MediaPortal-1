@@ -417,6 +417,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_D559CBA84AD0498BB20A2A58E232E474"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_D9DBF7B24134FE18605E3136FAAE41FA"
         "OwnerKey" = "8:_E641565D531E0F7FC2928B2E0284EFC7"
         "MsmSig" = "8:_UNDEFINED"
@@ -847,7 +853,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Databases, Version=1.0.2395.13074, Culture=neutral, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:Databases, Version=1.0.2426.25137, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_1BF4A1FADCD1C72197096041CAD8229E"
@@ -1620,7 +1626,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Utils, Version=1.0.2387.16291, Culture=neutral, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:Utils, Version=1.0.2426.24360, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_C930805B71426EFDCA6A6E94DA958B75"
@@ -1678,11 +1684,31 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D559CBA84AD0498BB20A2A58E232E474"
+            {
+            "SourcePath" = "8:..\\..\\..\\Filters\\bin\\TsReader.ax"
+            "TargetName" = "8:TsReader.ax"
+            "Tag" = "8:"
+            "Folder" = "8:_C2F0F37686774BEB8C7DCDEAD47B6909"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:4"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_D9DBF7B24134FE18605E3136FAAE41FA"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:DirectShowLib, Version=1.4.0.31479, Culture=neutral, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:DirectShowLib, Version=1.4.0.24357, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_D9DBF7B24134FE18605E3136FAAE41FA"
@@ -1713,7 +1739,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Core, Version=1.0.2395.13073, Culture=neutral, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:Core, Version=1.0.2426.25135, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_E641565D531E0F7FC2928B2E0284EFC7"

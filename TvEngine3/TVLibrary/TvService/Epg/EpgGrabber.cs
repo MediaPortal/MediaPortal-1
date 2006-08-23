@@ -590,6 +590,8 @@ namespace TvService
     {
       TvBusinessLayer layer = new TvBusinessLayer();
       Setting setting = layer.GetSetting("epgLanguages");
+      string epgLanguages = setting.Value;
+      Log.WriteFile("tvservice:updatedatabasechannel: epglang={0}", setting.Value);
       TimeSpan ts = DateTime.Now - channel.LastGrabTime;
       if (ts.TotalHours < EpgReGrabAfter)
       {
@@ -629,12 +631,12 @@ namespace TvService
         int offset = -1;
         for (int i = 0; i < program.Text.Count; ++i)
         {
-          if (setting.Value == null || program.Text[0].Language == "ALL")
+          if (program.Text[0].Language == "ALL")
           {
             offset = i;
             break;
           }
-          if (setting.Value.Length == 0 || setting.Value.ToLower().IndexOf(program.Text[i].Language.ToLower()) >= 0)
+          if (epgLanguages.Length == 0 || epgLanguages.ToLower().IndexOf(program.Text[i].Language.ToLower()) >= 0)
           {
             offset = i;
             break;

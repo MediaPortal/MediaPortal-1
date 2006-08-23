@@ -15,6 +15,7 @@ using IdeaBlade.Util;
 
 using TvDatabase;
 using TvLibrary;
+using TvLibrary.Log;
 using TvLibrary.Interfaces;
 using TvLibrary.Implementations;
 
@@ -22,6 +23,7 @@ namespace SetupTv.Sections
 {
   public partial class TvEpgGrabber : SectionSettings
   {
+    bool _loaded = false;
     public TvEpgGrabber()
       : this("TV Epg grabber")
     {
@@ -35,6 +37,7 @@ namespace SetupTv.Sections
 
     void LoadLanguages()
     {
+      _loaded = true;
       mpListView2.BeginUpdate();
       mpListView2.Items.Clear();
       TvLibrary.Epg.Languages languages = new TvLibrary.Epg.Languages();
@@ -45,6 +48,8 @@ namespace SetupTv.Sections
       int index = 0;
       TvBusinessLayer layer = new TvBusinessLayer();
       Setting setting = layer.GetSetting("epgLanguages");
+      Log.WriteFile("tvsetup:epggrabber:loadlanguages: epglang={0}", setting.Value);
+
       string values = "";
       foreach (string lang in list)
       {
@@ -179,6 +184,7 @@ namespace SetupTv.Sections
         setting.Value += code;
         setting.Value += ",";
       }
+      Log.WriteFile("tvsetup:epggrabber:all: epglang={0}", setting.Value);
       mpListView2.EndUpdate();
       DatabaseManager.Instance.SaveChanges();
     }
@@ -193,12 +199,14 @@ namespace SetupTv.Sections
       TvBusinessLayer layer = new TvBusinessLayer();
       Setting setting = layer.GetSetting("epgLanguages");
       setting.Value = ",";
+      Log.WriteFile("tvsetup:epggrabber:none: epglang={0}", setting.Value);
       DatabaseManager.Instance.SaveChanges();
       mpListView2.EndUpdate();
     }
 
     public override void SaveSettings()
     {
+      if (false==_loaded) return;
       TvBusinessLayer layer = new TvBusinessLayer();
       Setting setting = layer.GetSetting("epgLanguages");
       setting.Value = ",";
@@ -212,6 +220,7 @@ namespace SetupTv.Sections
 
         }
       }
+      Log.WriteFile("tvsetup:epggrabber:savesettings: epglang={0}", setting.Value);
       DatabaseManager.Instance.SaveChanges();
       base.SaveSettings();
     }
