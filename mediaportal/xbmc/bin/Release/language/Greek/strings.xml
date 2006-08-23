@@ -471,6 +471,8 @@
 <string><id>556</id><value>διάφορα</value></string>
 <string><id>557</id><value>ήρεμα</value></string>
 <string><id>558</id><value>Χωρίς αέρα</value></string>
+<string><id>559</id><value>στην περιοχή</value>
+</string><string><id>560</id><value>Καθάρισμα</value></string>     
 <string><id>590</id><value>Σ. 100</value></string>
 <string><id>591</id><value>Σ. 200</value></string>
 <string><id>592</id><value>Σ. 300</value></string>
@@ -478,6 +480,7 @@
 <string><id>594</id><value>Υποσελίδα</value></string>
 <string><id>595</id><value>Πλήρης σελίδα</value></string>
 <string><id>596</id><value>Αναμονή για σελίδα {0}/{1}...</value></string>
+<string><id>599</id><value>Καταιγίδα</value></string>
 <string><id>600</id><value>Οδηγός TV</value></string>
 <string><id>601</id><value>Εγγραφή Τώρα</value></string>
 <string><id>602</id><value>Κανάλι</value></string>
@@ -829,6 +832,8 @@
 <string><id>1015</id><value>Μη ειδοποίηση όταν το πρόγραμμα αρχίσει</value></string>
 <string><id>1016</id><value>Το πρόγραμμα ξεκινά σε 5 λεπτά</value></string>
 <string><id>1017</id><value>Ταξινόμηση: Διάρκεια</value></string>
+<string><id>1018</id><value>Το πρόγραμμα ξεκινά σε {0} λεπτά</value></string>
+<string><id>1019</id><value>Το πρόγραμμα ετοιμάζεται να ξεκινήσει</value></string>      
 <string><id>1020</id><value>Πληροφορίες</value></string>
 <string><id>1021</id><value>Πατήστε Alt+Enter για</value></string>
 <string><id>1022</id><value>επιστροφή σε παράθυρο.</value></string>
@@ -872,6 +877,7 @@
 <string><id>1104</id><value>left</value></string>
 <string><id>1105</id><value>Importing Tracks</value></string>
 <!-- End Music Import Strings -->
+<string><id>1190</id><value>Ζουμ 14:9</value></string>
 <string><id>1200</id><value>Καθοδηγητής ρυθμίσεων</value></string>
 <string><id>1440</id><value>Teletext</value></string>
 <string><id>1441</id><value>Teletext</value></string>
@@ -926,46 +932,52 @@
 <string><id>2012</id><value>Διαγραφή</value></string>
 <string><id>2013</id><value>Αγαπημένα</value></string>
 <string><id>2014</id><value>Αγνωστο</value></string>
-<string><id>2015</id><value>per Serving</value></string>
+<string><id>2015</id><value>ανά σερβίρισμα</value></string>
 <string><id>2016</id><value>μικρό</value></string>
 <string><id>2017</id><value>fluid ounce</value></string>
 <string><id>2018</id><value>ποτήρι</value></string>
 <string><id>2019</id><value>pint</value></string>
 <string><id>2020</id><value>μεσαίο</value></string>
 <string><id>2021</id><value>μεγάλο</value></string>
-<string><id>2022</id><value>can</value></string>
+<string><id>2022</id><value>κονσέρβα</value></string>
 <string><id>2023</id><value>πακέτο</value></string>
 <string><id>2024</id><value>pinch</value></string>
-<string><id>2025</id><value>drop</value></string>
+<string><id>2025</id><value>σταγόνα</value></string>
 <string><id>2026</id><value>dash</value></string>
 <string><id>2027</id><value>carton</value></string>
 <string><id>2028</id><value>bunch</value></string>
-<string><id>2029</id><value>slice</value></string>
-<string><id>2030</id><value>each</value></string>
-<string><id>2031</id><value>teaspoon</value></string>
-<string><id>2032</id><value>teaspoon</value></string>
-<string><id>2033</id><value>tablespoon</value></string>
-<string><id>2034</id><value>tablespoon</value></string>
+<string><id>2029</id><value>φέτα</value></string>
+<string><id>2030</id><value>έκαστος</value></string>
+<string><id>2031</id><value>κουταλάκι</value></string>
+<string><id>2032</id><value>κουταλάκι</value></string>
+<string><id>2033</id><value>κουτάλι σούπας</value></string>
+<string><id>2034</id><value>κουτάλι σούπας</value></string>
 <string><id>2035</id><value>quart</value></string>
-<string><id>2036</id><value>gallon</value></string>
+<string><id>2036</id><value>γαλόνι</value></string>
 <string><id>2037</id><value>ounce</value></string>
 <string><id>2038</id><value>pound</value></string>
-<string><id>2039</id><value>mililiter</value></string>
-<string><id>2040</id><value>mililiter</value></string>
-<string><id>2041</id><value>centiliter</value></string>
+<string><id>2039</id><value>ml</value></string>
+<string><id>2040</id><value>ml</value></string>
+<string><id>2041</id><value>δεκάλιτρο</value></string>
 <string><id>2042</id><value>deciliter</value></string>
-<string><id>2043</id><value>liter</value></string>
+<string><id>2043</id><value>λίτρο</value></string>
 <string><id>2044</id><value>milligram</value></string>
 <string><id>2045</id><value>centigram</value></string>
 <string><id>2046</id><value>decigram</value></string>
-<string><id>2047</id><value>gram</value></string>
-<string><id>2048</id><value>kilogram</value></string>
+<string><id>2047</id><value>γραμμάριο</value></string>
+<string><id>2048</id><value>κιλό</value></string>
 <string><id>2049</id><value>Διαγραφή της Συνταγής;</value></string>
 <string><id>2050</id><value>Διαγραφή της Κατηγορίας;</value></string>
-<string><id>2051</id><value>Search in Title</value></string>
-<string><id>2052</id><value>Search in Recipie</value></string>
-<string><id>2053</id><value>Categorie</value></string>
-<string><id>2054</id><value>No Entry!</value></string>
+<string><id>2051</id><value>Ψάξιμο στον τίτλο</value></string>
+<string><id>2052</id><value>Ψάξιμο στην συνταγή</value></string>
+<string><id>2053</id><value>Κατηγορία</value></string>
+<string><id>2054</id><value>Όχι καταχώρηση!</value></string>
+<string><id>2074</id><value>Επιλογή αρχείων για συνένωση:</value></string>
+<string><id>2075</id><value>Ορισμός των νέων σημείων κοπής</value></string>
+<string><id>2076</id><value>Μοντάζ</value></string>
+<string><id>2077</id><value>Κοπή</value></string>
+<string><id>2078</id><value>Ένωση</value>	</string>
+<string><id>2079</id><value>Ξεκίνημα συνένωσης</value></string>
 <string><id>2080</id><value>Μη υποστηριζόμενο είδος αρχείου</value></string>
 <string><id>2081</id><value>Δεν μπορεί να γίνει κοπή</value></string>
 <string><id>2082</id><value>MPEG: Τέλος κοπής αρχείου βίντεο</value></string>
@@ -1059,6 +1071,31 @@
 <string><id>2223</id><value>Κάδος Ανακύκλωσης</value></string>
 <string><id>2224</id><value> Ο φάκελος υπάρχει!</value></string>
 <string><id>2225</id><value>Ο φάκελος δημιουργήθηκε</value></string>
+<!-- Wikipedia Strings -->
+<string><id>2500</id><value>Δεν εισήχθη όρος εύρεσης!</value></string>
+<string><id>2501</id><value>Εισαγωγή ενός λογικού όρου!</value></string>
+<string><id>2502</id><value>Επιλογή τοπικής Wikipedia:</value></string>
+<string><id>2503</id><value>Επιλεγμένη Wikipedia:</value></string>
+<string><id>2504</id><value>Συγνώμη, κανένα άρθρο για τον όρο...</value></string>
+<string><id>2505</id><value>Σύνδεσμοι για άλλα άρθρα:</value></string><string>
+<id>2506</id><value>Όχι σύνδεσμοι για αυτό το άρθρο.</value></string>
+<string><id>2507</id><value>Εικόνες από αυτό το άρθρο:</value></string>
+<string><id>2508</id><value>Δεν υπάρχουν εικόνες σε αυτό το άρθρο.</value></string>
+<string><id>2509</id><value>Αυτή η σελίδα είναι απλώς παράκαμψη.</value></string>
+<string><id>2510</id><value>Επιλέξτε τον σύνδεσμο παράκαμψης από την λίστα.</value></string>
+<string><id>2511</id><value>Σύνδεσμοι</value></string>
+<string><id>2512</id><value>Η εικόνα δεν μπορεί να προβληθεί.</value></string>
+<string><id>2513</id><value>Παρακαλούμε δείτε το αρχείο log .</value></string>
+<string><id>2514</id><value>Επιστροφή στο κείμενο</value></string>
+<string><id>2515</id><value>Εικόνες</value></string>
+<string><id>2600</id><value>Αγγλικό</value></string>
+<string><id>2601</id><value>Γερμανικό</value></string>
+<string><id>2602</id><value>Γαλλικό</value></string>
+<string><id>2603</id><value>Ολανδέζικο</value></string>
+<string><id>2604</id><value>Νορβηγικό</value></string>
+<string><id>2605</id><value>Σουηδικό</value>	</string>
+<string><id>2606</id><value>Wikipedia</value></string>	
+<!-- End of Wikipedia Strings -->
 <!-- End of My Explorer Strings -->
 <string><id>2997</id><value>ω</value></string>
 <string><id>2998</id><value>λ</value></string>
@@ -1345,6 +1382,22 @@
 <string><id>19100</id><value>Γεω-ρολόι</value></string>
 <!-- Teletext -->
 <string><id>25001</id><value>Αναμονή για σελίδα {0:X}...!</value></string>
+<string><id>30000</id><value>Μουσικά Βίντεο</value></string>
+<string><id>30001</id><value>Περισσότερο επιθυμητά</value></string>
+<string><id>30002</id><value>Νέα στο Yahoo</value></string>
+<string><id>30003</id><value>Παίξιμο όλων</value></string>
+<string><id>30004</id><value>Προηγούμενη σελίδα</value></string>
+<string><id>30005</id><value>Επόμενη σελίδα</value></string>
+<string><id>30006</id><value>Σταμάτημα</value></string>
+<string><id>30007</id><value>Εύρεση άλλων βίντεο από τον καλιτέχνη</value></string>
+<string><id>30008</id><value>κατηγορία</value></string>
+<string><id>30009</id><value>σελίδα</value></string>
+<string><id>30010</id><value>Επιλογή αποτελεμάτων για {0} - σελίδα {1} </value></string>
+<string><id>33000</id><value>Scrobble Ενεργό</value></string>
+<string><id>33001</id><value>Scrobble: Παρόμοια</value></string>
+<string><id>33002</id><value>Scrobble: Γείτονες</value></string>
+<string><id>33003</id><value>Scrobble: Ετικέτες</value></string>
+<string><id>33004</id><value>Scrobble: Πρόσφατα</value></string>
 <!-- TV.Com -->
 <string><id>99845</id><value>Έρευνα σε TV.com</value></string>
 <!-- id 100000 and higher are reserved!! -->
