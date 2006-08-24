@@ -103,7 +103,6 @@ namespace MediaPortal.Player
     protected const int WS_CLIPSIBLINGS = 0x04000000;
     protected bool m_bVisible = false;
     protected DateTime updateTimer;
-    VMR7Util vmr7 = null;
 
     VMR9Util Vmr9 = null;
     protected ILog _log;
