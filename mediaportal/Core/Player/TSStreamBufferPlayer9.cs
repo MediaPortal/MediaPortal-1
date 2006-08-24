@@ -1,3 +1,4 @@
+#define TSFILESOURCE
 #region Copyright (C) 2005-2006 Team MediaPortal
 
 /* 
@@ -246,7 +247,7 @@ namespace MediaPortal.Player
 
 
         #endregion
-
+#if TSFILESOURCE
         bool demuxControl = true;     // let tsfilesource control demux 
         bool supplyMediaType = true;  // supply media type during load
         bool autoBuildGraph = false;   // true: let tsfilesource create graph, else we do it ourselves
@@ -311,7 +312,7 @@ namespace MediaPortal.Player
           _log.Error(ex);
         }
 
-        _fileSource = new TsFileSource();
+        _fileSource = (IBaseFilter) new TsFileSource();
         _log.Info("TSStreamBufferPlayer9:add tsfilesource to graph");
         int hr = _graphBuilder.AddFilter((IBaseFilter)_fileSource, "TsFileSource");
         if (hr != 0)
@@ -402,7 +403,7 @@ namespace MediaPortal.Player
 
         if (autoBuildGraph == false)
         {
-          #region connect tsfilesource->demux
+        #region connect tsfilesource->demux
           _log.Info("TSStreamBufferPlayer9:connect tsfilesource->mpeg2 demux");
           IPin pinTsOut = DsFindPin.ByDirection((IBaseFilter)_fileSource, PinDirection.Output, 0);
           if (pinTsOut == null)
@@ -427,7 +428,7 @@ namespace MediaPortal.Player
           Marshal.ReleaseComObject(pinDemuxIn);
           #endregion
 
-          #region map demux pids
+        #region map demux pids
           IMPEG2StreamIdMap pStreamId;
           if (_isRadio == false)
           {
@@ -452,7 +453,7 @@ namespace MediaPortal.Player
           #endregion
 
 
-          #region render demux audio/video pins
+        #region render demux audio/video pins
           _log.Info("TSStreamBufferPlayer9:render audio output pin");
           hr = _graphBuilder.Render(_pinAudio);
           if (hr != 0)
@@ -479,21 +480,6 @@ namespace MediaPortal.Player
         }
 
 
-        _mediaCtrl = (IMediaControl)_graphBuilder;
-        _mediaEvt = (IMediaEventEx)_graphBuilder;
-        _mediaSeeking = _graphBuilder as IMediaSeeking;
-        if (_mediaSeeking == null)
-        {
-          _log.Error("Unable to get IMediaSeeking interface#1");
-        }
-
-        if (_audioRendererFilter != null)
-        {
-          IMediaFilter mp = _graphBuilder as IMediaFilter;
-          IReferenceClock clock = _audioRendererFilter as IReferenceClock;
-          hr = mp.SetSyncSource(clock);
-        }
-
         if (autoBuildGraph == false)
         {
           IMPEG2StreamIdMap pStreamId;
@@ -519,10 +505,47 @@ namespace MediaPortal.Player
 
         }
 
-        //        _log.Info("TSStreamBufferPlayer9:SetARMode");
-        //        DirectShowUtil.SetARMode(_graphBuilder,AspectRatioMode.Stretched);
+#else
+        _fileSource = (IBaseFilter)new TsReaderSource();
+        _log.Info("TSStreamBufferPlayer9:add tsreader to graph");
+        int hr = _graphBuilder.AddFilter((IBaseFilter)_fileSource, "TsFileSource");
+        if (hr != 0)
+        {
+          _log.Error("TSStreamBufferPlayer9:Failed to add SBE to graph");
+          return false;
+        }
 
-        //_log.Info("TSStreamBufferPlayer9: set Deinterlace");
+        IFileSourceFilter interfaceFile = (IFileSourceFilter)_fileSource;
+        if (interfaceFile == null)
+        {
+          _log.Error("TSStreamBufferPlayer9:Failed to get IFileSourceFilter");
+          return false;
+        }
+        _log.Info("TSStreamBufferPlayer9: open file:{0}", filename);
+        hr = interfaceFile.Load(filename, null);
+        if (hr != 0)
+        {
+          _log.Error("TSStreamBufferPlayer9:Failed to open file:{0} :0x{1:x}", filename, hr);
+          return false;
+        }
+        _log.Info("TSStreamBufferPlayer9:render tsreader outputs");
+        DirectShowUtil.RenderOutputPins(_graphBuilder, (IBaseFilter)_fileSource);
+#endif
+
+        _mediaCtrl = (IMediaControl)_graphBuilder;
+        _mediaEvt = (IMediaEventEx)_graphBuilder;
+        _mediaSeeking = _graphBuilder as IMediaSeeking;
+        if (_mediaSeeking == null)
+        {
+          _log.Error("Unable to get IMediaSeeking interface#1");
+        }
+
+        if (_audioRendererFilter != null)
+        {
+          IMediaFilter mp = _graphBuilder as IMediaFilter;
+          IReferenceClock clock = _audioRendererFilter as IReferenceClock;
+          hr = mp.SetSyncSource(clock);
+        }
 
         if (_isRadio == false)
         {

@@ -1,3 +1,4 @@
+#define TSFILESOURCE 
 /* 
  *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,6 +19,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
 using System;
 using System.IO;
 using System.Windows.Forms;
@@ -40,6 +42,9 @@ namespace MediaPortal.Player
   {
     [ComImport, Guid("4F8BF30C-3BEB-43A3-8BF2-10096FD28CF2")]
     protected class TsFileSource { }
+                      
+    [ComImport, Guid("b9559486-e1bb-45d3-a2a2-9a7afe49b23f")]
+    protected class TsReaderSource { }
     #region imports
     [DllImport("dvblib.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
     protected static extern int SetupDemuxerPin(IPin pin, int pid, int elementaryStream, bool unmapOtherPins);
@@ -59,7 +64,7 @@ namespace MediaPortal.Player
 
     #region variables
     protected int iSpeed = 1;
-    protected TsFileSource _fileSource = null;
+    protected IBaseFilter _fileSource = null;
 
 
     protected int _positionX = 0;
@@ -383,6 +388,7 @@ namespace MediaPortal.Player
 
       //_log.Info("1");
 
+#if TSFILESOURCE
       if (_startingUp && _isLive)
       {
         ushort pgmCount = 0;
@@ -432,35 +438,10 @@ namespace MediaPortal.Player
             _startingUp = false;
           }*/
         }
-        /*
-        IAMStreamSelect control = _fileSource as IAMStreamSelect;
-        if (control != null)
-        {
-          int streamCount = 0;
-          control.Count(out streamCount);
-          if (streamCount > 0)
-          {
-            UpdateDuration();
-            _log.Info("streams:{0} duration:{1}", streamCount, _duration);
-            if (_duration > 1)
-            {
-              _log.Info("enable stream 1");
-              control.Enable(1, AMStreamSelectEnableFlags.EnableAll);
-              _log.Info("get duration", streamCount);
-              UpdateDuration();
-              double dPos = _duration;
-              _log.Info("_duration:{0}", _duration);
-              if (dPos >= 0 && CurrentPosition < dPos)
-              {
-                _log.Info("seek:{0}/{0}", dPos, _duration);
-                SeekAbsolute(dPos);
-                _log.Info("seek:{0}/{0} done", dPos, _duration);
-              }
-              _startingUp = false;
-            }
-          }
-        }*/
       }
+#else
+      _startingUp = false;
+#endif
       TimeSpan ts = DateTime.Now - _updateTimer;
       if (ts.TotalMilliseconds >= 800 || iSpeed != 1)
       {
@@ -1174,7 +1155,7 @@ namespace MediaPortal.Player
         _vmr7 = new VMR7Util();
         _vmr7.AddVMR7(_graphBuilder);
 
-        _fileSource = new TsFileSource();
+        _fileSource = (IBaseFilter)new TsFileSource();
         IBaseFilter filter = (IBaseFilter)_fileSource;
         _graphBuilder.AddFilter(filter, "TsFileSource");
 
