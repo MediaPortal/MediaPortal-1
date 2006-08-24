@@ -178,7 +178,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 	}
 
 
-	if (buffer->Pts()>0)
+	if (buffer->Pts()!=0)
 	{
 		long presentationTime=(long)(buffer->Pts() - m_pTsReaderFilter->GetStartTime());
 		CRefTime referenceTime(presentationTime);
@@ -193,7 +193,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
     
 		  REFERENCE_TIME refTimeStamp=(REFERENCE_TIME)timeStamp;
 		  pSample->SetTime(&refTimeStamp,NULL);
-#ifndef DEBUG
+#ifdef DEBUG
 		  char buf[100];
       sprintf(buf,"  A: ST:%05.2f CT:%05.2f FT:%05.2f TS:%05.2f v:%d a:%d (%d)\n",
 					  (dStartTime/1000.0),
