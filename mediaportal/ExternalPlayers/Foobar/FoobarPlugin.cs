@@ -117,6 +117,9 @@ namespace MediaPortal.FoobarPlugin
     public FoobarPlugin()
     {
       // empty constructor
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      ILog log = services.Get<ILog>();
+      _config = services.Get<IConfig>();
     }
 
     /// <summary>
