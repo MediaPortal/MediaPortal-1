@@ -23,15 +23,11 @@ namespace MediaPortal
         private int viewThumbNails = 0;
         private Core _core;
 
-        public MyPictures(ResourceDictionary dict)
+        public MyPictures()
         {
             
             InitializeComponent();
-            this.ShowsNavigationUI = true;
-            this.Opacity = 0.0f;
             this.Loaded += new RoutedEventHandler(MyPictures_Loaded);
-            this.Height = 608;
-            this.Width = 720;
             _core = (Core)this.Parent;
             lv1.SelectionChanged += new SelectionChangedEventHandler(lv1_SelectionChanged);       
 

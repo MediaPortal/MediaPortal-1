@@ -55,6 +55,7 @@
       <SubType>
       </SubType>
     </Page>
+    <Compile Include="GUIAnimation.cs" />
     <Compile Include="GUIDateTime.cs" />
     <Compile Include="GUISelectButton.cs" />
     <Compile Include="GUIPlugin.cs" />

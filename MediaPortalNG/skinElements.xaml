@@ -675,13 +675,6 @@
                 </Setter.Value>
               </Setter>
             </Trigger>
-              <Trigger Property="IsKeyboardFocused" Value="True">
-                <Setter TargetName="Border" Property="Background">
-                  <Setter.Value>
-                    <ImageBrush ImageSource="{DynamicResource button_green_focus_165x32.png}"/>
-                  </Setter.Value>
-                </Setter>              
-              </Trigger>
             <Trigger Property="IsPressed" Value="true">
               <Setter TargetName="Border" Property="Background">
                 <Setter.Value>

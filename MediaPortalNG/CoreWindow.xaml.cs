@@ -31,10 +31,10 @@ namespace MediaPortal
         public Core()
         {
             this.Loaded += new RoutedEventHandler(Core_Loaded);
+            this.Width = 720;
+            this.Height = 642;
             this.ShowsNavigationUI = true;
             // params
-            this.Width = 720;
-            this.Height = 670;
             this.Background = Brushes.Black;
             this.Title = "MediaPortalNG";
             this.Show();
@@ -67,7 +67,6 @@ namespace MediaPortal
         {
             
             LoadSkin();
-
         }
 
         
@@ -826,7 +825,7 @@ namespace MediaPortal
         {
             if (pluginType == typeof(MyPictures))
             {
-                MyPictures myPic = new MyPictures(this.Resources);
+                MyPictures myPic = new MyPictures();
                 myPic.InitializeComponent();
                 this.Navigate(myPic);
             }
