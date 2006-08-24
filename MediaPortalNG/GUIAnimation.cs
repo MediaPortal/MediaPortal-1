@@ -52,7 +52,6 @@ namespace MediaPortal
             _storyboard = new Storyboard();
             _storyboard.Children.Add(_animation);
             Storyboard.SetTargetProperty(_animation, new PropertyPath("Source"));
-
         }
 
         protected override void OnInitialized(EventArgs e)
