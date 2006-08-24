@@ -3,6 +3,7 @@
       xmlns:ctrl="clr-namespace:MediaPortal"
       x:Class="MediaPortal.MyPictures"
       Name="mypics"
+      WindowTitle="My Pictures" 
       xmlns:d="http://schemas.microsoft.com/expression/interactivedesigner/2006" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
       >
  

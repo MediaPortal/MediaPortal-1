@@ -41,7 +41,6 @@ namespace MediaPortal
                string file=dir+@"\"+i.ToString()+".png";
                if (File.Exists(file) == true)
                {
-                   
                    BitmapSource bmp = new BitmapImage(new Uri(file));
                    KeyTime t = KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(nextTime));
                    DiscreteObjectKeyFrame bmpKeyFrame = new DiscreteObjectKeyFrame(bmp, t);
@@ -54,22 +53,23 @@ namespace MediaPortal
             Storyboard.SetTargetProperty(_animation, new PropertyPath("Source"));
         }
 
-        protected override void OnInitialized(EventArgs e)
+   
+        public GUIAnimation()
         {
-            base.OnInitialized(e);
+            _displayTime = 100;
+            _restartAnimation = false;
+            this.Loaded += new RoutedEventHandler(GUIAnimation_Loaded);
+        }
+
+        void GUIAnimation_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (_storyboard == null) return;
 
             if (Repeat == true)
                 _storyboard.RepeatBehavior = RepeatBehavior.Forever;
 
             base.BeginStoryboard(_storyboard);
 
-        }
-
-  
-        public GUIAnimation()
-        {
-            _displayTime = 100;
-            _restartAnimation = false;
         }
 
  
