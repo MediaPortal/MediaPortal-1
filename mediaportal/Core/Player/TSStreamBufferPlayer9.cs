@@ -134,9 +134,13 @@ namespace MediaPortal.Player
 	      0x01, 0x00, 0x16, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
       };
     #endregion
+    #region variables
     VMR9Util _vmr9 = null;
     IPin _pinAudio = null;
     IPin _pinVideo = null;
+    #endregion
+
+    #region ctor
     public TStreamBufferPlayer9()
       :base()
     {
@@ -145,6 +149,8 @@ namespace MediaPortal.Player
       : base(type)
     {
     }
+    #endregion
+
 
     protected override void OnInitialized()
     {
@@ -248,7 +254,7 @@ namespace MediaPortal.Player
 
         #endregion
 #if TSFILESOURCE
-        bool demuxControl = true;     // let tsfilesource control demux 
+        bool demuxControl = false;     // let tsfilesource control demux 
         bool supplyMediaType = true;  // supply media type during load
         bool autoBuildGraph = false;   // true: let tsfilesource create graph, else we do it ourselves
         if (_isLive == false)
@@ -267,7 +273,7 @@ namespace MediaPortal.Player
           {
             using (RegistryKey settings = hklm.OpenSubKey(@"SOFTWARE\TSFileSource\settings\default", true))
             {
-              byte[] clockType = new byte[4] { 3, 0, 0, 0 };
+              byte[] clockType = new byte[4] { 0, 0, 0, 0 };
               byte[] programSid = new byte[4] { 0, 0, 0, 0 };
               byte[] value1Zeros = new byte[4];
               byte[] valueZero = new byte[1];
@@ -403,7 +409,7 @@ namespace MediaPortal.Player
 
         if (autoBuildGraph == false)
         {
-        #region connect tsfilesource->demux
+          #region connect tsfilesource->demux
           _log.Info("TSStreamBufferPlayer9:connect tsfilesource->mpeg2 demux");
           IPin pinTsOut = DsFindPin.ByDirection((IBaseFilter)_fileSource, PinDirection.Output, 0);
           if (pinTsOut == null)
@@ -426,34 +432,11 @@ namespace MediaPortal.Player
           }
           Marshal.ReleaseComObject(pinTsOut);
           Marshal.ReleaseComObject(pinDemuxIn);
-          #endregion
+          
+          MapPids();
+        #endregion
 
-        #region map demux pids
-          IMPEG2StreamIdMap pStreamId;
-          if (_isRadio == false)
-          {
-            _log.Info("TSStreamBufferPlayer9: map pid 0xe0->video pin");
-            pStreamId = (IMPEG2StreamIdMap)_pinVideo;
-            hr = pStreamId.MapStreamId(0xe0, MPEG2Program.ElementaryStream, 0, 0);
-            if (hr != 0)
-            {
-              _log.Error("TSStreamBufferPlayer9: failed to map pid 0xe0->video pin");
-              return false;
-            }
-          }
-          _log.Info("TSStreamBufferPlayer9: map audio 0xc0->audio pin");
-          pStreamId = (IMPEG2StreamIdMap)_pinAudio;
-          hr = pStreamId.MapStreamId(0xc0, MPEG2Program.ElementaryStream, 0, 0);
-          if (hr != 0)
-          {
-            _log.Error("TSStreamBufferPlayer9: failed  to map pid 0xc0->audio pin");
-            return false;
-          }
-
-          #endregion
-
-
-        #region render demux audio/video pins
+          #region render demux audio/video pins
           _log.Info("TSStreamBufferPlayer9:render audio output pin");
           hr = _graphBuilder.Render(_pinAudio);
           if (hr != 0)
@@ -471,7 +454,6 @@ namespace MediaPortal.Player
             }
           }
           #endregion
-
         }
         else
         {
@@ -482,27 +464,7 @@ namespace MediaPortal.Player
 
         if (autoBuildGraph == false)
         {
-          IMPEG2StreamIdMap pStreamId;
-          if (_isRadio == false)
-          {
-            _log.Info("TSStreamBufferPlayer9: map pid 0xe0->video pin");
-            pStreamId = (IMPEG2StreamIdMap)_pinVideo;
-            hr = pStreamId.MapStreamId(0xe0, MPEG2Program.ElementaryStream, 0, 0);
-            if (hr != 0)
-            {
-              _log.Error("TSStreamBufferPlayer9: failed to map pid 0xe0->video pin");
-              return false;
-            }
-          }
-          _log.Info("TSStreamBufferPlayer9: map audio 0xc0->audio pin");
-          pStreamId = (IMPEG2StreamIdMap)_pinAudio;
-          hr = pStreamId.MapStreamId(0xc0, MPEG2Program.ElementaryStream, 0, 0);
-          if (hr != 0)
-          {
-            _log.Error("TSStreamBufferPlayer9: failed  to map pid 0xc0->audio pin");
-            return false;
-          }
-
+          MapPids();
         }
 
 #else
@@ -542,9 +504,9 @@ namespace MediaPortal.Player
 
         if (_audioRendererFilter != null)
         {
-          IMediaFilter mp = _graphBuilder as IMediaFilter;
-          IReferenceClock clock = _audioRendererFilter as IReferenceClock;
-          hr = mp.SetSyncSource(clock);
+          //IMediaFilter mp = _graphBuilder as IMediaFilter;
+          //IReferenceClock clock = _audioRendererFilter as IReferenceClock;
+          //hr = mp.SetSyncSource(clock);
         }
 
         if (_isRadio == false)
@@ -798,5 +760,35 @@ namespace MediaPortal.Player
       return mediaVideo;
     }
 
+    void MapPids()
+    {
+      #region map demux pids
+      int hr;
+      IMPEG2StreamIdMap pStreamId;
+      if (_isRadio == false)
+      {
+        _log.Info("TSStreamBufferPlayer9: map pid 0xe0->video pin");
+        pStreamId = (IMPEG2StreamIdMap)_pinVideo;
+        for (int pid=0xe0; pid <= 0xef;pid++)
+        {
+          hr = pStreamId.MapStreamId(pid, MPEG2Program.ElementaryStream, 0, 0);
+          if (hr != 0)
+          {
+            _log.Error("TSStreamBufferPlayer9: failed to map pid 0xe0->video pin");
+            return ;
+          }
+        }
+      }
+      _log.Info("TSStreamBufferPlayer9: map audio 0xc0->audio pin");
+      pStreamId = (IMPEG2StreamIdMap)_pinAudio;
+      hr = pStreamId.MapStreamId(0xc0, MPEG2Program.ElementaryStream, 0, 0);
+      if (hr != 0)
+      {
+        _log.Error("TSStreamBufferPlayer9: failed  to map pid 0xc0->audio pin");
+        return ;
+      }
+
+      #endregion
+    }
   }
 }
