@@ -230,13 +230,13 @@
     </Grid>
 
     <ctrl:GUIAnimation
-      Canvas.Top="300"
+      Canvas.Top="450"
       Canvas.Left="60"
       ImageFolder="animation_mp_logo"
       Width="94"
       Height="125"
       Repeat="false"
-      FrameTime="25"
+      FrameTime="100"
       >
     </ctrl:GUIAnimation>
       
