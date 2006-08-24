@@ -19,20 +19,17 @@ namespace MediaPortal
         private string _imagePath;
         private double _displayTime;
         private bool _restartAnimation;
-        private ArrayList _images;
         private ObjectAnimationUsingKeyFrames _animation;
         private Storyboard _storyboard;
 
         private void SetAnimationDir(string imagePath)
         {
             string dir=Directory.GetCurrentDirectory()+@"\"+imagePath;
-            
+
             if (Directory.Exists(dir) == false)
                 return;
 
-           _images = new ArrayList();
-           _imagePath = dir;
-
+            _imagePath = imagePath;
             DirectoryInfo di = new DirectoryInfo(dir);
             FileInfo[] files = di.GetFiles("*.png");
             double nextTime=0;
@@ -169,6 +166,7 @@ namespace MediaPortal
         protected virtual void OnRepeatChanged(RoutedPropertyChangedEventArgs<bool> args)
         {
             _restartAnimation=args.NewValue;
+            SetAnimationDir(_imagePath);
             RaiseEvent(args);
         }
 
@@ -215,6 +213,7 @@ namespace MediaPortal
         protected virtual void OnFrameTimeChanged(RoutedPropertyChangedEventArgs<double> args)
         {
             _displayTime = args.NewValue;
+            SetAnimationDir(_imagePath);
             RaiseEvent(args);
         }
 

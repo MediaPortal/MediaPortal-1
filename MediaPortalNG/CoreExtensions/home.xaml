@@ -236,7 +236,7 @@
       Width="94"
       Height="125"
       Repeat="false"
-      FrameTime="100"
+      FrameTime="140"
       >
     </ctrl:GUIAnimation>
       
