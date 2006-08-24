@@ -273,19 +273,35 @@ namespace MediaPortal.Player
           {
             using (RegistryKey settings = hklm.OpenSubKey(@"SOFTWARE\TSFileSource\settings\default", true))
             {
-              byte[] clockType = new byte[4] { 0, 0, 0, 0 };
+              byte[] clockType = new byte[4] { 2, 0, 0, 0 };
               byte[] programSid = new byte[4] { 0, 0, 0, 0 };
               byte[] value1Zeros = new byte[4];
               byte[] valueZero = new byte[1];
               byte[] valueOne = new byte[1];
               valueZero[0] = 0;
               valueOne[0] = 1;
-
-              //clocktype:
-              // 0=default
-              // 1=tsfilesource
-              // 2=demux
-              // 3=audio renderer
+              /*
+              using (System.IO.FileStream stream = new System.IO.FileStream("clock.txt", System.IO.FileMode.Open))
+              {
+                using (System.IO.StreamReader reader = new System.IO.StreamReader(stream))
+                {
+                  string clockLine=reader.ReadLine();
+                  string demuxLine = reader.ReadLine();
+                  clockType[0] = (byte)Int32.Parse(clockLine);
+                  if (demuxLine.ToLower() == "yes") demuxControl = true;
+                  else demuxControl = false;
+                }
+              } 
+              _log.Info("set tsfilesource to clock:{0} demuxcontrol:{1}",clockType[0],demuxControl);
+              */
+              //                     
+              // --------------------
+              //clocktype:           
+              // --------------------
+              // 0=default           
+              // 1=tsfilesource      
+              // 2=demux             
+              // 3=audio renderer    
               settings.SetValue("clockType", clockType, RegistryValueKind.Binary);
               settings.SetValue("enableAC3", valueZero, RegistryValueKind.Binary);
               settings.SetValue("enableAudio2", valueZero, RegistryValueKind.Binary);
