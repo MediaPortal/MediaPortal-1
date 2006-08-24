@@ -207,8 +207,16 @@ void CMultiplexer::SplitPesPacket(int streamId,byte* pesPacket, int sectionLengt
 {
   if (m_pCallback==NULL) return;
   WritePackHeader();
-	if (isStart)
+	if (sectionLength==0x7f2)
 	{
+    if (pesPacket[3] != streamId)
+    {
+      int x=1;
+    }
+    if (isStart!=true)
+    {
+      int x=1;
+    }
       pesPacket[4] = 0x7;
       pesPacket[5] = 0xec;
 	    m_pCallback->Write(pesPacket, sectionLength);
@@ -229,17 +237,38 @@ void CMultiplexer::SplitPesPacket(int streamId,byte* pesPacket, int sectionLengt
   }
   else
   {
-      int len=0x7ec-(0x7e9-sectionLength);
+    int written=0;
+      int len=(0x7e9-sectionLength);
+      if (len < 1)
+      {
+        int x=1;
+      }
       m_pesBuffer[0] = 0;
       m_pesBuffer[1] = 0;
       m_pesBuffer[2] = 1;
 			m_pesBuffer[3] = streamId;
-      m_pesBuffer[4] = (len>>8)&0xff;
-      m_pesBuffer[5] = (len&0xff);
+      m_pesBuffer[4] = 0x7;
+      m_pesBuffer[5] = 0xec;
       m_pesBuffer[6] = 0x81;
       m_pesBuffer[7] = 0;
       m_pesBuffer[8] = 0;
-	    m_pCallback->Write(m_pesBuffer, 9);
-	    m_pCallback->Write(pesPacket, sectionLength);
+	    m_pCallback->Write(m_pesBuffer, 9);     written+=9;
+	    m_pCallback->Write(pesPacket, sectionLength); written+=sectionLength;
+
+      int userDataLen = len-6;
+      m_pesBuffer[0] = 0;
+      m_pesBuffer[1] = 0;
+      m_pesBuffer[2] = 1;
+      m_pesBuffer[3] = 0xB2;//USERDATA
+      m_pesBuffer[4] = (userDataLen>>8)&0xff;
+      m_pesBuffer[5] = (userDataLen)&0xff;
+      memset(&m_pesBuffer[6],0xff,len);
+	    m_pCallback->Write(m_pesBuffer, len);  written+=len;
+      if (written!=0x7f2)
+      {
+        int x=1;
+      }
+
+
   }
 }

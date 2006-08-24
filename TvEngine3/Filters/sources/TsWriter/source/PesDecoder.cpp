@@ -101,10 +101,11 @@ bool CPesDecoder::OnTsPacket(byte* tsPacket)
 		LogDebug("pesdecoder pid:%x transport error", m_pid);
 		return false;
 	}
+
 	if (header.Pid != m_pid) return false;
 	BOOL scrambled= (header.TScrambling!=0);
 	if (scrambled) return false;
-	//header.LogHeader();
+//	header.LogHeader();
 	if ( header.AdaptionFieldOnly() ) 
 	{
 		return false;
@@ -120,19 +121,31 @@ bool CPesDecoder::OnTsPacket(byte* tsPacket)
 			m_iStreamId=tsPacket[pos+3];
       if (m_iWritePos>0)
       {
-		    bool start;
-		    if (m_pesBuffer[0]==0 && m_pesBuffer[1]==0 && m_pesBuffer[2]==1)
-		    {
-			    start = true;
-		    }
-		    else
-		    {
-			    start = false;
-		    }
-		    if (m_pCallback!=NULL)
-		    {
-			    m_pCallback->OnNewPesPacket(m_iStreamId, m_pesBuffer, m_iWritePos, start);
-		    }
+        int pos=0;
+        while (pos < m_iWritePos)
+        {
+         
+		      bool start;
+		      int copyLen;
+		      if (m_pesBuffer[pos+0]==0 && m_pesBuffer[pos+1]==0 && m_pesBuffer[pos+2]==1 && m_pesBuffer[pos+3]==m_iStreamId)
+		      {
+			      start = true;
+			      copyLen = m_iMaxLength;
+		      }
+		      else
+		      {
+			      start = false;
+			      copyLen = m_iMaxLength-9;
+		      }
+          if (copyLen > (m_iWritePos-pos) )
+            copyLen=(m_iWritePos-pos);
+		      if (m_pCallback!=NULL)
+		      {
+			      m_pCallback->OnNewPesPacket(m_iStreamId, &m_pesBuffer[pos], copyLen, start);
+		      }
+          pos += copyLen;
+
+        }
       }
 			m_iWritePos=0;
 		}
@@ -147,7 +160,7 @@ bool CPesDecoder::OnTsPacket(byte* tsPacket)
 	{
 		bool start;
 		int copyLen;
-		if (m_pesBuffer[0]==0 && m_pesBuffer[1]==0 && m_pesBuffer[2]==1)
+		if (m_pesBuffer[0]==0 && m_pesBuffer[1]==0 && m_pesBuffer[2]==1 && m_pesBuffer[3]==m_iStreamId)
 		{
 			start = true;
 			copyLen = m_iMaxLength;
