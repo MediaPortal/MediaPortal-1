@@ -148,7 +148,7 @@ namespace MediaPortal.GUI.Library
 				_images[index].DimColor = DimColor;
 				_images[index].Filtering = Filtering;
         _images[index].AllocResources();
-        _images[index].ScaleToScreenResolution();
+        //_images[index].ScaleToScreenResolution(); -> causes too big images in fullscreen
 
         w = Math.Max(w, _images[index].Width);
         h = Math.Max(h, _images[index].Height);
