@@ -6,8 +6,5 @@
     Width="720"
     Height="576"
     >
-  <NavigationWindow.Triggers>
-    <Frame Name="mainContent" Source="../plugins/mypictures.xaml"/>
-  </NavigationWindow.Triggers>
 
  </NavigationWindow>
