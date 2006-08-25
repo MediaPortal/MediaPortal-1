@@ -296,14 +296,15 @@
       Foreground="White"
       />
 
-    <ctrl:GUIFadelabel 
-     Canvas.Top="350"
+    <ctrl:GUITextboxScrollUp 
+     Canvas.Top="200"
      Canvas.Left="40" 
-     Width="150"
+     Width="200"
+     Height="200" 
      FontSize="18"
      Foreground="White"
-     FrameTime="50"
-     Content="Be sure that you dont miss MediaPortal NG. You will be surprised :) :) :)"
+     FrameTime="70"
+     Content="Te luptatum ut adipiscing consequat nostrud ut nisl ullamcorper et autem feugait facilisis, consequat, autem eros. Exerci lobortis minim nonummy eum dignissim minim augue praesent iriure dolor wisi et lorem dolor, iusto illum. Consequat, et esse sit luptatum et feugait. Ea in vulputate, eros ad sit vulputate blandit laoreet duis qui vel adipiscing dolore qui commodo aliquip molestie diam iusto. Ea, dolor tation esse, erat ut. Odio et dolore iriure, lorem, velit. Suscipit facilisi ut ut, consequat eu ut vel odio euismod autem, quis facilisis in autem vel. Accumsan ad, vero commodo facilisi facilisis minim dolor praesent laoreet dolor tation eros, exerci dolor ut nibh. Magna et vel dolor volutpat et quis duis eu consectetuer nisl ad lobortis, veniam, aliquam, laoreet dignissim qui. Eum adipiscing ad. Elit tation aliquip, facilisis diam, augue quis, aliquip tation wisi erat. Vero, tation adipiscing hendrerit nostrud velit blandit consequat duis euismod feugait ullamcorper te lobortis eros facilisis lobortis lobortis diam."
       />
 
   </Canvas>

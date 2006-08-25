@@ -10,25 +10,25 @@ using System.Windows.Media;
 namespace MediaPortal
 {
 
-    public partial class GUIFadelabel : UserControl
+    public partial class GUITextboxScrollUp : UserControl
     {
         private ScrollViewer _scrollViewer;
         private double _displayTime;
         private double _scrollPosition;
         private Storyboard _storyBoard;
 
-        public GUIFadelabel()
+        public GUITextboxScrollUp()
         {
             this.Opacity = 0;
 
             // start all actions after load is complete
-            this.Loaded += new RoutedEventHandler(GUIFadelabel_Loaded);
+            this.Loaded += new RoutedEventHandler(GUITextboxScrollUp_Loaded);
 
         }
 
         void AnimateOpacity()
         {
-            DoubleAnimation opacityAnimation = new DoubleAnimation(0f,1.0f, new Duration(TimeSpan.FromMilliseconds(2000)));
+            DoubleAnimation opacityAnimation = new DoubleAnimation(0f, 1.0f, new Duration(TimeSpan.FromMilliseconds(2000)));
             _storyBoard = new Storyboard();
             _storyBoard.Children.Add(opacityAnimation);
             Storyboard.SetTargetProperty(opacityAnimation, new PropertyPath("Opacity"));
@@ -38,7 +38,7 @@ namespace MediaPortal
 
         void opacityAnimation_Completed(object sender, EventArgs e)
         {
-            DoubleAnimation positionAnimation = new DoubleAnimation(0, _scrollViewer.ScrollableWidth, new Duration(TimeSpan.FromMilliseconds(_displayTime * _scrollViewer.ScrollableWidth)));
+            DoubleAnimation positionAnimation = new DoubleAnimation(0, _scrollViewer.ScrollableHeight, new Duration(TimeSpan.FromMilliseconds(_displayTime * _scrollViewer.ScrollableHeight)));
             _storyBoard.Stop(this);
             _storyBoard.Completed -= new EventHandler(opacityAnimation_Completed);
             _storyBoard.Children.Clear();
@@ -62,7 +62,7 @@ namespace MediaPortal
             AnimateOpacity();
         }
 
-        void GUIFadelabel_Loaded(object sender, RoutedEventArgs e)
+        void GUITextboxScrollUp_Loaded(object sender, RoutedEventArgs e)
         {
             Border b = (Border)VisualTreeHelper.GetChild(this, 0);
             _scrollViewer = (ScrollViewer)VisualTreeHelper.GetChild(b, 0);
@@ -90,12 +90,12 @@ namespace MediaPortal
         }
 
         public static readonly DependencyProperty FrameTimeProperty =
-        DependencyProperty.Register("FrameTime", typeof(double), typeof(GUIFadelabel),
+        DependencyProperty.Register("FrameTime", typeof(double), typeof(GUITextboxScrollUp),
                 new FrameworkPropertyMetadata(new PropertyChangedCallback(OnFrameTimeChanged)));
 
         private static void OnFrameTimeChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
         {
-            GUIFadelabel control = (GUIFadelabel)obj;
+            GUITextboxScrollUp control = (GUITextboxScrollUp)obj;
 
             RoutedPropertyChangedEventArgs<double> e = new RoutedPropertyChangedEventArgs<double>(
                 (double)args.OldValue, (double)args.NewValue, FrameTimeChangedEvent);
@@ -104,7 +104,7 @@ namespace MediaPortal
 
         public static readonly RoutedEvent FrameTimeChangedEvent = EventManager.RegisterRoutedEvent(
     "FrameTimeChanged", RoutingStrategy.Bubble,
-    typeof(RoutedPropertyChangedEventHandler<double>), typeof(GUIFadelabel));
+    typeof(RoutedPropertyChangedEventHandler<double>), typeof(GUITextboxScrollUp));
 
         public event RoutedPropertyChangedEventHandler<double> FrameTimeChanged
         {
@@ -135,12 +135,12 @@ namespace MediaPortal
         }
 
         protected static readonly DependencyProperty ScrollPositionProperty =
-        DependencyProperty.Register("ScrollPosition", typeof(double), typeof(GUIFadelabel),
+        DependencyProperty.Register("ScrollPosition", typeof(double), typeof(GUITextboxScrollUp),
                 new FrameworkPropertyMetadata(new PropertyChangedCallback(OnScrollPositionChanged)));
 
         private static void OnScrollPositionChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
         {
-            GUIFadelabel control = (GUIFadelabel)obj;
+            GUITextboxScrollUp control = (GUITextboxScrollUp)obj;
 
             RoutedPropertyChangedEventArgs<double> e = new RoutedPropertyChangedEventArgs<double>(
                 (double)args.OldValue, (double)args.NewValue, ScrollPositionChangedEvent);
@@ -149,7 +149,7 @@ namespace MediaPortal
 
         protected static readonly RoutedEvent ScrollPositionChangedEvent = EventManager.RegisterRoutedEvent(
     "ScrollPositionChanged", RoutingStrategy.Bubble,
-    typeof(RoutedPropertyChangedEventHandler<double>), typeof(GUIFadelabel));
+    typeof(RoutedPropertyChangedEventHandler<double>), typeof(GUITextboxScrollUp));
 
         protected event RoutedPropertyChangedEventHandler<double> ScrollPositionChanged
         {
@@ -157,16 +157,16 @@ namespace MediaPortal
             remove { RemoveHandler(ScrollPositionChangedEvent, value); }
         }
 
-        protected virtual void OnScrollPositionChanged(RoutedPropertyChangedEventArgs<double> args)
+         public virtual void OnScrollPositionChanged(RoutedPropertyChangedEventArgs<double> args)
         {
             _scrollPosition = args.NewValue;
-            _scrollViewer.ScrollToHorizontalOffset(_scrollPosition);
+            _scrollViewer.ScrollToVerticalOffset(_scrollPosition);
             RaiseEvent(args);
         }
-        
 
 
- 
+
+
 
     }
 }
