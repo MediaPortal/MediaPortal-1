@@ -36,13 +36,13 @@
     <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="app.xaml" />
+    <ApplicationDefinition Include="MediaPortal.xaml" />
     <Page Include="CoreWindow.xaml">
       <SubType>
       </SubType>
     </Page>
-    <Compile Include="app.xaml.cs">
-      <DependentUpon>app.xaml</DependentUpon>
+    <Compile Include="MediaPortal.xaml.cs">
+      <DependentUpon>MediaPortal.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="CoreWindow.xaml.cs">
@@ -57,6 +57,7 @@
     </Page>
     <Compile Include="GUIAnimation.cs" />
     <Compile Include="GUIDateTime.cs" />
+    <Compile Include="GUIFadelabel.cs" />
     <Compile Include="GUISelectButton.cs" />
     <Compile Include="GUIPlugin.cs" />
     <Compile Include="Plugins\mypictures.xaml.cs">

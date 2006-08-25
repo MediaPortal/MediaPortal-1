@@ -1,0 +1,128 @@
+﻿<Application 
+  x:Class="MediaPortal.app"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ctrl="clr-namespace:MediaPortal" 
+    Startup="AppStartup">
+  <Application.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="skinElements.xaml" />
+        <ResourceDictionary Source="skinImages.xaml" />
+      </ResourceDictionary.MergedDictionaries>
+
+
+   
+    <!-- ControlTemplates for GUISelectButton -->
+      <ControlTemplate x:Key="SelectOpen" TargetType="{x:Type ctrl:GUISelectButton}">
+        <Border
+          Width="{TemplateBinding Width}" 
+          x:Name="Border"  
+          CornerRadius="0" 
+          BorderThickness="0"
+          BorderBrush="Transparent">
+          <Button Command="{x:Static ctrl:GUISelectButton.OpenCloseSelect}" Style="{DynamicResource GUIButton}">
+            <StackPanel >
+              <Grid >
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="16"/>
+                  <ColumnDefinition Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=SelectionFieldWidth}"/>
+                  <ColumnDefinition Width="16"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                  <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBlock Margin="5" Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=SelectedItem}" x:Name="SelectContent" Grid.Column="1"/>
+                <Button Command="{x:Static ctrl:GUISelectButton.PreviousCommand}" ClickMode="Press" Grid.Column="0" x:Name="LeftButton" Width="16" Height="16" Style="{DynamicResource LeftButton}"/>
+                <Button Command="{x:Static ctrl:GUISelectButton.NextCommand}" ClickMode="Press" Grid.Column="2" x:Name="RightButton" Width="16" Height="16" Style="{DynamicResource RightButton}"/>
+              </Grid>
+            </StackPanel>
+          </Button>
+        </Border>
+        <ControlTemplate.Triggers>
+        </ControlTemplate.Triggers>
+      </ControlTemplate>
+
+      <ControlTemplate x:Key="SelectClose" TargetType="{x:Type ctrl:GUISelectButton}">
+        <Border
+          x:Name="Border"  
+          CornerRadius="0" 
+          BorderThickness="0"
+          BorderBrush="Transparent">
+          <Button Command="{x:Static ctrl:GUISelectButton.OpenCloseSelect}" Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Content}" Style="{DynamicResource GUIButton}"></Button>
+        </Border>
+        <ControlTemplate.Triggers>
+          <Trigger Property="IsKeyboardFocused" Value="true">
+            <Setter TargetName="Border" Property="BorderBrush" Value="Black" />
+          </Trigger>
+
+        </ControlTemplate.Triggers>
+      </ControlTemplate>
+
+      <!-- Fadelabel -->
+      <Style TargetType="{x:Type ctrl:GUIFadelabel}">
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="OpacityMask">
+          <Setter.Value>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+              <GradientStop Offset="0.0" Color="#FF000000"/>
+              <GradientStop Offset="0.75" Color="#FF000000"/>
+              <GradientStop Offset="1.0" Color="#00000000"/>
+            </LinearGradientBrush>
+          </Setter.Value>
+        </Setter>
+            <Setter Property="Template">
+          <Setter.Value>
+            <ControlTemplate TargetType="{x:Type ctrl:GUIFadelabel}">
+              <Border BorderThickness="0" BorderBrush="Transparent" Margin="0" VerticalAlignment="Center" HorizontalAlignment="Left">
+                <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
+                  <TextBlock Text="{TemplateBinding Content}" />
+                </ScrollViewer>
+              </Border>
+            </ControlTemplate>
+          </Setter.Value>
+        </Setter>
+      </Style>
+
+      
+      
+      <!-- GUISpinControl Resource -->
+      <Style TargetType="{x:Type ctrl:GUISpinControl}">
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Template">
+          <Setter.Value>
+            <ControlTemplate TargetType="{x:Type ctrl:GUISpinControl}">
+              <Grid Margin="3">
+                <Grid.RowDefinitions>
+                  <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition/>
+                  <ColumnDefinition Width="16"/>
+                  <ColumnDefinition Width="16"/>
+                </Grid.ColumnDefinitions>
+                <Border BorderThickness="0" BorderBrush="Transparent" Margin="2" VerticalAlignment="Center" HorizontalAlignment="Stretch">
+                  <TextBlock Grid.Column="0" Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Value}"  Width="60" TextAlignment="Right" Padding="5"/>
+                </Border>
+                <RepeatButton Command="{x:Static ctrl:GUISpinControl.IncreaseCommand}"  Grid.Column="1" Grid.Row="0" Style="{DynamicResource UpScrollSmall}"></RepeatButton>
+                <RepeatButton Command="{x:Static ctrl:GUISpinControl.DecreaseCommand}"  Grid.Column="2" Grid.Row="0" Style="{DynamicResource DownScrollSmall}"></RepeatButton>
+              </Grid>
+            </ControlTemplate>
+          </Setter.Value>
+        </Setter>
+      </Style>
+
+      <!-- GUISelectButton Resource -->
+      <Style TargetType="{x:Type ctrl:GUISelectButton}">
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Template" Value="{DynamicResource SelectClose}"/>
+      </Style>
+    </ResourceDictionary>
+
+  
+    
+  </Application.Resources>
+</Application>

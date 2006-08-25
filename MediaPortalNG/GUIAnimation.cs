@@ -7,9 +7,8 @@ using System.Windows.Threading;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.IO;
-
-using MediaPortal;
 using System.Windows.Media.Imaging;
+using MediaPortal;
 
 namespace MediaPortal
 {

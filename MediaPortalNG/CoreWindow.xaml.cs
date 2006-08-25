@@ -42,6 +42,7 @@ namespace MediaPortal
             this.KeyDown += new System.Windows.Input.KeyEventHandler(Core_KeyDown);
             _home = new HomeExtension(this.Resources);
             _home.InitializeComponent();
+            
             this.Navigate(_home);
         }
 

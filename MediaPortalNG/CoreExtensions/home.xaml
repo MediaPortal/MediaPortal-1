@@ -296,7 +296,15 @@
       Foreground="White"
       />
 
- 
+    <ctrl:GUIFadelabel 
+     Canvas.Top="350"
+     Canvas.Left="40" 
+     Width="150"
+     FontSize="18"
+     Foreground="White"
+     FrameTime="50"
+     Content="Be sure that you dont miss MediaPortal NG. You will be surprised :) :) :)"
+      />
 
   </Canvas>
 </Page>
