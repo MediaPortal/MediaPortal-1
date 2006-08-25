@@ -53,7 +53,6 @@ namespace MediaPortal.InputDevices.HcwHelper
     private bool registered = false;
     bool restartIRApp = false;                // Restart Haupp. IR-app. after MP quit
     protected ILog _log;
-    protected IConfig _config;
 
     /// <summary>
     /// Initialization
@@ -62,11 +61,10 @@ namespace MediaPortal.InputDevices.HcwHelper
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
 
       InitializeComponent();
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         logVerbose = xmlreader.GetValueAsBool("remote", "HCWVerboseLog", false);
         port = xmlreader.GetValueAsInt("remote", "HCWHelperPort", 2110);
