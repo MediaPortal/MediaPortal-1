@@ -49,6 +49,9 @@ namespace System.Windows.Media.Animation
 			double p = 0;
 			double a = 0;
 
+      if (d == 0)
+        return 0;
+
 			// Easing Equations (c) 2003 Robert Penner, all rights reserved.
 			// This work is subject to the terms in http://www.robertpenner.com/easing_terms_of_use.html.
 
