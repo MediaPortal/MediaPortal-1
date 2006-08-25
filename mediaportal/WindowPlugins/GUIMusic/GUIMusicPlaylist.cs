@@ -1248,13 +1248,13 @@ namespace MediaPortal.GUI.Music
             // okay okay seems like there aren't enough files to add
             if (loops == scrobbledArtists.Count - 1)
               // make sure we get a few songs at least...
-              if (_preferCountForTracks != 2)
-              {
-                _preferCountForTracks = 2;
-                Log.Write("ScrobbleLookupThread: could not find enough songs - temporarily accepting all songs");
-                loops = 0;
-              }
-              else
+              //if (_preferCountForTracks != 2)
+              //{
+              //  _preferCountForTracks = 2;
+              //  Log.Write("ScrobbleLookupThread: could not find enough songs - temporarily accepting all songs");
+              //  loops = 0;
+              //}
+              //else
                 break;
           }
           _preferCountForTracks = previouspreferCount;
@@ -1301,7 +1301,10 @@ namespace MediaPortal.GUI.Music
           // delete all heard songs
           for (int s = 0; s < songList.Count; s++)
             if (songList[s].TimesPlayed > 0)
-              songList.RemoveAt(s);
+            {
+              songList.Remove(songList[s]);
+              s--;
+            }
           break;
         case 1:
           // delete all well known songs
@@ -1313,16 +1316,41 @@ namespace MediaPortal.GUI.Music
               if (songList[s].TimesPlayed > avgPlayCount)
                 // give 1x played songs a chance...
                 if (songList[s].TimesPlayed > 1)
-                  songList.RemoveAt(s);
+                  songList.Remove(songList[s]);
           break;
         case 2:
           break;
         case 3:
-          // delete all rarely heard songs
+          // only well known songs
           for (int s = 0; s < songList.Count; s++)
-            if (songList[s].TimesPlayed < avgPlayCount + 2)
-              songList.RemoveAt(s);
-          songList.Sort(CompareSongsByTimesPlayed);
+            // delete all rarely heard songs
+            if (songList[s].TimesPlayed < avgPlayCount)
+            {
+              songList.Remove(songList[s]);
+              s--;
+            }
+
+          // get new average playcount of remaining files
+          if (songList.Count > 0)
+          {
+            int avgOfKnownSongs = 0;
+            foreach (Song favSong in songList)
+            {
+              avgOfKnownSongs += favSong.TimesPlayed;
+            }
+            avgOfKnownSongs /= songList.Count;
+            avgOfKnownSongs = avgOfKnownSongs > 0 ? avgOfKnownSongs : 2;
+
+            int songListCount = songList.Count;
+            for (int s = 0; s < songListCount; s++)
+              if (songList[s].TimesPlayed < avgOfKnownSongs)
+              {
+                songList.Remove(songList[s]);
+                songListCount = songList.Count;
+                s--;
+              }
+          }
+          //songList.Sort(CompareSongsByTimesPlayed);
           break;
       }
 

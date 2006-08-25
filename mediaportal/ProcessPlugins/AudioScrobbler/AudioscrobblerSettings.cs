@@ -95,7 +95,8 @@ namespace MediaPortal.AudioScrobbler
           }
           comboBoxUserName.SelectedIndex = selected;
 
-          textBoxASUsername.Text = _currentUser;
+          buttonDelUser.Enabled = true;
+
           tmppass = mdb.AddScrobbleUserPassword(Convert.ToString(mdb.AddScrobbleUser(_currentUser)), "");
 
           EncryptDecrypt Crypter = new EncryptDecrypt();
@@ -362,14 +363,6 @@ namespace MediaPortal.AudioScrobbler
       }
       catch
       {
-      }
-    }
-
-    private void textBoxASUsername_Leave(object sender, EventArgs e)
-    {
-      if (textBoxASUsername.Text != "")
-      {
-        //tabControlASSettings.Enabled = true;
       }
     }
 
@@ -807,6 +800,7 @@ namespace MediaPortal.AudioScrobbler
       maskedTextBoxASPassword.Text = String.Empty;
       groupBoxOptions.Enabled = false;
       buttonAddUser.Enabled = false;
+      buttonDelUser.Enabled = false;
       comboBoxUserName.Focus();
     }
 
@@ -814,6 +808,20 @@ namespace MediaPortal.AudioScrobbler
     {
       if (e.KeyCode == Keys.Enter)
         buttonOk_Click(sender, e);
+    }
+
+
+    private void buttonDelUser_Click(object sender, EventArgs e)
+    {
+      MusicDatabase mdb = new MusicDatabase();
+      mdb.DeleteScrobbleUser(comboBoxUserName.Text);
+      if (comboBoxUserName.Items.Count <= 1)
+      {
+        buttonDelUser.Enabled = false;
+        maskedTextBoxASPassword.Clear();
+      }
+      comboBoxUserName.Items.Clear();
+      LoadSettings();
     }
     
   }

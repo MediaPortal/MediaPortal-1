@@ -116,9 +116,9 @@
 		<description>Here is the article text displayed</description>
         <type>textbox</type>
         <id>20</id>
-        <posX>264</posX>
-        <posY>72</posY>
-        <width>440</width>
+        <posX>280</posX>
+        <posY>70</posY>
+        <width>400</width>
         <height>466</height>
         <spinWidth>16</spinWidth>
         <spinColor>ffffffff</spinColor>

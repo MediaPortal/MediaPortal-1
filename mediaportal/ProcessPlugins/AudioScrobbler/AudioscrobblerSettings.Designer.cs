@@ -71,11 +71,11 @@ namespace MediaPortal.AudioScrobbler
       this.checkBoxEnableSubmits = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxLogVerbose = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBoxAccount = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.buttonDelUser = new MediaPortal.UserInterface.Controls.MPButton();
       this.buttonAddUser = new MediaPortal.UserInterface.Controls.MPButton();
       this.comboBoxUserName = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.textBoxASUsername = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.maskedTextBoxASPassword = new System.Windows.Forms.MaskedTextBox();
       this.tabPageMusicSettings = new System.Windows.Forms.TabPage();
       this.groupBoxSimilarMode = new MediaPortal.UserInterface.Controls.MPGroupBox();
@@ -280,10 +280,10 @@ namespace MediaPortal.AudioScrobbler
       this.linkLabel1.AutoSize = true;
       this.linkLabel1.Location = new System.Drawing.Point(305, 268);
       this.linkLabel1.Name = "linkLabel1";
-      this.linkLabel1.Size = new System.Drawing.Size(213, 13);
+      this.linkLabel1.Size = new System.Drawing.Size(168, 13);
       this.linkLabel1.TabIndex = 6;
       this.linkLabel1.TabStop = true;
-      this.linkLabel1.Text = "Please join the MediaPortal group on last.fm";
+      this.linkLabel1.Text = "Please join the MediaPortal group!";
       // 
       // linkLabel2
       // 
@@ -291,19 +291,19 @@ namespace MediaPortal.AudioScrobbler
       this.linkLabel2.AutoSize = true;
       this.linkLabel2.Location = new System.Drawing.Point(305, 240);
       this.linkLabel2.Name = "linkLabel2";
-      this.linkLabel2.Size = new System.Drawing.Size(104, 13);
+      this.linkLabel2.Size = new System.Drawing.Size(152, 13);
       this.linkLabel2.TabIndex = 5;
       this.linkLabel2.TabStop = true;
-      this.linkLabel2.Text = "Sign up a new user..";
+      this.linkLabel2.Text = "Sign up a new user on last.fm..";
       // 
       // groupBoxOptions
       // 
       this.groupBoxOptions.Controls.Add(this.checkBoxEnableSubmits);
       this.groupBoxOptions.Controls.Add(this.checkBoxLogVerbose);
       this.groupBoxOptions.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxOptions.Location = new System.Drawing.Point(10, 129);
+      this.groupBoxOptions.Location = new System.Drawing.Point(10, 136);
       this.groupBoxOptions.Name = "groupBoxOptions";
-      this.groupBoxOptions.Size = new System.Drawing.Size(275, 77);
+      this.groupBoxOptions.Size = new System.Drawing.Size(275, 72);
       this.groupBoxOptions.TabIndex = 4;
       this.groupBoxOptions.TabStop = false;
       this.groupBoxOptions.Text = "Scrobbler options";
@@ -336,27 +336,38 @@ namespace MediaPortal.AudioScrobbler
       // 
       this.groupBoxAccount.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxAccount.Controls.Add(this.buttonDelUser);
       this.groupBoxAccount.Controls.Add(this.buttonAddUser);
       this.groupBoxAccount.Controls.Add(this.comboBoxUserName);
       this.groupBoxAccount.Controls.Add(this.mpLabel1);
       this.groupBoxAccount.Controls.Add(this.mpLabel2);
-      this.groupBoxAccount.Controls.Add(this.textBoxASUsername);
       this.groupBoxAccount.Controls.Add(this.maskedTextBoxASPassword);
       this.groupBoxAccount.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxAccount.Location = new System.Drawing.Point(10, 6);
       this.groupBoxAccount.Name = "groupBoxAccount";
-      this.groupBoxAccount.Size = new System.Drawing.Size(275, 117);
+      this.groupBoxAccount.Size = new System.Drawing.Size(275, 124);
       this.groupBoxAccount.TabIndex = 3;
       this.groupBoxAccount.TabStop = false;
       this.groupBoxAccount.Text = "Last.fm account";
       // 
+      // buttonDelUser
+      // 
+      this.buttonDelUser.Enabled = false;
+      this.buttonDelUser.Location = new System.Drawing.Point(223, 37);
+      this.buttonDelUser.Name = "buttonDelUser";
+      this.buttonDelUser.Size = new System.Drawing.Size(35, 21);
+      this.buttonDelUser.TabIndex = 0;
+      this.buttonDelUser.Text = "Del";
+      this.buttonDelUser.UseVisualStyleBackColor = true;
+      this.buttonDelUser.Click += new System.EventHandler(this.buttonDelUser_Click);
+      // 
       // buttonAddUser
       // 
-      this.buttonAddUser.Location = new System.Drawing.Point(219, 35);
+      this.buttonAddUser.Location = new System.Drawing.Point(187, 37);
       this.buttonAddUser.Name = "buttonAddUser";
-      this.buttonAddUser.Size = new System.Drawing.Size(40, 21);
+      this.buttonAddUser.Size = new System.Drawing.Size(35, 21);
       this.buttonAddUser.TabIndex = 0;
-      this.buttonAddUser.Text = "Add..";
+      this.buttonAddUser.Text = "Add user..";
       this.buttonAddUser.UseVisualStyleBackColor = true;
       this.buttonAddUser.Click += new System.EventHandler(this.buttonAddUser_Click);
       // 
@@ -365,16 +376,16 @@ namespace MediaPortal.AudioScrobbler
       this.comboBoxUserName.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxUserName.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxUserName.FormattingEnabled = true;
-      this.comboBoxUserName.Location = new System.Drawing.Point(16, 35);
+      this.comboBoxUserName.Location = new System.Drawing.Point(16, 37);
       this.comboBoxUserName.Name = "comboBoxUserName";
-      this.comboBoxUserName.Size = new System.Drawing.Size(197, 21);
+      this.comboBoxUserName.Size = new System.Drawing.Size(169, 21);
       this.comboBoxUserName.TabIndex = 1;
       this.comboBoxUserName.SelectedIndexChanged += new System.EventHandler(this.comboBoxUserName_SelectedIndexChanged);
       // 
       // mpLabel1
       // 
       this.mpLabel1.AutoSize = true;
-      this.mpLabel1.Location = new System.Drawing.Point(16, 63);
+      this.mpLabel1.Location = new System.Drawing.Point(16, 68);
       this.mpLabel1.Name = "mpLabel1";
       this.mpLabel1.Size = new System.Drawing.Size(53, 13);
       this.mpLabel1.TabIndex = 0;
@@ -383,23 +394,11 @@ namespace MediaPortal.AudioScrobbler
       // mpLabel2
       // 
       this.mpLabel2.AutoSize = true;
-      this.mpLabel2.Location = new System.Drawing.Point(16, 19);
+      this.mpLabel2.Location = new System.Drawing.Point(16, 20);
       this.mpLabel2.Name = "mpLabel2";
       this.mpLabel2.Size = new System.Drawing.Size(55, 13);
       this.mpLabel2.TabIndex = 0;
       this.mpLabel2.Text = "Username";
-      // 
-      // textBoxASUsername
-      // 
-      this.textBoxASUsername.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.textBoxASUsername.BorderColor = System.Drawing.Color.Empty;
-      this.textBoxASUsername.Location = new System.Drawing.Point(19, 91);
-      this.textBoxASUsername.Name = "textBoxASUsername";
-      this.textBoxASUsername.Size = new System.Drawing.Size(243, 20);
-      this.textBoxASUsername.TabIndex = 0;
-      this.textBoxASUsername.Visible = false;
-      this.textBoxASUsername.Leave += new System.EventHandler(this.textBoxASUsername_Leave);
       // 
       // maskedTextBoxASPassword
       // 
@@ -408,10 +407,10 @@ namespace MediaPortal.AudioScrobbler
       this.maskedTextBoxASPassword.BeepOnError = true;
       this.maskedTextBoxASPassword.Culture = new System.Globalization.CultureInfo("");
       this.maskedTextBoxASPassword.HideSelection = false;
-      this.maskedTextBoxASPassword.Location = new System.Drawing.Point(16, 81);
+      this.maskedTextBoxASPassword.Location = new System.Drawing.Point(16, 85);
       this.maskedTextBoxASPassword.Name = "maskedTextBoxASPassword";
       this.maskedTextBoxASPassword.PasswordChar = '*';
-      this.maskedTextBoxASPassword.Size = new System.Drawing.Size(243, 20);
+      this.maskedTextBoxASPassword.Size = new System.Drawing.Size(242, 20);
       this.maskedTextBoxASPassword.TabIndex = 2;
       this.maskedTextBoxASPassword.KeyUp += new System.Windows.Forms.KeyEventHandler(this.maskedTextBoxASPassword_KeyUp);
       // 
@@ -1261,7 +1260,6 @@ namespace MediaPortal.AudioScrobbler
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxAccount;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
-    private MediaPortal.UserInterface.Controls.MPTextBox textBoxASUsername;
     private System.Windows.Forms.MaskedTextBox maskedTextBoxASPassword;
     private System.Windows.Forms.TabPage tabPageTags;
     private MediaPortal.UserInterface.Controls.MPButton buttonTagsRefresh;
@@ -1302,5 +1300,6 @@ namespace MediaPortal.AudioScrobbler
     private MediaPortal.UserInterface.Controls.MPComboBox comboBoxUserName;
     private MediaPortal.UserInterface.Controls.MPButton buttonAddUser;
     private MediaPortal.UserInterface.Controls.MPLabel labelNewUserHint;
+    private MediaPortal.UserInterface.Controls.MPButton buttonDelUser;
   }
 }

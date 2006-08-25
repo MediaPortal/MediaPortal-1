@@ -3638,5 +3638,47 @@ namespace MediaPortal.Music.Database
       return scrobbleUsers;
     }
 
+    public bool DeleteScrobbleUser(string userName_)
+    {
+      string strSQL;
+      int strUserID;
+      try
+      {
+        if (userName_ == null)
+          return false;
+        if (userName_.Length == 0)
+          return false;
+        string strUserName = userName_;
+
+        DatabaseUtility.RemoveInvalidChars(ref strUserName);
+        if (null == m_db)
+          return false;
+
+        strUserID = AddScrobbleUser(strUserName);
+
+        SQLiteResultSet results;
+        strSQL = String.Format("delete from scrobblesettings where idScrobbleUser = '{0}'", strUserID);
+        results = m_db.Execute(strSQL);
+        if (results.Rows.Count == 1)
+        {
+          // setting removed now remove user
+          strSQL = String.Format("delete from scrobbleusers where idScrobbleUser = '{0}'", strUserID);
+          m_db.Execute(strSQL);
+          return true;
+        }
+        else
+        {
+          _log.Error("MusicDatabase: could not delete settings for scrobbleuser {0} with ID {1}", strUserName, strUserID);
+          return false;
+        }
+      }
+      catch (Exception ex)
+      {
+        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+      return false;
+    }
+
   }
 }
