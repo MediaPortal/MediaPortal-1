@@ -69,8 +69,8 @@ namespace MediaPortal
             if (_scrollViewer == null)
                 return;
             this.Opacity = 0;
-            _scrollViewer.ScrollToHorizontalOffset(0);
-            _scrollPosition = 0;
+            _scrollViewer.ScrollToVerticalOffset(0);
+            ScrollPosition = 0;
             AnimateOpacity();
         }
 
