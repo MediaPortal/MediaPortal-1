@@ -24,7 +24,7 @@
 class CPesCallback
 {
 public:
-	virtual void OnNewPesPacket(int streamId,byte* data, int len, bool isStart)=0;
+	virtual int OnNewPesPacket(int streamId,byte* header, int headerlen,byte* data, int len, bool isStart)=0;
 };
 
 class CPesDecoder
@@ -40,6 +40,9 @@ public:
 	int						GetStreamId();
 
 private:
+  bool          m_bStart;
+  int           m_iPesHeaderLen;
+  byte          m_pesHeader[256];
 	CPesCallback* m_pCallback;
 	unsigned long m_packets;
 	int					  m_pid;

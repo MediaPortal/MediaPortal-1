@@ -72,6 +72,7 @@ private:
 	CVideoPin*	    m_pVideoPin;
 	WCHAR           m_fileName[1024];
 	CCritSec        m_section;
+	CCritSec        m_CritSecDuration;
 	MultiFileReader m_fileReader;
 	MultiFileReader m_fileDuration;
 	CPcrDecoder     m_pcrDecoder;

@@ -45,10 +45,10 @@ public:
 	void OnTsPacket(byte* tsPacket);
 	void Reset();
 	void SetFileWriterCallBack(IFileWriter* callback);
-	void OnNewPesPacket(int streamid,byte* data, int len, bool isStart);
+	int OnNewPesPacket(int streamid,byte* header, int headerlen,byte* data, int len, bool isStart);
 private:
 
-  void SplitPesPacket(int streamId,byte* pesPacket, int nLen,bool isStart);
+  int SplitPesPacket(int streamId,byte* header, int headerlen,byte* pesPacket, int nLen,bool isStart);
 	int  WritePackHeader();
 	CPcrDecoder m_pcrDecoder;
   

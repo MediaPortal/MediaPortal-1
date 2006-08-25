@@ -24,6 +24,7 @@
 
 #define OUTPUT_PACKET_LENGTH 0x6000
 #define BUFFER_LENGTH        0x1000
+extern void LogDebug(const char *fmt, ...) ;
 
 CDeMultiplexer::CDeMultiplexer(MultiFileReader& reader)
 :m_reader(reader)
@@ -340,6 +341,7 @@ bool CDeMultiplexer::Parse()
   }
 	while (m_vecAudioBuffers.size()>=2)
 	{
+		LogDebug("demuxer:drop audio:%d", m_vecAudioBuffers.size());
 		ivecBuffer it=m_vecAudioBuffers.begin();
 		CBuffer* pBuf=*it;
 		delete pBuf;
@@ -356,6 +358,7 @@ bool CDeMultiplexer::Parse()
   }
 	while (m_vecVideoBuffers.size()>=500)
 	{
+		LogDebug("demuxer:drop video:%d", m_vecVideoBuffers.size());
 		ivecBuffer it=m_vecVideoBuffers.begin();
 		CBuffer* pBuf=*it;
 		delete pBuf;

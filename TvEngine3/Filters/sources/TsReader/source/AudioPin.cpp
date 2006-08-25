@@ -165,7 +165,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 	{
 		buffer=demux.GetAudio();
 		delete buffer;
-		//::OutputDebugString("A:drop...\n");
+		LogDebug("A:drop...\n");
 		m_bDiscontinuity=TRUE;
 	}
 	buffer=demux.GetAudio();

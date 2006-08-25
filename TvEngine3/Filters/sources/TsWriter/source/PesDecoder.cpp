@@ -36,7 +36,7 @@ CPesDecoder::CPesDecoder(CPesCallback* callback)
 	m_iMaxLength=MAX_PES_PACKET;
 	m_pCallback=callback;
 	m_iStreamId=-1;
-//	m_fp=NULL;
+  m_iPesHeaderLen=0;
 }
 void CPesDecoder::SetMaxLength(int len)
 {
@@ -46,19 +46,13 @@ void CPesDecoder::SetMaxLength(int len)
 
 CPesDecoder::~CPesDecoder(void)
 {
-	//LogDebug("pes decoder pid:%x reset",m_pid);
-	delete[] m_pesBuffer;
-	//if (m_fp!=NULL)
-	//{
-	//	fclose(m_fp);
-	//	m_fp=NULL;
-	//}
+	delete[] m_pesBuffer; 
 }
 
 void CPesDecoder::Reset()
 {
-	//LogDebug("pes decoder pid:%x reset",m_pid);
 	m_iWritePos=-1;
+  m_iPesHeaderLen=0;
 }
 
 int CPesDecoder::GetPid()
@@ -68,16 +62,7 @@ int CPesDecoder::GetPid()
 
 void CPesDecoder::SetPid(int pid)
 {
-	//if (m_fp!=NULL)
-	//{
-	//	fclose(m_fp);
-	//	m_fp=NULL;
-	//}
 	m_pid=pid;
-	//char buf[128];
-	//sprintf(buf,"pid%x.mpg", pid);
-	//m_fp = fopen(buf,"wb+");
-	//LogDebug("pes decoder pid:%x",pid);
 }
 
 
@@ -104,8 +89,7 @@ bool CPesDecoder::OnTsPacket(byte* tsPacket)
 
 	if (header.Pid != m_pid) return false;
 	BOOL scrambled= (header.TScrambling!=0);
-	if (scrambled) return false;
-//	header.LogHeader();
+	if (scrambled) return false; 
 	if ( header.AdaptionFieldOnly() ) 
 	{
 		return false;
@@ -119,35 +103,23 @@ bool CPesDecoder::OnTsPacket(byte* tsPacket)
 		if (tsPacket[pos+0]==0 && tsPacket[pos+1]==0 && tsPacket[pos+2]==1)
 		{
 			m_iStreamId=tsPacket[pos+3];
-      if (m_iWritePos>0)
-      {
-        int pos=0;
-        while (pos < m_iWritePos)
-        {
-         
-		      bool start;
-		      int copyLen;
-		      if (m_pesBuffer[pos+0]==0 && m_pesBuffer[pos+1]==0 && m_pesBuffer[pos+2]==1 && m_pesBuffer[pos+3]==m_iStreamId)
-		      {
-			      start = true;
-			      copyLen = m_iMaxLength;
-		      }
-		      else
-		      {
-			      start = false;
-			      copyLen = m_iMaxLength-9;
-		      }
-          if (copyLen > (m_iWritePos-pos) )
-            copyLen=(m_iWritePos-pos);
-		      if (m_pCallback!=NULL)
-		      {
-			      m_pCallback->OnNewPesPacket(m_iStreamId, &m_pesBuffer[pos], copyLen, start);
-		      }
-          pos += copyLen;
+      if (m_iWritePos < 0)
+			  m_iWritePos=0;
 
-        }
+      m_iPesHeaderLen=tsPacket[pos+8]+9;
+      memcpy(m_pesHeader,&tsPacket[pos],m_iPesHeaderLen);
+      pos += (m_iPesHeaderLen);
+	    if (m_iWritePos  >= m_iMaxLength)
+	    {
+        int written=0;
+	      if (m_pCallback!=NULL)
+	      {
+		      written=m_pCallback->OnNewPesPacket(m_iStreamId, m_pesHeader, m_iPesHeaderLen, m_pesBuffer, m_iMaxLength, false);
+	      }
+		    memcpy(m_pesBuffer, &m_pesBuffer[written] , m_iWritePos-written);
+        m_iWritePos-=written;
       }
-			m_iWritePos=0;
+      m_bStart=true;
 		}
 	}
 
@@ -158,26 +130,15 @@ bool CPesDecoder::OnTsPacket(byte* tsPacket)
 	m_iWritePos += (188-pos);
 	if (m_iWritePos  >= m_iMaxLength)
 	{
-		bool start;
-		int copyLen;
-		if (m_pesBuffer[0]==0 && m_pesBuffer[1]==0 && m_pesBuffer[2]==1 && m_pesBuffer[3]==m_iStreamId)
-		{
-			start = true;
-			copyLen = m_iMaxLength;
-		}
-		else
-		{
-			start = false;
-			copyLen = m_iMaxLength-9;
-		}
-
+    int written=0;
 		if (m_pCallback!=NULL)
 		{
-			m_pCallback->OnNewPesPacket(m_iStreamId, m_pesBuffer, copyLen, start);
+			written=m_pCallback->OnNewPesPacket(m_iStreamId,m_pesHeader, m_iPesHeaderLen,  m_pesBuffer, m_iMaxLength, m_bStart);
 		}
+    m_bStart=false;
 
-		memcpy(m_pesBuffer, &m_pesBuffer[copyLen] , m_iWritePos-copyLen);
-		m_iWritePos -= copyLen;
+		memcpy(m_pesBuffer, &m_pesBuffer[written] , m_iWritePos-written);
+		m_iWritePos -= written;
 	}
   return result;
 }

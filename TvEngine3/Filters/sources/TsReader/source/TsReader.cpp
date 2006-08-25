@@ -217,6 +217,7 @@ STDMETHODIMP CTsReaderFilter::GetDuration(REFERENCE_TIME *dur)
 	if(!dur)
 		return E_INVALIDARG;
 
+	CAutoLock lock (&m_CritSecDuration);
 	double dmilliSeconds=m_endTime-m_startTime;
 	__int64 milliSeconds=(__int64)dmilliSeconds;
 	*dur = MILLISECONDS_TO_100NS_UNITS(milliSeconds);
@@ -274,16 +275,19 @@ STDMETHODIMP CTsReaderFilter::GetCurFile(LPOLESTR * ppszFileName,AM_MEDIA_TYPE *
 
 double CTsReaderFilter::UpdateDuration()
 {
-  if (m_seeking) return (m_endTime- m_startTime);
-  DWORD dwTicks=GetTickCount()-m_dwTickCount;
-  if (dwTicks<1000) return (m_endTime- m_startTime);
-	// determine first PCR...
-	m_fileDuration.SetFilePointer(0LL,FILE_BEGIN);
-	m_startTime=m_pcrDecoder.GetPcr();
+	{
+		CAutoLock lock (&m_CritSecDuration);
+		if (m_seeking) return (m_endTime- m_startTime);
+		DWORD dwTicks=GetTickCount()-m_dwTickCount;
+		if (dwTicks<1000) return (m_endTime- m_startTime);
+		// determine first PCR...
+		m_fileDuration.SetFilePointer(0LL,FILE_BEGIN);
+		m_startTime=m_pcrDecoder.GetPcr();
 
-	m_fileDuration.SetFilePointer(-8192LL,FILE_END);
-	m_endTime=m_pcrDecoder.GetPcr(true);
-
+		//determine last pcr
+		m_fileDuration.SetFilePointer(-8192LL,FILE_END);
+		m_endTime=m_pcrDecoder.GetPcr(true);
+	}
 	m_pAudioPin->SetDuration();
   m_dwTickCount=GetTickCount();
 	return (m_endTime- m_startTime);
@@ -304,6 +308,7 @@ CDeMultiplexer& CTsReaderFilter::GetDemultiplexer()
 
 double CTsReaderFilter::GetStartTime()
 {
+	CAutoLock lock (&m_CritSecDuration);
 	return m_startTime;
 }
 
@@ -339,7 +344,17 @@ void CTsReaderFilter::Seek(CRefTime& seekTime)
 		m_fileReader.setFilePointer(filePos,FILE_BEGIN);
 		m_fileDuration.setFilePointer(filePos,FILE_BEGIN);
 		double dtimeSeeked=m_pcrDecoder.GetPcr()-m_startTime;
-		LogDebug("-- seek %05.2f ->%05.2f", seektime/1000.0,dtimeSeeked/1000.0);
+		LogDebug("-- seekmin %05.2f ->%05.2f", seektime/1000.0,dtimeSeeked/1000.0);
+		if (dtimeSeeked < seektime) break;
+		if (filePos< 0x50000) break;
+		filePos-=0x50000;
+	} while (true);
+	do
+	{
+		m_fileReader.setFilePointer(filePos,FILE_BEGIN);
+		m_fileDuration.setFilePointer(filePos,FILE_BEGIN);
+		double dtimeSeeked=m_pcrDecoder.GetPcr()-m_startTime;
+		LogDebug("-- seekmax %05.2f ->%05.2f", seektime/1000.0,dtimeSeeked/1000.0);
 		if (dtimeSeeked>=seektime) break;
 		filePos+=0x50000;
 	} while (true);
