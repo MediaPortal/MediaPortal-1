@@ -35,7 +35,15 @@
                       VerticalScrollBarVisibility="Hidden">
                       <TextBlock FocusVisualStyle="{DynamicResource FocusStyle}" 
                         Text="{TemplateBinding Content}" 
-                        VerticalAlignment="Center"/>                  
+                        VerticalAlignment="Center">
+                        <TextBlock.OpacityMask>
+                          <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                            <GradientStop Offset="0.0" Color="#FF000000"/>
+                            <GradientStop Offset="0.75" Color="#FF000000"/>
+                            <GradientStop Offset="1.0" Color="#00000000"/>
+                          </LinearGradientBrush>
+                        </TextBlock.OpacityMask>
+                      </TextBlock>
                     </ScrollViewer>
               </Border>
               <ControlTemplate.Triggers>

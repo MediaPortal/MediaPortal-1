@@ -18,6 +18,7 @@ namespace MediaPortal
         private Storyboard _storyBoard;
         private Delegate _delegate;
 
+        // getting & removing the handler we will call on setting the Click property
         public event RoutedEventHandler Click
         {
             add 
@@ -33,33 +34,49 @@ namespace MediaPortal
         
         public GUIButton()
         {
+
+            this.MouseEnter += new MouseEventHandler(GUIButton_MouseEnter);
+            this.MouseLeave += new MouseEventHandler(GUIButton_MouseLeave);
             // start all actions after load is complete
             this.Loaded += new RoutedEventHandler(GUIButton_Loaded);
             this.Unloaded += new RoutedEventHandler(GUIButton_Unloaded);
            // default frame time
-            FrameTime = 120;
+            FrameTime = 80;
         }
 
+        void GUIButton_MouseLeave(object sender, MouseEventArgs e)
+        {
+            AnimateEnd();
+        }
+
+        void GUIButton_MouseEnter(object sender, MouseEventArgs e)
+        {
+           AnimateStart();
+        }
+
+        // no setting of an style is allowed
         new public Style Style
         {
             get { return this.Style; }
-            set { return; }
         }
+
 
         void GUIButton_Click(object sender, RoutedEventArgs e)
         {
             if (_delegate != null)
             {
-                object[] args = new object[2];
-                args.SetValue(sender, 0);
-                args.SetValue(e, 1);
-                _delegate.DynamicInvoke(args);
+                _delegate.DynamicInvoke(sender,e);
             }
         }
  
 
    
         void GUIButton_Unloaded(object sender, RoutedEventArgs e)
+        {
+            AnimateEnd();
+        }
+
+        void AnimateEnd()
         {
             if (_storyBoard == null)
                 return;
@@ -69,7 +86,7 @@ namespace MediaPortal
             _scrollPosition = 0;
         }
 
-        void Animate()
+        void AnimateStart()
         {
             DoubleAnimation positionAnimation = new DoubleAnimation(0, _scrollViewer.ScrollableWidth, new Duration(TimeSpan.FromMilliseconds(_displayTime*_scrollViewer.ScrollableWidth)));
             _storyBoard = new Storyboard();
@@ -91,7 +108,6 @@ namespace MediaPortal
                 return;
             _scrollViewer.ScrollToHorizontalOffset(0);
             _scrollPosition = 0;
-           Animate();
         }
 
 
