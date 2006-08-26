@@ -149,7 +149,7 @@ namespace MediaPortal.Playlists
             PlayListItem item = GetCurrentItem();
             if (item != null)
             {
-              if (item.Type != PlayListItem.PlayListItemType.Radio &&
+              if (item.Type != PlayListItem.PlayListItemType.Radio ||
                 item.Type != PlayListItem.PlayListItemType.AudioStream)
               {
                 Reset();
