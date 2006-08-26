@@ -14835,7 +14835,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Terratec Cinergy T USB XE" capturename="Cinergy T USB XE Receiver" devid="vid_0ccd&amp;pid_0055&amp;rev_01">
+  <capturecard commercialname="Terratec Cinergy T USB XE" capturename="Cinergy T USB XE Receiver" devid="vid_0ccd&amp;pid_0055">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
@@ -14932,6 +14932,44 @@
       </filters>
       <connections>
         <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Medion SAA7134, Hybrid Capture Device" capturename="713x BDA Digital Capture" devid="ven_1131&amp;dev_7134&amp;subsys_000316be&amp;rev_01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBS Network Provider"  checkdevice="false"/>
+        <filter cat="tunerdevice"     name="713x BDA DVBT Tuner"              checkdevice="true"/>
+        <filter cat="capture"         name="713x BDA Digital Capture"         checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="AVerMedia AVerTV PVR 150 Plus" capturename="AVerMedia AVerTV Video Capture (AF2)" devid="ven_4444&amp;dev_0016&amp;subsys_c0191461&amp;rev_01">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"  name="AVerMedia AVerTV Tuner (AF2)"					checkdevice="true"/>
+        <filter cat="tvaudio"  name="AVerMedia AVerTV TvAudio (AF2)"				checkdevice="true"/>
+        <filter cat="crossbar" name="AVerMedia AVerTV Crossbar (AF2)"				checkdevice="true"/>
+        <filter cat="capture"  name="AVerMedia AVerTV Video Capture (AF2)"  checkdevice="true"/>
+        <filter cat="encoder"  name="AVerMedia AVerTV Encoder (AF2)"				checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"	sinkpin="0"/>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"	sinkpin="0"/>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"	sinkpin="1"/>
+        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder"	sinkpin="0"/>
       </connections>
     </tv>
   </capturecard>
