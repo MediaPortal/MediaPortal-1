@@ -23,7 +23,17 @@ namespace MediaPortal
 
             // start all actions after load is complete
             this.Loaded += new RoutedEventHandler(GUITextboxScrollUp_Loaded);
+            this.Unloaded += new RoutedEventHandler(GUITextboxScrollUp_Unloaded);
 
+        }
+
+        void GUITextboxScrollUp_Unloaded(object sender, RoutedEventArgs e)
+        {
+            if (_storyBoard == null)
+                return;
+            _storyBoard.Stop(this);
+            _scrollViewer.ScrollToVerticalOffset(0);
+            _scrollPosition = 0;
         }
 
         void AnimateOpacity()
@@ -38,7 +48,16 @@ namespace MediaPortal
 
         void opacityAnimation_Completed(object sender, EventArgs e)
         {
-            DoubleAnimation positionAnimation = new DoubleAnimation(0, _scrollViewer.ScrollableHeight, new Duration(TimeSpan.FromMilliseconds(_displayTime * _scrollViewer.ScrollableHeight)));
+            DoubleAnimationUsingKeyFrames positionAnimation = new DoubleAnimationUsingKeyFrames();
+      
+            double nextTime = 0;
+            for (double val = 0; val < _scrollViewer.ExtentHeight; val += 1.0f)
+            {
+                KeyTime t = KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(nextTime));
+                DiscreteDoubleKeyFrame dblKeyFrame = new DiscreteDoubleKeyFrame(val, t);
+                nextTime += _displayTime;
+                positionAnimation.KeyFrames.Add(dblKeyFrame);
+            }
             _storyBoard.Stop(this);
             _storyBoard.Completed -= new EventHandler(opacityAnimation_Completed);
             _storyBoard.Children.Clear();
@@ -57,7 +76,8 @@ namespace MediaPortal
             _storyBoard.Stop(this);
             _storyBoard.Children.Clear();
             _storyBoard = null;
-            ScrollPosition = 0;
+            _scrollViewer.ScrollToVerticalOffset(0);
+            _scrollPosition = 0;
             Opacity = 0.0f;
             AnimateOpacity();
         }
@@ -70,7 +90,7 @@ namespace MediaPortal
                 return;
             this.Opacity = 0;
             _scrollViewer.ScrollToVerticalOffset(0);
-            ScrollPosition = 0;
+            _scrollPosition = 0;
             AnimateOpacity();
         }
 

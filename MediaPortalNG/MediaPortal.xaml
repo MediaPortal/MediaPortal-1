@@ -89,17 +89,6 @@
       <Style TargetType="{x:Type ctrl:GUITextboxScrollUp}">
         <Setter Property="HorizontalAlignment" Value="Left"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
-        <Setter Property="OpacityMask">
-          <Setter.Value>
-            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-              <GradientStop Offset="0.0" Color="#00000000"/>
-              <GradientStop Offset="0.25" Color="#FF000000"/>
-              <GradientStop Offset="0.5" Color="#FF000000"/>
-              <GradientStop Offset="0.75" Color="#FF000000"/>
-              <GradientStop Offset="1.0" Color="#00000000"/>
-            </LinearGradientBrush>
-          </Setter.Value>
-        </Setter>
         <Setter Property="Template">
           <Setter.Value>
             <ControlTemplate TargetType="{x:Type ctrl:GUITextboxScrollUp}">
