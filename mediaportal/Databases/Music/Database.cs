@@ -187,8 +187,23 @@ namespace MediaPortal.Music.Database
         DatabaseUtility.AddTable(m_db, "scrobblemode", "CREATE TABLE scrobblemode ( idScrobbleMode integer primary key, idScrobbleUser integer, iSortID integer, strModeName text)");
         DatabaseUtility.AddTable(m_db, "scrobbletags", "CREATE TABLE scrobbletags ( idScrobbleTag integer primary key, idScrobbleMode integer, iSortID integer, strTagName text)");
 
-        //CREATE TABLE scrobbletags (idMode NUMERIC, idTag INTEGER PRIMARY KEY, idUser NUMERIC, SortId NUMERIC, TagName TEXT);
-
+        DatabaseUtility.AddIndex(m_db, "idxartist_strArtist", "CREATE UNIQUE INDEX idxartist_strArtist ON artist(strArtist ASC)");
+        DatabaseUtility.AddIndex(m_db, "idxartist_strSortName", "CREATE INDEX idxartist_strSortName ON artist(strSortName ASC)");
+        DatabaseUtility.AddIndex(m_db, "idxalbum_idArtist", "CREATE INDEX idxalbum_idArtist ON album(idArtist ASC)");
+        DatabaseUtility.AddIndex(m_db, "idxalbum_strAlbum", "CREATE INDEX idxalbum_strAlbum ON album(strAlbum ASC)");
+        DatabaseUtility.AddIndex(m_db, "idxgenre_strGenre", "CREATE UNIQUE INDEX idxgenre_strGenre ON genre(strGenre ASC)");
+        DatabaseUtility.AddIndex(m_db, "idxpath_strPath", "CREATE UNIQUE INDEX idxpath_strPath ON path(strPath ASC)");
+        DatabaseUtility.AddIndex(m_db, "idxalbuminfo_idAlbum", "CREATE INDEX idxalbuminfo_idAlbum ON albuminfo(idAlbum ASC)");
+        DatabaseUtility.AddIndex(m_db, "idxalbuminfo_idArtist", "CREATE INDEX idxalbuminfo_idArtist ON albuminfo(idArtist ASC)");
+        DatabaseUtility.AddIndex(m_db, "idxalbuminfo_idGenre", "CREATE INDEX idxalbuminfo_idGenre ON albuminfo(idGenre ASC)");
+        DatabaseUtility.AddIndex(m_db, "idxartistinfo_idArtist", "CREATE INDEX idxartistinfo_idArtist ON artistinfo(idArtist ASC)");
+        DatabaseUtility.AddIndex(m_db, "idxsong_idArtist", "CREATE INDEX idxsong_idArtist ON song(idArtist ASC)");
+        DatabaseUtility.AddIndex(m_db, "idxsong_idAlbum", "CREATE INDEX idxsong_idAlbum ON song(idAlbum ASC)");
+        DatabaseUtility.AddIndex(m_db, "idxsong_idGenre", "CREATE INDEX idxsong_idGenre ON song(idGenre ASC)");
+        DatabaseUtility.AddIndex(m_db, "idxsong_idPath", "CREATE INDEX idxsong_idPath ON song(idPath ASC)");
+        DatabaseUtility.AddIndex(m_db, "idxsong_strTitle", "CREATE INDEX idxsong_strTitle ON song(strTitle ASC)");
+        DatabaseUtility.AddIndex(m_db, "idxsong_strFileName", "CREATE INDEX idxsong_strFileName ON song(strFileName ASC)");
+        DatabaseUtility.AddIndex(m_db, "idxsong_dwFileNameCRC", "CREATE INDEX idxsong_dwFileNameCRC ON song(dwFileNameCRC ASC)");
 
       }
 

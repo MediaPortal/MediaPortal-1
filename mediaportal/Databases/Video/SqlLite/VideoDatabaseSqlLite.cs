@@ -86,7 +86,8 @@ namespace MediaPortal.Video.Database
 
     bool CreateTables()
     {
-      if (m_db == null) return false;
+      if (m_db == null)
+        return false;
       DatabaseUtility.AddTable(m_db, "bookmark", "CREATE TABLE bookmark ( idBookmark integer primary key, idFile integer, fPercentage text)");
       DatabaseUtility.AddTable(m_db, "genre", "CREATE TABLE genre ( idGenre integer primary key, strGenre text)");
       DatabaseUtility.AddTable(m_db, "genrelinkmovie", "CREATE TABLE genrelinkmovie ( idGenre integer, idMovie integer)");
@@ -98,9 +99,25 @@ namespace MediaPortal.Video.Database
       DatabaseUtility.AddTable(m_db, "files", "CREATE TABLE files ( idFile integer primary key, idPath integer, idMovie integer,strFilename text)");
       DatabaseUtility.AddTable(m_db, "resume", "CREATE TABLE resume ( idResume integer primary key, idFile integer, stoptime integer, resumeData blob)");
       DatabaseUtility.AddTable(m_db, "duration", "CREATE TABLE duration ( idDuration integer primary key, idFile integer, duration integer)");
-
       DatabaseUtility.AddTable(m_db, "actorinfo", "CREATE TABLE actorinfo ( idActor integer, dateofbirth text, placeofbirth text, minibio text, biography text)");
       DatabaseUtility.AddTable(m_db, "actorinfomovies", "CREATE TABLE actorinfomovies ( idActor integer, idDirector integer, strPlotOutline text, strPlot text, strTagLine text, strVotes text, fRating text,strCast text,strCredits text, iYear integer, strGenre text, strPictureURL text, strTitle text, IMDBID text, mpaa text,runtime integer, iswatched integer, role text)");
+
+      DatabaseUtility.AddIndex(m_db, "idxactorinfo_idActor", "CREATE INDEX idxactorinfo_idActor ON actorinfo(idActor ASC)");
+      DatabaseUtility.AddIndex(m_db, "idxactorinfomovies_idActor", "CREATE INDEX idxactorinfomovies_idActor ON actorinfomovies(idActor ASC)");
+      DatabaseUtility.AddIndex(m_db, "idxactorlinkmovie_idActor", "CREATE INDEX idxactorlinkmovie_idActor ON actorlinkmovie(idActor ASC)");
+      DatabaseUtility.AddIndex(m_db, "idxactorlinkmovie_idMovie", "CREATE INDEX idxactorlinkmovie_idMovie ON actorlinkmovie(idMovie ASC)");
+      DatabaseUtility.AddIndex(m_db, "idxactors_strActor", "CREATE INDEX idxactors_strActor ON actors(strActor ASC)");
+      DatabaseUtility.AddIndex(m_db, "idxfiles_idMovie", "CREATE INDEX idxfiles_idMovie ON files(idMovie ASC)");
+      DatabaseUtility.AddIndex(m_db, "idxfiles_idPath", "CREATE INDEX idxfiles_idPath ON files(idPath ASC)");
+      DatabaseUtility.AddIndex(m_db, "idxgenrelinkmovie_idGenre", "CREATE INDEX idxgenrelinkmovie_idGenre ON genrelinkmovie(idGenre ASC)");
+      DatabaseUtility.AddIndex(m_db, "idxgenrelinkmovie_idMovie", "CREATE INDEX idxgenrelinkmovie_idMovie ON genrelinkmovie(idMovie ASC)");
+      DatabaseUtility.AddIndex(m_db, "idxmovie_idPath", "CREATE INDEX idxmovie_idPath ON movie(idPath ASC)");
+      DatabaseUtility.AddIndex(m_db, "idxmovieinfo_iYear", "CREATE INDEX idxmovieinfo_iYear ON movieinfo(iYear ASC)");
+      DatabaseUtility.AddIndex(m_db, "idxmovieinfo_idDirector", "CREATE INDEX idxmovieinfo_idDirector ON movieinfo(idDirector ASC)");
+      DatabaseUtility.AddIndex(m_db, "idxmovieinfo_idMovie", "CREATE UNIQUE INDEX idxmovieinfo_idMovie ON movieinfo(idMovie ASC)");
+      DatabaseUtility.AddIndex(m_db, "idxmovieinfo_strTitle", "CREATE INDEX idxmovieinfo_strTitle ON movieinfo(strTitle ASC)");
+      DatabaseUtility.AddIndex(m_db, "idxpath_strPath", "CREATE INDEX idxpath_strPath ON path(strPath ASC)");
+
       return true;
     }
 
