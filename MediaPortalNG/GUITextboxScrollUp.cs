@@ -32,6 +32,7 @@ namespace MediaPortal
             if (_storyBoard == null)
                 return;
             _storyBoard.Stop(this);
+            this.Opacity = 1;
             _scrollViewer.ScrollToVerticalOffset(0);
             _scrollPosition = 0;
         }

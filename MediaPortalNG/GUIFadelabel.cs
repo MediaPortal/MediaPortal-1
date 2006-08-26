@@ -23,7 +23,18 @@ namespace MediaPortal
 
             // start all actions after load is complete
             this.Loaded += new RoutedEventHandler(GUIFadelabel_Loaded);
+            this.Unloaded += new RoutedEventHandler(GUIFadelabel_Unloaded);
 
+        }
+
+        void GUIFadelabel_Unloaded(object sender, RoutedEventArgs e)
+        {
+            if (_storyBoard == null)
+                return;
+            _storyBoard.Stop(this);
+            this.Opacity = 1;
+            _scrollViewer.ScrollToHorizontalOffset(0);
+            _scrollPosition = 0;
         }
 
         void AnimateOpacity()
