@@ -48,13 +48,12 @@
        Canvas.Top="97"
        Canvas.Left="60"
        Visibility="Visible"
-       FrameTime="50" 
        Width="190"
        Height="32"
        Click="MPNG" 
-       Content="100" 
+       Content="Testing an Scrollbutton makes no sense" 
        Tag="##id::2//##keycontrol::onleft:;onright:50;onup:17;ondown://##metadata::labelNum:100"
-></ctrl:GUIButton>
+/>
 
 
     <ctrl:GUIButton

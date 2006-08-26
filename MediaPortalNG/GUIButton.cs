@@ -36,7 +36,8 @@ namespace MediaPortal
             // start all actions after load is complete
             this.Loaded += new RoutedEventHandler(GUIButton_Loaded);
             this.Unloaded += new RoutedEventHandler(GUIButton_Unloaded);
-            FrameTime = 50;
+           // default frame time
+            FrameTime = 120;
         }
 
         new public Style Style
@@ -70,7 +71,7 @@ namespace MediaPortal
 
         void Animate()
         {
-            DoubleAnimation positionAnimation = new DoubleAnimation(0, _scrollViewer.ScrollableWidth, new Duration(TimeSpan.FromMilliseconds(2000)));
+            DoubleAnimation positionAnimation = new DoubleAnimation(0, _scrollViewer.ScrollableWidth, new Duration(TimeSpan.FromMilliseconds(_displayTime*_scrollViewer.ScrollableWidth)));
             _storyBoard = new Storyboard();
             _storyBoard.Children.Add(positionAnimation);
             Storyboard.SetTargetProperty(positionAnimation, new PropertyPath("ScrollPosition"));
