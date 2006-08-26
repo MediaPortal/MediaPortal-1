@@ -23,44 +23,44 @@
 #pragma once
 #pragma warning(disable: 4511 4512 4995)
 
-#include <streams.h>
-
 #include "DVBSub.h"
 #include "dvbsubs\dvbsubdecoder.h"
+#include <streams.h>
 
 
 class CSubtitleInputPin : public CRenderedInputPin
 {
 private:
-    CDVBSub* const m_pDump;				// Main renderer object
-    CCritSec * const	m_pReceiveLock;			// Sample critical section
-    REFERENCE_TIME		m_tLast;				// Last sample receive time
-	bool				m_bReset;
+  CDVBSub* const    m_pDVBSub;				// Main renderer object
+  CCritSec * const	m_pReceiveLock;	  // Sample critical section
+  REFERENCE_TIME		m_tLast;				  // Last sample receive time
+	bool				      m_bReset;
+
 public:
 
-    CSubtitleInputPin( CDVBSub *pDump,
-                  LPUNKNOWN pUnk,
-                  CBaseFilter *pFilter,
-                  CCritSec *pLock,
-                  CCritSec *pReceiveLock,
-				  CDVBSubDecoder* pSubDecoder,
-                  HRESULT *phr );
+  CSubtitleInputPin(  CDVBSub *pDump,
+                      LPUNKNOWN pUnk,
+                      CBaseFilter *pFilter,
+                      CCritSec *pLock,
+                      CCritSec *pReceiveLock,
+			                CDVBSubDecoder* pSubDecoder,
+                      HRESULT *phr );
 
-	~CSubtitleInputPin();
+  ~CSubtitleInputPin();
 
-    // Do something with this media sample
-    STDMETHODIMP Receive(IMediaSample *pSample);
-    STDMETHODIMP EndOfStream(void);
-    STDMETHODIMP ReceiveCanBlock();
+  // Do something with this media sample
+  STDMETHODIMP Receive(IMediaSample *pSample);
+  STDMETHODIMP EndOfStream(void);
+  STDMETHODIMP ReceiveCanBlock();
 
-    STDMETHODIMP BeginFlush(void);
-    STDMETHODIMP EndFlush(void);
+  STDMETHODIMP BeginFlush(void);
+  STDMETHODIMP EndFlush(void);
 
-    // Check if the pin can support this specific proposed type and format
-    HRESULT CheckMediaType(const CMediaType *);
-	HRESULT CompleteConnect(IPin *pPin);
-    HRESULT BreakConnect();
-    STDMETHODIMP NewSegment(REFERENCE_TIME tStart,REFERENCE_TIME tStop,double dRate);
+  // Check if the pin can support this specific proposed type and format
+  HRESULT CheckMediaType( const CMediaType * );
+  HRESULT CompleteConnect( IPin *pPin );
+  HRESULT BreakConnect();
+  STDMETHODIMP NewSegment( REFERENCE_TIME tStart, REFERENCE_TIME tStop, double dRate );
 
 	void Reset();
 	void SetSubtitlePID( ULONG pPID );
@@ -69,8 +69,7 @@ private:
 
 	CDVBSubDecoder*		m_pSubDecoder;
 	unsigned char*		m_PESdata;
-	int					m_Position;
-	int					m_PESlenght;
-
-	ULONG				m_SubtitlePID;
+	int					      m_Position;
+	int					      m_PESlenght;
+	ULONG				      m_SubtitlePID;
 };

@@ -38,7 +38,7 @@
 
 extern void Log( const char *fmt, ... );
 
-CSubtitleInputPin::CSubtitleInputPin( CDVBSub *pDump,
+CSubtitleInputPin::CSubtitleInputPin( CDVBSub *pDVBSub,
 										LPUNKNOWN pUnk,
 										CBaseFilter *pFilter,
 										CCritSec *pLock,
@@ -47,12 +47,12 @@ CSubtitleInputPin::CSubtitleInputPin( CDVBSub *pDump,
 										HRESULT *phr ) :
 
     CRenderedInputPin(NAME( "CSubtitleInputPin" ),
-					pFilter,						// Filter
-					pLock,							// Locking
-					phr,							// Return code
+					pFilter,						    // Filter
+					pLock,							    // Locking
+					phr,							      // Return code
 					L"Subtitle" ),					// Pin name
 					m_pReceiveLock( pReceiveLock ),
-					m_pDump( pDump ),
+					m_pDVBSub( pDVBSub ),
 					m_tLast( 0 ),
 					m_PESdata( NULL ),
 					m_pSubDecoder( pSubDecoder ),
@@ -85,8 +85,6 @@ HRESULT CSubtitleInputPin::CheckMediaType( const CMediaType *pmt )
 //
 // BreakConnect
 //
-// Break a connection
-//
 HRESULT CSubtitleInputPin::BreakConnect()
 {
     return CRenderedInputPin::BreakConnect();
@@ -98,10 +96,10 @@ HRESULT CSubtitleInputPin::CompleteConnect( IPin *pPin )
 	
 	IMPEG2PIDMap	*pMap=NULL;
 	IEnumPIDMap		*pPidEnum=NULL;
-	ULONG			pid;
-	PID_MAP			pm;
-	ULONG			count;
-	ULONG			umPid;
+	ULONG			    pid;
+	PID_MAP			  pm;
+	ULONG			    count;
+	ULONG			    umPid;
 	
 	hr=pPin->QueryInterface( IID_IMPEG2PIDMap,(void**)&pMap );
 	if( SUCCEEDED(hr) && pMap!=NULL )
@@ -282,17 +280,16 @@ STDMETHODIMP CSubtitleInputPin::EndOfStream( void )
 
 } // EndOfStream
 
-STDMETHODIMP CSubtitleInputPin::BeginFlush(void)
+STDMETHODIMP CSubtitleInputPin::BeginFlush( void )
 {
 //	Reset();
 	return CRenderedInputPin::BeginFlush();
 }
-STDMETHODIMP CSubtitleInputPin::EndFlush(void)
+STDMETHODIMP CSubtitleInputPin::EndFlush( void )
 {
 //	Reset();
 	return CRenderedInputPin::EndFlush();
 }
-
 
 
 //
@@ -301,9 +298,9 @@ STDMETHODIMP CSubtitleInputPin::EndFlush(void)
 // Called when we are seeked
 //
 STDMETHODIMP CSubtitleInputPin::NewSegment( REFERENCE_TIME tStart,
-											REFERENCE_TIME tStop,
-											double dRate )
+											                      REFERENCE_TIME tStop,
+											                      double dRate )
 {
     m_tLast = 0;
     return S_OK;
-} // NewSegment
+}
