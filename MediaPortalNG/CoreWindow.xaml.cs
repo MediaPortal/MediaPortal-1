@@ -46,6 +46,7 @@ namespace MediaPortal
             this.Navigate(_home);
         }
 
+ 
         void Core_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
             if (_home!=null)

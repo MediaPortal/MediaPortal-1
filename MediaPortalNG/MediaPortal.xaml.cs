@@ -17,6 +17,8 @@ namespace MediaPortal
 
             Core mpCore = new Core();
        }
+
+
  
     }
 }

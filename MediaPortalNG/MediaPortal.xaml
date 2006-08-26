@@ -11,9 +11,56 @@
         <ResourceDictionary Source="skinImages.xaml" />
       </ResourceDictionary.MergedDictionaries>
 
-
-   
+      <!-- Button -->
+      <Style TargetType="{x:Type ctrl:GUIButton}">
+        <Setter Property="SnapsToDevicePixels" Value="true"/>
+        <Setter Property="OverridesDefaultStyle" Value="true"/>
+        <Setter Property="MinHeight" Value="23"/>
+        <Setter Property="MinWidth" Value="75"/>
+        <Setter Property="FontSize" Value="18"/>
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource FocusStyle}"/>
+        <Setter Property="Template">
+          <Setter.Value>
+            <ControlTemplate TargetType="{x:Type ctrl:GUIButton}">
+              <Border 
+                x:Name="Border"  
+                CornerRadius="0" 
+                BorderThickness="0"
+                BorderBrush="Transparent">
+                    <ScrollViewer  
+                      FocusVisualStyle="{DynamicResource FocusStyle}" 
+                      Margin="8,0" 
+                      HorizontalScrollBarVisibility="Hidden" 
+                      VerticalScrollBarVisibility="Hidden">
+                      <TextBlock FocusVisualStyle="{DynamicResource FocusStyle}" 
+                        Text="{TemplateBinding Content}" 
+                        VerticalAlignment="Center"/>                  
+                    </ScrollViewer>
+              </Border>
+              <ControlTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="true">
+                  <Setter TargetName="Border" Property="Background">
+                    <Setter.Value>
+                      <ImageBrush ImageSource="{DynamicResource button_green_focus_165x32.png}"/>
+                    </Setter.Value>
+                  </Setter>
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="false">
+                  <Setter TargetName="Border" Property="Background">
+                    <Setter.Value>
+                      <ImageBrush ImageSource="{DynamicResource button_green_nofocus_165x32.png}"/>
+                    </Setter.Value>
+                  </Setter>
+                </Trigger>
+              </ControlTemplate.Triggers>
+            </ControlTemplate>
+          </Setter.Value>
+        </Setter>
+      </Style>
+      
     <!-- ControlTemplates for GUISelectButton -->
+      
       <ControlTemplate x:Key="SelectOpen" TargetType="{x:Type ctrl:GUISelectButton}">
         <Border
           Width="{TemplateBinding Width}" 
@@ -63,6 +110,7 @@
       <Style TargetType="{x:Type ctrl:GUIFadelabel}">
         <Setter Property="HorizontalAlignment" Value="Left"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource FocusStyle}"/>
         <Setter Property="OpacityMask">
           <Setter.Value>
             <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
@@ -72,11 +120,11 @@
             </LinearGradientBrush>
           </Setter.Value>
         </Setter>
-            <Setter Property="Template">
+        <Setter Property="Template">
           <Setter.Value>
             <ControlTemplate TargetType="{x:Type ctrl:GUIFadelabel}">
               <Border BorderThickness="0" BorderBrush="Transparent" Margin="0" VerticalAlignment="Center" HorizontalAlignment="Left">
-                <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
+                <ScrollViewer Width="{TemplateBinding Width}" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
                   <TextBlock Text="{TemplateBinding Content}" />
                 </ScrollViewer>
               </Border>
@@ -89,6 +137,7 @@
       <Style TargetType="{x:Type ctrl:GUITextboxScrollUp}">
         <Setter Property="HorizontalAlignment" Value="Left"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource FocusStyle}"/>
         <Setter Property="Template">
           <Setter.Value>
             <ControlTemplate TargetType="{x:Type ctrl:GUITextboxScrollUp}">
@@ -103,7 +152,7 @@
             </ControlTemplate>
           </Setter.Value>
         </Setter>
-      </Style>     
+      </Style>  
       
       <!-- GUISpinControl Resource -->
       <Style TargetType="{x:Type ctrl:GUISpinControl}">

@@ -43,78 +43,74 @@
       <!--  -->
 
 
-   <Button
-      x:Name="mypictures1"
-      Canvas.Top="97"
-      Canvas.Left="60"
-      Visibility="Visible"
-      Width="190"
-      Height="32"
-      Style="{DynamicResource GUIButton}"
-      Click="MPNG" 
-      Tag="##id::2//##keycontrol::onleft:;onright:50;onup:17;ondown://##metadata::labelNum:100"
->100</Button>
+    <ctrl:GUIButton
+       x:Name="mypictures1"
+       Canvas.Top="97"
+       Canvas.Left="60"
+       Visibility="Visible"
+       FrameTime="50" 
+       Width="190"
+       Height="32"
+       Click="MPNG" 
+       Content="100" 
+       Tag="##id::2//##keycontrol::onleft:;onright:50;onup:17;ondown://##metadata::labelNum:100"
+></ctrl:GUIButton>
 
 
-      <Button
-        Name="id3"
+    <ctrl:GUIButton
+      x:Name="id3"
         Canvas.Top="129"
         Canvas.Left="60"
         Visibility="Visible"
         Width="190"
         Height="32"
-        Style="{DynamicResource GUIButton}"
         Click="showDialog" 
         Tag="##id::3//##keycontrol::onleft:;onright:;onup:;ondown://##metadata::labelNum:103"
->103</Button>
+>103</ctrl:GUIButton>
 
 
-      <Button
-        Name="id6"
+    <ctrl:GUIButton
+      x:Name="id6"
         Canvas.Top="161"
         Canvas.Left="60"
         Visibility="Visible"
         Width="190"
         Height="32"
-        Style="{DynamicResource GUIButton}"
         Tag="##id::6//##keycontrol::onleft:;onright:;onup:;ondown://##metadata::labelNum:108"
->108</Button>
+>108</ctrl:GUIButton>
 
 
-      <Button
-        Name="id7"
+      <ctrl:GUIButton
+       x:Name="id7"
         Canvas.Top="193"
         Canvas.Left="60"
         Visibility="Visible"
         Width="190"
         Height="32"
-        Style="{DynamicResource GUIButton}"
         Tag="##id::7//##keycontrol::onleft:;onright:;onup:;ondown://##metadata::labelNum:361"
->361</Button>
+>361</ctrl:GUIButton>
 
 
-      <Button
-        Name="id8"
-        Canvas.Top="225"
-        Canvas.Left="60"
-        Visibility="Visible"
-        Width="190"
-        Height="32"
-        Style="{DynamicResource GUIButton}"
-        Tag="##id::8//##keycontrol::onleft:;onright:;onup:;ondown://##metadata::labelNum:109"
->109</Button>
+    <ctrl:GUIButton
+      x:Name="id8"
+      Canvas.Top="225"
+      Canvas.Left="60"
+      Visibility="Visible"
+      Width="190"
+      Height="32"
+      Tag="##id::8//##keycontrol::onleft:;onright:;onup:;ondown://##metadata::labelNum:109"
+>109</ctrl:GUIButton>
 
 
-      <Button
-        Name="id9"
+    <ctrl:GUIButton
+     x:Name="id9"
         Canvas.Top="257"
         Canvas.Left="60"
         Visibility="Visible"
         Width="190"
         Height="32"
-        Style="{DynamicResource GUIButton}"
         Tag="##id::9//##keycontrol::onleft:;onright:;onup:;ondown:99//##metadata::labelNum:735"
->735</Button>
+>735</ctrl:GUIButton>
 
 
       <ListView

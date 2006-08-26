@@ -79,8 +79,14 @@ namespace MediaPortal
                    object o=this.FindName("id" + n.ToString());
                     if (o != null)
                     {
-                      
-                         if(o.ToString().StartsWith("System.Windows.Controls.TextBlock"))
+
+                        if (o.ToString().StartsWith("MediaPortal.GUIButton"))
+                        {
+
+                            ((GUIButton)o).Content = Core.GetLocalizedString("id", (string)((GUIButton)o).Content, "value", node);
+                        }
+
+                        if (o.ToString().StartsWith("System.Windows.Controls.TextBlock"))
                          {
 
                              ((TextBlock)o).Text = Core.GetLocalizedString("id", ((TextBlock)o).Text, "value", node);
