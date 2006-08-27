@@ -151,18 +151,8 @@ namespace MediaPortal.GUI.Music
       m_directory.SetExtensions(MediaPortal.Util.Utils.AudioExtensions);
     }
 
-    #region overrides
-    public override bool Init()
+    private void LoadScrobbleUserSettings()
     {
-      m_strDirectory = System.IO.Directory.GetCurrentDirectory();
-
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
-      {
-        _enableScrobbling = xmlreader.GetValueAsBool("plugins", "Audioscrobbler", false);               
-        _currentScrobbleUser = xmlreader.GetValueAsString("audioscrobbler", "user", "Username");
-        _useSimilarRandom = xmlreader.GetValueAsBool("audioscrobbler", "usesimilarrandom", false);
-      }
-
       MusicDatabase mdb = new MusicDatabase();
       string currentUID = Convert.ToString(mdb.AddScrobbleUser(_currentScrobbleUser));
       ScrobblerOn = (mdb.AddScrobbleUserSettings(currentUID, "iScrobbleDefault", -1) == 1) ? true : false;
@@ -190,7 +180,24 @@ namespace MediaPortal.GUI.Music
         default:
           currentOfflineMode = offlineMode.random;
           break;
+      }      
+      _log.Info("GUIMusicPlayList: Scrobblesettings loaded for {0} - Active: {1} , Trackpreference: {2}", _currentScrobbleUser, Convert.ToString(ScrobblerOn), Convert.ToString(_preferCountForTracks));
+    }
+
+    #region overrides
+    public override bool Init()
+    {
+      m_strDirectory = System.IO.Directory.GetCurrentDirectory();
+
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      {
+        _enableScrobbling = xmlreader.GetValueAsBool("plugins", "Audioscrobbler", false);               
+        _currentScrobbleUser = xmlreader.GetValueAsString("audioscrobbler", "user", "Username");
+        _useSimilarRandom = xmlreader.GetValueAsBool("audioscrobbler", "usesimilarrandom", false);
       }
+
+      LoadScrobbleUserSettings();
+
       ascrobbler = new AudioscrobblerUtils();
       ScrobbleLock = new object();
       //added by Sam
@@ -335,7 +342,8 @@ namespace MediaPortal.GUI.Music
           btnScrobbleUser.Label = GUILocalizeStrings.Get(33005) + _currentScrobbleUser;
 
           AudioscrobblerBase.ChangeUser(_currentScrobbleUser, mdb.AddScrobbleUserPassword(Convert.ToString(mdb.AddScrobbleUser(_currentScrobbleUser)), ""));
-
+          LoadScrobbleUserSettings();
+          UpdateButtonStates();
           //Log.Write("***DEBUG*** - chosen scrobbleuser: {0}", _currentScrobbleUser);
         }
 
@@ -524,6 +532,10 @@ namespace MediaPortal.GUI.Music
             btnSave.Disabled = false;
           else
             btnSave.Disabled = true;
+          if (ScrobblerOn)
+            btnScrobble.Selected = true;
+          else
+            btnScrobble.Selected = false;
         }
         else
         {
