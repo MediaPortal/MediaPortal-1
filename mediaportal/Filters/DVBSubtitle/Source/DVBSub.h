@@ -32,6 +32,7 @@
 #include "SubdecoderObserver.h"
 
 class CSubtitleInputPin;
+class CSubtitleOutputPin;
 class CDVBSubDecoder;
 
 typedef __int64 int64_t;
@@ -71,13 +72,14 @@ public:
 
 private:
 
-	CSubtitleInputPin*	m_pSubtitlePin;
-	CDVBSubDecoder*		  m_pSubDecoder;
+  CSubtitleInputPin*  m_pSubtitleInputPin;
+  CSubtitleOutputPin* m_pSubtitleOutputPin;
+  CDVBSubDecoder*     m_pSubDecoder;
 
-  CCritSec			m_Lock;				    // Main renderer critical section
-  CCritSec			m_ReceiveLock;		// Sublock for received samples
+  CCritSec            m_Lock;				    // Main renderer critical section
+  CCritSec            m_ReceiveLock;		// Sublock for received samples
 
-	unsigned char*		m_curSubtitleData;//[720*576*3];
-	ULONGLONG			    m_firstPTS;
-  CSubtitle*			  m_pSubtitle;
+  unsigned char*      m_curSubtitleData;//[720*576*3];
+  ULONGLONG           m_firstPTS;
+  CSubtitle*          m_pSubtitle;
 };
