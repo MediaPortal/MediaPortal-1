@@ -1004,18 +1004,18 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Kworld Xpert DTV - DVBT" capturename="DigiGo DVBT 2388x Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_08a117de&amp;rev_05">
+  <capturecard commercialname="Kworld DVB-T 100 (Digital)" capturename="DigiGo DVBT 2388x Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_08a117de&amp;rev_05">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"/>
       <filters>
-        <filter cat="networkprovider"	name="Microsoft DVBT Network Provider"				checkdevice="false"/>
-        <filter cat="tunerdevice"		name="DigiGo DVBT BDA Tuner/Demod"					checkdevice="true"/>
-        <filter cat="capture"			name="DigiGo DVBT 2388x Transport Stream Capture"	checkdevice="true"/>
+        <filter cat="networkprovider"	name="Microsoft DVBT Network Provider"				    checkdevice="false"/>
+        <filter cat="tunerdevice"		  name="DigiGo DVBT BDA Tuner/Demod"					      checkdevice="true"/>
+        <filter cat="capture"			    name="DigiGo DVBT 2388x Transport Stream Capture"	checkdevice="true"/>
       </filters>
       <connections>
-		<connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
-		<connection sourcefilter="tunerdevice"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"		  sourcepin="0" sinkfilter="capture"		  sinkpin="0"/>
       </connections>
     </tv>
   </capturecard>
@@ -1025,11 +1025,11 @@
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"  name="Conexant Falcon Tuner"  		checkdevice="true"/>
-        <filter cat="tvaudio"  name="Conexant Falcon TvAudio"  		checkdevice="true"/>
-        <filter cat="crossbar" name="Conexant Falcon Crossbar" 		checkdevice="true"/>
+        <filter cat="tvtuner"  name="Conexant Falcon Tuner"  		    checkdevice="true"/>
+        <filter cat="tvaudio"  name="Conexant Falcon TvAudio"  		  checkdevice="true"/>
+        <filter cat="crossbar" name="Conexant Falcon Crossbar" 		  checkdevice="true"/>
         <filter cat="capture"  name="Conexant Falcon Video Capture" checkdevice="true"/>
-        <filter cat="encoder"  name="Conexant Falcon Encoder"  		checkdevice="true"/>
+        <filter cat="encoder"  name="Conexant Falcon Encoder"  		  checkdevice="true"/>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"	sinkpin="0"/>
@@ -14962,6 +14962,83 @@
         <filter cat="crossbar" name="AVerMedia AVerTV Crossbar (AF2)"				checkdevice="true"/>
         <filter cat="capture"  name="AVerMedia AVerTV Video Capture (AF2)"  checkdevice="true"/>
         <filter cat="encoder"  name="AVerMedia AVerTV Encoder (AF2)"				checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"	sinkpin="0"/>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"	sinkpin="0"/>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"	sinkpin="1"/>
+        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder"	sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="AverMedia AverTV 203" capturename="AVerMedia, AVerTV WDM Video Capture (878)" devid="ven_109e&amp;dev_036e&amp;subsys_00031461&amp;rev_11">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"     name="AVerMedia, AVerTV TvTuner (878)"            checkdevice="true"/>
+        <filter cat="tvaudio"     name="AVerMedia, AVerTV WDM Audio Capture (878)"  checkdevice="true"/>
+        <filter cat="crossbar"    name="AVerMedia, AVerTV Crossbar (878)"           checkdevice="true"/>
+        <filter cat="capture"     name="AVerMedia, AVerTV WDM Video Capture (878)"  checkdevice="true"/>
+        <filter cat="audcapture"  name="%soundcard%"                                checkdevice="true"/>
+        <filter cat="videncoder"  name="AVerMedia MPEG Video Encoder"               checkdevice="false"/>
+        <filter cat="audencoder"  name="AVerMedia MPEG Audio Encoder"               checkdevice="false"/>
+        <filter cat="mux"         name="AVerMedia MPEG-2 Multiplexer"               checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"    sourcepin="0" sinkfilter="crossbar"   sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"    sourcepin="1" sinkfilter="tvaudio"    sinkpin="0"/>
+        <connection sourcefilter="tvaudio"    sourcepin="0" sinkfilter="crossbar"   sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"   sourcepin="0" sinkfilter="capture"    sinkpin="0"/>
+        <connection sourcefilter="capture"    sourcepin="0" sinkfilter="videncoder" sinkpin="0"/>
+        <connection sourcefilter="crossbar"   sourcepin="1" sinkfilter="audcapture" sinkpin="0"/>
+        <connection sourcefilter="audcapture" sourcepin="0" sinkfilter="audencoder" sinkpin="0"/>
+        <connection sourcefilter="videncoder" sourcepin="0" sinkfilter="mux"        sinkpin="0"/>
+        <connection sourcefilter="audencoder" sourcepin="0" sinkfilter="mux"        sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Kworld DVB-T 100 (Analogue)" capturename="DigiGo DVBT 2388x Video Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_08a117de&amp;rev_05">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="true" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		  name="DigiGo DVBT 2388x Tuner"	        checkdevice="true"/>
+        <filter cat="tvaudio"		  name="DigiGo DVBT 2388x TvAudio"			  checkdevice="true"/>
+        <filter cat="crossbar"		name="DigiGo DVBT 2388x Crossbar"			  checkdevice="true"/>
+        <filter cat="capture"		  name="DigiGo DVBT 2388x Video Capture"	checkdevice="true"/>
+        <filter cat="audcapture"	name="%soundcard%"							        checkdevice="true"/>
+        <filter cat="videncoder"	name="%videoencoder%"	                  checkdevice="false"/>
+        <filter cat="audencoder"	name="%audioencoder%"	                  checkdevice="false"/>
+        <filter cat="mux"         name="%mpegmux%"			                  checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="goTView PCI DVD2 Lite" capturename="GOTVIEW PCI DVD Video Capture" devid="ven_4444&amp;dev_0016&amp;subsys_0600ffad&amp;rev_01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="true" sw="false" bda="false"/>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"  name="GOTVIEW DVD2 Lite Tuner"         checkdevice="true"/>
+        <filter cat="tvaudio"  name="GOTVIEW DVD2 Lite TvAudio"       checkdevice="true"/>
+        <filter cat="crossbar" name="GOTVIEW DVD2 Lite Crossbar"      checkdevice="true"/>
+        <filter cat="capture"  name="GOTVIEW DVD2 Lite Video Capture" checkdevice="true"/>
+        <filter cat="encoder"  name="GOTVIEW DVD2 Lite Encoder"       checkdevice="true"/>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%tvtuner%"/>
