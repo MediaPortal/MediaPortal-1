@@ -40,6 +40,20 @@ DECLARE_INTERFACE_(ITsTimeshifting, IUnknown)
   STDMETHOD(Start)(THIS_ )PURE;
   STDMETHOD(Stop)(THIS_ )PURE;
   STDMETHOD(Reset)(THIS_ )PURE;
+	STDMETHOD(GetBufferSize) (THIS_ long * size) PURE;
+//	STDMETHOD(GetCurrentTSFile) (THIS_ FileWriter* fileWriter) PURE;
+	STDMETHOD(GetNumbFilesAdded) (THIS_ WORD *numbAdd) PURE;
+	STDMETHOD(GetNumbFilesRemoved) (THIS_ WORD *numbRem) PURE;
+	STDMETHOD(GetCurrentFileId) (THIS_ WORD *fileID) PURE;
+	STDMETHOD(GetMinTSFiles) (THIS_ WORD *minFiles) PURE;
+	STDMETHOD(SetMinTSFiles) (THIS_ WORD minFiles) PURE;
+	STDMETHOD(GetMaxTSFiles) (THIS_ WORD *maxFiles) PURE;
+	STDMETHOD(SetMaxTSFiles) (THIS_ WORD maxFiles) PURE;
+	STDMETHOD(GetMaxTSFileSize) (THIS_ __int64 *maxSize) PURE;
+	STDMETHOD(SetMaxTSFileSize) (THIS_ __int64 maxSize) PURE;
+	STDMETHOD(GetChunkReserve) (THIS_ __int64 *chunkSize) PURE;
+	STDMETHOD(SetChunkReserve) (THIS_ __int64 chunkSize) PURE;
+	STDMETHOD(GetFileBufferSize) (THIS_ __int64 *lpllsize) PURE;
 };
 
 class CTimeShifting: public CUnknown, public ITsTimeshifting, public IFileWriter
@@ -57,6 +71,20 @@ public:
 	STDMETHODIMP Stop();
 	STDMETHODIMP Reset();
 
+	STDMETHODIMP GetBufferSize( long * size) ;
+//	STDMETHODIMP GetCurrentTSFile( FileWriter* fileWriter) ;
+	STDMETHODIMP GetNumbFilesAdded( WORD *numbAdd) ;
+	STDMETHODIMP GetNumbFilesRemoved( WORD *numbRem) ;
+	STDMETHODIMP GetCurrentFileId( WORD *fileID) ;
+	STDMETHODIMP GetMinTSFiles( WORD *minFiles) ;
+	STDMETHODIMP SetMinTSFiles( WORD minFiles) ;
+	STDMETHODIMP GetMaxTSFiles( WORD *maxFiles) ;
+	STDMETHODIMP SetMaxTSFiles( WORD maxFiles) ;
+	STDMETHODIMP GetMaxTSFileSize( __int64 *maxSize) ;
+	STDMETHODIMP SetMaxTSFileSize( __int64 maxSize) ;
+	STDMETHODIMP GetChunkReserve( __int64 *chunkSize) ;
+	STDMETHODIMP SetChunkReserve( __int64 chunkSize) ;
+	STDMETHODIMP GetFileBufferSize( __int64 *lpllsize) ;
 	void OnTsPacket(byte* tsPacket);
 	void Write(byte* buffer, int len);
 private:

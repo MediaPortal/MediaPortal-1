@@ -195,3 +195,92 @@ void CTimeShifting::Write(byte* buffer, int len)
 		LogDebug("Timeshifter:Write exception");
 	}
 }
+
+STDMETHODIMP CTimeShifting::GetBufferSize(long *size)
+{
+	CheckPointer(size, E_POINTER);
+	*size = 0;
+	return S_OK;
+}
+
+STDMETHODIMP CTimeShifting::GetNumbFilesAdded(WORD *numbAdd)
+{
+    CheckPointer(numbAdd, E_POINTER);
+	*numbAdd = (WORD)m_pTimeShiftFile->getNumbFilesAdded();
+    return NOERROR;
+}
+
+STDMETHODIMP CTimeShifting::GetNumbFilesRemoved(WORD *numbRem)
+{
+    CheckPointer(numbRem, E_POINTER);
+	*numbRem = (WORD)m_pTimeShiftFile->getNumbFilesRemoved();
+    return NOERROR;
+}
+
+STDMETHODIMP CTimeShifting::GetCurrentFileId(WORD *fileID)
+{
+    CheckPointer(fileID, E_POINTER);
+	*fileID = (WORD)m_pTimeShiftFile->getCurrentFileId();
+    return NOERROR;
+}
+
+STDMETHODIMP CTimeShifting::GetMinTSFiles(WORD *minFiles)
+{
+    CheckPointer(minFiles, E_POINTER);
+	*minFiles = (WORD) m_pTimeShiftFile->getMinTSFiles();
+    return NOERROR;
+}
+
+STDMETHODIMP CTimeShifting::SetMinTSFiles(WORD minFiles)
+{
+	m_pTimeShiftFile->setMinTSFiles((long)minFiles);
+    return NOERROR;
+}
+
+STDMETHODIMP CTimeShifting::GetMaxTSFiles(WORD *maxFiles)
+{
+    CheckPointer(maxFiles, E_POINTER);
+	*maxFiles = (WORD) m_pTimeShiftFile->getMaxTSFiles();
+	return NOERROR;
+}
+
+STDMETHODIMP CTimeShifting::SetMaxTSFiles(WORD maxFiles)
+{
+	m_pTimeShiftFile->setMaxTSFiles((long)maxFiles);
+    return NOERROR;
+}
+
+STDMETHODIMP CTimeShifting::GetMaxTSFileSize(__int64 *maxSize)
+{
+    CheckPointer(maxSize, E_POINTER);
+	*maxSize = m_pTimeShiftFile->getMaxTSFileSize();
+	return NOERROR;
+}
+
+STDMETHODIMP CTimeShifting::SetMaxTSFileSize(__int64 maxSize)
+{
+	m_pTimeShiftFile->setMaxTSFileSize(maxSize);
+    return NOERROR;
+}
+
+STDMETHODIMP CTimeShifting::GetChunkReserve(__int64 *chunkSize)
+{
+    CheckPointer(chunkSize, E_POINTER);
+	*chunkSize = m_pTimeShiftFile->getChunkReserve();
+	return NOERROR;
+}
+
+STDMETHODIMP CTimeShifting::SetChunkReserve(__int64 chunkSize)
+{
+
+	m_pTimeShiftFile->setChunkReserve(chunkSize);
+    return NOERROR;
+}
+
+STDMETHODIMP CTimeShifting::GetFileBufferSize(__int64 *lpllsize)
+{
+    CheckPointer(lpllsize, E_POINTER);
+	m_pTimeShiftFile->GetFileSize(lpllsize);
+	return NOERROR;
+}
+
