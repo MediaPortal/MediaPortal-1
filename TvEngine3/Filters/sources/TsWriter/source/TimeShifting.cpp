@@ -66,13 +66,13 @@ STDMETHODIMP CTimeShifting::SetPcrPid(int pcrPid)
 	}
 	return S_OK;
 }
-STDMETHODIMP CTimeShifting::AddPesStream(int pid)
+STDMETHODIMP CTimeShifting::AddPesStream(int pid, bool isAudio, bool isVideo)
 {
 	CEnterCriticalSection enter(m_section);
 	try
 	{
 		LogDebug("Timeshifter:add pes stream pid:%x",pid);
-		m_multiPlexer.AddPesStream(pid);
+		m_multiPlexer.AddPesStream(pid,isAudio,isVideo);
 	}
 	catch(...)
 	{

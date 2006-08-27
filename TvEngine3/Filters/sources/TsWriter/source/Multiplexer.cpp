@@ -90,7 +90,7 @@ void CMultiplexer::RemovePesStream(int pid)
 	}
 }
 
-void CMultiplexer::AddPesStream(int pid)
+void CMultiplexer::AddPesStream(int pid, bool isAudio, bool isVideo)
 {
 	ivecPesDecoders it;
 	for (it=m_pesDecoders.begin(); it != m_pesDecoders.end();++it)
@@ -100,8 +100,24 @@ void CMultiplexer::AddPesStream(int pid)
 	}
 	
 	LogDebug("mux: add pes pid:%x", pid);
+	int audioStreamId=0xc0;
+	int videoStreamId=0xe0;
+
+	for (it=m_pesDecoders.begin(); it != m_pesDecoders.end();++it)
+	{
+		CPesDecoder* decoder=*it;
+		if (decoder->IsAudio()) audioStreamId++;
+		if (decoder->IsVideo()) videoStreamId++;
+	}
+
 	CPesDecoder* decoder = new CPesDecoder(this);
 	decoder->SetPid(pid);
+	if (isAudio)
+		decoder->SetStreamId(audioStreamId);
+	else if (isVideo)
+		decoder->SetStreamId(videoStreamId);
+	else
+		decoder->SetStreamId(-1);
 	decoder->SetMaxLength(0x7e9);
 	m_pesDecoders.push_back(decoder);
 }

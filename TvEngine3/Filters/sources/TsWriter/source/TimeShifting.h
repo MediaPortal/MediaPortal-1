@@ -33,7 +33,7 @@ DEFINE_GUID(IID_ITsTimeshifting,0x89459bf6, 0xd00e, 0x4d28, 0x92, 0x8e, 0x9d, 0x
 DECLARE_INTERFACE_(ITsTimeshifting, IUnknown)
 {
 	STDMETHOD(SetPcrPid)(THIS_ int pcrPid)PURE;
-	STDMETHOD(AddPesStream)(THIS_ int pid)PURE;
+	STDMETHOD(AddPesStream)(THIS_ int pid, bool isAudio, bool isVideo)PURE;
 	STDMETHOD(RemovePesStream)(THIS_ int pid)PURE;
 	
   STDMETHOD(SetTimeShiftingFileName)(THIS_ char* pszFileName)PURE;
@@ -64,7 +64,7 @@ public:
   DECLARE_IUNKNOWN
 	
 	STDMETHODIMP SetPcrPid(int pcrPid);
-	STDMETHODIMP AddPesStream(int pid);
+	STDMETHODIMP AddPesStream(int pid,bool isAudio,bool isVideo);
 	STDMETHODIMP RemovePesStream(int pid);
 	STDMETHODIMP SetTimeShiftingFileName(char* pszFileName);
 	STDMETHODIMP Start();

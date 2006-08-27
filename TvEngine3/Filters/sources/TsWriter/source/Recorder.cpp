@@ -60,11 +60,11 @@ STDMETHODIMP CRecorder::SetPcrPid(int pcrPid)
 	m_multiPlexer.SetPcrPid(pcrPid);
 	return S_OK;
 }
-STDMETHODIMP CRecorder::AddPesStream(int pid)
+STDMETHODIMP CRecorder::AddPesStream(int pid,bool isAudio,bool isVideo)
 {
 	CEnterCriticalSection enter(m_section);
 	LogDebug("Recorder:add pes stream pid:%x",pid);
-	m_multiPlexer.AddPesStream(pid);
+	m_multiPlexer.AddPesStream(pid,isAudio,isVideo);
 	return S_OK;
 }
 

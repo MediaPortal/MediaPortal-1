@@ -13,7 +13,7 @@ namespace TvLibrary.Interfaces.Analyzer
     [PreserveSig]
     int SetPcrPid(short pcrPid);
     [PreserveSig]
-    int AddPesStream(short pid);
+    int AddPesStream(short pid, bool isAudio, bool isVideo);
     [PreserveSig]
     int RemovePesStream(short pid);
     [PreserveSig]

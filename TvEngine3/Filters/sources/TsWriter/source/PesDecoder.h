@@ -38,7 +38,9 @@ public:
 	bool					OnTsPacket(byte* tsPacket);
 	void					Reset();
 	int						GetStreamId();
-
+	bool					IsAudio();
+	bool					IsVideo();
+	void					SetStreamId(int streamId);
 private:
   bool          m_bStart;
   int           m_iPesHeaderLen;

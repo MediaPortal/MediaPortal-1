@@ -252,7 +252,7 @@ namespace TvLibrary.Implementations.DVB
           {
             if (info.isAC3Audio || info.isAudio || info.isVideo)
             {
-              record.AddPesStream((short)info.pid);
+              record.AddPesStream((short)info.pid, (info.isAC3Audio || info.isAudio), info.isVideo);
             }
           }
           record.Start();
@@ -1174,7 +1174,7 @@ namespace TvLibrary.Implementations.DVB
           {
             if (pidInfo.isAC3Audio || pidInfo.isAudio || pidInfo.isVideo)
             {
-              record.AddPesStream((short)pidInfo.pid);
+              record.AddPesStream((short)pidInfo.pid, (pidInfo.isAC3Audio || pidInfo.isAudio), pidInfo.isVideo);
             }
           }
           Log.Log.WriteFile("dvb: start timeshifting");
@@ -1193,7 +1193,7 @@ namespace TvLibrary.Implementations.DVB
             {
               if (pidInfo.isAC3Audio || pidInfo.isAudio || pidInfo.isVideo)
               {
-                record.AddPesStream((short)pidInfo.pid);
+                record.AddPesStream((short)pidInfo.pid, (pidInfo.isAC3Audio || pidInfo.isAudio), pidInfo.isVideo);
               }
             }
           }
@@ -1487,7 +1487,7 @@ namespace TvLibrary.Implementations.DVB
         {
           if (info.isAC3Audio || info.isAudio || info.isVideo)
           {
-            record.AddPesStream((short)info.pid);
+            record.AddPesStream((short)info.pid, (info.isAC3Audio || info.isAudio), info.isVideo);
           }
         }
         if (hr != 0)
@@ -1948,14 +1948,14 @@ namespace TvLibrary.Implementations.DVB
           {
             timeshift.RemovePesStream((short)_currentAudioStream.Pid);
           }
-          timeshift.AddPesStream((short)audioStream.Pid);
+          timeshift.AddPesStream((short)audioStream.Pid,true,false);
 
           ITsRecorder recorder = _filterTsAnalyzer as ITsRecorder;
           if (_currentAudioStream != null)
           {
             recorder.RemovePesStream((short)_currentAudioStream.Pid);
           }
-          recorder.AddPesStream((short)audioStream.Pid);
+          recorder.AddPesStream((short)audioStream.Pid,true,false);
         }
         _currentAudioStream = audioStream;
       }

@@ -66,6 +66,18 @@ void CPesDecoder::SetPid(int pid)
 }
 
 
+bool CPesDecoder::IsAudio()
+{
+	return (m_iStreamId>=0xc0 && m_iStreamId<=0xcf);
+}
+bool CPesDecoder::IsVideo()
+{
+	return (m_iStreamId>=0xe0 && m_iStreamId<=0xef);
+}
+void CPesDecoder::SetStreamId(int streamId)
+{
+	m_iStreamId=streamId;
+}
 int	CPesDecoder::GetStreamId()
 {
 	return m_iStreamId;
@@ -113,7 +125,8 @@ bool CPesDecoder::OnTsPacket(byte* tsPacket)
 		}
 		if (tsPacket[pos+0]==0 && tsPacket[pos+1]==0 && tsPacket[pos+2]==1)
 		{
-			m_iStreamId=tsPacket[pos+3];
+			if (m_iStreamId<0)
+				m_iStreamId=tsPacket[pos+3];
 			m_iWritePos=0;
 
       m_iPesHeaderLen=tsPacket[pos+8]+9;

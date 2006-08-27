@@ -33,7 +33,7 @@ DEFINE_GUID(IID_ITsRecorder,0xb45662e3, 0x2749, 0x4a34, 0x99, 0x3a, 0xc, 0x16, 0
 DECLARE_INTERFACE_(ITsRecorder, IUnknown)
 {
 	STDMETHOD(SetPcrPid)(THIS_ int pcrPid)PURE;
-	STDMETHOD(AddPesStream)(THIS_ int pid)PURE;
+	STDMETHOD(AddPesStream)(THIS_ int pid,bool isAudio,bool isVideo)PURE;
 	STDMETHOD(RemovePesStream)(THIS_ int pid)PURE;
 	
   STDMETHOD(SetRecordingFileName)(THIS_ char* pszFileName)PURE;
@@ -49,7 +49,7 @@ public:
   DECLARE_IUNKNOWN
 	
 	STDMETHODIMP SetPcrPid(int pcrPid);
-	STDMETHODIMP AddPesStream(int pid);
+	STDMETHODIMP AddPesStream(int pid,bool isAudio,bool isVideo);
 	STDMETHODIMP RemovePesStream(int pid);
 	STDMETHODIMP SetRecordingFileName(char* pszFileName);
 	STDMETHODIMP StartRecord();

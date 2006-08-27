@@ -347,7 +347,7 @@ namespace TestApp
     {
       if (_currentCard.IsTimeShifting)
       {
-        _player.Stop();
+        //_player.Stop();
         _player = null;
         _currentCard.StopTimeShifting();
         _stopStreaming = true;
@@ -358,8 +358,8 @@ namespace TestApp
       _currentCard.StartTimeShifting("live.ts");
       button3.Text = "Stop .ts timeshift";
 
-      _player = new Player();
-      _player.Play(_currentCard.TimeShiftFileName,this);
+      //_player = new Player();
+      //_player.Play(_currentCard.TimeShiftFileName,this);
       if (_streamingRunning==false)
       {
         _stopStreaming = false;

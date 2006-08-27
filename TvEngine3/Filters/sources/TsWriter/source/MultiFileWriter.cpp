@@ -28,6 +28,7 @@
 #include <atlbase.h>
 #include <windows.h>
 #include <stdio.h>
+extern void LogDebug(const char *fmt, ...) ;
 
 MultiFileWriter::MultiFileWriter() :
 	m_hTSBufferFile(INVALID_HANDLE_VALUE),
@@ -164,7 +165,7 @@ HRESULT MultiFileWriter::Write(PBYTE pbData, ULONG lDataLength)
 
 	if (m_pCurrentTSFile->IsFileInvalid())
 	{
-		::OutputDebugString(TEXT("Creating first file\n"));
+		::LogDebug("Creating first file");
 		if FAILED(hr = PrepareTSFile())
 			return hr;
 	}
@@ -211,7 +212,7 @@ HRESULT MultiFileWriter::PrepareTSFile()
 	USES_CONVERSION;
 	HRESULT hr;
 
-	::OutputDebugString(TEXT("PrepareTSFile()\n"));
+	LogDebug("PrepareTSFile()");
 
 //	m_pCurrentTSFile->FlushFile())
 
@@ -249,16 +250,16 @@ HRESULT MultiFileWriter::PrepareTSFile()
 				if (m_tsFileNames.size() < m_maxTSFiles)
 				{
 					if (hr != 0x80070020) // ERROR_SHARING_VIOLATION
-						::OutputDebugString(TEXT("Failed to reopen old file. Unexpected reason. Trying to create a new file.\n"));
+						LogDebug("Failed to reopen old file. Unexpected reason. Trying to create a new file.");
 
 					hr = CreateNewTSFile();
 				}
 				else
 				{
 					if (hr != 0x80070020) // ERROR_SHARING_VIOLATION
-						::OutputDebugString(TEXT("Failed to reopen old file. Unexpected reason. Dropping data!\n"));
+						LogDebug("Failed to reopen old file. Unexpected reason. Dropping data!");
 					else
-						::OutputDebugString(TEXT("Failed to reopen old file. It's currently in use. Dropping data!\n"));
+						LogDebug("Failed to reopen old file. It's currently in use. Dropping data!");
 
 					Sleep(500);
 				}
@@ -282,6 +283,7 @@ HRESULT MultiFileWriter::CreateNewTSFile()
 	WIN32_FIND_DATA findData;
 	HANDLE handleFound = INVALID_HANDLE_VALUE;
 
+	LogDebug("CreateNewTSFile.");
 	while (TRUE)
 	{
 		// Create new filename
@@ -293,7 +295,7 @@ HRESULT MultiFileWriter::CreateNewTSFile()
 		if (handleFound == INVALID_HANDLE_VALUE)
 			break;
 
-		::OutputDebugString(TEXT("Newly generated filename already exists.\n"));
+		LogDebug("Newly generated filename already exists.");
 
 		// If it exists we loop and try the next number
 		FindClose(handleFound);
@@ -301,14 +303,14 @@ HRESULT MultiFileWriter::CreateNewTSFile()
 	
 	if FAILED(hr = m_pCurrentTSFile->SetFileName(pFilename))
 	{
-		::OutputDebugString(TEXT("Failed to set filename for new file.\n"));
+		LogDebug("Failed to set filename for new file.");
 		delete[] pFilename;
 		return hr;
 	}
 
 	if FAILED(hr = m_pCurrentTSFile->OpenFile())
 	{
-		::OutputDebugString(TEXT("Failed to open new file\n"));
+		LogDebug("Failed to open new file");
 		delete[] pFilename;
 		return hr;
 	}
@@ -320,6 +322,7 @@ HRESULT MultiFileWriter::CreateNewTSFile()
 	swprintf((LPWSTR)&msg, L"New file created : %s\n", pFilename);
 	::OutputDebugString(W2T((LPWSTR)&msg));
 
+	LogDebug("new file created");
 	return S_OK;
 }
 
@@ -332,7 +335,7 @@ HRESULT MultiFileWriter::ReuseTSFile()
 
 	if FAILED(hr = m_pCurrentTSFile->SetFileName(pFilename))
 	{
-		::OutputDebugString(TEXT("Failed to set filename to reuse old file\n"));
+		LogDebug("Failed to set filename to reuse old file");
 		return hr;
 	}
 
@@ -360,6 +363,7 @@ HRESULT MultiFileWriter::ReuseTSFile()
 	swprintf((LPWSTR)&msg, L"Old file reused : %s\n", pFilename);
 	::OutputDebugString(W2T((LPWSTR)&msg));
 
+	LogDebug("reuse old file");
 	return S_OK;
 }
 
@@ -426,6 +430,7 @@ HRESULT MultiFileWriter::CleanupFiles()
 			wchar_t msg[MAX_PATH];
 			swprintf((LPWSTR)&msg, L"CleanupFiles: A file is still locked : %s\n", *it);
 			::OutputDebugString(W2T((LPWSTR)&msg));
+			LogDebug("CleanupFiles: A file is still locked");
 			return S_OK;
 		}
 	}
@@ -439,6 +444,7 @@ HRESULT MultiFileWriter::CleanupFiles()
 			wchar_t msg[MAX_PATH];
 			swprintf((LPWSTR)&msg, L"Failed to delete file %s : 0x%x\n", *it, GetLastError());
 			::OutputDebugString(W2T((LPWSTR)&msg));
+			LogDebug("CleanupFiles: Failed to delete file");
 		}
 		delete[] *it;
 	}
@@ -449,6 +455,8 @@ HRESULT MultiFileWriter::CleanupFiles()
 		wchar_t msg[MAX_PATH];
 		swprintf((LPWSTR)&msg, L"Failed to delete tsbuffer file : 0x%x\n", GetLastError());
 		::OutputDebugString(W2T((LPWSTR)&msg));
+			LogDebug("CleanupFiles: Failed to delete tsbuffer file: 0x%x\n", GetLastError());
+
 	}
 	m_filesAdded = 0;
 	m_filesRemoved = 0;
