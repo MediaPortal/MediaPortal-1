@@ -254,6 +254,10 @@
 				RelativePath=".\source\SubtitleInputPin.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\Source\SubtitleOutputPin.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -281,6 +285,10 @@
 			</File>
 			<File
 				RelativePath=".\source\SubtitleInputPin.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Source\SubtitleOutputPin.h"
 				>
 			</File>
 			<File
