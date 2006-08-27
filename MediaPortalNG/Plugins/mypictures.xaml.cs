@@ -36,7 +36,7 @@ namespace MediaPortal
             upDown1.SetMinValue(0);
             upDown1.SetMaxValue(25);
 
-            select1.AddItem("Test 1");
+            select1.AddItem("I'm stuff inside an SelectButton. Just click me!");
             select1.AddItem("Test 2");
             select1.AddItem("ABC");
             select1.AddItem("123");

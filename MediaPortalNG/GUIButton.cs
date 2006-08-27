@@ -10,28 +10,16 @@ using System.Windows.Controls.Primitives;
 
 namespace MediaPortal
 {
-    public class GUIButton : UserControl
+    public class GUIButton : Button
     {
         private ScrollViewer _scrollViewer;
         private double _displayTime;
         private double _scrollPosition;
         private Storyboard _storyBoard;
-        private Delegate _delegate;
+        private bool _isButton;
 
         // getting & removing the handler we will call on setting the Click property
-        public event RoutedEventHandler Click
-        {
-            add 
-            { 
-                _delegate = value;
-            }
-            remove 
-            {
-                _delegate = null;
-            }
-        }
- 
-        
+         
         public GUIButton()
         {
 
@@ -42,6 +30,7 @@ namespace MediaPortal
             this.Unloaded += new RoutedEventHandler(GUIButton_Unloaded);
            // default frame time
             FrameTime = 80;
+            
         }
 
         void GUIButton_MouseLeave(object sender, MouseEventArgs e)
@@ -61,16 +50,6 @@ namespace MediaPortal
         }
 
 
-        void GUIButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (_delegate != null)
-            {
-                _delegate.DynamicInvoke(sender,e);
-            }
-        }
- 
-
-   
         void GUIButton_Unloaded(object sender, RoutedEventArgs e)
         {
             AnimateEnd();
@@ -103,7 +82,11 @@ namespace MediaPortal
         {
             Border b = (Border)VisualTreeHelper.GetChild(this, 0);
             _scrollViewer = (ScrollViewer)VisualTreeHelper.GetChild(b, 0);
-            this.MouseLeftButtonUp += new MouseButtonEventHandler(GUIButton_Click);
+
+            // prevent to select the scrollviewer
+            _scrollViewer.IsEnabled = false;
+            _scrollViewer.Focusable = false;
+
             if (_scrollViewer == null)
                 return;
             _scrollViewer.ScrollToHorizontalOffset(0);
@@ -203,50 +186,51 @@ namespace MediaPortal
             RaiseEvent(args);
         }
 
-        // the property to animate the scrolling
-
-        public string Caption
+        // 
+        public bool IsButton
         {
             get
             {
-                return (string)GetValue(CaptionProperty);
+                return _isButton;
             }
             set
             {
-                SetValue(CaptionProperty, value);
+                _isButton=value;
             }
         }
 
-        public static readonly DependencyProperty CaptionProperty =
-        DependencyProperty.Register("Caption", typeof(string), typeof(GUIButton),
-                new FrameworkPropertyMetadata(new PropertyChangedCallback(OnCaptionChanged)));
+        public static readonly DependencyProperty IsButtonProperty =
+        DependencyProperty.Register("IsButton", typeof(bool), typeof(GUIButton), new FrameworkPropertyMetadata(true,new PropertyChangedCallback(OnIsButtonChanged)));
 
-        private static void OnCaptionChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+        protected event RoutedPropertyChangedEventHandler<bool> IsButtonChanged
+        {
+            add 
+            {
+                AddHandler(IsButtonChangedEvent, value); 
+            }
+            remove 
+            {
+                RemoveHandler(IsButtonChangedEvent, value); 
+            }
+        }
+
+        public static readonly RoutedEvent IsButtonChangedEvent = EventManager.RegisterRoutedEvent(
+        "IsButtonChanged", RoutingStrategy.Bubble,
+        typeof(RoutedPropertyChangedEventHandler<bool>), typeof(GUIButton));
+
+        private static void OnIsButtonChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
         {
             GUIButton control = (GUIButton)obj;
 
-            RoutedPropertyChangedEventArgs<string> e = new RoutedPropertyChangedEventArgs<string>(
-                (string)args.OldValue, (string)args.NewValue, CaptionChangedEvent);
-            control.OnCaptionChanged(e);
+            RoutedPropertyChangedEventArgs<bool> e = new RoutedPropertyChangedEventArgs<bool>(
+                (bool)args.OldValue, (bool)args.NewValue, IsButtonChangedEvent);
+            control.OnIsButtonChanged(e);
         }
 
-        public static readonly RoutedEvent CaptionChangedEvent = EventManager.RegisterRoutedEvent(
-    "CaptionChanged", RoutingStrategy.Bubble,
-    typeof(RoutedPropertyChangedEventHandler<string>), typeof(GUIButton));
-
-        public event RoutedPropertyChangedEventHandler<string> CaptionChanged
+        protected virtual void OnIsButtonChanged(RoutedPropertyChangedEventArgs<bool> args)
         {
-            add { AddHandler(CaptionChangedEvent, value); }
-            remove { RemoveHandler(CaptionChangedEvent, value); }
-        }
-
-        protected virtual void OnCaptionChanged(RoutedPropertyChangedEventArgs<string> args)
-        {
+            IsButton = args.NewValue;
             RaiseEvent(args);
         }
-
-
-
-
     }
 }

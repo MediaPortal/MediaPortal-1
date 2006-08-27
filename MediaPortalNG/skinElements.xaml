@@ -623,17 +623,6 @@
     </Setter>
   </Style>
 
-  <Style x:Key="GUISelectButton" TargetType="{x:Type CheckBox}">
-    <Setter Property="SnapsToDevicePixels" Value="true"/>
-    <Setter Property="OverridesDefaultStyle" Value="true"/>
-    <Setter Property="MinHeight" Value="23"/>
-    <Setter Property="MinWidth" Value="75"/>
-    <Setter Property="FontSize" Value="18"/>
-    <Setter Property="Foreground" Value="White" />
-    <Setter Property="ClickMode" Value="Press" />
-    <Setter Property="FocusVisualStyle" Value="{DynamicResource FocusStyle}"/>
-    <Setter Property="Template" Value="{DynamicResource SelectButtonReleased}"/>
-  </Style>
   
   <Style x:Key="GUIButton" TargetType="{x:Type Button}">
     <Setter Property="SnapsToDevicePixels" Value="true"/>

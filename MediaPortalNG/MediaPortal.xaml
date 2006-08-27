@@ -11,7 +11,8 @@
         <ResourceDictionary Source="skinImages.xaml" />
       </ResourceDictionary.MergedDictionaries>
 
-      <!-- Button -->
+      <!-- GUIButton -->
+      
       <Style TargetType="{x:Type ctrl:GUIButton}">
         <Setter Property="SnapsToDevicePixels" Value="true"/>
         <Setter Property="OverridesDefaultStyle" Value="true"/>
@@ -34,16 +35,10 @@
                       HorizontalScrollBarVisibility="Hidden" 
                       VerticalScrollBarVisibility="Hidden">
                       <TextBlock FocusVisualStyle="{DynamicResource FocusStyle}" 
-                        Text="{TemplateBinding Content}" 
+                        Text="{TemplateBinding Content}"
+                        Foreground="{TemplateBinding Foreground}" 
                         VerticalAlignment="Center">
-                        <TextBlock.OpacityMask>
-                          <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                            <GradientStop Offset="0.0" Color="#FF000000"/>
-                            <GradientStop Offset="0.75" Color="#FF000000"/>
-                            <GradientStop Offset="1.0" Color="#00000000"/>
-                          </LinearGradientBrush>
-                        </TextBlock.OpacityMask>
-                      </TextBlock>
+                       </TextBlock>
                     </ScrollViewer>
               </Border>
               <ControlTemplate.Triggers>
@@ -61,6 +56,11 @@
                     </Setter.Value>
                   </Setter>
                 </Trigger>
+                <Trigger Property="IsButton" Value="false">
+                  <Setter TargetName="Border" Property="Background" Value="Transparent">
+                  </Setter>
+                </Trigger>
+
               </ControlTemplate.Triggers>
             </ControlTemplate>
           </Setter.Value>
@@ -76,8 +76,7 @@
           CornerRadius="0" 
           BorderThickness="0"
           BorderBrush="Transparent">
-          <Button Command="{x:Static ctrl:GUISelectButton.OpenCloseSelect}" Style="{DynamicResource GUIButton}">
-            <StackPanel >
+            <Button Style="{DynamicResource GUIButton}">
               <Grid >
                 <Grid.ColumnDefinitions>
                   <ColumnDefinition Width="16"/>
@@ -87,12 +86,11 @@
                 <Grid.RowDefinitions>
                   <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <TextBlock Margin="5" Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=SelectedItem}" x:Name="SelectContent" Grid.Column="1"/>
+                <ctrl:GUIButton IsButton="false" Height="{TemplateBinding Height}" Command="{x:Static ctrl:GUISelectButton.OpenCloseSelect}" Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=SelectedItem}" x:Name="SelectContent" Grid.Column="1" />
                 <Button Command="{x:Static ctrl:GUISelectButton.PreviousCommand}" ClickMode="Press" Grid.Column="0" x:Name="LeftButton" Width="16" Height="16" Style="{DynamicResource LeftButton}"/>
                 <Button Command="{x:Static ctrl:GUISelectButton.NextCommand}" ClickMode="Press" Grid.Column="2" x:Name="RightButton" Width="16" Height="16" Style="{DynamicResource RightButton}"/>
               </Grid>
-            </StackPanel>
-          </Button>
+            </Button>
         </Border>
         <ControlTemplate.Triggers>
         </ControlTemplate.Triggers>
@@ -104,13 +102,12 @@
           CornerRadius="0" 
           BorderThickness="0"
           BorderBrush="Transparent">
-          <Button Command="{x:Static ctrl:GUISelectButton.OpenCloseSelect}" Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Content}" Style="{DynamicResource GUIButton}"></Button>
+          <ctrl:GUIButton Command="{x:Static ctrl:GUISelectButton.OpenCloseSelect}"  Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Content}" />
         </Border>
         <ControlTemplate.Triggers>
           <Trigger Property="IsKeyboardFocused" Value="true">
             <Setter TargetName="Border" Property="BorderBrush" Value="Black" />
           </Trigger>
-
         </ControlTemplate.Triggers>
       </ControlTemplate>
 
@@ -133,7 +130,7 @@
             <ControlTemplate TargetType="{x:Type ctrl:GUIFadelabel}">
               <Border BorderThickness="0" BorderBrush="Transparent" Margin="0" VerticalAlignment="Center" HorizontalAlignment="Left">
                 <ScrollViewer Width="{TemplateBinding Width}" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
-                  <TextBlock Text="{TemplateBinding Content}" />
+                  <TextBlock Foreground="{TemplateBinding Foreground}" Text="{TemplateBinding Content}" />
                 </ScrollViewer>
               </Border>
             </ControlTemplate>

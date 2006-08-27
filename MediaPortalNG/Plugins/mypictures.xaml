@@ -131,7 +131,7 @@
 
     <ctrl:GUISelectButton 
   x:Name="select1"
-  Content="Click me ;)" 
+  Content="Hello! I'm an very,very nice SelectButton. If you click me, you can choose some stuff..." 
   Width="190" 
   Height="32" 
   Canvas.Top="327"

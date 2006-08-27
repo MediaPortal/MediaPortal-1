@@ -19,11 +19,13 @@ namespace MediaPortal
 
         public GUIFadelabel()
         {
-            this.Opacity = 0;
-
             // start all actions after load is complete
             this.Loaded += new RoutedEventHandler(GUIFadelabel_Loaded);
             this.Unloaded += new RoutedEventHandler(GUIFadelabel_Unloaded);
+            //
+            FrameTime = 80;
+            IsEnabled = false;
+            Focusable = false;
 
         }
 
@@ -31,58 +33,44 @@ namespace MediaPortal
         {
             if (_storyBoard == null)
                 return;
-            _storyBoard.Stop(this);
-            this.Opacity = 1;
-            _scrollViewer.ScrollToHorizontalOffset(0);
-            _scrollPosition = 0;
+            AnimateEnd();
         }
 
-        void AnimateOpacity()
+        void AnimateStart()
         {
-            DoubleAnimation opacityAnimation = new DoubleAnimation(0f,1.0f, new Duration(TimeSpan.FromMilliseconds(2000)));
+            DoubleAnimation fadeInAnimation = new DoubleAnimation(0, 1, new Duration(TimeSpan.FromMilliseconds(1000)));
+            DoubleAnimation positionAnimation = new DoubleAnimation(0, _scrollViewer.ScrollableWidth+10, new Duration(TimeSpan.FromMilliseconds(_displayTime * _scrollViewer.ScrollableWidth)));
             _storyBoard = new Storyboard();
-            _storyBoard.Children.Add(opacityAnimation);
-            Storyboard.SetTargetProperty(opacityAnimation, new PropertyPath("Opacity"));
-            _storyBoard.Completed += new EventHandler(opacityAnimation_Completed);
-            _storyBoard.Begin(this, false);
-        }
-
-        void opacityAnimation_Completed(object sender, EventArgs e)
-        {
-            DoubleAnimation positionAnimation = new DoubleAnimation(0, _scrollViewer.ScrollableWidth, new Duration(TimeSpan.FromMilliseconds(_displayTime * _scrollViewer.ScrollableWidth)));
-            _storyBoard.Stop(this);
-            _storyBoard.Completed -= new EventHandler(opacityAnimation_Completed);
-            _storyBoard.Children.Clear();
+            _storyBoard.Children.Add(fadeInAnimation);
             _storyBoard.Children.Add(positionAnimation);
-
-            Storyboard.SetTargetProperty(positionAnimation, new PropertyPath("ScrollPosition"));
-            _storyBoard.Completed += new EventHandler(positionAnimation_Completed);
-            _storyBoard.Begin(this, true);
+             Storyboard.SetTargetProperty(fadeInAnimation, new PropertyPath("Opacity"));
+             Storyboard.SetTargetProperty(positionAnimation, new PropertyPath("ScrollPosition"));
+             _storyBoard.RepeatBehavior = RepeatBehavior.Forever;
+            _storyBoard.Begin(this,HandoffBehavior.Compose, true);
             // anim scrollviewe 
         }
 
-        void positionAnimation_Completed(object sender, EventArgs e)
+        void AnimateEnd()
         {
             // reset and restart
-            _storyBoard.Completed -= new EventHandler(positionAnimation_Completed);
+            if (_storyBoard == null) return;
             _storyBoard.Stop(this);
             _storyBoard.Children.Clear();
             _storyBoard = null;
             ScrollPosition = 0;
-            Opacity = 0.0f;
-            AnimateOpacity();
         }
 
         void GUIFadelabel_Loaded(object sender, RoutedEventArgs e)
         {
+            // set object
             Border b = (Border)VisualTreeHelper.GetChild(this, 0);
             _scrollViewer = (ScrollViewer)VisualTreeHelper.GetChild(b, 0);
-            if (_scrollViewer == null)
-                return;
-            this.Opacity = 0;
+
+            //
+            if (_scrollViewer == null) return;
             _scrollViewer.ScrollToHorizontalOffset(0);
             _scrollPosition = 0;
-            AnimateOpacity();
+           AnimateStart();
         }
 
         // properties
@@ -137,7 +125,7 @@ namespace MediaPortal
         {
             get
             {
-                return (double)GetValue(FrameTimeProperty);
+                return (double)GetValue(ScrollPositionProperty);
             }
             set
             {
@@ -174,10 +162,6 @@ namespace MediaPortal
             _scrollViewer.ScrollToHorizontalOffset(_scrollPosition);
             RaiseEvent(args);
         }
-        
-
-
- 
 
     }
 }
