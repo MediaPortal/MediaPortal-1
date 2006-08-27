@@ -20,6 +20,8 @@
  *
  */
 
+#pragma warning(disable: 4511 4512 4995 4996)
+
 #ifndef _BITMAP_H
 #define _BITMAP_H
 
