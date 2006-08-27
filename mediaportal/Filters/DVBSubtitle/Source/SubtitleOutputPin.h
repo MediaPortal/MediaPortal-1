@@ -48,11 +48,12 @@ public:
 
   HRESULT GetMediaType( int iPosition, CMediaType* pmt );
 
-  HRESULT GetDeliveryBuffer(
+/*  HRESULT GetDeliveryBuffer(
     IMediaSample **ppSample,
     REFERENCE_TIME *pStartTime,
     REFERENCE_TIME *pEndTime,
     DWORD dwFlags );
+*/
 
   HRESULT CheckConnect( IPin *pPin );
   HRESULT Deliver( IMediaSample *pSample );

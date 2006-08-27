@@ -107,7 +107,7 @@ HRESULT CSubtitleOutputPin::GetMediaType( int iPosition, CMediaType* pmt )
 	return S_OK;
 }
 
-HRESULT CSubtitleOutputPin::GetDeliveryBuffer(
+/*HRESULT CSubtitleOutputPin::GetDeliveryBuffer(
     IMediaSample **ppSample,
     REFERENCE_TIME *pStartTime,
     REFERENCE_TIME *pEndTime,
@@ -115,6 +115,7 @@ HRESULT CSubtitleOutputPin::GetDeliveryBuffer(
 {
  return S_OK;
 }
+*/
 
 HRESULT CSubtitleOutputPin::CheckConnect( IPin *pPin )
 {
