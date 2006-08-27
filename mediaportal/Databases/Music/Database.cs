@@ -166,14 +166,13 @@ namespace MediaPortal.Music.Database
           {
             if (File.Exists(_config.Get(Config.Options.DatabasePath) + "musicdatabase5.db3"))
             {
-              File.Copy((_config.Get(Config.Options.DatabasePath) + "musicdatabase5.db3"), (_config.Get(Config.Options.DatabasePath) + "MusicDatabaseV6.db3"), false);
+              File.Copy((_config.Get(Config.Options.DatabasePath) + "musicdatabase5.db3"), (_config.Get(Config.Options.DatabasePath) + "MusicDatabaseV7.db3"), false);
 
             }
             else
               _log.Info("**** Please rescan your music shares ****");
           }
-          // now we should have a V6 or nothing useable
-          if (File.Exists(_config.Get(Config.Options.DatabasePath) + "MusicDatabaseV6.db3"))
+          else
           {
             if (UpdateDB_V6_to_V7())
             {
