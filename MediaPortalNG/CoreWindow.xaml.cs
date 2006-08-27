@@ -42,7 +42,6 @@ namespace MediaPortal
             this.KeyDown += new System.Windows.Input.KeyEventHandler(Core_KeyDown);
             _home = new HomeExtension(this.Resources);
             _home.InitializeComponent();
-            
             this.Navigate(_home);
         }
 
@@ -59,11 +58,14 @@ namespace MediaPortal
         void Core_Navigating(object sender, NavigatingCancelEventArgs e)
         {
             object content = e.Content;
+            if (content == null) return;
+
             if (content.GetType() == typeof(MediaPortal.HomeExtension))
             {
                 // we get here on navigating
             }
-        }
+            
+       }
 
         void Core_Loaded(object sender, RoutedEventArgs e)
         {

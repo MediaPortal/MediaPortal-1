@@ -27,10 +27,11 @@ namespace MediaPortal
         public HomeExtension(ResourceDictionary dict)
         {
 
+             _core = (Core)this.Parent;
             InitializeComponent();
             this.Opacity = 0.0f;
             this.Loaded += new RoutedEventHandler(HomeExtension_Loaded);
-            _core = (Core)this.Parent;
+            this.SizeChanged += new SizeChangedEventHandler(HomeExtension_SizeChanged);
             this.KeyDown += new System.Windows.Input.KeyEventHandler(HomeExtension_KeyDown);
 
             ApplyLanguage("German");
@@ -94,6 +95,29 @@ namespace MediaPortal
             lv.SelectedItem = lv.Items[0];
         }
 
+        void HomeExtension_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            ScalePage();
+        }
+
+        public void ScalePage()
+        {
+            double x1 = this.ActualWidth / 720.0f;
+            double y1 = this.ActualHeight / 576.0f;
+            double xc = 0;
+            double yc = 0;
+            try
+            {
+                if (x1 > 1.0f)
+                    xc = this.ActualWidth / 2.0f;
+                if (y1 > 1.0f)
+                    yc = this.ActualHeight / 2.0f;
+
+                ScaleTransform st = new ScaleTransform(x1, y1, xc, yc);
+                this.RenderTransform = st;
+            }
+            catch { }
+        }
 
         public void HandleKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
@@ -231,9 +255,7 @@ namespace MediaPortal
             _skinMediaPath = System.IO.Directory.GetCurrentDirectory() + @"\Media\";
             this.Opacity = 1.0f;
             //
-            
- 
- 
+            ScalePage();
         }
 
 

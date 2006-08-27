@@ -26,9 +26,10 @@ namespace MediaPortal
         public MyPictures()
         {
             
+            _core = (Core)this.Parent;
             InitializeComponent();
             this.Loaded += new RoutedEventHandler(MyPictures_Loaded);
-            _core = (Core)this.Parent;
+            this.SizeChanged+=new SizeChangedEventHandler(MyPictures_SizeChanged);
             lv1.SelectionChanged += new SelectionChangedEventHandler(lv1_SelectionChanged);       
 
             ApplyLanguage("German");
@@ -42,12 +43,32 @@ namespace MediaPortal
             select1.AddItem("123");
             select1.AddItem("HUH?");
 
-           
-
 
         }
+        public void ScalePage()
+        {
+            double x1 = this.ActualWidth / 720.0f;
+            double y1 = this.ActualHeight / 576.0f;
+            double xc = 0;
+            double yc = 0;
+            try
+            {
+                if (x1 > 1.0f)
+                    xc = this.ActualWidth / 2.0f;
+                if (y1 > 1.0f)
+                    yc = this.ActualHeight / 2.0f;
 
- 
+                ScaleTransform st = new ScaleTransform(x1, y1, xc, yc);
+                this.RenderTransform = st;
+            }
+            catch { }
+        }
+
+        void MyPictures_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            ScalePage();
+        }
+         
         void lv1_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
@@ -139,7 +160,7 @@ namespace MediaPortal
                 catch { }
             }
             // media
- 
+            ScalePage();
         }
 
 
