@@ -1019,9 +1019,9 @@ namespace TvPlugin
         VirtualCard card;
         bool succeeded = RemoteControl.Instance.StartTimeShifting(channel, out card);
         TVHome.Card = card;
+        _log.Info("succeeded:{0} scrambled:{1}", succeeded, TVHome.Card.IsScrambled);
         if (TVHome.Card.IsScrambled)
           succeeded = false;
-        _log.Info("succeeded:{0} scrambled:{1}", succeeded, TVHome.Card.IsScrambled);
         if (succeeded)
         {
           if (g_Player.Playing && g_Player.CurrentFile != TVHome.Card.TimeShiftFileName)
@@ -1035,6 +1035,7 @@ namespace TvPlugin
         else
         {
           g_Player.Stop();
+          TVHome.Card.StopTimeShifting();
         }
       }
       else return true;
@@ -1084,11 +1085,11 @@ namespace TvPlugin
 
         VirtualCard card;
         bool succeeded = RemoteControl.Instance.StartTimeShifting(channel, out card);
+        TVHome.Card = card;
         if (RemoteControl.Instance.IsScrambled(card.Id))
           succeeded = false;
         if (succeeded)
         {
-          TVHome.Card = card;
           if (g_Player.Playing && g_Player.CurrentFile != TVHome.Card.TimeShiftFileName)
           {
             g_Player.Stop();
@@ -1100,6 +1101,7 @@ namespace TvPlugin
         else
         {
           g_Player.Stop();
+          TVHome.Card.StopTimeShifting();
         }
       }
     }
@@ -1246,10 +1248,11 @@ namespace TvPlugin
     static void SeekToEnd()
     {
       double pos = g_Player.Duration;
+      if (g_Player.Duration < 10) return;
       _log.Info("tvhome:seektoend dur:{0} pos:{1}", g_Player.Duration, g_Player.CurrentPosition);
       if (pos >= 0 && g_Player.CurrentPosition < pos-4)
       {
-        g_Player.SeekAbsolute(g_Player.Duration );
+        g_Player.SeekAbsolute(g_Player.Duration-2 );
       }
     }
   }

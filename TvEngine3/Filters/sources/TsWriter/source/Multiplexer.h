@@ -56,5 +56,6 @@ private:
 	typedef vector<CPesDecoder*>::iterator ivecPesDecoders;
 	IFileWriter* m_pCallback;
 	int m_videoPacketCounter;
+	bool  m_streams[255];
   byte* m_pesBuffer;
 };

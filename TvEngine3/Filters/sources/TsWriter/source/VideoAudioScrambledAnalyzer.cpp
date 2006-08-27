@@ -36,6 +36,7 @@ CVideoAudioScrambledAnalyzer::~CVideoAudioScrambledAnalyzer()
 
 void CVideoAudioScrambledAnalyzer::SetVideoPid(int pid)
 {
+	LogDebug("analyzer: set video pid:%x", pid);
 	m_videoPid=pid;
 }
 
@@ -46,6 +47,7 @@ int  CVideoAudioScrambledAnalyzer::GetVideoPid()
 
 void CVideoAudioScrambledAnalyzer::SetAudioPid(int pid)
 {
+	LogDebug("analyzer: set audio pid:%x", pid);
 	m_audioPid=pid;
 }
 
@@ -67,10 +69,11 @@ bool CVideoAudioScrambledAnalyzer::IsVideoScrambled()
 
 void CVideoAudioScrambledAnalyzer::Reset()
 {
+		LogDebug("analyzer: reset");
 		m_bInitAudio=TRUE;
 		m_bInitVideo=TRUE;
-		m_bVideoEncrypted=TRUE;
-		m_bAudioEncrypted=TRUE;
+		m_bVideoEncrypted=FALSE;
+		m_bAudioEncrypted=FALSE;
 		m_audioTimer=GetTickCount();
 		m_videoTimer=GetTickCount();
 }
@@ -80,7 +83,6 @@ void CVideoAudioScrambledAnalyzer::OnTsPacket(byte* tsPacket)
 	CTsHeader  header(tsPacket);
 	if (header.SyncByte != TS_PACKET_SYNC) return;
 	if (header.TransportError==true) return;
-	if (header.ContinuityCounter!=0)  return;
 	BOOL scrambled= (header.TScrambling!=0);
 	if (header.Pid==m_audioPid) 
 	{
@@ -98,14 +100,14 @@ void CVideoAudioScrambledAnalyzer::OnTsPacket(byte* tsPacket)
 				DWORD timeSpan=GetTickCount()-m_audioTimer;
 				if (timeSpan > 150)
 				{
-					LogDebug("audio pid %x unscrambled", m_audioPid);
+					LogDebug("analyzer: audio pid %x unscrambled", m_audioPid);
 					m_bAudioEncrypted=scrambled;
 					//LogHeader(header);
 				}
 			}
 			else
 			{
-					LogDebug("audio pid %x scrambled", m_audioPid);
+					LogDebug("analyzer: audio pid %x scrambled", m_audioPid);
 				//LogHeader(header);
 				m_bAudioEncrypted=scrambled;
 			}
@@ -127,14 +129,14 @@ void CVideoAudioScrambledAnalyzer::OnTsPacket(byte* tsPacket)
 				DWORD timeSpan=GetTickCount()-m_videoTimer;
 				if (timeSpan > 150)
 				{
-					LogDebug("video pid %x unscrambled", m_videoPid);
+					LogDebug("analyzer: video pid %x unscrambled", m_videoPid);
 					//LogHeader(header);
 					m_bVideoEncrypted=scrambled;
 				}
 			}
 			else
 			{
-				LogDebug("video pid %x scrambled", m_videoPid);
+				LogDebug("analyzer: video pid %x scrambled", m_videoPid);
 				//LogHeader(header);
 				m_bVideoEncrypted=scrambled;
 			}

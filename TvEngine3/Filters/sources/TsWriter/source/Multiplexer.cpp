@@ -58,6 +58,7 @@ void CMultiplexer::Reset()
 	}
 	m_pesDecoders.clear();
 	m_pcrDecoder.Reset();
+	memset(m_streams,0,sizeof(m_streams));
 }
 
 void CMultiplexer::SetPcrPid(int pcrPid)
@@ -136,7 +137,7 @@ int CMultiplexer::OnNewPesPacket(int streamId,byte* header, int headerlen,byte* 
       writeToDisk=false;
 			if (isStart)
 			{
-				for (int x=6; x < pesLength-3;++x)
+				for (int x=0; x < pesLength-3;++x)
 				{
 					if (pesPacket[x] == 0 && pesPacket[x+1] == 0 && pesPacket[x+2] == 1 && pesPacket[x+3] == 0xb3)
 					{
@@ -203,16 +204,42 @@ int CMultiplexer::WritePackHeader()
 }
 
 int CMultiplexer::SplitPesPacket(int streamId,byte* header, int headerlen, byte* pesPacket, int sectionLength, bool isStart)
-{
+{ 
+	//LogDebug("sid:%x len:%x start:%d headerlen:%x %02.2x%02.2x %02.2x%02.2x %02.2x%02.2x %02.2x%02.2x %02.2x%02.2x %02.2x%02.2x", 
+	//	streamId, sectionLength,isStart,headerlen,
+	//	pesPacket[0],pesPacket[1], pesPacket[2],pesPacket[3], pesPacket[4],pesPacket[5],
+	//	pesPacket[6],pesPacket[7], pesPacket[8],pesPacket[9], pesPacket[10],pesPacket[11]);
+	if (streamId<0) return sectionLength;
   if (m_pCallback == NULL) return sectionLength;
-  if (sectionLength!=0x7e9)
+	if (m_streams[streamId]!=true)
+	{
+		LogDebug("got stream:%x", streamId,sectionLength);
+	}
+	m_streams[streamId]=true;
+
+//	if (streamId>=0xe0 && streamId <=0xef) streamId=0xe0;
+//	if (streamId>=0xc0 && streamId <=0xcf) streamId=0xc0;
+  if (sectionLength != 0x7e9)
   {
-    int x=1;
+		WritePackHeader();
+		m_pesBuffer[0] = 0;
+		m_pesBuffer[1] = 0;
+		m_pesBuffer[2] = 1;
+		m_pesBuffer[3] = streamId;
+		m_pesBuffer[4] = ((sectionLength+3)>>8)&0xff;
+		m_pesBuffer[5] = ((sectionLength+3))&0xff;
+		m_pesBuffer[6] = 0x81;
+		m_pesBuffer[7] = 0;
+		m_pesBuffer[8] = 0;
+		m_pCallback->Write(m_pesBuffer, 9);
+		m_pCallback->Write(pesPacket, sectionLength);
+		return sectionLength;
   }
 	if (isStart)
 	{
     int len=0x7e9-(headerlen-9);
     WritePackHeader();
+		header[3]=streamId;
     header[4]=0x7;
     header[5]=0xec;
     m_pCallback->Write(header, headerlen);

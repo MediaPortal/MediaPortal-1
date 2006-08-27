@@ -2070,11 +2070,19 @@ namespace TvLibrary.Implementations.DVB
         ITsVideoAnalyzer writer = (ITsVideoAnalyzer)_filterTsAnalyzer;
         short yesNo;
         writer.IsAudioEncrypted(out yesNo);
-        if (yesNo == 1) return false;
+        if (yesNo == 1)
+        {
+          Log.Log.WriteFile("audio is encrypted");
+          return false;
+        }
         if (_currentChannel.IsTv)
         {
           writer.IsVideoEncrypted(out yesNo);
-          if (yesNo == 1) return false;
+          if (yesNo == 1)
+          {
+            Log.Log.WriteFile("video is encrypted");
+            return false;
+          }
         }
         return true;
       }

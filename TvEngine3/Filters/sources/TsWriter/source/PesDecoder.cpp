@@ -100,26 +100,26 @@ bool CPesDecoder::OnTsPacket(byte* tsPacket)
 	bool result=false;
 	if (header.PayloadUnitStart)
 	{
+
+		if (m_iWritePos>0)
+		{
+			if (m_pCallback!=NULL)
+			{
+				//LogDebug(" pes %x start:%x", m_iStreamId,m_iWritePos);
+				int written=m_pCallback->OnNewPesPacket(m_iStreamId,m_pesHeader, m_iPesHeaderLen,  m_pesBuffer, m_iWritePos, false);
+				//LogDebug(" pes %x written:%x", m_iStreamId,written);
+				m_iWritePos=0;
+			}
+		}
 		if (tsPacket[pos+0]==0 && tsPacket[pos+1]==0 && tsPacket[pos+2]==1)
 		{
 			m_iStreamId=tsPacket[pos+3];
-      if (m_iWritePos < 0)
-			  m_iWritePos=0;
+			m_iWritePos=0;
 
       m_iPesHeaderLen=tsPacket[pos+8]+9;
       memcpy(m_pesHeader,&tsPacket[pos],m_iPesHeaderLen);
       pos += (m_iPesHeaderLen);
-	    if (m_iWritePos  >= m_iMaxLength)
-	    {
-        int written=0;
-	      if (m_pCallback!=NULL)
-	      {
-		      written=m_pCallback->OnNewPesPacket(m_iStreamId, m_pesHeader, m_iPesHeaderLen, m_pesBuffer, m_iMaxLength, false);
-	      }
-		    memcpy(m_pesBuffer, &m_pesBuffer[written] , m_iWritePos-written);
-        m_iWritePos-=written;
-      }
-      m_bStart=true;
+			m_bStart=true;
 		}
 	}
 
@@ -128,17 +128,20 @@ bool CPesDecoder::OnTsPacket(byte* tsPacket)
 
 	memcpy(&m_pesBuffer[m_iWritePos], &tsPacket[pos], 188-pos);
 	m_iWritePos += (188-pos);
+	//LogDebug(" pes %x copy:%x len:%x maxlen:%x start:%d", m_iStreamId,m_iWritePos,(188-pos),m_iMaxLength,m_bStart);
 	if (m_iWritePos  >= m_iMaxLength)
 	{
     int written=0;
 		if (m_pCallback!=NULL)
 		{
 			written=m_pCallback->OnNewPesPacket(m_iStreamId,m_pesHeader, m_iPesHeaderLen,  m_pesBuffer, m_iMaxLength, m_bStart);
+			//LogDebug(" pes %x next:%x written:%x", m_iStreamId,m_iWritePos,written);
 		}
     m_bStart=false;
 
 		memcpy(m_pesBuffer, &m_pesBuffer[written] , m_iWritePos-written);
 		m_iWritePos -= written;
+		//LogDebug(" pes %x now:%x", m_iStreamId,m_iWritePos);
 	}
   return result;
 }
