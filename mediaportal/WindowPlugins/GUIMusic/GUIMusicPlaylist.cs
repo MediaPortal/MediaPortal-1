@@ -160,37 +160,37 @@ namespace MediaPortal.GUI.Music
       {
         _enableScrobbling = xmlreader.GetValueAsBool("plugins", "Audioscrobbler", false);               
         _currentScrobbleUser = xmlreader.GetValueAsString("audioscrobbler", "user", "Username");
-
-        // temporary to avoid db change
-        _enablePlaylistLimit = xmlreader.GetValueAsBool("audioscrobbler", "playlistlimit", true);
         _useSimilarRandom = xmlreader.GetValueAsBool("audioscrobbler", "usesimilarrandom", false);
-        _preferCountForTracks = xmlreader.GetValueAsInt("audioscrobbler", "prefercount", 2);
-        _rememberStartTrack = xmlreader.GetValueAsBool("audioscrobbler", "rememberstartartist", true);
-        int tmpRMode = xmlreader.GetValueAsInt("audioscrobbler", "offlinemode", 0);
-
-        switch (tmpRMode)
-        {
-          case 0:
-            currentOfflineMode = offlineMode.random;
-            break;
-          case 1:
-            currentOfflineMode = offlineMode.timesplayed;
-            break;
-          case 2:
-            currentOfflineMode = offlineMode.favorites;
-            break;
-          default:
-            currentOfflineMode = offlineMode.random;
-            break;
-        }
       }
+
       MusicDatabase mdb = new MusicDatabase();
-      ScrobblerOn = (mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(_currentScrobbleUser)), "iScrobbleDefault", -1) == 1) ? true : false;
-      _maxScrobbledArtistsForSongs = mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(_currentScrobbleUser)), "iAddArtists", -1);
-      _maxScrobbledSongsPerArtist = mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(_currentScrobbleUser)), "iAddTracks", -1);
-      // make sure it has valid defaults
+      string currentUID = Convert.ToString(mdb.AddScrobbleUser(_currentScrobbleUser));
+      ScrobblerOn = (mdb.AddScrobbleUserSettings(currentUID, "iScrobbleDefault", -1) == 1) ? true : false;
+      _maxScrobbledArtistsForSongs = mdb.AddScrobbleUserSettings(currentUID, "iAddArtists", -1);
+      _maxScrobbledSongsPerArtist = mdb.AddScrobbleUserSettings(currentUID, "iAddTracks", -1);
+      _enablePlaylistLimit = (mdb.AddScrobbleUserSettings(currentUID, "iPlaylistLimit", -1) == 1) ? true : false;
+      _preferCountForTracks = mdb.AddScrobbleUserSettings(currentUID, "iPreferCount", -1);
+      _rememberStartTrack = (mdb.AddScrobbleUserSettings(currentUID, "iRememberStartArtist", -1) == 1) ? true : false;
+
       _maxScrobbledArtistsForSongs = (_maxScrobbledArtistsForSongs > 0) ? _maxScrobbledArtistsForSongs : 3;
       _maxScrobbledSongsPerArtist = (_maxScrobbledSongsPerArtist > 0) ? _maxScrobbledSongsPerArtist : 1;
+      int tmpRMode = mdb.AddScrobbleUserSettings(currentUID, "iOfflineMode", -1);
+
+      switch (tmpRMode)
+      {
+        case 0:
+          currentOfflineMode = offlineMode.random;
+          break;
+        case 1:
+          currentOfflineMode = offlineMode.timesplayed;
+          break;
+        case 2:
+          currentOfflineMode = offlineMode.favorites;
+          break;
+        default:
+          currentOfflineMode = offlineMode.random;
+          break;
+      }
       ascrobbler = new AudioscrobblerUtils();
       ScrobbleLock = new object();
       //added by Sam

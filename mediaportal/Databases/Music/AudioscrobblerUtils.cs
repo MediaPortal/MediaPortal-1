@@ -73,9 +73,9 @@ namespace MediaPortal.Music.Database
     private int _randomNessPercent = 75;
 
     // Neighbour mode intelligence params
-    private lastFMFeed _currentNeighbourMode = lastFMFeed.weeklyartistchart;
+    private lastFMFeed _currentNeighbourMode;
 
-    private offlineMode _currentOfflineMode = offlineMode.random;
+    private offlineMode _currentOfflineMode;
 
     List<Song> songList = null;
 
@@ -198,9 +198,12 @@ namespace MediaPortal.Music.Database
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
       {
         MusicDatabase mdb = new MusicDatabase();
+        _currentOfflineMode = offlineMode.random;
+        _currentNeighbourMode = lastFMFeed.weeklyartistchart;
         _defaultUser = xmlreader.GetValueAsString("audioscrobbler", "user", "");
-        int tmpRMode = xmlreader.GetValueAsInt("audioscrobbler", "offlinemode", 0);
+        
         _useDebugLog = (mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(_defaultUser)), "iDebugLog", -1) == 1) ? true : false;
+        int tmpRMode = mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(_defaultUser)), "iOfflineMode", -1);
         int tmpRand = mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(_defaultUser)), "iRandomness", -1);
         int tmpNMode = mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(_defaultUser)), "iNeighbourMode", -1);
 
