@@ -591,7 +591,6 @@ namespace TvService
       TvBusinessLayer layer = new TvBusinessLayer();
       Setting setting = layer.GetSetting("epgLanguages");
       string epgLanguages = setting.Value;
-      Log.WriteFile("tvservice:updatedatabasechannel: epglang={0}", setting.Value);
       TimeSpan ts = DateTime.Now - channel.LastGrabTime;
       if (ts.TotalHours < EpgReGrabAfter)
       {
