@@ -160,7 +160,7 @@
           CornerRadius="0" 
           BorderThickness="0"
           BorderBrush="Transparent">
-            <Button Style="{DynamicResource GUIButton}">
+            <Button Style="{DynamicResource GUIButtonStyle}">
               <Grid >
                 <Grid.ColumnDefinitions>
                   <ColumnDefinition Width="16"/>
@@ -170,7 +170,7 @@
                 <Grid.RowDefinitions>
                   <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <ctrl:GUIButton IsButton="false" Height="{TemplateBinding Height}" Command="{x:Static ctrl:GUISelectButton.OpenCloseSelect}" Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=SelectedItem}" x:Name="SelectContent" Grid.Column="1" />
+                <ctrl:GUIButton VerticalAlignment="Center" IsButton="false" Height="{TemplateBinding Height}" Command="{x:Static ctrl:GUISelectButton.OpenCloseSelect}" Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=SelectedItem}" x:Name="SelectContent" Grid.Column="1" />
                 <Button Command="{x:Static ctrl:GUISelectButton.PreviousCommand}" ClickMode="Press" Grid.Column="0" x:Name="LeftButton" Width="16" Height="16" Style="{DynamicResource LeftButton}"/>
                 <Button Command="{x:Static ctrl:GUISelectButton.NextCommand}" ClickMode="Press" Grid.Column="2" x:Name="RightButton" Width="16" Height="16" Style="{DynamicResource RightButton}"/>
               </Grid>
