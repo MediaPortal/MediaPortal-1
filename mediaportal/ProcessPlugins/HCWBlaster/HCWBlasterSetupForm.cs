@@ -28,7 +28,7 @@ using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
-using MediaPortal.Utils.Services;
+using MediaPortal.Util;
 
 namespace MediaPortal.HCWBlaster
 {
@@ -37,7 +37,6 @@ namespace MediaPortal.HCWBlaster
   /// </summary>
   public class HCWBlasterSetupForm : System.Windows.Forms.Form
   {
-    static IConfig _config;
     private MediaPortal.UserInterface.Controls.MPLabel label1;
     private MediaPortal.UserInterface.Controls.MPButton btnOK;
     private MediaPortal.UserInterface.Controls.MPCheckBox chkExtendedLog;
@@ -49,8 +48,6 @@ namespace MediaPortal.HCWBlaster
 
     public HCWBlasterSetupForm()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _config = services.Get<IConfig>();
       //
       // Required for Windows Form Designer support
       //
@@ -64,7 +61,7 @@ namespace MediaPortal.HCWBlaster
 
     private void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         this.chkExtendedLog.Checked = xmlreader.GetValueAsBool("HCWBlaster", "ExtendedLogging", false);
       }
@@ -72,7 +69,7 @@ namespace MediaPortal.HCWBlaster
 
     private bool SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         xmlwriter.SetValueAsBool("HCWBlaster", "ExtendedLogging", this.chkExtendedLog.Checked);
       }

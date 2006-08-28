@@ -30,7 +30,7 @@ using System.Collections.Generic;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
-using MediaPortal.Utils.Services;
+using MediaPortal.Util;
 
 namespace MediaPortal.GUI.Library
 {
@@ -44,8 +44,6 @@ namespace MediaPortal.GUI.Library
     static List<CachedTexture> _cache = new List<CachedTexture>();
     static List<DownloadedImage> _cacheDownload = new List<DownloadedImage>();
     static TexturePacker _packer = new TexturePacker();
-    static ILog _log;
-    static IConfig _config;
 
     // singleton. Dont allow any instance of this class
     private GUITextureManager()
@@ -54,9 +52,6 @@ namespace MediaPortal.GUI.Library
 
     static GUITextureManager()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
     }
 
     ~GUITextureManager()
@@ -71,7 +66,7 @@ namespace MediaPortal.GUI.Library
 
     static void dispose(bool disposing)
     {
-      _log.Info("texturemanager:dispose()");
+      Log.Info("texturemanager:dispose()");
       _packer.Dispose();
       if (disposing)
       {
@@ -83,7 +78,7 @@ namespace MediaPortal.GUI.Library
       }
       _cacheDownload.Clear();
 
-      string[] files = System.IO.Directory.GetFiles(_config.Get(Config.Options.ThumbsPath), "MPTemp*.*");
+      string[] files = System.IO.Directory.GetFiles(Config.Get(Config.Dir.Thumbs), "MPTemp*.*");
       if (files != null)
       {
         foreach (string file in files)
@@ -194,7 +189,7 @@ namespace MediaPortal.GUI.Library
       {
         if (!System.IO.File.Exists(fileName))
         {
-          _log.Info("texture:{0} does not exists", fileName);
+          Log.Info("texture:{0} does not exists", fileName);
           return 0;
         }
 
@@ -256,14 +251,14 @@ namespace MediaPortal.GUI.Library
             theImage = null;
             _cache.Add(newCache);
 
-            //_log.Info("  texturemanager:added:" + fileName + " total:" + _cache.Count + " mem left:" + GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
+            //Log.Info("  texturemanager:added:" + fileName + " total:" + _cache.Count + " mem left:" + GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
             return newCache.Frames;
           }
         }
         catch (Exception ex)
         {
-          _log.Error("TextureManager:exception loading texture {0}", fileName);
-          _log.Error(ex);
+          Log.Error("TextureManager:exception loading texture {0}", fileName);
+          Log.Error(ex);
         }
         return 0;
       }
@@ -280,7 +275,7 @@ namespace MediaPortal.GUI.Library
           newCache.Width = width;
           newCache.Height = height;
           newCache.texture = new CachedTexture.Frame(fileName, dxtexture, 0);
-          //_log.Info("  texturemanager:added:" + fileName + " total:" + _cache.Count + " mem left:" + GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
+          //Log.Info("  texturemanager:added:" + fileName + " total:" + _cache.Count + " mem left:" + GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
           _cache.Add(newCache);
           return 1;
         }
@@ -338,13 +333,13 @@ namespace MediaPortal.GUI.Library
         memoryImage = null;
         _cache.Add(newCache);
 
-        _log.Info("  texturemanager:added: memoryImage  " + " total:" + _cache.Count + " mem left:" + GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());        return newCache.Frames;
+        Log.Info("  texturemanager:added: memoryImage  " + " total:" + _cache.Count + " mem left:" + GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());        return newCache.Frames;
 
       }
       catch (Exception ex)
       {
-        _log.Error("TextureManager: exception loading texture memoryImage");
-        _log.Error(ex);
+        Log.Error("TextureManager: exception loading texture memoryImage");
+        Log.Error(ex);
       }
       return 0;
     }
@@ -387,7 +382,7 @@ namespace MediaPortal.GUI.Library
 				if (w>0 || h>0)
 				{
 					if (h > w) w=h;
-					_log.Info("TextureManager: resample {0}x{1} -> {2}x{3} {4}",
+					Log.Info("TextureManager: resample {0}x{1} -> {2}x{3} {4}",
 												imgSrc.Width,imgSrc.Height, w,w,fileName);
 
 					Image imgResampled=Resample(imgSrc,w, h);
@@ -433,7 +428,7 @@ namespace MediaPortal.GUI.Library
             width = info2.Width;
             height = info2.Height;
 
-            //_log.Info("Texturemanager loaded temporay:{0} {1}x{2} format:{3}", fileName, width, height, info2.Format);
+            //Log.Info("Texturemanager loaded temporay:{0} {1}x{2} format:{3}", fileName, width, height, info2.Format);
           }
         }
         else
@@ -474,15 +469,15 @@ namespace MediaPortal.GUI.Library
             width=info2.Width;
             height=info2.Height;
           }
-          _log.Info("Texturemanager loaded:{0} {1}x{2} format:{3}",
+          Log.Info("Texturemanager loaded:{0} {1}x{2} format:{3}",
                         fileName,width,height,info2.Format);*/
 
         }
       }
       catch (Exception ex)
       {
-        _log.Error("TextureManage:LoadGraphic({0})", fileName);
-        _log.Error(ex);
+        Log.Error("TextureManage:LoadGraphic({0})", fileName);
+        Log.Error(ex);
       }
       finally
       {
@@ -517,8 +512,8 @@ namespace MediaPortal.GUI.Library
             }
             catch (Exception ex)
             {
-              _log.Error("TextureManage:GetImage({0}) ", fileName);
-              _log.Error(ex);
+              Log.Error("TextureManage:GetImage({0}) ", fileName);
+              Log.Error(ex);
               return null;
             }
             return cached.image;
@@ -534,8 +529,8 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception ex)
       {
-        _log.Error("TextureManage:GetImage({0})", fileName);
-        _log.Error(ex);
+        Log.Error("TextureManage:GetImage({0})", fileName);
+        Log.Error(ex);
         return null;
       }
       if (img != null)
@@ -546,7 +541,7 @@ namespace MediaPortal.GUI.Library
         newCache.Width = img.Width;
         newCache.Height = img.Height;
         newCache.image = img;
-        //_log.Info("  texturemanager:added:" + fileName + " total:" + _cache.Count + " mem left:" + GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
+        //Log.Info("  texturemanager:added:" + fileName + " total:" + _cache.Count + " mem left:" + GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
         _cache.Add(newCache);
         return img;
       }
@@ -583,8 +578,8 @@ namespace MediaPortal.GUI.Library
       if (fileName == String.Empty) return;
 
       //dont dispose radio/tv logo's since they are used by the overlay windows
-      if (fileName.ToLower().IndexOf(_config.Get(Config.Options.ThumbsPath) + @"tv\logos") >= 0) return;
-      if (fileName.ToLower().IndexOf(_config.Get(Config.Options.ThumbsPath) + @"radio") >= 0) return;
+      if (fileName.ToLower().IndexOf(Config.Get(Config.Dir.Thumbs) + @"tv\logos") >= 0) return;
+      if (fileName.ToLower().IndexOf(Config.Get(Config.Dir.Thumbs) + @"radio") >= 0) return;
       try
       {
         bool continueRemoving = false;
@@ -595,7 +590,7 @@ namespace MediaPortal.GUI.Library
           {
             if (String.Compare(cached.Name, fileName, true) == 0)
             {
-              //_log.Info("texturemanager:dispose:{0} frames:{1} total:{2} mem left:{3}", cached.Name, cached.Frames, _cache.Count, GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
+              //Log.Info("texturemanager:dispose:{0} frames:{1} total:{2} mem left:{3}", cached.Name, cached.Frames, _cache.Count, GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
               _cache.Remove(cached);
               cached.Dispose();
               continueRemoving = true;
@@ -606,8 +601,8 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception ex)
       {
-        _log.Error("TextureManage:ReleaseTexture({0})", fileName);
-        _log.Error(ex);
+        Log.Error("TextureManage:ReleaseTexture({0})", fileName);
+        Log.Error(ex);
       }
     }
 
@@ -618,7 +613,7 @@ namespace MediaPortal.GUI.Library
 
     static public void CleanupThumbs()
     {
-      _log.Info("texturemanager:CleanupThumbs()");
+      Log.Info("texturemanager:CleanupThumbs()");
       try
       {
         List<CachedTexture> newCache = new List<CachedTexture>();
@@ -626,7 +621,7 @@ namespace MediaPortal.GUI.Library
         {
           if (IsTemporary(cached.Name))
           {
-            //_log.Info("texturemanager:dispose:" + cached.Name + " total:" + _cache.Count + " mem left:" + GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
+            //Log.Info("texturemanager:dispose:" + cached.Name + " total:" + _cache.Count + " mem left:" + GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
             cached.Dispose();
           }
           else
@@ -639,8 +634,8 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception ex)
       {
-        _log.Error("TextureManage:CleanupThumbs() ");
-        _log.Error(ex);
+        Log.Error("TextureManage:CleanupThumbs() ");
+        Log.Error(ex);
       }
     }
 
@@ -649,8 +644,8 @@ namespace MediaPortal.GUI.Library
       if (fileName.Length == 0) return false;
       if (fileName == "-") return false;
 
-      if (fileName.ToLower().IndexOf(_config.Get(Config.Options.ThumbsPath) + @"tv\logos") >= 0) return false;
-      if (fileName.ToLower().IndexOf(_config.Get(Config.Options.ThumbsPath) + "radio") >= 0) return false;
+      if (fileName.ToLower().IndexOf(Config.Get(Config.Dir.Thumbs) + @"tv\logos") >= 0) return false;
+      if (fileName.ToLower().IndexOf(Config.Get(Config.Dir.Thumbs) + "radio") >= 0) return false;
 
       /* Temporary: (textures that are disposed)
        * - all not skin images

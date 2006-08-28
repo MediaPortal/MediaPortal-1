@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using MediaPortal.Util;
-using MediaPortal.Utils.Services;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Playlists
 {
@@ -14,12 +14,9 @@ namespace MediaPortal.Playlists
     private PlayList playlist;
     private StreamReader file;
     private string basePath;
-    protected ILog _log;
 
     public PlayListM3uIO()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
     }
 
     public bool Load(PlayList incomingPlaylist, string playlistFileName)
@@ -80,7 +77,7 @@ namespace MediaPortal.Playlists
       }
       catch (Exception ex)
       {
-        _log.Info("exception loading playlist {0} err:{1} stack:{2}", playlistFileName, ex.Message, ex.StackTrace);
+        Log.Info("exception loading playlist {0} err:{1} stack:{2}", playlistFileName, ex.Message, ex.StackTrace);
         return false;
       }
       return true;
@@ -137,7 +134,7 @@ namespace MediaPortal.Playlists
       }
       catch (Exception e)
       {
-        _log.Info("failed to save a playlist {0}. err: {1} stack: {2}", fileName, e.Message, e.StackTrace);
+        Log.Info("failed to save a playlist {0}. err: {1} stack: {2}", fileName, e.Message, e.StackTrace);
       }
     }
   }

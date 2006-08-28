@@ -23,6 +23,8 @@ using System;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player ;
 using MediaPortal.TV.Recording;
+using MediaPortal.Util;
+
 namespace MediaPortal.GUI.TV
 {
 	/// <summary>
@@ -56,7 +58,7 @@ namespace MediaPortal.GUI.TV
 
 		void LoadSettings()
 		{
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
 			{
 				spinBitrate.Value = xmlreader.GetValueAsInt("compression","bitrate",4);
 				spinFPS.Value		 = xmlreader.GetValueAsInt("compression","fps",1);
@@ -72,7 +74,7 @@ namespace MediaPortal.GUI.TV
 		void SaveSettings()
 		{
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
 			{
 				xmlreader.SetValue("compression","bitrate",spinBitrate.Value);
 				xmlreader.SetValue("compression","fps",spinFPS.Value);

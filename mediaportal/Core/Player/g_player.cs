@@ -25,7 +25,6 @@ using System.Collections;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Subtitle;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Player
 {
@@ -84,8 +83,6 @@ namespace MediaPortal.Player
     static public bool Starting = false;
     static ArrayList _seekStepList = new ArrayList();
     static public bool configLoaded = false;
-    static ILog _log;
-    static IConfig _config;
     #endregion
 
     #region events
@@ -106,9 +103,6 @@ namespace MediaPortal.Player
 
     static g_Player()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
     }
     public static Player.IPlayer Player
     {
@@ -130,7 +124,7 @@ namespace MediaPortal.Player
     {
       ArrayList StepArray = new ArrayList();
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         foreach (string token in (xmlreader.GetValueAsString("movieplayer", "skipsteps", "0;1;1;0;1;1;1;0;1;1;1;0;1;0;1;0").Split(new char[] { ',', ';', ' ' })))
         {
           if (token == string.Empty)
@@ -156,7 +150,7 @@ namespace MediaPortal.Player
       if (g_Player.Playing && PlayBackStopped != null)
       {
         //yes, then raise event 
-        _log.Info("g_Player.OnStopped()");
+        Log.Info("g_Player.OnStopped()");
         PlayBackStopped(_currentMedia, (int)g_Player.CurrentPosition, g_Player.CurrentFile);
       }
     }
@@ -168,7 +162,7 @@ namespace MediaPortal.Player
       if (PlayBackEnded != null)
       {
         //yes, then raise event 
-        _log.Info("g_Player.OnEnded()");
+        Log.Info("g_Player.OnEnded()");
 
         PlayBackEnded(_currentMedia, _currentFilePlaying);
       }
@@ -199,7 +193,7 @@ namespace MediaPortal.Player
             _currentMedia = MediaType.Video;
           }
         }
-        _log.Info("g_Player.OnStarted() {0} media:{1}", _currentFilePlaying, _currentMedia.ToString());
+        Log.Info("g_Player.OnStarted() {0} media:{1}", _currentFilePlaying, _currentMedia.ToString());
         if (PlayBackStarted != null)
           PlayBackStarted(_currentMedia, _currentFilePlaying);
       }
@@ -225,7 +219,7 @@ namespace MediaPortal.Player
     {
       if (_player != null)
       {
-        _log.Info("g_Player.Stop()");
+        Log.Info("g_Player.Stop()");
         OnStopped();
         GUIGraphicsContext.ShowBackground = true;
         _player.Stop();
@@ -359,7 +353,7 @@ namespace MediaPortal.Player
         //GUIMessage msgTv = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TIMESHIFT, 0, 0, 0, 0, 0, null);
         //GUIWindowManager.SendMessage(msgTv);
 
-        _log.Info("g_Player.PlayDVD()");
+        Log.Info("g_Player.PlayDVD()");
         _currentStep = Steps.Sec0;
         _seekTimer = DateTime.MinValue;
         _subs = null;
@@ -379,7 +373,7 @@ namespace MediaPortal.Player
         }
         _isInitalized = true;
         int iUseVMR9 = 0;
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         {
           iUseVMR9 = xmlreader.GetValueAsInt("dvdplayer", "vmr9", 0);
         }
@@ -389,12 +383,12 @@ namespace MediaPortal.Player
         bool bResult = _player.Play(strPath);
         if (!bResult)
         {
-          _log.Error("g_Player.PlayDVD():failed to play");
+          Log.Error("g_Player.PlayDVD():failed to play");
           _player.Release();
           _player = null;
           _subs = null;
           GC.Collect(); GC.Collect(); GC.Collect();
-          _log.Info("dvdplayer:bla");
+          Log.Info("dvdplayer:bla");
         }
         else if (_player.Playing)
         {
@@ -408,7 +402,7 @@ namespace MediaPortal.Player
           OnStarted();
           return true;
         }
-        _log.Info("dvdplayer:sendmsg");
+        Log.Info("dvdplayer:sendmsg");
 
         //show dialog:unable to play dvd,
         GUIWindowManager.ShowWarning(722, 723, -1);
@@ -437,7 +431,7 @@ namespace MediaPortal.Player
         _seekTimer = DateTime.MinValue;
         _isInitalized = true;
         _subs = null;
-        _log.Info("g_Player.PlayAudioStream({0})", strURL);
+        Log.Info("g_Player.PlayAudioStream({0})", strURL);
         if (_player != null)
         {
           GUIGraphicsContext.ShowBackground = true;
@@ -453,7 +447,7 @@ namespace MediaPortal.Player
         bool bResult = _player.Play(strURL);
         if (!bResult)
         {
-          _log.Info("player:ended");
+          Log.Info("player:ended");
           _player.Release();
           _player = null;
           _subs = null;
@@ -490,7 +484,7 @@ namespace MediaPortal.Player
         if (strURL.Length == 0) return false;
         _isInitalized = true;
         _subs = null;
-        _log.Info("g_Player.PlayVideoStream({0})", strURL);
+        Log.Info("g_Player.PlayVideoStream({0})", strURL);
         if (_player != null)
         {
           GUIGraphicsContext.ShowBackground = true;
@@ -502,7 +496,7 @@ namespace MediaPortal.Player
           GC.Collect(); GC.Collect(); GC.Collect(); GC.Collect();
         }
         //int iUseVMR9inMYMovies = 0;
-        //using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+        //using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         //{
         //  iUseVMR9inMYMovies = xmlreader.GetValueAsInt("movieplayer", "vmr9", 1);
         //}
@@ -515,7 +509,7 @@ namespace MediaPortal.Player
         bool isPlaybackPossible = _player.Play(strURL);
         if (!isPlaybackPossible)
         {
-          _log.Info("player:ended");
+          Log.Info("player:ended");
           _player.Release();
           _player = null;
           _subs = null;
@@ -526,7 +520,7 @@ namespace MediaPortal.Player
           isPlaybackPossible = _player.Play(strURL);
           if (!isPlaybackPossible)
           {
-            _log.Info("player2:ended");
+            Log.Info("player2:ended");
             _player.Release();
             _player = null;
             _subs = null;
@@ -590,7 +584,7 @@ namespace MediaPortal.Player
         {
           //file is not a live tv file
           //so tell recorder to stop timeshifting live-tv
-          //_log.Info("player: file is not live tv, so stop timeshifting:{0}", strFile);
+          //Log.Info("player: file is not live tv, so stop timeshifting:{0}", strFile);
           //GUIMessage msgTv = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TIMESHIFT, 0, 0, 0, 0, 0, null);
           //GUIWindowManager.SendMessage(msgTv);
         }
@@ -601,7 +595,7 @@ namespace MediaPortal.Player
         if (strFile.Length == 0) return false;
         _isInitalized = true;
         _subs = null;
-        _log.Info("g_Player.Play({0} {1})", strFile,type);
+        Log.Info("g_Player.Play({0} {1})", strFile,type);
         if (_player != null)
         {
           GUIGraphicsContext.ShowBackground = true;
@@ -623,7 +617,7 @@ namespace MediaPortal.Player
           {
 
             int iUseVMR9 = 0;
-            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
             {
               iUseVMR9 = xmlreader.GetValueAsInt("dvdplayer", "vmr9", 0);
             }
@@ -633,7 +627,7 @@ namespace MediaPortal.Player
             bool _isPlaybackPossible = _player.Play(strFile);
             if (!_isPlaybackPossible)
             {
-              _log.Info("player:ended");
+              Log.Info("player:ended");
               _player.Release();
               _player = null;
               _subs = null;
@@ -659,7 +653,7 @@ namespace MediaPortal.Player
           bool bResult = _player.Play(strFile);
           if (!bResult)
           {
-            _log.Info("player:ended");
+            Log.Info("player:ended");
             _player.Release();
             _player = null;
             _subs = null;
@@ -698,7 +692,7 @@ namespace MediaPortal.Player
         {
           //file is not a live tv file
           //so tell recorder to stop timeshifting live-tv
-          //_log.Info("player: file is not live tv, so stop timeshifting:{0}", strFile);
+          //Log.Info("player: file is not live tv, so stop timeshifting:{0}", strFile);
           //GUIMessage msgTv = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TIMESHIFT, 0, 0, 0, 0, 0, null);
           //GUIWindowManager.SendMessage(msgTv);
         }
@@ -709,7 +703,7 @@ namespace MediaPortal.Player
         if (strFile.Length == 0) return false;
         _isInitalized = true;        
         _subs = null;
-        _log.Info("g_Player.Play({0})", strFile);
+        Log.Info("g_Player.Play({0})", strFile);
         if (_player != null)
         {
           GUIGraphicsContext.ShowBackground = true;
@@ -731,7 +725,7 @@ namespace MediaPortal.Player
           {
 
             int iUseVMR9 = 0;
-            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
             {
               iUseVMR9 = xmlreader.GetValueAsInt("dvdplayer", "vmr9", 0);
             }
@@ -741,7 +735,7 @@ namespace MediaPortal.Player
             bool _isPlaybackPossible = _player.Play(strFile);
             if (!_isPlaybackPossible)
             {
-              _log.Info("player:ended");
+              Log.Info("player:ended");
               _player.Release();
               _player = null;
               _subs = null;
@@ -767,7 +761,7 @@ namespace MediaPortal.Player
           bool bResult = _player.Play(strFile);
           if (!bResult)
           {
-            _log.Info("player:ended");
+            Log.Info("player:ended");
             _player.Release();
             _player = null;
             _subs = null;
@@ -1174,7 +1168,7 @@ namespace MediaPortal.Player
       if (!configLoaded)
       {
         _seekStepList = LoadSettings();
-        _log.Info("g_Player loading seekstep config {0}", "");// Convert.ToString(_seekStepList[0]));
+        Log.Info("g_Player loading seekstep config {0}", "");// Convert.ToString(_seekStepList[0]));
       }
 
       for (int i = 0; i < 16; i++)
@@ -1479,7 +1473,7 @@ namespace MediaPortal.Player
       _player.Process();
       if (!_player.Playing)
       {
-        _log.Info("g_Player.Process() player stopped...");
+        Log.Info("g_Player.Process() player stopped...");
         if (_player.Ended)
         {
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_ENDED, 0, 0, 0, 0, 0, null);

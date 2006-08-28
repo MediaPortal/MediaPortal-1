@@ -154,7 +154,7 @@ namespace MediaPortal.Player
 
     protected override void OnInitialized()
     {
-      _log.Info("tsplayer9:OnInitialized");
+      Log.Info("tsplayer9:OnInitialized");
       if (_vmr9 != null)
       {
         _vmr9.Enable(true);
@@ -184,19 +184,19 @@ namespace MediaPortal.Player
     {
       //create the pins on the demux then connect the demux then mapp the pids.
       Speed = 1;
-      _log.Info("TSStreamBufferPlayer9: GetInterfaces()");
+      Log.Info("TSStreamBufferPlayer9: GetInterfaces()");
 
       // switch back to directx fullscreen mode
-      _log.Info("TSStreamBufferPlayer9: Enabling DX9 exclusive mode");
+      Log.Info("TSStreamBufferPlayer9: Enabling DX9 exclusive mode");
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
       GUIWindowManager.SendMessage(msg);
 
-      //_log.Info("TSStreamBufferPlayer9: build graph");
+      //Log.Info("TSStreamBufferPlayer9: build graph");
 
       try
       {
         _graphBuilder = (IGraphBuilder)new FilterGraph();
-        _log.Info("TSStreamBufferPlayer9: add _vmr9");
+        Log.Info("TSStreamBufferPlayer9: add _vmr9");
 
         _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
         #region add vmr9
@@ -210,13 +210,13 @@ namespace MediaPortal.Player
 
         #region add codecs
 
-        _log.Info("TSStreamBufferPlayer9: add codecs");
+        Log.Info("TSStreamBufferPlayer9: add codecs");
         // add preferred video & audio codecs
         string strVideoCodec = "";
         string strAudioCodec = "";
         string strAudioRenderer = "";
         bool bAddFFDshow = false;
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         {
           bAddFFDshow = xmlreader.GetValueAsBool("mytv", "ffdshow", false);
           strVideoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "");
@@ -266,7 +266,7 @@ namespace MediaPortal.Player
 
         #region set tsfilesource settings
 
-        _log.Info("TSStreamBufferPlayer9:initialize tsfilesource");
+        Log.Info("TSStreamBufferPlayer9:initialize tsfilesource");
         try
         {
           using (RegistryKey hklm = Registry.LocalMachine)
@@ -292,7 +292,7 @@ namespace MediaPortal.Player
                   else demuxControl = false;
                 }
               } 
-              _log.Info("set tsfilesource to clock:{0} demuxcontrol:{1}",clockType[0],demuxControl);
+              Log.Info("set tsfilesource to clock:{0} demuxcontrol:{1}",clockType[0],demuxControl);
               */
               //                     
               // --------------------
@@ -308,12 +308,12 @@ namespace MediaPortal.Player
 
               if (demuxControl == false)
               {
-                _log.Info("set tsfilesource to manual mode");
+                Log.Info("set tsfilesource to manual mode");
                 settings.SetValue("enableAuto", valueZero, RegistryValueKind.Binary);
               }
               else
               {
-                _log.Info("set tsfilesource to auto mode");
+                Log.Info("set tsfilesource to auto mode");
                 settings.SetValue("enableAuto", valueOne, RegistryValueKind.Binary);
               }
               settings.SetValue("enableDelay", valueZero, RegistryValueKind.Binary);
@@ -331,15 +331,15 @@ namespace MediaPortal.Player
         }
         catch (Exception ex)
         {
-          _log.Error(ex);
+          Log.Error(ex);
         }
 
         _fileSource = (IBaseFilter) new TsFileSource();
-        _log.Info("TSStreamBufferPlayer9:add tsfilesource to graph");
+        Log.Info("TSStreamBufferPlayer9:add tsfilesource to graph");
         int hr = _graphBuilder.AddFilter((IBaseFilter)_fileSource, "TsFileSource");
         if (hr != 0)
         {
-          _log.Error("TSStreamBufferPlayer9:Failed to add SBE to graph");
+          Log.Error("TSStreamBufferPlayer9:Failed to add SBE to graph");
           return false;
         }
 
@@ -349,7 +349,7 @@ namespace MediaPortal.Player
 
         if (autoBuildGraph == false)
         {
-          _log.Info("TSStreamBufferPlayer9:add mpeg-2 demultiplexer to graph");
+          Log.Info("TSStreamBufferPlayer9:add mpeg-2 demultiplexer to graph");
           _mpegDemux = (IBaseFilter)new MPEG2Demultiplexer();
           hr = _graphBuilder.AddFilter(_mpegDemux, "MPEG-2 Demultiplexer");
         }
@@ -358,24 +358,24 @@ namespace MediaPortal.Player
         #region create mpeg2 demux pins
         if (autoBuildGraph == false)
         {
-          _log.Info("TSStreamBufferPlayer9:create audio/video pins");
+          Log.Info("TSStreamBufferPlayer9:create audio/video pins");
           //create mpeg-2 demux output pins
           IMpeg2Demultiplexer demuxer = _mpegDemux as IMpeg2Demultiplexer;
 
-          _log.Info("TSStreamBufferPlayer9:created audio output pin");
+          Log.Info("TSStreamBufferPlayer9:created audio output pin");
           hr = demuxer.CreateOutputPin(GetAudioMpg2Media(), "Audio", out _pinAudio);
           if (hr != 0)
           {
-            _log.Error("TSStreamBufferPlayer9 FAILED to create audio output pin on demuxer");
+            Log.Error("TSStreamBufferPlayer9 FAILED to create audio output pin on demuxer");
             return false;
           }
           if (_isRadio == false)
           {
-            _log.Info("TSStreamBufferPlayer9:created video output pin");
+            Log.Info("TSStreamBufferPlayer9:created video output pin");
             hr = demuxer.CreateOutputPin(GetVideoMpg2Media(), "Video", out _pinVideo);
             if (hr != 0)
             {
-              _log.Error("TSStreamBufferPlayer9 FAILED to create video output pin on demuxer");
+              Log.Error("TSStreamBufferPlayer9 FAILED to create video output pin on demuxer");
               return false;
             }
           }
@@ -389,13 +389,13 @@ namespace MediaPortal.Player
         IFileSourceFilter interfaceFile = (IFileSourceFilter)_fileSource;
         if (interfaceFile == null)
         {
-          _log.Error("TSStreamBufferPlayer9:Failed to get IFileSourceFilter");
+          Log.Error("TSStreamBufferPlayer9:Failed to get IFileSourceFilter");
           return false;
         }
-        //_log.Info("TSStreamBufferPlayer9: open file:{0}",filename);
+        //Log.Info("TSStreamBufferPlayer9: open file:{0}",filename);
         if (supplyMediaType)
         {
-          _log.Info("TSStreamBufferPlayer9: open file with mediatype:{0}", filename);
+          Log.Info("TSStreamBufferPlayer9: open file with mediatype:{0}", filename);
           AMMediaType mpeg2ProgramStream = new AMMediaType();
           mpeg2ProgramStream.majorType = MediaType.Stream;
           mpeg2ProgramStream.subType = MediaSubType.Mpeg2Program;
@@ -411,12 +411,12 @@ namespace MediaPortal.Player
         }
         else
         {
-          _log.Info("TSStreamBufferPlayer9: open file:{0}", filename);
+          Log.Info("TSStreamBufferPlayer9: open file:{0}", filename);
           hr = interfaceFile.Load(filename, null);
         }
         if (hr != 0)
         {
-          _log.Error("TSStreamBufferPlayer9:Failed to open file:{0} :0x{1:x}", filename, hr);
+          Log.Error("TSStreamBufferPlayer9:Failed to open file:{0} :0x{1:x}", filename, hr);
           return false;
         }
 
@@ -426,24 +426,24 @@ namespace MediaPortal.Player
         if (autoBuildGraph == false)
         {
           #region connect tsfilesource->demux
-          _log.Info("TSStreamBufferPlayer9:connect tsfilesource->mpeg2 demux");
+          Log.Info("TSStreamBufferPlayer9:connect tsfilesource->mpeg2 demux");
           IPin pinTsOut = DsFindPin.ByDirection((IBaseFilter)_fileSource, PinDirection.Output, 0);
           if (pinTsOut == null)
           {
-            _log.Info("TSStreamBufferPlayer9:failed to find output pin of tsfilesource");
+            Log.Info("TSStreamBufferPlayer9:failed to find output pin of tsfilesource");
             return false;
           }
           IPin pinDemuxIn = DsFindPin.ByDirection(_mpegDemux, PinDirection.Input, 0);
           if (pinDemuxIn == null)
           {
-            _log.Info("TSStreamBufferPlayer9:failed to find output pin of tsfilesource");
+            Log.Info("TSStreamBufferPlayer9:failed to find output pin of tsfilesource");
             return false;
           }
 
           hr = _graphBuilder.Connect(pinTsOut, pinDemuxIn);
           if (hr != 0)
           {
-            _log.Info("TSStreamBufferPlayer9:failed to connect tsfilesource->mpeg2 demux:{0:X}", hr);
+            Log.Info("TSStreamBufferPlayer9:failed to connect tsfilesource->mpeg2 demux:{0:X}", hr);
             return false;
           }
           Marshal.ReleaseComObject(pinTsOut);
@@ -453,27 +453,27 @@ namespace MediaPortal.Player
         #endregion
 
           #region render demux audio/video pins
-          _log.Info("TSStreamBufferPlayer9:render audio output pin");
+          Log.Info("TSStreamBufferPlayer9:render audio output pin");
           hr = _graphBuilder.Render(_pinAudio);
           if (hr != 0)
           {
-            _log.Info("TSStreamBufferPlayer9:failed to render video output pin:{0:X}", hr);
+            Log.Info("TSStreamBufferPlayer9:failed to render video output pin:{0:X}", hr);
           }
 
           if (_isRadio == false)
           {
-            _log.Info("TSStreamBufferPlayer9:render video output pin");
+            Log.Info("TSStreamBufferPlayer9:render video output pin");
             hr = _graphBuilder.Render(_pinVideo);
             if (hr != 0)
             {
-              _log.Info("TSStreamBufferPlayer9:failed to render audio output pin:{0:X}", hr);
+              Log.Info("TSStreamBufferPlayer9:failed to render audio output pin:{0:X}", hr);
             }
           }
           #endregion
         }
         else
         {
-          _log.Info("TSStreamBufferPlayer9:render tsfilesource outputs");
+          Log.Info("TSStreamBufferPlayer9:render tsfilesource outputs");
           DirectShowUtil.RenderOutputPins(_graphBuilder, (IBaseFilter)_fileSource);
         }
 
@@ -485,28 +485,28 @@ namespace MediaPortal.Player
 
 #else
         _fileSource = (IBaseFilter)new TsReaderSource();
-        _log.Info("TSStreamBufferPlayer9:add tsreader to graph");
+        Log.Info("TSStreamBufferPlayer9:add tsreader to graph");
         int hr = _graphBuilder.AddFilter((IBaseFilter)_fileSource, "TsFileSource");
         if (hr != 0)
         {
-          _log.Error("TSStreamBufferPlayer9:Failed to add SBE to graph");
+          Log.Error("TSStreamBufferPlayer9:Failed to add SBE to graph");
           return false;
         }
 
         IFileSourceFilter interfaceFile = (IFileSourceFilter)_fileSource;
         if (interfaceFile == null)
         {
-          _log.Error("TSStreamBufferPlayer9:Failed to get IFileSourceFilter");
+          Log.Error("TSStreamBufferPlayer9:Failed to get IFileSourceFilter");
           return false;
         }
-        _log.Info("TSStreamBufferPlayer9: open file:{0}", filename);
+        Log.Info("TSStreamBufferPlayer9: open file:{0}", filename);
         hr = interfaceFile.Load(filename, null);
         if (hr != 0)
         {
-          _log.Error("TSStreamBufferPlayer9:Failed to open file:{0} :0x{1:x}", filename, hr);
+          Log.Error("TSStreamBufferPlayer9:Failed to open file:{0} :0x{1:x}", filename, hr);
           return false;
         }
-        _log.Info("TSStreamBufferPlayer9:render tsreader outputs");
+        Log.Info("TSStreamBufferPlayer9:render tsreader outputs");
         DirectShowUtil.RenderOutputPins(_graphBuilder, (IBaseFilter)_fileSource);
 #endif
 
@@ -515,7 +515,7 @@ namespace MediaPortal.Player
         _mediaSeeking = _graphBuilder as IMediaSeeking;
         if (_mediaSeeking == null)
         {
-          _log.Error("Unable to get IMediaSeeking interface#1");
+          Log.Error("Unable to get IMediaSeeking interface#1");
         }
 
         if (_audioRendererFilter != null)
@@ -536,7 +536,7 @@ namespace MediaPortal.Player
             }
 
             //_vmr9 is not supported, switch to overlay
-            _log.Info("TSStreamBufferPlayer9: switch to overlay");
+            Log.Info("TSStreamBufferPlayer9: switch to overlay");
             _mediaCtrl = null;
             Cleanup();
             return base.GetInterfaces(filename);
@@ -549,7 +549,7 @@ namespace MediaPortal.Player
       }
       catch (Exception ex)
       {
-        _log.Error("TSStreamBufferPlayer9:exception while creating DShow graph {0} {1}", ex.Message, ex.StackTrace);
+        Log.Error("TSStreamBufferPlayer9:exception while creating DShow graph {0} {1}", ex.Message, ex.StackTrace);
         return false;
       }
     }
@@ -567,17 +567,17 @@ namespace MediaPortal.Player
     {
       if (_graphBuilder == null)
       {
-        _log.Info("TSStreamBufferPlayer9:grapbuilder=null");
+        Log.Info("TSStreamBufferPlayer9:grapbuilder=null");
         return;
       }
 
       int hr;
-      _log.Info("TSStreamBufferPlayer9:cleanup DShow graph {0}", GUIGraphicsContext.InVmr9Render);
+      Log.Info("TSStreamBufferPlayer9:cleanup DShow graph {0}", GUIGraphicsContext.InVmr9Render);
       try
       {
         if (_vmr9 != null)
         {
-          _log.Info("TSStreamBufferPlayer9: vmr9 disable");
+          Log.Info("TSStreamBufferPlayer9: vmr9 disable");
           _vmr9.Enable(false);
         }
         int counter = 0;
@@ -611,7 +611,7 @@ namespace MediaPortal.Player
 
         if (_vmr9 != null)
         {
-          _log.Info("TSStreamBufferPlayer9: vmr9 dispose");
+          Log.Info("TSStreamBufferPlayer9: vmr9 dispose");
           _vmr9.Dispose();
           _vmr9 = null;
         }
@@ -680,19 +680,19 @@ namespace MediaPortal.Player
       }
       catch (Exception ex)
       {
-        _log.Error("TSStreamBufferPlayer9: Exception while cleaning DShow graph - {0} {1}", ex.Message, ex.StackTrace);
+        Log.Error("TSStreamBufferPlayer9: Exception while cleaning DShow graph - {0} {1}", ex.Message, ex.StackTrace);
       }
 
 
       //switch back to directx windowed mode
       if (!GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindow))
       {
-        _log.Info("TSStreamBufferPlayer9: Disabling DX9 exclusive mode");
+        Log.Info("TSStreamBufferPlayer9: Disabling DX9 exclusive mode");
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
         GUIWindowManager.SendMessage(msg);
       }
 
-      _log.Info("TSStreamBufferPlayer9: Cleanup done");
+      Log.Info("TSStreamBufferPlayer9: Cleanup done");
     }
 
     protected override void OnProcess()
@@ -710,7 +710,7 @@ namespace MediaPortal.Player
     public override void SeekAbsolute(double dTimeInSecs)
     {
 
-      _log.Info("SeekAbsolute:seekabs:{0} duration:{1}", dTimeInSecs, Duration);
+      Log.Info("SeekAbsolute:seekabs:{0} duration:{1}", dTimeInSecs, Duration);
       if (_state != PlayState.Init)
       {
         if (_mediaCtrl != null && _mediaSeeking != null)
@@ -720,7 +720,7 @@ namespace MediaPortal.Player
           if (dTimeInSecs > Duration)
             dTimeInSecs = Duration;
           dTimeInSecs = Math.Floor(dTimeInSecs);
-          //_log.Info("StreamBufferPlayer: seekabs: {0} duration:{1} current pos:{2}", dTimeInSecs,Duration, CurrentPosition);
+          //Log.Info("StreamBufferPlayer: seekabs: {0} duration:{1} current pos:{2}", dTimeInSecs,Duration, CurrentPosition);
           dTimeInSecs *= 10000000d;
           long pStop = 0;
           long lContentStart, lContentEnd;
@@ -734,11 +734,11 @@ namespace MediaPortal.Player
           int hr = _mediaSeeking.SetPositions(new DsLong(lTime), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
           if (hr != 0)
           {
-            _log.Error("seek failed->seek to 0 0x:{0:X}", hr);
+            Log.Error("seek failed->seek to 0 0x:{0:X}", hr);
           }
         }
         UpdateCurrentPosition();
-        _log.Info("StreamBufferPlayer: current pos:{0}", CurrentPosition);
+        Log.Info("StreamBufferPlayer: current pos:{0}", CurrentPosition);
 
       }
     }
@@ -783,24 +783,24 @@ namespace MediaPortal.Player
       IMPEG2StreamIdMap pStreamId;
       if (_isRadio == false)
       {
-        _log.Info("TSStreamBufferPlayer9: map pid 0xe0->video pin");
+        Log.Info("TSStreamBufferPlayer9: map pid 0xe0->video pin");
         pStreamId = (IMPEG2StreamIdMap)_pinVideo;
         for (int pid=0xe0; pid <= 0xef;pid++)
         {
           hr = pStreamId.MapStreamId(pid, MPEG2Program.ElementaryStream, 0, 0);
           if (hr != 0)
           {
-            _log.Error("TSStreamBufferPlayer9: failed to map pid 0xe0->video pin");
+            Log.Error("TSStreamBufferPlayer9: failed to map pid 0xe0->video pin");
             return ;
           }
         }
       }
-      _log.Info("TSStreamBufferPlayer9: map audio 0xc0->audio pin");
+      Log.Info("TSStreamBufferPlayer9: map audio 0xc0->audio pin");
       pStreamId = (IMPEG2StreamIdMap)_pinAudio;
       hr = pStreamId.MapStreamId(0xc0, MPEG2Program.ElementaryStream, 0, 0);
       if (hr != 0)
       {
-        _log.Error("TSStreamBufferPlayer9: failed  to map pid 0xc0->audio pin");
+        Log.Error("TSStreamBufferPlayer9: failed  to map pid 0xc0->audio pin");
         return ;
       }
 

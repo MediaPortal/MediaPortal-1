@@ -69,14 +69,14 @@ namespace MediaPortal.GUI.TV
     #region Serialisation
     void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
       }
     }
 
     void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
       }
     }
@@ -192,7 +192,7 @@ namespace MediaPortal.GUI.TV
       {
         bmpTeletextPage = TeletextGrabber.TeletextCache.GetPage(acutalPageNumber, actualSubPageNumber);
         Redraw();
-        _log.Info("dvb-teletext: select page {0} / subpage {1}", Convert.ToString(acutalPageNumber), Convert.ToString(actualSubPageNumber));
+        Log.Info("dvb-teletext: select page {0} / subpage {1}", Convert.ToString(acutalPageNumber), Convert.ToString(actualSubPageNumber));
       }
     }
 
@@ -249,7 +249,7 @@ namespace MediaPortal.GUI.TV
           actualSubPageNumber = 0;
           bmpTeletextPage = TeletextGrabber.TeletextCache.GetPage(acutalPageNumber, actualSubPageNumber);
           Redraw();
-          _log.Info("dvb-teletext: select page {0} / subpage {1}", Convert.ToString(acutalPageNumber), Convert.ToString(actualSubPageNumber));
+          Log.Info("dvb-teletext: select page {0} / subpage {1}", Convert.ToString(acutalPageNumber), Convert.ToString(actualSubPageNumber));
           inputLine = "";
           return;
         }
@@ -267,7 +267,7 @@ namespace MediaPortal.GUI.TV
           {
             bmpTeletextPage = TeletextGrabber.TeletextCache.GetPage(acutalPageNumber, actualSubPageNumber);
             Redraw();
-            _log.Info("dvb-teletext: select page {0} / subpage {1}", Convert.ToString(acutalPageNumber), Convert.ToString(actualSubPageNumber));
+            Log.Info("dvb-teletext: select page {0} / subpage {1}", Convert.ToString(acutalPageNumber), Convert.ToString(actualSubPageNumber));
             inputLine = String.Empty;
             return;
           }
@@ -282,7 +282,7 @@ namespace MediaPortal.GUI.TV
           {
             bmpTeletextPage = TeletextGrabber.TeletextCache.GetPage(acutalPageNumber, actualSubPageNumber);
             Redraw();
-            _log.Info("dvb-teletext: select page {0} / subpage {1}", Convert.ToString(acutalPageNumber), Convert.ToString(actualSubPageNumber));
+            Log.Info("dvb-teletext: select page {0} / subpage {1}", Convert.ToString(acutalPageNumber), Convert.ToString(actualSubPageNumber));
             inputLine = String.Empty;
             return;
           }
@@ -313,7 +313,7 @@ namespace MediaPortal.GUI.TV
             bmpTeletextPage = TeletextGrabber.TeletextCache.GetPage(acutalPageNumber, actualSubPageNumber);
             Redraw();
           }
-          _log.Info("dvb-teletext: select page {0} / subpage {1}", Convert.ToString(acutalPageNumber), Convert.ToString(actualSubPageNumber));
+          Log.Info("dvb-teletext: select page {0} / subpage {1}", Convert.ToString(acutalPageNumber), Convert.ToString(actualSubPageNumber));
           inputLine = String.Empty;
 
         }
@@ -356,7 +356,7 @@ namespace MediaPortal.GUI.TV
       {
         if (actualSubPageNumber < 100) actualSubPageNumber = 100;
         if (actualSubPageNumber > 899) actualSubPageNumber = 899;
-        _log.Info("dvb-teletext page updated. {0:X}/{1}", acutalPageNumber, actualSubPageNumber);
+        Log.Info("dvb-teletext page updated. {0:X}/{1}", acutalPageNumber, actualSubPageNumber);
         int NumberOfSubpages = TeletextGrabber.TeletextCache.NumberOfSubpages(acutalPageNumber);
         if (NumberOfSubpages > actualSubPageNumber)
         {
@@ -373,7 +373,7 @@ namespace MediaPortal.GUI.TV
 
     void Redraw()
     {
-      _log.Info("dvb-teletext redraw()");
+      Log.Info("dvb-teletext redraw()");
       try
       {
 
@@ -414,7 +414,7 @@ namespace MediaPortal.GUI.TV
       }
       catch (Exception ex)
       {
-        _log.Error(ex);
+        Log.Error(ex);
       }
     }
 

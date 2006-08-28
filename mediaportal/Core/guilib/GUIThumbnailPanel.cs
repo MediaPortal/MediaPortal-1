@@ -2269,7 +2269,7 @@ namespace MediaPortal.GUI.Library
 
       catch (Exception ex)
       {
-        _log.Info("GUIListControl.MoveItemDown caused an exception: {0}", ex.Message);
+        Log.Info("GUIListControl.MoveItemDown caused an exception: {0}", ex.Message);
         selectedItemIndex = -1;
       }
 
@@ -2310,7 +2310,7 @@ namespace MediaPortal.GUI.Library
 
       catch (Exception ex)
       {
-        _log.Info("GUIListControl.MoveItemUp caused an exception: {0}", ex.Message);
+        Log.Info("GUIListControl.MoveItemUp caused an exception: {0}", ex.Message);
         selectedItemIndex = -1;
       }
 

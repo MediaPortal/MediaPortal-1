@@ -32,8 +32,8 @@ using System.Collections.Generic;
 using SQLite.NET;
 using MediaPortal.GUI.View;
 using MediaPortal.GUI.Library;
+using MediaPortal.Util;
 using MediaPortal.Music.Database;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.GUI.Music
 {
@@ -48,13 +48,10 @@ namespace MediaPortal.GUI.Music
         int currentLevel = 0;
         MusicDatabase database;
         List<ViewDefinition> views = new List<ViewDefinition>();
-        static IConfig _config;
 
         public MusicViewHandler()
         {
-            ServiceProvider services = GlobalServiceProvider.Instance;
-            _config = services.Get<IConfig>();
-            if (!System.IO.File.Exists(_config.Get(Config.Options.ConfigPath) + "musicviews.xml"))
+            if (!System.IO.File.Exists(Config.Get(Config.Dir.Config) + "musicviews.xml"))
             {
                 //genres
                 FilterDefinition filter1, filter2, filter3;
@@ -120,7 +117,7 @@ namespace MediaPortal.GUI.Music
                 listViews.Add(viewFavorites);
                 listViews.Add(viewAllSongs);
 
-                using (FileStream fileStream = new FileStream(_config.Get(Config.Options.ConfigPath) + "musicViews.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
+                using (FileStream fileStream = new FileStream(Config.Get(Config.Dir.Config) + "musicViews.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
                 {
                     ArrayList list = new ArrayList();
                     foreach (ViewDefinition view in listViews)
@@ -132,7 +129,7 @@ namespace MediaPortal.GUI.Music
             }
 
             database = new MusicDatabase();
-            using (FileStream fileStream = new FileStream(_config.Get(Config.Options.ConfigPath) + "musicViews.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            using (FileStream fileStream = new FileStream(Config.Get(Config.Dir.Config) + "musicViews.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 try
                 {

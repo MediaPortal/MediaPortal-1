@@ -38,7 +38,6 @@ using MediaPortal.Player;
 using MediaPortal.Dialogs;
 using MediaPortal.TV.Teletext;
 using MediaPortal.TV.DiskSpace;
-using MediaPortal.Utils.Services;
 #endregion
 
 namespace MediaPortal.TV.Recording
@@ -71,9 +70,7 @@ namespace MediaPortal.TV.Recording
         ErrorMessage = GUILocalizeStrings.Get(755);// "No tuner is viewing tv";
         return;
       }
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      ILog log = services.Get<ILog>();
-      log.Info("Command:Select audio stream with pid: 0x{0:X}",AudioPid);
+      Log.WriteFile(Log.LogType.Recorder, "Command:Select audio stream with pid: 0x{0:X}", AudioPid);
       TVCaptureDevice device = handler.TVCards[handler.CurrentCardIndex];
       device.SetAudioLanguage(AudioPid);
       Succeeded = true;

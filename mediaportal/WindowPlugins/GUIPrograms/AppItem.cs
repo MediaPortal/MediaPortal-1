@@ -31,7 +31,6 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using WindowPlugins.GUIPrograms;
 using Programs.Utils;
-using MediaPortal.Utils.Services;
 
 namespace ProgramsDatabase
 {
@@ -90,7 +89,6 @@ namespace ProgramsDatabase
 
     public bool linksAreLoaded = false;
     protected FilelinkList fileLinks = null;
-    protected ILog _log;
 
     // event: read new file
     public delegate void RefreshInfoEventHandler(string curLine);
@@ -109,8 +107,6 @@ namespace ProgramsDatabase
 
     public AppItem(SQLiteClient initSqlDB)
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
 
       // constructor: save SQLiteDB object 
       sqlDB = initSqlDB;
@@ -220,7 +216,7 @@ namespace ProgramsDatabase
       }
       else
       {
-        _log.Info("error in myPrograms: AppItem.LaunchGenericPlayer: unknown command: {0}", command);
+        Log.Info("error in myPrograms: AppItem.LaunchGenericPlayer: unknown command: {0}", command);
         return;
       }
       if (MediaPortal.Util.Utils.IsVideo(filename))
@@ -356,7 +352,7 @@ namespace ProgramsDatabase
                                            ex.Message,
                                            ex.Source,
                                            ex.StackTrace);
-        _log.Info(ErrorString);
+        Log.Info(ErrorString);
         this.LaunchErrorMsg = ErrorString;
       }
       finally
@@ -424,7 +420,7 @@ namespace ProgramsDatabase
 
         if (errors.Trim() != "")
         {
-          _log.Info("AppItem PrePost errors: {0}", errors);
+          Log.Info("AppItem PrePost errors: {0}", errors);
         }
       }
 
@@ -905,7 +901,7 @@ namespace ProgramsDatabase
         }
         catch (SQLiteException ex)
         {
-          _log.Info("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Log.Info("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         }
       }
     }
@@ -933,8 +929,8 @@ namespace ProgramsDatabase
         }
         catch (SQLiteException ex)
         {
-          _log.Info("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
-          _log.Info("sql \n{0}", sql);
+          Log.Info("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Log.Info("sql \n{0}", sql);
         }
       }
     }
@@ -951,7 +947,7 @@ namespace ProgramsDatabase
         }
         catch (SQLiteException ex)
         {
-          _log.Info("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Log.Info("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         }
       }
     }
@@ -988,7 +984,7 @@ namespace ProgramsDatabase
         }
         catch (SQLiteException ex)
         {
-          _log.Info("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Log.Info("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         }
       }
     }
@@ -1003,7 +999,7 @@ namespace ProgramsDatabase
         }
         catch (SQLiteException ex)
         {
-          _log.Info("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Log.Info("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         }
       }
     }
@@ -1084,7 +1080,7 @@ namespace ProgramsDatabase
       }
       catch (SQLiteException ex)
       {
-        _log.Info("programdatabase exception (AppItem.FixFileLinks) err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Info("programdatabase exception (AppItem.FixFileLinks) err:{0} stack:{1}", ex.Message, ex.StackTrace);
       }
 
     }

@@ -31,8 +31,8 @@ using System.Drawing;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using MediaPortal.Util;
+using MediaPortal.GUI.Library;
 using System.Runtime.InteropServices;
-using MediaPortal.Utils.Services;
 
 #pragma warning disable 108
 
@@ -57,7 +57,6 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxGeneralSettings;
     private System.Windows.Forms.CheckedListBox settingsCheckedListBox;
     private System.ComponentModel.IContainer components = null;
-    protected ILog _log;
 
     public General()
       : this("General")
@@ -67,8 +66,6 @@ namespace MediaPortal.Configuration.Sections
     public General(string name)
       : base(name)
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
 
       // This call is required by the Windows Form Designer.
       InitializeComponent();
@@ -122,7 +119,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         //
         // Load general settings
@@ -143,7 +140,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         //
         // Load general settings
@@ -196,9 +193,9 @@ namespace MediaPortal.Configuration.Sections
       }
       catch (Exception ex)
       {
-        _log.Info("Exception: {0}", ex.Message);
-        _log.Info("Exception: {0}", ex);
-        _log.Info("Exception: {0}", ex.StackTrace);
+        Log.Info("Exception: {0}", ex.Message);
+        Log.Info("Exception: {0}", ex);
+        Log.Info("Exception: {0}", ex.StackTrace);
       }
     }
 

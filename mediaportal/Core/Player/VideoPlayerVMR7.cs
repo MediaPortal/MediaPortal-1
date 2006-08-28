@@ -34,7 +34,6 @@ using MediaPortal.Util;
 using MediaPortal.GUI.Library;
 using DirectShowLib;
 using DShowNET.Helper;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Player
 {
@@ -172,14 +171,9 @@ namespace MediaPortal.Player
     protected DateTime updateTimer;
     protected FilterStreams FStreams = null;
     VMR7Util vmr7 = null;
-    protected ILog _log;
-    protected IConfig _config;
 
     public VideoPlayerVMR7()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
     }
 
     public override bool Play(string strFile)
@@ -195,7 +189,7 @@ namespace MediaPortal.Player
 
       VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
       _updateNeeded = true;
-      _log.Info("VideoPlayer:play {0}", strFile);
+      Log.Info("VideoPlayer:play {0}", strFile);
       //lock ( typeof(VideoPlayerVMR7) )
       {
         GC.Collect();
@@ -269,7 +263,7 @@ namespace MediaPortal.Player
         _updateNeeded = true;
         SetVideoWindow();
         mediaPos.get_Duration(out m_dDuration);
-        _log.Info("VideoPlayer:Duration:{0}", m_dDuration);
+        Log.Info("VideoPlayer:Duration:{0}", m_dDuration);
 
         AnalyseStreams();
 
@@ -345,14 +339,14 @@ namespace MediaPortal.Player
         rDest.Y += (int)y;
 
 
-        _log.Info("overlay: video WxH  : {0}x{1}", m_iVideoWidth, m_iVideoHeight);
-        _log.Info("overlay: video AR   : {0}:{1}", aspectX, aspectY);
-        _log.Info("overlay: screen WxH : {0}x{1}", nw, nh);
-        _log.Info("overlay: AR type    : {0}", GUIGraphicsContext.ARType);
-        _log.Info("overlay: PixelRatio : {0}", GUIGraphicsContext.PixelRatio);
-        _log.Info("overlay: src        : ({0},{1})-({2},{3})",
+        Log.Info("overlay: video WxH  : {0}x{1}", m_iVideoWidth, m_iVideoHeight);
+        Log.Info("overlay: video AR   : {0}:{1}", aspectX, aspectY);
+        Log.Info("overlay: screen WxH : {0}x{1}", nw, nh);
+        Log.Info("overlay: AR type    : {0}", GUIGraphicsContext.ARType);
+        Log.Info("overlay: PixelRatio : {0}", GUIGraphicsContext.PixelRatio);
+        Log.Info("overlay: src        : ({0},{1})-({2},{3})",
           rSource.X, rSource.Y, rSource.X + rSource.Width, rSource.Y + rSource.Height);
-        _log.Info("overlay: dst        : ({0},{1})-({2},{3})",
+        Log.Info("overlay: dst        : ({0},{1})-({2},{3})",
           rDest.X, rDest.Y, rDest.X + rDest.Width, rDest.Y + rDest.Height);
 
 
@@ -621,7 +615,7 @@ namespace MediaPortal.Player
     {
       if (m_state != PlayState.Init)
       {
-        _log.Info("VideoPlayer:ended {0}", m_strCurrentFile);
+        Log.Info("VideoPlayer:ended {0}", m_strCurrentFile);
         m_strCurrentFile = "";
         CloseInterfaces();
         m_state = PlayState.Init;
@@ -692,7 +686,7 @@ namespace MediaPortal.Player
             }
           }
         }
-        _log.Info("VideoPlayer:SetRate to:{0}", m_speedRate);
+        Log.Info("VideoPlayer:SetRate to:{0}", m_speedRate);
       }
     }
 
@@ -761,9 +755,9 @@ namespace MediaPortal.Player
           if (dTime < 0.0d) dTime = 0.0d;
           if (dTime < Duration)
           {
-            _log.Info("seekabs:{0}", dTime);
+            Log.Info("seekabs:{0}", dTime);
             mediaPos.put_CurrentPosition(dTime);
-            _log.Info("seekabs:{0} done", dTime);
+            Log.Info("seekabs:{0} done", dTime);
           }
         }
       }
@@ -836,7 +830,7 @@ namespace MediaPortal.Player
         string strAudiorenderer = "";
         bool bAddFFDshow = false;
         string defaultLanguage;
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         {
           bAddFFDshow = xmlreader.GetValueAsBool("movieplayer", "ffdshow", false);
           strVideoCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2videocodec", "");
@@ -873,7 +867,7 @@ namespace MediaPortal.Player
         vobSub = filter as IDirectVobSub;
         if (vobSub != null)
         {
-          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
           {
             string strTmp = "";
             string strFont = xmlreader.GetValueAsString("subtitles", "fontface", "Arial");
@@ -931,7 +925,7 @@ namespace MediaPortal.Player
       }
       catch (Exception ex)
       {
-        _log.Error("VideoPlayer:exception while creating DShow graph {0} {1}", ex.Message, ex.StackTrace);
+        Log.Error("VideoPlayer:exception while creating DShow graph {0} {1}", ex.Message, ex.StackTrace);
         return false;
       }
     }
@@ -942,7 +936,7 @@ namespace MediaPortal.Player
     {
       if (graphBuilder == null) return;
       int hr;
-      _log.Info("VideoPlayer:cleanup DShow graph");
+      Log.Info("VideoPlayer:cleanup DShow graph");
       try
       {
         if (videoWin != null) videoWin.put_Visible(OABool.False);
@@ -997,7 +991,7 @@ namespace MediaPortal.Player
         // switch back to directx windowed mode
         if (!GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindow))
         {
-          _log.Info("VideoPlayerVMR7: Disabling DX9 exclusive mode");
+          Log.Info("VideoPlayerVMR7: Disabling DX9 exclusive mode");
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
           GUIWindowManager.SendMessage(msg);
         }
@@ -1005,7 +999,7 @@ namespace MediaPortal.Player
       }
       catch (Exception ex)
       {
-        _log.Error("VideoPlayerVMR7: Exception while cleanuping DShow graph - {0} {1}", ex.Message, ex.StackTrace);
+        Log.Error("VideoPlayerVMR7: Exception while cleanuping DShow graph - {0} {1}", ex.Message, ex.StackTrace);
       }
     }
 
@@ -1056,7 +1050,7 @@ namespace MediaPortal.Player
       mediaSeek.GetAvailable(out earliest, out latest);
       mediaSeek.GetPositions(out current, out stop);
 
-      // _log.Info("earliest:{0} latest:{1} current:{2} stop:{3} speed:{4}, total:{5}",
+      // Log.Info("earliest:{0} latest:{1} current:{2} stop:{3} speed:{4}, total:{5}",
       //         earliest/10000000,latest/10000000,current/10000000,stop/10000000,m_speedRate, (latest-earliest)/10000000);
 
       //earliest += + 30 * 10000000;
@@ -1076,7 +1070,7 @@ namespace MediaPortal.Player
       {
         m_speedRate = 10000;
         rewind = earliest;
-        //_log.Info(" seek back:{0}",rewind/10000000);
+        //Log.Info(" seek back:{0}",rewind/10000000);
         hr = mediaSeek.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
         mediaCtrl.Run();
         return;
@@ -1087,14 +1081,14 @@ namespace MediaPortal.Player
       {
         m_speedRate = 10000;
         rewind = latest - 100000;
-        //_log.Info(" seek ff:{0}",rewind/10000000);
+        //Log.Info(" seek ff:{0}",rewind/10000000);
         hr = mediaSeek.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
         mediaCtrl.Run();
         return;
       }
 
       //seek to new moment in time
-      //_log.Info(" seek :{0}",rewind/10000000);
+      //Log.Info(" seek :{0}",rewind/10000000);
       hr = mediaSeek.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
       mediaCtrl.Pause();
     }

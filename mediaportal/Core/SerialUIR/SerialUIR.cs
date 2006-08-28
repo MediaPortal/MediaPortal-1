@@ -28,7 +28,7 @@ using System.Collections;
 using JH.CommBase;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
-using MediaPortal.Utils.Services;
+using MediaPortal.Util;
 
 namespace MediaPortal.SerialIR
 {
@@ -68,9 +68,7 @@ namespace MediaPortal.SerialIR
 		/// </summary>
 		private SerialUIR()
 		{
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _config = services.Get<IConfig>();
-      remotefile = _config.Get(Config.Options.ConfigPath) + "remotevalues.xml";
+      remotefile = Config.Get(Config.Dir.Config) + "remotevalues.xml";
 		}
 
 		public delegate void OnRemoteCommand(object command);
@@ -85,7 +83,6 @@ namespace MediaPortal.SerialIR
 		private string remotefile; 
 
 		static SerialUIR instance = null;
-    static IConfig _config;
 
 		/// <summary>
 		/// Event fired when we start learning a remote command

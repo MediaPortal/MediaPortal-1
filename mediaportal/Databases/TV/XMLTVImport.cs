@@ -30,7 +30,6 @@ using System.Threading;
 //using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.TV.Database
 {
@@ -86,8 +85,6 @@ namespace MediaPortal.TV.Database
     string m_strErrorMessage = "";
     Stats m_stats = new Stats();
     int _backgroundDelay = 0;
-    protected ILog _log;
-    protected IConfig _config;
 
     static bool m_bImport = false;
     public XMLTVImport()
@@ -97,9 +94,6 @@ namespace MediaPortal.TV.Database
 
     public XMLTVImport(int backgroundDelay)
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
 
       _backgroundDelay = backgroundDelay;
     }
@@ -125,7 +119,7 @@ namespace MediaPortal.TV.Database
       TVDatabase.SupressEvents = true;
       bool bUseTimeZone = false;
       int iTimeZoneCorrection = 0;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         bUseTimeZone = xmlreader.GetValueAsBool("xmltv", "usetimezone", true);
         int hours = xmlreader.GetValueAsInt("xmltv", "timezonecorrectionhours", 0);
@@ -143,7 +137,7 @@ namespace MediaPortal.TV.Database
       ArrayList Programs = new ArrayList();
       try
       {
-        _log.Info("xmltv import {0}", strFileName);
+        Log.Info("xmltv import {0}", strFileName);
 
         //
         // Make sure the file exists before we try to do any processing
@@ -155,7 +149,7 @@ namespace MediaPortal.TV.Database
           if (xml.DocumentElement == null)
           {
             m_strErrorMessage = GUILocalizeStrings.Get(767); //"Invalid XMLTV file"
-            _log.Error("  {0} is not a valid xml file");
+            Log.Error("  {0} is not a valid xml file");
             xml = null;
             m_bImport = false;
             TVDatabase.SupressEvents = false;
@@ -165,7 +159,7 @@ namespace MediaPortal.TV.Database
           if (channelList == null || channelList.Count == 0)
           {
             m_strErrorMessage = GUILocalizeStrings.Get(768); // "No channels found"
-            _log.Error("  {0} does not contain any channels");
+            Log.Error("  {0} does not contain any channels");
             xml = null;
             m_bImport = false;
             TVDatabase.SupressEvents = false;
@@ -244,7 +238,7 @@ namespace MediaPortal.TV.Database
                   newProgChan.XMLId = chan.XMLId;
                   Programs.Add(newProgChan);
 
-                  //_log.Info("  channel#{0} xmlid:{1} name:{2} dbsid:{3}",iChannel,chan.XMLId,chan.Name,chan.ID);
+                  //Log.Info("  channel#{0} xmlid:{1} name:{2} dbsid:{3}",iChannel,chan.XMLId,chan.Name,chan.ID);
                   tvchannels.Add(chan);
                   if (nodeIcon != null)
                   {
@@ -254,7 +248,7 @@ namespace MediaPortal.TV.Database
                       if (nodeSrc != null)
                       {
                         string strURL = htmlUtil.ConvertHTMLToAnsi(nodeSrc.InnerText);
-                        string strLogoPng = MediaPortal.Util.Utils.GetCoverArtName(_config.Get(Config.Options.ThumbsPath) + @"tv\logos", chan.Name);
+                        string strLogoPng = MediaPortal.Util.Utils.GetCoverArtName(Config.Get(Config.Dir.Thumbs) + @"tv\logos", chan.Name);
                         if (!System.IO.File.Exists(strLogoPng))
                         {
                           MediaPortal.Util.Utils.DownLoadImage(strURL, strLogoPng, System.Drawing.Imaging.ImageFormat.Png);
@@ -267,17 +261,17 @@ namespace MediaPortal.TV.Database
                 }
                 else
                 {
-                  _log.Error("  channel#{0} doesnt contain an displayname", iChannel);
+                  Log.Error("  channel#{0} doesnt contain an displayname", iChannel);
                 }
               }
               else
               {
-                _log.Error("  channel#{0} doesnt contain an id", iChannel);
+                Log.Error("  channel#{0} doesnt contain an id", iChannel);
               }
             }
             else
             {
-              _log.Error("  channel#{0} doesnt contain an id", iChannel);
+              Log.Error("  channel#{0} doesnt contain an id", iChannel);
             }
             iChannel++;
           }
@@ -293,8 +287,8 @@ namespace MediaPortal.TV.Database
           bool bIsDayLightSavings = System.TimeZone.CurrentTimeZone.IsDaylightSavingTime(DateTime.Now);
           if (bIsDayLightSavings) utcOff = utcOff.Add(new TimeSpan(0, -1, 0, 0, 0));
 
-          _log.Info("Current timezone:{0}", System.TimeZone.CurrentTimeZone.StandardName);
-          _log.Info("Offset with UTC {0:00}:{1:00} DaylightSavings:{2}", utcOff.Hours, utcOff.Minutes, bIsDayLightSavings.ToString());
+          Log.Info("Current timezone:{0}", System.TimeZone.CurrentTimeZone.StandardName);
+          Log.Info("Offset with UTC {0:00}:{1:00} DaylightSavings:{2}", utcOff.Hours, utcOff.Minutes, bIsDayLightSavings.ToString());
           XmlNodeList programsList = xml.DocumentElement.SelectNodes("/tv/programme");
 
           foreach (XmlNode programNode in programsList)
@@ -440,7 +434,7 @@ namespace MediaPortal.TV.Database
                   }
                   if (iChannelId < 0)
                   {
-                    _log.Error("Unknown TV channel xmlid:{0}", nodeChannel.InnerText);
+                    Log.Error("Unknown TV channel xmlid:{0}", nodeChannel.InnerText);
                     continue;
                   }
 
@@ -598,7 +592,7 @@ namespace MediaPortal.TV.Database
               if (prog.EndTime > dtStartDate)
               {
                 Thread.Sleep(_backgroundDelay);
-                _log.Info("epg-import :{0,-20} {1} {2}-{3} {4}",
+                Log.WriteFile(Log.LogType.EPG, "epg-import :{0,-20} {1} {2}-{3} {4}",
                           prog.Channel,
                           prog.StartTime.ToShortDateString(),
                           prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
@@ -631,14 +625,14 @@ namespace MediaPortal.TV.Database
         {
           m_strErrorMessage = GUILocalizeStrings.Get(770); // "No xmltv file found"
           m_stats.Status = m_strErrorMessage;
-          _log.Info("xmltv data file was not found");
+          Log.Info("xmltv data file was not found");
         }
       }
       catch (Exception ex)
       {
         m_strErrorMessage = String.Format("Invalid XML file:{0}", ex.Message);
         m_stats.Status = String.Format("invalid XML file:{0}", ex.Message);
-        _log.Error("XML tv import error loading {0} err:{1} ", strFileName, ex.Message);
+        Log.Error("XML tv import error loading {0} err:{1} ", strFileName, ex.Message);
         TVDatabase.RollbackTransaction();
       }
       Programs.Clear();
@@ -703,7 +697,7 @@ namespace MediaPortal.TV.Database
         day < 0 || day > 31 ||
         month < 0 || month > 12)
       {
-        _log.Error("epg-import:tvguide.xml contains invalid date/time :{0} converted it to:{1}",
+        Log.WriteFile(Log.LogType.EPG, true, "epg-import:tvguide.xml contains invalid date/time :{0} converted it to:{1}",
                       orgDateTime, newDateTime);
       }
 
@@ -783,7 +777,7 @@ namespace MediaPortal.TV.Database
       }
       catch (Exception ex)
       {
-        _log.Error("XML tv import error:{1} ", ex.Message);
+        Log.Error("XML tv import error:{1} ", ex.Message);
       }
     }
 

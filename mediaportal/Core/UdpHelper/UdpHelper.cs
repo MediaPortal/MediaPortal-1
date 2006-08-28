@@ -29,7 +29,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Net.NetworkInformation;
 using System.Text;
-using MediaPortal.Utils.Services;
+using MediaPortal.GUI.Library;
 
 namespace UdpHelper
 {
@@ -40,7 +40,6 @@ namespace UdpHelper
 
     Socket socket;
     IPAddress hostIP = IPAddress.Parse("127.0.0.1");
-    protected ILog _log;
 
     public delegate void ReceiveEventHandler(string strReceive);
     public event ReceiveEventHandler ReceiveEvent;
@@ -63,8 +62,6 @@ namespace UdpHelper
 
     public Connection(bool log)
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
 
       logVerbose = log;
     }
@@ -96,7 +93,7 @@ namespace UdpHelper
       }
       catch (SocketException se)
       {
-        _log.Info("UDPHelper: Send port {0}: {1} - {2}", udpPort, se.ErrorCode, se.Message);
+        Log.Info("UDPHelper: Send port {0}: {1} - {2}", udpPort, se.ErrorCode, se.Message);
         return false;
       }
     }
@@ -108,7 +105,7 @@ namespace UdpHelper
         socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
       try
       {
-        if (logVerbose) _log.Info("UDPHelper: Starting listener on port {0}", udpPort);
+        if (logVerbose) Log.Info("UDPHelper: Starting listener on port {0}", udpPort);
 
         // Port already used?
         IPGlobalProperties properties = IPGlobalProperties.GetIPGlobalProperties();
@@ -116,7 +113,7 @@ namespace UdpHelper
         foreach (TcpConnectionInformation c in connections)
           if (c.RemoteEndPoint.Port == udpPort)
           {
-            _log.Info("UDPHelper: UDP port {0} is already in use", udpPort);
+            Log.Info("UDPHelper: UDP port {0} is already in use", udpPort);
             return false;
           }
         IPAddress hostIP = IPAddress.Parse("127.0.0.1");
@@ -126,12 +123,12 @@ namespace UdpHelper
         state.EndPoint = endPoint;
         state.UdpClient = udpClient;
         udpClient.BeginReceive(new AsyncCallback(ReceiveCallback), state);
-        if (logVerbose) _log.Info("UDPHelper: Listening for messages on port {0}", udpPort);
+        if (logVerbose) Log.Info("UDPHelper: Listening for messages on port {0}", udpPort);
         return true;
       }
       catch (SocketException se)
       {
-        _log.Info("UDPHelper: Start port {0}: {1} - {2}", udpPort, se.ErrorCode, se.Message);
+        Log.Info("UDPHelper: Start port {0}: {1} - {2}", udpPort, se.ErrorCode, se.Message);
         return false;
       }
     }

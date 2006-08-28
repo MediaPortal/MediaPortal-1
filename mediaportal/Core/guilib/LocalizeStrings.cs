@@ -26,7 +26,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
-using MediaPortal.Utils.Services;
+using MediaPortal.Util;
 
 namespace MediaPortal.GUI.Library
 {
@@ -38,8 +38,6 @@ namespace MediaPortal.GUI.Library
   public class GUILocalizeStrings
   {
     private static string[] m_Languages = null;
-    protected static ILog _log;
-    protected static IConfig _config;
     static string LanguageDirectory; 
     static System.Collections.Generic.Dictionary<int, string> m_mapStrings = new System.Collections.Generic.Dictionary<int, string>();
 
@@ -72,7 +70,7 @@ namespace MediaPortal.GUI.Library
     {
       bool isPrefixEnabled = true;
 
-      using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         isPrefixEnabled = reader.GetValueAsBool("general", "myprefix", true);
 
       if (strFileName == null) return false;
@@ -132,7 +130,7 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception ex)
       {
-        _log.Info("exception loading language {0} err:{1} stack:{2}", strFileName, ex.Message, ex.StackTrace);
+        Log.Info("exception loading language {0} err:{1} stack:{2}", strFileName, ex.Message, ex.StackTrace);
         return false;
       }
     }
@@ -151,16 +149,13 @@ namespace MediaPortal.GUI.Library
       if (strFileName == String.Empty) return false;
       System.Collections.Generic.Dictionary<int, string> mapEnglish = new System.Collections.Generic.Dictionary<int, string>();
       m_mapStrings.Clear();
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
-      LanguageDirectory = _config.Get(Config.Options.LanguagePath);
+      LanguageDirectory = Config.Get(Config.Dir.Language);
 
-      _log.Info("  load localized strings from:{0}", strFileName);
+      Log.Info("  load localized strings from:{0}", strFileName);
       // load the text for the current language
       LoadMap(strFileName, ref m_mapStrings, true);
       //load the text for the english language
-      LoadMap(_config.Get(Config.Options.LanguagePath) + @"English\strings.xml", ref mapEnglish, false);
+      LoadMap(Config.Get(Config.Dir.Language) + @"English\strings.xml", ref mapEnglish, false);
 
       // check if current language contains an entry for each textline found
       // in the english version
@@ -173,7 +168,7 @@ namespace MediaPortal.GUI.Library
           //if current language does not contain a translation for this text
           //then use the english variant
           m_mapStrings[key] = mapEnglish[key];
-          _log.Info("language file:{0} is missing entry for id:{1} text:{2}", strFileName, key, (string)mapEnglish[key]);
+          Log.Info("language file:{0} is missing entry for id:{1} text:{2}", strFileName, key, (string)mapEnglish[key]);
         }
       }
       mapEnglish = null;
@@ -203,9 +198,9 @@ namespace MediaPortal.GUI.Library
         return String.Format(translation, parameters);
       }
       catch(System.FormatException e) {
-        _log.Error("Error formatting translation with id {0}", dwCode);
-        _log.Error("Unformatted translation: {0}", translation);
-        _log.Error(e);
+        Log.Error("Error formatting translation with id {0}", dwCode);
+        Log.Error("Unformatted translation: {0}", translation);
+        Log.Error(e);
         return translation;
       }
     }

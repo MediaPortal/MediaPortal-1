@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Data;
 using System.Data.SqlClient;
-using MediaPortal.Utils.Services;
 using MediaPortal.Util;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.Pictures;
@@ -20,17 +19,12 @@ namespace MediaPortal.Picture.Database
   public class PictureDatabaseADO : IPictureDatabase, IDisposable
   {
     SqlConnection _connection;
-    protected ILog _log;
-    protected IConfig _config;
 
     public PictureDatabaseADO()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
 
       string connectionString;
-      using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "mediaportal.xml"))
+      using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "mediaportal.xml"))
       {
         connectionString = reader.GetValueAsString("database", "connectionstring", SqlServerUtility.DefaultConnectionString);
       }
@@ -107,7 +101,7 @@ namespace MediaPortal.Picture.Database
         }
         catch (Exception ex)
         {
-          _log.Error("MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Log.Error("MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         }
         return -1;
       }
@@ -125,7 +119,7 @@ namespace MediaPortal.Picture.Database
       }
       catch (Exception ex)
       {
-        _log.Error("MediaPortal.Picture.Database exception deleting picture err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("MediaPortal.Picture.Database exception deleting picture err:{0} stack:{1}", ex.Message, ex.StackTrace);
 
       }
     }
@@ -165,7 +159,7 @@ namespace MediaPortal.Picture.Database
       }
       catch (Exception ex)
       {
-        _log.Error("MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
 
       }
       return 0;
@@ -189,7 +183,7 @@ namespace MediaPortal.Picture.Database
       }
       catch (Exception ex)
       {
-        _log.Error("MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
 
       }
     }
@@ -237,7 +231,7 @@ namespace MediaPortal.Picture.Database
       }
       catch (Exception ex)
       {
-        _log.Error("MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
       }
       return DateTime.MinValue;
     }

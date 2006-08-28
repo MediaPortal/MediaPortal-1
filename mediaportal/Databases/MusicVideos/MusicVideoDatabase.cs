@@ -33,7 +33,7 @@ using SQLite.NET;
 using System.Xml;
 using System.IO;
 using MediaPortal.MusicVideos;
-using MediaPortal.Utils.Services;
+using MediaPortal.Util;
 
 namespace MediaPortal.MusicVideos.Database
 {
@@ -46,14 +46,9 @@ namespace MediaPortal.MusicVideos.Database
     private SQLiteClient m_db;
 
     private static MusicVideoDatabase Instance;
-    private ILog moLog;
-    private IConfig _config;
 
     private MusicVideoDatabase()
     {
-      ServiceProvider loServices = GlobalServiceProvider.Instance;
-      moLog = loServices.Get<ILog>();
-      _config = loServices.Get<IConfig>();
       bool dbExists;
       try
       {
@@ -63,8 +58,8 @@ namespace MediaPortal.MusicVideos.Database
           System.IO.Directory.CreateDirectory("database");
         }
         catch (Exception) { }
-        dbExists = System.IO.File.Exists(_config.Get(Config.Options.DatabasePath) + "MusicVideoDatabaseV3.db3");
-        m_db = new SQLiteClient(_config.Get(Config.Options.DatabasePath) + "MusicVideoDatabaseV3.db3");
+        dbExists = System.IO.File.Exists(Config.Get(Config.Dir.Database) + "MusicVideoDatabaseV3.db3");
+        m_db = new SQLiteClient(Config.Get(Config.Dir.Database) + "MusicVideoDatabaseV3.db3");
 
         MediaPortal.Database.DatabaseUtility.SetPragmas(m_db);
          
@@ -79,7 +74,7 @@ namespace MediaPortal.MusicVideos.Database
       }
       catch (SQLiteException ex)
       {
-        moLog.Info("database exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Info("database exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
       }
     }
 
@@ -113,7 +108,7 @@ namespace MediaPortal.MusicVideos.Database
           }
           catch (Exception e)
           {
-              moLog.Info(e.ToString());
+              Log.Info(e.ToString());
           }
 
       }
@@ -148,7 +143,7 @@ namespace MediaPortal.MusicVideos.Database
       }
       catch (Exception e)
       {
-        moLog.Info(e.ToString());
+        Log.Info(e.ToString());
       }
     }
 
@@ -239,8 +234,8 @@ namespace MediaPortal.MusicVideos.Database
       SQLiteResultSet loResultSet = m_db.Execute(lsSQL);
 
       string lsFavID = (String)loResultSet.GetColumn(0)[0];
-      //moLog.Info("fav id = {0}",lsFavID);
-      //moLog.Info("song id = {0}", foVideo.songId);
+      //Log.Info("fav id = {0}",lsFavID);
+      //Log.Info("song id = {0}", foVideo.songId);
       lsSQL = string.Format("delete from FAVORITE_VIDEOS where SONG_ID='{0}' and FAVORITE_ID = {1}", foVideo.songId, lsFavID);
       m_db.Execute(lsSQL);
       if (m_db.ChangedRows() > 0)
@@ -302,7 +297,7 @@ namespace MediaPortal.MusicVideos.Database
           //string lsCurrentName = msDefaultFavoriteName;
           try
           {
-            loXmlreader = new XmlTextReader(_config.Get(Config.Options.ConfigPath) + "MusicVideoFavorites.xml");
+            loXmlreader = new XmlTextReader(Config.Get(Config.Dir.Config) + "MusicVideoFavorites.xml");
               YahooVideo loVideo;
 
               while (loXmlreader.Read())
@@ -315,17 +310,17 @@ namespace MediaPortal.MusicVideos.Database
                       loVideo.songId = loXmlreader.GetAttribute("SongId");
                       loVideo.songName = loXmlreader.GetAttribute("SongTitle");
                       loVideo.countryId = loXmlreader.GetAttribute("CtryId");
-                      moLog.Info("found favorite:{0}", loVideo.ToString());
+                      Log.Info("found favorite:{0}", loVideo.ToString());
                       loFavoriteList.Add(loVideo);
                   }
               }
               loXmlreader.Close();
           }
-          catch (Exception e) { moLog.Info(e.ToString()); }
+          catch (Exception e) { Log.Info(e.ToString()); }
           finally
           {
               loXmlreader.Close();
-              moLog.Info("old parse closed.");
+              Log.Info("old parse closed.");
           }
           return loFavoriteList;
       }
@@ -356,8 +351,8 @@ namespace MediaPortal.MusicVideos.Database
         SQLiteResultSet loResultSet = m_db.Execute(lsSQL);
 
         string lsPlaylistID = (String)loResultSet.GetColumn(0)[0];
-        //moLog.Info("fav id = {0}",lsFavID);
-        //moLog.Info("song id = {0}", foVideo.songId);
+        //Log.Info("fav id = {0}",lsFavID);
+        //Log.Info("song id = {0}", foVideo.songId);
         lsSQL = string.Format("delete from PLAYLIST_VIDEOS where SONG_ID='{0}' and PLAYLIST_ID = {1}", foVideo.songId, lsPlaylistID);
         m_db.Execute(lsSQL);
         if (m_db.ChangedRows() > 0)

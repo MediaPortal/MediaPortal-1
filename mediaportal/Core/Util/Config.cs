@@ -23,45 +23,51 @@ using System.Collections.Generic;
 using System.Xml;
 using System.IO;
 
-namespace MediaPortal.Utils.Services
+namespace MediaPortal.Util
 {
-  public class Config : IConfig
+  public class Config
   {
-    Dictionary<Options, string> configOption; 
+    static Dictionary<Dir, string> directories;
 
-    public enum Options
+    public enum Dir
     {
-      // Options holding Path Information
-      BasePath,
-      LogPath,
-      SkinPath,
-      LanguagePath,
-      DatabasePath,
-      PluginsPath,
-      ThumbsPath,
-      CachePath,
-      WeatherPath,
-      CustomInputDevicePath,
-      ConfigPath
-    }
-
-    public Config(string startuppath)
-    {
-      configOption = new Dictionary<Options, string>();
-      Set(Options.BasePath, startuppath + @"\");
+      // Path holding Path Information
+      Base,
+      Log,
+      Skin,
+      Language,
+      Database,
+      Plugins,
+      Thumbs,
+      Cache,
+      Weather,
+      CustomInputDevice,
+      Config
     }
 
     /// <summary>
-    /// Load the content of the Config File into the dictionary
+    /// Private constructor. Singleton. Do not allow any instance of this class.
+    /// </summary>
+    private Config()
+    {
+    }
+
+    static Config()
+    {
+      directories = new Dictionary<Dir, string>();
+    }
+
+    /// <summary>
+    /// Read the Directory Configuration from the Config File.
     /// First we look for the file in MyDocuments of the logged on user. If file is not there or invalid, 
     /// we use the one from the MediaPortal InstallPath.
     /// </summary>
-    /// <returns></returns>
-    public bool LoadConfig()
+    static public bool LoadDirs(string startuppath)
     {
-      if (LoadPath(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Team MediaPortal\"))
+      Set(Dir.Base, startuppath + @"\");
+      if (ReadConfig(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Team MediaPortal\"))
         return true;
-      else if (LoadPath(Get(Options.BasePath)))
+      else if (ReadConfig(Get(Dir.Base)))
         return true;
       else 
         return false;
@@ -71,10 +77,10 @@ namespace MediaPortal.Utils.Services
     /// Load the Path information from the Config File into the dictionary
     /// </summary>
     /// <returns></returns>
-    private bool LoadPath(string configDir)
+    static private bool ReadConfig(string configDir)
     {
       // Make sure the file exists before we try to do any processing
-      string strFileName = configDir + "MediaPortalConfig.xml";
+      string strFileName = configDir + "MediaPortalDirs.xml";
       if (File.Exists(strFileName))
       {
         try
@@ -105,14 +111,14 @@ namespace MediaPortal.Utils.Services
                   // In case of relative path, prefix it with the startuppath                 
                   if (!Path.IsPathRooted(path.InnerText))
                   {
-                    strPath = Get(Options.BasePath) + path.InnerText;
+                    strPath = Get(Dir.Base) + path.InnerText;
                   }
                   // See if we got a slash at the end. If not add one.
                   if (!strPath.EndsWith(@"\"))
                     strPath += @"\";
                   try
                   {
-                    Set((Options)Enum.Parse(typeof(Options), dirId.InnerText), strPath);
+                    Set((Dir)Enum.Parse(typeof(Dir), dirId.InnerText), strPath);
                   }
                   catch (Exception)
                   {
@@ -133,10 +139,10 @@ namespace MediaPortal.Utils.Services
       return false;
     }
 
-    public string Get(Config.Options option)
+    static public string Get(Config.Dir path)
     {
       string returnVal = "";
-      if (configOption.TryGetValue(option, out returnVal))
+      if (directories.TryGetValue(path, out returnVal))
       {
         return returnVal;
       }
@@ -146,11 +152,11 @@ namespace MediaPortal.Utils.Services
       }
     }
 
-    private void Set(Config.Options option, string value)
+    static private void Set(Config.Dir path, string value)
     {
       try
       {
-        configOption.Add(option, value);
+        directories.Add(path, value);
       }
       catch (ArgumentException)
       { }

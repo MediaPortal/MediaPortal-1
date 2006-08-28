@@ -31,7 +31,7 @@ using System.Windows.Forms;
 using Microsoft.Win32;
 using DShowNET;
 using DirectShowLib;
-using MediaPortal.Utils.Services;
+using MediaPortal.GUI.Library;
 
 #pragma warning disable 108
 
@@ -66,7 +66,6 @@ namespace MediaPortal.Configuration.Sections
     private Label labelBoostValue;
     private System.ComponentModel.IContainer components = null;
 
-    protected ILog _log;
 
     /// <summary>
     /// 
@@ -82,8 +81,6 @@ namespace MediaPortal.Configuration.Sections
     public MPEG2DecAudioFilter(string name)
       : base(name)
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
 
       // This call is required by the Windows Form Designer.
       InitializeComponent();
@@ -613,7 +610,7 @@ namespace MediaPortal.Configuration.Sections
           }
           catch (Exception ex)
           {
-            _log.Info("Exception while loading MPA settings: {0}", ex.Message);
+            Log.Info("Exception while loading MPA settings: {0}", ex.Message);
           }
         }
     }
@@ -685,7 +682,7 @@ namespace MediaPortal.Configuration.Sections
               if (DTSRegValue >= 0)
                 DTSRegValue = (DTSRegValue * -1);
               SPDIFSetting = Convert.ToSingle(DTSRegValue);
-              //MediaPortal.GUI.Library._log.Info("DEBUG: Write S/PDIF-DTSSpeakerConfig: {0}", SPDIFSetting.ToString());
+              //MediaPortal.GUI.Library.Log.Info("DEBUG: Write S/PDIF-DTSSpeakerConfig: {0}", SPDIFSetting.ToString());
               //This didn't work but Gabest uses a type overflow well knowing that the values subtract from MaxValue after this
               //subkey.SetValue("DtsSpeakerConfig", BitConverter.ToInt32(BitConverter.GetBytes(SPDIFSetting), 0), RegistryValueKind.DWord);
               subkey.SetValue("DtsSpeakerConfig", unchecked((Int32)4294967287), RegistryValueKind.DWord);
@@ -718,11 +715,11 @@ namespace MediaPortal.Configuration.Sections
           }
           catch (Exception ex)
           {
-            _log.Info("Exception while writing MPA settings: {0}", ex.Message);
+            Log.Info("Exception while writing MPA settings: {0}", ex.Message);
           }
         }
         else
-          _log.Info("Registry access error while trying to write MPA settings.");
+          Log.Info("Registry access error while trying to write MPA settings.");
     }
 
 

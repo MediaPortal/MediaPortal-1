@@ -46,7 +46,7 @@ namespace MediaPortal.TV.Recording
   {
     public override void Execute(CommandProcessor handler)
     {
-      _log.Info("Command:CheckRecordingsCommand");
+      Log.WriteFile(Log.LogType.Recorder, "Command:CheckRecordingsCommand");
       handler.scheduler.ResetTimer();
       Succeeded = true;
     }

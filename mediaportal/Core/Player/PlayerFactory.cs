@@ -28,7 +28,6 @@ using System.Collections;
 using System.Reflection;
 using MediaPortal.Util;
 using MediaPortal.GUI.Library;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Player
 {
@@ -39,20 +38,15 @@ namespace MediaPortal.Player
   {
     static ArrayList _externalPlayerList = new ArrayList();
     static bool _externalPlayersLoaded = false;
-    static ILog _log;
-    static IConfig _config;
 
     public PlayerFactory()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
     }
 
     private void LoadExternalPlayers()
     {
-      _log.Info("Loading external players plugins");
-      string[] fileList = System.IO.Directory.GetFiles(_config.Get(Config.Options.PluginsPath) + "ExternalPlayers", "*.dll");
+      Log.Info("Loading external players plugins");
+      string[] fileList = System.IO.Directory.GetFiles(Config.Get(Config.Dir.Plugins) + "ExternalPlayers", "*.dll");
       foreach (string fileName in fileList)
       {
         try
@@ -70,25 +64,25 @@ namespace MediaPortal.Player
                   if (t.IsSubclassOf(typeof(IExternalPlayer)))
                   {
                     object newObj = (object)Activator.CreateInstance(t);
-                    _log.Info("  found plugin:{0} in {1}", t.ToString(), fileName);
+                    Log.Info("  found plugin:{0} in {1}", t.ToString(), fileName);
 
                     IExternalPlayer player = (IExternalPlayer)newObj;
-                    _log.Info("  player:{0}.  author: {1}", player.PlayerName, player.AuthorName);
+                    Log.Info("  player:{0}.  author: {1}", player.PlayerName, player.AuthorName);
                     _externalPlayerList.Add(player);
                   }
                 }
               }
               catch (Exception e)
               {
-                _log.Info("Error loading external player: {0}", t.ToString());
-                _log.Info("Error: {0}", e.StackTrace);
+                Log.Info("Error loading external player: {0}", t.ToString());
+                Log.Info("Error: {0}", e.StackTrace);
               }
             }
           }
         }
         catch (Exception e)
         {
-          _log.Info("Error loading external player: {0}", e);
+          Log.Info("Error loading external player: {0}", e);
         }
       }
       _externalPlayersLoaded = true;
@@ -103,7 +97,7 @@ namespace MediaPortal.Player
 
       foreach (IExternalPlayer player in _externalPlayerList)
       {
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         {
           bool enabled = xmlreader.GetValueAsBool("plugins", player.PlayerName, false);
           player.Enabled = enabled;
@@ -127,7 +121,7 @@ namespace MediaPortal.Player
       if (fileName.StartsWith("mms:") && fileName.EndsWith(".ymvp"))
       {
           bool useVMR9;
-          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
           {
               useVMR9 = xmlreader.GetValueAsBool("musicvideo", "useVMR9", true);
           }
@@ -150,7 +144,7 @@ namespace MediaPortal.Player
         {
           if (!GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindow))
           {
-            _log.Info("PlayerFactory: Disabling DX9 exclusive mode");
+            Log.Info("PlayerFactory: Disabling DX9 exclusive mode");
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
             GUIWindowManager.SendMessage(msg);
           }
@@ -201,7 +195,7 @@ namespace MediaPortal.Player
 
       if (MediaPortal.Util.Utils.IsAudio(fileName))
       {
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         {
           string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "Windows Media Player 9");
           if (String.Compare(strAudioPlayer, "Windows Media Player 9", true) == 0)
@@ -237,7 +231,7 @@ namespace MediaPortal.Player
         {
           if (!GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindow))
           {
-            _log.Info("PlayerFactory: Disabling DX9 exclusive mode");
+            Log.Info("PlayerFactory: Disabling DX9 exclusive mode");
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
             GUIWindowManager.SendMessage(msg);
           }
@@ -288,7 +282,7 @@ namespace MediaPortal.Player
 
       if (MediaPortal.Util.Utils.IsAudio(fileName))
       {
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         {
           string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "Windows Media Player 9");
           if (String.Compare(strAudioPlayer, "Windows Media Player 9", true) == 0)

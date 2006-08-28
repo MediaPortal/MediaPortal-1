@@ -32,7 +32,7 @@ using System.Text;
 using System.IO;
 using Microsoft.Win32;
 using MediaPortal.GUI.Library;
-using MediaPortal.Utils.Services;
+using MediaPortal.Util;
 
 namespace MediaPortal.ITunesPlayer
 {
@@ -46,7 +46,6 @@ namespace MediaPortal.ITunesPlayer
     private MediaPortal.UserInterface.Controls.MPButton buttonEnable;
     private MediaPortal.UserInterface.Controls.MPLabel label1;
     private MediaPortal.UserInterface.Controls.MPTextBox extensionBox;
-    static IConfig _config;
     /// <summary>
     /// Required designer variable.
     /// </summary>
@@ -54,8 +53,6 @@ namespace MediaPortal.ITunesPlayer
 
     public ConfigurationForm()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _config = services.Get<IConfig>();
       //
       // Required for Windows Form Designer support
       //
@@ -131,7 +128,7 @@ namespace MediaPortal.ITunesPlayer
 
     private void ConfigurationForm_Load(object sender, System.EventArgs e)
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         m_enabledExt = xmlreader.GetValueAsString("itunesplugin", "enabledextensions", "");
         m_enabledExt.Replace(":", ","); // in case it was using the old plugin code where the separator was ":"
@@ -142,7 +139,7 @@ namespace MediaPortal.ITunesPlayer
 
     private void ConfigurationForm_Closing(object sender, System.ComponentModel.CancelEventArgs e)
     {
-      using (MediaPortal.Profile.Settings xmlWriter = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlWriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         xmlWriter.SetValue("itunesplugin", "enabledextensions", extensionBox.Text);
       }
@@ -150,7 +147,7 @@ namespace MediaPortal.ITunesPlayer
 
     private void buttonEnable_Click(object sender, System.EventArgs e)
     {
-      using (MediaPortal.Profile.Settings xmlWriter = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlWriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         xmlWriter.SetValue("itunesplugin", "enabledextensions", extensionBox.Text);
       }

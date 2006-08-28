@@ -34,7 +34,6 @@ using System.Collections;
 using MediaPortal.GUI.Library;
 using MediaPortal.Dialogs;
 using MediaPortal.Util;
-using MediaPortal.Utils.Services;
 
 namespace Wikipedia
 {
@@ -72,12 +71,9 @@ namespace Wikipedia
     private ArrayList imagenameArray = new ArrayList();
     private ArrayList imagedescArray = new ArrayList();
 
-    private ILog _wikilog;
 
     public GUIWikipedia()
 		{
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _wikilog = services.Get<ILog>();
 		}
 		#region ISetupForm Members
 
@@ -182,7 +178,7 @@ namespace Wikipedia
 				keyBoard.Text = "";
 				keyBoard.DoModal(GetID); // show it...
 
-        _wikilog.Info("Wikipedia: OSD keyboard loaded!");
+        Log.Info("Wikipedia: OSD keyboard loaded!");
 
 				// If input is finished, the string is saved to the searchterm var.
 				if (keyBoard.IsConfirmed)
@@ -191,7 +187,7 @@ namespace Wikipedia
 				// If there was a string entered try getting the article.
         if (searchterm != "")
         {
-          _wikilog.Info("Wikipedia: Searchterm gotten from OSD keyboard: {0}", searchterm);
+          Log.Info("Wikipedia: Searchterm gotten from OSD keyboard: {0}", searchterm);
           GetAndDisplayArticle(searchterm);
         }
         // Else display an error dialog.
@@ -248,7 +244,7 @@ namespace Wikipedia
             pDlgOK.DoModal(GetID);
             if (pDlgOK.SelectedLabel >= 0)
             {
-              _wikilog.Info("Wikipedia: new search from the links array: {0}", pDlgOK.SelectedLabelText);
+              Log.Info("Wikipedia: new search from the links array: {0}", pDlgOK.SelectedLabelText);
               GetAndDisplayArticle(pDlgOK.SelectedLabelText);
             }
           }
@@ -282,7 +278,7 @@ namespace Wikipedia
             pDlgOK.DoModal(GetID);
             if (pDlgOK.SelectedLabel >= 0)
             {
-              _wikilog.Info("Wikipedia: new search from the image array: {0}", imagedescArray[pDlgOK.SelectedId - 1]);
+              Log.Info("Wikipedia: new search from the image array: {0}", imagedescArray[pDlgOK.SelectedId - 1]);
               GetAndDisplayImage(imagenameArray[pDlgOK.SelectedId - 1].ToString(), imagedescArray[pDlgOK.SelectedId - 1].ToString());
             }
           }
@@ -340,7 +336,7 @@ namespace Wikipedia
       }
       if (searchtermLabel.Label != string.Empty && searchtermLabel.Label != "Wikipedia")
       {
-        _wikilog.Info("Wikipedia: language changed to {0}. Display article {1} again.", language, searchtermLabel.Label);
+        Log.Info("Wikipedia: language changed to {0}. Display article {1} again.", language, searchtermLabel.Label);
         GetAndDisplayArticle(searchtermLabel.Label);
       }
     }
@@ -349,7 +345,7 @@ namespace Wikipedia
     {
       WikipediaImage image = new WikipediaImage(imagename, language);
       string imagefilename = image.GetImageFilename();
-      _wikilog.Info("Wikipedia: Trying to display image file: {0}", imagefilename);
+      Log.Info("Wikipedia: Trying to display image file: {0}", imagefilename);
 
       if (imagefilename != string.Empty && System.IO.File.Exists(imagefilename))
       {

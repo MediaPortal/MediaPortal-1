@@ -21,7 +21,6 @@
 
 using MediaPortal.GUI.Library;
 using SQLite.NET;
-using MediaPortal.Utils.Services;
 
 namespace ProgramsDatabase
 {
@@ -61,9 +60,7 @@ namespace ProgramsDatabase
       }
       else
       {
-        ServiceProvider services = GlobalServiceProvider.Instance;
-        ILog log = services.Get<ILog>();
-        log.Info("myPrograms: appGrouper: internal error: Filelinkitem expected in LaunchFile");
+        Log.Info("myPrograms: appGrouper: internal error: Filelinkitem expected in LaunchFile");
       }
     }
 

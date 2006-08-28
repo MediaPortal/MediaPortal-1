@@ -1,5 +1,6 @@
 using System;
 using MediaPortal.GUI.Library;
+using MediaPortal.Util;
 
 namespace MediaPortal.GUI.Settings
 {
@@ -134,7 +135,7 @@ namespace MediaPortal.GUI.Settings
     #region Serialisation
     void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         m_iSpeedHorizontal=xmlreader.GetValueAsInt("general","scrollspeedhorizontal",8);
         m_iSpeedVertical=xmlreader.GetValueAsInt("general","scrollspeedvertical",2);
@@ -144,7 +145,7 @@ namespace MediaPortal.GUI.Settings
 
     void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         xmlwriter.SetValue("general","scrollspeedhorizontal",m_iSpeedHorizontal.ToString());
         xmlwriter.SetValue("general","scrollspeedvertical",m_iSpeedVertical.ToString());

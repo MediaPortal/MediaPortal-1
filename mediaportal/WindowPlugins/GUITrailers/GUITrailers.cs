@@ -885,7 +885,7 @@ namespace MediaPortal.GUI.Video
         if (castview == true)
           ToggleButtonCast();
       }
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         bitrate = xmlreader.GetValue("mytrailers", "speed");
         Show_GT = xmlreader.GetValueAsBool("mytrailers", "Show german trailers", false);

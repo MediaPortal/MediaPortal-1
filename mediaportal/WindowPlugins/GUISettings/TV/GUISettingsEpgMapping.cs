@@ -46,7 +46,7 @@ namespace WindowPlugins.GUISettings.Epg
     protected override void OnPageLoad()
     {
 
-      using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         string countryCode = xmlReader.GetValueAsString("general", "country", "");
         string country = xmlReader.GetValueAsString("capture", "countryname", "");

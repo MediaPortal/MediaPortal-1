@@ -99,7 +99,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'UseCaptureDefintionsRelease|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
@@ -289,6 +289,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Util\CryptoConvert.cs" />
+    <Compile Include="Util\Config.cs" />
     <Compile Include="Util\EncryptDecrypt.cs" />
     <Compile Include="Util\HTMLParser.cs" />
     <Compile Include="Util\IMPawardsSearch.cs" />

@@ -479,7 +479,7 @@ namespace MediaPortal.Dialogs
           ShowError(517, item.Path);
           m_bCanceled = true;
 
-          _log.Info("FileMenu Error: from {0} to {1} MC:{2}", item.Path, destinationFolder + strItemFileName, m_iFileMode);
+          Log.Info("FileMenu Error: from {0} to {1} MC:{2}", item.Path, destinationFolder + strItemFileName, m_iFileMode);
         }
       }
     }

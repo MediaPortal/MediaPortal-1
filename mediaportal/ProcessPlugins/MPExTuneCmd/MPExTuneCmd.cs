@@ -31,8 +31,8 @@ using System.Threading;
 using System.Text;
 using System.IO;
 using Microsoft.Win32;
-using MediaPortal.Utils.Services;
 using MediaPortal.GUI.Library;
+using MediaPortal.Util;
 
 namespace MediaPortal.MPExTuneCmd
 {
@@ -45,23 +45,18 @@ namespace MediaPortal.MPExTuneCmd
 		private static string s_TuneCmd		= "";
 		private static string s_TuneParam	= "";
 		private const string  s_version     = "0.1";
-    protected ILog _log;
-    protected IConfig _config;
 
 		public MPExTuneCmd()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
 		}
 
 		public void Start()
 		{
-			_log.Info("MPExTuneCmd {0} plugin starting.",s_version);
+			Log.Info("MPExTuneCmd {0} plugin starting.",s_version);
 
 			LoadSettings();
 
-			_log.Info("Adding message handler for MPExTuneCmd {0}.",s_version);
+			Log.Info("Adding message handler for MPExTuneCmd {0}.",s_version);
 
 			GUIWindowManager.Receivers += new SendMessageHandler(this.OnThreadMessage);
 			return;
@@ -69,13 +64,13 @@ namespace MediaPortal.MPExTuneCmd
 
 		public void Stop()
 		{
-			_log.Info("MPExTuneCmd {0} plugin stopping.",s_version);
+			Log.Info("MPExTuneCmd {0} plugin stopping.",s_version);
 			return;
 		}
 
 		private void LoadSettings()
 		{
-			using(MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+			using(MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
 			{
 				s_TuneCmd = xmlreader.GetValueAsString("MPExTuneCmd","commandloc","C:\\dtvcon\\dtvcmd.exe");
 				s_TuneParam = xmlreader.GetValueAsString("MPExTuneCmd","commanddelim","");
@@ -97,7 +92,7 @@ namespace MediaPortal.MPExTuneCmd
 
 		public void ChangeTunerChannel(string channel_data) 
 		{
-			_log.Info("MPExTuneCmd processing external tuner cmd: {0}", s_TuneCmd + " " + s_TuneParam + channel_data );
+			Log.Info("MPExTuneCmd processing external tuner cmd: {0}", s_TuneCmd + " " + s_TuneParam + channel_data );
 			this.RunProgram(s_TuneCmd, s_TuneParam + channel_data );
 
 		}

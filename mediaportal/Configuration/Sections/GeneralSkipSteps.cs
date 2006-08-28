@@ -31,7 +31,8 @@ using System.Data;
 using System.Text;
 using System.Windows.Forms;
 using System.Globalization;
-using MediaPortal.Utils.Services;
+using MediaPortal.Util;
+using MediaPortal.GUI.Library;
 
 #pragma warning disable 108
 
@@ -62,7 +63,6 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxStep1;
     private MediaPortal.UserInterface.Controls.MPTabPage tabPageSteps;
 
-    protected ILog _log;
 
     public GeneralSkipSteps()
       : this("Skip steps")
@@ -72,8 +72,6 @@ namespace MediaPortal.Configuration.Sections
     public GeneralSkipSteps(string name)
       : base(name)
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
 
       // This call is required by the Windows Form Designer.
       InitializeComponent();
@@ -84,7 +82,7 @@ namespace MediaPortal.Configuration.Sections
       ArrayList StepArray = new ArrayList();
       string regValue;
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         try
         {
@@ -92,7 +90,7 @@ namespace MediaPortal.Configuration.Sections
           if (regValue == String.Empty) // config after wizard run 1st
           {
             regValue = "0;1;1;0;1;1;1;0;1;1;1;0;1;0;1;0";
-            _log.Info("GeneralSkipSteps - creating new Skip-Settings {0}", "");
+            Log.Info("GeneralSkipSteps - creating new Skip-Settings {0}", "");
           }
           foreach (string token in regValue.Split(new char[] { ',', ';', ' ' }))
           {
@@ -120,14 +118,14 @@ namespace MediaPortal.Configuration.Sections
         }
         catch (Exception ex)
         {
-          _log.Info("GeneralSkipSteps - Exception while loading Skip-Settings: {0}", ex.ToString());
+          Log.Info("GeneralSkipSteps - Exception while loading Skip-Settings: {0}", ex.ToString());
         }
       }
     }
 
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         string skipSteps = (Convert.ToInt16(checkBoxStep1.Checked)).ToString() + ";" +
                            (Convert.ToInt16(checkBoxStep2.Checked)).ToString() + ";" +

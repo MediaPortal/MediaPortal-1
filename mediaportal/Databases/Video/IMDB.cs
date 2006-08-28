@@ -31,7 +31,6 @@ using System.Web;
 using System.Text;
 using System.Text.RegularExpressions;
 using MediaPortal.GUI.Library;
-using MediaPortal.Utils.Services;
 using MediaPortal.Util;
 
 
@@ -175,8 +174,6 @@ namespace MediaPortal.Video.Database
     // Arrays for multiple database support
     int[] aLimits;		// contains the limit for searchresults
     string[] aDatabases;		// contains the name of the database, e.g. IMDB
-    private ILog _log;
-    private IConfig _config;
 
     IProgress m_progress;
     // constructor
@@ -187,9 +184,6 @@ namespace MediaPortal.Video.Database
 
     public IMDB(IProgress progress)
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
 
       m_progress = progress;
       // load the settings
@@ -200,7 +194,7 @@ namespace MediaPortal.Video.Database
     private void LoadSettings()
     {
       // getting available databases and limits
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         int iNumber = xmlreader.GetValueAsInt("moviedatabase", "number", 0);
         if (iNumber <= 0)
@@ -288,7 +282,7 @@ namespace MediaPortal.Video.Database
       try
       {
         // Make the Webrequest
-        //_log.Info("IMDB: get page:{0}", strURL);
+        //Log.Info("IMDB: get page:{0}", strURL);
         WebRequest req = WebRequest.Create(strURL);
         result = req.GetResponse();
         ReceiveStream = result.GetResponseStream();
@@ -302,7 +296,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception)
       {
-        //_log.Error("Error retreiving WebPage: {0} Encoding:{1} err:{2} stack:{3}", strURL, strEncode, ex.Message, ex.StackTrace);
+        //Log.Error("Error retreiving WebPage: {0} Encoding:{1} err:{2} stack:{3}", strURL, strEncode, ex.Message, ex.StackTrace);
       }
       finally
       {
@@ -374,7 +368,7 @@ namespace MediaPortal.Video.Database
         /* Why are numbers bigger than 999 skipped?
         for (int c=0;i+c < strURL.Length&&Char.IsDigit(strURL[i+c]);c++)
         {
-          _log.Info("c: {0}",c);
+          Log.Info("c: {0}",c);
           if (c==3)
           {
             i+=4;
@@ -563,7 +557,7 @@ namespace MediaPortal.Video.Database
 
               default:
                 // unsupported database?
-                _log.Error("Movie database lookup - database not supported: {0}", aDatabases[i].ToUpper());
+                Log.Error("Movie database lookup - database not supported: {0}", aDatabases[i].ToUpper());
                 break;
             }
           }
@@ -655,7 +649,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("exception for imdb lookup of {0} err:{1} stack:{2}", strURL, ex.Message, ex.StackTrace);
+        Log.Error("exception for imdb lookup of {0} err:{1} stack:{2}", strURL, ex.Message, ex.StackTrace);
       }
     }
     public bool GetActorDetails(IMDB.IMDBUrl url, out IMDBActor actor)
@@ -677,7 +671,7 @@ namespace MediaPortal.Video.Database
         {
           value = new HTMLUtil().ConvertHTMLToAnsi(value);
           value = MediaPortal.Util.Utils.RemoveParenthesis(value).Trim();
-          //_log.Info("Actor Name:{0}", value);
+          //Log.Info("Actor Name:{0}", value);
           actor.Name = value;
         }
         if (actor.Name == string.Empty)
@@ -690,7 +684,7 @@ namespace MediaPortal.Video.Database
             (parser.skipToEndOf("src=\"")) &&
             (parser.extractTo("\"", ref strThumb)))
         {
-          //_log.Info("Actor Thumb:{0}", strThumb);
+          //Log.Info("Actor Thumb:{0}", strThumb);
           actor.ThumbnailUrl = strThumb;
         }
         if ((parser.skipToEndOf("/OnThisDay?")) &&
@@ -699,7 +693,7 @@ namespace MediaPortal.Video.Database
             (parser.skipToEndOf("/BornInYear?")) &&
             (parser.extractTo("\"", ref value2)))
         {
-          //_log.Info("Actor Birth:{0} {1}", value, value2);
+          //Log.Info("Actor Birth:{0} {1}", value, value2);
           actor.DateOfBirth = value + " " + value2;
         }
 
@@ -707,7 +701,7 @@ namespace MediaPortal.Video.Database
             (parser.skipToEndOf(">")) &&
             (parser.extractTo("<", ref value)))
         {
-          //_log.Info("Actor Place:{0}", value);
+          //Log.Info("Actor Place:{0}", value);
           actor.PlaceOfBirth = value;
         }
         //find Mini Biography
@@ -720,8 +714,8 @@ namespace MediaPortal.Video.Database
             (parser.skipToEndOf("href=\"")) &&
             (parser.extractTo("\"", ref value2)))
         {
-          //_log.Info("Actor Mini:{0}", value);
-          //_log.Info("Actor BIO URL:{0}", value2);
+          //Log.Info("Actor Mini:{0}", value);
+          //Log.Info("Actor BIO URL:{0}", value2);
           actor.MiniBiography = MediaPortal.Util.Utils.stripHTMLtags(value).Trim();
           actor.MiniBiography = HttpUtility.HtmlDecode(actor.MiniBiography);  // Remove HTML entities like &#189;
 
@@ -735,7 +729,7 @@ namespace MediaPortal.Video.Database
             bioURL += "/";
           }
           bioURL += value2;
-          //_log.Info("Bio Url:{0}", bioURL);
+          //Log.Info("Bio Url:{0}", bioURL);
           string strBioBody = GetPage(bioURL, "utf-8", out absoluteUri);
           if (strBioBody != null && strBioBody.Length > 0)
           {
@@ -743,7 +737,7 @@ namespace MediaPortal.Video.Database
             if (parser1.skipToEndOf("<p class=\"biopar\">") &&
                 parser1.extractTo("</p>", ref value))
             {
-              //_log.Info("Actor Bio:{0}", value);
+              //Log.Info("Actor Bio:{0}", value);
               actor.Biography = MediaPortal.Util.Utils.stripHTMLtags(value).Trim();
               actor.Biography = HttpUtility.HtmlDecode(actor.Biography);  // Remove HTML entities like &#189;
             }
@@ -754,7 +748,7 @@ namespace MediaPortal.Video.Database
           string movies = string.Empty;
           if (parser.extractTo("</ol>", ref movies))
           {
-            //_log.Info("Actor Movies:{0}", movies);
+            //Log.Info("Actor Movies:{0}", movies);
             parser.Content = movies;
           }
           while (parser.skipToStartOf("<li>"))
@@ -769,7 +763,7 @@ namespace MediaPortal.Video.Database
               {
                 movie = movie.Substring(0, start) + movie.Substring(end + 4);
               }
-              //_log.Info("Actor Movie:{0}", movie);
+              //Log.Info("Actor Movie:{0}", movie);
               HTMLParser movieParser = new HTMLParser(movie);
               string title = string.Empty;
               string episode = string.Empty;
@@ -779,7 +773,7 @@ namespace MediaPortal.Video.Database
               movieParser.skipToEndOf(">");
               movieParser.extractTo("</a>", ref title);
               title = HttpUtility.HtmlDecode(title);  // Remove HTML entities like &#189;
-              //_log.Info("Actor Movie title:{0}", title);
+              //Log.Info("Actor Movie title:{0}", title);
               bool isTvSeries = false;
               while (movieParser.skipToEndOf("- <a"))
               {
@@ -788,24 +782,24 @@ namespace MediaPortal.Video.Database
                 {
                   movieParser.extractTo("</a>", ref episode);
                   episode = HttpUtility.HtmlDecode(episode);  // Remove HTML entities like &#189;
-                  //_log.Info("Actor Movie episode:{0}", episode);
+                  //Log.Info("Actor Movie episode:{0}", episode);
                 }
                 if (movieParser.skipToStartOf("(20") &&
                     movieParser.skipToEndOf("("))
                 {
                   movieParser.extractTo(")", ref strYear);
-                  //_log.Info("Actor Episode year:{0}", strYear);
+                  //Log.Info("Actor Episode year:{0}", strYear);
                 }
                 else if (movieParser.skipToStartOf("(19") &&
                          movieParser.skipToEndOf("("))
                 {
                   movieParser.extractTo(")", ref strYear);
-                  //_log.Info("Actor Episode year:{0}", strYear);
+                  //Log.Info("Actor Episode year:{0}", strYear);
                 }
                 if (movieParser.skipToEndOf(".... "))
                 {
                   movieParser.extractTo("<", ref role);
-                  //_log.Info("Actor Episode role:{0}", role);
+                  //Log.Info("Actor Episode role:{0}", role);
                   role = role.Trim();
                   role = HttpUtility.HtmlDecode(role);  // Remove HTML entities like &#189;
                 }
@@ -824,7 +818,7 @@ namespace MediaPortal.Video.Database
                 actorMovie.Role = role;
                 actorMovie.Year = year;
                 actor.Add(actorMovie);
-                //_log.Info("Actor Movie {0} as {1},{2}", actorMovie.MovieTitle, actorMovie.Role, actorMovie.Year);
+                //Log.Info("Actor Movie {0} as {1},{2}", actorMovie.MovieTitle, actorMovie.Role, actorMovie.Year);
               }
               if (!isTvSeries)
               {
@@ -832,18 +826,18 @@ namespace MediaPortal.Video.Database
                     movieParser.skipToEndOf("("))
                 {
                   movieParser.extractTo(")", ref strYear);
-                  //_log.Info("Actor Movie year:{0}", strYear);
+                  //Log.Info("Actor Movie year:{0}", strYear);
                 }
                 else if (movieParser.skipToStartOf("(19") &&
                     movieParser.skipToEndOf("("))
                 {
                   movieParser.extractTo(")", ref strYear);
-                  //_log.Info("Actor Movie year:{0}", strYear);
+                  //Log.Info("Actor Movie year:{0}", strYear);
                 }
                 if (movieParser.skipToEndOf(".... "))
                 {
                   movieParser.extractTo("<", ref role);
-                  //_log.Info("Actor Movie role:{0}", role);
+                  //Log.Info("Actor Movie role:{0}", role);
                   role = role.Trim();
                 }
 
@@ -870,7 +864,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception)
       {
-        //_log.Info("IMDB.GetActorDetails({0} exception:{1} {2} {3}", url.URL,ex.Message,ex.Source,ex.StackTrace);
+        //Log.Info("IMDB.GetActorDetails({0} exception:{1} {2} {3}", url.URL,ex.Message,ex.Source,ex.StackTrace);
       }
       return false;
     }
@@ -889,7 +883,7 @@ namespace MediaPortal.Video.Database
         if ((iStart<0) || (iEnd<0))
         {
           // could not extract hostname!
-          _log.Info("Movie DB lookup GetDetails(): could not extract hostname from {0}",url.URL);
+          Log.Info("Movie DB lookup GetDetails(): could not extract hostname from {0}",url.URL);
           return false;
         }
         string	strHost = url.URL.Substring(iStart,iEnd-iStart).ToUpper();*/
@@ -907,7 +901,7 @@ namespace MediaPortal.Video.Database
             return GetDetailsFilmAffinity(url, ref movieDetails);
           default:
             // Not supported Database / Host
-            _log.Error("Movie DB lookup GetDetails(): Unknown Database {0}", url.Database);
+            Log.Error("Movie DB lookup GetDetails(): Unknown Database {0}", url.Database);
             return false;
         }
       }
@@ -1038,7 +1032,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("exception for imdb lookup of {0} err:{1} stack:{2}", strURL, ex.Message, ex.StackTrace);
+        Log.Error("exception for imdb lookup of {0} err:{1} stack:{2}", strURL, ex.Message, ex.StackTrace);
       }
     }
 
@@ -1220,7 +1214,7 @@ namespace MediaPortal.Video.Database
           }
           catch (Exception ex)
           {
-            _log.Error("exception for imdb lookup of {0} err:{1} stack:{2}", strPlotURL, ex.Message, ex.StackTrace);
+            Log.Error("exception for imdb lookup of {0} err:{1} stack:{2}", strPlotURL, ex.Message, ex.StackTrace);
           }
         }
 
@@ -1294,7 +1288,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("exception for imdb lookup of {0} err:{1} stack:{2}", url.URL, ex.Message, ex.StackTrace);
+        Log.Error("exception for imdb lookup of {0} err:{1} stack:{2}", url.URL, ex.Message, ex.StackTrace);
       }
       return false;
     }
@@ -1384,7 +1378,7 @@ namespace MediaPortal.Video.Database
         // Nothing found? What to do....?
         if (iStartOfMovieList < 0)
         {
-          _log.Error("OFDB: Keine Titel gefunden. Layout verändert?");
+          Log.Error("OFDB: Keine Titel gefunden. Layout verändert?");
           return;
         }
         // No matches....
@@ -1463,7 +1457,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("Error getting Movielist: exception for db lookup of {0} err:{1} stack:{2}", strURL, ex.Message, ex.StackTrace);
+        Log.Error("Error getting Movielist: exception for db lookup of {0} err:{1} stack:{2}", strURL, ex.Message, ex.StackTrace);
       }
     } // END FindOFDB()
 
@@ -1480,7 +1474,7 @@ namespace MediaPortal.Video.Database
       if ((iStart == 2) || (iEnd == 3))
       {
         // possible change of sitelayout
-        _log.Error("OFDB: error getting list, no start or end found.");
+        Log.Error("OFDB: error getting list, no start or end found.");
         return "";
       }
       // strip the infos, they are in an bold Tag
@@ -1517,7 +1511,7 @@ namespace MediaPortal.Video.Database
         else
         {
           // End not found, possible error in OFDB
-          _log.Error("OFDB: error getting end of entry");
+          Log.Error("OFDB: error getting end of entry");
           return "";
         }
         // Ende erreicht?
@@ -1731,26 +1725,26 @@ namespace MediaPortal.Video.Database
                 if (movieDetails.Plot.Length == 0)
                 {
                   // Could not get link to plot description
-                  _log.Error("OFDB: could extract the plot description from {0}", "http://www.ofdb.de/" + strPlotURL);
+                  Log.Error("OFDB: could extract the plot description from {0}", "http://www.ofdb.de/" + strPlotURL);
                 }
               }
             }
             catch (Exception ex)
             {
-              _log.Error("Error getting plot: exception for db lookup of {0} err:{1} stack:{2}", strPlotURL, ex.Message, ex.StackTrace);
+              Log.Error("Error getting plot: exception for db lookup of {0} err:{1} stack:{2}", strPlotURL, ex.Message, ex.StackTrace);
             }
           }
         }
         else
         {
           // Could not get link to plot description
-          _log.Error("OFDB: could not find link to plot description");
+          Log.Error("OFDB: could not find link to plot description");
         }
         return true;
       }
       catch (Exception ex)
       {
-        _log.Error("Error getting detailed movie information: exception for db lookup of {0} err:{1} stack:{2}", url.URL, ex.Message, ex.StackTrace);
+        Log.Error("Error getting detailed movie information: exception for db lookup of {0} err:{1} stack:{2}", url.URL, ex.Message, ex.StackTrace);
       }
       return false;
     } // END GetDetailsOFDB()
@@ -1789,7 +1783,7 @@ namespace MediaPortal.Video.Database
         // Nothing found? What to do....?
         if (iStartOfMovieList < 0)
         {
-          _log.Info("FRDB: Aucun film trouvé");
+          Log.Info("FRDB: Aucun film trouvé");
           return;
         }
         // No matches....
@@ -1838,7 +1832,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("Error getting Movielist: exception for db lookup of {0} err:{1} stack:{2}", strURL, ex.Message, ex.StackTrace);
+        Log.Error("Error getting Movielist: exception for db lookup of {0} err:{1} stack:{2}", strURL, ex.Message, ex.StackTrace);
       }
 
       return;
@@ -1931,7 +1925,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("Error getting detailed movie information: exception for db lookup of {0} err:{1} stack:{2}", url.URL, ex.Message, ex.StackTrace);
+        Log.Error("Error getting detailed movie information: exception for db lookup of {0} err:{1} stack:{2}", url.URL, ex.Message, ex.StackTrace);
         return false;
       }
       return true;
@@ -1998,7 +1992,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("exception for filmaffinity lookup of {0} err:{1} stack:{2}", strURL, ex.Message, ex.StackTrace);
+        Log.Error("exception for filmaffinity lookup of {0} err:{1} stack:{2}", strURL, ex.Message, ex.StackTrace);
       }
     }
 
@@ -2030,7 +2024,7 @@ namespace MediaPortal.Video.Database
           string strRating = String.Empty;
           string strVotes = String.Empty;
           parser.extractTo("</span>", ref strTitle);
-          //_log.Info("FilmAffinity:Title:{0}", strTitle);
+          //Log.Info("FilmAffinity:Title:{0}", strTitle);
           strTitle = MediaPortal.Util.Utils.stripHTMLtags(strTitle);
           movieDetails.Title = strTitle;
           if (parser.skipToEndOfNoCase("<b>AÑO</b>") &&
@@ -2039,7 +2033,7 @@ namespace MediaPortal.Video.Database
               parser.skipToEndOfNoCase("<td >") &&
               parser.extractTo("</td>", ref strYear))
           {
-            //_log.Info("FilmAffinity:Year:{0}", strYear);
+            //Log.Info("FilmAffinity:Year:{0}", strYear);
             try
             {
               movieDetails.Year = System.Int32.Parse(strYear);
@@ -2053,7 +2047,7 @@ namespace MediaPortal.Video.Database
               parser.skipToEndOfNoCase("<td >") &&
               parser.extractTo(" min.</td>", ref runtime))
           {
-            //_log.Info("FilmAffinity:Runtime:{0}", runtime);
+            //Log.Info("FilmAffinity:Runtime:{0}", runtime);
             try
             {
               movieDetails.RunTime = Int32.Parse(runtime);
@@ -2069,7 +2063,7 @@ namespace MediaPortal.Video.Database
               parser.skipToEndOfNoCase(">") &&
               parser.extractTo("</a>", ref strDirector))
           {
-            //_log.Info("FilmAffinity:Director:{0}", strDirector);
+            //Log.Info("FilmAffinity:Director:{0}", strDirector);
             movieDetails.Director = strDirector;
           }
           if (parser.skipToEndOfNoCase("<b>GUIÓN</b>") &&
@@ -2077,7 +2071,7 @@ namespace MediaPortal.Video.Database
               parser.extractTo("</td>", ref strWriting))
           {
             strWriting = HTMLParser.removeHtml(strWriting);
-            //_log.Info("FilmAffinity:Writing:{0}", strWriting);
+            //Log.Info("FilmAffinity:Writing:{0}", strWriting);
             movieDetails.WritingCredits = strWriting;
           }
           if (parser.skipToEndOfNoCase("<b>REPARTO</b>") &&
@@ -2085,7 +2079,7 @@ namespace MediaPortal.Video.Database
               parser.extractTo("</td>", ref strCast))
           {
             strCast = HTMLParser.removeHtml(strCast);
-            //_log.Info("FilmAffinity:Cast:{0}", strCast);
+            //Log.Info("FilmAffinity:Cast:{0}", strCast);
             movieDetails.Cast = strCast;
           }
           if (parser.skipToEndOfNoCase("<b>GÉNERO Y CRÍTICA</b>") &&
@@ -2098,7 +2092,7 @@ namespace MediaPortal.Video.Database
             {
               strGenre = strGenre2;
             }
-            //_log.Info("FilmAffinity:Genre:{0}", strGenre);
+            //Log.Info("FilmAffinity:Genre:{0}", strGenre);
             movieDetails.Genre = strGenre;
           }
           if (parser.skipToEndOfNoCase("SINOPSIS CORTA: "))
@@ -2106,19 +2100,19 @@ namespace MediaPortal.Video.Database
             if (parser.extractTo("SINOPSIS LARGA: ", ref strPlot))
             {
               strPlot = HTMLParser.removeHtml(strPlot);
-              //_log.Info("FilmAffinity:Plot Outline:{0}", strPlot);
+              //Log.Info("FilmAffinity:Plot Outline:{0}", strPlot);
               movieDetails.PlotOutline = strPlot.Trim();
               if (parser.extractTo("</td", ref strPlot))
               {
                 strPlot = HTMLParser.removeHtml(strPlot);
-                //_log.Info("FilmAffinity:Plot:{0}", strPlot);
+                //Log.Info("FilmAffinity:Plot:{0}", strPlot);
                 movieDetails.Plot = strPlot;
               }
             }
             else if (parser.extractTo("</td", ref strPlot))
             {
               strPlot = HTMLParser.removeHtml(strPlot);
-              //_log.Info("FilmAffinity:Plot:{0}", strPlot);
+              //Log.Info("FilmAffinity:Plot:{0}", strPlot);
               movieDetails.PlotOutline = strPlot.Trim();
               movieDetails.Plot = movieDetails.PlotOutline.Trim();
             }
@@ -2128,7 +2122,7 @@ namespace MediaPortal.Video.Database
             if (parser.extractTo("</td", ref strPlot))
             {
               strPlot = HTMLParser.removeHtml(strPlot);
-              //_log.Info("FilmAffinity:Plot:{0}", strPlot);
+              //Log.Info("FilmAffinity:Plot:{0}", strPlot);
               movieDetails.PlotOutline = strPlot.Trim();
               movieDetails.Plot = movieDetails.PlotOutline.Trim();
             }
@@ -2137,7 +2131,7 @@ namespace MediaPortal.Video.Database
                                   parser.skipToEndOfNoCase("<a href=\"/es/addreview.php?movie_id=") &&
                                   parser.extractTo("\"", ref strNumber))
           {
-            //_log.Info("FilmAffinity:Number:{0}", strNumber);
+            //Log.Info("FilmAffinity:Number:{0}", strNumber);
             movieDetails.IMDBNumber = strNumber;
           }
           if (parser.skipToEndOfNoCase("<b>Votaciones de tus Amigos:</b>") &&
@@ -2146,7 +2140,7 @@ namespace MediaPortal.Video.Database
               parser.skipToEndOfNoCase("<img src=\"") &&
               parser.extractTo("\"", ref strThumb))
           {
-            //_log.Info("FilmAffinity:Thumb:{0}", strThumb);
+            //Log.Info("FilmAffinity:Thumb:{0}", strThumb);
             if (strThumb != "http://www.filmaffinity.com/imgs/movies/noimgfull.jpg")
             {
               movieDetails.ThumbURL = strThumb;
@@ -2157,7 +2151,7 @@ namespace MediaPortal.Video.Database
               parser.skipToEndOfNoCase(">") &&
               parser.extractTo("</td>", ref strRating))
           {
-            //_log.Info("FilmAffinity:Rating:{0}", strRating);
+            //Log.Info("FilmAffinity:Rating:{0}", strRating);
             try
             {
               movieDetails.Rating = (float)System.Double.Parse(strRating);
@@ -2172,7 +2166,7 @@ namespace MediaPortal.Video.Database
               parser.skipToEndOfNoCase(">(") &&
               parser.extractTo(" votos)", ref strVotes))
           {
-            //_log.Info("FilmAffinity:Votes:{0}", strVotes);
+            //Log.Info("FilmAffinity:Votes:{0}", strVotes);
             movieDetails.Votes = strVotes;
           }
           movieDetails.Top250 = 0;
@@ -2194,7 +2188,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("exception for filmaffinity lookup of {0} err:{1} stack:{2}", url.URL, ex.Message, ex.StackTrace);
+        Log.Error("exception for filmaffinity lookup of {0} err:{1} stack:{2}", url.URL, ex.Message, ex.StackTrace);
       }
       return false;
     }

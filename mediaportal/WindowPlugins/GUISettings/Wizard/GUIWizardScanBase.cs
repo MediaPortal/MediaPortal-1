@@ -155,7 +155,7 @@ namespace WindowPlugins.GUISettings.Wizard
     {
       if (control == btnNext)
       {
-        _log.Info("dvbt-scan:pressed next");
+        Log.Info("dvbt-scan:pressed next");
         GUIWizardCardsDetected.ScanNextCardType();
         return;
       }

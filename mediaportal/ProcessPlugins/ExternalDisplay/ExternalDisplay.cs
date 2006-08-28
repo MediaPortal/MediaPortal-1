@@ -31,7 +31,6 @@ using System.Threading;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
-using MediaPortal.Utils.Services;
 using Microsoft.Win32;
 using ProcessPlugins.ExternalDisplay.Drivers;
 using Message=ProcessPlugins.ExternalDisplay.Setting.Message;
@@ -52,7 +51,6 @@ namespace ProcessPlugins.ExternalDisplay
         private DateTime lastAction = DateTime.MinValue; //Keeps track of when last action occurred
         private PropertyBrowser browser = null;
         private Thread t;
-        private ILog _log;  //Reference to the logging service
 
         #region IPlugin implementation
 
@@ -564,18 +562,5 @@ namespace ProcessPlugins.ExternalDisplay
             //}
             //return true;
         }
-
-        private ILog Log
-        {
-            get
-            {
-                if (_log == null)
-                {
-                    _log = GlobalServiceProvider.Instance.Get<ILog>();
-                }
-                return _log;
-            }
-        }
-
     }
 }

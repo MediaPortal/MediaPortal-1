@@ -23,7 +23,6 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using MediaPortal.GUI.Library;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.TV.Teletext
 {
@@ -98,12 +97,12 @@ namespace MediaPortal.TV.Teletext
             {
               continue;
             }
-            //_log.Info("Packet Number:{0}, type:{1}", packetNumber, type);
+            //Log.Info("Packet Number:{0}, type:{1}", packetNumber, type);
             string channelName = "";
             for (int i = 0; i < 20; i++)
             {
               char char1 = (char)(rowData[off + 22 + i] & 127);
-              //_log.Info("{0}-{1:x}", char1, (byte)(rowData[off + 22 + i] & 127));
+              //Log.Info("{0}-{1:x}", char1, (byte)(rowData[off + 22 + i] & 127));
               channelName += char1;
             }
             int pos = channelName.LastIndexOf("teletext", StringComparison.InvariantCultureIgnoreCase);
@@ -232,11 +231,9 @@ namespace MediaPortal.TV.Teletext
       }
       catch (Exception ex)
       {
-        ServiceProvider services = GlobalServiceProvider.Instance;
-        ILog log = services.Get<ILog>();
 
-        log.Error("Exception while decoding teletext");
-        log.Error(ex);
+        Log.Error("Exception while decoding teletext");
+        Log.Error(ex);
       }
     }//void Decode(byte[] rowData)
     #endregion

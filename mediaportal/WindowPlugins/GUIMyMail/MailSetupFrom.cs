@@ -29,7 +29,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
 using MediaPortal.Profile;
-using MediaPortal.Utils.Services;
+using MediaPortal.Util;
 
 namespace MyMail
 {
@@ -47,7 +47,6 @@ namespace MyMail
     private MediaPortal.UserInterface.Controls.MPButton btnDelete;
     private MediaPortal.UserInterface.Controls.MPButton btnEdit;
     private MediaPortal.UserInterface.Controls.MPButton btnClose;
-    static IConfig _config;
 
     /// <summary>
     /// Erforderliche Designervariable.
@@ -56,8 +55,6 @@ namespace MyMail
 
     public MailSetupFrom()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _config = services.Get<IConfig>();
       //
       // Erforderlich für die Windows Form-Designerunterstützung
       //
@@ -278,7 +275,7 @@ namespace MyMail
       applicationPath = Path.GetFullPath(applicationPath);
       applicationPath = Path.GetDirectoryName(applicationPath);
 
-      using (Settings xmlwriter = new Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (Settings xmlwriter = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         MailBox tmpBox;
         int boxCount = m_mailBox.Count;
@@ -336,7 +333,7 @@ namespace MyMail
 
     void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (Settings xmlreader = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         int boxCount = 0;
         MailBox tmpBox;

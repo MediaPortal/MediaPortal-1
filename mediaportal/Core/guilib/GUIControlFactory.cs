@@ -29,7 +29,6 @@ using System.Xml;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
 using System.Windows.Serialization;
-using MediaPortal.Utils.Services;
 using MediaPortal.Drawing;
 using MediaPortal.Drawing.Layouts;
 
@@ -41,7 +40,6 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class GUIControlFactory
   {
-    static ILog _log;
 
     #region Constructors
 
@@ -51,8 +49,6 @@ namespace MediaPortal.GUI.Library
 
     static GUIControlFactory()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
     }
 
     #endregion Constructors
@@ -65,7 +61,7 @@ namespace MediaPortal.GUI.Library
       {
         if (m_referenceNodesByControlType != null)
           return;
-        _log.Info("  Loading references from {0}", referenceFile);
+        Log.Info("  Loading references from {0}", referenceFile);
         m_referenceNodesByControlType = new Hashtable();
         _cachedStyleNodes = new Dictionary<string, XmlNode>();
 
@@ -97,7 +93,7 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception ex)
       {
-        _log.Info("exception loading references {0} err:{1} stack:{2}",
+        Log.Info("exception loading references {0} err:{1} stack:{2}",
           referenceFile, ex.Message, ex.StackTrace);
       }
     }
@@ -123,7 +119,7 @@ namespace MediaPortal.GUI.Library
         {
           int iWidth = Convert.ToInt16(nodeSkinWidth.Value);
           int iHeight = Convert.ToInt16(nodeSkinHeight.Value);
-          _log.Info("  original skin size:{0}x{1}", iWidth, iHeight);
+          Log.Info("  original skin size:{0}x{1}", iWidth, iHeight);
           GUIGraphicsContext.SkinSize = new System.Drawing.Size(iWidth, iHeight);
         }
         catch (FormatException) // Size values were invalid.
@@ -242,7 +238,7 @@ namespace MediaPortal.GUI.Library
               }
               catch
               {
-                _log.Info("GUIControlFactory.ConvertXmlStringToObject: Invalid color format '#{0}' reverting to White", valueText);
+                Log.Info("GUIControlFactory.ConvertXmlStringToObject: Invalid color format '#{0}' reverting to White", valueText);
 
                 return Color.White.ToArgb();
               }
@@ -316,7 +312,7 @@ namespace MediaPortal.GUI.Library
 
           if (styleNode != null)
           {
-            _log.Info("Styling");
+            Log.Info("Styling");
             UpdateControlWithXmlData(control, typeOfControlToCreate, styleNode, defines);
           }
         }
@@ -367,8 +363,8 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception e)
       {
-        _log.Info("GUIControlFactory.Create: {0}\r\n\r\n{1}\r\n\r\n", e.Message, e.StackTrace);
-        _log.Info("Parent: {0} Id: {1}", dwParentId, control.GetID);
+        Log.Info("GUIControlFactory.Create: {0}\r\n\r\n{1}\r\n\r\n", e.Message, e.StackTrace);
+        Log.Info("Parent: {0} Id: {1}", dwParentId, control.GetID);
       }
 
       return control;
@@ -409,7 +405,7 @@ namespace MediaPortal.GUI.Library
           }
           catch (Exception e)
           {
-            _log.Info("Couldn't place {0}, which is {1} in {2}. Exception:{3}",
+            Log.Info("Couldn't place {0}, which is {1} in {2}. Exception:{3}",
               newValue, newValue.GetType(), correspondingMember, e);
           }
         }
@@ -430,7 +426,7 @@ namespace MediaPortal.GUI.Library
 
             if (propertyInfo == null)
             {
-              _log.Info("GUIControlFactory.UpdateControlWithXmlData: '{0}' does not contain a definition for '{1}'", controlType, element.Name);
+              Log.Info("GUIControlFactory.UpdateControlWithXmlData: '{0}' does not contain a definition for '{1}'", controlType, element.Name);
               return;
             }
 
@@ -544,7 +540,7 @@ namespace MediaPortal.GUI.Library
 
           if (t == null)
           {
-            _log.Info("ERROR: unknown control:<{0}>", xmlTypeName);
+            Log.Info("ERROR: unknown control:<{0}>", xmlTypeName);
             return null;
           }
 

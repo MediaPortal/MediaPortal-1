@@ -31,7 +31,6 @@ using System.Windows.Forms;
 using System.Xml;
 using System.IO;
 using System.Threading;
-using MediaPortal.Utils.Services;
 using MediaPortal.GUI.Library;
 using MediaPortal.Playlists;
 using MediaPortal.TagReader;
@@ -1463,7 +1462,7 @@ namespace MediaPortal.Configuration.Sections
 
       if (dialogResult == DialogResult.Yes)
       {
-        string database = _config.Get(Config.Options.DatabasePath) + "VideoDatabaseV5.db3";
+        string database = Config.Get(Config.Dir.Database) + "VideoDatabaseV5.db3";
         if (File.Exists(database))
         {
           VideoDatabase.Dispose();
@@ -2096,9 +2095,7 @@ namespace MediaPortal.Configuration.Sections
       int id = movieDetails.ID;
       if (id < 0)
       {
-        ServiceProvider services = GlobalServiceProvider.Instance;
-        ILog log = services.Get<ILog>();
-        log.Info("Adding file:{0}", file);
+        Log.Info("Adding file:{0}", file);
         id = VideoDatabase.AddMovieFile(file);
         VirtualDirectory dir = new VirtualDirectory();
         dir.SetExtensions( MediaPortal.Util.Utils.VideoExtensions);
@@ -2458,7 +2455,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         _isFuzzyMatching = xmlreader.GetValueAsBool("movies", "fuzzyMatching", true);
 
@@ -2521,7 +2518,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         xmlwriter.SetValueAsBool("movies", "fuzzyMatching", _isFuzzyMatching);
         // Database

@@ -25,7 +25,6 @@ using System.Collections;
 using System.Runtime.InteropServices;
 using System.Threading;
 using MediaPortal.GUI.Library;
-using MediaPortal.Utils.Services;
 
 namespace SQLite.NET
 {
@@ -92,7 +91,6 @@ namespace SQLite.NET
 		IntPtr dbHandle=IntPtr.Zero;
 		string databaseName=String.Empty;
     //private long dbHandleAdres=0;
-    protected ILog _log;
 #endregion
 
     #region enums
@@ -166,30 +164,26 @@ namespace SQLite.NET
       IntPtr pName = sqlite3_libversion();
       if (pName != IntPtr.Zero)
       {
-        ServiceProvider services = GlobalServiceProvider.Instance;
-        ILog log = services.Get<ILog>();
         libVersion = Marshal.PtrToStringAnsi(pName);
-        log.Info("using sqlite {0}", libVersion);
+        Log.Info("using sqlite {0}", libVersion);
       }
     }
 
 		// Methods
 		public SQLiteClient(string dbName)
 		{
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
 
 			databaseName=System.IO.Path.GetFileName(dbName);
-			//_log.Info("dbs:open:{0}",databaseName);
+			//Log.Info("dbs:open:{0}",databaseName);
 			dbHandle=IntPtr.Zero;
 			
 			SqliteError err=(SqliteError)sqlite3_open16(dbName, out dbHandle);
-			//_log.Info("dbs:opened:{0} {1} {2:X}",databaseName, err.ToString(),dbHandle.ToInt32());
+			//Log.Info("dbs:opened:{0} {1} {2:X}",databaseName, err.ToString(),dbHandle.ToInt32());
 			if (err!=SqliteError.OK)
 			{
 				throw new SQLiteException(string.Format("Failed to open database, SQLite said: {0} {1}", dbName,err.ToString() ));
 			}
-			//_log.Info("dbs:opened:{0} {1:X}",databaseName, dbHandle.ToInt32());
+			//Log.Info("dbs:opened:{0} {1:X}",databaseName, dbHandle.ToInt32());
 		}
  
 
@@ -204,7 +198,7 @@ namespace SQLite.NET
 		{
 			if (this.dbHandle!=IntPtr.Zero)
 			{	
-			  _log.Info("dbs:close:{0}",databaseName);
+			  Log.Info("dbs:close:{0}",databaseName);
 				sqlite3_close(this.dbHandle);
 				this.dbHandle=IntPtr.Zero;
 				databaseName=String.Empty;
@@ -215,7 +209,7 @@ namespace SQLite.NET
 		{
 			
 			string errorMsg =Marshal.PtrToStringUni(sqlite3_errmsg16(this.dbHandle));
-			_log.Error("SQL:{0} cmd:{1} err:{2} detailed:{3} query:{4}",
+			Log.Error("SQL:{0} cmd:{1} err:{2} detailed:{3} query:{4}",
 											databaseName,statement,err.ToString(),errorMsg,sqlQuery);
 					
 			throw new SQLiteException( String.Format("SQL:{0} cmd:{1} err:{2} detailed:{3} query:{4}",databaseName,statement,err.ToString(),errorMsg,sqlQuery),err);
@@ -226,15 +220,15 @@ namespace SQLite.NET
 			SQLiteResultSet set1 = new SQLiteResultSet();
 			lock (typeof(SQLiteClient))
 			{
-				//_log.Info("dbs:{0} sql:{1}", databaseName,query);
+				//Log.Info("dbs:{0} sql:{1}", databaseName,query);
 				if (query==null) 
 				{
-					_log.Error("database:query==null");
+					Log.Error("database:query==null");
 					return set1;
 				}
 				if (query.Length==0) 
 				{
-					_log.Error("database:query==''");
+					Log.Error("database:query==''");
 					return set1;
 				}
 				IntPtr errMsg = IntPtr.Zero; 
@@ -262,7 +256,7 @@ namespace SQLite.NET
 				}
 				if (err != SqliteError.OK) 
 				{
-					_log.Error("database:query returned {0} {1}",err.ToString(),query);
+					Log.Error("database:query returned {0} {1}",err.ToString(),query);
 					ThrowError("sqlite3_finalize",query,err);
 				}
 			}
@@ -325,7 +319,7 @@ namespace SQLite.NET
 	
 		~SQLiteClient()
 		{
-			//_log.Info("dbs:{0} ~ctor()", databaseName);
+			//Log.Info("dbs:{0} ~ctor()", databaseName);
 			this.Close();
 		}
  /*
@@ -452,7 +446,7 @@ namespace SQLite.NET
 
 		public void Dispose()
 		{
-			//_log.Info("dbs:{0} Dispose()", databaseName);
+			//Log.Info("dbs:{0} Dispose()", databaseName);
 		}
 
 		#endregion

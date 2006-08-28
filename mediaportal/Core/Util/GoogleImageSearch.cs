@@ -22,7 +22,7 @@ using System;
 using System.IO;
 using System.Collections;
 using System.Net;
-using MediaPortal.Utils.Services;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Util
 {
@@ -74,9 +74,7 @@ namespace MediaPortal.Util
       }
       catch(Exception ex)
       {
-        ServiceProvider services = GlobalServiceProvider.Instance;
-        ILog log = services.Get<ILog>();
-        log.Warn("get failed:{0}", ex.Message);
+        Log.Warn("get failed:{0}", ex.Message);
       }
     }
 

@@ -22,7 +22,6 @@ using System;
 using MediaPortal.GUI.Library;
 using MediaPortal.TV.Teletext;
 using MediaPortal.TV.Recording;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.TV.Teletext
 {
@@ -34,12 +33,9 @@ namespace MediaPortal.TV.Teletext
     static DVBTeletext _teletextDecoder;
     static bool _grabbing = false;
     static TVCaptureDevice _device;
-    static ILog _log;
 
     static TeletextGrabber()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
 
       _teletextDecoder = new DVBTeletext();
       Recorder.OnTvViewingStarted += new MediaPortal.TV.Recording.Recorder.OnTvViewHandler(OnTvViewingStarted);
@@ -52,20 +48,20 @@ namespace MediaPortal.TV.Teletext
       _grabbing = false;
       device.GrabTeletext(_grabbing);
       _device = device;
-      _log.Info("teletext: grab teletext for card:{0}", device.Graph.CommercialName);
+      Log.Info("teletext: grab teletext for card:{0}", device.Graph.CommercialName);
     }
 
     static private void OnTvViewingStopped(int card, TVCaptureDevice device)
     {
       _grabbing = false;
       device.GrabTeletext(_grabbing);
-      _log.Info("teletext: stop grabbing teletext for card:{0}", device.Graph.CommercialName);
+      Log.Info("teletext: stop grabbing teletext for card:{0}", device.Graph.CommercialName);
     }
 
     static private void OnTvChannelChanged(string tvChannelName)
     {
       _teletextDecoder.ClearBuffer();
-      _log.Info("teletext: clear teletext cache");
+      Log.Info("teletext: clear teletext cache");
     }
 
     static public void SaveData(IntPtr dataPtr)

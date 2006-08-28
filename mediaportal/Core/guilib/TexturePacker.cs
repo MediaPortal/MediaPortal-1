@@ -35,7 +35,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using DShowNET.Helper;
-using MediaPortal.Utils.Services;
+using MediaPortal.Util;
 
 namespace MediaPortal.GUI.Library
 {
@@ -110,7 +110,7 @@ namespace MediaPortal.GUI.Library
 
       public PackedTextureNode Insert(string fileName, Image img, Image rootImage)
       {
-        //_log.Info("rect:({0},{1}) {2}x{3} img:{4}x{5} filename:{6} left:{7} right:{8}",
+        //Log.Info("rect:({0},{1}) {2}x{3} img:{4}x{5} filename:{6} left:{7} right:{8}",
         //				Rect.Left,Rect.Top,Rect.Width,Rect.Height,img.Width,img.Height,FileName, ChildLeft,ChildRight);
         if (ChildLeft != null && ChildRight != null)
         {
@@ -173,16 +173,11 @@ namespace MediaPortal.GUI.Library
 
     #region variables
     List<PackedTexture> _packedTextures;
-    private ILog _log;
-    private IConfig _config;
     #endregion
 
     #region ctor/dtor
     public TexturePacker()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
     }
     #endregion
 
@@ -192,11 +187,11 @@ namespace MediaPortal.GUI.Library
       PackedTextureNode node = root.Insert(fileName, img, rootImage);
       if (node != null)
       {
-        //_log.Info("added {0} at ({1},{2}) {3}x{4}",fileName,node.Rect.X,node.Rect.Y,node.Rect.Width,node.Rect.Height);
+        //Log.Info("added {0} at ({1},{2}) {3}x{4}",fileName,node.Rect.X,node.Rect.Y,node.Rect.Width,node.Rect.Height);
         node.FileName = fileName;
         return true;
       }
-      //_log.Info("no room anymore to add:{0}", fileName);
+      //Log.Info("no room anymore to add:{0}", fileName);
       return false;
     }
 
@@ -219,7 +214,7 @@ namespace MediaPortal.GUI.Library
     bool LoadPackedSkin(string skinName)
     {
       string packedXml = String.Format(@"{0}\packedgfx2.bxml", skinName);
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         if (xmlreader.GetValueAsBool("debug", "skincaching", true) && File.Exists(packedXml))
         {
@@ -254,9 +249,9 @@ namespace MediaPortal.GUI.Library
 
       _packedTextures = new List<PackedTexture>();
       string[] files1 = System.IO.Directory.GetFiles(String.Format(@"{0}\media", skinName), "*.png");
-      string[] files2 = System.IO.Directory.GetFiles(_config.Get(Config.Options.ThumbsPath) + @"tv\logos", "*.png");
-      string[] files3 = System.IO.Directory.GetFiles(_config.Get(Config.Options.WeatherPath) + "64x64", "*.png");
-      string[] files4 = System.IO.Directory.GetFiles(_config.Get(Config.Options.WeatherPath) + "128x128", "*.png");
+      string[] files2 = System.IO.Directory.GetFiles(Config.Get(Config.Dir.Thumbs) + @"tv\logos", "*.png");
+      string[] files3 = System.IO.Directory.GetFiles(Config.Get(Config.Dir.Weather) + "64x64", "*.png");
+      string[] files4 = System.IO.Directory.GetFiles(Config.Get(Config.Dir.Weather) + "128x128", "*.png");
       string[] files5 = System.IO.Directory.GetFiles(String.Format(@"{0}\media\tetris", skinName), "*.png");
       string[] files = new string[files1.Length + files2.Length + files3.Length + files4.Length + files5.Length];
 
@@ -349,7 +344,7 @@ namespace MediaPortal.GUI.Library
         bigOne.texture = tex;
         bigOne.texture.Disposing += new EventHandler(texture_Disposing);
 
-        _log.Info("TexturePacker: Loaded {0} texture:{1}x{2} miplevels:{3}", fileName, info2.Width, info2.Height, tex.LevelCount);
+        Log.Info("TexturePacker: Loaded {0} texture:{1}x{2} miplevels:{3}", fileName, info2.Width, info2.Height, tex.LevelCount);
       }
     }
 
@@ -363,7 +358,7 @@ namespace MediaPortal.GUI.Library
         {
           if (bigOne.textureNo >= 0)
           {
-            _log.Info("TexturePacker: disposing texture:{0}", bigOne.textureNo);
+            Log.Info("TexturePacker: disposing texture:{0}", bigOne.textureNo);
             FontEngineRemoveTexture(bigOne.textureNo);
             if (Disposing != null)
             {
@@ -443,7 +438,7 @@ namespace MediaPortal.GUI.Library
             {
               IntPtr ptr = DirectShowUtil.GetUnmanagedTexture(bigOne.texture);
               bigOne.textureNo = FontEngineAddTexture(ptr.ToInt32(), true, (void*)ptr.ToPointer());
-              _log.Info("TexturePacker: fontengine add texure:{0}", bigOne.textureNo);
+              Log.Info("TexturePacker: fontengine add texure:{0}", bigOne.textureNo);
             }
           }
           TextureNo = bigOne.textureNo;
@@ -456,14 +451,14 @@ namespace MediaPortal.GUI.Library
 
     public void Dispose()
     {
-      _log.Info("TexturePacker:Dispose()");
+      Log.Info("TexturePacker:Dispose()");
       if (_packedTextures != null)
       {
         foreach (PackedTexture bigOne in _packedTextures)
         {
           if (bigOne.textureNo >= 0)
           {
-            _log.Info("TexturePacker: remove texture:{0}", bigOne.textureNo);
+            Log.Info("TexturePacker: remove texture:{0}", bigOne.textureNo);
             FontEngineRemoveTexture(bigOne.textureNo);
             if (Disposing != null)
             {
@@ -493,7 +488,7 @@ namespace MediaPortal.GUI.Library
         Usage.None, ResourceType.Textures,
         textureFormat))
       {
-        _log.Info("TexurePacker:Using compressed textures");
+        Log.Info("TexurePacker:Using compressed textures");
         return true;
       }
       return false;

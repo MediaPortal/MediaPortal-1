@@ -2,6 +2,8 @@ using System;
 using MediaPortal.GUI.Library;
 using MediaPortal.Music.Database;
 using MediaPortal.Dialogs;
+using MediaPortal.Util;
+
 namespace MediaPortal.GUI.Settings
 {
 	/// <summary>
@@ -35,7 +37,7 @@ namespace MediaPortal.GUI.Settings
 
 		void LoadSettings()
 		{
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         m_bAutoShuffle=xmlreader.GetValueAsBool("musicfiles","autoshuffle",true);
         m_bUseID3=xmlreader.GetValueAsBool("musicfiles","showid3",m_bUseID3);
@@ -44,7 +46,7 @@ namespace MediaPortal.GUI.Settings
 		
 		void SaveSettings()
 		{
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         xmlreader.SetValueAsBool("musicfiles","autoshuffle",m_bAutoShuffle);
         xmlreader.SetValueAsBool("musicfiles","showid3",m_bUseID3);

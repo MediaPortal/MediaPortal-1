@@ -34,7 +34,6 @@ using DShowNET.Helper;
 using DirectShowLib;
 using TVCapture;
 using MediaPortal.GUI.Library;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.TV.Recording
 {
@@ -46,7 +45,6 @@ namespace MediaPortal.TV.Recording
     private string _deviceId;
     //private string _captureName;
     private string _commercialName;
-    protected ILog _log;
     #endregion
 
     #region properties
@@ -185,8 +183,6 @@ namespace MediaPortal.TV.Recording
     #region Constructors
     public GraphHelper()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
     }
     #endregion
 
@@ -215,7 +211,7 @@ namespace MediaPortal.TV.Recording
     ///     ...
     public int FindInstanceForDevice(string monikerName)
     {
-      _log.Info("    FindInstance:{0}", monikerName);
+      Log.Info("    FindInstance:{0}", monikerName);
 
       // find the device entry in SYSTEM\CurrentControlSet\Enum\[device moniker]
       int pos1 = monikerName.IndexOf("#");
@@ -229,7 +225,7 @@ namespace MediaPortal.TV.Recording
       if (registryKeyName.StartsWith(@"@device:pnp:\\?\"))
         registryKeyName = registryKeyName.Substring(@"@device:pnp:\\?\".Length);
       registryKeyName = @"SYSTEM\CurrentControlSet\Enum\" + registryKeyName;
-      _log.Info("      key:{0}", registryKeyName);
+      Log.Info("      key:{0}", registryKeyName);
 
       using (RegistryKey subkey = Registry.LocalMachine.OpenSubKey(registryKeyName, false))
         if (subkey != null)
@@ -238,9 +234,9 @@ namespace MediaPortal.TV.Recording
           string serviceName = (string)subkey.GetValue("Service");
 
           //next open the service entry in SYSTEM\CurrentControlSet\Services\[Service name\enum
-          _log.Info("        serviceName:{0}", serviceName);
+          Log.Info("        serviceName:{0}", serviceName);
           registryKeyName = @"SYSTEM\CurrentControlSet\Services\" + serviceName + @"\Enum";
-          _log.Info("        key:{0}", registryKeyName);
+          Log.Info("        key:{0}", registryKeyName);
 
           using (RegistryKey subkey2 = Registry.LocalMachine.OpenSubKey(registryKeyName, false))
             if (subkey2 != null)
@@ -248,13 +244,13 @@ namespace MediaPortal.TV.Recording
               // get the number of instances for the device
               Int32 count = (Int32)subkey2.GetValue("Count");
 
-              _log.Info("        Number of cards:{0}", count);
+              Log.Info("        Number of cards:{0}", count);
               for (int i = 0; i < count; i++)
               {
                 string moniker = (string)subkey2.GetValue(i.ToString());
                 moniker = moniker.Replace(@"\", "#");
                 moniker = moniker.Replace(@"/", "#");
-                _log.Info("          card#{0}={1}", i, moniker);
+                Log.Info("          card#{0}={1}", i, moniker);
               }
 
               // for each instance
@@ -269,14 +265,14 @@ namespace MediaPortal.TV.Recording
                 if (monikerName.ToLower().IndexOf(moniker.ToLower()) >= 0)
                 {
                   //yes then return this instance
-                  _log.Info("        using card:#{0}", i);
+                  Log.Info("        using card:#{0}", i);
                   return i;
                 }
               }
             }
             else
             {
-              _log.Info("        using default card:0 (subkey not found)");
+              Log.Info("        using default card:0 (subkey not found)");
               return 0;
             }
         }
@@ -306,7 +302,7 @@ namespace MediaPortal.TV.Recording
     ///     ...
     public string FindUniqueFilter(string monikerName, int instance)
     {
-      _log.Info("    FindUniqueFilter:card#{0} filter:{1}", instance, monikerName);
+      Log.Info("    FindUniqueFilter:card#{0} filter:{1}", instance, monikerName);
 
       int pos1 = monikerName.IndexOf("#");
       int pos2 = monikerName.LastIndexOf("#");
@@ -320,32 +316,32 @@ namespace MediaPortal.TV.Recording
         registryKeyName = registryKeyName.Substring(@"@device:pnp:\\?\".Length);
 
       registryKeyName = @"SYSTEM\CurrentControlSet\Enum\" + registryKeyName;
-      _log.Info("        key:{0}", registryKeyName);
+      Log.Info("        key:{0}", registryKeyName);
 
       using (RegistryKey subkey = Registry.LocalMachine.OpenSubKey(registryKeyName, false))
         if (subkey != null)
         {
           string serviceName = (string)subkey.GetValue("Service");
-          _log.Info("        serviceName:{0}", serviceName);
+          Log.Info("        serviceName:{0}", serviceName);
           registryKeyName = @"SYSTEM\CurrentControlSet\Services\" + serviceName + @"\Enum";
-          _log.Info("        key:{0}", registryKeyName);
+          Log.Info("        key:{0}", registryKeyName);
 
           using (RegistryKey subkey2 = Registry.LocalMachine.OpenSubKey(registryKeyName, false))
             if (subkey2 != null)
             {
               Int32 count = (Int32)subkey2.GetValue("Count");
-              _log.Info("        filters available:{0}", count);
+              Log.Info("        filters available:{0}", count);
               for (int i = 0; i < count; ++i)
               {
                 string moniker = (string)subkey2.GetValue(i.ToString());
                 moniker = moniker.Replace(@"\", "#");
                 moniker = moniker.Replace(@"/", "#");
-                _log.Info("          filter#:{0}={1}", i, moniker);
+                Log.Info("          filter#:{0}={1}", i, moniker);
               }
               string monikerToUse = (string)subkey2.GetValue(instance.ToString());
               monikerToUse = monikerToUse.Replace(@"\", "#");
               monikerToUse = monikerToUse.Replace(@"/", "#");
-              _log.Info("        using filter #:{0}={1}", instance, monikerToUse);
+              Log.Info("        using filter #:{0}={1}", instance, monikerToUse);
               return monikerToUse;
             }
             else
@@ -365,7 +361,7 @@ namespace MediaPortal.TV.Recording
     /// </returns>
     public string GetHardwareLocation(string monikerName)
     {
-      //_log.Info("    GetHardwareLocation: filter:{1}", monikerName);
+      //Log.Info("    GetHardwareLocation: filter:{1}", monikerName);
 
       int pos1 = monikerName.IndexOf("#");
       if (pos1 < 0) return String.Empty;
@@ -378,14 +374,14 @@ namespace MediaPortal.TV.Recording
       string registryKeyName = mid;
 
       registryKeyName = @"SYSTEM\CurrentControlSet\Enum\PCI\" + mid;
-      _log.Info("        key:{0}", registryKeyName);
+      Log.Info("        key:{0}", registryKeyName);
 
       using (RegistryKey subkey = Registry.LocalMachine.OpenSubKey(registryKeyName, false))
         if (subkey != null)
         {
           string locInfo = (string)subkey.GetValue("LocationInformation");
           if (locInfo == null) locInfo = string.Empty;
-          //_log.Info("        LocationInformation:{0}", locInfo);
+          //Log.Info("        LocationInformation:{0}", locInfo);
           int fPos = locInfo.LastIndexOf(",");
           locInfo = locInfo.Substring(0, fPos);
           return locInfo;
@@ -405,20 +401,20 @@ namespace MediaPortal.TV.Recording
       _captureCardDefinition = null;
       try
       {
-        _log.Info("LoadDefs for device at {0}", GetHardwareLocation(videoDeviceMoniker));
-        //_log.Info("LoadDefinitions() card:{0} {1}", ID, this.FriendlyName);
+        Log.Info("LoadDefs for device at {0}", GetHardwareLocation(videoDeviceMoniker));
+        //Log.Info("LoadDefinitions() card:{0} {1}", ID, this.FriendlyName);
         CaptureCardDefinitions captureCardDefinitions = CaptureCardDefinitions.Instance;
-        _log.Info("defs loaded for device at {0}", GetHardwareLocation(videoDeviceMoniker));
+        Log.Info("defs loaded for device at {0}", GetHardwareLocation(videoDeviceMoniker));
         if (CaptureCardDefinitions.CaptureCards.Count == 0)
         {
           // Load failed!!!
-          _log.Info(" No capturecards defined, or load failed");
+          Log.Info(" No capturecards defined, or load failed");
           return (false);
         }
 
         if (videoDeviceMoniker == null)
         {
-          _log.Info(" No video device moniker specified");
+          Log.Info(" No video device moniker specified");
           return true;
         }
 
@@ -447,7 +443,7 @@ namespace MediaPortal.TV.Recording
           _captureCardDefinition = new CaptureCardDefinition();
         if (ccd == null)
         {
-          _log.Error(" CaptureCard {0} NOT supported, no definitions found", videoDevice);
+          Log.Error(" CaptureCard {0} NOT supported, no definitions found", videoDevice);
           return (false);
         }
         _captureCardDefinition.CaptureName = ccd.CaptureName;
@@ -484,13 +480,13 @@ namespace MediaPortal.TV.Recording
         string captureDeviceDeviceName = videoDeviceMoniker;
         int pos = captureDeviceDeviceName.LastIndexOf("#");
         if (pos >= 0) captureDeviceDeviceName = captureDeviceDeviceName.Substring(0, pos);
-        _log.Info(" video device moniker   :{0}", videoDeviceMoniker);
-        _log.Info(" captureDeviceDeviceName:{0}", captureDeviceDeviceName);
+        Log.Info(" video device moniker   :{0}", videoDeviceMoniker);
+        Log.Info(" captureDeviceDeviceName:{0}", captureDeviceDeviceName);
 
 
 
         Instance = FindInstanceForDevice(captureDeviceDeviceName);
-        _log.Info(" Using card#{0}", Instance);
+        Log.Info(" Using card#{0}", Instance);
         //for each tv filter we need for building the graph
         foreach (FilterDefinition fd in _captureCardDefinition.Tv.FilterDefinitions)
         {
@@ -501,7 +497,7 @@ namespace MediaPortal.TV.Recording
 
           string friendlyName = fd.Category;
           bool filterFound = false;
-          _log.Info("  filter {0}='{1}' check:{2}", friendlyName, fd.FriendlyName, fd.CheckDevice);
+          Log.Info("  filter {0}='{1}' check:{2}", friendlyName, fd.FriendlyName, fd.CheckDevice);
 
           //for each directshow filter
           foreach (string key in AvailableFilters.Filters.Keys)
@@ -565,7 +561,7 @@ namespace MediaPortal.TV.Recording
                 int posTmp = filterMoniker.LastIndexOf("#");
                 if (posTmp >= 0) filterMoniker = filterMoniker.Substring(0, posTmp);
 
-                _log.Info("  CheckDevice:{0}", filterMoniker);
+                Log.Info("  CheckDevice:{0}", filterMoniker);
                 if (!filterFound)
                 {
                   string moniker = FindUniqueFilter(filterMoniker, Instance);
@@ -576,7 +572,7 @@ namespace MediaPortal.TV.Recording
                     tmpMoniker = tmpMoniker.Replace(@"/", "#");
                     if (tmpMoniker.ToLower().IndexOf(moniker.ToLower()) >= 0)
                     {
-                      _log.Info("use unique filter moniker:{0}", filter.MonikerString);
+                      Log.Info("use unique filter moniker:{0}", filter.MonikerString);
                       filterFound = true;
                       break;
                     }
@@ -595,29 +591,29 @@ namespace MediaPortal.TV.Recording
                     {
                       filter = f;
                       filterFound = true;
-                      _log.Info("Filter matched on hardware location: {1} -> {0}", f.MonikerString, GetHardwareLocation(f.MonikerString));
+                      Log.Info("Filter matched on hardware location: {1} -> {0}", f.MonikerString, GetHardwareLocation(f.MonikerString));
                       break;
                     }
                   }
-                  if (!filterFound) _log.Info("No filters matched on hardware location");
+                  if (!filterFound) Log.Info("No filters matched on hardware location");
                 }
 
                 if (!filterFound)
                 {
                   if (al.Count > 0)
                   {
-                    _log.Info("use global filter moniker (if you have two identical tuner cards and see this, you might experience problems using both)");
+                    Log.Info("use global filter moniker (if you have two identical tuner cards and see this, you might experience problems using both)");
                     filter = al[0] as Filter;
                     filterFound = true;
                   }
                 }
                 if (!filterFound)
                 {
-                  _log.Error("  ERROR Cannot find unique filter for filter:{0}", filter.Name);
+                  Log.Error("  ERROR Cannot find unique filter for filter:{0}", filter.Name);
                 }
                 else
                 {
-                  _log.Info("    Found {0}={1}", filter.Name, filter.MonikerString);
+                  Log.Info("    Found {0}={1}", filter.Name, filter.MonikerString);
                 }
               }
               else filterFound = true;
@@ -638,7 +634,7 @@ namespace MediaPortal.TV.Recording
           {
             if (fd.FriendlyName.StartsWith("%") == false || fd.FriendlyName.EndsWith("%") == false)
             {
-              _log.Error("  Filter {0} not found in definitions file", friendlyName);
+              Log.Error("  Filter {0} not found in definitions file", friendlyName);
               return (false);
             }
           }
@@ -646,11 +642,11 @@ namespace MediaPortal.TV.Recording
       }
       catch (Exception ex)
       {
-        _log.Error(ex);
+        Log.Error(ex);
         return (false);
       }
 
-      _log.Info("LoadDefinitions done");
+      Log.Info("LoadDefinitions done");
       return (true);
     }
     #endregion

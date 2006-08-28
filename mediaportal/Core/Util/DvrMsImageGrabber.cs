@@ -35,7 +35,6 @@ using MediaPortal.GUI.Library;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Util
 {
@@ -48,18 +47,16 @@ namespace MediaPortal.Util
 
     static public bool GrabFrame(string fileName,string imageFileName, System.Drawing.Imaging.ImageFormat format, int width, int height)
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      ILog log = services.Get<ILog>();
       try
       {
         if (!System.IO.File.Exists(fileName)) return false;
         Utils.FileDelete("temp.bmp");
-        log.Info("dvrms:create thumbnail for {0}", fileName);
+        Log.Info("dvrms:create thumbnail for {0}", fileName);
         GrabBitmaps(fileName);
 
         if (!System.IO.File.Exists("temp.bmp"))
         {
-          log.Info("dvrms:failed to create thumbnail for {0}", fileName);
+          Log.Info("dvrms:failed to create thumbnail for {0}", fileName);
           return false;
         }
         using (Image bmp = Image.FromFile("temp.bmp"))
@@ -71,7 +68,7 @@ namespace MediaPortal.Util
           float ar = ((float)ary) / ((float)arx);
           height = (int)(((float)width) * ar);
 
-          log.Info("dvrms:scale thumbnail {0}x{1}->{2}x{3}", arx,ary,width,height);
+          Log.Info("dvrms:scale thumbnail {0}x{1}->{2}x{3}", arx,ary,width,height);
           using (Bitmap result = new Bitmap(width, height))
           {
             using (Graphics g = Graphics.FromImage(result))
@@ -85,7 +82,7 @@ namespace MediaPortal.Util
       }
       catch (Exception ex)
       {
-        log.Error("dvrms:failed to create thumbnail for {0} {1} {2} {3}", fileName,ex.Message,ex.Source,ex.StackTrace);
+        Log.Error("dvrms:failed to create thumbnail for {0} {1} {2} {3}", fileName,ex.Message,ex.Source,ex.StackTrace);
         return false;
       }
     }

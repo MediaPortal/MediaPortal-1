@@ -35,7 +35,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
 using MediaPortal.TV.Scanning;
-using MediaPortal.Utils.Services;
+using MediaPortal.Util;
 
 namespace MediaPortal.Configuration.Sections
 {
@@ -108,8 +108,6 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel3;
-    protected ILog _log;
-    protected IConfig _config;
 
 
     public Wizard_DVBSTV()
@@ -121,9 +119,6 @@ namespace MediaPortal.Configuration.Sections
     public Wizard_DVBSTV(string name)
       : base(name)
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
 
       _card = null;
       // This call is required by the Windows Form Designer.
@@ -754,7 +749,7 @@ namespace MediaPortal.Configuration.Sections
       ts.SatName = fileName;
 
       string line;
-      System.IO.TextReader tin = System.IO.File.OpenText(_config.Get(Config.Options.BasePath) + @"Tuningparameters\" + fileName);
+      System.IO.TextReader tin = System.IO.File.OpenText(Config.Get(Config.Dir.Base) + @"Tuningparameters\" + fileName);
       while (true)
       {
         line = tin.ReadLine();
@@ -799,7 +794,7 @@ namespace MediaPortal.Configuration.Sections
       cbTransponder2.Items.Clear();
       cbTransponder3.Items.Clear();
       cbTransponder4.Items.Clear();
-      string[] files = System.IO.Directory.GetFiles(_config.Get(Config.Options.BasePath) + @"\Tuningparameters", "*.tpl");
+      string[] files = System.IO.Directory.GetFiles(Config.Get(Config.Dir.Base) + @"\Tuningparameters", "*.tpl");
       Transponder[] transponders = new Transponder[files.Length];
       int trans = 0;
       foreach (string file in files)
@@ -840,28 +835,28 @@ namespace MediaPortal.Configuration.Sections
     protected override String[] GetScanParameters()
     {
       int m_diseqcLoops = 1;
-      string filename = String.Format(_config.Get(Config.Options.DatabasePath) + "card_{0}.xml", _card.FriendlyName);
+      string filename = String.Format(Config.Get(Config.Dir.Database) + "card_{0}.xml", _card.FriendlyName);
       if (useLNB2.Checked) m_diseqcLoops++;
       if (useLNB3.Checked) m_diseqcLoops++;
       if (useLNB4.Checked) m_diseqcLoops++;
       String[] parameters = new String[m_diseqcLoops];
       Transponder ts = (Transponder)cbTransponder.SelectedItem;
-      parameters[0] = _config.Get(Config.Options.BasePath) + @"Tuningparameters\" + ts.FileName;
+      parameters[0] = Config.Get(Config.Dir.Base) + @"Tuningparameters\" + ts.FileName;
 
       if (useLNB2.Checked)
       {
         ts = (Transponder)cbTransponder2.SelectedItem;
-        parameters[1] = _config.Get(Config.Options.BasePath) + @"Tuningparameters\" + ts.FileName;
+        parameters[1] = Config.Get(Config.Dir.Base) + @"Tuningparameters\" + ts.FileName;
       }
       if (useLNB3.Checked)
       {
         ts = (Transponder)cbTransponder3.SelectedItem;
-        parameters[2] = _config.Get(Config.Options.BasePath) + @"Tuningparameters\" + ts.FileName;
+        parameters[2] = Config.Get(Config.Dir.Base) + @"Tuningparameters\" + ts.FileName;
       }
       if (useLNB4.Checked)
       {
         ts = (Transponder)cbTransponder4.SelectedItem;
-        parameters[3] = _config.Get(Config.Options.BasePath) + @"Tuningparameters\" + ts.FileName;
+        parameters[3] = Config.Get(Config.Dir.Base) + @"Tuningparameters\" + ts.FileName;
       }
       return parameters;
     }
@@ -897,11 +892,11 @@ namespace MediaPortal.Configuration.Sections
     {
       if (_card == null)
       {
-        _log.Info("load DVBS:no card");
+        Log.Info("load DVBS:no card");
         return;
       }
-      _log.Info("load DVBS:{0}", _card.FriendlyName);
-      string filename = String.Format(_config.Get(Config.Options.DatabasePath) + "card_{0}.xml", _card.FriendlyName);
+      Log.Info("load DVBS:{0}", _card.FriendlyName);
+      string filename = String.Format(Config.Get(Config.Dir.Database) + "card_{0}.xml", _card.FriendlyName);
 
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename))
@@ -1029,7 +1024,7 @@ namespace MediaPortal.Configuration.Sections
 
         }
         string transponder = xmlreader.GetValueAsString("dvbs", "transponder1", "");
-        _log.Info("1:{0}", transponder);
+        Log.Info("1:{0}", transponder);
         if (transponder != "")
         {
           for (int i = 0; i < cbTransponder.Items.Count; ++i)
@@ -1082,8 +1077,8 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      _log.Info("Save DVBS:{0}", _card.FriendlyName);
-      string filename = String.Format(_config.Get(Config.Options.DatabasePath) + "card_{0}.xml", _card.FriendlyName);
+      Log.Info("Save DVBS:{0}", _card.FriendlyName);
+      string filename = String.Format(Config.Get(Config.Dir.Database) + "card_{0}.xml", _card.FriendlyName);
       // save settings
 
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(filename))

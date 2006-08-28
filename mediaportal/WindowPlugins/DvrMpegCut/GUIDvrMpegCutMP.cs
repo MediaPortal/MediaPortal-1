@@ -126,7 +126,7 @@ namespace WindowPlugins.DvrMpegCut
 			}
 			catch (Exception e)
 			{
-				_log.Error("DvrMpegCut: (OnPageLoad) " + e.StackTrace);
+				Log.Error("DvrMpegCut: (OnPageLoad) " + e.StackTrace);
 			}
 
 		}
@@ -274,7 +274,7 @@ namespace WindowPlugins.DvrMpegCut
 			}
 			catch (Exception ex)
 			{
-				_log.Error("DvrMpegCut: (LoadDrives) " + ex.StackTrace);
+				Log.Error("DvrMpegCut: (LoadDrives) " + ex.StackTrace);
 			}
 		}
 
@@ -328,7 +328,7 @@ namespace WindowPlugins.DvrMpegCut
 			}
 			catch (Exception ex)
 			{
-				_log.Error("DvrMpegCut: (LoadListControl) "+ ex.Message);
+				Log.Error("DvrMpegCut: (LoadListControl) "+ ex.Message);
 			}
 		}
 
@@ -354,7 +354,7 @@ namespace WindowPlugins.DvrMpegCut
 
     private void LoadShares()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         //ShowTrailerButton = xmlreader.GetValueAsBool("plugins", "My Trailers", true);
        // fileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
@@ -446,7 +446,7 @@ namespace WindowPlugins.DvrMpegCut
 			}
 			catch (Exception ex)
 			{
-				_log.Error("DvrMpegCut: (ToCutScreen) " + ex.Message);
+				Log.Error("DvrMpegCut: (ToCutScreen) " + ex.Message);
 			}
 		}
 		#endregion

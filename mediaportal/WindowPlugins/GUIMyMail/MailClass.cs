@@ -34,7 +34,6 @@ using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography;
 using System.Windows.Forms.Design;
-using MediaPortal.Utils.Services;
 
 namespace MyMail
 {
@@ -142,14 +141,11 @@ namespace MyMail
     // timout handler
     public delegate void GotMailDataEventHandler(object mailObject, string mailData, int mailAction);
     public event GotMailDataEventHandler GotMailData;
-    protected ILog _log;
     //
     // get mail known state
     //
     public MailClass()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
 
       m_timeOutTimer.Tick += new EventHandler(TimeOut);
     }
@@ -199,7 +195,7 @@ namespace MyMail
         }
         m_ierrorNumber = (int)SocketError.ERROR_SERVER_NOT_READY;
         m_mb.MailCount = 0;
-        _log.Info("mymail: server connecting problem {0}", m_mb.ServerAddress);
+        Log.Info("mymail: server connecting problem {0}", m_mb.ServerAddress);
         InteractServer((int)MailAction.MAIL_SEND_QUIT); // logout from the server
       }
     }
@@ -232,13 +228,13 @@ namespace MyMail
               m_currAction = (int)MailAction.MAIL_MB_CONNECTED;
               m_mailTLSStream.BeginRead(m_mailBuffer, 0, m_buffSize, recieveData, m_mailTLSStream);
 
-              _log.Info("mymail: connected to server {0} using SSL", m_mb.ServerAddress);
+              Log.Info("mymail: connected to server {0} using SSL", m_mb.ServerAddress);
 
             }
             catch //(Exception ee)
             {
               /*
-              _log.Info("mymail: SSL connection attempt to dedicated port failed: {0}", ee.Message);
+              Log.Info("mymail: SSL connection attempt to dedicated port failed: {0}", ee.Message);
 
               m_mailTLSStream = null;
               m_TLS_OK = false;
@@ -260,7 +256,7 @@ namespace MyMail
             m_currAction = (int)MailAction.MAIL_MB_CONNECTED;
             m_mailSocketStream.BeginRead(m_mailBuffer, 0, m_buffSize, recieveData, m_mailSocketStream);
 
-            _log.Info("mymail: connected to server {0}", m_mb.ServerAddress);
+            Log.Info("mymail: connected to server {0}", m_mb.ServerAddress);
 
           }
 
@@ -279,12 +275,12 @@ namespace MyMail
 
         if (m_TLSSecured == MailBox.STLS && m_TLS_OK)
         {
-          _log.Info("mymail: re-connected to server {0} using SSL", m_mb.ServerAddress);
+          Log.Info("mymail: re-connected to server {0} using SSL", m_mb.ServerAddress);
           InteractServer((int)MailAction.MAIL_SEND_USER);
         }
         else
         {
-          _log.Info("mymail: SSL re-connection attempt using STARTTLS command failed: Explicit TLS issued w/out any effective SSL layer protection");
+          Log.Info("mymail: SSL re-connection attempt using STARTTLS command failed: Explicit TLS issued w/out any effective SSL layer protection");
           m_ierrorNumber = (int)SocketError.ERROR_CONNECTION_ERR;
           InteractServer((int)MailAction.MAIL_SEND_QUIT); // logout from the server
         }
@@ -304,7 +300,7 @@ namespace MyMail
 
         if (bytesCount == 0 && m_currAction == (int)MailAction.MAIL_ACTION_READ_ON)
         {
-          _log.Info("mymail: there is an recieve error. no data was send from server");
+          Log.Info("mymail: there is an recieve error. no data was send from server");
           m_errorMessage = "Error. No Mail-End indicator found";
           m_ierrorNumber = (int)SocketError.ERROR_WRONG_DATA;
           InteractServer((int)MailAction.MAIL_SEND_QUIT); // logout from the server
@@ -338,14 +334,14 @@ namespace MyMail
           else
           {
 
-            _log.Info("mymail: recieved message number {0}", Convert.ToString(m_mailNumber));
+            Log.Info("mymail: recieved message number {0}", Convert.ToString(m_mailNumber));
             try
             {
               SaveEMail(m_recMailData, m_mailNumber);
             }
             catch
             {
-              _log.Info("mymail: there was an error creating the mail nr. {0}", Convert.ToString(m_mailNumber));
+              Log.Info("mymail: there was an error creating the mail nr. {0}", Convert.ToString(m_mailNumber));
             }
             m_recMailData = "";
             m_mailNumber--;
@@ -353,14 +349,14 @@ namespace MyMail
             if (m_mailNumber <= 0)
             {
               m_mailBuffer = System.Text.Encoding.ASCII.GetBytes(m_emptyBuffer);
-              _log.Info("mymail: all messages transfered. count: {0}", Convert.ToString(m_imailCount));
+              Log.Info("mymail: all messages transfered. count: {0}", Convert.ToString(m_imailCount));
               m_ierrorNumber = (int)SocketError.ERROR_NO_ERROR;
               InteractServer((int)MailAction.MAIL_SEND_QUIT); // logout from the server
             }
             else
             {
               InformUser((int)InformNumber.INFORM_GETTING_MAIL, Convert.ToString((m_imailCount + 1) - m_mailNumber) + "/" + Convert.ToString(m_imailCount));
-              _log.Info("mymail: getting message number {0}", Convert.ToString(m_mailNumber));
+              Log.Info("mymail: getting message number {0}", Convert.ToString(m_mailNumber));
               m_mailAction = (int)MailAction.MAIL_SEND_LIST;
               InteractServer((int)MailAction.MAIL_SEND_LIST);
             }
@@ -400,7 +396,7 @@ namespace MyMail
                 }
                 else
                 {
-                  _log.Info("mymail: message number {0} has already been downloaded or is malformed", Convert.ToString(m_mailNumber));
+                  Log.Info("mymail: message number {0} has already been downloaded or is malformed", Convert.ToString(m_mailNumber));
                   m_mailNumber--;
                   if (m_mailNumber <= 0)
                   {
@@ -433,7 +429,7 @@ namespace MyMail
                 //Non? alors on arrête là...
                 if (!is_STLS_Authorized)
                 {
-                  _log.Info("mymail: Server does not advertise STLS. No secure connection will be issued.");
+                  Log.Info("mymail: Server does not advertise STLS. No secure connection will be issued.");
                   m_ierrorNumber = (int)SocketError.ERROR_CONNECTION_ERR;
                   InteractServer((int)MailAction.MAIL_SEND_QUIT); // logout from the server
                 }
@@ -452,7 +448,7 @@ namespace MyMail
                 {
                   m_mailSocket.Blocking = false;
 
-                  _log.Info("mymail: SSL connection attempt using STARTTLS command failed: {0}", ee.Message);
+                  Log.Info("mymail: SSL connection attempt using STARTTLS command failed: {0}", ee.Message);
 
                   m_mailTLSStream = null;
                   m_TLS_OK = false;
@@ -486,7 +482,7 @@ namespace MyMail
                   }
                   //									m_imailCount=m_imailCount;
                   m_mb.MailCount = m_imailCount;
-                  _log.Info("mymail: there are {0} messages in the mailbox {1}", Convert.ToString(m_imailCount), m_mb.BoxLabel);
+                  Log.Info("mymail: there are {0} messages in the mailbox {1}", Convert.ToString(m_imailCount), m_mb.BoxLabel);
                   if (m_imailCount > 0)
                   {
                     //m_lastMailToRecieve=m_mb.LastCheckCount;
@@ -512,28 +508,28 @@ namespace MyMail
                   //QUICK FIX: mail bodies whose size is lower than buffer length don't pass MAIL_ACTION_READ_ON related procedure through MAIL_SEND_RETR related procedure. 
                   if (strRecieved.EndsWith(_CRLF_ + "." + _CRLF_))
                   {
-                    _log.Info("mymail: recieved message number {0}", Convert.ToString(m_mailNumber));
+                    Log.Info("mymail: recieved message number {0}", Convert.ToString(m_mailNumber));
                     try
                     {
                       SaveEMail(m_recMailData, m_mailNumber);
                     }
                     catch
                     {
-                      _log.Info("mymail: there was an error creating the mail nr. {0}", Convert.ToString(m_mailNumber));
+                      Log.Info("mymail: there was an error creating the mail nr. {0}", Convert.ToString(m_mailNumber));
                     }
                     m_recMailData = "";
                     m_mailNumber--;
                     if (m_mailNumber <= 0)
                     {
                       m_mailBuffer = System.Text.Encoding.ASCII.GetBytes(m_emptyBuffer);
-                      _log.Info("mymail: all messages transfered. count: {0}", Convert.ToString(m_imailCount));
+                      Log.Info("mymail: all messages transfered. count: {0}", Convert.ToString(m_imailCount));
                       m_ierrorNumber = (int)SocketError.ERROR_NO_ERROR;
                       InteractServer((int)MailAction.MAIL_SEND_QUIT); // logout from the server
                     }
                     else
                     {
                       InformUser((int)InformNumber.INFORM_GETTING_MAIL, Convert.ToString((m_imailCount + 1) - m_mailNumber) + "/" + Convert.ToString(m_imailCount));
-                      _log.Info("mymail: getting message number {0}", Convert.ToString(m_mailNumber));
+                      Log.Info("mymail: getting message number {0}", Convert.ToString(m_mailNumber));
                       m_mailAction = (int)MailAction.MAIL_SEND_LIST;
                       InteractServer((int)MailAction.MAIL_SEND_LIST);
                     }
@@ -560,8 +556,8 @@ namespace MyMail
                 m_mailTLSStream = null;
                 if (m_ierrorNumber != 0)
                 {
-                  _log.Info("mymail: an error occured. errornumber {0} on mailbox {1}", Convert.ToString(m_ierrorNumber), m_mb.ServerAddress);
-                  _log.Info("mymail: an error occured. errormessage from server {0}", m_errorMessage);
+                  Log.Info("mymail: an error occured. errornumber {0} on mailbox {1}", Convert.ToString(m_ierrorNumber), m_mb.ServerAddress);
+                  Log.Info("mymail: an error occured. errormessage from server {0}", m_errorMessage);
                 }
                 GotMailData(m_errorMessage, "Ready", m_ierrorNumber); // ready
                 break;
@@ -571,7 +567,7 @@ namespace MyMail
       }
       catch
       {
-        _log.Info("mymail: recieve error. mail number {0} on mailbox {1}", Convert.ToString(m_mailNumber), m_mb.BoxLabel);
+        Log.Info("mymail: recieve error. mail number {0} on mailbox {1}", Convert.ToString(m_mailNumber), m_mb.BoxLabel);
         InteractServer((int)MailAction.MAIL_SEND_QUIT); // logout from the server
       }
     }
@@ -625,7 +621,7 @@ namespace MyMail
         m_currAction = action;
         AsyncCallback recieveData = new AsyncCallback(OnRecievedData);
         sock1.Blocking = false;
-        //_log.Info(System.Text.Encoding.ASCII.GetString(toSend));
+        //Log.Info(System.Text.Encoding.ASCII.GetString(toSend));
         //sock1.Poll(15000,System.Net.Sockets.SelectMode.SelectRead);
         //sock1.Send(toSend,0,toSend.Length,noFlags);
         if (m_TLSSecured != MailBox.NO_SSL && m_TLS_OK)
@@ -1083,7 +1079,7 @@ namespace MyMail
       }
       while (System.IO.File.Exists(tmpPath) == true);
       fileName = m_mb.MailboxFolder + @"\mail_message_" + Convert.ToString(fInfo.Length) + ".mail";
-      _log.Info("mymail: saved message to file named {0}", fileName);
+      Log.Info("mymail: saved message to file named {0}", fileName);
       if (CheckMailFileExists(mailText) == true) return;
       System.IO.StreamWriter sw = new System.IO.StreamWriter(fileName);
       sw.Write(mailText);
@@ -1594,15 +1590,13 @@ namespace MyMail
       m_enabled = true;
       m_TLS = TLS;
 
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      ILog log = services.Get<ILog>();
 
       // Check if MailboxFolder directory exist
       System.IO.DirectoryInfo dInfoMail = new System.IO.DirectoryInfo(m_mailBoxPath);
       if (!dInfoMail.Exists)
       {
         dInfoMail.Create(); // Creating the mail directory
-        log.Info("Mailbox {0} created mail folder: {1}", label, m_mailBoxPath);
+        Log.Info("Mailbox {0} created mail folder: {1}", label, m_mailBoxPath);
       }
 
       // Check if Attachments directory exist
@@ -1610,7 +1604,7 @@ namespace MyMail
       if (!dInfoAtt.Exists)
       {
         dInfoAtt.Create(); // Creating the mail directory
-        log.Info("Mailbox {0} created attachemnts folder: {1}", label, m_attachmentsPath);
+        Log.Info("Mailbox {0} created attachemnts folder: {1}", label, m_attachmentsPath);
       }
     }
 

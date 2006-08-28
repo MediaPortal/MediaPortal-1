@@ -29,7 +29,6 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using System.Reflection;
 using System.IO;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Configuration
 {
@@ -38,9 +37,6 @@ namespace MediaPortal.Configuration
   /// </summary>
   public class Startup
   {
-    private static ILog log;
-    private static IConfig _config;
-
     enum StartupMode
     {
       Normal,
@@ -56,23 +52,19 @@ namespace MediaPortal.Configuration
     /// <param name="arguments"></param>
     public Startup(string[] arguments)
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _config = new Config(Application.StartupPath);
-      if (!_config.LoadConfig())
+      if (!Config.LoadDirs(Application.StartupPath))
       {
-        MessageBox.Show("Missing or Invalid MediaPortalConfig.xml file. MediaPortal cannot run without that file.", "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        MessageBox.Show("Missing or Invalid MediaPortalDirs.xml file. MediaPortal cannot run without that file.", "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
         return;
       }
-      services.Add<IConfig>(_config);
 
-      log = new MediaPortal.Utils.Services.Log("Configuration", MediaPortal.Utils.Services.Log.Level.Debug);
-      services.Add<ILog>(log);
-      log.Info("Using Directories:");
-      foreach (string options in Enum.GetNames(typeof(Config.Options)))
+      Log.BackupLogFiles();
+      Log.Info("Using Directories:");
+      foreach (string options in Enum.GetNames(typeof(Config.Dir)))
       {
-        log.Info("{0} - {1}", options, _config.Get((Config.Options)Enum.Parse(typeof(Config.Options), options)));
+        Log.Info("{0} - {1}", options, Config.Get((Config.Dir)Enum.Parse(typeof(Config.Dir), options)));
       }
-      if (!System.IO.File.Exists(_config.Get(Config.Options.ConfigPath) + "mediaportal.xml"))
+      if (!System.IO.File.Exists(Config.Get(Config.Dir.Config) + "mediaportal.xml"))
         startupMode = StartupMode.Wizard;
 
       else if (arguments != null)
@@ -104,10 +96,10 @@ namespace MediaPortal.Configuration
     /// </summary>
     public void Start()
     {
-      log.Info("Configuration is starting up");
+      Log.Info("Configuration is starting up");
 
       FileInfo mpFi = new FileInfo(Assembly.GetExecutingAssembly().Location);
-      log.Info("Assembly creation time: {0} (UTC)", mpFi.LastWriteTimeUtc.ToUniversalTime());
+      Log.Info("Assembly creation time: {0} (UTC)", mpFi.LastWriteTimeUtc.ToUniversalTime());
 
       Form applicationForm = null;
 
@@ -116,12 +108,12 @@ namespace MediaPortal.Configuration
       switch (startupMode)
       {
         case StartupMode.Normal:
-          log.Info("Create new standard setup");
+          Log.Info("Create new standard setup");
           applicationForm = new SettingsForm();
           break;
 
         case StartupMode.Wizard:
-          log.Info("Create new wizard setup");
+          Log.Info("Create new wizard setup");
           applicationForm = new WizardForm(sectionsConfiguration);
           break;
       }
@@ -130,7 +122,7 @@ namespace MediaPortal.Configuration
       if (applicationForm != null)
       {
 
-        log.Info("start application");
+        Log.Info("start application");
         System.Windows.Forms.Application.Run(applicationForm);
       }
     }

@@ -29,8 +29,8 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using MediaPortal.Util;
 using System.Runtime.InteropServices;
-using MediaPortal.Utils.Services;
 
 #pragma warning disable 108
 
@@ -448,7 +448,7 @@ namespace MediaPortal.Configuration.Sections
           if (checkBoxDxVA.Checked) regDxVA = 1;
           else regDxVA = 0;
           subkey.SetValue("DXVA", regDxVA);
-          using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+          using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
           {
             xmlwriter.SetValue("videocodec", "intervideo", regDxVA);
           }

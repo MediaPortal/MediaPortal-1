@@ -28,7 +28,7 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Text;
 using System.Xml;
-using MediaPortal.Utils.Services;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.MusicVideos.Database
 {
@@ -41,11 +41,9 @@ namespace MediaPortal.MusicVideos.Database
         public bool mbUseVMR9 = false;
         public string msDefaultBitRate = "300";
         public string msDefaultCountryName = "USA";
-        private ILog moLog;
+
         private YahooSettings()
         {
-            ServiceProvider loServices = GlobalServiceProvider.Instance;
-            moLog = loServices.Get<ILog>();
             loadSettings();
         }
 
@@ -73,11 +71,11 @@ namespace MediaPortal.MusicVideos.Database
             {
                 if (moYahooSiteTable == null || moYahooSiteTable.Count < 1)
                 {
-                    moLog.Info("YahooSettings: loading settings");
+                    Log.Info("YahooSettings: loading settings");
                     //moYahooSiteTable = new Dictionary<string, YahooSite>();
                     moYahooSiteTable = new Dictionary<string, YahooSite>();
                     moBitRateList = new List<string>();
-                    moLog.Info("Yahoo Settings: {0}", moBitRateList == null);
+                    Log.Info("Yahoo Settings: {0}", moBitRateList == null);
                     YahooSite loSite;
                     string lsValue;
                     using (loXmlreader = new XmlTextReader("MusicVideoSettings.xml"))
@@ -96,11 +94,11 @@ namespace MediaPortal.MusicVideos.Database
                                 loSite.GenreListURL = loXmlreader.GetAttribute("GenreListURL");
                                 loSite.GenreURL = loXmlreader.GetAttribute("GenreURL");
                                 moYahooSiteTable.Add(loSite.countryName, loSite);
-                                //                moLog.Info("Yahoo Settings: Site created with name:{0},id={1},top={2},search={3}", loSite.countryName, loSite.countryId, loSite.TopURL, loSite.SearchURL);
+                                //                Log.Info("Yahoo Settings: Site created with name:{0},id={1},top={2},search={3}", loSite.countryName, loSite.countryId, loSite.TopURL, loSite.SearchURL);
                             }
                             else if (loXmlreader.Name == "bitrate")
                             {
-                                //moLog.Info("node type {0}", loXmlreader.NodeType);
+                                //Log.Info("node type {0}", loXmlreader.NodeType);
                                 if (loXmlreader.NodeType == XmlNodeType.Element)
                                 {
                                     lsValue = loXmlreader.ReadString();
@@ -113,7 +111,7 @@ namespace MediaPortal.MusicVideos.Database
             }
             catch (Exception e)
             {
-                moLog.Error(e);
+                Log.Error(e);
             }
             finally
             {
@@ -121,12 +119,12 @@ namespace MediaPortal.MusicVideos.Database
                 {
                     loXmlreader.Close();
 
-                    moLog.Info("Yahoo Settings: load settings closed");
+                    Log.Info("Yahoo Settings: load settings closed");
                     loXmlreader = null;
                 }
                 catch (Exception ex)
                 {
-                    moLog.Info("Yahoo Settings: Exception - {0}", ex);
+                    Log.Info("Yahoo Settings: Exception - {0}", ex);
                 }
             }
         }
@@ -142,7 +140,7 @@ namespace MediaPortal.MusicVideos.Database
         public void oldSaveSettings()
         {
             XmlTextReader loReader = null;
-            moLog.Info("Yahoo Settings: saving settings.");
+            Log.Info("Yahoo Settings: saving settings.");
             try
             {
                 string filename = "MyMusicVideoSettings.xml";
@@ -158,7 +156,7 @@ namespace MediaPortal.MusicVideos.Database
                 }
                 catch (System.IO.FileNotFoundException)
                 {
-                    moLog.Info("Yahoo Settings: MyMusicVideoSettings.xml not found.");
+                    Log.Info("Yahoo Settings: MyMusicVideoSettings.xml not found.");
                     //if file is not found, create a new xml file
                     //XmlTextWriter xmlWriter = new XmlTextWriter(filename, System.Text.Encoding.UTF8);
                     //xmlWriter.Formatting = Formatting.Indented;
@@ -181,8 +179,8 @@ namespace MediaPortal.MusicVideos.Database
 
                     defaultAttribute = xmlNode.Attributes["default"];
 
-                    //moLog.Info("name attribute={0}-", nameAttribute.Value);
-                    //moLog.Info("current_country={0}-", msDefaultCountryName);
+                    //Log.Info("name attribute={0}-", nameAttribute.Value);
+                    //Log.Info("current_country={0}-", msDefaultCountryName);
                     if (nameAttribute.Value == msDefaultCountryName)
                         defaultAttribute.Value = "Y";
                     else
@@ -209,20 +207,20 @@ namespace MediaPortal.MusicVideos.Database
             }
             catch (Exception e)
             {
-                moLog.Error(e);
-                moLog.Info("Yahoo Settings: save settings failed.");
+                Log.Error(e);
+                Log.Info("Yahoo Settings: save settings failed.");
             }
             finally
             {
                 try
                 {
                     loReader.Close();
-                    moLog.Info("Yahoo Settings: save settings - reader closed");
+                    Log.Info("Yahoo Settings: save settings - reader closed");
                     loReader = null;
                 }
                 catch (Exception ex)
                 {
-                    moLog.Info("Yahoo Settings: Exception - {0}", ex);
+                    Log.Info("Yahoo Settings: Exception - {0}", ex);
                 }
             }
         }

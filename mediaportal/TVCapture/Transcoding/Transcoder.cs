@@ -27,7 +27,6 @@ using MediaPortal.TV.Database;
 using MediaPortal.Core.Transcoding;
 using MediaPortal.Util;
 using MediaPortal.TV.DiskSpace;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.TV.Recording
 {
@@ -39,8 +38,6 @@ namespace MediaPortal.TV.Recording
     #region vars
     static ArrayList queue = new ArrayList();
     static Thread WorkerThread = null;
-    static ILog log;
-    static IConfig _config;
 
     public enum Status
     {
@@ -119,11 +116,8 @@ namespace MediaPortal.TV.Recording
       bool deleteOriginal, AutoDeleteOriginal, AutoCompress;
       Size ScreenSize = new Size(0, 0);
 
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         bitRate = xmlreader.GetValueAsInt("compression", "bitrate", 4);
         FPS = xmlreader.GetValueAsInt("compression", "fps", 1);
@@ -335,7 +329,7 @@ namespace MediaPortal.TV.Recording
             {
               if (transcording.status == Status.Busy)
                 transcording.status = Status.Error;
-              log.Error(ex);
+              Log.Error(ex);
             }
           }
           else System.Threading.Thread.Sleep(1000);

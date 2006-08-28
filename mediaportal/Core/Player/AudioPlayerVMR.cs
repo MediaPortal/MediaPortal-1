@@ -22,7 +22,6 @@ using System;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using MediaPortal.Utils.Services;
 using DShowNET.Helper;
 using MediaPortal.GUI.Library;
 using DirectShowLib;
@@ -64,12 +63,9 @@ namespace MediaPortal.Player
     private const int WS_CHILD = 0x40000000;	// attributes for video window
     private const int WS_CLIPCHILDREN = 0x02000000;
     private const int WS_CLIPSIBLINGS = 0x04000000;
-    protected ILog _log;
 
     public AudioPlayerVMR7()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
     }
 
     public override bool Play(string strFile)
@@ -80,7 +76,7 @@ namespace MediaPortal.Player
       m_strCurrentFile = strFile;
 
       VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
-      _log.Info("AudioPlayerVMR7.play {0}", strFile);
+      Log.Info("AudioPlayerVMR7.play {0}", strFile);
       lock (typeof(AudioPlayerVMR7))
       {
         CloseInterfaces();
@@ -126,7 +122,7 @@ namespace MediaPortal.Player
       // ifso, stop the movie which will trigger MovieStopped
       if (null != mediaCtrl)
       {
-        _log.Info("AudioPlayerVMR7.ended {0}", m_strCurrentFile);
+        Log.Info("AudioPlayerVMR7.ended {0}", m_strCurrentFile);
         m_strCurrentFile = "";
         if (!bManualStop)
         {
@@ -396,7 +392,7 @@ namespace MediaPortal.Player
       }
       catch (Exception ex)
       {
-        _log.Info("Can not start {0} stage:{1} err:{2} stack:{3}",
+        Log.Info("Can not start {0} stage:{1} err:{2} stack:{3}",
                           m_strCurrentFile, iStage,
                           ex.Message,
                           ex.StackTrace);

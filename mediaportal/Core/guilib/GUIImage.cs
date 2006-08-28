@@ -34,7 +34,6 @@ using System.Xml;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
-using MediaPortal.Utils.Services;
 
 
 namespace MediaPortal.GUI.Library
@@ -125,8 +124,6 @@ namespace MediaPortal.GUI.Library
 
     private GUIImage()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
     }
 
     public GUIImage(int dwParentID)
@@ -458,7 +455,7 @@ namespace MediaPortal.GUI.Library
           if (_textureFileNameTag.Length == 0) continue;
           if (_textureFileNameTag == "") continue;
 
-          if (logtextures) _log.Info("GUIImage:AllocResources:{0}", fileName);
+          if (logtextures) Log.Info("GUIImage:AllocResources:{0}", fileName);
           if (GUITextureManager.GetPackedTexture(fileName, out _texUoff, out _texVoff, out _texUmax, out _texVmax, out _textureWidth, out _textureHeight, out _packedTexture, out _packedTextureNo))
           {
             _reCalculate = true;
@@ -566,7 +563,7 @@ namespace MediaPortal.GUI.Library
         }
         if (file != null && file != String.Empty)
         {
-          if (logtextures) _log.Info("GUIImage:freeresources:{0}", file);
+          if (logtextures) Log.Info("GUIImage:freeresources:{0}", file);
           if (GUITextureManager.IsTemporary(file))
           {
             GUITextureManager.ReleaseTexture(file);
@@ -1039,7 +1036,7 @@ namespace MediaPortal.GUI.Library
         if (_cachedTextureFileName != fileName || _listTextures == null || 0 == _listTextures.Length)
         {
           // then free our resources, and reload the (new) image
-          if (logtextures) _log.Info("GUIImage:PreRender() image changed:{0}->{1}", _cachedTextureFileName, fileName);
+          if (logtextures) Log.Info("GUIImage:PreRender() image changed:{0}->{1}", _cachedTextureFileName, fileName);
           FreeResourcesAndRegEvent();
           _cachedTextureFileName = fileName;
           if (fileName.Length == 0)
@@ -1105,7 +1102,7 @@ namespace MediaPortal.GUI.Library
       if (fileName == null) return;
       if (_textureFileNameTag == fileName) return;// same file, no need to do anything
 
-      if (logtextures) _log.Info("GUIImage:SetFileName() {0}", fileName);
+      if (logtextures) Log.Info("GUIImage:SetFileName() {0}", fileName);
       _textureFileNameTag = fileName;
       if (_textureFileNameTag.IndexOf("#") >= 0) _containsProperty = true;
       else _containsProperty = false;

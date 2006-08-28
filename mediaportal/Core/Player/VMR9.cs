@@ -30,10 +30,10 @@ using DShowNET.Helper;
 using DirectShowLib;
 using MediaPortal.Player;
 using MediaPortal.GUI.Library;
+using MediaPortal.Util;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Player
 {
@@ -113,8 +113,6 @@ namespace MediaPortal.Player
     int _threadId;
     Vmr9PlayState currentVmr9State = Vmr9PlayState.Playing;
     //bool _useRGBmode = false;
-    private ILog _log;
-    private IConfig _config;
     #endregion
 
     #region ctor
@@ -123,15 +121,12 @@ namespace MediaPortal.Player
     /// </summary>
     public VMR9Util()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
 
       _useVmr9 = true;
-      _log.InfoThread("vmr9:ctor()");
+      Log.InfoThread("vmr9:ctor()");
       if (!GUIGraphicsContext.VMR9Allowed)
       {
-        _log.InfoThread("vmr9:ctor() not allowed");
+        Log.InfoThread("vmr9:ctor() not allowed");
         _useVmr9 = false;
         return;
       }
@@ -139,19 +134,19 @@ namespace MediaPortal.Player
       if (GUIGraphicsContext.DX9Device == null)
       {
         _useVmr9 = false;
-        _log.InfoThread("vmr9:ctor() DX9Device=null");
+        Log.InfoThread("vmr9:ctor() DX9Device=null");
       }
       if (_renderFrame == null)
       {
         _useVmr9 = false;
-        _log.InfoThread("vmr9:ctor() _renderFrame=null");
+        Log.InfoThread("vmr9:ctor() _renderFrame=null");
       }
       if (g_vmr9 != null || GUIGraphicsContext.Vmr9Active)
       {
         _useVmr9 = false;
-        _log.InfoThread("vmr9:ctor() already active");
+        Log.InfoThread("vmr9:ctor() already active");
       }
-      _log.InfoThread("vmr9:ctor() done:{0}", _useVmr9);
+      Log.InfoThread("vmr9:ctor() done:{0}", _useVmr9);
     }
     #endregion
 
@@ -269,7 +264,7 @@ namespace MediaPortal.Player
         // check if vmr9 is enabled and if initialized
         if (_vmr9Filter == null || !_useVmr9)
         {
-          _log.WarnThread("vmr9: not used or no filter:{0} {1:x}", _useVmr9, _vmr9Filter);
+          Log.WarnThread("vmr9: not used or no filter:{0} {1:x}", _useVmr9, _vmr9Filter);
           return false;
         }
 
@@ -282,7 +277,7 @@ namespace MediaPortal.Player
           if (pinIn == null)
           {
             //no input pin found, vmr9 is not possible
-            _log.WarnThread("vmr9: no input pin {0} found", i);
+            Log.WarnThread("vmr9: no input pin {0} found", i);
             continue;
           }
 
@@ -291,11 +286,11 @@ namespace MediaPortal.Player
           if (pinConnected == null)
           {
             //no pin is not connected so vmr9 is not possible
-            _log.WarnThread("vmr9: pin:{0} not connected:{1:x}", i, hr);
+            Log.WarnThread("vmr9: pin:{0} not connected:{1:x}", i, hr);
           }
           else
           {
-            //_log.Info("vmr9: pin:{0} is connected",i);
+            //Log.Info("vmr9: pin:{0} is connected",i);
             if (pinIn != null)
               hr = Marshal.ReleaseComObject(pinIn);
             if (pinConnected != null)
@@ -320,21 +315,21 @@ namespace MediaPortal.Player
     /// <param name="graphBuilder"></param>
     public bool AddVMR9(IGraphBuilder graphBuilder)
     {
-      _log.InfoThread("vmr9:addvmr9");
+      Log.InfoThread("vmr9:addvmr9");
       if (!_useVmr9)
       {
-        _log.InfoThread("vmr9:addvmr9: dont use vmr9");
+        Log.InfoThread("vmr9:addvmr9: dont use vmr9");
         return false;
       }
       if (_isVmr9Initialized)
       {
-        _log.InfoThread("vmr9:addvmr9: vmr9 already initialized");
+        Log.InfoThread("vmr9:addvmr9: vmr9 already initialized");
         return false;
       }
-      //_log.Info("VMR9Helper:AddVmr9");
+      //Log.Info("VMR9Helper:AddVmr9");
       if (_instanceCounter != 0)
       {
-        _log.ErrorThread("VMR9Helper:Multiple instances of VMR9 running!!!");
+        Log.ErrorThread("VMR9Helper:Multiple instances of VMR9 running!!!");
         throw new Exception("VMR9Helper:Multiple instances of VMR9 running!!!");
       }
 
@@ -342,7 +337,7 @@ namespace MediaPortal.Player
       if (_vmr9Filter == null)
       {
         Error.SetError("Unable to play movie", "VMR9 is not installed");
-        _log.ErrorThread("VMR9Helper:Failed to get instance of VMR9 ");
+        Log.ErrorThread("VMR9Helper:Failed to get instance of VMR9 ");
         return false;
       }
 
@@ -367,7 +362,7 @@ namespace MediaPortal.Player
         Marshal.ReleaseComObject(_vmr9Filter);
         _vmr9Filter = null;
         Error.SetError("Unable to play movie", "Unable to initialize VMR9");
-        _log.ErrorThread("vmr9:Failed to add vmr9 to filtergraph");
+        Log.ErrorThread("vmr9:Failed to add vmr9 to filtergraph");
         return false;
       }
 
@@ -386,7 +381,7 @@ namespace MediaPortal.Player
           IVMRMixerControl9 mixer = _vmr9Filter as IVMRMixerControl9;
           if (mixer != null)
           {
-            //_log.Info("VMR9: enable YUV mixing");
+            //Log.Info("VMR9: enable YUV mixing");
             VMR9MixerPrefs dwPrefs;
             mixer.GetMixingPrefs(out dwPrefs);
             dwPrefs &= ~VMR9MixerPrefs.RenderTargetMask;
@@ -394,12 +389,12 @@ namespace MediaPortal.Player
             /*if (_useRGBmode)
             {
               dwPrefs |= VMR9MixerPrefs.RenderTargetRGB;
-              _log.Info("VMR9: enable RGB mixing");
+              Log.Info("VMR9: enable RGB mixing");
             }
             else*/
             {
               dwPrefs |= VMR9MixerPrefs.RenderTargetYUV;
-              _log.Info("VMR9: enable YUV mixing");
+              Log.Info("VMR9: enable YUV mixing");
             }
             mixer.SetMixingPrefs(dwPrefs);
           }
@@ -408,7 +403,7 @@ namespace MediaPortal.Player
       _threadId = Thread.CurrentThread.ManagedThreadId;
       GUIGraphicsContext.Vmr9Active = true;
       g_vmr9 = this;
-      _log.InfoThread("VMR9Helper:Vmr9 Added");
+      Log.InfoThread("VMR9Helper:Vmr9 Added");
       return true;
     }
 
@@ -426,7 +421,7 @@ namespace MediaPortal.Player
     {
       if (!_isVmr9Initialized) return;
       if (!GUIGraphicsContext.Vmr9Active) return;
-      _log.Info("VMR9Helper: SetRepaint()");
+      Log.Info("VMR9Helper: SetRepaint()");
       FrameCounter = 0;
       _repaintTimer = DateTime.Now;
       currentVmr9State = Vmr9PlayState.Repaint;
@@ -463,7 +458,7 @@ namespace MediaPortal.Player
       if (ts.TotalMilliseconds >= 1000 || (currentVmr9State == Vmr9PlayState.Repaint && FrameCounter>0))
       {
         GUIGraphicsContext.Vmr9FPS = ((float)(frames * 1000)) / ((float)ts.TotalMilliseconds);
-//         _log.Info("VMR9Helper:frames:{0} fps:{1} time:{2}", frames, GUIGraphicsContext.Vmr9FPS,ts.TotalMilliseconds);
+//         Log.Info("VMR9Helper:frames:{0} fps:{1} time:{2}", frames, GUIGraphicsContext.Vmr9FPS,ts.TotalMilliseconds);
         FrameCounter = 0;
 
         if (_threadId == Thread.CurrentThread.ManagedThreadId)
@@ -475,7 +470,7 @@ namespace MediaPortal.Player
 
       if (currentVmr9State == Vmr9PlayState.Repaint && frames > 0)
       {
-        _log.InfoThread("VMR9Helper: repaint->playing {0}", frames);
+        Log.InfoThread("VMR9Helper: repaint->playing {0}", frames);
         GUIGraphicsContext.Vmr9FPS = 50f;
         currentVmr9State = Vmr9PlayState.Playing;
         _scene.DrawVideo = true;
@@ -483,7 +478,7 @@ namespace MediaPortal.Player
       }
       else if (currentVmr9State == Vmr9PlayState.Playing && GUIGraphicsContext.Vmr9FPS < 5f)
       {
-        _log.InfoThread("VMR9Helper: playing->repaint {0}", frames);
+        Log.InfoThread("VMR9Helper: playing->repaint {0}", frames);
         GUIGraphicsContext.Vmr9FPS = 0f;
         currentVmr9State = Vmr9PlayState.Repaint;
         _scene.DrawVideo = false;
@@ -501,7 +496,7 @@ namespace MediaPortal.Player
     {
       if (!_isVmr9Initialized) return;
       int DeInterlaceMode = 3;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         //None
         //Bob
@@ -515,7 +510,7 @@ namespace MediaPortal.Player
     {
       if (!_isVmr9Initialized) return;
       int DeInterlaceMode = 3;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         //None
         //Bob
@@ -527,7 +522,7 @@ namespace MediaPortal.Player
     }
     public void Enable(bool onOff)
     {
-      //_log.Info("Vmr9:Enable:{0}", onOff);
+      //Log.Info("Vmr9:Enable:{0}", onOff);
       if (!_isVmr9Initialized) return;
       if (_scene != null) _scene.Enabled = onOff;
       if (onOff)
@@ -553,7 +548,7 @@ namespace MediaPortal.Player
 
       if (GUIGraphicsContext.Vmr9Active == false)
       {
-        _log.InfoThread("SaveVMR9Bitmap() failed, no VMR9");
+        Log.InfoThread("SaveVMR9Bitmap() failed, no VMR9");
         return false;
       }
       int hr = 0;
@@ -601,11 +596,11 @@ namespace MediaPortal.Player
             bmp.rDest.bottom = fy;
             bmp.rDest.right = fx;
             bmp.fAlpha = alphaValue;
-            //_log.Info("SaveVMR9Bitmap() called");
+            //Log.Info("SaveVMR9Bitmap() called");
             hr = VMR9Util.g_vmr9.MixerBitmapInterface.SetAlphaBitmap(ref bmp);
             if (hr != 0)
             {
-              //_log.Info("SaveVMR9Bitmap() failed: error {0:X} on SetAlphaBitmap()",hr);
+              //Log.Info("SaveVMR9Bitmap() failed: error {0:X} on SetAlphaBitmap()",hr);
               return false;
             }
           }
@@ -679,22 +674,22 @@ namespace MediaPortal.Player
     /// </summary>
     public void Dispose()
     {
-      _log.InfoThread("vmr9:Dispose");
+      Log.InfoThread("vmr9:Dispose");
       if (false == _isVmr9Initialized) return;
       if (_threadId != Thread.CurrentThread.ManagedThreadId)
       {
-        _log.ErrorThread("VMR9:Dispose() from wrong thread");
+        Log.ErrorThread("VMR9:Dispose() from wrong thread");
         return;
       }
       if (_vmr9Filter == null)
       {
-        _log.ErrorThread("VMR9:Dispose() no filter");
+        Log.ErrorThread("VMR9:Dispose() no filter");
         return;
       }
 
       if (_scene != null)
       {
-        //_log.Info("VMR9Helper:stop planescene");
+        //Log.Info("VMR9Helper:stop planescene");
         _scene.Stop();
         _instanceCounter--;
         _scene.Deinit();
@@ -718,7 +713,7 @@ namespace MediaPortal.Player
       try
       {
         result = _graphBuilderInterface.RemoveFilter(_vmr9Filter);
-        if (result != 0) _log.InfoThread("VMR9:RemoveFilter():{0}", result);
+        if (result != 0) Log.InfoThread("VMR9:RemoveFilter():{0}", result);
       }
       catch (Exception)
       {
@@ -729,7 +724,7 @@ namespace MediaPortal.Player
         do
         {
           result = Marshal.ReleaseComObject(_vmr9Filter);
-          _log.InfoThread("VMR9:ReleaseComObject():{0}", result);
+          Log.InfoThread("VMR9:ReleaseComObject():{0}", result);
         }
         while (result > 0);
       }

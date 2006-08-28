@@ -29,7 +29,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
-using MediaPortal.Utils.Services;
+using MediaPortal.Util;
 
 namespace MediaPortal.GUI.Alarm
 {
@@ -63,7 +63,6 @@ namespace MediaPortal.GUI.Alarm
       private Label lblAlarmVol3;
       private Label lblAlarmVol4;
       private Button cmdAlarmVolTest;
-    private IConfig _config;
     /// <summary>
     /// Required designer variable.
     /// </summary>
@@ -71,8 +70,6 @@ namespace MediaPortal.GUI.Alarm
 
     public AlarmSetupForm()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _config = services.Get<IConfig>();
       //
       // Required for Windows Form Designer support
       //
@@ -622,7 +619,7 @@ namespace MediaPortal.GUI.Alarm
     /// </summary>
     private void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         xmlwriter.SetValue("alarm", "alarmSoundsFolder", txtAlarmSoundsFolder.Text);
         xmlwriter.SetValue("alarm", "alarmTimeout", NUDAlarmTimeout.Value);
@@ -640,7 +637,7 @@ namespace MediaPortal.GUI.Alarm
     /// </summary>
     private void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         txtAlarmSoundsFolder.Text = xmlreader.GetValueAsString("alarm", "alarmSoundsFolder", string.Empty);
         NUDAlarmTimeout.Value = xmlreader.GetValueAsInt("alarm", "alarmTimeout", 60);

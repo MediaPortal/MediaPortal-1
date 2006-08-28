@@ -23,7 +23,6 @@
 
 #endregion
 
-using MediaPortal.Utils.Services;
 
 namespace ProcessPlugins.ExternalDisplay
 {
@@ -34,18 +33,5 @@ namespace ProcessPlugins.ExternalDisplay
     /// <author>JoeDalton</author>
     public abstract class BaseDisplay
     {
-        private ILog _log;
-
-        protected ILog Log
-        {
-            get
-            {
-                if (_log == null)
-                {
-                    _log = GlobalServiceProvider.Instance.Get<ILog>();
-                }
-                return _log;
-            }
-        }
     }
 }

@@ -37,7 +37,6 @@ using Microsoft.Win32;
 using MediaPortal.GUI.Library;
 using MediaPortal.TV.Database;
 using MediaPortal.Util;
-using MediaPortal.Utils.Services;
 
 namespace ProcessPlugins.TvMovie
 {
@@ -56,8 +55,6 @@ namespace ProcessPlugins.TvMovie
     public event ProgramsChanged OnProgramsChanged;
     public delegate void StationsChanged(int value, int maximum, string text);
     public event StationsChanged OnStationsChanged;
-    protected ILog _log;
-    protected IConfig _config;
 
  
     private struct Mapping
@@ -226,14 +223,11 @@ namespace ProcessPlugins.TvMovie
 
     public TvMovieDatabase()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
-      _xmlFile = _config.Get(Config.Options.ConfigPath) + "TVMovieMapping.xml";
+      _xmlFile = Config.Get(Config.Dir.Config) + "TVMovieMapping.xml";
 
       string dataProviderString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source={0}";
 
-      _log.Info("TVMovie: DB path: {0}", DatabasePath);
+      Log.Info("TVMovie: DB path: {0}", DatabasePath);
 
       if (DatabasePath != string.Empty)
         dataProviderString = string.Format(dataProviderString, DatabasePath);
@@ -256,8 +250,8 @@ namespace ProcessPlugins.TvMovie
       }
       catch (System.Data.OleDb.OleDbException ex)
       {
-        _log.Info("TVMovie: Error accessing TV Movie Clickfinder database while reading stations");
-        _log.Info("TVMovie: Exception: {0}", ex);
+        Log.Info("TVMovie: Error accessing TV Movie Clickfinder database while reading stations");
+        Log.Info("TVMovie: Exception: {0}", ex);
         _canceled = true;
         return;
       }
@@ -279,7 +273,7 @@ namespace ProcessPlugins.TvMovie
     {
       if (!File.Exists(_xmlFile))
       {
-        _log.Info("TVMovie: Mapping file \"{0}\" does not exist", _xmlFile);
+        Log.Info("TVMovie: Mapping file \"{0}\" does not exist", _xmlFile);
         return null;
       }
       ArrayList mappingList = new ArrayList();
@@ -310,8 +304,8 @@ namespace ProcessPlugins.TvMovie
       }
       catch (System.Xml.XmlException ex)
       {
-        _log.Info("TVMovie: The mapping file \"{0}\" seems to be corrupt", _xmlFile);
-        _log.Info("TVMovie: {0}", ex.Message);
+        Log.Info("TVMovie: The mapping file \"{0}\" seems to be corrupt", _xmlFile);
+        Log.Info("TVMovie: {0}", ex.Message);
         return null;
       }
 
@@ -411,7 +405,7 @@ namespace ProcessPlugins.TvMovie
       if (_databaseConnection == null)
         return 0;
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         useShortProgramDesc = xmlreader.GetValueAsBool("tvmovie", "shortprogramdesc", false);
         extendDescription = xmlreader.GetValueAsBool("tvmovie", "extenddescription", false);
@@ -444,8 +438,8 @@ namespace ProcessPlugins.TvMovie
       }
       catch (System.Data.OleDb.OleDbException ex)
       {
-        _log.Info("TVMovie: Error accessing TV Movie Clickfinder database - Current import canceled, waiting for next schedule");
-        _log.Info("TVMovie: Exception: {0}", ex);
+        Log.Info("TVMovie: Error accessing TV Movie Clickfinder database - Current import canceled, waiting for next schedule");
+        Log.Info("TVMovie: Exception: {0}", ex);
         return 0;
       }
       finally
@@ -570,7 +564,7 @@ namespace ProcessPlugins.TvMovie
           else
             return false;
 
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
           if (Convert.ToInt64(xmlreader.GetValueAsString("tvmovie", "lastupdate", "0")) == lastUpdate)
             return false;
 
@@ -585,11 +579,11 @@ namespace ProcessPlugins.TvMovie
 
       if (mappingList == null)
       {
-        _log.Info("TVMovie: Cannot import from TV Movie database");
+        Log.Info("TVMovie: Cannot import from TV Movie database");
         return;
       }
 
-      _log.Info("TVMovie: Importing database");
+      Log.Info("TVMovie: Importing database");
 
       TVDatabase.RemoveOldPrograms();
 
@@ -645,13 +639,13 @@ namespace ProcessPlugins.TvMovie
             lastUpdate = Convert.ToInt64(regLastUpdate.Substring(8));
           }
 
-        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
           xmlwriter.SetValue("tvmovie", "lastupdate", lastUpdate);
 
         MediaPortal.Profile.Settings.SaveCache();
       }
 
-      _log.Info("TVMovie: Imported {0} database entries for {1} stations", _programsCounter, counter);
+      Log.Info("TVMovie: Imported {0} database entries for {1} stations", _programsCounter, counter);
     }
   }
 

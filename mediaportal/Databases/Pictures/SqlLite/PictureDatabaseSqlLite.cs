@@ -26,7 +26,6 @@ using MediaPortal.Util;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.Pictures;
 using MediaPortal.Database;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Picture.Database
 {
@@ -37,14 +36,9 @@ namespace MediaPortal.Picture.Database
   {
     bool disposed = false;
     SQLiteClient m_db = null;
-    protected ILog _log;
-    protected IConfig _config;
 
     public PictureDatabaseSqlLite()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
 
       Open();
     }
@@ -53,16 +47,16 @@ namespace MediaPortal.Picture.Database
     {
       lock (typeof(PictureDatabase))
       {
-        _log.Info("opening picture database");
+        Log.Info("opening picture database");
         try
         {
           // Open database
           try
           {
-            System.IO.Directory.CreateDirectory(_config.Get(Config.Options.DatabasePath));
+            System.IO.Directory.CreateDirectory(Config.Get(Config.Dir.Database));
           }
           catch (Exception) { }
-          m_db = new SQLiteClient(_config.Get(Config.Options.DatabasePath) + "PictureDatabase.db3");
+          m_db = new SQLiteClient(Config.Get(Config.Dir.Database) + "PictureDatabase.db3");
 
           DatabaseUtility.SetPragmas(m_db);
           CreateTables();
@@ -70,10 +64,10 @@ namespace MediaPortal.Picture.Database
         }
         catch (Exception ex)
         {
-          _log.Error("picture database exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Log.Error("picture database exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
-        _log.Info("picture database opened");
+        Log.Info("picture database opened");
       }
     }
     bool CreateTables()
@@ -130,7 +124,7 @@ namespace MediaPortal.Picture.Database
             }
             catch (System.FormatException ex)
             {
-              _log.Error("date conversion exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+              Log.Error("date conversion exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
             }
             iRotation = EXIFOrientationToRotation(Convert.ToInt32(metaData.Orientation.Hex));
           }
@@ -144,7 +138,7 @@ namespace MediaPortal.Picture.Database
         }
         catch (Exception ex)
         {
-          _log.Error("MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Log.Error("MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
         return -1;
@@ -167,7 +161,7 @@ namespace MediaPortal.Picture.Database
         }
         catch (Exception ex)
         {
-          _log.Error("MediaPortal.Picture.Database exception deleting picture err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Log.Error("MediaPortal.Picture.Database exception deleting picture err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
         return;
@@ -204,7 +198,7 @@ namespace MediaPortal.Picture.Database
         }
         catch (Exception ex)
         {
-          _log.Error("MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Log.Error("MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
         return 0;
@@ -232,7 +226,7 @@ namespace MediaPortal.Picture.Database
         }
         catch (Exception ex)
         {
-          _log.Error("MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Log.Error("MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
       }
@@ -281,7 +275,7 @@ namespace MediaPortal.Picture.Database
         }
         catch (Exception ex)
         {
-          _log.Error("MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Log.Error("MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
         return DateTime.MinValue;
@@ -291,7 +285,7 @@ namespace MediaPortal.Picture.Database
 
     public int EXIFOrientationToRotation(int orientation)
     {
-      _log.Info("Orientation: {0}", orientation);
+      Log.Info("Orientation: {0}", orientation);
 
       if (orientation == 6)
         return 1;

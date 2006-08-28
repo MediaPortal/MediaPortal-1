@@ -31,20 +31,17 @@ using System.IO;
 using System.Threading;
 using System.Windows.Media.Animation;
 using MediaPortal.Drawing;
-using MediaPortal.Utils.Services;
+using MediaPortal.Util;
 
 namespace MediaPortal.GUI.Library
 {
   public class GUIAnimation : GUIControl
   {
-    static IConfig _config;
 
     #region Constructors
 
     public GUIAnimation()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _config = services.Get<IConfig>();
     }
 
     public GUIAnimation(int parentId)
@@ -113,7 +110,7 @@ namespace MediaPortal.GUI.Library
 
     public override void AllocResources()
     {
-      using (Profile.Settings xmlreader = new Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (Profile.Settings xmlreader = new Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         _hidePngAnimations = (xmlreader.GetValueAsBool("general", "hidepnganimations", false));
 
       if (_filenames == null)

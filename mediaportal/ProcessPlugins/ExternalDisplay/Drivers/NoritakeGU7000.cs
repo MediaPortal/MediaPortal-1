@@ -28,6 +28,7 @@ using System.Drawing;
 using System.IO.Ports;
 using System.Windows.Forms;
 using ProcessPlugins.ExternalDisplay.Noritake;
+using MediaPortal.GUI.Library;
 
 namespace ProcessPlugins.ExternalDisplay.Drivers
 {

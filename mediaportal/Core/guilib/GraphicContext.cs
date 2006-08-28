@@ -27,7 +27,7 @@ using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
 using AMS.Profile;
 using System.Runtime.InteropServices;
-using MediaPortal.Utils.Services;
+using MediaPortal.Util;
 
 namespace MediaPortal.GUI.Library
 {
@@ -126,8 +126,6 @@ namespace MediaPortal.GUI.Library
     static bool vmr9Allowed = true;
     static Size videoSize;
     static bool hasFocus = false;
-    static ILog _log;
-    static IConfig _config;
 
     const uint SC_MONITORPOWER = 0xF170;
     const uint WM_SYSCOMMAND = 0x0112;
@@ -144,9 +142,6 @@ namespace MediaPortal.GUI.Library
 
     static GUIGraphicsContext()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
     }
 
     /// <summary>
@@ -210,13 +205,13 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     static public void Save()
     {
-      string strFileName = String.Format(_config.Get(Config.Options.ConfigPath) + "ScreenCalibration{0}x{1}", Width, Height);
+      string strFileName = String.Format(Config.Get(Config.Dir.Config) + "ScreenCalibration{0}x{1}", Width, Height);
       if (Fullscreen)
         strFileName += ".fs.xml";
       else
         strFileName += ".xml";
 
-      // _log.Info("save {0}" ,strFileName);
+      // Log.Info("save {0}" ,strFileName);
       using (MediaPortal.Profile.Settings xmlWriter = new MediaPortal.Profile.Settings(strFileName))
       {
         xmlWriter.SetValue("screen", "offsetx", m_iOffsetX.ToString());
@@ -261,13 +256,13 @@ namespace MediaPortal.GUI.Library
       ZoomHorizontal = 1.0f;
       ZoomVertical = 1.0f;
 
-      string strFileName = String.Format(_config.Get(Config.Options.ConfigPath) + "ScreenCalibration{0}x{1}", Width, Height);
+      string strFileName = String.Format(Config.Get(Config.Dir.Config) + "ScreenCalibration{0}x{1}", Width, Height);
       if (Fullscreen)
         strFileName += ".fs.xml";
       else
         strFileName += ".xml";
 
-      _log.Info("  load {0}", strFileName);
+      Log.Info("  load {0}", strFileName);
       using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings(strFileName))
       {
         m_iOffsetX = xmlReader.GetValueAsInt("screen", "offsetx", 0);
@@ -292,7 +287,7 @@ namespace MediaPortal.GUI.Library
         m_fZoomVertical /= 10000f;
       }
 
-      using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         m_iMaxFPS = xmlReader.GetValueAsInt("screen", "maxguifps", 25);
         SyncFrameTime();
@@ -511,7 +506,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     static public string Skin
     {
-      set { m_strSkin = _config.Get(Config.Options.SkinPath) + value; }
+      set { m_strSkin = Config.Get(Config.Dir.Skin) + value; }
       get { return m_strSkin; }
     }
 
@@ -1004,10 +999,10 @@ namespace MediaPortal.GUI.Library
         if (value != vmr9Active)
         {
           vmr9Active = value;
-          if (vmr9Active) _log.Info("VMR9: now active");
+          if (vmr9Active) Log.Info("VMR9: now active");
           else
           {
-            _log.Info("VMR9: not active");
+            Log.Info("VMR9: not active");
           }
         }
       }

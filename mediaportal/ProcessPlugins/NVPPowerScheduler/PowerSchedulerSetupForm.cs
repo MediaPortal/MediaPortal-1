@@ -28,7 +28,7 @@ using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
-using MediaPortal.Utils.Services;
+using MediaPortal.Util;
 
 namespace MediaPortal.PowerScheduler
 {
@@ -48,7 +48,6 @@ namespace MediaPortal.PowerScheduler
     private MediaPortal.UserInterface.Controls.MPCheckBox cbxForced;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
     
-    static IConfig _config;
     /// <summary>
     /// Required designer variable.
     /// </summary>
@@ -56,8 +55,6 @@ namespace MediaPortal.PowerScheduler
 
     public PowerSchedulerSetupForm()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _config = services.Get<IConfig>();
       //
       // Required for Windows Form Designer support
       //
@@ -84,7 +81,7 @@ namespace MediaPortal.PowerScheduler
 
     void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         nud_wakeup.Value = xmlreader.GetValueAsInt("powerscheduler", "wakeupinterval", 1);
         nud_shutdown.Value = xmlreader.GetValueAsInt("powerscheduler", "shutdowninterval", 3);
@@ -97,7 +94,7 @@ namespace MediaPortal.PowerScheduler
 
     bool SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         xmlwriter.SetValue("powerscheduler", "wakeupinterval", nud_wakeup.Value);
         xmlwriter.SetValue("powerscheduler", "shutdowninterval", nud_shutdown.Value);

@@ -27,7 +27,6 @@ using System.Xml.Serialization;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Database;
-using MediaPortal.Utils.Services;
 
 namespace Databases.Folders
 {
@@ -37,20 +36,15 @@ namespace Databases.Folders
   public class FolderSettingsSqlLite : IFolderSettings, IDisposable
 	{
     public SQLiteClient m_db=null;
-    protected ILog _log;
-    protected IConfig _config;
 
     public FolderSettingsSqlLite()
 		{
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
 
       try 
       {
         // Open database
-        _log.Info("open folderdatabase");
-        m_db = new SQLiteClient(_config.Get(Config.Options.DatabasePath) + "FolderDatabase3.db3");
+        Log.Info("open folderdatabase");
+        m_db = new SQLiteClient(Config.Get(Config.Dir.Database) + "FolderDatabase3.db3");
 
         DatabaseUtility.SetPragmas(m_db);
         DatabaseUtility.AddTable(m_db, "tblPath", "CREATE TABLE tblPath ( idPath integer primary key, strPath text)");
@@ -59,7 +53,7 @@ namespace Databases.Folders
       } 
       catch (Exception ex) 
       {
-        _log.Error(ex);
+        Log.Error(ex);
       }
     }
     public void Dispose()
@@ -134,7 +128,7 @@ namespace Databases.Folders
       } 
       catch (Exception ex)
       {
-        _log.Error(ex);
+        Log.Error(ex);
       }
       return -1;
     }
@@ -160,7 +154,7 @@ namespace Databases.Folders
       }
       catch (Exception ex)
       {
-        _log.Error(ex);
+        Log.Error(ex);
       }
     }
 
@@ -209,7 +203,7 @@ namespace Databases.Folders
       }
       catch (Exception ex)
       {
-        _log.Error(ex);
+        Log.Error(ex);
 
       }
     }
@@ -265,7 +259,7 @@ namespace Databases.Folders
       }
       catch (Exception ex)
       {
-        _log.Error(ex);
+        Log.Error(ex);
       }
     }
 	}

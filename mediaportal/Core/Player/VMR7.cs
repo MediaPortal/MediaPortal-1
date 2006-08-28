@@ -26,7 +26,6 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using DirectShowLib;
 using MediaPortal.Player;
-using MediaPortal.Utils.Services;
 using MediaPortal.GUI.Library;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
@@ -57,7 +56,6 @@ namespace MediaPortal.Player
 		//ulong m_oldSavedBitmapCRC=0;
 		bool  vmr7intialized=false;
 		IGraphBuilder m_graphBuilder=null;
-    protected ILog _log;
 			//Util.CRCTool crc=new MediaPortal.Util.CRCTool();
 		/// <summary>
 		/// Constructor
@@ -68,8 +66,6 @@ namespace MediaPortal.Player
 		public VMR7Util()
 		{
 
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
 
 			//crc.Init(Util.CRCTool.CRCCode.CRC32);
 		}
@@ -81,14 +77,14 @@ namespace MediaPortal.Player
 		/// <param name="graphBuilder"></param>
 		public void AddVMR7(IGraphBuilder graphBuilder)
 		{
-			_log.Info("VMR7Helper:AddVMR7");
+			Log.Info("VMR7Helper:AddVMR7");
 			if (vmr7intialized) return;
 
       VMR7Filter = (IBaseFilter)new VideoMixingRenderer();
 			if (VMR7Filter == null)
 			{
 				Error.SetError("Unable to play movie", "VMR7 is not installed");
-				_log.Error("VMR7Helper:Failed to get instance of VMR7 ");
+				Log.Error("VMR7Helper:Failed to get instance of VMR7 ");
 				return;
 			}
 
@@ -99,7 +95,7 @@ namespace MediaPortal.Player
 				hr=config.SetNumberOfStreams(1);
 				if (hr != 0)
 				{
-					_log.Error("VMR7Helper:Failed to set number of streams:0x{0:X}",hr);
+					Log.Error("VMR7Helper:Failed to set number of streams:0x{0:X}",hr);
 					Marshal.ReleaseComObject(VMR7Filter);
 					VMR7Filter=null;
 					return;
@@ -110,7 +106,7 @@ namespace MediaPortal.Player
 			if (hr != 0)
 			{
 				Error.SetError("Unable to play movie", "Unable to initialize VMR7");
-				_log.Error("VMR7Helper:Failed to add VMR7 to filtergraph");
+				Log.Error("VMR7Helper:Failed to add VMR7 to filtergraph");
 				Marshal.ReleaseComObject(VMR7Filter);
 				VMR7Filter=null;
 				return;
@@ -130,7 +126,7 @@ namespace MediaPortal.Player
 			if (vmr7intialized)
 			{
 				int result;
-				_log.Info("VMR7Helper:RemoveVMR7");
+				Log.Info("VMR7Helper:RemoveVMR7");
 				//if (m_mixerBitmap != null)
 				//	while ((result=Marshal.ReleaseComObject(m_mixerBitmap))>0);
 				m_mixerBitmap = null;
@@ -145,11 +141,11 @@ namespace MediaPortal.Player
 					try
 					{
 						result=m_graphBuilder.RemoveFilter(VMR7Filter);
-						if (result!=0) _log.Info("VMR7Helper:RemoveFilter():{0}",result);
+						if (result!=0) Log.Info("VMR7Helper:RemoveFilter():{0}",result);
 					}
 					catch(Exception){}
 					while ( (result=Marshal.ReleaseComObject(VMR7Filter))>0); 
-					if (result!=0) _log.Info("VMR7Helper:ReleaseComObject():{0}",result);
+					if (result!=0) Log.Info("VMR7Helper:ReleaseComObject():{0}",result);
 					m_graphBuilder=null;
 				}
 				vmr7intialized=false;
@@ -276,7 +272,7 @@ namespace MediaPortal.Player
 								bmp.rDest.bottom=1.0f;
 								bmp.rDest.right=1.0f;
 								bmp.fAlpha=alphaValue;
-								//_log.Info("SaveVMR7Bitmap() called");
+								//Log.Info("SaveVMR7Bitmap() called");
 							
 								hr=VMR7Util.g_vmr7.MixerBitmapInterface.SetAlphaBitmap(ref bmp);
 								//g.ReleaseHdc(ptrSrc);
@@ -284,7 +280,7 @@ namespace MediaPortal.Player
 								g.ReleaseHdc(handle1);
 								if(hr!=0)
 								{
-									_log.Info("SaveVMR7Bitmap() failed: error 0x{0:X} on SetAlphaBitmap()",hr);
+									Log.Info("SaveVMR7Bitmap() failed: error 0x{0:X} on SetAlphaBitmap()",hr);
 									return false;
 								}
 							}
@@ -302,11 +298,11 @@ namespace MediaPortal.Player
 					bmp.rDest.bottom=1.0f;
 					bmp.rDest.right=1.0f;
 					bmp.fAlpha=alphaValue;
-					//_log.Info("SaveVMR7Bitmap() called");
+					//Log.Info("SaveVMR7Bitmap() called");
 					hr=VMR7Util.g_vmr7.MixerBitmapInterface.SetAlphaBitmap(ref bmp);
 					if(hr!=0)
 					{
-						_log.Info("SaveVMR7Bitmap() failed: error {0:X} on SetAlphaBitmap()",hr);
+						Log.Info("SaveVMR7Bitmap() failed: error {0:X} on SetAlphaBitmap()",hr);
 						return false;
 					}
 				}

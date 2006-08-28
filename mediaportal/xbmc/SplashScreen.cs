@@ -26,7 +26,7 @@
 using System.ComponentModel;
 using System.Threading;
 using System.Windows.Forms;
-using MediaPortal.Utils.Services;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal
 {
@@ -45,12 +45,9 @@ namespace MediaPortal
     private bool stopRequested = false;
     private SplashForm frm;
     private string info;
-    static ILog _log;
 
     public SplashScreen()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
     }
 
 
@@ -152,7 +149,7 @@ namespace MediaPortal
       {
         string[] strVersion = version.Split('-');
         versionLabel.Text = strVersion[0];
-        _log.Info("Version: Application {0}", strVersion[0]);
+        Log.Info("Version: Application {0}", strVersion[0]);
         if (strVersion.Length > 1)
         {
           string day = strVersion[2].Substring(0, 2);
@@ -160,7 +157,7 @@ namespace MediaPortal
           string year = strVersion[2].Substring(6, 4);
           string time = strVersion[3].Substring(0, 5);
           string build = strVersion[4].Substring(0, 13).Trim();
-          _log.Info("Version: {0} {1} ({2}.{3}.{4} / {5} CET)", strVersion[1], build, day, month, year, time);
+          Log.Info("Version: {0} {1} ({2}.{3}.{4} / {5} CET)", strVersion[1], build, day, month, year, time);
           cvsLabel.Text = string.Format("{0} {1} ({2}.{3}.{4}/{5} CET)", strVersion[1], build, day, month, year, time);
         }
         Update();

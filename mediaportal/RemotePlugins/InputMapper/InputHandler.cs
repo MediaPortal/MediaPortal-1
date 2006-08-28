@@ -33,7 +33,6 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Player;
 using MediaPortal.TV.Recording;
-using MediaPortal.Utils.Services;
 
 
 namespace MediaPortal.InputDevices
@@ -50,8 +49,6 @@ namespace MediaPortal.InputDevices
     int _currentLayer = 1;
     bool _isLoaded = false;
     bool _basicHome = false;
-    protected ILog _log;
-    protected IConfig _config;
 
     /// <summary>
     /// Mapping successful loaded
@@ -133,11 +130,8 @@ namespace MediaPortal.InputDevices
     /// <param name="deviceXmlName">Input device name</param>
     public InputHandler(string deviceXmlName)
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
 
-      using (Profile.Settings xmlreader = new Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (Profile.Settings xmlreader = new Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         _basicHome = xmlreader.GetValueAsBool("general", "startbasichome", false);
 
       string xmlPath = GetXmlPath(deviceXmlName);
@@ -184,18 +178,18 @@ namespace MediaPortal.InputDevices
     public string GetXmlPath(string deviceXmlName)
     {
       string path = string.Empty;
-      string pathCustom = _config.Get(Config.Options.CustomInputDevicePath) + deviceXmlName + ".xml";
+      string pathCustom = Config.Get(Config.Dir.CustomInputDevice) + deviceXmlName + ".xml";
       string pathDefault = "InputDeviceMappings\\defaults\\" + deviceXmlName + ".xml";
 
       if (System.IO.File.Exists(pathCustom) && CheckXmlFile(pathCustom))
       {
         path = pathCustom;
-        _log.Info("MAP: using custom mappings for {0}", deviceXmlName);
+        Log.Info("MAP: using custom mappings for {0}", deviceXmlName);
       }
       else if (System.IO.File.Exists(pathDefault) && CheckXmlFile(pathDefault))
       {
         path = pathDefault;
-        _log.Info("MAP: using default mappings for {0}", deviceXmlName);
+        Log.Info("MAP: using default mappings for {0}", deviceXmlName);
       }
       return path;
     }
@@ -303,7 +297,7 @@ namespace MediaPortal.InputDevices
     {
       if (!_isLoaded)   // No mapping loaded
       {
-        _log.Info("Map: No button mapping loaded");
+        Log.Info("Map: No button mapping loaded");
         return false;
       }
       Mapping map = null;
@@ -311,7 +305,7 @@ namespace MediaPortal.InputDevices
       if (map == null)
         return false;
 #if DEBUG
-      _log.Info("{0} / {1} / {2} / {3}", map.Condition, map.ConProperty, map.Command, map.CmdProperty);
+      Log.Info("{0} / {1} / {2} / {3}", map.Condition, map.ConProperty, map.Command, map.CmdProperty);
 #endif
       Action action;
       if (map.Sound != string.Empty)
@@ -327,7 +321,7 @@ namespace MediaPortal.InputDevices
         case "ACTION":  // execute Action x
           Key key = new Key(map.CmdKeyChar, map.CmdKeyCode);
 #if DEBUG
-          _log.Info("Executing: key {0} / {1} / Action: {2} / {3}", map.CmdKeyChar, map.CmdKeyCode, map.CmdProperty, ((Action.ActionType)Convert.ToInt32(map.CmdProperty)).ToString());
+          Log.Info("Executing: key {0} / {1} / Action: {2} / {3}", map.CmdKeyChar, map.CmdKeyCode, map.CmdProperty, ((Action.ActionType)Convert.ToInt32(map.CmdProperty)).ToString());
 #endif
           action = new Action(key, (Action.ActionType)Convert.ToInt32(map.CmdProperty), 0, 0);
           GUIGraphicsContext.OnAction(action);

@@ -23,7 +23,6 @@ using MediaPortal.GUI.Library;
 using System.Collections.Generic;
 using MediaPortal.TagReader;
 using System.Collections;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Playlists
 {
@@ -33,12 +32,9 @@ namespace MediaPortal.Playlists
   {
     protected string _playListName = "";
     protected List<PlayListItem> _listPlayListItems = new List<PlayListItem>();
-    protected ILog _log;
 
     public PlayList()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
     }
 
     public bool AllPlayed()
@@ -61,7 +57,7 @@ namespace MediaPortal.Playlists
     public void Add(PlayListItem item)
     {
       if (item == null) return;
-      _log.Info("Playlist: add {0}", item.FileName);
+      Log.Info("Playlist: add {0}", item.FileName);
       _listPlayListItems.Add(item);
     }
 
@@ -160,7 +156,7 @@ namespace MediaPortal.Playlists
 
       try
       {
-        _log.Info("Moving playlist item {0} up. Old index:{1}, new index{2}", playListItem1.Description, iItem, iPreviousItem);
+        Log.Info("Moving playlist item {0} up. Old index:{1}, new index{2}", playListItem1.Description, iItem, iPreviousItem);
         System.Threading.Monitor.Enter(this);
         _listPlayListItems[iItem] = playListItem2;
         _listPlayListItems[iPreviousItem] = playListItem1;
@@ -169,7 +165,7 @@ namespace MediaPortal.Playlists
 
       catch (Exception ex)
       {
-        _log.Info("PlayList.MovePlayListItemUp caused an exception: {0}", ex.Message);
+        Log.Info("PlayList.MovePlayListItemUp caused an exception: {0}", ex.Message);
         selectedItemIndex = -1;
       }
 
@@ -201,7 +197,7 @@ namespace MediaPortal.Playlists
 
       try
       {
-        _log.Info("Moving playlist item {0} down. Old index:{1}, new index{2}", playListItem1.Description, iItem, iNextItem);
+        Log.Info("Moving playlist item {0} down. Old index:{1}, new index{2}", playListItem1.Description, iItem, iNextItem);
         System.Threading.Monitor.Enter(this);
         _listPlayListItems[iItem] = playListItem2;
         _listPlayListItems[iNextItem] = playListItem1;
@@ -210,7 +206,7 @@ namespace MediaPortal.Playlists
 
       catch (Exception ex)
       {
-        _log.Info("PlayList.MovePlayListItemDown caused an exception: {0}", ex.Message);
+        Log.Info("PlayList.MovePlayListItemDown caused an exception: {0}", ex.Message);
         selectedItemIndex = -1;
       }
 

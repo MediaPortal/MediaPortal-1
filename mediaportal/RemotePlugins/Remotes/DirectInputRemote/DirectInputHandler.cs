@@ -30,7 +30,6 @@ using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using Microsoft.DirectX.DirectInput;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.InputDevices
 {
@@ -117,14 +116,9 @@ namespace MediaPortal.InputDevices
 
     public event diStateChangeText OnStateChangeText = null;
 
-    protected ILog _log;
-    protected IConfig _config;
 
     public DirectInputHandler()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
 
       //
       // TODO: Add constructor logic here
@@ -138,7 +132,7 @@ namespace MediaPortal.InputDevices
         AttachHandlers();
       }
       else
-        _log.Info("DirectInput: Error loading default mapping file - please reinstall MediaPortal");
+        Log.Info("DirectInput: Error loading default mapping file - please reinstall MediaPortal");
     }
 
     ~DirectInputHandler()
@@ -167,8 +161,8 @@ namespace MediaPortal.InputDevices
       }
       catch (Exception ex)
       {
-        _log.Info("DirectInputHandler: error in InitDeviceList");
-        _log.Info(ex.Message.ToString());
+        Log.Info("DirectInputHandler: error in InitDeviceList");
+        Log.Info(ex.Message.ToString());
       }
     }
 
@@ -505,7 +499,7 @@ namespace MediaPortal.InputDevices
 
       if (VerifyAction(actionCode, curAxisValue))
       {
-        _log.Info("mapping action {0}", actionCode);
+        Log.Info("mapping action {0}", actionCode);
         _inputHandler.MapAction(actionCode, actionParam);
       }
     }
@@ -609,7 +603,7 @@ namespace MediaPortal.InputDevices
 
     public void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         _active = xmlreader.GetValueAsBool("remote", "DirectInput", false);
         string strGUID = xmlreader.GetValueAsString("remote", "DirectInputDeviceGUID", "");
@@ -625,7 +619,7 @@ namespace MediaPortal.InputDevices
 
     public void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         xmlwriter.SetValueAsBool("remote", "DirectInput", _active);
         xmlwriter.SetValue("remote", "DirectInputDeviceGUID", SelectedDeviceGUID);

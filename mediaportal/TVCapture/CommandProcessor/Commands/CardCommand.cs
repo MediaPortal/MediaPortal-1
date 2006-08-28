@@ -39,7 +39,6 @@ using MediaPortal.Player;
 using MediaPortal.Dialogs;
 using MediaPortal.TV.Teletext;
 using MediaPortal.TV.DiskSpace;
-using MediaPortal.Utils.Services;
 #endregion
 
 
@@ -51,12 +50,9 @@ namespace MediaPortal.TV.Recording
     bool _isSucceeded=false;
     string _errorMessage = "";
     AutoResetEvent _event=null;
-    protected ILog _log;
 
     public CardCommand()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
     }
 
     public AutoResetEvent Event

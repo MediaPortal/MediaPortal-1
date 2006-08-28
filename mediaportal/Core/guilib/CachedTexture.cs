@@ -27,7 +27,6 @@ using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
 using System.Runtime.InteropServices;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.GUI.Library
 {
@@ -68,7 +67,6 @@ namespace MediaPortal.GUI.Library
       public readonly bool UseNewTextureEngine = true;
       string _imageName = String.Empty;
       static private bool logTextures = false;
-      protected ILog _log;
       #endregion
 
       #region events
@@ -78,8 +76,6 @@ namespace MediaPortal.GUI.Library
 
       public Frame(string name, Texture image, int duration)
       {
-        ServiceProvider services = GlobalServiceProvider.Instance;
-        _log = services.Get<ILog>();
 
         _imageName = name;
         _image = image;
@@ -90,7 +86,7 @@ namespace MediaPortal.GUI.Library
           {
             IntPtr ptr = DShowNET.Helper.DirectShowUtil.GetUnmanagedTexture(_image);
             _textureNumber = FontEngineAddTexture(ptr.ToInt32(), true, (void*)ptr.ToPointer());
-            if (logTextures) _log.Info("Frame:ctor() fontengine: added texture:{0} {1}", _textureNumber.ToString(), _imageName);
+            if (logTextures) Log.Info("Frame:ctor() fontengine: added texture:{0} {1}", _textureNumber.ToString(), _imageName);
           }
         }
       }
@@ -113,7 +109,7 @@ namespace MediaPortal.GUI.Library
             if (Disposing != null) Disposing(this, new EventArgs());
             try
             {
-              if (logTextures) _log.Info("Frame:Image fontengine: remove texture:{0} {1}", _textureNumber.ToString(), _imageName);
+              if (logTextures) Log.Info("Frame:Image fontengine: remove texture:{0} {1}", _textureNumber.ToString(), _imageName);
               FontEngineRemoveTexture(_textureNumber);
               if (!_image.Disposed)
                 _image.Dispose();
@@ -133,7 +129,7 @@ namespace MediaPortal.GUI.Library
             {
               IntPtr ptr = DShowNET.Helper.DirectShowUtil.GetUnmanagedTexture(_image);
               _textureNumber = FontEngineAddTexture(ptr.ToInt32(), true, (void*)ptr.ToPointer());
-              if (logTextures) _log.Info("Frame:Image fontengine: added texture:{0} {1}", _textureNumber.ToString(), _imageName);
+              if (logTextures) Log.Info("Frame:Image fontengine: added texture:{0} {1}", _textureNumber.ToString(), _imageName);
             }
           }
         }
@@ -155,7 +151,7 @@ namespace MediaPortal.GUI.Library
         if (_image != null)
         {
           if (Disposing != null) Disposing(this, new EventArgs());
-          if (logTextures) _log.Info("Frame: dispose() fontengine: remove texture:" + _textureNumber.ToString());
+          if (logTextures) Log.Info("Frame: dispose() fontengine: remove texture:" + _textureNumber.ToString());
           try
           {
             if (!_image.Disposed)
@@ -189,7 +185,7 @@ namespace MediaPortal.GUI.Library
         }
         else
         {
-          if (logTextures) _log.Info("fontengine:Draw() ERROR. Texture is disposed:{0} {1}", _textureNumber.ToString(), _imageName);
+          if (logTextures) Log.Info("fontengine:Draw() ERROR. Texture is disposed:{0} {1}", _textureNumber.ToString(), _imageName);
         }
       }
     }

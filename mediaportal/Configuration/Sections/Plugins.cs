@@ -33,8 +33,8 @@ using System.Reflection;
 using System.Windows.Forms;
 using MediaPortal.Configuration.Controls;
 using MediaPortal.GUI.Library;
+using MediaPortal.Util;
 using MediaPortal.Profile;
-using MediaPortal.Utils.Services;
 
 #pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
@@ -58,7 +58,6 @@ namespace MediaPortal.Configuration.Sections
     private ArrayList loadedPlugins = new ArrayList();
     private DataSet ds = new DataSet();
     bool isLoaded = false;
-    protected ILog _log;
 
     public Plugins()
       : this("Plugins")
@@ -68,8 +67,6 @@ namespace MediaPortal.Configuration.Sections
     public Plugins(string name)
       : base(name)
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
 
       // This call is required by the Windows Form Designer.
       InitializeComponent();
@@ -172,11 +169,11 @@ namespace MediaPortal.Configuration.Sections
 
     private void EnumeratePlugins()
     {
-      EnumeratePluginDirectory(_config.Get(Config.Options.PluginsPath) + "windows");
-      EnumeratePluginDirectory(_config.Get(Config.Options.PluginsPath) + "subtitle");
-      EnumeratePluginDirectory(_config.Get(Config.Options.PluginsPath) + "tagreaders");
-      EnumeratePluginDirectory(_config.Get(Config.Options.PluginsPath) + "externalplayers");
-      EnumeratePluginDirectory(_config.Get(Config.Options.PluginsPath) + "process");
+      EnumeratePluginDirectory(Config.Get(Config.Dir.Plugins) + "windows");
+      EnumeratePluginDirectory(Config.Get(Config.Dir.Plugins) + "subtitle");
+      EnumeratePluginDirectory(Config.Get(Config.Dir.Plugins) + "tagreaders");
+      EnumeratePluginDirectory(Config.Get(Config.Dir.Plugins) + "externalplayers");
+      EnumeratePluginDirectory(Config.Get(Config.Dir.Plugins) + "process");
     }
 
     private void LoadPlugins()
@@ -222,10 +219,10 @@ namespace MediaPortal.Configuration.Sections
                 }
                 catch (Exception setupFormException)
                 {
-                  _log.Info("Exception in plugin SetupForm loading :{0}", setupFormException.Message);
-                  _log.Info("Current class is :{0}", type.FullName);
+                  Log.Info("Exception in plugin SetupForm loading :{0}", setupFormException.Message);
+                  Log.Info("Current class is :{0}", type.FullName);
 #if DEBUG
-                  _log.Info(setupFormException.StackTrace);
+                  Log.Info(setupFormException.StackTrace);
 #endif
                 }
               }
@@ -254,10 +251,10 @@ namespace MediaPortal.Configuration.Sections
               }
               catch (Exception guiWindowException)
               {
-                _log.Info("Exception in plugin GUIWindows loading :{0}", guiWindowException.Message);
-                _log.Info("Current class is :{0}", t.FullName);
+                Log.Info("Exception in plugin GUIWindows loading :{0}", guiWindowException.Message);
+                Log.Info("Current class is :{0}", t.FullName);
 #if DEBUG
-                _log.Info(guiWindowException.StackTrace);
+                Log.Info(guiWindowException.StackTrace);
 #endif
               }
             }
@@ -265,9 +262,9 @@ namespace MediaPortal.Configuration.Sections
         }
         catch (Exception unknownException)
         {
-          _log.Info("Exception in plugin loading :{0}", unknownException.Message);
+          Log.Info("Exception in plugin loading :{0}", unknownException.Message);
 #if DEBUG
-          _log.Info(unknownException.StackTrace);
+          Log.Info(unknownException.StackTrace);
 #endif
         }
       }
@@ -277,7 +274,7 @@ namespace MediaPortal.Configuration.Sections
     {
       try
       {
-        using (Settings xmlreader = new Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+        using (Settings xmlreader = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         {
           foreach (DataRow row in ds.Tables[0].Rows)
           {
@@ -321,7 +318,7 @@ namespace MediaPortal.Configuration.Sections
       LoadAll();
       try
       {
-        using (Settings xmlwriter = new Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+        using (Settings xmlwriter = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         {
           foreach (DataRow row in ds.Tables[0].Rows)
           {

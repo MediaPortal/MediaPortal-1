@@ -25,7 +25,7 @@
 
 using System;
 using MediaPortal.GUI.Library;
-using MediaPortal.Utils.Services;
+using MediaPortal.Util;
 
 namespace MediaPortal.WinampPlayer
 {
@@ -53,12 +53,9 @@ namespace MediaPortal.WinampPlayer
     private int m_volume = 100;
     private bool _notifyPlaying = false;
     private bool _isCDA = false;
-    static IConfig _config;
 
     public WinampPlugin()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _config = services.Get<IConfig>();
     }
 
     public override void ShowPlugin()
@@ -131,7 +128,7 @@ namespace MediaPortal.WinampPlayer
     private void readConfig()
     {
       string strExt = null;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         strExt = xmlreader.GetValueAsString("winampplugin", "enabledextensions", "");
       }

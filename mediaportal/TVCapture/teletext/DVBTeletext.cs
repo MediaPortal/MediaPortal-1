@@ -308,7 +308,7 @@ namespace MediaPortal.TV.Teletext
         Assembly assm = Assembly.GetExecutingAssembly();
         string[] names = assm.GetManifestResourceNames();
         //for (int x = 0; x < names.Length; x++)
-        //  _log.Info("res:{0}", names[x]);
+        //  Log.Info("res:{0}", names[x]);
 
         Stream stream = assm.GetManifestResourceStream("TVCapture.teletext.LogoPage");
         if (stream != null)

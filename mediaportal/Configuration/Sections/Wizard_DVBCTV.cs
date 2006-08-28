@@ -32,10 +32,10 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using System.Threading;
 using MediaPortal.GUI.Library;
+using MediaPortal.Util;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
 using MediaPortal.TV.Scanning;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Configuration.Sections
 {
@@ -269,7 +269,7 @@ namespace MediaPortal.Configuration.Sections
               }
           }
       }
-      string[] files = System.IO.Directory.GetFiles(base._config.Get(Config.Options.BasePath) + "Tuningparameters", "*.dvbc");
+      string[] files = System.IO.Directory.GetFiles(Config.Get(Config.Dir.Base) + "Tuningparameters", "*.dvbc");
       Array.Sort(files);
       foreach (string file in files)
       {
@@ -286,7 +286,7 @@ namespace MediaPortal.Configuration.Sections
       {
           String[] parameters = new String[1];
           string countryName = (string)cbCountry.SelectedItem;
-          parameters[0] = base._config.Get(Config.Options.BasePath) + @"Tuningparameters\" + countryName;
+          parameters[0] = Config.Get(Config.Dir.Base) + @"Tuningparameters\" + countryName;
           return parameters;
       }
 

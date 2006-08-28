@@ -327,7 +327,7 @@ namespace MediaPortal.GUI.Video
                 ToggleSubMenu(0, m_iActiveMenu);						// hide the currently active sub-menu
               }
               //g_application.m_guiWindowFullScreen.m_bOSDVisible = false;	// toggle the OSD off so parent window can de-init
-              _log.Info("GUIVideoOSD:stop");
+              Log.Info("GUIVideoOSD:stop");
               g_Player.Stop();						// close our media
               //GUIWindowManager.ShowPreviousWindow();							// go back to the previous window
             }

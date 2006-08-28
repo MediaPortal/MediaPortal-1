@@ -28,7 +28,7 @@ using System.Windows.Forms;
 using System.Threading;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
-using MediaPortal.Utils.Services;
+using MediaPortal.Util;
 
 namespace MediaPortal.InputDevices
 {
@@ -37,14 +37,9 @@ namespace MediaPortal.InputDevices
     bool controlEnabled = false;
     bool logVerbose = false;           // Verbose logging
     InputHandler _inputHandler;
-    protected ILog _log;
-    protected IConfig _config;
 
     public HidListener()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
     }
 
     public void Init(IntPtr hwnd)
@@ -54,7 +49,7 @@ namespace MediaPortal.InputDevices
 
     void Init()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         controlEnabled = xmlreader.GetValueAsBool("remote", "HID", false);
         logVerbose = xmlreader.GetValueAsBool("remote", "HIDVerboseLog", false);
@@ -66,7 +61,7 @@ namespace MediaPortal.InputDevices
         if (!_inputHandler.IsLoaded)
         {
           controlEnabled = false;
-          _log.Info("HID: Error loading default mapping file - please reinstall MediaPortal");
+          Log.Info("HID: Error loading default mapping file - please reinstall MediaPortal");
         }
       }
     }
@@ -99,7 +94,7 @@ namespace MediaPortal.InputDevices
 
         InputDevices.LastHidRequest = appCommand;
 
-        if (logVerbose) _log.Info("HID: Command: {0} - {1}", ((msg.LParam.ToInt32() >> 16) & ~0xF000), InputDevices.LastHidRequest.ToString());
+        if (logVerbose) Log.Info("HID: Command: {0} - {1}", ((msg.LParam.ToInt32() >> 16) & ~0xF000), InputDevices.LastHidRequest.ToString());
 
         if (!_inputHandler.MapAction((msg.LParam.ToInt32() >> 16) & ~0xF000))
           return false;

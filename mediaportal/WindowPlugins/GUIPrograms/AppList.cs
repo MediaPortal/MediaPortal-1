@@ -24,7 +24,6 @@ using MediaPortal.GUI.Library;
 using Programs.Utils;
 using SQLite.NET;
 using WindowPlugins.GUIPrograms;
-using MediaPortal.Utils.Services;
 
 namespace ProgramsDatabase
 {
@@ -168,9 +167,7 @@ namespace ProgramsDatabase
       }
       catch (SQLiteException ex)
       {
-        ServiceProvider services = GlobalServiceProvider.Instance;
-        ILog log = services.Get<ILog>();
-        log.Info("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Info("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
       }
     }
 

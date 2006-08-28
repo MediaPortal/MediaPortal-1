@@ -25,7 +25,7 @@ using DShowNET.Helper;
 using System.Collections;
 using System.Collections.Generic;
 using MediaPortal.GUI.Library;
-using MediaPortal.Utils.Services;
+using MediaPortal.Util;
 
 namespace TVCapture
 {
@@ -271,27 +271,24 @@ namespace TVCapture
     /// </summary>
     private CaptureCardDefinitions()
     {
-      //			_log.Info("CaptureCardDefinitions:ctor IN");
+      //			Log.Info("CaptureCardDefinitions:ctor IN");
 
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      ILog log = services.Get<ILog>();
-      IConfig _config = services.Get<IConfig>();
 
       XmlDocument doc = new XmlDocument();
-      if (!System.IO.File.Exists(_config.Get(Config.Options.ConfigPath) + "CaptureCardDefinitions.xml"))
+      if (!System.IO.File.Exists(Config.Get(Config.Dir.Config) + "CaptureCardDefinitions.xml"))
       {
-        log.Info(" Error: CaptureCardDefinitions.xml file not found!");
-        log.Info("CaptureCardDefinitions:ctor OUT");
+        Log.Info(" Error: CaptureCardDefinitions.xml file not found!");
+        Log.Info("CaptureCardDefinitions:ctor OUT");
         return;
       }
 
       try
       {
-        doc.Load(_config.Get(Config.Options.ConfigPath) + "CaptureCardDefinitions.xml");
+        doc.Load(Config.Get(Config.Dir.Config) + "CaptureCardDefinitions.xml");
       }
       catch (Exception ex)
       {
-        log.Error(ex);
+        Log.Error(ex);
         return;
       }
 
@@ -302,7 +299,7 @@ namespace TVCapture
       {
         if (nodeList != null)
         {
-          //_log.Info(" Loading: capturecards...");
+          //Log.Info(" Loading: capturecards...");
 
           foreach (XmlNode cc in nodeList)
           {
@@ -336,13 +333,13 @@ namespace TVCapture
             cardConfig.CommercialName = cc.Attributes.GetNamedItem(@"commercialname").InnerText;
             cardConfig.CaptureName = cc.Attributes.GetNamedItem(@"capturename").InnerText;
             _mCaptureCardDefinitions.Add(cardConfig);
-            //_log.Info("device:{0}", cardConfig.CommercialName);
+            //Log.Info("device:{0}", cardConfig.CommercialName);
 
             // Get the cards capabilities...
             XmlNode capNode = cc.SelectSingleNode(@"capabilities");
             if (capNode != null)
             {
-              //_log.Info("  Getting capabilities...");
+              //Log.Info("  Getting capabilities...");
               cardConfig.Capabilities.HasTv = XmlConvert.ToBoolean(capNode.Attributes.GetNamedItem(@"tv").InnerText);
               cardConfig.Capabilities.HasRadio = XmlConvert.ToBoolean(capNode.Attributes.GetNamedItem(@"radio").InnerText);
               bool isBda = XmlConvert.ToBoolean(capNode.Attributes.GetNamedItem(@"bda").InnerText);
@@ -355,14 +352,14 @@ namespace TVCapture
               else if (isMpeg2)
                 cardConfig.Capabilities.CardType = CardTypes.Analog;
 
-              //_log.Info("    TV:{0} radio:{1} bda:{2} mce:{3} mpeg2:{4} s/w:{5}",
+              //Log.Info("    TV:{0} radio:{1} bda:{2} mce:{3} mpeg2:{4} s/w:{5}",
               //					cardConfig.Capabilities.HasTv,cardConfig.Capabilities.HasRadio,cardConfig.Capabilities.IsBDADevice,
               //					cardConfig.Capabilities.IsMceDevice,	cardConfig.Capabilities.IsMpeg2Device,cardConfig.Capabilities.IsSoftwareDevice);																																																																
 
             }
             else
             {
-              //_log.Info("  Failed getting capabilities...");
+              //Log.Info("  Failed getting capabilities...");
             }
 
             // First do the tv part, then the (optional) radio part...
@@ -419,7 +416,7 @@ namespace TVCapture
             XmlNode radioNode = cc.SelectSingleNode(@"radio");
             if (radioNode != null)
             {
-              //_log.Info("  Getting radio...");
+              //Log.Info("  Getting radio...");
 
               XmlNode filterNodes = radioNode.SelectSingleNode(@"filters");
               FilterDefinition dsfilter;
@@ -465,14 +462,14 @@ namespace TVCapture
 
 
             }
-            //_log.Info("  Loaded: DeviceId {0}, CommercialName {1}, CaptureName {2}",
+            //Log.Info("  Loaded: DeviceId {0}, CommercialName {1}, CaptureName {2}",
             //	cardConfig.DeviceId, cardConfig.CommercialName, cardConfig.CaptureName);
           }
         }
       }
       catch (System.Exception ex)
       {
-        log.Error(ex);
+        Log.Error(ex);
       }
     }
 

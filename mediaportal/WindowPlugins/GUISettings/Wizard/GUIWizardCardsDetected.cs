@@ -1,12 +1,36 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
+/* 
+ *	Copyright (C) 2005-2006 Team MediaPortal
+ *	http://www.team-mediaportal.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+
+#endregion
 using System;
 using System.IO;
 using System.Collections;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Soap;
-using MediaPortal.Utils.Services;
 using DShowNET;
 using DShowNET.Helper;
 using MediaPortal.GUI.Library;
+using MediaPortal.Util;
 using MediaPortal.TV.Recording;
 using TVCapture;
 
@@ -20,12 +44,9 @@ namespace MediaPortal.GUI.Settings.Wizard
 		[SkinControlAttribute(24)]		protected GUITextControl tbCards = null;
 		[SkinControlAttribute(5)]  		protected GUIButtonControl btnNext = null;
     [SkinControlAttribute(25)]      protected GUIButtonControl btnBack = null;
-    new static ILog _log;
 
 		public GUIWizardCardsDetected()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
 
 			GetID=(int)GUIWindow.Window.WINDOW_WIZARD_CARDS_DETECTED;
 		}
@@ -83,9 +104,9 @@ namespace MediaPortal.GUI.Settings.Wizard
 						cardsDetected+="SkyStar 2 DVB-S";
 
 
-            string filename = String.Format(_config.Get(MediaPortal.Utils.Services.Config.Options.DatabasePath) + "card_{0}.xml", cd.FriendlyName);
+            string filename = String.Format(Config.Get(Config.Dir.Database) + "card_{0}.xml", cd.FriendlyName);
 						// save settings for get the filename in mp.xml
-            using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+            using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
 						{
 							xmlwriter.SetValue("dvb_ts_cards","filename",filename);
 						}
@@ -115,9 +136,9 @@ namespace MediaPortal.GUI.Settings.Wizard
             cardsDetected += "Techno Trend Premium";
 
 
-            string filename = String.Format(_config.Get(MediaPortal.Utils.Services.Config.Options.DatabasePath) + "card_{0}.xml", cd.FriendlyName);
+            string filename = String.Format(Config.Get(Config.Dir.Database) + "card_{0}.xml", cd.FriendlyName);
             // save settings for get the filename in mp.xml
-            using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+            using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
             {
               xmlwriter.SetValue("dvb_ts_cards", "filename", filename);
             }
@@ -165,7 +186,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 
 		void SaveCaptureCards(ArrayList availableCards)
 		{
-      using (FileStream fileStream = new FileStream(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "capturecards.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
+      using (FileStream fileStream = new FileStream(Config.Get(Config.Dir.Config) + "capturecards.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
 			{
 				SoapFormatter formatter = new SoapFormatter();
 				formatter.Serialize(fileStream, availableCards);
@@ -177,7 +198,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 		{
 			if (control==btnNext)
 			{
-				_log.Info("cards detected:{0}", Recorder.Count);
+				Log.Info("cards detected:{0}", Recorder.Count);
 				ScanNextCardType();
 				return;
 
@@ -187,7 +208,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 		}
 		static public void ScanNextCardType()
 		{
-			_log.Info("ScanNextCardType:cards:{0}",Recorder.Count);
+			Log.Info("ScanNextCardType:cards:{0}",Recorder.Count);
 			if (Recorder.Count>0)
 			{
 				for (int i=0; i < Recorder.Count;++i)
@@ -197,7 +218,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 					{
 						if (GUIPropertyManager.GetProperty("#Wizard.DVBT.Done") != "yes")
 						{
-							_log.Info("ScanNextCardType:goto dvbt");
+							Log.Info("ScanNextCardType:goto dvbt");
 							GUIPropertyManager.SetProperty("#WizardCard",i.ToString());
 							GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_DVBT_COUNTRY);
 							return;
@@ -207,7 +228,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 					{
 						if (GUIPropertyManager.GetProperty("#Wizard.DVBC.Done") != "yes")
 						{
-							_log.Info("ScanNextCardType:goto dvbc");
+							Log.Info("ScanNextCardType:goto dvbc");
 							GUIPropertyManager.SetProperty("#WizardCard",i.ToString());
 							GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_DVBC_COUNTRY);
 							return;
@@ -217,7 +238,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 					{
 						if (GUIPropertyManager.GetProperty("#Wizard.DVBS.Done") != "yes")
 						{
-							_log.Info("ScanNextCardType:goto dvbs");
+							Log.Info("ScanNextCardType:goto dvbs");
 							GUIPropertyManager.SetProperty("#WizardCard",i.ToString());
 							GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_DVBS_SELECT_LNB);
 							return;
@@ -227,7 +248,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 					{
 						if (GUIPropertyManager.GetProperty("#Wizard.ATSC.Done") != "yes")
 						{
-							_log.Info("ScanNextCardType:goto atsc");
+							Log.Info("ScanNextCardType:goto atsc");
 							GUIPropertyManager.SetProperty("#WizardCard",i.ToString());
 							GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_ATSC_SCAN);
 							return;
@@ -237,7 +258,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 					{
 						if (GUIPropertyManager.GetProperty("#Wizard.Analog.Done") != "yes")
 						{	
-							_log.Info("ScanNextCardType:goto analog");
+							Log.Info("ScanNextCardType:goto analog");
 							GUIPropertyManager.SetProperty("#WizardCard",i.ToString());
                             
 							GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_ANALOG_CITY);
@@ -258,7 +279,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 				return;
 			}
 			
-			_log.Info("ScanNextCardType:goto finished");
+			Log.Info("ScanNextCardType:goto finished");
 			GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_FINISHED);
 		
 		}

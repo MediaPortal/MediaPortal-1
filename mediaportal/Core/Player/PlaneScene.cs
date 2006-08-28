@@ -27,7 +27,7 @@ using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
 using System.Runtime.InteropServices;
 using DShowNET;
-using MediaPortal.Utils.Services;
+using MediaPortal.Util;
 
 namespace MediaPortal.Player
 {
@@ -111,18 +111,13 @@ namespace MediaPortal.Player
     bool _drawVideoAllowed = true;
     int _debugStep = 0;
     GUIImage _blackImage;
-    protected ILog _log;
-    protected IConfig _config;
     #endregion
 
     #region ctor
     public PlaneScene(IRender renderer, VMR9Util util)
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
 
-      //	_log.Info("PlaneScene: ctor()");
+      //	Log.Info("PlaneScene: ctor()");
 
       _surfaceAdress = 0;
       _textureAddress = 0;
@@ -137,7 +132,7 @@ namespace MediaPortal.Player
       _blackImage.SetFileName("black.bmp");
       _blackImage.AllocResources();
 
-      using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         _topscanlinesToRemove = xmlReader.GetValueAsInt("mytv", "topscanlinestoremove", 0);
         _bottomscanlinesToRemove = xmlReader.GetValueAsInt("mytv", "bottomscanlinestoremove", 0);
@@ -170,7 +165,7 @@ namespace MediaPortal.Player
       set
       {
         _drawVideoAllowed = value;
-        //_log.Info("PlaneScene: video draw allowed:{0}", _drawVideoAllowed);
+        //Log.Info("PlaneScene: video draw allowed:{0}", _drawVideoAllowed);
       }
 
     }
@@ -211,7 +206,7 @@ namespace MediaPortal.Player
       set
       {
         _isEnabled = value;
-        //_log.Info("planescene: enabled:{0}", _isEnabled);
+        //Log.Info("planescene: enabled:{0}", _isEnabled);
       }
     }
     #endregion
@@ -224,7 +219,7 @@ namespace MediaPortal.Player
     /// </summary>
     public void Stop()
     {
-      //_log.Info("PlaneScene: Stop()");
+      //Log.Info("PlaneScene: Stop()");
       DrawVideo = false;
       _stopPainting = true;
     }
@@ -279,7 +274,7 @@ namespace MediaPortal.Player
     /// <param name="device">Direct3d devices</param>
     public void Init()
     {
-      //_log.Info("PlaneScene: init()");
+      //Log.Info("PlaneScene: init()");
       _renderTarget = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Video);
     }
@@ -389,17 +384,17 @@ namespace MediaPortal.Player
         _sourceRect.Width -= _leftcolumnsToRemove;
         _sourceRect.Width -= _rightcolumnsToRemove;
 
-        _log.Info("PlaneScene: crop T, B  : {0}, {1}", _topscanlinesToRemove, _bottomscanlinesToRemove);
-        _log.Info("PlaneScene: crop L, R  : {0}, {1}", _leftcolumnsToRemove, _rightcolumnsToRemove);
+        Log.Info("PlaneScene: crop T, B  : {0}, {1}", _topscanlinesToRemove, _bottomscanlinesToRemove);
+        Log.Info("PlaneScene: crop L, R  : {0}, {1}", _leftcolumnsToRemove, _rightcolumnsToRemove);
 
-        _log.Info("PlaneScene: video WxH  : {0}x{1}", videoSize.Width, videoSize.Height);
-        _log.Info("PlaneScene: video AR   : {0}:{1}", _arVideoWidth, _arVideoHeight);
-        _log.Info("PlaneScene: screen WxH : {0}x{1}", nw, nh);
-        _log.Info("PlaneScene: AR type    : {0}", GUIGraphicsContext.ARType);
-        _log.Info("PlaneScene: PixelRatio : {0}", GUIGraphicsContext.PixelRatio);
-        _log.Info("PlaneScene: src        : ({0},{1})-({2},{3})",
+        Log.Info("PlaneScene: video WxH  : {0}x{1}", videoSize.Width, videoSize.Height);
+        Log.Info("PlaneScene: video AR   : {0}:{1}", _arVideoWidth, _arVideoHeight);
+        Log.Info("PlaneScene: screen WxH : {0}x{1}", nw, nh);
+        Log.Info("PlaneScene: AR type    : {0}", GUIGraphicsContext.ARType);
+        Log.Info("PlaneScene: PixelRatio : {0}", GUIGraphicsContext.PixelRatio);
+        Log.Info("PlaneScene: src        : ({0},{1})-({2},{3})",
           _sourceRect.X, _sourceRect.Y, _sourceRect.X + _sourceRect.Width, _sourceRect.Y + _sourceRect.Height);
-        _log.Info("PlaneScene: dst        : ({0},{1})-({2},{3})",
+        Log.Info("PlaneScene: dst        : ({0},{1})-({2},{3})",
           _destinationRect.X, _destinationRect.Y, _destinationRect.X + _destinationRect.Width, _destinationRect.Y + _destinationRect.Height);
 
         if (_sourceRect.Y == 0)
@@ -441,7 +436,7 @@ namespace MediaPortal.Player
       }
       catch (Exception ex)
       {
-        _log.Error(ex);
+        Log.Error(ex);
         return false;
       }
     }
@@ -472,10 +467,10 @@ namespace MediaPortal.Player
       }
       catch (Exception ex)
       {
-        _log.Error("planescene:Unhandled exception in {0} {1} {2}",
+        Log.Error("planescene:Unhandled exception in {0} {1} {2}",
             ex.Message, ex.Source, ex.StackTrace);
       }
-      //			_log.Info("scene.repaint done");
+      //			Log.Info("scene.repaint done");
     }
 
     #endregion
@@ -490,11 +485,11 @@ namespace MediaPortal.Player
         _textureAddress = pTex;
         if (_vmr9Util.FrameCounter == 0)
         {
-          _log.Info("planescene: PresentImage() ");
+          Log.Info("planescene: PresentImage() ");
         }
         if (pTex == 0)
         {
-          _log.Info("PlaneScene: PresentImage() dispose surfaces");
+          Log.Info("PlaneScene: PresentImage() dispose surfaces");
           _surfaceAdress = 0;
           _vmr9Util.VideoWidth = 0;
           _vmr9Util.VideoHeight = 0;
@@ -507,14 +502,14 @@ namespace MediaPortal.Player
         if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) return 0;
         if (!_drawVideoAllowed || !_isEnabled)
         {
-          _log.Info("planescene:PresentImage() frame:{0} enabled:{1} allowed:{2}", _vmr9Util.FrameCounter, _isEnabled, _drawVideoAllowed);
+          Log.Info("planescene:PresentImage() frame:{0} enabled:{1} allowed:{2}", _vmr9Util.FrameCounter, _isEnabled, _drawVideoAllowed);
           _vmr9Util.FrameCounter++;
           return 0;
         }
         _vmr9Util.FrameCounter++;
-        //			_log.Info("vmr9:present image()");
+        //			Log.Info("vmr9:present image()");
         InternalPresentImage(width, height, arWidth, arHeight, false);
-        //			_log.Info("vmr9:present image() done");
+        //			Log.Info("vmr9:present image() done");
       }
       catch (Exception)
       {
@@ -528,11 +523,11 @@ namespace MediaPortal.Player
         _surfaceAdress = pSurface;
         if (_vmr9Util.FrameCounter == 0)
         {
-          //_log.Info("planescene: PresentSurface() ");
+          //Log.Info("planescene: PresentSurface() ");
         }
         if (pSurface == 0)
         {
-          _log.Info("PlaneScene: PresentSurface() dispose surfaces");
+          Log.Info("PlaneScene: PresentSurface() dispose surfaces");
           _textureAddress = 0;
           _vmr9Util.VideoWidth = 0;
           _vmr9Util.VideoHeight = 0;
@@ -554,7 +549,7 @@ namespace MediaPortal.Player
         if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) return 0;
         if (!_drawVideoAllowed || !_isEnabled)
         {
-          _log.Info("planescene: PresentSurface() frame:{0} enabled:{1} allowed:{2} {3}x{4}",
+          Log.Info("planescene: PresentSurface() frame:{0} enabled:{1} allowed:{2} {3}x{4}",
             _vmr9Util.FrameCounter, _isEnabled, _drawVideoAllowed,width,height);
           _vmr9Util.FrameCounter++;
           return 0;
@@ -573,7 +568,7 @@ namespace MediaPortal.Player
 
       if (_reEntrant)
       {
-        _log.Error("PlaneScene: re-entrancy in presentimage");
+        Log.Error("PlaneScene: re-entrancy in presentimage");
         return;
       }
       try
@@ -661,7 +656,7 @@ namespace MediaPortal.Player
       }
       catch (Exception ex)
       {
-        _log.Error("Planescene({0},{1},{2},{3},{4},{5},{6}):Unhandled exception in {7} {8} {9}",
+        Log.Error("Planescene({0},{1},{2},{3},{4},{5},{6}):Unhandled exception in {7} {8} {9}",
           width, height, arWidth, arHeight, _textureAddress, isRepaint, _debugStep,
           ex.Message, ex.Source, ex.StackTrace);
       }
@@ -677,7 +672,7 @@ namespace MediaPortal.Player
     {
       if (_reEntrant)
       {
-        _log.Error("PlaneScene: re-entrancy in PresentSurface");
+        Log.Error("PlaneScene: re-entrancy in PresentSurface");
         return;
       }
       try
@@ -777,7 +772,7 @@ namespace MediaPortal.Player
       }
       catch (Exception ex)
       {
-        _log.Error("Planescene({0},{1},{2},{3},{4},{5},{6}):Unhandled exception in {7} {8} {9}",
+        Log.Error("Planescene({0},{1},{2},{3},{4},{5},{6}):Unhandled exception in {7} {8} {9}",
           width, height, arWidth, arHeight, _surfaceAdress, InRepaint, _debugStep,
           ex.Message, ex.Source, ex.StackTrace);
       }
@@ -872,7 +867,7 @@ namespace MediaPortal.Player
       }
       else
       {
-       // _log.Info("render black");
+       // Log.Info("render black");
         _blackImage.SetPosition((int)_fx, (int)_fy);
         _blackImage.Width = (int)_nw;
         _blackImage.Height = (int)_nh;

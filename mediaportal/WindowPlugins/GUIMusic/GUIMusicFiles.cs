@@ -38,7 +38,6 @@ using MediaPortal.Database;
 using MediaPortal.Music.Database;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.View;
-//using MediaPortal.Utils.Services;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Soap;
@@ -167,7 +166,7 @@ namespace MediaPortal.GUI.Music
       m_directory.AddDrives();
       m_directory.SetExtensions(MediaPortal.Util.Utils.AudioExtensions);
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         MusicState.StartWindow = xmlreader.GetValueAsInt("music", "startWindow", GetID);
         MusicState.View = xmlreader.GetValueAsString("music", "startview", String.Empty);
@@ -215,7 +214,7 @@ namespace MediaPortal.GUI.Music
     protected override void LoadSettings()
     {
       base.LoadSettings();
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         m_bFileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
         m_strFileMenuPinCode = MediaPortal.Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", String.Empty));
@@ -403,12 +402,12 @@ namespace MediaPortal.GUI.Music
         case GUIMessage.MessageType.GUI_MSG_PLAY_AUDIO_CD:
           if (message.Label2 == "Ask")
           {
-            _log.Info("OnPlayCD (false), vragen dus.");
+            Log.Info("OnPlayCD (false), vragen dus.");
             OnPlayCD(message.Label, false);
           }
           else
           {
-            _log.Info("OnPlayCD (true), niet vragen dus");
+            Log.Info("OnPlayCD (true), niet vragen dus");
             OnPlayCD(message.Label, true);
           }
 
@@ -660,16 +659,14 @@ namespace MediaPortal.GUI.Music
       }
       else
       {
-        //ServiceProvider services = GlobalServiceProvider.Instance;
-        //ILog log = services.Get<ILog>();
         //{
-        //  log.Info("DEBUG: item.Path - {0} ", System.IO.Path.GetFileName(item.Path));
-        //  log.Info("DEBUG: item.IsFolder - {0} ", Convert.ToString(item.IsFolder));
-        //  log.Info("DEBUG: item.Label - {0} ", System.IO.Path.GetFileName(item.Label));
-        //  log.Info("DEBUG: currentFolder - {0} ", currentFolder);
-        //  log.Info("DEBUG: m_directory - {0} ", m_directory);
-        //  log.Info("DEBUG: m_strCurrentFolder - {0} ", m_strCurrentFolder);
-        //  log.Info("DEBUG: m_strDirectoryStart - {0} ", m_strDirectoryStart);
+        //  Log.Info("DEBUG: item.Path - {0} ", System.IO.Path.GetFileName(item.Path));
+        //  Log.Info("DEBUG: item.IsFolder - {0} ", Convert.ToString(item.IsFolder));
+        //  Log.Info("DEBUG: item.Label - {0} ", System.IO.Path.GetFileName(item.Label));
+        //  Log.Info("DEBUG: currentFolder - {0} ", currentFolder);
+        //  Log.Info("DEBUG: m_directory - {0} ", m_directory);
+        //  Log.Info("DEBUG: m_strCurrentFolder - {0} ", m_strCurrentFolder);
+        //  Log.Info("DEBUG: m_strDirectoryStart - {0} ", m_strDirectoryStart);
         //}
 
         if ( item.Label == ".." )
@@ -1118,7 +1115,7 @@ namespace MediaPortal.GUI.Music
           currentView = (View)share.DefaultView;
         }
       }
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         if (xmlreader.GetValueAsBool("music", "rememberlastfolder", false))
           xmlreader.SetValue("music", "lastfolder", folderName);
 
@@ -1256,7 +1253,7 @@ namespace MediaPortal.GUI.Music
 
         catch (Exception ex)
         {
-          _log.Info("GUIMusicFiles.AddItemToPlayList at itemlist.Sort: {0}", ex.Message);
+          Log.Info("GUIMusicFiles.AddItemToPlayList at itemlist.Sort: {0}", ex.Message);
         }
 
         foreach (GUIListItem item in itemlist)
@@ -1730,7 +1727,7 @@ namespace MediaPortal.GUI.Music
               catch (Exception e)
               {
                 // log the problem...
-                _log.Info("OnRetrieveMusicInfo: {0}", e.ToString());
+                Log.Info("OnRetrieveMusicInfo: {0}", e.ToString());
               }
             }
           }//if (!tag.Loaded() )

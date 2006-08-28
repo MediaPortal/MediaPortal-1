@@ -28,7 +28,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using MediaPortal.GUI.Library;
-using MediaPortal.Utils.Services;
 
 // Original source-code available from www.becapture.com, written in C++
 // This code refactored in C#
@@ -338,9 +337,7 @@ namespace Mpeg2SplitterPackage
       if (bLogEnabled)
       {
         //swLog.WriteLine(sLog);
-        ServiceProvider services = GlobalServiceProvider.Instance;
-        ILog log = services.Get<ILog>();
-        log.Info(sLog);
+        Log.Info(sLog);
       }
     }
     bool SplitProgramStreamCut()

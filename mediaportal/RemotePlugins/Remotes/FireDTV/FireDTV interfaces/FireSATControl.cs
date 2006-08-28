@@ -32,7 +32,7 @@ using Microsoft.Win32;
 using System.Reflection;
 using System.IO;
 using MediaPortal.Util;
-using MediaPortal.Utils.Services;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.RemoteControls.FireDTV
 {
@@ -384,10 +384,6 @@ namespace MediaPortal.RemoteControls.FireDTV
     /// <param name="windowHandle"></param>
     public FireDTVControl(IntPtr windowHandle)
     {
-      // get logger
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-
       // try to locate the FireDTV installation directory
       using (RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\DigitalEverywhere\\FireDTV"))
       {
@@ -395,7 +391,7 @@ namespace MediaPortal.RemoteControls.FireDTV
         {
           if (rkey == null)
           {
-            _log.Error("FireDTVRemote: Trying to enable FireDTV remote, but software not installed!");
+            Log.Info("FireDTVRemote: Trying to enable FireDTV remote, but software not installed!");
             return;
           }
           else
@@ -405,16 +401,16 @@ namespace MediaPortal.RemoteControls.FireDTV
             bool _apiFound = File.Exists(fullDllPath + "FiresatApi.dll");
             if (!_apiFound)
             {
-              _log.Error("FireDTVRemote: Trying to enable FireDTV remote, but dll not found!");
+              Log.Error("FireDTVRemote: Trying to enable FireDTV remote, but dll not found!");
               return;
             }
-            _log.Info("FireDTVRemote: DLL found in directory: {0}", fullDllPath);
+            Log.Info("FireDTVRemote: DLL found in directory: {0}", fullDllPath);
             FireDTVControl.SetDllDirectory(fullDllPath);
           }
         }
         catch (Exception ex)
         {
-          _log.Error("FireDTVRemote: Trying to enable FireDTV remote, but failed to find dll with error: {0}",ex.Message);
+          Log.Error("FireDTVRemote: Trying to enable FireDTV remote, but failed to find dll with error: {0}",ex.Message);
           return;
         }
       }
@@ -451,11 +447,11 @@ namespace MediaPortal.RemoteControls.FireDTV
           if ((FireDTVConstants.FireDTVStatusCodes)returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
             throw new FireDTVInitializationException("Initilization Failure (" + returnCode.ToString() + ")");
           LibrayInitialized = true;
-          _log.Info("FireDTV: dll initialized");
+          Log.Info("FireDTV: dll initialized");
         }
         catch (Exception e)
         {
-          _log.Error("FireDTV: error initializing {0}", e.Message);
+          Log.Error("FireDTV: error initializing {0}", e.Message);
         }
       }
     }
@@ -547,7 +543,6 @@ namespace MediaPortal.RemoteControls.FireDTV
     #endregion
     #endregion
     #region Private Variables
-    private ILog _log;
     private bool LibrayInitialized = false;
     private bool NotificationsRegistered = false;
     private IntPtr _windowHandle = (IntPtr)0;
@@ -602,14 +597,14 @@ namespace MediaPortal.RemoteControls.FireDTV
       int BDADriverCount = getBDACount();
       int WDMDriverCount = getWDMCount();
 
-      _log.Info("FireDTV: BDA {0}, WMA {1}", BDADriverCount, WDMDriverCount);
+      Log.Info("FireDTV: BDA {0}, WMA {1}", BDADriverCount, WDMDriverCount);
 
 
       for (int BDACount = 0; BDACount < BDADriverCount; BDACount++)
       {
         FireDTVSourceFilterInfo bdaSourceFilter = new FireDTVSourceFilterInfo(OpenBDADevice(BDACount), _windowHandle);
         if (bdaSourceFilter != null)
-          _log.Info("FireDTV: add BDA Source {0}", bdaSourceFilter.ToString());
+          Log.Info("FireDTV: add BDA Source {0}", bdaSourceFilter.ToString());
 
         _sourceFilterCollection.Add(bdaSourceFilter);
       }
@@ -618,7 +613,7 @@ namespace MediaPortal.RemoteControls.FireDTV
       {
         FireDTVSourceFilterInfo wdmSourceFilter = new FireDTVSourceFilterInfo(OpenWDMDevice(WDMCount), _windowHandle);
         if (wdmSourceFilter != null)
-          _log.Info("FireDTV: add WDM Source");
+          Log.Info("FireDTV: add WDM Source");
         _sourceFilterCollection.Add(wdmSourceFilter);
       }
       return true;

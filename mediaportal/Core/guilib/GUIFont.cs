@@ -31,8 +31,8 @@ using System.Runtime.Serialization.Formatters.Binary;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
+using MediaPortal.Util;
 
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.GUI.Library
 {
@@ -96,8 +96,6 @@ namespace MediaPortal.GUI.Library
     private int _EndCharacter = 255;
     private static bool logfonts = false;
     private bool _useRTLLang;
-    private ILog _log;
-    private IConfig _config;
     #endregion
     #region ctors
     /// <summary>
@@ -105,9 +103,6 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public GUIFont()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
       LoadSettings();
     }
     /// <summary>
@@ -119,7 +114,7 @@ namespace MediaPortal.GUI.Library
     public GUIFont(string fontName, string fileName, int fontHeight)
       : this()
     {
-      if (logfonts) _log.Info("GUIFont:ctor({0}) fontengine: Initialize()", fontName);
+      if (logfonts) Log.Info("GUIFont:ctor({0}) fontengine: Initialize()", fontName);
       FontEngineInitialize(GUIGraphicsContext.Width, GUIGraphicsContext.Height);
       _fontName = fontName;
       _fileName = fileName;
@@ -136,7 +131,7 @@ namespace MediaPortal.GUI.Library
     public GUIFont(string fontName, string fileName, int iHeight, FontStyle style)
       : this()
     {
-      if (logfonts) _log.Info("GUIFont:ctor({0}) fontengine: Initialize()", fontName);
+      if (logfonts) Log.Info("GUIFont:ctor({0}) fontengine: Initialize()", fontName);
       FontEngineInitialize(GUIGraphicsContext.Width, GUIGraphicsContext.Height);
       _fontName = fontName;
       _fileName = fileName;
@@ -147,7 +142,7 @@ namespace MediaPortal.GUI.Library
 
     private void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       _useRTLLang = xmlreader.GetValueAsBool("skin", "rtllang", false);
     }
 
@@ -457,7 +452,7 @@ namespace MediaPortal.GUI.Library
       }
       catch ( Exception exp )
       {
-        _log.Error(exp);
+        Log.Error(exp);
         return "";
       }
     }
@@ -593,7 +588,7 @@ namespace MediaPortal.GUI.Library
       _systemFont = null;
       if (_fontAdded)
       {
-        if (logfonts) _log.Info("GUIFont:Dispose({0}) fontengine: Remove font:{1}", _fontName, ID.ToString());
+        if (logfonts) Log.Info("GUIFont:Dispose({0}) fontengine: Remove font:{1}", _fontName, ID.ToString());
         if (ID >= 0) FontEngineRemoveFont(ID);
       }
       _fontAdded = false;
@@ -709,7 +704,7 @@ namespace MediaPortal.GUI.Library
       // If file does not exist
       if (!System.IO.File.Exists(strCache))
       {
-        _log.Info("TextureLoader.CreateFile {0}", strCache);
+        Log.Info("TextureLoader.CreateFile {0}", strCache);
         // Make sure directory exists
         try
         {
@@ -744,7 +739,7 @@ namespace MediaPortal.GUI.Library
         s = File.Open(strCache + ".bxml", FileMode.CreateNew, FileAccess.ReadWrite);
         b.Serialize(s, (object)_textureCoords);
         s.Close();
-        _log.Info("Saving font:{0} height:{1} texture:{2}x{3} chars:[{4}-{5}] miplevels:{6}", _fontName, _fontHeight, _textureWidth, _textureHeight, _StartCharacter, _EndCharacter, _textureFont.LevelCount);
+        Log.Info("Saving font:{0} height:{1} texture:{2}x{3} chars:[{4}-{5}] miplevels:{6}", _fontName, _fontHeight, _textureWidth, _textureHeight, _StartCharacter, _EndCharacter, _textureFont.LevelCount);
  
       }
       else
@@ -770,7 +765,7 @@ namespace MediaPortal.GUI.Library
         _textureHeight = info.Height;
         _textureWidth = info.Width;
 
-        _log.Info("  Loaded font:{0} height:{1} texture:{2}x{3} chars:[{4}-{5}] miplevels:{6}",_fontName, _fontHeight, _textureWidth, _textureHeight, _StartCharacter, _EndCharacter, _textureFont.LevelCount);
+        Log.Info("  Loaded font:{0} height:{1} texture:{2}x{3} chars:[{4}-{5}] miplevels:{6}",_fontName, _fontHeight, _textureWidth, _textureHeight, _StartCharacter, _EndCharacter, _textureFont.LevelCount);
   
       }
       _textureFont.Disposing += new EventHandler(_textureFont_Disposing);
@@ -781,7 +776,7 @@ namespace MediaPortal.GUI.Library
 
     void _textureFont_Disposing(object sender, EventArgs e)
     {
-      _log.Info("GUIFont:texture disposing:{0} {1}", ID, _fontName);
+      Log.Info("GUIFont:texture disposing:{0} {1}", ID, _fontName);
       _textureFont = null;
       if (_fontAdded && ID >= 0)
       {
@@ -799,7 +794,7 @@ namespace MediaPortal.GUI.Library
       if (ID < 0) return;
       Surface surf = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
 
-      if (logfonts) _log.Info("GUIFont:RestoreDeviceObjects() fontengine: add font:" + ID.ToString());
+      if (logfonts) Log.Info("GUIFont:RestoreDeviceObjects() fontengine: add font:" + ID.ToString());
       IntPtr upTexture = DShowNET.Helper.DirectShowUtil.GetUnmanagedTexture(_textureFont);
       unsafe
       {

@@ -62,7 +62,7 @@ namespace MediaPortal.Player
       Vmr9 = new VMR9Util();
 
       // switch back to directx fullscreen mode
-      _log.Info("VideoPlayerVMR9: Enabling DX9 exclusive mode");
+      Log.Info("VideoPlayerVMR9: Enabling DX9 exclusive mode");
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
       GUIWindowManager.SendMessage(msg);
 
@@ -88,7 +88,7 @@ namespace MediaPortal.Player
         string strAudioCodec = "";
         string strAudiorenderer = "";
         bool bAddFFDshow = false;
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         {
           bAddFFDshow = xmlreader.GetValueAsBool("movieplayer", "ffdshow", false);
           strVideoCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2videocodec", "");
@@ -144,7 +144,7 @@ namespace MediaPortal.Player
         if (vobSub != null)
         {
           string defaultLanguage;
-          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
           {
             string strTmp = "";
             string strFont = xmlreader.GetValueAsString("subtitles", "fontface", "Arial");
@@ -202,7 +202,7 @@ namespace MediaPortal.Player
       catch (Exception ex)
       {
         Error.SetError("Unable to play movie", "Unable build graph for VMR9");
-        _log.Error("VideoPlayer9:exception while creating DShow graph {0} {1}", ex.Message, ex.StackTrace);
+        Log.Error("VideoPlayer9:exception while creating DShow graph {0} {1}", ex.Message, ex.StackTrace);
         return false;
       }
     }
@@ -226,7 +226,7 @@ namespace MediaPortal.Player
     {
       if (graphBuilder == null) return;
       int hr;
-      _log.Info("VideoPlayer9:cleanup DShow graph");
+      Log.Info("VideoPlayer9:cleanup DShow graph");
       try
       {
         videoWin = graphBuilder as IVideoWindow;
@@ -249,7 +249,7 @@ namespace MediaPortal.Player
           hr = mediaCtrl.Stop();
           FilterState state;
           hr = mediaCtrl.GetState(10, out state);
-          _log.Info("state:{0} {1:X}", state.ToString(), hr);
+          Log.Info("state:{0} {1:X}", state.ToString(), hr);
           mediaCtrl = null;
         }
         mediaEvt = null;
@@ -313,13 +313,13 @@ namespace MediaPortal.Player
       }
       catch (Exception ex)
       {
-        _log.Error("VideoPlayerVMR9: Exception while cleanuping DShow graph - {0} {1}", ex.Message, ex.StackTrace);
+        Log.Error("VideoPlayerVMR9: Exception while cleanuping DShow graph - {0} {1}", ex.Message, ex.StackTrace);
       }
 
       //switch back to directx windowed mode
       if (!GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindow))
       {
-        _log.Info("VideoPlayerVMR9: Disabling DX9 exclusive mode");
+        Log.Info("VideoPlayerVMR9: Disabling DX9 exclusive mode");
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
         GUIWindowManager.SendMessage(msg);
       }

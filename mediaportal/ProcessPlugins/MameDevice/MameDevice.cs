@@ -25,7 +25,6 @@
 
 using System;
 using MediaPortal.GUI.Library;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.InputDevices
 {
@@ -38,12 +37,9 @@ namespace MediaPortal.InputDevices
     const int WM_SYSKEYDOWN          = 0x0104;
 
     InputHandler _inputHandler;
-    protected ILog _log;
 
 		public MameDevice()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
     }
     #region ISetupForm Members
 
@@ -111,7 +107,7 @@ namespace MediaPortal.InputDevices
 				//disabled: following code produces a stack overflow exception
 				//when i start MP and simply press the cursor up arrow
 
-        _log.Info("WM_KEYDOWN: wParam {0}", (int)msg.WParam);
+        Log.Info("WM_KEYDOWN: wParam {0}", (int)msg.WParam);
         try
         {
           _inputHandler.MapAction((int)msg.WParam);
@@ -135,7 +131,7 @@ namespace MediaPortal.InputDevices
     {
       _inputHandler = new InputHandler("MameDevice");
       if (!_inputHandler.IsLoaded)
-        _log.Info("MameDevice: Error loading default mapping file - please reinstall MediaPortal");
+        Log.Info("MameDevice: Error loading default mapping file - please reinstall MediaPortal");
     }
 
     public void Stop()

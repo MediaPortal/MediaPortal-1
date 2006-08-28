@@ -27,7 +27,6 @@ using MediaPortal.Player;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.TV.Database;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.TV.Recording
 {
@@ -42,12 +41,9 @@ namespace MediaPortal.TV.Recording
     static List<TVChannel> _tvChannelList = new List<TVChannel>();
     static long _programStart = -1;
     static bool _subscribeRecorderHandler = false;
-    static ILog _log;
 
     static RecorderProperties()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
     }
 
     static public void Init()
@@ -114,13 +110,13 @@ namespace MediaPortal.TV.Recording
             livePoint = livePoint.AddSeconds(g_Player.ContentStart);
             if (livePoint < showStart || livePoint > showEnd)
             {
-              //_log.Info("get program at livepoint:{0} timeshift start:{1}", livePoint.ToString(),timeshiftStart.ToString());
+              //Log.Info("get program at livepoint:{0} timeshift start:{1}", livePoint.ToString(),timeshiftStart.ToString());
               TVProgram program = _currentTvChannel.GetProgramAt(livePoint);
               if (program != null)
               {
                 showStart = program.StartTime;
                 showEnd = program.EndTime;
-                //_log.Info("  program at livepoint:{0} {1}-{2} start:{3}", livePoint.ToString(), showStart.ToString(), showEnd.ToString(), timeshiftStart.ToString());
+                //Log.Info("  program at livepoint:{0} {1}-{2} start:{3}", livePoint.ToString(), showStart.ToString(), showEnd.ToString(), timeshiftStart.ToString());
                 SetProgressBarProperties(showStart, timeshiftStart, showEnd);
                 UpdateTvProgramProperties(_currentTvChannel.Name, program);
                 return;
@@ -233,13 +229,13 @@ namespace MediaPortal.TV.Recording
 #if LOGPROPERTIES
       TimeSpan tsCP = new TimeSpan(0, 0, 0, (int)currentPlayingPosition);
       TimeSpan tsNB = new TimeSpan(0, 0, 0, (int)notInBufferAnymore);
-      _log.Info("movie :{0} {1}-{2}", GUIPropertyManager.GetProperty("#TV.View.title"), GUIPropertyManager.GetProperty("#TV.View.start"), GUIPropertyManager.GetProperty("#TV.View.stop"));
-      _log.Info("movie     start   :{0}", MovieStartTime.ToString());
-      _log.Info("movie     end     :{0}", MovieEndTime.ToString());
-      _log.Info("movie     duration:{0}", tsMovieDuration.ToString());
-      _log.Info("timeshift started :{0}", RecordingStarted.ToString());
-      _log.Info("current position  :{0} {1}", currentPlayingPosition.ToString(), tsCP.ToString());
-      _log.Info("notInBufferAnymore:{0} {1}", notInBufferAnymore.ToString(), tsNB.ToString());
+      Log.Info("movie :{0} {1}-{2}", GUIPropertyManager.GetProperty("#TV.View.title"), GUIPropertyManager.GetProperty("#TV.View.start"), GUIPropertyManager.GetProperty("#TV.View.stop"));
+      Log.Info("movie     start   :{0}", MovieStartTime.ToString());
+      Log.Info("movie     end     :{0}", MovieEndTime.ToString());
+      Log.Info("movie     duration:{0}", tsMovieDuration.ToString());
+      Log.Info("timeshift started :{0}", RecordingStarted.ToString());
+      Log.Info("current position  :{0} {1}", currentPlayingPosition.ToString(), tsCP.ToString());
+      Log.Info("notInBufferAnymore:{0} {1}", notInBufferAnymore.ToString(), tsNB.ToString());
 #endif
       if (g_Player.Playing && g_Player.IsTV)
       {
@@ -257,8 +253,8 @@ namespace MediaPortal.TV.Recording
       }
 #if LOGPROPERTIES
       tsCP = new TimeSpan(0, 0, 0, (int)currentPlayingPosition);
-      _log.Info("  timeshift started :{0}", RecordingStarted.ToString());
-      _log.Info("  current position  :{0} {1}", currentPlayingPosition.ToString(), tsCP.ToString());
+      Log.Info("  timeshift started :{0}", RecordingStarted.ToString());
+      Log.Info("  current position  :{0} {1}", currentPlayingPosition.ToString(), tsCP.ToString());
 #endif
       // get point where we started timeshifting/recording relative to the start of movie
       TimeSpan tsRecordingStart = (RecordingStarted - MovieStartTime);
@@ -292,7 +288,7 @@ namespace MediaPortal.TV.Recording
       GUIPropertyManager.SetProperty("#TV.Record.percent3", iPercentLive.ToString());
 
 #if LOGPROPERTIES
-      _log.Info("  percent1 :{0} percent2:{1} percent3:{2}",
+      Log.Info("  percent1 :{0} percent2:{1} percent3:{2}",
             GUIPropertyManager.GetProperty("#TV.Record.percent1"),
             GUIPropertyManager.GetProperty("#TV.Record.percent2"),
             GUIPropertyManager.GetProperty("#TV.Record.percent3"));
@@ -302,7 +298,7 @@ namespace MediaPortal.TV.Recording
 
     private static void Recorder_OnTvChannelChanged(string tvChannelName)
     {
-      _log.Info("Recorder: tv channel changed:{0}", tvChannelName);
+      Log.WriteFile(Log.LogType.Recorder, "Recorder: tv channel changed:{0}", tvChannelName);
       UpdateTvProgramProperties(tvChannelName);
     }
 
@@ -330,7 +326,7 @@ namespace MediaPortal.TV.Recording
         GUIPropertyManager.SetProperty("#TV.View.genre", prog.Genre);
         GUIPropertyManager.SetProperty("#TV.View.title", prog.Title);
         GUIPropertyManager.SetProperty("#TV.View.description", prog.Description);
-        //_log.Info("current program(live) :{0} {1}-{2}", prog.Title, prog.StartTime.ToString(), prog.EndTime.ToString());
+        //Log.Info("current program(live) :{0} {1}-{2}", prog.Title, prog.StartTime.ToString(), prog.EndTime.ToString());
         // up next in tv
         TVProgram prognext = _currentTvChannel.GetProgramAt(prog.EndTime.AddMinutes(1));
         if (prognext != null)
@@ -405,7 +401,7 @@ namespace MediaPortal.TV.Recording
           GUIPropertyManager.SetProperty("#TV.View.genre", prog.Genre);
           GUIPropertyManager.SetProperty("#TV.View.title", prog.Title);
           GUIPropertyManager.SetProperty("#TV.View.description", prog.Description);
-          //_log.Info("current program       :{0} {1}-{2}", prog.Title, prog.StartTime.ToString(), prog.EndTime.ToString());
+          //Log.Info("current program       :{0} {1}-{2}", prog.Title, prog.StartTime.ToString(), prog.EndTime.ToString());
           // up next in tv
           TVProgram prognext = _currentTvChannel.GetProgramAt(prog.EndTime.AddMinutes(1));
           if (prognext != null)
@@ -430,7 +426,7 @@ namespace MediaPortal.TV.Recording
 
     private static void Recorder_OnTvRecordingChanged()
     {
-      _log.Info("Recorder: recording state changed");
+      Log.WriteFile(Log.LogType.Recorder, "Recorder: recording state changed");
       if (Recorder.IsRecording())
       {
         if (_lastTvRecording != Recorder.CurrentTVRecording || _lastProgramRecording != Recorder.ProgramRecording)

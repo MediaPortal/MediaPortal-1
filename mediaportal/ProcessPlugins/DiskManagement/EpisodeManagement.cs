@@ -33,18 +33,14 @@ using MediaPortal.Util;
 using MediaPortal.TV.Database;
 using MediaPortal.Video.Database;
 using MediaPortal.TV.Recording;
-using MediaPortal.Utils.Services;
 
 namespace ProcessPlugins.DiskSpace
 {
   public class EpisodeManagement : IPlugin, ISetupForm 
   {
-    protected ILog _log;
 
     public EpisodeManagement()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
     }
 
     public List<TVRecorded> GetEpisodes(string title, List<TVRecorded> recordings)
@@ -78,9 +74,8 @@ namespace ProcessPlugins.DiskSpace
     #region episode disk management
     private void OnTvRecordingEnded(string recordingFilename, TVRecording recording, TVProgram program)
     {
-      _log.Info("diskmanagement: recording {0} ended. type:{1} max episodes:{2}",
-          recording.Title, recording.RecType.ToString(), recording.EpisodesToKeep);
-
+      Log.WriteFile(Log.LogType.Recorder, "diskmanagement: recording {0} ended. type:{1} max episodes:{2}",
+                recording.Title, recording.RecType.ToString(), recording.EpisodesToKeep);
 
       CheckEpsiodesForRecording(recording);
     }
@@ -99,7 +94,7 @@ namespace ProcessPlugins.DiskSpace
 
         TVRecorded oldestEpisode = GetOldestEpisode(episodes);
         if (oldestEpisode == null) return;
-        _log.Info("diskmanagement:   Delete episode {0} {1} {2} {3}",
+        Log.WriteFile(Log.LogType.Recorder, false, "diskmanagement:   Delete episode {0} {1} {2} {3}",
                              oldestEpisode.Channel,
                              oldestEpisode.Title,
                              oldestEpisode.StartTime.ToLongDateString(),

@@ -22,7 +22,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
-using MediaPortal.Utils.Services;
+using MediaPortal.Util;
 
 namespace MediaPortal.GUI.Library
 {
@@ -32,7 +32,6 @@ namespace MediaPortal.GUI.Library
   public class Log
   {
     static DateTime _previousDate;
-    static IConfig _config;
 
     public enum LogType
     {
@@ -40,9 +39,17 @@ namespace MediaPortal.GUI.Library
       Recorder,
       Error,
       EPG,
-      TVCom,
       VMR9
     }
+
+    public enum Level
+    {
+      Error = 0,
+      Warning = 1,
+      Information = 2,
+      Debug = 3
+    }
+
     /// <summary>
     /// Private constructor of the GUIPropertyManager. Singleton. Do not allow any instance of this class.
     /// </summary>
@@ -55,11 +62,8 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     static Log()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _config = services.Get<IConfig>();
-
       _previousDate = DateTime.Now.Date;
-      System.IO.Directory.CreateDirectory(_config.Get(Config.Options.LogPath));
+      System.IO.Directory.CreateDirectory(Config.Get(Config.Dir.Log));
       //BackupLogFiles();
     }
     public static void BackupLogFiles()
@@ -68,7 +72,6 @@ namespace MediaPortal.GUI.Library
       BackupLogFile(LogType.Recorder);
       BackupLogFile(LogType.Error);
       BackupLogFile(LogType.EPG);
-      BackupLogFile(LogType.TVCom);
       BackupLogFile(LogType.VMR9);
     }
 
@@ -120,6 +123,31 @@ namespace MediaPortal.GUI.Library
       WriteFile(LogType.Log, format, arg);
     }
 
+    static public void Info(string format, params object[] arg)
+    {
+      WriteFile(LogType.Log, Level.Information, format, arg);
+    }
+
+    static public void Warn(string format, params object[] arg)
+    {
+      WriteFile(LogType.Log, Level.Warning, format, arg);
+    }
+
+    static public void Debug(string format, params object[] arg)
+    {
+      WriteFile(LogType.Log, Level.Debug, format, arg);
+    }
+
+    static public void Error(string format, params object[] arg)
+    {
+      WriteFile(LogType.Log, true, format, arg);
+    }
+
+    static public void Error(Exception ex)
+    {
+      Write(ex);
+    }
+
     /// <summary>
     /// Write a string to the logfile.
     /// </summary>
@@ -137,12 +165,14 @@ namespace MediaPortal.GUI.Library
           System.Threading.Thread.CurrentThread.ManagedThreadId, String.Format(format, arg));
       WriteFile(LogType.Log, log);
     }
+
     static public void WriteThreadId(LogType type, string format, params object[] arg)
     {
       String log = String.Format("{0:X} {1}",
           System.Threading.Thread.CurrentThread.ManagedThreadId, String.Format(format, arg));
       WriteFile(type, log);
     }
+
     static public void WriteFileThreadId(LogType type, bool isError, string format, params object[] arg)
     {
       WriteThreadId(type, format, arg);
@@ -150,38 +180,75 @@ namespace MediaPortal.GUI.Library
         WriteThreadId(LogType.Error, format, arg);
     }
 
+    static public void InfoThread(string format, params object[] arg)
+    {
+      WriteThreadId(format, arg);
+    }
+
+    static public void WarnThread(string format, params object[] arg)
+    {
+      WriteThreadId(format, arg);
+    }
+
+    static public void ErrorThread(string format, params object[] arg)
+    {
+      WriteThreadId(format, arg);
+    }
+
     static string GetFileName(LogType type)
     {
-      string fname = _config.Get(Config.Options.LogPath) + "MediaPortal2.log";
+      string fname = Config.Get(Config.Dir.Log) + "MediaPortal.log";
       switch (type)
       {
         case LogType.Recorder:
-          fname = _config.Get(Config.Options.LogPath) + "recorder2.log";
+          fname = Config.Get(Config.Dir.Log) + "recorder.log";
           break;
         case LogType.Error:
-          fname = _config.Get(Config.Options.LogPath) + "error2.log";
+          fname = Config.Get(Config.Dir.Log) + "error.log";
           break;
         case LogType.EPG:
-          fname = _config.Get(Config.Options.LogPath) + "epg2.log";
-          break;
-        case LogType.TVCom:
-          fname = _config.Get(Config.Options.LogPath) + "TVCom2.log";
+          fname = Config.Get(Config.Dir.Log) + "epg.log";
           break;
         case LogType.VMR9:
-          fname = _config.Get(Config.Options.LogPath) + "vmr92.log";
+          fname = Config.Get(Config.Dir.Log) + "vmr9.log";
           break;
       }
       return fname;
+    }
+    
+    static string GetLevelName(Level logLevel)
+    {
+      switch (logLevel)
+      {
+        case Level.Error:
+          return "ERROR";
+
+        case Level.Warning:
+          return "Warn.";
+
+        case Level.Information:
+          return "Info.";
+
+        case Level.Debug:
+          return "Debug";
+      }
+
+      return "Unknown";
     }
 
     static public void WriteFile(LogType type, bool isError, string format, params object[] arg)
     {
       WriteFile(type, format, arg);
       if (isError)
-        WriteFile(LogType.Error, format, arg);
+        WriteFile(LogType.Error, Level.Error, format, arg);
     }
 
     static public void WriteFile(LogType type, string format, params object[] arg)
+    {
+      WriteFile(type, Level.Information, format, arg);
+    }
+
+    static public void WriteFile(LogType type, Level logLevel, string format, params object[] arg)
     {
       lock (typeof(Log))
       {
@@ -196,7 +263,8 @@ namespace MediaPortal.GUI.Library
           using (StreamWriter writer = new StreamWriter(GetFileName(type), true))
           {
             writer.BaseStream.Seek(0, SeekOrigin.End); // set the file pointer to the end of 
-            writer.Write(DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString() + " ");
+            writer.Write(DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString() + " " + String.Format("{0:000}",DateTime.Now.Millisecond));
+            writer.Write(" [" + GetLevelName(logLevel) + "] ");
             writer.WriteLine(format, arg);
             writer.Close();
           }
@@ -207,7 +275,7 @@ namespace MediaPortal.GUI.Library
       }
 
       //
-      if (type != LogType.Log && type != LogType.Error && type != LogType.EPG && type != LogType.TVCom)
+      if (type != LogType.Log && type != LogType.Error && type != LogType.EPG)
         WriteFile(LogType.Log, format, arg);
     }//static public void WriteFile(LogType type, string format, params object[] arg)
   }

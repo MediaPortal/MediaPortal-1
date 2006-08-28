@@ -51,7 +51,7 @@ namespace ProgramsDatabase
         SQLiteResultSet.Row arr = results.Rows[0];
         res = arr.fields[0];
       }
-      //_log.Info("dw read setting key:{0}\nvalue:{1}", Key, res);
+      //Log.Info("dw read setting key:{0}\nvalue:{1}", Key, res);
       return res;
     }
 

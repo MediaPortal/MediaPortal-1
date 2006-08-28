@@ -36,7 +36,6 @@ using MediaPortal.Music.Database;
 using MediaPortal.TagReader;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.View;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.GUI.Music
 {
@@ -160,8 +159,6 @@ namespace MediaPortal.GUI.Music
 
         public GUIMusicPlayingNow()
         {
-            ServiceProvider services = GlobalServiceProvider.Instance;
-            IConfig _config = services.Get<IConfig>();
             GetID = (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW;
             PlaylistPlayer = PlayListPlayer.SingletonPlayer;
 
@@ -169,7 +166,7 @@ namespace MediaPortal.GUI.Music
             g_Player.PlayBackStopped += new g_Player.StoppedHandler(g_Player_PlayBackStopped);
             g_Player.PlayBackEnded += new g_Player.EndedHandler(g_Player_PlayBackEnded);
 
-            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
             {
                 UseID3 = xmlreader.GetValueAsBool("musicfiles", "showid3", true);
             }
@@ -690,7 +687,7 @@ namespace MediaPortal.GUI.Music
             catch (Exception e)
             {
                 // log the problem...
-                _log.Info("GUIMusicPlayingNow.GetCDInfoFromFreeDB: {0}", e.ToString());
+                Log.Info("GUIMusicPlayingNow.GetCDInfoFromFreeDB: {0}", e.ToString());
             }
         }
 

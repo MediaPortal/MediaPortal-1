@@ -38,7 +38,6 @@ using DShowNET;
 using DShowNET.Helper;
 using DirectShowLib;
 using Keys = MediaPortal.Configuration.Sections.Keys;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Configuration
 {
@@ -81,8 +80,6 @@ namespace MediaPortal.Configuration
     private RedEye redeye; //PB00//
     private DirectInputRemote dinputRemote;
 
-    protected ILog _log;
-    protected IConfig _config;
     //
     // Hashtable where we store each added tree node/section for faster access
     //
@@ -97,11 +94,8 @@ namespace MediaPortal.Configuration
 
     public SettingsForm()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
 
-      _log.Info("SettingsForm constructor");
+      Log.Info("SettingsForm constructor");
       //
       // Required for Windows Form Designer support
       //
@@ -120,21 +114,21 @@ namespace MediaPortal.Configuration
       //
 
       string strLanguage;
-      using (Settings xmlreader = new Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (Settings xmlreader = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         strLanguage = xmlreader.GetValueAsString("skin", "language", "English");
       }
-      GUILocalizeStrings.Load(_config.Get(Config.Options.LanguagePath) + strLanguage + @"\strings.xml");
+      GUILocalizeStrings.Load(Config.Get(Config.Dir.Language) + strLanguage + @"\strings.xml");
 
-      _log.Info("add project section");
+      Log.Info("add project section");
       Project project = new Project();
       AddSection(project);
 
-      _log.Info("add general section");
+      Log.Info("add general section");
       General general = new General();
       AddSection(general);
 
-      _log.Info("add skins section");
+      Log.Info("add skins section");
       AddChildSection(general, new Skin());
       AddChildSection(general, new KeyboardControl());
       AddChildSection(general, new Keys());
@@ -144,97 +138,97 @@ namespace MediaPortal.Configuration
       AddChildSection(general, new FileMenu());
       AddChildSection(general, new Volume());
       
-      _log.Info("add DVD section");
+      Log.Info("add DVD section");
       SectionSettings dvd = new DVD();
       AddSection(dvd);
 
-      _log.Info("  add DVD codec section");
+      Log.Info("  add DVD codec section");
       AddChildSection(dvd, new DVDCodec());
 
-      _log.Info("  add DVD player section");
+      Log.Info("  add DVD player section");
       AddChildSection(dvd, new DVDPlayer());
 
-      _log.Info("  add DVD postprocessing section");
+      Log.Info("  add DVD postprocessing section");
       AddChildSection(dvd, new DVDPostProcessing());
 
-      _log.Info("add movie section");
+      Log.Info("add movie section");
       SectionSettings movie = new Movies();
       AddSection(movie);
 
-      _log.Info("  add movie shares section");
+      Log.Info("  add movie shares section");
       AddChildSection(movie, new MovieShares());
-      _log.Info("  add movie player section");
+      Log.Info("  add movie player section");
       AddChildSection(movie, new MoviePlayer());
-      _log.Info("  add movie extensions section");
+      Log.Info("  add movie extensions section");
       AddChildSection(movie, new MovieExtensions());
-      _log.Info("  add movie postprocessing section");
+      Log.Info("  add movie postprocessing section");
       AddChildSection(movie, new MoviePostProcessing());
       AddChildSection(movie, new MovieDatabase());
       AddChildSection(movie, new MovieViews());
 
-      _log.Info("add music section");
+      Log.Info("add music section");
       SectionSettings music = new Sections.Music();
       AddSection(music);
-      _log.Info("  add music shares section");
+      Log.Info("  add music shares section");
       AddChildSection(music, new MusicShares());
-      _log.Info("  add music database section");
+      Log.Info("  add music database section");
       AddChildSection(music, new MusicDatabase());
-      _log.Info("  add music extension section");
+      Log.Info("  add music extension section");
       AddChildSection(music, new MusicExtensions());
-      _log.Info("  add music views section");
+      Log.Info("  add music views section");
       AddChildSection(music, new MusicViews());
-      _log.Info("  add music import section");
+      Log.Info("  add music import section");
       AddChildSection(music, new MusicImport());
       AddChildSection(music, new MusicSort());
 
-      _log.Info("  add music misc section");
+      Log.Info("  add music misc section");
       AddChildSection(music, new MusicMisc());
 
-      _log.Info("add pictures section");
+      Log.Info("add pictures section");
       SectionSettings picture = new Pictures();
       AddSection(picture);
-      _log.Info("  add pictures shares section");
+      Log.Info("  add pictures shares section");
       AddChildSection(picture, new PictureShares());
-      _log.Info("  add pictures extensions section");
+      Log.Info("  add pictures extensions section");
       AddChildSection(picture, new PictureExtensions());
 
-      _log.Info("add radio section");
+      Log.Info("add radio section");
       SectionSettings radio = new Sections.Radio();
       AddSection(radio);
-      _log.Info("  add radio stations section");
+      Log.Info("  add radio stations section");
       AddChildSection(radio, new RadioStations());
 
-      _log.Info("add television section");
+      Log.Info("add television section");
       SectionSettings television = new Television();
       AddSection(television);
-      _log.Info("  add tv capture cards section");
+      Log.Info("  add tv capture cards section");
       AddChildSection(television, new TVCaptureCards());
-      _log.Info("  add tv channels section");
+      Log.Info("  add tv channels section");
       AddChildSection(television, new SectionTvChannels());
-      _log.Info("  add tv channel groups section");
+      Log.Info("  add tv channel groups section");
       AddChildSection(television, new SectionTvGroups());
-      _log.Info("  add tv program guide section");
+      Log.Info("  add tv program guide section");
       AddChildSection(television, new TVProgramGuide());
-      _log.Info("  add tv recording section");
+      Log.Info("  add tv recording section");
       AddChildSection(television, new TVRecording());
-      _log.Info("  add tv postprocessing section");
+      Log.Info("  add tv postprocessing section");
       AddChildSection(television, new TVPostProcessing());
 
       SectionSettings remote = new Remote();
       AddSection(remote);
 
-      _log.Info("add USBUIRT section");
+      Log.Info("add USBUIRT section");
       AddChildSection(remote, new USBUIRT());
-      _log.Info("add SerialUIR section");
+      Log.Info("add SerialUIR section");
       serialuir = new SerialUIR();
       AddChildSection(remote, serialuir);
-      _log.Info("add WINLIRC section"); //sd00//
+      Log.Info("add WINLIRC section"); //sd00//
       AddChildSection(remote, new Sections.WINLIRC()); //sd00//
-      _log.Info("add RedEye section"); //PB00//
+      Log.Info("add RedEye section"); //PB00//
       redeye = new RedEye(); //PB00//
       AddChildSection(remote, redeye); //PB00//
 
-      _log.Info("add DirectInput section");
+      Log.Info("add DirectInput section");
       dinputRemote = new DirectInputRemote();
       AddChildSection(remote, dinputRemote);
 
@@ -300,9 +294,9 @@ namespace MediaPortal.Configuration
           }
         }
       
-      _log.Info("add weather section");
+      Log.Info("add weather section");
       AddSection(new Weather());
-      _log.Info("add plugins section");
+      Log.Info("add plugins section");
       AddSection(new PluginsNew());
 
       //
@@ -310,10 +304,10 @@ namespace MediaPortal.Configuration
       //
       sectionTree.SelectedNode = sectionTree.Nodes[0];
 
-      _log.Info("bring to front");
+      Log.Info("bring to front");
       // make sure window is in front of mediaportal
       BringToFront();
-      _log.Info("settingsform constructor done");
+      Log.Info("settingsform constructor done");
     }
 
     /// <summary>
@@ -592,17 +586,17 @@ namespace MediaPortal.Configuration
     /// <param name="e"></param>
     private void SettingsForm_Load(object sender, EventArgs e)
     {
-      _log.Info("Load settings");
+      Log.Info("Load settings");
       foreach (TreeNode treeNode in sectionTree.Nodes)
       {
         //
         // Load settings for all sections
         //
 
-        _log.Info("  Load settings:{0}", treeNode.Text);
+        Log.Info("  Load settings:{0}", treeNode.Text);
         LoadSectionSettings(treeNode);
       }
-      _log.Info("Load settings done");
+      Log.Info("Load settings done");
       GUIGraphicsContext.form = this;
     }
 
@@ -612,7 +606,7 @@ namespace MediaPortal.Configuration
     /// <param name="currentNode"></param>
     private void LoadSectionSettings(TreeNode currentNode)
     {
-      _log.Info("LoadSectionSettings()");
+      Log.Info("LoadSectionSettings()");
       if (currentNode != null)
       {
         //
@@ -630,11 +624,11 @@ namespace MediaPortal.Configuration
         //
         foreach (TreeNode childNode in treeNode.Nodes)
         {
-          _log.Info("  Load settings:{0}", childNode.Text);
+          Log.Info("  Load settings:{0}", childNode.Text);
           LoadSectionSettings(childNode);
         }
       }
-      _log.Info("LoadSectionSettings() done");
+      Log.Info("LoadSectionSettings() done");
     }
 
     /// <summary>
@@ -643,7 +637,7 @@ namespace MediaPortal.Configuration
     /// <param name="currentNode"></param>
     private void SaveSectionSettings(TreeNode currentNode)
     {
-      _log.Info("SaveSectionSettings()");
+      Log.Info("SaveSectionSettings()");
       if (currentNode != null)
       {
         //
@@ -661,11 +655,11 @@ namespace MediaPortal.Configuration
         //
         foreach (TreeNode childNode in treeNode.Nodes)
         {
-          _log.Info("SaveSectionSettings:{0}", childNode.Text);
+          Log.Info("SaveSectionSettings:{0}", childNode.Text);
           SaveSectionSettings(childNode);
         }
       }
-      _log.Info("SaveSectionSettings done()");
+      Log.Info("SaveSectionSettings done()");
     }
 
     private void cancelButton_Click(object sender, EventArgs e)
@@ -688,7 +682,7 @@ namespace MediaPortal.Configuration
     {
       int MaximumShares = 20;
       //Do we have 1 or more music,picture,video shares?
-      using (Settings xmlreader = new Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (Settings xmlreader = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         string playlistFolder = xmlreader.GetValueAsString("music", "playlists", "");
         if (playlistFolder == String.Empty)

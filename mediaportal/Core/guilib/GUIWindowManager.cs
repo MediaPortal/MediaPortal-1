@@ -28,7 +28,6 @@ using System.Threading;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using MediaPortal.Utils.Services;
 
 
 namespace MediaPortal.GUI.Library
@@ -76,7 +75,6 @@ namespace MediaPortal.GUI.Library
     static bool _shouldRefresh = false;
     static bool _isSwitchingToNewWindow = false;
     static string _currentWindowName = String.Empty;
-    static ILog _log;
     #endregion
 
     #region ctor
@@ -87,8 +85,6 @@ namespace MediaPortal.GUI.Library
 
     static GUIWindowManager()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
     }
     #endregion
 
@@ -163,7 +159,7 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception ex)
       {
-        _log.Error("Exception: {0}", ex.ToString());
+        Log.Error("Exception: {0}", ex.ToString());
       }
     }
     /// <summary>
@@ -380,12 +376,12 @@ namespace MediaPortal.GUI.Library
       {
         if (_listWindows[i].GetID == Window.GetID)
         {
-          //_log.Error("Window:{0} and window {1} have the same id's!!!", Window, _listWindows[i]);
+          //Log.Error("Window:{0} and window {1} have the same id's!!!", Window, _listWindows[i]);
           Window.OnAdded();
           return;
         }
       }
-      //_log.Info("Add window :{0} id:{1}", Window.ToString(), Window.GetID);
+      //Log.Info("Add window :{0} id:{1}", Window.ToString(), Window.GetID);
       _listWindows[_windowCount] = Window;
       _windowCount++;
       Window.OnAdded();
@@ -476,7 +472,7 @@ namespace MediaPortal.GUI.Library
         }
         catch (Exception ex)
         {
-          _log.Error("Exception in {0}.Preinit() {1}",
+          Log.Error("Exception in {0}.Preinit() {1}",
             window.GetType().ToString(), ex.ToString());
         }
       }
@@ -569,7 +565,7 @@ namespace MediaPortal.GUI.Library
             {
               if (_listHistory.Count > 15) _listHistory.RemoveAt(0);
               _listHistory.Add(_activeWindowId);
-              //_log.Info("Window list add Id:{0} new count: {1}", _activeWindowId, _listHistory.Count);
+              //Log.Info("Window list add Id:{0} new count: {1}", _activeWindowId, _listHistory.Count);
             }
           }
 
@@ -607,7 +603,7 @@ namespace MediaPortal.GUI.Library
             }
             catch (Exception ex)
             {
-              _log.Info("WindowManager:Unable to initialize window:{0} {1} {2} {3}",
+              Log.Info("WindowManager:Unable to initialize window:{0} {1} {2} {3}",
                       iWindowID, ex.Message, ex.Source, ex.StackTrace);
               break;
             }
@@ -656,7 +652,7 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception ex)
       {
-        _log.Error("Exception: {0}", ex.ToString());
+        Log.Error("Exception: {0}", ex.ToString());
       }
       finally
       {
@@ -670,7 +666,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     static public void ShowPreviousWindow()
     {
-      _log.Info("Windowmanager:goto previous window");
+      Log.Info("Windowmanager:goto previous window");
       _isSwitchingToNewWindow = true;
       try
       {
@@ -697,7 +693,7 @@ namespace MediaPortal.GUI.Library
         {
           _previousActiveWindowId = (int)_listHistory[_listHistory.Count - 1];
           _listHistory.RemoveAt(_listHistory.Count - 1);
-          //_log.Info("Window list remove Id:{0} new count: {1}", _previousActiveWindowId, _listHistory.Count);
+          //Log.Info("Window list remove Id:{0} new count: {1}", _previousActiveWindowId, _listHistory.Count);
         }
 
         if ((_activeWindowIndex >= 0 && _activeWindowIndex < _windowCount))
@@ -784,7 +780,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     static public void CloseCurrentWindow()
     {
-      _log.Info("Windowmanager:closing current window");
+      Log.Info("Windowmanager:closing current window");
       _isSwitchingToNewWindow = true;
       try
       {
@@ -963,7 +959,7 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception ex)
       {
-        _log.Error("ProcessWindows exception:{0}", ex.ToString());
+        Log.Error("ProcessWindows exception:{0}", ex.ToString());
       }
     }
 
@@ -1085,7 +1081,7 @@ namespace MediaPortal.GUI.Library
     {
       if (_routedWindow != null)
       {
-        _log.Info("WindowManager:unroute to {0}:{1}->{2}:{3}",
+        Log.Info("WindowManager:unroute to {0}:{1}->{2}:{3}",
                 _routedWindow, _routedWindow.GetID, GetWindow(ActiveWindow), ActiveWindow);
       }
       if (_currentWindowName != String.Empty && _routedWindow != null)
@@ -1100,7 +1096,7 @@ namespace MediaPortal.GUI.Library
     {
       _shouldRefresh = true;
       _routedWindow = GetWindow(dialogId);
-      _log.Info("WindowManager:route {0}:{1}->{2}:{3}",
+      Log.Info("WindowManager:route {0}:{1}->{2}:{3}",
                 GetWindow(ActiveWindow), ActiveWindow, _routedWindow, dialogId);
       _currentWindowName = GUIPropertyManager.GetProperty("#currentmodule");
     }
@@ -1133,14 +1129,14 @@ namespace MediaPortal.GUI.Library
     }
     static public void Replace(int windowId, GUIWindow window)
     {
-      _log.Info("WindowManager::replace {0}" , windowId);
+      Log.Info("WindowManager::replace {0}" , windowId);
       for (int i = 0; i < _listWindows.Length; ++i)
       {
         if (_listWindows[i] != null)
         {
           if (_listWindows[i].GetID == windowId)
           {
-            _log.Info("WindowManager::replaced {0} with {1}", _listWindows[i], window);
+            Log.Info("WindowManager::replaced {0} with {1}", _listWindows[i], window);
             ISetupForm frm = window as ISetupForm;
             if (frm != null)
             {
@@ -1148,7 +1144,7 @@ namespace MediaPortal.GUI.Library
               {
                 if (((ISetupForm)PluginManager.SetupForms[x]).GetWindowId() == windowId)
                 {
-                  _log.Info("WindowManager::setup...");
+                  Log.Info("WindowManager::setup...");
                   PluginManager.SetupForms.RemoveAt(x);
                   break;
                   //PluginManager.SetupForms[x] = frm;

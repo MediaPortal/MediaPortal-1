@@ -5,7 +5,6 @@ using System.Xml;
 using System.IO;
 using MediaPortal.Util;
 using MediaPortal.GUI.Library;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Playlists
 {
@@ -51,9 +50,7 @@ namespace MediaPortal.Playlists
       }
       catch (Exception ex)
       {
-        ServiceProvider services = GlobalServiceProvider.Instance;
-        ILog log = services.Get<ILog>();
-        log.Info("exception loading playlist {0} err:{1} stack:{2}", fileName, ex.Message, ex.StackTrace);
+        Log.Info("exception loading playlist {0} err:{1} stack:{2}", fileName, ex.Message, ex.StackTrace);
       }
       return false;
     }

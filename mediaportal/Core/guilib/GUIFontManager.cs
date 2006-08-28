@@ -23,7 +23,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
 using System.Runtime.InteropServices;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.GUI.Library
 {
@@ -40,7 +39,6 @@ namespace MediaPortal.GUI.Library
 		unsafe private static extern void FontEngineSetDevice(void* device);
 
     static protected List<GUIFont> _listFonts = new List<GUIFont>();
-    static protected ILog _log;
 
 		// singleton. Dont allow any instance of this class
 		private GUIFontManager()
@@ -49,8 +47,6 @@ namespace MediaPortal.GUI.Library
 
     static GUIFontManager()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
     }
 
 		static public int Count
@@ -67,7 +63,7 @@ namespace MediaPortal.GUI.Library
 			// Clear current set of fonts
 			Dispose();
 			int counter=0;
-			_log.Info("  Load fonts from {0}", strFilename);
+			Log.Info("  Load fonts from {0}", strFilename);
 			_listFonts.Clear();
 
 			// Load the debug font
@@ -140,7 +136,7 @@ namespace MediaPortal.GUI.Library
 			}
 			catch(Exception ex)
 			{
-				_log.Info("exception loading fonts {0} err:{1} stack:{2}", strFilename, ex.Message,ex.StackTrace);
+				Log.Info("exception loading fonts {0} err:{1} stack:{2}", strFilename, ex.Message,ex.StackTrace);
 			}
 
 			return false;
@@ -189,7 +185,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		static public void	Dispose()
 		{
-			_log.Info("  fonts.Dispose()");
+			Log.Info("  fonts.Dispose()");
 			foreach (GUIFont font in _listFonts)
 			{
 				font.Dispose(null,null);
@@ -201,7 +197,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
     static public void SetDevice()
     {
-      _log.Info("  fonts.SetDevice()");
+      Log.Info("  fonts.SetDevice()");
       IntPtr upDevice = DShowNET.Helper.DirectShowUtil.GetUnmanagedDevice(GUIGraphicsContext.DX9Device);
 
       unsafe
@@ -215,7 +211,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		static public void InitializeDeviceObjects()
 		{
-			_log.Info("  fonts.InitializeDeviceObjects()");
+			Log.Info("  fonts.InitializeDeviceObjects()");
       IntPtr upDevice = DShowNET.Helper.DirectShowUtil.GetUnmanagedDevice(GUIGraphicsContext.DX9Device);
 
       unsafe

@@ -5,7 +5,6 @@ using System.Collections;
 using System.Text;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Video.Database
 {
@@ -20,12 +19,9 @@ namespace MediaPortal.Video.Database
     private Thread actorsThread;
     private IMDB.IProgress progress;
     private bool disableCancel = false;
-    static ILog _log;
 
     static IMDBFetcher()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
     }
 
     public IMDBFetcher(IMDB.IProgress progress)
@@ -43,7 +39,7 @@ namespace MediaPortal.Video.Database
         return false;
       }
       movieThread = new Thread(new ThreadStart(this._fetch));
-      //_log.Info("Thread for Fetching Movie list:{0}", movieThread.ManagedThreadId);
+      //Log.Info("Thread for Fetching Movie list:{0}", movieThread.ManagedThreadId);
       movieThread.Start();
       if (!OnSearchStarted(this))
       {
@@ -71,7 +67,7 @@ namespace MediaPortal.Video.Database
       {
         OnSearchEnd(this);
         disableCancel = false;
-        //_log.Info("Ending Thread for Fetching movie list:{0}", movieThread.ManagedThreadId);
+        //Log.Info("Ending Thread for Fetching movie list:{0}", movieThread.ManagedThreadId);
         movieThread = null;
       }
     }
@@ -87,7 +83,7 @@ namespace MediaPortal.Video.Database
         return false;
       }
       detailsThread = new Thread(new ThreadStart(this._fetchDetails));
-      //_log.Info("Thread for Fetching details:{0}", detailsThread.ManagedThreadId);
+      //Log.Info("Thread for Fetching details:{0}", detailsThread.ManagedThreadId);
       detailsThread.Start();
       if (!OnDetailsStarted(this))
       {
@@ -158,7 +154,7 @@ namespace MediaPortal.Video.Database
       {
         OnDetailsEnd(this);
         disableCancel = false;
-        //_log.Info("Ending Thread for Fetching movie details:{0}", detailsThread.ManagedThreadId);
+        //Log.Info("Ending Thread for Fetching movie details:{0}", detailsThread.ManagedThreadId);
         detailsThread = null;
       }
     }
@@ -170,7 +166,7 @@ namespace MediaPortal.Video.Database
         return false;
       }
       actorsThread = new Thread(new ThreadStart(this._fetchActors));
-      //_log.Info("Thread for Fetching actors:{0}", actorsThread.ManagedThreadId);
+      //Log.Info("Thread for Fetching actors:{0}", actorsThread.ManagedThreadId);
       actorsThread.Start();
       if (!OnActorsStarted(this))
       {
@@ -192,7 +188,7 @@ namespace MediaPortal.Video.Database
       finally
       {
         OnActorsEnd(this);
-        //_log.Info("Ending Thread for Fetching actors:{0}", actorsThread.ManagedThreadId);
+        //Log.Info("Ending Thread for Fetching actors:{0}", actorsThread.ManagedThreadId);
         actorsThread = null;
         disableCancel = false;
       }
@@ -244,9 +240,9 @@ namespace MediaPortal.Video.Database
             {
               index = 0;
             }
-            ////_log.Info("Getting actor:{0}", _imdb[index].Title);
+            ////Log.Info("Getting actor:{0}", _imdb[index].Title);
             _imdb.GetActorDetails(_imdb[index], out imdbActor);
-            ////_log.Info("Adding actor:{0}({1}),{2}", imdbActor.Name, actor, percent);
+            ////Log.Info("Adding actor:{0}({1}),{2}", imdbActor.Name, actor, percent);
             int actorId = VideoDatabase.AddActor(imdbActor.Name);
             if (actorId > 0)
             {
@@ -294,7 +290,7 @@ namespace MediaPortal.Video.Database
       if (actorsThread == null) return;
       if ((actorsThread.IsAlive) && (!disableCancel))
       {
-        //_log.Info("Aborting Thread for Fetching:{0}", actorsThread.ManagedThreadId);
+        //Log.Info("Aborting Thread for Fetching:{0}", actorsThread.ManagedThreadId);
         actorsThread.Abort();
       }
     }
@@ -303,7 +299,7 @@ namespace MediaPortal.Video.Database
       if (movieThread == null) return;
       if ((movieThread.IsAlive) && (!disableCancel))
       {
-        //_log.Info("Aborting Thread for Fetching:{0}", movieThread.ManagedThreadId);
+        //Log.Info("Aborting Thread for Fetching:{0}", movieThread.ManagedThreadId);
         movieThread.Abort();
       }
     }
@@ -312,7 +308,7 @@ namespace MediaPortal.Video.Database
       if (detailsThread == null) return;
       if ((detailsThread.IsAlive) && (!disableCancel))
       {
-        //_log.Info("Aborting Thread for Fetching:{0}", detailsThread.ManagedThreadId);
+        //Log.Info("Aborting Thread for Fetching:{0}", detailsThread.ManagedThreadId);
         detailsThread.Abort();
       }
     }
@@ -540,7 +536,7 @@ namespace MediaPortal.Video.Database
     /// </summary>
     public static bool RefreshIMDB(IMDB.IProgress progress, ref IMDBMovie currentMovie, bool fuzzyMatching)
     {
-      _log.Info("Refreshing IMDB for {0}-{1}", currentMovie.Title, currentMovie.SearchString);
+      Log.Info("Refreshing IMDB for {0}-{1}", currentMovie.Title, currentMovie.SearchString);
       string strMovieName = currentMovie.SearchString;
       string strFileName = string.Empty;
       string path = currentMovie.Path;
@@ -739,7 +735,7 @@ namespace MediaPortal.Video.Database
       int count = 1;
       foreach (string file in availableFiles)
       {
-        _log.Info("Scanning file:{0}", file);
+        Log.Info("Scanning file:{0}", file);
         if ((progress != null) && (!progress.OnScanIterating(count)))
         {
           success = false;
@@ -805,7 +801,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception e)
       {
-        _log.Info("Exception counting files:{0}", e);
+        Log.Info("Exception counting files:{0}", e);
         // Ignore
       }
     }
@@ -836,7 +832,7 @@ namespace MediaPortal.Video.Database
       int id = movieDetails.ID;
       if (id < 0)
       {
-        _log.Info("Adding file:{0}", file);
+        Log.Info("Adding file:{0}", file);
         id = VideoDatabase.AddMovieFile(file);
         VirtualDirectory dir = new VirtualDirectory();
         dir.SetExtensions(MediaPortal.Util.Utils.VideoExtensions);

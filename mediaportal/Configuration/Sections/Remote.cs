@@ -36,8 +36,9 @@ using System.Reflection;
 using Microsoft.Win32;
 using MediaPortal.GUI.Library;
 using MediaPortal.InputDevices;
+using MediaPortal.Util;
+
 using System.Net.Sockets;
-using MediaPortal.Utils.Services;
 
 #pragma warning disable 108
 
@@ -201,7 +202,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
 
         #region MCE
@@ -301,7 +302,7 @@ namespace MediaPortal.Configuration.Sections
           checkBoxHcwEnabled.Enabled = false;
           groupBoxHcwSettings.Enabled = false;
           groupBoxHcwRepeatDelay.Enabled = false;
-          using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+          using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
           {
             xmlwriter.SetValueAsBool("remote", "HCW", false);
           }
@@ -398,7 +399,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         #region MCE
 
@@ -1930,9 +1931,7 @@ namespace MediaPortal.Configuration.Sections
       }
       catch (System.Runtime.InteropServices.COMException)
       {
-        ServiceProvider services = GlobalServiceProvider.Instance;
-        ILog log = services.Get<ILog>();
-        log.Warn("x10Remote: Can't initialize");
+        Log.Warn("x10Remote: Can't initialize");
         x10Form = null;
         labelX10DriverInfo.Visible = false;
         linkLabelDownloadX10.Visible = false;

@@ -32,8 +32,8 @@ using System.Drawing;
 using System.Text;
 using System.Web.Security;
 using System.Windows.Forms;
-using MediaPortal.Utils.Services;
 using MediaPortal.Music.Database;
+using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 
 
@@ -46,14 +46,8 @@ namespace MediaPortal.AudioScrobbler
     List<Song> similarList = null;
     private string _currentUser = String.Empty;
 
-    private static ILog _log;
-    private static IConfig _config;
-
     public AudioscrobblerSettings()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
       InitializeComponent();
       LoadSettings();
     }
@@ -66,7 +60,7 @@ namespace MediaPortal.AudioScrobbler
       string tmpuser = "";
       string tmppass = "";      
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         tmpuser = xmlreader.GetValueAsString("audioscrobbler", "user", "");
 
@@ -109,7 +103,7 @@ namespace MediaPortal.AudioScrobbler
             }
             catch (Exception)
             {
-              //_log.Info("Audioscrobbler: Password decryption failed {0}", ex.Message);
+              //Log.Info("Audioscrobbler: Password decryption failed {0}", ex.Message);
             }
           }
           checkBoxLimitPlaylist.Checked = xmlreader.GetValueAsBool("audioscrobbler", "playlistlimit", true);
@@ -178,65 +172,65 @@ namespace MediaPortal.AudioScrobbler
       if (mdb.AddScrobbleUserSettings(tmpUserID, "iDebugLog", -1) == -1)
       {
         mdb.AddScrobbleUserSettings(tmpUserID, "iDebugLog", 0);
-        //_log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iDebugLog");
+        //Log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iDebugLog");
       }
       // set randomness
       if (mdb.AddScrobbleUserSettings(tmpUserID, "iRandomness", -1) < 1)
       {
         mdb.AddScrobbleUserSettings(tmpUserID, "iRandomness", 77);
         defaultsNeeded = true;
-        //_log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iRandomness");
+        //Log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iRandomness");
       }     
       // enable scrobbling
       if (mdb.AddScrobbleUserSettings(tmpUserID, "iSubmitOn", -1) == -1)
       {
         mdb.AddScrobbleUserSettings(tmpUserID, "iSubmitOn", 1);
-        //_log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iSubmitOn");
+        //Log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iSubmitOn");
       }
       // disable Scrobble On on startup
       if (mdb.AddScrobbleUserSettings(tmpUserID, "iScrobbleDefault", -1) == -1)
       {
         mdb.AddScrobbleUserSettings(tmpUserID, "iScrobbleDefault", 0);
-        //_log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iScrobbleDefault");
+        //Log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iScrobbleDefault");
       }
       // consider 3 artists to add
       if (mdb.AddScrobbleUserSettings(tmpUserID, "iAddArtists", -1) < 1)
       {
         mdb.AddScrobbleUserSettings(tmpUserID, "iAddArtists", 3);
-        //_log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iAddArtists");
+        //Log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iAddArtists");
       }
       // consider adding 1 track per artist
       if (mdb.AddScrobbleUserSettings(tmpUserID, "iAddTracks", -1) < 1)
       {
         mdb.AddScrobbleUserSettings(tmpUserID, "iAddTracks", 1);
-        //_log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iAddTracks");
+        //Log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iAddTracks");
       }
       // set neighbour mode to weekly artists
       if (mdb.AddScrobbleUserSettings(tmpUserID, "iNeighbourMode", -1) == -1)
       {
         mdb.AddScrobbleUserSettings(tmpUserID, "iNeighbourMode", 1);
-        //_log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iNeighbourMode");
+        //Log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iNeighbourMode");
       }
 
       if (mdb.AddScrobbleUserSettings(tmpUserID, "iOfflineMode", -1) == -1)
       {
         mdb.AddScrobbleUserSettings(tmpUserID, "iOfflineMode", 0);
-        //_log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iOfflineMode");
+        //Log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iOfflineMode");
       }
       if (mdb.AddScrobbleUserSettings(tmpUserID, "iPlaylistLimit", -1) == -1)
       {
         mdb.AddScrobbleUserSettings(tmpUserID, "iPlaylistLimit", 1);
-        //_log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iPlaylistLimit");
+        //Log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iPlaylistLimit");
       }
       if (mdb.AddScrobbleUserSettings(tmpUserID, "iPreferCount", -1) == -1)
       {
         mdb.AddScrobbleUserSettings(tmpUserID, "iPreferCount", 2);
-        //_log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iPreferCount");
+        //Log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iPreferCount");
       }
       if (mdb.AddScrobbleUserSettings(tmpUserID, "iRememberStartArtist", -1) == -1)
       {
         mdb.AddScrobbleUserSettings(tmpUserID, "iRememberStartArtist", 1);
-        //_log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iRememberStartArtist");
+        //Log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iRememberStartArtist");
       }
 
       return defaultsNeeded;
@@ -260,7 +254,7 @@ namespace MediaPortal.AudioScrobbler
 
       if (comboBoxUserName.Text != String.Empty)
       {
-        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         {
           xmlwriter.SetValue("audioscrobbler", "user", comboBoxUserName.Text);
 
@@ -273,7 +267,7 @@ namespace MediaPortal.AudioScrobbler
           }
           catch (Exception)
           {
-            //_log.Info("Audioscrobbler: Password encryption failed {0}", ex.Message);
+            //Log.Info("Audioscrobbler: Password encryption failed {0}", ex.Message);
           }
 
           // checks and adds the user if necessary + updates the password;
@@ -302,7 +296,7 @@ namespace MediaPortal.AudioScrobbler
             if (lastFmLookup != null)
               neighbourmode = (int)lastFmLookup.CurrentNeighbourMode;
             else
-              _log.Info("DEBUG *** lastFMLookup was null. neighbourmode: {0}", Convert.ToString(neighbourmode));
+              Log.Info("DEBUG *** lastFMLookup was null. neighbourmode: {0}", Convert.ToString(neighbourmode));
 
             if (comboBoxOfflineMode != null)
               offlinemode = comboBoxOfflineMode.SelectedIndex;
@@ -825,7 +819,7 @@ namespace MediaPortal.AudioScrobbler
     private void comboBoxUserName_SelectedIndexChanged(object sender, EventArgs e)
     {
       _currentUser = comboBoxUserName.Text;
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         xmlwriter.SetValue("audioscrobbler", "user", _currentUser);
       LoadSettings();
     }

@@ -21,7 +21,8 @@
 using System;
 using System.Collections;
 using System.Reflection;
-using MediaPortal.Utils.Services;
+using MediaPortal.GUI.Library;
+using MediaPortal.Util;
 
 namespace MediaPortal.Subtitle
 {
@@ -34,11 +35,8 @@ namespace MediaPortal.Subtitle
 		
       static SubReader()
       {
-        ServiceProvider services = GlobalServiceProvider.Instance;
-        ILog log = services.Get<ILog>();
-        IConfig _config = services.Get<IConfig>();
-        log.Info("loading subtitle plugins");
-        string[] strFiles=System.IO.Directory.GetFiles(_config.Get(Config.Options.PluginsPath) + "subtitle", "*.dll");
+        Log.Info("loading subtitle plugins");
+        string[] strFiles=System.IO.Directory.GetFiles(Config.Get(Config.Dir.Plugins) + "subtitle", "*.dll");
         foreach (string strFile in strFiles)
         {
           try
@@ -57,7 +55,7 @@ namespace MediaPortal.Subtitle
                     if (t.IsSubclassOf (typeof(ISubtitleReader)))
                     {
                       
-                      log.Info("  found plugin:{0} in {1}",t.ToString(), strFile);
+                      Log.Info("  found plugin:{0} in {1}",t.ToString(), strFile);
                       object newObj=(object)Activator.CreateInstance(t);
                       ISubtitleReader reader=(ISubtitleReader)newObj;
                       m_readers.Add(reader);

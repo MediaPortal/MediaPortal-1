@@ -38,7 +38,6 @@ using Yeti.MMedia.Mp3;
 using Yeti.Lame;
 using WaveLib;
 using Roger.ID3;
-using MediaPortal.Utils.Services;
 //using iTunesLib;
 
 namespace MediaPortal.MusicImport
@@ -85,16 +84,11 @@ namespace MediaPortal.MusicImport
     }
 
     Thread EncodeThread;
-    static ILog _log;
-    static IConfig _config;
 
     public MusicImport()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         mp3VBR = xmlreader.GetValueAsBool("musicimport", "mp3vbr", true);
         mp3MONO = xmlreader.GetValueAsBool("musicimport", "mp3mono", false);
@@ -224,7 +218,7 @@ namespace MediaPortal.MusicImport
     {
       string strInput = string.Empty;
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         strInput = xmlreader.GetValueAsString("musicimport", "format", "%artist%\\%album%\\%track% %title%");
 
       string fileFormat = string.Empty;
@@ -393,7 +387,7 @@ namespace MediaPortal.MusicImport
             }
             catch
             {
-              _log.Info("CDIMP: Error moving encoded file {0} to new location {1}", trackInfo.TempFileName, trackInfo.TargetFileName);
+              Log.Info("CDIMP: Error moving encoded file {0} to new location {1}", trackInfo.TempFileName, trackInfo.TargetFileName);
             }
             #endregion
           }
@@ -462,7 +456,7 @@ namespace MediaPortal.MusicImport
                   m_Writer = new Mp3Writer(WaveFile, Format, mp3Config);
                   if (!m_CancelRipping) try
                     {
-                      _log.Info("CDIMP: Processing track {0}", trackInfo.MusicTag.Track);
+                      Log.Info("CDIMP: Processing track {0}", trackInfo.MusicTag.Track);
 
                       DateTime InitTime = DateTime.Now;
                       if (m_Drive.ReadTrack(trackInfo.MusicTag.Track, new CdDataReadEventHandler(WriteWaveData), new CdReadProgressEventHandler(CdReadProgress)) > 0)
@@ -473,12 +467,12 @@ namespace MediaPortal.MusicImport
                         {
                           TimeSpan Duration = DateTime.Now - InitTime;
                           double Speed = m_Drive.TrackSize(trackInfo.MusicTag.Track) / Duration.TotalSeconds / Format.nAvgBytesPerSec;
-                          _log.Info("CDIMP: Done reading track {0} at {1:0.00}x speed", trackInfo.MusicTag.Track, Speed);
+                          Log.Info("CDIMP: Done reading track {0} at {1:0.00}x speed", trackInfo.MusicTag.Track, Speed);
                         }
                       }
                       else
                       {
-                        _log.Info("CDIMP: Error reading track {0}", trackInfo.MusicTag.Track);
+                        Log.Info("CDIMP: Error reading track {0}", trackInfo.MusicTag.Track);
                         m_Writer.Close();
                         WaveFile.Close();
                         if (File.Exists(trackInfo.TempFileName))

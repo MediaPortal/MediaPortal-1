@@ -22,7 +22,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using MediaPortal.Utils.Services;
 using MediaPortal.GUI.Library;
 using MediaPortal.Radio.Database;
 using MediaPortal.TV.Recording;
@@ -36,12 +35,9 @@ namespace MediaPortal.TV.Epg
     string _channelName;
     DateTime _firstEvent;
     DateTime _lastEvent;
-    protected ILog _log;
 
     public EpgChannelUpdate(bool isTv,string channelName)
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
 
       _isTv = isTv;
       _channelName = channelName;
@@ -80,7 +76,7 @@ namespace MediaPortal.TV.Epg
           if (String.Compare(ch.Name, _channelName, true) != 0) continue;
           if (ch.LastDateTimeEpgGrabbed < DateTime.Now.AddHours(-2))
           {
-            _log.Info("epg: channel:{0} received epg for : {1} hours", _channelName, hours);
+            Log.WriteFile(Log.LogType.EPG, "epg: channel:{0} received epg for : {1} hours", _channelName, hours);
             if (hours > 0)
             {
               ch.EpgHours = hours;
@@ -90,7 +86,7 @@ namespace MediaPortal.TV.Epg
           }
           else
           {
-            _log.Info("epg: channel:{0} received epg for : {1} hours (ignored last update:{2} {3})",
+            Log.WriteFile(Log.LogType.EPG, "epg: channel:{0} received epg for : {1} hours (ignored last update:{2} {3})",
               _channelName, hours, ch.LastDateTimeEpgGrabbed.ToShortDateString(), ch.LastDateTimeEpgGrabbed.ToLongTimeString());
           }
           return;
@@ -103,7 +99,7 @@ namespace MediaPortal.TV.Epg
           if (String.Compare(ch.Name, _channelName, true) != 0) continue;
           if (ch.LastDateTimeEpgGrabbed < DateTime.Now.AddHours(-2))
           {
-            _log.Info("epg: channel:{0} received epg for : {1} hours", _channelName, hours);
+            Log.WriteFile(Log.LogType.EPG, "epg: channel:{0} received epg for : {1} hours", _channelName, hours);
             if (hours > 0)
             {
               ch.EpgHours = hours;
@@ -113,7 +109,7 @@ namespace MediaPortal.TV.Epg
           }
           else
           {
-            _log.Info("epg: station:{0} received epg for : {1} hours (ignored last update:{2} {3})",
+            Log.WriteFile(Log.LogType.EPG, "epg: station:{0} received epg for : {1} hours (ignored last update:{2} {3})",
               _channelName, hours, ch.LastDateTimeEpgGrabbed.ToShortDateString(), ch.LastDateTimeEpgGrabbed.ToLongTimeString());
           }
           return;

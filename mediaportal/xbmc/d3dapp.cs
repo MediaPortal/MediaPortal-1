@@ -58,7 +58,6 @@ using Timer = System.Windows.Forms.Timer;
 using Utils = MediaPortal.Util.Utils;
 using MediaPortal.TV.Recording;
 using MediaPortal.Video.Database;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal
 {
@@ -129,10 +128,7 @@ namespace MediaPortal
 
     internal static string _fullscreenOverride = string.Empty;
 
-    protected ILog _log;
-    protected IConfig _config;
-
-    protected Caps Caps
+     protected Caps Caps
     {
       get { return graphicsCaps; }
     }
@@ -295,10 +291,6 @@ namespace MediaPortal
     /// </summary>
     public D3DApp()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
-
 #if PERFCOUNTER
       _perfCounterCpu = new PerformanceCounter();
       _perfCounterCpu.CategoryName = "Processor";
@@ -338,7 +330,7 @@ namespace MediaPortal
       showCursorWhenFullscreen = false;
       bool debugChangeDeviceHack = false;
 
-      using (Settings xmlreader = new Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (Settings xmlreader = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         useExclusiveDirectXMode = xmlreader.GetValueAsBool("general", "exclusivemode", true);
         autoHideTaskbar = xmlreader.GetValueAsBool("general", "hidetaskbar", true);
@@ -422,7 +414,7 @@ namespace MediaPortal
         storedLocation = this.Location;
         oldBounds = new Rectangle(Bounds.X, Bounds.Y, Bounds.Width, Bounds.Height);
 
-        using (Settings xmlreader = new Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+        using (Settings xmlreader = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         {
           string strStartFull;
           if (_fullscreenOverride == "yes")
@@ -437,7 +429,7 @@ namespace MediaPortal
               Win32API.ShowStartBar(false);
             }
 
-            _log.Info("D3D: Starting fullscreen");
+            Log.Info("D3D: Starting fullscreen");
             this.FormBorderStyle = FormBorderStyle.None;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -447,7 +439,7 @@ namespace MediaPortal
             this.ClientSize = new Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
             //GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth=Screen.PrimaryScreen.Bounds.Width;
             //GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight=Screen.PrimaryScreen.Bounds.Height;
-            _log.Info("D3D: Client size: {0}x{1} - Screen: {2}x{3}",
+            Log.Info("D3D: Client size: {0}x{1} - Screen: {2}x{3}",
                       this.ClientSize.Width, this.ClientSize.Height,
                       Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
 
@@ -791,9 +783,9 @@ namespace MediaPortal
       GUIGraphicsContext.DX9Device.DeviceReset -= new EventHandler(this.OnDeviceReset);
 
       if (bWindowed)
-        _log.Info("D3D: Switch to windowed mode - Playing media: {0}", g_Player.Playing);
+        Log.Info("D3D: Switch to windowed mode - Playing media: {0}", g_Player.Playing);
       else
-        _log.Info("D3D: Switch to fullscreen mode - Playing media: {0}", g_Player.Playing);
+        Log.Info("D3D: Switch to fullscreen mode - Playing media: {0}", g_Player.Playing);
 
       windowed = bWindowed;
       BuildPresentParamsFromSettings();
@@ -802,17 +794,17 @@ namespace MediaPortal
         GUIGraphicsContext.DX9Device.Reset(presentParams);
 
         if (windowed)
-          _log.Info("D3D: Switched to windowed mode successfully");
+          Log.Info("D3D: Switched to windowed mode successfully");
         else
-          _log.Info("D3D: Switched to fullscreen mode successfully");
+          Log.Info("D3D: Switched to fullscreen mode successfully");
 
       }
       catch (Exception ex)
       {
         if (windowed)
-          _log.Info("D3D: Switch to windowed mode failed - {0}", ex.ToString());
+          Log.Info("D3D: Switch to windowed mode failed - {0}", ex.ToString());
         else
-          _log.Info("D3D: Switch to fullscreen mode failed - {0}", ex.ToString());
+          Log.Info("D3D: Switch to fullscreen mode failed - {0}", ex.ToString());
 
         windowed = !bWindowed;
         BuildPresentParamsFromSettings();
@@ -971,7 +963,7 @@ namespace MediaPortal
         }
         catch (Exception ex)
         {
-          _log.Error("D3D: InitializeDeviceObjects - Exception: {0}", ex.ToString());
+          Log.Error("D3D: InitializeDeviceObjects - Exception: {0}", ex.ToString());
           // Cleanup before we try again
           //OnDeviceLost(null, null);
           //OnDeviceDisposing(null, null);
@@ -1032,7 +1024,7 @@ namespace MediaPortal
         strSource = e.Source;
         strStack = e.StackTrace;
       }
-      _log.Error("D3D: Exception: {0} {1} {2}", strMsg, strSource, strStack);
+      Log.Error("D3D: Exception: {0} {1} {2}", strMsg, strSource, strStack);
       if (ApplicationMessage.ApplicationMustExit == Type)
       {
         strMsg += "\n\nMediaPortal has to be closed.";
@@ -1092,7 +1084,7 @@ namespace MediaPortal
     /// </summary>
     public void ToggleFullscreen()
     {
-      _log.Info("D3D: ToggleFullscreen");
+      Log.Info("D3D: ToggleFullscreen");
       int AdapterOrdinalOld = graphicsSettings.AdapterOrdinal;
       DeviceType DevTypeOld = graphicsSettings.DevType;
 
@@ -1247,7 +1239,7 @@ namespace MediaPortal
           // TV is active
           _tvChannel = Recorder.TVChannelName;
           _tvTimeshift = Recorder.IsTimeShifting();
-          _log.Info("D3D: Form resized - Stopping TV - Current channel: {0} / Timeshifting: {1}", _tvChannel, _tvTimeshift);
+          Log.Info("D3D: Form resized - Stopping TV - Current channel: {0} / Timeshifting: {1}", _tvChannel, _tvTimeshift);
           Recorder.StopViewing();
         }
         else
@@ -1257,7 +1249,7 @@ namespace MediaPortal
           _currentPlayListType = playlistPlayer.CurrentPlaylistType;
           _currentPlayList = new PlayList();
 
-          _log.Info("D3D: Saving fullscreen state for resume: {0}", _fullscreen);
+          Log.Info("D3D: Saving fullscreen state for resume: {0}", _fullscreen);
           PlayList tempList = playlistPlayer.GetPlaylist(_currentPlayListType);
           if (tempList.Count == 0 && g_Player.IsDVD == true)
           {
@@ -1279,7 +1271,7 @@ namespace MediaPortal
           _strCurrentFile = playlistPlayer.Get(playlistPlayer.CurrentSong);
           if (_strCurrentFile.Equals(String.Empty) && g_Player.IsDVD == true)
             _strCurrentFile = g_Player.CurrentFile;
-          _log.Info("D3D: Form resized - Stopping media - Current playlist: Type: {0} / Size: {1} / Current item: {2} / Filename: {3} / Position: {4}", _currentPlayListType, _currentPlayList.Count, playlistPlayer.CurrentSong, _strCurrentFile, _currentPlayerPos);
+          Log.Info("D3D: Form resized - Stopping media - Current playlist: Type: {0} / Size: {1} / Current item: {2} / Filename: {3} / Position: {4}", _currentPlayListType, _currentPlayList.Count, playlistPlayer.CurrentSong, _strCurrentFile, _currentPlayerPos);
           g_Player.Stop();
         }
         _iActiveWindow = GUIWindowManager.ActiveWindow;
@@ -1298,7 +1290,7 @@ namespace MediaPortal
         if (_wasTV)
         {
           // we were watching TV
-          _log.Info("D3D: RestorePlayers - Resuming: {0}", _tvChannel);
+          Log.Info("D3D: RestorePlayers - Resuming: {0}", _tvChannel);
           string _errorMessage = string.Empty;
           bool success = Recorder.StartViewing(_tvChannel, true, _tvTimeshift, true, out _errorMessage);
           if (success)
@@ -1306,7 +1298,7 @@ namespace MediaPortal
               (_iActiveWindow == (int)GUIWindow.Window.WINDOW_TV))
             {
               GUIWindowManager.ActivateWindow(_iActiveWindow);
-              _log.Info("D3D: Resumed TV successfully");
+              Log.Info("D3D: Resumed TV successfully");
             }
             else
             {
@@ -1315,12 +1307,12 @@ namespace MediaPortal
               tvWaitThread.Start();
             }
           else
-            _log.Info("D3D: Error resuming TV: {0}", _errorMessage);
+            Log.Info("D3D: Error resuming TV: {0}", _errorMessage);
         }
         else
         {
           // we were watching some audio/video
-          _log.Info("D3D: RestorePlayers - Resuming: {0}", _strCurrentFile);
+          Log.Info("D3D: RestorePlayers - Resuming: {0}", _strCurrentFile);
           playlistPlayer.Init();
           playlistPlayer.Reset();
           playlistPlayer.CurrentPlaylistType = _currentPlayListType;
@@ -1405,7 +1397,7 @@ namespace MediaPortal
         }
         catch (Exception ee)
         {
-          _log.Info("D3D: Exception {0}", ee);
+          Log.Info("D3D: Exception {0}", ee);
           System.Windows.Forms.MessageBox.Show("An exception has occurred.  MediaPortal has to be closed.\r\n\r\n" + ee.ToString(), "Exception",
             System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
           this.Close();
@@ -1448,18 +1440,18 @@ namespace MediaPortal
         try
         {
           // Test the cooperative level to see if it's okay to render
-          //_log.Info("app.TestCooperativeLevel()");
+          //Log.Info("app.TestCooperativeLevel()");
           GUIGraphicsContext.DX9Device.TestCooperativeLevel();
-          //_log.Info("app.TestCooperativeLevel() succeeded");
-          //_log.Info("app.InitializeDeviceObjects()");
+          //Log.Info("app.TestCooperativeLevel() succeeded");
+          //Log.Info("app.InitializeDeviceObjects()");
         }
         catch (DeviceLostException)
         {
-          //_log.Info("app.TestCooperativeLevel()->DeviceLostException");
+          //Log.Info("app.TestCooperativeLevel()->DeviceLostException");
           // If the device was lost, do not render until we get it back
           isHandlingSizeChanges = false;
           isWindowActive = false;
-          //_log.Info("app.DeviceLostException");
+          //Log.Info("app.DeviceLostException");
           return;
         }
         catch (DeviceNotResetException)
@@ -1473,7 +1465,7 @@ namespace MediaPortal
 
           // If we are windowed, read the desktop mode and use the same format for
           // the back buffer
-          //_log.Info("app.TestCooperativeLevel()->app.DeviceNotResetException");
+          //Log.Info("app.TestCooperativeLevel()->app.DeviceNotResetException");
           if (windowed)
           {
             GraphicsAdapterInfo adapterInfo = graphicsSettings.AdapterInfo;
@@ -1482,14 +1474,14 @@ namespace MediaPortal
           }
 
           // Reset the device and resize it
-          _log.Info("D3D: Resetting DX9 device");
+          Log.Info("D3D: Resetting DX9 device");
           try
           {
             GUIGraphicsContext.DX9Device.Reset(GUIGraphicsContext.DX9Device.PresentationParameters);
           }
           catch { }
 
-          //_log.Info("app.EnvironmentResized()");
+          //Log.Info("app.EnvironmentResized()");
           EnvironmentResized(GUIGraphicsContext.DX9Device, new CancelEventArgs());
           InitializeDeviceObjects();
         }
@@ -1504,7 +1496,7 @@ namespace MediaPortal
       }
       catch (Exception ex)
       {
-        _log.Info("D3D: Exception: {0}", ex);
+        Log.Info("D3D: Exception: {0}", ex);
       }
     }
 
@@ -1513,7 +1505,7 @@ namespace MediaPortal
       while (!g_Player.Playing)
         Thread.Sleep(100);
 
-      _log.Info("D3D: Resumed TV successfully");
+      Log.Info("D3D: Resumed TV successfully");
       GUIGraphicsContext.IsFullScreenVideo = _fullscreen;
       GUIWindowManager.ReplaceWindow(_iActiveWindow);
     }
@@ -1718,7 +1710,7 @@ namespace MediaPortal
         if (process.ProcessName.Equals(processName))
           return;
 
-      _log.Info("D3D: OnSetup - Stopping media");
+      Log.Info("D3D: OnSetup - Stopping media");
       g_Player.Stop();
 
       if (!GUIGraphicsContext.DX9Device.PresentationParameters.Windowed)
@@ -1728,7 +1720,7 @@ namespace MediaPortal
       Cursor.Show();
       Invalidate(true);
 
-      using (Settings xmlreader = new Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (Settings xmlreader = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         xmlreader.Clear();
 
       MediaPortal.Util.Utils.StartProcess("Configuration.exe", "", false, false);
@@ -1910,7 +1902,7 @@ namespace MediaPortal
 
     protected void ToggleFullWindowed()
     {
-      _log.Info("D3D: Fullscreen / windowed mode toggled");
+      Log.Info("D3D: Fullscreen / windowed mode toggled");
 
       isMaximized = !isMaximized;
 
@@ -1920,7 +1912,7 @@ namespace MediaPortal
 
       if (isMaximized)
       {
-        _log.Info("D3D: Switching windowed mode -> fullscreen");
+        Log.Info("D3D: Switching windowed mode -> fullscreen");
         if (autoHideTaskbar)
         {
           Win32API.EnableStartBar(false);
@@ -1939,8 +1931,8 @@ namespace MediaPortal
         this.ClientSize = new Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
         this.Update();
 
-        _log.Info("D3D: Switching windowed mode -> fullscreen done - Maximized: {0}", isMaximized);
-        _log.Info("D3D: Client size: {0}x{1} - Screen: {2}x{3}",
+        Log.Info("D3D: Switching windowed mode -> fullscreen done - Maximized: {0}", isMaximized);
+        Log.Info("D3D: Client size: {0}x{1} - Screen: {2}x{3}",
                   this.ClientSize.Width, this.ClientSize.Height,
                   Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
 
@@ -1948,7 +1940,7 @@ namespace MediaPortal
       }
       else
       {
-        _log.Info("D3D: Switching fullscreen -> windowed mode");
+        Log.Info("D3D: Switching fullscreen -> windowed mode");
         if (autoHideTaskbar)
         {
           Win32API.EnableStartBar(true);
@@ -1964,8 +1956,8 @@ namespace MediaPortal
         this.ClientSize = storedSize;
         this.Update();
 
-        _log.Info("D3D: Switching fullscreen -> windowed mode done - Maximized: {0}", isMaximized);
-        _log.Info("D3D: Client size: {0}x{1} - Screen: {2}x{3}",
+        Log.Info("D3D: Switching fullscreen -> windowed mode done - Maximized: {0}", isMaximized);
+        Log.Info("D3D: Client size: {0}x{1} - Screen: {2}x{3}",
                   this.ClientSize.Width, this.ClientSize.Height,
                   Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
 
@@ -2261,7 +2253,7 @@ namespace MediaPortal
       if (this._minimizeOnGuiExit && !_shuttingDown)
       {
         if (WindowState != FormWindowState.Minimized)
-          _log.Info("D3D: Minimizing to tray on GUI exit");
+          Log.Info("D3D: Minimizing to tray on GUI exit");
 
         isClosing = false;
         this.WindowState = FormWindowState.Minimized;
@@ -2374,7 +2366,7 @@ namespace MediaPortal
       if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false)
         SwitchFullScreenOrWindowed(true);
 
-      using (Settings xmlreader = new Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (Settings xmlreader = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         xmlreader.Clear();
 
       Process.Start("configuration.exe", @"/wizard /section=wizards\television.xml");
@@ -2387,7 +2379,7 @@ namespace MediaPortal
       if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false)
         SwitchFullScreenOrWindowed(true);
 
-      using (Settings xmlreader = new Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (Settings xmlreader = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         xmlreader.Clear();
 
       Process.Start("configuration.exe", @"/wizard /section=wizards\pictures.xml");
@@ -2400,7 +2392,7 @@ namespace MediaPortal
       if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false)
         SwitchFullScreenOrWindowed(true);
 
-      using (Settings xmlreader = new Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (Settings xmlreader = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         xmlreader.Clear();
 
       Process.Start("configuration.exe", @"/wizard /section=wizards\music.xml");
@@ -2413,7 +2405,7 @@ namespace MediaPortal
       if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false)
         SwitchFullScreenOrWindowed(true);
 
-      using (Settings xmlreader = new Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (Settings xmlreader = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         xmlreader.Clear();
 
       Process.Start("configuration.exe", @"/wizard /section=wizards\movies.xml");
@@ -2426,7 +2418,7 @@ namespace MediaPortal
       if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false)
         SwitchFullScreenOrWindowed(true);
 
-      using (Settings xmlreader = new Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (Settings xmlreader = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         xmlreader.Clear();
 
       Process.Start("configuration.exe", @"/wizard /section=wizards\dvd.xml");
@@ -2451,7 +2443,7 @@ namespace MediaPortal
 #if DEBUG
       catch (Exception ex)
       {
-        _log.Info("D3D: Exception: {0}", ex.ToString());
+        Log.Info("D3D: Exception: {0}", ex.ToString());
 #else
       catch (Exception)
       {
@@ -2588,7 +2580,7 @@ namespace MediaPortal
             }
             catch (Exception ex)
             {
-              _log.Error("exception:{0}", ex.ToString());
+              Log.Error("exception:{0}", ex.ToString());
     #if DEBUG
             throw ex;
     #endif
@@ -2623,7 +2615,7 @@ namespace MediaPortal
 
     public void Restore()
     {
-      _log.Info("D3D: Restoring from tray");
+      Log.Info("D3D: Restoring from tray");
       _fromTray = true;
       Show();
       notifyIcon.Visible = false;
@@ -2638,7 +2630,7 @@ namespace MediaPortal
       {
         Win32API.EnableStartBar(false);
         Win32API.ShowStartBar(false);
-        _log.Info("D3D: Hiding taskbar");
+        Log.Info("D3D: Hiding taskbar");
       }
     }
 
@@ -2718,7 +2710,7 @@ namespace MediaPortal
 
     protected void DoMinimizeOnStartup()
     {
-      _log.Info("D3D: Minimizing to tray on startup");
+      Log.Info("D3D: Minimizing to tray on startup");
 
       WindowState = FormWindowState.Minimized;
       Hide();

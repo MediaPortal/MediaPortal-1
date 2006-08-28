@@ -28,7 +28,7 @@ using System.Collections;
 using JH.CommBase;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
-using MediaPortal.Utils.Services;
+using MediaPortal.Util;
 
 namespace MediaPortal.RedEyeIR
 {
@@ -68,9 +68,6 @@ namespace MediaPortal.RedEyeIR
 		/// </summary>
 		private RedEye()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
 		}
 
 		public delegate void OnRemoteCommand(object command);
@@ -86,8 +83,6 @@ namespace MediaPortal.RedEyeIR
 		private const string remotefile = "remotevalues.xml";
 		static RedEye instance = null;
 		private string currentChannel = "0";
-    static ILog _log;
-    static IConfig _config;
 
 		public OnRemoteCommand RemoteCommandCallback
 		{
@@ -176,9 +171,6 @@ namespace MediaPortal.RedEyeIR
 		{
 			try
 			{
-        ServiceProvider services = GlobalServiceProvider.Instance;
-        _log = services.Get<ILog>();
-        _config = services.Get<IConfig>();
 				if (instance == null)
 					instance = new RedEye(remoteCommandCallback);
 			}
@@ -258,7 +250,7 @@ namespace MediaPortal.RedEyeIR
 		{
 			try
 			{
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
 				{
 					recInternalCommands = xmlreader.GetValueAsString("RedEye", "internal", "false") == "true";
 					commport        = xmlreader.GetValueAsString("RedEye", "commport",     "COM1:");
@@ -313,12 +305,12 @@ namespace MediaPortal.RedEyeIR
 			if (base.Online)
 			{
 				base.SendImmediate((byte)'%');
-				_log.Info("RedEye IRDA set");
+				Log.Info("RedEye IRDA set");
 				Sleep(500);
 			}
 			else
 			{
-				_log.Info("IRDA set failed, Port not Online");
+				Log.Info("IRDA set failed, Port not Online");
 				throw new System.Exception("IRDA set failed, Port not Online");
 				
 			}
@@ -330,12 +322,12 @@ namespace MediaPortal.RedEyeIR
 			if (base.Online)
 			{
 				base.SendImmediate((byte)'&');
-				_log.Info("RedEye RC5 Set");
+				Log.Info("RedEye RC5 Set");
 				Sleep(500);
 			}
 			else
 			{
-				_log.Info("RC5 set failed, Port not Online");
+				Log.Info("RC5 set failed, Port not Online");
 				throw new System.Exception("RC5 set failed, Port not Online");
 				
 			}
@@ -347,12 +339,12 @@ namespace MediaPortal.RedEyeIR
 			if (base.Online)
 			{
 				base.SendImmediate((byte)'$');
-				_log.Info("RedEye SkY set");
+				Log.Info("RedEye SkY set");
 				Sleep(500);
 			}
 			else
 			{
-				_log.Info("SKY set failed, Port not Online");
+				Log.Info("SKY set failed, Port not Online");
 				throw new System.Exception("SKY set failed, Port not Online");
 				
 			}
@@ -396,14 +388,14 @@ namespace MediaPortal.RedEyeIR
 						}
 						else
 						{
-							_log.Info("Redeye Failed to Send channel change : " + channel);
+							Log.Info("Redeye Failed to Send channel change : " + channel);
 							throw new System.Exception("Redeye Failed to Send channel change : " + channel);
 							
 						}
 						Sleep(CommandDelay);
 					}	
 				}
-				_log.Info("RedEye Transmitted Channel : " + channel);
+				Log.Info("RedEye Transmitted Channel : " + channel);
 			}											
 		}
 	}

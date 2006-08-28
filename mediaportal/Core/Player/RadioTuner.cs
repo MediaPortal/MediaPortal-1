@@ -28,7 +28,6 @@ using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
 using MediaPortal.Util;
-using MediaPortal.Utils.Services;
 
 
 using MediaPortal.GUI.Library;
@@ -48,21 +47,16 @@ namespace MediaPortal.Player
     string m_strRadioDevice = "";
     string m_strAudioDevice = "";
     string m_strLineInput = "";
-    protected ILog _log;
-    protected IConfig _config;
 
     public RadioTuner()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
     }
 
     public override bool Play(string strFile)
     {
       int iChannel = Convert.ToInt32(System.IO.Path.GetFileNameWithoutExtension(strFile));
 
-      _log.Info("Radiotuner: tune to channel:{0}", iChannel);
+      Log.Info("Radiotuner: tune to channel:{0}", iChannel);
       try
       {
         string strPlayerFile = "";
@@ -70,7 +64,7 @@ namespace MediaPortal.Player
 
         int iTunerCountry = 31;
         string strTunerType = "Antenna";
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         {
           m_bInternal = xmlreader.GetValueAsBool("radio", "internal", true);
           strPlayerFile = xmlreader.GetValueAsString("radio", "player", "");
@@ -101,7 +95,7 @@ namespace MediaPortal.Player
           m_player = MediaPortal.Util.Utils.StartProcess(strPlayerFile, strPlayerArgs, false, true);
           if (m_player == null)
           {
-            _log.Info("Unable to start external radio player:{0} {1}", strPlayerFile, strPlayerArgs);
+            Log.Info("Unable to start external radio player:{0} {1}", strPlayerFile, strPlayerArgs);
             return false;
           }
 
@@ -118,7 +112,7 @@ namespace MediaPortal.Player
         m_capture = new RadioGraph(m_strRadioDevice, m_strAudioDevice, m_strLineInput);
         if (!m_capture.Create(!bAntenna, 0, iTunerCountry))
         {
-          _log.Info("RadioTuner:failed to Tune to channel:{0}", iChannel);
+          Log.Info("RadioTuner:failed to Tune to channel:{0}", iChannel);
           m_capture.DeleteGraph();
           m_capture = null;
           FreeCard(m_strRadioDevice);
@@ -126,14 +120,14 @@ namespace MediaPortal.Player
         }
         m_capture.Tune(iChannel);
 
-        _log.Info("RadioTuner:Frequency:{0} Hz tuned to:{1} Hz", m_capture.Channel, m_capture.AudioFrequency);
+        Log.Info("RadioTuner:Frequency:{0} Hz tuned to:{1} Hz", m_capture.Channel, m_capture.AudioFrequency);
 
       }
       catch (Exception ex)
       {
         if (m_strRadioDevice != "B2C2 MPEG-2 Source")
         {
-          _log.Info("RadioTuner:failed to Tune to channel:{0} {1} {2}", iChannel, ex.Message, ex.StackTrace);
+          Log.Info("RadioTuner:failed to Tune to channel:{0} {1} {2}", iChannel, ex.Message, ex.StackTrace);
           m_capture.DeleteGraph();
           m_capture = null;
           FreeCard(m_strRadioDevice);

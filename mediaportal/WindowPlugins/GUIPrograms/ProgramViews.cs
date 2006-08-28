@@ -33,7 +33,7 @@ using System.Runtime.Serialization.Formatters.Soap;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.View;
-using MediaPortal.Utils.Services;
+using MediaPortal.Util;
 
 namespace WindowPlugins.GUIPrograms
 {
@@ -184,15 +184,12 @@ namespace WindowPlugins.GUIPrograms
 
     public ProgramViews(string name)
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      ILog log = services.Get<ILog>();
-      IConfig _config = services.Get<IConfig>();
       // This call is required by the Windows Form Designer.
       InitializeComponent();
       views = new ArrayList();
-      if (System.IO.File.Exists(_config.Get(Config.Options.ConfigPath) + "programViews2.xml"))
+      if (System.IO.File.Exists(Config.Get(Config.Dir.Config) + "programViews2.xml"))
       {
-        using (FileStream fileStream = new FileStream(_config.Get(Config.Options.ConfigPath) + "programViews2.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+        using (FileStream fileStream = new FileStream(Config.Get(Config.Dir.Config) + "programViews2.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
         {
           try
           {
@@ -207,7 +204,7 @@ namespace WindowPlugins.GUIPrograms
       }
       else
       {
-        log.Info("Warning: no programViews2.xml found!");
+        Log.Info("Warning: no programViews2.xml found!");
       }
       LoadViews();
     }

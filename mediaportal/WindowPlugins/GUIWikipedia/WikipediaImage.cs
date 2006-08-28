@@ -32,7 +32,7 @@ using System.Text;
 using System.Threading;
 using System.Collections;
 using MediaPortal.GUI.Library;
-using MediaPortal.Utils.Services;
+using MediaPortal.Util;
 
 namespace Wikipedia
 {
@@ -48,8 +48,6 @@ namespace Wikipedia
     private string imageurl = string.Empty;
     private string imagelocal = string.Empty;
 
-    private ILog _log;
-    private IConfig _config;
     #endregion
 
     #region constructors
@@ -59,9 +57,6 @@ namespace Wikipedia
     /// <param name="language">Language of the Wikipedia page</param>
     public WikipediaImage(string imagename, string language)
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
       SetLanguage(language);
       this.imagename = imagename;
       GetImageUrl();
@@ -88,34 +83,34 @@ namespace Wikipedia
     {
       if (language == "Default")
       {
-        MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml");
+        MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml");
         language = xmlreader.GetValueAsString("skin", "language", "English");
       }
       switch (language)
       {
         case "English":
           this.WikipediaURL = "http://en.wikipedia.org/wiki/Image:";
-          _log.Info("Wikipedia: Language set to English");
+          Log.Info("Wikipedia: Language set to English");
           break;
         case "German":
           this.WikipediaURL = "http://de.wikipedia.org/wiki/Bild:";
-          _log.Info("Wikipedia: Language set to German");
+          Log.Info("Wikipedia: Language set to German");
           break;
         case "French":
           this.WikipediaURL = "http://fr.wikipedia.org/wiki/Image:";
-          _log.Info("Wikipedia: Language set to French");
+          Log.Info("Wikipedia: Language set to French");
           break;
         case "Dutch":
           this.WikipediaURL = "http://nl.wikipedia.org/wiki/Afbeelding:";
-          _log.Info("Wikipedia: Language set to Dutch");
+          Log.Info("Wikipedia: Language set to Dutch");
           break;
         case "Norwegian":
           this.WikipediaURL = "http://no.wikipedia.org/wiki/Bilde:";
-          _log.Info("Wikipedia: Language set to Norwegian");
+          Log.Info("Wikipedia: Language set to Norwegian");
           break;
         default:
           this.WikipediaURL = "http://en.wikipedia.org/wiki/Image:";
-          _log.Info("Wikipedia: Language set to Default (English)");
+          Log.Info("Wikipedia: Language set to Default (English)");
           break;
       }
     }
@@ -124,7 +119,7 @@ namespace Wikipedia
     /// <returns>String: filename of the downloaded image.</returns>
     public string GetImageFilename()
     {
-      string imagelocal = _config.Get(Config.Options.ThumbsPath) + @"wikipedia\" + imagename;
+      string imagelocal = Config.Get(Config.Dir.Thumbs) + @"wikipedia\" + imagename;
       return imagelocal;
     }
 
@@ -136,7 +131,7 @@ namespace Wikipedia
       
       // Build the URL to the Image page
       System.Uri url = new System.Uri(WikipediaURL + this.imagename);
-      _log.Info("Wikipedia: Trying to get following Image page: {0}", url.ToString());
+      Log.Info("Wikipedia: Trying to get following Image page: {0}", url.ToString());
 
       // Here we get the content from the web and put it to a string
       try
@@ -147,19 +142,19 @@ namespace Wikipedia
         StreamReader reader = new StreamReader(data);
         imagepage = reader.ReadToEnd();
         reader.Close();
-        _log.Info("Wikipedia: Success! Downloaded all data from the image page.");
+        Log.Info("Wikipedia: Success! Downloaded all data from the image page.");
       }
       catch (Exception e)
       {
-        _log.Info("Wikipedia: Exception during downloading image page:");
-        _log.Info(e.ToString());
+        Log.Info("Wikipedia: Exception during downloading image page:");
+        Log.Info(e.ToString());
       }
 
       //We're searching for something like this:
       //<div class="fullImageLink" id="file"><a href="http://upload.wikimedia.org/wikipedia/commons/7/7d/Bild_478.jpg">
       if (imagepage.IndexOf("class=\"fullImageLink\"") >= 0)
       {
-        _log.Info("Wikipedia: Extracting link to full-size image.");
+        Log.Info("Wikipedia: Extracting link to full-size image.");
         int iStart = imagepage.IndexOf("class=\"fullImageLink\"");
         imagepage = imagepage.Substring(iStart, 1000);
 
@@ -167,8 +162,8 @@ namespace Wikipedia
         int iEnd = imagepage.IndexOf("\"", iStart);
 
         this.imageurl = imagepage.Substring(iStart, iEnd - iStart);
-        _log.Info("Wikipedia: URL of full-size image extracted.");
-        _log.Info(imageurl);
+        Log.Info("Wikipedia: URL of full-size image extracted.");
+        Log.Info(imageurl);
       }
       else
         this.imageurl = string.Empty;
@@ -189,29 +184,29 @@ namespace Wikipedia
         if (!System.IO.File.Exists(thumbspath + imagename))
         {
 
-          _log.Info("Wikipedia: Trying to get following URL: {0}", imageurl);
+          Log.Info("Wikipedia: Trying to get following URL: {0}", imageurl);
           // Here we get the image from the web and save it to disk
           try
           {
             WebClient client = new WebClient();
             client.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
             client.DownloadFile(imageurl, thumbspath + imagename);
-            _log.Info("Wikipedia: Success! Image downloaded.");
+            Log.Info("Wikipedia: Success! Image downloaded.");
           }
           catch (Exception e)
           {
-            _log.Info("Wikipedia: Exception during downloading:");
-            _log.Info(e.ToString());
+            Log.Info("Wikipedia: Exception during downloading:");
+            Log.Info(e.ToString());
           }
         }
         else
         {
-          _log.Info("Wikipedia: Image exists, no need to redownload!");
+          Log.Info("Wikipedia: Image exists, no need to redownload!");
         }
       }
       else
       {
-        _log.Info("Wikipedia: No imageurl. Can't download file.");
+        Log.Info("Wikipedia: No imageurl. Can't download file.");
       }
     }
 

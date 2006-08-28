@@ -22,7 +22,8 @@ using System;
 using System.Collections;
 using System.Reflection;
 using System.Drawing;
-using MediaPortal.Utils.Services;
+using MediaPortal.GUI.Library;
+using MediaPortal.Util;
 
 namespace MediaPortal.TagReader
 {
@@ -36,8 +37,6 @@ namespace MediaPortal.TagReader
 	public class TagReader
 	{
     static ArrayList m_readers=new ArrayList();
-    static ILog _log;
-    static IConfig _config;
 		
 		/// <summary>
 		/// Constructor
@@ -45,12 +44,9 @@ namespace MediaPortal.TagReader
 		/// </summary>
     static TagReader()
 		{
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
 
-      _log.Info("Loading tag reader plugins");
-      string[] strFiles=System.IO.Directory.GetFiles(_config.Get(Config.Options.PluginsPath) + "tagreaders", "*.dll");
+      Log.Info("Loading tag reader plugins");
+      string[] strFiles=System.IO.Directory.GetFiles(Config.Get(Config.Dir.Plugins) + "tagreaders", "*.dll");
       foreach (string strFile in strFiles)
       {
         try
@@ -69,7 +65,7 @@ namespace MediaPortal.TagReader
                   if (t.IsSubclassOf (typeof(ITagReader)))
                   {
                     object newObj=(object)Activator.CreateInstance(t);
-                    _log.Info("  found plugin:{0} in {1}",t.ToString(), strFile);
+                    Log.Info("  found plugin:{0} in {1}",t.ToString(), strFile);
                     ITagReader reader=(ITagReader)newObj;
                     m_readers.Add(reader);
                   }
@@ -124,7 +120,7 @@ namespace MediaPortal.TagReader
         }
         catch(Exception ex)
         { 
-          _log.Info("Tag reader generated exception:{0}",ex.ToString());
+          Log.Info("Tag reader generated exception:{0}",ex.ToString());
         }
       }
       return null;
@@ -167,7 +163,7 @@ namespace MediaPortal.TagReader
         }
         catch(Exception ex)
         { 
-          _log.Info("Tag reader generated exception:{0}",ex.ToString());
+          Log.Info("Tag reader generated exception:{0}",ex.ToString());
         }
       }
       return null;

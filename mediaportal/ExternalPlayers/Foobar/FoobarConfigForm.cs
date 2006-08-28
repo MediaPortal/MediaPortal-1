@@ -31,7 +31,7 @@ using System.Windows.Forms;
 using System.Text;
 using System.IO;
 using Microsoft.Win32;
-using MediaPortal.Utils.Services;
+using MediaPortal.Util;
 
 namespace MediaPortal.FoobarPlugin
 {
@@ -54,7 +54,6 @@ namespace MediaPortal.FoobarPlugin
     private MediaPortal.UserInterface.Controls.MPLabel labelFoobarFileTypes;
     private LinkLabel linkLabelStartupParameter;
     private TextBox textBoxStartupParameter;
-    static IConfig _config;
     /// <summary>
     /// Required designer variable.
     /// </summary>
@@ -62,8 +61,6 @@ namespace MediaPortal.FoobarPlugin
 
     public FoobarConfigForm()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _config = services.Get<IConfig>();
       //
       // Required for Windows Form Designer support
       //
@@ -330,7 +327,7 @@ namespace MediaPortal.FoobarPlugin
     /// <param name="e">the event.  Form load!</param>
     private void FoobarConfigForm_Load(object sender, System.EventArgs e)
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         textBoxFoobarExtensions.Text = xmlreader.GetValueAsString("foobarplugin", "enabledextensions", ".cda,.mp3,.mid,.wav,.mpc,.aac,.shn,.wma,.ac3,.ogg");
         textBoxPortNumber.Text = xmlreader.GetValueAsString("foobarplugin", "port", "8989");
@@ -361,7 +358,7 @@ namespace MediaPortal.FoobarPlugin
     /// <param name="e">the event.  Closing!</param>
     private void FoobarConfigForm_Closing(object sender, System.ComponentModel.CancelEventArgs e)
     {
-      using (MediaPortal.Profile.Settings xmlWriter = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlWriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         xmlWriter.SetValue("foobarplugin", "port", textBoxPortNumber.Text);
         xmlWriter.SetValue("foobarplugin", "host", textBoxHostname.Text);

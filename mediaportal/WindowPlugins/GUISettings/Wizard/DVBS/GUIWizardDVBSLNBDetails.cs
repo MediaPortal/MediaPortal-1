@@ -1,5 +1,6 @@
 using System;
 using MediaPortal.GUI.Library;
+using MediaPortal.Util;
 using MediaPortal.TV.Recording;
 
 namespace WindowPlugins.GUISettings.Wizard.DVBS
@@ -50,7 +51,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBS
 			TVCaptureDevice captureCard= Recorder.Get(card);
 			if (captureCard!=null) 
 			{
-				string filename=String.Format(_config.Get(MediaPortal.Utils.Services.Config.Options.DatabasePath) + "card_{0}.xml",captureCard.FriendlyName);
+				string filename=String.Format(Config.Get(Config.Dir.Database) + "card_{0}.xml",captureCard.FriendlyName);
 
 				using(MediaPortal.Profile.Settings   xmlwriter=new MediaPortal.Profile.Settings(filename))
 				{
@@ -141,7 +142,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBS
 
 			TVCaptureDevice captureCard= Recorder.Get(card);
 			if (captureCard==null) return;
-      string filename = String.Format(_config.Get(MediaPortal.Utils.Services.Config.Options.DatabasePath) + "card_{0}.xml", captureCard.FriendlyName);
+      string filename = String.Format(Config.Get(Config.Dir.Database) + "card_{0}.xml", captureCard.FriendlyName);
 			
 			using(MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings(filename))
 			{
@@ -180,7 +181,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBS
 
 			TVCaptureDevice captureCard= Recorder.Get(card);
 			if (captureCard==null) return;
-      string filename = String.Format(_config.Get(MediaPortal.Utils.Services.Config.Options.DatabasePath) + "card_{0}.xml", captureCard.FriendlyName);
+      string filename = String.Format(Config.Get(Config.Dir.Database) + "card_{0}.xml", captureCard.FriendlyName);
 			using(MediaPortal.Profile.Settings   xmlwriter=new MediaPortal.Profile.Settings(filename))
 			{
 				string lnbKey=String.Format("useLNB{0}",LNBNumber);

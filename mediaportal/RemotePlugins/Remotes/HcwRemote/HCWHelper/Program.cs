@@ -28,7 +28,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Threading;
-using MediaPortal.Utils.Services;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.InputDevices.HcwHelper
 {
@@ -40,12 +40,7 @@ namespace MediaPortal.InputDevices.HcwHelper
     [STAThread]
     static void Main()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      LogSharedFileWriter logFile = new LogSharedFileWriter("log", "MediaPortal");
-      ILog log = new Log(logFile, Log.Level.Debug);
-      services.Add<ILog>(log);
-
-      log.Info("HCWHelper: Starting up");
+      Log.Info("HCWHelper: Starting up");
       Thread.CurrentThread.Priority = ThreadPriority.Highest;
 
       if ((Process.GetProcessesByName("HcwHelper").Length == 1) &&
@@ -65,10 +60,10 @@ namespace MediaPortal.InputDevices.HcwHelper
       }
       else
         if (Process.GetProcessesByName("HcwHelper").Length != 1)
-          log.Info("HCWHelper: HCWHelper already running - exiting");
+          Log.Info("HCWHelper: HCWHelper already running - exiting");
         else
-          log.Info("HCWHelper: MediaPortal not running - exiting");
-      log.Info("HCWHelper: Shutting down");
+          Log.Info("HCWHelper: MediaPortal not running - exiting");
+      Log.Info("HCWHelper: Shutting down");
     }
   }
 }

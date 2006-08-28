@@ -596,7 +596,7 @@ namespace MediaPortal.Dialogs
       m_bConfirmed = false;
       GUIGraphicsContext.Overlay = false;
       GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + (int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD));
-      _log.Info("window:{0} init", this.ToString());
+      Log.Info("window:{0} init", this.ToString());
       Initialize();
     }
 
@@ -605,7 +605,7 @@ namespace MediaPortal.Dialogs
       GUIGraphicsContext.Overlay = m_bPrevOverlay;
       DeInitialize();
 
-      _log.Info("window:{0} deinit", this.ToString());
+      Log.Info("window:{0} deinit", this.ToString());
       FreeResources();
     }
 

@@ -143,7 +143,7 @@ namespace MediaPortal.GUI.Video
       if ( g_Player.IsTVRecording )
         key = "mytv";
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         m_bMSNChatPopup = ( xmlreader.GetValueAsInt("MSNmessenger", "popupwindow", 0) == 1 );
         m_iMaxTimeOSDOnscreen = 1000 * xmlreader.GetValueAsInt("movieplayer", "osdtimeout", 5);
@@ -169,7 +169,7 @@ namespace MediaPortal.GUI.Video
 
     void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         string strKey = "movieplayer";
         if ( g_Player.IsDVD )
@@ -360,7 +360,7 @@ namespace MediaPortal.GUI.Video
         case Action.ActionType.ACTION_SHOW_MSN_OSD:
           if ( m_bMSNChatPopup )
           {
-            _log.Info("MSN CHAT:ON");
+            Log.Info("MSN CHAT:ON");
 
             m_bMSNChatVisible = true;
             GUIWindowManager.VisibleOsd = GUIWindow.Window.WINDOW_MSNOSD;
@@ -541,7 +541,7 @@ namespace MediaPortal.GUI.Video
               g_Player.SwitchToNextAudio();
               msg.Label = string.Format("{0} ({1}/{2})", g_Player.AudioLanguage(g_Player.CurrentAudioStream), g_Player.CurrentAudioStream + 1, g_Player.AudioStreams);
               OnMessage(msg);
-              _log.Info("GUIVideoFullscreen: switched audio to {0}", msg.Label);
+              Log.Info("GUIVideoFullscreen: switched audio to {0}", msg.Label);
             }
           }
           break;
@@ -559,14 +559,14 @@ namespace MediaPortal.GUI.Video
               else
                 msg.Label = GUILocalizeStrings.Get(519); // Subtitles off
               OnMessage(msg);
-              _log.Info("GUIVideoFullscreen: switched subtitle to {0}", msg.Label);
+              Log.Info("GUIVideoFullscreen: switched subtitle to {0}", msg.Label);
             }
           }
           break;
 
         case Action.ActionType.ACTION_STOP:
           {
-            _log.Info("GUIVideoFullscreen:stop");
+            Log.Info("GUIVideoFullscreen:stop");
             g_Player.Stop();
             GUIWindowManager.ShowPreviousWindow();
           }
@@ -756,7 +756,7 @@ namespace MediaPortal.GUI.Video
 
           if ( !m_bMSNChatVisible && m_bMSNChatPopup && ( m_msnWindow != null ) )
           {
-            _log.Info("MSN CHAT:ON");
+            Log.Info("MSN CHAT:ON");
             m_bMSNChatVisible = true;
             GUIWindowManager.VisibleOsd = GUIWindow.Window.WINDOW_MSNOSD;
             m_msnWindow.DoModal(GetID, message);
@@ -918,7 +918,7 @@ namespace MediaPortal.GUI.Video
           break;
 
         case 12902: // MSN Messenger
-          _log.Info("MSN CHAT:ON");
+          Log.Info("MSN CHAT:ON");
           m_bMSNChatVisible = true;
           GUIWindowManager.VisibleOsd = GUIWindow.Window.WINDOW_MSNOSD;
           m_msnWindow.DoModal(GetID, null);

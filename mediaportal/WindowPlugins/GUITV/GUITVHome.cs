@@ -40,7 +40,6 @@ using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
-using MediaPortal.Utils.Services;
 using System.Threading;
 
 namespace MediaPortal.GUI.TV
@@ -87,13 +86,10 @@ namespace MediaPortal.GUI.TV
     [SkinControlAttribute(99)]
     protected GUIVideoControl videoWindow = null;
 
-    new static protected ILog _log;
     #endregion
 
     public GUITVHome()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
 
       GetID = (int)GUIWindow.Window.WINDOW_TV;
     }
@@ -105,7 +101,7 @@ namespace MediaPortal.GUI.TV
       if ( _settingsLoaded )
         return;
       _settingsLoaded = true;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(MediaPortal.Util.Config.Get(MediaPortal.Util.Config.Dir.Config) + "MediaPortal.xml"))
       {
         m_navigator.LoadSettings(xmlreader);
         _isTvOn = xmlreader.GetValueAsBool("mytv", "tvon", false);
@@ -132,7 +128,7 @@ namespace MediaPortal.GUI.TV
 
     void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(MediaPortal.Util.Config.Get(MediaPortal.Util.Config.Dir.Config) + "MediaPortal.xml"))
       {
         m_navigator.SaveSettings(xmlwriter);
         xmlwriter.SetValueAsBool("mytv", "tvon", _isTvOn);
@@ -168,7 +164,7 @@ namespace MediaPortal.GUI.TV
           //are we watching tv?
           if ( GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN )
           {
-            _log.Info("send message to fullscreen tv");
+            Log.Info("send message to fullscreen tv");
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORD, GUIWindowManager.ActiveWindow, 0, 0, 0, 0, null);
             msg.SendToTargetWindow = true;
             msg.TargetWindowId = (int)GUIWindow.Window.WINDOW_TVFULLSCREEN;
@@ -176,7 +172,7 @@ namespace MediaPortal.GUI.TV
             return;
           }
 
-          _log.Info("GUITvHome:Record action");
+          Log.Info("GUITvHome:Record action");
           if ( Recorder.IsViewing() || Recorder.IsTimeShifting() )
           {
             string channel = Recorder.GetTVChannelName();
@@ -294,7 +290,7 @@ namespace MediaPortal.GUI.TV
       {
         if (!g_Player.IsTVRecording)
         {
-          _log.Info("TVHome:stop music/video:{0}",g_Player.CurrentFile);
+          Log.Info("TVHome:stop music/video:{0}",g_Player.CurrentFile);
           g_Player.Stop();
         }
       }
@@ -332,7 +328,7 @@ namespace MediaPortal.GUI.TV
           _isTimeShifting = Recorder.IsTimeShifting();
           _isTvOn = true;
         }
-        _log.Info("tv home init:{0}", channelName);
+        Log.Info("tv home init:{0}", channelName);
         ViewChannelAndCheck(channelName);
       }
 
@@ -425,7 +421,7 @@ namespace MediaPortal.GUI.TV
         if ( Recorder.IsViewing() )
         {
           //tv off
-          _log.Info("TVHome:turn tv off");
+          Log.Info("TVHome:turn tv off");
           _isTvOn = false;
           SaveSettings();
           g_Player.Stop();
@@ -434,11 +430,11 @@ namespace MediaPortal.GUI.TV
         {
           if ( !Recorder.Running )
           {
-            _log.Info("TVHome: Recorder.Start()");
+            Log.Info("TVHome: Recorder.Start()");
             Recorder.Start();
           }
           // tv on
-          _log.Info("TVHome:turn tv on {0}", Navigator.CurrentChannel);
+          Log.Info("TVHome:turn tv on {0}", Navigator.CurrentChannel);
           _isTvOn = true;
 
           //stop playing anything
@@ -466,7 +462,7 @@ namespace MediaPortal.GUI.TV
       {
         //turn timeshifting off 
         _isTimeShifting = !Recorder.IsTimeShifting();
-        _log.Info("tv home timeshift onoff:{0}", _isTimeShifting);
+        Log.Info("tv home timeshift onoff:{0}", _isTimeShifting);
         ViewChannelAndCheck(Navigator.CurrentChannel);
 
         _isTimeShifting = Recorder.IsTimeShifting();
@@ -508,20 +504,20 @@ namespace MediaPortal.GUI.TV
             {
               //restart viewing...  
               _isTvOn = true;
-              _log.Info("tv home msg resume tv:{0}", Navigator.CurrentChannel);
+              Log.Info("tv home msg resume tv:{0}", Navigator.CurrentChannel);
               ViewChannel(Navigator.CurrentChannel);
             }
           }
           break;
         case GUIMessage.MessageType.GUI_MSG_RECORDER_VIEW_CHANNEL:
-          _log.Info("tv home msg view chan:{0}", message.Label);
+          Log.Info("tv home msg view chan:{0}", message.Label);
           ViewChannel(message.Label);
           Navigator.UpdateCurrentChannel();
           break;
 
         case GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_VIEWING:
           _isTvOn = false;
-          _log.Info("tv home msg stop chan:{0}", message.Label);
+          Log.Info("tv home msg stop chan:{0}", message.Label);
           ViewChannel(message.Label);
           Navigator.UpdateCurrentChannel();
           break;
@@ -727,7 +723,7 @@ namespace MediaPortal.GUI.TV
       }
       catch ( Exception ex )
       {
-        _log.Info("grrrr:{0}", ex.Source, ex.StackTrace);
+        Log.Info("grrrr:{0}", ex.Source, ex.StackTrace);
       }
     }
 
@@ -736,7 +732,7 @@ namespace MediaPortal.GUI.TV
     /// </summary>
     static public void OnPreviousChannel()
     {
-      _log.Info("GUITVHome:OnPreviousChannel()");
+      Log.Info("GUITVHome:OnPreviousChannel()");
       if ( GUIGraphicsContext.IsFullScreenVideo )
       {
         // where in fullscreen so delayzap channel instead of immediatly tune..
@@ -754,7 +750,7 @@ namespace MediaPortal.GUI.TV
     {
       if ( !Recorder.Running )
       {
-        _log.Info("GUITVHome.ViewChannelAndCheck(): Recorder.Running = false");
+        Log.Info("GUITVHome.ViewChannelAndCheck(): Recorder.Running = false");
         return false;
       }
       if ( g_Player.Playing )
@@ -769,9 +765,9 @@ namespace MediaPortal.GUI.TV
           return true;
       }
       if ( _isTvOn )
-        _log.Info("GUITVHome.ViewChannelAndCheck(): View channel={0} ts:{1}", channel, _isTimeShifting);
+        Log.Info("GUITVHome.ViewChannelAndCheck(): View channel={0} ts:{1}", channel, _isTimeShifting);
       else
-        _log.Info("GUITVHome.ViewChannelAndCheckl(): _isTvOn = off - autostart doesn't apply");
+        Log.Info("GUITVHome.ViewChannelAndCheckl(): _isTvOn = off - autostart doesn't apply");
 
       if ( channel != Navigator.CurrentChannel )
         Navigator.LastViewedChannel = Navigator.CurrentChannel;
@@ -816,9 +812,9 @@ namespace MediaPortal.GUI.TV
           return;
       }
       if ( _isTvOn )
-        _log.Info("GUITVHome.ViewChannel(): View channel={0} ts:{1}", channel, _isTimeShifting);
+        Log.Info("GUITVHome.ViewChannel(): View channel={0} ts:{1}", channel, _isTimeShifting);
       else
-        _log.Info("GUITVHome.ViewChannel(): _isTvOn = off");
+        Log.Info("GUITVHome.ViewChannel(): _isTvOn = off");
 
       if ( channel != Navigator.CurrentChannel )
         Navigator.LastViewedChannel = Navigator.CurrentChannel;
@@ -832,7 +828,7 @@ namespace MediaPortal.GUI.TV
     /// </summary>
     static public void OnNextChannel()
     {
-      _log.Info("GUITVHome:OnNextChannel()");
+      Log.Info("GUITVHome:OnNextChannel()");
       if ( GUIGraphicsContext.IsFullScreenVideo )
       {
         // where in fullscreen so delayzap channel instead of immediatly tune..
@@ -956,14 +952,11 @@ namespace MediaPortal.GUI.TV
     private bool reentrant = false;
     #endregion
 
-    protected ILog _log;
 
     #region Constructors
 
     public ChannelNavigator()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
 
       // Load all groups
       ReLoad();
@@ -1077,11 +1070,11 @@ namespace MediaPortal.GUI.TV
     public void ZapNow()
     {
       m_zaptime = DateTime.Now.AddSeconds(-1);
-      //_log.Error("zapnow group:{0} current group:{0}", m_zapgroup, m_currentgroup);
+      //Log.Error("zapnow group:{0} current group:{0}", m_zapgroup, m_currentgroup);
       //if (m_zapchannel == null)
-      //  _log.Error("zapchannel==null");
+      //  Log.Error("zapchannel==null");
       //else
-      //  _log.Error("zapchannel=={0}",m_zapchannel);
+      //  Log.Error("zapchannel=={0}",m_zapchannel);
     }
     /// <summary>
     /// Checks if it is time to zap to a different channel. This is called during Process().
@@ -1119,7 +1112,7 @@ namespace MediaPortal.GUI.TV
           // Zap to desired channel
           string zappingTo = m_zapchannel;
           m_zapchannel = null;
-          _log.Info("Channel change:{0}", zappingTo);
+          Log.Info("Channel change:{0}", zappingTo);
           GUITVHome.ViewChannel(zappingTo);
           reentrant = false;
           return true;
@@ -1256,7 +1249,7 @@ namespace MediaPortal.GUI.TV
       TVChannel chan = (TVChannel)CurrentGroup.TvChannels[currindex];
       m_zapchannel = chan.Name;
 
-      _log.Info("Navigator:ZapNext {0}->{1}", currentChan, m_zapchannel);
+      Log.Info("Navigator:ZapNext {0}->{1}", currentChan, m_zapchannel);
       if ( GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN )
       {
         if ( useZapDelay )
@@ -1296,7 +1289,7 @@ namespace MediaPortal.GUI.TV
       TVChannel chan = (TVChannel)CurrentGroup.TvChannels[currindex];
       m_zapchannel = chan.Name;
 
-      _log.Info("Navigator:ZapPrevious {0}->{1}", currentChan, m_zapchannel);
+      Log.Info("Navigator:ZapPrevious {0}->{1}", currentChan, m_zapchannel);
       if ( GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN )
       {
         if ( useZapDelay )

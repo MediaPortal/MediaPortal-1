@@ -31,8 +31,8 @@ using System.Windows.Forms;
 using System.Xml;
 using System.IO;
 using MediaPortal.GUI.Library;
+using MediaPortal.Util;
 using System.Threading;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.InputDevices
 {
@@ -71,8 +71,6 @@ namespace MediaPortal.InputDevices
 
     bool changedSettings = false;
 
-    protected ILog _log;
-    protected IConfig _config;
 
     class Data
     {
@@ -157,9 +155,6 @@ namespace MediaPortal.InputDevices
 
     public InputMappingForm(string name)
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
       //
       // Required for Windows Form Designer support
       //
@@ -738,8 +733,8 @@ namespace MediaPortal.InputDevices
         treeMapping.Nodes.Clear();
         XmlDocument doc = new XmlDocument();
         string path = "InputDeviceMappings\\defaults\\" + xmlFile;
-        if (!defaults && File.Exists(_config.Get(Config.Options.CustomInputDevicePath) + xmlFile))
-          path = _config.Get(Config.Options.CustomInputDevicePath) + xmlFile;
+        if (!defaults && File.Exists(Config.Get(Config.Dir.CustomInputDevice) + xmlFile))
+          path = Config.Get(Config.Dir.CustomInputDevice) + xmlFile;
         if (!File.Exists(path))
         {
           MessageBox.Show("Can't locate mapping file " + xmlFile + "\n\nMake sure it exists in /InputDeviceMappings/defaults", "Mapping file missing", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -890,8 +885,8 @@ namespace MediaPortal.InputDevices
       }
       catch (Exception ex)
       {
-        _log.Error(ex);
-        File.Delete(_config.Get(Config.Options.CustomInputDevicePath) + xmlFile);
+        Log.Error(ex);
+        File.Delete(Config.Get(Config.Dir.CustomInputDevice) + xmlFile);
         LoadMapping(xmlFile, true);
       }
     }
@@ -902,18 +897,18 @@ namespace MediaPortal.InputDevices
       try
 #endif
       {
-        DirectoryInfo dir = Directory.CreateDirectory(_config.Get(Config.Options.CustomInputDevicePath));
+        DirectoryInfo dir = Directory.CreateDirectory(Config.Get(Config.Dir.CustomInputDevice));
       }
 #if !DEBUG
       catch
       {
-        _log.Info("MAP: Error accessing directory \"InputDeviceMappings\\custom\"");
+        Log.Info("MAP: Error accessing directory \"InputDeviceMappings\\custom\"");
       }
 
       //try
 #endif
       {
-        XmlTextWriter writer = new XmlTextWriter(_config.Get(Config.Options.CustomInputDevicePath) + xmlFile, System.Text.Encoding.UTF8);
+        XmlTextWriter writer = new XmlTextWriter(Config.Get(Config.Dir.CustomInputDevice) + xmlFile, System.Text.Encoding.UTF8);
         writer.Formatting = Formatting.Indented;
         writer.Indentation = 1;
         writer.IndentChar = (char)9;
@@ -1020,7 +1015,7 @@ namespace MediaPortal.InputDevices
 #if !DEBUG
       //catch (Exception ex)
       //{
-      //  _log.Info("MAP: Error saving mapping to XML file: {0}", ex.Message);
+      //  Log.Info("MAP: Error saving mapping to XML file: {0}", ex.Message);
       //  return false;
       //}
 #endif
@@ -1601,8 +1596,8 @@ namespace MediaPortal.InputDevices
 
     private void buttonDefault_Click(object sender, System.EventArgs e)
     {
-      if (File.Exists(_config.Get(Config.Options.CustomInputDevicePath) + inputClassName + ".xml"))
-        File.Delete(_config.Get(Config.Options.CustomInputDevicePath) + inputClassName + ".xml");
+      if (File.Exists(Config.Get(Config.Dir.CustomInputDevice) + inputClassName + ".xml"))
+        File.Delete(Config.Get(Config.Dir.CustomInputDevice) + inputClassName + ".xml");
       LoadMapping(inputClassName + ".xml", true);
     }
 

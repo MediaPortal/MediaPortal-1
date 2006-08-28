@@ -31,9 +31,9 @@ using System.IO;
 using System.Windows.Forms;
 using System.Xml;
 using MediaPortal.GUI.Library;
+using MediaPortal.Util;
 using Programs.Utils;
 using ProgramsDatabase;
-using MediaPortal.Utils.Services;
 
 namespace WindowPlugins.GUIPrograms
 {
@@ -103,12 +103,9 @@ namespace WindowPlugins.GUIPrograms
     private System.Windows.Forms.MenuItem menuGamebaseImporter;
     private System.Windows.Forms.MenuItem SourceTypeToGamebase;
     private bool m_ProfilesLoaded = false;
-    static IConfig _config;
 
     public SetupForm()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _config = services.Get<IConfig>();
       //
       // Required for Windows Form Designer support
       //
@@ -1400,7 +1397,7 @@ namespace WindowPlugins.GUIPrograms
       this.menuItemReadFromProfile.Enabled = false;
       if ((curApp != null) && (curApp.ProfileLoadingAllowed()))
       {
-        if (File.Exists(_config.Get(Config.Options.ConfigPath) + "ProgramSettingProfiles.xml"))
+        if (File.Exists(Config.Get(Config.Dir.Config) + "ProgramSettingProfiles.xml"))
         {
           this.menuItemReadFromProfile.Enabled = true;
           FillProfileMenu();
@@ -1497,7 +1494,7 @@ namespace WindowPlugins.GUIPrograms
         menuItemReadFromProfile.MenuItems.Clear();
 
         XmlDocument document = new XmlDocument();
-        document.Load(_config.Get(Config.Options.ConfigPath) + "ProgramSettingProfiles.xml");
+        document.Load(Config.Get(Config.Dir.Config) + "ProgramSettingProfiles.xml");
         XmlElement rootElement = document.DocumentElement;
 
         if (rootElement != null && rootElement.Name.Equals("profiles"))
@@ -1530,7 +1527,7 @@ namespace WindowPlugins.GUIPrograms
       AppItem curApp = GetSelectedAppItem();
       XmlNode profileNode = ((taggedMenuItem)sender).XmlTag;
       pageCurrentSettings = GetCurrentSettingsPage();
-      //_log.Info("huhu1");
+      //Log.Info("huhu1");
       if (pageCurrentSettings != null)
       {
         // create a pseudo-appitem and read the values from the xml node

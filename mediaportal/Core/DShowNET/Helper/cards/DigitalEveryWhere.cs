@@ -204,8 +204,8 @@ namespace DShowNET
         {
           _hasCAM = IsCamPresent();
 
-          //_log.Info("FireDTV Driver version:{0} ", GetDriverVersionNumber());
-          //_log.Info("FireDTV FW version:{0} ", GetFirmwareVersionNumber());
+          //Log.Info("FireDTV Driver version:{0} ", GetDriverVersionNumber());
+          //Log.Info("FireDTV FW version:{0} ", GetFirmwareVersionNumber());
         }
       }
       _isInitialized = true;
@@ -262,21 +262,21 @@ namespace DShowNET
       if (PMT == null) return false;
       if (pmtLength == 0) return false;
 
-      //_log.Info("SendPMTToFireDTV pmt:{0}", pmtLength);
+      //Log.Info("SendPMTToFireDTV pmt:{0}", pmtLength);
       Guid propertyGuid = KSPROPSETID_Firesat;
       int propId = KSPROPERTY_FIRESAT_HOST2CA;
       DirectShowLib.IKsPropertySet propertySet = captureFilter as DirectShowLib.IKsPropertySet;
       KSPropertySupport isTypeSupported = 0;
       if (propertySet == null)
       {
-        _log.Info("FireDTV:SendPmt() properySet=null");
+        Log.Info("FireDTV:SendPmt() properySet=null");
         return true;
       }
 
       int hr = propertySet.QuerySupported(propertyGuid, propId, out isTypeSupported);
       if (hr != 0 || (isTypeSupported & KSPropertySupport.Set) == 0)
       {
-        _log.Info("FireDTV:SendPmt() not supported");
+        Log.Info("FireDTV:SendPmt() not supported");
         return true;
       }
 
@@ -322,13 +322,13 @@ namespace DShowNET
         log += String.Format("0x{0:X} ", byData[i]);
       }
 
-      _log.Info(log);
+      Log.Info(log);
       hr = propertySet.Set(propertyGuid, propId, pDataInstance, 1036, pDataReturned, 1036);
       Marshal.FreeCoTaskMem(pDataReturned);
       Marshal.FreeCoTaskMem(pDataInstance);
       if (hr != 0)
       {
-        _log.Error("FireDTV:  failed 0x{0:X} offs:{1}", hr, offs);
+        Log.Error("FireDTV:  failed 0x{0:X} offs:{1}", hr, offs);
         ResetCAM();
         return false;
       }
@@ -344,21 +344,21 @@ namespace DShowNET
       //  UCHAR uData[MAX_PMT_SIZE];        //10....
       //}FIRESAT_CA_DATA, *PFIRESAT_CA_DATA;
 
-      _log.Info("FireDTV:ResetCAM()");
+      Log.Info("FireDTV:ResetCAM()");
       Guid propertyGuid = KSPROPSETID_Firesat;
       int propId = KSPROPERTY_FIRESAT_HOST2CA;
       IKsPropertySet propertySet = captureFilter as IKsPropertySet;
       uint isTypeSupported = 0;
       if (propertySet == null)
       {
-        _log.Info("FireDTV:ResetCAM() properySet=null");
+        Log.Info("FireDTV:ResetCAM() properySet=null");
         return;
       }
 
       int hr = propertySet.QuerySupported(ref propertyGuid, (uint)propId, out isTypeSupported);
       if (hr != 0 || (isTypeSupported & (uint)KsPropertySupport.Set) == 0)
       {
-        _log.Info("FireDTV:ResetCAM() Reset CI is not supported");
+        Log.Info("FireDTV:ResetCAM() Reset CI is not supported");
         return;
       }
       int dataLength = 1;
@@ -396,15 +396,15 @@ namespace DShowNET
           log += String.Format("0x{0:X} ", byData[i]);
         }
 
-        _log.Info(log);
+        Log.Info(log);
         hr = propertySet.RemoteSet(ref propertyGuid, (uint)propId, pDataInstance, (uint)1036, pDataReturned, (uint)1036);
 
         if (hr != 0)
         {
-          _log.Error("FireDTV:ResetCAM() failed 0x{0:X} offs:{1}", hr, offs);
+          Log.Error("FireDTV:ResetCAM() failed 0x{0:X} offs:{1}", hr, offs);
           return;
         }
-        _log.Info("FireDTV:ResetCAM() cam has been reset");
+        Log.Info("FireDTV:ResetCAM() cam has been reset");
       }
       finally
       {
@@ -434,7 +434,7 @@ namespace DShowNET
       int hr = propertySet.QuerySupported(propertyGuid, (int)propertySelect, out isTypeSupported);
       if (hr != 0 || (isTypeSupported & KSPropertySupport.Set) == 0)
       {
-        _log.Info("FireDTV: Set H/W pid filtering is not supported");
+        Log.Info("FireDTV: Set H/W pid filtering is not supported");
         return true;
       }
 
@@ -495,13 +495,13 @@ namespace DShowNET
         Marshal.StructureToPtr(dvbsStruct, pDataReturned, true);
       }
 
-      _log.Info("FireDTV: Set H/W pid filtering count:{0} len:{1}", pids.Count, len);
+      Log.Info("FireDTV: Set H/W pid filtering count:{0} len:{1}", pids.Count, len);
 
       string txt = "";
       for (int i = 0; i < len; ++i)
         txt += String.Format("0x{0:X} ", Marshal.ReadByte(pDataInstance, i));
 
-      _log.Info("FireDTV: Set H/W pid filtering pid {0} data:{1}", logStart, txt);
+      Log.Info("FireDTV: Set H/W pid filtering pid {0} data:{1}", logStart, txt);
       hr = propertySet.Set(propertyGuid,
                           (int)propertySelect,
                           pDataInstance, (int)len,
@@ -510,7 +510,7 @@ namespace DShowNET
       Marshal.FreeCoTaskMem(pDataInstance);
       if (hr != 0)
       {
-        _log.Error("FireDTV: Set H/W pid filtering failed 0x{0:X}", hr);
+        Log.Error("FireDTV: Set H/W pid filtering failed 0x{0:X}", hr);
         return false;
       }
 
@@ -525,7 +525,7 @@ namespace DShowNET
       int hr = propertySet.QuerySupported(propertyGuid, (int)KSPROPERTY_FIRESAT_GET_FIRMWARE_VERSION, out isTypeSupported);
       if (hr != 0 || (isTypeSupported & KSPropertySupport.Get) == 0)
       {
-        _log.Error("FireDTV:GetDriverVersion() not supported");
+        Log.Error("FireDTV:GetDriverVersion() not supported");
         return String.Empty;
       }
       int byteCount = 0;
@@ -540,10 +540,10 @@ namespace DShowNET
 
       if (hr != 0)
       {
-        _log.Error("FireDTV:GetFirmwareVersionNumber() failed 0x{0:X}", hr);
+        Log.Error("FireDTV:GetFirmwareVersionNumber() failed 0x{0:X}", hr);
         return String.Empty;
       }
-      _log.Info("count:{0}", byteCount);
+      Log.Info("count:{0}", byteCount);
 
       string version = String.Empty;
       for (int i = 0; i < byteCount; ++i)
@@ -551,7 +551,7 @@ namespace DShowNET
         char ch;
         byte k = Marshal.ReadByte(pDataReturned, i);
 
-        _log.Info("{0} = 0x{1:X} = {2} = {3}",
+        Log.Info("{0} = 0x{1:X} = {2} = {3}",
                 i, k, k, (char)k);
         if (k < 0x20)
           ch = '.';
@@ -570,7 +570,7 @@ namespace DShowNET
       int hr = propertySet.QuerySupported(propertyGuid, (int)KSPROPERTY_FIRESAT_DRIVER_VERSION, out isTypeSupported);
       if (hr != 0 || (isTypeSupported & KSPropertySupport.Get) == 0)
       {
-        _log.Error("FireDTV:GetDriverVersion() not supported");
+        Log.Error("FireDTV:GetDriverVersion() not supported");
         return String.Empty;
       }
       int byteCount = 0;
@@ -585,10 +585,10 @@ namespace DShowNET
 
       if (hr != 0)
       {
-        _log.Error("FireDTV:GetDriverVersion() failed 0x{0:X}", hr);
+        Log.Error("FireDTV:GetDriverVersion() failed 0x{0:X}", hr);
         return String.Empty;
       }
-      _log.Info("count:{0}", byteCount);
+      Log.Info("count:{0}", byteCount);
 
       string version = String.Empty;
 
@@ -597,7 +597,7 @@ namespace DShowNET
         char ch;
         byte k = Marshal.ReadByte(pDataReturned, i);
 
-        _log.Info("{0} = 0x{1:X} = {2} = {3}",
+        Log.Info("{0} = 0x{1:X} = {2} = {3}",
                 i, k, k, (char)k);
         if (k < 0x20)
           ch = '.';
@@ -616,14 +616,14 @@ namespace DShowNET
       KSPropertySupport isTypeSupported;
       if (propertySet == null)
       {
-        _log.Info("FireDTV:GetCAMStatus() properySet=null");
+        Log.Info("FireDTV:GetCAMStatus() properySet=null");
         return 0;
       }
 
       int hr = propertySet.QuerySupported(propertyGuid, propId, out isTypeSupported);
       if (hr != 0 || (isTypeSupported & KSPropertySupport.Get) == 0)
       {
-        _log.Info("FireDTV:GetCAMStatus() get is not supported");
+        Log.Info("FireDTV:GetCAMStatus() get is not supported");
         return 0;
       }
       int bytesReturned;
@@ -634,7 +634,7 @@ namespace DShowNET
         hr = propertySet.Get(propertyGuid, propId, pDataInstance, 1036, pDataReturned, 1036, out bytesReturned);
         if (hr != 0)
         {
-          _log.Error("FireDTV:GetCAMStatus() failed 0x{0:X}", hr);
+          Log.Error("FireDTV:GetCAMStatus() failed 0x{0:X}", hr);
           if (((uint)hr) == ((uint)0x8007001F))
           {
             ResetCAM();
@@ -702,7 +702,7 @@ namespace DShowNET
     {
       if (_prevDisEqcType == disEqcType && _prevFrequency == frequency && _prevPolarisation == polarisation)
       {
-        _log.Info("FireDTV: Skipping DiSEqC command for type={0}, freq={1}, pol={2}", disEqcType, frequency, polarisation);
+        Log.Info("FireDTV: Skipping DiSEqC command for type={0}, freq={1}, pol={2}", disEqcType, frequency, polarisation);
         return;
       }
 
@@ -732,7 +732,7 @@ namespace DShowNET
         break;
       }
       //"01,02,03,04,05,06,07,08,09,0a,0b,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,"	
-      _log.Info("FireDTV SendDiseqcCommand() diseqc:{0}, antenna:{1} frequency:{2}, switching frequency:{3}, polarisation:{4}", 
+      Log.Info("FireDTV SendDiseqcCommand() diseqc:{0}, antenna:{1} frequency:{2}, switching frequency:{3}, polarisation:{4}", 
               disEqcType,antennaNr, frequency, switchingFrequency, polarisation);
       IntPtr ptrCmd = Marshal.AllocCoTaskMem(25);
       try
@@ -780,19 +780,19 @@ namespace DShowNET
         int hr = propertySet.QuerySupported(propertyGuid, (int)KSPROPERTY_FIRESAT_LNB_CONTROL, out isTypeSupported);
         if (hr != 0 || (isTypeSupported & KSPropertySupport.Set) == 0)
         {
-          _log.Error("FireDTV:SendDiseqCommand() not supported");
+          Log.Error("FireDTV:SendDiseqCommand() not supported");
           return;
         }
 
         string txt = "";
         for (int i = 0; i < 25; ++i)
           txt += String.Format("0x{0:X} ", Marshal.ReadByte(ptrCmd, i));
-        _log.Info("FireDTV:SendDiseq: {0}", txt);
+        Log.Info("FireDTV:SendDiseq: {0}", txt);
 
         hr = propertySet.Set(propertyGuid, KSPROPERTY_FIRESAT_LNB_CONTROL, ptrCmd, 25, ptrCmd, 25);
         if (hr != 0)
         {
-          _log.Error("FireDTV:SendDiseqCommand() not supported");
+          Log.Error("FireDTV:SendDiseqCommand() not supported");
         }
         else
         {

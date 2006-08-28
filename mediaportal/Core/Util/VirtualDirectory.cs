@@ -33,7 +33,6 @@ using System.Management;
 using System.IO;
 using EnterpriseDT.Net.Ftp;
 using Core.Util;
-using MediaPortal.Utils.Services;
 
 
 namespace MediaPortal.Util
@@ -58,14 +57,11 @@ namespace MediaPortal.Util
     string previousShare = String.Empty;
     string m_strLocalFolder = String.Empty;
     bool showFilesWithoutExtension = false;
-    protected ILog _log;
     /// <summary>
     /// constructor
     /// </summary>
     public VirtualDirectory()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
     }
 
     public string CurrentShare
@@ -75,7 +71,7 @@ namespace MediaPortal.Util
       {
         previousShare = currentShare;
         currentShare = value;
-        _log.Info("*****Setting current share:{0}-Previous:{1}", currentShare, previousShare);
+        Log.Info("*****Setting current share:{0}-Previous:{1}", currentShare, previousShare);
       }
     }
     public string PreviousShare
@@ -644,7 +640,7 @@ namespace MediaPortal.Util
           }
           catch (Exception ex)
           {
-            _log.Info("VirtualDirectory:unable to chdir to remote folder:{0} reason:{1} {2}", subitems[4], ex.Message, ex.StackTrace);
+            Log.Info("VirtualDirectory:unable to chdir to remote folder:{0} reason:{1} {2}", subitems[4], ex.Message, ex.StackTrace);
             return items;
           }
           try
@@ -653,14 +649,14 @@ namespace MediaPortal.Util
           }
           catch (Exception ex)
           {
-            _log.Info("VirtualDirectory:unable to get remote folder:{0} reason:{1}  {2}", subitems[4], ex.Message, ex.StackTrace);
+            Log.Info("VirtualDirectory:unable to get remote folder:{0} reason:{1}  {2}", subitems[4], ex.Message, ex.StackTrace);
             return items;
           }
         }
         for (int i = 0; i < files.Length; ++i)
         {
           FTPFile file = files[i];
-          //_log.Info("VirtualDirectory: {0} {1}",file.Name,file.Dir);
+          //Log.Info("VirtualDirectory: {0} {1}",file.Name,file.Dir);
           if (file.Dir)
           {
             if (file.Name != "." && file.Name != "..")
@@ -1206,7 +1202,7 @@ namespace MediaPortal.Util
       }
       catch (Exception ex)
       {
-        _log.Info("VirtualDirectory:unable to start download:{0}", ex.Message);
+        Log.Info("VirtualDirectory:unable to start download:{0}", ex.Message);
       }
       return false;
     }
@@ -1234,7 +1230,7 @@ namespace MediaPortal.Util
         ftp = FtpConnectionCache.MakeConnection(subitems[0], subitems[2], subitems[3], port);
       }
       if (ftp == null)
-        _log.Info("VirtualDirectory:unable to connect to remote share");
+        Log.Info("VirtualDirectory:unable to connect to remote share");
       return ftp;
     }
     #region generics
@@ -1429,7 +1425,7 @@ namespace MediaPortal.Util
           }
           catch (Exception ex)
           {
-            _log.Info("VirtualDirectory:unable to chdir to remote folder:{0} reason:{1} {2}", subitems[4], ex.Message, ex.StackTrace);
+            Log.Info("VirtualDirectory:unable to chdir to remote folder:{0} reason:{1} {2}", subitems[4], ex.Message, ex.StackTrace);
             return items;
           }
           try
@@ -1438,14 +1434,14 @@ namespace MediaPortal.Util
           }
           catch (Exception ex)
           {
-            _log.Info("VirtualDirectory:unable to get remote folder:{0} reason:{1}  {2}", subitems[4], ex.Message, ex.StackTrace);
+            Log.Info("VirtualDirectory:unable to get remote folder:{0} reason:{1}  {2}", subitems[4], ex.Message, ex.StackTrace);
             return items;
           }
         }
         for (int i = 0; i < files.Length; ++i)
         {
           FTPFile file = files[i];
-          //_log.Info("VirtualDirectory: {0} {1}",file.Name,file.Dir);
+          //Log.Info("VirtualDirectory: {0} {1}",file.Name,file.Dir);
           if (file.Dir)
           {
             if (file.Name != "." && file.Name != "..")
@@ -1709,7 +1705,7 @@ namespace MediaPortal.Util
           }
           catch (Exception ex)
           {
-            _log.Info("VirtualDirectory:unable to chdir to remote folder:{0} reason:{1} {2}", subitems[4], ex.Message, ex.StackTrace);
+            Log.Info("VirtualDirectory:unable to chdir to remote folder:{0} reason:{1} {2}", subitems[4], ex.Message, ex.StackTrace);
             return items;
           }
           try
@@ -1718,14 +1714,14 @@ namespace MediaPortal.Util
           }
           catch (Exception ex)
           {
-            _log.Info("VirtualDirectory:unable to get remote folder:{0} reason:{1}  {2}", subitems[4], ex.Message, ex.StackTrace);
+            Log.Info("VirtualDirectory:unable to get remote folder:{0} reason:{1}  {2}", subitems[4], ex.Message, ex.StackTrace);
             return items;
           }
         }
         for (int i = 0; i < files.Length; ++i)
         {
           FTPFile file = files[i];
-          //_log.Info("VirtualDirectory: {0} {1}",file.Name,file.Dir);
+          //Log.Info("VirtualDirectory: {0} {1}",file.Name,file.Dir);
           if (file.Dir)
           {
             if (file.Name != "." && file.Name != "..")
@@ -2022,7 +2018,7 @@ namespace MediaPortal.Util
     {
       System.Threading.Thread.Sleep(5000);
       AutoPlay.StartListening();
-      _log.Info("*****Start listening to drives");
+      Log.Info("*****Start listening to drives");
     }
     #endregion
 

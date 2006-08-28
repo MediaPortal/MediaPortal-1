@@ -31,7 +31,6 @@ using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.Util;
 using Win32.Utils.Cd;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Ripper
 {
@@ -45,8 +44,6 @@ namespace MediaPortal.Ripper
     static DeviceVolumeMonitor _deviceMonitor;
     static string m_dvd = "No";
     static string m_audiocd = "No";
-    static ILog _log;
-    static IConfig _config;
 
     enum MediaType
     {
@@ -72,9 +69,6 @@ namespace MediaPortal.Ripper
     /// </summary>
     static AutoPlay()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
 
       m_dvd = "No";
       m_audiocd = "No";
@@ -109,7 +103,7 @@ namespace MediaPortal.Ripper
 
     private static void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         m_dvd = xmlreader.GetValueAsString("dvdplayer", "autoplay", "Ask");
         m_audiocd = xmlreader.GetValueAsString("audioplayer", "autoplay", "No");
@@ -147,7 +141,7 @@ namespace MediaPortal.Ripper
     /// <param name="e"></param>
     private static void CDRemoved(string DriveLetter)
     {
-      _log.Info("media removed from drive {0}", DriveLetter);
+      Log.Info("media removed from drive {0}", DriveLetter);
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CD_REMOVED,
                                       (int)GUIWindow.Window.WINDOW_MUSIC_FILES,
                                       GUIWindowManager.ActiveWindow, 0, 0, 0, 0);
@@ -172,7 +166,7 @@ namespace MediaPortal.Ripper
     /// <param name="e"></param>
     private static void CDInserted(string DriveLetter)
     {
-      _log.Info("media inserted in drive {0}", DriveLetter);
+      Log.Info("media inserted in drive {0}", DriveLetter);
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CD_INSERTED,
                                             (int)0,
                                             GUIWindowManager.ActiveWindow, 0, 0, 0, 0);
@@ -188,7 +182,7 @@ namespace MediaPortal.Ripper
     {
       string driveLetter = _deviceMonitor.MaskToLogicalPaths(bitMask);
 
-      _log.Info("volume removed drive {0}", driveLetter);
+      Log.Info("volume removed drive {0}", driveLetter);
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VOLUME_REMOVED,
                                 (int)0,
                                 GUIWindowManager.ActiveWindow, 0, 0, 0, 0);
@@ -203,7 +197,7 @@ namespace MediaPortal.Ripper
     private static void VolumeInserted(int bitMask)
     {
       string driveLetter = _deviceMonitor.MaskToLogicalPaths(bitMask);
-      _log.Info("volume inserted drive {0}", driveLetter);
+      Log.Info("volume inserted drive {0}", driveLetter);
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VOLUME_INSERTED,
         (int)0,
         GUIWindowManager.ActiveWindow, 0, 0, 0, 0);
@@ -214,7 +208,7 @@ namespace MediaPortal.Ripper
 
     static bool ShouldWeAutoPlay(MediaType iMedia)
     {
-      _log.Info("Check if we want to autoplay a {0}", iMedia);
+      Log.Info("Check if we want to autoplay a {0}", iMedia);
       if (GUIWindowManager.IsRouted) return false;
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ASKYESNO, 0, 0, 0, 0, 0, null);
       msg.Param1 = 713;
@@ -263,25 +257,25 @@ namespace MediaPortal.Ripper
       switch (DetectMediaType(strDrive))
       {
         //case MediaType.DVD:
-        //  _log.Info("ExamineCD: DVD inserted into drive {0}", strDrive);
+        //  Log.Info("ExamineCD: DVD inserted into drive {0}", strDrive);
 
         //  bool PlayDVD = false;
         //  if (m_dvd == "Yes")
         //  {
         //    // Automaticaly play the CD
         //    PlayDVD = true;
-        //    _log.Info("DVD Autoplay = auto");
+        //    Log.Info("DVD Autoplay = auto");
         //  }
         //  else if (m_dvd == "Ask")
         //  {
         //    if (ShouldWeAutoPlay(MediaType.DVD))
         //    {
         //      PlayDVD = true;
-        //      _log.Info("DVD Autoplay = ask,answer = yes");
+        //      Log.Info("DVD Autoplay = ask,answer = yes");
         //    }
         //    else
         //    {
-        //      _log.Info("DVD Autoplay = ask, answer = no");
+        //      Log.Info("DVD Autoplay = ask, answer = no");
         //    }
         //  }
         //  if (PlayDVD)
@@ -291,21 +285,21 @@ namespace MediaPortal.Ripper
 
         //    // We are going to autoplay if..
         //    //Log.Write ("We seem to want to play the DVD");
-        //    _log.Info("Autoplay:start DVD in {0}", strDrive);
+        //    Log.Info("Autoplay:start DVD in {0}", strDrive);
         //    g_Player.PlayDVD(strDrive + @"\VIDEO_TS\VIDEO_TS.IFO");
         //  }
         //  break;
 
         case MediaType.AUDIO_CD:
-          _log.Info("ExamineCD: Audio CD inserted into drive {0}", strDrive);
+          Log.Info("ExamineCD: Audio CD inserted into drive {0}", strDrive);
           //m_audiocd tells us if we want to autoplay or not.
-          _log.Info("CD Autoplay = {0}", m_audiocd);
+          Log.Info("CD Autoplay = {0}", m_audiocd);
           bool PlayAudioCd = false;
           if (m_audiocd == "Yes")
           {
             // Automaticaly play the CD
             PlayAudioCd = true;
-            _log.Info("CD Autoplay = auto");
+            Log.Info("CD Autoplay = auto");
           }
           else if ((m_audiocd == "Ask") && (ShouldWeAutoPlay(MediaType.AUDIO_CD)))
           {
@@ -324,7 +318,7 @@ namespace MediaPortal.Ripper
             msg.Label = strDrive;
             msg.SendToTargetWindow = true;
             msg.Label2 = m_audiocd;
-            _log.Info("Autoplay = {0}", m_audiocd);
+            Log.Info("Autoplay = {0}", m_audiocd);
             GUIWindowManager.SendThreadMessage(msg);
           }
           break;
@@ -332,7 +326,7 @@ namespace MediaPortal.Ripper
         case MediaType.PHOTOS:
           if (ShouldWeAutoPlay(MediaType.PHOTOS))
           {
-            _log.Info("CD/DVD with photo's inserted into drive {0}", strDrive);
+            Log.Info("CD/DVD with photo's inserted into drive {0}", strDrive);
             GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_PICTURES);
             msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_AUTOPLAY_VOLUME,
               (int)GUIWindow.Window.WINDOW_PICTURES,
@@ -344,15 +338,15 @@ namespace MediaPortal.Ripper
           break;
 
         case MediaType.VIDEOS:
-          _log.Info("CD/DVD with videos inserted into drive {0}", strDrive);
+          Log.Info("CD/DVD with videos inserted into drive {0}", strDrive);
           break;
 
         case MediaType.AUDIO:
-          _log.Info("CD/DVD with audio inserted into drive {0}", strDrive);
+          Log.Info("CD/DVD with audio inserted into drive {0}", strDrive);
           break;
 
         default:
-          _log.Info("ExamineCD: Unknown media type inserted into drive {0}", strDrive);
+          Log.Info("ExamineCD: Unknown media type inserted into drive {0}", strDrive);
           break;
       }
       StartListening();
@@ -366,30 +360,30 @@ namespace MediaPortal.Ripper
       switch (DetectMediaType(strDrive))
       {
         case MediaType.DVD:
-          _log.Info("DVD volume inserted {0}", strDrive);
+          Log.Info("DVD volume inserted {0}", strDrive);
           if (m_dvd == "Yes")
           {
             // dont interrupt if we're already playing
             if (g_Player.Playing && g_Player.IsDVD) return;
-            _log.Info("Autoplay: Yes, start DVD in {0}", strDrive);
+            Log.Info("Autoplay: Yes, start DVD in {0}", strDrive);
             g_Player.PlayDVD(strDrive + @"\VIDEO_TS\VIDEO_TS.IFO");
           }
           if (m_dvd == "Ask")
           {
             if (ShouldWeAutoPlay(MediaType.DVD))
             {
-              _log.Info("Autoplay: Answered yes, start DVD in {0}", strDrive);
+              Log.Info("Autoplay: Answered yes, start DVD in {0}", strDrive);
               g_Player.PlayDVD(strDrive + @"\VIDEO_TS\VIDEO_TS.IFO");
             }
             else
             {
-              _log.Info("Autoplay: Answered no, do not start DVD in {0}", strDrive);
+              Log.Info("Autoplay: Answered no, do not start DVD in {0}", strDrive);
             }
           }
           break;
 
         case MediaType.PHOTOS:
-          _log.Info("Photo volume inserted {0}", strDrive);
+          Log.Info("Photo volume inserted {0}", strDrive);
           if (ShouldWeAutoPlay(MediaType.PHOTOS))
           {
             GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_PICTURES);
@@ -403,7 +397,7 @@ namespace MediaPortal.Ripper
           break;
 
         case MediaType.VIDEOS:
-          _log.Info("Video volume inserted {0}", strDrive);
+          Log.Info("Video volume inserted {0}", strDrive);
           if (ShouldWeAutoPlay(MediaType.VIDEOS))
           {
             GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_VIDEOS);
@@ -417,7 +411,7 @@ namespace MediaPortal.Ripper
           break;
 
         case MediaType.AUDIO:
-          _log.Info("Audio volume inserted {0}", strDrive);
+          Log.Info("Audio volume inserted {0}", strDrive);
           if (ShouldWeAutoPlay(MediaType.AUDIO))
           {
             GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MUSIC_FILES);
@@ -431,7 +425,7 @@ namespace MediaPortal.Ripper
           break;
 
         default:
-          _log.Info("ExamineVolume: Unknown media type inserted into drive {0}", strDrive);
+          Log.Info("ExamineVolume: Unknown media type inserted into drive {0}", strDrive);
           break;
       }
     }

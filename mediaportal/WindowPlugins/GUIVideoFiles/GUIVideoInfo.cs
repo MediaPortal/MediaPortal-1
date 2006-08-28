@@ -362,7 +362,7 @@ namespace MediaPortal.GUI.Video
             }//if ( strExtension.Length>0)
             else
             {
-              _log.Info("image has no extension:{0}", imageUrl);
+              Log.Info("image has no extension:{0}", imageUrl);
             }
           }
           if ((System.IO.File.Exists(coverArtImage))&&(FolderForThumbs != string.Empty))

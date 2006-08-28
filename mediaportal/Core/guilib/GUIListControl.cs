@@ -29,7 +29,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Forms; // used for Keys definition
 using Microsoft.DirectX.Direct3D;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.GUI.Library
 {
@@ -2757,7 +2756,7 @@ namespace MediaPortal.GUI.Library
 
       try
       {
-        //_log.Info("Moving List Item {0} down. Old index:{1}, new index{2}", item1.Path, iItem, iNextItem);
+        //Log.Info("Moving List Item {0} down. Old index:{1}, new index{2}", item1.Path, iItem, iNextItem);
         System.Threading.Monitor.Enter(this);
         _listItems[iItem] = item2;
         _listItems[iNextItem] = item1;
@@ -2766,7 +2765,7 @@ namespace MediaPortal.GUI.Library
 
       catch (Exception ex)
       {
-        _log.Info("GUIListControl.MoveItemDown caused an exception: {0}", ex.Message);
+        Log.Info("GUIListControl.MoveItemDown caused an exception: {0}", ex.Message);
         selectedItemIndex = -1;
       }
 
@@ -2798,7 +2797,7 @@ namespace MediaPortal.GUI.Library
 
       try
       {
-        //_log.Info("Moving List Item {0} up. Old index:{1}, new index{2}", item1.Path, iItem, iPreviousItem);
+        //Log.Info("Moving List Item {0} up. Old index:{1}, new index{2}", item1.Path, iItem, iPreviousItem);
         System.Threading.Monitor.Enter(this);
         _listItems[iItem] = item2;
         _listItems[iPreviousItem] = item1;
@@ -2807,7 +2806,7 @@ namespace MediaPortal.GUI.Library
 
       catch (Exception ex)
       {
-        _log.Info("GUIListControl.MoveItemUp caused an exception: {0}", ex.Message);
+        Log.Info("GUIListControl.MoveItemUp caused an exception: {0}", ex.Message);
         selectedItemIndex = -1;
       }
 

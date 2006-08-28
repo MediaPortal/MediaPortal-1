@@ -30,7 +30,6 @@ using MediaPortal.GUI.Library;
 using System.Windows.Forms;
 using System.Threading;
 
-using MediaPortal.Utils.Services;
 using MediaPortal.TV.Database;
 
 namespace ProcessPlugins.TvMovie
@@ -43,9 +42,7 @@ namespace ProcessPlugins.TvMovie
 
     private void ImportThread()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      ILog log = services.Get<ILog>();
-      log.Info("TVMovie: Checking database");
+      Log.Info("TVMovie: Checking database");
       _database = new TvMovieDatabase();
 
       if (!_database.WasUpdated)

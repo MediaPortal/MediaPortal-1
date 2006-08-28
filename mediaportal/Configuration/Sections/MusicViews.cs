@@ -33,7 +33,7 @@ using System.Runtime.Serialization.Formatters.Soap;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.View;
-using MediaPortal.Utils.Services;
+using MediaPortal.Util;
 
 #pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
@@ -186,7 +186,7 @@ namespace MediaPortal.Configuration.Sections
       // This call is required by the Windows Form Designer.
       InitializeComponent();
       views = new ArrayList();
-      FileInfo fi = new FileInfo(base._config.Get(Config.Options.ConfigPath) + "MusicViews.xml");
+      FileInfo fi = new FileInfo(Config.Get(Config.Dir.Config) + "MusicViews.xml");
       if (fi.Exists)
       {
         try
@@ -209,9 +209,7 @@ namespace MediaPortal.Configuration.Sections
       }
       else
       {
-        ServiceProvider services = GlobalServiceProvider.Instance;
-        ILog log = services.Get<ILog>();
-        log.Info("MusicViews.xml not found.  No Music Views will be available...");
+        Log.Info("MusicViews.xml not found.  No Music Views will be available...");
       }
       LoadViews();
     }
@@ -632,7 +630,7 @@ namespace MediaPortal.Configuration.Sections
       if (settingsChanged)
         try
         {
-          using (FileStream fileStream = new FileStream(base._config.Get(Config.Options.ConfigPath) + "musicViews.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
+          using (FileStream fileStream = new FileStream(Config.Get(Config.Dir.Config) + "musicViews.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
           {
             SoapFormatter formatter = new SoapFormatter();
             formatter.Serialize(fileStream, views);

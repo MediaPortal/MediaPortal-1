@@ -30,9 +30,9 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
-
+using MediaPortal.Util;
 using MediaPortal.GUI.Library;
-using MediaPortal.Utils.Services;
+
 #pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
@@ -159,7 +159,7 @@ namespace MediaPortal.Configuration.Sections
 
       try
       {
-        FileStream fileStream = new FileStream(base._config.Get(Config.Options.ConfigPath) + "keymap.xml", FileMode.Create);
+        FileStream fileStream = new FileStream(Config.Get(Config.Dir.Config) + "keymap.xml", FileMode.Create);
         writer = new XmlTextWriter(fileStream, System.Text.Encoding.GetEncoding("iso-8859-1"));
 
         writer.Formatting = Formatting.Indented;
@@ -287,7 +287,7 @@ namespace MediaPortal.Configuration.Sections
         //
         // Load the xml document
         //
-        document.Load(base._config.Get(Config.Options.ConfigPath) + "keymap.xml");
+        document.Load(Config.Get(Config.Dir.Config) + "keymap.xml");
 
         XmlElement rootElement = document.DocumentElement;
 

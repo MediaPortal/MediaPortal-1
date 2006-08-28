@@ -24,7 +24,6 @@ using SQLite.NET;
 using MediaPortal.Util;
 using MediaPortal.Database;
 using MediaPortal.GUI.Library;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Video.Database
 {
@@ -34,15 +33,10 @@ namespace MediaPortal.Video.Database
   public class VideoDatabaseSqlLite : IVideoDatabase, IDisposable
   {
     public SQLiteClient m_db = null;
-    protected ILog _log;
-    protected IConfig _config;
 
     #region ctor
     public VideoDatabaseSqlLite()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
 
       Open();
     }
@@ -51,11 +45,11 @@ namespace MediaPortal.Video.Database
     #region helper funcs
     void Open()
     {
-      _log.Info("opening video database");
+      Log.Info("opening video database");
       try
       {
         // Open database
-        String strPath = _config.Get(Config.Options.DatabasePath);
+        String strPath = Config.Get(Config.Dir.Database);
         try
         {
           System.IO.Directory.CreateDirectory(strPath);
@@ -69,10 +63,10 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
       }
 
-      _log.Info("video database opened");
+      Log.Info("video database opened");
     }
     public void Dispose()
     {
@@ -148,7 +142,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
       return -1;
@@ -212,7 +206,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
       return -1;
@@ -274,7 +268,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
       return -1;
@@ -301,7 +295,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
       return -1;
@@ -323,7 +317,7 @@ namespace MediaPortal.Video.Database
       }
       catch (SQLiteException ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
       }
     }
 
@@ -337,7 +331,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
     }
@@ -375,7 +369,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
     }
@@ -415,7 +409,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
       return -1;
@@ -438,7 +432,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
 
@@ -463,7 +457,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
     }
@@ -488,7 +482,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
     }
@@ -503,7 +497,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
     }
@@ -543,7 +537,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
       return -1;
@@ -566,7 +560,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
     }
@@ -590,7 +584,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
     }
@@ -615,7 +609,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
     }
@@ -630,7 +624,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
     }
@@ -653,7 +647,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
     }
@@ -676,7 +670,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
     }
@@ -705,7 +699,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
     }
@@ -809,7 +803,7 @@ namespace MediaPortal.Video.Database
         strRating = String.Format("{0}", details1.Rating);
         if (strRating == "") strRating = "0.0";
         strSQL = String.Format("select * from movieinfo where idmovie={0}", lMovieId);
-        //	_log.Error("dbs:{0}", strSQL);
+        //	Log.Error("dbs:{0}", strSQL);
         SQLiteResultSet results;
         results = m_db.Execute(strSQL);
         if (results.Rows.Count == 0)
@@ -824,7 +818,7 @@ namespace MediaPortal.Video.Database
             details1.ThumbURL, details1.Title,
             details1.IMDBNumber, details1.MPARating, details1.RunTime, details1.Watched);
 
-          //			_log.Error("dbs:{0}", strSQL);
+          //			Log.Error("dbs:{0}", strSQL);
           m_db.Execute(strSQL);
 
         }
@@ -841,13 +835,13 @@ namespace MediaPortal.Video.Database
             details1.MPARating, details1.RunTime,
             details1.Watched, lMovieId);
 
-          //		_log.Error("dbs:{0}", strSQL);
+          //		Log.Error("dbs:{0}", strSQL);
           m_db.Execute(strSQL);
         }
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} src:{2}, stack:{1}", ex.Message, ex.Source, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} src:{2}, stack:{1}", ex.Message, ex.Source, ex.StackTrace);
         Open();
       }
     }
@@ -864,7 +858,7 @@ namespace MediaPortal.Video.Database
       {
         if (null == m_db) return;
         if (lMovieId == -1) return;
-        _log.Info("Removing movie:{0}", lMovieId);
+        Log.Info("Removing movie:{0}", lMovieId);
         string strSQL;
         strSQL = String.Format("delete from genrelinkmovie where idmovie={0}", lMovieId);
         m_db.Execute(strSQL);
@@ -883,7 +877,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
     }
@@ -909,7 +903,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
       return false;
@@ -961,7 +955,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
     }
@@ -978,7 +972,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
     }
@@ -996,7 +990,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
     }
@@ -1015,7 +1009,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
       return 0;
@@ -1042,7 +1036,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
     }
@@ -1089,7 +1083,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
       return 0;
@@ -1119,7 +1113,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
     }
@@ -1138,7 +1132,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
       return 0;
@@ -1165,7 +1159,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
     }
@@ -1213,7 +1207,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
     }
@@ -1256,7 +1250,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
       return -1;
@@ -1316,7 +1310,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
     }
@@ -1348,7 +1342,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
       return false;
@@ -1368,7 +1362,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
     }
@@ -1387,7 +1381,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
     }
@@ -1419,7 +1413,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
     }
@@ -1470,7 +1464,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
     }
@@ -1521,7 +1515,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
     }
@@ -1571,7 +1565,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
 
@@ -1616,7 +1610,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
     }
@@ -1677,7 +1671,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
 
@@ -1698,7 +1692,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
     }
@@ -1724,7 +1718,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
 
@@ -1773,7 +1767,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
       return;
@@ -1792,7 +1786,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
       return;
@@ -1807,7 +1801,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
     }
@@ -1845,7 +1839,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        _log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
       return null;

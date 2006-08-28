@@ -36,8 +36,9 @@ using MediaPortal.Radio.Database;
 using MediaPortal.TV.Recording;
 using MediaPortal.TV.Scanning;
 using MediaPortal.GUI.Library;
-using MediaPortal.Utils.Services;
+using MediaPortal.Util;
 using DShowNET;
+
 namespace MediaPortal.Configuration.Sections
 {
   public class Wizard_AnalogTV : Wizard_ScanBase
@@ -75,13 +76,10 @@ namespace MediaPortal.Configuration.Sections
     bool _clearButtonEnabled = true;
     bool _loadingInfo = false;
     XmlDocument docSetup;
-    protected ILog _log;
 
     public Wizard_AnalogTV()
       : this("Analog TV")
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
 
       CheckForIllegalCrossThreadCalls = false;
     }
@@ -726,11 +724,11 @@ namespace MediaPortal.Configuration.Sections
             tvChan.Number = channelNumber;
             tvChan.Frequency = channelFrequency;
             tvChan.Sort = 40000;
-            _log.Info("Wizard_AnalogTV: add new channel for {0}:{1}:{2}", tvChan.Name, tvChan.Number, tvChan.Sort);
+            Log.Info("Wizard_AnalogTV: add new channel for {0}:{1}:{2}", tvChan.Name, tvChan.Number, tvChan.Sort);
             int id = TVDatabase.AddChannel(tvChan);
             if (id < 0)
             {
-              _log.Error("Wizard_AnalogTV: failed to add new channel for {0}:{1}:{2} to database", tvChan.Name, tvChan.Number, tvChan.Sort);
+              Log.Error("Wizard_AnalogTV: failed to add new channel for {0}:{1}:{2} to database", tvChan.Name, tvChan.Number, tvChan.Sort);
             }
             newTvChannels++;
           }
@@ -741,7 +739,7 @@ namespace MediaPortal.Configuration.Sections
             tvChan.Frequency = channelFrequency;
             TVDatabase.UpdateChannel(tvChan, tvChan.Sort);
             updatedTvChannels++;
-            _log.Info("Wizard_AnalogTV: update channel {0}:{1}:{2} {3}", tvChan.Name, tvChan.Number, tvChan.Sort, tvChan.ID);
+            Log.Info("Wizard_AnalogTV: update channel {0}:{1}:{2} {3}", tvChan.Name, tvChan.Number, tvChan.Sort, tvChan.ID);
           }
           TVDatabase.MapChannelToCard(tvChan.ID, _card.ID);
           TVGroup group = new TVGroup();
@@ -782,7 +780,7 @@ namespace MediaPortal.Configuration.Sections
       {
         TunerCountry tunerCountry = cbCountry.SelectedItem as TunerCountry;
         _card.DefaultCountryCode = tunerCountry.Id;
-        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         {
           xmlwriter.SetValue("capture", "countryname", tunerCountry.Country);
           xmlwriter.SetValue("capture", "country", tunerCountry.Id.ToString());
@@ -803,7 +801,7 @@ namespace MediaPortal.Configuration.Sections
         Boolean isCableInput = false;
         if (!cbInput.Text.Equals("Antenna")) isCableInput = true;
         _card.IsCableInput = isCableInput;
-        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         {
           xmlwriter.SetValue("capture", "tuner", cbInput.Text);
         }
@@ -1106,7 +1104,7 @@ namespace MediaPortal.Configuration.Sections
     }
     public override void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         cbInput.SelectedItem = xmlreader.GetValueAsString("capture", "tuner", "Antenna");
         string countryName = xmlreader.GetValueAsString("capture", "countryname", "The Netherlands");
@@ -1124,7 +1122,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         xmlwriter.SetValue("capture", "tuner", cbInput.Text);
         if (cbCountry.Text.Length > 0)

@@ -27,7 +27,7 @@ using System;
 using System.IO;
 using System.Collections;
 using System.Globalization;
-
+using MediaPortal.Util;
 using MediaPortal.GUI.Library;
 using MediaPortal.Dialogs;
 
@@ -74,7 +74,7 @@ namespace WindowPlugins.GUISettings
     public override bool Init()
     {
       //SkinDirectory = GUIGraphicsContext.Skin.Remove(GUIGraphicsContext.Skin.LastIndexOf(@"\"));
-      SkinDirectory = _config.Get(MediaPortal.Utils.Services.Config.Options.SkinPath);  
+      SkinDirectory = Config.Get(Config.Dir.Skin);  
       return Load(GUIGraphicsContext.Skin + @"\settings_general.xml");
     }
 
@@ -114,7 +114,7 @@ namespace WindowPlugins.GUISettings
 
     void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         xmlwriter.SetValueAsBool("general", "startfullscreen", btnFullscreen.Selected);
         xmlwriter.SetValueAsBool("general", "screensaver", btnScreenSaver.Selected);
@@ -125,7 +125,7 @@ namespace WindowPlugins.GUISettings
 
     void SetFullScreen()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         bool fullscreen = xmlreader.GetValueAsBool("general", "startfullscreen", false);
         btnFullscreen.Selected = fullscreen;
@@ -134,7 +134,7 @@ namespace WindowPlugins.GUISettings
 
     void SetScreenSaver()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         bool screensaver = xmlreader.GetValueAsBool("general", "screensaver", false);
         btnScreenSaver.Selected = screensaver;
@@ -145,11 +145,11 @@ namespace WindowPlugins.GUISettings
     {
       GUIControl.ClearControl(GetID, btnLanguage.GetID);
       string currentLanguage = String.Empty;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         currentLanguage = xmlreader.GetValueAsString("skin", "language", "English");
       }
-      string LanguageDirectory = _config.Get(MediaPortal.Utils.Services.Config.Options.LanguagePath);
+      string LanguageDirectory = Config.Get(Config.Dir.Language);
       int lang = 0;
       if (Directory.Exists(LanguageDirectory))
       {
@@ -183,7 +183,7 @@ namespace WindowPlugins.GUISettings
     void SetSkins()
     {
       string currentSkin = "";
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         currentSkin = xmlreader.GetValueAsString("skin", "name", "BlueTwo");
       }
@@ -264,7 +264,7 @@ namespace WindowPlugins.GUISettings
     {
       SaveSettings();
       GUILocalizeStrings.Clear();
-      GUILocalizeStrings.Load(_config.Get(MediaPortal.Utils.Services.Config.Options.LanguagePath) + btnLanguage.SelectedLabel + @"\strings.xml");
+      GUILocalizeStrings.Load(Config.Get(Config.Dir.Language) + btnLanguage.SelectedLabel + @"\strings.xml");
       GUIWindowManager.OnResize();
       GUIWindowManager.ActivateWindow(GetID); // without this you cannot change skins / lang any more..
       GUIControl.FocusControl(GetID, btnLanguage.GetID);

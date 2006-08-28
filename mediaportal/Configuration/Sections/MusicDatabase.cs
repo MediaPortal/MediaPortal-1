@@ -38,7 +38,7 @@ using MediaPortal.Util;
 using MediaPortal.GUI.Library;
 using MediaPortal.Database;
 using MediaPortal.Music.Database;
-using MediaPortal.Utils.Services;
+
 #pragma warning disable 108
 
 namespace MediaPortal.Configuration.Sections
@@ -137,7 +137,7 @@ namespace MediaPortal.Configuration.Sections
         /// </summary>
         public override void LoadSettings()
         {
-          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
             {
                 buildThumbsCheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "buildThumbs", false);
                 folderAsAlbumCheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "treatFolderAsAlbum", false);
@@ -150,7 +150,7 @@ namespace MediaPortal.Configuration.Sections
         /// </summary>
         public override void SaveSettings()
         {
-          using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+          using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
             {
                 xmlwriter.SetValueAsBool("musicfiles", "buildThumbs", buildThumbsCheckBox.Checked);
 
@@ -429,7 +429,7 @@ namespace MediaPortal.Configuration.Sections
 
             if (dialogResult == DialogResult.Yes)
             {
-              string database = _config.Get(Config.Options.DatabasePath) + "MusicDatabaseV7.db3";
+              string database = Config.Get(Config.Dir.Config) + "MusicDatabaseV7.db3";
                 
                 if (File.Exists(database))
                     File.Delete(database);

@@ -37,7 +37,7 @@ using System.Reflection;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.Player;
-using MediaPortal.Utils.Services;
+using MediaPortal.Util;
 
 namespace MediaPortal.Configuration.Sections
 {
@@ -46,7 +46,6 @@ namespace MediaPortal.Configuration.Sections
     private ArrayList loadedPlugins = new ArrayList();
     private ArrayList availablePlugins = new ArrayList();
     bool isLoaded = false;
-    protected ILog _log;
 
     private class ItemTag
     {
@@ -71,8 +70,6 @@ namespace MediaPortal.Configuration.Sections
     public PluginsNew(string name)
       : base(name)
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
 
       // This call is required by the Windows Form Designer.
       InitializeComponent();
@@ -109,11 +106,11 @@ namespace MediaPortal.Configuration.Sections
 
     private void EnumeratePlugins()
     {
-      EnumeratePluginDirectory(_config.Get(Config.Options.PluginsPath) + "windows");
-      EnumeratePluginDirectory(_config.Get(Config.Options.PluginsPath) + "subtitle");
-      EnumeratePluginDirectory(_config.Get(Config.Options.PluginsPath) + "tagreaders");
-      EnumeratePluginDirectory(_config.Get(Config.Options.PluginsPath) + "externalplayers");
-      EnumeratePluginDirectory(_config.Get(Config.Options.PluginsPath) + "process");
+      EnumeratePluginDirectory(Config.Get(Config.Dir.Plugins) + "windows");
+      EnumeratePluginDirectory(Config.Get(Config.Dir.Plugins) + "subtitle");
+      EnumeratePluginDirectory(Config.Get(Config.Dir.Plugins) + "tagreaders");
+      EnumeratePluginDirectory(Config.Get(Config.Dir.Plugins) + "externalplayers");
+      EnumeratePluginDirectory(Config.Get(Config.Dir.Plugins) + "process");
     }
 
     private void EnumeratePluginDirectory(string directory)
@@ -193,7 +190,7 @@ namespace MediaPortal.Configuration.Sections
                 catch (System.Reflection.TargetInvocationException)
                 {
                   MessageBox.Show(string.Format("An error occured while loading the plugin {0}.\n\nIt's incompatible with the current MediaPortal version and won't be loaded.", type.FullName, "Plugin Manager", MessageBoxButtons.OK, MessageBoxIcon.Error));
-                  _log.Info("Plugin Manager: Plugin {0} is incompatible with the current MediaPortal version! (File: {1})", type.FullName, pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1));
+                  Log.Info("Plugin Manager: Plugin {0} is incompatible with the current MediaPortal version! (File: {1})", type.FullName, pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1));
                   continue;
                 }
                 ISetupForm pluginForm = pluginObject as ISetupForm;
@@ -227,7 +224,7 @@ namespace MediaPortal.Configuration.Sections
                 catch (System.Reflection.TargetInvocationException)
                 {
                   MessageBox.Show(string.Format("An error occured while loading the plugin {0}.\n\nIt's incompatible with the current MediaPortal version and won't be loaded.", t.FullName, "Plugin Manager", MessageBoxButtons.OK, MessageBoxIcon.Error));
-                  _log.Info("PluginManager: {0} is incompatible with the current MediaPortal version! (File: {1})", t.FullName, pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1));
+                  Log.Info("PluginManager: {0} is incompatible with the current MediaPortal version! (File: {1})", t.FullName, pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1));
                   continue;
                 }
                 GUIWindow win = (GUIWindow)newObj;
@@ -245,8 +242,8 @@ namespace MediaPortal.Configuration.Sections
           catch (Exception ex)
           {
             MessageBox.Show(string.Format("An error occured while loading the plugin file {0}.\n\nIt's borken or incompatible with the current MediaPortal version and won't be loaded.", pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1), "Plugin Manager", MessageBoxButtons.OK, MessageBoxIcon.Error));
-            _log.Info("PluginManager: Plugin file {0} is broken or incompatible with the current MediaPortal version and won't be loaded!", pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1));
-            _log.Info("PluginManager: Exception: {0}", ex);
+            Log.Info("PluginManager: Plugin file {0} is broken or incompatible with the current MediaPortal version and won't be loaded!", pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1));
+            Log.Info("PluginManager: Exception: {0}", ex);
           }
         }
       }
@@ -254,7 +251,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (Settings xmlreader = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         foreach (ListViewItem item in listViewPlugins.Items)
         {
           ItemTag itemTag = (ItemTag)item.Tag;
@@ -288,7 +285,7 @@ namespace MediaPortal.Configuration.Sections
     public override void SaveSettings()
     {
       LoadAll();
-      using (Settings xmlwriter = new Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (Settings xmlwriter = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         foreach (ListViewItem item in listViewPlugins.Items)
         {
           ItemTag itemTag = (ItemTag)item.Tag;

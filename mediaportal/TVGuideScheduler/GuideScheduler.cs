@@ -29,7 +29,6 @@ using System.Collections;
 using MediaPortal.GUI.Library;
 using MediaPortal.TV.Database;
 using MediaPortal.Util;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.TVGuideScheduler
 {
@@ -37,18 +36,11 @@ namespace MediaPortal.TVGuideScheduler
   {
     public static void Main(string[] options)
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      IConfig _config = new Config(System.IO.Directory.GetCurrentDirectory());
-      if (!_config.LoadConfig())
+      if (!Config.LoadDirs(System.IO.Directory.GetCurrentDirectory()))
       {
         Console.WriteLine("Missing or Invalid MediaPortalConfig.xml file. MediaPortal cannot run without that file.");
         return;
       }
-      services.Add<IConfig>(_config);
-
-      LogFile logFile = new LogFile(_config.Get(Config.Options.LogPath), "MediaPortal");
-      ILog log = new MediaPortal.Utils.Services.Log(logFile.GetSharedStream(), MediaPortal.Utils.Services.Log.Level.Debug);
-      services.Add<ILog>(log);
 
       string grabber = null;
       int grabberDays;
@@ -61,7 +53,7 @@ namespace MediaPortal.TVGuideScheduler
       string FileToImport = null;
       bool RunConfig = false;
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         grabber = xmlreader.GetValueAsString("xmltv", "grabber", "tv_grab_uk_rt");
         multiGrab = xmlreader.GetValueAsString("xmltv", "advanced", "yes");
@@ -84,7 +76,7 @@ namespace MediaPortal.TVGuideScheduler
           else
           {
             //LoadFromFile=false;
-            log.Info("TVGuideScheduler: /file option but invalid file name " + s);
+            Log.Info("TVGuideScheduler: /file option but invalid file name " + s);
           }
           FileNext = false;
         }
@@ -104,7 +96,7 @@ namespace MediaPortal.TVGuideScheduler
           XMLTVImport importMulti = new XMLTVImport();
           importMulti.Import(FileToImport, false);
         }
-        else log.Info("TVGuideScheduler: /file option but no filename ");
+        else Log.Info("TVGuideScheduler: /file option but no filename ");
 
       }
       else
@@ -121,7 +113,7 @@ namespace MediaPortal.TVGuideScheduler
           }
           else
           {
-            log.Info("TVGuideScheduler: XML file is empty - " + file);
+            Log.Info("TVGuideScheduler: XML file is empty - " + file);
           }
         }
         else
@@ -160,7 +152,7 @@ namespace MediaPortal.TVGuideScheduler
               }
               else
               {
-                log.Info("TVGuideScheduler: XML file is empty - " + file);
+                Log.Info("TVGuideScheduler: XML file is empty - " + file);
               }
             }
           }
@@ -182,7 +174,7 @@ namespace MediaPortal.TVGuideScheduler
             int offset = 0;
             if (System.Convert.ToInt32(daysInGuide.Days) < 0)
             {
-              log.Info("TVGuideScheduler: /already more days in guide than configured, exiting");
+              Log.Info("TVGuideScheduler: /already more days in guide than configured, exiting");
               return;
             }
             if (System.Convert.ToInt32(daysInGuide.Days) == 0)
@@ -211,7 +203,7 @@ namespace MediaPortal.TVGuideScheduler
             }
             else
             {
-              log.Info("TVGuideScheduler: XML file is empty - " + file);
+              Log.Info("TVGuideScheduler: XML file is empty - " + file);
             }
           }
         }

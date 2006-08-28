@@ -30,7 +30,8 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using System.Text;
 using MediaPortal.UserInterface.Controls;
-using MediaPortal.Utils.Services;
+using MediaPortal.Util;
+
 #pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
@@ -61,7 +62,7 @@ namespace MediaPortal.Configuration.Sections
       // default default
       _useClassicHandler.Checked = true;
 
-      using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         int volumeStyle = reader.GetValueAsInt("volume", "handler", 0);
 
@@ -95,7 +96,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings writer = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings writer = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         if (_useClassicHandler.Checked)
           writer.SetValue("volume", "handler", 0);

@@ -41,7 +41,7 @@ using MediaPortal.TV.Scanning;
 using MediaPortal.GUI.Library;
 using TVCapture;
 using MediaPortal.TV.Database;
-using MediaPortal.Utils.Services;
+using MediaPortal.Util;
 
 namespace MediaPortal.Configuration
 {
@@ -132,24 +132,19 @@ namespace MediaPortal.Configuration
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBox5vAntennae;
     TVCaptureDevice prevDevice = null;
 
-    protected ILog _log;
-    protected IConfig _config;
 
     /// <summary>
     /// 
     /// </summary>
     public EditCaptureCardForm(int cardId, bool addNewCard, TVCaptureDevice deviceToEdit)
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
 
       ArrayList captureCards = new ArrayList();
       if (addNewCard)
       {
         try
         {
-          using (FileStream fileStream = new FileStream(_config.Get(Config.Options.ConfigPath) + "capturecards.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+          using (FileStream fileStream = new FileStream(Config.Get(Config.Dir.Config) + "capturecards.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
           {
 
             SoapFormatter formatter = new SoapFormatter();
@@ -166,7 +161,7 @@ namespace MediaPortal.Configuration
         }
         catch
         {
-					_log.Error("Recorder: EditCaptureCardForm");
+					Log.Error("Recorder: EditCaptureCardForm");
         }
       }
 
@@ -235,7 +230,7 @@ namespace MediaPortal.Configuration
       FilterHelper.GetMPEG2AudioEncoders(availableAudioCompressors);
       for (int i = 0; i < availableVideoDevices.Count; ++i)
       {
-        _log.Info("device:{0} id:{1}", availableVideoDevices[i].ToString(), availableVideoDeviceMonikers[i].ToString());
+        Log.Info("device:{0} id:{1}", availableVideoDevices[i].ToString(), availableVideoDeviceMonikers[i].ToString());
       }
 
 
@@ -360,7 +355,7 @@ namespace MediaPortal.Configuration
             }
 
             // only 3 values ?? "Adding name:{0} capture:{1} id:{2} type:{3}",
-            _log.Info("Adding name:{0} id:{1} type:{2}",
+            Log.Info("Adding name:{0} id:{1} type:{2}",
               cd.CommercialName,
               cd.DeviceId,
               cd.CardType.ToString());
@@ -1285,7 +1280,7 @@ namespace MediaPortal.Configuration
 
       if (CaptureCard != null && CaptureCard.FriendlyName != String.Empty)
       {
-        string filename = String.Format(_config.Get(Config.Options.DatabasePath) + "card_{0}.xml", CaptureCard.FriendlyName);
+        string filename = String.Format(Config.Get(Config.Dir.Database) + "card_{0}.xml", CaptureCard.FriendlyName);
         using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(filename))
         {
           xmlwriter.SetValueAsBool("quality", "enabled", checkBoxHiQuality.Checked);
@@ -1440,7 +1435,7 @@ namespace MediaPortal.Configuration
       }
       catch (Exception ex)
       {
-        _log.Info("FillInAll exception:{0} {1} {2}",
+        Log.Info("FillInAll exception:{0} {1} {2}",
           ex.Message, ex.Source, ex.StackTrace);
         return false;
       }
@@ -1524,7 +1519,7 @@ namespace MediaPortal.Configuration
           FillAutotuneTab();
           if (capture.FriendlyName != String.Empty)
           {
-            string filename = String.Format(_config.Get(Config.Options.DatabasePath) + "card_{0}.xml", capture.FriendlyName);
+            string filename = String.Format(Config.Get(Config.Dir.Database) + "card_{0}.xml", capture.FriendlyName);
             using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename))
             {
               checkBoxHiQuality.Checked = xmlreader.GetValueAsBool("quality", "enabled", false);
@@ -1681,7 +1676,7 @@ namespace MediaPortal.Configuration
       // save settings for card
       if (capture != null)
       {
-        string filename = String.Format(_config.Get(Config.Options.DatabasePath) + "card_{0}.xml", capture.FriendlyName);
+        string filename = String.Format(Config.Get(Config.Dir.Database) + "card_{0}.xml", capture.FriendlyName);
         using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(filename))
         {
           if (checkBoxHWPidFiltering.Visible)
@@ -1699,7 +1694,7 @@ namespace MediaPortal.Configuration
             capture.CardType == TVCapture.CardTypes.Digital_TTPremium)
         {
           // save settings for get the filename in mp.xml
-          using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+          using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
           {
             xmlwriter.SetValue("dvb_ts_cards", "filename", filename);
           }
@@ -1720,7 +1715,7 @@ namespace MediaPortal.Configuration
       // save settings for card
       if (capture != null)
       {
-        string filename = String.Format(_config.Get(Config.Options.DatabasePath) + "card_{0}.xml", capture.FriendlyName);
+        string filename = String.Format(Config.Get(Config.Dir.Database) + "card_{0}.xml", capture.FriendlyName);
         using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(filename))
         {
           if (checkBoxHWPidFiltering.Visible)
@@ -1737,7 +1732,7 @@ namespace MediaPortal.Configuration
         if (capture.CardType == TVCapture.CardTypes.Digital_SS2)
         {
           // save settings for get the filename in mp.xml
-          using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+          using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
           {
             xmlwriter.SetValue("dvb_ts_cards", "filename", filename);
           }

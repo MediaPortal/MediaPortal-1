@@ -82,7 +82,7 @@ namespace MediaPortal.GUI.Library
 			}
 			catch(Exception e)
 			{
-				_log.Info(e.Message);
+				Log.Info(e.Message);
 			}
 
 		}

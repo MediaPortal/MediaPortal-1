@@ -26,7 +26,7 @@
 using System;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
-using MediaPortal.Utils.Services;
+using MediaPortal.Util;
 
 namespace MediaPortal.HCWBlaster
 {
@@ -48,37 +48,32 @@ namespace MediaPortal.HCWBlaster
 		private        bool   _ExLogging   = false;
 
 		private HCWIRBlaster irblaster;
-    protected ILog _log;
-    protected IConfig _config;
 		#region MPInteraction
 
 		public HCWBlaster()
 		{
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
 			//
 			//irblaster = new HCWIRBlaster();
 		}
 
 		public void Start()
 		{
-			_log.Info("HCWBlaster: HCWBlaster {0} plugin starting.", _version);
+			Log.Info("HCWBlaster: HCWBlaster {0} plugin starting.", _version);
 
 			LoadSettings();
 			
 			if (_ExLogging == true) 
-                _log.Info("HCWBlaster: Extended Logging is Enabled.");
+                Log.Info("HCWBlaster: Extended Logging is Enabled.");
 
 			if (_ExLogging == false) 
-				_log.Info("HCWBlaster: Extended Logging is NOT Enabled.");
+				Log.Info("HCWBlaster: Extended Logging is NOT Enabled.");
 
 			if (_ExLogging == true)
-				_log.Info("HCWBlaster: Creating IRBlaster Object.");
+				Log.Info("HCWBlaster: Creating IRBlaster Object.");
 
 			irblaster = new HCWIRBlaster();
 
-			_log.Info("HCWBlaster: Adding message handler for HCWBlaster {0}.", _version);
+			Log.Info("HCWBlaster: Adding message handler for HCWBlaster {0}.", _version);
 
 			GUIWindowManager.Receivers += new SendMessageHandler(this.OnThreadMessage);
 			return;
@@ -86,13 +81,13 @@ namespace MediaPortal.HCWBlaster
 
 		public void Stop()
 		{
-			_log.Info("HCWBlaster: HCWBlaster {0} plugin stopping.", _version);
+			Log.Info("HCWBlaster: HCWBlaster {0} plugin stopping.", _version);
 			return;
 		}
 
 		private void LoadSettings()
 		{
-			using(MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+			using(MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
 			{
 				_ExLogging = xmlreader.GetValueAsBool("HCWBlaster", "ExtendedLogging", false);
 			}
@@ -114,7 +109,7 @@ namespace MediaPortal.HCWBlaster
 		public void ChangeTunerChannel(string channel_data) 
 		{
 			if (_ExLogging == true)
-				_log.Info("HCWBlaster: Calling IR Blaster Code for: {0}", channel_data );
+				Log.Info("HCWBlaster: Calling IR Blaster Code for: {0}", channel_data );
 			irblaster.blast(channel_data, _ExLogging);
 		}
 

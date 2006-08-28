@@ -28,9 +28,9 @@ using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-using MediaPortal.Utils.Services;
 using MediaPortal.IR;
 using MediaPortal.GUI.Library;
+using MediaPortal.Util;
 
 #pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
@@ -64,7 +64,6 @@ namespace MediaPortal.Configuration.Sections
     private Label lblUSBUIRTConfigVersion;
     private Label label7;
     private System.ComponentModel.IContainer components = null;
-    protected ILog _log;
 
     #region Properties
 
@@ -83,8 +82,6 @@ namespace MediaPortal.Configuration.Sections
     public USBUIRT(string name)
       : base(name)
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
 
       InitializeComponent();
 
@@ -116,11 +113,11 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         try
         {
-          _log.Info("USBUIRT: Setting configuration control values");
+          Log.Info("USBUIRT: Setting configuration control values");
 
           inputCheckBox.Checked = xmlreader.GetValueAsBool("USBUIRT", "internal", false);
           outputCheckBox.Checked = xmlreader.GetValueAsBool("USBUIRT", "external", false);
@@ -144,14 +141,14 @@ namespace MediaPortal.Configuration.Sections
 
         catch (Exception ex)
         {
-          _log.Info("USBUIRT: Setting control values failed: " + ex.Message);
+          Log.Info("USBUIRT: Setting control values failed: " + ex.Message);
         }
       }
     }
 
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         xmlwriter.SetValueAsBool("USBUIRT", "internal", inputCheckBox.Checked);
         xmlwriter.SetValueAsBool("USBUIRT", "external", outputCheckBox.Checked);

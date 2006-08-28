@@ -10,7 +10,6 @@ using System.Runtime.InteropServices;
 using DirectShowLib;
 using DShowNET.Helper;
 using MediaPortal.GUI.Library;
-using MediaPortal.Utils.Services;
 
 namespace Toub.MediaCenter.Dvrms.Metadata
 {
@@ -153,9 +152,7 @@ namespace Toub.MediaCenter.Dvrms.Metadata
 			sourceFilter = ClassId.CoCreateInstance(ClassId.RecordingAttributes) as Toub.MediaCenter.Dvrms.Metadata.IFileSourceFilter;
 			if (sourceFilter==null)
 			{
-        ServiceProvider services = GlobalServiceProvider.Instance;
-        ILog log = services.Get<ILog>();
-				log.Error("Unable to create IFileSourceFilter");
+        Log.WriteFile(Log.LogType.Recorder, true, "Unable to create IFileSourceFilter");
 				return;
 			}
 			int hr=sourceFilter.Load(filepath, null);

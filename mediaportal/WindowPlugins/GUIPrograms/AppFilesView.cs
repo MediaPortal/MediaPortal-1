@@ -619,7 +619,7 @@ namespace WindowPlugins.GUIPrograms
         newLink.TargetAppID = curFile.AppID; // the app where the launch will effectively happen....
         newLink.Filename = curFile.Filename;
         newLink.Write();
-        //				_log.Info("Add to Favourites groupAppID:{0} Title:{1} fileID:{2} appID:{3}", GrouperAppID, curFile.Title, curFile.FileID, curFile.AppID);
+        //				Log.Info("Add to Favourites groupAppID:{0} Title:{1} fileID:{2} appID:{3}", GrouperAppID, curFile.Title, curFile.FileID, curFile.AppID);
       }
     }
 

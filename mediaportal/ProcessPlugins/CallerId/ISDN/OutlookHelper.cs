@@ -24,7 +24,6 @@ using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using Outlook = Microsoft.Office.Interop.Outlook;
-using MediaPortal.Utils.Services;
 
 namespace ProcessPlugins.CallerId
 {
@@ -114,9 +113,7 @@ namespace ProcessPlugins.CallerId
       }
       catch (Exception ex)
       {
-        ServiceProvider services = GlobalServiceProvider.Instance;
-        ILog log = services.Get<ILog>();
-        log.Info("Outlook exception: {0}", ex.Message);
+        Log.Info("Outlook exception: {0}", ex.Message);
       }
 
       return found;

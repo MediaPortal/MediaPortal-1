@@ -32,7 +32,7 @@ using Microsoft.Win32;
 using System.Runtime.InteropServices;
 using DShowNET;
 using DirectShowLib;
-using MediaPortal.Utils.Services;
+using MediaPortal.GUI.Library;
 
 #pragma warning disable 108
 
@@ -58,7 +58,6 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPButton buttonTvDefaults;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxOutputInterlaced;
     private System.ComponentModel.IContainer components = null;
-    protected ILog _log;
 
     /// <summary>
     /// 
@@ -74,8 +73,6 @@ namespace MediaPortal.Configuration.Sections
     public MPEG2DecVideoFilter(string name)
       : base(name)
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
 
       // This call is required by the Windows Form Designer.
       InitializeComponent();
@@ -397,11 +394,11 @@ namespace MediaPortal.Configuration.Sections
           }
           catch (Exception ex)
           {
-            _log.Info("Exception while loading MPV settings: {0}", ex.Message);
+            Log.Info("Exception while loading MPV settings: {0}", ex.Message);
           }
         }
         else
-          _log.Info("Registry Key not found: {0}", "Software\\Gabest\\Filters\\MPEG Video Decoder", true);
+          Log.Info("Registry Key not found: {0}", "Software\\Gabest\\Filters\\MPEG Video Decoder", true);
     }
 
     public override void SaveSettings()

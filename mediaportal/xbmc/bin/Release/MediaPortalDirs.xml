@@ -28,43 +28,43 @@
 -->
 <Config>
   <!-- The Path were all the Config files are located (mediaportal.xml, etc.) -->
-  <Dir id = "ConfigPath">
+  <Dir id = "Config">
     <Path></Path>
   </Dir>
   <!-- The Path were all the Plugins are located. Don't modify -->
-  <Dir id = "PluginsPath">
+  <Dir id = "Plugins">
     <Path>plugins\</Path>
   </Dir>
   <!-- The Path were the log files should be written to -->
-  <Dir id = "LogPath">
+  <Dir id = "Log">
     <Path>log\</Path>
   </Dir>
       <!-- The Path were the Custom Inputdevice Mappings are located. -->
-  <Dir id = "CustomInputDevicePath">
+  <Dir id = "CustomInputDevice">
     <Path>InputDeviceMappings\custom</Path>
   </Dir>
   <!-- The Path were the skins are located -->
-  <Dir id = "SkinPath">
+  <Dir id = "Skin">
     <Path>skin\</Path>
   </Dir>
     <!-- The Path were the Language files are located -->
-  <Dir id = "LanguagePath">
+  <Dir id = "Language">
     <Path>language\</Path>
   </Dir>
   <!-- The Path for the databases -->
-  <Dir id = "DatabasePath">
+  <Dir id = "Database">
     <Path>database\</Path>
   </Dir>
   <!-- The Path for the Thumbs, like Music Cover Art, TV Logos, etc. -->
-  <Dir id = "ThumbsPath">
+  <Dir id = "Thumbs">
     <Path>thumbs\</Path>
   </Dir>
   <!-- The Path were all the Weather related files are located. -->
-  <Dir id = "WeatherPath">
+  <Dir id = "Weather">
     <Path>weather\</Path>
   </Dir>
   <!-- A Path holding cached information. Like Picture thumbs, modified skin files (packedgfx), etc. Files in there can be removed by the user -->
-  <Dir id = "CachePath">
+  <Dir id = "Cache">
     <Path>cache\</Path>
   </Dir>
 </Config>

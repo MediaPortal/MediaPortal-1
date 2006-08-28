@@ -28,7 +28,7 @@ using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
-using MediaPortal.Utils.Services;
+using MediaPortal.Util;
 
 namespace MediaPortal.GUI.MSN
 {
@@ -59,7 +59,6 @@ namespace MediaPortal.GUI.MSN
     private MediaPortal.UserInterface.Controls.MPComboBox cbProxyType;
     private MediaPortal.UserInterface.Controls.MPLabel label8;
     private MediaPortal.UserInterface.Controls.MPTextBox tbProxyPort;
-    static IConfig _config;
     /// <summary>
     /// Required designer variable.
     /// </summary>
@@ -67,8 +66,6 @@ namespace MediaPortal.GUI.MSN
 
     public MessengerSetup()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _config = services.Get<IConfig>();
       //
       // Required for Windows Form Designer support
       //
@@ -378,7 +375,7 @@ namespace MediaPortal.GUI.MSN
 
     private void buttonOK_Click(object sender, System.EventArgs e)
     {
-      using (MediaPortal.Profile.Settings xmlWriter = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlWriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         xmlWriter.SetValue("MSNmessenger", "email", textBoxEMail.Text);
         xmlWriter.SetValue("MSNmessenger", "password", textBoxPassword.Text);
@@ -406,7 +403,7 @@ namespace MediaPortal.GUI.MSN
     private void MessengerSetup_Load(object sender, System.EventArgs e)
     {
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         textBoxEMail.Text = xmlreader.GetValueAsString("MSNmessenger", "email", "");
         textBoxPassword.Text = xmlreader.GetValueAsString("MSNmessenger", "password", "");

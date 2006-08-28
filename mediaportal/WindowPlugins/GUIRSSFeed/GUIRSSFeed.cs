@@ -314,7 +314,7 @@ namespace MediaPortal.GUI.RSS
     {
       String firstSite = "";
       m_sites.Clear();
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         for (int i = 0; i < NUM_STORIES; i++)
         {
@@ -467,7 +467,7 @@ namespace MediaPortal.GUI.RSS
               }//if ( strExtension.Length>0)
               else
               {
-                _log.Info("image has no extension:{0}", strImage);
+                Log.Info("image has no extension:{0}", strImage);
               }
             }
             m_strSiteIcon = MediaPortal.Util.Utils.GetThumb(m_strSiteURL);
@@ -642,7 +642,7 @@ namespace MediaPortal.GUI.RSS
         GUIWindowManager.SendMessage(msg);
 
         // Log exception
-        _log.Info("ex:{0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+        Log.Info("ex:{0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
       }
 
       return text;

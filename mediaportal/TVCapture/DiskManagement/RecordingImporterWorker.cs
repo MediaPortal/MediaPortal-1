@@ -9,7 +9,6 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.TV.Recording;
 using MediaPortal.TV.Database;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.TV.DiskSpace
 {
@@ -100,9 +99,7 @@ namespace MediaPortal.TV.DiskSpace
       }
       catch (Exception ex)
       {
-        ServiceProvider services = GlobalServiceProvider.Instance;
-        ILog log = services.Get<ILog>();
-        log.Error(ex);
+        Log.Error(ex);
       }
     }
 
@@ -110,7 +107,7 @@ namespace MediaPortal.TV.DiskSpace
 
     static TVRecorded AddFileToTvDatabase(string fileName)
     {
-      //_log.Info("Recorder: import recording {0}", file);
+      //Log.Info("Recorder: import recording {0}", file);
       try
       {
         using (DvrmsMetadataEditor editor = new DvrmsMetadataEditor(fileName))
@@ -173,17 +170,17 @@ namespace MediaPortal.TV.DiskSpace
             {
               return newRec;
             }
-            //_log.Info("Recorder: import recording {0} failed");
+            //Log.Info("Recorder: import recording {0} failed");
           }
           else
           {
-            //_log.Info("Recorder: import recording {0} failed, unknown tv channel", file);
+            //Log.Info("Recorder: import recording {0} failed, unknown tv channel", file);
           }
         }//using (DvrmsMetadataEditor editor = new DvrmsMetadataEditor(file))
       }
       catch (Exception)
       {
-        //_log.Error("Recorder:Unable to import {0} reason:{1} {2} {3}", file, ex.Message, ex.Source, ex.StackTrace);
+        //Log.Error("Recorder:Unable to import {0} reason:{1} {2} {3}", file, ex.Message, ex.Source, ex.StackTrace);
       }
       return null;
     }

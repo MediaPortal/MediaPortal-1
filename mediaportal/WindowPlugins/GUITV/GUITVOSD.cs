@@ -441,7 +441,7 @@ namespace MediaPortal.GUI.TV
                 ToggleSubMenu(0, m_iActiveMenu);						// hide the currently active sub-menu
               }
               //g_application.m_guiWindowFullScreen.m_bOSDVisible = false;	// toggle the OSD off so parent window can de-init
-              _log.Info("TVOSD:stop");
+              Log.Info("TVOSD:stop");
               if (Recorder.IsRecording())
               {
                 Recorder.StopRecording();
@@ -1194,7 +1194,7 @@ namespace MediaPortal.GUI.TV
 
     private void OnPreviousChannel()
     {
-      _log.Info("GUITV OSD: OnPreviousChannel");
+      Log.Info("GUITV OSD: OnPreviousChannel");
       if (!Recorder.View) return;
       GUITVHome.Navigator.ZapToPreviousChannel(false);
 
@@ -1204,7 +1204,7 @@ namespace MediaPortal.GUI.TV
 
     private void OnNextChannel()
     {
-      _log.Info("GUITV OSD: OnNextChannel");
+      Log.Info("GUITV OSD: OnNextChannel");
       if (!Recorder.View) return;
 
       GUITVHome.Navigator.ZapToNextChannel(false);

@@ -3,15 +3,14 @@ using System.Collections.Generic;
 using System.Text;
 using DirectShowLib.SBE;
 using DirectShowLib;
-using MediaPortal.Utils.Services;
 using System.Runtime.InteropServices;
+using MediaPortal.GUI.Library;
 
 namespace WindowPlugins.DvrMpegCut
 {
   class DvrMsModifier
   {
     IStreamBufferRecComp recCompcut = null;
-    ILog log;
     System.Timers.Timer progressTime;
     public delegate void Finished();
     public event Finished OnFinished;
@@ -25,8 +24,6 @@ namespace WindowPlugins.DvrMpegCut
     public DvrMsModifier()
     {
       
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      log = services.Get<ILog>();
       progressTime = new System.Timers.Timer(1000);
       progressTime.Elapsed += new System.Timers.ElapsedEventHandler(progressTime_Elapsed);
     }
@@ -99,7 +96,7 @@ namespace WindowPlugins.DvrMpegCut
       }
       catch (Exception ex)
       {
-        log.Error(ex);
+        Log.Error(ex);
       }
       finally
       {
@@ -145,7 +142,7 @@ namespace WindowPlugins.DvrMpegCut
 			}
 			catch (Exception ex)
 			{
-				log.Error(ex);
+				Log.Error(ex);
 			}
 			finally
 			{
@@ -193,7 +190,7 @@ namespace WindowPlugins.DvrMpegCut
 			}
 			catch (Exception ex)
 			{
-				log.Error(ex);
+				Log.Error(ex);
 			}
 			finally
 			{

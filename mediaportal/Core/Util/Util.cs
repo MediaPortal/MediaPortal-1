@@ -41,7 +41,6 @@ using Microsoft.Win32;
 using MediaPortal.GUI.Library;
 using MediaPortal.Ripper;
 using MediaPortal.Player;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Util
 {
@@ -107,8 +106,6 @@ namespace MediaPortal.Util
     static ServiceController ehSched = new ServiceController("ehSched");
 
     static char[] crypt = new char[10] { 'G', 'D', 'J', 'S', 'I', 'B', 'T', 'P', 'W', 'Q' };
-    static ILog _log;
-    static IConfig _config;
 
     // singleton. Dont allow any instance of this class
     private Utils()
@@ -117,11 +114,8 @@ namespace MediaPortal.Util
 
     static Utils()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         m_bHideExtensions = xmlreader.GetValueAsBool("general", "hideextensions", true);
 
@@ -808,7 +802,7 @@ namespace MediaPortal.Util
         CRCTool crc = new CRCTool();
         crc.Init(CRCTool.CRCCode.CRC32);
         ulong dwcrc = crc.calc(strLine);
-        string strRet = System.IO.Path.GetFullPath(String.Format("{0}{1}.jpg", _config.Get(Config.Options.ThumbsPath),dwcrc));
+        string strRet = System.IO.Path.GetFullPath(String.Format("{0}{1}.jpg", Config.Get(Config.Dir.Thumbs),dwcrc));
         return strRet;
       }
       catch (Exception)
@@ -898,7 +892,7 @@ namespace MediaPortal.Util
       proc.StartInfo = procStartInfo;
       try
       {
-        _log.Info("Start process {0} {1}", procStartInfo.FileName, procStartInfo.Arguments);
+        Log.Info("Start process {0} {1}", procStartInfo.FileName, procStartInfo.Arguments);
         if (OnStartExternal != null)
         {
           // Event: Starting external process
@@ -924,7 +918,7 @@ namespace MediaPortal.Util
           ex.Message,
           ex.Source,
           ex.StackTrace);
-        _log.Info(ErrorString);
+        Log.Info(ErrorString);
       }
       return proc;
     }
@@ -952,7 +946,7 @@ namespace MediaPortal.Util
 
     static public bool PlayDVD()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         string strPath = xmlreader.GetValueAsString("dvdplayer", "path", "");
         string strParams = xmlreader.GetValueAsString("dvdplayer", "arguments", "");
@@ -975,7 +969,7 @@ namespace MediaPortal.Util
             {
               dvdplayer.StartInfo.Arguments = strParams;
             }
-            _log.Info("start process {0} {1}", strPath, dvdplayer.StartInfo.Arguments);
+            Log.Info("start process {0} {1}", strPath, dvdplayer.StartInfo.Arguments);
 
             if (OnStartExternal != null)
             {
@@ -987,11 +981,11 @@ namespace MediaPortal.Util
             {
               OnStopExternal(dvdplayer, true);		// Event: External process stopped
             }
-            _log.Info("{0} done", strPath);
+            Log.Info("{0} done", strPath);
           }
           else
           {
-            _log.Info("file {0} does not exists", strPath);
+            Log.Info("file {0} does not exists", strPath);
           }
         }
       }
@@ -1015,7 +1009,7 @@ namespace MediaPortal.Util
           strFile.IndexOf("record2.") > 0 || strFile.IndexOf("record3.") > 0 ||
           strFile.IndexOf("record4.") > 0 || strFile.IndexOf("record5.") > 0) return false;
 
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         {
           bool bInternal = xmlreader.GetValueAsBool("movieplayer", "internal", true);
           if (bInternal) return false;
@@ -1047,7 +1041,7 @@ namespace MediaPortal.Util
               {
                 movieplayer.StartInfo.Arguments = "\"" + strFile + "\"";
               }
-              _log.Info("start process {0} {1}", strPath, movieplayer.StartInfo.Arguments);
+              Log.Info("start process {0} {1}", strPath, movieplayer.StartInfo.Arguments);
               if (OnStartExternal != null)
               {
                 OnStartExternal(movieplayer, true);		// Event: Starting external process
@@ -1058,12 +1052,12 @@ namespace MediaPortal.Util
               {
                 OnStopExternal(movieplayer, true);		// Event: External process stopped
               }
-              _log.Info("{0} done", strPath);
+              Log.Info("{0} done", strPath);
               return true;
             }
             else
             {
-              _log.Info("file {0} does not exists", strPath);
+              Log.Info("file {0} does not exists", strPath);
             }
           }
         }
@@ -1211,7 +1205,7 @@ namespace MediaPortal.Util
         }
         catch (Exception ex)
         {
-          _log.Info("download failed:{0}", ex.Message);
+          Log.Info("download failed:{0}", ex.Message);
         }
       }
     }
@@ -1293,7 +1287,7 @@ namespace MediaPortal.Util
       }
       catch (Exception ex)
       {
-        _log.Info("download failed:{0}", ex.Message);
+        Log.Info("download failed:{0}", ex.Message);
       }
     }
 
@@ -1440,7 +1434,7 @@ namespace MediaPortal.Util
         }
         else
         {
-          _log.Info(@"Cannot find sound:{0}\sounds\{1} ", strSkin, sSoundFile);
+          Log.Info(@"Cannot find sound:{0}\sounds\{1} ", strSkin, sSoundFile);
           return 0;
         }
       }
@@ -1702,7 +1696,7 @@ namespace MediaPortal.Util
       if ((ehRecvrExist && (ehRecvr.Status != ServiceControllerStatus.Stopped) && (ehRecvr.Status != ServiceControllerStatus.StopPending))
         || (ehSchedExist && (ehSched.Status != ServiceControllerStatus.Stopped) && (ehSched.Status != ServiceControllerStatus.StopPending)))
       {
-        _log.Info("  Stopping Microsoft Media Center services");
+        Log.Info("  Stopping Microsoft Media Center services");
         try
         {
           if ((ehRecvr.Status != ServiceControllerStatus.Stopped) && (ehRecvr.Status != ServiceControllerStatus.StopPending))
@@ -1713,7 +1707,7 @@ namespace MediaPortal.Util
         }
         catch
         {
-          _log.Info("Error stopping MCE service \"ehRecvr\"");
+          Log.Info("Error stopping MCE service \"ehRecvr\"");
         }
         try
         {
@@ -1725,7 +1719,7 @@ namespace MediaPortal.Util
         }
         catch
         {
-          _log.Info("Error stopping MCE service \"ehSched\"");
+          Log.Info("Error stopping MCE service \"ehSched\"");
         }
       }
     }
@@ -1734,7 +1728,7 @@ namespace MediaPortal.Util
     {
       if (restartMCEehRecvr || restartMCEehSched)
       {
-        _log.Info("Restarting MCE Services");
+        Log.Info("Restarting MCE Services");
 
         try
         {
@@ -1744,7 +1738,7 @@ namespace MediaPortal.Util
         catch (Exception ex)
         {
           if (ehRecvr.Status != ServiceControllerStatus.Running)
-            _log.Info("Error starting MCE service \"ehRecvr\" {0}", ex.ToString());
+            Log.Info("Error starting MCE service \"ehRecvr\" {0}", ex.ToString());
         }
 
         try
@@ -1755,7 +1749,7 @@ namespace MediaPortal.Util
         catch (Exception ex)
         {
           if (ehSched.Status != ServiceControllerStatus.Running)
-            _log.Info("Error starting MCE service \"ehSched\" {0}", ex.ToString());
+            Log.Info("Error starting MCE service \"ehSched\" {0}", ex.ToString());
         }
       }
     }
@@ -1808,7 +1802,7 @@ namespace MediaPortal.Util
       }
       catch (Exception e)
       {
-        _log.Info("Util.ExportEmbeddedResource: {0}", e.Message);
+        Log.Info("Util.ExportEmbeddedResource: {0}", e.Message);
       }
     }
 
@@ -1969,13 +1963,13 @@ namespace MediaPortal.Util
 
     static public bool HibernateSystem(bool forceShutDown)
     {
-      _log.Info("Utils: Hibernate system");
+      Log.Info("Utils: Hibernate system");
       return (SetSuspendState(PowerState.Hibernate, forceShutDown));
     }
 
     static public bool SuspendSystem(bool forceShutDown)
     {
-      _log.Info("Utils: Suspend system");
+      Log.Info("Utils: Suspend system");
       return (SetSuspendState(PowerState.Suspend, forceShutDown));
     }
 

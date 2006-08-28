@@ -181,7 +181,7 @@ namespace MediaPortal.GUI.Music
           currentOfflineMode = offlineMode.random;
           break;
       }      
-      _log.Info("GUIMusicPlayList: Scrobblesettings loaded for {0} - Active: {1} , Trackpreference: {2}", _currentScrobbleUser, Convert.ToString(ScrobblerOn), Convert.ToString(_preferCountForTracks));
+      Log.Info("GUIMusicPlayList: Scrobblesettings loaded for {0} - Active: {1} , Trackpreference: {2}", _currentScrobbleUser, Convert.ToString(ScrobblerOn), Convert.ToString(_preferCountForTracks));
     }
 
     #region overrides
@@ -189,7 +189,7 @@ namespace MediaPortal.GUI.Music
     {
       m_strDirectory = System.IO.Directory.GetCurrentDirectory();
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         _enableScrobbling = xmlreader.GetValueAsBool("plugins", "Audioscrobbler", false);               
         _currentScrobbleUser = xmlreader.GetValueAsString("audioscrobbler", "user", "Username");
@@ -879,7 +879,7 @@ namespace MediaPortal.GUI.Music
       {
         string strPath = System.IO.Path.GetFileNameWithoutExtension(strNewFileName);
         string strPlayListPath = String.Empty;
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         {
           strPlayListPath = xmlreader.GetValueAsString("music", "playlists", String.Empty);
           strPlayListPath = MediaPortal.Util.Utils.RemoveTrailingSlash(strPlayListPath);

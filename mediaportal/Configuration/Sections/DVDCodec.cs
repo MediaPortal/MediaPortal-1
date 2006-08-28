@@ -30,10 +30,10 @@ using System.Drawing;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using System.Runtime.InteropServices;
-using MediaPortal.Utils.Services;
 using DShowNET;
 using DShowNET.Helper;
 using DirectShowLib;
+using MediaPortal.Util;
 
 #pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
@@ -55,7 +55,6 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxDXVA;
     private System.ComponentModel.IContainer components = null;
     bool _init = false;
-    protected ILog _log;
     /// <summary>
     /// 
     /// </summary>
@@ -70,8 +69,6 @@ namespace MediaPortal.Configuration.Sections
     public DVDCodec(string name)
       : base(name)
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
 
       // This call is required by the Windows Form Designer.
       InitializeComponent();
@@ -117,8 +114,8 @@ namespace MediaPortal.Configuration.Sections
     public override void LoadSettings()
     {
       if (_init == false) return;
-      _log.Info("load dvd");
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      Log.Info("load dvd");
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         string audioRenderer = xmlreader.GetValueAsString("dvdplayer", "audiorenderer", "Default DirectSound Device");
         string videoCodec = xmlreader.GetValueAsString("dvdplayer", "videocodec", "");
@@ -183,14 +180,14 @@ namespace MediaPortal.Configuration.Sections
         videoCodecComboBox.SelectedItem = videoCodec;
 
       }
-      _log.Info("load dvd done");
+      Log.Info("load dvd done");
     }
 
     public override void SaveSettings()
     {
       if (_init == false) return;
 
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         xmlwriter.SetValue("dvdplayer", "audiorenderer", audioRendererComboBox.Text);
         xmlwriter.SetValue("dvdplayer", "videocodec", videoCodecComboBox.Text);

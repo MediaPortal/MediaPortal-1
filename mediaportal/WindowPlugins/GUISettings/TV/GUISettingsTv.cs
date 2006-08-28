@@ -5,6 +5,8 @@ using MediaPortal.Dialogs;
 using DShowNET;
 using DShowNET.Helper;
 using DirectShowLib;
+using MediaPortal.Util;
+
 namespace WindowPlugins.GUISettings.TV
 {
   /// <summary>
@@ -53,7 +55,7 @@ namespace WindowPlugins.GUISettings.TV
     void OnVideoCodec()
     {
       string strVideoCodec = "";
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         strVideoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "");
       }
@@ -78,7 +80,7 @@ namespace WindowPlugins.GUISettings.TV
       dlg.DoModal(GetID);
       if ( dlg.SelectedLabel < 0 )
         return;
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         xmlwriter.SetValue("mytv", "videocodec", (string)availableVideoFilters[dlg.SelectedLabel]);
       }
@@ -87,7 +89,7 @@ namespace WindowPlugins.GUISettings.TV
     void OnAudioCodec()
     {
       string strAudioCodec = "";
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         strAudioCodec = xmlreader.GetValueAsString("mytv", "audiocodec", "");
       }
@@ -112,7 +114,7 @@ namespace WindowPlugins.GUISettings.TV
       dlg.DoModal(GetID);
       if ( dlg.SelectedLabel < 0 )
         return;
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         xmlwriter.SetValue("mytv", "audiocodec", (string)availableAudioFilters[dlg.SelectedLabel]);
       }
@@ -147,7 +149,7 @@ namespace WindowPlugins.GUISettings.TV
       //string[] aspectRatio = { "normal", "original", "stretch", "zoom", "letterbox", "panscan" };
       string[] aspectRatio = { "normal", "original", "stretch", "zoom149", "zoom", "letterbox", "panscan" };
       string defaultAspectRatio = "";
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         defaultAspectRatio = xmlreader.GetValueAsString("mytv", "defaultar", "normal");
       }
@@ -170,7 +172,7 @@ namespace WindowPlugins.GUISettings.TV
         dlg.DoModal(GetID);
         if ( dlg.SelectedLabel < 0 )
           return;
-        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         {
           xmlwriter.SetValue("mytv", "defaultar", aspectRatio[dlg.SelectedLabel]);
         }
@@ -179,7 +181,7 @@ namespace WindowPlugins.GUISettings.TV
     void OnTimeshiftBuffer()
     {
       int buflen = 30;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         buflen = xmlreader.GetValueAsInt("capture", "timeshiftbuffer", 30);
       }
@@ -203,7 +205,7 @@ namespace WindowPlugins.GUISettings.TV
         dlg.DoModal(GetID);
         if ( dlg.SelectedLabel < 0 )
           return;
-        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         {
           buflen = ( dlg.SelectedLabel * 30 ) + 30;
           xmlwriter.SetValue("capture", "timeshiftbuffer", buflen.ToString());
@@ -214,7 +216,7 @@ namespace WindowPlugins.GUISettings.TV
     {
       string[] deinterlaceModes = { "None", "Bob", "Weave", "Best" };
       int deInterlaceMode = 1;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         deInterlaceMode = xmlreader.GetValueAsInt("mytv", "deinterlace", 1);
       }
@@ -233,7 +235,7 @@ namespace WindowPlugins.GUISettings.TV
         dlg.DoModal(GetID);
         if ( dlg.SelectedLabel < 0 )
           return;
-        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         {
           xmlwriter.SetValue("mytv", "deinterlace", dlg.SelectedLabel);
         }
@@ -242,7 +244,7 @@ namespace WindowPlugins.GUISettings.TV
     void OnAutoTurnOnTv()
     {
       bool autoTurnOn = false;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         autoTurnOn = xmlreader.GetValueAsBool("mytv", "autoturnontv", false);
       }
@@ -258,7 +260,7 @@ namespace WindowPlugins.GUISettings.TV
         dlg.DoModal(GetID);
         if ( dlg.SelectedLabel < 0 )
           return;
-        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         {
           xmlwriter.SetValueAsBool("mytv", "autoturnontv", ( dlg.SelectedLabel == 0 ));
         }
@@ -268,7 +270,7 @@ namespace WindowPlugins.GUISettings.TV
     void OnAutoTurnOnTS()
     {
       bool autoTurnOnTS = true;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         autoTurnOnTS = xmlreader.GetValueAsBool("mytv", "autoturnontimeshifting", true);
       }
@@ -284,7 +286,7 @@ namespace WindowPlugins.GUISettings.TV
         dlg.DoModal(GetID);
         if ( dlg.SelectedLabel < 0 )
           return;
-        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         {
           if ( dlg.SelectedLabel == 0 )
             autoTurnOnTS = true;
@@ -300,7 +302,7 @@ namespace WindowPlugins.GUISettings.TV
     void OnAudioRenderer()
     {
       string strAudioRenderer = "";
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         strAudioRenderer = xmlreader.GetValueAsString("mytv", "audiorenderer", "");
       }
@@ -325,7 +327,7 @@ namespace WindowPlugins.GUISettings.TV
       dlg.DoModal(GetID);
       if ( dlg.SelectedLabel < 0 )
         return;
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         xmlwriter.SetValue("mytv", "audiorenderer", (string)availableAudioFilters[dlg.SelectedLabel]);
       }

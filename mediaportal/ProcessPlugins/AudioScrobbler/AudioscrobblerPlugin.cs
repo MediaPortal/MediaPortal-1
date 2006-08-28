@@ -31,10 +31,9 @@ using System.Net;
 using System.Text;
 using System.Timers;
 using System.Windows.Forms;
-
+using MediaPortal.Util;
 using MediaPortal.GUI.Library;
 using MediaPortal.Music.Database;
-using MediaPortal.Utils.Services;
 using MediaPortal.Player;
 
 namespace MediaPortal.Audioscrobbler 
@@ -67,8 +66,6 @@ namespace MediaPortal.Audioscrobbler
     
     private System.Timers.Timer SongCheckTimer;
 
-    private static ILog _log;
-    private static IConfig _config;
 
     #region Properties
     /* The number of seconds at which the current song will be queued */
@@ -174,7 +171,7 @@ namespace MediaPortal.Audioscrobbler
       // Only submit if we have reasonable info about the song
       if (currentSong.Artist == "" || currentSong.Title == "")
       {
-        _log.Info("Audioscrobbler plugin: {0}", "no tags found ignoring song");
+        Log.Info("Audioscrobbler plugin: {0}", "no tags found ignoring song");
         return;
       }
 
@@ -186,7 +183,7 @@ namespace MediaPortal.Audioscrobbler
         return;
       }
       else
-        _log.Info("Audioscrobbler plugin: {0}", "song started late - ignoring");
+        Log.Info("Audioscrobbler plugin: {0}", "song started late - ignoring");
     }
     
     /// <summary>
@@ -208,7 +205,7 @@ namespace MediaPortal.Audioscrobbler
             // no CD text information available
             if (g_Player.CurrentFile.IndexOf("Track") > 0 && g_Player.CurrentFile.IndexOf(".cda") > 0)
             {
-              //              _log.Info("Audioscrobbler plugin: AudioCD detected - {0}", "ignoring song");
+              //              Log.Info("Audioscrobbler plugin: AudioCD detected - {0}", "ignoring song");
               currentSong.Artist = GUIPropertyManager.GetProperty("#Play.Current.Artist");
               currentSong.Title = GUIPropertyManager.GetProperty("#Play.Current.Title");
               currentSong.Album = GUIPropertyManager.GetProperty("#Play.Current.Album");
@@ -244,7 +241,7 @@ namespace MediaPortal.Audioscrobbler
           // DB lookup of song failed
           else
             if (g_Player.IsMusic)
-              _log.Info("Audioscrobbler plugin: database does not contain track - ignoring song: {0}", currentSong.ToShortString());
+              Log.Info("Audioscrobbler plugin: database does not contain track - ignoring song: {0}", currentSong.ToShortString());
 
 
         }
@@ -252,7 +249,7 @@ namespace MediaPortal.Audioscrobbler
         {
           // avoid false skip detection
           lastPosition = Convert.ToInt32(g_Player.Player.CurrentPosition);
-          _log.Info("Audioscrobbler plugin: {0}", "track paused - avoid skip protection");
+          Log.Info("Audioscrobbler plugin: {0}", "track paused - avoid skip protection");
         }
       }
     }
@@ -279,15 +276,15 @@ namespace MediaPortal.Audioscrobbler
           {
             if (alertTime < INFINITE_TIME && position > (lastPosition + skipThreshold + _timerTickSecs))
             {
-              //        _log.Info("Audioscrobbler: OnTickEvent {0}", "Skipping detected from " + lastPosition + " to " + position + ") - not queueing");
+              //        Log.Info("Audioscrobbler: OnTickEvent {0}", "Skipping detected from " + lastPosition + " to " + position + ") - not queueing");
               alertTime = INFINITE_TIME;
-              _log.Info("Audioscrobbler plugin: song was forwarded - ignoring {0}", currentSong.ToShortString());              
+              Log.Info("Audioscrobbler plugin: song was forwarded - ignoring {0}", currentSong.ToShortString());              
             }
 
             // then actually queue the song if we're that far along
             if (position >= alertTime && alertTime > 14)
             {
-              _log.Info("Audioscrobbler plugin: queuing song: {0}", currentSong.ToShortString());
+              Log.Info("Audioscrobbler plugin: queuing song: {0}", currentSong.ToShortString());
               AudioscrobblerBase.pushQueue(currentSong);              
               queued = true;              
               currentSong.AudioScrobblerStatus = SongStatus.Cached;
@@ -309,7 +306,7 @@ namespace MediaPortal.Audioscrobbler
         SongCheckTimer = new System.Timers.Timer();
       if (startNow)
       {
-        _log.Info("Audioscrobbler plugin: {0}", "starting check timer");
+        Log.Info("Audioscrobbler plugin: {0}", "starting check timer");
         SongCheckTimer.Interval = _timerTickSecs * 1000;
         SongCheckTimer.Elapsed += new ElapsedEventHandler(OnTickEvent);
         SongCheckTimer.Start();
@@ -323,12 +320,12 @@ namespace MediaPortal.Audioscrobbler
     {
       if (currentSong.Duration > MAX_DURATION) {
         //SubmitTimeLabel.Text = "Current song is too long. Not submitting.";
-        _log.Info("Audioscrobbler plugin: ignoring long song {0}", currentSong.ToShortString());
+        Log.Info("Audioscrobbler plugin: ignoring long song {0}", currentSong.ToShortString());
         return INFINITE_TIME;
       }
       else if (currentSong.Duration < MIN_DURATION) {
         //SubmitTimeLabel.Text = "Current song is too short. Not submitting.";
-        _log.Info("Audioscrobbler plugin: ignoring short song {0}", currentSong.ToShortString());
+        Log.Info("Audioscrobbler plugin: ignoring short song {0}", currentSong.ToShortString());
         return INFINITE_TIME;
       }
 
@@ -354,13 +351,10 @@ namespace MediaPortal.Audioscrobbler
       
       GUIWindowManager.OnNewAction += new OnActionHandler(OnNewAction);
 
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
 
       startStopSongCheckTimer(true);
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         currentUser = xmlreader.GetValueAsString("audioscrobbler", "user", "");
       }      
@@ -368,7 +362,7 @@ namespace MediaPortal.Audioscrobbler
       MusicDatabase mdb = new MusicDatabase();
       _doSubmit = (mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(currentUser)), "iSubmitOn", -1) == 1) ? true : false;
 
-      _log.Info("Audioscrobbler plugin: submitting songs: {0}", Convert.ToString(_doSubmit));
+      Log.Info("Audioscrobbler plugin: submitting songs: {0}", Convert.ToString(_doSubmit));
 
       if (_doSubmit)
       {

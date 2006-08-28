@@ -166,7 +166,7 @@ namespace WindowPlugins.GUIPrograms
 
     void SaveSettings()
     {
-      using (Settings xmlwriter = new Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (Settings xmlwriter = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         switch ((View) mapSettings.ViewAs)
         {
@@ -213,7 +213,7 @@ namespace WindowPlugins.GUIPrograms
 
     void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (Settings xmlreader = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         string curText = "";
         curText = xmlreader.GetValue("myprograms", "viewby");
@@ -261,7 +261,7 @@ namespace WindowPlugins.GUIPrograms
 
     void LoadLastAppIDFromSettings()
     {
-      using (Settings xmlreader = new Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (Settings xmlreader = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         mapSettings.LastAppID = xmlreader.GetValueAsInt("myprograms", "lastAppID", - 1);
         mapSettings.LastViewLevel = xmlreader.GetValueAsInt("myprograms", "lastViewLevel", - 1);
@@ -557,12 +557,12 @@ namespace WindowPlugins.GUIPrograms
         if (!bSuccess)
         {
           strMsg = "Connection failed";
-          _log.Info("myPrograms: RefreshData failed");
+          Log.Info("myPrograms: RefreshData failed");
         }
         else
         {
           strMsg = String.Format("No match for '{0}'", curFile.Title);
-          _log.Info("myPrograms: No data found for '{0}'", curFile.Title);
+          Log.Info("myPrograms: No data found for '{0}'", curFile.Title);
         }
         if (null != dlgOk)
         {

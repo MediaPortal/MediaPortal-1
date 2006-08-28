@@ -33,7 +33,6 @@ using System.Reflection;
 using MediaPortal.GUI.Library;
 using MediaPortal.TV.Recording;
 using MediaPortal.Util;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Configuration
 {
@@ -90,7 +89,6 @@ namespace MediaPortal.Configuration
     private MediaPortal.UserInterface.Controls.MPLabel infoLabel;
     private System.Windows.Forms.PictureBox pictureBox1;
     int visiblePageIndex = -1;
-    protected ILog _log;
 
     public void AddSection(SectionSettings settings, string topic, string information)
     {
@@ -115,8 +113,6 @@ namespace MediaPortal.Configuration
     public WizardForm(string sectionConfiguration)
     {
 
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
 
         wizardForm = this;
       //
@@ -150,7 +146,7 @@ namespace MediaPortal.Configuration
         bool DVBCCard = false;
         bool DVBSCard = false;
         bool ATSCCard = false;
-        _log.Info("found {0} tv cards", sect.captureCards.Count);
+        Log.Info("found {0} tv cards", sect.captureCards.Count);
         foreach (TVCaptureDevice dev in sect.captureCards)
         {
           if (dev.VideoDevice == "B2C2 MPEG-2 Source" ||
@@ -160,27 +156,27 @@ namespace MediaPortal.Configuration
           }
           if (dev.Network == NetworkType.Analog)
           {
-            _log.Info("Analog TV Card:{0}", dev.CommercialName);
+            Log.Info("Analog TV Card:{0}", dev.CommercialName);
             analogCard = true;
           }
           if (dev.Network == NetworkType.DVBT)
           {
-            _log.Info("Digital DVB-T Card:{0}", dev.CommercialName);
+            Log.Info("Digital DVB-T Card:{0}", dev.CommercialName);
             DVBTCard = true;
           }
           if (dev.Network == NetworkType.DVBC)
           {
-            _log.Info("Digital DVB-C Card:{0}", dev.CommercialName);
+            Log.Info("Digital DVB-C Card:{0}", dev.CommercialName);
             DVBCCard = true;
           }
           if (dev.Network == NetworkType.DVBS)
           {
-            _log.Info("Digital DVB-S Card:{0}", dev.CommercialName);
+            Log.Info("Digital DVB-S Card:{0}", dev.CommercialName);
             DVBSCard = true;
           }
           if (dev.Network == NetworkType.ATSC)
           {
-              _log.Info("Digital ATSC Card:{0}", dev.CommercialName);
+              Log.Info("Digital ATSC Card:{0}", dev.CommercialName);
               ATSCCard = true;
           }
           if (dev.VideoDevice == "B2C2 MPEG-2 Source" || 

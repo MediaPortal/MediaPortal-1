@@ -40,7 +40,6 @@ using MediaPortal.Dialogs;
 using MediaPortal.Player;
 using MediaPortal.TV.Recording;
 using MediaPortal.TV.Database;
-using MediaPortal.Utils.Services;
 #endregion
 
 
@@ -122,16 +121,11 @@ namespace MediaPortal.GUI.TV
     string _lineInput = String.Empty;
     static bool _workerThreadRunning = false;
 
-    new static ILog _log;
-    new static IConfig _config;
     #endregion
 
     #region ctor
     public GUITvGuideBase()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
 
       _colorList.Add(Color.Red);
       _colorList.Add(Color.Green);
@@ -169,7 +163,7 @@ namespace MediaPortal.GUI.TV
     #region Serialisation
     void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         _currentTvChannel = xmlreader.GetValueAsString("tvguide", "channel", String.Empty);
         _cursorX = xmlreader.GetValueAsInt("tvguide", "ypos", 0);
@@ -181,7 +175,7 @@ namespace MediaPortal.GUI.TV
 
     void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         xmlwriter.SetValue("tvguide", "channel", _currentTvChannel);
         xmlwriter.SetValue("tvguide", "ypos", _cursorX.ToString());
@@ -202,9 +196,9 @@ namespace MediaPortal.GUI.TV
 
     protected void Initialize()
     {
-      _log.Info("TvGuide StartImportXML: Initialize");
+      Log.Info("TvGuide StartImportXML: Initialize");
       _tvGuideFileName = "xmltv";
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         _tvGuideFileName = xmlreader.GetValueAsString("xmltv", "folder", "xmltv");
         _tvGuideFileName = MediaPortal.Util.Utils.RemoveTrailingSlash(_tvGuideFileName);
@@ -647,13 +641,13 @@ namespace MediaPortal.GUI.TV
 
             if ( _autoTurnOnTv )
             {
-              _log.Info("TVGuide: automatically turn on TV");
+              Log.Info("TVGuide: automatically turn on TV");
               GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RESUME_TV, (int)GUIWindow.Window.WINDOW_TV, GetID, 0, 0, 0, null);
               msg.SendToTargetWindow = true;
               GUIWindowManager.SendThreadMessage(msg);
             }
             else
-              _log.Info("TVGuide: do not turn tv on automatically");
+              Log.Info("TVGuide: do not turn tv on automatically");
 
             return true;
           }
@@ -790,7 +784,7 @@ namespace MediaPortal.GUI.TV
     protected void CheckNewTVGuide()
     {
       bool shouldImportTvGuide = false;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         string strTmp = String.Empty;
         strTmp = xmlreader.GetValueAsString("tvguide", "date", String.Empty);
@@ -2159,7 +2153,7 @@ namespace MediaPortal.GUI.TV
       }
       catch (Exception)
       {
-        _log.Info("StartImportXML - Exception " + _tvGuideFileName);
+        Log.Info("StartImportXML - Exception " + _tvGuideFileName);
         return;
       }
       _tvGuideFileWatcher.EnableRaisingEvents = false;
@@ -2175,7 +2169,7 @@ namespace MediaPortal.GUI.TV
 
     static void ThreadFunctionImportTVGuide()
     {
-      _log.Info(@"detected new tvguide ->import new tvguide");
+      Log.Info(@"detected new tvguide ->import new tvguide");
       Thread.Sleep(500);
       try
       {
@@ -2194,7 +2188,7 @@ namespace MediaPortal.GUI.TV
         //
         if (File.Exists(_tvGuideFileName))
         {
-          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
           {
             string strFileTime = System.IO.File.GetLastWriteTime(_tvGuideFileName).ToString();
             xmlreader.SetValue("tvguide", "date", strFileTime);
@@ -2207,7 +2201,7 @@ namespace MediaPortal.GUI.TV
       }
       _tvGuideFileWatcher.EnableRaisingEvents = true;
       _workerThreadRunning = false;
-      _log.Info(@"import done");
+      Log.Info(@"import done");
     }
 
     void ShowContextMenu()
@@ -2320,7 +2314,7 @@ namespace MediaPortal.GUI.TV
           }
           try
           {
-            _log.Info("TVGuide: IsAnyCardRecording: {0}", Convert.ToString(Recorder.IsAnyCardRecording()));
+            Log.Info("TVGuide: IsAnyCardRecording: {0}", Convert.ToString(Recorder.IsAnyCardRecording()));
 
             if (Recorder.IsAnyCardRecording())
             {
@@ -2335,7 +2329,7 @@ namespace MediaPortal.GUI.TV
                 {
                   recMatchFound = true;
 
-                  _log.Info("TVGuide: clicked on a currently running recording");
+                  Log.Info("TVGuide: clicked on a currently running recording");
                   GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
                   if (dlg == null)
                     return;
@@ -2350,7 +2344,7 @@ namespace MediaPortal.GUI.TV
                     return;
                   if (_recordingList != null)
                   {
-                    _log.Info("TVGuide: Found current program {0} in recording list", _currentTitle);
+                    Log.Info("TVGuide: Found current program {0} in recording list", _currentTitle);
                     switch (dlg.SelectedId)
                     {
                       case 979: // Play recording from beginning                          
@@ -2358,7 +2352,7 @@ namespace MediaPortal.GUI.TV
                         string filename = Recorder.GetRecordingFileName(rec);
                         if (filename != String.Empty)
                         {
-                          _log.Info("TVGuide: Play recording {0} from start", _currentTitle);
+                          Log.Info("TVGuide: Play recording {0} from start", _currentTitle);
                           g_Player.Play(filename);
                           if (g_Player.Playing)
                           {
@@ -2375,7 +2369,7 @@ namespace MediaPortal.GUI.TV
                         {
                           if (g_Player.Playing)
                           {
-                            _log.Info("TVGuide: Show recording {0} at live point", _currentTitle);
+                            Log.Info("TVGuide: Show recording {0} at live point", _currentTitle);
                             g_Player.SeekAsolutePercentage(99);
                           }
                           GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
@@ -2385,7 +2379,7 @@ namespace MediaPortal.GUI.TV
                     }
                   }
                   else
-                    _log.Info("EPG: _recordingList was not available");
+                    Log.Info("EPG: _recordingList was not available");
                 }
               }
               if (recMatchFound == false)

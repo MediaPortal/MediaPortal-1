@@ -33,7 +33,6 @@ using System.Windows.Media.Animation;
 using System.Xml;
 using MediaPortal.Drawing;
 using MediaPortal.Drawing.Layouts;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.GUI.Library
 {
@@ -75,7 +74,6 @@ namespace MediaPortal.GUI.Library
     protected long _originalDiffuseColor;
     protected GUIControl _parentControl = null;
     protected bool _isDimmed = false;
-    protected ILog _log;
 
     //protected int DimColor = 0x60ffffff;
 
@@ -106,8 +104,6 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public GUIControl()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
     }
 
     /// <summary>
@@ -1179,7 +1175,7 @@ namespace MediaPortal.GUI.Library
 			}
 			catch (Exception e)
 			{
-				_log.Info("LoadDefines: {0}", e.Message);
+				Log.Info("LoadDefines: {0}", e.Message);
 			}
 
 			foreach (XmlNode controlNode in doc.DocumentElement.SelectNodes("/window/controls/control"))
@@ -1191,7 +1187,7 @@ namespace MediaPortal.GUI.Library
 				}
 				catch (Exception ex)
 				{
-					_log.Error("Unable to load control: {0}", ex.ToString());
+					Log.Error("Unable to load control: {0}", ex.ToString());
 				}
 			}
 			return listControls;

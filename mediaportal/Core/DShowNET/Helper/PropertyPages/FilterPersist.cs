@@ -22,7 +22,6 @@ using System;
 using System.IO;
 using DirectShowLib;
 using MediaPortal.GUI.Library;
-using MediaPortal.Utils.Services;
 
 namespace DShowNET.Helper
 {
@@ -34,15 +33,12 @@ namespace DShowNET.Helper
     ICaptureGraphBuilder2		 m_captureGraphBuilder;
     IBaseFilter              m_videoCompressorFilter;
     IBaseFilter              m_audioCompressorFilter;
-    protected ILog _log;
 
 		public FilterPersist(ICaptureGraphBuilder2		captureGraphBuilder,
                           IBaseFilter              videoCompressorFilter,
                           IBaseFilter              audioCompressorFilter)
 		{
 
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
 
       m_captureGraphBuilder=captureGraphBuilder;
       m_videoCompressorFilter=videoCompressorFilter;
@@ -52,7 +48,7 @@ namespace DShowNET.Helper
 
     public void LoadSettings(int ID)
     {
-      _log.Info("Load settings card:{0}",ID);
+      Log.Info("Load settings card:{0}",ID);
       try
       {
         PropertyPageCollection propertyPages = new PropertyPageCollection( m_captureGraphBuilder, m_videoCompressorFilter, m_audioCompressorFilter);
@@ -73,7 +69,7 @@ namespace DShowNET.Helper
       }
       catch(Exception ex)
       {
-        _log.Info("ex:{0} {1} {2}", ex.Source, ex.StackTrace, ex.Message);
+        Log.Info("ex:{0} {1} {2}", ex.Source, ex.StackTrace, ex.Message);
       }
     }
 
@@ -82,7 +78,7 @@ namespace DShowNET.Helper
     {
       try
       {
-        _log.Info("Save settings card:{0}",ID);
+        Log.Info("Save settings card:{0}",ID);
         System.IO.Directory.CreateDirectory("filters");
         PropertyPageCollection  propertyPages = new PropertyPageCollection( m_captureGraphBuilder, m_videoCompressorFilter, m_audioCompressorFilter);
         foreach ( PropertyPage p in propertyPages )
@@ -100,7 +96,7 @@ namespace DShowNET.Helper
       }
       catch(Exception ex)
       {
-        _log.Info("ex:{0} {1} {2}", ex.Source, ex.StackTrace, ex.Message);
+        Log.Info("ex:{0} {1} {2}", ex.Source, ex.StackTrace, ex.Message);
       }
     }
 	}

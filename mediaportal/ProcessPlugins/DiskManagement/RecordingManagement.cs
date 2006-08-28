@@ -33,7 +33,6 @@ using MediaPortal.Util;
 using MediaPortal.TV.Database;
 using MediaPortal.Video.Database;
 using MediaPortal.TV.Recording;
-using MediaPortal.Utils.Services;
 
 namespace ProcessPlugins.DiskSpace
 {
@@ -69,9 +68,7 @@ namespace ProcessPlugins.DiskSpace
       {
         if (!rec.ShouldBeDeleted) continue;
 
-        ServiceProvider services = GlobalServiceProvider.Instance;
-        ILog log = services.Get<ILog>();
-        log.Info("Recorder: delete old recording:{0} date:{1}",
+        Log.WriteFile(Log.LogType.Recorder, "Recorder: delete old recording:{0} date:{1}",
                           rec.FileName,
                           rec.StartTime.ToShortDateString());
         Recorder.DeleteRecording(rec);

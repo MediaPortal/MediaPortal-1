@@ -25,7 +25,7 @@
 
 using System;
 using System.Windows.Forms;
-using MediaPortal.Utils.Services;
+using MediaPortal.Util;
 
 namespace GUIRSSFeed
 {
@@ -49,12 +49,9 @@ namespace GUIRSSFeed
     public int ID;
     //private SetupForm form;
     public bool isNew;
-    static IConfig _config;
 
     public DetailsForm(SetupForm parent, int ID)
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _config = services.Get<IConfig>();
       this.ID = ID;
       //this.form = form;
       isNew = false;
@@ -76,7 +73,7 @@ namespace GUIRSSFeed
         string tempText;
         for (int i = 0; i < 20; i++)
         {
-          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
           {
             tempText = xmlreader.GetValueAsString("rss", "siteName" + i, "");
             if (tempText == "")
@@ -128,7 +125,7 @@ namespace GUIRSSFeed
 
     void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
 
         textName.Text = xmlreader.GetValueAsString("rss", "siteName" + ID, "");
@@ -140,7 +137,7 @@ namespace GUIRSSFeed
 
     void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         xmlwriter.SetValue("rss", "siteName" + this.ID, textName.Text);
         xmlwriter.SetValue("rss", "siteURL" + this.ID, textURL.Text);

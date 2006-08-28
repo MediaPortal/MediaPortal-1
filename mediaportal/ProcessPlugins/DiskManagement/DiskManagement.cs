@@ -33,7 +33,6 @@ using MediaPortal.Util;
 using MediaPortal.TV.Database;
 using MediaPortal.Video.Database;
 using MediaPortal.TV.Recording;
-using MediaPortal.Utils.Services;
 
 namespace ProcessPlugins.DiskSpace
 {
@@ -42,14 +41,9 @@ namespace ProcessPlugins.DiskSpace
   /// </summary>
   public class DiskManagement : IPlugin, ISetupForm 
   {
-    static ILog log;
-    static IConfig _config;
     System.Windows.Forms.Timer _timer;
     public DiskManagement()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
 
       _timer = new System.Windows.Forms.Timer();
       _timer.Interval = 15*60*1000;
@@ -108,7 +102,7 @@ namespace ProcessPlugins.DiskSpace
     bool OutOfDiskSpace(string drive)
     {
       ulong minimiumFreeDiskSpace = 0;
-      using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         string quotaText = xmlReader.GetValueAsString("freediskspace", drive[0].ToString(), "51200");
         minimiumFreeDiskSpace = (ulong)Int32.Parse(quotaText);
@@ -163,9 +157,9 @@ namespace ProcessPlugins.DiskSpace
 
       List<RecordingFileInfo> recordings = GetRecordingsOnDrive(drive);
       if (recordings.Count == 0) return;
- 
-      log.Info("Recorder: not enough free space on drive:{0}.", drive);
-      log.Info("Recorder: found {0} recordings on drive:{0}", recordings.Count, drive);
+
+      Log.WriteFile(Log.LogType.Recorder, "Recorder: not enough free space on drive:{0}.", drive);
+      Log.WriteFile(Log.LogType.Recorder, "Recorder: found {0} recordings on drive:{0}", recordings.Count, drive);
 
       // Not enough free diskspace
       // start deleting recordings (oldest ones first)
@@ -176,7 +170,7 @@ namespace ProcessPlugins.DiskSpace
         RecordingFileInfo fi = (RecordingFileInfo)recordings[0];
         if (fi.record.KeepRecordingMethod == TVRecorded.KeepMethod.UntilSpaceNeeded)
         {
-          log.Info("Recorder: delete recording:{0} size:{1} date:{2} {3}",
+          Log.WriteFile(Log.LogType.Recorder, "Recorder: delete recording:{0} size:{1} date:{2} {3}",
                                               fi.filename,
                                               Utils.GetSize(fi.info.Length),
                                               fi.info.CreationTime.ToShortDateString(), fi.info.CreationTime.ToShortTimeString());

@@ -33,12 +33,12 @@ using DShowNET;
 using DShowNET.Helper;
 using DirectShowLib;
 using MediaPortal.GUI.Library;
+using MediaPortal.Util;
 using TVCapture;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Soap;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
-using MediaPortal.Utils.Services;
 #pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
@@ -55,7 +55,6 @@ namespace MediaPortal.Configuration.Sections
     private System.ComponentModel.IContainer components = null;
     private System.Windows.Forms.ColumnHeader columnHeader4;
     bool _init = false;
-		protected ILog _log;
 
     //
     // Privare members
@@ -334,12 +333,10 @@ namespace MediaPortal.Configuration.Sections
 
     public void LoadCaptureCards()
     {
-			ServiceProvider services = GlobalServiceProvider.Instance;
-			_log = services.Get<ILog>();
 
-      if (File.Exists(base._config.Get(Config.Options.ConfigPath) + "capturecards.xml"))
+      if (File.Exists(Config.Get(Config.Dir.Config) + "capturecards.xml"))
       {
-        using (FileStream fileStream = new FileStream(base._config.Get(Config.Options.ConfigPath) + "capturecards.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+        using (FileStream fileStream = new FileStream(Config.Get(Config.Dir.Config) + "capturecards.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
         {
           try
           {
@@ -366,7 +363,7 @@ namespace MediaPortal.Configuration.Sections
           catch
           {
             MessageBox.Show("Failed to load previously configured capture card(s), you will need to re-configure your device(s).", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-						_log.Error("Recorder: LoadCaptureCards()");
+						Log.Error("Recorder: LoadCaptureCards()");
           }
         }
       }
@@ -374,7 +371,7 @@ namespace MediaPortal.Configuration.Sections
 
     void SaveCaptureCards(ArrayList availableCards)
     {
-      using (FileStream fileStream = new FileStream(base._config.Get(Config.Options.ConfigPath) + "capturecards.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
+      using (FileStream fileStream = new FileStream(Config.Get(Config.Dir.Config) + "capturecards.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
       {
         //
         // Create Soap Formatter
@@ -468,9 +465,9 @@ namespace MediaPortal.Configuration.Sections
             cd.Priority = 10;
             captureCards.Add(cd);
 
-            string filename = String.Format(base._config.Get(Config.Options.DatabasePath) + "card_{0}.xml", cd.FriendlyName);
+            string filename = String.Format(Config.Get(Config.Dir.Database) + "card_{0}.xml", cd.FriendlyName);
             // save settings for get the filename in mp.xml
-            using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+            using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
             {
               xmlwriter.SetValue("dvb_ts_cards", "filename", filename);
             }
@@ -497,9 +494,9 @@ namespace MediaPortal.Configuration.Sections
             cd.Priority = 10;
             captureCards.Add(cd);
 
-            string filename = String.Format(base._config.Get(Config.Options.DatabasePath) + "card_{0}.xml", cd.FriendlyName);
+            string filename = String.Format(Config.Get(Config.Dir.Database) + "card_{0}.xml", cd.FriendlyName);
             // save settings for get the filename in mp.xml
-            using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+            using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
             {
               xmlwriter.SetValue("dvb_ts_cards", "filename", filename);
             }

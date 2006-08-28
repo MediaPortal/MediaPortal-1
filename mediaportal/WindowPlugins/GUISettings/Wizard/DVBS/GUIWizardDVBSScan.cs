@@ -31,7 +31,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBS
     protected override ITuning GetTuningInterface(TVCaptureDevice captureCard)
     {
       m_diseqcLoops = 1;
-      string filename = String.Format(_config.Get(MediaPortal.Utils.Services.Config.Options.DatabasePath) + "card_{0}.xml", captureCard.FriendlyName);
+      string filename = String.Format(Config.Get(Config.Dir.Database) + "card_{0}.xml", captureCard.FriendlyName);
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename))
       {
         if (xmlreader.GetValueAsBool("dvbs", "useLNB2", false) == true)

@@ -1,3 +1,27 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
+/* 
+ *	Copyright (C) 2005-2006 Team MediaPortal
+ *	http://www.team-mediaportal.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+
+#endregion
 using System;
 using System.Net;
 using System.Text;
@@ -5,7 +29,7 @@ using System.Threading;
 using System.ComponentModel;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
-using MediaPortal.Utils.Services;
+using MediaPortal.Util;
 
 namespace MediaPortal.GUI.Video
 {
@@ -15,7 +39,6 @@ namespace MediaPortal.GUI.Video
 	public class TrailersUtility
 	{
 		string _downloadedText		= string.Empty;
-    static IConfig _config;
 
 		public void GetWebPage(string url, out string HTMLDownload) // Get url and put in string
 		{
@@ -58,10 +81,8 @@ namespace MediaPortal.GUI.Video
 			}
 			catch(Exception ex)
 			{
-        ServiceProvider services = GlobalServiceProvider.Instance;
-        ILog log = services.Get<ILog>();
 
-				log.Info("GUITrailers.DownloadWorker: {0}", ex.Message);
+				Log.Info("GUITrailers.DownloadWorker: {0}", ex.Message);
 			}
 			finally
 			{
@@ -81,17 +102,15 @@ namespace MediaPortal.GUI.Video
 					// Download Poster
 					WebClient wc = new WebClient();
 					moviename = moviename.Replace(":","-");
-					wc.DownloadFile(downloadurl, _config.Get(Config.Options.ThumbsPath) + "MPTemp -"+moviename + ".jpg");
+					wc.DownloadFile(downloadurl, Config.Get(Config.Dir.Thumbs) + "MPTemp -"+moviename + ".jpg");
 
-          while (System.IO.File.Exists(_config.Get(Config.Options.ThumbsPath) + "MPTemp -" + moviename + ".jpg") != true)
+          while (System.IO.File.Exists(Config.Get(Config.Dir.Thumbs) + "MPTemp -" + moviename + ".jpg") != true)
 						GUIWindowManager.Process();
 				}
 		}
 
         public TrailersUtility()
 		{
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _config = services.Get<IConfig>();
 		}
 	}
 }

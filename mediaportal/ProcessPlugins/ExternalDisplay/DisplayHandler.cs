@@ -26,8 +26,8 @@
 using System;
 using System.Collections.Generic;
 using ExternalDisplay.Setting;
-using MediaPortal.Utils.Services;
 using ProcessPlugins.ExternalDisplay.Setting;
+using MediaPortal.GUI.Library;
 
 namespace ProcessPlugins.ExternalDisplay
 {
@@ -42,7 +42,6 @@ namespace ProcessPlugins.ExternalDisplay
         protected Line[] lines; //Keeps the lines of text to display on the display
         protected int[] pos; //Keeps track of the start positions in the display lines
         private List<Image> images;
-        private ILog _log;  //Reference to the logging service
         
 
         private IDisplay display; //Reference to the display we are controlling
@@ -182,19 +181,5 @@ namespace ProcessPlugins.ExternalDisplay
             tmp = tmp.Substring(pos[_line]++, width);
             return tmp;
         }
-
-
-        private ILog Log
-        {
-            get
-            {
-                if (_log == null)
-                {
-                    _log = GlobalServiceProvider.Instance.Get<ILog>();
-                }
-                return _log;
-            }
-        }
-
     }
 }

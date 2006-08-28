@@ -30,7 +30,6 @@ using MediaPortal.Util;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.Profile;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Playlists
 {
@@ -111,14 +110,9 @@ namespace MediaPortal.Playlists
     PlayList _emptyPlayList = new PlayList();
     PlayList _musicVideoPlayList = new PlayList();
     bool _repeatPlayList = true;
-    protected ILog _log;
-    protected IConfig _config;
 
     public PlayListPlayer()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
     }
 
     static private PlayListPlayer singletonPlayer = new PlayListPlayer();
@@ -174,22 +168,22 @@ namespace MediaPortal.Playlists
 
         case GUIMessage.MessageType.GUI_MSG_PLAY_FILE:
           {
-            _log.Info("Playlistplayer.StartFile({0})", message.Label);
+            Log.Info("Playlistplayer.StartFile({0})", message.Label);
             g_Player.Play(message.Label);
             if (!g_Player.Playing) g_Player.Stop();
           }
           break;
         case GUIMessage.MessageType.GUI_MSG_STOP_FILE:
           {
-            _log.Info("Playlistplayer.Stopfile");
+            Log.Info("Playlistplayer.Stopfile");
             g_Player.Stop();
           }
           break;
         case GUIMessage.MessageType.GUI_MSG_SEEK_FILE_PERCENTAGE:
           {
-            _log.Info("Playlistplayer.SeekPercent({0}%)", message.Param1);
+            Log.Info("Playlistplayer.SeekPercent({0}%)", message.Param1);
             g_Player.SeekAsolutePercentage(message.Param1);
-            _log.Info("Playlistplayer.SeekPercent({0}%) done", message.Param1);
+            Log.Info("Playlistplayer.SeekPercent({0}%) done", message.Param1);
           }
           break;
         case GUIMessage.MessageType.GUI_MSG_SEEK_FILE_END:
@@ -198,9 +192,9 @@ namespace MediaPortal.Playlists
             double position = g_Player.CurrentPosition;
             if (position < duration - 1d)
             {
-              _log.Info("Playlistplayer.SeekEnd({0})", duration);
+              Log.Info("Playlistplayer.SeekEnd({0})", duration);
               g_Player.SeekAbsolute(duration - 2d);
-              _log.Info("Playlistplayer.SeekEnd({0}) done", g_Player.CurrentPosition);
+              Log.Info("Playlistplayer.SeekEnd({0}) done", g_Player.CurrentPosition);
             }
           }
           break;
@@ -359,13 +353,13 @@ namespace MediaPortal.Playlists
     {
       if (_currentPlayList == PlayListType.PLAYLIST_NONE)
       {
-        _log.Info("PlaylistPlayer.Play() no playlist selected");
+        Log.Info("PlaylistPlayer.Play() no playlist selected");
         return false;
       }
       PlayList playlist = GetPlaylist(_currentPlayList);
       if (playlist.Count <= 0)
       {
-        _log.Info("PlaylistPlayer.Play() playlist is empty");
+        Log.Info("PlaylistPlayer.Play() playlist is empty");
         return false;
       }
       if (iSong < 0) iSong = 0;
@@ -384,7 +378,7 @@ namespace MediaPortal.Playlists
         playlist.ResetStatus();
       }
 
-      _log.Info("PlaylistPlayer.Play:{0}", item.FileName);
+      Log.Info("PlaylistPlayer.Play:{0}", item.FileName);
       if (item.Type == PlayListItem.PlayListItemType.Radio)
       {
         msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_TUNE_RADIO, 0, 0, 0, 0, 0, null);
@@ -399,7 +393,7 @@ namespace MediaPortal.Playlists
         //	Count entries in current playlist
         //	that couldn't be played
         _entriesNotFound++;
-        _log.Info("PlaylistPlayer.Play unable to play:{0}", item.FileName);
+        Log.Info("PlaylistPlayer.Play unable to play:{0}", item.FileName);
         return false;
       }
       else
@@ -447,7 +441,7 @@ namespace MediaPortal.Playlists
         {
           _currentPlayList = value;
           _entriesNotFound = 0;
-          using (Settings settings = new Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+          using (Settings settings = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
           {
             if (value == PlayListType.PLAYLIST_MUSIC || value == PlayListType.PLAYLIST_MUSIC_TEMP)
             {

@@ -24,7 +24,6 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using System.Collections;
 using SQLite.NET;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Database
 {
@@ -33,12 +32,9 @@ namespace MediaPortal.Database
   /// </summary>
   public class DatabaseUtility
   {
-    static ILog _log;
 
     private DatabaseUtility()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
     }
 
     static public void CompactDatabase(SQLiteClient m_db)
@@ -145,7 +141,7 @@ namespace MediaPortal.Database
       }
       catch (SQLiteException ex)
       {
-        _log.Error("DatabaseUtility exception err:{0} stack:{1} sql:{2}", ex.Message, ex.StackTrace, strSQL);
+        Log.Error("DatabaseUtility exception err:{0} stack:{1} sql:{2}", ex.Message, ex.StackTrace, strSQL);
       }
       return;
     }
@@ -161,13 +157,13 @@ namespace MediaPortal.Database
         return false;
       try
       {
-        //_log.Info("create table:{0} {1}", strSQL,dbHandle);
+        //Log.Info("create table:{0} {1}", strSQL,dbHandle);
         dbHandle.Execute(strSQL);
-        //_log.Info("table created");
+        //Log.Info("table created");
       }
       catch (SQLiteException ex)
       {
-        _log.Error("DatabaseUtility exception err:{0} stack:{1} sql:{2}", ex.Message, ex.StackTrace, strSQL);
+        Log.Error("DatabaseUtility exception err:{0} stack:{1} sql:{2}", ex.Message, ex.StackTrace, strSQL);
       }
       return true;
     }
@@ -186,7 +182,7 @@ namespace MediaPortal.Database
       }
       catch (Exception)
       {
-        _log.Info("DatabaseUtility:GetAsInt() column:{0} record:{1} value:{2} is not an int",
+        Log.Info("DatabaseUtility:GetAsInt() column:{0} record:{1} value:{2} is not an int",
                                             strColum, iRecord, result);
       }
       return returnValue;
@@ -205,7 +201,7 @@ namespace MediaPortal.Database
       }
       catch (Exception)
       {
-        _log.Info("DatabaseUtility:GetAsInt64() column:{0} record:{1} value:{2} is not an Int64",
+        Log.Info("DatabaseUtility:GetAsInt64() column:{0} record:{1} value:{2} is not an Int64",
             strColum, iRecord, result);
       }
       return returnValue;

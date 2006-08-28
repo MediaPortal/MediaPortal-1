@@ -134,7 +134,7 @@ namespace WindowPlugins.DvrMpegCut
       }
       catch (Exception ex)
       {
-        _log.Error("DvrMpegCut: (DvrMpegCutPreview) " + ex.StackTrace);
+        Log.Error("DvrMpegCut: (DvrMpegCutPreview) " + ex.StackTrace);
       }
 
     }
@@ -160,7 +160,7 @@ namespace WindowPlugins.DvrMpegCut
         if (videoWindow != null)
         {
           GUIGraphicsContext.VideoWindow = new System.Drawing.Rectangle(videoWindow.XPosition, videoWindow.YPosition, videoWindow.Width, videoWindow.Height);
-          //_log.Info("Test " +videoWindow.XPosition  + " " + videoWindow.Width + " " + videoWindow.Height);
+          //Log.Info("Test " +videoWindow.XPosition  + " " + videoWindow.Width + " " + videoWindow.Height);
         }
         g_Player.FullScreen = false;
         g_Player.Play(inFilename.FullName);
@@ -193,7 +193,7 @@ namespace WindowPlugins.DvrMpegCut
       }
       catch (Exception ex)
       {
-        _log.Error("DvrMpegCut: (OnPageLoad) " + ex.StackTrace);
+        Log.Error("DvrMpegCut: (OnPageLoad) " + ex.StackTrace);
       }
       //schneideListeLct.Add(new GUIListItem("Test"));
     }
@@ -575,7 +575,7 @@ namespace WindowPlugins.DvrMpegCut
       }
       catch (Exception e)
       {
-        _log.Error("DvrMpegCut: (CutDvrms) " + e.StackTrace);
+        Log.Error("DvrMpegCut: (CutDvrms) " + e.StackTrace);
         if (cutProgressTime != null)
         {
           cutProgressTime.Stop();

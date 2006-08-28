@@ -36,7 +36,6 @@ using MediaPortal.TagReader;
 using System.Text.RegularExpressions;
 using System.IO;
 using System.Globalization;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Music.Database
 {
@@ -130,16 +129,10 @@ namespace MediaPortal.Music.Database
     }
 
     static public SQLiteClient m_db = null;
-    static ILog _log;
-    static IConfig _config;
 
     static MusicDatabase()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
-
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         TreatFolderAsAlbum = xmlreader.GetValueAsBool("musicfiles", "treatFolderAsAlbum", false);
         ScanForVariousArtists = xmlreader.GetValueAsBool("musicfiles", "scanForVariousArtists", true);
@@ -149,42 +142,42 @@ namespace MediaPortal.Music.Database
 
     static void Open()
     {
-      _log.Info("Opening music database");
+      Log.Info("Opening music database");
       try
       {
         // Open database
         try
         {
-          System.IO.Directory.CreateDirectory(_config.Get(Config.Options.DatabasePath));
+          System.IO.Directory.CreateDirectory(Config.Get(Config.Dir.Database));
         }
         catch (Exception) { }
 
         // no database V7 - copy and update V6
-        if (!File.Exists(_config.Get(Config.Options.DatabasePath) + "MusicDatabaseV7.db3"))
+        if (!File.Exists(Config.Get(Config.Dir.Database) + "MusicDatabaseV7.db3"))
         {
-          if (!File.Exists(_config.Get(Config.Options.DatabasePath) + "MusicDatabaseV6.db3"))
+          if (!File.Exists(Config.Get(Config.Dir.Database) + "MusicDatabaseV6.db3"))
           {
-            if (File.Exists(_config.Get(Config.Options.DatabasePath) + "musicdatabase5.db3"))
+            if (File.Exists(Config.Get(Config.Dir.Database) + "musicdatabase5.db3"))
             {
-              File.Copy((_config.Get(Config.Options.DatabasePath) + "musicdatabase5.db3"), (_config.Get(Config.Options.DatabasePath) + "MusicDatabaseV7.db3"), false);
+              File.Copy((Config.Get(Config.Dir.Database) + "musicdatabase5.db3"), (Config.Get(Config.Dir.Database) + "MusicDatabaseV7.db3"), false);
 
             }
             else
-              _log.Info("**** Please rescan your music shares ****");
+              Log.Info("**** Please rescan your music shares ****");
           }
           else
           {
             if (UpdateDB_V6_to_V7())
             {
-              _log.Info("MusicDatabaseV7: old V6 database successfully updated");
-              File.Copy((_config.Get(Config.Options.DatabasePath) + "MusicDatabaseV6.db3"), (_config.Get(Config.Options.DatabasePath) + "MusicDatabaseV7.db3"), false);
+              Log.Info("MusicDatabaseV7: old V6 database successfully updated");
+              File.Copy((Config.Get(Config.Dir.Database) + "MusicDatabaseV6.db3"), (Config.Get(Config.Dir.Database) + "MusicDatabaseV7.db3"), false);
             }
             else
-              _log.Error("MusicDatabaseV6: error while trying to update your database to V7");
+              Log.Error("MusicDatabaseV6: error while trying to update your database to V7");
           }
         }
 
-        m_db = new SQLiteClient(_config.Get(Config.Options.DatabasePath) + "MusicDatabaseV7.db3");
+        m_db = new SQLiteClient(Config.Get(Config.Dir.Database) + "MusicDatabaseV7.db3");
 
         DatabaseUtility.SetPragmas(m_db);
 
@@ -225,9 +218,9 @@ namespace MediaPortal.Music.Database
 
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
       }
-      _log.Info("music database opened");
+      Log.Info("music database opened");
     }
 
     ~MusicDatabase()
@@ -246,7 +239,7 @@ namespace MediaPortal.Music.Database
     static bool UpdateDB_V6_to_V7()
     {
       bool success = true;
-      m_db = new SQLiteClient(_config.Get(Config.Options.DatabasePath) + "MusicDatabaseV6.db3");
+      m_db = new SQLiteClient(Config.Get(Config.Dir.Database) + "MusicDatabaseV6.db3");
       SQLiteResultSet results;
 
       string strSQL = "ALTER TABLE scrobblesettings ADD COLUMN iOfflineMode integer";
@@ -321,7 +314,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
       return -1;
@@ -371,7 +364,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
       return -1;
@@ -399,7 +392,7 @@ namespace MediaPortal.Music.Database
               FixedTheCode = true;
             }
           }
-          _log.Info("Genre {0} veranderd in {1}", strGenre1, strGenre);
+          Log.Info("Genre {0} veranderd in {1}", strGenre1, strGenre);
         }
 
         if (null == m_db)
@@ -435,7 +428,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
       return -1;
@@ -456,7 +449,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
     }
@@ -499,7 +492,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
 
@@ -518,7 +511,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
       return null;
@@ -593,7 +586,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
     }
@@ -666,7 +659,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
       return -1;
@@ -691,7 +684,7 @@ namespace MediaPortal.Music.Database
     ///Weird right?
     public void AddSong(Song song1, bool bCheck)
     {
-      //_log.Error("database.AddSong {0} {1} {2}  {3}", song1.FileName,song1.Album, song1.Artist, song1.Title);
+      //Log.Error("database.AddSong {0} {1} {2}  {3}", song1.FileName,song1.Album, song1.Artist, song1.Title);
       string strSQL;
       try
       {
@@ -766,7 +759,7 @@ namespace MediaPortal.Music.Database
           }
           catch (Exception)
           {
-            _log.Error("MusicDatabaseReorg: Executing query failed");
+            Log.Error("MusicDatabaseReorg: Executing query failed");
           }
         } //End if
 
@@ -777,7 +770,7 @@ namespace MediaPortal.Music.Database
         crc.Init(CRCTool.CRCCode.CRC32);
         dwCRC = crc.calc(song1.FileName);
 
-        _log.Info("Song {0} will be added with CRC {1}", strFileName, dwCRC);
+        Log.Info("Song {0} will be added with CRC {1}", strFileName, dwCRC);
 
         strSQL = String.Format("insert into song (idSong,idArtist,idAlbum,idGenre,idPath,strTitle,iTrack,iDuration,iYear,dwFileNameCRC,strFileName,iTimesPlayed,iRating,favorite) values(NULL,{0},{1},{2},{3},'{4}',{5},{6},{7},'{8}','{9}',{10},{11},{12})",
                     lArtistId, lAlbumId, lGenreId, lPathId,
@@ -792,7 +785,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
     }
@@ -924,7 +917,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
 
@@ -980,7 +973,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
 
@@ -1028,7 +1021,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
 
@@ -1090,7 +1083,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
 
@@ -1116,7 +1109,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
       return 0;
@@ -1141,7 +1134,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
       return 0;
@@ -1171,7 +1164,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
       return 0;
@@ -1219,7 +1212,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
 
@@ -1270,7 +1263,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
 
@@ -1351,7 +1344,7 @@ namespace MediaPortal.Music.Database
 
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
 
@@ -1379,7 +1372,7 @@ namespace MediaPortal.Music.Database
 
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
 
@@ -1406,7 +1399,7 @@ namespace MediaPortal.Music.Database
 
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
 
@@ -1434,7 +1427,7 @@ namespace MediaPortal.Music.Database
 
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
 
@@ -1492,7 +1485,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
       return false;
@@ -1551,7 +1544,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
 
@@ -1587,7 +1580,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
 
@@ -1621,7 +1614,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
 
@@ -1671,7 +1664,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
 
@@ -1711,7 +1704,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
 
@@ -1741,7 +1734,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
       return false;
@@ -1787,7 +1780,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
       return false;
@@ -1844,7 +1837,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
       return false;
@@ -1876,7 +1869,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
       return false;
@@ -1904,7 +1897,7 @@ namespace MediaPortal.Music.Database
 
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
 
@@ -1920,7 +1913,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
     }
@@ -1964,7 +1957,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
 
@@ -2024,7 +2017,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
 
@@ -2085,7 +2078,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
 
@@ -2118,7 +2111,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
 
@@ -2206,7 +2199,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
 
@@ -2259,7 +2252,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
 
@@ -2324,7 +2317,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        _log.Error("GetSongsByPath2:musicdatabase  {0} exception err:{1} stack:{2}", strSQL, ex.Message, ex.StackTrace);
+        Log.Error("GetSongsByPath2:musicdatabase  {0} exception err:{1} stack:{2}", strSQL, ex.Message, ex.StackTrace);
         Open();
       }
 
@@ -2385,7 +2378,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
 
@@ -2436,7 +2429,7 @@ namespace MediaPortal.Music.Database
 
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
 
@@ -2509,14 +2502,14 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        _log.Error("BeginTransaction: musicdatabase begin transaction failed exception err:{0} ", ex.Message);
+        Log.Error("BeginTransaction: musicdatabase begin transaction failed exception err:{0} ", ex.Message);
         //Open();
       }
     }
 
     public void CommitTransaction()
     {
-      _log.Info("Commit will effect {0} rows", m_db.ChangedRows());
+      Log.Info("Commit will effect {0} rows", m_db.ChangedRows());
       SQLiteResultSet CommitResults;
       try
       {
@@ -2524,7 +2517,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        _log.Error("musicdatabase commit failed exception err:{0} ", ex.Message);
+        Log.Error("musicdatabase commit failed exception err:{0} ", ex.Message);
         Open();
       }
     }
@@ -2537,7 +2530,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        _log.Error("musicdatabase rollback failed exception err:{0} ", ex.Message);
+        Log.Error("musicdatabase rollback failed exception err:{0} ", ex.Message);
         Open();
       }
     }
@@ -2577,7 +2570,7 @@ namespace MediaPortal.Music.Database
 
       try
       {
-        _log.Info("Musicdatabasereorg: Beginning music database reorganization...");
+        Log.Info("Musicdatabasereorg: Beginning music database reorganization...");
 
         BeginTransaction();
         /// Delete song that are in non-existing MusicFolders (for example: you moved everything to another disk)
@@ -2600,7 +2593,7 @@ namespace MediaPortal.Music.Database
 
         int AddMissingFilesResult = AddMissingFiles(8, 36, ref fileCount);
         //int AddMissingFilesResult = AddMissingFiles(8, 50);
-        _log.Info("Musicdatabasereorg: Addmissingfiles: {0} files added", AddMissingFilesResult);
+        Log.Info("Musicdatabasereorg: Addmissingfiles: {0} files added", AddMissingFilesResult);
 
         /// Update the tags
         MyArgs.progress = 38;
@@ -2643,7 +2636,7 @@ namespace MediaPortal.Music.Database
         UpdateSortableArtistNames();
 
         // Check for a database backup and delete it if it exists       
-        string backupDbPath = Path.Combine(_config.Get(Config.Options.DatabasePath), "musicdatabase4.db3.bak");
+        string backupDbPath = Path.Combine(Config.Get(Config.Dir.Database), "musicdatabase4.db3.bak");
 
         if (File.Exists(backupDbPath))
         {
@@ -2657,7 +2650,7 @@ namespace MediaPortal.Music.Database
 
       catch (Exception ex)
       {
-        _log.Error("music-scan{0} {1} {2}",
+        Log.Error("music-scan{0} {1} {2}",
                             ex.Message, ex.Source, ex.StackTrace);
       }
 
@@ -2689,7 +2682,7 @@ namespace MediaPortal.Music.Database
         if (fileCount > 0)
           trackPerSecSummary = string.Format(" ({0} seconds per track)", fSecsPerTrack);
 
-        _log.Info("Musicdatabasereorg: Music database reorganization done.  Processed {0} tracks in: {1:d2}:{2:d2}:{3:d2}{4}",
+        Log.Info("Musicdatabasereorg: Music database reorganization done.  Processed {0} tracks in: {1:d2}:{2:d2}:{3:d2}{4}",
             fileCount, ts.Hours, ts.Minutes, ts.Seconds, trackPerSecSummary);
       }
       return (int)Errors.ERROR_OK;
@@ -2699,7 +2692,7 @@ namespace MediaPortal.Music.Database
     {
       string strSQL;
       int NumRecodsUpdated = 0;
-      _log.Info("Musicdatabasereorg: starting Tag update");
+      Log.Info("Musicdatabasereorg: starting Tag update");
 
       SQLiteResultSet FileList;
       strSQL = String.Format("select * from song, path where song.idPath=path.idPath");
@@ -2709,20 +2702,20 @@ namespace MediaPortal.Music.Database
         FileList = m_db.Execute(strSQL);
         if (FileList == null)
         {
-          _log.Info("Musicdatabasereorg: UpdateTags: Select from failed");
+          Log.Info("Musicdatabasereorg: UpdateTags: Select from failed");
           return (int)Errors.ERROR_REORG_SONGS;
         }
       }
       catch (Exception)
       {
-        _log.Error("Musicdatabasereorg: query for tag update could not be executed.");
+        Log.Error("Musicdatabasereorg: query for tag update could not be executed.");
         //m_db.Execute("rollback");
         return (int)Errors.ERROR_REORG_SONGS;
       }
 
       //	songs cleanup
 
-      _log.Info("Going to check tags of {0} files", FileList.Rows.Count);
+      Log.Info("Going to check tags of {0} files", FileList.Rows.Count);
 
       DatabaseReorgEventArgs MyArgs = new DatabaseReorgEventArgs();
       int ProgressRange = EndProgress - StartProgress;
@@ -2735,7 +2728,7 @@ namespace MediaPortal.Music.Database
       {
         string strFileName = DatabaseUtility.Get(FileList, i, "path.strPath");
         strFileName += DatabaseUtility.Get(FileList, i, "song.strFileName");
-        //_log.Info("Musicdatabasereorg: starting Tag update 1 for {0} ", strFileName);
+        //Log.Info("Musicdatabasereorg: starting Tag update 1 for {0} ", strFileName);
 
         if (System.IO.File.Exists(strFileName))
         {
@@ -2747,58 +2740,58 @@ namespace MediaPortal.Music.Database
           int idPathNew = 0;
           int idGenreNew = 0;
 
-          //_log.Info("Musicdatabasereorg: starting Tag update 2 for existing file {0} ", strFileName);
+          //Log.Info("Musicdatabasereorg: starting Tag update 2 for existing file {0} ", strFileName);
           int idSong = Int32.Parse(DatabaseUtility.Get(FileList, i, "song.idSong"));
 
-          //_log.Info("Musicdatabasereorg: starting Tag update 3 for existing file {0} ", strFileName);
+          //Log.Info("Musicdatabasereorg: starting Tag update 3 for existing file {0} ", strFileName);
           try
           {
             int idAlbum = idAlbumNew = Int32.Parse(DatabaseUtility.Get(FileList, i, "song.idAlbum"));
           }
           catch (Exception)
           {
-            _log.Error("Musicdatabasereorg: failed Tag update 3 for existing file {0} ", strFileName);
+            Log.Error("Musicdatabasereorg: failed Tag update 3 for existing file {0} ", strFileName);
           }
 
-          //_log.Info("Musicdatabasereorg: starting Tag update 4 for existing file {0} ", strFileName);
+          //Log.Info("Musicdatabasereorg: starting Tag update 4 for existing file {0} ", strFileName);
           try
           {
             int idArtist = idArtistNew = Int32.Parse(DatabaseUtility.Get(FileList, i, "song.idArtist"));
           }
           catch (Exception)
           {
-            _log.Error("Musicdatabasereorg: failed Tag update 4 for existing file {0} ", strFileName);
+            Log.Error("Musicdatabasereorg: failed Tag update 4 for existing file {0} ", strFileName);
           }
 
-          //_log.Info("Musicdatabasereorg: starting Tag update 5 for existing file {0} ", strFileName);
+          //Log.Info("Musicdatabasereorg: starting Tag update 5 for existing file {0} ", strFileName);
           try
           {
             int idPath = idPathNew = Int32.Parse(DatabaseUtility.Get(FileList, i, "song.idPath"));
           }
           catch (Exception)
           {
-            _log.Error("Musicdatabasereorg: failed Tag update 5 for existing file {0} ", strFileName);
+            Log.Error("Musicdatabasereorg: failed Tag update 5 for existing file {0} ", strFileName);
           }
 
 
-          //_log.Info("Musicdatabasereorg: starting Tag update 6 for existing file {0} ", strFileName);
+          //Log.Info("Musicdatabasereorg: starting Tag update 6 for existing file {0} ", strFileName);
           try
           {
             int idGenre = idGenreNew = Int32.Parse(DatabaseUtility.Get(FileList, i, "song.idGenre"));
           }
           catch (Exception)
           {
-            _log.Error("Musicdatabasereorg: failed Tag update 7 for existing file {0} ", strFileName);
+            Log.Error("Musicdatabasereorg: failed Tag update 7 for existing file {0} ", strFileName);
           }
 
 
           /// PDW 24-MAY-2005
           /// The song will be updated, tags from the file will be checked against the tags in the database
           /// But why do we send all the id's
-          //_log.Info("Musicdatabasereorg: starting Tag update 7 for {0} ", strFileName);
+          //Log.Info("Musicdatabasereorg: starting Tag update 7 for {0} ", strFileName);
           if (!UpdateSong(strFileName, idSong, ref idAlbumNew, ref idArtistNew, ref idGenreNew, ref idPathNew))
           {
-            _log.Info("Musicdatabasereorg: Song update after tag update failed for", strFileName);
+            Log.Info("Musicdatabasereorg: Song update after tag update failed for", strFileName);
             //m_db.Execute("rollback"); 
             return (int)Errors.ERROR_REORG_SONGS;
           }
@@ -2816,7 +2809,7 @@ namespace MediaPortal.Music.Database
         }
         SongCounter++;
       }//for (int i=0; i < results.Rows.Count;++i)
-      _log.Info("Musicdatabasereorg: UpdateTags completed for {0} songs", (int)NumRecodsUpdated);
+      Log.Info("Musicdatabasereorg: UpdateTags completed for {0} songs", (int)NumRecodsUpdated);
       return (int)Errors.ERROR_OK;
     }
 
@@ -2974,18 +2967,18 @@ namespace MediaPortal.Music.Database
           }
           catch (Exception)
           {
-            _log.Error("Musicdatabasereorg: Update tags for {0} failed because of DB exception", strPathSong);
+            Log.Error("Musicdatabasereorg: Update tags for {0} failed because of DB exception", strPathSong);
             return false;
           }
         }
         else
         {
-          _log.Info("Musicdatabasereorg: cannot get tag for {0} ", strPathSong);
+          Log.Info("Musicdatabasereorg: cannot get tag for {0} ", strPathSong);
         }
       }
       catch (Exception ex)
       {
-        _log.Error("Musicdatabasereorg: {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+        Log.Error("Musicdatabasereorg: {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
       }
       //Log.Write ("Musicdatabasereorg: Update for {0} success", strPathSong);
       return true;
@@ -3007,11 +3000,11 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception)
       {
-        _log.Error("DeleteNonExistingSongs() to get songs from database");
+        Log.Error("DeleteNonExistingSongs() to get songs from database");
         return (int)Errors.ERROR_REORG_SONGS;
       }
       int removed = 0;
-      _log.Info("Musicdatabasereorg: starting song cleanup for {0} songs", (int)results.Rows.Count);
+      Log.Info("Musicdatabasereorg: starting song cleanup for {0} songs", (int)results.Rows.Count);
       for (int i = 0; i < results.Rows.Count; ++i)
       {
         string strFileName = DatabaseUtility.Get(results, i, "path.strPath");
@@ -3024,7 +3017,7 @@ namespace MediaPortal.Music.Database
           /// We don't care about foreign keys at this moment. We'll just change this later.
 
           removed++;
-          //_log.Info("Musicdatabasereorg:Song {0} will to be deleted from MusicDatabase", strFileName);
+          //Log.Info("Musicdatabasereorg:Song {0} will to be deleted from MusicDatabase", strFileName);
           DeleteSong(strFileName, false);
 
         }
@@ -3036,7 +3029,7 @@ namespace MediaPortal.Music.Database
           OnDatabaseReorgChanged(MyArgs);
         }
       }//for (int i=0; i < results.Rows.Count;++i)
-      _log.Info("Musicdatabasereorg: DeleteNonExistingSongs completed");
+      Log.Info("Musicdatabasereorg: DeleteNonExistingSongs completed");
       return (int)Errors.ERROR_OK;
     }
 
@@ -3053,12 +3046,12 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception)
       {
-        _log.Error("Musicdatabasereorg: ExamineAndDeleteArtistids failed");
+        Log.Error("Musicdatabasereorg: ExamineAndDeleteArtistids failed");
         //m_db.Execute("rollback");
         return (int)Errors.ERROR_REORG_ARTIST;
       }
 
-      _log.Info("Musicdatabasereorg: ExamineAndDeleteArtistids completed");
+      Log.Info("Musicdatabasereorg: ExamineAndDeleteArtistids completed");
       return (int)Errors.ERROR_OK;
     }
 
@@ -3073,7 +3066,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception)
       {
-        _log.Error("Musicdatabasereorg: ExamineAndDeleteGenreids failed");
+        Log.Error("Musicdatabasereorg: ExamineAndDeleteGenreids failed");
         //m_db.Execute("rollback");
         return (int)Errors.ERROR_REORG_GENRE;
       }
@@ -3085,7 +3078,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception)
       {
-        _log.Error("Musicdatabasereorg: ExamineAndDeleteGenreids failed");
+        Log.Error("Musicdatabasereorg: ExamineAndDeleteGenreids failed");
         //m_db.Execute("rollback");
         return (int)Errors.ERROR_REORG_GENRE;
 
@@ -3093,7 +3086,7 @@ namespace MediaPortal.Music.Database
       string Aantal = DatabaseUtility.Get(result, 0, "aantal");
       if (Aantal != "0")
         return (int)Errors.ERROR_REORG_GENRE;
-      _log.Info("Musicdatabasereorg: ExamineAndDeleteGenreids completed");
+      Log.Info("Musicdatabasereorg: ExamineAndDeleteGenreids completed");
 
       return (int)Errors.ERROR_OK;
     }
@@ -3108,11 +3101,11 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception)
       {
-        _log.Error("Musicdatabasereorg: ExamineAndDeletePathids failed");
+        Log.Error("Musicdatabasereorg: ExamineAndDeletePathids failed");
         //m_db.Execute("rollback");
         return (int)Errors.ERROR_REORG_PATH;
       }
-      _log.Info("Musicdatabasereorg: ExamineAndDeletePathids completed");
+      Log.Info("Musicdatabasereorg: ExamineAndDeletePathids completed");
       return (int)Errors.ERROR_OK;
     }
 
@@ -3128,7 +3121,7 @@ namespace MediaPortal.Music.Database
       catch (Exception)
       {
         //m_db.Execute("rollback");
-        _log.Error("MusicDatabasereorg: ExamineAndDeleteAlbumids() unable to delete old albums");
+        Log.Error("MusicDatabasereorg: ExamineAndDeleteAlbumids() unable to delete old albums");
         return (int)Errors.ERROR_REORG_ALBUM;
       }
       /// Now all the albums without songs will be deleted.
@@ -3140,11 +3133,11 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception)
       {
-        _log.Error("Musicdatabasereorg: ExamineAndDeleteAlbumids failed");
+        Log.Error("Musicdatabasereorg: ExamineAndDeleteAlbumids failed");
         //m_db.Execute("rollback");
         return (int)Errors.ERROR_REORG_ALBUM;
       }
-      _log.Info("Musicdatabasereorg: ExamineAndDeleteAlbumids completed");
+      Log.Info("Musicdatabasereorg: ExamineAndDeleteAlbumids completed");
       return (int)Errors.ERROR_OK;
     }
     int Compress()
@@ -3156,10 +3149,10 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception)
       {
-        _log.Error("Musicdatabasereorg: vacuum failed");
+        Log.Error("Musicdatabasereorg: vacuum failed");
         return (int)Errors.ERROR_COMPRESSING;
       }
-      _log.Info("Musicdatabasereorg: Compress completed");
+      Log.Info("Musicdatabasereorg: Compress completed");
       return (int)Errors.ERROR_OK;
     }
 
@@ -3173,7 +3166,7 @@ namespace MediaPortal.Music.Database
       bool fileMenuEnabled = false;
       string fileMenuPinCode = String.Empty;
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         fileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
 
@@ -3206,7 +3199,7 @@ namespace MediaPortal.Music.Database
       /// Here we handle the songs in non-existing MusicFolders (shares).
       /// So we have to check Mediaportal.XML
       /// Loading the current MusicFolders
-      _log.Info("Musicdatabasereorg: deleting songs in non-existing shares");
+      Log.Info("Musicdatabasereorg: deleting songs in non-existing shares");
 
       /// For each path in the MusicDatabase we will check if it's in a share
       /// If not, we will delete all the songs in this path.
@@ -3220,7 +3213,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception)
       {
-        _log.Error("Musicdatabasereorg:DeleteSongsOldMusicFolders() failed");
+        Log.Error("Musicdatabasereorg:DeleteSongsOldMusicFolders() failed");
         //MusicDatabase.DBHandle.Execute("rollback");
         return (int)Errors.ERROR_REORG_SONGS;
       }
@@ -3245,7 +3238,7 @@ namespace MediaPortal.Music.Database
         }
         if (!Path_has_Share)
         {
-          _log.Info("Musicdatabasereorg: Path {0} with id {1} has no corresponding share, songs will be deleted ", Path, PathId);
+          Log.Info("Musicdatabasereorg: Path {0} with id {1} has no corresponding share, songs will be deleted ", Path, PathId);
           strSQL = String.Format("delete from song where idPath = {0}", PathId);
           try
           {
@@ -3256,15 +3249,15 @@ namespace MediaPortal.Music.Database
           catch (Exception)
           {
             //MusicDatabase.DBHandle.Execute("rollback");
-            _log.Error("Musicdatabasereorg: DeleteSongsOldMusicFolders failed");
+            Log.Error("Musicdatabasereorg: DeleteSongsOldMusicFolders failed");
             return (int)Errors.ERROR_REORG_SONGS;
           }
 
-          _log.Info("Trying to commit the deletes from the DB");
+          Log.Info("Trying to commit the deletes from the DB");
 
         } /// If path has no share
       } /// For each path
-      _log.Info("Musicdatabasereorg: DeleteSongsOldMusicFolders completed");
+      Log.Info("Musicdatabasereorg: DeleteSongsOldMusicFolders completed");
       return (int)Errors.ERROR_OK;
     } // DeleteSongsOldMusicFolders
 
@@ -3278,7 +3271,7 @@ namespace MediaPortal.Music.Database
     {
       /// This seems to clear the arraylist and make it valid
       availableFiles = new ArrayList();
-      _log.Info("13");
+      Log.Info("13");
 
       DatabaseReorgEventArgs MyArgs = new DatabaseReorgEventArgs();
       string strSQL;
@@ -3301,7 +3294,7 @@ namespace MediaPortal.Music.Database
         CountFilesInPath(Share, ref totalFiles);
       }
       TotalSongs = totalFiles;
-      _log.Info("Musicdatabasereorg: Found {0} files to check if they are new", (int)totalFiles);
+      Log.Info("Musicdatabasereorg: Found {0} files to check if they are new", (int)totalFiles);
       SQLiteResultSet results;
 
       foreach (string MusicFile in availableFiles)
@@ -3326,14 +3319,14 @@ namespace MediaPortal.Music.Database
           results = m_db.Execute(strSQL);
           if (results == null)
           {
-            _log.Info("Musicdatabasereorg: AddMissingFiles finished with error (results == null)");
+            Log.Info("Musicdatabasereorg: AddMissingFiles finished with error (results == null)");
             return (int)Errors.ERROR_REORG_SONGS;
           }
         }
 
         catch (Exception)
         {
-          _log.Error("Musicdatabasereorg: AddMissingFiles finished with error (exception for select)");
+          Log.Error("Musicdatabasereorg: AddMissingFiles finished with error (exception for select)");
           //m_db.Execute("rollback");
           return (int)Errors.ERROR_REORG_SONGS;
         }
@@ -3359,8 +3352,8 @@ namespace MediaPortal.Music.Database
           OnDatabaseReorgChanged(MyArgs);
         }
       } //end for-each
-      _log.Info("Musicdatabasereorg: AddMissingFiles finished with SongCounter = {0}", SongCounter);
-      _log.Info("Musicdatabasereorg: AddMissingFiles finished with AddedCounter = {0}", AddedCounter);
+      Log.Info("Musicdatabasereorg: AddMissingFiles finished with SongCounter = {0}", SongCounter);
+      Log.Info("Musicdatabasereorg: AddMissingFiles finished with AddedCounter = {0}", AddedCounter);
 
       fileCount = SongCounter;
       return SongCounter;
@@ -3417,13 +3410,13 @@ namespace MediaPortal.Music.Database
         results = m_db.Execute(strSQL);
         if (results == null)
         {
-          _log.Info("Musicdatabasereorg: Insert of song {0}{1} failed", MusicFilePath, MusicFileName);
+          Log.Info("Musicdatabasereorg: Insert of song {0}{1} failed", MusicFilePath, MusicFileName);
           return (int)Errors.ERROR_REORG_SONGS;
         }
       }
       catch (Exception)
       {
-        _log.Error("Musicdatabasereorg: Insert of song {0}{1} failed", MusicFilePath, MusicFileName);
+        Log.Error("Musicdatabasereorg: Insert of song {0}{1} failed", MusicFilePath, MusicFileName);
         //m_db.Execute("rollback");
         return (int)Errors.ERROR_REORG_SONGS;
       }
@@ -3437,7 +3430,7 @@ namespace MediaPortal.Music.Database
       //
       // Count the files in the current directory
       //
-      //_log.Info("Musicdatabasereorg: Counting files in {0}", path );
+      //Log.Info("Musicdatabasereorg: Counting files in {0}", path );
 
       try
       {
@@ -3544,12 +3537,12 @@ namespace MediaPortal.Music.Database
           if (artistCount > 1)
           {
             variousArtistsFound = true;
-            _log.Info("Musicdatabasereorg: multiple album artists album found: {0}.  Updating album artist count ({1}).", album.Album, artistCount);
+            Log.Info("Musicdatabasereorg: multiple album artists album found: {0}.  Updating album artist count ({1}).", album.Album, artistCount);
 
             foreach (DictionaryEntry entry in artistCountTable)
             {
               Song s = (Song)entry.Value;
-              _log.Info("   ArtistID:{0}  Artist Name:{1}  Track Title:{2}", s.artistId, s.Artist, s.Title);
+              Log.Info("   ArtistID:{0}  Artist Name:{1}  Track Title:{2}", s.artistId, s.Artist, s.Title);
             }
           }
 
@@ -3577,7 +3570,7 @@ namespace MediaPortal.Music.Database
 
           if (idVariousArtists != -1)
           {
-            _log.Info("Musicdatabasereorg: updating artist id's for 'Various Artists' albums");
+            Log.Info("Musicdatabasereorg: updating artist id's for 'Various Artists' albums");
 
             strSQL = string.Format("update album set idArtist={0} where iNumArtists>1", idVariousArtists);
             m_db.Execute(strSQL);
@@ -3587,7 +3580,7 @@ namespace MediaPortal.Music.Database
 
       catch (Exception ex)
       {
-        _log.Info("Musicdatabasereorg: {0}", ex);
+        Log.Info("Musicdatabasereorg: {0}", ex);
       }
     }
 
@@ -3642,7 +3635,7 @@ namespace MediaPortal.Music.Database
 
         catch (Exception ex)
         {
-          _log.Info("UpdateSortableArtistNames: {0}", ex);
+          Log.Info("UpdateSortableArtistNames: {0}", ex);
         }
       }
     }
@@ -3674,7 +3667,7 @@ namespace MediaPortal.Music.Database
           // doesnt exists, add it
           strSQL = String.Format("insert into scrobbleusers (idScrobbleUser , strUsername) values ( NULL, '{0}' )", strUserName);
           m_db.Execute(strSQL);
-          _log.Info("MusicDatabase: added scrobbleuser {0} with ID {1}", strUserName, Convert.ToString(m_db.LastInsertID()));
+          Log.Info("MusicDatabase: added scrobbleuser {0} with ID {1}", strUserName, Convert.ToString(m_db.LastInsertID()));
           return m_db.LastInsertID();
         }
         else
@@ -3682,7 +3675,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
       return -1;
@@ -3729,7 +3722,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
       return string.Empty;
@@ -3751,14 +3744,14 @@ namespace MediaPortal.Music.Database
         strSQL = String.Format("select idScrobbleSettings, idScrobbleUser from scrobblesettings where idScrobbleUser = '{0}'", userID_);
         results = m_db.Execute(strSQL);
         currentSettingID = DatabaseUtility.Get(results, 0, "idScrobbleSettings");
-        //_log.Info("MusicDatabase: updating settings with ID {0}", currentSettingID);
+        //Log.Info("MusicDatabase: updating settings with ID {0}", currentSettingID);
 
         // setting doesn't exist - add it
         if (results.Rows.Count == 0)
         {
           strSQL = String.Format("insert into scrobblesettings (idScrobbleSettings, idScrobbleUser, " + fieldName_ + ") values ( NULL, '{0}', '{1}')", userID_, fieldValue_);
           m_db.Execute(strSQL);
-          _log.Info("MusicDatabase: added scrobblesetting {0} for userid {1}", Convert.ToString(m_db.LastInsertID()), userID_);
+          Log.Info("MusicDatabase: added scrobblesetting {0} for userid {1}", Convert.ToString(m_db.LastInsertID()), userID_);
           if (fieldValue_ > -1)
             return m_db.LastInsertID();
           else
@@ -3789,7 +3782,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
       return -1;
@@ -3843,13 +3836,13 @@ namespace MediaPortal.Music.Database
         }
         else
         {
-          _log.Error("MusicDatabase: could not delete settings for scrobbleuser {0} with ID {1}", strUserName, strUserID);
+          Log.Error("MusicDatabase: could not delete settings for scrobbleuser {0} with ID {1}", strUserName, strUserID);
           return false;
         }
       }
       catch (Exception ex)
       {
-        _log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
       return false;

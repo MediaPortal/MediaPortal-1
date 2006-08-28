@@ -192,7 +192,7 @@ namespace WindowPlugins.GUISettings.Epg
         catch (Exception ex)
         {
           //MessageBox.Show("Your mapping is invalid! Error code: " + i );
-          _log.Error("GUIWizard: Invalid mapping!", ex);
+          Log.Error("GUIWizard: Invalid mapping!", ex);
         }
 
       }
@@ -252,7 +252,7 @@ namespace WindowPlugins.GUISettings.Epg
     protected void OnManual()
     {
       string _strTVGuideFile;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         _strTVGuideFile = xmlreader.GetValueAsString("xmltv", "folder", "xmltv");
         _strTVGuideFile = MediaPortal.Util.Utils.RemoveTrailingSlash(_strTVGuideFile);

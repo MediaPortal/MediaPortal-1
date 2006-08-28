@@ -36,7 +36,6 @@ using System.Collections;
 using System.Runtime.InteropServices;
 using System.Threading;
 using MediaPortal.TV.Teletext;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.TV.Recording
 {
@@ -164,8 +163,6 @@ namespace MediaPortal.TV.Recording
     #region Contructor/Destructor
     public DVBDemuxer()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
     }
     ~DVBDemuxer()
     {
@@ -185,7 +182,6 @@ namespace MediaPortal.TV.Recording
     int _restBufferLen = 0;
     byte[] _restBuffer = new byte[200];
     IntPtr _ptrRestBuffer = Marshal.AllocCoTaskMem(200);
-    protected ILog _log;
 #if GRABPPMT
 		// pmt
 		int m_currentPMTVersion=-1;
@@ -241,7 +237,7 @@ int m_bufferPositionPMT=0;
 			m_eitScheduleLastTable=0x50;
 			m_secTimer.Interval=10000;
 			GetTable(0x12,tableID);// timeout 10 sec
-			_log.Info("start getting epg for table 0x{0:X}",tableID);
+			Log.Info("start getting epg for table 0x{0:X}",tableID);
 #endif
     }
 
@@ -337,7 +333,7 @@ int m_bufferPositionPMT=0;
       _packetTimer = DateTime.MinValue;
 
 
-      _log.Info("DVBDemuxer:{0} audio:{1:X} video:{2:X} teletext:{3:X} pmt:{4:X} subtitle:{5:X} program:{6}",
+      Log.Info("DVBDemuxer:{0} audio:{1:X} video:{2:X} teletext:{3:X} pmt:{4:X} subtitle:{5:X} program:{6}",
         channelName, _pidMp2Audio, _pidVideo, _pidTeletext, _pidPmt, _pidSubtitle, _programNumber);
 
     }
@@ -375,7 +371,7 @@ int m_bufferPositionPMT=0;
         {
           _isReceivingPackets = false;
           _numberOfPacketsReceived = 0;
-          _log.Info("DVBDemuxer:stopped receiving DVB packets");
+          Log.Info("DVBDemuxer:stopped receiving DVB packets");
         }
       }
       if (_ac3Present)
@@ -682,13 +678,13 @@ int m_bufferPositionPMT=0;
         if (_packetHeader.TransportScrambling != 0)
         {
           // if (!_isScrambled)
-          //   _log.Info("demuxer:video pid:{0:X} is scrambled",_pidVideo);
+          //   Log.Info("demuxer:video pid:{0:X} is scrambled",_pidVideo);
           _isScrambled = true;
         }
         else
         {
           // if (_isScrambled)
-          //   _log.Info("demuxer:video pid:{0:X} is unscrambled", _pidVideo);
+          //   Log.Info("demuxer:video pid:{0:X} is unscrambled", _pidVideo);
           _isScrambled = false;
         }
       }
@@ -719,29 +715,29 @@ int m_bufferPositionPMT=0;
       DVBSections.ChannelInfo info = new DVBSections.ChannelInfo();
       if (!sections.GetChannelInfoFromPMT(pmt, ref info))
       {
-        _log.Info("PMT:invalid");
+        Log.Info("PMT:invalid");
         return;
       }
-      _log.Info("PMT: program number:{0}", info.program_number);
+      Log.Info("PMT: program number:{0}", info.program_number);
       if (info.pid_list != null)
       {
         for (int pids = 0; pids < info.pid_list.Count; pids++)
         {
           DVBSections.PMTData data = (DVBSections.PMTData)info.pid_list[pids];
           if (data.isVideo)
-            _log.Info(" video pid:0x{0:X}", data.elementary_PID);
+            Log.Info(" video pid:0x{0:X}", data.elementary_PID);
           else if (data.isAudio)
-            _log.Info(" audio pid:0x{0:X}", data.elementary_PID);
+            Log.Info(" audio pid:0x{0:X}", data.elementary_PID);
           else if (data.isAC3Audio)
-            _log.Info(" ac3 pid:0x{0:X}", data.elementary_PID);
+            Log.Info(" ac3 pid:0x{0:X}", data.elementary_PID);
           else if (data.isDVBSubtitle)
-            _log.Info(" dvb subtitle pid:0x{0:X}", data.elementary_PID);
+            Log.Info(" dvb subtitle pid:0x{0:X}", data.elementary_PID);
           else if (data.isTeletext)
-            _log.Info(" teletext pid:0x{0:X}", data.elementary_PID);
+            Log.Info(" teletext pid:0x{0:X}", data.elementary_PID);
           else
-            _log.Info(" unknown pid:0x{0:X}", data.elementary_PID);
+            Log.Info(" unknown pid:0x{0:X}", data.elementary_PID);
         }
-        _log.Info(" pcr pid:0x{0:X}", info.pcr_pid);
+        Log.Info(" pcr pid:0x{0:X}", info.pcr_pid);
 
       }
     }

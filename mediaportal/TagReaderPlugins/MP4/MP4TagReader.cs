@@ -24,7 +24,6 @@ using System.Text;
 using MediaPortal.TagReader;
 using MediaPortal.TagReader.MP4.MiscUtil.Conversion;
 using MediaPortal.GUI.Library;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.TagReader.MP4
 {
@@ -35,12 +34,9 @@ namespace MediaPortal.TagReader.MP4
 	{
 		protected MusicTag m_tag = new MusicTag();
 		protected byte[] _imageBytes;
-    protected ILog _log;
 
 		public MP4TagReader()
 		{
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
 		}
 
     public override int Priority
@@ -55,7 +51,7 @@ namespace MediaPortal.TagReader.MP4
 		}
 		public override bool ReadTag(string strFileName)
 		{
-			_log.Info("mp4 tag: scan {0}",strFileName);
+			Log.Info("mp4 tag: scan {0}",strFileName);
 			m_tag.Clear();
       _imageBytes = null;
 			try 
@@ -134,24 +130,24 @@ namespace MediaPortal.TagReader.MP4
 						}
 						catch(Exception e)
 						{
-							_log.Info("MP4TagReader.ReadTag: {0} while extracting embedded cover art", e.Message);
+							Log.Info("MP4TagReader.ReadTag: {0} while extracting embedded cover art", e.Message);
 						}
 					}
 
-					// _log.Info("Title={0}", m_tag.Title);
-					// _log.Info("Artist={0}", m_tag.Artist);
-					// _log.Info("Album={0}", m_tag.Album);
-					// _log.Info("Comment={0}", m_tag.Comment);
-					// _log.Info("Genre={0}", m_tag.Genre);
-					// _log.Info("Year={0}", m_tag.Year);
-					// _log.Info("Track={0}", m_tag.Track);
+					// Log.Info("Title={0}", m_tag.Title);
+					// Log.Info("Artist={0}", m_tag.Artist);
+					// Log.Info("Album={0}", m_tag.Album);
+					// Log.Info("Comment={0}", m_tag.Comment);
+					// Log.Info("Genre={0}", m_tag.Genre);
+					// Log.Info("Year={0}", m_tag.Year);
+					// Log.Info("Track={0}", m_tag.Track);
 
 					return true;
 				}
 			} 
 			catch (Exception e) 
 			{
-				_log.Info("MP4 Parser Error: '{0}'", e.Message);
+				Log.Info("MP4 Parser Error: '{0}'", e.Message);
 			}
 			return false;
 		}

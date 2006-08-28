@@ -26,7 +26,6 @@ using MediaPortal.Util;
 using MediaPortal.GUI.Library;
 using System.Threading;
 using MediaPortal.Music.Database;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Music.Amazon
 {
@@ -47,7 +46,6 @@ namespace MediaPortal.Music.Amazon
     private string _AlbumName = string.Empty;
 
     protected List<AlbumInfo> _AlbumInfoList = new List<AlbumInfo>();
-    protected ILog _log;
 
     #region Properties
 
@@ -103,8 +101,6 @@ namespace MediaPortal.Music.Amazon
 
     public AmazonWebservice()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
     }
 
     public AmazonWebservice(string artistName, string albumName) : this()
@@ -176,7 +172,7 @@ namespace MediaPortal.Music.Amazon
           totResults = int.Parse(response.Items[0].TotalResults);
           totPages = int.Parse(response.Items[0].TotalPages);
 
-          _log.Info("Cover art grabber:AWS Response Returned {0} total pages with {1} total results.", totPages, totResults);
+          Log.Info("Cover art grabber:AWS Response Returned {0} total pages with {1} total results.", totPages, totResults);
         }
 
         //int grabPass = 0;
@@ -232,7 +228,7 @@ namespace MediaPortal.Music.Amazon
               catch (Exception ex)
               {
                 //Console.WriteLine("response.Items[y].Item[i] caused an exception");
-                _log.Info("Cover art grabber exception:{0}", ex.ToString());
+                Log.Info("Cover art grabber exception:{0}", ex.ToString());
               }
 
               if (item == null || item.ImageSets == null || item.ImageSets.Length == 0)
@@ -351,14 +347,14 @@ namespace MediaPortal.Music.Amazon
           else
             et = string.Format("in {0:d2}:{1:d2}:{2:d2}.{3:d3} ({4:f3} seconds per image)", elapsedTime.Hours, elapsedTime.Minutes, elapsedTime.Seconds, elapsedTime.Milliseconds, secondsPerImage);
 
-          _log.Info("Cover art grabber:{0} {1}", resultsText, et);
+          Log.Info("Cover art grabber:{0} {1}", resultsText, et);
         }
       }
 
       catch (Exception ex)
       {
         //string errMsg = string.Format("GetAlbumInfoAsync caused an exception: {0}\r\n{1}\r\n", ex.Message, ex.StackTrace);
-        _log.Info("Cover art grabber exception:{0}", ex.ToString());
+        Log.Info("Cover art grabber exception:{0}", ex.ToString());
         result = false;
       }
 

@@ -107,7 +107,7 @@ namespace MediaPortal.TV.Recording
       lock (_listCommands)
       {
         _listCommands.Add(command);
-        _log.Info("add cmd:{0} #{1}", command.ToString(), _listCommands.Count);
+        Log.WriteFile(Log.LogType.Recorder, "add cmd:{0} #{1}", command.ToString(), _listCommands.Count);
         _waitMutex.Set();
       }
     }
@@ -216,33 +216,33 @@ namespace MediaPortal.TV.Recording
         dev = TVCards[i];
         if (dev.IsRecording)
         {
-          _log.Info("Recorder:  Card:{0} recording tv channel:{1}", dev.CommercialName, dev.TVChannel);
+          Log.WriteFile(Log.LogType.Recorder, "Recorder:  Card:{0} recording tv channel:{1}", dev.CommercialName, dev.TVChannel);
         }
         else if (dev.IsRadio)
         {
-          _log.Info("Recorder:  Card:{0} radio station:{1}", dev.CommercialName, dev.RadioStation);
+          Log.WriteFile(Log.LogType.Recorder, "Recorder:  Card:{0} radio station:{1}", dev.CommercialName, dev.RadioStation);
         }
         else if (dev.IsEpgGrabbing)
         {
-          _log.Info("Recorder:  Card:{0} grab epg tv channel:{1}", dev.CommercialName, dev.TVChannel);
+          Log.WriteFile(Log.LogType.Recorder, "Recorder:  Card:{0} grab epg tv channel:{1}", dev.CommercialName, dev.TVChannel);
         }
         else if (dev.View)
         {
-          _log.Info("Recorder:  Card:{0} view tv channel:{1}", dev.CommercialName, dev.TVChannel);
+          Log.WriteFile(Log.LogType.Recorder, "Recorder:  Card:{0} view tv channel:{1}", dev.CommercialName, dev.TVChannel);
         }
         else if (dev.IsTimeShifting)
         {
-          _log.Info("Recorder:  Card:{0} timeshift tv channel:{1}", dev.CommercialName, dev.TVChannel);
+          Log.WriteFile(Log.LogType.Recorder, "Recorder:  Card:{0} timeshift tv channel:{1}", dev.CommercialName, dev.TVChannel);
         }
         else
         {
-          _log.Info("Recorder:  Card:{0} idle", dev.CommercialName);
+          Log.WriteFile(Log.LogType.Recorder, "Recorder:  Card:{0} idle", dev.CommercialName);
         }
       }
 
       if (g_Player.Playing)
       {
-        _log.Info("Recorder:  currently playing:{0} pos:{0}/{1}", g_Player.CurrentFile, g_Player.CurrentPosition, g_Player.Duration);
+        Log.WriteFile(Log.LogType.Recorder, "Recorder:  currently playing:{0} pos:{0}/{1}", g_Player.CurrentFile, g_Player.CurrentPosition, g_Player.Duration);
       }
     }
 
@@ -251,19 +251,19 @@ namespace MediaPortal.TV.Recording
     #region private members
     void ProcessThread(object sender, DoWorkEventArgs e)
     {
-      _log.Info("Commandprocessor:starting");
+      Log.Info("Commandprocessor:starting");
       if (GUIGraphicsContext.DX9Device != null)
       {
         AvailableFilters af = AvailableFilters.Instance;
-        _log.Info("Commandprocessor:starting tv cards");
+        Log.Info("Commandprocessor:starting tv cards");
 
         for (int i = 0; i < TVCards.Count; ++i)
         {
-          _log.Info("Recorder:start card:{0}", TVCards[i].CommercialName);
+          Log.Info("Recorder:start card:{0}", TVCards[i].CommercialName);
           TVCards[i].CreateGraph();
         }
       }
-        _log.Info("Commandprocessor:running");
+        Log.Info("Commandprocessor:running");
         System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.BelowNormal;
         
         while (_isRunning)
@@ -280,12 +280,12 @@ namespace MediaPortal.TV.Recording
           }
           catch (Exception ex)
           {
-            _log.Error(ex);
+            Log.Error(ex);
           }
       }
       StopAllCards();
       _isStopped = true;
-      _log.Info("Commandprocessor stopped");
+      Log.WriteFile(Log.LogType.Recorder, "Commandprocessor stopped");
     }
 
     public bool ControlTimeShifting
@@ -317,8 +317,8 @@ namespace MediaPortal.TV.Recording
         }
         catch (Exception ex)
         {
-          _log.Error("Command:{0} failed", cmd.ToString());
-          _log.Error(ex);
+          Log.WriteFile(Log.LogType.Recorder, true, "Command:{0} failed", cmd.ToString());
+          Log.Error(ex);
         }
         finally
         {
@@ -326,11 +326,11 @@ namespace MediaPortal.TV.Recording
           TimeSpan ts = DateTime.Now - dtStart;
           if (cmd.Succeeded == false)
           {
-            _log.Error("Command:{0} failed reason:{1} time:{2} msec", cmd.ToString(), cmd.ErrorMessage, ts.TotalMilliseconds);
+            Log.WriteFile(Log.LogType.Recorder, true, "Command:{0} failed reason:{1} time:{2} msec", cmd.ToString(), cmd.ErrorMessage, ts.TotalMilliseconds);
           }
           else
           {
-            _log.Info("Command:{0} time:{1} msec", cmd.ToString(), ts.TotalMilliseconds);
+            Log.WriteFile(Log.LogType.Recorder, "Command:{0} time:{1} msec", cmd.ToString(), ts.TotalMilliseconds);
           }
           cmd.Finished = true;
           lock (_listCommands)
@@ -344,10 +344,10 @@ namespace MediaPortal.TV.Recording
 
     void StopAllCards()
     {
-      _log.Info("Recorder:Stop all tuners");
+      Log.WriteFile(Log.LogType.Recorder, "Recorder:Stop all tuners");
       for (int i = 0; i < TVCards.Count; ++i)
       {
-        _log.Info("Recorder:Stop card:{0}", TVCards[i].CommercialName);
+        Log.WriteFile(Log.LogType.Recorder, "Recorder:Stop card:{0}", TVCards[i].CommercialName);
         TVCards[i].Stop();
       }
     }
@@ -382,14 +382,14 @@ namespace MediaPortal.TV.Recording
                     {
                       //yes, check if we're already playing/watching it
                       string timeShiftFileName = GetTimeShiftFileName(CurrentCardIndex);
-                      _log.Info("Recorder:  start viewing timeshift file of card {0}", dev.CommercialName);
+                      Log.WriteFile(Log.LogType.Recorder, "Recorder:  start viewing timeshift file of card {0}", dev.CommercialName);
                       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAY_FILE, 0, 0, 0, 0, 0, null);
                       msg.Label = timeShiftFileName;
                       GUIGraphicsContext.SendMessage(msg);
                       ResetTimeshiftTimer();
                       _startTimeShiftTimer = DateTime.Now;
                     }
-                    //else _log.Info("Recorder:wait {0}...", ts.TotalSeconds);
+                    //else Log.WriteFile(Log.LogType.Recorder, "Recorder:wait {0}...", ts.TotalSeconds);
                   }
                   else
                   {
@@ -422,7 +422,7 @@ namespace MediaPortal.TV.Recording
                 if (ts.TotalSeconds > 10)
                 {
                   //then stop the card
-                  _log.Info("Recorder:Stop card:{0}", dev.CommercialName);
+                  Log.WriteFile(Log.LogType.Recorder, "Recorder:Stop card:{0}", dev.CommercialName);
                   dev.StopTimeShifting();
                   CurrentCardIndex = -1;
                   OnTvStopped(i, dev);
@@ -436,7 +436,7 @@ namespace MediaPortal.TV.Recording
             }
             else
             {
-              _log.Info("Recorder:Stop card:{0}", dev.CommercialName);
+              Log.WriteFile(Log.LogType.Recorder, "Recorder:Stop card:{0}", dev.CommercialName);
               dev.StopTimeShifting();
             }
           }

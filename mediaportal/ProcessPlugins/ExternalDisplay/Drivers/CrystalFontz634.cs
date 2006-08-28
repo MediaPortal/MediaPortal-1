@@ -27,6 +27,7 @@ using System;
 using System.Drawing;
 using System.IO.Ports;
 using System.Windows.Forms;
+using MediaPortal.GUI.Library;
 
 namespace ProcessPlugins.ExternalDisplay.Drivers
 {

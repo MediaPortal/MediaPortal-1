@@ -162,12 +162,12 @@ namespace DShowNET
 			isVBR = (bitrate.isvbr!=0);
 			minKbps=(int)bitrate.bitrate;
 			maxKbps=(int)bitrate.maxBitrate;
-			_log.Info("hauppauge: current videobitrate: min:{0} max:{1} vbr:{2}",minKbps,maxKbps,isVBR);
+			Log.Info("hauppauge: current videobitrate: min:{0} max:{1} vbr:{2}",minKbps,maxKbps,isVBR);
 			return true;
 		}
 		public void SetVideoBitRate(int minKbps, int maxKbps,bool isVBR)
 		{
-			_log.Info("hauppauge: setvideobitrate min:{0} max:{1} vbr:{2} {3}",minKbps,maxKbps,isVBR,Marshal.SizeOf(typeof(VideoBitRate)));
+			Log.Info("hauppauge: setvideobitrate min:{0} max:{1} vbr:{2} {3}",minKbps,maxKbps,isVBR,Marshal.SizeOf(typeof(VideoBitRate)));
 			VideoBitRate bitrate=new VideoBitRate();
 			if (isVBR) bitrate.isvbr=1;
 			else bitrate.isvbr=0;
@@ -185,7 +185,7 @@ namespace DShowNET
 		{
 			get
 			{
-				_log.Info("hauppauge: get version info {0}",Marshal.SizeOf(typeof(driverVersion) ));
+				Log.Info("hauppauge: get version info {0}",Marshal.SizeOf(typeof(driverVersion) ));
 				driverVersion version = new driverVersion();
 				version.size=(uint)Marshal.SizeOf(typeof(driverVersion) );
 				object obj =GetStructure(HauppaugeGuid,(uint)PropertyId.DriverVersion, typeof(driverVersion)) ;

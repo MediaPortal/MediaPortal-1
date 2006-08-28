@@ -93,7 +93,7 @@ namespace MediaPortal.GUI.TV
     #region Serialisation
     void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         string strTmp = String.Empty;
         strTmp = (string)xmlreader.GetValue("tvrecordedchannel", "sort");
@@ -111,7 +111,7 @@ namespace MediaPortal.GUI.TV
 
     void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         switch (currentSortMethod)
         {
@@ -711,7 +711,7 @@ namespace MediaPortal.GUI.TV
       TVRecorded rec = (TVRecorded)pItem.TVTag;
       if (System.IO.File.Exists(rec.FileName))
       {
-        _log.Info("TVRecording:play:{0}", rec.FileName);
+        Log.Info("TVRecording:play:{0}", rec.FileName);
         g_Player.Stop();
         Recorder.StopViewing();
 
@@ -740,7 +740,7 @@ namespace MediaPortal.GUI.TV
             if (!dlgYesNo.IsConfirmed) stoptime = 0;
           }
         }
-        _log.Info("GUIRecordedTV Play:{0}", rec.FileName);
+        Log.Info("GUIRecordedTV Play:{0}", rec.FileName);
         if (g_Player.Play(rec.FileName))
         {
           if (MediaPortal.Util.Utils.IsVideo(rec.FileName))

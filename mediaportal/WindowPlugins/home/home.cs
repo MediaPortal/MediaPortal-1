@@ -172,7 +172,7 @@ namespace MediaPortal.GUI.Home
     {
       base.OnWindowLoaded();
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         m_iDateLayout = xmlreader.GetValueAsInt("home", "datelayout", 0);
         MAX_FRAMES = xmlreader.GetValueAsInt("home", "scrollspeed", 5);
@@ -318,7 +318,7 @@ namespace MediaPortal.GUI.Home
           break;
 
         case GUIMessage.MessageType.GUI_MSG_WRONG_PASSWORD:
-          using (Profile.Settings xmlreader = new Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+          using (Profile.Settings xmlreader = new Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
           {
             if (!xmlreader.GetValueAsBool("general", "hidewrongpin", false))
             {
@@ -751,7 +751,7 @@ namespace MediaPortal.GUI.Home
         case GUIMessage.MessageType.GUI_MSG_CLICKED:  // Handle Menu tags
           {
             //get sender control
-            _log.Info(" OnMessage : MessageType.GUI_MSG_CLICKED");
+            Log.Info(" OnMessage : MessageType.GUI_MSG_CLICKED");
             base.OnMessage(message);
             int bControl = message.SenderControlId;
             if ( bControl > 1 && bControl < 60 )
@@ -1227,7 +1227,7 @@ namespace MediaPortal.GUI.Home
         foreach (ISetupForm setup in plugins)
         {
 
-          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
           {
             bool bHomeDefault = setup.DefaultEnabled();
             bool inhome;

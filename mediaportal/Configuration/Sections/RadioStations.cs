@@ -41,7 +41,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Radio.Database;
 using MediaPortal.TV.Recording;
 using MediaPortal.Configuration.Controls;
-using MediaPortal.Utils.Services;
+using MediaPortal.Util;
 
 namespace MediaPortal.Configuration.Sections
 {
@@ -91,7 +91,6 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPButton mpButtonClear;
     ListViewColumnSorter _columnSorter;
 
-		protected ILog _log;
 
     public RadioStations()
       : this("Stations")
@@ -549,7 +548,7 @@ namespace MediaPortal.Configuration.Sections
           strDefaultStation = radioStation.Name;
         }
       }
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         xmlwriter.SetValue("myradio", "default", strDefaultStation);
       }
@@ -560,7 +559,7 @@ namespace MediaPortal.Configuration.Sections
       stationsListView.Items.Clear();
       string defaultStation = string.Empty;
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         defaultStation = xmlreader.GetValueAsString("myradio", "default", "");
       }
@@ -772,13 +771,11 @@ namespace MediaPortal.Configuration.Sections
 
     void LoadCards()
     {
-			ServiceProvider services = GlobalServiceProvider.Instance;
-			_log = services.Get<ILog>();
 
 			comboBoxCard.Items.Clear();
-      if (File.Exists(base._config.Get(Config.Options.ConfigPath) + "capturecards.xml"))
+      if (File.Exists(Config.Get(Config.Dir.Config) + "capturecards.xml"))
       {
-        using (FileStream fileStream = new FileStream(base._config.Get(Config.Options.ConfigPath) + "capturecards.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+        using (FileStream fileStream = new FileStream(Config.Get(Config.Dir.Config) + "capturecards.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
         {
           try
           {
@@ -812,7 +809,7 @@ namespace MediaPortal.Configuration.Sections
           catch
           {
             MessageBox.Show("Failed to load previously configured capture card(s), you will need to re-configure your device(s).", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-						_log.Error("Recorder: LoadCards()");
+						Log.Error("Recorder: LoadCards()");
           }
         }
       }

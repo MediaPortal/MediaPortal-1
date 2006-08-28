@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 using System.Xml;
 using MediaPortal.GUI.Library;
+using MediaPortal.Util;
 
 namespace WindowPlugins.GUISettings.Wizard.Analog
 {
@@ -66,7 +67,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 
 		void DoScan(GUIListItem item)
 		{
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
 			{
 				xmlwriter.SetValue("capture", "countryname", item.Label);
 				xmlwriter.SetValue("capture", "country", item.ItemId.ToString());

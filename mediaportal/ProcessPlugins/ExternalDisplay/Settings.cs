@@ -32,7 +32,6 @@ using System.Xml;
 using System.Xml.Serialization;
 using ExternalDisplay.Setting;
 using MediaPortal.GUI.Library;
-using MediaPortal.Utils.Services;
 using ProcessPlugins.ExternalDisplay.Drivers;
 using ProcessPlugins.ExternalDisplay.Setting;
 
@@ -53,7 +52,6 @@ namespace ProcessPlugins.ExternalDisplay
         #region Singleton implementation
 
         private static Settings m_Instance; //Reference to the single instance of this task
-        private ILog _log; //Reference to the logging service
 
         /// <summary>
         /// Gets the single instance
@@ -687,18 +685,6 @@ namespace ProcessPlugins.ExternalDisplay
             msg.Lines.Add(new Line(new Property("#currentmodule")));
             msg.Lines.Add(new Line(new Property("#selecteditem")));
             _settings.Messages.Add(msg);
-        }
-
-        private ILog Log
-        {
-            get
-            {
-                if (_log == null)
-                {
-                    _log = GlobalServiceProvider.Instance.Get<ILog>();
-                }
-                return _log;
-            }
         }
     }
 }

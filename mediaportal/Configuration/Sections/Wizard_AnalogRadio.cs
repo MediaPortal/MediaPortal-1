@@ -36,8 +36,9 @@ using MediaPortal.Radio.Database;
 using MediaPortal.TV.Recording;
 using MediaPortal.TV.Scanning;
 using MediaPortal.GUI.Library;
-using MediaPortal.Utils.Services;
+using MediaPortal.Util;
 using DShowNET;
+
 namespace MediaPortal.Configuration.Sections
 {
   public class Wizard_AnalogRadio : Wizard_ScanBase
@@ -72,7 +73,6 @@ namespace MediaPortal.Configuration.Sections
     bool _loadingInfo = false;
     XmlDocument docSetup;
 
-    protected ILog _log;
 
     public Wizard_AnalogRadio()
       : this("Analog TV")
@@ -82,8 +82,6 @@ namespace MediaPortal.Configuration.Sections
     public Wizard_AnalogRadio(string name)
       : base(name)
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
 
       Radio = true;
       // This call is required by the Windows Form Designer.
@@ -703,11 +701,11 @@ namespace MediaPortal.Configuration.Sections
             station.Frequency = stationFrequency;
             station.Sort = 40000;
             station.Channel = GetUniqueNumber();
-            _log.Info("Wizard_AnalogRadio: add new station for {0}:{1}", station.Name, station.Frequency);
+            Log.Info("Wizard_AnalogRadio: add new station for {0}:{1}", station.Name, station.Frequency);
             int id = RadioDatabase.AddStation(ref station);
             if (id < 0)
             {
-              _log.Error("Wizard_AnalogRadio: failed to add new station for {0}:{1} to database", station.Name, station.Frequency);
+              Log.Error("Wizard_AnalogRadio: failed to add new station for {0}:{1} to database", station.Name, station.Frequency);
             }
             newRadioChannels++;
           }
@@ -717,7 +715,7 @@ namespace MediaPortal.Configuration.Sections
             station.Frequency = stationFrequency;
             RadioDatabase.UpdateStation(station);
             updatedRadioChannels++;
-            _log.Info("Wizard_AnalogRadio: update station {0}:{1} {2}", station.Name, station.Frequency, station.ID);
+            Log.Info("Wizard_AnalogRadio: update station {0}:{1} {2}", station.Name, station.Frequency, station.ID);
           }
           RadioDatabase.MapChannelToCard(station.ID, _card.ID);
         }
@@ -771,7 +769,7 @@ namespace MediaPortal.Configuration.Sections
       {
         TunerCountry tunerCountry = cbCountry.SelectedItem as TunerCountry;
         _card.DefaultCountryCode = tunerCountry.Id;
-        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         {
           xmlwriter.SetValue("capture", "countryname", tunerCountry.Country);
           xmlwriter.SetValue("capture", "country", tunerCountry.Id.ToString());
@@ -796,7 +794,7 @@ namespace MediaPortal.Configuration.Sections
         Boolean isCableInput = false;
         if (!cbInput.Text.Equals("Antenna")) isCableInput = true;
         _card.IsCableInput = isCableInput;
-        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         {
           xmlwriter.SetValue("capture", "radiotuner", cbInput.Text);
         }
@@ -954,7 +952,7 @@ namespace MediaPortal.Configuration.Sections
     }
     public override void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         cbInput.SelectedItem = xmlreader.GetValueAsString("capture", "radiotuner", "Antenna");
         string countryName = xmlreader.GetValueAsString("capture", "countryname", "The Netherlands");
@@ -972,7 +970,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         xmlwriter.SetValue("capture", "radiotuner", cbInput.Text);
         if (cbCountry.Text.Length > 0)

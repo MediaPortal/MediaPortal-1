@@ -26,7 +26,7 @@ using System.Threading;
 using System.Text;
 using System.Collections;
 using MediaPortal.GUI.Library;
-using MediaPortal.Utils.Services;
+using MediaPortal.Util;
 
 namespace MediaPortal.IR
 {
@@ -195,8 +195,6 @@ namespace MediaPortal.IR
     private bool tunerCodesLoaded = false;
     private string lastIRCodeSent = string.Empty;
     //private bool                            lastIRCodeSentWasToggle = false;
-    protected ILog _log;
-    protected IConfig _config;
     #endregion
 
     #region jumpTo enums
@@ -444,13 +442,10 @@ namespace MediaPortal.IR
     #region ctor / dtor
     private USBUIRT(OnRemoteCommand callback)
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
 
       try
       {
-        _log.Info("USBUIRT:Open");
+        Log.Info("USBUIRT:Open");
         commandsLearned = new Hashtable();
         jumpToCommands = new Hashtable();
         CreateJumpToCommands();
@@ -460,12 +455,12 @@ namespace MediaPortal.IR
         if (UsbUirtHandle != empty)
         {
           isUsbUirtLoaded = true;
-          _log.Info("USBUIRT:Open success:{0}", GetVersions());
+          Log.Info("USBUIRT:Open success:{0}", GetVersions());
         }
 
         else
         {
-          _log.Info("USBUIRT:Unable to open USBUIRT driver");
+          Log.Info("USBUIRT:Unable to open USBUIRT driver");
         }
 
         if (isUsbUirtLoaded)
@@ -482,7 +477,7 @@ namespace MediaPortal.IR
       catch (System.DllNotFoundException)
       {
         //most users dont have the dll on their system so will get a exception here
-        _log.Info("USBUIRT:uuirtdrv.dll not found");
+        Log.Info("USBUIRT:uuirtdrv.dll not found");
       }
 
       catch (Exception)
@@ -533,7 +528,7 @@ namespace MediaPortal.IR
     #region serialisation
     private void Initialize()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         ReceiveEnabled = xmlreader.GetValueAsBool("USBUIRT", "internal", false);
         TransmitEnabled = xmlreader.GetValueAsBool("USBUIRT", "external", false);
@@ -545,10 +540,10 @@ namespace MediaPortal.IR
       }
 
       if (!LoadValues())
-        _log.Info("USBUIRT:unable to load values from:{0}", remotefile);
+        Log.Info("USBUIRT:unable to load values from:{0}", remotefile);
 
       if (!LoadTunerValues())
-        _log.Info("USBUIRT:unable to load tunervalues from:{0}", tunerfile);
+        Log.Info("USBUIRT:unable to load tunervalues from:{0}", tunerfile);
     }
 
     private bool LoadValues()
@@ -958,7 +953,7 @@ namespace MediaPortal.IR
       try
       {
         isUsbUirtLoaded = false;
-        _log.Info("USBUIRT:Re-connecting");
+        Log.Info("USBUIRT:Re-connecting");
 
         if (UsbUirtHandle == IntPtr.Zero || UsbUirtHandle == empty)
         {
@@ -983,13 +978,13 @@ namespace MediaPortal.IR
         }
 
         else
-          _log.Info("USBUIRT:Unable to open USBUIRT driver");
+          Log.Info("USBUIRT:Unable to open USBUIRT driver");
       }
 
       catch (System.DllNotFoundException)
       {
         //most users dont have the dll on their system so will get a exception here
-        _log.Info("USBUIRT:uuirtdrv.dll not found");
+        Log.Info("USBUIRT:uuirtdrv.dll not found");
       }
 
       catch (Exception)
@@ -1199,7 +1194,7 @@ namespace MediaPortal.IR
 
       if (!TransmitEnabled) return;
 
-      _log.Info("USBUIRT: NewChannel={0} LastChannel={1}", channel, lastchannel);
+      Log.Info("USBUIRT: NewChannel={0} LastChannel={1}", channel, lastchannel);
 
       // Already tuned to this channel?
       if (channel == lastchannel)
@@ -1210,7 +1205,7 @@ namespace MediaPortal.IR
       //if ((!this.Is3Digit && length >2) || (length >3))
       if (this.Is3Digit && length > 3)
       {
-        _log.Info("USBUIRT: invalid channel:{0}", channel);
+        Log.Info("USBUIRT: invalid channel:{0}", channel);
         return;
       }
 
@@ -1222,11 +1217,11 @@ namespace MediaPortal.IR
         int codeIndex = channel[i] - '0';
         bool isToggledCode = false;
         string irTxString = GetSTBIrCode(codeIndex, ref isToggledCode);
-        _log.Info("USBUIRT: send:{0}{1}", channel[i], (isToggledCode ? " (toggled)" : ""));
+        Log.Info("USBUIRT: send:{0}{1}", channel[i], (isToggledCode ? " (toggled)" : ""));
 
         if (irTxString.Length == 0)
         {
-          _log.Info(string.Format("USBUIRT: IR Code for [{0}] button is empty", codeIndex));
+          Log.Info(string.Format("USBUIRT: IR Code for [{0}] button is empty", codeIndex));
           continue;
         }
 
@@ -1238,11 +1233,11 @@ namespace MediaPortal.IR
         int codeIndex = 10;
         bool isToggledCode = false;
         string irTxString = GetSTBIrCode(codeIndex, ref isToggledCode);
-        _log.Info("USBUIRT: send enter{0}", (isToggledCode ? " (toggled)" : ""));
+        Log.Info("USBUIRT: send enter{0}", (isToggledCode ? " (toggled)" : ""));
 
         if (irTxString.Length == 0)
         {
-          _log.Info("USBUIRT: IR Code for enter button is empty");
+          Log.Info("USBUIRT: IR Code for enter button is empty");
         }
 
         else
@@ -1301,7 +1296,7 @@ namespace MediaPortal.IR
         );
 
       if (!result)
-        _log.Info("USBUIRT: unable to transmit code");
+        Log.Info("USBUIRT: unable to transmit code");
 
       else
         System.Threading.Thread.Sleep(interCommandDelay);

@@ -38,7 +38,6 @@ using MediaPortal.Player;
 using MediaPortal.Dialogs;
 using MediaPortal.TV.Teletext;
 using MediaPortal.TV.DiskSpace;
-using MediaPortal.Utils.Services;
 #endregion
 
 namespace MediaPortal.TV.Recording
@@ -48,10 +47,8 @@ namespace MediaPortal.TV.Recording
     public override void Execute(CommandProcessor handler)
     {
       bool stopped = false;
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      ILog log = services.Get<ILog>();
 
-      log.Info("Command:Stop radio");
+      Log.WriteFile(Log.LogType.Recorder, "Command:Stop radio");
 
       if (g_Player.Playing && g_Player.IsRadio)
       {
@@ -69,7 +66,7 @@ namespace MediaPortal.TV.Recording
         TVCaptureDevice dev = handler.TVCards[i];
         if (dev.IsRadio)
         {
-          log.Info("Recorder:StopRadio() stop radio on card:{0}", dev.CommercialName);
+          Log.WriteFile(Log.LogType.Recorder, "Recorder: StopRadio() stop radio on card:{0}", dev.CommercialName);
           dev.StopRadio();
           if (i == handler.CurrentCardIndex)
           {

@@ -23,7 +23,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using DirectShowLib;
 using DShowNET.Helper;
-using MediaPortal.Utils.Services;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Player
 {
@@ -57,12 +57,9 @@ namespace MediaPortal.Player
     string                  m_strAudioInputPin=String.Empty;
     IBaseFilter             m_filterCaptureAudio = null;
     //int                     _RecordingLevel=80;
-    protected ILog _log;
 
     private RadioGraph()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
     }
 
 		public RadioGraph(string strDevice,string strAudioDevice,string strLineInput) : this()
@@ -76,7 +73,7 @@ namespace MediaPortal.Player
     {
       int hr=0;
       if (m_graphState != State.None) return false;
-      _log.Info("RadioGraph:CreateGraph()");
+      Log.Info("RadioGraph:CreateGraph()");
       m_bUseCable = cable;
       m_iTuningSpace=tuningspace;
       m_iCountryCode = country;
@@ -113,35 +110,35 @@ namespace MediaPortal.Player
       
       if (filterVideoCaptureDevice == null) 
       {
-        _log.Info("RadioGraph:CreateGraph() FAILED couldnt find capture device:{0}",m_strVideoCaptureFilter);
+        Log.Info("RadioGraph:CreateGraph() FAILED couldnt find capture device:{0}",m_strVideoCaptureFilter);
         return false;
       }
       // Make a new filter graph
-      _log.Info("RadioGraph:create new filter graph (IGraphBuilder)");
+      Log.Info("RadioGraph:create new filter graph (IGraphBuilder)");
       m_graphBuilder = (IGraphBuilder)new FilterGraph();
 
       // Get the Capture Graph Builder
-      _log.Info("RadioGraph:Get the Capture Graph Builder (ICaptureGraphBuilder2)");
+      Log.Info("RadioGraph:Get the Capture Graph Builder (ICaptureGraphBuilder2)");
       m_captureGraphBuilder = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
-      _log.Info("RadioGraph:Link the CaptureGraphBuilder to the filter graph (SetFiltergraph)");
+      Log.Info("RadioGraph:Link the CaptureGraphBuilder to the filter graph (SetFiltergraph)");
       hr = m_captureGraphBuilder.SetFiltergraph(m_graphBuilder);
       if (hr < 0) 
       {
-        _log.Info("RadioGraph:link FAILED:0x{0:X}",hr);
+        Log.Info("RadioGraph:link FAILED:0x{0:X}",hr);
         return false;
       }
-      _log.Info("RadioGraph:Add graph to ROT table");
+      Log.Info("RadioGraph:Add graph to ROT table");
       _rotEntry = new DsROTEntry((IFilterGraph)m_graphBuilder);
 
       // Get the Video device and add it to the filter graph
-      _log.Info("RadioGraph:CreateGraph() add capture device {0}",m_strVideoCaptureFilter);
+      Log.Info("RadioGraph:CreateGraph() add capture device {0}",m_strVideoCaptureFilter);
       m_filterCaptureVideo = Marshal.BindToMoniker(filterVideoCaptureDevice.MonikerString) as IBaseFilter;
       if (m_filterCaptureVideo != null)
       {
         hr = m_graphBuilder.AddFilter(m_filterCaptureVideo, filterVideoCaptureDevice.Name);
         if (hr < 0) 
         {
-          _log.Info("RadioGraph:FAILED:Add Videodevice to filtergraph:0x{0:X}",hr);
+          Log.Info("RadioGraph:FAILED:Add Videodevice to filtergraph:0x{0:X}",hr);
           return false;
         }
       }
@@ -151,14 +148,14 @@ namespace MediaPortal.Player
       if (filterAudioCaptureDevice != null)
       {
         // Get the audio device and add it to the filter graph
-        _log.Info("RadioGraph:CreateGraph() add capture device {0}",m_strAudioDevice);
+        Log.Info("RadioGraph:CreateGraph() add capture device {0}",m_strAudioDevice);
         m_filterCaptureAudio = Marshal.BindToMoniker(filterAudioCaptureDevice.MonikerString) as IBaseFilter;
         if (m_filterCaptureAudio != null)
         {
           hr = m_graphBuilder.AddFilter(m_filterCaptureAudio, filterAudioCaptureDevice.Name);
           if (hr < 0) 
           {
-            _log.Info("RadioGraph:FAILED:Add audiodevice to filtergraph:0x{0:X}",hr);
+            Log.Info("RadioGraph:FAILED:Add audiodevice to filtergraph:0x{0:X}",hr);
             return false;
           }
         }
@@ -166,7 +163,7 @@ namespace MediaPortal.Player
 */
 
       // Retrieve TV Tuner if available
-      _log.Info("RadioGraph:Find TV Tuner");
+      Log.Info("RadioGraph:Find TV Tuner");
       object o = null;
       Guid iid = typeof(IAMTVTuner).GUID;
       DsGuid cat = new DsGuid(FindDirection.UpstreamOnly);
@@ -178,7 +175,7 @@ namespace MediaPortal.Player
       }
       if (m_TVTuner == null)
       {
-        _log.Info("RadioGraph:CreateGraph() FAILED:no tuner found");
+        Log.Info("RadioGraph:CreateGraph() FAILED:no tuner found");
       }
 
       bool bAdded=false;
@@ -191,7 +188,7 @@ namespace MediaPortal.Player
         {
           if (Filters.AudioRenderers[i].MonikerString.IndexOf(strDefault) >= 0)
           {
-            _log.Info("RadioGraph:adding {0} to graph", Filters.AudioRenderers[i].Name);
+            Log.Info("RadioGraph:adding {0} to graph", Filters.AudioRenderers[i].Name);
 						try
 						{
               m_audioFilter = DirectShowUtil.AddAudioRendererToGraph(m_graphBuilder, Filters.AudioRenderers[i].Name, false);
@@ -199,7 +196,7 @@ namespace MediaPortal.Player
 						}
 						catch(Exception)
 						{ 
-							_log.Info("RadioGraph:Cannot add default audio renderer to graph");
+							Log.Info("RadioGraph:Cannot add default audio renderer to graph");
 							return false;
 						}
             break;
@@ -207,18 +204,18 @@ namespace MediaPortal.Player
         }
         if (!bAdded)
         {
-          _log.Info("RadioGraph:FAILED could not find default directsound device");
+          Log.Info("RadioGraph:FAILED could not find default directsound device");
           return false;
         }
 
-        _log.Info("RadioGraph:Render audio preview pin");
+        Log.Info("RadioGraph:Render audio preview pin");
         hr=m_graphBuilder.Render(m_videoCaptureDevice.PreviewAudioPin);
         if (hr!=0)
         {
-          _log.Info("RadioGraph:FAILED could not render preview audio pin:0x{0:x}",hr);
+          Log.Info("RadioGraph:FAILED could not render preview audio pin:0x{0:x}",hr);
           return false;
         }
-        _log.Info("RadioGraph:starting graph");
+        Log.Info("RadioGraph:starting graph");
       }
 /*
       // select the correct audio input pin to capture
@@ -226,11 +223,11 @@ namespace MediaPortal.Player
       {
         if (m_strAudioInputPin.Length > 0)
         {
-          _log.Info("SWGraph:set audio input pin:{0}", m_strAudioInputPin);
+          Log.Info("SWGraph:set audio input pin:{0}", m_strAudioInputPin);
           IPin pinInput = DirectShowUtil.FindPin(m_filterCaptureAudio, PinDirection.Input, m_strAudioInputPin);
           if (pinInput == null)
           {
-            _log.Info("SWGraph:FAILED audio input pin:{0} not found", m_strAudioInputPin);
+            Log.Info("SWGraph:FAILED audio input pin:{0} not found", m_strAudioInputPin);
           }
           else
           {
@@ -240,11 +237,11 @@ namespace MediaPortal.Player
               hr = mixer.put_Enable(true);
               if (hr != 0)
               {
-                _log.Info("SWGraph:FAILED:to enable audio input pin:0x{0:X}",hr);
+                Log.Info("SWGraph:FAILED:to enable audio input pin:0x{0:X}",hr);
               }
               else
               {
-                _log.Info("SWGraph:enabled audio input pin:{0}",m_strAudioInputPin);
+                Log.Info("SWGraph:enabled audio input pin:{0}",m_strAudioInputPin);
               }
 
               double fLevel=((double)_RecordingLevel);
@@ -252,17 +249,17 @@ namespace MediaPortal.Player
               hr = mixer.put_MixLevel(fLevel);
               if (hr != 0)
               {
-                _log.Info("SWGraph:FAILED:to set mixing level to {0}%:0x{1:X}",_RecordingLevel,hr);
+                Log.Info("SWGraph:FAILED:to set mixing level to {0}%:0x{1:X}",_RecordingLevel,hr);
               }
               else
               {
-                _log.Info("SWGraph:set mixing level to {0}% of pin:{1}",_RecordingLevel,m_strAudioInputPin);
+                Log.Info("SWGraph:set mixing level to {0}% of pin:{1}",_RecordingLevel,m_strAudioInputPin);
               }
 
             }
             else
             {
-              _log.Info("SWGraph:FAILED audio input pin:{0} does not expose an IAMAudioInputMixer", m_strAudioInputPin);
+              Log.Info("SWGraph:FAILED audio input pin:{0} does not expose an IAMAudioInputMixer", m_strAudioInputPin);
             }
           }
         }
@@ -277,7 +274,7 @@ namespace MediaPortal.Player
     {
       if (m_graphState < State.Created) return;
       if (m_TVTuner == null) return;
-      _log.Info("RadioGraph:Tune:{0} Hz country:{1}",channel,m_iCountryCode);
+      Log.Info("RadioGraph:Tune:{0} Hz country:{1}",channel,m_iCountryCode);
       if (m_graphState == State.Created)
       {
         m_TVTuner.put_TuningSpace(0);
@@ -285,12 +282,12 @@ namespace MediaPortal.Player
         m_TVTuner.put_Mode(AMTunerModeType.FMRadio);
         if (m_bUseCable)
         {
-          _log.Info("RadioGraph:Cable");
+          Log.Info("RadioGraph:Cable");
           m_TVTuner.put_InputType(0, TunerInputType.Cable);
         }
         else
         {
-          _log.Info("RadioGraph:Antenna");
+          Log.Info("RadioGraph:Antenna");
           m_TVTuner.put_InputType(0, TunerInputType.Antenna);
         }
 
@@ -300,12 +297,12 @@ namespace MediaPortal.Player
 
         int chanmin,chanmax;
         m_TVTuner.ChannelMinMax(out chanmin, out chanmax);
-        _log.Info("RadioGraph:minimal :{0} Hz, maximal:{1} Hz",chanmin,chanmax);
+        Log.Info("RadioGraph:minimal :{0} Hz, maximal:{1} Hz",chanmin,chanmax);
 		    if (m_strAudioDevice.Length>0)
           CrossBar.Route(m_graphBuilder, m_captureGraphBuilder, m_filterCaptureVideo, true, false, false, false, false, true);
-        _log.Info("RadioGraph:start listening");
+        Log.Info("RadioGraph:start listening");
         int hr=m_mediaControl.Run();
-        if (hr!=0) _log.Info("RadioGraph:start listening returned :0x{0:X}",hr);
+        if (hr!=0) Log.Info("RadioGraph:start listening returned :0x{0:X}",hr);
       }
       else
       { 
@@ -317,7 +314,7 @@ namespace MediaPortal.Player
 
     public void DeleteGraph()
     {
-      _log.Info("RadioGraph:DeleteGraph");
+      Log.Info("RadioGraph:DeleteGraph");
       if (m_mediaControl != null)
       {
         m_mediaControl.Stop();

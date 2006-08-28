@@ -118,7 +118,7 @@ namespace MediaPortal.GUI.TV
       {
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           {
-            _log.Info("tvguidedlg:GUI_MSG_WINDOW_DEINIT");
+            Log.Info("tvguidedlg:GUI_MSG_WINDOW_DEINIT");
             m_bRunning = false;
             return true;
           }

@@ -203,7 +203,7 @@ namespace MediaPortal.GUI.TV
 
     public override bool Init()
     {
-      using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml") )
+      using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml") )
       {
         _useVMR9Zap = xmlreader.GetValueAsBool("general", "useVMR9ZapOSD", false);
         _notifyTVTimeout = xmlreader.GetValueAsInt("movieplayer", "notifyTVTimeout", 15);
@@ -215,7 +215,7 @@ namespace MediaPortal.GUI.TV
     #region serialisation
     void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         _isMsnChatPopup = ( xmlreader.GetValueAsInt("MSNmessenger", "popupwindow", 0) == 1 );
         _timeOsdOnscreen = 1000 * xmlreader.GetValueAsInt("movieplayer", "osdtimeout", 5);
@@ -254,7 +254,7 @@ namespace MediaPortal.GUI.TV
     //		}
     void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         GUITVHome.Navigator.SaveSettings(xmlwriter);
         switch ( GUIGraphicsContext.ARType )
@@ -418,7 +418,7 @@ namespace MediaPortal.GUI.TV
 
         }
       }
-      //_log.Error("action:{0}",action.wID);
+      //Log.Error("action:{0}",action.wID);
       switch ( action.wID )
       {
         case Action.ActionType.ACTION_MOUSE_DOUBLECLICK:
@@ -463,7 +463,7 @@ namespace MediaPortal.GUI.TV
               {
                 GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, _zapWindow.GetID, 0, 0, GetID, 0, null);
                 _zapWindow.OnMessage(msg);
-                _log.Info("ZAP OSD:ON");
+                Log.Info("ZAP OSD:ON");
                 _zapTimeOutTimer = DateTime.Now;
                 _zapOsdVisible = true;
               }
@@ -478,7 +478,7 @@ namespace MediaPortal.GUI.TV
         case Action.ActionType.ACTION_SHOW_MSN_OSD:
           if ( _isMsnChatPopup )
           {
-            _log.Info("MSN CHAT:ON");
+            Log.Info("MSN CHAT:ON");
 
             _msnWindowVisible = true;
             GUIWindowManager.VisibleOsd = GUIWindow.Window.WINDOW_TVMSNOSD;
@@ -541,7 +541,7 @@ namespace MediaPortal.GUI.TV
         case Action.ActionType.ACTION_AUDIO_NEXT_LANGUAGE:
         case Action.ActionType.ACTION_NEXT_AUDIO:
           {
-            _log.Info("GUIFullscreenTV: switching audio");
+            Log.Info("GUIFullscreenTV: switching audio");
             DVBSections.AudioLanguage al;
             ArrayList audioPidList = new ArrayList();
             audioPidList = Recorder.GetAudioLanguageList();
@@ -569,7 +569,7 @@ namespace MediaPortal.GUI.TV
               string strLanguage = DVBSections.GetLanguageFromCode(al.AudioLanguageCode);
               msg.Label = string.Format("{0} ({1}/{2})", strLanguage, selected + 1, audioPidList.Count);
               OnMessage(msg);
-              _log.Info("GUIFullscreenTV: switched audio to {0}", msg.Label);
+              Log.Info("GUIFullscreenTV: switched audio to {0}", msg.Label);
             }
           }
           break;
@@ -638,7 +638,7 @@ namespace MediaPortal.GUI.TV
 
         case Action.ActionType.ACTION_PREVIOUS_MENU:
         case Action.ActionType.ACTION_SHOW_GUI:
-          _log.Info("fullscreentv:show gui");
+          Log.Info("fullscreentv:show gui");
           //if(_vmr9OSD!=null)
           //	_vmr9OSD.HideBitmap();
           GUIWindowManager.ShowPreviousWindow();
@@ -646,7 +646,7 @@ namespace MediaPortal.GUI.TV
 
         case Action.ActionType.ACTION_SHOW_OSD:	// Show the OSD
           {
-            _log.Info("OSD:ON");
+            Log.Info("OSD:ON");
             _osdTimeoutTimer = DateTime.Now;
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, _osdWindow.GetID, 0, 0, GetID, 0, null);
             _osdWindow.OnMessage(msg);	// Send an init msg to the OSD
@@ -838,24 +838,24 @@ namespace MediaPortal.GUI.TV
         }
         else
         {
-          _log.Info("1");
+          Log.Info("1");
           if ( prog != null )
           {
-            _log.Info("2");
+            Log.Info("2");
             _dialogBottomMenu = (GUIDialogMenuBottomRight)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT);
             if ( _dialogBottomMenu != null )
             {
-              _log.Info("3");
+              Log.Info("3");
               _dialogBottomMenu.Reset();
               _dialogBottomMenu.SetHeading(605);//my tv
               _dialogBottomMenu.AddLocalizedString(875); //current program
               _dialogBottomMenu.AddLocalizedString(876); //till manual stop
               _bottomDialogMenuVisible = true;
 
-              _log.Info("4");
+              Log.Info("4");
               _dialogBottomMenu.DoModal(GetID);
 
-              _log.Info("5");
+              Log.Info("5");
               _bottomDialogMenuVisible = false;
               switch ( _dialogBottomMenu.SelectedId )
               {
@@ -879,7 +879,7 @@ namespace MediaPortal.GUI.TV
           else
           {
 
-            _log.Info("bah");
+            Log.Info("bah");
             _isStartingTSForRecording = !g_Player.IsTimeShifting;
             Recorder.RecordNow(channel, true);
           }
@@ -1035,7 +1035,7 @@ namespace MediaPortal.GUI.TV
         _notifyDialogVisible = true;
         dlgNotify.DoModal(GUIWindowManager.ActiveWindow);
         _notifyDialogVisible = false;
-        _log.Info("Notify Message:" + channel + ", " + message.Label);
+        Log.Info("Notify Message:" + channel + ", " + message.Label);
         return true;
       }
       #endregion
@@ -1131,7 +1131,7 @@ namespace MediaPortal.GUI.TV
 
           if ( !_msnWindowVisible && _isMsnChatPopup )
           {
-            _log.Info("MSN CHAT:ON");
+            Log.Info("MSN CHAT:ON");
             _msnWindowVisible = true;
             GUIWindowManager.VisibleOsd = GUIWindow.Window.WINDOW_TVMSNOSD;
             _msnWindow.DoModal(GetID, message);
@@ -1146,7 +1146,7 @@ namespace MediaPortal.GUI.TV
 
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           {
-            _log.Info("deinit->OSD:Off");
+            Log.Info("deinit->OSD:Off");
             if ( _isOsdVisible )
             {
               GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _osdWindow.GetID, 0, 0, GetID, 0, null);
@@ -1233,8 +1233,8 @@ namespace MediaPortal.GUI.TV
 
             _lastPause = g_Player.Paused;
             _lastSpeed = g_Player.Speed;
-            _log.Info("start fullscreen channel:{0}", Recorder.TVChannelName);
-            _log.Info("init->OSD:Off");
+            Log.Info("start fullscreen channel:{0}", Recorder.TVChannelName);
+            Log.Info("init->OSD:Off");
             _isOsdVisible = false;
             GUIWindowManager.IsOsdVisible = false;
             _channelInputVisible = false;
@@ -1427,7 +1427,7 @@ namespace MediaPortal.GUI.TV
           break;
 
         case 12902: // MSN Messenger
-          _log.Info("MSN CHAT:ON");
+          Log.Info("MSN CHAT:ON");
           _msnWindowVisible = true;
           GUIWindowManager.VisibleOsd = GUIWindow.Window.WINDOW_TVMSNOSD;
           _msnWindow.DoModal(GetID, null);
@@ -1924,17 +1924,17 @@ namespace MediaPortal.GUI.TV
 
       // Let the navigator zap channel if needed
       GUITVHome.Navigator.CheckChannelChange();
-      //_log.Info("osd visible:{0} timeoutvalue:{1}", _zapOsdVisible ,_zapTimeOutValue);
+      //Log.Info("osd visible:{0} timeoutvalue:{1}", _zapOsdVisible ,_zapTimeOutValue);
       if ( _zapOsdVisible && _zapTimeOutValue > 0 )
       {
         TimeSpan ts = DateTime.Now - _zapTimeOutTimer;
-        //_log.Info("timeout :{0}", ts.TotalMilliseconds);
+        //Log.Info("timeout :{0}", ts.TotalMilliseconds);
         if ( ts.TotalMilliseconds > _zapTimeOutValue )
         {
           //yes, then remove osd offscreen
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _zapWindow.GetID, 0, 0, GetID, 0, null);
           _zapWindow.OnMessage(msg);	// Send a de-init msg to the OSD
-          _log.Info("ZAP OSD:Off timeout");
+          Log.Info("ZAP OSD:Off timeout");
           _zapOsdVisible = false;
           msg = null;
         }
@@ -2014,7 +2014,7 @@ namespace MediaPortal.GUI.TV
       GUIMessage msg2 = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _osdWindow.GetID, 0, 0, GetID, 0, null);
       _osdWindow.OnMessage(msg2);	// Send a de-init msg to the OSD
       msg2 = null;
-      _log.Info("timeout->OSD:Off");
+      Log.Info("timeout->OSD:Off");
       _isOsdVisible = false;
       GUIWindowManager.IsOsdVisible = false;
 
@@ -2024,7 +2024,7 @@ namespace MediaPortal.GUI.TV
       msg2 = null;
       _msnWindowVisible = false;
       GUIWindowManager.IsOsdVisible = false;
-      _log.Info("fullscreentv:not viewing anymore");
+      Log.Info("fullscreentv:not viewing anymore");
       GUIWindowManager.ShowPreviousWindow();
     }
 
@@ -2032,7 +2032,7 @@ namespace MediaPortal.GUI.TV
     {
       if ( GUIWindowManager.ActiveWindow != GetID )
         return;
-      _log.Info("UpdateOSD()");
+      Log.Info("UpdateOSD()");
       if ( _isOsdVisible )
       {
         _osdWindow.UpdateChannelInfo();
@@ -2128,7 +2128,7 @@ namespace MediaPortal.GUI.TV
           {
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, _zapWindow.GetID, 0, 0, GetID, 0, null);
             _zapWindow.OnMessage(msg);
-            _log.Info("ZAP OSD:ON");
+            Log.Info("ZAP OSD:ON");
             _zapTimeOutTimer = DateTime.Now;
             _zapOsdVisible = true;
           }
@@ -2238,7 +2238,7 @@ namespace MediaPortal.GUI.TV
     void ChangeChannelNr( int channelNr )
     {
 
-      _log.Info("ChangeChannelNr()");
+      Log.Info("ChangeChannelNr()");
       if ( _byIndex == true )
       {
         GUITVHome.Navigator.ZapToChannel(channelNr, false);
@@ -2255,7 +2255,7 @@ namespace MediaPortal.GUI.TV
 
     public void ZapPreviousChannel()
     {
-      _log.Info("ZapPreviousChannel()");
+      Log.Info("ZapPreviousChannel()");
       GUITVHome.Navigator.ZapToPreviousChannel(true);
       _zapTimeOutTimer = DateTime.Now;
       UpdateOSD();
@@ -2267,7 +2267,7 @@ namespace MediaPortal.GUI.TV
 
     public void ZapNextChannel()
     {
-      _log.Info("ZapNextChannel()");
+      Log.Info("ZapNextChannel()");
       GUITVHome.Navigator.ZapToNextChannel(true);
       _zapTimeOutTimer = DateTime.Now;
       UpdateOSD();

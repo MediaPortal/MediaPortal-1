@@ -27,8 +27,7 @@ using Programs.Utils;
 using SQLite.NET;
 using WindowPlugins.GUIPrograms;
 using MediaPortal.Database;
-using MediaPortal.Utils.Services;
-
+using MediaPortal.Util;
 
 namespace ProgramsDatabase
 {
@@ -40,8 +39,6 @@ namespace ProgramsDatabase
     public static SQLiteClient sqlDB = null;
     static Applist mAppList = null;
     static ProgramViewHandler viewHandler = null;
-    static ILog _log;
-    static IConfig _config;
 
     // singleton. Dont allow any instance of this class
     private ProgramDatabase(){}
@@ -49,19 +46,16 @@ namespace ProgramsDatabase
     static ProgramDatabase()
     {
 
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
 
       try
       {
         // Open database
         try
         {
-          Directory.CreateDirectory(_config.Get(Config.Options.DatabasePath));
+          Directory.CreateDirectory(Config.Get(Config.Dir.Database));
         }
         catch (Exception){}
-        sqlDB = new SQLiteClient(_config.Get(Config.Options.DatabasePath) + "ProgramDatabaseV4.db3");
+        sqlDB = new SQLiteClient(Config.Get(Config.Dir.Database) + "ProgramDatabaseV4.db3");
 
         MediaPortal.Database.DatabaseUtility.SetPragmas(sqlDB);
 
@@ -81,7 +75,7 @@ namespace ProgramsDatabase
       }
       catch (SQLiteException ex)
       {
-        _log.Info("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Info("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
       }
       viewHandler = new ProgramViewHandler();
       ProgramSettings.viewHandler = viewHandler;
@@ -135,7 +129,7 @@ namespace ProgramsDatabase
       }
       catch (SQLiteException ex)
       {
-        _log.Info("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Info("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         return false;
       }
       return true;
@@ -170,7 +164,7 @@ namespace ProgramsDatabase
         return;
       if (!ProgramSettings.KeyExists(ProgramUtils.cCONTENT_PATCH))
       {
-        _log.Info("myPrograms: applying contentID-patch");
+        Log.Info("myPrograms: applying contentID-patch");
         sqlDB.Execute("update application set contentID = 100 where contentID IS NULL");
         sqlDB.Execute("update application set contentID = 100 where contentID <= 0");
         ProgramSettings.WriteSetting(ProgramUtils.cCONTENT_PATCH, "DONE") ;
@@ -183,7 +177,7 @@ namespace ProgramsDatabase
         return;
       if (!ProgramSettings.KeyExists(ProgramUtils.cGENRE_PATCH))
       {
-        _log.Info("myPrograms: applying genre-patch");
+        Log.Info("myPrograms: applying genre-patch");
         sqlDB.Execute("update tblfile set genre = '' where genre IS NULL");
         sqlDB.Execute("update tblfile set genre2 = '' where genre2 IS NULL");
         sqlDB.Execute("update tblfile set genre3 = '' where genre3 IS NULL");
@@ -206,7 +200,7 @@ namespace ProgramsDatabase
         }
         catch (SQLiteException ex)
         {
-          _log.Info("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Log.Info("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         }
       }
     }
@@ -219,14 +213,14 @@ namespace ProgramsDatabase
       {
         try
         {
-        _log.Info("myPrograms: adding preLaunch / postLaunch fields");
+        Log.Info("myPrograms: adding preLaunch / postLaunch fields");
         sqlDB.Execute("alter table application add column preLaunch text");
         sqlDB.Execute("alter table application add column postLaunch text");
         ProgramSettings.WriteSetting(ProgramUtils.cPREPOST_PATCH, "DONE") ;
         }
         catch (SQLiteException ex)
         {
-          _log.Info("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Log.Info("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         }
       }
     }
@@ -304,7 +298,7 @@ namespace ProgramsDatabase
       }
       catch (Exception ex) 
       {
-        _log.Error("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
       }
 
       return ;		
@@ -322,7 +316,7 @@ namespace ProgramsDatabase
       }
       catch (Exception ex) 
       {
-        _log.Error("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
       }
 
       return null;	

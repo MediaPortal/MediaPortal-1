@@ -30,7 +30,8 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
 using MediaPortal.TV.Database;
-using MediaPortal.Utils.Services;
+using MediaPortal.Util;
+
 #pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
@@ -839,7 +840,7 @@ namespace MediaPortal.Configuration.Sections
     {
       FillInEPGLanguages();
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         cbGrabDVBEPG.Checked = xmlreader.GetValueAsBool("xmltv", "epgdvb", true);
         useColorCheckBox.Checked = xmlreader.GetValueAsBool("xmltv", "colors", false);
@@ -911,7 +912,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         xmlwriter.SetValueAsBool("xmltv", "epgdvb", cbGrabDVBEPG.Checked);
         xmlwriter.SetValueAsBool("xmltv", "colors", useColorCheckBox.Checked);

@@ -29,7 +29,6 @@ using MediaPortal.TV.Recording;
 using System.Xml;
 using DirectShowLib;
 using DirectShowLib.BDA;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.TV.Scanning
 {
@@ -55,12 +54,9 @@ namespace MediaPortal.TV.Scanning
 
     int newChannels, updatedChannels;
     int newRadioChannels, updatedRadioChannels;
-    protected ILog _log;
 
     public DVBCTuning()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
     }
 
     #region ITuning Members
@@ -99,7 +95,7 @@ namespace MediaPortal.TV.Scanning
       _channelCount = 0;
       string line;
       string[] tpdata;
-      _log.Info("dvbc-scan:Opening {0}", fileName);
+      Log.Info("dvbc-scan:Opening {0}", fileName);
       // load _dvbcChannelsList list and start scan
       System.IO.TextReader tin = System.IO.File.OpenText(fileName);
 
@@ -211,7 +207,7 @@ namespace MediaPortal.TV.Scanning
               }
               catch
               {
-                _log.Info("dvbc-scan:Error in line:{0}", LineNr);
+                Log.Info("dvbc-scan:Error in line:{0}", LineNr);
               }
             }
           }
@@ -220,7 +216,7 @@ namespace MediaPortal.TV.Scanning
       tin.Close();
 
 
-      _log.Info("dvbc-scan:loaded:{0} dvbc transponders", _channelCount);
+      Log.Info("dvbc-scan:loaded:{0} dvbc transponders", _channelCount);
       _currentIndex = 0;
       return;
     }
@@ -303,7 +299,7 @@ namespace MediaPortal.TV.Scanning
             _dvbcChannels[_currentIndex].modstr, 
             _dvbcChannels[_currentIndex].symbolrate/1000);
       string description = String.Format("Transponder:{0} locking...", chanDesc);
-      _log.Info("dvbc-scan:tune dvbcChannel:{0}/{1} {2}", _currentIndex, _channelCount, chanDesc);
+      Log.Info("dvbc-scan:tune dvbcChannel:{0}/{1} {2}", _currentIndex, _channelCount, chanDesc);
       _callback.OnStatus(description);
 
       DVBChannel newchan = new DVBChannel();
@@ -319,7 +315,7 @@ namespace MediaPortal.TV.Scanning
 
       _captureCard.Process();
       _callback.OnSignal(_captureCard.SignalQuality, _captureCard.SignalStrength);
-      _log.Info("dvbc-scan:signal quality:{0} signal strength:{1} signal present:{2}",
+      Log.Info("dvbc-scan:signal quality:{0} signal strength:{1} signal present:{2}",
                   _captureCard.SignalQuality, _captureCard.SignalStrength, _captureCard.SignalPresent());
     }
     #endregion

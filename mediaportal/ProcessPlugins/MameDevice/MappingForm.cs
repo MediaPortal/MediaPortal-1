@@ -31,7 +31,7 @@ using System.Windows.Forms;
 using System.Xml;
 using System.IO;
 using MediaPortal.GUI.Library;
-using MediaPortal.Utils.Services;
+using MediaPortal.Util;
 
 namespace MediaPortal.InputDevices
 {
@@ -55,8 +55,6 @@ namespace MediaPortal.InputDevices
     string[] processList = new string[] { "CLOSE", "KILL" };
 
     string inputClassName;
-    static IConfig _config;
-    static ILog log;
 
     class Data
     {
@@ -117,9 +115,6 @@ namespace MediaPortal.InputDevices
 
     public MappingForm(string name)
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
 
       //
       // Required for Windows Form Designer support
@@ -518,8 +513,8 @@ namespace MediaPortal.InputDevices
       treeMapping.Nodes.Clear();
       XmlDocument doc = new XmlDocument();
       string path = "InputDeviceMappings\\defaults\\" + xmlFile;
-      if (!defaults && File.Exists(_config.Get(Config.Options.CustomInputDevicePath) + xmlFile))
-        path = _config.Get(Config.Options.CustomInputDevicePath) + xmlFile;
+      if (!defaults && File.Exists(Config.Get(Config.Dir.CustomInputDevice) + xmlFile))
+        path = Config.Get(Config.Dir.CustomInputDevice) + xmlFile;
       doc.Load(path);
       XmlNodeList listRemotes = doc.DocumentElement.SelectNodes("/mappings/remote");
 
@@ -675,17 +670,17 @@ namespace MediaPortal.InputDevices
     {
       try
       {
-        DirectoryInfo dir = Directory.CreateDirectory(_config.Get(Config.Options.CustomInputDevicePath));
+        DirectoryInfo dir = Directory.CreateDirectory(Config.Get(Config.Dir.CustomInputDevice));
       }
       catch
       {
-        log.Info("MAP: Error accessing directory \"InputDeviceMappings\\custom\"");
+        Log.Info("MAP: Error accessing directory \"InputDeviceMappings\\custom\"");
       }
       DialogResult result = MessageBox.Show(this, "Information:\n\nThere is no plausibility check implemented in this version.\nMake sure your mappings are correct.\n\nThis is just an information, settings will be saved.",
         "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
       try
       {
-        XmlTextWriter writer = new XmlTextWriter(_config.Get(Config.Options.CustomInputDevicePath) + xmlFile, System.Text.Encoding.UTF8);
+        XmlTextWriter writer = new XmlTextWriter(Config.Get(Config.Dir.CustomInputDevice) + xmlFile, System.Text.Encoding.UTF8);
         writer.Formatting = Formatting.Indented;
         writer.Indentation = 1;
         writer.IndentChar = (char)9;
@@ -748,7 +743,7 @@ namespace MediaPortal.InputDevices
       }
       catch
       {
-        log.Info("MAP: Error saving mapping to XML file");
+        Log.Info("MAP: Error saving mapping to XML file");
         return false;
       }
     }

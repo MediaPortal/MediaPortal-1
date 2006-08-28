@@ -35,7 +35,7 @@ using System.Runtime.InteropServices;
 using Microsoft.Win32;
 using MediaPortal.RemoteControls.FireDTV;
 using MediaPortal.InputDevices;
-using MediaPortal.Utils.Services;
+using MediaPortal.Util;
 
 namespace MediaPortal.RemoteControls
 {
@@ -51,8 +51,6 @@ namespace MediaPortal.RemoteControls
 
     private FireDTVControl _fireDTV = null;
     private InputHandler _inputHandler;
-    private IConfig _config;
-    private ILog _log;
     #endregion
 
     #region Private Methods
@@ -68,7 +66,7 @@ namespace MediaPortal.RemoteControls
 
         if (!_enabled)
         {
-          _log.Error("FireDTVRemote: Failed to open driver");
+          Log.Error("FireDTVRemote: Failed to open driver");
           return;
         }
 
@@ -79,7 +77,7 @@ namespace MediaPortal.RemoteControls
           sourceFilter.StartFireDTVRemoteControlSupport();
         }
         else
-          _log.Error("FireDTVRemote: SourceFilter {0} Not Found", _name);
+          Log.Error("FireDTVRemote: SourceFilter {0} Not Found", _name);
       }
     }
 
@@ -87,8 +85,6 @@ namespace MediaPortal.RemoteControls
 
     public FireDTVRemote()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
     }
 
     /// <summary>
@@ -99,11 +95,8 @@ namespace MediaPortal.RemoteControls
     {
       try
       {
-        ServiceProvider services = GlobalServiceProvider.Instance;
-        _log = services.Get<ILog>();
-        _config = services.Get<IConfig>();
         // first read the configuration, to determine the initialisation is needed
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         {
           _enabled = ((xmlreader.GetValueAsBool("remote", "FireDTV", false)));
           _name = xmlreader.GetValueAsString("remote", "FireDTVDeviceName", string.Empty);
@@ -115,23 +108,23 @@ namespace MediaPortal.RemoteControls
         if (!_inputHandler.IsLoaded)
         {
           _enabled = false;
-          _log.Error("FireDTVRemote: Error loading default mapping file - please reinstall MediaPortal");
+          Log.Error("FireDTVRemote: Error loading default mapping file - please reinstall MediaPortal");
           return;
         }
 
         _fireDTV = new FireDTVControl(hwnd);
-        _log.Info("FireDTVRemote: Starting on handler {0}", hwnd);
+        Log.Info("FireDTVRemote: Starting on handler {0}", hwnd);
 
         // start communication with the FireDTV library
         StartFireDTVComms();
       }
       catch (FileNotFoundException eFileNotFound)
       {
-        _log.Error(eFileNotFound);
+        Log.Error(eFileNotFound);
       }
       catch (FireDTVException eFireDTV)
       {
-        _log.Error(eFireDTV);
+        Log.Error(eFireDTV);
       }
     }
 
@@ -148,17 +141,17 @@ namespace MediaPortal.RemoteControls
       switch ((FireDTVConstants.FireDTVWindowMessages)msg.Msg)
       {
         case FireDTVConstants.FireDTVWindowMessages.DeviceAttached:
-          _log.Info("FireDTVRemote: DeviceAttached");
+          Log.Info("FireDTVRemote: DeviceAttached");
           StartFireDTVComms();
           break;
 
         case FireDTVConstants.FireDTVWindowMessages.DeviceDetached:
-          _log.Info("FireDTVRemote: DeviceDetached");
+          Log.Info("FireDTVRemote: DeviceDetached");
           _fireDTV.SourceFilters.RemoveByHandle((uint)msg.WParam);
           break;
 
         case FireDTVConstants.FireDTVWindowMessages.DeviceChanged:
-          _log.Info("FireDTVRemote: DeviceChanged");
+          Log.Info("FireDTVRemote: DeviceChanged");
           StartFireDTVComms();
           break;
 
@@ -166,7 +159,7 @@ namespace MediaPortal.RemoteControls
           if (_enabled)
           {
             int remoteKeyCode = msg.LParam.ToInt32();
-            if (_logVerbose) _log.Info("FireDTVRemote: RemoteControlEvent {0}", remoteKeyCode);
+            if (_logVerbose) Log.Info("FireDTVRemote: RemoteControlEvent {0}", remoteKeyCode);
 
             if (!_inputHandler.MapAction(remoteKeyCode))
               return false;

@@ -29,7 +29,7 @@ using System.Collections;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D=Microsoft.DirectX.Direct3D;
-using MediaPortal.Utils.Services;
+using MediaPortal.Util;
 
 namespace MediaPortal.GUI.Library
 {
@@ -42,14 +42,9 @@ namespace MediaPortal.GUI.Library
 		string    _url;
 		DateTime  _dateDownloaded=DateTime.MinValue;
 		int       _cacheMinutes = 60*30; //30minutes
-    protected ILog _log;
-    protected IConfig _config;
 
 		public DownloadedImage(string url)
 		{
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
 
 			URL=url;
 			int pos=url.LastIndexOf("/");
@@ -62,9 +57,9 @@ namespace MediaPortal.GUI.Library
 			int x=0;
 			while (true)
 			{
-				string tempFile=String.Format(_config.Get(Config.Options.ThumbsPath) + "MPTemp{0}.gif",x);
-        string tempFile2 = String.Format(_config.Get(Config.Options.ThumbsPath) + "MPTemp{0}.jpg", x);
-        string tempFile3 = String.Format(_config.Get(Config.Options.ThumbsPath) + "MPTemp{0}.bmp", x);
+				string tempFile=String.Format(Config.Get(Config.Dir.Thumbs) + "MPTemp{0}.gif",x);
+        string tempFile2 = String.Format(Config.Get(Config.Dir.Thumbs) + "MPTemp{0}.jpg", x);
+        string tempFile3 = String.Format(Config.Get(Config.Dir.Thumbs) + "MPTemp{0}.bmp", x);
 				if (!System.IO.File.Exists(tempFile) && 
 					!System.IO.File.Exists(tempFile2) &&
 					!System.IO.File.Exists(tempFile3))
@@ -119,7 +114,7 @@ namespace MediaPortal.GUI.Library
 					}
 					catch(Exception)
 					{
-						_log.Info("DownloadedImage:Download() Delete failed:{0}", FileName);
+						Log.Info("DownloadedImage:Download() Delete failed:{0}", FileName);
 					}
 
 					client.DownloadFile(URL, FileName);
@@ -142,7 +137,7 @@ namespace MediaPortal.GUI.Library
 								}
 								catch(Exception)
 								{
-									_log.Info("DownloadedImage:Download() Delete failed:{0}", newFile);
+									Log.Info("DownloadedImage:Download() Delete failed:{0}", newFile);
 								}
 								System.IO.File.Move(FileName,newFile);
 								FileName=newFile;
@@ -151,7 +146,7 @@ namespace MediaPortal.GUI.Library
 					}
 					catch(Exception)
 					{
-						_log.Info("DownloadedImage:Download() DownloadFile failed:{0}->{1}", URL,FileName);
+						Log.Info("DownloadedImage:Download() DownloadFile failed:{0}->{1}", URL,FileName);
 
 					}
 					_dateDownloaded=DateTime.Now;
@@ -159,7 +154,7 @@ namespace MediaPortal.GUI.Library
 				} 
 				catch(Exception ex)
 				{
-					_log.Info("download failed:{0}", ex.Message);
+					Log.Info("download failed:{0}", ex.Message);
 				}
 			}
 			return false;

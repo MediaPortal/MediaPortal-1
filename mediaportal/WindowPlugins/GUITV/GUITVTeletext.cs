@@ -73,14 +73,14 @@ namespace MediaPortal.GUI.TV
 		#region Serialisation
 		void LoadSettings()
 		{
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
 			{
 			}
 		}
 
 		void SaveSettings()
 		{
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
 			{
 			}
 		}
@@ -208,7 +208,7 @@ namespace MediaPortal.GUI.TV
 			{
 				bitmapTeletextPage=TeletextGrabber.TeletextCache.GetPage(currentPageNumber,currentSubPageNumber);
 				Redraw();
-				_log.Info("dvb-teletext: select page {0} / subpage {1}",Convert.ToString(currentPageNumber),Convert.ToString(currentSubPageNumber));
+				Log.Info("dvb-teletext: select page {0} / subpage {1}",Convert.ToString(currentPageNumber),Convert.ToString(currentSubPageNumber));
 			}
 		}
 
@@ -266,7 +266,7 @@ namespace MediaPortal.GUI.TV
           currentSubPageNumber = 0;
           bitmapTeletextPage = TeletextGrabber.TeletextCache.GetPage(currentPageNumber, currentSubPageNumber);
           Redraw();
-          _log.Info("dvb-teletext: select page {0} / subpage {1}", Convert.ToString(currentPageNumber), Convert.ToString(currentSubPageNumber));
+          Log.Info("dvb-teletext: select page {0} / subpage {1}", Convert.ToString(currentPageNumber), Convert.ToString(currentSubPageNumber));
           inputLine = "";
           return;
         }
@@ -286,7 +286,7 @@ namespace MediaPortal.GUI.TV
 					{
 						bitmapTeletextPage=TeletextGrabber.TeletextCache.GetPage(currentPageNumber,currentSubPageNumber);
 						Redraw();
-						_log.Info("dvb-teletext: select page {0} / subpage {1}",Convert.ToString(currentPageNumber),Convert.ToString(currentSubPageNumber));
+						Log.Info("dvb-teletext: select page {0} / subpage {1}",Convert.ToString(currentPageNumber),Convert.ToString(currentSubPageNumber));
 						inputLine="";
 						return;
 					}
@@ -301,7 +301,7 @@ namespace MediaPortal.GUI.TV
 					{
 						bitmapTeletextPage=TeletextGrabber.TeletextCache.GetPage(currentPageNumber,currentSubPageNumber);
 						Redraw();
-						_log.Info("dvb-teletext: select page {0} / subpage {1}",Convert.ToString(currentPageNumber),Convert.ToString(currentSubPageNumber));
+						Log.Info("dvb-teletext: select page {0} / subpage {1}",Convert.ToString(currentPageNumber),Convert.ToString(currentSubPageNumber));
 						inputLine="";
 						return;
 					}
@@ -333,7 +333,7 @@ namespace MediaPortal.GUI.TV
 						bitmapTeletextPage=TeletextGrabber.TeletextCache.GetPage(currentPageNumber,currentSubPageNumber);
 						Redraw();
 					}
-					_log.Info("dvb-teletext: select page {0} / subpage {1}",Convert.ToString(currentPageNumber),Convert.ToString(currentSubPageNumber));
+					Log.Info("dvb-teletext: select page {0} / subpage {1}",Convert.ToString(currentPageNumber),Convert.ToString(currentSubPageNumber));
 					inputLine="";
 					
 				}
@@ -389,7 +389,7 @@ namespace MediaPortal.GUI.TV
 				else if (currentSubPageNumber>=NumberOfSubpages)
 					currentSubPageNumber=1;
 
-				_log.Info("dvb-teletext page updated. {0}/{1} {2}",currentPageNumber,currentSubPageNumber,NumberOfSubpages);
+				Log.Info("dvb-teletext page updated. {0}/{1} {2}",currentPageNumber,currentSubPageNumber,NumberOfSubpages);
 				bitmapTeletextPage=TeletextGrabber.TeletextCache.GetPage(currentPageNumber,currentSubPageNumber);
 				Redraw();
 				isPageDirty=false;
@@ -398,7 +398,7 @@ namespace MediaPortal.GUI.TV
 
 		void Redraw()
 		{
-			_log.Info("dvb-teletext redraw()");
+			Log.Info("dvb-teletext redraw()");
 			try
 			{
 
@@ -427,7 +427,7 @@ namespace MediaPortal.GUI.TV
 			}
 			catch (Exception ex)
 			{
-        _log.Error(ex);
+        Log.Error(ex);
 			}
 		}
 		public override void Render(float timePassed)

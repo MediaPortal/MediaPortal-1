@@ -49,14 +49,14 @@ namespace GUIScript
       //
       // Required for Windows Form Designer support
       //
-      _log.Info("Init MPScript");
+      Log.Info("Init MPScript");
       InitializeComponent();
 
       //
       // TODO: Add any constructor code after InitializeComponent call
       //
       string scriptdir = System.IO.Directory.GetCurrentDirectory() + "\\" + "scripts";
-      _log.Info("{0}", scriptdir);
+      Log.Info("{0}", scriptdir);
       if (!Directory.Exists(scriptdir)) // writes some standart scripts
       {
         Directory.CreateDirectory(scriptdir);

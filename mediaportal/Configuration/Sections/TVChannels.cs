@@ -32,8 +32,9 @@ using System.Runtime.Serialization.Formatters.Soap;
 using Microsoft.Win32;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
+using MediaPortal.Util;
+using MediaPortal.GUI.Library;
 using DirectShowLib;
-using MediaPortal.Utils.Services;
 
 #pragma warning disable 108
 
@@ -103,7 +104,6 @@ namespace MediaPortal.Configuration.Sections
       CHANNEL_DVBT_FAILED = -5
     }
 
-    protected ILog _log;
 
     public SectionTvChannels()
       : this("TV Channels")
@@ -113,8 +113,6 @@ namespace MediaPortal.Configuration.Sections
     public SectionTvChannels(string name)
       : base(name)
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
 
       // This call is required by the Windows Form Designer.
       InitializeComponent();
@@ -689,7 +687,7 @@ namespace MediaPortal.Configuration.Sections
       if (_itemsModified)
       {
         int countryCode = 31;
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
           countryCode = xmlreader.GetValueAsInt("capture", "country", 31);
 
         string[] registryLocations = new string[] { String.Format(@"Software\Microsoft\TV System Services\TVAutoTune\TS{0}-1", countryCode),
@@ -947,7 +945,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void buttonImportFromTvGuide_Click(object sender, System.EventArgs e)
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         string strTVGuideFile = xmlreader.GetValueAsString("xmltv", "folder", "xmltv");
         strTVGuideFile = RemoveTrailingSlash(strTVGuideFile);
@@ -1068,8 +1066,8 @@ namespace MediaPortal.Configuration.Sections
 
       comboBoxCard.Items.Clear();
 
-      if (File.Exists(base._config.Get(Config.Options.ConfigPath) + "capturecards.xml"))
-        using (FileStream fileStream = new FileStream(base._config.Get(Config.Options.ConfigPath) + "capturecards.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+      if (File.Exists(Config.Get(Config.Dir.Config) + "capturecards.xml"))
+        using (FileStream fileStream = new FileStream(Config.Get(Config.Dir.Config) + "capturecards.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
           try
           {
             //
@@ -1098,7 +1096,7 @@ namespace MediaPortal.Configuration.Sections
           catch
           {
             MessageBox.Show("Failed to load previously configured capture card(s), you have to reconfigure your device(s).", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-						_log.Error("Recorder: LoadCards()");
+						Log.Error("Recorder: LoadCards()");
           }
 
       if (comboBoxCard.Items.Count != 0)
@@ -2318,7 +2316,7 @@ namespace MediaPortal.Configuration.Sections
       int loopedNTimes = 0;
       bool containsScrambledChannels = true;
 
-      _log.Info("Scanning {0} channels for scrambled status", Convert.ToString(itemCount));
+      Log.Info("Scanning {0} channels for scrambled status", Convert.ToString(itemCount));
 
       while (containsScrambledChannels)
       {
@@ -2326,20 +2324,20 @@ namespace MediaPortal.Configuration.Sections
         for (int index = 0; index < itemCount; index++)
           if (((TelevisionChannel)listViewTvChannels.Items[index].Tag).Scrambled) // channel is scrambled
           {
-            _log.Info("Deleting scrambled channel: {0}", ((TelevisionChannel)listViewTvChannels.Items[index].Tag).Name);
+            Log.Info("Deleting scrambled channel: {0}", ((TelevisionChannel)listViewTvChannels.Items[index].Tag).Name);
             listViewTvChannels.Items.RemoveAt(index);
             itemCount -= 1;
             deletedChans += 1;
           }
         containsScrambledChannels = false;
-        _log.Info("Looped list {0} time(s) to delete all scrambled channels", Convert.ToString(loopedNTimes));
+        Log.Info("Looped list {0} time(s) to delete all scrambled channels", Convert.ToString(loopedNTimes));
         for (int index = 0; index < listViewTvChannels.Items.Count; index++)
           if (((TelevisionChannel)listViewTvChannels.Items[index].Tag).Scrambled)
             containsScrambledChannels = true;
       }
 
       SaveSettings();
-      _log.Info("Deleted {0} scrambled channels", Convert.ToString(deletedChans));
+      Log.Info("Deleted {0} scrambled channels", Convert.ToString(deletedChans));
       listViewTvChannels.EndUpdate();
     }
 

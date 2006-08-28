@@ -34,7 +34,6 @@ using MediaPortal.Util;
 using MediaPortal.GUI.Library;
 using DirectShowLib;
 using DShowNET.Helper;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Player
 {
@@ -105,14 +104,9 @@ namespace MediaPortal.Player
     protected DateTime updateTimer;
 
     VMR9Util Vmr9 = null;
-    protected ILog _log;
-    protected IConfig _config;
 
     public RTSPPlayer()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
     }
 
     protected  void OnInitialized()
@@ -130,7 +124,7 @@ namespace MediaPortal.Player
       Vmr9 = new VMR9Util();
 
       // switch back to directx fullscreen mode
-      _log.Info("RTSPPlayer: Enabling DX9 exclusive mode");
+      Log.Info("RTSPPlayer: Enabling DX9 exclusive mode");
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
       GUIWindowManager.SendMessage(msg);
 
@@ -148,7 +142,7 @@ namespace MediaPortal.Player
       {
         graphBuilder = (IGraphBuilder)new FilterGraph();
 
-        _log.Info("RTSPPlayer: add source filter");
+        Log.Info("RTSPPlayer: add source filter");
         Vmr9.AddVMR9(graphBuilder);
         Vmr9.Enable(false);
 
@@ -156,17 +150,17 @@ namespace MediaPortal.Player
         int hr = graphBuilder.AddFilter((IBaseFilter)rtspSource, "RTSP Source Filter");
         if (hr != 0)
         {
-          _log.Error("RTSPPlayer:unable to add RTSP source filter:{0:X}", hr);
+          Log.Error("RTSPPlayer:unable to add RTSP source filter:{0:X}", hr);
           return false;
         }
 
         // add preferred video & audio codecs
-        _log.Info("RTSPPlayer: add video/audio codecs");
+        Log.Info("RTSPPlayer: add video/audio codecs");
         string strVideoCodec = "";
         string strAudioCodec = "";
         string strAudiorenderer = "";
         bool bAddFFDshow = false;
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         {
           bAddFFDshow = xmlreader.GetValueAsBool("movieplayer", "ffdshow", false);
           strVideoCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2videocodec", "");
@@ -183,29 +177,29 @@ namespace MediaPortal.Player
         if (strAudiorenderer.Length > 0) audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(graphBuilder, strAudiorenderer, false);
 
 
-        _log.Info("RTSPPlayer: load:{0}", m_strCurrentFile);
+        Log.Info("RTSPPlayer: load:{0}", m_strCurrentFile);
         IFileSourceFilter interfaceFile = (IFileSourceFilter)rtspSource;
         if (interfaceFile == null)
         {
-          _log.Error("RTSPPlayer:Failed to get IFileSourceFilter");
+          Log.Error("RTSPPlayer:Failed to get IFileSourceFilter");
           return false;
         }
 
 
-        //_log.Info("TSStreamBufferPlayer9: open file:{0}",filename);
+        //Log.Info("TSStreamBufferPlayer9: open file:{0}",filename);
         hr = interfaceFile.Load(m_strCurrentFile, null);
         if (hr != 0)
         {
-          _log.Error("RTSPPlayer:Failed to open file:{0} :0x{1:x}", m_strCurrentFile, hr);
+          Log.Error("RTSPPlayer:Failed to open file:{0} :0x{1:x}", m_strCurrentFile, hr);
           return false;
         }
-        _log.Info("RTSPPlayer: render output pins of rtsp filter");
+        Log.Info("RTSPPlayer: render output pins of rtsp filter");
         DirectShowUtil.RenderOutputPins(graphBuilder, (IBaseFilter)rtspSource);
 
         if (!Vmr9.IsVMR9Connected)
         {
           //VMR9 is not supported, switch to overlay
-          _log.Info("RTSPPlayer: vmr9 not connected");
+          Log.Info("RTSPPlayer: vmr9 not connected");
           mediaCtrl = null;
           Cleanup();
           return false ;
@@ -222,13 +216,13 @@ namespace MediaPortal.Player
         DirectShowUtil.EnableDeInterlace(graphBuilder);
         m_iVideoWidth = Vmr9.VideoWidth;
         m_iVideoHeight = Vmr9.VideoHeight;
-        _log.Info("RTSPPlayer: graph build successfull");
+        Log.Info("RTSPPlayer: graph build successfull");
         return true;
       }
       catch (Exception ex)
       {
         Error.SetError("Unable to play movie", "Unable build graph for VMR9");
-        _log.Error("RTSPPlayer:exception while creating DShow graph {0} {1}", ex.Message, ex.StackTrace);
+        Log.Error("RTSPPlayer:exception while creating DShow graph {0} {1}", ex.Message, ex.StackTrace);
         return false;
       }
     }
@@ -252,7 +246,7 @@ namespace MediaPortal.Player
     {
       if (graphBuilder == null) return;
       int hr;
-      _log.Info("RTSPPlayer:cleanup DShow graph");
+      Log.Info("RTSPPlayer:cleanup DShow graph");
       try
       {
         videoWin = graphBuilder as IVideoWindow;
@@ -275,7 +269,7 @@ namespace MediaPortal.Player
           hr = mediaCtrl.Stop();
           FilterState state;
           hr = mediaCtrl.GetState(10, out state);
-          _log.Info("state:{0} {1:X}", state.ToString(), hr);
+          Log.Info("state:{0} {1:X}", state.ToString(), hr);
           mediaCtrl = null;
         }
         mediaEvt = null;
@@ -339,13 +333,13 @@ namespace MediaPortal.Player
       }
       catch (Exception ex)
       {
-        _log.Error("RTSPPlayer: Exception while cleanuping DShow graph - {0} {1}", ex.Message, ex.StackTrace);
+        Log.Error("RTSPPlayer: Exception while cleanuping DShow graph - {0} {1}", ex.Message, ex.StackTrace);
       }
 
       //switch back to directx windowed mode
       if (!GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindow))
       {
-        _log.Info("RTSPPlayer: Disabling DX9 exclusive mode");
+        Log.Info("RTSPPlayer: Disabling DX9 exclusive mode");
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
         GUIWindowManager.SendMessage(msg);
       }
@@ -365,7 +359,7 @@ namespace MediaPortal.Player
 
       VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
       _updateNeeded = true;
-      _log.Info("RTSPPlayer:play {0}", strFile);
+      Log.Info("RTSPPlayer:play {0}", strFile);
       //lock ( typeof(VideoPlayerVMR7) )
       {
         GC.Collect();
@@ -411,7 +405,7 @@ namespace MediaPortal.Player
         _updateNeeded = true;
         SetVideoWindow();
         mediaPos.get_Duration(out m_dDuration);
-        _log.Info("RTSPPlayer:Duration:{0}", m_dDuration);
+        Log.Info("RTSPPlayer:Duration:{0}", m_dDuration);
 
         
 
@@ -661,7 +655,7 @@ namespace MediaPortal.Player
     {
       if (m_state != PlayState.Init)
       {
-        _log.Info("RTSPPlayer:ended {0}", m_strCurrentFile);
+        Log.Info("RTSPPlayer:ended {0}", m_strCurrentFile);
         m_strCurrentFile = "";
         CloseInterfaces();
         m_state = PlayState.Init;
@@ -732,7 +726,7 @@ namespace MediaPortal.Player
             }
           }
         }
-        _log.Info("RTSPPlayer:SetRate to:{0}", m_speedRate);
+        Log.Info("RTSPPlayer:SetRate to:{0}", m_speedRate);
       }
     }
 
@@ -801,9 +795,9 @@ namespace MediaPortal.Player
           if (dTime < 0.0d) dTime = 0.0d;
           if (dTime < Duration)
           {
-            _log.Info("seekabs:{0}", dTime);
+            Log.Info("seekabs:{0}", dTime);
             mediaPos.put_CurrentPosition(dTime);
-            _log.Info("seekabs:{0} done", dTime);
+            Log.Info("seekabs:{0} done", dTime);
           }
         }
       }
@@ -907,7 +901,7 @@ namespace MediaPortal.Player
       mediaSeek.GetAvailable(out earliest, out latest);
       mediaSeek.GetPositions(out current, out stop);
 
-      // _log.Info("earliest:{0} latest:{1} current:{2} stop:{3} speed:{4}, total:{5}",
+      // Log.Info("earliest:{0} latest:{1} current:{2} stop:{3} speed:{4}, total:{5}",
       //         earliest/10000000,latest/10000000,current/10000000,stop/10000000,m_speedRate, (latest-earliest)/10000000);
 
       //earliest += + 30 * 10000000;
@@ -927,7 +921,7 @@ namespace MediaPortal.Player
       {
         m_speedRate = 10000;
         rewind = earliest;
-        //_log.Info(" seek back:{0}",rewind/10000000);
+        //Log.Info(" seek back:{0}",rewind/10000000);
         hr = mediaSeek.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
         mediaCtrl.Run();
         return;
@@ -938,14 +932,14 @@ namespace MediaPortal.Player
       {
         m_speedRate = 10000;
         rewind = latest - 100000;
-        //_log.Info(" seek ff:{0}",rewind/10000000);
+        //Log.Info(" seek ff:{0}",rewind/10000000);
         hr = mediaSeek.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
         mediaCtrl.Run();
         return;
       }
 
       //seek to new moment in time
-      //_log.Info(" seek :{0}",rewind/10000000);
+      //Log.Info(" seek :{0}",rewind/10000000);
       hr = mediaSeek.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
       mediaCtrl.Pause();
     }

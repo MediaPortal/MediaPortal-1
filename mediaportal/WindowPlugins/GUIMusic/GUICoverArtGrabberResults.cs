@@ -290,7 +290,7 @@ namespace MediaPortal.GUI.Music
 
             if (selectedItem >= amazonWS.AlbumCount)
             {
-              _log.Info("Cover art grabber:user selected item #{0}", listView.SelectedListItemIndex);
+              Log.Info("Cover art grabber:user selected item #{0}", listView.SelectedListItemIndex);
 
               _CancelledByUser = false;
               _SelectedAlbum = null;
@@ -305,7 +305,7 @@ namespace MediaPortal.GUI.Music
 
         case (int)ControlIDs.BTN_SKIP:
           {
-            _log.Info("Cover art grabber:[{0}-{1}] skipped by user", _Artist, _Album);
+            Log.Info("Cover art grabber:[{0}-{1}] skipped by user", _Artist, _Album);
 
             _CancelledByUser = false;
             _SelectedAlbum = null;
@@ -315,7 +315,7 @@ namespace MediaPortal.GUI.Music
 
         case (int)ControlIDs.BTN_CANCEL:
           {
-            _log.Info("Cover art grabber:user cancelled out of grab results");
+            Log.Info("Cover art grabber:user cancelled out of grab results");
 
             _CancelledByUser = true;
             Close();
@@ -384,18 +384,18 @@ namespace MediaPortal.GUI.Music
       amazonWS.FindCoverArtProgress += new AmazonWebservice.FindCoverArtProgressHandler(amazonWS_GetAlbumInfoProgress);
       amazonWS.FindCoverArtDone += new AmazonWebservice.FindCoverArtDoneHandler(amazonWS_FindCoverArtDone);
 
-      _log.Info("Cover art grabber:getting cover art for [{0}-{1}]...", _Artist, _Album);
+      Log.Info("Cover art grabber:getting cover art for [{0}-{1}]...", _Artist, _Album);
 
       if (IsCompilationAlbum)
       {
-        _log.Info("Cover art grabber:compilation album found", _Artist, _Album);
+        Log.Info("Cover art grabber:compilation album found", _Artist, _Album);
 
         amazonWS.MaxSearchResultItems = MAX_UNFILTERED_SEARCH_ITEMS;
         _Artist = "";
         string filterString = string.Format("{0} = \"{1}\"", GUILocalizeStrings.Get(484), " ");
         string filter = string.Format(filteredAlbumFormatString, filterString);
 
-        _log.Info("Cover art grabber:trying again with blank artist name...");
+        Log.Info("Cover art grabber:trying again with blank artist name...");
         InternalGetAlbumCovers(_Artist, _Album, filter);
       }
 
@@ -417,7 +417,7 @@ namespace MediaPortal.GUI.Music
           if (AlbumNotFoundRetryingFiltered != null)
             AlbumNotFoundRetryingFiltered(amazonWS, origAlbumName, cleanAlbumName);
 
-          _log.Info("Cover art grabber:[{0}-{1}] not found. Trying [{0}-{2}]...", _Artist, _Album, cleanAlbumName);
+          Log.Info("Cover art grabber:[{0}-{1}] not found. Trying [{0}-{2}]...", _Artist, _Album, cleanAlbumName);
 
           string filter = string.Format(filteredAlbumFormatString, cleanAlbumName);
           origAlbumName = _Album;
@@ -431,7 +431,7 @@ namespace MediaPortal.GUI.Music
           if (AlbumNotFoundRetryingFiltered != null)
             AlbumNotFoundRetryingFiltered(amazonWS, origAlbumName, cleanAlbumName);
 
-          _log.Info("Cover art grabber:[{0}-{1}] not found. Trying album name without sub-title [{0}-{2}]...", _Artist, _Album, cleanAlbumName);
+          Log.Info("Cover art grabber:[{0}-{1}] not found. Trying album name without sub-title [{0}-{2}]...", _Artist, _Album, cleanAlbumName);
 
           string filter = string.Format(filteredAlbumFormatString, cleanAlbumName);
           origAlbumName = _Album;
@@ -451,7 +451,7 @@ namespace MediaPortal.GUI.Music
         string filter = string.Format(filteredAlbumFormatString, filterString);
 
         // Try searching by artist only to get all albums for this artist...
-        _log.Info("Cover art grabber:[{0}-{1}] not found. Trying again with blank album name...", _Artist, _Album);
+        Log.Info("Cover art grabber:[{0}-{1}] not found. Trying again with blank album name...", _Artist, _Album);
         InternalGetAlbumCovers(_Artist, "", filter);
       }
 

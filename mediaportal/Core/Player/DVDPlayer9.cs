@@ -34,6 +34,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Text;
 using MediaPortal.GUI.Library;
+using MediaPortal.Util;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
@@ -70,7 +71,7 @@ namespace MediaPortal.Player
       int codecValue = 0;
       string codecType = "";
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         dvdDNavigator = xmlreader.GetValueAsString("dvdplayer", "navigator", "DVD Navigator");
         aspectRatio = xmlreader.GetValueAsString("dvdplayer", "armode", "").ToLower();
@@ -86,51 +87,51 @@ namespace MediaPortal.Player
         if (displayMode == "4:3 letterbox") _videoPref = DvdPreferredDisplayMode.Display4x3LetterBoxPreferred;
 
         turnoffDXVA = xmlreader.GetValueAsBool("dvdplayer", "turnoffdxva", false);
-        _log.Info("DVDPlayer9:Turn off DXVA value = {0}", turnoffDXVA);
+        Log.Info("DVDPlayer9:Turn off DXVA value = {0}", turnoffDXVA);
         if (turnoffDXVA == true)
         {
           codecType = xmlreader.GetValueAsString("dvdplayer", "videocodec", "");
-          _log.Info("DVDPlayer9:Video Decoder = {0}", codecType);
+          Log.Info("DVDPlayer9:Video Decoder = {0}", codecType);
           if (codecType == "InterVideo Video Decoder")
           {
             codecValue = xmlreader.GetValueAsInt("videocodec", "intervideo", 1);
             if (codecValue == 1)
             {
-              _log.Info("DVDPlayer9:Turning InterVideo DXVA off");
+              Log.Info("DVDPlayer9:Turning InterVideo DXVA off");
               using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(@"Software\InterVideo\Common\VideoDec\MediaPortal"))
                 subkey.SetValue("DXVA", 0);
             }
             if (codecValue == 0)
-              _log.Info("DVDPlayer9:InterVideo DXVA already off");
+              Log.Info("DVDPlayer9:InterVideo DXVA already off");
           }
           if (codecType == "CyberLink Video/SP Decoder")
           {
             codecValue = xmlreader.GetValueAsInt("videocodec", "cyberlink", 1);
             if (codecValue == 1)
             {
-              _log.Info("DVDPlayer9:Turning CyberLink DXVA off");
+              Log.Info("DVDPlayer9:Turning CyberLink DXVA off");
               using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(@"Software\Cyberlink\Common\CLVSD\MediaPortal"))
                 subkey.SetValue("UIUseHVA", 0);
             }
             if (codecValue == 0)
-              _log.Info("DVDPlayer9:CyberLink DXVA already off");
+              Log.Info("DVDPlayer9:CyberLink DXVA already off");
           }
           if (codecType == "NVIDIA Video Decoder")
           {
             codecValue = xmlreader.GetValueAsInt("videocodec", "nvidia", 1);
             if (codecValue == 1)
             {
-              _log.Info("DVDPlayer9:Turning NVIDIA DXVA off");
+              Log.Info("DVDPlayer9:Turning NVIDIA DXVA off");
               using (RegistryKey subkey = Registry.LocalMachine.CreateSubKey(@"Software\NVIDIA Corporation\Filters\Video"))
                 subkey.SetValue("EnableDXVA", 0);
             }
             if (codecValue == 0)
-              _log.Info("DVDPlayer9:NVIDIA DXVA already off");
+              Log.Info("DVDPlayer9:NVIDIA DXVA already off");
           }
         }
       }
 
-      _log.Info("DVDPlayer9: Enabling DX9 exclusive mode");
+      Log.Info("DVDPlayer9: Enabling DX9 exclusive mode");
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
       GUIWindowManager.SendMessage(msg);
 
@@ -153,7 +154,7 @@ namespace MediaPortal.Player
         _vmr9.AddVMR9(_graphBuilder);
         try
         {
-          _log.Info("DVDPlayer9:Add {0}", dvdDNavigator);
+          Log.Info("DVDPlayer9:Add {0}", dvdDNavigator);
           _dvdbasefilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, dvdDNavigator);
           if (_dvdbasefilter != null)
           {
@@ -186,7 +187,7 @@ namespace MediaPortal.Player
 
         if (_dvdInfo == null)
         {
-          _log.Info("Dvdplayer9:volume rendered, get interfaces");
+          Log.Info("Dvdplayer9:volume rendered, get interfaces");
           riid = typeof(IDvdInfo2).GUID;
           hr = _dvdGraph.GetDvdInterface(riid, out comobj);
           if (hr < 0)
@@ -196,16 +197,16 @@ namespace MediaPortal.Player
 
         if (_dvdCtrl == null)
         {
-          _log.Info("Dvdplayer9: get IDvdControl2");
+          Log.Info("Dvdplayer9: get IDvdControl2");
           riid = typeof(IDvdControl2).GUID;
           hr = _dvdGraph.GetDvdInterface(riid, out comobj);
           if (hr < 0)
             Marshal.ThrowExceptionForHR(hr);
           _dvdCtrl = (IDvdControl2)comobj; comobj = null;
           if (_dvdCtrl != null)
-            _log.Info("Dvdplayer9: get IDvdControl2");
+            Log.Info("Dvdplayer9: get IDvdControl2");
           else
-            _log.Error("Dvdplayer9: FAILED TO get get IDvdControl2");
+            Log.Error("Dvdplayer9: FAILED TO get get IDvdControl2");
         }
 
 
@@ -215,7 +216,7 @@ namespace MediaPortal.Player
         _mediaPos = (IMediaPosition)_graphBuilder;
         _basicVideo = _graphBuilder as IBasicVideo2;
 
-        _log.Info("Dvdplayer9:disable line 21");
+        Log.Info("Dvdplayer9:disable line 21");
         // disable Closed Captions!
         IBaseFilter basefilter;
         _graphBuilder.FindFilterByName("Line 21 Decoder", out basefilter);
@@ -230,11 +231,11 @@ namespace MediaPortal.Player
             hr = _line21Decoder.SetServiceState(state);
             if (hr == 0)
             {
-              _log.Info("DVDPlayer9:Closed Captions disabled");
+              Log.Info("DVDPlayer9:Closed Captions disabled");
             }
             else
             {
-              _log.Info("DVDPlayer9:failed 2 disable Closed Captions");
+              Log.Info("DVDPlayer9:failed 2 disable Closed Captions");
             }
           }
         }
@@ -249,14 +250,14 @@ namespace MediaPortal.Player
 
         if (!_vmr9.IsVMR9Connected)
         {
-          _log.Info("DVDPlayer9:failed vmr9 not connected");
+          Log.Info("DVDPlayer9:failed vmr9 not connected");
           _mediaCtrl = null;
           Cleanup();
           return base.GetInterfaces(path);
         }
 
         _vmr9.SetDeinterlaceMode();
-        _log.Info("Dvdplayer9:graph created");
+        Log.Info("Dvdplayer9:graph created");
         _started = true;
         return true;
       }
@@ -280,37 +281,37 @@ namespace MediaPortal.Player
     {
       if (_graphBuilder == null) return;
       int hr;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         int codecValue = 0;
         string codecType = "";
         codecType = xmlreader.GetValueAsString("dvdplayer", "videocodec", "");
-        _log.Info("DVDPlayer9:Resetting {0}", codecType);
+        Log.Info("DVDPlayer9:Resetting {0}", codecType);
         if (codecType == "InterVideo Video Decoder")
         {
           codecValue = xmlreader.GetValueAsInt("videocodec", "intervideo", 1);
-          _log.Info("DVDPlayer9:Resetting InterVideo DXVA to {0}", codecValue);
+          Log.Info("DVDPlayer9:Resetting InterVideo DXVA to {0}", codecValue);
           using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(@"Software\InterVideo\Common\VideoDec\MediaPortal"))
             subkey.SetValue("DXVA", codecValue);
         }
         if (codecType == "CyberLink Video/SP Decoder")
         {
           codecValue = xmlreader.GetValueAsInt("videocodec", "cyberlink", 1);
-          _log.Info("DVDPlayer9:Resetting CyberLink DXVA to {0}", codecValue);
+          Log.Info("DVDPlayer9:Resetting CyberLink DXVA to {0}", codecValue);
           using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(@"Software\Cyberlink\Common\CLVSD\MediaPortal"))
             subkey.SetValue("UIUseHVA", codecValue);
         }
         if (codecType == "NVIDIA Video Decoder")
         {
           codecValue = xmlreader.GetValueAsInt("videocodec", "nvidia", 1);
-          _log.Info("DVDPlayer9:Resetting NVIDIA DXVA to {0}", codecValue);
+          Log.Info("DVDPlayer9:Resetting NVIDIA DXVA to {0}", codecValue);
           using (RegistryKey subkey = Registry.LocalMachine.CreateSubKey(@"Software\NVIDIA Corporation\Filters\Video"))
             subkey.SetValue("EnableDXVA", codecValue);
         }
       }
       try
       {
-        _log.Info("DVDPlayer9:cleanup DShow graph");
+        Log.Info("DVDPlayer9:cleanup DShow graph");
         if (_mediaCtrl != null)
         {
           hr = _mediaCtrl.Stop();
@@ -398,7 +399,7 @@ namespace MediaPortal.Player
 
         if (!GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindow))
         {
-          _log.Info("DVDPlayer9: Disabling DX9 exclusive mode");
+          Log.Info("DVDPlayer9: Disabling DX9 exclusive mode");
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
           GUIWindowManager.SendMessage(msg);
         }
@@ -408,7 +409,7 @@ namespace MediaPortal.Player
       }
       catch (Exception ex)
       {
-        _log.Error("DVDPlayer9: Exception while cleanuping DShow graph - {0} {1}", ex.Message, ex.StackTrace);
+        Log.Error("DVDPlayer9: Exception while cleanuping DShow graph - {0} {1}", ex.Message, ex.StackTrace);
       }
     }
 

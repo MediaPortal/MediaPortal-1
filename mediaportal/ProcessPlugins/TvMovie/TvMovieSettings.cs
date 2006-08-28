@@ -36,7 +36,7 @@ using System.Xml;
 using System.IO;
 using Microsoft.Win32;
 using MediaPortal.GUI.Library;
-using MediaPortal.Utils.Services;
+using MediaPortal.Util;
 
 namespace ProcessPlugins.TvMovie
 {
@@ -46,9 +46,6 @@ namespace ProcessPlugins.TvMovie
     #region Membervariables
 
     string _xmlFile; 
-    static ILog log;
-    static IConfig _config;
-
     #endregion
 
     class ChannelInfo
@@ -90,10 +87,7 @@ namespace ProcessPlugins.TvMovie
     /// </summary>
     public TvMovieSettings()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
-      _xmlFile = _config.Get(Config.Options.ConfigPath) + "TVMovieMapping.xml";
+      _xmlFile = Config.Get(Config.Dir.Config) + "TVMovieMapping.xml";
 
       InitializeComponent();
       LoadStations();
@@ -142,7 +136,7 @@ namespace ProcessPlugins.TvMovie
 
     private void LoadOptions()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         checkBoxUseShortDesc.Checked = xmlreader.GetValueAsBool("tvmovie", "shortprogramdesc", false);
         checkBoxAdditionalInfo.Checked = xmlreader.GetValueAsBool("tvmovie", "extenddescription", false);
@@ -154,7 +148,7 @@ namespace ProcessPlugins.TvMovie
 
     private void SaveOptions()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         xmlwriter.SetValueAsBool("tvmovie", "shortprogramdesc", checkBoxUseShortDesc.Checked);
         xmlwriter.SetValueAsBool("tvmovie", "extenddescription", checkBoxAdditionalInfo.Checked);
@@ -302,7 +296,7 @@ namespace ProcessPlugins.TvMovie
     {
       if (!File.Exists(_xmlFile))
       {
-        log.Info("TVMovie: Mapping file \"{0}\" does not exist, using empty list", _xmlFile);
+        Log.Info("TVMovie: Mapping file \"{0}\" does not exist, using empty list", _xmlFile);
         return;
       }
 
@@ -359,15 +353,15 @@ namespace ProcessPlugins.TvMovie
                 }
               }
               else
-                log.Warn("TVMovie plugin: Channel {0} no longer present in Database - ignoring", stationName);
+                Log.Warn("TVMovie plugin: Channel {0} no longer present in Database - ignoring", stationName);
             }
           }
         }
       }
       catch (System.Xml.XmlException ex)
       {
-        log.Info("TVMovie: The mapping file \"{0}\" seems to be corrupt", _xmlFile);
-        log.Info("TVMovie: {0}", ex.Message);
+        Log.Info("TVMovie: The mapping file \"{0}\" seems to be corrupt", _xmlFile);
+        Log.Info("TVMovie: {0}", ex.Message);
       }
       treeViewChannels.EndUpdate();
     }

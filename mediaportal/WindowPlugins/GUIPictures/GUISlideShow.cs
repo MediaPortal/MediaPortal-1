@@ -754,7 +754,7 @@ namespace MediaPortal.GUI.Pictures
    }
    public override void Render(float timePassed)
    {
-     //_log.Info("Render:{0} {1} {2}", timePassed, _renderTimer, _frameCounter);
+     //Log.Info("Render:{0} {1} {2}", timePassed, _renderTimer, _frameCounter);
      if (!_isPaused && !_isPictureZoomed)
      {
        if (_frameCounter > 0)
@@ -872,7 +872,7 @@ namespace MediaPortal.GUI.Pictures
      {
        // render the new picture
        bool bResult = false;
-       //_log.Info("method:{0} frame:{1}", _transitionMethod, _frameCounter);
+       //Log.Info("method:{0} frame:{1}", _transitionMethod, _frameCounter);
        switch (_transitionMethod)
        {
          case 0:
@@ -1151,7 +1151,7 @@ namespace MediaPortal.GUI.Pictures
    //  _zoomInfoVisible = false;
 
    //  strSlide = _slideList[_currentSlide];
-   //  _log.Info("Next Slide: {0}/{1} : {2}", _currentSlide + 1, _slideList.Count, strSlide);
+   //  Log.Info("Next Slide: {0}/{1} : {2}", _currentSlide + 1, _slideList.Count, strSlide);
    //  using (PictureDatabase dbs = new PictureDatabase())
    //  {
    //    _rotation = dbs.GetRotation(strSlide);
@@ -1550,7 +1550,7 @@ namespace MediaPortal.GUI.Pictures
      }
 
 
-     //_log.Info("method 10 count:{0} alpha:{1:X}", _frameCounter, iAlpha);
+     //Log.Info("method 10 count:{0} alpha:{1:X}", _frameCounter, iAlpha);
      //render background first
      int lColorDiffuse = (0xff - iAlpha);
      lColorDiffuse <<= 24;
@@ -2341,7 +2341,7 @@ namespace MediaPortal.GUI.Pictures
 
    void LoadSettings()
    {
-     using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+     using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
      {
        _speed = xmlreader.GetValueAsInt("pictures", "speed", 3);
        _slideShowTransistionFrames = xmlreader.GetValueAsInt("pictures", "transition", 20);
@@ -2376,7 +2376,7 @@ namespace MediaPortal.GUI.Pictures
 
      if (_musicFileExtensions == null)
      {
-       using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+       using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
          _musicFileExtensions = reader.GetValueAsString("music", "extensions", ".mp3,.pls,.wpl").Split(',');
      }
 
@@ -2404,7 +2404,7 @@ namespace MediaPortal.GUI.Pictures
        }
        catch (Exception e)
        {
-         _log.Info("GUISlideShow.StartBackgroundMusic", e.Message);
+         Log.Info("GUISlideShow.StartBackgroundMusic", e.Message);
        }
 
        break;

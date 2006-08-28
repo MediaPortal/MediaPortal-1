@@ -28,7 +28,6 @@ using System.Drawing.Drawing2D;
 using System.Data;
 using System.Windows.Forms;
 using System.Xml;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Configuration
 {
@@ -37,12 +36,9 @@ namespace MediaPortal.Configuration
 	/// </summary>
 	public class SectionSettings : System.Windows.Forms.UserControl
 	{
-    protected IConfig _config;
 
 		public SectionSettings(string text)
 		{
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _config = services.Get<IConfig>();
 
 			this.AutoScroll=true;
 			Text = text;

@@ -151,7 +151,7 @@ namespace MediaPortal.GUI.Pictures
     #region Serialisation
     void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         isFileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
         fileMenuPinCode = MediaPortal.Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", String.Empty));
@@ -660,7 +660,7 @@ namespace MediaPortal.GUI.Pictures
           mapSettings.ViewAs = (int)share.DefaultView;
         }
       }
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         if (xmlreader.GetValueAsBool("pictures", "rememberlastfolder", false))
           xmlreader.SetValue("pictures", "lastfolder", folderName);
     }
@@ -1253,7 +1253,7 @@ namespace MediaPortal.GUI.Pictures
               }
               catch (Exception)
               {
-                _log.Info("Damaged picture file found: {0}. Try to repair or delete this file please!", (string)pictureList[0]);
+                Log.Info("Damaged picture file found: {0}. Try to repair or delete this file please!", (string)pictureList[0]);
               }
 
               //If exists load second of 4 images for the folder thumb.
@@ -1268,7 +1268,7 @@ namespace MediaPortal.GUI.Pictures
                 }
                 catch (Exception)
                 {
-                  _log.Info("Damaged picture file found: {0}. Try to repair or delete this file please!", (string)pictureList[1]);
+                  Log.Info("Damaged picture file found: {0}. Try to repair or delete this file please!", (string)pictureList[1]);
                 }
               }
 
@@ -1284,7 +1284,7 @@ namespace MediaPortal.GUI.Pictures
                 }
                 catch (Exception)
                 {
-                  _log.Info("Damaged picture file found: {0}. Try to repair or delete this file please!", (string)pictureList[2]);
+                  Log.Info("Damaged picture file found: {0}. Try to repair or delete this file please!", (string)pictureList[2]);
                 }
               }
 
@@ -1300,7 +1300,7 @@ namespace MediaPortal.GUI.Pictures
                 }
                 catch (Exception)
                 {
-                  _log.Info("Damaged picture file found: {0}. Try to repair or delete this file please!", (string)pictureList[3]);
+                  Log.Info("Damaged picture file found: {0}. Try to repair or delete this file please!", (string)pictureList[3]);
                 }
               }
             }//using (Graphics g = Graphics.FromImage(bmp) )

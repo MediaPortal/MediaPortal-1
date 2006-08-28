@@ -27,7 +27,6 @@ using System;
 using System.Globalization;
 using System.Windows.Forms;
 using MediaPortal.Util;
-using MediaPortal.Utils.Services;
 #pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
@@ -85,7 +84,7 @@ namespace MediaPortal.Configuration.Sections
     public override void LoadSettings()
     {
       comboBox1.Items.Clear();
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         for (int i = 0; i < sortModes.Length; ++i)
         {
@@ -138,7 +137,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         for (int i = 0; i < sortModes.Length; ++i)
         {

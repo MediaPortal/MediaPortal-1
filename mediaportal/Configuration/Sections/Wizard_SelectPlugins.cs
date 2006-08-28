@@ -33,7 +33,6 @@ using MediaPortal.Util;
 using MediaPortal.TagReader;
 using MediaPortal.Music.Database;
 using MediaPortal.GUI.Library;
-using MediaPortal.Utils.Services;
 
 #pragma warning disable 108
 
@@ -68,7 +67,6 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.Timer timer1;
     private MediaPortal.UserInterface.Controls.MPLabel fileLabel;
     bool isScanning = false;
-    protected ILog _log;
 
     public Wizard_SelectPlugins()
       : this("Media Search")
@@ -78,8 +76,6 @@ namespace MediaPortal.Configuration.Sections
     public Wizard_SelectPlugins(string name)
       : base(name)
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
 
       // This call is required by the Windows Form Designer.
       InitializeComponent();
@@ -339,7 +335,7 @@ namespace MediaPortal.Configuration.Sections
         }
       }
 
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         xmlwriter.SetValue("music", "default", AddAudioShare(Util.Win32API.GetFolderPath(Util.Win32API.CSIDL_MYMUSIC)));
         xmlwriter.SetValue("pictures", "default", AddPhotoShare(Util.Win32API.GetFolderPath(Util.Win32API.CSIDL_MYPICTURES)));
@@ -498,7 +494,7 @@ namespace MediaPortal.Configuration.Sections
             }
           }
           else
-            _log.Info("ScanFolder: Path > 260: {0}", file);
+            Log.Info("ScanFolder: Path > 260: {0}", file);
         }
       }
       foreach (string subfolder in folders)
@@ -585,7 +581,7 @@ namespace MediaPortal.Configuration.Sections
 
     void SaveShare(ArrayList sharesList, string mediaType)
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         for (int index = 0; index < MaximumShares; index++)
         {

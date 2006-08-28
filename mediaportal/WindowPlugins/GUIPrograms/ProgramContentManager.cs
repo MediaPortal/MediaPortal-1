@@ -22,9 +22,9 @@
 using System;
 using System.Xml;
 using MediaPortal.GUI.Library;
+using MediaPortal.Util;
 using ProgramsDatabase;
 using Programs.Utils;
-using MediaPortal.Utils.Services;
 
 namespace WindowPlugins.GUIPrograms
 {
@@ -35,8 +35,6 @@ namespace WindowPlugins.GUIPrograms
   {
     static XmlNodeList NodeList = null;
     static XmlElement rootElement = null; 
-    static ILog _log;
-    static IConfig _config;
 
     static public int NodeCount
     {
@@ -126,16 +124,13 @@ namespace WindowPlugins.GUIPrograms
 
     static ProgramContentManager()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
 
-      if (System.IO.File.Exists(_config.Get(Config.Options.ConfigPath) + "FileDetailContents.xml"))
+      if (System.IO.File.Exists(Config.Get(Config.Dir.Config) + "FileDetailContents.xml"))
       {
         try
         {
           XmlDocument document = new XmlDocument();
-          document.Load(_config.Get(Config.Options.ConfigPath) + "FileDetailContents.xml");
+          document.Load(Config.Get(Config.Dir.Config) + "FileDetailContents.xml");
           rootElement = document.DocumentElement;
           if ((rootElement != null) && (rootElement.Name.Equals("contentprofiles")))
           {
@@ -144,12 +139,12 @@ namespace WindowPlugins.GUIPrograms
         }
         catch (Exception ex)
         {
-          _log.Info("exception in ProgramContentManager err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Log.Info("exception in ProgramContentManager err:{0} stack:{1}", ex.Message, ex.StackTrace);
         }
       }
       else
       {
-        _log.Info("Warning: myPrograms did not find the expected 'FileDetailContents.xml' in your MP root directory!");
+        Log.Info("Warning: myPrograms did not find the expected 'FileDetailContents.xml' in your MP root directory!");
       }
     }
 
@@ -170,12 +165,12 @@ namespace WindowPlugins.GUIPrograms
         }
         else
         {
-          _log.Info("ProgramContentManager Warning, no data found for \n{0}\n{1}\n{2}", curApp.Title, curFile.Title, node.InnerXml);
+          Log.Info("ProgramContentManager Warning, no data found for \n{0}\n{1}\n{2}", curApp.Title, curFile.Title, node.InnerXml);
         }
       }
       else
       {
-        _log.Info("ProgramContentManager Warning, no data found for \n{0}\n{1}", curApp.Title, curFile.Title);
+        Log.Info("ProgramContentManager Warning, no data found for \n{0}\n{1}", curApp.Title, curFile.Title);
       }
       if (result == "")
       {
@@ -359,7 +354,7 @@ namespace WindowPlugins.GUIPrograms
         }
         else
         {
-          _log.Info("Warning: ProgramContentManager: Invalid number {0}", TagName);
+          Log.Info("Warning: ProgramContentManager: Invalid number {0}", TagName);
         }
       }
       return result;
@@ -385,7 +380,7 @@ namespace WindowPlugins.GUIPrograms
         }
         else
         {
-          _log.Info("Warning: ProgramContentManager: Invalid number {0}", TagName);
+          Log.Info("Warning: ProgramContentManager: Invalid number {0}", TagName);
         }
 
       }

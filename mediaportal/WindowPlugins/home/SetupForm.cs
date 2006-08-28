@@ -34,7 +34,7 @@ using System.Data;
 using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using MediaPortal.GUI.Library;
-using MediaPortal.Utils.Services;
+using MediaPortal.Util;
 
 namespace home
 {
@@ -165,8 +165,6 @@ namespace home
     private MediaPortal.UserInterface.Controls.MPComboBox comboBox2;
     private MediaPortal.UserInterface.Controls.MPComboBox comboBox3;
     private MediaPortal.UserInterface.Controls.MPButton addConfig;
-    protected ILog _log;
-    protected IConfig _config;
 
     #region plugin vars
     public bool CanEnable()		// Indicates whether plugin can be enabled/disabled
@@ -221,9 +219,6 @@ namespace home
 
     public SetupForm()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
 
       //
       // Required for Windows Form Designer support
@@ -1375,7 +1370,7 @@ namespace home
     private void SaveAll_Click(object sender, System.EventArgs e)
     {
       saveTree(treeView, Application.StartupPath + @"\menu2.bin");
-      using (MediaPortal.Profile.Settings xmlWriter = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlWriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         int iLayout = 0;
         if (radioButton2.Checked) iLayout = 1;
@@ -1398,7 +1393,7 @@ namespace home
 
     private void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         int iLayout = xmlreader.GetValueAsInt("home", "datelayout", 0);
         if (iLayout == 0) radioButton1.Checked = true;
@@ -1451,7 +1446,7 @@ namespace home
           if (l1 > 0)
           {
             strBtnFile = name.Substring(l1 + 1, (l2 - l1) - 1);
-            pictureBox1.Image = Image.FromFile(_config.Get(Config.Options.SkinPath) + skinName + "\\media\\" + strBtnFile, true);
+            pictureBox1.Image = Image.FromFile(Config.Get(Config.Dir.Skin) + skinName + "\\media\\" + strBtnFile, true);
             groupBox3.Text = strBtnFile;
           }
           label3.Text = "Tag Type";
@@ -1489,7 +1484,7 @@ namespace home
                 label8.Text = "Description";
                 textBox6.Text = tag.description;
                 groupBox3.Text = tag.picture;
-                pictureBox1.Image = Image.FromFile(_config.Get(Config.Options.SkinPath) + skinName + "\\media\\" + tag.picture, true);
+                pictureBox1.Image = Image.FromFile(Config.Get(Config.Dir.Skin) + skinName + "\\media\\" + tag.picture, true);
               }
               break;
             }
@@ -1564,11 +1559,11 @@ namespace home
 
     private void EnumeratePlugins()
     {
-      EnumeratePluginDirectory(_config.Get(Config.Options.PluginsPath) + "windows");
-      EnumeratePluginDirectory(_config.Get(Config.Options.PluginsPath) + "subtitle");
-      EnumeratePluginDirectory(_config.Get(Config.Options.PluginsPath) + "tagreaders");
-      EnumeratePluginDirectory(_config.Get(Config.Options.PluginsPath) + "externalplayers");
-      EnumeratePluginDirectory(_config.Get(Config.Options.PluginsPath) + "process");
+      EnumeratePluginDirectory(Config.Get(Config.Dir.Plugins) + "windows");
+      EnumeratePluginDirectory(Config.Get(Config.Dir.Plugins) + "subtitle");
+      EnumeratePluginDirectory(Config.Get(Config.Dir.Plugins) + "tagreaders");
+      EnumeratePluginDirectory(Config.Get(Config.Dir.Plugins) + "externalplayers");
+      EnumeratePluginDirectory(Config.Get(Config.Dir.Plugins) + "process");
     }
 
     private void LoadPlugins()
@@ -1622,8 +1617,8 @@ namespace home
                   }
                   catch (Exception setupFormException)
                   {
-                    _log.Info("Exception in plugin SetupForm loading :{0}", setupFormException.Message);
-                    _log.Info("Current class is :{0}", type.FullName);
+                    Log.Info("Exception in plugin SetupForm loading :{0}", setupFormException.Message);
+                    Log.Info("Current class is :{0}", type.FullName);
                   }
                 }
               }
@@ -1632,7 +1627,7 @@ namespace home
         }
         catch (Exception unknownException)
         {
-          _log.Info("Exception in plugin loading :{0}", unknownException.Message);
+          Log.Info("Exception in plugin loading :{0}", unknownException.Message);
         }
       }
     }
@@ -1798,7 +1793,7 @@ namespace home
       openFileDialog1.RestoreDirectory = true;
       openFileDialog1.DefaultExt = ".png";
       openFileDialog1.FileName = "hover*";
-      openFileDialog1.InitialDirectory = _config.Get(Config.Options.ConfigPath) + skinName + "\\media";
+      openFileDialog1.InitialDirectory = Config.Get(Config.Dir.Config) + skinName + "\\media";
       if (openFileDialog1.ShowDialog(this) == DialogResult.OK)
       {
         string appName = openFileDialog1.FileName;
@@ -1887,8 +1882,8 @@ namespace home
                         }
                         catch (Exception setupFormException)
                         {
-                          _log.Info("Exception in plugin SetupForm loading :{0}", setupFormException.Message);
-                          _log.Info("Current class is :{0}", type.FullName);
+                          Log.Info("Exception in plugin SetupForm loading :{0}", setupFormException.Message);
+                          Log.Info("Current class is :{0}", type.FullName);
                         }
                       }
                     }
@@ -1897,7 +1892,7 @@ namespace home
               }
               catch (Exception unknownException)
               {
-                _log.Info("Exception in plugin loading :{0}", unknownException.Message);
+                Log.Info("Exception in plugin loading :{0}", unknownException.Message);
               }
 
             }
@@ -2379,7 +2374,7 @@ namespace home
       {
         AddSpecial.Enabled = true;
         SpecialFunctions.Enabled = true;
-        string scriptdir = _config.Get(Config.Options.BasePath) + "scripts";
+        string scriptdir = Config.Get(Config.Dir.Base) + "scripts";
         if (!Directory.Exists(scriptdir))
         {
           SpecialFunctions.Items.Clear();
@@ -2392,7 +2387,7 @@ namespace home
           DirectoryInfo scDir = new DirectoryInfo(scriptdir);
           foreach (FileInfo fi in scDir.GetFiles())
           {
-            _log.Info(fi.Name + "  " + fi.Extension);
+            Log.Info(fi.Name + "  " + fi.Extension);
             if (fi.Extension.ToLower() == ".mps")
             {
               string fl = fi.Name;

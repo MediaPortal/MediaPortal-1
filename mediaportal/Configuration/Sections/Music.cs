@@ -28,7 +28,8 @@ using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-using MediaPortal.Utils.Services;
+using MediaPortal.Util;
+
 #pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
@@ -80,7 +81,7 @@ namespace MediaPortal.Configuration.Sections
         /// </summary>
         public override void LoadSettings()
         {
-          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
             {
                 repeatPlaylistCheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "repeat", true);
                 showID3CheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "showid3", false);
@@ -120,7 +121,7 @@ namespace MediaPortal.Configuration.Sections
 
         public override void SaveSettings()
         {
-          using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(base._config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+          using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
             {
                 xmlwriter.SetValueAsBool("musicfiles", "repeat", repeatPlaylistCheckBox.Checked);
                 xmlwriter.SetValueAsBool("musicfiles", "showid3", showID3CheckBox.Checked);

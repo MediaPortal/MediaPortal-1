@@ -117,7 +117,7 @@ namespace MediaPortal.GUI.Video
     #region Serialisation
     protected virtual void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         currentView = (View)xmlreader.GetValueAsInt(SerializeName, "view", (int)View.List);
         currentViewRoot = (View)xmlreader.GetValueAsInt(SerializeName, "viewroot", (int)View.List);
@@ -137,7 +137,7 @@ namespace MediaPortal.GUI.Video
 
     protected virtual void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         xmlwriter.SetValue(SerializeName, "view", (int)currentView);
         xmlwriter.SetValue(SerializeName, "viewroot", (int)currentViewRoot);
@@ -424,7 +424,7 @@ namespace MediaPortal.GUI.Video
       SaveSettings();
 
       // Save view
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(_config.Get(MediaPortal.Utils.Services.Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         xmlwriter.SetValue("movies", "startWindow", VideoState.StartWindow.ToString());
         xmlwriter.SetValue("movies", "startview", VideoState.View);

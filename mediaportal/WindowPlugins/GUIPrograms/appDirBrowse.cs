@@ -251,7 +251,7 @@ namespace ProgramsDatabase
       }
       catch (Exception ex)
       {
-        _log.Info("myPrograms: error launching program\n  filename: {0}\n  arguments: {1}\n  WorkingDirectory: {2}\n  stack: {3} {4} {5}", procStart.FileName,
+        Log.Info("myPrograms: error launching program\n  filename: {0}\n  arguments: {1}\n  WorkingDirectory: {2}\n  stack: {3} {4} {5}", procStart.FileName,
           procStart.Arguments, procStart.WorkingDirectory, ex.Message, ex.Source, ex.StackTrace);
       }
       finally

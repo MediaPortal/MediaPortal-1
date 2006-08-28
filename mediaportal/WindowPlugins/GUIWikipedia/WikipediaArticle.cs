@@ -32,7 +32,7 @@ using System.Text;
 using System.Threading;
 using System.Collections;
 using MediaPortal.GUI.Library;
-using MediaPortal.Utils.Services;
+using MediaPortal.Util;
 
 namespace Wikipedia
 {
@@ -51,8 +51,6 @@ namespace Wikipedia
     private ArrayList linkArray = new ArrayList();
     private ArrayList imageArray = new ArrayList();
     private ArrayList imagedescArray = new ArrayList();
-    private ILog _log;
-    private IConfig _config;
     #endregion
 
     #region constructors
@@ -62,9 +60,6 @@ namespace Wikipedia
     /// <param name="language">Language of the Wikipedia page</param>
     public WikipediaArticle(string title, string language)
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
       SetLanguage(language);
       this.title = title;
       GetWikipediaXML();
@@ -91,7 +86,7 @@ namespace Wikipedia
     {
       if (language == "Default")
       {
-        MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml");
+        MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml");
         language = xmlreader.GetValueAsString("skin", "language", "English");
       }
       this.language = language;
@@ -100,32 +95,32 @@ namespace Wikipedia
         case "English":
           this.WikipediaURL = "http://en.wikipedia.org/wiki/Special:Export/";
           this.imagePattern = "Image";
-          _log.Info("Wikipedia: Language set to English");
+          Log.Info("Wikipedia: Language set to English");
           break;
         case "German":
           this.WikipediaURL = "http://de.wikipedia.org/wiki/Spezial:Export/";
           this.imagePattern = "Bild";
-          _log.Info("Wikipedia: Language set to German");
+          Log.Info("Wikipedia: Language set to German");
           break;
         case "French":
           this.WikipediaURL = "http://fr.wikipedia.org/wiki/Special:Export/";
           this.imagePattern = "Image";
-          _log.Info("Wikipedia: Language set to French");
+          Log.Info("Wikipedia: Language set to French");
           break;
         case "Dutch":
           this.WikipediaURL = "http://nl.wikipedia.org/wiki/Speciaal:Export/";
           this.imagePattern = "Afbeelding";
-          _log.Info("Wikipedia: Language set to Dutch");
+          Log.Info("Wikipedia: Language set to Dutch");
           break;
         case "Norwegian":
           this.WikipediaURL = "http://no.wikipedia.org/wiki/Spesial:Export";
           this.imagePattern = "Bilde";
-          _log.Info("Wikipedia: Language set to Norwegian");
+          Log.Info("Wikipedia: Language set to Norwegian");
           break;
         default:
           this.WikipediaURL = "http://en.wikipedia.org/wiki/Special:Export/";
           this.imagePattern = "Image";
-          _log.Info("Wikipedia: Language set to Default (English)");
+          Log.Info("Wikipedia: Language set to Default (English)");
           break;
       }
     }
@@ -171,7 +166,7 @@ namespace Wikipedia
       string wikipediaXML = string.Empty;
       // Build the URL to the Wikipedia page
       System.Uri url = new System.Uri(WikipediaURL + this.title);
-      _log.Info("Wikipedia: Trying to get following URL: {0}", url.ToString());
+      Log.Info("Wikipedia: Trying to get following URL: {0}", url.ToString());
 
       // Here we get the content from the web and put it to a string
       try
@@ -182,17 +177,17 @@ namespace Wikipedia
         StreamReader reader = new StreamReader(data);
         wikipediaXML = reader.ReadToEnd();
         reader.Close();
-        _log.Info("Wikipedia: Success! Downloaded all data.");
+        Log.Info("Wikipedia: Success! Downloaded all data.");
       }
       catch (Exception e)
       {
-        _log.Info("Wikipedia: Exception during downloading:");
-        _log.Info(e.ToString());
+        Log.Info("Wikipedia: Exception during downloading:");
+        Log.Info(e.ToString());
       }
 
       if (wikipediaXML.IndexOf("<text xml:space=\"preserve\">") > 0)
       {
-        _log.Info("Wikipedia: Extracting unparsed string.");
+        Log.Info("Wikipedia: Extracting unparsed string.");
         int iStart = 0;
         int iEnd = wikipediaXML.Length;
         // Start of the Entry
@@ -201,7 +196,7 @@ namespace Wikipedia
         iEnd = wikipediaXML.IndexOf("</text>");
         // Extract the Text and update the var
         this.unparsedArticle = wikipediaXML.Substring(iStart, iEnd - iStart);
-        _log.Info("Wikipedia: Unparsed string extracted.");
+        Log.Info("Wikipedia: Unparsed string extracted.");
       }
       else
         this.unparsedArticle = string.Empty;
@@ -215,13 +210,13 @@ namespace Wikipedia
       // Check if the article is empty, if so do not parse.
       if (tempParsedArticle == string.Empty)
       {
-        _log.Info("Wikipedia: Empty article found. Try another Searchterm.");
+        Log.Info("Wikipedia: Empty article found. Try another Searchterm.");
         this.unparsedArticle = string.Empty;
       }
       // Here we check if there is only a redirect as article to handle it as a special article type
       else if (tempParsedArticle.IndexOf("#REDIRECT") >= 0)
       {
-        _log.Info("Wikipedia: #REDIRECT found.");
+        Log.Info("Wikipedia: #REDIRECT found.");
         int iStart = tempParsedArticle.IndexOf("[[") + 2;
         int iEnd = tempParsedArticle.IndexOf("]]", iStart);
         // Extract the Text
@@ -232,13 +227,13 @@ namespace Wikipedia
       // Finally a well-formed article ;-)
       else
       {
-        _log.Info("Wikipedia: Starting parsing.");
+        Log.Info("Wikipedia: Starting parsing.");
         StringBuilder builder = new StringBuilder(tempParsedArticle);
         int iStart = 0;
         int iEnd = 0;
 
         // Remove HTML comments
-        _log.Debug("Wikipedia: Remove HTML comments.");
+        Log.Debug("Wikipedia: Remove HTML comments.");
         while (tempParsedArticle.IndexOf("&lt;!--") >= 0)
         {
           builder = new StringBuilder(tempParsedArticle);
@@ -251,15 +246,15 @@ namespace Wikipedia
           }
           catch (Exception e)
           {
-            _log.Error(e.ToString());
-            _log.Error(builder.ToString());
+            Log.Error(e.ToString());
+            Log.Error(builder.ToString());
           }
 
           tempParsedArticle = builder.ToString();
         }
 
         // surrounded by {{ and }} is (atm) unusable stuff.
-        //_log.Debug("Wikipedia: Remove stuff between {{ and }}.");
+        //Log.Debug("Wikipedia: Remove stuff between {{ and }}.");
         while (tempParsedArticle.IndexOf("{{") >= 0)
         {
           builder = new StringBuilder(tempParsedArticle);
@@ -281,15 +276,15 @@ namespace Wikipedia
           }
           catch (Exception e)
           {
-            _log.Error(e.ToString());
-            _log.Error(builder.ToString());
+            Log.Error(e.ToString());
+            Log.Error(builder.ToString());
           }
 
           tempParsedArticle = builder.ToString();
         }
 
         // surrounded by {| and |} is (atm) unusable stuff.
-        //_log.Debug("Wikipedia: Remove stuff between {| and |}.");
+        //Log.Debug("Wikipedia: Remove stuff between {| and |}.");
         while (tempParsedArticle.IndexOf("{|") >= 0)
         {
           builder = new StringBuilder(tempParsedArticle);
@@ -302,15 +297,15 @@ namespace Wikipedia
           }
           catch (Exception e)
           {
-            _log.Error(e.ToString());
-            _log.Error(builder.ToString());
+            Log.Error(e.ToString());
+            Log.Error(builder.ToString());
           }
 
           tempParsedArticle = builder.ToString();
         }
 
         // Remove web references.
-        _log.Debug("Wikipedia: Remove web references.");
+        Log.Debug("Wikipedia: Remove web references.");
         while (tempParsedArticle.IndexOf("&lt;ref&gt;") >= 0)
         {
           builder = new StringBuilder(tempParsedArticle);
@@ -323,75 +318,75 @@ namespace Wikipedia
           }
           catch (Exception e)
           {
-            _log.Error(e.ToString());
-            _log.Error(builder.ToString());
+            Log.Error(e.ToString());
+            Log.Error(builder.ToString());
           }
 
           tempParsedArticle = builder.ToString();
         }
 
         // Remove <br />
-        _log.Debug("Wikipedia: Remove <br />.");
+        Log.Debug("Wikipedia: Remove <br />.");
         builder.Replace("&lt;br /&gt;", "\n");
         builder.Replace("&lt;br style=&quot;clear:both&quot;/&gt;", "\n");
         builder.Replace("&lt;br style=&quot;clear:left&quot;/&gt;", "\n");
         builder.Replace("&lt;br style=&quot;clear:right&quot;/&gt;", "\n");
 
         // Remove <sup>
-        _log.Debug("Wikipedia: Remove <sup>.");
+        Log.Debug("Wikipedia: Remove <sup>.");
         builder.Replace("&lt;sup&gt;", "^");
         builder.Replace("&lt;/sup&gt;", "");
 
         // surrounded by ''' and ''' is bold text, atm also unusable.
-        _log.Debug("Wikipedia: Remove \'\'\'.");
+        Log.Debug("Wikipedia: Remove \'\'\'.");
         builder.Replace("'''", "");
 
         // surrounded by '' and '' is italic text, atm also unusable.
-        _log.Debug("Wikipedia: Remove \'\'.");
+        Log.Debug("Wikipedia: Remove \'\'.");
         builder.Replace("''", "");
 
         // Display === as newlines (meaning new line for every ===).
-        _log.Debug("Wikipedia: Display === as 2 newlines.");
+        Log.Debug("Wikipedia: Display === as 2 newlines.");
         builder.Replace("===", "\n");
 
         // Display == as newlines (meaning new line for every ==).
-        _log.Debug("Wikipedia: Display == as 1 newline.");
+        Log.Debug("Wikipedia: Display == as 1 newline.");
         builder.Replace("==", "\n");
 
         // Display * as list (meaning new line for every *).
-        _log.Debug("Wikipedia: Display * as list.");
+        Log.Debug("Wikipedia: Display * as list.");
         builder.Replace("*", "\n +");
 
         // Remove HTML whitespace.
-        _log.Debug("Wikipedia: Remove HTML whitespace.");
+        Log.Debug("Wikipedia: Remove HTML whitespace.");
         builder.Replace("&amp;nbsp;", " ");
 
         // Display &quot; as ".
-        _log.Debug("Wikipedia: Remove Quotations.");
+        Log.Debug("Wikipedia: Remove Quotations.");
         builder.Replace("&quot;", "\"");
 
         // Display &amp;mdash; as -.
-        _log.Debug("Wikipedia: Remove &amp;mdash;.");
+        Log.Debug("Wikipedia: Remove &amp;mdash;.");
         builder.Replace("&amp;mdash;", "-");
         
 
         // Remove gallery tags.
-        _log.Debug("Wikipedia: Remove gallery tags.");
+        Log.Debug("Wikipedia: Remove gallery tags.");
         builder.Replace("&lt;gallery&gt;", "");
         builder.Replace("&lt;/gallery&gt;", "");
 
         // Remove gallery tags.
-        _log.Debug("Wikipedia: Remove &amp;.");
+        Log.Debug("Wikipedia: Remove &amp;.");
         builder.Replace("&amp;", "&");
 
         // Remove (too many) newlines
-        _log.Debug("Wikipedia: Remove (too many) newlines.");
+        Log.Debug("Wikipedia: Remove (too many) newlines.");
         builder.Replace("\n\n", "\n");
 
         tempParsedArticle = builder.ToString();
 
         // For Debug purposes it is nice to see how the whole article text is parsed until here
-        //_log.Debug(tempParsedArticle);
+        //Log.Debug(tempParsedArticle);
 
         this.unparsedArticle = tempParsedArticle;
       }
@@ -453,7 +448,7 @@ namespace Wikipedia
 
         this.imageArray.Add(imagename);
         this.imagedescArray.Add(imagedesc);
-        _log.Debug("Wikipedia: Image added: {0}, {1}", imagedesc, imagename);
+        Log.Debug("Wikipedia: Image added: {0}, {1}", imagedesc, imagename);
 
         tempParsedArticle = tempParsedArticle.Substring(0, iStart) + tempParsedArticle.Substring(iEnd, tempParsedArticle.Length - iEnd);
       }
@@ -478,7 +473,7 @@ namespace Wikipedia
             if (!this.linkArray.Contains(parsedKeyword))
             {
               this.linkArray.Add(parsedKeyword);
-              _log.Debug("Wikipedia: Link added: {0}", parsedKeyword);
+              Log.Debug("Wikipedia: Link added: {0}", parsedKeyword);
             }
           }
           else if (keyword.IndexOf(":") > 0)
@@ -492,7 +487,7 @@ namespace Wikipedia
             if (!this.linkArray.Contains(parsedKeyword))
             {
               this.linkArray.Add(parsedKeyword);
-              _log.Debug("Wikipedia: Link added: {0}", parsedKeyword);
+              Log.Debug("Wikipedia: Link added: {0}", parsedKeyword);
             }
           }
 
@@ -501,12 +496,12 @@ namespace Wikipedia
       }
       catch (Exception e)
       {
-        _log.Error("Wikipedia: {0}", e.ToString());
-        _log.Error("Wikipedia: tempArticle: {0}", tempParsedArticle);
+        Log.Error("Wikipedia: {0}", e.ToString());
+        Log.Error("Wikipedia: tempArticle: {0}", tempParsedArticle);
       }
 
       // surrounded by [ and ] are external Links. Need to be removed.
-      _log.Debug("Wikipedia: Removing external links");
+      Log.Debug("Wikipedia: Removing external links");
       while (tempParsedArticle.IndexOf("[") >= 0)
       {
         int iStart = tempParsedArticle.IndexOf("[");

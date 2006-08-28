@@ -30,7 +30,7 @@ using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
-using MediaPortal.Utils.Services;
+using MediaPortal.Util;
 
 namespace MediaPortal
 {
@@ -42,7 +42,7 @@ namespace MediaPortal
 		private MediaPortal.UserInterface.Controls.MPLabel label1;
 		private MediaPortal.UserInterface.Controls.MPCheckBox checkBox1;
 		private MediaPortal.UserInterface.Controls.MPButton button1;
-    static IConfig _config;
+
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -50,8 +50,6 @@ namespace MediaPortal
 
 		public OldSkinForm()
 		{
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _config = services.Get<IConfig>();
 			//
 			// Required for Windows Form Designer support
 			//
@@ -129,7 +127,7 @@ namespace MediaPortal
 
 		private void button1_Click(object sender, System.EventArgs e)
 		{
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
 			{
 				xmlreader.SetValueAsBool("general", "dontshowskinversion", checkBox1.Checked);
 			}
@@ -138,7 +136,7 @@ namespace MediaPortal
 		
 		public bool CheckSkinVersion(string skin)
 		{
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
 			{
 				bool ignoreErrors=false;
 				ignoreErrors=xmlreader.GetValueAsBool("general", "dontshowskinversion", false);
@@ -147,7 +145,7 @@ namespace MediaPortal
 
 			string versionBlueTwoSkin="";
 			string versionSkin="";
-			string filename= _config.Get(Config.Options.SkinPath) + @"BlueTwo\references.xml";
+			string filename= Config.Get(Config.Dir.Skin) + @"BlueTwo\references.xml";
 			if(File.Exists(filename))
 			{	
 				XmlDocument doc=new XmlDocument();
@@ -156,7 +154,7 @@ namespace MediaPortal
 				if (node!=null && node.InnerText!=null)
 					versionBlueTwoSkin=node.InnerText;
 			}
-      filename = String.Format(_config.Get(Config.Options.SkinPath) + @"{0}\references.xml", skin);
+      filename = String.Format(Config.Get(Config.Dir.Skin) + @"{0}\references.xml", skin);
 			if(File.Exists(filename))
 			{	
 				XmlDocument doc=new XmlDocument();

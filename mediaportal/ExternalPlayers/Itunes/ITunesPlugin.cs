@@ -26,9 +26,8 @@
 using System;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
-using MediaPortal.Utils.Services;
 using iTunesLib;
-//using MediaPortal.GUI.Library;
+using MediaPortal.Util;
 
 namespace MediaPortal.ITunesPlayer
 {
@@ -48,14 +47,9 @@ namespace MediaPortal.ITunesPlayer
     DateTime _updateTimer;
     private string[] m_supportedExtensions = new string[0];
     private bool _notifyPlaying = false;
-    protected ILog _log;
-    protected IConfig _config;
 
     public ITunesPlugin()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-      _config = services.Get<IConfig>();
     }
 
     public override string Description()
@@ -135,7 +129,7 @@ namespace MediaPortal.ITunesPlayer
     private void readConfig()
     {
       string strExt = null;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         strExt = xmlreader.GetValueAsString("itunesplugin", "enabledextensions", "");
       }
@@ -192,7 +186,7 @@ namespace MediaPortal.ITunesPlayer
     void _iTunesApplication_OnPlayerPlayingTrackChangedEvent(object iTrack)
     {
       iTunesLib.IITTrack track = iTrack as iTunesLib.IITTrack;
-      _log.Info("ITunes:track changed track :{0} duration:{1}", track.Name, track.Duration);
+      Log.Info("ITunes:track changed track :{0} duration:{1}", track.Name, track.Duration);
       _iTunesApplication.Stop();
       _ended = true;
     }
@@ -200,7 +194,7 @@ namespace MediaPortal.ITunesPlayer
     void _iTunesApplication_OnPlayerStopEvent(object iTrack)
     {
       iTunesLib.IITTrack track = iTrack as iTunesLib.IITTrack;
-      _log.Info("ITunes:playback stopped track :{0} duration:{1}", track.Name, track.Duration);
+      Log.Info("ITunes:playback stopped track :{0} duration:{1}", track.Name, track.Duration);
 
       _iTunesApplication.Stop();
       _ended = true;
@@ -209,7 +203,7 @@ namespace MediaPortal.ITunesPlayer
     void _iTunesApplication_OnPlayerPlayEvent(object iTrack)
     {
       iTunesLib.IITTrack track = iTrack as iTunesLib.IITTrack;
-      _log.Info("ITunes:playback started track :{0} duration:{1}", track.Name, track.Duration);
+      Log.Info("ITunes:playback started track :{0} duration:{1}", track.Name, track.Duration);
       _started = true;
     }
 
