@@ -674,52 +674,7 @@
       </Setter.Value>
     </Setter>
   </Style>
-
   
-  <Style x:Key="GUIButton" TargetType="{x:Type Button}">
-    <Setter Property="SnapsToDevicePixels" Value="true"/>
-    <Setter Property="OverridesDefaultStyle" Value="true"/>
-    <Setter Property="MinHeight" Value="23"/>
-    <Setter Property="MinWidth" Value="75"/>
-    <Setter Property="FontSize" Value="18"/>
-    <Setter Property="Foreground" Value="White" />
-    <Setter Property="FocusVisualStyle" Value="{DynamicResource FocusStyle}"/>
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate TargetType="{x:Type Button}">
-          <Border 
-            x:Name="Border"  
-            CornerRadius="0" 
-            BorderThickness="0"
-            BorderBrush="Transparent">
-            <ContentPresenter 
-              Margin="8,0"
-              HorizontalAlignment="Left"
-              VerticalAlignment="Center"
-              />
-          </Border>
-          <ControlTemplate.Triggers>
-            <Trigger Property="IsDefaulted" Value="true">
-              <Setter TargetName="Border" Property="Background" Value="Black" />
-            </Trigger>
-            <Trigger Property="IsMouseOver" Value="true">
-              <Setter TargetName="Border" Property="Background"  Value="{DynamicResource GreenFocus}">
-              </Setter>
-            </Trigger>
-            <Trigger Property="IsMouseOver" Value="false">
-              <Setter TargetName="Border" Property="Background" Value="{DynamicResource GreenNoFocus}">
-              </Setter>
-            </Trigger>
-            <Trigger Property="IsPressed" Value="true">
-              <Setter TargetName="Border" Property="Background" Value="{DynamicResource GreenFocus}">
-              </Setter>
-            </Trigger>
-          </ControlTemplate.Triggers>
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
-  </Style>
-
   <Style x:Key="DialogCloseButton" TargetType="{x:Type Button}">
     <Setter Property="SnapsToDevicePixels" Value="true"/>
     <Setter Property="OverridesDefaultStyle" Value="true"/>
@@ -770,86 +725,7 @@
     </Setter>
   </Style>
   
-  <Style x:Key="GUIToggleButton" TargetType="{x:Type CheckBox}">
-    <Setter Property="SnapsToDevicePixels" Value="true"/>
-    <Setter Property="OverridesDefaultStyle" Value="true"/>
-    <Setter Property="MinHeight" Value="23"/>
-    <Setter Property="MinWidth" Value="75"/>
-    <Setter Property="FontSize" Value="18"/>
-    <Setter Property="Foreground" Value="White" />
-    <Setter Property="FocusVisualStyle" Value="{DynamicResource FocusStyle}"/>
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate TargetType="{x:Type CheckBox}">
-          <Border 
-					  x:Name="Border"  
-					  CornerRadius="0" 
-					  BorderThickness="0"
-					  BorderBrush="Transparent">
-            <ContentPresenter 
-						  Margin="2"
-						  HorizontalAlignment="Center"
-						  VerticalAlignment="Center"
-						  RecognizesAccessKey="True"/>
-          </Border>
-          <ControlTemplate.Triggers>
-            <Trigger Property="IsKeyboardFocused" Value="true">
-              <Setter TargetName="Border" Property="BorderBrush" Value="Black" />
-            </Trigger>
-            <MultiTrigger>
-              <MultiTrigger.Conditions>
-                <Condition Property="IsMouseOver" Value="true"/>
-                <Condition Property="IsChecked" Value="true"/>
-              </MultiTrigger.Conditions>
-              <Setter TargetName="Border" Property="Background">
-                <Setter.Value>
-                  <ImageBrush ImageSource="{DynamicResource togglebutton-on-focus.png}"/>
-                </Setter.Value>
-              </Setter>
-            </MultiTrigger>
-            <MultiTrigger>
-              <MultiTrigger.Conditions>
-                <Condition Property="IsMouseOver" Value="true"/>
-                <Condition Property="IsChecked" Value="false"/>
-              </MultiTrigger.Conditions>
-              <Setter TargetName="Border" Property="Background">
-                <Setter.Value>
-                  <ImageBrush ImageSource="{DynamicResource togglebutton-off-focus.png}"/>
-                </Setter.Value>
-              </Setter>
-            </MultiTrigger>
-            <MultiTrigger>
-              <MultiTrigger.Conditions>
-                <Condition Property="IsMouseOver" Value="false"/>
-                <Condition Property="IsChecked" Value="true"/>
-              </MultiTrigger.Conditions>
-              <Setter TargetName="Border" Property="Background">
-                <Setter.Value>
-                  <ImageBrush ImageSource="{DynamicResource togglebutton-on-nofocus.png}"/>
-                </Setter.Value>
-              </Setter>
-            </MultiTrigger>
-            <MultiTrigger>
-              <MultiTrigger.Conditions>
-                <Condition Property="IsMouseOver" Value="false"/>
-                <Condition Property="IsChecked" Value="false"/>
-              </MultiTrigger.Conditions>
-              <Setter TargetName="Border" Property="Background">
-                <Setter.Value>
-                  <ImageBrush ImageSource="{DynamicResource togglebutton-off-nofocus.png}"/>
-                </Setter.Value>
-              </Setter>
-            </MultiTrigger>
-            <Trigger Property="IsEnabled" Value="false">
-              <Setter TargetName="Border" Property="Background" Value="Yellow" />
-              <Setter TargetName="Border" Property="BorderBrush" Value="Transparent" />
-              <Setter Property="Foreground" Value="Black"/>
-            </Trigger>
-          </ControlTemplate.Triggers>
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
-  </Style>
+
 
    
   <!-- Listcontrol -->

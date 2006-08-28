@@ -50,7 +50,6 @@
        Visibility="Visible"
        Width="190"
        Height="31"
-       Opacity="0" 
        Click="MPNG" 
        Content="Testing an Scrollbutton makes no sense" 
        Tag="##id::2//##keycontrol::onleft:;onright:50;onup:17;ondown://##metadata::labelNum:100"
@@ -159,6 +158,16 @@ Content="109"
   FontSize="18"
   Text="Checkmark-Test"
       />
+    
+    <ctrl:GUIToggleButton 
+ Canvas.Top="480"
+ Canvas.Left="60" 
+ Width="190"
+ ScrollAreaWidth="145" 
+ FontSize="18"
+ Height="32" 
+ Text="Toggle-Button with an scrolling Caption is COOL"
+      /> 
     
   </Canvas>
 </Page>
