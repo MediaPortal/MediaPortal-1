@@ -30,7 +30,7 @@
 #include <stdio.h>
 extern void LogDebug(const char *fmt, ...) ;
 
-MultiFileWriter::MultiFileWriter() :
+MultiFileWriter::MultiFileWriter(MultiFileWriterParam *pWriterParams) :
 	m_hTSBufferFile(INVALID_HANDLE_VALUE),
 	m_pTSBufferFileName(NULL),
 	m_pTSRegFileName(NULL),
@@ -38,10 +38,11 @@ MultiFileWriter::MultiFileWriter() :
 	m_filesAdded(0),
 	m_filesRemoved(0),
 	m_currentFilenameId(0),
-	m_minTSFiles(6),
-	m_maxTSFiles(60),
-	m_maxTSFileSize((__int64) ((__int64)1048576 *(__int64)250)),	//250Mb
-	m_chunkReserve((__int64) ((__int64)1048576 *(__int64)250)) //250Mb
+	m_currentFileId(0),
+	m_minTSFiles(pWriterParams->minFiles),
+	m_maxTSFiles(pWriterParams->maxFiles),
+	m_maxTSFileSize(pWriterParams->maxSize),	
+	m_chunkReserve(pWriterParams->chunkSize) 
 {
 	m_pCurrentTSFile = new FileWriter();
 	m_pCurrentTSFile->SetChunkReserve(TRUE, m_chunkReserve, m_maxTSFileSize);
@@ -51,13 +52,13 @@ MultiFileWriter::~MultiFileWriter()
 {
 	CloseFile();
 	if (m_pTSBufferFileName)
-		delete m_pTSBufferFileName;
+		delete[] m_pTSBufferFileName;
 
 	if (m_pTSRegFileName)
-		delete m_pTSRegFileName;
+		delete[] m_pTSRegFileName;
 
 	if (m_pCurrentTSFile)
-		delete m_pCurrentTSFile;
+		delete[] m_pCurrentTSFile;
 }
 
 HRESULT MultiFileWriter::GetFileName(LPOLESTR *lpszFileName)
@@ -102,10 +103,10 @@ HRESULT MultiFileWriter::OpenFile(LPCWSTR pszFileName)
 
 	// Try to open the file
 	m_hTSBufferFile = CreateFile(W2T(m_pTSBufferFileName),  // The filename
-								 GENERIC_WRITE,             // File access
-								 FILE_SHARE_READ,           // Share access
+								 (DWORD) GENERIC_WRITE,             // File access
+								 (DWORD) FILE_SHARE_READ,           // Share access
 								 NULL,                      // Security
-								 CREATE_ALWAYS,             // Open flags
+								 (DWORD) CREATE_ALWAYS,             // Open flags
 								 (DWORD) 0,                 // More flags
 								 NULL);                     // Template
 
@@ -318,6 +319,9 @@ HRESULT MultiFileWriter::CreateNewTSFile()
 	m_tsFileNames.push_back(pFilename);
 	m_filesAdded++;
 
+	LPWSTR pos = pFilename + wcslen(m_pTSBufferFileName);
+	if (pos)
+		m_currentFileId = _wtoi(pos);
 	wchar_t msg[MAX_PATH];
 	swprintf((LPWSTR)&msg, L"New file created : %s\n", pFilename);
 	::OutputDebugString(W2T((LPWSTR)&msg));
@@ -359,6 +363,9 @@ HRESULT MultiFileWriter::ReuseTSFile()
 	m_tsFileNames.push_back(pFilename);
 	m_filesAdded++;
 
+	LPWSTR pos = pFilename + wcslen(m_pTSBufferFileName);
+	if (pos)
+		m_currentFileId = _wtoi(pos);
 	wchar_t msg[MAX_PATH];
 	swprintf((LPWSTR)&msg, L"Old file reused : %s\n", pFilename);
 	::OutputDebugString(W2T((LPWSTR)&msg));
@@ -415,6 +422,7 @@ HRESULT MultiFileWriter::CleanupFiles()
 	m_filesAdded = 0;
 	m_filesRemoved = 0;
 	m_currentFilenameId = 0;
+	m_currentFileId = 0;
 
 	// Check if .tsbuffer file is being read by something.
 	if (IsFileLocked(m_pTSBufferFileName) == TRUE)
@@ -439,7 +447,7 @@ HRESULT MultiFileWriter::CleanupFiles()
 
 	for (it = m_tsFileNames.begin() ; it < m_tsFileNames.end() ; it++ )
 	{
-		if (DeleteFile(W2T(*it)))
+		if (DeleteFile(W2T(*it)) == FALSE)
 		{
 			wchar_t msg[MAX_PATH];
 			swprintf((LPWSTR)&msg, L"Failed to delete file %s : 0x%x\n", *it, GetLastError());
@@ -450,7 +458,7 @@ HRESULT MultiFileWriter::CleanupFiles()
 	}
 	m_tsFileNames.clear();
 
-	if (DeleteFile(W2T(m_pTSBufferFileName)))
+	if (DeleteFile(W2T(m_pTSBufferFileName)) == FALSE)
 	{
 		wchar_t msg[MAX_PATH];
 		swprintf((LPWSTR)&msg, L"Failed to delete tsbuffer file : 0x%x\n", GetLastError());
@@ -461,6 +469,7 @@ HRESULT MultiFileWriter::CleanupFiles()
 	m_filesAdded = 0;
 	m_filesRemoved = 0;
 	m_currentFilenameId = 0;
+	m_currentFileId = 0;
 	return S_OK;
 }
 
@@ -470,10 +479,10 @@ BOOL MultiFileWriter::IsFileLocked(LPWSTR pFilename)
 
 	HANDLE hFile;
 	hFile = CreateFile(W2T(pFilename),        // The filename
-					   GENERIC_READ,          // File access
-					   NULL,                  // Share access
+					   (DWORD) GENERIC_READ,          // File access
+					   (DWORD) NULL,                  // Share access
 					   NULL,                  // Security
-					   OPEN_EXISTING,         // Open flags
+					   (DWORD) OPEN_EXISTING,         // Open flags
 					   (DWORD) 0,             // More flags
 					   NULL);                 // Template
 
@@ -584,7 +593,7 @@ long MultiFileWriter::getNumbFilesRemoved(void)
 
 long MultiFileWriter::getCurrentFileId(void)
 {
-	return m_currentFilenameId;
+	return m_currentFileId;//m_currentFilenameId;
 }
 
 long MultiFileWriter::getMinTSFiles(void)

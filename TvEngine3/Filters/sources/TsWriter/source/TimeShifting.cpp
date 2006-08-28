@@ -121,7 +121,12 @@ STDMETHODIMP CTimeShifting::Start()
 		WCHAR wstrFileName[2048];
 		MultiByteToWideChar(CP_ACP,0,m_szFileName,-1,wstrFileName,1+strlen(m_szFileName));
 
-		m_pTimeShiftFile = new MultiFileWriter();
+		MultiFileWriterParam params;
+		params.chunkSize=1024*1024*256;
+		params.maxFiles=20;
+		params.maxSize=1024*1024*256;
+		params.minFiles=6;
+		m_pTimeShiftFile = new MultiFileWriter(&params);
 		if (FAILED(m_pTimeShiftFile->OpenFile(wstrFileName))) 
 		{
 			LogDebug("Timeshifter:failed to open filename:%s %d",m_szFileName,GetLastError());
