@@ -43,7 +43,6 @@ STDMETHODIMP CVideoAnalyzer::SetVideoPid( int videoPid)
 {
 	try
 	{
-		LogDebug("analyzer videopid:%x",videoPid);
 		m_videoAudioAnalyzer.SetVideoPid(videoPid);
 		m_videoAudioAnalyzer.Reset();
 	}
@@ -70,7 +69,6 @@ STDMETHODIMP CVideoAnalyzer::SetAudioPid( int audioPid)
 {
 	try
 	{
-		LogDebug("analyzer audiopid:%x",audioPid);
 		m_videoAudioAnalyzer.SetAudioPid(audioPid);
 		m_videoAudioAnalyzer.Reset();
 	}

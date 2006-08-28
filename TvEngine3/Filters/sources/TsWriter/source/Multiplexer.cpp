@@ -48,7 +48,7 @@ void CMultiplexer::SetFileWriterCallBack(IFileWriter* callback)
 
 void CMultiplexer::Reset()
 {
-	LogDebug("mux: reset");
+//	LogDebug("mux: reset");
 	m_videoPacketCounter= 0;
   m_audioPacketCounter=0;
 	m_startPcr=0;
@@ -65,7 +65,7 @@ void CMultiplexer::Reset()
 
 void CMultiplexer::SetPcrPid(int pcrPid)
 {
-	LogDebug("mux: set pcr pid:%x", pcrPid);
+//	LogDebug("mux: set pcr pid:%x", pcrPid);
 	m_pcrDecoder.SetPcrPid(pcrPid);
 }
 
@@ -76,7 +76,7 @@ int CMultiplexer::GetPcrPid()
 
 void CMultiplexer::RemovePesStream(int pid)
 {
-	LogDebug("mux: remove pes pid:%x", pid);
+//	LogDebug("mux: remove pes pid:%x", pid);
 	ivecPesDecoders it;
 	it=m_pesDecoders.begin(); 
 	while (it != m_pesDecoders.end())
@@ -101,7 +101,7 @@ void CMultiplexer::AddPesStream(int pid, bool isAudio, bool isVideo)
 		if (decoder->GetPid()== pid) return;
 	}
 	
-	LogDebug("mux: add pes pid:%x", pid);
+//	LogDebug("mux: add pes pid:%x", pid);
 	int audioStreamId=0xc0;
 	int videoStreamId=0xe0;
 

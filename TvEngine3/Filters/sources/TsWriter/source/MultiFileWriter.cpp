@@ -166,7 +166,7 @@ HRESULT MultiFileWriter::Write(PBYTE pbData, ULONG lDataLength)
 
 	if (m_pCurrentTSFile->IsFileInvalid())
 	{
-		::LogDebug("Creating first file");
+		//::LogDebug("Creating first file");
 		if FAILED(hr = PrepareTSFile())
 			return hr;
 	}
@@ -213,7 +213,7 @@ HRESULT MultiFileWriter::PrepareTSFile()
 	USES_CONVERSION;
 	HRESULT hr;
 
-	LogDebug("PrepareTSFile()");
+	//LogDebug("PrepareTSFile()");
 
 //	m_pCurrentTSFile->FlushFile())
 
@@ -284,7 +284,7 @@ HRESULT MultiFileWriter::CreateNewTSFile()
 	WIN32_FIND_DATA findData;
 	HANDLE handleFound = INVALID_HANDLE_VALUE;
 
-	LogDebug("CreateNewTSFile.");
+	//LogDebug("CreateNewTSFile.");
 	while (TRUE)
 	{
 		// Create new filename
@@ -296,7 +296,7 @@ HRESULT MultiFileWriter::CreateNewTSFile()
 		if (handleFound == INVALID_HANDLE_VALUE)
 			break;
 
-		LogDebug("Newly generated filename already exists.");
+		//LogDebug("Newly generated filename already exists.");
 
 		// If it exists we loop and try the next number
 		FindClose(handleFound);
@@ -326,7 +326,7 @@ HRESULT MultiFileWriter::CreateNewTSFile()
 	swprintf((LPWSTR)&msg, L"New file created : %s\n", pFilename);
 	::OutputDebugString(W2T((LPWSTR)&msg));
 
-	LogDebug("new file created");
+	//LogDebug("new file created");
 	return S_OK;
 }
 
@@ -370,7 +370,7 @@ HRESULT MultiFileWriter::ReuseTSFile()
 	swprintf((LPWSTR)&msg, L"Old file reused : %s\n", pFilename);
 	::OutputDebugString(W2T((LPWSTR)&msg));
 
-	LogDebug("reuse old file");
+	//LogDebug("reuse old file");
 	return S_OK;
 }
 

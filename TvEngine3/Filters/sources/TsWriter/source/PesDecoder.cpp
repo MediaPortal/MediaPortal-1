@@ -40,7 +40,7 @@ CPesDecoder::CPesDecoder(CPesCallback* callback)
 }
 void CPesDecoder::SetMaxLength(int len)
 {
-	LogDebug("pes decoder pid:%x set maxlen:%x",m_pid,len);
+//	LogDebug("pes decoder pid:%x set maxlen:%x",m_pid,len);
 	m_iMaxLength=len;
 }
 
