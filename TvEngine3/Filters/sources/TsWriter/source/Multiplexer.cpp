@@ -50,6 +50,7 @@ void CMultiplexer::Reset()
 {
 	LogDebug("mux: reset");
 	m_videoPacketCounter= 0;
+  m_audioPacketCounter=0;
 	m_startPcr=0;
 	m_currentPcr=0;
 	ivecPesDecoders it;
@@ -128,13 +129,8 @@ void CMultiplexer::OnTsPacket(byte* tsPacket)
 {
 	m_pcrDecoder.OnTsPacket(tsPacket);
 	if (m_pcrDecoder.PcrHigh()== 0 && m_pcrDecoder.PcrLow()== 0) return;
-  __int64 pcrHi=m_pcrDecoder.Pcr();
-  int pcrLow=m_pcrDecoder.PcrLow();
-	if (m_startPcr==0)
-	{
-		m_startPcr = pcrHi;
-	}
-	m_currentPcr=pcrHi;
+  
+
 	ivecPesDecoders it;
 	for (it=m_pesDecoders.begin(); it != m_pesDecoders.end();++it)
 	{
@@ -149,48 +145,42 @@ int CMultiplexer::OnNewPesPacket(int streamId,byte* header, int headerlen,byte* 
 
 //	LogDebug("OnNewPesPacket streamid:%x len:%x start:%d", streamId,pesLength,isStart);
 	if (pesLength<=0) return 0;
+  if (m_pesDecoders.size()==1)
+  {
+		return SplitPesPacket(streamId,header,headerlen,pesPacket,pesLength,isStart);
+  }
+
 	//is it a video stream
 	if (streamId>= 0xe0 && streamId <= 0xef)
 	{
-		//yes
-    bool writeToDisk=true;
-		// is this the first video packet?
-		if (m_videoPacketCounter== 0)
+		if (m_videoPacketCounter==0)
     {
-      // yes, then start the file with a mpeg-2 sequence header...
-      writeToDisk=false;
-			if (isStart)
+      if (m_audioPacketCounter==0) return pesLength;
+      if (isStart==false) return pesLength;
+   
+      bool containsStart=false;
+			if (pesPacket[0] == 0 && pesPacket[1] == 0 && pesPacket[2] == 1 && pesPacket[3] == 0xb3)
 			{
-				for (int x=0; x < pesLength-3;++x)
-				{
-					if (pesPacket[x] == 0 && pesPacket[x+1] == 0 && pesPacket[x+2] == 1 && pesPacket[x+3] == 0xb3)
-					{
-						writeToDisk=true;
-						break;
-					}
-				}
+				containsStart=true;
 			}
+      if (false==containsStart) return pesLength;
     }
-
-    if (writeToDisk)
-    {
-		  m_videoPacketCounter++;
-		  return SplitPesPacket(streamId,header,headerlen,pesPacket,pesLength,isStart);
-    }
+	  m_videoPacketCounter++;
+	  return SplitPesPacket(streamId,header,headerlen,pesPacket,pesLength,isStart);
 	}
 	else 
 	{
 		//audio stream (or private stream)
-
-		// wait for first video packet 
-		// if we only have 1 stream then just write it...
-		if (m_videoPacketCounter>0 || m_pesDecoders.size()== 1)
-		{
-			return SplitPesPacket(streamId,header,headerlen,pesPacket,pesLength,isStart);
-		}
+    if (m_audioPacketCounter==0 && isStart==false)
+    {
+      return pesLength;
+    }
+    m_audioPacketCounter++;
+		return SplitPesPacket(streamId,header,headerlen,pesPacket,pesLength,isStart);
 	}
   return pesLength;
 }
+
 int CMultiplexer::WritePackHeader()
 {
 	__int64 pcrHi=m_pcrDecoder.PcrHigh() - m_startPcr;
@@ -211,7 +201,7 @@ int CMultiplexer::WritePackHeader()
 	pBuffer[5] = (pcrHi >> 20)  & 0xff;
 	pBuffer[6] = ((pcrHi >> 13) & 0x3) + 4 + ( ( (pcrHi >> 15) & 0x1f) <<3);
 	pBuffer[7] = (pcrHi >> 5) & 0xff;
-	pBuffer[8] = ((pcrLow >> 7) & 3) + 4 + ((pcrHi & 0x1f)<<3);
+	pBuffer[8] = ((pcrLow >> 7) & 3) + 4 + ((pcrLow & 0x1f)<<3);
 	pBuffer[9] = ((pcrLow & 0x7f) << 1) +1 ;
 
 	//10..12 = mux rate
@@ -237,6 +227,7 @@ int CMultiplexer::SplitPesPacket(int streamId,byte* header, int headerlen, byte*
 	if (streamId<0) return sectionLength;
   if (m_pCallback == NULL) return sectionLength;
 	
+
   __int64 pcrHi=m_pcrDecoder.Pcr();
   int pcrLow=0;//m_pcrDecoder.PcrLow();
 	if (m_startPcr==0)
@@ -252,13 +243,25 @@ int CMultiplexer::SplitPesPacket(int streamId,byte* header, int headerlen, byte*
 		m_pesBuffer[1] = 0;
 		m_pesBuffer[2] = 1;
 		m_pesBuffer[3] = streamId;
-		m_pesBuffer[4] = ((sectionLength+3)>>8)&0xff;
-		m_pesBuffer[5] = ((sectionLength+3))&0xff;
+		m_pesBuffer[4] = 0x7;
+		m_pesBuffer[5] = 0xec;
 		m_pesBuffer[6] = 0x81;
 		m_pesBuffer[7] = 0;
 		m_pesBuffer[8] = 0;
 		m_pCallback->Write(m_pesBuffer, 9);
 		m_pCallback->Write(pesPacket, sectionLength);
+
+    //write padding stream;
+    memset(m_pesBuffer,0xff,0x800);
+    int rest = 0x7e9-sectionLength;
+		m_pesBuffer[0] = 0;
+		m_pesBuffer[1] = 0;
+		m_pesBuffer[2] = 1;
+		m_pesBuffer[3] = 0xbe;
+		m_pesBuffer[4] = ((rest-6)>>8)&0xff;
+		m_pesBuffer[5] = ((rest-6)&0xff);
+		m_pCallback->Write(m_pesBuffer, rest);
+
 		return sectionLength;
   }
 	if (isStart)

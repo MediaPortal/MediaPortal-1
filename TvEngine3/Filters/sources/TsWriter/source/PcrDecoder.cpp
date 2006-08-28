@@ -111,13 +111,14 @@ bool CPcrDecoder::GetPtsDts(byte* pesHeader, __int64& pts, __int64& dts)
 	if ( (pesHeader[7]&0x80)!=0) ptsAvailable=true;
 	if ( (pesHeader[7]&0x40)!=0) dtsAvailable=true;
 	if (ptsAvailable)
-	{
-		pts= (pesHeader[13]>>1);								// 7bits	7
+	{	
+		pts+= ((pesHeader[13]>>1)&0x7f);					// 7bits	7
 		pts+=(pesHeader[12]<<7);								// 8bits	15
 		pts+=((pesHeader[11]>>1)<<15);					// 7bits	22
 		pts+=((pesHeader[10])<<22);							// 8bits	30
-		pts+=(((pesHeader[9]>>1)&0x7)<<30);			// 3bits
-	
+    __int64 k=((pesHeader[9]>>1)&0x7);
+    k <<=30;
+		pts+=k;			// 3bits
 	}
 	if (dtsAvailable)
 	{
@@ -125,7 +126,9 @@ bool CPcrDecoder::GetPtsDts(byte* pesHeader, __int64& pts, __int64& dts)
 		dts+=(pesHeader[17]<<7);								// 8bits	15
 		dts+=((pesHeader[16]>>1)<<15);					// 7bits	22
 		dts+=((pesHeader[15])<<22);							// 8bits	30
-		dts+=(((pesHeader[14]>>1)&0x7)<<30);			// 3bits
+    __int64 k=((pesHeader[14]>>1)&0x7);
+    k <<=30;
+		dts+=k;			// 3bits
 	
 	}
 	return (ptsAvailable||dtsAvailable);
@@ -133,7 +136,7 @@ bool CPcrDecoder::GetPtsDts(byte* pesHeader, __int64& pts, __int64& dts)
 
 void CPcrDecoder::ChangePtsDts(byte* header, __int64 startPcr)
 {
-	__int64 pts,dts;
+	__int64 pts=0,dts=0;
 	if (!GetPtsDts(header, pts, dts)) 
 	{
 		return ;

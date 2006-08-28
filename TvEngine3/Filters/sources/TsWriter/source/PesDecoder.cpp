@@ -95,6 +95,7 @@ bool CPesDecoder::OnTsPacket(byte* tsPacket)
 	}
 	if (header.TransportError ) 
 	{
+    m_iWritePos=-1;
 		LogDebug("pesdecoder pid:%x transport error", m_pid);
 		return false;
 	}
