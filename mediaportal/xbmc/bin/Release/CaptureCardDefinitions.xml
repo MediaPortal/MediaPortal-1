@@ -12532,15 +12532,15 @@
   <capturecard commercialname="anysee E30 Digital Terrestrial USB 2.0 TV Tuner Box" capturename="anysee BDA Digital Capturer" devid="vid_04b4&amp;pid_861f">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
     <tv>
-      <interface cat="tunerdevice" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"/>
         <filter cat="tunerdevice"     name="anysee BDA Digital Tuner"         checkdevice="true"/>
         <filter cat="capture"         name="anysee BDA Digital Capturer"      checkdevice="true"/>
       </filters>
       <connections>
-        <connection sourcefilter="networkprovider" sourcepin="0"  sinkfilter="tunerdevice"  sinkpin="0"/>
-        <connection sourcefilter="tunerdevice" sourcepin="0"      sinkfilter="capture"      sinkpin="0"/>
+        <connection sourcefilter="networkprovider"  sourcepin="0" sinkfilter="tunerdevice"  sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"      sourcepin="0" sinkfilter="capture"      sinkpin="0"/>
       </connections>
     </tv>
   </capturecard>
