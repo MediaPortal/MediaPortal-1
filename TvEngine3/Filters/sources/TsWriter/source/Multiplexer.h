@@ -47,8 +47,8 @@ public:
 	void SetFileWriterCallBack(IFileWriter* callback);
 	int OnNewPesPacket(int streamid,byte* header, int headerlen,byte* data, int len, bool isStart);
 private:
-
-  int SplitPesPacket(int streamId,byte* header, int headerlen,byte* pesPacket, int nLen,bool isStart);
+	
+  int  SplitPesPacket(int streamId,byte* header, int headerlen,byte* pesPacket, int nLen,bool isStart);
 	int  WritePackHeader();
 	CPcrDecoder m_pcrDecoder;
   
@@ -58,4 +58,6 @@ private:
 	int m_videoPacketCounter;
 	bool  m_streams[255];
   byte* m_pesBuffer;
+	__int64 m_startPcr;
+	__int64 m_currentPcr;
 };

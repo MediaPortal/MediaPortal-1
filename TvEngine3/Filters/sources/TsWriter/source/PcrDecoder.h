@@ -32,6 +32,9 @@ public:
 
 	__int64 PcrHigh();
 	int     PcrLow();
+	__int64 Pcr();
+	bool    GetPtsDts(byte* pesHeader, __int64& pts, __int64& dts);
+	void		ChangePtsDts(byte* header, __int64 startPcr);
 private:
 	int m_pcrPid;
 	__int64 m_pcrHigh;

@@ -59,6 +59,10 @@ int CPcrDecoder::PcrLow()
 {
 	return m_pcrLow;
 }
+__int64 CPcrDecoder::Pcr()
+{
+	return m_pcrHigh;
+}
 
 void CPcrDecoder::OnTsPacket(byte* tsPacket)
 {
@@ -97,4 +101,68 @@ void CPcrDecoder::OnTsPacket(byte* tsPacket)
 	m_pcrLow = ((p[4] & 1) << 8) | p[5];							//9	 bits
 
 //	LogDebug("pcr:%02.2x%02.2x%02.2x%02.2x%02.2x%02.2x",p[0],p[1],p[2],p[3],p[4],p[5]);
+}
+bool CPcrDecoder::GetPtsDts(byte* pesHeader, __int64& pts, __int64& dts)
+{
+	pts=0;
+	dts=0;
+	bool ptsAvailable=false;
+	bool dtsAvailable=false;
+	if ( (pesHeader[7]&0x80)!=0) ptsAvailable=true;
+	if ( (pesHeader[7]&0x40)!=0) dtsAvailable=true;
+	if (ptsAvailable)
+	{
+		pts= (pesHeader[13]>>1);								// 7bits	7
+		pts+=(pesHeader[12]<<7);								// 8bits	15
+		pts+=((pesHeader[11]>>1)<<15);					// 7bits	22
+		pts+=((pesHeader[10])<<22);							// 8bits	30
+		pts+=(((pesHeader[9]>>1)&0x7)<<30);			// 3bits
+	
+	}
+	if (dtsAvailable)
+	{
+		dts= (pesHeader[18]>>1);								// 7bits	7
+		dts+=(pesHeader[17]<<7);								// 8bits	15
+		dts+=((pesHeader[16]>>1)<<15);					// 7bits	22
+		dts+=((pesHeader[15])<<22);							// 8bits	30
+		dts+=(((pesHeader[14]>>1)&0x7)<<30);			// 3bits
+	
+	}
+	return (ptsAvailable||dtsAvailable);
+}
+
+void CPcrDecoder::ChangePtsDts(byte* header, __int64 startPcr)
+{
+	__int64 pts,dts;
+	if (!GetPtsDts(header, pts, dts)) 
+	{
+		return ;
+	}
+	if (pts>0)
+	{
+		if (pts < startPcr) 
+			pts=0;
+		else
+			pts-=startPcr;
+		byte marker=0x21;
+		if (dts!=0) marker=0x31;
+		header[13]=(((pts&0x7f)<<1)+1); pts>>=7;
+		header[12]= (pts&0xff);				  pts>>=8;
+		header[11]=(((pts&0x7f)<<1)+1); pts>>=7;
+		header[10]=(pts&0xff);					pts>>=8;
+		header[9]= (((pts&7)<<1)+marker); 
+	}
+	if (dts >0)
+	{
+		if (dts < startPcr) 
+			dts=0;
+		else
+			dts-=startPcr;
+
+		header[18]=(((dts&0x7f)<<1)+1); dts>>=7;
+		header[17]= (dts&0xff);				  dts>>=8;
+		header[16]=(((dts&0x7f)<<1)+1); dts>>=7;
+		header[15]=(dts&0xff);					dts>>=8;
+		header[14]= (((dts&7)<<1)+0x11); 
+	}
 }

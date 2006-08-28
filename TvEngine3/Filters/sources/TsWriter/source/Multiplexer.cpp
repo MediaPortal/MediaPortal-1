@@ -50,6 +50,8 @@ void CMultiplexer::Reset()
 {
 	LogDebug("mux: reset");
 	m_videoPacketCounter= 0;
+	m_startPcr=0;
+	m_currentPcr=0;
 	ivecPesDecoders it;
 	for (it=m_pesDecoders.begin(); it != m_pesDecoders.end();++it)
 	{
@@ -58,7 +60,6 @@ void CMultiplexer::Reset()
 	}
 	m_pesDecoders.clear();
 	m_pcrDecoder.Reset();
-	memset(m_streams,0,sizeof(m_streams));
 }
 
 void CMultiplexer::SetPcrPid(int pcrPid)
@@ -126,8 +127,14 @@ void CMultiplexer::AddPesStream(int pid, bool isAudio, bool isVideo)
 void CMultiplexer::OnTsPacket(byte* tsPacket)
 {
 	m_pcrDecoder.OnTsPacket(tsPacket);
-  
 	if (m_pcrDecoder.PcrHigh()== 0 && m_pcrDecoder.PcrLow()== 0) return;
+  __int64 pcrHi=m_pcrDecoder.Pcr();
+  int pcrLow=m_pcrDecoder.PcrLow();
+	if (m_startPcr==0)
+	{
+		m_startPcr = pcrHi;
+	}
+	m_currentPcr=pcrHi;
 	ivecPesDecoders it;
 	for (it=m_pesDecoders.begin(); it != m_pesDecoders.end();++it)
 	{
@@ -139,6 +146,7 @@ void CMultiplexer::OnTsPacket(byte* tsPacket)
 
 int CMultiplexer::OnNewPesPacket(int streamId,byte* header, int headerlen,byte* pesPacket, int pesLength, bool isStart)
 {
+
 //	LogDebug("OnNewPesPacket streamid:%x len:%x start:%d", streamId,pesLength,isStart);
 	if (pesLength<=0) return 0;
 	//is it a video stream
@@ -185,8 +193,9 @@ int CMultiplexer::OnNewPesPacket(int streamId,byte* header, int headerlen,byte* 
 }
 int CMultiplexer::WritePackHeader()
 {
-  __int64 pcrHi=m_pcrDecoder.PcrHigh();
-  int pcrLow=m_pcrDecoder.PcrLow();
+	__int64 pcrHi=m_pcrDecoder.PcrHigh() - m_startPcr;
+  int pcrLow=0;//m_pcrDecoder.PcrLow();
+
   int muxRate=(6*1024*1024)/50; //6MB/s
   byte pBuffer[0x20];
 	//pack header
@@ -227,14 +236,15 @@ int CMultiplexer::SplitPesPacket(int streamId,byte* header, int headerlen, byte*
 	//	pesPacket[6],pesPacket[7], pesPacket[8],pesPacket[9], pesPacket[10],pesPacket[11]);
 	if (streamId<0) return sectionLength;
   if (m_pCallback == NULL) return sectionLength;
-	if (m_streams[streamId]!=true)
+	
+  __int64 pcrHi=m_pcrDecoder.Pcr();
+  int pcrLow=0;//m_pcrDecoder.PcrLow();
+	if (m_startPcr==0)
 	{
-		LogDebug("got stream:%x", streamId,sectionLength);
+		m_startPcr = pcrHi;
 	}
-	m_streams[streamId]=true;
+	m_currentPcr=pcrHi;
 
-//	if (streamId>=0xe0 && streamId <=0xef) streamId=0xe0;
-//	if (streamId>=0xc0 && streamId <=0xcf) streamId=0xc0;
   if (sectionLength != 0x7e9)
   {
 		WritePackHeader();
@@ -258,6 +268,7 @@ int CMultiplexer::SplitPesPacket(int streamId,byte* header, int headerlen, byte*
 		header[3]=streamId;
     header[4]=0x7;
     header[5]=0xec;
+		m_pcrDecoder.ChangePtsDts(header, m_startPcr);
     m_pCallback->Write(header, headerlen);
     m_pCallback->Write(pesPacket, len);
 		return len;
