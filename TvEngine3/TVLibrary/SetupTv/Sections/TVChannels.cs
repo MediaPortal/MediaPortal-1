@@ -167,6 +167,7 @@ namespace SetupTv.Sections
 
     private void mpButtonClearEncrypted_Click(object sender, EventArgs e)
     {
+      //@ TODO : does not work
       EntityList<Channel> channels = DatabaseManager.Instance.GetEntities<Channel>();
       channels.ShouldRemoveDeletedEntities = false;
 

@@ -183,9 +183,12 @@ int CMultiplexer::OnNewPesPacket(int streamId,byte* header, int headerlen,byte* 
 
 int CMultiplexer::WritePackHeader()
 {
+	__int64 pcrHi=m_pcrDecoder.PcrHigh() ;
+  int pcrLow=m_pcrDecoder.PcrLow();
+/*
 	__int64 pcrHi=m_pcrDecoder.PcrHigh() - m_startPcr;
   int pcrLow=0;//m_pcrDecoder.PcrLow();
-
+*/
   int muxRate=(6*1024*1024)/50; //6MB/s
   byte pBuffer[0x20];
 	//pack header
@@ -229,7 +232,7 @@ int CMultiplexer::SplitPesPacket(int streamId,byte* header, int headerlen, byte*
 	
 
   __int64 pcrHi=m_pcrDecoder.Pcr();
-  int pcrLow=0;//m_pcrDecoder.PcrLow();
+  
 	if (m_startPcr==0)
 	{
 		m_startPcr = pcrHi;
@@ -242,6 +245,7 @@ int CMultiplexer::SplitPesPacket(int streamId,byte* header, int headerlen, byte*
     int rest = 0x7e9-sectionLength;
 		if (rest < 0xe0)
 		{
+			//write pes header
 			memset(m_pesBuffer,0xff,0x800);
 			m_pesBuffer[0] = 0;
 			m_pesBuffer[1] = 0;
@@ -257,6 +261,7 @@ int CMultiplexer::SplitPesPacket(int streamId,byte* header, int headerlen, byte*
 		}
 		else
 		{
+			//write original header
 			m_pesBuffer[0] = 0;
 			m_pesBuffer[1] = 0;
 			m_pesBuffer[2] = 1;
@@ -282,6 +287,7 @@ int CMultiplexer::SplitPesPacket(int streamId,byte* header, int headerlen, byte*
 		}
 		return sectionLength;
   }
+
 	if (isStart)
 	{
     int len=0x7e9-(headerlen-9);
@@ -289,7 +295,7 @@ int CMultiplexer::SplitPesPacket(int streamId,byte* header, int headerlen, byte*
 		header[3]=streamId;
     header[4]=0x7;
     header[5]=0xec;
-		m_pcrDecoder.ChangePtsDts(header, m_startPcr);
+		//m_pcrDecoder.ChangePtsDts(header, m_startPcr);
     m_pCallback->Write(header, headerlen);
     m_pCallback->Write(pesPacket, len);
 		return len;

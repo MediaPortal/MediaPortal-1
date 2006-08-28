@@ -58,12 +58,12 @@ int  CVideoAudioScrambledAnalyzer::GetAudioPid()
 
 bool CVideoAudioScrambledAnalyzer::IsAudioScrambled()
 {
-	return m_bAudioEncrypted;
+	return (m_bAudioEncrypted==TRUE);
 }
 
 bool CVideoAudioScrambledAnalyzer::IsVideoScrambled()
 {
-	return m_bVideoEncrypted;
+	return (m_bVideoEncrypted==TRUE);
 }
 
 
@@ -83,10 +83,10 @@ void CVideoAudioScrambledAnalyzer::OnTsPacket(byte* tsPacket)
 	CTsHeader  header(tsPacket);
 	if (header.SyncByte != TS_PACKET_SYNC) return;
 	if (header.TransportError==true) return;
+	if (header.PayloadUnitStart==false) return;
 	BOOL scrambled= (header.TScrambling!=0);
-	if (header.Pid==m_audioPid) 
+	if (header.Pid==m_audioPid && m_audioPid > 0x10) 
 	{
-		//LogDebug("audio:%x",header.TScrambling);
 		if (TRUE==scrambled)
 		{
 			m_audioTimer=GetTickCount();
@@ -102,19 +102,17 @@ void CVideoAudioScrambledAnalyzer::OnTsPacket(byte* tsPacket)
 				{
 					LogDebug("analyzer: audio pid %x unscrambled", m_audioPid);
 					m_bAudioEncrypted=scrambled;
-					//LogHeader(header);
 				}
 			}
 			else
 			{
 					LogDebug("analyzer: audio pid %x scrambled", m_audioPid);
-				//LogHeader(header);
 				m_bAudioEncrypted=scrambled;
 			}
 		}
 	}
 
-	if (header.Pid==m_videoPid) 
+	if (header.Pid==m_videoPid && m_videoPid > 0x10) 
 	{
 		if (TRUE==scrambled)
 		{
@@ -130,14 +128,12 @@ void CVideoAudioScrambledAnalyzer::OnTsPacket(byte* tsPacket)
 				if (timeSpan > 150)
 				{
 					LogDebug("analyzer: video pid %x unscrambled", m_videoPid);
-					//LogHeader(header);
 					m_bVideoEncrypted=scrambled;
 				}
 			}
 			else
 			{
 				LogDebug("analyzer: video pid %x scrambled", m_videoPid);
-				//LogHeader(header);
 				m_bVideoEncrypted=scrambled;
 			}
 		}
