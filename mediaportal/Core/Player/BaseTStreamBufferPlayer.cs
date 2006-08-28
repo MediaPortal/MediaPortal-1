@@ -1,4 +1,4 @@
-#define TSFILESOURCE 
+
 /* 
  *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -262,7 +262,9 @@ namespace MediaPortal.Player
 
       Log.Info("TsBaseStreamBuffer:start graph");
       _mediaCtrl.Run();
-
+      SeekAbsolute(0);
+      UpdateCurrentPosition();
+      UpdateDuration();
       Log.Info("TsBaseStreamBuffer:playing state");
       OnInitialized();
       Log.Info("TsBaseStreamBuffer:done");
@@ -379,7 +381,8 @@ namespace MediaPortal.Player
 
       //Log.Info("1");
 
-#if TSFILESOURCE
+      _startingUp = false;
+      /*
       if (_startingUp && _isLive)
       {
         ushort pgmCount = 0;
@@ -405,34 +408,9 @@ namespace MediaPortal.Player
             Log.Info("selected prgm number 1");
           }
           _startingUp = false;
-          /*
-          UpdateDuration();
-          if (_duration > 0)
-          {
-            Log.Info("duration:{0}",_duration);
-            double pos = _duration - 2;
-            if (pos > 0)
-            {
-              if (VMR9Util.g_vmr9 != null)
-              {
-                VMR9Util.g_vmr9.FrameCounter = 123;
-                VMR9Util.g_vmr9.Process();
-              }
-              SeekAbsolute(_duration);
-
-              if (VMR9Util.g_vmr9 != null)
-              {
-                VMR9Util.g_vmr9.FrameCounter = 123;
-                VMR9Util.g_vmr9.Process();
-              }
-            }
-            _startingUp = false;
-          }*/
         }
-      }
-#else
-      _startingUp = false;
-#endif
+      }*/
+
       TimeSpan ts = DateTime.Now - _updateTimer;
       if (ts.TotalMilliseconds >= 800 || iSpeed != 1)
       {

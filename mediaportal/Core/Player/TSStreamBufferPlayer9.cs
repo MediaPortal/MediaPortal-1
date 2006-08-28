@@ -1,4 +1,4 @@
-#define TSFILESOURCE
+
 #region Copyright (C) 2005-2006 Team MediaPortal
 
 /* 
@@ -246,17 +246,17 @@ namespace MediaPortal.Player
         }
         if (strAudioCodec.Length > 0)
           _audioCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strAudioCodec);
-        //        if (strAudioRenderer.Length > 0)
-        //          _audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(_graphBuilder, strAudioRenderer, false);
+        if (strAudioRenderer.Length > 0)
+          _audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(_graphBuilder, strAudioRenderer, false);
         //if (bAddFFDshow)
         //_ffdShowFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, "ffdshow raw video filter");
 
 
         #endregion
-#if TSFILESOURCE
-        bool demuxControl = false;     // let tsfilesource control demux 
-        bool supplyMediaType = true;  // supply media type during load
-        bool autoBuildGraph = false;   // true: let tsfilesource create graph, else we do it ourselves
+
+        bool demuxControl = true;     // let tsfilesource control demux 
+        bool supplyMediaType = false;  // supply media type during load
+        bool autoBuildGraph = true;   // true: let tsfilesource create graph, else we do it ourselves
         if (_isLive == false)
         {
           demuxControl = true;
@@ -280,20 +280,6 @@ namespace MediaPortal.Player
               byte[] valueOne = new byte[1];
               valueZero[0] = 0;
               valueOne[0] = 1;
-              /*
-              using (System.IO.FileStream stream = new System.IO.FileStream("clock.txt", System.IO.FileMode.Open))
-              {
-                using (System.IO.StreamReader reader = new System.IO.StreamReader(stream))
-                {
-                  string clockLine=reader.ReadLine();
-                  string demuxLine = reader.ReadLine();
-                  clockType[0] = (byte)Int32.Parse(clockLine);
-                  if (demuxLine.ToLower() == "yes") demuxControl = true;
-                  else demuxControl = false;
-                }
-              } 
-              Log.Info("set tsfilesource to clock:{0} demuxcontrol:{1}",clockType[0],demuxControl);
-              */
               //                     
               // --------------------
               //clocktype:           
@@ -345,7 +331,7 @@ namespace MediaPortal.Player
 
         #endregion
 
-        #region add mpeg-2 demux filter
+        #region add mpeg-2 demux filter when autoBuildGraph == false
 
         if (autoBuildGraph == false)
         {
@@ -355,7 +341,7 @@ namespace MediaPortal.Player
         }
         #endregion
 
-        #region create mpeg2 demux pins
+        #region create mpeg2 demux pins when autoBuildGraph == false
         if (autoBuildGraph == false)
         {
           Log.Info("TSStreamBufferPlayer9:create audio/video pins");
@@ -425,7 +411,7 @@ namespace MediaPortal.Player
 
         if (autoBuildGraph == false)
         {
-          #region connect tsfilesource->demux
+          #region connect tsfilesource->demux when autoBuildGraph == false
           Log.Info("TSStreamBufferPlayer9:connect tsfilesource->mpeg2 demux");
           IPin pinTsOut = DsFindPin.ByDirection((IBaseFilter)_fileSource, PinDirection.Output, 0);
           if (pinTsOut == null)
@@ -483,32 +469,7 @@ namespace MediaPortal.Player
           MapPids();
         }
 
-#else
-        _fileSource = (IBaseFilter)new TsReaderSource();
-        Log.Info("TSStreamBufferPlayer9:add tsreader to graph");
-        int hr = _graphBuilder.AddFilter((IBaseFilter)_fileSource, "TsFileSource");
-        if (hr != 0)
-        {
-          Log.Error("TSStreamBufferPlayer9:Failed to add SBE to graph");
-          return false;
-        }
 
-        IFileSourceFilter interfaceFile = (IFileSourceFilter)_fileSource;
-        if (interfaceFile == null)
-        {
-          Log.Error("TSStreamBufferPlayer9:Failed to get IFileSourceFilter");
-          return false;
-        }
-        Log.Info("TSStreamBufferPlayer9: open file:{0}", filename);
-        hr = interfaceFile.Load(filename, null);
-        if (hr != 0)
-        {
-          Log.Error("TSStreamBufferPlayer9:Failed to open file:{0} :0x{1:x}", filename, hr);
-          return false;
-        }
-        Log.Info("TSStreamBufferPlayer9:render tsreader outputs");
-        DirectShowUtil.RenderOutputPins(_graphBuilder, (IBaseFilter)_fileSource);
-#endif
 
         _mediaCtrl = (IMediaControl)_graphBuilder;
         _mediaEvt = (IMediaEventEx)_graphBuilder;
@@ -518,12 +479,24 @@ namespace MediaPortal.Player
           Log.Error("Unable to get IMediaSeeking interface#1");
         }
 
+
         if (_audioRendererFilter != null)
         {
-          //IMediaFilter mp = _graphBuilder as IMediaFilter;
-          //IReferenceClock clock = _audioRendererFilter as IReferenceClock;
-          //hr = mp.SetSyncSource(clock);
+          Log.Info("TSStreamBufferPlayer9:set reference clock");
+          IMediaFilter mp = _graphBuilder as IMediaFilter;
+          IReferenceClock clock = _audioRendererFilter as IReferenceClock;
+          hr = mp.SetSyncSource(null);
+          hr = mp.SetSyncSource(clock);
+          Log.Info("TSStreamBufferPlayer9:set reference clock:{0:X}", hr);
+          
+          long start, latest;
+          _mediaSeeking.GetAvailable(out start, out latest);
+          if (latest > 3 * 10000000) latest -= 3 * 10000000;
+          Log.Info("TSStreamBufferPlayer9:start :{0} end:{1} {0:X}", start, latest, hr);
+          hr = _mediaSeeking.SetPositions(new DsLong(latest), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(0), AMSeekingSeekingFlags.NoPositioning);
+          Log.Info("TSStreamBufferPlayer9:seek :{0:X}", hr);
         }
+
 
         if (_isRadio == false)
         {
@@ -778,6 +751,8 @@ namespace MediaPortal.Player
 
     void MapPids()
     {
+      if (_pinAudio == null) return;
+      if (_pinVideo == null) return;
       #region map demux pids
       int hr;
       IMPEG2StreamIdMap pStreamId;
