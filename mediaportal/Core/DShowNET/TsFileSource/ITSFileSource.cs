@@ -171,5 +171,25 @@ Guid("559E6E81-FAC4-4EBC-9530-662DAA27EDC2"),
     int GetPCRPosition(ref long pos);
     [PreserveSig]
     int ShowStreamMenu(IntPtr hwnd);
+
+    //New method added after 2.2.0.3
+    [PreserveSig]
+    int GetFixedAspectRatio(ref ushort fixedAr);
+    [PreserveSig]
+    int SetFixedAspectRatio(ushort fixedAr);
+
+    //New method added after 2.2.0.6
+    [PreserveSig]
+    int GetCurFile(ref string ppszFileName, out DirectShowLib.AMMediaType pmt);
+    [PreserveSig]
+    int GetDTSPid(ref ushort pDtsPid);
+    [PreserveSig]
+    int GetDTS2Pid(ref ushort pDts2Pid);
+    [PreserveSig]
+    int GetCreateSubPinOnDemux(ref ushort pbCreatePin);
+    [PreserveSig]
+    int SetCreateSubPinOnDemux(short bCreatePin);
+    [PreserveSig]
+    int GetSubtitlePid(ref ushort subpid);
   }
 }
