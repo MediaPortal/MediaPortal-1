@@ -2,16 +2,83 @@
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 >
- 
-  <!-- Skin BlueTwo -->
-  <!-- Brushes -->
-  <LinearGradientBrush x:Key="GreenBackground" StartPoint="0,0" EndPoint="0,1">
-    <GradientStop Offset="0" Color="#FF7FC377"/>
-    <GradientStop Offset="0.498" Color="#FF3EA53A"/>
-    <GradientStop Offset="0.499" Color="#FF0C8E06"/>
-    <GradientStop Offset="0.894" Color="#FF0EBC0C"/>
-  </LinearGradientBrush>
 
+ 
+  <LinearGradientBrush x:Key="GreenFill" StartPoint="0,0" EndPoint="0,1">
+    <LinearGradientBrush.GradientStops>
+      <GradientStop Offset="0" Color="#FFFFFFFF"/>
+      <GradientStop Offset="0.099" Color="#FF7FC377"/>
+      <GradientStop Offset="0.498" Color="#FF3EA53A"/>
+      <GradientStop Offset="0.499" Color="#FF0C8E06"/>
+      <GradientStop Offset="0.894" Color="#FF0EBC0C"/>
+      <GradientStop Offset="0.995" Color="#FF0C7006"/>
+    </LinearGradientBrush.GradientStops>
+  </LinearGradientBrush>
+  
+   <!-- Skin BlueTwo -->
+  <!-- Brushes -->
+  <DrawingBrush x:Key="GreenFocus" Viewport="0,0,1,1" >
+    <DrawingBrush.Drawing>
+      <DrawingGroup>
+        <DrawingGroup.Children>
+          <GeometryDrawing Brush="{DynamicResource GreenFill}">
+            <GeometryDrawing.Geometry>
+              <GeometryGroup>
+                <RectangleGeometry Rect="0 0 1 1" RadiusX="0.05" RadiusY="0.5"/>
+              </GeometryGroup>
+            </GeometryDrawing.Geometry>
+          </GeometryDrawing>
+        </DrawingGroup.Children>
+      </DrawingGroup>
+    </DrawingBrush.Drawing>
+  </DrawingBrush>
+
+  <DrawingBrush x:Key="GreenNoFocus" Viewport="0,0,1,1" >
+    <DrawingBrush.Drawing>
+      <GeometryDrawing Brush="#339999BB">
+        <GeometryDrawing.Geometry>
+          <GeometryGroup>
+            <RectangleGeometry Rect="0 0 1 1" RadiusX="0.05" RadiusY="0.5"/>
+          </GeometryGroup>
+        </GeometryDrawing.Geometry>
+      </GeometryDrawing>
+    </DrawingBrush.Drawing>
+  </DrawingBrush>
+
+  <DrawingBrush x:Key="ListGreenFocus" Viewport="0,0,1,1" >
+    <DrawingBrush.Drawing>
+      <DrawingGroup>
+        <DrawingGroup.Children>
+          <GeometryDrawing Brush="{DynamicResource GreenFill}">
+            <GeometryDrawing.Geometry>
+              <GeometryGroup>
+                <RectangleGeometry Rect="0 0 1 1" RadiusX="0.025" RadiusY="0.5"/>
+              </GeometryGroup>
+            </GeometryDrawing.Geometry>
+          </GeometryDrawing>
+         </DrawingGroup.Children>
+      </DrawingGroup>
+    </DrawingBrush.Drawing>
+  </DrawingBrush>
+
+  <DrawingBrush x:Key="ListGreenNoFocus" Viewport="0,0,1,1" >
+    <DrawingBrush.Drawing>
+      <GeometryDrawing Brush="#339999BB">
+        <GeometryDrawing.Geometry>
+          <GeometryGroup>
+            <RectangleGeometry Rect="0 0 1 1" RadiusX="0.025" RadiusY="0.5"/>
+          </GeometryGroup>
+        </GeometryDrawing.Geometry>
+      </GeometryDrawing>
+    </DrawingBrush.Drawing>
+  </DrawingBrush>
+  
+  <LinearGradientBrush x:Key="WhiteBackground" StartPoint="0,0" EndPoint="0,1">
+    <GradientStop Offset="0" Color="#FFFFFFFF"/>
+    <GradientStop Offset="0.498" Color="#FFF0F5FA"/>
+    <GradientStop Offset="0.499" Color="#FFBBBBBB"/>
+    <GradientStop Offset="0.894" Color="#FFFFFFFF"/>
+  </LinearGradientBrush>
   <!-- GUI Elements -->
 
   
@@ -426,17 +493,11 @@
           </Border>
           <ControlTemplate.Triggers>
             <Trigger Property="IsMouseOver" Value="true">
-              <Setter TargetName="ListControlPanel" Property="Background">
-                <Setter.Value>
-                  <ImageBrush ImageSource="{DynamicResource list_sub_focus.png}" />
-                </Setter.Value>
+              <Setter TargetName="ListControlPanel" Property="Background"  Value="{DynamicResource ListGreenFocus}">
                 </Setter>
             </Trigger>
             <Trigger Property="IsMouseOver" Value="false">
-              <Setter TargetName="ListControlPanel" Property="Background">
-                <Setter.Value>
-                  <ImageBrush ImageSource="{DynamicResource list_sub_nofocus.png}" />
-                </Setter.Value>
+              <Setter TargetName="ListControlPanel" Property="Background"  Value="{DynamicResource ListGreenNoFocus}">
               </Setter>
             </Trigger>
           </ControlTemplate.Triggers>
@@ -591,24 +652,15 @@
               <Setter TargetName="Border" Property="BorderBrush" Value="Black" />
             </Trigger>
             <Trigger Property="IsMouseOver" Value="true">
-              <Setter TargetName="Border" Property="Background">
-                <Setter.Value>
-                  <ImageBrush ImageSource="{DynamicResource button_green_focus_165x32.png}"/>
-                </Setter.Value>
+              <Setter TargetName="Border" Property="Background" Value="{DynamicResource GreenFocus}">
               </Setter>
             </Trigger>
             <Trigger Property="IsMouseOver" Value="false">
-              <Setter TargetName="Border" Property="Background">
-                <Setter.Value>
-                  <ImageBrush ImageSource="{DynamicResource button_green_nofocus_165x32.png}"/>
-                </Setter.Value>
+              <Setter TargetName="Border" Property="Background" Value="{DynamicResource GreenNoFocus}">
               </Setter>
             </Trigger>
             <Trigger Property="IsPressed" Value="true">
-              <Setter TargetName="Border" Property="Background">
-                <Setter.Value>
-                  <ImageBrush ImageSource="{DynamicResource button_green_focus_165x32.png}"/>
-                </Setter.Value>
+              <Setter TargetName="Border" Property="Background" Value="{DynamicResource GreenFocus}">
               </Setter>
               <Setter TargetName="Border" Property="Opacity" Value="0.5"></Setter>
             </Trigger>
@@ -651,24 +703,15 @@
               <Setter TargetName="Border" Property="Background" Value="Black" />
             </Trigger>
             <Trigger Property="IsMouseOver" Value="true">
-              <Setter TargetName="Border" Property="Background">
-                <Setter.Value>
-                  <ImageBrush ImageSource="{DynamicResource button_green_focus_165x32.png}"/>
-                </Setter.Value>
+              <Setter TargetName="Border" Property="Background"  Value="{DynamicResource GreenFocus}">
               </Setter>
             </Trigger>
             <Trigger Property="IsMouseOver" Value="false">
-              <Setter TargetName="Border" Property="Background">
-                <Setter.Value>
-                  <ImageBrush ImageSource="{DynamicResource button_green_nofocus_165x32.png}"/>
-                </Setter.Value>
+              <Setter TargetName="Border" Property="Background" Value="{DynamicResource GreenNoFocus}">
               </Setter>
             </Trigger>
             <Trigger Property="IsPressed" Value="true">
-              <Setter TargetName="Border" Property="Background">
-                <Setter.Value>
-                  <ImageBrush ImageSource="{DynamicResource button_green_focus_165x32.png}"/>
-                </Setter.Value>
+              <Setter TargetName="Border" Property="Background" Value="{DynamicResource GreenFocus}">
               </Setter>
             </Trigger>
           </ControlTemplate.Triggers>

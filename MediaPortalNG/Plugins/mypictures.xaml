@@ -49,7 +49,8 @@
        Canvas.Left="60"
        Visibility="Visible"
        Width="190"
-       Height="32"
+       Height="31"
+       Opacity="0" 
        Click="MPNG" 
        Content="Testing an Scrollbutton makes no sense" 
        Tag="##id::2//##keycontrol::onleft:;onright:50;onup:17;ondown://##metadata::labelNum:100"
@@ -62,10 +63,11 @@
         Canvas.Left="60"
         Visibility="Visible"
         Width="190"
-        Height="32"
+        Height="31"
         Click="showDialog" 
         Tag="##id::3//##keycontrol::onleft:;onright:;onup:;ondown://##metadata::labelNum:103"
->103</ctrl:GUIButton>
+Content="103"
+/>
 
 
     <ctrl:GUIButton
@@ -74,9 +76,10 @@
         Canvas.Left="60"
         Visibility="Visible"
         Width="190"
-        Height="32"
+        Height="31"
         Tag="##id::6//##keycontrol::onleft:;onright:;onup:;ondown://##metadata::labelNum:108"
->108</ctrl:GUIButton>
+Content="108"
+/>
 
 
       <ctrl:GUIButton
@@ -85,9 +88,10 @@
         Canvas.Left="60"
         Visibility="Visible"
         Width="190"
-        Height="32"
+        Height="31"
         Tag="##id::7//##keycontrol::onleft:;onright:;onup:;ondown://##metadata::labelNum:361"
->361</ctrl:GUIButton>
+Content="361"
+/>
 
 
     <ctrl:GUIButton
@@ -96,9 +100,10 @@
       Canvas.Left="60"
       Visibility="Visible"
       Width="190"
-      Height="32"
+      Height="31"
       Tag="##id::8//##keycontrol::onleft:;onright:;onup:;ondown://##metadata::labelNum:109"
->109</ctrl:GUIButton>
+Content="109"
+/>
 
 
     <ctrl:GUIButton
@@ -107,7 +112,7 @@
         Canvas.Left="60"
         Visibility="Visible"
         Width="190"
-        Height="32"
+        Height="31"
         Tag="##id::9//##keycontrol::onleft:;onright:;onup:;ondown:99//##metadata::labelNum:735"
 >735</ctrl:GUIButton>
 
@@ -133,7 +138,7 @@
   x:Name="select1"
   Content="Hello! I'm an very,very nice SelectButton. If you click me, you can choose some stuff..." 
   Width="190" 
-  Height="32" 
+  Height="31" 
   Canvas.Top="327"
   Canvas.Left="60">
     </ctrl:GUISelectButton>
@@ -145,6 +150,14 @@
       Canvas.Top="380"
       Canvas.Left="60"
       Style="{DynamicResource GUIProgressBar}"
+      />
+
+    <ctrl:GUICheckMark 
+  Canvas.Top="420"
+  Canvas.Left="60" 
+  Width="190"
+  FontSize="18"
+  Text="Checkmark-Test"
       />
     
   </Canvas>

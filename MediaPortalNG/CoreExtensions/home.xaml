@@ -6,8 +6,8 @@
   WindowTitle="Home"
   >
   
-  <Page.Resources>
- 
+  <Page.Resources>    
+     
     <!-- Items-Style -->
     <Style x:Key="MainMenuItemsSmall" TargetType="{x:Type ListBoxItem}">
       <Setter Property="Foreground" Value="Transparent"/>
@@ -254,6 +254,7 @@
       Tag="##id::1//##keycontrol::onleft:;onright:;onup:;ondown://##metadata::"
 />
 
+    
 
     <!-- template for panel in which all buttons should b fitted -->
     <Image
@@ -287,6 +288,7 @@
     </Image>
 
     <ctrl:GUIDateTime 
+      
       Grid.Row="2" 
       Grid.Column="0" 
       Canvas.Top="120"
@@ -295,17 +297,6 @@
       FontSize="18"
       Foreground="White"
       />
-    <ctrl:GUIFadelabel 
-     Canvas.Top="360"
-     Canvas.Left="40" 
-     Width="200"
-     Height="30" 
-     FontSize="18"
-     Foreground="White"
-     FrameTime="90"
-     Content=" Testing Fadelabel ... MediaPortal NG ..."
-      />
-
-
+ 
   </Canvas>
 </Page>

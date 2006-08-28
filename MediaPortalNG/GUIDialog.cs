@@ -71,6 +71,7 @@ namespace MediaPortal
 
         new public int ShowDialog()
         {
+            if (this.Owner == null) return -1;
             this.Owner.Opacity = 0.3f;
             bool val = (bool)base.ShowDialog();
             this.Owner.Opacity = 1.0f;

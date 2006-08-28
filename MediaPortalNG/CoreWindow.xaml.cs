@@ -48,6 +48,22 @@ namespace MediaPortal
  
         void Core_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
+           
+            if (e.Key == System.Windows.Input.Key.F8)
+            {
+                if (this.WindowState == WindowState.Maximized)
+                {
+                    this.WindowStyle = WindowStyle.None;
+                    this.WindowStyle = WindowStyle.SingleBorderWindow;
+                    this.ShowsNavigationUI = true;
+                }
+                else
+                {
+                    this.WindowState = WindowState.Maximized;
+                    this.WindowStyle = WindowStyle.None;
+                    this.ShowsNavigationUI = false;
+                }
+            }
             if (_home!=null)
             {
                 _home.HandleKeyDown(sender, e);

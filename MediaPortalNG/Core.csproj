@@ -57,6 +57,7 @@
     </Page>
     <Compile Include="GUIAnimation.cs" />
     <Compile Include="GUIButton.cs" />
+    <Compile Include="GUICheckMark.cs" />
     <Compile Include="GUIDateTime.cs" />
     <Compile Include="GUIFadelabel.cs" />
     <Compile Include="GUISelectButton.cs" />
