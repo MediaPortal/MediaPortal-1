@@ -19,6 +19,18 @@ namespace MediaPortal
 
         public GUITextboxScrollUp()
         {
+            string styleName = this.GetType().ToString() + "Style";
+            styleName = styleName.Replace("MediaPortal.", "");
+            object resource = null;
+            try
+            {
+                resource = this.FindResource(styleName);
+                if (resource != null)
+                {
+                    this.Style = resource as Style;
+                }
+            }
+            catch { }
             this.Opacity = 0;
 
             // start all actions after load is complete

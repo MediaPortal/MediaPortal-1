@@ -22,6 +22,18 @@ namespace MediaPortal
          
         public GUIButton()
         {
+            string styleName = this.GetType().ToString() + "Style";
+            styleName = styleName.Replace("MediaPortal.", "");
+            object resource = null;
+            try
+            {
+                resource = this.FindResource(styleName);
+                if (resource != null)
+                {
+                    this.Style = resource as Style;
+                }
+            }
+            catch { }
 
             this.MouseEnter += new MouseEventHandler(GUIButton_MouseEnter);
             this.MouseLeave += new MouseEventHandler(GUIButton_MouseLeave);
@@ -44,12 +56,7 @@ namespace MediaPortal
         }
 
         // no setting of an style is allowed
-        new public Style Style
-        {
-            get { return this.Style; }
-        }
-
-
+ 
         void GUIButton_Unloaded(object sender, RoutedEventArgs e)
         {
             AnimateEnd();
@@ -81,8 +88,11 @@ namespace MediaPortal
         void GUIButton_Loaded(object sender, RoutedEventArgs e)
         {
             Border b = (Border)VisualTreeHelper.GetChild(this, 0);
-            _scrollViewer = (ScrollViewer)VisualTreeHelper.GetChild(b, 0);
-
+            try
+            {
+                _scrollViewer = (ScrollViewer)VisualTreeHelper.GetChild(b, 0);
+            }
+            catch { }
             // prevent to select the scrollviewer
             _scrollViewer.IsEnabled = false;
             _scrollViewer.Focusable = false;

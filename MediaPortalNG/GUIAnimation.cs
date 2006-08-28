@@ -55,6 +55,19 @@ namespace MediaPortal
    
         public GUIAnimation()
         {
+            string styleName = this.GetType().ToString() + "Style";
+            styleName = styleName.Replace("MediaPortal.", "");
+            object resource = null;
+            try
+            {
+                resource = this.FindResource(styleName);
+                if (resource != null)
+                {
+                    this.Style = resource as Style;
+                }
+            }
+            catch { }
+
             _displayTime = 100;
             _restartAnimation = false;
             this.Loaded += new RoutedEventHandler(GUIAnimation_Loaded);

@@ -20,6 +20,18 @@ namespace MediaPortal
 
         public GUISelectButton()
         {
+            string styleName = this.GetType().ToString() + "Style";
+            styleName = styleName.Replace("MediaPortal.", "");
+            object resource = null;
+            try
+            {
+                resource = this.FindResource(styleName);
+                if (resource != null)
+                {
+                    this.Style = resource as Style;
+                }
+            }
+            catch { }
             _items = new System.Collections.ArrayList();
             _selectedItem = -1;
             InitializeCommands();

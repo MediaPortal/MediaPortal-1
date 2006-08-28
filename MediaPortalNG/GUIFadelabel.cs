@@ -19,6 +19,18 @@ namespace MediaPortal
 
         public GUIFadelabel()
         {
+            string styleName = this.GetType().ToString() + "Style";
+            styleName = styleName.Replace("MediaPortal.", "");
+            object resource = null;
+            try
+            {
+                resource = this.FindResource(styleName);
+                if (resource != null)
+                {
+                    this.Style = resource as Style;
+                }
+            }
+            catch { }
             // start all actions after load is complete
             this.Loaded += new RoutedEventHandler(GUIFadelabel_Loaded);
             this.Unloaded += new RoutedEventHandler(GUIFadelabel_Unloaded);

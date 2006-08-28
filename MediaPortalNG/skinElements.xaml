@@ -21,10 +21,166 @@
       <GradientStop Offset="0.995" Color="#FF0C7006"/>
     </LinearGradientBrush.GradientStops>
   </LinearGradientBrush>
+
+  <LinearGradientBrush x:Key="BlackBall" >
+    <LinearGradientBrush.GradientStops>
+      <GradientStop Color="#99222222" Offset="0" />
+      <GradientStop Color="#99BBBBBB" Offset="1" />
+    </LinearGradientBrush.GradientStops>
+  </LinearGradientBrush>
+
+  <LinearGradientBrush x:Key="WhiteBall" >
+    <LinearGradientBrush.GradientStops>
+      <GradientStop Color="#99BBBBBB" Offset="0" />
+      <GradientStop Color="#99222222" Offset="1" />
+    </LinearGradientBrush.GradientStops>
+  </LinearGradientBrush>
   
+  <RadialGradientBrush x:Key="BlueBall" GradientOrigin="0.5,0.5">
+    <RadialGradientBrush.GradientStops>
+      <GradientStop Color="LightBlue" Offset="0.25" />
+      <GradientStop Color="MediumBlue" Offset="1" />
+    </RadialGradientBrush.GradientStops>
+  </RadialGradientBrush>
    <!-- Skin BlueTwo -->
   
   <!-- Brushes -->
+
+  <DrawingBrush x:Key="ToggleOnGreenFocus" Viewport="0,0,1,1" >
+    <DrawingBrush.Drawing>
+      <DrawingGroup>
+        <DrawingGroup.Children>
+          <GeometryDrawing Brush="{DynamicResource GreenFill}">
+            <GeometryDrawing.Geometry>
+              <GeometryGroup>
+                <RectangleGeometry Rect="0 0 1 1" RadiusX="0.05" RadiusY="0.5"/>
+              </GeometryGroup>
+            </GeometryDrawing.Geometry>
+          </GeometryDrawing>
+          <GeometryDrawing Brush="{DynamicResource WhiteBall}">
+            <GeometryDrawing.Geometry>
+              <GeometryGroup>
+                <EllipseGeometry Center="0.9 0.5" RadiusX="0.0421" RadiusY="0.25"/>
+              </GeometryGroup>
+            </GeometryDrawing.Geometry>
+          </GeometryDrawing>
+          <GeometryDrawing Brush="{DynamicResource BlackBall}">
+            <GeometryDrawing.Geometry>
+              <GeometryGroup>
+                <EllipseGeometry Center="0.9 0.5" RadiusX="0.031" RadiusY="0.1875"/>
+              </GeometryGroup>
+            </GeometryDrawing.Geometry>
+          </GeometryDrawing>
+          <GeometryDrawing Brush="{DynamicResource BlueBall}">
+            <GeometryDrawing.Geometry>
+              <GeometryGroup>
+                <EllipseGeometry Center="0.9 0.5" RadiusX="0.026" RadiusY="0.1562"/>
+              </GeometryGroup>
+            </GeometryDrawing.Geometry>
+          </GeometryDrawing>
+        </DrawingGroup.Children>
+      </DrawingGroup>
+    </DrawingBrush.Drawing>
+  </DrawingBrush>
+
+  <DrawingBrush x:Key="ToggleOffGreenFocus" Viewport="0,0,1,1" >
+    <DrawingBrush.Drawing>
+      <DrawingGroup>
+        <DrawingGroup.Children>
+          <GeometryDrawing Brush="{DynamicResource GreenFill}">
+            <GeometryDrawing.Geometry>
+              <GeometryGroup>
+                <RectangleGeometry Rect="0 0 1 1" RadiusX="0.05" RadiusY="0.5"/>
+              </GeometryGroup>
+            </GeometryDrawing.Geometry>
+          </GeometryDrawing>
+          <GeometryDrawing Brush="{DynamicResource WhiteBall}">
+            <GeometryDrawing.Geometry>
+              <GeometryGroup>
+                <EllipseGeometry Center="0.9 0.5" RadiusX="0.0421" RadiusY="0.25"/>
+              </GeometryGroup>
+            </GeometryDrawing.Geometry>
+          </GeometryDrawing>
+          <GeometryDrawing Brush="{DynamicResource BlackBall}">
+            <GeometryDrawing.Geometry>
+              <GeometryGroup>
+                <EllipseGeometry Center="0.9 0.5" RadiusX="0.031" RadiusY="0.1875"/>
+              </GeometryGroup>
+            </GeometryDrawing.Geometry>
+          </GeometryDrawing>
+        </DrawingGroup.Children>
+      </DrawingGroup>
+    </DrawingBrush.Drawing>
+  </DrawingBrush>
+
+  <DrawingBrush x:Key="ToggleOnGreenNoFocus" Viewport="0,0,1,1" >
+    <DrawingBrush.Drawing>
+      <DrawingGroup>
+        <DrawingGroup.Children>
+          <GeometryDrawing Brush="#339999BB">
+            <GeometryDrawing.Geometry>
+              <GeometryGroup>
+                <RectangleGeometry Rect="0 0 1 1" RadiusX="0.05" RadiusY="0.5"/>
+              </GeometryGroup>
+            </GeometryDrawing.Geometry>
+          </GeometryDrawing>
+          <GeometryDrawing Brush="{DynamicResource WhiteBall}">
+            <GeometryDrawing.Geometry>
+              <GeometryGroup>
+                <EllipseGeometry Center="0.9 0.5" RadiusX="0.0421" RadiusY="0.25"/>
+              </GeometryGroup>
+            </GeometryDrawing.Geometry>
+          </GeometryDrawing>
+          <GeometryDrawing Brush="{DynamicResource BlackBall}">
+            <GeometryDrawing.Geometry>
+              <GeometryGroup>
+                <EllipseGeometry Center="0.9 0.5" RadiusX="0.031" RadiusY="0.1875"/>
+              </GeometryGroup>
+            </GeometryDrawing.Geometry>
+          </GeometryDrawing>
+          <GeometryDrawing Brush="{DynamicResource BlueBall}">
+            <GeometryDrawing.Geometry>
+              <GeometryGroup>
+                <EllipseGeometry Center="0.9 0.5" RadiusX="0.026" RadiusY="0.1562"/>
+              </GeometryGroup>
+            </GeometryDrawing.Geometry>
+          </GeometryDrawing>
+        </DrawingGroup.Children>
+      </DrawingGroup>
+    </DrawingBrush.Drawing>
+  </DrawingBrush>
+
+  <DrawingBrush x:Key="ToggleOffGreenNoFocus" Viewport="0,0,1,1" >
+    <DrawingBrush.Drawing>
+      <DrawingGroup>
+        <DrawingGroup.Children>
+          <GeometryDrawing Brush="#339999BB">
+            <GeometryDrawing.Geometry>
+              <GeometryGroup>
+                <RectangleGeometry Rect="0 0 1 1" RadiusX="0.05" RadiusY="0.5"/>
+              </GeometryGroup>
+            </GeometryDrawing.Geometry>
+          </GeometryDrawing>
+          <GeometryDrawing Brush="{DynamicResource WhiteBall}">
+            <GeometryDrawing.Geometry>
+              <GeometryGroup>
+                <EllipseGeometry Center="0.9 0.5" RadiusX="0.0421" RadiusY="0.25"/>
+              </GeometryGroup>
+            </GeometryDrawing.Geometry>
+          </GeometryDrawing>
+          <GeometryDrawing Brush="{DynamicResource BlackBall}">
+            <GeometryDrawing.Geometry>
+              <GeometryGroup>
+                <EllipseGeometry Center="0.9 0.5" RadiusX="0.031" RadiusY="0.1875"/>
+              </GeometryGroup>
+            </GeometryDrawing.Geometry>
+          </GeometryDrawing>
+        </DrawingGroup.Children>
+      </DrawingGroup>
+    </DrawingBrush.Drawing>
+  </DrawingBrush>
+
+
   <DrawingBrush x:Key="GreenFocus" Viewport="0,0,1,1" >
     <DrawingBrush.Drawing>
       <DrawingGroup>
@@ -88,7 +244,7 @@
     <GradientStop Offset="0.894" Color="#FFFFFFFF"/>
   </LinearGradientBrush>
   <!-- GUI Elements -->
-  <Style x:Key="GUIButtonStyle" TargetType="{x:Type Button}">
+  <Style x:Key="ButtonStyle" TargetType="{x:Type Button}">
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="{x:Type Button}">

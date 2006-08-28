@@ -51,21 +51,16 @@
                     <Condition Property="IsMouseOver" Value="true"/>
                     <Condition Property="IsChecked" Value="true"/>
                   </MultiTrigger.Conditions>
-                  <Setter TargetName="Border" Property="Background">
-                    <Setter.Value>
-                      <ImageBrush ImageSource="{DynamicResource togglebutton-on-focus.png}"/>
-                    </Setter.Value>
-                  </Setter>
+                  <Setter TargetName="Border" Property="Background" Value="{DynamicResource ToggleOnGreenFocus}">
+                      </Setter>
                 </MultiTrigger>
                 <MultiTrigger>
                   <MultiTrigger.Conditions>
                     <Condition Property="IsMouseOver" Value="true"/>
                     <Condition Property="IsChecked" Value="false"/>
                   </MultiTrigger.Conditions>
-                  <Setter TargetName="Border" Property="Background">
-                    <Setter.Value>
-                      <ImageBrush ImageSource="{DynamicResource togglebutton-off-focus.png}"/>
-                    </Setter.Value>
+                  <Setter TargetName="Border" Property="Background" Value="{DynamicResource ToggleOffGreenFocus}">
+          
                   </Setter>
                 </MultiTrigger>
                 <MultiTrigger>
@@ -73,10 +68,8 @@
                     <Condition Property="IsMouseOver" Value="false"/>
                     <Condition Property="IsChecked" Value="true"/>
                   </MultiTrigger.Conditions>
-                  <Setter TargetName="Border" Property="Background">
-                    <Setter.Value>
-                      <ImageBrush ImageSource="{DynamicResource togglebutton-on-nofocus.png}"/>
-                    </Setter.Value>
+                  <Setter TargetName="Border" Property="Background" Value="{DynamicResource ToggleOnGreenNoFocus}">
+
                   </Setter>
                 </MultiTrigger>
                 <MultiTrigger>
@@ -84,11 +77,8 @@
                     <Condition Property="IsMouseOver" Value="false"/>
                     <Condition Property="IsChecked" Value="false"/>
                   </MultiTrigger.Conditions>
-                  <Setter TargetName="Border" Property="Background">
-                    <Setter.Value>
-                      <ImageBrush ImageSource="{DynamicResource togglebutton-off-nofocus.png}"/>
-                    </Setter.Value>
-                  </Setter>
+                  <Setter TargetName="Border" Property="Background" Value="{DynamicResource ToggleOffGreenNoFocus}">
+                 </Setter>
                 </MultiTrigger>
                 <Trigger Property="IsEnabled" Value="false">
                   <Setter TargetName="Border" Property="Background" Value="Yellow" />
@@ -160,7 +150,7 @@
           CornerRadius="0" 
           BorderThickness="0"
           BorderBrush="Transparent">
-            <Button Style="{DynamicResource GUIButtonStyle}">
+            <Button Style="{DynamicResource ButtonStyle}">
               <Grid >
                 <Grid.ColumnDefinitions>
                   <ColumnDefinition Width="16"/>
@@ -280,21 +270,12 @@
         <Setter Property="Template">
           <Setter.Value>
             <ControlTemplate TargetType="{x:Type ctrl:GUICheckMark}">
-              <Grid Margin="3">
-                <Grid.RowDefinitions>
-                  <RowDefinition/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                  <ColumnDefinition/>
-                  <ColumnDefinition Width="16"/>
-                </Grid.ColumnDefinitions>
-                <Border BorderThickness="0" BorderBrush="Transparent" Margin="2" VerticalAlignment="Center" HorizontalAlignment="Stretch">
-                  <DockPanel>
-                    <TextBlock Grid.Column="0" Text="{TemplateBinding Text}" TextAlignment="Left" Padding="0"/>
-                    <Image Name="CheckMarkIndicator" Width="16" Height="16" Source="{DynamicResource check-boxNF.png}"/>
-                  </DockPanel>
-                </Border>
-              </Grid>
+              <Border BorderThickness="0" BorderBrush="Transparent" Margin="2" VerticalAlignment="Center" HorizontalAlignment="Stretch">
+                <DockPanel>
+                  <Image Name="CheckMarkIndicator" Width="16" Height="16" Source="{DynamicResource check-boxNF.png}"/>
+                  <TextBlock Margin="6" Text="{TemplateBinding Text}" TextAlignment="Left"/>
+                </DockPanel>
+              </Border>
               <ControlTemplate.Triggers>
                 <Trigger Property="IsChecked" Value="true">
                   <Setter TargetName="CheckMarkIndicator" Property="Source" Value="{DynamicResource check-box.png}">

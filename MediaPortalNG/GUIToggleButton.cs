@@ -25,6 +25,19 @@ namespace MediaPortal
         public GUIToggleButton()
         {
 
+            string styleName = this.GetType().ToString() + "Style";
+            styleName = styleName.Replace("MediaPortal.", "");
+            object resource = null;
+            try
+            {
+                resource = this.FindResource(styleName);
+                if (resource != null)
+                {
+                    this.Style = resource as Style;
+                }
+            }
+            catch { }
+
             this.MouseEnter += new MouseEventHandler(GUIToggleButton_MouseEnter);
             this.MouseLeave += new MouseEventHandler(GUIToggleButton_MouseLeave);
             // start all actions after load is complete
@@ -46,11 +59,7 @@ namespace MediaPortal
         }
 
         // no setting of an style is allowed
-        new public Style Style
-        {
-            get { return this.Style; }
-        }
-
+ 
 
         void GUIToggleButton_Unloaded(object sender, RoutedEventArgs e)
         {

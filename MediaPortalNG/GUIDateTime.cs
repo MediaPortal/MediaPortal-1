@@ -28,6 +28,18 @@ namespace MediaPortal
 
         public GUIDateTime()
         {
+            string styleName = this.GetType().ToString() + "Style";
+            styleName = styleName.Replace("MediaPortal.", "");
+            object resource = null;
+            try
+            {
+                resource = this.FindResource(styleName);
+                if (resource != null)
+                {
+                    this.Style = resource as Style;
+                }
+            }
+            catch { }
             _dateTime = new DateTime();
             UpdateValue();
         }
