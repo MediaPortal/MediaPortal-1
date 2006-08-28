@@ -483,7 +483,7 @@ namespace TvPlugin
           VirtualCard card;
           if (RemoteControl.Instance.IsRecordingSchedule(rec.IdSchedule, out card))
           {
-            _log.Info("recording:{0}, {1} ", rec.IdSchedule, card.Name);
+            Log.Info("recording:{0}, {1} ", rec.IdSchedule, card.Name);
             if (rec.ScheduleType != (int)ScheduleRecordingType.Once)
               item.PinImage = Thumbs.TvRecordingSeriesIcon;
             else
@@ -491,7 +491,7 @@ namespace TvPlugin
           }
           else
           {
-            _log.Info("not recording:{0}", rec.IdSchedule);
+            Log.Info("not recording:{0}", rec.IdSchedule);
             //@
             /*if (ConflictManager.IsConflict(rec))
             {

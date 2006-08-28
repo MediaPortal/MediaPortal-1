@@ -220,7 +220,7 @@ namespace TvPlugin
         bmpTeletextPage = _renderer.RenderPage(page, acutalPageNumber, actualSubPageNumber);
         Redraw();
         _waiting = false;
-        _log.Info("dvb-teletext: select page {0:X} / subpage {1:X}", acutalPageNumber, actualSubPageNumber);
+        Log.Info("dvb-teletext: select page {0:X} / subpage {1:X}", acutalPageNumber, actualSubPageNumber);
       }
       else
       {
@@ -275,7 +275,7 @@ namespace TvPlugin
           actualSubPageNumber = 0;
           GetNewPage();
           Redraw();
-          _log.Info("dvb-teletext: select page {0:X} / subpage {1:X}", acutalPageNumber, actualSubPageNumber);
+          Log.Info("dvb-teletext: select page {0:X} / subpage {1:X}", acutalPageNumber, actualSubPageNumber);
           inputLine = "";
           return;
         }
@@ -295,7 +295,7 @@ namespace TvPlugin
           {
             GetNewPage();
             Redraw();
-            _log.Info("dvb-teletext: select page {0:X} / subpage {1:X}", acutalPageNumber, actualSubPageNumber);
+            Log.Info("dvb-teletext: select page {0:X} / subpage {1:X}", acutalPageNumber, actualSubPageNumber);
             inputLine = "";
             return;
           }
@@ -310,7 +310,7 @@ namespace TvPlugin
           {
             GetNewPage();
             Redraw();
-            _log.Info("dvb-teletext: select page {0:X} / subpage {1:X}", acutalPageNumber, actualSubPageNumber);
+            Log.Info("dvb-teletext: select page {0:X} / subpage {1:X}", acutalPageNumber, actualSubPageNumber);
             inputLine = "";
             return;
           }
@@ -340,7 +340,7 @@ namespace TvPlugin
             GetNewPage();
             Redraw();
           }
-          _log.Info("dvb-teletext: select page {0:X} / subpage {1:X}", acutalPageNumber, actualSubPageNumber);
+          Log.Info("dvb-teletext: select page {0:X} / subpage {1:X}", acutalPageNumber, actualSubPageNumber);
           inputLine = "";
 
         }
@@ -396,13 +396,13 @@ namespace TvPlugin
       if (actualSubPageNumber >  NumberOfSubpages)
         actualSubPageNumber = 0;
 
-      _log.Info("dvb-teletext page updated. {0:X}/{1:X} total:{2} rotspeed:{3}", acutalPageNumber, actualSubPageNumber, NumberOfSubpages, tsRotation.TotalMilliseconds);
+      Log.Info("dvb-teletext page updated. {0:X}/{1:X} total:{2} rotspeed:{3}", acutalPageNumber, actualSubPageNumber, NumberOfSubpages, tsRotation.TotalMilliseconds);
       GetNewPage();
       Redraw();
     }
     void Redraw()
     {
-      _log.Info("dvb-teletext redraw()");
+      Log.Info("dvb-teletext redraw()");
       try
       {
 
@@ -441,7 +441,7 @@ namespace TvPlugin
       }
       catch (Exception ex)
       {
-        _log.Error(ex);
+        Log.Error(ex);
       }
     }
 

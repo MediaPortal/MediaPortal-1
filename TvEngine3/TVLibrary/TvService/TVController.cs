@@ -1763,7 +1763,7 @@ namespace TvService
                     Log.Write("timeshifting fileSize:{0}", fileSize);
                   }
                   fileSize = newfileSize;
-                  if (fileSize >= 4 * 1024) // 3meg ..
+                  if (fileSize >= 300 * 1024) // 300kb ..
                   {
                     TimeSpan ts = DateTime.Now - timeStart;
                     Log.Write("timeshifting fileSize:{0} {1}", fileSize, ts.TotalMilliseconds);

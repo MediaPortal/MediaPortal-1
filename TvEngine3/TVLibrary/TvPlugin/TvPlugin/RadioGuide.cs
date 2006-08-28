@@ -58,7 +58,7 @@ namespace TvPlugin
     }
     public override void OnAdded()
     {
-      _log.Info("TVHome:OnAdded");
+      Log.Info("TVHome:OnAdded");
       GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_RADIO_GUIDE, this);
     }
     public override bool Init()

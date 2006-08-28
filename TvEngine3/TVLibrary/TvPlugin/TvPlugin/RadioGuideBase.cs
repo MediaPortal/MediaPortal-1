@@ -194,7 +194,7 @@ namespace TvPlugin
 
     protected void Initialize()
     {
-      _log.Info("StartImportXML: Initialize");
+      Log.Info("StartImportXML: Initialize");
       _tvGuideFileName = "xmltv";
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {

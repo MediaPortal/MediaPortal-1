@@ -2330,7 +2330,7 @@ namespace TvPlugin
                 {
                   recMatchFound = true;
 
-                  _log.Info("TVGuide: clicked on a currently running recording");
+                  Log.Info("TVGuide: clicked on a currently running recording");
                   GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
                   if (dlg == null)
                     return;
@@ -2345,7 +2345,7 @@ namespace TvPlugin
                     return;
                   if (_recordingList != null)
                   {
-                    _log.Info("TVGuide: Found current program {0} in recording list", _currentTitle);
+                    Log.Info("TVGuide: Found current program {0} in recording list", _currentTitle);
                     switch (dlg.SelectedId)
                     {
                       case 979: // Play recording from beginning                          
@@ -2353,7 +2353,7 @@ namespace TvPlugin
                         //string filename = Recorder.GetRecordingFileName(rec);
                         //if (filename != String.Empty)
                         //{
-                        //  _log.Info("TVGuide: Play recording {0} from start", _currentTitle);
+                        //  Log.Info("TVGuide: Play recording {0} from start", _currentTitle);
                         //  g_Player.Play(filename);
                         //  if (g_Player.Playing)
                         //  {
@@ -2367,7 +2367,7 @@ namespace TvPlugin
                         TVHome.ViewChannel(rec.Channel.Name);
                         if (g_Player.Playing)
                         {
-                          _log.Info("TVGuide: Show recording {0} at live point", _currentTitle);
+                          Log.Info("TVGuide: Show recording {0} at live point", _currentTitle);
                           g_Player.SeekAsolutePercentage(99);
                         }
                         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
@@ -2375,7 +2375,7 @@ namespace TvPlugin
                     }
                   }
                   else
-                    _log.Info("EPG: _recordingList was not available");
+                    Log.Info("EPG: _recordingList was not available");
                 }
               }
               if (recMatchFound == false)
