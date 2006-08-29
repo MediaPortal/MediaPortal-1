@@ -198,7 +198,7 @@ namespace TvLibrary.Implementations.DVB.Structures
     {
       if (buf.Length < 13)
       {
-        //Log.Write("decodePMTTable() len < 13 len={0}", buf.Length);
+        //Log.Log.WriteFile("decodePMTTable() len < 13 len={0}", buf.Length);
         return;
       }
       int table_id = buf[0];

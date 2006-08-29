@@ -1156,6 +1156,8 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.WriteFile("    pmt pid:0x{0:X}", info.network_pmt_PID);
         foreach (PidInfo pmtData in info.pids)
         {
+          Log.Log.WriteFile("  pid:{0:X} type::{1} audio:{2} video:{3} ac3:{4} txt:{5} sub:{6}",
+              pmtData.pid, pmtData.stream_type, pmtData.isAudio, pmtData.isVideo, pmtData.isAC3Audio, pmtData.isTeletext, pmtData.isDVBSubtitle);
           if (pmtData.pid == 0 || pmtData.pid > 0x1fff) continue;
           if (pmtData.isTeletext)
           {
@@ -1182,6 +1184,7 @@ namespace TvLibrary.Implementations.DVB
 
             if (_currentAudioStream.Pid == pmtData.pid)
             {
+              Log.Log.WriteFile("    map audio pid:0x{0:X}", pmtData.pid);
               hwPids.Add((ushort)pmtData.pid);
               writer.SetAudioPid((short)pmtData.pid);
             }
@@ -1189,6 +1192,7 @@ namespace TvLibrary.Implementations.DVB
 
           if (pmtData.isVideo)
           {
+            Log.Log.WriteFile("    map video pid:0x{0:X}", pmtData.pid);
             hwPids.Add((ushort)pmtData.pid);
             writer.SetVideoPid((short)pmtData.pid);
             if (info.pcr_pid > 0 && info.pcr_pid != pmtData.pid)
@@ -2187,7 +2191,6 @@ namespace TvLibrary.Implementations.DVB
             {
               if (_pmtVersion != version)
               {
-
                 _channelInfo = new ChannelInfo();
                 _channelInfo.DecodePmt(pmt);
                 _channelInfo.network_pmt_PID = channel.PmtPid;
