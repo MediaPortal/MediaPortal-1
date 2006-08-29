@@ -293,7 +293,8 @@ int CMultiplexer::SplitPesPacket(int streamId,byte* header, int headerlen, byte*
 		}
 		else
 		{	
-				//audio			
+			//audio			
+			WritePackHeader();
 			int rest = 0x7e9-sectionLength;
 			if (rest < 0xe0)
 			{
@@ -324,6 +325,17 @@ int CMultiplexer::SplitPesPacket(int streamId,byte* header, int headerlen, byte*
 				m_pesBuffer[8] = 0;
 				m_pCallback->Write(m_pesBuffer, 9);
 				m_pCallback->Write(pesPacket, sectionLength);
+				
+				//write padding stream;
+				memset(m_pesBuffer,0xff,0x800);
+				int rest = 0x7e9-sectionLength;
+				m_pesBuffer[0] = 0;
+				m_pesBuffer[1] = 0;
+				m_pesBuffer[2] = 1;
+				m_pesBuffer[3] = 0xbe;
+				m_pesBuffer[4] = ((rest-6)>>8)&0xff;
+				m_pesBuffer[5] = ((rest-6)&0xff);
+				m_pCallback->Write(m_pesBuffer, rest);
 			}
 		}
 		return sectionLength;
