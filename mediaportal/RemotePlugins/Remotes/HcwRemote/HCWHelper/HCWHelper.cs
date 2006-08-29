@@ -35,6 +35,7 @@ using System.IO;
 using System.Diagnostics;
 using Microsoft.Win32;
 using MediaPortal.GUI.Library;
+using MediaPortal.Util;
 
 namespace MediaPortal.InputDevices.HcwHelper
 {
@@ -59,7 +60,7 @@ namespace MediaPortal.InputDevices.HcwHelper
     {
       InitializeComponent();
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         logVerbose = xmlreader.GetValueAsBool("remote", "HCWVerboseLog", false);
         port = xmlreader.GetValueAsInt("remote", "HCWHelperPort", 2110);
