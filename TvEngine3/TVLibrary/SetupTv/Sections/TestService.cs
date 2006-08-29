@@ -216,16 +216,10 @@ namespace SetupTv.Sections
           if (card.IsGrabbingEpg) tmp = "Grabbing EPG";
           item.SubItems[2].Text = tmp;
 
-          if (tmp == "idle")
-          {
-            item.SubItems[4].Text = "";
-          }
-          else
-          {
-            if (card.IsScrambled) tmp = "yes";
-            else tmp = "no";
-            item.SubItems[4].Text = tmp;
-          }
+
+          if (card.IsScrambled) tmp = "yes";
+          else tmp = "no";
+          item.SubItems[4].Text = tmp;
 
           IChannel channel = card.Channel;
           if (channel == null)

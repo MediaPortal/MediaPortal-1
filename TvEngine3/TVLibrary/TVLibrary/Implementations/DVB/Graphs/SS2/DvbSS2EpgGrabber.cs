@@ -20,7 +20,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// ctor
     /// </summary>
-    /// <param name="card"></param>
+    /// <param name="card">The card.</param>
     public DvbSs2EpgGrabber(TvCardDvbSS2 card)
     {
       _card = (TvCardDvbSS2)card;
@@ -36,6 +36,11 @@ namespace TvLibrary.Implementations.DVB
       _card.GrabEpg();
     }
 
+    /// <summary>
+    /// _card_s the on epg received.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="epg">The epg.</param>
     void _card_OnEpgReceived(object sender, List<EpgChannel> epg)
     {
       _card.OnEpgReceived -= new TvCardDvbSS2.EpgProcessedHandler(_card_OnEpgReceived);

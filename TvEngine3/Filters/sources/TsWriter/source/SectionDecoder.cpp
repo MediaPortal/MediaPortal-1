@@ -75,16 +75,18 @@ void CSectionDecoder::OnTsPacket(byte* tsPacket)
   CTsHeader header(tsPacket);
   if (header.Pid != m_pid) return;
     
+  //LogDebug(" section decoder pid:%x ontspacket payloadunitstart:%d",m_pid,header.PayloadUnitStart);
 	if (header.PayloadUnitStart)
 	{
 		int start=header.PayLoadStart+1;
 		int table_id = tsPacket[start];
-		if (table_id != m_tableId) return ;
 		
 		int section_syntax_indicator = (tsPacket[start+1]>>7) & 1;
-		if (section_syntax_indicator!=1) return;
 		int current_next_indicator = tsPacket[start+5] & 1;
+   // LogDebug("  tableid:%x si:%x cni:%x",table_id,section_syntax_indicator,current_next_indicator);
 		if (current_next_indicator==0)  return;
+		if (table_id != m_tableId) return ;
+		if (section_syntax_indicator!=1) return;
 
 		int section_length = ((tsPacket[start+1]& 0xF)<<8) + tsPacket[start+2];
 		int transport_stream_id = (tsPacket[start+3]<<8)+tsPacket[start+4];
@@ -111,6 +113,7 @@ void CSectionDecoder::OnTsPacket(byte* tsPacket)
 
 		if (m_section.BufferPos+188>=MAX_SECTION_LENGTH)
 		{
+      LogDebug("section decoder:section length to large pid:%x table:%x", m_pid,m_tableId);
 			return;
 		}
     memcpy(&m_section.Data[m_section.BufferPos], tsPacket, 188);
@@ -131,6 +134,7 @@ void CSectionDecoder::OnTsPacket(byte* tsPacket)
 		if (m_section.BufferPos==0) return;//wait for payloadunit start...
 		if (m_section.SectionPos>=m_section.SectionLength) 
     {
+      LogDebug("section decoder:section length to large2 pid:%x table:%x", m_pid,m_tableId);
       m_section.BufferPos=0;
       return;
     }
@@ -140,10 +144,12 @@ void CSectionDecoder::OnTsPacket(byte* tsPacket)
 		
 		if (m_section.BufferPos+len>=MAX_SECTION_LENGTH)
 		{
+      LogDebug("section decoder:section length to large3 pid:%x table:%x", m_pid,m_tableId);
 			return;
 		}
 		if (len <=0)
 		{
+      LogDebug("section decoder:section len < 0 pid:%x table:%x", m_pid,m_tableId);
 			return;
 		}
 		memcpy(&m_section.Data[m_section.BufferPos], &tsPacket[start], len);

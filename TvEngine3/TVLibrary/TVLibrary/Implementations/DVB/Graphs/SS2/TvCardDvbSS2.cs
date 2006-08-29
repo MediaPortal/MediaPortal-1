@@ -387,7 +387,14 @@ namespace TvLibrary.Implementations.DVB
       if (!CheckThreadId()) return;
       FilterState state;
       (_graphBuilder as IMediaControl).GetState(10, out state);
-      if (state == FilterState.Running) return;
+      if (state == FilterState.Running)
+      {
+        Log.Log.WriteFile("ss2:RunGraph already running");
+        DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
+        SetAnalyzerMapping(channel.PmtPid);
+        _pmtVersion = -1;
+        return;
+      }
 
       Log.Log.WriteFile("ss2:RunGraph");
       _teletextDecoder.ClearBuffer();
@@ -416,8 +423,8 @@ namespace TvLibrary.Implementations.DVB
 
       _epgGrabbing = false;
       _dateTimeShiftStarted = DateTime.Now;
-      DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
-      SetAnalyzerMapping(channel.PmtPid);
+      DVBBaseChannel dvbChannel = _currentChannel as DVBBaseChannel;
+      SetAnalyzerMapping(dvbChannel.PmtPid);
       _pmtTimer.Enabled = true;
       _graphRunning = true;
 
@@ -675,8 +682,11 @@ namespace TvLibrary.Implementations.DVB
           return;
         }
         //do grab epg, pat,sdt or nit when not timeshifting
-        _interfacePmtGrabber.SetCallBack(this);
-        _interfacePmtGrabber.SetPmtPid(pmtPid);
+        if (pmtPid > 0)
+        {
+          _interfacePmtGrabber.SetCallBack(this);
+          _interfacePmtGrabber.SetPmtPid(pmtPid);
+        }
         Log.Log.WriteFile("ss2:SetAnalyzerMapping done");
       }
       catch (Exception ex)
@@ -1272,17 +1282,19 @@ namespace TvLibrary.Implementations.DVB
       }
       DVBSChannel dvbsChannel = channel as DVBSChannel;
       _hasTeletext = false;
-
-      if (dvbsChannel == null)
+      if (IsReceivingAudioVideo == false)
       {
-        Log.Log.WriteFile("Channel is not a DVBS channel!!! {0}", channel.GetType().ToString());
-        return false;
-      }
+        if (dvbsChannel == null)
+        {
+          Log.Log.WriteFile("Channel is not a DVBS channel!!! {0}", channel.GetType().ToString());
+          return false;
+        }
 
-      DVBSChannel oldChannel = _currentChannel as DVBSChannel;
-      if (_currentChannel != null)
-      {
-        if (oldChannel.Equals(channel)) return true;
+        DVBSChannel oldChannel = _currentChannel as DVBSChannel;
+        if (_currentChannel != null)
+        {
+          if (oldChannel.Equals(channel)) return true;
+        }
       }
       _currentChannel = channel;
       if (_graphState == GraphState.Idle)

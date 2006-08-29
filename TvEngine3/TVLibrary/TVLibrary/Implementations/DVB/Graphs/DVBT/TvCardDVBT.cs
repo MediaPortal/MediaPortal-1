@@ -25,15 +25,25 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     #region ctor
+    /// <summary>
+    /// Initializes a new instance of the <see cref="T:TvCardDVBT"/> class.
+    /// </summary>
+    /// <param name="device">The device.</param>
     public TvCardDVBT(DsDevice device)
     {
       _device = device;
       _name = device.Name;
       _devicePath = device.DevicePath;
+      BuildGraph();
+      RunGraph();
+      StopGraph();
     }
     #endregion
 
     #region graphbuilding
+    /// <summary>
+    /// Builds the graph.
+    /// </summary>
     public void BuildGraph()
     {
       try
@@ -73,6 +83,9 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
+    /// <summary>
+    /// Creates the tuning space.
+    /// </summary>
     protected void CreateTuningSpace()
     {
       Log.Log.WriteFile("CreateTuningSpace()");
@@ -134,6 +147,10 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     #region properties
+    /// <summary>
+    /// Gets/sets the card name
+    /// </summary>
+    /// <value></value>
     public string Name
     {
       get
@@ -146,6 +163,10 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
+    /// <summary>
+    /// gets the current filename used for recording
+    /// </summary>
+    /// <value></value>
     public string FileName
     {
       get
@@ -153,6 +174,10 @@ namespace TvLibrary.Implementations.DVB
         return _recordingFileName;
       }
     }
+    /// <summary>
+    /// returns true if card is currently recording
+    /// </summary>
+    /// <value></value>
     public bool IsRecording
     {
       get
@@ -160,6 +185,10 @@ namespace TvLibrary.Implementations.DVB
         return (_graphState == GraphState.Recording);
       }
     }
+    /// <summary>
+    /// returns true if card is currently timeshifting
+    /// </summary>
+    /// <value></value>
     public bool IsTimeShifting
     {
       get
@@ -170,12 +199,22 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     #region tuning & recording
+    /// <summary>
+    /// tune the card to the channel specified by IChannel
+    /// </summary>
+    /// <param name="channel">channel to tune</param>
+    /// <returns></returns>
     public bool TuneScan(IChannel channel)
     {
       bool result = Tune(channel);
       RunGraph();
       return result;
     }
+    /// <summary>
+    /// Tunes the specified channel.
+    /// </summary>
+    /// <param name="channel">The channel.</param>
+    /// <returns></returns>
     public bool Tune(IChannel channel)
     {
       Log.Log.WriteFile("dvbt:  Tune:{0}", channel);
@@ -189,10 +228,14 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.WriteFile("Channel is not a DVBT channel!!! {0}", channel.GetType().ToString());
           return false;
         }
-        DVBTChannel oldChannel = _currentChannel as DVBTChannel;
-        if (_currentChannel != null)
+
+        if (IsReceivingAudioVideo == false)
         {
-          if (oldChannel.Equals(channel)) return true;
+          DVBTChannel oldChannel = _currentChannel as DVBTChannel;
+          if (_currentChannel != null)
+          {
+            if (oldChannel.Equals(channel)) return true;
+          }
         }
         if (_graphState == GraphState.Idle)
         {
@@ -222,6 +265,11 @@ namespace TvLibrary.Implementations.DVB
       }
       return true;
     }
+    /// <summary>
+    /// Starts timeshifting. Note card has to be tuned first
+    /// </summary>
+    /// <param name="fileName">filename used for the timeshiftbuffer</param>
+    /// <returns></returns>
     public bool StartTimeShifting(string fileName)
     {
       try
@@ -272,6 +320,10 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
+    /// <summary>
+    /// Stops timeshifting
+    /// </summary>
+    /// <returns></returns>
     public bool StopTimeShifting()
     {
       try
@@ -295,6 +347,13 @@ namespace TvLibrary.Implementations.DVB
       return true;
     }
 
+    /// <summary>
+    /// Starts recording
+    /// </summary>
+    /// <param name="recordingType">Recording type (content or reference)</param>
+    /// <param name="fileName">filename to which to recording should be saved</param>
+    /// <param name="startTime">time the recording should start (0=now)</param>
+    /// <returns></returns>
     public bool StartRecording(RecordingType recordingType, string fileName, long startTime)
     {
       try
@@ -324,6 +383,10 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
+    /// <summary>
+    /// Stop recording
+    /// </summary>
+    /// <returns></returns>
     public bool StopRecording()
     {
       try
@@ -344,6 +407,10 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     #region quality control
+    /// <summary>
+    /// Get/Set the quality
+    /// </summary>
+    /// <value></value>
     public IQuality Quality
     {
       get
@@ -354,6 +421,10 @@ namespace TvLibrary.Implementations.DVB
       {
       }
     }
+    /// <summary>
+    /// Property which returns true if card supports quality control
+    /// </summary>
+    /// <value></value>
     public bool SupportsQualityControl
     {
       get
@@ -364,6 +435,10 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     #region epg & scanning
+    /// <summary>
+    /// returns the ITVScanning interface used for scanning channels
+    /// </summary>
+    /// <value></value>
     public ITVScanning ScanningInterface
     {
       get
@@ -376,11 +451,24 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
 
+    /// <summary>
+    /// Returns a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
+    /// </summary>
+    /// <returns>
+    /// A <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
+    /// </returns>
     public override string ToString()
     {
       return _name;
     }
 
+    /// <summary>
+    /// Method to check if card can tune to the channel specified
+    /// </summary>
+    /// <param name="channel"></param>
+    /// <returns>
+    /// true if card can tune to the channel otherwise false
+    /// </returns>
     public bool CanTune(IChannel channel)
     {
       if ((channel as DVBTChannel) == null) return false;

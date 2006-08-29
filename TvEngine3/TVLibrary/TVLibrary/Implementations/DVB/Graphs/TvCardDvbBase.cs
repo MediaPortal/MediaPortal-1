@@ -131,6 +131,7 @@ namespace TvLibrary.Implementations.DVB
     DVBAudioStream _currentAudioStream;
 
 
+
     #region teletext
     protected bool _grabTeletext = false;
     protected bool _hasTeletext = false;
@@ -167,9 +168,13 @@ namespace TvLibrary.Implementations.DVB
       _packetHeader = new TSHelperTools.TSHeader();
       _tsHelper = new TSHelperTools();
       _channelInfo = new ChannelInfo();
- 
+
 
     }
+    /// <summary>
+    /// Checks the thread id.
+    /// </summary>
+    /// <returns></returns>
     protected bool CheckThreadId()
     {
       return true;
@@ -343,25 +348,23 @@ namespace TvLibrary.Implementations.DVB
       if (!CheckThreadId()) return;
       FilterState state;
       (_graphBuilder as IMediaControl).GetState(10, out state);
-      if (state == FilterState.Running) return;
-
+      if (state == FilterState.Running)
+      {
+        Log.Log.WriteFile("dvb:RunGraph: already running");
+        _pmtVersion = -1;
+        DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
+        if (channel != null)
+        {
+          SetAnalyzerMapping(channel.PmtPid);
+        }
+        return;
+      }
       Log.Log.WriteFile("dvb:RunGraph");
       _teletextDecoder.ClearBuffer();
       _pmtVersion = -1;
 
       int hr = 0;
-      //hr=_graphBuilder.SetDefaultSyncSource();
 
-      //Log.Log.WriteFile("SetSyncSource:{0:X}", hr);
-      /*
-      IReferenceClock clock;
-      hr = _filterMpeg2DemuxTs.GetSyncSource(out clock);
-      Log.Log.WriteFile("GetSyncSource from timeshifting mux:{0:X} {1}", hr, clock);
-      
-      IMediaFilter mediaFilter = _graphBuilder as IMediaFilter;
-      hr = mediaFilter.SetSyncSource(clock);
-      Log.Log.WriteFile("SetSyncSource:{0:X}", hr);
-      */
 
       hr = (_graphBuilder as IMediaControl).Run();
       if (hr < 0 || hr > 1)
@@ -372,8 +375,11 @@ namespace TvLibrary.Implementations.DVB
 
       _epgGrabbing = false;
       _dateTimeShiftStarted = DateTime.Now;
-      DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
-      SetAnalyzerMapping(channel.PmtPid);
+      DVBBaseChannel dvbChannel = _currentChannel as DVBBaseChannel;
+      if (dvbChannel != null)
+      {
+        SetAnalyzerMapping(dvbChannel.PmtPid);
+      }
       _pmtTimer.Enabled = true;
       _graphRunning = true;
 
@@ -655,12 +661,12 @@ namespace TvLibrary.Implementations.DVB
     {
       if (!CheckThreadId()) return;
       if (_filterMpeg2DemuxTif != null) return;
-      Log.Log.WriteFile("dvb:AddMPEG2DemuxFilter");
+      Log.Log.WriteFile("dvb:Add MPEG2 Demultiplexer filter");
       int hr = 0;
 
       _filterMpeg2DemuxTif = (IBaseFilter)new MPEG2Demultiplexer();
 
-      hr = _graphBuilder.AddFilter(_filterMpeg2DemuxTif, "TIF MPEG2 Demultiplexer");
+      hr = _graphBuilder.AddFilter(_filterMpeg2DemuxTif, "MPEG2-Demultiplexer");
       if (hr != 0)
       {
         Log.Log.WriteFile("dvb:AddMpeg2DemuxerTif returns:0x{0:X}", hr);
@@ -687,20 +693,24 @@ namespace TvLibrary.Implementations.DVB
       }
 
 #endif
+      Log.Log.WriteFile("dvb:add Inf Tee filter");
       _infTeeMain = (IBaseFilter)new InfTee();
-      hr = _graphBuilder.AddFilter(_infTeeMain, "Main Inf Tee");
+      hr = _graphBuilder.AddFilter(_infTeeMain, "Inf Tee");
       if (hr != 0)
       {
         Log.Log.WriteFile("dvb:Add main InfTee returns:0x{0:X}", hr);
         throw new TvException("Unable to add  mainInfTee");
       }
     }
+    /// <summary>
+    /// Connects the mpeg2 demuxers to main tee.
+    /// </summary>
     protected void ConnectMpeg2DemuxersToMainTee()
     {
       //multi demux
 
       //connect the inftee main -> TIF MPEG2 Demultiplexer
-      Log.Log.WriteFile("dvb:connect mpeg 2 demuxers to maintee");
+      Log.Log.WriteFile("dvb:connect mpeg-2 demuxer to maintee");
       IPin mainTeeOut = DsFindPin.ByDirection(_infTeeMain, PinDirection.Output, 0);
       IPin demuxPinIn = DsFindPin.ByDirection(_filterMpeg2DemuxTif, PinDirection.Input, 0);
       int hr = _graphBuilder.Connect(mainTeeOut, demuxPinIn);
@@ -735,17 +745,47 @@ namespace TvLibrary.Implementations.DVB
 #endif
     }
 
+    /// <summary>
+    /// Gets the video audio pins.
+    /// </summary>
     protected void GetVideoAudioPins()
     {
 
       if (_filterTsAnalyzer == null)
       {
+        Log.Log.WriteFile("dvb:Add Mediaportal Ts Analyzer filter");
         _filterTsAnalyzer = (IBaseFilter)new MpTsAnalyzer();
-        _graphBuilder.AddFilter(_filterTsAnalyzer, "MediaPortal Ts Analyzer");
+        int hr = _graphBuilder.AddFilter(_filterTsAnalyzer, "MediaPortal Ts Analyzer");
+        if (hr != 0)
+        {
+          Log.Log.WriteFile("dvb:Add main Ts Analyzer returns:0x{0:X}", hr);
+          throw new TvException("Unable to add Ts Analyzer filter");
+        }
         IPin pinTee = DsFindPin.ByDirection(_infTeeMain, PinDirection.Output, 1);
+        if (pinTee == null)
+        {
+          if (hr != 0)
+          {
+            Log.Log.WriteFile("dvb:unable to find pin#2 on inftee filter");
+            throw new TvException("unable to find pin#2 on inftee filter");
+          }
+        }
         IPin pin = DsFindPin.ByDirection(_filterTsAnalyzer, PinDirection.Input, 0);
-        _graphBuilder.Connect(pinTee, pin);
+        if (pin == null)
+        {
+          if (hr != 0)
+          {
+            Log.Log.WriteFile("dvb:unable to find pin on ts analyzer filter");
+            throw new TvException("unable to find pin on ts analyzer filter");
+          }
+        }
+        hr = _graphBuilder.Connect(pinTee, pin);
         Release.ComObject("pinTsWriterIn", pin);
+        if (hr != 0)
+        {
+          Log.Log.WriteFile("dvb:unable to connect inftee to analyzer filter :0x{0:X}", hr);
+          throw new TvException("unable to connect inftee to analyzer filter");
+        }
 
         _interfaceChannelScan = (ITsChannelScan)_filterTsAnalyzer;
         _interfaceEpgGrabber = (ITsEpgScanner)_filterTsAnalyzer;
@@ -1077,6 +1117,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="pmtPid">pid of the PMT</param>
     protected void SetAnalyzerMapping(int pmtPid)
     {
+      if (pmtPid < 0) return;
       if (!CheckThreadId()) return;
       _interfacePmtGrabber.SetCallBack(this);
       _interfacePmtGrabber.SetPmtPid(pmtPid);
@@ -1551,6 +1592,11 @@ namespace TvLibrary.Implementations.DVB
       _interfaceEpgGrabber.GrabMHW();
       _epgGrabbing = true;
     }
+    /// <summary>
+    /// Gets the UTC.
+    /// </summary>
+    /// <param name="val">The val.</param>
+    /// <returns></returns>
     int getUTC(int val)
     {
       if ((val & 0xF0) >= 0xA0)
@@ -1780,6 +1826,11 @@ namespace TvLibrary.Implementations.DVB
     {
       _pmtTimer_Elapsed(null, null);
     }
+    /// <summary>
+    /// Handles the Elapsed event of the _pmtTimer control.
+    /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">The <see cref="T:System.Timers.ElapsedEventArgs"/> instance containing the event data.</param>
     void _pmtTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
       try
@@ -1823,6 +1874,10 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.WriteFile("dvb:{0}", ex.StackTrace);
       }
     }
+    /// <summary>
+    /// Sends the hw pids.
+    /// </summary>
+    /// <param name="pids">The pids.</param>
     public void SendHwPids(ArrayList pids)
     {
       if (System.IO.File.Exists("usehwpids.txt"))
@@ -1948,14 +2003,14 @@ namespace TvLibrary.Implementations.DVB
           {
             timeshift.RemovePesStream((short)_currentAudioStream.Pid);
           }
-          timeshift.AddPesStream((short)audioStream.Pid,true,false);
+          timeshift.AddPesStream((short)audioStream.Pid, true, false);
 
           ITsRecorder recorder = _filterTsAnalyzer as ITsRecorder;
           if (_currentAudioStream != null)
           {
             recorder.RemovePesStream((short)_currentAudioStream.Pid);
           }
-          recorder.AddPesStream((short)audioStream.Pid,true,false);
+          recorder.AddPesStream((short)audioStream.Pid, true, false);
         }
         _currentAudioStream = audioStream;
       }
@@ -2026,6 +2081,10 @@ namespace TvLibrary.Implementations.DVB
     {
       get { return -1; }
     }
+    /// <summary>
+    /// Gets the max channel.
+    /// </summary>
+    /// <value>The max channel.</value>
     public int MaxChannel
     {
       get { return -1; }
@@ -2075,11 +2134,15 @@ namespace TvLibrary.Implementations.DVB
         {
           writer.IsVideoEncrypted(out videoEncrypted);
         }
-        return ( (audioEncrypted==0) && (videoEncrypted==0) );
+        return ((audioEncrypted == 0) && (videoEncrypted == 0));
       }
     }
 
     #region IPMTCallback interface
+    /// <summary>
+    /// Called when tswriter.ax has received a new pmt
+    /// </summary>
+    /// <returns></returns>
     public int OnPMTReceived()
     {
       try

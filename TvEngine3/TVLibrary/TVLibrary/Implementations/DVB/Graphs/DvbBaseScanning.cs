@@ -44,17 +44,33 @@ namespace TvLibrary.Implementations.DVB
     bool _isAtsc = false;
     #endregion
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="T:DvbBaseScanning"/> class.
+    /// </summary>
+    /// <param name="card">The card.</param>
     public DvbBaseScanning(ITVCard card)
     {
       _card = card;
     }
+    /// <summary>
+    /// Sets the hw pids.
+    /// </summary>
+    /// <param name="pids">The pids.</param>
     protected virtual void SetHwPids(ArrayList pids)
     {
     }
+    /// <summary>
+    /// Gets the analyzer.
+    /// </summary>
+    /// <returns></returns>
     protected virtual ITsChannelScan GetAnalyzer()
     {
       return null;
     }
+    /// <summary>
+    /// Gets the pin analyzer SI.
+    /// </summary>
+    /// <value>The pin analyzer SI.</value>
     protected virtual IPin PinAnalyzerSI
     {
       get
@@ -62,25 +78,44 @@ namespace TvLibrary.Implementations.DVB
         return null;
       }
     }
+    /// <summary>
+    /// Creates the new channel.
+    /// </summary>
+    /// <param name="info">The info.</param>
+    /// <returns></returns>
     protected virtual IChannel CreateNewChannel(ChannelInfo info)
     {
       return null;
     }
+    /// <summary>
+    /// Resets the signal update.
+    /// </summary>
     protected virtual void ResetSignalUpdate()
     {
 
     }
+    /// <summary>
+    /// Resets this instance.
+    /// </summary>
     public void Reset()
     {
     }
 
 
+    /// <summary>
+    /// Disposes this instance.
+    /// </summary>
     public void Dispose()
     {
       if (_analyzer == null) return;
       //_analyzer.SetPidFilterCallback(null);
     }
 
+    /// <summary>
+    /// Scans the specified transponder.
+    /// </summary>
+    /// <param name="channel">The channel.</param>
+    /// <returns></returns>
     public List<IChannel> Scan(IChannel channel)
     {
       _card.IsScanning = true;
@@ -100,7 +135,10 @@ namespace TvLibrary.Implementations.DVB
       if (_card.IsTunerLocked == false)
       {
         Log.Log.WriteFile("Scan! no signal detected: locked:{0} signal level:{1} signal quality:{2}", _card.IsTunerLocked, _card.SignalLevel, _card.SignalQuality);
-        return null;
+        if ((channel as ATSCChannel) != null)
+        {
+          return null;
+        }
       }
       Log.Log.WriteFile("Signal detected, wait for good signal quality");
       try
@@ -129,7 +167,7 @@ namespace TvLibrary.Implementations.DVB
         if (channelCount == 0)
         {
           _analyzer.GetCount(out channelCount);
-          Log.Log.WriteFile("Scan! timeout...found no channels tuner locked:{0} signal level:{1} signal quality:{2} {3}", _card.IsTunerLocked, _card.SignalLevel, _card.SignalQuality,channelCount);
+          Log.Log.WriteFile("Scan! timeout...found no channels tuner locked:{0} signal level:{1} signal quality:{2} {3}", _card.IsTunerLocked, _card.SignalLevel, _card.SignalQuality, channelCount);
           return new List<IChannel>();
         }
         short networkId;
@@ -176,7 +214,7 @@ namespace TvLibrary.Implementations.DVB
             serviceId = 0;
             _analyzer.GetChannel((short)i,
                   out networkId, out transportId, out serviceId, out majorChannel, out minorChannel,
-                  out frequency, out lcn,out EIT_schedule_flag, out EIT_present_following_flag, out runningStatus,
+                  out frequency, out lcn, out EIT_schedule_flag, out EIT_present_following_flag, out runningStatus,
                   out freeCAMode, out serviceType, out modulation, out providerName, out serviceName,
                   out pcrPid, out pmtPid, out videoPid, out audio1Pid, out audio2Pid, out audio3Pid,
                   out ac3Pid, out  audioLanguage1, out audioLanguage2, out audioLanguage3, out teletextPid, out subtitlePid);
@@ -260,11 +298,11 @@ namespace TvLibrary.Implementations.DVB
               }
               if (!isTvRadioChannel)
               {
-                Log.Log.Write("Found Unknown: {0} {1} type:{2} onid:{3:X} tsid:{4:X} sid:{5:X}", 
-                  info.service_provider_name,info.service_name,info.serviceType,info.networkID,info.transportStreamID,info.serviceID);
+                Log.Log.Write("Found Unknown: {0} {1} type:{2} onid:{3:X} tsid:{4:X} sid:{5:X}",
+                  info.service_provider_name, info.service_name, info.serviceType, info.networkID, info.transportStreamID, info.serviceID);
               }
             }
-            if ((i%10)==0)
+            if ((i % 10) == 0)
             {
               System.Threading.Thread.Sleep(50);
             }
@@ -569,6 +607,12 @@ namespace TvLibrary.Implementations.DVB
     }
 
     */
+    /// <summary>
+    /// Filters the pids.
+    /// </summary>
+    /// <param name="count">The count.</param>
+    /// <param name="pids">The pids.</param>
+    /// <returns></returns>
     public int FilterPids(short count, IntPtr pids)
     {
       return 0;

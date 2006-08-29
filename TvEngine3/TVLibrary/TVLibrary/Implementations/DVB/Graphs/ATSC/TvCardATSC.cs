@@ -24,14 +24,24 @@ namespace TvLibrary.Implementations.DVB
     DsDevice _device;
     #endregion
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="T:TvCardATSC"/> class.
+    /// </summary>
+    /// <param name="device">The device.</param>
     public TvCardATSC(DsDevice device)
     {
       _device = device;
       _name = device.Name;
       _devicePath = device.DevicePath;
+      BuildGraph();
+      RunGraph();
+      StopGraph();
     }
 
     #region graphbuilding
+    /// <summary>
+    /// Builds the graph.
+    /// </summary>
     public void BuildGraph()
     {
       try
@@ -67,6 +77,9 @@ namespace TvLibrary.Implementations.DVB
         throw ex;
       }
     }
+    /// <summary>
+    /// Creates the tuning space.
+    /// </summary>
     protected void CreateTuningSpace()
     {
       Log.Log.WriteFile("CreateTuningSpace()");
@@ -172,12 +185,22 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     #region tuning & recording
+    /// <summary>
+    /// tune the card to the channel specified by IChannel
+    /// </summary>
+    /// <param name="channel">channel to tune</param>
+    /// <returns></returns>
     public bool TuneScan(IChannel channel)
     {
       bool result = Tune(channel);
       RunGraph();
       return result;
     }
+    /// <summary>
+    /// Tunes the specified channel.
+    /// </summary>
+    /// <param name="channel">The channel.</param>
+    /// <returns></returns>
     public bool Tune(IChannel channel)
     {
       Log.Log.WriteFile("atsc:  Tune:{0}", channel);
@@ -191,10 +214,13 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.WriteFile("Channel is not a ATSC channel!!! {0}", channel.GetType().ToString());
           return false;
         }
-        ATSCChannel oldChannel = _currentChannel as ATSCChannel;
-        if (_currentChannel != null)
+        if (IsReceivingAudioVideo == false)
         {
-          if (oldChannel.Equals(channel)) return true;
+          ATSCChannel oldChannel = _currentChannel as ATSCChannel;
+          if (_currentChannel != null)
+          {
+            if (oldChannel.Equals(channel)) return true;
+          }
         }
         if (_graphState == GraphState.Idle)
         {
@@ -229,6 +255,11 @@ namespace TvLibrary.Implementations.DVB
       }
       return true;
     }
+    /// <summary>
+    /// Starts timeshifting. Note card has to be tuned first
+    /// </summary>
+    /// <param name="fileName">filename used for the timeshiftbuffer</param>
+    /// <returns></returns>
     public bool StartTimeShifting(string fileName)
     {
       if (!CheckThreadId()) return false;
@@ -266,6 +297,10 @@ namespace TvLibrary.Implementations.DVB
       return true;
     }
 
+    /// <summary>
+    /// Stops timeshifting
+    /// </summary>
+    /// <returns></returns>
     public bool StopTimeShifting()
     {
       if (!CheckThreadId()) return false;
@@ -280,6 +315,13 @@ namespace TvLibrary.Implementations.DVB
       _graphState = GraphState.Created;
       return true;
     }
+    /// <summary>
+    /// Starts recording
+    /// </summary>
+    /// <param name="recordingType">Recording type (content or reference)</param>
+    /// <param name="fileName">filename to which to recording should be saved</param>
+    /// <param name="startTime">time the recording should start (0=now)</param>
+    /// <returns></returns>
     public bool StartRecording(RecordingType recordingType, string fileName, long startTime)
     {
       if (!CheckThreadId()) return false;
@@ -295,6 +337,10 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.WriteFile("Started recording on {0}", startTime);
       return true;
     }
+    /// <summary>
+    /// Stop recording
+    /// </summary>
+    /// <returns></returns>
     public bool StopRecording()
     {
       if (!CheckThreadId()) return false;
@@ -306,6 +352,10 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     #region quality control
+    /// <summary>
+    /// Get/Set the quality
+    /// </summary>
+    /// <value></value>
     public IQuality Quality
     {
       get
@@ -316,6 +366,10 @@ namespace TvLibrary.Implementations.DVB
       {
       }
     }
+    /// <summary>
+    /// Property which returns true if card supports quality control
+    /// </summary>
+    /// <value></value>
     public bool SupportsQualityControl
     {
       get
@@ -327,6 +381,10 @@ namespace TvLibrary.Implementations.DVB
 
 
     #region epg & scanning
+    /// <summary>
+    /// returns the ITVScanning interface used for scanning channels
+    /// </summary>
+    /// <value></value>
     public ITVScanning ScanningInterface
     {
       get
@@ -337,12 +395,25 @@ namespace TvLibrary.Implementations.DVB
 
     #endregion
 
+    /// <summary>
+    /// Returns a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
+    /// </summary>
+    /// <returns>
+    /// A <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
+    /// </returns>
     public override string ToString()
     {
       return _name;
     }
 
 
+    /// <summary>
+    /// Method to check if card can tune to the channel specified
+    /// </summary>
+    /// <param name="channel"></param>
+    /// <returns>
+    /// true if card can tune to the channel otherwise false
+    /// </returns>
     public bool CanTune(IChannel channel)
     {
       if ((channel as ATSCChannel) == null) return false;

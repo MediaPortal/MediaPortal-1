@@ -75,6 +75,9 @@ void CPmtGrabber::OnTsPacket(byte* tsPacket)
 	if (m_pCallback==NULL) return;
 	if (GetPid()<=0) return;
 	
+  CTsHeader header(tsPacket);
+  if (header.Pid != GetPid()) return;
+ // LogDebug(" got tspacket pid:%x", GetPid());
 	CEnterCriticalSection enter(m_section);
 	CSectionDecoder::OnTsPacket(tsPacket);
 
@@ -84,7 +87,7 @@ void CPmtGrabber::OnNewSection(CSection& section)
 {
 	try
 	{
-		if (section.Version == m_iPmtVersion) return;
+ 		if (section.Version == m_iPmtVersion) return;
 	  CEnterCriticalSection enter(m_section);
 		LogDebug("pmtgrabber: got pmt version:%d %d", section.Version,m_iPmtVersion);
 		m_iPmtVersion=section.Version;

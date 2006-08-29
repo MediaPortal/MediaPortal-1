@@ -16,12 +16,20 @@ namespace TvLibrary.Implementations.DVB
   public class ATSCScanning : DvbBaseScanning, ITVScanning, IDisposable
   {
     TvCardATSC _card;
+    /// <summary>
+    /// Initializes a new instance of the <see cref="T:ATSCScanning"/> class.
+    /// </summary>
+    /// <param name="card">The card.</param>
     public ATSCScanning(TvCardATSC card)
       : base(card)
     {
       _card = card;
     }
 
+    /// <summary>
+    /// returns the tv card used
+    /// </summary>
+    /// <value></value>
     public ITVCard TvCard
     {
       get
@@ -30,15 +38,27 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
+    /// <summary>
+    /// Gets the analyzer.
+    /// </summary>
+    /// <returns></returns>
     protected override ITsChannelScan GetAnalyzer()
     {
       return _card.StreamAnalyzer;
     }
 
+    /// <summary>
+    /// Resets the signal update.
+    /// </summary>
     protected override void ResetSignalUpdate()
     {
       _card.ResetSignalUpdate();
     }
+    /// <summary>
+    /// Creates the new channel.
+    /// </summary>
+    /// <param name="info">The info.</param>
+    /// <returns></returns>
     protected override IChannel CreateNewChannel(ChannelInfo info)
     {
       ATSCChannel tuningChannel = (ATSCChannel)_card.Channel;

@@ -46,6 +46,19 @@ namespace TvLibrary.Implementations.DVB
       }
       _technoTrend = null;
     }
+
+    /// <summary>
+    /// returns if cam is ready or not
+    /// </summary>
+    public bool IsCamReady()
+    {
+      if (_digitalEveryWhere != null)
+      {
+        _digitalEveryWhere.IsCamReady();
+      }
+      return true;
+    }
+    
     /// <summary>
     /// resets the CAM
     /// </summary>

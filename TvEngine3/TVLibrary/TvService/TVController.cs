@@ -77,7 +77,7 @@ namespace TvService
       DatabaseManager.New();
       try
       {
-        Log.Write("Controller:Started");
+        Log.Write("Controller: Started");
         EntityList<Server> servers = DatabaseManager.Instance.GetEntities<Server>();
         Server ourServer = null;
         foreach (Server server in servers)
@@ -90,7 +90,7 @@ namespace TvService
         }
         if (ourServer == null)
         {
-          Log.WriteFile("create new server in database");
+          Log.WriteFile("Controller: create new server in database");
           ourServer = Server.Create();
           if (servers.Count == 0)
           {
@@ -99,7 +99,7 @@ namespace TvService
           }
           ourServer.HostName = Dns.GetHostName();
           DatabaseManager.Instance.SaveChanges();
-          Log.WriteFile("new server created");
+          Log.WriteFile("Controller: new server created");
         }
         _isMaster = ourServer.IsMaster;
 
@@ -119,7 +119,7 @@ namespace TvService
           }
           if (!found)
           {
-            Log.WriteFile("add card:{0}", localCardCollection.Cards[i].Name);
+            Log.WriteFile("Controller: add card:{0}", localCardCollection.Cards[i].Name);
             layer.AddCard(localCardCollection.Cards[i].Name, localCardCollection.Cards[i].DevicePath, ourServer);
           }
         }
@@ -143,7 +143,7 @@ namespace TvService
             }
             if (!found)
             {
-              Log.WriteFile("del card:{0}", dbsCard.Name);
+              Log.WriteFile("Controller: del card:{0}", dbsCard.Name);
               dbsCard.DeleteAll();
             }
           }
@@ -230,13 +230,13 @@ namespace TvService
     /// </summary>
     public void Dispose()
     {
-      Log.Write("Controller:stopped");
+      Log.Write("Controller: stopped");
       if (_streamer != null)
       {
-        Log.WriteFile("Controller:stop streamer...");
+        Log.WriteFile("Controller: stop streamer...");
         _streamer.Stop();
         _streamer = null;
-        Log.WriteFile("Controller:streamer stopped...");
+        Log.WriteFile("Controller: streamer stopped...");
       }
       if (_scheduler != null)
       {
@@ -248,7 +248,7 @@ namespace TvService
         _epgGrabber.Stop();
         _epgGrabber = null;
       }
-      Log.WriteFile("Controller:dispose cards");
+      Log.WriteFile("Controller: dispose cards");
       Dictionary<int, ITVCard>.Enumerator enumerator = _localCards.GetEnumerator();
       while (enumerator.MoveNext())
       {
@@ -264,7 +264,7 @@ namespace TvService
         }
       }
       _localCards = null;
-      Log.WriteFile("Controller:cards disposed");
+      Log.WriteFile("Controller: cards disposed");
     }
 
     #endregion
@@ -843,7 +843,7 @@ namespace TvService
     {
       try
       {
-        Log.Write("Tune {0} to {1}", cardId, channel.Name);
+        Log.Write("Controller:Tune {0} to {1}", cardId, channel.Name);
         lock (this)
         {
           if (IsLocal(_allDbscards[cardId].Server.HostName) == false)
@@ -855,7 +855,11 @@ namespace TvService
           {
             if (CurrentChannel(cardId).Equals(channel)) return true;
           }
-          return _localCards[cardId].Tune(channel);
+          bool result = _localCards[cardId].Tune(channel);
+          Log.Write("Controller: Tuner locked:{0} signal strength:{1} signal quality:{2}",
+             _localCards[cardId].IsTunerLocked, _localCards[cardId].SignalLevel, _localCards[cardId].SignalQuality);
+
+          return result;
         }
       }
       catch (Exception ex)
@@ -869,6 +873,7 @@ namespace TvService
     {
       try
       {
+        Log.Write("Controller:TuneScan {0} to {1}", cardId, channel.Name);
         lock (this)
         {
           if (IsLocal(_allDbscards[cardId].Server.HostName) == false)
@@ -876,7 +881,10 @@ namespace TvService
             RemoteControl.HostName = _allDbscards[cardId].Server.HostName;
             return RemoteControl.Instance.TuneScan(cardId, channel);
           }
-          return _localCards[cardId].TuneScan(channel);
+          bool result= _localCards[cardId].TuneScan(channel);
+          Log.Write("Controller: Tuner locked:{0} signal strength:{1} signal quality:{2}",
+             _localCards[cardId].IsTunerLocked, _localCards[cardId].SignalLevel, _localCards[cardId].SignalQuality);
+          return result;
         }
       }
       catch (Exception ex)
@@ -898,7 +906,7 @@ namespace TvService
         lock (this)
         {
           if (_cardLocks[cardId] == true) return false;
-          Log.Write("Controller:Lock card:{0}", cardId);
+          Log.Write("Controller: Lock card:{0}", cardId);
           _cardLocks[cardId] = true;
           return true;
         }
@@ -918,7 +926,7 @@ namespace TvService
     {
       try
       {
-        Log.Write("Controller:Unlock card:{0}", cardId);
+        Log.Write("Controller: Unlock card:{0}", cardId);
         _cardLocks[cardId] = false;
       }
       catch (Exception ex)
@@ -1012,7 +1020,7 @@ namespace TvService
     {
       try
       {
-        Log.Write("Controller:StartTimeShifting {0} {1}", cardId, fileName);
+        Log.Write("Controller: StartTimeShifting {0} {1} ", cardId, fileName);
         lock (this)
         {
           if (IsLocal(_allDbscards[cardId].Server.HostName) == false)
@@ -1028,13 +1036,15 @@ namespace TvService
           if (_localCards[cardId].IsTimeShifting)
           {
             _clientReferenceCount[cardId]++;
-            Log.Write("  refcount: card:{0} count:{1}", cardId, _clientReferenceCount[cardId]);
+            Log.Write("Controller:  refcount: card:{0} count:{1}", cardId, _clientReferenceCount[cardId]);
             return true;
           }
 
+          Log.Write("Controller: Tuner locked:{0} signal strength:{1} signal quality:{2}",
+              _localCards[cardId].IsTunerLocked, _localCards[cardId].SignalLevel, _localCards[cardId].SignalQuality);
           if (WaitForUnScrambledSignal(cardId) == false)
           {
-            Log.Write("Controller:channel is scrambled");
+            Log.Write("Controller: channel is scrambled");
             return false;
           }
 
@@ -1042,7 +1052,7 @@ namespace TvService
           if (result == true)
           {
             _clientReferenceCount[cardId]++;
-            Log.Write("  refcount: card:{0} count:{1}", cardId, _clientReferenceCount[cardId]);
+            Log.Write("Controller:  refcount: card:{0} count:{1}", cardId, _clientReferenceCount[cardId]);
             fileName += ".tsbuffer";
             WaitForTimeShiftFile(cardId, fileName);
             if (System.IO.File.Exists(fileName))
@@ -1052,7 +1062,7 @@ namespace TvService
             }
             else
             {
-              Log.Write("Controller:streaming: file not found:{0}", fileName);
+              Log.Write("Controller: streaming: file not found:{0}", fileName);
             }
           }
           return result;
@@ -1074,7 +1084,7 @@ namespace TvService
     {
       try
       {
-        Log.Write("Controller:StopTimeShifting {0}", cardId);
+        Log.Write("Controller: StopTimeShifting {0}", cardId);
         lock (this)
         {
           if (IsLocal(_allDbscards[cardId].Server.HostName) == false)
@@ -1083,7 +1093,7 @@ namespace TvService
             return RemoteControl.Instance.StopTimeShifting(cardId);
           }
           _clientReferenceCount[cardId]--;
-          Log.Write("  refcount: card:{0} count:{1}", cardId, _clientReferenceCount[cardId]);
+          Log.Write("Controller:  refcount: card:{0} count:{1}", cardId, _clientReferenceCount[cardId]);
           if (_clientReferenceCount[cardId] <= 0)
           {
             _clientReferenceCount[cardId] = 0;
@@ -1136,7 +1146,7 @@ namespace TvService
     {
       try
       {
-        Log.Write("Controller:StartRecording {0} {1}", cardId, fileName);
+        Log.Write("Controller: StartRecording {0} {1}", cardId, fileName);
         lock (this)
         {
           RecordingType recType = RecordingType.Content;
@@ -1166,7 +1176,7 @@ namespace TvService
     {
       try
       {
-        Log.Write("Controller:StopRecording {0}", cardId);
+        Log.Write("Controller: StopRecording {0}", cardId);
         lock (this)
         {
           if (IsLocal(_allDbscards[cardId].Server.HostName) == false)
@@ -1174,7 +1184,7 @@ namespace TvService
             RemoteControl.HostName = _allDbscards[cardId].Server.HostName;
             return RemoteControl.Instance.StopRecording(cardId);
           }
-          Log.Write("Controller:StopRecording for card:{0}", cardId);
+          Log.Write("Controller: StopRecording for card:{0}", cardId);
           if (IsRecording(cardId))
           {
             _localCards[cardId].StopRecording();
@@ -1284,7 +1294,7 @@ namespace TvService
 
     public void SetCurrentAudioStream(int cardId, IAudioStream stream)
     {
-      Log.WriteFile("controller: setaudiostream:{0} {1}", cardId, stream);
+      Log.WriteFile("Controller: setaudiostream:{0} {1}", cardId, stream);
       if (IsLocal(_allDbscards[cardId].Server.HostName) == false)
       {
         RemoteControl.HostName = _allDbscards[cardId].Server.HostName;
@@ -1320,7 +1330,7 @@ namespace TvService
       string streamName = _streamer.Add(recordings[0].FileName);
       string hostName = Dns.GetHostName();
       string url = String.Format("rtsp://{0}/{1}", hostName, streamName);
-      Log.WriteFile("url:{0} file:{1}", url, recordings[0].FileName);
+      Log.WriteFile("Controller: streaming url:{0} file:{1}", url, recordings[0].FileName);
       return url;
     }
     #endregion
@@ -1336,7 +1346,7 @@ namespace TvService
     /// <returns>true if timeshifting has started, otherwise false</returns>
     public bool StartTimeShifting(string channelName, out VirtualCard card)
     {
-      Log.Write("Controller:StartTimeShifting {0}", channelName);
+      Log.Write("Controller: StartTimeShifting {0}", channelName);
       card = null;
       try
       {
@@ -1350,7 +1360,7 @@ namespace TvService
             if (CurrentChannelName(keyPair.Value.IdCard) == channelName)
             {
               _clientReferenceCount[keyPair.Value.IdCard]++;
-              Log.Write("  refcount: card:{0} count:{1}", keyPair.Value.IdCard, _clientReferenceCount[keyPair.Value.IdCard]);
+              Log.Write("Controller:  refcount: card:{0} count:{1}", keyPair.Value.IdCard, _clientReferenceCount[keyPair.Value.IdCard]);
               card = new VirtualCard(keyPair.Value.IdCard, Dns.GetHostName());
               card.RecordingFolder = keyPair.Value.RecordingFolder;
               return true;
@@ -1361,7 +1371,7 @@ namespace TvService
         List<CardDetail> freeCards = GetFreeCardsForChannelName(channelName);
         if (freeCards.Count == 0)
         {
-          Log.Write("Controller:StartTimeShifting failed, no card available");
+          Log.Write("Controller: StartTimeShifting failed, no card available");
           return false;
         }
         CardDetail cardInfo = freeCards[0];
@@ -1378,7 +1388,7 @@ namespace TvService
         if (false == CardTune(cardId, channel)) return false;
         if (false == CardTimeShift(cardId, timeshiftFileName)) return false;
 
-        Log.Write("Controller:StartTimeShifting started on card:{0} to {1}", cardId, timeshiftFileName);
+        Log.Write("Controller: StartTimeShifting started on card:{0} to {1}", cardId, timeshiftFileName);
         card = new VirtualCard(cardId, Dns.GetHostName());
         card.RecordingFolder = _allDbscards[cardId].RecordingFolder;
         return true;
@@ -1519,7 +1529,7 @@ namespace TvService
         {
           if (value)
           {
-            Log.Write("Controller:epg start");
+            Log.Write("Controller: epg start");
             if (_epgGrabber != null)
             {
               _epgGrabber.Start();
@@ -1527,7 +1537,7 @@ namespace TvService
           }
           else
           {
-            Log.Write("Controller:epg stop");
+            Log.Write("Controller: epg stop");
             if (_epgGrabber != null)
             {
               _epgGrabber.Stop();
@@ -1591,30 +1601,30 @@ namespace TvService
       {
         List<CardDetail> cardsAvailable = new List<CardDetail>();
 
-        Log.Write("service:find free card for channel {0}", channelName);
+        Log.Write("Controller: find free card for channel {0}", channelName);
         TvBusinessLayer layer = new TvBusinessLayer();
         Channel dbChannel = layer.GetChannelByName(channelName);
         if (dbChannel == null)
         {
-          Log.Write("service:  channel {0} is not found", channelName);
+          Log.Write("Controller:  channel {0} is not found", channelName);
           return cardsAvailable;
         }
 
         List<IChannel> tuningDetails = layer.GetTuningChannelByName(channelName);
         if (tuningDetails == null)
         {
-          Log.Write("service:  No tuning details for channel:{0}", channelName);
+          Log.Write("Controller:  No tuning details for channel:{0}", channelName);
           return cardsAvailable;
         }
         if (tuningDetails.Count == 0)
         {
-          Log.Write("service:  No tuning details for channel:{0}", channelName);
+          Log.Write("Controller:  No tuning details for channel:{0}", channelName);
           return cardsAvailable;
         }
 
         foreach (IChannel tuningDetail in tuningDetails)
         {
-          Log.Write("  Tuning detail:{0}", tuningDetail.ToString());
+          Log.Write("Controller  Tuning detail:{0}", tuningDetail.ToString());
           Dictionary<int, Card>.Enumerator enumerator = _allDbscards.GetEnumerator();
           while (enumerator.MoveNext())
           {
@@ -1632,12 +1642,12 @@ namespace TvService
             //check if card can tune to this channel
             if (IsLocked(keyPair.Value.IdCard))
             {
-              Log.Write("    card:{0} type:{1} is locked", keyPair.Value.IdCard, Type(keyPair.Value.IdCard));
+              Log.Write("Controller:    card:{0} type:{1} is locked", keyPair.Value.IdCard, Type(keyPair.Value.IdCard));
               continue;
             }
             if (CanTune(keyPair.Value.IdCard, tuningDetail) == false)
             {
-              Log.Write("    card:{0} type:{1} cannot tune to channel", keyPair.Value.IdCard, Type(keyPair.Value.IdCard));
+              Log.Write("Controller:    card:{0} type:{1} cannot tune to channel", keyPair.Value.IdCard, Type(keyPair.Value.IdCard));
               continue;
             }
 
@@ -1645,7 +1655,7 @@ namespace TvService
             {
               if (CurrentChannelName(keyPair.Value.IdCard) != channelName)
               {
-                Log.Write("    card:{0} type:{1} is recording:{2}", keyPair.Value.IdCard, Type(keyPair.Value.IdCard), CurrentChannelName(keyPair.Value.IdCard));
+                Log.Write("Controller:    card:{0} type:{1} is recording:{2}", keyPair.Value.IdCard, Type(keyPair.Value.IdCard), CurrentChannelName(keyPair.Value.IdCard));
                 continue;
               }
             }
@@ -1655,7 +1665,7 @@ namespace TvService
             {
               if (map.Card.DevicePath == keyPair.Value.DevicePath)
               {
-                Log.Write("    card:{0} type:{1} is free priority:{2}", keyPair.Value.IdCard, Type(keyPair.Value.IdCard), map.Card.Priority);
+                Log.Write("Controller:    card:{0} type:{1} is free priority:{2}", keyPair.Value.IdCard, Type(keyPair.Value.IdCard), map.Card.Priority);
                 cardsAvailable.Add(new CardDetail(keyPair.Value.IdCard, map.Card, tuningDetail));
                 break;
               }
@@ -1676,12 +1686,16 @@ namespace TvService
     {
       try
       {
-        Log.WriteFile("Controller:CardTune {0} {1}", idCard, channel.Name);
+        Log.WriteFile("Controller: CardTune {0} {1}", idCard, channel.Name);
+        if (IsScrambled(idCard))
+        {
+          return TuneScan(idCard, channel);
+        }
         if (CurrentChannel(idCard) != null)
         {
           if (CurrentChannel(idCard).Equals(channel)) return true;
         }
-        return Tune(idCard, channel);
+        return TuneScan(idCard, channel);
       }
       catch (Exception ex)
       {
@@ -1694,7 +1708,7 @@ namespace TvService
     {
       try
       {
-        Log.WriteFile("Controller:CardTimeShift {0} {1}", idCard, fileName);
+        Log.WriteFile("Controller: CardTimeShift {0} {1}", idCard, fileName);
         if (IsTimeShifting(idCard)) return true;
         return StartTimeShifting(idCard, fileName);
       }
@@ -1709,7 +1723,7 @@ namespace TvService
     {
       try
       {
-        Log.Write(@"delete timeshift files {0}\{1}", folder, fileName);
+        Log.Write(@"Controller: delete timeshift files {0}\{1}", folder, fileName);
         string[] files = System.IO.Directory.GetFiles(folder);
         for (int i = 0; i < files.Length; ++i)
         {
@@ -1717,7 +1731,7 @@ namespace TvService
           {
             try
             {
-              Log.Write("  delete {0}", files[i]);
+              Log.Write("Controller:   delete {0}", files[i]);
               System.IO.File.Delete(files[i]);
             }
             catch (Exception)
@@ -1738,24 +1752,24 @@ namespace TvService
     /// <returns>true if channel is unscrambled else false</returns>
     bool WaitForUnScrambledSignal(int cardId)
     {
-      Log.Write("WaitForUnScrambledSignal");
+      Log.Write("Controller: WaitForUnScrambledSignal");
       DateTime timeStart = DateTime.Now;
       while (true)
       {
         if (IsScrambled(cardId))
         {
-          Log.Write("  scrambled, sleep 100");
+          Log.Write("Controller:   scrambled, sleep 100");
           System.Threading.Thread.Sleep(100);
           TimeSpan timeOut = DateTime.Now - timeStart;
           if (timeOut.TotalMilliseconds >= 5000)
           {
-            Log.Write("  return scrambled");
+            Log.Write("Controller:   return scrambled");
             return false;
           }
         }
         else
         {
-          Log.Write("  return not scrambled");
+          Log.Write("Controller:   return not scrambled");
           return true;
         }
       }
@@ -1769,7 +1783,7 @@ namespace TvService
     /// <returns>true when timeshift files is at least of 300kb, else timeshift file is less then 300kb</returns>
     bool WaitForTimeShiftFile(int cardId, string fileName)
     {
-      Log.Write("WaitForTimeShiftFile");
+      Log.Write("Controller: WaitForTimeShiftFile");
       if (!WaitForUnScrambledSignal(cardId)) return false;
       DateTime timeStart = DateTime.Now;
       ulong fileSize = 0;
@@ -1793,13 +1807,13 @@ namespace TvService
                   ulong newfileSize = reader.ReadUInt64();
                   if (newfileSize != fileSize)
                   {
-                    Log.Write("timeshifting fileSize:{0}", fileSize);
+                    Log.Write("Controller: timeshifting fileSize:{0}", fileSize);
                   }
                   fileSize = newfileSize;
                   if (fileSize >= 300 * 1024) // 300kb ..
                   {
                     TimeSpan ts = DateTime.Now - timeStart;
-                    Log.Write("timeshifting fileSize:{0} {1}", fileSize, ts.TotalMilliseconds);
+                    Log.Write("Controller: timeshifting fileSize:{0} {1}", fileSize, ts.TotalMilliseconds);
                     return true;
                   }
                 }
@@ -1810,7 +1824,7 @@ namespace TvService
           TimeSpan timeOut = DateTime.Now - timeStart;
           if (timeOut.TotalMilliseconds >= 15000)
           {
-            Log.Write("timeshifting fileSize:{0} TIMEOUT", fileSize);
+            Log.Write("Controller: timeshifting fileSize:{0} TIMEOUT", fileSize);
             return false;
           }
         }

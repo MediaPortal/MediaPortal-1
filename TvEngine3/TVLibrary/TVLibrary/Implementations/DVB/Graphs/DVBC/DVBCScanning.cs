@@ -16,12 +16,20 @@ namespace TvLibrary.Implementations.DVB
   public class DVBCScanning : DvbBaseScanning, ITVScanning, IDisposable
   {
     TvCardDVBC _card;
+    /// <summary>
+    /// Initializes a new instance of the <see cref="T:DVBCScanning"/> class.
+    /// </summary>
+    /// <param name="card">The card.</param>
     public DVBCScanning(TvCardDVBC card)
       : base(card)
     {
       _card = card;
     }
 
+    /// <summary>
+    /// returns the tv card used
+    /// </summary>
+    /// <value></value>
     public ITVCard TvCard
     {
       get
@@ -30,19 +38,35 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
+    /// <summary>
+    /// Gets the analyzer.
+    /// </summary>
+    /// <returns></returns>
     protected override ITsChannelScan GetAnalyzer()
     {
       return _card.StreamAnalyzer;
     }
+    /// <summary>
+    /// Sets the hw pids.
+    /// </summary>
+    /// <param name="pids">The pids.</param>
     protected override void SetHwPids(System.Collections.ArrayList pids)
     {
       _card.SendHwPids(pids);
     }
 
+    /// <summary>
+    /// Resets the signal update.
+    /// </summary>
     protected override void ResetSignalUpdate()
     {
       _card.ResetSignalUpdate();
     }
+    /// <summary>
+    /// Creates the new channel.
+    /// </summary>
+    /// <param name="info">The info.</param>
+    /// <returns></returns>
     protected override IChannel CreateNewChannel(ChannelInfo info)
     {
       DVBCChannel tuningChannel = (DVBCChannel)_card.Channel;
