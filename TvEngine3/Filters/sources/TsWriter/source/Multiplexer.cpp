@@ -171,10 +171,10 @@ int CMultiplexer::OnNewPesPacket(int streamId,byte* header, int headerlen,byte* 
 	else 
 	{
 		//audio stream (or private stream)
-    if (m_audioPacketCounter==0 && isStart==false)
-    {
-      return pesLength;
-    }
+    //if (m_audioPacketCounter==0 && isStart==false)
+    //{
+    //  return pesLength;
+    //}
     m_audioPacketCounter++;
 		return SplitPesPacket(streamId,header,headerlen,pesPacket,pesLength,isStart);
 	}
