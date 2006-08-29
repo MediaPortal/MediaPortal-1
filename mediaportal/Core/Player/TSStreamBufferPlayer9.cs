@@ -142,7 +142,7 @@ namespace MediaPortal.Player
 
     #region ctor
     public TStreamBufferPlayer9()
-      :base()
+      : base()
     {
     }
     public TStreamBufferPlayer9(g_Player.MediaType type)
@@ -320,7 +320,7 @@ namespace MediaPortal.Player
           Log.Error(ex);
         }
 
-        _fileSource = (IBaseFilter) new TsFileSource();
+        _fileSource = (IBaseFilter)new TsFileSource();
         Log.Info("TSStreamBufferPlayer9:add tsfilesource to graph");
         int hr = _graphBuilder.AddFilter((IBaseFilter)_fileSource, "TsFileSource");
         if (hr != 0)
@@ -331,14 +331,12 @@ namespace MediaPortal.Player
 
         #endregion
 
-        #region add mpeg-2 demux filter when autoBuildGraph == false
+        #region add mpeg-2 demux filter 
+        //forces tsfilesource to connect to the ms-demuxer and not another demuxer registered
+        Log.Info("TSStreamBufferPlayer9:add mpeg-2 demultiplexer to graph");
+        _mpegDemux = (IBaseFilter)new MPEG2Demultiplexer();
+        hr = _graphBuilder.AddFilter(_mpegDemux, "MPEG-2 Demultiplexer");
 
-        if (autoBuildGraph == false)
-        {
-          Log.Info("TSStreamBufferPlayer9:add mpeg-2 demultiplexer to graph");
-          _mpegDemux = (IBaseFilter)new MPEG2Demultiplexer();
-          hr = _graphBuilder.AddFilter(_mpegDemux, "MPEG-2 Demultiplexer");
-        }
         #endregion
 
         #region create mpeg2 demux pins when autoBuildGraph == false
@@ -434,9 +432,9 @@ namespace MediaPortal.Player
           }
           Marshal.ReleaseComObject(pinTsOut);
           Marshal.ReleaseComObject(pinDemuxIn);
-          
+
           MapPids();
-        #endregion
+          #endregion
 
           #region render demux audio/video pins
           Log.Info("TSStreamBufferPlayer9:render audio output pin");
@@ -488,7 +486,7 @@ namespace MediaPortal.Player
           hr = mp.SetSyncSource(null);
           hr = mp.SetSyncSource(clock);
           Log.Info("TSStreamBufferPlayer9:set reference clock:{0:X}", hr);
-          
+
           long start, latest;
           _mediaSeeking.GetAvailable(out start, out latest);
           if (latest > 3 * 10000000) latest -= 3 * 10000000;
@@ -760,13 +758,13 @@ namespace MediaPortal.Player
       {
         Log.Info("TSStreamBufferPlayer9: map pid 0xe0->video pin");
         pStreamId = (IMPEG2StreamIdMap)_pinVideo;
-        for (int pid=0xe0; pid <= 0xef;pid++)
+        for (int pid = 0xe0; pid <= 0xef; pid++)
         {
           hr = pStreamId.MapStreamId(pid, MPEG2Program.ElementaryStream, 0, 0);
           if (hr != 0)
           {
             Log.Error("TSStreamBufferPlayer9: failed to map pid 0xe0->video pin");
-            return ;
+            return;
           }
         }
       }
@@ -776,7 +774,7 @@ namespace MediaPortal.Player
       if (hr != 0)
       {
         Log.Error("TSStreamBufferPlayer9: failed  to map pid 0xc0->audio pin");
-        return ;
+        return;
       }
 
       #endregion
