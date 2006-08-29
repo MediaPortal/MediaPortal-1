@@ -842,7 +842,7 @@ namespace MediaPortal.Configuration.Sections
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
-        cbGrabDVBEPG.Checked = xmlreader.GetValueAsBool("xmltv", "epgdvb", true);
+        cbGrabDVBEPG.Checked = xmlreader.GetValueAsBool("xmltv", "epgdvb", false);
         useColorCheckBox.Checked = xmlreader.GetValueAsBool("xmltv", "colors", false);
         useTimeZoneCheckBox.Checked = xmlreader.GetValueAsBool("xmltv", "usetimezone", true);
         OldTimeZoneCompensation = useTimeZoneCheckBox.Checked;
@@ -1240,6 +1240,10 @@ namespace MediaPortal.Configuration.Sections
       TVDatabase.RemovePrograms();
       MessageBox.Show("All programs are removed from the tv database",
         "MediaPortal Configuration", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+      // provoke tvmovie to re-import the database, too
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+        xmlwriter.SetValue("tvmovie", "lastupdate", 1);
     }
 
     private void label15_Click(object sender, System.EventArgs e)
