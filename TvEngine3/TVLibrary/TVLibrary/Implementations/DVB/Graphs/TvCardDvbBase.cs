@@ -1185,9 +1185,9 @@ namespace TvLibrary.Implementations.DVB
             if (_currentAudioStream.Pid == pmtData.pid)
             {
               Log.Log.WriteFile("    map audio pid:0x{0:X}", pmtData.pid);
-              hwPids.Add((ushort)pmtData.pid);
               writer.SetAudioPid((short)pmtData.pid);
             }
+            hwPids.Add((ushort)pmtData.pid);
           }
 
           if (pmtData.isVideo)
@@ -1843,7 +1843,10 @@ namespace TvLibrary.Implementations.DVB
 #if FORM
         if (_newPMT)
         {
-          SendPmtToCam();
+          if (SendPmtToCam())
+          {
+                SetMpegPidMapping(_channelInfo);
+          } 
           _newPMT=false;
         }
 #endif
@@ -1868,7 +1871,10 @@ namespace TvLibrary.Implementations.DVB
         {
           Log.Log.WriteFile("dvb: resend pmt to cam");
           _pmtVersion = -1;
-          SendPmtToCam();
+          if (SendPmtToCam())
+          {
+                SetMpegPidMapping(_channelInfo);
+          } 
         }*/
       }
       catch (Exception ex)
@@ -2017,6 +2023,7 @@ namespace TvLibrary.Implementations.DVB
           recorder.AddPesStream((short)audioStream.Pid, true, false);
         }
         _currentAudioStream = audioStream;
+        SendPmtToCam();
       }
     }
     #endregion
@@ -2156,7 +2163,10 @@ namespace TvLibrary.Implementations.DVB
 #if FORM
       _newPMT=true;
 #else
-        SendPmtToCam();
+        if (SendPmtToCam())
+        {
+          SetMpegPidMapping(_channelInfo);
+        } 
 #endif
       }
       catch (Exception ex)
@@ -2170,12 +2180,12 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Sends the PMT to cam.
     /// </summary>
-    protected void SendPmtToCam()
+    protected bool SendPmtToCam()
     {
       lock (this)
       {
         DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
-        if (channel == null) return;
+        if (channel == null) return false;
         IntPtr pmtMem = Marshal.AllocCoTaskMem(4096);// max. size for pmt
         try
         {
@@ -2201,11 +2211,11 @@ namespace TvLibrary.Implementations.DVB
                 {
                   if (_conditionalAccess.SendPMT((DVBBaseChannel)Channel, pmt, pmtLength) == false)
                   {
-                    return;
+                    return true;
                   }
                 }
                 _pmtVersion = version;
-                SetMpegPidMapping(_channelInfo);
+                return true;
               }
             }
           }
@@ -2219,6 +2229,7 @@ namespace TvLibrary.Implementations.DVB
           Marshal.FreeCoTaskMem(pmtMem);
         }
       }
+      return false;
     }
     #endregion
   }

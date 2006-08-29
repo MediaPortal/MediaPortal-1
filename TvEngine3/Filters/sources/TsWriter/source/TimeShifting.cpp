@@ -90,7 +90,7 @@ STDMETHODIMP CTimeShifting::RemovePesStream(int pid)
 	CEnterCriticalSection enter(m_section);
 	try
 	{
-		LogDebug("Recorder:remove pes stream pid:%x",pid);
+		LogDebug("Timeshifter:remove pes stream pid:%x",pid);
 		m_multiPlexer.RemovePesStream(pid);
 	}
 	catch(...)
