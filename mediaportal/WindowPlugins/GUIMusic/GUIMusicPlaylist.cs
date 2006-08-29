@@ -508,8 +508,11 @@ namespace MediaPortal.GUI.Music
 
             if (m_iLastControl == facadeView.GetID && facadeView.Count <= 0)
             {
-              m_iLastControl = btnViewAs.GetID;
-              GUIControl.FocusControl(GetID, m_iLastControl);
+              if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST)
+              {
+                m_iLastControl = btnViewAs.GetID;
+                GUIControl.FocusControl(GetID, m_iLastControl);
+              }
             }
 
             SelectCurrentPlayingSong();
@@ -522,25 +525,29 @@ namespace MediaPortal.GUI.Music
     protected override void UpdateButtonStates()
     {
       base.UpdateButtonStates();
-      if (facadeView != null)
+      // only update while playlist is visible
+      if (GUIWindowManager.ActiveWindow ==  (int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST)
       {
-        if (facadeView.Count > 0)
+        if (facadeView != null)
         {
-          btnClear.Disabled = false;
-          btnPlay.Disabled = false;
-          if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC)
-            btnSave.Disabled = false;
+          if (facadeView.Count > 0)
+          {
+            btnClear.Disabled = false;
+            btnPlay.Disabled = false;
+            if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC)
+              btnSave.Disabled = false;
+            else
+              btnSave.Disabled = true;
+            if (ScrobblerOn)
+              btnScrobble.Selected = true;
+            else
+              btnScrobble.Selected = false;
+          }
           else
-            btnSave.Disabled = true;
-          if (ScrobblerOn)
-            btnScrobble.Selected = true;
-          else
-            btnScrobble.Selected = false;
-        }
-        else
-        {
-          btnClear.Disabled = true;
-          btnPlay.Disabled = true;
+          {
+            btnClear.Disabled = true;
+            btnPlay.Disabled = true;
+          }
         }
       }
     }
@@ -721,7 +728,7 @@ namespace MediaPortal.GUI.Music
         //	Search current playlist item
         if ((m_nTempPlayListWindow == GetID && m_strTempPlayListDirectory.IndexOf(m_strDirectory) >= 0 && g_Player.Playing
           && playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC_TEMP)
-          || (GetID == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST && playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC
+          || (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST && playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC
           && g_Player.Playing))
         {
           iCurrentSong = playlistPlayer.CurrentSong;
@@ -910,25 +917,28 @@ namespace MediaPortal.GUI.Music
     {
       if (g_Player.Playing && playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC)
       {
-        // delete prev. selected item
-        for (int i = 0; i < facadeView.Count; ++i)
+        if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST)
         {
-          GUIListItem item = facadeView[i];
-          if (item != null && item.Selected)
+          // delete prev. selected item
+          for (int i = 0; i < facadeView.Count; ++i)
           {
-            item.Selected = false;
-            break;
+            GUIListItem item = facadeView[i];
+            if (item != null && item.Selected)
+            {
+              item.Selected = false;
+              break;
+            }
           }
-        }
 
-        // set current item selected
-        int iSong = playlistPlayer.CurrentSong;
-        if (iSong >= 0 && iSong <= facadeView.Count)
-        {
-          GUIControl.SelectItemControl(GetID, facadeView.GetID, iSong);
-          GUIListItem item = facadeView[iSong];
-          if (item != null)
-            item.Selected = true;
+          // set current item selected
+          int iSong = playlistPlayer.CurrentSong;
+          if (iSong >= 0 && iSong <= facadeView.Count)
+          {
+            GUIControl.SelectItemControl(GetID, facadeView.GetID, iSong);
+            GUIListItem item = facadeView[iSong];
+            if (item != null)
+              item.Selected = true;
+          }
         }
       }
     }
@@ -1272,9 +1282,13 @@ namespace MediaPortal.GUI.Music
           _preferCountForTracks = previouspreferCount;
         }
         if (facadeView != null)
-        {
-          LoadDirectory(String.Empty);
-          SelectCurrentPlayingSong();
+        {          
+          // only focus the file while playlist is visible
+          if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST)
+          {
+            LoadDirectory(String.Empty);
+            SelectCurrentPlayingSong();
+          }
         }
       }
       else
