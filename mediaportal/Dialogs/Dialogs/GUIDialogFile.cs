@@ -742,7 +742,9 @@ namespace MediaPortal.Dialogs
 
     bool GetUserInputString(ref string sString)
     {
-      VirtualSearchKeyboard keyBoard = (VirtualSearchKeyboard)GUIWindowManager.GetWindow(1001);
+      VirtualKeyboard keyBoard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
+      if (null == keyBoard) return false;
+      keyBoard.IsSearchKeyboard = true;
       keyBoard.Reset();
       keyBoard.Text = sString;
       keyBoard.DoModal(m_dwParentWindowID); // show it...

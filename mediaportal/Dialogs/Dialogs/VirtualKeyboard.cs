@@ -42,7 +42,7 @@ namespace MediaPortal.Dialogs
     #region constants
     const int GAP_WIDTH = 0;
     const int GAP2_WIDTH = 4;
-    const int MODEKEY_WIDTH = 110;
+    int MODEKEY_WIDTH = 110;
     const int KEY_INSET = 1;
 
     const int MAX_KEYS_PER_ROW = 14;
@@ -71,7 +71,6 @@ namespace MediaPortal.Dialogs
     const int FONTSIZE_BUTTONCHARS = 24;
     const int FONTSIZE_BUTTONSTRINGS = 18;
     const int FONTSIZE_SEARCHTEXT = 20;
-
 
     // Controller repeat values
     const float fINITIAL_REPEAT = 0.333f; // 333 mS recommended for first repeat
@@ -122,6 +121,14 @@ namespace MediaPortal.Dialogs
     #endregion
 
     #region enums
+    public enum SearchKinds
+    {
+      SEARCH_STARTS_WITH = 0,
+      SEARCH_CONTAINS,
+      SEARCH_ENDS_WITH,
+      SEARCH_IS
+    }
+
     enum KeyboardTypes
     {
       TYPE_ALPHABET = 0,
@@ -357,6 +364,16 @@ namespace MediaPortal.Dialogs
       XK_HIRAGANA,            // Hiragana
       XK_KATAKANA,            // Katakana
       XK_ANS,                 // Alphabet/numeral/symbol
+
+      // Special Search-Keys
+      XK_SEARCH_START_WITH = 0x11000, // to search music that starts with string
+      XK_SEARCH_CONTAINS, // ...contains string
+      XK_SEARCH_ENDS_WITH, // ...ends with string
+      XK_SEARCH_IS, // is the search text
+      XK_SEARCH_ALBUM, // search for album
+      XK_SEARCH_TITLE, // search for title
+      XK_SEARCH_ARTIST, // search for artist
+      XK_SEARCH_GENERE // search for genere
     };
 
     enum KeyboardLanguageType
@@ -431,7 +448,19 @@ namespace MediaPortal.Dialogs
             name = "ACCENTS";
             break;
           case Xkey.XK_OK:
-            name = "DONE";
+            name = GUILocalizeStrings.Get(804);
+            break;
+          case Xkey.XK_SEARCH_CONTAINS:
+            name = GUILocalizeStrings.Get(801);
+            break;
+          case Xkey.XK_SEARCH_ENDS_WITH:
+            name = GUILocalizeStrings.Get(802);
+            break;
+          case Xkey.XK_SEARCH_START_WITH:
+            name = GUILocalizeStrings.Get(800);
+            break;
+          case Xkey.XK_SEARCH_IS:
+            name = GUILocalizeStrings.Get(803);
             break;
         }
       }
@@ -448,25 +477,39 @@ namespace MediaPortal.Dialogs
     int _currentKey;
     int _lastColumn;
     //float         m_fRepeatDelay;
-    CachedTexture.Frame _keyTexture;
+    CachedTexture.Frame _keyTexture = null;
     float _keyHeight;
     int _maxRows;
     bool _pressedEnter;
-    GUIFont _font18;
-    GUIFont _font12;
-    GUIFont _fontButtons;
-    GUIFont _fontSearchText;
+    GUIFont _font18 = null;
+    GUIFont _font12 = null;
+    GUIFont _fontButtons = null;
+    GUIFont _fontSearchText = null;
     DateTime _caretTimer = DateTime.Now;
     bool _previousOverlayVisible = true;
     bool _password = false;
     GUIImage image;
+    bool _useSearchLayout = false;
+
+    // added by Agree
+    int _searchKind; // 0=Starts with, 1=Contains, 2=Ends with
+    //
 
     ArrayList _keyboardList = new ArrayList();         // list of rows = keyboard
 
+    #endregion
+
+
+    #region Base Dialog Variables
     bool _isVisible = false;
     int _parentWindowId = 0;
     GUIWindow _parentWindow = null;
     #endregion
+
+    // lets do some event stuff
+    public delegate void TextChangedEventHandler(int kindOfSearch, string evtData);
+    public event TextChangedEventHandler TextChanged;
+    //
 
     public VirtualKeyboard()
     {
@@ -486,7 +529,8 @@ namespace MediaPortal.Dialogs
       _maxRows = 5;
       _pressedEnter = false;
       _caretTimer = DateTime.Now;
-
+      // construct search def.
+      _searchKind = (int)SearchKinds.SEARCH_CONTAINS; // default search Contains
 
       if (GUIGraphicsContext.DX9Device != null)
         InitBoard();
@@ -500,6 +544,11 @@ namespace MediaPortal.Dialogs
     public bool IsConfirmed
     {
       get { return _pressedEnter; }
+    }
+
+    public bool IsSearchKeyboard
+    {
+      set { _useSearchLayout = value; }
     }
 
     void Initialize()
@@ -521,7 +570,7 @@ namespace MediaPortal.Dialogs
 
     void DeInitialize()
     {
-      image.FreeResources();
+      if (image != null) image.FreeResources();
       image = null;
     }
 
@@ -544,6 +593,7 @@ namespace MediaPortal.Dialogs
       _textEntered = "";
       _caretTimer = DateTime.Now;
 
+      _searchKind = (int)SearchKinds.SEARCH_CONTAINS; // default search Contains
 
       int y = 411;
       int x = 40;
@@ -591,6 +641,16 @@ namespace MediaPortal.Dialogs
     {
       get { return _textEntered; }
       set { _textEntered = value; }
+    }
+
+    public int KindOfSearch
+    {
+      get { return _searchKind; }
+      set
+      {
+        _searchKind = value;
+        SetSearchKind();
+      }
     }
 
     public void SelectActiveButton(float x, float y)
@@ -732,6 +792,7 @@ namespace MediaPortal.Dialogs
       GUIWindowManager.RouteToWindow(GetID);
 
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
+
       // active this window... (with its own OnPageLoad)
       PageLoad();
 
@@ -742,16 +803,17 @@ namespace MediaPortal.Dialogs
       {
         GUIWindowManager.Process();
       }
-      // deactive this window... (with its own OnPageDestroy)
-      PageDestroy();
 
       GUIWindowManager.IsSwitchingToNewWindow = true;
-      GUIWindowManager.UnRoute();
-      _parentWindow = null;
-      _isVisible = false;
+      lock (this)
+      {
+        // deactive this window... (with its own OnPageDestroy)
+        PageDestroy();
 
+        GUIWindowManager.UnRoute();
+        _parentWindow = null;
+      }
       GUIWindowManager.IsSwitchingToNewWindow = false;
-
       GUILayerManager.UnRegisterLayer(this);
     }
 
@@ -768,6 +830,9 @@ namespace MediaPortal.Dialogs
 
     void InitBoard()
     {
+      if (_useSearchLayout)
+        MODEKEY_WIDTH = 130;  // Searchkeyboard
+
       // Restore keyboard to default state
       _currentRow = 0;
       _currentKey = 0;
@@ -805,11 +870,20 @@ namespace MediaPortal.Dialogs
       keyRow.Add(new Key(Xkey.XK_8));
       keyRow.Add(new Key(Xkey.XK_9));
       keyRow.Add(new Key(Xkey.XK_0));
+
+      if (_useSearchLayout)
+        keyRow.Add(new Key(Xkey.XK_ACCENTS, MODEKEY_WIDTH));  // Searchkeyboard
+
       keyBoard.Add(keyRow);
 
       // Second row is Shift, A-J
       keyRow = new ArrayList();
-      keyRow.Add(new Key(Xkey.XK_SHIFT, MODEKEY_WIDTH));
+
+      if (_useSearchLayout)
+        keyRow.Add(new Key(Xkey.XK_SEARCH_CONTAINS, MODEKEY_WIDTH));  // Searchkeyboard
+      else
+        keyRow.Add(new Key(Xkey.XK_SHIFT, MODEKEY_WIDTH));
+
       keyRow.Add(new Key(Xkey.XK_A));
       keyRow.Add(new Key(Xkey.XK_B));
       keyRow.Add(new Key(Xkey.XK_C));
@@ -824,7 +898,12 @@ namespace MediaPortal.Dialogs
 
       // Third row is Caps Lock, K-T
       keyRow = new ArrayList();
-      keyRow.Add(new Key(Xkey.XK_CAPSLOCK, MODEKEY_WIDTH));
+
+      if (_useSearchLayout)
+        keyRow.Add(new Key(Xkey.XK_SHIFT, MODEKEY_WIDTH));  // Searchkeyboard
+      else
+        keyRow.Add(new Key(Xkey.XK_CAPSLOCK, MODEKEY_WIDTH));
+
       keyRow.Add(new Key(Xkey.XK_K));
       keyRow.Add(new Key(Xkey.XK_L));
       keyRow.Add(new Key(Xkey.XK_M));
@@ -839,7 +918,12 @@ namespace MediaPortal.Dialogs
 
       // Fourth row is Symbols, U-Z, Backspace
       keyRow = new ArrayList();
-      keyRow.Add(new Key(Xkey.XK_SYMBOLS, MODEKEY_WIDTH));
+
+      if (_useSearchLayout)
+        keyRow.Add(new Key(Xkey.XK_CAPSLOCK, MODEKEY_WIDTH));   // Searchkeyboard
+      else
+        keyRow.Add(new Key(Xkey.XK_SYMBOLS, MODEKEY_WIDTH));
+
       keyRow.Add(new Key(Xkey.XK_U));
       keyRow.Add(new Key(Xkey.XK_V));
       keyRow.Add(new Key(Xkey.XK_W));
@@ -851,7 +935,12 @@ namespace MediaPortal.Dialogs
 
       // Fifth row is Accents, Space, Left, Right
       keyRow = new ArrayList();
-      keyRow.Add(new Key(Xkey.XK_ACCENTS, MODEKEY_WIDTH));
+
+      if (_useSearchLayout)
+        keyRow.Add(new Key(Xkey.XK_SYMBOLS, MODEKEY_WIDTH));   // Searchkeyboard
+      else
+        keyRow.Add(new Key(Xkey.XK_ACCENTS, MODEKEY_WIDTH));
+
       keyRow.Add(new Key(Xkey.XK_SPACE, (KEY_WIDTH * 6) + (GAP_WIDTH * 5)));
       keyRow.Add(new Key(Xkey.XK_ARROWLEFT, (KEY_WIDTH * 2) + (GAP_WIDTH * 1)));
       keyRow.Add(new Key(Xkey.XK_ARROWRIGHT, (KEY_WIDTH * 2) + (GAP_WIDTH * 1)));
@@ -879,11 +968,20 @@ namespace MediaPortal.Dialogs
       keyRow.Add(new Key(Xkey.XK_FSLASH));
       keyRow.Add(new Key(Xkey.XK_AT));
       keyRow.Add(new Key(Xkey.XK_NSIGN));
+
+      if (_useSearchLayout)
+        keyRow.Add(new Key(Xkey.XK_ACCENTS, MODEKEY_WIDTH));  // Searchkeyboard
+
       keyBoard.Add(keyRow);
 
       // Second row
       keyRow = new ArrayList();
-      keyRow.Add(new Key(Xkey.XK_SHIFT, MODEKEY_WIDTH));
+
+      if (_useSearchLayout)
+        keyRow.Add(new Key(Xkey.XK_SEARCH_CONTAINS, MODEKEY_WIDTH));  // Searchkeyboard
+      else
+        keyRow.Add(new Key(Xkey.XK_SHIFT, MODEKEY_WIDTH));
+
       keyRow.Add(new Key(Xkey.XK_LBRACK));
       keyRow.Add(new Key(Xkey.XK_RBRACK));
       keyRow.Add(new Key(Xkey.XK_DOLLAR));
@@ -898,7 +996,12 @@ namespace MediaPortal.Dialogs
 
       // Third row
       keyRow = new ArrayList();
-      keyRow.Add(new Key(Xkey.XK_CAPSLOCK, MODEKEY_WIDTH));
+
+      if (_useSearchLayout)
+        keyRow.Add(new Key(Xkey.XK_SHIFT, MODEKEY_WIDTH));  // Searchkeyboard
+      else
+        keyRow.Add(new Key(Xkey.XK_CAPSLOCK, MODEKEY_WIDTH));
+
       keyRow.Add(new Key(Xkey.XK_LT));
       keyRow.Add(new Key(Xkey.XK_GT));
       keyRow.Add(new Key(Xkey.XK_QMARK));
@@ -913,7 +1016,12 @@ namespace MediaPortal.Dialogs
 
       // Fourth row
       keyRow = new ArrayList();
-      keyRow.Add(new Key(Xkey.XK_ALPHABET, MODEKEY_WIDTH));
+
+      if (_useSearchLayout)
+        keyRow.Add(new Key(Xkey.XK_CAPSLOCK, MODEKEY_WIDTH)); // Searchkeyboard
+      else
+        keyRow.Add(new Key(Xkey.XK_ALPHABET, MODEKEY_WIDTH));
+
       keyRow.Add(new Key(Xkey.XK_LBRACE));
       keyRow.Add(new Key(Xkey.XK_RBRACE));
       keyRow.Add(new Key(Xkey.XK_LT_DBL_ANGLE_QUOTE));
@@ -925,7 +1033,12 @@ namespace MediaPortal.Dialogs
 
       // Fifth row is Accents, Space, Left, Right
       keyRow = new ArrayList();
-      keyRow.Add(new Key(Xkey.XK_ACCENTS, MODEKEY_WIDTH));
+
+      if (_useSearchLayout)
+        keyRow.Add(new Key(Xkey.XK_ALPHABET, MODEKEY_WIDTH)); // Searchkeyboard
+      else
+        keyRow.Add(new Key(Xkey.XK_ACCENTS, MODEKEY_WIDTH));
+
       keyRow.Add(new Key(Xkey.XK_SPACE, (KEY_WIDTH * 6) + (GAP_WIDTH * 5)));
       keyRow.Add(new Key(Xkey.XK_ARROWLEFT, (KEY_WIDTH * 2) + (GAP_WIDTH * 1)));
       keyRow.Add(new Key(Xkey.XK_ARROWRIGHT, (KEY_WIDTH * 2) + (GAP_WIDTH * 1)));
@@ -953,11 +1066,20 @@ namespace MediaPortal.Dialogs
       keyRow.Add(new Key(Xkey.XK_8));
       keyRow.Add(new Key(Xkey.XK_9));
       keyRow.Add(new Key(Xkey.XK_0));
+
+      if (_useSearchLayout)
+        keyRow.Add(new Key(Xkey.XK_ACCENTS, MODEKEY_WIDTH));  // Searchkeyboard
+
       keyBoard.Add(keyRow);
 
       // Second row
       keyRow = new ArrayList();
-      keyRow.Add(new Key(Xkey.XK_SHIFT, MODEKEY_WIDTH));
+
+      if (_useSearchLayout)
+        keyRow.Add(new Key(Xkey.XK_SEARCH_CONTAINS, MODEKEY_WIDTH));  // Searchkeyboard
+      else
+        keyRow.Add(new Key(Xkey.XK_SHIFT, MODEKEY_WIDTH));
+
       keyRow.Add(new Key(Xkey.XK_CAP_A_GRAVE));
       keyRow.Add(new Key(Xkey.XK_CAP_A_ACUTE));
       keyRow.Add(new Key(Xkey.XK_CAP_A_CIRCUMFLEX));
@@ -972,7 +1094,12 @@ namespace MediaPortal.Dialogs
 
       // Third row
       keyRow = new ArrayList();
-      keyRow.Add(new Key(Xkey.XK_CAPSLOCK, MODEKEY_WIDTH));
+
+      if (_useSearchLayout)
+        keyRow.Add(new Key(Xkey.XK_SHIFT, MODEKEY_WIDTH));  // Searchkeyboard
+      else
+        keyRow.Add(new Key(Xkey.XK_CAPSLOCK, MODEKEY_WIDTH));
+
       keyRow.Add(new Key(Xkey.XK_CAP_I_ACUTE));
       keyRow.Add(new Key(Xkey.XK_CAP_I_CIRCUMFLEX));
       keyRow.Add(new Key(Xkey.XK_CAP_I_DIAERESIS));
@@ -987,7 +1114,12 @@ namespace MediaPortal.Dialogs
 
       // Fourth row
       keyRow = new ArrayList();
-      keyRow.Add(new Key(Xkey.XK_ALPHABET, MODEKEY_WIDTH));
+
+      if (_useSearchLayout)
+        keyRow.Add(new Key(Xkey.XK_CAPSLOCK, MODEKEY_WIDTH)); // Searchkeyboard
+      else
+        keyRow.Add(new Key(Xkey.XK_ALPHABET, MODEKEY_WIDTH));
+
       keyRow.Add(new Key(Xkey.XK_CAP_U_GRAVE));
       keyRow.Add(new Key(Xkey.XK_CAP_U_ACUTE));
       keyRow.Add(new Key(Xkey.XK_CAP_U_CIRCUMFLEX));
@@ -999,7 +1131,12 @@ namespace MediaPortal.Dialogs
 
       // Fifth row
       keyRow = new ArrayList();
-      keyRow.Add(new Key(Xkey.XK_ACCENTS, MODEKEY_WIDTH));
+
+      if (_useSearchLayout)
+        keyRow.Add(new Key(Xkey.XK_ALPHABET, MODEKEY_WIDTH)); // Searchkeyboard
+      else
+        keyRow.Add(new Key(Xkey.XK_ACCENTS, MODEKEY_WIDTH));
+
       keyRow.Add(new Key(Xkey.XK_SPACE, (KEY_WIDTH * 6) + (GAP_WIDTH * 5)));
       keyRow.Add(new Key(Xkey.XK_ARROWLEFT, (KEY_WIDTH * 2) + (GAP_WIDTH * 1)));
       keyRow.Add(new Key(Xkey.XK_ARROWRIGHT, (KEY_WIDTH * 2) + (GAP_WIDTH * 1)));
@@ -1101,9 +1238,15 @@ namespace MediaPortal.Dialogs
         if (fWidth < fTEXTBOX_WIDTH)
         {
           if (_position >= _textEntered.Length)
+          {
             _textEntered += k.ToString();
+            if (TextChanged != null) TextChanged(_searchKind, _textEntered);
+          }
           else
+          {
             _textEntered = _textEntered.Insert(_position, k.ToString());
+            if (TextChanged != null) TextChanged(_searchKind, _textEntered);
+          }
           ++_position; // move the caret
         }
       }
@@ -1114,6 +1257,7 @@ namespace MediaPortal.Dialogs
 
     void Press(Xkey xk)
     {
+
       if (xk == Xkey.XK_NULL) // happens in Japanese keyboard (keyboard type)
         xk = Xkey.XK_SPACE;
 
@@ -1130,9 +1274,15 @@ namespace MediaPortal.Dialogs
           if (fWidth < fTEXTBOX_WIDTH)
           {
             if (_position >= _textEntered.Length)
+            {
               _textEntered += GetChar(xk).ToString();
+              if (TextChanged != null) TextChanged(_searchKind, _textEntered);
+            }
             else
+            {
               _textEntered = _textEntered.Insert(_position, GetChar(xk).ToString());
+              if (TextChanged != null) TextChanged(_searchKind, _textEntered);
+            }
             ++_position; // move the caret
           }
         }
@@ -1149,11 +1299,15 @@ namespace MediaPortal.Dialogs
             {
               --_position; // move the caret
               _textEntered = _textEntered.Remove(_position, 1);
+              if (TextChanged != null) TextChanged(_searchKind, _textEntered);
             }
             break;
           case Xkey.XK_DELETE: // Used for Japanese only
             if (_textEntered.Length > 0)
+            {
               _textEntered = _textEntered.Remove(_position, 1);
+              if (TextChanged != null) TextChanged(_searchKind, _textEntered);
+            }
             break;
           case Xkey.XK_SHIFT:
             _shiftTurnedOn = !_shiftTurnedOn;
@@ -1165,24 +1319,48 @@ namespace MediaPortal.Dialogs
             _currentKeyboard = KeyboardTypes.TYPE_ALPHABET;
 
             // Adjust mode keys
-            ChangeKey((int)_currentKeyboard, 3, 0, new Key(Xkey.XK_SYMBOLS, MODEKEY_WIDTH));
-            ChangeKey((int)_currentKeyboard, 4, 0, new Key(Xkey.XK_ACCENTS, MODEKEY_WIDTH));
+            if (_useSearchLayout)
+            {
+              ChangeKey((int)_currentKeyboard, 4, 0, new Key(Xkey.XK_SYMBOLS, MODEKEY_WIDTH));  // Searchkeyboard
+              ChangeKey((int)_currentKeyboard, 0, 11, new Key(Xkey.XK_ACCENTS, MODEKEY_WIDTH)); // Searchkeyboard
+            }
+            else
+            {
+              ChangeKey((int)_currentKeyboard, 3, 0, new Key(Xkey.XK_SYMBOLS, MODEKEY_WIDTH));
+              ChangeKey((int)_currentKeyboard, 4, 0, new Key(Xkey.XK_ACCENTS, MODEKEY_WIDTH));
+            }
 
             break;
           case Xkey.XK_SYMBOLS:
             _currentKeyboard = KeyboardTypes.TYPE_SYMBOLS;
 
             // Adjust mode keys
-            ChangeKey((int)_currentKeyboard, 3, 0, new Key(Xkey.XK_ALPHABET, MODEKEY_WIDTH));
-            ChangeKey((int)_currentKeyboard, 4, 0, new Key(Xkey.XK_ACCENTS, MODEKEY_WIDTH));
+            if (_useSearchLayout)
+            {
+              ChangeKey((int)_currentKeyboard, 4, 0, new Key(Xkey.XK_ALPHABET, MODEKEY_WIDTH)); // Searchkeyboard
+              ChangeKey((int)_currentKeyboard, 0, 11, new Key(Xkey.XK_ACCENTS, MODEKEY_WIDTH)); // Searchkeyboard
+            }
+            else
+            {
+              ChangeKey((int)_currentKeyboard, 3, 0, new Key(Xkey.XK_ALPHABET, MODEKEY_WIDTH));
+              ChangeKey((int)_currentKeyboard, 4, 0, new Key(Xkey.XK_ACCENTS, MODEKEY_WIDTH));
+            }
 
             break;
           case Xkey.XK_ACCENTS:
             _currentKeyboard = KeyboardTypes.TYPE_ACCENTS;
 
             // Adjust mode keys
-            ChangeKey((int)_currentKeyboard, 3, 0, new Key(Xkey.XK_ALPHABET, MODEKEY_WIDTH));
-            ChangeKey((int)_currentKeyboard, 4, 0, new Key(Xkey.XK_SYMBOLS, MODEKEY_WIDTH));
+            if (_useSearchLayout)
+            {
+              ChangeKey((int)_currentKeyboard, 4, 0, new Key(Xkey.XK_ALPHABET, MODEKEY_WIDTH)); // Searchkeyboard
+              ChangeKey((int)_currentKeyboard, 0, 11, new Key(Xkey.XK_SYMBOLS, MODEKEY_WIDTH)); // Searchkeyboard
+            }
+            else
+            {
+              ChangeKey((int)_currentKeyboard, 3, 0, new Key(Xkey.XK_ALPHABET, MODEKEY_WIDTH));
+              ChangeKey((int)_currentKeyboard, 4, 0, new Key(Xkey.XK_SYMBOLS, MODEKEY_WIDTH));
+            }
             break;
           case Xkey.XK_ARROWLEFT:
             if (_position > 0)
@@ -1196,7 +1374,55 @@ namespace MediaPortal.Dialogs
             Close();
             _pressedEnter = true;
             break;
+          // added to the original code VirtualKeyboard.cs
+          // by Agree
+          // starts here...
+
+          case Xkey.XK_SEARCH_IS:
+            _searchKind = (int)SearchKinds.SEARCH_STARTS_WITH;
+            SetSearchKind();
+            break;
+
+          case Xkey.XK_SEARCH_CONTAINS:
+            _searchKind = (int)SearchKinds.SEARCH_ENDS_WITH;
+            SetSearchKind();
+            break;
+
+          case Xkey.XK_SEARCH_ENDS_WITH:
+            _searchKind = (int)SearchKinds.SEARCH_IS;
+            SetSearchKind();
+            break;
+
+          case Xkey.XK_SEARCH_START_WITH:
+            _searchKind = (int)SearchKinds.SEARCH_CONTAINS;
+            SetSearchKind();
+            break;
+          // code by Agree ends here
+          //
         }
+    }
+
+    void SetSearchKind()
+    {
+      switch (_searchKind)
+      {
+        case (int)SearchKinds.SEARCH_STARTS_WITH:
+          ChangeKey((int)_currentKeyboard, 1, 0, new Key(Xkey.XK_SEARCH_START_WITH, MODEKEY_WIDTH));
+          break;
+
+        case (int)SearchKinds.SEARCH_ENDS_WITH:
+          ChangeKey((int)_currentKeyboard, 1, 0, new Key(Xkey.XK_SEARCH_ENDS_WITH, MODEKEY_WIDTH));
+          break;
+
+        case (int)SearchKinds.SEARCH_IS:
+          ChangeKey((int)_currentKeyboard, 1, 0, new Key(Xkey.XK_SEARCH_IS, MODEKEY_WIDTH));
+          break;
+
+        case (int)SearchKinds.SEARCH_CONTAINS:
+          ChangeKey((int)_currentKeyboard, 1, 0, new Key(Xkey.XK_SEARCH_CONTAINS, MODEKEY_WIDTH));
+          break;
+      }
+      if (TextChanged != null) TextChanged(_searchKind, _textEntered);
     }
 
     void MoveUp()
@@ -1298,6 +1524,7 @@ namespace MediaPortal.Dialogs
     void MoveLeft()
     {
       if (_currentKey == -1) _currentKey = _lastColumn;
+
       do
       {
         if (_currentKey <= 0)
@@ -1318,6 +1545,7 @@ namespace MediaPortal.Dialogs
     void MoveRight()
     {
       if (_currentKey == -1) _currentKey = _lastColumn;
+
       do
       {
         ArrayList board = (ArrayList)_keyboardList[(int)_currentKeyboard];
@@ -1336,6 +1564,7 @@ namespace MediaPortal.Dialogs
     void SetLastColumn()
     {
       if (_currentKey == -1) return;
+
       // If the new key is a single character, remember it for later
       ArrayList board = (ArrayList)_keyboardList[(int)_currentKeyboard];
       ArrayList row = (ArrayList)board[_currentRow];
@@ -1423,6 +1652,7 @@ namespace MediaPortal.Dialogs
 
       _keyTexture.Draw(x, y, nw, nh, uoffs, 0.0f, u, v, (int)keyColor);
       /*
+
             VertexBuffer m_vbBuffer = new VertexBuffer(typeof(CustomVertex.TransformedColoredTextured),
                                               4, GUIGraphicsContext.DX9Device, 
                                               0, CustomVertex.TransformedColoredTextured.Format, 
@@ -1493,6 +1723,7 @@ namespace MediaPortal.Dialogs
 
       GUIGraphicsContext.ScalePosToScreenResolution(ref x1, ref y1);
       GUIGraphicsContext.ScalePosToScreenResolution(ref x2, ref y2);
+
       x1 += GUIGraphicsContext.OffsetX;
       x2 += GUIGraphicsContext.OffsetX;
       y1 += GUIGraphicsContext.OffsetY;
@@ -1510,6 +1741,7 @@ namespace MediaPortal.Dialogs
       image.Width = (x2 - x1);
       image.Height = (y2 - y1);
       image.Render(timePassed);
+
 
     }
 
@@ -1641,6 +1873,7 @@ namespace MediaPortal.Dialogs
 
     public void RenderLayer(float timePassed)
     {
+
       Render(timePassed);
     }
     #endregion

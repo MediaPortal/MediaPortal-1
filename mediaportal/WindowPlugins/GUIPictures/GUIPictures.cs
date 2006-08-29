@@ -1439,7 +1439,7 @@ namespace MediaPortal.GUI.Pictures
           else
           {
             int pin;
-            if ((item.Label != "..")&&(!virtualDirectory.IsProtectedShare(item.Path, out pin)))
+            if ((item.Label != "..") && (!virtualDirectory.IsProtectedShare(item.Path, out pin)))
             {
               string thumbnailImage = item.Path + @"\folder.jpg";
               if (!item.IsRemote && !System.IO.File.Exists(thumbnailImage))
@@ -1455,12 +1455,14 @@ namespace MediaPortal.GUI.Pictures
 
     bool GetUserInputString(ref string sString)
     {
-      VirtualSearchKeyboard keyBoard = (VirtualSearchKeyboard)GUIWindowManager.GetWindow(1001);
-      keyBoard.Reset();
-      keyBoard.Text = sString;
-      keyBoard.DoModal(GetID); // show it...
-      if (keyBoard.IsConfirmed) sString = keyBoard.Text;
-      return keyBoard.IsConfirmed;
+      VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
+      if (null == keyboard) return false;
+      keyboard.IsSearchKeyboard = true;
+      keyboard.Reset();
+      keyboard.Text = sString;
+      keyboard.DoModal(GetID); // show it...
+      if (keyboard.IsConfirmed) sString = keyboard.Text;
+      return keyboard.IsConfirmed;
     }
 
     #endregion

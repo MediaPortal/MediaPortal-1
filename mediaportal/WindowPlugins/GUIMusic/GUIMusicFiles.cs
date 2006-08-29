@@ -652,7 +652,7 @@ namespace MediaPortal.GUI.Music
       dlg.Reset();
       dlg.SetHeading(924); // menu
 
-      if ( !facadeView.Focus )
+      if (!facadeView.Focus)
       {
         // control view has no focus
         dlg.AddLocalizedString(368); //IMDB
@@ -669,20 +669,20 @@ namespace MediaPortal.GUI.Music
         //  Log.Info("DEBUG: m_strDirectoryStart - {0} ", m_strDirectoryStart);
         //}
 
-        if ( item.Label == ".." )
+        if (item.Label == "..")
           isUpFolder = true;
-        if ( ( System.IO.Path.GetFileName(item.Path) != String.Empty ) || isCD && !isDVD )
+        if ((System.IO.Path.GetFileName(item.Path) != String.Empty) || isCD && !isDVD)
         {
-          if ( !isUpFolder )
+          if (!isUpFolder)
           {
             dlg.AddLocalizedString(926);    // Add to playlist     
             dlg.AddLocalizedString(4557);    // Add all to playlist
             dlg.AddLocalizedString(4552);   // Play now
-            if ( !item.IsFolder )
+            if (!item.IsFolder)
               dlg.AddLocalizedString(4551);   // Play next
-            if ( isCD )
+            if (isCD)
               dlg.AddLocalizedString(890);   // Play CD
-            if ( !item.IsFolder && !item.IsRemote )
+            if (!item.IsFolder && !item.IsRemote)
             {
               dlg.AddLocalizedString(930); //Add to favorites
               dlg.AddLocalizedString(931); //Rating
@@ -690,15 +690,15 @@ namespace MediaPortal.GUI.Music
             dlg.AddLocalizedString(4521);   //Show Album Info
             dlg.AddLocalizedString(928);    //find coverart               
 
-            if ( ( !item.IsFolder ) && ( MediaPortal.Util.Utils.getDriveType(item.Path.Substring(0, 2)) == 5 ) )
+            if ((!item.IsFolder) && (MediaPortal.Util.Utils.getDriveType(item.Path.Substring(0, 2)) == 5))
             {
               dlg.AddLocalizedString(1100); //Import CD
               dlg.AddLocalizedString(1101); //Import Track
-              if ( MusicImport.MusicImport.Ripping )
+              if (MusicImport.MusicImport.Ripping)
                 dlg.AddLocalizedString(1102); //Cancel Import
             }
 
-            if ( !m_directory.IsRemote(currentFolder) )
+            if (!m_directory.IsRemote(currentFolder))
               dlg.AddLocalizedString(102); //Scan
           }
           else // ".."
@@ -708,11 +708,11 @@ namespace MediaPortal.GUI.Music
           }
         }
 
-        if ( MediaPortal.Util.Utils.getDriveType(item.Path) == 5 )
+        if (MediaPortal.Util.Utils.getDriveType(item.Path) == 5)
           dlg.AddLocalizedString(654); //Eject
 
         int iPincodeCorrect;
-        if ( !m_directory.IsProtectedShare(item.Path, out iPincodeCorrect) && !item.IsRemote && m_bFileMenuEnabled )
+        if (!m_directory.IsProtectedShare(item.Path, out iPincodeCorrect) && !item.IsRemote && m_bFileMenuEnabled)
           dlg.AddLocalizedString(500); // FileMenu
       }
 
@@ -851,12 +851,14 @@ namespace MediaPortal.GUI.Music
 
     bool GetUserInputString(ref string sString)
     {
-      VirtualSearchKeyboard keyBoard = (VirtualSearchKeyboard)GUIWindowManager.GetWindow(1001);
-      keyBoard.Reset();
-      keyBoard.Text = sString;
-      keyBoard.DoModal(GetID); // show it...
-      if (keyBoard.IsConfirmed) sString = keyBoard.Text;
-      return keyBoard.IsConfirmed;
+      VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
+      if (null == keyboard) return false;
+      keyboard.IsSearchKeyboard = true;
+      keyboard.Reset();
+      keyboard.Text = sString;
+      keyboard.DoModal(GetID); // show it...
+      if (keyboard.IsConfirmed) sString = keyboard.Text;
+      return keyboard.IsConfirmed;
     }
 
     void OnShowFileMenu()
@@ -997,9 +999,9 @@ namespace MediaPortal.GUI.Music
 
       //move to next item
       GUIControl.SelectItemControl(GetID, facadeView.GetID, iItem + 1);
-      if ( !g_Player.Playing )
+      if (!g_Player.Playing)
       {
-        if ( playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Count > 0 )
+        if (playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Count > 0)
         {
           playlistPlayer.Reset();
           playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
@@ -1188,15 +1190,15 @@ namespace MediaPortal.GUI.Music
         }
         iItem++;
       }
-			for (int i = 0; i < facadeView.Count; ++i)
-			{
-				GUIListItem item = facadeView[i];
-				if (item.Path.Equals(_currentPlaying, StringComparison.OrdinalIgnoreCase))
-				{
-					item.Selected = true;
-					break;
-				}
-			}
+      for (int i = 0; i < facadeView.Count; ++i)
+      {
+        GUIListItem item = facadeView[i];
+        if (item.Path.Equals(_currentPlaying, StringComparison.OrdinalIgnoreCase))
+        {
+          item.Selected = true;
+          break;
+        }
+      }
       int iTotalItems = itemlist.Count;
       if (itemlist.Count > 0)
       {
@@ -1294,6 +1296,7 @@ namespace MediaPortal.GUI.Music
     {
       VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
       if (null == keyboard) return;
+      keyboard.IsSearchKeyboard = true;
       keyboard.Reset();
       keyboard.Text = strLine;
       keyboard.DoModal(GetID);
