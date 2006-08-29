@@ -2023,6 +2023,7 @@ namespace TvLibrary.Implementations.DVB
           recorder.AddPesStream((short)audioStream.Pid, true, false);
         }
         _currentAudioStream = audioStream;
+        _pmtVersion = -1;
         SendPmtToCam();
       }
     }
