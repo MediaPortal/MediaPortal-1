@@ -24,6 +24,7 @@
 #endregion
 
 using System;
+using System.Globalization;
 using System.Text;
 using System.Xml.Serialization;
 
@@ -39,7 +40,6 @@ namespace ProcessPlugins.ExternalDisplay.Setting
         private int length = 8;
         private Property valueProperty;
         private Property targetProperty;
-        private double targetValue = -1;
 
         public TextProgressBar()
         {
@@ -169,7 +169,10 @@ namespace ProcessPlugins.ExternalDisplay.Setting
         public override string Evaluate()
         {
             double currentValue = ConvertToInt(valueProperty.Evaluate());
-            int barLength = (int) (currentValue <= 0 ? 0 : (currentValue/TargetValue)*(length - 2));
+            //We used to cache the targetValue, but as the target property also changes
+            //(when skipping songs, for example) it is no longer cached.
+            double targetValue = ConvertToInt(targetProperty.Evaluate());
+            int barLength = (int)(currentValue <= 0 ? 0 : (currentValue / targetValue) * (length - 2));
             StringBuilder b = new StringBuilder(length);
             b.Append(startChar);
             b.Append(valueChar, barLength);
@@ -192,7 +195,7 @@ namespace ProcessPlugins.ExternalDisplay.Setting
             {
                 result = 0;
             }
-            else if (DateTime.TryParse(stringValue, out dateResult))
+            else if (DateTime.TryParseExact(stringValue, new string[] { "m:ss","mm:ss", "h:mm:ss","hh:mm:ss" }, null, DateTimeStyles.None, out dateResult))
             {
                 result = dateResult.TimeOfDay.TotalSeconds;
             }
@@ -201,21 +204,6 @@ namespace ProcessPlugins.ExternalDisplay.Setting
                 result = Convert.ToInt32(stringValue);
             }
             return result;
-        }
-
-        /// <value>
-        /// Holds the cached target value (bar is full)
-        /// </value>
-        private double TargetValue
-        {
-            get
-            {
-                if (targetValue < 0)
-                {
-                    targetValue = ConvertToInt(targetProperty.Evaluate());
-                }
-                return targetValue;
-            }
         }
     }
 }
