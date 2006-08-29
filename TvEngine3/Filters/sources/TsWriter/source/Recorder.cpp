@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -31,6 +31,7 @@
 
 extern void LogDebug(const char *fmt, ...) ;
 
+//FILE* fpOut=NULL;
 CRecorder::CRecorder(LPUNKNOWN pUnk, HRESULT *phr) 
 :CUnknown( NAME ("MpTsRecorder"), pUnk)
 {
@@ -49,6 +50,10 @@ void CRecorder::OnTsPacket(byte* tsPacket)
 	if (m_bRecording)
 	{
 		m_multiPlexer.OnTsPacket(tsPacket);
+		//if (fpOut!=NULL)
+		//{
+		//fwrite(tsPacket,1,188,fpOut);
+		//}
 	}
 }
 
@@ -109,6 +114,8 @@ STDMETHODIMP CRecorder::StartRecord()
 
 	LogDebug("Recorder:Start Recording:'%s'",m_szFileName);
 	m_bRecording=true;
+	//::DeleteFile("out.ts");
+	//fpOut =fopen("out.ts","wb+");
 	return S_OK;
 }
 STDMETHODIMP CRecorder::StopRecord()
@@ -123,6 +130,9 @@ STDMETHODIMP CRecorder::StopRecord()
 		delete m_pRecordFile;
 		m_pRecordFile=NULL;
 	}
+	//if (fpOut!=NULL)
+	//	fclose(fpOut);
+	//fpOut=NULL;
 	return S_OK;
 }
 

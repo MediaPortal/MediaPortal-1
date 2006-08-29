@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -183,10 +183,11 @@ int CMultiplexer::OnNewPesPacket(int streamId,byte* header, int headerlen,byte* 
 
 int CMultiplexer::WritePackHeader()
 {
-/*
-	__int64 pcrHi=m_pcrDecoder.PcrHigh() ;
+
+/*	__int64 pcrHi=m_pcrDecoder.PcrHigh() ;
   int pcrLow=m_pcrDecoder.PcrLow();
-*/
+	*/
+
 	__int64 pcrHi=m_pcrDecoder.PcrHigh() - m_startPcr;
   int pcrLow=0;//m_pcrDecoder.PcrLow();
   int muxRate=(6*1024*1024)/50; //6MB/s
@@ -241,29 +242,29 @@ int CMultiplexer::SplitPesPacket(int streamId,byte* header, int headerlen, byte*
 
   if (sectionLength != 0x7e9)
   {
-		WritePackHeader();
-    int rest = 0x7e9-sectionLength;
-		if (rest < 0xe0)
+		if (streamId>=0xe0 && streamId <=0xef)
 		{
-			//write pes header
-			memset(m_pesBuffer,0xff,0x800);
-			m_pesBuffer[0] = 0;
-			m_pesBuffer[1] = 0;
-			m_pesBuffer[2] = 1;
-			m_pesBuffer[3] = streamId;
-			m_pesBuffer[4] = 0x7;
-			m_pesBuffer[5] = 0xec;
-			m_pesBuffer[6] = 0x81;
-			m_pesBuffer[7] = 0;
-			m_pesBuffer[8] = rest;
-			m_pCallback->Write(m_pesBuffer, 9+rest);
-			m_pCallback->Write(pesPacket, sectionLength);
-		}
-		else
-		{
-			if (streamId>=0xe0 && streamId <=0xef)
+			//video 
+			WritePackHeader();
+			int rest = 0x7e9-sectionLength;
+			if (rest < 0xe0)
 			{
-				//video 
+				//write pes header
+				memset(m_pesBuffer,0xff,0x800);
+				m_pesBuffer[0] = 0;
+				m_pesBuffer[1] = 0;
+				m_pesBuffer[2] = 1;
+				m_pesBuffer[3] = streamId;
+				m_pesBuffer[4] = 0x7;
+				m_pesBuffer[5] = 0xec;
+				m_pesBuffer[6] = 0x81;
+				m_pesBuffer[7] = 0;
+				m_pesBuffer[8] = rest;
+				m_pCallback->Write(m_pesBuffer, 9+rest);
+				m_pCallback->Write(pesPacket, sectionLength);
+			}
+			else
+			{
 
 				//write original header
 				m_pesBuffer[0] = 0;
@@ -289,10 +290,29 @@ int CMultiplexer::SplitPesPacket(int streamId,byte* header, int headerlen, byte*
 				m_pesBuffer[5] = ((rest-6)&0xff);
 				m_pCallback->Write(m_pesBuffer, rest);
 			}
+		}
+		else
+		{	
+				//audio			
+			int rest = 0x7e9-sectionLength;
+			if (rest < 0xe0)
+			{
+				//write pes header
+				memset(m_pesBuffer,0xff,0x800);
+				m_pesBuffer[0] = 0;
+				m_pesBuffer[1] = 0;
+				m_pesBuffer[2] = 1;
+				m_pesBuffer[3] = streamId;
+				m_pesBuffer[4] = 0x7;
+				m_pesBuffer[5] = 0xec;
+				m_pesBuffer[6] = 0x81;
+				m_pesBuffer[7] = 0;
+				m_pesBuffer[8] = rest;
+				m_pCallback->Write(m_pesBuffer, 9+rest);
+				m_pCallback->Write(pesPacket, sectionLength);
+			}
 			else
-			{				
-				//audio
-				return 0;
+			{
 				m_pesBuffer[0] = 0;
 				m_pesBuffer[1] = 0;
 				m_pesBuffer[2] = 1;
