@@ -2068,23 +2068,14 @@ namespace TvLibrary.Implementations.DVB
         if (_filterTsAnalyzer == null) return false;
         if (_currentChannel == null) return false;
         ITsVideoAnalyzer writer = (ITsVideoAnalyzer)_filterTsAnalyzer;
-        short yesNo;
-        writer.IsAudioEncrypted(out yesNo);
-        if (yesNo == 1)
-        {
-          Log.Log.WriteFile("audio is encrypted");
-          return false;
-        }
+        short audioEncrypted = 0;
+        short videoEncrypted = 0;
+        writer.IsAudioEncrypted(out audioEncrypted);
         if (_currentChannel.IsTv)
         {
-          writer.IsVideoEncrypted(out yesNo);
-          if (yesNo == 1)
-          {
-            Log.Log.WriteFile("video is encrypted");
-            return false;
-          }
+          writer.IsVideoEncrypted(out videoEncrypted);
         }
-        return true;
+        return ( (audioEncrypted==0) && (videoEncrypted==0) );
       }
     }
 
@@ -2109,6 +2100,9 @@ namespace TvLibrary.Implementations.DVB
     }
     #endregion
 
+    /// <summary>
+    /// Sends the PMT to cam.
+    /// </summary>
     protected void SendPmtToCam()
     {
       lock (this)

@@ -72,8 +72,8 @@ void CVideoAudioScrambledAnalyzer::Reset()
 		LogDebug("analyzer: reset");
 		m_bInitAudio=TRUE;
 		m_bInitVideo=TRUE;
-		m_bVideoEncrypted=FALSE;
-		m_bAudioEncrypted=FALSE;
+		m_bVideoEncrypted=TRUE;
+		m_bAudioEncrypted=TRUE;
 		m_audioTimer=GetTickCount();
 		m_videoTimer=GetTickCount();
 }

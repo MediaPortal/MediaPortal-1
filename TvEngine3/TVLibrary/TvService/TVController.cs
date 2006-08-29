@@ -1032,6 +1032,12 @@ namespace TvService
             return true;
           }
 
+          if (WaitForUnScrambledSignal(cardId) == false)
+          {
+            Log.Write("Controller:channel is scrambled");
+            return false;
+          }
+
           bool result = _localCards[cardId].StartTimeShifting(fileName);
           if (result == true)
           {
@@ -1725,22 +1731,49 @@ namespace TvService
         Log.Write(ex);
       }
     }
-
-    void WaitForTimeShiftFile(int cardId, string fileName)
+    /// <summary>
+    /// Waits for un scrambled signal.
+    /// </summary>
+    /// <param name="cardId">The card id.</param>
+    /// <returns>true if channel is unscrambled else false</returns>
+    bool WaitForUnScrambledSignal(int cardId)
     {
-      Log.Write("WaitForTimeShiftFile");
+      Log.Write("WaitForUnScrambledSignal");
       DateTime timeStart = DateTime.Now;
-      ulong fileSize = 0;
       while (true)
       {
-        if (false == IsScrambled(cardId))
+        if (IsScrambled(cardId))
         {
+          Log.Write("  scrambled, sleep 100");
           System.Threading.Thread.Sleep(100);
           TimeSpan timeOut = DateTime.Now - timeStart;
-          if (timeOut.TotalMilliseconds >= 5000) return;
+          if (timeOut.TotalMilliseconds >= 5000)
+          {
+            Log.Write("  return scrambled");
+            return false;
+          }
         }
-        else break;
+        else
+        {
+          Log.Write("  return not scrambled");
+          return true;
+        }
       }
+    }
+
+    /// <summary>
+    /// Waits for time shift file to be at leat 300kb.
+    /// </summary>
+    /// <param name="cardId">The card id.</param>
+    /// <param name="fileName">Name of the file.</param>
+    /// <returns>true when timeshift files is at least of 300kb, else timeshift file is less then 300kb</returns>
+    bool WaitForTimeShiftFile(int cardId, string fileName)
+    {
+      Log.Write("WaitForTimeShiftFile");
+      if (!WaitForUnScrambledSignal(cardId)) return false;
+      DateTime timeStart = DateTime.Now;
+      ulong fileSize = 0;
+      if (IsScrambled(cardId)) return false;
 
       timeStart = DateTime.Now;
       try
@@ -1767,7 +1800,7 @@ namespace TvService
                   {
                     TimeSpan ts = DateTime.Now - timeStart;
                     Log.Write("timeshifting fileSize:{0} {1}", fileSize, ts.TotalMilliseconds);
-                    return;
+                    return true;
                   }
                 }
               }
@@ -1778,7 +1811,7 @@ namespace TvService
           if (timeOut.TotalMilliseconds >= 15000)
           {
             Log.Write("timeshifting fileSize:{0} TIMEOUT", fileSize);
-            return;
+            return false;
           }
         }
       }
@@ -1786,6 +1819,7 @@ namespace TvService
       {
         Log.Write(ex);
       }
+      return false;
     }
     #endregion
 

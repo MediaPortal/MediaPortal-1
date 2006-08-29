@@ -1989,6 +1989,9 @@ namespace TvLibrary.Implementations.DVB
     }
     #endregion
 
+    /// <summary>
+    /// Sends the PMT to cam.
+    /// </summary>
     protected void SendPmtToCam()
     {
       lock (this)
