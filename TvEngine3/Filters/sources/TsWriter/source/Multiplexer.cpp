@@ -261,29 +261,50 @@ int CMultiplexer::SplitPesPacket(int streamId,byte* header, int headerlen, byte*
 		}
 		else
 		{
-			//write original header
-			m_pesBuffer[0] = 0;
-			m_pesBuffer[1] = 0;
-			m_pesBuffer[2] = 1;
-			m_pesBuffer[3] = streamId;
-			m_pesBuffer[4] = 0x7;
-			m_pesBuffer[5] = 0xec;
-			m_pesBuffer[6] = 0x81;
-			m_pesBuffer[7] = 0;
-			m_pesBuffer[8] = 0;
-			m_pCallback->Write(m_pesBuffer, 9);
-			m_pCallback->Write(pesPacket, sectionLength);
+			if (streamId>=0xe0 && streamId <=0xef)
+			{
+				//video 
 
-			//write padding stream;
-			memset(m_pesBuffer,0xff,0x800);
-			int rest = 0x7e9-sectionLength;
-			m_pesBuffer[0] = 0;
-			m_pesBuffer[1] = 0;
-			m_pesBuffer[2] = 1;
-			m_pesBuffer[3] = 0xbe;
-			m_pesBuffer[4] = ((rest-6)>>8)&0xff;
-			m_pesBuffer[5] = ((rest-6)&0xff);
-			m_pCallback->Write(m_pesBuffer, rest);
+				//write original header
+				m_pesBuffer[0] = 0;
+				m_pesBuffer[1] = 0;
+				m_pesBuffer[2] = 1;
+				m_pesBuffer[3] = streamId;
+				m_pesBuffer[4] = 0x7;
+				m_pesBuffer[5] = 0xec;
+				m_pesBuffer[6] = 0x81;
+				m_pesBuffer[7] = 0;
+				m_pesBuffer[8] = 0;
+				m_pCallback->Write(m_pesBuffer, 9);
+				m_pCallback->Write(pesPacket, sectionLength);
+
+				//write padding stream;
+				memset(m_pesBuffer,0xff,0x800);
+				int rest = 0x7e9-sectionLength;
+				m_pesBuffer[0] = 0;
+				m_pesBuffer[1] = 0;
+				m_pesBuffer[2] = 1;
+				m_pesBuffer[3] = 0xbe;
+				m_pesBuffer[4] = ((rest-6)>>8)&0xff;
+				m_pesBuffer[5] = ((rest-6)&0xff);
+				m_pCallback->Write(m_pesBuffer, rest);
+			}
+			else
+			{				
+				//audio
+				return 0;
+				m_pesBuffer[0] = 0;
+				m_pesBuffer[1] = 0;
+				m_pesBuffer[2] = 1;
+				m_pesBuffer[3] = streamId;
+				m_pesBuffer[4] = ((sectionLength+3)>>8)&0xff;
+				m_pesBuffer[5] = ((sectionLength+3))&0xff;
+				m_pesBuffer[6] = 0x81;
+				m_pesBuffer[7] = 0;
+				m_pesBuffer[8] = 0;
+				m_pCallback->Write(m_pesBuffer, 9);
+				m_pCallback->Write(pesPacket, sectionLength);
+			}
 		}
 		return sectionLength;
   }

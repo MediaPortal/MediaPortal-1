@@ -36,9 +36,16 @@ namespace TvLibrary.Implementations.DVB
       _device = device;
       _name = device.Name;
       _devicePath = device.DevicePath;
-      BuildGraph();
-      RunGraph();
-      StopGraph();
+
+      try
+      {
+        BuildGraph();
+        RunGraph();
+        StopGraph();
+      }
+      catch (Exception)
+      {
+      }
     }
     #endregion
 
