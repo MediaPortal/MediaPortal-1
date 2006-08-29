@@ -21,7 +21,7 @@
 		<type>label</type>
 		<id>10</id>
 		<posX>70</posX>
-		<posY>55</posY>
+		<posY>70</posY>
 		<label>-</label>
 		<align>left</align>
 		<font>font14</font>
@@ -32,10 +32,10 @@
 		<description>row 2 label</description>
 		<type>label</type>
 		<id>11</id>
-		<posX>70</posX>
-		<posY>76</posY>
+		<posX>1200</posX>
+		<posY>70</posY>
 		<label>-</label>
-		<align>left</align>
+		<align>right</align>
 		<font>font14</font>
 		<textcolor>FFFFFFFF</textcolor>
 		<visible>no</visible>
@@ -44,10 +44,10 @@
 		<description>row 3 label</description>
 		<type>label</type>
 		<id>12</id>
-		<posX>70</posX>
-		<posY>97</posY>
+		<posX>640</posX>
+		<posY>70</posY>
 		<label>-</label>
-		<align>left</align>
+		<align>center</align>
 		<font>font14</font>
 		<textcolor>FFFFFFFF</textcolor>
 		<visible>no</visible>
@@ -243,7 +243,7 @@
 		<id>106</id>
 		<posX>334</posX> 
 		<posY>522</posY>  
-		<label>0:00</label> 
+		<label>#TV.View.start</label> 
 		<align>right</align> 
 		<font>font14</font> 
 		<textcolor>ffa9d0f7</textcolor> 
@@ -254,7 +254,7 @@
 		<id>107</id>
 		<posX>740</posX> 
 		<posY>522</posY>  
-		<label>#duration</label>  
+		<label>#TV.View.stop</label>  
 		<font>font14</font> 
 		<textcolor>ffa9d0f7</textcolor> 
 	</control>
