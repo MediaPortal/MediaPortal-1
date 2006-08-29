@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -247,7 +247,7 @@ STDMETHODIMP CMpTsFilterPin::Receive(IMediaSample *pSample)
 	{
 		if (pSample==NULL) 
 		{
-			LogDebug("receive sample=null");
+			LogDebug("pin:receive sample=null");
 			return S_OK;
 		}
 		
@@ -258,21 +258,21 @@ STDMETHODIMP CMpTsFilterPin::Receive(IMediaSample *pSample)
 		long sampleLen=pSample->GetActualDataLength();
 		if (sampleLen<=0)
 		{
-			LogDebug("receive samplelen:%d",sampleLen);
+			LogDebug("pin:receive samplelen:%d",sampleLen);
 			return S_OK;
 		}
 		
 		HRESULT hr = pSample->GetPointer(&pbData);
 		if (FAILED(hr)) 
 		{
-			LogDebug("receive cannot get samplepointer");
+			LogDebug("pin:receive cannot get samplepointer");
 			return S_OK;
 		}
 		OnRawData(pbData, sampleLen);
 	}
 	catch(...)
 	{
-		LogDebug("receive exception");
+		LogDebug("pin:receive exception");
 	}
   return S_OK;
 }
@@ -291,7 +291,7 @@ STDMETHODIMP CMpTsFilterPin::EndOfStream(void)
 
 void CMpTsFilterPin::Reset()
 {
-		LogDebug("Reset()...");
+		LogDebug("CMpTsFilter::Reset()...");
 }
 
 //
