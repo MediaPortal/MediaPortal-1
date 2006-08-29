@@ -93,12 +93,6 @@ bool CPesDecoder::OnTsPacket(byte* tsPacket)
 		LogDebug("pesdecoder pid:%x sync error", m_pid);
 		return false;
 	}
-	if (header.TransportError ) 
-	{
-    m_iWritePos=-1;
-		LogDebug("pesdecoder pid:%x transport error", m_pid);
-		return false;
-	}
 
 	if (header.Pid != m_pid) return false;
 	BOOL scrambled= (header.TScrambling!=0);
