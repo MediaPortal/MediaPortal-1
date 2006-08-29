@@ -107,8 +107,8 @@ namespace MediaPortal.GUI.Library
     static Size m_skinSize = new Size(720, 576);// original width/height for which the skin was designed
     static bool m_bShowBackGround = true;				//boolean indicating if we should show the GUI background or if we should show live tv in the background
     static bool m_bPlayingVideo = false;				//boolean indicating if we are playing a movie
-    static int m_iScrollSpeedVertical = 5;							//scroll speed for controls which scroll
-    static int m_iScrollSpeedHorizontal = 5;							//scroll speed for controls which scroll
+    static int m_iScrollSpeedVertical = 2;							//scroll speed for controls which scroll
+    static int m_iScrollSpeedHorizontal = 8;							//scroll speed for controls which scroll
     static int m_iCharsInCharacterSet = 255;		//number of characters for current fonts
     static bool m_bEditMode = false;						//boolean indicating if we are in skin edit mode
     static bool m_bAnimations = true;						//boolean indicating animiations are turned on or off
