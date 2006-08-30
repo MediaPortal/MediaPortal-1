@@ -58,7 +58,9 @@ namespace MediaPortal.Configuration
         return;
       }
 
-      Log.BackupLogFiles();
+      // Logger should write into Configuration.log
+      Log.SetConfigurationMode();
+      Log.BackupLogFile(Log.LogType.Config);
       Log.Info("Using Directories:");
       foreach (string options in Enum.GetNames(typeof(Config.Dir)))
       {

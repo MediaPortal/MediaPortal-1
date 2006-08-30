@@ -56,6 +56,8 @@ namespace MediaPortal.Configuration.Sections
         
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxGeneralSettings;
     private System.Windows.Forms.CheckedListBox settingsCheckedListBox;
+    private MediaPortal.UserInterface.Controls.MPComboBox cbDebug;
+    private Label lbDebug;
     private System.ComponentModel.IContainer components = null;
 
     public General()
@@ -86,6 +88,8 @@ namespace MediaPortal.Configuration.Sections
       }
       base.Dispose(disposing);
     }
+
+    string loglevel = "3";  // Degub is default
 
     string[][] sectionEntries = new string[][] { 
       new string[] { "general", "startfullscreen", "false" },
@@ -130,6 +134,9 @@ namespace MediaPortal.Configuration.Sections
           settingsCheckedListBox.SetItemChecked(index, xmlreader.GetValueAsBool(currentSection[0], currentSection[1], bool.Parse(currentSection[2])));
         }
 
+        loglevel = xmlreader.GetValueAsString("general", "loglevel", "3");
+        cbDebug.SelectedIndex = Convert.ToInt16(loglevel);
+
         //numericUpDown1.Value=xmlreader.GetValueAsInt("vmr9OSDSkin","alphaValue",10);
 
         // Allow Focus
@@ -142,6 +149,9 @@ namespace MediaPortal.Configuration.Sections
     {
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
+        // Save Debug Level
+        xmlwriter.SetValue("general", "loglevel", cbDebug.SelectedIndex);
+
         //
         // Load general settings
         //
@@ -208,14 +218,16 @@ namespace MediaPortal.Configuration.Sections
     {
       this.groupBoxGeneralSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.settingsCheckedListBox = new System.Windows.Forms.CheckedListBox();
+      this.cbDebug = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.lbDebug = new System.Windows.Forms.Label();
       this.groupBoxGeneralSettings.SuspendLayout();
       this.SuspendLayout();
       // 
       // groupBoxGeneralSettings
       // 
-      this.groupBoxGeneralSettings.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
-                  | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.groupBoxGeneralSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxGeneralSettings.Controls.Add(this.settingsCheckedListBox);
       this.groupBoxGeneralSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxGeneralSettings.Location = new System.Drawing.Point(0, 3);
@@ -227,9 +239,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // settingsCheckedListBox
       // 
-      this.settingsCheckedListBox.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
-                  | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.settingsCheckedListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.settingsCheckedListBox.CheckOnClick = true;
       this.settingsCheckedListBox.Items.AddRange(new object[] {
             "Start MediaPortal in fullscreen mode",
@@ -257,14 +269,41 @@ namespace MediaPortal.Configuration.Sections
       this.settingsCheckedListBox.Size = new System.Drawing.Size(440, 289);
       this.settingsCheckedListBox.TabIndex = 0;
       // 
+      // cbDebug
+      // 
+      this.cbDebug.BorderColor = System.Drawing.Color.Empty;
+      this.cbDebug.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.cbDebug.FormattingEnabled = true;
+      this.cbDebug.Items.AddRange(new object[] {
+            "Error",
+            "Warning",
+            "Information",
+            "Debug"});
+      this.cbDebug.Location = new System.Drawing.Point(94, 339);
+      this.cbDebug.Name = "cbDebug";
+      this.cbDebug.Size = new System.Drawing.Size(121, 21);
+      this.cbDebug.TabIndex = 2;
+      // 
+      // lbDebug
+      // 
+      this.lbDebug.AutoSize = true;
+      this.lbDebug.Location = new System.Drawing.Point(16, 343);
+      this.lbDebug.Name = "lbDebug";
+      this.lbDebug.Size = new System.Drawing.Size(57, 13);
+      this.lbDebug.TabIndex = 3;
+      this.lbDebug.Text = "Log Level:";
+      // 
       // General
       // 
       this.BackColor = System.Drawing.SystemColors.Control;
+      this.Controls.Add(this.lbDebug);
+      this.Controls.Add(this.cbDebug);
       this.Controls.Add(this.groupBoxGeneralSettings);
       this.Name = "General";
       this.Size = new System.Drawing.Size(472, 408);
       this.groupBoxGeneralSettings.ResumeLayout(false);
       this.ResumeLayout(false);
+      this.PerformLayout();
 
     }
     #endregion

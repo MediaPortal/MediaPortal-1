@@ -32,6 +32,9 @@ namespace MediaPortal.GUI.Library
   public class Log
   {
     static DateTime _previousDate;
+    static Level _minLevel;
+    static string logDir;
+    static bool bConfiguration;   // when Configuartion.exe is running the logging should take place in Configuration.log
 
     public enum LogType
     {
@@ -39,7 +42,8 @@ namespace MediaPortal.GUI.Library
       Recorder,
       Error,
       EPG,
-      VMR9
+      VMR9,
+      Config
     }
 
     public enum Level
@@ -63,9 +67,16 @@ namespace MediaPortal.GUI.Library
     static Log()
     {
       _previousDate = DateTime.Now.Date;
-      System.IO.Directory.CreateDirectory(Config.Get(Config.Dir.Log));
+      logDir = Config.Get(Config.Dir.Log);
+      System.IO.Directory.CreateDirectory(logDir);
       //BackupLogFiles();
+      using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      {
+        _minLevel = (Level)Enum.Parse(typeof(Level), xmlReader.GetValueAsString("general", "loglevel", "3"));
+      }
+      bConfiguration = false; 
     }
+
     public static void BackupLogFiles()
     {
       BackupLogFile(LogType.Log);
@@ -197,20 +208,25 @@ namespace MediaPortal.GUI.Library
 
     static string GetFileName(LogType type)
     {
-      string fname = Config.Get(Config.Dir.Log) + "MediaPortal.log";
+      string fname = logDir + "MediaPortal.log";
+      if (bConfiguration)
+      {
+        fname = logDir + "Configuration.log";
+        return fname;
+      }
       switch (type)
       {
         case LogType.Recorder:
-          fname = Config.Get(Config.Dir.Log) + "recorder.log";
+          fname = logDir + "recorder.log";
           break;
         case LogType.Error:
-          fname = Config.Get(Config.Dir.Log) + "error.log";
+          fname = logDir + "error.log";
           break;
         case LogType.EPG:
-          fname = Config.Get(Config.Dir.Log) + "epg.log";
+          fname = logDir + "epg.log";
           break;
         case LogType.VMR9:
-          fname = Config.Get(Config.Dir.Log) + "vmr9.log";
+          fname = logDir + "vmr9.log";
           break;
       }
       return fname;
@@ -234,6 +250,13 @@ namespace MediaPortal.GUI.Library
       }
 
       return "Unknown";
+    }
+
+    static public void SetConfigurationMode()
+    {
+      bConfiguration = true;
+      // Always use Debug Level in Configuration
+      _minLevel = Level.Debug;
     }
 
     static public void WriteFile(LogType type, bool isError, string format, params object[] arg)
@@ -260,13 +283,16 @@ namespace MediaPortal.GUI.Library
             BackupLogFiles();
           }
 
-          using (StreamWriter writer = new StreamWriter(GetFileName(type), true))
+          if (logLevel <= _minLevel)
           {
-            writer.BaseStream.Seek(0, SeekOrigin.End); // set the file pointer to the end of 
-            writer.Write(DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString() + " " + String.Format("{0:000}",DateTime.Now.Millisecond));
-            writer.Write(" [" + GetLevelName(logLevel) + "] ");
-            writer.WriteLine(format, arg);
-            writer.Close();
+            using (StreamWriter writer = new StreamWriter(GetFileName(type), true))
+            {
+              writer.BaseStream.Seek(0, SeekOrigin.End); // set the file pointer to the end of 
+              writer.Write(DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString() + " " + String.Format("{0:000}", DateTime.Now.Millisecond));
+              writer.Write(" [" + GetLevelName(logLevel) + "] ");
+              writer.WriteLine(format, arg);
+              writer.Close();
+            }
           }
         }
         catch (Exception)
