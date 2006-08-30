@@ -346,7 +346,7 @@ namespace Wikipedia
         builder.Replace("''", "");
 
         // Display === as newlines (meaning new line for every ===).
-        Log.Debug("Wikipedia: Display === as 2 newlines.");
+        Log.Debug("Wikipedia: Display === as 1 newlines.");
         builder.Replace("===", "\n");
 
         // Display == as newlines (meaning new line for every ==).
@@ -369,7 +369,6 @@ namespace Wikipedia
         Log.Debug("Wikipedia: Remove &amp;mdash;.");
         builder.Replace("&amp;mdash;", "-");
         
-
         // Remove gallery tags.
         Log.Debug("Wikipedia: Remove gallery tags.");
         builder.Replace("&lt;gallery&gt;", "");
@@ -381,9 +380,21 @@ namespace Wikipedia
 
         // Remove (too many) newlines
         Log.Debug("Wikipedia: Remove (too many) newlines.");
+        builder.Replace("\n\n\n\n", "\n");
+        builder.Replace("\n\n\n", "\n");
         builder.Replace("\n\n", "\n");
 
+        // Remove (too many) newlines
+        Log.Debug("Wikipedia: Remove (too many) whitespaces.");
+        builder.Replace("    ", " ");
+        builder.Replace("   ", " ");
+        builder.Replace("  ", " ");
+
         tempParsedArticle = builder.ToString();
+
+        // The text shouldn't start with a newline.
+        if (tempParsedArticle.IndexOf("\n") == 0)
+          tempParsedArticle.Remove(0, 2);
 
         // For Debug purposes it is nice to see how the whole article text is parsed until here
         //Log.Debug(tempParsedArticle);
