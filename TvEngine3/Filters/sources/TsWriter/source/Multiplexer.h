@@ -21,7 +21,7 @@
 #pragma once
 #include "pcrdecoder.h"
 #include "pesdecoder.h"
-#include "patparser.h"
+//#include "patparser.h"
 #include <vector>
 #include <map>
 
