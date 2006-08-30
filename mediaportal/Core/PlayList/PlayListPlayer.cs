@@ -168,22 +168,22 @@ namespace MediaPortal.Playlists
 
         case GUIMessage.MessageType.GUI_MSG_PLAY_FILE:
           {
-            Log.Info("Playlistplayer.StartFile({0})", message.Label);
+            Log.Info("Playlistplayer: Start file ({0})", message.Label);
             g_Player.Play(message.Label);
             if (!g_Player.Playing) g_Player.Stop();
           }
           break;
         case GUIMessage.MessageType.GUI_MSG_STOP_FILE:
           {
-            Log.Info("Playlistplayer.Stopfile");
+            Log.Info("Playlistplayer: Stop file");
             g_Player.Stop();
           }
           break;
         case GUIMessage.MessageType.GUI_MSG_SEEK_FILE_PERCENTAGE:
           {
-            Log.Info("Playlistplayer.SeekPercent({0}%)", message.Param1);
+            Log.Info("Playlistplayer: SeekPercent ({0}%)", message.Param1);
             g_Player.SeekAsolutePercentage(message.Param1);
-            Log.Info("Playlistplayer.SeekPercent({0}%) done", message.Param1);
+            Log.Debug("Playlistplayer: SeekPercent ({0}%) done", message.Param1);
           }
           break;
         case GUIMessage.MessageType.GUI_MSG_SEEK_FILE_END:
@@ -192,9 +192,9 @@ namespace MediaPortal.Playlists
             double position = g_Player.CurrentPosition;
             if (position < duration - 1d)
             {
-              Log.Info("Playlistplayer.SeekEnd({0})", duration);
+              Log.Info("Playlistplayer: SeekEnd ({0})", duration);
               g_Player.SeekAbsolute(duration - 2d);
-              Log.Info("Playlistplayer.SeekEnd({0}) done", g_Player.CurrentPosition);
+              Log.Debug("Playlistplayer: SeekEnd ({0}) done", g_Player.CurrentPosition);
             }
           }
           break;
@@ -357,13 +357,13 @@ namespace MediaPortal.Playlists
       {
         if (_currentPlayList == PlayListType.PLAYLIST_NONE)
         {
-          Log.Info("PlaylistPlayer.Play() no playlist selected");
+          Log.Debug("PlaylistPlayer.Play() no playlist selected");
           return false;
         }
         PlayList playlist = GetPlaylist(_currentPlayList);
         if (playlist.Count <= 0)
         {
-          Log.Info("PlaylistPlayer.Play() playlist is empty");
+          Log.Debug("PlaylistPlayer.Play() playlist is empty");
           return false;
         }
         if (iSong < 0) iSong = 0;
@@ -388,7 +388,7 @@ namespace MediaPortal.Playlists
           playlist.ResetStatus();
         }
 
-        Log.Info("PlaylistPlayer.Play:{0}", item.FileName);
+        Log.Info("PlaylistPlayer: Play - {0}", item.FileName);
         if (item.Type == PlayListItem.PlayListItemType.Radio)
         {
           msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_TUNE_RADIO, 0, 0, 0, 0, 0, null);
@@ -403,7 +403,7 @@ namespace MediaPortal.Playlists
           //	Count entries in current playlist
           //	that couldn't be played
           _entriesNotFound++;
-          Log.Info("PlaylistPlayer.Play unable to play:{0}", item.FileName);
+          Log.Error("PlaylistPlayer: *** unable to play - {0} - skipping track!", item.FileName);
           skipmissing = true;
           iSong++;
         }

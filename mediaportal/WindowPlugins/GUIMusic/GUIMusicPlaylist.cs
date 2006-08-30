@@ -343,8 +343,7 @@ namespace MediaPortal.GUI.Music
 
           AudioscrobblerBase.ChangeUser(_currentScrobbleUser, mdb.AddScrobbleUserPassword(Convert.ToString(mdb.AddScrobbleUser(_currentScrobbleUser)), ""));
           LoadScrobbleUserSettings();
-          UpdateButtonStates();
-          //Log.Write("***DEBUG*** - chosen scrobbleuser: {0}", _currentScrobbleUser);
+          UpdateButtonStates();          
         }
 
         GUIControl.FocusControl(GetID, controlId);
@@ -417,7 +416,7 @@ namespace MediaPortal.GUI.Music
                 if (checkdb.GetNumOfFavorites() <= _maxScrobbledArtistsForSongs * 2)
                 {
                   shouldContinue = true;
-                  Log.Write("Audioscrobbler playlist: Cannot activate offline mode: favorites because there are not enough tracks");
+                  Log.Warn("Audioscrobbler playlist: Cannot activate offline mode: favorites because there are not enough tracks");
                 }
               }
           }
@@ -1188,7 +1187,7 @@ namespace MediaPortal.GUI.Music
                 }
                 catch (Exception ex)
                 {
-                  Log.Write("ScrobbleLookupThread: exception on lookup Similar - {0}", ex.Message);
+                  Log.Error("ScrobbleLookupThread: exception on lookup Similar - {0}", ex.Message);
                 }
               }
             }
@@ -1203,7 +1202,7 @@ namespace MediaPortal.GUI.Music
               }
               catch (Exception ex)
               {
-                Log.Write("ScrobbleLookupThread: exception on lookup Neighbours - {0}", ex.Message);
+                Log.Error("ScrobbleLookupThread: exception on lookup Neighbours - {0}", ex.Message);
               }
             }
             break;
@@ -1217,7 +1216,7 @@ namespace MediaPortal.GUI.Music
               }
               catch (Exception ex)
               {
-                Log.Write("ScrobbleLookupThread: exception on lookup - Friends {0}", ex.Message);
+                Log.Error("ScrobbleLookupThread: exception on lookup - Friends {0}", ex.Message);
               }
             }
             break;
@@ -1244,7 +1243,7 @@ namespace MediaPortal.GUI.Music
               }
               catch (Exception ex)
               {
-                Log.Write("ScrobbleLookupThread: exception on lookup - Random {0}", ex.Message);
+                Log.Error("ScrobbleLookupThread: exception on lookup - Random {0}", ex.Message);
               }
             }
             break;
@@ -1292,7 +1291,7 @@ namespace MediaPortal.GUI.Music
         }
       }
       else
-        Log.Write("ScrobbleLookupThread: too many items ({0}) in playlist - pausing...", Convert.ToString(currentPlaylist.Count));
+        Log.Debug("ScrobbleLookupThread: too many items ({0}) in playlist - pausing...", Convert.ToString(currentPlaylist.Count));
     }
 
     bool ScrobbleSimilarArtists(string Artist_)
