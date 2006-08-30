@@ -42,10 +42,10 @@ CSubtitleOutputPin::CSubtitleOutputPin(
                       HRESULT *phr ) :
 
     CBaseOutputPin(NAME( "CSubtitleOutputPin" ),
-					pFilter,						// Filter
-					pLock,							// Locking
-					phr,							  // Return code
-					L"Subtitle" ),			// Pin name
+					pFilter,            // Filter
+					pLock,              // Locking
+					phr,                // Return code
+					L"Out" ),           // Pin name
 					m_pDVBSub( pDVBSub )
 {
 	Reset();

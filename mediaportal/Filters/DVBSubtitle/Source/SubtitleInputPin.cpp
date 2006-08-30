@@ -50,7 +50,7 @@ CSubtitleInputPin::CSubtitleInputPin( CDVBSub *pDVBSub,
 					pFilter,						    // Filter
 					pLock,							    // Locking
 					phr,							      // Return code
-					L"Subtitle" ),					// Pin name
+					L"In" ),				      	// Pin name
 					m_pReceiveLock( pReceiveLock ),
 					m_pDVBSub( pDVBSub ),
 					m_tLast( 0 ),
