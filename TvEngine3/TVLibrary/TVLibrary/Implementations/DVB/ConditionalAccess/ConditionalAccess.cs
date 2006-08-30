@@ -1,3 +1,23 @@
+/* 
+ *	Copyright (C) 2005-2006 Team MediaPortal
+ *	http://www.team-mediaportal.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -77,7 +97,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="PMT">byte array containing the PMT</param>
     /// <param name="pmtLength">length of the pmt array</param>
     /// <returns></returns>
-    public bool SendPMT(DVBBaseChannel channel, byte[] PMT, int pmtLength)
+    public bool SendPMT(DVBBaseChannel channel, byte[] PMT, int pmtLength, int audioPid)
     {
       if (_digitalEveryWhere != null)
       {
@@ -87,13 +107,12 @@ namespace TvLibrary.Implementations.DVB
       {
 
         ChannelInfo info = new ChannelInfo();
-        info.DecodePmt(PMT);
-        int audioPid = -1;
+        info.DecodePmt(PMT); 
         int videoPid = -1;
         foreach (PidInfo pmtData in info.pids)
         {
-          if (pmtData.isVideo) videoPid = pmtData.pid;
-          if (pmtData.isAudio) audioPid = pmtData.pid;
+          if (pmtData.isVideo && videoPid<0) videoPid = pmtData.pid;
+          if (pmtData.isAudio && audioPid<0) audioPid = pmtData.pid;
           if (videoPid >= 0 && audioPid >= 0) break;
         }
         _twinhan.SendPMT("default", (uint)videoPid, (uint)audioPid, PMT, pmtLength);
