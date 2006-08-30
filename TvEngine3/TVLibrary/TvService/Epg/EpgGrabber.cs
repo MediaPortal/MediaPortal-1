@@ -650,7 +650,7 @@ namespace TvService
         int offset = -1;
         for (int i = 0; i < program.Text.Count; ++i)
         {
-          if (program.Text[0].Language == "ALL")
+          if (program.Text[0].Language.ToLower() == "all")
           {
             offset = i;
             break;

@@ -255,6 +255,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_65B181AA18E843D0AE51C27EB348E478"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_66705963F85444578734529B5D03DE36"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -934,7 +940,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:IdeaBlade.Persistence, Version=3.1.4.4, Culture=neutral, PublicKeyToken=287b5094865421c0, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:IdeaBlade.Persistence, Version=3.2.0.0, Culture=neutral, PublicKeyToken=287b5094865421c0, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_0BEE9D19894BB5590A755946D72E23CF"
@@ -1245,7 +1251,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:IdeaBlade.Persistence.Server, Version=3.1.4.4, Culture=neutral, PublicKeyToken=287b5094865421c0, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:IdeaBlade.Persistence.Server, Version=3.2.0.0, Culture=neutral, PublicKeyToken=287b5094865421c0, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_3A7F4EBA792948CA9B352D212B3B3AE6"
@@ -1376,7 +1382,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:IdeaBlade.Util, Version=3.1.4.4, Culture=neutral, PublicKeyToken=287b5094865421c0, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:IdeaBlade.Util, Version=3.2.0.0, Culture=neutral, PublicKeyToken=287b5094865421c0, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_577640135A583424FC405E2F3C36898C"
@@ -1450,6 +1456,26 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_65B181AA18E843D0AE51C27EB348E478"
+            {
+            "SourcePath" = "8:..\\..\\Filters\\bin\\mpFileWriter.ax"
+            "TargetName" = "8:mpFileWriter.ax"
+            "Tag" = "8:"
+            "Folder" = "8:_5A092B5055EA443AB462A6217E9C2838"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:4"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
@@ -1729,7 +1755,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:IdeaBlade.Rdb, Version=3.1.4.4, Culture=neutral, PublicKeyToken=287b5094865421c0, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:IdeaBlade.Rdb, Version=3.2.0.0, Culture=neutral, PublicKeyToken=287b5094865421c0, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_831CB960FF2CBC6BC4B2576227DA3FC5"
@@ -2355,7 +2381,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:IdeaBlade.Persistence.Rdb, Version=3.1.4.4, Culture=neutral, PublicKeyToken=287b5094865421c0, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:IdeaBlade.Persistence.Rdb, Version=3.2.0.0, Culture=neutral, PublicKeyToken=287b5094865421c0, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_F0422411658E199618710D9D60A382EA"
