@@ -226,7 +226,8 @@ namespace MediaPortal.Music.Database
     {
       if (submitTimer != null)
         submitTimer.Close();
-      queue.Save();
+      if (queue != null)
+        queue.Save();
       _signedIn = false;
     }
 

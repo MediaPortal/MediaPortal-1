@@ -351,63 +351,77 @@ namespace MediaPortal.Playlists
 
     public bool Play(int iSong)
     {
-      if (_currentPlayList == PlayListType.PLAYLIST_NONE)
+      // if play returns false PlayNext is called but this does not help against selecting an invalid track
+      bool skipmissing = false;
+      do
       {
-        Log.Info("PlaylistPlayer.Play() no playlist selected");
-        return false;
-      }
-      PlayList playlist = GetPlaylist(_currentPlayList);
-      if (playlist.Count <= 0)
-      {
-        Log.Info("PlaylistPlayer.Play() playlist is empty");
-        return false;
-      }
-      if (iSong < 0) iSong = 0;
-      if (iSong >= playlist.Count) iSong = playlist.Count - 1;
-
-			int iPreviousSong = _currentSong;
-      _currentSong = iSong;
-      PlayListItem item = playlist[_currentSong];
-
-			GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS, 0, 0, 0, _currentSong, 0, null);
-			msg.Label = item.FileName;
-			GUIGraphicsContext.SendMessage(msg);
-
-      if (playlist.AllPlayed())
-      {
-        playlist.ResetStatus();
-      }
-
-      Log.Info("PlaylistPlayer.Play:{0}", item.FileName);
-      if (item.Type == PlayListItem.PlayListItemType.Radio)
-      {
-        msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_TUNE_RADIO, 0, 0, 0, 0, 0, null);
-        msg.Label = item.Description;
-        GUIGraphicsContext.SendMessage(msg);
-        item.Played = true;
-        return true;
-      }
-
-      if (!g_Player.Play(item.FileName))
-      {
-        //	Count entries in current playlist
-        //	that couldn't be played
-        _entriesNotFound++;
-        Log.Info("PlaylistPlayer.Play unable to play:{0}", item.FileName);
-        return false;
-      }
-      else
-      {
-        item.Played = true;
-        if (MediaPortal.Util.Utils.IsVideo(item.FileName))
+        if (_currentPlayList == PlayListType.PLAYLIST_NONE)
         {
-          if (g_Player.HasVideo)
+          Log.Info("PlaylistPlayer.Play() no playlist selected");
+          return false;
+        }
+        PlayList playlist = GetPlaylist(_currentPlayList);
+        if (playlist.Count <= 0)
+        {
+          Log.Info("PlaylistPlayer.Play() playlist is empty");
+          return false;
+        }
+        if (iSong < 0) iSong = 0;
+        if (iSong >= playlist.Count)
+        {
+          if (skipmissing)
+            return false;
+          else
+            iSong = playlist.Count - 1;
+        }
+
+        int iPreviousSong = _currentSong;
+        _currentSong = iSong;
+        PlayListItem item = playlist[_currentSong];
+
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS, 0, 0, 0, _currentSong, 0, null);
+        msg.Label = item.FileName;
+        GUIGraphicsContext.SendMessage(msg);
+
+        if (playlist.AllPlayed())
+        {
+          playlist.ResetStatus();
+        }
+
+        Log.Info("PlaylistPlayer.Play:{0}", item.FileName);
+        if (item.Type == PlayListItem.PlayListItemType.Radio)
+        {
+          msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_TUNE_RADIO, 0, 0, 0, 0, 0, null);
+          msg.Label = item.Description;
+          GUIGraphicsContext.SendMessage(msg);
+          item.Played = true;
+          return true;
+        }
+
+        if (!g_Player.Play(item.FileName))
+        {
+          //	Count entries in current playlist
+          //	that couldn't be played
+          _entriesNotFound++;
+          Log.Info("PlaylistPlayer.Play unable to play:{0}", item.FileName);
+          skipmissing = true;
+          iSong++;
+        }
+        else
+        {
+          item.Played = true;
+          skipmissing = false;
+          if (MediaPortal.Util.Utils.IsVideo(item.FileName))
           {
-            GUIGraphicsContext.IsFullScreenVideo = true;
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+            if (g_Player.HasVideo)
+            {
+              GUIGraphicsContext.IsFullScreenVideo = true;
+              GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+            }
           }
         }
       }
+      while (skipmissing);
       return g_Player.Playing;
     }
 

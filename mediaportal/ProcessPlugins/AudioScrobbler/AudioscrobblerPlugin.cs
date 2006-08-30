@@ -232,11 +232,15 @@ namespace MediaPortal.Audioscrobbler
 
           if (songFound)
           {
-            currentSong.AudioScrobblerStatus = SongStatus.Init;
-            currentSong.DateTimePlayed = DateTime.UtcNow - TimeSpan.FromSeconds(g_Player.CurrentPosition);
-            // avoid false skip detection
-            lastPosition = Convert.ToInt32(g_Player.Player.CurrentPosition);
-            OnSongChangedEvent(currentSong);
+            // playback couuuuld be stopped in theory
+            if (g_Player.Playing)
+            {
+              currentSong.AudioScrobblerStatus = SongStatus.Init;
+              currentSong.DateTimePlayed = DateTime.UtcNow - TimeSpan.FromSeconds(g_Player.CurrentPosition);
+              // avoid false skip detection            
+              lastPosition = Convert.ToInt32(g_Player.Player.CurrentPosition);
+              OnSongChangedEvent(currentSong);
+            }
           }
           // DB lookup of song failed
           else
