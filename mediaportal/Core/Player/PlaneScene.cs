@@ -244,7 +244,7 @@ namespace MediaPortal.Player
     /// </summary>
     public void Deinit()
     {
-
+      GUIGraphicsContext.Receivers -= new SendMessageHandler(this.OnMessage);
       GUILayerManager.UnRegisterLayer(this);
       if (_renderTarget != null)
       {
@@ -277,6 +277,68 @@ namespace MediaPortal.Player
       //Log.Info("PlaneScene: init()");
       _renderTarget = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Video);
+      GUIGraphicsContext.Receivers += new SendMessageHandler(this.OnMessage);
+    }
+
+    /// <summary>
+    /// OnMessage.
+    /// Handles received GUIMessage's from graphics context.
+    /// </summary>
+    /// <param name="message">GUIMessage</param>
+    void OnMessage(GUIMessage message)
+    {
+      switch (message.Message)
+      {
+        case GUIMessage.MessageType.GUI_MSG_PLANESCENE_CROP:
+          CropMessage msg = message.Object as CropMessage;
+          if (msg != null)
+            Crop(msg);
+          break;
+      }
+    }
+
+    /// <summary>
+    /// Crop.
+    /// Crops the current picture..
+    /// </summary>
+    /// <param name="message">CropMessage</param>
+    void Crop(CropMessage message)
+    {
+      if (message.Amount < 0) return;
+      using (MediaPortal.Profile.Settings writer = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      {
+        switch (message.EdgeToCtop)
+        {
+          case CropMessage.Edge.Top:
+           if ((message.Amount + _bottomscanlinesToRemove) >= _sourceRect.Height)
+             return;
+           _topscanlinesToRemove = message.Amount;
+           writer.SetValue("mytv", "topscanlinestoremove", _topscanlinesToRemove);
+           break;
+         case CropMessage.Edge.Bottom:
+           if ((message.Amount + _topscanlinesToRemove) >= _sourceRect.Height)
+             return;
+           _bottomscanlinesToRemove = message.Amount;
+           writer.SetValue("mytv", "bottomscanlinestoremove", _bottomscanlinesToRemove);
+           break;
+         case CropMessage.Edge.Left:
+           if ((message.Amount + _rightcolumnsToRemove) >= _sourceRect.Width)
+             return;
+           _leftcolumnsToRemove = message.Amount;
+           writer.SetValue("mytv", "leftcolumnstoremove", _leftcolumnsToRemove);
+           break;
+         case CropMessage.Edge.Right:
+           if ((message.Amount + _leftcolumnsToRemove) >= _sourceRect.Width)
+             return;
+           _rightcolumnsToRemove = message.Amount;
+           writer.SetValue("mytv", "rightcolumnstoremove", _rightcolumnsToRemove);
+           break;
+        }
+      }
+      Log.Info("PlaneScene: Crop Edge {0}, amount: {1}", message.EdgeToCtop.ToString(), message.Amount);
+
+      // Repaint();
+      InternalPresentImage(_vmr9Util.VideoWidth, _vmr9Util.VideoHeight, _arVideoWidth, _arVideoHeight, false);
     }
 
     /// <summary>

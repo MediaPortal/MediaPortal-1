@@ -4984,6 +4984,26 @@
       <value>Mini EPG</value>
    </string>
    <string>
+      <id>11000</id>
+      <value>Crop settings</value>
+   </string>
+   <string>
+      <id>11001</id>
+      <value>Top:</value>
+   </string>
+   <string>
+      <id>11002</id>
+      <value>Bottom:</value>
+   </string>
+   <string>
+      <id>11003</id>
+      <value>Left:</value>
+   </string>
+   <string>
+      <id>11004</id>
+      <value>Right:</value>
+   </string>
+   <string>
       <id>12902</id>
       <value>MSN Messenger OSD</value>
    </string>

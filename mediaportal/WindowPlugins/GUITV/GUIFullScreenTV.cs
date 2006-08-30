@@ -1331,6 +1331,9 @@ namespace MediaPortal.GUI.TV
       }
       dlg.AddLocalizedString(970); // Previous window
 
+      dlg.AddLocalizedString(11000); // Crop settings
+
+
       _isDialogVisible = true;
 
       dlg.DoModal(GetID);
@@ -1450,6 +1453,12 @@ namespace MediaPortal.GUI.TV
           GUIWindowManager.IsOsdVisible = false;
           GUIGraphicsContext.IsFullScreenVideo = false;
           GUIWindowManager.ShowPreviousWindow();
+          break;
+        case 11000:
+          GUICropSettings cropSettings = (GUICropSettings)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TV_CROP_SETTINGS);
+          _isDialogVisible = true;
+          cropSettings.DoModal(GetID);
+          _isDialogVisible = false;
           break;
       }
     }

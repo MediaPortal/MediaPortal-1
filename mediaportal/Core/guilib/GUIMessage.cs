@@ -119,7 +119,8 @@ namespace MediaPortal.GUI.Library
       GUI_MSG_RECORDER_STOP,
       GUI_MSG_RECORDER_START,
       GUI_MSG_DISABLEGUIDEREFRESH,
-      GUI_MSG_ENABLEGUIDEREFRESH
+      GUI_MSG_ENABLEGUIDEREFRESH,
+      GUI_MSG_PLANESCENE_CROP,
     };
 
     private string _label = "";
