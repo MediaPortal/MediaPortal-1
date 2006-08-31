@@ -331,7 +331,7 @@ CMpTs::CMpTs(LPUNKNOWN pUnk, HRESULT *phr)
     }
 
 		m_pVideoAnalyzer = new CVideoAnalyzer(GetOwner(),phr);
-		m_pChannelScanner= new CChannelScan(GetOwner(),phr);
+		m_pChannelScanner= new CChannelScan(GetOwner(),phr,m_pFilter);
 		m_pEpgScanner = new CEpgScanner(GetOwner(),phr);
 		m_pPmtGrabber = new CPmtGrabber(GetOwner(),phr);
 		m_pRecorder = new CRecorder(GetOwner(),phr);

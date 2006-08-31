@@ -28,14 +28,15 @@
 
 #include "channelscan.h"
 #include "channelinfo.h"
-
+#include "tswriter.h"
 
 extern void LogDebug(const char *fmt, ...) ;
 
-CChannelScan::CChannelScan(LPUNKNOWN pUnk, HRESULT *phr) 
+CChannelScan::CChannelScan(LPUNKNOWN pUnk, HRESULT *phr, CMpTsFilter* filter) 
 :CUnknown( NAME ("MpTsChannelScan"), pUnk)
 {
 	m_bIsParsing=false;
+	m_pFilter=filter;
 }
 CChannelScan::~CChannelScan(void)
 {
@@ -46,6 +47,12 @@ STDMETHODIMP CChannelScan::Start()
 	CEnterCriticalSection enter(m_section);
 	try
 	{
+		if (m_pConditionalAccess!=NULL)
+		{
+			delete m_pConditionalAccess;
+		}
+		m_pConditionalAccess = new CConditionalAccess(m_pFilter->GetFilterGraph());
+		m_patParser.SetConditionalAccess(m_pConditionalAccess);
 		m_patParser.Reset();
 		m_bIsParsing=true;
 	}
@@ -60,6 +67,12 @@ STDMETHODIMP CChannelScan::Stop()
 	CEnterCriticalSection enter(m_section);
 	try
 	{
+		m_patParser.SetConditionalAccess(NULL);
+		if (m_pConditionalAccess!=NULL)
+		{
+			delete m_pConditionalAccess;
+		}
+		m_pConditionalAccess=NULL;
 		m_bIsParsing=false;
 		m_patParser.Reset();
 	}

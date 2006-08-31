@@ -19,6 +19,7 @@
  *
  */
 #include "patparser.h"
+#include "ConditionalAccess.h"
 #include "criticalsection.h"
 #include "entercriticalsection.h"
 
@@ -64,11 +65,12 @@ DECLARE_INTERFACE_(ITSChannelScan, IUnknown)
 
 };
 
+class CMpTsFilter;
 
 class CChannelScan: public CUnknown, public ITSChannelScan
 {
 public:
-	CChannelScan(LPUNKNOWN pUnk, HRESULT *phr);
+	CChannelScan(LPUNKNOWN pUnk, HRESULT *phr, CMpTsFilter* filter);
 	~CChannelScan(void);
 	
   DECLARE_IUNKNOWN
@@ -110,5 +112,7 @@ public:
 private:
 	CPatParser m_patParser;
 	bool m_bIsParsing;
+	CMpTsFilter* m_pFilter;
 	CCriticalSection m_section;
+	CConditionalAccess*	m_pConditionalAccess;
 };

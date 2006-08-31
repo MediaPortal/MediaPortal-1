@@ -25,6 +25,7 @@
 void LogDebug(const char *fmt, ...) ;
 CPmtParser::CPmtParser()
 {
+	m_pmtCallback=NULL;
 	_isFound=false;
 }
 
@@ -39,6 +40,11 @@ bool CPmtParser::Ready()
 CPidTable& CPmtParser::GetPidInfo()
 {
   return m_pidInfo;
+}
+	
+void CPmtParser::SetPmtCallBack(IPmtCallBack* callback)
+{
+	m_pmtCallback=callback;
 }
 
 
@@ -66,8 +72,12 @@ void CPmtParser::OnNewSection(CSection& sections)
 
 	if (!_isFound)
 	{
-		LogDebug("got pmt:%x service id:%x", GetPid(), program_number);
+		//LogDebug("got pmt:%x service id:%x", GetPid(), program_number);
 		_isFound=true;	
+		if (m_pmtCallback!=NULL)
+		{
+			m_pmtCallback->OnPmtReceived(GetPid());
+		}
 	}
   // loop 1
   while (len2 > 0)

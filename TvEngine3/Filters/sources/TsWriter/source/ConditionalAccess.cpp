@@ -18,30 +18,36 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-#pragma once
-#include "sectiondecoder.h"
-#include "PidTable.h"
-#include <map>
-using namespace std;
+#include <windows.h>
+#include <commdlg.h>
+#include <bdatypes.h>
+#include <time.h>
+#include <streams.h>
+#include <initguid.h>
+#include "ConditionalAccess.h"
 
-class IPmtCallBack
+CConditionalAccess::CConditionalAccess(IFilterGraph *graph)
 {
-public:
-	virtual void OnPmtReceived(int pmtPid)=0;
-};
+	m_pFireDtv = new CFireDtv(graph);
+}
 
-class CPmtParser: public  CSectionDecoder
+CConditionalAccess::~CConditionalAccess(void)
 {
-public:
-  CPmtParser(void);
-  virtual ~CPmtParser(void);
-  CPidTable& GetPidInfo();
-	void			 OnNewSection(CSection& sections);
-  bool			 Ready();
-	void       SetPmtCallBack(IPmtCallBack* callback);
-private:
-  int				m_pmtPid;
-  CPidTable m_pidInfo;
-	bool			_isFound;
-	IPmtCallBack* m_pmtCallback;
-};
+	delete m_pFireDtv;
+}
+
+bool CConditionalAccess::SetPids(vector<int> pids)
+{
+	if (m_pFireDtv->IsFireDtv())
+	{
+		return m_pFireDtv->SetPids(pids);
+	}
+	return true;
+}
+void CConditionalAccess::DisablePidFiltering()
+{
+	if (m_pFireDtv->IsFireDtv())
+	{
+		m_pFireDtv->DisablePidFiltering();
+	}
+}

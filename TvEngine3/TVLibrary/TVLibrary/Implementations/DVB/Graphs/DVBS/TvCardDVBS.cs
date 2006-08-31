@@ -297,10 +297,10 @@ namespace TvLibrary.Implementations.DVB
       {
         _conditionalAccess.SendDiseqcCommand(dvbsChannel);
       }
+      _currentChannel = channel;
       SubmitTuneRequest(_tuneRequest);
 
 
-      _currentChannel = channel;
 
       SetAnalyzerMapping(dvbsChannel.PmtPid);
       return true;

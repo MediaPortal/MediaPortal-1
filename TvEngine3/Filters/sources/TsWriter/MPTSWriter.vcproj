@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="8,00"
 	Name="TsWriter"
 	ProjectGUID="{FCF30D16-2C9E-4429-B605-4ACA43023E71}"
 	RootNamespace="MPTSWriter"
@@ -378,6 +378,18 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="ConditionalAccess"
+				>
+				<File
+					RelativePath=".\source\ConditionalAccess.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\source\FireDtv.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -536,6 +548,18 @@
 				</File>
 				<File
 					RelativePath=".\source\EnterCriticalSection.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Conditional Access"
+				>
+				<File
+					RelativePath=".\source\ConditionalAccess.h"
+					>
+				</File>
+				<File
+					RelativePath=".\source\FireDtv.h"
 					>
 				</File>
 			</Filter>

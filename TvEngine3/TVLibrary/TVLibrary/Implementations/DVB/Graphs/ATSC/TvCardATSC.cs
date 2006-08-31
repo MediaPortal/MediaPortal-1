@@ -268,8 +268,8 @@ namespace TvLibrary.Implementations.DVB
         hr = _tuneRequest.put_MinorChannel(atscChannel.MinorChannel);
         _tuneRequest.put_Locator(locator);
 
-        SubmitTuneRequest(_tuneRequest);
         _currentChannel = channel;
+        SubmitTuneRequest(_tuneRequest);
 
 
         SetAnalyzerMapping(atscChannel.PmtPid);

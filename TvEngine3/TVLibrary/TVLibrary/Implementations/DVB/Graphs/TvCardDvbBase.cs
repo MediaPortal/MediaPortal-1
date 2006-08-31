@@ -242,7 +242,19 @@ namespace TvLibrary.Implementations.DVB
 
       _pmtTimer.Enabled = true;
       _lastSignalUpdate = DateTime.MinValue;
-      SendHwPids(new ArrayList());
+      ArrayList pids = new ArrayList();
+      pids.Add((ushort)0x0);//pat
+      pids.Add((ushort)0x11);//sdt
+      pids.Add((ushort)0x1fff);//padding stream
+      if (_currentChannel != null)
+      {
+        DVBBaseChannel ch = (DVBBaseChannel)_currentChannel;
+        if (ch.PmtPid > 0)
+        {
+          pids.Add((ushort)ch.PmtPid);//sdt
+        }
+      }
+      SendHwPids(pids);
 
       _pmtVersion = -1;
     }
@@ -1910,7 +1922,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="pids">The pids.</param>
     public void SendHwPids(ArrayList pids)
     {
-      if (System.IO.File.Exists("usehwpids.txt"))
+      //if (System.IO.File.Exists("usehwpids.txt"))
       {
         if (_conditionalAccess != null)
         {

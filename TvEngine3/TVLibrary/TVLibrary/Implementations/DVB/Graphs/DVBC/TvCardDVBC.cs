@@ -275,9 +275,9 @@ namespace TvLibrary.Implementations.DVB
       hr = locator.put_CarrierFrequency((int)dvbcChannel.Frequency);
 
       _tuneRequest.put_Locator(locator);
-      SubmitTuneRequest(_tuneRequest);
 
       _currentChannel = channel;
+      SubmitTuneRequest(_tuneRequest);
 
       SetAnalyzerMapping(dvbcChannel.PmtPid);
       return true;

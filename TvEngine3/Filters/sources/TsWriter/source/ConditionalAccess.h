@@ -18,30 +18,18 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-#pragma once
-#include "sectiondecoder.h"
-#include "PidTable.h"
-#include <map>
+#include "firedtv.h"
+#include <vector>
 using namespace std;
+#pragma once
 
-class IPmtCallBack
+class CConditionalAccess
 {
 public:
-	virtual void OnPmtReceived(int pmtPid)=0;
-};
-
-class CPmtParser: public  CSectionDecoder
-{
-public:
-  CPmtParser(void);
-  virtual ~CPmtParser(void);
-  CPidTable& GetPidInfo();
-	void			 OnNewSection(CSection& sections);
-  bool			 Ready();
-	void       SetPmtCallBack(IPmtCallBack* callback);
+	CConditionalAccess(IFilterGraph *graph);
+	virtual ~CConditionalAccess(void);
+	bool		SetPids(vector<int> pids);
+	void		DisablePidFiltering();
 private:
-  int				m_pmtPid;
-  CPidTable m_pidInfo;
-	bool			_isFound;
-	IPmtCallBack* m_pmtCallback;
+	CFireDtv* m_pFireDtv;
 };

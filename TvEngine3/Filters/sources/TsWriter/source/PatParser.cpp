@@ -19,12 +19,19 @@
  *
  */
 #include <windows.h>
+#include <commdlg.h>
+#include <bdatypes.h>
+#include <time.h>
+#include <streams.h>
+#include <initguid.h>
+
 #include "PatParser.h"
 #include "tsheader.h"
 
 void LogDebug(const char *fmt, ...) ;
 CPatParser::CPatParser(void)
 {
+	m_pConditionalAccess=NULL;
   Reset();
   SetTableId(0);
   SetPid(0);
@@ -54,6 +61,12 @@ void  CPatParser::Reset()
   m_vctParser.Reset();
   m_sdtParser.Reset();
 	m_nitDecoder.Reset();
+	UpdateHwPids();
+}
+
+void CPatParser::SetConditionalAccess(CConditionalAccess* access)
+{
+	m_pConditionalAccess=access;
 }
  
 int CPatParser::Count()
@@ -65,9 +78,8 @@ int CPatParser::Count()
 bool CPatParser::GetChannel(int index, CChannelInfo& info)
 {
 	static CChannelInfo unknownChannel;
-  if (index < 0 || index >Count()) 
+  if (index < 0 || index > Count()) 
 	{
-		LogDebug("CPatParser::GetChannel(%d) invalid index", index);
 		return false;
 	}
 
@@ -119,6 +131,7 @@ void CPatParser::OnTsPacket(byte* tsPacket)
     parser->OnTsPacket(tsPacket);
   }
   CSectionDecoder::OnTsPacket(tsPacket);
+	
 }
 
 void CPatParser::OnNewSection(CSection& sections)
@@ -142,6 +155,7 @@ void CPatParser::OnNewSection(CSection& sections)
 
   int pmtcount=0;
   int loop =(section_length - 9) / 4;
+	bool newPmtsAdded=false;
   for(int i=0; i < loop; i++)
   {
 	  int offset = (8 +(i * 4));
@@ -167,10 +181,16 @@ void CPatParser::OnNewSection(CSection& sections)
 		  CPmtParser* pmtParser = new CPmtParser();
 		  pmtParser->SetTableId(2);
 		  pmtParser->SetPid(pmtPid);
+			pmtParser->SetPmtCallBack(this);
 		  m_pmtParsers.push_back( pmtParser );
 			LogDebug("  add pmt# %d pid: %x",m_pmtParsers.size(), pmtPid);
+			newPmtsAdded=true;
 	  }
   }
+	if (newPmtsAdded)
+	{
+			UpdateHwPids();
+	}
 }
 
 void CPatParser::Dump()
@@ -190,4 +210,40 @@ void CPatParser::Dump()
       LogDebug("%d) not found",i);
     }
   }
+}
+
+void CPatParser::OnPmtReceived(int pid)
+{
+	LogDebug("PatParser:  received pmt:%x", pid);
+	if ((m_pmtParsers.size()+5) <=16) return;
+	UpdateHwPids();
+}
+void CPatParser::UpdateHwPids()
+{
+	if (m_pConditionalAccess==NULL) return;
+	vector<int> pids;
+	pids.push_back(0x0); //pat
+	pids.push_back(0x10);//NIT
+	pids.push_back(0x11);//sdt
+	pids.push_back(0x1ffb);//atsc virtual channel table
+	pids.push_back(0x1fff);//padding stream..
+	for (int i=0; i < m_pmtParsers.size();++i)
+	{
+		CPmtParser* parser = m_pmtParsers[i];
+		if (parser->Ready() == false)
+		{
+			pids.push_back( parser->GetPid() );
+		}
+		if (pids.size()>=16) break;
+	}
+	char buf[1024];
+	strcpy(buf,"");
+	for (int i=0; i < pids.size();++i)
+	{
+		char tmp[100];
+		sprintf(tmp,"%x,", pids[i]);
+		strcat(buf,tmp);
+	}
+	LogDebug("PatParser: filter pids:%s", buf);
+	m_pConditionalAccess->SetPids(pids);
 }
