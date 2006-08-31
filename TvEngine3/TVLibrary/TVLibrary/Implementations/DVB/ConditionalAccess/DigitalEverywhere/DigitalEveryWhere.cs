@@ -252,13 +252,7 @@ namespace TvLibrary.Implementations.DVB
     /// </preconditions>
     public bool SendPMTToFireDTV(byte[] PMT, int pmtLength)
     {
-      if (_hasCAM == false) return true;
-      /*if (IsCamReady() == false)
-      {
-        ResetCAM();
-        return false;
-      }*/
-
+      
       //typedef struct _FIRESAT_CA_DATA{ 
       //  UCHAR uSlot;                      //0
       //  UCHAR uTag;                       //1   (2..3 = padding)
