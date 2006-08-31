@@ -511,7 +511,7 @@ namespace TvLibrary.Implementations.DVB
       {
         Log.Log.WriteFile("ss2:DeleteAllPIDs() failed pid:0x2000");
       }
-      if (pids.Count == 0 || true)
+      if (pids.Count == 0)
       {
         Log.Log.WriteFile("ss2:hw pids:all");
         int added = SetPidToPin(_interfaceB2C2DataCtrl, 0, PID_CAPTURE_ALL_INCLUDING_NULLS);
@@ -1480,7 +1480,19 @@ namespace TvLibrary.Implementations.DVB
       _interfaceB2C2TunerCtrl.CheckLock();
       _lastSignalUpdate = DateTime.MinValue;
       UpdateSignalPresent();
-      SendHWPids(new ArrayList());
+      ArrayList pids = new ArrayList();
+      pids.Add((ushort)0x0);//pat
+      pids.Add((ushort)0x11);//sdt
+      pids.Add((ushort)0x1fff);//padding stream
+      if (_currentChannel != null)
+      {
+        DVBBaseChannel ch = (DVBBaseChannel)_currentChannel;
+        if (ch.PmtPid > 0)
+        {
+          pids.Add((ushort)ch.PmtPid);//sdt
+        }
+      }
+      SendHWPids(pids);
 
 
       SetAnalyzerMapping(dvbsChannel.PmtPid);
