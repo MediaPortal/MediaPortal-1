@@ -65,6 +65,7 @@ namespace SetupTv.Sections
         ch.VisibleInGuide = mpListView1.Items[i].Checked;
       }
       DatabaseManager.Instance.SaveChanges();
+      RemoteControl.Instance.OnNewSchedule();
       base.OnSectionDeActivated();
     }
     public override void OnSectionActivated()

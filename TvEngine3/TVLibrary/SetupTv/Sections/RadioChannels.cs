@@ -143,6 +143,7 @@ namespace SetupTv.Sections
         mpListView1.Items.Remove(item);
       }
       DatabaseManager.Instance.SaveChanges();
+      RemoteControl.Instance.OnNewSchedule();
     }
   }
 }

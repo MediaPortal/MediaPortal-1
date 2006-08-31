@@ -119,7 +119,16 @@ namespace SetupTv.Sections
           progressBar1.Value = (int)percent;
 
           ATSCChannel tuneChannel = new ATSCChannel();
+          tuneChannel.NetworkId = -1;
+          tuneChannel.TransportId = -1;
+          tuneChannel.ServiceId = -1;
+          tuneChannel.MinorChannel = -1;
+          tuneChannel.MajorChannel = -1;
+          tuneChannel.Frequency = -1;
+          tuneChannel.SymbolRate = -1;
           tuneChannel.PhysicalChannel = index;
+          tuneChannel.ModulationType = ModulationType.ModNotSet;
+
           if (index == 2)
           {
             RemoteControl.Instance.Tune(_cardNumber, tuneChannel);
@@ -165,14 +174,14 @@ namespace SetupTv.Sections
 
             labelScan1.Text = String.Format("Tv channels New:{0} Updated:{1}", tvChannelsNew, tvChannelsUpdated);
             labelScan2.Text = String.Format("Radio channels New:{0} Updated:{1}", radioChannelsNew, radioChannelsUpdated);
-            
+
           }
         }
 
         progressBar1.Value = 100;
         mpButtonScanTv.Enabled = true;
         DatabaseManager.Instance.SaveChanges();
-        
+
       }
       catch (Exception ex)
       {

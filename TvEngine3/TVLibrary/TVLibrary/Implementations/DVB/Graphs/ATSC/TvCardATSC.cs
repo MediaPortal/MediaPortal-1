@@ -91,7 +91,7 @@ namespace TvLibrary.Implementations.DVB
         AddAndConnectBDABoardFilters(_device);
         AddTransportStreamFiltersToGraph();
 
-        
+
         GetTunerSignalStatistics();
         _graphState = GraphState.Created;
       }
@@ -258,14 +258,16 @@ namespace TvLibrary.Implementations.DVB
 
         _tuningSpace.get_DefaultLocator(out locator);
         IATSCLocator atscLocator = (IATSCLocator)locator;
-        int hr = atscLocator.put_Modulation(atscChannel.ModulationType);
-        hr = atscLocator.put_InnerFEC(FECMethod.MethodNotSet);
-        hr = atscLocator.put_SymbolRate(atscChannel.SymbolRate);
+        int hr;
+        hr = locator.put_CarrierFrequency(-1);//(int)atscChannel.Frequency);
         hr = atscLocator.put_PhysicalChannel(atscChannel.PhysicalChannel);
-        hr = atscLocator.put_TSID(atscChannel.TransportId);
-        hr = locator.put_CarrierFrequency((int)atscChannel.Frequency);
-        hr = _tuneRequest.put_Channel(atscChannel.MajorChannel);
+        hr = atscLocator.put_SymbolRate(-1);//atscChannel.SymbolRate);
+        hr = atscLocator.put_TSID(-1);//atscChannel.TransportId);
+
+        hr = atscLocator.put_InnerFEC(FECMethod.MethodNotSet);
+        hr = atscLocator.put_Modulation(atscChannel.ModulationType);
         hr = _tuneRequest.put_MinorChannel(atscChannel.MinorChannel);
+        hr = _tuneRequest.put_Channel(atscChannel.MajorChannel);
         _tuneRequest.put_Locator(locator);
 
         _currentChannel = channel;
