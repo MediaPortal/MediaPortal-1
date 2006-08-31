@@ -54,5 +54,14 @@ namespace TvLibrary.Implementations.DVB.Structures
       language = "";
       isDVBSubtitle = true;
     }
+    public override string ToString()
+    {
+      if (isVideo) return String.Format("pid:{0:X} video", pid);
+      if (isAC3Audio) return String.Format("pid:{0:X} ac3 lang:{1} type:{2}", pid, language, stream_type);
+      if (isAudio) return String.Format("pid:{0:X} audio lang:{1} type:{2}", pid, language, stream_type);
+      if (isTeletext) return String.Format("pid:{0:X} teletext", pid);
+      if (isDVBSubtitle) return String.Format("pid:{0:X} subtitle", pid);
+      return string.Format("pid:{0:X} type unknown", pid);
+    }
   }
 }
