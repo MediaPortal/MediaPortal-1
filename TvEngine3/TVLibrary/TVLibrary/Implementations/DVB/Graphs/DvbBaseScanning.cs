@@ -154,24 +154,27 @@ namespace TvLibrary.Implementations.DVB
       }
       if (_card.IsTunerLocked == false)
       {
-        if ((channel as ATSCChannel) != null)
+        if ((channel as ATSCChannel) == null)
         {
           Log.Log.WriteFile("Scan! no signal detected: locked:{0} signal level:{1} signal quality:{2}", _card.IsTunerLocked, _card.SignalLevel, _card.SignalQuality);
           return null;
         }
       }
-      Log.Log.WriteFile("Signal detected, wait for good signal quality");
       try
       {
         _analyzer.Start();
-        startTime = DateTime.Now;
-        while (true)
+        if (_card.IsTunerLocked || _card.SignalQuality>0 || _card.SignalLevel>0)
         {
-          System.Threading.Thread.Sleep(100);
-          ResetSignalUpdate();
-          if (_card.SignalQuality >= 30) break;
-          TimeSpan ts = DateTime.Now - startTime;
-          if (ts.TotalMilliseconds >= 2000) break;
+          Log.Log.WriteFile("Signal detected, wait for good signal quality");
+          startTime = DateTime.Now;
+          while (true)
+          {
+            System.Threading.Thread.Sleep(100);
+            ResetSignalUpdate();
+            if (_card.SignalQuality >= 30) break;
+            TimeSpan ts = DateTime.Now - startTime;
+            if (ts.TotalMilliseconds >= 2000) break;
+          }
         }
         Log.Log.WriteFile("Tuner locked:{0} signal level:{1} signal quality:{2}", _card.IsTunerLocked, _card.SignalLevel, _card.SignalQuality);
         startTime = DateTime.Now;

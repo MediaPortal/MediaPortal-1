@@ -24,6 +24,7 @@
 #include "VirtualChannelTableParser.h"
 #include "tsheader.h"
 
+extern void LogDebug(const char *fmt, ...) ;
 CVirtualChannelTableParser::CVirtualChannelTableParser(void)
 {
   SetPid(0x1ffb);
@@ -47,6 +48,14 @@ int CVirtualChannelTableParser::Count()
 {
   return m_vecChannels.size();
 }
+
+bool CVirtualChannelTableParser::GetChannel(int index,CChannelInfo& info)
+{
+	if (index < 0 || index >= Count()) return false;
+	info=m_vecChannels[index];
+	return true;
+}
+
 bool CVirtualChannelTableParser::GetChannelInfo(int serviceId,CChannelInfo& info)
 {
 	for (int i=0; i < m_vecChannels.size();++i)
@@ -80,12 +89,14 @@ void CVirtualChannelTableParser::OnNewSection(CSection** sections, int maxSectio
 	  int transport_stream_id = (buf[3]<<8)+buf[4];
 	  int version_number = ((buf[5]>>1)&0x1F);
     if (version_number==m_iVctVersion) return;
+		LogDebug("VCT: received vct table id:%x version:%d", table_id,version_number);
     m_iVctVersion=version_number;
 	  int current_next_indicator = buf[5] & 1;
 	  int section_number = buf[6];
 	  int last_section_number = buf[7];
 	  int protocol_version = buf[8];
 	  int num_channels_in_section = buf[9];
+		LogDebug("VCT:  channels:%d", num_channels_in_section);
 	  if (num_channels_in_section <= 0) return;
 	  int start=10;
 	  for (int i=0; i < num_channels_in_section;i++)
@@ -197,7 +208,12 @@ void CVirtualChannelTableParser::OnNewSection(CSection** sections, int maxSectio
 			  }
 			  len += (descriptor_len+2);
 		  }
-		  start += descriptors_length;
+			
+			LogDebug("VCT:  #%d major:%d minor:%d freq:%d tsid:%x sid:%x servicetype:%x name:%s video:%x audio:%x ac3:%x", 
+					m_vecChannels.size(),
+					info.MajorChannel,info.MinorChannel,info.Frequency,
+					info.ServiceId,info.TransportId,info.ServiceType,
+					info.ServiceName,info.PidTable.VideoPid,info.PidTable.AudioPid1,info.PidTable.AC3Pid);
       m_vecChannels.push_back(info);
     }
   }

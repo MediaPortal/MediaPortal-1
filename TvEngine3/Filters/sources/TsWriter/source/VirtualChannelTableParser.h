@@ -36,7 +36,7 @@ public:
 
   int   Count();
   bool  GetChannelInfo(int serviceId,CChannelInfo& info);
-
+	bool  GetChannel(int index,CChannelInfo& info);
 private:
   void DecodeServiceLocationDescriptor( byte* buf,int start,CChannelInfo& channelInfo);
   void DecodeExtendedChannelNameDescriptor( byte* buf,int start,CChannelInfo& channelInfo, int maxLen);

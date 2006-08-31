@@ -511,7 +511,7 @@ namespace TvLibrary.Implementations.DVB
       {
         Log.Log.WriteFile("ss2:DeleteAllPIDs() failed pid:0x2000");
       }
-      if (pids.Count == 0)
+      if (pids.Count == 0 || true)
       {
         Log.Log.WriteFile("ss2:hw pids:all");
         int added = SetPidToPin(_interfaceB2C2DataCtrl, 0, PID_CAPTURE_ALL_INCLUDING_NULLS);

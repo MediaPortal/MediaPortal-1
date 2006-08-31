@@ -72,7 +72,12 @@ void CPatParser::SetConditionalAccess(CConditionalAccess* access)
 int CPatParser::Count()
 {
 	if (m_nitDecoder.Ready()==false) return 0;
-  return m_pmtParsers.size();
+  int count= m_pmtParsers.size();
+	if (count==0) 
+	{
+		count = m_vctParser.Count();
+	}
+	return count;
 }
 
 bool CPatParser::GetChannel(int index, CChannelInfo& info)
@@ -80,6 +85,14 @@ bool CPatParser::GetChannel(int index, CChannelInfo& info)
 	static CChannelInfo unknownChannel;
   if (index < 0 || index > Count()) 
 	{
+		return false;
+	}
+	if (m_pmtParsers.size()==0 && m_vctParser.Count()>0)
+	{
+		if (m_vctParser.GetChannel(index,info))
+		{
+			return true;
+		}
 		return false;
 	}
 
