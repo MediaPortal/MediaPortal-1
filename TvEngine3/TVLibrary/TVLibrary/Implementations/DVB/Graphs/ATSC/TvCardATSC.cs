@@ -55,9 +55,9 @@ namespace TvLibrary.Implementations.DVB
       _devicePath = device.DevicePath;
       try
       {
-        BuildGraph();
-        RunGraph();
-        StopGraph();
+        //BuildGraph();
+        //RunGraph();
+        //StopGraph();
       }
       catch (Exception)
       {

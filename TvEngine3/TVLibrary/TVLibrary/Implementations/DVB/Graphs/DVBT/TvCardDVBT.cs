@@ -57,9 +57,9 @@ namespace TvLibrary.Implementations.DVB
 
       try
       {
-        BuildGraph();
-        RunGraph();
-        StopGraph();
+//        BuildGraph();
+        //        RunGraph();
+        //        StopGraph();
       }
       catch (Exception)
       {
