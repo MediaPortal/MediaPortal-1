@@ -2732,64 +2732,9 @@ namespace MediaPortal.Music.Database
 
         if (System.IO.File.Exists(strFileName))
         {
-          /// PDW 24-MAY-2005
-          /// Added description
-          /// The file for this song still exists so we can update the Tags
-          int idAlbumNew = 0;
-          int idArtistNew = 0;
-          int idPathNew = 0;
-          int idGenreNew = 0;
-
-          //Log.Info("Musicdatabasereorg: starting Tag update 2 for existing file {0} ", strFileName);
+          // The song will be updated, tags from the file will be checked against the tags in the database
           int idSong = Int32.Parse(DatabaseUtility.Get(FileList, i, "song.idSong"));
-
-          //Log.Info("Musicdatabasereorg: starting Tag update 3 for existing file {0} ", strFileName);
-          try
-          {
-            int idAlbum = idAlbumNew = Int32.Parse(DatabaseUtility.Get(FileList, i, "song.idAlbum"));
-          }
-          catch (Exception)
-          {
-            Log.Error("Musicdatabasereorg: failed Tag update 3 for existing file {0} ", strFileName);
-          }
-
-          //Log.Info("Musicdatabasereorg: starting Tag update 4 for existing file {0} ", strFileName);
-          try
-          {
-            int idArtist = idArtistNew = Int32.Parse(DatabaseUtility.Get(FileList, i, "song.idArtist"));
-          }
-          catch (Exception)
-          {
-            Log.Error("Musicdatabasereorg: failed Tag update 4 for existing file {0} ", strFileName);
-          }
-
-          //Log.Info("Musicdatabasereorg: starting Tag update 5 for existing file {0} ", strFileName);
-          try
-          {
-            int idPath = idPathNew = Int32.Parse(DatabaseUtility.Get(FileList, i, "song.idPath"));
-          }
-          catch (Exception)
-          {
-            Log.Error("Musicdatabasereorg: failed Tag update 5 for existing file {0} ", strFileName);
-          }
-
-
-          //Log.Info("Musicdatabasereorg: starting Tag update 6 for existing file {0} ", strFileName);
-          try
-          {
-            int idGenre = idGenreNew = Int32.Parse(DatabaseUtility.Get(FileList, i, "song.idGenre"));
-          }
-          catch (Exception)
-          {
-            Log.Error("Musicdatabasereorg: failed Tag update 7 for existing file {0} ", strFileName);
-          }
-
-
-          /// PDW 24-MAY-2005
-          /// The song will be updated, tags from the file will be checked against the tags in the database
-          /// But why do we send all the id's
-          //Log.Info("Musicdatabasereorg: starting Tag update 7 for {0} ", strFileName);
-          if (!UpdateSong(strFileName, idSong, ref idAlbumNew, ref idArtistNew, ref idGenreNew, ref idPathNew))
+          if (!UpdateSong(strFileName, idSong))
           {
             Log.Info("Musicdatabasereorg: Song update after tag update failed for", strFileName);
             //m_db.Execute("rollback"); 
@@ -2813,10 +2758,15 @@ namespace MediaPortal.Music.Database
       return (int)Errors.ERROR_OK;
     }
 
-    public bool UpdateSong(string strPathSong, int idSong, ref int idAlbum, ref int idArtist, ref int idGenre, ref int idPath)
+    public bool UpdateSong(string strPathSong, int idSong)
     {
       try
       {
+        int idAlbum = 0;
+        int idArtist = 0;
+        int idPath = 0;
+        int idGenre = 0;
+
         MusicTag tag;
         byte[] imageBytes = null;
         tag = TagReader.TagReader.ReadTag(strPathSong, ref imageBytes);
@@ -3484,7 +3434,7 @@ namespace MediaPortal.Music.Database
       }
     }
 
-    private void UpdateAlbumArtistsCounts(int startProgress, int endProgress)
+    public void UpdateAlbumArtistsCounts(int startProgress, int endProgress)
     {
       if (m_albumCache.Count == 0)
         return;
@@ -3502,8 +3452,10 @@ namespace MediaPortal.Music.Database
 
       try
       {
-        foreach (AlbumInfoCache album in m_albumCache)
+        // Process the array from the end, to have no troubles when removing processed items
+        for (int j = m_albumCache.Count - 1; j > -1; j--)
         {
+          AlbumInfoCache album = (AlbumInfoCache)m_albumCache[j];
           artistCountTable.Clear();
 
           if (album.Album == Strings.Unknown)
@@ -3548,6 +3500,12 @@ namespace MediaPortal.Music.Database
 
           strSQL = string.Format("update album set iNumArtists={0} where idAlbum={1}", artistCount, album.idAlbum);
           m_db.Execute(strSQL);
+          
+          // Remove the processed Album from the cache
+          lock (m_albumCache)
+          {
+            m_albumCache.RemoveAt(j);
+          }
 
           if ((albumCounter % 10) == 0)
           {
@@ -3638,6 +3596,207 @@ namespace MediaPortal.Music.Database
           Log.Info("UpdateSortableArtistNames: {0}", ex);
         }
       }
+    }
+
+    // by hwahrmann to support the MusicShareWatcher
+
+    public bool SongExists(string strFileName)
+    {
+      ulong dwCRC = 0;
+      CRCTool crc = new CRCTool();
+      crc.Init(CRCTool.CRCCode.CRC32);
+      dwCRC = crc.calc(strFileName);
+
+      string strSQL;
+      strSQL = String.Format("select idSong from song where dwFileNameCRC like '{0}'",
+                     dwCRC);
+
+      SQLiteResultSet results;
+      results = m_db.Execute(strSQL);
+      if (results.Rows.Count > 0)
+        // Found
+        return true;
+      else
+        // Not Found
+        return false;
+    }
+
+    public bool RenameSong(string strOldFileName, string strNewFileName)
+    {
+      try
+      {
+        string strPath, strFName;
+        DatabaseUtility.Split(strNewFileName, out strPath, out strFName);
+
+        CRCTool crc = new CRCTool();
+        crc.Init(CRCTool.CRCCode.CRC32);
+
+        // The rename may have been on a directory or a file
+        // In case of a directory rename, the Path needs to be corrected
+        FileInfo fi = new FileInfo(strNewFileName);
+        if (fi.Exists)
+        {
+          // Must be a file that has been changed
+          // Now get the CRC of the original file name and the new file name
+          ulong dwOldCRC = crc.calc(strOldFileName);
+          ulong dwNewCRC = crc.calc(strNewFileName);
+
+          DatabaseUtility.RemoveInvalidChars(ref strFName);
+
+          string strSQL;
+          strSQL = String.Format("update song set dwFileNameCRC = '{0}', strFileName = '{1}' where dwFileNameCRC like '{2}'",
+                       dwNewCRC,
+                       strFName,
+                       dwOldCRC);
+          SQLiteResultSet results;
+          results = m_db.Execute(strSQL);
+          return true;
+        }
+        else
+        {
+          // See if it is a directory
+          DirectoryInfo di = new DirectoryInfo(strNewFileName);
+          if (di.Exists)
+          {
+            // Must be a directory, so let's change the path entries, containing the old
+            // name with the new name
+            DatabaseUtility.RemoveInvalidChars(ref strOldFileName);
+
+            string strSQL;
+            strSQL = String.Format("select * from path where strPath like '{0}%'",
+                    strOldFileName);
+
+            SQLiteResultSet results;
+            SQLiteResultSet resultSongs;
+            ulong dwCRC = 0;
+            results = m_db.Execute(strSQL);
+            if (results.Rows.Count > 0)
+            {
+              try
+              {
+                BeginTransaction();
+                // We might have changed a Top directory, so we get a lot of path entries returned
+                for (int rownum = 0; rownum < results.Rows.Count; rownum++)
+                {
+                  int lPathId = DatabaseUtility.GetAsInt(results, rownum, "path.idPath");
+                  string strTmpPath = DatabaseUtility.Get(results, rownum, "path.strPath");
+                  strPath = strTmpPath.Replace(strOldFileName, strNewFileName);
+                  // Need to keep an unmodified path for the later CRC calculation
+                  strTmpPath = strPath;
+                  DatabaseUtility.RemoveInvalidChars(ref strTmpPath);
+                  strSQL = String.Format("update path set strPath='{0}' where idPath={1}",
+                          strTmpPath,
+                          lPathId);
+
+                  m_db.Execute(strSQL);
+                  // And now we need to update the songs with the new CRC
+                  strSQL = String.Format("select * from song where idPath = {0}",
+                               lPathId);
+                  resultSongs = m_db.Execute(strSQL);
+                  if (resultSongs.Rows.Count > 0)
+                  {
+                    for (int i = 0; i < resultSongs.Rows.Count; i++)
+                    {
+                      strFName = DatabaseUtility.Get(resultSongs, i, "song.strFileName");
+                      int lSongId = DatabaseUtility.GetAsInt(resultSongs, i, "song.idSong");
+                      dwCRC = crc.calc(strPath + strFName);
+                      strSQL = String.Format("update song set dwFileNameCRC='{0}' where idSong={1}",
+                                dwCRC,
+                                lSongId);
+                      m_db.Execute(strSQL);
+                    }
+                  }
+                  EmptyCache();
+                }
+                CommitTransaction();
+                return true;
+              }
+              catch (Exception)
+              {
+                RollbackTransaction();
+                Log.Info(Log.LogType.MusicShareWatcher, "RenameSong: Rename for {0} failed because of DB exception", strPath);
+                return false;
+              }
+            }
+            return true;
+          }
+          else
+          {
+            return false;
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error(Log.LogType.MusicShareWatcher, "musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        return false;
+      }
+    }
+
+    /// <summary>
+    /// A complete Path has been deleted. Now we need to remove all Songs for that path from the dB.
+    /// </summary>
+    /// <param name="strPath"></param>
+    /// <returns></returns>
+    public bool DeleteSongDirectory(string strPath)
+    {
+      try
+      {
+        DatabaseUtility.RemoveInvalidChars(ref strPath);
+
+        string strSQL;
+        strSQL = String.Format("select * from path where strPath like '{0}%'",
+                strPath);
+
+        // Get all songs and Path matching the deleted directory and remove them.
+        SQLiteResultSet results;
+        SQLiteResultSet resultSongs;
+        results = m_db.Execute(strSQL);
+        if (results.Rows.Count > 0)
+        {
+          try
+          {
+            BeginTransaction();
+            // We might have deleted a Top directory, so we get a lot of path entries returned
+            for (int rownum = 0; rownum < results.Rows.Count; rownum++)
+            {
+              int lPathId = DatabaseUtility.GetAsInt(results, rownum, "path.idPath");
+              string strSongPath = DatabaseUtility.Get(results, rownum, "path.strPath");
+              // And now we need to remove the songs
+              strSQL = String.Format("select * from song where idPath = {0}",
+                           lPathId);
+              resultSongs = m_db.Execute(strSQL);
+              if (resultSongs.Rows.Count > 0)
+              {
+                for (int i = 0; i < resultSongs.Rows.Count; i++)
+                {
+                  string strFName = DatabaseUtility.Get(resultSongs, i, "song.strFileName");
+                  DeleteSong(strSongPath + strFName, true);
+                }
+              }
+              EmptyCache();
+            }
+            // And finally let's remove all the path information
+            strSQL = String.Format("delete from path where strPath like '{0}%'",
+                                strPath);
+            results = m_db.Execute(strSQL);
+            CommitTransaction();
+            return true;
+          }
+          catch (Exception)
+          {
+            RollbackTransaction();
+            Log.Error(Log.LogType.MusicShareWatcher, "Delete Directory for {0} failed because of DB exception", strPath);
+            return false;
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error(Log.LogType.MusicShareWatcher, "musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        return false;
+      }
+      return true;
     }
 
 

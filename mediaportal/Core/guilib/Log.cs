@@ -43,7 +43,8 @@ namespace MediaPortal.GUI.Library
       Error,
       EPG,
       VMR9,
-      Config
+      Config,
+      MusicShareWatcher
     }
 
     public enum Level
@@ -139,9 +140,19 @@ namespace MediaPortal.GUI.Library
       WriteFile(LogType.Log, Level.Information, format, arg);
     }
 
+    static public void Info(LogType type, string format, params object[] arg)
+    {
+      WriteFile(type, Level.Information, format, arg);
+    }
+
     static public void Warn(string format, params object[] arg)
     {
       WriteFile(LogType.Log, Level.Warning, format, arg);
+    }
+
+    static public void Warn(LogType type, string format, params object[] arg)
+    {
+      WriteFile(type, Level.Warning, format, arg);
     }
 
     static public void Debug(string format, params object[] arg)
@@ -149,9 +160,19 @@ namespace MediaPortal.GUI.Library
       WriteFile(LogType.Log, Level.Debug, format, arg);
     }
 
+    static public void Debug(LogType type, string format, params object[] arg)
+    {
+      WriteFile(type, Level.Debug, format, arg);
+    }
+
     static public void Error(string format, params object[] arg)
     {
       WriteFile(LogType.Log, true, format, arg);
+    }
+
+    static public void Error(LogType type, string format, params object[] arg)
+    {
+      WriteFile(type, true, format, arg);
     }
 
     static public void Error(Exception ex)
@@ -228,6 +249,9 @@ namespace MediaPortal.GUI.Library
         case LogType.VMR9:
           fname = logDir + "vmr9.log";
           break;
+        case LogType.MusicShareWatcher:
+          fname = logDir + "MusicshareWatcher.log";
+          break;
       }
       return fname;
     }
@@ -301,7 +325,7 @@ namespace MediaPortal.GUI.Library
       }
 
       //
-      if (type != LogType.Log && type != LogType.Error && type != LogType.EPG)
+      if (type != LogType.Log && type != LogType.Error && type != LogType.EPG && type != LogType.MusicShareWatcher)
         WriteFile(LogType.Log, format, arg);
     }//static public void WriteFile(LogType type, string format, params object[] arg)
   }

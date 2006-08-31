@@ -192,6 +192,10 @@
       <Project>{6DA0E4DF-6230-4642-98B5-E690BB6942BB}</Project>
       <Name>Utils</Name>
     </ProjectReference>
+    <ProjectReference Include="MusicShareWatcher\MusicShareWatcherHelper\MusicShareWatcherHelper.csproj">
+      <Project>{C6564AA7-976B-43EF-9E35-7E607EE1DD12}</Project>
+      <Name>MusicShareWatcherHelper</Name>
+    </ProjectReference>
     <Reference Include="Communications">
       <Name>Communications</Name>
       <HintPath>..\Communications.dll</HintPath>
@@ -378,6 +382,7 @@
     <Compile Include="MPExTuneCmd\MPExTunerCmdForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="MusicShareWatcher\MusicShareWatcherPlugin.cs" />
     <Compile Include="NVPPowerScheduler\NVPPowerScheduler.cs">
       <SubType>Code</SubType>
     </Compile>

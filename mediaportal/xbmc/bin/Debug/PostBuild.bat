@@ -105,6 +105,9 @@ copy ..\..\..\Dialogs\bin\debug\Dialogs.dll plugins\Windows
 copy ..\..\..\Dialogs\bin\debug\Dialogs.pdb plugins\Windows
 copy ..\..\..\ProcessPlugins\bin\debug\ProcessPlugins.dll plugins\process\
 copy ..\..\..\ProcessPlugins\bin\debug\ProcessPlugins.pdb  plugins\process\
+copy ..\..\..\ProcessPlugins\MusicShareWatcher\MusicShareWatcherHelper\bin\Debug\MusicShareWatcherHelper.dll .
+copy ..\..\..\ProcessPlugins\MusicShareWatcher\MusicShareWatcherHelper\bin\Debug\MusicShareWatcherHelper.pdb .
+copy ..\..\..\ProcessPlugins\MusicShareWatcher\MusicShareWatcher\bin\Debug\MusicShareWatcher.exe .
 copy ..\..\..\RemotePlugins\bin\debug\RemotePlugins.dll .
 
 

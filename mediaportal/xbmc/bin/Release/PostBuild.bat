@@ -23,6 +23,8 @@ copy ..\..\..\MediaPortal.Support\bin\Release\ICSharpCode.SharpZipLib.dll .
 copy ..\..\..\RemotePlugins\Remotes\HcwRemote\HCWHelper\bin\Release\HCWHelper.exe .
 copy ..\..\..\RemotePlugins\Remotes\X10Remote\AxInterop.X10.dll .
 copy ..\..\..\RemotePlugins\Remotes\X10Remote\Interop.X10.dll .
+copy ..\..\..\ProcessPlugins\MusicShareWatcher\MusicShareWatcherHelper\bin\Release\MusicShareWatcherHelper.dll .
+copy ..\..\..\ProcessPlugins\MusicShareWatcher\MusicShareWatcher\bin\Release\MusicShareWatcher.exe .
 if exist ..\..\..\lame_enc.dll copy ..\..\..\lame_enc.dll .
 copy ..\..\..\MPSA.ax .
 copy ..\..\..\TSFileSource.ax .
