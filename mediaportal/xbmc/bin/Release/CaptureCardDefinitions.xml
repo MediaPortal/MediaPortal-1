@@ -11101,13 +11101,13 @@
   <capturecard commercialname="Twinhan DVB-S (Mantis)" capturename="DTV-DVB Mantis DVBS BDA Receiver" devid="ven_1822&amp;dev_4e35&amp;subsys_00011822&amp;rev_11">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
     <tv>
-      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <interface cat="tunerdevice" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBS Network Provider"  checkdevice="false"/>
         <filter cat="tunerdevice"     name="DTV-DVB Mantis DVBS BDA Receiver"	checkdevice="true"/>
       </filters>
       <connections>
-        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter=" tunerdevice"	sinkpin="0"/>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
       </connections>
     </tv>
   </capturecard>
@@ -11115,7 +11115,7 @@
   <capturecard commercialname="Twinhan DVB-T (Mantis)" capturename="DTV-DVB Mantis DVBT BDA Receiver" devid="ven_1822&amp;dev_4e35&amp;subsys_00011822&amp;rev_11">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
     <tv>
-      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <interface cat="tunerdevice" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"/>
         <filter cat="tunerdevice"     name="DTV-DVB Mantis DVBT BDA Receiver"	checkdevice="true"/>
@@ -11129,7 +11129,7 @@
   <capturecard commercialname="Twinhan DVB-C (Mantis)" capturename="DTV-DVB Mantis DVBC BDA Receiver" devid="ven_1822&amp;dev_4e35&amp;subsys_00011822&amp;rev_11">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
     <tv>
-      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <interface cat="tunerdevice" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBC Network Provider"  checkdevice="false"/>
         <filter cat="tunerdevice"     name="DTV-DVB Mantis DVBC BDA Receiver"	checkdevice="true"/>
