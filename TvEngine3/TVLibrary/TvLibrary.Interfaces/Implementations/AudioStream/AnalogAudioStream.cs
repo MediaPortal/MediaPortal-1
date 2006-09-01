@@ -25,6 +25,9 @@ using TvLibrary.Interfaces;
 
 namespace TvLibrary.Implementations.DVB
 {
+  /// <summary>
+  /// class describing an analog audio stream
+  /// </summary>
   [Serializable]
   public class AnalogAudioStream: IAudioStream
   {

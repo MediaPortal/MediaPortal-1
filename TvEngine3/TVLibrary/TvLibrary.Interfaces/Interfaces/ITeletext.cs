@@ -24,7 +24,16 @@ using System.Text;
 using System.Drawing;
 namespace TvLibrary.Teletext
 {
+  /// <summary>
+  /// delegate which is called when a teletext page has been received,modified or deleted
+  /// </summary>
+  /// <param name="pageNumber">pagenumber (100-899)</param>
+  /// <param name="subPageNumber">subpagenumber (0-79)</param>
   public delegate void PageEventHandler(int pageNumber, int subPageNumber);
+
+  /// <summary>
+  /// teletext decoder interface
+  /// </summary>
   public interface ITeletext
   {
     #region events

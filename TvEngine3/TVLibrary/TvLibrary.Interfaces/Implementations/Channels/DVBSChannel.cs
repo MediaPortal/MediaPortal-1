@@ -26,14 +26,38 @@ using TvLibrary.Interfaces;
 
 namespace TvLibrary.Channels
 {
+  /// <summary>
+  /// enum describing the different DisEqc type
+  /// </summary>
   public enum DisEqcType
   {
+    /// <summary>
+    /// diseqc not used
+    /// </summary>
     None,
+    /// <summary>
+    /// Simple A
+    /// </summary>
     SimpleA,
+    /// <summary>
+    /// Simple B
+    /// </summary>
     SimpleB,
+    /// <summary>
+    /// Level 1 A/A
+    /// </summary>
     Level1AA,
+    /// <summary>
+    /// Level 1 B/A
+    /// </summary>
     Level1BA,
+    /// <summary>
+    /// Level 1 A/B
+    /// </summary>
     Level1AB,
+    /// <summary>
+    /// Level 1 B/B
+    /// </summary>
     Level1BB,
   };
 

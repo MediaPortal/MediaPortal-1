@@ -44,33 +44,37 @@ using TvLibrary.Helper;
 namespace TvLibrary.Implementations.DVB
 {
   /// <summary>
-  /// base class for DVB devices
+  /// base class for DVB cards
   /// </summary>
   public class TvCardDvbBase : IDisposable, ITeletextCallBack, IPMTCallback
   {
-    #region structs
-    #endregion
 
     #region enums
+    /// <summary>
+    /// Different states of the card
+    /// </summary>
     protected enum GraphState
     {
+      /// <summary>
+      /// Card is idle
+      /// </summary>
       Idle,
+      /// <summary>
+      /// Card is idle, but graph is created
+      /// </summary>
       Created,
+      /// <summary>
+      /// Card is timeshifting
+      /// </summary>
       TimeShifting,
+      /// <summary>
+      /// Card is recording
+      /// </summary>
       Recording
     }
     #endregion
 
-    #region imports
-    [DllImport("dvblib.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
-    protected static extern int SetupDemuxerPin(IPin pin, int pid, int elementaryStream, bool unmapOtherPins);
-    [DllImport("dvblib.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
-    protected static extern int SetupDemuxerPids(IPin pin, int[] pids, int pidCount, int elementaryStream, bool unmapOtherPins);
-    [DllImport("dvblib.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
-    protected static extern int DumpMpeg2DemuxerMappings(IBaseFilter filter);
-    [DllImport("dvblib.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
-    protected static extern int GetPidMapping(IPin pin, IntPtr pids, IntPtr elementary_stream, ref Int32 count);
-    #endregion
+
 
     #region delegates
     public delegate void EpgProcessedHandler(object sender, List<EpgChannel> epg);
@@ -80,23 +84,19 @@ namespace TvLibrary.Implementations.DVB
     #region constants
 
     [ComImport, Guid("fc50bed6-fe38-42d3-b831-771690091a6e")]
-    protected class MpTsAnalyzer { }
+    class MpTsAnalyzer { }
 
     [ComImport, Guid("BC650178-0DE4-47DF-AF50-BBD9C7AEF5A9")]
-    protected class CyberLinkMuxer { }
+    class CyberLinkMuxer { }
 
     [ComImport, Guid("7F2BBEAF-E11C-4D39-90E8-938FB5A86045")]
-    protected class PowerDirectorMuxer { }
+    class PowerDirectorMuxer { }
 
     [ComImport, Guid("3E8868CB-5FE8-402C-AA90-CB1AC6AE3240")]
-    protected class CyberLinkDumpFilter { };
+    class CyberLinkDumpFilter { };
 
     #endregion
 
-    #region imports
-    [DllImport("advapi32", CharSet = CharSet.Auto)]
-    protected static extern ulong RegOpenKeyEx(IntPtr key, string subKey, uint ulOptions, uint sam, out IntPtr resultKey);
-    #endregion
 
 
     #region variables
@@ -172,7 +172,7 @@ namespace TvLibrary.Implementations.DVB
     #region graph building
 
     /// <summary>
-    /// ctor
+    /// Initializes a new instance of the <see cref="TvCardDvbBase"/> class.
     /// </summary>
     public TvCardDvbBase()
     {
@@ -327,7 +327,7 @@ namespace TvLibrary.Implementations.DVB
       if (!CheckThreadId()) return;
       _timeshiftFileName = fileName;
       Log.Log.WriteFile("dvb:SetTimeShiftFileName:{0}", fileName);
-      int hr;
+      //int hr;
       if (_filterTsAnalyzer != null)
       {
         ITsTimeShift timeshift = _filterTsAnalyzer as ITsTimeShift;
@@ -882,7 +882,7 @@ namespace TvLibrary.Implementations.DVB
 
     /// <summary>
     /// adds the BDA Transport Information Filter  and the
-    /// MPEG-2 sections & tables filter to the graph 
+    /// MPEG-2 sections and tables filter to the graph 
     /// </summary>
     protected void AddTransportStreamFiltersToGraph()
     {
@@ -1211,7 +1211,7 @@ namespace TvLibrary.Implementations.DVB
 
 
     /// <summary>
-    /// maps the correct pids to the TsFileSink filter & teletext pins
+    /// maps the correct pids to the TsFileSink filter and teletext pins
     /// </summary>
     /// <param name="info"></param>
     protected void SetMpegPidMapping(ChannelInfo info)
@@ -1878,7 +1878,7 @@ namespace TvLibrary.Implementations.DVB
     /// with the new PMT
     /// </summary>
     /// <param name="sender"></param>
-    /// <param name="e"></param>
+    /// <param name="args"></param>
     void _pmtTimer_ElapsedForm(object sender, EventArgs args)
     {
       _pmtTimer_Elapsed(null, null);

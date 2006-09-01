@@ -36,13 +36,25 @@ using TvLibrary.Helper;
 namespace TvLibrary.Implementations.DVB
 {
 
+  /// <summary>
+  /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles DVB-S BDA cards
+  /// </summary>
   public class TvCardDVBS : TvCardDvbBase, IDisposable, ITVCard
   {
 
     #region variables
-
+    /// <summary>
+    /// holds the DVB-S tuning space
+    /// </summary>
     protected IDVBSTuningSpace _tuningSpace = null;
+    /// <summary>
+    /// holds the current DVB-S tuning request
+    /// </summary>
     protected IDVBTuneRequest _tuneRequest = null;
+
+    /// <summary>
+    /// Device of the card
+    /// </summary>
     DsDevice _device;
     #endregion
 
@@ -358,7 +370,6 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Write(ex);
         throw ex;
       }
-      Log.Log.WriteFile("StartTimeShifting() done");
     }
 
     /// <summary>

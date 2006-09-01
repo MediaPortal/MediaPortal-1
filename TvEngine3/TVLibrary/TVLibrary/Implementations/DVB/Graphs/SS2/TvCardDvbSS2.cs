@@ -39,21 +39,16 @@ using TvLibrary.Helper;
 
 namespace TvLibrary.Implementations.DVB
 {
+  /// <summary>
+  /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles the SkyStar 2 DVB-S card
+  /// </summary>
   public class TvCardDvbSS2 : ITVCard, IDisposable, ITeletextCallBack, IPMTCallback
   {
     #region imports
 
     [ComImport, Guid("fc50bed6-fe38-42d3-b831-771690091a6e")]
-    protected class MpTsAnalyzer { }
+    class MpTsAnalyzer { }
 
-    [DllImport("dvblib.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
-    protected static extern int SetupDemuxerPin(IPin pin, int pid, int elementaryStream, bool unmapOtherPins);
-    [DllImport("dvblib.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
-    protected static extern int DumpMpeg2DemuxerMappings(IBaseFilter filter);
-    [DllImport("dvblib.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
-    protected static extern int SetupDemuxerPids(IPin pin, int[] pids, int pidCount, int elementaryStream, bool unmapOtherPins);
-    [DllImport("dvblib.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
-    protected static extern int GetPidMapping(IPin pin, IntPtr pids, IntPtr elementary_stream, ref Int32 count);
     #endregion
 
 
@@ -63,22 +58,22 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     #region variables
-    protected DsDevice _tunerDevice;
-    protected string _recordingFileName;
+    DsDevice _tunerDevice;
+    string _recordingFileName;
     GraphState _graphState;
-    protected IChannel _currentChannel;
-    protected IFilterGraph2 _graphBuilder;
-    protected DsROTEntry _rotEntry;
-    protected ICaptureGraphBuilder2 _capBuilder;
-    protected IBaseFilter _infTeeMain = null;
-    protected IBaseFilter _filterB2C2Adapter;
-    protected IBaseFilter _filterNetworkProvider = null;
-    protected IBaseFilter _filterMpeg2DemuxTif = null;
+    IChannel _currentChannel;
+    IFilterGraph2 _graphBuilder;
+    DsROTEntry _rotEntry;
+    ICaptureGraphBuilder2 _capBuilder;
+    IBaseFilter _infTeeMain = null;
+    IBaseFilter _filterB2C2Adapter;
+    IBaseFilter _filterNetworkProvider = null;
+    IBaseFilter _filterMpeg2DemuxTif = null;
 
-    protected IBaseFilter _filterTIF = null;
-    protected IBaseFilter _filterSectionsAndTables = null;
-    protected IBaseFilter _filterTsAnalyzer;
-    
+    IBaseFilter _filterTIF = null;
+    IBaseFilter _filterSectionsAndTables = null;
+    IBaseFilter _filterTsAnalyzer;
+
 
 
     DVBAudioStream _currentAudioStream;
@@ -86,38 +81,40 @@ namespace TvLibrary.Implementations.DVB
     DVBSkyStar2Helper.IB2C2MPEG2TunerCtrl2 _interfaceB2C2TunerCtrl;
 
 
-    protected DVBTeletext _teletextDecoder;
-    protected bool _hasTeletext = false;
-    protected ITsEpgScanner _interfaceEpgGrabber;
-    protected ITsChannelScan _interfaceChannelScan;
-    protected ITsPmtGrabber _interfacePmtGrabber;
+    DVBTeletext _teletextDecoder;
+    bool _hasTeletext = false;
+    ITsEpgScanner _interfaceEpgGrabber;
+    ITsChannelScan _interfaceChannelScan;
+    ITsPmtGrabber _interfacePmtGrabber;
 
-    protected bool _graphRunning;
-    protected bool _epgGrabbing;
-    protected int _managedThreadId;
-    protected bool _tunerLocked;
-    protected int _signalQuality;
-    protected int _signalLevel;
-    protected DateTime _lastSignalUpdate;
-    protected bool _startTimeShifting = false;
+    bool _graphRunning;
+    bool _epgGrabbing;
+    int _managedThreadId;
+    bool _tunerLocked;
+    int _signalQuality;
+    int _signalLevel;
+    DateTime _lastSignalUpdate;
+    bool _startTimeShifting = false;
 
 #if FORM
-    protected bool _newPMT = false;
+     bool _newPMT = false;
     System.Windows.Forms.Timer _pmtTimer = new System.Windows.Forms.Timer();
 #else
     System.Timers.Timer _pmtTimer = new System.Timers.Timer();
 #endif
-    protected int _pmtVersion;
-    protected ChannelInfo _channelInfo = new ChannelInfo();
+    int _pmtVersion;
+    ChannelInfo _channelInfo = new ChannelInfo();
     string _timeshiftFileName;
-    protected bool _isScanning = false;
-    protected DateTime _dateTimeShiftStarted = DateTime.MinValue;
-    protected DateTime _dateRecordingStarted = DateTime.MinValue;
+    bool _isScanning = false;
+    DateTime _dateTimeShiftStarted = DateTime.MinValue;
+    DateTime _dateRecordingStarted = DateTime.MinValue;
+
     #region teletext
-    protected bool _grabTeletext = false;
-    protected TSHelperTools.TSHeader _packetHeader;
-    protected TSHelperTools _tsHelper = new TSHelperTools();
+    bool _grabTeletext = false;
+    TSHelperTools.TSHeader _packetHeader;
+    TSHelperTools _tsHelper = new TSHelperTools();
     #endregion
+
     #endregion
 
     #region enums
@@ -132,7 +129,7 @@ namespace TvLibrary.Implementations.DVB
 
     #region enums
 
-    public enum TunerType
+    enum TunerType
     {
       ttSat = 0,
       ttCable = 1,
@@ -140,7 +137,7 @@ namespace TvLibrary.Implementations.DVB
       ttATSC = 3,
       ttUnknown = -1
     }
-    protected enum eModulationTAG
+    enum eModulationTAG
     {
       QAM_4 = 2,
       QAM_16,
@@ -150,7 +147,7 @@ namespace TvLibrary.Implementations.DVB
       QAM_256,
       MODE_UNKNOWN = -1
     };
-    protected enum GuardIntervalType
+    enum GuardIntervalType
     {
       Interval_1_32 = 0,
       Interval_1_16,
@@ -158,13 +155,13 @@ namespace TvLibrary.Implementations.DVB
       Interval_1_4,
       Interval_Auto
     };
-    protected enum BandWidthType
+    enum BandWidthType
     {
       MHz_6 = 6,
       MHz_7 = 7,
       MHz_8 = 8,
     };
-    protected enum SS2DisEqcType
+    enum SS2DisEqcType
     {
       None = 0,
       Simple_A,
@@ -174,7 +171,7 @@ namespace TvLibrary.Implementations.DVB
       Level_1_A_B,
       Level_1_B_B
     };
-    protected enum FecType
+    enum FecType
     {
       Fec_1_2 = 1,
       Fec_2_3,
@@ -184,7 +181,7 @@ namespace TvLibrary.Implementations.DVB
       Fec_Auto
     }
 
-    protected enum LNBSelectionType
+    enum LNBSelectionType
     {
       Lnb0 = 0,
       Lnb22kHz,
@@ -192,7 +189,7 @@ namespace TvLibrary.Implementations.DVB
       Lnb44kHz,
     } ;
 
-    protected enum PolarityType
+    enum PolarityType
     {
       Horizontal = 0,
       Vertical,
@@ -202,31 +199,35 @@ namespace TvLibrary.Implementations.DVB
 
     #region constants
     [ComImport, Guid("BAAC8911-1BA2-4ec2-96BA-6FFE42B62F72")]
-    protected class MPStreamAnalyzer { }
+    class MPStreamAnalyzer { }
 
     [ComImport, Guid("BC650178-0DE4-47DF-AF50-BBD9C7AEF5A9")]
-    protected class CyberLinkMuxer { }
+    class CyberLinkMuxer { }
 
     [ComImport, Guid("3E8868CB-5FE8-402C-AA90-CB1AC6AE3240")]
-    protected class CyberLinkDumpFilter { };
+    class CyberLinkDumpFilter { };
     #endregion
 
     #region imports
     [DllImport("advapi32", CharSet = CharSet.Auto)]
-    protected static extern ulong RegOpenKeyEx(IntPtr key, string subKey, uint ulOptions, uint sam, out IntPtr resultKey);
+    static extern ulong RegOpenKeyEx(IntPtr key, string subKey, uint ulOptions, uint sam, out IntPtr resultKey);
 
     [DllImport("dvblib.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    public static extern int SetPidToPin(DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3 dataCtrl, UInt16 pin, UInt16 pid);
+    static extern int SetPidToPin(DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3 dataCtrl, UInt16 pin, UInt16 pid);
 
     [DllImport("dvblib.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    public static extern bool DeleteAllPIDs(DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3 dataCtrl, UInt16 pin);
+    static extern bool DeleteAllPIDs(DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3 dataCtrl, UInt16 pin);
 
     [DllImport("dvblib.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    public static extern int GetSNR(DVBSkyStar2Helper.IB2C2MPEG2TunerCtrl2 tunerCtrl, [Out] out int a, [Out] out int b);
+    static extern int GetSNR(DVBSkyStar2Helper.IB2C2MPEG2TunerCtrl2 tunerCtrl, [Out] out int a, [Out] out int b);
 
     #endregion
 
     #region ctor
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TvCardDvbSS2"/> class.
+    /// </summary>
+    /// <param name="device">The device.</param>
     public TvCardDvbSS2(DsDevice device)
     {
       _tunerDevice = device;
@@ -246,6 +247,10 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     #region GraphBuilding
+    /// <summary>
+    /// Checks the thread id.
+    /// </summary>
+    /// <returns></returns>
     protected bool CheckThreadId()
     {
       return true;
@@ -258,6 +263,9 @@ namespace TvLibrary.Implementations.DVB
       return true;
     }
 
+    /// <summary>
+    /// Builds the graph.
+    /// </summary>
     void BuildGraph()
     {
       Log.Log.WriteFile("ss2: build graph");
@@ -327,6 +335,9 @@ namespace TvLibrary.Implementations.DVB
       _graphState = GraphState.Created;
     }
 
+    /// <summary>
+    /// Connects the main tee to the SS2 filter
+    /// </summary>
     void ConnectMainTee()
     {
       Log.Log.WriteFile("ss2:ConnectMainTee()");
@@ -502,6 +513,10 @@ namespace TvLibrary.Implementations.DVB
     }
 
 
+    /// <summary>
+    /// Sends the HW pids.
+    /// </summary>
+    /// <param name="pids">The pids.</param>
     public void SendHWPids(ArrayList pids)
     {
       const int PID_CAPTURE_ALL_INCLUDING_NULLS = 0x2000;//Enables reception of all PIDs in the transport stream including the NULL PID
@@ -562,6 +577,9 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
+    /// <summary>
+    /// Connects the mpeg2 demuxers to main tee.
+    /// </summary>
     protected void ConnectMpeg2DemuxersToMainTee()
     {
       //multi demux
@@ -581,6 +599,9 @@ namespace TvLibrary.Implementations.DVB
 
     }
 
+    /// <summary>
+    /// Gets the video audio pins.
+    /// </summary>
     protected void GetVideoAudioPins()
     {
       if (!CheckThreadId()) return;
@@ -602,11 +623,17 @@ namespace TvLibrary.Implementations.DVB
     }
 
 
+    /// <summary>
+    /// Resets the signal update.
+    /// </summary>
     public void ResetSignalUpdate()
     {
       _lastSignalUpdate = DateTime.Now;
     }
 
+    /// <summary>
+    /// Updates the signal present.
+    /// </summary>
     protected void UpdateSignalPresent()
     {
       if (_graphState == GraphState.Idle || _interfaceB2C2TunerCtrl == null)
@@ -636,6 +663,7 @@ namespace TvLibrary.Implementations.DVB
     /// callback from the TsWriter filter when it received a new teletext packets
     /// </summary>
     /// <param name="data">teletext data</param>
+    /// <param name="packetCount">packetCount</param>
     /// <returns></returns>
     public int OnTeletextReceived(IntPtr data, short packetCount)
     {
@@ -717,7 +745,7 @@ namespace TvLibrary.Implementations.DVB
 
 
     /// <summary>
-    /// maps the correct pids to the TsFileSink filter & teletext pins
+    /// maps the correct pids to the TsFileSink filter and teletext pins
     /// </summary>
     /// <param name="info"></param>
     protected void SetMpegPidMapping(ChannelInfo info)
@@ -820,7 +848,7 @@ namespace TvLibrary.Implementations.DVB
           {
             if (pidInfo.isAC3Audio || pidInfo.isAudio || pidInfo.isVideo)
             {
-              record.AddPesStream((short)pidInfo.pid,(pidInfo.isAC3Audio || pidInfo.isAudio), pidInfo.isVideo);
+              record.AddPesStream((short)pidInfo.pid, (pidInfo.isAC3Audio || pidInfo.isAudio), pidInfo.isVideo);
             }
           }
         }
@@ -854,7 +882,7 @@ namespace TvLibrary.Implementations.DVB
         {
           if (info.isAC3Audio || info.isAudio || info.isVideo)
           {
-            record.AddPesStream((short)info.pid,(info.isAC3Audio || info.isAudio), info.isVideo);
+            record.AddPesStream((short)info.pid, (info.isAC3Audio || info.isAudio), info.isVideo);
           }
         }
         if (hr != 0)
@@ -880,7 +908,7 @@ namespace TvLibrary.Implementations.DVB
     protected void StopRecord()
     {
       if (!CheckThreadId()) return;
-      int hr;
+
       Log.Log.WriteFile("ss2:StopRecord()");
 
       if (_filterTsAnalyzer != null)
@@ -1289,6 +1317,11 @@ namespace TvLibrary.Implementations.DVB
       RunGraph();
       return result;
     }
+    /// <summary>
+    /// Tunes the specified channel.
+    /// </summary>
+    /// <param name="channel">The channel.</param>
+    /// <returns>true if succeeded else false</returns>
     public bool Tune(IChannel channel)
     {
       Log.Log.WriteFile("ss2:Tune({0})", channel);
@@ -1661,7 +1694,7 @@ namespace TvLibrary.Implementations.DVB
           {
             recorder.RemovePesStream((short)_currentAudioStream.Pid);
           }
-          recorder.AddPesStream((short)audioStream.Pid,true,false);
+          recorder.AddPesStream((short)audioStream.Pid, true, false);
         }
         _currentAudioStream = audioStream;
       }
@@ -1752,6 +1785,9 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     #region idisposable
+    /// <summary>
+    /// Disposes this instance.
+    /// </summary>
     public void Dispose()
     {
       if (_graphBuilder == null) return;
@@ -1840,7 +1876,7 @@ namespace TvLibrary.Implementations.DVB
     /// with the new PMT
     /// </summary>
     /// <param name="sender"></param>
-    /// <param name="e"></param>
+    /// <param name="args"></param>
     void _pmtTimer_ElapsedForm(object sender, EventArgs args)
     {
       _pmtTimer_Elapsed(null, null);
@@ -1893,6 +1929,12 @@ namespace TvLibrary.Implementations.DVB
 
     #endregion
     #endregion
+    /// <summary>
+    /// Returns a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
+    /// </summary>
+    /// <returns>
+    /// A <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
+    /// </returns>
     public override string ToString()
     {
       return _tunerDevice.Name;
@@ -1964,12 +2006,16 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// returns the min/max channel numbers for analog cards
+    /// returns the min. channel numbers for analog cards
     /// </summary>
     public int MinChannel
     {
       get { return -1; }
     }
+    /// <summary>
+    /// returns the max. channel number for analog cards
+    /// </summary>
+    /// <value>The max channel.</value>
     public int MaxChannel
     {
       get { return -1; }
@@ -2013,6 +2059,10 @@ namespace TvLibrary.Implementations.DVB
       }
     }
     #region pmtcallback interface
+    /// <summary>
+    /// Called when  a new PMT is received
+    /// </summary>
+    /// <returns></returns>
     public int OnPMTReceived()
     {
       try

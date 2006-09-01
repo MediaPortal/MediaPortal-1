@@ -24,7 +24,10 @@ using System.Text;
 
 namespace TvLibrary.Interfaces
 {
-  public class IQuality
+  /// <summary>
+  /// interface for quality control of a card
+  /// </summary>
+  public interface IQuality
   {
   }
 }

@@ -23,7 +23,8 @@ using System;
 namespace TvLibrary
 {
   /// <summary>
-  /// Class which holds the details about a country
+  /// Class which holds the details about a country like the 
+  /// short country id, the full name of the country and the iso code for the country
   /// </summary>
   [Serializable]
   public class Country

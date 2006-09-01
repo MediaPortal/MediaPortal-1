@@ -36,32 +36,49 @@ using DirectShowLib.BDA;
 
 namespace TvLibrary.Implementations.DVB
 {
+  /// <summary>
+  /// base class for scanning DVB tv/radio channels
+  /// </summary>
   public class DvbBaseScanning : IHardwarePidFiltering
   {
+    /// <summary>
+    /// Different stream service type
+    /// </summary>
     public enum ServiceType
     {
+      /// <summary>
+      /// Service contains video
+      /// </summary>
       Video = 1,
+      /// <summary>
+      /// Service contains audio
+      /// </summary>
       Audio = 2,
+      /// <summary>
+      /// Service contains video in MPEG-4
+      /// </summary>
       Mpeg4Stream = 0x11,
+      /// <summary>
+      /// Service contains video in H.264
+      /// </summary>
       H264Stream = 0x1b
     }
     #region consts
     const int ScanMaxChannels = 10;
     #endregion
 
-    #region imports
-    [DllImport("dvblib.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
-    protected static extern int SetupDemuxerPin(IPin pin, int pid, int elementaryStream, bool unmapOtherPins);
-    [DllImport("dvblib.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
-    protected static extern int DumpMpeg2DemuxerMappings(IBaseFilter filter);
-
-    #endregion
+    //#region imports
+    //[DllImport("dvblib.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
+    //protected static extern int SetupDemuxerPin(IPin pin, int pid, int elementaryStream, bool unmapOtherPins);
+    //[DllImport("dvblib.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
+    //protected static extern int DumpMpeg2DemuxerMappings(IBaseFilter filter);
+    //#endregion
 
     #region variables
     ITsChannelScan _analyzer;
     ITVCard _card;
     List<ushort> _scanPidList = new List<ushort>();
-    bool _isAtsc = false;
+    //bool _isAtsc = false;
     #endregion
 
     /// <summary>

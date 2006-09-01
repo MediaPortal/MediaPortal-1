@@ -36,11 +36,24 @@ using TvLibrary.Helper;
 namespace TvLibrary.Implementations.DVB
 {
 
+  /// <summary>
+  /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles DVB-T BDA cards
+  /// </summary>
   public class TvCardDVBT : TvCardDvbBase, IDisposable, ITVCard
   {
     #region variables
+    /// <summary>
+    /// holds the the DVB-T tuning space
+    /// </summary>
     protected IDVBTuningSpace _tuningSpace = null;
+    /// <summary>
+    /// holds the current DVB-T tuning request
+    /// </summary>
     protected IDVBTuneRequest _tuneRequest = null;
+
+    /// <summary>
+    /// Device of the card
+    /// </summary>
     DsDevice _device;
     #endregion
 

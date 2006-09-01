@@ -72,12 +72,13 @@
     <Compile Include="Implementations\Helper\Release.cs" />
     <Compile Include="Implementations\Helper\SidHelper.cs" />
     <Compile Include="Implementations\TvCardCollection.cs" />
-    <Compile Include="Interfaces\Analyzer\IATSCGrabber.cs" />
-    <Compile Include="Interfaces\Analyzer\IEPGGrabber.cs" />
-    <Compile Include="Interfaces\Analyzer\IMHWGrabber.cs" />
-    <Compile Include="Interfaces\Analyzer\IMPRecord.cs" />
+    <Compile Include="Interfaces\Analyzer\IMPRecord.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interfaces\Analyzer\IStreamAnalyzer.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Interfaces\Analyzer\ITsRecorder.cs" />
-    <Compile Include="Interfaces\Analyzer\IStreamAnalyzer.cs" />
     <Compile Include="Interfaces\Analyzer\ITsChannelScan.cs" />
     <Compile Include="Interfaces\Analyzer\ITsEpgScanner.cs" />
     <Compile Include="Interfaces\Analyzer\ITsPmtGrabber.cs" />

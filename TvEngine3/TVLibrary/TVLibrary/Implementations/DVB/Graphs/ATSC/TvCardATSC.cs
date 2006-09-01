@@ -35,12 +35,24 @@ using TvLibrary.Helper;
 
 namespace TvLibrary.Implementations.DVB
 {
+  /// <summary>
+  /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles ATSC BDA cards
+  /// </summary>
   public class TvCardATSC : TvCardDvbBase, IDisposable, ITVCard
   {
 
     #region variables
+    /// <summary>
+    /// Hold the ATSC tuning space
+    /// </summary>
     protected IATSCTuningSpace _tuningSpace = null;
+    /// <summary>
+    /// Holds the current ATSC tuning request
+    /// </summary>
     protected IATSCChannelTuneRequest _tuneRequest = null;
+    /// <summary>
+    /// Holds the card's device moniker
+    /// </summary>
     DsDevice _device;
     #endregion
 
@@ -175,6 +187,10 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     #region properties
+    /// <summary>
+    /// Gets/sets the card name
+    /// </summary>
+    /// <value></value>
     public string Name
     {
       get
@@ -187,6 +203,10 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
+    /// <summary>
+    /// gets the current filename used for recording
+    /// </summary>
+    /// <value></value>
     public string FileName
     {
       get
@@ -194,6 +214,10 @@ namespace TvLibrary.Implementations.DVB
         return _recordingFileName;
       }
     }
+    /// <summary>
+    /// returns true if card is currently recording
+    /// </summary>
+    /// <value></value>
     public bool IsRecording
     {
       get
@@ -201,6 +225,10 @@ namespace TvLibrary.Implementations.DVB
         return (_graphState == GraphState.Recording);
       }
     }
+    /// <summary>
+    /// returns true if card is currently timeshifting
+    /// </summary>
+    /// <value></value>
     public bool IsTimeShifting
     {
       get

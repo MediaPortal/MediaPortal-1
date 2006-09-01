@@ -33,6 +33,9 @@ using DirectShowLib.BDA;
 
 namespace TvLibrary.Implementations.DVB
 {
+  /// <summary>
+  /// Class which implements scanning for tv/radio channels for ATSC BDA cards
+  /// </summary>
   public class ATSCScanning : DvbBaseScanning, ITVScanning, IDisposable
   {
     TvCardATSC _card;

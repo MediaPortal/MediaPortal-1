@@ -36,13 +36,24 @@ using TvLibrary.Helper;
 namespace TvLibrary.Implementations.DVB
 {
 
+  /// <summary>
+  /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles DVB-C BDA cards
+  /// </summary>
   public class TvCardDVBC : TvCardDvbBase, IDisposable, ITVCard
   {
 
     #region variables
-
+    /// <summary>
+    /// holds the the DVB-C tuning space
+    /// </summary>
     protected IDVBTuningSpace _tuningSpace = null;
+    /// <summary>
+    /// holds the current DVB-C tuning request
+    /// </summary>
     protected IDVBTuneRequest _tuneRequest = null;
+    /// <summary>
+    /// Device of the card
+    /// </summary>
     DsDevice _device;
     #endregion
 
@@ -335,7 +346,7 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Write(ex);
         throw ex;
       }
-      Log.Log.WriteFile("dvbc:StartTimeShifting() done");
+      //Log.Log.WriteFile("dvbc:StartTimeShifting() done");
     }
 
     /// <summary>

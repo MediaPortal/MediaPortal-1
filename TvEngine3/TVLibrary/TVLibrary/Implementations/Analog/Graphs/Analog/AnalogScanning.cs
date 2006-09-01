@@ -30,6 +30,9 @@ using DirectShowLib;
 namespace TvLibrary.Implementations.Analog
 {
   
+  /// <summary>
+  /// Class which implements scanning for tv/radio channels for analog cards
+  /// </summary>
   public class AnalogScanning : ITVScanning
   {
     TvCardAnalog _card;

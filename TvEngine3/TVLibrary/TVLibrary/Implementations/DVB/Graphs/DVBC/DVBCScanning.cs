@@ -33,6 +33,9 @@ using DirectShowLib.BDA;
 
 namespace TvLibrary.Implementations.DVB
 {
+  /// <summary>
+  /// Class which implements scanning for tv/radio channels for DVB-C BDA cards
+  /// </summary>
   public class DVBCScanning : DvbBaseScanning, ITVScanning, IDisposable
   {
     TvCardDVBC _card;

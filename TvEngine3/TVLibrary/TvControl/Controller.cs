@@ -9,10 +9,25 @@ namespace TvControl
   /// </summary>
   public enum CardType
   {
+    /// <summary>
+    /// analog card
+    /// </summary>
     Analog,
+    /// <summary>
+    /// DVB-S card
+    /// </summary>
     DvbS,
+    /// <summary>
+    /// DVB-T card
+    /// </summary>
     DvbT,
+    /// <summary>
+    /// DVB-C card
+    /// </summary>
     DvbC,
+    /// <summary>
+    /// ATSC card
+    /// </summary>
     Atsc
   }
   /// <summary>
@@ -20,11 +35,29 @@ namespace TvControl
   /// </summary>
   public enum TvResult
   {
+    /// <summary>
+    /// Operation succeeded
+    /// </summary>
     Succeeded,
+    /// <summary>
+    /// Operation failed since all cards are busy and no free card could be found
+    /// </summary>
     AllCardsBusy,
+    /// <summary>
+    /// Operation failed since channel is encrypted
+    /// </summary>
     ChannelIsScrambled,
+    /// <summary>
+    /// Opetation failed since no audio/video was detected after tuning
+    /// </summary>
     NoVideoAudioDetected,
+    /// <summary>
+    /// Operation failed due to an unknown error
+    /// </summary>
     UnknownError,
+    /// <summary>
+    /// Operation failed since the graph could not be build or started
+    /// </summary>
     UnableToStartGraph
   }
   /// <summary>
@@ -204,6 +237,7 @@ namespace TvControl
     /// turn on/off teletext grabbing for a card
     /// </summary>
     /// <param name="cardId">id of the card.</param>
+    /// <param name="onOff">boolean indicating if teletext grabbing should be enabled or not</param>
     /// <returns>onOff when true start grabbing teletext otherwise stop grabbing teletext</returns>
     void GrabTeletext(int cardId, bool onOff);
 

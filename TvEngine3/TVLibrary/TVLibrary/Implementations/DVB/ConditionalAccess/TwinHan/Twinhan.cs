@@ -28,7 +28,7 @@ namespace TvLibrary.Implementations.DVB
   /// <summary>
   /// Summary description for Twinhan.
   /// </summary>
-  public class Twinhan 
+  public class Twinhan
   {
     #region twinhan sample app code:
     //#define CTL_CODE( DeviceType, Function, Method, Access ) (                 \
@@ -131,6 +131,11 @@ namespace TvLibrary.Implementations.DVB
     IBaseFilter _captureFilter;
     #endregion
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Twinhan"/> class.
+    /// </summary>
+    /// <param name="tunerFilter">The tuner filter.</param>
+    /// <param name="captureFilter">The capture filter.</param>
     public Twinhan(IBaseFilter tunerFilter, IBaseFilter captureFilter)
     {
       _captureFilter = tunerFilter;
@@ -149,13 +154,19 @@ namespace TvLibrary.Implementations.DVB
       _initialized = true;
 
     }
+    /// <summary>
+    /// Reutns if the tuner specified in the constructor supports twinhan CI/CAM handling
+    /// </summary>
+    /// <value>
+    /// 	<c>true</c> if this instance is twinhan compatible; otherwise, <c>false</c>.
+    /// </value>
     public bool IsTwinhan
     {
       get
       {
         if (_initialized) return _isTwinHanCard;
 
-        bool result=IsTwinhanCard();
+        bool result = IsTwinhanCard();
         if (result)
         {
           if (IsCamPresent())
@@ -167,6 +178,11 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
+    /// <summary>
+    /// Gets the status of the CAM and CI.
+    /// </summary>
+    /// <param name="CIState">State of the CI.</param>
+    /// <param name="MMIState">State of the MMI.</param>
     public void GetCAMStatus(out uint CIState, out uint MMIState)
     {
       CIState = 0;
@@ -231,6 +247,12 @@ namespace TvLibrary.Implementations.DVB
         //Marshal.ReleaseComObject(pin);
       }
     }
+    /// <summary>
+    /// Determines whether a cam is present or not
+    /// </summary>
+    /// <returns>
+    /// 	<c>true</c> if cam is present; otherwise, <c>false</c>.
+    /// </returns>
     public bool IsCamPresent()
     {
       if (_initialized) return _camPresent;
@@ -240,15 +262,28 @@ namespace TvLibrary.Implementations.DVB
       if (CIState != 0) return true;
       return false;
     }
+    /// <summary>
+    /// Determines whether the cam is ready
+    /// </summary>
+    /// <returns>
+    /// 	<c>true</c> if cam is ready; otherwise, <c>false</c>.
+    /// </returns>
     public bool IsCamReady()
     {
       return IsCamPresent();
     }
+
+    /// <summary>
+    /// Determines whether this card is twinhan compatible
+    /// </summary>
+    /// <returns>
+    /// 	<c>true</c> if card is twinhan compatible; otherwise, <c>false</c>.
+    /// </returns>
     public bool IsTwinhanCard()
     {
       if (_initialized) return _isTwinHanCard;
       Log.Log.WriteFile("Twinhan: check for twinhan driver");
-      
+
       bool success = false;
       IntPtr ptrDwBytesReturned = Marshal.AllocCoTaskMem(4);
       try
@@ -286,7 +321,7 @@ namespace TvLibrary.Implementations.DVB
               int hr = propertySet.Set(propertyGuid, 0, thbdaBuf, thbdaLen, thbdaBuf, thbdaLen);
               if (hr == 0)
               {
-                Log.Log.WriteFile( "twinhan card detected");
+                Log.Log.WriteFile("twinhan card detected");
                 success = true;
               }
               //Marshal.ReleaseComObject(propertySet);
@@ -307,10 +342,18 @@ namespace TvLibrary.Implementations.DVB
     }
 
 
-    public void SendPMT(string camType,uint videoPid, uint audioPid, byte[] PMT, int pmtLen)
+    /// <summary>
+    /// Sends the PMT to the CAM/CI module
+    /// </summary>
+    /// <param name="camType">Type of the cam.</param>
+    /// <param name="videoPid">The video pid.</param>
+    /// <param name="audioPid">The audio pid.</param>
+    /// <param name="PMT">The PMT.</param>
+    /// <param name="pmtLen">The PMT lenght</param>
+    public void SendPMT(string camType, uint videoPid, uint audioPid, byte[] PMT, int pmtLen)
     {
       if (IsCamPresent() == false) return;
-      int camNumber=1;
+      int camNumber = 1;
       camType = camType.ToLower();
       if (camType.ToLower() == "default") camNumber = 0;
       if (camType.ToLower() == "viaccess") camNumber = 1;
@@ -320,7 +363,7 @@ namespace TvLibrary.Implementations.DVB
 
       IntPtr ptrPMT = Marshal.AllocCoTaskMem(pmtLen + 1);
 
-      Log.Log.WriteFile("Twinhan: send PMT cam:{0} {1} len:{2} video:0x{3:X} audio:0x{4:X}", camType,camNumber, pmtLen, videoPid, audioPid);
+      Log.Log.WriteFile("Twinhan: send PMT cam:{0} {1} len:{2} video:0x{3:X} audio:0x{4:X}", camType, camNumber, pmtLen, videoPid, audioPid);
 
       if (ptrPMT == IntPtr.Zero)
         return;
@@ -393,7 +436,7 @@ namespace TvLibrary.Implementations.DVB
         if (propertySet != null)
         {
           Guid propertyGuid = THBDA_TUNER;
-          int hr = propertySet.Set( propertyGuid, 0, ksBla, 0x18, thbdaBuf, thbdaLen);
+          int hr = propertySet.Set(propertyGuid, 0, ksBla, 0x18, thbdaBuf, thbdaLen);
           int back = Marshal.ReadInt32(ptrDwBytesReturned);
           int ksBlaVal = Marshal.ReadInt32(ksBla);
 

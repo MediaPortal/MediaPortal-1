@@ -25,6 +25,9 @@ using TvLibrary.Interfaces;
 
 namespace TvLibrary
 {
+  /// <summary>
+  /// Exception class for the tv library
+  /// </summary>
   [Serializable]
   public class TvException : Exception
   {

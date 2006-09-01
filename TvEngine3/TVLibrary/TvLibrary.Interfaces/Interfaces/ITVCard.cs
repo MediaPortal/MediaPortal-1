@@ -26,6 +26,9 @@ using TvLibrary.Teletext;
 using DirectShowLib.SBE;
 namespace TvLibrary.Interfaces
 {
+  /// <summary>
+  /// interface for a tv card
+  /// </summary>
   public interface ITVCard
   {
     #region properties

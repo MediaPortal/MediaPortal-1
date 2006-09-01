@@ -6,34 +6,118 @@ using System.Text;
 
 namespace TvLibrary.Implementations.DVB.Structures
 {
+  /// <summary>
+  /// class holding all information about a channel including pids
+  /// </summary>
   public class ChannelInfo
   {
+    /// <summary>
+    /// program number (service id)
+    /// </summary>
     public int program_number;
+    /// <summary>
+    /// reserved
+    /// </summary>
     public int reserved;
+    /// <summary>
+    /// pid of the PMT
+    /// </summary>
     public int network_pmt_PID;
+    /// <summary>
+    /// transport stream id
+    /// </summary>
     public int transportStreamID;
+    /// <summary>
+    /// name of the provider
+    /// </summary>
     public string service_provider_name;
+    /// <summary>
+    /// name of the service
+    /// </summary>
     public string service_name;
+    /// <summary>
+    /// service type
+    /// </summary>
     public int serviceType;
+    /// <summary>
+    /// eit schedule flag
+    /// </summary>
     public bool eitSchedule;
+    /// <summary>
+    /// eit prefollow flag
+    /// </summary>
     public bool eitPreFollow;
+    /// <summary>
+    /// indicates if channel is scrambled
+    /// </summary>
     public bool scrambled;
+    /// <summary>
+    /// carrier frequency
+    /// </summary>
     public int freq;// 12188
+    /// <summary>
+    /// symbol rate
+    /// </summary>
     public int symb;// 27500
+    /// <summary>
+    /// fec
+    /// </summary>
     public int fec;// 6
+    /// <summary>
+    /// diseqc type
+    /// </summary>
     public int diseqc;// 1
+    /// <summary>
+    /// LNB low oscilator frequency
+    /// </summary>
     public int lnb01;// 10600
+    /// <summary>
+    /// LNB frequency
+    /// </summary>
     public int lnbkhz;// 1 = 22
+    /// <summary>
+    /// Polarisation
+    /// </summary>
     public int pol; // 0 - h
+    /// <summary>
+    /// pid of the PCR
+    /// </summary>
     public int pcr_pid;
+    /// <summary>
+    /// ArrayList of PidInfo containing all pids
+    /// </summary>
     public ArrayList pids;
+    /// <summary>
+    /// Service Id
+    /// </summary>
     public int serviceID;
+    /// <summary>
+    /// Network Id
+    /// </summary>
     public int networkID;
+    /// <summary>
+    /// pidcache?
+    /// </summary>
     public string pidCache;
+    /// <summary>
+    /// Atsc minor channel number
+    /// </summary>
     public int minorChannel;
+    /// <summary>
+    /// atsc major channel number
+    /// </summary>
     public int majorChannel;
+    /// <summary>
+    /// Modulation
+    /// </summary>
     public int modulation;
+    /// <summary>
+    /// CaPmt
+    /// </summary>
     public CaPMT caPMT;
+    /// <summary>
+    /// Logical channel number
+    /// </summary>
     public int LCN;
 
     /// <summary>

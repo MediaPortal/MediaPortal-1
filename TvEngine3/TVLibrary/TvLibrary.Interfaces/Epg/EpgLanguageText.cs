@@ -24,6 +24,9 @@ using System.Text;
 
 namespace TvLibrary.Epg
 {
+  /// <summary>
+  /// class which holds the title, description and genre for all epg languages received
+  /// </summary>
   [Serializable]
   public class EpgLanguageText
   {

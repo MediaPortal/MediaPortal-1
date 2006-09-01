@@ -24,6 +24,9 @@ using System.Text;
 
 namespace TvLibrary.Epg
 {
+  /// <summary>
+  /// Class which holds all dvb epg languages
+  /// </summary>
   public class Languages
   {
     #region languages

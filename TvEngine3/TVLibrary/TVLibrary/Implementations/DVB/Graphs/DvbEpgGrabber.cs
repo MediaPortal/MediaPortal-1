@@ -26,10 +26,16 @@ using TvLibrary.Epg;
 
 namespace TvLibrary.Implementations.DVB
 {
+  /// <summary>
+  /// class with handles epg-grabbing for DVB cards
+  /// </summary>
   public class DvbEpgGrabber : ITVEPG
   {
 
     #region events
+    /// <summary>
+    /// event which gets called when epg is received
+    /// </summary>
     public event EpgReceivedHandler OnEpgReceived;
     #endregion
 

@@ -24,8 +24,11 @@ using System.Text;
 
 namespace TvLibrary.Epg
 {
+  /// <summary>
+  /// Class which contains a single epg-program
+  /// </summary>
   [Serializable]
-  public class EpgProgram :IComparable<EpgProgram>
+  public class EpgProgram : IComparable<EpgProgram>
   {
     #region variables
     List<EpgLanguageText> _languageText;
@@ -55,7 +58,7 @@ namespace TvLibrary.Epg
     /// Gets or sets the text.
     /// </summary>
     /// <value>The text.</value>
-    public List<EpgLanguageText> Text 
+    public List<EpgLanguageText> Text
     {
       get
       {
@@ -71,7 +74,7 @@ namespace TvLibrary.Epg
     /// Gets or sets the start time.
     /// </summary>
     /// <value>The start time.</value>
-    public DateTime StartTime 
+    public DateTime StartTime
     {
       get
       {
@@ -87,8 +90,8 @@ namespace TvLibrary.Epg
     /// Gets or sets the end time.
     /// </summary>
     /// <value>The end time.</value>
-    public DateTime EndTime 
-    { 
+    public DateTime EndTime
+    {
       get
       {
         return _endTime;

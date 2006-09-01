@@ -24,6 +24,9 @@ using System.Text;
 
 namespace TvLibrary.Interfaces
 {
+  /// <summary>
+  /// Interface for scanning new channels
+  /// </summary>
   public interface ITVScanning
   {
     /// <summary>

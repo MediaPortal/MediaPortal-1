@@ -25,6 +25,9 @@ using TvLibrary.Interfaces;
 
 namespace TvLibrary.Implementations.DVB
 {
+  /// <summary>
+  /// class which holds the audio stream details for a DVB channel
+  /// </summary>
   [Serializable]
   public class DVBAudioStream : IAudioStream
   {

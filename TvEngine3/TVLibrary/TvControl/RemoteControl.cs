@@ -8,11 +8,18 @@ using TvControl;
 using TvLibrary.Log;
 namespace TvControl
 {
+  /// <summary>
+  /// Class which holds the connection with the master tv-server
+  /// </summary>
   public class RemoteControl
   {
     static IController _tvControl;
     static string _hostName = "localhost";
 
+    /// <summary>
+    /// Gets or sets the name the hostname of the master tv-server.
+    /// </summary>
+    /// <value>The name of the host.</value>
     static public string HostName
     {
       get
@@ -28,6 +35,10 @@ namespace TvControl
         }
       }
     }
+    /// <summary>
+    /// returns an the <see cref="T:TvControl.IController"/> interface to the tv server
+    /// </summary>
+    /// <value>The instance.</value>
     static public IController Instance
     {
       get
@@ -45,6 +56,12 @@ namespace TvControl
         return _tvControl;
       }
     }
+    /// <summary>
+    /// Gets a value indicating whether this instance is connected with the tv server
+    /// </summary>
+    /// <value>
+    /// 	<c>true</c> if this instance is connected; otherwise, <c>false</c>.
+    /// </value>
     static public bool IsConnected
     {
       get
@@ -60,6 +77,10 @@ namespace TvControl
         return false;
       }
     }
+
+    /// <summary>
+    /// Clears this instance.
+    /// </summary>
     static public void Clear()
     {
       _tvControl = null;

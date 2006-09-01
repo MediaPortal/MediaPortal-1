@@ -27,6 +27,9 @@ using TvLibrary.Log;
 
 namespace TVLibrary.Streaming
 {
+  /// <summary>
+  /// class which handles all RTSP related tasks
+  /// </summary>
   public class RtspStreaming
   {
     #region imports
@@ -70,6 +73,9 @@ namespace TVLibrary.Streaming
     #endregion
 
     #region public members
+    /// <summary>
+    /// Starts RTSP Streaming.
+    /// </summary>
     public void Start()
     {
       if (_initialized == false) return;
@@ -85,6 +91,9 @@ namespace TVLibrary.Streaming
     }
 
 
+    /// <summary>
+    /// Stops RTSP streaming.
+    /// </summary>
     public void Stop()
     {
       if (_initialized == false) return;
@@ -92,6 +101,11 @@ namespace TVLibrary.Streaming
       _running = false;
     }
 
+    /// <summary>
+    /// Creates a new RTSP stream
+    /// </summary>
+    /// <param name="streamName">Name of the stream.</param>
+    /// <param name="fileName">Name of the file.</param>
     public void Add(string streamName, string fileName)
     {
       if (_initialized == false) return;
@@ -108,6 +122,11 @@ namespace TVLibrary.Streaming
       }
     }
 
+    /// <summary>
+    /// Creates a new RTSP stream
+    /// </summary>
+    /// <param name="fileName">file to stream.</param>
+    /// <returns>name of the stream</returns>
     public string Add(string fileName)
     {
       if (_initialized == false) return "";
@@ -129,6 +148,10 @@ namespace TVLibrary.Streaming
       return streamName;
     }
 
+    /// <summary>
+    /// Removes the specified stream .
+    /// </summary>
+    /// <param name="streamName">Name of the stream.</param>
     public void Remove(string streamName)
     {
       if (_initialized == false) return;
@@ -143,6 +166,9 @@ namespace TVLibrary.Streaming
 
     #region streaming thread
 
+    /// <summary>
+    /// worker thread which handles all streaming activity
+    /// </summary>
     protected void workerThread()
     {
       Log.WriteFile("RTSP: Streamer started");

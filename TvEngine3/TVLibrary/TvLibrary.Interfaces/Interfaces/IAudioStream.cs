@@ -29,8 +29,17 @@ namespace TvLibrary.Interfaces
   /// </summary>
   public enum AudioStreamType
   {
+    /// <summary>
+    /// mpeg 1 audio
+    /// </summary>
     Mpeg1,
+    /// <summary>
+    /// mpeg 2 audio
+    /// </summary>
     Mpeg2,
+    /// <summary>
+    /// ac3 audio
+    /// </summary>
     AC3,
   }
 
@@ -40,7 +49,7 @@ namespace TvLibrary.Interfaces
   public interface IAudioStream
   {
     /// <summary>
-    /// gets/sets  Audio language
+    /// gets/sets the Audio language
     /// </summary>
     string Language { get;set;}
 

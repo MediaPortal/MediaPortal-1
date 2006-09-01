@@ -37,6 +37,9 @@ using TvLibrary.Helper;
 
 namespace TvLibrary.Implementations.Analog
 {
+  /// <summary>
+  /// base class for analog tv cards
+  /// </summary>
   public class TvCardAnalogBase : ISampleGrabberCB
   {
 
@@ -57,11 +60,26 @@ namespace TvLibrary.Implementations.Analog
     #endregion
 
     #region enums
+    /// <summary>
+    /// Different states of the card
+    /// </summary>
     protected enum GraphState
     {
+      /// <summary>
+      /// Card is idle
+      /// </summary>
       Idle,
+      /// <summary>
+      /// Card is idle, but graph is created
+      /// </summary>
       Created,
+      /// <summary>
+      /// Card is timeshifting
+      /// </summary>
       TimeShifting,
+      /// <summary>
+      /// Card is recording
+      /// </summary>
       Recording
     }
     #endregion
@@ -115,9 +133,16 @@ namespace TvLibrary.Implementations.Analog
 
     #region ctor
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TvCardAnalogBase"/> class.
+    /// </summary>
     public TvCardAnalogBase()
     {
     }
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TvCardAnalogBase"/> class.
+    /// </summary>
+    /// <param name="device">The device.</param>
     public TvCardAnalogBase(DsDevice device)
     {
       _tunerDevice = device;
@@ -127,6 +152,10 @@ namespace TvLibrary.Implementations.Analog
     }
     #endregion
 
+    /// <summary>
+    /// Checks the thread id.
+    /// </summary>
+    /// <returns></returns>
     protected bool CheckThreadId()
     {
       return true;
@@ -142,6 +171,9 @@ namespace TvLibrary.Implementations.Analog
 
 
 
+    /// <summary>
+    /// Builds the graph.
+    /// </summary>
     protected void BuildGraph()
     {
       _lastSignalUpdate = DateTime.MinValue;
@@ -1247,10 +1279,6 @@ namespace TvLibrary.Implementations.Analog
 
     }
 
-    protected void ConnectFilters()
-    {
-      if (!CheckThreadId()) return;
-    }
 
     /// <summary>
     /// sets the filename used for timeshifting
@@ -1292,6 +1320,10 @@ namespace TvLibrary.Implementations.Analog
       Release.ComObject("mpegmux pinin", pin);
     }
 
+    /// <summary>
+    /// Adds the MPEG muxer filter
+    /// </summary>
+    /// <param name="isTv">if set to <c>true</c> [is tv].</param>
     protected void AddMpegMuxer(bool isTv)
     {
       if (!CheckThreadId()) return;
@@ -1332,6 +1364,10 @@ namespace TvLibrary.Implementations.Analog
     }
 
 
+    /// <summary>
+    /// Setups the cross bar.
+    /// </summary>
+    /// <param name="mode">The crossbar mode.</param>
     protected void SetupCrossBar(AnalogChannel.VideoInputType mode)
     {
       if (!CheckThreadId()) return;
@@ -1659,7 +1695,7 @@ namespace TvLibrary.Implementations.Analog
     {
       if (!CheckThreadId()) return;
       Log.Log.WriteFile("analog:StartRecord({0})", fileName);
-      int hr;
+      //int hr;
       if (_tsFileSink != null)
       {
         Log.Log.WriteFile("dvb:SetRecording: uses .mpg");
@@ -1678,7 +1714,7 @@ namespace TvLibrary.Implementations.Analog
     protected void StopRecord()
     {
       if (!CheckThreadId()) return;
-      int hr;
+      //int hr;
       Log.Log.WriteFile("analog:StopRecord()");
 
       if (_tsFileSink != null)
@@ -1750,6 +1786,9 @@ namespace TvLibrary.Implementations.Analog
 
     #region IDisposable Members
 
+    /// <summary>
+    /// Disposes this instance.
+    /// </summary>
     public void Dispose()
     {
       if (_graphBuilder == null) return;
@@ -1906,11 +1945,24 @@ namespace TvLibrary.Implementations.Analog
     #region ISampleGrabberCB Members
 
 
+    /// <summary>
+    /// callback from ISampleGrabber filter
+    /// </summary>
+    /// <param name="SampleTime">media sample timestamp</param>
+    /// <param name="pSample">IMediaSample</param>
+    /// <returns></returns>
     public int SampleCB(double SampleTime, IMediaSample pSample)
     {
       return 0;
     }
 
+    /// <summary>
+    /// callback from ISampleGrabber filter
+    /// </summary>
+    /// <param name="SampleTime">The sample time.</param>
+    /// <param name="pBuffer">The buffer.</param>
+    /// <param name="BufferLen">The buffer length</param>
+    /// <returns></returns>
     public int BufferCB(double SampleTime, System.IntPtr pBuffer, int BufferLen)
     {
       try
@@ -1931,6 +1983,12 @@ namespace TvLibrary.Implementations.Analog
 
     #endregion
 
+    /// <summary>
+    /// Returns a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
+    /// </summary>
+    /// <returns>
+    /// A <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
+    /// </returns>
     public override string ToString()
     {
       return _name;
@@ -1992,7 +2050,7 @@ namespace TvLibrary.Implementations.Analog
       }
     }
     /// <summary>
-    /// returns the min/max channel numbers for analog cards
+    /// returns the max. channel numbers for analog cards
     /// </summary>
     public int MaxChannel
     {
@@ -2004,6 +2062,10 @@ namespace TvLibrary.Implementations.Analog
         return maxChannel;
       }
     }
+    /// <summary>
+    /// returns the min. channel numbers for analog cards
+    /// </summary>
+    /// <value>The min channel.</value>
     public int MinChannel
     {
       get
@@ -2119,6 +2181,9 @@ namespace TvLibrary.Implementations.Analog
       }
     }
     #endregion
+    /// <summary>
+    /// Deletes the time shifting filters
+    /// </summary>
     protected void DeleteTimeShifting()
     {
 

@@ -34,15 +34,26 @@ using DirectShowLib.BDA;
 
 namespace TvLibrary.Implementations.DVB
 {
+  /// <summary>
+  /// Class which implements scanning for tv/radio channels for DVB-S SkyStar 2 cards
+  /// </summary>
   public class DVBSS2canning : DvbBaseScanning, ITVScanning, IDisposable
   {
     TvCardDvbSS2 _card;
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DVBSS2canning"/> class.
+    /// </summary>
+    /// <param name="card">The card.</param>
     public DVBSS2canning(TvCardDvbSS2 card)
       : base(card)
     {
       _card = card;
     }
 
+    /// <summary>
+    /// returns the tv card used
+    /// </summary>
+    /// <value></value>
     public ITVCard TvCard
     {
       get
@@ -51,19 +62,35 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
+    /// <summary>
+    /// Gets the analyzer.
+    /// </summary>
+    /// <returns></returns>
     protected override ITsChannelScan GetAnalyzer()
     {
       return _card.StreamAnalyzer;
     }
+    /// <summary>
+    /// Sets the hw pids.
+    /// </summary>
+    /// <param name="pids">The pids.</param>
     protected override void SetHwPids(ArrayList pids)
     {
       _card.SendHWPids(pids);
     }
 
+    /// <summary>
+    /// Resets the signal update.
+    /// </summary>
     protected override void ResetSignalUpdate()
     {
       _card.ResetSignalUpdate();
     }
+    /// <summary>
+    /// Creates the new channel.
+    /// </summary>
+    /// <param name="info">The info.</param>
+    /// <returns></returns>
     protected override IChannel CreateNewChannel(ChannelInfo info)
     {
       DVBSChannel tuningChannel = (DVBSChannel)_card.Channel;

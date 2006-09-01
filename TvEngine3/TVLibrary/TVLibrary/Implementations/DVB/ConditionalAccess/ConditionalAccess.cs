@@ -27,6 +27,10 @@ using TvLibrary.Channels;
 using TvLibrary.Implementations.DVB.Structures;
 namespace TvLibrary.Implementations.DVB
 {
+  /// <summary>
+  /// Class which handles the conditional access modules for a tv card
+  /// (CI and CAM)
+  /// </summary>
   public class ConditionalAccess
   {
     #region variables

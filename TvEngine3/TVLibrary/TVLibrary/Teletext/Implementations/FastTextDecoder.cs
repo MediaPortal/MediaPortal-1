@@ -124,30 +124,57 @@ namespace TvLibrary.Teletext
     #endregion
 
     #region properties
+    /// <summary>
+    /// Gets the pagenumber for the red button.
+    /// </summary>
+    /// <value>The red page number</value>
     public int Red
     {
       get { return _redPage; }
     }
 
+    /// <summary>
+    /// Gets the pagenumber for the green button.
+    /// </summary>
+    /// <value>The green page number</value>
     public int Green
     {
       get { return _greenPage; }
     }
 
+    /// <summary>
+    /// Gets the pagenumber for the yellow button.
+    /// </summary>
+    /// <value>The yellow page number</value>
     public int Yellow
     {
       get { return _yellowPage; }
     }
 
+    /// <summary>
+    /// Gets the pagenumber for the blue button.
+    /// </summary>
+    /// <value>The blue page number</value>
     public int Blue
     {
       get { return _bluePage; }
     }
 
+    /// <summary>
+    /// Gets the pagenumber for the white button.
+    /// </summary>
+    /// <value>The white page number.</value>
     public int White
     {
       get { return _whitePage; }
     }
+    /// <summary>
+    /// Determines whether the page is a decimal page or hexadecimal page
+    /// </summary>
+    /// <param name="i">The pagenumber</param>
+    /// <returns>
+    /// 	<c>true</c> if the page is a decimal page; otherwise, <c>false</c>.
+    /// </returns>
     bool IsDecimalPage(int i)
     {
       return (bool)(((i & 0x00F) <= 9) && ((i & 0x0F0) <= 0x90));

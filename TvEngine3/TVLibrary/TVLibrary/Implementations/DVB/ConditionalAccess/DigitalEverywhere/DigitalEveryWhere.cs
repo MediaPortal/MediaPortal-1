@@ -27,6 +27,10 @@ using TvLibrary.Channels;
 
 namespace TvLibrary.Implementations.DVB
 {
+  /// <summary>
+  /// Handles the CI/CAM interface for FireDtv and FloppyDtv devices from 
+  /// Digital Everywhere
+  /// </summary>
   public class DigitalEverywhere //: IksPropertyUtils
   {
     #region structs
@@ -156,6 +160,9 @@ namespace TvLibrary.Implementations.DVB
     }
     #endregion
 
+    /// <summary>
+    /// FireDtv guid
+    /// </summary>
     static public readonly Guid KSPROPSETID_Firesat = new Guid(0xab132414, 0xd060, 0x11d0, 0x85, 0x83, 0x00, 0xc0, 0x4f, 0xd9, 0xba, 0xf3);
     #region property ids
     const int KSPROPERTY_FIRESAT_SELECT_PIDS_DVB_C = 8;
@@ -192,6 +199,11 @@ namespace TvLibrary.Implementations.DVB
     DVBSChannel _previousChannel = null;
     #endregion
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DigitalEverywhere"/> class.
+    /// </summary>
+    /// <param name="tunerFilter">The tuner filter.</param>
+    /// <param name="captureFilter">The capture filter.</param>
     public DigitalEverywhere(IBaseFilter tunerFilter, IBaseFilter captureFilter)
     //: base(filter)
     {
@@ -218,6 +230,12 @@ namespace TvLibrary.Implementations.DVB
 
     }
 
+    /// <summary>
+    /// Returns if the card is a FireDtv/Floppy DTV device or not.
+    /// </summary>
+    /// <value>
+    /// 	<c>true</c> if this instance is a FireDtv/Floppy DtV; otherwise, <c>false</c>.
+    /// </value>
     public bool IsDigitalEverywhere
     {
       get
@@ -238,10 +256,11 @@ namespace TvLibrary.Implementations.DVB
     }
     /// <summary>
     /// This function sends the PMT (Program Map Table) to the FireDTV DVB-T/DVB-C/DVB-S card
-    /// This allows the integrated CI & CAM module inside the FireDTv device to decrypt the current TV channel
+    /// This allows the integrated CI and CAM module inside the FireDTv device to decrypt the current TV channel
     /// (provided that offcourse a smartcard with the correct subscription and its inserted in the CAM)
     /// </summary>
     /// <param name="PMT">Program Map Table received from digital transport stream</param>
+    /// <param name="pmtLength">length in bytes of PMT</param>
     /// <remarks>
     /// 1. first byte in PMT is 0x02=tableId for PMT
     /// 2. This function is vender specific. It will only work on the FireDTV devices
@@ -322,6 +341,9 @@ namespace TvLibrary.Implementations.DVB
       return true;
     }//public bool SendPMTToFireDTV(byte[] PMT)
 
+    /// <summary>
+    /// Resets the CAM.
+    /// </summary>
     public void ResetCAM()
     {
       Log.Log.WriteFile("FireDTV:ResetCAM()");
@@ -379,6 +401,15 @@ namespace TvLibrary.Implementations.DVB
       return;
     }
 
+    /// <summary>
+    /// Sets the pids for hardware pid filtering.
+    /// </summary>
+    /// <param name="isDvbc">if set to <c>true</c> [is DVB-C].</param>
+    /// <param name="isDvbT">if set to <c>true</c> [is DVB-T].</param>
+    /// <param name="isDvbS">if set to <c>true</c> [is DVB-S].</param>
+    /// <param name="isAtsc">if set to <c>true</c> [is atsc].</param>
+    /// <param name="pids">The pids to filter</param>
+    /// <returns></returns>
     public bool SetHardwarePidFiltering(bool isDvbc, bool isDvbT, bool isDvbS, bool isAtsc, ArrayList pids)
     {
       string logStart = "dvbt:";
@@ -517,6 +548,10 @@ namespace TvLibrary.Implementations.DVB
       return version;
     }
     */
+    /// <summary>
+    /// Gets the driver version number.
+    /// </summary>
+    /// <returns></returns>
     public string GetDriverVersionNumber()
     {
       DirectShowLib.IKsPropertySet propertySet = _filterTuner as DirectShowLib.IKsPropertySet;
@@ -560,6 +595,10 @@ namespace TvLibrary.Implementations.DVB
       return version;
     }
 
+    /// <summary>
+    /// Gets the CAM status.
+    /// </summary>
+    /// <returns></returns>
     int GetCAMStatus()
     {
       Guid propertyGuid = KSPROPSETID_Firesat;
@@ -608,6 +647,12 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
+    /// <summary>
+    /// Determines whether a cam is present
+    /// </summary>
+    /// <returns>
+    /// 	<c>true</c> if cam is present; otherwise, <c>false</c>.
+    /// </returns>
     public bool IsCamPresent()
     {
       if (_isInitialized) return _hasCAM;
@@ -624,6 +669,12 @@ namespace TvLibrary.Implementations.DVB
       return false;
     }
 
+    /// <summary>
+    /// Determines whether cam is ready
+    /// </summary>
+    /// <returns>
+    /// 	<c>true</c> if cam is ready; otherwise, <c>false</c>.
+    /// </returns>
     public bool IsCamReady()
     {
       int camStatus = GetCAMStatus();
@@ -660,6 +711,11 @@ namespace TvLibrary.Implementations.DVB
       }
       return true;
     }
+
+    /// <summary>
+    /// Sends the diseqc command.
+    /// </summary>
+    /// <param name="channel">The channel.</param>
     public void SendDiseqcCommand(DVBSChannel channel)
     {
       if (_previousChannel != null)

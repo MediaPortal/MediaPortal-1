@@ -35,12 +35,18 @@ using TvLibrary.Helper;
 
 namespace TvLibrary.Implementations.Analog
 {
-
+  /// <summary>
+  /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles analog tv cards
+  /// </summary>
   public class TvCardAnalog : TvCardAnalogBase, IDisposable, ITVCard, ISampleGrabberCB
   {
     AnalogChannel _previousChannel;
     #region ctor
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TvCardAnalog"/> class.
+    /// </summary>
+    /// <param name="device">The device.</param>
     public TvCardAnalog(DsDevice device)
     {
       _previousChannel = null;
@@ -155,6 +161,10 @@ namespace TvLibrary.Implementations.Analog
     #endregion
 
     #region teletext
+    /// <summary>
+    /// Property which returns true when the current channel contains teletext
+    /// </summary>
+    /// <value></value>
     public bool HasTeletext
     {
       get
@@ -337,7 +347,7 @@ namespace TvLibrary.Implementations.Analog
         StopGraph();
         AddMpegMuxer(_currentChannel.IsTv);
         AddTsFileSink(_currentChannel.IsTv);
-        ConnectFilters();
+        
         SetTimeShiftFileName(fileName);
       }
       RunGraph();

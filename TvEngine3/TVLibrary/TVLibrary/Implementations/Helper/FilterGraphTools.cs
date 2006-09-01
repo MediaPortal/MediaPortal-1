@@ -985,6 +985,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// helper function to connect 2 filters
     /// </summary>
+    /// <param name="graphBuilder">graph builder interface</param>
     /// <param name="pinSource">souce pin</param>
     /// <param name="filterDest">destination filter</param>
     /// <param name="destPinIndex">input pin index</param>
@@ -1009,6 +1010,13 @@ namespace TvLibrary.Implementations.DVB
       Release.ComObject("Connect Pin", pinDest);
     }
 
+    /// <summary>
+    /// helper function to connect 2 filters
+    /// </summary>
+    /// <param name="graphBuilder">The graph builder.</param>
+    /// <param name="sourceFilter">The source filter.</param>
+    /// <param name="pinDestination">The pin destination.</param>
+    /// <returns></returns>
     static public bool ConnectFilter(IGraphBuilder graphBuilder, IBaseFilter sourceFilter, IPin pinDestination)
     {
       Log.Log.WriteFile("analog: ConnectFilter()");
@@ -1030,6 +1038,13 @@ namespace TvLibrary.Implementations.DVB
       return false;
     }
 
+    /// <summary>
+    /// helper function to connect 2 filters
+    /// </summary>
+    /// <param name="graphBuilder">The graph builder.</param>
+    /// <param name="sourceFilter">The source filter.</param>
+    /// <param name="destinationFilter">The destination filter.</param>
+    /// <returns></returns>
     static public bool ConnectFilter(IGraphBuilder graphBuilder, IBaseFilter sourceFilter, IBaseFilter destinationFilter)
     {
       Log.Log.WriteFile("analog: ConnectFilter()");
@@ -1054,6 +1069,11 @@ namespace TvLibrary.Implementations.DVB
       return false;
     }
 
+    /// <summary>
+    /// Logs the pin info.
+    /// </summary>
+    /// <param name="pin">The pin.</param>
+    /// <returns></returns>
     static public string LogPinInfo(IPin pin)
     {
       PinInfo pinInfo;
@@ -1063,6 +1083,10 @@ namespace TvLibrary.Implementations.DVB
       return String.Format("name:{0} Direction:{1}", pinInfo.name, pinInfo.dir);
     }
 
+    /// <summary>
+    /// Gets the audio MPG2 media.
+    /// </summary>
+    /// <returns></returns>
     static public AMMediaType GetAudioMpg2Media()
     {
       AMMediaType mediaAudio = new AMMediaType();
@@ -1080,6 +1104,10 @@ namespace TvLibrary.Implementations.DVB
       System.Runtime.InteropServices.Marshal.Copy(MPEG2AudioFormat, 0, mediaAudio.formatPtr, mediaAudio.formatSize);
       return mediaAudio;
     }
+    /// <summary>
+    /// Gets the audio MPG1 media.
+    /// </summary>
+    /// <returns></returns>
     static public AMMediaType GetAudioMpg1Media()
     {
       AMMediaType mediaAudio = new AMMediaType();
@@ -1098,6 +1126,10 @@ namespace TvLibrary.Implementations.DVB
       return mediaAudio;
     }
 
+    /// <summary>
+    /// Gets the video MPG2 media.
+    /// </summary>
+    /// <returns></returns>
     static public AMMediaType GetVideoMpg2Media()
     {
       AMMediaType mediaVideo = new AMMediaType();
@@ -1114,6 +1146,10 @@ namespace TvLibrary.Implementations.DVB
       return mediaVideo;
     }
 
+    /// <summary>
+    /// Gets the audio ac3 media type
+    /// </summary>
+    /// <returns></returns>
     static public AMMediaType GetAudioAc3()
     {
       AMMediaType mediaAc3 = new AMMediaType();
@@ -1129,6 +1165,10 @@ namespace TvLibrary.Implementations.DVB
       System.Runtime.InteropServices.Marshal.Copy(MPEG1AudioFormat, 0, mediaAc3.formatPtr, mediaAc3.formatSize);
       return mediaAc3;
     }
+    /// <summary>
+    /// Gets the audio AAC media type
+    /// </summary>
+    /// <returns></returns>
     static public AMMediaType GetAudioAAC()
     {
       AMMediaType mediaAac = new AMMediaType();
@@ -1144,6 +1184,10 @@ namespace TvLibrary.Implementations.DVB
       System.Runtime.InteropServices.Marshal.Copy(AACAudioFormat, 0, mediaAac.formatPtr, mediaAac.formatSize);
       return mediaAac;
     }
+    /// <summary>
+    /// Gets the audio LPCM media type
+    /// </summary>
+    /// <returns></returns>
     static public AMMediaType GetAudioLPCMMedia()
     {
       AMMediaType mediaLPCM = new AMMediaType();
@@ -1159,6 +1203,10 @@ namespace TvLibrary.Implementations.DVB
       System.Runtime.InteropServices.Marshal.Copy(LPCMAudioFormat, 0, mediaLPCM.formatPtr, mediaLPCM.formatSize);
       return mediaLPCM;
     }
+    /// <summary>
+    /// Gets the transport stream media type
+    /// </summary>
+    /// <returns></returns>
     static public AMMediaType GetTransportStreamMedia()
     {
       AMMediaType mediaTS = new AMMediaType();

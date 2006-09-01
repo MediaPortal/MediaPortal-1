@@ -24,6 +24,9 @@ using System.Text;
 using TvLibrary.Interfaces;
 namespace TvLibrary.Epg
 {
+  /// <summary>
+  /// class which holds all epg information received for a specific DVB tv/radio channel
+  /// </summary>
   [Serializable]
   public class EpgChannel
   {

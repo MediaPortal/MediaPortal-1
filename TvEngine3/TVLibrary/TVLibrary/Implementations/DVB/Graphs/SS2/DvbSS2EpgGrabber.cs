@@ -26,10 +26,16 @@ using TvLibrary.Epg;
 
 namespace TvLibrary.Implementations.DVB
 {
+  /// <summary>
+  /// Epg grabber for SS2
+  /// </summary>
   public class DvbSs2EpgGrabber : ITVEPG
   {
 
     #region events
+    /// <summary>
+    /// event which gets fired when epg has been received
+    /// </summary>
     public event EpgReceivedHandler OnEpgReceived;
     #endregion
 

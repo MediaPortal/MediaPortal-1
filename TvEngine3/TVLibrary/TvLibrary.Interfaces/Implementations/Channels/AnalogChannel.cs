@@ -34,17 +34,50 @@ namespace TvLibrary.Implementations
   public class AnalogChannel : IChannel
   {
     #region enums
+    /// <summary>
+    /// Video input type
+    /// </summary>
     public enum VideoInputType
     {
+      /// <summary>
+      /// Tuner input
+      /// </summary>
       Tuner,
+      /// <summary>
+      /// CVBS input #1
+      /// </summary>
       VideoInput1,
+      /// <summary>
+      /// CVBS input #2
+      /// </summary>
       VideoInput2,
+      /// <summary>
+      /// CVBS input #3
+      /// </summary>
       VideoInput3,
+      /// <summary>
+      /// SVHS input #1
+      /// </summary>
       SvhsInput1,
+      /// <summary>
+      /// SVHS input #2
+      /// </summary>
       SvhsInput2,
+      /// <summary>
+      /// SVHS input #3
+      /// </summary>
       SvhsInput3,
+      /// <summary>
+      /// RGB input #1
+      /// </summary>
       RgbInput1,
+      /// <summary>
+      /// RGB input #2
+      /// </summary>
       RgbInput2,
+      /// <summary>
+      /// RGB input #3
+      /// </summary>
       RgbInput3
     }
     #endregion
@@ -79,6 +112,10 @@ namespace TvLibrary.Implementations
     #endregion
 
     #region properties
+    /// <summary>
+    /// Gets or sets the video source.
+    /// </summary>
+    /// <value>The video source.</value>
     public VideoInputType VideoSource
     {
       get
@@ -90,9 +127,11 @@ namespace TvLibrary.Implementations
         _videoInputType = value;
       }
     }
+
     /// <summary>
-    /// gets/sets the country
+    /// Gets or sets the tuner source.
     /// </summary>
+    /// <value>The tuner source.</value>
     public TunerInputType TunerSource
     {
       get
