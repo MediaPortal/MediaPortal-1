@@ -50,7 +50,8 @@ namespace MediaPortal.Music.Database
     taggedalbums,
     taggedtracks,
     topartisttags,
-    toptracktags
+    toptracktags,
+    albuminfo
   }
 
   public enum offlineMode: int
@@ -334,6 +335,22 @@ namespace MediaPortal.Music.Database
         default:
           return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "recenttracks.xml", @"//recenttracks/track", feed_);
       }
+    }
+
+    /// <summary>
+    /// Fetch Amazon cover link, release date and album songs sortable by their popularity
+    /// </summary>
+    /// <param name="artistToSearch_">Band name</param>
+    /// <param name="albumToSearch_">Album name</param>
+    /// <param name="sortBestTracks">false gives album songs in trackorder, true by popularity</param>
+    /// <returns>Song-List of Album Tracks with Title, Artist, Album, Playcount, URL(track), DateTimePlayed (album release), WebImage</returns>
+    public List<Song> getAlbumInfo(string artistToSearch_, string albumToSearch_, bool sortBestTracks)
+    {
+      List<Song> albumTracks = new List<Song>();
+      albumTracks = ParseXMLDocForAlbumInfo(artistToSearch_, albumToSearch_);
+      if (sortBestTracks)
+        albumTracks.Sort(CompareSongsByTimesPlayed);
+      return albumTracks;
     }
 
     public List<Song> getTagsForArtist(string artistToSearch_)
@@ -682,6 +699,66 @@ namespace MediaPortal.Music.Database
     #endregion
 
     #region XML - Parsers
+    private List<Song> ParseXMLDocForAlbumInfo(string artist_, string album_)
+    {      
+      songList = new List<Song>();
+      try
+      {
+        XmlDocument doc = new XmlDocument();
+
+        doc.Load(@"http://ws.audioscrobbler.com/1.0/album/" + artist_ + "/" + album_ + "/info.xml");
+
+        XmlNodeList nodes = doc.SelectNodes(@"//album");
+        string tmpCover = String.Empty;
+        DateTime tmpRelease = DateTime.MinValue;        
+
+        foreach (XmlNode mainchild in nodes[0].ChildNodes)
+        {
+          if (mainchild.Name == "releasedate" && mainchild.ChildNodes.Count != 0)
+            tmpRelease = Convert.ToDateTime(mainchild.ChildNodes[0].Value);
+          else if (mainchild.Name == "coverart" && mainchild.ChildNodes.Count != 0)
+          {
+            foreach (XmlNode coverchild in mainchild.ChildNodes)
+            {
+              if (coverchild.Name == "large" && coverchild.ChildNodes.Count != 0)
+                tmpCover = coverchild.ChildNodes[0].Value;
+            }
+          }
+          //else if (mainchild.Name == "mbid" && mainchild.ChildNodes.Count != 0)
+          //  nodeSong.MusicBrainzID = child.ChildNodes[0].Value;
+        }
+
+        nodes = doc.SelectNodes(@"//album/tracks/track");
+
+        foreach (XmlNode node in nodes)
+        {
+          Song nodeSong = new Song();
+
+          nodeSong.Artist = artist_;
+          nodeSong.Album = album_;
+          nodeSong.WebImage = tmpCover;
+          nodeSong.DateTimePlayed = tmpRelease;
+
+          if (node.Attributes["title"].Value != "")
+            nodeSong.Title = node.Attributes["title"].Value;
+
+          foreach (XmlNode child in node.ChildNodes)
+          {
+            if (child.Name == "reach" && child.ChildNodes.Count != 0)
+              nodeSong.TimesPlayed = Convert.ToInt32(child.ChildNodes[0].Value);
+            else if (child.Name == "url" && child.ChildNodes.Count != 0)
+              nodeSong.URL = child.ChildNodes[0].Value;
+          }
+          songList.Add(nodeSong);
+        }
+      }
+      catch
+      {
+        // input nice exception here...
+      }
+      return songList;
+    }
+
     private List<Song> ParseXMLDocForSimilarArtists(string artist_)
     {
       songList = new List<Song>();
