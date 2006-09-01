@@ -141,6 +141,39 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ControlDevices\IControlInput.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ControlDevices\IControlOutput.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ControlDevices\IControlPlugin.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ControlDevices\IControlSettings.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ControlDevices\Util\AbstractControlPlugin.cs" />
+    <Compile Include="ControlDevices\Util\AbstractControlSettings.cs" />
+    <Compile Include="ControlDevices\Util\AbstractLearnCode.cs" />
+    <Compile Include="ControlDevices\Util\LearnCodePanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ControlDevices\Util\LearnCodePanel.Designer.cs">
+      <DependentUpon>LearnCodePanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ControlDevices\Util\ControlDeviceForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ControlDevices\Util\ControlDeviceForm.Designer.cs">
+      <DependentUpon>ControlDeviceForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ControlDevices\Util\ControlDevicePanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ControlDevices\Util\ControlDevicePanel.Designer.cs">
+      <DependentUpon>ControlDevicePanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="InputMapper\InputHandler.cs" />
     <Compile Include="InputMapper\InputMappingForm.cs">
       <SubType>Form</SubType>
@@ -182,14 +215,38 @@
     <Compile Include="Remotes\MCE2005Remote\MediaPortal.Hardware\RemoteButton.cs" />
     <Compile Include="Remotes\MCE2005Remote\MediaPortal.Hardware\RemoteEventArgs.cs" />
     <Compile Include="Remotes\MCE2005Remote\MediaPortal.Hardware\RemoteEventHandler.cs" />
+    <Compile Include="Remotes\USBUIRT\USBUIRTAdvancedForm.cs" />
+    <Compile Include="Remotes\USBUIRT\USBUIRTPlugin.cs" />
+    <Compile Include="Remotes\USBUIRT\USBUIRTAPI.cs" />
+    <Compile Include="Remotes\USBUIRT\USBUIRTControlCode.cs" />
+    <None Include="Remotes\USBUIRT\USBUIRTLearnForm.cs">
+      <SubType>Form</SubType>
+    </None>
+    <Compile Include="Remotes\USBUIRT\USBUIRTSettings.cs" />
     <Compile Include="Remotes\X10Remote\X10RemoteForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Remotes\X10Remote\X10Remote.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="ControlDevices\Util\LearnCodePanel.resx">
+      <DependentUpon>LearnCodePanel.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ControlDevices\Util\ControlDeviceForm.resx">
+      <DependentUpon>ControlDeviceForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ControlDevices\Util\ControlDevicePanel.resx">
+      <DependentUpon>ControlDevicePanel.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="InputMapper\InputMappingForm.resx">
       <DependentUpon>InputMappingForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Remotes\USBUIRT\USBUIRTLearnForm.resx">
+      <DependentUpon>USBUIRTLearnForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Remotes\X10Remote\X10RemoteForm.resx">
