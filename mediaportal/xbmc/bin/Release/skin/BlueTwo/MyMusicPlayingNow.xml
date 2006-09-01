@@ -24,7 +24,7 @@
          <description>album art image</description>
          <id>2</id>
          <posX>32</posX>
-         <posY>112</posY>
+         <posY>144</posY>
          <width>300</width>
          <height>300</height>
          <texture>-</texture>
@@ -34,20 +34,20 @@
          <type>fadelabel</type>
          <description>track label</description>
          <id>3</id>
-         <posX>671</posX>
-         <posY>66</posY>
+         <posX>32</posX>
+         <posY>460</posY>
          <width>300</width>
          <label>#Play.Current.Title</label>
          <font>font16</font>
-         <align>right</align>
+         <align>center</align>
          <disabledcolor>ff808080</disabledcolor>
       </control>
       <control>
          <type>fadelabel</type>
          <description>album label</description>
          <id>4</id>
-         <posX>32</posX>
-         <posY>416</posY>
+         <posX>34</posX>
+         <posY>120</posY>
          <label>#Play.Current.Album</label>
          <font>font14</font>
          <disabledcolor>ff808080</disabledcolor>
@@ -56,8 +56,8 @@
          <type>label</type>
          <description>album year</description>
          <id>5</id>
-         <posX>328</posX>
-         <posY>416</posY>
+         <posX>326</posX>
+         <posY>120</posY>
          <label>#Play.Current.Year</label>
          <font>font14</font>
          <align>right</align>
@@ -67,20 +67,20 @@
          <type>fadelabel</type>
          <description>artist label</description>
          <id>6</id>
-         <posX>672</posX>
-         <posY>32</posY>
-         <width>300</width>
+         <posX>110</posX>
+         <posY>64</posY>
+         <width>500</width>
          <label>#Play.Current.Artist</label>
          <font>font18</font>
-         <align>right</align>
-         <disabledcolor>ff808080</disabledcolor>
+         <align>center</align>
+         <textcolor>ffffffff</textcolor>
       </control>
       <control>
          <type>image</type>
          <id>7</id>
          <posX>32</posX>
-         <posY>442</posY>
-         <width>290</width>
+         <posY>480</posY>
+         <width>292</width>
          <texture>osd_progress_background.png</texture>
       </control>
       <control>
@@ -88,7 +88,7 @@
          <description>track progress</description>
          <id>8</id>
          <posX>22</posX>
-         <posY>441</posY>
+         <posY>480</posY>
          <width>316</width>
          <visible>no</visible>
          <lefttexture>osd_progress_left.png</lefttexture>
@@ -101,7 +101,7 @@
          <description>track progress label</description>
          <id>9</id>
          <posX>32</posX>
-         <posY>480</posY>
+         <posY>508</posY>
          <label>#currentplaytime</label>
          <font>font32</font>
          <textcolor>ffffffff</textcolor>
