@@ -215,14 +215,14 @@
     <Compile Include="Remotes\MCE2005Remote\MediaPortal.Hardware\RemoteButton.cs" />
     <Compile Include="Remotes\MCE2005Remote\MediaPortal.Hardware\RemoteEventArgs.cs" />
     <Compile Include="Remotes\MCE2005Remote\MediaPortal.Hardware\RemoteEventHandler.cs" />
-    <Compile Include="Remotes\USBUIRT\USBUIRTAdvancedForm.cs" />
-    <Compile Include="Remotes\USBUIRT\USBUIRTPlugin.cs" />
-    <Compile Include="Remotes\USBUIRT\USBUIRTAPI.cs" />
-    <Compile Include="Remotes\USBUIRT\USBUIRTControlCode.cs" />
-    <None Include="Remotes\USBUIRT\USBUIRTLearnForm.cs">
+    <Compile Include="Devices\USBUIRT\USBUIRTAdvancedForm.cs" />
+    <Compile Include="Devices\USBUIRT\USBUIRTPlugin.cs" />
+    <Compile Include="Devices\USBUIRT\USBUIRTAPI.cs" />
+    <Compile Include="Devices\USBUIRT\USBUIRTControlCode.cs" />
+    <None Include="Devices\USBUIRT\USBUIRTLearnForm.cs">
       <SubType>Form</SubType>
     </None>
-    <Compile Include="Remotes\USBUIRT\USBUIRTSettings.cs" />
+    <Compile Include="Devices\USBUIRT\USBUIRTSettings.cs" />
     <Compile Include="Remotes\X10Remote\X10RemoteForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -245,7 +245,7 @@
       <DependentUpon>InputMappingForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Remotes\USBUIRT\USBUIRTLearnForm.resx">
+    <EmbeddedResource Include="Devices\USBUIRT\USBUIRTLearnForm.resx">
       <DependentUpon>USBUIRTLearnForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
