@@ -335,7 +335,7 @@ namespace MediaPortal.MusicShareWatcher
     // Retrieve the Music Shares that should be monitored
     int LoadShares()
     {
-      MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml");
+      MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml");
       string strDefault = xmlreader.GetValueAsString("music", "default", String.Empty);
       for (int i = 0; i < 20; i++)
       {

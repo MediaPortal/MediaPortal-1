@@ -536,7 +536,7 @@ namespace WindowPlugins.GUIPrograms
       StoreGridInView();
       try
       {
-        using (FileStream fileStream = new FileStream("programViews2.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
+        using (FileStream fileStream = new FileStream(Config.Get(Config.Dir.Config) + "programViews2.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
         {
           SoapFormatter formatter = new SoapFormatter();
           formatter.Serialize(fileStream, views);

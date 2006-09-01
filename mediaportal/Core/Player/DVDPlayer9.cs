@@ -147,7 +147,7 @@ namespace MediaPortal.Player
 
         _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
 
-        /*using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_config.Get(Config.Options.ConfigPath) + "MediaPortal.xml"))
+        /*using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         {
           _vmr9.UseRGBMode(xmlreader.GetValueAsBool("dvdplayer", "usergbmode", false));
         }*/

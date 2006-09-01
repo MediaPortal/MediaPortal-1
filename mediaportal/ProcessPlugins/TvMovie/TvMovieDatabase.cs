@@ -150,7 +150,7 @@ namespace ProcessPlugins.TvMovie
           if (rkey != null)
             path = string.Format("{0}", rkey.GetValue("DBDatei"));
 
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
           mpPath = xmlreader.GetValueAsString("tvmovie", "databasepath", path);
 
         if (File.Exists(mpPath))
@@ -172,10 +172,10 @@ namespace ProcessPlugins.TvMovie
           newPath = path;
 
         string mpPath = string.Empty;
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
           mpPath = xmlreader.GetValueAsString("tvmovie", "databasepath", string.Empty);
 
-        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
           if (newPath == path)
             xmlwriter.SetValue("tvmovie", "databasepath", string.Empty);
           else

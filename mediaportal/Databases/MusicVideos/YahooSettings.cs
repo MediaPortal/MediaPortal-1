@@ -29,6 +29,7 @@ using System.Collections;
 using System.Text;
 using System.Xml;
 using MediaPortal.GUI.Library;
+using MediaPortal.Util;
 
 namespace MediaPortal.MusicVideos.Database
 {
@@ -60,7 +61,7 @@ namespace MediaPortal.MusicVideos.Database
         public void loadSettings()
         {
             //Read the defaults
-            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
             {
                 msDefaultCountryName = xmlreader.GetValueAsString("musicvideo", "country","USA");
                 msDefaultBitRate = xmlreader.GetValueAsString("musicvideo", "bitrate","768");
@@ -78,7 +79,7 @@ namespace MediaPortal.MusicVideos.Database
                     Log.Info("Yahoo Settings: {0}", moBitRateList == null);
                     YahooSite loSite;
                     string lsValue;
-                    using (loXmlreader = new XmlTextReader("MusicVideoSettings.xml"))
+                    using (loXmlreader = new XmlTextReader(Config.Get(Config.Dir.Config) + "MusicVideoSettings.xml"))
                     //using (MediaPortal.Profile.Settings loXmlreader = new MediaPortal.Profile.Settings("MusicVideoSettings.xml"))
                     {
                         while (loXmlreader.Read())
@@ -130,7 +131,7 @@ namespace MediaPortal.MusicVideos.Database
         }
         public void saveSettings()
         {
-            using (MediaPortal.Profile.Settings loXmlSettings = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+            using (MediaPortal.Profile.Settings loXmlSettings = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
             {
                 loXmlSettings.SetValue("musicvideo", "bitrate", msDefaultBitRate);
                 loXmlSettings.SetValueAsBool("musicvideo", "useVMR9", mbUseVMR9);
@@ -143,7 +144,7 @@ namespace MediaPortal.MusicVideos.Database
             Log.Info("Yahoo Settings: saving settings.");
             try
             {
-                string filename = "MyMusicVideoSettings.xml";
+                string filename = Config.Get(Config.Dir.Config) + "MyMusicVideoSettings.xml";
 
                 loReader = new XmlTextReader(filename);
 
