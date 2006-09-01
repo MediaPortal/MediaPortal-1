@@ -36,6 +36,9 @@ namespace TvLibrary.Implementations.DVB
 
     
     #region ctor
+    /// <summary>
+    /// Initializes a new instance of the <see cref="T:DVBAudioStream"/> class.
+    /// </summary>
     public DVBAudioStream()
     {
       _language = "";
@@ -91,6 +94,13 @@ namespace TvLibrary.Implementations.DVB
     }
     #endregion
 
+    /// <summary>
+    /// Determines whether the specified <see cref="T:System.Object"></see> is equal to the current <see cref="T:System.Object"></see>.
+    /// </summary>
+    /// <param name="obj">The <see cref="T:System.Object"></see> to compare with the current <see cref="T:System.Object"></see>.</param>
+    /// <returns>
+    /// true if the specified <see cref="T:System.Object"></see> is equal to the current <see cref="T:System.Object"></see>; otherwise, false.
+    /// </returns>
     public override bool Equals(object obj)
     {
       DVBAudioStream stream = obj as DVBAudioStream;
@@ -98,11 +108,23 @@ namespace TvLibrary.Implementations.DVB
       if (_language == stream.Language && _streamType == stream.StreamType && _pid == stream.Pid) return true;
       return false;
     }
+    /// <summary>
+    /// Returns a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
+    /// </summary>
+    /// <returns>
+    /// A <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
+    /// </returns>
     public override string ToString()
     {
       return String.Format("pid:{0:X} language:{1} type:{2}",
         Pid, Language, StreamType);
     }
+    /// <summary>
+    /// Serves as a hash function for a particular type. <see cref="M:System.Object.GetHashCode"></see> is suitable for use in hashing algorithms and data structures like a hash table.
+    /// </summary>
+    /// <returns>
+    /// A hash code for the current <see cref="T:System.Object"></see>.
+    /// </returns>
     public override int GetHashCode()
     {
       return base.GetHashCode() ^ _language.GetHashCode() ^_streamType.GetHashCode() ^ _pid.GetHashCode();

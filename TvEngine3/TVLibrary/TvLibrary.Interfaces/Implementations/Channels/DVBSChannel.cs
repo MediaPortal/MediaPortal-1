@@ -50,6 +50,9 @@ namespace TvLibrary.Channels
     DisEqcType _disEqc;
     #endregion
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="T:DVBSChannel"/> class.
+    /// </summary>
     public DVBSChannel()
     {
       SwitchingFrequency = 0;
@@ -115,6 +118,12 @@ namespace TvLibrary.Channels
     }
     #endregion
 
+    /// <summary>
+    /// Returns a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
+    /// </summary>
+    /// <returns>
+    /// A <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
+    /// </returns>
     public override string ToString()
     {
       string line = String.Format("DVBS:{0} SymbolRate:{1} Polarisation:{2} DisEqc:{3} Switch Freq:{4}",
@@ -122,6 +131,13 @@ namespace TvLibrary.Channels
       return line;
     }
 
+    /// <summary>
+    /// Determines whether the specified <see cref="T:System.Object"></see> is equal to the current <see cref="T:System.Object"></see>.
+    /// </summary>
+    /// <param name="obj">The <see cref="T:System.Object"></see> to compare with the current <see cref="T:System.Object"></see>.</param>
+    /// <returns>
+    /// true if the specified <see cref="T:System.Object"></see> is equal to the current <see cref="T:System.Object"></see>; otherwise, false.
+    /// </returns>
     public override bool Equals(object obj)
     {
       if ((obj as DVBSChannel)==null) return false;

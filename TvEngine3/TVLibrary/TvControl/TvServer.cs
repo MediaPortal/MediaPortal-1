@@ -52,7 +52,7 @@ namespace TvControl
     /// </summary>
     /// <param name="channelName">Name of the channel</param>
     /// <param name="card">returns on which card timeshifting is started</param>
-    /// <returns>true if timeshifting has started, otherwise false</returns>
+    /// <returns>TvResult indicating whether method succeeded</returns>
     public TvResult StartTimeShifting(string channelName, out VirtualCard card)
     {
       TvResult result= RemoteControl.Instance.StartTimeShifting(channelName, out card);

@@ -84,6 +84,11 @@ namespace TvLibrary.Teletext
     /// <returns>number of subpages for this pagenumber</returns>
     int NumberOfSubpages(int currentPageNumber);
 
+    /// <summary>
+    /// returns the rotation time for the page.
+    /// </summary>
+    /// <param name="currentPageNumber">The current page number.</param>
+    /// <returns>timespan contain the rotation time</returns>
     TimeSpan RotationTime(int currentPageNumber);
     #endregion
 
@@ -104,6 +109,11 @@ namespace TvLibrary.Teletext
     /// returns the pagenumber for the blue button
     /// </summary>
     int PageBlue { get;}
+
+    /// <summary>
+    /// Gets the page select text.
+    /// </summary>
+    /// <value>The page select text.</value>
     string PageSelectText { get;}
     /// <summary>
     /// turns on/off the conceal (hidden) mode

@@ -26,6 +26,9 @@ namespace TvLibrary.Interfaces
 {
   public interface ITVScanning
   {
+    /// <summary>
+    /// Disposes this instance.
+    /// </summary>
     void Dispose();
 
     /// <summary>

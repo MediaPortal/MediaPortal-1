@@ -100,9 +100,14 @@ namespace TvLibrary.Interfaces
     IChannel Channel { get;}
 
     /// <summary>
-    /// returns the min/max channel numbers for analog cards
+    /// returns the min. channel number for analog cards
     /// </summary>
     int MinChannel { get;}
+
+    /// <summary>
+    /// returns the max. channel number for analog cards
+    /// </summary>
+    /// <value>The max channel.</value>
     int MaxChannel { get;}
     #endregion
 
@@ -141,36 +146,42 @@ namespace TvLibrary.Interfaces
     /// tune the card to the channel specified by IChannel
     /// </summary>
     /// <param name="channel">channel to tune</param>
-    /// <returns></returns>
+    /// <returns>true if succeeded else false</returns>
     bool TuneScan(IChannel channel);
+
+    /// <summary>
+    /// Tunes the specified channel.
+    /// </summary>
+    /// <param name="channel">The channel.</param>
+    /// <returns>true if succeeded else false</returns>
     bool Tune(IChannel channel);
 
     /// <summary>
     /// Starts timeshifting. Note card has to be tuned first
     /// </summary>
     /// <param name="fileName">filename used for the timeshiftbuffer</param>
-    /// <returns></returns>
+    /// <returns>true if succeeded else false</returns>
     bool StartTimeShifting(string fileName);
 
     /// <summary>
     /// Stops timeshifting
     /// </summary>
-    /// <returns></returns>
+    /// <returns>true if succeeded else false</returns>
     bool StopTimeShifting();
 
     /// <summary>
     /// Starts recording
     /// </summary>
-    /// <param name="recordingType">Recording type (content or reference)</param>
+    /// <param name="recordingType">unused</param>
     /// <param name="fileName">filename to which to recording should be saved</param>
-    /// <param name="startTime">time the recording should start (0=now)</param>
-    /// <returns></returns>
+    /// <param name="startTime">unused</param>
+    /// <returns>true if succeeded else false</returns>
     bool StartRecording(RecordingType recordingType, string fileName, long startTime);
 
     /// <summary>
     /// Stop recording
     /// </summary>
-    /// <returns></returns>
+    /// <returns>true if succeeded else false</returns>
     bool StopRecording();
     #endregion
 
@@ -217,6 +228,9 @@ namespace TvLibrary.Interfaces
     #endregion
 
     #region idisposable
+    /// <summary>
+    /// Disposes this instance.
+    /// </summary>
     void Dispose();
     #endregion
   }

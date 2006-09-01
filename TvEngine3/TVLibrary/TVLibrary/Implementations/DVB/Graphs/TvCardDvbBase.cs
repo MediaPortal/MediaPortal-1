@@ -728,6 +728,9 @@ namespace TvLibrary.Implementations.DVB
 
     #region IDisposable
 
+    /// <summary>
+    /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+    /// </summary>
     public void Dispose()
     {
       Decompose();
@@ -1311,12 +1314,15 @@ namespace TvLibrary.Implementations.DVB
 
     #region signal quality, level etc
 
+    /// <summary>
+    /// Resets the signal update.
+    /// </summary>
     public void ResetSignalUpdate()
     {
       _lastSignalUpdate = DateTime.MinValue;
     }
     /// <summary>
-    /// updates the signal quality/level & tuner locked statusses
+    /// updates the signal quality/level and tuner locked statusses
     /// </summary>
     protected void UpdateSignalQuality()
     {
@@ -1606,7 +1612,6 @@ namespace TvLibrary.Implementations.DVB
     protected void StopRecord()
     {
       if (!CheckThreadId()) return;
-      int hr;
       Log.Log.WriteFile("dvb:StopRecord()");
 
       if (_filterTsAnalyzer != null)
@@ -1955,6 +1960,7 @@ namespace TvLibrary.Implementations.DVB
     /// callback from the TsWriter filter when it received a new teletext packets
     /// </summary>
     /// <param name="data">teletext data</param>
+    /// <param name="packetCount">number of packets in data</param>
     /// <returns></returns>
     public int OnTeletextReceived(IntPtr data, short packetCount)
     {

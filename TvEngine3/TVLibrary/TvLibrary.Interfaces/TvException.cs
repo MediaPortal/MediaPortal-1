@@ -28,39 +28,28 @@ namespace TvLibrary
   [Serializable]
   public class TvException : Exception
   {
-    // Summary:
-    //     Initializes a new instance of the System.Exception class.
+    /// <summary>
+    /// Initializes a new instance of the <see cref="T:TvException"/> class.
+    /// </summary>
     public TvException()
     {
     }
 
-    //
-    // Summary:
-    //     Initializes a new instance of the System.Exception class with a specified
-    //     error message.
-    //
-    // Parameters:
-    //   message:
-    //     The message that describes the error.
+    /// <summary>
+    /// Initializes a new instance of the <see cref="T:TvException"/> class.
+    /// </summary>
+    /// <param name="message">The message.</param>
     public TvException(string message)
       : base(message)
     {
     }
 
 
-    //
-    // Summary:
-    //     Initializes a new instance of the System.Exception class with a specified
-    //     error message and a reference to the inner exception that is the cause of
-    //     this exception.
-    //
-    // Parameters:
-    //   message:
-    //     The error message that explains the reason for the exception.
-    //
-    //   innerException:
-    //     The exception that is the cause of the current exception, or a null reference
-    //     (Nothing in Visual Basic) if no inner exception is specified.
+    /// <summary>
+    /// Initializes a new instance of the <see cref="T:TvException"/> class.
+    /// </summary>
+    /// <param name="message">The message.</param>
+    /// <param name="innerException">The inner exception.</param>
     public TvException(string message, Exception innerException)
       : base(message, innerException)
     {

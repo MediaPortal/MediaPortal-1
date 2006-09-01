@@ -36,14 +36,25 @@ namespace TvLibrary.Implementations.DVB.Structures
     public CaPMT caPMT;
     public int LCN;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="T:ChannelInfo"/> class.
+    /// </summary>
     public ChannelInfo()
     {
       pids = new ArrayList();
     }
+    /// <summary>
+    /// Adds a pid to the pidtable
+    /// </summary>
+    /// <param name="info">The info.</param>
     public void AddPid(PidInfo info)
     {
       pids.Add(info);
     }
+    /// <summary>
+    /// Decodes the pmt specified in data.
+    /// </summary>
+    /// <param name="data">The data.</param>
     public void Decode(IntPtr data)
     {
       byte[] da = new byte[600];
@@ -194,6 +205,10 @@ namespace TvLibrary.Implementations.DVB.Structures
       strReturn = strReturn.Trim();
       strTxt = strReturn;
     }
+    /// <summary>
+    /// Decodes the PMT supplied in buf and fills the pid table with all pids found
+    /// </summary>
+    /// <param name="buf">The buf.</param>
     public void DecodePmt(byte[] buf)
     {
       if (buf.Length < 13)

@@ -33,6 +33,9 @@ namespace TvLibrary.Epg
     #endregion
 
     #region ctor
+    /// <summary>
+    /// Initializes a new instance of the <see cref="T:EpgChannel"/> class.
+    /// </summary>
     public EpgChannel()
     {
       _programs = new List<EpgProgram>();
@@ -41,6 +44,10 @@ namespace TvLibrary.Epg
 
 
     #region properties
+    /// <summary>
+    /// Gets or sets the channel.
+    /// </summary>
+    /// <value>The channel.</value>
     public IChannel Channel
     {
       get
@@ -53,6 +60,10 @@ namespace TvLibrary.Epg
       }
     }
 
+    /// <summary>
+    /// Gets or sets the epg programs.
+    /// </summary>
+    /// <value>The programs.</value>
     public List<EpgProgram> Programs
     {
       get
@@ -66,6 +77,9 @@ namespace TvLibrary.Epg
     }
     #endregion
 
+    /// <summary>
+    /// Sorts all programs for this channel on time/date.
+    /// </summary>
     public void Sort()
     {
       _programs.Sort();

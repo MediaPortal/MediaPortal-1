@@ -282,7 +282,7 @@ namespace TvLibrary
     /// <summary>
     /// Returns a country specified by id
     /// </summary>
-    /// <param name="countryName">id of country</param>
+    /// <param name="countryId">id of country</param>
     /// <returns>Country object or null if country is not found</returns>
     public Country GetTunerCountryFromID(int countryId)
     {
@@ -299,7 +299,7 @@ namespace TvLibrary
     /// <summary>
     /// Returns a country specified by id
     /// </summary>
-    /// <param name="countryName">country code</param>
+    /// <param name="code">country code</param>
     /// <returns>Country object or null if country is not found</returns>
     public Country GetTunerCountryFromCode(string code)
     {

@@ -47,16 +47,25 @@ namespace TvLibrary.Log
       System.IO.Directory.CreateDirectory("log");
       BackupLogFiles();
     }
+    /// <summary>
+    /// Backups the log files.
+    /// </summary>
     public static void BackupLogFiles()
     {
       BackupLogFile();
     }
 
+    /// <summary>
+    /// Backups the log file.
+    /// </summary>
     public static void BackupLogFile()
     {
       Initialize();
     }
 
+    /// <summary>
+    /// Initializes this instance.
+    /// </summary>
     static void Initialize()
     {
       try
@@ -74,6 +83,10 @@ namespace TvLibrary.Log
       }
     }
 
+    /// <summary>
+    /// Writes the specified exception to the log file
+    /// </summary>
+    /// <param name="ex">The ex.</param>
     static public void Write(Exception ex)
     {
       Log.WriteFile("Exception   :{0}", ex.ToString());
@@ -123,6 +136,11 @@ namespace TvLibrary.Log
       return fname;
     }
 
+    /// <summary>
+    /// Writes the file.
+    /// </summary>
+    /// <param name="format">The format.</param>
+    /// <param name="arg">The arg.</param>
     static public void WriteFile(string format, params object[] arg)
     {
       lock (typeof(Log))

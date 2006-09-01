@@ -76,6 +76,10 @@ namespace TvLibrary.Channels
         _lcn = value;
       }
     }
+    /// <summary>
+    /// Gets or sets the PCR pid.
+    /// </summary>
+    /// <value>The PCR pid.</value>
     public int PcrPid
     {
       get
@@ -235,7 +239,12 @@ namespace TvLibrary.Channels
 
     #endregion
 
-    ///
+    /// <summary>
+    /// Returns a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
+    /// </summary>
+    /// <returns>
+    /// A <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
+    /// </returns>
     public override string ToString()
     {
       string line = "";
@@ -253,6 +262,13 @@ namespace TvLibrary.Channels
     }
 
 
+    /// <summary>
+    /// Determines whether the specified <see cref="T:System.Object"></see> is equal to the current <see cref="T:System.Object"></see>.
+    /// </summary>
+    /// <param name="obj">The <see cref="T:System.Object"></see> to compare with the current <see cref="T:System.Object"></see>.</param>
+    /// <returns>
+    /// true if the specified <see cref="T:System.Object"></see> is equal to the current <see cref="T:System.Object"></see>; otherwise, false.
+    /// </returns>
     public override bool Equals(object obj)
     {
       if ((obj as DVBBaseChannel) == null) return false;

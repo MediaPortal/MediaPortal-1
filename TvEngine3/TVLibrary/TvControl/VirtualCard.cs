@@ -155,6 +155,10 @@ namespace TvControl
         RemoteControl.Instance.SetCurrentAudioStream(_cardId, value);
       }
     }
+    /// <summary>
+    /// Gets the available audio streams.
+    /// </summary>
+    /// <value>The available audio streams.</value>
     [XmlIgnore]
     public IAudioStream[] AvailableAudioStreams
     {
@@ -201,7 +205,6 @@ namespace TvControl
     /// <summary>
     /// turn on/off teletext grabbing
     /// </summary>
-    /// <param name="cardId">onOff when true start grabbing teletext otherwise stop grabbing teletext</param>
     [XmlIgnore]
     public bool GrabTeletext
     {
@@ -386,7 +389,7 @@ namespace TvControl
     /// <summary>
     /// Returns if the tuner is locked onto a signal or not
     /// </summary>
-    /// <returns>true if tuner is locked otherwise false
+    /// <returns>true if tuner is locked otherwise false</returns>
     [XmlIgnore]
     public bool IsTunerLocked
     {
@@ -521,7 +524,8 @@ namespace TvControl
     /// Starts recording.
     /// </summary>
     /// <param name="fileName">Name of the recording file.</param>
-    /// <param name="contentRecording">if true then create a content recording else a reference recording</param>
+    /// <param name="contentRecording">not used</param>
+    /// <param name="startTime">not used</param>
     /// <returns>true if success otherwise false</returns>
     public bool StartRecording(string fileName, bool contentRecording, long startTime)
     {

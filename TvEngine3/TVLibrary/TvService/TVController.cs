@@ -307,7 +307,7 @@ namespace TvService
     /// <summary>
     /// Gets the card Id for a card
     /// </summary>
-    /// <param name="cardId">Index of the card.</param>
+    /// <param name="cardIndex">Index of the card.</param>
     /// <value>id of card</value>
     public int CardId(int cardIndex)
     {
@@ -318,7 +318,7 @@ namespace TvService
     /// <summary>
     /// Gets the type of card.
     /// </summary>
-    /// <param name="cardId">Index of the card.</param>
+    /// <param name="cardId">id of card.</param>
     /// <value>cardtype</value>
     public CardType Type(int cardId)
     {
@@ -347,7 +347,7 @@ namespace TvService
     /// <summary>
     /// Gets the name for a card.
     /// </summary>
-    /// <param name="cardId">Index of the card.</param>
+    /// <param name="cardId">id of card.</param>
     /// <returns>name of card</returns>
     public string CardName(int cardId)
     {
@@ -370,6 +370,8 @@ namespace TvService
     /// <summary>
     /// Method to check if card can tune to the channel specified
     /// </summary>
+    /// <param name="cardId">id of card.</param>
+    /// <param name="channel">channel.</param>
     /// <returns>true if card can tune to the channel otherwise false</returns>
     public bool CanTune(int cardId, IChannel channel)
     {
@@ -392,7 +394,7 @@ namespace TvService
     /// <summary>
     /// Gets the name for a card.
     /// </summary>
-    /// <param name="cardId">Index of the card.</param>
+    /// <param name="cardId">id of the card.</param>
     /// <returns>device of card</returns>
     public string CardDevice(int cardId)
     {
@@ -415,7 +417,7 @@ namespace TvService
     /// <summary>
     /// Gets the current channel.
     /// </summary>
-    /// <param name="cardId">Index of the card.</param>
+    /// <param name="cardId">id of the card.</param>
     /// <returns>channel</returns>
     public IChannel CurrentChannel(int cardId)
     {
@@ -438,7 +440,7 @@ namespace TvService
     /// <summary>
     /// Gets the current channel name.
     /// </summary>
-    /// <param name="cardId">Index of the card.</param>
+    /// <param name="cardId">id of the card.</param>
     /// <returns>channel</returns>
     public string CurrentChannelName(int cardId)
     {
@@ -463,7 +465,7 @@ namespace TvService
     /// <summary>
     /// Returns if the tuner is locked onto a signal or not
     /// </summary>
-    /// <param name="cardId">Index of the card.</param>
+    /// <param name="cardId">id of the card.</param>
     /// <returns>true when tuner is locked to a signal otherwise false</returns>
     public bool TunerLocked(int cardId)
     {
@@ -486,7 +488,7 @@ namespace TvService
     /// <summary>
     /// Returns the signal quality for a card
     /// </summary>
-    /// <param name="cardId">Index of the card.</param>
+    /// <param name="cardId">id of the card.</param>
     /// <returns>signal quality (0-100)</returns>
     public int SignalQuality(int cardId)
     {
@@ -509,7 +511,7 @@ namespace TvService
     /// <summary>
     /// Returns the signal level for a card.
     /// </summary>
-    /// <param name="cardId">Index of the card.</param>
+    /// <param name="cardId">id of the card.</param>
     /// <returns>signal level (0-100)</returns>
     public int SignalLevel(int cardId)
     {
@@ -532,7 +534,7 @@ namespace TvService
     /// <summary>
     /// Returns the current filename used for recording
     /// </summary>
-    /// <param name="cardId">Index of the card.</param>
+    /// <param name="cardId">id of the card.</param>
     /// <returns>filename or null when not recording</returns>
     public string FileName(int cardId)
     {
@@ -573,7 +575,7 @@ namespace TvService
     /// <summary>
     /// Returns if the card is timeshifting or not
     /// </summary>
-    /// <param name="cardId">Index of the card.</param>
+    /// <param name="cardId">id of the card.</param>
     /// <returns>true when card is timeshifting otherwise false</returns>
     public bool IsTimeShifting(int cardId)
     {
@@ -596,7 +598,7 @@ namespace TvService
     /// <summary>
     /// Returns if the card is recording or not
     /// </summary>
-    /// <param name="cardId">Index of the card.</param>
+    /// <param name="cardId">id of the card.</param>
     /// <returns>true when card is recording otherwise false</returns>
     public bool IsRecording(int cardId)
     {
@@ -619,7 +621,7 @@ namespace TvService
     /// <summary>
     /// Returns if the card is scanning or not
     /// </summary>
-    /// <param name="cardId">Index of the card.</param>
+    /// <param name="cardId">id of the card.</param>
     /// <returns>true when card is scanning otherwise false</returns>
     public bool IsScanning(int cardId)
     {
@@ -642,7 +644,7 @@ namespace TvService
     /// <summary>
     /// Returns if the card is grabbing the epg or not
     /// </summary>
-    /// <param name="cardId">Index of the card.</param>
+    /// <param name="cardId">id of the card.</param>
     /// <returns>true when card is grabbing the epg  otherwise false</returns>
     public bool IsGrabbingEpg(int cardId)
     {
@@ -665,7 +667,7 @@ namespace TvService
     /// <summary>
     /// Returns if the card is grabbing teletext or not
     /// </summary>
-    /// <param name="cardId">Index of the card.</param>
+    /// <param name="cardId">id of the card.</param>
     /// <returns>true when card is grabbing teletext otherwise false</returns>
     public bool IsGrabbingTeletext(int cardId)
     {
@@ -689,7 +691,7 @@ namespace TvService
     /// Returns if the channel to which the card is currently tuned
     /// has teletext or not
     /// </summary>
-    /// <param name="cardId">Index of the card.</param>
+    /// <param name="cardId">id of the card.</param>
     /// <returns>yes if channel has teletext otherwise false</returns>
     public bool HasTeletext(int cardId)
     {
@@ -704,7 +706,7 @@ namespace TvService
     /// <summary>
     /// Returns the rotation time for a specific teletext page
     /// </summary>
-    /// <param name="cardId">Index of the card.</param>
+    /// <param name="cardId">id of the card.</param>
     /// <param name="pageNumber">The pagenumber (0x100-0x899)</param>
     /// <returns>timespan containing the rotation time</returns>
     public TimeSpan TeletextRotation(int cardId, int pageNumber)
@@ -728,7 +730,7 @@ namespace TvService
     /// <summary>
     /// returns the date/time when timeshifting has been started for the card specified
     /// </summary>
-    /// <param name="cardId">Index of the card.</param>
+    /// <param name="cardId">id of the card.</param>
     /// <returns>DateTime containg the date/time when timeshifting was started</returns>
     public DateTime TimeShiftStarted(int cardId)
     {
@@ -751,7 +753,7 @@ namespace TvService
     /// <summary>
     /// returns the date/time when recording has been started for the card specified
     /// </summary>
-    /// <param name="cardId">Index of the card.</param>
+    /// <param name="cardId">id of the card.</param>
     /// <returns>DateTime containg the date/time when recording was started</returns>
     public DateTime RecordingStarted(int cardId)
     {
@@ -775,7 +777,7 @@ namespace TvService
     /// <summary>
     /// returns true if card is locked otherwise false
     /// </summary>
-    /// <param name="card">index of the card</param>
+    /// <param name="cardId">id of the card</param>
     /// <returns></returns>
     public bool IsLocked(int cardId)
     {
@@ -794,7 +796,7 @@ namespace TvService
     /// Returns whether the channel to which the card is tuned is
     /// scrambled or not.
     /// </summary>
-    /// <param name="cardId">Index of the card.</param>
+    /// <param name="cardId">id of the card.</param>
     /// <returns>yes if channel is scrambled and CI/CAM cannot decode it, otherwise false</returns>
     public bool IsScrambled(int cardId)
     {
@@ -856,7 +858,7 @@ namespace TvService
     /// <summary>
     /// Tunes the the specified card to the channel.
     /// </summary>
-    /// <param name="cardId">Index of the card.</param>
+    /// <param name="cardId">id of the card.</param>
     /// <param name="channel">The channel.</param>
     /// <returns></returns>
     public bool Tune(int cardId, IChannel channel)
@@ -917,7 +919,7 @@ namespace TvService
     /// <summary>
     /// Locks the specified card
     /// </summary>
-    /// <param name="card">index of card</param>
+    /// <param name="cardId">id of card</param>
     /// <returns>true if card has been locked otherwise false</returns>
     public bool Lock(int cardId)
     {
@@ -941,7 +943,7 @@ namespace TvService
     /// <summary>
     /// Unlocks the card specified
     /// </summary>
-    /// <param name="card">index of card</param>
+    /// <param name="cardId">id of card</param>
     public void Unlock(int cardId)
     {
       try
@@ -959,7 +961,7 @@ namespace TvService
     /// <summary>
     /// turn on/off teletext grabbing
     /// </summary>
-    /// <param name="cardId">Index of the card.</param>
+    /// <param name="cardId">id of the card.</param>
     public void GrabTeletext(int cardId, bool onOff)
     {
       try
@@ -982,7 +984,7 @@ namespace TvService
     /// <summary>
     /// Gets the teletext page.
     /// </summary>
-    /// <param name="cardId">Index of the card.</param>
+    /// <param name="cardId">id of the card.</param>
     /// <param name="pageNumber">The page number.</param>
     /// <param name="subPageNumber">The sub page number.</param>
     /// <returns></returns>
@@ -1008,7 +1010,7 @@ namespace TvService
     /// <summary>
     /// Gets the number of subpages for a teletext page.
     /// </summary>
-    /// <param name="cardId">Index of the card.</param>
+    /// <param name="cardId">id of the card.</param>
     /// <param name="pageNumber">The page number.</param>
     /// <returns></returns>
     public int SubPageCount(int cardId, int pageNumber)
@@ -1033,9 +1035,9 @@ namespace TvService
     /// <summary>
     /// Start timeshifting.
     /// </summary>
-    /// <param name="cardId">Index of the card.</param>
+    /// <param name="cardId">id of the card.</param>
     /// <param name="fileName">Name of the timeshiftfile.</param>
-    /// <returns></returns>
+    /// <returns>TvResult indicating whether method succeeded</returns>
     public TvResult StartTimeShifting(int cardId, string fileName)
     {
       try
@@ -1102,7 +1104,7 @@ namespace TvService
     /// <summary>
     /// Stops the time shifting.
     /// </summary>
-    /// <param name="cardId">Index of the card.</param>
+    /// <param name="cardId">id of the card.</param>
     /// <returns></returns>
     public bool StopTimeShifting(int cardId)
     {
@@ -1162,9 +1164,10 @@ namespace TvService
     /// <summary>
     /// Starts recording.
     /// </summary>
-    /// <param name="cardId">Index of the card.</param>
+    /// <param name="cardId">id of the card.</param>
     /// <param name="fileName">Name of the recording file.</param>
     /// <param name="contentRecording">if true then create a content recording else a reference recording</param>
+    /// <param name="startTime">not used</param>
     /// <returns></returns>
     public bool StartRecording(int cardId, string fileName, bool contentRecording, long startTime)
     {
@@ -1194,7 +1197,7 @@ namespace TvService
     /// <summary>
     /// Stops recording.
     /// </summary>
-    /// <param name="cardId">Index of the card.</param>
+    /// <param name="cardId">id of the card.</param>
     /// <returns></returns>
     public bool StopRecording(int cardId)
     {
@@ -1226,8 +1229,9 @@ namespace TvService
     /// <summary>
     /// scans current transponder for more channels.
     /// </summary>
-    /// <param name="cardId">Index of the card.</param>
-    /// <returns></returns>
+    /// <param name="cardId">id of the card.</param>
+    /// <param name="cardId">IChannel containing the transponder tuning details.</param>
+    /// <returns>list of channels found</returns>
     public IChannel[] Scan(int cardId, IChannel channel)
     {
       try
@@ -1255,7 +1259,7 @@ namespace TvService
     /// <summary>
     /// grabs the epg.
     /// </summary>
-    /// <param name="cardId">Index of the card.</param>
+    /// <param name="cardId">id of the card.</param>
     /// <returns></returns>
     public void GrabEpg(int cardId)
     {
@@ -1366,8 +1370,8 @@ namespace TvService
     /// Start timeshifting on a specific channel
     /// </summary>
     /// <param name="channelName">Name of the channel</param>
-    /// <param name="cardId">returns on which card timeshifting is started</param>
-    /// <returns>true if timeshifting has started, otherwise false</returns>
+    /// <param name="card">returns card for which timeshifting is started</param>
+    /// <returns>TvResult indicating whether method succeeded</returns>
     public TvResult StartTimeShifting(string channelName, out VirtualCard card)
     {
       Log.Write("Controller: StartTimeShifting {0}", channelName);
@@ -1437,8 +1441,8 @@ namespace TvService
     /// Checks if the channel specified is being recorded and ifso
     /// returns on which card
     /// </summary>
-    /// <param name="channelName">Name of the channel</param>
-    /// <param name="cardId">returns card is recording the channel</param>
+    /// <param name="channel">Name of the channel</param>
+    /// <param name="card">returns the card which is recording the channel</param>
     /// <returns>true if a card is recording the channel, otherwise false</returns>
     public bool IsRecording(string channel, out VirtualCard card)
     {
@@ -1474,7 +1478,7 @@ namespace TvService
     /// returns on which card
     /// </summary>
     /// <param name="idSchedule">id of the Schedule</param>
-    /// <param name="cardId">returns card is recording the channel</param>
+    /// <param name="card">returns the card which is recording the channel</param>
     /// <returns>true if a card is recording the schedule, otherwise false</returns>
     public bool IsRecordingSchedule(int idSchedule, out VirtualCard card)
     {
@@ -1726,7 +1730,7 @@ namespace TvService
     /// </summary>
     /// <param name="idCard">The id card.</param>
     /// <param name="channel">The channel.</param>
-    /// <returns></returns>
+    /// <returns>TvResult indicating whether method succeeded</returns>
     TvResult CardTune(int idCard, IChannel channel)
     {
       try
@@ -1759,7 +1763,7 @@ namespace TvService
     /// </summary>
     /// <param name="idCard">The id card.</param>
     /// <param name="fileName">Name of the file.</param>
-    /// <returns></returns>
+    /// <returns>TvResult indicating whether method succeeded</returns>
     TvResult CardTimeShift(int idCard, string fileName)
     {
       try

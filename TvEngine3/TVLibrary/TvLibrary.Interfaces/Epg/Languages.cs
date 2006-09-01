@@ -201,6 +201,10 @@ namespace TvLibrary.Epg
 
     #endregion
 
+    /// <summary>
+    /// Gets the languages.
+    /// </summary>
+    /// <returns>list of all languages</returns>
     public List<String> GetLanguages()
     {
       List<String> langs = new List<String>();
@@ -208,8 +212,11 @@ namespace TvLibrary.Epg
         langs.Add(str);
       return langs;
     }
-    //
-    //
+
+    /// <summary>
+    /// Gets the language codes.
+    /// </summary>
+    /// <returns>list of all language codes</returns>
     public List<String> GetLanguageCodes()
     {
       List<String> langs = new List<String>();
@@ -217,8 +224,12 @@ namespace TvLibrary.Epg
         langs.Add(str);
       return langs;
     }
-    //
-    //
+
+    /// <summary>
+    /// Gets the language from a language code.
+    /// </summary>
+    /// <param name="code">The code.</param>
+    /// <returns>language</returns>
     static public string GetLanguageFromCode(string code)
     {
       int n = 0;

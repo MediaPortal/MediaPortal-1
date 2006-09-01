@@ -36,6 +36,11 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     //ctor
+    /// <summary>
+    /// Initializes a new instance of the <see cref="T:ConditionalAccess"/> class.
+    /// </summary>
+    /// <param name="tunerFilter">The tuner filter.</param>
+    /// <param name="captureFilter">The capture filter.</param>
     public ConditionalAccess(IBaseFilter tunerFilter, IBaseFilter captureFilter)
     {
       Log.Log.WriteFile("Check for Digital Everywhere");
@@ -96,6 +101,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="channel">channel on which we are tuned</param>
     /// <param name="PMT">byte array containing the PMT</param>
     /// <param name="pmtLength">length of the pmt array</param>
+    /// <param name="audioPid">pid of the current audio stream</param>
     /// <returns></returns>
     public bool SendPMT(DVBBaseChannel channel, byte[] PMT, int pmtLength, int audioPid)
     {
@@ -128,7 +134,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// sends the diseqc command to the card
     /// </summary>
-    /// <param name="channel"></param>
+    /// <param name="channel">The current tv/radio channel</param>
     public void SendDiseqcCommand(DVBSChannel channel)
     {
       if (_digitalEveryWhere != null)
@@ -136,6 +142,12 @@ namespace TvLibrary.Implementations.DVB
         _digitalEveryWhere.SendDiseqcCommand(channel);
       }
     }
+    /// <summary>
+    /// Instructs the cam/ci module to use hardware filter and only send the pids listed in pids to the pc
+    /// </summary>
+    /// <param name="channel">The current tv/radio channel.</param>
+    /// <param name="pids">The pids.</param>
+    /// <remarks>when the pids array is empty, pid filtering is disabled and all pids are received</remarks>
     public void SendPids(DVBBaseChannel channel,ArrayList pids)
     {
       if (_digitalEveryWhere != null)

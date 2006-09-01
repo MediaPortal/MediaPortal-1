@@ -39,6 +39,9 @@ namespace TvLibrary.Channels
     ModulationType _modulation;
     #endregion
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="T:ATSCChannel"/> class.
+    /// </summary>
     public ATSCChannel()
     {
       _majorChannel = -1;
@@ -120,12 +123,21 @@ namespace TvLibrary.Channels
     }
     #endregion
 
+    /// <summary>
+    /// Toes the string.
+    /// </summary>
+    /// <returns></returns>
     public override string ToString()
     {
       return String.Format("{0} phys:{1} maj:{2} min:{3} SR:{4} mod:{5}",
         base.ToString(), _physicalChannel, _majorChannel, _minorChannel, _symbolRate, _modulation);
     }
 
+    /// <summary>
+    /// Equalses the specified obj.
+    /// </summary>
+    /// <param name="obj">The obj.</param>
+    /// <returns></returns>
     public override bool Equals(object obj)
     {
       if ((obj as ATSCChannel) == null) return false;

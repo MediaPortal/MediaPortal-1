@@ -52,6 +52,10 @@ namespace TvLibrary.Epg
     #endregion
 
     #region properties
+    /// <summary>
+    /// Gets or sets the language.
+    /// </summary>
+    /// <value>The language.</value>
     public string Language
     {
       get
@@ -64,6 +68,10 @@ namespace TvLibrary.Epg
         if (_language == null) _language = "";
       }
     }
+    /// <summary>
+    /// Gets or sets the title.
+    /// </summary>
+    /// <value>The title.</value>
     public string Title
     {
       get
@@ -76,6 +84,10 @@ namespace TvLibrary.Epg
         if (_title == null) _title = "";
       }
     }
+    /// <summary>
+    /// Gets or sets the description.
+    /// </summary>
+    /// <value>The description.</value>
     public string Description
     {
       get
@@ -88,6 +100,10 @@ namespace TvLibrary.Epg
         if (_description == null) _description = "";
       }
     }
+    /// <summary>
+    /// Gets or sets the genre.
+    /// </summary>
+    /// <value>The genre.</value>
     public string Genre
     {
       get
