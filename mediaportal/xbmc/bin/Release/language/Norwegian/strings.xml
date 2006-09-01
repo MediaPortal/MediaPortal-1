@@ -4987,6 +4987,26 @@
       <value>Mini EPG</value>
    </string>
    <string>
+      <id>11000</id>
+      <value>Oppsett for Beskjæring</value>
+   </string>
+   <string>
+      <id>11001</id>
+      <value>Topp:</value>
+   </string>
+   <string>
+      <id>11002</id>
+      <value>Bunn:</value>
+   </string>
+   <string>
+      <id>11003</id>
+      <value>Venstre:</value>
+   </string>
+   <string>
+      <id>11004</id>
+      <value>Høyre:</value>
+   </string>
+   <string>
       <id>12902</id>
       <value>MSN Messenger OSD</value>
    </string>
