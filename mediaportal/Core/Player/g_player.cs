@@ -1661,14 +1661,33 @@ namespace MediaPortal.Player
       }
     }
 
+    /// <summary>
+    /// Switches to the next audio stream.
+    /// 
+    /// Calls are directly pushed to the embedded player. And care 
+    /// is taken not to do multiple calls to the player.
+    /// </summary>
     static public void SwitchToNextAudio()
     {
-      if (AudioStreams > 1)
-        if (CurrentAudioStream < AudioStreams - 1)
-          CurrentAudioStream++;
-        else
-          CurrentAudioStream = 0;
+      if (_player != null)
+      {
+        // take current stream and number of
+        int streams = _player.AudioStreams;
+        int current = _player.CurrentAudioStream;
+        int next = current++;
+
+        // if next stream is greater then the amount of stream
+        // take first
+        if (next >= streams)
+        {
+          next = 0;
+        }
+        // set the new stream, don't care if there is one stream
+        // or more, so we keep uniform behaviour
+        _player.CurrentAudioStream = next;
+      }
     }
+
 
     static public void SwitchToNextSubtitle()
     {
