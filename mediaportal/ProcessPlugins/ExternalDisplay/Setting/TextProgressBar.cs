@@ -61,7 +61,7 @@ namespace ProcessPlugins.ExternalDisplay.Setting
         [XmlAttribute]
         public string StartChar
         {
-            get { return new string(startChar,1); }
+            get { return new string(startChar, 1); }
             set
             {
                 if (value != null && value.Length > 0)
@@ -80,7 +80,7 @@ namespace ProcessPlugins.ExternalDisplay.Setting
         [XmlAttribute]
         public string EndChar
         {
-            get { return new string(endChar,1); }
+            get { return new string(endChar, 1); }
             set
             {
                 if (value != null && value.Length > 0)
@@ -99,7 +99,7 @@ namespace ProcessPlugins.ExternalDisplay.Setting
         [XmlAttribute]
         public string ValueChar
         {
-            get { return new string(valueChar,1); }
+            get { return new string(valueChar, 1); }
             set
             {
                 if (value != null && value.Length > 0)
@@ -118,7 +118,7 @@ namespace ProcessPlugins.ExternalDisplay.Setting
         [XmlAttribute]
         public string FillChar
         {
-            get { return new string(fillChar,1); }
+            get { return new string(fillChar, 1); }
             set
             {
                 if (value != null && value.Length > 0)
@@ -138,7 +138,7 @@ namespace ProcessPlugins.ExternalDisplay.Setting
             get { return length; }
             set { length = value; }
         }
-        
+
 
         /// <summary>
         /// The property that holds the value to draw.
@@ -166,13 +166,13 @@ namespace ProcessPlugins.ExternalDisplay.Setting
         /// Evaluates the properties and returns the progress bar.
         /// </summary>
         /// <returns>A <see cref="string"/> containing the complete progress bar.</returns>
-        public override string Evaluate()
+        protected override string DoEvaluate()
         {
             double currentValue = ConvertToInt(valueProperty.Evaluate());
             //We used to cache the targetValue, but as the target property also changes
             //(when skipping songs, for example) it is no longer cached.
             double targetValue = ConvertToInt(targetProperty.Evaluate());
-            int barLength = (int)(currentValue <= 0 ? 0 : (currentValue / targetValue) * (length - 2));
+            int barLength = (int) (currentValue <= 0 ? 0 : (currentValue/targetValue)*(length - 2));
             StringBuilder b = new StringBuilder(length);
             b.Append(startChar);
             b.Append(valueChar, barLength);
@@ -195,7 +195,9 @@ namespace ProcessPlugins.ExternalDisplay.Setting
             {
                 result = 0;
             }
-            else if (DateTime.TryParseExact(stringValue, new string[] { "m:ss","mm:ss", "h:mm:ss","hh:mm:ss" }, null, DateTimeStyles.None, out dateResult))
+            else if (
+                DateTime.TryParseExact(stringValue, new string[] {"m:ss", "mm:ss", "h:mm:ss", "hh:mm:ss"}, null,
+                                       DateTimeStyles.None, out dateResult))
             {
                 result = dateResult.TimeOfDay.TotalSeconds;
             }

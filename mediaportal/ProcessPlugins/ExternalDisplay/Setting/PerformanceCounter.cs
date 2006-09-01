@@ -40,8 +40,9 @@ namespace ProcessPlugins.ExternalDisplay.Setting
         private System.Diagnostics.PerformanceCounter counter;
 
         public PerformanceCounter()
-        {}
-        
+        {
+        }
+
         public PerformanceCounter(string categoryName, string counterName, string instanceName)
         {
             this.categoryName = categoryName;
@@ -89,7 +90,7 @@ namespace ProcessPlugins.ExternalDisplay.Setting
             set { format = value; }
         }
 
-        public override string Evaluate()
+        protected override string DoEvaluate()
         {
             if (counter == null)
             {
@@ -97,7 +98,9 @@ namespace ProcessPlugins.ExternalDisplay.Setting
             }
             float result = counter.NextValue();
             if (format == null)
+            {
                 return result.ToString();
+            }
             return result.ToString(format);
         }
 

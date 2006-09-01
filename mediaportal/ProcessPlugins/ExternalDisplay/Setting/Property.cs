@@ -55,13 +55,9 @@ namespace ProcessPlugins.ExternalDisplay.Setting
         /// <returns>
         /// The property's value, or an empty string if the associated <see cref="Condition"/> evaluates to false.
         /// </returns>
-        public override string Evaluate()
+        protected override string DoEvaluate()
         {
-            if (Condition == null || Condition.Evaluate())
-            {
-                return GUIPropertyManager.GetProperty(value);
-            }
-            return "";
+            return GUIPropertyManager.GetProperty(value);
         }
     }
 }

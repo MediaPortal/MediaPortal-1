@@ -48,6 +48,15 @@ namespace ProcessPlugins.ExternalDisplay.Setting
         [DefaultValue(null)]
         public Condition Condition = null;
 
-        public abstract string Evaluate();
+        public string Evaluate()
+        {
+            if (Condition == null || Condition.Evaluate())
+            {
+                return DoEvaluate();
+            }
+            return "";
+        }
+
+        protected abstract string DoEvaluate();
     }
 }

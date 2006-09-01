@@ -58,27 +58,23 @@ namespace ProcessPlugins.ExternalDisplay.Setting
         /// The fixed text, or in case of a reference to a translatable resource string, the translation.
         /// If the associated <see cref="Condition"/> evaluates to false, the return value is an empty string.
         /// </returns>
-        public override string Evaluate()
+        protected override string DoEvaluate()
         {
             string text = value;
-            if (Condition == null || Condition.Evaluate())
+            int pos = text.IndexOf("#") + 1;
+            while (pos > 0)
             {
-                int pos = text.IndexOf("#") + 1;
-                while (pos > 0)
+                StringBuilder b = new StringBuilder();
+                while (pos >= 1 && pos < text.Length && text[pos] >= '0' && text[pos] <= '9')
                 {
-                    StringBuilder b = new StringBuilder();
-                    while (pos >= 1 && pos < text.Length && text[pos] >= '0' && text[pos] <= '9')
-                    {
-                        b.Append(text[pos++]);
-                    }
-                    string num = b.ToString();
-                    int val = int.Parse(num);
-                    text = text.Replace("#" + num, GUILocalizeStrings.Get(val));
-                    pos = text.IndexOf("#") + 1;
+                    b.Append(text[pos++]);
                 }
-                return text;
+                string num = b.ToString();
+                int val = int.Parse(num);
+                text = text.Replace("#" + num, GUILocalizeStrings.Get(val));
+                pos = text.IndexOf("#") + 1;
             }
-            return "";
+            return text;
         }
     }
 }

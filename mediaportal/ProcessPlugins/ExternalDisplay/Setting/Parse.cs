@@ -61,13 +61,9 @@ namespace ProcessPlugins.ExternalDisplay.Setting
         /// </summary>
         /// <returns>The Parse string with all propertie references replaced by their values, or an empty
         /// string if the associated <see cref="Condition"/> evaluates to false.</returns>
-        public override string Evaluate()
+        protected override string DoEvaluate()
         {
-            if (Condition == null || Condition.Evaluate())
-            {
-                return GUIPropertyManager.Parse(value);
-            }
-            return "";
+            return GUIPropertyManager.Parse(value);
         }
     }
 }
