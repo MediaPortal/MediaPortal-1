@@ -207,9 +207,9 @@ namespace MediaPortal.Configuration.Sections
       this.labelIrcChannelData.AutoSize = true;
       this.labelIrcChannelData.Location = new System.Drawing.Point(24, 200);
       this.labelIrcChannelData.Name = "labelIrcChannelData";
-      this.labelIrcChannelData.Size = new System.Drawing.Size(220, 13);
+      this.labelIrcChannelData.Size = new System.Drawing.Size(232, 13);
       this.labelIrcChannelData.TabIndex = 9;
-      this.labelIrcChannelData.Text = "IRC network: EFNet / channel: #MediaPortal";
+      this.labelIrcChannelData.Text = "IRC network: freenode / channel: #MediaPortal";
       // 
       // labelIrcChannel
       // 
