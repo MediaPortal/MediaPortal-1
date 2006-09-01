@@ -129,7 +129,28 @@ namespace SetupTv.Sections
       }
       else
       {
-        server.StartTimeShifting(channel, out card);
+        TvResult result=server.StartTimeShifting(channel, out card);
+        if (result != TvResult.Succeeded)
+        {
+          switch (result)
+          {
+            case TvResult.AllCardsBusy:
+              MessageBox.Show("All cards are busy");
+              break;
+            case TvResult.ChannelIsScrambled:
+              MessageBox.Show("Channel is scrambled");
+              break;
+            case TvResult.NoVideoAudioDetected:
+              MessageBox.Show("No Video/Audio detected");
+              break;
+            case TvResult.UnableToStartGraph:
+              MessageBox.Show("Unable to create/start graph");
+              break;
+            case TvResult.UnknownError:
+              MessageBox.Show("Unknown error occured");
+              break;
+          }
+        }
       }
     }
 

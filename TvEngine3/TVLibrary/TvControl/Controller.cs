@@ -15,6 +15,15 @@ namespace TvControl
     DvbC,
     Atsc
   }
+  public enum TvResult
+  {
+    Succeeded,
+    AllCardsBusy,
+    ChannelIsScrambled,
+    NoVideoAudioDetected,
+    UnknownError,
+    UnableToStartGraph
+  }
   /// <summary>
   /// interface class describing all methods available
   /// to remote-control the TVService
@@ -218,7 +227,7 @@ namespace TvControl
     /// <param name="cardId">Index of the card.</param>
     /// <param name="fileName">Name of the timeshiftfile.</param>
     /// <returns>true if success otherwise false</returns>
-    bool StartTimeShifting(int cardId, string fileName);
+    TvResult StartTimeShifting(int cardId, string fileName);
 
     /// <summary>
     /// Stops the time shifting.
@@ -343,7 +352,7 @@ namespace TvControl
     /// <param name="channelName">Name of the channel</param>
     /// <param name="cardId">returns on which card timeshifting is started</param>
     /// <returns>true if timeshifting has started, otherwise false</returns>
-    bool StartTimeShifting(string channelName, out VirtualCard card);
+    TvResult StartTimeShifting(string channelName, out VirtualCard card);
 
     /// <summary>
     /// Checks if the channel specified is being recorded and ifso

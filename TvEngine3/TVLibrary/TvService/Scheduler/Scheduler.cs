@@ -406,7 +406,7 @@ namespace TvService
         if (false == _controller.Tune(cardInfo.Id, cardInfo.TuningDetail)) return false;
         Log.Write("Scheduler : record, now start timeshift");
         string timeshiftFileName = String.Format(@"{0}\live{1}.ts", cardInfo.Card.RecordingFolder, cardInfo.Id);
-        if (false == _controller.StartTimeShifting(cardInfo.Id, timeshiftFileName)) return false;
+        if (TvResult.Succeeded != _controller.StartTimeShifting(cardInfo.Id, timeshiftFileName)) return false;
 
         recording.MakeFileName(cardInfo.Card.RecordingFolder);
         recording.CardInfo = cardInfo;

@@ -901,7 +901,7 @@ namespace TvService
             RemoteControl.HostName = _allDbscards[cardId].Server.HostName;
             return RemoteControl.Instance.TuneScan(cardId, channel);
           }
-          bool result= _localCards[cardId].TuneScan(channel);
+          bool result = _localCards[cardId].TuneScan(channel);
           Log.Write("Controller: Tuner locked:{0} signal strength:{1} signal quality:{2}",
              _localCards[cardId].IsTunerLocked, _localCards[cardId].SignalLevel, _localCards[cardId].SignalQuality);
           return result;
@@ -1036,7 +1036,7 @@ namespace TvService
     /// <param name="cardId">Index of the card.</param>
     /// <param name="fileName">Name of the timeshiftfile.</param>
     /// <returns></returns>
-    public bool StartTimeShifting(int cardId, string fileName)
+    public TvResult StartTimeShifting(int cardId, string fileName)
     {
       try
       {
@@ -1057,7 +1057,7 @@ namespace TvService
           {
             _clientReferenceCount[cardId]++;
             Log.Write("Controller:  refcount: card:{0} count:{1}", cardId, _clientReferenceCount[cardId]);
-            return true;
+            return TvResult.Succeeded;
           }
 
           Log.Write("Controller: Tuner locked:{0} signal strength:{1} signal quality:{2}",
@@ -1065,34 +1065,38 @@ namespace TvService
           if (WaitForUnScrambledSignal(cardId) == false)
           {
             Log.Write("Controller: channel is scrambled");
-            return false;
+            return TvResult.ChannelIsScrambled;
           }
 
           bool result = _localCards[cardId].StartTimeShifting(fileName);
-          if (result == true)
+          if (result == false)
           {
-            _clientReferenceCount[cardId]++;
-            Log.Write("Controller:  refcount: card:{0} count:{1}", cardId, _clientReferenceCount[cardId]);
-            fileName += ".tsbuffer";
-            WaitForTimeShiftFile(cardId, fileName);
-            if (System.IO.File.Exists(fileName))
-            {
-              _streamer.Start();
-              _streamer.Add(String.Format("stream{0}", cardId), fileName);
-            }
-            else
-            {
-              Log.Write("Controller: streaming: file not found:{0}", fileName);
-            }
+            return TvResult.UnableToStartGraph;
           }
-          return result;
+          _clientReferenceCount[cardId]++;
+          Log.Write("Controller:  refcount: card:{0} count:{1}", cardId, _clientReferenceCount[cardId]);
+          fileName += ".tsbuffer";
+          if (!WaitForTimeShiftFile(cardId, fileName))
+          {
+            return TvResult.NoVideoAudioDetected;
+          }
+          if (System.IO.File.Exists(fileName))
+          {
+            _streamer.Start();
+            _streamer.Add(String.Format("stream{0}", cardId), fileName);
+          }
+          else
+          {
+            Log.Write("Controller: streaming: file not found:{0}", fileName);
+          }
+          return TvResult.Succeeded;
         }
       }
       catch (Exception ex)
       {
         Log.Write(ex);
       }
-      return false;
+      return TvResult.UnknownError;
     }
 
     /// <summary>
@@ -1364,7 +1368,7 @@ namespace TvService
     /// <param name="channelName">Name of the channel</param>
     /// <param name="cardId">returns on which card timeshifting is started</param>
     /// <returns>true if timeshifting has started, otherwise false</returns>
-    public bool StartTimeShifting(string channelName, out VirtualCard card)
+    public TvResult StartTimeShifting(string channelName, out VirtualCard card)
     {
       Log.Write("Controller: StartTimeShifting {0}", channelName);
       card = null;
@@ -1383,7 +1387,7 @@ namespace TvService
               Log.Write("Controller:  refcount: card:{0} count:{1}", keyPair.Value.IdCard, _clientReferenceCount[keyPair.Value.IdCard]);
               card = new VirtualCard(keyPair.Value.IdCard, Dns.GetHostName());
               card.RecordingFolder = keyPair.Value.RecordingFolder;
-              return true;
+              return TvResult.Succeeded;
             }
           }
         }
@@ -1392,7 +1396,7 @@ namespace TvService
         if (freeCards.Count == 0)
         {
           Log.Write("Controller: StartTimeShifting failed, no card available");
-          return false;
+          return TvResult.AllCardsBusy;
         }
         CardDetail cardInfo = freeCards[0];
         int cardId = cardInfo.Id;
@@ -1405,18 +1409,27 @@ namespace TvService
         }
         string timeshiftFileName = String.Format(@"{0}\live{1}.ts", cardInfo.Card.RecordingFolder, cardId);
 
-        if (false == CardTune(cardId, channel)) return false;
-        if (false == CardTimeShift(cardId, timeshiftFileName)) return false;
+        TvResult result = CardTune(cardId, channel);
+        if (result != TvResult.Succeeded)
+        {
+          return result;
+        }
+
+        result = CardTimeShift(cardId, timeshiftFileName);
+        if (result != TvResult.Succeeded)
+        {
+          return result;
+        }
 
         Log.Write("Controller: StartTimeShifting started on card:{0} to {1}", cardId, timeshiftFileName);
         card = new VirtualCard(cardId, Dns.GetHostName());
         card.RecordingFolder = _allDbscards[cardId].RecordingFolder;
-        return true;
+        return TvResult.Succeeded;
       }
       catch (Exception ex)
       {
         Log.Write(ex);
-        return false;
+        return TvResult.UnknownError;
       }
     }
 
@@ -1615,6 +1628,12 @@ namespace TvService
 
     #region private members
 
+    /// <summary>
+    /// Gets a list of all free cards which can receive the channel specified
+    /// List is sorted by priority
+    /// </summary>
+    /// <param name="channelName">Name of the channel.</param>
+    /// <returns>list containg all free cards which can receive the channel</returns>
     public List<CardDetail> GetFreeCardsForChannelName(string channelName)
     {
       try
@@ -1702,43 +1721,65 @@ namespace TvService
       }
     }
 
-    bool CardTune(int idCard, IChannel channel)
+    /// <summary>
+    /// Tune the card to the specified channel
+    /// </summary>
+    /// <param name="idCard">The id card.</param>
+    /// <param name="channel">The channel.</param>
+    /// <returns></returns>
+    TvResult CardTune(int idCard, IChannel channel)
     {
       try
       {
+        bool result;
         Log.WriteFile("Controller: CardTune {0} {1}", idCard, channel.Name);
         if (IsScrambled(idCard))
         {
-          return TuneScan(idCard, channel);
+          result = TuneScan(idCard, channel);
+          if (result == false) return TvResult.UnableToStartGraph;
+          return TvResult.Succeeded;
         }
         if (CurrentChannel(idCard) != null)
         {
-          if (CurrentChannel(idCard).Equals(channel)) return true;
+          if (CurrentChannel(idCard).Equals(channel)) return TvResult.Succeeded;
         }
-        return TuneScan(idCard, channel);
+        result = TuneScan(idCard, channel);
+        if (result == false) return TvResult.UnableToStartGraph;
+        return TvResult.Succeeded;
       }
       catch (Exception ex)
       {
         Log.Write(ex);
-        return false;
+        return TvResult.UnknownError;
       }
     }
 
-    bool CardTimeShift(int idCard, string fileName)
+    /// <summary>
+    /// Start timeshifting on the card
+    /// </summary>
+    /// <param name="idCard">The id card.</param>
+    /// <param name="fileName">Name of the file.</param>
+    /// <returns></returns>
+    TvResult CardTimeShift(int idCard, string fileName)
     {
       try
       {
         Log.WriteFile("Controller: CardTimeShift {0} {1}", idCard, fileName);
-        if (IsTimeShifting(idCard)) return true;
+        if (IsTimeShifting(idCard)) return TvResult.Succeeded;
         return StartTimeShifting(idCard, fileName);
       }
       catch (Exception ex)
       {
         Log.Write(ex);
-        return false;
+        return TvResult.UnknownError;
       }
     }
 
+    /// <summary>
+    /// deletes time shifting files left in the specified folder.
+    /// </summary>
+    /// <param name="folder">The folder.</param>
+    /// <param name="fileName">Name of the file.</param>
     void CleanTimeShiftFiles(string folder, string fileName)
     {
       try

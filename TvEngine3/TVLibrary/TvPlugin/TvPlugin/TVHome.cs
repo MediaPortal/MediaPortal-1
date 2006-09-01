@@ -91,15 +91,15 @@ namespace TvPlugin
     protected GUIVideoControl videoWindow = null;
     [SkinControlAttribute(9)]
     protected GUIToggleButtonControl btnTimeshiftingOnOff = null;
-    
+
     static protected TvServer _server;
     #endregion
 
     public TVHome()
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
-      
-      
+
+
       MediaPortal.GUI.Library.Log.Info("TVHome:ctor");
       try
       {
@@ -360,8 +360,8 @@ namespace TvPlugin
             }
             else
             {
-              int id=TVHome.Card.RecordingScheduleId;
-              if (id>0)
+              int id = TVHome.Card.RecordingScheduleId;
+              if (id > 0)
                 TVHome.TvServer.StopRecordingSchedule(id);
             }
           }
@@ -678,19 +678,19 @@ namespace TvPlugin
         }
         return;
       }
-        /*
-      else
+      /*
+    else
+    {
+      if (g_Player.IsTV)
       {
-        if (g_Player.IsTV)
-        {
 
-          if (TVHome.Card.IsScrambled)
-          {
-            g_Player.Stop();
-            return;
-          }
+        if (TVHome.Card.IsScrambled)
+        {
+          g_Player.Stop();
+          return;
         }
-      }*/
+      }
+    }*/
 
 
       btnChannel.Disabled = false;
@@ -1013,24 +1013,25 @@ namespace TvPlugin
         Navigator.LastViewedChannel = Navigator.CurrentChannel;
 
       string errorMessage;
+      TvResult succeeded;
       if (TVHome.Card.IsTimeShifting == false ||
           TVHome.Card.ChannelName != channel)
       {
 
         VirtualCard card;
-        bool succeeded = RemoteControl.Instance.StartTimeShifting(channel, out card);
+        succeeded = RemoteControl.Instance.StartTimeShifting(channel, out card);
         TVHome.Card = card;
         MediaPortal.GUI.Library.Log.Info("succeeded:{0} scrambled:{1}", succeeded, TVHome.Card.IsScrambled);
-        if (TVHome.Card.IsScrambled)
-          succeeded = false;
-        if (succeeded)
+        if (succeeded == TvResult.Succeeded)
         {
           if (g_Player.Playing && g_Player.CurrentFile != TVHome.Card.TimeShiftFileName)
           {
             g_Player.Stop();
           }
-          if (g_Player.Playing) SeekToEnd();
-          else StartPlay();
+          if (g_Player.Playing)
+            SeekToEnd();
+          else
+            StartPlay();
           return true;
         }
         else
@@ -1046,8 +1047,27 @@ namespace TvPlugin
       if (pDlgOK != null)
       {
         errorMessage = "Unable to start timeshifting";
-        if (TVHome.Card.IsScrambled)
-          errorMessage += "\rchannel is scrambled\r";
+        switch (succeeded)
+        {
+          case TvResult.AllCardsBusy:
+            errorMessage += "\rNo free card available\r";
+            break;
+          case TvResult.ChannelIsScrambled:
+            errorMessage += "\rChannel is scrambled\r";
+            break;
+          case TvResult.NoVideoAudioDetected:
+            errorMessage += "\rNo video/audio detected\r";
+            break;
+          case TvResult.UnableToStartGraph:
+            errorMessage += "\rUnable to start graph\r";
+            break;
+          case TvResult.UnknownError:
+            errorMessage += "\rUnknown error occured\r";
+            break;
+          default:
+            errorMessage += "\rUnknown error occured\r";
+            break;
+        }
         string[] lines = errorMessage.Split('\r');
         pDlgOK.SetHeading(605);//my tv
         pDlgOK.SetLine(1, lines[0]);
@@ -1085,11 +1105,9 @@ namespace TvPlugin
       {
 
         VirtualCard card;
-        bool succeeded = RemoteControl.Instance.StartTimeShifting(channel, out card);
+        TvResult succeeded = RemoteControl.Instance.StartTimeShifting(channel, out card);
         TVHome.Card = card;
-        if (RemoteControl.Instance.IsScrambled(card.Id))
-          succeeded = false;
-        if (succeeded)
+        if (succeeded == TvResult.Succeeded)
         {
           if (g_Player.Playing && g_Player.CurrentFile != TVHome.Card.TimeShiftFileName)
           {
@@ -1248,7 +1266,7 @@ namespace TvPlugin
       double pos = g_Player.Duration;
       MediaPortal.GUI.Library.Log.Info("tvhome:seektoend dur:{0} pos:{1}", g_Player.Duration, g_Player.CurrentPosition);
       if (pos > 2) pos -= 2;
-      g_Player.SeekAbsolute(pos );
+      g_Player.SeekAbsolute(pos);
     }
   }
 
@@ -1301,7 +1319,7 @@ namespace TvPlugin
     private Channel m_currentChannel = null;
     private EntityList<Channel> channels = new EntityList<Channel>();
     private bool reentrant = false;
-    
+
     #endregion
 
     #region Constructors
@@ -1310,7 +1328,7 @@ namespace TvPlugin
     {
       // Load all groups
       ServiceProvider services = GlobalServiceProvider.Instance;
-      
+
       MediaPortal.GUI.Library.Log.Info("ChannelNavigator::ctor()");
       string ipadres = Dns.GetHostName();
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
@@ -1326,7 +1344,7 @@ namespace TvPlugin
         }
       }
       RemoteControl.HostName = ipadres;
-      MediaPortal.GUI.Library.Log.Info("Remote control:master server :{0}",RemoteControl.HostName);
+      MediaPortal.GUI.Library.Log.Info("Remote control:master server :{0}", RemoteControl.HostName);
 
       ReLoad();
     }
