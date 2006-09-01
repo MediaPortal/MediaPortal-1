@@ -74,8 +74,7 @@ namespace MediaPortal.Music.Database
 
     // Neighbour mode intelligence params
     private lastFMFeed _currentNeighbourMode;
-
-    private offlineMode _currentOfflineMode;
+    //private offlineMode _currentOfflineMode;
 
     List<Song> songList = null;
 
@@ -193,12 +192,12 @@ namespace MediaPortal.Music.Database
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         MusicDatabase mdb = new MusicDatabase();
-        _currentOfflineMode = offlineMode.random;
+        //_currentOfflineMode = offlineMode.random;
         _currentNeighbourMode = lastFMFeed.weeklyartistchart;
         _defaultUser = xmlreader.GetValueAsString("audioscrobbler", "user", "");
         
         _useDebugLog = (mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(_defaultUser)), "iDebugLog", -1) == 1) ? true : false;
-        int tmpRMode = mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(_defaultUser)), "iOfflineMode", -1);
+        //int tmpRMode = mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(_defaultUser)), "iOfflineMode", -1);
         int tmpRand = mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(_defaultUser)), "iRandomness", -1);
         int tmpNMode = mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(_defaultUser)), "iNeighbourMode", -1);
 
@@ -214,13 +213,13 @@ namespace MediaPortal.Music.Database
             _currentNeighbourMode = lastFMFeed.weeklyartistchart; break;
         }
 
-        switch (tmpRMode)
-        {
-          case 0: _currentOfflineMode = offlineMode.random; break;
-          case 1: _currentOfflineMode = offlineMode.timesplayed; break;
-          case 2: _currentOfflineMode = offlineMode.favorites; break;
-          default: _currentOfflineMode = offlineMode.random; break;
-        }
+        //switch (tmpRMode)
+        //{
+        //  case 0: _currentOfflineMode = offlineMode.random; break;
+        //  case 1: _currentOfflineMode = offlineMode.timesplayed; break;
+        //  case 2: _currentOfflineMode = offlineMode.favorites; break;
+        //  default: _currentOfflineMode = offlineMode.random; break;
+        //}
 
         _randomNessPercent = (tmpRand >= 25) ? tmpRand : 25;
       }

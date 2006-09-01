@@ -51,6 +51,7 @@ namespace MediaPortal.GUI.Music
       LBL_ARTIST_NAME = 6,
       IMG_TRACK_PROGRESS_BG = 7,
       PROG_TRACK = 8,
+      REMAIN_TRACK = 10,
 
       IMGLIST_RATING = 11,
       IMGLIST_NEXTRATING = 12,
@@ -311,6 +312,7 @@ namespace MediaPortal.GUI.Music
         GUIPropertyManager.SetProperty("#Play.Current.Title", CurrentTrackTag.Title);
         GUIPropertyManager.SetProperty("#Play.Current.Album", CurrentTrackTag.Album);
         GUIPropertyManager.SetProperty("#Play.Current.Artist", CurrentTrackTag.Artist);
+        GUIPropertyManager.SetProperty("#Play.Current.Genre", CurrentTrackTag.Genre);
         if (CurrentTrackTag.Year > 0)
           GUIPropertyManager.SetProperty("#Play.Current.Year", CurrentTrackTag.Year.ToString());
         else
@@ -339,10 +341,11 @@ namespace MediaPortal.GUI.Music
         GUIPropertyManager.SetProperty("#Play.Next.Title", NextTrackTag.Title);
         GUIPropertyManager.SetProperty("#Play.Next.Album", NextTrackTag.Album);
         GUIPropertyManager.SetProperty("#Play.Next.Artist", NextTrackTag.Artist);
+        GUIPropertyManager.SetProperty("#Play.Next.Genre", NextTrackTag.Genre);
         if (NextTrackTag.Year > 0)
           GUIPropertyManager.SetProperty("#Play.Next.Year", NextTrackTag.Year.ToString());
         else
-          GUIPropertyManager.SetProperty("#Play.Next.Year", "");
+          GUIPropertyManager.SetProperty("#Play.Next.Year", String.Empty);
       }
       else
       {
@@ -350,6 +353,8 @@ namespace MediaPortal.GUI.Music
         GUIPropertyManager.SetProperty("#Play.Next.Title", String.Empty);
         GUIPropertyManager.SetProperty("#Play.Next.Album", String.Empty);
         GUIPropertyManager.SetProperty("#Play.Next.Artist", String.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.Genre", String.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.Year", String.Empty);
       }
     }
 
