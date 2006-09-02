@@ -86,7 +86,7 @@ HRESULT CSubtitleOutputPin::CompleteConnect( IPin *pReceivePin )
       return hr;
   }
 
-  return hr;
+  return S_OK;
 }
 HRESULT CSubtitleOutputPin::GetMediaType( int iPosition, CMediaType* pmt )
 {
@@ -119,12 +119,28 @@ HRESULT CSubtitleOutputPin::GetMediaType( int iPosition, CMediaType* pmt )
 
 HRESULT CSubtitleOutputPin::CheckConnect( IPin *pPin )
 {
-  return CBaseOutputPin::CheckConnect( pPin );
+  HRESULT hr = CBaseOutputPin::CheckConnect( pPin );
+
+  // Input pin does not support IMemInputPin
+  if( hr == E_NOINTERFACE )
+  {
+    // TODO, as at least Elecard MPEG2 decoder doesn't support this
+  }
+  
+  return hr;
 }
 
 HRESULT CSubtitleOutputPin::Deliver( IMediaSample *pSample )
 {
- return S_OK;
+  if( m_pInputPin )
+  {
+    HRESULT hr = m_pInputPin->Receive( pSample );
+    return hr;
+  }
+  else
+  {
+    return E_FAIL;
+  }
 }
 
 HRESULT CSubtitleOutputPin::DecideBufferSize( IMemAllocator *pAlloc,

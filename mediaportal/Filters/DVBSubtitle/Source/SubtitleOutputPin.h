@@ -61,7 +61,7 @@ public:
 	void Reset();
 
 private:
-  CDVBSub* const    m_pDVBSub;				// Main renderer object
-  REFERENCE_TIME		m_tLast;				// Last sample receive time
-	bool				      m_bReset;
+  CDVBSub* const    m_pDVBSub;    // Main renderer object
+  REFERENCE_TIME    m_tLast;      // Last sample receive time
+  bool              m_bReset;
 };
