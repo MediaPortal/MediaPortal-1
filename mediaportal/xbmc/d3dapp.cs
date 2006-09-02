@@ -1566,6 +1566,110 @@ namespace MediaPortal
 
 
     /// <summary>
+    ///Get the  statistics 
+    /// </summary>
+    public void GetStats()
+    {
+      string strFmt;
+      Format fmtAdapter = graphicsSettings.DisplayMode.Format;
+      strFmt = String.Format("backbuf {0}, adapter {1}",
+                             GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferFormat.ToString(),
+                             fmtAdapter.ToString());
+
+      string strDepthFmt;
+      if (enumerationSettings.AppUsesDepthBuffer)
+        strDepthFmt = String.Format(" ({0})", graphicsSettings.DepthStencilBufferFormat.ToString());
+      else
+        // No depth buffer
+        strDepthFmt = "";
+
+      string strMultiSample;
+      switch (graphicsSettings.MultisampleType)
+      {
+        case MultiSampleType.NonMaskable:
+          strMultiSample = " (NonMaskable Multisample)";
+          break;
+        case MultiSampleType.TwoSamples:
+          strMultiSample = " (2x Multisample)";
+          break;
+        case MultiSampleType.ThreeSamples:
+          strMultiSample = " (3x Multisample)";
+          break;
+        case MultiSampleType.FourSamples:
+          strMultiSample = " (4x Multisample)";
+          break;
+        case MultiSampleType.FiveSamples:
+          strMultiSample = " (5x Multisample)";
+          break;
+        case MultiSampleType.SixSamples:
+          strMultiSample = " (6x Multisample)";
+          break;
+        case MultiSampleType.SevenSamples:
+          strMultiSample = " (7x Multisample)";
+          break;
+        case MultiSampleType.EightSamples:
+          strMultiSample = " (8x Multisample)";
+          break;
+        case MultiSampleType.NineSamples:
+          strMultiSample = " (9x Multisample)";
+          break;
+        case MultiSampleType.TenSamples:
+          strMultiSample = " (10x Multisample)";
+          break;
+        case MultiSampleType.ElevenSamples:
+          strMultiSample = " (11x Multisample)";
+          break;
+        case MultiSampleType.TwelveSamples:
+          strMultiSample = " (12x Multisample)";
+          break;
+        case MultiSampleType.ThirteenSamples:
+          strMultiSample = " (13x Multisample)";
+          break;
+        case MultiSampleType.FourteenSamples:
+          strMultiSample = " (14x Multisample)";
+          break;
+        case MultiSampleType.FifteenSamples:
+          strMultiSample = " (15x Multisample)";
+          break;
+        case MultiSampleType.SixteenSamples:
+          strMultiSample = " (16x Multisample)";
+          break;
+        default:
+          strMultiSample = string.Empty;
+          break;
+      }
+
+      frameStats = String.Format("last {0} fps ({1}x{2}), {3} {4}{5}{6} {7}",
+                                 GUIGraphicsContext.CurrentFPS.ToString("f2"),
+                                 GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth,
+                                 GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight,
+                                 GetSleepingTime(), strFmt, strDepthFmt, strMultiSample, ShouldUseSleepingTime());
+
+      if (GUIGraphicsContext.Vmr9Active)
+        frameStats += String.Format(" VMR9 {0}", GUIGraphicsContext.Vmr9FPS.ToString("f2"));
+
+      string quality = String.Format("\navg fps:{0} sync:{1} drawn:{2} dropped:{3} jitter:{4}",
+                                     VideoRendererStatistics.AverageFrameRate.ToString("f2"),
+                                     VideoRendererStatistics.AverageSyncOffset,
+                                     VideoRendererStatistics.FramesDrawn,
+                                     VideoRendererStatistics.FramesDropped,
+                                     VideoRendererStatistics.Jitter);
+#if PERFCOUNTER
+        long MBUsed = Process.GetCurrentProcess().PrivateMemorySize;
+        MBUsed /= 1024; // KByte;
+        MBUsed /= 1024; // MByte;
+
+        quality += String.Format(" Memory:{0} Mb cpu:{1}%",
+              MBUsed, _perfCounterCpu.NextValue().ToString("f2"));
+#endif
+      frameStats += quality;
+      //long lTotalMemory=GC.GetTotalMemory(false);
+      //string memory=String.Format("\nTotal Memory allocated:{0}",Utils.GetSize(lTotalMemory) );
+
+      //frameStats+=memory;
+    }
+
+    /// <summary>
     /// Update the various statistics the simulation keeps track of
     /// </summary>
     public void UpdateStats()
@@ -1580,111 +1684,6 @@ namespace MediaPortal
         GUIGraphicsContext.CurrentFPS = framePerSecond;
         lastTime = time;
         frames = 0;
-        //				if ( !GUIGraphicsContext.Vmr9Active )
-        //				{
-        //					if (framePerSecond>GUIGraphicsContext.MaxFPS) m_iSleepingTime++;
-        //					if (framePerSecond<GUIGraphicsContext.MaxFPS) m_iSleepingTime--;
-        //					if (m_iSleepingTime<0) m_iSleepingTime=0;
-        //					if (m_iSleepingTime>100) m_iSleepingTime=100;
-        //				}
-
-        string strFmt;
-        Format fmtAdapter = graphicsSettings.DisplayMode.Format;
-        strFmt = String.Format("backbuf {0}, adapter {1}",
-                               GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferFormat.ToString(),
-                               fmtAdapter.ToString());
-
-        string strDepthFmt;
-        if (enumerationSettings.AppUsesDepthBuffer)
-          strDepthFmt = String.Format(" ({0})", graphicsSettings.DepthStencilBufferFormat.ToString());
-        else
-          // No depth buffer
-          strDepthFmt = "";
-
-        string strMultiSample;
-        switch (graphicsSettings.MultisampleType)
-        {
-          case MultiSampleType.NonMaskable:
-            strMultiSample = " (NonMaskable Multisample)";
-            break;
-          case MultiSampleType.TwoSamples:
-            strMultiSample = " (2x Multisample)";
-            break;
-          case MultiSampleType.ThreeSamples:
-            strMultiSample = " (3x Multisample)";
-            break;
-          case MultiSampleType.FourSamples:
-            strMultiSample = " (4x Multisample)";
-            break;
-          case MultiSampleType.FiveSamples:
-            strMultiSample = " (5x Multisample)";
-            break;
-          case MultiSampleType.SixSamples:
-            strMultiSample = " (6x Multisample)";
-            break;
-          case MultiSampleType.SevenSamples:
-            strMultiSample = " (7x Multisample)";
-            break;
-          case MultiSampleType.EightSamples:
-            strMultiSample = " (8x Multisample)";
-            break;
-          case MultiSampleType.NineSamples:
-            strMultiSample = " (9x Multisample)";
-            break;
-          case MultiSampleType.TenSamples:
-            strMultiSample = " (10x Multisample)";
-            break;
-          case MultiSampleType.ElevenSamples:
-            strMultiSample = " (11x Multisample)";
-            break;
-          case MultiSampleType.TwelveSamples:
-            strMultiSample = " (12x Multisample)";
-            break;
-          case MultiSampleType.ThirteenSamples:
-            strMultiSample = " (13x Multisample)";
-            break;
-          case MultiSampleType.FourteenSamples:
-            strMultiSample = " (14x Multisample)";
-            break;
-          case MultiSampleType.FifteenSamples:
-            strMultiSample = " (15x Multisample)";
-            break;
-          case MultiSampleType.SixteenSamples:
-            strMultiSample = " (16x Multisample)";
-            break;
-          default:
-            strMultiSample = string.Empty;
-            break;
-        }
-
-        frameStats = String.Format("{0} fps ({1}x{2}), {3} {4}{5}{6} {7}",
-                                   GUIGraphicsContext.CurrentFPS.ToString("f2"),
-                                   GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth,
-                                   GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight,
-                                   GetSleepingTime(), strFmt, strDepthFmt, strMultiSample, ShouldUseSleepingTime());
-
-        if (GUIGraphicsContext.Vmr9Active)
-          frameStats += String.Format(" VMR9 {0}", GUIGraphicsContext.Vmr9FPS.ToString("f2"));
-
-        string quality = String.Format("\nfps:{0} sync:{1} drawn:{2} dropped:{3} jitter:{4}",
-                                       VideoRendererStatistics.AverageFrameRate.ToString("f2"),
-                                       VideoRendererStatistics.AverageSyncOffset,
-                                       VideoRendererStatistics.FramesDrawn,
-                                       VideoRendererStatistics.FramesDropped,
-                                       VideoRendererStatistics.Jitter);
-#if PERFCOUNTER
-        long MBUsed = Process.GetCurrentProcess().PrivateMemorySize;
-        MBUsed /= 1024; // KByte;
-        MBUsed /= 1024; // MByte;
-
-        quality += String.Format(" Memory:{0} Mb cpu:{1}%",
-              MBUsed, _perfCounterCpu.NextValue().ToString("f2"));
-#endif
-        frameStats += quality;
-        //long lTotalMemory=GC.GetTotalMemory(false);
-        //string memory=String.Format("\nTotal Memory allocated:{0}",Utils.GetSize(lTotalMemory) );
-
-        //frameStats+=memory;
       }
     }
 

@@ -520,6 +520,7 @@ public class MediaPortalApp : D3DApp, IRender
     UpdateStats();
     if (m_bShowStats)
     {
+      GetStats();
       GUIFont font = GUIFontManager.GetFont(0);
       if (font != null)
       {
