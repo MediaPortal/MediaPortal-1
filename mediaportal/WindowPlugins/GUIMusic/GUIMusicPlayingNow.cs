@@ -170,7 +170,7 @@ namespace MediaPortal.GUI.Music
       NextTrackFileName = PlaylistPlayer.GetNext();
       GetTrackTags();
 
-      CurrentThumbFileName = GUIMusicFiles.GetCoverArt(false, filename, CurrentTrackTag);
+      CurrentThumbFileName = GUIMusicFiles.GetCoverArt(false, CurrentTrackFileName, CurrentTrackTag);
 
       if (CurrentThumbFileName.Length == 0)
         CurrentThumbFileName = GUIGraphicsContext.Skin + @"\media\missing_coverart.png";
@@ -361,8 +361,16 @@ namespace MediaPortal.GUI.Music
       }
 
       if (AlbumTracks.Count > 0)
+      {
+        if (CurrentThumbFileName == GUIGraphicsContext.Skin + @"\media\missing_coverart.png")
+        {
+          CurrentThumbFileName = GUIMusicFiles.GetCoverArt(false, CurrentTrackFileName, CurrentTrackTag);
+          if (CurrentThumbFileName.Length > 0)
+            ImgCoverArt.SetFileName(CurrentThumbFileName);
+        }
         if (LblBestTracks != null)
           LblBestTracks.Visible = true;
+      }
     }
 
     private void UpdateTrackInfo()

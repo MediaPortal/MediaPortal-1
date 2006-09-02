@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Text;
 using System.Xml;
 using MediaPortal.Util;
@@ -517,6 +518,51 @@ namespace MediaPortal.Music.Database
     #endregion
 
     #region internal fetch routines
+
+    /// <summary>downloads the large thumb from amazon</summary>
+    private bool fetchAlbumImage(string imageUrl, string fileName)
+    {
+      bool success = false;
+      if (imageUrl != "")
+      {
+        //Check if we already have the file.
+        string thumbspath = @"Thumbs\music\albums\";
+
+        //Create the album subdir in thumbs if it does not exist.
+        if (!System.IO.Directory.Exists(thumbspath))
+          System.IO.Directory.CreateDirectory(thumbspath);
+
+        if (!System.IO.File.Exists(thumbspath + fileName))
+        {
+          Log.Info("Audioscrobbler: Trying to get thumb: {0}", imageUrl);
+          // Here we get the image from the web and save it to disk
+          try
+          {
+            WebClient client = new WebClient();
+            client.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
+            client.DownloadFile(imageUrl, thumbspath + fileName);
+            Log.Info("Wikipedia: Success! Image downloaded.");
+            success = true;
+          }
+          catch (Exception e)
+          {
+            Log.Info("Wikipedia: Exception during downloading:");
+            Log.Info(e.ToString());
+          }
+        }
+        else
+        {
+          Log.Info("Wikipedia: Image exists, no need to redownload!");
+        }
+      }
+      else
+      {
+        Log.Info("Wikipedia: No imageurl. Can't download file.");
+      }
+      return success;
+    }
+
+
     private List<Song> fetchRandomTracks(offlineMode randomMode_)
     {
       int addedSongs = 0;
@@ -741,7 +787,18 @@ namespace MediaPortal.Music.Database
 
         XmlNodeList nodes = doc.SelectNodes(@"//album");
         string tmpCover = String.Empty;
-        DateTime tmpRelease = DateTime.MinValue;        
+        string tmpArtist = String.Empty;
+        string tmpAlbum = String.Empty;
+        DateTime tmpRelease = DateTime.MinValue;
+        
+        if (nodes[0].Attributes["artist"].Value != "")
+          tmpArtist = nodes[0].Attributes["artist"].Value;
+        else
+          tmpArtist = artist_;
+        if (nodes[0].Attributes["title"].Value != "")
+          tmpAlbum = nodes[0].Attributes["title"].Value;
+        else
+          tmpAlbum = album_;
 
         foreach (XmlNode mainchild in nodes[0].ChildNodes)
         {
@@ -765,8 +822,8 @@ namespace MediaPortal.Music.Database
         {
           Song nodeSong = new Song();
 
-          nodeSong.Artist = artist_;
-          nodeSong.Album = album_;
+          nodeSong.Artist = tmpArtist;
+          nodeSong.Album = tmpAlbum;
           nodeSong.WebImage = tmpCover;
           nodeSong.DateTimePlayed = tmpRelease;
 
@@ -782,11 +839,13 @@ namespace MediaPortal.Music.Database
           }
           songList.Add(nodeSong);
         }
+        fetchAlbumImage(tmpCover, tmpArtist + "-" + tmpAlbum + ".jpg");
       }
       catch
       {
         // input nice exception here...
-      }
+      }     
+
       return songList;
     }
 
