@@ -337,6 +337,83 @@ namespace MediaPortal.Music.Database
       }
     }
 
+    public string getValidURLLastFMString(string lastFMString)
+    {
+      int dotIndex = 0;
+      int lastIndex = -1;
+      string outString = String.Empty;
+      string cleanString = String.Empty;
+      string urlString = System.Web.HttpUtility.UrlEncode(lastFMString);
+
+      try
+      {
+        // remove CD1, CD2, CDn from Tracks
+        dotIndex = lastFMString.IndexOf("CD");
+        if (dotIndex > 0)
+          cleanString = lastFMString.Remove(dotIndex);
+        // remove [DJ Spacko MIX 2000]
+        dotIndex = cleanString.IndexOf("[");
+        if (dotIndex > 0)
+          cleanString = cleanString.Remove(dotIndex);
+        dotIndex = cleanString.IndexOf("(");
+        if (dotIndex > 0)
+          cleanString = cleanString.Remove(dotIndex);
+
+        dotIndex = 0;
+        if (cleanString != String.Empty)
+        {
+          // build a clean end
+          dotIndex = cleanString.LastIndexOf('-');
+          if (dotIndex >= cleanString.Length - 2)
+            outString = cleanString.Remove(dotIndex);
+          dotIndex = cleanString.LastIndexOf('+');
+          if (dotIndex >= cleanString.Length - 2)
+            outString = cleanString.Remove(dotIndex);
+          urlString = System.Web.HttpUtility.UrlEncode(cleanString);
+        }
+
+        outString = urlString;
+
+        List<Char> invalidSingleChars = new List<Char>();
+        invalidSingleChars.Add('.');
+        invalidSingleChars.Add(',');
+        foreach (Char singleChar in invalidSingleChars)
+        {
+          do
+          {
+            dotIndex = urlString.IndexOf(singleChar);
+            if (dotIndex > 0)
+              if (dotIndex > lastIndex)
+              {
+                if (dotIndex < urlString.Length -1)
+                {
+                  lastIndex = dotIndex;
+                  outString = urlString.Insert(dotIndex + 1, "+");
+                  urlString = outString;
+                }                
+              }
+              else
+                break;
+          }
+          while (dotIndex > 0);
+        } 
+        // build a clean end
+        dotIndex = outString.LastIndexOf('-');
+        if (dotIndex >= outString.Length - 2)
+          outString = outString.Remove(dotIndex);
+        dotIndex = outString.LastIndexOf('+');
+        if (dotIndex >= outString.Length - 2)
+          outString = outString.Remove(dotIndex);
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Audioscrobber: Error while building valid url string {0}", ex.Message);
+        return urlString;
+      }
+
+      return outString;
+    }
+
     /// <summary>
     /// Fetch Amazon cover link, release date and album songs sortable by their popularity
     /// </summary>
@@ -346,36 +423,11 @@ namespace MediaPortal.Music.Database
     /// <returns>Song-List of Album Tracks with Title, Artist, Album, Playcount, URL(track), DateTimePlayed (album release), WebImage</returns>
     public List<Song> getAlbumInfo(string artistToSearch_, string albumToSearch_, bool sortBestTracks)
     {
-      int dotIndex = 0;
-      int lastIndex = -1;
-      string urlArtist = System.Web.HttpUtility.UrlEncode(artistToSearch_);
-      string urlAlbum = System.Web.HttpUtility.UrlEncode(albumToSearch_);
-      string modAlbum = String.Empty;
+      string urlArtist = getValidURLLastFMString(artistToSearch_);
+      string urlAlbum = getValidURLLastFMString(albumToSearch_);
       List<Song> albumTracks = new List<Song>();
 
       albumTracks = ParseXMLDocForAlbumInfo(urlArtist, urlAlbum);
-
-      if (albumTracks.Count == 0)
-      {
-        // try once more for some dotted album names.        
-        do          
-        {
-          dotIndex = urlAlbum.IndexOf(".");
-          if (dotIndex > 0)
-            if (dotIndex > lastIndex)
-            {
-              {
-                lastIndex = dotIndex;
-                modAlbum = urlAlbum.Insert(dotIndex + 1, "+");
-              }
-              urlAlbum = modAlbum;
-            }
-            else
-              break;
-        }
-        while (dotIndex > 0);
-        albumTracks = ParseXMLDocForAlbumInfo(urlArtist, urlAlbum);
-      }
 
       if (sortBestTracks)
         albumTracks.Sort(CompareSongsByTimesPlayed);
@@ -385,15 +437,15 @@ namespace MediaPortal.Music.Database
 
     public List<Song> getTagsForArtist(string artistToSearch_)
     {
-      string urlArtist = System.Web.HttpUtility.UrlEncode(artistToSearch_);
+      string urlArtist = getValidURLLastFMString(artistToSearch_);
 
       return ParseXMLDocForUsedTags(urlArtist, "", lastFMFeed.topartisttags);
     }
 
     public List<Song> getTagsForTrack(string artistToSearch_, string trackToSearch_)
     {
-      string urlArtist = System.Web.HttpUtility.UrlEncode(artistToSearch_);
-      string urlTrack = System.Web.HttpUtility.UrlEncode(trackToSearch_);
+      string urlArtist = getValidURLLastFMString(artistToSearch_);
+      string urlTrack = getValidURLLastFMString(trackToSearch_);
 
       return ParseXMLDocForUsedTags(urlArtist, urlTrack, lastFMFeed.toptracktags);
     }
@@ -534,30 +586,29 @@ namespace MediaPortal.Music.Database
 
         if (!System.IO.File.Exists(thumbspath + fileName))
         {
-          Log.Info("Audioscrobbler: Trying to get thumb: {0}", imageUrl);
+          Log.Debug("Audioscrobbler: Trying to get thumb: {0}", imageUrl);
           // Here we get the image from the web and save it to disk
           try
           {
             WebClient client = new WebClient();
             client.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
             client.DownloadFile(imageUrl, thumbspath + fileName);
-            Log.Info("Wikipedia: Success! Image downloaded.");
+            Log.Info("Audioscrobbler: Thumb successfully downloaded.");
             success = true;
           }
           catch (Exception e)
           {
-            Log.Info("Wikipedia: Exception during downloading:");
-            Log.Info(e.ToString());
+            Log.Error("Audioscrobbler: Exception during downloading - {0}", e.Message);
           }
         }
         else
         {
-          Log.Info("Wikipedia: Image exists, no need to redownload!");
+          Log.Debug("Audioscrobbler: Thumb exists, download canceled!");
         }
       }
       else
       {
-        Log.Info("Wikipedia: No imageurl. Can't download file.");
+        Log.Debug("Audioscrobbler: No imageurl. Can't download thumb.");
       }
       return success;
     }

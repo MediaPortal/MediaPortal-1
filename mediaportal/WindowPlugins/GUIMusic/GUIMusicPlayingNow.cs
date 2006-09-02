@@ -377,8 +377,11 @@ namespace MediaPortal.GUI.Music
     {
       UpdateTrackPosition();
 
-      if (CurrentTrackTag.Title != GUIPropertyManager.GetProperty("#Play.Current.Title"))
+      if (CurrentTrackTag == null)
         _trackChanged = true;
+      else
+        if (CurrentTrackTag.Title != GUIPropertyManager.GetProperty("#Play.Current.Title"))
+          _trackChanged = true;
 
       // only update if necessary
       if (_trackChanged)
@@ -407,7 +410,7 @@ namespace MediaPortal.GUI.Music
             ImgListRating.Percentage = rating;
           }
 
-          StartAlbumInfoThread();          
+          StartAlbumInfoThread();
         }
         else
         {

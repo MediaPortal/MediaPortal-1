@@ -4677,6 +4677,7 @@
       <id>5923</id>
       <value>DVD premierer denne uken</value>
    </string>
+
    <string>
       <id>5924</id>
       <value>DVD premierer neste uke</value>
@@ -5250,6 +5251,10 @@
       <id>33017</id>
       <value>Blandede spor</value>
    </string>
+   <string>
+      <id>33030</id>
+      <value>De beste album sporene</value>
+   </string> 
    <string>
       <id>99845</id>
       <value>TV.com sjekk</value>
