@@ -5227,7 +5227,11 @@
    <string>
       <id>33017</id>
       <value>Zufällige Titel</value>
-   </string>  
+   </string>
+   <string>
+      <id>33030</id>
+      <value>Hits dieses Albums</value>
+   </string>
       
    <string>
       <id>100000</id>

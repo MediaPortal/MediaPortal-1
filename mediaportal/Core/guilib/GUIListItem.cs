@@ -67,7 +67,7 @@ namespace MediaPortal.GUI.Library
     int _idItem = 0;                // General item id
     bool _retrieveCoverArtAllowed = true;
     int _dimColor = 0x60ffffff;
-    
+
     /// <summary>
     /// The (empty) constructor of the GUIListItem.
     /// </summary>
@@ -109,7 +109,8 @@ namespace MediaPortal.GUI.Library
     /// <param name="strLabel">The text of the first label of the item.</param>
     public GUIListItem(string strLabel)
     {
-      if (strLabel == null) return;
+      if (strLabel == null)
+        return;
       _label = strLabel;
     }
 
@@ -121,7 +122,8 @@ namespace MediaPortal.GUI.Library
       get { return _label; }
       set
       {
-        if (value == null) return;
+        if (value == null)
+          return;
         _label = value;
       }
     }
@@ -134,7 +136,8 @@ namespace MediaPortal.GUI.Library
       get { return _label2; }
       set
       {
-        if (value == null) return;
+        if (value == null)
+          return;
         _label2 = value;
       }
     }
@@ -147,7 +150,8 @@ namespace MediaPortal.GUI.Library
       get { return _label3; }
       set
       {
-        if (value == null) return;
+        if (value == null)
+          return;
         _label3 = value;
       }
     }
@@ -165,7 +169,8 @@ namespace MediaPortal.GUI.Library
       }
       set
       {
-        if (value == null) return;
+        if (value == null)
+          return;
         _thumbNailName = value;
       }
     }
@@ -183,7 +188,8 @@ namespace MediaPortal.GUI.Library
       }
       set
       {
-        if (value == null) return;
+        if (value == null)
+          return;
         _smallIconName = value;
       }
     }
@@ -198,7 +204,8 @@ namespace MediaPortal.GUI.Library
       }
       set
       {
-        if (value == null) return;
+        if (value == null)
+          return;
         _pinIconName = value;
       }
     }
@@ -217,7 +224,8 @@ namespace MediaPortal.GUI.Library
       }
       set
       {
-        if (value == null) return;
+        if (value == null)
+          return;
         _bigIconName = value;
       }
     }
@@ -283,9 +291,11 @@ namespace MediaPortal.GUI.Library
     public GUIImage Thumbnail
     {
       get { return _thumbnailImage; }
-      set { 
+      set
+      {
         _thumbnailImage = value;
-        if (_thumbnailImage != null) _thumbnailImage.DimColor = DimColor;
+        if (_thumbnailImage != null)
+          _thumbnailImage.DimColor = DimColor;
       }
     }
 
@@ -295,9 +305,11 @@ namespace MediaPortal.GUI.Library
     public GUIImage Icon
     {
       get { return _imageIcon; }
-      set { 
+      set
+      {
         _imageIcon = value;
-        if (_imageIcon != null) _imageIcon.DimColor = DimColor;
+        if (_imageIcon != null)
+          _imageIcon.DimColor = DimColor;
       }
     }
 
@@ -307,9 +319,11 @@ namespace MediaPortal.GUI.Library
     public GUIImage PinIcon
     {
       get { return _imagePinIcon; }
-      set { 
+      set
+      {
         _imagePinIcon = value;
-        if (_imagePinIcon != null) _imagePinIcon.DimColor = DimColor;
+        if (_imagePinIcon != null)
+          _imagePinIcon.DimColor = DimColor;
       }
     }
 
@@ -319,9 +333,11 @@ namespace MediaPortal.GUI.Library
     public GUIImage IconBig
     {
       get { return _imageBigPinIcon; }
-      set { 
+      set
+      {
         _imageBigPinIcon = value;
-        if (_imageBigPinIcon != null) _imageBigPinIcon.DimColor = DimColor;
+        if (_imageBigPinIcon != null)
+          _imageBigPinIcon.DimColor = DimColor;
 
       }
     }
@@ -343,7 +359,8 @@ namespace MediaPortal.GUI.Library
       get { return _folder; }
       set
       {
-        if (value == null) return;
+        if (value == null)
+          return;
         _folder = value;
       }
     }
@@ -356,7 +373,8 @@ namespace MediaPortal.GUI.Library
       get { return _dvdLabel; }
       set
       {
-        if (value == null) return;
+        if (value == null)
+          return;
         _dvdLabel = value;
       }
     }
@@ -462,7 +480,7 @@ namespace MediaPortal.GUI.Library
       get { return _shaded; }
       set { _shaded = value; }
     }
-    
+
     /// <summary>
     /// Free the memory that is used.
     /// </summary>
@@ -507,10 +525,13 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     void DoRetrieveArt()
     {
-      if (!_retrieveCoverArtAllowed) return;
-      if (_isCoverArtRetrieved) return;
+      if (!_retrieveCoverArtAllowed)
+        return;
+      if (_isCoverArtRetrieved)
+        return;
       _isCoverArtRetrieved = true;
-      if (OnRetrieveArt != null) OnRetrieveArt(this);
+      if (OnRetrieveArt != null)
+        OnRetrieveArt(this);
     }
     public void RefreshCoverArt()
     {
@@ -560,10 +581,14 @@ namespace MediaPortal.GUI.Library
       set
       {
         _dimColor = value;
-        if (_thumbnailImage != null)  _thumbnailImage.DimColor = value;
-        if (_imageIcon != null)       _imageIcon.DimColor = value;
-        if (_imageBigPinIcon != null) _imageBigPinIcon.DimColor = value;
-        if (_imagePinIcon != null)    _imagePinIcon.DimColor = value;
+        if (_thumbnailImage != null)
+          _thumbnailImage.DimColor = value;
+        if (_imageIcon != null)
+          _imageIcon.DimColor = value;
+        if (_imageBigPinIcon != null)
+          _imageBigPinIcon.DimColor = value;
+        if (_imagePinIcon != null)
+          _imagePinIcon.DimColor = value;
       }
     }
 

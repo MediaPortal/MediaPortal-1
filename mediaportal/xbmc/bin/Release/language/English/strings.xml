@@ -5247,6 +5247,10 @@
    <string>
       <id>33017</id>
       <value>random tracks</value>
+   </string>
+   <string>
+      <id>33030</id>
+      <value>Top album tracks</value>
    </string>                         
                  
    <string>

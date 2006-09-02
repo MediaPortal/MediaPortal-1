@@ -345,16 +345,47 @@ namespace MediaPortal.Music.Database
     /// <returns>Song-List of Album Tracks with Title, Artist, Album, Playcount, URL(track), DateTimePlayed (album release), WebImage</returns>
     public List<Song> getAlbumInfo(string artistToSearch_, string albumToSearch_, bool sortBestTracks)
     {
+      int dotIndex = 0;
+      int lastIndex = -1;
+      string urlArtist = System.Web.HttpUtility.UrlEncode(artistToSearch_);
+      string urlAlbum = System.Web.HttpUtility.UrlEncode(albumToSearch_);
+      string modAlbum = String.Empty;
       List<Song> albumTracks = new List<Song>();
-      albumTracks = ParseXMLDocForAlbumInfo(artistToSearch_, albumToSearch_);
+
+      albumTracks = ParseXMLDocForAlbumInfo(urlArtist, urlAlbum);
+
+      if (albumTracks.Count == 0)
+      {
+        // try once more for some dotted album names.        
+        do          
+        {
+          dotIndex = urlAlbum.IndexOf(".");
+          if (dotIndex > 0)
+            if (dotIndex > lastIndex)
+            {
+              {
+                lastIndex = dotIndex;
+                modAlbum = urlAlbum.Insert(dotIndex + 1, "+");
+              }
+              urlAlbum = modAlbum;
+            }
+            else
+              break;
+        }
+        while (dotIndex > 0);
+        albumTracks = ParseXMLDocForAlbumInfo(urlArtist, urlAlbum);
+      }
+
       if (sortBestTracks)
         albumTracks.Sort(CompareSongsByTimesPlayed);
+
       return albumTracks;
     }
 
     public List<Song> getTagsForArtist(string artistToSearch_)
     {
       string urlArtist = System.Web.HttpUtility.UrlEncode(artistToSearch_);
+
       return ParseXMLDocForUsedTags(urlArtist, "", lastFMFeed.topartisttags);
     }
 
@@ -362,6 +393,7 @@ namespace MediaPortal.Music.Database
     {
       string urlArtist = System.Web.HttpUtility.UrlEncode(artistToSearch_);
       string urlTrack = System.Web.HttpUtility.UrlEncode(trackToSearch_);
+
       return ParseXMLDocForUsedTags(urlArtist, urlTrack, lastFMFeed.toptracktags);
     }
 

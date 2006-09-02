@@ -74,9 +74,9 @@ namespace MediaPortal.GUI.Music
     protected MusicViewHandler handler;
     protected MusicDatabase m_database;
     [SkinControlAttribute(50)]    protected GUIFacadeControl facadeView = null;
-    [SkinControlAttribute(2)]    protected GUIButtonControl btnViewAs = null;
-    [SkinControlAttribute(3)]    protected GUISortButtonControl btnSortBy = null;
-    [SkinControlAttribute(6)]    protected GUIButtonControl btnViews = null;
+    [SkinControlAttribute(2)]     protected GUIButtonControl btnViewAs = null;
+    [SkinControlAttribute(3)]     protected GUISortButtonControl btnSortBy = null;
+    [SkinControlAttribute(6)]     protected GUIButtonControl btnViews = null;
 
     const string defaultTrackTag = "[%track%. ][%artist% - ][%title%]";
     const string albumTrackTag = "[%track%. ][%artist% - ][%title%]";
@@ -91,7 +91,7 @@ namespace MediaPortal.GUI.Music
     protected int PlayNowJumpToWindowID = (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW;
     protected bool PlayAllOnSingleItemPlayNow = false;
     protected string m_strPlayListPath = string.Empty;
-		protected string _currentPlaying = string.Empty;
+    protected string _currentPlaying = string.Empty;
 
     public GUIMusicBaseWindow()
     {
@@ -100,7 +100,7 @@ namespace MediaPortal.GUI.Music
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         string playNowJumpTo = xmlreader.GetValueAsString("musicmisc", "playnowjumpto", "nowplaying");
-       
+
         switch (playNowJumpTo)
         {
           case "nowplaying":
@@ -129,7 +129,8 @@ namespace MediaPortal.GUI.Music
 
     protected virtual bool AllowView(View view)
     {
-      if (view == View.PlayList) return false;
+      if (view == View.PlayList)
+        return false;
       return true;
     }
     protected virtual bool AllowSortMethod(MusicSort.SortMethod method)
@@ -204,7 +205,8 @@ namespace MediaPortal.GUI.Music
     {
       get
       {
-        if (CurrentView != View.List) return true;
+        if (CurrentView != View.List)
+          return true;
         return false;
       }
     }
@@ -213,7 +215,8 @@ namespace MediaPortal.GUI.Music
     {
       get
       {
-        if (CurrentView == View.LargeIcons) return true;
+        if (CurrentView == View.LargeIcons)
+          return true;
         return false;
       }
     }
@@ -246,15 +249,15 @@ namespace MediaPortal.GUI.Music
       base.OnAction(action);
     }
 
-		public override bool OnMessage(GUIMessage message)
-		{
-			if (message.Message == GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS)
-			{
-				_currentPlaying = message.Label;
-				facadeView.OnMessage(message);
-			}
-			return base.OnMessage(message);
-		}
+    public override bool OnMessage(GUIMessage message)
+    {
+      if (message.Message == GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS)
+      {
+        _currentPlaying = message.Label;
+        facadeView.OnMessage(message);
+      }
+      return base.OnMessage(message);
+    }
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
@@ -491,7 +494,8 @@ namespace MediaPortal.GUI.Music
     protected void OnSetRating(int itemNumber)
     {
       GUIListItem item = facadeView[itemNumber];
-      if (item == null) return;
+      if (item == null)
+        return;
       MusicTag tag = item.MusicTag as MusicTag;
       GUIDialogSetRating dialog = (GUIDialogSetRating)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_RATING);
       if (tag != null)
@@ -566,7 +570,8 @@ namespace MediaPortal.GUI.Music
     protected void LoadPlayList(string strPlayList)
     {
       IPlayListIO loader = PlayListFactory.CreateIO(strPlayList);
-      if (loader == null) return;
+      if (loader == null)
+        return;
 
       PlayList playlist = new PlayList();
 
@@ -575,7 +580,7 @@ namespace MediaPortal.GUI.Music
         TellUserSomethingWentWrong();
         return;
       }
-      if ( _autoShuffleOnLoad )
+      if (_autoShuffleOnLoad)
       {
         Random r = new Random((int)DateTime.Now.Ticks);
         int shuffleCount = r.Next() % 50;
@@ -658,24 +663,38 @@ namespace MediaPortal.GUI.Music
           string filename = MediaPortal.Util.Utils.GetFilename(item.Path);
           string duration = MediaPortal.Util.Utils.SecondsToHMSString(tag.Duration);
           string rating = tag.Rating.ToString();
-          if (tag.Track <= 0) trackNr = "";
-          if (tag.Year < 1900) year = "";
+          if (tag.Track <= 0)
+            trackNr = "";
+          if (tag.Year < 1900)
+            year = "";
 
           string date = "";
-          if (item.FileInfo != null) date = item.FileInfo.ModificationTime.ToShortDateString() + " " + item.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat); ;
+          if (item.FileInfo != null)
+            date = item.FileInfo.ModificationTime.ToShortDateString() + " " + item.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+          ;
 
           string line1 = _sortTags1[(int)method];
           string line2 = _sortTags2[(int)method];
-          line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%track%", trackNr); line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%track%", trackNr);
-          line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%filesize%", fileSize); line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%filesize%", fileSize);
-          line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%artist%", tag.Artist); line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%artist%", tag.Artist);
-          line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%album%", tag.Album); line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%album%", tag.Album);
-          line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%title%", tag.Title); line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%title%", tag.Title);
-          line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%year%", year); line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%year%", year);
-          line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%filename%", filename); line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%filename%", filename);
-          line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%rating%", rating); line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%rating%", rating);
-          line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%duration%", duration); line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%duration%", duration);
-          line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%date%", date); line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%date%", date);
+          line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%track%", trackNr);
+          line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%track%", trackNr);
+          line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%filesize%", fileSize);
+          line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%filesize%", fileSize);
+          line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%artist%", tag.Artist);
+          line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%artist%", tag.Artist);
+          line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%album%", tag.Album);
+          line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%album%", tag.Album);
+          line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%title%", tag.Title);
+          line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%title%", tag.Title);
+          line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%year%", year);
+          line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%year%", year);
+          line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%filename%", filename);
+          line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%filename%", filename);
+          line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%rating%", rating);
+          line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%rating%", rating);
+          line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%duration%", duration);
+          line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%duration%", duration);
+          line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%date%", date);
+          line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%date%", date);
           item.Label = line1;
           item.Label2 = line2;
         }
@@ -777,7 +796,8 @@ namespace MediaPortal.GUI.Music
     protected bool GetKeyboard(ref string strLine)
     {
       VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
-      if (null == keyboard) return false;
+      if (null == keyboard)
+        return false;
       keyboard.Reset();
       keyboard.DoModal(GetID);
       if (keyboard.IsConfirmed)
@@ -792,7 +812,8 @@ namespace MediaPortal.GUI.Music
     protected virtual void OnRetrieveCoverArt(GUIListItem item)
     {
       MediaPortal.Util.Utils.SetDefaultIcons(item);
-      if (item.Label == "..") return;
+      if (item.Label == "..")
+        return;
       MusicTag tag = (MusicTag)item.MusicTag;
       string strThumb = GUIMusicFiles.GetCoverArt(item.IsFolder, item.Path, tag);
       if (strThumb != String.Empty)
@@ -812,7 +833,8 @@ namespace MediaPortal.GUI.Music
     protected void OnShowViews()
     {
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-      if (dlg == null) return;
+      if (dlg == null)
+        return;
       dlg.Reset();
       dlg.SetHeading(924); // menu
       dlg.Add(GUILocalizeStrings.Get(134));//songs
@@ -831,7 +853,8 @@ namespace MediaPortal.GUI.Music
       int PLAYING_NOW_INDEX = handler.Views.Count + 1; // "Shares" + total view count + "Playing Now"
 
       dlg.DoModal(GetID);
-      if (dlg.SelectedLabel == -1) return;
+      if (dlg.SelectedLabel == -1)
+        return;
       if (dlg.SelectedLabel == 0)
       {
         int nNewWindow = (int)GUIWindow.Window.WINDOW_MUSIC_FILES;
@@ -911,11 +934,13 @@ namespace MediaPortal.GUI.Music
       {
         if (!pItem.IsFolder)
         {
-          if (pItem.Path != String.Empty) OnInfoFile(pItem);
+          if (pItem.Path != String.Empty)
+            OnInfoFile(pItem);
         }
         else
         {
-          if (pItem.Path != String.Empty) OnInfoFolder(pItem);
+          if (pItem.Path != String.Empty)
+            OnInfoFolder(pItem);
         }
         facadeView.RefreshCoverArt();
         return;
@@ -999,7 +1024,8 @@ namespace MediaPortal.GUI.Music
       AllmusicSiteScraper scraper = new AllmusicSiteScraper();
       if (scraper.FindInfo(AllmusicSiteScraper.SearchBy.Artists, artistName))
       {
-        if (dlgProgress != null) dlgProgress.Close();
+        if (dlgProgress != null)
+          dlgProgress.Close();
         // did we found at least 1 album?
         if (scraper.IsMultiple())
         {
@@ -1022,7 +1048,8 @@ namespace MediaPortal.GUI.Music
 
             // and wait till user selects one
             iSelectedAlbum = pDlg.SelectedLabel;
-            if (iSelectedAlbum < 0) return;
+            if (iSelectedAlbum < 0)
+              return;
           }
 
           // ok, now show dialog we're downloading the artist info
@@ -1346,7 +1373,8 @@ namespace MediaPortal.GUI.Music
 
               // and wait till user selects one
               iSelectedAlbum = pDlg.SelectedLabel;
-              if (iSelectedAlbum < 0) return;
+              if (iSelectedAlbum < 0)
+                return;
             }
           }
 
@@ -1533,16 +1561,20 @@ namespace MediaPortal.GUI.Music
 
     static public string GetAlbumThumbName(string ArtistName, string AlbumName)
     {
-      if (ArtistName == String.Empty) return String.Empty;
-      if (AlbumName == String.Empty) return String.Empty;
+      if (ArtistName == String.Empty)
+        return String.Empty;
+      if (AlbumName == String.Empty)
+        return String.Empty;
       string name = String.Format("{0}-{1}", ArtistName, AlbumName);
       return MediaPortal.Util.Utils.GetCoverArtName(Thumbs.MusicAlbum, name);
     }
     protected virtual void AddSongToFavorites(GUIListItem item)
     {
       Song song = item.AlbumInfoTag as Song;
-      if (song == null) return;
-      if (song.songId < 0) return;
+      if (song == null)
+        return;
+      if (song.songId < 0)
+        return;
       song.Favorite = true;
       m_database.SetFavorite(song);
     }

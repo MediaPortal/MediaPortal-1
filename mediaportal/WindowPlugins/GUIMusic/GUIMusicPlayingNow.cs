@@ -28,6 +28,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Globalization;
+using System.Threading;
+
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Player;
@@ -51,16 +53,19 @@ namespace MediaPortal.GUI.Music
       LBL_ARTIST_NAME = 6,
       IMG_TRACK_PROGRESS_BG = 7,
       PROG_TRACK = 8,
-      REMAIN_TRACK = 10,
+      REMAIN_TRACK = 10,      
 
       IMGLIST_RATING = 11,
       IMGLIST_NEXTRATING = 12,
-
+      
       LBL_UP_NEXT = 20,
       LBL_NEXT_TRACK_NAME = 21,
       LBL_NEXT_ALBUM_NAME = 22,
       LBL_NEXT_ARTIST_NAME = 23,
 
+      BEST_TRACKS = 29,
+
+      LIST_ALBUM_INFO = 66,
       // Transport Buttons
       //BTN_BACK = 30,
       //BTN_PREVIOUS = 31,
@@ -101,6 +106,8 @@ namespace MediaPortal.GUI.Music
 
     [SkinControlAttribute((int)ControlIDs.IMGLIST_RATING)]      protected GUIImageList ImgListRating = null;
     [SkinControlAttribute((int)ControlIDs.IMGLIST_NEXTRATING)]  protected GUIImageList ImgListNextRating = null;
+    [SkinControlAttribute((int)ControlIDs.LIST_ALBUM_INFO)]     protected GUIListControl facadeAlbumInfo = null;
+    [SkinControlAttribute((int)ControlIDs.BEST_TRACKS)]         protected GUILabelControl LblBestTracks = null;
 
     public enum TrackProgressType { Elapsed, CountDown };
 
@@ -114,7 +121,10 @@ namespace MediaPortal.GUI.Music
     private DateTime LastUpdateTime = DateTime.Now;
     private TimeSpan UpdateInterval = new TimeSpan(0, 0, 1);
     private GUIMusicBaseWindow _MusicWindow = null;
+    private AudioscrobblerUtils InfoScrobbler = null;
+    private Thread InfoThread;
     private bool UseID3 = false;
+    private bool _trackChanged = true;
 
 
     public GUIMusicPlayingNow()
@@ -212,9 +222,24 @@ namespace MediaPortal.GUI.Music
       }
     }
 
+    public override bool OnMessage(GUIMessage message)
+    {
+      if (message.Message == GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS)
+      {
+        //_currentPlaying = message.Label;
+        facadeAlbumInfo.OnMessage(message);
+      }
+      return base.OnMessage(message);
+    }
+
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
+
+      facadeAlbumInfo.Clear();
+      facadeAlbumInfo.Focusable = false;
+
+      _trackChanged = true;
 
       GUIPropertyManager.SetProperty("#currentmodule", String.Format("{0}/{1}", GUILocalizeStrings.Get(100005), GUILocalizeStrings.Get(4540)));
       LblUpNext.Label = GUILocalizeStrings.Get(4541);
@@ -225,8 +250,13 @@ namespace MediaPortal.GUI.Music
       if (GUIPropertyManager.GetProperty("#Play.Next.Title") == String.Empty)
         LblUpNext.Visible = false;
 
+      LblBestTracks.Visible = false;
       ControlsInitialized = true;
+
+      InfoScrobbler = new AudioscrobblerUtils();
+
       g_Player_PlayBackStarted(g_Player.MediaType.Music, g_Player.CurrentFile);
+
     }
 
     protected override void OnPageDestroy(int new_windowId)
@@ -303,58 +333,108 @@ namespace MediaPortal.GUI.Music
       }
     }
 
+    private void StartAlbumInfoThread()
+    {
+      InfoThread = new Thread(new ThreadStart(UpdateAlbumInfoThread));
+      // allow windows to kill the thread if the main app was closed
+      InfoThread.IsBackground = true;
+      InfoThread.Priority = ThreadPriority.BelowNormal;
+      InfoThread.Start();
+    }
+
+    private void UpdateAlbumInfoThread()
+    {
+      GUIListItem item = null;
+      List<Song> AlbumTracks = new List<Song>();
+
+      AlbumTracks = InfoScrobbler.getAlbumInfo(CurrentTrackTag.Artist, CurrentTrackTag.Album, true);
+
+      for (int i = 0; i < AlbumTracks.Count; i++)
+      {
+        item = new GUIListItem(AlbumTracks[i].ToShortString());
+        item.Label = AlbumTracks[i].Title + " (" + GUILocalizeStrings.Get(931) + ": " + Convert.ToString(AlbumTracks[i].TimesPlayed) + ")";
+
+        facadeAlbumInfo.Add(item);
+
+        if (i >= 2)
+          break;
+      }
+
+      if (AlbumTracks.Count > 0)
+        if (LblBestTracks != null)
+          LblBestTracks.Visible = true;
+    }
+
     private void UpdateTrackInfo()
     {
       UpdateTrackPosition();
 
-      if (CurrentTrackTag != null)
-      {
-        GUIPropertyManager.SetProperty("#Play.Current.Title", CurrentTrackTag.Title);
-        GUIPropertyManager.SetProperty("#Play.Current.Album", CurrentTrackTag.Album);
-        GUIPropertyManager.SetProperty("#Play.Current.Artist", CurrentTrackTag.Artist);
-        GUIPropertyManager.SetProperty("#Play.Current.Genre", CurrentTrackTag.Genre);
-        if (CurrentTrackTag.Year > 0)
-          GUIPropertyManager.SetProperty("#Play.Current.Year", CurrentTrackTag.Year.ToString());
-        else
-          GUIPropertyManager.SetProperty("#Play.Current.Year", "");
+      if (CurrentTrackTag.Title != GUIPropertyManager.GetProperty("#Play.Current.Title"))
+        _trackChanged = true;
 
-        if (ImgListNextRating != null)
+      // only update if necessary
+      if (_trackChanged)
+      {
+        if (CurrentTrackTag != null)
         {
-          int rating = CurrentTrackTag.Rating;
-          ImgListRating.Percentage = rating;
-        }
-      }
-      else
-      {
-        GUIPropertyManager.SetProperty("#Play.Current.Title", GUILocalizeStrings.Get(4543));
+          facadeAlbumInfo.Clear();
+          if (LblBestTracks != null)
+            LblBestTracks.Visible = false;
 
-        if (PlaylistPlayer == null)
-          if (PlaylistPlayer.GetCurrentItem() == null)
-            GUIPropertyManager.SetProperty("#Play.Current.Title", GUILocalizeStrings.Get(4542));
+          GUIPropertyManager.SetProperty("#Play.Current.Title", CurrentTrackTag.Title);
+          GUIPropertyManager.SetProperty("#Play.Current.Album", CurrentTrackTag.Album);
+          GUIPropertyManager.SetProperty("#Play.Current.Artist", CurrentTrackTag.Artist);
+          GUIPropertyManager.SetProperty("#Play.Current.Genre", CurrentTrackTag.Genre);
+          if (CurrentTrackTag.Year > 0)
+            GUIPropertyManager.SetProperty("#Play.Current.Year", CurrentTrackTag.Year.ToString());
           else
-            GUIPropertyManager.SetProperty("#Play.Next.Title", GUILocalizeStrings.Get(4542));
-      }
+            GUIPropertyManager.SetProperty("#Play.Current.Year", "");
 
-      if (NextTrackTag != null)
-      {
-        LblUpNext.Visible = true;
-        GUIPropertyManager.SetProperty("#Play.Next.Title", NextTrackTag.Title);
-        GUIPropertyManager.SetProperty("#Play.Next.Album", NextTrackTag.Album);
-        GUIPropertyManager.SetProperty("#Play.Next.Artist", NextTrackTag.Artist);
-        GUIPropertyManager.SetProperty("#Play.Next.Genre", NextTrackTag.Genre);
-        if (NextTrackTag.Year > 0)
-          GUIPropertyManager.SetProperty("#Play.Next.Year", NextTrackTag.Year.ToString());
+          if (g_Player.Playing)
+            GUIPropertyManager.SetProperty("#duration", Convert.ToString(g_Player.Duration));
+
+          if (ImgListNextRating != null)
+          {
+            int rating = CurrentTrackTag.Rating;
+            ImgListRating.Percentage = rating;
+          }
+
+          StartAlbumInfoThread();          
+        }
         else
+        {
+          GUIPropertyManager.SetProperty("#Play.Current.Title", GUILocalizeStrings.Get(4543));
+          GUIPropertyManager.SetProperty("#duration", String.Empty);
+
+          if (PlaylistPlayer == null)
+            if (PlaylistPlayer.GetCurrentItem() == null)
+              GUIPropertyManager.SetProperty("#Play.Current.Title", GUILocalizeStrings.Get(4542));
+            else
+              GUIPropertyManager.SetProperty("#Play.Next.Title", GUILocalizeStrings.Get(4542));
+        }
+
+        if (NextTrackTag != null)
+        {
+          LblUpNext.Visible = true;
+          GUIPropertyManager.SetProperty("#Play.Next.Title", NextTrackTag.Title);
+          GUIPropertyManager.SetProperty("#Play.Next.Album", NextTrackTag.Album);
+          GUIPropertyManager.SetProperty("#Play.Next.Artist", NextTrackTag.Artist);
+          GUIPropertyManager.SetProperty("#Play.Next.Genre", NextTrackTag.Genre);
+          if (NextTrackTag.Year > 0)
+            GUIPropertyManager.SetProperty("#Play.Next.Year", NextTrackTag.Year.ToString());
+          else
+            GUIPropertyManager.SetProperty("#Play.Next.Year", String.Empty);
+        }
+        else
+        {
+          LblUpNext.Visible = false;
+          GUIPropertyManager.SetProperty("#Play.Next.Title", String.Empty);
+          GUIPropertyManager.SetProperty("#Play.Next.Album", String.Empty);
+          GUIPropertyManager.SetProperty("#Play.Next.Artist", String.Empty);
+          GUIPropertyManager.SetProperty("#Play.Next.Genre", String.Empty);
           GUIPropertyManager.SetProperty("#Play.Next.Year", String.Empty);
-      }
-      else
-      {
-        LblUpNext.Visible = false;
-        GUIPropertyManager.SetProperty("#Play.Next.Title", String.Empty);
-        GUIPropertyManager.SetProperty("#Play.Next.Album", String.Empty);
-        GUIPropertyManager.SetProperty("#Play.Next.Artist", String.Empty);
-        GUIPropertyManager.SetProperty("#Play.Next.Genre", String.Empty);
-        GUIPropertyManager.SetProperty("#Play.Next.Year", String.Empty);
+        }
+        _trackChanged = false;
       }
     }
 
