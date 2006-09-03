@@ -85,18 +85,18 @@ namespace MediaPortal.GUI.Music
 
     #endregion
 
-    [SkinControlAttribute((int)ControlIDs.LBL_CAPTION)]         protected GUILabelControl LblCaption = null;
+//    [SkinControlAttribute((int)ControlIDs.LBL_CAPTION)]         protected GUILabelControl LblCaption = null;
     [SkinControlAttribute((int)ControlIDs.IMG_COVERART)]        protected GUIImage ImgCoverArt = null;
-    [SkinControlAttribute((int)ControlIDs.LBL_TRACK_NAME)]      protected GUIFadeLabel LblTrackName = null;
-    [SkinControlAttribute((int)ControlIDs.LBL_ALBUM_NAME)]      protected GUIFadeLabel LblAlbumName = null;
-    [SkinControlAttribute((int)ControlIDs.LBL_ALBUM_YEAR)]      protected GUILabelControl LblAlbumYear = null;
-    [SkinControlAttribute((int)ControlIDs.LBL_ARTIST_NAME)]     protected GUIFadeLabel LblArtistName = null;
+//    [SkinControlAttribute((int)ControlIDs.LBL_TRACK_NAME)]      protected GUIFadeLabel LblTrackName = null;
+//    [SkinControlAttribute((int)ControlIDs.LBL_ALBUM_NAME)]      protected GUIFadeLabel LblAlbumName = null;
+//    [SkinControlAttribute((int)ControlIDs.LBL_ALBUM_YEAR)]      protected GUILabelControl LblAlbumYear = null;
+//    [SkinControlAttribute((int)ControlIDs.LBL_ARTIST_NAME)]     protected GUIFadeLabel LblArtistName = null;
     [SkinControlAttribute((int)ControlIDs.PROG_TRACK)]          protected GUIProgressControl ProgTrack = null;
     [SkinControlAttribute((int)ControlIDs.IMG_TRACK_PROGRESS_BG)] protected GUIImage ImgTrackProgressBkGrnd = null;
     [SkinControlAttribute((int)ControlIDs.LBL_UP_NEXT)]         protected GUILabelControl LblUpNext = null;
-    [SkinControlAttribute((int)ControlIDs.LBL_NEXT_TRACK_NAME)] protected GUIFadeLabel LblNextTrackName = null;
-    [SkinControlAttribute((int)ControlIDs.LBL_NEXT_ALBUM_NAME)] protected GUIFadeLabel LblNextAlbumName = null;
-    [SkinControlAttribute((int)ControlIDs.LBL_NEXT_ARTIST_NAME)]  protected GUIFadeLabel LblNextArtistName = null;
+//    [SkinControlAttribute((int)ControlIDs.LBL_NEXT_TRACK_NAME)] protected GUIFadeLabel LblNextTrackName = null;
+//    [SkinControlAttribute((int)ControlIDs.LBL_NEXT_ALBUM_NAME)] protected GUIFadeLabel LblNextAlbumName = null;
+//    [SkinControlAttribute((int)ControlIDs.LBL_NEXT_ARTIST_NAME)]  protected GUIFadeLabel LblNextArtistName = null;
 
     //[SkinControlAttribute((int)ControlIDs.BTN_BACK)]    //protected GUIButtonControl BtnBack = null;
     //[SkinControlAttribute((int)ControlIDs.BTN_PREVIOUS)]    //protected GUIButtonControl BtnPrevious = null;
@@ -105,8 +105,8 @@ namespace MediaPortal.GUI.Music
     //[SkinControlAttribute((int)ControlIDs.BTN_STOP)]    //protected GUIButtonControl BtnStop = null;
     //[SkinControlAttribute((int)ControlIDs.BTN_NEXT)]    //protected GUIButtonControl BtnNext = null;
 
-    [SkinControlAttribute((int)ControlIDs.IMGLIST_RATING)]      protected GUIImageList ImgListRating = null;
-    [SkinControlAttribute((int)ControlIDs.IMGLIST_NEXTRATING)]  protected GUIImageList ImgListNextRating = null;
+//    [SkinControlAttribute((int)ControlIDs.IMGLIST_RATING)]      protected GUIImageList ImgListRating = null;
+//    [SkinControlAttribute((int)ControlIDs.IMGLIST_NEXTRATING)]  protected GUIImageList ImgListNextRating = null;
     [SkinControlAttribute((int)ControlIDs.LIST_ALBUM_INFO)]     protected GUIListControl facadeAlbumInfo = null;
     [SkinControlAttribute((int)ControlIDs.BEST_TRACKS)]         protected GUILabelControl LblBestTracks = null;
 
@@ -233,12 +233,33 @@ namespace MediaPortal.GUI.Music
                 if ((int)Action.ActionType.ACTION_SELECT_ITEM == message.Param1)
                 {
                   MusicDatabase mdb = new MusicDatabase();
-                  Song queueSong = new Song();
+                  //Song queueSong = new Song();
+                  //List<Song> queueSongs = new List<Song>();
                   MusicTag listTag = new MusicTag();
+                  List<GUIListItem> guiListItemList = new List<GUIListItem>();
+                  GUIListItem queueItem = new GUIListItem();
+
                   listTag = (MusicTag)facadeAlbumInfo.SelectedListItem.MusicTag;
-                  if (mdb.GetSong(listTag.Title, ref queueSong))
-                    if (AddSongToPlaylist(ref queueSong, true))
-                      Log.Debug("DEBUG: *** Song added: {0} - {1}", listTag.Artist, listTag.Title);
+                  guiListItemList.Add(facadeAlbumInfo.SelectedListItem);
+
+                  if (mdb.GetSongs(2, listTag.Title, ref guiListItemList))
+                  {
+                    MusicTag tempTag = new MusicTag();
+                    //queueItem = guiListItemList[0];
+                    //queueItem.MusicTag = GetTrackTag(mdb, queueItem.FileInfo.Name, false);
+                    foreach (GUIListItem alternativeSong in guiListItemList)
+                    {
+                      tempTag = GetTrackTag(mdb, alternativeSong.Path, false);
+                      if (tempTag.Artist.ToUpperInvariant() == listTag.Artist.ToUpperInvariant())
+                      {
+                        queueItem = alternativeSong;
+                        queueItem.MusicTag = tempTag;
+                      }
+                    }
+                    if (queueItem != null && queueItem.MusicTag != null)
+                      if (AddSongToPlaylist(ref queueItem, true))
+                        Log.Debug("GUIMusicPlayingNow: Song inserted: {0} - {1}", listTag.Artist, listTag.Title);
+                  }
                 }
               }
             }
@@ -444,11 +465,11 @@ namespace MediaPortal.GUI.Music
           if (g_Player.Playing)
             GUIPropertyManager.SetProperty("#duration", Convert.ToString(g_Player.Duration));
 
-          if (ImgListNextRating != null)
-          {
-            int rating = CurrentTrackTag.Rating;
-            ImgListRating.Percentage = rating;
-          }
+          //if (ImgListNextRating != null)
+          //{
+          //  int rating = CurrentTrackTag.Rating;
+          //  ImgListRating.Percentage = rating;
+          //}
 
           StartAlbumInfoThread();
         }
@@ -489,25 +510,6 @@ namespace MediaPortal.GUI.Music
       }
     }
 
-    private void ResetTrackInfo()
-    {
-      if (ImgCoverArt != null)
-        ImgCoverArt.SetFileName("");
-      if (LblTrackName != null)
-        LblTrackName.Label = "";
-      if (LblAlbumName != null)
-        LblAlbumName.Label = "";
-      if (LblArtistName != null)
-        LblArtistName.Label = "";
-      if (LblUpNext != null)
-        LblUpNext.Label = "";
-      if (LblNextTrackName != null)
-        LblNextTrackName.Label = "";
-      if (LblNextAlbumName != null)
-        LblNextAlbumName.Label = "";
-      if (LblNextArtistName != null)
-        LblNextArtistName.Label = "";
-    }
 
     private void UpdateTrackPosition()
     {
@@ -760,10 +762,45 @@ namespace MediaPortal.GUI.Music
       catch (Exception e)
       {
         // log the problem...
-        Log.Info("GUIMusicPlayingNow.GetCDInfoFromFreeDB: {0}", e.ToString());
+        Log.Error("GUIMusicPlayingNow: GetCDInfoFromFreeDB: {0}", e.ToString());
       }
     }
 
+    private bool AddSongToPlaylist(ref GUIListItem song, bool enqueueNext_)
+    {
+      PlayList playlist = PlaylistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
+      if (playlist == null)
+        return false;
+
+      //add to playlist
+      PlayListItem playlistItem = new PlayListItem();
+      playlistItem.Type = Playlists.PlayListItem.PlayListItemType.Audio;
+      StringBuilder sb = new StringBuilder();
+      MusicTag tmptag = new MusicTag();
+      tmptag = (MusicTag)song.MusicTag;
+
+      playlistItem.FileName = song.Path;
+      sb.Append(tmptag.Track);
+      sb.Append(". ");
+      sb.Append(tmptag.Artist);
+      sb.Append(" - ");
+      sb.Append(tmptag.Title);
+      playlistItem.Description = sb.ToString();
+      playlistItem.Duration = tmptag.Duration;
+
+      playlistItem.MusicTag = tmptag;
+
+      if (enqueueNext_)
+        PlaylistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Insert(playlistItem, PlaylistPlayer.CurrentSong);
+      else
+        PlaylistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Add(playlistItem);
+
+      _trackChanged = true;
+      NextTrackFileName = PlaylistPlayer.GetNext();
+      GetTrackTags();
+      UpdateTrackInfo();
+      return true;
+    }
 
     private bool AddSongToPlaylist(ref Song song, bool enqueueNext_)
     {

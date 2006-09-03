@@ -271,7 +271,7 @@
    </string>
    <string>
       <id>136</id>
-      <value>Spillelister</value>
+      <value>Gjeldende spilleliste</value>
    </string>
    <string>
       <id>137</id>
@@ -4677,7 +4677,6 @@
       <id>5923</id>
       <value>DVD premierer denne uken</value>
    </string>
-
    <string>
       <id>5924</id>
       <value>DVD premierer neste uke</value>
