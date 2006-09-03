@@ -96,6 +96,12 @@ namespace MediaPortal.GUI.Library
 			}
 		}
 
+		public override void ScaleToScreenResolution()
+		{
+			base.ScaleToScreenResolution();
+			GUIGraphicsContext.ScaleRectToScreenResolution(ref _buttonX, ref _buttonY, ref _buttonWidth, ref _buttonHeight);
+		}
+
 		/// <summary>
 		/// Allocates the control its DirectX resources.
 		/// </summary>
