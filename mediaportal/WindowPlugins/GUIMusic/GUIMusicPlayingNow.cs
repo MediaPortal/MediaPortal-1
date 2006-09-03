@@ -238,7 +238,7 @@ namespace MediaPortal.GUI.Music
                   listTag = (MusicTag)facadeAlbumInfo.SelectedListItem.MusicTag;
                   if (mdb.GetSong(listTag.Title, ref queueSong))
                     if (AddSongToPlaylist(ref queueSong, true))
-                      Log.Debug("DEBUG: *** Song added: {0} - {1}", facadeAlbumInfo.SelectedListItem.Label2, facadeAlbumInfo.SelectedListItem.Label3);
+                      Log.Debug("DEBUG: *** Song added: {0} - {1}", listTag.Artist, listTag.Title);
                 }
               }
             }
