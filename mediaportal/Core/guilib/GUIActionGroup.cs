@@ -37,6 +37,7 @@ namespace MediaPortal.GUI.Library
 		[XMLSkinElement("buttonheight")]		protected int _buttonHeight = 0;
 		[XMLSkinElement("defaultcontrol")]	protected int _defaultcontrol = -1;
 		[XMLSkinElement("onexit")]	        protected int _exitcontrol = -1;
+		[XMLSkinElement("allowoverlay")]		protected string _allowOverlayString = String.Empty;
     #endregion
 
 		public enum NextButtonStates
@@ -49,9 +50,12 @@ namespace MediaPortal.GUI.Library
 
 
 		#region Properties
-		protected GUIAnimation _imageFocused = null;
-		protected GUIAnimation _imageNonFocused = null;
-		protected NextButtonStates _buttonState = NextButtonStates.Activation;
+		protected GUIAnimation     _imageFocused     = null;
+		protected GUIAnimation     _imageNonFocused  = null;
+		protected NextButtonStates _buttonState      = NextButtonStates.Activation;
+		protected bool             _isOverlayAllowed = false;
+		protected bool             _isWinOverlayAllowed = false;
+		protected GUIWindow        _parentWin = null;   
 		#endregion
 
 
@@ -82,6 +86,14 @@ namespace MediaPortal.GUI.Library
 			_imageNonFocused.Filtering = false;
 			_imageNonFocused.DimColor = DimColor;
 			_imageNonFocused.ColourDiffuse = ColourDiffuse;
+
+			_isOverlayAllowed = false;
+			if ((_allowOverlayString != null) && (_allowOverlayString.Length > 0))
+			{
+				_allowOverlayString = _allowOverlayString.ToLower();
+				if (_allowOverlayString.Equals("yes") || _allowOverlayString.Equals("true"))
+					_isOverlayAllowed = true;
+			}
 		}
 
 		/// <summary>
@@ -109,11 +121,12 @@ namespace MediaPortal.GUI.Library
 			base.OnInit();
 			// ensure that we are always the last entry in the GUIWindow.Children 
 			// -> HitTest always starts from the last entry
-			GUIWindow win = GUIWindowManager.GetWindow(_windowId);
-			if (win != null)
+			_parentWin = GUIWindowManager.GetWindow(_windowId);
+			if (_parentWin != null)
 			{
-				win.Children.Remove(this);
-				win.Children.Add(this);
+				_parentWin.Children.Remove(this);
+				_parentWin.Children.Add(this);
+				_isWinOverlayAllowed = _parentWin.IsOverlayAllowed;
 			}
 			SetDefaultControl();
 			_buttonState = NextButtonStates.Activation;
@@ -227,12 +240,28 @@ namespace MediaPortal.GUI.Library
 			//base.Render(timePassed);
 			if (!Dimmed)
 			{
+				if (_parentWin != null)
+				{
+					if (_isWinOverlayAllowed != _isOverlayAllowed)
+					{
+						GUIGraphicsContext.Overlay = _parentWin.IsOverlayAllowed = _isOverlayAllowed;
+					}
+				}
 				_imageFocused.Render(timePassed);
 				GUIFontManager.Present();
 				base.Render(timePassed);
-				//GUIFontManager.Present();
 			}
-			else _imageNonFocused.Render(timePassed);
+			else
+			{
+				if (_parentWin != null)
+				{
+					if (_isWinOverlayAllowed != _parentWin.IsOverlayAllowed)
+					{
+						GUIGraphicsContext.Overlay = _parentWin.IsOverlayAllowed = _isWinOverlayAllowed;
+					}
+				}
+				_imageNonFocused.Render(timePassed);
+			}
 		}
 
 		#endregion

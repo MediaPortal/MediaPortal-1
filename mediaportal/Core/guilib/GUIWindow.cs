@@ -695,7 +695,8 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public virtual bool IsOverlayAllowed
     {
-      get { return _isOverlayAllowed; }
+      get { return _isOverlayAllowed;  }
+			set { _isOverlayAllowed = value; }
     }
 
     /// <summary>

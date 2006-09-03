@@ -61,7 +61,6 @@ namespace MediaPortal.GUI.Music
     int m_iFrame = 0;
     string m_strThumb = String.Empty;
     bool VisualisationEnabled = true;
-		bool _isMusicOverlayAllowed = true;
 
     enum Controls
     {
@@ -85,14 +84,7 @@ namespace MediaPortal.GUI.Music
 
     PlayListPlayer playlistPlayer;
 
-		public bool IsMusicOverlayAllowed
-		{
-			get { return _isMusicOverlayAllowed;  }
-			set { _isMusicOverlayAllowed = value; }
-		}
-
-
-    public GUIMusicOverlay()
+		public GUIMusicOverlay()
     {
       GetID = (int)GUIWindow.Window.WINDOW_MUSIC_OVERLAY;
       playlistPlayer = PlayListPlayer.SingletonPlayer;
@@ -151,7 +143,7 @@ namespace MediaPortal.GUI.Music
 
     public override bool DoesPostRender()
     {
-			if (!IsMusicOverlayAllowed) return false;
+			CheckForNewFile();
 
 			if (!g_Player.Playing && !Recorder.IsRadio())
       {
@@ -166,8 +158,28 @@ namespace MediaPortal.GUI.Music
       }
       if (GUIGraphicsContext.IsFullScreenVideo) return false;
       if (!GUIGraphicsContext.Overlay) return false;
-      return true;
+			return true;
     }
+
+		protected void CheckForNewFile()
+		{
+			if (GUIPropertyManager.GetProperty("#Play.Current.Thumb") != m_strThumb)
+			{
+				m_strFile = g_Player.CurrentFile;
+				SetCurrentFile(m_strFile);
+			}
+			if (g_Player.Playing && g_Player.CurrentFile != m_strFile)
+			{
+				m_iFrames = 0;
+				m_strFile = g_Player.CurrentFile;
+				SetCurrentFile(m_strFile);
+			}
+			if (Recorder.IsRadio() && Recorder.RadioStationName() != m_strFile)
+			{
+				m_strFile = Recorder.RadioStationName();
+				SetCurrentFile(m_strFile);
+			}
+		}
 
     public override void PostRender(float timePassed, int iLayer)
     {
@@ -182,25 +194,7 @@ namespace MediaPortal.GUI.Music
 
         return;
       }
-
-      if (GUIPropertyManager.GetProperty("#Play.Current.Thumb") != m_strThumb)
-      {
-        m_strFile = g_Player.CurrentFile;
-        SetCurrentFile(m_strFile);
-      }
-      if (g_Player.Playing && g_Player.CurrentFile != m_strFile)
-      {
-        m_iFrames = 0;
-        m_strFile = g_Player.CurrentFile;
-        SetCurrentFile(m_strFile);
-      }
-      if (Recorder.IsRadio() && Recorder.RadioStationName() != m_strFile)
-      {
-        m_strFile = Recorder.RadioStationName();
-        SetCurrentFile(m_strFile);
-      }
-
-
+			      
       // Aways get the positions before we do anything, because the window could be resized.
       m_iPosXRect = GetControlXPosition((int)Controls.CONTROL_LOGO_RECT);
       m_iPosYRect = GetControlYPosition((int)Controls.CONTROL_LOGO_RECT);
