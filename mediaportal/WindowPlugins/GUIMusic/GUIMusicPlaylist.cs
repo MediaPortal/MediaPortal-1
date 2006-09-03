@@ -40,8 +40,6 @@ using MediaPortal.Dialogs;
 
 namespace MediaPortal.GUI.Music
 {
-
-
   /// <summary>
   /// Summary description for Class1.
   /// </summary>

@@ -575,6 +575,24 @@ namespace MediaPortal.Music.Database
     private bool fetchAlbumImage(string imageUrl, string fileName)
     {
       bool success = false;
+      int k = 0; int j = 0;
+      char[] filechars = fileName.ToCharArray();
+      char[] invalids = System.IO.Path.GetInvalidFileNameChars();
+
+      foreach (char c in filechars)
+      {
+        k++;
+        foreach (char i in invalids)
+        {
+          j++;
+          if (c == i)
+          {
+            Log.Warn("Audioscrobbler: *** File name {1} contains invalid chars - {0}", Convert.ToString(c), fileName);
+            return false;
+          }
+        }
+      }
+
       if (imageUrl != "")
       {
         //Check if we already have the file.

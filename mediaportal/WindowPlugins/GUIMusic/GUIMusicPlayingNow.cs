@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Globalization;
 using System.Threading;
+using System.Text;
 
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
@@ -45,27 +46,27 @@ namespace MediaPortal.GUI.Music
   {
     private enum ControlIDs
     {
-      LBL_CAPTION = 1,
-      IMG_COVERART = 2,
-      LBL_TRACK_NAME = 3,
-      LBL_ALBUM_NAME = 4,
-      LBL_ALBUM_YEAR = 5,
-      LBL_ARTIST_NAME = 6,
-      IMG_TRACK_PROGRESS_BG = 7,
-      PROG_TRACK = 8,
-      REMAIN_TRACK = 10,      
+      LBL_CAPTION = 111,
+      IMG_COVERART = 112,
+      LBL_TRACK_NAME = 113,
+      LBL_ALBUM_NAME = 114,
+      LBL_ALBUM_YEAR = 115,
+      LBL_ARTIST_NAME = 116,
+      IMG_TRACK_PROGRESS_BG = 117,
+      PROG_TRACK = 118,
+      REMAIN_TRACK = 110,      
 
-      IMGLIST_RATING = 11,
-      IMGLIST_NEXTRATING = 12,
+      IMGLIST_RATING = 141,
+      IMGLIST_NEXTRATING = 142,
       
-      LBL_UP_NEXT = 20,
-      LBL_NEXT_TRACK_NAME = 21,
-      LBL_NEXT_ALBUM_NAME = 22,
-      LBL_NEXT_ARTIST_NAME = 23,
+      LBL_UP_NEXT = 120,
+      LBL_NEXT_TRACK_NAME = 121,
+      LBL_NEXT_ALBUM_NAME = 122,
+      LBL_NEXT_ARTIST_NAME = 123,
 
-      BEST_TRACKS = 29,
+      BEST_TRACKS = 129,
 
-      LIST_ALBUM_INFO = 66,
+      LIST_ALBUM_INFO = 166,
       // Transport Buttons
       //BTN_BACK = 30,
       //BTN_PREVIOUS = 31,
@@ -121,7 +122,7 @@ namespace MediaPortal.GUI.Music
     private DateTime LastUpdateTime = DateTime.Now;
     private TimeSpan UpdateInterval = new TimeSpan(0, 0, 1);
     private GUIMusicBaseWindow _MusicWindow = null;
-    private AudioscrobblerUtils InfoScrobbler = null;
+    private AudioscrobblerUtils InfoScrobbler = null;    
     private Thread InfoThread;
     private bool UseID3 = false;
     private bool _trackChanged = true;
@@ -188,7 +189,6 @@ namespace MediaPortal.GUI.Music
     public override void OnAction(Action action)
     {
       base.OnAction(action);
-
       switch (action.wID)
       {
         case Action.ActionType.ACTION_STOP:
@@ -199,7 +199,6 @@ namespace MediaPortal.GUI.Music
               act.wID = Action.ActionType.ACTION_PREVIOUS_MENU;
               GUIGraphicsContext.OnAction(act);
             }
-
             break;
           }
 
@@ -216,7 +215,6 @@ namespace MediaPortal.GUI.Music
             {
               LoadAndStartPlayList();
             }
-
             break;
           }
       }
@@ -224,20 +222,46 @@ namespace MediaPortal.GUI.Music
 
     public override bool OnMessage(GUIMessage message)
     {
-      if (message.Message == GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS)
+      switch (message.Message)
       {
-        //_currentPlaying = message.Label;
-        facadeAlbumInfo.OnMessage(message);
+        case GUIMessage.MessageType.GUI_MSG_CLICKED:
+          {
+            if (facadeAlbumInfo != null)
+            {
+              if (message.SenderControlId == (int)ControlIDs.LIST_ALBUM_INFO) // listbox
+              {
+                if ((int)Action.ActionType.ACTION_SELECT_ITEM == message.Param1)
+                {
+                  MusicDatabase mdb = new MusicDatabase();
+                  Song queueSong = new Song();
+                  MusicTag listTag = new MusicTag();
+                  listTag = (MusicTag)facadeAlbumInfo.SelectedListItem.MusicTag;
+                  if (mdb.GetSong(listTag.Title, ref queueSong))
+                    if (AddSongToPlaylist(ref queueSong, true))
+                      Log.Debug("DEBUG: *** Song added: {0} - {1}", facadeAlbumInfo.SelectedListItem.Label2, facadeAlbumInfo.SelectedListItem.Label3);
+                }
+              }
+            }
+          }
+          break;
+        case GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS:
+          {
+            //_currentPlaying = message.Label;
+            if (GUIWindowManager.ActiveWindow == GetID)
+              facadeAlbumInfo.OnMessage(message);
+          }
+          break;
       }
-      return base.OnMessage(message);
+      return base.OnMessage(message);      
     }
 
     protected override void OnPageLoad()
     {
-      base.OnPageLoad();
-
+      base.OnPageLoad();  
       facadeAlbumInfo.Clear();
-      facadeAlbumInfo.Focusable = false;
+//      facadeAlbumInfo.Visible = false;
+//      facadeAlbumInfo.Visible = true;
+      //facadeAlbumInfo.Focusable = false;
 
       _trackChanged = true;
 
@@ -353,6 +377,20 @@ namespace MediaPortal.GUI.Music
       {
         item = new GUIListItem(AlbumTracks[i].ToShortString());
         item.Label = AlbumTracks[i].Title + " (" + GUILocalizeStrings.Get(931) + ": " + Convert.ToString(AlbumTracks[i].TimesPlayed) + ")";
+        //item.Label2 = AlbumTracks[i].Artist;
+        //item.Label3 = AlbumTracks[i].Title;
+
+        MusicTag tag = new MusicTag();
+        tag.Title = AlbumTracks[i].Title;
+        tag.Album = AlbumTracks[i].Album;
+        tag.Artist = AlbumTracks[i].Artist;
+        tag.Duration = AlbumTracks[i].Duration;
+        tag.Genre = AlbumTracks[i].Genre;
+        tag.Track = AlbumTracks[i].Track;
+        tag.Year = AlbumTracks[i].Year;
+        tag.Rating = AlbumTracks[i].Rating;
+
+        item.MusicTag = tag;
 
         facadeAlbumInfo.Add(item);
 
@@ -370,6 +408,8 @@ namespace MediaPortal.GUI.Music
         }
         if (LblBestTracks != null)
           LblBestTracks.Visible = true;
+
+        GUIControl.FocusControl(GetID, ((int)ControlIDs.LIST_ALBUM_INFO));
       }
     }
 
@@ -722,6 +762,51 @@ namespace MediaPortal.GUI.Music
         // log the problem...
         Log.Info("GUIMusicPlayingNow.GetCDInfoFromFreeDB: {0}", e.ToString());
       }
+    }
+
+
+    private bool AddSongToPlaylist(ref Song song, bool enqueueNext_)
+    {
+      PlayList playlist = PlaylistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
+      if (playlist == null)
+        return false;      
+      
+      //add to playlist
+      PlayListItem playlistItem = new PlayListItem();
+      playlistItem.Type = Playlists.PlayListItem.PlayListItemType.Audio;
+      StringBuilder sb = new StringBuilder();
+
+      playlistItem.FileName = song.FileName;
+      sb.Append(song.Track);
+      sb.Append(". ");
+      sb.Append(song.Artist);
+      sb.Append(" - ");
+      sb.Append(song.Title);
+      playlistItem.Description = sb.ToString();
+      playlistItem.Duration = song.Duration;
+
+      MusicTag tag = new MusicTag();
+      tag.Title = song.Title;
+      tag.Album = song.Album;
+      tag.Artist = song.Artist;
+      tag.Duration = song.Duration;
+      tag.Genre = song.Genre;
+      tag.Track = song.Track;
+      tag.Year = song.Year;
+      tag.Rating = song.Rating;
+
+      playlistItem.MusicTag = tag;
+
+      if (enqueueNext_)
+        PlaylistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Insert(playlistItem, PlaylistPlayer.CurrentSong);
+      else
+        PlaylistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Add(playlistItem);
+
+      _trackChanged = true;
+      NextTrackFileName = PlaylistPlayer.GetNext();
+      GetTrackTags();
+      UpdateTrackInfo();
+      return true;
     }
 
     int GetCDATrackNumber(string strFile)

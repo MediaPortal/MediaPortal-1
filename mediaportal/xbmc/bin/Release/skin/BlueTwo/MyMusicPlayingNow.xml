@@ -32,7 +32,7 @@
       <control>
          <type>image</type>
          <description>album art image</description>
-         <id>2</id>
+         <id>112</id>
          <posX>382</posX>
          <posY>108</posY>
          <width>300</width>
@@ -43,9 +43,9 @@
       <control>
          <type>fadelabel</type>
          <description>track label</description>
-         <id>3</id>
+         <id>113</id>
          <posX>42</posX>
-         <posY>482</posY>
+         <posY>480</posY>
          <width>288</width>
          <height>20</height>
          <label>#Play.Current.Title</label>
@@ -56,7 +56,7 @@
       <control>
          <type>fadelabel</type>
          <description>album label</description>
-         <id>4</id>
+         <id>114</id>
          <posX>382</posX>
          <posY>84</posY>
          <label>#Play.Current.Album</label>
@@ -66,7 +66,7 @@
       <control>
          <type>label</type>
          <description>album year</description>
-         <id>5</id>
+         <id>115</id>
          <posX>672</posX>
          <posY>84</posY>
          <label>#Play.Current.Year</label>
@@ -77,7 +77,7 @@
       <control>
          <type>fadelabel</type>
          <description>artist label</description>
-         <id>6</id>
+         <id>116</id>
          <posX>378</posX>
          <posY>58</posY>
          <width>300</width>
@@ -88,7 +88,7 @@
       </control>
       <control>
          <type>image</type>
-         <id>7</id>
+         <id>117</id>
          <posX>36</posX>
          <posY>432</posY>
          <width>292</width>
@@ -97,7 +97,7 @@
       <control>
          <type>progress</type>
          <description>track progress</description>
-         <id>8</id>
+         <id>118</id>
          <posX>26</posX>
          <posY>432</posY>
          <width>316</width>
@@ -110,7 +110,7 @@
       <control>
          <type>label</type>
          <description>track progress label</description>
-         <id>9</id>
+         <id>119</id>
          <posX>44</posX>
          <posY>502</posY>
          <label>#currentplaytime</label>
@@ -120,7 +120,7 @@
       <control>
          <type>label</type>
          <description>track duration label</description>
-         <id>10</id>
+         <id>110</id>
          <posX>280</posX>
          <posY>502</posY>
          <label>#duration</label>
@@ -130,7 +130,7 @@
       <control>
          <type>label</type>
          <description>up next label</description>
-         <id>20</id>
+         <id>120</id>
          <posX>674</posX>
          <posY>464</posY>
          <label>4541</label>
@@ -141,7 +141,7 @@
       <control>
          <type>fadelabel</type>
          <description>next track label</description>
-         <id>21</id>
+         <id>121</id>
          <posX>673</posX>
          <posY>520</posY>
          <width>300</width>
@@ -153,7 +153,7 @@
       <control>
          <type>fadelabel</type>
          <description>next artist label</description>
-         <id>23</id>
+         <id>123</id>
          <posX>672</posX>
          <posY>496</posY>
          <width>300</width>
@@ -165,9 +165,11 @@
       <control>
          <type>listcontrol</type>
          <description>list of best tracks</description>
-         <id>66</id>
-         <posX>40</posX>
-         <posY>280</posY>
+         <id>166</id>
+         <onleft>666</onleft>
+         <onright>666</onright>
+         <posX>38</posX>
+         <posY>288</posY>
          <width>300</width>
          <height>135</height>
          <textcolor>80ffffff</textcolor>
@@ -175,8 +177,8 @@
       <control>
          <type>label</type>
          <description>best tracks label</description>
-         <id>29</id>
-         <posX>44</posX>
+         <id>129</id>
+         <posX>42</posX>
          <posY>256</posY>
          <label>33030</label>
       </control>

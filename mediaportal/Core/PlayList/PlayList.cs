@@ -61,6 +61,44 @@ namespace MediaPortal.Playlists
       _listPlayListItems.Add(item);
     }
 
+    public bool Insert(PlayListItem item, int currentSong)
+    {
+      bool success = false;
+      if (item == null)
+        return success;  
+
+      Log.Info("Playlist: Insert {0} at {1}", item.FileName, Convert.ToString(currentSong));
+      if (currentSong < _listPlayListItems.Count)
+      {
+        _listPlayListItems.Insert(currentSong + 1, item);
+        success = true;
+      }
+      else
+      {
+        _listPlayListItems.Add(item);
+        success = true;
+      }
+      return success;
+    }
+
+    public bool Insert(PlayListItem item, PlayListItem afterThisItem)
+    {
+      bool success = false;
+      if (item == null)
+        return success;      
+
+      for (int i = 0; i < _listPlayListItems.Count; ++i)
+      {
+        if (afterThisItem.FileName == _listPlayListItems[i].FileName)
+        {
+          Log.Info("Playlist: Insert {0} after {1}", item.FileName, afterThisItem.FileName);
+          _listPlayListItems.Insert(i+1, item);
+          success = true;
+        }
+      }
+      return success;
+    }
+
     public string Name
     {
       get { return _playListName; }
