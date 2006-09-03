@@ -61,6 +61,7 @@ namespace MediaPortal.GUI.Music
     int m_iFrame = 0;
     string m_strThumb = String.Empty;
     bool VisualisationEnabled = true;
+		bool _isMusicOverlayAllowed = true;
 
     enum Controls
     {
@@ -83,6 +84,13 @@ namespace MediaPortal.GUI.Music
     }
 
     PlayListPlayer playlistPlayer;
+
+		public bool IsMusicOverlayAllowed
+		{
+			get { return _isMusicOverlayAllowed;  }
+			set { _isMusicOverlayAllowed = value; }
+		}
+
 
     public GUIMusicOverlay()
     {
@@ -143,7 +151,9 @@ namespace MediaPortal.GUI.Music
 
     public override bool DoesPostRender()
     {
-      if (!g_Player.Playing && !Recorder.IsRadio())
+			if (!IsMusicOverlayAllowed) return false;
+
+			if (!g_Player.Playing && !Recorder.IsRadio())
       {
         m_strFile = String.Empty;
         return false;

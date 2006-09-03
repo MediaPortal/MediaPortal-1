@@ -28,6 +28,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Globalization;
+using System.Xml;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Player;
@@ -70,6 +71,7 @@ namespace MediaPortal.GUI.Music
     protected bool m_bSortAscendingRoot;
     private bool m_bUseID3 = false;
     private bool _autoShuffleOnLoad = false;
+		protected bool _isMusicOverlayAllowed = true;
 
     protected MusicViewHandler handler;
     protected MusicDatabase m_database;
@@ -120,6 +122,40 @@ namespace MediaPortal.GUI.Music
         _autoShuffleOnLoad = xmlreader.GetValueAsBool("musicfiles", "autoshuffle", false);
       }
     }
+
+		public override bool Load(string _skinFileName)
+    {
+ 	    bool result = base.Load(_skinFileName);
+			if (result)
+			{
+				try
+				{
+					// Load the XML file
+					XmlDocument doc = new XmlDocument();
+					doc.Load(_windowXmlFileName);
+					if (doc.DocumentElement == null) return result;
+					
+					XmlNode nodeOverlay = doc.DocumentElement.SelectSingleNode("/window/allowmusicoverlay");
+					if (nodeOverlay != null)
+					{
+						if (nodeOverlay.InnerText != null)
+						{
+							string allowed = nodeOverlay.InnerText.ToLower();
+							GUIWindow win = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_MUSIC_OVERLAY);
+							if (allowed == "yes" || allowed == "true")
+								_isMusicOverlayAllowed = true;
+							if (allowed == "no" || allowed == "false")
+								_isMusicOverlayAllowed = false;
+						}
+					}
+				}
+				catch (Exception)
+				{
+					// TODO Add some error when conversion fails message here.
+				}
+			}
+			return result;
+    } 
 
     protected bool UseID3
     {
@@ -553,6 +589,9 @@ namespace MediaPortal.GUI.Music
 
       if (btnSortBy != null)
         btnSortBy.SortChanged += new SortEventHandler(SortChanged);
+
+			GUIMusicOverlay win = (GUIMusicOverlay)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_MUSIC_OVERLAY);
+			if (win != null) win.IsMusicOverlayAllowed = _isMusicOverlayAllowed;
     }
 
     protected override void OnPageDestroy(int newWindowId)
