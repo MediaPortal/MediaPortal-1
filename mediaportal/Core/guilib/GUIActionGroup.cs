@@ -228,7 +228,9 @@ namespace MediaPortal.GUI.Library
 			if (!Dimmed)
 			{
 				_imageFocused.Render(timePassed);
+				GUIFontManager.Present();
 				base.Render(timePassed);
+				//GUIFontManager.Present();
 			}
 			else _imageNonFocused.Render(timePassed);
 		}
