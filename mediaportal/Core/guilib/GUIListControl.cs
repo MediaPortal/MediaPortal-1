@@ -509,6 +509,8 @@ namespace MediaPortal.GUI.Library
       if (pItem.Selected)
         dwColor = _selectedColor;
 
+			if (!Focus) dwColor &= DimColor;
+
       dwPosX += _textOffsetX;
       bool bSelected = false;
       if (buttonNr == _cursorX && IsFocused && _listType == ListType.CONTROL_LIST)
@@ -528,6 +530,8 @@ namespace MediaPortal.GUI.Library
           dwColor = _remoteColor;
           if (pItem.IsDownloading) dwColor = _downloadColor;
         }
+				if (!Focus) dwColor &= DimColor;
+
         int xpos = dwPosX;
         int ypos = dwPosY;
 
@@ -548,7 +552,7 @@ namespace MediaPortal.GUI.Library
               label2.TextColor = dwColor;
             else
               label2.TextColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
-
+						
             label2.Label = pItem.Label2;
             label2.TextAlignment = GUIControl.Alignment.ALIGN_RIGHT;
             label2.FontName = _fontName2Name;
@@ -572,6 +576,7 @@ namespace MediaPortal.GUI.Library
         }
         if (!pItem.Selected && !gotFocus)
           dwColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
+				if (!Focus) dwColor &= DimColor;
 
         RenderText(timePassed, buttonNr, (float)dwPosX, (float)dwPosY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY, (float)dMaxWidth, dwColor, _textLine, bSelected);
       }
@@ -588,6 +593,7 @@ namespace MediaPortal.GUI.Library
           dwColor = _remoteColor;
           if (pItem.IsDownloading) dwColor = _downloadColor;
         }
+				if (!Focus) dwColor &= DimColor;
 
         if (0 == _textOffsetX2)
           dwPosX = _positionX + _width - GUIGraphicsContext.ScaleHorizontal(16);
@@ -627,6 +633,7 @@ namespace MediaPortal.GUI.Library
           dwColor = _remoteColor;
           if (pItem.IsDownloading) dwColor = _downloadColor;
         }
+				if (!Focus) dwColor &= DimColor;
 
         if (0 == _textOffsetX3)
           dwPosX = _positionX + _textOffsetX;
