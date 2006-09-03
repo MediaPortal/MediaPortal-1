@@ -214,15 +214,17 @@ namespace Wikipedia
         this.unparsedArticle = string.Empty;
       }
       // Here we check if there is only a redirect as article to handle it as a special article type
-      else if (tempParsedArticle.IndexOf("#REDIRECT") >= 0)
+      else if (tempParsedArticle.IndexOf("#REDIRECT") == 0)
       {
         Log.Info("Wikipedia: #REDIRECT found.");
         int iStart = tempParsedArticle.IndexOf("[[") + 2;
         int iEnd = tempParsedArticle.IndexOf("]]", iStart);
         // Extract the Text
         string keyword = tempParsedArticle.Substring(iStart, iEnd - iStart);
-        linkArray.Add(keyword);
-        this.unparsedArticle = "REDIRECT";
+        this.unparsedArticle = string.Empty;
+        this.title = keyword;
+        GetWikipediaXML();
+        ParseWikipediaArticle();
       }
       // Finally a well-formed article ;-)
       else
