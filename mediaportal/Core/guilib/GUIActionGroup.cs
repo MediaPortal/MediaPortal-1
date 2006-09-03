@@ -78,7 +78,7 @@ namespace MediaPortal.GUI.Library
 			_imageFocused.ColourDiffuse = ColourDiffuse;
 
 			_imageNonFocused = LoadAnimationControl(_parentControlId, _controlId, _buttonX, _buttonY, _buttonWidth, _buttonHeight, _nonFocusedTextureName);
-			_imageNonFocused.ParentControl = null;
+			_imageNonFocused.ParentControl = null;  // null, because to avoid dimming with the parentControl
 			_imageNonFocused.Filtering = false;
 			_imageNonFocused.DimColor = DimColor;
 			_imageNonFocused.ColourDiffuse = ColourDiffuse;
@@ -143,7 +143,7 @@ namespace MediaPortal.GUI.Library
 			switch (_buttonState)
 			{ 
 				case NextButtonStates.Activation:
-					if (Dimmed == false)
+					if (Dimmed == false)   // let us check if something changed by keyboard input
 					{
 						_buttonState = NextButtonStates.Deaktivation;
 						focused = !Dimmed;
@@ -160,7 +160,7 @@ namespace MediaPortal.GUI.Library
 					return false;
 
 				case NextButtonStates.Outside:
-					if (Dimmed == true)
+					if (Dimmed == true)  // let us check if something changed by keyboard input
 					{
 						_buttonState = NextButtonStates.Activation;
 						focused = !Dimmed;
@@ -174,7 +174,7 @@ namespace MediaPortal.GUI.Library
 					break;
 
 				case NextButtonStates.Deaktivation:
-					if (Dimmed == true)
+					if (Dimmed == true) // let us check if something changed by keyboard input
 					{
 						_buttonState = NextButtonStates.Activation;
 						focused = !Dimmed;
@@ -195,7 +195,7 @@ namespace MediaPortal.GUI.Library
 					break;
 
 				case NextButtonStates.Outside2:
-					if (Dimmed == false)
+					if (Dimmed == false)  // let us check if something changed by keyboard input
 					{
 						_buttonState = NextButtonStates.Deaktivation;
 						focused = !Dimmed;
@@ -224,13 +224,13 @@ namespace MediaPortal.GUI.Library
 		
 		public override void Render(float timePassed)
 		{
-			base.Render(timePassed);
-			if (!Dimmed) _imageFocused.Render(timePassed);
-			else
+			//base.Render(timePassed);
+			if (!Dimmed)
 			{
-				_imageNonFocused.Render(timePassed);
-
+				_imageFocused.Render(timePassed);
+				base.Render(timePassed);
 			}
+			else _imageNonFocused.Render(timePassed);
 		}
 
 		#endregion
