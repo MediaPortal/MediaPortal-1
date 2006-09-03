@@ -376,8 +376,8 @@ namespace MediaPortal.GUI.Music
       for (int i = 0; i < AlbumTracks.Count; i++)
       {
         item = new GUIListItem(AlbumTracks[i].ToShortString());
-        item.Label = AlbumTracks[i].Title + " (" + GUILocalizeStrings.Get(931) + ": " + Convert.ToString(AlbumTracks[i].TimesPlayed) + ")";
-        //item.Label2 = AlbumTracks[i].Artist;
+        item.Label = AlbumTracks[i].Title;
+        item.Label2 = " (" + GUILocalizeStrings.Get(931) + ": " + Convert.ToString(AlbumTracks[i].TimesPlayed) + ")";
         //item.Label3 = AlbumTracks[i].Title;
 
         MusicTag tag = new MusicTag();
