@@ -64,7 +64,7 @@
          <disabledcolor>ff808080</disabledcolor>
       </control>
       <control>
-         <type>label</type>
+         <type>fadelabel</type>
          <description>album year</description>
          <id>115</id>
          <posX>672</posX>
@@ -75,14 +75,14 @@
          <disabledcolor>ff808080</disabledcolor>
       </control>
       <control>
-         <type>fadelabel</type>
+         <type>label</type>
          <description>artist label</description>
          <id>116</id>
          <posX>378</posX>
          <posY>58</posY>
          <width>300</width>
          <label>#Play.Current.Artist</label>
-         <font>font18</font>
+         <font>font32</font>
          <align>center</align>
          <textcolor>ffffffff</textcolor>
       </control>
@@ -164,24 +164,46 @@
       </control>
       <control>
          <type>listcontrol</type>
-         <description>list of best tracks</description>
-         <id>166</id>
+         <description>list of best tag tracks</description>
+         <id>155</id>
          <onleft>666</onleft>
+         <onright>166</onright>
+         <posX>38</posX>
+         <posY>136</posY>
+         <width>300</width>
+         <height>135</height>
+         <textcolor>White</textcolor>
+      </control> 
+      <control>
+         <type>listcontrol</type>
+         <description>list of best album tracks</description>
+         <id>166</id>
+         <onleft>155</onleft>
          <onright>666</onright>
+         <onup>155</onup>
          <posX>38</posX>
          <posY>288</posY>
          <width>300</width>
          <height>135</height>
          <textcolor>White</textcolor>
+      </control> 
+      <control>
+         <type>label</type>
+         <description>best tag tracks label</description>
+         <id>128</id>
+         <posX>42</posX>
+         <posY>108</posY>
+         <label>Top tracks for tag</label>
+         <textcolor>LightGrey</textcolor>
       </control>      
       <control>
          <type>label</type>
-         <description>best tracks label</description>
+         <description>best album tracks label</description>
          <id>129</id>
          <posX>42</posX>
          <posY>260</posY>
          <label>33030</label>
-         <textcolor>80ffffff</textcolor>
+         <textcolor>LightGrey</textcolor>
       </control>
    </controls>
 </window>

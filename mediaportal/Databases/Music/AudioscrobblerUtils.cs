@@ -347,10 +347,11 @@ namespace MediaPortal.Music.Database
 
       try
       {
+        cleanString = lastFMString;
         // remove CD1, CD2, CDn from Tracks
-        dotIndex = lastFMString.IndexOf("CD");
+        dotIndex = cleanString.IndexOf("CD");
         if (dotIndex > 0)
-          cleanString = lastFMString.Remove(dotIndex);
+          cleanString = cleanString.Remove(dotIndex);
         // remove [DJ Spacko MIX 2000]
         dotIndex = cleanString.IndexOf("[");
         if (dotIndex > 0)
@@ -425,6 +426,7 @@ namespace MediaPortal.Music.Database
     {
       string urlArtist = getValidURLLastFMString(artistToSearch_);
       string urlAlbum = getValidURLLastFMString(albumToSearch_);
+
       List<Song> albumTracks = new List<Song>();
 
       albumTracks = ParseXMLDocForAlbumInfo(urlArtist, urlAlbum);
@@ -433,6 +435,43 @@ namespace MediaPortal.Music.Database
         albumTracks.Sort(CompareSongsByTimesPlayed);
 
       return albumTracks;
+    }
+
+    public List<Song> getTagInfo(string artistToSearch_, string trackToSearch_, bool randomizeUsedTag_, bool sortBestTracks_)
+    {
+      int randomPosition = 0;
+      Random rand = new Random();
+      string urlArtist = getValidURLLastFMString(artistToSearch_);
+      string urlTrack = getValidURLLastFMString(trackToSearch_);
+      List<Song> tagTracks = new List<Song>();
+
+      // fetch the most popular Tags for the current track
+      tagTracks = getTagsForTrack(urlArtist, urlTrack);
+
+      // no tags for current track - try artist tags instead
+      if (tagTracks.Count < 1)
+        tagTracks = getTagsForArtist(urlArtist);
+
+      if (tagTracks.Count > 0)
+      {
+        if (randomizeUsedTag_)
+        {
+          // decide which tag to use
+          int minRandValue = _limitRandomListCount;
+          int calcRandValue = ((tagTracks.Count / 2) - 1) * _randomNessPercent / 100;
+
+          if (calcRandValue > minRandValue)
+            randomPosition = rand.Next(0, calcRandValue);
+          else
+            randomPosition = rand.Next(0, minRandValue);
+        }
+        // use the best matches for the given track only
+        if (sortBestTracks_)
+          tagTracks = getSimilarToTag(lastFMFeed.taggedtracks, tagTracks[randomPosition].Genre, false);
+        else
+          tagTracks = getSimilarToTag(lastFMFeed.taggedtracks, tagTracks[randomPosition].Genre, true);
+      }
+      return tagTracks;
     }
 
     public List<Song> getTagsForArtist(string artistToSearch_)
@@ -961,7 +1000,7 @@ namespace MediaPortal.Music.Database
     /// <param name="artist_">artist to search</param>
     /// <param name="track_">track to search</param>
     /// <param name="searchType_">topartisttags or toptracktags</param>
-    /// <returns>List of Song</returns>
+    /// <returns>List of Song with Genre, TimesPlayed and URL</returns>
     private List<Song> ParseXMLDocForUsedTags(string artist_, string track_, lastFMFeed searchType_)
     {
       songList = new List<Song>();
