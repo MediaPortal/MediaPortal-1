@@ -67,6 +67,7 @@ namespace MediaPortal.Music.Database
   {
     private bool _useDebugLog = false;
     private string _defaultUser = "";
+    private Object LookupLock;
 
     // Similar mode intelligence params
     private int _minimumArtistMatchPercent = 50;
@@ -192,38 +193,42 @@ namespace MediaPortal.Music.Database
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
-        MusicDatabase mdb = new MusicDatabase();
-        //_currentOfflineMode = offlineMode.random;
-        _currentNeighbourMode = lastFMFeed.weeklyartistchart;
         _defaultUser = xmlreader.GetValueAsString("audioscrobbler", "user", "");
-        
-        _useDebugLog = (mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(_defaultUser)), "iDebugLog", -1) == 1) ? true : false;
-        //int tmpRMode = mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(_defaultUser)), "iOfflineMode", -1);
-        int tmpRand = mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(_defaultUser)), "iRandomness", -1);
-        int tmpNMode = mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(_defaultUser)), "iNeighbourMode", -1);
-
-        switch (tmpNMode)
-        {
-          case 3:
-            _currentNeighbourMode = lastFMFeed.topartists; break;
-          case 1:
-            _currentNeighbourMode = lastFMFeed.weeklyartistchart; break;
-          case 0:
-            _currentNeighbourMode = lastFMFeed.recenttracks; break;
-          default:
-            _currentNeighbourMode = lastFMFeed.weeklyartistchart; break;
-        }
-
-        //switch (tmpRMode)
-        //{
-        //  case 0: _currentOfflineMode = offlineMode.random; break;
-        //  case 1: _currentOfflineMode = offlineMode.timesplayed; break;
-        //  case 2: _currentOfflineMode = offlineMode.favorites; break;
-        //  default: _currentOfflineMode = offlineMode.random; break;
-        //}
-
-        _randomNessPercent = (tmpRand >= 25) ? tmpRand : 25;
       }
+      MusicDatabase mdb = new MusicDatabase();
+      _currentNeighbourMode = lastFMFeed.weeklyartistchart;
+
+      _useDebugLog = (mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(_defaultUser)), "iDebugLog", -1) == 1) ? true : false;
+      //int tmpRMode = mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(_defaultUser)), "iOfflineMode", -1);
+      int tmpRand = mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(_defaultUser)), "iRandomness", -1);
+      int tmpNMode = mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(_defaultUser)), "iNeighbourMode", -1);
+
+      switch (tmpNMode)
+      {
+        case 3:
+          _currentNeighbourMode = lastFMFeed.topartists;
+          break;
+        case 1:
+          _currentNeighbourMode = lastFMFeed.weeklyartistchart;
+          break;
+        case 0:
+          _currentNeighbourMode = lastFMFeed.recenttracks;
+          break;
+        default:
+          _currentNeighbourMode = lastFMFeed.weeklyartistchart;
+          break;
+      }
+
+      //switch (tmpRMode)
+      //{
+      //  case 0: _currentOfflineMode = offlineMode.random; break;
+      //  case 1: _currentOfflineMode = offlineMode.timesplayed; break;
+      //  case 2: _currentOfflineMode = offlineMode.favorites; break;
+      //  default: _currentOfflineMode = offlineMode.random; break;
+      //}
+
+      _randomNessPercent = (tmpRand >= 25) ? tmpRand : 25;
+      LookupLock = new object();
     }
 
     #endregion
@@ -429,7 +434,8 @@ namespace MediaPortal.Music.Database
 
       List<Song> albumTracks = new List<Song>();
 
-      albumTracks = ParseXMLDocForAlbumInfo(urlArtist, urlAlbum);
+      lock (LookupLock)
+        albumTracks = ParseXMLDocForAlbumInfo(urlArtist, urlAlbum);
 
       if (sortBestTracks)
         albumTracks.Sort(CompareSongsByTimesPlayed);
@@ -437,41 +443,92 @@ namespace MediaPortal.Music.Database
       return albumTracks;
     }
 
-    public List<Song> getTagInfo(string artistToSearch_, string trackToSearch_, bool randomizeUsedTag_, bool sortBestTracks_)
+    public List<Song> getTagInfo(string artistToSearch_, string trackToSearch_, bool randomizeUsedTag_, bool sortBestTracks_, bool addAvailableTracksOnly)
     {
-      int randomPosition = 0;
-      Random rand = new Random();
-      string urlArtist = getValidURLLastFMString(artistToSearch_);
-      string urlTrack = getValidURLLastFMString(trackToSearch_);
-      List<Song> tagTracks = new List<Song>();
-
-      // fetch the most popular Tags for the current track
-      tagTracks = getTagsForTrack(urlArtist, urlTrack);
-
-      // no tags for current track - try artist tags instead
-      if (tagTracks.Count < 1)
-        tagTracks = getTagsForArtist(urlArtist);
-
-      if (tagTracks.Count > 0)
+      lock (LookupLock)
       {
-        if (randomizeUsedTag_)
-        {
-          // decide which tag to use
-          int minRandValue = _limitRandomListCount;
-          int calcRandValue = ((tagTracks.Count / 2) - 1) * _randomNessPercent / 100;
+        int randomPosition = 0;
+        Random rand = new Random();
+        string urlArtist = getValidURLLastFMString(artistToSearch_);
+        string urlTrack = getValidURLLastFMString(trackToSearch_);
+        string tmpGenre = String.Empty;
+        List<Song> tagTracks = new List<Song>();
 
-          if (calcRandValue > minRandValue)
-            randomPosition = rand.Next(0, calcRandValue);
+        // fetch the most popular Tags for the current track
+        tagTracks = getTagsForTrack(urlArtist, urlTrack);
+
+        // no tags for current track - try artist tags instead
+        if (tagTracks.Count < 1)
+          tagTracks = getTagsForArtist(urlArtist);
+
+        if (tagTracks.Count > 0)
+        {
+          if (randomizeUsedTag_)
+          {
+            // decide which tag to use            
+            int minRandValue = _limitRandomListCount;
+            // only use the "better" 50% for randomness
+            int calcRandValue = ((tagTracks.Count / 2) - 1) * _randomNessPercent / 100;
+
+            if (calcRandValue > minRandValue)
+              randomPosition = rand.Next(0, calcRandValue);
+            else
+              randomPosition = rand.Next(0, minRandValue);
+          }
+
+          tmpGenre = tagTracks[randomPosition].Genre;
+
+          if (tmpGenre != String.Empty)
+          {            
+            // use the best matches for the given track only            
+            if (sortBestTracks_)
+              tagTracks = getSimilarToTag(lastFMFeed.taggedtracks, tmpGenre, false);
+            else
+            {
+              //_limitRandomListCount *= 3;
+              tagTracks = getSimilarToTag(lastFMFeed.taggedtracks, tmpGenre, true);
+              //_limitRandomListCount /= 3;
+            }
+          }
           else
-            randomPosition = rand.Next(0, minRandValue);
+            tagTracks.Clear();
         }
-        // use the best matches for the given track only
-        if (sortBestTracks_)
-          tagTracks = getSimilarToTag(lastFMFeed.taggedtracks, tagTracks[randomPosition].Genre, false);
-        else
-          tagTracks = getSimilarToTag(lastFMFeed.taggedtracks, tagTracks[randomPosition].Genre, true);
+        if (addAvailableTracksOnly)
+        {
+          MusicDatabase mdb = new MusicDatabase();
+          List<Song> tmpSongs = new List<Song>();
+          Song dbSong = new Song();
+          bool foundDoubleEntry = false;
+
+          for (int s = 0; s < tagTracks.Count; s++)
+          {
+            // only accept other artists then the current playing
+            if (tagTracks[s].Artist.ToLowerInvariant() != artistToSearch_.ToLowerInvariant())
+            {
+              if (mdb.GetSong(tagTracks[s].Title, ref dbSong))
+              {
+                // check and prevent entries from the same artist
+                for (int j = 0; j < tmpSongs.Count; j++)
+                {
+                  if (dbSong.Artist == tmpSongs[j].Artist)
+                    foundDoubleEntry = true;
+                }
+                // new item therefore add it
+                if (!foundDoubleEntry)
+                {
+                  tagTracks[s].Genre = tmpGenre;
+                  tmpSongs.Add(tagTracks[s]);
+                }
+              }
+            }
+          }
+          tagTracks = tmpSongs;
+        }
+        // sort list by playcount (times a track was tagged in this case)
+        tagTracks.Sort(CompareSongsByTimesPlayed);
+
+        return tagTracks;
       }
-      return tagTracks;
     }
 
     public List<Song> getTagsForArtist(string artistToSearch_)
@@ -499,6 +556,7 @@ namespace MediaPortal.Music.Database
         taggedArtists = ParseXMLDocForTags(taggedWith_, searchType_);
         int artistsAdded = 0;
         int randomPosition;
+        _limitRandomListCount *= 5;
         // make sure we do not get an endless loop
         if (taggedArtists.Count > _limitRandomListCount)
         {
@@ -524,6 +582,7 @@ namespace MediaPortal.Music.Database
               artistsAdded++;
             }
           }
+          _limitRandomListCount /= 5;
           // enough similar artists
           return randomTaggedArtists;
         }

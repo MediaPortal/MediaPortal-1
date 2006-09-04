@@ -77,12 +77,12 @@
       <control>
          <type>label</type>
          <description>artist label</description>
-         <id>116</id>
+         <id>6</id>
          <posX>378</posX>
          <posY>58</posY>
          <width>300</width>
          <label>#Play.Current.Artist</label>
-         <font>font32</font>
+         <font>font18</font>
          <align>center</align>
          <textcolor>ffffffff</textcolor>
       </control>
@@ -130,7 +130,7 @@
       <control>
          <type>label</type>
          <description>up next label</description>
-         <id>120</id>
+         <id>20</id>
          <posX>674</posX>
          <posY>464</posY>
          <label>4541</label>
@@ -162,48 +162,49 @@
          <textcolor>80ffffff</textcolor>
          <disabledcolor>80ffffff</disabledcolor>
       </control>
+
       <control>
          <type>listcontrol</type>
-         <description>list of best tag tracks</description>
-         <id>155</id>
+         <description>list of best album tracks</description>
+         <id>166</id>
          <onleft>666</onleft>
-         <onright>166</onright>
+         <onright>155</onright>
          <posX>38</posX>
          <posY>136</posY>
          <width>300</width>
          <height>135</height>
          <textcolor>White</textcolor>
-      </control> 
+      </control>
       <control>
          <type>listcontrol</type>
-         <description>list of best album tracks</description>
-         <id>166</id>
-         <onleft>155</onleft>
+         <description>list of best tag tracks</description>
+         <id>155</id>
+         <onleft>166</onleft>
          <onright>666</onright>
-         <onup>155</onup>
          <posX>38</posX>
          <posY>288</posY>
          <width>300</width>
          <height>135</height>
          <textcolor>White</textcolor>
-      </control> 
-      <control>
-         <type>label</type>
-         <description>best tag tracks label</description>
-         <id>128</id>
-         <posX>42</posX>
-         <posY>108</posY>
-         <label>Top tracks for tag</label>
-         <textcolor>LightGrey</textcolor>
-      </control>      
+      </control>
+     
       <control>
          <type>label</type>
          <description>best album tracks label</description>
-         <id>129</id>
+         <id>29</id>
          <posX>42</posX>
-         <posY>260</posY>
+         <posY>108</posY>
          <label>33030</label>
-         <textcolor>LightGrey</textcolor>
+         <textcolor>White</textcolor>
       </control>
+      <control>
+         <type>label</type>
+         <description>best tag tracks label</description>
+         <id>28</id>
+         <posX>42</posX>
+         <posY>260</posY>         
+         <label>Top tracks for tag</label>
+         <textcolor>White</textcolor>
+      </control> 
    </controls>
 </window>
