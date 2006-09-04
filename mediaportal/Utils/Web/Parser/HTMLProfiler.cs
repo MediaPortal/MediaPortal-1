@@ -335,10 +335,11 @@ namespace MediaPortal.Utils.Web
 
       //if(strLinkURL.ToLower().IndexOf("http") == -1)
       //{
-      if (strLinkURL.ToLower().IndexOf("javascript") != -1)
+      //if (strLinkURL.ToLower().IndexOf("javascript") != -1)
+      //{
+      string[] param = GetJavaSubLinkParams(result); //strLinkURL);
+      if (param != null)
       {
-        string[] param = GetJavaSubLinkParams(strLinkURL);
-
         for (int i = 0; i < param.Length; i++)
           linkURL.ReplaceTag("[" + (i + 1).ToString() + "]", param[i]);
       }
