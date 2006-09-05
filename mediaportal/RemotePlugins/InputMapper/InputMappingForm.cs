@@ -197,7 +197,6 @@ namespace MediaPortal.InputDevices
             case (int)GUIWindow.Window.WINDOW_VIDEO_ARTIST_INFO:
             case (int)GUIWindow.Window.WINDOW_VIDEO_INFO:
             case (int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD:
-            case (int)GUIWindow.Window.WINDOW_VIRTUAL_SEARCH_KEYBOARD:
             case (int)GUIWindow.Window.WINDOW_VIRTUAL_WEB_KEYBOARD:
               break;
             default:
