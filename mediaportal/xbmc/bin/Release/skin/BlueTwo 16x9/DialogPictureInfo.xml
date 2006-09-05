@@ -28,8 +28,7 @@
 		<posY>107</posY>
 		<width>760</width>
 		<label>-</label> 
-		<font>font36</font>
-		<align>left</align> 
+		<font>font36</font> 
 		<textcolor>30FFFFFF</textcolor> 
 	</control>
 	<control>
@@ -39,7 +38,8 @@
 		<posX>575</posX> 
 		<posY>197</posY> 
 		<label>9000</label> 
-		<font>font12</font> 
+		<font>font12</font>
+		<align>right</align> 
 		<textcolor>FFB2D4F5</textcolor> 
 	</control>
 	<control>
@@ -49,7 +49,8 @@
 		<posX>575</posX> 
 		<posY>219</posY> 
 		<label>9001</label> 
-		<font>font12</font> 
+		<font>font12</font>
+		<align>right</align> 
 		<textcolor>FFB2D4F5</textcolor> 
 	</control>
 	<control>
@@ -59,7 +60,8 @@
 		<posX>575</posX> 
 		<posY>241</posY> 
 		<label>9002</label> 
-		<font>font12</font> 
+		<font>font12</font>
+		<align>right</align> 
 		<textcolor>FFB2D4F5</textcolor> 
 	</control>
 	<control>
@@ -69,7 +71,8 @@
 		<posX>575</posX> 
 		<posY>263</posY> 
 		<label>9003</label> 
-		<font>font12</font> 
+		<font>font12</font>
+		<align>right</align> 
 		<textcolor>FFB2D4F5</textcolor> 
 	</control>
 	<control>
@@ -79,7 +82,8 @@
 		<posX>575</posX> 
 		<posY>285</posY> 
 		<label>9004</label> 
-		<font>font12</font> 
+		<font>font12</font>
+		<align>right</align> 
 		<textcolor>FFB2D4F5</textcolor> 
 	</control>
 	<control>
@@ -89,7 +93,8 @@
 		<posX>575</posX> 
 		<posY>307</posY> 
 		<label>9005</label> 
-		<font>font12</font> 
+		<font>font12</font>
+		<align>right</align> 
 		<textcolor>FFB2D4F5</textcolor> 
 	</control>
 	<control>
@@ -100,6 +105,7 @@
 		<posY>197</posY>
 		<label>9008</label> 
 		<font>font12</font>
+		<align>right</align>
 		<textcolor>FFB2D4F5</textcolor> 
 	</control>
 	<control>
@@ -109,7 +115,8 @@
 		<posX>915</posX> 
 		<posY>219</posY>
 		<label>9009</label> 
-		<font>font12</font> 
+		<font>font12</font>
+		<align>right</align> 
 		<textcolor>FFB2D4F5</textcolor> 
 	</control>
 	<control>
@@ -119,7 +126,8 @@
 		<posX>915</posX> 
 		<posY>241</posY> 
 		<label>9010</label> 
-		<font>font12</font> 
+		<font>font12</font>
+		<align>right</align> 
 		<textcolor>FFB2D4F5</textcolor> 
 	</control>
 	<control>
@@ -129,7 +137,8 @@
 		<posX>915</posX> 
 		<posY>263</posY> 
 		<label>9006</label> 
-		<font>font12</font> 
+		<font>font12</font>
+		<align>right</align> 
 		<textcolor>FFB2D4F5</textcolor> 
 	</control>
 	<control>
@@ -139,7 +148,8 @@
 		<posX>915</posX> 
 		<posY>285</posY> 
 		<label>9007</label> 
-		<font>font12</font> 
+		<font>font12</font>
+		<align>right</align> 
 		<textcolor>FFB2D4F5</textcolor> 
 	</control>
 	<control>
@@ -276,7 +286,8 @@
 		<posX>875</posX> 
 		<posY>341</posY> 
 		<label>9011</label> 
-		<font>font12</font> 
+		<font>font12</font>
+		<align>right</align> 
 		<textcolor>FFB2D4F5</textcolor> 
 	</control>
 	<control>
