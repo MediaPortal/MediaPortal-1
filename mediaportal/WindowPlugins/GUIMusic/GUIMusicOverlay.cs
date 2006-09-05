@@ -153,7 +153,7 @@ namespace MediaPortal.GUI.Music
 
       if (!g_Player.IsRadio && !g_Player.IsMusic && !Recorder.IsRadio())
       {
-        m_strFile = String.Empty;
+        // m_strFile = String.Empty; // rtv: Bav what's up here - this will alwasys re-trigger "if (g_Player.Playing && g_Player.CurrentFile != m_strFile)" below?
         return false;
       }
       if (GUIGraphicsContext.IsFullScreenVideo) return false;
@@ -170,7 +170,7 @@ namespace MediaPortal.GUI.Music
 			}
 			if (g_Player.Playing && g_Player.CurrentFile != m_strFile)
 			{
-				m_iFrames = 0;
+				// m_iFrames = 0;  rtv: really needed? SetCurrentFile does reset Frames, too..
 				m_strFile = g_Player.CurrentFile;
 				SetCurrentFile(m_strFile);
 			}
