@@ -143,8 +143,6 @@ namespace MediaPortal.GUI.Music
 
     public override bool DoesPostRender()
     {
-			CheckForNewFile();
-
 			if (!g_Player.Playing && !Recorder.IsRadio())
       {
         m_strFile = String.Empty;
@@ -157,7 +155,8 @@ namespace MediaPortal.GUI.Music
         return false;
       }
       if (GUIGraphicsContext.IsFullScreenVideo) return false;
-      if (!GUIGraphicsContext.Overlay) return false;
+			CheckForNewFile();
+			if (!GUIGraphicsContext.Overlay) return false;
 			return true;
     }
 
