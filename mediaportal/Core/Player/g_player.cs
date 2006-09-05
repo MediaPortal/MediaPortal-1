@@ -1674,20 +1674,34 @@ namespace MediaPortal.Player
         // take current stream and number of
         int streams = _player.AudioStreams;
         int current = _player.CurrentAudioStream;
-        int next = current++;
-
-        // if next stream is greater then the amount of stream
-        // take first
-        if (next >= streams)
+        int next = current;
+        bool success=false;
+        // Loop over the stream, so we skip the disabled streams
+        // stops if the loop is over the current stream again.
+        do
         {
-          next = 0;
+          // if next stream is greater then the amount of stream
+          // take first
+          if (++next >= streams)
+          {
+            next = 0;
+          }
+          // set the next stream
+          _player.CurrentAudioStream = next;
+          // if the stream is set in, stop the loop
+          if (next == _player.CurrentAudioStream)
+          {
+            success = true;
+          }
+
+        } while ((next != current) && (success == false));
+        if (success == false)
+        {
+          Log.Info("g_Player: Failed to switch to next audiostream.");
         }
-        // set the new stream, don't care if there is one stream
-        // or more, so we keep uniform behaviour
-        _player.CurrentAudioStream = next;
+
       }
     }
-
 
     static public void SwitchToNextSubtitle()
     {

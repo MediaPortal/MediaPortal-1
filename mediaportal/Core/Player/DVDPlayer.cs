@@ -825,7 +825,7 @@ namespace MediaPortal.Player
 
             case EventCode.DvdAudioStreamChange:
               // audio stream changed
-              Log.Info("EVT:DvdAudioStChange:{0}", p1);
+              Log.Info("EVT:DvdAudioStreamChange:{0}", p1);
               break;
 
             case EventCode.DvdValidUopsChange:
@@ -1784,7 +1784,6 @@ namespace MediaPortal.Player
     {
       get
       {
-
         int streamsAvailable, currentStream;
         int hr = _dvdInfo.GetCurrentAudio(out streamsAvailable, out currentStream);
         if (hr == 0) return streamsAvailable;
@@ -1802,7 +1801,22 @@ namespace MediaPortal.Player
       }
       set
       {
-        _dvdCtrl.SelectAudioStream(value, DvdCmdFlags.None, out _cmdOption);
+        int hr = _dvdCtrl.SelectAudioStream(value, DvdCmdFlags.None, out _cmdOption);
+        if (hr != 0)
+        {
+          if (hr == -2147220874)
+          {
+            Log.Info("DVDPlayer: UOP control prohibits setting to audio stream {0}", value);
+          }
+          //else if (hr == 0x8004028F)
+          //{
+          //  Log.Info("DVDPlayer: The specified audiostream {0} is disabled", value);
+          //}
+          else
+          {
+            Log.Info("DVDPlayer:Failed to set audiostream to {0} with error code:{1}", value, hr);
+          }
+        }
       }
     }
 
