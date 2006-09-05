@@ -721,7 +721,10 @@ namespace MediaPortal.AudioScrobbler
           for (int j = 0; j < listViewSuggestions.Items.Count; j++)
           {
             if (listViewSuggestions.Items[j].Text == similarList[i].Artist)
+            {
               foundDoubleEntry = true;
+              break;
+            }
           }
           if (!foundDoubleEntry)
             listViewSuggestions.Items.Add(BuildListViewArtist(similarList[i], false, true));
@@ -778,7 +781,10 @@ namespace MediaPortal.AudioScrobbler
         for (int j = 0; j < listViewNeighbours.Items.Count; j++)
         {
           if (listViewNeighbours.Items[j].Text == songList[i].Artist)
+          {
             foundDoubleEntry = true;
+            break;
+          }
         }
         if (!foundDoubleEntry)
           listViewNeighbours.Items.Add(BuildListViewArtist(songList[i], true, false));
@@ -811,7 +817,10 @@ namespace MediaPortal.AudioScrobbler
           for (int j = 0; j < listViewNeighbours.Items.Count; j++)
           {
             if (listViewNeighbours.Items[j].Text == songList[i].Artist)
+            {
               foundDoubleEntry = true;
+              break;
+            }
           }
           if (!foundDoubleEntry)
             listViewNeighbours.Items.Add(BuildListViewArtist(songList[i], false, false));

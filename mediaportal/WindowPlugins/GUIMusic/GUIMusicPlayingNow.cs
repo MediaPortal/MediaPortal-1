@@ -227,33 +227,41 @@ namespace MediaPortal.GUI.Music
 
     private void AddInfoTrackToPlaylist(GUIListItem chosenTrack_, bool enqueueNext_)
     {
-      MusicDatabase mdb = new MusicDatabase();
-      MusicTag listTag = new MusicTag();
-      List<GUIListItem> guiListItemList = new List<GUIListItem>();
-      GUIListItem queueItem = new GUIListItem();
-
-      listTag = (MusicTag)chosenTrack_.MusicTag;
-      guiListItemList.Add(chosenTrack_);
-
-      if (mdb.GetSongs(2, listTag.Title, ref guiListItemList))
+      try
       {
-        MusicTag tempTag = new MusicTag();
+        MusicDatabase mdb = new MusicDatabase();
+        MusicTag listTag = new MusicTag();
+        List<GUIListItem> guiListItemList = new List<GUIListItem>();
+        GUIListItem queueItem = new GUIListItem();
 
-        foreach (GUIListItem alternativeSong in guiListItemList)
+        listTag = (MusicTag)chosenTrack_.MusicTag;
+        guiListItemList.Add(chosenTrack_);
+
+        if (mdb.GetSongs(2, listTag.Title, ref guiListItemList))
         {
-          tempTag = GetTrackTag(mdb, alternativeSong.Path, false);
-          if (tempTag != null && tempTag.Artist != String.Empty)
+          MusicTag tempTag = new MusicTag();
+
+          foreach (GUIListItem alternativeSong in guiListItemList)
           {
-            if (tempTag.Artist.ToUpperInvariant() == listTag.Artist.ToUpperInvariant())
+            tempTag = GetTrackTag(mdb, alternativeSong.Path, false);
+            if (tempTag != null && tempTag.Artist != String.Empty)
             {
-              queueItem = alternativeSong;
-              queueItem.MusicTag = tempTag;
+              if (tempTag.Artist.ToUpperInvariant() == listTag.Artist.ToUpperInvariant())
+              {
+                queueItem = alternativeSong;
+                queueItem.MusicTag = tempTag;
+              }
             }
           }
+          if (queueItem != null && queueItem.MusicTag != null)
+            if (AddSongToPlaylist(ref queueItem, true))
+              Log.Info("GUIMusicPlayingNow: Song inserted: {0} - {1}", listTag.Artist, listTag.Title);
         }
-        if (queueItem != null && queueItem.MusicTag != null)
-          if (AddSongToPlaylist(ref queueItem, true))
-            Log.Debug("GUIMusicPlayingNow: Song inserted: {0} - {1}", listTag.Artist, listTag.Title);
+        Log.Debug("GUIMusicPlayingNow: DB lookup for Song {0} unsuccessful", listTag.Artist + " - " + listTag.Title);
+      }
+      catch (Exception ex)
+      {
+        Log.Debug("GUIMusicPlayingNow: DB lookup for Song failed - {0}", ex.Message);        
       }
     }
 
@@ -448,7 +456,9 @@ namespace MediaPortal.GUI.Music
       {
         item = new GUIListItem(TagTracks[i].ToShortString());
         item.Label = TagTracks[i].Artist + " - " + TagTracks[i].Title;
-        item.Label2 = " (" + GUILocalizeStrings.Get(931) + ": " + Convert.ToString(TagTracks[i].TimesPlayed) + ")";
+        //item.Label2 = " (" + GUILocalizeStrings.Get(931) + ": " + Convert.ToString(TagTracks[i].TimesPlayed) + ")";
+        //item.Label = TagTracks[i].Artist;
+        //item.Label2 = TagTracks[i].Title;
 
         item.MusicTag = BuildMusicTagFromSong(TagTracks[i]);
 
