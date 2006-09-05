@@ -5657,4 +5657,256 @@
 		<id>9999</id>
 		<value>Ore:</value>
 	</string>
+	<string>
+		<id>559</id>
+		<value>nelle vicinanze</value>
+	</string>	
+	<string>
+		<id>560</id>
+		<value>Miglioramento</value>
+	</string>
+	<string>
+		<id>1190</id>
+		<value>Zoom 14:9</value>
+	</string>
+	<string>
+		<id>2074</id>
+		<value>Scegliere i file che si desidera aggregare</value>
+	</string>
+	<string>
+		<id>2075</id>
+		<value>Definire i nuovi punti di taglio</value>
+	</string>
+	<string>
+		<id>2076</id>
+		<value>Modifica</value>
+	</string>
+	<string>
+		<id>2077</id>
+		<value>Taglia</value>
+	</string>
+	<string>
+		<id>2078</id>
+		<value>Aggrega</value>
+	</string>
+	<string>
+		<id>2079</id>
+		<value>Inizia fusione</value>
+	</string>
+	<string>
+		<id>2500</id>
+		<value>Nessuna parola chiave specificata!</value>
+	</string>
+	<string>
+		<id>2501</id>
+		<value>Inserire una parola chiave valida!</value>
+	</string>
+	<string>
+		<id>2502</id>
+		<value>Seleziona la Wikipedia locale:</value>
+	</string>
+	<string>
+		<id>2503</id>
+		<value>Wikipedia selezionata:</value>
+	</string>
+	<string>
+		<id>2504</id>
+		<value>Nessun articolo trovato con i criteri specificati.</value>
+	</string>
+	<string>
+		<id>2505</id>
+		<value>Collegamenti ad altri articoli:</value>
+	</string>
+	<string>
+		<id>2506</id>
+		<value>Nessun collegamento da questo articolo.</value>
+	</string>
+	<string>
+		<id>2507</id>
+		<value>Immagini da questo articolo:</value>
+	</string>
+	<string>
+		<id>2508</id>
+		<value>Nessuna immagine riferita da questo articolo.</value>
+	</string>
+	<string>
+		<id>2509</id>
+		<value>Questa pagina redirige solamente.</value>
+	</string>
+	<string>
+		<id>2510</id>
+		<value>Scegliere la destinazione dalla lista dei collegamenti.</value>
+	</string>
+	<string>
+		<id>2511</id>
+		<value>Collegamenti</value>
+	</string>
+	<string>
+		<id>2512</id>
+		<value>L'immagine non puo' essere visualizzata.</value>
+	</string>
+	<string>
+		<id>2513</id>
+		<value>Controllare il file di log.</value>
+	</string>
+	<string>
+		<id>2514</id>
+		<value>Riorna all'articolo</value>
+	</string>
+	<string>
+		<id>2515</id>
+		<value>Immagini</value>
+	</string>
+	<string>
+		<id>2600</id>
+		<value>Inglese</value>
+	</string>
+	<string>
+		<id>2601</id>
+		<value>Tedesco</value>
+	</string>
+	<string>
+		<id>2602</id>
+		<value>Francese</value>
+	</string>
+	<string>
+		<id>2603</id>
+		<value>Olandese</value>
+	</string>
+	<string>
+		<id>2604</id>
+		<value>Norvegese</value>
+	</string>
+	<string>
+		<id>2605</id>
+		<value>Svedese</value>
+	</string>
+	<string>
+		<id>2606</id>
+		<value>Wikipedia</value>
+	</string>
+	<string>
+		<id>11000</id>
+		<value>Impostazioni ritaglio</value>
+	</string>
+	<string>
+		<id>11001</id>
+		<value>Alto</value>
+	</string>
+	<string>
+		<id>11002</id>
+		<value>Basso</value>
+	</string>
+	<string>
+		<id>11003</id>
+		<value>Sinistra</value>
+	</string>
+	<string>
+		<id>11004</id>
+		<value>Destra</value>
+	</string>
+	<string>
+		<id>30000</id>
+		<value>Video Musicali</value>
+	</string>
+	<string>
+		<id>30001</id>
+		<value>Più richiesti</value>
+	</string>
+	<string>
+		<id>30002</id>
+		<value>Nuovi su Yahoo!</value>
+	</string>
+	<string>
+		<id>30003</id>
+		<value>Ascolta tutti</value>
+	</string>
+	<string>
+		<id>30004</id>
+		<value>Pagina precedente</value>
+	</string>
+	<string>
+		<id>30005</id>
+		<value>Pagina successiva</value>
+	</string>
+	<string>
+		<id>30006</id>
+		<value>Stop</value>
+	</string>
+	<string>
+		<id>30007</id>
+		<value>Cerca altri video di questo artista</value>
+	</string>
+	<string>
+		<id>30008</id>
+		<value>classifica</value>
+	</string>
+	<string>
+		<id>30009</id>
+		<value>pagina</value>
+	</string>
+	<string>
+		<id>30010</id>
+		<value>Risultati per {0} - pagina {1}</value>
+	</string>
+	<string>
+		<id>33000</id>
+		<value>Scrobble attivato</value>
+	</string>
+	<string>
+		<id>33001</id>
+		<value>Scrobble: Simili</value>
+	</string>
+	<string>
+		<id>33002</id>
+		<value>Scrobble: Vicini</value>
+	</string>
+	<string>
+		<id>33003</id>
+		<value>Scrobble: Indici</value>
+	</string>
+	<string>
+		<id>33004</id>
+		<value>Scrobble: Recenti</value>
+	</string>
+	<string>
+		<id>33005</id>
+		<value>Account:</value>
+	</string>
+	<string>
+		<id>33006</id>
+		<value>Scrobble: Amici</value>
+	</string>
+	<string>
+		<id>33007</id>
+		<value>Scrobble: Disconnesso</value>
+	</string>
+	<string>
+		<id>33010</id>
+		<value>Compila automaticamente la playlist con</value>
+	</string>
+	<string>
+		<id>33011</id>
+		<value>tracce simili</value>
+	</string>
+	<string>
+		<id>33012</id>
+		<value>tracce preferite dei tuoi vicini</value>
+	</string>
+	<string>
+		<id>33013</id>
+		<value>tracce corrispondenti al tag richiesto</value>
+	</string>
+	<string>
+		<id>33014</id>
+		<value>tracce ascoltate di recente</value>
+	</string>
+	<string>
+		<id>33016</id>
+		<value>tracce preferite dai tuoi amici</value>
+	</string>
+	<string>
+		<id>33017</id>
+		<value>tracce casuali</value>
+	</string>
 </strings>
