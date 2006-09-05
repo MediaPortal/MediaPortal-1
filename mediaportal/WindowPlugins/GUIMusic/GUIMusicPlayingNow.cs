@@ -442,7 +442,7 @@ namespace MediaPortal.GUI.Music
       GUIListItem item = null;
       List<Song> TagTracks = new List<Song>();
 
-      TagTracks = InfoScrobbler.getTagInfo(CurrentTrackTag.Artist, CurrentTrackTag.Title, false, false, true);
+      TagTracks = InfoScrobbler.getTagInfo(CurrentTrackTag.Artist, CurrentTrackTag.Title, true, false, true);
 
       for (int i = 0; i < TagTracks.Count; i++)
       {

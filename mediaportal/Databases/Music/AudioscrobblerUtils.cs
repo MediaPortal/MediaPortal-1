@@ -475,19 +475,35 @@ namespace MediaPortal.Music.Database
             else
               randomPosition = rand.Next(0, minRandValue);
           }
-
-          tmpGenre = tagTracks[randomPosition].Genre;
+          for (int x = 0; x < tagTracks.Count * 5; x++)
+          {
+            if (randomPosition < tagTracks.Count - 1)
+            {
+              tmpGenre = tagTracks[randomPosition].Genre.ToLowerInvariant();
+              // filter unwanted tags - TODO stringlist parsing
+              if (tmpGenre != "seen live")
+                if (tmpGenre != "favorites")
+                  if (tmpGenre != "favourites")
+                    if (tmpGenre != "albums i own")
+                      if (tmpGenre != "favorite songs")
+                        if (tmpGenre != "favorite")
+                          if (tmpGenre != "tracks")
+                            if (tmpGenre != "good")
+                              if (tmpGenre != "awesome")
+                                if (tmpGenre != "favourite")
+                                  if (tmpGenre != "favourite songs")
+                                    break;
+            }
+          }
 
           if (tmpGenre != String.Empty)
-          {            
+          {
             // use the best matches for the given track only            
             if (sortBestTracks_)
               tagTracks = getSimilarToTag(lastFMFeed.taggedtracks, tmpGenre, false);
             else
             {
-              //_limitRandomListCount *= 3;
               tagTracks = getSimilarToTag(lastFMFeed.taggedtracks, tmpGenre, true);
-              //_limitRandomListCount /= 3;
             }
           }
           else
@@ -503,7 +519,7 @@ namespace MediaPortal.Music.Database
           for (int s = 0; s < tagTracks.Count; s++)
           {
             // only accept other artists then the current playing
-            if (tagTracks[s].Artist.ToLowerInvariant() != artistToSearch_.ToLowerInvariant())
+            if ((tagTracks[s].Artist.ToLowerInvariant() != artistToSearch_.ToLowerInvariant()) || (tagTracks[s].Artist.ToLowerInvariant() == tmpGenre))
             {
               if (mdb.GetSong(tagTracks[s].Title, ref dbSong))
               {
@@ -525,7 +541,8 @@ namespace MediaPortal.Music.Database
           tagTracks = tmpSongs;
         }
         // sort list by playcount (times a track was tagged in this case)
-        tagTracks.Sort(CompareSongsByTimesPlayed);
+        if (sortBestTracks_)
+          tagTracks.Sort(CompareSongsByTimesPlayed);
 
         return tagTracks;
       }
