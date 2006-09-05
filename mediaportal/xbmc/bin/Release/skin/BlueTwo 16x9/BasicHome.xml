@@ -41,15 +41,21 @@
 		<id>2</id>
 		<posX>150</posX>
 		<posY>300</posY>
-		<width>-</width>
-		<height>-</height>
-		<textureFocus>Radio.png</textureFocus>
-		<textureNoFocus>hover_my radio.png</textureNoFocus>
+		<width>135</width>
+		<height>195</height>
+		<textureFocus>common.RadioAnimation.xml</textureFocus>
+		<textureNoFocus>Radio0.png</textureNoFocus>
 		<thumbZoom>yes</thumbZoom>
 		<hyperlink>30</hyperlink>
+		<hover>-</hover>
+		<hoverX>265</hoverX>
+		<hoverY>270</hoverY>
+		<hoverWidth>204</hoverWidth>
+		<hoverHeight>230</hoverHeight>
 		<label>665</label>
-  		<textcolor>00ffffff</textcolor>
-		<onleft>5</onleft>
+		<textcolor>00ffffff</textcolor>
+		<textcolorNoFocus>00ffffff</textcolorNoFocus>
+		<onleft>6</onleft>
 		<onright>3</onright>
 		<onup>21</onup>
 		<ondown>2</ondown>
@@ -60,17 +66,23 @@
 		<id>3</id>
 		<posX>350</posX>
 		<posY>300</posY>
-		<width>-</width>
-		<height>-</height>
-		<textureFocus>Video.png</textureFocus>
-		<textureNoFocus>hover_my videos.png</textureNoFocus>
-		<hyperlink>6</hyperlink>
-		<label>3</label>
-  		<textcolor>00ffffff</textcolor>
-		<onleft>2</onleft>
-		<onright>4</onright>
-		<onup>21</onup>
-		<ondown>3</ondown>
+			<width>135</width>
+			<height>195</height>
+			<textureFocus>common.VideoAnimation.xml</textureFocus>
+			<textureNoFocus>Video0.png</textureNoFocus>
+			<hyperlink>6</hyperlink>
+			<hover>-</hover>
+			<hoverX>265</hoverX>
+			<hoverY>270</hoverY>
+			<hoverWidth>204</hoverWidth>
+			<hoverHeight>230</hoverHeight>
+			<label>3</label>
+			<textcolor>00ffffff</textcolor>
+			<textcolorNoFocus>00ffffff</textcolorNoFocus>
+			<onleft>2</onleft>
+			<onright>4</onright>
+			<onup>21</onup>
+			<ondown>3</ondown>
 	</control>
 	<control>
 		<description>home BM FFS</description>
@@ -78,17 +90,23 @@
 		<id>4</id>
 		<posX>550</posX>
 		<posY>300</posY>
-		<width>-</width>
-		<height>-</height>
-		<textureFocus>TV.png</textureFocus>
-		<textureNoFocus>hover_my tv.png</textureNoFocus>
-		<hyperlink>1</hyperlink>
-		<label>605</label>
-  		<textcolor>00ffffff</textcolor>
-		<onleft>3</onleft>
-		<onright>5</onright>
-		<onup>21</onup>
-		<ondown>4</ondown>
+			<width>135</width>
+			<height>195</height>
+			<textureFocus>common.TvAnimation.xml</textureFocus>
+			<textureNoFocus>TV0.png</textureNoFocus>
+			<hyperlink>1</hyperlink>
+			<hover>-</hover>
+			<hoverX>265</hoverX>
+			<hoverY>270</hoverY>
+			<hoverWidth>204</hoverWidth>
+			<hoverHeight>230</hoverHeight>
+			<label>605</label>
+			<textcolor>00ffffff</textcolor>
+			<textcolorNoFocus>00ffffff</textcolorNoFocus>
+			<onleft>3</onleft>
+			<onright>5</onright>
+			<onup>21</onup>
+			<ondown>4</ondown>
 	</control>
 	<control>
 		<description>home BM Music</description>
@@ -96,35 +114,47 @@
 		<id>5</id>
 		<posX>750</posX>
 		<posY>300</posY>
-		<width>-</width>
-		<height>-</height>
-		<textureFocus>Music.png</textureFocus>
-		<textureNoFocus>hover_my music.png</textureNoFocus>
-		<hyperlink>501</hyperlink>
-		<label>2</label>
-  		<textcolor>00ffffff</textcolor>
-		<onleft>4</onleft>
-		<onright>6</onright>
-		<onup>21</onup>
-		<ondown>5</ondown>
+			<width>135</width>
+			<height>195</height>
+			<textureFocus>common.MusicAnimation.xml</textureFocus>
+			<textureNoFocus>Music0.png</textureNoFocus>
+			<hyperlink>501</hyperlink>
+			<hover>-</hover>
+			<hoverX>265</hoverX>
+			<hoverY>270</hoverY>
+			<hoverWidth>204</hoverWidth>
+			<hoverHeight>230</hoverHeight>
+			<label>2</label>
+			<textcolor>00ffffff</textcolor>
+			<textcolorNoFocus>00ffffff</textcolorNoFocus>
+			<onleft>4</onleft>
+			<onright>6</onright>
+			<onup>21</onup>
+			<ondown>5</ondown>
 	</control>
 	<control>
 		<description>home BM Pictures</description>
 		<type>button</type>
 		<id>6</id>
 		<posX>950</posX>
-		<posY>320</posY>
-		<width>-</width>
-		<height>-</height>
-		<textureFocus>Pictures.png</textureFocus>
-		<textureNoFocus>hover_my pictures.png</textureNoFocus>
-		<hyperlink>2</hyperlink>
-		<label>1</label>
-  		<textcolor>00ffffff</textcolor>
-		<onleft>5</onleft>
-		<onright>2</onright>
-		<onup>21</onup>
-		<ondown>6</ondown>
+		<posY>300</posY>
+			<width>135</width>
+			<height>195</height>
+			<textureFocus>common.PicturesAnimation.xml</textureFocus>
+			<textureNoFocus>Pictures0.png</textureNoFocus>
+			<hyperlink>2</hyperlink>
+			<hover>-</hover>
+			<hoverX>265</hoverX>
+			<hoverY>270</hoverY>
+			<hoverWidth>204</hoverWidth>
+			<hoverHeight>230</hoverHeight>
+			<label>1</label>
+			<textcolor>00ffffff</textcolor>
+			<textcolorNoFocus>00ffffff</textcolorNoFocus>
+			<onleft>5</onleft>
+			<onright>2</onright>
+			<onup>21</onup>
+			<ondown>6</ondown>
 	</control>
 	<control>
 		<description>Date</description>

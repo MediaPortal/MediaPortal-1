@@ -6,20 +6,19 @@
 	<control>
 		<type>image</type> 
 		<id>0</id> 
-		<posX>366</posX> 
-		<posY>132</posY> 
-		<width>546</width> 
-		<height>366</height> 
+		<posX>367</posX>
+		<posY>177</posY>
+		<width>-</width>
+		<height>-</height> 
 		<texture>context_background.png</texture> 
 	</control>
 	<control>
 		<description>Heading text label</description> 
 		<type>label</type> 
 		<id>4</id> 
-		<posX>410</posX> 
-		<posY>164</posY> 
+		<posX>407</posX>
+		<posY>211</posY> 
 		<label>181</label>
-		<align>left</align> 
 		<font>font14</font> 
 		<textcolor>FFFFFFFF</textcolor> 
 	</control>	
@@ -27,8 +26,8 @@
 		<description>Exit button</description>
 		<type>button</type>
 		<id>2</id>
-		<posX>820</posX>
-		<posY>163</posY>
+		<posX>827</posX>
+		<posY>212</posY>
 		<width>44</width>
 		<height>44</height>
 		<textureFocus>dialogue_shutdown_focus.png</textureFocus>
@@ -44,7 +43,7 @@
 		<type>listcontrol</type> 
 		<id>3</id> 
 		<posX>420</posX> 
-		<posY>215</posY> 
+		<posY>265</posY> 
 		<width>430</width> 
 		<height>242</height>
 		<textureHeight>32</textureHeight> 
@@ -52,8 +51,8 @@
 		<onright>2</onright>
 		<onup>2</onup> 
 		<ondown>2</ondown>
-		<spinPosX>740</spinPosX>
-		<spinPosY>430</spinPosY>
+		<spinPosX>750</spinPosX>
+		<spinPosY>476</spinPosY>
 	</control>
     </controls>
 </window>

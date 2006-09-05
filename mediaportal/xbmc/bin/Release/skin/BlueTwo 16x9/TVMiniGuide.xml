@@ -10,15 +10,15 @@
 			<texture>context_background.png</texture>
 			<width>-</width>
 			<height>-</height>
-			<posX>100</posX>
-			<posY>100</posY>
+			<posX>367</posX>
+			<posY>177</posY>
 		</control>
 		<control>
 			<description>exit button</description>
 			<type>button</type>
 			<id>34</id>
-			<posX>560</posX>
-			<posY>132</posY>
+			<posX>827</posX>
+			<posY>212</posY>
 			<width>44</width>
 			<height>44</height>
 			<textureFocus>dialogue_shutdown_focus.png</textureFocus>
@@ -33,32 +33,32 @@
 			<description>list to show channels</description>
 			<type>listcontrol</type>
 			<id>35</id>
-			<posX>146</posX>
-			<posY>180</posY>
-			<width>444</width>
-			<height>280</height>
-			<textXOff>5</textXOff>
+			<posX>420</posX> 
+			<posY>265</posY> 
+			<width>430</width> 
+			<height>260</height>
+			<textXOff>10</textXOff>
 			<textYOff>20</textYOff>
-			<textXOff2>430</textXOff2>
+			<textXOff2>425</textXOff2>
 			<textYOff2>20</textYOff2>
-			<textXOff3>50</textXOff3>
+			<textXOff3>52</textXOff3>
 			<textYOff3>5</textYOff3>
 			<IconXOff>12</IconXOff>
-			<IconYOff>4</IconYOff>
-			<spinPosX>530</spinPosX>
-			<spinPosY>416</spinPosY>
+			<IconYOff>5</IconYOff>
+			<spinPosX>776</spinPosX>
+			<spinPosY>489</spinPosY>
 			<spinWidth>16</spinWidth>
 			<spinHeight>16</spinHeight>
-			<itemWidth>35</itemWidth>
-			<itemHeight>35</itemHeight>
+			<itemWidth>32</itemWidth>
+			<itemHeight>32</itemHeight>
 			<textureFocus>recording_background_focus.png</textureFocus>
 			<textureNoFocus>recording_background_nofocus.png</textureNoFocus>
-			<spaceBetweenItems>3</spaceBetweenItems>
+			<spaceBetweenItems>0</spaceBetweenItems>
 			<textureHeight>44</textureHeight>
 			<keepaspectratio>no</keepaspectratio>
 			<font>font10</font>
 			<font2>font10</font2>
-			<font3>font13</font3>
+			<font3>font10</font3>
 			<remoteColor>ffffffff</remoteColor>   <!-- used for selected channel -->
 			<onleft>36</onleft>
 			<onright>34</onright>
@@ -68,13 +68,13 @@
 			<description>groups spin control</description>
 			<type>spincontrol</type>
 			<id>36</id>
-			<posX>150</posX>
-			<posY>138</posY>
+			<posX>407</posX>
+			<posY>218</posY> 
 			<showrange>no</showrange>
 			<orientation>horizontal</orientation>
 			<align>left</align>
 			<reverse>yes</reverse>
-			<font>font13</font>
+			<font>font14</font>
 			<textureUp>arrow_round_right_nofocus.png</textureUp>
 			<textureDown>arrow_round_left_nofocus.png</textureDown>
 			<textureUpFocus>arrow_round_right_focus.png</textureUpFocus>
@@ -88,10 +88,10 @@
 			<description>time label</description>
 			<id>0</id>
 			<type>label</type>
-			<posX>530</posX>
-			<posY>135</posY>
+			<posX>805</posX>
+			<posY>216</posY>
+			<font>font12</font>
 			<align>right</align>
-			<font>font13</font>
 			<textcolor>ffa9d0f7</textcolor>
 			<label>#time</label>
 		</control>
