@@ -524,7 +524,7 @@ namespace MediaPortal.GUI.Music
         {
           bool InfoNeeded = false;
 
-          if (CurrentTrackTag.Album != GUIPropertyManager.GetProperty("#Play.Current.Album"))
+          if (CurrentTrackTag.Album != GUIPropertyManager.GetProperty("#Play.Current.Album") || facadeTagInfo.Count < 1)
           {
             InfoNeeded = true;
             if (LblBestAlbumTracks != null)

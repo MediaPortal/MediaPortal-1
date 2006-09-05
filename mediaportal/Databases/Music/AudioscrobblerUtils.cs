@@ -690,7 +690,8 @@ namespace MediaPortal.Music.Database
     private bool fetchAlbumImage(string imageUrl, string fileName)
     {
       bool success = false;
-      int k = 0; int j = 0;
+      int k = 0;
+      int j = 0;
       char[] filechars = fileName.ToCharArray();
       char[] invalids = System.IO.Path.GetInvalidFileNameChars();
 
@@ -710,34 +711,40 @@ namespace MediaPortal.Music.Database
 
       if (imageUrl != "")
       {
-        //Check if we already have the file.
-        string thumbspath = @"Thumbs\music\albums\";
-
-        //Create the album subdir in thumbs if it does not exist.
-        if (!System.IO.Directory.Exists(thumbspath))
-          System.IO.Directory.CreateDirectory(thumbspath);
-
-        if (!System.IO.File.Exists(thumbspath + fileName))
+        // do not download last.fm's placeholder
+        if (imageUrl.IndexOf("no_album") <= 0)
         {
-          Log.Debug("Audioscrobbler: Trying to get thumb: {0}", imageUrl);
-          // Here we get the image from the web and save it to disk
-          try
+          //Check if we already have the file.
+          string thumbspath = @"Thumbs\music\albums\";
+
+          //Create the album subdir in thumbs if it does not exist.
+          if (!System.IO.Directory.Exists(thumbspath))
+            System.IO.Directory.CreateDirectory(thumbspath);
+
+          if (!System.IO.File.Exists(thumbspath + fileName))
           {
-            WebClient client = new WebClient();
-            client.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
-            client.DownloadFile(imageUrl, thumbspath + fileName);
-            Log.Info("Audioscrobbler: Thumb successfully downloaded.");
-            success = true;
+            Log.Debug("Audioscrobbler: Trying to get thumb: {0}", imageUrl);
+            // Here we get the image from the web and save it to disk
+            try
+            {
+              WebClient client = new WebClient();
+              client.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
+              client.DownloadFile(imageUrl, thumbspath + fileName);
+              Log.Info("Audioscrobbler: Thumb successfully downloaded.");
+              success = true;
+            }
+            catch (Exception e)
+            {
+              Log.Error("Audioscrobbler: Exception during downloading - {0}", e.Message);
+            }
           }
-          catch (Exception e)
+          else
           {
-            Log.Error("Audioscrobbler: Exception during downloading - {0}", e.Message);
+            Log.Debug("Audioscrobbler: Thumb exists, download canceled!");
           }
         }
         else
-        {
-          Log.Debug("Audioscrobbler: Thumb exists, download canceled!");
-        }
+          Log.Debug("Audioscrobbler: last.fm only uses a placeholder - do not download thumb.");
       }
       else
       {
