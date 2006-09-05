@@ -221,18 +221,18 @@
 		<font>font12</font>
 		<font2>font12</font2>
 		<font3>font12</font3>
-		<IconXOff>14</IconXOff>
-		<IconYOff>5</IconYOff>
+		<IconXOff>12</IconXOff>
+		<IconYOff>4</IconYOff>
 		<textXOff>50</textXOff>
-		<textYOff>0</textYOff>
+		<textYOff>2</textYOff>
 		<textXOff2>750</textXOff2>
 		<textYOff2>23</textYOff2>
 		<textXOff3>110</textXOff3>
 		<textYOff3>23</textYOff3>
 		<PinIconXOff>64</PinIconXOff>
 		<PinIconYOff>12</PinIconYOff>
-		<itemWidth>40</itemWidth>
-		<itemHeight>40</itemHeight>
+		<itemWidth>44</itemWidth>
+		<itemHeight>44</itemHeight>
 		<shadedColor>20ffffff</shadedColor>
 		<selectedColor>FFF8BC70</selectedColor>
 		<textcolor>ffffffff</textcolor>

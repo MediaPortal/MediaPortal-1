@@ -147,14 +147,14 @@
 				<subtype>album</subtype>
 				<id>52</id>
 				<textXOff>50</textXOff>
-				<textYOff>0</textYOff>
+				<textYOff>2</textYOff>
 				<textXOff2>800</textXOff2>
 				<textYOff2>23</textYOff2>
 				<textXOff3>110</textXOff3>
-				<textYOff3>25</textYOff3>
-				<IconXOff>5</IconXOff>
-				<IconYOff>2</IconYOff>
-				<PinIconXOff>56</PinIconXOff>
+				<textYOff3>23</textYOff3>
+				<IconXOff>12</IconXOff>
+				<IconYOff>4</IconYOff>
+				<PinIconXOff>64</PinIconXOff>
 				<PinIconYOff>12</PinIconYOff>
 				<itemWidth>44</itemWidth>
 				<itemHeight>44</itemHeight>

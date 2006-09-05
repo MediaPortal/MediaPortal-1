@@ -49,9 +49,9 @@
 		<textXOff2>0</textXOff2>
 		<textYOff2>4</textYOff2>
 		<IconXOff>6</IconXOff>
-		<IconYOff>5</IconYOff>
-		<itemWidth>24</itemWidth>
-		<itemHeight>24</itemHeight>
+		<IconYOff>1</IconYOff>
+		<itemWidth>32</itemWidth>
+		<itemHeight>32</itemHeight>
 	</control>
    </controls>
 </window>
