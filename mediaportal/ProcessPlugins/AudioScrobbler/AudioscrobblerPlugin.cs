@@ -245,7 +245,10 @@ namespace MediaPortal.Audioscrobbler
           // DB lookup of song failed
           else
             if (g_Player.IsMusic)
+            {
               Log.Info("Audioscrobbler plugin: database does not contain track - ignoring song: {0}", currentSong.ToShortString());
+              Log.Debug("g_player: filename of current song - {0}", g_Player.CurrentFile);
+            }
 
 
         }

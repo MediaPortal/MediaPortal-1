@@ -1116,6 +1116,9 @@ namespace MediaPortal.Util
 
     static public string MakeFileName(string strText)
     {
+      int k = 0;
+      int j = 0;
+
       if (strText == null) return String.Empty;
       if (strText.Length == 0) return String.Empty;
       string strFName = strText.Replace(':', '_');
@@ -1127,6 +1130,23 @@ namespace MediaPortal.Util
       strFName = strFName.Replace('<', '_'); ;
       strFName = strFName.Replace('>', '_');
       strFName = strFName.Replace('|', '_');
+
+      char[] filechars = strFName.ToCharArray();
+      char[] invalids = System.IO.Path.GetInvalidFileNameChars();
+
+      foreach (char c in filechars)
+      {
+        k++;
+        foreach (char i in invalids)
+        {
+          j++;
+          if (c == i)
+          {
+            Log.Warn("Utils: *** File name {1} still contains invalid chars - {0}", Convert.ToString(c), strFName);
+          }
+        }
+      }
+
       return strFName;
     }
 

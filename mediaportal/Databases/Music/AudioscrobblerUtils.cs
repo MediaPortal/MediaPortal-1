@@ -377,9 +377,11 @@ namespace MediaPortal.Music.Database
       {
         cleanString = lastFMString;
         // remove CD1, CD2, CDn from Tracks
-        dotIndex = cleanString.IndexOf("CD");
-        if (dotIndex > 0)
-          cleanString = cleanString.Remove(dotIndex);
+        if (Util.Utils.ShouldStack(cleanString, cleanString))
+          Util.Utils.RemoveStackEndings(ref cleanString);
+        //dotIndex = cleanString.IndexOf("CD");
+        //if (dotIndex > 0)
+        //  cleanString = cleanString.Remove(dotIndex);
         // remove [DJ Spacko MIX 2000]
         dotIndex = cleanString.IndexOf("[");
         if (dotIndex > 0)
@@ -733,24 +735,15 @@ namespace MediaPortal.Music.Database
     private bool fetchAlbumImage(string imageUrl, string fileName)
     {
       bool success = false;
-      int k = 0;
-      int j = 0;
-      char[] filechars = fileName.ToCharArray();
-      char[] invalids = System.IO.Path.GetInvalidFileNameChars();
+      //string singleFileName = null;
+      //string singlePathName = null;
 
-      foreach (char c in filechars)
-      {
-        k++;
-        foreach (char i in invalids)
-        {
-          j++;
-          if (c == i)
-          {
-            Log.Warn("Audioscrobbler: *** File name {1} contains invalid chars - {0}", Convert.ToString(c), fileName);
-            return false;
-          }
-        }
-      }
+      //Util.Utils.Split(fileName, singlePathName, singleFileName);
+      // remove invalid chars
+      //singleFileName = Util.Utils.MakeFileName(singleFileName);
+      // combine again
+      //fileName = System.IO.Path.Combine(singlePathName, singleFileName);
+      fileName = Util.Utils.MakeFileName(fileName);
 
       if (imageUrl != "")
       {
