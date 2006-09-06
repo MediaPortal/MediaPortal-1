@@ -257,11 +257,12 @@ namespace MediaPortal.GUI.Music
             if (AddSongToPlaylist(ref queueItem, true))
               Log.Info("GUIMusicPlayingNow: Song inserted: {0} - {1}", listTag.Artist, listTag.Title);
         }
-        Log.Debug("GUIMusicPlayingNow: DB lookup for Song {0} unsuccessful", listTag.Artist + " - " + listTag.Title);
+        else
+          Log.Debug("GUIMusicPlayingNow: DB lookup for Song {0} unsuccessful", listTag.Artist + " - " + listTag.Title);
       }
       catch (Exception ex)
       {
-        Log.Debug("GUIMusicPlayingNow: DB lookup for Song failed - {0}", ex.Message);        
+        Log.Debug("GUIMusicPlayingNow: DB lookup for Song failed - {0}", ex.Message);
       }
     }
 
