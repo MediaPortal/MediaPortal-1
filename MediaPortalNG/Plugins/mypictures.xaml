@@ -4,170 +4,223 @@
       x:Class="MediaPortal.MyPictures"
       Name="mypics"
       WindowTitle="My Pictures" 
+      xml:lang="de" 
       xmlns:d="http://schemas.microsoft.com/expression/interactivedesigner/2006" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
       >
- 
-  <Canvas Name="mainPanel" Style="{DynamicResource PageBackground}">
-      <!--  -->
-      <TextBlock
-        Name="id1"
-        Text="1"
-        Canvas.Top="70"
-        Foreground="White"
-        Visibility="Visible"
-        Canvas.Left="0"
-        Width="250"
-        TextAlignment="Right"
-        FontSize="16"
-        Tag="##id::1//##keycontrol::onleft:;onright:;onup:;ondown://##metadata::"
+
+  <ctrl:GUIWindow
+    Style="{DynamicResource PageBackground}"
+   AllowOverlay="true"
+   DefaultControl="2"
+   WindowID="501"
+   x:Name="GUIWindow"
+>
+
+
+    <ctrl:GUIImage
+     PosY="0"
+     PosX="0"
+     Width="720"
+     Height="576"
+     ID="1"
+     Texture="background.png"
 />
 
 
-      <!--  -->
-      <Image
-        Name="id1_0"
-        Canvas.Top="20"
-        Canvas.Left="60"
-        Source="{DynamicResource pictures_logo.png}"
-        Visibility="Visible"
-        Tag="##id::1//##keycontrol::onleft:;onright:;onup:;ondown://##metadata::"
+    <ctrl:GUIImage
+     PosY="20"
+     PosX="60"
+     ID="1"
+     Texture="music_logo.png"
 />
 
 
-      <!--  -->
+    <ctrl:GUILabel
+     PosY="70"
+     PosX="250"
+     ID="1"
+     Label="134"
+     Align="right"
+     Foreground="White"
+     DisabledColor="#80ffffff"
+     FontSize="19"
+/>
 
 
-      <!-- View-As button -->
+    <ctrl:GUILabel
+     PosY="530"
+     PosX="260"
+     ID="1"
+     Label="#itemcount"
+     Align="left"
+     Foreground="White"
+     DisabledColor="#80ffffff"
+     FontSize="16"
+/>
 
 
-      <!--  -->
+    <ctrl:GUIFadelabel
+     PosY="70"
+     PosX="660"
+     Width="400"
+     ID="1"
+     Label="#selecteditem"
+     Align="right"
+     Foreground="White"
+     FontSize="17"
+/>
 
 
-    <ctrl:GUIButton
-       x:Name="mypictures1"
-       Canvas.Top="97"
-       Canvas.Left="60"
-       Visibility="Visible"
+    <ctrl:GUIImage
+     PosY="370"
+     PosX="75"
+     ID="1"
+     Texture="hover_my music.png"
+/>
+
+    <StackPanel Width="190" Canvas.Top="97" Canvas.Left="60">
+
+      <ctrl:GUIButton
        Width="190"
-       Height="31"
-       Click="MPNG" 
-       Content="Testing an Scrollbutton makes no sense" 
-       Tag="##id::2//##keycontrol::onleft:;onright:50;onup:17;ondown://##metadata::labelNum:100"
-/>
-
-
-    <ctrl:GUIButton
-      x:Name="id3"
-        Canvas.Top="129"
-        Canvas.Left="60"
-        Visibility="Visible"
-        Width="190"
-        Height="31"
-        Click="showDialog" 
-        Tag="##id::3//##keycontrol::onleft:;onright:;onup:;ondown://##metadata::labelNum:103"
-Content="103"
-/>
-
-
-    <ctrl:GUIButton
-      x:Name="id6"
-        Canvas.Top="161"
-        Canvas.Left="60"
-        Visibility="Visible"
-        Width="190"
-        Height="31"
-        Tag="##id::6//##keycontrol::onleft:;onright:;onup:;ondown://##metadata::labelNum:108"
-Content="108"
+       Height="32"
+       ID="2"
+       OnUP="17"
+       OnDOWN="3"
+       OnRIGHT="50"
+       OnLEFT="2"
+       Label="100"
+       Foreground="#ffffffff"
+       DisabledColor="#60ffffff"
+       FontSize="16"
 />
 
 
       <ctrl:GUIButton
-       x:Name="id7"
-        Canvas.Top="193"
-        Canvas.Left="60"
-        Visibility="Visible"
-        Width="190"
-        Height="31"
-        Tag="##id::7//##keycontrol::onleft:;onright:;onup:;ondown://##metadata::labelNum:361"
-Content="361"
+       Width="190"
+       Height="32"
+       ID="3"
+       OnUP="2"
+       OnDOWN="6"
+       OnRIGHT="50"
+       OnLEFT="3"
+       Label="103"
+       Foreground="White"
+       DisabledColor="#60ffffff"
+       FontSize="16"
 />
 
 
-    <ctrl:GUIButton
-      x:Name="id8"
-      Canvas.Top="225"
-      Canvas.Left="60"
-      Visibility="Visible"
-      Width="190"
-      Height="31"
-      Tag="##id::8//##keycontrol::onleft:;onright:;onup:;ondown://##metadata::labelNum:109"
-Content="109"
+      <ctrl:GUIButton
+       Width="190"
+       Height="32"
+       ID="6"
+       OnUP="3"
+       OnDOWN="12"
+       OnRIGHT="50"
+       OnLEFT="6"
+       Label="457"
+       Foreground="#ffffffff"
+       DisabledColor="#60ffffff"
+       FontSize="16"
 />
 
 
-    <ctrl:GUIButton
-     x:Name="id9"
-        Canvas.Top="257"
-        Canvas.Left="60"
-        Visibility="Visible"
-        Width="190"
-        Height="31"
-        Tag="##id::9//##keycontrol::onleft:;onright:;onup:;ondown:99//##metadata::labelNum:735"
->735</ctrl:GUIButton>
-
-
-      <ListView
-        Name="lv1"
-        Canvas.Top="97"
-        Canvas.Left="260"
-        Width="425"
-        Height="479"
-        Style="{DynamicResource GUIListControl}"
+      <ctrl:GUIButton
+       Width="190"
+       Height="32"
+       ID="12"
+       OnUP="6"
+       OnDOWN="9"
+       OnRIGHT="50"
+       OnLEFT="12"
+       Label="137"
+       Foreground="#ffffffff"
+       DisabledColor="#60ffffff"
+       FontSize="16"
 />
 
-      <ctrl:GUISpinControl 
-        x:Name="upDown1"  
-        FontSize="18" 
-        Foreground="White" 
-        Canvas.Top="280"
-        Canvas.Left="60">
-      </ctrl:GUISpinControl>
 
-    <ctrl:GUISelectButton 
-  x:Name="select1"
-  Content="Hello! I'm an very,very nice SelectButton. If you click me, you can choose some stuff..." 
-  Width="190" 
-  Height="31" 
-  Canvas.Top="327"
-  Canvas.Left="60">
-    </ctrl:GUISelectButton>
+      <ctrl:GUIButton
+       Width="190"
+       Height="32"
+       ID="9"
+       OnUP="12"
+       OnDOWN="13"
+       OnRIGHT="50"
+       OnLEFT="9"
+       Label="890"
+       Foreground="#ffffffff"
+       DisabledColor="#60ffffff"
+       FontSize="16"
+/>
 
-    <ProgressBar 
-      x:Name="pb1" 
-      Width="190"
-      Height="24"
-      Canvas.Top="380"
-      Canvas.Left="60"
-      Style="{DynamicResource GUIProgressBar}"
-      />
 
-    <ctrl:GUICheckMark 
-  Canvas.Top="420"
-  Canvas.Left="60" 
-  Width="190"
-  FontSize="18"
-  Text="Checkmark-Test"
-      />
-    
-    <ctrl:GUIToggleButton 
- Canvas.Top="480"
- Canvas.Left="60" 
- Width="190"
- ScrollAreaWidth="145" 
- FontSize="18"
- Height="32" 
- Text="Toggle-Button with an scrolling Caption is COOL"
-      /> 
-    
-  </Canvas>
+      <ctrl:GUIButton
+       Width="190"
+       Height="32"
+       ID="13"
+       OnUP="9"
+       OnDOWN="11"
+       OnRIGHT="50"
+       OnLEFT="13"
+       Label="654"
+       Foreground="#ffffffff"
+       DisabledColor="#60ffffff"
+       FontSize="16"
+/>
+
+
+      <ctrl:GUIImage
+       ID="999"
+       Texture="hbar1.png"
+/>
+
+
+      <ctrl:GUIButton
+       Width="190"
+       Height="32"
+       ID="11"
+       OnUP="13"
+       OnDOWN="8"
+       OnRIGHT="50"
+       OnLEFT="11"
+       Label="4540"
+       Hyperlink="510"
+       Foreground="#ffffffff"
+       DisabledColor="#60ffffff"
+       FontSize="16"
+/>
+
+
+      <ctrl:GUIButton
+       Width="190"
+       Height="32"
+       ID="8"
+       OnUP="11"
+       OnDOWN="10"
+       OnRIGHT="50"
+       OnLEFT="8"
+       Label="4555"
+       Foreground="#ffffffff"
+       DisabledColor="#60ffffff"
+       FontSize="16"
+/>
+
+
+      <ctrl:GUIButton
+       Width="190"
+       Height="32"
+       ID="10"
+       OnUP="8"
+       OnDOWN="99"
+       OnRIGHT="50"
+       OnLEFT="10"
+       Label="983"
+       Foreground="#ffffffff"
+       DisabledColor="#60ffffff"
+       FontSize="16"
+/>
+
+    </StackPanel>
+  </ctrl:GUIWindow>
 </Page>

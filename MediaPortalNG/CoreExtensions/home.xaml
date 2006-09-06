@@ -239,6 +239,7 @@
       Height="125"
       Repeat="false"
       FrameTime="213"
+      ID="4711"
       >
     </ctrl:GUIAnimation>
       

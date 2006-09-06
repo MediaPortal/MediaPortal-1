@@ -36,7 +36,7 @@
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center">
                   <TextBlock FocusVisualStyle="{DynamicResource FocusStyle}" 
-                    Text="{TemplateBinding Text}"
+                    Text="{TemplateBinding Content}"
                     Foreground="{TemplateBinding Foreground}" 
                     >
                   </TextBlock>
@@ -100,6 +100,7 @@
         <Setter Property="MinWidth" Value="75"/>
         <Setter Property="FontSize" Value="18"/>
         <Setter Property="Foreground" Value="White" />
+
         <Setter Property="FocusVisualStyle" Value="{DynamicResource FocusStyle}"/>
         <Setter Property="Template">
           <Setter.Value>
@@ -108,7 +109,9 @@
                 x:Name="Border"  
                 CornerRadius="0" 
                 BorderThickness="0"
-                BorderBrush="Transparent">
+                BorderBrush="Transparent"
+                Background="{DynamicResource GreenNoFocus}"
+                >
                     <ScrollViewer  
                       FocusVisualStyle="{DynamicResource FocusStyle}" 
                       Margin="8,0" 
@@ -122,16 +125,12 @@
                     </ScrollViewer>
               </Border>
               <ControlTemplate.Triggers>
-                <Trigger Property="IsMouseOver" Value="true">
-                  <Setter TargetName="Border" Property="Background" Value="{DynamicResource GreenFocus}">
+               <Trigger Property="IsButton" Value="false">
+                  <Setter TargetName="Border" Property="Background" Value="Transparent">
                   </Setter>
                 </Trigger>
-                <Trigger Property="IsMouseOver" Value="false">
-                  <Setter TargetName="Border" Property="Background" Value="{DynamicResource GreenNoFocus}">
-                    </Setter>
-                </Trigger>
-                <Trigger Property="IsButton" Value="false">
-                  <Setter TargetName="Border" Property="Background" Value="Transparent">
+                <Trigger Property="IsKeyboardFocused" Value="true">
+                  <Setter TargetName="Border" Property="Background" Value="{DynamicResource GreenFocus}">
                   </Setter>
                 </Trigger>
 
@@ -240,26 +239,25 @@
         <Setter Property="Template">
           <Setter.Value>
             <ControlTemplate TargetType="{x:Type ctrl:GUISpinControl}">
-              <Grid Margin="3">
+             <Border BorderThickness="0" BorderBrush="Transparent">
+              <Grid Name="ContentGrid">
                 <Grid.RowDefinitions>
                   <RowDefinition/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                  <ColumnDefinition/>
-                  <ColumnDefinition Width="16"/>
-                  <ColumnDefinition Width="16"/>
+                  <ColumnDefinition />
+                  <ColumnDefinition />
+                  <ColumnDefinition />
                 </Grid.ColumnDefinitions>
-                <Border BorderThickness="0" BorderBrush="Transparent" Margin="2" VerticalAlignment="Center" HorizontalAlignment="Stretch">
-                  <TextBlock Grid.Column="0" Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Value}"  Width="60" TextAlignment="Right" Padding="5"/>
-                </Border>
-                <RepeatButton Command="{x:Static ctrl:GUISpinControl.IncreaseCommand}"  Grid.Column="1" Grid.Row="0" Style="{DynamicResource UpScrollSmall}"></RepeatButton>
-                <RepeatButton Command="{x:Static ctrl:GUISpinControl.DecreaseCommand}"  Grid.Column="2" Grid.Row="0" Style="{DynamicResource DownScrollSmall}"></RepeatButton>
+                <TextBlock Width="80" Grid.Column="{TemplateBinding ButtonContentValue}" Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Value}" />
+                <RepeatButton Width="16" Command="{x:Static ctrl:GUISpinControl.IncreaseCommand}"  Grid.Column="{TemplateBinding ButtonUpValue}" Grid.Row="0" Style="{DynamicResource UpScrollSmall}"></RepeatButton>
+                <RepeatButton Width="16" Command="{x:Static ctrl:GUISpinControl.DecreaseCommand}"  Grid.Column="{TemplateBinding ButtonDownValue}" Grid.Row="0" Style="{DynamicResource DownScrollSmall}"></RepeatButton>
               </Grid>
+             </Border>
             </ControlTemplate>
           </Setter.Value>
         </Setter>
       </Style>
-
       <!-- GUICheckMark Resource -->
       <Style TargetType="{x:Type ctrl:GUICheckMark}">
         <Setter Property="HorizontalAlignment" Value="Center"/>

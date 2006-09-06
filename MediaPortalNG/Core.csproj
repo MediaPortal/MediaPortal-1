@@ -10,6 +10,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{907A5C3C-B130-4D1F-A9FC-6ECBD9160E92}</ProjectGuid>
     <XamlDebuggingInformation>true</XamlDebuggingInformation>
+    <RootNamespace>MediaPortal</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <Optimize>false</Optimize>
@@ -55,20 +56,29 @@
       <SubType>
       </SubType>
     </Page>
-    <Compile Include="GUIAnimation.cs" />
-    <Compile Include="GUIButton.cs" />
-    <Compile Include="GUICheckMark.cs" />
-    <Compile Include="GUIDateTime.cs" />
-    <Compile Include="GUIFadelabel.cs" />
-    <Compile Include="GUISelectButton.cs" />
+    <Compile Include="Controls\GUIAnimation.cs" />
+    <Compile Include="Controls\GUIButton.cs" />
+    <Compile Include="Controls\GUICheckMark.cs" />
+    <Compile Include="Controls\GUITextbox.cs" />
+    <Compile Include="Controls\GUIWindow.cs" />
+    <Compile Include="Controls\IGUIControl.cs" />
+    <Compile Include="Controls\GUIDateTime.cs" />
+    <Compile Include="Controls\GUIFadelabel.cs" />
+    <Compile Include="Controls\GUIImage.cs" />
+    <Compile Include="Controls\GUILabel.cs" />
+    <Compile Include="Controls\GUIListControl.cs" />
+    <Compile Include="Controls\GUIProgress.cs" />
+    <Compile Include="Controls\GUISelectButton.cs" />
+    <Compile Include="Controls\GUIHScrollBar.cs" />
+    <Compile Include="Controls\IGUIWindow.cs" />
     <Compile Include="GUIPlugin.cs" />
-    <Compile Include="GUITextboxScrollUp.cs" />
-    <Compile Include="GUIToggleButton.cs" />
+    <Compile Include="Controls\GUITextboxScrollUp.cs" />
+    <Compile Include="Controls\GUIToggleButton.cs" />
     <Compile Include="Plugins\mypictures.xaml.cs">
       <DependentUpon>mypictures.xaml</DependentUpon>
     </Compile>
     <Compile Include="GUIDialog.cs" />
-    <Compile Include="GUISpinControl.cs" />
+    <Compile Include="Controls\GUISpinControl.cs" />
     <Compile Include="CoreExtensions\home.xaml.cs">
       <DependentUpon>home.xaml</DependentUpon>
       <SubType>Code</SubType>

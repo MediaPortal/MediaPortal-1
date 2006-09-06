@@ -207,45 +207,45 @@ namespace MediaPortal
  
         private void ApplyLanguage(string lang)
         {
-            System.Xml.XmlDocument langFile = new System.Xml.XmlDocument();
-            langFile.Load(System.IO.Directory.GetCurrentDirectory()+@"\language\"+lang+@"\strings.xml");
-            System.Xml.XmlNode node = langFile.GetElementsByTagName("strings").Item(0);
-            if (node != null)
-            {
-                for (int n = 0; n < 9999; n++)
-                {
-                   object o=this.FindName("id" + n.ToString());
-                    if (o != null)
-                    {
+            //System.Xml.XmlDocument langFile = new System.Xml.XmlDocument();
+            //langFile.Load(System.IO.Directory.GetCurrentDirectory()+@"\language\"+lang+@"\strings.xml");
+            //System.Xml.XmlNode node = langFile.GetElementsByTagName("strings").Item(0);
+            //if (node != null)
+            //{
+            //    for (int n = 0; n < 9999; n++)
+            //    {
+            //       object o=this.FindName("id" + n.ToString());
+            //        if (o != null)
+            //        {
                       
-                         if(o.ToString().StartsWith("System.Windows.Controls.TextBlock"))
-                         {
+            //             if(o.ToString().StartsWith("System.Windows.Controls.TextBlock"))
+            //             {
 
-                             ((TextBlock)o).Text = Core.GetLocalizedString("id", ((TextBlock)o).Text, "value", node);
-                         }
+            //                 ((TextBlock)o).Text = Core.GetLocalizedString("id", ((TextBlock)o).Text, "value", node);
+            //             }
 
-                         if (o.ToString().StartsWith("System.Windows.Controls.Button"))
-                         {
-                             string tag = ((Button)o).Tag.ToString();
-                             string label=Core.SplitElementTag(tag, "labelNum","##metadata");
-                             ((Button)o).Content = Core.GetLocalizedString("id", label, "value", node);
-                         }
-                         if (o.ToString().StartsWith("System.Windows.Controls.CheckBox"))
-                         {
-                             string tag = ((CheckBox)o).Tag.ToString();
-                             string label = Core.SplitElementTag(tag, "labelNum", "##metadata");
-                             ((CheckBox)o).Content = Core.GetLocalizedString("id", label, "value", node);
-                         }
-                         if (o.ToString().StartsWith("System.Windows.Controls.ComboBox"))
-                         {
-                             string tag = ((ComboBox)o).Tag.ToString();
-                             string label = Core.SplitElementTag(tag, "labelNum", "##metadata");
-                             ((ComboBox)o).Text = Core.GetLocalizedString("id", label, "value", node);
-                         }
-                    }
-                }
-                int count=VisualTreeHelper.GetChildrenCount(this);
-            }
+            //             if (o.ToString().StartsWith("System.Windows.Controls.Button"))
+            //             {
+            //                 string tag = ((Button)o).Tag.ToString();
+            //                 string label=Core.SplitElementTag(tag, "labelNum","##metadata");
+            //                 ((Button)o).Content = Core.GetLocalizedString("id", label, "value", node);
+            //             }
+            //             if (o.ToString().StartsWith("System.Windows.Controls.CheckBox"))
+            //             {
+            //                 string tag = ((CheckBox)o).Tag.ToString();
+            //                 string label = Core.SplitElementTag(tag, "labelNum", "##metadata");
+            //                 ((CheckBox)o).Content = Core.GetLocalizedString("id", label, "value", node);
+            //             }
+            //             if (o.ToString().StartsWith("System.Windows.Controls.ComboBox"))
+            //             {
+            //                 string tag = ((ComboBox)o).Tag.ToString();
+            //                 string label = Core.SplitElementTag(tag, "labelNum", "##metadata");
+            //                 ((ComboBox)o).Text = Core.GetLocalizedString("id", label, "value", node);
+            //             }
+            //        }
+            //    }
+            //    int count=VisualTreeHelper.GetChildrenCount(this);
+            //}
 
         }
 
