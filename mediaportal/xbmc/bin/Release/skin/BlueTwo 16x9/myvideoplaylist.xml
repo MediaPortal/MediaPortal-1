@@ -44,7 +44,6 @@
 		 		<type>button</type>
 		 		<id>20</id>
 		 		<label>191</label>
-		 		<font>font13</font>
 		 		<onleft>20</onleft>
 		 		<onright>50</onright>
 				<onup>2</onup>
@@ -55,7 +54,6 @@
 				<type>button</type>
 				<id>21</id>
 				<label>190</label>
-				<font>font13</font>
 				<onleft>21</onleft>
 				<onright>50</onright>
 				<onup>20</onup>
@@ -66,7 +64,6 @@
 				<type>button</type>
 				<id>22</id>
 				<label>192</label>
-				<font>font13</font>
 				<onleft>22</onleft>
 				<onright>50</onright>
 				<onup>21</onup>
@@ -77,7 +74,6 @@
 				<type>button</type>
 				<id>23</id>
 				<label>208</label>
-				<font>font13</font>
 				<onleft>23</onleft>
 				<onright>50</onright>
 				<onup>22</onup>
@@ -88,7 +84,6 @@
 				<type>button</type>
 				<id>24</id>
 				<label>209</label>
-				<font>font13</font>
 				<onleft>24</onleft>
 				<onright>50</onright>
 				<onup>23</onup>
@@ -99,7 +94,6 @@
 				<type>button</type>
 				<id>25</id>
 				<label>210</label>
-				<font>font13</font>
 				<onleft>25</onleft>
 				<onright>50</onright>
 				<onup>24</onup>
