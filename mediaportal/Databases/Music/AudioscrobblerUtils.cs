@@ -499,6 +499,9 @@ namespace MediaPortal.Music.Database
             else
               calcRandValue = ((tagTracks.Count) - 1) * _randomNessPercent / 100;
 
+            // make sure calcRandValue is not lower then random(minvalue, )
+            calcRandValue = calcRandValue > 0 ? calcRandValue : 0;
+
             randomPosition = rand.Next(0, calcRandValue);
           }
 
@@ -525,7 +528,10 @@ namespace MediaPortal.Music.Database
               tagTracks = getSimilarToTag(lastFMFeed.taggedtracks, tmpGenre, false);
             else
             {
+              // increase the result list
+              _limitRandomListCount *= 3;
               tagTracks = getSimilarToTag(lastFMFeed.taggedtracks, tmpGenre, true);
+              _limitRandomListCount /= 3;
             }
 
             if (addAvailableTracksOnly)
@@ -556,15 +562,13 @@ namespace MediaPortal.Music.Database
                     // new item therefore add it
                     if (!foundDoubleEntry)
                     {
-                      //tagTracks[s].Genre = tmpGenre;
-                      //tmpSongs.Add(tagTracks[s]);
                       tmpSong.Genre = tmpGenre;
                       tmpSongs.Add(tmpSong);
                     }
                   }
                 }
-                else
-                  Log.Debug("Audioscrobbler: Artist {0} inadequate - skipping", tagTracks[s].Artist);
+                //else
+                //  Log.Debug("Audioscrobbler: Artist {0} inadequate - skipping", tagTracks[s].Artist);
               }
               tagTracks = tmpSongs;
             }
@@ -779,7 +783,7 @@ namespace MediaPortal.Music.Database
           }
           else
           {
-            Log.Debug("Audioscrobbler: Thumb exists, - do not download.");
+            Log.Debug("Audioscrobbler: Thumb exists - do not download.");
           }
         }
         else

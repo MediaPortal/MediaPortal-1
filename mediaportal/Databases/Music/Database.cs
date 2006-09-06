@@ -1440,6 +1440,7 @@ namespace MediaPortal.Music.Database
       {
         songs.Clear();
         string strTitle = strTitle1;
+        DatabaseUtility.RemoveInvalidChars(ref strTitle);
         if (null == m_db)
           return false;
 
@@ -1485,7 +1486,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("MusicDatabase: exception on song retrieval - {0}", ex.Message);
         Open();
       }
       return false;
@@ -1953,6 +1954,7 @@ namespace MediaPortal.Music.Database
         strSQL = String.Format("update song set iTimesPlayed={0} where idSong={1}",
                               ++iTimesPlayed, idSong);
         m_db.Execute(strSQL);
+        Log.Debug("MusicDatabase: increased playcount for song {1} to {0}", Convert.ToString(iTimesPlayed), strFileName1);
         return true;
       }
       catch (Exception ex)
