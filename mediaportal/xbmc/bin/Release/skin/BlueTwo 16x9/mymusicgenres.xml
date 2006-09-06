@@ -14,7 +14,7 @@
 		<layout>StackLayout(2)</layout>
 		<posX>60</posX>
 		<posY>97</posY>
-		<control>
+      		<control>
         		<description>View-As button</description>
         		<type>button</type>
         		<id>2</id>
@@ -25,7 +25,7 @@
         		<ondown>3</ondown>
       		</control>
       		<control>
-        		<type>sortbutton</type>
+       		 	<type>sortbutton</type>
         		<id>3</id>
         		<label>103</label>
         		<onleft>3</onleft>
@@ -34,43 +34,43 @@
         		<ondown>6</ondown>
       		</control>
       		<control>
-       			<description>Switch View</description>
+        		<description>Albums/Artists/Songs/Genres button</description>
         		<type>button</type>
         		<id>6</id>
         		<label>457</label>
         		<onleft>6</onleft>
         		<onright>50</onright>
         		<onup>3</onup>
-        		<ondown>12</ondown>
+        		<ondown>9</ondown>
       		</control>
       		<control>
-        		<description>Search</description>
+        		<description>Search button</description>
         		<type>button</type>
-        		<id>12</id>
+        		<id>9</id>
         		<label>137</label>
-        		<onleft>12</onleft>
+        		<onleft>9</onleft>
         		<onright>50</onright>
         		<onup>6</onup>
-        		<ondown>9</ondown>
+        		<ondown>12</ondown>
       		</control>
       		<control>
         		<description>Play CD</description>
         		<type>button</type>
-        		<id>9</id>
+        		<id>12</id>
         		<label>890</label>
-        		<onleft>9</onleft>
+        		<onleft>12</onleft>
         		<onright>50</onright>
-        		<onup>12</onup>
-        		<ondown>13</ondown>
-     		 </control>
+        		<onup>9</onup>
+        		<ondown>10</ondown>
+      		</control>
       		<control>
         		<description>Eject Disc</description>
         		<type>button</type>
-        		<id>13</id>
+        		<id>10</id>
         		<label>654</label>
-        		<onleft>13</onleft>
+        		<onleft>10</onleft>
         		<onright>50</onright>
-        		<onup>9</onup>
+        		<onup>12</onup>
         		<ondown>11</ondown>
         		<action>100</action>
       		</control>
@@ -78,7 +78,7 @@
         		<type>image</type>
         		<description>Divider image</description>
         		<id>999</id>
-        		<texture>hbar1.png</texture>
+       	 		<texture>hbar1.png</texture>
         		<keepaspectratio>yes</keepaspectratio>
       		</control>
       		<control>
@@ -88,27 +88,27 @@
         		<label>4540</label>
         		<onleft>11</onleft>
         		<onright>50</onright>
-        		<onup>13</onup>
+        		<onup>10</onup>
         		<ondown>8</ondown>
         		<hyperlink>510</hyperlink>
       		</control>
       		<control>
-        		<description>Playlists button</description>
+       			<description>Playlist button</description>
         		<type>button</type>
         		<id>8</id>
         		<label>4555</label>
+        		<action>33</action>
         		<onleft>8</onleft>
         		<onright>50</onright>
         		<onup>11</onup>
-        		<ondown>10</ondown>
-        		<action>33</action>
+        		<ondown>14</ondown>
       		</control>
       		<control>
         		<description>My Playlists</description>
         		<type>button</type>
-        		<id>10</id>
+        		<id>14</id>
         		<label>983</label>
-        		<onleft>10</onleft>
+        		<onleft>14</onleft>
         		<onright>50</onright>
         		<onup>8</onup>
         		<ondown>99</ondown>
