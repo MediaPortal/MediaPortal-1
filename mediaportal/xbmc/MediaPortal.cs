@@ -396,7 +396,7 @@ public class MediaPortalApp : D3DApp, IRender
         {
             processName = processName.Substring(0, processName.Length - 7);
         }
-        processName = "mediaportal";
+        //processName = "mediaportal";
         processes.AddRange(System.Diagnostics.Process.GetProcessesByName(processName));
         processes.AddRange(System.Diagnostics.Process.GetProcessesByName(processName + ".vshost"));
 
@@ -434,15 +434,15 @@ public class MediaPortalApp : D3DApp, IRender
         }
     }
 
+    //JoeDalton: not used
+    //private static UnhandledExceptionLogger logger;
 
-    private static UnhandledExceptionLogger logger;
-
-    private static void AddExceptionHandler()
-    {
-        logger = new UnhandledExceptionLogger();
-        AppDomain current = AppDomain.CurrentDomain;
-        current.UnhandledException += new UnhandledExceptionEventHandler(logger.LogCrash);
-    }
+    //private static void AddExceptionHandler()
+    //{
+    //    logger = new UnhandledExceptionLogger();
+    //    AppDomain current = AppDomain.CurrentDomain;
+    //    current.UnhandledException += new UnhandledExceptionEventHandler(logger.LogCrash);
+    //}
 
     #endregion
 
@@ -739,7 +739,7 @@ public class MediaPortalApp : D3DApp, IRender
         //_suspended = false;
 
         EXECUTION_STATE oldState = EXECUTION_STATE.ES_CONTINUOUS;
-        bool turnMonitorOn = false;
+        bool turnMonitorOn;
         using (Settings xmlreader = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         {
             turnMonitorOn = xmlreader.GetValueAsBool("general", "turnmonitoronafterresume", false);
@@ -886,7 +886,6 @@ public class MediaPortalApp : D3DApp, IRender
                 {
                     msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAY_FILE, 0, 0, 0, 0, 0, null);
                     msg.Label = station.URL;
-                    station = null;
                 }
                 else
                 {
@@ -1906,7 +1905,6 @@ public class MediaPortalApp : D3DApp, IRender
     protected override void keypressed(KeyPressEventArgs e)
     {
         GUIGraphicsContext.BlankScreen = false;
-        char keyc = e.KeyChar;
         // Log.Info("key:{0} 0x{1:X} (2)", (int)keyc, (int)keyc, keyc);
         Key key = new Key(e.KeyChar, 0);
         Action action = new Action();
@@ -2802,8 +2800,13 @@ public class MediaPortalApp : D3DApp, IRender
                 SetDWORDRegKey(hklm, @"SOFTWARE\IviSDK4Hauppauge\Common\VideoDec", "Dxva", 1);
             }
         }
-        catch (Exception)
+        catch (SecurityException)
         {
+            Log.Info("Not enough permissions to set registry keys for Hauppauge codecs");
+        }
+        catch (UnauthorizedAccessException)
+        {
+            Log.Info("No write permissions to set registry keys for Hauppauge codecs");
         }
 
         // Set Cyberlink H.264 decoder to use dxva - great for Nvidia Geforce 6 & 7 cards 
@@ -2814,45 +2817,16 @@ public class MediaPortalApp : D3DApp, IRender
                 SetDWORDRegKey(hkcu, @"SOFTWARE\Cyberlink\Common\cl264dec", "UIUseHVA", 1);
             }
         }
-        catch (Exception)
-        {
-        }
-
-        //Trick to enable S3 standby on systems & turn off fans
-        try
-        {
-            using (RegistryKey services = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services", true))
-            {
-                RegistryKey usb = services.OpenSubKey("usb", true);
-                Debug.WriteLine(usb);
-                if (usb == null)
-                {
-                    usb = services.CreateSubKey("usb");
-                }
-                //according to M$ support, the USBBIOSHACKS setting should not be used.
-                //see http://support.microsoft.com/kb/841858/en-us in the bottom
-                if (usb.GetValue("USBBIOSHacks") != null)
-                {
-                    usb.DeleteValue("USBBIOSHacks");
-                }
-                using (Settings xmlreader = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
-                {
-                    bool enableS3Trick = xmlreader.GetValueAsBool("general", "enables3trick", true);
-                    if (enableS3Trick)
-                        usb.SetValue("USBBIOSx", 0);
-                    else
-                        usb.DeleteValue("USBBIOSx");
-                }
-            }
-        }
         catch (SecurityException)
         {
-            Log.Info("Not enough permissions to enable/disable the S3 standby trick");
+            Log.Info("Not enough permissions to set Cyberlink H.264 decoder to use dxva");
         }
         catch (UnauthorizedAccessException)
         {
-            Log.Info("No write permissions to enable/disable the S3 standby trick");
+            Log.Info("No write permissions to set Cyberlink H.264 decoder to use dxva");
         }
+
+        EnableS3Trick();
 
         GUIWindowManager.OnNewAction += new OnActionHandler(OnAction);
 
@@ -3004,5 +2978,67 @@ public class MediaPortalApp : D3DApp, IRender
             m_iDateLayout = xmlreader.GetValueAsInt("home", "datelayout", 0);
         }
         screenSaverTimer = DateTime.Now;
+    }
+
+    /// <summary>
+    /// Enables the S3 system power state for standby when USB devices are armed for wake, 
+    /// if this option is enabled in the configuration.
+    /// </summary>
+    /// <remarks>
+    /// <para>The trick is to create the following registry value: 
+    /// HKLM\SYSTEM\CurrentControlSet\Services\usb\USBBIOSx and set it to 0.</para>
+    /// <para>This method checks whether the <b>enables3trick</b> option in the <b>general</b>
+    /// section of the mediaportal.xml file is enabled (which is the default), before setting
+    /// the value.  The reason for this configuration option is a bug in the S3 implementation
+    /// of various (Asus) motherboards like the A7NX8 and A7VX8 that causes the computer to
+    /// reboot immediately after hibernating.</para>
+    /// <para>The previous implementation of this method also created an USBBIOSHACKS value,
+    /// which according to this article http://support.microsoft.com/kb/841858/en-us should
+    /// not be used.  That is why the current implementation deletes this key if it still
+    /// exists.</para>
+    /// </remarks>
+    private static void EnableS3Trick()
+    {
+        try
+        {
+            using (RegistryKey services = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services", true))
+            {
+                RegistryKey usb = services.OpenSubKey("usb", true);
+                if (usb == null)
+                {
+                    usb = services.CreateSubKey("usb");
+                }
+                //Delete the USBBIOSHACKS value if it is still there.  See the remarks.
+                if (usb.GetValue("USBBIOSHacks") != null)
+                {
+                    usb.DeleteValue("USBBIOSHacks");
+                }
+                //Check the general.enables3trick configuration option and create/delete the USBBIOSx
+                //value accordingly
+                using (Settings xmlreader = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+                {
+                    bool enableS3Trick = xmlreader.GetValueAsBool("general", "enables3trick", true);
+                    if (enableS3Trick)
+                    {
+                        usb.SetValue("USBBIOSx", 0);
+                    }
+                    else
+                    {
+                        if (usb.GetValue("USBBIOSx") != null)
+                        {
+                            usb.DeleteValue("USBBIOSx");
+                        }
+                    }
+                }
+            }
+        }
+        catch (SecurityException)
+        {
+            Log.Info("Not enough permissions to enable/disable the S3 standby trick");
+        }
+        catch (UnauthorizedAccessException)
+        {
+            Log.Info("No write permissions to enable/disable the S3 standby trick");
+        }
     }
 }
