@@ -38,7 +38,7 @@ namespace MediaPortal.Configuration.Sections
 {
   public class TVPostProcessing : MediaPortal.Configuration.SectionSettings
   {
-      private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox3;
+    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox3;
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
     private MediaPortal.UserInterface.Controls.MPLabel label1;
@@ -48,12 +48,12 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPTextBox leftcolumnsTextBox;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel4;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel3;
-      private MediaPortal.UserInterface.Controls.MPTextBox rightcolumnsTextBox;
-      private CheckedListBox cLBDSFilter;
-      private MediaPortal.UserInterface.Controls.MPLabel label3;
-      private Label labelPropertiesHint;
-      private Button bSetup;
-      private ListBox lBDSFilter;
+    private MediaPortal.UserInterface.Controls.MPTextBox rightcolumnsTextBox;
+    private CheckedListBox cLBDSFilter;
+    private MediaPortal.UserInterface.Controls.MPLabel label3;
+    private Label labelPropertiesHint;
+    private Button bSetup;
+    private ListBox lBDSFilter;
     private System.ComponentModel.IContainer components = null;
 
     public TVPostProcessing()
@@ -81,45 +81,45 @@ namespace MediaPortal.Configuration.Sections
       lBDSFilter.FormattingEnabled = true;
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
-          topscanlinesTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("mytv", "topscanlinestoremove", 0));
-          bottomscanlinesTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("mytv", "bottomscanlinestoremove", 0));
-          leftcolumnsTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("mytv", "leftcolumnstoremove", 0));
-          rightcolumnsTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("mytv", "rightcolumnstoremove", 0));
-          int intCount = 0;
-          while (xmlreader.GetValueAsString("mytv", "filter" + intCount.ToString(), "undefined") != "undefined")
+        topscanlinesTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("mytv", "topscanlinestoremove", 0));
+        bottomscanlinesTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("mytv", "bottomscanlinestoremove", 0));
+        leftcolumnsTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("mytv", "leftcolumnstoremove", 0));
+        rightcolumnsTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("mytv", "rightcolumnstoremove", 0));
+        int intCount = 0;
+        while (xmlreader.GetValueAsString("mytv", "filter" + intCount.ToString(), "undefined") != "undefined")
+        {
+          strFilters += xmlreader.GetValueAsString("mytv", "filter" + intCount.ToString(), "undefined") + ";";
+          if (xmlreader.GetValueAsBool("mytv", "usefilter" + intCount.ToString(), false))
           {
-              strFilters += xmlreader.GetValueAsString("mytv", "filter" + intCount.ToString(), "undefined") + ";";
-              if (xmlreader.GetValueAsBool("mytv", "usefilter" + intCount.ToString(), false))
-              {
-                  strUsedFilters += xmlreader.GetValueAsString("mytv", "filter" + intCount.ToString(), "undefined") + ";";
-              }
-              intCount++;
+            strUsedFilters += xmlreader.GetValueAsString("mytv", "filter" + intCount.ToString(), "undefined") + ";";
           }
+          intCount++;
+        }
       }
       foreach (DsDevice device in DsDevice.GetDevicesOfCat(DirectShowLib.FilterCategory.LegacyAmFilterCategory))
       {
-          try
+        try
+        {
+          if (device.Name != null)
           {
-              if (device.Name != null)
-              {
-                  lBDSFilter.Items.Add(device);
-                  if (strFilters.Contains(device.Name))
-                  {
-                      cLBDSFilter.Items.Add(device);
-                      cLBDSFilter.SetItemChecked(cLBDSFilter.Items.Count - 1, strUsedFilters.Contains(device.Name));
-                  }
-              }
+            lBDSFilter.Items.Add(device);
+            if (strFilters.Contains(device.Name))
+            {
+              cLBDSFilter.Items.Add(device);
+              cLBDSFilter.SetItemChecked(cLBDSFilter.Items.Count - 1, strUsedFilters.Contains(device.Name));
+            }
           }
-          catch (Exception)
-          {
-          }
+        }
+        catch (Exception)
+        {
+        }
       }
       cLBDSFilter.Sorted = true;
       lBDSFilter.Sorted = true;
       if (cLBDSFilter.Items.Count > 0)
-          cLBDSFilter.SelectedIndex = 0;
+        cLBDSFilter.SelectedIndex = 0;
       if (lBDSFilter.Items.Count > 0)
-          lBDSFilter.SelectedIndex = 0;
+        lBDSFilter.SelectedIndex = 0;
     }
 
     public override void SaveSettings()
@@ -127,17 +127,17 @@ namespace MediaPortal.Configuration.Sections
       DsDevice tmpDevice = null;
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
-          xmlwriter.SetValue("mytv", "topscanlinestoremove", topscanlinesTextBox.Text);
-          xmlwriter.SetValue("mytv", "bottomscanlinestoremove", bottomscanlinesTextBox.Text);
-          xmlwriter.SetValue("mytv", "leftcolumnstoremove", leftcolumnsTextBox.Text);
-          xmlwriter.SetValue("mytv", "rightcolumnstoremove", rightcolumnsTextBox.Text);
-          for (int i = 0; i < cLBDSFilter.Items.Count; i++)
-          {
-              tmpDevice = (DsDevice)cLBDSFilter.Items[i];
-              xmlwriter.SetValue("mytv", "filter" + i.ToString(), tmpDevice.Name);
-              xmlwriter.SetValueAsBool("mytv", "usefilter" + i.ToString(), cLBDSFilter.GetItemChecked(i));
-          }
-          xmlwriter.SetValue("mytv", "filter" + cLBDSFilter.Items.Count.ToString(), "undefined");
+        xmlwriter.SetValue("mytv", "topscanlinestoremove", topscanlinesTextBox.Text);
+        xmlwriter.SetValue("mytv", "bottomscanlinestoremove", bottomscanlinesTextBox.Text);
+        xmlwriter.SetValue("mytv", "leftcolumnstoremove", leftcolumnsTextBox.Text);
+        xmlwriter.SetValue("mytv", "rightcolumnstoremove", rightcolumnsTextBox.Text);
+        for (int i = 0; i < cLBDSFilter.Items.Count; i++)
+        {
+          tmpDevice = (DsDevice)cLBDSFilter.Items[i];
+          xmlwriter.SetValue("mytv", "filter" + i.ToString(), tmpDevice.Name);
+          xmlwriter.SetValueAsBool("mytv", "usefilter" + i.ToString(), cLBDSFilter.GetItemChecked(i));
+        }
+        xmlwriter.SetValue("mytv", "filter" + cLBDSFilter.Items.Count.ToString(), "undefined");
       }
     }
 
@@ -163,12 +163,6 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      this.mpGroupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.lBDSFilter = new System.Windows.Forms.ListBox();
-      this.labelPropertiesHint = new System.Windows.Forms.Label();
-      this.bSetup = new System.Windows.Forms.Button();
-      this.cLBDSFilter = new System.Windows.Forms.CheckedListBox();
-      this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.rightcolumnsTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.leftcolumnsTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
@@ -179,75 +173,15 @@ namespace MediaPortal.Configuration.Sections
       this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.topscanlinesTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpGroupBox3.SuspendLayout();
+      this.mpGroupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.lBDSFilter = new System.Windows.Forms.ListBox();
+      this.labelPropertiesHint = new System.Windows.Forms.Label();
+      this.bSetup = new System.Windows.Forms.Button();
+      this.cLBDSFilter = new System.Windows.Forms.CheckedListBox();
+      this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpGroupBox1.SuspendLayout();
+      this.mpGroupBox3.SuspendLayout();
       this.SuspendLayout();
-      // 
-      // mpGroupBox3
-      // 
-      this.mpGroupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpGroupBox3.Controls.Add(this.lBDSFilter);
-      this.mpGroupBox3.Controls.Add(this.labelPropertiesHint);
-      this.mpGroupBox3.Controls.Add(this.bSetup);
-      this.mpGroupBox3.Controls.Add(this.cLBDSFilter);
-      this.mpGroupBox3.Controls.Add(this.label3);
-      this.mpGroupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox3.Location = new System.Drawing.Point(3, 121);
-      this.mpGroupBox3.Name = "mpGroupBox3";
-      this.mpGroupBox3.Size = new System.Drawing.Size(466, 284);
-      this.mpGroupBox3.TabIndex = 0;
-      this.mpGroupBox3.TabStop = false;
-      this.mpGroupBox3.Text = "Custom Filters";
-      // 
-      // lBDSFilter
-      // 
-      this.lBDSFilter.FormattingEnabled = true;
-      this.lBDSFilter.Location = new System.Drawing.Point(13, 161);
-      this.lBDSFilter.Name = "lBDSFilter";
-      this.lBDSFilter.Size = new System.Drawing.Size(441, 108);
-      this.lBDSFilter.TabIndex = 8;
-      this.lBDSFilter.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lBDSFilter_MouseDoubleClick);
-      // 
-      // labelPropertiesHint
-      // 
-      this.labelPropertiesHint.AutoSize = true;
-      this.labelPropertiesHint.Location = new System.Drawing.Point(134, 123);
-      this.labelPropertiesHint.Name = "labelPropertiesHint";
-      this.labelPropertiesHint.Size = new System.Drawing.Size(265, 13);
-      this.labelPropertiesHint.TabIndex = 7;
-      this.labelPropertiesHint.Text = "Use this button to edit the settings of the selected filter.";
-      // 
-      // bSetup
-      // 
-      this.bSetup.Location = new System.Drawing.Point(13, 118);
-      this.bSetup.Name = "bSetup";
-      this.bSetup.Size = new System.Drawing.Size(115, 23);
-      this.bSetup.TabIndex = 6;
-      this.bSetup.Text = "Filter properties";
-      this.bSetup.UseVisualStyleBackColor = true;
-      this.bSetup.Click += new System.EventHandler(this.bSetup_Click);
-      // 
-      // cLBDSFilter
-      // 
-      this.cLBDSFilter.FormattingEnabled = true;
-      this.cLBDSFilter.Location = new System.Drawing.Point(13, 63);
-      this.cLBDSFilter.Name = "cLBDSFilter";
-      this.cLBDSFilter.Size = new System.Drawing.Size(441, 49);
-      this.cLBDSFilter.TabIndex = 3;
-      this.cLBDSFilter.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.cLBDSFilter_MouseDoubleClick);
-      // 
-      // label3
-      // 
-      this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.label3.Location = new System.Drawing.Point(14, 17);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(440, 41);
-      this.label3.TabIndex = 2;
-      this.label3.Text = "With a doubleclick you can add / remove custom filters like ffdshow raw video or " +
-          "MoMoLight for playback. You have to enable them explicitly. Be aware, that some " +
-          "filters might break your playback!";
       // 
       // mpGroupBox1
       // 
@@ -364,16 +298,82 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabel1.TabIndex = 0;
       this.mpLabel1.Text = "MediaPortal can crop the picture for you if you need to remove unwanted video.";
       // 
+      // mpGroupBox3
+      // 
+      this.mpGroupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox3.Controls.Add(this.lBDSFilter);
+      this.mpGroupBox3.Controls.Add(this.labelPropertiesHint);
+      this.mpGroupBox3.Controls.Add(this.bSetup);
+      this.mpGroupBox3.Controls.Add(this.cLBDSFilter);
+      this.mpGroupBox3.Controls.Add(this.label3);
+      this.mpGroupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpGroupBox3.Location = new System.Drawing.Point(3, 121);
+      this.mpGroupBox3.Name = "mpGroupBox3";
+      this.mpGroupBox3.Size = new System.Drawing.Size(466, 284);
+      this.mpGroupBox3.TabIndex = 0;
+      this.mpGroupBox3.TabStop = false;
+      this.mpGroupBox3.Text = "Custom Filters";
+      // 
+      // lBDSFilter
+      // 
+      this.lBDSFilter.FormattingEnabled = true;
+      this.lBDSFilter.Location = new System.Drawing.Point(13, 161);
+      this.lBDSFilter.Name = "lBDSFilter";
+      this.lBDSFilter.Size = new System.Drawing.Size(441, 108);
+      this.lBDSFilter.TabIndex = 8;
+      this.lBDSFilter.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lBDSFilter_MouseDoubleClick);
+      // 
+      // labelPropertiesHint
+      // 
+      this.labelPropertiesHint.AutoSize = true;
+      this.labelPropertiesHint.Location = new System.Drawing.Point(134, 123);
+      this.labelPropertiesHint.Name = "labelPropertiesHint";
+      this.labelPropertiesHint.Size = new System.Drawing.Size(265, 13);
+      this.labelPropertiesHint.TabIndex = 7;
+      this.labelPropertiesHint.Text = "Use this button to edit the settings of the selected filter.";
+      // 
+      // bSetup
+      // 
+      this.bSetup.Location = new System.Drawing.Point(13, 118);
+      this.bSetup.Name = "bSetup";
+      this.bSetup.Size = new System.Drawing.Size(115, 23);
+      this.bSetup.TabIndex = 6;
+      this.bSetup.Text = "Filter properties";
+      this.bSetup.UseVisualStyleBackColor = true;
+      this.bSetup.Click += new System.EventHandler(this.bSetup_Click);
+      // 
+      // cLBDSFilter
+      // 
+      this.cLBDSFilter.FormattingEnabled = true;
+      this.cLBDSFilter.Location = new System.Drawing.Point(13, 63);
+      this.cLBDSFilter.Name = "cLBDSFilter";
+      this.cLBDSFilter.Size = new System.Drawing.Size(441, 49);
+      this.cLBDSFilter.TabIndex = 3;
+      this.cLBDSFilter.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.cLBDSFilter_MouseDoubleClick);
+      // 
+      // label3
+      // 
+      this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.label3.ForeColor = System.Drawing.Color.Red;
+      this.label3.Location = new System.Drawing.Point(14, 17);
+      this.label3.Name = "label3";
+      this.label3.Size = new System.Drawing.Size(440, 41);
+      this.label3.TabIndex = 2;
+      this.label3.Text = "USE THIS AT YOUR OWN RISK!";
+      this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+      // 
       // TVPostProcessing
       // 
       this.Controls.Add(this.mpGroupBox1);
       this.Controls.Add(this.mpGroupBox3);
       this.Name = "TVPostProcessing";
       this.Size = new System.Drawing.Size(472, 408);
-      this.mpGroupBox3.ResumeLayout(false);
-      this.mpGroupBox3.PerformLayout();
       this.mpGroupBox1.ResumeLayout(false);
       this.mpGroupBox1.PerformLayout();
+      this.mpGroupBox3.ResumeLayout(false);
+      this.mpGroupBox3.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -381,36 +381,36 @@ namespace MediaPortal.Configuration.Sections
 
     private void lBDSFilter_MouseDoubleClick(object sender, MouseEventArgs e)
     {
-        bool booFound = false;
-        for (int i = 0; i < cLBDSFilter.Items.Count; i++)
-            if (cLBDSFilter.Items[i] == lBDSFilter.SelectedItem)
-                booFound = true;
-        if (!booFound)
-            cLBDSFilter.Items.Add(lBDSFilter.SelectedItem);
-        for (int i = 0; i < cLBDSFilter.Items.Count; i++)
-            if (cLBDSFilter.Items[i] == lBDSFilter.SelectedItem)
-                cLBDSFilter.SelectedIndex = i;
+      bool booFound = false;
+      for (int i = 0; i < cLBDSFilter.Items.Count; i++)
+        if (cLBDSFilter.Items[i] == lBDSFilter.SelectedItem)
+          booFound = true;
+      if (!booFound)
+        cLBDSFilter.Items.Add(lBDSFilter.SelectedItem);
+      for (int i = 0; i < cLBDSFilter.Items.Count; i++)
+        if (cLBDSFilter.Items[i] == lBDSFilter.SelectedItem)
+          cLBDSFilter.SelectedIndex = i;
     }
 
     private void bSetup_Click(object sender, EventArgs e)
     {
-        if (cLBDSFilter.SelectedIndex != -1)
-        {
-            DirectShowPropertyPage page = new DirectShowPropertyPage((DsDevice)cLBDSFilter.SelectedItem);
-            page.Show(this);
-        }
+      if (cLBDSFilter.SelectedIndex != -1)
+      {
+        DirectShowPropertyPage page = new DirectShowPropertyPage((DsDevice)cLBDSFilter.SelectedItem);
+        page.Show(this);
+      }
     }
 
-      private void cLBDSFilter_MouseDoubleClick(object sender, MouseEventArgs e)
-      {
-          int tmpIndex = cLBDSFilter.SelectedIndex;
-          if (tmpIndex == 0)
-              tmpIndex = 1;
-          cLBDSFilter.Items.RemoveAt(cLBDSFilter.SelectedIndex);
-          if (cLBDSFilter.Items.Count > 0)
-              cLBDSFilter.SelectedIndex = tmpIndex - 1;
+    private void cLBDSFilter_MouseDoubleClick(object sender, MouseEventArgs e)
+    {
+      int tmpIndex = cLBDSFilter.SelectedIndex;
+      if (tmpIndex == 0)
+        tmpIndex = 1;
+      cLBDSFilter.Items.RemoveAt(cLBDSFilter.SelectedIndex);
+      if (cLBDSFilter.Items.Count > 0)
+        cLBDSFilter.SelectedIndex = tmpIndex - 1;
 
-      }
+    }
 
   }
 }

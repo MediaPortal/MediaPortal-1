@@ -38,12 +38,12 @@ namespace MediaPortal.Configuration.Sections
 {
   public class DVDPostProcessing : MediaPortal.Configuration.SectionSettings
   {
-      private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxCustomFilters;
-      private Label labelSetupButtonHint;
-      private Button bSetup;
-      private CheckedListBox cLBDSFilter;
-      private ListBox lBDSFilter;
-      private MediaPortal.UserInterface.Controls.MPLabel labelTopHint;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxCustomFilters;
+    private Label labelSetupButtonHint;
+    private Button bSetup;
+    private CheckedListBox cLBDSFilter;
+    private ListBox lBDSFilter;
+    private MediaPortal.UserInterface.Controls.MPLabel labelTopHint;
     private System.ComponentModel.IContainer components = null;
 
     public DVDPostProcessing()
@@ -62,65 +62,65 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
-        string strFilters = "";
-        string strUsedFilters = "";
-        cLBDSFilter.Sorted = false;
-        lBDSFilter.Sorted = false;
-        cLBDSFilter.DisplayMember = "Name";
-        lBDSFilter.DisplayMember = "Name";
-        lBDSFilter.FormattingEnabled = true;
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      string strFilters = "";
+      string strUsedFilters = "";
+      cLBDSFilter.Sorted = false;
+      lBDSFilter.Sorted = false;
+      cLBDSFilter.DisplayMember = "Name";
+      lBDSFilter.DisplayMember = "Name";
+      lBDSFilter.FormattingEnabled = true;
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+        int intCount = 0;
+        while (xmlreader.GetValueAsString("dvdplayer", "filter" + intCount.ToString(), "undefined") != "undefined")
         {
-            int intCount = 0;
-            while (xmlreader.GetValueAsString("dvdplayer", "filter" + intCount.ToString(), "undefined") != "undefined")
-            {
-                strFilters += xmlreader.GetValueAsString("dvdplayer", "filter" + intCount.ToString(), "undefined") + ";";
-                if (xmlreader.GetValueAsBool("dvdplayer", "usefilter" + intCount.ToString(), false))
-                {
-                    strUsedFilters += xmlreader.GetValueAsString("dvdplayer", "filter" + intCount.ToString(), "undefined") + ";";
-                }
-                intCount++;
-            }
+          strFilters += xmlreader.GetValueAsString("dvdplayer", "filter" + intCount.ToString(), "undefined") + ";";
+          if (xmlreader.GetValueAsBool("dvdplayer", "usefilter" + intCount.ToString(), false))
+          {
+            strUsedFilters += xmlreader.GetValueAsString("dvdplayer", "filter" + intCount.ToString(), "undefined") + ";";
+          }
+          intCount++;
         }
-        foreach (DsDevice device in DsDevice.GetDevicesOfCat(DirectShowLib.FilterCategory.LegacyAmFilterCategory))
+      }
+      foreach (DsDevice device in DsDevice.GetDevicesOfCat(DirectShowLib.FilterCategory.LegacyAmFilterCategory))
+      {
+        try
         {
-            try
+          if (device.Name != null)
+          {
+            lBDSFilter.Items.Add(device);
+            if (strFilters.Contains(device.Name))
             {
-                if (device.Name != null)
-                {
-                    lBDSFilter.Items.Add(device);
-                    if (strFilters.Contains(device.Name))
-                    {
-                        cLBDSFilter.Items.Add(device);
-                        cLBDSFilter.SetItemChecked(cLBDSFilter.Items.Count - 1, strUsedFilters.Contains(device.Name));
-                    }
-                }
+              cLBDSFilter.Items.Add(device);
+              cLBDSFilter.SetItemChecked(cLBDSFilter.Items.Count - 1, strUsedFilters.Contains(device.Name));
             }
-            catch (Exception)
-            {
-            }
+          }
         }
-        cLBDSFilter.Sorted = true;
-        lBDSFilter.Sorted = true;
-        if (cLBDSFilter.Items.Count > 0)
-            cLBDSFilter.SelectedIndex = 0;
-        if (lBDSFilter.Items.Count > 0)
-            lBDSFilter.SelectedIndex = 0;
+        catch (Exception)
+        {
+        }
+      }
+      cLBDSFilter.Sorted = true;
+      lBDSFilter.Sorted = true;
+      if (cLBDSFilter.Items.Count > 0)
+        cLBDSFilter.SelectedIndex = 0;
+      if (lBDSFilter.Items.Count > 0)
+        lBDSFilter.SelectedIndex = 0;
     }
 
     public override void SaveSettings()
     {
-        DsDevice tmpDevice = null;
-        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      DsDevice tmpDevice = null;
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+        for (int i = 0; i < cLBDSFilter.Items.Count; i++)
         {
-            for (int i = 0; i < cLBDSFilter.Items.Count; i++)
-            {
-                tmpDevice = (DsDevice)cLBDSFilter.Items[i];
-                xmlwriter.SetValue("dvdplayer", "filter" + i.ToString(), tmpDevice.Name);
-                xmlwriter.SetValueAsBool("dvdplayer", "usefilter" + i.ToString(), cLBDSFilter.GetItemChecked(i));
-            }
-            xmlwriter.SetValue("dvdplayer", "filter" + cLBDSFilter.Items.Count.ToString(), "undefined");
+          tmpDevice = (DsDevice)cLBDSFilter.Items[i];
+          xmlwriter.SetValue("dvdplayer", "filter" + i.ToString(), tmpDevice.Name);
+          xmlwriter.SetValueAsBool("dvdplayer", "usefilter" + i.ToString(), cLBDSFilter.GetItemChecked(i));
         }
+        xmlwriter.SetValue("dvdplayer", "filter" + cLBDSFilter.Items.Count.ToString(), "undefined");
+      }
     }
 
     /// <summary>
@@ -212,13 +212,13 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.labelTopHint.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.labelTopHint.ForeColor = System.Drawing.Color.Red;
       this.labelTopHint.Location = new System.Drawing.Point(15, 22);
       this.labelTopHint.Name = "labelTopHint";
       this.labelTopHint.Size = new System.Drawing.Size(427, 41);
       this.labelTopHint.TabIndex = 6;
-      this.labelTopHint.Text = "With a doubleclick you can add / remove custom filters like ffdshow raw video or " +
-          "MoMoLight for playback. You have to enable them explicitly. Be aware, that some " +
-          "filters might break your playback!";
+      this.labelTopHint.Text = "USE AT YOUR OWN RISK!";
+      this.labelTopHint.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
       // 
       // DVDPostProcessing
       // 
@@ -234,35 +234,35 @@ namespace MediaPortal.Configuration.Sections
 
     private void lBDSFilter_MouseDoubleClick(object sender, MouseEventArgs e)
     {
-        bool booFound = false;
-        for (int i = 0; i < cLBDSFilter.Items.Count; i++)
-            if (cLBDSFilter.Items[i] == lBDSFilter.SelectedItem)
-                booFound = true;
-        if (!booFound)
-            cLBDSFilter.Items.Add(lBDSFilter.SelectedItem);
-        for (int i = 0; i < cLBDSFilter.Items.Count; i++)
-            if (cLBDSFilter.Items[i] == lBDSFilter.SelectedItem)
-                cLBDSFilter.SelectedIndex = i;
+      bool booFound = false;
+      for (int i = 0; i < cLBDSFilter.Items.Count; i++)
+        if (cLBDSFilter.Items[i] == lBDSFilter.SelectedItem)
+          booFound = true;
+      if (!booFound)
+        cLBDSFilter.Items.Add(lBDSFilter.SelectedItem);
+      for (int i = 0; i < cLBDSFilter.Items.Count; i++)
+        if (cLBDSFilter.Items[i] == lBDSFilter.SelectedItem)
+          cLBDSFilter.SelectedIndex = i;
     }
 
     private void bSetup_Click(object sender, EventArgs e)
     {
-        if (cLBDSFilter.SelectedIndex != -1)
-        {
-            DirectShowPropertyPage page = new DirectShowPropertyPage((DsDevice)cLBDSFilter.SelectedItem);
-            page.Show(this);
-        }
+      if (cLBDSFilter.SelectedIndex != -1)
+      {
+        DirectShowPropertyPage page = new DirectShowPropertyPage((DsDevice)cLBDSFilter.SelectedItem);
+        page.Show(this);
+      }
     }
 
-      private void cLBDSFilter_MouseDoubleClick(object sender, MouseEventArgs e)
-      {
-          int tmpIndex = cLBDSFilter.SelectedIndex;
-          if (tmpIndex == 0)
-              tmpIndex = 1;
-          cLBDSFilter.Items.RemoveAt(cLBDSFilter.SelectedIndex);
-          if (cLBDSFilter.Items.Count > 0)
-              cLBDSFilter.SelectedIndex = tmpIndex - 1;
-      }
+    private void cLBDSFilter_MouseDoubleClick(object sender, MouseEventArgs e)
+    {
+      int tmpIndex = cLBDSFilter.SelectedIndex;
+      if (tmpIndex == 0)
+        tmpIndex = 1;
+      cLBDSFilter.Items.RemoveAt(cLBDSFilter.SelectedIndex);
+      if (cLBDSFilter.Items.Count > 0)
+        cLBDSFilter.SelectedIndex = tmpIndex - 1;
+    }
   }
 }
 
