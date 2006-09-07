@@ -98,8 +98,7 @@ namespace MediaPortal.Music.Database
     string[] ArtistNamePrefixes = new string[]
             {
               "the",
-              "les",
-              "die"
+              "les"
             };
 
 

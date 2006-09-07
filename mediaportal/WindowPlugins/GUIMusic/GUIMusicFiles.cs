@@ -1148,6 +1148,22 @@ namespace MediaPortal.GUI.Music
       {
         return strThumb;
       }
+      else
+      {
+        strThumb = GUIMusicFiles.GetAlbumThumbName(strArtistName, "The " + strAlbumName);
+        if (System.IO.File.Exists(strThumb))
+        {
+          return strThumb;
+        }
+        else
+        {
+          strThumb = GUIMusicFiles.GetAlbumThumbName("The " + strArtistName, strAlbumName);
+          if (System.IO.File.Exists(strThumb))
+          {
+            return strThumb;
+          }
+        }
+      }
 
       // no album art? then use folder.jpg
       string strPathName;
@@ -1157,6 +1173,22 @@ namespace MediaPortal.GUI.Music
       if (System.IO.File.Exists(strFolderThumb))
       {
         return strFolderThumb;
+      }
+      else
+      {
+        strFolderThumb = strPathName + @"\cover.jpg";
+        if (System.IO.File.Exists(strFolderThumb))
+        {
+          return strFolderThumb;
+        }
+        else
+        {
+          strFolderThumb = strPathName + @"\front.jpg";
+          if (System.IO.File.Exists(strFolderThumb))
+          {
+            return strFolderThumb;
+          }
+        }
       }
       return string.Empty;
     }
