@@ -138,7 +138,7 @@ namespace MediaPortal.GUI.TV
                 string selectedChan = (string)lstChannels.SelectedListItem.TVTag;
                 if (GUITVHome.Navigator.CurrentChannel != selectedChan)
                 {
-                  GUITVHome.Navigator.ZapToChannel((string)lstChannels.SelectedListItem.TVTag, false);
+                  GUITVHome.Navigator.ZapToChannel(selectedChan, false);
                   GUITVHome.Navigator.ZapNow();
                 }
                 Close();
