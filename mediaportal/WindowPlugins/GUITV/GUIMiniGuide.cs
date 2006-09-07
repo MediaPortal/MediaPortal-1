@@ -135,8 +135,12 @@ namespace MediaPortal.GUI.TV
               if ((int)Action.ActionType.ACTION_SELECT_ITEM == message.Param1)
               {
                 // switching logic
-                GUITVHome.Navigator.ZapToChannel(lstChannels.SelectedListItem.Label2, false);
-                GUITVHome.Navigator.ZapNow();
+                string selectedChan = (string)lstChannels.SelectedListItem.TVTag;
+                if (GUITVHome.Navigator.CurrentChannel != selectedChan)
+                {
+                  GUITVHome.Navigator.ZapToChannel((string)lstChannels.SelectedListItem.TVTag, false);
+                  GUITVHome.Navigator.ZapNow();
+                }
                 Close();
               }
             }
@@ -259,8 +263,11 @@ namespace MediaPortal.GUI.TV
         if (current.VisibleInGuide)
         {
           item = new GUIListItem("");
+          // store here as it is not needed right now - please beat me later..
+          item.TVTag = current.Name;
           if (!_altLayout)
             item.Label2 = current.Name;
+
           logo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, current.Name);
 
           // if we are watching this channel mark it
