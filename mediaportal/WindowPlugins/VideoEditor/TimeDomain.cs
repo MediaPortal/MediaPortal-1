@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace WindowPlugins.DvrMpegCut
+namespace WindowPlugins.VideoEditor
 {
   /// <summary>
   /// Holds a Timedomain with the starttime, the endtime and the duration
@@ -16,8 +16,8 @@ namespace WindowPlugins.DvrMpegCut
     {
       this.startTime = startTime;
       this.endTime = endTime;
-			startTimeSp = new TimeSpan((long)(startTime * 10e-7));
-			endTimeSp = new TimeSpan((long)(endTime * 10e-7));
+			startTimeSp = new TimeSpan((long)(startTime * 10e6));
+			endTimeSp = new TimeSpan((long)(endTime * 10e6));
 			durationSp = new TimeSpan();
 			if (endTime > startTime)
 			{
@@ -35,11 +35,43 @@ namespace WindowPlugins.DvrMpegCut
     {
       this.startTime = startTime;
       this.endTime = endTime;
-      if (endTime > startTime)
-        duration = endTime - startTime;
-      else
-        duration = -1;
+			startTimeSp = new TimeSpan((long)(startTime * 10e6));
+			endTimeSp = new TimeSpan((long)(endTime * 10e6));
+			durationSp = new TimeSpan();
+			if (endTime > startTime)
+			{
+				duration = endTime - startTime;
+				durationSp = new TimeSpan(endTimeSp.Ticks - startTimeSp.Ticks);
+			}
+			else
+			{
+				duration = -1;
+			}
     }
+
+		public TimeSpan StartTimeSp
+		{
+			get
+			{
+				return startTimeSp;
+			}
+		}
+
+		public TimeSpan EndTimeSp
+		{
+			get
+			{
+				return endTimeSp;
+			}
+		}
+
+		public TimeSpan DurationSp
+		{
+			get
+			{
+				return durationSp;
+			}
+		}
 
     public double StartTime
     {
@@ -67,7 +99,7 @@ namespace WindowPlugins.DvrMpegCut
 
     /// <summary>
     /// Gets the difference between the starttime and the endtime.
-    /// Is the endtime lower than the starttime the return is -1.
+    /// Is the endtime lower than the starttime it gets -1.
     /// </summary>
     public double Duration
     {
