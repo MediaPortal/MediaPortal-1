@@ -69,6 +69,7 @@ namespace MediaPortal.TV.Recording
     protected IGraphBuilder _graphBuilderInterface = null;
     protected ICaptureGraphBuilder2 _captureGraphBuilderInterface = null;
     protected IBaseFilter _filterCapture = null;
+    protected IBaseFilter[] customFilters;
     protected IAMTVTuner _tvTunerInterface = null;
     protected IAMTVAudio _tvAudioTunerInterface = null;
     protected IAMAnalogVideoDecoder _analogVideoDecoderInterface = null;
@@ -94,10 +95,6 @@ namespace MediaPortal.TV.Recording
     bool _isTuning = false;
     protected string _lastError = String.Empty;
 
-    public SinkGraph()
-    {
-    }
-
     /// <summary>
     /// Constructor
     /// </summary>
@@ -105,7 +102,6 @@ namespace MediaPortal.TV.Recording
     /// <param name="cable">use Cable or antenna</param>
     /// <param name="videoCaptureFilter">Filter name of the capture device</param>
     public SinkGraph( int ID, int countryCode, bool cable, string videoCaptureFilter, Size frameSize, double frameRate, string friendlyName )
-      : this()
     {
       _cardName = friendlyName;
       _cardId = ID;
@@ -136,7 +132,6 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     /// <param name="pCard"></param>
     public SinkGraph( TVCaptureDevice pCard )
-      : this()
     {
       _card = pCard;
 
@@ -228,7 +223,7 @@ namespace MediaPortal.TV.Recording
       if ( _graphState != State.Created && _graphState != State.TimeShifting )
         return false;
 
-      ulong freeSpace = MediaPortal.Util.Utils.GetFreeDiskSpace(strFileName);
+      ulong freeSpace = Util.Utils.GetFreeDiskSpace(strFileName);
       if ( freeSpace < ( 1024L * 1024L * 1024L ) )// 1 GB
       {
         _lastError = GUILocalizeStrings.Get(765);// "Not enough free diskspace";
@@ -892,7 +887,6 @@ namespace MediaPortal.TV.Recording
 
     /// <summary>
     /// Add preferred mpeg2 audio/video codecs to the graph
-    /// and if wanted add ffdshow postprocessing to the graph
     /// </summary>
     void AddPreferredCodecs( bool audio, bool video )
     {
@@ -900,11 +894,20 @@ namespace MediaPortal.TV.Recording
       string strVideoCodec = "";
       string strAudioCodec = "";
       string strAudioRenderer = "";
-      bool bAddFFDshow = false;
-
+      int intFilters = 0;
+      string strFilters = "";
       using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml") )
       {
-        bAddFFDshow = xmlreader.GetValueAsBool("mytv", "ffdshow", false);
+          int intCount = 0;
+          while (xmlreader.GetValueAsString("mytv", "filter" + intCount.ToString(), "undefined") != "undefined")
+          {
+              if (xmlreader.GetValueAsBool("mytv", "usefilter" + intCount.ToString(), false))
+              {
+                  strFilters += xmlreader.GetValueAsString("mytv", "filter" + intCount.ToString(), "undefined") + ";";
+                  intFilters++;
+              }
+              intCount++;
+          }
         strVideoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "");
         strAudioCodec = xmlreader.GetValueAsString("mytv", "audiocodec", "");
         strAudioRenderer = xmlreader.GetValueAsString("mytv", "audiorenderer", "");
@@ -915,8 +918,12 @@ namespace MediaPortal.TV.Recording
         DirectShowUtil.AddFilterToGraph(_graphBuilderInterface, strAudioCodec);
       if ( audio && strAudioRenderer.Length > 0 )
         DirectShowUtil.AddAudioRendererToGraph(_graphBuilderInterface, strAudioRenderer, false);
-      if ( video && bAddFFDshow )
-        DirectShowUtil.AddFilterToGraph(_graphBuilderInterface, "ffdshow raw video filter");
+      customFilters = new IBaseFilter[intFilters];
+      string[] arrFilters = strFilters.Split(';');
+      for (int i = 0; i < intFilters; i++)
+      {
+        customFilters[i] = DirectShowUtil.AddFilterToGraph(_graphBuilderInterface, arrFilters[i]);
+      }
     }
 
 
@@ -1578,25 +1585,25 @@ namespace MediaPortal.TV.Recording
     public void SetAudioLanguage( int audioPid )
     {
       _selectedAudioLanguage = audioPid;
-      //if (_tvAudioTunerInterface == null) return;
-      //switch (_selectedAudioLanguage)
-      //{
+      //  if (_tvAudioTunerInterface == null) return;
+      //  switch (_selectedAudioLanguage)
+      //  {
       //    case 0://mono
-      //        _tvAudioTunerInterface.put_TVAudioMode(TVAudioMode.Mono);
-      //        break;
+      //      _tvAudioTunerInterface.put_TVAudioMode(TVAudioMode.Mono);
+      //      break;
       //    case 1://stereo
-      //        _tvAudioTunerInterface.put_TVAudioMode(TVAudioMode.Stereo);
-      //        break;
+      //      _tvAudioTunerInterface.put_TVAudioMode(TVAudioMode.Stereo);
+      //      break;
       //    case 2://Language#1
-      //        _tvAudioTunerInterface.put_TVAudioMode(TVAudioMode.LangA);
-      //        break;
+      //      _tvAudioTunerInterface.put_TVAudioMode(TVAudioMode.LangA);
+      //      break;
       //    case 3://Language#2
-      //        _tvAudioTunerInterface.put_TVAudioMode(TVAudioMode.LangB);
-      //        break;
+      //      _tvAudioTunerInterface.put_TVAudioMode(TVAudioMode.LangB);
+      //      break;
       //    case 4://Language#3
-      //        _tvAudioTunerInterface.put_TVAudioMode(TVAudioMode.LangC);
-      //        break;
-      //}
+      //      _tvAudioTunerInterface.put_TVAudioMode(TVAudioMode.LangC);
+      //      break;
+      //  }
     }
 
     public ArrayList GetAudioLanguageList()

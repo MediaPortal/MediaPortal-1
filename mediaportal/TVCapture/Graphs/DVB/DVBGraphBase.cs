@@ -28,6 +28,7 @@
 
 #define COMPARE_PMT
 #if (UseCaptureCardDefinitions)
+
 #region usings
 using System;
 using System.IO;
@@ -58,6 +59,7 @@ using MediaPortal.TV.BDA;
 using DShowNET.TsFileSink;
 using MediaPortal.TV.Scanning;
 #endregion
+
 #pragma warning disable 618
 namespace MediaPortal.TV.Recording
 {
@@ -280,6 +282,8 @@ namespace MediaPortal.TV.Recording
     protected IBaseFilter _filterSampleGrabber = null;
     protected ISampleGrabber _sampleInterface = null;
     protected IBaseFilter _filterInfTee = null;
+    protected IBaseFilter[] customFilters;
+
 
     protected StreamBufferSink m_StreamBufferSink = null;
     protected StreamBufferConfig m_StreamBufferConfig = null;
@@ -1288,10 +1292,20 @@ namespace MediaPortal.TV.Recording
       string strVideoCodec = "";
       string strAudioCodec = "";
       string strAudioRenderer = "";
-      bool bAddFFDshow = false;
+      int intFilters = 0;
+      string strFilters = "";
       using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml") )
       {
-        bAddFFDshow = xmlreader.GetValueAsBool("mytv", "ffdshow", false);
+          int intCount = 0;
+          while (xmlreader.GetValueAsString("mytv", "filter" + intCount.ToString(), "undefined") != "undefined")
+          {
+              if (xmlreader.GetValueAsBool("mytv", "usefilter" + intCount.ToString(), false))
+              {
+                  strFilters += xmlreader.GetValueAsString("mytv", "filter" + intCount.ToString(), "undefined") + ";";
+                  intFilters++;
+              }
+              intCount++;
+          }
         strVideoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "");
         strAudioCodec = xmlreader.GetValueAsString("mytv", "audiocodec", "");
         strAudioRenderer = xmlreader.GetValueAsString("mytv", "audiorenderer", "");
@@ -1302,8 +1316,12 @@ namespace MediaPortal.TV.Recording
         DirectShowUtil.AddFilterToGraph(_graphBuilder, strAudioCodec);
       if ( audio && strAudioRenderer.Length > 0 )
         DirectShowUtil.AddAudioRendererToGraph(_graphBuilder, strAudioRenderer, false);
-      if ( video && bAddFFDshow )
-        DirectShowUtil.AddFilterToGraph(_graphBuilder, "ffdshow raw video filter");
+      customFilters = new IBaseFilter[intFilters];
+      string[] arrFilters = strFilters.Split(';');
+      for (int i = 0; i < intFilters; i++)
+      {
+        customFilters[i] = DirectShowUtil.AddFilterToGraph(_graphBuilder, arrFilters[i]);
+      }
     }//void AddPreferredCodecs()
 
 
@@ -1313,10 +1331,20 @@ namespace MediaPortal.TV.Recording
       string strVideoCodec = "";
       string strAudioCodec = "";
       string strAudioRenderer = "";
-      bool bAddFFDshow = false;
+      int intFilters = 0;
+      string strFilters = "";
       using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml") )
       {
-        bAddFFDshow = xmlreader.GetValueAsBool("mytv", "ffdshow", false);
+          int intCount = 0;
+          while (xmlreader.GetValueAsString("mytv", "filter" + intCount.ToString(), "undefined") != "undefined")
+          {
+              if (xmlreader.GetValueAsBool("mytv", "usefilter" + intCount.ToString(), false))
+              {
+                  strFilters += xmlreader.GetValueAsString("mytv", "filter" + intCount.ToString(), "undefined") + ";";
+                  intFilters++;
+              }
+              intCount++;
+          }
         strVideoCodec = xmlreader.GetValueAsString("mytv", "videocodecMPEG4", "Elecard AVC/H.264 Decoder DMO");
         strAudioCodec = xmlreader.GetValueAsString("mytv", "audiocodec", "");
         strAudioRenderer = xmlreader.GetValueAsString("mytv", "audiorenderer", "");
@@ -1327,8 +1355,12 @@ namespace MediaPortal.TV.Recording
         DirectShowUtil.AddFilterToGraph(_graphBuilder, strAudioCodec);
       if ( audio && strAudioRenderer.Length > 0 )
         DirectShowUtil.AddAudioRendererToGraph(_graphBuilder, strAudioRenderer, false);
-      if ( video && bAddFFDshow )
-        DirectShowUtil.AddFilterToGraph(_graphBuilder, "ffdshow raw video filter");
+      customFilters = new IBaseFilter[intFilters];
+      string[] arrFilters = strFilters.Split(';');
+      for (int i = 0; i < intFilters; i++)
+      {
+        customFilters[i] = DirectShowUtil.AddFilterToGraph(_graphBuilder, arrFilters[i]);
+      }
     }//void AddPreferredCodecs()
 
 

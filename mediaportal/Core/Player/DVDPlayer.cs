@@ -115,7 +115,7 @@ namespace MediaPortal.Player
     protected IBaseFilter _videoCodecFilter = null;
     protected IBaseFilter _audioCodecFilter = null;
     protected IBaseFilter _audioRendererFilter = null;
-    protected IBaseFilter _ffdShowFilter = null;
+    protected IBaseFilter[] customFilters; // FlipGer: array for custom directshow filters
 
     VMR7Util _vmr7 = null;
     protected int _speed = 1;
@@ -437,10 +437,14 @@ namespace MediaPortal.Player
           _audioRendererFilter = null;
         }
 
-        if (_ffdShowFilter != null)
+        // FlipGer: release custom filters
+        for (int i = 0; i < customFilters.Length; i++)
         {
-          while ((hr = Marshal.ReleaseComObject(_ffdShowFilter)) > 0) ;
-          _ffdShowFilter = null;
+            if (customFilters[i] != null)
+            {
+                while ((hr = Marshal.ReleaseComObject(customFilters[i])) > 0) ;
+            }
+            customFilters[i] = null;
         }
 
         if (_dvdbasefilter != null)
@@ -1914,10 +1918,21 @@ namespace MediaPortal.Player
       string strVideoCodec = "";
       string strAudioCodec = "";
       string strAudiorenderer = "";
-      bool bAddFFDshow = false;
+      int intFilters = 0; // FlipGer: count custom filters
+      string strFilters = ""; // FlipGer: collect custom filters
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
-        bAddFFDshow = xmlreader.GetValueAsBool("dvdplayer", "ffdshow", false);
+        // FlipGer: load infos for custom filters
+          int intCount = 0;
+          while (xmlreader.GetValueAsString("dvdplayer", "filter" + intCount.ToString(), "undefined") != "undefined")
+          {
+              if (xmlreader.GetValueAsBool("dvdplayer", "usefilter" + intCount.ToString(), false))
+              {
+                  strFilters += xmlreader.GetValueAsString("dvdplayer", "filter" + intCount.ToString(), "undefined") + ";";
+                  intFilters++;
+              }
+              intCount++;
+          }
         strVideoCodec = xmlreader.GetValueAsString("dvdplayer", "videocodec", "");
         strAudioCodec = xmlreader.GetValueAsString("dvdplayer", "audiocodec", "");
         strAudiorenderer = xmlreader.GetValueAsString("dvdplayer", "audiorenderer", "");
@@ -1925,7 +1940,13 @@ namespace MediaPortal.Player
       if (strVideoCodec.Length > 0) _videoCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strVideoCodec);
       if (strAudioCodec.Length > 0) _audioCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strAudioCodec);
       if (strAudiorenderer.Length > 0) _audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(_graphBuilder, strAudiorenderer, false);
-      if (bAddFFDshow) _ffdShowFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, "ffdshow raw video filter");
+      // FlipGer: add custom filters to graph
+      customFilters = new IBaseFilter[intFilters];
+      string[] arrFilters = strFilters.Split(';');
+      for (int i = 0; i < intFilters; i++)
+      {
+          customFilters[i] = DirectShowUtil.AddFilterToGraph(_graphBuilder, arrFilters[i]);
+      }
 
 
     }

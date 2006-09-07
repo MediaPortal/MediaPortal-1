@@ -416,7 +416,7 @@ namespace MediaPortal.GUI.Music
         case 33040:    // IRC spam
           {
             string tmpTrack = CurrentTrackTag.Track > 0 ? (Convert.ToString(CurrentTrackTag.Track) + ". ") : String.Empty;
-            Clipboard.SetText(@"/me listens to " + CurrentTrackTag.Artist + " - [" + CurrentTrackTag.Album + "] - " + tmpTrack + CurrentTrackTag.Title);
+            Clipboard.SetText(@"/me is listening to " + CurrentTrackTag.Artist + " [" + CurrentTrackTag.Album + "] - " + tmpTrack + CurrentTrackTag.Title);
             break;
           }
       }

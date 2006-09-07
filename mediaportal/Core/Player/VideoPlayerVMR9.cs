@@ -87,13 +87,24 @@ namespace MediaPortal.Player
         string strVideoCodec = "";
         string strAudioCodec = "";
         string strAudiorenderer = "";
-        bool bAddFFDshow = false;
+        int intFilters = 0; // FlipGer: count custom filters
+        string strFilters = ""; // FlipGer: collect custom filters
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         {
-          bAddFFDshow = xmlreader.GetValueAsBool("movieplayer", "ffdshow", false);
           strVideoCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2videocodec", "");
           strAudioCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2audiocodec", "");
           strAudiorenderer = xmlreader.GetValueAsString("movieplayer", "audiorenderer", "");
+          // FlipGer: load infos for custom filters
+          int intCount = 0;
+          while (xmlreader.GetValueAsString("movieplayer", "filter" + intCount.ToString(), "undefined") != "undefined")
+          {
+              if (xmlreader.GetValueAsBool("movieplayer", "usefilter" + intCount.ToString(), false))
+              {
+                  strFilters += xmlreader.GetValueAsString("movieplayer", "filter" + intCount.ToString(), "undefined") + ";";
+                  intFilters++;
+              }
+              intCount++;
+          }
         }
         string extension = System.IO.Path.GetExtension(m_strCurrentFile).ToLower();
         if (extension.Equals(".dvr-ms") || extension.Equals(".mpg") || extension.Equals(".mpeg") || extension.Equals(".bin") || extension.Equals(".dat"))
@@ -108,7 +119,13 @@ namespace MediaPortal.Player
         //  audioCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, "WMAudio Decoder DMO");
         //}
 
-        if (bAddFFDshow) ffdShowFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, "ffdshow raw video filter");
+        // FlipGer: add custom filters to graph
+        customFilters = new IBaseFilter[intFilters];
+        string[] arrFilters = strFilters.Split(';');
+        for (int i = 0; i < intFilters; i++)
+        {
+            customFilters[i] = DirectShowUtil.AddFilterToGraph(graphBuilder, arrFilters[i]);
+        }
         if (strAudiorenderer.Length > 0) audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(graphBuilder, strAudiorenderer, false);
 
 
@@ -282,10 +299,14 @@ namespace MediaPortal.Player
           while (Marshal.ReleaseComObject(audioRendererFilter)>0); 
           audioRendererFilter = null;
         }
-        if (ffdShowFilter != null)
+        // FlipGer: release custom filters
+        for (int i = 0; i < customFilters.Length; i++)
         {
-          while (Marshal.ReleaseComObject(ffdShowFilter)>0); 
-          ffdShowFilter = null;
+            if (customFilters[i] != null)
+            {
+                while (( hr =Marshal.ReleaseComObject(customFilters[i])) > 0);
+            }
+            customFilters[i] = null;
         }
 
         if (vobSub != null)

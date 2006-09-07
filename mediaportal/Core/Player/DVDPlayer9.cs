@@ -352,10 +352,14 @@ namespace MediaPortal.Player
           _audioRendererFilter = null;
         }
 
-        if (_ffdShowFilter != null)
+        // FlipGer: release custom filters
+        for (int i = 0; i < customFilters.Length; i++)
         {
-          while ((hr = Marshal.ReleaseComObject(_ffdShowFilter)) > 0) ;
-          _ffdShowFilter = null;
+            if (customFilters[i] != null)
+            {
+                while ((hr = Marshal.ReleaseComObject(customFilters[i])) > 0) ;
+            }
+            customFilters[i] = null;
         }
 
 

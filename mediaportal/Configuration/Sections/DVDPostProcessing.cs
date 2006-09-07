@@ -28,6 +28,9 @@ using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using DShowNET.Helper;
+using DirectShowLib;
+
 using MediaPortal.Util;
 
 #pragma warning disable 108
@@ -35,9 +38,12 @@ namespace MediaPortal.Configuration.Sections
 {
   public class DVDPostProcessing : MediaPortal.Configuration.SectionSettings
   {
-    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox3;
-    private MediaPortal.UserInterface.Controls.MPCheckBox ffdshowCheckBox;
-    private MediaPortal.UserInterface.Controls.MPLabel label3;
+      private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxCustomFilters;
+      private Label labelSetupButtonHint;
+      private Button bSetup;
+      private CheckedListBox cLBDSFilter;
+      private ListBox lBDSFilter;
+      private MediaPortal.UserInterface.Controls.MPLabel labelTopHint;
     private System.ComponentModel.IContainer components = null;
 
     public DVDPostProcessing()
@@ -56,18 +62,65 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
-      {
-        ffdshowCheckBox.Checked = xmlreader.GetValueAsBool("dvdplayer", "ffdshow", false);
-      }
+        string strFilters = "";
+        string strUsedFilters = "";
+        cLBDSFilter.Sorted = false;
+        lBDSFilter.Sorted = false;
+        cLBDSFilter.DisplayMember = "Name";
+        lBDSFilter.DisplayMember = "Name";
+        lBDSFilter.FormattingEnabled = true;
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        {
+            int intCount = 0;
+            while (xmlreader.GetValueAsString("dvdplayer", "filter" + intCount.ToString(), "undefined") != "undefined")
+            {
+                strFilters += xmlreader.GetValueAsString("dvdplayer", "filter" + intCount.ToString(), "undefined") + ";";
+                if (xmlreader.GetValueAsBool("dvdplayer", "usefilter" + intCount.ToString(), false))
+                {
+                    strUsedFilters += xmlreader.GetValueAsString("dvdplayer", "filter" + intCount.ToString(), "undefined") + ";";
+                }
+                intCount++;
+            }
+        }
+        foreach (DsDevice device in DsDevice.GetDevicesOfCat(DirectShowLib.FilterCategory.LegacyAmFilterCategory))
+        {
+            try
+            {
+                if (device.Name != null)
+                {
+                    lBDSFilter.Items.Add(device);
+                    if (strFilters.Contains(device.Name))
+                    {
+                        cLBDSFilter.Items.Add(device);
+                        cLBDSFilter.SetItemChecked(cLBDSFilter.Items.Count - 1, strUsedFilters.Contains(device.Name));
+                    }
+                }
+            }
+            catch (Exception)
+            {
+            }
+        }
+        cLBDSFilter.Sorted = true;
+        lBDSFilter.Sorted = true;
+        if (cLBDSFilter.Items.Count > 0)
+            cLBDSFilter.SelectedIndex = 0;
+        if (lBDSFilter.Items.Count > 0)
+            lBDSFilter.SelectedIndex = 0;
     }
 
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
-      {
-        xmlwriter.SetValueAsBool("dvdplayer", "ffdshow", ffdshowCheckBox.Checked);
-      }
+        DsDevice tmpDevice = null;
+        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        {
+            for (int i = 0; i < cLBDSFilter.Items.Count; i++)
+            {
+                tmpDevice = (DsDevice)cLBDSFilter.Items[i];
+                xmlwriter.SetValue("dvdplayer", "filter" + i.ToString(), tmpDevice.Name);
+                xmlwriter.SetValueAsBool("dvdplayer", "usefilter" + i.ToString(), cLBDSFilter.GetItemChecked(i));
+            }
+            xmlwriter.SetValue("dvdplayer", "filter" + cLBDSFilter.Items.Count.ToString(), "undefined");
+        }
     }
 
     /// <summary>
@@ -92,58 +145,124 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      this.mpGroupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.ffdshowCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpGroupBox3.SuspendLayout();
+      this.groupBoxCustomFilters = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.labelSetupButtonHint = new System.Windows.Forms.Label();
+      this.bSetup = new System.Windows.Forms.Button();
+      this.cLBDSFilter = new System.Windows.Forms.CheckedListBox();
+      this.lBDSFilter = new System.Windows.Forms.ListBox();
+      this.labelTopHint = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.groupBoxCustomFilters.SuspendLayout();
       this.SuspendLayout();
       // 
-      // mpGroupBox3
+      // groupBoxCustomFilters
       // 
-      this.mpGroupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.groupBoxCustomFilters.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpGroupBox3.Controls.Add(this.ffdshowCheckBox);
-      this.mpGroupBox3.Controls.Add(this.label3);
-      this.mpGroupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox3.Location = new System.Drawing.Point(0, 0);
-      this.mpGroupBox3.Name = "mpGroupBox3";
-      this.mpGroupBox3.Size = new System.Drawing.Size(472, 96);
-      this.mpGroupBox3.TabIndex = 0;
-      this.mpGroupBox3.TabStop = false;
-      this.mpGroupBox3.Text = "Settings";
+      this.groupBoxCustomFilters.Controls.Add(this.labelSetupButtonHint);
+      this.groupBoxCustomFilters.Controls.Add(this.bSetup);
+      this.groupBoxCustomFilters.Controls.Add(this.cLBDSFilter);
+      this.groupBoxCustomFilters.Controls.Add(this.lBDSFilter);
+      this.groupBoxCustomFilters.Controls.Add(this.labelTopHint);
+      this.groupBoxCustomFilters.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxCustomFilters.Location = new System.Drawing.Point(0, 0);
+      this.groupBoxCustomFilters.Name = "groupBoxCustomFilters";
+      this.groupBoxCustomFilters.Size = new System.Drawing.Size(472, 405);
+      this.groupBoxCustomFilters.TabIndex = 0;
+      this.groupBoxCustomFilters.TabStop = false;
+      this.groupBoxCustomFilters.Text = "Custom Filters";
       // 
-      // ffdshowCheckBox
+      // labelSetupButtonHint
       // 
-      this.ffdshowCheckBox.AutoSize = true;
-      this.ffdshowCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.ffdshowCheckBox.Location = new System.Drawing.Point(16, 64);
-      this.ffdshowCheckBox.Name = "ffdshowCheckBox";
-      this.ffdshowCheckBox.Size = new System.Drawing.Size(182, 17);
-      this.ffdshowCheckBox.TabIndex = 1;
-      this.ffdshowCheckBox.Text = "Enable FFDshow post processing";
+      this.labelSetupButtonHint.AutoSize = true;
+      this.labelSetupButtonHint.Location = new System.Drawing.Point(137, 143);
+      this.labelSetupButtonHint.Name = "labelSetupButtonHint";
+      this.labelSetupButtonHint.Size = new System.Drawing.Size(265, 13);
+      this.labelSetupButtonHint.TabIndex = 10;
+      this.labelSetupButtonHint.Text = "Use this button to edit the settings of the selected filter.";
       // 
-      // label3
+      // bSetup
       // 
-      this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.bSetup.Location = new System.Drawing.Point(16, 138);
+      this.bSetup.Name = "bSetup";
+      this.bSetup.Size = new System.Drawing.Size(115, 23);
+      this.bSetup.TabIndex = 8;
+      this.bSetup.Text = "Filter properties";
+      this.bSetup.UseVisualStyleBackColor = true;
+      this.bSetup.Click += new System.EventHandler(this.bSetup_Click);
+      // 
+      // cLBDSFilter
+      // 
+      this.cLBDSFilter.FormattingEnabled = true;
+      this.cLBDSFilter.Location = new System.Drawing.Point(16, 68);
+      this.cLBDSFilter.Name = "cLBDSFilter";
+      this.cLBDSFilter.Size = new System.Drawing.Size(441, 64);
+      this.cLBDSFilter.TabIndex = 7;
+      this.cLBDSFilter.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.cLBDSFilter_MouseDoubleClick);
+      // 
+      // lBDSFilter
+      // 
+      this.lBDSFilter.FormattingEnabled = true;
+      this.lBDSFilter.Location = new System.Drawing.Point(16, 184);
+      this.lBDSFilter.Name = "lBDSFilter";
+      this.lBDSFilter.Size = new System.Drawing.Size(441, 199);
+      this.lBDSFilter.TabIndex = 9;
+      this.lBDSFilter.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lBDSFilter_MouseDoubleClick);
+      // 
+      // labelTopHint
+      // 
+      this.labelTopHint.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.label3.Location = new System.Drawing.Point(16, 24);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(440, 32);
-      this.label3.TabIndex = 0;
-      this.label3.Text = "Note that you need to install ffdshow separately to make any this option work. Pl" +
-          "ease read the MediaPortal documentation for more information.";
+      this.labelTopHint.Location = new System.Drawing.Point(15, 22);
+      this.labelTopHint.Name = "labelTopHint";
+      this.labelTopHint.Size = new System.Drawing.Size(427, 41);
+      this.labelTopHint.TabIndex = 6;
+      this.labelTopHint.Text = "With a doubleclick you can add / remove custom filters like ffdshow raw video or " +
+          "MoMoLight for playback. You have to enable them explicitly. Be aware, that some " +
+          "filters might break your playback!";
       // 
       // DVDPostProcessing
       // 
-      this.Controls.Add(this.mpGroupBox3);
+      this.Controls.Add(this.groupBoxCustomFilters);
       this.Name = "DVDPostProcessing";
       this.Size = new System.Drawing.Size(472, 408);
-      this.mpGroupBox3.ResumeLayout(false);
-      this.mpGroupBox3.PerformLayout();
+      this.groupBoxCustomFilters.ResumeLayout(false);
+      this.groupBoxCustomFilters.PerformLayout();
       this.ResumeLayout(false);
 
     }
     #endregion
+
+    private void lBDSFilter_MouseDoubleClick(object sender, MouseEventArgs e)
+    {
+        bool booFound = false;
+        for (int i = 0; i < cLBDSFilter.Items.Count; i++)
+            if (cLBDSFilter.Items[i] == lBDSFilter.SelectedItem)
+                booFound = true;
+        if (!booFound)
+            cLBDSFilter.Items.Add(lBDSFilter.SelectedItem);
+        for (int i = 0; i < cLBDSFilter.Items.Count; i++)
+            if (cLBDSFilter.Items[i] == lBDSFilter.SelectedItem)
+                cLBDSFilter.SelectedIndex = i;
+    }
+
+    private void bSetup_Click(object sender, EventArgs e)
+    {
+        if (cLBDSFilter.SelectedIndex != -1)
+        {
+            DirectShowPropertyPage page = new DirectShowPropertyPage((DsDevice)cLBDSFilter.SelectedItem);
+            page.Show(this);
+        }
+    }
+
+      private void cLBDSFilter_MouseDoubleClick(object sender, MouseEventArgs e)
+      {
+          int tmpIndex = cLBDSFilter.SelectedIndex;
+          if (tmpIndex == 0)
+              tmpIndex = 1;
+          cLBDSFilter.Items.RemoveAt(cLBDSFilter.SelectedIndex);
+          if (cLBDSFilter.Items.Count > 0)
+              cLBDSFilter.SelectedIndex = tmpIndex - 1;
+      }
   }
 }
 
