@@ -434,16 +434,18 @@ public class MediaPortalApp : D3DApp, IRender
         }
     }
 
-    //JoeDalton: not used
-    //private static UnhandledExceptionLogger logger;
+    #if !DEBUG
+    private static UnhandledExceptionLogger logger;
 
-    //private static void AddExceptionHandler()
-    //{
-    //    logger = new UnhandledExceptionLogger();
-    //    AppDomain current = AppDomain.CurrentDomain;
-    //    current.UnhandledException += new UnhandledExceptionEventHandler(logger.LogCrash);
-    //}
-
+    /// <remark>This method is only used in release builds.
+    private static void AddExceptionHandler()
+    {
+        logger = new UnhandledExceptionLogger();
+        AppDomain current = AppDomain.CurrentDomain;
+        current.UnhandledException += new UnhandledExceptionEventHandler(logger.LogCrash);
+    }
+    #endif
+    
     #endregion
 
     #region remote callbacks
