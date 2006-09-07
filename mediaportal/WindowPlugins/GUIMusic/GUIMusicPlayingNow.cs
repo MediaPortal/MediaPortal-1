@@ -30,6 +30,7 @@ using System.Net;
 using System.Globalization;
 using System.Threading;
 using System.Text;
+using System.Windows.Forms;
 
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
@@ -375,6 +376,9 @@ namespace MediaPortal.GUI.Music
       if (IsCdTrack(CurrentTrackFileName))
         dlg.AddLocalizedString(4554);   // Lookup CD info
 
+      if (CurrentTrackTag != null)
+        dlg.AddLocalizedString(33040);  // copy IRC spam
+
       dlg.DoModal(GetID);
 
       if (dlg.SelectedId == -1)
@@ -407,6 +411,12 @@ namespace MediaPortal.GUI.Music
             MusicTag tag = new MusicTag();
             GetCDInfoFromFreeDB(CurrentTrackFileName, tag);
             GetTrackTags();
+            break;
+          }
+        case 33040:    // IRC spam
+          {
+            string tmpTrack = CurrentTrackTag.Track > 0 ? (Convert.ToString(CurrentTrackTag.Track) + ". ") : String.Empty;
+            Clipboard.SetText(@"/me listens to " + CurrentTrackTag.Artist + " - [" + CurrentTrackTag.Album + "] - " + tmpTrack + CurrentTrackTag.Title);
             break;
           }
       }

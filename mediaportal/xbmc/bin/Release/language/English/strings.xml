@@ -5255,7 +5255,11 @@
       <string>
       <id>33031</id>
       <value>Other tracks tagged with: </value>
-   </string>                         
+   </string>
+   <string>
+      <id>33040</id>
+      <value>Copy now playing spam to clipboard</value>
+   </string>                          
                  
    <string>
       <id>100000</id>

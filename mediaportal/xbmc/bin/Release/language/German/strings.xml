@@ -5256,6 +5256,10 @@
       <id>33031</id>
       <value>Weitere Titel markiert als: </value>
    </string>
+   <string>
+      <id>33040</id>
+      <value>Aktuellen Titel für IRC in die Zwischenablage kopieren</value>
+   </string>
       
    <string>
       <id>100000</id>
