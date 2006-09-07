@@ -1813,9 +1813,18 @@ namespace MediaPortal.GUI.Library
         }
         else
         {
-          // move 2 last item in list
-          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, WindowId, GetID, GetID, _listItems.Count - 1, 0, null);
-          OnMessage(msg);
+          //check if _downControlId is set -> then go to the window
+          if (_upControlId > 0)
+          {
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, WindowId, GetID, _upControlId, (int)action.wID, 0, null);
+            GUIGraphicsContext.SendMessage(msg);
+          }
+          else
+          {
+            // move 2 last item in list
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, WindowId, GetID, GetID, _listItems.Count - 1, 0, null);
+            OnMessage(msg);
+          }
         }
       }
       else
@@ -1869,9 +1878,18 @@ namespace MediaPortal.GUI.Library
           }
           else
           {
-            // move first item in list
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, WindowId, GetID, GetID, 0, 0, null);
-            OnMessage(msg);
+            //check if _downControlId is set -> then go to the window
+            if (_downControlId > 0)
+            {
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, WindowId, GetID, _downControlId, (int)action.wID, 0, null);
+              GUIGraphicsContext.SendMessage(msg);
+            }
+            else
+            {
+              // move first item in list
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, WindowId, GetID, GetID, 0, 0, null);
+              OnMessage(msg);
+            }
           }
         }
       }
