@@ -1210,7 +1210,7 @@ namespace MediaPortal.Player
           }
           strVideoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "");
           strAudioCodec = xmlreader.GetValueAsString("mytv", "audiocodec", "");
-          strAudiorenderer = xmlreader.GetValueAsString("mytv", "audiorenderer", "");
+          strAudiorenderer = xmlreader.GetValueAsString("mytv", "audiorenderer", "Default DirectSound Device");
           string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "normal");
           if ( strValue.Equals("zoom") )
             GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom;

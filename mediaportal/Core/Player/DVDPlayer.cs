@@ -1935,7 +1935,7 @@ namespace MediaPortal.Player
           }
         strVideoCodec = xmlreader.GetValueAsString("dvdplayer", "videocodec", "");
         strAudioCodec = xmlreader.GetValueAsString("dvdplayer", "audiocodec", "");
-        strAudiorenderer = xmlreader.GetValueAsString("dvdplayer", "audiorenderer", "");
+        strAudiorenderer = xmlreader.GetValueAsString("dvdplayer", "audiorenderer", "Default DirectSound Device");
       }
       if (strVideoCodec.Length > 0) _videoCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strVideoCodec);
       if (strAudioCodec.Length > 0) _audioCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strAudioCodec);

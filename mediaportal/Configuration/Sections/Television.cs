@@ -41,9 +41,11 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
     private MediaPortal.UserInterface.Controls.MPRadioButton radioButton1;
     private MediaPortal.UserInterface.Controls.MPComboBox audioCodecComboBox;
+    private MediaPortal.UserInterface.Controls.MPLabel labelAudioRenderer;
+    private MediaPortal.UserInterface.Controls.MPComboBox audioRendererComboBox;
     private MediaPortal.UserInterface.Controls.MPLabel label3;
     private MediaPortal.UserInterface.Controls.MPComboBox videoCodecComboBox;
-      private MediaPortal.UserInterface.Controls.MPLabel label5;
+    private MediaPortal.UserInterface.Controls.MPLabel label5;
     private MediaPortal.UserInterface.Controls.MPComboBox defaultZoomModeComboBox;
     private MediaPortal.UserInterface.Controls.MPLabel label6;
     private System.ComponentModel.IContainer components = null;
@@ -84,9 +86,11 @@ namespace MediaPortal.Configuration.Sections
         //
         ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
         ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
+        ArrayList availableAudioRenderers = FilterHelper.GetAudioRenderers();
 
         videoCodecComboBox.Items.AddRange(availableVideoFilters.ToArray());
         audioCodecComboBox.Items.AddRange(availableAudioFilters.ToArray());
+        audioRendererComboBox.Items.AddRange(availableAudioRenderers.ToArray());
         _init = true;
         LoadSettings();
       }
@@ -122,6 +126,8 @@ namespace MediaPortal.Configuration.Sections
       this.label5 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.audioCodecComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.labelAudioRenderer = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.audioRendererComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.radioButton1 = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.groupBox4 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.cbTurnOnTimeShift = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -149,6 +155,8 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.label5);
       this.groupBox1.Controls.Add(this.label3);
       this.groupBox1.Controls.Add(this.audioCodecComboBox);
+      this.groupBox1.Controls.Add(this.labelAudioRenderer);
+      this.groupBox1.Controls.Add(this.audioRendererComboBox);
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
@@ -171,14 +179,14 @@ namespace MediaPortal.Configuration.Sections
       this.cbDeinterlace.Location = new System.Drawing.Point(168, 92);
       this.cbDeinterlace.Name = "cbDeinterlace";
       this.cbDeinterlace.Size = new System.Drawing.Size(288, 21);
-      this.cbDeinterlace.TabIndex = 5;
+      this.cbDeinterlace.TabIndex = 7;
       // 
       // label8
       // 
       this.label8.Location = new System.Drawing.Point(16, 96);
       this.label8.Name = "label8";
       this.label8.Size = new System.Drawing.Size(96, 16);
-      this.label8.TabIndex = 4;
+      this.label8.TabIndex = 6;
       this.label8.Text = "Deinterlace mode:";
       // 
       // defaultZoomModeComboBox
@@ -198,14 +206,14 @@ namespace MediaPortal.Configuration.Sections
       this.defaultZoomModeComboBox.Location = new System.Drawing.Point(168, 116);
       this.defaultZoomModeComboBox.Name = "defaultZoomModeComboBox";
       this.defaultZoomModeComboBox.Size = new System.Drawing.Size(288, 21);
-      this.defaultZoomModeComboBox.TabIndex = 7;
+      this.defaultZoomModeComboBox.TabIndex = 9;
       // 
       // label6
       // 
       this.label6.Location = new System.Drawing.Point(16, 120);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(112, 16);
-      this.label6.TabIndex = 6;
+      this.label6.TabIndex = 8;
       this.label6.Text = "Default zoom mode:";
       // 
       // videoCodecComboBox
@@ -245,6 +253,25 @@ namespace MediaPortal.Configuration.Sections
       this.audioCodecComboBox.Name = "audioCodecComboBox";
       this.audioCodecComboBox.Size = new System.Drawing.Size(288, 21);
       this.audioCodecComboBox.TabIndex = 3;
+      // 
+      // labelAudioRenderer
+      // 
+      this.labelAudioRenderer.Location = new System.Drawing.Point(16, 72);
+      this.labelAudioRenderer.Name = "labelAudioRenderer";
+      this.labelAudioRenderer.Size = new System.Drawing.Size(88, 16);
+      this.labelAudioRenderer.TabIndex = 4;
+      this.labelAudioRenderer.Text = "Audio renderer:";
+      // 
+      // audioRendererComboBox
+      // 
+      this.audioRendererComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.audioRendererComboBox.BorderColor = System.Drawing.Color.Empty;
+      this.audioRendererComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.audioRendererComboBox.Location = new System.Drawing.Point(168, 68);
+      this.audioRendererComboBox.Name = "audioRendererComboBox";
+      this.audioRendererComboBox.Size = new System.Drawing.Size(288, 21);
+      this.audioRendererComboBox.TabIndex = 5;
       // 
       // radioButton1
       // 
@@ -388,6 +415,8 @@ namespace MediaPortal.Configuration.Sections
         //
         string audioCodec = xmlreader.GetValueAsString("mytv", "audiocodec", "");
         string videoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "");
+        string audioRenderer = xmlreader.GetValueAsString("mytv", "audiorenderer", "Default DirectSound Device");
+
         if (audioCodec == String.Empty)
         {
           ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
@@ -436,6 +465,7 @@ namespace MediaPortal.Configuration.Sections
         }
         audioCodecComboBox.SelectedItem = audioCodec;
         videoCodecComboBox.SelectedItem = videoCodec;
+        audioRendererComboBox.SelectedItem = audioRenderer;
 
         //
         // Set default aspect ratio
@@ -477,6 +507,7 @@ namespace MediaPortal.Configuration.Sections
         //
         xmlwriter.SetValue("mytv", "audiocodec", audioCodecComboBox.Text);
         xmlwriter.SetValue("mytv", "videocodec", videoCodecComboBox.Text);
+        xmlwriter.SetValue("mytv", "audiorenderer", audioRendererComboBox.Text);
 
       }
     }

@@ -304,7 +304,7 @@ namespace WindowPlugins.GUISettings.TV
       string strAudioRenderer = "";
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
-        strAudioRenderer = xmlreader.GetValueAsString("mytv", "audiorenderer", "");
+        strAudioRenderer = xmlreader.GetValueAsString("mytv", "audiorenderer", "Default DirectSound Device");
       }
       ArrayList availableAudioFilters = FilterHelper.GetAudioRenderers();
 

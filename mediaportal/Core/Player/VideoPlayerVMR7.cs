@@ -835,7 +835,7 @@ namespace MediaPortal.Player
         {
           strVideoCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2videocodec", "");
           strAudioCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2audiocodec", "");
-          strAudiorenderer = xmlreader.GetValueAsString("movieplayer", "audiorenderer", "");
+          strAudiorenderer = xmlreader.GetValueAsString("movieplayer", "audiorenderer", "Default DirectSound Device");
           defaultLanguage = xmlreader.GetValueAsString("subtitles", "language", "English");
           // FlipGer: load infos for custom filters
           int intCount = 0;

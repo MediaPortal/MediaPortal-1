@@ -910,7 +910,7 @@ namespace MediaPortal.TV.Recording
           }
         strVideoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "");
         strAudioCodec = xmlreader.GetValueAsString("mytv", "audiocodec", "");
-        strAudioRenderer = xmlreader.GetValueAsString("mytv", "audiorenderer", "");
+        strAudioRenderer = xmlreader.GetValueAsString("mytv", "audiorenderer", "Default DirectSound Device");
       }
       if ( video && strVideoCodec.Length > 0 )
         DirectShowUtil.AddFilterToGraph(_graphBuilderInterface, strVideoCodec);
