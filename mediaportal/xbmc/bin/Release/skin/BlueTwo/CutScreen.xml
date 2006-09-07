@@ -260,7 +260,7 @@
 		   	<width>180</width>
 		   	<height>250</height>
 		   	<label>Schneideliste</label>
-		   	<onleft>100</onleft>
+		   	<onleft>31</onleft>
 		   	<onright>100</onright>
 		   	<onup>24</onup>
 		   	<ondown>24</ondown>
