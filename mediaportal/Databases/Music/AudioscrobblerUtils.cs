@@ -454,16 +454,44 @@ namespace MediaPortal.Music.Database
     /// <returns>Song-List of Album Tracks with Title, Artist, Album, Playcount, URL(track), DateTimePlayed (album release), WebImage</returns>
     public List<Song> getAlbumInfo(string artistToSearch_, string albumToSearch_, bool sortBestTracks)
     {
+      int failover = 0;
       string urlArtist = getValidURLLastFMString(artistToSearch_);
       string urlAlbum = getValidURLLastFMString(albumToSearch_);
-
       List<Song> albumTracks = new List<Song>();
+      do
+      {
+        lock (LookupLock)
+          albumTracks = ParseXMLDocForAlbumInfo(urlArtist, urlAlbum);
 
-      lock (LookupLock)
-        albumTracks = ParseXMLDocForAlbumInfo(urlArtist, urlAlbum);
+        if (sortBestTracks)
+          albumTracks.Sort(CompareSongsByTimesPlayed);
 
-      if (sortBestTracks)
-        albumTracks.Sort(CompareSongsByTimesPlayed);
+        if (albumTracks.Count == 0)
+        {
+          failover++;
+          switch (failover)
+          {
+            case 1:
+              urlArtist = getValidURLLastFMString("The " + artistToSearch_);
+              break;
+            case 2:
+              urlArtist = getValidURLLastFMString(artistToSearch_);
+              urlAlbum = getValidURLLastFMString("The " + albumToSearch_);
+              break;
+            case 3:
+              urlArtist = getValidURLLastFMString("The " + artistToSearch_);
+              urlAlbum = getValidURLLastFMString("The " + albumToSearch_);
+              break;
+            default:
+              Log.Debug("Audioscrobbler: No album info for {1} found after {0} tries", failover, artistToSearch_ + " - " + albumToSearch_);
+              failover = 0;
+              break;
+          }
+        }
+        else
+          failover = 0;
+
+      } while (failover != 0);
 
       return albumTracks;
     }
