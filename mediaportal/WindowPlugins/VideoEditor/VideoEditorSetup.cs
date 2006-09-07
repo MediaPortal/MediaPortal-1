@@ -23,7 +23,7 @@ using System.Collections.Generic;
 using System.Text;
 using MediaPortal.GUI.Library;
 
-namespace WindowPlugins.DvrMpegCut
+namespace WindowPlugins.VideoEditor
 {
 	public class DvrMpegCutMPSetup : ISetupForm
 	{

@@ -28,7 +28,7 @@ using MediaPortal.Player;
 using MediaPortal.Util;
 using DirectShowLib.SBE;
 
-namespace WindowPlugins.DvrMpegCut
+namespace WindowPlugins.VideoEditor
 {
 	public class GUIDvrMpegCutMP : GUIWindow
 	{
@@ -110,6 +110,7 @@ namespace WindowPlugins.DvrMpegCut
 				extensions.Add(".dvr-ms");
 				extensions.Add(".mpeg");
 				extensions.Add(".mpg");
+				extensions.Add(".ts");
 				videoListLct.Clear();
 				videoListLct.UpdateLayout();
         startJoinBtn.IsEnabled = false;
@@ -124,9 +125,9 @@ namespace WindowPlugins.DvrMpegCut
         LoadShares();
 				LoadDrives();
 			}
-			catch (Exception e)
+			catch (Exception ex)
 			{
-				Log.Error("DvrMpegCut: (OnPageLoad) " + e.StackTrace);
+				Log.Error(ex);
 			}
 
 		}
@@ -274,7 +275,7 @@ namespace WindowPlugins.DvrMpegCut
 			}
 			catch (Exception ex)
 			{
-				Log.Error("DvrMpegCut: (LoadDrives) " + ex.StackTrace);
+				Log.Error("VideoEditor: (LoadDrives) " + ex.StackTrace);
 			}
 		}
 
@@ -328,7 +329,7 @@ namespace WindowPlugins.DvrMpegCut
 			}
 			catch (Exception ex)
 			{
-				Log.Error("DvrMpegCut: (LoadListControl) "+ ex.Message);
+				Log.Error("VideoEditor: (LoadListControl) "+ ex.Message);
 			}
 		}
 
@@ -446,7 +447,7 @@ namespace WindowPlugins.DvrMpegCut
 			}
 			catch (Exception ex)
 			{
-				Log.Error("DvrMpegCut: (ToCutScreen) " + ex.Message);
+				Log.Error("VideoEditor: (ToCutScreen) " + ex.Message);
 			}
 		}
 		#endregion

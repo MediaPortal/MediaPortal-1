@@ -39,7 +39,7 @@ using DShowNET.Helper;
 using System.Runtime.InteropServices;
 using Mpeg2SplitterPackage;
 
-namespace WindowPlugins.DvrMpegCut
+namespace WindowPlugins.VideoEditor
 {
   class DvrMpegCutPreview : GUIWindow
   {
@@ -110,7 +110,6 @@ namespace WindowPlugins.DvrMpegCut
 		bool editCutPoint;
 		int editCutPointsIndex;
 		int lastIndexedCutPoint;
-   // int videoLength;
 
     //EMode eMode = EMode.E_CUT;
     EMode eMode = EMode.E_TRIM;
@@ -134,7 +133,7 @@ namespace WindowPlugins.DvrMpegCut
       }
       catch (Exception ex)
       {
-        Log.Error("DvrMpegCut: (DvrMpegCutPreview) " + ex.StackTrace);
+        Log.Error("VideoEditor: (DvrMpegCutPreview) " + ex.StackTrace);
       }
 
     }
@@ -143,8 +142,17 @@ namespace WindowPlugins.DvrMpegCut
     #region overrides
     public override bool Init()
     {
-      iCount = 0;
-      return Load(GUIGraphicsContext.Skin + @"\CutScreen.xml");
+			try
+			{
+				iCount = 0;
+				return Load(GUIGraphicsContext.Skin + @"\CutScreen.xml");
+			}
+			catch (Exception ex)
+			{
+				MessageBox("Error loading skinfile: CutScreen.xml", "Skin Error");
+				Log.Error(ex);
+				return false;
+			}
     }
 
     protected override void OnPageLoad()
@@ -190,10 +198,11 @@ namespace WindowPlugins.DvrMpegCut
 				cutBtn.IsEnabled = false;
 				editCutPoint = false;
 				editCutPointsIndex = 0;
+				addBtn.IsEnabled = true;
       }
       catch (Exception ex)
       {
-        Log.Error("DvrMpegCut: (OnPageLoad) " + ex.StackTrace);
+        Log.Error("VideoEditor: (OnPageLoad) " + ex.StackTrace);
       }
       //schneideListeLct.Add(new GUIListItem("Test"));
     }
@@ -207,6 +216,8 @@ namespace WindowPlugins.DvrMpegCut
       progressLbl.Label = "0";
 			cutListCtrl.Clear();
 			cutPointsList.Clear();
+			cutBtn.IsEnabled = false;
+			addBtn.IsEnabled = false;
     }
 
     void dvrMod_OnProgress(int percentage)
@@ -317,6 +328,7 @@ namespace WindowPlugins.DvrMpegCut
 						ReloadCutList();
 						editCutPointsLbl.IsVisible = false;
 						editCutPoint = false;
+						//_log.Info("Days::" + cutPointsList[0].StartTimeSp.Days.ToString() + "::Seconds::" + cutPointsList[0].StartTimeSp.Seconds.ToString(), null);
 					}
 					else
 					{
@@ -325,6 +337,7 @@ namespace WindowPlugins.DvrMpegCut
 						newLenghtLbl.Label = MediaPortal.Util.Utils.SecondsToHMSString((int)durationNew);
 						cutPointsList.Add(new TimeDomain(startCut, endCut));
 					}
+					
 					startPosLbl.Label = "";
 					endPosLbl.Label = "";
 					cutBtn.IsEnabled = true;
@@ -423,8 +436,8 @@ namespace WindowPlugins.DvrMpegCut
 						break;
 					case 2076:
 						editCutPoint = true;
-						positionSld.Percentage = (int)((100 / durationOld) * cutPointsList[cutListCtrl.SelectedListItemIndex].StartTime);
-						g_Player.SeekAbsolute(cutPointsList[cutListCtrl.SelectedListItemIndex].StartTime);
+						//positionSld.Percentage = (int)((100 / durationOld) * cutPointsList[cutListCtrl.SelectedListItemIndex].StartTime);
+						//g_Player.SeekAbsolute(cutPointsList[cutListCtrl.SelectedListItemIndex].StartTime);
 						editCutPointsIndex = cutListCtrl.SelectedListItemIndex;
 						editCutPointsLbl.IsVisible = true;
 						//addBtn.Label = GUILocalizeStrings.Get(510);
@@ -575,7 +588,7 @@ namespace WindowPlugins.DvrMpegCut
       }
       catch (Exception e)
       {
-        Log.Error("DvrMpegCut: (CutDvrms) " + e.StackTrace);
+        Log.Error("VideoEditor: (CutDvrms) " + e.StackTrace);
         if (cutProgressTime != null)
         {
           cutProgressTime.Stop();
