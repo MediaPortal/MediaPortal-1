@@ -280,12 +280,6 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DvrMpegCut\DvrMpegCutMPSetup.cs" />
-    <Compile Include="DvrMpegCut\DvrMpegCutPreview.cs" />
-    <Compile Include="DvrMpegCut\DvrMsModifier.cs" />
-    <Compile Include="DvrMpegCut\GUIDvrMpegCutMP.cs" />
-    <Compile Include="DvrMpegCut\Mpeg2Splitter.cs" />
-    <Compile Include="DvrMpegCut\TimeDomain.cs" />
     <Compile Include="GUIAlarm\Alarm.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -947,6 +941,13 @@
     <Compile Include="Home\SetupForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="VideoEditor\DvrMsModifier.cs" />
+    <Compile Include="VideoEditor\GUIVideoEditor.cs" />
+    <Compile Include="VideoEditor\Mpeg2Splitter.cs" />
+    <Compile Include="VideoEditor\MpegModifier.cs" />
+    <Compile Include="VideoEditor\TimeDomain.cs" />
+    <Compile Include="VideoEditor\VideoEditorPreview.cs" />
+    <Compile Include="VideoEditor\VideoEditorSetup.cs" />
     <EmbeddedResource Include="GUIAlarm\AlarmSetupForm.resx">
       <DependentUpon>AlarmSetupForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -1052,6 +1053,9 @@
     </EmbeddedResource>
     <Content Include="GUIPrograms\FileDetailContents.xml" />
     <Content Include="GUIPrograms\ProgramSettingProfiles.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="NewFolder1\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
