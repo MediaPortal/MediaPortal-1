@@ -445,6 +445,56 @@ namespace MediaPortal.Music.Database
       return outString;
     }
 
+    public List<Song> filterForLocalSongs(List<Song> unfilteredList_, string excludeArtist_, string currentTag_)
+    {
+      try
+      {
+        MusicDatabase mdb = new MusicDatabase();
+        List<Song> tmpSongs = new List<Song>();
+        Song dbSong = new Song();
+        Song tmpSong = new Song();
+        bool foundDoubleEntry = false;
+        string tmpArtist = String.Empty;
+
+        for (int s = 0; s < unfilteredList_.Count; s++)
+        {
+          // only accept other artists than the current playing
+          tmpArtist = unfilteredList_[s].Artist.ToLowerInvariant();
+          if (tmpArtist != excludeArtist_.ToLowerInvariant() || tmpArtist == currentTag_)
+          {
+            if (mdb.GetSong(unfilteredList_[s].Title, ref dbSong))
+            {
+              tmpSong = dbSong.Clone();
+              // check and prevent entries from the same artist
+              for (int j = 0; j < tmpSongs.Count; j++)
+              {
+                if (tmpSong.Artist == tmpSongs[j].Artist)
+                {
+                  foundDoubleEntry = true;
+                  break;
+                }
+              }
+              // new item therefore add it
+              if (!foundDoubleEntry)
+              {
+                if (currentTag_ != String.Empty)
+                  tmpSong.Genre = currentTag_;
+                tmpSongs.Add(tmpSong);
+              }
+            }
+          }
+          //else
+          //  Log.Debug("Audioscrobbler: Artist {0} inadequate - skipping", tagTracks[s].Artist);
+        }
+        return tmpSongs;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Audioscrobbler: filtering for local songs failed - {0}", ex.Message);
+        return unfilteredList_;
+      }
+    }
+
     /// <summary>
     /// Fetch Amazon cover link, release date and album songs sortable by their popularity
     /// </summary>
@@ -496,6 +546,15 @@ namespace MediaPortal.Music.Database
       return albumTracks;
     }
 
+    /// <summary>
+    /// fetch other Tracks from last.fm which correspond to the tags of the given Track
+    /// </summary>
+    /// <param name="artistToSearch_">Artist name (can be unparsed)</param>
+    /// <param name="trackToSearch_">Track name (can be unparsed)</param>
+    /// <param name="randomizeUsedTag_">chose randomly between the 5 top tags</param>
+    /// <param name="sortBestTracks_">do not apply randomness on track lookup</param>
+    /// <param name="addAvailableTracksOnly">filter all songs not locally available</param>
+    /// <returns>List of Song where Song.Genre contains the used tag</returns>
     public List<Song> getTagInfo(string artistToSearch_, string trackToSearch_, bool randomizeUsedTag_, bool sortBestTracks_, bool addAvailableTracksOnly)
     {
       lock (LookupLock)
@@ -564,43 +623,10 @@ namespace MediaPortal.Music.Database
               _limitRandomListCount /= 3;
             }
 
+            // filter tracks not available in music database
             if (addAvailableTracksOnly)
             {
-              MusicDatabase mdb = new MusicDatabase();
-              List<Song> tmpSongs = new List<Song>();
-              Song dbSong = new Song();
-              Song tmpSong = new Song();
-              bool foundDoubleEntry = false;
-
-              for (int s = 0; s < tagTracks.Count; s++)
-              {
-                // only accept other artists than the current playing
-                if ((tagTracks[s].Artist.ToLowerInvariant() != artistToSearch_.ToLowerInvariant()) || (tagTracks[s].Artist.ToLowerInvariant() == tmpGenre))
-                {
-                  if (mdb.GetSong(tagTracks[s].Title, ref dbSong))
-                  {
-                    tmpSong = dbSong.Clone();
-                    // check and prevent entries from the same artist
-                    for (int j = 0; j < tmpSongs.Count; j++)
-                    {
-                      if (tmpSong.Artist == tmpSongs[j].Artist)
-                      {
-                        foundDoubleEntry = true;
-                        break;
-                      }
-                    }
-                    // new item therefore add it
-                    if (!foundDoubleEntry)
-                    {
-                      tmpSong.Genre = tmpGenre;
-                      tmpSongs.Add(tmpSong);
-                    }
-                  }
-                }
-                //else
-                //  Log.Debug("Audioscrobbler: Artist {0} inadequate - skipping", tagTracks[s].Artist);
-              }
-              tagTracks = tmpSongs;
+              tagTracks = filterForLocalSongs(tagTracks, artistToSearch_, tmpGenre);
             }
           }
           else
