@@ -165,7 +165,7 @@ namespace MediaPortal.Configuration.Sections
         "<=",
         "<>",
         "like",
-
+        "group",
       };
 
     private string[] viewsAs = new string[]
@@ -259,6 +259,7 @@ namespace MediaPortal.Configuration.Sections
       cbSelection.DropDownStyle = ComboBoxStyle.DropDownList;
       cbSelection.Dock = DockStyle.Fill;
       cbSelection.DisplayMember = "Selection";
+      cbSelection.MaxDropDownItems = 10;
       foreach (string strText in selections)
       {
         cbSelection.Items.Add(strText);
@@ -274,6 +275,7 @@ namespace MediaPortal.Configuration.Sections
       cbOperators.DropDownStyle = ComboBoxStyle.DropDownList;
       cbOperators.Dock = DockStyle.Fill;
       cbOperators.DisplayMember = "Operator";
+      cbOperators.MaxDropDownItems = 10;
       foreach (string strText in sqloperators)
       {
         cbOperators.Items.Add(strText);

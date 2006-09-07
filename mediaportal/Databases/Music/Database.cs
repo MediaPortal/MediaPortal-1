@@ -590,6 +590,60 @@ namespace MediaPortal.Music.Database
       }
     }
 
+    public void GetSongsByIndex(string sql, out List<Song> songs, bool artistTable, bool albumTable, bool songTable, bool genreTable)
+    {
+      songs = new List<Song>();
+      try
+      {
+        if (null == m_db)
+          return;
+        //Originele regel
+        //SQLiteResultSet results=GetResults(sql);
+        //Nieuwe regel
+        SQLiteResultSet results = m_db.Execute(sql);
+
+        MediaPortal.Music.Database.Song song;
+        //Log.Write (sql);
+        //Log.Write ("Aantal rijen = {0}",(int)results.Rows.Count);
+
+        for (int i = 0; i < results.Rows.Count; i++)
+        {
+          song = new Song();
+          SQLiteResultSet.Row fields = results.Rows[i];
+          if (artistTable && !songTable)
+          {
+            song.Artist = fields.fields[0];
+            // Count of songs
+            song.Duration = Convert.ToInt16(fields.fields[1]);
+          }
+          if (albumTable && !songTable)
+          {
+            song.Album = fields.fields[0];
+            // Count of songs
+            song.Duration = Convert.ToInt16(fields.fields[1]);
+          }
+          if (genreTable && !songTable)
+          {
+            song.Genre = fields.fields[0];
+            // Count of songs
+            song.Duration = Convert.ToInt16(fields.fields[1]);
+          }
+          if (songTable)
+          {         
+            song.Title = fields.fields[0];
+            // Count of songs
+            song.Duration = Convert.ToInt16(fields.fields[1]);
+          }
+          songs.Add(song);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+    }
+
     public int AddAlbum(string strAlbum1, int lArtistId)
     {
       return AddAlbum(strAlbum1, lArtistId, -1);

@@ -662,7 +662,17 @@ namespace MediaPortal.GUI.Music
           string fileSize = MediaPortal.Util.Utils.GetSize(item.Size);
           string year = tag.Year.ToString();
           string filename = MediaPortal.Util.Utils.GetFilename(item.Path);
-          string duration = MediaPortal.Util.Utils.SecondsToHMSString(tag.Duration);
+          // For an index view, don't translate the duration
+          string duration = "";
+          FilterDefinition filter = (FilterDefinition)handler.View.Filters[handler.CurrentLevel];
+          if (filter.SqlOperator == "group")
+          {
+            duration = Convert.ToString(tag.Duration);
+          }
+          else
+          {
+            duration = MediaPortal.Util.Utils.SecondsToHMSString(tag.Duration);
+          }
           string rating = tag.Rating.ToString();
           if (tag.Track <= 0)
             trackNr = "";
