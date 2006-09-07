@@ -24,10 +24,12 @@
 #endregion
 
 using System;
-using System.Globalization;
-using System.Drawing;
-using System.Windows.Forms;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Globalization;
+using System.Text;
+using System.Windows.Forms;
+
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.TV.Recording;
@@ -43,14 +45,12 @@ namespace MediaPortal.GUI.TV
   public class GUIMiniGuide : GUIWindow, IRenderLayer
   {
     // Member variables                                  
-    [SkinControlAttribute(34)]
-    protected GUIButtonControl cmdExit = null;
-    [SkinControlAttribute(35)]
-    protected GUIListControl lstChannels = null;
-    [SkinControlAttribute(36)]
-    protected GUISpinControl spinGroup = null;
+    [SkinControlAttribute(34)]    protected GUIButtonControl cmdExit = null;
+    [SkinControlAttribute(35)]    protected GUIListControl lstChannels = null;
+    [SkinControlAttribute(36)]    protected GUISpinControl spinGroup = null;
 
     bool m_bRunning = false;
+    bool _altLayout = false;
     int m_dwParentWindowID = 0;
     GUIWindow m_pParentWindow = null;
     List<TVChannel> tvChannelList = null;
@@ -70,7 +70,16 @@ namespace MediaPortal.GUI.TV
     /// <returns></returns>
     public override bool Init()
     {
-      bool bResult = Load(GUIGraphicsContext.Skin + @"\TVMiniGuide.xml");
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      {
+        _altLayout = xmlreader.GetValueAsBool("mytv", "altminiguide", true);
+      }
+      bool bResult = false;
+      //if (_altLayout)
+      //  bResult = Load(GUIGraphicsContext.Skin + @"\mytvMiniGuide.xml");
+      //else
+      bResult = Load(GUIGraphicsContext.Skin + @"\TVMiniGuide.xml");
+
       GetID = (int)GUIWindow.Window.WINDOW_MINI_GUIDE;
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.MiniEPG);
       return bResult;
@@ -199,6 +208,8 @@ namespace MediaPortal.GUI.TV
       // appearing are already fixed elsewhere
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.MiniEPG);
       AllocResources();
+      //if (_altLayout)
+      //  lstChannels.
       ResetAllControls();							// make sure the controls are positioned relevant to the OSD Y offset
       FillChannelList();
       FillGroupList();
@@ -243,10 +254,13 @@ namespace MediaPortal.GUI.TV
       for (int i = 0; i < tvChannelList.Count; i++)
       {
         current = tvChannelList[i];
+        StringBuilder sb = new StringBuilder();
+
         if (current.VisibleInGuide)
         {
           item = new GUIListItem("");
-          item.Label2 = current.Name;
+          if (!_altLayout)
+            item.Label2 = current.Name;
           logo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, current.Name);
 
           // if we are watching this channel mark it
@@ -270,13 +284,26 @@ namespace MediaPortal.GUI.TV
           if (prog != null)
           {
             //                    item.Label3 = prog.Title + " [" + prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat) + "-" + prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat) + "]";
-            item.Label3 = prog.Title + ": " + CalculateProgress(prog).ToString() + "%";
+            if (_altLayout)
+            {
+              item.Label3 = GUILocalizeStrings.Get(789) + prog.Title;
+              sb.Append(current.Name);
+              sb.Append(" - ");
+              sb.Append(CalculateProgress(prog).ToString());
+              sb.Append("%");
+              item.Label2 = sb.ToString();
+            }
+            else
+              item.Label3 = prog.Title + ": " + CalculateProgress(prog).ToString() + "%";
           }
           prognext = GetNextProgram(current, prog);
           if (prognext != null)
           {
             //                    item.Label = prognext.Title + " [" + prognext.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat) + "-" + prognext.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat) + "]";
-            item.Label = prognext.Title;
+            if (!_altLayout)
+              item.Label = prognext.Title;
+            else
+              item.Label = GUILocalizeStrings.Get(790) + prognext.Title;
           }
           lstChannels.Add(item);
           lstChannels.SelectedListItemIndex = selected;
@@ -297,7 +324,8 @@ namespace MediaPortal.GUI.TV
       {
         double fprogress = (passed.TotalMinutes / length.TotalMinutes) * 100;
         fprogress = Math.Floor(fprogress);
-        if (fprogress > 100.0f) return 100.0f;
+        if (fprogress > 100.0f)
+          return 100.0f;
         return fprogress;
       }
       else
@@ -326,7 +354,8 @@ namespace MediaPortal.GUI.TV
     /// <returns></returns>
     private TVProgram GetNextProgram(TVChannel channel, TVProgram based)
     {
-      if (based == null) return null;
+      if (based == null)
+        return null;
       TVProgram prognext = channel.GetProgramAt(based.EndTime.AddMinutes(1));
       return prognext;
     }

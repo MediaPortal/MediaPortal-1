@@ -2622,6 +2622,14 @@
       <value>Erweitert</value>
    </string>
    <string>
+      <id>789</id>
+      <value>Jetzt: </value>
+   </string>
+   <string>
+      <id>790</id>
+      <value>Gleich: </value>
+   </string>
+   <string>
       <id>798</id>
       <value>niedrig</value>
    </string>

@@ -2622,6 +2622,14 @@
       <value>Advanced record</value>
    </string>
    <string>
+      <id>789</id>
+      <value>Now: </value>
+   </string>    
+   <string>
+      <id>790</id>
+      <value>Next: </value>
+   </string>   
+   <string>
       <id>798</id>
       <value>low</value>
    </string>
