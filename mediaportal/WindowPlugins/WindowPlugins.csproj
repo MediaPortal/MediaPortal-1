@@ -943,6 +943,7 @@
     </Compile>
     <Compile Include="VideoEditor\DvrMsModifier.cs" />
     <Compile Include="VideoEditor\GUIVideoEditor.cs" />
+    <Compile Include="VideoEditor\Mpeg2Divx.cs" />
     <Compile Include="VideoEditor\Mpeg2Splitter.cs" />
     <Compile Include="VideoEditor\MpegModifier.cs" />
     <Compile Include="VideoEditor\TimeDomain.cs" />
@@ -1053,9 +1054,6 @@
     </EmbeddedResource>
     <Content Include="GUIPrograms\FileDetailContents.xml" />
     <Content Include="GUIPrograms\ProgramSettingProfiles.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="NewFolder1\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

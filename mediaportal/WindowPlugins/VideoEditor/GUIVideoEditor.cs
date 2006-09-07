@@ -30,7 +30,7 @@ using DirectShowLib.SBE;
 
 namespace WindowPlugins.VideoEditor
 {
-	public class GUIDvrMpegCutMP : GUIWindow
+	public class GUIVideoEditor : GUIWindow
 	{
 		readonly int windowID = 170601;
 
@@ -65,11 +65,11 @@ namespace WindowPlugins.VideoEditor
     string lastUsedFolder = "";
     VirtualDirectory directory = new VirtualDirectory();
 		ArrayList extensions;
-		DvrMpegCutPreview cutScr;
+		VideoEditorPreview cutScr;
 		List<System.IO.FileInfo> joiningList;
 		#endregion
 
-		public GUIDvrMpegCutMP()
+		public GUIVideoEditor()
 		{ }
 
 		#region Overrides
@@ -199,11 +199,14 @@ namespace WindowPlugins.VideoEditor
 
       if (control == startJoinBtn)
       {
-        DvrMsModifier mod = new DvrMsModifier();
-				if (joiningList[0] != null && joiningList[1] != null)
-					mod.JoinDvr(joiningList);
-				//else
+				if (joiningList[0].Extension.ToLower() == ".dvr-ms")
+				{
+					DvrMsModifier mod = new DvrMsModifier();
+					if (joiningList[0] != null && joiningList[1] != null)
+						mod.JoinDvr(joiningList);
+					//else
 					//System.Windows.Forms.MessageBox.Show("keineDatei");
+				}
       }
 
 
@@ -432,7 +435,7 @@ namespace WindowPlugins.VideoEditor
 					System.Windows.Forms.MessageBox.Show("No path");
 				if (cutScr == null)
 				{
-					cutScr = new DvrMpegCutPreview(filepath);
+					cutScr = new VideoEditorPreview(filepath);
 					cutScr.Init();
 					if (GUIWindowManager.GetWindow(cutScr.GetID) == null)
 					{

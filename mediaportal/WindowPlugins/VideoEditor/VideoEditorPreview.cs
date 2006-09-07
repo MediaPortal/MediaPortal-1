@@ -41,7 +41,7 @@ using Mpeg2SplitterPackage;
 
 namespace WindowPlugins.VideoEditor
 {
-  class DvrMpegCutPreview : GUIWindow
+  class VideoEditorPreview : GUIWindow
   {
     enum EMode
     {
@@ -120,7 +120,7 @@ namespace WindowPlugins.VideoEditor
     #endregion
 
     #region constructor
-    public DvrMpegCutPreview(string filepath)
+    public VideoEditorPreview(string filepath)
     {
       try
       {
@@ -236,7 +236,7 @@ namespace WindowPlugins.VideoEditor
 
     public override void OnAction(Action action)
     {
-      //code send by Davide
+      //code provided by Davide
      /* switch (action.wID)
       {
         case Action.ActionType.ACTION_STOP:

@@ -86,7 +86,7 @@ namespace WindowPlugins.VideoEditor
           string outPath = inFilename.FullName;
           //rename the source file ------------later this could be configurable to delete it
           //TODO behavior if the renamed sourcefile (_original) exists
-          inFilename.MoveTo(inFilename.FullName.Replace(".dvr-ms", "_original.dvr-ms"));
+					inFilename.MoveTo(inFilename.FullName.Replace(inFilename.Extension, "_original" + inFilename.Extension));
           //to not to change the database the outputfile has the same name 
           outFilename = new System.IO.FileInfo(outPath);
 
@@ -144,7 +144,7 @@ namespace WindowPlugins.VideoEditor
 					System.IO.FileInfo outFilename;
 					percent = 0;
 					//progressTime.Start();
-					string outPath = firstFile.FullName.Replace(".dvr-ms", "_joined.dvr-ms");
+					string outPath = firstFile.FullName.Replace(firstFile.Extension, "_joined" + firstFile.Extension);
 					//rename the source file ------------later this could be configurable to delete it
 					//TODO behavior if the renamed sourcefile (_original) exists
 					//inFilename.MoveTo(inFilename.FullName.Replace(".dvr-ms", "_original.dvr-ms"));

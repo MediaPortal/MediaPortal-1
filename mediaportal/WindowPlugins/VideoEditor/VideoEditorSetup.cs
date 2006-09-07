@@ -25,11 +25,11 @@ using MediaPortal.GUI.Library;
 
 namespace WindowPlugins.VideoEditor
 {
-	public class DvrMpegCutMPSetup : ISetupForm
+	public class VideoEditorSetup : ISetupForm
 	{
 		int windowID = 170601;
 
-		public DvrMpegCutMPSetup()
+		public VideoEditorSetup()
 		{ }
 
 		#region ISetupForm Member
