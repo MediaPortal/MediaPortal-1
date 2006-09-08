@@ -391,6 +391,56 @@ namespace MediaPortal.GUI.Music
       if (item.IsRemote) return;
       Song song = item.AlbumInfoTag as Song;
       if (song == null) return;
+      // Get Cover Art for Index display
+      FilterDefinition filter = (FilterDefinition)handler.View.Filters[handler.CurrentLevel];
+      if (filter.SqlOperator == "group")
+      {
+        if (filter.Where == "artist")
+        {
+          string strThumb = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MusicArtists, item.Label);
+          if (System.IO.File.Exists(strThumb))
+          {
+            item.IconImage = strThumb;
+            item.IconImageBig = strThumb;
+            item.ThumbnailImage = strThumb;
+            return;
+          }
+        }
+        else if (filter.Where == "album")
+        {
+          string strThumb = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MusicAlbum, item.Label);
+          if (System.IO.File.Exists(strThumb))
+          {
+            item.IconImage = strThumb;
+            item.IconImageBig = strThumb;
+            item.ThumbnailImage = strThumb;
+            return;
+          }
+        }
+        else if (filter.Where == "genre")
+        {
+          string strThumb = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MovieGenre, item.Label);
+          if (System.IO.File.Exists(strThumb))
+          {
+            item.IconImage = strThumb;
+            item.IconImageBig = strThumb;
+            item.ThumbnailImage = strThumb;
+            return;
+          }
+        }
+        else if (filter.Where == "title")
+        {
+          string strThumb = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MusicAlbum, item.Label);
+          if (System.IO.File.Exists(strThumb))
+          {
+            item.IconImage = strThumb;
+            item.IconImageBig = strThumb;
+            item.ThumbnailImage = strThumb;
+            return;
+          }
+        }
+        return;
+      }
       if (song.genreId >= 0 && song.albumId < 0 && song.artistId < 0 && song.songId < 0)
       {
         string strThumb = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MusicGenre, item.Label);
