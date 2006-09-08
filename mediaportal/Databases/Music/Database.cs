@@ -590,26 +590,60 @@ namespace MediaPortal.Music.Database
       }
     }
 
-    public void GetSongsByIndex(string sql, out List<Song> songs, bool artistTable, bool albumTable, bool songTable, bool genreTable)
+    public void GetSongsByIndex(string sql, out List<Song> songs, int level, bool artistTable, bool albumTable, bool songTable, bool genreTable)
     {
       songs = new List<Song>();
       try
       {
         if (null == m_db)
           return;
-        //Originele regel
-        //SQLiteResultSet results=GetResults(sql);
-        //Nieuwe regel
+
         SQLiteResultSet results = m_db.Execute(sql);
 
         MediaPortal.Music.Database.Song song;
-        //Log.Write (sql);
-        //Log.Write ("Aantal rijen = {0}",(int)results.Rows.Count);
+
+        int specialCharCount = 0;
+        bool appendedSpecialChar = false;
 
         for (int i = 0; i < results.Rows.Count; i++)
         {
-          song = new Song();
           SQLiteResultSet.Row fields = results.Rows[i];
+
+
+          // Check for special characters to group them on Level 0 of a list
+          if (level == 0)
+          {
+            char ch = fields.fields[0][0];
+            bool founddSpecialChar = false;
+            if (ch < 'A')
+            {
+              specialCharCount += Convert.ToInt16(fields.fields[1]);
+              founddSpecialChar = true;
+            }
+
+            if (founddSpecialChar && i < results.Rows.Count - 1)
+              continue;
+
+            // Now we've looped through all Chars < A let's add the song
+            if (!appendedSpecialChar)
+            {
+              appendedSpecialChar = true;
+              if (specialCharCount > 0)
+              {
+                song = new Song();
+                if (!songTable)
+                {
+                  song.Artist = "#";
+                  song.Album = "#";
+                  song.Genre = "#";
+                }
+                song.Title = "#";
+                song.Duration = specialCharCount;
+                songs.Add(song);
+              }
+            }
+          }
+          song = new Song();
           if (artistTable && !songTable)
           {
             song.Artist = fields.fields[0];

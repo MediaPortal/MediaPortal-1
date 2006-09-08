@@ -312,7 +312,7 @@ namespace MediaPortal.GUI.Music
           }
 
           sql = String.Format("Select UPPER(SUBSTR({0},1,{1})) IX, Count(*) from {2} GROUP BY IX", searchField, definition.Restriction, table);
-          database.GetSongsByIndex(sql, out songs, useArtistTable, useAlbumTable, useSongTable, useGenreTable);
+          database.GetSongsByIndex(sql, out songs, CurrentLevel, useArtistTable, useAlbumTable, useSongTable, useGenreTable);
           return songs;
         }
 
@@ -384,7 +384,7 @@ namespace MediaPortal.GUI.Music
           sql = String.Format("select UPPER(SUBSTR(strTitle,1,{3})) IX, Count(*) from {0} where {1} {2}",
                                             table, whereClause, orderClause, Convert.ToInt16(defPrevious.Restriction) + Convert.ToInt16(defCurrent.Restriction));
 
-          database.GetSongsByIndex(sql, out songs, useArtistTable, useAlbumTable, useSongTable, useGenreTable);
+          database.GetSongsByIndex(sql, out songs, CurrentLevel, useArtistTable, useAlbumTable, useSongTable, useGenreTable);
         }
         else
         {
@@ -510,7 +510,11 @@ namespace MediaPortal.GUI.Music
     {
       if (filter.SqlOperator == "group")
       {
-        whereClause = String.Format(" {0} like '{1}%'", GetFieldName(filter.Where), filter.SelectedValue);
+        // Was the value selected a "#"? Then we have the group of special chars and need to search for values < A
+        if (filter.SelectedValue == "#")
+          whereClause = String.Format(" {0} < 'A'", GetFieldName(filter.Where));
+        else
+          whereClause = String.Format(" {0} like '{1}%'", GetFieldName(filter.Where), filter.SelectedValue);
       }
       else
       {
