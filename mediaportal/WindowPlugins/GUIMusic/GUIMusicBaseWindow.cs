@@ -664,10 +664,18 @@ namespace MediaPortal.GUI.Music
           string filename = MediaPortal.Util.Utils.GetFilename(item.Path);
           // For an index view, don't translate the duration
           string duration = "";
-          FilterDefinition filter = (FilterDefinition)handler.View.Filters[handler.CurrentLevel];
-          if (filter.SqlOperator == "group")
+          // When in Shares View, the View = null
+          if (handler.View != null)
           {
-            duration = Convert.ToString(tag.Duration);
+            FilterDefinition filter = (FilterDefinition)handler.View.Filters[handler.CurrentLevel];
+            if (filter.SqlOperator == "group")
+            {
+              duration = Convert.ToString(tag.Duration);
+            }
+            else
+            {
+              duration = MediaPortal.Util.Utils.SecondsToHMSString(tag.Duration);
+            }
           }
           else
           {
