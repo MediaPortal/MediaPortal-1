@@ -438,14 +438,16 @@ namespace MediaPortal.Player
         // Some capture cards capture too much of the video source
         // Remove unwanted video by croping the picture
 
-        _sourceRect.Y += _topscanlinesToRemove;
-        _sourceRect.Height -= _topscanlinesToRemove;
-        _sourceRect.Height -= _bottomscanlinesToRemove;
+        if (InTv)
+        {
+          _sourceRect.Y += _topscanlinesToRemove;
+          _sourceRect.Height -= _topscanlinesToRemove;
+          _sourceRect.Height -= _bottomscanlinesToRemove;
 
-        _sourceRect.X += _leftcolumnsToRemove;
-        _sourceRect.Width -= _leftcolumnsToRemove;
-        _sourceRect.Width -= _rightcolumnsToRemove;
-
+          _sourceRect.X += _leftcolumnsToRemove;
+          _sourceRect.Width -= _leftcolumnsToRemove;
+          _sourceRect.Width -= _rightcolumnsToRemove;
+        }
         Log.Info("PlaneScene: crop T, B  : {0}, {1}", _topscanlinesToRemove, _bottomscanlinesToRemove);
         Log.Info("PlaneScene: crop L, R  : {0}, {1}", _leftcolumnsToRemove, _rightcolumnsToRemove);
 
