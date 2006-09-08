@@ -6401,7 +6401,7 @@
         <filter cat="tunerdevice"     name="DTV-DVB USB2 DVB-T receiver"      checkdevice="true"/>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
       </connections>
     </tv>
   </capturecard>
@@ -12909,7 +12909,7 @@
   <capturecard commercialname="Hauppage Nova-T Stick DVB-T Tuner" capturename="Nova-T Stick DVB-T Capture (Dev1 Path0) " devid="vid_2040&amp;pid_7051">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
     <tv>
-      <interface cat="tunerdevice" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
       <filters>
         <filter cat="networkprovider"   name="Microsoft DVBT Network Provider"          checkdevice="false"/>
         <filter cat="tunerdevice"       name="Nova-T Stick DVB-T Tuner (Dev1 Path0) "   checkdevice="true"/>
@@ -14020,7 +14020,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Easy TV USB DVB-T Stick" capturename="AF9005 BDA Capture Filter" devid="vid_15a4&amp;pid_9020">
+  <capturecard commercialname="Afa Tech AF9005 USB TV stick/Easy TV USB DVB-T Stick" capturename="AF9005 BDA Capture Filter" devid="vid_15a4&amp;pid_9020">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"/>
@@ -15133,6 +15133,20 @@
         <connection sourcefilter="audcapture" sourcepin="0" sinkfilter="audencoder" sinkpin="0"/>
         <connection sourcefilter="videncoder" sourcepin="0" sinkfilter="mux"        sinkpin="0"/>
         <connection sourcefilter="audencoder" sourcepin="0" sinkfilter="mux"        sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="MSI Digi VOX DVB-T USB" capturename="Twinhan USB2 DVB-T receiver" devid="vid_13d3&amp;pid_3205">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="tunerdevice" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"/>
+        <filter cat="tunerdevice"     name="Twinhan USB2 DVB-T receiver"      checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
       </connections>
     </tv>
   </capturecard>
