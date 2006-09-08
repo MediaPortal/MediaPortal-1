@@ -191,7 +191,7 @@ namespace MediaPortal.GUI.Music
 
       //ImgCoverArt.SetFileName(CurrentThumbFileName);
       UpdateImagePathContainer();
-      FlipPictures();
+      //FlipPictures();
       UpdateTrackInfo();
       UpdateTrackPosition();
     }
@@ -242,8 +242,8 @@ namespace MediaPortal.GUI.Music
         AddImageToImagePathContainer(GUIGraphicsContext.Skin + @"\media\missing_coverart.png");
       }
 
-      if (g_Player.Playing && ImagePathContainer.Count > 1) // change each cover twice
-        ImageChangeTimer.Interval = (g_Player.Duration * 1000) / (ImagePathContainer.Count * 10);
+      if (g_Player.Playing && ImagePathContainer.Count > 1) // change each cover 8x
+        ImageChangeTimer.Interval = (g_Player.Duration * 1000) / (ImagePathContainer.Count * 8);
       else
         ImageChangeTimer.Interval = 3600 * 1000;
 
@@ -278,6 +278,10 @@ namespace MediaPortal.GUI.Music
         {
           ImagePathContainer.Add(newImage);
           success = true;
+
+          // display the first pic automatically
+          if (ImagePathContainer.Count == 1)
+            FlipPictures();
         }
       }
       return success;
@@ -636,18 +640,17 @@ namespace MediaPortal.GUI.Music
         if (CurrentThumbFileName.Length > 0)
           AddImageToImagePathContainer(CurrentThumbFileName);
 
-        InfoScrobbler.getArtistInfo(CurrentTrackTag.Artist);
-        CurrentThumbFileName = Util.Utils.GetCoverArtName(Thumbs.MusicArtists, Util.Utils.FilterFileName(CurrentTrackTag.Artist));
-        if (CurrentThumbFileName.Length > 0)
-          AddImageToImagePathContainer(CurrentThumbFileName);
-
-        UpdateImagePathContainer();
-
         if (LblBestAlbumTracks != null)
           LblBestAlbumTracks.Visible = true;
 
         GUIControl.FocusControl(GetID, ((int)ControlIDs.LIST_ALBUM_INFO));
       }
+      InfoScrobbler.getArtistInfo(CurrentTrackTag.Artist);
+      CurrentThumbFileName = Util.Utils.GetCoverArtName(Thumbs.MusicArtists, Util.Utils.FilterFileName(CurrentTrackTag.Artist));
+      if (CurrentThumbFileName.Length > 0)
+        AddImageToImagePathContainer(CurrentThumbFileName);
+
+      UpdateImagePathContainer();
     }
 
     private void UpdateTrackInfo()
