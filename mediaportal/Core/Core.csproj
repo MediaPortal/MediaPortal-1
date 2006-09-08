@@ -286,6 +286,9 @@
     <Compile Include="UserInterfaceControls\MPContextMenuStrip.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="UserInterfaceControls\MPNumericUpDown.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UserInterfaceControls\MPToolTip.cs">
       <SubType>Component</SubType>
     </Compile>
