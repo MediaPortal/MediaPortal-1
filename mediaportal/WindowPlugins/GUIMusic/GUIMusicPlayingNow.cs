@@ -444,8 +444,9 @@ namespace MediaPortal.GUI.Music
 
     protected override void OnPageDestroy(int new_windowId)
     {
-      GC.Collect();
+      AbortAllLookupThreads();      
       ImageChangeTimer.Stop();
+      GC.Collect();
       base.OnPageDestroy(new_windowId);
       ControlsInitialized = false;
     }
@@ -554,6 +555,34 @@ namespace MediaPortal.GUI.Music
       tmpTag.Rating = Song_.Rating;
 
       return tmpTag;
+    }
+
+    private void AbortAllLookupThreads()
+    {
+      if (TagInfoThread != null)
+        if (TagInfoThread.IsAlive)
+        {
+          try
+          {            
+            TagInfoThread.Abort();
+          }
+          catch (Exception ex)
+          {
+            Log.Debug("GUIMusicPlayingNow: aborting lookup thread: TagInfoThread - {0}", ex.Message);
+          }
+        }
+      if (AlbumInfoThread != null)
+        if (AlbumInfoThread.IsAlive)
+        {
+          try
+          {
+            AlbumInfoThread.Abort();
+          }
+          catch (Exception ex)
+          {
+            Log.Debug("GUIMusicPlayingNow: aborting lookup thread: AlbumInfoThread - {0}", ex.Message);
+          }
+        }
     }
 
     private void StartTagInfoThread()

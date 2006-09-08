@@ -846,37 +846,40 @@ namespace MediaPortal.Music.Database
           // Here we get the image from the web and save it to disk
           try
           {
-            string tmpFile = System.IO.Path.GetTempFileName();
-            WebClient client = new WebClient();
-            client.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
-            client.DownloadFile(imageUrl, tmpFile);
-
-            //temp file downloaded - check if needed
-            if (System.IO.File.Exists(fullPath))
+            lock (LookupLock)
             {
-              System.IO.FileInfo oldFile = new System.IO.FileInfo(fullPath);
-              System.IO.FileInfo newFile = new System.IO.FileInfo(tmpFile);
-              
-              if (oldFile.Length >= newFile.Length)
+              string tmpFile = System.IO.Path.GetTempFileName();
+              WebClient client = new WebClient();
+              client.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
+              client.DownloadFile(imageUrl, tmpFile);
+
+              //temp file downloaded - check if needed
+              if (System.IO.File.Exists(fullPath))
               {
-                newFile.Delete();
-                Log.Debug("Audioscrobbler: better thumb {0} already exists - do not save", fileName);
+                System.IO.FileInfo oldFile = new System.IO.FileInfo(fullPath);
+                System.IO.FileInfo newFile = new System.IO.FileInfo(tmpFile);
+
+                if (oldFile.Length >= newFile.Length)
+                {
+                  newFile.Delete();
+                  Log.Debug("Audioscrobbler: better thumb {0} already exists - do not save", fileName);
+                }
+                // temp thumb is "better" than old one
+                else
+                {
+                  oldFile.Delete();
+                  newFile.MoveTo(fullPath);
+                  Log.Debug("Audioscrobbler: fetched better thumb {0} overwriting existing one", fileName);
+                }
               }
-              // temp thumb is "better" than old one
               else
               {
-                oldFile.Delete();
-                newFile.MoveTo(fullPath);
-                Log.Debug("Audioscrobbler: fetched better thumb {0} overwriting existing one", fileName);
+                System.IO.FileInfo saveFile = new System.IO.FileInfo(tmpFile);
+                saveFile.MoveTo(fullPath);
+                Log.Info("Audioscrobbler: Thumb successfully downloaded as {0}", fileName);
               }
+              success = true;
             }
-            else
-            {
-              System.IO.FileInfo saveFile = new System.IO.FileInfo(tmpFile);
-              saveFile.MoveTo(fullPath);
-              Log.Info("Audioscrobbler: Thumb successfully downloaded as {0}", fileName);
-            }
-            success = true;
           }
           catch (Exception e)
           {
