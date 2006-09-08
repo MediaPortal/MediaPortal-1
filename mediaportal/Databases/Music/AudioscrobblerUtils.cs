@@ -831,7 +831,7 @@ namespace MediaPortal.Music.Database
       if (imageUrl != "")
       {
         // do not download last.fm's placeholder
-        if ((imageUrl.IndexOf("no_album") <= 0) || (imageUrl.IndexOf("no_artist") <= 0))
+        if ((imageUrl.IndexOf("no_album") <= 0) && (imageUrl.IndexOf("no_artist") <= 0))
         {
           //Check if we already have the file.
           //          string thumbspath = @"Thumbs\music\albums\";
@@ -842,7 +842,7 @@ namespace MediaPortal.Music.Database
 
           string fullPath = System.IO.Path.Combine(thumbspath, fileName);
 
-          //Log.Debug("Audioscrobbler: Trying to get thumb: {0}", imageUrl);
+          Log.Debug("Audioscrobbler: Trying to get thumb: {0}", imageUrl);
           // Here we get the image from the web and save it to disk
           try
           {
