@@ -113,9 +113,14 @@ namespace Wikipedia
           Log.Info("Wikipedia: Language set to Dutch");
           break;
         case "Norwegian":
-          this.WikipediaURL = "http://no.wikipedia.org/wiki/Spesial:Export";
+          this.WikipediaURL = "http://no.wikipedia.org/wiki/Spesial:Export/";
           this.imagePattern = "Bilde";
           Log.Info("Wikipedia: Language set to Norwegian");
+          break;
+        case "Italian":
+          this.WikipediaURL = "http://it.wikipedia.org/wiki/Speciale:Export/";
+          this.imagePattern = "Image";
+          Log.Info("Wikipedia: Language set to Italian");
           break;
         default:
           this.WikipediaURL = "http://en.wikipedia.org/wiki/Special:Export/";

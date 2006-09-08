@@ -1077,8 +1077,8 @@
 <string><id>2502</id><value>Επιλογή τοπικής Wikipedia:</value></string>
 <string><id>2503</id><value>Επιλεγμένη Wikipedia:</value></string>
 <string><id>2504</id><value>Συγνώμη, κανένα άρθρο για τον όρο...</value></string>
-<string><id>2505</id><value>Σύνδεσμοι για άλλα άρθρα:</value></string><string>
-<id>2506</id><value>Όχι σύνδεσμοι για αυτό το άρθρο.</value></string>
+<string><id>2505</id><value>Σύνδεσμοι για άλλα άρθρα:</value></string>
+<string><id>2506</id><value>Όχι σύνδεσμοι για αυτό το άρθρο.</value></string>
 <string><id>2507</id><value>Εικόνες από αυτό το άρθρο:</value></string>
 <string><id>2508</id><value>Δεν υπάρχουν εικόνες σε αυτό το άρθρο.</value></string>
 <string><id>2509</id><value>Αυτή η σελίδα είναι απλώς παράκαμψη.</value></string>
@@ -1088,13 +1088,13 @@
 <string><id>2513</id><value>Παρακαλούμε δείτε το αρχείο log .</value></string>
 <string><id>2514</id><value>Επιστροφή στο κείμενο</value></string>
 <string><id>2515</id><value>Εικόνες</value></string>
+<string><id>2516</id><value>Wikipedia</value></string>	
 <string><id>2600</id><value>Αγγλικό</value></string>
 <string><id>2601</id><value>Γερμανικό</value></string>
 <string><id>2602</id><value>Γαλλικό</value></string>
 <string><id>2603</id><value>Ολανδέζικο</value></string>
 <string><id>2604</id><value>Νορβηγικό</value></string>
 <string><id>2605</id><value>Σουηδικό</value>	</string>
-<string><id>2606</id><value>Wikipedia</value></string>	
 <!-- End of Wikipedia Strings -->
 <!-- End of My Explorer Strings -->
 <string><id>2997</id><value>ω</value></string>

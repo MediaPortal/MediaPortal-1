@@ -138,7 +138,7 @@ namespace Wikipedia
     ///          false : plugin does not need its own button on home</returns>
     public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
     {
-      strButtonText = GUILocalizeStrings.Get(2606);
+      strButtonText = GUILocalizeStrings.Get(2516);
       strButtonImage = "";
       strButtonImageFocus = "";
       strPictureImage = "";
@@ -214,7 +214,7 @@ namespace Wikipedia
           pDlgOK.SetHeading(GUILocalizeStrings.Get(2502)); //Select your local Wikipedia:
 
           // Add all the local sites we want to be displayed starting with int 0.
-          for (int i = 0; i <= 5; i++)
+          for (int i = 0; i <= 6; i++)
           {
             pDlgOK.Add(GUILocalizeStrings.Get(2600 + i)); //English, German, French ...
           }
@@ -334,6 +334,9 @@ namespace Wikipedia
           break;
         case 5: //Swedish
           language = "Swedish";
+          break;
+        case 6: //Italian
+          language = "Italian";
           break;
       }
       if (searchtermLabel.Label != string.Empty && searchtermLabel.Label != "Wikipedia")

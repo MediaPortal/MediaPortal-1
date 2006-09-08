@@ -108,6 +108,10 @@ namespace Wikipedia
           this.WikipediaURL = "http://no.wikipedia.org/wiki/Bilde:";
           Log.Info("Wikipedia: Language set to Norwegian");
           break;
+        case "Italian":
+          this.WikipediaURL = "http://it.wikipedia.org/wiki/Image:";
+          Log.Info("Wikipedia: Language set to Italian");
+          break;
         default:
           this.WikipediaURL = "http://en.wikipedia.org/wiki/Image:";
           Log.Info("Wikipedia: Language set to Default (English)");

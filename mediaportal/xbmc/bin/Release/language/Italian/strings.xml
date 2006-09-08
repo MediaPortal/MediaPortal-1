@@ -5758,6 +5758,10 @@
 		<value>Immagini</value>
 	</string>
 	<string>
+		<id>2516</id>
+		<value>Wikipedia</value>
+	</string>
+	<string>
 		<id>2600</id>
 		<value>Inglese</value>
 	</string>
@@ -5780,10 +5784,6 @@
 	<string>
 		<id>2605</id>
 		<value>Svedese</value>
-	</string>
-	<string>
-		<id>2606</id>
-		<value>Wikipedia</value>
 	</string>
 	<string>
 		<id>11000</id>
