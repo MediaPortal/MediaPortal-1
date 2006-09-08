@@ -448,44 +448,47 @@ namespace MediaPortal.Music.Database
     {
       try
       {
-        MusicDatabase mdb = new MusicDatabase();
-        List<Song> tmpSongs = new List<Song>();
-        Song dbSong = new Song();
-        Song tmpSong = new Song();
-        bool foundDoubleEntry = false;
-        string tmpArtist = String.Empty;
-
-        for (int s = 0; s < unfilteredList_.Count; s++)
+        lock (LookupLock)
         {
-          // only accept other artists than the current playing
-          tmpArtist = unfilteredList_[s].Artist.ToLowerInvariant();
-          if (tmpArtist != excludeArtist_.ToLowerInvariant() || tmpArtist == currentTag_)
+          MusicDatabase mdb = new MusicDatabase();
+          List<Song> tmpSongs = new List<Song>();
+          Song dbSong = new Song();
+          Song tmpSong = new Song();
+          bool foundDoubleEntry = false;
+          string tmpArtist = String.Empty;
+
+          for (int s = 0; s < unfilteredList_.Count; s++)
           {
-            if (mdb.GetSong(unfilteredList_[s].Title, ref dbSong))
+            // only accept other artists than the current playing
+            tmpArtist = unfilteredList_[s].Artist.ToLowerInvariant();
+            if (tmpArtist != excludeArtist_.ToLowerInvariant() || tmpArtist == currentTag_)
             {
-              tmpSong = dbSong.Clone();
-              // check and prevent entries from the same artist
-              for (int j = 0; j < tmpSongs.Count; j++)
+              if (mdb.GetSong(unfilteredList_[s].Title, ref dbSong))
               {
-                if (tmpSong.Artist == tmpSongs[j].Artist)
+                tmpSong = dbSong.Clone();
+                // check and prevent entries from the same artist
+                for (int j = 0; j < tmpSongs.Count; j++)
                 {
-                  foundDoubleEntry = true;
-                  break;
+                  if (tmpSong.Artist == tmpSongs[j].Artist)
+                  {
+                    foundDoubleEntry = true;
+                    break;
+                  }
+                }
+                // new item therefore add it
+                if (!foundDoubleEntry)
+                {
+                  if (currentTag_ != String.Empty)
+                    tmpSong.Genre = currentTag_;
+                  tmpSongs.Add(tmpSong);
                 }
               }
-              // new item therefore add it
-              if (!foundDoubleEntry)
-              {
-                if (currentTag_ != String.Empty)
-                  tmpSong.Genre = currentTag_;
-                tmpSongs.Add(tmpSong);
-              }
             }
+            //else
+            //  Log.Debug("Audioscrobbler: Artist {0} inadequate - skipping", tagTracks[s].Artist);
           }
-          //else
-          //  Log.Debug("Audioscrobbler: Artist {0} inadequate - skipping", tagTracks[s].Artist);
+          return tmpSongs;
         }
-        return tmpSongs;
       }
       catch (Exception ex)
       {
@@ -907,41 +910,44 @@ namespace MediaPortal.Music.Database
       Song lookupSong = new Song();
 
       // fetch more than needed since there could be double entries
-      while (addedSongs < _limitRandomListCount * 2)
+      lock (LookupLock)
       {
-        lookupSong.Clear();
-
-        dbs.GetRandomSong(ref lookupSong);
-        randomSong = lookupSong.Clone();
-
-        // dirty hack to improve .NET's shitty random.next()
-        //if (thisOne.Next(0, 6) == thisOne.Next(0, 6))
-        bool found = false;
-        for (int i = 0; i < songList.Count; i++)
-          if (songList[i].Artist == randomSong.Artist)
-            found = true;
-        if (!found)
+        while (addedSongs < _limitRandomListCount * 2)
         {
-          switch (randomMode_)
+          lookupSong.Clear();
+
+          dbs.GetRandomSong(ref lookupSong);
+          randomSong = lookupSong.Clone();
+
+          // dirty hack to improve .NET's shitty random.next()
+          //if (thisOne.Next(0, 6) == thisOne.Next(0, 6))
+          bool found = false;
+          for (int i = 0; i < songList.Count; i++)
+            if (songList[i].Artist == randomSong.Artist)
+              found = true;
+          if (!found)
           {
-            case offlineMode.timesplayed:
-              if (randomSong.TimesPlayed == 0)
-              {
+            switch (randomMode_)
+            {
+              case offlineMode.timesplayed:
+                if (randomSong.TimesPlayed == 0)
+                {
+                  songList.Add(randomSong);
+                  addedSongs++;
+                }
+                break;
+              case offlineMode.favorites:
+                if (randomSong.Favorite)
+                {
+                  songList.Add(randomSong);
+                  addedSongs++;
+                }
+                break;
+              case offlineMode.random:
                 songList.Add(randomSong);
                 addedSongs++;
-              }
-              break;
-            case offlineMode.favorites:
-              if (randomSong.Favorite)
-              {
-                songList.Add(randomSong);
-                addedSongs++;
-              }
-              break;
-            case offlineMode.random:
-              songList.Add(randomSong);
-              addedSongs++;
-              break;
+                break;
+            }
           }
         }
       }

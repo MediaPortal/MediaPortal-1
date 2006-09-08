@@ -177,6 +177,7 @@ namespace MediaPortal.GUI.Music
       if (!ControlsInitialized)
         return;
 
+      //AbortAllLookupThreads();
       ImagePathContainer.Clear();
       CurrentTrackFileName = filename;
       NextTrackFileName = PlaylistPlayer.GetNext();
