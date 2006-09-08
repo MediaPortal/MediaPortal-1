@@ -306,6 +306,27 @@ namespace Wikipedia
           tempParsedArticle = builder.ToString();
         }
 
+        // Remove audio links.
+        Log.Debug("Wikipedia: Remove audio links.");
+        while (tempParsedArticle.IndexOf("&lt;span") >= 0)
+        {
+          builder = new StringBuilder(tempParsedArticle);
+          iStart = tempParsedArticle.IndexOf("&lt;span");
+          iEnd = tempParsedArticle.IndexOf("&lt;/span&gt;") + 13;
+
+          try
+          {
+            builder.Remove(iStart, iEnd - iStart);
+          }
+          catch (Exception e)
+          {
+            Log.Error(e.ToString());
+            Log.Error(builder.ToString());
+          }
+
+          tempParsedArticle = builder.ToString();
+        }
+
         // Remove web references.
         Log.Debug("Wikipedia: Remove web references.");
         while (tempParsedArticle.IndexOf("&lt;ref&gt;") >= 0)
