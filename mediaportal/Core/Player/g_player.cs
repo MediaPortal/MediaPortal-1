@@ -1,3 +1,5 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
  *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,6 +20,9 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
+
 using System;
 using System.Windows.Forms;
 using System.Drawing;
@@ -82,6 +87,7 @@ namespace MediaPortal.Player
     static Player.IPlayerFactory _factory;
     static public bool Starting = false;
     static ArrayList _seekStepList = new ArrayList();
+    static int _seekStepTimeout;
     static public bool configLoaded = false;
     #endregion
 
@@ -125,6 +131,7 @@ namespace MediaPortal.Player
       ArrayList StepArray = new ArrayList();
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      {
         foreach (string token in (xmlreader.GetValueAsString("movieplayer", "skipsteps", "0;1;1;0;1;1;1;0;1;1;1;0;1;0;1;0").Split(new char[] { ',', ';', ' ' })))
         {
           if (token == string.Empty)
@@ -132,7 +139,15 @@ namespace MediaPortal.Player
           else
             StepArray.Add(Convert.ToInt32(token));
         }
-      _seekStepList = StepArray;
+        _seekStepList = StepArray;
+
+        string timeout = (xmlreader.GetValueAsString("movieplayer", "skipsteptimeout", "1500"));
+
+        if (timeout == string.Empty)
+          _seekStepTimeout = 1500;
+        else
+          _seekStepTimeout = Convert.ToInt16(timeout);
+      }
       configLoaded = true;
 
       return StepArray;
@@ -595,7 +610,7 @@ namespace MediaPortal.Player
         if (strFile.Length == 0) return false;
         _isInitalized = true;
         _subs = null;
-        Log.Info("g_Player.Play({0} {1})", strFile,type);
+        Log.Info("g_Player.Play({0} {1})", strFile, type);
         if (_player != null)
         {
           GUIGraphicsContext.ShowBackground = true;
@@ -646,7 +661,7 @@ namespace MediaPortal.Player
             return _isPlaybackPossible;
           }
         }
-        _player = _factory.Create(strFile,type);
+        _player = _factory.Create(strFile, type);
         if (_player != null)
         {
           _player = CachePreviousPlayer(_player);
@@ -701,7 +716,7 @@ namespace MediaPortal.Player
         _seekTimer = DateTime.MinValue;
         if (strFile == null) return false;
         if (strFile.Length == 0) return false;
-        _isInitalized = true;        
+        _isInitalized = true;
         _subs = null;
         Log.Info("g_Player.Play({0})", strFile);
         if (_player != null)
@@ -1489,7 +1504,7 @@ namespace MediaPortal.Player
         if (_currentStep != Steps.Sec0)
         {
           TimeSpan ts = DateTime.Now - _seekTimer;
-          if (ts.TotalMilliseconds > 1500)
+          if (ts.TotalMilliseconds > _seekStepTimeout)
           {
             StepNow();
           }
@@ -1675,7 +1690,7 @@ namespace MediaPortal.Player
         int streams = _player.AudioStreams;
         int current = _player.CurrentAudioStream;
         int next = current;
-        bool success=false;
+        bool success = false;
         // Loop over the stream, so we skip the disabled streams
         // stops if the loop is over the current stream again.
         do
