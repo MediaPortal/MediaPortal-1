@@ -415,9 +415,21 @@ namespace MediaPortal.GUI.Music
           }
         case 33040:    // IRC spam
           {
-            string tmpTrack = CurrentTrackTag.Track > 0 ? (Convert.ToString(CurrentTrackTag.Track) + ". ") : String.Empty;
-            Clipboard.SetText(@"/me is listening to " + CurrentTrackTag.Artist + " [" + CurrentTrackTag.Album + "] - " + tmpTrack + CurrentTrackTag.Title);
-            break;
+            try
+            {
+              if (CurrentTrackTag != null)
+              {
+                string tmpTrack = CurrentTrackTag.Track > 0 ? (Convert.ToString(CurrentTrackTag.Track) + ". ") : String.Empty;
+                Clipboard.SetDataObject(@"/me is listening to " + CurrentTrackTag.Artist + " [" + CurrentTrackTag.Album + "] - " + tmpTrack + CurrentTrackTag.Title, true);
+              }
+              break;
+            }
+            catch (Exception ex)
+            {
+              Log.Error("GUIMusicPlayingNow: could not copy song spam to clipboard - {0}", ex.Message);
+              break;
+            }
+
           }
       }
     }
