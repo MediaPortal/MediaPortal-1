@@ -61,6 +61,9 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxStep3;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxStep2;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxStep1;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxTimeout;
+    private MediaPortal.UserInterface.Controls.MPLabel labelSkipTimeout;
+    private MediaPortal.UserInterface.Controls.MPNumericUpDown numericUpDownSkipTimeout;
     private MediaPortal.UserInterface.Controls.MPTabPage tabPageSteps;
 
 
@@ -120,6 +123,13 @@ namespace MediaPortal.Configuration.Sections
         {
           Log.Info("GeneralSkipSteps - Exception while loading Skip-Settings: {0}", ex.ToString());
         }
+
+        string timeout = (xmlreader.GetValueAsString("movieplayer", "skipsteptimeout", "1500"));
+
+        if (timeout == string.Empty)
+          numericUpDownSkipTimeout.Value = 1500;
+        else
+          numericUpDownSkipTimeout.Value = Convert.ToInt16(timeout);
       }
     }
 
@@ -144,6 +154,7 @@ namespace MediaPortal.Configuration.Sections
                            (Convert.ToInt16(checkBoxStep15.Checked)).ToString() + ";" +
                            (Convert.ToInt16(checkBoxStep16.Checked)).ToString();
         xmlwriter.SetValue("movieplayer", "skipsteps", skipSteps);
+        xmlwriter.SetValue("movieplayer", "skipsteptimeout", numericUpDownSkipTimeout.Value);
       }
     }
 
@@ -177,15 +188,19 @@ namespace MediaPortal.Configuration.Sections
       checkBoxStep14.Checked = false;
       checkBoxStep15.Checked = true;
       checkBoxStep16.Checked = false;
+      numericUpDownSkipTimeout.Value = 1500;
     }
 
     private void InitializeComponent()
     {
       this.tabControlSkipSteps = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPageSteps = new MediaPortal.UserInterface.Controls.MPTabPage();
+      this.groupBoxTimeout = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.numericUpDownSkipTimeout = new MediaPortal.UserInterface.Controls.MPNumericUpDown();
+      this.labelSkipTimeout = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.buttonResetSkipSteps = new MediaPortal.UserInterface.Controls.MPButton();
       this.groupBoxSkipSteps = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.checkBoxStep16 = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.buttonResetSkipSteps = new MediaPortal.UserInterface.Controls.MPButton();
       this.checkBoxStep4 = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxStep15 = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxStep12 = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -203,6 +218,8 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep1 = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tabControlSkipSteps.SuspendLayout();
       this.tabPageSteps.SuspendLayout();
+      this.groupBoxTimeout.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSkipTimeout)).BeginInit();
       this.groupBoxSkipSteps.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -217,6 +234,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabPageSteps
       // 
+      this.tabPageSteps.Controls.Add(this.groupBoxTimeout);
+      this.tabPageSteps.Controls.Add(this.buttonResetSkipSteps);
       this.tabPageSteps.Controls.Add(this.groupBoxSkipSteps);
       this.tabPageSteps.Location = new System.Drawing.Point(4, 22);
       this.tabPageSteps.Name = "tabPageSteps";
@@ -226,10 +245,61 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageSteps.Text = "Player steps";
       this.tabPageSteps.UseVisualStyleBackColor = true;
       // 
+      // groupBoxTimeout
+      // 
+      this.groupBoxTimeout.Controls.Add(this.numericUpDownSkipTimeout);
+      this.groupBoxTimeout.Controls.Add(this.labelSkipTimeout);
+      this.groupBoxTimeout.Location = new System.Drawing.Point(16, 248);
+      this.groupBoxTimeout.Name = "groupBoxTimeout";
+      this.groupBoxTimeout.Size = new System.Drawing.Size(424, 64);
+      this.groupBoxTimeout.TabIndex = 1;
+      this.groupBoxTimeout.TabStop = false;
+      this.groupBoxTimeout.Text = "Timeout";
+      // 
+      // numericUpDownSkipTimeout
+      // 
+      this.numericUpDownSkipTimeout.Increment = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+      this.numericUpDownSkipTimeout.Location = new System.Drawing.Point(216, 24);
+      this.numericUpDownSkipTimeout.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+      this.numericUpDownSkipTimeout.Name = "numericUpDownSkipTimeout";
+      this.numericUpDownSkipTimeout.Size = new System.Drawing.Size(56, 20);
+      this.numericUpDownSkipTimeout.TabIndex = 1;
+      this.numericUpDownSkipTimeout.Value = new decimal(new int[] {
+            1500,
+            0,
+            0,
+            0});
+      // 
+      // labelSkipTimeout
+      // 
+      this.labelSkipTimeout.AutoSize = true;
+      this.labelSkipTimeout.Location = new System.Drawing.Point(12, 27);
+      this.labelSkipTimeout.Name = "labelSkipTimeout";
+      this.labelSkipTimeout.Size = new System.Drawing.Size(195, 13);
+      this.labelSkipTimeout.TabIndex = 0;
+      this.labelSkipTimeout.Text = "Timeout before skipping occurs (msec.):";
+      // 
+      // buttonResetSkipSteps
+      // 
+      this.buttonResetSkipSteps.Location = new System.Drawing.Point(368, 344);
+      this.buttonResetSkipSteps.Name = "buttonResetSkipSteps";
+      this.buttonResetSkipSteps.Size = new System.Drawing.Size(75, 23);
+      this.buttonResetSkipSteps.TabIndex = 49;
+      this.buttonResetSkipSteps.Text = "Defaults";
+      this.buttonResetSkipSteps.UseVisualStyleBackColor = true;
+      this.buttonResetSkipSteps.Click += new System.EventHandler(this.buttonResetSkipSteps_Click);
+      // 
       // groupBoxSkipSteps
       // 
       this.groupBoxSkipSteps.Controls.Add(this.checkBoxStep16);
-      this.groupBoxSkipSteps.Controls.Add(this.buttonResetSkipSteps);
       this.groupBoxSkipSteps.Controls.Add(this.checkBoxStep4);
       this.groupBoxSkipSteps.Controls.Add(this.checkBoxStep15);
       this.groupBoxSkipSteps.Controls.Add(this.checkBoxStep12);
@@ -263,16 +333,6 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep16.TabIndex = 50;
       this.checkBoxStep16.Text = "+/- 3 h";
       this.checkBoxStep16.UseVisualStyleBackColor = true;
-      // 
-      // buttonResetSkipSteps
-      // 
-      this.buttonResetSkipSteps.Location = new System.Drawing.Point(338, 26);
-      this.buttonResetSkipSteps.Name = "buttonResetSkipSteps";
-      this.buttonResetSkipSteps.Size = new System.Drawing.Size(75, 23);
-      this.buttonResetSkipSteps.TabIndex = 49;
-      this.buttonResetSkipSteps.Text = "Defaults";
-      this.buttonResetSkipSteps.UseVisualStyleBackColor = true;
-      this.buttonResetSkipSteps.Click += new System.EventHandler(this.buttonResetSkipSteps_Click);
       // 
       // checkBoxStep4
       // 
@@ -466,6 +526,9 @@ namespace MediaPortal.Configuration.Sections
       this.Size = new System.Drawing.Size(472, 408);
       this.tabControlSkipSteps.ResumeLayout(false);
       this.tabPageSteps.ResumeLayout(false);
+      this.groupBoxTimeout.ResumeLayout(false);
+      this.groupBoxTimeout.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSkipTimeout)).EndInit();
       this.groupBoxSkipSteps.ResumeLayout(false);
       this.groupBoxSkipSteps.PerformLayout();
       this.ResumeLayout(false);
