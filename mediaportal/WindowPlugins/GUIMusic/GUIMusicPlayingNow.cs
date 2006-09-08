@@ -30,6 +30,7 @@ using System.Net;
 using System.Globalization;
 using System.Threading;
 using System.Text;
+using System.Timers;
 using System.Windows.Forms;
 
 using MediaPortal.GUI.Library;
@@ -130,6 +131,8 @@ namespace MediaPortal.GUI.Music
     private AudioscrobblerUtils InfoScrobbler = null;    
     private Thread AlbumInfoThread;
     private Thread TagInfoThread;
+    private System.Timers.Timer ImageChangeTimer = null;
+    private List<String> ImagePathContainer = null;
     private bool UseID3 = false;
     private bool _trackChanged = true;
 
@@ -138,6 +141,7 @@ namespace MediaPortal.GUI.Music
     {
       GetID = (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW;
       PlaylistPlayer = PlayListPlayer.SingletonPlayer;
+      ImagePathContainer = new List<string>();
 
       g_Player.PlayBackStarted += new g_Player.StartedHandler(g_Player_PlayBackStarted);
       g_Player.PlayBackStopped += new g_Player.StoppedHandler(g_Player_PlayBackStopped);
@@ -173,16 +177,21 @@ namespace MediaPortal.GUI.Music
       if (!ControlsInitialized)
         return;
 
+      ImagePathContainer.Clear();
       CurrentTrackFileName = filename;
       NextTrackFileName = PlaylistPlayer.GetNext();
       GetTrackTags();
 
       CurrentThumbFileName = GUIMusicFiles.GetCoverArt(false, CurrentTrackFileName, CurrentTrackTag);
 
-      if (CurrentThumbFileName.Length == 0)
-        CurrentThumbFileName = GUIGraphicsContext.Skin + @"\media\missing_coverart.png";
+      //if (CurrentThumbFileName.Length == 0)
+      //  CurrentThumbFileName = GUIGraphicsContext.Skin + @"\media\missing_coverart.png";
+      if (CurrentThumbFileName.Length > 0)
+        AddImageToImagePathContainer(CurrentThumbFileName);
 
-      ImgCoverArt.SetFileName(CurrentThumbFileName);
+      //ImgCoverArt.SetFileName(CurrentThumbFileName);
+      UpdateImagePathContainer();
+      FlipPictures();
       UpdateTrackInfo();
       UpdateTrackPosition();
     }
@@ -224,6 +233,87 @@ namespace MediaPortal.GUI.Music
             break;
           }
       }
+    }
+
+    private void UpdateImagePathContainer()
+    {
+      if (ImagePathContainer.Count <= 0)
+      {
+        AddImageToImagePathContainer(GUIGraphicsContext.Skin + @"\media\missing_coverart.png");
+      }
+
+      if (g_Player.Playing && ImagePathContainer.Count > 1) // change each cover twice
+        ImageChangeTimer.Interval = (g_Player.Duration * 1000) / (ImagePathContainer.Count * 10);
+      else
+        ImageChangeTimer.Interval = 3600 * 1000;
+
+      ImageChangeTimer.Stop();
+      ImageChangeTimer.Start();
+    }
+
+    private bool AddImageToImagePathContainer(string newImage)
+    {
+      bool success = false;
+      if (ImagePathContainer != null)
+      {
+        if (ImagePathContainer.Contains(newImage))
+          return false;
+
+        // check for placeholder
+        int indexDel = 0;
+        bool found = false;
+        foreach (string pic in ImagePathContainer)
+        {
+          indexDel++;
+          if (pic.IndexOf("missing_coverart.png") > 0)
+          {
+            found = true;
+            break;
+          }
+        }
+        if (found)
+          ImagePathContainer.RemoveAt(indexDel-1);
+
+        if (System.IO.File.Exists(newImage))
+        {
+          ImagePathContainer.Add(newImage);
+          success = true;
+        }
+      }
+      return success;
+    }
+
+    private void FlipPictures()
+    {
+      if (ImgCoverArt != null)
+      {
+        if (ImagePathContainer.Count > 0)
+        {
+          if (ImagePathContainer.Count > 1)
+          {
+            int currentImage = 0;
+            // get the next image
+            foreach (string image in ImagePathContainer)
+            {
+              currentImage++;
+              if (ImgCoverArt.FileName == image)
+                break;
+            }
+            if (currentImage < ImagePathContainer.Count)
+              ImgCoverArt.SetFileName(ImagePathContainer[currentImage]);
+            else
+              // start loop again
+              ImgCoverArt.SetFileName(ImagePathContainer[0]);
+          }
+          else
+            ImgCoverArt.SetFileName(ImagePathContainer[0]);
+        }
+      }
+    }
+
+    private void OnImageTimerTickEvent(object trash_, ElapsedEventArgs args_)
+    {
+      FlipPictures();
     }
 
     private void AddInfoTrackToPlaylist(GUIListItem chosenTrack_, bool enqueueNext_)
@@ -314,6 +404,7 @@ namespace MediaPortal.GUI.Music
       base.OnPageLoad();
       facadeAlbumInfo.Clear();
       facadeTagInfo.Clear();
+      ImagePathContainer.Clear();
       //facadeAlbumInfo.Focusable = false;
       //facadeTagInfo.Focusable = false;
 
@@ -336,11 +427,21 @@ namespace MediaPortal.GUI.Music
 
       InfoScrobbler = new AudioscrobblerUtils();
 
+      if (ImageChangeTimer == null)
+      {
+        ImageChangeTimer = new System.Timers.Timer();
+        ImageChangeTimer.Interval = 3600 * 1000;
+        ImageChangeTimer.Elapsed += new ElapsedEventHandler(OnImageTimerTickEvent);
+        ImageChangeTimer.Start();
+      }
+
       g_Player_PlayBackStarted(g_Player.MediaType.Music, g_Player.CurrentFile);
     }
 
     protected override void OnPageDestroy(int new_windowId)
     {
+      GC.Collect();
+      ImageChangeTimer.Stop();
       base.OnPageDestroy(new_windowId);
       ControlsInitialized = false;
     }
@@ -391,11 +492,13 @@ namespace MediaPortal.GUI.Music
             string albumFolderPath = System.IO.Path.GetDirectoryName(CurrentTrackFileName);
             _MusicWindow.FindCoverArt(false, CurrentTrackTag.Artist, CurrentTrackTag.Album, albumFolderPath, CurrentTrackTag, -1);
             CurrentThumbFileName = GUIMusicFiles.GetCoverArt(false, CurrentTrackFileName, CurrentTrackTag);
+            //if (CurrentThumbFileName.Length == 0)
+            //  CurrentThumbFileName = GUIGraphicsContext.Skin + @"\media\missing_coverart.png";
+            if (CurrentThumbFileName.Length > 0)
+              AddImageToImagePathContainer(CurrentThumbFileName);
 
-            if (CurrentThumbFileName.Length == 0)
-              CurrentThumbFileName = GUIGraphicsContext.Skin + @"\media\missing_coverart.png";
-
-            ImgCoverArt.SetFileName(CurrentThumbFileName);
+            //ImgCoverArt.SetFileName(CurrentThumbFileName);
+            UpdateImagePathContainer();
             break;
           }
 
@@ -429,7 +532,6 @@ namespace MediaPortal.GUI.Music
               Log.Error("GUIMusicPlayingNow: could not copy song spam to clipboard - {0}", ex.Message);
               break;
             }
-
           }
       }
     }
@@ -503,7 +605,7 @@ namespace MediaPortal.GUI.Music
           GUIControl.FocusControl(GetID, ((int)ControlIDs.LIST_TAG_INFO));
       }
     }
-    
+
     private void UpdateAlbumInfoThread()
     {
       GUIListItem item = null;
@@ -528,12 +630,19 @@ namespace MediaPortal.GUI.Music
 
       if (AlbumTracks.Count > 0)
       {
-        if (CurrentThumbFileName == GUIGraphicsContext.Skin + @"\media\missing_coverart.png")
-        {
-          CurrentThumbFileName = GUIMusicFiles.GetCoverArt(false, CurrentTrackFileName, CurrentTrackTag);
-          if (CurrentThumbFileName.Length > 0)
-            ImgCoverArt.SetFileName(CurrentThumbFileName);
-        }
+        //if (CurrentThumbFileName == GUIGraphicsContext.Skin + @"\media\missing_coverart.png")
+        //{
+        CurrentThumbFileName = GUIMusicFiles.GetCoverArt(false, CurrentTrackFileName, CurrentTrackTag);
+        if (CurrentThumbFileName.Length > 0)
+          AddImageToImagePathContainer(CurrentThumbFileName);
+
+        InfoScrobbler.getArtistInfo(CurrentTrackTag.Artist);
+        CurrentThumbFileName = Util.Utils.GetCoverArtName(Thumbs.MusicArtists, Util.Utils.FilterFileName(CurrentTrackTag.Artist));
+        if (CurrentThumbFileName.Length > 0)
+          AddImageToImagePathContainer(CurrentThumbFileName);
+
+        UpdateImagePathContainer();
+
         if (LblBestAlbumTracks != null)
           LblBestAlbumTracks.Visible = true;
 
@@ -698,13 +807,13 @@ namespace MediaPortal.GUI.Music
             MediaPortal.Freedb.CDTrackDetail nextTrack = GUIMusicFiles.MusicCD.getTrack(nextCDTrackNum);
             NextTrackTag = GetTrackTag(nextTrack);
           }
-          if (CurrentTrackTag != null)
-          {
-            CurrentThumbFileName = GUIMusicFiles.GetCoverArt(false, CurrentTrackFileName, CurrentTrackTag);
-            if (CurrentThumbFileName.Length == 0)
-              CurrentThumbFileName = GUIGraphicsContext.Skin + @"\media\missing_coverart.png";
-            ImgCoverArt.SetFileName(CurrentThumbFileName);
-          }
+          //if (CurrentTrackTag != null)
+          //{
+          //  CurrentThumbFileName = GUIMusicFiles.GetCoverArt(false, CurrentTrackFileName, CurrentTrackTag);
+          //  if (CurrentThumbFileName.Length == 0)
+          //    CurrentThumbFileName = GUIGraphicsContext.Skin + @"\media\missing_coverart.png";
+          //  ImgCoverArt.SetFileName(CurrentThumbFileName);
+          //}
         }
       }
     }
@@ -736,13 +845,14 @@ namespace MediaPortal.GUI.Music
       else
       {
         tag = new MusicTag();
-        tag.Album = song.Album;
-        tag.Artist = song.Artist;
-        tag.Duration = song.Duration;
-        tag.Genre = song.Genre;
-        tag.Title = song.Title;
-        tag.Track = song.Track;
-        tag.Year = song.Year;
+        tag = BuildMusicTagFromSong(song);
+        //tag.Album = song.Album;
+        //tag.Artist = song.Artist;
+        //tag.Duration = song.Duration;
+        //tag.Genre = song.Genre;
+        //tag.Title = song.Title;
+        //tag.Track = song.Track;
+        //tag.Year = song.Year;
       }
       return tag;
     }
@@ -869,12 +979,13 @@ namespace MediaPortal.GUI.Music
         else if (bFound)
         {
           tag = new MusicTag();
-          tag.Album = song.Album;
-          tag.Artist = song.Artist;
-          tag.Genre = song.Genre;
-          tag.Duration = song.Duration;
-          tag.Title = song.Title;
-          tag.Track = song.Track;
+          tag = BuildMusicTagFromSong(song);
+          //tag.Album = song.Album;
+          //tag.Artist = song.Artist;
+          //tag.Genre = song.Genre;
+          //tag.Duration = song.Duration;
+          //tag.Title = song.Title;
+          //tag.Track = song.Track;
         }
 
       }// end of try

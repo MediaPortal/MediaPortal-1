@@ -604,6 +604,9 @@ namespace MediaPortal.Music.Database
               {
                 randomPosition = rand.Next(0, calcRandValue);
                 Log.Debug("Audioscrobbler: Tag {0} in blacklist, randomly chosing another one", tmpGenre);
+                // do not try to often..
+                if (x > tagTracks.Count * 3)
+                  break;
               }
               else
                 break;
@@ -639,6 +642,18 @@ namespace MediaPortal.Music.Database
 
         return tagTracks;
       }
+    }
+
+    /// <summary>
+    /// Lookup artist info from last.fm
+    /// </summary>
+    /// <param name="artistToSearch_">the artist to search (will be parsed / cleaned)</param>
+    /// <returns>Song object with Artist, WebImage and MusicBrainzID</returns>
+    public Song getArtistInfo(string artistToSearch_)
+    {
+      string urlArtist = getValidURLLastFMString(artistToSearch_);
+
+      return ParseXMLDocForArtistInfo(urlArtist);
     }
 
     public List<Song> getTagsForArtist(string artistToSearch_)
@@ -786,7 +801,7 @@ namespace MediaPortal.Music.Database
     #region internal fetch routines
 
     /// <summary>downloads the large thumb from amazon</summary>
-    private bool fetchAlbumImage(string imageUrl, string fileName)
+    private bool fetchWebImage(string imageUrl, string fileName, string thumbspath)
     {
       bool success = false;
       //string singleFileName = null;
@@ -805,13 +820,14 @@ namespace MediaPortal.Music.Database
         if (imageUrl.IndexOf("no_album") <= 0)
         {
           //Check if we already have the file.
-          string thumbspath = @"Thumbs\music\albums\";
+//          string thumbspath = @"Thumbs\music\albums\";
 
           //Create the album subdir in thumbs if it does not exist.
           if (!System.IO.Directory.Exists(thumbspath))
             System.IO.Directory.CreateDirectory(thumbspath);
+          string fullPath = System.IO.Path.Combine(thumbspath, fileName);
 
-          if (!System.IO.File.Exists(thumbspath + fileName))
+          if (!System.IO.File.Exists(fullPath))
           {
             Log.Debug("Audioscrobbler: Trying to get thumb: {0}", imageUrl);
             // Here we get the image from the web and save it to disk
@@ -819,7 +835,7 @@ namespace MediaPortal.Music.Database
             {
               WebClient client = new WebClient();
               client.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
-              client.DownloadFile(imageUrl, thumbspath + fileName);
+              client.DownloadFile(imageUrl, fullPath);
               Log.Info("Audioscrobbler: Thumb successfully downloaded.");
               success = true;
             }
@@ -1129,7 +1145,7 @@ namespace MediaPortal.Music.Database
           }
           songList.Add(nodeSong);
         }
-        fetchAlbumImage(tmpCover, tmpArtist + "-" + tmpAlbum + ".jpg");
+        fetchWebImage(tmpCover, tmpArtist + "-" + tmpAlbum + ".jpg", Thumbs.MusicAlbum);
       }
       catch
       {
@@ -1137,6 +1153,33 @@ namespace MediaPortal.Music.Database
       }     
 
       return songList;
+    }
+
+    private Song ParseXMLDocForArtistInfo(string artist_)
+    {
+      Song artistInfo = new Song();
+      try
+      {
+        XmlDocument doc = new XmlDocument();
+
+        doc.Load(@"http://ws.audioscrobbler.com/1.0/artist/" + artist_ + "/" + "similar.xml");
+        XmlNodeList nodes = doc.SelectNodes(@"//similarartists");
+        
+        if (nodes[0].Attributes["artist"].Value != "")
+          artistInfo.Artist = nodes[0].Attributes["artist"].Value;
+        if (nodes[0].Attributes["picture"].Value != "")
+          artistInfo.WebImage = nodes[0].Attributes["picture"].Value;
+        if (nodes[0].Attributes["mbid"].Value != "")
+          artistInfo.MusicBrainzID = nodes[0].Attributes["mbid"].Value;
+
+        if (artistInfo.WebImage != null || artistInfo.WebImage != String.Empty)
+          fetchWebImage(artistInfo.WebImage, artistInfo.Artist + ".jpg", Thumbs.MusicArtists);
+      }
+      catch
+      {
+        // input nice exception here...
+      }
+      return artistInfo;
     }
 
     private List<Song> ParseXMLDocForSimilarArtists(string artist_)
