@@ -487,7 +487,8 @@ namespace MediaPortal.GUI.Music
           LblBestTagTracks.Label = GUILocalizeStrings.Get(33031) + TagTracks[0].Genre;
           LblBestTagTracks.Visible = true;
         }
-        //GUIControl.FocusControl(GetID, ((int)ControlIDs.LIST_TAG_INFO));
+        if (facadeAlbumInfo == null || facadeAlbumInfo.Count == 0)
+          GUIControl.FocusControl(GetID, ((int)ControlIDs.LIST_TAG_INFO));
       }
     }
     
