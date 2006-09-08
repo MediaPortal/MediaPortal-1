@@ -209,7 +209,6 @@ namespace MediaPortal.Music.Database
     }
     #endregion
 
-
     #region Serialization
     void LoadSettings()
     {
@@ -645,15 +644,30 @@ namespace MediaPortal.Music.Database
     }
 
     /// <summary>
-    /// Lookup artist info from last.fm
+    /// Lookup artist info from last.fm and tries to save an artist thumb
     /// </summary>
     /// <param name="artistToSearch_">the artist to search (will be parsed / cleaned)</param>
     /// <returns>Song object with Artist, WebImage and MusicBrainzID</returns>
     public Song getArtistInfo(string artistToSearch_)
     {
+      Song tmpSong = new Song();
       string urlArtist = getValidURLLastFMString(artistToSearch_);
 
-      return ParseXMLDocForArtistInfo(urlArtist);
+      tmpSong = ParseXMLDocForArtistInfo(urlArtist);
+
+      if (tmpSong.WebImage != null || tmpSong.WebImage != String.Empty)
+      {
+        if (artistToSearch_.ToLowerInvariant() != tmpSong.Artist.ToLowerInvariant())
+        {
+          Log.Info("Audioscrobbler: alternative artist spelling detected - try to fetch both thumbs (MP: {0} / official: {1})", artistToSearch_, tmpSong.Artist);
+          fetchWebImage(tmpSong.WebImage, artistToSearch_ + ".jpg", Thumbs.MusicArtists);
+          fetchWebImage(tmpSong.WebImage, tmpSong.Artist + ".jpg", Thumbs.MusicArtists);          
+        }
+        else
+          fetchWebImage(tmpSong.WebImage, tmpSong.Artist + ".jpg", Thumbs.MusicArtists);
+      }
+
+      return tmpSong;
     }
 
     public List<Song> getTagsForArtist(string artistToSearch_)
@@ -817,44 +831,64 @@ namespace MediaPortal.Music.Database
       if (imageUrl != "")
       {
         // do not download last.fm's placeholder
-        if (imageUrl.IndexOf("no_album") <= 0)
+        if ((imageUrl.IndexOf("no_album") <= 0) || (imageUrl.IndexOf("no_artist") <= 0))
         {
           //Check if we already have the file.
-//          string thumbspath = @"Thumbs\music\albums\";
+          //          string thumbspath = @"Thumbs\music\albums\";
 
           //Create the album subdir in thumbs if it does not exist.
           if (!System.IO.Directory.Exists(thumbspath))
             System.IO.Directory.CreateDirectory(thumbspath);
+
           string fullPath = System.IO.Path.Combine(thumbspath, fileName);
 
-          if (!System.IO.File.Exists(fullPath))
+          //Log.Debug("Audioscrobbler: Trying to get thumb: {0}", imageUrl);
+          // Here we get the image from the web and save it to disk
+          try
           {
-            Log.Debug("Audioscrobbler: Trying to get thumb: {0}", imageUrl);
-            // Here we get the image from the web and save it to disk
-            try
+            string tmpFile = System.IO.Path.GetTempFileName();
+            WebClient client = new WebClient();
+            client.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
+            client.DownloadFile(imageUrl, tmpFile);
+
+            //temp file downloaded - check if needed
+            if (System.IO.File.Exists(fullPath))
             {
-              WebClient client = new WebClient();
-              client.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
-              client.DownloadFile(imageUrl, fullPath);
-              Log.Info("Audioscrobbler: Thumb successfully downloaded.");
-              success = true;
+              System.IO.FileInfo oldFile = new System.IO.FileInfo(fullPath);
+              System.IO.FileInfo newFile = new System.IO.FileInfo(tmpFile);
+              
+              if (oldFile.Length >= newFile.Length)
+              {
+                newFile.Delete();
+                Log.Debug("Audioscrobbler: better thumb {0} already exists - do not save", fileName);
+              }
+              // temp thumb is "better" than old one
+              else
+              {
+                oldFile.Delete();
+                newFile.MoveTo(fullPath);
+                Log.Debug("Audioscrobbler: fetched better thumb {0} overwriting existing one", fileName);
+              }
             }
-            catch (Exception e)
+            else
             {
-              Log.Error("Audioscrobbler: Exception during downloading - {0}", e.Message);
+              System.IO.FileInfo saveFile = new System.IO.FileInfo(tmpFile);
+              saveFile.MoveTo(fullPath);
+              Log.Info("Audioscrobbler: Thumb successfully downloaded as {0}", fileName);
             }
+            success = true;
           }
-          else
+          catch (Exception e)
           {
-            Log.Debug("Audioscrobbler: Thumb exists - do not download.");
+            Log.Error("Audioscrobbler: Exception while downloading - {0}", e.Message);
           }
         }
         else
-          Log.Debug("Audioscrobbler: last.fm only uses a placeholder - do not download thumb.");
+          Log.Debug("Audioscrobbler: last.fm only uses a placeholder - do not download thumb");
       }
       else
       {
-        Log.Debug("Audioscrobbler: No imageurl. Can't download thumb.");
+        Log.Debug("Audioscrobbler: No imageurl. Can't download thumb");
       }
       return success;
     }
@@ -1170,10 +1204,7 @@ namespace MediaPortal.Music.Database
         if (nodes[0].Attributes["picture"].Value != "")
           artistInfo.WebImage = nodes[0].Attributes["picture"].Value;
         if (nodes[0].Attributes["mbid"].Value != "")
-          artistInfo.MusicBrainzID = nodes[0].Attributes["mbid"].Value;
-
-        if (artistInfo.WebImage != null || artistInfo.WebImage != String.Empty)
-          fetchWebImage(artistInfo.WebImage, artistInfo.Artist + ".jpg", Thumbs.MusicArtists);
+          artistInfo.MusicBrainzID = nodes[0].Attributes["mbid"].Value;        
       }
       catch
       {
