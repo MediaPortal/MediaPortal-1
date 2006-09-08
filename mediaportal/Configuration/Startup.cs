@@ -24,6 +24,9 @@
 #endregion
 
 using System;
+using System.Text;
+using System.Runtime.InteropServices;
+using System.Diagnostics;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
@@ -45,6 +48,25 @@ namespace MediaPortal.Configuration
     StartupMode startupMode = StartupMode.Normal;
 
     string sectionsConfiguration = String.Empty;
+
+    public delegate bool IECallBack(int hwnd, int lParam);
+    private const int SW_SHOWNORMAL = 1;
+
+    [DllImport("user32.dll")]
+    public static extern int SendMessage(IntPtr window, int message, int wparam, int lparam);
+
+    [DllImport("user32.dll")]
+    private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+    [DllImport("user32.Dll")]
+    public static extern int EnumWindows(IECallBack x, int y);
+
+    [DllImport("User32.Dll")]
+    public static extern void GetWindowText(int h, StringBuilder s, int nMaxCount);
+
+    [DllImport("User32.Dll")]
+    public static extern void GetClassName(int h, StringBuilder s, int nMaxCount);
+
 
     /// <summary>
     /// 
@@ -99,6 +121,55 @@ namespace MediaPortal.Configuration
     public void Start()
     {
       Log.Info("Configuration is starting up");
+
+      bool exitConfiguration = false;
+
+      // Check for a MediaPortal Instance running and don't allow Configuration to start
+      try
+      {
+        string processName = "MediaPortal";
+
+        
+        foreach (Process process in Process.GetProcesses())
+        {
+          if (process.ProcessName.Equals(processName))
+          {
+            DialogResult dialogResult =
+              MessageBox.Show("MediaPortal has to be closed for configuration.\nClose MediaPortal and start Configuration?",
+                              "MediaPortal", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (dialogResult == DialogResult.Yes)
+            {
+              try
+              {
+                //
+                // Terminate the MediaPortal process by finding window and sending ALT+F4 to it.
+                //
+                IECallBack ewp = new IECallBack(EnumWindowCallBack);
+                EnumWindows(ewp, 0);
+                process.CloseMainWindow();
+              }
+              catch
+              { }
+              Log.Info("MediaPortal closed, continue running Configuration.");
+              break;
+            }
+            else
+            {
+              exitConfiguration = true;
+              break;
+            }
+          }
+        }
+      }
+      catch (Exception)
+      { }
+
+      if (exitConfiguration)
+      {
+        Log.Info("Configuration ended, due to a running MediaPortal.");
+        return;
+      }
 
       FileInfo mpFi = new FileInfo(Assembly.GetExecutingAssembly().Location);
       Log.Info("Assembly creation time: {0} (UTC)", mpFi.LastWriteTimeUtc.ToUniversalTime());
@@ -158,6 +229,19 @@ namespace MediaPortal.Configuration
       MessageBox.Show("Failed to locate assembly '" + args.Name + "'." + Environment.NewLine + "Note that the configuration program must be executed from/reside in the MediaPortal folder, the execution will now end.", "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
       System.Windows.Forms.Application.Exit();
       return null;
+    }
+
+    private bool EnumWindowCallBack(int hwnd, int lParam)
+    {
+      IntPtr windowHandle = (IntPtr)hwnd;
+      StringBuilder sb = new StringBuilder(1024);
+      GetWindowText((int)windowHandle, sb, sb.Capacity);
+      string window = sb.ToString().ToLower();
+      if (window.IndexOf("mediaportal") >= 0 || window.IndexOf("media portal") >= 0)
+      {
+        ShowWindow(windowHandle, SW_SHOWNORMAL);
+      }
+      return true;
     }
   }
 }
