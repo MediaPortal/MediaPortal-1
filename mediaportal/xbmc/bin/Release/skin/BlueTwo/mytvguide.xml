@@ -72,6 +72,30 @@
 		<texture>-</texture>
 	</control>
 
+	<control>
+		<description>Single Channel Label</description>
+		<type>label</type>
+		<id>32</id>
+		<posX>230</posX>
+		<posY>90</posY>
+		<font>font16</font>
+		<align>left</align>
+		<textcolor>FFFFFFFF</textcolor>
+	</control>
+	<control>
+		<description>Single Channel Image</description>
+		<type>image</type>
+		<id>33</id>
+		<posX>186</posX>
+		<posY>80</posY>
+		<width>40</width>
+		<height>40</height>
+		<keepaspectratio>yes</keepaspectratio>
+		<centered>no</centered>
+		<zoom>yes</zoom>
+		<texture>defaultVideoBig.png</texture>
+	</control> 
+
 	<!-- Timeheader background must be dedfined before Timeheader label template -->
 	<!-- b/c Timeheader is on the background and will be rendered first -->	
 	<control>
@@ -110,6 +134,8 @@
 		<textureUpFocus>arrow_round_right_focus.png</textureUpFocus>
 		<textureDownFocus>arrow_round_left_focus.png</textureDownFocus>
 	</control>
+
+	
 	<control>
 		<description>time interval spin control</description>
 		<type>spincontrol</type>
