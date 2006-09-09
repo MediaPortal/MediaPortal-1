@@ -5,6 +5,7 @@
 	<define>#header.label:#Play.Current.Title</define>
 	<define>#header.text:DVR Cut</define>
 	<define>#header.hover:hover_my videos.png</define>
+	<define>#selecteditem:-</define>
 	<controls>
 		<import>common.window.tv.xml</import>
 		<control>
@@ -44,7 +45,7 @@
 		</control>
       		<control>
          		<type>label</type>
-			<description>Old Duration Value</description>
+			<description>Old Duration Label</description>
          		<id>26</id>
          		<posX>75</posX>
          		<posY>187</posY>
@@ -65,7 +66,7 @@
 	   	</control>
       		<control>
          		<type>label</type>
-         		<description>New Duration</description>
+         		<description>New Duration Label</description>
          		<id>27</id>
          		<posX>75</posX>
          		<posY>225</posY>
@@ -226,24 +227,24 @@
 		   	<posY>580</posY>
 		   	<onup>24</onup>
 		   	<ondown>24</ondown>
-		   	<label></label>
+		   	<label>#currentplaytime</label>
 	   	</control>
 	   	<control>
 		   	<type>label</type>
 		   	<description>start Position</description>
 		   	<id>1</id>
 		   	<posX>525</posX>
-		   	<posY>616</posY>
+		   	<posY>610</posY>
 		   	<onup>24</onup>
 		   	<ondown>24</ondown>
-		   	<label>start cut:</label>
+		   	<label>2084</label>
 	   	</control>
 	   	<control>
 		   	<type>label</type>
 		   	<description>Start Position Value</description>
 		   	<id>37</id>
 		   	<posX>700</posX>
-		   	<posY>616</posY>
+		   	<posY>610</posY>
 		   	<onup>24</onup>
 		   	<label></label>
 	   	</control>
@@ -252,20 +253,59 @@
 		   	<description>End Position</description>
 		   	<id>1</id>
 		   	<posX>525</posX>
-		   	<posY>652</posY>
+		   	<posY>640</posY>
 		   	<onup>24</onup>
 		   	<ondown>24</ondown>
-		   	<label>end cut:</label>
+		   	<label>2085</label>
 	   	</control>
    		<control>
 		   	<type>label</type>
 		   	<description>End Position Value</description>
 		   	<id>38</id>
 		   	<posX>700</posX>
-		   	<posY>652</posY>
+		   	<posY>640</posY>
 		   	<onup>24</onup>
 		   	<label></label>
 	   	</control>
+   		<control>
+        		<type>label</type>
+			<description>Status Label</description>
+        		<id>102</id>
+        		<posX>470</posX>
+        		<posY>676</posY>
+      		</control>
+      		<control>
+        		<type>statusbar</type>
+        		<id>103</id>
+        		<posX>470</posX>
+        		<posY>680</posY>
+        		<width>660</width>
+        		<height>20</height>
+        		<texturebg>statusbar_back.png</texturebg>
+        		<midtexture>statusbar_mid.png</midtexture>
+        		<lefttexture>statusbar_left.png</lefttexture>
+        		<righttexture>statusbar_right.png</righttexture>
+      		</control>
+      		<control>
+        		<type>progress</type>
+        		<id>104</id>
+        		<posX>470</posX>
+        		<posY>680</posY>
+            		<width>660</width>
+        		<texturebg>progress_back.png</texturebg>
+        		<midtexture>osd_progress_mid.png</midtexture>
+        		<lefttexture>osd_progress_left.png</lefttexture>
+        		<righttexture>osd_progress_right.png</righttexture>
+      		</control>
+		<control>
+			<type>label</type>
+			<description>edit cutpoint</description>
+			<id>105</id>
+			<posX>470</posX>
+			<posY>680</posY>
+			<align>left</align>
+			<label>2075</label>
+		</control>
 		<control>
 		   	<type>slider</type>
 		   	<description>movie slider</description>
