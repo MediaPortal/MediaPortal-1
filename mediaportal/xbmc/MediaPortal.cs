@@ -2491,7 +2491,7 @@ public class MediaPortalApp : D3DApp, IRender
 
             case GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED:
                 bool fullscreen = (message.Param1 != 0);
-                Log.Info("Main: DX exclusive mode: {0}", fullscreen && isMaximized);
+                Log.Info("Main: DX exclusive mode: {0}", fullscreen && isFullScreen);
                 if (isMaximized == false || GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
                 {
                     return;
