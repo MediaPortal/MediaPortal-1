@@ -1149,16 +1149,17 @@ namespace MediaPortal.TV.Recording
         return true;
       }
       Log.Info("TVCapture.StartTimeShifting() Card:{0} :{1}", ID, channelName);
-      TVChannel channel = GetChannel(channelName);
-      _lastChannelChange = DateTime.Now;
+      TVChannel channel = GetChannel(channelName);      
 
       if (_currentGraphState == State.Timeshifting)
-      {
-        _timeTimeshiftingStarted = DateTime.Now;
+      {        
         if (_currentGraph.GetChannelNumber() != channel.Number)
-        {          
+        {
+          _lastChannelChange = DateTime.Now;
+          _timeTimeshiftingStarted = DateTime.Now; // rtv: should be higher, but record by reference doesn't work else
           if (!_currentGraph.ShouldRebuildGraph(channel))
-          {            
+          {
+            //_timeTimeshiftingStarted = DateTime.Now; rtv: replaced for mantis 745 (progressbar wrong)
             _currentGraph.TuneChannel(channel);            
             _currentTvChannelName = channelName;
             return true;
