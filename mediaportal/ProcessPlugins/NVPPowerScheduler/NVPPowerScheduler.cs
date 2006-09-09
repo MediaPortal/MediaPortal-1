@@ -51,6 +51,7 @@ namespace MediaPortal.PowerScheduler
     static bool m_bShutdownEnabled = false;		// shutdown enabled/disabled
     static DateTime m_dtShutdownTime = new DateTime();	// Next time system will automaticly shutdown
     static bool m_bExtensiveLog = false;		// Write a lot to Mediaportal.log
+    static bool m_bReinitOnResume = false;      // Re-init the Recorder when resuming  
     static bool m_bProgramsChanged = false;		// flag - TVGuide has changed, reset wake up time
     static bool m_bRecordingsChanged = false;	// flag - recordings has changed, reset wake up time	
     static bool m_bResetWakeuptime = true;		// flag - reset wake up time
@@ -152,6 +153,11 @@ namespace MediaPortal.PowerScheduler
       WakeupManager();
 
       // start recorder if needed
+      if (m_bReinitOnResume)
+      {
+          if (m_bExtensiveLog) Log.Debug("Stopping recorder before starting it in OnWakeUpTimer");
+          Recorder.Stop();
+      }
       Recorder.Start();
       AutoPlay.StartListening();
     }
@@ -189,7 +195,11 @@ namespace MediaPortal.PowerScheduler
       {
         Log.Info("PowerScheduler: System powerup detected ");
 
-        // start recorder if needed
+        if (m_bReinitOnResume)
+        {
+            if (m_bExtensiveLog) Log.Debug("Stopping recorder before starting it in OnTimer");
+            Recorder.Stop();
+        }
         Recorder.Start();
         
         LoadSettings();  // Settings may changed by Mediaportal.cs
@@ -403,6 +413,11 @@ namespace MediaPortal.PowerScheduler
         if (m_shutdownMode.StartsWith("Suspend"))
         {
           Log.Info("PowerScheduler: Suspend system");
+          if (m_bReinitOnResume)
+          {
+              if (m_bExtensiveLog) Log.Debug("Stopping recorder before suspend");
+              Recorder.Stop();
+          }
           MediaPortal.Util.Utils.SuspendSystem(m_bForceShutdown);
           //WindowsController.ExitWindows(RestartOptions.Suspend, m_bForceShutdown);
         }
@@ -410,6 +425,11 @@ namespace MediaPortal.PowerScheduler
         if (m_shutdownMode.StartsWith("Hibernate"))
         {
           Log.Info("PowerScheduler: Hibernate system");
+          if (m_bReinitOnResume)
+          {
+              if (m_bExtensiveLog) Log.Debug("Stopping recorder before hibernate");
+              Recorder.Stop();
+          }
           MediaPortal.Util.Utils.HibernateSystem(m_bForceShutdown);
           //WindowsController.ExitWindows(RestartOptions.Hibernate, m_bForceShutdown);
         }
@@ -417,6 +437,11 @@ namespace MediaPortal.PowerScheduler
         if (m_shutdownMode.StartsWith("Shutdown"))
         {
           AutoPlay.StopListening();
+          if (m_bReinitOnResume)
+          {
+              if (m_bExtensiveLog) Log.Debug("Stopping recorder before shutdown");
+              Recorder.Stop();
+          }
           WindowsController.ExitWindows(RestartOptions.ShutDown, m_bForceShutdown);
         }
       }
@@ -467,6 +492,10 @@ namespace MediaPortal.PowerScheduler
         m_shutdownMode = xmlreader.GetValueAsString("powerscheduler", "shutdownmode", "Suspend");
         m_bExtensiveLog = xmlreader.GetValueAsBool("powerscheduler", "extensivelogging", false);
         m_bForceShutdown = xmlreader.GetValueAsBool("powerscheduler", "forcedshutdown", false);
+        m_bReinitOnResume = xmlreader.GetValueAsBool("powerscheduler", "reinitonresume", false);
+
+        if (m_bExtensiveLog && m_bReinitOnResume) Log.Info("PowerScheduler : Reinit recorder on resume enabled");
+        else if (m_bExtensiveLog) Log.Debug("PowerScheduler : Reinit recorder on resume disabled");
 
         m_bDisabled = xmlreader.GetValueAsString("plugins", "Power Scheduler", "no") == "no";
 

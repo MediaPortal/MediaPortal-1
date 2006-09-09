@@ -42,12 +42,12 @@ namespace MediaPortal.PowerScheduler
     private MediaPortal.UserInterface.Controls.MPLabel label3;
     private MediaPortal.UserInterface.Controls.MPLabel label1;
     private MediaPortal.UserInterface.Controls.MPComboBox cobx_shutdown;
-    private System.Windows.Forms.NumericUpDown nud_wakeup;
-    private System.Windows.Forms.NumericUpDown nud_shutdown;
     private MediaPortal.UserInterface.Controls.MPCheckBox cbxExtensive;
     private MediaPortal.UserInterface.Controls.MPCheckBox cbxForced;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-    
+    private MediaPortal.UserInterface.Controls.MPCheckBox cbxReinit;
+    private MediaPortal.UserInterface.Controls.MPNumericUpDown nud_wakeup;
+    private MediaPortal.UserInterface.Controls.MPNumericUpDown nud_shutdown;
     /// <summary>
     /// Required designer variable.
     /// </summary>
@@ -88,6 +88,7 @@ namespace MediaPortal.PowerScheduler
         cobx_shutdown.Text = xmlreader.GetValueAsString("powerscheduler", "shutdownmode", "Suspend");
         cbxExtensive.Checked = xmlreader.GetValueAsBool("powerscheduler", "extensivelogging", false);
         cbxForced.Checked = xmlreader.GetValueAsBool("powerscheduler", "forcedshutdown", false);
+        cbxReinit.Checked = xmlreader.GetValueAsBool("powerscheduler", "reinitonresume", false);
 
       }
     }
@@ -101,6 +102,7 @@ namespace MediaPortal.PowerScheduler
         xmlwriter.SetValue("powerscheduler", "shutdownmode", cobx_shutdown.Text);
         xmlwriter.SetValueAsBool("powerscheduler", "extensivelogging", cbxExtensive.Checked);
         xmlwriter.SetValueAsBool("powerscheduler", "forcedshutdown", cbxForced.Checked);
+        xmlwriter.SetValueAsBool("powerscheduler", "reinitonresume", cbxReinit.Checked);
       }
       return true;
     }
@@ -119,19 +121,20 @@ namespace MediaPortal.PowerScheduler
       this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.cobx_shutdown = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.nud_wakeup = new System.Windows.Forms.NumericUpDown();
-      this.nud_shutdown = new System.Windows.Forms.NumericUpDown();
       this.cbxExtensive = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.cbxForced = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.cbxReinit = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.nud_wakeup = new MediaPortal.UserInterface.Controls.MPNumericUpDown();
+      this.nud_shutdown = new MediaPortal.UserInterface.Controls.MPNumericUpDown();
+      this.groupBox1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.nud_wakeup)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.nud_shutdown)).BeginInit();
-      this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
       // cb_ok
       // 
-      this.cb_ok.Location = new System.Drawing.Point(277, 246);
+      this.cb_ok.Location = new System.Drawing.Point(277, 260);
       this.cb_ok.Name = "cb_ok";
       this.cb_ok.Size = new System.Drawing.Size(75, 23);
       this.cb_ok.TabIndex = 0;
@@ -167,6 +170,7 @@ namespace MediaPortal.PowerScheduler
       // 
       // cobx_shutdown
       // 
+      this.cobx_shutdown.BorderColor = System.Drawing.Color.Empty;
       this.cobx_shutdown.Items.AddRange(new object[] {
             "Hibernate",
             "Suspend",
@@ -177,36 +181,12 @@ namespace MediaPortal.PowerScheduler
       this.cobx_shutdown.Size = new System.Drawing.Size(219, 21);
       this.cobx_shutdown.TabIndex = 14;
       // 
-      // nud_wakeup
-      // 
-      this.nud_wakeup.Location = new System.Drawing.Point(304, 14);
-      this.nud_wakeup.Maximum = new decimal(new int[] {
-            60,
-            0,
-            0,
-            0});
-      this.nud_wakeup.Name = "nud_wakeup";
-      this.nud_wakeup.Size = new System.Drawing.Size(48, 20);
-      this.nud_wakeup.TabIndex = 12;
-      // 
-      // nud_shutdown
-      // 
-      this.nud_shutdown.Location = new System.Drawing.Point(304, 66);
-      this.nud_shutdown.Maximum = new decimal(new int[] {
-            60,
-            0,
-            0,
-            0});
-      this.nud_shutdown.Name = "nud_shutdown";
-      this.nud_shutdown.Size = new System.Drawing.Size(48, 20);
-      this.nud_shutdown.TabIndex = 13;
-      // 
       // cbxExtensive
       // 
       this.cbxExtensive.AutoSize = true;
       this.cbxExtensive.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
       this.cbxExtensive.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbxExtensive.Location = new System.Drawing.Point(8, 57);
+      this.cbxExtensive.Location = new System.Drawing.Point(39, 42);
       this.cbxExtensive.Name = "cbxExtensive";
       this.cbxExtensive.Size = new System.Drawing.Size(107, 17);
       this.cbxExtensive.TabIndex = 17;
@@ -218,7 +198,7 @@ namespace MediaPortal.PowerScheduler
       this.cbxForced.AutoSize = true;
       this.cbxForced.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
       this.cbxForced.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbxForced.Location = new System.Drawing.Point(8, 24);
+      this.cbxForced.Location = new System.Drawing.Point(40, 19);
       this.cbxForced.Name = "cbxForced";
       this.cbxForced.Size = new System.Drawing.Size(106, 17);
       this.cbxForced.TabIndex = 15;
@@ -227,20 +207,47 @@ namespace MediaPortal.PowerScheduler
       // 
       // groupBox1
       // 
+      this.groupBox1.Controls.Add(this.cbxReinit);
       this.groupBox1.Controls.Add(this.cbxForced);
       this.groupBox1.Controls.Add(this.cbxExtensive);
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox1.Location = new System.Drawing.Point(19, 148);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(333, 92);
+      this.groupBox1.Size = new System.Drawing.Size(333, 93);
       this.groupBox1.TabIndex = 18;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Advanced options";
       // 
+      // cbxReinit
+      // 
+      this.cbxReinit.AutoSize = true;
+      this.cbxReinit.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+      this.cbxReinit.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbxReinit.Location = new System.Drawing.Point(8, 65);
+      this.cbxReinit.Name = "cbxReinit";
+      this.cbxReinit.Size = new System.Drawing.Size(138, 17);
+      this.cbxReinit.TabIndex = 18;
+      this.cbxReinit.Text = "Re-init tuners on resume";
+      this.cbxReinit.UseVisualStyleBackColor = true;
+      // 
+      // nud_wakeup
+      // 
+      this.nud_wakeup.Location = new System.Drawing.Point(304, 12);
+      this.nud_wakeup.Name = "nud_wakeup";
+      this.nud_wakeup.Size = new System.Drawing.Size(48, 20);
+      this.nud_wakeup.TabIndex = 12;
+      // 
+      // nud_shutdown
+      // 
+      this.nud_shutdown.Location = new System.Drawing.Point(304, 67);
+      this.nud_shutdown.Name = "nud_shutdown";
+      this.nud_shutdown.Size = new System.Drawing.Size(48, 20);
+      this.nud_shutdown.TabIndex = 13;
+      // 
       // PowerSchedulerSetupForm
       // 
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-      this.ClientSize = new System.Drawing.Size(368, 277);
+      this.ClientSize = new System.Drawing.Size(373, 295);
       this.Controls.Add(this.nud_shutdown);
       this.Controls.Add(this.nud_wakeup);
       this.Controls.Add(this.cobx_shutdown);
@@ -250,11 +257,12 @@ namespace MediaPortal.PowerScheduler
       this.Controls.Add(this.cb_ok);
       this.Controls.Add(this.groupBox1);
       this.Name = "PowerSchedulerSetupForm";
-      this.Text = "Power Scheduler configuration 0.3 ";
-      ((System.ComponentModel.ISupportInitialize)(this.nud_wakeup)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.nud_shutdown)).EndInit();
+      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+      this.Text = "Power Scheduler configuration 0.3";
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.nud_wakeup)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.nud_shutdown)).EndInit();
       this.ResumeLayout(false);
 
     }
@@ -289,9 +297,6 @@ namespace MediaPortal.PowerScheduler
         if (SaveSettings()) this.Close();
       }
     }
-
-
-
 
   }
 }
