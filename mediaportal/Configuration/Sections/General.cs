@@ -53,11 +53,12 @@ namespace MediaPortal.Configuration.Sections
     const int WM_SETTINGCHANGE = 0x1A;
     const int SMTO_ABORTIFHUNG = 0x2;
     const int HWND_BROADCAST = 0xFFFF;
-        
+
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxGeneralSettings;
     private System.Windows.Forms.CheckedListBox settingsCheckedListBox;
     private MediaPortal.UserInterface.Controls.MPComboBox cbDebug;
     private Label lbDebug;
+    private GroupBox groupBoxLogging;
     private System.ComponentModel.IContainer components = null;
 
     public General()
@@ -96,22 +97,22 @@ namespace MediaPortal.Configuration.Sections
       new string[] { "general", "minimizeonstartup", "false" },
       new string[] { "general", "minimizeonexit", "false" },
       new string[] { "general", "autohidemouse", "true" },
-	  new string[] { "general", "mousesupport", "true" }, 
+	    new string[] { "general", "mousesupport", "true" }, 
       new string[] { "general", "hideextensions", "true" },
       new string[] { "general", "animations", "true" },
-	  new string[] { "general", "autostart", "false" },
-	  new string[] { "general", "baloontips", "false" },
-	  new string[] { "general", "dblclickasrightclick", "false" },
-	  new string[] { "general", "hidetaskbar", "true" },
-	  new string[] { "general", "alwaysontop", "true" },
-	  new string[] { "general", "exclusivemode", "true" },
-	  new string[] { "general", "enableguisounds", "true" },
-	  new string[] { "general", "screensaver", "false" },
+	    new string[] { "general", "autostart", "false" },
+	    new string[] { "general", "baloontips", "false" },
+	    new string[] { "general", "dblclickasrightclick", "false" },
+	    new string[] { "general", "hidetaskbar", "true" },
+	    new string[] { "general", "alwaysontop", "true" },
+	    new string[] { "general", "exclusivemode", "true" },
+	    new string[] { "general", "enableguisounds", "true" },
+	    new string[] { "general", "screensaver", "false" },
       new string[] { "general", "turnoffmonitor", "false" },
-	  new string[] { "general", "startbasichome", "false" },
+	    new string[] { "general", "startbasichome", "false" },
       new string[] { "general", "turnmonitoronafterresume", "false" },
-      new string[] { "general", "enables3trick","true" },
-      new string[] { "general", "allowfocus", "false" }
+      new string[] { "general", "enables3trick","true" }
+      //new string[] { "general", "allowfocus", "false" }
       };
 
     // PLEASE NOTE: when adding items, adjust the box so it doesn't get scrollbars
@@ -141,9 +142,9 @@ namespace MediaPortal.Configuration.Sections
 
         //numericUpDown1.Value=xmlreader.GetValueAsInt("vmr9OSDSkin","alphaValue",10);
 
-        // Allow Focus
-        using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", false))
-          settingsCheckedListBox.SetItemChecked(settingsCheckedListBox.Items.Count - 1, ((int)subkey.GetValue("ForegroundLockTimeout", 2000000) == 0));
+        //// Allow Focus
+        //using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", false))
+        //  settingsCheckedListBox.SetItemChecked(settingsCheckedListBox.Items.Count - 1, ((int)subkey.GetValue("ForegroundLockTimeout", 2000000) == 0));
       }
     }
 
@@ -161,7 +162,7 @@ namespace MediaPortal.Configuration.Sections
         {
           string[] currentSection = sectionEntries[index];
           xmlwriter.SetValueAsBool(currentSection[0], currentSection[1], settingsCheckedListBox.GetItemChecked(index));
-        }        
+        }
         //xmlwriter.SetValue("vmr9OSDSkin","alphaValue",numericUpDown1.Value);
       }
 
@@ -188,17 +189,17 @@ namespace MediaPortal.Configuration.Sections
           using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true))
             subkey.SetValue("ForegroundLockTimeout", 0);
 
-        // Allow Focus
-        using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true))
-        {
-          bool focusChecked = ((int)subkey.GetValue("ForegroundLockTimeout", 200000) == 0);
+        //// Allow Focus
+        //using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true))
+        //{
+        //  bool focusChecked = ((int)subkey.GetValue("ForegroundLockTimeout", 200000) == 0);
 
-          if (focusChecked != settingsCheckedListBox.GetItemChecked(18))
-            if (settingsCheckedListBox.GetItemChecked(settingsCheckedListBox.Items.Count - 1))
-              subkey.SetValue("ForegroundLockTimeout", 0);
-            else
-              subkey.SetValue("ForegroundLockTimeout", 200000);
-        }
+        //  if (focusChecked != settingsCheckedListBox.GetItemChecked(18))
+        //    if (settingsCheckedListBox.GetItemChecked(settingsCheckedListBox.Items.Count - 1))
+        //      subkey.SetValue("ForegroundLockTimeout", 0);
+        //    else
+        //      subkey.SetValue("ForegroundLockTimeout", 200000);
+        //}
 
         IntPtr result = IntPtr.Zero;
         SendMessageTimeout((IntPtr)HWND_BROADCAST, (IntPtr)WM_SETTINGCHANGE, IntPtr.Zero, Marshal.StringToBSTR(String.Empty), (IntPtr)SMTO_ABORTIFHUNG, (IntPtr)3, out result);
@@ -218,34 +219,36 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
-        this.groupBoxGeneralSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
-        this.settingsCheckedListBox = new System.Windows.Forms.CheckedListBox();
-        this.cbDebug = new MediaPortal.UserInterface.Controls.MPComboBox();
-        this.lbDebug = new System.Windows.Forms.Label();
-        this.groupBoxGeneralSettings.SuspendLayout();
-        this.SuspendLayout();
-        // 
-        // groupBoxGeneralSettings
-        // 
-        this.groupBoxGeneralSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                    | System.Windows.Forms.AnchorStyles.Left)
-                    | System.Windows.Forms.AnchorStyles.Right)));
-        this.groupBoxGeneralSettings.Controls.Add(this.settingsCheckedListBox);
-        this.groupBoxGeneralSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-        this.groupBoxGeneralSettings.Location = new System.Drawing.Point(0, 3);
-        this.groupBoxGeneralSettings.Name = "groupBoxGeneralSettings";
-        this.groupBoxGeneralSettings.Size = new System.Drawing.Size(472, 344);
-        this.groupBoxGeneralSettings.TabIndex = 1;
-        this.groupBoxGeneralSettings.TabStop = false;
-        this.groupBoxGeneralSettings.Text = "General Settings";
-        // 
-        // settingsCheckedListBox
-        // 
-        this.settingsCheckedListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                    | System.Windows.Forms.AnchorStyles.Left)
-                    | System.Windows.Forms.AnchorStyles.Right)));
-        this.settingsCheckedListBox.CheckOnClick = true;
-        this.settingsCheckedListBox.Items.AddRange(new object[] {
+      this.groupBoxGeneralSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.settingsCheckedListBox = new System.Windows.Forms.CheckedListBox();
+      this.cbDebug = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.lbDebug = new System.Windows.Forms.Label();
+      this.groupBoxLogging = new System.Windows.Forms.GroupBox();
+      this.groupBoxGeneralSettings.SuspendLayout();
+      this.groupBoxLogging.SuspendLayout();
+      this.SuspendLayout();
+      // 
+      // groupBoxGeneralSettings
+      // 
+      this.groupBoxGeneralSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxGeneralSettings.Controls.Add(this.settingsCheckedListBox);
+      this.groupBoxGeneralSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxGeneralSettings.Location = new System.Drawing.Point(0, 3);
+      this.groupBoxGeneralSettings.Name = "groupBoxGeneralSettings";
+      this.groupBoxGeneralSettings.Size = new System.Drawing.Size(472, 333);
+      this.groupBoxGeneralSettings.TabIndex = 1;
+      this.groupBoxGeneralSettings.TabStop = false;
+      this.groupBoxGeneralSettings.Text = "General Settings";
+      // 
+      // settingsCheckedListBox
+      // 
+      this.settingsCheckedListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.settingsCheckedListBox.CheckOnClick = true;
+      this.settingsCheckedListBox.Items.AddRange(new object[] {
             "Start MediaPortal in fullscreen mode",
             "Minimize to tray on start up",
             "Minimize to tray on GUI exit",
@@ -264,49 +267,58 @@ namespace MediaPortal.Configuration.Sections
             "Turn off monitor when blanking screen",
             "Start with basic home screen",
             "Turn monitor/tv on when resuming from standby",
-            "Enable S3 standby trick",
-            "Allow MediaPortal (and other apps) to gain focus (per-user setting - needs reboot" +
-                "!)"});
-        this.settingsCheckedListBox.Location = new System.Drawing.Point(16, 24);
-        this.settingsCheckedListBox.Name = "settingsCheckedListBox";
-        this.settingsCheckedListBox.Size = new System.Drawing.Size(440, 304);
-        this.settingsCheckedListBox.TabIndex = 0;
-        // 
-        // cbDebug
-        // 
-        this.cbDebug.BorderColor = System.Drawing.Color.Empty;
-        this.cbDebug.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-        this.cbDebug.FormattingEnabled = true;
-        this.cbDebug.Items.AddRange(new object[] {
+            "Force S3 standby mode (overrides BIOS setting)"});
+      this.settingsCheckedListBox.Location = new System.Drawing.Point(16, 24);
+      this.settingsCheckedListBox.Name = "settingsCheckedListBox";
+      this.settingsCheckedListBox.Size = new System.Drawing.Size(440, 289);
+      this.settingsCheckedListBox.TabIndex = 0;
+      // 
+      // cbDebug
+      // 
+      this.cbDebug.BorderColor = System.Drawing.Color.Empty;
+      this.cbDebug.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.cbDebug.FormattingEnabled = true;
+      this.cbDebug.Items.AddRange(new object[] {
             "Error",
             "Warning",
             "Information",
             "Debug"});
-        this.cbDebug.Location = new System.Drawing.Point(93, 353);
-        this.cbDebug.Name = "cbDebug";
-        this.cbDebug.Size = new System.Drawing.Size(121, 21);
-        this.cbDebug.TabIndex = 2;
-        // 
-        // lbDebug
-        // 
-        this.lbDebug.AutoSize = true;
-        this.lbDebug.Location = new System.Drawing.Point(15, 357);
-        this.lbDebug.Name = "lbDebug";
-        this.lbDebug.Size = new System.Drawing.Size(57, 13);
-        this.lbDebug.TabIndex = 3;
-        this.lbDebug.Text = "Log Level:";
-        // 
-        // General
-        // 
-        this.BackColor = System.Drawing.SystemColors.Control;
-        this.Controls.Add(this.lbDebug);
-        this.Controls.Add(this.cbDebug);
-        this.Controls.Add(this.groupBoxGeneralSettings);
-        this.Name = "General";
-        this.Size = new System.Drawing.Size(472, 408);
-        this.groupBoxGeneralSettings.ResumeLayout(false);
-        this.ResumeLayout(false);
-        this.PerformLayout();
+      this.cbDebug.Location = new System.Drawing.Point(80, 24);
+      this.cbDebug.Name = "cbDebug";
+      this.cbDebug.Size = new System.Drawing.Size(121, 21);
+      this.cbDebug.TabIndex = 2;
+      // 
+      // lbDebug
+      // 
+      this.lbDebug.AutoSize = true;
+      this.lbDebug.Location = new System.Drawing.Point(16, 28);
+      this.lbDebug.Name = "lbDebug";
+      this.lbDebug.Size = new System.Drawing.Size(57, 13);
+      this.lbDebug.TabIndex = 3;
+      this.lbDebug.Text = "Log Level:";
+      // 
+      // groupBoxLogging
+      // 
+      this.groupBoxLogging.Controls.Add(this.lbDebug);
+      this.groupBoxLogging.Controls.Add(this.cbDebug);
+      this.groupBoxLogging.Location = new System.Drawing.Point(0, 344);
+      this.groupBoxLogging.Name = "groupBoxLogging";
+      this.groupBoxLogging.Size = new System.Drawing.Size(472, 64);
+      this.groupBoxLogging.TabIndex = 4;
+      this.groupBoxLogging.TabStop = false;
+      this.groupBoxLogging.Text = "Logging";
+      // 
+      // General
+      // 
+      this.BackColor = System.Drawing.SystemColors.Control;
+      this.Controls.Add(this.groupBoxLogging);
+      this.Controls.Add(this.groupBoxGeneralSettings);
+      this.Name = "General";
+      this.Size = new System.Drawing.Size(472, 408);
+      this.groupBoxGeneralSettings.ResumeLayout(false);
+      this.groupBoxLogging.ResumeLayout(false);
+      this.groupBoxLogging.PerformLayout();
+      this.ResumeLayout(false);
 
     }
     #endregion
