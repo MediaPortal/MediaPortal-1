@@ -1094,38 +1094,6 @@ public class MediaPortalApp : D3DApp, IRender
         WorkingSet.Minimize();
     }
 
-    /// <summary>
-    /// The device exists, but may have just been Reset().  Resources in
-    /// Pool.Managed and any other device state that persists during
-    /// rendering should be set here.  Render states, matrices, textures,
-    /// etc., that don't change during rendering can be set once here to
-    /// avoid redundant state setting during Render() or FrameMove().
-    /// </summary>
-    protected override void OnDeviceReset(Object sender, EventArgs e)
-    {
-        //
-        // Only perform the device reset if we're not shutting down MediaPortal.
-        //
-        if (GUIGraphicsContext.CurrentState != GUIGraphicsContext.State.STOPPING)
-        {
-            Log.Info("Main: Resetting DX9 device");
-            GUIWaitCursor.Dispose();
-            GUIFontManager.LoadFonts(Config.Get(Config.Dir.Skin) + m_strSkin + @"\fonts.xml");
-            GUIFontManager.InitializeDeviceObjects();
-            if (GUIGraphicsContext.DX9Device != null)
-            {
-                GUIWindowManager.OnResize();
-                GUIGraphicsContext.Load();
-                GUIWindowManager.PreInit();
-                GUIWindowManager.ActivateWindow(GUIWindowManager.ActiveWindow);
-                GUIWindowManager.OnDeviceRestored();
-            }
-            // Must set the FVF after reset
-            GUIFontManager.SetDevice();
-            Log.Info("Main: Resetting DX9 device done");
-        }
-    }
-
     #endregion
 
     #region Render()
