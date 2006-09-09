@@ -1152,11 +1152,12 @@ namespace MediaPortal.TV.Recording
       TVChannel channel = GetChannel(channelName);      
 
       if (_currentGraphState == State.Timeshifting)
-      {        
+      {
+        _timeTimeshiftingStarted = DateTime.Now; // rtv: should be higher, but record by reference doesn't work else
         if (_currentGraph.GetChannelNumber() != channel.Number)
         {
           _lastChannelChange = DateTime.Now;
-          _timeTimeshiftingStarted = DateTime.Now; // rtv: should be higher, but record by reference doesn't work else
+          
           if (!_currentGraph.ShouldRebuildGraph(channel))
           {
             //_timeTimeshiftingStarted = DateTime.Now; rtv: replaced for mantis 745 (progressbar wrong)
