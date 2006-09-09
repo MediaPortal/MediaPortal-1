@@ -721,7 +721,7 @@ public class MediaPortalApp : D3DApp, IRender
         Recorder.Stop();
 
         //switch to windowed mode
-        if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false && isFullScreen)
+        if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false && isMaximized)
         {
             Log.Info("Main: Switching to windowed mode");
             SwitchFullScreenOrWindowed(true);
@@ -1094,6 +1094,38 @@ public class MediaPortalApp : D3DApp, IRender
         WorkingSet.Minimize();
     }
 
+    /// <summary>
+    /// The device exists, but may have just been Reset().  Resources in
+    /// Pool.Managed and any other device state that persists during
+    /// rendering should be set here.  Render states, matrices, textures,
+    /// etc., that don't change during rendering can be set once here to
+    /// avoid redundant state setting during Render() or FrameMove().
+    /// </summary>
+    protected override void OnDeviceReset(Object sender, EventArgs e)
+    {
+        //
+        // Only perform the device reset if we're not shutting down MediaPortal.
+        //
+        if (GUIGraphicsContext.CurrentState != GUIGraphicsContext.State.STOPPING)
+        {
+            Log.Info("Main: Resetting DX9 device");
+            GUIWaitCursor.Dispose();
+            GUIFontManager.LoadFonts(Config.Get(Config.Dir.Skin) + m_strSkin + @"\fonts.xml");
+            GUIFontManager.InitializeDeviceObjects();
+            if (GUIGraphicsContext.DX9Device != null)
+            {
+                GUIWindowManager.OnResize();
+                GUIGraphicsContext.Load();
+                GUIWindowManager.PreInit();
+                GUIWindowManager.ActivateWindow(GUIWindowManager.ActiveWindow);
+                GUIWindowManager.OnDeviceRestored();
+            }
+            // Must set the FVF after reset
+            GUIFontManager.SetDevice();
+            Log.Info("Main: Resetting DX9 device done");
+        }
+    }
+
     #endregion
 
     #region Render()
@@ -1324,7 +1356,7 @@ public class MediaPortalApp : D3DApp, IRender
 
                 if (!GUIGraphicsContext.BlankScreen)
                 {
-                  if (isFullScreen)
+                    if (isMaximized)
                     {
                         int window = GUIWindowManager.ActiveWindow;
                         if (window < (int) GUIWindow.Window.WINDOW_WIZARD_WELCOME ||
@@ -2491,8 +2523,8 @@ public class MediaPortalApp : D3DApp, IRender
 
             case GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED:
                 bool fullscreen = (message.Param1 != 0);
-                Log.Info("Main: DX exclusive mode: {0}", fullscreen && isFullScreen);
-                if (isFullScreen == false || GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
+                Log.Info("Main: DX exclusive mode: {0}", fullscreen && isMaximized);
+                if (isMaximized == false || GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
                 {
                     return;
                 }
