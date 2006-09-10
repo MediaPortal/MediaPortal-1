@@ -494,7 +494,7 @@ namespace MediaPortal.Configuration.Sections
 
     string[] PlayerOptions = new string[]{
             "Internal Music Player",
-            "Windows Media Player 9",
+            //"Windows Media Player 9",
             "DirectShow" 
         };
 
@@ -576,6 +576,7 @@ namespace MediaPortal.Configuration.Sections
     private CheckBox GaplessPlaybackChkBox;
     private HScrollBar hScrollBarCrossFade;
     private HScrollBar hScrollBarBuffering;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxDisableInternetLookups;
     private MediaPortal.UserInterface.Controls.MPComboBox autoPlayComboBox;
 
     #endregion
@@ -781,7 +782,7 @@ namespace MediaPortal.Configuration.Sections
             break;
         }
 
-        ShowVizInNowPlayingChkBox.Checked = xmlreader.GetValueAsBool("musicmisc", "showVisInNowPlaying", true);
+        ShowVizInNowPlayingChkBox.Checked = xmlreader.GetValueAsBool("musicmisc", "showVisInNowPlaying", false);
       }
     }
 
@@ -987,6 +988,7 @@ namespace MediaPortal.Configuration.Sections
       this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.MiscTabPg = new System.Windows.Forms.TabPage();
       this.mpGroupBox4 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.checkBoxDisableInternetLookups = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.ShowVizInNowPlayingChkBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.ShowLyricsCmbBox = new System.Windows.Forms.ComboBox();
       this.label9 = new System.Windows.Forms.Label();
@@ -1194,9 +1196,9 @@ namespace MediaPortal.Configuration.Sections
       this.enableVisualisation.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.enableVisualisation.Location = new System.Drawing.Point(87, 89);
       this.enableVisualisation.Name = "enableVisualisation";
-      this.enableVisualisation.Size = new System.Drawing.Size(265, 17);
+      this.enableVisualisation.Size = new System.Drawing.Size(214, 17);
       this.enableVisualisation.TabIndex = 3;
-      this.enableVisualisation.Text = "Enable visualization (Internal player and WMP only)";
+      this.enableVisualisation.Text = "Enable visualization (Internal player only)";
       this.enableVisualisation.UseVisualStyleBackColor = true;
       // 
       // label2
@@ -1510,26 +1512,39 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox4
       // 
+      this.mpGroupBox4.Controls.Add(this.checkBoxDisableInternetLookups);
       this.mpGroupBox4.Controls.Add(this.ShowVizInNowPlayingChkBox);
       this.mpGroupBox4.Controls.Add(this.ShowLyricsCmbBox);
       this.mpGroupBox4.Controls.Add(this.label9);
       this.mpGroupBox4.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox4.Location = new System.Drawing.Point(16, 152);
       this.mpGroupBox4.Name = "mpGroupBox4";
-      this.mpGroupBox4.Size = new System.Drawing.Size(432, 89);
+      this.mpGroupBox4.Size = new System.Drawing.Size(432, 110);
       this.mpGroupBox4.TabIndex = 2;
       this.mpGroupBox4.TabStop = false;
       this.mpGroupBox4.Text = "Now Playing";
+      // 
+      // checkBoxDisableInternetLookups
+      // 
+      this.checkBoxDisableInternetLookups.AutoSize = true;
+      this.checkBoxDisableInternetLookups.Enabled = false;
+      this.checkBoxDisableInternetLookups.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxDisableInternetLookups.Location = new System.Drawing.Point(114, 78);
+      this.checkBoxDisableInternetLookups.Name = "checkBoxDisableInternetLookups";
+      this.checkBoxDisableInternetLookups.Size = new System.Drawing.Size(129, 17);
+      this.checkBoxDisableInternetLookups.TabIndex = 5;
+      this.checkBoxDisableInternetLookups.Text = "Disable cover lookups";
+      this.checkBoxDisableInternetLookups.UseVisualStyleBackColor = true;
       // 
       // ShowVizInNowPlayingChkBox
       // 
       this.ShowVizInNowPlayingChkBox.AutoSize = true;
       this.ShowVizInNowPlayingChkBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.ShowVizInNowPlayingChkBox.Location = new System.Drawing.Point(114, 19);
+      this.ShowVizInNowPlayingChkBox.Location = new System.Drawing.Point(114, 55);
       this.ShowVizInNowPlayingChkBox.Name = "ShowVizInNowPlayingChkBox";
-      this.ShowVizInNowPlayingChkBox.Size = new System.Drawing.Size(206, 17);
+      this.ShowVizInNowPlayingChkBox.Size = new System.Drawing.Size(208, 17);
       this.ShowVizInNowPlayingChkBox.TabIndex = 4;
-      this.ShowVizInNowPlayingChkBox.Text = "Show visualzation (Internal player only)";
+      this.ShowVizInNowPlayingChkBox.Text = "Show visualization (Internal player only)";
       this.ShowVizInNowPlayingChkBox.UseVisualStyleBackColor = true;
       // 
       // ShowLyricsCmbBox
@@ -1537,7 +1552,7 @@ namespace MediaPortal.Configuration.Sections
       this.ShowLyricsCmbBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.ShowLyricsCmbBox.Enabled = false;
       this.ShowLyricsCmbBox.FormattingEnabled = true;
-      this.ShowLyricsCmbBox.Location = new System.Drawing.Point(114, 47);
+      this.ShowLyricsCmbBox.Location = new System.Drawing.Point(114, 19);
       this.ShowLyricsCmbBox.Name = "ShowLyricsCmbBox";
       this.ShowLyricsCmbBox.Size = new System.Drawing.Size(293, 21);
       this.ShowLyricsCmbBox.TabIndex = 1;
@@ -1546,7 +1561,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.label9.AutoSize = true;
       this.label9.Enabled = false;
-      this.label9.Location = new System.Drawing.Point(47, 50);
+      this.label9.Location = new System.Drawing.Point(47, 22);
       this.label9.Name = "label9";
       this.label9.Size = new System.Drawing.Size(63, 13);
       this.label9.TabIndex = 0;
