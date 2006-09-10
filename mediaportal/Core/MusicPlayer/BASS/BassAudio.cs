@@ -1424,15 +1424,12 @@ namespace MediaPortal.Player
                 VizWindow.Visible = true;
             }
 
-            if (!NotifyPlaying && CurrentPosition >= 10.0)
+            if (NotifyPlaying && CurrentPosition >= 10.0)
             {
-                if (NotifyPlaying)
-                {
                     NotifyPlaying = false;
                     GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYING_10SEC, 0, 0, 0, 0, 0, null);
                     msg.Label = CurrentFile;
-                    GUIWindowManager.SendThreadMessage(msg);
-                }
+                    GUIWindowManager.SendThreadMessage(msg);                
             }
 
             if (FullScreen != GUIGraphicsContext.IsFullScreenVideo)

@@ -845,7 +845,7 @@ namespace MediaPortal.Music.Database
 
           string fullPath = System.IO.Path.Combine(thumbspath, fileName);
 
-          Log.Debug("Audioscrobbler: Trying to get thumb: {0}", imageUrl);
+          Log.Debug("MyMusic: Trying to get thumb: {0}", imageUrl);
           // Here we get the image from the web and save it to disk
           try
           {
@@ -865,36 +865,36 @@ namespace MediaPortal.Music.Database
                 if (oldFile.Length >= newFile.Length)
                 {
                   newFile.Delete();
-                  Log.Debug("Audioscrobbler: better thumb {0} already exists - do not save", fileName);
+                  Log.Debug("MyMusic: better thumb {0} already exists - do not save", fileName);
                 }
                 // temp thumb is "better" than old one
                 else
                 {
                   oldFile.Delete();
                   newFile.MoveTo(fullPath);
-                  Log.Debug("Audioscrobbler: fetched better thumb {0} overwriting existing one", fileName);
+                  Log.Debug("MyMusic: fetched better thumb {0} overwriting existing one", fileName);
                 }
               }
               else
               {
                 System.IO.FileInfo saveFile = new System.IO.FileInfo(tmpFile);
                 saveFile.MoveTo(fullPath);
-                Log.Info("Audioscrobbler: Thumb successfully downloaded as {0}", fileName);
+                Log.Info("MyMusic: Thumb successfully downloaded as {0}", fileName);
               }
               success = true;
             }
           }
           catch (Exception e)
           {
-            Log.Error("Audioscrobbler: Exception while downloading - {0}", e.Message);
+            Log.Error("MyMusic: Exception while downloading - {0}", e.Message);
           }
         }
         else
-          Log.Debug("Audioscrobbler: last.fm only uses a placeholder - do not download thumb");
+          Log.Debug("MyMusic: last.fm only uses a placeholder - do not download thumb");
       }
       else
       {
-        Log.Debug("Audioscrobbler: No imageurl. Can't download thumb");
+        Log.Debug("MyMusic: No imageurl. Can't download thumb");
       }
       return success;
     }
