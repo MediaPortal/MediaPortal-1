@@ -284,17 +284,21 @@ namespace MediaPortal.AudioScrobbler
       this.linkLabel1.TabIndex = 6;
       this.linkLabel1.TabStop = true;
       this.linkLabel1.Text = "Please join the MediaPortal group!";
+      this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelMPGroup_LinkClicked);
       // 
       // linkLabel2
       // 
       this.linkLabel2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.linkLabel2.AutoSize = true;
+      this.linkLabel2.LinkArea = new System.Windows.Forms.LinkArea(0, 29);
       this.linkLabel2.Location = new System.Drawing.Point(305, 240);
       this.linkLabel2.Name = "linkLabel2";
-      this.linkLabel2.Size = new System.Drawing.Size(152, 13);
+      this.linkLabel2.Size = new System.Drawing.Size(159, 17);
       this.linkLabel2.TabIndex = 5;
       this.linkLabel2.TabStop = true;
       this.linkLabel2.Text = "Sign up a new user on last.fm..";
+      this.linkLabel2.UseCompatibleTextRendering = true;
+      this.linkLabel2.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelNewUser_LinkClicked);
       // 
       // groupBoxOptions
       // 

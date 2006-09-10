@@ -390,7 +390,7 @@ namespace MediaPortal.AudioScrobbler
     private void linkLabelMPGroup_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
       // Determine which link was clicked within the LinkLabel.
-      this.linkLabelMPGroup.Links[linkLabelMPGroup.Links.IndexOf(e.Link)].Visited = true;
+      //this.linkLabelMPGroup.Links[linkLabelMPGroup.Links.IndexOf(e.Link)].Visited = true;
       try
       {
         Help.ShowHelp(this, "http://www.last.fm/group/MediaPortal%2BUsers");
@@ -402,7 +402,7 @@ namespace MediaPortal.AudioScrobbler
 
     private void linkLabelNewUser_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      this.linkLabelNewUser.Links[linkLabelNewUser.Links.IndexOf(e.Link)].Visited = true;
+      //this.linkLabelNewUser.Links[linkLabelNewUser.Links.IndexOf(e.Link)].Visited = true;
       try
       {
         Help.ShowHelp(this, "https://www.last.fm/join/");
