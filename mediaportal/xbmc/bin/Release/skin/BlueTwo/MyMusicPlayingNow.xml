@@ -214,6 +214,11 @@
          <posY>136</posY>
          <width>300</width>
          <height>135</height>
+         <spinColor>-</spinColor>
+         <textureUp>-</textureUp>
+		<textureDown>-</textureDown>
+		<textureUpFocus>-</textureUpFocus>
+		<textureDownFocus>-</textureDownFocus>
          <textcolor>White</textcolor>
       </control>
       <control>
@@ -227,6 +232,11 @@
          <posY>288</posY>
          <width>300</width>
          <height>135</height>
+         <spinColor>-</spinColor>
+         <textureUp>-</textureUp>
+		<textureDown>-</textureDown>
+		<textureUpFocus>-</textureUpFocus>
+		<textureDownFocus>-</textureDownFocus>
          <textcolor>White</textcolor>
       </control>
 
