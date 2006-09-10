@@ -443,8 +443,8 @@ namespace MediaPortal.GUI.Music
         if (vizWindow != null)
         {
           vizWindow.Visible = false;
-          System.Drawing.Size vizSize = new System.Drawing.Size(ImgCoverArt.Width - 4, ImgCoverArt.Height - 4);
-          System.Drawing.Point vizLoc = new System.Drawing.Point((int)ImgCoverArt.Location.X+2, (int)ImgCoverArt.Location.Y+2);
+          System.Drawing.Size vizSize = new System.Drawing.Size(ImgCoverArt.Width, ImgCoverArt.Height);
+          System.Drawing.Point vizLoc = new System.Drawing.Point((int)ImgCoverArt.Location.X, (int)ImgCoverArt.Location.Y);
           vizWindow.Size = vizSize;
           vizWindow.Location = vizLoc;
           vizWindow.Visible = true;

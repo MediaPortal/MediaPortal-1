@@ -108,7 +108,7 @@
          <id>114</id>
          <posX>670</posX>
          <posY>79</posY>
-         <width>85</width>
+         <width>80</width>
          <label>#Play.Current.Year</label>
          <font>font14</font>
           <align>right</align>
@@ -120,7 +120,7 @@
          <id>6</id>
          <posX>410</posX>
          <posY>79</posY>
-         <width>210</width>
+         <width>190</width>
          <label>#Play.Current.Album</label>
          <font>font14</font>
          <align>left</align>
@@ -130,7 +130,7 @@
          <type>image</type>
          <id>117</id>
          <posX>444</posX>
-         <posY>368</posY>
+         <posY>370</posY>
          <width>190</width>
          <texture>osd_progress_background.png</texture>
       </control>
@@ -139,7 +139,7 @@
          <description>track progress</description>
          <id>118</id>
          <posX>432</posX>
-         <posY>368</posY>
+         <posY>370</posY>
          <width>200</width>
          <visible>no</visible>
          <lefttexture>osd_progress_left.png</lefttexture>
@@ -152,7 +152,7 @@
          <description>track progress label</description>
          <id>119</id>
          <posX>406</posX>
-         <posY>368</posY>
+         <posY>370</posY>
          <label>#currentplaytime</label>
          <font>font14</font>
           <align>left</align>
@@ -163,7 +163,7 @@
          <description>track duration label</description>
          <id>110</id>
          <posX>675</posX>
-         <posY>368</posY>
+         <posY>370</posY>
          <label>#duration</label>
          <font>font14</font>
           <align>right</align>
@@ -214,8 +214,8 @@
          <ondown>155</ondown>
          <posX>38</posX>
          <posY>136</posY>
-         <width>300</width>
-         <height>135</height>
+         <width>295</width>
+         <height>140</height>
          <textcolor>White</textcolor>
       </control>
       <control>
@@ -224,11 +224,10 @@
          <id>155</id>
          <onup>166</onup>
          <onleft>166</onleft>
-         <onright>666</onright>
          <posX>38</posX>
          <posY>288</posY>
-         <width>300</width>
-         <height>135</height>
+         <width>295</width>
+         <height>140</height>
          <textcolor>White</textcolor>
       </control>
 
@@ -248,7 +247,7 @@
          <id>28</id>
          <posX>42</posX>
          <posY>266</posY>
-         <width>250</width>
+         <width>280</width>
          <label>Top tracks for tag</label>
          <textcolor>White</textcolor>
       </control>

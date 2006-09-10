@@ -1174,23 +1174,27 @@ namespace MediaPortal.GUI.Music
                 scrobbledArtists.Add(tmpArtist);
                 break;
               }
-            string strFile = g_Player.Player.CurrentFile;
-            
-            bool songFound = dbs.GetSongByFileName(strFile, ref current10SekSong);
-            if (songFound)
+            string strFile = String.Empty;
+            if (g_Player.Player.CurrentFile != null && g_Player.Player.CurrentFile != String.Empty && g_Player.IsMusic)
             {
-              if (_scrobbleStartTrack == null || _scrobbleStartTrack.Artist == String.Empty)
-                _scrobbleStartTrack = current10SekSong.Clone();
-              
-              lock (ScrobbleLock)
+              strFile = g_Player.Player.CurrentFile;
+
+              bool songFound = dbs.GetSongByFileName(strFile, ref current10SekSong);
+              if (songFound)
               {
-                try
+                if (_scrobbleStartTrack == null || _scrobbleStartTrack.Artist == String.Empty)
+                  _scrobbleStartTrack = current10SekSong.Clone();
+
+                lock (ScrobbleLock)
                 {
-                  scrobbledArtists = ascrobbler.getSimilarArtists(current10SekSong.ToURLArtistString(), _useSimilarRandom);
-                }
-                catch (Exception ex)
-                {
-                  Log.Error("ScrobbleLookupThread: exception on lookup Similar - {0}", ex.Message);
+                  try
+                  {
+                    scrobbledArtists = ascrobbler.getSimilarArtists(current10SekSong.ToURLArtistString(), _useSimilarRandom);
+                  }
+                  catch (Exception ex)
+                  {
+                    Log.Error("ScrobbleLookupThread: exception on lookup Similar - {0}", ex.Message);
+                  }
                 }
               }
             }
