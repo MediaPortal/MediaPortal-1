@@ -66,7 +66,7 @@
          <description>track label</description>
          <id>113</id>
          <posX>135</posX>
-         <posY>460</posY>
+         <posY>462</posY>
          <width>320</width>
          <height>20</height>
          <label>#Play.Current.Title</label>
@@ -79,7 +79,7 @@
          <description>track label</description>
          <id>113</id>
          <posX>134</posX>
-         <posY>500</posY>
+         <posY>504</posY>
          <width>288</width>
          <height>20</height>
          <label>#Play.Current.Artist</label>
@@ -237,7 +237,7 @@
          <description>best album tracks label</description>
          <id>29</id>
          <posX>42</posX>
-         <posY>110</posY>
+         <posY>114</posY>
          <width>280</width>
          <label>33030</label>
          <textcolor>White</textcolor>
@@ -246,8 +246,8 @@
          <type>fadelabel</type>
          <description>best tag tracks label</description>
          <id>28</id>
-         <posX>44</posX>
-         <posY>280</posY>
+         <posX>42</posX>
+         <posY>266</posY>
          <width>250</width>
          <label>Top tracks for tag</label>
          <textcolor>White</textcolor>
