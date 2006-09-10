@@ -653,10 +653,20 @@ namespace MediaPortal.GUI.Music
             tag.Track = song.Track;
             item.MusicTag = tag;
           }
-          else if (UseID3)
-          {
-            item.MusicTag = TagReader.TagReader.ReadTag(item.Path);
-          }
+          else
+            if (UseID3)
+            {
+              item.MusicTag = TagReader.TagReader.ReadTag(item.Path);
+            }
+        }
+        MusicTag checkTag = (MusicTag)item.MusicTag;
+        if (checkTag.Title.IndexOf("unknown") > 0 || checkTag.Title == String.Empty || checkTag.Title == ("unknown"))
+        {
+          string tmpFilename = System.IO.Path.GetFileNameWithoutExtension(item.Path);
+          item.Label = tmpFilename;
+          checkTag.Title = String.Empty;
+          checkTag.Artist = tmpFilename;
+          item.MusicTag = checkTag;
         }
       }
     }
@@ -829,11 +839,6 @@ namespace MediaPortal.GUI.Music
       string strFileName = pItem.Path;
 
       playlistPlayer.Remove(PlayListType.PLAYLIST_MUSIC, strFileName);
-
-      //added by Sam
-      //check if party shuffle is on
-      //if (PShuffleOn)
-      //  UpdatePartyShuffle();
 
       LoadDirectory(m_strDirectory);
       UpdateButtonStates();
