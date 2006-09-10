@@ -723,10 +723,38 @@ namespace MediaPortal.Player
         {
           GUIGraphicsContext.ShowBackground = true;
           OnStopped();
-          _player.Stop();
-          CachePlayer();
-          _player = null;
-          GC.Collect(); GC.Collect(); GC.Collect(); GC.Collect(); //?? ms-help://MS.VSCC.v80/MS.MSDN.v80/MS.NETDEVFX.v20.de/cpref2/html/M_System_GC_Collect_1_804c5d7d.htm
+            
+          //SV 
+          // If we're using the internal music player and cross-fading is enabled
+          // we don't want a hard stop here as it will break cross-fading
+            
+          //_player.Stop();
+          //CachePlayer();
+          //_player = null;
+          //GC.Collect(); GC.Collect(); GC.Collect(); GC.Collect(); //?? ms-help://MS.VSCC.v80/MS.MSDN.v80/MS.NETDEVFX.v20.de/cpref2/html/M_System_GC_Collect_1_804c5d7d.htm
+
+          bool doStop = true;
+
+          if (MediaPortal.Util.Utils.IsAudio(strFile))
+          {
+              if (CoreMusicPlayer.IsDefaultMusicPlayer && CoreMusicPlayer.Player.Playing)
+                  doStop = !CoreMusicPlayer.Player.CrossFadingEnabled;
+          }
+
+          if (doStop)
+          {
+              //Console.WriteLine("--Stopping music player!");
+              _player.Stop();
+
+              CachePlayer();
+              _player = null;
+              GC.Collect(); GC.Collect(); GC.Collect(); GC.Collect();
+          }
+
+          else
+          {
+              //Console.WriteLine("--NOT Stopping music player!");
+          }
         }
         if (!MediaPortal.Util.Utils.IsAVStream(strFile) && MediaPortal.Util.Utils.IsVideo(strFile))
         {

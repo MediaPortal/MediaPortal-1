@@ -899,6 +899,11 @@ public class MediaPortalApp : D3DApp, IRender
             }
         }
 
+        //SV Added by SteveV 2006-09-07
+        // Asynchronously pre-initialize the music engine if we're using the CoreMusicPlayer
+        if (CoreMusicPlayer.IsDefaultMusicPlayer)
+            CoreMusicPlayer.CreatePlayerAsync();
+
         GUIPropertyManager.SetProperty("#date", GetDate());
         GUIPropertyManager.SetProperty("#time", GetTime());
 
@@ -1778,7 +1783,14 @@ public class MediaPortalApp : D3DApp, IRender
                                 {
                                     if (g_Player.HasVideo)
                                     {
-                                        GUIWindowManager.ActivateWindow((int) GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+                                        //SV
+                                        //GUIWindowManager.ActivateWindow((int) GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+                                        if (g_Player.IsMusic && CoreMusicPlayer.IsDefaultMusicPlayer)
+                                            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_MUSIC);                      //GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+
+                                        else
+                                            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+
                                         GUIGraphicsContext.IsFullScreenVideo = true;
                                         return;
                                     }
@@ -1864,6 +1876,10 @@ public class MediaPortalApp : D3DApp, IRender
                     case Action.ActionType.ACTION_MUSIC_FORWARD:
                         if (!GUIGraphicsContext.IsFullScreenVideo)
                         {
+                            //SV Fixes Music player seek with new Bass Audio Engine
+                            if (g_Player.IsMusic && CoreMusicPlayer.IsDefaultMusicPlayer)
+                                break;
+
                             if (!g_Player.IsTV)
                             {
                                 g_Player.Speed = Utils.GetNextForwardSpeed(g_Player.Speed);
@@ -1877,6 +1893,10 @@ public class MediaPortalApp : D3DApp, IRender
                     case Action.ActionType.ACTION_MUSIC_REWIND:
                         if (!GUIGraphicsContext.IsFullScreenVideo)
                         {
+                            //SV Fixes Music player seek with new Bass Audio Engine
+                            if (g_Player.IsMusic && CoreMusicPlayer.IsDefaultMusicPlayer)
+                                break;
+
                             if (!g_Player.IsTV)
                             {
                                 g_Player.Speed = Utils.GetNextRewindSpeed(g_Player.Speed);
@@ -2466,9 +2486,15 @@ public class MediaPortalApp : D3DApp, IRender
 
             case GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW:
                 GUIWindowManager.ActivateWindow(message.Param1);
-                if (GUIWindowManager.ActiveWindow == (int) GUIWindow.Window.WINDOW_TVFULLSCREEN ||
-                    GUIWindowManager.ActiveWindow == (int) GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT ||
-                    GUIWindowManager.ActiveWindow == (int) GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO)
+                
+                //SV
+                //if (GUIWindowManager.ActiveWindow == (int) GUIWindow.Window.WINDOW_TVFULLSCREEN ||
+                //    GUIWindowManager.ActiveWindow == (int) GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT ||
+                //    GUIWindowManager.ActiveWindow == (int) GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO)
+                if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN ||
+                    GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT ||
+                    GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO ||
+                    GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_FULLSCREEN_MUSIC)
                 {
                     GUIGraphicsContext.IsFullScreenVideo = true;
                 }

@@ -120,4 +120,11 @@ copy ..\..\..\WebEPG\WebEPG-xmltv\bin\Release\WebEPG-xmltv.exe WebEPG.exe
 copy ..\..\..\WebEPG\WebEPG-conf\bin\Release\WebEPG-conf.exe .
 copy ..\..\..\WebEPG\WebEPG-channels\bin\Release\WebEPG-channels.exe .
 
+rem Begin BASS Music Engine dependancies
+copy ..\..\..\bass.dll .
+copy ..\..\..\Bass.Net.dll .
+copy ..\..\..\bass_vis.dll .
+copy ..\..\..\mpviz.dll .
+rem End BASS Music Engine dependancies
+
 @if exist postbuild2.bat call postbuild2.bat

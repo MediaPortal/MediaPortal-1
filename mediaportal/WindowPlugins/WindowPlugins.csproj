@@ -324,6 +324,7 @@
     <Compile Include="GUIMusicVideos\GUIMusicVideoPlaylist.cs" />
     <Compile Include="GUIMusic\GUICoverArtGrabberProgress.cs" />
     <Compile Include="GUIMusic\GUICoverArtGrabberResults.cs" />
+    <Compile Include="GUIMusic\GUIMusicFullscreen.cs" />
     <Compile Include="GUIMusic\GUIMusicPlayingNow.cs" />
     <Compile Include="GUIMusic\GUIMusicPlaylist.cs" />
     <Compile Include="GUIMusic\MusicImport.cs" />

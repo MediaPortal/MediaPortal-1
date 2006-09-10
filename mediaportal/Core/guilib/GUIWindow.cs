@@ -110,6 +110,7 @@ namespace MediaPortal.GUI.Library
       WINDOW_MUSIC_COVERART_GRABBER_RESULTS = 508,
       WINDOW_MUSIC_COVERART_GRABBER_PROGRESS = 509,
       WINDOW_MUSIC_PLAYING_NOW = 510,
+      WINDOW_FULLSCREEN_MUSIC = 511, //SV Added by SteveV 2006-09-07
       WINDOW_TVGUIDE = 600,
       WINDOW_SCHEDULER = 601,
       WINDOW_TVFULLSCREEN = 602,
@@ -977,6 +978,7 @@ namespace MediaPortal.GUI.Library
             if (GUIGraphicsContext.IsFullScreenVideo) return;
             if (GetID == (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO) return;
             if (GetID == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN) return;
+            if (GetID == (int)GUIWindow.Window.WINDOW_FULLSCREEN_MUSIC) return; //SV Added by SteveV 2006-09-07
 
             // Print an error message
             GUIFont font = GUIFontManager.GetFont(0);

@@ -197,11 +197,27 @@ namespace MediaPortal.Player
       {
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         {
-          string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "Windows Media Player 9");
-          if (String.Compare(strAudioPlayer, "Windows Media Player 9", true) == 0)
+          //SV
+          ////string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "Windows Media Player 9");
+          ////if (String.Compare(strAudioPlayer, "Windows Media Player 9", true) == 0)
+          ////{
+          ////  newPlayer = new Player.AudioPlayerWMP9();
+          ////  return newPlayer;
+          ////}
+          ////newPlayer = new Player.AudioPlayerVMR7();
+          ////return newPlayer;
+
+          string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "Internal Music Player");
+
+          if (String.Compare(strAudioPlayer, "Internal Music Player", true) == 0)
           {
-            newPlayer = new Player.AudioPlayerWMP9();
-            return newPlayer;
+              return CoreMusicPlayer.Player;
+          }
+
+          else if (String.Compare(strAudioPlayer, "Windows Media Player 9", true) == 0)
+          {
+              newPlayer = new Player.AudioPlayerWMP9();
+              return newPlayer;
           }
           newPlayer = new Player.AudioPlayerVMR7();
           return newPlayer;

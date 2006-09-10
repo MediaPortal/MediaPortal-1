@@ -190,8 +190,10 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Property to get windowed/fullscreen state of application
     /// </summary>
-    static bool Fullscreen
-    {
+    //SV
+    //static bool Fullscreen
+    static public bool Fullscreen
+      {
       get
       {
         return ((Width == Screen.PrimaryScreen.Bounds.Width) && (Height == Screen.PrimaryScreen.Bounds.Height));

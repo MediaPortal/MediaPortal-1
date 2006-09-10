@@ -156,6 +156,17 @@ namespace MediaPortal.Playlists
           }
           break;
 
+      // SV Allows CoreMusicPlayer to continuously play
+      case GUIMessage.MessageType.GUI_MSG_PLAYBACK_CROSSFADING:
+          {
+            PlayNext();
+            if (!g_Player.Playing)
+            {
+              g_Player.Release();
+            }
+          }
+          break;
+
         case GUIMessage.MessageType.GUI_MSG_PLAYBACK_ENDED:
           {
             PlayNext();

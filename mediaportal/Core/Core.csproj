@@ -200,6 +200,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\AxInterop.WMPLib.dll</HintPath>
     </Reference>
+    <Reference Include="Bass.Net, Version=2.3.0.2, Culture=neutral, PublicKeyToken=b7566c273e6ef480, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Bass.Net.dll</HintPath>
+    </Reference>
     <Reference Include="edtftpnet-1.2.2, Version=1.2.2.0, Culture=neutral, PublicKeyToken=4b0c991f43097782">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\edtftpnet-1.2.2.dll</HintPath>
@@ -273,6 +277,23 @@
     <Compile Include="guilib\GUIGridRow.cs" />
     <Compile Include="guilib\GUIPlayListItemListControl.cs" />
     <Compile Include="guilib\GUIPlayListtButtonControl.cs" />
+    <Compile Include="MusicPlayer\BASS\BassAudio.cs" />
+    <Compile Include="MusicPlayer\Visualization\IVisualization.cs" />
+    <Compile Include="MusicPlayer\Visualization\IVisualizationManager.cs" />
+    <Compile Include="MusicPlayer\Visualization\IWMPEffects.cs" />
+    <Compile Include="MusicPlayer\Visualization\SoniqueViz.cs" />
+    <Compile Include="MusicPlayer\Visualization\SoundSpectrumViz.cs" />
+    <Compile Include="MusicPlayer\Visualization\VisualizationBase.cs" />
+    <Compile Include="MusicPlayer\Visualization\VisualizationInfo.cs" />
+    <Compile Include="MusicPlayer\Visualization\VisualizationManager.cs" />
+    <Compile Include="MusicPlayer\Visualization\VisuallizationWindow.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MusicPlayer\Visualization\VisuallizationWindow.Designer.cs">
+      <DependentUpon>VisuallizationWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MusicPlayer\Visualization\WMPVisualizationHelper.cs" />
+    <Compile Include="MusicPlayer\Visualization\WMPViz.cs" />
     <Compile Include="Player\CropMessage.cs" />
     <Compile Include="Player\DummyPlayer.cs" />
     <Compile Include="Player\DummyPlayerFactory.cs" />
@@ -1942,6 +1963,10 @@
     <Compile Include="wmfsdk\WriterTypes.cs">
       <SubType>Code</SubType>
     </Compile>
+    <EmbeddedResource Include="MusicPlayer\Visualization\VisuallizationWindow.resx">
+      <DependentUpon>VisuallizationWindow.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="UserInterfaceControls\DataGridBooleanNoNull.resx">
       <DependentUpon>DataGridBooleanNoNull.cs</DependentUpon>
       <SubType>Designer</SubType>
