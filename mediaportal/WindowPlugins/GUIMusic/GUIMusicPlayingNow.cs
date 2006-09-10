@@ -140,6 +140,7 @@ namespace MediaPortal.GUI.Music
     private AudioscrobblerUtils InfoScrobbler = null;
     private Thread AlbumInfoThread;
     private Thread TagInfoThread;
+    private Thread ArtistInfoThread;
     private System.Timers.Timer ImageChangeTimer = null;
     private List<String> ImagePathContainer = null;
     private bool UseID3 = false;
@@ -625,6 +626,19 @@ namespace MediaPortal.GUI.Music
             Log.Debug("GUIMusicPlayingNow: aborting lookup thread: AlbumInfoThread - {0}", ex.Message);
           }
         }
+      if (ArtistInfoThread != null)
+        if (ArtistInfoThread.IsAlive)
+        {
+          Log.Warn("GUIMusicPlayingNow: ArtistInfoThread was active when leaving screen");
+          //try
+          //{
+          //  ArtistInfoThread.Abort();
+          //}
+          //catch (Exception ex)
+          //{
+          //  Log.Debug("GUIMusicPlayingNow: aborting lookup thread: ArtistInfoThread - {0}", ex.Message);
+          //}
+        }
     }
 
     private void StartTagInfoThread()
@@ -643,6 +657,26 @@ namespace MediaPortal.GUI.Music
       AlbumInfoThread.IsBackground = true;
       AlbumInfoThread.Priority = ThreadPriority.BelowNormal;
       AlbumInfoThread.Start();
+    }
+
+    private void StartArtistInfoThread()
+    {
+      ArtistInfoThread = new Thread(new ThreadStart(UpdateArtistInfoThread));
+      // allow windows to kill the thread if the main app was closed
+      ArtistInfoThread.IsBackground = true;
+      ArtistInfoThread.Priority = ThreadPriority.BelowNormal;
+      ArtistInfoThread.Start();
+    }
+
+    private void UpdateArtistInfoThread()
+    {
+      InfoScrobbler.getArtistInfo(CurrentTrackTag.Artist);
+      CurrentThumbFileName = Util.Utils.GetCoverArtName(Thumbs.MusicArtists, Util.Utils.FilterFileName(CurrentTrackTag.Artist));
+      if (CurrentThumbFileName.Length > 0)
+      {
+        AddImageToImagePathContainer(CurrentThumbFileName);
+        UpdateImagePathContainer();
+      }
     }
 
     private void UpdateTagInfoThread()
@@ -714,14 +748,10 @@ namespace MediaPortal.GUI.Music
         if (LblBestAlbumTracks != null)
           LblBestAlbumTracks.Visible = true;
 
+        UpdateImagePathContainer();
+
         GUIControl.FocusControl(GetID, ((int)ControlIDs.LIST_ALBUM_INFO));
       }
-      InfoScrobbler.getArtistInfo(CurrentTrackTag.Artist);
-      CurrentThumbFileName = Util.Utils.GetCoverArtName(Thumbs.MusicArtists, Util.Utils.FilterFileName(CurrentTrackTag.Artist));
-      if (CurrentThumbFileName.Length > 0)
-        AddImageToImagePathContainer(CurrentThumbFileName);
-
-      UpdateImagePathContainer();
     }
 
     private void UpdateTrackInfo()
@@ -740,6 +770,9 @@ namespace MediaPortal.GUI.Music
         if (CurrentTrackTag != null)
         {
           bool InfoNeeded = false;
+
+          if (CurrentTrackTag.Artist != GUIPropertyManager.GetProperty("#Play.Current.Artist"))
+            StartArtistInfoThread();
 
           if (CurrentTrackTag.Album != GUIPropertyManager.GetProperty("#Play.Current.Album") || facadeTagInfo.Count < 1)
           {
@@ -771,7 +804,7 @@ namespace MediaPortal.GUI.Music
           //  ImgListRating.Percentage = rating;
           //}
           if (InfoNeeded)
-          {
+          {            
             StartAlbumInfoThread();
             StartTagInfoThread();
           }

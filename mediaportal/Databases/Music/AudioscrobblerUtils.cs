@@ -870,9 +870,17 @@ namespace MediaPortal.Music.Database
                 // temp thumb is "better" than old one
                 else
                 {
-                  oldFile.Delete();
-                  newFile.MoveTo(fullPath);
-                  Log.Debug("MyMusic: fetched better thumb {0} overwriting existing one", fileName);
+                  try
+                  {
+                    oldFile.Delete();
+                    newFile.MoveTo(fullPath);
+                    Log.Debug("MyMusic: fetched better thumb {0} overwriting existing one", fileName);
+                  }
+                  catch (System.IO.IOException ex)
+                  {
+                    newFile.Delete();
+                    Log.Debug("MyMusic: could not overwrite existing thumb {0} with better one", fileName, ex.Message);
+                  }                  
                 }
               }
               else
