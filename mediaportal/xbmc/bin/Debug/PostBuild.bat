@@ -138,6 +138,14 @@ rem copy ..\..\..\LUI.dll LUI\.
 copy ..\..\..\Communications.dll .
 copy ..\..\..\Interop.GIRDERLib.dll .
 copy ..\..\..\MediaPadLayer.dll .
+
+rem Begin BASS Music Engine dependancies
+copy ..\..\..\bass.dll .
+copy ..\..\..\Bass.Net.dll .
+copy ..\..\..\bass_vis.dll .
+copy ..\..\..\mpviz.dll .
+rem End BASS Music Engine dependancies
+
 rem - LCDHype drivers
 xcopy ..\Release\plugins\process\LCDDrivers\*.* plugins\process\LCDDrivers /E /I /R /K /Y
 rem - Copy ExternalDisplay graphics
