@@ -1057,9 +1057,9 @@ namespace MediaPortal.Configuration.Sections
       this.PlaybackSettingsGrpBox.Controls.Add(this.mpLabel1);
       this.PlaybackSettingsGrpBox.Controls.Add(this.CrossFadingLbl);
       this.PlaybackSettingsGrpBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.PlaybackSettingsGrpBox.Location = new System.Drawing.Point(12, 140);
+      this.PlaybackSettingsGrpBox.Location = new System.Drawing.Point(16, 144);
       this.PlaybackSettingsGrpBox.Name = "PlaybackSettingsGrpBox";
-      this.PlaybackSettingsGrpBox.Size = new System.Drawing.Size(440, 180);
+      this.PlaybackSettingsGrpBox.Size = new System.Drawing.Size(432, 180);
       this.PlaybackSettingsGrpBox.TabIndex = 1;
       this.PlaybackSettingsGrpBox.TabStop = false;
       this.PlaybackSettingsGrpBox.Text = "Playback Settings (Internal player only)";
@@ -1072,7 +1072,7 @@ namespace MediaPortal.Configuration.Sections
       this.hScrollBarBuffering.Location = new System.Drawing.Point(84, 136);
       this.hScrollBarBuffering.Maximum = 8499;
       this.hScrollBarBuffering.Name = "hScrollBarBuffering";
-      this.hScrollBarBuffering.Size = new System.Drawing.Size(256, 17);
+      this.hScrollBarBuffering.Size = new System.Drawing.Size(248, 17);
       this.hScrollBarBuffering.SmallChange = 100;
       this.hScrollBarBuffering.TabIndex = 11;
       this.hScrollBarBuffering.Value = 5000;
@@ -1086,7 +1086,7 @@ namespace MediaPortal.Configuration.Sections
       this.hScrollBarCrossFade.Location = new System.Drawing.Point(84, 112);
       this.hScrollBarCrossFade.Maximum = 16499;
       this.hScrollBarCrossFade.Name = "hScrollBarCrossFade";
-      this.hScrollBarCrossFade.Size = new System.Drawing.Size(256, 17);
+      this.hScrollBarCrossFade.Size = new System.Drawing.Size(248, 17);
       this.hScrollBarCrossFade.SmallChange = 100;
       this.hScrollBarCrossFade.TabIndex = 10;
       this.hScrollBarCrossFade.Value = 4000;
@@ -1181,9 +1181,9 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.Controls.Add(this.showID3CheckBox);
       this.mpGroupBox1.Controls.Add(this.audioPlayerComboBox);
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox1.Location = new System.Drawing.Point(12, 12);
+      this.mpGroupBox1.Location = new System.Drawing.Point(16, 16);
       this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(440, 120);
+      this.mpGroupBox1.Size = new System.Drawing.Size(432, 120);
       this.mpGroupBox1.TabIndex = 0;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "General Settings";
@@ -1227,7 +1227,7 @@ namespace MediaPortal.Configuration.Sections
       this.audioPlayerComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.audioPlayerComboBox.Location = new System.Drawing.Point(87, 32);
       this.audioPlayerComboBox.Name = "audioPlayerComboBox";
-      this.audioPlayerComboBox.Size = new System.Drawing.Size(297, 21);
+      this.audioPlayerComboBox.Size = new System.Drawing.Size(289, 21);
       this.audioPlayerComboBox.TabIndex = 1;
       this.audioPlayerComboBox.SelectedIndexChanged += new System.EventHandler(this.audioPlayerComboBox_SelectedIndexChanged);
       // 
