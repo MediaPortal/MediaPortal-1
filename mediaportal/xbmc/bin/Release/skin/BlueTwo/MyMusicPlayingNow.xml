@@ -15,12 +15,22 @@
          <type>image</type>
          <description>menu background image</description>
          <id>0</id>
-         <posX>18</posX>
-         <posY>420</posY>
-         <width>334</width>
-         <height>122</height>
-         <texture>background_glass_menu_area.png</texture>
+         <posX>31</posX>
+         <posY>425</posY>
+         <width>670</width>
+         <height>142</height>
+         <texture>osd_bg.png</texture>
       </control>
+      <control>
+         <type>image</type>
+         <description>menu background image</description>
+         <id>0</id>
+         <posX>40</posX>
+         <posY>443</posY>
+         <width>90</width>
+         <height>126</height>
+         <texture>music.png</texture>
+      </control>      
       <control>
          <type>image</type>
          <description>title image</description>
@@ -31,12 +41,23 @@
       </control>
       <control>
          <type>image</type>
+         <description>noyplaing background</description>
+         <id>0</id>
+         <posX>389</posX>
+         <posY>83</posY>
+         <width>307</width>
+         <height>366</height>
+         <texture>nowplaying_background.png</texture>
+         <keepaspectratio>yes</keepaspectratio>
+      </control>
+      <control>
+         <type>image</type>
          <description>album art image</description>
          <id>112</id>
-         <posX>382</posX>
-         <posY>108</posY>
-         <width>300</width>
-         <height>300</height>
+         <posX>410</posX>
+         <posY>129</posY>
+         <width>260</width>
+         <height>240</height>
          <texture>-</texture>
          <keepaspectratio>yes</keepaspectratio>
       </control>
@@ -44,63 +65,80 @@
          <type>fadelabel</type>
          <description>track label</description>
          <id>113</id>
-         <posX>42</posX>
-         <posY>480</posY>
-         <width>288</width>
+         <posX>135</posX>
+         <posY>450</posY>
+         <width>320</width>
          <height>20</height>
          <label>#Play.Current.Title</label>
          <font>font18</font>
-         <align>center</align>
+         <align>left</align>
+         <disabledcolor>ff808080</disabledcolor>
+      </control>
+       <control>
+         <type>fadelabel</type>
+         <description>track label</description>
+         <id>113</id>
+         <posX>134</posX>
+         <posY>480</posY>
+         <width>288</width>
+         <height>20</height>
+         <label>#Play.Current.Artist</label>
+         <font>font16</font>
+         <align>left</align>
+         <disabledcolor>ff808080</disabledcolor>
+      </control>
+       <control>
+         <type>fadelabel</type>
+         <description>track label</description>
+         <id>113</id>
+         <posX>134</posX>
+         <posY>511</posY>
+         <width>288</width>
+         <height>20</height>
+         <label>#Play.Current.Album</label>
+         <font>font16</font>
+         <align>left</align>
          <disabledcolor>ff808080</disabledcolor>
       </control>
       <control>
          <type>fadelabel</type>
          <description>album label</description>
          <id>114</id>
-         <posX>382</posX>
-         <posY>84</posY>
+         <posX>675</posX>
+         <posY>99</posY>
+         <width>150</width>
          <label>#Play.Current.Album</label>
          <font>font14</font>
-         <disabledcolor>ff808080</disabledcolor>
-      </control>
-      <control>
-         <type>fadelabel</type>
-         <description>album year</description>
-         <id>115</id>
-         <posX>672</posX>
-         <posY>84</posY>
-         <label>#Play.Current.Year</label>
-         <font>font14</font>
-         <align>right</align>
+          <align>right</align>
          <disabledcolor>ff808080</disabledcolor>
       </control>
       <control>
          <type>label</type>
          <description>artist label</description>
          <id>6</id>
-         <posX>378</posX>
-         <posY>58</posY>
-         <width>300</width>
+         <posX>405</posX>
+         <posY>99</posY>
+         <width>140</width>
          <label>#Play.Current.Artist</label>
-         <font>font18</font>
-         <align>center</align>
+         <font>font14</font>
+         <align>left</align>
          <textcolor>ffffffff</textcolor>
       </control>
       <control>
          <type>image</type>
          <id>117</id>
-         <posX>36</posX>
-         <posY>432</posY>
-         <width>292</width>
+         <posX>444</posX>
+         <posY>378</posY>
+         <width>190</width>
          <texture>osd_progress_background.png</texture>
       </control>
       <control>
          <type>progress</type>
          <description>track progress</description>
          <id>118</id>
-         <posX>26</posX>
-         <posY>432</posY>
-         <width>316</width>
+         <posX>432</posX>
+         <posY>378</posY>
+         <width>200</width>
          <visible>no</visible>
          <lefttexture>osd_progress_left.png</lefttexture>
          <texturebg>progress_back.png</texturebg>
@@ -111,28 +149,30 @@
          <type>label</type>
          <description>track progress label</description>
          <id>119</id>
-         <posX>44</posX>
-         <posY>502</posY>
+         <posX>402</posX>
+         <posY>378</posY>
          <label>#currentplaytime</label>
-         <font>font18</font>
+         <font>font14</font>
+          <align>left</align>
          <textcolor>80ffffff</textcolor>
       </control>
       <control>
          <type>label</type>
          <description>track duration label</description>
          <id>110</id>
-         <posX>280</posX>
-         <posY>502</posY>
+         <posX>679</posX>
+         <posY>378</posY>
          <label>#duration</label>
-         <font>font18</font>
+         <font>font14</font>
+          <align>right</align>
          <textcolor>80ffffff</textcolor>
       </control>
       <control>
          <type>label</type>
          <description>up next label</description>
          <id>20</id>
-         <posX>674</posX>
-         <posY>464</posY>
+         <posX>664</posX>
+         <posY>457</posY>
          <label>4541</label>
          <font>font14</font>
          <align>right</align>
@@ -142,8 +182,8 @@
          <type>fadelabel</type>
          <description>next track label</description>
          <id>121</id>
-         <posX>673</posX>
-         <posY>520</posY>
+         <posX>663</posX>
+         <posY>513</posY>
          <width>300</width>
          <label>#Play.Next.Title</label>
          <align>right</align>
@@ -154,8 +194,8 @@
          <type>fadelabel</type>
          <description>next artist label</description>
          <id>123</id>
-         <posX>672</posX>
-         <posY>496</posY>
+         <posX>662</posX>
+         <posY>489</posY>
          <width>300</width>
          <label>#Play.Next.Artist</label>
          <align>right</align>
@@ -189,7 +229,7 @@
          <height>135</height>
          <textcolor>White</textcolor>
       </control>
-     
+
       <control>
          <type>label</type>
          <description>best album tracks label</description>
@@ -204,9 +244,9 @@
          <description>best tag tracks label</description>
          <id>28</id>
          <posX>42</posX>
-         <posY>260</posY>         
+         <posY>260</posY>
          <label>Top tracks for tag</label>
          <textcolor>White</textcolor>
-      </control> 
+      </control>
    </controls>
 </window>
