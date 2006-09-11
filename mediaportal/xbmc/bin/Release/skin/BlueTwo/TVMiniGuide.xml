@@ -62,7 +62,6 @@
 			<remoteColor>ffffffff</remoteColor>   <!-- used for selected channel -->
 			<onleft>36</onleft>
 			<onright>34</onright>
-			<onup>36</onup>
 		</control>
 		<control>
 			<description>groups spin control</description>
