@@ -611,6 +611,9 @@ namespace MediaPortal.GUI.Music
           }
           break;
 
+        case GUIMessage.MessageType.GUI_MSG_PLAYBACK_CROSSFADING:
+          goto case GUIMessage.MessageType.GUI_MSG_PLAYBACK_ENDED;
+
         case GUIMessage.MessageType.GUI_MSG_PLAYBACK_STOPPED:
           ClearScrobbleStartTrack();
           break;
