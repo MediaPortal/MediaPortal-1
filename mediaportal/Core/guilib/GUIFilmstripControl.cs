@@ -188,7 +188,7 @@ namespace MediaPortal.GUI.Library
     protected string _brackedText;
     protected string _scollText;
     GUIAnimation _imageBackground;
-    GUIAnimation _imageInfo;
+    GUIImage _imageInfo;
     DateTime _idleTimer = DateTime.Now;
     bool _infoChanged = false;
     string _newInfoImageName = "";
@@ -268,7 +268,7 @@ namespace MediaPortal.GUI.Library
       _imageBackground.ParentControl = this;
       _imageBackground.DimColor = DimColor;
 
-			_imageInfo = LoadAnimationControl(0, 0, _infoImagePositionX, _infoImagePositionY, _infoImageWidth, _infoImageHeight, _infoImageName);
+			_imageInfo = new GUIImage(0, 0, _infoImagePositionX, _infoImagePositionY, _infoImageWidth, _infoImageHeight, _infoImageName, 0);
       _imageInfo.ParentControl = this;
       _imageInfo.Filtering = true;
       _imageInfo.KeepAspectRatio = true;
