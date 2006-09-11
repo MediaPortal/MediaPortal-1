@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Net;
 using System.Text;
 using System.Xml;
@@ -60,6 +61,13 @@ namespace MediaPortal.Music.Database
     random = 0,
     timesplayed = 1,
     favorites = 2,
+  }
+
+  public enum songFilterType
+  {
+    Artist,
+    Album,
+    Track
   }
   #endregion
 
@@ -444,45 +452,88 @@ namespace MediaPortal.Music.Database
       return outString;
     }
 
-    public List<Song> filterForLocalSongs(List<Song> unfilteredList_, string excludeArtist_, string currentTag_)
+    public List<Song> filterForLocalSongs(List<Song> unfilteredList_, string excludeArtist_, string currentTag_, songFilterType filterType)
     {
       try
       {
         lock (LookupLock)
         {
           MusicDatabase mdb = new MusicDatabase();
-          List<Song> tmpSongs = new List<Song>();
-          Song dbSong = new Song();
+          List<Song> tmpSongs = new List<Song>();          
+          
           Song tmpSong = new Song();
           bool foundDoubleEntry = false;
           string tmpArtist = String.Empty;
 
           for (int s = 0; s < unfilteredList_.Count; s++)
-          {
-            // only accept other artists than the current playing
+          {            
             tmpArtist = unfilteredList_[s].Artist.ToLowerInvariant();
+            // only accept other artists than the current playing
             if (tmpArtist != excludeArtist_.ToLowerInvariant() || tmpArtist == currentTag_)
             {
-              if (mdb.GetSong(unfilteredList_[s].Title, ref dbSong))
+              switch (filterType)
               {
-                tmpSong = dbSong.Clone();
-                // check and prevent entries from the same artist
-                for (int j = 0; j < tmpSongs.Count; j++)
-                {
-                  if (tmpSong.Artist == tmpSongs[j].Artist)
+                case songFilterType.Track:
                   {
-                    foundDoubleEntry = true;
+                    Song dbSong = new Song();
+                    if (mdb.GetSong(unfilteredList_[s].Title, ref dbSong))
+                    {
+                      tmpSong = dbSong.Clone();
+                      // check and prevent entries from the same artist
+                      for (int j = 0; j < tmpSongs.Count; j++)
+                      {
+                        if (tmpSong.Artist == tmpSongs[j].Artist)
+                        {
+                          foundDoubleEntry = true;
+                          break;
+                        }
+                      }
+                      // new item therefore add it
+                      if (!foundDoubleEntry)
+                      {
+                        if (currentTag_ != String.Empty)
+                          tmpSong.Genre = currentTag_;
+                        tmpSongs.Add(tmpSong);
+                      }
+                    }
                     break;
                   }
-                }
-                // new item therefore add it
-                if (!foundDoubleEntry)
-                {
-                  if (currentTag_ != String.Empty)
-                    tmpSong.Genre = currentTag_;
-                  tmpSongs.Add(tmpSong);
-                }
-              }
+                case songFilterType.Artist:
+                  {
+                    String[] artistArray = null;
+                    List<Song> dbArtists = new List<Song>();
+                    ArrayList artistsInDB = new ArrayList();
+                    if (mdb.GetArtists(4, unfilteredList_[s].Artist, ref artistsInDB))
+                    {
+                      artistArray = (String[])artistsInDB.ToArray(typeof(String));
+                      foreach (String singleArtist in artistArray)
+                      {
+                        Song addSong = new Song();
+                        addSong.Artist = singleArtist;
+                        dbArtists.Add(addSong);
+                      }
+                      // only use the first hit for now..
+                      if (dbArtists.Count > 0)
+                      {
+                        // check and prevent double entries 
+                        for (int j = 0; j < tmpSongs.Count; j++)
+                        {
+                          if (dbArtists[0].Artist == (tmpSongs[j].Artist))
+                          {
+                            foundDoubleEntry = true;
+                            break;
+                          }
+                        }
+                        // new item therefore add it
+                        if (!foundDoubleEntry)
+                        {
+                          tmpSongs.Add(unfilteredList_[s]);
+                        }
+                      }
+                    }
+                    break;
+                  }
+            }
             }
             //else
             //  Log.Debug("Audioscrobbler: Artist {0} inadequate - skipping", tagTracks[s].Artist);
@@ -616,23 +667,18 @@ namespace MediaPortal.Music.Database
           }
 
           if (tmpGenre != String.Empty)
-          {
+          {            
             // use the best matches for the given track only            
             if (sortBestTracks_)
-              tagTracks = getSimilarToTag(lastFMFeed.taggedtracks, tmpGenre, false);
-            else
-            {
-              // increase the result list
-              _limitRandomListCount *= 3;
-              tagTracks = getSimilarToTag(lastFMFeed.taggedtracks, tmpGenre, true);
-              _limitRandomListCount /= 3;
-            }
-
-            // filter tracks not available in music database
-            if (addAvailableTracksOnly)
-            {
-              tagTracks = filterForLocalSongs(tagTracks, artistToSearch_, tmpGenre);
-            }
+              tagTracks = getSimilarToTag(lastFMFeed.taggedtracks, tmpGenre, false, addAvailableTracksOnly);
+            else                        
+              tagTracks = getSimilarToTag(lastFMFeed.taggedtracks, tmpGenre, true, addAvailableTracksOnly);
+            
+            //// filter tracks not available in music database
+            //if (addAvailableTracksOnly)
+            //{
+            //  tagTracks = filterForLocalSongs(tagTracks, artistToSearch_, tmpGenre);
+            //}
           }
           else
             tagTracks.Clear();
@@ -688,17 +734,34 @@ namespace MediaPortal.Music.Database
       return ParseXMLDocForUsedTags(urlArtist, urlTrack, lastFMFeed.toptracktags);
     }
 
-    public List<Song> getSimilarToTag(lastFMFeed searchType_, string taggedWith_, bool randomizeList_)
+    public List<Song> getSimilarToTag(lastFMFeed searchType_, string taggedWith_, bool randomizeList_, bool addAvailableTracksOnly_)
     {
+      songFilterType currentFilterType = songFilterType.Track;
+      switch (searchType_)
+      {
+        case lastFMFeed.taggedtracks:
+          currentFilterType = songFilterType.Track;
+          break;
+        case lastFMFeed.taggedartists:
+          currentFilterType = songFilterType.Artist;
+          break;
+        case lastFMFeed.taggedalbums:
+          currentFilterType = songFilterType.Album;
+          break;
+      }
+
       if (randomizeList_)
       {
         Random rand = new Random();
         List<Song> taggedArtists = new List<Song>();
         List<Song> randomTaggedArtists = new List<Song>();
-        taggedArtists = ParseXMLDocForTags(taggedWith_, searchType_);
+        
         int artistsAdded = 0;
         int randomPosition;
-        _limitRandomListCount *= 5;
+        _limitRandomListCount *= 10;
+
+        taggedArtists = ParseXMLDocForTags(taggedWith_, searchType_);
+
         // make sure we do not get an endless loop
         if (taggedArtists.Count > _limitRandomListCount)
         {
@@ -727,16 +790,29 @@ namespace MediaPortal.Music.Database
               artistsAdded++;
             }
           }
-          _limitRandomListCount /= 5;
+          _limitRandomListCount /= 10;
           // enough similar artists
-          return randomTaggedArtists;
+          if (addAvailableTracksOnly_)
+            return filterForLocalSongs(randomTaggedArtists, String.Empty, String.Empty, currentFilterType);
+          else
+            return randomTaggedArtists;
         }
         else
+        {
           // limit not reached - return all Artists
-          return taggedArtists;
+          if (addAvailableTracksOnly_)
+            return filterForLocalSongs(taggedArtists, String.Empty, String.Empty, currentFilterType);
+          else
+            return taggedArtists;
+        }
       }
       else
-        return ParseXMLDocForTags(taggedWith_, searchType_);
+      {
+        if (addAvailableTracksOnly_)
+          return filterForLocalSongs(ParseXMLDocForTags(taggedWith_, searchType_), String.Empty, String.Empty, currentFilterType);
+        else
+          return ParseXMLDocForTags(taggedWith_, searchType_);
+      }
     }
 
     public List<Song> getSimilarArtists(string Artist_, bool randomizeList_)

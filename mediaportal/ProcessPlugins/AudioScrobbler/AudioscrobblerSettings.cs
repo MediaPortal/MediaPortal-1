@@ -565,7 +565,7 @@ namespace MediaPortal.AudioScrobbler
       buttonGetTaggedArtists.Enabled = false;
       listViewTags.Clear();
       songList = new List<Song>();
-      songList = lastFmLookup.getSimilarToTag(lastFMFeed.taggedartists, System.Web.HttpUtility.UrlEncode(textBoxTagToSearch.Text), checkBoxTagRandomize.Checked);
+      songList = lastFmLookup.getSimilarToTag(lastFMFeed.taggedartists, System.Web.HttpUtility.UrlEncode(textBoxTagToSearch.Text), checkBoxTagRandomize.Checked, checkBoxLocalOnly.Checked);
       listViewTags.Columns.Add("Artist", 170);
       listViewTags.Columns.Add("Popularity", 70);
       for (int i = 0; i < songList.Count; i++)
@@ -578,7 +578,7 @@ namespace MediaPortal.AudioScrobbler
       buttonTaggedAlbums.Enabled = false;
       listViewTags.Clear();
       songList = new List<Song>();
-      songList = lastFmLookup.getSimilarToTag(lastFMFeed.taggedalbums, System.Web.HttpUtility.UrlEncode(textBoxTagToSearch.Text), checkBoxTagRandomize.Checked);
+      songList = lastFmLookup.getSimilarToTag(lastFMFeed.taggedalbums, System.Web.HttpUtility.UrlEncode(textBoxTagToSearch.Text), checkBoxTagRandomize.Checked, checkBoxLocalOnly.Checked);
       listViewTags.Columns.Add("Artist", 170);
       listViewTags.Columns.Add("Album", 170);
       listViewTags.Columns.Add("Popularity", 70); 
@@ -592,7 +592,7 @@ namespace MediaPortal.AudioScrobbler
       buttonTaggedTracks.Enabled = false;
       listViewTags.Clear();
       songList = new List<Song>();
-      songList = lastFmLookup.getSimilarToTag(lastFMFeed.taggedtracks, System.Web.HttpUtility.UrlEncode(textBoxTagToSearch.Text), checkBoxTagRandomize.Checked);
+      songList = lastFmLookup.getSimilarToTag(lastFMFeed.taggedtracks, System.Web.HttpUtility.UrlEncode(textBoxTagToSearch.Text), checkBoxTagRandomize.Checked, checkBoxLocalOnly.Checked);
       listViewTags.Columns.Add("Track", 170);
       listViewTags.Columns.Add("Artist", 170);
       listViewTags.Columns.Add("Popularity", 70);

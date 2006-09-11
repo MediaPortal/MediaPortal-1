@@ -140,6 +140,7 @@ namespace MediaPortal.AudioScrobbler
       this.buttonOk = new MediaPortal.UserInterface.Controls.MPButton();
       this.labelPassword = new MediaPortal.UserInterface.Controls.MPLabel();
       this.labelUser = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.checkBoxLocalOnly = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.panelPicBox.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxASLogo)).BeginInit();
       this.tabControlSettings.SuspendLayout();
@@ -709,7 +710,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       this.buttonRefreshRecent.Location = new System.Drawing.Point(452, 12);
       this.buttonRefreshRecent.Name = "buttonRefreshRecent";
-      this.buttonRefreshRecent.Size = new System.Drawing.Size(75, 23);
+      this.buttonRefreshRecent.Size = new System.Drawing.Size(83, 23);
       this.buttonRefreshRecent.TabIndex = 1;
       this.buttonRefreshRecent.Text = "Refresh";
       this.buttonRefreshRecent.UseVisualStyleBackColor = true;
@@ -753,7 +754,7 @@ namespace MediaPortal.AudioScrobbler
             "Recent"});
       this.comboBoxNeighbourMode.Location = new System.Drawing.Point(452, 183);
       this.comboBoxNeighbourMode.Name = "comboBoxNeighbourMode";
-      this.comboBoxNeighbourMode.Size = new System.Drawing.Size(75, 21);
+      this.comboBoxNeighbourMode.Size = new System.Drawing.Size(83, 21);
       this.comboBoxNeighbourMode.TabIndex = 6;
       this.comboBoxNeighbourMode.Text = "Weekly";
       this.comboBoxNeighbourMode.SelectedIndexChanged += new System.EventHandler(this.comboBoxNeighbourMode_SelectedIndexChanged);
@@ -763,7 +764,7 @@ namespace MediaPortal.AudioScrobbler
       this.buttonNeighboursFilter.Enabled = false;
       this.buttonNeighboursFilter.Location = new System.Drawing.Point(452, 239);
       this.buttonNeighboursFilter.Name = "buttonNeighboursFilter";
-      this.buttonNeighboursFilter.Size = new System.Drawing.Size(75, 23);
+      this.buttonNeighboursFilter.Size = new System.Drawing.Size(83, 23);
       this.buttonNeighboursFilter.TabIndex = 5;
       this.buttonNeighboursFilter.Text = "Suggestions";
       this.buttonNeighboursFilter.UseVisualStyleBackColor = true;
@@ -774,7 +775,7 @@ namespace MediaPortal.AudioScrobbler
       this.buttonRefreshNeigboursArtists.Enabled = false;
       this.buttonRefreshNeigboursArtists.Location = new System.Drawing.Point(452, 210);
       this.buttonRefreshNeigboursArtists.Name = "buttonRefreshNeigboursArtists";
-      this.buttonRefreshNeigboursArtists.Size = new System.Drawing.Size(75, 23);
+      this.buttonRefreshNeigboursArtists.Size = new System.Drawing.Size(83, 23);
       this.buttonRefreshNeigboursArtists.TabIndex = 4;
       this.buttonRefreshNeigboursArtists.Text = "Their artists";
       this.buttonRefreshNeigboursArtists.UseVisualStyleBackColor = true;
@@ -784,7 +785,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       this.buttonRefreshNeighbours.Location = new System.Drawing.Point(452, 12);
       this.buttonRefreshNeighbours.Name = "buttonRefreshNeighbours";
-      this.buttonRefreshNeighbours.Size = new System.Drawing.Size(75, 23);
+      this.buttonRefreshNeighbours.Size = new System.Drawing.Size(83, 23);
       this.buttonRefreshNeighbours.TabIndex = 3;
       this.buttonRefreshNeighbours.Text = "Refresh";
       this.buttonRefreshNeighbours.UseVisualStyleBackColor = true;
@@ -869,7 +870,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       this.buttonRefreshSuggestions.Location = new System.Drawing.Point(452, 12);
       this.buttonRefreshSuggestions.Name = "buttonRefreshSuggestions";
-      this.buttonRefreshSuggestions.Size = new System.Drawing.Size(75, 23);
+      this.buttonRefreshSuggestions.Size = new System.Drawing.Size(83, 23);
       this.buttonRefreshSuggestions.TabIndex = 7;
       this.buttonRefreshSuggestions.Text = "Refresh";
       this.buttonRefreshSuggestions.UseVisualStyleBackColor = true;
@@ -906,7 +907,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       this.buttonArtistsRefresh.Location = new System.Drawing.Point(452, 12);
       this.buttonArtistsRefresh.Name = "buttonArtistsRefresh";
-      this.buttonArtistsRefresh.Size = new System.Drawing.Size(75, 23);
+      this.buttonArtistsRefresh.Size = new System.Drawing.Size(83, 23);
       this.buttonArtistsRefresh.TabIndex = 3;
       this.buttonArtistsRefresh.Text = "Refresh";
       this.buttonArtistsRefresh.UseVisualStyleBackColor = true;
@@ -941,7 +942,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       this.buttonRefreshWeeklyArtists.Location = new System.Drawing.Point(452, 12);
       this.buttonRefreshWeeklyArtists.Name = "buttonRefreshWeeklyArtists";
-      this.buttonRefreshWeeklyArtists.Size = new System.Drawing.Size(75, 23);
+      this.buttonRefreshWeeklyArtists.Size = new System.Drawing.Size(83, 23);
       this.buttonRefreshWeeklyArtists.TabIndex = 3;
       this.buttonRefreshWeeklyArtists.Text = "Refresh";
       this.buttonRefreshWeeklyArtists.UseVisualStyleBackColor = true;
@@ -975,7 +976,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       this.buttonTopTracks.Location = new System.Drawing.Point(452, 12);
       this.buttonTopTracks.Name = "buttonTopTracks";
-      this.buttonTopTracks.Size = new System.Drawing.Size(75, 23);
+      this.buttonTopTracks.Size = new System.Drawing.Size(83, 23);
       this.buttonTopTracks.TabIndex = 5;
       this.buttonTopTracks.Text = "Refresh";
       this.buttonTopTracks.UseVisualStyleBackColor = true;
@@ -1009,7 +1010,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       this.buttonRefreshWeeklyTracks.Location = new System.Drawing.Point(452, 12);
       this.buttonRefreshWeeklyTracks.Name = "buttonRefreshWeeklyTracks";
-      this.buttonRefreshWeeklyTracks.Size = new System.Drawing.Size(87, 23);
+      this.buttonRefreshWeeklyTracks.Size = new System.Drawing.Size(83, 23);
       this.buttonRefreshWeeklyTracks.TabIndex = 3;
       this.buttonRefreshWeeklyTracks.Text = "Refresh";
       this.buttonRefreshWeeklyTracks.UseVisualStyleBackColor = true;
@@ -1030,6 +1031,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       // tabPageTags
       // 
+      this.tabPageTags.Controls.Add(this.checkBoxLocalOnly);
       this.tabPageTags.Controls.Add(this.checkBoxTagRandomize);
       this.tabPageTags.Controls.Add(this.buttonTaggedTracks);
       this.tabPageTags.Controls.Add(this.buttonTaggedAlbums);
@@ -1049,11 +1051,11 @@ namespace MediaPortal.AudioScrobbler
       // 
       this.checkBoxTagRandomize.AutoSize = true;
       this.checkBoxTagRandomize.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxTagRandomize.Location = new System.Drawing.Point(454, 161);
+      this.checkBoxTagRandomize.Location = new System.Drawing.Point(454, 137);
       this.checkBoxTagRandomize.Name = "checkBoxTagRandomize";
-      this.checkBoxTagRandomize.Size = new System.Drawing.Size(73, 17);
+      this.checkBoxTagRandomize.Size = new System.Drawing.Size(79, 17);
       this.checkBoxTagRandomize.TabIndex = 9;
-      this.checkBoxTagRandomize.Text = "Random 5";
+      this.checkBoxTagRandomize.Text = "Random 25";
       this.checkBoxTagRandomize.UseVisualStyleBackColor = true;
       // 
       // buttonTaggedTracks
@@ -1079,7 +1081,7 @@ namespace MediaPortal.AudioScrobbler
       // labelTagDesc
       // 
       this.labelTagDesc.AutoSize = true;
-      this.labelTagDesc.Location = new System.Drawing.Point(452, 117);
+      this.labelTagDesc.Location = new System.Drawing.Point(452, 93);
       this.labelTagDesc.Name = "labelTagDesc";
       this.labelTagDesc.Size = new System.Drawing.Size(62, 13);
       this.labelTagDesc.TabIndex = 6;
@@ -1088,7 +1090,7 @@ namespace MediaPortal.AudioScrobbler
       // textBoxTagToSearch
       // 
       this.textBoxTagToSearch.BorderColor = System.Drawing.Color.Empty;
-      this.textBoxTagToSearch.Location = new System.Drawing.Point(454, 135);
+      this.textBoxTagToSearch.Location = new System.Drawing.Point(454, 111);
       this.textBoxTagToSearch.Name = "textBoxTagToSearch";
       this.textBoxTagToSearch.Size = new System.Drawing.Size(81, 20);
       this.textBoxTagToSearch.TabIndex = 5;
@@ -1168,6 +1170,17 @@ namespace MediaPortal.AudioScrobbler
       this.labelUser.Size = new System.Drawing.Size(55, 13);
       this.labelUser.TabIndex = 2;
       this.labelUser.Text = "Username";
+      // 
+      // checkBoxLocalOnly
+      // 
+      this.checkBoxLocalOnly.AutoSize = true;
+      this.checkBoxLocalOnly.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxLocalOnly.Location = new System.Drawing.Point(454, 158);
+      this.checkBoxLocalOnly.Name = "checkBoxLocalOnly";
+      this.checkBoxLocalOnly.Size = new System.Drawing.Size(59, 17);
+      this.checkBoxLocalOnly.TabIndex = 10;
+      this.checkBoxLocalOnly.Text = "My files";
+      this.checkBoxLocalOnly.UseVisualStyleBackColor = true;
       // 
       // AudioscrobblerSettings
       // 
@@ -1305,5 +1318,6 @@ namespace MediaPortal.AudioScrobbler
     private MediaPortal.UserInterface.Controls.MPButton buttonAddUser;
     private MediaPortal.UserInterface.Controls.MPLabel labelNewUserHint;
     private MediaPortal.UserInterface.Controls.MPButton buttonDelUser;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxLocalOnly;
   }
 }

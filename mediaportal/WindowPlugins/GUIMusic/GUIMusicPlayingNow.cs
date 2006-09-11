@@ -780,8 +780,12 @@ namespace MediaPortal.GUI.Music
             facadeTagInfo.Clear();
           }
 
+          string strTrack = String.Format("{0} {1}", GUILocalizeStrings.Get(435), CurrentTrackTag.Track);   //	"Track"
+          if (CurrentTrackTag.Track <= 0)
+            strTrack = String.Empty;
+
           GUIPropertyManager.SetProperty("#Play.Current.Title", CurrentTrackTag.Title);
-          GUIPropertyManager.SetProperty("#Play.Current.Track", Convert.ToString(CurrentTrackTag.Track));
+          GUIPropertyManager.SetProperty("#Play.Current.Track", strTrack);
           GUIPropertyManager.SetProperty("#Play.Current.Album", CurrentTrackTag.Album);
           GUIPropertyManager.SetProperty("#Play.Current.Artist", CurrentTrackTag.Artist);
           GUIPropertyManager.SetProperty("#Play.Current.Genre", CurrentTrackTag.Genre);
@@ -820,8 +824,12 @@ namespace MediaPortal.GUI.Music
         if (NextTrackTag != null)
         {
           LblUpNext.Visible = true;
+          string strNextTrack = String.Format("{0} {1}", GUILocalizeStrings.Get(435), NextTrackTag.Track);   //	"Track"
+          if (NextTrackTag.Track <= 0)
+            strNextTrack = String.Empty;
+
           GUIPropertyManager.SetProperty("#Play.Next.Title", NextTrackTag.Title);
-          GUIPropertyManager.SetProperty("#Play.Next.Track", Convert.ToString(NextTrackTag.Track));
+          GUIPropertyManager.SetProperty("#Play.Next.Track", strNextTrack);
           GUIPropertyManager.SetProperty("#Play.Next.Album", NextTrackTag.Album);
           GUIPropertyManager.SetProperty("#Play.Next.Artist", NextTrackTag.Artist);
           GUIPropertyManager.SetProperty("#Play.Next.Genre", NextTrackTag.Genre);
