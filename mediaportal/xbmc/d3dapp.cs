@@ -416,6 +416,7 @@ namespace MediaPortal
     {
       enumerationSettings.ConfirmDeviceCallback = new D3DEnumeration.ConfirmDeviceCallbackType(this.ConfirmDevice);
       enumerationSettings.Enumerate();
+      bool startfull=false;
 
       if (ourRenderTarget.Cursor == null)
       {
@@ -472,6 +473,7 @@ namespace MediaPortal
             //m_bNeedReset=true;
             //deviceLost=true;
             windowed = false;
+            startfull = true;
           }
         }
 
@@ -497,7 +499,8 @@ namespace MediaPortal
       // The app is ready to go
       ready = true;
 
-
+      if (startfull)
+        ToggleFullWindowed();
       return true;
     }
 
@@ -1097,46 +1100,6 @@ namespace MediaPortal
         GUIGraphicsContext.DX9Device.SetCursor(ourCursor, true);
         GUIGraphicsContext.DX9Device.ShowCursor(true);
       }
-    }
-
-
-
-
-    /// <summary>
-    /// Switch to a windowed mode, even if that means picking a new device and/or adapter
-    /// </summary>
-    public void ForceWindowed()
-    {
-      if (windowed)
-        return;
-
-      if (!FindBestWindowedMode(false, false))
-        return;
-
-      windowed = true;
-
-      // Now destroy the current 3D device objects, then reinitialize
-
-      ready = false;
-
-      // Release display objects, so a new device can be created
-      GUIGraphicsContext.DX9Device.Dispose();
-      GUIGraphicsContext.DX9Device = null;
-
-      // Create the new device
-      try
-      {
-        InitializeEnvironment();
-      }
-      catch (SampleException e)
-      {
-        HandleSampleException(e, ApplicationMessage.ApplicationMustExit);
-      }
-      catch
-      {
-        HandleSampleException(new SampleException(), ApplicationMessage.ApplicationMustExit);
-      }
-      ready = true;
     }
 
     /// <summary>
