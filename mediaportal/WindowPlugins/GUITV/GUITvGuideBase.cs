@@ -2411,7 +2411,7 @@ namespace MediaPortal.GUI.TV
                 {
                   recMatchFound = true;
 
-                  Log.Info("TVGuide: clicked on a currently running recording");
+                  Log.Debug("TVGuide: clicked on a currently running recording");
                   GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
                   if (dlg == null)
                     return;
@@ -2426,7 +2426,7 @@ namespace MediaPortal.GUI.TV
                     return;
                   if (_recordingList != null)
                   {
-                    Log.Info("TVGuide: Found current program {0} in recording list", _currentTitle);
+                    Log.Debug("TVGuide: Found current program {0} in recording list", _currentTitle);
                     switch (dlg.SelectedId)
                     {
                       case 979: // Play recording from beginning                          
@@ -2461,7 +2461,7 @@ namespace MediaPortal.GUI.TV
                     }
                   }
                   else
-                    Log.Info("EPG: _recordingList was not available");
+                    Log.Debug("EPG: _recordingList was not available");
                 }
               }
               if (recMatchFound == false)
@@ -2476,11 +2476,45 @@ namespace MediaPortal.GUI.TV
             }
             else
             {
-            GUITVHome.IsTVOn = true;
-            GUITVHome.ViewChannelAndCheck(_currentProgram.Channel);
-            if (Recorder.IsViewing() && Recorder.TVChannelName == _currentProgram.Channel)
-            {
-              GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+              // clicked the show we're currently watching
+              if (Recorder.TVChannelName == _currentProgram.Channel)
+              {
+                Log.Debug("TVGuide: clicked on a currently running show");
+                GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+                if (dlg == null)
+                  return;
+
+                dlg.Reset();
+                dlg.SetHeading(_currentProgram.Title);
+                dlg.AddLocalizedString(1041); //Upcoming episodes
+                dlg.AddLocalizedString(938);  //View this channel
+                dlg.DoModal(GetID);
+
+                if (dlg.SelectedLabel == -1)
+                  return;
+
+                switch (dlg.SelectedId)
+                {
+                  case 1041:
+                    ShowProgramInfo();
+                    Log.Debug("TVGuide: show episodes or repeatings for current show");
+                    break;
+                  case 938:
+                    Log.Debug("TVGuide: switch currently running show to fullscreen");
+                    if (Recorder.IsViewing())
+                      GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+                    break;
+                }
+              }
+              else
+              // zap to selected show's channel
+              {
+                GUITVHome.IsTVOn = true;
+                GUITVHome.ViewChannelAndCheck(_currentProgram.Channel);
+                if (Recorder.IsViewing() && Recorder.TVChannelName == _currentProgram.Channel)
+                {
+                  GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+                }
               }
             }
           }
