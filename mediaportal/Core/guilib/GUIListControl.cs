@@ -131,7 +131,7 @@ namespace MediaPortal.GUI.Library
     protected bool _scrollContinuosly = false;
     [XMLSkinElement("scrollOffset")]
     protected int _scrollStartOffset = 0;  // this is the offset from the first or last element on screen when scrolling should start
-    protected int _loopDelay = 500;        // wait at the last item this amount of msec until loop to the first item
+    protected int _loopDelay = 100;        // wait at the last item this amount of msec until loop to the first item
     protected double _lastCommandTime = 0;
 
     public double TimeSlice

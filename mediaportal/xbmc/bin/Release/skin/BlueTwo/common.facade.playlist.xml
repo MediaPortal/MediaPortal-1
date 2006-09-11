@@ -38,6 +38,7 @@
           <itemHeight>81</itemHeight>
           <spaceBetweenItems>14</spaceBetweenItems>
           <textureHeight>90</textureHeight>
+          <scrollOffset>2</scrollOffset>
           <onleft>2</onleft>
           <onright>52</onright>
           <onup>2</onup>
