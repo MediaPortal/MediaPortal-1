@@ -70,6 +70,8 @@ namespace MediaPortal.GUI.Library
 		[XMLSkinElement("spinPosX")]		protected int			_spinControlPositionX;
 		[XMLSkinElement("spinPosY")]		protected int			_spinControlPositionY;
 		[XMLSkinElement("label")]			protected string	_property="";
+		[XMLSkinElement("textalign")]
+    	protected GUIControl.Alignment _textAlignment = GUIControl.Alignment.ALIGN_LEFT;
 
 		bool                            _containsProperty=false;
 		string                          _previousProperty="a";
@@ -153,6 +155,7 @@ namespace MediaPortal.GUI.Library
 
 			    string wszText1=String.Format("{0}", strLabel1 );
 			    int dMaxWidth=_width+16;
+			    float x=0;
 			    if (strLabel2.Length>0)
 			    {
 				    string wszText2;
@@ -160,10 +163,18 @@ namespace MediaPortal.GUI.Library
 				    wszText2=String.Format("{0}", strLabel2 );
 				    _font.GetTextExtent( wszText2, ref fTextWidth,ref fTextHeight);
 				    dMaxWidth -= (int)(fTextWidth);
-
-				    _font.DrawTextWidth((float)dwPosX+dMaxWidth, (float)dwPosY+2, _textColor,wszText2,(float)fTextWidth,GUIControl.Alignment.ALIGN_LEFT);
+				    _font.DrawTextWidth((float)dwPosX+dMaxWidth, (float)dwPosY+2, _textColor,wszText2,(float)fTextWidth,_textAlignment);
 			    }
-			    _font.DrawTextWidth((float)dwPosX, (float)dwPosY+2, _textColor,wszText1,(float)dMaxWidth,GUIControl.Alignment.ALIGN_LEFT);
+			    switch(_textAlignment)
+				{
+				   case GUIControl.Alignment.ALIGN_RIGHT:
+			    		x = (float)dwPosX+_width;
+			    		break;
+				   default:
+				   		x = (float)dwPosX;
+				   		break;
+				}
+			    _font.DrawTextWidth(x, (float)dwPosY+2, _textColor,wszText1,(float)dMaxWidth,_textAlignment);
           dwPosY += (int)_itemHeight;
         }
       }

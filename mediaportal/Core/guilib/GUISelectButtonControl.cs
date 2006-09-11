@@ -72,6 +72,10 @@ namespace MediaPortal.GUI.Library
     protected GUIAnimation _imageRightFocus = null;
     protected GUIAnimation _imageFocused = null;
     protected GUIAnimation _imageNonFocused = null;
+    
+    [XMLSkinElement("textalign")]
+    protected GUIControl.Alignment _textAlignment = GUIControl.Alignment.ALIGN_LEFT;
+
     protected GUIFont _font = null;
     protected bool _showSelect = false;
 
@@ -288,8 +292,13 @@ namespace MediaPortal.GUI.Library
         if (SelectedItem >= 0 && null != _font && SelectedItem < _subItemList.Count)
         {
           _labelControl.FontName = _font.FontName;
-          _labelControl.SetPosition(_positionX + _imageLeft.Width + _textOffsetX, _textOffsetY + _positionY);
+          if (_textAlignment == GUIControl.Alignment.ALIGN_RIGHT)
+          	_labelControl.SetPosition(_positionX + _width - _imageLeft.Width - _textOffsetX, _textOffsetY + _positionY);
+          else
+          	_labelControl.SetPosition(_positionX + _imageLeft.Width + _textOffsetX, _textOffsetY + _positionY);
+          	
           _labelControl.TextColor = dwTextColor;
+          _labelControl.TextAlignment = _textAlignment;
           _labelControl.Label = (string)_subItemList[SelectedItem];
           _labelControl.Width = _width - (_imageRight.Width + _imageLeft.Width + _textOffsetX);
           _labelControl.Render(timePassed);
@@ -345,11 +354,16 @@ namespace MediaPortal.GUI.Library
         if (_label != null && _label.Length > 0 && _font != null)
         {
           _labelControl.FontName = _font.FontName;
-          _labelControl.SetPosition(_textOffsetX2 + _positionX, _textOffsetY2 + _positionY);
+          if (_textAlignment == GUIControl.Alignment.ALIGN_RIGHT)
+          	_labelControl.SetPosition(_positionX + _width - _textOffsetX2, _textOffsetY2 + _positionY);
+          else
+          	_labelControl.SetPosition(_textOffsetX2 + _positionX, _textOffsetY2 + _positionY);
+          	
           if (Disabled || _subItemList.Count == 0)
             _labelControl.TextColor = _disabledColor;
           else
             _labelControl.TextColor = Focus ? _textColor:_textColorNoFocus;
+          _labelControl.TextAlignment = _textAlignment;
           _labelControl.Label = _label;
           _labelControl.Render(timePassed);
         }

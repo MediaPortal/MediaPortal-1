@@ -78,6 +78,8 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("itemHeight")]
     protected int _imageHeight = 16;
     protected bool _upDownControlVisible = true;
+    [XMLSkinElement("textalign")]
+    protected GUIControl.Alignment _textAlignment = GUIControl.Alignment.ALIGN_LEFT;
 
     protected GUIFont _font = null;
     protected GUIFont _font2 = null;
@@ -554,7 +556,7 @@ namespace MediaPortal.GUI.Library
               label2.TextColor = dwColor;
             else
               label2.TextColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
-						
+
             label2.Label = pItem.Label2;
             label2.TextAlignment = GUIControl.Alignment.ALIGN_RIGHT;
             label2.FontName = _fontName2Name;
@@ -720,17 +722,36 @@ namespace MediaPortal.GUI.Library
           bool gotFocus = false;
           if (_drawFocus && i == _cursorX && IsFocused && _listType == ListType.CONTROL_LIST)
             gotFocus = true;
-          // render the icon
-          RenderIcon(timePassed, i, dwPosX + _iconOffsetX, dwPosY + _iconOffsetY, gotFocus);
-
+          
+          int iconX;
+          int labelX;
+          int pinX;
+          
           int ten = 10;
           GUIGraphicsContext.ScaleHorizontal(ref ten);
 
+          switch (_textAlignment)
+          {
+          	case GUIControl.Alignment.ALIGN_RIGHT:
+          		iconX = dwPosX + _width - _iconOffsetX - _imageWidth;
+          		labelX = dwPosX;
+          		pinX = dwPosX + _width - PinIconWidth;
+          		break;
+          	default:
+          		iconX = dwPosX + _iconOffsetX;
+          		labelX = dwPosX + _imageWidth + ten;
+          		pinX = dwPosX;
+          		break;
+          }
+          
+          // render the icon
+          RenderIcon(timePassed, i, iconX, dwPosY + _iconOffsetY, gotFocus);
+
           dwPosX += (_imageWidth + ten);
           // render the text
-          RenderLabel(timePassed, i, dwPosX, dwPosY, gotFocus);
+          RenderLabel(timePassed, i, labelX, dwPosY, gotFocus);
 
-          RenderPinIcon(timePassed, i, _positionX, dwPosY, gotFocus);
+          RenderPinIcon(timePassed, i, pinX, dwPosY, gotFocus);
 
           dwPosY += _itemHeight + _spaceBetweenItems;
         } //if (i + _offset < _listItems.Count)
@@ -790,12 +811,24 @@ namespace MediaPortal.GUI.Library
         return;
 
       GUILabelControl label = _labelControls1[Item];
+      
       if (label == null) return;
-      label.SetPosition((int)fPosX, (int)fPosY);
+      float textWidth = 0 ;
+      float textHeight = 0 ;
+      _font.GetTextExtent(label.Label, ref textWidth, ref textHeight);
+      
+      if (_textAlignment == GUIControl.Alignment.ALIGN_RIGHT && textWidth < fMaxWidth)
+      	label.SetPosition((int)(fPosX + fMaxWidth), (int)fPosY);
+      else
+      	label.SetPosition((int)fPosX, (int)fPosY);
+      
       label.TextColor = dwTextColor;
       label.Label = strTextToRender;
       label.Width = (int)fMaxWidth;
-      label.TextAlignment = GUIControl.Alignment.ALIGN_LEFT;
+      if (textWidth < fMaxWidth)
+      	label.TextAlignment = _textAlignment;
+      else
+      	label.TextAlignment = GUIControl.Alignment.ALIGN_LEFT;
       label.FontName = _fontName;
       RenderText(timePassed, Item, label, bScroll);
     }
@@ -1313,11 +1346,11 @@ namespace MediaPortal.GUI.Library
 					foreach (GUIListItem item in _listItems)
 					{
 						if (item.Path.Equals(message.Label, StringComparison.OrdinalIgnoreCase))
-						{
+          {
 							item.Selected = true;
 							break;
 						}
-					}
+          }
         }
       }
       if (message.Message == GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADING)
@@ -1823,11 +1856,11 @@ namespace MediaPortal.GUI.Library
           }
           else
           {
-            // move 2 last item in list
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, WindowId, GetID, GetID, _listItems.Count - 1, 0, null);
-            OnMessage(msg);
-          }
+          // move 2 last item in list
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, WindowId, GetID, GetID, _listItems.Count - 1, 0, null);
+          OnMessage(msg);
         }
+      }
       }
       else
       {
@@ -1898,12 +1931,12 @@ namespace MediaPortal.GUI.Library
             }
             else
             {
-              // move first item in list
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, WindowId, GetID, GetID, 0, 0, null);
-              OnMessage(msg);
-            }
+            // move first item in list
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, WindowId, GetID, GetID, 0, 0, null);
+            OnMessage(msg);
           }
         }
+      }
       }
       else
       {

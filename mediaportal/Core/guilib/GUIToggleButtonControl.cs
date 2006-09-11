@@ -57,6 +57,9 @@ namespace MediaPortal.GUI.Library
     protected int _textOffsetX = 0;
     [XMLSkinElement("textYOff")]
     protected int _textOffsetY = 0;
+    [XMLSkinElement("textalign")]
+    protected GUIControl.Alignment _textAlignment = GUIControl.Alignment.ALIGN_LEFT;
+    
 
     public GUIToggleButtonControl(int parentId)
       : base(parentId)
@@ -140,7 +143,20 @@ namespace MediaPortal.GUI.Library
         if (Dimmed)
           color &= (DimColor);
 
-        _font.DrawText((float)_textOffsetX + _positionX, (float)_textOffsetY + _positionY, color, _label, GUIControl.Alignment.ALIGN_LEFT, -1);
+		// render the text on the button
+	    int x = 0;
+	
+	    switch (_textAlignment)
+	    {
+	      case Alignment.ALIGN_LEFT:
+	        x = _textOffsetX + _positionX;
+	       break;
+	 
+	      case Alignment.ALIGN_RIGHT:
+	       x = _positionX + _width - _textOffsetX;
+	       break;
+	     } 
+        _font.DrawText(x, (float)_textOffsetY + _positionY, color, _label, _textAlignment, -1);
       }
     }
 

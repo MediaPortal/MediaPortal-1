@@ -41,6 +41,9 @@ namespace MediaPortal.GUI.Library
     protected GUIFont _font = null;
     protected ArrayList _listItems = new ArrayList();
     protected bool _invalidate = false;
+    [XMLSkinElement("textalign")]
+    protected GUIControl.Alignment _textAlignment = GUIControl.Alignment.ALIGN_LEFT;
+
     string _previousProperty = "a";
 
     bool _containsProperty = false;
@@ -174,7 +177,7 @@ namespace MediaPortal.GUI.Library
       }
 			long color = _textColor;
 			if (Dimmed) color &= DimColor;
-			for (int i = 0; i < 1 + _itemsPerPage; i++)
+      for (int i = 0; i < 1 + _itemsPerPage; i++)
       {
         // render each line
         int dwPosX = _positionX;
@@ -210,6 +213,7 @@ namespace MediaPortal.GUI.Library
           GUIGraphicsContext.ScaleHorizontal(ref ixoff);
           string wszText1 = String.Format("{0}", strLabel1);
           int dMaxWidth = _width + ixoff;
+          float x = dwPosX;
           if (strLabel2.Length > 0)
           {
             string wszText2;
@@ -218,11 +222,34 @@ namespace MediaPortal.GUI.Library
             _font.GetTextExtent(wszText2.Trim(), ref fTextWidth, ref fTextHeight);
             dMaxWidth -= (int) (fTextWidth);
 
-            _font.DrawTextWidth((float) dwPosX + dMaxWidth, (float) dwPosY + ioffy, color, wszText2.Trim(), fTextWidth, GUIControl.Alignment.ALIGN_LEFT);
-          }
-          _font.DrawTextWidth((float) dwPosX, (float) dwPosY + ioffy, color, wszText1.Trim(), (float) dMaxWidth, GUIControl.Alignment.ALIGN_LEFT);
-          //            _log.Info("dw _positionY, dwPosY, _yPositionScroll, _scrollOffset: {0} {1} {2} {3}", _positionY, dwPosY, _yPositionScroll, _scrollOffset);
-          //            _log.Info("dw wszText1.Trim() {0}", wszText1.Trim());
+	          switch (_textAlignment)
+			  {
+			      case Alignment.ALIGN_LEFT:
+			        x = dwPosX + dMaxWidth;
+			        break;
+			
+			      case Alignment.ALIGN_RIGHT:
+			        x = dwPosX + dMaxWidth + _width;
+			        break;
+			  }
+	          
+	          _font.DrawTextWidth(x, (float) dwPosY + ioffy, _textColor, wszText2.Trim(), fTextWidth, _textAlignment);
+	      }
+          
+          switch (_textAlignment)
+		  {
+		      case Alignment.ALIGN_LEFT:
+		        x = dwPosX;
+		        break;
+		
+		      case Alignment.ALIGN_RIGHT:
+		        x = dwPosX + _width;
+		        break;
+		  }
+          _font.DrawTextWidth(x, (float) dwPosY + ioffy, _textColor, wszText1.Trim(), (float) dMaxWidth, _textAlignment);
+          
+          //            Log.Write("dw _positionY, dwPosY, _yPositionScroll, _scrollOffset: {0} {1} {2} {3}", _positionY, dwPosY, _yPositionScroll, _scrollOffset);
+          //            Log.Write("dw wszText1.Trim() {0}", wszText1.Trim());
 
           dwPosY += _itemHeight;
         }
