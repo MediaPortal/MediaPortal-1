@@ -5441,6 +5441,10 @@
       <id>100506</id>
       <value>Musik/Favoriten</value>
    </string>
+   <string Prefix="Meine">
+      <id>100511</id>
+      <value>Musik/Visualisierung</value>
+   </string>
    <string Prefix="Mein ">
       <id>100600</id>
       <value>Fernsehen/TV-Programm</value>
