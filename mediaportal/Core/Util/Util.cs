@@ -1997,10 +1997,6 @@ namespace MediaPortal.Util
     {
       g_Player.Stop();
       AutoPlay.StopListening();
-      GUIWindowManager.Dispose();
-      GUITextureManager.Dispose();
-      GUIFontManager.Dispose();
-
       return (Application.SetSuspendState(state, forceShutDown, false));
     }
 
