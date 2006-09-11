@@ -21,6 +21,7 @@
 using System;
 using System.Collections;
 using System.Globalization;
+using System.IO;
 using SQLite.NET;
 using MediaPortal.Util;
 using MediaPortal.GUI.Library;
@@ -128,7 +129,44 @@ namespace MediaPortal.Picture.Database
             }
             iRotation = EXIFOrientationToRotation(Convert.ToInt32(metaData.Orientation.Hex));
           }
-
+          if (File.Exists(Path.GetDirectoryName(strPic) + "\\Picasa.ini"))
+          {
+            using (StreamReader sr = File.OpenText(Path.GetDirectoryName(strPic) + "\\Picasa.ini"))
+            {
+              try
+              {
+                string s = "";
+                bool searching = true;
+                while ((s = sr.ReadLine()) != null && searching)
+                {
+                  if (s.ToLower() == "[" + Path.GetFileName(strPic).ToLower() + "]")
+                  {
+                    do
+                    {
+                      s = sr.ReadLine();
+                      if (s.StartsWith("rotate=rotate("))
+                      {
+                        // Find out Rotate Setting
+                        try
+                        {
+                          iRotation = int.Parse(s.Substring(14, 1));
+                        }
+                        catch (Exception ex)
+                        {
+                          Log.Error("MyPictures: error converting number picasa.ini", ex.Message, ex.StackTrace);
+                        }
+                        searching = false;
+                      }
+                    } while (s != null && !s.StartsWith("[") && searching);
+                  }
+                }
+              }
+              catch (Exception ex)
+              {
+                Log.Error("MyPictures: file read problem picasa.ini", ex.Message, ex.StackTrace);
+              }
+            }
+          }
           strSQL = String.Format("insert into picture (idPicture, strFile, iRotation, strDateTaken) values(null, '{0}',{1},'{2}')", strPic, iRotation, strDateTaken);
           //End Changed
 
