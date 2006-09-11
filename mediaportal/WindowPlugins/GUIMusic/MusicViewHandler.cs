@@ -257,10 +257,7 @@ namespace MediaPortal.GUI.Music
 
       if (CurrentLevel > 0)
       {
-        if (definition.SqlOperator != "group")
-        {
           whereClause = "where song.idPath=path.idPath and song.idAlbum=album.idAlbum and song.idGenre=genre.idGenre and song.idArtist=artist.idArtist and " + whereClause;
-        }
       }
 
       //execute the query
@@ -381,8 +378,12 @@ namespace MediaPortal.GUI.Music
         {
           // get previous filter to find out the length of the substr search
           FilterDefinition defPrevious = (FilterDefinition)currentView.Filters[CurrentLevel - 1];
-          sql = String.Format("select UPPER(SUBSTR(strTitle,1,{3})) IX, Count(*) from {0} where {1} {2}",
-                                            table, whereClause, orderClause, Convert.ToInt16(defPrevious.Restriction) + Convert.ToInt16(defCurrent.Restriction));
+          int previousRestriction = 0;
+          if (defPrevious.SqlOperator == "group")
+            previousRestriction = Convert.ToInt16(defPrevious.Restriction);
+          string field = GetField(defCurrent.Where);
+          sql = String.Format("select UPPER(SUBSTR({0},1,{4})) IX, Count(distinct {1}.{0}), {1}.* from song,album,genre,artist,path {2} {3}",
+                                            field, table, whereClause, orderClause, previousRestriction + Convert.ToInt16(defCurrent.Restriction));
 
           database.GetSongsByIndex(sql, out songs, CurrentLevel, useArtistTable, useAlbumTable, useSongTable, useGenreTable);
         }
@@ -510,11 +511,12 @@ namespace MediaPortal.GUI.Music
     {
       if (filter.SqlOperator == "group")
       {
+        if (whereClause != "") whereClause += " and ";
         // Was the value selected a "#"? Then we have the group of special chars and need to search for values < A
         if (filter.SelectedValue == "#")
-          whereClause = String.Format(" {0} < 'A'", GetFieldName(filter.Where));
+          whereClause += String.Format(" {0} < 'A'", GetFieldName(filter.Where));
         else
-          whereClause = String.Format(" {0} like '{1}%'", GetFieldName(filter.Where), filter.SelectedValue);
+          whereClause += String.Format(" {0} like '{1}%'", GetFieldName(filter.Where), filter.SelectedValue);
       }
       else
       {
