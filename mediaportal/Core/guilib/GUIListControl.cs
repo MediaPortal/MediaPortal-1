@@ -122,10 +122,12 @@ namespace MediaPortal.GUI.Library
     protected int _scrollPosititionX = 0;
     protected int _lastItem = -1;
 
-    protected double _scrollOffset = 0.0f;
+    protected double _scrollOffsetX = 0.0f;
     protected int _currentFrame = 0;
     protected double _timeElapsed = 0.0f;
     protected bool _scrollContinuosly = false;
+    [XMLSkinElement("scrollOffset")]
+    protected int _scrollStartOffset = 0;  // this is the offset from the first or last element on screen when scrolling should start
 
     public double TimeSlice
     {
@@ -316,7 +318,7 @@ namespace MediaPortal.GUI.Library
       _scrollPosititionX = 0;
       _lastItem = -1;
 
-      _scrollOffset = 0.0f;
+      _scrollOffsetX = 0.0f;
       _currentFrame = 0;
       _timeElapsed = 0.0f;
       // Reset searchstring
@@ -882,7 +884,7 @@ namespace MediaPortal.GUI.Library
           _scrollPosition = 0;
           _lastItem = iItem;
           _scrollPosititionX = 0;
-          _scrollOffset = 0.0f;
+          _scrollOffsetX = 0.0f;
           _currentFrame = 0;
           _timeElapsed = 0.0f;
           _scrollContinuosly = false;
@@ -901,20 +903,20 @@ namespace MediaPortal.GUI.Library
             wTmp = _brackedText[_scrollPosition];
 
           font.GetTextExtent(wTmp.ToString(), ref fWidth, ref fHeight);
-          if (_scrollPosititionX - _scrollOffset >= fWidth)
+          if (_scrollPosititionX - _scrollOffsetX >= fWidth)
           {
             ++_scrollPosition;
             if (_scrollPosition > _brackedText.Length)
             {
               _scrollPosition = 0;
               _scrollPosititionX = 0;
-              _scrollOffset = 0.0f;
+              _scrollOffsetX = 0.0f;
               _currentFrame = 0;
               _timeElapsed = 0.0f;
               _scrollContinuosly = true;
             }
             else
-              _scrollOffset += fWidth;
+              _scrollOffsetX += fWidth;
           }
           int ipos = 0;
           for (int i = 0; i < _brackedText.Length; i++)
@@ -930,9 +932,9 @@ namespace MediaPortal.GUI.Library
             }
 
           if (fPosY >= 0.0)
-            font.DrawText((int)(fPosX - _scrollPosititionX + _scrollOffset),
+            font.DrawText((int)(fPosX - _scrollPosititionX + _scrollOffsetX),
               fPosY, dwTextColor, _textLine2, GUIControl.Alignment.ALIGN_LEFT,
-              (int)(fMaxWidth - 50f + _scrollPosititionX - _scrollOffset));
+              (int)(fMaxWidth - 50f + _scrollPosititionX - _scrollOffsetX));
         }
         else if (fPosY >= 0.0)
           font.DrawText(fPosX, fPosY, dwTextColor, strTextToRender, GUIControl.Alignment.ALIGN_LEFT, (int)(fMaxWidth - 50f));
@@ -1792,12 +1794,12 @@ namespace MediaPortal.GUI.Library
       action.wID = Action.ActionType.ACTION_MOVE_UP;
       if (_listType == ListType.CONTROL_LIST)
       {
-        if (_cursorX > 0)
+        if ((_cursorX > _scrollStartOffset) || (_offset == 0))
         {
           _cursorX--;
           OnSelectionChanged();
         }
-        else if (_cursorX == 0 && _offset != 0)
+        else if (_cursorX == _scrollStartOffset && _offset != 0)
         {
           _offset--;
 
@@ -1846,7 +1848,8 @@ namespace MediaPortal.GUI.Library
       action.wID = Action.ActionType.ACTION_MOVE_DOWN;
       if (_listType == ListType.CONTROL_LIST)
       {
-        if (_cursorX + 1 < _itemsPerPage)
+        if ((_cursorX + 1 + _scrollStartOffset < _itemsPerPage) ||
+            (_offset + 1 + _cursorX + _scrollStartOffset >= _listItems.Count))
         {
           if (_offset + 1 + _cursorX < _listItems.Count)
           {
@@ -1855,9 +1858,18 @@ namespace MediaPortal.GUI.Library
           }
           else
           {
-            // move first item in list
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, WindowId, GetID, GetID, 0, 0, null);
-            OnMessage(msg);
+            //check if _downControlId is set -> then go to the window
+            if (_downControlId > 0)
+            {
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, WindowId, GetID, _downControlId, (int)action.wID, 0, null);
+              GUIGraphicsContext.SendMessage(msg);
+            }
+            else
+            {
+              // move first item in list
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, WindowId, GetID, GetID, 0, 0, null);
+              OnMessage(msg);
+            }
           }
         }
         else
