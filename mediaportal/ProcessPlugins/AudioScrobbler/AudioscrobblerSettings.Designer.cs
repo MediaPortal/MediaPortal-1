@@ -128,6 +128,7 @@ namespace MediaPortal.AudioScrobbler
       this.buttonRefreshWeeklyTracks = new MediaPortal.UserInterface.Controls.MPButton();
       this.listViewWeeklyTracks = new MediaPortal.UserInterface.Controls.MPListView();
       this.tabPageTags = new System.Windows.Forms.TabPage();
+      this.checkBoxLocalOnly = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxTagRandomize = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.buttonTaggedTracks = new MediaPortal.UserInterface.Controls.MPButton();
       this.buttonTaggedAlbums = new MediaPortal.UserInterface.Controls.MPButton();
@@ -140,7 +141,6 @@ namespace MediaPortal.AudioScrobbler
       this.buttonOk = new MediaPortal.UserInterface.Controls.MPButton();
       this.labelPassword = new MediaPortal.UserInterface.Controls.MPLabel();
       this.labelUser = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.checkBoxLocalOnly = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.panelPicBox.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxASLogo)).BeginInit();
       this.tabControlSettings.SuspendLayout();
@@ -573,7 +573,7 @@ namespace MediaPortal.AudioScrobbler
       this.trackBarConsiderCount.Location = new System.Drawing.Point(17, 213);
       this.trackBarConsiderCount.Maximum = 3;
       this.trackBarConsiderCount.Name = "trackBarConsiderCount";
-      this.trackBarConsiderCount.Size = new System.Drawing.Size(226, 45);
+      this.trackBarConsiderCount.Size = new System.Drawing.Size(226, 40);
       this.trackBarConsiderCount.TabIndex = 19;
       this.trackBarConsiderCount.Value = 2;
       this.trackBarConsiderCount.ValueChanged += new System.EventHandler(this.trackBarConsiderCount_ValueChanged);
@@ -657,7 +657,7 @@ namespace MediaPortal.AudioScrobbler
       this.trackBarRandomness.Maximum = 100;
       this.trackBarRandomness.Minimum = 25;
       this.trackBarRandomness.Name = "trackBarRandomness";
-      this.trackBarRandomness.Size = new System.Drawing.Size(226, 45);
+      this.trackBarRandomness.Size = new System.Drawing.Size(226, 40);
       this.trackBarRandomness.SmallChange = 5;
       this.trackBarRandomness.TabIndex = 0;
       this.trackBarRandomness.TickFrequency = 15;
@@ -1047,15 +1047,26 @@ namespace MediaPortal.AudioScrobbler
       this.tabPageTags.Text = "Tags";
       this.tabPageTags.UseVisualStyleBackColor = true;
       // 
+      // checkBoxLocalOnly
+      // 
+      this.checkBoxLocalOnly.AutoSize = true;
+      this.checkBoxLocalOnly.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxLocalOnly.Location = new System.Drawing.Point(454, 158);
+      this.checkBoxLocalOnly.Name = "checkBoxLocalOnly";
+      this.checkBoxLocalOnly.Size = new System.Drawing.Size(59, 17);
+      this.checkBoxLocalOnly.TabIndex = 10;
+      this.checkBoxLocalOnly.Text = "My files";
+      this.checkBoxLocalOnly.UseVisualStyleBackColor = true;
+      // 
       // checkBoxTagRandomize
       // 
       this.checkBoxTagRandomize.AutoSize = true;
       this.checkBoxTagRandomize.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxTagRandomize.Location = new System.Drawing.Point(454, 137);
       this.checkBoxTagRandomize.Name = "checkBoxTagRandomize";
-      this.checkBoxTagRandomize.Size = new System.Drawing.Size(79, 17);
+      this.checkBoxTagRandomize.Size = new System.Drawing.Size(64, 17);
       this.checkBoxTagRandomize.TabIndex = 9;
-      this.checkBoxTagRandomize.Text = "Random 25";
+      this.checkBoxTagRandomize.Text = "Random";
       this.checkBoxTagRandomize.UseVisualStyleBackColor = true;
       // 
       // buttonTaggedTracks
@@ -1170,17 +1181,6 @@ namespace MediaPortal.AudioScrobbler
       this.labelUser.Size = new System.Drawing.Size(55, 13);
       this.labelUser.TabIndex = 2;
       this.labelUser.Text = "Username";
-      // 
-      // checkBoxLocalOnly
-      // 
-      this.checkBoxLocalOnly.AutoSize = true;
-      this.checkBoxLocalOnly.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxLocalOnly.Location = new System.Drawing.Point(454, 158);
-      this.checkBoxLocalOnly.Name = "checkBoxLocalOnly";
-      this.checkBoxLocalOnly.Size = new System.Drawing.Size(59, 17);
-      this.checkBoxLocalOnly.TabIndex = 10;
-      this.checkBoxLocalOnly.Text = "My files";
-      this.checkBoxLocalOnly.UseVisualStyleBackColor = true;
       // 
       // AudioscrobblerSettings
       // 

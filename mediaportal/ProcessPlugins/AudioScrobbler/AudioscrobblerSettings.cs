@@ -169,80 +169,80 @@ namespace MediaPortal.AudioScrobbler
       }
     }
 
-    protected bool CheckOrSetDefaultDBSettings(string userName_)
-    {
-      MusicDatabase mdb = new MusicDatabase();
-      bool defaultsNeeded = false;
+    //protected bool CheckOrSetDefaultDBSettings(string userName_)
+    //{
+    //  MusicDatabase mdb = new MusicDatabase();
+    //  bool defaultsNeeded = false;
 
-      String tmpUserID = Convert.ToString(mdb.AddScrobbleUser(userName_));
+    //  String tmpUserID = Convert.ToString(mdb.AddScrobbleUser(userName_));
 
-      // disable log
-      if (mdb.AddScrobbleUserSettings(tmpUserID, "iDebugLog", -1) == -1)
-      {
-        mdb.AddScrobbleUserSettings(tmpUserID, "iDebugLog", 0);
-        //Log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iDebugLog");
-      }
-      // set randomness
-      if (mdb.AddScrobbleUserSettings(tmpUserID, "iRandomness", -1) < 1)
-      {
-        mdb.AddScrobbleUserSettings(tmpUserID, "iRandomness", 77);
-        defaultsNeeded = true;
-        //Log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iRandomness");
-      }     
-      // enable scrobbling
-      if (mdb.AddScrobbleUserSettings(tmpUserID, "iSubmitOn", -1) == -1)
-      {
-        mdb.AddScrobbleUserSettings(tmpUserID, "iSubmitOn", 1);
-        //Log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iSubmitOn");
-      }
-      // disable Scrobble On on startup
-      if (mdb.AddScrobbleUserSettings(tmpUserID, "iScrobbleDefault", -1) == -1)
-      {
-        mdb.AddScrobbleUserSettings(tmpUserID, "iScrobbleDefault", 0);
-        //Log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iScrobbleDefault");
-      }
-      // consider 3 artists to add
-      if (mdb.AddScrobbleUserSettings(tmpUserID, "iAddArtists", -1) < 1)
-      {
-        mdb.AddScrobbleUserSettings(tmpUserID, "iAddArtists", 3);
-        //Log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iAddArtists");
-      }
-      // consider adding 1 track per artist
-      if (mdb.AddScrobbleUserSettings(tmpUserID, "iAddTracks", -1) < 1)
-      {
-        mdb.AddScrobbleUserSettings(tmpUserID, "iAddTracks", 1);
-        //Log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iAddTracks");
-      }
-      // set neighbour mode to weekly artists
-      if (mdb.AddScrobbleUserSettings(tmpUserID, "iNeighbourMode", -1) == -1)
-      {
-        mdb.AddScrobbleUserSettings(tmpUserID, "iNeighbourMode", 1);
-        //Log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iNeighbourMode");
-      }
+    //  // disable log
+    //  if (mdb.AddScrobbleUserSettings(tmpUserID, "iDebugLog", -1) == -1)
+    //  {
+    //    mdb.AddScrobbleUserSettings(tmpUserID, "iDebugLog", 0);
+    //    //Log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iDebugLog");
+    //  }
+    //  // set randomness
+    //  if (mdb.AddScrobbleUserSettings(tmpUserID, "iRandomness", -1) < 1)
+    //  {
+    //    mdb.AddScrobbleUserSettings(tmpUserID, "iRandomness", 77);
+    //    defaultsNeeded = true;
+    //    //Log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iRandomness");
+    //  }     
+    //  // enable scrobbling
+    //  if (mdb.AddScrobbleUserSettings(tmpUserID, "iSubmitOn", -1) == -1)
+    //  {
+    //    mdb.AddScrobbleUserSettings(tmpUserID, "iSubmitOn", 1);
+    //    //Log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iSubmitOn");
+    //  }
+    //  // disable Scrobble On on startup
+    //  if (mdb.AddScrobbleUserSettings(tmpUserID, "iScrobbleDefault", -1) == -1)
+    //  {
+    //    mdb.AddScrobbleUserSettings(tmpUserID, "iScrobbleDefault", 0);
+    //    //Log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iScrobbleDefault");
+    //  }
+    //  // consider 3 artists to add
+    //  if (mdb.AddScrobbleUserSettings(tmpUserID, "iAddArtists", -1) < 1)
+    //  {
+    //    mdb.AddScrobbleUserSettings(tmpUserID, "iAddArtists", 3);
+    //    //Log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iAddArtists");
+    //  }
+    //  // consider adding 1 track per artist
+    //  if (mdb.AddScrobbleUserSettings(tmpUserID, "iAddTracks", -1) < 1)
+    //  {
+    //    mdb.AddScrobbleUserSettings(tmpUserID, "iAddTracks", 1);
+    //    //Log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iAddTracks");
+    //  }
+    //  // set neighbour mode to weekly artists
+    //  if (mdb.AddScrobbleUserSettings(tmpUserID, "iNeighbourMode", -1) == -1)
+    //  {
+    //    mdb.AddScrobbleUserSettings(tmpUserID, "iNeighbourMode", 1);
+    //    //Log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iNeighbourMode");
+    //  }
 
-      if (mdb.AddScrobbleUserSettings(tmpUserID, "iOfflineMode", -1) == -1)
-      {
-        mdb.AddScrobbleUserSettings(tmpUserID, "iOfflineMode", 0);
-        //Log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iOfflineMode");
-      }
-      if (mdb.AddScrobbleUserSettings(tmpUserID, "iPlaylistLimit", -1) == -1)
-      {
-        mdb.AddScrobbleUserSettings(tmpUserID, "iPlaylistLimit", 1);
-        //Log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iPlaylistLimit");
-      }
-      if (mdb.AddScrobbleUserSettings(tmpUserID, "iPreferCount", -1) == -1)
-      {
-        mdb.AddScrobbleUserSettings(tmpUserID, "iPreferCount", 2);
-        //Log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iPreferCount");
-      }
-      if (mdb.AddScrobbleUserSettings(tmpUserID, "iRememberStartArtist", -1) == -1)
-      {
-        mdb.AddScrobbleUserSettings(tmpUserID, "iRememberStartArtist", 1);
-        //Log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iRememberStartArtist");
-      }
+    //  if (mdb.AddScrobbleUserSettings(tmpUserID, "iOfflineMode", -1) == -1)
+    //  {
+    //    mdb.AddScrobbleUserSettings(tmpUserID, "iOfflineMode", 0);
+    //    //Log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iOfflineMode");
+    //  }
+    //  if (mdb.AddScrobbleUserSettings(tmpUserID, "iPlaylistLimit", -1) == -1)
+    //  {
+    //    mdb.AddScrobbleUserSettings(tmpUserID, "iPlaylistLimit", 1);
+    //    //Log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iPlaylistLimit");
+    //  }
+    //  if (mdb.AddScrobbleUserSettings(tmpUserID, "iPreferCount", -1) == -1)
+    //  {
+    //    mdb.AddScrobbleUserSettings(tmpUserID, "iPreferCount", 2);
+    //    //Log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iPreferCount");
+    //  }
+    //  if (mdb.AddScrobbleUserSettings(tmpUserID, "iRememberStartArtist", -1) == -1)
+    //  {
+    //    mdb.AddScrobbleUserSettings(tmpUserID, "iRememberStartArtist", 1);
+    //    //Log.Info("Audioscrobbler: sql setting for option: {0} didn't exist using defaults", "iRememberStartArtist");
+    //  }
 
-      return defaultsNeeded;
-    }
+    //  return defaultsNeeded;
+    //}
 
     protected void SaveSettings()
     {
@@ -282,52 +282,52 @@ namespace MediaPortal.AudioScrobbler
           mdb.AddScrobbleUserPassword(Convert.ToString(mdb.AddScrobbleUser(comboBoxUserName.Text)), tmpPass);
 
           // if defaults were added do not overwrite them..
-          if (!CheckOrSetDefaultDBSettings(comboBoxUserName.Text))
-          {
-            if (checkBoxDisableRandom.Checked)
-              xmlwriter.SetValueAsBool("audioscrobbler", "usesimilarrandom", false);
-            else
-              xmlwriter.SetValueAsBool("audioscrobbler", "usesimilarrandom", true);
+          //if (!CheckOrSetDefaultDBSettings(comboBoxUserName.Text))
+          //{
+          if (checkBoxDisableRandom.Checked)
+            xmlwriter.SetValueAsBool("audioscrobbler", "usesimilarrandom", false);
+          else
+            xmlwriter.SetValueAsBool("audioscrobbler", "usesimilarrandom", true);
 
-            if (checkBoxLogVerbose != null)
-              usedebuglog = checkBoxLogVerbose.Checked ? 1 : 0;
-            if (checkBoxEnableSubmits != null)
-              submitsenabled = checkBoxEnableSubmits.Checked ? 1 : 0;
-            if (checkBoxScrobbleDefault != null)
-              scrobbledefault = checkBoxScrobbleDefault.Checked ? 1 : 0;
-            if (trackBarRandomness != null)
-              randomness = trackBarRandomness.Value;
-            if (numericUpDownSimilarArtist != null)
-              artisttoadd = (int)numericUpDownSimilarArtist.Value;
-            //if (numericUpDownTracksPerArtist != null)
-            //  trackstoadd = (int)numericUpDownTracksPerArtist.Value;
-            if (lastFmLookup != null)
-              neighbourmode = (int)lastFmLookup.CurrentNeighbourMode;
-            else
-              Log.Info("DEBUG *** lastFMLookup was null. neighbourmode: {0}", Convert.ToString(neighbourmode));
+          if (checkBoxLogVerbose != null)
+            usedebuglog = checkBoxLogVerbose.Checked ? 1 : 0;
+          if (checkBoxEnableSubmits != null)
+            submitsenabled = checkBoxEnableSubmits.Checked ? 1 : 0;
+          if (checkBoxScrobbleDefault != null)
+            scrobbledefault = checkBoxScrobbleDefault.Checked ? 1 : 0;
+          if (trackBarRandomness != null)
+            randomness = trackBarRandomness.Value;
+          if (numericUpDownSimilarArtist != null)
+            artisttoadd = (int)numericUpDownSimilarArtist.Value;
+          //if (numericUpDownTracksPerArtist != null)
+          //  trackstoadd = (int)numericUpDownTracksPerArtist.Value;
+          if (lastFmLookup != null)
+            neighbourmode = (int)lastFmLookup.CurrentNeighbourMode;
+          else
+            Log.Info("DEBUG *** lastFMLookup was null. neighbourmode: {0}", Convert.ToString(neighbourmode));
 
-            if (comboBoxOfflineMode != null)
-              offlinemode = comboBoxOfflineMode.SelectedIndex;
-            if (checkBoxLimitPlaylist != null)
-              playlistlimit = checkBoxLimitPlaylist.Checked ? 1 : 0;
-            if (trackBarConsiderCount != null)
-              prefercount = trackBarConsiderCount.Value;
-            if (checkBoxReAddArtist != null)
-              rememberstartartist = checkBoxReAddArtist.Checked ? 1 : 0;
-            
-            tmpUserID = Convert.ToString(mdb.AddScrobbleUser(comboBoxUserName.Text));
-            mdb.AddScrobbleUserSettings(tmpUserID, "iDebugLog", usedebuglog);
-            mdb.AddScrobbleUserSettings(tmpUserID, "iRandomness", randomness);
-            mdb.AddScrobbleUserSettings(tmpUserID, "iSubmitOn", submitsenabled);
-            mdb.AddScrobbleUserSettings(tmpUserID, "iScrobbleDefault", scrobbledefault);
-            mdb.AddScrobbleUserSettings(tmpUserID, "iAddArtists", artisttoadd);
-            mdb.AddScrobbleUserSettings(tmpUserID, "iAddTracks", trackstoadd);
-            mdb.AddScrobbleUserSettings(tmpUserID, "iNeighbourMode", neighbourmode);
-            mdb.AddScrobbleUserSettings(tmpUserID, "iOfflineMode", offlinemode);
-            mdb.AddScrobbleUserSettings(tmpUserID, "iPlaylistLimit", playlistlimit);
-            mdb.AddScrobbleUserSettings(tmpUserID, "iPreferCount", prefercount);
-            mdb.AddScrobbleUserSettings(tmpUserID, "iRememberStartArtist", rememberstartartist);
-          }
+          if (comboBoxOfflineMode != null)
+            offlinemode = comboBoxOfflineMode.SelectedIndex;
+          if (checkBoxLimitPlaylist != null)
+            playlistlimit = checkBoxLimitPlaylist.Checked ? 1 : 0;
+          if (trackBarConsiderCount != null)
+            prefercount = trackBarConsiderCount.Value;
+          if (checkBoxReAddArtist != null)
+            rememberstartartist = checkBoxReAddArtist.Checked ? 1 : 0;
+
+          tmpUserID = Convert.ToString(mdb.AddScrobbleUser(comboBoxUserName.Text));
+          mdb.AddScrobbleUserSettings(tmpUserID, "iDebugLog", usedebuglog);
+          mdb.AddScrobbleUserSettings(tmpUserID, "iRandomness", randomness);
+          mdb.AddScrobbleUserSettings(tmpUserID, "iSubmitOn", submitsenabled);
+          mdb.AddScrobbleUserSettings(tmpUserID, "iScrobbleDefault", scrobbledefault);
+          mdb.AddScrobbleUserSettings(tmpUserID, "iAddArtists", artisttoadd);
+          mdb.AddScrobbleUserSettings(tmpUserID, "iAddTracks", trackstoadd);
+          mdb.AddScrobbleUserSettings(tmpUserID, "iNeighbourMode", neighbourmode);
+          mdb.AddScrobbleUserSettings(tmpUserID, "iOfflineMode", offlinemode);
+          mdb.AddScrobbleUserSettings(tmpUserID, "iPlaylistLimit", playlistlimit);
+          mdb.AddScrobbleUserSettings(tmpUserID, "iPreferCount", prefercount);
+          mdb.AddScrobbleUserSettings(tmpUserID, "iRememberStartArtist", rememberstartartist);
+          //}
         }
       }
     }

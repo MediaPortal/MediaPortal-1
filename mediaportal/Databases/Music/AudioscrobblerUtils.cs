@@ -459,14 +459,14 @@ namespace MediaPortal.Music.Database
         lock (LookupLock)
         {
           MusicDatabase mdb = new MusicDatabase();
-          List<Song> tmpSongs = new List<Song>();          
-          
+          List<Song> tmpSongs = new List<Song>();
+
           Song tmpSong = new Song();
           bool foundDoubleEntry = false;
           string tmpArtist = String.Empty;
 
           for (int s = 0; s < unfilteredList_.Count; s++)
-          {            
+          {
             tmpArtist = unfilteredList_[s].Artist.ToLowerInvariant();
             // only accept other artists than the current playing
             if (tmpArtist != excludeArtist_.ToLowerInvariant() || tmpArtist == currentTag_)
@@ -533,7 +533,42 @@ namespace MediaPortal.Music.Database
                     }
                     break;
                   }
-            }
+                case songFilterType.Album:
+                  {
+                    AlbumInfo[] albumArray = null;
+                    List<Song> dbAlbums = new List<Song>();
+                    ArrayList albumsInDB = new ArrayList();
+                    if (mdb.GetAlbums(2, unfilteredList_[s].Album, ref albumsInDB))
+                    {
+                      albumArray = (AlbumInfo[])albumsInDB.ToArray(typeof(AlbumInfo));
+                      foreach (AlbumInfo singleAlbum in albumArray)
+                      {
+                        Song addSong = new Song();
+                        addSong.Album = singleAlbum.Album;
+                        dbAlbums.Add(addSong);
+                      }
+                      // only use the first hit for now..
+                      if (dbAlbums.Count > 0)
+                      {
+                        // check and prevent double entries 
+                        for (int j = 0; j < tmpSongs.Count; j++)
+                        {
+                          if (dbAlbums[0].Album == (tmpSongs[j].Album))
+                          {
+                            foundDoubleEntry = true;
+                            break;
+                          }
+                        }
+                        // new item therefore add it
+                        if (!foundDoubleEntry)
+                        {
+                          tmpSongs.Add(unfilteredList_[s]);
+                        }
+                      }
+                    }
+                    break;
+                  }                  
+              }
             }
             //else
             //  Log.Debug("Audioscrobbler: Artist {0} inadequate - skipping", tagTracks[s].Artist);
@@ -758,7 +793,9 @@ namespace MediaPortal.Music.Database
         
         int artistsAdded = 0;
         int randomPosition;
-        _limitRandomListCount *= 10;
+        int oldRandomLimit = 5;
+        oldRandomLimit = _limitRandomListCount;
+        _limitRandomListCount = 50;
 
         taggedArtists = ParseXMLDocForTags(taggedWith_, searchType_);
 
@@ -790,7 +827,7 @@ namespace MediaPortal.Music.Database
               artistsAdded++;
             }
           }
-          _limitRandomListCount /= 10;
+          _limitRandomListCount = oldRandomLimit;
           // enough similar artists
           if (addAvailableTracksOnly_)
             return filterForLocalSongs(randomTaggedArtists, String.Empty, String.Empty, currentFilterType);
@@ -804,7 +841,7 @@ namespace MediaPortal.Music.Database
             return filterForLocalSongs(taggedArtists, String.Empty, String.Empty, currentFilterType);
           else
             return taggedArtists;
-        }
+        }        
       }
       else
       {
