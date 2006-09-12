@@ -719,6 +719,8 @@ public class MediaPortalApp : D3DApp, IRender
         g_Player.Stop();
         Log.Info("Main: Stopping recorder");
         Recorder.Stop();
+        Log.Info("Main: Stopping AutoPlay");
+        AutoPlay.StopListening();
 
         //switch to windowed mode
         if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false && !windowed)
@@ -726,6 +728,7 @@ public class MediaPortalApp : D3DApp, IRender
             Log.Info("Main: Switching to windowed mode");
             SwitchFullScreenOrWindowed(true);
         }
+        Log.Info("Main: OnSuspend - Done");
     }
 
     //called when windows wakes up again
@@ -754,6 +757,7 @@ public class MediaPortalApp : D3DApp, IRender
             }
         }
 
+        Recorder.Stop();  // bug fix from Powerscheduler
         if (!Recorder.Running && !_onResumeRunning)
         {
             _onResumeRunning = true;
@@ -761,10 +765,11 @@ public class MediaPortalApp : D3DApp, IRender
             Recorder.Start();
             if (turnMonitorOn)
             {
-                SetThreadExecutionState(oldState);
+              SetThreadExecutionState(oldState);
             }
         }
 
+        AutoPlay.StartListening();
         InputDevices.Init();
 
         _onResumeRunning = false;

@@ -159,7 +159,7 @@ namespace MediaPortal.PowerScheduler
           Recorder.Stop();
       }
       Recorder.Start();
-      AutoPlay.StartListening();
+      //AutoPlay.StartListening(); -> moved to MediaPortal.cs - OnResume
     }
 
     /// <summary>

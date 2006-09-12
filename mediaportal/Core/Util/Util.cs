@@ -1995,8 +1995,6 @@ namespace MediaPortal.Util
 
     static private bool SetSuspendState(PowerState state, bool forceShutDown)
     {
-      g_Player.Stop();
-      AutoPlay.StopListening();
       return (Application.SetSuspendState(state, forceShutDown, false));
     }
 
