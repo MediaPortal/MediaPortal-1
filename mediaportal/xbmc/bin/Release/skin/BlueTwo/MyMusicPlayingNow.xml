@@ -127,18 +127,18 @@
       <control>
          <type>image</type>
          <id>117</id>
-         <posX>445</posX>
+         <posX>450</posX>
          <posY>373</posY>
-         <width>190</width>
+         <width>180</width>
          <texture>osd_progress_background.png</texture>
       </control>
       <control>
          <type>progress</type>
          <description>track progress</description>
          <id>118</id>
-         <posX>433</posX>
+         <posX>438</posX>
          <posY>373</posY>
-         <width>200</width>
+         <width>190</width>
          <visible>no</visible>
          <lefttexture>osd_progress_left.png</lefttexture>
          <texturebg>progress_back.png</texturebg>
