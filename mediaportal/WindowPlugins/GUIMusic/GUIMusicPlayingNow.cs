@@ -680,6 +680,8 @@ namespace MediaPortal.GUI.Music
       List<Song> TagTracks = new List<Song>();
 
       TagTracks = InfoScrobbler.getTagInfo(CurrentTrackTag.Artist, CurrentTrackTag.Title, true, false, true);
+      if (TagTracks.Count > 0)
+        facadeTagInfo.Clear();
 
       for (int i = 0; i < TagTracks.Count; i++)
       {
@@ -698,7 +700,7 @@ namespace MediaPortal.GUI.Music
           break;
       }
 
-      if (TagTracks.Count > 0)
+      if (facadeTagInfo.Count > 0)
       {
         if (LblBestTagTracks != null)
         {
@@ -717,6 +719,9 @@ namespace MediaPortal.GUI.Music
 
       AlbumTracks = InfoScrobbler.getAlbumInfo(CurrentTrackTag.Artist, CurrentTrackTag.Album, true);
 
+            if (AlbumTracks.Count > 0)      
+        facadeAlbumInfo.Clear();
+
       for (int i = 0; i < AlbumTracks.Count; i++)
       {
         item = new GUIListItem(AlbumTracks[i].ToShortString());
@@ -732,7 +737,7 @@ namespace MediaPortal.GUI.Music
           break;
       }
 
-      if (AlbumTracks.Count > 0)
+      if (facadeAlbumInfo.Count > 0)
       {
         //if (CurrentThumbFileName == GUIGraphicsContext.Skin + @"\media\missing_coverart.png")
         //{

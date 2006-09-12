@@ -29,6 +29,7 @@ using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
+
 using MediaPortal.TV.Database;
 using MediaPortal.Utils.Services;
 
@@ -180,12 +181,12 @@ namespace WebEPG_conf
       this.tbGrabSite = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.importFile = new System.Windows.Forms.OpenFileDialog();
       this.groupBox2.SuspendLayout();
-      ( (System.ComponentModel.ISupportInitialize)( this.nMaxGrab ) ).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.nMaxGrab)).BeginInit();
       this.gbChannelDetails.SuspendLayout();
       this.gbGrabber.SuspendLayout();
       this.gbLinked.SuspendLayout();
-      ( (System.ComponentModel.ISupportInitialize)( this.nEnd ) ).BeginInit();
-      ( (System.ComponentModel.ISupportInitialize)( this.nStart ) ).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.nEnd)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.nStart)).BeginInit();
       this.SuspendLayout();
       // 
       // bAdd
@@ -199,19 +200,20 @@ namespace WebEPG_conf
       // 
       // bImport
       // 
-      this.bImport.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left ) ) );
+      this.bImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.bImport.Location = new System.Drawing.Point(16, 368);
       this.bImport.Name = "bImport";
       this.bImport.Size = new System.Drawing.Size(72, 24);
       this.bImport.TabIndex = 11;
       this.bImport.Text = "Import";
       this.bImport.UseVisualStyleBackColor = true;
+
       // 
       // lbChannels
       // 
-      this.lbChannels.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
-                  | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.lbChannels.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.lbChannels.Location = new System.Drawing.Point(32, 32);
       this.lbChannels.Name = "lbChannels";
       this.lbChannels.Size = new System.Drawing.Size(168, 277);
@@ -219,9 +221,9 @@ namespace WebEPG_conf
       // 
       // groupBox2
       // 
-      this.groupBox2.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
-                  | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.lCount);
       this.groupBox2.Controls.Add(this.tbCount);
       this.groupBox2.Controls.Add(this.bImport);
@@ -235,11 +237,11 @@ namespace WebEPG_conf
       this.groupBox2.TabIndex = 13;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "My Channels";
-      this.groupBox2.Enter += new System.EventHandler(this.groupBox2_Enter);
+
       // 
       // lCount
       // 
-      this.lCount.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.lCount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.lCount.Location = new System.Drawing.Point(104, 312);
       this.lCount.Name = "lCount";
       this.lCount.Size = new System.Drawing.Size(80, 16);
@@ -248,8 +250,8 @@ namespace WebEPG_conf
       // 
       // tbCount
       // 
-      this.tbCount.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.tbCount.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.tbCount.BorderColor = System.Drawing.Color.Empty;
       this.tbCount.Location = new System.Drawing.Point(16, 304);
       this.tbCount.Name = "tbCount";
@@ -258,7 +260,7 @@ namespace WebEPG_conf
       // 
       // bSave
       // 
-      this.bSave.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.bSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.bSave.Location = new System.Drawing.Point(112, 368);
       this.bSave.Name = "bSave";
       this.bSave.Size = new System.Drawing.Size(72, 24);
@@ -268,7 +270,7 @@ namespace WebEPG_conf
       // 
       // lGrabDay
       // 
-      this.lGrabDay.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.lGrabDay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.lGrabDay.Location = new System.Drawing.Point(104, 336);
       this.lGrabDay.Name = "lGrabDay";
       this.lGrabDay.Size = new System.Drawing.Size(72, 16);
@@ -277,8 +279,8 @@ namespace WebEPG_conf
       // 
       // nMaxGrab
       // 
-      this.nMaxGrab.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.nMaxGrab.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.nMaxGrab.Location = new System.Drawing.Point(16, 328);
       this.nMaxGrab.Maximum = new decimal(new int[] {
             14,
@@ -301,8 +303,8 @@ namespace WebEPG_conf
       // 
       // gbChannelDetails
       // 
-      this.gbChannelDetails.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.gbChannelDetails.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.gbChannelDetails.Controls.Add(this.bUpdate);
       this.gbChannelDetails.Controls.Add(this.tbDisplayName);
       this.gbChannelDetails.Controls.Add(this.label4);
@@ -523,7 +525,6 @@ namespace WebEPG_conf
       this.lGuideDays.Size = new System.Drawing.Size(56, 30);
       this.lGuideDays.TabIndex = 8;
       this.lGuideDays.Text = "Guide Days";
-      this.lGuideDays.Click += new System.EventHandler(this.label2_Click);
       // 
       // tbGrabDays
       // 
@@ -578,15 +579,15 @@ namespace WebEPG_conf
       this.Text = "WebEPG Config";
       this.groupBox2.ResumeLayout(false);
       this.groupBox2.PerformLayout();
-      ( (System.ComponentModel.ISupportInitialize)( this.nMaxGrab ) ).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.nMaxGrab)).EndInit();
       this.gbChannelDetails.ResumeLayout(false);
       this.gbChannelDetails.PerformLayout();
       this.gbGrabber.ResumeLayout(false);
       this.gbGrabber.PerformLayout();
       this.gbLinked.ResumeLayout(false);
       this.gbLinked.PerformLayout();
-      ( (System.ComponentModel.ISupportInitialize)( this.nEnd ) ).EndInit();
-      ( (System.ComponentModel.ISupportInitialize)( this.nStart ) ).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.nEnd)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.nStart)).EndInit();
       this.ResumeLayout(false);
 
     }
@@ -601,16 +602,6 @@ namespace WebEPG_conf
     {
       Application.Run(new fChannels());
       //Application.Run(new fGrabber());
-    }
-
-    private void label2_Click(object sender, System.EventArgs e)
-    {
-
-    }
-
-    private void groupBox2_Enter(object sender, System.EventArgs e)
-    {
-
     }
 
     private void DoSelect(Object source, EventArgs e)
@@ -681,21 +672,8 @@ namespace WebEPG_conf
 
       if (source == bImport)
       {
-        _log.Info("WebEPG Config: Button: Import");
-        ArrayList channels = new ArrayList();
-        TVDatabase.GetChannels(ref channels);
-        for (int i = 0; i < channels.Count; i++)
-        {
-          TVChannel chan = (TVChannel) channels[i];
-          if (ChannelList[chan.Name] == null)
-          {
-            ChannelInfo channel = new ChannelInfo();
-            channel.DisplayName = chan.Name;
-            channel.Linked = false;
-            ChannelList.Add(chan.Name, channel);
-          }
-        }
-        UpdateList("", -1);
+        getTVChannels();
+
         //if (importFile.ShowDialog() != DialogResult.Cancel)
         //{
         //  _log.Info("WebEPG Config: Importing MP ChannelList: {0}", importFile.FileName);
@@ -903,6 +881,34 @@ namespace WebEPG_conf
 
           selection.BringToFront();
         }
+      }
+    }
+
+    private void getTVChannels()
+    {
+      _log.Info("WebEPG Config: Button: Import");
+      try
+      {
+        ArrayList channels = new ArrayList();
+
+        TVDatabase.GetChannels(ref channels);
+        for (int i = 0; i < channels.Count; i++)
+        {
+          TVChannel chan = (TVChannel)channels[i];
+          if (ChannelList[chan.Name] == null)
+          {
+            ChannelInfo channel = new ChannelInfo();
+            channel.DisplayName = chan.Name;
+            channel.Linked = false;
+            ChannelList.Add(chan.Name, channel);
+
+          }
+          UpdateList("", -1);
+        }
+      }
+      catch (Exception ex)
+      {
+        _log.Info("WebEPG Config: Import failed - {0}", ex.Message);
       }
     }
 
