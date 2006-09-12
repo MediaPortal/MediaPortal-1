@@ -158,7 +158,7 @@ namespace MediaPortal.Configuration.Sections
         //
         // Load general settings
         //
-        for (int index = 0; index < sectionEntries.Length - 1; index++)  // Leave out last setting (focus)!
+        for (int index = 0; index < sectionEntries.Length; index++)  // Leave out last setting (focus)!
         {
           string[] currentSection = sectionEntries[index];
           xmlwriter.SetValueAsBool(currentSection[0], currentSection[1], settingsCheckedListBox.GetItemChecked(index));
@@ -267,7 +267,7 @@ namespace MediaPortal.Configuration.Sections
             "Turn off monitor when blanking screen",
             "Start with basic home screen",
             "Turn monitor/tv on when resuming from standby",
-            "Force S3 standby mode (overrides BIOS setting)"});
+            "Allow S3 standby although wake up devices are present"});
       this.settingsCheckedListBox.Location = new System.Drawing.Point(16, 24);
       this.settingsCheckedListBox.Name = "settingsCheckedListBox";
       this.settingsCheckedListBox.Size = new System.Drawing.Size(440, 289);
