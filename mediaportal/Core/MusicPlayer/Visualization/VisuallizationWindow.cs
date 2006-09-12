@@ -34,7 +34,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.TagReader;
 using MediaPortal.Playlists;
-//using MediaPortal.Utils.Services;
+using MediaPortal.Util;
 
 namespace MediaPortal.Visualization
 {
@@ -45,7 +45,7 @@ namespace MediaPortal.Visualization
         private const int WM_MOVE = 0x3;
         private const int WM_SIZE = 0x5;
         private const int WM_WINDOWPOSCHANGED = 0x47;
-        
+
         [DllImport("Gdi32.dll")]
         public static extern IntPtr CreateCompatibleDC(IntPtr hdc);
 
@@ -99,7 +99,6 @@ namespace MediaPortal.Visualization
 
         #region Variables
 
-        //protected ILog _log;
         private IVisualization Viz = null;
         private IntPtr _CompatibleDC = IntPtr.Zero;
         private IntPtr hNativeMemDCBmp = IntPtr.Zero;
@@ -112,11 +111,13 @@ namespace MediaPortal.Visualization
         private int FadeFrameCount = 15;
         private int ShowCoverArtFrameCount = 90;
         private int ShowVisualizationFrameCount = 150;
+        private const int TrackInfoDisplayMS = 5 * 1000;
         private int ShowTrackInfoFrameCount = 250;
 
         private int ShowPlayStateFrameCount = 30;
-        private int PlayStateDisplayMS = 1000;
+        private const int PlayStateDisplayMS = 1 * 1000;
         private int CurrentPlayStateFrame = 0;
+
         private bool SeekingFF = false;
         private bool SeekingRew = false;
         private bool NewPlay = false;
@@ -287,6 +288,13 @@ namespace MediaPortal.Visualization
         private bool VisualizationRunning = false;
         private bool ReadyToRender = false;
         private bool _IsPreviewVisualization = false;
+        private bool _KeepCoverArtAspectRatio = true;
+
+        private List<string> _ImagesPathsList = new List<string>();
+        private List<Image> _CoverArtImages = new List<Image>();
+        private bool UpdatingCoverArtImage = false;
+        private bool UpdatingCoverArtImageList = false;
+        private bool DoImageCleanup = false;
 
         #endregion
 
@@ -322,7 +330,7 @@ namespace MediaPortal.Visualization
         {
             get
             {
-                if(_IsPreviewVisualization)
+                if (_IsPreviewVisualization)
                     return this.Handle;
 
                 if (!_EnableStatusOverlays && GUIGraphicsContext.IsFullScreenVideo)
@@ -372,6 +380,22 @@ namespace MediaPortal.Visualization
             }
         }
 
+        public bool KeepCoverArtAspectRatio
+        {
+            get { return _KeepCoverArtAspectRatio; }
+            set { _KeepCoverArtAspectRatio = value; }
+        }
+
+        public List<string> ImagesPathsList
+        {
+            get { return _ImagesPathsList; }
+        }
+
+        public List<Image> CoverArtImages
+        {
+            get { return _CoverArtImages; }
+        }
+
         #endregion
 
         public VisualizationWindow()
@@ -382,8 +406,8 @@ namespace MediaPortal.Visualization
 
             g_Player.PlayBackStarted += new g_Player.StartedHandler(OnPlayBackStarted);
 
-            if (GUIGraphicsContext.form != null)
-                GUIGraphicsContext.form.Resize += new EventHandler(OnAppFormResize);
+            //if (GUIGraphicsContext.form != null)
+            //    GUIGraphicsContext.form.Resize += new EventHandler(OnAppFormResize);
 
             GUIGraphicsContext.OnNewAction += new OnActionHandler(OnNewAction);
 
@@ -485,26 +509,25 @@ namespace MediaPortal.Visualization
             }
         }
 
+        ////void OnAppFormResize(object sender, EventArgs e)
+        ////{
+        ////    FormWindowState curWindowState = GUIGraphicsContext.form.WindowState;
 
-        void OnAppFormResize(object sender, EventArgs e)
-        {
-            FormWindowState curWindowState = GUIGraphicsContext.form.WindowState;
+        ////    if (LastWindowState != curWindowState)
+        ////    {
+        ////        if (curWindowState == FormWindowState.Maximized || FullScreen)
+        ////            Size = GUIGraphicsContext.form.ClientSize;
 
-            if (LastWindowState != curWindowState)
-            {
-                if (curWindowState == FormWindowState.Maximized || FullScreen)
-                    Size = GUIGraphicsContext.form.ClientSize;
+        ////        LastWindowState = curWindowState;
+        ////    }
 
-                LastWindowState = curWindowState;
-            }
+        ////    // Don't call DoResize unless the window size has really changed
+        ////    if (!NeedsResize())
+        ////        return;
 
-            // Don't call DoResize unless the window size has really changed
-            if (!NeedsResize())
-                return;
-
-            OldSize = Size;
-            DoResize();
-        }
+        ////    OldSize = Size;
+        ////    DoResize();
+        ////}
 
         ~VisualizationWindow()
         {
@@ -518,7 +541,8 @@ namespace MediaPortal.Visualization
 
             try
             {
-                using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+                //using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+                using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
                 {
                     _EnableStatusOverlays = xmlreader.GetValueAsBool("musicvisualization", "enableStatusOverlays", false);
                     ShowTrackOverlay = xmlreader.GetValueAsBool("musicvisualization", "showTrackInfo", true);
@@ -636,7 +660,7 @@ namespace MediaPortal.Visualization
             DefaultTrackInfoImageYPos = TrackInfoImageYPos = GetSettingIntValue(node["posY"], TrackInfoImageYPos);
             DefaultTrackInfoImageWidth = TrackInfoImageWidth = GetSettingIntValue(node["width"], TrackInfoImageWidth);
             DefaultTrackInfoImageHeight = TrackInfoImageHeight = GetSettingIntValue(node["height"], TrackInfoImageHeight);
-            
+
             TrackInfoImageName = GetSettingStringValue(node["texture"], "VisualizationTrackInfo.png");
             TrackInfoOverlayAlpha = GetSettingByteValue(node["alpha"], TrackInfoOverlayAlpha);
 
@@ -777,13 +801,13 @@ namespace MediaPortal.Visualization
 
             imgName = GetSettingStringValue(node["texture"], "");
 
-            if(imgName.Length == 0)
+            if (imgName.Length == 0)
                 return;
 
             imgPath = System.IO.Path.Combine(System.Windows.Forms.Application.StartupPath,
                 string.Format(@"{0}\Media\{1}", GUIGraphicsContext.Skin, imgName));
 
-            if(!File.Exists(imgPath))
+            if (!File.Exists(imgPath))
                 return;
 
             try
@@ -801,7 +825,7 @@ namespace MediaPortal.Visualization
             int imgWidth = GetSettingIntValue(node["width"], 1);
             int imgHeight = GetSettingIntValue(node["height"], 1);
 
-            if(ctrlID == (int)ControlID.PauseIcon)
+            if (ctrlID == (int)ControlID.PauseIcon)
             {
                 if (PauseImage != null)
                 {
@@ -821,7 +845,7 @@ namespace MediaPortal.Visualization
                 PauseImage = img;
             }
 
-            else if(ctrlID == (int)ControlID.PlayIcon)
+            else if (ctrlID == (int)ControlID.PlayIcon)
             {
                 if (PlayImage != null)
                 {
@@ -840,7 +864,7 @@ namespace MediaPortal.Visualization
                 PlayImage = img;
             }
 
-            else if(ctrlID == (int)ControlID.FFIcon)
+            else if (ctrlID == (int)ControlID.FFIcon)
             {
                 if (FFImage != null)
                 {
@@ -859,7 +883,7 @@ namespace MediaPortal.Visualization
                 FFImage = img;
             }
 
-            else if(ctrlID == (int)ControlID.RewIcon)
+            else if (ctrlID == (int)ControlID.RewIcon)
             {
                 if (RewImage != null)
                 {
@@ -878,7 +902,7 @@ namespace MediaPortal.Visualization
                 RewImage = img;
             }
 
-            else if(ctrlID == (int)ControlID.StopIcon)
+            else if (ctrlID == (int)ControlID.StopIcon)
             {
                 if (StopImage != null)
                 {
@@ -1030,7 +1054,7 @@ namespace MediaPortal.Visualization
 
         private float GetOpacity(byte alphaVal)
         {
-            if(alphaVal == 0)
+            if (alphaVal == 0)
                 return 0f;
 
             return (float)alphaVal / 255f;
@@ -1171,7 +1195,7 @@ namespace MediaPortal.Visualization
             if (!NeedsResize())
                 return;
 
-            OldSize = Size;
+            //OldSize = Size;
             DoResize();
         }
 
@@ -1179,8 +1203,11 @@ namespace MediaPortal.Visualization
         {
             if (Size.Width <= 1 || Size.Height <= 1)
             {
+                OldSize = Size;
                 return;
             }
+
+            Size oldSize = Size;
 
             if (hNativeMemDCBmp != IntPtr.Zero)
             {
@@ -1195,10 +1222,10 @@ namespace MediaPortal.Visualization
             }
 
             FullScreen = GUIGraphicsContext.IsFullScreenVideo;
-            OutputContextNeedsUpdating = true;           
+            OutputContextNeedsUpdating = true;
 
             // Make sure we always start at a fade-in frame when we go to fullscreen mode
-            if(FullScreen)
+            if (FullScreen)
                 CurrentFrame = 0;
 
             // Make sure we always start at a coverart frame when return from fullscreen mode
@@ -1350,6 +1377,11 @@ namespace MediaPortal.Visualization
             {
                 Console.WriteLine("DoResize caused an exception:{0}", ex);
             }
+
+            finally
+            {
+                OldSize = oldSize;
+            }
         }
 
         internal void SetVisualizationTimer(int targetFPS)
@@ -1362,6 +1394,10 @@ namespace MediaPortal.Visualization
 
             float displayseconds = (float)PlayStateDisplayMS / 1000;
             ShowPlayStateFrameCount = (int)((float)targetFPS * (float)displayseconds);
+
+            displayseconds = TrackInfoDisplayMS / 1000;
+            ShowTrackInfoFrameCount = (int)((float)targetFPS * (float)displayseconds);
+
             float interval = 1000 / targetFPS;
             VisualizationRenderInterval = (int)interval;
         }
@@ -1387,7 +1423,7 @@ namespace MediaPortal.Visualization
                 t = new System.Threading.Thread(firstRenderTs);
                 t.Start();
             }
-            
+
             VisualizationRunning = true;
             System.Threading.ThreadStart renderTs = new System.Threading.ThreadStart(this.RunRenderThread);
             VizRenderThread = new System.Threading.Thread(renderTs);
@@ -1425,9 +1461,9 @@ namespace MediaPortal.Visualization
                 {
                     if (VizRenderThread != null)
                     {
-                        if(VizRenderThread.IsAlive)
+                        if (VizRenderThread.IsAlive)
                             VizRenderThread.Abort();
-                        
+
                         VizRenderThread = null;
                     }
                 }
@@ -1461,7 +1497,8 @@ namespace MediaPortal.Visualization
                         if (sleepMS < 0)
                             sleepMS = 1;
 
-                        System.Threading.Thread.Sleep(VisualizationRenderInterval + sleepMS);
+                        //System.Threading.Thread.Sleep(VisualizationRenderInterval + sleepMS);
+                        System.Threading.Thread.Sleep(VisualizationRenderInterval);
                     }
 
                     else
@@ -1483,7 +1520,8 @@ namespace MediaPortal.Visualization
                                 sleepMS = 0;
 
                             g.Dispose();
-                            System.Threading.Thread.Sleep(VisualizationRenderInterval + sleepMS);
+                            //System.Threading.Thread.Sleep(VisualizationRenderInterval + sleepMS);
+                            System.Threading.Thread.Sleep(VisualizationRenderInterval);
                         }
                     }
                 }
@@ -1539,6 +1577,7 @@ namespace MediaPortal.Visualization
         private int RenderVisualization(Graphics g)
         {
             int sleepMS = 10;
+            CurrentFrame++;
 
             try
             {
@@ -1656,10 +1695,10 @@ namespace MediaPortal.Visualization
             if (ArtistName == String.Empty) return String.Empty;
             if (AlbumName == String.Empty) return String.Empty;
             string name = String.Format("{0}-{1}", ArtistName, AlbumName);
-            
+
             string thumbPath = MediaPortal.Util.Utils.GetCoverArtName(MediaPortal.Util.Thumbs.MusicAlbum, name);
 
-            if(thumbPath.Length > 0 && !Path.IsPathRooted(thumbPath))
+            if (thumbPath.Length > 0 && !Path.IsPathRooted(thumbPath))
                 thumbPath = Path.Combine(Application.StartupPath, thumbPath);
 
             if (thumbPath.Length > 0 && File.Exists(thumbPath))
@@ -1674,8 +1713,6 @@ namespace MediaPortal.Visualization
 
             return string.Empty;
         }
-
-        private bool UpdatingCoverArtImage = false;
 
         private void LoadThumbnail(string thumbPath)
         {
@@ -1817,8 +1854,8 @@ namespace MediaPortal.Visualization
             ImageAttributes imgAttrib = new ImageAttributes();
             imgAttrib.SetColorMatrix(colorMatrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
 
-            g.DrawImage(CurrentTrackInfoImage, rect, 0, 0, 
-                CurrentTrackInfoImage.Width, CurrentTrackInfoImage.Height, 
+            g.DrawImage(CurrentTrackInfoImage, rect, 0, 0,
+                CurrentTrackInfoImage.Width, CurrentTrackInfoImage.Height,
                 GraphicsUnit.Pixel, imgAttrib);
         }
 
@@ -1826,10 +1863,10 @@ namespace MediaPortal.Visualization
         {
             float maxOpacity = GetOpacity(TrackInfoOverlayAlpha);
 
-            if(maxOpacity < (float)(FadeFrameCount - 1) / 100)
+            if (maxOpacity < (float)(FadeFrameCount - 1) / 100)
                 maxOpacity = (float)(FadeFrameCount - 1) / 100;
 
-           float fStep = maxOpacity / (float)(FadeFrameCount - 1);
+            float fStep = maxOpacity / (float)(FadeFrameCount - 1);
 
             if (CurrentFrame < FadeFrameCount)
             {
@@ -1857,13 +1894,21 @@ namespace MediaPortal.Visualization
                 CurrentFrame = -1;
             }
 
-            CurrentFrame++;
+            //CurrentFrame++;
         }
+
+        private int CurrentCoverArtImageIndex = -1;
 
         private void DoThumbnailOverlayFading(Graphics g)
         {
             try
             {
+                if (DoImageCleanup)
+                {
+                    InternalClearImages();
+                    DoImageCleanup = false;
+                }
+
                 if (UpdatingCoverArtImage)
                     return;
 
@@ -1896,9 +1941,27 @@ namespace MediaPortal.Visualization
                 }
 
                 else
-                    CurrentFrame = -1;
+                {
+                    if (_ImagesPathsList.Count > 0)
+                    {
+                        if (CurrentCoverArtImageIndex + 1 >= _ImagesPathsList.Count)
+                        {
+                            if (CurrentThumbImage != null)
+                                CurrentCoverArtImageIndex = -1;
 
-                CurrentFrame++;
+                            else
+                                CurrentCoverArtImageIndex = 0;
+                        }
+
+                        else
+                            CurrentCoverArtImageIndex++;
+                    }
+
+                    else
+                        CurrentCoverArtImageIndex = -1;
+
+                    CurrentFrame = -1;
+                }
             }
 
             catch (Exception ex)
@@ -1907,14 +1970,66 @@ namespace MediaPortal.Visualization
             }
         }
 
+        //private void DrawThumbnailOverlay(Graphics g, float opacity)
+        //{
+        //    try
+        //    {
+        //        if (UpdatingCoverArtImage || UpdatingCoverArtImageList)
+        //            return;
+
+        //        if (CurrentThumbImage == null && _CoverArtImages.Count == 0)
+        //            return;
+
+        //        Rectangle rect = new Rectangle(0, 0, Width, Height);
+        //        SolidBrush fillBrush = new SolidBrush(Color.FromArgb((int)(255f * opacity), Color.Black));
+        //        g.FillRectangle(fillBrush, rect);
+        //        fillBrush.Dispose();
+
+        //        ////int imgHeight = Height;
+        //        ////int imgWidth = imgHeight;
+
+        //        int imgHeight = Height;
+        //        int imgWidth = imgHeight;
+
+        //        if (!_KeepCoverArtAspectRatio)
+        //            imgWidth = Width;
+
+        //        int left = (Width - imgHeight) / 2;
+
+        //        float[][] matrixItems ={ 
+        //           new float[] {1, 0, 0, 0, 0},
+        //           new float[] {0, 1, 0, 0, 0},
+        //           new float[] {0, 0, 1, 0, 0},
+        //           new float[] {0, 0, 0, opacity, 0}, 
+        //           new float[] {0, 0, 0, 0, 1}};
+
+        //        ColorMatrix colorMatrix = new ColorMatrix(matrixItems);
+        //        ImageAttributes imgAttrib = new ImageAttributes();
+        //        imgAttrib.SetColorMatrix(colorMatrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+
+        //        g.DrawImage(CurrentThumbImage, new Rectangle(left, 0, imgWidth, imgHeight), 0, 0,
+        //            CurrentThumbImage.Width, CurrentThumbImage.Height, GraphicsUnit.Pixel, imgAttrib);
+        //    }
+
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine("DrawThumbnailOverlay caused an exception:{0}", ex);
+        //    }
+        //}
+
         private void DrawThumbnailOverlay(Graphics g, float opacity)
         {
             try
             {
-                if (UpdatingCoverArtImage)
+                if (UpdatingCoverArtImage || UpdatingCoverArtImageList)
                     return;
 
-                if (CurrentThumbImage == null)
+                if (CurrentThumbImage == null && _CoverArtImages.Count == 0)
+                    return;
+
+                Image img = GetNextImage();
+
+                if (img == null)
                     return;
 
                 Rectangle rect = new Rectangle(0, 0, Width, Height);
@@ -1924,6 +2039,9 @@ namespace MediaPortal.Visualization
 
                 int imgHeight = Height;
                 int imgWidth = imgHeight;
+
+                if (!_KeepCoverArtAspectRatio)
+                    imgWidth = Width;
 
                 int left = (Width - imgHeight) / 2;
 
@@ -1938,14 +2056,41 @@ namespace MediaPortal.Visualization
                 ImageAttributes imgAttrib = new ImageAttributes();
                 imgAttrib.SetColorMatrix(colorMatrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
 
-                g.DrawImage(CurrentThumbImage, new Rectangle(left, 0, imgWidth, imgHeight), 0, 0,
-                    CurrentThumbImage.Width, CurrentThumbImage.Height, GraphicsUnit.Pixel, imgAttrib);
+                //g.DrawImage(CurrentThumbImage, new Rectangle(left, 0, imgWidth, imgHeight), 0, 0,
+                //    CurrentThumbImage.Width, CurrentThumbImage.Height, GraphicsUnit.Pixel, imgAttrib);
+
+                g.DrawImage(img, new Rectangle(left, 0, imgWidth, imgHeight), 0, 0, 
+                    img.Width, img.Height, GraphicsUnit.Pixel, imgAttrib);
             }
 
             catch (Exception ex)
             {
                 Console.WriteLine("DrawThumbnailOverlay caused an exception:{0}", ex);
             }
+        }
+
+        private Image GetNextImage()
+        {
+            if (CurrentCoverArtImageIndex == -1 || _CoverArtImages.Count == 0)
+                return CurrentThumbImage;
+
+            if (CurrentCoverArtImageIndex >= _CoverArtImages.Count)
+            {
+                if (CurrentThumbImage == null)
+                {
+                    CurrentCoverArtImageIndex = 0;
+                    return _CoverArtImages[0];
+                }
+
+                else
+                {
+                    CurrentCoverArtImageIndex = -1;
+                    return CurrentThumbImage;
+                }
+            }
+
+            else
+                return _CoverArtImages[CurrentCoverArtImageIndex];
         }
 
         private void DrawFadingText(Graphics g, SizeF stringSize, string text, Rectangle rect, Font font, Color color)
@@ -2096,7 +2241,7 @@ namespace MediaPortal.Visualization
                     }
 
                     else
-                        DoPlayStateIconFading(g, opacity, PlayImage, PlayImageX, PlayImageY, PlayImageWidth, PlayImageHeight); 
+                        DoPlayStateIconFading(g, opacity, PlayImage, PlayImageX, PlayImageY, PlayImageWidth, PlayImageHeight);
                 }
 
                 else if (g_Player.Stopped)
@@ -2111,7 +2256,7 @@ namespace MediaPortal.Visualization
                     }
 
                     else
-                        DoPlayStateIconFading(g, opacity, StopImage, StopImageX, StopImageY, StopImageWidth, StopImageHeight); 
+                        DoPlayStateIconFading(g, opacity, StopImage, StopImageX, StopImageY, StopImageWidth, StopImageHeight);
                 }
 
                 else if (SeekingFF)
@@ -2122,7 +2267,7 @@ namespace MediaPortal.Visualization
 
                     if (seekStep == 0 || bStart || bEnd)
                     {
-                        if(CurrentPlayStateFrame < ShowPlayStateFrameCount)
+                        if (CurrentPlayStateFrame < ShowPlayStateFrameCount)
                             CurrentPlayStateFrame = ShowPlayStateFrameCount;
                     }
 
@@ -2198,10 +2343,10 @@ namespace MediaPortal.Visualization
                 case WM_WINDOWPOSCHANGED:
                     {
                         // Don't call DoResize unless the window size has really changed
-                        if(!NeedsResize())
+                        if (!NeedsResize())
                             break;
 
-                        OldSize = Size;
+//                        OldSize = Size;
                         DoResize();
                         break;
                     }
@@ -2229,6 +2374,78 @@ namespace MediaPortal.Visualization
 
             else
                 Viz.SetOutputContext(VisualizationBase.OutputContextType.DeviceContext);
+        }
+
+        public bool AddImage(string imagePath)
+        {
+            Console.WriteLine(Path.GetFileName(imagePath));
+            /////////////////////////////
+            
+            bool result = false;
+            imagePath = imagePath.ToLower();
+
+            if (_ImagesPathsList == null)
+                return false;
+
+            if (_ImagesPathsList.Contains(imagePath))
+                return false;
+
+            if (CurrentThumbPath.IndexOf(Path.GetFileName(imagePath)) > 0)
+                return false;
+
+            if (imagePath.IndexOf("missing_coverart.png") > 0)
+                return false;
+
+            if (System.IO.File.Exists(imagePath))
+            {
+                try
+                {
+                    UpdatingCoverArtImageList = true;
+                    _ImagesPathsList.Add(imagePath);
+                    Image img = Image.FromFile(imagePath);
+
+                    if (img != null)
+                        this._CoverArtImages.Add(img);
+
+                    result = img != null;
+                }
+
+                catch
+                {
+                    result = false;
+                }
+
+                finally
+                {
+                    UpdatingCoverArtImageList = false;
+                }
+            }
+
+            return result;
+        }
+
+        public void ClearImages()
+        {
+            DoImageCleanup = true;
+        }
+
+        // Make sure that this is called from the Rendering thread!
+        private void InternalClearImages()
+        {
+            for(int i = 0; i < _CoverArtImages.Count; i++)
+            {
+                Image img = _CoverArtImages[i];
+
+                if (img == null)
+                    continue;
+
+                img.Dispose();
+                img = null;
+            }
+
+            _CoverArtImages.Clear();
+            _ImagesPathsList.Clear();
+            CurrentCoverArtImageIndex = -1;
         }
     }
 }
