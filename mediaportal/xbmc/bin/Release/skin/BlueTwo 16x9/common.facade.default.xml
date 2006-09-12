@@ -16,6 +16,7 @@
 				        <onright>2</onright>
 				        <onup>2</onup>
 				        <ondown>2</ondown>
+					<scrollOffset>2</scrollOffset>
 			        </control>
 			        <control>
 				        <description>Thumbnail Panel</description>
@@ -25,6 +26,7 @@
 				        <onright>2</onright>
 				        <onup>2</onup>
 				        <ondown>2</ondown>
+					<scrollOffset>1</scrollOffset>
 			        </control>
 			        <control>
 				        <description>Filmstrip view</description>
