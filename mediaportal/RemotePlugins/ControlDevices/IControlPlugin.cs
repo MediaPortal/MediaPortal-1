@@ -26,6 +26,8 @@ namespace MediaPortal.ControlDevices
 
   public interface IControlPlugin
   {
+    string LibraryName { set; get; }
+
     string DeviceName { get; }
 
     string DeviceDescription { get; }
@@ -49,6 +51,8 @@ namespace MediaPortal.ControlDevices
     IControlOutput OutputInterface { get; }
 
     IControlSettings Settings { get; }
+
+    void Initialize();
 
     
 

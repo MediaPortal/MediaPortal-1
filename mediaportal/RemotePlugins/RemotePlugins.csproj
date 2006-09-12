@@ -141,6 +141,7 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ControlDevices\ControlDevices.cs" />
     <Compile Include="ControlDevices\IControlInput.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -173,6 +174,14 @@
     </Compile>
     <Compile Include="ControlDevices\Util\ControlDevicePanel.Designer.cs">
       <DependentUpon>ControlDevicePanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ControlDevices\Devices\Keyboard\KeyboardPlugin.cs" />
+    <Compile Include="ControlDevices\Devices\Keyboard\KeyboardSettings.cs" />
+    <Compile Include="ControlDevices\Devices\USBUIRT\USBUIRTAdvancedForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ControlDevices\Devices\USBUIRT\USBUIRTAdvancedForm.Designer.cs">
+      <DependentUpon>USBUIRTAdvancedForm.cs</DependentUpon>
     </Compile>
     <Compile Include="InputMapper\InputHandler.cs" />
     <Compile Include="InputMapper\InputMappingForm.cs">
@@ -215,14 +224,13 @@
     <Compile Include="Remotes\MCE2005Remote\MediaPortal.Hardware\RemoteButton.cs" />
     <Compile Include="Remotes\MCE2005Remote\MediaPortal.Hardware\RemoteEventArgs.cs" />
     <Compile Include="Remotes\MCE2005Remote\MediaPortal.Hardware\RemoteEventHandler.cs" />
-    <Compile Include="Devices\USBUIRT\USBUIRTAdvancedForm.cs" />
-    <Compile Include="Devices\USBUIRT\USBUIRTPlugin.cs" />
-    <Compile Include="Devices\USBUIRT\USBUIRTAPI.cs" />
-    <Compile Include="Devices\USBUIRT\USBUIRTControlCode.cs" />
-    <None Include="Devices\USBUIRT\USBUIRTLearnForm.cs">
+    <Compile Include="ControlDevices\Devices\USBUIRT\USBUIRTPlugin.cs" />
+    <Compile Include="ControlDevices\Devices\USBUIRT\USBUIRTAPI.cs" />
+    <Compile Include="ControlDevices\Devices\USBUIRT\USBUIRTControlCode.cs" />
+    <None Include="ControlDevices\Devices\USBUIRT\USBUIRTLearnForm.cs">
       <SubType>Form</SubType>
     </None>
-    <Compile Include="Devices\USBUIRT\USBUIRTSettings.cs" />
+    <Compile Include="ControlDevices\Devices\USBUIRT\USBUIRTSettings.cs" />
     <Compile Include="Remotes\X10Remote\X10RemoteForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -245,7 +253,7 @@
       <DependentUpon>InputMappingForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Devices\USBUIRT\USBUIRTLearnForm.resx">
+    <EmbeddedResource Include="ControlDevices\Devices\USBUIRT\USBUIRTLearnForm.resx">
       <DependentUpon>USBUIRTLearnForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>

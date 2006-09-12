@@ -1,37 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows.Forms;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.ControlDevices
 {
   public interface IControlInput
   {
-    bool Enabled
+    bool UseWndProc
     {
-      set;
       get;
     }
 
-    bool EnabledInput
-    {
-      set;
-      get;
-    }
-
-    bool EnabledOutput
-    {
-      set;
-      get;
-    }
-
-    bool Verbose
-    {
-      set;
-      get;
-    }
-
-    void Default();
-    void Load();
-    void Save();
+    bool WndProc(ref Message msg, out Action action, out char key, out Keys keyCode);
   }
 }
