@@ -3,7 +3,7 @@
    <defaultcontrol>101</defaultcontrol>
    <allowoverlay>yes</allowoverlay>
 	<define>#header.label:Choose File to Edit</define>
-	<define>#header.text:DVR Cut</define>
+	<define>#header.text:VideoEditor</define>
 	<define>#header.hover:hover_my videos.png</define>
 	<controls>
 		<import>common.window.default.xml</import>

@@ -2,12 +2,12 @@
    <id>170602</id>
    <defaultcontrol>100</defaultcontrol>
    <allowoverlay>no</allowoverlay>
-	<define>#header.label:#Play.Current.Title</define>
-	<define>#header.text:DVR Cut</define>
+	<define>#header.label:Cut Screen</define>
+	<define>#header.text:VideoEditor</define>
 	<define>#header.hover:hover_my videos.png</define>
-	<define>#selecteditem:-</define>
+	<define>#selecteditem:#Play.Current.Title</define>
 	<controls>
-		<import>common.window.tv.xml</import>
+		<import>common.window.default.xml</import>
 		<control>
 			<type>group</type>
 			<description>group element</description>
@@ -17,6 +17,7 @@
 			<posY>97</posY>
    			<control>
 				<type>button</type>
+				<description>Cut</description>
       				<id>24</id>
         			<onup>25</onup>
          			<ondown>25</ondown>		
@@ -25,13 +26,33 @@
       			</control>
       			<control>
         			<type>button</type>
+				<description>Cancel</description>
          			<id>25</id>
          			<onup>24</onup>
-         			<ondown>24</ondown>
+         			<ondown>101</ondown>
 				<onright>100</onright>
          			<label>510</label>
       			</control>
 		</control>
+<!--	   	<control>
+		   	<type>label</type>
+		   	<posX>420</posX>
+		   	<posY>65</posY>
+			<align>left</align>
+			<font>font14</font> 
+		   	<label>Title:</label>
+	   	</control>
+		<control>
+			<description>scrolling info label</description> 
+			<type>fadelabel</type> 
+			<posX>490</posX> 
+			<posY>65</posY>
+			<width>520</width>
+			<align>left</align>  
+			<font>font14</font> 
+			<label>#Play.Current.Title</label>
+			<id>0</id> 
+		</control>  -->
 		<control>
 			<description>TV background</description>
 			<type>image</type>
@@ -101,7 +122,7 @@
 			<posY>313</posY>
 			<width>300</width>
 			<height>360</height>
-			<onleft>26</onleft>
+			<onleft>100</onleft>
 			<onright>100</onright>
 			<onup>2</onup>
 			<ondown>2</ondown>
@@ -110,9 +131,9 @@
 		   	<type>button</type>
 		   	<description>Add</description>
 		   	<id>28</id>
-		   	<posX>875</posX>
+		   	<posX>910</posX>
 		   	<posY>520</posY>
-		   	<width>100</width>
+		   	<width>200</width>
 			<height>30</height>
 		   	<onup>31</onup>
 		   	<ondown>28</ondown>
@@ -121,7 +142,7 @@
 	   	<control>
 		   	<type>label</type>
 		   	<label>Add Label</label>
-		   	<posX>925</posX>
+		   	<posX>1010</posX>
 		   	<posY>535</posY>
 			<align>center</align>
 		   	<label>2093</label>
@@ -130,9 +151,9 @@
 		   	<type>button</type>
 		   	<description>Start</description>
 		   	<id>29</id>
-		   	<posX>575</posX>
+		   	<posX>490</posX>
 		   	<posY>520</posY>
-		   	<width>100</width>
+		   	<width>200</width>
 			<height>30</height>
 		   	<onup>34</onup>
 			<ondown>29</ondown>
@@ -142,7 +163,7 @@
 	   	<control>
 		   	<type>label</type>
 		   	<description>Start Label</description>
-		   	<posX>625</posX>
+		   	<posX>590</posX>
 		   	<posY>535</posY>
 			<align>center</align>
 		   	<label>2084</label>
@@ -151,9 +172,9 @@
 		   	<type>button</type>
 		   	<description>Ende</description>
 		   	<id>30</id>
-		   	<posX>725</posX>
+		   	<posX>700</posX>
 		   	<posY>520</posY>
-		   	<width>100</width>
+		   	<width>200</width>
 			<height>30</height>
 		   	<onup>31</onup>
 			<ondown>30</ondown>
@@ -163,7 +184,7 @@
 	   	<control>
 		   	<type>label</type>
 		   	<label>End</label>
-		   	<posX>775</posX>
+		   	<posX>800</posX>
 		   	<posY>535</posY>
 			<align>center</align>
 		   	<label>2085</label>
@@ -172,9 +193,9 @@
 		   	<type>button</type>
 		   	<description>forward</description>
 		   	<id>31</id>
-		   	<posX>920</posX>
-		   	<posY>480</posY>
-		   	<width>120</width>
+		   	<posX>910</posX>
+		   	<posY>485</posY>
+		   	<width>200</width>
 			<height>30</height>
 		   	<onup>100</onup>
 		   	<ondown>30</ondown>
@@ -183,8 +204,8 @@
 	   	<control>
 		   	<type>label</type>
 		   	<label>forward</label>
-		   	<posX>980</posX>
-		   	<posY>495</posY>
+		   	<posX>1010</posX>
+		   	<posY>500</posY>
 			<align>center</align>
 		   	<label>2086</label>
 	   	</control>
@@ -192,9 +213,9 @@
 		   	<type>button</type>
 		   	<description>backward</description>
 		   	<id>34</id>
-		   	<posX>530</posX>
-		   	<posY>480</posY>
-		   	<width>120</width>
+		   	<posX>490</posX>
+		   	<posY>485</posY>
+		   	<width>200</width>
 			<height>30</height>
 		   	<onup>100</onup>
 		   	<ondown>29</ondown>
@@ -204,8 +225,8 @@
 	   	<control>
 		   	<label>backward</label>
 		   	<type>label</type>		   	
-		   	<posX>590</posX>
-		   	<posY>495</posY>
+		   	<posX>580</posX>
+		   	<posY>500</posY>
 			<align>center</align>
             		<label>2087</label>
 	   	</control>
@@ -223,7 +244,7 @@
 		   	<type>label</type>
 		   	<description>Current Position Value</description>
 		   	<id>33</id>
-		   	<posX>700</posX>
+		   	<posX>720</posX>
 		   	<posY>580</posY>
 		   	<onup>24</onup>
 		   	<ondown>24</ondown>
@@ -271,7 +292,7 @@
         		<type>label</type>
 			<description>Status Label</description>
         		<id>102</id>
-        		<posX>470</posX>
+        		<posX>474</posX>
         		<posY>676</posY>
       		</control>
       		<control>
@@ -301,8 +322,8 @@
 			<type>label</type>
 			<description>edit cutpoint</description>
 			<id>105</id>
-			<posX>470</posX>
-			<posY>680</posY>
+			<posX>474</posX>
+			<posY>676</posY>
 			<align>left</align>
 			<label>2075</label>
 		</control>
@@ -310,8 +331,8 @@
 		   	<type>slider</type>
 		   	<description>movie slider</description>
 		   	<id>100</id>
-		   	<posX>700</posX>
-		   	<posY>485</posY>
+		   	<posX>715</posX>
+		   	<posY>486</posY>
 		   	<onup>24</onup>
 		   	<ondown>34</ondown>
 		   	<textureSliderBar>osd_slider_bg.png</textureSliderBar>
