@@ -98,11 +98,8 @@ namespace MediaPortal
 
     protected D3DEnumeration enumerationSettings = new D3DEnumeration();  // We need to keep track of our enumeration settings
     protected D3DSettings graphicsSettings = new D3DSettings();
-    protected bool windowed;  // Internal variables for the state of the app
-    protected bool isMaximized = false; // Are we maximized in windowed mode?
-    protected bool isExlusiveMode = false; // Are we in exclusive mode
-    protected bool useExclusiveDirectXMode; // Should we ever use exlusive mode
-    protected bool mustHandleResize;        // Reload fonts (with new size) after next reset
+    protected bool isMaximized = false; // Are we maximized?
+    private bool isHandlingSizeChanges = true; // Are we handling size changes?
     private bool isClosing = false; // Are we closing?
     private bool isChangingFormStyle = false; // Are we changing the forms style?
     private bool isWindowActive = true; // Are we waiting for got focus?
@@ -113,10 +110,11 @@ namespace MediaPortal
     private static int lastx = -1;
     private static int lasty = -1;
 
-    
+    protected bool windowed;  // Internal variables for the state of the app
     protected bool active;
     protected bool ready;
     protected bool hasFocus;
+    protected bool isMultiThreaded = true;
     protected bool _fromTray = false;
 
     protected bool frameMoving; // Internal variables used for timing
@@ -186,8 +184,7 @@ namespace MediaPortal
     protected bool clipCursorWhenFullscreen; // Whether to limit cursor pos when fullscreen
     protected bool startFullscreen; // Whether to start up the app in fullscreen mode
 
-    protected Size storedSize; // Store size when toggling between windowed full screen
-    protected Size prevSize;
+    protected Size storedSize;
     protected Point storedLocation;
     private MenuItem menuItemOptions;
     private MenuItem menuItemConfiguration;
@@ -236,37 +233,9 @@ namespace MediaPortal
       /* Do Nothing */
     }
 
-    private void AfterResize()
-    {
-      if (prevSize != this.ClientSize)
-      {
-        GUIWaitCursor.Dispose();
-        GUIFontManager.LoadFonts(Config.Get(Config.Dir.Skin) + m_strSkin + @"\fonts.xml");
-        GUIFontManager.InitializeDeviceObjects();
-        if (GUIGraphicsContext.DX9Device != null)
-        {
-          GUIWindowManager.OnResize();
-          GUIGraphicsContext.Load();
-          GUIWindowManager.PreInit();
-          GUIWindowManager.ActivateWindow(GUIWindowManager.ActiveWindow);
-          GUIWindowManager.OnDeviceRestored();
-        }
-        prevSize = this.ClientSize;
-      }
-    }
     protected virtual void OnDeviceReset(Object sender, EventArgs e)
     {
-      Log.Info("OnDeviceReset");
-      if(mustHandleResize)
-        AfterResize();
-      GUIFontManager.SetDevice();
-      mustHandleResize = false;
-    }
-
-    protected virtual void OnResizeEnd(Object sender, EventArgs e)
-    {
-      Log.Info("OnResizeEnd");
-      AfterResize();
+      /* Do Nothing */
     }
 
     protected virtual void FrameMove()
@@ -306,6 +275,11 @@ namespace MediaPortal
     private int m_iSleepingTime = 50;
     private bool autoHideTaskbar = true;
     private bool alwaysOnTop = false;
+    private Device m_dddevice = null;
+    private SurfaceDescription m_dddescription = null;
+    private Surface m_ddfront = null;
+    private Surface m_ddback = null;
+    private bool useExclusiveDirectXMode;
 
     [DllImport("winmm.dll")]
     internal static extern uint timeBeginPeriod(uint period);
@@ -416,7 +390,6 @@ namespace MediaPortal
     {
       enumerationSettings.ConfirmDeviceCallback = new D3DEnumeration.ConfirmDeviceCallbackType(this.ConfirmDevice);
       enumerationSettings.Enumerate();
-      bool startfull=false;
 
       if (ourRenderTarget.Cursor == null)
       {
@@ -472,8 +445,7 @@ namespace MediaPortal
 
             //m_bNeedReset=true;
             //deviceLost=true;
-            windowed = false;
-            startfull = true;
+            isMaximized = true;
           }
         }
 
@@ -499,8 +471,7 @@ namespace MediaPortal
       // The app is ready to go
       ready = true;
 
-      if (startfull)
-        ToggleFullWindowed();
+
       return true;
     }
 
@@ -764,27 +735,8 @@ namespace MediaPortal
       presentParams.EnableAutoDepthStencil = false;
       presentParams.ForceNoMultiThreadedFlag = false;
 
-      // Exclusive mode can only be set in full screen mode
-      if (isExlusiveMode && !windowed)
+      if (windowed)
       {
-        Log.Info("D3D: BuildPresentParamsFromSettings - exlusive mode");
-        presentParams.MultiSample = graphicsSettings.FullscreenMultisampleType;
-        presentParams.MultiSampleQuality = graphicsSettings.FullscreenMultisampleQuality;
-        presentParams.AutoDepthStencilFormat = graphicsSettings.FullscreenDepthStencilBufferFormat;
-
-        presentParams.BackBufferWidth = graphicsSettings.DisplayMode.Width;
-        presentParams.BackBufferHeight = graphicsSettings.DisplayMode.Height;
-        presentParams.BackBufferFormat = graphicsSettings.DeviceCombo.BackBufferFormat;
-        presentParams.PresentationInterval = PresentInterval.Default;
-        presentParams.FullScreenRefreshRateInHz = graphicsSettings.DisplayMode.RefreshRate;
-        presentParams.SwapEffect = SwapEffect.Discard;
-        presentParams.PresentFlag = PresentFlag.Video; //|PresentFlag.LockableBackBuffer;
-        presentParams.DeviceWindow = this;
-        presentParams.Windowed = false;
-      }
-      else
-      {
-        Log.Info("D3D: BuildPresentParamsFromSettings - none exlusive mode");
         presentParams.MultiSample = graphicsSettings.WindowedMultisampleType;
         presentParams.MultiSampleQuality = graphicsSettings.WindowedMultisampleQuality;
         presentParams.AutoDepthStencilFormat = graphicsSettings.WindowedDepthStencilBufferFormat;
@@ -799,6 +751,22 @@ namespace MediaPortal
         presentParams.Windowed = true;
         //presentParams.PresentationInterval = PresentInterval.Immediate;
       }
+      else
+      {
+        presentParams.MultiSample = graphicsSettings.FullscreenMultisampleType;
+        presentParams.MultiSampleQuality = graphicsSettings.FullscreenMultisampleQuality;
+        presentParams.AutoDepthStencilFormat = graphicsSettings.FullscreenDepthStencilBufferFormat;
+
+        presentParams.BackBufferWidth = graphicsSettings.DisplayMode.Width;
+        presentParams.BackBufferHeight = graphicsSettings.DisplayMode.Height;
+        presentParams.BackBufferFormat = graphicsSettings.DeviceCombo.BackBufferFormat;
+        presentParams.PresentationInterval = PresentInterval.Default;
+        presentParams.FullScreenRefreshRateInHz = graphicsSettings.DisplayMode.RefreshRate;
+        presentParams.SwapEffect = SwapEffect.Discard;
+        presentParams.PresentFlag = PresentFlag.Video; //|PresentFlag.LockableBackBuffer;
+        presentParams.DeviceWindow = this;
+        presentParams.Windowed = false;
+      }
       GUIGraphicsContext.DirectXPresentParameters = presentParams;
     }
 
@@ -808,10 +776,16 @@ namespace MediaPortal
     /// 
     public void SwitchFullScreenOrWindowed(bool bWindowed)
     {
+      if (!useExclusiveDirectXMode)
+        return;
 
-      Log.Info("D3D: SwitchFullScreenOrWindowed - Windowed: {0} Playing media: {1}", bWindowed, g_Player.Playing);
+      // Temporary remove the handler
+      GUIGraphicsContext.DX9Device.DeviceReset -= new EventHandler(this.OnDeviceReset);
 
-      mustHandleResize = true;
+      if (bWindowed)
+        Log.Info("D3D: Switch to windowed mode - Playing media: {0}", g_Player.Playing);
+      else
+        Log.Info("D3D: Switch to fullscreen mode - Playing media: {0}", g_Player.Playing);
 
       windowed = bWindowed;
       BuildPresentParamsFromSettings();
@@ -882,7 +856,7 @@ namespace MediaPortal
         throw new ApplicationException();
 
       // Make sure to allow multithreaded apps if we need them
-      presentParams.ForceNoMultiThreadedFlag = false;
+      presentParams.ForceNoMultiThreadedFlag = !isMultiThreaded;
 
       try
       {
@@ -975,8 +949,10 @@ namespace MediaPortal
         }
 
         // Setup the event handlers for our device
-        this.ResizeEnd += new EventHandler(this.OnResizeEnd);
+        //GUIGraphicsContext.DX9Device.DeviceLost += new System.EventHandler(this.OnDeviceLost);
         GUIGraphicsContext.DX9Device.DeviceReset += new EventHandler(this.OnDeviceReset);
+        //GUIGraphicsContext.DX9Device.Disposing += new System.EventHandler(this.OnDeviceDisposing);
+        //GUIGraphicsContext.DX9Device.DeviceResizing += new System.ComponentModel.CancelEventHandler(this.EnvironmentResized);
 
         // Initialize the app's device-dependent objects
         try
@@ -1100,6 +1076,148 @@ namespace MediaPortal
         GUIGraphicsContext.DX9Device.SetCursor(ourCursor, true);
         GUIGraphicsContext.DX9Device.ShowCursor(true);
       }
+    }
+
+
+    /// <summary>
+    /// Called when user toggles between fullscreen mode and windowed mode
+    /// </summary>
+    public void ToggleFullscreen()
+    {
+      Log.Info("D3D: ToggleFullscreen");
+      int AdapterOrdinalOld = graphicsSettings.AdapterOrdinal;
+      DeviceType DevTypeOld = graphicsSettings.DevType;
+
+      isHandlingSizeChanges = false;
+      isChangingFormStyle = true;
+      ready = false;
+
+      // Toggle the windowed state
+      windowed = !windowed;
+
+      // Save our maximized settings..
+      if (!windowed && isMaximized)
+        this.WindowState = FormWindowState.Normal;
+
+      graphicsSettings.IsWindowed = windowed;
+
+      // If AdapterOrdinal and DevType are the same, we can just do a Reset().
+      // If they've changed, we need to do a complete device teardown/rebuild.
+      if (graphicsSettings.AdapterOrdinal == AdapterOrdinalOld &&
+          graphicsSettings.DevType == DevTypeOld)
+      {
+        BuildPresentParamsFromSettings();
+      // Resize the 3D device
+      RETRY:
+        try
+        {
+          GUIGraphicsContext.DX9Device.Reset(presentParams);
+        }
+        catch
+        {
+          if (windowed)
+            ForceWindowed();
+          else
+            // Sit in a loop until the device passes Reset()
+            try
+            {
+              GUIGraphicsContext.DX9Device.TestCooperativeLevel();
+            }
+            catch (DeviceNotResetException)
+            {
+              // Device still needs to be Reset. Try again.
+              // Yield some CPU time to other processes
+#if !PROFILING
+              Thread.Sleep(100); // 100 milliseconds
+#endif
+              goto RETRY;
+            }
+        }
+        EnvironmentResized(GUIGraphicsContext.DX9Device, new CancelEventArgs());
+      }
+      else
+      {
+        GUIGraphicsContext.DX9Device.Dispose();
+        GUIGraphicsContext.DX9Device = null;
+        InitializeEnvironment();
+      }
+
+      // When moving from fullscreen to windowed mode, it is important to
+      // adjust the window size after resetting the device rather than
+      // beforehand to ensure that you get the window size you want.  For
+      // example, when switching from 640x480 fullscreen to windowed with
+      // a 1000x600 window on a 1024x768 desktop, it is impossible to set
+      // the window size to 1000x600 until after the display mode has
+      // changed to 1024x768, because windows cannot be larger than the
+      // desktop.
+
+      if (windowed)
+      {
+        // if our render target is the main window and we haven't said 
+        // ignore the menus, add our menu
+        if ((ourRenderTarget == this) && (isUsingMenus))
+          this.Menu = menuStripMain;
+        this.FormBorderStyle = FormBorderStyle.Sizable;
+        isChangingFormStyle = false;
+
+        // We were maximized, restore that state
+        if (isMaximized)
+          this.WindowState = FormWindowState.Maximized;
+        this.SendToBack();
+        this.BringToFront();
+        this.ClientSize = storedSize;
+        this.Location = storedLocation;
+        this.TopMost = alwaysOnTop;
+        //this.FormBorderStyle=FormBorderStyle.None;
+      }
+      else
+      {
+        if (this.Menu != null)
+          this.Menu = null;
+
+        this.FormBorderStyle = FormBorderStyle.None;
+        isChangingFormStyle = false;
+      }
+      isHandlingSizeChanges = true;
+      ready = true;
+    }
+
+
+    /// <summary>
+    /// Switch to a windowed mode, even if that means picking a new device and/or adapter
+    /// </summary>
+    public void ForceWindowed()
+    {
+      if (windowed)
+        return;
+
+      if (!FindBestWindowedMode(false, false))
+        return;
+
+      windowed = true;
+
+      // Now destroy the current 3D device objects, then reinitialize
+
+      ready = false;
+
+      // Release display objects, so a new device can be created
+      GUIGraphicsContext.DX9Device.Dispose();
+      GUIGraphicsContext.DX9Device = null;
+
+      // Create the new device
+      try
+      {
+        InitializeEnvironment();
+      }
+      catch (SampleException e)
+      {
+        HandleSampleException(e, ApplicationMessage.ApplicationMustExit);
+      }
+      catch
+      {
+        HandleSampleException(new SampleException(), ApplicationMessage.ApplicationMustExit);
+      }
+      ready = true;
     }
 
     /// <summary>
@@ -1331,6 +1449,7 @@ namespace MediaPortal
         {
           //Log.Info("app.TestCooperativeLevel()->DeviceLostException");
           // If the device was lost, do not render until we get it back
+          isHandlingSizeChanges = false;
           isWindowActive = false;
           //Log.Info("app.DeviceLostException");
           return;
@@ -1393,6 +1512,9 @@ namespace MediaPortal
 
     private void HandleCursor()
     {
+      if (!isMaximized)
+        return;
+
       if (_autoHideMouse)
       {
         if (_showCursor != _lastShowCursor)
@@ -1603,6 +1725,71 @@ namespace MediaPortal
       MediaPortal.Util.Utils.StartProcess("Configuration.exe", "", false, false);
     }
 
+    /// <summary>
+    /// Prepares the simulation for a new device being selected
+    /// </summary>
+    public void UserSelectNewDevice(object sender, EventArgs e)
+    {
+      // Prompt the user to select a new device or mode
+      if (active && ready)
+        DoSelectNewDevice();
+    }
+
+
+    /// <summary>
+    /// Displays a dialog so the user can select a new adapter, device, or
+    /// display mode, and then recreates the 3D environment if needed
+    /// </summary>
+    private void DoSelectNewDevice()
+    {
+      isHandlingSizeChanges = false;
+      // Can't display dialogs in fullscreen mode
+      if (windowed == false)
+        try
+        {
+          ToggleFullscreen();
+          isHandlingSizeChanges = false;
+        }
+        catch
+        {
+          HandleSampleException(new ResetFailedException(), ApplicationMessage.ApplicationMustExit);
+          return;
+        }
+
+      // Make sure the main form is in the background
+      this.SendToBack();
+      D3DSettingsForm settingsForm = new D3DSettingsForm(enumerationSettings, graphicsSettings);
+      DialogResult result = settingsForm.ShowDialog(null);
+      if (result != DialogResult.OK)
+      {
+        isHandlingSizeChanges = true;
+        return;
+      }
+      graphicsSettings = settingsForm.settings;
+
+      windowed = graphicsSettings.IsWindowed;
+
+      // Release display objects, so a new device can be created
+      GUIGraphicsContext.DX9Device.Dispose();
+      GUIGraphicsContext.DX9Device = null;
+
+      // Inform the display class of the change. It will internally
+      // re-create valid surfaces, a d3ddevice, etc.
+      try
+      {
+        InitializeEnvironment();
+      }
+      catch (SampleException d3de)
+      {
+        HandleSampleException(d3de, ApplicationMessage.ApplicationMustExit);
+      }
+      catch
+      {
+        HandleSampleException(new SampleException(), ApplicationMessage.ApplicationMustExit);
+      }
+
+      isHandlingSizeChanges = true;
+    }
 
 
     /// <summary>
@@ -1712,40 +1899,27 @@ namespace MediaPortal
     }
 
 
-    protected void SetExlusiveMode(bool exlusivemode)
-    {
-      Log.Info("D3D: SetExlusiveMode - exlusivemode: {0} useExclusiveDirectXMode: {1}", exlusivemode, useExclusiveDirectXMode);
-
-      if (!useExclusiveDirectXMode)
-        return;
-     
-      // Are we already in right state?
-      if (exlusivemode == isExlusiveMode)
-        return;
-
-      isExlusiveMode = exlusivemode;
-      SwitchFullScreenOrWindowed(windowed);
-     
-    }
     protected void ToggleFullWindowed()
     {
       Log.Info("D3D: Fullscreen / windowed mode toggled");
- 
-      windowed = !windowed;
 
-      GUIGraphicsContext.DX9Device.DeviceReset -= new EventHandler(this.OnDeviceReset);
-      if (!windowed)
+      isMaximized = !isMaximized;
 
+      GUITextureManager.CleanupThumbs();
+      GUITextureManager.Dispose();
+      GUIFontManager.Dispose();
+
+      if (isMaximized)
       {
-        Log.Info("D3D: Switching windowed mode -> fullscreen autoHideTaskbar:{0}", autoHideTaskbar);
+        Log.Info("D3D: Switching windowed mode -> fullscreen");
         if (autoHideTaskbar)
         {
           Win32API.EnableStartBar(false);
           Win32API.ShowStartBar(false);
         }
-
-        Log.Info("D3D: Switching windowed mode -> fullscreen, new stored size {0}, {1}", ClientSize.Height, ClientSize.Width);
-        storedSize = ClientSize;
+        // Disable DeviceReset event handler, so it's not called when we resize
+        // (Event handler is reinstated in SwitchFullScreenOrWindowed)
+        GUIGraphicsContext.DX9Device.DeviceReset -= new EventHandler(this.OnDeviceReset);
 
         this.FormBorderStyle = FormBorderStyle.None;
         this.MaximizeBox = false;
@@ -1756,32 +1930,22 @@ namespace MediaPortal
         this.ClientSize = new Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
         this.Update();
 
-
-        GUIGraphicsContext.DX9Device.DeviceReset += new EventHandler(this.OnDeviceReset);
-
-        SwitchFullScreenOrWindowed(false);
-        Log.Info("D3D: Switching windowed mode -> fullscreen done - windowed: {0}", windowed);
-
+        Log.Info("D3D: Switching windowed mode -> fullscreen done - Maximized: {0}", isMaximized);
         Log.Info("D3D: Client size: {0}x{1} - Screen: {2}x{3}",
                   this.ClientSize.Width, this.ClientSize.Height,
                   Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
+
+        SwitchFullScreenOrWindowed(false);
       }
       else
       {
         Log.Info("D3D: Switching fullscreen -> windowed mode");
-        Log.Info("D3D: Switching fullscreen -> windowed mode, using stored size {0}, {1}", storedSize.Height, storedSize.Width);
-     
         if (autoHideTaskbar)
         {
           Win32API.EnableStartBar(true);
           Win32API.ShowStartBar(true);
         }
-        // We were maximized, restore that state
-        if (isMaximized)
-          this.WindowState = FormWindowState.Maximized;
-        else
-          this.WindowState = FormWindowState.Normal;
-
+        this.WindowState = FormWindowState.Normal;
         this.FormBorderStyle = FormBorderStyle.Sizable;
         this.MaximizeBox = true;
         this.MinimizeBox = true;
@@ -1791,15 +1955,12 @@ namespace MediaPortal
         this.ClientSize = storedSize;
         this.Update();
 
-
-        GUIGraphicsContext.DX9Device.DeviceReset += new EventHandler(this.OnDeviceReset);
-        SwitchFullScreenOrWindowed(true);
-
-        Log.Info("D3D: Switching fullscreen -> windowed mode done - windowed: {0}", windowed);
-
+        Log.Info("D3D: Switching fullscreen -> windowed mode done - Maximized: {0}", isMaximized);
         Log.Info("D3D: Client size: {0}x{1} - Screen: {2}x{3}",
                   this.ClientSize.Width, this.ClientSize.Height,
                   Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
+
+        SwitchFullScreenOrWindowed(true);
       }
       OnDeviceReset(null, null);
     }
@@ -1952,6 +2113,11 @@ namespace MediaPortal
       this.menuItemTelevision.Text = "Television";
       this.menuItemTelevision.Click += new System.EventHandler(this.televisionMenuItem_Click);
       // 
+      // menuItemChangeDevice
+      // 
+      this.menuItemChangeDevice.Index = -1;
+      this.menuItemChangeDevice.Text = "&Change Device...";
+      this.menuItemChangeDevice.Click += new System.EventHandler(this.UserSelectNewDevice);
       // 
       // menuBreakFile
       // 
@@ -2028,7 +2194,6 @@ namespace MediaPortal
     /// </summary>
     protected override void OnResize(EventArgs e)
     {
-      Log.Info("OnResize {0}", this.WindowState);
       if (_fromTray)
         _fromTray = false;
       else
@@ -2045,20 +2210,6 @@ namespace MediaPortal
           notifyIcon.Visible = false;
 
       active = !(this.WindowState == FormWindowState.Minimized);
-      if(this.WindowState == FormWindowState.Maximized)
-      {
-        if (isMaximized == false)
-          mustHandleResize = true;
-        isMaximized = true;
-      }
-
-      // Going to normal state from maximized state
-      if (this.WindowState == FormWindowState.Normal)
-      {
-        if (isMaximized == true)
-          mustHandleResize = true;
-        isMaximized = false;
-      }
 
       try
       {
@@ -2074,6 +2225,7 @@ namespace MediaPortal
     /// </summary>
     protected override void OnGotFocus(EventArgs e)
     {
+      isHandlingSizeChanges = true;
       isWindowActive = true;
       base.OnGotFocus(e);
     }
@@ -2084,6 +2236,10 @@ namespace MediaPortal
     /// </summary>
     protected override void OnMove(EventArgs e)
     {
+      if (isHandlingSizeChanges)
+      {
+        //storedLocation = this.Location;
+      }
       base.OnMove(e);
     }
 
@@ -2180,13 +2336,34 @@ namespace MediaPortal
     {
       keypressed(e);
     }
+
+
+    private void CreateDirectDrawSurface()
+    {
+      m_dddescription = new SurfaceDescription();
+      m_dddevice = new Device();
+      m_dddevice.SetCooperativeLevel(this, CooperativeLevelFlags.Exclusive);
+      m_dddevice.SetDisplayMode(presentParams.BackBufferWidth, presentParams.BackBufferHeight, 32, 0, false);
+
+      m_dddescription.SurfaceCaps.PrimarySurface = true;
+      m_dddescription.SurfaceCaps.Flip = true;
+      m_dddescription.SurfaceCaps.Complex = true;
+      m_dddescription.BackBufferCount = 1;
+      m_ddfront = new Surface(m_dddescription, m_dddevice);
+      SurfaceCaps caps = new SurfaceCaps();
+      // Yes, we are using a back buffer
+      caps.BackBuffer = true;
+
+      // Associate the front buffer to back buffer with specified caps
+      m_ddback = m_ddfront.GetAttachedSurface(caps);
+    }
     
     private void televisionMenuItem_Click(object sender, EventArgs e)
     {
       g_Player.Stop();
 
-      //if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false)
-      //  SwitchFullScreenOrWindowed(true);
+      if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false)
+        SwitchFullScreenOrWindowed(true);
 
       using (Settings xmlreader = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         xmlreader.Clear();
@@ -2198,8 +2375,8 @@ namespace MediaPortal
     {
       g_Player.Stop();
 
-      //if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false)
-      //  SwitchFullScreenOrWindowed(true);
+      if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false)
+        SwitchFullScreenOrWindowed(true);
 
       using (Settings xmlreader = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         xmlreader.Clear();
@@ -2211,8 +2388,8 @@ namespace MediaPortal
     {
       g_Player.Stop();
 
-      //if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false)
-      //  SwitchFullScreenOrWindowed(true);
+      if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false)
+        SwitchFullScreenOrWindowed(true);
 
       using (Settings xmlreader = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         xmlreader.Clear();
@@ -2224,8 +2401,8 @@ namespace MediaPortal
     {
       g_Player.Stop();
 
-      //if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false)
-      //  SwitchFullScreenOrWindowed(true);
+      if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false)
+        SwitchFullScreenOrWindowed(true);
 
       using (Settings xmlreader = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         xmlreader.Clear();
@@ -2237,8 +2414,8 @@ namespace MediaPortal
     {
       g_Player.Stop();
 
-      //if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false)
-      //  SwitchFullScreenOrWindowed(true);
+      if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false)
+        SwitchFullScreenOrWindowed(true);
 
       using (Settings xmlreader = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
         xmlreader.Clear();
