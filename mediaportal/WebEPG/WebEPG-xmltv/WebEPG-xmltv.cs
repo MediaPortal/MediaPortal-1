@@ -42,8 +42,7 @@ namespace MediaPortal.EPG.TestWebEPG
     static void Main()
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
-      LogFile logFile = new LogFile("WebEPG");
-      ILog log = new Log(logFile.GetSharedStream(), Log.Level.Debug);
+      ILog log = new Log("WebEPG", Log.Level.Debug);
       services.Add<ILog>(log);
 
       log.Info("WebEPG: Starting");
