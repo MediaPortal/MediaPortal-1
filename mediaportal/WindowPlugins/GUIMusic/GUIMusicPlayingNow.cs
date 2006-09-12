@@ -789,15 +789,16 @@ namespace MediaPortal.GUI.Music
           if (CurrentTrackTag.Track <= 0)
             strTrack = String.Empty;
 
+          string strYear = String.Format("{0} {1}", GUILocalizeStrings.Get(436), CurrentTrackTag.Year); //	"Year: "
+          if (CurrentTrackTag.Year <= 1900)
+            strYear = String.Empty;
+
           GUIPropertyManager.SetProperty("#Play.Current.Title", CurrentTrackTag.Title);
           GUIPropertyManager.SetProperty("#Play.Current.Track", strTrack);
           GUIPropertyManager.SetProperty("#Play.Current.Album", CurrentTrackTag.Album);
           GUIPropertyManager.SetProperty("#Play.Current.Artist", CurrentTrackTag.Artist);
           GUIPropertyManager.SetProperty("#Play.Current.Genre", CurrentTrackTag.Genre);
-          if (CurrentTrackTag.Year > 0)
-            GUIPropertyManager.SetProperty("#Play.Current.Year", CurrentTrackTag.Year.ToString());
-          else
-            GUIPropertyManager.SetProperty("#Play.Current.Year", "");
+          GUIPropertyManager.SetProperty("#Play.Current.Year", strYear);
 
           if (g_Player.Playing)
             GUIPropertyManager.SetProperty("#duration", Convert.ToString(g_Player.Duration));
@@ -808,7 +809,7 @@ namespace MediaPortal.GUI.Music
           //  ImgListRating.Percentage = rating;
           //}
           if (InfoNeeded)
-          {            
+          {
             StartAlbumInfoThread();
             StartTagInfoThread();
           }
@@ -829,23 +830,24 @@ namespace MediaPortal.GUI.Music
         if (NextTrackTag != null)
         {
           LblUpNext.Visible = true;
-          string strNextTrack = String.Format("{0} {1}", GUILocalizeStrings.Get(435), NextTrackTag.Track);   //	"Track"
+          string strNextTrack = String.Format("{0} {1}", GUILocalizeStrings.Get(435), NextTrackTag.Track);   //	"Track: "
           if (NextTrackTag.Track <= 0)
             strNextTrack = String.Empty;
+
+          string strYear = String.Format("{0} {1}", GUILocalizeStrings.Get(436), NextTrackTag.Year); //	"Year: "
+          if (NextTrackTag.Year <= 1900)
+            strYear = String.Empty;
 
           GUIPropertyManager.SetProperty("#Play.Next.Title", NextTrackTag.Title);
           GUIPropertyManager.SetProperty("#Play.Next.Track", strNextTrack);
           GUIPropertyManager.SetProperty("#Play.Next.Album", NextTrackTag.Album);
           GUIPropertyManager.SetProperty("#Play.Next.Artist", NextTrackTag.Artist);
           GUIPropertyManager.SetProperty("#Play.Next.Genre", NextTrackTag.Genre);
-          if (NextTrackTag.Year > 0)
-            GUIPropertyManager.SetProperty("#Play.Next.Year", NextTrackTag.Year.ToString());
-          else
-            GUIPropertyManager.SetProperty("#Play.Next.Year", String.Empty);
+          GUIPropertyManager.SetProperty("#Play.Next.Year", strYear);
         }
         else
         {
-          LblUpNext.Visible = false;          
+          LblUpNext.Visible = false;
           GUIPropertyManager.SetProperty("#Play.Next.Title", String.Empty);
           GUIPropertyManager.SetProperty("#Play.Next.Track", String.Empty);
           GUIPropertyManager.SetProperty("#Play.Next.Album", String.Empty);

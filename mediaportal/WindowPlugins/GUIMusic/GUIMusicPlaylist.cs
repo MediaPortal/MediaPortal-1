@@ -239,10 +239,10 @@ namespace MediaPortal.GUI.Music
     // Handle case where playlist has been stopped and we receive a player action.
       // This allows us to restart the playback proccess...
       else if (action.wID == Action.ActionType.ACTION_MUSIC_PLAY
-            || action.wID == Action.ActionType.ACTION_NEXT_ITEM
-            || action.wID == Action.ActionType.ACTION_PAUSE
-            || action.wID == Action.ActionType.ACTION_PREV_ITEM
-          )
+       || action.wID == Action.ActionType.ACTION_NEXT_ITEM
+       || action.wID == Action.ActionType.ACTION_PAUSE
+       || action.wID == Action.ActionType.ACTION_PREV_ITEM
+     )
       {
         if (playlistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_MUSIC)
         {
@@ -661,15 +661,6 @@ namespace MediaPortal.GUI.Music
             {
               item.MusicTag = TagReader.TagReader.ReadTag(item.Path);
             }
-        }
-        MusicTag checkTag = (MusicTag)item.MusicTag;
-        if (checkTag.Title.IndexOf("unknown") > 0 || checkTag.Title == String.Empty || checkTag.Title == ("unknown"))
-        {
-          string tmpFilename = System.IO.Path.GetFileNameWithoutExtension(item.Path);
-          item.Label = tmpFilename;
-          checkTag.Title = String.Empty;
-          checkTag.Artist = tmpFilename;
-          item.MusicTag = checkTag;
         }
       }
     }
@@ -1435,7 +1426,11 @@ namespace MediaPortal.GUI.Music
       {
         GUIListItem item = facadeView[i];
         MusicTag tag = (MusicTag)item.MusicTag;
-        if (tag != null)
+        bool dirtyTag = false;
+        if (tag.Title == ("unknown") || tag.Title.IndexOf("unknown") > 0 || tag.Title == String.Empty)
+          dirtyTag = true;
+
+        if (tag != null && !dirtyTag)
         {
           int playCount = tag.TimesPlayed;
           string duration = MediaPortal.Util.Utils.SecondsToHMSString(tag.Duration);
@@ -1443,6 +1438,16 @@ namespace MediaPortal.GUI.Music
           item.Label2 = duration;
         }
       }
+
+      //MusicTag checkTag = (MusicTag)item.MusicTag;
+      //if (checkTag.Title.IndexOf("unknown") > 0 || checkTag.Title == String.Empty || checkTag.Title == ("unknown"))
+      //{
+      //  string tmpFilename = System.IO.Path.GetFileNameWithoutExtension(item.Path);
+      //  item.Label = tmpFilename;
+      //  checkTag.Title = String.Empty;
+      //  checkTag.Artist = tmpFilename;
+      //  item.MusicTag = checkTag;
+      //}
 
       for (int i = 0; i < facadeView.Count; ++i)
       {

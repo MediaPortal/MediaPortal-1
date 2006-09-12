@@ -66,7 +66,7 @@
          <description>track label</description>
          <id>113</id>
          <posX>135</posX>
-         <posY>450</posY>
+         <posY>452</posY>
          <width>320</width>
          <height>20</height>
          <label>#Play.Current.Title</label>
@@ -79,7 +79,7 @@
          <description>track label</description>
          <id>113</id>
          <posX>134</posX>
-         <posY>480</posY>
+         <posY>484</posY>
          <width>288</width>
          <height>20</height>
          <label>#Play.Current.Artist</label>
@@ -92,7 +92,7 @@
          <description>track label</description>
          <id>113</id>
          <posX>134</posX>
-         <posY>511</posY>
+         <posY>512</posY>
          <width>288</width>
          <height>20</height>
           <label>#Play.Current.Track</label>
@@ -118,7 +118,7 @@
          <id>6</id>
          <posX>410</posX>
          <posY>79</posY>
-         <width>185</width>
+         <width>180</width>
          <label>#Play.Current.Album</label>
          <font>font14</font>
          <align>left</align>
@@ -138,7 +138,7 @@
          <id>118</id>
          <posX>438</posX>
          <posY>373</posY>
-         <width>190</width>
+         <width>204</width>
          <visible>no</visible>
          <lefttexture>osd_progress_left.png</lefttexture>
          <texturebg>progress_back.png</texturebg>
@@ -232,8 +232,8 @@
          <height>135</height>
          <spinColor>-</spinColor>
          <textureUp>-</textureUp>
-		     <textureDown>-</textureDown>
-		     <textureUpFocus>-</textureUpFocus>
+	 <textureDown>-</textureDown>
+	 <textureUpFocus>-</textureUpFocus>
          <textureDownFocus>-</textureDownFocus>
          <textcolor>White</textcolor>
       </control>
