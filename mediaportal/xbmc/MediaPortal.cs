@@ -127,6 +127,7 @@ public class MediaPortalApp : D3DApp, IRender
     //private const int PBT_APMPOWERSTATUSCHANGE = 0x000A;
     //private const int PBT_APMOEMEVENT = 0x000B;
     private const int PBT_APMRESUMEAUTOMATIC = 0x0012;
+    private const int BROADCAST_QUERY_DENY = 0x424D5144;
 
     private const int SC_SCREENSAVE = 0xF140;
 
@@ -591,7 +592,7 @@ public class MediaPortalApp : D3DApp, IRender
                         //Return TRUE to grant the request to suspend. To deny the request, return BROADCAST_QUERY_DENY.
                     case PBT_APMQUERYSUSPEND:
                         Log.Info("Main: Windows is requesting hibernate mode");
-                        OnSuspend();
+                        if (!OnSuspend(ref msg)) return;
                         break;
 
                         //The PBT_APMQUERYSTANDBY message is sent to request permission to suspend the computer.
@@ -600,7 +601,7 @@ public class MediaPortalApp : D3DApp, IRender
                     case PBT_APMQUERYSTANDBY:
                         // Stop all media before suspending or hibernating
                         Log.Info("Main: Windows is requesting standby mode");
-                        OnSuspend();
+                        if (!OnSuspend(ref msg)) return;
                         break;
                     case PBT_APMSUSPEND:
                         Log.Info("Main: Windows is suspending");
@@ -705,11 +706,18 @@ public class MediaPortalApp : D3DApp, IRender
     }
 
     //called when windows wants to hibernate or go into standbye mode
-    private void OnSuspend()
+    private bool OnSuspend(ref Message msg)
     {
         if (_suspended)
         {
-            return;
+            return true;
+        }
+             
+        if (Recorder.IsRecording()) // if we are recording then deny request
+        {
+          msg.Result = new IntPtr(BROADCAST_QUERY_DENY);
+          Log.Info("Main: TVRecording running -> Suspend stopped");
+          return false;
         }
         //stop playback
         _suspended = true;
@@ -729,6 +737,7 @@ public class MediaPortalApp : D3DApp, IRender
             SwitchFullScreenOrWindowed(true);
         }
         Log.Info("Main: OnSuspend - Done");
+        return true;
     }
 
     //called when windows wakes up again
