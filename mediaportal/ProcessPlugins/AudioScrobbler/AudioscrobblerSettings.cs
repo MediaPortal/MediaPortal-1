@@ -540,8 +540,13 @@ namespace MediaPortal.AudioScrobbler
 
     private void buttonOk_Click(object sender, EventArgs e)
     {
-      SaveSettings();
-      this.Close();
+      if (maskedTextBoxASPassword.Text.Length > 0)
+      {
+        SaveSettings();
+        this.Close();
+      }
+      else
+        MessageBox.Show("No password has been configured yet!");
     }
 
     private void buttonTagsRefresh_Click(object sender, EventArgs e)

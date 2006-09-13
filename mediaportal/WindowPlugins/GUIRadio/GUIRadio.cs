@@ -28,11 +28,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Globalization;
+
 using MediaPortal.Player;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Dialogs;
 using MediaPortal.Radio.Database;
+//using MediaPortal.Music.Database;
 using MediaPortal.Playlists;
 
 namespace MediaPortal.GUI.Radio
@@ -49,18 +51,12 @@ namespace MediaPortal.GUI.Radio
   /// </summary>
   public class GUIRadio : GUIWindow, IComparer<GUIListItem>, ISetupForm, IShowPlugin
   {
-    [SkinControlAttribute(2)]
-    protected GUIButtonControl btnViewAs = null;
-    [SkinControlAttribute(3)]
-    protected GUISortButtonControl btnSortBy = null;
-    [SkinControlAttribute(6)]
-    protected GUIButtonControl btnPrevious = null;
-    [SkinControlAttribute(7)]
-    protected GUIButtonControl btnNext = null;
-    [SkinControlAttribute(50)]
-    protected GUIListControl listView = null;
-    [SkinControlAttribute(51)]
-    protected GUIThumbnailPanel thumbnailView = null;
+    [SkinControlAttribute(2)]     protected GUIButtonControl btnViewAs = null;
+    [SkinControlAttribute(3)]     protected GUISortButtonControl btnSortBy = null;
+    [SkinControlAttribute(6)]     protected GUIButtonControl btnPrevious = null;
+    [SkinControlAttribute(7)]     protected GUIButtonControl btnNext = null;
+    [SkinControlAttribute(50)]    protected GUIListControl listView = null;
+    [SkinControlAttribute(51)]    protected GUIThumbnailPanel thumbnailView = null;
 
 
     enum SortMethod
@@ -91,6 +87,8 @@ namespace MediaPortal.GUI.Radio
     int selectedItemIndex = -1;
     PlayList currentPlayList = null;
     PlayListPlayer playlistPlayer;
+
+    //bool _useLastFM = true;
     #endregion
 
     public GUIRadio()
@@ -106,6 +104,7 @@ namespace MediaPortal.GUI.Radio
     {
       currentFolder = String.Empty;
       bool bResult = Load(GUIGraphicsContext.Skin + @"\MyRadio.xml");
+
       return bResult;
     }
 
@@ -257,6 +256,22 @@ namespace MediaPortal.GUI.Radio
       ShowThumbPanel();
       LoadDirectory(currentFolder);
       btnSortBy.SortChanged += new SortEventHandler(SortChanged);
+
+      //if (_useLastFM)
+      //{
+      //  if (!AudioscrobblerBase.Connected)
+      //    AudioscrobblerBase.Connect();
+      //  AudioscrobblerBase.DoRadioHandshake(true);
+      //}
+
+      // TO DO: 
+      // Steps to get a stream:
+      // 1. http.request.uri = Request URI: http://ws.audioscrobbler.com/radio/adjust.php?session=e5b0c80f5b5d0937d407fb77a913cb6a&url=lastfm://globaltags/alternative,alternative%20rock
+      // 2. http.request.uri = Request URI: http://streamer1.last.fm/last.mp3?Session=e5b0c80f5b5d0937d407fb77a913cb6a
+      // 3. http.request.uri = Request URI: http://ws.audioscrobbler.com/radio/control.php?session=e5b0c80f5b5d0937d407fb77a913cb6a&command=rtp
+      // 4. http.request.uri = Request URI: http://ws.audioscrobbler.com/radio/adjust.php?session=e5b0c80f5b5d0937d407fb77a913cb6a&url=lastfm://settings/discovery/off
+      // 5. http.request.uri = Request URI: http://ws.audioscrobbler.com/radio/np.php?session=e5b0c80f5b5d0937d407fb77a913cb6a
+      // 6. 
     }
 
     protected override void OnPageDestroy(int newWindowId)

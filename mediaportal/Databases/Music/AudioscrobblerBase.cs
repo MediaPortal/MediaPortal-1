@@ -50,9 +50,10 @@ namespace MediaPortal.Music.Database
     const string CLIENT_NAME = "mpm"; //assigned by Russ Garrett from Last.fm Ltd.
     const string CLIENT_VERSION = "0.1";
     const string SCROBBLER_URL = "http://post.audioscrobbler.com";
+    const string RADIO_SCROBBLER_URL = "http://ws.audioscrobbler.com/radio/";
     const string PROTOCOL_VERSION = "1.1";
     #endregion
-
+    
     #region Variables
     // Client-specific config variables.
     private static string username;
@@ -67,6 +68,7 @@ namespace MediaPortal.Music.Database
     private static Object submitLock;
     private static int _antiHammerCount = 0;
     private static DateTime lastHandshake;        //< last successful attempt.
+    private static DateTime lastRadioHandshake;
     private static TimeSpan handshakeInterval;
     private static DateTime lastConnectAttempt;
 
@@ -211,6 +213,9 @@ namespace MediaPortal.Music.Database
     public static void Connect()
     {
       // Try to submit all queued songs immediately.
+      if (!_signedIn)
+        DoHandshake(true);
+
       if (!_disableTimerThread)
         StartSubmitQueueThread();
       // From now on, try to submit queued songs periodically.
@@ -375,8 +380,9 @@ namespace MediaPortal.Music.Database
                  + "&v=" + CLIENT_VERSION
                  + "&u=" + System.Web.HttpUtility.UrlEncode(username);
 
+      //string url = "http://post.audioscrobbler.com/?hs=true&p=1.1&c=ass&v=1.0.2&u=f1n4rf1n";
       // Parse handshake response
-      bool success = GetResponse(url, "");
+      bool success = GetResponse(url, "", false);
 
       if (!success)
       {
@@ -396,6 +402,55 @@ namespace MediaPortal.Music.Database
         Log.Debug("AudioscrobblerBase: {0}", "Handshake successful");
       return true;
     }
+
+    public static bool DoRadioHandshake(bool forceNow_)
+    {
+      // Handle uninitialized username/password.
+      if (username == "" || password == "")
+      {
+        Log.Error("AudioscrobblerBase: {0}", "user or password not defined for Last.FM Radio");
+        return false;
+      }
+
+      if (!forceNow_)
+      {
+        // Check whether we had a *successful* handshake recently.
+        if (DateTime.Now < lastRadioHandshake.Add(handshakeInterval))
+        {
+          string nextRadioHandshake = lastRadioHandshake.Add(handshakeInterval).ToString();
+          string logmessage = "Next handshake due at " + nextRadioHandshake;
+          if (_useDebugLog)
+            Log.Debug("AudioscrobblerBase: {0}", logmessage);
+          return true;
+        }
+      }
+      //  handshake.php?version=1.0.2&platform=win32&username=f1n4rf1n&passwordmd5=3847af7ab43a1c31503e8bef7736c41f&language=en
+      //Log.Info("AudioscrobblerBase.DoHandshake: {0}", "Attempting handshake");
+      string tmpUser = System.Web.HttpUtility.UrlEncode(username).ToLower();
+      string tmpPass = HashPassword();
+      string url = RADIO_SCROBBLER_URL
+                 + "handshake.php"
+                 + "?version=" + "1.0.2"
+                 + "&platform=" + "win32"
+                 + "&username=" + tmpUser
+                 + "&passwordmd5=" + tmpPass
+                 + "&language=" + "en";
+
+      // Parse handshake response
+      bool success = GetResponse(url, "", true);
+
+      if (!success)
+      {
+        Log.Warn("AudioscrobblerBase: {0}", "Handshake failed");
+        return false;
+      }
+
+      lastRadioHandshake = DateTime.Now;
+
+      if (_useDebugLog)
+        Log.Debug("AudioscrobblerBase: {0}", " Radio handshake successful");
+      return true;
+    }
     
 
     /// <summary>
@@ -404,7 +459,7 @@ namespace MediaPortal.Music.Database
     /// <param name="url_">The url to open</param>
     /// <param name="postdata_">Data to be sent via HTTP POST, an empty string for GET</param>
     /// <returns>True if the request was successfully completed, false otherwise</returns>
-    private static bool GetResponse(string url_, string postdata_)
+    private static bool GetResponse(string url_, string postdata_, bool useGet_)
     {
       // Enforce a minimum wait time between connects.
       DateTime nextconnect = lastConnectAttempt.Add(minConnectWaitTime);
@@ -444,10 +499,17 @@ namespace MediaPortal.Music.Database
         try
         {
           byte[] postHeaderBytes = Encoding.UTF8.GetBytes(postdata_);
-          request.Method = "POST";
+          if (useGet_)
+          {
+            request.Method = "GET";
+          }
+          else
+          {
+            request.Method = "POST";
+            request.ContentType = "application/x-www-form-urlencoded";
+          }
           request.ContentLength = postHeaderBytes.Length;
-          request.ContentType = "application/x-www-form-urlencoded";
-
+    
           // Create stream writer - this can also fail if we aren't connected
           Stream requestStream = request.GetRequestStream();
           requestStream.Write(postHeaderBytes, 0, postHeaderBytes.Length);
@@ -505,9 +567,13 @@ namespace MediaPortal.Music.Database
           parse_success = parseFailedMessage(respType, reader);
         else if (respType.StartsWith("BADUSER") || respType.StartsWith("BADAUTH"))
           parse_success = parseBadUserMessage(respType, reader);
+        //else if (respType.StartsWith("session=FAILED"))
+
         else
         {
-          string logmessage = "** CRITICAL ** Unknown response " + respType;
+          string logmessage = "** CRITICAL ** Unknown response";
+          while ((respType = reader.ReadLine()) != null)
+            logmessage += "\n " + respType;
           Log.Error("AudioscrobblerBase: {0}", logmessage);
         }
 
@@ -602,7 +668,7 @@ namespace MediaPortal.Music.Database
         }
 
         // Submit or die.
-        if (!GetResponse(submitUrl, postData))
+        if (!GetResponse(submitUrl, postData, false))
         {
           Log.Error("AudioscrobblerBase: {0}", "Submit failed.");
           return;
@@ -727,17 +793,39 @@ namespace MediaPortal.Music.Database
       // is the ascii-encoded MD5 representation, and + represents
       // concatenation.
 
-      MD5 hash = MD5.Create();
+      ////MD5 hash = MD5.Create();
+      ////UTF8Encoding encoding = new UTF8Encoding();
+      ////byte[] barr = hash.ComputeHash(encoding.GetBytes(password));
+
+      ////string tmp = CryptoConvert.ToHex(barr).ToLower();
+
+      ////barr = hash.ComputeHash(encoding.GetBytes(tmp + md5challenge));
+      ////string md5response = CryptoConvert.ToHex(barr).ToLower();
+
+      ////return md5response;
+
+
+      MD5 hash = MD5CryptoServiceProvider.Create();
       UTF8Encoding encoding = new UTF8Encoding();
       byte[] barr = hash.ComputeHash(encoding.GetBytes(password));
 
-      string tmp = CryptoConvert.ToHex(barr).ToLower();
+      string tmp = String.Empty;
+      for (int i = 0; i < barr.Length; i++)
+      {
+        tmp += barr[i].ToString("x2");
+      }
 
       barr = hash.ComputeHash(encoding.GetBytes(tmp + md5challenge));
-      string md5response = CryptoConvert.ToHex(barr).ToLower();
 
-      return md5response;
+      string md5response = String.Empty;
+      for (int i = 0; i < barr.Length; i++)
+      {
+        md5response += barr[i].ToString("x2");
+      }
+
+      return md5response;   
     }
     #endregion
+
   } // class AudioscrobblerBase
 } // namespace AudioscrobblerBase
