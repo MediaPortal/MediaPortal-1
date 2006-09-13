@@ -29,6 +29,7 @@ using System.Windows.Forms;
 using MediaPortal.EPG;
 using MediaPortal.Utils.Services;
 using MediaPortal.Webepg.TV.Database;
+using MediaPortal.Util;
 
 namespace MediaPortal.EPG.TestWebEPG
 {
@@ -44,6 +45,12 @@ namespace MediaPortal.EPG.TestWebEPG
       ServiceProvider services = GlobalServiceProvider.Instance;
       ILog log = new Log("WebEPG", Log.Level.Debug);
       services.Add<ILog>(log);
+
+      if (!Config.LoadDirs(System.IO.Directory.GetCurrentDirectory()))
+      {
+        Console.WriteLine("Missing or Invalid MediaPortalDirs.xml file. MediaPortal cannot run without that file.");
+        return;
+      }
 
       log.Info("WebEPG: Starting");
       System.Diagnostics.Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.BelowNormal;
