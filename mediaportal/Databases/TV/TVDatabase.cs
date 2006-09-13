@@ -236,7 +236,7 @@ namespace MediaPortal.TV.Database
       if (versionNr < 9)
       {
         m_db.Execute("ALTER TABLE recorded ADD COLUMN idCard integer");
-        m_db.Execute("UPDATE recorded set idCard=0");
+        m_db.Execute("UPDATE recorded set idCard=1");
       }
       m_db.Execute(String.Format("update tblversion set idVersion={0}", currentVersion));
     }
