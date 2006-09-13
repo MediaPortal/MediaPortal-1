@@ -1046,10 +1046,24 @@ namespace MediaPortal.GUI.Library
               iItem -= (_rowCount * _columnCount);
               iPage++;
             }
+            while ((iItem <= _columnCount * _scrollStartOffset) && (_offset > 0))
+            {
+              _offset -= (_columnCount);
+              iItem += (_columnCount);
+             
+            }
             while (iItem >= _columnCount)
             {
-              _cursorY++;
-              iItem -= _columnCount;
+              if (_cursorY + 1 >= _rowCount - _scrollStartOffset)
+              {
+                _offset += (_columnCount);
+                iItem -= (_columnCount);
+              }
+              else
+              {
+                _cursorY++;
+                iItem -= _columnCount;
+              }
             }
             _controlUpDown.Value = iPage;
             _cursorX = iItem;
