@@ -1095,7 +1095,8 @@ namespace MediaPortal.Visualization
 
                     string thumbPath = GetAlbumThumbName(filename, CurrentTrackTag.Artist, CurrentTrackTag.Album);
 
-                    if (thumbPath.Length > 0 && thumbPath.ToLower().CompareTo(CurrentThumbPath) != 0)
+                    //if (thumbPath.Length > 0 && thumbPath.ToLower().CompareTo(CurrentThumbPath) != 0)
+                    if (thumbPath.ToLower().CompareTo(CurrentThumbPath) != 0)
                     {
                         CurrentThumbPath = thumbPath.ToLower();
                         CoverArtNeedsRefresh = true;
@@ -1566,8 +1567,8 @@ namespace MediaPortal.Visualization
                 if (_EnableStatusOverlays || !FullScreen)
                     RenderVisualization(e.Graphics);
 
-                else
-                    base.OnPaint(e);
+//                else
+//                    base.OnPaint(e);
             }
 
             else
@@ -1692,10 +1693,13 @@ namespace MediaPortal.Visualization
 
         private string GetAlbumThumbName(string filename, string ArtistName, string AlbumName)
         {
-            if (ArtistName == String.Empty) return String.Empty;
-            if (AlbumName == String.Empty) return String.Empty;
+            if (ArtistName == String.Empty) 
+                return String.Empty;
+            
+            if (AlbumName == String.Empty) 
+                return String.Empty;
+            
             string name = String.Format("{0}-{1}", ArtistName, AlbumName);
-
             string thumbPath = MediaPortal.Util.Utils.GetCoverArtName(MediaPortal.Util.Thumbs.MusicAlbum, name);
 
             if (thumbPath.Length > 0 && !Path.IsPathRooted(thumbPath))

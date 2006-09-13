@@ -33,7 +33,7 @@ using Un4seen.Bass.AddOn.Tags;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.View;
 using MediaPortal.Visualization;
-//using MediaPortal.Utils.Services;
+using MediaPortal.Util;
 
 namespace MediaPortal.Player
 {
@@ -69,7 +69,7 @@ namespace MediaPortal.Player
             {
                 if (!SettingsLoaded)
                 {
-                    using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+                    using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
                     {
                         string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "Internal Music Player");
                         _IsDefaultMusicPlayer = String.Compare(strAudioPlayer, "Internal Music Player", true) == 0;
@@ -433,8 +433,6 @@ namespace MediaPortal.Player
                 Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_GVOL_STREAM, _StreamVolume);
                 Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_BUFFER, _BufferingMS);
 
-                //if (Bass.BASS_Init(1, 44100, BASSInit.BASS_DEVICE_DEFAULT | BASSInit.BASS_DEVICE_LATENCY, GUIGraphicsContext.form.Handle.ToInt32(), null))
-                //if (Bass.BASS_Init(1, 44100, BASSInit.BASS_DEVICE_DEFAULT | BASSInit.BASS_DEVICE_LATENCY, 0, null))
                 if (Bass.BASS_Init(-1, 44100, BASSInit.BASS_DEVICE_DEFAULT | BASSInit.BASS_DEVICE_LATENCY, 0, null))
                 {
                     for (int i = 0; i < MAXSTREAMS; i++)
@@ -500,7 +498,7 @@ namespace MediaPortal.Player
 
         private void LoadSettings()
         {
-            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
             {
                 int vizType = xmlreader.GetValueAsInt("musicvisualization", "vizType", (int)VisualizationInfo.PluginType.None);
                 string vizName = xmlreader.GetValueAsString("musicvisualization", "name", "");
@@ -510,10 +508,23 @@ namespace MediaPortal.Player
 
                 VizPluginInfo = new VisualizationInfo((VisualizationInfo.PluginType)vizType, vizPath, vizName, vizClsid, vizPreset);
 
-                VizFPS = xmlreader.GetValueAsInt("musicvisualization", "fps", 20);
+                VizFPS = xmlreader.GetValueAsInt("musicvisualization", "fps", 30);
                 _StreamVolume = xmlreader.GetValueAsInt("audioplayer", "streamOutputLevel", 85);
                 _BufferingMS = xmlreader.GetValueAsInt("audioplayer", "buffering", 5000);
+
+                if (_BufferingMS <= 0)
+                    _BufferingMS = 1000;
+
+                else if (_BufferingMS > 8000)
+                    _BufferingMS = 8000;
+
                 _CrossFadeIntervalMS = xmlreader.GetValueAsInt("audioplayer", "crossfade", 4000);
+
+                if (_CrossFadeIntervalMS < 0)
+                    _CrossFadeIntervalMS = 0;
+
+                else if (_CrossFadeIntervalMS > 16000)
+                    _CrossFadeIntervalMS = 16000;
 
                 bool doGaplessPlayback = xmlreader.GetValueAsBool("audioplayer", "gaplessPlayback", false);
 
@@ -828,8 +839,8 @@ namespace MediaPortal.Player
                         Log.Info("Core Audioplayer: playback started");
                         Console.WriteLine("Playing:{0}", Path.GetFileName(filePath));
 
-                        VizWindow.Size = new Size(0, 0);
-                        VizWindow.Visible = false;
+                        //VizWindow.Size = new Size(0, 0);
+                        //VizWindow.Visible = false;
 
                         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
                         msg.Label = FilePath;
@@ -1087,7 +1098,7 @@ namespace MediaPortal.Player
            if (!MediaPortal.Util.Utils.IsAudio(FilePath))
                 GUIGraphicsContext.IsFullScreenVideo = false;
 
-            FilePath = "";
+            //FilePath = "";
 
             if(bManualStop)
                 ShowVisualizationWindow(false);
@@ -1100,7 +1111,10 @@ namespace MediaPortal.Player
                     _State = PlayState.Playing;
 
                 else
+                {
+                    FilePath = "";
                     _State = PlayState.Ended;
+                }
             }
 
             else
@@ -1426,10 +1440,10 @@ namespace MediaPortal.Player
 
             if (NotifyPlaying && CurrentPosition >= 10.0)
             {
-                    NotifyPlaying = false;
-                    GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYING_10SEC, 0, 0, 0, 0, 0, null);
-                    msg.Label = CurrentFile;
-                    GUIWindowManager.SendThreadMessage(msg);                
+                NotifyPlaying = false;
+                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYING_10SEC, 0, 0, 0, 0, 0, null);
+                msg.Label = CurrentFile;
+                GUIWindowManager.SendThreadMessage(msg);                
             }
 
             if (FullScreen != GUIGraphicsContext.IsFullScreenVideo)
@@ -1458,12 +1472,13 @@ namespace MediaPortal.Player
                 _VideoHeight = GUIGraphicsContext.OverScanHeight;
                 
                 VizWindow.Location = new Point(0, 0);
-                VizWindow.Visible = false;
+                //VizWindow.Visible = false;
 
                 _videoRectangle = new Rectangle(0, 0, GUIGraphicsContext.Width, GUIGraphicsContext.Height);
                 _sourceRectangle = _videoRectangle;
 
-                VizManager.ResizeVisualizationWindow(new System.Drawing.Size(GUIGraphicsContext.Width, GUIGraphicsContext.Height));
+                //VizManager.ResizeVisualizationWindow(new System.Drawing.Size(GUIGraphicsContext.Width, GUIGraphicsContext.Height));
+                VizWindow.Size = new System.Drawing.Size(_VideoWidth, _VideoHeight);
                 VizWindow.Visible = true;
                 Log.Info("Core Audioplayer: Done");
 
