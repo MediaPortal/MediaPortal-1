@@ -613,7 +613,11 @@ namespace MediaPortal.Music.Database
           // Check for special characters to group them on Level 0 of a list
           if (level == 0)
           {
-            char ch = fields.fields[0][0];
+            char ch = ' ';
+            if (fields.fields[0] != "")
+            {
+              ch = fields.fields[0][0];
+            }
             bool founddSpecialChar = false;
             if (ch < 'A')
             {

@@ -48,6 +48,7 @@ namespace MediaPortal.GUI.Music
     int currentLevel = 0;
     MusicDatabase database;
     List<ViewDefinition> views = new List<ViewDefinition>();
+    int restrictionLength = 0;   // used to sum up the length of all restrictions
 
     public MusicViewHandler()
     {
@@ -247,6 +248,7 @@ namespace MediaPortal.GUI.Music
       string orderClause = String.Empty;
       FilterDefinition definition = (FilterDefinition)currentView.Filters[CurrentLevel];
 
+      restrictionLength = 0;
       for (int i = 0; i < CurrentLevel; ++i)
       {
         BuildSelect((FilterDefinition)currentView.Filters[i], ref whereClause);
@@ -516,7 +518,10 @@ namespace MediaPortal.GUI.Music
         if (filter.SelectedValue == "#")
           whereClause += String.Format(" {0} < 'A'", GetFieldName(filter.Where));
         else
-          whereClause += String.Format(" {0} like '{1}%'", GetFieldName(filter.Where), filter.SelectedValue);
+        {
+          restrictionLength += Convert.ToInt16(filter.Restriction);
+          whereClause += String.Format(" ({0} like '{1}%' or {0} like '{2}%')", GetFieldName(filter.Where), filter.SelectedValue.PadRight(restrictionLength), filter.SelectedValue);
+        }
       }
       else
       {
@@ -524,6 +529,7 @@ namespace MediaPortal.GUI.Music
         whereClause += String.Format(" {0}='{1}'", GetFieldId(filter.Where), filter.SelectedValue);
       }
     }
+
     void BuildRestriction(FilterDefinition filter, ref string whereClause)
     {
       if (filter.SqlOperator != String.Empty && filter.Restriction != String.Empty)
