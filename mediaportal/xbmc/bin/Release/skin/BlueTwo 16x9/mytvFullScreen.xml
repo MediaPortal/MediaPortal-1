@@ -176,7 +176,7 @@
 	<control>
 		<description>background</description>
 		<type>image</type>
-		<id>103</id>
+		<id>105</id>
 		<posX>10</posX> 
 		<posY>490</posY>
 		<texture>osd_bg.png</texture>		
@@ -199,7 +199,7 @@
 		<id>100</id>
 		<posX>339</posX> 
 		<posY>525</posY> 
-		<width>400</width>
+		<width>394</width>
 		<height>20</height>
 		<toptexture>osd_progress_indicator.png</toptexture>
 		<TextureOffsetY>22</TextureOffsetY>
@@ -227,17 +227,6 @@
 		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
-		<description>Current time</description>
-		<type>label</type>
-		<id>105</id>
-		<posX>1080</posX> 
-		<posY>545</posY>
-		<label>#TV.Record.current</label>  
-		<font>font48</font>
-		<align>right</align> 
-		<textcolor>3030ffff</textcolor> 
-	</control>
-	<control>
 		<description>Start Time Info</description>
 		<type>label</type>
 		<id>106</id>
@@ -262,8 +251,8 @@
 		<description>rec logo</description>
 		<type>image</type>
 		<id>39</id>
-		<posX>900</posX>
-		<posY>580</posY>
+		<posX>900</posX> 
+		<posY>523</posY>
 		<texture>rec.png</texture>
 		<colordiffuse>50ffffff</colordiffuse>
 		<visible>yes</visible>
