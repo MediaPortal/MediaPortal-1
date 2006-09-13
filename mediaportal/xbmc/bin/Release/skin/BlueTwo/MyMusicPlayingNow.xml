@@ -106,7 +106,7 @@
          <id>114</id>
          <posX>676</posX>
          <posY>79</posY>
-         <width>80</width>
+         <width>90</width>
          <label>#Play.Current.Year</label>
          <font>font14</font>
           <align>right</align>
