@@ -739,16 +739,19 @@ namespace MediaPortal.Music.Database
 
       tmpSong = ParseXMLDocForArtistInfo(urlArtist);
 
-      if (tmpSong.WebImage != null || tmpSong.WebImage != String.Empty)
+      if (tmpSong.Artist != String.Empty)
       {
-        if (artistToSearch_.ToLowerInvariant() != tmpSong.Artist.ToLowerInvariant())
+        if (tmpSong.WebImage != null || tmpSong.WebImage != String.Empty)
         {
-          Log.Info("Audioscrobbler: alternative artist spelling detected - try to fetch both thumbs (MP: {0} / official: {1})", artistToSearch_, tmpSong.Artist);
-          fetchWebImage(tmpSong.WebImage, artistToSearch_ + ".jpg", Thumbs.MusicArtists);
-          fetchWebImage(tmpSong.WebImage, tmpSong.Artist + ".jpg", Thumbs.MusicArtists);          
+          if (artistToSearch_.ToLowerInvariant() != tmpSong.Artist.ToLowerInvariant())
+          {
+            Log.Info("Audioscrobbler: alternative artist spelling detected - try to fetch both thumbs (MP: {0} / official: {1})", artistToSearch_, tmpSong.Artist);
+            fetchWebImage(tmpSong.WebImage, artistToSearch_ + ".jpg", Thumbs.MusicArtists);
+            fetchWebImage(tmpSong.WebImage, tmpSong.Artist + ".jpg", Thumbs.MusicArtists);
+          }
+          else
+            fetchWebImage(tmpSong.WebImage, tmpSong.Artist + ".jpg", Thumbs.MusicArtists);
         }
-        else
-          fetchWebImage(tmpSong.WebImage, tmpSong.Artist + ".jpg", Thumbs.MusicArtists);
       }
 
       return tmpSong;

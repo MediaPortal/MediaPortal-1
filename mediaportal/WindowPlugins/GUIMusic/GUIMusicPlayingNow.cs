@@ -113,6 +113,7 @@ namespace MediaPortal.GUI.Music
     private List<String> ImagePathContainer = null;
     private bool UseID3 = false;
     private bool _trackChanged = true;
+    private bool _doInternetLookups = true;
 
     //SV Added by SteveV 2006-09-07
     private bool UsingInternalMusicPlayer = false;
@@ -133,6 +134,7 @@ namespace MediaPortal.GUI.Music
       {
         UseID3 = xmlreader.GetValueAsBool("musicfiles", "showid3", true);
         ShowVisualization = xmlreader.GetValueAsBool("musicmisc", "showVisInNowPlaying", true);
+        _doInternetLookups = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmthumbs", true);
       }
 
       UsingInternalMusicPlayer = CoreMusicPlayer.IsDefaultMusicPlayer;
@@ -632,33 +634,50 @@ namespace MediaPortal.GUI.Music
 
     private void StartTagInfoThread()
     {
-      TagInfoThread = new Thread(new ThreadStart(UpdateTagInfoThread));
-      // allow windows to kill the thread if the main app was closed
-      TagInfoThread.IsBackground = true;
-      TagInfoThread.Priority = ThreadPriority.BelowNormal;
-      TagInfoThread.Start();
+      if (_doInternetLookups)
+      {
+        TagInfoThread = new Thread(new ThreadStart(UpdateTagInfoThread));
+        // allow windows to kill the thread if the main app was closed
+        TagInfoThread.IsBackground = true;
+        TagInfoThread.Priority = ThreadPriority.BelowNormal;
+        TagInfoThread.Start();
+      }
     }
 
     private void StartAlbumInfoThread()
     {
-      AlbumInfoThread = new Thread(new ThreadStart(UpdateAlbumInfoThread));
-      // allow windows to kill the thread if the main app was closed
-      AlbumInfoThread.IsBackground = true;
-      AlbumInfoThread.Priority = ThreadPriority.BelowNormal;
-      AlbumInfoThread.Start();
+      if (_doInternetLookups)
+      {
+        AlbumInfoThread = new Thread(new ThreadStart(UpdateAlbumInfoThread));
+        // allow windows to kill the thread if the main app was closed
+        AlbumInfoThread.IsBackground = true;
+        AlbumInfoThread.Priority = ThreadPriority.BelowNormal;
+        AlbumInfoThread.Start();
+      }
     }
 
     private void StartArtistInfoThread()
     {
-      ArtistInfoThread = new Thread(new ThreadStart(UpdateArtistInfoThread));
-      // allow windows to kill the thread if the main app was closed
-      ArtistInfoThread.IsBackground = true;
-      ArtistInfoThread.Priority = ThreadPriority.BelowNormal;
-      ArtistInfoThread.Start();
+      if (_doInternetLookups)
+      {
+        ArtistInfoThread = new Thread(new ThreadStart(UpdateArtistInfoThread));
+        // allow windows to kill the thread if the main app was closed
+        ArtistInfoThread.IsBackground = true;
+        ArtistInfoThread.Priority = ThreadPriority.BelowNormal;
+        ArtistInfoThread.Start();
+      }
     }
 
     private void UpdateArtistInfoThread()
     {
+      if (CurrentTrackTag == null)
+        return;
+      if (CurrentTrackTag.Artist == String.Empty)
+      {
+        Log.Warn("GUIMusicPlayingNow: current tag invalid for artist info lookup. File: {0}", g_Player.CurrentFile);
+        return;
+      }
+
       InfoScrobbler.getArtistInfo(CurrentTrackTag.Artist);
       CurrentThumbFileName = Util.Utils.GetCoverArtName(Thumbs.MusicArtists, Util.Utils.FilterFileName(CurrentTrackTag.Artist));
       if (CurrentThumbFileName.Length > 0)
@@ -672,6 +691,14 @@ namespace MediaPortal.GUI.Music
     {
       GUIListItem item = null;
       List<Song> TagTracks = new List<Song>();
+
+      if (CurrentTrackTag == null)
+        return;
+      if (CurrentTrackTag.Artist == String.Empty || CurrentTrackTag.Title == String.Empty)
+      {
+        Log.Warn("GUIMusicPlayingNow: current tag invalid for tag info lookup. File: {0}", g_Player.CurrentFile);
+        return;
+      }
 
       TagTracks = InfoScrobbler.getTagInfo(CurrentTrackTag.Artist, CurrentTrackTag.Title, true, false, true);
       if (TagTracks.Count > 0)
@@ -710,6 +737,14 @@ namespace MediaPortal.GUI.Music
     {
       GUIListItem item = null;
       List<Song> AlbumTracks = new List<Song>();
+
+      if (CurrentTrackTag == null)
+        return;
+      if (CurrentTrackTag.Artist == String.Empty || CurrentTrackTag.Album == String.Empty)
+      {
+        Log.Warn("GUIMusicPlayingNow: current tag invalid for album info lookup. File: {0}", g_Player.CurrentFile);
+        return;
+      }
 
       AlbumTracks = InfoScrobbler.getAlbumInfo(CurrentTrackTag.Artist, CurrentTrackTag.Album, true);
 
