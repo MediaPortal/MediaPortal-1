@@ -30,6 +30,7 @@ using System.Windows.Forms;
 using System.Collections;
 using System.Threading;
 using System.Diagnostics;
+using Microsoft.Win32.SafeHandles;
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Hardware
@@ -59,11 +60,14 @@ namespace MediaPortal.Hardware
       try
       {
         _deviceStream.Close();
-        _deviceStream = null;
       }
       catch (IOException)
       {
         // we are closing the stream so ignore this
+      }
+      finally
+      {
+        _deviceStream = null;
       }
 
       if (DeviceRemoval != null)
@@ -139,7 +143,8 @@ namespace MediaPortal.Hardware
         (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_107b&pid_3009") != -1) ||     // FIC Spectra/Mycom Mediacenter
         (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_0609&pid_031d") != -1) ||     // Toshiba/Hauppauge SMK MCE remote
         (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_03ee&pid_2501") != -1) ||     // Mitsumi MCE remote
-        (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_1509&pid_9242") != -1))       // Fujitsu Scaleo-E
+        (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_1509&pid_9242") != -1) ||     // Fujitsu Scaleo-E
+        (deviceInterfaceDetailData.DevicePath.StartsWith(@"\\?\hid#irdevice&col01#2")))   // Microsoft/Philips 2005 (Vista)
         {
           SetupDiDestroyDeviceInfoList(handle);
           devicePath = deviceInterfaceDetailData.DevicePath;
@@ -154,7 +159,7 @@ namespace MediaPortal.Hardware
     #region Interop
 
     [DllImport("kernel32", SetLastError = true)]
-    protected static extern IntPtr CreateFile(string FileName, [MarshalAs(UnmanagedType.U4)] FileAccess DesiredAccess, [MarshalAs(UnmanagedType.U4)] FileShare ShareMode, uint SecurityAttributes, [MarshalAs(UnmanagedType.U4)] FileMode CreationDisposition, FileFlag FlagsAndAttributes, int hTemplateFile);
+    protected static extern SafeFileHandle CreateFile(string FileName, [MarshalAs(UnmanagedType.U4)] FileAccess DesiredAccess, [MarshalAs(UnmanagedType.U4)] FileShare ShareMode, uint SecurityAttributes, [MarshalAs(UnmanagedType.U4)] FileMode CreationDisposition, FileFlag FlagsAndAttributes, int hTemplateFile);
 
     [DllImport("kernel32", SetLastError = true)]
     protected static extern bool CloseHandle(IntPtr hObject);

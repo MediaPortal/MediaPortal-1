@@ -28,81 +28,81 @@ using System.Collections;
 
 namespace MediaPortal.Hardware
 {
-	public sealed class DeviceCollection : CollectionBase
-	{
-		#region Constructors
+  public sealed class DeviceCollection : CollectionBase
+  {
+    #region Constructors
 
-		public DeviceCollection()
-		{
-		}
+    public DeviceCollection()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		public void Add(Device device)
-		{
-			if(device == null)
-				throw new ArgumentNullException("device");
+    public void Add(Device device)
+    {
+      if (device == null)
+        throw new ArgumentNullException("device");
 
-			List.Add(device);
-		}
+      List.Add(device);
+    }
 
-		public bool Contains(Device device)
-		{
-			if(device == null)
-				throw new ArgumentNullException("device");
+    public bool Contains(Device device)
+    {
+      if (device == null)
+        throw new ArgumentNullException("device");
 
-			return List.Contains(device);
-		}
+      return List.Contains(device);
+    }
 
-		public void CopyTo(Device[] array, int arrayIndex)
-		{
-			if(array == null)
-				throw new ArgumentNullException("array");
+    public void CopyTo(Device[] array, int arrayIndex)
+    {
+      if (array == null)
+        throw new ArgumentNullException("array");
 
-			List.CopyTo(array, arrayIndex);
-		}
+      List.CopyTo(array, arrayIndex);
+    }
 
-		public int IndexOf(Device device)
-		{
-			if(device == null)
-				throw new ArgumentNullException("device");
+    public int IndexOf(Device device)
+    {
+      if (device == null)
+        throw new ArgumentNullException("device");
 
-			return List.IndexOf(device);
-		}
+      return List.IndexOf(device);
+    }
 
-		public void Insert(int index, Device device)
-		{
-			if(device == null)
-				throw new ArgumentNullException("device");
+    public void Insert(int index, Device device)
+    {
+      if (device == null)
+        throw new ArgumentNullException("device");
 
-			List.Insert(index, device);
-		}
+      List.Insert(index, device);
+    }
 
-		public bool Remove(Device device)
-		{
-			if(device == null)
-				throw new ArgumentNullException("device");
-			
-			if(List.Contains(device) == false)
-				return false;
+    public bool Remove(Device device)
+    {
+      if (device == null)
+        throw new ArgumentNullException("device");
 
-			List.Remove(device);
+      if (List.Contains(device) == false)
+        return false;
 
-			return true;
-		}
+      List.Remove(device);
 
-		#endregion Methods
+      return true;
+    }
 
-		#region Properties
+    #endregion Methods
 
-		public Device this[int index]
-		{ 
-			get { return (Device)List[index]; }
-			set { List[index] = value; }
-		}
+    #region Properties
 
-		#endregion Properties
-	}
+    public Device this[int index]
+    {
+      get { return (Device)List[index]; }
+      set { List[index] = value; }
+    }
+
+    #endregion Properties
+  }
 }

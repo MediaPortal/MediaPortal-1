@@ -27,5 +27,5 @@ using System;
 
 namespace MediaPortal.Hardware
 {
-	public delegate void RemoteEventHandler(object sender, RemoteEventArgs e);
+  public delegate void RemoteEventHandler(object sender, RemoteEventArgs e);
 }

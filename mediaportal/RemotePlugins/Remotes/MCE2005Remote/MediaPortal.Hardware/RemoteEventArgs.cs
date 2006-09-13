@@ -27,34 +27,34 @@ using System;
 
 namespace MediaPortal.Hardware
 {
-	public class RemoteEventArgs : EventArgs
-	{
-		#region Constructors
+  public class RemoteEventArgs : EventArgs
+  {
+    #region Constructors
 
-		public RemoteEventArgs()
-		{
-		}
+    public RemoteEventArgs()
+    {
+    }
 
-		public RemoteEventArgs(RemoteButton button)
-		{
-			_button = button;
-		}
+    public RemoteEventArgs(RemoteButton button)
+    {
+      _button = button;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Properties
+    #region Properties
 
-		public RemoteButton Button
-		{
-			get { return _button; }
-		}
+    public RemoteButton Button
+    {
+      get { return _button; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		RemoteButton				_button;
+    RemoteButton _button;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

@@ -28,72 +28,76 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
+using Microsoft.Win32.SafeHandles;
 
 #pragma warning disable 618
 
 namespace MediaPortal.Hardware
 {
-	sealed class Remote : Device
-	{
-		#region Constructor
+  sealed class Remote : Device
+  {
+    #region Constructor
 
-		static Remote()
-		{
-			_deviceSingleton = new Remote();
-			_deviceSingleton.Init();
-		}
+    static Remote()
+    {
+      _deviceSingleton = new Remote();
+      _deviceSingleton.Init();
+    }
 
-		#endregion Constructor
+    #endregion Constructor
 
-		#region Implementation
+    #region Implementation
 
-		void Init()
-		{
-      _deviceClass = Device.HidGuid;
+    void Init()
+    {
+      try
+      {
+        _deviceClass = Device.HidGuid;
+        _doubleClickTime = GetDoubleClickTime();
 
-      DeviceCollection devices = Device.GetDevicesByClass(_deviceClass);
+        _deviceBuffer = new byte[256];
 
-      _doubleClickTime = GetDoubleClickTime();
+        _deviceWatcher = new DeviceWatcher();
+        _deviceWatcher.Create();
+        _deviceWatcher.Class = _deviceClass;
+        _deviceWatcher.DeviceArrival += new DeviceEventHandler(OnDeviceArrival);
+        _deviceWatcher.DeviceRemoval += new DeviceEventHandler(OnDeviceRemoval);
+        _deviceWatcher.SettingsChanged += new SettingsChanged(OnSettingsChanged);
+        _deviceWatcher.RegisterDeviceArrival();
 
-      _deviceBuffer = new byte[256];
-      _deviceWatcher = new DeviceWatcher();
-      _deviceWatcher.Create();
-      _deviceWatcher.Class = _deviceClass;
+        Open();
+      }
+      catch (Exception e)
+      {
+        Log.Info("Remote.Init: {0}", e.Message);
+      }
+    }
 
-      Open();
-
-      _deviceWatcher.DeviceArrival += new DeviceEventHandler(OnDeviceArrival);
-      _deviceWatcher.DeviceRemoval += new DeviceEventHandler(OnDeviceRemoval);
-      _deviceWatcher.SettingsChanged += new SettingsChanged(OnSettingsChanged);
-      _deviceWatcher.RegisterDeviceArrival();
-		}
-
-		protected override void Open()
-		{
-			string devicePath = FindDevice(_deviceClass);
+    protected override void Open()
+    {
+      string devicePath = FindDevice(_deviceClass);
 
       if (devicePath == null)
-        throw new Exception("No MCE remote found");
-
+        return;
       if (LogVerbose)
       {
         Log.Info("MCE: Using: {0}", devicePath);
       }
 
-			IntPtr deviceHandle = CreateFile(devicePath, FileAccess.Read, FileShare.ReadWrite, 0, FileMode.Open, FileFlag.Overlapped, 0);
+      SafeFileHandle deviceHandle = CreateFile(devicePath, FileAccess.Read, FileShare.ReadWrite, 0, FileMode.Open, FileFlag.Overlapped, 0);
 
-      if (deviceHandle.ToInt32() == INVALID_HANDLE_VALUE)
-				throw new Exception(string.Format("Failed to open remote ({0})", GetLastError()));
+      if (deviceHandle.IsInvalid)
+        throw new Exception(string.Format("Failed to open remote ({0})", GetLastError()));
 
-			_deviceWatcher.RegisterDeviceRemoval(deviceHandle);
+      _deviceWatcher.RegisterDeviceRemoval(deviceHandle);
 
-			// open a stream from the device and begin an asynchronous read
-			_deviceStream = new FileStream(deviceHandle, FileAccess.Read, true, 128, true);
-      IAsyncResult aResult = _deviceStream.BeginRead(_deviceBuffer, 0, _deviceBuffer.Length, new AsyncCallback(OnReadComplete), null);
-		}
+      // open a stream from the device and begin an asynchronous read
+      _deviceStream = new FileStream(deviceHandle, FileAccess.Read, 128, true);
+      _deviceStream.BeginRead(_deviceBuffer, 0, _deviceBuffer.Length, new AsyncCallback(OnReadComplete), null);
+    }
 
-		void OnReadComplete(IAsyncResult asyncResult)
-		{
+    void OnReadComplete(IAsyncResult asyncResult)
+    {
       try
       {
         if (_deviceStream.EndRead(asyncResult) == 13 && _deviceBuffer[1] == 1)
@@ -115,42 +119,41 @@ namespace MediaPortal.Hardware
         // begin another asynchronous read from the device
         _deviceStream.BeginRead(_deviceBuffer, 0, _deviceBuffer.Length, new AsyncCallback(OnReadComplete), null);
       }
-      catch (System.IO.IOException)
+      catch (Exception)
       {
       }
-		}
+    }
 
-		void OnSettingsChanged()
-		{
-			_doubleClickTime = GetDoubleClickTime();
-		}
+    void OnSettingsChanged()
+    {
+      _doubleClickTime = GetDoubleClickTime();
+    }
 
-		#endregion Implementation
+    #endregion Implementation
 
-		#region Interop
+    #region Interop
 
-		[DllImport("user32")]
-		static extern int GetDoubleClickTime();
+    [DllImport("user32")]
+    static extern int GetDoubleClickTime();
 
-		#endregion Interop
+    #endregion Interop
 
-		#region Events
+    #region Events
 
-		public static RemoteEventHandler Click = null;
-		public static RemoteEventHandler DoubleClick = null;
+    public static RemoteEventHandler Click = null;
+    public static RemoteEventHandler DoubleClick = null;
 
-		#endregion Events
+    #endregion Events
 
-		#region Members
+    #region Members
 
-		static Remote				_deviceSingleton;
-		int							_doubleClickTime = -1;
-		int							_doubleClickTick = 0;
-		RemoteButton				_doubleClickButton;
+    static Remote _deviceSingleton;
+    int _doubleClickTime = -1;
+    int _doubleClickTick = 0;
+    RemoteButton _doubleClickButton;
 
     #endregion Members
 
-    const int INVALID_HANDLE_VALUE = -1;
 
-	}
+  }
 }

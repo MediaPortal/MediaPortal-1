@@ -27,5 +27,5 @@ using System;
 
 namespace MediaPortal.Hardware
 {
-	public delegate void DeviceEventHandler(object sender, EventArgs e);
+  public delegate void DeviceEventHandler(object sender, EventArgs e);
 }

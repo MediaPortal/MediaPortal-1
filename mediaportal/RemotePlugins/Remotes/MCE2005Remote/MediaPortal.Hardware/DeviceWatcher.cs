@@ -24,210 +24,232 @@
 #endregion
 
 using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using Microsoft.Win32.SafeHandles;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Hardware
 {
-	internal class DeviceWatcher : NativeWindow
-	{
-		#region Interop
+  internal class DeviceWatcher : NativeWindow
+  {
+    #region Interop
 
-		const int WM_DEVICECHANGE			= 0x0219;
-		const int WM_SETTINGSCHANGE			= 0x001A;
-		const int DBT_DEVICEARRIVAL			= 0x8000;
-		const int DBT_DEVICEREMOVECOMPLETE	= 0x8004;
+    const int WM_DEVICECHANGE = 0x0219;
+    const int WM_SETTINGSCHANGE = 0x001A;
+    const int DBT_DEVICEARRIVAL = 0x8000;
+    const int DBT_DEVICEREMOVECOMPLETE = 0x8004;
 
-		[StructLayout(LayoutKind.Sequential)]
-		struct DeviceBroadcastHeader
-		{
-			public int				Size;
-			public int				DeviceType;
-			public int				Reserved;
-		}
-		
-		[StructLayout(LayoutKind.Sequential)]
-		struct DeviceBroadcastInterface
-		{
-			public int				Size;
-			public int				DeviceType;
-			public int				Reserved;
-			public Guid				ClassGuid;
-		
-			[MarshalAs(UnmanagedType.ByValTStr, SizeConst=256)]
-			public string			Name;
-		}
+    [StructLayout(LayoutKind.Sequential)]
+    struct DeviceBroadcastHeader
+    {
+      public int Size;
+      public int DeviceType;
+      public int Reserved;
+    }
 
-		[StructLayout(LayoutKind.Sequential)]
-		struct DeviceBroadcastHandle 
-		{
-			public int				Size;
-			public int				DeviceType;
-			public int				Reserved;
-			public IntPtr			Handle;
-			public IntPtr			HandleNotify;
-			public Guid				EventGuid;
-			public int				NameOffset;
-			public byte				Data;
-		}
+    [StructLayout(LayoutKind.Sequential)]
+    struct DeviceBroadcastInterface
+    {
+      public int Size;
+      public int DeviceType;
+      public int Reserved;
+      public Guid ClassGuid;
 
-		[DllImport("user32", SetLastError=true)]
-		static extern IntPtr RegisterDeviceNotification(IntPtr handle, ref DeviceBroadcastHandle filter, int flags);
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+      public string Name;
+    }
 
-		[DllImport("user32", SetLastError=true)]
-		static extern IntPtr RegisterDeviceNotification(IntPtr handle, ref DeviceBroadcastInterface filter, int flags);
+    [StructLayout(LayoutKind.Sequential)]
+    struct DeviceBroadcastHandle
+    {
+      public int Size;
+      public int DeviceType;
+      public int Reserved;
+      public IntPtr Handle;
+      public IntPtr HandleNotify;
+      public Guid EventGuid;
+      public int NameOffset;
+      public byte Data;
+    }
 
-		[DllImport("user32")]
-		static extern IntPtr UnregisterDeviceNotification(IntPtr handle);
+    [DllImport("user32", SetLastError = true)]
+    static extern IntPtr RegisterDeviceNotification(IntPtr handle, ref DeviceBroadcastHandle filter, int flags);
 
-		[DllImport("kernel32")]
-		static extern int GetLastError();
+    [DllImport("user32", SetLastError = true)]
+    static extern IntPtr RegisterDeviceNotification(IntPtr handle, ref DeviceBroadcastInterface filter, int flags);
 
-		[DllImport("kernel32", SetLastError=true)]
-		static extern bool CancelIo(IntPtr handle);
+    [DllImport("user32")]
+    static extern IntPtr UnregisterDeviceNotification(SafeHandle handle);
 
-		#endregion Interop
+    [DllImport("kernel32")]
+    static extern int GetLastError();
 
-		#region Methods
+    [DllImport("kernel32", SetLastError = true)]
+    static extern bool CancelIo(SafeHandle handle);
 
-		internal void Create()
-		{
-			if(Handle != IntPtr.Zero)
-				return;
+    #endregion Interop
 
-			CreateParams Params = new CreateParams();
-			Params.ExStyle = 0x80;
-			Params.Style = unchecked((int)0x80000000);
-			CreateHandle(Params);
-		}
+    #region Methods
 
-		#endregion Methods
+    internal void Create()
+    {
+      if (Handle != IntPtr.Zero)
+        return;
 
-		#region Properties
+      CreateParams Params = new CreateParams();
+      Params.ExStyle = 0x80;
+      Params.Style = unchecked((int)0x80000000);
+      CreateHandle(Params);
+    }
 
-		internal Guid Class			{ get { return _deviceClass; } set { _deviceClass = value; } }
+    #endregion Methods
 
-		#endregion Properties
+    #region Properties
 
-		#region Overrides
+    internal Guid Class { get { return _deviceClass; } set { _deviceClass = value; } }
 
-		protected override void WndProc(ref Message m)
-		{
-			if(m.Msg == WM_DEVICECHANGE)
-			{
-				switch(m.WParam.ToInt32())
-				{
-					case DBT_DEVICEARRIVAL:
-						OnDeviceArrival((DeviceBroadcastHeader)Marshal.PtrToStructure(m.LParam, typeof(DeviceBroadcastHeader)), m.LParam);
-						break;
-					case DBT_DEVICEREMOVECOMPLETE:
-						OnDeviceRemoval((DeviceBroadcastHeader)Marshal.PtrToStructure(m.LParam, typeof(DeviceBroadcastHeader)), m.LParam);
-						break;
-				}
-			}
-			else if(m.Msg == WM_SETTINGSCHANGE)
-			{
-				if(SettingsChanged != null) SettingsChanged();
-			}
+    #endregion Properties
 
-			base.WndProc(ref m);
-		}
+    #region Overrides
 
-		#endregion Overrides
+    protected override void WndProc(ref Message m)
+    {
+      if (m.Msg == WM_DEVICECHANGE)
+      {
+        switch (m.WParam.ToInt32())
+        {
+          case DBT_DEVICEARRIVAL:
+            OnDeviceArrival((DeviceBroadcastHeader)Marshal.PtrToStructure(m.LParam, typeof(DeviceBroadcastHeader)), m.LParam);
+            break;
+          case DBT_DEVICEREMOVECOMPLETE:
+            OnDeviceRemoval((DeviceBroadcastHeader)Marshal.PtrToStructure(m.LParam, typeof(DeviceBroadcastHeader)), m.LParam);
+            break;
+        }
+      }
+      else if (m.Msg == WM_SETTINGSCHANGE)
+      {
+        if (SettingsChanged != null)
+          SettingsChanged();
+      }
 
-		#region Implementation
+      base.WndProc(ref m);
+    }
 
-		internal void RegisterDeviceArrival()
-		{
-			DeviceBroadcastInterface dbi = new DeviceBroadcastInterface();
+    #endregion Overrides
 
-			dbi.Size = Marshal.SizeOf(dbi);
-			dbi.DeviceType = 0x5;
-			dbi.ClassGuid = _deviceClass;
+    #region Implementation
 
-			_handleDeviceArrival = RegisterDeviceNotification(Handle, ref dbi, 0);
+    internal void RegisterDeviceArrival()
+    {
+      DeviceBroadcastInterface dbi = new DeviceBroadcastInterface();
 
-			if(_handleDeviceArrival == IntPtr.Zero) throw new Exception(string.Format("Failed in call to RegisterDeviceNotification ({0})", GetLastError()));
-		}
+      dbi.Size = Marshal.SizeOf(dbi);
+      dbi.DeviceType = 0x5;
+      dbi.ClassGuid = _deviceClass;
 
-		internal void RegisterDeviceRemoval(IntPtr deviceHandle)
-		{
-			DeviceBroadcastHandle dbh = new DeviceBroadcastHandle();
+      try
+      {
+        _handleDeviceArrival = new SafeFileHandle(RegisterDeviceNotification(Handle, ref dbi, 0), true);
+      }
+      catch
+      {
+        Log.Info("DeviceWatcher.RegisterDeviceArrival: Error={0}.", Marshal.GetLastWin32Error());
+      }
 
-			dbh.Size = Marshal.SizeOf(dbh);
-			dbh.DeviceType = 0x6;
-			dbh.Handle = deviceHandle;
+      if (_handleDeviceArrival.IsInvalid)
+        throw new Exception(string.Format("Failed in call to RegisterDeviceNotification ({0})", GetLastError()));
+    }
 
-			_deviceHandle = deviceHandle;
-			_handleDeviceRemoval = RegisterDeviceNotification(Handle, ref dbh, 0);
+    internal void RegisterDeviceRemoval(SafeHandle deviceHandle)
+    {
+      DeviceBroadcastHandle dbh = new DeviceBroadcastHandle();
 
-			if(_handleDeviceRemoval == IntPtr.Zero) throw new Exception(string.Format("Failed in call to RegisterDeviceNotification ({0})", GetLastError()));
-		}
+      dbh.Size = Marshal.SizeOf(dbh);
+      dbh.DeviceType = 0x6;
+      dbh.Handle = deviceHandle.DangerousGetHandle();
 
-		internal void UnregisterDeviceArrival()
-		{
-			if(_handleDeviceArrival == IntPtr.Zero) return;
+      _deviceHandle = deviceHandle;
+      try
+      {
+        _handleDeviceRemoval = new SafeFileHandle(RegisterDeviceNotification(Handle, ref dbh, 0), true);
+      }
+      catch
+      {
+        Log.Info("DeviceWatcher.RegisterDeviceRemoval: Error={0}.", Marshal.GetLastWin32Error());
+      }
 
-			UnregisterDeviceNotification(_handleDeviceArrival);
-			_handleDeviceArrival = IntPtr.Zero;
-		}
+      if (_handleDeviceRemoval.IsInvalid)
+        throw new Exception(string.Format("Failed in call to RegisterDeviceNotification ({0})", GetLastError()));
+    }
 
-		internal void UnregisterDeviceRemoval()
-		{
-			if(_handleDeviceRemoval == IntPtr.Zero) return;
+    internal void UnregisterDeviceArrival()
+    {
+      if (_handleDeviceArrival.IsInvalid)
+        return;
 
-			UnregisterDeviceNotification(_handleDeviceRemoval);
-			_handleDeviceRemoval = IntPtr.Zero;
-			_deviceHandle = IntPtr.Zero;
-		}
+      UnregisterDeviceNotification(_handleDeviceArrival);
+      _handleDeviceArrival.Close();
+    }
 
-		void OnDeviceArrival(DeviceBroadcastHeader dbh, IntPtr ptr)
-		{
-			if(dbh.DeviceType == 0x05)
-			{
-				DeviceBroadcastInterface dbi = (DeviceBroadcastInterface)Marshal.PtrToStructure(ptr, typeof(DeviceBroadcastInterface));
+    internal void UnregisterDeviceRemoval()
+    {
+      if (_handleDeviceRemoval.IsInvalid)
+        return;
 
-				if(dbi.ClassGuid == _deviceClass && DeviceArrival != null)
-					DeviceArrival(this, EventArgs.Empty);
-			}
-		}
+      UnregisterDeviceNotification(_handleDeviceRemoval);
+      _handleDeviceRemoval.Close();
+      _deviceHandle.Close();
+    }
 
-		void OnDeviceRemoval(DeviceBroadcastHeader header, IntPtr ptr)
-		{
-			if(header.DeviceType == 0x06)
-			{
-				DeviceBroadcastHandle dbh = (DeviceBroadcastHandle)Marshal.PtrToStructure(ptr, typeof(DeviceBroadcastHandle));
+    void OnDeviceArrival(DeviceBroadcastHeader dbh, IntPtr ptr)
+    {
+      if (dbh.DeviceType == 0x05)
+      {
+        DeviceBroadcastInterface dbi = (DeviceBroadcastInterface)Marshal.PtrToStructure(ptr, typeof(DeviceBroadcastInterface));
 
-				if(dbh.Handle != _deviceHandle)
-					return;
+        if (dbi.ClassGuid == _deviceClass && DeviceArrival != null)
+          DeviceArrival(this, EventArgs.Empty);
+      }
+    }
 
-				CancelIo(_deviceHandle);
-				UnregisterDeviceRemoval();
+    void OnDeviceRemoval(DeviceBroadcastHeader header, IntPtr ptr)
+    {
+      if (header.DeviceType == 0x06)
+      {
+        DeviceBroadcastHandle dbh = (DeviceBroadcastHandle)Marshal.PtrToStructure(ptr, typeof(DeviceBroadcastHandle));
 
-				if(DeviceRemoval != null)
-					DeviceRemoval(this, EventArgs.Empty);
-			}
-		}
+        if (dbh.Handle != _deviceHandle.DangerousGetHandle())
+          return;
 
-		#endregion Implementation
+        CancelIo(_deviceHandle);
+        UnregisterDeviceRemoval();
 
-		#region Delegates
+        if (DeviceRemoval != null)
+          DeviceRemoval(this, EventArgs.Empty);
+      }
+    }
 
-		internal DeviceEventHandler	DeviceArrival;
-		internal DeviceEventHandler	DeviceRemoval;
-		internal SettingsChanged	SettingsChanged;
+    #endregion Implementation
 
-		#endregion Delegates
+    #region Delegates
 
-		#region Members
+    internal DeviceEventHandler DeviceArrival;
+    internal DeviceEventHandler DeviceRemoval;
+    internal SettingsChanged SettingsChanged;
 
-		IntPtr						_handleDeviceArrival;
-		IntPtr						_handleDeviceRemoval;
-		IntPtr						_deviceHandle;
-		Guid						_deviceClass;
+    #endregion Delegates
 
-		#endregion Members
-	}
+    #region Members
 
-	public delegate void SettingsChanged();
+    SafeHandle _handleDeviceArrival;
+    SafeHandle _handleDeviceRemoval;
+    SafeHandle _deviceHandle;
+    Guid _deviceClass;
+
+    #endregion Members
+  }
+
+  public delegate void SettingsChanged();
 }
