@@ -1335,6 +1335,18 @@ namespace MediaPortal.GUI.Library
               _offset += _itemsPerPage;
               _cursorX -= _itemsPerPage;
             }
+            if ((_cursorX < _scrollStartOffset) && (_offset >= _scrollStartOffset))
+            {
+              _offset -= _scrollStartOffset;
+              _cursorX += _scrollStartOffset;
+              iPage = (_offset / _itemsPerPage) + 1;
+            }
+            else if ((_cursorX > _itemsPerPage - _scrollStartOffset) && (_cursorX >= _scrollStartOffset))
+            {
+              _offset += _scrollStartOffset;
+              _cursorX -= _scrollStartOffset;
+              iPage = (_offset / _itemsPerPage) + 1;
+            }
             _upDownControl.Value = iPage;
             OnSelectionChanged();
           }
@@ -1835,7 +1847,7 @@ namespace MediaPortal.GUI.Library
           _cursorX--;
           OnSelectionChanged();
         }
-        else if (_cursorX == _scrollStartOffset && _offset != 0)
+        else if (_cursorX == _scrollStartOffset && _offset > 0)
         {
           _offset--;
 
