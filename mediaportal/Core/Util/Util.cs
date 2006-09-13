@@ -1622,8 +1622,9 @@ namespace MediaPortal.Util
 			catch(Exception){}*/
 
       string strThumb = String.Format(@"{0}\{1}", strFolder, Utils.FilterFileName(strFileName));
-      if (System.IO.File.Exists(strThumb + ".jpg")) return strThumb + ".jpg";
-      else if (System.IO.File.Exists(strThumb + ".png")) return strThumb + ".png";
+      
+      if (System.IO.File.Exists(strThumb + ".png")) return strThumb + ".png";
+      else if (System.IO.File.Exists(strThumb + ".jpg")) return strThumb + ".jpg";
       else if (System.IO.File.Exists(strThumb + ".gif")) return strThumb + ".gif";
       else if (System.IO.File.Exists(strThumb + ".tbn")) return strThumb + ".tbn";
       return String.Empty;
