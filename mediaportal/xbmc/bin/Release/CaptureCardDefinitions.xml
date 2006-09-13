@@ -15150,4 +15150,50 @@
       </connections>
     </tv>
   </capturecard>
+
+  <capturecard commercialname="Terratec Cinergy Hybrid T USB XS" capturename="Cinergy Hybrid T USB XS (Digital)" devid="vid_0ccd&amp;pid_004c&amp;mi_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"/>
+        <filter cat="tunerdevice"     name="Cinergy Hybrid T USB XS Tuner"      checkdevice="true"/>
+        <filter cat="capture"         name="Cinergy Hybrid T USB XS (Digital)"  checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider"  sourcepin="0" sinkfilter="tunerdevice"  sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"      sourcepin="0" sinkfilter="capture"      sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="YUAN PD300 DVB-T mobility" capturename="TM200/TM400 MOD3000 TV receiver" devid="vid_10b8&amp;pid_0bc7">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="tunerdevice" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"/>
+        <filter cat="tunerdevice"     name="TM200/TM400 MOD3000 TV receiver"  checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Ultron DVB-T Stick" capturename="M9207 BDA Digital Capture" devid="vid_10fd&amp;pid_1513">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"/>
+        <filter cat="tunerdevice"     name="M9207 BDA Digital Tuner"          checkdevice="true"/>
+        <filter cat="capture"         name="M9207 BDA Digital Capture"        checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0"  sinkfilter="tunerdevice"  sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0"  sinkfilter="capture"      sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
 </capturecards>
