@@ -1477,7 +1477,6 @@ namespace MediaPortal.Player
                 _videoRectangle = new Rectangle(0, 0, GUIGraphicsContext.Width, GUIGraphicsContext.Height);
                 _sourceRectangle = _videoRectangle;
 
-                //VizManager.ResizeVisualizationWindow(new System.Drawing.Size(GUIGraphicsContext.Width, GUIGraphicsContext.Height));
                 VizWindow.Size = new System.Drawing.Size(_VideoWidth, _VideoHeight);
                 VizWindow.Visible = true;
                 Log.Info("Core Audioplayer: Done");

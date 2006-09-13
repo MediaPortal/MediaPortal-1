@@ -541,7 +541,6 @@ namespace MediaPortal.Visualization
 
             try
             {
-                //using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
                 using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
                 {
                     _EnableStatusOverlays = xmlreader.GetValueAsBool("musicvisualization", "enableStatusOverlays", false);
@@ -1095,7 +1094,6 @@ namespace MediaPortal.Visualization
 
                     string thumbPath = GetAlbumThumbName(filename, CurrentTrackTag.Artist, CurrentTrackTag.Album);
 
-                    //if (thumbPath.Length > 0 && thumbPath.ToLower().CompareTo(CurrentThumbPath) != 0)
                     if (thumbPath.ToLower().CompareTo(CurrentThumbPath) != 0)
                     {
                         CurrentThumbPath = thumbPath.ToLower();
@@ -2127,68 +2125,6 @@ namespace MediaPortal.Visualization
             }
         }
 
-        ////private void DrawPlayStateIcon(Graphics g)
-        ////{
-        ////    if (g_Player.Paused)
-        ////    {
-        ////        if (PauseImage == null)
-        ////            return;
-
-        ////        g.DrawImage(PauseImage, new Rectangle(PauseImageX, PauseImageY, PauseImageWidth, PauseImageHeight), 0, 0,
-        ////            PauseImage.Width, PauseImage.Height, GraphicsUnit.Pixel);
-        ////    }
-
-        ////    //else if (g_Player.Playing)
-        ////    else
-        ////    {
-        ////        //if(++CurrentPlayStateFrame >= ShowPlayStateFrameCount)
-        ////        if (++CurrentPlayStateFrame >= ShowPlayStateFrameCount + FadeFrameCount)
-        ////        {
-        ////            SeekingFF = false;
-        ////            SeekingRew = false;
-        ////            NewPlay = false;
-        ////            return;
-        ////        }
-
-        ////        if (NewPlay && g_Player.Playing)
-        ////        {
-        ////            if (PlayImage == null)
-        ////                return;
-
-        ////            g.DrawImage(PlayImage, new Rectangle(PlayImageX, PlayImageY, PlayImageWidth, PlayImageHeight), 0, 0,
-        ////                PlayImage.Width, PlayImage.Height, GraphicsUnit.Pixel);
-        ////        }
-
-        ////        else if (g_Player.Stopped)
-        ////        {
-        ////            if (StopImage == null)
-        ////                return;
-
-        ////            g.DrawImage(StopImage, new Rectangle(StopImageX, StopImageY, StopImageWidth, StopImageHeight), 0, 0,
-        ////                StopImage.Width, StopImage.Height, GraphicsUnit.Pixel);
-        ////        }
-
-        ////        else if (SeekingFF)
-        ////        {
-        ////            if (FFImage == null)
-        ////                return;
-
-        ////            g.DrawImage(FFImage, new Rectangle(FFImageX, FFImageY, FFImageWidth, FFImageHeight), 0, 0,
-        ////                FFImage.Width, FFImage.Height, GraphicsUnit.Pixel);
-        ////        }
-
-
-        ////        else if (SeekingRew)
-        ////        {
-        ////            if (RewImage == null)
-        ////                return;
-
-        ////            g.DrawImage(RewImage, new Rectangle(RewImageX, RewImageY, RewImageWidth, RewImageHeight), 0, 0,
-        ////                RewImage.Width, RewImage.Height, GraphicsUnit.Pixel);
-        ////        }
-        ////    }
-        ////}
-
         private void DrawPlayStateIcon(Graphics g)
         {
             if (g_Player.Paused)
@@ -2200,7 +2136,6 @@ namespace MediaPortal.Visualization
                     PauseImage.Width, PauseImage.Height, GraphicsUnit.Pixel);
             }
 
-            //else if (g_Player.Playing)
             else
             {
                 if (!SeekingFF && !SeekingRew && !NewPlay)
@@ -2223,7 +2158,6 @@ namespace MediaPortal.Visualization
                         opacity = 1.0f;
                 }
 
-                //if(++CurrentPlayStateFrame >= ShowPlayStateFrameCount)
                 if (CurrentPlayStateFrame >= ShowPlayStateFrameCount + FadeFrameCount)
                 {
                     CurrentPlayStateFrame = 0;
