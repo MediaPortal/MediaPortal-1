@@ -139,6 +139,7 @@
 <entry name="tve.es">208</entry>
 <entry name="Ushuaia TV">451</entry>
 <entry name="voyage.fr">212</entry>
+<entry name="W9">119</entry>
 <entry name="xxltv.fr">218</entry>
 <entry name="zdf.de">219</entry>
  
@@ -146,38 +147,36 @@
   </section>
  
 <!-- Formating of Listing -->
-  <section name="Listing">
-    <entry name="BaseURL">http://telecineobs.nouvelobs.com/api/</entry>
-    <entry name="SearchURL">?</entry>
-    <entry name="PostQuery">cmd=listeProgrammes&amp;formtv-limit=200&amp;formtv-initialisation=1&amp;formtv-crenau=0&amp;formtv-chaine=[ID]&amp;positionGroupeChainePrincipal=0&amp;formtv-date=[YYYY]-[MM]-[DD]</entry>
+<section name="Listing">
+<entry name="BaseURL">http://telecineobs.nouvelobs.com/index.php</entry>
+<entry name="SearchURL">?</entry>
+<entry name="PostQuery">formtv-limit=200&amp;formtv-initialisation=1&amp;formtv-crenau=0&amp;formtv-chaine=[ID]&amp;positionGroupeChainePrincipal=0&amp;formtv-date=[YYYY]-[MM]-[DD]</entry>
 <!-- Unique Listing Start string -->
- 
+
 <!-- Template of the Listing information -->
-        <entry name="Tags">TA</entry>   
-    <entry name="Template">
-&#60;tr&#62;&#60;td&#62;&#60;a&#62;&#60;#START&#62;-&#60;#TITLE&#62;&#60;/a&#62;&#60;/td&#62;
+<entry name="Tags">TA</entry> 
+<entry name="Template">
+&#60;tr>&#60;td&#62;&#60;a&#62;&#60;#START&#62;-&#60;#TITLE&#62;&#60;/a&#62;&#60;/td&#62;
 &#60;td&#62;&#60;#GENRE&#62;&#60;/td&#62;&#60;/tr&#62;
-    </entry>
+</entry>
 <entry name="SubListingLink">onclick</entry>
-  </section>
- 
-  <section name="SubListing">
-        <entry name="URL">http://telecineobs.nouvelobs.com/detailProgramme.php?idProgram=[1]</entry>
-        <!-- Template of the Listing information -->
-        <entry name="Tags">TPS</entry>
-        <entry name="Template">
-        &#60;table&#62;
-&#60;tr&#62;
-&#60;td&#62;
+</section>
+
+<section name="SubListing">
+<entry name="URL">http://telecineobs.nouvelobs.com/detailProgramme.php?idProgram=[1]</entry>
+<!-- Template of the Listing information -->
+<entry name="Tags">TPS</entry>
+<entry name="Template">
 &#60;p&#62;
 &#60;strong&#62;&#60;/strong&#62;:&#60;#DESCRIPTION&#62;
 &#60;/p&#62;
 &#60;/td&#62;
 &#60;/tr&#62;
-&#60;/table&#62;    
-        </entry>
- 
-  </section>
+&#60;/table&#62; 
+&#60;/p&#62;
+</entry>
+</section>
+
  
   <section name="Info">
     <entry name="GuideDays">3</entry>
