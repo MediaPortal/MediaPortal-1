@@ -56,12 +56,16 @@ namespace MediaPortal.GUI.TV
 
     bool _running;
     int _parentWindowID = 0;
-    int _cropTop, _cropBottom, _cropLeft, _cropRight = 0;
+    CropSettings _cropSettings;
     GUIWindow _parentWindow = null;
 
+    /// <summary>
+    /// Collection of Controls which are accessed from this class
+    /// </summary>
     enum Controls
     {
       CONTROL_EXIT = 2,
+      CONTROL_CARD_LABEL = 5,
       CONTROL_CROP_TOP = 8,
       CONTROL_CROP_BOTTOM = 12,
       CONTROL_CROP_LEFT = 16,
@@ -136,13 +140,12 @@ namespace MediaPortal.GUI.TV
       {
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
           {
-            using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
-            {
-              _cropTop = reader.GetValueAsInt("mytv", "topscanlinestoremove", 0);
-              _cropBottom = reader.GetValueAsInt("mytv", "bottomscanlinestoremove", 0);
-              _cropLeft = reader.GetValueAsInt("mytv", "leftcolumnstoremove", 0);
-              _cropRight = reader.GetValueAsInt("mytv", "rightcolumnstoremove", 0);
-            }
+            // fetch settings for the current capture card
+            TVCaptureDevice dev = Recorder.CommandProcessor.TVCards[Recorder.CommandProcessor.CurrentCardIndex];
+            _cropSettings = dev.CropSettings;
+            GUILabelControl cardLabel = GetControl((int)Controls.CONTROL_CARD_LABEL) as GUILabelControl;
+            cardLabel.Label = GUILocalizeStrings.Get(810) + String.Format(": {0}", dev.CommercialName);
+
             foreach (int iCtl in Enum.GetValues(typeof(Controls)))
             {
               if (GetControl(iCtl) is GUISpinControl)
@@ -156,47 +159,46 @@ namespace MediaPortal.GUI.TV
             {
               GUIControl.AddItemLabelControl(GetID,(int)Controls.CONTROL_CROP_TOP, i.ToString());
             }
-            GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_CROP_TOP, _cropTop);
+            GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_CROP_TOP, _cropSettings.Top);
             GUIControl.ClearControl(GetID, (int)Controls.CONTROL_CROP_BOTTOM);
             for (int i = 0; i <= 200; ++i)
             {
               GUIControl.AddItemLabelControl(GetID,(int)Controls.CONTROL_CROP_BOTTOM, i.ToString());
             }
-            GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_CROP_BOTTOM, _cropBottom);
+            GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_CROP_BOTTOM, _cropSettings.Bottom);
             GUIControl.ClearControl(GetID, (int)Controls.CONTROL_CROP_LEFT);
             for (int i = 0; i <= 200; ++i)
             {
               GUIControl.AddItemLabelControl(GetID,(int)Controls.CONTROL_CROP_LEFT, i.ToString());
             }
-            GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_CROP_LEFT, _cropLeft);
+            GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_CROP_LEFT, _cropSettings.Left);
             GUIControl.ClearControl(GetID, (int)Controls.CONTROL_CROP_RIGHT);
             for (int i = 0; i <= 200; ++i)
             {
               GUIControl.AddItemLabelControl(GetID,(int)Controls.CONTROL_CROP_RIGHT, i.ToString());
             }
-            GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_CROP_RIGHT, _cropRight);
+            GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_CROP_RIGHT, _cropSettings.Right);
+
+            dev = null;
             break;
           }
         case GUIMessage.MessageType.GUI_MSG_CLICKED:
           {
-            CropMessage cm = null;
             int iControl = message.SenderControlId;
             if (iControl == (int)Controls.CONTROL_EXIT)
               Close();
             else if (iControl == (int)Controls.CONTROL_CROP_TOP)
-              cm = new CropMessage(CropMessage.Edge.Top, Int32.Parse(message.Label));
+              _cropSettings.Top = Int32.Parse(message.Label);
             else if (iControl == (int)Controls.CONTROL_CROP_BOTTOM)
-              cm = new CropMessage(CropMessage.Edge.Bottom, Int32.Parse(message.Label));
+              _cropSettings.Bottom = Int32.Parse(message.Label);
             else if (iControl == (int)Controls.CONTROL_CROP_LEFT)
-              cm = new CropMessage(CropMessage.Edge.Left, Int32.Parse(message.Label));
+              _cropSettings.Left = Int32.Parse(message.Label);
             else if (iControl == (int)Controls.CONTROL_CROP_RIGHT)
-              cm = new CropMessage(CropMessage.Edge.Right, Int32.Parse(message.Label));
-            if (cm != null)
-            {
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLANESCENE_CROP, 0, 0, 0, 0, 0, null);
-              msg.Object = cm;
-              GUIGraphicsContext.SendMessage(msg);
-            }
+              _cropSettings.Right = Int32.Parse(message.Label);
+
+            // ativate & save settings for the current capture card
+            Recorder.CommandProcessor.TVCards[Recorder.CommandProcessor.CurrentCardIndex].CropSettings = _cropSettings;
+
             break;
           }
       }

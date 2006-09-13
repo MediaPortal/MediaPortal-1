@@ -47,6 +47,8 @@ namespace MediaPortal.TV.Database
     string _fileName;
     int _recordedId = -1;
     int _playedCounter = 0;
+    int _recordedCardIndex = 0;
+
     DateTime _keepUntilDate = DateTime.MaxValue;
     KeepMethod _keepUntilMethod = KeepMethod.UntilSpaceNeeded;
 
@@ -196,5 +198,15 @@ namespace MediaPortal.TV.Database
         return true;
       }
     }
+
+    /// <summary>
+    /// Indicates on which card number the recording is made
+    /// </summary>
+    public int RecordedCardIndex
+    {
+      get { return _recordedCardIndex; }
+      set { _recordedCardIndex = value; }
+    }
+
   }
 }

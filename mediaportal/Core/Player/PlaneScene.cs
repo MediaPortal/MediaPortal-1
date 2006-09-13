@@ -97,10 +97,7 @@ namespace MediaPortal.Player
     VertexBuffer _vertexBuffer;
     uint _surfaceAdress, _textureAddress;
 
-    int _topscanlinesToRemove = 0;
-    int _bottomscanlinesToRemove = 0;
-    int _leftcolumnsToRemove = 0;
-    int _rightcolumnsToRemove = 0;
+    CropSettings _cropSettings;
     int _arVideoWidth = 4;
     int _arVideoHeight = 3;
     int _prevVideoWidth = 0;
@@ -132,13 +129,7 @@ namespace MediaPortal.Player
       _blackImage.SetFileName("black.bmp");
       _blackImage.AllocResources();
 
-      using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
-      {
-        _topscanlinesToRemove = xmlReader.GetValueAsInt("mytv", "topscanlinestoremove", 0);
-        _bottomscanlinesToRemove = xmlReader.GetValueAsInt("mytv", "bottomscanlinestoremove", 0);
-        _leftcolumnsToRemove = xmlReader.GetValueAsInt("mytv", "leftcolumnstoremove", 0);
-        _rightcolumnsToRemove = xmlReader.GetValueAsInt("mytv", "rightcolumnstoremove", 0);
-      }
+      _cropSettings = new CropSettings();
     }
     #endregion
 
@@ -244,7 +235,7 @@ namespace MediaPortal.Player
     /// </summary>
     public void Deinit()
     {
-      GUIGraphicsContext.Receivers -= new SendMessageHandler(this.OnMessage);
+      GUIWindowManager.Receivers -= new SendMessageHandler(this.OnMessage);
       GUILayerManager.UnRegisterLayer(this);
       if (_renderTarget != null)
       {
@@ -277,7 +268,7 @@ namespace MediaPortal.Player
       //Log.Info("PlaneScene: init()");
       _renderTarget = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Video);
-      GUIGraphicsContext.Receivers += new SendMessageHandler(this.OnMessage);
+      GUIWindowManager.Receivers += new SendMessageHandler(this.OnMessage);
     }
 
     /// <summary>
@@ -290,9 +281,9 @@ namespace MediaPortal.Player
       switch (message.Message)
       {
         case GUIMessage.MessageType.GUI_MSG_PLANESCENE_CROP:
-          CropMessage msg = message.Object as CropMessage;
-          if (msg != null)
-            Crop(msg);
+          CropSettings cs = message.Object as CropSettings;
+          if (cs != null)
+            Crop(cs);
           break;
       }
     }
@@ -301,44 +292,15 @@ namespace MediaPortal.Player
     /// Crop.
     /// Crops the current picture..
     /// </summary>
-    /// <param name="message">CropMessage</param>
-    void Crop(CropMessage message)
+    /// <param name="message">CropSettings</param>
+    void Crop(CropSettings cs)
     {
-      if (message.Amount < 0) return;
-      using (MediaPortal.Profile.Settings writer = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      _cropSettings = cs;
+      Log.Info("PlaneScene: Crop: top:{0}, bottom:{1}, left:{2}, right:{3}", cs.Top, cs.Bottom, cs.Left, cs.Right);
+      lock (this)
       {
-        switch (message.EdgeToCtop)
-        {
-          case CropMessage.Edge.Top:
-           if ((message.Amount + _bottomscanlinesToRemove) >= _sourceRect.Height)
-             return;
-           _topscanlinesToRemove = message.Amount;
-           writer.SetValue("mytv", "topscanlinestoremove", _topscanlinesToRemove);
-           break;
-         case CropMessage.Edge.Bottom:
-           if ((message.Amount + _topscanlinesToRemove) >= _sourceRect.Height)
-             return;
-           _bottomscanlinesToRemove = message.Amount;
-           writer.SetValue("mytv", "bottomscanlinestoremove", _bottomscanlinesToRemove);
-           break;
-         case CropMessage.Edge.Left:
-           if ((message.Amount + _rightcolumnsToRemove) >= _sourceRect.Width)
-             return;
-           _leftcolumnsToRemove = message.Amount;
-           writer.SetValue("mytv", "leftcolumnstoremove", _leftcolumnsToRemove);
-           break;
-         case CropMessage.Edge.Right:
-           if ((message.Amount + _leftcolumnsToRemove) >= _sourceRect.Width)
-             return;
-           _rightcolumnsToRemove = message.Amount;
-           writer.SetValue("mytv", "rightcolumnstoremove", _rightcolumnsToRemove);
-           break;
-        }
+        InternalPresentImage(_vmr9Util.VideoWidth, _vmr9Util.VideoHeight, _arVideoWidth, _arVideoHeight, false);
       }
-      Log.Info("PlaneScene: Crop Edge {0}, amount: {1}", message.EdgeToCtop.ToString(), message.Amount);
-
-      // Repaint();
-      InternalPresentImage(_vmr9Util.VideoWidth, _vmr9Util.VideoHeight, _arVideoWidth, _arVideoHeight, false);
     }
 
     /// <summary>
@@ -438,18 +400,15 @@ namespace MediaPortal.Player
         // Some capture cards capture too much of the video source
         // Remove unwanted video by croping the picture
 
-        if (InTv)
-        {
-          _sourceRect.Y += _topscanlinesToRemove;
-          _sourceRect.Height -= _topscanlinesToRemove;
-          _sourceRect.Height -= _bottomscanlinesToRemove;
+        _sourceRect.Y += _cropSettings.Top;
+        _sourceRect.Height -= _cropSettings.Top;
+        _sourceRect.Height -= _cropSettings.Bottom;
 
-          _sourceRect.X += _leftcolumnsToRemove;
-          _sourceRect.Width -= _leftcolumnsToRemove;
-          _sourceRect.Width -= _rightcolumnsToRemove;
-        }
-        Log.Info("PlaneScene: crop T, B  : {0}, {1}", _topscanlinesToRemove, _bottomscanlinesToRemove);
-        Log.Info("PlaneScene: crop L, R  : {0}, {1}", _leftcolumnsToRemove, _rightcolumnsToRemove);
+        _sourceRect.X += _cropSettings.Left;
+        _sourceRect.Width -= _cropSettings.Left;
+        _sourceRect.Width -= _cropSettings.Right;
+        Log.Info("PlaneScene: crop T, B  : {0}, {1}", _cropSettings.Top, _cropSettings.Bottom);
+        Log.Info("PlaneScene: crop L, R  : {0}, {1}", _cropSettings.Left, _cropSettings.Right);
 
         Log.Info("PlaneScene: video WxH  : {0}x{1}", videoSize.Width, videoSize.Height);
         Log.Info("PlaneScene: video AR   : {0}:{1}", _arVideoWidth, _arVideoHeight);

@@ -294,7 +294,7 @@
     </Compile>
     <Compile Include="MusicPlayer\Visualization\WMPVisualizationHelper.cs" />
     <Compile Include="MusicPlayer\Visualization\WMPViz.cs" />
-    <Compile Include="Player\CropMessage.cs" />
+    <Compile Include="Player\CropSettings.cs" />
     <Compile Include="Player\DummyPlayer.cs" />
     <Compile Include="Player\DummyPlayerFactory.cs" />
     <Compile Include="Player\IPlayerFactory.cs" />

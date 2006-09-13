@@ -155,6 +155,8 @@ namespace MediaPortal.TV.Recording
     private GraphHelper _graphHelper = null;
     [NonSerialized]
     static Hashtable _devices = new Hashtable();
+    [NonSerialized]
+    private CropSettings _cropSettings;
 
     /// <summary>
     /// #MW#
@@ -845,6 +847,20 @@ namespace MediaPortal.TV.Recording
       set { _supportsRadio = value; }
     }
 
+    /// <summary>
+    /// Property which returns the crop settings for this capture device
+    /// </summary>
+    public CropSettings CropSettings
+    {
+      get { return _cropSettings; }
+      set
+      {
+        _cropSettings = value;
+        SendCropMessage();
+        SaveCropSettings();
+      }
+    }
+
     #endregion
 
     #region public members
@@ -1096,6 +1112,7 @@ namespace MediaPortal.TV.Recording
       if (_currentGraph == null)
       {
         LoadContrastGammaBrightnessSettings();
+        LoadCropSettings();
         Log.Info("TVCapture.CreateGraph() Card:{0}", ID);
         _currentGraph = GraphFactory.CreateGraph(this);
         if (_currentGraph == null) return false;
@@ -1612,6 +1629,7 @@ namespace MediaPortal.TV.Recording
       _recordedTvObject.FileName = fullFileName;
       _recordedTvObject.KeepRecordingMethod = recording.KeepRecordingMethod;
       _recordedTvObject.KeepRecordingTill = recording.KeepRecordingTill;
+      _recordedTvObject.RecordedCardIndex = ID;
       if (currentRunningProgram != null)
       {
         _recordedTvObject.Title = currentRunningProgram.Title;
@@ -1735,9 +1753,58 @@ namespace MediaPortal.TV.Recording
       }
     }
 
+    /// <summary>
+    /// Loads stored crop settings for this capture device
+    /// </summary>
+    void LoadCropSettings()
+    {
+      try
+      {
+        string filename = String.Format(Config.Get(Config.Dir.Database) + "card_{0}.xml", _friendlyName);
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename))
+        {
+          _cropSettings = new CropSettings(
+                                           xmlreader.GetValueAsInt("tv", "croptop", 0),
+                                           xmlreader.GetValueAsInt("tv", "cropbottom", 0),
+                                           xmlreader.GetValueAsInt("tv", "cropleft", 0),
+                                           xmlreader.GetValueAsInt("tv", "cropright", 0)
+                                          );
+        }
+      }
+      catch (Exception)
+      { }
+    }
 
+    /// <summary>
+    /// Saves crop settings for this capture device
+    /// </summary>
+    void SaveCropSettings()
+    {
+      if (_friendlyName != null && _friendlyName != String.Empty)
+      {
+        string filename = String.Format(Config.Get(Config.Dir.Database) + @"card_{0}.xml", _friendlyName);
+        using (MediaPortal.Profile.Settings xmlWriter = new MediaPortal.Profile.Settings(filename))
+        {
+          xmlWriter.SetValue("tv", "croptop", _cropSettings.Top);
+          xmlWriter.SetValue("tv", "cropbottom", _cropSettings.Bottom);
+          xmlWriter.SetValue("tv", "cropleft", _cropSettings.Left);
+          xmlWriter.SetValue("tv", "cropright", _cropSettings.Right);
+        }
+      }
+    }
+
+    /// <summary>
+    /// Handles sending the crop message with the crop settings for the current capture device
+    /// </summary>
+    public void SendCropMessage()
+    {
+      Log.Info("TvCaptureDevice.SendCropMessage(): {0}, {1}, {2}, {3}", _cropSettings.Top, _cropSettings.Bottom, _cropSettings.Left, _cropSettings.Right);
+      GUIWindowManager.SendThreadMessage(
+        new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLANESCENE_CROP, 0, 0, 0, 0, 0, _cropSettings)
+        );
+    }
+    
     #endregion
-
 
   }
 }

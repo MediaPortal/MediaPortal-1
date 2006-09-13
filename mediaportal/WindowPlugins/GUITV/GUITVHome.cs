@@ -61,6 +61,7 @@ namespace MediaPortal.GUI.TV
     static bool _isTvOn = true;
     static bool _isTimeShifting = true;
     static ChannelNavigator m_navigator = new ChannelNavigator();
+    static GUITVCropManager _cropManager = new GUITVCropManager();
 
     DateTime _updateTimer = DateTime.Now;
     bool _autoTurnOnTv = false;

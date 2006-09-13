@@ -151,7 +151,7 @@ namespace MediaPortal.TV.Database
 
     static public void UpdateFromPreviousVersion()
     {
-      int currentVersion = 8;
+      int currentVersion = 9;
       int versionNr = 0;
 
       DatabaseUtility.AddTable(m_db, "tblversion", "CREATE TABLE tblversion( idVersion integer)");
@@ -233,6 +233,11 @@ namespace MediaPortal.TV.Database
         m_db.Execute("ALTER TABLE channel ADD COLUMN epgLastUpdate text");
         m_db.Execute(String.Format("update channel set epglastupdate='{0}'", MediaPortal.Util.Utils.datetolong(dtStart)));
       }
+      if (versionNr < 9)
+      {
+        m_db.Execute("ALTER TABLE recorded ADD COLUMN idCard integer");
+        m_db.Execute("UPDATE recorded set idCard=0");
+      }
       m_db.Execute(String.Format("update tblversion set idVersion={0}", currentVersion));
     }
 
@@ -302,7 +307,7 @@ namespace MediaPortal.TV.Database
         DatabaseUtility.AddTable(m_db, "recording", "CREATE TABLE recording ( idRecording integer primary key, idChannel integer, iRecordingType integer, strProgram text, iStartTime integer, iEndTime integer, iCancelTime integer, bContentRecording integer, priority integer, quality integer, episodesToKeep integer)");
         DatabaseUtility.AddTable(m_db, "canceledseries", "CREATE TABLE canceledseries ( idRecording integer, idChannel integer, iCancelTime text)");
 
-        DatabaseUtility.AddTable(m_db, "recorded", "CREATE TABLE recorded ( idRecorded integer primary key, idChannel integer, idGenre integer, strProgram text, iStartTime integer, iEndTime integer, strDescription text, strFileName text, iPlayed integer)");
+        DatabaseUtility.AddTable(m_db, "recorded", "CREATE TABLE recorded ( idRecorded integer primary key, idChannel integer, idGenre integer, strProgram text, iStartTime integer, iEndTime integer, strDescription text, strFileName text, iPlayed integer, idCard integer)");
 
         DatabaseUtility.AddTable(m_db, "tblDVBSMapping", "CREATE TABLE tblDVBSMapping ( idChannel integer,sPCRPid integer,sTSID integer,sFreq integer,sSymbrate integer,sFEC integer,sLNBKhz integer,sDiseqc integer,sProgramNumber integer,sServiceType integer,sProviderName text,sChannelName text,sEitSched integer,sEitPreFol integer,sAudioPid integer,sVideoPid integer,sAC3Pid integer,sAudio1Pid integer,sAudio2Pid integer,sAudio3Pid integer,sTeletextPid integer,sScrambled integer,sPol integer,sLNBFreq integer,sNetworkID integer,sAudioLang text,sAudioLang1 text,sAudioLang2 text,sAudioLang3 text,sECMPid integer,sPMTPid integer)");
         DatabaseUtility.AddTable(m_db, "tblDVBCMapping", "CREATE TABLE tblDVBCMapping ( idChannel integer primary key, strChannel text, strProvider text, iLCN integer, frequency text, symbolrate integer, innerFec integer, modulation integer, ONID integer, TSID integer, SID integer, Visible integer, audioPid integer, videoPid integer, teletextPid integer, pmtPid integer, ac3Pid integer, audio1Pid integer, audio2Pid integer, audio3Pid integer,sAudioLang text,sAudioLang1 text,sAudioLang2 text,sAudioLang3 text, HasEITPresentFollow integer, HasEITSchedule integer)");
@@ -2517,7 +2522,7 @@ namespace MediaPortal.TV.Database
 
           if (recording.ID > 0) //mjsystem
           {
-            strSQL = String.Format("insert into recorded (idRecorded,idChannel,idGenre,strProgram,iStartTime,iEndTime,strDescription,strFileName,iPlayed,keepMethod,keepDate) values ( {10}, {0}, {1}, '{2}', '{3}', '{4}', '{5}', '{6}', {7}, {8}, '{9}')",
+            strSQL = String.Format("insert into recorded (idRecorded,idChannel,idGenre,strProgram,iStartTime,iEndTime,strDescription,strFileName,iPlayed,keepMethod,keepDate, idCard) values ( {10}, {0}, {1}, '{2}', '{3}', '{4}', '{5}', '{6}', {7}, {8}, '{9}', {11})",
               iChannelId,
               iGenreId,
               strTitle,
@@ -2528,11 +2533,12 @@ namespace MediaPortal.TV.Database
               recording.Played,
               (int)recording.KeepRecordingMethod,
               MediaPortal.Util.Utils.datetolong(recording.KeepRecordingTill),
-              recording.ID);
+              recording.ID,
+              recording.RecordedCardIndex);
           }
           else
           {
-            strSQL = String.Format("insert into recorded (idRecorded,idChannel,idGenre,strProgram,iStartTime,iEndTime,strDescription,strFileName,iPlayed,keepMethod,keepDate) values ( NULL, {0}, {1}, '{2}', '{3}', '{4}', '{5}', '{6}', {7}, {8}, '{9}')",
+            strSQL = String.Format("insert into recorded (idRecorded,idChannel,idGenre,strProgram,iStartTime,iEndTime,strDescription,strFileName,iPlayed,keepMethod,keepDate, idCard) values ( NULL, {0}, {1}, '{2}', '{3}', '{4}', '{5}', '{6}', {7}, {8}, '{9}', {10})",
               iChannelId,
               iGenreId,
               strTitle,
@@ -2542,7 +2548,8 @@ namespace MediaPortal.TV.Database
               strFileName,
               recording.Played,
               (int)recording.KeepRecordingMethod,
-              MediaPortal.Util.Utils.datetolong(recording.KeepRecordingTill));
+              MediaPortal.Util.Utils.datetolong(recording.KeepRecordingTill),
+              recording.RecordedCardIndex);
           }
           m_db.Execute(strSQL);
           lNewId = m_db.LastInsertID();
@@ -2628,6 +2635,7 @@ namespace MediaPortal.TV.Database
             rec.KeepRecordingMethod = (TVRecorded.KeepMethod)DatabaseUtility.GetAsInt(results, i, "recorded.keepMethod");
             long date = DatabaseUtility.GetAsInt64(results, i, "recorded.keepDate");
             rec.KeepRecordingTill = MediaPortal.Util.Utils.longtodate(date);
+            rec.RecordedCardIndex = DatabaseUtility.GetAsInt(results, i, "recorded.idCard");
             recordings.Add(rec);
           }
 
@@ -2677,6 +2685,7 @@ namespace MediaPortal.TV.Database
           recording.KeepRecordingMethod = (TVRecorded.KeepMethod)DatabaseUtility.GetAsInt(results, 0, "recorded.keepMethod");
           long date = DatabaseUtility.GetAsInt64(results, 0, "recorded.keepDate");
           recording.KeepRecordingTill = MediaPortal.Util.Utils.longtodate(date);
+          recording.RecordedCardIndex = DatabaseUtility.GetAsInt(results, 0, "recorded.idCard");
           return true;
         }
         catch (Exception ex)
@@ -4965,6 +4974,7 @@ namespace MediaPortal.TV.Database
             rec.KeepRecordingMethod = (TVRecorded.KeepMethod)DatabaseUtility.GetAsInt(results, i, "recorded.keepMethod");
             long date = DatabaseUtility.GetAsInt64(results, i, "recorded.keepDate");
             rec.KeepRecordingTill = MediaPortal.Util.Utils.longtodate(date);
+            rec.RecordedCardIndex = DatabaseUtility.GetAsInt(results, i, "recorded.idCard");
             recordings.Add(rec);
           }
 

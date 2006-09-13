@@ -830,6 +830,7 @@
     <Compile Include="GUITV\GUITVConflicts.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="GUITV\GUITVCropManager.cs" />
     <Compile Include="GUITV\GUITVGuide.cs">
       <SubType>Code</SubType>
     </Compile>
