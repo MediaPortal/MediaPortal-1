@@ -29,6 +29,7 @@ using System.Text;
 using System.Threading;
 using NUnit.Framework;
 using UdpHelper;
+using MediaPortal.Util;
 
 namespace MediaPortal.Tests.Plugins.HCWHelper.NetHelper
 {
@@ -37,6 +38,15 @@ namespace MediaPortal.Tests.Plugins.HCWHelper.NetHelper
   public class NetHelperTest
   {
     int udpPort = 2110;
+
+    [SetUp]
+    public void Init()
+    {
+      if (!Config.LoadDirs(System.IO.Directory.GetCurrentDirectory()))
+      {
+        throw new Exception("Missing or Invalid MediaPortalDirs.xml file. Unit tests cannot run without that file.");
+      }
+    }
 
     [Test]
     public void SendMessage()

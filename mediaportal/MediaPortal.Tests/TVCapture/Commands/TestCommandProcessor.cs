@@ -11,7 +11,6 @@ using MediaPortal.Radio.Database;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
 using System.IO;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Tests.Commands
 {
@@ -37,10 +36,10 @@ namespace MediaPortal.Tests.Commands
     [SetUp]
     public void Init()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      StringWriter logString = new StringWriter();
-      ILog log = new MediaPortal.Utils.Services.Log(logString, MediaPortal.Utils.Services.Log.Level.Debug);
-      services.Replace<ILog>(log);
+      if (!Config.LoadDirs(System.IO.Directory.GetCurrentDirectory()))
+      {
+        throw new Exception("Missing or Invalid MediaPortalDirs.xml file. Unit tests cannot run without that file.");
+      }
 
       TVChannel ch;
       TVDatabase.ClearAll();

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
+using MediaPortal.Util;
 using MediaPortal.Playlists;
 using System.IO;
 
@@ -10,6 +11,15 @@ namespace MediaPortal.Tests.Core.Playlists
   [TestFixture]
   public class PlayListB4STest
   {
+    [SetUp]
+    public void Init()
+    {
+      if (!Config.LoadDirs(System.IO.Directory.GetCurrentDirectory()))
+      {
+        throw new Exception("Missing or Invalid MediaPortalDirs.xml file. Unit tests cannot run without that file.");
+      }
+    }
+
     [Test]
     public void LoadB4S()
     {

@@ -29,7 +29,7 @@ using System.Text;
 using MediaPortal.InputDevices;
 using NUnit.Framework;
 using System.IO;
-using MediaPortal.Utils.Services;
+using MediaPortal.Util;
 
 namespace MediaPortal.Tests.Core.InputDevices
 {
@@ -40,10 +40,10 @@ namespace MediaPortal.Tests.Core.InputDevices
     [SetUp]
     public void Init()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      StringWriter logString = new StringWriter();
-      Log log = new Log(logString, Log.Level.Debug);
-      services.Replace<ILog>(log);
+      if (!Config.LoadDirs(System.IO.Directory.GetCurrentDirectory()))
+      {
+        throw new Exception("Missing or Invalid MediaPortalDirs.xml file. Unit tests cannot run without that file.");
+      }
     }
 
     [Test]
@@ -59,7 +59,7 @@ namespace MediaPortal.Tests.Core.InputDevices
     {
       string xmlFile = "TestCustom";
       InputHandler inputHandler = new InputHandler(xmlFile);
-      Assert.AreEqual("InputDeviceMappings\\custom\\TestCustom.xml", inputHandler.GetXmlPath(xmlFile));
+      Assert.AreEqual(Config.Get(Config.Dir.CustomInputDevice) + xmlFile + ".xml", inputHandler.GetXmlPath(xmlFile));
     }
 
     [Test]
