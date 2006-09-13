@@ -74,11 +74,6 @@ namespace MediaPortal.Hardware
         DeviceRemoval(sender, e);
     }
 
-    public static DeviceCollection GetDevicesByClass(Guid guid)
-    {
-      return new DeviceCollection();
-    }
-
     protected string FindDevice(Guid classGuid)
     {
       IntPtr handle = SetupDiGetClassDevs(ref classGuid, 0, 0, 0x12);
