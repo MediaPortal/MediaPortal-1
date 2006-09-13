@@ -65,7 +65,7 @@
          <type>fadelabel</type>
          <description>track label</description>
          <id>113</id>
-         <posX>135</posX>
+         <posX>138</posX>
          <posY>452</posY>
          <width>320</width>
          <height>20</height>
@@ -78,7 +78,7 @@
          <type>fadelabel</type>
          <description>track label</description>
          <id>113</id>
-         <posX>134</posX>
+         <posX>138</posX>
          <posY>484</posY>
          <width>288</width>
          <height>20</height>
@@ -91,7 +91,7 @@
          <type>fadelabel</type>
          <description>track label</description>
          <id>113</id>
-         <posX>134</posX>
+         <posX>138</posX>
          <posY>512</posY>
          <width>288</width>
          <height>20</height>
@@ -104,7 +104,7 @@
          <type>fadelabel</type>
          <description>year label</description>
          <id>114</id>
-         <posX>670</posX>
+         <posX>676</posX>
          <posY>79</posY>
          <width>80</width>
          <label>#Play.Current.Year</label>
@@ -116,7 +116,7 @@
          <type>label</type>
          <description>album label</description>
          <id>6</id>
-         <posX>410</posX>
+         <posX>404</posX>
          <posY>79</posY>
          <width>180</width>
          <label>#Play.Current.Album</label>
