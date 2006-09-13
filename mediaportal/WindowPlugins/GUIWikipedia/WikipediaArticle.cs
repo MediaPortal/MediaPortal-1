@@ -64,7 +64,7 @@ namespace Wikipedia
       this.title = title;
       GetWikipediaXML();
       ParseWikipediaArticle();
-      parseLinksAndImages();
+      ParseLinksAndImages();
     }
 
     /// <summary>This constructor creates a new WikipediaArticle.</summary>
@@ -135,6 +135,13 @@ namespace Wikipedia
     public string GetArticleText()
     {
         return parsedArticle;
+    }
+
+    /// <summary>Returns the title of the article. Can differ from the passed parameter on redirects for example.</summary>
+    /// <returns>String: title of the article</returns>
+    public string GetTitle()
+    {
+      return title;
     }
 
     /// <summary>Returns all names of images.</summary>
@@ -256,7 +263,6 @@ namespace Wikipedia
             Log.Error(e.ToString());
             Log.Error(builder.ToString());
           }
-
           tempParsedArticle = builder.ToString();
         }
 
@@ -427,21 +433,24 @@ namespace Wikipedia
         // For Debug purposes it is nice to see how the whole article text is parsed until here
         //Log.Debug(tempParsedArticle);
 
+        Log.Info("Wikipedia: Finished parsing.");
         this.unparsedArticle = tempParsedArticle;
       }
     }
 
     /// <summary>Gets Links out of the article. External links are thrown away, links to other wikipedia articles get into the link array, images to the image array</summary>
-    private void parseLinksAndImages()
+    private void ParseLinksAndImages()
     {
+      Log.Info("Wikipedia: Starting parsing of links and images.");
       string tempParsedArticle = this.unparsedArticle;
+      int iStart, iEnd, iPipe;
 
       // surrounded by [[IMAGEPATTERN: and ]] are the links to IMAGES.
       // Example: [[Bild:H_NeuesRathaus1.jpg|left|thumb|Das [[Neues Rathaus (Hannover)|Neue Rathaus]] mit Maschteich]]
       while (tempParsedArticle.IndexOf("[[" + imagePattern + ":") >= 0)
       {
-        int iStart = tempParsedArticle.IndexOf("[[" + imagePattern + ":");
-        int iEnd = tempParsedArticle.IndexOf("]]", (iStart + 2)) + 2;
+        iStart = tempParsedArticle.IndexOf("[[" + imagePattern + ":");
+        iEnd = tempParsedArticle.IndexOf("]]", (iStart + 2)) + 2;
         int disturbingLink = iStart;
 
         // Descriptions of images can contain links!
@@ -493,36 +502,37 @@ namespace Wikipedia
       }
 
       // surrounded by [[ and ]] are the links to other articles.
-      string parsedKeyword;
+      string parsedKeyword, parsedLink;
       try
       {
-        while (tempParsedArticle.IndexOf("[[") >= 0)
+        while ((iStart = tempParsedArticle.IndexOf("[[")) >= 0)
         {
-          int iStart = tempParsedArticle.IndexOf("[[");
-          int iEnd = tempParsedArticle.IndexOf("]]") + 2;
+          iEnd = tempParsedArticle.IndexOf("]]") + 2;
           // Extract the Text
           string keyword = tempParsedArticle.Substring(iStart, iEnd - iStart);
 
           // Parse Links to other keywords.
           // 1st type of keywords is like [[article|displaytext]]	
-          // for the 2nd the article and displayed text are equal [[article]].
-          if (keyword.IndexOf("|") > 0)
+          if ((iPipe = keyword.IndexOf("|")) > 0)
           {
-            parsedKeyword = keyword.Substring(keyword.IndexOf("|") + 1, keyword.IndexOf("]]") - keyword.IndexOf("|") - 1);
-            if (!this.linkArray.Contains(parsedKeyword))
+            parsedKeyword = keyword.Substring(iPipe + 1, keyword.Length - iPipe - 3);
+            parsedLink = keyword.Substring(2, iPipe - 2);
+            if (!this.linkArray.Contains(parsedLink))
             {
-              this.linkArray.Add(parsedKeyword);
-              Log.Debug("Wikipedia: Link added: {0}", parsedKeyword);
+              this.linkArray.Add(parsedLink);
+              Log.Debug("Wikipedia: Link added: {0}, {1}", parsedLink, parsedKeyword);
             }
           }
           else if (keyword.IndexOf(":") > 0)
           {
-            //TODO Add links to other languages!!!
+            // for the 2nd a ":" is a link to the article in another language.
+            // TODO Add links to other languages!!!
             parsedKeyword = String.Empty;
           }
           else
           {
-            parsedKeyword = keyword.Substring(keyword.IndexOf("[[") + 2, keyword.IndexOf("]]") - keyword.IndexOf("[[") - 2);
+            // for the 3rd the article and displayed text are equal [[article]].
+            parsedKeyword = keyword.Substring(2, keyword.Length - 4);
             if (!this.linkArray.Contains(parsedKeyword))
             {
               this.linkArray.Add(parsedKeyword);
@@ -530,7 +540,10 @@ namespace Wikipedia
             }
           }
 
-          tempParsedArticle = tempParsedArticle.Substring(0, iStart) + parsedKeyword + tempParsedArticle.Substring(iEnd, tempParsedArticle.Length - iEnd);
+          StringBuilder builder = new StringBuilder(tempParsedArticle);
+          builder.Remove(iStart, iEnd - iStart);
+          builder.Insert(iStart, parsedKeyword);
+          tempParsedArticle = builder.ToString();
         }
       }
       catch (Exception e)
@@ -541,16 +554,16 @@ namespace Wikipedia
 
       // surrounded by [ and ] are external Links. Need to be removed.
       Log.Debug("Wikipedia: Removing external links");
-      while (tempParsedArticle.IndexOf("[") >= 0)
+      while ((iStart = tempParsedArticle.IndexOf("[")) >= 0)
       {
-        int iStart = tempParsedArticle.IndexOf("[");
-        int iEnd = tempParsedArticle.IndexOf("]") + 1;
+        iEnd = tempParsedArticle.IndexOf("]") + 1;
 
         StringBuilder builder = new StringBuilder(tempParsedArticle);
         builder.Remove(iStart, iEnd - iStart);
         tempParsedArticle = builder.ToString();
       }
 
+      Log.Info("Wikipedia: Finished parsing of links and images.");
       this.parsedArticle = tempParsedArticle;
     }
   }
