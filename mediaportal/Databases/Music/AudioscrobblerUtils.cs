@@ -86,7 +86,7 @@ namespace MediaPortal.Music.Database
     private lastFMFeed _currentNeighbourMode;
     //private offlineMode _currentOfflineMode;
 
-    List<Song> songList = null;
+    // List<Song> songList = null;
     List<String> _unwantedTags = null;
 
     /// <summary>
@@ -583,13 +583,28 @@ namespace MediaPortal.Music.Database
       }
     }
 
+    public List<Song> getTopAlbums(string artistToSearch_)
+    {
+      string urlArtist = getValidURLLastFMString(artistToSearch_);
+      List<Song> TopAlbums = new List<Song>();
+
+      TopAlbums = ParseXMLDocForTopAlbums(urlArtist);
+
+      foreach (Song song in TopAlbums)
+      {
+        song.Artist = artistToSearch_;
+      }
+
+      return TopAlbums;
+    }
+
     /// <summary>
     /// Fetch Amazon cover link, release date and album songs sortable by their popularity
     /// </summary>
     /// <param name="artistToSearch_">Band name</param>
     /// <param name="albumToSearch_">Album name</param>
     /// <param name="sortBestTracks">false gives album songs in trackorder, true by popularity</param>
-    /// <returns>Song-List of Album Tracks with Title, Artist, Album, Playcount, URL(track), DateTimePlayed (album release), WebImage</returns>
+    /// <returns>Song-List of Album Tracks with Title, Artist, Album, TimesPlayed, URL(track), DateTimePlayed (album release), WebImage</returns>
     public List<Song> getAlbumInfo(string artistToSearch_, string albumToSearch_, bool sortBestTracks)
     {
       int failover = 0;
@@ -1250,8 +1265,8 @@ namespace MediaPortal.Music.Database
 
     #region XML - Parsers
     private List<Song> ParseXMLDocForAlbumInfo(string artist_, string album_)
-    {      
-      songList = new List<Song>();
+    {
+      List<Song> AlbumInfoList = new List<Song>();
       try
       {
         XmlDocument doc = new XmlDocument();
@@ -1310,16 +1325,60 @@ namespace MediaPortal.Music.Database
             else if (child.Name == "url" && child.ChildNodes.Count != 0)
               nodeSong.URL = child.ChildNodes[0].Value;
           }
-          songList.Add(nodeSong);
+          AlbumInfoList.Add(nodeSong);
         }
         fetchWebImage(tmpCover, tmpArtist + "-" + tmpAlbum + ".jpg", Thumbs.MusicAlbum);
       }
       catch
       {
         // input nice exception here...
-      }     
+      }
 
-      return songList;
+      return AlbumInfoList;
+    }
+
+    private List<Song> ParseXMLDocForTopAlbums(string artist_)
+    {
+      List<Song> TopAlbumList = new List<Song>();
+      try
+      {
+        XmlDocument doc = new XmlDocument();
+
+        doc.Load(@"http://ws.audioscrobbler.com/1.0/artist/" + artist_ + "/topalbums.xml");
+
+        XmlNodeList nodes = doc.SelectNodes(@"//topalbums/album");
+
+        foreach (XmlNode node in nodes)
+        {
+          Song nodeSong = new Song();
+          foreach (XmlNode mainchild in node.ChildNodes)
+          { 
+            if (mainchild.Name == "name" && mainchild.ChildNodes.Count != 0)
+              nodeSong.Album = mainchild.ChildNodes[0].Value;
+            else if (mainchild.Name == "mbid" && mainchild.ChildNodes.Count != 0)
+              nodeSong.MusicBrainzID = mainchild.ChildNodes[0].Value;
+            else if (mainchild.Name == "reach" && mainchild.ChildNodes.Count != 0)
+              nodeSong.TimesPlayed = Convert.ToInt32(mainchild.ChildNodes[0].Value);
+            else if (mainchild.Name == "url" && mainchild.ChildNodes.Count != 0)
+              nodeSong.URL = mainchild.ChildNodes[0].Value;
+            else if (mainchild.Name == "releasedate" && mainchild.ChildNodes.Count != 0)
+              nodeSong.DateTimePlayed = Convert.ToDateTime(mainchild.ChildNodes[0].Value);
+            else if (mainchild.Name == "coverart" && mainchild.ChildNodes.Count != 0)
+            {
+              foreach (XmlNode coverchild in mainchild.ChildNodes)
+                if (coverchild.Name == "large" && coverchild.ChildNodes.Count != 0)
+                  nodeSong.WebImage = coverchild.ChildNodes[0].Value;
+            }
+          }
+          TopAlbumList.Add(nodeSong);
+        }
+      }
+      catch
+      {
+        // input nice exception here...
+      }
+
+      return TopAlbumList;
     }
 
     private Song ParseXMLDocForArtistInfo(string artist_)
@@ -1348,7 +1407,7 @@ namespace MediaPortal.Music.Database
 
     private List<Song> ParseXMLDocForSimilarArtists(string artist_)
     {
-      songList = new List<Song>();
+      List<Song> SimilarArtistList = new List<Song>();
       try
       {
         XmlDocument doc = new XmlDocument();
@@ -1373,14 +1432,14 @@ namespace MediaPortal.Music.Database
               nodeSong.LastFMMatch = child.ChildNodes[0].Value;
           }
           if (Convert.ToInt32(nodeSong.LastFMMatch) > _minimumArtistMatchPercent)
-            songList.Add(nodeSong);
+            SimilarArtistList.Add(nodeSong);
         }
       }
       catch
       {
         // input nice exception here...
       }
-      return songList;
+      return SimilarArtistList;
     }
 
     /// <summary>
@@ -1392,7 +1451,7 @@ namespace MediaPortal.Music.Database
     /// <returns>List of Song with Genre, TimesPlayed and URL</returns>
     private List<Song> ParseXMLDocForUsedTags(string artist_, string track_, lastFMFeed searchType_)
     {
-      songList = new List<Song>();
+      List<Song> UsedTagsList = new List<Song>();
       try
       {
         XmlDocument doc = new XmlDocument();
@@ -1432,19 +1491,19 @@ namespace MediaPortal.Music.Database
             if (child.Name == "count" && child.ChildNodes.Count != 0)
               nodeSong.TimesPlayed = Convert.ToInt32(child.ChildNodes[0].Value);
           }
-          songList.Add(nodeSong);
+          UsedTagsList.Add(nodeSong);
         }
       }
       catch
       {
         // input nice exception here...
       }
-      return songList;
+      return UsedTagsList;
     }
 
     private List<Song> ParseXMLDocForTags(string taggedWith_, lastFMFeed searchType_)
     {
-      songList = new List<Song>();
+      List<Song> TagsList = new List<Song>();
       try
       {
         XmlDocument doc = new XmlDocument();
@@ -1505,19 +1564,19 @@ namespace MediaPortal.Music.Database
             if (node.Attributes["count"].Value != "")
               nodeSong.TimesPlayed = Convert.ToInt32(node.Attributes["count"].Value);
           }
-          songList.Add(nodeSong);
+          TagsList.Add(nodeSong);
         }
       }
       catch
       {
         // input nice exception here...
       }
-      return songList;
+      return TagsList;
     }
 
     private List<Song> ParseXMLDoc(string xmlFileInput, string queryNodePath, lastFMFeed xmlfeed)
     {
-      songList = new List<Song>();
+      List<Song> songList = new List<Song>();
       try
       {
         XmlDocument doc = new XmlDocument();

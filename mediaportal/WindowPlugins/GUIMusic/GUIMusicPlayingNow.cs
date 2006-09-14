@@ -229,7 +229,7 @@ namespace MediaPortal.GUI.Music
         AddImageToImagePathContainer(GUIGraphicsContext.Skin + @"\media\missing_coverart.png");
       }
 
-      if (g_Player.Playing && ImagePathContainer.Count > 1) // change each cover 8x
+      if (g_Player.Duration > 0 && ImagePathContainer.Count > 1) // change each cover 8x
         ImageChangeTimer.Interval = (g_Player.Duration * 1000) / (ImagePathContainer.Count * 8);
       else
         ImageChangeTimer.Interval = 3600 * 1000;
@@ -749,21 +749,51 @@ namespace MediaPortal.GUI.Music
       AlbumTracks = InfoScrobbler.getAlbumInfo(CurrentTrackTag.Artist, CurrentTrackTag.Album, true);
 
       if (AlbumTracks.Count > 0)
+      {
         facadeAlbumInfo.Clear();
 
-      for (int i = 0; i < AlbumTracks.Count; i++)
-      {
-        item = new GUIListItem(AlbumTracks[i].ToShortString());
-        item.Label = AlbumTracks[i].Title;
-        item.Label2 = " (" + GUILocalizeStrings.Get(931) + ": " + Convert.ToString(AlbumTracks[i].TimesPlayed) + ")";
+        // get total ratings
+        float AlbumSongRating = 0;
+        float ratingBase = 0;
 
-        item.MusicTag = BuildMusicTagFromSong(AlbumTracks[i]);
+        foreach (Song Song in AlbumTracks)
+        {
+          AlbumSongRating += Convert.ToSingle(Song.TimesPlayed);
+        }
+        // set % rating
+        if (AlbumTracks[0].TimesPlayed > 0)
+          ratingBase = AlbumSongRating / Convert.ToSingle(AlbumTracks[0].TimesPlayed);
+        //else
+        //  ratingBase = 0.01f;
 
-        facadeAlbumInfo.Add(item);
+        // avoid division by zero
+        AlbumSongRating = AlbumSongRating > 0 ? AlbumSongRating : 1;        
 
-        // display 3 items only
-        if (i >= 2)
-          break;
+        for (int i = 0; i < AlbumTracks.Count; i++)
+        {
+          float rating = 0;
+
+          if (i == 0)
+            AlbumTracks[i].Rating = 10;
+          else
+          {
+            rating = (int)(ratingBase * Convert.ToSingle(AlbumTracks[i].TimesPlayed));
+            AlbumTracks[i].Rating = (int)(rating * 10 / AlbumSongRating);
+          }
+
+          item = new GUIListItem(AlbumTracks[i].ToShortString());
+          item.Label = AlbumTracks[i].Title;
+          //item.Label2 = " (" + GUILocalizeStrings.Get(931) + ": " + Convert.ToString(AlbumTracks[i].TimesPlayed) + ")";
+          item.Label2 = " (" + GUILocalizeStrings.Get(931) + ": " + Convert.ToString(AlbumTracks[i].Rating) + ")";
+
+          item.MusicTag = BuildMusicTagFromSong(AlbumTracks[i]);
+
+          facadeAlbumInfo.Add(item);
+
+          // display 3 items only
+          if (i >= 2)
+            break;
+        }
       }
 
       if (facadeAlbumInfo.Count > 0)

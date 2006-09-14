@@ -212,9 +212,9 @@ namespace MediaPortal.Music.Database
     /// </summary>
     public static void Connect()
     {
-      // Try to submit all queued songs immediately.
-      if (!_signedIn)
-        DoHandshake(true);
+      // avoid delay on start
+      //if (!_signedIn)
+      //  DoHandshake(true);
 
       if (!_disableTimerThread)
         StartSubmitQueueThread();
