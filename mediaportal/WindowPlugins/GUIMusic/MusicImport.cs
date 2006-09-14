@@ -182,7 +182,7 @@ namespace MediaPortal.MusicImport
     public void EncodeDisc(GUIFacadeControl facadeView, int getID)
     {
       GetID = getID;
-      if (File.Exists("lame_enc.dll"))
+      if (File.Exists(System.IO.Path.Combine(Config.Get(Config.Dir.Base), "lame_enc.dll")))
       {
         char[] Drives = CDDrive.GetCDDriveLetters();
         for (int i = 1; i < facadeView.Count; ++i)
