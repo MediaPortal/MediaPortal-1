@@ -232,12 +232,12 @@ namespace MediaPortal.Tests.TVCapture.Commands
 
     void VerifyRecord(int card, TVRecording rec)
     {
-      // Assert.IsTrue(_cards[card].IsRecording);
-      // Assert.IsTrue(_cards[card].InternalGraph.IsRecording());
-      // Assert.AreEqual(_cards[card].CurrentTVRecording.Channel, rec.Channel);
-      // Assert.AreEqual(_cards[card].CurrentTVRecording.Title, rec.Title);
-      // Assert.AreEqual(_cards[card].CurrentTVRecording.End, rec.End);
-      // Assert.AreEqual(_cards[card].CurrentTVRecording.Start, rec.Start);
+      Assert.IsTrue(_cards[card].IsRecording);
+      Assert.IsTrue(_cards[card].InternalGraph.IsRecording());
+      Assert.AreEqual(_cards[card].CurrentTVRecording.Channel, rec.Channel);
+      Assert.AreEqual(_cards[card].CurrentTVRecording.Title, rec.Title);
+      Assert.AreEqual(_cards[card].CurrentTVRecording.End, rec.End);
+      Assert.AreEqual(_cards[card].CurrentTVRecording.Start, rec.Start);
     }
 
     void Zap(string channelName)
