@@ -1180,10 +1180,8 @@ namespace MediaPortal.GUI.Library
     /// <param name="Key"></param>
     void Press(char Key)
     {
-      Log.Debug("1. Key: " + Key + ", PrevKey: " + _previousKey + ", CurKey: " + _currentKey + ", _keyTimer: " + _keyTimer.ToLongTimeString());
       // Check key timeout
       CheckTimer();
-      Log.Debug("2. Key: " + Key + ", PrevKey: " + _previousKey + ", CurKey: " + _currentKey + ", _keyTimer: " + _keyTimer.ToLongTimeString());
       // Check different key pressed
       if ((Key != _previousKey) && (Key >= '1' && Key <= '9'))
         _currentKey = (char)0;
@@ -1293,8 +1291,6 @@ namespace MediaPortal.GUI.Library
       }
       SearchItem(_searchString, SearchType.SEARCH_FIRST);
       _keyTimer = DateTime.Now;
-      Log.Debug("3. Key: " + Key + ", PrevKey: " + _previousKey + ", CurKey: " + _currentKey + ", _keyTimer: " + _keyTimer.ToLongTimeString());
-
     }
 
     void CheckTimer()
