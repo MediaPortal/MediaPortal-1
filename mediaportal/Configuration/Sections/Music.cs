@@ -215,7 +215,7 @@ namespace MediaPortal.Configuration.Sections
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         // Player Settings
-        audioPlayerComboBox.Text = xmlreader.GetValueAsString("audioplayer", "player", "Internal Music Player");
+        audioPlayerComboBox.SelectedItem = xmlreader.GetValueAsString("audioplayer", "player", "Internal Music Player");
         showID3CheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "showid3", false);
         enableVisualisation.Checked = xmlreader.GetValueAsBool("musicfiles", "doVisualisation", true);
 
