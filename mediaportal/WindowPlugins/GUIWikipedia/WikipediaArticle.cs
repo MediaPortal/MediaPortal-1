@@ -445,9 +445,10 @@ namespace Wikipedia
       string tempParsedArticle = this.unparsedArticle;
       int iStart = 0, iEnd = 0, iPipe = 0;
 
-      // surrounded by [[IMAGEPATTERN: and ]] are the links to IMAGES.
+      // Surrounded by [[IMAGEPATTERN: and ]] are the links to IMAGES.
+      // We need to check for the localized image keyword but also for the English as this is commonly used in some local sites.
       // Example: [[Bild:H_NeuesRathaus1.jpg|left|thumb|Das [[Neues Rathaus (Hannover)|Neue Rathaus]] mit Maschteich]]
-      while ((iStart = tempParsedArticle.IndexOf("[[" + imagePattern + ":", iStart)) >= 0)
+      while ((iStart = tempParsedArticle.IndexOf("[[" + imagePattern + ":", iStart)) >= 0 || (iStart = tempParsedArticle.IndexOf("[[Image:")) >= 0)
       {
         iEnd = tempParsedArticle.IndexOf("]]", (iStart + 2)) + 2;
         int disturbingLink = iStart;
