@@ -149,11 +149,14 @@ namespace Core.Util
         string[] subitems = folder.Split(new char[] { '?' });
         if (subitems[4] == String.Empty) subitems[4] = "/";
         bool fileExists = false;
+        string tmpDir = String.Empty;
         FTPFile[] files;
         try
         {
-          Connection.ChDir(subitems[4]);
-          files = Connection.DirDetails(subitems[4]);
+          tmpDir = subitems[4];
+          Connection.ChDir(tmpDir);
+          Log.Debug("FTPConnection: Download {0} from {1} to {2}", remotefile, tmpDir, localfile);
+          files = Connection.DirDetails(); //(tmpDir);
           for (int i = 0; i < files.Length; ++i)
           {
             FTPFile file = files[i];
