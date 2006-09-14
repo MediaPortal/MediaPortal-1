@@ -1325,6 +1325,7 @@ namespace MediaPortal.GUI.Library
         if (message.Message == GUIMessage.MessageType.GUI_MSG_ITEM_SELECT)
         {
           SelectItem(message.Param1);
+          OnSelectionChanged();
           _refresh = true;
         }
         if (message.Message == GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS)
@@ -1423,7 +1424,6 @@ namespace MediaPortal.GUI.Library
           _cursorX -= _scrollStartOffset;
         }
         _upDownControl.Value = (_offset / _itemsPerPage) + 1;
-        OnSelectionChanged();
       }
     }
     
