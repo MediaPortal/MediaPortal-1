@@ -1418,41 +1418,63 @@ namespace MediaPortal.GUI.Music
       // _maxScrobbledSongsPerArtist are inserted      
       return true;
     }
-    
+
 
     protected override void SetLabels()
     {
-      for (int i = 0; i < facadeView.Count; ++i)
+      if (facadeView != null)
       {
-        GUIListItem item = facadeView[i];
-        MusicTag tag = (MusicTag)item.MusicTag;
-        bool dirtyTag = false;
-        if (tag.Title == ("unknown") || tag.Title.IndexOf("unknown") > 0 || tag.Title == String.Empty)
-          dirtyTag = true;
-
-        if (tag != null && !dirtyTag)
+        try
         {
-          int playCount = tag.TimesPlayed;
-          string duration = MediaPortal.Util.Utils.SecondsToHMSString(tag.Duration);
-          item.Label = string.Format("{0} - {1}", tag.Artist, tag.Title);
-          item.Label2 = duration;
+          for (int i = 0; i < facadeView.Count; ++i)
+          {
+            GUIListItem item = facadeView[i];
+            MusicTag tag = null;
+            bool dirtyTag = false;
+            if (item.MusicTag != null)
+            {
+              tag = (MusicTag)item.MusicTag;
+
+              if (tag.Title == ("unknown") || tag.Title.IndexOf("unknown") > 0 || tag.Title == String.Empty)
+                dirtyTag = true;
+            }
+            else
+              dirtyTag = true;
+
+            if (tag != null && !dirtyTag)
+            {
+              int playCount = tag.TimesPlayed;
+              string duration = MediaPortal.Util.Utils.SecondsToHMSString(tag.Duration);
+              item.Label = string.Format("{0} - {1}", tag.Artist, tag.Title);
+              item.Label2 = duration;
+            }
+          }
+
+          //MusicTag checkTag = (MusicTag)item.MusicTag;
+          //if (checkTag.Title.IndexOf("unknown") > 0 || checkTag.Title == String.Empty || checkTag.Title == ("unknown"))
+          //{
+          //  string tmpFilename = System.IO.Path.GetFileNameWithoutExtension(item.Path);
+          //  item.Label = tmpFilename;
+          //  checkTag.Title = String.Empty;
+          //  checkTag.Artist = tmpFilename;
+          //  item.MusicTag = checkTag;
+          //}
+
+          for (int i = 0; i < facadeView.Count; ++i)
+          {
+            GUIListItem item = facadeView[i];
+            //if (item.AlbumInfoTag == null)
+            //{
+            //  AlbumInfo tmpInfo = new AlbumInfo();
+            //  // Fill it..
+            //}
+            handler.SetLabel(item.AlbumInfoTag as Song, ref item);
+          }
         }
-      }
-
-      //MusicTag checkTag = (MusicTag)item.MusicTag;
-      //if (checkTag.Title.IndexOf("unknown") > 0 || checkTag.Title == String.Empty || checkTag.Title == ("unknown"))
-      //{
-      //  string tmpFilename = System.IO.Path.GetFileNameWithoutExtension(item.Path);
-      //  item.Label = tmpFilename;
-      //  checkTag.Title = String.Empty;
-      //  checkTag.Artist = tmpFilename;
-      //  item.MusicTag = checkTag;
-      //}
-
-      for (int i = 0; i < facadeView.Count; ++i)
-      {
-        GUIListItem item = facadeView[i];
-        handler.SetLabel(item.AlbumInfoTag as Song, ref item);
+        catch (Exception ex)
+        {
+          Log.Error("GUIMusicPlaylist: exception occured - item without Albumtag? - {0} / {1}", ex.Message, ex.StackTrace);
+        }
       }
     }
   }
