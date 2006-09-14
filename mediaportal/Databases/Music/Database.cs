@@ -1017,13 +1017,14 @@ namespace MediaPortal.Music.Database
 
     public bool GetSongByFileName(string strFileName1, ref Song song)
     {
+      string strFileName = strFileName1;
+      string strPath = String.Empty;
+      string strFName = String.Empty;
       try
       {
         song.Clear();
-        string strFileName = strFileName1;
-        DatabaseUtility.RemoveInvalidChars(ref strFileName);
-
-        string strPath, strFName;
+        
+        DatabaseUtility.RemoveInvalidChars(ref strFileName);        
         DatabaseUtility.Split(strFileName, out strPath, out strFName);
 
         if (null == m_db)
@@ -1064,7 +1065,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("musicdatabase exception for string: {2} / path: {3} - err:{0} stack:{1}", ex.Message, ex.StackTrace, strFileName1, strPath);
         Open();
       }
 
