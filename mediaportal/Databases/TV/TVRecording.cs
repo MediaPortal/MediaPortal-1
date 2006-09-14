@@ -440,7 +440,7 @@ namespace MediaPortal.TV.Database
     public bool IsRecordingAtTime(DateTime dtTime, TVProgram currentProgram, int iPreInterval, int iPostInterval)
     {
       DateTime dtStart;
-      DateTime dtEnd;
+      DateTime dtEnd; 
       switch (RecType)
       {
         // record program just once
@@ -458,8 +458,9 @@ namespace MediaPortal.TV.Database
         // record program daily at same time & channel
         case RecordingType.Daily:
           // check if recording start/date time is correct
-          dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, StartTime.Minute, 0);
-          dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, EndTime.Minute, 0);
+            dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, this.StartTime.Minute, 0);
+            dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, this.EndTime.Minute, 0);
+            if (dtEnd < dtStart) { dtEnd = dtEnd.AddDays(1); }  // Recording starts day x and finishes Day x+1  eg: 23:00 -> 1:00  // Recording starts day x and finishes Day x+1  eg: 23:00 -> 1:00
           if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval))
           {
             // not canceled?
@@ -474,8 +475,9 @@ namespace MediaPortal.TV.Database
         // record program daily at same time & channel
         case RecordingType.WeekDays:
           // check if recording start/date time is correct
-          dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, StartTime.Minute, 0);
-          dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, EndTime.Minute, 0);
+          dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, this.StartTime.Minute, 0);
+          dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, this.EndTime.Minute, 0);
+          if (dtEnd < dtStart) { dtEnd = dtEnd.AddDays(1); }  // Recording starts day x and finishes Day x+1  eg: 23:00 -> 1:00  // Recording starts day x and finishes Day x+1  eg: 23:00 -> 1:00
           if (dtStart.DayOfWeek >= DayOfWeek.Monday && dtStart.DayOfWeek <= DayOfWeek.Friday)
           {
             if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval))
@@ -492,8 +494,9 @@ namespace MediaPortal.TV.Database
 
         case RecordingType.WeekEnds:
           // check if recording start/date time is correct
-          dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, StartTime.Minute, 0);
-          dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, EndTime.Minute, 0);
+          dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, this.StartTime.Minute, 0);
+          dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, this.EndTime.Minute, 0);
+          if (dtEnd < dtStart) { dtEnd = dtEnd.AddDays(1); }  // Recording starts day x and finishes Day x+1  eg: 23:00 -> 1:00  // Recording starts day x and finishes Day x+1  eg: 23:00 -> 1:00
           if (dtStart.DayOfWeek == DayOfWeek.Saturday || dtStart.DayOfWeek == DayOfWeek.Sunday)
           {
             if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval))
@@ -515,6 +518,7 @@ namespace MediaPortal.TV.Database
             // check if start/end time of recording is correct
             dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, this.StartTime.Minute, 0);
             dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, this.EndTime.Minute, 0);
+            if (dtEnd < dtStart) { dtEnd = dtEnd.AddDays(1); }  // Recording starts day x and finishes Day x+1  eg: 23:00 -> 1:00  // Recording starts day x and finishes Day x+1  eg: 23:00 -> 1:00
             if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval))
             {
               // not canceled?
@@ -585,6 +589,7 @@ namespace MediaPortal.TV.Database
     {
       DateTime dtStart;
       DateTime dtEnd;
+      
       switch (RecType)
       {
         // record program just once
@@ -621,15 +626,17 @@ namespace MediaPortal.TV.Database
           if (currentProgram.Channel == this.Channel) //check channel is correct
           {
             // check if program start/date time is correct
-            dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.StartTime.Hour, StartTime.Minute, 0);
-            dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.EndTime.Hour, EndTime.Minute, 0);
+              dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.StartTime.Hour, currentProgram.StartTime.Minute, 0);
+              dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.EndTime.Hour, currentProgram.EndTime.Minute, 0);
+              if (dtEnd < dtStart) { dtEnd = dtEnd.AddDays(1); }  // Recording starts day x and finishes Day x+1  eg: 23:00 -> 1:00  // Recording starts day x and finishes Day x+1  eg: 23:00 -> 1:00
             if (dtStart.DayOfWeek >= DayOfWeek.Monday && dtStart.DayOfWeek <= DayOfWeek.Friday)
             {
               if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval))
               {
                 // check if recording start/date time is correct
-                dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, StartTime.Minute, 0);
-                dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, EndTime.Minute, 0);
+                dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, this.StartTime.Minute, 0);
+                dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, this.EndTime.Minute, 0);
+                if (dtEnd < dtStart) { dtEnd = dtEnd.AddDays(1); }  // Recording starts day x and finishes Day x+1  eg: 23:00 -> 1:00  // Recording starts day x and finishes Day x+1  eg: 23:00 -> 1:00
                 if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval))
                 {
                   // not canceled?
@@ -649,15 +656,17 @@ namespace MediaPortal.TV.Database
           if (currentProgram.Channel == this.Channel) //check channel is correct
           {
             // check if program start/date time is correct
-            dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.StartTime.Hour, StartTime.Minute, 0);
-            dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.EndTime.Hour, EndTime.Minute, 0);
+            dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.StartTime.Hour, currentProgram.StartTime.Minute, 0);
+            dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.EndTime.Hour, currentProgram.EndTime.Minute, 0);
+            if (dtEnd < dtStart) { dtEnd = dtEnd.AddDays(1); }  // Recording starts day x and finishes Day x+1  eg: 23:00 -> 1:00  // Recording starts day x and finishes Day x+1  eg: 23:00 -> 1:00
             if (dtStart.DayOfWeek == DayOfWeek.Saturday || dtStart.DayOfWeek == DayOfWeek.Sunday)
             {
               if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval))
               {
                 // check if recording start/date time is correct
-                dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, StartTime.Minute, 0);
-                dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, EndTime.Minute, 0);
+                dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, this.StartTime.Minute, 0);
+                dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, this.EndTime.Minute, 0);
+                if (dtEnd < dtStart) { dtEnd = dtEnd.AddDays(1); }  // Recording starts day x and finishes Day x+1  eg: 23:00 -> 1:00  // Recording starts day x and finishes Day x+1  eg: 23:00 -> 1:00
                 if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval))
                 {
                   // not canceled?
@@ -677,13 +686,15 @@ namespace MediaPortal.TV.Database
           if (currentProgram.Channel == this.Channel) //check channel is correct
           {
             // check if program start/date time is correct
-            dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.StartTime.Hour, StartTime.Minute, 0);
-            dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.EndTime.Hour, EndTime.Minute, 0);
+            dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.StartTime.Hour, currentProgram.StartTime.Minute, 0);
+            dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.EndTime.Hour, currentProgram.EndTime.Minute, 0);
+            if (dtEnd < dtStart) { dtEnd = dtEnd.AddDays(1); }  // Recording starts day x and finishes Day x+1  eg: 23:00 -> 1:00  // Recording starts day x and finishes Day x+1  eg: 23:00 -> 1:00
             if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval))
             {
               // check if recording start/date time is correct
-              dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, StartTime.Minute, 0);
-              dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, EndTime.Minute, 0);
+              dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, this.StartTime.Minute, 0);
+              dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, this.EndTime.Minute, 0);
+              if (dtEnd < dtStart) { dtEnd = dtEnd.AddDays(1); }  // Recording starts day x and finishes Day x+1  eg: 23:00 -> 1:00  // Recording starts day x and finishes Day x+1  eg: 23:00 -> 1:00
               if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval))
               {
                 // not canceled?
@@ -709,6 +720,7 @@ namespace MediaPortal.TV.Database
               // check if start/end time of program is correct
               dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.StartTime.Hour, currentProgram.StartTime.Minute, 0);
               dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.EndTime.Hour, currentProgram.EndTime.Minute, 0);
+              if (dtEnd < dtStart) { dtEnd = dtEnd.AddDays(1); }  // Recording starts day x and finishes Day x+1  eg: 23:00 -> 1:00  // Recording starts day x and finishes Day x+1  eg: 23:00 -> 1:00
 
               if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval))
               {
@@ -719,6 +731,7 @@ namespace MediaPortal.TV.Database
                   // check if start/end time of recording is correct
                   dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, this.StartTime.Minute, 0);
                   dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, this.EndTime.Minute, 0);
+                  if (dtEnd < dtStart) { dtEnd = dtEnd.AddDays(1); }  // Recording starts day x and finishes Day x+1  eg: 23:00 -> 1:00  // Recording starts day x and finishes Day x+1  eg: 23:00 -> 1:00
                   if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval))
                   {
                     // not canceled?
