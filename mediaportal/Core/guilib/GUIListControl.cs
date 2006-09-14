@@ -1324,32 +1324,7 @@ namespace MediaPortal.GUI.Library
         }
         if (message.Message == GUIMessage.MessageType.GUI_MSG_ITEM_SELECT)
         {
-          if (message.Param1 >= 0 && message.Param1 < _listItems.Count)
-          {
-            int iPage = 1;
-            _offset = 0;
-            _cursorX = message.Param1;
-            while (_cursorX >= _itemsPerPage)
-            {
-              iPage++;
-              _offset += _itemsPerPage;
-              _cursorX -= _itemsPerPage;
-            }
-            if ((_cursorX < _scrollStartOffset) && (_offset >= _scrollStartOffset))
-            {
-              _offset -= _scrollStartOffset;
-              _cursorX += _scrollStartOffset;
-              iPage = (_offset / _itemsPerPage) + 1;
-            }
-            else if ((_cursorX > _itemsPerPage - _scrollStartOffset) && (_cursorX >= _scrollStartOffset))
-            {
-              _offset += _scrollStartOffset;
-              _cursorX -= _scrollStartOffset;
-              iPage = (_offset / _itemsPerPage) + 1;
-            }
-            _upDownControl.Value = iPage;
-            OnSelectionChanged();
-          }
+          SelectItem(message.Param1);
           _refresh = true;
         }
         if (message.Message == GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS)
@@ -1421,6 +1396,38 @@ namespace MediaPortal.GUI.Library
       return false;
     }
 
+    
+    /// <summary>
+    /// Select the item and set the Page accordengly 
+    /// </summary>
+    /// <param name="SearchKey">SearchKey</param>
+    void SelectItem(int item)
+    {
+      if (item >= 0 && item < _listItems.Count)
+      {
+        _offset = 0;
+        _cursorX = item;
+        while (_cursorX >= _itemsPerPage)
+        {
+          _offset += _itemsPerPage;
+          _cursorX -= _itemsPerPage;
+        }
+        if ((_cursorX < _scrollStartOffset) && (_offset >= _scrollStartOffset))
+        {
+          _offset -= _scrollStartOffset;
+          _cursorX += _scrollStartOffset;
+        }
+        else if ((_cursorX > _itemsPerPage - _scrollStartOffset) && (_cursorX >= _scrollStartOffset))
+        {
+          _offset += _scrollStartOffset;
+          _cursorX -= _scrollStartOffset;
+        }
+        _upDownControl.Value = (_offset / _itemsPerPage) + 1;
+        OnSelectionChanged();
+      }
+    }
+    
+
     /// <summary>
     /// Search for first item starting with searchkey
     /// </summary>
@@ -1472,28 +1479,7 @@ namespace MediaPortal.GUI.Library
         }
       } while (iItem != iCurrentItem);
 
-      if ((bItemFound) && (iItem >= 0 && iItem < _listItems.Count))
-      {
-        // update spin controls
-        int iPage = 1;
-        int iSel = iItem;
-        while (iSel >= _itemsPerPage)
-        {
-          iPage++;
-          iSel -= _itemsPerPage;
-        }
-        _upDownControl.Value = iPage;
-
-        // find item
-        _offset = 0;
-        _cursorX = 0;
-        while (iItem >= _itemsPerPage)
-        {
-          iItem -= _itemsPerPage;
-          _offset += _itemsPerPage;
-        }
-        _cursorX = iItem;
-      }
+      if (bItemFound) SelectItem(iItem);
 
       _lastSearchItem = _cursorX + _offset;
       OnSelectionChanged();

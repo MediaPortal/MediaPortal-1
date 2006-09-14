@@ -1033,43 +1033,7 @@ namespace MediaPortal.GUI.Library
         }
         if (message.Message == GUIMessage.MessageType.GUI_MSG_ITEM_SELECT)
         {
-          int iItem = message.Param1;
-          if (iItem >= 0 && iItem < _listItems.Count)
-          {
-            int iPage = 1;
-            _cursorX = 0;
-            _cursorY = 0;
-            _offset = 0;
-            while (iItem >= (_rowCount * _columnCount))
-            {
-              _offset += (_rowCount * _columnCount);
-              iItem -= (_rowCount * _columnCount);
-              iPage++;
-            }
-            while ((iItem <= _columnCount * _scrollStartOffset) && (_offset > 0))
-            {
-              _offset -= (_columnCount);
-              iItem += (_columnCount);
-             
-            }
-            while (iItem >= _columnCount)
-            {
-              if (_cursorY + 1 >= _rowCount - _scrollStartOffset)
-              {
-                _offset += (_columnCount);
-                iItem -= (_columnCount);
-              }
-              else
-              {
-                _cursorY++;
-                iItem -= _columnCount;
-              }
-            }
-            _controlUpDown.Value = iPage;
-            _cursorX = iItem;
-            OnSelectionChanged();
-          }
-          _refresh = true;
+          SelectItem(message.Param1);
         }
       }
 			
@@ -1124,6 +1088,46 @@ namespace MediaPortal.GUI.Library
 
     }
 
+    void SelectItem(int iItem)
+    {
+      if (iItem >= 0 && iItem < _listItems.Count)
+      {
+        int iPage = 1;
+        _cursorX = 0;
+        _cursorY = 0;
+        _offset = 0;
+        while (iItem >= (_rowCount * _columnCount))
+        {
+          _offset += (_rowCount * _columnCount);
+          iItem -= (_rowCount * _columnCount);
+          iPage++;
+        }
+        while ((iItem <= _columnCount * _scrollStartOffset) && (_offset > 0))
+        {
+          _offset -= (_columnCount);
+          iItem += (_columnCount);
+        }
+        while (iItem >= _columnCount)
+        {
+          if (_cursorY + 1 >= _rowCount - _scrollStartOffset)
+          {
+            _offset += (_columnCount);
+            iItem -= (_columnCount);
+          }
+          else
+          {
+            _cursorY++;
+            iItem -= _columnCount;
+          }
+        }
+        _controlUpDown.Value = iPage;
+        _cursorX = iItem;
+        OnSelectionChanged();
+      }
+      _refresh = true;
+    }
+
+
     /// <summary>
     /// Search for first item starting with searchkey
     /// </summary>
@@ -1162,35 +1166,8 @@ namespace MediaPortal.GUI.Library
         }
       } while (iItem != iCurrentItem);
 
-      if ((bItemFound) && (iItem >= 0 && iItem < _listItems.Count))
-      {
-        // update spin controls
-        int iItemsPerPage = _rowCount * _columnCount;
-        int iPage = 1;
-        int iSel = iItem;
-        while (iSel >= iItemsPerPage)
-        {
-          iPage++;
-          iSel -= iItemsPerPage;
-        }
-        _controlUpDown.Value = iPage;
-
-        // find item
-        _offset = 0;
-        _cursorY = 0;
-        while (iItem >= iItemsPerPage)
-        {
-          iItem -= iItemsPerPage;
-          _offset += iItemsPerPage;
-        }
-        while (iItem >= _columnCount)
-        {
-          iItem -= _columnCount;
-          _cursorY++;
-        }
-        _cursorX = iItem;
-      }
-
+      if (bItemFound) SelectItem(iItem);
+        
       _lastSearchItem = _offset + _cursorY * _columnCount + _cursorX;
       OnSelectionChanged();
       _refresh = true;
