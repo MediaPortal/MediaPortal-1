@@ -30,7 +30,11 @@ using Direct3D = Microsoft.DirectX.Direct3D;
 namespace MediaPortal.Dialogs
 {
   /// <summary>
+  /// OBSOLETE CLASS - SHOULD NOT BE USED IN MEDIAPORTAL
+  /// ONLY EXISTS FOR NOT BREAKING THE OUTSOURCED WEB PLUGIN
+  /// USE VirtualKeyboard INSTEAD
   /// 
+  /// THIS CLASS IS MARKED FOR FUTURE REMOVAL
   /// </summary>
   public class VirtualWebKeyboard : GUIWindow, IRenderLayer
   {
