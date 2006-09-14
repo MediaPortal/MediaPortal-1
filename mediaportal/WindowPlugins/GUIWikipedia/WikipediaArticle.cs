@@ -443,13 +443,12 @@ namespace Wikipedia
     {
       Log.Info("Wikipedia: Starting parsing of links and images.");
       string tempParsedArticle = this.unparsedArticle;
-      int iStart, iEnd, iPipe;
+      int iStart = 0, iEnd = 0, iPipe = 0;
 
       // surrounded by [[IMAGEPATTERN: and ]] are the links to IMAGES.
       // Example: [[Bild:H_NeuesRathaus1.jpg|left|thumb|Das [[Neues Rathaus (Hannover)|Neue Rathaus]] mit Maschteich]]
-      while (tempParsedArticle.IndexOf("[[" + imagePattern + ":") >= 0)
+      while ((iStart = tempParsedArticle.IndexOf("[[" + imagePattern + ":", iStart)) >= 0)
       {
-        iStart = tempParsedArticle.IndexOf("[[" + imagePattern + ":");
         iEnd = tempParsedArticle.IndexOf("]]", (iStart + 2)) + 2;
         int disturbingLink = iStart;
 
@@ -502,10 +501,12 @@ namespace Wikipedia
       }
 
       // surrounded by [[ and ]] are the links to other articles.
+      Log.Debug("Wikipedia: Starting Link parsing.");
       string parsedKeyword, parsedLink;
+      iStart = iEnd = 0;
       try
       {
-        while ((iStart = tempParsedArticle.IndexOf("[[")) >= 0)
+        while ((iStart = tempParsedArticle.IndexOf("[[", iStart)) >= 0)
         {
           iEnd = tempParsedArticle.IndexOf("]]") + 2;
           // Extract the Text
@@ -520,7 +521,7 @@ namespace Wikipedia
             if (!this.linkArray.Contains(parsedLink))
             {
               this.linkArray.Add(parsedLink);
-              Log.Debug("Wikipedia: Link added: {0}, {1}", parsedLink, parsedKeyword);
+              //Log.Debug("Wikipedia: Link added: {0}, {1}", parsedLink, parsedKeyword);
             }
           }
           else if (keyword.IndexOf(":") > 0)
@@ -536,7 +537,7 @@ namespace Wikipedia
             if (!this.linkArray.Contains(parsedKeyword))
             {
               this.linkArray.Add(parsedKeyword);
-              Log.Debug("Wikipedia: Link added: {0}", parsedKeyword);
+              //Log.Debug("Wikipedia: Link added: {0}", parsedKeyword);
             }
           }
 
@@ -551,6 +552,7 @@ namespace Wikipedia
         Log.Error("Wikipedia: {0}", e.ToString());
         Log.Error("Wikipedia: tempArticle: {0}", tempParsedArticle);
       }
+      Log.Debug("Wikipedia: Finished Link parsing: {0} Links added.", linkArray.Count);
 
       // surrounded by [ and ] are external Links. Need to be removed.
       Log.Debug("Wikipedia: Removing external links");
