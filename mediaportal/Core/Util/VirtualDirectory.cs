@@ -1133,8 +1133,7 @@ namespace MediaPortal.Util
         Log.Debug("VirtualDirectory: Downloading remote file {0} already got {1} bytes", file, Convert.ToString(info.Length));
         // not completely downloaded yet
       }
-      else
-        Log.Debug("VirtualDirectory: Remote file {0} is downloaded", file);
+
       return false;
     }
 

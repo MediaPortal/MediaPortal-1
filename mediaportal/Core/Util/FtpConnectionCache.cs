@@ -80,7 +80,7 @@ namespace Core.Util
           Connection.BytesTransferred += new BytesTransferredHandler(OnBytesTransferred);
           Connection.TransferType = FTPTransferType.BINARY;
 
-          Log.Info("ftp:Start Download:{0}->{1}", RemoteFileName, LocalFileName);
+          Log.Info("FTPConnection: Start download: {0}->{1}", RemoteFileName, LocalFileName);
           if (System.IO.File.Exists(LocalFileName))
           {
             FileInfo info = new FileInfo(LocalFileName);
@@ -97,11 +97,11 @@ namespace Core.Util
 
           Connection.Get(LocalFileName, RemoteFileName);
           Connection.BytesTransferred -= new BytesTransferredHandler(OnBytesTransferred);
-          Log.Info("ftp:download finished {0}->{1}", RemoteFileName, LocalFileName);
+          Log.Info("FTPConnection: Download finished: {0}->{1}", RemoteFileName, LocalFileName);
         }
         catch (Exception ex)
         {
-          Log.Info("ftp:download of {0} stopped", LocalFileName);
+          Log.Warn("FTPConnection: Download of {0} stopped", LocalFileName);
           Log.Error(ex);
         }
         finally
@@ -123,17 +123,17 @@ namespace Core.Util
 
       void Connection_TransferStartedEx(object sender, TransferEventArgs e)
       {
-        Log.Info("ftp: Transfer started {0}->{1}",e.RemoteFilename, e.LocalFilePath);
+        Log.Debug("ftp: Transfer started {0}->{1}",e.RemoteFilename, e.LocalFilePath);
       }
 
       void Connection_ReplyReceived(object sender, FTPMessageEventArgs e)
       {
-        Log.Info("ftp:Cmd  :{0}", e.Message);
+        Log.Debug("ftp:Cmd  :{0}", e.Message);
       }
 
       void Connection_CommandSent(object sender, FTPMessageEventArgs e)
       {
-        Log.Info("ftp:reply:{0}", e.Message);
+        Log.Debug("ftp:reply:{0}", e.Message);
       }
 
 
@@ -156,8 +156,7 @@ namespace Core.Util
         try
         {
           tmpDir = subitems[4];
-          Connection.ChDir(tmpDir);
-          Log.Debug("FTPConnection: Download {0} from {1} to {2}", remotefile, tmpDir, localfile);
+          Connection.ChDir(tmpDir);          
           files = Connection.DirDetails(); //(tmpDir);
           for (int i = 0; i < files.Length; ++i)
           {
@@ -184,7 +183,7 @@ namespace Core.Util
           return;
         }
 
-        Log.Info("ftp: download:{0}", remotefile);
+        Log.Debug("FTPConnection: Download {0} from {1} to {2}", remotefile, tmpDir, localfile);
         LocalFileName = localfile;
         RemoteFileName = remotefile;
         OriginalRemoteFileName = orgremoteFile;
@@ -378,7 +377,7 @@ namespace Core.Util
     /// <param name="e"></param>
     static void Connection_TransferCompleteEx(object sender, TransferEventArgs e)
     {
-      Log.Info("ftp: Transfer completed:{0}->{1}",e.RemoteFilename, e.LocalFilePath);
+      Log.Info("FTPConnection: Transfer completed: {0}->{1}", e.RemoteFilename, e.LocalFilePath);
       try
       {
         FTPClient ftpclient = sender as FTPClient;
