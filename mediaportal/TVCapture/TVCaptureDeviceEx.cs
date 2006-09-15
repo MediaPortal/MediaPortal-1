@@ -1174,13 +1174,19 @@ namespace MediaPortal.TV.Recording
         if (_currentGraph.GetChannelNumber() != channel.Number)
         {
           _lastChannelChange = DateTime.Now;
-          
+
           if (!_currentGraph.ShouldRebuildGraph(channel))
           {
-            //_timeTimeshiftingStarted = DateTime.Now; rtv: replaced for mantis 745 (progressbar wrong)
-            _currentGraph.TuneChannel(channel);            
-            _currentTvChannelName = channelName;
-            return true;
+              //_timeTimeshiftingStarted = DateTime.Now; rtv: replaced for mantis 745 (progressbar wrong)
+              _currentGraph.TuneChannel(channel);
+              _currentTvChannelName = channelName;
+              return true;
+          }
+          // Broceliande: Mantis 788 fix test 
+          else
+          {
+              RebuildGraph();
+              return true;
           }
         }
         else return true;
