@@ -32,9 +32,18 @@
 			<type>label</type>
 			<id>4</id>
 			<posX>407</posX>
-			<posY>211</posY>
+			<posY>210</posY>
 			<label>11000</label>
 			<font>font14</font> 
+			<textcolor>FFFFFFFF</textcolor>
+		</control>
+		<control>
+			<description>Capture device text label</description>
+			<type>label</type>
+			<id>5</id>
+			<posX>417</posX>
+			<posY>245</posY>
+			<font>font14</font>
 			<textcolor>FFFFFFFF</textcolor>
 		</control>
 		<control>
@@ -42,7 +51,7 @@
 			<type>label</type>
 			<id>6</id>
 			<posX>500</posX>
-			<posY>288</posY>
+			<posY>298</posY>
 			<label>11001</label>
 			<textcolor>FFFFFFFF</textcolor>
 		</control>
@@ -51,7 +60,7 @@
 			<type>spincontrol</type>
 			<id>8</id>
 			<posX>710</posX>
-			<posY>292</posY>
+			<posY>302</posY>
 			<reverse>yes</reverse>
 			<onup>20</onup>
 			<ondown>12</ondown>
@@ -64,7 +73,7 @@
 			<type>label</type>
 			<id>10</id>
 			<posX>500</posX>
-			<posY>328</posY>
+			<posY>338</posY>
 			<label>11002</label>
 			<textcolor>FFFFFFFF</textcolor>
 		</control>
@@ -73,7 +82,7 @@
 			<type>spincontrol</type>
 			<id>12</id>
 			<posX>710</posX>
-			<posY>332</posY>
+			<posY>342</posY>
 			<reverse>yes</reverse>
 			<onup>8</onup>
 			<ondown>16</ondown>
@@ -86,7 +95,7 @@
 			<type>label</type>
 			<id>14</id>
 			<posX>500</posX>
-			<posY>368</posY>
+			<posY>378</posY>
 			<label>11003</label>
 			<textcolor>FFFFFFFF</textcolor>
 		</control>
@@ -95,7 +104,7 @@
 			<type>spincontrol</type>
 			<id>16</id>
 			<posX>710</posX>
-			<posY>372</posY>
+			<posY>382</posY>
 			<reverse>yes</reverse>
 			<onup>12</onup>
 			<ondown>20</ondown>
@@ -108,7 +117,7 @@
 			<type>label</type>
 			<id>18</id>
 			<posX>500</posX>
-			<posY>408</posY>
+			<posY>418</posY>
 			<label>11004</label>
 			<textcolor>FFFFFFFF</textcolor>
 		</control>
@@ -117,7 +126,7 @@
 			<type>spincontrol</type>
 			<id>20</id>
 			<posX>710</posX>
-			<posY>412</posY>
+			<posY>422</posY>
 			<reverse>yes</reverse>
 			<onup>16</onup>
 			<ondown>8</ondown>

@@ -94,16 +94,16 @@
          	<midtexture>osd_progress_mid.png</midtexture>
          	<righttexture>osd_progress_right.png</righttexture>
       	</control>
-      	<control>
+<!--    <control>
          	<type>label</type>
          	<description>Track Start label</description>
-         	<id>1</id>
+         	<id>0</id>
          	<posX>400</posX>
          	<posY>266</posY>
          	<label>0:00</label>
          	<font>font12</font>
          	<textcolor>80ffffff</textcolor>
-      	</control>
+      	</control> -->
       	<control>
          	<type>label</type>
          	<description>track progress label</description>
