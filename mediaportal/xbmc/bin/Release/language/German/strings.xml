@@ -3858,6 +3858,26 @@
       <value>Kein Eintrag!</value>
    </string>
 	<string>
+		<id>2069</id>
+		<value>Die Dateien wurden zusammengefügt.</value>
+	</string>
+	<string>
+		<id>2070</id>
+		<value>Der Konvertierungs-Vorgang wurde abgeschlossen.</value>
+	</string>
+	<string>
+		<id>2071</id>
+		<value>Dvr-ms nach mpeg</value>
+	</string>
+	<string>
+		<id>2072</id>
+		<value>Starte die Konvertierung</value>
+	</string>
+	<string>
+		<id>2073</id>
+		<value>Welche dvr-ms Datei soll konvertiert werden:</value>
+	</string>
+	<string>
 		<id>2074</id>
 		<value>Welche Dateien sollen zusammengefügt werden:</value>
 	</string>
@@ -3891,11 +3911,11 @@
    </string>
    <string>
       <id>2082</id>
-      <value>mpeg: Schnitt-Vorgang abgeschlossen</value>
+      <value>Schnitt-Vorgang abgeschlossen</value>
    </string>
    <string>
       <id>2083</id>
-      <value>dvr-ms: Schnitt-Vorgang abgeschlossen</value>
+      <value>Möchten sie die Originaldatei löschen?</value>
    </string>
    <string>
       <id>2084</id>
@@ -3923,7 +3943,7 @@
    </string>
    <string Prefix="Mein ">
       <id>2090</id>
-      <value>Videoschnitt</value>
+      <value>Video Editor</value>
    </string>
    <string>
       <id>2091</id>

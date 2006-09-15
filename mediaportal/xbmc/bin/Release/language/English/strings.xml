@@ -3858,6 +3858,26 @@
       <value>No Entry!</value>
    </string>
 	<string>
+		<id>2069</id>
+		<value>Finished to join the video files</value>
+	</string>
+	<string>
+		<id>2070</id>
+		<value>Finished to convert the video file</value>
+	</string>
+	<string>
+		<id>2071</id>
+		<value>Dvr-ms to mpeg</value>
+	</string>
+	<string>
+		<id>2072</id>
+		<value>Start converting</value>
+	</string>
+	<string>
+		<id>2073</id>
+		<value>Please, choose the dvr-ms file you would like to convert:</value>
+	</string>
+	<string>
 		<id>2074</id>
 		<value>Please, choose the files you would like to join:</value>
 	</string>
@@ -3879,7 +3899,7 @@
 	</string>
 	<string>
 		<id>2079</id>
-		<value>Start Joining</value>
+		<value>Start joining</value>
 	</string>
    <string>
       <id>2080</id>
@@ -3891,11 +3911,11 @@
    </string>
    <string>
       <id>2082</id>
-      <value>Mpeg:Finished to cut the video file</value>
+      <value>Finished to cut the video file</value>
    </string>
    <string>
       <id>2083</id>
-      <value>Dvrms:Finished to cut the video file</value>
+      <value>Would you like to delete the original file?</value>
    </string>
    <string>
       <id>2084</id>
