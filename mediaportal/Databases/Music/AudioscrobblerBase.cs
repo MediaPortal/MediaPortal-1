@@ -431,7 +431,7 @@ namespace MediaPortal.Music.Database
 
       // http://ws.audioscrobbler.com/radio/handshake.php?version=1.0.6&platform=win32&username=f1n4rf1n&passwordmd5=3847af7ab43a1c31503e8bef7736c41f&language=en    
       string tmpUser = System.Web.HttpUtility.UrlEncode(username).ToLower();
-      string tmpPass = HashPassword();
+      string tmpPass = HashPassword(true);
       string url = RADIO_SCROBBLER_URL
                  + "handshake.php"
                  + "?version=" + "1.0.6"
@@ -469,7 +469,7 @@ namespace MediaPortal.Music.Database
       DateTime nextconnect = lastConnectAttempt.Add(minConnectWaitTime);
       if (DateTime.Now < nextconnect)
       {
-        TimeSpan waittime = nextconnect - DateTime.Now;        
+        TimeSpan waittime = nextconnect - DateTime.Now;
         string logmessage = "Avoiding too fast connects. Sleeping until "
                              + nextconnect.ToString();
         if (_useDebugLog)
@@ -501,7 +501,7 @@ namespace MediaPortal.Music.Database
         //Log.Info("AudioscrobblerBase.GetResponse: POST to {0}", url_);
         Log.Info("AudioscrobblerBase: Submitting data: {0}", postdata_);
         string logmessage = "Connecting to '" + url_ + "\nData: " + postdata_;
-                
+
         try
         {
           byte[] postHeaderBytes = Encoding.UTF8.GetBytes(postdata_);
@@ -515,7 +515,7 @@ namespace MediaPortal.Music.Database
             request.ContentType = "application/x-www-form-urlencoded";
           }
           request.ContentLength = postHeaderBytes.Length;
-    
+
           // Create stream writer - this can also fail if we aren't connected
           Stream requestStream = request.GetRequestStream();
           requestStream.Write(postHeaderBytes, 0, postHeaderBytes.Length);
@@ -540,13 +540,14 @@ namespace MediaPortal.Music.Database
           throw (new Exception());
         else
         {
-          if (_useDebugLog)
+          // Print the properties of each cookie.
+          int i = 0;
+          foreach (Cookie cook in response.Cookies)
           {
-            // Print the properties of each cookie.
-            int i = 0;
-            foreach (Cookie cook in response.Cookies)
+            _cookies.Add(cook);
+            i++;
+            if (_useDebugLog)
             {
-              i++;
               Log.Debug("AudioscrobblerBase: Cookie: {0}", Convert.ToString(i));
               Log.Debug("AudioscrobblerBase: {0} = {1}", cook.Name, cook.Value);
               Log.Debug("AudioscrobblerBase: Domain: {0}", cook.Domain);
@@ -564,9 +565,10 @@ namespace MediaPortal.Music.Database
               Log.Debug("AudioscrobblerBase: String: {0}", cook.ToString());
             }
           }
-          reader = new StreamReader(response.GetResponseStream());
         }
+        reader = new StreamReader(response.GetResponseStream());
       }
+
       catch (Exception e)
       {
         string logmessage = "HttpWebRequest.GetResponse: " + e.Message;
@@ -684,7 +686,7 @@ namespace MediaPortal.Music.Database
 
         // Build POST data from the username and the password.
         string webUsername = System.Web.HttpUtility.UrlEncode(username);
-        string md5resp = HashPassword();
+        string md5resp = HashPassword(false);
         string postData = "u=" + webUsername + "&s=" + md5resp;
 
         StringBuilder sb = new StringBuilder();
@@ -819,7 +821,7 @@ namespace MediaPortal.Music.Database
       submitTimer.Start();
     }
 
-    private static string HashPassword()
+    private static string HashPassword(bool passwordOnly_)
     {
       // generate MD5 response from user's password
 
@@ -848,6 +850,8 @@ namespace MediaPortal.Music.Database
       {
         tmp += barr[i].ToString("x2");
       }
+      if (passwordOnly_)
+        return tmp;
 
       barr = hash.ComputeHash(encoding.GetBytes(tmp + md5challenge));
 
