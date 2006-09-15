@@ -58,8 +58,6 @@
       <height>260</height>
       <onleft>2</onleft>
       <onright>2</onright>
-      <onup>2</onup>
-      <ondown>2</ondown>
       <spinPosX>500</spinPosX>
       <spinPosY>370</spinPosY>
     </control>
