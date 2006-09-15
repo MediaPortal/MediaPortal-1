@@ -724,7 +724,7 @@ namespace MediaPortal.Util
           for (int i = 0; i < strDirs.Length; ++i)
           {
             string strPath = strDirs[i].Substring(strDir.Length + 1);
-           
+
             // Skip hidden folders
             if ((!Directory.Exists(strDirs[i]) || (File.GetAttributes(strDirs[i]) & FileAttributes.Hidden) == FileAttributes.Hidden))
             {
@@ -1105,11 +1105,16 @@ namespace MediaPortal.Util
     /// false: file is not downloaded or MP is busy downloading</returns>
     public bool IsRemoteFileDownloaded(string file, long size)
     {
-      if (!IsRemote(file)) return true;
+      if (!IsRemote(file))
+      {
+        Log.Debug("VirtualDirectory: File {0} is not remote", file);
+        return true;
+      }
 
       //check if we're still downloading
       if (FtpConnectionCache.IsDownloading(file))
       {
+        Log.Debug("VirtualDirectory: Remote file {0} is downloading right now", file);
         return false;
       }
 
@@ -1121,11 +1126,15 @@ namespace MediaPortal.Util
         FileInfo info = new FileInfo(localFile);
         if (info.Length == size)
         {
+          Log.Debug("VirtualDirectory: Remote file {0} is downloaded completely", file);
           //already downloaded
           return true;
         }
+        Log.Debug("VirtualDirectory: Downloading remote file {0} already got {1} bytes", file, Convert.ToString(info.Length));
         // not completely downloaded yet
       }
+      else
+        Log.Debug("VirtualDirectory: Remote file {0} is downloaded", file);
       return false;
     }
 
@@ -1179,7 +1188,11 @@ namespace MediaPortal.Util
 
       //start download...
       FTPClient client = GetFtpClient(file);
-      if (client == null) return false;
+      if (client == null)
+      {
+        Log.Debug("VirtualDirectory: DownloadRemoteFile {0} aborted due to previous errors", file);
+        return false;
+      }
 
       string remoteFilename;
       string remotePath;
@@ -1188,21 +1201,23 @@ namespace MediaPortal.Util
       {
         client.ChDir(remotePath);
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("VirtualDirectory: Error on ftp command ChDir {0}", ex.Message);
         FtpConnectionCache.Remove(client);
         client = GetFtpClient(file);
         if (client == null) return false;
       }
       try
       {
-        client.ChDir(remotePath);
+        // client.ChDir(remotePath);
         string localFile = GetLocalFilename(file);
+        Log.Debug("VirtualDirectory: Trying to download file: {0} remote: {1} local: {2}", file, remoteFilename, localFile);
         return FtpConnectionCache.Download(client, file, remoteFilename, localFile);
       }
       catch (Exception ex)
       {
-        Log.Info("VirtualDirectory:unable to start download:{0}", ex.Message);
+        Log.Error("VirtualDirectory:Unable to start download:{0}", ex.Message, ex.StackTrace);
       }
       return false;
     }
@@ -1216,18 +1231,23 @@ namespace MediaPortal.Util
     /// <returns>FTP client or null</returns>
     FTPClient GetFtpClient(string file)
     {
+      bool ActiveConnection = true;
       string folder = file.Substring("remote:".Length);
       string[] subitems = folder.Split(new char[] { '?' });
       if (subitems[4] == String.Empty) subitems[4] = "/";
+      //if (subitems[5] == null) 
+      ActiveConnection = true;
+      //else
+      //  ActiveConnection = Convert.ToBoolean(subitems[5]);      
       int port = 21;
       unchecked
       {
         port = Int32.Parse(subitems[1]);
       }
       FTPClient ftp;
-      if (!FtpConnectionCache.InCache(subitems[0], subitems[2], subitems[3], port, out ftp))
+      if (!FtpConnectionCache.InCache(subitems[0], subitems[2], subitems[3], port, ActiveConnection, out ftp))
       {
-        ftp = FtpConnectionCache.MakeConnection(subitems[0], subitems[2], subitems[3], port);
+        ftp = FtpConnectionCache.MakeConnection(subitems[0], subitems[2], subitems[3], port, ActiveConnection);
       }
       if (ftp == null)
         Log.Info("VirtualDirectory:unable to connect to remote share");

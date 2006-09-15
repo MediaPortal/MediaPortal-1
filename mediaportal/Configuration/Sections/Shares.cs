@@ -52,6 +52,7 @@ namespace MediaPortal.Configuration.Sections
       public string PassWord = String.Empty;
       public string RemoteFolder = String.Empty;
       public int Port = 21;
+      public bool ActiveConnection = true;
       public Views DefaultView = Views.List;
 
       public bool HasPinCode
@@ -258,9 +259,9 @@ namespace MediaPortal.Configuration.Sections
         shareData.LoginName = editShare.LoginName;
         shareData.PassWord = editShare.PassWord;
         shareData.Port = editShare.Port;
+        shareData.ActiveConnection = editShare.ActiveConnection;
         shareData.RemoteFolder = editShare.RemoteFolder;
         shareData.DefaultView = (ShareData.Views)editShare.View;
-
 
         AddShare(shareData, currentlyCheckedItem == null);
       }
@@ -268,7 +269,7 @@ namespace MediaPortal.Configuration.Sections
 
     protected void AddShare(ShareData shareData, bool check)
     {
-      ListViewItem listItem = new ListViewItem(new string[] { shareData.Name, shareData.HasPinCode ? "Yes" : "No", shareData.Folder });
+      ListViewItem listItem = new ListViewItem(new string[] { shareData.Name, shareData.HasPinCode ? "Yes" : "No", shareData.Folder, shareData.ActiveConnection ? "Yes" : "No" });
 
       if (shareData.IsRemote)
       {
@@ -298,6 +299,7 @@ namespace MediaPortal.Configuration.Sections
           editShare.IsRemote = shareData.IsRemote;
           editShare.Server = shareData.Server;
           editShare.Port = shareData.Port;
+          editShare.ActiveConnection = shareData.ActiveConnection;
           editShare.LoginName = shareData.LoginName;
           editShare.PassWord = shareData.PassWord;
           editShare.RemoteFolder = shareData.RemoteFolder;
@@ -316,10 +318,10 @@ namespace MediaPortal.Configuration.Sections
             shareData.LoginName = editShare.LoginName;
             shareData.PassWord = editShare.PassWord;
             shareData.Port = editShare.Port;
+            shareData.ActiveConnection = editShare.ActiveConnection;
             shareData.RemoteFolder = editShare.RemoteFolder;
             shareData.DefaultView = (ShareData.Views)editShare.View;
-
-
+            
             selectedItem.Tag = shareData;
 
             selectedItem.SubItems[0].Text = shareData.Name;

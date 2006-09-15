@@ -60,6 +60,7 @@ namespace MediaPortal.Configuration
     private MediaPortal.UserInterface.Controls.MPLabel label3;
     private MediaPortal.UserInterface.Controls.MPLabel label9;
     private MediaPortal.UserInterface.Controls.MPComboBox comboBox1;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxPASV;
     /// <summary>
     /// Required designer variable.
     /// </summary>
@@ -124,14 +125,16 @@ namespace MediaPortal.Configuration
       this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.okButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
+      this.checkBoxPASV = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
       // groupBox1
       // 
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-        | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.checkBoxPASV);
       this.groupBox1.Controls.Add(this.comboBox1);
       this.groupBox1.Controls.Add(this.label9);
       this.groupBox1.Controls.Add(this.textBoxRemoteFolder);
@@ -152,6 +155,7 @@ namespace MediaPortal.Configuration
       this.groupBox1.Controls.Add(this.label2);
       this.groupBox1.Controls.Add(this.nameTextBox);
       this.groupBox1.Controls.Add(this.label1);
+      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox1.Location = new System.Drawing.Point(8, 8);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(408, 354);
@@ -162,33 +166,36 @@ namespace MediaPortal.Configuration
       // 
       // comboBox1
       // 
+      this.comboBox1.BorderColor = System.Drawing.Color.Empty;
       this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBox1.Items.AddRange(new object[] {
-                                                   "List",
-                                                   "Icons",
-                                                   "Big Icons",
-                                                   "Album",
-                                                   "Filmstrip"});
+            "List",
+            "Icons",
+            "Big Icons",
+            "Album",
+            "Filmstrip"});
       this.comboBox1.Location = new System.Drawing.Point(16, 136);
       this.comboBox1.Name = "comboBox1";
-      this.comboBox1.Size = new System.Drawing.Size(121, 21);
+      this.comboBox1.Size = new System.Drawing.Size(184, 21);
       this.comboBox1.TabIndex = 25;
       // 
       // label9
       // 
+      this.label9.AutoSize = true;
       this.label9.Location = new System.Drawing.Point(16, 120);
       this.label9.Name = "label9";
-      this.label9.Size = new System.Drawing.Size(72, 16);
+      this.label9.Size = new System.Drawing.Size(69, 13);
       this.label9.TabIndex = 24;
       this.label9.Text = "Default view:";
       // 
       // textBoxRemoteFolder
       // 
       this.textBoxRemoteFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxRemoteFolder.BorderColor = System.Drawing.Color.Empty;
       this.textBoxRemoteFolder.Location = new System.Drawing.Point(16, 320);
       this.textBoxRemoteFolder.Name = "textBoxRemoteFolder";
-      this.textBoxRemoteFolder.Size = new System.Drawing.Size(344, 20);
+      this.textBoxRemoteFolder.Size = new System.Drawing.Size(381, 20);
       this.textBoxRemoteFolder.TabIndex = 8;
       this.textBoxRemoteFolder.Text = "/";
       // 
@@ -202,30 +209,34 @@ namespace MediaPortal.Configuration
       // 
       // label8
       // 
-      this.label8.Location = new System.Drawing.Point(256, 224);
+      this.label8.AutoSize = true;
+      this.label8.Location = new System.Drawing.Point(288, 224);
       this.label8.Name = "label8";
-      this.label8.Size = new System.Drawing.Size(100, 16);
+      this.label8.Size = new System.Drawing.Size(68, 13);
       this.label8.TabIndex = 22;
       this.label8.Text = "TCP/IP Port:";
       // 
       // textBoxPort
       // 
-      this.textBoxPort.Location = new System.Drawing.Point(256, 240);
+      this.textBoxPort.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxPort.Location = new System.Drawing.Point(291, 240);
       this.textBoxPort.Name = "textBoxPort";
+      this.textBoxPort.Size = new System.Drawing.Size(38, 20);
       this.textBoxPort.TabIndex = 7;
       this.textBoxPort.Text = "21";
       // 
       // textBoxPassword
       // 
-      this.textBoxPassword.Location = new System.Drawing.Point(136, 280);
+      this.textBoxPassword.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxPassword.Location = new System.Drawing.Point(213, 280);
       this.textBoxPassword.Name = "textBoxPassword";
       this.textBoxPassword.PasswordChar = '*';
+      this.textBoxPassword.Size = new System.Drawing.Size(184, 20);
       this.textBoxPassword.TabIndex = 6;
-      this.textBoxPassword.Text = "";
       // 
       // label7
       // 
-      this.label7.Location = new System.Drawing.Point(136, 264);
+      this.label7.Location = new System.Drawing.Point(213, 264);
       this.label7.Name = "label7";
       this.label7.Size = new System.Drawing.Size(100, 16);
       this.label7.TabIndex = 19;
@@ -233,10 +244,11 @@ namespace MediaPortal.Configuration
       // 
       // textBoxLogin
       // 
+      this.textBoxLogin.BorderColor = System.Drawing.Color.Empty;
       this.textBoxLogin.Location = new System.Drawing.Point(16, 280);
       this.textBoxLogin.Name = "textBoxLogin";
+      this.textBoxLogin.Size = new System.Drawing.Size(184, 20);
       this.textBoxLogin.TabIndex = 5;
-      this.textBoxLogin.Text = "";
       // 
       // label6
       // 
@@ -248,39 +260,44 @@ namespace MediaPortal.Configuration
       // 
       // textBoxServer
       // 
+      this.textBoxServer.BorderColor = System.Drawing.Color.Empty;
       this.textBoxServer.Location = new System.Drawing.Point(16, 240);
       this.textBoxServer.Name = "textBoxServer";
-      this.textBoxServer.Size = new System.Drawing.Size(224, 20);
+      this.textBoxServer.Size = new System.Drawing.Size(263, 20);
       this.textBoxServer.TabIndex = 4;
       this.textBoxServer.Text = "127.0.0.1";
       // 
       // label5
       // 
+      this.label5.AutoSize = true;
       this.label5.Location = new System.Drawing.Point(16, 224);
       this.label5.Name = "label5";
-      this.label5.Size = new System.Drawing.Size(100, 16);
+      this.label5.Size = new System.Drawing.Size(135, 13);
       this.label5.TabIndex = 15;
-      this.label5.Text = "FTP Server:";
+      this.label5.Text = "FTP Server (without ftp://):";
       // 
       // checkBoxRemote
       // 
+      this.checkBoxRemote.AutoSize = true;
+      this.checkBoxRemote.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxRemote.Location = new System.Drawing.Point(16, 200);
       this.checkBoxRemote.Name = "checkBoxRemote";
-      this.checkBoxRemote.Size = new System.Drawing.Size(176, 16);
+      this.checkBoxRemote.Size = new System.Drawing.Size(153, 17);
       this.checkBoxRemote.TabIndex = 3;
       this.checkBoxRemote.Text = "This is a remote FTP Folder";
+      this.checkBoxRemote.UseVisualStyleBackColor = true;
       this.checkBoxRemote.CheckedChanged += new System.EventHandler(this.checkBoxRemote_CheckedChanged);
       // 
       // pinCodeTextBox
       // 
       this.pinCodeTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.pinCodeTextBox.BorderColor = System.Drawing.Color.Empty;
       this.pinCodeTextBox.Location = new System.Drawing.Point(216, 40);
       this.pinCodeTextBox.MaxLength = 4;
       this.pinCodeTextBox.Name = "pinCodeTextBox";
       this.pinCodeTextBox.Size = new System.Drawing.Size(63, 20);
       this.pinCodeTextBox.TabIndex = 1;
-      this.pinCodeTextBox.Text = "";
       this.pinCodeTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.pinCodeTextBox_KeyPress);
       // 
       // label4
@@ -299,43 +316,46 @@ namespace MediaPortal.Configuration
       this.folderButton.Size = new System.Drawing.Size(24, 20);
       this.folderButton.TabIndex = 3;
       this.folderButton.Text = "...";
+      this.folderButton.UseVisualStyleBackColor = true;
       this.folderButton.Click += new System.EventHandler(this.folderButton_Click);
       // 
       // folderTextBox
       // 
       this.folderTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.folderTextBox.BorderColor = System.Drawing.Color.Empty;
       this.folderTextBox.Location = new System.Drawing.Point(16, 88);
       this.folderTextBox.Name = "folderTextBox";
       this.folderTextBox.Size = new System.Drawing.Size(344, 20);
       this.folderTextBox.TabIndex = 2;
-      this.folderTextBox.Text = "";
       // 
       // label2
       // 
+      this.label2.AutoSize = true;
       this.label2.Location = new System.Drawing.Point(16, 72);
       this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(168, 23);
+      this.label2.Size = new System.Drawing.Size(62, 13);
       this.label2.TabIndex = 8;
-      this.label2.Text = "local folder";
+      this.label2.Text = "Local folder";
       // 
       // nameTextBox
       // 
       this.nameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.nameTextBox.BorderColor = System.Drawing.Color.Empty;
       this.nameTextBox.Location = new System.Drawing.Point(16, 40);
       this.nameTextBox.Name = "nameTextBox";
       this.nameTextBox.Size = new System.Drawing.Size(184, 20);
       this.nameTextBox.TabIndex = 0;
-      this.nameTextBox.Text = "";
       // 
       // label1
       // 
+      this.label1.AutoSize = true;
       this.label1.Location = new System.Drawing.Point(16, 24);
       this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(168, 23);
+      this.label1.Size = new System.Drawing.Size(64, 13);
       this.label1.TabIndex = 6;
-      this.label1.Text = "Name";
+      this.label1.Text = "Visual name";
       // 
       // cancelButton
       // 
@@ -343,8 +363,10 @@ namespace MediaPortal.Configuration
       this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       this.cancelButton.Location = new System.Drawing.Point(342, 369);
       this.cancelButton.Name = "cancelButton";
+      this.cancelButton.Size = new System.Drawing.Size(75, 23);
       this.cancelButton.TabIndex = 1;
       this.cancelButton.Text = "Cancel";
+      this.cancelButton.UseVisualStyleBackColor = true;
       this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
       // 
       // okButton
@@ -352,9 +374,23 @@ namespace MediaPortal.Configuration
       this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.okButton.Location = new System.Drawing.Point(262, 369);
       this.okButton.Name = "okButton";
+      this.okButton.Size = new System.Drawing.Size(75, 23);
       this.okButton.TabIndex = 0;
       this.okButton.Text = "OK";
+      this.okButton.UseVisualStyleBackColor = true;
       this.okButton.Click += new System.EventHandler(this.okButton_Click);
+      // 
+      // checkBoxPASV
+      // 
+      this.checkBoxPASV.AutoSize = true;
+      this.checkBoxPASV.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxPASV.Location = new System.Drawing.Point(340, 241);
+      this.checkBoxPASV.Name = "checkBoxPASV";
+      this.checkBoxPASV.Size = new System.Drawing.Size(52, 17);
+      this.checkBoxPASV.TabIndex = 26;
+      this.checkBoxPASV.Text = "PASV";
+      this.checkBoxPASV.UseVisualStyleBackColor = true;
+      this.checkBoxPASV.Visible = false;
       // 
       // EditShareForm
       // 
@@ -375,6 +411,7 @@ namespace MediaPortal.Configuration
       this.Text = "Edit Folder";
       this.Load += new System.EventHandler(this.EditShareForm_Load);
       this.groupBox1.ResumeLayout(false);
+      this.groupBox1.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -527,6 +564,11 @@ namespace MediaPortal.Configuration
         return port;
       }
       set { textBoxPort.Text = value.ToString(); }
+    }
+    public bool ActiveConnection
+    {
+      get { return checkBoxPASV.Checked; }
+      set { checkBoxPASV.Checked = value; }
     }
     public string Server
     {

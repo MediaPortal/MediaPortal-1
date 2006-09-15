@@ -229,8 +229,7 @@ namespace MediaPortal.GUI.Music
         {
           string strShareName = String.Format("sharename{0}", i);
           string strSharePath = String.Format("sharepath{0}", i);
-          string strPincode = String.Format("pincode{0}", i);
-          ;
+          string strPincode = String.Format("pincode{0}", i);          
 
           string shareType = String.Format("sharetype{0}", i);
           string shareServer = String.Format("shareserver{0}", i);

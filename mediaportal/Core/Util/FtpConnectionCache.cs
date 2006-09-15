@@ -40,20 +40,22 @@ namespace Core.Util
     /// </summary>
     class FtpConnection
     {
-      public FTPClient Connection = null;					//current FTP connection
+      public FTPClient Connection = null;				//current FTP connection
       public string HostName = String.Empty;		//host name
-      public string LoginName = String.Empty;	//loginname
+      public string LoginName = String.Empty;	  //loginname
       public string Password = String.Empty;		//password
-      public int Port = 21;									//tcp/ip port of the server
-      public bool Busy = false;							//Flag indicating if we are busy downloading a file
+      public int Port = 21;								    	//tcp/ip port of the server
+      public bool Busy = false;						      //Flag indicating if we are busy downloading a file
+      public bool PASV = false;                 //use passive mode
       public string RemoteFileName = String.Empty;	//remote file we're downloading
-      public string LocalFileName = String.Empty;	//local file where download is stored
+      public string LocalFileName = String.Empty;	 //local file where download is stored
       public string OriginalRemoteFileName = String.Empty;	//original remote filename
-      public long BytesTransferred = 0;			// bytes transferred
-      public long BytesOffset = 0;						// bytes offset when resuming an ftp download
+      public long BytesTransferred = 0;			    // bytes transferred
+      public long BytesOffset = 0;					  	// bytes offset when resuming an ftp download
 
       public FtpConnection()
       {
+       // using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       }
 
       /// <summary>
@@ -238,7 +240,7 @@ namespace Core.Util
     /// true: found an idle connection, this is returned in ftpclient
     /// false: no idle connections found. ftpclient =null
     /// </returns>
-    static public bool InCache(string hostname, string login, string password, int port, out FTPClient ftpclient)
+    static public bool InCache(string hostname, string login, string password, int port, bool active, out FTPClient ftpclient)
     {
       ftpclient = null;
       foreach (FtpConnection client in ftpConnections)
@@ -264,15 +266,16 @@ namespace Core.Util
     /// <param name="login">loginname</param>
     /// <param name="password">password</param>
     /// <param name="port">tcpip port</param>
+    /// <param name="active">active or PASV</param>
     /// <returns>
     /// instance of an FTPClient handling the ftp connection
     /// or null if no connection could be made
     /// </returns>
-    static public FTPClient MakeConnection(string hostname, string login, string password, int port)
+    static public FTPClient MakeConnection(string hostname, string login, string password, int port, bool active)
     {
       try
       {
-        Log.Info("ftp:connect to ftp://{0}:{1}", hostname, port);
+        Log.Info("FTPConnection: Connect to ftp://{0}:{1} with user {2}", hostname, port, login);
         FtpConnection newConnection = new FtpConnection();
         newConnection.HostName = hostname;
         newConnection.LoginName = login;
@@ -287,14 +290,15 @@ namespace Core.Util
         newConnection.Connection.Login(login, password);
         newConnection.Connection.ConnectMode = FTPConnectMode.ACTIVE;
         ftpConnections.Add(newConnection);
-#if DEBUG
+//#if DEBUG
         newConnection.Connection.DebugResponses(true);
-#endif
+//#endif
+        Log.Debug("FTPConnection: New connection successful");
         return newConnection.Connection;
       }
       catch (Exception ex)
       {
-        Log.Info("ftp:unable to connect to ftp://{0}:{1} reason:{2}", hostname, port, ex.Message);
+        Log.Error("FTPConnection: Unable to connect to ftp://{0}:{1} reason: {2}", hostname, port, ex.Message);
         return null;
       }
     }
