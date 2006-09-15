@@ -34,7 +34,7 @@ namespace WindowPlugins.VideoEditor
 	/*class MpegModifier
 	{
 		
-		System.Timers.Timer progressTime;
+		System.Timers.Timer cutProgresstime;
     public delegate void Finished();
     public event Finished OnFinished;
     public delegate void Progress(int percentage);
@@ -72,8 +72,8 @@ namespace WindowPlugins.VideoEditor
 
 		public MpegModifier()
 		{
-			progressTime = new System.Timers.Timer(1000);
-			progressTime.Elapsed += new System.Timers.ElapsedEventHandler(progressTime_Elapsed);
+			cutProgresstime = new System.Timers.Timer(1000);
+			cutProgresstime.Elapsed += new System.Timers.ElapsedEventHandler(progressTime_Elapsed);
 		}
 
 		void progressTime_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -116,7 +116,7 @@ namespace WindowPlugins.VideoEditor
 				
 				
 
-				progressTime.Start();
+				cutProgresstime.Start();
 				string outPath = inFilename.FullName;
 				//rename the source file ------------later this could be configurable to delete it
 				//TODO behavior if the renamed sourcefile (_original) exists
@@ -169,7 +169,7 @@ namespace WindowPlugins.VideoEditor
 				Log.Debug("step 1");
 
 
-				progressTime.Stop();
+				cutProgresstime.Stop();
 				
 				percent = 100;
 

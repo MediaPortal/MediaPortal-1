@@ -27,6 +27,8 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Util;
 using DirectShowLib.SBE;
+using MediaPortal.TV.Database;
+using MediaPortal.Video.Database;
 
 namespace WindowPlugins.VideoEditor
 {
@@ -55,6 +57,8 @@ namespace WindowPlugins.VideoEditor
     protected GUIListControl joinListCtrl = null;
     [SkinControlAttribute(104)]
     protected GUIButtonControl startJoinBtn = null;
+		[SkinControlAttribute(105)]
+		protected GUIProgressControl progressBar = null;
 		#endregion
 
 		#region Own Variables
@@ -67,6 +71,11 @@ namespace WindowPlugins.VideoEditor
 		ArrayList extensions;
 		VideoEditorPreview cutScr;
 		List<System.IO.FileInfo> joiningList;
+		MediaPortal.Core.Transcoding.Dvrms2Mpeg tompeg;
+		string filetoConvert;
+		bool inDatabase;
+		TVRecorded recInfo;
+		DvrMsModifier dvrmsMod;
 		#endregion
 
 		public GUIVideoEditor()
@@ -88,7 +97,7 @@ namespace WindowPlugins.VideoEditor
 			try
 			{
 
-				bool init = Load(GUIGraphicsContext.Skin + @"\DvrCutMP.xml");
+				bool init = Load(GUIGraphicsContext.Skin + @"\VideoEditorStartScreen.xml");
 				if (init)
 				{
 					GetDrives();
@@ -115,13 +124,14 @@ namespace WindowPlugins.VideoEditor
 				videoListLct.UpdateLayout();
         startJoinBtn.IsEnabled = false;
         joinListCtrl.IsVisible = false;
-				if (joinCutSpinCtrl.GetLabel() == "Zusammenfügen")
+				if (joinCutSpinCtrl.GetLabel() == GUILocalizeStrings.Get(2078))  //Join
 				{
 					joinListCtrl.IsVisible = true;
 					startJoinBtn.IsEnabled = true;
-					titelLbl.Label = GUILocalizeStrings.Get(2074);
+					titelLbl.Label = GUILocalizeStrings.Get(2074); //Please, choose the files you would like to join:
 				}
 				joiningList = new List<System.IO.FileInfo>();
+				progressBar.Visible = false;
         LoadShares();
 				LoadDrives();
 			}
@@ -140,13 +150,8 @@ namespace WindowPlugins.VideoEditor
 		{
 			if (control == backBtn)
 			{
-				//Abbrechen();
 				GUIWindowManager.ShowPreviousWindow();
 			}
-			/*if (control == abbrechenBtn)
-			{
-				Abbrechen();
-			}*/
 			if (control == videoListLct)
 			{
 				GUIListItem item = videoListLct.SelectedListItem;
@@ -154,64 +159,192 @@ namespace WindowPlugins.VideoEditor
 				if (!item.IsFolder)
 				{
 					if (joinCutSpinCtrl.GetLabel() == GUILocalizeStrings.Get(2077))	//Cut
-					  ToCutScreen(item.Path);
+						ToCutScreen(item.Path);
 					if (joinCutSpinCtrl.GetLabel() == GUILocalizeStrings.Get(2078))	//join
-          {
+					{
 						joiningList.Add(new System.IO.FileInfo(item.Path));
-             // joinListCtrl.Add(new GUIListItem(item.Path));
-						LoadJoinList();		
-          }
+						extensions.Clear();
+						extensions.Add(System.IO.Path.GetExtension(item.Path));
+						LoadListControl(currentFolder,extensions);
+						// joinListCtrl.Add(new GUIListItem(item.Path));
+						LoadJoinList();
+					}
+					if (joinCutSpinCtrl.GetLabel() == GUILocalizeStrings.Get(2071)) //Dvr-ms to mpeg
+					{
+						recInfo = new TVRecorded();
+						/*MediaPortal.Core.Transcoding.TranscodeInfo mpegInfo = new MediaPortal.Core.Transcoding.TranscodeInfo();
+						mpegInfo.Author = "MediaPortal";
+						
+						if (inDatabase)
+						{
+							mpegInfo.Channel = recInfo.Channel;
+							mpegInfo.Description = recInfo.Description;
+							mpegInfo.Duration = (int)(recInfo.EndTime.Subtract(recInfo.StartTime)).Seconds;
+							mpegInfo.End = recInfo.EndTime;
+							mpegInfo.file = recInfo.FileName;
+							mpegInfo.Start = recInfo.StartTime;
+							mpegInfo.Title = recInfo.Title;
+						}
+						else
+						{
+							mpegInfo.Channel = "none";
+							mpegInfo.Description = "none";
+							g_Player.Play(item.Path);
+							mpegInfo.Duration = (int)g_Player.Duration;
+							g_Player.Stop();
+							mpegInfo.End = new DateTime();
+							mpegInfo.file = item.Path;
+							mpegInfo.Start = new DateTime();
+							mpegInfo.Title = System.IO.Path.GetFileNameWithoutExtension(item.Path);
+						}*/
+						filetoConvert = item.Path;
+						/*
+						tompeg = new MediaPortal.Core.Transcoding.Dvrms2Mpeg();
+						if (!tompeg.Transcode(mpegInfo, MediaPortal.Core.Transcoding.VideoFormat.Mpeg2, MediaPortal.Core.Transcoding.Quality.High))
+						{
+						//	titelLbl.Label = "finished";
+							
+						}
+						//else
+							//titelLbl.Label = "nicht gut gelaufen";
+						System.Threading.Thread isTranscoding = new System.Threading.Thread(new System.Threading.ThreadStart(IsConverting));
+						isTranscoding.Start();
+						//if (tompeg.IsFinished())*/
+						progressBar.Percentage = 0;
+						progressBar.Visible = true;
+						int duration;
+						g_Player.Play(item.Path);
+						duration = (int)g_Player.Duration;
+						g_Player.Stop();
+						dvrmsMod = new DvrMsModifier();
+						dvrmsMod.OnProgress += new DvrMsModifier.Progress(OnProgress);
+						dvrmsMod.OnFinished += new DvrMsModifier.Finished(dvrmsMod_OnFinished);
+						dvrmsMod.TranscodeToMpeg(new System.IO.FileInfo(item.Path), duration);
+
+					}
 				}
 
 				else if (item.Label.Substring(1, 1) == ":")  // is a drive
 				{
 					currentFolder = item.Label;
-          if (currentFolder != String.Empty)
-            LoadListControl(currentFolder, extensions);
-          else
-            LoadShares();
-						LoadDrives();
+					if (currentFolder != String.Empty)
+						LoadListControl(currentFolder, extensions);
+					else
+						LoadShares();
+					LoadDrives();
 				}
 				else
-					LoadListControl(item.Path, extensions);
+				{
+					currentFolder = item.Path;
+					LoadListControl(currentFolder, extensions);
+				}
 				if (item.Path == "")
 				{
-          LoadShares();
+					LoadShares();
 					LoadDrives();
 				}
 			}
 
-      if (control == joinCutSpinCtrl)
-      {
-        if (joinCutSpinCtrl.GetLabel() == GUILocalizeStrings.Get(2078))		//join
-        {
-          joinListCtrl.IsVisible = true;
-          startJoinBtn.IsEnabled = true;
-					titelLbl.Label = GUILocalizeStrings.Get(2074);
-        }
-        if(joinCutSpinCtrl.GetLabel() == GUILocalizeStrings.Get(2077))		//cut
-        {
-          joinListCtrl.IsVisible = false;
-          startJoinBtn.IsEnabled = false;
-					titelLbl.Label = GUILocalizeStrings.Get(2092);
-        }
-      }
+			if (control == joinCutSpinCtrl)
+			{
+				if (joinCutSpinCtrl.GetLabel() == GUILocalizeStrings.Get(2078))		//join
+				{
+					joinListCtrl.IsVisible = true;
+					startJoinBtn.IsEnabled = true;
+					startJoinBtn.Label = GUILocalizeStrings.Get(2079); //Start joining
+					titelLbl.Label = GUILocalizeStrings.Get(2074);	//Please, choose the files you would like to join:
+				}
+				if (joinCutSpinCtrl.GetLabel() == GUILocalizeStrings.Get(2077))		//cut
+				{
+					joinListCtrl.IsVisible = false;
+					startJoinBtn.IsEnabled = false;
+					titelLbl.Label = GUILocalizeStrings.Get(2092);	//Please, choose a file you would like to edit:
+				}
+				if (joinCutSpinCtrl.GetLabel() == GUILocalizeStrings.Get(2071))		//dvr-ms to mpeg
+				{
+					joinListCtrl.IsVisible = false;
+					startJoinBtn.IsEnabled = false;
+					//startJoinBtn.Label = GUILocalizeStrings.Get(2072);    //Start converting
+					titelLbl.Label = GUILocalizeStrings.Get(2073);		//"Please, choose a file you would like to convert:";
+				}
+			}
 
-      if (control == startJoinBtn)
-      {
+			if (control == startJoinBtn)
+			{
 				if (joiningList[0].Extension.ToLower() == ".dvr-ms")
 				{
-					DvrMsModifier mod = new DvrMsModifier();
+					DvrMsModifier joinmod = new DvrMsModifier();
 					if (joiningList[0] != null && joiningList[1] != null)
-						mod.JoinDvr(joiningList);
+					{
+						progressBar.Visible = true;
+						joinmod.JoinDvr(joiningList);
+						joinmod.OnFinished += new DvrMsModifier.Finished(joinmod_OnFinished);
+						joinmod.OnProgress += new DvrMsModifier.Progress(OnProgress);
+					}
 					//else
 					//System.Windows.Forms.MessageBox.Show("keineDatei");
 				}
-      }
+			}
 
 
-      //System.Windows.Forms.MessageBox.Show(controlId.ToString() + "::" + control.Name + "::" + actionType.ToString());
+			//System.Windows.Forms.MessageBox.Show(controlId.ToString() + "::" + control.Name + "::" + actionType.ToString());
 			base.OnClicked(controlId, control, actionType);
+		}
+
+		void joinmod_OnFinished()
+		{
+			GUIDialogYesNo yesnoDialog = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+			yesnoDialog.SetHeading(2111); // Finished !
+			yesnoDialog.SetLine(1, 2069); // //Finished to convert the video file
+			yesnoDialog.SetLine(2, 2083); // Would you like to delete the original file?
+			yesnoDialog.DoModal(GetID);
+			if (yesnoDialog.IsConfirmed)
+			{
+			/*	recInfo = new TVRecorded();
+				System.IO.File.Delete(filetoConvert);
+				if (TVDatabase.GetRecordedTVByFilename(filetoConvert, ref recInfo))
+				{
+					TVDatabase.RemoveRecordedTV(recInfo);
+					recInfo.FileName = System.IO.Path.ChangeExtension(filetoConvert, ".mpeg");
+					TVDatabase.AddRecordedTV(recInfo);
+				}*/
+			}
+			progressBar.Percentage = 0;
+			progressBar.Visible = false;
+			LoadListControl(currentFolder, extensions);
+		}
+
+		void dvrmsMod_OnFinished()
+		{
+			GUIDialogYesNo yesnoDialog = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+			yesnoDialog.SetHeading(2111); // Finished !
+			yesnoDialog.SetLine(1, 2070); // //Finished to convert the video file
+			yesnoDialog.SetLine(2, 2083); // Would you like to delete the original file?
+			yesnoDialog.DoModal(GetID);
+			if (yesnoDialog.IsConfirmed)
+			{
+				recInfo = new TVRecorded();
+				System.IO.File.Delete(filetoConvert);
+				if (TVDatabase.GetRecordedTVByFilename(filetoConvert, ref recInfo))
+				{
+					TVDatabase.RemoveRecordedTV(recInfo);
+					recInfo.FileName = System.IO.Path.ChangeExtension(filetoConvert, ".mpeg");
+					TVDatabase.AddRecordedTV(recInfo);
+				}
+			}
+			progressBar.Percentage = 0;
+			progressBar.Visible = false;
+			extensions.Clear();
+			extensions.Add(".dvr-ms");
+			extensions.Add(".mpeg");
+			extensions.Add(".mpg");
+			extensions.Add(".ts");
+			LoadListControl(currentFolder, extensions);
+		}
+
+		void OnProgress(int percentage)
+		{
+			progressBar.Percentage = percentage;
 		}
 
 		private void LoadJoinList()
@@ -351,6 +484,14 @@ namespace WindowPlugins.VideoEditor
         if (dlg.SelectedId == -1) return;*/
 				joiningList.RemoveAt(joinListCtrl.SelectedListItemIndex);
 				LoadJoinList();
+				if (joiningList.Count <= 0)
+				{
+					extensions.Add(".dvr-ms");
+					extensions.Add(".mpeg");
+					extensions.Add(".mpg");
+					extensions.Add(".ts");
+					LoadListControl(currentFolder, extensions);
+				}
         //joinListCtrl.RemoveSubItem(joinListCtrl.SelectedListItemIndex);//joinListCtrl.SelectedListItem.);//SelectedLabelText);
 				//System.Windows.Forms.MessageBox.Show(selected.Label + "::" + joinListCtrl.SelectedItem.ToString() + "::" + joinListCtrl.SelectedListItemIndex.ToString());
       }

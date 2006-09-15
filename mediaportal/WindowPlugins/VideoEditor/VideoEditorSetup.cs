@@ -75,7 +75,7 @@ namespace WindowPlugins.VideoEditor
 
 		public string PluginName()
 		{
-      return "Dvr-MpegCut";
+      return "VideoEditor";
 		}
 
 		public void ShowPlugin()

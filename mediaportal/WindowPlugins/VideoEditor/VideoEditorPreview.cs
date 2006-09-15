@@ -38,6 +38,8 @@ using DirectShowLib;
 using DShowNET.Helper;
 using System.Runtime.InteropServices;
 using Mpeg2SplitterPackage;
+using MediaPortal.TV.Database;
+using MediaPortal.Video.Database;
 
 namespace WindowPlugins.VideoEditor
 {
@@ -124,6 +126,7 @@ namespace WindowPlugins.VideoEditor
     {
       try
       {
+				
         if (filepath != String.Empty)
         {
           inFilename = new FileInfo(filepath);
@@ -145,7 +148,7 @@ namespace WindowPlugins.VideoEditor
 			try
 			{
 				iCount = 0;
-				return Load(GUIGraphicsContext.Skin + @"\CutScreen.xml");
+				return Load(GUIGraphicsContext.Skin + @"\VideoEditorCutScreen.xml");
 			}
 			catch (Exception ex)
 			{
@@ -209,7 +212,17 @@ namespace WindowPlugins.VideoEditor
 
     void dvrMod_OnFinished()
     {
-      MessageBox(GUILocalizeStrings.Get(2083), GUILocalizeStrings.Get(2111)); //Dvrms:Finished to cut the video file , Finished !
+			progressBar.Percentage = 100;
+      //MessageBox(GUILocalizeStrings.Get(2083), GUILocalizeStrings.Get(2111)); //Dvrms:Finished to cut the video file , 
+			GUIDialogYesNo yesnoDialog = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+			yesnoDialog.SetHeading(2111); // Finished !
+			yesnoDialog.SetLine(1, 2082); // //Finished to cut the video file
+			yesnoDialog.SetLine(2, 2083); // Would you like to delete the original file?
+			yesnoDialog.DoModal(GetID);
+			if (yesnoDialog.IsConfirmed)
+			{
+				System.IO.File.Delete(inFilename.FullName);
+			}
       progressBar.IsVisible = false;
       progressBar.Percentage = 0;
       progressLbl.IsVisible = false;
@@ -218,6 +231,28 @@ namespace WindowPlugins.VideoEditor
 			cutPointsList.Clear();
 			cutBtn.IsEnabled = false;
 			addBtn.IsEnabled = false;
+			TVRecorded rec = new TVRecorded();
+			int fileId = VideoDatabase.GetFileId(inFilename.FullName);
+			VideoDatabase.SetMovieDuration(fileId, (int) durationNew);
+			if (TVDatabase.GetRecordedTVByFilename(inFilename.FullName.Replace("_original" + inFilename.Extension, inFilename.Extension), ref rec))
+			{
+				TVDatabase.RemoveRecordedTV(rec);
+				DateTime ende = rec.StartTime.AddSeconds(durationNew);
+				rec.End = MediaPortal.Util.Utils.datetolong(ende);
+				TVDatabase.AddRecordedTV(rec);	
+			}
+			else
+			{
+				//TVDatabase.CommitTransaction();	
+				//rec.Channel = "Pro7";
+				//rec.Start = MediaPortal.Util.Utils.datetolong(DateTime.Now);
+				//rec.End = MediaPortal.Util.Utils.datetolong(rec.StartTime.AddSeconds(durationNew));
+				//rec.FileName = inFilename.FullName.Replace("_original" + inFilename.Extension, inFilename.Extension);
+				//rec.Title = "pro7Test";
+				//rec.Description = "werbung";
+				//rec.KeepRecordingMethod = TVRecorded.KeepMethod.Always;
+				//int i = TVDatabase.AddRecordedTV(rec);
+			}
     }
 
     void dvrMod_OnProgress(int percentage)
@@ -230,7 +265,6 @@ namespace WindowPlugins.VideoEditor
     {
       g_Player.Release();
       inFilename = null;
-      //vmrPlayer.Release();
       base.OnPageDestroy(new_windowId);
     }
 
@@ -341,21 +375,6 @@ namespace WindowPlugins.VideoEditor
 					startPosLbl.Label = "";
 					endPosLbl.Label = "";
 					cutBtn.IsEnabled = true;
-					if (iCount < NR_OF_SPILTER_TIME_STAMPS)
-					{
-						tStamp[iCount].s_sec = (int)startCut;
-						tStamp[iCount].s_min = tStamp[iCount].s_sec / 60;
-						tStamp[iCount].s_hour = tStamp[iCount].s_min / 60;
-						tStamp[iCount].s_min = tStamp[iCount].s_min % 60;
-						tStamp[iCount].s_sec = tStamp[iCount].s_sec % 60;
-
-						tStamp[iCount].e_sec = (int)endCut;
-						tStamp[iCount].e_min = tStamp[iCount].e_sec / 60;
-						tStamp[iCount].e_hour = tStamp[iCount].e_min / 60;
-						tStamp[iCount].e_min = tStamp[iCount].e_min % 60;
-						tStamp[iCount].e_sec = tStamp[iCount].e_sec % 60;
-						iCount++;
-					}
 				}
 				//}
 			}
@@ -520,24 +539,48 @@ namespace WindowPlugins.VideoEditor
       switch (cutType)
       {
         case FileTypes.Dvrms:
-          dvrMod.CutPoints = cutPointsList;
-          dvrMod.InFilename = inFilename;
-          cutThread = new Thread(new ThreadStart(dvrMod.CutDvr));//CutDvrms));
+          //dvrMod.CutPoints = cutPointsList;
+          //dvrMod.InFilename = inFilename;
+         // cutThread = new Thread(new ThreadStart(dvrMod.CutDvr));//CutDvrms));
           //cutThread.SetApartmentState(ApartmentState.STA);
           //cutThread.IsBackground = true;
-          cutThread.Priority = ThreadPriority.BelowNormal;
+          //cutThread.Priority = ThreadPriority.BelowNormal;
+					
           progressBar.Percentage = 0;
           progressBar.IsVisible = true;
           progressLbl.IsVisible = true;
 					cutBtn.IsEnabled = false;
-          cutThread.Start();
+					dvrMod.CutDvr(inFilename, cutPointsList);
+         // cutThread.Start();
          // CutDvrms();
           break;
         case FileTypes.Mpeg:
+					for (int iCount = 0; iCount < cutPointsList.Count; iCount++)
+					{
+						if (iCount < NR_OF_SPILTER_TIME_STAMPS)
+						{
+							tStamp[iCount].s_sec = (int)cutPointsList[iCount].StartTime;
+							tStamp[iCount].s_min = tStamp[iCount].s_sec / 60;
+							tStamp[iCount].s_hour = tStamp[iCount].s_min / 60;
+							tStamp[iCount].s_min = tStamp[iCount].s_min % 60;
+							tStamp[iCount].s_sec = tStamp[iCount].s_sec % 60;
+
+							tStamp[iCount].e_sec = (int)cutPointsList[iCount].EndTime;
+							tStamp[iCount].e_min = tStamp[iCount].e_sec / 60;
+							tStamp[iCount].e_hour = tStamp[iCount].e_min / 60;
+							tStamp[iCount].e_min = tStamp[iCount].e_min % 60;
+							tStamp[iCount].e_sec = tStamp[iCount].e_sec % 60;
+							//iCount++;
+						}
+					}
           cutThread = new Thread(new ThreadStart(CutMpeg));
           cutThread.Priority = ThreadPriority.BelowNormal;
-          cutThread.Start();
+         
+					progressBar.Percentage = 0;
+					progressBar.IsVisible = true;
+					progressLbl.IsVisible = true;
 					cutBtn.IsEnabled = false;
+					cutThread.Start();
           //CutMpeg();
           break;
         default:
@@ -618,9 +661,9 @@ namespace WindowPlugins.VideoEditor
       progressLbl.Label = "100";
       progressBar.Percentage = 100;
       MessageBox(GUILocalizeStrings.Get(2082), GUILocalizeStrings.Get(2111));
-      progressBar.IsVisible = false;
-      progressLbl.IsVisible = false;
-			cutBtn.IsEnabled = true;
+     // progressBar.IsVisible = false;
+      //progressLbl.IsVisible = false;
+			//cutBtn.IsEnabled = true;
     }
 
   /*  private void CutProgressTime()

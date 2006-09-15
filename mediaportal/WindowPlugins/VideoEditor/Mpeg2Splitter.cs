@@ -89,6 +89,32 @@ namespace Mpeg2SplitterPackage
 
     bool bLogEnabled = false;
 
+		System.Timers.Timer progressTime;
+		public delegate void Finished();
+		public event Finished OnFinished;
+		public delegate void Progress(int percentage);
+		public event Progress OnProgress;
+
+		int percent = 0;
+
+		public Mpeg2Splitter()
+		{
+			progressTime = new System.Timers.Timer(1000);
+			progressTime.Elapsed += new System.Timers.ElapsedEventHandler(progressTime_Elapsed);
+		}
+
+		void progressTime_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+		{
+			int progress = 0;
+			//if (recCompcut != null)
+			//	recCompcut.GetCurrentLength(out progress);
+			//percent = System.Convert.ToInt32((progress * 100) / newDuration);
+			// progressBar.Percentage = percent;
+			//progressLbl.Label = percent.ToString();
+			if (OnProgress != null)
+				OnProgress(percent);
+		}
+
     bool OpenInOutFile(string sInFilename, string sOutFilename)
     {
       bool result = true;
@@ -525,6 +551,12 @@ namespace Mpeg2SplitterPackage
         //ER		        }
         fsOut.Write(ptBuffers, 0, iLeftBufferSize);
       }
+
+			progressTime.Stop();
+			percent = 100;
+
+			if (OnFinished != null)
+				OnFinished();
 
       return true;
     }
