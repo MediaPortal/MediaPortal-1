@@ -860,10 +860,18 @@ namespace MediaPortal.GUI.Library
 
         if (!measureOnly)
         {
+          try
+          {
           if (c != ' ') // We need the special case here because a space has a 0 width in GenericTypoGraphic stringformats
             g.DrawString(str, _systemFont, Brushes.White, new Point((int)x, (int)y), StringFormat.GenericTypographic);
           else
             g.DrawString(str, _systemFont, Brushes.White, new Point((int)x, (int)y));
+          }
+          catch (ExternalException)
+          {
+            // If GDI+ throws a generic exception (Interop ExternalException) because the requested character (str) isn't defined, ignore it and move on.
+            continue; 
+          }
           _textureCoords[c - _StartCharacter, 0] = ((float)(x + 0 - _spacingPerChar)) / _textureWidth;
           _textureCoords[c - _StartCharacter, 1] = ((float)(y + 0 + 0)) / _textureHeight;
           _textureCoords[c - _StartCharacter, 2] = ((float)(x + size.Width + _spacingPerChar)) / _textureWidth;
