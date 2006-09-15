@@ -313,7 +313,6 @@
     <Compile Include="UserInterfaceControls\MPToolTip.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Util\CryptoConvert.cs" />
     <Compile Include="Util\Config.cs" />
     <Compile Include="Util\EncryptDecrypt.cs" />
     <Compile Include="Util\HTMLParser.cs" />

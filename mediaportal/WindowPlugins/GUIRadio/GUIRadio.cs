@@ -34,7 +34,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Dialogs;
 using MediaPortal.Radio.Database;
-//using MediaPortal.Music.Database;
+using MediaPortal.Music.Database;
 using MediaPortal.Playlists;
 
 namespace MediaPortal.GUI.Radio
@@ -88,7 +88,7 @@ namespace MediaPortal.GUI.Radio
     PlayList currentPlayList = null;
     PlayListPlayer playlistPlayer;
 
-    //bool _useLastFM = true;
+    bool _useLastFM = false;
     #endregion
 
     public GUIRadio()
@@ -257,12 +257,12 @@ namespace MediaPortal.GUI.Radio
       LoadDirectory(currentFolder);
       btnSortBy.SortChanged += new SortEventHandler(SortChanged);
 
-      //if (_useLastFM)
-      //{
-      //  if (!AudioscrobblerBase.Connected)
-      //    AudioscrobblerBase.Connect();
-      //  AudioscrobblerBase.DoRadioHandshake(true);
-      //}
+      if (_useLastFM)
+      {
+        if (!AudioscrobblerBase.Connected)
+          AudioscrobblerBase.Connect();
+        AudioscrobblerBase.DoRadioHandshake(true);
+      }
 
       // TO DO: 
       // Steps to get a stream:

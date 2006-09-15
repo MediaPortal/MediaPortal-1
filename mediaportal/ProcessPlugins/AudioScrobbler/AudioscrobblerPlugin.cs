@@ -97,7 +97,8 @@ namespace MediaPortal.Audioscrobbler
 
     private void OnManualConnect(object sender, EventArgs args)
     {
-      AudioscrobblerBase.Connect();
+      if(!AudioscrobblerBase.Connected)
+        AudioscrobblerBase.Connect();
     }
 
     private void OnEnabledChangedEvent(bool isEnabled)

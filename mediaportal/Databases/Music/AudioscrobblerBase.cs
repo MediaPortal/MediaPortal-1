@@ -82,6 +82,7 @@ namespace MediaPortal.Music.Database
     // Data received by the Audioscrobbler service.
     private static string md5challenge;
     private static string submitUrl;
+    private static CookieContainer _cookies;
     #endregion
 
     /// <summary>
@@ -137,6 +138,7 @@ namespace MediaPortal.Music.Database
       handshakeInterval = new TimeSpan(0, HANDSHAKE_INTERVAL, 0);
       lastConnectAttempt = DateTime.MinValue;
       minConnectWaitTime = new TimeSpan(0, 0, CONNECT_WAIT_TIME);
+      _cookies = new CookieContainer();
     }
 
     #region Public getters and setters
@@ -380,7 +382,7 @@ namespace MediaPortal.Music.Database
                  + "&v=" + CLIENT_VERSION
                  + "&u=" + System.Web.HttpUtility.UrlEncode(username);
 
-      //string url = "http://post.audioscrobbler.com/?hs=true&p=1.1&c=ass&v=1.0.2&u=f1n4rf1n";
+      // Request URI: http://post.audioscrobbler.com/?hs=true&p=1.1&c=ass&v=1.0.6&u=f1n4rf1n
       // Parse handshake response
       bool success = GetResponse(url, "", false);
 
@@ -411,6 +413,8 @@ namespace MediaPortal.Music.Database
         Log.Error("AudioscrobblerBase: {0}", "user or password not defined for Last.FM Radio");
         return false;
       }
+      if (!DoHandshake(false))
+        return false;
 
       if (!forceNow_)
       {
@@ -424,13 +428,13 @@ namespace MediaPortal.Music.Database
           return true;
         }
       }
-      //  handshake.php?version=1.0.2&platform=win32&username=f1n4rf1n&passwordmd5=3847af7ab43a1c31503e8bef7736c41f&language=en
-      //Log.Info("AudioscrobblerBase.DoHandshake: {0}", "Attempting handshake");
+
+      // http://ws.audioscrobbler.com/radio/handshake.php?version=1.0.6&platform=win32&username=f1n4rf1n&passwordmd5=3847af7ab43a1c31503e8bef7736c41f&language=en    
       string tmpUser = System.Web.HttpUtility.UrlEncode(username).ToLower();
       string tmpPass = HashPassword();
       string url = RADIO_SCROBBLER_URL
                  + "handshake.php"
-                 + "?version=" + "1.0.2"
+                 + "?version=" + "1.0.6"
                  + "&platform=" + "win32"
                  + "&username=" + tmpUser
                  + "&passwordmd5=" + tmpPass
@@ -481,6 +485,8 @@ namespace MediaPortal.Music.Database
         request = (HttpWebRequest)WebRequest.Create(url_);
         if (request == null)
           throw (new Exception());
+        else
+          request.CookieContainer = _cookies;
       }
       catch (Exception e)
       {
@@ -532,7 +538,34 @@ namespace MediaPortal.Music.Database
         HttpWebResponse response = (HttpWebResponse)request.GetResponse();
         if (response == null)
           throw (new Exception());
-        reader = new StreamReader(response.GetResponseStream());
+        else
+        {
+          if (_useDebugLog)
+          {
+            // Print the properties of each cookie.
+            int i = 0;
+            foreach (Cookie cook in response.Cookies)
+            {
+              i++;
+              Log.Debug("AudioscrobblerBase: Cookie: {0}", Convert.ToString(i));
+              Log.Debug("AudioscrobblerBase: {0} = {1}", cook.Name, cook.Value);
+              Log.Debug("AudioscrobblerBase: Domain: {0}", cook.Domain);
+              Log.Debug("AudioscrobblerBase: Path: {0}", cook.Path);
+              Log.Debug("AudioscrobblerBase: Port: {0}", cook.Port);
+              Log.Debug("AudioscrobblerBase: Secure: {0}", cook.Secure);
+              Log.Debug("AudioscrobblerBase: When issued: {0}", cook.TimeStamp);
+              Log.Debug("AudioscrobblerBase: Expires: {0} (expired? {1})", cook.Expires, cook.Expired);
+              Log.Debug("AudioscrobblerBase: Don't save: {0}", cook.Discard);
+              Log.Debug("AudioscrobblerBase: Comment: {0}", cook.Comment);
+              Log.Debug("AudioscrobblerBase: Uri for comments: {0}", cook.CommentUri);
+              Log.Debug("AudioscrobblerBase: Version: RFC {0}", cook.Version == 1 ? "2109" : "2965");
+
+              // Show the string representation of the cookie.
+              Log.Debug("AudioscrobblerBase: String: {0}", cook.ToString());
+            }
+          }
+          reader = new StreamReader(response.GetResponseStream());
+        }
       }
       catch (Exception e)
       {
@@ -581,6 +614,7 @@ namespace MediaPortal.Music.Database
         while ((respType = reader.ReadLine()) != null)
           if (respType.StartsWith("INTERVAL"))
             parse_success = parseIntervalMessage(respType, reader);
+
       }
       catch (Exception ex)
       {
