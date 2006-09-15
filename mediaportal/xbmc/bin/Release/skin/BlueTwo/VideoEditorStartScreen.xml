@@ -71,6 +71,7 @@
         <subitems>
           <subitem>2077</subitem>
           <subitem>2078</subitem>
+					<subitem>2071</subitem>
         </subitems>
       </control>
       <control>
@@ -99,5 +100,16 @@
         <label>2079</label>
         <align>center</align>
       </control>
+			<control>
+				<type>progress</type>
+				<id>105</id>
+				<posX>56</posX>
+				<posY>230</posY>
+				<width>180</width>
+				<texturebg>progress_back.png</texturebg>
+				<midtexture>osd_progress_mid.png</midtexture>
+				<lefttexture>osd_progress_left.png</lefttexture>
+				<righttexture>osd_progress_right.png</righttexture>
+			</control>
     </controls>
 </window>
