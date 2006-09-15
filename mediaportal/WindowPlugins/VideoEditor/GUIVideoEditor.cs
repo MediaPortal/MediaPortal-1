@@ -66,7 +66,7 @@ namespace WindowPlugins.VideoEditor
 		int cntDrives = 0;
 		string[] drives = new string[maxDrives];
 		string currentFolder = "";
-    string lastUsedFolder = "";
+    //string lastUsedFolder = "";
     VirtualDirectory directory = new VirtualDirectory();
 		ArrayList extensions;
 		VideoEditorPreview cutScr;
@@ -115,6 +115,10 @@ namespace WindowPlugins.VideoEditor
 			base.OnPageLoad();
 			try 
 			{
+				using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+				{
+					currentFolder = xmlreader.GetValueAsString("VideoEditor", "lastUsedFolder", "");
+				}
 				extensions = new ArrayList();
 				extensions.Add(".dvr-ms");
 				extensions.Add(".mpeg");
@@ -132,8 +136,14 @@ namespace WindowPlugins.VideoEditor
 				}
 				joiningList = new List<System.IO.FileInfo>();
 				progressBar.Visible = false;
-        LoadShares();
-				LoadDrives();
+
+				if (currentFolder == "")
+				{
+					LoadShares();
+					LoadDrives();
+				}
+				else
+					LoadListControl(currentFolder, extensions);
 			}
 			catch (Exception ex)
 			{
@@ -144,6 +154,10 @@ namespace WindowPlugins.VideoEditor
 		protected override void OnPageDestroy(int new_windowId)
 		{
 			g_Player.Release();
+			using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+			{
+				xmlwriter.SetValue("VideoEditor", "lastUsedFolder", currentFolder);
+			}
 			base.OnPageDestroy(new_windowId);
 		}
 		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
