@@ -36,34 +36,31 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Music.Database;
 using MediaPortal.Player;
 
-namespace MediaPortal.Audioscrobbler 
+namespace MediaPortal.Audioscrobbler
 {
   public class AudioscrobblerPlugin : ISetupForm, IPlugin
   {
     private int _timerTickSecs = 15;
-    private int skipThreshold = 2;
+    private int skipThreshold = 6;
     // maybe increase after introduction of x-fading
-    private const int STARTED_LATE = 10;
-  
+    private const int STARTED_LATE = 15;
+
     // songs longer or shorter than this won't be submitted
     private const int MIN_DURATION = 30;
     private const int MAX_DURATION = 2700;
 
     private const int INFINITE_TIME = Int32.MaxValue;
 
-    // how many events to store in the history textfield
-    private const int MAX_HISTORY_LINES = 250;
-
     private Song currentSong;
     // whether the current song has been submitted    
-    private bool queued; 
+    private bool queued;
     // when to submbit the current song
     private int alertTime;
     // check for skipping
     private int lastPosition = 0;
-    
+
     public bool _doSubmit = true;
-    
+
     private System.Timers.Timer SongCheckTimer;
 
 
@@ -71,7 +68,8 @@ namespace MediaPortal.Audioscrobbler
     /* The number of seconds at which the current song will be queued */
     public int AlertTime
     {
-      get {
+      get
+      {
         return alertTime;
       }
     }
@@ -79,7 +77,8 @@ namespace MediaPortal.Audioscrobbler
     /* Whether the current song has been added to the queue */
     public bool Queued
     {
-      get {
+      get
+      {
         return queued;
       }
     }
@@ -100,44 +99,19 @@ namespace MediaPortal.Audioscrobbler
     {
       AudioscrobblerBase.Connect();
     }
-    
-    //private void OnNameChangedEvent(string ASUsername)
-    //{
-    //  scrobbler.Username = ASUsername;
-    //}
-
-    //private void OnPassChangedEvent(string ASPassword)
-    //{
-    //  scrobbler.Password = ASPassword;
-    //}
 
     private void OnEnabledChangedEvent(bool isEnabled)
     {
       if (isEnabled)
         OnManualConnect(null, null);
-      else {
+      else
+      {
         AudioscrobblerBase.Disconnect();
       }
     }
     #endregion
 
     #region MediaPortal events
-    //public void OnThreadMessage(GUIMessage message)
-    //{
-    //  switch (message.Message)
-    //  {
-    //    case GUIMessage.MessageType.GUI_MSG_PLAYING_10SEC:
-
-    //      string strFile = message.Label;
-    //      if (MediaPortal.Util.Utils.IsAudio(strFile))
-    //      {
-    //        // no longer needed
-    //      }
-    //      break;
-    //  }
-    //  return;
-    //}
-
     // Make sure we get all of the ACTION_PLAY events (OnAction only receives the ACTION_PLAY event when 
     // the player is not playing)...     
     void OnNewAction(Action action)
@@ -185,7 +159,7 @@ namespace MediaPortal.Audioscrobbler
       else
         Log.Info("Audioscrobbler plugin: {0}", "song started late - ignoring");
     }
-    
+
     /// <summary>
     /// Gets called everytime the playback status of MyMusic changes.
     /// </summary>
@@ -202,20 +176,14 @@ namespace MediaPortal.Audioscrobbler
           bool songFound = false;
           if (g_Player.IsCDA)
           {
-            // no CD text information available
             if (g_Player.CurrentFile.IndexOf("Track") > 0 && g_Player.CurrentFile.IndexOf(".cda") > 0)
             {
-              //              Log.Info("Audioscrobbler plugin: AudioCD detected - {0}", "ignoring song");
               currentSong.Artist = GUIPropertyManager.GetProperty("#Play.Current.Artist");
               currentSong.Title = GUIPropertyManager.GetProperty("#Play.Current.Title");
-              currentSong.Album = GUIPropertyManager.GetProperty("#Play.Current.Album");
-              //currentSong.Track = Int32.Parse(GUIPropertyManager.GetProperty("#Play.Current.Track"), System.Globalization.NumberStyles.AllowDecimalPoint, new System.Globalization.CultureInfo("en-US"));
-              //currentSong.Track = Int32.Parse(GUIPropertyManager.GetProperty("#Play.Current.Track"), System.Globalization.NumberStyles.Integer, new System.Globalization.CultureInfo("en-US"));
-              //currentSong.Year = Convert.ToInt32(GUIPropertyManager.GetProperty("#Play.Current.Year"));
-              //currentSong.Duration = Int32.Parse(GUIPropertyManager.GetProperty("#Play.Current.Duration"), System.Globalization.NumberStyles.Integer, new System.Globalization.CultureInfo("en-US"));
+              currentSong.Album = GUIPropertyManager.GetProperty("#Play.Current.Album");              
+              //currentSong.Track = Int32.Parse(GUIPropertyManager.GetProperty("#Play.Current.Track"), System.Globalization.NumberStyles.Integer, new System.Globalization.CultureInfo("en-US"));              
               currentSong.Duration = Convert.ToInt32(g_Player.Duration);
-              currentSong.Genre = GUIPropertyManager.GetProperty("#Play.Current.Genre");
-              //currentSong.FileName = GUIPropertyManager.GetProperty("#Play.Current.File");
+              currentSong.Genre = GUIPropertyManager.GetProperty("#Play.Current.Genre");              
               currentSong.FileName = g_Player.CurrentFile;
 
               songFound = currentSong.Artist != "" ? true : false;
@@ -246,17 +214,17 @@ namespace MediaPortal.Audioscrobbler
           else
             if (g_Player.IsMusic)
             {
-              Log.Info("Audioscrobbler plugin: database does not contain track - ignoring song: {0}", currentSong.ToShortString());
+              Log.Info("Audioscrobbler plugin: database does not contain track - ignoring track: {0} by {1} from {2}", currentSong.Title, currentSong.Artist, currentSong.Album);
               Log.Debug("g_player: filename of current song - {0}", g_Player.CurrentFile);
             }
 
-
         }
-        else // Track was paused
+        else // Track was paused / unpaused
         {
           // avoid false skip detection
           lastPosition = Convert.ToInt32(g_Player.Player.CurrentPosition);
-          Log.Info("Audioscrobbler plugin: {0}", "track paused - avoid skip protection");
+          if (currentSong.AudioScrobblerStatus == SongStatus.Init)
+            Log.Info("Audioscrobbler plugin: {0}", "track paused - avoid skip protection");
         }
       }
     }
@@ -268,11 +236,11 @@ namespace MediaPortal.Audioscrobbler
       int position = 0;
       if (g_Player.Playing)
       {
-        position = Convert.ToInt32(g_Player.Player.CurrentPosition);
         // attempt to detect skipping
+        position = Convert.ToInt32(g_Player.Player.CurrentPosition);
         if (currentSong != null)
         {
-          // manually chose song with "SELECT" action
+          // manually skipped song with "SELECT" action
           if (g_Player.CurrentFile != currentSong.FileName)
           {
             OnStateChangedEvent(true);
@@ -283,24 +251,22 @@ namespace MediaPortal.Audioscrobbler
           {
             if (alertTime < INFINITE_TIME && position > (lastPosition + skipThreshold + _timerTickSecs))
             {
-              //        Log.Info("Audioscrobbler: OnTickEvent {0}", "Skipping detected from " + lastPosition + " to " + position + ") - not queueing");
               alertTime = INFINITE_TIME;
-              Log.Info("Audioscrobbler plugin: song was forwarded - ignoring {0}", currentSong.ToShortString());              
+              Log.Info("Audioscrobbler plugin: song was forwarded - ignoring {0}", currentSong.ToShortString());
             }
-
             // then actually queue the song if we're that far along
             if (position >= alertTime && alertTime > 14)
             {
               Log.Info("Audioscrobbler plugin: queuing song: {0}", currentSong.ToShortString());
-              AudioscrobblerBase.pushQueue(currentSong);              
-              queued = true;              
+              AudioscrobblerBase.pushQueue(currentSong);
+              queued = true;
               currentSong.AudioScrobblerStatus = SongStatus.Cached;
             }
 
             lastPosition = position;
           }
         }
-        else // Playing but no Song? Action missed!
+        else // Playing but no Song? Action missed! (Or manually started via "SELECT" action)
           OnStateChangedEvent(true);
       }
     }
@@ -325,25 +291,22 @@ namespace MediaPortal.Audioscrobbler
     // Logic about when we should submit a song to Audioscrobbler - http://www.audioscrobbler.net/wiki/Protocol1.1   
     private int GetAlertTime()
     {
-      if (currentSong.Duration > MAX_DURATION) {
-        //SubmitTimeLabel.Text = "Current song is too long. Not submitting.";
+      if (currentSong.Duration > MAX_DURATION)
+      {
         Log.Info("Audioscrobbler plugin: ignoring long song {0}", currentSong.ToShortString());
         return INFINITE_TIME;
       }
-      else if (currentSong.Duration < MIN_DURATION) {
-        //SubmitTimeLabel.Text = "Current song is too short. Not submitting.";
+      else if (currentSong.Duration < MIN_DURATION)
+      {
         Log.Info("Audioscrobbler plugin: ignoring short song {0}", currentSong.ToShortString());
         return INFINITE_TIME;
       }
-
       // If the duration is less then 480 secs, alert when the song
       // is half over, otherwise after 240 seconds.
       if (currentSong.Duration < 480)
         return currentSong.Duration / 2;
       else
         return 240;
-
-      //return INFINITE_TIME;
     }
 
     #endregion
@@ -351,20 +314,20 @@ namespace MediaPortal.Audioscrobbler
     #region IPlugin Members
     public void Start()
     {
-      currentSong = null;
-      queued = false;
       string currentUser = "";
-      alertTime = INFINITE_TIME;
-      
-      GUIWindowManager.OnNewAction += new OnActionHandler(OnNewAction);
 
+      currentSong = null;
+      queued = false;      
+      alertTime = INFINITE_TIME;
+
+      GUIWindowManager.OnNewAction += new OnActionHandler(OnNewAction);
 
       startStopSongCheckTimer(true);
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         currentUser = xmlreader.GetValueAsString("audioscrobbler", "user", "");
-      }      
+      }
 
       MusicDatabase mdb = new MusicDatabase();
       _doSubmit = (mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(currentUser)), "iSubmitOn", -1) == 1) ? true : false;
@@ -380,7 +343,7 @@ namespace MediaPortal.Audioscrobbler
     public void Stop()
     {
       OnManualDisconnect(null, null);
-      startStopSongCheckTimer(false);      
+      startStopSongCheckTimer(false);
     }
 
     #endregion
@@ -393,9 +356,8 @@ namespace MediaPortal.Audioscrobbler
     }
 
     public string Description()
-    {
-      // This offers the possibility to get a radio stream based on your own music taste and "smart playlists"
-      return "The Audioscrobbler plugin populates your profile on http://www.last.fm";
+    {    
+      return "The Audioscrobbler plugin populates your profile on http://www.last.fm \nand automatically fills your playlist with songs you'll like.";
     }
 
     public bool DefaultEnabled()
