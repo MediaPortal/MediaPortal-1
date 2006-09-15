@@ -6,6 +6,7 @@
   <section name="ChannelList">
 
 <!-- Schweiz - Haupt -->
+    <entry name="3plus.ch">3PLS</entry>		        <!-- 3 Plus -->
     <entry name="sf1@sfdrs.ch">DRS</entry>		<!-- SF 1 -->
     <entry name="sf2@sfdrs.ch">CH4</entry>		<!-- SF 2 -->
     <entry name="tsr1@tsr.ch">TSR</entry>		<!-- TSR 1 -->
