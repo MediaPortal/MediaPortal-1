@@ -53,7 +53,6 @@ namespace MediaPortal.MusicShareWatcher
 
     public MusicShareWatcherHelper()
     {
-      Config.LoadDirs(System.IO.Directory.GetCurrentDirectory());
       // Create Log File
       Log.BackupLogFile(Log.LogType.MusicShareWatcher);
 

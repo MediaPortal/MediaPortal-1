@@ -36,11 +36,6 @@ namespace MediaPortal.Tests.Commands
     [SetUp]
     public void Init()
     {
-      if (!Config.LoadDirs(System.IO.Directory.GetCurrentDirectory()))
-      {
-        throw new Exception("Missing or Invalid MediaPortalDirs.xml file. Unit tests cannot run without that file.");
-      }
-
       TVChannel ch;
       TVDatabase.ClearAll();
       RadioDatabase.ClearAll();

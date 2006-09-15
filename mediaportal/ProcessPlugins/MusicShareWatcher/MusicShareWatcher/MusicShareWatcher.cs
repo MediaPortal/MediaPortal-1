@@ -42,7 +42,6 @@ namespace MediaPortal.MusicShareWatcher
 
     public MusicShareWatcher()
     {
-      Config.LoadDirs(Application.StartupPath);
       InitializeComponent();
 
       bMonitoring = true;

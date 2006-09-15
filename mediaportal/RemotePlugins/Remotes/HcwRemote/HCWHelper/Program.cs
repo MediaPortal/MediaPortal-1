@@ -41,11 +41,6 @@ namespace MediaPortal.InputDevices.HcwHelper
     [STAThread]
     static void Main()
     {
-      if (!Config.LoadDirs(System.IO.Directory.GetCurrentDirectory()))
-      {
-        Console.WriteLine("Missing or Invalid MediaPortalConfig.xml file. MediaPortal cannot run without that file.");
-        return;
-      }
       Log.Info("HCWHelper: Starting up");
       Thread.CurrentThread.Priority = ThreadPriority.Highest;
 

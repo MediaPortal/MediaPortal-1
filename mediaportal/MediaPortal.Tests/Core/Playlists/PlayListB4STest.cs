@@ -14,10 +14,6 @@ namespace MediaPortal.Tests.Core.Playlists
     [SetUp]
     public void Init()
     {
-      if (!Config.LoadDirs(System.IO.Directory.GetCurrentDirectory()))
-      {
-        throw new Exception("Missing or Invalid MediaPortalDirs.xml file. Unit tests cannot run without that file.");
-      }
     }
 
     [Test]

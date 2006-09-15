@@ -169,13 +169,6 @@ public class MediaPortalApp : D3DApp, IRender
 #if !DEBUG
     AddExceptionHandler();
 #endif
-        if (!Config.LoadDirs(Application.StartupPath))
-        {
-            MessageBox.Show("Missing or Invalid MediaPortalDirs.xml file. MediaPortal cannot run without that file.",
-                            "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            return;
-        }
-
         Log.BackupLogFiles();
         Log.Info("Main: MediaPortal is starting up");
         Log.Info("Main: Using Directories:");

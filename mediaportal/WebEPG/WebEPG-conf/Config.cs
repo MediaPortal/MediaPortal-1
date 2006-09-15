@@ -116,14 +116,6 @@ namespace WebEPG_conf
       _log = new Log("WebEPG", Log.Level.Debug);
       services.Add<ILog>(_log);
 
-      // hwahrmann: Init the Config for static components to find the various directories
-      if (!Config.LoadDirs(Application.StartupPath))
-      {
-        MessageBox.Show("Missing or Invalid MediaPortalDirs.xml file. MediaPortal cannot run without that file.",
-                        "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        return;
-      }
-
       startDirectory = Environment.CurrentDirectory;
 
       startDirectory += "\\WebEPG";

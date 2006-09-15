@@ -55,6 +55,7 @@ namespace MediaPortal.Util
     static Config()
     {
       directories = new Dictionary<Dir, string>();
+      LoadDirs(System.IO.Directory.GetCurrentDirectory());
     }
 
     /// <summary>
@@ -62,16 +63,13 @@ namespace MediaPortal.Util
     /// First we look for the file in MyDocuments of the logged on user. If file is not there or invalid, 
     /// we use the one from the MediaPortal InstallPath.
     /// </summary>
-    static public bool LoadDirs(string startuppath)
+    static private void LoadDirs(string startuppath)
     {
       Set(Dir.Base, startuppath + @"\");
-      if (ReadConfig(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Team MediaPortal\"))
-        return true;
-      else if (ReadConfig(Get(Dir.Base)))
-        return true;
-      else 
-        return false;
-    }
+      if (!ReadConfig(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Team MediaPortal\"))
+        if (!ReadConfig(Get(Dir.Base)))
+          LoadDefaultDirs();
+     }
 
     /// <summary>
     /// Load the Path information from the Config File into the dictionary
@@ -107,7 +105,7 @@ namespace MediaPortal.Util
                 if (path != null)
                 {
                   string strPath = path.InnerText;
-                  // Check to see, if the location was specified with an absolute or relative oath.
+                  // Check to see, if the location was specified with an absolute or relative path.
                   // In case of relative path, prefix it with the startuppath                 
                   if (!Path.IsPathRooted(path.InnerText))
                   {
@@ -137,6 +135,21 @@ namespace MediaPortal.Util
         }
       }
       return false;
+    }
+
+    static private void LoadDefaultDirs()
+    {
+      string baseDir = Get(Dir.Base);
+      Set(Dir.Cache, baseDir + @"cache\");
+      Set(Dir.Config, baseDir);
+      Set(Dir.CustomInputDevice, baseDir + @"InputDeviceMappings\custom\");
+      Set(Dir.Database, baseDir + @"database\");
+      Set(Dir.Language, baseDir + @"language\");
+      Set(Dir.Log, baseDir + @"log\");
+      Set(Dir.Plugins, baseDir + @"plugins\");
+      Set(Dir.Skin, baseDir + @"skin\");
+      Set(Dir.Thumbs, baseDir + @"thumbs\");
+      Set(Dir.Weather, baseDir + @"weather\");
     }
 
     static public string Get(Config.Dir path)

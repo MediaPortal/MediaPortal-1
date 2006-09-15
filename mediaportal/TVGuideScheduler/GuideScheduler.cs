@@ -36,12 +36,6 @@ namespace MediaPortal.TVGuideScheduler
   {
     public static void Main(string[] options)
     {
-      if (!Config.LoadDirs(System.IO.Directory.GetCurrentDirectory()))
-      {
-        Console.WriteLine("Missing or Invalid MediaPortalDirs.xml file. MediaPortal cannot run without that file.");
-        return;
-      }
-
       string grabber = null;
       int grabberDays;
       string multiGrab;

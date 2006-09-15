@@ -74,12 +74,6 @@ namespace MediaPortal.Configuration
     /// <param name="arguments"></param>
     public Startup(string[] arguments)
     {
-      if (!Config.LoadDirs(Application.StartupPath))
-      {
-        MessageBox.Show("Missing or Invalid MediaPortalDirs.xml file. MediaPortal cannot run without that file.", "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        return;
-      }
-
       // Logger should write into Configuration.log
       Log.SetConfigurationMode();
       Log.BackupLogFile(Log.LogType.Config);
