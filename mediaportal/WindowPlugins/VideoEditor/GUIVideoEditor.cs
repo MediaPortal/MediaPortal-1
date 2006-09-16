@@ -71,9 +71,9 @@ namespace WindowPlugins.VideoEditor
 		ArrayList extensions;
 		VideoEditorPreview cutScr;
 		List<System.IO.FileInfo> joiningList;
-		MediaPortal.Core.Transcoding.Dvrms2Mpeg tompeg;
+		//MediaPortal.Core.Transcoding.Dvrms2Mpeg tompeg;
 		string filetoConvert;
-		bool inDatabase;
+		//bool inDatabase;
 		TVRecorded recInfo;
 		DvrMsModifier dvrmsMod;
 		#endregion
@@ -314,8 +314,9 @@ namespace WindowPlugins.VideoEditor
 			yesnoDialog.DoModal(GetID);
 			if (yesnoDialog.IsConfirmed)
 			{
-			/*	recInfo = new TVRecorded();
 				System.IO.File.Delete(filetoConvert);
+			/*	recInfo = new TVRecorded();
+				
 				if (TVDatabase.GetRecordedTVByFilename(filetoConvert, ref recInfo))
 				{
 					TVDatabase.RemoveRecordedTV(recInfo);

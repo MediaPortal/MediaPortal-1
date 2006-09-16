@@ -15,7 +15,7 @@ namespace WindowPlugins.VideoEditor
   {
     protected DsROTEntry _rotEntry = null;
     protected IGraphBuilder graphBuilder = null;
-    protected IStreamBufferSource bufferSource = null;
+		protected IFileSinkFilter bufferSource = null;//IStreamBufferSource bufferSource = null;
     protected IFileSinkFilter2 fileWriterFilter = null;			// DShow Filter: file writer
     protected IMediaControl mediaControl = null;
     protected IStreamBufferMediaSeeking mediaSeeking = null;
@@ -56,7 +56,7 @@ namespace WindowPlugins.VideoEditor
     {
       if (!Supports(format)) return false;
       string ext = System.IO.Path.GetExtension(info.file);
-      if (ext.ToLower() != ".dvr-ms" && ext.ToLower() != ".sbe") return false;
+      if (ext.ToLower() != ".mpeg" && ext.ToLower() != ".mpg") return false;
 
       //disable xvid status window while encoding
       try
@@ -87,19 +87,19 @@ namespace WindowPlugins.VideoEditor
         _rotEntry = new DsROTEntry((IFilterGraph)graphBuilder);
 
         Log.Info("DVR2XVID: add streambuffersource");
-        bufferSource = (IStreamBufferSource)new StreamBufferSource();
+				//bufferSource = new AsyncReader();//(IStreamBufferSource)new StreamBufferSource();
 
 
         IBaseFilter filter = (IBaseFilter)bufferSource;
         graphBuilder.AddFilter(filter, "SBE SOURCE");
-        IFileSourceFilter fileSource = (IFileSourceFilter)bufferSource;
+				IFileSourceFilter fileSource = (IFileSourceFilter)new AsyncReader();//(IFileSourceFilter)bufferSource;
         Log.Info("DVR2XVID: load file:{0}", info.file);
         int hr = fileSource.Load(info.file, null);
 
 
 
         //add mpeg2 audio/video codecs
-        string strVideoCodecMoniker = @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{F50B3F13-19C4-11CF-AA9A-02608C9BABA2}";
+				string strVideoCodecMoniker = @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{39F498AF-1A09-4275-B193-673B0BA3D478}";
         string strAudioCodec = "MPA Decoder Filter";
         Log.Info("DVR2XVID: add elecard mpeg2 video codec");
         Mpeg2VideoCodec = Marshal.BindToMoniker(strVideoCodecMoniker) as IBaseFilter;

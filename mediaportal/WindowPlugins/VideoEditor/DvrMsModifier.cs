@@ -50,8 +50,8 @@ namespace WindowPlugins.VideoEditor
     List<TimeDomain> cutPoints;
 		List<System.IO.FileInfo> fileList;
 		MediaPortal.Core.Transcoding.Dvrms2Mpeg tompeg;
-		string filetoConvert;
-		bool inDatabase;
+		//string filetoConvert;
+		//bool inDatabase;
 		MediaPortal.TV.Database.TVRecorded recInfo;
 
     public DvrMsModifier()
@@ -297,10 +297,11 @@ namespace WindowPlugins.VideoEditor
 			}
 			else if (tompeg.IsFinished())
 			{
+				transcodeProgresstime.Stop();
 				tompeg.Stop();
 				if (OnFinished != null)
 					OnFinished();
-				transcodeProgresstime.Stop();
+				
 			}
 		}
 
@@ -368,7 +369,7 @@ namespace WindowPlugins.VideoEditor
 			}
 			finally
 			{
-				
+				//tompeg.Stop();
 			}
 		}
 
