@@ -259,19 +259,9 @@ namespace MediaPortal.GUI.Radio
 
       if (_useLastFM)
       {
-        if (!AudioscrobblerBase.Connected)
-          AudioscrobblerBase.Connect();
-        AudioscrobblerBase.DoRadioHandshake(true);
+        AudioscrobblerRadio LastFMStation = new AudioscrobblerRadio();
+        g_Player.Play(AudioscrobblerRadio.CurrentStream, g_Player.MediaType.Radio);
       }
-
-      // TO DO: 
-      // Steps to get a stream:
-      // 1. http.request.uri = Request URI: http://ws.audioscrobbler.com/radio/adjust.php?session=e5b0c80f5b5d0937d407fb77a913cb6a&url=lastfm://globaltags/alternative,alternative%20rock
-      // 2. http.request.uri = Request URI: http://streamer1.last.fm/last.mp3?Session=e5b0c80f5b5d0937d407fb77a913cb6a
-      // 3. http.request.uri = Request URI: http://ws.audioscrobbler.com/radio/control.php?session=e5b0c80f5b5d0937d407fb77a913cb6a&command=rtp
-      // 4. http.request.uri = Request URI: http://ws.audioscrobbler.com/radio/adjust.php?session=e5b0c80f5b5d0937d407fb77a913cb6a&url=lastfm://settings/discovery/off
-      // 5. http.request.uri = Request URI: http://ws.audioscrobbler.com/radio/np.php?session=e5b0c80f5b5d0937d407fb77a913cb6a
-      // 6. 
     }
 
     protected override void OnPageDestroy(int newWindowId)

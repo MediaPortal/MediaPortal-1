@@ -1,7 +1,7 @@
 #region Copyright (C) 2006 Team MediaPortal
 
 /* 
- *	Copyright (C) 2005-2006 Team MediaPortal
+ *	Copyright (C) 2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -70,6 +70,7 @@ namespace MediaPortal.Music.Database
     private static DateTime lastHandshake;        //< last successful attempt.
     private static DateTime lastRadioHandshake;
     private static TimeSpan handshakeInterval;
+    private static TimeSpan handshakeRadioInterval;
     private static DateTime lastConnectAttempt;
 
     private static TimeSpan minConnectWaitTime;
@@ -83,6 +84,11 @@ namespace MediaPortal.Music.Database
     private static string md5challenge;
     private static string submitUrl;
     private static CookieContainer _cookies;
+
+    // radio related
+    private static string _radioStreamURL;
+    private static string _radioSession;
+    private static bool _subscriber;
     #endregion
 
     /// <summary>
@@ -94,21 +100,17 @@ namespace MediaPortal.Music.Database
 
       if (_useDebugLog)
         Log.Info("AudioscrobblerBase: new scrobbler for {0} with {1} cached songs - debuglog={2}", Username, Convert.ToString(queue.Count), Convert.ToString(_useDebugLog));
-    //    else
-    //Log.Info("AudioscrobblerBase: new scrobbler for {0} - debuglog={1} directonly={2}", Username, Convert.ToString(_useDebugLog), Convert.ToString(_disableTimerThread));
     }
 
     static void LoadSettings()
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
-        //_useDebugLog = xmlreader.GetValueAsBool("audioscrobbler", "usedebuglog", false);
-        //_dismissOnError = xmlreader.GetValueAsBool("audioscrobbler", "dismisscacheonerror", false);
         _disableTimerThread = xmlreader.GetValueAsBool("audioscrobbler", "disabletimerthread", true);
 
         username = xmlreader.GetValueAsString("audioscrobbler", "user", "");
+
         string tmpPass;
-        //tmpPass = xmlreader.GetValueAsString("audioscrobbler", "pass", "");
         MusicDatabase mdb = new MusicDatabase();
 
         tmpPass = mdb.AddScrobbleUserPassword(Convert.ToString(mdb.AddScrobbleUser(username)), "");
@@ -136,9 +138,13 @@ namespace MediaPortal.Music.Database
       _signedIn = false;
       lastHandshake = DateTime.MinValue;
       handshakeInterval = new TimeSpan(0, HANDSHAKE_INTERVAL, 0);
+      handshakeRadioInterval = new TimeSpan(0, 5 * HANDSHAKE_INTERVAL, 0);  // Radio is session based - no need to re-handshake soon
       lastConnectAttempt = DateTime.MinValue;
       minConnectWaitTime = new TimeSpan(0, 0, CONNECT_WAIT_TIME);
       _cookies = new CookieContainer();
+      _radioStreamURL = String.Empty;
+      _radioSession = String.Empty;
+      _subscriber = false;
     }
 
     #region Public getters and setters
@@ -181,6 +187,37 @@ namespace MediaPortal.Music.Database
           lastHandshake = DateTime.MinValue;
           //          Log.Info("AudioscrobblerBase.Password", "Password changed");
         }
+      }
+    }
+
+    public static string RadioSession
+    {
+      get
+      {
+        if (_radioSession == String.Empty)
+          DoRadioHandshake(false);
+
+        return _radioSession;
+      }
+    }
+
+    //public static string RadioStream
+    //{
+    //  get
+    //  {
+    //    if (_radioStreamURL == String.Empty)
+    //      DoRadioHandshake(false);
+
+    //    return _radioStreamURL;
+    //  }
+    //}
+
+    public static bool Subscriber
+    {
+      get
+      {
+        DoRadioHandshake(false);
+        return _subscriber;
       }
     }
 
@@ -276,6 +313,7 @@ namespace MediaPortal.Music.Database
         }
       }
     }
+
     /// <summary>
     /// Push the given song on the queue.
     /// </summary>
@@ -320,8 +358,8 @@ namespace MediaPortal.Music.Database
       else
         if (_useDebugLog)
           Log.Debug("AudioscrobblerBase: {0}", "direct submit cancelled because of previous errors");
-    }
-       
+    }     
+    
 
     #region Public event triggers
 
@@ -419,10 +457,10 @@ namespace MediaPortal.Music.Database
       if (!forceNow_)
       {
         // Check whether we had a *successful* handshake recently.
-        if (DateTime.Now < lastRadioHandshake.Add(handshakeInterval))
+        if (DateTime.Now < lastRadioHandshake.Add(handshakeRadioInterval))
         {
-          string nextRadioHandshake = lastRadioHandshake.Add(handshakeInterval).ToString();
-          string logmessage = "Next handshake due at " + nextRadioHandshake;
+          string nextRadioHandshake = lastRadioHandshake.Add(handshakeRadioInterval).ToString();
+          string logmessage = "Next radio handshake due at " + nextRadioHandshake;
           if (_useDebugLog)
             Log.Debug("AudioscrobblerBase: {0}", logmessage);
           return true;
@@ -445,7 +483,7 @@ namespace MediaPortal.Music.Database
 
       if (!success)
       {
-        Log.Warn("AudioscrobblerBase: {0}", "Handshake failed");
+        Log.Warn("AudioscrobblerBase: {0}", "Radio handshake failed");
         return false;
       }
 
@@ -602,7 +640,8 @@ namespace MediaPortal.Music.Database
           parse_success = parseFailedMessage(respType, reader);
         else if (respType.StartsWith("BADUSER") || respType.StartsWith("BADAUTH"))
           parse_success = parseBadUserMessage(respType, reader);
-        //else if (respType.StartsWith("session=FAILED"))
+        else if (respType.StartsWith("session="))
+          success = parse_success = parseRadioStreamMessage(respType, reader);
 
         else
         {
@@ -809,6 +848,36 @@ namespace MediaPortal.Music.Database
         Log.Error("AudioscrobblerBase.parseIntervalMessage: {0}", logmessage);
       }
       return true;
+    }
+
+    private static bool parseRadioStreamMessage(string type_, StreamReader reader_)
+    {  
+      if (type_.Length > 8)
+      {
+        _radioSession = type_.Substring(8);
+        Log.Info("AudioscrobblerBase: Initialising radio session {0}", _radioSession);
+
+        int i = 0;
+        while ((type_ = reader_.ReadLine()) != null)
+        {
+          i++;
+          if (i == 1)
+            _radioStreamURL = type_.Substring(11);
+          if (i == 2)
+          {
+            if (type_.Substring(11) == "1")
+              _subscriber = true;
+            else
+              _subscriber = false;
+
+          }
+        }
+        Log.Info("AudioscrobblerBase: Successfully initialised radio stream {0} - subscriber: {1}", _radioStreamURL, _subscriber);
+
+        return true;
+      }
+
+      return false;
     }
     #endregion
 

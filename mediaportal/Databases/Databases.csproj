@@ -235,6 +235,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Music\AudioscrobblerBase.cs" />
+    <Compile Include="Music\AudioscrobblerRadio.cs" />
     <Compile Include="Music\AudioscrobblerUtils.cs" />
     <Compile Include="Music\AWSECommerceService.cs" />
     <Compile Include="Music\Database.cs">
