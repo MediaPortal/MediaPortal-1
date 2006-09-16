@@ -3857,6 +3857,26 @@
       <id>2054</id>
       <value>Ingen innslag!</value>
    </string>
+	 <string>
+		<id>2069</id>
+		<value>Ferdig med å lime sammen video filene</value>
+	</string>
+	<string>
+		<id>2070</id>
+		<value>Ferdig med å konvertere video filen</value>
+	</string>
+	<string>
+		<id>2071</id>
+		<value>Dvr-ms til mpeg</value>
+	</string>
+	<string>
+		<id>2072</id>
+		<value>Start konvertering</value>
+	</string>
+	<string>
+		<id>2073</id>
+		<value>Vennligst, velg den dvr-ms filen du har lyst til å konvertere:</value>
+	</string>
 	<string>
 		<id>2074</id>
 		<value>Vennligst, velg den filen du vil spleise inn:</value>
