@@ -218,10 +218,24 @@ namespace MediaPortal.GUI.TV
 
       LoadSettings();
       LoadDirectory();
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RESUME_TV, (int)GUIWindow.Window.WINDOW_TV, GetID, 0, 0, 0, null);
-      msg.SendToTargetWindow = true;
-      GUIWindowManager.SendThreadMessage(msg);
+      if (Recorder.IsViewing())
+      {
+        GUIControl cntl = GetControl(300);
+        if (cntl != null) cntl.Visible = true;
+        cntl = GetControl(99);
+        if (cntl != null) cntl.Visible = true;
 
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RESUME_TV, (int)GUIWindow.Window.WINDOW_TV, GetID, 0, 0, 0, null);
+        msg.SendToTargetWindow = true;
+        GUIWindowManager.SendThreadMessage(msg);
+      }
+      else
+      {
+        GUIControl cntl = GetControl(300);
+        if (cntl != null) cntl.Visible = false;
+        cntl = GetControl(99);
+        if (cntl != null) cntl.Visible = false;
+      }
       btnSortBy.SortChanged += new SortEventHandler(SortChanged);
     }
     void ShowViews()

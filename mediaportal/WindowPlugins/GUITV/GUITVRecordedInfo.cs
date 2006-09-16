@@ -39,6 +39,20 @@ namespace MediaPortal.GUI.TV
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
+      if (Recorder.IsViewing())
+      {
+        GUIControl cntl = GetControl(300);
+        if (cntl != null) cntl.Visible = true;
+        cntl = GetControl(99);
+        if (cntl != null) cntl.Visible = true;
+      }
+      else
+      {
+        GUIControl cntl = GetControl(300);
+        if (cntl != null) cntl.Visible = false;
+        cntl = GetControl(99);
+        if (cntl != null) cntl.Visible = false;
+      }
       Update();
     }
 

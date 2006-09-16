@@ -247,11 +247,24 @@ namespace MediaPortal.GUI.TV
       //DiskManagement.ImportDvrMsFiles();
       LoadSettings();
       LoadDirectory();
+      if (Recorder.IsViewing())
+      {
+        GUIControl cntl = GetControl(300);
+        if (cntl != null) cntl.Visible = true;
+        cntl = GetControl(99);
+        if (cntl != null) cntl.Visible = true;
 
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RESUME_TV, (int)GUIWindow.Window.WINDOW_TV, GetID, 0, 0, 0, null);
-      msg.SendToTargetWindow = true;
-      GUIWindowManager.SendThreadMessage(msg);
-
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RESUME_TV, (int)GUIWindow.Window.WINDOW_TV, GetID, 0, 0, 0, null);
+        msg.SendToTargetWindow = true;
+        GUIWindowManager.SendThreadMessage(msg);
+      }
+      else
+      {
+        GUIControl cntl = GetControl(300);
+        if (cntl != null) cntl.Visible = false;
+        cntl = GetControl(99);
+        if (cntl != null) cntl.Visible = false;
+      }
       while (m_iSelectedItem >= GetItemCount() && m_iSelectedItem > 0) m_iSelectedItem--;
       GUIControl.SelectItemControl(GetID, listViews.GetID, m_iSelectedItem);
       GUIControl.SelectItemControl(GetID, listAlbums.GetID, m_iSelectedItem);
@@ -638,7 +651,7 @@ namespace MediaPortal.GUI.TV
         int idMovie = VideoDatabase.GetMovieId(rec.FileName);
         int idFile = VideoDatabase.GetFileId(rec.FileName);
         int stoptime = 0;
-        if (idMovie >= 0 && idFile >= 0 )
+        if (idMovie >= 0 && idFile >= 0)
         {
           Log.Info("play got movie id:{0} for {1}", idMovie, rec.FileName);
           stoptime = VideoDatabase.GetMovieStopTime(idMovie);
@@ -689,7 +702,7 @@ namespace MediaPortal.GUI.TV
       GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
       if (null == dlgYesNo) return;
       if (rec.Played > 0) dlgYesNo.SetHeading(GUILocalizeStrings.Get(653));
-        else dlgYesNo.SetHeading(GUILocalizeStrings.Get(820));
+      else dlgYesNo.SetHeading(GUILocalizeStrings.Get(820));
       dlgYesNo.SetLine(1, rec.Channel);
       dlgYesNo.SetLine(2, rec.Title);
       dlgYesNo.SetLine(3, String.Empty);
@@ -982,7 +995,7 @@ namespace MediaPortal.GUI.TV
       {
         if (_deleteWatchedShows || rec.KeepRecordingMethod == TVRecorded.KeepMethod.UntilWatched)
         {
-          if (String.Compare(rec.FileName,filename,true)==0)
+          if (String.Compare(rec.FileName, filename, true) == 0)
           {
             Recorder.DeleteRecording(rec);
             return;
@@ -1031,7 +1044,7 @@ namespace MediaPortal.GUI.TV
           string thumbNail = System.IO.Path.ChangeExtension(rec.FileName, ".jpg");
           if (!System.IO.File.Exists(thumbNail))
           {
-              DvrMsImageGrabber.GrabFrame(rec.FileName, thumbNail, System.Drawing.Imaging.ImageFormat.Jpeg, 128, 128);
+            DvrMsImageGrabber.GrabFrame(rec.FileName, thumbNail, System.Drawing.Imaging.ImageFormat.Jpeg, 128, 128);
           }
         }
       }
