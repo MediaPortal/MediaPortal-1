@@ -47,7 +47,7 @@ namespace MediaPortal.Music.Database
 
     // TO DO: 
     // Steps to get a stream:
-    // 1. http.request.uri = Request URI: http://ws.audioscrobbler.com/radio/adjust.php?session=e5b0c80f5b5d0937d407fb77a913cb6a&url=lastfm://globaltags/alternative,alternative%20rock
+    // 1. http.request.uri = Request URI: http://ws.audioscrobbler.com/radio/adjust.php?session=e5b0c80f5b5d0937d407fb77a913cb6a&url=lastfm://globaltags/alternative%20rock,ebm,progressive%20rock
     // 2. http.request.uri = Request URI: http://streamer1.last.fm/last.mp3?Session=e5b0c80f5b5d0937d407fb77a913cb6a
     // 3. http.request.uri = Request URI: http://ws.audioscrobbler.com/radio/control.php?session=e5b0c80f5b5d0937d407fb77a913cb6a&command=rtp
     // 4. http.request.uri = Request URI: http://ws.audioscrobbler.com/radio/adjust.php?session=e5b0c80f5b5d0937d407fb77a913cb6a&url=lastfm://settings/discovery/off
@@ -64,8 +64,10 @@ namespace MediaPortal.Music.Database
       _isSubscriber = AudioscrobblerBase.Subscriber;
       _currentRadioURL = "http://streamer1.last.fm/last.mp3?Session=" + _currentSession;
       // some testing here..
-      if (SendCommandRequest("http://ws.audioscrobbler.com/radio/adjust.php?session=" + _currentSession + "&url=lastfm://globaltags/alternative,alternative%20rock"))
+      if (SendCommandRequest("http://ws.audioscrobbler.com/radio/control.php?session=" + _currentSession + "&command=rtp"))
         Log.Info("AudioscrobblerRadio: Stream adjusted");
+      if (SendCommandRequest("http://ws.audioscrobbler.com/radio/adjust.php?session=" + _currentSession + "&url=lastfm://globaltags/Metal,Viking+Metal,Melodic+Death+Metal"))
+        Log.Info("AudioscrobblerRadio: Streaming: metal, viking metal, melodic death metal");
     }
 
 

@@ -194,23 +194,11 @@ namespace MediaPortal.Music.Database
     {
       get
       {
-        if (_radioSession == String.Empty)
-          DoRadioHandshake(false);
+        DoRadioHandshake(false);
 
         return _radioSession;
       }
     }
-
-    //public static string RadioStream
-    //{
-    //  get
-    //  {
-    //    if (_radioStreamURL == String.Empty)
-    //      DoRadioHandshake(false);
-
-    //    return _radioStreamURL;
-    //  }
-    //}
 
     public static bool Subscriber
     {
