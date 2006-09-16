@@ -294,6 +294,7 @@ namespace MediaPortal.GUI.Video
           if (item.IsFolder == false)
           {
             OnDeleteItem(item);
+            return;
           }
         }
       }
@@ -1849,7 +1850,8 @@ namespace MediaPortal.GUI.Video
             dlgYesNo.SetLine(3, String.Empty);
             dlgYesNo.DoModal(GetID);
 
-            if (!dlgYesNo.IsConfirmed) break;
+            if (!dlgYesNo.IsConfirmed)
+              return;
             DoDeleteItem(temporaryListItem);
           }
         }
@@ -1865,7 +1867,8 @@ namespace MediaPortal.GUI.Video
           dlgYesNo.SetLine(3, String.Empty);
           dlgYesNo.DoModal(GetID);
 
-          if (!dlgYesNo.IsConfirmed) return;
+          if (!dlgYesNo.IsConfirmed)
+            return;
           DoDeleteItem(item);
         }
       }
@@ -1874,7 +1877,8 @@ namespace MediaPortal.GUI.Video
         GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
         if (null == dlgYesNo) return;
 
-        if (!dlgYesNo.IsConfirmed) return;
+        if (!dlgYesNo.IsConfirmed)
+          return;
         ArrayList items = m_directory.GetDirectoryUnProtected(_currentFolder, true);
         int iPart = 1;
         for (int i = 0; i < items.Count; ++i)
@@ -1893,10 +1897,9 @@ namespace MediaPortal.GUI.Video
             dlgYesNo.SetLine(3, String.Empty);
             dlgYesNo.DoModal(GetID);
 
-            if (dlgYesNo.IsConfirmed)
-            {
-              DoDeleteItem(temporaryListItem);
-            }
+            if (!dlgYesNo.IsConfirmed)
+              return;
+            DoDeleteItem(temporaryListItem);
           }
         }
       }
