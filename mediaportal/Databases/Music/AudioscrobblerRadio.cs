@@ -41,7 +41,7 @@ namespace MediaPortal.Music.Database
       LoadSettings();
     }
 
-    static private string _currentRadioURL = String.Empty;
+    private string _currentRadioURL = String.Empty;
     private string _currentSession = String.Empty;
     private bool _isSubscriber = false;
 
@@ -71,7 +71,7 @@ namespace MediaPortal.Music.Database
     }
 
 
-    static public string CurrentStream
+    public string CurrentStream
     {
       get
       {

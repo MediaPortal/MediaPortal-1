@@ -95,7 +95,8 @@ namespace MediaPortal.Player
       _wmp10Player.Name = "axWindowsMediaPlayer1";
       _wmp10Player.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axWindowsMediaPlayer1.OcxState")));
       _wmp10Player.Size = new System.Drawing.Size(264, 240);
-      _wmp10Player.TabIndex = 0;
+      _wmp10Player.TabIndex = 0;            
+
       GUIGraphicsContext.form.Controls.Add(_wmp10Player);
 
 
@@ -346,6 +347,8 @@ namespace MediaPortal.Player
 
     private void OnBuffering(object sender, AxWMPLib._WMPOCXEvents_BufferingEvent e)
     {
+      _wmp10Player.network.bufferingTime = 10000;
+      
       if (e.start)
       {
         _bufferCompleted = false;

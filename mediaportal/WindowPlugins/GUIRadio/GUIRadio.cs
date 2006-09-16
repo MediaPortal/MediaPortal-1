@@ -260,7 +260,12 @@ namespace MediaPortal.GUI.Radio
       if (_useLastFM)
       {
         AudioscrobblerRadio LastFMStation = new AudioscrobblerRadio();
-        g_Player.Play(AudioscrobblerRadio.CurrentStream, g_Player.MediaType.Radio);
+        // often the buffer is to slow for the playback to start
+        for (int i = 0; i < 5; i++)
+        {
+          if (g_Player.PlayAudioStream(LastFMStation.CurrentStream))
+            return;
+        }
       }
     }
 
