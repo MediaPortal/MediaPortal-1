@@ -50,8 +50,7 @@
 		<height>400</height>
 		<label>2094</label>
 		<onleft>24</onleft>
-		<onup>2</onup>
-		<ondown>2</ondown>
+    <onright>2</onright>
 	</control>
       <control>
         <description>JoinSelect</description>
