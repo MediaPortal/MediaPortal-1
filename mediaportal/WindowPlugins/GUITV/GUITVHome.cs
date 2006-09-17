@@ -330,6 +330,7 @@ namespace MediaPortal.GUI.TV
           _isTvOn = true;
         }
         Log.Info("tv home init:{0}", channelName);
+        if (_autoTurnOnTv) _isTvOn = true;
         ViewChannelAndCheck(channelName);
       }
 
