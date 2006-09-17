@@ -73,14 +73,15 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
                 if (ex is TargetInvocationException)
                 {
                     Exception innerException = ex.InnerException;
-                    if (innerException != null && innerException is DllNotFoundException)
+                    if (innerException != null)
                     {
-                        errorMessage = "Driver reports missing DLL: " + innerException.Message;
+                        errorMessage = innerException.Message;
                         Log.Error("ExternalDisplay:Error while loading driver {0}: {1}",dllFile,errorMessage);
                         return;
                     }
                 }
                 errorMessage = ex.Message;
+                Log.Error("ExternalDisplay:Error while loading driver {0}: {1}", dllFile, errorMessage);
             }
         }
 
