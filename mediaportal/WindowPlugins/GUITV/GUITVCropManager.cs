@@ -100,18 +100,21 @@ namespace MediaPortal.GUI.TV
     /// <param name="filename"></param>
     void g_Player_PlayBackStarted(g_Player.MediaType type, string filename)
     {
-      Log.Debug("GUITVCropManager.g_Player_PlackBackStarted: media: {0} tv:{1} ts:{2}", type, g_Player.IsTV, g_Player.IsTimeShifting);
-      if (type == g_Player.MediaType.TV && !g_Player.IsTVRecording)
+      if (Recorder.Running)
       {
-        SendCropMessage(Recorder.CommandProcessor.CurrentCardIndex, Recorder.CommandProcessor.TVCards[Recorder.CommandProcessor.CurrentCardIndex], Recorder.IsTimeShifting());
-      }
-      else if (g_Player.IsTVRecording)
-      {
-        TVRecorded recording = new TVRecorded();
-        if (TVDatabase.GetRecordedTVByFilename(filename, ref recording))
+        Log.Debug("GUITVCropManager.g_Player_PlackBackStarted: media: {0} tv:{1} ts:{2}", type, g_Player.IsTV, g_Player.IsTimeShifting);
+        if (type == g_Player.MediaType.TV && !g_Player.IsTVRecording)
         {
-          Log.Debug("GUITVCropManager.g_Player_PlackBackStarted: cropping recorded tv:{0} card:{1}", filename, recording.RecordedCardIndex);
-          SendCropMessage(recording.RecordedCardIndex - 1, Recorder.CommandProcessor.TVCards[recording.RecordedCardIndex - 1], true);
+          SendCropMessage(Recorder.CommandProcessor.CurrentCardIndex, Recorder.CommandProcessor.TVCards[Recorder.CommandProcessor.CurrentCardIndex], Recorder.IsTimeShifting());
+        }
+        else if (g_Player.IsTVRecording)
+        {
+          TVRecorded recording = new TVRecorded();
+          if (TVDatabase.GetRecordedTVByFilename(filename, ref recording))
+          {
+            Log.Debug("GUITVCropManager.g_Player_PlackBackStarted: cropping recorded tv:{0} card:{1}", filename, recording.RecordedCardIndex);
+            SendCropMessage(recording.RecordedCardIndex - 1, Recorder.CommandProcessor.TVCards[recording.RecordedCardIndex - 1], true);
+          }
         }
       }
     }
