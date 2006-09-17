@@ -28,6 +28,7 @@ using System.Drawing;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.InteropServices;
+using MediaPortal.GUI.Library;
 
 namespace ProcessPlugins.ExternalDisplay.Drivers
 {
@@ -74,7 +75,8 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
                     Exception innerException = ex.InnerException;
                     if (innerException != null && innerException is DllNotFoundException)
                     {
-                        errorMessage = "DriverLinx Port I/O Driver not installed";
+                        errorMessage = "Driver reports missing DLL: " + innerException.Message;
+                        Log.Error("ExternalDisplay:Error while loading driver {0}: {1}",dllFile,errorMessage);
                         return;
                     }
                 }
