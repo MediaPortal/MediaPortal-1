@@ -66,8 +66,8 @@ namespace MediaPortal.Tests.TVCapture.Commands
       _cards[LOWEST].Priority=1;
 
       //setup recording paths for all cards
-      _cards[HIGHEST].RecordingPath = "e:";
-      _cards[MEDIUM].RecordingPath = "d:";
+      _cards[HIGHEST].RecordingPath = "c:";
+      _cards[MEDIUM].RecordingPath = "c:";
       _cards[LOWEST].RecordingPath = "c:";
 
       using (FileStream fileStream = new FileStream(Config.Get(Config.Dir.Config) + "capturecards.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
