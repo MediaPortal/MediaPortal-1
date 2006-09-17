@@ -1338,7 +1338,9 @@ public class MediaPortalApp : D3DApp, IRender
     {
       return;
     } //we are suspended/hibernated
+#if !DEBUG
     try
+#endif
     {
       if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
       {
