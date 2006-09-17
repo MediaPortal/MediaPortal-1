@@ -48,9 +48,12 @@ namespace MediaPortal.Util
     /// <summary>
     /// Private constructor. Singleton. Do not allow any instance of this class.
     /// </summary>
+    ///
+    /*
     private Config()
     {
     }
+    */
 
     static Config()
     {
