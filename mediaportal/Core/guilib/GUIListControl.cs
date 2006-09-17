@@ -1002,11 +1002,8 @@ namespace MediaPortal.GUI.Library
         case Action.ActionType.ACTION_HOME:
           {
             _searchString = "";
-            _offset = 0;
-            _cursorX = 0;
-            _upDownControl.Value = 1;
+            SelectItem(0);
             OnSelectionChanged();
-
             _refresh = true;
           }
           break;
@@ -1014,30 +1011,8 @@ namespace MediaPortal.GUI.Library
         case Action.ActionType.ACTION_END:
           {
             _searchString = "";
-            int iItem = _listItems.Count - 1;
-            if (iItem >= 0)
-            {
-              // update spin controls
-              int iPage = 1;
-              int iSel = iItem;
-              while (iSel >= _itemsPerPage)
-              {
-                iPage++;
-                iSel -= _itemsPerPage;
-              }
-              _upDownControl.Value = iPage;
-
-              // find item
-              _offset = 0;
-              _cursorX = 0;
-              while (iItem >= _itemsPerPage)
-              {
-                iItem -= _itemsPerPage;
-                _offset += _itemsPerPage;
-              }
-              _cursorX = iItem;
-              OnSelectionChanged();
-            }
+            SelectItem(_listItems.Count - 1);
+            OnSelectionChanged();
             _refresh = true;
           }
           break;
@@ -1404,27 +1379,65 @@ namespace MediaPortal.GUI.Library
     /// <param name="SearchKey">SearchKey</param>
     void SelectItem(int item)
     {
-      if (item >= 0 && item < _listItems.Count)
+      if (item < 0) item = 0;
+      if (item >= _listItems.Count) item = _listItems.Count - 1;
+      
+      int delta = (_offset + _cursorX) - item;
+      int delta2 = 0;
+      if (delta == 0) return;            // nothing to do
+
+      if (delta > 0)                      // scroll up
       {
-        _offset = 0;
-        _cursorX = item;
-        while (_cursorX >= _itemsPerPage)
-        {
-          _offset += _itemsPerPage;
-          _cursorX -= _itemsPerPage;
+        if ((_cursorX < _scrollStartOffset) && (_offset > 0)) // we are before _scrollStartOffset position
+        {                                                     // let us try to get a _scrollStartOffset
+          delta2 = (_offset < delta) ? _offset : (_scrollStartOffset - _cursorX);
+          _offset -= delta2;
+          _cursorX += delta2;
         }
-        if ((_cursorX < _scrollStartOffset) && (_offset >= _scrollStartOffset))
-        {
-          _offset -= _scrollStartOffset;
-          _cursorX += _scrollStartOffset;
+        else if (_cursorX > _scrollStartOffset)        // we are after _scrollStartOffset
+        {                                              // let us move towards the _scrollStartOffset
+          delta2 = ((_cursorX - _scrollStartOffset) > delta) ? delta : (_cursorX - _scrollStartOffset);
+          delta -= delta2;
+          _cursorX -= delta2;
         }
-        else if ((_cursorX > _itemsPerPage - _scrollStartOffset) && (_cursorX >= _scrollStartOffset))
+        if (delta > 0) 
         {
-          _offset += _scrollStartOffset;
-          _cursorX -= _scrollStartOffset;
+          if (_offset < delta)
+          {
+            delta -= _offset;
+            _offset = 0;
+          }
+          else
+          {
+            _offset -= delta;
+            delta = 0;
+          }
+          if (_offset == 0) _cursorX -= delta;
         }
-        _upDownControl.Value = (_offset / _itemsPerPage) + 1;
       }
+      else if (delta < 0)  // scroll down
+      {
+        delta = -1 * delta;                                      // make it positive   
+        if ((_itemsPerPage - _cursorX - 1 < _scrollStartOffset) &&   // we are after _scrollStartOffset position 
+            (_offset + _cursorX < _listItems.Count))              // but not at the end of the list
+        {                                                        // let us try to get a _scrollStartOffset
+          delta2 = _scrollStartOffset - (_itemsPerPage - _cursorX - 1);
+          _cursorX -= delta2;
+          delta += delta2;
+        }
+        else if (_itemsPerPage - _cursorX > _scrollStartOffset)  // we are before _scrollStartOffset position
+        {
+          delta2 = ((_cursorX + delta) < _itemsPerPage - _scrollStartOffset - 1) ? delta : (_itemsPerPage - _cursorX - _scrollStartOffset - 1);
+          delta -= delta2;
+          _cursorX += delta2;
+        }
+        if (delta > 0)
+        {
+          if (_offset + delta <= _listItems.Count) _offset += delta;
+          else _offset = _listItems.Count;
+        }
+      }
+      _upDownControl.Value = ((_offset + _cursorX) / _itemsPerPage) + 1;
     }
 
 
@@ -1828,23 +1841,9 @@ namespace MediaPortal.GUI.Library
       action.wID = Action.ActionType.ACTION_MOVE_UP;
       if (_listType == ListType.CONTROL_LIST)
       {
-        if ((_cursorX > _scrollStartOffset) || ((_cursorX > 0) && (_offset == 0)))
+        if ((_cursorX > 0) || (_offset > 0))
         {
-          _cursorX--;
-          OnSelectionChanged();
-        }
-        else if (_cursorX == _scrollStartOffset && _offset > 0)
-        {
-          _offset--;
-
-          int iPage = 1;
-          int iSel = _offset + _cursorX;
-          while (iSel >= _itemsPerPage)
-          {
-            iPage++;
-            iSel -= _itemsPerPage;
-          }
-          _upDownControl.Value = iPage;
+          SelectItem(_offset + _cursorX - 1);
           OnSelectionChanged();
         }
         else
@@ -1891,7 +1890,7 @@ namespace MediaPortal.GUI.Library
         {
           if (_offset + 1 + _cursorX < _listItems.Count)
           {
-            _cursorX++;
+            SelectItem(_offset + _cursorX + 1);
             OnSelectionChanged();
           }
           else
@@ -1917,16 +1916,7 @@ namespace MediaPortal.GUI.Library
         {
           if (_offset + 1 + _cursorX < _listItems.Count)
           {
-            _offset++;
-
-            int iPage = 1;
-            int iSel = _offset + _cursorX;
-            while (iSel >= _itemsPerPage)
-            {
-              iPage++;
-              iSel -= _itemsPerPage;
-            }
-            _upDownControl.Value = iPage;
+            SelectItem(_offset + _cursorX + 1);
             OnSelectionChanged();
           }
           else
@@ -1978,18 +1968,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     protected void OnPageUp()
     {
-      int iPage = _upDownControl.Value;
-      if (iPage > 1)
-      {
-        iPage--;
-        _upDownControl.Value = iPage;
-        _offset = (_upDownControl.Value - 1) * _itemsPerPage;
-      }
-      else
-      {
-        // already on page 1, then select the 1st item
-        _cursorX = 0;
-      }
+      SelectItem(_offset + _cursorX - _itemsPerPage);
       OnSelectionChanged();
     }
 
@@ -1998,26 +1977,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     protected void OnPageDown()
     {
-      int iPages = _listItems.Count / _itemsPerPage;
-      if ((_listItems.Count % _itemsPerPage) != 0) iPages++;
-
-      int iPage = _upDownControl.Value;
-      if (iPage + 1 <= iPages)
-      {
-        iPage++;
-        _upDownControl.Value = iPage;
-        _offset = (_upDownControl.Value - 1) * _itemsPerPage;
-      }
-      else
-      {
-        // already on last page, move 2 last item in list
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, GetID, WindowId, GetID, _listItems.Count - 1, 0, null);
-        OnMessage(msg);
-      }
-      if (_offset + _cursorX >= _listItems.Count)
-      {
-        _cursorX = (_listItems.Count - _offset) - 1;
-      }
+      SelectItem(_offset + _cursorX + _itemsPerPage);
       OnSelectionChanged();
     }
 
@@ -2226,16 +2186,7 @@ namespace MediaPortal.GUI.Library
       {
         if (value >= 0 && value < _listItems.Count)
         {
-          int iPage = 1;
-          _offset = 0;
-          _cursorX = value;
-          while (_cursorX >= _itemsPerPage)
-          {
-            iPage++;
-            _offset += _itemsPerPage;
-            _cursorX -= _itemsPerPage;
-          }
-          _upDownControl.Value = iPage;
+          SelectItem(value);
           OnSelectionChanged();
         }
         _refresh = true;
