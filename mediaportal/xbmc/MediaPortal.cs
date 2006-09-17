@@ -1388,10 +1388,12 @@ public class MediaPortalApp : D3DApp, IRender
         }
       }
     }
+#if !DEBUG
     catch (Exception ex)
     {
       Log.Error(ex);
     }
+#endif
   }
 
   #endregion
