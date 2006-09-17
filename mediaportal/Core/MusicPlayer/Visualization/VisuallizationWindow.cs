@@ -1112,7 +1112,7 @@ namespace MediaPortal.Visualization
         {
             try
             {
-                if (CurrentTrackTag == null || propertyString.Length == 0 || propertyString[0] != '#')
+                if (CurrentTrackTag == null || propertyString==null || propertyString.Length == 0 || propertyString[0] != '#')
                     return string.Empty;
 
                 string propertyVal = GUIPropertyManager.GetProperty(propertyString);
@@ -1633,21 +1633,32 @@ namespace MediaPortal.Visualization
                         if (hNativeMemDCBmp == IntPtr.Zero)
                         {
                             IntPtr hDestHDC = g.GetHdc();
-                            hNativeMemDCBmp = CreateCompatibleBitmap(hDestHDC, Width, Height);
+                            try
+                            {
+                                hNativeMemDCBmp = CreateCompatibleBitmap(hDestHDC, Width, Height);
+                            }
+                            finally
+                            {
+                                g.ReleaseHdc(hDestHDC);
+                            }
                             BackBuffer = Bitmap.FromHbitmap(hNativeMemDCBmp);
-                            g.ReleaseHdc(hDestHDC);
                         }
 
                         Graphics gBackBuf = Graphics.FromImage(BackBuffer);
-                        IntPtr hBackBufDC = gBackBuf.GetHdc();
                         int dcState = SaveDC(_CompatibleDC);
 
                         SelectObject(_CompatibleDC, hNativeMemDCBmp);
 
                         sleepMS = Viz.RenderVisualization();
-                        BitBlt(hBackBufDC, 0, 0, Width, Height, _CompatibleDC, 0, 0, SRCCOPY);
-                        gBackBuf.ReleaseHdc(hBackBufDC);
-
+                        IntPtr hBackBufDC = gBackBuf.GetHdc();
+                        try
+                        {
+                            BitBlt(hBackBufDC, 0, 0, Width, Height, _CompatibleDC, 0, 0, SRCCOPY);
+                        }
+                        finally
+                        {
+                            gBackBuf.ReleaseHdc(hBackBufDC);
+                        }
                         if (!FullScreen && CurrentThumbImage != null)
                             DoThumbnailOverlayFading(gBackBuf);
 
