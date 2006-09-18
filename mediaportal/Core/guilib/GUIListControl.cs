@@ -1135,6 +1135,7 @@ namespace MediaPortal.GUI.Library
                   _offset += _itemsPerPage;
                 }
                 _cursorX = iChan;
+                _upDownControl.Value = ((_offset + _cursorX) / _itemsPerPage) + 1;
                 OnSelectionChanged();
               }
               return;
@@ -1396,8 +1397,7 @@ namespace MediaPortal.GUI.Library
 
       return false;
     }
-
-    
+           
     /// <summary>
     /// Select the item and set the Page accordengly 
     /// </summary>
@@ -1423,7 +1423,7 @@ namespace MediaPortal.GUI.Library
           _offset += _scrollStartOffset;
           _cursorX -= _scrollStartOffset;
         }
-        _upDownControl.Value = (_offset / _itemsPerPage) + 1;
+        _upDownControl.Value = ((_offset + _cursorX) / _itemsPerPage) + 1;
       }
     }
     
@@ -1831,6 +1831,7 @@ namespace MediaPortal.GUI.Library
         if ((_cursorX > _scrollStartOffset) || ((_cursorX > 0) && (_offset == 0)))
         {
           _cursorX--;
+          _upDownControl.Value = ((_offset + _cursorX)/ _itemsPerPage) + 1;
           OnSelectionChanged();
         }
         else if (_cursorX <= _scrollStartOffset && _offset > 0)
@@ -1892,6 +1893,7 @@ namespace MediaPortal.GUI.Library
           if (_offset + 1 + _cursorX < _listItems.Count)
           {
             _cursorX++;
+            _upDownControl.Value = ((_offset + _cursorX) / _itemsPerPage) + 1;
             OnSelectionChanged();
           }
           else
@@ -2550,6 +2552,7 @@ namespace MediaPortal.GUI.Library
       while (_offset + _cursorX >= _listItems.Count) _cursorX--;
       if (_cursorX >= _itemsPerPage)
         _cursorX = _itemsPerPage - 1;
+      _upDownControl.Value = ((_offset + _cursorX) / _itemsPerPage) + 1;
       OnSelectionChanged();
       _refresh = true;
 

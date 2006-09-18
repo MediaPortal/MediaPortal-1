@@ -424,7 +424,13 @@ namespace MediaPortal.GUI.Library
 
         protected override void OnUp()
         {
-            Action action = new Action();
+          if (_listType == ListType.CONTROL_LIST)
+          {
+            GUIPlayListButtonControl.SuppressActiveButtonReset = false;
+          }
+          base.OnUp();
+          /*
+          Action action = new Action();
             action.wID = Action.ActionType.ACTION_MOVE_UP;
             if (_listType == ListType.CONTROL_LIST)
             {
@@ -463,6 +469,7 @@ namespace MediaPortal.GUI.Library
                     _listType = ListType.CONTROL_LIST;
                 }
             }
+           */
         }
 
         /// <summary>
@@ -470,7 +477,13 @@ namespace MediaPortal.GUI.Library
         /// </summary>
         protected override void OnDown()
         {
-            Action action = new Action();
+          if (_listType == ListType.CONTROL_LIST)
+          {
+            GUIPlayListButtonControl.SuppressActiveButtonReset = false;
+          }
+          base.OnDown();
+          /*
+          Action action = new Action();
             action.wID = Action.ActionType.ACTION_MOVE_DOWN;
             if (_listType == ListType.CONTROL_LIST)
             {
@@ -521,6 +534,7 @@ namespace MediaPortal.GUI.Library
                     base.OnAction(action);
                 }
             }
+           */
         }
 
         public override void OnAction(Action action)
