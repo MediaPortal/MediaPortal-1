@@ -79,7 +79,7 @@ namespace MediaPortal.Music.Database
 
     private void LoadSettings()
     {
-      InfoScrobbler = new AudioscrobblerUtils();
+      InfoScrobbler = AudioscrobblerUtils.Instance;
 
       _currentSession = AudioscrobblerBase.RadioSession;
       _currentUser = AudioscrobblerBase.Username;
