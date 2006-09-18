@@ -263,7 +263,7 @@ namespace MediaPortal.GUI.Radio
         // often the buffer is to slow for the playback to start
         for (int i = 0; i < 5; i++)
         {
-          if (g_Player.PlayAudioStream(LastFMStation.CurrentStream))
+          if (g_Player.Play(LastFMStation.CurrentStream))
             return;
         }
       }

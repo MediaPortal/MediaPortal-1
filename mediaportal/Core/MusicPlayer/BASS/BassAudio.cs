@@ -815,7 +815,14 @@ namespace MediaPortal.Player
                     FilePath = filePath;
 
                     // create the stream
-                    stream = Bass.BASS_StreamCreateFile(filePath, 0, 0, BASSStream.BASS_SAMPLE_SOFTWARE | BASSStream.BASS_SAMPLE_FLOAT | BASSStream.BASS_STREAM_AUTOFREE);
+                    if (filePath.Contains(@"http://"))
+                    {
+                      stream = Bass.BASS_StreamCreateURL(filePath, 0, BASSStream.BASS_SAMPLE_SOFTWARE | BASSStream.BASS_SAMPLE_FLOAT | BASSStream.BASS_STREAM_AUTOFREE, null, 0);
+                      Log.Debug("BASSAudio: Webstream found - trying to fetch stream {0}", Convert.ToString(stream));
+                    }
+                    else
+                      stream = Bass.BASS_StreamCreateFile(filePath, 0, 0, BASSStream.BASS_SAMPLE_SOFTWARE | BASSStream.BASS_SAMPLE_FLOAT | BASSStream.BASS_STREAM_AUTOFREE);
+
                     Streams[CurrentStreamIndex] = stream;
 
                     if (stream != 0)
