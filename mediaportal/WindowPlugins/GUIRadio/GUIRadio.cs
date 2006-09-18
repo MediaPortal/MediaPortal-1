@@ -87,6 +87,7 @@ namespace MediaPortal.GUI.Radio
     int selectedItemIndex = -1;
     PlayList currentPlayList = null;
     PlayListPlayer playlistPlayer;
+    AudioscrobblerRadio LastFMStation;
 
     bool _useLastFM = false;
     #endregion
@@ -218,6 +219,11 @@ namespace MediaPortal.GUI.Radio
         return;
       }
 
+      if (action.wID == Action.ActionType.ACTION_NEXT_ITEM && _useLastFM)
+      {
+        LastFMStation.SendControlCommand(StreamControls.skiptrack);
+      }
+
       base.OnAction(action);
     }
 
@@ -259,7 +265,7 @@ namespace MediaPortal.GUI.Radio
 
       if (_useLastFM)
       {
-        AudioscrobblerRadio LastFMStation = new AudioscrobblerRadio();
+        LastFMStation = new AudioscrobblerRadio();
         // often the buffer is to slow for the playback to start
         for (int i = 0; i < 5; i++)
         {

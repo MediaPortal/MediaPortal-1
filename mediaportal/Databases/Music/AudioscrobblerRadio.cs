@@ -34,6 +34,12 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Music.Database
 {
+  public enum StreamControls : int
+  {
+    skiptrack = 0,
+    lovetrack = 1,
+  }
+
   public class AudioscrobblerRadio
   {
     // constructor
@@ -56,18 +62,20 @@ namespace MediaPortal.Music.Database
     // or http.request.uri = Request URI: http://ws.audioscrobbler.com/radio/adjust.php?session=e5b0c80f5b5d0937d407fb77a913cb6a&url=lastfm://user/f1n4rf1n/personal
     // or http.request.uri = Request URI: http://ws.audioscrobbler.com/radio/adjust.php?session=e5b0c80f5b5d0937d407fb77a913cb6a&url=lastfm://user/f1n4rf1n/neighbours
     // or http.request.uri = Request URI: http://ws.audioscrobbler.com/radio/adjust.php?session=e5b0c80f5b5d0937d407fb77a913cb6a&url=lastfm://user/f1n4rf1n/recommended
+    // or http.request.uri = Request URI: http://ws.audioscrobbler.com/radio/adjust.php?session=e5b0c80f5b5d0937d407fb77a913cb6a&url=lastfm://group/MediaPortal%20Users
 
     // 2. http.request.uri = Request URI: http://streamer1.last.fm/last.mp3?Session=e5b0c80f5b5d0937d407fb77a913cb6a
     // 3. http.request.uri = Request URI: http://ws.audioscrobbler.com/radio/control.php?session=e5b0c80f5b5d0937d407fb77a913cb6a&command=rtp
     // 4. http.request.uri = Request URI: http://ws.audioscrobbler.com/radio/adjust.php?session=e5b0c80f5b5d0937d407fb77a913cb6a&url=lastfm://settings/discovery/off
+    
+    // TASKS:
+    // Stopwatch and Parser for nowplaying
     // 5. http.request.uri = Request URI: http://ws.audioscrobbler.com/radio/np.php?session=e5b0c80f5b5d0937d407fb77a913cb6a
     // 6. http.request.uri = Request URI: http://ws.audioscrobbler.com/ass/artistmetadata.php?artist=Sportfreunde%20Stiller&lang=en
     // 7. http.request.uri = Request URI: http://ws.audioscrobbler.com/ass/metadata.php?artist=Sportfreunde%20Stiller&track=Alles%20Das&album=Macht%20doch%20was%20ihr%20wollt%20-%20Ich%20geh%2527%20jetzt%2521
-
-
-    // TASKS:
-    // Stopwatch and Parser for nowplaying
+    
     // SKIP Button
+    // 8. http.request.uri = Request URI: http://ws.audioscrobbler.com/radio/control.php?session=e5b0c80f5b5d0937d407fb77a913cb6a&command=skip
 
     private void LoadSettings()
     {
@@ -80,10 +88,19 @@ namespace MediaPortal.Music.Database
       // some testing here..
       if (_currentUser.Length > 0)
       {
-        TuneIntoArtist("röyksopp");
+        //List<String> MyTags = new List<string>();
 
-        Thread.Sleep(1000);
-        if (SendCommandRequest("http://ws.audioscrobbler.com/radio/control.php?session=" + _currentSession + "&command=rtp"))
+        //MyTags.Add("industrial");
+        //MyTags.Add("melodic death metal");
+
+        //TuneIntoTags(MyTags);
+
+        //TuneIntoPersonalRadio("The_real_mPod");
+
+        TuneIntoGroupRadio("MediaPortal Users");
+
+        Thread.Sleep(250);
+        if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/control.php?session=" + _currentSession + "&command=rtp"))
           Log.Info("AudioscrobblerRadio: Stream adjusted");
       }
     }
@@ -97,14 +114,53 @@ namespace MediaPortal.Music.Database
       }
     }
 
+    #region Control functions
+    public bool SendControlCommand(StreamControls command_)
+    {
+      bool success = false;
+      string baseUrl = @"http://ws.audioscrobbler.com/radio/control.php?session=" + _currentSession;
+      switch (command_)
+      {
+        case StreamControls.skiptrack:
+          if (SendCommandRequest(baseUrl + @"&command=skip"))
+          {
+            Log.Info("AudioscrobblerRadio: Successfully send skip command");
+            success = true;
+          }
+          break;
+        case StreamControls.lovetrack:
+          if (SendCommandRequest(baseUrl + @"&command=love"))
+          {
+            Log.Info("AudioscrobblerRadio: Track added to loved tracks list");
+            success = true;
+          }
+          break; 
+      }
+      return success;
+    }
+    #endregion
+
     #region Tuning functions
     public bool TuneIntoPersonalRadio(string username_)
     {
       string TuneUser = InfoScrobbler.getValidURLLastFMString(username_);
 
-      if (SendCommandRequest("http://ws.audioscrobbler.com/radio/adjust.php?session=" + _currentSession + "&url=lastfm://user/" + TuneUser + "/personal"))
+      if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/adjust.php?session=" + _currentSession + @"&url=lastfm://user/" + TuneUser + "/personal"))
       {
         Log.Info("AudioscrobblerRadio: Tune into personal station of: {0}", username_);
+        return true;
+      }
+      else
+        return false;
+    }
+
+    public bool TuneIntoGroupRadio(string groupname_)
+    {
+      string TuneGroup = InfoScrobbler.getValidURLLastFMString(groupname_);
+
+      if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/adjust.php?session=" + _currentSession + @"&url=lastfm://group/" + TuneGroup))
+      {
+        Log.Info("AudioscrobblerRadio: Tune into group radio for: {0}", groupname_);
         return true;
       }
       else
@@ -115,7 +171,7 @@ namespace MediaPortal.Music.Database
     {
       string TuneArtist = InfoScrobbler.getValidURLLastFMString(artist_);
 
-      if (SendCommandRequest("http://ws.audioscrobbler.com/radio/adjust.php?session=" + _currentSession + "&url=lastfm://artist/" + TuneArtist + "/similarartists"))
+      if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/adjust.php?session=" + _currentSession + @"&url=lastfm://artist/" + TuneArtist + "/similarartists"))
       {
         Log.Info("AudioscrobblerRadio: Tune into artists similar to: {0}", artist_);
         return true;
@@ -133,9 +189,9 @@ namespace MediaPortal.Music.Database
         TuneTags += InfoScrobbler.getValidURLLastFMString(singleTag) + ",";
       }
       // remove trailing comma
-      TuneTags.Remove(TuneTags.Length - 1);
+      TuneTags = TuneTags.Remove(TuneTags.Length - 1);
 
-      if (SendCommandRequest("http://ws.audioscrobbler.com/radio/adjust.php?session=" + _currentSession + "&url=lastfm://globaltags/" + TuneTags))
+      if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/adjust.php?session=" + _currentSession + @"&url=lastfm://globaltags/" + TuneTags))
       {
         Log.Info("AudioscrobblerRadio: Tune into tags: {0}", TuneTags);
         return true;
@@ -190,9 +246,10 @@ namespace MediaPortal.Music.Database
           return true;
         else
         {
-          string logmessage = responseMessage;
+          string logmessage = "AudioscrobblerRadio: ***** Unknown response! - " + responseMessage;
           while ((responseMessage = reader.ReadLine()) != null)
-            logmessage += "\n" + responseMessage;          
+            logmessage += "\n" + responseMessage;
+          Log.Warn(logmessage);
         }
       }
       catch (Exception e)
