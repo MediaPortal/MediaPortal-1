@@ -1105,6 +1105,12 @@ namespace MediaPortal.GUI.Video
         TrailersUtility TU = new TrailersUtility();
         TU.DownloadPoster(downloadurl, moviename);
         moviename = moviename.Replace(":", "-");
+        if (moviename.Contains("opens"))
+        {
+          int i = moviename.IndexOf("opens");
+          moviename = moviename.Remove(i);
+        }
+
         poster.SetFileName(@"thumbs\MPTemp -" + moviename + ".jpg");
       }
     }
