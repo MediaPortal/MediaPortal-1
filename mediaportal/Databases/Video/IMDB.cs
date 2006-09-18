@@ -284,6 +284,7 @@ namespace MediaPortal.Video.Database
         // Make the Webrequest
         //Log.Info("IMDB: get page:{0}", strURL);
         WebRequest req = WebRequest.Create(strURL);
+  
         result = req.GetResponse();
         ReceiveStream = result.GetResponseStream();
 
@@ -554,6 +555,18 @@ namespace MediaPortal.Video.Database
                 // END FilmAffinity support
                 break;
 
+              case "MOVIEMETER":
+                // Moviemeter.nl support
+                line1 = GUILocalizeStrings.Get(984) + ":MovieMeter";
+                if (m_progress != null)
+                  m_progress.OnProgress(line1, line2, line3, percent);
+                strURL = "http://www.moviemeter.nl/film/search/" + strSearch;
+                FindMovieMeter(strURL, aLimits[i]);
+                percent += 100 / aDatabases.Length;
+                if (m_progress != null)
+                  m_progress.OnProgress(line1, line2, line3, percent);
+                // END MovieMeter.nl support
+                break;
 
               default:
                 // unsupported database?
@@ -893,12 +906,12 @@ namespace MediaPortal.Video.Database
             return GetDetailsIMDB(url, ref movieDetails);
           case "OFDB":
             return GetDetailsOFDB(url, ref movieDetails);
-
           case "FRDB":
             return GetDetailsFRDB(url, ref movieDetails);
-
           case "FilmAffinity":
             return GetDetailsFilmAffinity(url, ref movieDetails);
+          case "MovieMeter":
+            return GetDetailsMovieMeter(url, ref movieDetails);
           default:
             // Not supported Database / Host
             Log.Error("Movie DB lookup GetDetails(): Unknown Database {0}", url.Database);
@@ -2194,6 +2207,155 @@ namespace MediaPortal.Video.Database
     }
 
     #endregion
+
+#region MovieMeter
+
+    private void FindMovieMeter(string strURL, int iLimit)
+    {
+      int iCount = 0;
+      string strBody = string.Empty;
+      ArrayList doublecheck = new ArrayList();
+      try
+      {
+        strURL = strURL.Replace("MovieMeter","");
+        HttpWebRequest firstRequest = (HttpWebRequest)WebRequest.Create(strURL);
+        firstRequest.UserAgent = "Mozilla/4.0 (compatible; MSIE 6.0;  WindowsNT 5.0; .NET CLR 1 .1.4322)";
+        firstRequest.CookieContainer = new CookieContainer();
+        HttpWebResponse firstResponse = (HttpWebResponse)firstRequest.GetResponse();
+        HttpWebRequest secondRequest = (HttpWebRequest)WebRequest.Create(@"http://www.moviemeter.nl/film/searchresults#results");
+        secondRequest.CookieContainer = new CookieContainer();
+        secondRequest.UserAgent = firstRequest.UserAgent;
+        CookieCollection cookies = firstResponse.Cookies;
+        secondRequest.CookieContainer.Add(cookies);
+
+        HttpWebResponse secondResponse = (HttpWebResponse)
+        secondRequest.GetResponse();
+        Stream recstream = secondResponse.GetResponseStream();
+        StringBuilder sb = new StringBuilder();
+
+        byte[] buf = new byte[8192];
+
+        string tempstring = null;
+        int count = 0;
+
+        do
+        {
+          count = recstream.Read(buf, 0, buf.Length);
+          if (count != 0)
+          {
+            tempstring = Encoding.UTF8.GetString(buf, 0, count);
+            sb.Append(tempstring);
+          }
+        }
+        while (count > 0);
+
+        strBody = sb.ToString();
+
+        recstream.Close();
+        firstResponse.Close();
+        secondResponse.Close();
+
+        MatchCollection mc = Regex.Matches(strBody, @"(?<url>http://www.moviemeter.nl/film/\d*?).\s>(?<title>.*?)<.*?(?<year>.\d{4}.)");
+        foreach (Match m in mc)
+        {
+          if (iCount.Equals(iLimit))
+            return;
+
+          string _strUrl = m.Groups["url"].Value;
+          string _strTitle = m.Groups["title"].Value + " " + m.Groups["year"].Value;
+          HTMLUtil htmlUtil = new HTMLUtil();
+          htmlUtil.ConvertHTMLToAnsi(_strTitle, out _strTitle);
+          IMDBUrl url = new IMDBUrl(_strUrl, _strTitle + " - MovieMeter", "MovieMeter");
+          if (!doublecheck.Contains(url.Title))
+          {
+            elements.Add(url);
+            doublecheck.Add(url.Title);
+            iCount++;
+          }
+        }
+        
+      }
+      catch (Exception ex)
+      {
+        Log.Error("exception for MovieMeter.nl lookup of {0} err:{1} stack:{2}", strURL, ex.Message, ex.StackTrace);
+      }
+
+
+    }
+
+    private bool GetDetailsMovieMeter(IMDB.IMDBUrl url, ref IMDBMovie movieDetails)
+    {
+      try
+      {
+        movieDetails.Reset();
+        // add databaseinfo
+        movieDetails.Database = "MovieMeter";
+        string strAbsURL;
+        string strBody = GetPage(url.URL, "ISO-8859-1", out strAbsURL);
+        if (strBody == null) return false;
+        if (strBody.Length == 0) return false;
+
+        // genre
+        Match info = Regex.Match(strBody, @"film_info.*?<br\s/>(?<genre>.*?)<");
+        movieDetails.Genre = info.Groups["genre"].Value;
+        // title
+        info = Regex.Match(strBody, @"title>(?<title>.*)\s.(?<year>.*).\s-");
+        movieDetails.Title = info.Groups["title"].Value;
+        // runtime
+        info = Regex.Match(strBody, @"film_info.*>(?<runtime>.*?)\sminuten");
+        if(info.Groups["runtime"].Success)
+          movieDetails.RunTime = Int32.Parse(info.Groups["runtime"].Value);
+        // cast
+        info = Regex.Match(strBody, @"film_info.*?met\s(?<cast>.*?)<");
+        movieDetails.Cast = info.Groups["cast"].Value;
+        movieDetails.Cast = movieDetails.Cast.Replace("de stemmen van ", "");
+        movieDetails.Cast = movieDetails.Cast.Replace(" en", ",");
+        // director
+        info = Regex.Match(strBody, @"film_info.*?director.*?>(?<director>.*?)<");
+        movieDetails.Director = info.Groups["director"].Value;
+        // plot
+        info = Regex.Match(strBody, @"film_info.*>(?<plot>.*?)<");
+        movieDetails.Plot = info.Groups["plot"].Value + "\n";
+        movieDetails.PlotOutline = info.Groups["plot"].Value + "\n";
+        // year
+        info = Regex.Match(strBody, @"title.*\s.(?<year>.*).\s-");
+        if(info.Groups["year"].Success)
+          movieDetails.Year = Int32.Parse(info.Groups["year"].Value);
+        // imdbnumber
+        info = Regex.Match(strBody, @"http://www.imdb.com/title/tt(?<imdb>.*?)/.*?IMDb");
+        movieDetails.IMDBNumber = info.Groups["imdb"].Value;
+        // poster
+        info = Regex.Match(strBody, @"poster.\ssrc=.(?<poster>.*?.jpg)");
+        movieDetails.ThumbURL = info.Groups["poster"].Value;
+        // votes
+        info = Regex.Match(strBody, @"er is nog niet gestemd");
+        if(!info.Success)
+        {
+          info = Regex.Match(strBody, @"film_votes.>(?<votes>.*)\sstemmen");
+          movieDetails.Votes = info.Groups["votes"].Value;
+          // rating
+          info = Regex.Match(strBody, @"film_votes.*gemiddelde:\s(?<rating>.*?)<");
+          try
+          {
+              movieDetails.Rating = (float)System.Double.Parse(info.Groups["rating"].Value)*2;
+          }
+          catch(Exception ex)
+          {
+          }
+        }
+        // mpaRating
+        movieDetails.MPARating = " - ";
+        return true;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("exception for MovieMeter lookup of {0} err:{1} stack:{2}", url.URL, ex.Message, ex.StackTrace);
+      }
+      return false;
+    }
+
+
+#endregion
 
   } // END class IMDB
 

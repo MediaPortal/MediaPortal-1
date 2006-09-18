@@ -2466,6 +2466,7 @@ namespace MediaPortal.Configuration.Sections
         bool ofdbFound = false;
         bool frdbFound = false;
         bool filmAffinityFound = false;
+        bool movieMeterFound = false;
         if (iNumber > 0)
         {
           string strLimit = "";
@@ -2490,6 +2491,8 @@ namespace MediaPortal.Configuration.Sections
                 frdbFound = true;
               else if (strDatabase == "FilmAffinity")
                 filmAffinityFound = true;
+              else if (strDatabase == "MovieMeter")
+                movieMeterFound = true;
             }
           }
         }
@@ -2504,6 +2507,9 @@ namespace MediaPortal.Configuration.Sections
 
         if (!filmAffinityFound)
           mpComboBox1.Items.Add(new ComboBoxItemDatabase("FilmAffinity", "spanish", "20"));
+
+        if (!movieMeterFound)
+          mpComboBox1.Items.Add(new ComboBoxItemDatabase("MovieMeter", "dutch", "20"));
 
         if (mpComboBox1.Items.Count > 0)
           mpComboBox1.SelectedIndex = 0;
