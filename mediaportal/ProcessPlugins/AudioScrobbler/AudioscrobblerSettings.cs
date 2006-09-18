@@ -135,7 +135,7 @@ namespace MediaPortal.AudioScrobbler
             trackBarConsiderCount.Value = (tmpPreferTracks >= 0) ? tmpPreferTracks : 2;
             comboBoxOfflineMode.SelectedIndex = tmpOfflineMode;
 
-            lastFmLookup = new AudioscrobblerUtils();
+            lastFmLookup = AudioscrobblerUtils.Instance;
 
             switch (tmpNMode)
             {

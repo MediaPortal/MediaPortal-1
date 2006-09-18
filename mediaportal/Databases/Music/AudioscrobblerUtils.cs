@@ -24,6 +24,7 @@
 #endregion
 
 using System;
+using System.Threading;
 using System.Collections.Generic;
 using System.Collections;
 using System.Net;
@@ -86,15 +87,293 @@ namespace MediaPortal.Music.Database
     private lastFMFeed _currentNeighbourMode;
     //private offlineMode _currentOfflineMode;
 
+    private bool _run = false;
+    private Thread _thread;
+    public static readonly AudioscrobblerUtils Instance = new AudioscrobblerUtils();
+    private List<ScrobblerUtilsRequest> _requestQueue = new List<ScrobblerUtilsRequest>();
+    private object _queueMutex = new object();
+    private DateTime _lastQueueActivity;
+
+    public delegate void RequestCompletedDelegate(ScrobblerUtilsResponse response);
+
     // List<Song> songList = null;
     List<String> _unwantedTags = null;
 
     /// <summary>
+    /// Static constructor
+    /// </summary>
+    static AudioscrobblerUtils()
+    {
+    }
+
+    /// <summary>
     /// ctor
     /// </summary>
-    public AudioscrobblerUtils()
+    AudioscrobblerUtils()
     {
       LoadSettings();
+    }
+
+    /// <summary>
+    /// Starts request queue processing thread.
+    /// </summary>
+    void Start()
+    {
+      _thread = new Thread(new ThreadStart(Run));
+      _thread.IsBackground = true;
+      _thread.Name = "AudioScrobblerUtils thread";
+      _run = true;
+      _lastQueueActivity = DateTime.Now;
+      _thread.Start();
+    }
+
+    /// <summary>
+    /// Adds a request to the request queue.
+    /// Also starts the request processing thread if it's not running.
+    /// </summary>
+    /// <param name="request">ScrobblerUtilsRequest to add to the queue</param>
+    public void AddRequest(ScrobblerUtilsRequest request)
+    {
+      if (request != null)
+      {
+        lock (_queueMutex)
+        {
+          Log.Debug("AudioScrobblerUtils.AddRequest:{0}, requestID:{1}", request.Request.ToString(), request.ID);
+          if (_thread != null)
+            Log.Debug("AudioscrobblerUtils: thread status:{0}, pending requests:{1}", _thread.ThreadState, _requestQueue.Count);
+          _requestQueue.Add(request);
+        }
+        if (!_run)
+          Start();
+      }
+    }
+
+    /// <summary>
+    /// Removes a request from the request queue.
+    /// </summary>
+    /// <param name="request">ScrobblerUtilsRequest to remove from the queue</param>
+    /// <returns></returns>
+    public bool RemoveRequest(ScrobblerUtilsRequest request)
+    {
+      lock (_queueMutex)
+      {
+        if (request != null)
+        {
+          Log.Debug("AudioScrobblerUtils.RemoveRequest:{0}, requestID:{1}", request.Request.ToString(), request.ID);
+          bool result = _requestQueue.Remove(request);
+          _requestQueue.TrimExcess();
+          return result;
+        }
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Main entrypoint for the request queue processing thread.
+    /// </summary>
+    void Run()
+    {
+      Log.Debug("AudioScrobblerUtils: thread started");
+      while (_run)
+      {
+        // check if there are requests on the processing queue
+        if (_requestQueue.Count > 0)
+        {
+          // fetch request from queue
+          ScrobblerUtilsRequest request;
+          lock (_queueMutex)
+          {
+            request = _requestQueue[0];
+            _requestQueue.Remove(request);
+          }
+          // process fetched request
+          ProcessScrobblerUtilsRequest(request);
+          _lastQueueActivity = DateTime.Now;
+          request = null;
+        }
+        else
+        {
+          // check if inactivity timeout has been reached
+          if (DateTime.Now >= _lastQueueActivity.AddMinutes(15))
+          {
+            // timeout has been reached, stop queue processing thread
+            Log.Debug("AudioScrobblerUtils.Run: thread inactivity timeout timer expired (last activity:{0}", _lastQueueActivity.ToString());
+            _thread = null;
+            _run = false;
+          }
+          else
+          {
+            // yield some CPU time
+            Thread.Sleep(100);
+          }
+        }
+      }
+      Log.Debug("AudioScrobblerUtils: thread ended");
+    }
+
+    /// <summary>
+    /// Processes one request from the request queue
+    /// </summary>
+    /// <param name="request">ScrobblerUtilsRequest to process</param>
+    void ProcessScrobblerUtilsRequest(ScrobblerUtilsRequest request)
+    {
+      ScrobblerUtilsResponse response = new ScrobblerUtilsResponse(new ScrobblerUtilsRequest(ScrobblerUtilsRequest.RequestType.Unknown, request.Caller, request.Params), null);
+      switch (request.Request)
+      {
+        case ScrobblerUtilsRequest.RequestType.GetAudioScrobblerFeed:
+          // public List<Song> getAudioScrobblerFeed(lastFMFeed feed_, string asUser_)
+          if (request.Params.Length == 2)
+          {
+            response = new ScrobblerUtilsResponse(
+                                   request,
+                                   getAudioScrobblerFeed((lastFMFeed)request.Params[0], request.Params[1] as string)
+                                   );
+          }
+          break;
+        case ScrobblerUtilsRequest.RequestType.GetValidURLLastFMString:
+          // public string getValidURLLastFMString(string lastFMString)
+          if (request.Params.Length == 1)
+          {
+            response = new ScrobblerUtilsResponse(
+                                    request,
+                                    getValidURLLastFMString(request.Params[0] as string)
+                                    );
+          }
+          break;
+        case ScrobblerUtilsRequest.RequestType.FilterForLocalSongs:
+          // public List<Song> filterForLocalSongs(List<Song> unfilteredList_, string excludeArtist_, string currentTag_, songFilterType filterType)
+          if (request.Params.Length == 4)
+          {
+            response = new ScrobblerUtilsResponse(
+                                    request,
+                                    filterForLocalSongs(
+                                        request.Params[0] as List<Song>,
+                                        request.Params[1] as string,
+                                        request.Params[2] as string,
+                                        (songFilterType)request.Params[3]
+                                        )
+                                    );
+          }
+          break;
+        case ScrobblerUtilsRequest.RequestType.GetTopAlbums:
+          // public List<Song> getTopAlbums(string artistToSearch_)
+          if (request.Params.Length == 1)
+          {
+            response = new ScrobblerUtilsResponse(
+                                    request,
+                                    getTopAlbums(request.Params[0] as string)
+                                    );
+          }
+          break;
+        case ScrobblerUtilsRequest.RequestType.GetAlbumInfo:
+          // public List<Song> getAlbumInfo(string artistToSearch_, string albumToSearch_, bool sortBestTracks)
+          if (request.Params.Length == 3)
+          {
+            response = new ScrobblerUtilsResponse(
+                                    request,
+                                    getAlbumInfo(request.Params[0] as string, request.Params[1] as string, (bool)request.Params[2])
+                                    );
+          }
+          break;
+        case ScrobblerUtilsRequest.RequestType.GetTagInfo:
+          // public List<Song> getTagInfo(string artistToSearch_, string trackToSearch_, bool randomizeUsedTag_, bool sortBestTracks_, bool addAvailableTracksOnly)
+          if (request.Params.Length == 5)
+          {
+            response = new ScrobblerUtilsResponse(
+                                    request,
+                                    getTagInfo(request.Params[0] as string, request.Params[1] as string, (bool)request.Params[2], (bool)request.Params[3], (bool)request.Params[4])
+                                    );
+          }
+          break;
+        case ScrobblerUtilsRequest.RequestType.GetArtistInfo:
+          // public Song getArtistInfo(string artistToSearch_)
+          if (request.Params.Length == 1)
+          {
+            response = new ScrobblerUtilsResponse(
+                                    request,
+                                    getArtistInfo(request.Params[0] as string)
+                                    );
+          }
+          break;
+        case ScrobblerUtilsRequest.RequestType.GetTagsForArtist:
+          // public List<Song> getTagsForArtist(string artistToSearch_)
+          if (request.Params.Length == 1)
+          {
+            response = new ScrobblerUtilsResponse(
+                                    request,
+                                    getTagsForArtist(request.Params[0] as string)
+                                    );
+          }
+          break;
+        case ScrobblerUtilsRequest.RequestType.GetTagsForTrack:
+          // public List<Song> getTagsForTrack(string artistToSearch_, string trackToSearch_)
+          if (request.Params.Length == 2)
+          {
+            response = new ScrobblerUtilsResponse(
+                                    request,
+                                    getTagsForTrack(request.Params[0] as string, request.Params[1] as string)
+                                    );
+          }
+          break;
+        case ScrobblerUtilsRequest.RequestType.GetSimilarToTag:
+          // public List<Song> getSimilarToTag(lastFMFeed searchType_, string taggedWith_, bool randomizeList_, bool addAvailableTracksOnly_)
+          if (request.Params.Length == 4)
+          {
+            response = new ScrobblerUtilsResponse(
+                                   request,
+                                   getSimilarToTag((lastFMFeed)request.Params[0], request.Params[1] as string, (bool)request.Params[2], (bool)request.Params[3])
+                                   );
+          }
+          break;
+        case ScrobblerUtilsRequest.RequestType.GetSimilarArtists:
+          // public List<Song> getSimilarArtists(string Artist_, bool randomizeList_)
+          if (request.Params.Length == 2)
+          {
+            response = new ScrobblerUtilsResponse(
+                                   request,
+                                   getSimilarArtists(request.Params[0] as string, (bool)request.Params[1])
+                                   );
+          }
+          break;
+        case ScrobblerUtilsRequest.RequestType.GetNeighboursArtists:
+          // public List<Song> getNeighboursArtists(bool randomizeList_)
+          if (request.Params.Length == 1)
+          {
+            response = new ScrobblerUtilsResponse(
+                                   request,
+                                   getNeighboursArtists((bool)request.Params[0])
+                                   );
+          }
+          break;
+        case ScrobblerUtilsRequest.RequestType.GetFriendsArtists:
+          // public List<Song> getFriendsArtists(bool randomizeList_)
+          if (request.Params.Length == 1)
+          {
+            response = new ScrobblerUtilsResponse(
+                                   request,
+                                   getFriendsArtists((bool)request.Params[0])
+                                   );
+          }
+          break;
+        case ScrobblerUtilsRequest.RequestType.GetRandomTracks:
+          // public List<Song> getRandomTracks()
+          response = new ScrobblerUtilsResponse(request, getRandomTracks());
+          break;
+        case ScrobblerUtilsRequest.RequestType.GetUnhearedTracks:
+          // public List<Song> getUnhearedTracks()
+          response = new ScrobblerUtilsResponse(request, getUnhearedTracks());
+          break;
+        case ScrobblerUtilsRequest.RequestType.GetFavoriteTracks:
+          // public List<Song> getFavoriteTracks()
+          response = new ScrobblerUtilsResponse(request, getFavoriteTracks());
+          break;
+      }
+
+      // Asynchronously invoke the delegate method of the caller with the response as argument
+      request.Caller.BeginInvoke(response, delegate(IAsyncResult iar)
+      {
+        request.Caller.EndInvoke(iar);
+      }, null);
     }
 
     #region SongComparer

@@ -196,7 +196,7 @@ namespace MediaPortal.GUI.Music
 
       LoadScrobbleUserSettings();
 
-      ascrobbler = new AudioscrobblerUtils();
+      ascrobbler = AudioscrobblerUtils.Instance;
       ScrobbleLock = new object();
       //added by Sam
       GUIWindowManager.Receivers += new SendMessageHandler(this.OnThreadMessage);
