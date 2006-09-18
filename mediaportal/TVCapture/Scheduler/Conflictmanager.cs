@@ -141,12 +141,8 @@ namespace MediaPortal.TV.Recording
             if (otherEpisode.ID == episode.ID &&
               otherEpisode.Start == episode.Start &&
               otherEpisode.End == episode.End) continue;
-            // episode        s------------------------e
-            // other    ---------s-----------------------------
-            // other ------------------e
-            if ((otherEpisode.Start >= episode.Start && otherEpisode.Start < episode.End) ||
-                 (otherEpisode.Start <= episode.Start && otherEpisode.End >= episode.End) ||
-              (otherEpisode.End > episode.Start && otherEpisode.End <= episode.End))
+
+            if (IsOverlap(episode,otherEpisode))
             {
               if (AllocateCard(otherEpisode.Channel))
               {
@@ -189,12 +185,8 @@ namespace MediaPortal.TV.Recording
             if (otherEpisode.ID == episode.ID &&
               otherEpisode.Start == episode.Start &&
               otherEpisode.End == episode.End) continue;
-            // episode        s------------------------e
-            // other    ---------s-----------------------------
-            // other ------------------e
-            if ((otherEpisode.Start >= episode.Start && otherEpisode.Start < episode.End) ||
-              (otherEpisode.Start <= episode.Start && otherEpisode.End >= episode.End) ||
-              (otherEpisode.End > episode.Start && otherEpisode.End <= episode.End))
+
+            if (IsOverlap(episode,otherEpisode))
             {
               if (AllocateCard(otherEpisode.Channel))
               {
@@ -235,12 +227,8 @@ namespace MediaPortal.TV.Recording
           if (otherEpisode.ID == episode.ID &&
             otherEpisode.Start == episode.Start &&
             otherEpisode.End == episode.End) continue;
-          // episode        s------------------------e
-          // other    ---------s-----------------------------
-          // other ------------------e
-          if ((otherEpisode.Start >= episode.Start && otherEpisode.Start < episode.End) ||
-            (otherEpisode.Start <= episode.Start && otherEpisode.End >= episode.End) ||
-            (otherEpisode.End > episode.Start && otherEpisode.End <= episode.End))
+
+          if (IsOverlap(episode,otherEpisode))
           {
             conflicts.Add(otherEpisode);
           }
@@ -272,6 +260,20 @@ namespace MediaPortal.TV.Recording
       {
         Initialize();
       }
+    }
+    /// <summary>
+    /// Tests the time overlapping of two recordings
+    /// </summary>
+    /// <returns>true : overlapping, false : no overlapping</returns>
+    static private bool IsOverlap(TVRecording rec_1, TVRecording rec_2)
+    {
+      // rec_1        s------------------------e
+      // rec_2    ---------s-----------------------------
+      // rec_2  ------------------e
+      if ((rec_2.Start >= rec_1.Start && rec_2.Start < rec_1.End) ||
+          (rec_2.Start <= rec_1.Start && rec_2.End >= rec_1.End) ||
+          (rec_2.End > rec_1.Start && rec_2.Start <= rec_1.End)) return true;
+      return false;
     }
   }
 }
