@@ -77,6 +77,25 @@ namespace MediaPortal.Music.Database
     // SKIP Button
     // 8. http.request.uri = Request URI: http://ws.audioscrobbler.com/radio/control.php?session=e5b0c80f5b5d0937d407fb77a913cb6a&command=skip
 
+    //price=
+    //shopname=
+    //clickthrulink=
+    //streaming=true
+    //discovery=0
+    //station=Global Tag Radio: metal, viking metal, Melodic Death Metal
+    //artist=Sonata Arctica
+    //artist_url=http://www.last.fm/music/Sonata+Arctica
+    //track=8th Commandment
+    //track_url=http://www.last.fm/music/Sonata+Arctica/_/8th+Commandment
+    //album=Ecliptica
+    //album_url=http://www.last.fm/music/Sonata+Arctica/Ecliptica
+    //albumcover_small=http://images.amazon.com/images/P/B00004T40X.01._SCMZZZZZZZ_.jpg
+    //albumcover_medium=http://images.amazon.com/images/P/B00004T40X.01._SCMZZZZZZZ_.jpg
+    //albumcover_large=http://images.amazon.com/images/P/B00004T40X.01._SCMZZZZZZZ_.jpg
+    //trackduration=222
+    //radiomode=1
+    //recordtoprofile=1
+
     private void LoadSettings()
     {
       InfoScrobbler = AudioscrobblerUtils.Instance;

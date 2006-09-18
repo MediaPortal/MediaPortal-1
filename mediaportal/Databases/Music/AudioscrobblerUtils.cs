@@ -479,6 +479,13 @@ namespace MediaPortal.Music.Database
     private List<String> buildTagBlacklist()
     {
       List<String> badTags = new List<string>();
+
+      // these are quite too common :-(
+      badTags.Add("rock");
+      badTags.Add("indie");
+      badTags.Add("alternative");
+
+      // these are useless
       badTags.Add("seen live");
       badTags.Add("favorites");
       badTags.Add("favourites");
