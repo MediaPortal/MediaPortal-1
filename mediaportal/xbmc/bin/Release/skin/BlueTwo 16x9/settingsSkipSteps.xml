@@ -12,6 +12,8 @@
 		<description>group element</description>
 		<animation>FlyInFromLeft</animation>
 		<layout>StackLayout(2)</layout>
+		<posX>60</posX>
+		<posY>97</posY>
 		<control>
 			<description>reset button</description>
 			<type>button</type>
@@ -188,8 +190,6 @@
 			<ondown>6</ondown>
 			<align>right</align>
 		</control>
-
-
 		<control>
 			<type>label</type>
 			<description>skip steps hours</description>
@@ -198,7 +198,6 @@
 			<posY>97</posY>
 			<label>9999</label>
 		</control>	
-
 		<control>
 			<description>Step 13</description>
 			<type>checkmark</type>
@@ -242,6 +241,7 @@
 			<id>17</id>
 			<label> 3</label>
 			<posX>800</posX>
+			<posY>217</posY>
 			<onleft>6</onleft>
 			<onright>2</onright>
 			<ondown>14</ondown>

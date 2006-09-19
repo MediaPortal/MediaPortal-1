@@ -2,7 +2,7 @@
 	<id>12</id>
 	<defaultcontrol>2</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
-	<define>#header.label:My Pictures</define>
+	<define>#header.label:1</define>
 	<define>#header.text:settings</define>
 	<define>#header.hover:hover_my pictures.png</define>
 	<define>#selecteditem:-</define>
@@ -82,9 +82,9 @@
 			<ondown>5</ondown>
 			<onleft>4</onleft>
 			<onright>4</onright>
-			<align>right</align>
 			<textcolor>FFFFFFFF</textcolor>
 			<buddycontrolid>102</buddycontrolid>
+			<align>right</align>
 		</control>	
 		<control>
 			<description>X-fade transitions</description>
@@ -92,13 +92,15 @@
 			<id>5</id>
 			<posX>440</posX>
 			<posY>300</posY>
+			<textureCheckmark>check-box1.png</textureCheckmark>
+			<textureCheckmarkNoFocus>check-boxNF1.png</textureCheckmarkNoFocus>
+			<align>right</align>
 			<label>13010</label>
 			<textcolor>FFFFFFFF</textcolor>
 			<onleft>5</onleft>
 			<onright>5</onright>
 			<onup>4</onup>
 			<ondown>6</ondown>
-			<align>right</align>
 		</control>
 		<control>
 			<description>Ken Buns transitions</description>
@@ -106,13 +108,15 @@
 			<id>6</id>
 			<posX>440</posX>
 			<posY>340</posY>
+			<textureCheckmark>check-box1.png</textureCheckmark>
+			<textureCheckmarkNoFocus>check-boxNF1.png</textureCheckmarkNoFocus>
+			<align>right</align>
 			<label>13008</label>
 			<textcolor>FFFFFFFF</textcolor>
 			<onleft>6</onleft>
 			<onright>6</onright>
 			<onup>5</onup>
 			<ondown>7</ondown>
-			<align>right</align>
 		</control>
 		<control>
 			<description>Random transitions</description>
@@ -120,13 +124,15 @@
 			<id>7</id>
 			<posX>440</posX>
 			<posY>380</posY>
+			<textureCheckmark>check-box1.png</textureCheckmark>
+			<textureCheckmarkNoFocus>check-boxNF1.png</textureCheckmarkNoFocus>
+			<align>right</align>
 			<label>13009</label>
 			<textcolor>FFFFFFFF</textcolor>
 			<onleft>7</onleft>
 			<onright>7</onright>
 			<onup>6</onup>
 			<ondown>8</ondown>
-			<align>right</align>
 		</control>	
 		<control>
 			<description>Repeat/loop slideshows</description>
@@ -134,13 +140,15 @@
 			<id>8</id>
 			<posX>440</posX>
 			<posY>420</posY>
+			<textureCheckmark>check-box1.png</textureCheckmark>
+			<textureCheckmarkNoFocus>check-boxNF1.png</textureCheckmarkNoFocus>
+			<align>right</align>
 			<label>Repeat/loop slideshows</label>
 			<textcolor>FFFFFFFF</textcolor>
 			<onleft>8</onleft>
 			<onright>8</onright>
 			<onup>7</onup>
 			<ondown>9</ondown>
-			<align>right</align>
 		</control>	
 		<control>
 			<description>Auto shuffle slideshow</description>
@@ -148,13 +156,15 @@
 			<id>9</id>
 			<posX>440</posX>
 			<posY>460</posY>
+			<textureCheckmark>check-box1.png</textureCheckmark>
+			<textureCheckmarkNoFocus>check-boxNF1.png</textureCheckmarkNoFocus>
+			<align>right</align>
 			<label>Auto shuffle slideshow</label>
 			<textcolor>FFFFFFFF</textcolor>
 			<onleft>9</onleft>
 			<onright>9</onright>
 			<onup>8</onup>
 			<ondown>9</ondown>
-			<align>right</align>
 		</control>		
 	</controls>
 </window>

@@ -14,10 +14,8 @@
 		<posX>450</posX>
 		<posY>180</posY>
 		<shadow>no</shadow>
-		<MarkHeight>16</MarkHeight>
-		<textureCheckmark>check-box.png</textureCheckmark>
-		<textureCheckmarkNoFocus>check-boxNF.png</textureCheckmarkNoFocus>
-		<MarkWidth>16</MarkWidth>
+		<textureCheckmark>check-box1.png</textureCheckmark>
+		<textureCheckmarkNoFocus>check-boxNF1.png</textureCheckmarkNoFocus>
 		<label>Auto delete recordings after watching them</label>
 		<align>right</align>
 		<onup>4</onup>
@@ -29,10 +27,8 @@
 		<posX>450</posX>
 		<posY>220</posY>
 		<shadow>no</shadow>
-		<MarkHeight>16</MarkHeight>
-		<textureCheckmark>check-box.png</textureCheckmark>
-		<textureCheckmarkNoFocus>check-boxNF.png</textureCheckmarkNoFocus>
-		<MarkWidth>16</MarkWidth>
+		<textureCheckmark>check-box1.png</textureCheckmark>
+		<textureCheckmarkNoFocus>check-boxNF1.png</textureCheckmarkNoFocus>
 		<label>Add recordings to movie database</label>
 		<align>right</align>
 		<onup>4</onup>

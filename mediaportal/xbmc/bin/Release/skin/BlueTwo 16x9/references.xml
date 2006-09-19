@@ -546,7 +546,7 @@
 		<align>left</align>
 		<shadow>no</shadow>
 		<MarkWidth>24</MarkWidth>
-		<MarkHeight>20</MarkHeight>
+		<MarkHeight>16</MarkHeight>
 	</control>	
 	<control>
 	      <description>default select button</description>
