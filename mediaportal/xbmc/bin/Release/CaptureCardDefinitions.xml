@@ -8858,13 +8858,13 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"		name="713x BDA Analog Tv Tuner"		checkdevice="true"/>
-        <filter cat="tvaudio"		name="713x BDA Analog TV Audio"		checkdevice="true"/>
-        <filter cat="crossbar"		name="713x BDA Analog Xbar"			checkdevice="true"/>
-        <filter cat="capture"		name="713x BDA Analog Capture"		checkdevice="true"/>
+        <filter cat="tvtuner"		  name="713x BDA Analog Tv Tuner"		  checkdevice="true"/>
+        <filter cat="tvaudio"		  name="713x BDA Analog TV Audio"		  checkdevice="true"/>
+        <filter cat="crossbar"		name="713x BDA Analog Xbar"			    checkdevice="true"/>
+        <filter cat="capture"		  name="713x BDA Analog Capture"		  checkdevice="true"/>
         <filter cat="videncoder"	name="CyberLink MPEG Video Encoder"	checkdevice="false"/>
-        <filter cat="audencoder"	name="Cyberlink Audio Encoder"		checkdevice="false"/>
-        <filter cat="mux"			name="CyberLink MPEG Muxer"			checkdevice="false"/>
+        <filter cat="audencoder"	name="Cyberlink Audio Encoder"		  checkdevice="false"/>
+        <filter cat="mux"			    name="CyberLink MPEG Muxer"			    checkdevice="false"/>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
@@ -14326,13 +14326,12 @@
   <capturecard commercialname="Hauppauge HVR-3000 Analogue" capturename="Hauppauge WinTV 88x Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_14020070&amp;rev_05">
     <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
     <tv>
-      <interface cat="encoder" video="" audio="" mpeg2="0"/>
+      <interface cat="capture" video="" audio="" mpeg2="0"/>
       <filters>
         <filter cat="tvtuner"  name="Hauppauge WinTV 88x Tuner"			    checkdevice="true"/>
         <filter cat="tvaudio"  name="Hauppauge WinTV 88x TvAudio"		    checkdevice="true"/>
         <filter cat="crossbar" name="Hauppauge WinTV 88x Crossbar"		  checkdevice="true"/>
         <filter cat="capture"  name="Hauppauge WinTV 88x Video Capture" checkdevice="true"/>
-        <filter cat="encoder"  name="Hauppauge WinTV 88x MPEG Encoder"	checkdevice="true"/>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"	sourcepin="0"	sinkfilter="crossbar"	sinkpin="%tvtuner%"/>
@@ -14340,8 +14339,6 @@
         <connection sourcefilter="tvaudio"	sourcepin="0"	sinkfilter="crossbar"	sinkpin="%audiotuner%"/>
         <connection sourcefilter="crossbar"	sourcepin="0"	sinkfilter="capture"	sinkpin="0"/>
         <connection sourcefilter="crossbar"	sourcepin="1"	sinkfilter="capture"	sinkpin="1"/>
-        <connection sourcefilter="capture"	sourcepin="3"	sinkfilter="encoder"	sinkpin="0"/>
-        <connection sourcefilter="capture"	sourcepin="4"	sinkfilter="encoder"	sinkpin="1"/>
       </connections>
     </tv>
   </capturecard>
@@ -15193,6 +15190,61 @@
       <connections>
         <connection sourcefilter="networkprovider" sourcepin="0"  sinkfilter="tunerdevice"  sinkpin="0"/>
         <connection sourcefilter="tunerdevice"     sourcepin="0"  sinkfilter="capture"      sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Compro VideoMate U500" capturename="VideoMate U500 BDA Digital Capture" devid="vid_185b&amp;pid_1e79&amp;mi_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"/>
+        <filter cat="tunerdevice"     name="VideoMate U500 BDA Digital Tuner"   checkdevice="true"/>
+        <filter cat="capture"         name="VideoMate U500 BDA Digital Capture" checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider"  sourcepin="0" sinkfilter="tunerdevice"  sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"      sourcepin="0" sinkfilter="capture"      sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Pinnacle PCTV Sat HDTV Pro USB" capturename="Pinnacle PCTV 4XXe Capture" devid="vid_2304&amp;pid_021f">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBS Network Provider" checkdevice="false"/>
+        <filter cat="tunerdevice"     name="Pinnacle PCTV 4XXe Tuner"            checkdevice="true"/>
+        <filter cat="capture"         name="Pinnacle PCTV 4XXe Capture" checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="ATI TV Wonder Elite" capturename="ATI AVStream Analog Capture" devid="ven_1002&amp;dev_4d53&amp;subsys_a5031028&amp;rev_00">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"   name="ATI AVStream Analog Tuner"      checkdevice="true"/>
+        <filter cat="tvaudio"   name="ATI AVStream Analog TV Audio"   checkdevice="true"/>
+        <filter cat="crossbar"  name="ATI AVStream Analog Xbar"       checkdevice="true"/>
+        <filter cat="capture"   name="ATI AVStream Analog Capture"    checkdevice="true"/>
+        <filter cat="mux"       name="ATI AVStream MPEG2 Multiplexer" checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"/>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"/>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"/>
+        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="mux"      sinkpin="0"/>
+        <connection sourcefilter="capture"  sourcepin="4" sinkfilter="mux"      sinkpin="1"/>
       </connections>
     </tv>
   </capturecard>
