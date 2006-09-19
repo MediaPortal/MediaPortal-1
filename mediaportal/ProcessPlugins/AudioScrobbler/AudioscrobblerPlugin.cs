@@ -223,9 +223,12 @@ namespace MediaPortal.Audioscrobbler
         else // Track was paused / unpaused
         {
           // avoid false skip detection
-          lastPosition = Convert.ToInt32(g_Player.Player.CurrentPosition);
-          if (currentSong.AudioScrobblerStatus == SongStatus.Init)
-            Log.Info("Audioscrobbler plugin: {0}", "track paused - avoid skip protection");
+          if (g_Player.Playing && g_Player.CurrentPosition > 0)
+          {
+            lastPosition = Convert.ToInt32(g_Player.CurrentPosition);
+            if (currentSong.AudioScrobblerStatus == SongStatus.Init)
+              Log.Info("Audioscrobbler plugin: {0}", "track paused - avoid skip protection");
+          }
         }
       }
     }
