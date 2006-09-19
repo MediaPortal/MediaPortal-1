@@ -97,7 +97,7 @@ namespace MediaPortal.TV.Recording
       {
         DetermineIsConflict(rec);
       }
-      TimeSpan ts = DateTime.Now - dtStart;
+
       if (OnConflictsUpdated != null)
         OnConflictsUpdated();
     }
