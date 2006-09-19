@@ -1173,7 +1173,7 @@ namespace MediaPortal.GUI.Weather
         lock (this)
         {
           //message strings for refresh of images
-          string weatherFile = @"weather\curWeather.xml";
+          string weatherFile = Config.Get(Config.Dir.Weather) + "curWeather.xml";
 
           GUIDialogOK dialogOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
           bool dlRes = false, ldRes = false;
