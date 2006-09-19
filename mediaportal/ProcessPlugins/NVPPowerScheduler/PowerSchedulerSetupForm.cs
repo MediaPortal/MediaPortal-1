@@ -184,9 +184,8 @@ namespace MediaPortal.PowerScheduler
       // cbxExtensive
       // 
       this.cbxExtensive.AutoSize = true;
-      this.cbxExtensive.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
       this.cbxExtensive.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbxExtensive.Location = new System.Drawing.Point(39, 42);
+      this.cbxExtensive.Location = new System.Drawing.Point(13, 42);
       this.cbxExtensive.Name = "cbxExtensive";
       this.cbxExtensive.Size = new System.Drawing.Size(107, 17);
       this.cbxExtensive.TabIndex = 17;
@@ -196,9 +195,8 @@ namespace MediaPortal.PowerScheduler
       // cbxForced
       // 
       this.cbxForced.AutoSize = true;
-      this.cbxForced.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
       this.cbxForced.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbxForced.Location = new System.Drawing.Point(40, 19);
+      this.cbxForced.Location = new System.Drawing.Point(13, 19);
       this.cbxForced.Name = "cbxForced";
       this.cbxForced.Size = new System.Drawing.Size(106, 17);
       this.cbxForced.TabIndex = 15;
@@ -221,9 +219,8 @@ namespace MediaPortal.PowerScheduler
       // cbxReinit
       // 
       this.cbxReinit.AutoSize = true;
-      this.cbxReinit.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
       this.cbxReinit.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbxReinit.Location = new System.Drawing.Point(8, 65);
+      this.cbxReinit.Location = new System.Drawing.Point(13, 65);
       this.cbxReinit.Name = "cbxReinit";
       this.cbxReinit.Size = new System.Drawing.Size(138, 17);
       this.cbxReinit.TabIndex = 18;

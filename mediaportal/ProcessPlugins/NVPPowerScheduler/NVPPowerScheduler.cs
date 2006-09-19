@@ -488,7 +488,7 @@ namespace MediaPortal.PowerScheduler
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         m_iStartupInterval = xmlreader.GetValueAsInt("powerscheduler", "wakeupinterval", 1);
-        m_iShutdownInterval = xmlreader.GetValueAsInt("powerscheduler", "shutdowninterval", 3);
+        m_iShutdownInterval = xmlreader.GetValueAsInt("powerscheduler", "shutdowninterval", 0);
         m_shutdownMode = xmlreader.GetValueAsString("powerscheduler", "shutdownmode", "Suspend");
         m_bExtensiveLog = xmlreader.GetValueAsBool("powerscheduler", "extensivelogging", false);
         m_bForceShutdown = xmlreader.GetValueAsBool("powerscheduler", "forcedshutdown", false);
@@ -868,7 +868,7 @@ namespace MediaPortal.PowerScheduler
     }
     public bool DefaultEnabled()
     {
-      return false;
+      return true;
     }
 
     public int GetWindowId()
