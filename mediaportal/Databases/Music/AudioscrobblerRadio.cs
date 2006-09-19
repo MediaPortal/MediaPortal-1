@@ -149,6 +149,13 @@ namespace MediaPortal.Music.Database
     public StreamPlaybackState CurrentStreamState
     {
       get { return _currentState; }
+
+      set
+      {
+        if (value != _currentState)
+          _currentState = value;
+        Log.Debug("AudioscrobblerRadio: Setting CurrentStreamState to {0}", _currentState.ToString());
+      }
     }
 
     /// <summary>

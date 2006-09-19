@@ -266,6 +266,15 @@ namespace MediaPortal.GUI.Radio
 
     protected override void OnPageDestroy(int newWindowId)
     {
+      if (LastFMStation != null)
+      {
+        if ((int)LastFMStation.CurrentStreamState > 1)
+        {
+          if (g_Player.Playing)
+            g_Player.Stop();
+          LastFMStation.CurrentStreamState = StreamPlaybackState.initialized;
+        }
+      }
       selectedItemIndex = GetSelectedItemNo();
       SaveSettings();
       base.OnPageDestroy(newWindowId);
@@ -282,11 +291,15 @@ namespace MediaPortal.GUI.Radio
 
         if (LastFMStation.CurrentStreamState == StreamPlaybackState.initialized)
         {
+          LastFMStation.CurrentStreamState = StreamPlaybackState.starting;
           // often the buffer is to slow for the playback to start
           for (int i = 0; i < 5; i++)
           {
             if (g_Player.Play(LastFMStation.CurrentStream))
+            {
+              LastFMStation.CurrentStreamState = StreamPlaybackState.streaming;
               return;
+            }
           }
         }
         else
@@ -324,6 +337,16 @@ namespace MediaPortal.GUI.Radio
     {
       switch (message.Message)
       {
+        case GUIMessage.MessageType.GUI_MSG_PLAYBACK_ENDED:
+          if (_useLastFM)
+          {
+            if ((int)LastFMStation.CurrentStreamState > 1)
+              LastFMStation.CurrentStreamState = StreamPlaybackState.initialized;
+          }
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_PLAYBACK_STOPPED:
+          goto case GUIMessage.MessageType.GUI_MSG_PLAYBACK_ENDED;
 
         case GUIMessage.MessageType.GUI_MSG_PLAY_RADIO_STATION:
           if (message.Label.Length == 0) return true;
