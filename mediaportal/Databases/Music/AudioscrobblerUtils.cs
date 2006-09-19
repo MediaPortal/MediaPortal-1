@@ -1023,7 +1023,14 @@ namespace MediaPortal.Music.Database
             }
           }
           else
-            Log.Debug("AudioScrobblerUtils: randomPosition {0} not useable for list of {1} tags - picking {2}", randomPosition, tagTracks.Count, tmpGenre);
+          {
+            Log.Debug("AudioScrobblerUtils: randomPosition {0} not reasonable for list of {1} tags", randomPosition, tagTracks.Count);
+            if (tagTracks.Count == 1)
+            {
+              tmpGenre = tagTracks[0].Genre.ToLowerInvariant();
+              Log.Debug("AudioScrobblerUtils: Tag {0} is the only one found - selecting..", tmpGenre);
+            }
+          }
 
           if (tmpGenre != String.Empty)
           {
