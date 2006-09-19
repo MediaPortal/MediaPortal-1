@@ -1184,7 +1184,7 @@ namespace MediaPortal.GUI.Music
 
     public void OnUpdateAlbumInfoCompleted(ScrobblerUtilsResponse response)
     {
-      Log.Debug("NowPlaying.OnUpdateAlbumInfoCompleted: response with ID:{0} for: {1}", response.Request.ID, response.Request.Request);
+      Log.Debug("NowPlaying.OnUpdateAlbumInfoCompleted: response with ID: {0} for: {1}", response.Request.ID, response.Request.Request);
       if (response.Response != null && response.Request.Equals(_lastAlbumRequest) && response.Response is List<Song>)
       {
         GUIListItem item = null;
@@ -1253,13 +1253,13 @@ namespace MediaPortal.GUI.Music
       }
       else
       {
-        Log.Warn("PlayingNow:.OnUpdateAlbumInfoCompleted: unexpected responsetype for request:{1}", response.Request.Request);
+        Log.Warn("PlayingNow:.OnUpdateAlbumInfoCompleted: unexpected responsetype for request: {1}", response.Request.Request);
       }
     }
 
     public void OnUpdateArtistInfoCompleted(ScrobblerUtilsResponse response)
     {
-      Log.Debug("NowPlaying.OnUpdateArtistInfoCompleted: response with ID:{0} for: {1}", response.Request.ID, response.Request.Request);
+      Log.Debug("NowPlaying.OnUpdateArtistInfoCompleted: response with ID: {0} for: {1}", response.Request.ID, response.Request.Request);
       if (response.Response != null && response.Request.Equals(_lastArtistRequest) && response.Response is Song)
       {
         CurrentThumbFileName = Util.Utils.GetCoverArtName(Thumbs.MusicArtists, Util.Utils.FilterFileName(CurrentTrackTag.Artist));
@@ -1271,13 +1271,13 @@ namespace MediaPortal.GUI.Music
       }
       else
       {
-        Log.Warn("PlayingNow:.OnUpdateArtistInfoCompleted: unexpected response for request:{1}", response.Request.Request);
+        Log.Warn("NowPlaying.OnUpdateArtistInfoCompleted: unexpected response for request: {1}", response.Request.Request);
       }
     }
 
     public void OnUpdateTagInfoCompleted(ScrobblerUtilsResponse response)
     {
-      Log.Debug("NowPlaying.OnUpdateTagInfoCompleted: response with ID:{0} for: {1}", response.Request.ID, response.Request.Request);
+      Log.Debug("NowPlaying.OnUpdateTagInfoCompleted: response with ID: {0} for: {1}", response.Request.ID, response.Request.Request);
       if (response.Response != null && response.Request.Equals(_lastTagRequest) && response.Response is List<Song>)
       {
         GUIListItem item = null;
@@ -1317,7 +1317,7 @@ namespace MediaPortal.GUI.Music
       }
       else
       {
-        Log.Warn("PlayingNow:.OnUpdateTagInfoCompleted: unexpected response for request:{1}", response.Request.Request);
+        Log.Warn("NowPlaying.OnUpdateTagInfoCompleted: unexpected response for request: {1}", response.Request.Request);
       }
     }
 

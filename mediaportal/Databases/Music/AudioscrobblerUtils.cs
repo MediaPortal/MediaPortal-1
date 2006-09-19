@@ -857,14 +857,14 @@ namespace MediaPortal.Music.Database
               }
             }
             //else
-            //  Log.Debug("Audioscrobbler: Artist {0} inadequate - skipping", tagTracks[s].Artist);
+            //  Log.Debug("AudioScrobblerUtils Artist {0} inadequate - skipping", tagTracks[s].Artist);
           }
           return tmpSongs;
         }
       }
       catch (Exception ex)
       {
-        Log.Error("Audioscrobbler: filtering for local songs failed - {0}", ex.Message);
+        Log.Error("AudioScrobblerUtils: filtering for local songs failed - {0}", ex.Message);
         return unfilteredList_;
       }
     }
@@ -922,7 +922,7 @@ namespace MediaPortal.Music.Database
               urlAlbum = getValidURLLastFMString("The " + albumToSearch_);
               break;
             default:
-              Log.Debug("Audioscrobbler: No album info for {1} found after {0} tries", failover, artistToSearch_ + " - " + albumToSearch_);
+              Log.Debug("AudioScrobblerUtils: No album info for {1} found after {0} tries", failover, artistToSearch_ + " - " + albumToSearch_);
               failover = 0;
               break;
           }
@@ -989,27 +989,50 @@ namespace MediaPortal.Music.Database
             {
               tmpGenre = tagTracks[randomPosition].Genre.ToLowerInvariant();
               // filter unwanted tags
-              if (_unwantedTags.Contains(tmpGenre))
+              if (_unwantedTags.Contains(tmpGenre.ToLowerInvariant()))
               {
                 randomPosition = rand.Next(0, calcRandValue);
-                Log.Debug("Audioscrobbler: Tag {0} in blacklist, randomly chosing another one", tmpGenre);
+                Log.Debug("AudioScrobblerUtils: Tag {0} in blacklist, randomly chosing another one", tmpGenre);
                 // do not try to often..
+                // if random picking doesn't lead to a result quit the randomness and pick the best
                 if (x > tagTracks.Count * 3)
-                  break;
+                {
+                  for (int t = 0; t < tagTracks.Count; t++)
+                  {
+                    tmpGenre = tagTracks[t].Genre.ToLowerInvariant();
+                    if (!_unwantedTags.Contains(tmpGenre.ToLowerInvariant()))
+                    {
+                      Log.Debug("AudioScrobblerUtils: Tag {0} was the first non-blacklisted item", tmpGenre);
+                      break;
+                    }
+
+                    if (t == tagTracks.Count - 1)
+                    {
+                      tmpGenre = tagTracks[0].Genre.ToLowerInvariant();
+                      Log.Debug("AudioScrobblerUtils: Random tag picking unsuccessful - selecting {0}", tmpGenre);
+                      break;
+                    }
+                  }
+                }
               }
               else
+              {
+                Log.Debug("AudioScrobblerUtils: Tag picking successful - selecting {0}", tmpGenre);
                 break;
+              }
             }
           }
+          else
+            Log.Debug("AudioScrobblerUtils: randomPosition {0} not useable for list of {1} tags - picking {2}", randomPosition, tagTracks.Count, tmpGenre);
 
           if (tmpGenre != String.Empty)
-          {            
+          {
             // use the best matches for the given track only            
             if (sortBestTracks_)
               tagTracks = getSimilarToTag(lastFMFeed.taggedtracks, tmpGenre, false, addAvailableTracksOnly);
-            else                        
+            else
               tagTracks = getSimilarToTag(lastFMFeed.taggedtracks, tmpGenre, true, addAvailableTracksOnly);
-            
+
             //// filter tracks not available in music database
             //if (addAvailableTracksOnly)
             //{
@@ -1024,6 +1047,10 @@ namespace MediaPortal.Music.Database
         if (sortBestTracks_)
           tagTracks.Sort(CompareSongsByTimesPlayed);
 
+        foreach (Song tagSong in tagTracks)
+        {
+          tagSong.Genre = tmpGenre;
+        }
         return tagTracks;
       }
     }
@@ -1046,7 +1073,7 @@ namespace MediaPortal.Music.Database
         {
           if (artistToSearch_.ToLowerInvariant() != tmpSong.Artist.ToLowerInvariant())
           {
-            Log.Info("Audioscrobbler: alternative artist spelling detected - try to fetch both thumbs (MP: {0} / official: {1})", artistToSearch_, tmpSong.Artist);
+            Log.Info("AudioScrobblerUtils: alternative artist spelling detected - try to fetch both thumbs (MP: {0} / official: {1})", artistToSearch_, tmpSong.Artist);
             fetchWebImage(tmpSong.WebImage, artistToSearch_ + ".jpg", Thumbs.MusicArtists);
             fetchWebImage(tmpSong.WebImage, tmpSong.Artist + ".jpg", Thumbs.MusicArtists);
           }
@@ -1127,6 +1154,7 @@ namespace MediaPortal.Music.Database
             // new item therefore add it
             if (!foundDoubleEntry)
             {
+              //taggedArtists[randomPosition].Genre = taggedWith_;
               randomTaggedArtists.Add(taggedArtists[randomPosition]);
               artistsAdded++;
             }
