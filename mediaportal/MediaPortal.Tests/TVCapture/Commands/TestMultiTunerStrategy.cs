@@ -66,6 +66,7 @@ namespace MediaPortal.Tests.TVCapture.Commands
       _cards[LOWEST].Priority=1;
 
       //setup recording paths for all cards
+      //Use C: drive because not everybody has D or E drives
       _cards[HIGHEST].RecordingPath = "c:";
       _cards[MEDIUM].RecordingPath = "c:";
       _cards[LOWEST].RecordingPath = "c:";

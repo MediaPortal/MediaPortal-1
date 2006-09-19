@@ -24,7 +24,7 @@ using System.IO;
 
 namespace MediaPortal.Utils.Services
 {
-	public interface ILog
+	public interface ILog : IDisposable
 	{
 		void Debug(string strFormat, params object[] arg);
 		void Error(string strFormat, params object[] arg);

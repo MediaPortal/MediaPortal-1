@@ -37,7 +37,7 @@
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
-    <Optimize>true</Optimize>
+    <Optimize>false</Optimize>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -48,7 +48,7 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="nunit.framework, Version=2.3.6006.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
+    <Reference Include="nunit.framework, Version=2.3.6162.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\nunit.framework.dll</HintPath>
     </Reference>
@@ -75,6 +75,7 @@
     <Compile Include="Core\Playlists\PlayListWPLTest.cs" />
     <Compile Include="Core\UdpHelper\UdpHelperTest.cs" />
     <Compile Include="Core\InputDevices\InputHandlerTest.cs" />
+    <Compile Include="Utils\Services\ServiceTest.cs" />
     <Compile Include="WebEPG\ProgramDataTest.cs" />
     <Compile Include="Support\DxDiagLogTests.cs" />
     <Compile Include="Support\EventLogLoggerTests.cs" />

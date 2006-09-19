@@ -19,56 +19,116 @@
  *
  */
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 
 namespace MediaPortal.Utils.Services
 {
-  public class ServiceProvider
-  {
-    private Dictionary<Type, object> services;
-
-    public ServiceProvider()
+    public class ServiceProvider
     {
-      services = new Dictionary<Type, object>();
-    }
+        private Dictionary<Type, object> services;
 
-    public bool IsRegistered<T>()
-    {
-      return services.ContainsKey(typeof(T));
-    }
+        public ServiceProvider()
+        {
+            services = new Dictionary<Type, object>();
+        }
 
-		public void Add<T>(object service)
-    {
-      // Make sure service implements type
-			Type t = typeof(T);
-      services.Add(t, service);
-    }
+        public bool IsRegistered<T>()
+        {
+            return services.ContainsKey(typeof(T));
+        }
 
-    public T Get<T>()
-    {
-      Type t = typeof(T);
-      if (services.ContainsKey(t))
-      {
-        return (T)services[t];
-      }
-      return default(T);
-    }
+        /// <summary>
+        /// Adds a new service to the ServiceProvider.
+        /// </summary>
+        /// <typeparam name="T">The type of the service to add</typeparam>
+        /// <param name="service">The service implementation to add</param>
+        /// <exception cref="ArgumentException">the added service is already present</exception>
+        public void Add<T>(object service)
+        {
+            // Make sure service implements type
+            Type t = typeof(T);
+            if (services.ContainsKey(t))
+            {
+                object o = services[t];
+                if (!(o is ServiceCreatorCallback<T>))
+                {
+                    throw new ArgumentException(string.Format("A service of type {0} is already present", t.ToString()));
+                }
+                services[t] = service;
+                return;
+            }
+            services.Add(t, service);
+        }
 
-    public void Remove<T>()
-    {
-      Type t = typeof(T);
-      if (services.ContainsKey(t))
-      {
-          services.Remove(t);
-      }
-    }
+        /// <summary>
+        /// Registes a new service to the ServiceProvider. 
+        /// </summary>
+        /// <typeparam name="T">The type of the service to register.</typeparam>
+        /// <param name="callback">The <see cref="ServiceCreatorCallback<T>"/> to call to get to the service instance.</param>
+        public void Add<T>(ServiceCreatorCallback<T> callback)
+        {
+            Type t = typeof(T);
+            if (services.ContainsKey(t))
+            {
+                throw new ArgumentException(string.Format("A service of type {0} is already present", t.ToString()));
+            }
+            services.Add(t, callback);
+        }
 
-		public void Replace<T>(object service)
-		{
-			services.Remove(typeof(T));
-			services.Add(typeof(T), service);
-		}
-  }
+        /// <summary>
+        /// Gets the requested service instance.
+        /// </summary>
+        /// <typeparam name="T">The type of the service to return</typeparam>
+        /// <returns>The service implementation.</returns>
+        public T Get<T>()
+        {
+            Type t = typeof(T);
+            if (services.ContainsKey(t))
+            {
+                object o = services[t];
+                ServiceCreatorCallback<T> s = o as ServiceCreatorCallback<T>;
+                if (s != null)
+                {
+                    return s(this);
+                }
+                return (T) services[t];
+            }
+            return default(T);
+        }
+
+        /// <summary>
+        /// Removes the specified service from the ServiceProvider.
+        /// </summary>
+        /// <typeparam name="T">The type of the service to remove.</typeparam>
+        public void Remove<T>()
+        {
+            Type t = typeof(T);
+            if (services.ContainsKey(t))
+            {
+                services.Remove(t);
+            }
+        }
+
+        /// <summary>
+        /// Replaces the specified service with the new implementation
+        /// </summary>
+        /// <typeparam name="T">The type of the service to replace.</typeparam>
+        /// <param name="service">The new implementation.</param>
+        public void Replace<T>(object service)
+        {
+            Remove<T>();
+            Add<T>(service);
+        }
+
+        /// <summary>
+        /// Replaces the specified service.
+        /// </summary>
+        /// <typeparam name="T">The type of the service to replace.</typeparam>
+        /// <param name="callback">The <see cref="ServiceCreatorCallback<T>"/> to call to get to the service instance.</param>
+        public void Replace<T>(ServiceCreatorCallback<T> callback)
+        {
+            Remove<T>();
+            Add<T>(callback);
+        }
+    }
 }
