@@ -34,6 +34,15 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Music.Database
 {
+  public enum StreamPlaybackState : int
+  {
+    offline = 0,
+    initialized = 1,
+    starting = 2,
+    streaming = 3,
+    paused = 4
+  }
+
   public enum StreamControls : int
   {
     skiptrack = 0,
@@ -54,6 +63,9 @@ namespace MediaPortal.Music.Database
     private string _currentSession = String.Empty;
     private string _currentUser = String.Empty;
     private bool _isSubscriber = false;
+    private bool _recordToProfile = true;
+
+    private StreamPlaybackState _currentState = StreamPlaybackState.offline;
 
     // TO DO: 
     // Steps to get a stream:
@@ -100,61 +112,115 @@ namespace MediaPortal.Music.Database
     {
       InfoScrobbler = AudioscrobblerUtils.Instance;
 
-      _currentSession = AudioscrobblerBase.RadioSession;
       _currentUser = AudioscrobblerBase.Username;
-      _isSubscriber = AudioscrobblerBase.Subscriber;
-      _currentRadioURL = "http://streamer1.last.fm/last.mp3?Session=" + _currentSession;
-      // some testing here..
+
       if (_currentUser.Length > 0)
       {
-        //List<String> MyTags = new List<string>();
+        _currentSession = AudioscrobblerBase.RadioSession;
 
-        //MyTags.Add("industrial");
-        //MyTags.Add("melodic death metal");
+        if (_currentSession != String.Empty)
+        {
+          _isSubscriber = AudioscrobblerBase.Subscriber;
+          _currentRadioURL = "http://streamer1.last.fm/last.mp3?Session=" + _currentSession;
+          _currentState = StreamPlaybackState.initialized;
+          
+          //List<String> MyTags = new List<string>();
+          //MyTags.Add("cover");
+          //MyTags.Add("melodic death metal");
+          //TuneIntoTags(MyTags);
+          
+          //TuneIntoPersonalRadio(_currentUser);  <-- subscriber only
+          TuneIntoGroupRadio("MediaPortal Users");
 
-        //TuneIntoTags(MyTags);
-
-        //TuneIntoPersonalRadio("The_real_mPod");
-
-        TuneIntoGroupRadio("MediaPortal Users");
-
-        Thread.Sleep(250);
-        if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/control.php?session=" + _currentSession + "&command=rtp"))
-          Log.Info("AudioscrobblerRadio: Stream adjusted");
+          Thread.Sleep(250);
+          ToggleRecordToProfile(_recordToProfile);
+        }
       }
     }
 
-
+    /// <summary>
+    /// URL for playback with buffering audioplayers
+    /// </summary>
     public string CurrentStream
     {
-      get
+      get { return _currentRadioURL; }
+    }
+
+    public StreamPlaybackState CurrentStreamState
+    {
+      get { return _currentState; }
+    }
+
+    /// <summary>
+    /// Get/Set if you like your radio songs to appear in your last.fm profile
+    /// </summary>
+    public bool SubmitRadioSongs
+    {
+      get { return _recordToProfile; }
+
+      set
       {
-        return _currentRadioURL;
+        if (value != _recordToProfile)
+        {
+          ToggleRecordToProfile(value);
+        }        
       }
     }
 
+
+
     #region Control functions
+    public bool ToggleRecordToProfile(bool submitTracks_)
+    {
+      bool success = false;
+
+      if (submitTracks_)
+      {
+        if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/control.php?session=" + _currentSession + "&command=rtp"))
+        {
+          success = true;
+          _recordToProfile = true;
+          Log.Info("AudioscrobblerRadio: Enabled submitting of radio tracks to profile");
+        }        
+      }
+      else
+        if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/control.php?session=" + _currentSession + "&command=nortp"))
+        {
+          success = true;
+          _recordToProfile = false;
+          Log.Info("AudioscrobblerRadio: Disabled submitting of radio tracks to profile");
+        }
+      return success;
+    }
+
     public bool SendControlCommand(StreamControls command_)
     {
       bool success = false;
-      string baseUrl = @"http://ws.audioscrobbler.com/radio/control.php?session=" + _currentSession;
-      switch (command_)
-      {
-        case StreamControls.skiptrack:
-          if (SendCommandRequest(baseUrl + @"&command=skip"))
-          {
-            Log.Info("AudioscrobblerRadio: Successfully send skip command");
-            success = true;
-          }
-          break;
-        case StreamControls.lovetrack:
-          if (SendCommandRequest(baseUrl + @"&command=love"))
-          {
-            Log.Info("AudioscrobblerRadio: Track added to loved tracks list");
-            success = true;
-          }
-          break; 
+      if (_currentState == StreamPlaybackState.streaming)
+      {        
+        string baseUrl = @"http://ws.audioscrobbler.com/radio/control.php?session=" + _currentSession;
+
+        switch (command_)
+        {
+          case StreamControls.skiptrack:
+            if (SendCommandRequest(baseUrl + @"&command=skip"))
+            {
+              Log.Info("AudioscrobblerRadio: Successfully send skip command");
+              success = true;
+            }
+            break;
+          case StreamControls.lovetrack:
+            if (SendCommandRequest(baseUrl + @"&command=love"))
+            {
+              Log.Info("AudioscrobblerRadio: Track added to loved tracks list");
+              success = true;
+            }
+            break;
+        }
       }
+      else
+        Log.Info("AudioscrobblerRadio: Currently not streaming - ignoring command");
+
       return success;
     }
     #endregion

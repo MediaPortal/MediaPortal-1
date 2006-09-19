@@ -200,11 +200,13 @@ namespace MediaPortal.Music.Database
       }
     }
 
+    /// <summary>
+    /// Get the subscription status. Must be preceded by "RadioSession" before.
+    /// </summary>
     public static bool Subscriber
     {
       get
       {
-        DoRadioHandshake(false);
         return _subscriber;
       }
     }
@@ -478,7 +480,7 @@ namespace MediaPortal.Music.Database
       lastRadioHandshake = DateTime.Now;
 
       if (_useDebugLog)
-        Log.Debug("AudioscrobblerBase: {0}", " Radio handshake successful");
+        Log.Debug("AudioscrobblerBase: {0}", "Radio handshake successful");
       return true;
     }
     
@@ -839,7 +841,20 @@ namespace MediaPortal.Music.Database
     }
 
     private static bool parseRadioStreamMessage(string type_, StreamReader reader_)
-    {  
+    {
+      if (type_.Contains("FAILED") || type_.Contains("failed"))
+      {
+        string logmessage = "AudioscrobblerBase: Radio session failed";
+        while ((type_ = reader_.ReadLine()) != null)
+        {
+          logmessage += type_ + ", ";
+        }
+
+        Log.Warn(logmessage);
+        return false;
+      }
+
+
       if (type_.Length > 8)
       {
         _radioSession = type_.Substring(8);

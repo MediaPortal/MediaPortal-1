@@ -39,22 +39,13 @@ using MediaPortal.Playlists;
 
 namespace MediaPortal.GUI.Radio
 {
-  /// <summary>
-  /// controls en-/disablen 
-  ///   - player (wel of niet) played radio/tv/music/video's...
-  ///   - buddy enable/disable
-  ///   -
-  /// -keuzes aan select button  (sort by ....)
-  /// -root/sub view->generiek maken
-  /// -class welke de list/thumbnail view combinatie doet
-  /// 
-  /// </summary>
   public class GUIRadio : GUIWindow, IComparer<GUIListItem>, ISetupForm, IShowPlugin
   {
     [SkinControlAttribute(2)]     protected GUIButtonControl btnViewAs = null;
     [SkinControlAttribute(3)]     protected GUISortButtonControl btnSortBy = null;
     [SkinControlAttribute(6)]     protected GUIButtonControl btnPrevious = null;
     [SkinControlAttribute(7)]     protected GUIButtonControl btnNext = null;
+    [SkinControlAttribute(21)]    protected GUIButtonControl btnLastFM = null;
     [SkinControlAttribute(50)]    protected GUIListControl listView = null;
     [SkinControlAttribute(51)]    protected GUIThumbnailPanel thumbnailView = null;
 
@@ -138,6 +129,7 @@ namespace MediaPortal.GUI.Radio
 
         sortAscending = xmlreader.GetValueAsBool("myradio", "sortascending", true);
 
+        _useLastFM = xmlreader.GetValueAsBool("plugins", "Audioscrobbler", false);
       }
     }
 
@@ -263,15 +255,12 @@ namespace MediaPortal.GUI.Radio
       LoadDirectory(currentFolder);
       btnSortBy.SortChanged += new SortEventHandler(SortChanged);
 
-      if (_useLastFM)
+      if (btnLastFM != null)
       {
-        LastFMStation = new AudioscrobblerRadio();
-        // often the buffer is to slow for the playback to start
-        for (int i = 0; i < 5; i++)
-        {
-          if (g_Player.Play(LastFMStation.CurrentStream))
-            return;
-        }
+        if (_useLastFM)
+          btnLastFM.Visible = true;
+        else
+          btnLastFM.Visible = false;
       }
     }
 
@@ -285,6 +274,25 @@ namespace MediaPortal.GUI.Radio
     protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
     {
       base.OnClicked(controlId, control, actionType);
+
+      if (control == btnLastFM)
+      {
+        if (LastFMStation == null)
+          LastFMStation = new AudioscrobblerRadio();
+
+        if (LastFMStation.CurrentStreamState == StreamPlaybackState.initialized)
+        {
+          // often the buffer is to slow for the playback to start
+          for (int i = 0; i < 5; i++)
+          {
+            if (g_Player.Play(LastFMStation.CurrentStream))
+              return;
+          }
+        }
+        else
+          Log.Info("GUIRadio: Didn't start LastFM radio because stream state is {0}", LastFMStation.CurrentStreamState.ToString());
+      }
+
       if (control == btnViewAs)
       {
         currentView = (View)btnViewAs.SelectedItem;

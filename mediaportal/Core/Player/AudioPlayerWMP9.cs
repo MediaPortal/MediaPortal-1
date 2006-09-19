@@ -347,8 +347,13 @@ namespace MediaPortal.Player
 
     private void OnBuffering(object sender, AxWMPLib._WMPOCXEvents_BufferingEvent e)
     {
+      Log.Info("Audioplayer: ***** Debug - bandWidth: {0}", _wmp10Player.network.bandWidth);
+      Log.Info("Audioplayer: ***** Debug - bitRate: {0}", _wmp10Player.network.bitRate);
+      Log.Info("Audioplayer: ***** Debug - receivedPackets: {0}", _wmp10Player.network.receivedPackets);
+      Log.Info("Audioplayer: ***** Debug - receptionQuality: {0}", _wmp10Player.network.receptionQuality);
+
       _wmp10Player.network.bufferingTime = 10000;
-      
+
       if (e.start)
       {
         _bufferCompleted = false;
