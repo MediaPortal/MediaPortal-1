@@ -4737,21 +4737,21 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"		name="LifeView TV Walker Ultra Tuner"		checkdevice="true"/>
-        <filter cat="tvaudio"		name="LifeView TV Walker Ultra Audio"		checkdevice="true"/>
-        <filter cat="crossbar"		name="LifeView TV Walker Ultra CrossBar"	checkdevice="true"/>
-        <filter cat="capture"		name="LifeView TV Walker Ultra A/V Capture"	checkdevice="true"/>
-        <filter cat="audencoder"	name="HT MPEG1 Audio Encoder"				checkdevice="false"/>
-        <filter cat="mux"			name="HT MPEG Multiplexer"					checkdevice="false"/>
+        <filter cat="tvtuner"		  name="LifeView TV Walker Ultra Tuner"		    checkdevice="true"/>
+        <filter cat="tvaudio"		  name="LifeView TV Walker Ultra Audio"		    checkdevice="true"/>
+        <filter cat="crossbar"		name="LifeView TV Walker Ultra CrossBar"	  checkdevice="true"/>
+        <filter cat="capture"		  name="LifeView TV Walker Ultra A/V Capture"	checkdevice="true"/>
+        <filter cat="audencoder"	name="HT MPEG1 Audio Encoder"				        checkdevice="false"/>
+        <filter cat="mux"			    name="HT MPEG Multiplexer"					        checkdevice="false"/>
       </filters>
       <connections>
-		<connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
         <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
         <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
         <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
-        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
         <connection sourcefilter="capture"		sourcepin="2" sinkfilter="audencoder"	sinkpin="0"/>
-        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
       </connections>
     </tv>
   </capturecard> 
@@ -15215,9 +15215,9 @@
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
       <filters>
-        <filter cat="networkprovider" name="Microsoft DVBS Network Provider" checkdevice="false"/>
-        <filter cat="tunerdevice"     name="Pinnacle PCTV 4XXe Tuner"            checkdevice="true"/>
-        <filter cat="capture"         name="Pinnacle PCTV 4XXe Capture" checkdevice="true"/>
+        <filter cat="networkprovider" name="Microsoft DVBS Network Provider"  checkdevice="false"/>
+        <filter cat="tunerdevice"     name="Pinnacle PCTV 4XXe Tuner"         checkdevice="true"/>
+        <filter cat="capture"         name="Pinnacle PCTV 4XXe Capture"       checkdevice="true"/>
       </filters>
       <connections>
         <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
@@ -15245,6 +15245,339 @@
         <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"/>
         <connection sourcefilter="capture"  sourcepin="3" sinkfilter="mux"      sinkpin="0"/>
         <connection sourcefilter="capture"  sourcepin="4" sinkfilter="mux"      sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Lifeview FlyTV Express X1 MST-T2A2 DVB-T Tuner 1" capturename="7162 BDA Digital Capture0" devid="ven_1131&amp;dev_7162&amp;subsys_08205168&amp;rev_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"/>
+        <filter cat="tunerdevice"     name="7162 BDA DVBT Tuner0"             checkdevice="true"/>
+        <filter cat="capture"         name="7162 BDA Digital Capture0"        checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"		  sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Lifeview FlyTV Express X1 MST-T2A2 DVB-T Tuner 2" capturename="7162 BDA Digital Capture1" devid="ven_1131&amp;dev_7162&amp;subsys_08205168&amp;rev_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"/>
+        <filter cat="tunerdevice"     name="7162 BDA DVBT Tuner1"             checkdevice="true"/>
+        <filter cat="capture"         name="7162 BDA Digital Capture1"        checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"		  sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Lifeview FlyTV Express X1 MST-T2A2 Analogue Tuner 1" capturename="7162 BDA Analog Capture0" devid="ven_1131&amp;dev_7162&amp;subsys_08205168&amp;rev_00">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		  name="7162 BDA Analog Tv Tuner0"		checkdevice="true"/>
+        <filter cat="tvaudio"		  name="7162 BDA Analog TV Audio0"		checkdevice="true"/>
+        <filter cat="crossbar"		name="7162 BDA Analog Xbar0"			  checkdevice="true"/>
+        <filter cat="capture"		  name="7162 BDA Analog Capture0"		  checkdevice="true"/>
+        <filter cat="videncoder"	name="CyberLink MPEG Video Encoder"	checkdevice="false"/>
+        <filter cat="audencoder"	name="Cyberlink Audio Encoder"		  checkdevice="false"/>
+        <filter cat="mux"			    name="CyberLink MPEG Muxer"			    checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="2" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Lifeview FlyTV Express X1 MST-T2A2 Analogue Tuner 2" capturename="7162 BDA Analog Capture1" devid="ven_1131&amp;dev_7162&amp;subsys_08205168&amp;rev_00">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		  name="7162 BDA Analog Tv Tuner1"		checkdevice="true"/>
+        <filter cat="tvaudio"		  name="7162 BDA Analog TV Audio1"		checkdevice="true"/>
+        <filter cat="crossbar"		name="7162 BDA Analog Xbar1"			  checkdevice="true"/>
+        <filter cat="capture"		  name="7162 BDA Analog Capture1"		  checkdevice="true"/>
+        <filter cat="videncoder"	name="CyberLink MPEG Video Encoder"	checkdevice="false"/>
+        <filter cat="audencoder"	name="Cyberlink Audio Encoder"		  checkdevice="false"/>
+        <filter cat="mux"			    name="CyberLink MPEG Muxer"			    checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="2" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Lifeview FlyTV Express X1 MST-STA2 DVB-T" capturename="7162 BDA Digital Capture0" devid="ven_1131&amp;dev_7162&amp;subsys_08605168&amp;rev_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"/>
+        <filter cat="tunerdevice"     name="7162 BDA DVBT Tuner0"             checkdevice="true"/>
+        <filter cat="capture"         name="7162 BDA Digital Capture0"        checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"		  sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Lifeview FlyTV Express X1 MST-STA2 DVB-S" capturename="7162 BDA Digital Capture0" devid="ven_1131&amp;dev_7162&amp;subsys_08605168&amp;rev_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"/>
+        <filter cat="tunerdevice"     name="7162 BDA DVBS Tuner0"             checkdevice="true"/>
+        <filter cat="capture"         name="7162 BDA Digital Capture0"        checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"		  sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+  
+  <capturecard commercialname="Lifeview FlyTV Express X1 MST-STA2 Analogue Tuner 1" capturename="7162 BDA Analog Capture0" devid="ven_1131&amp;dev_7162&amp;subsys_08605168&amp;rev_00">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		  name="7162 BDA Analog Tv Tuner0"		checkdevice="true"/>
+        <filter cat="tvaudio"		  name="7162 BDA Analog TV Audio0"		checkdevice="true"/>
+        <filter cat="crossbar"		name="7162 BDA Analog Xbar0"			  checkdevice="true"/>
+        <filter cat="capture"		  name="7162 BDA Analog Capture0"		  checkdevice="true"/>
+        <filter cat="videncoder"	name="CyberLink MPEG Video Encoder"	checkdevice="false"/>
+        <filter cat="audencoder"	name="Cyberlink Audio Encoder"		  checkdevice="false"/>
+        <filter cat="mux"			    name="CyberLink MPEG Muxer"			    checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="2" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Lifeview FlyTV Express X1 MST-STA2 Analogue Tuner 2" capturename="7162 BDA Analog Capture1" devid="ven_1131&amp;dev_7162&amp;subsys_08605168&amp;rev_00">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		  name="7162 BDA Analog Tv Tuner1"		checkdevice="true"/>
+        <filter cat="tvaudio"		  name="7162 BDA Analog TV Audio1"		checkdevice="true"/>
+        <filter cat="crossbar"		name="7162 BDA Analog Xbar1"			  checkdevice="true"/>
+        <filter cat="capture"		  name="7162 BDA Analog Capture1"		  checkdevice="true"/>
+        <filter cat="videncoder"	name="CyberLink MPEG Video Encoder"	checkdevice="false"/>
+        <filter cat="audencoder"	name="Cyberlink Audio Encoder"		  checkdevice="false"/>
+        <filter cat="mux"			    name="CyberLink MPEG Muxer"			    checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="2" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Lifeview FlyTV Express X1 MST-S2T2A2 DVB-T Tuner 1" capturename="7162 BDA Digital Capture0" devid="ven_1131&amp;dev_7162&amp;subsys_08615168&amp;rev_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"/>
+        <filter cat="tunerdevice"     name="7162 BDA DVBT Tuner0"             checkdevice="true"/>
+        <filter cat="capture"         name="7162 BDA Digital Capture0"        checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"		  sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Lifeview FlyTV Express X1 MST-S2T2A2 DVB-T Tuner 2" capturename="7162 BDA Digital Capture1" devid="ven_1131&amp;dev_7162&amp;subsys_08615168&amp;rev_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"/>
+        <filter cat="tunerdevice"     name="7162 BDA DVBT Tuner1"             checkdevice="true"/>
+        <filter cat="capture"         name="7162 BDA Digital Capture1"        checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"		  sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Lifeview FlyTV Express X1 MST-S2T2A2 DVB-S Tuner 1" capturename="7162 BDA Digital Capture0" devid="ven_1131&amp;dev_7162&amp;subsys_08615168&amp;rev_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"/>
+        <filter cat="tunerdevice"     name="7162 BDA DVBS Tuner0"             checkdevice="true"/>
+        <filter cat="capture"         name="7162 BDA Digital Capture0"        checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"		  sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Lifeview FlyTV Express X1 MST-S2T2A2 DVB-S Tuner 2" capturename="7162 BDA Digital Capture1" devid="ven_1131&amp;dev_7162&amp;subsys_08615168&amp;rev_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBS Network Provider"  checkdevice="false"/>
+        <filter cat="tunerdevice"     name="7162 BDA DVBT Tuner1"             checkdevice="true"/>
+        <filter cat="capture"         name="7162 BDA Digital Capture1"        checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"		  sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Lifeview FlyTV Express X1 MST-S2T2A2 Analogue Tuner 1" capturename="7162 BDA Analog Capture0" devid="ven_1131&amp;dev_7162&amp;subsys_08615168&amp;rev_00">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		  name="7162 BDA Analog Tv Tuner0"		checkdevice="true"/>
+        <filter cat="tvaudio"		  name="7162 BDA Analog TV Audio0"		checkdevice="true"/>
+        <filter cat="crossbar"		name="7162 BDA Analog Xbar0"			  checkdevice="true"/>
+        <filter cat="capture"		  name="7162 BDA Analog Capture0"		  checkdevice="true"/>
+        <filter cat="videncoder"	name="CyberLink MPEG Video Encoder"	checkdevice="false"/>
+        <filter cat="audencoder"	name="Cyberlink Audio Encoder"		  checkdevice="false"/>
+        <filter cat="mux"			    name="CyberLink MPEG Muxer"			    checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="2" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Lifeview FlyTV Express X1 MST-S2T2A2 Analogue Tuner 2" capturename="7162 BDA Analog Capture1" devid="ven_1131&amp;dev_7162&amp;subsys_08615168&amp;rev_00">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		  name="7162 BDA Analog Tv Tuner1"		checkdevice="true"/>
+        <filter cat="tvaudio"		  name="7162 BDA Analog TV Audio1"		checkdevice="true"/>
+        <filter cat="crossbar"		name="7162 BDA Analog Xbar1"			  checkdevice="true"/>
+        <filter cat="capture"		  name="7162 BDA Analog Capture1"		  checkdevice="true"/>
+        <filter cat="videncoder"	name="CyberLink MPEG Video Encoder"	checkdevice="false"/>
+        <filter cat="audencoder"	name="Cyberlink Audio Encoder"		  checkdevice="false"/>
+        <filter cat="mux"			    name="CyberLink MPEG Muxer"			    checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="2" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Lifeview FlyTV Express X1 MST-TA Hybrid (Digital)" capturename="7162 BDA Digital Capture0" devid="ven_1131&amp;dev_7162&amp;subsys_18205168&amp;rev_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"/>
+        <filter cat="tunerdevice"     name="7162 BDA DVBT Tuner0"             checkdevice="true"/>
+        <filter cat="capture"         name="7162 BDA Digital Capture0"        checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"		  sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Lifeview FlyTV Express X1 MST-TA Hybrid (Analogue)" capturename="7162 BDA Analog Capture0" devid="ven_1131&amp;dev_7162&amp;subsys_18205168&amp;rev_00">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		  name="7162 BDA Analog Tv Tuner0"		checkdevice="true"/>
+        <filter cat="tvaudio"		  name="7162 BDA Analog TV Audio0"		checkdevice="true"/>
+        <filter cat="crossbar"		name="7162 BDA Analog Xbar0"			  checkdevice="true"/>
+        <filter cat="capture"		  name="7162 BDA Analog Capture0"		  checkdevice="true"/>
+        <filter cat="videncoder"	name="CyberLink MPEG Video Encoder"	checkdevice="false"/>
+        <filter cat="audencoder"	name="Cyberlink Audio Encoder"		  checkdevice="false"/>
+        <filter cat="mux"			    name="CyberLink MPEG Muxer"			    checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="2" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
       </connections>
     </tv>
   </capturecard>
