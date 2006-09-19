@@ -288,6 +288,10 @@ namespace MediaPortal.GUI.TV
             item.IconImage = string.Empty;
           }
           prog = GetCurrentProgram(current);
+
+          if (prog == null || prog.Title == String.Empty)
+            item.Label2 = current.Name;
+
           if (prog != null)
           {
             //                    item.Label3 = prog.Title + " [" + prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat) + "-" + prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat) + "]";
