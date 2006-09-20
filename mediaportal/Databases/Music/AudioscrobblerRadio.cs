@@ -28,10 +28,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Timers;
 using System.Threading;
 
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
+using MediaPortal.TagReader;
 
 namespace MediaPortal.Music.Database
 {
@@ -68,6 +70,8 @@ namespace MediaPortal.Music.Database
     private bool _recordToProfile = true;
     private bool _discoveryMode = false;
 
+    private MusicTag CurrentSongTag;
+    private System.Timers.Timer _nowPlayingTimer;
     private StreamPlaybackState _currentState = StreamPlaybackState.offline;
 
     // TO DO: 
@@ -113,6 +117,11 @@ namespace MediaPortal.Music.Database
 
     private void LoadSettings()
     {
+      CurrentSongTag = new MusicTag();
+      _nowPlayingTimer = new System.Timers.Timer();
+      _nowPlayingTimer.Interval =  180000;
+      _nowPlayingTimer.Elapsed += new ElapsedEventHandler(OnTimerTick);
+
       InfoScrobbler = AudioscrobblerUtils.Instance;
 
       _currentUser = AudioscrobblerBase.Username;
@@ -203,10 +212,18 @@ namespace MediaPortal.Music.Database
           _currentState = StreamPlaybackState.streaming;
           ToggleRecordToProfile(_recordToProfile);
           ToggleDiscoveryMode(_discoveryMode);
+          _nowPlayingTimer.Start();          
+          UpdateNowPlaying();
+
           return true;
         }
       }
       return false;
+    }
+
+    public void UpdateNowPlaying()
+    {
+      SendCommandRequest(@"http://ws.audioscrobbler.com/radio/np.php?session=" + _currentSession);
     }
 
     public bool ToggleRecordToProfile(bool submitTracks_)
@@ -261,6 +278,9 @@ namespace MediaPortal.Music.Database
             {
               Log.Info("AudioscrobblerRadio: Successfully send skip command");
               success = true;
+              // the website has to refresh therefore we wait a little bit
+              Thread.Sleep(1000);
+              UpdateNowPlaying();
             }
             break;
           case StreamControls.lovetrack:
@@ -409,9 +429,17 @@ namespace MediaPortal.Music.Database
       {
         string responseMessage = reader.ReadLine();
 
-        if (responseMessage.StartsWith("response=OK") || responseCode == HttpStatusCode.OK)
-          return true;
+        if (responseCode == HttpStatusCode.OK)
+        {
+          if (responseMessage.StartsWith("response=OK"))
+            return true;
 
+          if (responseMessage.StartsWith("price="))
+          {
+            ParseNowPlaying(reader);
+            return true;
+          }
+        }
         else
         {
           string logmessage = "AudioscrobblerRadio: ***** Unknown response! - " + responseMessage;
@@ -438,5 +466,83 @@ namespace MediaPortal.Music.Database
     }
     # endregion
 
+    #region Response parser
+    private void ParseNowPlaying(StreamReader responseStream_)
+    {
+      List<String> NowPlayingInfo = new List<string>();
+      String tmpString = String.Empty;
+      CurrentSongTag.Clear();
+
+      try
+      {
+        while ((tmpString = responseStream_.ReadLine()) != null)
+          NowPlayingInfo.Add(tmpString);
+
+        foreach (String token in NowPlayingInfo)
+        {
+          if (token.StartsWith("artist="))
+          {
+            if (token.Length > 7)
+              CurrentSongTag.Artist = token.Substring(7);
+          }
+          else if (token.StartsWith("album="))
+          {
+            if (token.Length > 6)
+              CurrentSongTag.Album = token.Substring(6);
+          }
+          else if (token.StartsWith("track="))
+          {
+            if (token.Length > 6)
+              CurrentSongTag.Title = token.Substring(6);
+          }
+          else if (token.StartsWith("station="))
+          {
+            if (token.Length > 8)
+              CurrentSongTag.Genre = token.Substring(8);
+          }
+          else if (token.StartsWith("albumcover_large="))
+          {
+            if (token.Length > 17)
+              CurrentSongTag.Comment = token.Substring(17);
+          }
+          else if (token.StartsWith("trackduration="))
+          {
+            if (token.Length > 14)
+            {
+              int trackLength = Convert.ToInt32(token.Substring(14));
+              CurrentSongTag.Duration = trackLength;
+
+              if (trackLength > 0)
+              {
+                _nowPlayingTimer.Stop();
+                _nowPlayingTimer.Interval = trackLength * 1000 + 500;                
+                _nowPlayingTimer.Start();
+              }
+            }
+          }
+        }
+        GUIPropertyManager.SetProperty("#Play.Current.Artist", CurrentSongTag.Artist);
+        GUIPropertyManager.SetProperty("#Play.Current.Album", CurrentSongTag.Album);
+        GUIPropertyManager.SetProperty("#Play.Current.Title", CurrentSongTag.Title);
+        GUIPropertyManager.SetProperty("#Play.Current.Genre", CurrentSongTag.Genre);
+        GUIPropertyManager.SetProperty("#Play.Current.Thumb", CurrentSongTag.Comment);
+        GUIPropertyManager.SetProperty("#trackduration", Convert.ToString(CurrentSongTag.Duration));
+
+
+        Log.Info("AudioscrobblerRadio: Current track: {0} [{1}] - {2} ({3})", CurrentSongTag.Artist, CurrentSongTag.Album, CurrentSongTag.Title, Util.Utils.SecondsToHMSString(CurrentSongTag.Duration));
+      }
+      catch (Exception ex)
+      {
+        Log.Error("AudioscrobblerRadio: Error parsing now playing info: {0}", ex.Message);
+      }
+    }
+    #endregion
+
+    #region Utils
+    private void OnTimerTick(object trash_, ElapsedEventArgs args_)
+    {     
+      UpdateNowPlaying();
+    }
+    #endregion
   }
 }
