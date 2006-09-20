@@ -2506,6 +2506,15 @@
 		<value>Aucune carte TV installé</value>
 	</string>
 	<string>
+		<id>754</id>
+		<value>Pas de tuner pour enregistrer la visualisation specifiée</value>
+	</string>
+	<string>
+		<id>755</id>
+		<value>Pas de tuner pour regarder la télé</value>
+	</string>
+
+	<string>
 		<id>756</id>
 		<value>Aucun tuner ne peut recevoir:{0}</value>
 	</string>
@@ -2614,6 +2623,14 @@
 		<value>Enregistrement avançé</value>
 	</string>
 	<string>
+		<id>789</id>
+		<value>Maintenant : </value>
+	</string>
+	<string>
+		<id>790</id>
+		<value>Suivant : </value>
+	</string>   
+	<string>
 		<id>798</id>
 		<value>bas</value>
 	</string>
@@ -2664,6 +2681,10 @@
 	<string>
 		<id>810</id>
 		<value>Carte</value>
+	</string>
+	<string>
+		<id>820</id>
+		<value>Supprimer l'enregistrement non vu ?</value>
 	</string>
 	<string>
 		<id>850</id>
@@ -3838,8 +3859,52 @@
 		<value>Pas de saisie !</value>
 	</string>
 	<string>
+		<id>2069</id>
+		<value>Jonction des fichiers videos terminée</value>
+	</string>
+	<string>
+		<id>2070</id>
+		<value>Conversion des fichiers video terminée</value>
+	</string>
+	<string>
+		<id>2071</id>
+		<value>Dvr-ms vers mpeg</value>
+	</string>
+	<string>
+		<id>2072</id>
+		<value>Démarrage conversion</value>
+	</string>
+	<string>
+		<id>2073</id>
+		<value>Choisissez le fichier dvr-ms à convertir :</value>
+	</string>
+	<string>
+		<id>2074</id>
+		<value>Choisissez le fichier à joindre :</value>
+	</string>
+	<string>
+		<id>2075</id>
+		<value>Definissez les nouveaux points de coupure</value>
+	</string>
+	<string>
+		<id>2076</id>
+		<value>Editer</value>
+	</string>
+	<string>
+		<id>2077</id>
+		<value>Couper</value>
+	</string>
+	<string>
+		<id>2078</id>
+		<value>Joindre</value>
+	</string>
+	<string>
+		<id>2079</id>
+		<value>Démarre jonction</value>
+	</string>
+	<string>
 		<id>2080</id>
-		<value>Fichier non soutenu</value>
+		<value>Fichier non supporté</value>
 	</string>
 	<string>
 		<id>2081</id>
@@ -3847,11 +3912,11 @@
 	</string>
 	<string>
 		<id>2082</id>
-		<value>MPEG: Fini de couper le fichier video</value>
+		<value>Fini de couper le fichier video</value>
 	</string>
 	<string>
 		<id>2083</id>
-		<value>Dvrms: Fini de couper le fichier video</value>
+		<value>Voulez-vous supprimer le fichier original ?</value>
 	</string>
 	<string>
 		<id>2084</id>
@@ -3870,9 +3935,17 @@
 		<value>vers l'arrière</value>
 	</string>
 	<string>
+		<id>2088</id>
+		<value>Liste de Coupe :</value>
+	</string>
+	<string>
 		<id>2089</id>
 		<value>ajuster la qualité</value>
 	</string>
+	<string>
+ 		<id>2090</id>
+ 		<value>Editeur Video</value>
+ 	</string>
 	<string>
 		<id>2091</id>
 		<value>Le processus a été annulé</value>
@@ -3884,6 +3957,10 @@
 	<string>
 		<id>2093</id>
 		<value>ajouter</value>
+	</string>
+	<string>
+		<id>2094</id>
+		<value>Liste Video</value>
 	</string>
 	<string>
 		<id>2095</id>
@@ -4181,6 +4258,104 @@
 		<id>2225</id>
 		<value>Répertoire créé</value>
 	</string>
+	<!-- Wikipedia Strings -->
+	<string>
+		<id>2500</id>
+		<value>Pas de critère de recherche saisi!</value>
+	</string>
+	<string>
+		<id>2501</id>
+		<value>Entrez un critère de recherche valide!</value>
+	</string>
+	<string>
+		<id>2502</id>
+		<value>Selectionnez votre Wikipedia local:</value>
+	</string>
+	<string>
+		<id>2503</id>
+		<value>Wikipedia sélectionné :</value>
+	</string>
+	<string>
+		<id>2504</id>
+		<value>Désolé, pas d'article trouvé pour votre critère de recherche...</value>
+	</string>
+	<string>
+		<id>2505</id>
+		<value>Liens vers d'autres articles:</value>
+	</string>
+	<string>
+		<id>2506</id>
+		<value>Pas de lien pour cet article.</value>
+	</string>
+	<string>
+		<id>2507</id>
+		<value>Images pour cet article :</value>
+	</string>
+	<string>
+		<id>2508</id>
+		<value>Pas d'image referencées par cet article.</value>
+	</string>
+	<string>
+		<id>2509</id>
+		<value>Cette page est seulement une redirection.</value>
+	</string>
+	<string>
+		<id>2510</id>
+		<value>Choisissez la cible de redirection à partir de la liste de liens.</value>
+	</string>
+	<string>
+		<id>2511</id>
+		<value>Liens</value>
+	</string>
+	<string>
+		<id>2512</id>
+		<value>L'image pourrait ne pas être affichée.</value>
+	</string>
+	<string>
+		<id>2513</id>
+		<value>Regardez le fichier de logs.</value>
+	</string>
+	<string>
+		<id>2514</id>
+		<value>Retour au text</value>
+	</string>
+	<string>
+		<id>2515</id>
+		<value>Images</value>
+	</string>
+	<string>
+		<id>2516</id>
+		<value>Wikipedia</value>
+	</string>	
+	<string>
+		<id>2600</id>
+		<value>Anglais</value>
+	</string>
+	<string>
+		<id>2601</id>
+		<value>Allemand</value>
+	</string>
+	<string>
+		<id>2602</id>
+		<value>Français</value>
+	</string>
+	<string>
+		<id>2603</id>
+		<value>Pays-bas</value>
+	</string>
+	<string>
+		<id>2604</id>
+		<value>Norwégien</value>
+	</string>
+	<string>
+		<id>2605</id>
+		<value>Suédois</value>
+	</string>
+	<string>
+		<id>2606</id>
+		<value>Italien</value>
+	</string>
+	<!-- End of Wikipedia Strings -->
 	<string>
 		<id>2997</id>
 		<value>h</value>
@@ -4410,6 +4585,10 @@
 		<value>Information non disponible</value>
 	</string>
 	<string>
+		<id>4550</id>
+		<value>File d'attente</value>
+	</string>
+	<string>
 		<id>4551</id>
 		<value>Lancer après</value>
 	</string>
@@ -4568,6 +4747,10 @@
 	<string>
 		<id>6007</id>
 		<value>Options d'enregistrement</value>
+	</string>
+ 	<string>
+ 		<id>6008</id>
+ 		<value>Tri des canaux</value>
 	</string>
 	<string>
 		<id>6009</id>
@@ -4834,6 +5017,26 @@
 		<value>Mini EPG</value>
 	</string>
 	<string>
+		<id>11000</id>
+		<value>Crop settings</value>
+	</string>
+	<string>
+	<id>11001</id>
+		<value>Haut :</value>
+	</string>
+	<string>
+		<id>11002</id>
+		<value>Bas :</value>
+	</string>
+	<string>
+		<id>11003</id>
+		<value>Gauche :</value>
+	</string>
+	<string>
+		<id>11004</id>
+		<value>Droite :</value>
+	</string>
+	<string>
 		<id>12902</id>
 		<value>MSN Messenger OSD</value>
 	</string>
@@ -5018,6 +5221,78 @@
 		<value>Résultats de la recherche pour {0} - page {1}</value>
 	</string>
 	<string>
+		<id>33000</id>
+		<value>Scrobble On</value>
+	</string>
+	<string>
+		<id>33001</id>
+		<value>Scrobble: Similaire</value>
+	</string>
+	<string>
+		<id>33002</id>
+		<value>Scrobble: Voisins</value>
+	</string>
+	<string>
+		<id>33003</id>
+		<value>Scrobble: Tags</value>
+	</string>
+	<string>
+		<id>33004</id>
+		<value>Scrobble: Récemment</value>
+	</string>
+	<string>
+		<id>33005</id>
+		<value>Compte : </value>
+	</string>
+	<string>
+		<id>33006</id>
+		<value>Scrobble: Amis</value>
+	</string>
+	<string>
+		<id>33007</id>
+		<value>Scrobble: Déconnecté</value>
+	</string>
+	<string>
+		<id>33010</id>
+		<value>Remplir automatiquent la liste de lecture avec</value>
+	</string>      
+	<string>
+		<id>33011</id>
+		<value>Pistes similaires</value>
+	</string>
+	<string>
+		<id>33012</id>
+		<value>Pistes que votre voisin aime</value>
+	</string>
+	<string>
+		<id>33013</id>
+		<value>Pistes convenant au tag configuré</value>
+	</string>
+	<string>
+		<id>33014</id>
+		<value>Pistes jouées récemment</value>
+	</string>
+	<string>
+		<id>33016</id>
+		<value>Pistes que vos amis aiment</value>
+	</string>
+	<string>
+		<id>33017</id>
+		<value>Pistes aléatoires</value>
+	</string>
+	<string>
+		<id>33030</id>
+		<value>Pistes Top album</value>
+	</string>
+	<string>
+		<id>33031</id>
+		<value>Autres pistes tagguées avec : </value>
+	</string>
+	<string>
+		<id>33040</id>
+		<value>Copier joué maintenant spam au presse-papier</value>
+	</string>                          
+	<string>
 		<id>99845</id>
 		<value>Recherche sur TV.com</value>
 	</string>
@@ -5188,6 +5463,10 @@
 	<string>
 		<id>100506</id>
 		<value>Musique/Favoris</value>
+	</string>
+	<string>
+		<id>100511</id>
+		<value>Musique/Plein écran</value>
 	</string>
 	<string>
 		<id>100600</id>
