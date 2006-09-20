@@ -1321,7 +1321,25 @@ namespace MediaPortal.InputDevices
 
     string GetActionName(string friendlyName)
     {
-      return "ACTION_" + friendlyName.Replace(' ', '_').ToUpper();
+      string actionName = string.Empty;
+
+      try
+      {
+        if (Enum.Parse(typeof(Action.ActionType), "ACTION_" + friendlyName.Replace(' ', '_').ToUpper()) != null)
+          actionName = "ACTION_" + friendlyName.Replace(' ', '_').ToUpper();
+      }
+      catch (ArgumentException)
+      {
+        try
+        {
+          if (Enum.Parse(typeof(Action.ActionType), friendlyName.Replace(' ', '_').ToUpper()) != null)
+            actionName = friendlyName.Replace(' ', '_').ToUpper();
+        }
+        catch (ArgumentException)
+        { }
+      }
+
+      return actionName;
     }
 
 
