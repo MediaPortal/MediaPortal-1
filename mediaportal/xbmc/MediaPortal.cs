@@ -95,7 +95,7 @@ public class MediaPortalApp : D3DApp, IRender
   private bool useScreenSaver = true;
   private int timeScreenSaver = 60;
   private bool restoreTopMost = false;
-  private bool startWithBasicHome = false;
+  private bool _startWithBasicHome = false;
   private bool _suspended = false;
   private bool _onResumeRunning = false;
 #if AUTOUPDATE
@@ -741,8 +741,16 @@ public class MediaPortalApp : D3DApp, IRender
       return;
     }
     _suspended = false;
-    Log.Info("Main: Switch to home screen");
-    GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
+    if (_startWithBasicHome)
+    {
+      Log.Info("Main: Switch to basic home screen");
+      GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SECOND_HOME);
+    }
+    else
+    {
+      Log.Info("Main: Switch to home screen");
+      GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
+    }
     //_suspended = false;
 
     EXECUTION_STATE oldState = EXECUTION_STATE.ES_CONTINUOUS;
@@ -1065,9 +1073,9 @@ public class MediaPortalApp : D3DApp, IRender
     // Edit Michel
     using (Settings xmlreader = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
     {
-      startWithBasicHome = xmlreader.GetValueAsBool("general", "startbasichome", false);
+      _startWithBasicHome = xmlreader.GetValueAsBool("general", "startbasichome", false);
     }
-    if ((startWithBasicHome) && (File.Exists(GUIGraphicsContext.Skin + @"\basichome.xml")))
+    if ((_startWithBasicHome) && (File.Exists(GUIGraphicsContext.Skin + @"\basichome.xml")))
     {
       GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SECOND_HOME);
     }
@@ -1564,7 +1572,7 @@ public class MediaPortalApp : D3DApp, IRender
           }
           else
           {
-            if (startWithBasicHome)
+            if (_startWithBasicHome)
             {
               homeMsg =
                   new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0,
