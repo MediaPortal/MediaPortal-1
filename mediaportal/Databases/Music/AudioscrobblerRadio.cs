@@ -53,7 +53,7 @@ namespace MediaPortal.Music.Database
     lovetrack = 1,
   }
 
-  public class AudioscrobblerRadio
+  public class AudioscrobblerRadio //: IPlayer
   {
     // constructor
     public AudioscrobblerRadio()
@@ -140,7 +140,7 @@ namespace MediaPortal.Music.Database
           //MyTags.Add("cover");
           //MyTags.Add("melodic death metal");
           //TuneIntoTags(MyTags);
-
+          //TuneIntoPersonalRadio();
           //TuneIntoPersonalRadio(_currentUser);  <-- subscriber only
           //TuneIntoGroupRadio("MediaPortal Users");
           TuneIntoRecommendedRadio(_currentUser);
@@ -205,14 +205,18 @@ namespace MediaPortal.Music.Database
     {
       _currentState = StreamPlaybackState.starting;
       // often the buffer is too slow for the playback to start
-      for (int i = 0; i < 5; i++)
+      for (int i = 0; i < 3; i++)
       {
         if (g_Player.Play(_currentRadioURL))
         {
           _currentState = StreamPlaybackState.streaming;
+          Thread.Sleep(50);
           ToggleRecordToProfile(_recordToProfile);
+          Thread.Sleep(50);
           ToggleDiscoveryMode(_discoveryMode);
-          _nowPlayingTimer.Start();          
+          Thread.Sleep(50);
+          _nowPlayingTimer.Start();
+          Thread.Sleep(50);
           UpdateNowPlaying();
 
           return true;
@@ -220,6 +224,59 @@ namespace MediaPortal.Music.Database
       }
       return false;
     }
+
+    //public override bool Playing
+    //{
+    //  get
+    //  {
+    //    return _currentState == StreamPlaybackState.streaming;
+    //  }
+    //}
+
+    //public override string CurrentFile
+    //{
+    //  get
+    //  {
+    //    return _currentRadioURL;
+    //  }
+    //}
+
+    //public override double Duration
+    //{
+    //  get
+    //  {
+    //    double tmpDuration = 0;
+    //    if (CurrentSongTag != null)
+    //    {
+    //      tmpDuration = Convert.ToDouble(CurrentSongTag.Duration);
+    //    }
+    //    return tmpDuration;
+    //  }
+    //}
+
+    //public override bool HasVideo
+    //{
+    //  get
+    //  {
+    //    return false;
+    //  }
+    //}
+
+    //public override bool IsRadio
+    //{
+    //  get
+    //  {
+    //    return true;
+    //  }
+    //}
+
+    //public override bool Paused
+    //{
+    //  get
+    //  {
+    //    return _currentState == StreamPlaybackState.paused;
+    //  }
+    //}
 
     public void UpdateNowPlaying()
     {
@@ -276,10 +333,13 @@ namespace MediaPortal.Music.Database
           case StreamControls.skiptrack:
             if (SendCommandRequest(baseUrl + @"&command=skip"))
             {
+              Thread.Sleep(750);
               Log.Info("AudioscrobblerRadio: Successfully send skip command");
+              Thread.Sleep(750);
               success = true;
+              Thread.Sleep(750);
               // the website has to refresh therefore we wait a little bit
-              Thread.Sleep(1000);
+              Thread.Sleep(750);              
               UpdateNowPlaying();
             }
             break;
@@ -394,7 +454,9 @@ namespace MediaPortal.Music.Database
       // send the command
       try
       {
+        
         request = (HttpWebRequest)WebRequest.Create(url_);
+        request.Timeout = 20000;
         if (request == null)
           throw (new Exception());
       }
@@ -515,7 +577,7 @@ namespace MediaPortal.Music.Database
               if (trackLength > 0)
               {
                 _nowPlayingTimer.Stop();
-                _nowPlayingTimer.Interval = trackLength * 1000 + 500;                
+                _nowPlayingTimer.Interval = trackLength * 1000;                
                 _nowPlayingTimer.Start();
               }
             }
