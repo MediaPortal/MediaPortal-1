@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<mappings version="3">
+	<remote family="Test">
+		<button name="Test" code="0">
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="93" cmdkeychar="48" cmdkeycode="0" sound="cursor.wav" focus="true" />
+		</button>
+	</remote>
+</mappings>

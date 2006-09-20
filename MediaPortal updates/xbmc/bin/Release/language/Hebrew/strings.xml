@@ -1,0 +1,5208 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<strings>
+   <characters>512</characters>
+   <string>
+      <id>0</id>
+      <value>תוכניות</value>
+   </string>
+   <string>
+      <id>1</id>
+      <value>תמונות</value>
+   </string>
+   <string>
+      <id>2</id>
+      <value>מוסיקה</value>
+   </string>
+   <string>
+      <id>3</id>
+      <value>סרטים</value>
+   </string>
+   <string>
+      <id>4</id>
+      <value>מדריך שידורים</value>
+   </string>
+   <string>
+      <id>5</id>
+      <value>תצורה</value>
+   </string>
+   <string>
+      <id>6</id>
+      <value>XBOX Media Center CVS build</value>
+   </string>
+   <string>
+      <id>7</id>
+      <value>קבצים</value>
+   </string>
+   <string>
+      <id>8</id>
+      <value>מזג אוויר</value>
+   </string>
+   <string>
+      <id>9</id>
+      <value>חדשות</value>
+   </string>
+   <string>
+      <id>10</id>
+      <value>מתכונים</value>
+   </string>
+   <string>
+      <id>11</id>
+      <value>שני</value>
+   </string>
+   <string>
+      <id>12</id>
+      <value>שלישי</value>
+   </string>
+   <string>
+      <id>13</id>
+      <value>רביעי</value>
+   </string>
+   <string>
+      <id>14</id>
+      <value>חמישי</value>
+   </string>
+   <string>
+      <id>15</id>
+      <value>שישי</value>
+   </string>
+   <string>
+      <id>16</id>
+      <value>שבת</value>
+   </string>
+   <string>
+      <id>17</id>
+      <value>ראשון</value>
+   </string>
+   <string>
+      <id>21</id>
+      <value>ינואר</value>
+   </string>
+   <string>
+      <id>22</id>
+      <value>פברואר</value>
+   </string>
+   <string>
+      <id>23</id>
+      <value>מרץ</value>
+   </string>
+   <string>
+      <id>24</id>
+      <value>אפריל</value>
+   </string>
+   <string>
+      <id>25</id>
+      <value>מאי</value>
+   </string>
+   <string>
+      <id>26</id>
+      <value>יוני</value>
+   </string>
+   <string>
+      <id>27</id>
+      <value>יולי</value>
+   </string>
+   <string>
+      <id>28</id>
+      <value>אוגוסט</value>
+   </string>
+   <string>
+      <id>29</id>
+      <value>ספטמבר</value>
+   </string>
+   <string>
+      <id>30</id>
+      <value>אוקטובר</value>
+   </string>
+   <string>
+      <id>31</id>
+      <value>נובמבר</value>
+   </string>
+   <string>
+      <id>32</id>
+      <value>דצמבר</value>
+   </string>
+   <string>
+      <id>50</id>
+      <value>סרטי DVD</value>
+   </string>
+   <string>
+      <id>100</id>
+      <value>מבט: צלמיות</value>
+   </string>
+   <string>
+      <id>101</id>
+      <value>מבט: רשימה</value>
+   </string>
+   <string>
+      <id>102</id>
+      <value>סרוק</value>
+   </string>
+   <string>
+      <id>103</id>
+      <value>מיין לפי: שם</value>
+   </string>
+   <string>
+      <id>104</id>
+      <value>מיין לפי: תאריך</value>
+   </string>
+   <string>
+      <id>105</id>
+      <value>מיין: לפי גודל</value>
+   </string>
+   <string>
+      <id>106</id>
+      <value>לא</value>
+   </string>
+   <string>
+      <id>107</id>
+      <value>כן</value>
+   </string>
+   <string>
+      <id>108</id>
+      <value>שקופיות</value>
+   </string>
+   <string>
+      <id>109</id>
+      <value>צור תמונות ממוזערות</value>
+   </string>
+   <string>
+      <id>110</id>
+      <value>צור תמונות ממוזערות</value>
+   </string>
+   <string>
+      <id>111</id>
+      <value>קיצורי דרך</value>
+   </string>
+   <string>
+      <id>112</id>
+      <value>מושהה</value>
+   </string>
+   <string>
+      <id>113</id>
+      <value>קבצים: מקור</value>
+   </string>
+   <string>
+      <id>114</id>
+      <value>קבצים: יעד</value>
+   </string>
+   <string>
+      <id>115</id>
+      <value>העתק</value>
+   </string>
+   <string>
+      <id>116</id>
+      <value>העבר</value>
+   </string>
+   <string>
+      <id>117</id>
+      <value>מחק</value>
+   </string>
+   <string>
+      <id>118</id>
+      <value>שנה שם</value>
+   </string>
+   <string>
+      <id>119</id>
+      <value>תיקיה חדשה</value>
+   </string>
+   <string>
+      <id>120</id>
+      <value>אשר העתקת קובץ</value>
+   </string>
+   <string>
+      <id>121</id>
+      <value>אשר העברת קובץ</value>
+   </string>
+   <string>
+      <id>122</id>
+      <value>אשר מחיקת קובץ</value>
+   </string>
+   <string>
+      <id>123</id>
+      <value>להעתיק קבצים?</value>
+   </string>
+   <string>
+      <id>124</id>
+      <value>להעביר קבצים?</value>
+   </string>
+   <string>
+      <id>125</id>
+      <value>למחוק קבצים?</value>
+   </string>
+   <string>
+      <id>126</id>
+      <value>מצב</value>
+   </string>
+   <string>
+      <id>127</id>
+      <value>אובייקטים</value>
+   </string>
+   <string>
+      <id>128</id>
+      <value>כללי</value>
+   </string>
+   <string>
+      <id>129</id>
+      <value>שקופיות</value>
+   </string>
+   <string>
+      <id>130</id>
+      <value>מידע מערכת</value>
+   </string>
+   <string>
+      <id>131</id>
+      <value>מסך</value>
+   </string>
+   <string>
+      <id>132</id>
+      <value>אלבומים</value>
+   </string>
+   <string>
+      <id>133</id>
+      <value>אמנים</value>
+   </string>
+   <string>
+      <id>134</id>
+      <value>סרטים</value>
+   </string>
+   <string>
+      <id>135</id>
+      <value>ז'אנר</value>
+   </string>
+   <string>
+      <id>136</id>
+      <value>רשימת ניגון</value>
+   </string>
+   <string>
+      <id>137</id>
+      <value>חיפוש</value>
+   </string>
+   <string>
+      <id>138</id>
+      <value>מידע מערכת</value>
+   </string>
+   <string>
+      <id>139</id>
+      <value>טמפרטורה:</value>
+   </string>
+   <string>
+      <id>140</id>
+      <value>CPU:</value>
+   </string>
+   <string>
+      <id>141</id>
+      <value>GPU:</value>
+   </string>
+   <string>
+      <id>142</id>
+      <value>שעה:</value>
+   </string>
+   <string>
+      <id>143</id>
+      <value>נוכחי:</value>
+   </string>
+   <string>
+      <id>144</id>
+      <value>גרסה:</value>
+   </string>
+   <string>
+      <id>145</id>
+      <value>רשת:</value>
+   </string>
+   <string>
+      <id>146</id>
+      <value>סוג:</value>
+   </string>
+   <string>
+      <id>147</id>
+      <value>סטטי</value>
+   </string>
+   <string>
+      <id>148</id>
+      <value>DHCP</value>
+   </string>
+   <string>
+      <id>149</id>
+      <value>MAC</value>
+   </string>
+   <string>
+      <id>150</id>
+      <value>IP:</value>
+   </string>
+   <string>
+      <id>151</id>
+      <value>Link:</value>
+   </string>
+   <string>
+      <id>152</id>
+      <value>Half duplex</value>
+   </string>
+   <string>
+      <id>153</id>
+      <value>Full duplex</value>
+   </string>
+   <string>
+      <id>154</id>
+      <value>אחסון</value>
+   </string>
+   <string>
+      <id>155</id>
+      <value>כונן</value>
+   </string>
+   <string>
+      <id>156</id>
+      <value>חופשי</value>
+   </string>
+   <string>
+      <id>157</id>
+      <value>וידאו</value>
+   </string>
+   <string>
+      <id>158</id>
+      <value>זכרון פנוי</value>
+   </string>
+   <string>
+      <id>159</id>
+      <value>אין חיבור</value>
+   </string>
+   <string>
+      <id>160</id>
+      <value>פנוי</value>
+   </string>
+   <string>
+      <id>161</id>
+      <value>לא פנוי</value>
+   </string>
+   <string>
+      <id>162</id>
+      <value>מגש פתוח</value>
+   </string>
+   <string>
+      <id>163</id>
+      <value>קורא</value>
+   </string>
+   <string>
+      <id>164</id>
+      <value>אין כונן</value>
+   </string>
+   <string>
+      <id>165</id>
+      <value>נמצא כונן</value>
+   </string>
+   <string>
+      <id>166</id>
+      <value>סקין:</value>
+   </string>
+   <string>
+      <id>167</id>
+      <value>שרת FTP:</value>
+   </string>
+   <string>
+      <id>168</id>
+      <value>זמן סנכרון:</value>
+   </string>
+   <string>
+      <id>169</id>
+      <value>רזולוציה:</value>
+   </string>
+   <string>
+      <id>170</id>
+      <value>אלבום:</value>
+   </string>
+   <string>
+      <id>171</id>
+      <value>אמן:</value>
+   </string>
+   <string>
+      <id>172</id>
+      <value>תאריך שחרור:</value>
+   </string>
+   <string>
+      <id>173</id>
+      <value>דירוג:</value>
+   </string>
+   <string>
+      <id>174</id>
+      <value>ז'אנר:</value>
+   </string>
+   <string>
+      <id>175</id>
+      <value>טון:</value>
+   </string>
+   <string>
+      <id>176</id>
+      <value>סגנון:</value>
+   </string>
+   <string>
+      <id>177</id>
+      <value>בקורת:</value>
+   </string>
+   <string>
+      <id>178</id>
+      <value>קטעים:</value>
+   </string>
+   <string>
+      <id>179</id>
+      <value>שיר</value>
+   </string>
+   <string>
+      <id>180</id>
+      <value>זמן</value>
+   </string>
+   <string>
+      <id>181</id>
+      <value>בחר אלבום</value>
+   </string>
+   <string>
+      <id>182</id>
+      <value>קטעים</value>
+   </string>
+   <string>
+      <id>183</id>
+      <value>בקורת</value>
+   </string>
+   <string>
+      <id>184</id>
+      <value>רענון</value>
+   </string>
+   <string>
+      <id>185</id>
+      <value>מחפש אלבום</value>
+   </string>
+   <string>
+      <id>186</id>
+      <value>אישור</value>
+   </string>
+   <string>
+      <id>187</id>
+      <value>לא נמצא אלבום!</value>
+   </string>
+   <string>
+      <id>188</id>
+      <value>בחר הכל</value>
+   </string>
+   <string>
+      <id>189</id>
+      <value>סוקר מידע ממדיה</value>
+   </string>
+   <string>
+      <id>190</id>
+      <value>שמור</value>
+   </string>
+   <string>
+      <id>191</id>
+      <value>ערבב</value>
+   </string>
+   <string>
+      <id>192</id>
+      <value>מחק</value>
+   </string>
+   <string>
+      <id>193</id>
+      <value>סרוק</value>
+   </string>
+   <string>
+      <id>194</id>
+      <value>מחפש...</value>
+   </string>
+   <string>
+      <id>195</id>
+      <value>לא נמצא מידע ב-IMDB!</value>
+   </string>
+   <string>
+      <id>196</id>
+      <value>בחר סרט:</value>
+   </string>
+   <string>
+      <id>197</id>
+      <value>מבקש מידע מ-IMDB</value>
+   </string>
+   <string>
+      <id>198</id>
+      <value>טוען פרטי סרט</value>
+   </string>
+   <string>
+      <id>199</id>
+      <value>במאי:</value>
+   </string>
+   <string>
+      <id>200</id>
+      <value>תסריטאי:</value>
+   </string>
+   <string>
+      <id>201</id>
+      <value>שנה:</value>
+   </string>
+   <string>
+      <id>202</id>
+      <value>שורת נושא:</value>
+   </string>
+   <string>
+      <id>203</id>
+      <value>עלילה:</value>
+   </string>
+   <string>
+      <id>204</id>
+      <value>דירוג:</value>
+   </string>
+   <string>
+      <id>205</id>
+      <value>הצבעות:</value>
+   </string>
+   <string>
+      <id>206</id>
+      <value>שחקנים</value>
+   </string>
+   <string>
+      <id>207</id>
+      <value>עלילה</value>
+   </string>
+   <string>
+      <id>208</id>
+      <value>הצג</value>
+   </string>
+   <string>
+      <id>209</id>
+      <value>הבא</value>
+   </string>
+   <string>
+      <id>210</id>
+      <value>הקודם</value>
+   </string>
+   <string>
+      <id>211</id>
+      <value>מחפש ישום</value>
+   </string>
+   <string>
+      <id>212</id>
+      <value>ישום נמצא</value>
+   </string>
+   <string>
+      <id>213</id>
+      <value>כוונון ממשק משתמש</value>
+   </string>
+   <string>
+      <id>214</id>
+      <value>כוונון מסך</value>
+   </string>
+   <string>
+      <id>215</id>
+      <value>רך יותר</value>
+   </string>
+   <string>
+      <id>216</id>
+      <value>הגדל/הקטן</value>
+   </string>
+   <string>
+      <id>217</id>
+      <value>מתח</value>
+   </string>
+   <string>
+      <id>218</id>
+      <value>כונן DVD</value>
+   </string>
+   <string>
+      <id>219</id>
+      <value>בבקשה הכנס דיסק</value>
+   </string>
+   <string>
+      <id>220</id>
+      <value>תיקיה על הרשת</value>
+   </string>
+   <string>
+      <id>221</id>
+      <value>רשת לא מחוברת</value>
+   </string>
+   <string>
+      <id>222</id>
+      <value>בטל</value>
+   </string>
+   <string>
+      <id>223</id>
+      <value>מעבר אוטומטי למסך רחב</value>
+   </string>
+   <string>
+      <id>224</id>
+      <value>מהירות</value>
+   </string>
+   <string>
+      <id>225</id>
+      <value>זמן מעבר</value>
+   </string>
+   <string>
+      <id>226</id>
+      <value>אפשר PAL60</value>
+   </string>
+   <string>
+      <id>227</id>
+      <value>אפשר CDDB</value>
+   </string>
+   <string>
+      <id>228</id>
+      <value>ערבב רשימת קטעים בטעינה</value>
+   </string>
+   <string>
+      <id>229</id>
+      <value>זמן עצירה של הכונן הקשיח (דקות(</value>
+   </string>
+   <string>
+      <id>230</id>
+      <value>פילטרים</value>
+   </string>
+   <string>
+      <id>231</id>
+      <value>אין</value>
+   </string>
+   <string>
+      <id>232</id>
+      <value>נקודה</value>
+   </string>
+   <string>
+      <id>233</id>
+      <value>ליניארי</value>
+   </string>
+   <string>
+      <id>234</id>
+      <value>אנאיזוטרופי</value>
+   </string>
+   <string>
+      <id>235</id>
+      <value>Quincunx</value>
+   </string>
+   <string>
+      <id>236</id>
+      <value>Gaussian Cubic</value>
+   </string>
+   <string>
+      <id>237</id>
+      <value>הגדלה:</value>
+   </string>
+   <string>
+      <id>238</id>
+      <value>הגדלה:</value>
+   </string>
+   <string>
+      <id>240</id>
+      <value>הרץ DVD-Video באופן אוטומטי</value>
+   </string>
+   <string>
+      <id>241</id>
+      <value>הרץ VCD/SVCD באופן אוטומטי</value>
+   </string>
+   <string>
+      <id>242</id>
+      <value>הרץ Audio-CD באופן אוטומטי</value>
+   </string>
+   <string>
+      <id>243</id>
+      <value>הרץ XBOX באופן אוטומטי</value>
+   </string>
+   <string>
+      <id>244</id>
+      <value>הרץ קטעי וידאו באופן אוטומטי</value>
+   </string>
+   <string>
+      <id>245</id>
+      <value>השמע מוזיקה באופן אוטומטי</value>
+   </string>
+   <string>
+      <id>246</id>
+      <value>הצג תמונות באופן אוטומטי</value>
+   </string>
+   <string>
+      <id>247</id>
+      <value>סקריפטים</value>
+   </string>
+   <string>
+      <id>248</id>
+      <value>שפה</value>
+   </string>
+   <string>
+      <id>249</id>
+      <value>מוזיקה</value>
+   </string>
+   <string>
+      <id>250</id>
+      <value>ויזואליזציה</value>
+   </string>
+   <string>
+      <id>251</id>
+      <value>בחר תיקיית יעד</value>
+   </string>
+   <string>
+      <id>252</id>
+      <value>השמע בכל הרמקולים</value>
+   </string>
+   <string>
+      <id>253</id>
+      <value>מספר ערוצים</value>
+   </string>
+   <string>
+      <id>254</id>
+      <value>DD Stereo Passthrough</value>
+   </string>
+   <string>
+      <id>255</id>
+      <value>CDDB</value>
+   </string>
+   <string>
+      <id>256</id>
+      <value>מתשאל מידע כונן</value>
+   </string>
+   <string>
+      <id>257</id>
+      <value>שגיאה</value>
+   </string>
+   <string>
+      <id>258</id>
+      <value>אפשר סימוני ID3</value>
+   </string>
+   <string>
+      <id>259</id>
+      <value>פותח</value>
+   </string>
+   <string>
+      <id>260</id>
+      <value>Shoutcast</value>
+   </string>
+   <string>
+      <id>261</id>
+      <value>מחכה להתחלה....</value>
+   </string>
+   <string>
+      <id>262</id>
+      <value>פלט סקריפט</value>
+   </string>
+   <string>
+      <id>263</id>
+      <value>שרת HTTP:</value>
+   </string>
+   <string>
+      <id>264</id>
+      <value>הקלט</value>
+   </string>
+   <string>
+      <id>265</id>
+      <value>עצור הקלטה</value>
+   </string>
+   <string>
+      <id>266</id>
+      <value>מיין לפי: רצועה</value>
+   </string>
+   <string>
+      <id>267</id>
+      <value>מיין לפי: זמן</value>
+   </string>
+   <string>
+      <id>268</id>
+      <value>מיין לפי: כותרת</value>
+   </string>
+   <string>
+      <id>269</id>
+      <value>מיין לפי: אמן</value>
+   </string>
+   <string>
+      <id>270</id>
+      <value>מיין לפי: אלבום</value>
+   </string>
+   <string>
+      <id>271</id>
+      <value>ה 100 העליונים</value>
+   </string>
+   <string>
+      <id>272</id>
+      <value>Top Left Overscan Compensation</value>
+   </string>
+   <string>
+      <id>273</id>
+      <value>Bottom Right Overscan Compensation</value>
+   </string>
+   <string>
+      <id>274</id>
+      <value>מיקום כותרות</value>
+   </string>
+   <string>
+      <id>275</id>
+      <value>כוונון יחס פיקסלים</value>
+   </string>
+   <string>
+      <id>276</id>
+      <value>-אזהרה!- השאר 0,0 לאיכות הכי טובה, שנה בכדי להקטין את הוידיאו להתאמה</value>
+   </string>
+   <string>
+      <id>277</id>
+      <value>העבר את הסמן לקביעת מיקום כותרות</value>
+   </string>
+   <string>
+      <id>278</id>
+      <value>-חשוב!- בכדי לקבל איכות טובה ביותר, שנה את המלבן כך שיהיה ריבוע בצורה מושלמת</value>
+   </string>
+   <string>
+      <id>279</id>
+      <value>לא ניתן לטעון תצורה</value>
+   </string>
+   <string>
+      <id>280</id>
+      <value>השתמש בערכי ברירת מחדל</value>
+   </string>
+   <string>
+      <id>281</id>
+      <value>בדוק את קבצי הXML</value>
+   </string>
+   <string>
+      <id>282</id>
+      <value>נמצא פריט %i</value>
+   </string>
+   <string>
+      <id>283</id>
+      <value>תוצאות חיפוש</value>
+   </string>
+   <string>
+      <id>284</id>
+      <value>לא נמצאו תוצאות</value>
+   </string>
+   <string>
+      <id>285</id>
+      <value>Deinterlace filter</value>
+   </string>
+   <string>
+      <id>286</id>
+      <value>Postprocessing filter</value>
+   </string>
+   <string>
+      <id>287</id>
+      <value>כותרות</value>
+   </string>
+   <string>
+      <id>288</id>
+      <value>גופן</value>
+   </string>
+   <string>
+      <id>289</id>
+      <value>גודל</value>
+   </string>
+   <string>
+      <id>290</id>
+      <value>הגברה (dB)</value>
+   </string>
+   <string>
+      <id>291</id>
+      <value>ווידאו</value>
+   </string>
+   <string>
+      <id>292</id>
+      <value>קול</value>
+   </string>
+   <string>
+      <id>293</id>
+      <value>כותרות</value>
+   </string>
+   <string>
+      <id>294</id>
+      <value>צור סימנייה</value>
+   </string>
+   <string>
+      <id>295</id>
+      <value>עבור סימניות</value>
+   </string>
+   <string>
+      <id>296</id>
+      <value>מחק סימניות</value>
+   </string>
+   <string>
+      <id>297</id>
+      <value>AVDelay</value>
+   </string>
+   <string>
+      <id>298</id>
+      <value>גלשן</value>
+   </string>
+   <string>
+      <id>299</id>
+      <value>זמן ריצה:</value>
+   </string>
+   <string>
+      <id>300</id>
+      <value>1. שפה</value>
+   </string>
+   <string>
+      <id>301</id>
+      <value>2. עוצמה</value>
+   </string>
+   <string>
+      <id>302</id>
+      <value>3. Stream</value>
+   </string>
+   <string>
+      <id>303</id>
+      <value>השהייה</value>
+   </string>
+   <string>
+      <id>304</id>
+      <value>שפה</value>
+   </string>
+   <string>
+      <id>305</id>
+      <value>אפשר</value>
+   </string>
+   <string>
+      <id>306</id>
+      <value>Non-Interleaved</value>
+   </string>
+   <string>
+      <id>307</id>
+      <value>אוטומטי</value>
+   </string>
+   <string>
+      <id>308</id>
+      <value>vertical deblocking filter</value>
+   </string>
+   <string>
+      <id>309</id>
+      <value>horizontal deblocking filter</value>
+   </string>
+   <string>
+      <id>310</id>
+      <value>בהירה/חדות אוטומטית</value>
+   </string>
+   <string>
+      <id>311</id>
+      <value>Dering</value>
+   </string>
+   <string>
+      <id>312</id>
+      <value>(0=אוטומטי)</value>
+   </string>
+   <string>
+      <id>313</id>
+      <value>מארגן בסיס נתונים</value>
+   </string>
+   <string>
+      <id>314</id>
+      <value>מכין...</value>
+   </string>
+   <string>
+      <id>315</id>
+      <value>שגיאה בבסיס הנתונים</value>
+   </string>
+   <string>
+      <id>316</id>
+      <value>מחפש שירים...</value>
+   </string>
+   <string>
+      <id>317</id>
+      <value>ארגון בסיס הנתונים הסתיים בהצלחה</value>
+   </string>
+   <string>
+      <id>318</id>
+      <value>מסמן שירים מחוקים</value>
+   </string>
+   <string>
+      <id>319</id>
+      <value>שגיאה בעת ארגון מחדש של השירים</value>
+   </string>
+   <string>
+      <id>320</id>
+      <value>מחפש אמן...</value>
+   </string>
+   <string>
+      <id>321</id>
+      <value>שגיאה בעת ארגון מחדש של אמנים</value>
+   </string>
+   <string>
+      <id>322</id>
+      <value>מחפש ז'אנר...</value>
+   </string>
+   <string>
+      <id>323</id>
+      <value>שגיאה בעת ארגון מחדש של ז'אנרים</value>
+   </string>
+   <string>
+      <id>324</id>
+      <value>מחפש שמות קבצים...</value>
+   </string>
+   <string>
+      <id>325</id>
+      <value>שגיאה בעת ארגון מחדש של שמות קבצים</value>
+   </string>
+   <string>
+      <id>326</id>
+      <value>מחפש אלבומים...</value>
+   </string>
+   <string>
+      <id>327</id>
+      <value>שגיאה בעת ארגון מחדש של אלבומים</value>
+   </string>
+   <string>
+      <id>328</id>
+      <value>שומר שינויים...</value>
+   </string>
+   <string>
+      <id>329</id>
+      <value>שגיאה בעת שמירת שינויים</value>
+   </string>
+   <string>
+      <id>330</id>
+      <value>פעולה זו עשויה להיות ארוכה...</value>
+   </string>
+   <string>
+      <id>331</id>
+      <value>דוחס בסיס נתונים...</value>
+   </string>
+   <string>
+      <id>332</id>
+      <value>שגיאה בעת דחיסת בסיס הנתונים</value>
+   </string>
+   <string>
+      <id>333</id>
+      <value>האם אתה מעוניין לארגן מחדש את בסיס הנתונים של המוסיקה?</value>
+   </string>
+   <string>
+      <id>334</id>
+      <value>ארגן בסיס נתונים של המוסיקה</value>
+   </string>
+   <string>
+      <id>335</id>
+      <value>התחל</value>
+   </string>
+   <string>
+      <id>336</id>
+      <value>שנה קצב פריימים</value>
+   </string>
+   <string>
+      <id>337</id>
+      <value>מוצא קול:</value>
+   </string>
+   <string>
+      <id>338</id>
+      <value>אנלוגי</value>
+   </string>
+   <string>
+      <id>339</id>
+      <value>דיגיטלי</value>
+   </string>
+   <string>
+      <id>340</id>
+      <value>אמנים שונים</value>
+   </string>
+   <string>
+      <id>341</id>
+      <value>הצג DVD</value>
+   </string>
+   <string>
+      <id>342</id>
+      <value>סרטים</value>
+   </string>
+   <string>
+      <id>343</id>
+      <value>שנה קצב פריימים</value>
+   </string>
+   <string>
+      <id>344</id>
+      <value>שחקנים</value>
+   </string>
+   <string>
+      <id>345</id>
+      <value>שנה</value>
+   </string>
+   <string>
+      <id>346</id>
+      <value>קבץ</value>
+   </string>
+   <string>
+      <id>347</id>
+      <value>פרק קיבוץ</value>
+   </string>
+   <string>
+      <id>348</id>
+      <value>שטח הירארכיית תיקיות</value>
+   </string>
+   <string>
+      <id>349</id>
+      <value>הצג רק ברירת מחדל</value>
+   </string>
+   <string>
+      <id>350</id>
+      <value>תכניות</value>
+   </string>
+   <string>
+      <id>351</id>
+      <value>כבוי</value>
+   </string>
+   <string>
+      <id>352</id>
+      <value>מעומעם</value>
+   </string>
+   <string>
+      <id>353</id>
+      <value>שחור</value>
+   </string>
+   <string>
+      <id>354</id>
+      <value>Matrix Trails</value>
+   </string>
+   <string>
+      <id>355</id>
+      <value>זמן לפני הפעלת שומר מסך</value>
+   </string>
+   <string>
+      <id>356</id>
+      <value>מצב שומר מסך</value>
+   </string>
+   <string>
+      <id>357</id>
+      <value>זמן לפני כבוי</value>
+   </string>
+   <string>
+      <id>358</id>
+      <value>כל האלבומים</value>
+   </string>
+   <string>
+      <id>359</id>
+      <value>אלבומים אחרונים</value>
+   </string>
+   <string>
+      <id>360</id>
+      <value>שמור מסך</value>
+   </string>
+   <string>
+      <id>361</id>
+      <value>תצוגה הפוכה</value>
+   </string>
+   <string>
+      <id>362</id>
+      <value>עצמת החשכת שומר מסך (%)</value>
+   </string>
+   <string>
+      <id>363</id>
+      <value>מיין לפי: קובץ</value>
+   </string>
+   <string>
+      <id>364</id>
+      <value>DD/DTS Multichannel Passthrough</value>
+   </string>
+   <string>
+      <id>365</id>
+      <value>מיין לפי: שם</value>
+   </string>
+   <string>
+      <id>366</id>
+      <value>מיין לפי: שנה</value>
+   </string>
+   <string>
+      <id>367</id>
+      <value>מיין לפי: דרוג</value>
+   </string>
+   <string>
+      <id>368</id>
+      <value>IMDB</value>
+   </string>
+   <string>
+      <id>369</id>
+      <value>כותרת</value>
+   </string>
+   <string>
+      <id>370</id>
+      <value>סופות רעמים</value>
+   </string>
+   <string>
+      <id>371</id>
+      <value>חלקית</value>
+   </string>
+   <string>
+      <id>372</id>
+      <value>בעיקר</value>
+   </string>
+   <string>
+      <id>373</id>
+      <value>בהיר</value>
+   </string>
+   <string>
+      <id>374</id>
+      <value>מעונן</value>
+   </string>
+   <string>
+      <id>375</id>
+      <value>שלג</value>
+   </string>
+   <string>
+      <id>376</id>
+      <value>גשם</value>
+   </string>
+   <string>
+      <id>377</id>
+      <value>אור</value>
+   </string>
+   <string>
+      <id>378</id>
+      <value>AM</value>
+   </string>
+   <string>
+      <id>379</id>
+      <value>PM</value>
+   </string>
+   <string>
+      <id>380</id>
+      <value>גשמים</value>
+   </string>
+   <string>
+      <id>381</id>
+      <value>מעט</value>
+   </string>
+   <string>
+      <id>382</id>
+      <value>מפוזרים</value>
+   </string>
+   <string>
+      <id>383</id>
+      <value>רוח</value>
+   </string>
+   <string>
+      <id>384</id>
+      <value>חזק</value>
+   </string>
+   <string>
+      <id>385</id>
+      <value>למדי</value>
+   </string>
+   <string>
+      <id>386</id>
+      <value>בהיר</value>
+   </string>
+   <string>
+      <id>387</id>
+      <value>מוקדם</value>
+   </string>
+   <string>
+      <id>388</id>
+      <value>ו</value>
+   </string>
+   <string>
+      <id>389</id>
+      <value>ערפל</value>
+   </string>
+   <string>
+      <id>390</id>
+      <value>-</value>
+   </string>
+   <string>
+      <id>391</id>
+      <value>רוחות</value>
+   </string>
+   <string>
+      <id>392</id>
+      <value>מעורפל</value>
+   </string>
+   <string>
+      <id>393</id>
+      <value>מקפיא</value>
+   </string>
+   <string>
+      <id>394</id>
+      <value>לא זמין</value>
+   </string>
+   <string>
+      <id>396</id>
+      <value>בחר מקום</value>
+   </string>
+   <string>
+      <id>397</id>
+      <value>זמן עדכון</value>
+   </string>
+   <string>
+      <id>398</id>
+      <value>יחידות טמפרטורה</value>
+   </string>
+   <string>
+      <id>399</id>
+      <value>יחידות מהירות</value>
+   </string>
+   <string>
+      <id>400</id>
+      <value>מזג האוויר</value>
+   </string>
+   <string>
+      <id>401</id>
+      <value>טמפרטורה</value>
+   </string>
+   <string>
+      <id>402</id>
+      <value>מרגיש כמו</value>
+   </string>
+   <string>
+      <id>403</id>
+      <value>רמת קרינה</value>
+   </string>
+   <string>
+      <id>404</id>
+      <value>רוח</value>
+   </string>
+   <string>
+      <id>405</id>
+      <value>נקודת העיבוי</value>
+   </string>
+   <string>
+      <id>406</id>
+      <value>לחות</value>
+   </string>
+   <string>
+      <id>407</id>
+      <value>מ</value>
+   </string>
+   <string>
+      <id>408</id>
+      <value>ב</value>
+   </string>
+   <string>
+      <id>410</id>
+      <value>ניגש ל- Weather.com</value>
+   </string>
+   <string>
+      <id>411</id>
+      <value>שולף נתוני מזג אוויר ל:</value>
+   </string>
+   <string>
+      <id>412</id>
+      <value>לא ניתן לקבל נתוני מזג אוויר</value>
+   </string>
+   <string>
+      <id>413</id>
+      <value>ידני</value>
+   </string>
+   <string>
+      <id>414</id>
+      <value>אין ביקורת לאלבום זה</value>
+   </string>
+   <string>
+      <id>415</id>
+      <value>מוריד תמונות...</value>
+   </string>
+   <string>
+      <id>416</id>
+      <value>לא תמצא</value>
+   </string>
+   <string>
+      <id>417</id>
+      <value>הצג: צלמיות גדולות</value>
+   </string>
+   <string>
+      <id>418</id>
+      <value>וידאו/ז'אנרים</value>
+   </string>
+   <string>
+      <id>419</id>
+      <value>וידאו/שחקנים</value>
+   </string>
+   <string>
+      <id>420</id>
+      <value>וידאו/שנים</value>
+   </string>
+   <string>
+      <id>421</id>
+      <value>וידאו/שמות</value>
+   </string>
+   <string>
+      <id>422</id>
+      <value>מחק מידע אלבום</value>
+   </string>
+   <string>
+      <id>423</id>
+      <value>מחק מידע CDDB</value>
+   </string>
+   <string>
+      <id>424</id>
+      <value>בחר</value>
+   </string>
+   <string>
+      <id>425</id>
+      <value>אין מידע אלבום</value>
+   </string>
+   <string>
+      <id>426</id>
+      <value>אין מידע CDDB</value>
+   </string>
+   <string>
+      <id>427</id>
+      <value>כונן:</value>
+   </string>
+   <string>
+      <id>428</id>
+      <value>הכנס CD/DVD נכון</value>
+   </string>
+   <string>
+      <id>429</id>
+      <value>הכנס בבקשה את ה-CD/DVD הבא:</value>
+   </string>
+   <string>
+      <id>430</id>
+      <value>מיין לפי: DVD#</value>
+   </string>
+   <string>
+      <id>431</id>
+      <value>אין מטמון</value>
+   </string>
+   <string>
+      <id>432</id>
+      <value>מחק סרט מבסיס הנתונים</value>
+   </string>
+   <string>
+      <id>433</id>
+      <value>האם למחוק</value>
+   </string>
+   <string>
+      <id>434</id>
+      <value>את הסרט?</value>
+   </string>
+   <string>
+      <id>435</id>
+      <value>רצועה</value>
+   </string>
+   <string>
+      <id>436</id>
+      <value>שנה:</value>
+   </string>
+   <string>
+      <id>437</id>
+      <value>זמן:</value>
+   </string>
+   <string>
+      <id>438</id>
+      <value>פותח קובץ</value>
+   </string>
+   <string>
+      <id>439</id>
+      <value>מטמון</value>
+   </string>
+   <string>
+      <id>440</id>
+      <value>כונן קשיח</value>
+   </string>
+   <string>
+      <id>441</id>
+      <value>UDF</value>
+   </string>
+   <string>
+      <id>442</id>
+      <value>רשת מקומית</value>
+   </string>
+   <string>
+      <id>443</id>
+      <value>אינטרנט</value>
+   </string>
+   <string>
+      <id>444</id>
+      <value>וידאו</value>
+   </string>
+   <string>
+      <id>445</id>
+      <value>אודיו</value>
+   </string>
+   <string>
+      <id>446</id>
+      <value>DVD</value>
+   </string>
+   <string>
+      <id>447</id>
+      <value>הפעלה אוטומטית</value>
+   </string>
+   <string>
+      <id>448</id>
+      <value>LCD</value>
+   </string>
+   <string>
+      <id>449</id>
+      <value>מופעל</value>
+   </string>
+   <string>
+      <id>450</id>
+      <value>עמודות</value>
+   </string>
+   <string>
+      <id>451</id>
+      <value>כתובת שורה 1:</value>
+   </string>
+   <string>
+      <id>452</id>
+      <value>כתובת שורה 2:</value>
+   </string>
+   <string>
+      <id>453</id>
+      <value>כתובת שורה 3:</value>
+   </string>
+   <string>
+      <id>454</id>
+      <value>כתובת שורה 4:</value>
+   </string>
+   <string>
+      <id>455</id>
+      <value>שורות:</value>
+   </string>
+   <string>
+      <id>456</id>
+      <value>מצב:</value>
+   </string>
+   <string>
+      <id>457</id>
+      <value>שנה מבט</value>
+   </string>
+   <string>
+      <id>458</id>
+      <value>B/Mark</value>
+   </string>
+   <string>
+      <id>459</id>
+      <value>כתוביות</value>
+   </string>
+   <string>
+      <id>460</id>
+      <value>אודיו</value>
+   </string>
+   <string>
+      <id>461</id>
+      <value>[פעיל]</value>
+   </string>
+   <string>
+      <id>462</id>
+      <value>כותרות</value>
+   </string>
+   <string>
+      <id>463</id>
+      <value>תאורה אחורית</value>
+   </string>
+   <string>
+      <id>464</id>
+      <value>בהירות</value>
+   </string>
+   <string>
+      <id>465</id>
+      <value>ניגודיות</value>
+   </string>
+   <string>
+      <id>466</id>
+      <value>גמא</value>
+   </string>
+   <string>
+      <id>467</id>
+      <value>סוג</value>
+   </string>
+   <string>
+      <id>468</id>
+      <value>העבר את הבקר כדי לשנות את מיקום תפריט מסך</value>
+   </string>
+   <string>
+      <id>469</id>
+      <value>מיקום תפריט מסך</value>
+   </string>
+   <string>
+      <id>470</id>
+      <value>תודה ל</value>
+   </string>
+   <string>
+      <id>471</id>
+      <value>Modchip</value>
+   </string>
+   <string>
+      <id>472</id>
+      <value>OSD Timeout</value>
+   </string>
+   <string>
+      <id>473</id>
+      <value>High Quality Resampling</value>
+   </string>
+   <string>
+      <id>474</id>
+      <value>כבוי</value>
+   </string>
+   <string>
+      <id>475</id>
+      <value>מוסיקה בלבד</value>
+   </string>
+   <string>
+      <id>476</id>
+      <value>מוסיקה &amp; וידאו</value>
+   </string>
+   <string>
+      <id>477</id>
+      <value>לא ניתן לטעון רשימת קטעים</value>
+   </string>
+   <string>
+      <id>478</id>
+      <value>OSD</value>
+   </string>
+   <string>
+      <id>479</id>
+      <value>סקין ושפה</value>
+   </string>
+   <string>
+      <id>480</id>
+      <value>ממשק משתמש</value>
+   </string>
+   <string>
+      <id>481</id>
+      <value>אפשרויות אודיו</value>
+   </string>
+   <string>
+      <id>482</id>
+      <value>About XBMC</value>
+   </string>
+   <string>
+      <id>483</id>
+      <value>אלבום</value>
+   </string>
+   <string>
+      <id>484</id>
+      <value>אמן</value>
+   </string>
+   <string>
+      <id>485</id>
+      <value>מחק אלבום</value>
+   </string>
+   <string>
+      <id>486</id>
+      <value>חזור</value>
+   </string>
+   <string>
+      <id>487</id>
+      <value>חזור פעם אחת</value>
+   </string>
+   <string>
+      <id>488</id>
+      <value>חזור על רשימת קטעים של תיקיה</value>
+   </string>
+   <string>
+      <id>489</id>
+      <value>השתמש ברשימת קטעים בשירים</value>
+   </string>
+   <string>
+      <id>490</id>
+      <value>עבור אוטומטית בין רשימה וצלמיות בשירים</value>
+   </string>
+   <string>
+      <id>491</id>
+      <value>השתמש בצלמיות גדולות</value>
+   </string>
+   <string>
+      <id>492</id>
+      <value>שפת אודיו</value>
+   </string>
+   <string>
+      <id>493</id>
+      <value>שחקן:</value>
+   </string>
+   <string>
+      <id>500</id>
+      <value>תפריט קובץ</value>
+   </string>
+   <string>
+      <id>501</id>
+      <value>קבע כיעד</value>
+   </string>
+   <string>
+      <id>502</id>
+      <value>לא ניתן להשלים את הפעולה</value>
+   </string>
+   <string>
+      <id>503</id>
+      <value>מחק תיקיה זו</value>
+   </string>
+   <string>
+      <id>504</id>
+      <value>עבור ליעד</value>
+   </string>
+   <string>
+      <id>505</id>
+      <value>מחשב</value>
+   </string>
+   <string>
+      <id>506</id>
+      <value>האם אתה בטוח?</value>
+   </string>
+   <string>
+      <id>507</id>
+      <value>פריטים</value>
+   </string>
+   <string>
+      <id>508</id>
+      <value>אל</value>
+   </string>
+   <string>
+      <id>509</id>
+      <value>קובץ יעד קיים. האם לדרוס?</value>
+   </string>
+   <string>
+      <id>510</id>
+      <value>ביטול</value>
+   </string>
+   <string>
+      <id>511</id>
+      <value>תמיד</value>
+   </string>
+   <string>
+      <id>512</id>
+      <value>לעולם לא</value>
+   </string>
+   <string>
+      <id>513</id>
+      <value>הפריט מוגן, הפעולה לא הושלמה</value>
+   </string>
+   <string>
+      <id>514</id>
+      <value>שגיאה ביצירת תיקיה, הפעולה לא הושלמה</value>
+   </string>
+   <string>
+      <id>515</id>
+      <value>שגיאה במחיקת תיקיה, הפעולה לא הושלמה</value>
+   </string>
+   <string>
+      <id>516</id>
+      <value>לא ניתן למחוק קובץ יעד, הפעולה לא הושלמה</value>
+   </string>
+   <string>
+      <id>517</id>
+      <value>שגיאה קריטית, הפעולה לא הושלמה</value>
+   </string>
+   <string>
+      <id>518</id>
+      <value>האם למחוק את השיר הזה?</value>
+   </string>
+   <string>
+      <id>530</id>
+      <value>הוכנס דיסק תמונות, האם ברצונך להציג אותו?</value>
+   </string>
+   <string>
+      <id>531</id>
+      <value>הוכנס דיסק סרטים, האם ברצונך להציג אותו?</value>
+   </string>
+   <string>
+      <id>532</id>
+      <value>הוכנס דיסק אודיו</value>
+   </string>
+   <string>
+      <id>533</id>
+      <value>מדריך</value>
+   </string>
+   <string>
+      <id>550</id>
+      <value>חתוך</value>
+   </string>
+   <string>
+      <id>600</id>
+      <value>מדריך שידורים</value>
+   </string>
+   <string>
+      <id>601</id>
+      <value>הקלט כעת</value>
+   </string>
+   <string>
+      <id>602</id>
+      <value>ערוץ:</value>
+   </string>
+   <string>
+      <id>603</id>
+      <value>לוח זמנים</value>
+   </string>
+   <string>
+      <id>604</id>
+      <value>תכניות מוקלטות</value>
+   </string>
+   <string>
+      <id>605</id>
+      <value>טלוויזיה</value>
+   </string>
+   <string>
+      <id>606</id>
+      <value>טוען מדריך שידורים חדש</value>
+   </string>
+   <string>
+      <id>607</id>
+      <value>טען</value>
+   </string>
+   <string>
+      <id>608</id>
+      <value>טעינת מדריך שידרים נכשלה</value>
+   </string>
+   <string>
+      <id>609</id>
+      <value>טעינת מדריך שידורים הסתיימה</value>
+   </string>
+   <string>
+      <id>610</id>
+      <value>אין</value>
+   </string>
+   <string>
+      <id>611</id>
+      <value>הקלט פעם אחת</value>
+   </string>
+   <string>
+      <id>612</id>
+      <value>הקלט כל פעם מערוץ זה</value>
+   </string>
+   <string>
+      <id>613</id>
+      <value>הקלט כל פעם מערוץ כלשהו</value>
+   </string>
+   <string>
+      <id>614</id>
+      <value>הקלט כל שבוע בשעה זו</value>
+   </string>
+   <string>
+      <id>615</id>
+      <value>הקלט כל יום בשעה זו</value>
+   </string>
+   <string>
+      <id>616</id>
+      <value>בחר סוג הקלטה</value>
+   </string>
+   <string>
+      <id>617</id>
+      <value>חדש</value>
+   </string>
+   <string>
+      <id>618</id>
+      <value>מחק</value>
+   </string>
+   <string>
+      <id>619</id>
+      <value>ערוך שעה/תאריך</value>
+   </string>
+   <string>
+      <id>620</id>
+      <value>מיין לפי: ערוץ</value>
+   </string>
+   <string>
+      <id>621</id>
+      <value>מיין לפי: תאריך</value>
+   </string>
+   <string>
+      <id>622</id>
+      <value>מיין לפי: שם</value>
+   </string>
+   <string>
+      <id>623</id>
+      <value>מיין לפי: סוג</value>
+   </string>
+   <string>
+      <id>624</id>
+      <value>נקיון</value>
+   </string>
+   <string>
+      <id>625</id>
+      <value>לוחות זמנים נמחקו:</value>
+   </string>
+   <string>
+      <id>626</id>
+      <value>שנה סוג</value>
+   </string>
+   <string>
+      <id>627</id>
+      <value>ערוצים:</value>
+   </string>
+   <string>
+      <id>628</id>
+      <value>תוכניות:</value>
+   </string>
+   <string>
+      <id>629</id>
+      <value>עצור הקלטה</value>
+   </string>
+   <string>
+      <id>630</id>
+      <value>האם לאתחל מחדש?</value>
+   </string>
+   <string>
+      <id>631</id>
+      <value>האם לסגור?</value>
+   </string>
+   <string>
+      <id>632</id>
+      <value>אובייקטים</value>
+   </string>
+   <string>
+      <id>633</id>
+      <value>זמן/תאריך התחלה</value>
+   </string>
+   <string>
+      <id>634</id>
+      <value>זמן/תאריך סיום</value>
+   </string>
+   <string>
+      <id>635</id>
+      <value>זמן</value>
+   </string>
+   <string>
+      <id>636</id>
+      <value>תאריך</value>
+   </string>
+   <string>
+      <id>637</id>
+      <value>ערוך הקלטה</value>
+   </string>
+   <string>
+      <id>638</id>
+      <value>הקלטה חדשה</value>
+   </string>
+   <string>
+      <id>639</id>
+      <value>אלבום של</value>
+   </string>
+   <string>
+      <id>640</id>
+      <value>רוויה</value>
+   </string>
+   <string>
+      <id>641</id>
+      <value>חדות</value>
+   </string>
+   <string>
+      <id>642</id>
+      <value>טוען ערוצי טלוויזיה</value>
+   </string>
+   <string>
+      <id>643</id>
+      <value>טוען תוכניות טלוויזיה</value>
+   </string>
+   <string>
+      <id>644</id>
+      <value>ממין תוכניות טלוויזיה</value>
+   </string>
+   <string>
+      <id>645</id>
+      <value>טוען קובץ XML</value>
+   </string>
+   <string>
+      <id>646</id>
+      <value>הקלטה מתוזמנת</value>
+   </string>
+   <string>
+      <id>647</id>
+      <value>פעם אחת</value>
+   </string>
+   <string>
+      <id>648</id>
+      <value>יומי</value>
+   </string>
+   <string>
+      <id>649</id>
+      <value>כל</value>
+   </string>
+   <string>
+      <id>650</id>
+      <value>כל פעם מערוץ זה</value>
+   </string>
+   <string>
+      <id>651</id>
+      <value>כל פעם בכל ערוץ</value>
+   </string>
+   <string>
+      <id>652</id>
+      <value>תוכנית טלוויזיה מוקלטת</value>
+   </string>
+   <string>
+      <id>653</id>
+      <value>מחק הקלטה זו?</value>
+   </string>
+   <string>
+      <id>654</id>
+      <value>הוצא תקליטור</value>
+   </string>
+   <string>
+      <id>655</id>
+      <value>הצג תוכנית מוקלטת</value>
+   </string>
+   <string>
+      <id>656</id>
+      <value>מחק תוכנית מוקלטת</value>
+   </string>
+   <string>
+      <id>657</id>
+      <value>שני</value>
+   </string>
+   <string>
+      <id>658</id>
+      <value>שלישי</value>
+   </string>
+   <string>
+      <id>659</id>
+      <value>רביעי</value>
+   </string>
+   <string>
+      <id>660</id>
+      <value>חמישי</value>
+   </string>
+   <string>
+      <id>661</id>
+      <value>שישי</value>
+   </string>
+   <string>
+      <id>662</id>
+      <value>שבת</value>
+   </string>
+   <string>
+      <id>663</id>
+      <value>ראשון</value>
+   </string>
+   <string>
+      <id>664</id>
+      <value>מחק תמונה זו?</value>
+   </string>
+   <string>
+      <id>665</id>
+      <value>רדיו</value>
+   </string>
+   <string>
+      <id>666</id>
+      <value>תחנות</value>
+   </string>
+   <string>
+      <id>667</id>
+      <value>כיוון אוטומטי</value>
+   </string>
+   <string>
+      <id>668</id>
+      <value>מיין לפי: סוג</value>
+   </string>
+   <string>
+      <id>669</id>
+      <value>מיין לפי: ז'אנר</value>
+   </string>
+   <string>
+      <id>670</id>
+      <value>מיין לפי: קצב נתונים</value>
+   </string>
+   <string>
+      <id>671</id>
+      <value>מיין לפי: צפייה</value>
+   </string>
+   <string>
+      <id>672</id>
+      <value>הקלט ימים שני-שישי</value>
+   </string>
+   <string>
+      <id>673</id>
+      <value>מהירות גלילה</value>
+   </string>
+   <string>
+      <id>674</id>
+      <value>תצורת ממשק</value>
+   </string>
+   <string>
+      <id>675</id>
+      <value>דוגמה:</value>
+   </string>
+   <string>
+      <id>676</id>
+      <value>מחק הקלטה שנצפתה?</value>
+   </string>
+   <string>
+      <id>677</id>
+      <value>פעמים</value>
+   </string>
+   <string>
+      <id>678</id>
+      <value>מיין לפי: ז'אנר</value>
+   </string>
+   <string>
+      <id>679</id>
+      <value>שבועי</value>
+   </string>
+   <string>
+      <id>680</id>
+      <value>שני-שישי</value>
+   </string>
+   <string>
+      <id>681</id>
+      <value>מחכה</value>
+   </string>
+   <string>
+      <id>682</id>
+      <value>מקליט</value>
+   </string>
+   <string>
+      <id>683</id>
+      <value>הסתיים</value>
+   </string>
+   <string>
+      <id>684</id>
+      <value>בוטל</value>
+   </string>
+   <string>
+      <id>685</id>
+      <value>מיין לפי: מצב</value>
+   </string>
+   <string>
+      <id>686</id>
+      <value>נולד</value>
+   </string>
+   <string>
+      <id>687</id>
+      <value>פעיל במשך</value>
+   </string>
+   <string>
+      <id>688</id>
+      <value>כלי</value>
+   </string>
+   <string>
+      <id>689</id>
+      <value>ביוגרפיה</value>
+   </string>
+   <string>
+      <id>690</id>
+      <value>דיסקוגרפיה (אלבומים)</value>
+   </string>
+   <string>
+      <id>691</id>
+      <value>דיסקוגרפיה (אוספים, קופסאות)</value>
+   </string>
+   <string>
+      <id>700</id>
+      <value>דיסקוגרפיה (eps, סינגלים)</value>
+   </string>
+   <string>
+      <id>701</id>
+      <value>דיסקוגרפיה (זיופים, וידאו, רעיונות)</value>
+   </string>
+   <string>
+      <id>702</id>
+      <value>לא נמצאו אמנים!</value>
+   </string>
+   <string>
+      <id>703</id>
+      <value>לא מחובר לאינטרנט!</value>
+   </string>
+   <string>
+      <id>704</id>
+      <value>קולט מידע</value>
+   </string>
+   <string>
+      <id>705</id>
+      <value>מקבל מידע (RSS)</value>
+   </string>
+   <string>
+      <id>706</id>
+      <value>בחר ערוץ מידע</value>
+   </string>
+   <string>
+      <id>707</id>
+      <value>טלוויזיה פועלת</value>
+   </string>
+   <string>
+      <id>708</id>
+      <value>מצב הקלטה</value>
+   </string>
+   <string>
+      <id>709</id>
+      <value>עדכון אוטומטי</value>
+   </string>
+   <string>
+      <id>710</id>
+      <value>קיימת גרסה חדשה</value>
+   </string>
+   <string>
+      <id>711</id>
+      <value>עדכן מ v#old -&gt;v#new ?</value>
+   </string>
+   <string>
+      <id>712</id>
+      <value>חזור</value>
+   </string>
+   <string>
+      <id>713</id>
+      <value>נגן אוטומטי</value>
+   </string>
+   <string>
+      <id>714</id>
+      <value>הוכנס דיסק, האם לנגן אותו?</value>
+   </string>
+   <string>
+      <id>715</id>
+      <value>CD מוכנס, האם להשמיע אותו?</value>
+   </string>
+   <string>
+      <id>716</id>
+      <value>לווין</value>
+   </string>
+   <string>
+      <id>717</id>
+      <value>מזג-האוויר</value>
+   </string>
+   <string>
+      <id>718</id>
+      <value>אפס רשימת 100 מושמעים ביותר</value>
+   </string>
+   <string>
+      <id>719</id>
+      <value>האם לאפס את רשימת 100 מושמעים ביותר?</value>
+   </string>
+   <string>
+      <id>720</id>
+      <value>הצג: זמן נגינה</value>
+   </string>
+   <string>
+      <id>721</id>
+      <value>הצג: מספר השמעות</value>
+   </string>
+   <string>
+      <id>722</id>
+      <value>לא ניתן לנגן את הדיסק</value>
+   </string>
+   <string>
+      <id>723</id>
+      <value>האם הכנסת/ה דיסק?</value>
+   </string>
+   <string>
+      <id>724</id>
+      <value>חפש במדריך שידורים</value>
+   </string>
+   <string>
+      <id>725</id>
+      <value>ז'אנרים</value>
+   </string>
+   <string>
+      <id>726</id>
+      <value>כותרות</value>
+   </string>
+   <string>
+      <id>727</id>
+      <value>טלוויזיה ברקע</value>
+   </string>
+   <string>
+      <id>728</id>
+      <value>לא ניתן להתחיל</value>
+   </string>
+   <string>
+      <id>729</id>
+      <value>אנא וודא כי אתה משתמש ב VMR9 ומשהו מתנגן</value>
+   </string>
+   <string>
+      <id>730</id>
+      <value>תזמון זה נמצא בהקלטה, אם תמחק אותן</value>
+   </string>
+   <string>
+      <id>731</id>
+      <value>ההקלטה תעצר</value>
+   </string>
+   <string>
+      <id>732</id>
+      <value>האם אתה בטוח?</value>
+   </string>
+   <string>
+      <id>733</id>
+      <value>הצג: שורת תמונות</value>
+   </string>
+   <string>
+      <id>734</id>
+      <value>תמונה:</value>
+   </string>
+   <string>
+      <id>735</id>
+      <value>סובב</value>
+   </string>
+   <string>
+      <id>736</id>
+      <value>אין מדריך שידורים</value>
+   </string>
+   <string>
+      <id>737</id>
+      <value>צפה: לווין</value>
+   </string>
+   <string>
+      <id>738</id>
+      <value>צפה: טמפרטורות</value>
+   </string>
+   <string>
+      <id>739</id>
+      <value>צפה: רמת קרינה</value>
+   </string>
+   <string>
+      <id>740</id>
+      <value>צפה: רוחות</value>
+   </string>
+   <string>
+      <id>741</id>
+      <value>צפה: לחות</value>
+   </string>
+   <string>
+      <id>742</id>
+      <value>צפה: משקעים</value>
+   </string>
+   <string>
+      <id>743</id>
+      <value>תחזית לארבעה ימים</value>
+   </string>
+   <string>
+      <id>744</id>
+      <value>זריחה</value>
+   </string>
+   <string>
+      <id>745</id>
+      <value>שקיעה</value>
+   </string>
+   <string>
+      <id>746</id>
+      <value>גבוה</value>
+   </string>
+   <string>
+      <id>747</id>
+      <value>נמוך</value>
+   </string>
+   <string>
+      <id>748</id>
+      <value>משקעים</value>
+   </string>
+   <string>
+      <id>750</id>
+      <value>תמונות</value>
+   </string>
+   <string>
+      <id>751</id>
+      <value>הצג את כל השירים של אמן זה</value>
+   </string>
+   <string>
+      <id>752</id>
+      <value>לא צוינו הקלטות</value>
+   </string>
+   <string>
+      <id>753</id>
+      <value>לא מותקן כרטיס טלוויזיה</value>
+   </string>
+   <string>
+      <id>754</id>
+      <value>כרטיס הטלוויזיה אינו מקליט את התכנית שצוינה</value>
+   </string>
+   <string>
+      <id>755</id>
+      <value>אין כרטיס טלוויזיה בצפייה כרגע</value>
+   </string>
+   <string>
+      <id>756</id>
+      <value>כרטיס הטלוויזיה אינו פנוי כעת לקבל:{0}</value>
+   </string>
+   <string>
+      <id>757</id>
+      <value>כל כרטיסי הטלוויזיה תפוסים כרגע</value>
+   </string>
+   <string>
+      <id>758</id>
+      <value>כרטיס הטלוויזיה אינו מקליט כרגע</value>
+   </string>
+   <string>
+      <id>759</id>
+      <value>נכשל בהתחלת צפייה במצב הקלטה</value>
+   </string>
+   <string>
+      <id>760</id>
+      <value>לא זמין לצפייה במצב הקלטה</value>
+   </string>
+   <string>
+      <id>761</id>
+      <value>נכשל בעצירת צפייה במצב הקלטה</value>
+   </string>
+   <string>
+      <id>762</id>
+      <value>נכשל בהתחלת הטלוויזיה</value>
+   </string>
+   <string>
+      <id>763</id>
+      <value>המקליט תפוס</value>
+   </string>
+   <string>
+      <id>764</id>
+      <value>המקליט מושהה</value>
+   </string>
+   <string>
+      <id>765</id>
+      <value>אין מספיק שטח דיסק פנוי</value>
+   </string>
+   <string>
+      <id>800</id>
+      <value>התחל עם</value>
+   </string>
+   <string>
+      <id>801</id>
+      <value>מכיל</value>
+   </string>
+   <string>
+      <id>802</id>
+      <value>סיים עם</value>
+   </string>
+   <string>
+      <id>803</id>
+      <value>הינו</value>
+   </string>
+   <string>
+      <id>804</id>
+      <value>בוצע</value>
+   </string>
+   <string>
+      <id>805</id>
+      <value>מחק</value>
+   </string>
+   <string>
+      <id>806</id>
+      <value>כותרת</value>
+   </string>
+   <string>
+      <id>807</id>
+      <value>מייצר</value>
+   </string>
+   <string>
+      <id>808</id>
+      <value>מרכיבים</value>
+   </string>
+   <string>
+      <id>809</id>
+      <value>הוראות</value>
+   </string>
+   <string>
+      <id>810</id>
+      <value>כרטיס</value>
+   </string>
+   <string>
+      <id>850</id>
+      <value>שעון מעורר</value>
+   </string>
+   <string>
+      <id>851</id>
+      <value>רשימת קטעים</value>
+   </string>
+   <string>
+      <id>852</id>
+      <value>שעון מעורר כבוי/פועל</value>
+   </string>
+   <string>
+      <id>853</id>
+      <value>שם:</value>
+   </string>
+   <string>
+      <id>854</id>
+      <value>מופעל בימים אילו</value>
+   </string>
+   <string>
+      <id>855</id>
+      <value>זמן שעון מעורר</value>
+   </string>
+   <string>
+      <id>856</id>
+      <value>שעון שינה</value>
+   </string>
+   <string>
+      <id>857</id>
+      <value>הער</value>
+   </string>
+   <string>
+      <id>858</id>
+      <value>זמן הערה</value>
+   </string>
+   <string>
+      <id>859</id>
+      <value>שעון שינה</value>
+   </string>
+   <string>
+      <id>860</id>
+      <value>הגדל עוצמה לאורך הזמן</value>
+   </string>
+   <string>
+      <id>861</id>
+      <value>פרטי שעון מעורר</value>
+   </string>
+   <string>
+      <id>862</id>
+      <value>רדיו</value>
+   </string>
+   <string>
+      <id>863</id>
+      <value>קובץ</value>
+   </string>
+   <string>
+      <id>864</id>
+      <value>סוג מדיה</value>
+   </string>
+   <string>
+      <id>865</id>
+      <value>מספר דקות עד לשינה:</value>
+   </string>
+   <string>
+      <id>866</id>
+      <value>הפחת עוצמה לאורך הזמן</value>
+   </string>
+   <string>
+      <id>867</id>
+      <value>כבה מחשב</value>
+   </string>
+   <string>
+      <id>868</id>
+      <value>אפס</value>
+   </string>
+   <string>
+      <id>869</id>
+      <value>שעון מעורר חדש</value>
+   </string>
+   <string>
+      <id>870</id>
+      <value>מופע חוזר</value>
+   </string>
+   <string>
+      <id>871</id>
+      <value>הער את המחשב עבור התראה זו</value>
+   </string>
+   <string>
+      <id>872</id>
+      <value>התחל עם</value>
+   </string>
+   <string>
+      <id>873</id>
+      <value>תכנית טלוויזיה</value>
+   </string>
+   <string>
+      <id>874</id>
+      <value>פרק</value>
+   </string>
+   <string>
+      <id>875</id>
+      <value>תכנית נוכחית</value>
+   </string>
+   <string>
+      <id>876</id>
+      <value>עד לעצירה ידנית</value>
+   </string>
+   <string>
+      <id>877</id>
+      <value>עדיפויות</value>
+   </string>
+   <string>
+      <id>878</id>
+      <value>אחסון</value>
+   </string>
+   <string>
+      <id>879</id>
+      <value>התנגשות הקלטות</value>
+   </string>
+   <string>
+      <id>880</id>
+      <value>זמן להקלטה:</value>
+   </string>
+   <string>
+      <id>881</id>
+      <value>בחר הקלטה לעצירה:</value>
+   </string>
+   <string>
+      <id>882</id>
+      <value>אפשרויות איכות:</value>
+   </string>
+   <string>
+      <id>883</id>
+      <value>נמוך</value>
+   </string>
+   <string>
+      <id>884</id>
+      <value>בינוני</value>
+   </string>
+   <string>
+      <id>885</id>
+      <value>גבוה</value>
+   </string>
+   <string>
+      <id>886</id>
+      <value>ברירת מחדל</value>
+   </string>
+   <string>
+      <id>887</id>
+      <value>ציין את מספר הפרקים לשמירה</value>
+   </string>
+   <string>
+      <id>888</id>
+      <value>ניהול פרקים</value>
+   </string>
+   <string>
+      <id>889</id>
+      <value>כל הפרקים</value>
+   </string>
+   <string>
+      <id>890</id>
+      <value>נגן CD</value>
+   </string>
+   <string>
+      <id>891</id>
+      <value>בחר ערוץ טלוויזיה</value>
+   </string>
+   <string>
+      <id>892</id>
+      <value>התנגשויות</value>
+   </string>
+   <string>
+      <id>893</id>
+      <value>נייד</value>
+   </string>
+   <string>
+      <id>894</id>
+      <value>דחס הקלטות טלוויזיה</value>
+   </string>
+   <string>
+      <id>895</id>
+      <value>דחיסה אוטומטית</value>
+   </string>
+   <string>
+      <id>896</id>
+      <value>דחס</value>
+   </string>
+   <string>
+      <id>897</id>
+      <value>אפשרויות</value>
+   </string>
+   <string>
+      <id>898</id>
+      <value>MPEG-2</value>
+   </string>
+   <string>
+      <id>899</id>
+      <value>WMV</value>
+   </string>
+   <string>
+      <id>900</id>
+      <value>המשך הקרנת סרט?</value>
+   </string>
+   <string>
+      <id>901</id>
+      <value>MSN Messenger</value>
+   </string>
+   <string>
+      <id>902</id>
+      <value>אנשי קשר מחוברים</value>
+   </string>
+   <string>
+      <id>903</id>
+      <value>הכנס למערכת</value>
+   </string>
+   <string>
+      <id>904</id>
+      <value>צא מהמערכת</value>
+   </string>
+   <string>
+      <id>905</id>
+      <value>תחילה עליך לקבוע את אופן הפעלת התוסף</value>
+   </string>
+   <string>
+      <id>906</id>
+      <value>הכנס את כתובת הדוא"ל שלך בקביעת התצורה</value>
+   </string>
+   <string>
+      <id>907</id>
+      <value>לא ניתן להתחבר ל MSN</value>
+   </string>
+   <string>
+      <id>908</id>
+      <value>מקיש הודעה...</value>
+   </string>
+   <string>
+      <id>909</id>
+      <value>מתחבר...</value>
+   </string>
+   <string>
+      <id>910</id>
+      <value>מתחבר ל...</value>
+   </string>
+   <string>
+      <id>911</id>
+      <value>אין ערוצים</value>
+   </string>
+   <string>
+      <id>912</id>
+      <value>לא ניתן לקבל חדשות</value>
+   </string>
+   <string>
+      <id>913</id>
+      <value>תוספים</value>
+   </string>
+   <string>
+      <id>914</id>
+      <value>הקלטות</value>
+   </string>
+   <string>
+      <id>915</id>
+      <value>ערוצי טלוויזיה</value>
+   </string>
+   <string>
+      <id>916</id>
+      <value>קבצים מרוחקים</value>
+   </string>
+   <string>
+      <id>917</id>
+      <value>קובץ זה נמצא על שרת אחר</value>
+   </string>
+   <string>
+      <id>918</id>
+      <value>האם לעתיק אותו</value>
+   </string>
+   <string>
+      <id>919</id>
+      <value>למחשב המקומי?</value>
+   </string>
+   <string>
+      <id>920</id>
+      <value>לא ניתו להעתיק קובץ משרת אחר</value>
+   </string>
+   <string>
+      <id>921</id>
+      <value>מעתיק את הקובץ</value>
+   </string>
+   <string>
+      <id>922</id>
+      <value>תאור</value>
+   </string>
+   <string>
+      <id>923</id>
+      <value>הצג</value>
+   </string>
+   <string>
+      <id>924</id>
+      <value>תפריט</value>
+   </string>
+   <string>
+      <id>925</id>
+      <value>למחק סרט</value>
+   </string>
+   <string>
+      <id>926</id>
+      <value>להוסיף לרשימת הקטעים</value>
+   </string>
+   <string>
+      <id>927</id>
+      <value>אזהרה</value>
+   </string>
+   <string>
+      <id>928</id>
+      <value>מצא עטיפה</value>
+   </string>
+   <string>
+      <id>929</id>
+      <value>סגור תפריט</value>
+   </string>
+   <string>
+      <id>930</id>
+      <value>הוסף למועדפים</value>
+   </string>
+   <string>
+      <id>931</id>
+      <value>דירוג</value>
+   </string>
+   <string>
+      <id>932</id>
+      <value>מועדפים</value>
+   </string>
+   <string>
+      <id>933</id>
+      <value>מחק מרשימת המועדפים</value>
+   </string>
+   <string>
+      <id>934</id>
+      <value>קבע דירוג</value>
+   </string>
+   <string>
+      <id>935</id>
+      <value>הצג: דירוג</value>
+   </string>
+   <string>
+      <id>936</id>
+      <value>המשך מ:</value>
+   </string>
+   <string>
+      <id>937</id>
+      <value>ייבא לוח שידורים</value>
+   </string>
+   <string>
+      <id>938</id>
+      <value>צפה בערוץ זה</value>
+   </string>
+   <string>
+      <id>939</id>
+      <value>החלף מוד</value>
+   </string>
+   <string>
+      <id>940</id>
+      <value>תכונות</value>
+   </string>
+   <string>
+      <id>941</id>
+      <value>שנה יחס גובה/רוחב של המסך</value>
+   </string>
+   <string>
+      <id>942</id>
+      <value>מתח</value>
+   </string>
+   <string>
+      <id>943</id>
+      <value>רגיל</value>
+   </string>
+   <string>
+      <id>944</id>
+      <value>מקורי</value>
+   </string>
+   <string>
+      <id>945</id>
+      <value>תיבה</value>
+   </string>
+   <string>
+      <id>946</id>
+      <value>העבר וסרוק</value>
+   </string>
+   <string>
+      <id>947</id>
+      <value>הגדל</value>
+   </string>
+   <string>
+      <id>948</id>
+      <value>מחובר</value>
+   </string>
+   <string>
+      <id>949</id>
+      <value>עסוק</value>
+   </string>
+   <string>
+      <id>950</id>
+      <value>תכף אשוב</value>
+   </string>
+   <string>
+      <id>951</id>
+      <value>לא נמצא</value>
+   </string>
+   <string>
+      <id>952</id>
+      <value>טלפון</value>
+   </string>
+   <string>
+      <id>953</id>
+      <value>ארוחה</value>
+   </string>
+   <string>
+      <id>954</id>
+      <value>חבוי</value>
+   </string>
+   <string>
+      <id>955</id>
+      <value>לא פעיל</value>
+   </string>
+   <string>
+      <id>956</id>
+      <value>מחובר</value>
+   </string>
+   <string>
+      <id>957</id>
+      <value>MSN Messenger</value>
+   </string>
+   <string>
+      <id>958</id>
+      <value>משוחח עם</value>
+   </string>
+   <string>
+      <id>959</id>
+      <value>התחבר לשיחה</value>
+   </string>
+   <string>
+      <id>960</id>
+      <value>עזב את השיחה</value>
+   </string>
+   <string>
+      <id>961</id>
+      <value>MSN מצב</value>
+   </string>
+   <string>
+      <id>970</id>
+      <value>חלון קודם</value>
+   </string>
+   <string>
+      <id>971</id>
+      <value>קבוצה</value>
+   </string>
+   <string>
+      <id>972</id>
+      <value>כל הערוצים</value>
+   </string>
+   <string>
+      <id>973</id>
+      <value>קצב מרבי</value>
+   </string>
+   <string>
+      <id>974</id>
+      <value>תפריט ראשי</value>
+   </string>
+   <string>
+      <id>975</id>
+      <value>פרק קודם</value>
+   </string>
+   <string>
+      <id>976</id>
+      <value>פרק הבא</value>
+   </string>
+   <string>
+      <id>977</id>
+      <value>אין כרטיסים פנויים זמינים</value>
+   </string>
+   <string>
+      <id>978</id>
+      <value>שיכולים לצפות בערוץ זה</value>
+   </string>
+   <string>
+      <id>979</id>
+      <value>נגן הקלטה מהתחלה</value>
+   </string>
+   <string>
+      <id>980</id>
+      <value>נגן הקלטה מנקודה נוכחית</value>
+   </string>
+   <string>
+      <id>981</id>
+      <value>בטל תכנית זו</value>
+   </string>
+   <string>
+      <id>982</id>
+      <value>מחק את ההקלטה במלואה</value>
+   </string>
+   <string>
+      <id>983</id>
+      <value>רשימות ניגון</value>
+   </string>
+   <string>
+      <id>984</id>
+      <value>מוריד רשימת סרטים</value>
+   </string>
+   <string>
+      <id>985</id>
+      <value>מוריד פרטי סרטים</value>
+   </string>
+   <string>
+      <id>986</id>
+      <value>מוריד שחקן</value>
+   </string>
+   <string>
+      <id>987</id>
+      <value>שנים</value>
+   </string>
+   <string>
+      <id>988</id>
+      <value>איכות</value>
+   </string>
+   <string>
+      <id>989</id>
+      <value>-</value>
+   </string>
+   <string>
+      <id>990</id>
+      <value>-</value>
+   </string>
+   <string>
+      <id>991</id>
+      <value>עדיפות</value>
+   </string>
+   <string>
+      <id>992</id>
+      <value>מחק קובץ מקורי</value>
+   </string>
+   <string>
+      <id>993</id>
+      <value>מותאם אישית</value>
+   </string>
+   <string>
+      <id>994</id>
+      <value>הפעל דחיסה אוטומטית</value>
+   </string>
+   <string>
+      <id>995</id>
+      <value>האם אתה בטוח שאתה רוצה לדחוס את</value>
+   </string>
+   <string>
+      <id>996</id>
+      <value>ההקלטה הנבחרת?</value>
+   </string>
+   <string>
+      <id>997</id>
+      <value>הושלם</value>
+   </string>
+   <string>
+      <id>998</id>
+      <value>-</value>
+   </string>
+   <string>
+      <id>999</id>
+      <value>תוסף זה מאפשר לך להמיר את</value>
+   </string>
+   <string>
+      <id>1000</id>
+      <value>הקלטות הטלוויזיה מdvr-ms לmpg,xvid או wmv</value>
+   </string>
+   <string>
+      <id>1001</id>
+      <value>שים לב. אתה תזדקק</value>
+   </string>
+   <string>
+      <id>1002</id>
+      <value>למפענח וידיאו Elecard MPEG2 מותקן</value>
+   </string>
+   <string>
+      <id>1003</id>
+      <value>בכדי לבצע המרה ל-xvid</value>
+   </string>
+   <string>
+      <id>1004</id>
+      <value>עומד להתחיל בהקלטה</value>
+   </string>
+   <string>
+      <id>1005</id>
+      <value>בערוץ</value>
+   </string>
+   <string>
+      <id>1006</id>
+      <value>אפשר להקלטה להתחיל</value>
+   </string>
+   <string>
+      <id>1007</id>
+      <value>בטל הקלטה והמשך לצפות בטלוויזיה</value>
+   </string>
+   <string>
+      <id>1008</id>
+      <value>תור</value>
+   </string>
+   <string>
+      <id>1009</id>
+      <value>מוריד עדיפה</value>
+   </string>
+   <string>
+      <id>1010</id>
+      <value>נצפה</value>
+   </string>
+   <string>
+      <id>1011</id>
+      <value>ביוגרפיה</value>
+   </string>
+   <string>
+      <id>1012</id>
+      <value>התכנית תופסק על ידי</value>
+   </string>
+   <string>
+      <id>1013</id>
+      <value>האם אתה מעוניין להקליט גם את החלק השני?</value>
+   </string>
+   <string>
+      <id>1014</id>
+      <value>עדכן אותי כאשר התכנית מתחילה</value>
+   </string>
+   <string>
+      <id>1015</id>
+      <value>אל תעדכן אותי כאשר התכנית מתחילה</value>
+   </string>
+   <string>
+      <id>1016</id>
+      <value>התכנית מתחילה בעוד 5 דקות</value>
+   </string>
+   <string>
+      <id>1017</id>
+      <value>מיין לפי: משך</value>
+   </string>
+   <string>
+      <id>1020</id>
+      <value>מידע</value>
+   </string>
+   <string>
+      <id>1021</id>
+      <value>לחץ Alt+Enter כדי</value>
+   </string>
+   <string>
+      <id>1022</id>
+      <value>לחזור למצב חלון</value>
+   </string>
+   <string>
+      <id>1023</id>
+      <value>שיחה נכנסת</value>
+   </string>
+   <string>
+      <id>1024</id>
+      <value>מאת</value>
+   </string>
+   <string>
+      <id>1025</id>
+      <value>אירעה שגיאה</value>
+   </string>
+   <string>
+      <id>1026</id>
+      <value>ראה את קבצי ה-log לפרטים נוספים</value>
+   </string>
+   <string>
+      <id>1027</id>
+      <value>DVD</value>
+   </string>
+   <string>
+      <id>1028</id>
+      <value>עיר</value>
+   </string>
+   <string>
+      <id>1029</id>
+      <value>שפת כתוביות</value>
+   </string>
+   <string>
+      <id>1030</id>
+      <value>כיבוי</value>
+   </string>
+   <string>
+      <id>1031</id>
+      <value>הפעלה מחדש</value>
+   </string>
+   <string>
+      <id>1032</id>
+      <value>מצב שינה</value>
+   </string>
+   <string>
+      <id>1033</id>
+      <value>תכניות מוקלטות כרגע</value>
+   </string>
+   <string>
+      <id>1034</id>
+      <value>לא אותר אות!</value>
+   </string>
+   <string>
+      <id>1035</id>
+      <value>ערוץ הטלוויזיה מטושטש</value>
+   </string>
+   <string>
+      <id>1036</id>
+      <value>לא נמצא וידיאו</value>
+   </string>
+   <string>
+      <id>1037</id>
+      <value>טלוויזיה - מידע על תכנית</value>
+   </string>
+   <string>
+      <id>1038</id>
+      <value>הקלטה מתקדמת</value>
+   </string>
+   <string>
+      <id>1039</id>
+      <value>אל תקליט</value>
+   </string>
+   <string>
+      <id>1040</id>
+      <value>הזכר לי</value>
+   </string>
+   <string>
+      <id>1041</id>
+      <value>פרקים הבאים</value>
+   </string>
+   <string>
+      <id>1042</id>
+      <value>שמור עד</value>
+   </string>
+   <string>
+      <id>1043</id>
+      <value>עד שנצפה</value>
+   </string>
+   <string>
+      <id>1044</id>
+      <value>עד שידרש שטח דיסק</value>
+   </string>
+   <string>
+      <id>1045</id>
+      <value>עד תאריך</value>
+   </string>
+   <string>
+      <id>1046</id>
+      <value>תמיד</value>
+   </string>
+   <string>
+      <id>1047</id>
+      <value>התחל במסך מלא</value>
+   </string>
+   <string>
+      <id>1048</id>
+      <value>אפשרויות</value>
+   </string>
+   <string>
+      <id>1049</id>
+      <value>הקפאה</value>
+   </string>
+   <string>
+      <id>1050</id>
+      <value>שבת-ראשון</value>
+   </string>
+   <string>
+      <id>1051</id>
+      <value>הקלט שבת-ראשון</value>
+   </string>
+   <string>
+      <id>1052</id>
+      <value>שירים</value>
+   </string>
+   <string>
+      <id>1100</id>
+      <value>ייבא CD</value>
+   </string>
+   <string>
+      <id>1101</id>
+      <value>ייבא רצועה נבחרת</value>
+   </string>
+   <string>
+      <id>1102</id>
+      <value>בטל ייבוא CD</value>
+   </string>
+   <string>
+      <id>1103</id>
+      <value>ייבוא רצועה</value>
+   </string>
+   <string>
+      <id>1104</id>
+      <value>שמאל</value>
+   </string>
+   <string>
+      <id>1105</id>
+      <value>מייבא רצועות</value>
+   </string>
+   <string>
+      <id>1440</id>
+      <value>טלטקסט</value>
+   </string>
+   <string>
+      <id>1441</id>
+      <value>טלטקסט</value>
+   </string>
+   <string>
+      <id>1442</id>
+      <value>מהירות גלילה (אופקית)</value>
+   </string>
+   <string>
+      <id>1443</id>
+      <value>מהירות גלילה (אנכית)</value>
+   </string>
+   <string>
+      <id>1444</id>
+      <value>טרום-הקלטה</value>
+   </string>
+   <string>
+      <id>1445</id>
+      <value>לאחר-הקלטה</value>
+   </string>
+   <string>
+      <id>1446</id>
+      <value>הקלטה החלה:</value>
+   </string>
+   <string>
+      <id>1447</id>
+      <value>הקלטה הופסקה:</value>
+   </string>
+   <string>
+      <id>1448</id>
+      <value>בחר כלום</value>
+   </string>
+   <string>
+      <id>1449</id>
+      <value>הפסק הקלטה</value>
+   </string>
+   <string>
+      <id>1450</id>
+      <value>האם אתה בטוח שאתה רוצה לעצור את ההקלטה?</value>
+   </string>
+   <string>
+      <id>1950</id>
+      <value>מצב מחשב</value>
+   </string>
+   <string>
+      <id>1951</id>
+      <value>כונן קשיח</value>
+   </string>
+   <string>
+      <id>1952</id>
+      <value>מאורר</value>
+   </string>
+   <string>
+      <id>1953</id>
+      <value>פנוי</value>
+   </string>
+   <string>
+      <id>1954</id>
+      <value>טמפרטורה</value>
+   </string>
+   <string>
+      <id>1955</id>
+      <value>C</value>
+   </string>
+   <string>
+      <id>1956</id>
+      <value>בחר צליל להתראה</value>
+   </string>
+   <string>
+      <id>1957</id>
+      <value>עדיפויות</value>
+   </string>
+   <string>
+      <id>1958</id>
+      <value>CPU שימוש ב</value>
+   </string>
+   <string>
+      <id>1959</id>
+      <value>מתח</value>
+   </string>
+   <string>
+      <id>1960</id>
+      <value>וולט</value>
+   </string>
+   <string>
+      <id>1961</id>
+      <value>תדר שעון</value>
+   </string>
+   <string>
+      <id>1962</id>
+      <value>עדיפויות</value>
+   </string>
+   <string>
+      <id>1963</id>
+      <value>פרטי חיישן</value>
+   </string>
+   <string>
+      <id>1964</id>
+      <value>התראת חיישן</value>
+   </string>
+   <string>
+      <id>1965</id>
+      <value>ערך גבוה ביותר</value>
+   </string>
+   <string>
+      <id>1966</id>
+      <value>ערך נמוך ביותר</value>
+   </string>
+   <string>
+      <id>1967</id>
+      <value>סף התראה עליון</value>
+   </string>
+   <string>
+      <id>1968</id>
+      <value>סף התראה תחתון</value>
+   </string>
+   <string>
+      <id>1969</id>
+      <value>בדוק קול</value>
+   </string>
+   <string>
+      <id>1970</id>
+      <value>זמן התראה )בשניות)</value>
+   </string>
+   <string>
+      <id>1971</id>
+      <value>כבה במידה ויש התראה</value>
+   </string>
+   <string>
+      <id>1972</id>
+      <value>פרטי מצב</value>
+   </string>
+   <string>
+      <id>1973</id>
+      <value>מ</value>
+   </string>
+   <string>
+      <id>1974</id>
+      <value>זכרון</value>
+   </string>
+   <string>
+      <id>1975</id>
+      <value>עמוד הבא</value>
+   </string>
+   <string>
+      <id>1976</id>
+      <value>סל"ד</value>
+   </string>
+   <string>
+      <id>1977</id>
+      <value>מערך קבצים</value>
+   </string>
+   <string>
+      <id>1978</id>
+      <value>זכרון וירטואלי</value>
+   </string>
+   <string>
+      <id>2005</id>
+      <value>מחק</value>
+   </string>
+   <string>
+      <id>2006</id>
+      <value>כותרת</value>
+   </string>
+   <string>
+      <id>2007</id>
+      <value>מיצור</value>
+   </string>
+   <string>
+      <id>2008</id>
+      <value>רכיבים</value>
+   </string>
+   <string>
+      <id>2009</id>
+      <value>הוראות</value>
+   </string>
+   <string>
+      <id>2010</id>
+      <value>כרטיס</value>
+   </string>
+   <string>
+      <id>2011</id>
+      <value>הדפס</value>
+   </string>
+   <string>
+      <id>2012</id>
+      <value>מחק</value>
+   </string>
+   <string>
+      <id>2013</id>
+      <value>מועדפים</value>
+   </string>
+   <string>
+      <id>2014</id>
+      <value>לא ידוע</value>
+   </string>
+   <string>
+      <id>2015</id>
+      <value>להגשה</value>
+   </string>
+   <string>
+      <id>2016</id>
+      <value>קטן</value>
+   </string>
+   <string>
+      <id>2017</id>
+      <value>קומץ נוזל</value>
+   </string>
+   <string>
+      <id>2018</id>
+      <value>כוס</value>
+   </string>
+   <string>
+      <id>2019</id>
+      <value>פינט</value>
+   </string>
+   <string>
+      <id>2020</id>
+      <value>בינוני</value>
+   </string>
+   <string>
+      <id>2021</id>
+      <value>גדול</value>
+   </string>
+   <string>
+      <id>2022</id>
+      <value>פחית</value>
+   </string>
+   <string>
+      <id>2023</id>
+      <value>אריזה</value>
+   </string>
+   <string>
+      <id>2024</id>
+      <value>קמצוץ</value>
+   </string>
+   <string>
+      <id>2025</id>
+      <value>טיפה</value>
+   </string>
+   <string>
+      <id>2026</id>
+      <value> קָרְטוֹב</value>
+   </string>
+   <string>
+      <id>2027</id>
+      <value>קרטון</value>
+   </string>
+   <string>
+      <id>2028</id>
+      <value>מספר</value>
+   </string>
+   <string>
+      <id>2029</id>
+      <value>פיסה</value>
+   </string>
+   <string>
+      <id>2030</id>
+      <value>כל</value>
+   </string>
+   <string>
+      <id>2031</id>
+      <value>כפית</value>
+   </string>
+   <string>
+      <id>2032</id>
+      <value>כפית</value>
+   </string>
+   <string>
+      <id>2033</id>
+      <value>כף</value>
+   </string>
+   <string>
+      <id>2034</id>
+      <value>כף</value>
+   </string>
+   <string>
+      <id>2035</id>
+      <value> רבע גלון</value>
+   </string>
+   <string>
+      <id>2036</id>
+      <value>גלון</value>
+   </string>
+   <string>
+      <id>2037</id>
+      <value>אונקיה</value>
+   </string>
+   <string>
+      <id>2038</id>
+      <value>פאונד</value>
+   </string>
+   <string>
+      <id>2039</id>
+      <value>מיליליטר</value>
+   </string>
+   <string>
+      <id>2040</id>
+      <value>מיליליטר</value>
+   </string>
+   <string>
+      <id>2041</id>
+      <value>סנטיליטר</value>
+   </string>
+   <string>
+      <id>2042</id>
+      <value>דציליטר</value>
+   </string>
+   <string>
+      <id>2043</id>
+      <value>ליטר</value>
+   </string>
+   <string>
+      <id>2044</id>
+      <value>מיליגרם</value>
+   </string>
+   <string>
+      <id>2045</id>
+      <value>סנטיגרם</value>
+   </string>
+   <string>
+      <id>2046</id>
+      <value>דקגרם</value>
+   </string>
+   <string>
+      <id>2047</id>
+      <value>גרם</value>
+   </string>
+   <string>
+      <id>2048</id>
+      <value>קילוגרם</value>
+   </string>
+   <string>
+      <id>2049</id>
+      <value>מחק מרשם?</value>
+   </string>
+   <string>
+      <id>2050</id>
+      <value>מחק סיווג זה?</value>
+   </string>
+   <string>
+      <id>2051</id>
+      <value>חפש בכותרת</value>
+   </string>
+   <string>
+      <id>2052</id>
+      <value>חפש במרשם</value>
+   </string>
+   <string>
+      <id>2053</id>
+      <value>סיווג</value>
+   </string>
+   <string>
+      <id>2054</id>
+      <value>לא קיים!</value>
+   </string>
+   <string>
+      <id>2100</id>
+      <value>צרוב</value>
+   </string>
+   <string>
+      <id>2101</id>
+      <value>העתק CD/DVD</value>
+   </string>
+   <string>
+      <id>2102</id>
+      <value>צור Audio-CD</value>
+   </string>
+   <string>
+      <id>2103</id>
+      <value>צור Video-CD</value>
+   </string>
+   <string>
+      <id>2104</id>
+      <value>צור Video-DVD</value>
+   </string>
+   <string>
+      <id>2105</id>
+      <value>צור Data-CD</value>
+   </string>
+   <string>
+      <id>2106</id>
+      <value>צור Data-DVD</value>
+   </string>
+   <string>
+      <id>2107</id>
+      <value>התחל להעתיק</value>
+   </string>
+   <string>
+      <id>2108</id>
+      <value>הכנס CD/DVD ריק</value>
+   </string>
+   <string>
+      <id>2109</id>
+      <value>ולחץ OK</value>
+   </string>
+   <string>
+      <id>2110</id>
+      <value>הכנס CD/DVD מקור</value>
+   </string>
+   <string>
+      <id>2111</id>
+      <value>הסתיים!</value>
+   </string>
+   <string>
+      <id>2112</id>
+      <value>מחכה ל CD/DVD</value>
+   </string>
+   <string>
+      <id>2113</id>
+      <value>העתק הכל</value>
+   </string>
+   <string>
+      <id>2114</id>
+      <value>מחק דיסק</value>
+   </string>
+   <string>
+      <id>2115</id>
+      <value>הכנס CD/DVD RW</value>
+   </string>
+   <string>
+      <id>2116</id>
+      <value>הכונן אינו מוכן</value>
+   </string>
+   <string>
+      <id>2117</id>
+      <value>קרתה שגיאה קריטית!</value>
+   </string>
+   <string>
+      <id>2118</id>
+      <value>המר DVR-MS</value>
+   </string>
+   <string>
+      <id>2119</id>
+      <value>התחל המרה</value>
+   </string>
+   <string>
+      <id>2120</id>
+      <value>ממיר קובץ(ים)...</value>
+   </string>
+   <string>
+      <id>2121</id>
+      <value>לא יכול להמיר קובץ(ים)!</value>
+   </string>
+   <string>
+      <id>2122</id>
+      <value>מתחיל!</value>
+   </string>
+   <string>
+      <id>2123</id>
+      <value>מידע דיסק</value>
+   </string>
+   <string>
+      <id>2124</id>
+      <value>לא יכול למחוק: מדיה לא ניתנת לכתיבה</value>
+   </string>
+   <string>
+      <id>2125</id>
+      <value>מחק דיסק...</value>
+   </string>
+   <string>
+      <id>2126</id>
+      <value>הוצא CD</value>
+   </string>
+   <string>
+      <id>2127</id>
+      <value>ה-CD אינו ניתן לכתיבה</value>
+   </string>
+   <string>
+      <id>2128</id>
+      <value>מכין צריבה: זמן משוער:</value>
+   </string>
+   <string>
+      <id>2129</id>
+      <value>מתכונן לצריבה</value>
+   </string>
+   <string>
+      <id>2130</id>
+      <value>חסום</value>
+   </string>
+   <string>
+      <id>2131</id>
+      <value>של</value>
+   </string>
+   <string>
+      <id>2132</id>
+      <value>סוגר כונן: זמן משוער:</value>
+   </string>
+   <string>
+      <id>2133</id>
+      <value>הקלטות טלוויזיה</value>
+   </string>
+   <string>
+      <id>2134</id>
+      <value>וידיאו</value>
+   </string>
+   <string>
+      <id>2135</id>
+      <value>אודיו</value>
+   </string>
+   <string>
+      <id>2136</id>
+      <value>נתונים</value>
+   </string>
+   <string>
+      <id>2137</id>
+      <value>המר</value>
+   </string>
+   <string>
+      <id>2138</id>
+      <value>חתוך</value>
+   </string>
+   <string>
+      <id>2139</id>
+      <value>הכן דיסק MP3</value>
+   </string>
+   <string>
+      <id>2140</id>
+      <value>הכן דיסק DVD</value>
+   </string>
+   <string>
+      <id>2141</id>
+      <value>MPEG2 -&gt; DivX</value>
+   </string>
+   <string>
+      <id>2142</id>
+      <value>MPEG2 -&gt; MPEG4</value>
+   </string>
+   <string>
+      <id>2143</id>
+      <value>בית</value>
+   </string>
+   <string>
+      <id>2200</id>
+      <value>סייר</value>
+   </string>
+   <string>
+      <id>2201</id>
+      <value>בחר מקור</value>
+   </string>
+   <string>
+      <id>2202</id>
+      <value>בחר יעד</value>
+   </string>
+   <string>
+      <id>2203</id>
+      <value>העתק</value>
+   </string>
+   <string>
+      <id>2204</id>
+      <value>צור תיקיה</value>
+   </string>
+   <string>
+      <id>2205</id>
+      <value>שחזר בחירה</value>
+   </string>
+   <string>
+      <id>2206</id>
+      <value>בחר הכל</value>
+   </string>
+   <string>
+      <id>2207</id>
+      <value>מה ברצונך לעשות</value>
+   </string>
+   <string>
+      <id>2208</id>
+      <value>ליצור תיקיה?</value>
+   </string>
+   <string>
+      <id>2209</id>
+      <value>האם להעתיק את הקבצים?</value>
+   </string>
+   <string>
+      <id>2210</id>
+      <value>קבצים העתקו!</value>
+   </string>
+   <string>
+      <id>2211</id>
+      <value>המתן, מעתיק קבצים</value>
+   </string>
+   <string>
+      <id>2212</id>
+      <value>מחק</value>
+   </string>
+   <string>
+      <id>2213</id>
+      <value>העבר</value>
+   </string>
+   <string>
+      <id>2214</id>
+      <value>האם להעביר את הקבצים שנבחרו?</value>
+   </string>
+   <string>
+      <id>2215</id>
+      <value>המתן, מזיז קבצים</value>
+   </string>
+   <string>
+      <id>2216</id>
+      <value>קבצים הוזזו!</value>
+   </string>
+   <string>
+      <id>2217</id>
+      <value>קובץ יעד קיים!</value>
+   </string>
+   <string>
+      <id>2218</id>
+      <value>לכתוב מחדש קובץ?</value>
+   </string>
+   <string>
+      <id>2219</id>
+      <value>לא ניתן להעביר מהכונן שנבחר!</value>
+   </string>
+   <string>
+      <id>2220</id>
+      <value>להעתיק את הקבצים שנבחרו?</value>
+   </string>
+   <string>
+      <id>2221</id>
+      <value>האם למחוק את הקבצים שנבחרו?</value>
+   </string>
+   <string>
+      <id>2222</id>
+      <value>קבצים נמחקו!</value>
+   </string>
+   <string>
+      <id>2223</id>
+      <value>פח-זבל</value>
+   </string>
+   <string>
+      <id>2224</id>
+      <value>תיקיה קיימת!</value>
+   </string>
+   <string>
+      <id>2225</id>
+      <value>תיקיה נוצרה</value>
+   </string>
+   <string>
+      <id>3000</id>
+      <value>אפשרויות</value>
+   </string>
+   <string>
+      <id>3001</id>
+      <value>שעה</value>
+   </string>
+   <string>
+      <id>3002</id>
+      <value>שעות</value>
+   </string>
+   <string>
+      <id>3003</id>
+      <value>דקה</value>
+   </string>
+   <string>
+      <id>3004</id>
+      <value>דקות</value>
+   </string>
+   <string>
+      <id>3005</id>
+      <value>לפני שעה</value>
+   </string>
+   <string>
+      <id>3006</id>
+      <value>לפני שעות</value>
+   </string>
+   <string>
+      <id>3007</id>
+      <value>לפני דקה</value>
+   </string>
+   <string>
+      <id>3008</id>
+      <value>לפני דקות</value>
+   </string>
+   <string>
+      <id>3009</id>
+      <value>מתחיל ב</value>
+   </string>
+   <string>
+      <id>3010</id>
+      <value>נשארו דקות</value>
+   </string>
+   <string>
+      <id>3011</id>
+      <value>נשארה שעה</value>
+   </string>
+   <string>
+      <id>3012</id>
+      <value>נשארו שעות</value>
+   </string>
+   <string>
+      <id>3013</id>
+      <value>מתחיל עכשיו</value>
+   </string>
+   <string>
+      <id>3014</id>
+      <value>יום</value>
+   </string>
+   <string>
+      <id>3015</id>
+      <value>ימים</value>
+   </string>
+   <string>
+      <id>3016</id>
+      <value>כבר הסתיים</value>
+   </string>
+   <string>
+      <id>3017</id>
+      <value>החל</value>
+   </string>
+   <string>
+      <id>3018</id>
+      <value>נשארו דקות</value>
+   </string>
+   <string>
+      <id>3019</id>
+      <value>סידרה</value>
+   </string>
+   <string>
+      <id>3020</id>
+      <value>פרק</value>
+   </string>
+   <string>
+      <id>3021</id>
+      <value>חלק</value>
+   </string>
+   <string>
+      <id>3022</id>
+      <value>של</value>
+   </string>
+   <string>
+      <id>4000</id>
+      <value>דפדפן אינטרנט</value>
+   </string>
+   <string>
+      <id>4001</id>
+      <value>מועדפים</value>
+   </string>
+   <string>
+      <id>4002</id>
+      <value>לא ניתן לטעון כתובת URL</value>
+   </string>
+   <string>
+      <id>4003</id>
+      <value>אנא קבע תיקיית מועדפים בתצורה</value>
+   </string>
+   <string>
+      <id>4500</id>
+      <value>דלג על אלבומים עם עטיפה קיימת</value>
+   </string>
+   <string>
+      <id>4501</id>
+      <value>שמור עטיפה בתיקיית האלבום</value>
+   </string>
+   <string>
+      <id>4502</id>
+      <value>שמור עטיפה בתיקיית הסמלים</value>
+   </string>
+   <string>
+      <id>4503</id>
+      <value>מקבל מספר אלבום. אנא המתן...</value>
+   </string>
+   <string>
+      <id>4504</id>
+      <value>{0}% - {1} מתוך {2}</value>
+   </string>
+   <string>
+      <id>4505</id>
+      <value>מחפש {0{...</value>
+   </string>
+   <string>
+      <id>4506</id>
+      <value>[ריק]</value>
+   </string>
+   <string>
+      <id>4507</id>
+      <value>הורדת העטיפה בוטלה על ידי המשתמש</value>
+   </string>
+   <string>
+      <id>4508</id>
+      <value>הורדת העטיפה הסתיימה בהצלחה</value>
+   </string>
+   <string>
+      <id>4509</id>
+      <value>הורדת העטיפה הסתיימה עם שגיאות</value>
+   </string>
+   <string>
+      <id>4510</id>
+      <value>{0} עטיפות עודכנו</value>
+   </string>
+   <string>
+      <id>4511</id>
+      <value>הורדת העטיפה הסתיימה</value>
+   </string>
+   <string>
+      <id>4512</id>
+      <value>כל העטיפות מעודכנות</value>
+   </string>
+   <string>
+      <id>4513</id>
+      <value>מגוון</value>
+   </string>
+   <string>
+      <id>4514</id>
+      <value>הורדת עטיפות</value>
+   </string>
+   <string>
+      <id>4515</id>
+      <value>תוצאות חיפוש הורדת עטיפות</value>
+   </string>
+   <string>
+      <id>4516</id>
+      <value>לא נמצאו עטיפות</value>
+   </string>
+   <string>
+      <id>4517</id>
+      <value>סגור</value>
+   </string>
+   <string>
+      <id>4518</id>
+      <value>כותרת אלבום לא נמצאה\r\nמנסה: {0}</value>
+   </string>
+   <string>
+      <id>4519</id>
+      <value>עטיפת אלבום נוכחית</value>
+   </string>
+   <string>
+      <id>4520</id>
+      <value>דלג</value>
+   </string>
+   <string>
+      <id>4521</id>
+      <value>הצג מידע אלבום</value>
+   </string>
+   <string>
+      <id>4522</id>
+      <value>מוריד: {0}...</value>
+   </string>
+   <string>
+      <id>4540</id>
+      <value>מנגן כעת</value>
+   </string>
+   <string>
+      <id>4541</id>
+      <value>הבא לניגון</value>
+   </string>
+   <string>
+      <id>4542</id>
+      <value>לא נטענו רשימות ניגון</value>
+   </string>
+   <string>
+      <id>4543</id>
+      <value>מידע רצועה לא זמין</value>
+   </string>
+   <string>
+      <id>4550</id>
+      <value>הוסף לתור</value>
+   </string>
+   <string>
+      <id>4551</id>
+      <value>נגן הבא</value>
+   </string>
+   <string>
+      <id>4552</id>
+      <value>נגן כעת</value>
+   </string>
+   <string>
+      <id>4553</id>
+      <value>הצג רשימת ניגון</value>
+   </string>
+   <string>
+      <id>4554</id>
+      <value>מחפש מידע על CD</value>
+   </string>
+   <string>
+      <id>4555</id>
+      <value>רשימת ניגון נוכחית</value>
+   </string>
+   <string>
+      <id>5900</id>
+      <value>פרומואים</value>
+   </string>
+   <string>
+      <id>5901</id>
+      <value>הצג סרטים</value>
+   </string>
+   <string>
+      <id>5902</id>
+      <value>אילו סרטים להציג?</value>
+   </string>
+   <string>
+      <id>5903</id>
+      <value>הפרומואים הכי אחרונים</value>
+   </string>
+   <string>
+      <id>5904</id>
+      <value>הפרומואים הכי טובים</value>
+   </string>
+   <string>
+      <id>5905</id>
+      <value>כל הפרומואים</value>
+   </string>
+   <string>
+      <id>5906</id>
+      <value>פרומואים</value>
+   </string>
+   <string>
+      <id>5907</id>
+      <value>קליפים</value>
+   </string>
+   <string>
+      <id>5908</id>
+      <value>עוד</value>
+   </string>
+   <string>
+      <id>5909</id>
+      <value>לא ניתן להציג סרט!</value>
+   </string>
+   <string>
+      <id>5910</id>
+      <value>מקבל מידע על הסרט</value>
+   </string>
+   <string>
+      <id>5911</id>
+      <value>חדש בקולנוע</value>
+   </string>
+   <string>
+      <id>5912</id>
+      <value>שבוע שעבר</value>
+   </string>
+   <string>
+      <id>5913</id>
+      <value>השבוע</value>
+   </string>
+   <string>
+      <id>5914</id>
+      <value>שבוע הבא</value>
+   </string>
+   <string>
+      <id>5915</id>
+      <value>טרם נסקרו סרטים</value>
+   </string>
+   <string>
+      <id>5916</id>
+      <value>לא נמצאו פרומואים</value>
+   </string>
+   <string>
+      <id>5917</id>
+      <value>פרומואים בגרמנית</value>
+   </string>
+   <string>
+      <id>5918</id>
+      <value>T?l?vision Suisse Romande VOD</value>
+   </string>
+   <string>
+      <id>5919</id>
+      <value>סוף השבוע בקופות</value>
+   </string>
+   <string>
+      <id>5920</id>
+      <value>סרטים שנפתחים השבוע</value>
+   </string>
+   <string>
+      <id>5921</id>
+      <value>סרטים שמגיעים בקרוב</value>
+   </string>
+   <string>
+      <id>5922</id>
+      <value>ה-DVD הכי נמכרים</value>
+   </string>
+   <string>
+      <id>5923</id>
+      <value>חדש ב-DVD השבוע</value>
+   </string>
+   <string>
+      <id>5924</id>
+      <value>חדש ב-DVD בשבוע הבא</value>
+   </string>
+   <string>
+      <id>5925</id>
+      <value>קדם-הזמנות DVD</value>
+   </string>
+   <string>
+      <id>8000</id>
+      <value>דואר</value>
+   </string>
+   <string>
+      <id>8001</id>
+      <value>בדוק תיבת דואר</value>
+   </string>
+   <string>
+      <id>8002</id>
+      <value>בדיקה אוטומטית לא מופעלת</value>
+   </string>
+   <string>
+      <id>8003</id>
+      <value>בדיקה אוטומטית מופעלת</value>
+   </string>
+   <string>
+      <id>8004</id>
+      <value>יש לך דואר!</value>
+   </string>
+   <string>
+      <id>8005</id>
+      <value>מרענן תיבת דואר</value>
+   </string>
+   <string>
+      <id>8007</id>
+      <value>בדיקה אוטומטית</value>
+   </string>
+   <string>
+      <id>8008</id>
+      <value>חזור</value>
+   </string>
+   <string>
+      <id>8009</id>
+      <value>סמן את כל ההודעות שלא נקראו</value>
+   </string>
+   <string>
+      <id>8010</id>
+      <value>לא מוגדרת תיבת דואר</value>
+   </string>
+   <string>
+      <id>8011</id>
+      <value>הגדר לפחות תיבה בקביעת תצורה</value>
+   </string>
+   <string>
+      <id>8012</id>
+      <value>של תוסף הדואר</value>
+   </string>
+   <string>
+      <id>8013</id>
+      <value>אין תגובה מהשרת</value>
+   </string>
+   <string>
+      <id>8014</id>
+      <value>השרת '{0}' לא מגיב!</value>
+   </string>
+   <string>
+      <id>8015</id>
+      <value>בדוק את ההגדרות לתיבה '{0}'</value>
+   </string>
+   <string>
+      <id>8016</id>
+      <value>מ</value>
+   </string>
+   <string>
+      <id>8017</id>
+      <value>ל</value>
+   </string>
+   <string>
+      <id>8018</id>
+      <value>נושא</value>
+   </string>
+   <string>
+      <id>8019</id>
+      <value>הודעה</value>
+   </string>
+   <string>
+      <id>8020</id>
+      <value>מחק דואר</value>
+   </string>
+   <string>
+      <id>8021</id>
+      <value>סמן כנקרא</value>
+   </string>
+   <string>
+      <id>8022</id>
+      <value>הראה חומר מצורף</value>
+   </string>
+   <string>
+      <id>8023</id>
+      <value>הודעה חדשה הגיעה</value>
+   </string>
+   <string>
+      <id>8024</id>
+      <value>הראה הודעה</value>
+   </string>
+   <string>
+      <id>8025</id>
+      <value>סורק הודעה</value>
+   </string>
+   <string>
+      <id>8030</id>
+      <value>מחובר לשרת</value>
+   </string>
+   <string>
+      <id>8031</id>
+      <value>מקבל הודעה מספר</value>
+   </string>
+   <string>
+      <id>8033</id>
+      <value>התקדמות</value>
+   </string>
+   <string>
+      <id>8034</id>
+      <value>הראה HTML</value>
+   </string>
+   <string>
+      <id>9000</id>
+      <value>גודל תמונה:</value>
+   </string>
+   <string>
+      <id>9001</id>
+      <value>רזולוציה:</value>
+   </string>
+   <string>
+      <id>9002</id>
+      <value>פלש:</value>
+   </string>
+   <string>
+      <id>9003</id>
+      <value>מצב מדידת אור:</value>
+   </string>
+   <string>
+      <id>9004</id>
+      <value>דחיסה:</value>
+   </string>
+   <string>
+      <id>9005</id>
+      <value>מהירות צמצם:</value>
+   </string>
+   <string>
+      <id>9006</id>
+      <value>תאריך צילום:</value>
+   </string>
+   <string>
+      <id>9007</id>
+      <value>Fstop:</value>
+   </string>
+   <string>
+      <id>9008</id>
+      <value>זמן חשיפה:</value>
+   </string>
+   <string>
+      <id>9009</id>
+      <value>דגם מצלמה:</value>
+   </string>
+   <string>
+      <id>9010</id>
+      <value>יצרן ציוד:</value>
+   </string>
+   <string>
+      <id>9011</id>
+      <value>הערות:</value>
+   </string>
+   <string>
+      <id>10100</id>
+      <value>תיבת שיחה כן/לא</value>
+   </string>
+   <string>
+      <id>10101</id>
+      <value>דיווח התקדמות</value>
+   </string>
+   <string>
+      <id>10102</id>
+      <value>זמן הכי מהיר</value>
+   </string>
+   <string>
+      <id>10103</id>
+      <value>שולה מוקשים</value>
+   </string>
+   <string>
+      <id>10104</id>
+      <value>מיני-מדריך</value>
+   </string>
+   <string>
+      <id>12902</id>
+      <value>MSN Messenger OSD</value>
+   </string>
+   <string>
+      <id>13000</id>
+      <value>מערכת:</value>
+   </string>
+   <string>
+      <id>13001</id>
+      <value>יצרן:</value>
+   </string>
+   <string>
+      <id>13002</id>
+      <value>התחל</value>
+   </string>
+   <string>
+      <id>13003</id>
+      <value>קובץ מייבא *.mlf</value>
+   </string>
+   <string>
+      <id>13004</id>
+      <value>מייבא קובץ *.my</value>
+   </string>
+   <string>
+      <id>13005</id>
+      <value>קובץ אחרון שיובא:</value>
+   </string>
+   <string>
+      <id>13006</id>
+      <value>תמונה קטנה</value>
+   </string>
+   <string>
+      <id>13007</id>
+      <value>תמונה גדולה</value>
+   </string>
+   <string>
+      <id>13008</id>
+      <value>אפקט Ken Burns</value>
+   </string>
+   <string>
+      <id>13009</id>
+      <value>מעבר אקראי</value>
+   </string>
+   <string>
+      <id>13010</id>
+      <value>X-fade מעבר</value>
+   </string>
+   <string>
+      <id>13011</id>
+      <value>מהירות Ken Burns</value>
+   </string>
+   <string>
+      <id>13012</id>
+      <value>טוען תמונה, אנא המתן</value>
+   </string>
+   <string>
+      <id>13013</id>
+      <value>טוען וידיאו, אנא המתן</value>
+   </string>
+   <string>
+      <id>13014</id>
+      <value>סורק תיקיה</value>
+   </string>
+   <string>
+      <id>13015</id>
+      <value>מייבא קובץ בסיס משחק</value>
+   </string>
+   <string>
+      <id>13016</id>
+      <value>מיין לפי: הפעלות</value>
+   </string>
+   <string>
+      <id>13017</id>
+      <value>מיין לפי: עדכניות</value>
+   </string>
+   <string>
+      <id>13018</id>
+      <value>מיין לפי: דירוג</value>
+   </string>
+   <string>
+      <id>16001</id>
+      <value>ערבוב חלקי</value>
+   </string>
+   <string>
+      <id>19001</id>
+      <value>טטריס</value>
+   </string>
+   <string>
+      <id>19002</id>
+      <value>משחק חדש</value>
+   </string>
+   <string>
+      <id>19003</id>
+      <value>מוסיקה</value>
+   </string>
+   <string>
+      <id>19004</id>
+      <value>קולות</value>
+   </string>
+   <string>
+      <id>19005</id>
+      <value>ניקוד</value>
+   </string>
+   <string>
+      <id>19006</id>
+      <value>רמה</value>
+   </string>
+   <string>
+      <id>19007</id>
+      <value>שורות</value>
+   </string>
+   <string>
+      <id>19008</id>
+      <value>ניקוד מירבי</value>
+   </string>
+   <string>
+      <id>19009</id>
+      <value>הבא</value>
+   </string>
+   <string>
+      <id>19010</id>
+      <value>הקש או לחץ כדי להתחיל...</value>
+   </string>
+   <string>
+      <id>19011</id>
+      <value>מושהה</value>
+   </string>
+   <string>
+      <id>19012</id>
+      <value>המשחק נגמר</value>
+   </string>
+   <string>
+      <id>19100</id>
+      <value>GeoClock</value>
+   </string>
+   <string>
+      <id>25001</id>
+      <value>ממתין לדף {0:X}...!</value>
+   </string>
+   <string>
+      <id>99845</id>
+      <value>-חיפוש בTV.com</value>
+   </string>
+   <string>
+      <id>100000</id>
+      <value>בית</value>
+   </string>
+   <string>
+      <id>100001</id>
+      <value>טלוויזיה</value>
+   </string>
+   <string>
+      <id>100002</id>
+      <value>תמונות</value>
+   </string>
+   <string>
+      <id>100003</id>
+      <value>קבצים</value>
+   </string>
+   <string>
+      <id>100004</id>
+      <value>אפשרויות</value>
+   </string>
+   <string>
+      <id>100005</id>
+      <value>מוזיקה</value>
+   </string>
+   <string>
+      <id>100006</id>
+      <value>וידיאו</value>
+   </string>
+   <string>
+      <id>100007</id>
+      <value>מידע מערכת</value>
+   </string>
+   <string>
+      <id>100008</id>
+      <value>אפשרויות-&gt;כללי</value>
+   </string>
+   <string>
+      <id>100009</id>
+      <value>אפשרויות-&gt;מסך</value>
+   </string>
+   <string>
+      <id>100010</id>
+      <value>אפשרויות-&gt;מסך-&gt;כיוון UI</value>
+   </string>
+   <string>
+      <id>100011</id>
+      <value>אפשרויות-&gt;מסך-&gt;כיוון מסך</value>
+   </string>
+   <string>
+      <id>100012</id>
+      <value>אפשרויות-&gt;הצגה ברצף</value>
+   </string>
+   <string>
+      <id>100013</id>
+      <value>אפשרויות-&gt;מסך-&gt;מסננים</value>
+   </string>
+   <string>
+      <id>100014</id>
+      <value>אפשרויות-&gt;מוזיקה</value>
+   </string>
+   <string>
+      <id>100015</id>
+      <value>אפשרויות-&gt;מסך-&gt;כתוביות</value>
+   </string>
+   <string>
+      <id>100016</id>
+      <value>אפשרויות-&gt;מסך-&gt;שומר מסך</value>
+   </string>
+   <string>
+      <id>100017</id>
+      <value>אפשרויות-&gt;מזג האוויר</value>
+   </string>
+   <string>
+      <id>100020</id>
+      <value>אפשרויות-&gt;סקריפטים</value>
+   </string>
+   <string>
+      <id>100021</id>
+      <value>וידיאו/ז'אנר</value>
+   </string>
+   <string>
+      <id>100022</id>
+      <value>וידיאו/שחקן</value>
+   </string>
+   <string>
+      <id>100023</id>
+      <value>וידיאו/שנה</value>
+   </string>
+   <string>
+      <id>100024</id>
+      <value>אפשרויות-&gt;תכניות</value>
+   </string>
+   <string>
+      <id>100025</id>
+      <value>וידיאו/כותרת</value>
+   </string>
+   <string>
+      <id>100026</id>
+      <value>אפשרויות-&gt;כללי-&gt;מטמון</value>
+   </string>
+   <string>
+      <id>100027</id>
+      <value>אפשרויות-&gt;כללי-&gt;ריצה אוטומטית</value>
+   </string>
+   <string>
+      <id>100028</id>
+      <value>וידיאו/רשימת ניגון</value>
+   </string>
+   <string>
+      <id>100029</id>
+      <value>אפשרויות-&gt;כללי-&gt;LCD</value>
+   </string>
+   <string>
+      <id>100030</id>
+      <value>רדיו</value>
+   </string>
+   <string>
+      <id>100031</id>
+      <value>אפשרויות-&gt;מסך-&gt;מהירות גלילה</value>
+   </string>
+   <string>
+      <id>100032</id>
+      <value>MSN Messenger</value>
+   </string>
+   <string>
+      <id>100033</id>
+      <value>שיחת MSN Messenger</value>
+   </string>
+   <string>
+      <id>100034</id>
+      <value>תוספים</value>
+   </string>
+   <string>
+      <id>100100</id>
+      <value>תיבת דו-שיח כן/לא</value>
+   </string>
+   <string>
+      <id>100101</id>
+      <value>תיבת דו-שיח התקדמות</value>
+   </string>
+   <string>
+      <id>100500</id>
+      <value>מוזיקה/רשימת ניגון</value>
+   </string>
+   <string>
+      <id>100501</id>
+      <value>מוזיקה/שיתוף</value>
+   </string>
+   <string>
+      <id>100502</id>
+      <value>מוזיקה/אלבומים</value>
+   </string>
+   <string>
+      <id>100503</id>
+      <value>מוזיקה/אמנים</value>
+   </string>
+   <string>
+      <id>100504</id>
+      <value>מוזיקה/ז'אנרים</value>
+   </string>
+   <string>
+      <id>100505</id>
+      <value>מוזיקה/Top100</value>
+   </string>
+   <string>
+      <id>100506</id>
+      <value>מוזיקה/מועדפים</value>
+   </string>
+   <string>
+      <id>100600</id>
+      <value>טלוויזיה/מדריך</value>
+   </string>
+   <string>
+      <id>100601</id>
+      <value>טלוויזיה/תזמון</value>
+   </string>
+   <string>
+      <id>100602</id>
+      <value>טלוויזיה/מסך מלא</value>
+   </string>
+   <string>
+      <id>100603</id>
+      <value>טלוויזיה/תכנים מוקלטים</value>
+   </string>
+   <string>
+      <id>100604</id>
+      <value>טלוויזיה/חיפוש</value>
+   </string>
+   <string>
+      <id>100605</id>
+      <value>טלוויזיה/תכנים מוקלטים/ז'אנר</value>
+   </string>
+   <string>
+      <id>100606</id>
+      <value>טלוויזיה/תכנים מוקלטים/ערוצים</value>
+   </string>
+   <string>
+      <id>100607</id>
+      <value>טלוויזיה/תזמון/עדיפויות</value>
+   </string>
+   <string>
+      <id>100608</id>
+      <value>טלוויזיה/תזמון/התנגשויות</value>
+   </string>
+   <string>
+      <id>100609</id>
+      <value>טלוויזיה/דחיסה/ראשי</value>
+   </string>
+   <string>
+      <id>100610</id>
+      <value>טלוויזיה/דחיסה/אפשרויות</value>
+   </string>
+   <string>
+      <id>100611</id>
+      <value>טלוויזיה/דחיסה/אוטומטי</value>
+   </string>
+   <string>
+      <id>100612</id>
+      <value>טלוויזיה/דחיסה/דחיסה</value>
+   </string>
+   <string>
+      <id>100613</id>
+      <value>טלוויזיה/דחיסה/מצב</value>
+   </string>
+   <string>
+      <id>100614</id>
+      <value>מידע אמן וידיאו</value>
+   </string>
+   <string>
+      <id>100615</id>
+      <value>אשף/ברוכים הבאים</value>
+   </string>
+   <string>
+      <id>100616</id>
+      <value>אשף/כרטיסים שנמצאו</value>
+   </string>
+   <string>
+      <id>100617</id>
+      <value>אשף/מדינה</value>
+   </string>
+   <string>
+      <id>100618</id>
+      <value>אשף/סריקה</value>
+   </string>
+   <string>
+      <id>100619</id>
+      <value>אשף/DVBC/מדינה</value>
+   </string>
+   <string>
+      <id>100620</id>
+      <value>אשף/DVBC/סריקה</value>
+   </string>
+   <string>
+      <id>100621</id>
+      <value>אשף/DVBC/LNB</value>
+   </string>
+   <string>
+      <id>100622</id>
+      <value>אשף/DVBC/פרטי LNB</value>
+   </string>
+   <string>
+      <id>100623</id>
+      <value>אשף/DVBS/Transponder</value>
+   </string>
+   <string>
+      <id>100624</id>
+      <value>אשף/DVBS/סריקה</value>
+   </string>
+   <string>
+      <id>100625</id>
+      <value>אשף/ATSC/סריקה</value>
+   </string>
+   <string>
+      <id>100626</id>
+      <value>אשף/אנלוגי/מדינה</value>
+   </string>
+   <string>
+      <id>100627</id>
+      <value>אשף/אנלוגי/עיר</value>
+   </string>
+   <string>
+      <id>100628</id>
+      <value>אשף/אנלוגי/מיובא</value>
+   </string>
+   <string>
+      <id>100629</id>
+      <value>אשף/אנלוגי/ידני</value>
+   </string>
+   <string>
+      <id>100630</id>
+      <value>אשף/אנלוגי/סריקה</value>
+   </string>
+   <string>
+      <id>100631</id>
+      <value>אשף/אנלוגי/שינוי שם</value>
+   </string>
+   <string>
+      <id>100632</id>
+      <value>אשף/אנלוגי/רדיו</value>
+   </string>
+   <string>
+      <id>100633</id>
+      <value>אשף/אנלוגי/שינוי שם רדיו</value>
+   </string>
+   <string>
+      <id>100634</id>
+      <value>אשף/שלט</value>
+   </string>
+   <string>
+      <id>100635</id>
+      <value>אשף/מדריך שידורים</value>
+   </string>
+   <string>
+      <id>100699</id>
+      <value>אשף/הסתיים</value>
+   </string>
+   <string>
+      <id>100700</id>
+      <value>אפשרויות טלוויזיה</value>
+   </string>
+   <string>
+      <id>100701</id>
+      <value>אפשרויות הקלטת טלוויזיה</value>
+   </string>
+   <string>
+      <id>100702</id>
+      <value>אפשרויות מיון ערוצים</value>
+   </string>
+   <string>
+      <id>100703</id>
+      <value>אפשריות סרטי טלוויזיה</value>
+   </string>
+   <string>
+      <id>100704</id>
+      <value>אפשרויות DVD</value>
+   </string>
+   <string>
+      <id>100705</id>
+      <value>אפשרויות סקין</value>
+   </string>
+   <string>
+      <id>100748</id>
+      <value>מידע תכנית</value>
+   </string>
+   <string>
+      <id>100749</id>
+      <value>טלוויזיה/אין אות</value>
+   </string>
+   <string>
+      <id>100750</id>
+      <value>מתכונים</value>
+   </string>
+   <string>
+      <id>100755</id>
+      <value>מצב</value>
+   </string>
+   <string>
+      <id>100756</id>
+      <value>פרטי מצב</value>
+   </string>
+   <string>
+      <id>100757</id>
+      <value>מאפייני מצב</value>
+   </string>
+   <string>
+      <id>100758</id>
+      <value>תיבת דו-שיח קבצים</value>
+   </string>
+   <string>
+      <id>100759</id>
+      <value>מידע תכנית טלוויזיה מוקלטת</value>
+   </string>
+   <string>
+      <id>100760</id>
+      <value>צורב</value>
+   </string>
+   <string>
+      <id>100770</id>
+      <value>סייר</value>
+   </string>
+   <string>
+      <id>101000</id>
+      <value>מקלדת</value>
+   </string>
+   <string>
+      <id>102000</id>
+      <value>בחר תיבת דו-שיח</value>
+   </string>
+   <string>
+      <id>102001</id>
+      <value>מוזיקה/מידע</value>
+   </string>
+   <string>
+      <id>102002</id>
+      <value>תיבת דו-שיח אישור</value>
+   </string>
+   <string>
+      <id>102003</id>
+      <value>וידיאו/מידע</value>
+   </string>
+   <string>
+      <id>102004</id>
+      <value>סקריפטים/מידע</value>
+   </string>
+   <string>
+      <id>102005</id>
+      <value>וידיאו מסך מלא</value>
+   </string>
+   <string>
+      <id>102006</id>
+      <value>תצוגת אודיו</value>
+   </string>
+   <string>
+      <id>102007</id>
+      <value>תמונות/הצגה ברצף</value>
+   </string>
+   <string>
+      <id>102008</id>
+      <value>תיבת דו-שיח קיבוץ קבצים</value>
+   </string>
+   <string>
+      <id>102009</id>
+      <value>תיבת דוח-שיח בחירה</value>
+   </string>
+   <string>
+      <id>102010</id>
+      <value>תאריך/שעה</value>
+   </string>
+   <string>
+      <id>102011</id>
+      <value>מידע אמן</value>
+   </string>
+   <string>
+      <id>102012</id>
+      <value>תפריט הקשר</value>
+   </string>
+   <string>
+      <id>102013</id>
+      <value>קבע דירוג</value>
+   </string>
+   <string>
+      <id>102014</id>
+      <value>מידע תמונה</value>
+   </string>
+   <string>
+      <id>102015</id>
+      <value>מיני-תפריט</value>
+   </string>
+   <string>
+      <id>102016</id>
+      <value>התראות</value>
+   </string>
+   <string>
+      <id>102600</id>
+      <value>מזג אוויר</value>
+   </string>
+   <string>
+      <id>102700</id>
+      <value>חדשות</value>
+   </string>
+   <string>
+      <id>102900</id>
+      <value>שומר מסך</value>
+   </string>
+   <string>
+      <id>102901</id>
+      <value>OSD מסך מלא</value>
+   </string>
+   <string>
+      <id>103003</id>
+      <value>טלוויזיה/OSD</value>
+   </string>
+   <string>
+      <id>103006</id>
+      <value>טלוויזיה/MSN OSD</value>
+   </string>
+   <string>
+      <id>103007</id>
+      <value>טלוויזיה/Zap OSD</value>
+   </string>
+   <string>
+      <id>107700</id>
+      <value>טלוויזיה/טלטקסט</value>
+   </string>
+   <string>
+      <id>107701</id>
+      <value>טלוויזיה/טלטקסט</value>
+   </string>
+   <string>
+      <id>200000</id>
+      <value>אנא בחר את לוכד לוח השידורים שלך. שים לב, אם מדינתך </value>
+   </string>
+   <string>
+      <id>200001</id>
+      <value>לא מופיעה ברשימה אז תצטרך לספק את לוח השידורים באופן ידני</value>
+   </string>
+   <string>
+      <id>200002</id>
+      <value>אתה יכול כעת למפות את ערוצי לוח השידורים לערוצי הטלוויזיה</value>
+   </string>
+   <string>
+      <id>200003</id>
+      <value>בחר ערוץ ולחץ ENTER כדי לשנות את המיפוי</value>
+   </string>
+   <string>
+      <id>200004</id>
+      <value>tvguide.xml סופק ידנית</value>
+   </string>
+   <string>
+      <id>200005</id>
+      <value>אנא בחר את סוג שלט הרחוק שבו אתה משתמש</value>
+   </string>
+   <string>
+      <id>200006</id>
+      <value>לחץ "הבא" כדי להמשיך את קביעת התצורה</value>
+   </string>
+   <string>
+      <id>200007</id>
+      <value>חזור</value>
+   </string>
+   <string>
+      <id>200008</id>
+      <value>תצורה - שלט רחוק</value>
+   </string>
+   <string>
+      <id>200009</id>
+      <value>הבא</value>
+   </string>
+   <string>
+      <id>200010</id>
+      <value>מדיה-פורטל הופך את המחשב שלך למרכז מדיה מתקדם מאוד.</value>
+   </string>
+   <string>
+      <id>200011</id>
+      <value>באמצעות מדיה-פורטל אתה יכול ליהנות מהאזנה למוזיקה, רדיו המועדפים עליך</value>
+   </string>
+   <string>
+      <id>200012</id>
+      <value>לצפות בסרטים, DVD, טלוויזיה ועוד.</value>
+   </string>
+   <string>
+      <id>200013</id>
+      <value>אשף זה יעזור לך להגדיר את תצורת מדיה-פורטל בצורה פשוטה ומהירה. אנא עקוב אחר כל הצעדים,</value>
+   </string>
+   <string>
+      <id>200014</id>
+      <value>והתחל על ידי קביעת השפה והמיקום להלן:</value>
+   </string>
+   <string>
+      <id>200015</id>
+      <value>כעת לחץ על כפתור "הבא" בכדי להתחיל</value>
+   </string>
+   <string>
+      <id>200017</id>
+      <value>ברוכים הבאים למדיה-פורטל</value>
+   </string>
+   <string>
+      <id>200018</id>
+      <value>מזל טוב. מדיה-פורטל כעת מאתחלת ומוכנה לשימוש</value>
+   </string>
+   <string>
+      <id>200019</id>
+      <value>לחץ על כפתור "סיום" בכדי לסגור את האשף הנוכחי</value>
+   </string>
+   <string>
+      <id>200020</id>
+      <value>סיום</value>
+   </string>
+   <string>
+      <id>200021</id>
+      <value>תצורת טלוויזיה - מדריך שידורים</value>
+   </string>
+   <string>
+      <id>200022</id>
+      <value>מדיה-פורטל מצא את כרטיסי הטלוויזיה הבאים:</value>
+   </string>
+   <string>
+      <id>200023</id>
+      <value>לחץ כפתור "הבא" בכדי להגדיר את הכרטיסים האלה</value>
+   </string>
+   <string>
+      <id>200024</id>
+      <value>תצורת טלוויזיה</value>
+   </string>
+   <string>
+      <id>200025</id>
+      <value>שפה</value>
+   </string>
+   <string>
+      <id>200026</id>
+      <value>מדינה</value>
+   </string>
+   <string>
+      <id>200027</id>
+      <value>תצורה - כללי</value>
+   </string>
+   <string>
+      <id>200028</id>
+      <value>האם למחשב זה יש חיבור קבוע לאינטרנט?</value>
+   </string>
+   <string>
+      <id>200029</id>
+      <value>איך אתה משתמש במדיה-פורטל?</value>
+   </string>
+   <string>
+      <id>200030</id>
+      <value>במחשב יעודי</value>
+   </string>
+   <string>
+      <id>200031</id>
+      <value>כן</value>
+   </string>
+   <string>
+      <id>200032</id>
+      <value>לא</value>
+   </string>
+   <string>
+      <id>200033</id>
+      <value>תצורת טלוויזיה - טלוויזיה אנלוגית</value>
+   </string>
+   <string>
+      <id>200034</id>
+      <value>אנא בחר את העיר שלך מרשימת הערים הבאה</value>
+   </string>
+   <string>
+      <id>200035</id>
+      <value>אם העיר שלך לא מופיעה תזדקק לבצע כוונון ידני</value>
+   </string>
+   <string>
+      <id>200036</id>
+      <value>כוונון ידני</value>
+   </string>
+   <string>
+      <id>200037</id>
+      <value>דלג</value>
+   </string>
+   <string>
+      <id>200038</id>
+      <value>במחשב אישי משותף עם תכניות נוספות</value>
+   </string>
+</strings>

@@ -1,0 +1,3799 @@
+<strings>
+	<characters>255</characters>
+	<string>
+		<id>0</id>
+		<value>Mis Programas</value>
+	</string>
+	<string>
+		<id>1</id>
+		<value>Mis Fotos</value>
+	</string>
+	<string>
+		<id>2</id>
+		<value>Mi Musica</value>
+	</string>
+	<string>
+		<id>3</id>
+		<value>Mis Videos</value>
+	</string>
+	<string>
+		<id>4</id>
+		<value>Guia de TV</value>
+	</string>
+	<string>
+		<id>5</id>
+		<value>Opciones</value>
+	</string>
+	<string>
+		<id>6</id>
+		<value>XBOX Media Center CVS build</value>
+	</string>
+	<string>
+		<id>7</id>
+		<value>Mis Archivos</value>
+	</string>
+	<string>
+		<id>8</id>
+		<value>El clima</value>
+	</string>
+	<string>
+		<id>9</id>
+		<value>Mis Noticias</value>
+	</string>
+	<string>
+		<id>10</id>
+		<value>Mis Recetas</value>
+	</string>
+	<string>
+		<id>11</id>
+		<value>Lunes</value>
+	</string>
+	<string>
+		<id>12</id>
+		<value>Martes</value>
+	</string>
+	<string>
+		<id>13</id>
+		<value>Miercoles</value>
+	</string>
+	<string>
+		<id>14</id>
+		<value>Jueves</value>
+	</string>
+	<string>
+		<id>15</id>
+		<value>Viernes</value>
+	</string>
+	<string>
+		<id>16</id>
+		<value>Sabado</value>
+	</string>
+	<string>
+		<id>17</id>
+		<value>Domingo</value>
+	</string>
+	<string>
+		<id>21</id>
+		<value>Enero</value>
+	</string>
+	<string>
+		<id>22</id>
+		<value>Febrero</value>
+	</string>
+	<string>
+		<id>23</id>
+		<value>Marzo</value>
+	</string>
+	<string>
+		<id>24</id>
+		<value>Abril</value>
+	</string>
+	<string>
+		<id>25</id>
+		<value>Mayo</value>
+	</string>
+	<string>
+		<id>26</id>
+		<value>Junio</value>
+	</string>
+	<string>
+		<id>27</id>
+		<value>Julio</value>
+	</string>
+	<string>
+		<id>28</id>
+		<value>Agosto</value>
+	</string>
+	<string>
+		<id>29</id>
+		<value>Septiembre</value>
+	</string>
+	<string>
+		<id>30</id>
+		<value>Octubre</value>
+	</string>
+	<string>
+		<id>31</id>
+		<value>Noviembre</value>
+	</string>
+	<string>
+		<id>32</id>
+		<value>Diciembre</value>
+	</string>
+	<string>
+		<id>100</id>
+		<value>Ver: Iconos</value>
+	</string>
+	<string>
+		<id>101</id>
+		<value>Ver: Lista</value>
+	</string>
+	<string>
+		<id>102</id>
+		<value>Revisar</value>
+	</string>
+	<string>
+		<id>103</id>
+		<value>Ordenar por: Nombre</value>
+	</string>
+	<string>
+		<id>104</id>
+		<value>Ordenar por: Fecha</value>
+	</string>
+	<string>
+		<id>105</id>
+		<value>Ordenar por: Tamaño</value>
+	</string>
+	<string>
+		<id>106</id>
+		<value>No</value>
+	</string>
+	<string>
+		<id>107</id>
+		<value>Si</value>
+	</string>
+	<string>
+		<id>108</id>
+		<value>Presentacion</value>
+	</string>
+	<string>
+		<id>109</id>
+		<value>Crear Vista Previa</value>
+	</string>
+	<string>
+		<id>110</id>
+		<value>Crear Vista Previa</value>
+	</string>
+	<string>
+		<id>111</id>
+		<value>Accesos directos</value>
+	</string>
+	<string>
+		<id>112</id>
+		<value>Pausado</value>
+	</string>
+	<string>
+		<id>113</id>
+		<value>Mis Archivos: Origen</value>
+	</string>
+	<string>
+		<id>114</id>
+		<value>Mis Archivos: Destino</value>
+	</string>
+	<string>
+		<id>115</id>
+		<value>Copiar</value>
+	</string>
+	<string>
+		<id>116</id>
+		<value>Mover</value>
+	</string>
+	<string>
+		<id>117</id>
+		<value>Borrar</value>
+	</string>
+	<string>
+		<id>118</id>
+		<value>Cambiar Nombre</value>
+	</string>
+	<string>
+		<id>119</id>
+		<value>Nueva carpeta</value>
+	</string>
+	<string>
+		<id>120</id>
+		<value>Confirmar copiar archivo</value>
+	</string>
+	<string>
+		<id>121</id>
+		<value>Confirmar mover archivo</value>
+	</string>
+	<string>
+		<id>122</id>
+		<value>Confirmar borrar archivo</value>
+	</string>
+	<string>
+		<id>123</id>
+		<value>Copiar estos archivos?</value>
+	</string>
+	<string>
+		<id>124</id>
+		<value>Mover estos archivos?</value>
+	</string>
+	<string>
+		<id>125</id>
+		<value>Borrar estos archivos?</value>
+	</string>
+	<string>
+		<id>126</id>
+		<value>Estado</value>
+	</string>
+	<string>
+		<id>127</id>
+		<value>Objetos</value>
+	</string>
+	<string>
+		<id>128</id>
+		<value>General</value>
+	</string>
+	<string>
+		<id>129</id>
+		<value>Presentacion</value>
+	</string>
+	<string>
+		<id>130</id>
+		<value>Info. del Sistema</value>
+	</string>
+	<string>
+		<id>131</id>
+		<value>Pantalla</value>
+	</string>
+	<string>
+		<id>132</id>
+		<value>Albumes</value>
+	</string>
+	<string>
+		<id>133</id>
+		<value>Artistas</value>
+	</string>
+	<string>
+		<id>134</id>
+		<value>Canciones</value>
+	</string>
+	<string>
+		<id>135</id>
+		<value>Generos</value>
+	</string>
+	<string>
+		<id>136</id>
+		<value>Lista de Repr.</value>
+	</string>
+	<string>
+		<id>137</id>
+		<value>Buscar</value>
+	</string>
+	<string>
+		<id>138</id>
+		<value>Informacion del Sistema</value>
+	</string>
+	<string>
+		<id>139</id>
+		<value>Temperaturas:</value>
+	</string>
+	<string>
+		<id>140</id>
+		<value>CPU:</value>
+	</string>
+	<string>
+		<id>141</id>
+		<value>GPU:</value>
+	</string>
+	<string>
+		<id>142</id>
+		<value>Hora:</value>
+	</string>
+	<string>
+		<id>143</id>
+		<value>Actual:</value>
+	</string>
+	<string>
+		<id>144</id>
+		<value>Build:</value>
+	</string>
+	<string>
+		<id>145</id>
+		<value>Red:</value>
+	</string>
+	<string>
+		<id>146</id>
+		<value>Tipo:</value>
+	</string>
+	<string>
+		<id>147</id>
+		<value>Estatica</value>
+	</string>
+	<string>
+		<id>148</id>
+		<value>DHCP</value>
+	</string>
+	<string>
+		<id>149</id>
+		<value>MAC</value>
+	</string>
+	<string>
+		<id>150</id>
+		<value>IP:</value>
+	</string>
+	<string>
+		<id>151</id>
+		<value>Link:</value>
+	</string>
+	<string>
+		<id>152</id>
+		<value>Half duplex</value>
+	</string>
+	<string>
+		<id>153</id>
+		<value>Full duplex</value>
+	</string>
+	<string>
+		<id>154</id>
+		<value>Almacenamiento</value>
+	</string>
+	<string>
+		<id>155</id>
+		<value>Disco</value>
+	</string>
+	<string>
+		<id>156</id>
+		<value>Libre</value>
+	</string>
+	<string>
+		<id>157</id>
+		<value>Video</value>
+	</string>
+	<string>
+		<id>158</id>
+		<value>Memoria Libre</value>
+	</string>
+	<string>
+		<id>159</id>
+		<value>Sin conexion</value>
+	</string>
+	<string>
+		<id>160</id>
+		<value>Libre</value>
+	</string>
+	<string>
+		<id>161</id>
+		<value>No disponible</value>
+	</string>
+	<string>
+		<id>162</id>
+		<value>Bandeja Abierta</value>
+	</string>
+	<string>
+		<id>163</id>
+		<value>Leyendo</value>
+	</string>
+	<string>
+		<id>164</id>
+		<value>No hay disco</value>
+	</string>
+	<string>
+		<id>165</id>
+		<value>Disco insertado</value>
+	</string>
+	<string>
+		<id>166</id>
+		<value>Skin:</value>
+	</string>
+	<string>
+		<id>167</id>
+		<value>Servidor FTP:</value>
+	</string>
+	<string>
+		<id>168</id>
+		<value>Sincronizar Hora:</value>
+	</string>
+	<string>
+		<id>169</id>
+		<value>Resolucion:</value>
+	</string>
+	<string>
+		<id>170</id>
+		<value>Album:</value>
+	</string>
+	<string>
+		<id>171</id>
+		<value>Artista:</value>
+	</string>
+	<string>
+		<id>172</id>
+		<value>Fecha de public.:</value>
+	</string>
+	<string>
+		<id>173</id>
+		<value>Puntuacion:</value>
+	</string>
+	<string>
+		<id>174</id>
+		<value>Genero:</value>
+	</string>
+	<string>
+		<id>175</id>
+		<value>Tonos:</value>
+	</string>
+	<string>
+		<id>176</id>
+		<value>Estilos:</value>
+	</string>
+	<string>
+		<id>177</id>
+		<value>Revision:</value>
+	</string>
+	<string>
+		<id>178</id>
+		<value>Pistas:</value>
+	</string>
+	<string>
+		<id>179</id>
+		<value>Cancion</value>
+	</string>
+	<string>
+		<id>180</id>
+		<value>Duracion</value>
+	</string>
+	<string>
+		<id>181</id>
+		<value>Seleccionar album</value>
+	</string>
+	<string>
+		<id>182</id>
+		<value>Pistas</value>
+	</string>
+	<string>
+		<id>183</id>
+		<value>Revisar</value>
+	</string>
+	<string>
+		<id>184</id>
+		<value>Actualizar</value>
+	</string>
+	<string>
+		<id>185</id>
+		<value>Buscando album</value>
+	</string>
+	<string>
+		<id>186</id>
+		<value>OK</value>
+	</string>
+	<string>
+		<id>187</id>
+		<value>No se encontraron albumes!</value>
+	</string>
+	<string>
+		<id>188</id>
+		<value>Seleccionar Todo</value>
+	</string>
+	<string>
+		<id>189</id>
+		<value>Buscando informacion de archivos</value>
+	</string>
+	<string>
+		<id>190</id>
+		<value>Guardar</value>
+	</string>
+	<string>
+		<id>191</id>
+		<value>Aleatorio</value>
+	</string>
+	<string>
+		<id>192</id>
+		<value>Borrar</value>
+	</string>
+	<string>
+		<id>193</id>
+		<value>Actualizar</value>
+	</string>
+	<string>
+		<id>194</id>
+		<value>Buscando...</value>
+	</string>
+	<string>
+		<id>195</id>
+		<value>No se encontro info. en IMDB!</value>
+	</string>
+	<string>
+		<id>196</id>
+		<value>Seleccionar pelicula:</value>
+	</string>
+	<string>
+		<id>197</id>
+		<value>Consultando info. IMDB</value>
+	</string>
+	<string>
+		<id>198</id>
+		<value>Cargando detalles de la pelicula</value>
+	</string>
+	<string>
+		<id>199</id>
+		<value>Director:</value>
+	</string>
+	<string>
+		<id>200</id>
+		<value>Escritor:</value>
+	</string>
+	<string>
+		<id>201</id>
+		<value>Año:</value>
+	</string>
+	<string>
+		<id>202</id>
+		<value>Tagline:</value>
+	</string>
+	<string>
+		<id>203</id>
+		<value>Sinopsis:</value>
+	</string>
+	<string>
+		<id>204</id>
+		<value>Puntaje:</value>
+	</string>
+	<string>
+		<id>205</id>
+		<value>Votos:</value>
+	</string>
+	<string>
+		<id>206</id>
+		<value>Reparto</value>
+	</string>
+	<string>
+		<id>207</id>
+		<value>Argumento</value>
+	</string>
+	<string>
+		<id>208</id>
+		<value>Reproducir</value>
+	</string>
+	<string>
+		<id>209</id>
+		<value>Siguiente</value>
+	</string>
+	<string>
+		<id>210</id>
+		<value>Anterior</value>
+	</string>
+	<string>
+		<id>211</id>
+		<value>Buscando aplicaciones</value>
+	</string>
+	<string>
+		<id>212</id>
+		<value>Aplicaciones encontradas</value>
+	</string>
+	<string>
+		<id>213</id>
+		<value>Calibracion Interfaz</value>
+	</string>
+	<string>
+		<id>214</id>
+		<value>Calib. Pantalla</value>
+	</string>
+	<string>
+		<id>215</id>
+		<value>Suavizar</value>
+	</string>
+	<string>
+		<id>216</id>
+		<value>Zoom</value>
+	</string>
+	<string>
+		<id>217</id>
+		<value>Estirar</value>
+	</string>
+	<string>
+		<id>218</id>
+		<value>Unidad DVD</value>
+	</string>
+	<string>
+		<id>219</id>
+		<value>Por favor inserte disco</value>
+	</string>
+	<string>
+		<id>220</id>
+		<value>Carpeta remota</value>
+	</string>
+	<string>
+		<id>221</id>
+		<value>La red esta desconectada</value>
+	</string>
+	<string>
+		<id>222</id>
+		<value>Cancelar</value>
+	</string>
+	<string>
+		<id>223</id>
+		<value>Cambio autom. a Pant. Ancha</value>
+	</string>
+	<string>
+		<id>224</id>
+		<value>Velocidad</value>
+	</string>
+	<string>
+		<id>225</id>
+		<value>Tiempo de transicion</value>
+	</string>
+	<string>
+		<id>226</id>
+		<value>Habilitar PAL60</value>
+	</string>
+	<string>
+		<id>227</id>
+		<value>Habilitar CDDB</value>
+	</string>
+	<string>
+		<id>228</id>
+		<value>Mezclar lista de repr. al cargar</value>
+	</string>
+	<string>
+		<id>229</id>
+		<value>Tiempo de apagado del HD (mins)</value>
+	</string>
+	<string>
+		<id>230</id>
+		<value>Filtros</value>
+	</string>
+	<string>
+		<id>231</id>
+		<value>Ninguno</value>
+	</string>
+	<string>
+		<id>232</id>
+		<value>Punto</value>
+	</string>
+	<string>
+		<id>233</id>
+		<value>Lineal</value>
+	</string>
+	<string>
+		<id>234</id>
+		<value>Anisotropico</value>
+	</string>
+	<string>
+		<id>235</id>
+		<value>Quincunx</value>
+	</string>
+	<string>
+		<id>236</id>
+		<value>Gaussian Cubic</value>
+	</string>
+	<string>
+		<id>237</id>
+		<value>Minificacion:</value>
+	</string>
+	<string>
+		<id>238</id>
+		<value>Magnificacion:</value>
+	</string>
+	<string>
+		<id>240</id>
+		<value>Repr. Autom. DVD-Video</value>
+	</string>
+	<string>
+		<id>241</id>
+		<value>Repr. Autom. VCD/SVCD</value>
+	</string>
+	<string>
+		<id>242</id>
+		<value>Repr. Autom. Audio-CD</value>
+	</string>
+	<string>
+		<id>243</id>
+		<value>Repr. Autom.  XBOX Games</value>
+	</string>
+	<string>
+		<id>244</id>
+		<value>Repr. Autom. Videos</value>
+	</string>
+	<string>
+		<id>245</id>
+		<value>Repr. Autom. Musica</value>
+	</string>
+	<string>
+		<id>246</id>
+		<value>Repr. Autom. Fotos</value>
+	</string>
+	<string>
+		<id>247</id>
+		<value>Scripts</value>
+	</string>
+	<string>
+		<id>248</id>
+		<value>Idioma</value>
+	</string>
+	<string>
+		<id>249</id>
+		<value>Musica</value>
+	</string>
+	<string>
+		<id>250</id>
+		<value>Visualizacion</value>
+	</string>
+	<string>
+		<id>251</id>
+		<value>Seleccione carpeta destino</value>
+	</string>
+	<string>
+		<id>252</id>
+		<value>Salida a todos los parlantes</value>
+	</string>
+	<string>
+		<id>253</id>
+		<value>Numero de canales</value>
+	</string>
+	<string>
+		<id>254</id>
+		<value>DD Stereo Passthrough</value>
+	</string>
+	<string>
+		<id>255</id>
+		<value>CDDB</value>
+	</string>
+	<string>
+		<id>256</id>
+		<value>Consultando freedb por info. de CDDB</value>
+	</string>
+	<string>
+		<id>257</id>
+		<value>Error</value>
+	</string>
+	<string>
+		<id>258</id>
+		<value>Habilitar etiquetas ID3</value>
+	</string>
+	<string>
+		<id>259</id>
+		<value>Abriendo</value>
+	</string>
+	<string>
+		<id>260</id>
+		<value>Shoutcast</value>
+	</string>
+	<string>
+		<id>261</id>
+		<value>Esperando que comience...</value>
+	</string>
+	<string>
+		<id>262</id>
+		<value>Scripts Output</value>
+	</string>
+	<string>
+		<id>263</id>
+		<value>Servidor HTTP:</value>
+	</string>
+	<string>
+		<id>264</id>
+		<value>Grabar</value>
+	</string>
+	<string>
+		<id>265</id>
+		<value>Detener Grab.</value>
+	</string>
+	<string>
+		<id>266</id>
+		<value>Ordenar por: Pista</value>
+	</string>
+	<string>
+		<id>267</id>
+		<value>Ordenar por: Hora</value>
+	</string>
+	<string>
+		<id>268</id>
+		<value>Ordenar por: Titulo</value>
+	</string>
+	<string>
+		<id>269</id>
+		<value>Ordenar por: Artista</value>
+	</string>
+	<string>
+		<id>270</id>
+		<value>Ordenar por: Album</value>
+	</string>
+	<string>
+		<id>271</id>
+		<value>Top 100</value>
+	</string>
+	<string>
+		<id>272</id>
+		<value>Compensacion de Overscan Sup. Izquierda</value>
+	</string>
+	<string>
+		<id>273</id>
+		<value>Compensacion de Overscan Inf. Derecha</value>
+	</string>
+	<string>
+		<id>274</id>
+		<value>Posicion de subtitulos</value>
+	</string>
+	<string>
+		<id>275</id>
+		<value>Ajuste de la razon/cociente del pixel</value>
+	</string>
+	<string>
+		<id>276</id>
+		<value>-ADVERTENCIA!- Mantenga en 0,0 para mayor calidad, cambie para ajustar el video.</value>
+	</string>
+	<string>
+		<id>277</id>
+		<value>Mueva la barra para cambiar la posicion de los subtitulos</value>
+	</string>
+	<string>
+		<id>278</id>
+		<value>-Importante!- para mejor calidad, cambie el rectangulo para que sea perfectamente cuadrado</value>
+	</string>
+	<string>
+		<id>279</id>
+		<value>No se puede cargar las opciones</value>
+	</string>
+	<string>
+		<id>280</id>
+		<value>Usando config. predeterminadas</value>
+	</string>
+	<string>
+		<id>281</id>
+		<value>Por favor revise archivos .xml</value>
+	</string>
+	<string>
+		<id>282</id>
+		<value>Encontrado %i elementos</value>
+	</string>
+	<string>
+		<id>283</id>
+		<value>Resultados de busqueda</value>
+	</string>
+	<string>
+		<id>284</id>
+		<value>No se encontraron resultado</value>
+	</string>
+	<string>
+		<id>285</id>
+		<value>Deinterlace filter</value>
+	</string>
+	<string>
+		<id>286</id>
+		<value>Postprocessing filter</value>
+	</string>
+	<string>
+		<id>287</id>
+		<value>Subtitulos</value>
+	</string>
+	<string>
+		<id>288</id>
+		<value>Tipo de Letra</value>
+	</string>
+	<string>
+		<id>289</id>
+		<value>Tamaño</value>
+	</string>
+	<string>
+		<id>290</id>
+		<value>Amplificacion de Volumen (dB)</value>
+	</string>
+	<string>
+		<id>291</id>
+		<value>Video</value>
+	</string>
+	<string>
+		<id>292</id>
+		<value>Audio</value>
+	</string>
+	<string>
+		<id>293</id>
+		<value>Subtitulos</value>
+	</string>
+	<string>
+		<id>294</id>
+		<value>Crear marcador</value>
+	</string>
+	<string>
+		<id>295</id>
+		<value>Rotar marcadores</value>
+	</string>
+	<string>
+		<id>296</id>
+		<value>Borrar marcadores</value>
+	</string>
+	<string>
+		<id>297</id>
+		<value>AVDelay</value>
+	</string>
+	<string>
+		<id>298</id>
+		<value>Deslizador</value>
+	</string>
+	<string>
+		<id>300</id>
+		<value>1. Idioma</value>
+	</string>
+	<string>
+		<id>301</id>
+		<value>2. Volumen</value>
+	</string>
+	<string>
+		<id>302</id>
+		<value>3. Stream</value>
+	</string>
+	<string>
+		<id>303</id>
+		<value>Retraso</value>
+	</string>
+	<string>
+		<id>304</id>
+		<value>Idioma</value>
+	</string>
+	<string>
+		<id>305</id>
+		<value>Habilitado</value>
+	</string>
+	<string>
+		<id>306</id>
+		<value>Non-Interleaved</value>
+	</string>
+	<string>
+		<id>307</id>
+		<value>Auto</value>
+	</string>
+	<string>
+		<id>308</id>
+		<value>vertical deblocking filter</value>
+	</string>
+	<string>
+		<id>309</id>
+		<value>horizontal deblocking filter</value>
+	</string>
+	<string>
+		<id>310</id>
+		<value>Auto brightness/contrast</value>
+	</string>
+	<string>
+		<id>311</id>
+		<value>Dering</value>
+	</string>
+	<string>
+		<id>312</id>
+		<value>(0=auto)</value>
+	</string>
+	<string>
+		<id>313</id>
+		<value>Reorganizar base de datos</value>
+	</string>
+	<string>
+		<id>314</id>
+		<value>Preparando...</value>
+	</string>
+	<string>
+		<id>315</id>
+		<value>Error de base de datos</value>
+	</string>
+	<string>
+		<id>316</id>
+		<value>Buscando canciones...</value>
+	</string>
+	<string>
+		<id>317</id>
+		<value>Reorganizacion exitosa</value>
+	</string>
+	<string>
+		<id>318</id>
+		<value>Marcando canciones borradas</value>
+	</string>
+	<string>
+		<id>319</id>
+		<value>Error reorganizando canciones</value>
+	</string>
+	<string>
+		<id>320</id>
+		<value>Buscando artistas</value>
+	</string>
+	<string>
+		<id>321</id>
+		<value>Error reorganizing artistas</value>
+	</string>
+	<string>
+		<id>322</id>
+		<value>Buscando Generos...</value>
+	</string>
+	<string>
+		<id>323</id>
+		<value>Error reorganizando Generos</value>
+	</string>
+	<string>
+		<id>324</id>
+		<value>Buscando rutas...</value>
+	</string>
+	<string>
+		<id>325</id>
+		<value>Error reorganizing rutas</value>
+	</string>
+	<string>
+		<id>326</id>
+		<value>Buscando albumes...</value>
+	</string>
+	<string>
+		<id>327</id>
+		<value>Error reorganizing albumes</value>
+	</string>
+	<string>
+		<id>328</id>
+		<value>Grabando cambios...</value>
+	</string>
+	<string>
+		<id>329</id>
+		<value>Error grabando cambios</value>
+	</string>
+	<string>
+		<id>330</id>
+		<value>Esto puede llevar un tiempo...</value>
+	</string>
+	<string>
+		<id>331</id>
+		<value>Comprimiendo base de datos...</value>
+	</string>
+	<string>
+		<id>332</id>
+		<value>Error comprimiendo base de datos</value>
+	</string>
+	<string>
+		<id>333</id>
+		<value>Organizar la base de datos de musica?</value>
+	</string>
+	<string>
+		<id>334</id>
+		<value>Reorganizar la base de datos de musica</value>
+	</string>
+	<string>
+		<id>335</id>
+		<value>Inicio</value>
+	</string>
+	<string>
+		<id>336</id>
+		<value>Aj. Cuadros por seg.</value>
+	</string>
+	<string>
+		<id>337</id>
+		<value>Salida de Audio:</value>
+	</string>
+	<string>
+		<id>338</id>
+		<value>Analoga</value>
+	</string>
+	<string>
+		<id>339</id>
+		<value>Digital</value>
+	</string>
+	<string>
+		<id>340</id>
+		<value>Varios Artistas</value>
+	</string>
+	<string>
+		<id>341</id>
+		<value>Repr. DVD</value>
+	</string>
+	<string>
+		<id>342</id>
+		<value>Peliculas</value>
+	</string>
+	<string>
+		<id>343</id>
+		<value>Aj. Cuadros por segundo</value>
+	</string>
+	<string>
+		<id>344</id>
+		<value>Actores</value>
+	</string>
+	<string>
+		<id>345</id>
+		<value>Año</value>
+	</string>
+	<string>
+		<id>346</id>
+		<value>Agrupar</value>
+	</string>
+	<string>
+		<id>347</id>
+		<value>DesAgrupar</value>
+	</string>
+	<string>
+		<id>348</id>
+		<value>Nivelar estructura de carpetas</value>
+	</string>
+	<string>
+		<id>349</id>
+		<value>Show only Default.xbe</value>
+	</string>
+	<string>
+		<id>350</id>
+		<value>Programas</value>
+	</string>
+	<string>
+		<id>351</id>
+		<value>Apagar</value>
+	</string>
+	<string>
+		<id>352</id>
+		<value>Dim</value>
+	</string>
+	<string>
+		<id>353</id>
+		<value>Negro</value>
+	</string>
+	<string>
+		<id>354</id>
+		<value>Matrix Trails</value>
+	</string>
+	<string>
+		<id>355</id>
+		<value>Screensaver Idle Timeout</value>
+	</string>
+	<string>
+		<id>356</id>
+		<value>Screensaver Mode</value>
+	</string>
+	<string>
+		<id>357</id>
+		<value>Shutdown Idle Timeout</value>
+	</string>
+	<string>
+		<id>358</id>
+		<value>Todos los albums</value>
+	</string>
+	<string>
+		<id>359</id>
+		<value>Albums recientes</value>
+	</string>
+	<string>
+		<id>360</id>
+		<value>Protector de pantalla</value>
+	</string>
+	<string>
+		<id>361</id>
+		<value>SlideShow Aleat.</value>
+	</string>
+	<string>
+		<id>362</id>
+		<value>Screensaver Fade Level (%)</value>
+	</string>
+	<string>
+		<id>363</id>
+		<value>Ordenar por: Archivo</value>
+	</string>
+	<string>
+		<id>364</id>
+		<value>DD/DTS Multichannel Passthrough</value>
+	</string>
+	<string>
+		<id>365</id>
+		<value>Ordenar por: Nombre</value>
+	</string>
+	<string>
+		<id>366</id>
+		<value>Ordenar por: Año</value>
+	</string>
+	<string>
+		<id>367</id>
+		<value>Ordenar por: Puntaje</value>
+	</string>
+	<string>
+		<id>368</id>
+		<value>IMDB</value>
+	</string>
+	<string>
+		<id>369</id>
+		<value>Titulo</value>
+	</string>
+	<string>
+		<id>370</id>
+		<value>T. de truenos</value>
+	</string>
+	<string>
+		<id>371</id>
+		<value>Parcialmente</value>
+	</string>
+	<string>
+		<id>372</id>
+		<value>Mayormente</value>
+	</string>
+	<string>
+		<id>373</id>
+		<value>Soleado</value>
+	</string>
+	<string>
+		<id>374</id>
+		<value>Nuboso</value>
+	</string>
+	<string>
+		<id>375</id>
+		<value>Nieve</value>
+	</string>
+	<string>
+		<id>376</id>
+		<value>Lluvia</value>
+	</string>
+	<string>
+		<id>377</id>
+		<value>Leve</value>
+	</string>
+	<string>
+		<id>378</id>
+		<value>AM</value>
+	</string>
+	<string>
+		<id>379</id>
+		<value>PM</value>
+	</string>
+	<string>
+		<id>380</id>
+		<value>Lloviznas</value>
+	</string>
+	<string>
+		<id>381</id>
+		<value>Pocas</value>
+	</string>
+	<string>
+		<id>382</id>
+		<value>Dispersas</value>
+	</string>
+	<string>
+		<id>383</id>
+		<value>Viento</value>
+	</string>
+	<string>
+		<id>384</id>
+		<value>Fuerte</value>
+	</string>
+	<string>
+		<id>385</id>
+		<value>Justo</value>
+	</string>
+	<string>
+		<id>386</id>
+		<value>Limpio</value>
+	</string>
+	<string>
+		<id>387</id>
+		<value>Tempraño</value>
+	</string>
+	<string>
+		<id>388</id>
+		<value>y</value>
+	</string>
+	<string>
+		<id>389</id>
+		<value>Niebla</value>
+	</string>
+	<string>
+		<id>390</id>
+		<value>Neblina</value>
+	</string>
+	<string>
+		<id>391</id>
+		<value>Ventoso</value>
+	</string>
+	<string>
+		<id>392</id>
+		<value>Llovizna</value>
+	</string>
+	<string>
+		<id>393</id>
+		<value>Congelamiento</value>
+	</string>
+	<string>
+		<id>394</id>
+		<value>N/D</value>
+	</string>
+	<string>
+		<id>395</id>
+		<value>Seleccionar ubicacion</value>
+	</string>
+	<string>
+		<id>396</id>
+		<value>Seleccionar ubicacion</value>
+	</string>
+	<string>
+		<id>397</id>
+		<value>Tiempo de actualizacion</value>
+	</string>
+	<string>
+		<id>398</id>
+		<value>Unidad de Temperatura</value>
+	</string>
+	<string>
+		<id>399</id>
+		<value>Unidad de velocidad</value>
+	</string>
+	<string>
+		<id>400</id>
+		<value>Clima</value>
+	</string>
+	<string>
+		<id>401</id>
+		<value>Temperatura</value>
+	</string>
+	<string>
+		<id>402</id>
+		<value>Sens. termica</value>
+	</string>
+	<string>
+		<id>403</id>
+		<value>Indice UV</value>
+	</string>
+	<string>
+		<id>404</id>
+		<value>Viendo</value>
+	</string>
+	<string>
+		<id>405</id>
+		<value>Punto de condens.</value>
+	</string>
+	<string>
+		<id>406</id>
+		<value>Humedad</value>
+	</string>
+	<string>
+		<id>410</id>
+		<value>Accediendo a Weather.com</value>
+	</string>
+	<string>
+		<id>411</id>
+		<value>Obteniendo clima para:</value>
+	</string>
+	<string>
+		<id>412</id>
+		<value>No se puede obtener datos del clima</value>
+	</string>
+	<string>
+		<id>413</id>
+		<value>Manual</value>
+	</string>
+	<string>
+		<id>414</id>
+		<value>No hay comentarios para este album</value>
+	</string>
+	<string>
+		<id>415</id>
+		<value>Descargando vista previa...</value>
+	</string>
+	<string>
+		<id>416</id>
+		<value>No disponible</value>
+	</string>
+	<string>
+		<id>417</id>
+		<value>Ver: Iconos grandes</value>
+	</string>
+	<string>
+		<id>418</id>
+		<value>Mis Videos/Generos</value>
+	</string>
+	<string>
+		<id>419</id>
+		<value>Mis Videos/Actores</value>
+	</string>
+	<string>
+		<id>420</id>
+		<value>Mis Videos/Años</value>
+	</string>
+	<string>
+		<id>421</id>
+		<value>Mis Videos/Titulo</value>
+	</string>
+	<string>
+		<id>422</id>
+		<value>Borrar info. de album</value>
+	</string>
+	<string>
+		<id>423</id>
+		<value>Borrar info. de CDDB</value>
+	</string>
+	<string>
+		<id>424</id>
+		<value>Seleccionar</value>
+	</string>
+	<string>
+		<id>425</id>
+		<value>No se encontro info. del album.</value>
+	</string>
+	<string>
+		<id>426</id>
+		<value>No se encontro info. de CDDB.</value>
+	</string>
+	<string>
+		<id>427</id>
+		<value>Disco:</value>
+	</string>
+	<string>
+		<id>428</id>
+		<value>Inserte el CD/DVD correct</value>
+	</string>
+	<string>
+		<id>429</id>
+		<value>Por favor inserte el siguiente CD/DVD</value>
+	</string>
+	<string>
+		<id>430</id>
+		<value>Ordenar por: #DVD</value>
+	</string>
+	<string>
+		<id>431</id>
+		<value>No Cache</value>
+	</string>
+	<string>
+		<id>432</id>
+		<value>Borrar pelicula de la base de datos</value>
+	</string>
+	<string>
+		<id>433</id>
+		<value>Esta seguro de quitar</value>
+	</string>
+	<string>
+		<id>434</id>
+		<value>la pelicula?</value>
+	</string>
+	<string>
+		<id>435</id>
+		<value>Pista</value>
+	</string>
+	<string>
+		<id>436</id>
+		<value>Año:</value>
+	</string>
+	<string>
+		<id>437</id>
+		<value>Duracion:</value>
+	</string>
+	<string>
+		<id>438</id>
+		<value>Abrir archivo</value>
+	</string>
+	<string>
+		<id>439</id>
+		<value>Cache</value>
+	</string>
+	<string>
+		<id>440</id>
+		<value>Disco Rigido</value>
+	</string>
+	<string>
+		<id>441</id>
+		<value>UDF</value>
+	</string>
+	<string>
+		<id>442</id>
+		<value>LAN</value>
+	</string>
+	<string>
+		<id>443</id>
+		<value>Internet</value>
+	</string>
+	<string>
+		<id>444</id>
+		<value>video</value>
+	</string>
+	<string>
+		<id>445</id>
+		<value>audio</value>
+	</string>
+	<string>
+		<id>446</id>
+		<value>DVD</value>
+	</string>
+	<string>
+		<id>447</id>
+		<value>Ej. Automatica</value>
+	</string>
+	<string>
+		<id>448</id>
+		<value>LCD</value>
+	</string>
+	<string>
+		<id>449</id>
+		<value>Habilitado</value>
+	</string>
+	<string>
+		<id>450</id>
+		<value>Columnas</value>
+	</string>
+	<string>
+		<id>451</id>
+		<value>Direccion Fila 1:</value>
+	</string>
+	<string>
+		<id>452</id>
+		<value>Direccion Fila 2:</value>
+	</string>
+	<string>
+		<id>453</id>
+		<value>Direccion Fila 3:</value>
+	</string>
+	<string>
+		<id>454</id>
+		<value>Direccion Fila 4:</value>
+	</string>
+	<string>
+		<id>455</id>
+		<value>Filas:</value>
+	</string>
+	<string>
+		<id>456</id>
+		<value>Modo:</value>
+	</string>
+	<string>
+		<id>457</id>
+		<value>Ver por:</value>
+	</string>
+	<string>
+		<id>458</id>
+		<value>Marcador</value>
+	</string>
+	<string>
+		<id>459</id>
+		<value>Subtitulos</value>
+	</string>
+	<string>
+		<id>460</id>
+		<value>Pista de Audio</value>
+	</string>
+	<string>
+		<id>461</id>
+		<value>[activo]</value>
+	</string>
+	<string>
+		<id>462</id>
+		<value>Subtitulo</value>
+	</string>
+	<string>
+		<id>463</id>
+		<value>Luz de fondo</value>
+	</string>
+	<string>
+		<id>464</id>
+		<value>Brillo</value>
+	</string>
+	<string>
+		<id>465</id>
+		<value>Contraste</value>
+	</string>
+	<string>
+		<id>466</id>
+		<value>Gamma</value>
+	</string>
+	<string>
+		<id>467</id>
+		<value>Tipo</value>
+	</string>
+	<string>
+		<id>468</id>
+		<value>Mueva la barra para cambiar la posicion del OSD</value>
+	</string>
+	<string>
+		<id>469</id>
+		<value>Posicion OSD</value>
+	</string>
+	<string>
+		<id>470</id>
+		<value>Creditos</value>
+	</string>
+	<string>
+		<id>471</id>
+		<value>Modchip</value>
+	</string>
+	<string>
+		<id>472</id>
+		<value>Timeout OSD</value>
+	</string>
+	<string>
+		<id>473</id>
+		<value>High Quality Resampling</value>
+	</string>
+	<string>
+		<id>474</id>
+		<value>Apagado</value>
+	</string>
+	<string>
+		<id>475</id>
+		<value>Solamente Musica</value>
+	</string>
+	<string>
+		<id>476</id>
+		<value>Musica &amp; Video</value>
+	</string>
+	<string>
+		<id>477</id>
+		<value>No se puede cargar lista de Repr.</value>
+	</string>
+	<string>
+		<id>478</id>
+		<value>OSD</value>
+	</string>
+	<string>
+		<id>479</id>
+		<value>Skin e idioma</value>
+	</string>
+	<string>
+		<id>480</id>
+		<value>Interfaz de usuario</value>
+	</string>
+	<string>
+		<id>481</id>
+		<value>Opciones de Audio</value>
+	</string>
+	<string>
+		<id>482</id>
+		<value>Acerca de XBMC</value>
+	</string>
+	<string>
+		<id>483</id>
+		<value>Album</value>
+	</string>
+	<string>
+		<id>484</id>
+		<value>Artista</value>
+	</string>
+	<string>
+		<id>485</id>
+		<value>Borrar album</value>
+	</string>
+	<string>
+		<id>486</id>
+		<value>Repetir</value>
+	</string>
+	<string>
+		<id>487</id>
+		<value>Repetir solo una</value>
+	</string>
+	<string>
+		<id>488</id>
+		<value>Repetir Lista de Repr.</value>
+	</string>
+	<string>
+		<id>489</id>
+		<value>Usar lista de repr. en canciones</value>
+	</string>
+	<string>
+		<id>490</id>
+		<value>Auto switch list and icons in songs</value>
+	</string>
+	<string>
+		<id>491</id>
+		<value>Usar iconos Grandes</value>
+	</string>
+	<string>
+		<id>555</id>
+		<value>Desde {0} a {1} {2}</value>
+	</string>
+	<string>
+		<id>600</id>
+		<value>Guia de TV</value>
+	</string>
+	<string>
+		<id>601</id>
+		<value>Grabar TV ahora</value>
+	</string>
+	<string>
+		<id>602</id>
+		<value>Canal:</value>
+	</string>
+	<string>
+		<id>603</id>
+		<value>Grab. Programadas</value>
+	</string>
+	<string>
+		<id>604</id>
+		<value>Grabaciones de TV</value>
+	</string>
+	<string>
+		<id>605</id>
+		<value>Mi TV</value>
+	</string>
+	<string>
+		<id>606</id>
+		<value>Cargando Guia de TV</value>
+	</string>
+	<string>
+		<id>607</id>
+		<value>Cargar</value>
+	</string>
+	<string>
+		<id>608</id>
+		<value>Fallo la carga de la Guia de TV</value>
+	</string>
+	<string>
+		<id>609</id>
+		<value>Cargado de Guia de TV completado</value>
+	</string>
+	<string>
+		<id>610</id>
+		<value>Ninguno</value>
+	</string>
+	<string>
+		<id>611</id>
+		<value>Grabar una vez</value>
+	</string>
+	<string>
+		<id>612</id>
+		<value>Grabar siempre en este canal</value>
+	</string>
+	<string>
+		<id>613</id>
+		<value>Grabar siempre en cualquier canal</value>
+	</string>
+	<string>
+		<id>614</id>
+		<value>Grabar cada semana a esta hora</value>
+	</string>
+	<string>
+		<id>615</id>
+		<value>Grabar diariamente a esta hora</value>
+	</string>
+	<string>
+		<id>616</id>
+		<value>Seleccionar tipo de grabacion</value>
+	</string>
+	<string>
+		<id>617</id>
+		<value>Nuevo</value>
+	</string>
+	<string>
+		<id>618</id>
+		<value>Borrar</value>
+	</string>
+	<string>
+		<id>619</id>
+		<value>Editar Fecha/Hora</value>
+	</string>
+	<string>
+		<id>620</id>
+		<value>Ordenar por: Canal</value>
+	</string>
+	<string>
+		<id>621</id>
+		<value>Ordenar por: Fecha</value>
+	</string>
+	<string>
+		<id>622</id>
+		<value>Ordenar por: Nombre</value>
+	</string>
+	<string>
+		<id>623</id>
+		<value>Ordenar por: Tipo</value>
+	</string>
+	<string>
+		<id>624</id>
+		<value>Limpiar</value>
+	</string>
+	<string>
+		<id>625</id>
+		<value>Programacion quitada:</value>
+	</string>
+	<string>
+		<id>626</id>
+		<value>Cambiar tipo</value>
+	</string>
+	<string>
+		<id>627</id>
+		<value>Canales:</value>
+	</string>
+	<string>
+		<id>628</id>
+		<value>Programas:</value>
+	</string>
+	<string>
+		<id>629</id>
+		<value>Detener grabacion</value>
+	</string>
+	<string>
+		<id>630</id>
+		<value>Desea reiniciar el equipo?</value>
+	</string>
+	<string>
+		<id>631</id>
+		<value>Desea apagar el equipo?</value>
+	</string>
+	<string>
+		<id>632</id>
+		<value>Objetos</value>
+	</string>
+	<string>
+		<id>633</id>
+		<value>Fecha/Hora de comienzo</value>
+	</string>
+	<string>
+		<id>634</id>
+		<value>Fecha/Hora de finalizacion</value>
+	</string>
+	<string>
+		<id>635</id>
+		<value>Hora</value>
+	</string>
+	<string>
+		<id>636</id>
+		<value>Fecha</value>
+	</string>
+	<string>
+		<id>637</id>
+		<value>Editar grabacion</value>
+	</string>
+	<string>
+		<id>638</id>
+		<value>Nueva grabacion</value>
+	</string>
+	<string>
+		<id>639</id>
+		<value>Albums de</value>
+	</string>
+	<string>
+		<id>640</id>
+		<value>Saturacion</value>
+	</string>
+	<string>
+		<id>641</id>
+		<value>Definicion</value>
+	</string>
+	<string>
+		<id>642</id>
+		<value>Cargando canales de TV</value>
+	</string>
+	<string>
+		<id>643</id>
+		<value>Cargando programas de TV</value>
+	</string>
+	<string>
+		<id>644</id>
+		<value>Ordenando programas de TV</value>
+	</string>
+	<string>
+		<id>645</id>
+		<value>Cargando archivo XML</value>
+	</string>
+	<string>
+		<id>646</id>
+		<value>Grabaciones programadas</value>
+	</string>
+	<string>
+		<id>647</id>
+		<value>Una vez</value>
+	</string>
+	<string>
+		<id>648</id>
+		<value>Diariamente</value>
+	</string>
+	<string>
+		<id>649</id>
+		<value>Cada</value>
+	</string>
+	<string>
+		<id>650</id>
+		<value>Siempre en este canal</value>
+	</string>
+	<string>
+		<id>651</id>
+		<value>Siempre en cualquier canal</value>
+	</string>
+	<string>
+		<id>652</id>
+		<value>Grabaciones de TV</value>
+	</string>
+	<string>
+		<id>653</id>
+		<value>Borrar esta grabacion?</value>
+	</string>
+	<string>
+		<id>654</id>
+		<value>Expulsar</value>
+	</string>
+	<string>
+		<id>655</id>
+		<value>Reproducir grabacion de TV</value>
+	</string>
+	<string>
+		<id>656</id>
+		<value>Borrar grabacion de TV</value>
+	</string>
+	<string>
+		<id>657</id>
+		<value>Lun</value>
+	</string>
+	<string>
+		<id>658</id>
+		<value>Mar</value>
+	</string>
+	<string>
+		<id>659</id>
+		<value>Mie</value>
+	</string>
+	<string>
+		<id>660</id>
+		<value>Jue</value>
+	</string>
+	<string>
+		<id>661</id>
+		<value>Vie</value>
+	</string>
+	<string>
+		<id>662</id>
+		<value>Sab</value>
+	</string>
+	<string>
+		<id>663</id>
+		<value>Dom</value>
+	</string>
+	<string>
+		<id>664</id>
+		<value>Borrar esta foto?</value>
+	</string>
+	<string>
+		<id>665</id>
+		<value>Mi Radio</value>
+	</string>
+	<string>
+		<id>666</id>
+		<value>Estaciones</value>
+	</string>
+	<string>
+		<id>667</id>
+		<value>Sintonizacion automatica</value>
+	</string>
+	<string>
+		<id>668</id>
+		<value>Ordenar por: Tipo</value>
+	</string>
+	<string>
+		<id>669</id>
+		<value>Ordenar por: Genero</value>
+	</string>
+	<string>
+		<id>670</id>
+		<value>Ordenar por: Bitrate</value>
+	</string>
+	<string>
+		<id>671</id>
+		<value>Ordenar por: Visto</value>
+	</string>
+	<string>
+		<id>672</id>
+		<value>Grabar Lun-Vie</value>
+	</string>
+	<string>
+		<id>673</id>
+		<value>Veloc. de desplazamiento</value>
+	</string>
+	<string>
+		<id>674</id>
+		<value>Config. de Interfase</value>
+	</string>
+	<string>
+		<id>675</id>
+		<value>Ejemplo:</value>
+	</string>
+	<string>
+		<id>676</id>
+		<value>Borrar grabaciones ya vistas?</value>
+	</string>
+	<string>
+		<id>677</id>
+		<value>veces</value>
+	</string>
+	<string>
+		<id>678</id>
+		<value>Ordenar por: Genero</value>
+	</string>
+	<string>
+		<id>679</id>
+		<value>Semanalmente</value>
+	</string>
+	<string>
+		<id>680</id>
+		<value>Lun-Vie</value>
+	</string>
+	<string>
+		<id>681</id>
+		<value>Esperando</value>
+	</string>
+	<string>
+		<id>682</id>
+		<value>Grabando</value>
+	</string>
+	<string>
+		<id>683</id>
+		<value>Terminado</value>
+	</string>
+	<string>
+		<id>684</id>
+		<value>Cancelado</value>
+	</string>
+	<string>
+		<id>685</id>
+		<value>Ordenar por: Estado</value>
+	</string>
+	<string>
+		<id>100000</id>
+		<value>Inicio</value>
+	</string>
+	<string>
+		<id>100001</id>
+		<value>Mi TV</value>
+	</string>
+	<string>
+		<id>100002</id>
+		<value>Mis Fotos</value>
+	</string>
+	<string>
+		<id>100003</id>
+		<value>Mis Archivos</value>
+	</string>
+	<string>
+		<id>100004</id>
+		<value>Opciones</value>
+	</string>
+	<string>
+		<id>100005</id>
+		<value>Mi Musica</value>
+	</string>
+	<string>
+		<id>100006</id>
+		<value>Mis Videos</value>
+	</string>
+	<string>
+		<id>100007</id>
+		<value>Informacion del sistema</value>
+	</string>
+	<string>
+		<id>100008</id>
+		<value>Opciones-&gt;General</value>
+	</string>
+	<string>
+		<id>100009</id>
+		<value>Opciones-&gt;Screen</value>
+	</string>
+	<string>
+		<id>100010</id>
+		<value>Opciones-&gt;Screen-&gt;UI Calibration</value>
+	</string>
+	<string>
+		<id>100011</id>
+		<value>Opciones-&gt;Screen-&gt;Screen Calibration</value>
+	</string>
+	<string>
+		<id>100012</id>
+		<value>Opciones-&gt;SlideShow</value>
+	</string>
+	<string>
+		<id>100013</id>
+		<value>Opciones-&gt;Screen-&gt;Filters</value>
+	</string>
+	<string>
+		<id>100014</id>
+		<value>Opciones-&gt;Music</value>
+	</string>
+	<string>
+		<id>100015</id>
+		<value>Opciones-&gt;Screen-&gt;Subtitles</value>
+	</string>
+	<string>
+		<id>100016</id>
+		<value>Opciones-&gt;Screen-&gt;Screensaver</value>
+	</string>
+	<string>
+		<id>100017</id>
+		<value>Opciones-&gt;Weather</value>
+	</string>
+	<string>
+		<id>100020</id>
+		<value>Opciones-&gt;Scripts</value>
+	</string>
+	<string>
+		<id>100021</id>
+		<value>Mis Videos/Genero</value>
+	</string>
+	<string>
+		<id>100022</id>
+		<value>Mis Videos/actor</value>
+	</string>
+	<string>
+		<id>100023</id>
+		<value>Mis Videos/año</value>
+	</string>
+	<string>
+		<id>100024</id>
+		<value>Opciones-&gt;Programas</value>
+	</string>
+	<string>
+		<id>100025</id>
+		<value>Mis Videos/title</value>
+	</string>
+	<string>
+		<id>100026</id>
+		<value>Opciones-&gt;General-&gt;Cache</value>
+	</string>
+	<string>
+		<id>100027</id>
+		<value>Opciones-&gt;General-&gt;Autorun</value>
+	</string>
+	<string>
+		<id>100028</id>
+		<value>Mis Videos/Lista de Repr.</value>
+	</string>
+	<string>
+		<id>100029</id>
+		<value>Opciones-&gt;General-&gt;LCD</value>
+	</string>
+	<string>
+		<id>100030</id>
+		<value>Mi Radio</value>
+	</string>
+	<string>
+		<id>100031</id>
+		<value>Opciones-&gt;Screen-&gt;scroll speed</value>
+	</string>
+	<string>
+		<id>100032</id>
+		<value>MSN Messenger</value>
+	</string>
+	<string>
+		<id>100033</id>
+		<value>MSN Messenger chat</value>
+	</string>
+	<string>
+		<id>100034</id>
+		<value>Mis Plugins</value>
+	</string>
+	<string>
+		<id>100100</id>
+		<value>Dialogo Si/no</value>
+	</string>
+	<string>
+		<id>100101</id>
+		<value>Dialogo de Progreso</value>
+	</string>
+	<string>
+		<id>100500</id>
+		<value>Mi Musica/Lista de Repr.</value>
+	</string>
+	<string>
+		<id>100501</id>
+		<value>Mi Musica/Archivos</value>
+	</string>
+	<string>
+		<id>100502</id>
+		<value>Mi Musica/Albums</value>
+	</string>
+	<string>
+		<id>100503</id>
+		<value>Mi Musica/Artistas</value>
+	</string>
+	<string>
+		<id>100504</id>
+		<value>Mi Musica/Generos</value>
+	</string>
+	<string>
+		<id>100505</id>
+		<value>Mi Musica/Top 100</value>
+	</string>
+	<string>
+		<id>100506</id>
+		<value>Mi Musica/Favoritos</value>
+	</string>
+	<string>
+		<id>100600</id>
+		<value>Mi TV/Guia</value>
+	</string>
+	<string>
+		<id>100601</id>
+		<value>Mi TV/Programar</value>
+	</string>
+	<string>
+		<id>100602</id>
+		<value>Mi TV/Pant. Conpleta</value>
+	</string>
+	<string>
+		<id>100603</id>
+		<value>Mi TV/Programas Grabados</value>
+	</string>
+	<string>
+		<id>100604</id>
+		<value>Mi TV/Buscar</value>
+	</string>
+	<string>
+		<id>100605</id>
+		<value>Mi TV/Programas Grabados/Genero</value>
+	</string>
+	<string>
+		<id>100606</id>
+		<value>Mi TV/Programas Grabados/Canales</value>
+	</string>
+	<string>
+		<id>100750</id>
+		<value>Mis Recetas</value>
+	</string>
+	<string>
+		<id>100755</id>
+		<value>Mi Estado</value>
+	</string>
+	<string>
+		<id>100756</id>
+		<value>Mi Estado/Detalles</value>
+	</string>
+	<string>
+		<id>100757</id>
+		<value>Mi Estado/Preferencias</value>
+	</string>
+	<string>
+		<id>100770</id>
+		<value>Mi PC</value>
+	</string>
+	<string>
+		<id>101000</id>
+		<value>teclado</value>
+	</string>
+	<string>
+		<id>102000</id>
+		<value>Seleccionar dialogo</value>
+	</string>
+	<string>
+		<id>102001</id>
+		<value>Mi Musica/info</value>
+	</string>
+	<string>
+		<id>102002</id>
+		<value>Dialog OK</value>
+	</string>
+	<string>
+		<id>102003</id>
+		<value>Mis Videos/Info</value>
+	</string>
+	<string>
+		<id>102004</id>
+		<value>My Scripts/Info</value>
+	</string>
+	<string>
+		<id>102005</id>
+		<value>Video a Pantalla Completa</value>
+	</string>
+	<string>
+		<id>102006</id>
+		<value>Visualizacion de audio</value>
+	</string>
+	<string>
+		<id>102007</id>
+		<value>Fotos/Slideshow</value>
+	</string>
+	<string>
+		<id>102008</id>
+		<value>Dialogo de agrupar archivos</value>
+	</string>
+	<string>
+		<id>102010</id>
+		<value>Fecha/Hora</value>
+	</string>
+	<string>
+		<id>102011</id>
+		<value>Info. de Artista</value>
+	</string>
+	<string>
+		<id>102012</id>
+		<value>Menu contextual</value>
+	</string>
+	<string>
+		<id>102013</id>
+		<value>Dar Puntaje</value>
+	</string>
+	<string>
+		<id>102014</id>
+		<value>Picture info</value>
+	</string>
+	<string>
+		<id>102600</id>
+		<value>El Clima</value>
+	</string>
+	<string>
+		<id>102700</id>
+		<value>Mis Noticias</value>
+	</string>
+	<string>
+		<id>102900</id>
+		<value>Protector de Pantalla</value>
+	</string>
+	<string>
+		<id>102901</id>
+		<value>OSD Pant. Completa</value>
+	</string>
+	<string>
+		<id>102902</id>
+		<value>MSN Messenger OSD</value>
+	</string>
+	<string>
+		<id>686</id>
+		<value>Nacido</value>
+	</string>
+	<string>
+		<id>687</id>
+		<value>Años Activo</value>
+	</string>
+	<string>
+		<id>688</id>
+		<value>Instrumentos</value>
+	</string>
+	<string>
+		<id>689</id>
+		<value>Bio.</value>
+	</string>
+	<string>
+		<id>690</id>
+		<value>Discografia (Albums)</value>
+	</string>
+	<string>
+		<id>691</id>
+		<value>Discografia (compilations, boxes)</value>
+	</string>
+	<string>
+		<id>700</id>
+		<value>Discografia (eps, singles)</value>
+	</string>
+	<string>
+		<id>701</id>
+		<value>Discografia (bootlegs, videos, interVers)</value>
+	</string>
+	<string>
+		<id>702</id>
+		<value>No se encontro el artista</value>
+	</string>
+	<string>
+		<id>703</id>
+		<value>Not connected to the Internet!</value>
+	</string>
+	<string>
+		<id>704</id>
+		<value>Feed Retrieval</value>
+	</string>
+	<string>
+		<id>705</id>
+		<value>Getting RSS Feed for</value>
+	</string>
+	<string>
+		<id>706</id>
+		<value>Select Feed</value>
+	</string>
+	<string>
+		<id>707</id>
+		<value>TV Encendida</value>
+	</string>
+	<string>
+		<id>708</id>
+		<value>Timeshifting</value>
+	</string>
+	<string>
+		<id>709</id>
+		<value>Actualizacion automatica</value>
+	</string>
+	<string>
+		<id>710</id>
+		<value>Una nueva version esta disponible</value>
+	</string>
+	<string>
+		<id>711</id>
+		<value>Actualizar desde v#old -&gt;v#new ?</value>
+	</string>
+	<string>
+		<id>712</id>
+		<value>Volver</value>
+	</string>
+	<string>
+		<id>713</id>
+		<value>Repr. Automatica</value>
+	</string>
+	<string>
+		<id>714</id>
+		<value>Disc inserted, do you want to play it?</value>
+	</string>
+	<string>
+		<id>715</id>
+		<value>CD inserted, do you want to play it?</value>
+	</string>
+	<string>
+		<id>716</id>
+		<value>Satelite</value>
+	</string>
+	<string>
+		<id>717</id>
+		<value>Clima</value>
+	</string>
+	<string>
+		<id>718</id>
+		<value>Clear Top100</value>
+	</string>
+	<string>
+		<id>719</id>
+		<value>Are you sure to reset the top 100 list?</value>
+	</string>
+	<string>
+		<id>720</id>
+		<value>Show: Duracion</value>
+	</string>
+	<string>
+		<id>721</id>
+		<value>Show: Veces Reprod.</value>
+	</string>
+	<string>
+		<id>722</id>
+		<value>No se puede reproducir disco</value>
+	</string>
+	<string>
+		<id>723</id>
+		<value>Inserto un disco?</value>
+	</string>
+	<string>
+		<id>724</id>
+		<value>Buscar en Guia de TV</value>
+	</string>
+	<string>
+		<id>725</id>
+		<value>Generos</value>
+	</string>
+	<string>
+		<id>726</id>
+		<value>Titulo</value>
+	</string>
+	<string>
+		<id>727</id>
+		<value>TV en vivo de fondo</value>
+	</string>
+	<string>
+		<id>728</id>
+		<value>No se puede iniciar</value>
+	</string>
+	<string>
+		<id>729</id>
+		<value>Asegurese de utilizar VMR9 y que algo se esta reproduciendo</value>
+	</string>
+	<string>
+		<id>730</id>
+		<value>Este programa se esta grabando, si borra</value>
+	</string>
+	<string>
+		<id>731</id>
+		<value>el programa entonces se detendrá la grabacion</value>
+	</string>
+	<string>
+		<id>732</id>
+		<value>Esta seguro?</value>
+	</string>
+	<string>
+		<id>733</id>
+		<value>Ver: Filmstrip</value>
+	</string>
+	<string>
+		<id>734</id>
+		<value>Imagen:</value>
+	</string>
+	<string>
+		<id>735</id>
+		<value>Rotar</value>
+	</string>
+	<string>
+		<id>736</id>
+		<value>No hay datos de la Guia de TV</value>
+	</string>
+	<string>
+		<id>800</id>
+		<value>Comienza con</value>
+	</string>
+	<string>
+		<id>801</id>
+		<value>Contiene</value>
+	</string>
+	<string>
+		<id>802</id>
+		<value>Termina con</value>
+	</string>
+	<string>
+		<id>803</id>
+		<value>Es</value>
+	</string>
+	<string>
+		<id>804</id>
+		<value>Listo</value>
+	</string>
+	<string>
+		<id>805</id>
+		<value>Borrar</value>
+	</string>
+	<string>
+		<id>806</id>
+		<value>Titulo</value>
+	</string>
+	<string>
+		<id>807</id>
+		<value>Campo</value>
+	</string>
+	<string>
+		<id>808</id>
+		<value>Ingredientes</value>
+	</string>
+	<string>
+		<id>809</id>
+		<value>Instrucciones</value>
+	</string>
+	<string>
+		<id>810</id>
+		<value>Placa</value>
+	</string>
+	<string>
+		<id>850</id>
+		<value>Mis Alarmas</value>
+	</string>
+	<string>
+		<id>851</id>
+		<value>Lista de Repr.</value>
+	</string>
+	<string>
+		<id>852</id>
+		<value>Alarma On/Off</value>
+	</string>
+	<string>
+		<id>853</id>
+		<value>Nombre:</value>
+	</string>
+	<string>
+		<id>854</id>
+		<value>Activado en estos días</value>
+	</string>
+	<string>
+		<id>855</id>
+		<value>Hora de Alarma</value>
+	</string>
+	<string>
+		<id>856</id>
+		<value>Sleep Timer</value>
+	</string>
+	<string>
+		<id>857</id>
+		<value>Posponer</value>
+	</string>
+	<string>
+		<id>858</id>
+		<value>Dormitar</value>
+	</string>
+	<string>
+		<id>859</id>
+		<value>Sleep Timer</value>
+	</string>
+	<string>
+		<id>860</id>
+		<value>Aumentar volumen con el tiempo</value>
+	</string>
+	<string>
+		<id>861</id>
+		<value>Detalles de la alarma</value>
+	</string>
+	<string>
+		<id>862</id>
+		<value>Radio</value>
+	</string>
+	<string>
+		<id>863</id>
+		<value>Archivo</value>
+	</string>
+	<string>
+		<id>864</id>
+		<value>Tipo de medio</value>
+	</string>
+	<string>
+		<id>865</id>
+		<value>Minutos antes de dormir</value>
+	</string>
+	<string>
+		<id>866</id>
+		<value>Disminuir volumen con el tiempo</value>
+	</string>
+	<string>
+		<id>867</id>
+		<value>Apagar computadora</value>
+	</string>
+	<string>
+		<id>868</id>
+		<value>Reset</value>
+	</string>
+	<string>
+		<id>869</id>
+		<value>Nueva Alarma</value>
+	</string>
+	<string>
+		<id>900</id>
+		<value>Continuar pelicula desde la ultima posicion</value>
+	</string>
+	<string>
+		<id>901</id>
+		<value>MSN Messenger</value>
+	</string>
+	<string>
+		<id>902</id>
+		<value>Contactos en linea</value>
+	</string>
+	<string>
+		<id>903</id>
+		<value>Iniciar Sesion</value>
+	</string>
+	<string>
+		<id>904</id>
+		<value>Cerrar Sesion</value>
+	</string>
+	<string>
+		<id>905</id>
+		<value>Primero necesita configurar este plugin</value>
+	</string>
+	<string>
+		<id>906</id>
+		<value>Ingrese su direccion de email en la configuracion</value>
+	</string>
+	<string>
+		<id>907</id>
+		<value>No es posible conectarse a MSN</value>
+	</string>
+	<string>
+		<id>908</id>
+		<value>esta escribiendo un mensaje...</value>
+	</string>
+	<string>
+		<id>909</id>
+		<value>Conectando...</value>
+	</string>
+	<string>
+		<id>910</id>
+		<value>Iniciando sesion...</value>
+	</string>
+	<string>
+		<id>911</id>
+		<value>No hay canales</value>
+	</string>
+	<string>
+		<id>912</id>
+		<value>No se pueden bajar las ultimas noticias</value>
+	</string>
+	<string>
+		<id>913</id>
+		<value>Mis Plugins</value>
+	</string>
+	<string>
+		<id>914</id>
+		<value>Grabaciones</value>
+	</string>
+	<string>
+		<id>915</id>
+		<value>Canales de TV</value>
+	</string>
+	<string>
+		<id>916</id>
+		<value>Archivo remoto</value>
+	</string>
+	<string>
+		<id>917</id>
+		<value>Este archivo esta ubicado en una carpeta remota</value>
+	</string>
+	<string>
+		<id>918</id>
+		<value>Desea bajarlo a su carpeta local</value>
+	</string>
+	<string>
+		<id>919</id>
+		<value>predeterminada?</value>
+	</string>
+	<string>
+		<id>920</id>
+		<value>No es posible descargar el archivo remoto</value>
+	</string>
+	<string>
+		<id>921</id>
+		<value>El archivo esta siendo descargado</value>
+	</string>
+	<string>
+		<id>922</id>
+		<value>Descripcion</value>
+	</string>
+	<string>
+		<id>923</id>
+		<value>Show</value>
+	</string>
+	<string>
+		<id>924</id>
+		<value>Menu</value>
+	</string>
+	<string>
+		<id>925</id>
+		<value>Borrar esta pelicula</value>
+	</string>
+	<string>
+		<id>926</id>
+		<value>Agregar a la Lista de repr.</value>
+	</string>
+	<string>
+		<id>927</id>
+		<value>Advertencia</value>
+	</string>
+	<string>
+		<id>928</id>
+		<value>Buscar Arte de Tapa</value>
+	</string>
+	<string>
+		<id>929</id>
+		<value>Cerrar Menu</value>
+	</string>
+	<string>
+		<id>930</id>
+		<value>Agregar a favoritos</value>
+	</string>
+	<string>
+		<id>931</id>
+		<value>Puntaje</value>
+	</string>
+	<string>
+		<id>932</id>
+		<value>Favoritos</value>
+	</string>
+	<string>
+		<id>933</id>
+		<value>Quitar de Favoritos</value>
+	</string>
+	<string>
+		<id>934</id>
+		<value>Establecer Puntaje</value>
+	</string>
+	<string>
+		<id>935</id>
+		<value>Mostrar: Puntaje</value>
+	</string>
+	<string>
+		<id>936</id>
+		<value>Continuar desde:</value>
+	</string>
+	<string>
+		<id>937</id>
+		<value>Importar Guia de TV</value>
+	</string>
+	<string>
+		<id>938</id>
+		<value>Ver este canal</value>
+	</string>
+	<string>
+		<id>939</id>
+		<value>Cambiar modo</value>
+	</string>
+	<string>
+		<id>940</id>
+		<value>Propiedades</value>
+	</string>
+	<string>
+		<id>941</id>
+		<value>Cambiar relacion de aspecto</value>
+	</string>
+	<string>
+		<id>942</id>
+		<value>Estirar</value>
+	</string>
+	<string>
+		<id>943</id>
+		<value>Normal</value>
+	</string>
+	<string>
+		<id>944</id>
+		<value>Original</value>
+	</string>
+	<string>
+		<id>945</id>
+		<value>Letterbox</value>
+	</string>
+	<string>
+		<id>946</id>
+		<value>Pan and Scan</value>
+	</string>
+	<string>
+		<id>947</id>
+		<value>Zoom</value>
+	</string>
+	<string>
+		<id>948</id>
+		<value>En linea</value>
+	</string>
+	<string>
+		<id>949</id>
+		<value>No disponible</value>
+	</string>
+	<string>
+		<id>950</id>
+		<value>Vuelvo Enseguida</value>
+	</string>
+	<string>
+		<id>951</id>
+		<value>Ausente</value>
+	</string>
+	<string>
+		<id>952</id>
+		<value>Al telefono</value>
+	</string>
+	<string>
+		<id>953</id>
+		<value>Almorzando</value>
+	</string>
+	<string>
+		<id>954</id>
+		<value>Oculto</value>
+	</string>
+	<string>
+		<id>955</id>
+		<value>Inactivo</value>
+	</string>
+	<string>
+		<id>956</id>
+		<value>En linea</value>
+	</string>
+	<string>
+		<id>957</id>
+		<value>MSN Messenger</value>
+	</string>
+	<string>
+		<id>958</id>
+		<value>Hablando a</value>
+	</string>
+	<string>
+		<id>959</id>
+		<value>Se ha unido a la conversacion</value>
+	</string>
+	<string>
+		<id>960</id>
+		<value>Ha dejado la conversacion</value>
+	</string>
+	<string>
+		<id>961</id>
+		<value>Estado de MSN</value>
+	</string>
+	<string>
+		<id>970</id>
+		<value>Ventana anterior</value>
+	</string>
+	<string>
+		<id>1950</id>
+		<value>Mi Estado</value>
+	</string>
+	<string>
+		<id>1951</id>
+		<value>Disco Rigido</value>
+	</string>
+	<string>
+		<id>1952</id>
+		<value>Ventilador</value>
+	</string>
+	<string>
+		<id>1953</id>
+		<value>Libre</value>
+	</string>
+	<string>
+		<id>1954</id>
+		<value>Temperatura</value>
+	</string>
+	<string>
+		<id>1955</id>
+		<value>C</value>
+	</string>
+	<string>
+		<id>1956</id>
+		<value>Seleccione el sonido de la alarma</value>
+	</string>
+	<string>
+		<id>1957</id>
+		<value>Preferencias</value>
+	</string>
+	<string>
+		<id>1958</id>
+		<value>Uso de CPU</value>
+	</string>
+	<string>
+		<id>1959</id>
+		<value>Voltaje</value>
+	</string>
+	<string>
+		<id>1960</id>
+		<value>Voltio</value>
+	</string>
+	<string>
+		<id>1961</id>
+		<value>Frecuencia de Reloj</value>
+	</string>
+	<string>
+		<id>1962</id>
+		<value>Preferencias</value>
+	</string>
+	<string>
+		<id>1963</id>
+		<value>Detalles del sensor</value>
+	</string>
+	<string>
+		<id>1964</id>
+		<value>Alarma del sensor</value>
+	</string>
+	<string>
+		<id>1965</id>
+		<value>Valor maximo</value>
+	</string>
+	<string>
+		<id>1966</id>
+		<value>Valor minimo</value>
+	</string>
+	<string>
+		<id>1967</id>
+		<value>Umbral superior de alarma</value>
+	</string>
+	<string>
+		<id>1968</id>
+		<value>Umbral inferior de alarma</value>
+	</string>
+	<string>
+		<id>1969</id>
+		<value>Probar sonido</value>
+	</string>
+	<string>
+		<id>1970</id>
+		<value>Intervalo de alarma (en segundos)</value>
+	</string>
+	<string>
+		<id>1971</id>
+		<value>Apagar si hay alerta</value>
+	</string>
+	<string>
+		<id>1972</id>
+		<value>Detalles de estado</value>
+	</string>
+	<string>
+		<id>1973</id>
+		<value>de</value>
+	</string>
+	<string>
+		<id>1974</id>
+		<value>Memoria</value>
+	</string>
+	<string>
+		<id>1975</id>
+		<value>Siguiente pagina</value>
+	</string>
+	<string>
+		<id>1976</id>
+		<value>RPM</value>
+	</string>
+	<string>
+		<id>1977</id>
+		<value>Sistema de archivos</value>
+	</string>
+	<string>
+		<id>1978</id>
+		<value>Mem. Virtual</value>
+	</string>
+	<string>
+		<id>2005</id>
+		<value>Borrar</value>
+	</string>
+	<string>
+		<id>2006</id>
+		<value>Titulo</value>
+	</string>
+	<string>
+		<id>2007</id>
+		<value>Produccion</value>
+	</string>
+	<string>
+		<id>2008</id>
+		<value>Ingredientes</value>
+	</string>
+	<string>
+		<id>2009</id>
+		<value>Instrucciones</value>
+	</string>
+	<string>
+		<id>2010</id>
+		<value>Tarjeta</value>
+	</string>
+	<string>
+		<id>2011</id>
+		<value>Imprimir</value>
+	</string>
+	<string>
+		<id>2012</id>
+		<value>Borrar</value>
+	</string>
+	<string>
+		<id>2013</id>
+		<value>Favoritos</value>
+	</string>
+	<string>
+		<id>2014</id>
+		<value>Desconocido</value>
+	</string>
+	<string>
+		<id>2015</id>
+		<value>por Comensal</value>
+	</string>
+	<string>
+		<id>2016</id>
+		<value>pequeño</value>
+	</string>
+	<string>
+		<id>2017</id>
+		<value>onza fluida</value>
+	</string>
+	<string>
+		<id>2018</id>
+		<value>taza</value>
+	</string>
+	<string>
+		<id>2019</id>
+		<value>pinta</value>
+	</string>
+	<string>
+		<id>2020</id>
+		<value>medio</value>
+	</string>
+	<string>
+		<id>2021</id>
+		<value>grande</value>
+	</string>
+	<string>
+		<id>2022</id>
+		<value>lata</value>
+	</string>
+	<string>
+		<id>2023</id>
+		<value>paquete</value>
+	</string>
+	<string>
+		<id>2024</id>
+		<value>asa</value>
+	</string>
+	<string>
+		<id>2025</id>
+		<value>gota</value>
+	</string>
+	<string>
+		<id>2026</id>
+		<value>rocio</value>
+	</string>
+	<string>
+		<id>2027</id>
+		<value>carton</value>
+	</string>
+	<string>
+		<id>2028</id>
+		<value>manojo</value>
+	</string>
+	<string>
+		<id>2029</id>
+		<value>rebanada</value>
+	</string>
+	<string>
+		<id>2030</id>
+		<value>cada</value>
+	</string>
+	<string>
+		<id>2031</id>
+		<value>cuch. de te</value>
+	</string>
+	<string>
+		<id>2032</id>
+		<value>cuch. de te</value>
+	</string>
+	<string>
+		<id>2033</id>
+		<value>cuch. de sopa</value>
+	</string>
+	<string>
+		<id>2034</id>
+		<value>cuch. de sopa</value>
+	</string>
+	<string>
+		<id>2035</id>
+		<value>cuarto</value>
+	</string>
+	<string>
+		<id>2036</id>
+		<value>galón</value>
+	</string>
+	<string>
+		<id>2037</id>
+		<value>onza</value>
+	</string>
+	<string>
+		<id>2038</id>
+		<value>libra</value>
+	</string>
+	<string>
+		<id>2039</id>
+		<value>mililitro</value>
+	</string>
+	<string>
+		<id>2040</id>
+		<value>mililitro</value>
+	</string>
+	<string>
+		<id>2041</id>
+		<value>centilitro</value>
+	</string>
+	<string>
+		<id>2042</id>
+		<value>decilitro</value>
+	</string>
+	<string>
+		<id>2043</id>
+		<value>litro</value>
+	</string>
+	<string>
+		<id>2044</id>
+		<value>miligramo</value>
+	</string>
+	<string>
+		<id>2045</id>
+		<value>centigramo</value>
+	</string>
+	<string>
+		<id>2046</id>
+		<value>decigramo</value>
+	</string>
+	<string>
+		<id>2047</id>
+		<value>gramo</value>
+	</string>
+	<string>
+		<id>2048</id>
+		<value>kilogramo</value>
+	</string>
+	<string>
+		<id>2049</id>
+		<value>Borrar esta receta?</value>
+	</string>
+	<string>
+		<id>2050</id>
+		<value>Borrar esta categoria?</value>
+	</string>
+	<string>
+		<id>2051</id>
+		<value>Buscar en titulo</value>
+	</string>
+	<string>
+		<id>2052</id>
+		<value>Buscar en receta</value>
+	</string>
+	<string>
+		<id>2053</id>
+		<value>Categoría</value>
+	</string>
+	<string>
+		<id>2054</id>
+		<value>No hay entradas</value>
+	</string>
+	<string>
+		<id>2100</id>
+		<value>Grabar</value>
+	</string>
+	<string>
+		<id>2101</id>
+		<value>Copiar CD/DVD</value>
+	</string>
+	<string>
+		<id>2102</id>
+		<value>Create Audio-CD</value>
+	</string>
+	<string>
+		<id>2103</id>
+		<value>Create Video-CD</value>
+	</string>
+	<string>
+		<id>2104</id>
+		<value>Create Video-DVD</value>
+	</string>
+	<string>
+		<id>2105</id>
+		<value>Create Data-CD</value>
+	</string>
+	<string>
+		<id>2106</id>
+		<value>Create Data-DVD</value>
+	</string>
+	<string>
+		<id>2107</id>
+		<value>Comenzar copia</value>
+	</string>
+	<string>
+		<id>2108</id>
+		<value>Inserte un CD/DVD en blanco</value>
+	</string>
+	<string>
+		<id>2109</id>
+		<value>y luego presione Ok</value>
+	</string>
+	<string>
+		<id>2110</id>
+		<value>Inserte el CD/DVD original </value>
+	</string>
+	<string>
+		<id>2111</id>
+		<value>Finalizado!</value>
+	</string>
+	<string>
+		<id>2112</id>
+		<value>Esperando el CD/DVD</value>
+	</string>
+	<string>
+		<id>2113</id>
+		<value>Copiar todo</value>
+	</string>
+	<string>
+		<id>2114</id>
+		<value>Borrar disco</value>
+	</string>
+	<string>
+		<id>2115</id>
+		<value>Inserte un CD/DVD RW</value>
+	</string>
+	<string>
+		<id>2116</id>
+		<value>Unidad no preparada</value>
+	</string>
+	<string>
+		<id>2117</id>
+		<value>Un error fatal ha ocurrido!</value>
+	</string>
+	<string>
+		<id>2118</id>
+		<value>Convertir DVR-MS</value>
+	</string>
+	<string>
+		<id>2200</id>
+		<value>Explorador</value>
+	</string>
+	<string>
+		<id>2201</id>
+		<value>Seleccione origen</value>
+	</string>
+	<string>
+		<id>2202</id>
+		<value>Seleccione destino</value>
+	</string>
+	<string>
+		<id>2203</id>
+		<value>Copiar datos</value>
+	</string>
+	<string>
+		<id>2204</id>
+		<value>Crear carpeta</value>
+	</string>
+	<string>
+		<id>2205</id>
+		<value>Restaurar seleccion</value>
+	</string>
+	<string>
+		<id>2206</id>
+		<value>Seleccionar todo</value>
+	</string>
+	<string>
+		<id>2207</id>
+		<value>Quiere crear</value>
+	</string>
+	<string>
+		<id>2208</id>
+		<value>esta carpeta?</value>
+	</string>
+	<string>
+		<id>2209</id>
+		<value>Quiere copiar los archivos?</value>
+	</string>
+	<string>
+		<id>2210</id>
+		<value>Archivos copiados!</value>
+	</string>
+	<string>
+		<id>2211</id>
+		<value>Por favor espere, copiando archivos</value>
+	</string>
+	<string>
+		<id>2212</id>
+		<value>Borrar</value>
+	</string>
+	<string>
+		<id>2213</id>
+		<value>Mover</value>
+	</string>
+	<string>
+		<id>2214</id>
+		<value>Quiere mover los archivos seleccionados?</value>
+	</string>
+	<string>
+		<id>2215</id>
+		<value>Por favor espere, moviendo archivos</value>
+	</string>
+	<string>
+		<id>2216</id>
+		<value>Archivos movidos!</value>
+	</string>
+	<string>
+		<id>8000</id>
+		<value>Mi correo</value>
+	</string>
+	<string>
+		<id>8001</id>
+		<value>Buscar correo nuevo</value>
+	</string>
+	<string>
+		<id>8002</id>
+		<value>Revision auto: no</value>
+	</string>
+	<string>
+		<id>8003</id>
+		<value>Revision auto: si</value>
+	</string>
+	<string>
+		<id>8004</id>
+		<value>Tiene correo nuevo!</value>
+	</string>
+	<string>
+		<id>8005</id>
+		<value>Actualizando buzón de correo</value>
+	</string>
+	<string>
+		<id>8007</id>
+		<value>Revision automatica</value>
+	</string>
+	<string>
+		<id>8008</id>
+		<value>Volver</value>
+	</string>
+	<string>
+		<id>8009</id>
+		<value>Marcar todos como leidos</value>
+	</string>
+	<string>
+		<id>8010</id>
+		<value>No se definio buzon de correo</value>
+	</string>
+	<string>
+		<id>8011</id>
+		<value>Por favor vaya a la config. y defina</value>
+	</string>
+	<string>
+		<id>8012</id>
+		<value>Al menos un buzon de correo para usar esta funcion</value>
+	</string>
+	<string>
+		<id>8013</id>
+		<value>No hay respuesta del servidor</value>
+	</string>
+	<string>
+		<id>8014</id>
+		<value>El servidor '{0}' no responde!</value>
+	</string>
+	<string>
+		<id>8015</id>
+		<value>Revise su configuracion del buzon'{0}'</value>
+	</string>
+	<string>
+		<id>8016</id>
+		<value>De</value>
+	</string>
+	<string>
+		<id>8017</id>
+		<value>Para</value>
+	</string>
+	<string>
+		<id>8018</id>
+		<value>Asunto</value>
+	</string>
+	<string>
+		<id>8019</id>
+		<value>Mensaje</value>
+	</string>
+	<string>
+		<id>8020</id>
+		<value>Borrar correo</value>
+	</string>
+	<string>
+		<id>8021</id>
+		<value>Marcar como leido</value>
+	</string>
+	<string>
+		<id>8022</id>
+		<value>Mostrar archivos adjuntos</value>
+	</string>
+	<string>
+		<id>8023</id>
+		<value>Hay nuevos mensajes</value>
+	</string>
+	<string>
+		<id>8024</id>
+		<value>Mostrar mensaje</value>
+	</string>
+	<string>
+		<id>8025</id>
+		<value>Analizando mensaje</value>
+	</string>
+	<string>
+		<id>8030</id>
+		<value>Conectado al servidor</value>
+	</string>
+	<string>
+		<id>8031</id>
+		<value>Obteniendo numero de correos</value>
+	</string>
+	<string>
+		<id>8033</id>
+		<value>Progreso</value>
+	</string>
+	<string>
+		<id>8034</id>
+		<value>Mostrar HTML</value>
+	</string>
+	<string>
+		<id>9000</id>
+		<value>Tamaño de la imagen:</value>
+	</string>
+	<string>
+		<id>9001</id>
+		<value>Resolucion:</value>
+	</string>
+	<string>
+		<id>9002</id>
+		<value>Flash</value>
+	</string>
+	<string>
+		<id>9003</id>
+		<value>Modo de medida:</value>
+	</string>
+	<string>
+		<id>9004</id>
+		<value>Compensacion:</value>
+	</string>
+	<string>
+		<id>9005</id>
+		<value>Veloc. del obturador:</value>
+	</string>
+	<string>
+		<id>9006</id>
+		<value>Tomada en fecha:</value>
+	</string>
+	<string>
+		<id>9007</id>
+		<value>Fstop:</value>
+	</string>
+	<string>
+		<id>9008</id>
+		<value>Tiempo de Exposicion:</value>
+	</string>
+	<string>
+		<id>9009</id>
+		<value>Modelo de Camara:</value>
+	</string>
+	<string>
+		<id>9010</id>
+		<value>Fabricante del equipo:</value>
+	</string>
+	<string>
+		<id>9011</id>
+		<value>Ver comentarios:</value>
+	</string>
+	<string>
+		<id>13000</id>
+		<value>Sistema:</value>
+	</string>
+	<string>
+		<id>13001</id>
+		<value>Fabricante:</value>
+	</string>
+	<string>
+		<id>13002</id>
+		<value>Iniciar</value>
+	</string>
+	<string>
+		<id>13003</id>
+		<value>Importando archivo *.mlf</value>
+	</string>
+	<string>
+		<id>13004</id>
+		<value>Importando archivo *.my</value>
+	</string>
+	<string>
+		<id>13005</id>
+		<value>Ultimo archivo importado:</value>
+	</string>
+	<string>
+		<id>13006</id>
+		<value>Imagen pequeña</value>
+	</string>
+	<string>
+		<id>13007</id>
+		<value>Imagen grande</value>
+	</string>
+	<string>
+		<id>13008</id>
+		<value>Efecto Ken Burns</value>
+	</string>
+	<string>
+		<id>13009</id>
+		<value>Transiciones aleatorias</value>
+	</string>
+	<string>
+		<id>13010</id>
+		<value>Transiciones X-fade</value>
+	</string>
+	<string>
+		<id>13011</id>
+		<value>Velocidad de Ken Burns</value>
+	</string>
+	<string>
+		<id>1440</id>
+		<value>Mi Teletexto</value>
+	</string>
+	<string>
+		<id>16001</id>
+		<value>Sesion aleatoria</value>
+	</string>
+	<string>
+		<id>2225</id>
+		<value>Carpeta creada</value>
+	</string>
+	<string>
+		<id>2224</id>
+		<value>La carpeta ya existe!</value>
+	</string>
+	<string>
+		<id>2223</id>
+		<value>Papelera de reciclaje</value>
+	</string>
+	<string>
+		<id>2222</id>
+		<value>Archivos borrados</value>
+	</string>
+	<string>
+		<id>2221</id>
+		<value>Quiere borrar los archivos seleccionados?</value>
+	</string>
+	<string>
+		<id>2220</id>
+		<value>Copiar el archivo seleccionado?</value>
+	</string>
+	<string>
+		<id>2219</id>
+		<value>No se puede mover desde la unidad seleccionada!</value>
+	</string>
+	<string>
+		<id>2218</id>
+		<value>Convertir DVR-MS</value>
+	</string>
+	<string>
+		<id>2217</id>
+		<value>Ocurrio un error fatal</value>
+	</string>
+	<string>
+		<id>2216</id>
+		<value>No esta lista la unidad</value>
+	</string>
+	<string>
+		<id>19012</id>
+		<value>Juego terminado</value>
+	</string>
+	<string>
+		<id>19011</id>
+		<value>Pausado</value>
+	</string>
+	<string>
+		<id>19010</id>
+		<value>Presione o haga click para empezar...</value>
+	</string>
+	<string>
+		<id>19009</id>
+		<value>Siguiente</value>
+	</string>
+	<string>
+		<id>19008</id>
+		<value>Puntajes maximos</value>
+	</string>
+	<string>
+		<id>19007</id>
+		<value>Lineas</value>
+	</string>
+	<string>
+		<id>19006</id>
+		<value>Nivel</value>
+	</string>
+	<string>
+		<id>19005</id>
+		<value>Puntaje</value>
+	</string>
+	<string>
+		<id>19004</id>
+		<value>Sonidos</value>
+	</string>
+	<string>
+		<id>19003</id>
+		<value>Musica</value>
+	</string>
+	<string>
+		<id>19002</id>
+		<value>Nuevo Juego</value>
+	</string>
+	<string>
+		<id>19001</id>
+		<value>Mi Tetris</value>
+	</string>
+	<string>
+		<id>3007</id>
+		<value>Minutos antes</value>
+	</string>
+	<string>
+		<id>3006</id>
+		<value>Horas antes</value>
+	</string>
+	<string>
+		<id>3002</id>
+		<value>Horas</value>
+	</string>
+	<string>
+		<id>3001</id>
+		<value>Hora</value>
+	</string>
+	<string>
+		<id>3000</id>
+		<value>Opciones de programa</value>
+	</string>
+	<string>
+		<id>976</id>
+		<value>Capitulo siguiente</value>
+	</string>
+	<string>
+		<id>975</id>
+		<value>Capitulo anterior</value>
+	</string>
+	<string>
+		<id>974</id>
+		<value>Menu principal</value>
+	</string>
+	<string>
+		<id>973</id>
+		<value>Maximos FPS</value>
+	</string>
+	<string>
+		<id>972</id>
+		<value>Todos los canales</value>
+	</string>
+	<string>
+		<id>971</id>
+		<value>Grupo</value>
+	</string>
+	<string>
+		<id>3010</id>
+		<value>Minutos restantes</value>
+	</string>
+	<string>
+		<id>3009</id>
+		<value>Comienza en</value>
+	</string>
+	<string>
+		<id>3020</id>
+		<value>Episodio</value>
+	</string>
+	<string>
+		<id>3012</id>
+		<value>Horas restantes</value>
+	</string>
+	<string>
+		<id>3022</id>
+		<value>de</value>
+	</string>
+	<string>
+		<id>3021</id>
+		<value>Parte</value>
+	</string>
+	<string>
+		<id>3019</id>
+		<value>Series</value>
+	</string>
+	<string>
+		<id>3018</id>
+		<value>Minuto restante</value>
+	</string>
+	<string>
+		<id>3017</id>
+		<value>Comenzado</value>
+	</string>
+	<string>
+		<id>3016</id>
+		<value>Ya terminado</value>
+	</string>
+	<string>
+		<id>3013</id>
+		<value>Comenzando ahora</value>
+	</string>
+	<string>
+		<id>750</id>
+		<value>Imagenes</value>
+	</string>
+	<string>
+		<id>3011</id>
+		<value>Hora restante</value>
+	</string>
+	<string>
+		<id>748</id>
+		<value>Precipitacion</value>
+	</string>
+	<string>
+		<id>747</id>
+		<value>Baja</value>
+	</string>
+	<string>
+		<id>3008</id>
+		<value>Minutos antes</value>
+	</string>
+	<string>
+		<id>3005</id>
+		<value>Horas antes</value>
+	</string>
+	<string>
+		<id>3004</id>
+		<value>Minutos</value>
+	</string>
+	<string>
+		<id>3003</id>
+		<value>Minuto</value>
+	</string>
+	<string>
+		<id>739</id>
+		<value>Ver: Indice UV</value>
+	</string>
+	<string>
+		<id>738</id>
+		<value>Ver: Temperatura</value>
+	</string>
+	<string>
+		<id>737</id>
+		<value>Ver: Satelite</value>
+	</string>
+	<string>
+		<id>746</id>
+		<value>Alto</value>
+	</string>
+	<string>
+		<id>745</id>
+		<value>Puesta del sol</value>
+	</string>
+	<string>
+		<id>744</id>
+		<value>Salida del sol</value>
+	</string>
+	<string>
+		<id>743</id>
+		<value>Pronostico de 4 días</value>
+	</string>
+	<string>
+		<id>742</id>
+		<value>Ver: Precipitacion</value>
+	</string>
+	<string>
+		<id>741</id>
+		<value>Ver: Humedad</value>
+	</string>
+	<string>
+		<id>740</id>
+		<value>Ver: Vientos</value>
+	</string>
+	<string>
+		<id>3015</id>
+		<value>Dias</value>
+	</string>
+	<string>
+		<id>3014</id>
+		<value>Dia</value>
+	</string>
+</strings>

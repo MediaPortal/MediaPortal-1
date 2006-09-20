@@ -1,0 +1,3668 @@
+<?xml version="1.0" encoding="ISO-8859-4"?>
+<strings>
+	<characters>255</characters>
+	<string>
+		<id>0</id>
+		<value>Programmid</value>
+	</string>
+	<string>
+		<id>1</id>
+		<value>Pildid</value>
+	</string>
+	<string>
+		<id>2</id>
+		<value>Muusika</value>
+	</string>
+	<string>
+		<id>3</id>
+		<value>Videod</value>
+	</string>
+	<string>
+		<id>4</id>
+		<value>Saatekava</value>
+	</string>
+	<string>
+		<id>5</id>
+		<value>Seaded</value>
+	</string>
+	<string>
+		<id>6</id>
+		<value>XBOX Media Center CVS build</value>
+	</string>
+	<string>
+		<id>7</id>
+		<value>Failid</value>
+	</string>
+	<string>
+		<id>8</id>
+		<value>Ilm</value>
+	</string>
+	<string>
+		<id>9</id>
+		<value>Uudised</value>
+	</string>
+	<string>
+		<id>10</id>
+		<value>Retsepetid</value>
+	</string>
+	<string>
+		<id>11</id>
+		<value>Esmaspäev</value>
+	</string>
+	<string>
+		<id>12</id>
+		<value>Teisipäev</value>
+	</string>
+	<string>
+		<id>13</id>
+		<value>Kolmapäev</value>
+	</string>
+	<string>
+		<id>14</id>
+		<value>Neljapäev</value>
+	</string>
+	<string>
+		<id>15</id>
+		<value>Reede</value>
+	</string>
+	<string>
+		<id>16</id>
+		<value>Laupäev</value>
+	</string>
+	<string>
+		<id>17</id>
+		<value>Pühapäev</value>
+	</string>
+	<string>
+		<id>21</id>
+		<value>Jaanuar</value>
+	</string>
+	<string>
+		<id>22</id>
+		<value>Veebruar</value>
+	</string>
+	<string>
+		<id>23</id>
+		<value>Märts</value>
+	</string>
+	<string>
+		<id>24</id>
+		<value>Aprill</value>
+	</string>
+	<string>
+		<id>25</id>
+		<value>Mai</value>
+	</string>
+	<string>
+		<id>26</id>
+		<value>Juuni</value>
+	</string>
+	<string>
+		<id>27</id>
+		<value>Juuli</value>
+	</string>
+	<string>
+		<id>28</id>
+		<value>August</value>
+	</string>
+	<string>
+		<id>29</id>
+		<value>September</value>
+	</string>
+	<string>
+		<id>30</id>
+		<value>Oktoober</value>
+	</string>
+	<string>
+		<id>31</id>
+		<value>November</value>
+	</string>
+	<string>
+		<id>32</id>
+		<value>Detsember</value>
+	</string>
+	<string>
+		<id>50</id>
+		<value>DVDd</value>
+	</string>
+	<string>
+		<id>100</id>
+		<value>Vaade: Ikoonid</value>
+	</string>
+	<string>
+		<id>101</id>
+		<value>Vaade: Nimekiri</value>
+	</string>
+	<string>
+		<id>102</id>
+		<value>Skanneeri</value>
+	</string>
+	<string>
+		<id>103</id>
+		<value>Sortimine: Nimi</value>
+	</string>
+	<string>
+		<id>104</id>
+		<value>Sortimine: Kuupäev</value>
+	</string>
+	<string>
+		<id>105</id>
+		<value>Sortimine: Suurus</value>
+	</string>
+	<string>
+		<id>106</id>
+		<value>Ei</value>
+	</string>
+	<string>
+		<id>107</id>
+		<value>Jah</value>
+	</string>
+	<string>
+		<id>108</id>
+		<value>SlaidiShow</value>
+	</string>
+	<string>
+		<id>109</id>
+		<value>Tee Pisipildid</value>
+	</string>
+	<string>
+		<id>110</id>
+		<value>Tee Pisipildid</value>
+	</string>
+	<string>
+		<id>111</id>
+		<value>Otseteed</value>
+	</string>
+	<string>
+		<id>112</id>
+		<value>PEATATUD</value>
+	</string>
+	<string>
+		<id>113</id>
+		<value>Failid: Asukoht</value>
+	</string>
+	<string>
+		<id>114</id>
+		<value>Failid: Sihtkoht</value>
+	</string>
+	<string>
+		<id>115</id>
+		<value>Kopeeri</value>
+	</string>
+	<string>
+		<id>116</id>
+		<value>Lõika</value>
+	</string>
+	<string>
+		<id>117</id>
+		<value>Kustuta</value>
+	</string>
+	<string>
+		<id>118</id>
+		<value>Muuda nime</value>
+	</string>
+	<string>
+		<id>119</id>
+		<value>Uus Kataloog</value>
+	</string>
+	<string>
+		<id>120</id>
+		<value>Faili kopeerimise kontroll</value>
+	</string>
+	<string>
+		<id>121</id>
+		<value>Faili lõikamise kontroll</value>
+	</string>
+	<string>
+		<id>122</id>
+		<value>Faili kustutamise kontroll</value>
+	</string>
+	<string>
+		<id>123</id>
+		<value>Kopeerin need failid?</value>
+	</string>
+	<string>
+		<id>124</id>
+		<value>Lõikan need failid?</value>
+	</string>
+	<string>
+		<id>125</id>
+		<value>Kustutan need failid?</value>
+	</string>
+	<string>
+		<id>126</id>
+		<value>Olek</value>
+	</string>
+	<string>
+		<id>127</id>
+		<value>Objektid</value>
+	</string>
+	<string>
+		<id>128</id>
+		<value>Üldine</value>
+	</string>
+	<string>
+		<id>129</id>
+		<value>Slaidishow</value>
+	</string>
+	<string>
+		<id>130</id>
+		<value>Süsteemi info</value>
+	</string>
+	<string>
+		<id>131</id>
+		<value>Ekraan</value>
+	</string>
+	<string>
+		<id>132</id>
+		<value>Albumid</value>
+	</string>
+	<string>
+		<id>133</id>
+		<value>Artistid</value>
+	</string>
+	<string>
+		<id>134</id>
+		<value>Laulud</value>
+	</string>
+	<string>
+		<id>135</id>
+		<value>Stiilid</value>
+	</string>
+	<string>
+		<id>136</id>
+		<value>Esitusnimekiri</value>
+	</string>
+	<string>
+		<id>137</id>
+		<value>Otsing</value>
+	</string>
+	<string>
+		<id>138</id>
+		<value>SÜSTEEMI INFORMATSIOON</value>
+	</string>
+	<string>
+		<id>139</id>
+		<value>Temperatuurid:</value>
+	</string>
+	<string>
+		<id>140</id>
+		<value>Protsessor:</value>
+	</string>
+	<string>
+		<id>141</id>
+		<value>Graafika Protsessor:</value>
+	</string>
+	<string>
+		<id>142</id>
+		<value>Aeg:</value>
+	</string>
+	<string>
+		<id>143</id>
+		<value>Praegune:</value>
+	</string>
+	<string>
+		<id>144</id>
+		<value>Ehitus:</value>
+	</string>
+	<string>
+		<id>145</id>
+		<value>Võrk:</value>
+	</string>
+	<string>
+		<id>146</id>
+		<value>Tüüp:</value>
+	</string>
+	<string>
+		<id>147</id>
+		<value>Staatiline</value>
+	</string>
+	<string>
+		<id>148</id>
+		<value>DHCP</value>
+	</string>
+	<string>
+		<id>149</id>
+		<value>MAC</value>
+	</string>
+	<string>
+		<id>150</id>
+		<value>IP:</value>
+	</string>
+	<string>
+		<id>151</id>
+		<value>Link:</value>
+	</string>
+	<string>
+		<id>152</id>
+		<value>Half duplex</value>
+	</string>
+	<string>
+		<id>153</id>
+		<value>Full duplex</value>
+	</string>
+	<string>
+		<id>154</id>
+		<value>Andmehoid</value>
+	</string>
+	<string>
+		<id>155</id>
+		<value>Ketas</value>
+	</string>
+	<string>
+		<id>156</id>
+		<value>Vaba</value>
+	</string>
+	<string>
+		<id>157</id>
+		<value>Video</value>
+	</string>
+	<string>
+		<id>158</id>
+		<value>Vaba Mälu</value>
+	</string>
+	<string>
+		<id>159</id>
+		<value>Link puudub</value>
+	</string>
+	<string>
+		<id>160</id>
+		<value>Vaba</value>
+	</string>
+	<string>
+		<id>161</id>
+		<value>Kättesaamatu</value>
+	</string>
+	<string>
+		<id>162</id>
+		<value>Sahtel lahti</value>
+	</string>
+	<string>
+		<id>163</id>
+		<value>Lugemine</value>
+	</string>
+	<string>
+		<id>164</id>
+		<value>Plaati pole</value>
+	</string>
+	<string>
+		<id>165</id>
+		<value>Plaat olemas</value>
+	</string>
+	<string>
+		<id>166</id>
+		<value>Rüü:</value>
+	</string>
+	<string>
+		<id>167</id>
+		<value>FTP server:</value>
+	</string>
+	<string>
+		<id>168</id>
+		<value>Sünkroniseeri Aeg:</value>
+	</string>
+	<string>
+		<id>169</id>
+		<value>Resolutsioon:</value>
+	</string>
+	<string>
+		<id>170</id>
+		<value>Album:</value>
+	</string>
+	<string>
+		<id>171</id>
+		<value>Esitaja:</value>
+	</string>
+	<string>
+		<id>172</id>
+		<value>Väljalaske kuupäev</value>
+	</string>
+	<string>
+		<id>173</id>
+		<value>Reiting:</value>
+	</string>
+	<string>
+		<id>174</id>
+		<value>Stiil:</value>
+	</string>
+	<string>
+		<id>175</id>
+		<value>Toonid:</value>
+	</string>
+	<string>
+		<id>176</id>
+		<value>Stiilid:</value>
+	</string>
+	<string>
+		<id>177</id>
+		<value>Lühiülevaade:</value>
+	</string>
+	<string>
+		<id>178</id>
+		<value>Radu:</value>
+	</string>
+	<string>
+		<id>179</id>
+		<value>Laul</value>
+	</string>
+	<string>
+		<id>180</id>
+		<value>Kestus</value>
+	</string>
+	<string>
+		<id>181</id>
+		<value>Selekteeri album</value>
+	</string>
+	<string>
+		<id>182</id>
+		<value>Radu</value>
+	</string>
+	<string>
+		<id>183</id>
+		<value>Lühiülevaade</value>
+	</string>
+	<string>
+		<id>184</id>
+		<value>Värskenda</value>
+	</string>
+	<string>
+		<id>185</id>
+		<value>Albumi otsimine</value>
+	</string>
+	<string>
+		<id>186</id>
+		<value>OK</value>
+	</string>
+	<string>
+		<id>187</id>
+		<value>Ühtegi albumit ei leitud!</value>
+	</string>
+	<string>
+		<id>188</id>
+		<value>Märgista kõik</value>
+	</string>
+	<string>
+		<id>189</id>
+		<value>Meedia info skaneerimine</value>
+	</string>
+	<string>
+		<id>190</id>
+		<value>Salvesta</value>
+	</string>
+	<string>
+		<id>191</id>
+		<value>Shuffle</value>
+	</string>
+	<string>
+		<id>192</id>
+		<value>Puhasta</value>
+	</string>
+	<string>
+		<id>193</id>
+		<value>Skaneeri</value>
+	</string>
+	<string>
+		<id>194</id>
+		<value>Otsimine...</value>
+	</string>
+	<string>
+		<id>195</id>
+		<value>IMDB infot ei leitud!</value>
+	</string>
+	<string>
+		<id>196</id>
+		<value>Vali Film:</value>
+	</string>
+	<string>
+		<id>197</id>
+		<value>IMDB päringu tegemine</value>
+	</string>
+	<string>
+		<id>198</id>
+		<value>Filmi detailide laadimine</value>
+	</string>
+	<string>
+		<id>199</id>
+		<value>Direktor:</value>
+	</string>
+	<string>
+		<id>200</id>
+		<value>Stsenarist:</value>
+	</string>
+	<string>
+		<id>201</id>
+		<value>Aasta:</value>
+	</string>
+	<string>
+		<id>202</id>
+		<value>Lühitutvustus:</value>
+	</string>
+	<string>
+		<id>203</id>
+		<value>Süzee kirjeldus:</value>
+	</string>
+	<string>
+		<id>204</id>
+		<value>Reiting:</value>
+	</string>
+	<string>
+		<id>205</id>
+		<value>Hääli:</value>
+	</string>
+	<string>
+		<id>206</id>
+		<value>Osades</value>
+	</string>
+	<string>
+		<id>207</id>
+		<value>Süzee</value>
+	</string>
+	<string>
+		<id>208</id>
+		<value>Mängi</value>
+	</string>
+	<string>
+		<id>209</id>
+		<value>Järgmine</value>
+	</string>
+	<string>
+		<id>210</id>
+		<value>Eelmine</value>
+	</string>
+	<string>
+		<id>211</id>
+		<value>Aplikatsioonide otsimine</value>
+	</string>
+	<string>
+		<id>212</id>
+		<value>aplikatsioonid leitud</value>
+	</string>
+	<string>
+		<id>213</id>
+		<value>Kasutajaliidese Kalibreerimine</value>
+	</string>
+	<string>
+		<id>214</id>
+		<value>Ekraani kalibreerimine</value>
+	</string>
+	<string>
+		<id>215</id>
+		<value>Pehmenda</value>
+	</string>
+	<string>
+		<id>216</id>
+		<value>Zoom</value>
+	</string>
+	<string>
+		<id>217</id>
+		<value>Stretch</value>
+	</string>
+	<string>
+		<id>218</id>
+		<value>DVD Ketas</value>
+	</string>
+	<string>
+		<id>219</id>
+		<value>Sisesta palun plaat</value>
+	</string>
+	<string>
+		<id>220</id>
+		<value>Võrguresurss</value>
+	</string>
+	<string>
+		<id>221</id>
+		<value>Võrguühendust pole</value>
+	</string>
+	<string>
+		<id>222</id>
+		<value>Katkesta</value>
+	</string>
+	<string>
+		<id>223</id>
+		<value>Automaatne laiekraani lülitamine</value>
+	</string>
+	<string>
+		<id>224</id>
+		<value>Kiirus</value>
+	</string>
+	<string>
+		<id>225</id>
+		<value>Ülemineku aeg</value>
+	</string>
+	<string>
+		<id>226</id>
+		<value>Enable PAL60</value>
+	</string>
+	<string>
+		<id>227</id>
+		<value>Enable CDDB</value>
+	</string>
+	<string>
+		<id>228</id>
+		<value>Shuffle Playlist on load</value>
+	</string>
+	<string>
+		<id>229</id>
+		<value>HD Spindown time (mins)</value>
+	</string>
+	<string>
+		<id>230</id>
+		<value>Filtrid</value>
+	</string>
+	<string>
+		<id>231</id>
+		<value>Pole</value>
+	</string>
+	<string>
+		<id>232</id>
+		<value>Punkt</value>
+	</string>
+	<string>
+		<id>233</id>
+		<value>Lineaarne</value>
+	</string>
+	<string>
+		<id>234</id>
+		<value>Anisotropic</value>
+	</string>
+	<string>
+		<id>235</id>
+		<value>Quincunx</value>
+	</string>
+	<string>
+		<id>236</id>
+		<value>Gaussian Cubic</value>
+	</string>
+	<string>
+		<id>237</id>
+		<value>Minification:</value>
+	</string>
+	<string>
+		<id>238</id>
+		<value>Magnification:</value>
+	</string>
+	<string>
+		<id>240</id>
+		<value>Autorun DVD-Video</value>
+	</string>
+	<string>
+		<id>241</id>
+		<value>Autorun VCD/SVCD</value>
+	</string>
+	<string>
+		<id>242</id>
+		<value>Autorun Audio-CD</value>
+	</string>
+	<string>
+		<id>243</id>
+		<value>Autorun XBOX Games</value>
+	</string>
+	<string>
+		<id>244</id>
+		<value>Video automaatesitus</value>
+	</string>
+	<string>
+		<id>245</id>
+		<value>Muusika automaatesitus</value>
+	</string>
+	<string>
+		<id>246</id>
+		<value>Piltide automaatesitus</value>
+	</string>
+	<string>
+		<id>247</id>
+		<value>Skriptid</value>
+	</string>
+	<string>
+		<id>248</id>
+		<value>Keel</value>
+	</string>
+	<string>
+		<id>249</id>
+		<value>Muusika</value>
+	</string>
+	<string>
+		<id>250</id>
+		<value>Visualiseerimine</value>
+	</string>
+	<string>
+		<id>251</id>
+		<value>Vali sihtkoha kataloog</value>
+	</string>
+	<string>
+		<id>252</id>
+		<value>Väljund kõikidesse kõlaritesse</value>
+	</string>
+	<string>
+		<id>253</id>
+		<value>Kanalite numbrid</value>
+	</string>
+	<string>
+		<id>254</id>
+		<value>DD Stereo Passthrough</value>
+	</string>
+	<string>
+		<id>255</id>
+		<value>CDDB</value>
+	</string>
+	<string>
+		<id>256</id>
+		<value>Querying freedb for CDDB info</value>
+	</string>
+	<string>
+		<id>257</id>
+		<value>Viga</value>
+	</string>
+	<string>
+		<id>258</id>
+		<value>Luba ID3 info</value>
+	</string>
+	<string>
+		<id>259</id>
+		<value>Avamine</value>
+	</string>
+	<string>
+		<id>260</id>
+		<value>Shoutcast</value>
+	</string>
+	<string>
+		<id>261</id>
+		<value>Stardi ootamine....</value>
+	</string>
+	<string>
+		<id>262</id>
+		<value>Skriptide Väljund</value>
+	</string>
+	<string>
+		<id>263</id>
+		<value>HTTP server:</value>
+	</string>
+	<string>
+		<id>264</id>
+		<value>Salvesta</value>
+	</string>
+	<string>
+		<id>265</id>
+		<value>Peata salvestus</value>
+	</string>
+	<string>
+		<id>266</id>
+		<value>Sorteeri: Track</value>
+	</string>
+	<string>
+		<id>267</id>
+		<value>Sorteeri: Aeg</value>
+	</string>
+	<string>
+		<id>268</id>
+		<value>Sorteeri: Pealkiri</value>
+	</string>
+	<string>
+		<id>269</id>
+		<value>Sorteeri: Esitaja</value>
+	</string>
+	<string>
+		<id>270</id>
+		<value>Sorteeri: Album</value>
+	</string>
+	<string>
+		<id>271</id>
+		<value>Top 100</value>
+	</string>
+	<string>
+		<id>272</id>
+		<value>Top Left Overscan Compensation</value>
+	</string>
+	<string>
+		<id>273</id>
+		<value>Bottom Right Overscan Compensation</value>
+	</string>
+	<string>
+		<id>274</id>
+		<value>Subtiitrite asukoht</value>
+	</string>
+	<string>
+		<id>275</id>
+		<value>Pixel Ratio Adjustment</value>
+	</string>
+	<string>
+		<id>276</id>
+		<value>-HOIATUS!- jäta 0,0 säilitamaks parimat kvaliteeti, muuda video resolutsiooni paremaks mahutamiseks.</value>
+	</string>
+	<string>
+		<id>277</id>
+		<value>Liiguta joont, et muuta subtiitrite positsiooni</value>
+	</string>
+	<string>
+		<id>278</id>
+		<value>-Oluline!- parema kvaliteedi nimel, muuda seda nelinurka nii, et ta oleks ideaalne ruut</value>
+	</string>
+	<string>
+		<id>279</id>
+		<value>Võimatu seadeid laadida</value>
+	</string>
+	<string>
+		<id>280</id>
+		<value>using default fallbacks</value>
+	</string>
+	<string>
+		<id>281</id>
+		<value>Palun kontrolli .xml  faile</value>
+	</string>
+	<string>
+		<id>282</id>
+		<value>Leitud %i ühikut</value>
+	</string>
+	<string>
+		<id>283</id>
+		<value>Otsingu Tulemus</value>
+	</string>
+	<string>
+		<id>284</id>
+		<value>Tulemusi ei ole</value>
+	</string>
+	<string>
+		<id>285</id>
+		<value>Deinterlace filter</value>
+	</string>
+	<string>
+		<id>286</id>
+		<value>Postprocessing filter</value>
+	</string>
+	<string>
+		<id>287</id>
+		<value>Subtiitrid</value>
+	</string>
+	<string>
+		<id>288</id>
+		<value>Font</value>
+	</string>
+	<string>
+		<id>289</id>
+		<value>Suurus</value>
+	</string>
+	<string>
+		<id>290</id>
+		<value>Volume amplification (dB)</value>
+	</string>
+	<string>
+		<id>291</id>
+		<value>Video</value>
+	</string>
+	<string>
+		<id>292</id>
+		<value>Audio</value>
+	</string>
+	<string>
+		<id>293</id>
+		<value>Subtiitrid</value>
+	</string>
+	<string>
+		<id>294</id>
+		<value>Lisa järjehoidja</value>
+	</string>
+	<string>
+		<id>295</id>
+		<value>Cycle bookmarks</value>
+	</string>
+	<string>
+		<id>296</id>
+		<value>Puhasta järjehoidja</value>
+	</string>
+	<string>
+		<id>297</id>
+		<value>AVDelay</value>
+	</string>
+	<string>
+		<id>298</id>
+		<value>Slider</value>
+	</string>
+	<string>
+		<id>300</id>
+		<value>1. Keel</value>
+	</string>
+	<string>
+		<id>301</id>
+		<value>2. Helitugevus</value>
+	</string>
+	<string>
+		<id>302</id>
+		<value>3. Kanal</value>
+	</string>
+	<string>
+		<id>303</id>
+		<value>Delay</value>
+	</string>
+	<string>
+		<id>304</id>
+		<value>Keel</value>
+	</string>
+	<string>
+		<id>305</id>
+		<value>Lubatud</value>
+	</string>
+	<string>
+		<id>306</id>
+		<value>Non-Interleaved</value>
+	</string>
+	<string>
+		<id>307</id>
+		<value>Auto</value>
+	</string>
+	<string>
+		<id>308</id>
+		<value>vertical deblocking filter</value>
+	</string>
+	<string>
+		<id>309</id>
+		<value>horizontal deblocking filter</value>
+	</string>
+	<string>
+		<id>310</id>
+		<value>Automaatne heledus/kontrast</value>
+	</string>
+	<string>
+		<id>311</id>
+		<value>Dering</value>
+	</string>
+	<string>
+		<id>312</id>
+		<value>(0=auto)</value>
+	</string>
+	<string>
+		<id>313</id>
+		<value>Korrasta andmebaasi</value>
+	</string>
+	<string>
+		<id>314</id>
+		<value>Valmistumine...</value>
+	</string>
+	<string>
+		<id>315</id>
+		<value>Andmebaasi viga</value>
+	</string>
+	<string>
+		<id>316</id>
+		<value>Laulude otsimine...</value>
+	</string>
+	<string>
+		<id>317</id>
+		<value>Korrastamine õnnestus</value>
+	</string>
+	<string>
+		<id>318</id>
+		<value>Kustutatud laulude markeerimine</value>
+	</string>
+	<string>
+		<id>319</id>
+		<value>Viga laulude korrastamisel</value>
+	</string>
+	<string>
+		<id>320</id>
+		<value>Esitajate otsimine...</value>
+	</string>
+	<string>
+		<id>321</id>
+		<value>Viga esitajate korrastamisel</value>
+	</string>
+	<string>
+		<id>322</id>
+		<value>Stiilide otsimine...</value>
+	</string>
+	<string>
+		<id>323</id>
+		<value>Viga stiilide korrastamisel</value>
+	</string>
+	<string>
+		<id>324</id>
+		<value>Teede otsimine...</value>
+	</string>
+	<string>
+		<id>325</id>
+		<value>Viga teede korrastamisel</value>
+	</string>
+	<string>
+		<id>326</id>
+		<value>Albumite otsimine.....</value>
+	</string>
+	<string>
+		<id>327</id>
+		<value>Viga albumite korrastamisel</value>
+	</string>
+	<string>
+		<id>328</id>
+		<value>Muudatuste kirjutamine...</value>
+	</string>
+	<string>
+		<id>329</id>
+		<value>Viga muudatuste kirjutamisel</value>
+	</string>
+	<string>
+		<id>330</id>
+		<value>See võib võtta mõne aja...</value>
+	</string>
+	<string>
+		<id>331</id>
+		<value>andmebaasi pakkimine...</value>
+	</string>
+	<string>
+		<id>332</id>
+		<value>Viga andmebaasi pakkimisel</value>
+	</string>
+	<string>
+		<id>333</id>
+		<value>Kas sa tahad reorganiseerida muusika andmebaasi?</value>
+	</string>
+	<string>
+		<id>334</id>
+		<value>Korrasta muusika andmebaasi</value>
+	</string>
+	<string>
+		<id>335</id>
+		<value>Start</value>
+	</string>
+	<string>
+		<id>336</id>
+		<value>Säti kaadri kiirus</value>
+	</string>
+	<string>
+		<id>337</id>
+		<value>Heli Väljund:</value>
+	</string>
+	<string>
+		<id>338</id>
+		<value>Analog</value>
+	</string>
+	<string>
+		<id>339</id>
+		<value>Digital</value>
+	</string>
+	<string>
+		<id>340</id>
+		<value>Erinevad artistid</value>
+	</string>
+	<string>
+		<id>341</id>
+		<value>Esita DVD</value>
+	</string>
+	<string>
+		<id>342</id>
+		<value>Filmid</value>
+	</string>
+	<string>
+		<id>343</id>
+		<value>Säti kaadri kiirus</value>
+	</string>
+	<string>
+		<id>344</id>
+		<value>Näitlejad</value>
+	</string>
+	<string>
+		<id>345</id>
+		<value>Aasta</value>
+	</string>
+	<string>
+		<id>346</id>
+		<value>Koonda</value>
+	</string>
+	<string>
+		<id>347</id>
+		<value>Eralda</value>
+	</string>
+	<string>
+		<id>348</id>
+		<value>Madalda kataloogi hierarhiat</value>
+	</string>
+	<string>
+		<id>349</id>
+		<value>Näita ainult Default.xbe</value>
+	</string>
+	<string>
+		<id>350</id>
+		<value>Programmid</value>
+	</string>
+	<string>
+		<id>351</id>
+		<value>Välja</value>
+	</string>
+	<string>
+		<id>352</id>
+		<value>Dim</value>
+	</string>
+	<string>
+		<id>353</id>
+		<value>Must</value>
+	</string>
+	<string>
+		<id>354</id>
+		<value>Matrix Trails</value>
+	</string>
+	<string>
+		<id>355</id>
+		<value>Ekraanisäästja käivitumisaeg</value>
+	</string>
+	<string>
+		<id>356</id>
+		<value>Ekraanisäästja mood</value>
+	</string>
+	<string>
+		<id>357</id>
+		<value>Väljalülitamise aeg</value>
+	</string>
+	<string>
+		<id>358</id>
+		<value>Kõik albumid</value>
+	</string>
+	<string>
+		<id>359</id>
+		<value>Viimased albumid</value>
+	</string>
+	<string>
+		<id>360</id>
+		<value>Ekraanisäästja</value>
+	</string>
+	<string>
+		<id>361</id>
+		<value>Suvaline slaidishow</value>
+	</string>
+	<string>
+		<id>362</id>
+		<value>Ekraanisäästja hajumise tase (%)</value>
+	</string>
+	<string>
+		<id>363</id>
+		<value>Sorteeri: Fail</value>
+	</string>
+	<string>
+		<id>364</id>
+		<value>DD/DTS Multichannel Passthrough</value>
+	</string>
+	<string>
+		<id>365</id>
+		<value>Sorteeri: Nimi</value>
+	</string>
+	<string>
+		<id>366</id>
+		<value>Sorteeri: Aasta</value>
+	</string>
+	<string>
+		<id>367</id>
+		<value>Sorteeri: Reiting</value>
+	</string>
+	<string>
+		<id>368</id>
+		<value>IMDB</value>
+	</string>
+	<string>
+		<id>369</id>
+		<value>Tiitel</value>
+	</string>
+	<string>
+		<id>370</id>
+		<value>T-Storms</value>
+	</string>
+	<string>
+		<id>371</id>
+		<value>Osalisels</value>
+	</string>
+	<string>
+		<id>372</id>
+		<value>Enamasti</value>
+	</string>
+	<string>
+		<id>373</id>
+		<value>Päikseline</value>
+	</string>
+	<string>
+		<id>374</id>
+		<value>Pilvine</value>
+	</string>
+	<string>
+		<id>375</id>
+		<value>Lumine</value>
+	</string>
+	<string>
+		<id>376</id>
+		<value>Vihmane</value>
+	</string>
+	<string>
+		<id>377</id>
+		<value>Kerge</value>
+	</string>
+	<string>
+		<id>378</id>
+		<value>EL</value>
+	</string>
+	<string>
+		<id>379</id>
+		<value>PL</value>
+	</string>
+	<string>
+		<id>380</id>
+		<value>Sademed</value>
+	</string>
+	<string>
+		<id>381</id>
+		<value>Mõned</value>
+	</string>
+	<string>
+		<id>382</id>
+		<value>Scattered</value>
+	</string>
+	<string>
+		<id>383</id>
+		<value>Tuul</value>
+	</string>
+	<string>
+		<id>384</id>
+		<value>Tugev</value>
+	</string>
+	<string>
+		<id>385</id>
+		<value>Fair</value>
+	</string>
+	<string>
+		<id>386</id>
+		<value>Selge</value>
+	</string>
+	<string>
+		<id>387</id>
+		<value>Varajane</value>
+	</string>
+	<string>
+		<id>388</id>
+		<value>ja</value>
+	</string>
+	<string>
+		<id>389</id>
+		<value>Udu</value>
+	</string>
+	<string>
+		<id>391</id>
+		<value>Tuuline</value>
+	</string>
+	<string>
+		<id>396</id>
+		<value>Mära asukoht</value>
+	</string>
+	<string>
+		<id>397</id>
+		<value>Uuenduse kiirus</value>
+	</string>
+	<string>
+		<id>398</id>
+		<value>Temperatuuri ühikud</value>
+	</string>
+	<string>
+		<id>399</id>
+		<value>Kiiruse ühikud</value>
+	</string>
+	<string>
+		<id>400</id>
+		<value>Ilm</value>
+	</string>
+	<string>
+		<id>401</id>
+		<value>Temp</value>
+	</string>
+	<string>
+		<id>402</id>
+		<value>Tundub nagu...</value>
+	</string>
+	<string>
+		<id>403</id>
+		<value>UV Indeks</value>
+	</string>
+	<string>
+		<id>404</id>
+		<value>Tuul</value>
+	</string>
+	<string>
+		<id>405</id>
+		<value>Sulamispunkt</value>
+	</string>
+	<string>
+		<id>406</id>
+		<value>Niiskus</value>
+	</string>
+	<string>
+		<id>410</id>
+		<value>Ühendamine Weather.com</value>
+	</string>
+	<string>
+		<id>411</id>
+		<value>Ilmateate allalaadimine:</value>
+	</string>
+	<string>
+		<id>412</id>
+		<value>Ilmateadet poel võimalik kätte saada</value>
+	</string>
+	<string>
+		<id>413</id>
+		<value>Manuaalne</value>
+	</string>
+	<string>
+		<id>414</id>
+		<value>Sellel albumil ülevaade puudub</value>
+	</string>
+	<string>
+		<id>415</id>
+		<value>Pisipildi allalaadimine...</value>
+	</string>
+	<string>
+		<id>416</id>
+		<value>Pole kättesaadav</value>
+	</string>
+	<string>
+		<id>417</id>
+		<value>Vaade: Suured Ikoonid</value>
+	</string>
+	<string>
+		<id>418</id>
+		<value>Videod/Zanr</value>
+	</string>
+	<string>
+		<id>419</id>
+		<value>Videod/Näitlejad</value>
+	</string>
+	<string>
+		<id>420</id>
+		<value>Videod/Aastad</value>
+	</string>
+	<string>
+		<id>421</id>
+		<value>Videod/Pealkiri</value>
+	</string>
+	<string>
+		<id>422</id>
+		<value>Kustuta albumi info</value>
+	</string>
+	<string>
+		<id>423</id>
+		<value>Kustuta CDDB info</value>
+	</string>
+	<string>
+		<id>424</id>
+		<value>Märgista</value>
+	</string>
+	<string>
+		<id>425</id>
+		<value>Albumi infot ei leidu.</value>
+	</string>
+	<string>
+		<id>426</id>
+		<value>CDDB infot ei leitud.</value>
+	</string>
+	<string>
+		<id>427</id>
+		<value>Plaat:</value>
+	</string>
+	<string>
+		<id>428</id>
+		<value>Sisesta õige CD/DVD</value>
+	</string>
+	<string>
+		<id>429</id>
+		<value>Sisesta järgmine CD/DVD</value>
+	</string>
+	<string>
+		<id>430</id>
+		<value>Sorteeri: DVD#</value>
+	</string>
+	<string>
+		<id>431</id>
+		<value>Vahemäluta</value>
+	</string>
+	<string>
+		<id>432</id>
+		<value>Kustuta film andmebaasist</value>
+	</string>
+	<string>
+		<id>433</id>
+		<value>Oled sa kindel et tahad eemaldada?</value>
+	</string>
+	<string>
+		<id>434</id>
+		<value>filmi?</value>
+	</string>
+	<string>
+		<id>435</id>
+		<value>Track</value>
+	</string>
+	<string>
+		<id>436</id>
+		<value>Aasta:</value>
+	</string>
+	<string>
+		<id>437</id>
+		<value>Kestvus:</value>
+	</string>
+	<string>
+		<id>438</id>
+		<value>Faili avamine</value>
+	</string>
+	<string>
+		<id>439</id>
+		<value>Vahemälu</value>
+	</string>
+	<string>
+		<id>440</id>
+		<value>Kõvaketas</value>
+	</string>
+	<string>
+		<id>441</id>
+		<value>UDF</value>
+	</string>
+	<string>
+		<id>442</id>
+		<value>LAN</value>
+	</string>
+	<string>
+		<id>443</id>
+		<value>Internet</value>
+	</string>
+	<string>
+		<id>444</id>
+		<value>video</value>
+	</string>
+	<string>
+		<id>445</id>
+		<value>audio</value>
+	</string>
+	<string>
+		<id>446</id>
+		<value>DVD</value>
+	</string>
+	<string>
+		<id>447</id>
+		<value>Automaatkäivitus</value>
+	</string>
+	<string>
+		<id>448</id>
+		<value>LCD</value>
+	</string>
+	<string>
+		<id>449</id>
+		<value>Lubatud</value>
+	</string>
+	<string>
+		<id>450</id>
+		<value>Veergudes</value>
+	</string>
+	<string>
+		<id>451</id>
+		<value>Rida 1 aadress:</value>
+	</string>
+	<string>
+		<id>452</id>
+		<value>Rida 2 aadress:</value>
+	</string>
+	<string>
+		<id>453</id>
+		<value>Rida 3 aadress:</value>
+	</string>
+	<string>
+		<id>454</id>
+		<value>Rida 4 aadress:</value>
+	</string>
+	<string>
+		<id>455</id>
+		<value>Read:</value>
+	</string>
+	<string>
+		<id>456</id>
+		<value>Mood:</value>
+	</string>
+	<string>
+		<id>457</id>
+		<value>Vaheta vaade</value>
+	</string>
+	<string>
+		<id>458</id>
+		<value>B/Mark</value>
+	</string>
+	<string>
+		<id>459</id>
+		<value>Subtiitrid</value>
+	</string>
+	<string>
+		<id>460</id>
+		<value>Heliriba</value>
+	</string>
+	<string>
+		<id>461</id>
+		<value>[aktiivne]</value>
+	</string>
+	<string>
+		<id>462</id>
+		<value>Subtiiter</value>
+	</string>
+	<string>
+		<id>463</id>
+		<value>Tasutavalgustus</value>
+	</string>
+	<string>
+		<id>464</id>
+		<value>Heledus</value>
+	</string>
+	<string>
+		<id>465</id>
+		<value>Kontrast</value>
+	</string>
+	<string>
+		<id>466</id>
+		<value>Gamma</value>
+	</string>
+	<string>
+		<id>467</id>
+		<value>Tüüp</value>
+	</string>
+	<string>
+		<id>468</id>
+		<value>Liiguta riba, et muuta OSD positsiooni</value>
+	</string>
+	<string>
+		<id>469</id>
+		<value>OSD Positsioon</value>
+	</string>
+	<string>
+		<id>470</id>
+		<value>Tegijad</value>
+	</string>
+	<string>
+		<id>471</id>
+		<value>Modchip</value>
+	</string>
+	<string>
+		<id>472</id>
+		<value>OSD väljumisaeg</value>
+	</string>
+	<string>
+		<id>473</id>
+		<value>High Quality Resampling</value>
+	</string>
+	<string>
+		<id>474</id>
+		<value>Välja</value>
+	</string>
+	<string>
+		<id>475</id>
+		<value>Ainult Muusika</value>
+	</string>
+	<string>
+		<id>476</id>
+		<value>Muusika&amp;Video</value>
+	</string>
+	<string>
+		<id>477</id>
+		<value>Esitusnimekirja poel võimalik laadida</value>
+	</string>
+	<string>
+		<id>478</id>
+		<value>OSD</value>
+	</string>
+	<string>
+		<id>479</id>
+		<value>Rüü ja Keel</value>
+	</string>
+	<string>
+		<id>480</id>
+		<value>Kasutajaliides</value>
+	</string>
+	<string>
+		<id>481</id>
+		<value>Heli suvandid</value>
+	</string>
+	<string>
+		<id>482</id>
+		<value>About XBMC</value>
+	</string>
+	<string>
+		<id>483</id>
+		<value>Album</value>
+	</string>
+	<string>
+		<id>484</id>
+		<value>Esitaja</value>
+	</string>
+	<string>
+		<id>485</id>
+		<value>Kustuta album</value>
+	</string>
+	<string>
+		<id>486</id>
+		<value>Korda</value>
+	</string>
+	<string>
+		<id>487</id>
+		<value>Korda Üks</value>
+	</string>
+	<string>
+		<id>488</id>
+		<value>Korda kataloogi esitusnimekiri</value>
+	</string>
+	<string>
+		<id>489</id>
+		<value>Kasuta esitusnimekirja lauludes</value>
+	</string>
+	<string>
+		<id>490</id>
+		<value>Auto switch list and icons in songs</value>
+	</string>
+	<string>
+		<id>491</id>
+		<value>Kasuta suuri ikoone</value>
+	</string>
+	<string>
+		<id>492</id>
+		<value>Heli keel</value>
+	</string>
+	<string>
+		<id>493</id>
+		<value>Näitleja:</value>
+	</string>
+	<string>
+		<id>500</id>
+		<value>Faili menüü</value>
+	</string>
+	<string>
+		<id>502</id>
+		<value>Võimatu lõpetada tegevust</value>
+	</string>
+	<string>
+		<id>503</id>
+		<value>Kustuta see kaust</value>
+	</string>
+	<string>
+		<id>504</id>
+		<value>Mine sihtkohta</value>
+	</string>
+	<string>
+		<id>505</id>
+		<value>Arvutamine</value>
+	</string>
+	<string>
+		<id>506</id>
+		<value>Oled sa kindel?</value>
+	</string>
+	<string>
+		<id>507</id>
+		<value>kirjed</value>
+	</string>
+	<string>
+		<id>509</id>
+		<value>Sihtfail on olemas. Kirjutada fail üle?</value>
+	</string>
+	<string>
+		<id>510</id>
+		<value>Katkesta</value>
+	</string>
+	<string>
+		<id>511</id>
+		<value>Alati</value>
+	</string>
+	<string>
+		<id>512</id>
+		<value>Mitte kunagi</value>
+	</string>
+	<string>
+		<id>513</id>
+		<value>Kirje on kaitstud, tegevus lõpetamata</value>
+	</string>
+	<string>
+		<id>514</id>
+		<value>Viga kausta tekitamisel, tegevus lõpetamata</value>
+	</string>
+	<string>
+		<id>515</id>
+		<value>Viga kausta kustutamisel, tegevus lõpetamata</value>
+	</string>
+	<string>
+		<id>518</id>
+		<value>Kustutada see laul?</value>
+	</string>
+	<string>
+		<id>530</id>
+		<value>Fotodega ketas sisestatud, kas soovid seda avada?</value>
+	</string>
+	<string>
+		<id>531</id>
+		<value>Filmidega ketas sisestatud, kas soovid seda avada?</value>
+	</string>
+	<string>
+		<id>532</id>
+		<value>Audiofailidega ketas sisestatud, soovid seda avada?</value>
+	</string>
+	<string>
+		<id>550</id>
+		<value>Lõika</value>
+	</string>
+	<string>
+		<id>555</id>
+		<value>From {0} at {1} {2}</value>
+	</string>
+	<string>
+		<id>600</id>
+		<value>TV Kava</value>
+	</string>
+	<string>
+		<id>601</id>
+		<value>Salvesta nüüd</value>
+	</string>
+	<string>
+		<id>602</id>
+		<value>Kanal</value>
+	</string>
+	<string>
+		<id>603</id>
+		<value>Scheduled</value>
+	</string>
+	<string>
+		<id>604</id>
+		<value>Salvestatud TV</value>
+	</string>
+	<string>
+		<id>605</id>
+		<value>Teler</value>
+	</string>
+	<string>
+		<id>606</id>
+		<value>Uue TV Kava laadimine</value>
+	</string>
+	<string>
+		<id>607</id>
+		<value>Lae</value>
+	</string>
+	<string>
+		<id>608</id>
+		<value>TV Kava import ebaõnnestus</value>
+	</string>
+	<string>
+		<id>609</id>
+		<value>TV kava import lõpule viidud</value>
+	</string>
+	<string>
+		<id>610</id>
+		<value>None</value>
+	</string>
+	<string>
+		<id>611</id>
+		<value>Salvesta korra</value>
+	</string>
+	<string>
+		<id>612</id>
+		<value>Salvesta alati sel ajal seda kanalit</value>
+	</string>
+	<string>
+		<id>613</id>
+		<value>Salvesta alati kõigil kanalitel</value>
+	</string>
+	<string>
+		<id>614</id>
+		<value>Salvesta iga nädal sel ajal</value>
+	</string>
+	<string>
+		<id>615</id>
+		<value>Salvesta iga päev sel ajal</value>
+	</string>
+	<string>
+		<id>616</id>
+		<value>Määra salvestuse tüüp</value>
+	</string>
+	<string>
+		<id>617</id>
+		<value>Uus</value>
+	</string>
+	<string>
+		<id>618</id>
+		<value>Kustuta</value>
+	</string>
+	<string>
+		<id>619</id>
+		<value>Muuda Kuupäeva/Kellaaega</value>
+	</string>
+	<string>
+		<id>620</id>
+		<value>Sorteeri: Kanalid</value>
+	</string>
+	<string>
+		<id>621</id>
+		<value>Sorteeri: Kuupäev</value>
+	</string>
+	<string>
+		<id>622</id>
+		<value>Sorteeri: Nimi</value>
+	</string>
+	<string>
+		<id>623</id>
+		<value>Sorteeri: Tüüp</value>
+	</string>
+	<string>
+		<id>624</id>
+		<value>Puhastus</value>
+	</string>
+	<string>
+		<id>625</id>
+		<value>Ajastatud toimingud kustutatud:</value>
+	</string>
+	<string>
+		<id>626</id>
+		<value>Muuda tüüpi</value>
+	</string>
+	<string>
+		<id>627</id>
+		<value>Kanalid:</value>
+	</string>
+	<string>
+		<id>628</id>
+		<value>Programmid:</value>
+	</string>
+	<string>
+		<id>629</id>
+		<value>Peata salvestus</value>
+	</string>
+	<string>
+		<id>630</id>
+		<value>Tahad sa taaskäivitada?</value>
+	</string>
+	<string>
+		<id>631</id>
+		<value>Sulgen arvuti?</value>
+	</string>
+	<string>
+		<id>632</id>
+		<value>Objekti</value>
+	</string>
+	<string>
+		<id>633</id>
+		<value>Algus kuupäev/kellaaeg</value>
+	</string>
+	<string>
+		<id>634</id>
+		<value>Lõpp Kuupäev/kellaaeg</value>
+	</string>
+	<string>
+		<id>635</id>
+		<value>Aeg</value>
+	</string>
+	<string>
+		<id>636</id>
+		<value>Kuupäev</value>
+	</string>
+	<string>
+		<id>637</id>
+		<value>Muuda salvestust</value>
+	</string>
+	<string>
+		<id>638</id>
+		<value>Uus salvestus</value>
+	</string>
+	<string>
+		<id>639</id>
+		<value>Albums of</value>
+	</string>
+	<string>
+		<id>640</id>
+		<value>Saturation</value>
+	</string>
+	<string>
+		<id>641</id>
+		<value>Sharpness</value>
+	</string>
+	<string>
+		<id>642</id>
+		<value>Loading TV channels</value>
+	</string>
+	<string>
+		<id>643</id>
+		<value>Loading TV programs</value>
+	</string>
+	<string>
+		<id>644</id>
+		<value>TV programmide sorteerimine</value>
+	</string>
+	<string>
+		<id>645</id>
+		<value>Laadin XML faili</value>
+	</string>
+	<string>
+		<id>646</id>
+		<value>Ajastatud salvestused</value>
+	</string>
+	<string>
+		<id>647</id>
+		<value>Üks kord</value>
+	</string>
+	<string>
+		<id>648</id>
+		<value>Päeviti</value>
+	</string>
+	<string>
+		<id>649</id>
+		<value>Iga</value>
+	</string>
+	<string>
+		<id>650</id>
+		<value>Igakord sellel kanalil</value>
+	</string>
+	<string>
+		<id>651</id>
+		<value>Everytime on any channel</value>
+	</string>
+	<string>
+		<id>652</id>
+		<value>Salvestatud TV</value>
+	</string>
+	<string>
+		<id>653</id>
+		<value>Kustutada see salvestis?</value>
+	</string>
+	<string>
+		<id>654</id>
+		<value>Väljasta</value>
+	</string>
+	<string>
+		<id>655</id>
+		<value>Play recorded tv</value>
+	</string>
+	<string>
+		<id>656</id>
+		<value>Delete recorded tv</value>
+	</string>
+	<string>
+		<id>657</id>
+		<value>Esmasp</value>
+	</string>
+	<string>
+		<id>658</id>
+		<value>Teisip</value>
+	</string>
+	<string>
+		<id>659</id>
+		<value>Kolmap</value>
+	</string>
+	<string>
+		<id>660</id>
+		<value>Neljap</value>
+	</string>
+	<string>
+		<id>661</id>
+		<value>Reede</value>
+	</string>
+	<string>
+		<id>662</id>
+		<value>Laup</value>
+	</string>
+	<string>
+		<id>663</id>
+		<value>Pühap</value>
+	</string>
+	<string>
+		<id>664</id>
+		<value>Kustutada see pilt?</value>
+	</string>
+	<string>
+		<id>665</id>
+		<value>Raadio</value>
+	</string>
+	<string>
+		<id>666</id>
+		<value>Stations</value>
+	</string>
+	<string>
+		<id>667</id>
+		<value>Auto Tune</value>
+	</string>
+	<string>
+		<id>668</id>
+		<value>Sort by: Type</value>
+	</string>
+	<string>
+		<id>669</id>
+		<value>Sort by: Genre</value>
+	</string>
+	<string>
+		<id>670</id>
+		<value>Sort by: Bitrate</value>
+	</string>
+	<string>
+		<id>671</id>
+		<value>Sort by: Watched</value>
+	</string>
+	<string>
+		<id>672</id>
+		<value>Record Mon-Fri</value>
+	</string>
+	<string>
+		<id>673</id>
+		<value>Scroll speed</value>
+	</string>
+	<string>
+		<id>674</id>
+		<value>GUI Settings</value>
+	</string>
+	<string>
+		<id>675</id>
+		<value>Example:</value>
+	</string>
+	<string>
+		<id>676</id>
+		<value>Delete watched recordings?</value>
+	</string>
+	<string>
+		<id>677</id>
+		<value>times</value>
+	</string>
+	<string>
+		<id>678</id>
+		<value>Sort by: Genre</value>
+	</string>
+	<string>
+		<id>679</id>
+		<value>Weekly</value>
+	</string>
+	<string>
+		<id>680</id>
+		<value>Mon-Fri</value>
+	</string>
+	<string>
+		<id>681</id>
+		<value>Waiting</value>
+	</string>
+	<string>
+		<id>682</id>
+		<value>Recording</value>
+	</string>
+	<string>
+		<id>683</id>
+		<value>Finished</value>
+	</string>
+	<string>
+		<id>684</id>
+		<value>Canceled</value>
+	</string>
+	<string>
+		<id>685</id>
+		<value>Sort by: Status</value>
+	</string>
+	<string>
+		<id>686</id>
+		<value>Tehtud</value>
+	</string>
+	<string>
+		<id>687</id>
+		<value>Years Active</value>
+	</string>
+	<string>
+		<id>688</id>
+		<value>Instruments</value>
+	</string>
+	<string>
+		<id>689</id>
+		<value>Bio.</value>
+	</string>
+	<string>
+		<id>690</id>
+		<value>Discography (Albums)</value>
+	</string>
+	<string>
+		<id>691</id>
+		<value>Discography (compilations, boxes)</value>
+	</string>
+	<string>
+		<id>700</id>
+		<value>Discography (eps, singles)</value>
+	</string>
+	<string>
+		<id>701</id>
+		<value>Discography (bootlegs, videos, interviews)</value>
+	</string>
+	<string>
+		<id>702</id>
+		<value>No artists found!</value>
+	</string>
+	<string>
+		<id>703</id>
+		<value>Not connected to the Internet!</value>
+	</string>
+	<string>
+		<id>704</id>
+		<value>Feed Retrieval</value>
+	</string>
+	<string>
+		<id>705</id>
+		<value>Getting RSS Feed for</value>
+	</string>
+	<string>
+		<id>706</id>
+		<value>Vali kanal</value>
+	</string>
+	<string>
+		<id>707</id>
+		<value>TV Sisse</value>
+	</string>
+	<string>
+		<id>708</id>
+		<value>Timeshifting</value>
+	</string>
+	<string>
+		<id>709</id>
+		<value>Auto uuendus</value>
+	</string>
+	<string>
+		<id>710</id>
+		<value>Uus versioon on kättesaadav</value>
+	</string>
+	<string>
+		<id>711</id>
+		<value>Uuendus v#old -&gt;v#new ?</value>
+	</string>
+	<string>
+		<id>712</id>
+		<value>Tagasi</value>
+	</string>
+	<string>
+		<id>713</id>
+		<value>Autoplay</value>
+	</string>
+	<string>
+		<id>714</id>
+		<value>Disc inserted, do you want to play it?</value>
+	</string>
+	<string>
+		<id>715</id>
+		<value>CD inserted, do you want to play it?</value>
+	</string>
+	<string>
+		<id>716</id>
+		<value>Satipilt</value>
+	</string>
+	<string>
+		<id>717</id>
+		<value>Weather</value>
+	</string>
+	<string>
+		<id>718</id>
+		<value>Clear Top100</value>
+	</string>
+	<string>
+		<id>719</id>
+		<value>Are you sure to reset the top 100 list?</value>
+	</string>
+	<string>
+		<id>720</id>
+		<value>Show: Duration</value>
+	</string>
+	<string>
+		<id>721</id>
+		<value>Show: Times played</value>
+	</string>
+	<string>
+		<id>722</id>
+		<value>Unable to play Disc</value>
+	</string>
+	<string>
+		<id>723</id>
+		<value>Did you insert a Disc?</value>
+	</string>
+	<string>
+		<id>724</id>
+		<value>Search TVGuide</value>
+	</string>
+	<string>
+		<id>725</id>
+		<value>Genres</value>
+	</string>
+	<string>
+		<id>726</id>
+		<value>Title</value>
+	</string>
+	<string>
+		<id>727</id>
+		<value>Live tv in background</value>
+	</string>
+	<string>
+		<id>728</id>
+		<value>Unable to start</value>
+	</string>
+	<string>
+		<id>729</id>
+		<value>Make sure you use VMR9 and that something is playing</value>
+	</string>
+	<string>
+		<id>730</id>
+		<value>This schedule is recording. If you delete</value>
+	</string>
+	<string>
+		<id>731</id>
+		<value>the schedule then the recording is stopped.</value>
+	</string>
+	<string>
+		<id>732</id>
+		<value>Are you sure?</value>
+	</string>
+	<string>
+		<id>733</id>
+		<value>View: Filmstrip</value>
+	</string>
+	<string>
+		<id>734</id>
+		<value>Image:</value>
+	</string>
+	<string>
+		<id>735</id>
+		<value>Rotate</value>
+	</string>
+	<string>
+		<id>736</id>
+		<value>No TVGuide data available</value>
+	</string>
+	<string>
+		<id>737</id>
+		<value>Satelliit</value>
+	</string>
+	<string>
+		<id>738</id>
+		<value>Vaade: temperatuur</value>
+	</string>
+	<string>
+		<id>739</id>
+		<value>Vaade: UV kiirguse indeks</value>
+	</string>
+	<string>
+		<id>740</id>
+		<value>Vaade: tuuled</value>
+	</string>
+	<string>
+		<id>741</id>
+		<value>Vaade: õhuniiskus</value>
+	</string>
+	<string>
+		<id>742</id>
+		<value>Vaade: sademed</value>
+	</string>
+	<string>
+		<id>743</id>
+		<value>4 päeva ilmaennustus</value>
+	</string>
+	<string>
+		<id>744</id>
+		<value>Päikesetõus</value>
+	</string>
+	<string>
+		<id>745</id>
+		<value>Päikeseloojang</value>
+	</string>
+	<string>
+		<id>746</id>
+		<value>Kõrge</value>
+	</string>
+	<string>
+		<id>747</id>
+		<value>Madal</value>
+	</string>
+	<string>
+		<id>748</id>
+		<value>Sademed</value>
+	</string>
+	<string>
+		<id>750</id>
+		<value>Pildid</value>
+	</string>
+	<string>
+		<id>751</id>
+		<value>Näita kõiki laule sellelt artistilt</value>
+	</string>
+	<string>
+		<id>800</id>
+		<value>Starts with</value>
+	</string>
+	<string>
+		<id>801</id>
+		<value>Contains</value>
+	</string>
+	<string>
+		<id>802</id>
+		<value>Ends with</value>
+	</string>
+	<string>
+		<id>803</id>
+		<value>Is</value>
+	</string>
+	<string>
+		<id>804</id>
+		<value>Done</value>
+	</string>
+	<string>
+		<id>805</id>
+		<value>Clear</value>
+	</string>
+	<string>
+		<id>806</id>
+		<value>Title</value>
+	</string>
+	<string>
+		<id>807</id>
+		<value>Yield</value>
+	</string>
+	<string>
+		<id>808</id>
+		<value>Ingredients</value>
+	</string>
+	<string>
+		<id>809</id>
+		<value>Directions</value>
+	</string>
+	<string>
+		<id>810</id>
+		<value>Card</value>
+	</string>
+	<string>
+		<id>850</id>
+		<value>My Alarm</value>
+	</string>
+	<string>
+		<id>851</id>
+		<value>Playlist</value>
+	</string>
+	<string>
+		<id>852</id>
+		<value>Alarm On/Off</value>
+	</string>
+	<string>
+		<id>853</id>
+		<value>Name:</value>
+	</string>
+	<string>
+		<id>854</id>
+		<value>Enabled on these days</value>
+	</string>
+	<string>
+		<id>855</id>
+		<value>Alarm Time</value>
+	</string>
+	<string>
+		<id>856</id>
+		<value>Sleep Timer</value>
+	</string>
+	<string>
+		<id>857</id>
+		<value>Snooze</value>
+	</string>
+	<string>
+		<id>858</id>
+		<value>Snooze Time</value>
+	</string>
+	<string>
+		<id>859</id>
+		<value>Sleep Timer</value>
+	</string>
+	<string>
+		<id>860</id>
+		<value>Increase volume over time</value>
+	</string>
+	<string>
+		<id>861</id>
+		<value>Alarm Details</value>
+	</string>
+	<string>
+		<id>862</id>
+		<value>Raadio</value>
+	</string>
+	<string>
+		<id>863</id>
+		<value>File</value>
+	</string>
+	<string>
+		<id>864</id>
+		<value>Media type</value>
+	</string>
+	<string>
+		<id>865</id>
+		<value>Number of minutes until sleep:</value>
+	</string>
+	<string>
+		<id>866</id>
+		<value>Decrease volume over time</value>
+	</string>
+	<string>
+		<id>867</id>
+		<value>Shutdown computer</value>
+	</string>
+	<string>
+		<id>868</id>
+		<value>Reset</value>
+	</string>
+	<string>
+		<id>869</id>
+		<value>NewAlarm</value>
+	</string>
+	<string>
+		<id>872</id>
+		<value>Algab koos</value>
+	</string>
+	<string>
+		<id>873</id>
+		<value>TV Show</value>
+	</string>
+	<string>
+		<id>874</id>
+		<value>Episood</value>
+	</string>
+	<string>
+		<id>875</id>
+		<value>Praegune saade</value>
+	</string>
+	<string>
+		<id>876</id>
+		<value>Käsitsi peatamiseni</value>
+	</string>
+	<string>
+		<id>877</id>
+		<value>Prioriteedid</value>
+	</string>
+	<string>
+		<id>879</id>
+		<value>Salvestamise konflikt</value>
+	</string>
+	<string>
+		<id>882</id>
+		<value>Kvaliteedi seaded</value>
+	</string>
+	<string>
+		<id>883</id>
+		<value>Madal</value>
+	</string>
+	<string>
+		<id>884</id>
+		<value>Keskmine</value>
+	</string>
+	<string>
+		<id>885</id>
+		<value>Kõrge</value>
+	</string>
+	<string>
+		<id>886</id>
+		<value>Vaikimisi</value>
+	</string>
+	<string>
+		<id>888</id>
+		<value>Episoodide haldur</value>
+	</string>
+	<string>
+		<id>889</id>
+		<value>Kõik episoodid</value>
+	</string>
+	<string>
+		<id>890</id>
+		<value>Taasesita CDd</value>
+	</string>
+	<string>
+		<id>891</id>
+		<value>Vali TV kanal</value>
+	</string>
+	<string>
+		<id>892</id>
+		<value>Konfliktid</value>
+	</string>
+	<string>
+		<id>897</id>
+		<value>Seaded</value>
+	</string>
+	<string>
+		<id>898</id>
+		<value>MPEG-2</value>
+	</string>
+	<string>
+		<id>899</id>
+		<value>WMV</value>
+	</string>
+	<string>
+		<id>900</id>
+		<value>Resume movie from last time ?</value>
+	</string>
+	<string>
+		<id>901</id>
+		<value>MSN Messenger</value>
+	</string>
+	<string>
+		<id>902</id>
+		<value>Online contacts</value>
+	</string>
+	<string>
+		<id>903</id>
+		<value>Sign in</value>
+	</string>
+	<string>
+		<id>904</id>
+		<value>Sign out</value>
+	</string>
+	<string>
+		<id>905</id>
+		<value>Pead selle Lisa kõigepealt seadistma</value>
+	</string>
+	<string>
+		<id>906</id>
+		<value>Fill in your email adres in the setup</value>
+	</string>
+	<string>
+		<id>907</id>
+		<value>Could not connect to MSN</value>
+	</string>
+	<string>
+		<id>908</id>
+		<value>is typing a message...</value>
+	</string>
+	<string>
+		<id>909</id>
+		<value>Ühendan...</value>
+	</string>
+	<string>
+		<id>910</id>
+		<value>Signing in...</value>
+	</string>
+	<string>
+		<id>911</id>
+		<value>No channels</value>
+	</string>
+	<string>
+		<id>912</id>
+		<value>Viimaseid uudiseid pole võimalik alla laadida</value>
+	</string>
+	<string>
+		<id>913</id>
+		<value>Lisad</value>
+	</string>
+	<string>
+		<id>914</id>
+		<value>Recordings</value>
+	</string>
+	<string>
+		<id>915</id>
+		<value>TV Channels</value>
+	</string>
+	<string>
+		<id>916</id>
+		<value>Remote file</value>
+	</string>
+	<string>
+		<id>917</id>
+		<value>This file is located on a remote share</value>
+	</string>
+	<string>
+		<id>918</id>
+		<value>Should I download it to your default</value>
+	</string>
+	<string>
+		<id>919</id>
+		<value>local share?</value>
+	</string>
+	<string>
+		<id>920</id>
+		<value>Unable to download remote file</value>
+	</string>
+	<string>
+		<id>921</id>
+		<value>File is being downloaded</value>
+	</string>
+	<string>
+		<id>922</id>
+		<value>Description</value>
+	</string>
+	<string>
+		<id>923</id>
+		<value>Show</value>
+	</string>
+	<string>
+		<id>924</id>
+		<value>Menu</value>
+	</string>
+	<string>
+		<id>925</id>
+		<value>Delete this movie</value>
+	</string>
+	<string>
+		<id>926</id>
+		<value>Add to playlist</value>
+	</string>
+	<string>
+		<id>927</id>
+		<value>Warning</value>
+	</string>
+	<string>
+		<id>928</id>
+		<value>Find coverart</value>
+	</string>
+	<string>
+		<id>929</id>
+		<value>Close menu</value>
+	</string>
+	<string>
+		<id>930</id>
+		<value>Add to favorites</value>
+	</string>
+	<string>
+		<id>931</id>
+		<value>Rating</value>
+	</string>
+	<string>
+		<id>932</id>
+		<value>Favorites</value>
+	</string>
+	<string>
+		<id>933</id>
+		<value>Remove from favorites</value>
+	</string>
+	<string>
+		<id>934</id>
+		<value>Set rating</value>
+	</string>
+	<string>
+		<id>935</id>
+		<value>Show: Rating</value>
+	</string>
+	<string>
+		<id>936</id>
+		<value>Resume from:</value>
+	</string>
+	<string>
+		<id>937</id>
+		<value>Import TV Guide</value>
+	</string>
+	<string>
+		<id>938</id>
+		<value>View this channel</value>
+	</string>
+	<string>
+		<id>939</id>
+		<value>Switch mode</value>
+	</string>
+	<string>
+		<id>940</id>
+		<value>Properties</value>
+	</string>
+	<string>
+		<id>941</id>
+		<value>Change aspect ratio</value>
+	</string>
+	<string>
+		<id>942</id>
+		<value>Stretch</value>
+	</string>
+	<string>
+		<id>943</id>
+		<value>Normal</value>
+	</string>
+	<string>
+		<id>944</id>
+		<value>Original</value>
+	</string>
+	<string>
+		<id>945</id>
+		<value>Letterbox</value>
+	</string>
+	<string>
+		<id>946</id>
+		<value>Pan and Scan</value>
+	</string>
+	<string>
+		<id>947</id>
+		<value>Zoom</value>
+	</string>
+	<string>
+		<id>948</id>
+		<value>Online</value>
+	</string>
+	<string>
+		<id>949</id>
+		<value>Busy</value>
+	</string>
+	<string>
+		<id>950</id>
+		<value>Be Right Back</value>
+	</string>
+	<string>
+		<id>951</id>
+		<value>Away</value>
+	</string>
+	<string>
+		<id>952</id>
+		<value>Phone</value>
+	</string>
+	<string>
+		<id>953</id>
+		<value>Lunch</value>
+	</string>
+	<string>
+		<id>954</id>
+		<value>Hidden</value>
+	</string>
+	<string>
+		<id>955</id>
+		<value>Idle</value>
+	</string>
+	<string>
+		<id>956</id>
+		<value>Online</value>
+	</string>
+	<string>
+		<id>957</id>
+		<value>MSN Messenger</value>
+	</string>
+	<string>
+		<id>958</id>
+		<value>Talking to</value>
+	</string>
+	<string>
+		<id>959</id>
+		<value>has joined the conversation</value>
+	</string>
+	<string>
+		<id>960</id>
+		<value>has left the conversation</value>
+	</string>
+	<string>
+		<id>961</id>
+		<value>MSN Status</value>
+	</string>
+	<string>
+		<id>970</id>
+		<value>Previous window</value>
+	</string>
+	<string>
+		<id>971</id>
+		<value>Grupp</value>
+	</string>
+	<string>
+		<id>972</id>
+		<value>Kõik kanalid</value>
+	</string>
+	<string>
+		<id>974</id>
+		<value>Juurmenüü</value>
+	</string>
+	<string>
+		<id>979</id>
+		<value>Taasesita salvestist algusest</value>
+	</string>
+	<string>
+		<id>982</id>
+		<value>Kustuta terve see salvestis</value>
+	</string>
+	<string>
+		<id>983</id>
+		<value>Taasesituse nimekirjad</value>
+	</string>
+	<string>
+		<id>986</id>
+		<value>Laadin näitlejat</value>
+	</string>
+	<string>
+		<id>987</id>
+		<value>Aastad</value>
+	</string>
+	<string>
+		<id>988</id>
+		<value>Kvaliteet</value>
+	</string>
+	<string>
+		<id>991</id>
+		<value>Prioriteet</value>
+	</string>
+	<string>
+		<id>996</id>
+		<value>valitud salvestused?</value>
+	</string>
+	<string>
+		<id>997</id>
+		<value>Täidetud</value>
+	</string>
+	<string>
+		<id>998</id>
+		<value>XviD</value>
+	</string>
+	<string>
+		<id>1005</id>
+		<value>kanalil</value>
+	</string>
+	<string>
+		<id>1006</id>
+		<value>Luba salvestusel alata</value>
+	</string>
+	<string>
+		<id>1010</id>
+		<value>Vaadatud</value>
+	</string>
+	<string>
+		<id>1011</id>
+		<value>Biograafia</value>
+	</string>
+	<string>
+		<id>1017</id>
+		<value>Sorteerimine: kestus</value>
+	</string>
+	<string>
+		<id>1020</id>
+		<value>Info</value>
+	</string>
+	<string>
+		<id>1021</id>
+		<value>Vajuta Alt+Enter et</value>
+	</string>
+	<string>
+		<id>1023</id>
+		<value>Sissetulev kõne</value>
+	</string>
+	<string>
+		<id>1024</id>
+		<value>kellelt</value>
+	</string>
+	<string>
+		<id>1026</id>
+		<value>Detailide jjaoks vaata logifaili.</value>
+	</string>
+	<string>
+		<id>1027</id>
+		<value>DVD</value>
+	</string>
+	<string>
+		<id>1028</id>
+		<value>Linn</value>
+	</string>
+	<string>
+		<id>1029</id>
+		<value>Subtiitrite keel</value>
+	</string>
+	<string>
+		<id>1440</id>
+		<value>My TeleText</value>
+	</string>
+	<string>
+		<id>1950</id>
+		<value>My status</value>
+	</string>
+	<string>
+		<id>1951</id>
+		<value>Harddisk</value>
+	</string>
+	<string>
+		<id>1952</id>
+		<value>Fan</value>
+	</string>
+	<string>
+		<id>1953</id>
+		<value>Free</value>
+	</string>
+	<string>
+		<id>1954</id>
+		<value>Temperature</value>
+	</string>
+	<string>
+		<id>1955</id>
+		<value>C</value>
+	</string>
+	<string>
+		<id>1956</id>
+		<value>Select alarm sound</value>
+	</string>
+	<string>
+		<id>1957</id>
+		<value>Preferences</value>
+	</string>
+	<string>
+		<id>1958</id>
+		<value>CPU usage</value>
+	</string>
+	<string>
+		<id>1959</id>
+		<value>Voltage</value>
+	</string>
+	<string>
+		<id>1960</id>
+		<value>Volt</value>
+	</string>
+	<string>
+		<id>1961</id>
+		<value>Clock frequency</value>
+	</string>
+	<string>
+		<id>1962</id>
+		<value>Preferences</value>
+	</string>
+	<string>
+		<id>1963</id>
+		<value>Sensor details</value>
+	</string>
+	<string>
+		<id>1964</id>
+		<value>Sensor alarm</value>
+	</string>
+	<string>
+		<id>1965</id>
+		<value>Highest Value</value>
+	</string>
+	<string>
+		<id>1966</id>
+		<value>Lowest Value</value>
+	</string>
+	<string>
+		<id>1967</id>
+		<value>top alarm threshold</value>
+	</string>
+	<string>
+		<id>1968</id>
+		<value>lower alarm threshold</value>
+	</string>
+	<string>
+		<id>1969</id>
+		<value>Test sound</value>
+	</string>
+	<string>
+		<id>1970</id>
+		<value>Alarm interval (in seconds)</value>
+	</string>
+	<string>
+		<id>1971</id>
+		<value>Shutdown on alert</value>
+	</string>
+	<string>
+		<id>1972</id>
+		<value>Status details</value>
+	</string>
+	<string>
+		<id>1973</id>
+		<value>of</value>
+	</string>
+	<string>
+		<id>1974</id>
+		<value>Memory</value>
+	</string>
+	<string>
+		<id>1975</id>
+		<value>Next Page</value>
+	</string>
+	<string>
+		<id>1976</id>
+		<value>rpm</value>
+	</string>
+	<string>
+		<id>1977</id>
+		<value>Filesystem</value>
+	</string>
+	<string>
+		<id>1978</id>
+		<value>VirtualMem</value>
+	</string>
+	<string>
+		<id>2005</id>
+		<value>Delete</value>
+	</string>
+	<string>
+		<id>2006</id>
+		<value>Title</value>
+	</string>
+	<string>
+		<id>2007</id>
+		<value>Yield</value>
+	</string>
+	<string>
+		<id>2008</id>
+		<value>Ingredients</value>
+	</string>
+	<string>
+		<id>2009</id>
+		<value>Directions</value>
+	</string>
+	<string>
+		<id>2010</id>
+		<value>Card</value>
+	</string>
+	<string>
+		<id>2011</id>
+		<value>Print</value>
+	</string>
+	<string>
+		<id>2012</id>
+		<value>Delete</value>
+	</string>
+	<string>
+		<id>2013</id>
+		<value>Favorites</value>
+	</string>
+	<string>
+		<id>2014</id>
+		<value>Unknown</value>
+	</string>
+	<string>
+		<id>2015</id>
+		<value>per Serving</value>
+	</string>
+	<string>
+		<id>2016</id>
+		<value>small</value>
+	</string>
+	<string>
+		<id>2017</id>
+		<value>fluid ounce</value>
+	</string>
+	<string>
+		<id>2018</id>
+		<value>cup</value>
+	</string>
+	<string>
+		<id>2019</id>
+		<value>pint</value>
+	</string>
+	<string>
+		<id>2020</id>
+		<value>medium</value>
+	</string>
+	<string>
+		<id>2021</id>
+		<value>large</value>
+	</string>
+	<string>
+		<id>2022</id>
+		<value>can</value>
+	</string>
+	<string>
+		<id>2023</id>
+		<value>package</value>
+	</string>
+	<string>
+		<id>2024</id>
+		<value>pinch</value>
+	</string>
+	<string>
+		<id>2025</id>
+		<value>drop</value>
+	</string>
+	<string>
+		<id>2026</id>
+		<value>dash</value>
+	</string>
+	<string>
+		<id>2027</id>
+		<value>carton</value>
+	</string>
+	<string>
+		<id>2028</id>
+		<value>bunch</value>
+	</string>
+	<string>
+		<id>2029</id>
+		<value>slice</value>
+	</string>
+	<string>
+		<id>2030</id>
+		<value>each</value>
+	</string>
+	<string>
+		<id>2031</id>
+		<value>teaspoon</value>
+	</string>
+	<string>
+		<id>2032</id>
+		<value>teaspoon</value>
+	</string>
+	<string>
+		<id>2033</id>
+		<value>tablespoon</value>
+	</string>
+	<string>
+		<id>2034</id>
+		<value>tablespoon</value>
+	</string>
+	<string>
+		<id>2035</id>
+		<value>quart</value>
+	</string>
+	<string>
+		<id>2036</id>
+		<value>gallon</value>
+	</string>
+	<string>
+		<id>2037</id>
+		<value>ounce</value>
+	</string>
+	<string>
+		<id>2038</id>
+		<value>pound</value>
+	</string>
+	<string>
+		<id>2039</id>
+		<value>mililiter</value>
+	</string>
+	<string>
+		<id>2040</id>
+		<value>mililiter</value>
+	</string>
+	<string>
+		<id>2041</id>
+		<value>centiliter</value>
+	</string>
+	<string>
+		<id>2042</id>
+		<value>deciliter</value>
+	</string>
+	<string>
+		<id>2043</id>
+		<value>liter</value>
+	</string>
+	<string>
+		<id>2044</id>
+		<value>milligram</value>
+	</string>
+	<string>
+		<id>2045</id>
+		<value>centigram</value>
+	</string>
+	<string>
+		<id>2046</id>
+		<value>decigram</value>
+	</string>
+	<string>
+		<id>2047</id>
+		<value>gram</value>
+	</string>
+	<string>
+		<id>2048</id>
+		<value>kilogram</value>
+	</string>
+	<string>
+		<id>2049</id>
+		<value>Delete this Recipie?</value>
+	</string>
+	<string>
+		<id>2050</id>
+		<value>Delete this Categorie?</value>
+	</string>
+	<string>
+		<id>2051</id>
+		<value>Search in Title</value>
+	</string>
+	<string>
+		<id>2052</id>
+		<value>Search in Recipie</value>
+	</string>
+	<string>
+		<id>2053</id>
+		<value>Categorie</value>
+	</string>
+	<string>
+		<id>2054</id>
+		<value>No Entry!</value>
+	</string>
+	<string>
+		<id>2100</id>
+		<value>Burn</value>
+	</string>
+	<string>
+		<id>2101</id>
+		<value>Copy CD/DVD</value>
+	</string>
+	<string>
+		<id>2102</id>
+		<value>Create Audio-CD</value>
+	</string>
+	<string>
+		<id>2103</id>
+		<value>Create Video-CD</value>
+	</string>
+	<string>
+		<id>2104</id>
+		<value>Create Video-DVD</value>
+	</string>
+	<string>
+		<id>2105</id>
+		<value>Create Data-CD</value>
+	</string>
+	<string>
+		<id>2106</id>
+		<value>Create Data-DVD</value>
+	</string>
+	<string>
+		<id>2107</id>
+		<value>Start copy</value>
+	</string>
+	<string>
+		<id>2108</id>
+		<value>Insert empty CD/DVD</value>
+	</string>
+	<string>
+		<id>2109</id>
+		<value>then press OK</value>
+	</string>
+	<string>
+		<id>2110</id>
+		<value>Insert original CD/DVD</value>
+	</string>
+	<string>
+		<id>2111</id>
+		<value>Finished !</value>
+	</string>
+	<string>
+		<id>2112</id>
+		<value>Waiting for CD/DVD</value>
+	</string>
+	<string>
+		<id>2113</id>
+		<value>Copy all</value>
+	</string>
+	<string>
+		<id>2114</id>
+		<value>Erase disc</value>
+	</string>
+	<string>
+		<id>2115</id>
+		<value>Insert CD/DVD RW</value>
+	</string>
+	<string>
+		<id>2200</id>
+		<value>Explorer</value>
+	</string>
+	<string>
+		<id>2201</id>
+		<value>Select source</value>
+	</string>
+	<string>
+		<id>2202</id>
+		<value>Select destination</value>
+	</string>
+	<string>
+		<id>2203</id>
+		<value>Copy data</value>
+	</string>
+	<string>
+		<id>2204</id>
+		<value>Create folder</value>
+	</string>
+	<string>
+		<id>2205</id>
+		<value>Restore selection</value>
+	</string>
+	<string>
+		<id>2206</id>
+		<value>Select all</value>
+	</string>
+	<string>
+		<id>2207</id>
+		<value>Would you like to</value>
+	</string>
+	<string>
+		<id>2208</id>
+		<value>create the folder?</value>
+	</string>
+	<string>
+		<id>2209</id>
+		<value>Would you like to copy the files?</value>
+	</string>
+	<string>
+		<id>2210</id>
+		<value>Files copied!</value>
+	</string>
+	<string>
+		<id>2211</id>
+		<value>Please wait, files are copied.</value>
+	</string>
+	<string>
+		<id>2212</id>
+		<value>Delete</value>
+	</string>
+	<string>
+		<id>2213</id>
+		<value>Move</value>
+	</string>
+	<string>
+		<id>2214</id>
+		<value>Do you want to move the selected files?</value>
+	</string>
+	<string>
+		<id>2215</id>
+		<value>Please wait, moving files.</value>
+	</string>
+	<string>
+		<id>2216</id>
+		<value>Files moved!</value>
+	</string>
+	<string>
+		<id>8000</id>
+		<value>My Mail</value>
+	</string>
+	<string>
+		<id>8001</id>
+		<value>Check Mailbox</value>
+	</string>
+	<string>
+		<id>8002</id>
+		<value>Autocheck off</value>
+	</string>
+	<string>
+		<id>8003</id>
+		<value>Autocheck on</value>
+	</string>
+	<string>
+		<id>8004</id>
+		<value>You have new Mail!</value>
+	</string>
+	<string>
+		<id>8005</id>
+		<value>Refreshing Mailbox</value>
+	</string>
+	<string>
+		<id>8007</id>
+		<value>Autocheck</value>
+	</string>
+	<string>
+		<id>8008</id>
+		<value>Back</value>
+	</string>
+	<string>
+		<id>8009</id>
+		<value>Mark all unread</value>
+	</string>
+	<string>
+		<id>8010</id>
+		<value>No Mailbox defined</value>
+	</string>
+	<string>
+		<id>8011</id>
+		<value>Please go to Setup and define</value>
+	</string>
+	<string>
+		<id>8012</id>
+		<value>at least 1 Mailbox to use the Mail-Plugin.</value>
+	</string>
+	<string>
+		<id>8013</id>
+		<value>No Server response</value>
+	</string>
+	<string>
+		<id>8014</id>
+		<value>The Server&apos;{0}&apos;doesn&apos;t respond!</value>
+	</string>
+	<string>
+		<id>8015</id>
+		<value>Check your config for Mailbox&apos;{0}&apos;</value>
+	</string>
+	<string>
+		<id>8016</id>
+		<value>From</value>
+	</string>
+	<string>
+		<id>8017</id>
+		<value>To</value>
+	</string>
+	<string>
+		<id>8018</id>
+		<value>Subject</value>
+	</string>
+	<string>
+		<id>8019</id>
+		<value>Message</value>
+	</string>
+	<string>
+		<id>8020</id>
+		<value>Delete Mail</value>
+	</string>
+	<string>
+		<id>8021</id>
+		<value>Set as read</value>
+	</string>
+	<string>
+		<id>8022</id>
+		<value>Show Attachments</value>
+	</string>
+	<string>
+		<id>8023</id>
+		<value>New Messages arrived</value>
+	</string>
+	<string>
+		<id>8024</id>
+		<value>Show Message</value>
+	</string>
+	<string>
+		<id>8025</id>
+		<value>Parsing Message</value>
+	</string>
+	<string>
+		<id>8030</id>
+		<value>Connected to server</value>
+	</string>
+	<string>
+		<id>8031</id>
+		<value>Getting mail number</value>
+	</string>
+	<string>
+		<id>8033</id>
+		<value>Progress</value>
+	</string>
+	<string>
+		<id>8034</id>
+		<value>Show HTML</value>
+	</string>
+	<string>
+		<id>9000</id>
+		<value>Image dimensions:</value>
+	</string>
+	<string>
+		<id>9001</id>
+		<value>Resolution:</value>
+	</string>
+	<string>
+		<id>9002</id>
+		<value>Flash:</value>
+	</string>
+	<string>
+		<id>9003</id>
+		<value>Metering Mode:</value>
+	</string>
+	<string>
+		<id>9004</id>
+		<value>Compensation:</value>
+	</string>
+	<string>
+		<id>9005</id>
+		<value>Shutter Speed:</value>
+	</string>
+	<string>
+		<id>9006</id>
+		<value>Date taken:</value>
+	</string>
+	<string>
+		<id>9007</id>
+		<value>Fstop:</value>
+	</string>
+	<string>
+		<id>9008</id>
+		<value>Exposure time:</value>
+	</string>
+	<string>
+		<id>9009</id>
+		<value>Camera Model:</value>
+	</string>
+	<string>
+		<id>9010</id>
+		<value>Equipment make:</value>
+	</string>
+	<string>
+		<id>9011</id>
+		<value>View comments:</value>
+	</string>
+	<string>
+		<id>12902</id>
+		<value>MSN Messenger OSD</value>
+	</string>
+	<string>
+		<id>13000</id>
+		<value>System:</value>
+	</string>
+	<string>
+		<id>13001</id>
+		<value>Manufacturer:</value>
+	</string>
+	<string>
+		<id>13002</id>
+		<value>Alusta</value>
+	</string>
+	<string>
+		<id>13003</id>
+		<value>*.mlf faili import</value>
+	</string>
+	<string>
+		<id>13004</id>
+		<value>*.my fail on importimisel</value>
+	</string>
+	<string>
+		<id>13005</id>
+		<value>Viimati imporditud fail:</value>
+	</string>
+	<string>
+		<id>13006</id>
+		<value>Väike Pilt</value>
+	</string>
+	<string>
+		<id>13007</id>
+		<value>Suur Pilt</value>
+	</string>
+	<string>
+		<id>13008</id>
+		<value>Ken Burns efekt</value>
+	</string>
+	<string>
+		<id>13009</id>
+		<value>Suvaline üleminek</value>
+	</string>
+	<string>
+		<id>13010</id>
+		<value>X-fade transitions</value>
+	</string>
+	<string>
+		<id>13011</id>
+		<value>Ken Burns speed</value>
+	</string>
+	<string>
+		<id>16001</id>
+		<value>Party Shuffle</value>
+	</string>
+	<string>
+		<id>100704</id>
+		<value>DVD seaded</value>
+	</string>
+	<string>
+		<id>100755</id>
+		<value>Olek</value>
+	</string>
+	<string>
+		<id>100756</id>
+		<value>Oleku detailid</value>
+	</string>
+	<string>
+		<id>101000</id>
+		<value>klaviatuur</value>
+	</string>
+	<string>
+		<id>102003</id>
+		<value>Videod/Info</value>
+	</string>
+	<string>
+		<id>102010</id>
+		<value>Kuupäev/Aeg</value>
+	</string>
+	<string>
+		<id>102014</id>
+		<value>Pildi info</value>
+	</string>
+	<string>
+		<id>102015</id>
+		<value>Mini menüü</value>
+	</string>
+	<string>
+		<id>102600</id>
+		<value>Ilm</value>
+	</string>
+	<string>
+		<id>102700</id>
+		<value>Uudised</value>
+	</string>
+	<string>
+		<id>102900</id>
+		<value>Ekraanisäästja</value>
+	</string>
+	<string>
+		<id>200007</id>
+		<value>&lt;Tagasi</value>
+	</string>
+	<string>
+		<id>200009</id>
+		<value>Järgmine&gt;</value>
+	</string>
+	<string>
+		<id>200017</id>
+		<value>Tere tulemast MediaPortali.</value>
+	</string>
+	<string>
+		<id>200018</id>
+		<value>Õnnitlused. Mediaportal on nüüd seadistatud ja valmis kasutamiseks</value>
+	</string>
+	<string>
+		<id>200019</id>
+		<value>Selle viisardi sulgemiseks vajuta nupule Lõpeta</value>
+	</string>
+	<string>
+		<id>200020</id>
+		<value>Lõpeta</value>
+	</string>
+	<string>
+		<id>200022</id>
+		<value>MediaPortal on leidnud järmised TV-kaarid:</value>
+	</string>
+	<string>
+		<id>200024</id>
+		<value>TV seadistamine</value>
+	</string>
+	<string>
+		<id>200025</id>
+		<value>Keel</value>
+	</string>
+	<string>
+		<id>200028</id>
+		<value>Kas sellel arvuitil on ligipääs Internetile?</value>
+	</string>
+	<string>
+		<id>200029</id>
+		<value>Käivitada MediaPortal täisekraani re¾iimis?</value>
+	</string>
+	<string>
+		<id>200030</id>
+		<value>Käivitada MediaPortal automaatselt arvuti käivitamisel?</value>
+	</string>
+	<string>
+		<id>200031</id>
+		<value>Jah</value>
+	</string>
+	<string>
+		<id>200032</id>
+		<value>Ei</value>
+	</string>
+	<string>
+		<id>200034</id>
+		<value>Palun vali oma linn järgnevast nimekirjast</value>
+	</string>
+	<string>
+		<id>200036</id>
+		<value>Käsitsi seadistamine</value>
+	</string>
+	<string>
+		<id>4000</id>
+		<value>Veebisirvija</value>
+	</string>
+	<string>
+		<id>4001</id>
+		<value>Järjehoidjad</value>
+	</string>
+	<string>
+		<id>4002</id>
+		<value>Võimatu laadida URLi</value>
+	</string>
+</strings>

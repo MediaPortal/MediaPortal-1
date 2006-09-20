@@ -1,0 +1,5196 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<strings>
+	<characters>255</characters>
+	<string>
+		<id>0</id>
+		<value>Ohjelmat</value>
+	</string>
+	<string>
+		<id>1</id>
+		<value>Kuvat</value>
+	</string>
+	<string>
+		<id>2</id>
+		<value>Musiikki</value>
+	</string>
+	<string>
+		<id>3</id>
+		<value>Elokuvat</value>
+	</string>
+	<string>
+		<id>4</id>
+		<value>Ohjelmaopas</value>
+	</string>
+	<string>
+		<id>5</id>
+		<value>Asetukset</value>
+	</string>
+	<string>
+		<id>6</id>
+		<value>XBOX Media Center CVS build</value>
+	</string>
+	<string>
+		<id>7</id>
+		<value>Tiedostot</value>
+	</string>
+	<string>
+		<id>8</id>
+		<value>Sää</value>
+	</string>
+	<string>
+		<id>9</id>
+		<value>Uutiset</value>
+	</string>
+	<string>
+		<id>10</id>
+		<value>Reseptit</value>
+	</string>
+	<string>
+		<id>11</id>
+		<value>Maanantai</value>
+	</string>
+	<string>
+		<id>12</id>
+		<value>Tiistai</value>
+	</string>
+	<string>
+		<id>13</id>
+		<value>Keskiviikko</value>
+	</string>
+	<string>
+		<id>14</id>
+		<value>Torstai</value>
+	</string>
+	<string>
+		<id>15</id>
+		<value>Perjantai</value>
+	</string>
+	<string>
+		<id>16</id>
+		<value>Lauantai</value>
+	</string>
+	<string>
+		<id>17</id>
+		<value>Sunnuntai</value>
+	</string>
+	<string>
+		<id>21</id>
+		<value>Tammikuu</value>
+	</string>
+	<string>
+		<id>22</id>
+		<value>Helmikuu</value>
+	</string>
+	<string>
+		<id>23</id>
+		<value>Maaliskuu</value>
+	</string>
+	<string>
+		<id>24</id>
+		<value>Huhtikuu</value>
+	</string>
+	<string>
+		<id>25</id>
+		<value>Toukokuu</value>
+	</string>
+	<string>
+		<id>26</id>
+		<value>Kesäkuu</value>
+	</string>
+	<string>
+		<id>27</id>
+		<value>Heinäkuu</value>
+	</string>
+	<string>
+		<id>28</id>
+		<value>Elokuu</value>
+	</string>
+	<string>
+		<id>29</id>
+		<value>Syyskuu</value>
+	</string>
+	<string>
+		<id>30</id>
+		<value>Lokakuu</value>
+	</string>
+	<string>
+		<id>31</id>
+		<value>Marraskuu</value>
+	</string>
+	<string>
+		<id>32</id>
+		<value>Joulukuu</value>
+	</string>
+	<string>
+		<id>50</id>
+		<value>DVD</value>
+	</string>
+	<string>
+		<id>100</id>
+		<value>Näytä: Ikonit</value>
+	</string>
+	<string>
+		<id>101</id>
+		<value>Näytä: Lista</value>
+	</string>
+	<string>
+		<id>102</id>
+		<value>Etsi tiedot</value>
+	</string>
+	<string>
+		<id>103</id>
+		<value>Järjestä: Nimi</value>
+	</string>
+	<string>
+		<id>104</id>
+		<value>Järjestä: Pvm</value>
+	</string>
+	<string>
+		<id>105</id>
+		<value>Järjestä: Koko</value>
+	</string>
+	<string>
+		<id>106</id>
+		<value>Ei</value>
+	</string>
+	<string>
+		<id>107</id>
+		<value>Kyllä</value>
+	</string>
+	<string>
+		<id>108</id>
+		<value>Kuvaesitys</value>
+	</string>
+	<string>
+		<id>109</id>
+		<value>Tee minikuvat</value>
+	</string>
+	<string>
+		<id>110</id>
+		<value>Tee minikuvat</value>
+	</string>
+	<string>
+		<id>111</id>
+		<value>Oikotiet</value>
+	</string>
+	<string>
+		<id>112</id>
+		<value>PAUSE</value>
+	</string>
+	<string>
+		<id>113</id>
+		<value>Tiedostot : Lähde</value>
+	</string>
+	<string>
+		<id>114</id>
+		<value>Tiedostot : Kohde</value>
+	</string>
+	<string>
+		<id>115</id>
+		<value>Kopioi</value>
+	</string>
+	<string>
+		<id>116</id>
+		<value>Siirrä</value>
+	</string>
+	<string>
+		<id>117</id>
+		<value>Poista</value>
+	</string>
+	<string>
+		<id>118</id>
+		<value>Vaihda nimeä</value>
+	</string>
+	<string>
+		<id>119</id>
+		<value>Uusi kansio</value>
+	</string>
+	<string>
+		<id>120</id>
+		<value>Vahvista kopiointi</value>
+	</string>
+	<string>
+		<id>121</id>
+		<value>Vahvista siirto</value>
+	</string>
+	<string>
+		<id>122</id>
+		<value>Vahvista poisto</value>
+	</string>
+	<string>
+		<id>123</id>
+		<value>Kopioi valitut tiedostot?</value>
+	</string>
+	<string>
+		<id>124</id>
+		<value>Siirrä valitut tiedostot?</value>
+	</string>
+	<string>
+		<id>125</id>
+		<value>Poista valitut tiedostot?</value>
+	</string>
+	<string>
+		<id>126</id>
+		<value>Tila</value>
+	</string>
+	<string>
+		<id>127</id>
+		<value>Kohdetta</value>
+	</string>
+	<string>
+		<id>128</id>
+		<value>Yleistä</value>
+	</string>
+	<string>
+		<id>129</id>
+		<value>Kuvaesitys</value>
+	</string>
+	<string>
+		<id>130</id>
+		<value>Järjestelmän tiedot</value>
+	</string>
+	<string>
+		<id>131</id>
+		<value>Kuva</value>
+	</string>
+	<string>
+		<id>132</id>
+		<value>Albumit</value>
+	</string>
+	<string>
+		<id>133</id>
+		<value>Artistit</value>
+	</string>
+	<string>
+		<id>134</id>
+		<value>Kansiot</value>
+	</string>
+	<string>
+		<id>135</id>
+		<value>Genret</value>
+	</string>
+	<string>
+		<id>136</id>
+		<value>Soittolista</value>
+	</string>
+	<string>
+		<id>137</id>
+		<value>Etsi</value>
+	</string>
+	<string>
+		<id>138</id>
+		<value>JÄRJESTELMÄN TIEDOT</value>
+	</string>
+	<string>
+		<id>139</id>
+		<value>Lämpötilat:</value>
+	</string>
+	<string>
+		<id>140</id>
+		<value>CPU:</value>
+	</string>
+	<string>
+		<id>141</id>
+		<value>GPU:</value>
+	</string>
+	<string>
+		<id>142</id>
+		<value>Aika:</value>
+	</string>
+	<string>
+		<id>143</id>
+		<value>Tämänhetkinen:</value>
+	</string>
+	<string>
+		<id>144</id>
+		<value>Build:</value>
+	</string>
+	<string>
+		<id>145</id>
+		<value>Verkko:</value>
+	</string>
+	<string>
+		<id>146</id>
+		<value>Tyyppi:</value>
+	</string>
+	<string>
+		<id>147</id>
+		<value>Staattinen</value>
+	</string>
+	<string>
+		<id>148</id>
+		<value>DHCP</value>
+	</string>
+	<string>
+		<id>149</id>
+		<value>MAC</value>
+	</string>
+	<string>
+		<id>150</id>
+		<value>IP:</value>
+	</string>
+	<string>
+		<id>151</id>
+		<value>Link:</value>
+	</string>
+	<string>
+		<id>152</id>
+		<value>Half duplex</value>
+	</string>
+	<string>
+		<id>153</id>
+		<value>Full duplex</value>
+	</string>
+	<string>
+		<id>154</id>
+		<value>Levyt</value>
+	</string>
+	<string>
+		<id>155</id>
+		<value>Asema</value>
+	</string>
+	<string>
+		<id>156</id>
+		<value>Vapaana</value>
+	</string>
+	<string>
+		<id>157</id>
+		<value>Video</value>
+	</string>
+	<string>
+		<id>158</id>
+		<value>Vapaa muisti</value>
+	</string>
+	<string>
+		<id>159</id>
+		<value>Ei linkkiä</value>
+	</string>
+	<string>
+		<id>160</id>
+		<value>Vapaana</value>
+	</string>
+	<string>
+		<id>161</id>
+		<value>Ei saatavilla</value>
+	</string>
+	<string>
+		<id>162</id>
+		<value>Luukku auki</value>
+	</string>
+	<string>
+		<id>163</id>
+		<value>Lukee</value>
+	</string>
+	<string>
+		<id>164</id>
+		<value>Ei levyä</value>
+	</string>
+	<string>
+		<id>165</id>
+		<value>Levy asemassa</value>
+	</string>
+	<string>
+		<id>166</id>
+		<value>Ulkoasu:</value>
+	</string>
+	<string>
+		<id>167</id>
+		<value>FTP palvelin:</value>
+	</string>
+	<string>
+		<id>168</id>
+		<value>Synkronoi aika:</value>
+	</string>
+	<string>
+		<id>169</id>
+		<value>Resoluutio:</value>
+	</string>
+	<string>
+		<id>170</id>
+		<value>Albumi:</value>
+	</string>
+	<string>
+		<id>171</id>
+		<value>Artisti:</value>
+	</string>
+	<string>
+		<id>172</id>
+		<value>Julkaisupvm.:</value>
+	</string>
+	<string>
+		<id>173</id>
+		<value>Arvosana:</value>
+	</string>
+	<string>
+		<id>174</id>
+		<value>Genre:</value>
+	</string>
+	<string>
+		<id>175</id>
+		<value>Tones:</value>
+	</string>
+	<string>
+		<id>176</id>
+		<value>Tyylit:</value>
+	</string>
+	<string>
+		<id>177</id>
+		<value>Arvostelu:</value>
+	</string>
+	<string>
+		<id>178</id>
+		<value>Raidat:</value>
+	</string>
+	<string>
+		<id>179</id>
+		<value>Kappale</value>
+	</string>
+	<string>
+		<id>180</id>
+		<value>Kesto</value>
+	</string>
+	<string>
+		<id>181</id>
+		<value>Valitse albumi</value>
+	</string>
+	<string>
+		<id>182</id>
+		<value>Raidat</value>
+	</string>
+	<string>
+		<id>183</id>
+		<value>Arvostelu</value>
+	</string>
+	<string>
+		<id>184</id>
+		<value>Päivitä</value>
+	</string>
+	<string>
+		<id>185</id>
+		<value>Etsin albumia</value>
+	</string>
+	<string>
+		<id>186</id>
+		<value>OK</value>
+	</string>
+	<string>
+		<id>187</id>
+		<value>Albumia ei löytynyt!</value>
+	</string>
+	<string>
+		<id>188</id>
+		<value>Valitse kaikki</value>
+	</string>
+	<string>
+		<id>189</id>
+		<value>Etsin median tietoja</value>
+	</string>
+	<string>
+		<id>190</id>
+		<value>Tallenna</value>
+	</string>
+	<string>
+		<id>191</id>
+		<value>Sekoita</value>
+	</string>
+	<string>
+		<id>192</id>
+		<value>Poista kaikki</value>
+	</string>
+	<string>
+		<id>193</id>
+		<value>Etsi tiedot</value>
+	</string>
+	<string>
+		<id>194</id>
+		<value>Etsii...</value>
+	</string>
+	<string>
+		<id>195</id>
+		<value>IMDB tietoja ei löytynyt!</value>
+	</string>
+	<string>
+		<id>196</id>
+		<value>Valitse elokuva:</value>
+	</string>
+	<string>
+		<id>197</id>
+		<value>Etsin tietoja IMDB:stä</value>
+	</string>
+	<string>
+		<id>198</id>
+		<value>Lataan elokuvan tiedot</value>
+	</string>
+	<string>
+		<id>199</id>
+		<value>Ohjaaja:</value>
+	</string>
+	<string>
+		<id>200</id>
+		<value>Käsikirjoittaja:</value>
+	</string>
+	<string>
+		<id>201</id>
+		<value>Vuosi:</value>
+	</string>
+	<string>
+		<id>202</id>
+		<value>Tagline:</value>
+	</string>
+	<string>
+		<id>203</id>
+		<value>Juonikuvaus:</value>
+	</string>
+	<string>
+		<id>204</id>
+		<value>Arvosana:</value>
+	</string>
+	<string>
+		<id>205</id>
+		<value>Arvosteluja:</value>
+	</string>
+	<string>
+		<id>206</id>
+		<value>Näyttelijät</value>
+	</string>
+	<string>
+		<id>207</id>
+		<value>Juoni</value>
+	</string>
+	<string>
+		<id>208</id>
+		<value>Toista</value>
+	</string>
+	<string>
+		<id>209</id>
+		<value>Seuraava</value>
+	</string>
+	<string>
+		<id>210</id>
+		<value>Edellinen</value>
+	</string>
+	<string>
+		<id>211</id>
+		<value>Etsin ohjelmia</value>
+	</string>
+	<string>
+		<id>212</id>
+		<value>Ohjelmia löytyi</value>
+	</string>
+	<string>
+		<id>213</id>
+		<value>Käyttöliittymän kalibrointi</value>
+	</string>
+	<string>
+		<id>214</id>
+		<value>Ruudun kalibrointi</value>
+	</string>
+	<string>
+		<id>215</id>
+		<value>Pehmennä</value>
+	</string>
+	<string>
+		<id>216</id>
+		<value>Zoomaa</value>
+	</string>
+	<string>
+		<id>217</id>
+		<value>Venytä</value>
+	</string>
+	<string>
+		<id>218</id>
+		<value>DVD Asema</value>
+	</string>
+	<string>
+		<id>219</id>
+		<value>Aseta DVD-levy</value>
+	</string>
+	<string>
+		<id>220</id>
+		<value>Verkkolevy</value>
+	</string>
+	<string>
+		<id>221</id>
+		<value>Ei verkkoyhteyttä</value>
+	</string>
+	<string>
+		<id>222</id>
+		<value>Keskeytä</value>
+	</string>
+	<string>
+		<id>223</id>
+		<value>Automaattinen laajakuvan vaihto</value>
+	</string>
+	<string>
+		<id>224</id>
+		<value>Nopeus</value>
+	</string>
+	<string>
+		<id>225</id>
+		<value>Siirtymäaika</value>
+	</string>
+	<string>
+		<id>226</id>
+		<value>PAL60 päälle</value>
+	</string>
+	<string>
+		<id>227</id>
+		<value>CDDB päälle</value>
+	</string>
+	<string>
+		<id>228</id>
+		<value>Sekoita soittolista ladattaessa</value>
+	</string>
+	<string>
+		<id>229</id>
+		<value>Kiintolevyn sammutusaika (minuuteissa)</value>
+	</string>
+	<string>
+		<id>230</id>
+		<value>Suodatin</value>
+	</string>
+	<string>
+		<id>231</id>
+		<value>Ei</value>
+	</string>
+	<string>
+		<id>232</id>
+		<value>Piste</value>
+	</string>
+	<string>
+		<id>233</id>
+		<value>Lineaarinen</value>
+	</string>
+	<string>
+		<id>234</id>
+		<value>Anisotrooppinen</value>
+	</string>
+	<string>
+		<id>235</id>
+		<value>Quincunx</value>
+	</string>
+	<string>
+		<id>236</id>
+		<value>Gaussian Cubic</value>
+	</string>
+	<string>
+		<id>237</id>
+		<value>Pienennys:</value>
+	</string>
+	<string>
+		<id>238</id>
+		<value>Suurennus:</value>
+	</string>
+	<string>
+		<id>240</id>
+		<value>Käynnistä DVD-Video automaattisesti</value>
+	</string>
+	<string>
+		<id>241</id>
+		<value>Käynnistä VCD/SVCD automaattisesti</value>
+	</string>
+	<string>
+		<id>242</id>
+		<value>Käynnistä Audio-CD automaattisesti</value>
+	</string>
+	<string>
+		<id>243</id>
+		<value>Käynnistä XBOX pelit automaattisesti</value>
+	</string>
+	<string>
+		<id>244</id>
+		<value>Käynnistä Videot automaattisesti</value>
+	</string>
+	<string>
+		<id>245</id>
+		<value>Käynnistä Musiikki automaattisesti</value>
+	</string>
+	<string>
+		<id>246</id>
+		<value>Käynnistä Kuvat automaattisesti</value>
+	</string>
+	<string>
+		<id>247</id>
+		<value>Skriptit</value>
+	</string>
+	<string>
+		<id>248</id>
+		<value>Kieli</value>
+	</string>
+	<string>
+		<id>249</id>
+		<value>Musiikki</value>
+	</string>
+	<string>
+		<id>250</id>
+		<value>Visualisointi</value>
+	</string>
+	<string>
+		<id>251</id>
+		<value>Valitse kohdehakemisto</value>
+	</string>
+	<string>
+		<id>252</id>
+		<value>Toista kaikilla kaiuttimilla</value>
+	</string>
+	<string>
+		<id>253</id>
+		<value>Kanavien lukumäärä</value>
+	</string>
+	<string>
+		<id>254</id>
+		<value>DD Stereo Läpipäästö</value>
+	</string>
+	<string>
+		<id>255</id>
+		<value>CDDB</value>
+	</string>
+	<string>
+		<id>256</id>
+		<value>Etsin freedb:stä CDDB tietoja</value>
+	</string>
+	<string>
+		<id>257</id>
+		<value>Virhe</value>
+	</string>
+	<string>
+		<id>258</id>
+		<value>Käytä ID3 tageja</value>
+	</string>
+	<string>
+		<id>259</id>
+		<value>Avaa</value>
+	</string>
+	<string>
+		<id>260</id>
+		<value>Shoutcast</value>
+	</string>
+	<string>
+		<id>261</id>
+		<value>Odotan käynnistymistä....</value>
+	</string>
+	<string>
+		<id>262</id>
+		<value>Skriptin tuloste</value>
+	</string>
+	<string>
+		<id>263</id>
+		<value>HTTP palvelin:</value>
+	</string>
+	<string>
+		<id>264</id>
+		<value>Tallenna</value>
+	</string>
+	<string>
+		<id>265</id>
+		<value>Lopeta tallennus</value>
+	</string>
+	<string>
+		<id>266</id>
+		<value>Järjestä: Raita</value>
+	</string>
+	<string>
+		<id>267</id>
+		<value>Järjestä: Aika</value>
+	</string>
+	<string>
+		<id>268</id>
+		<value>Järjestä: Nimi</value>
+	</string>
+	<string>
+		<id>269</id>
+		<value>Järjestä: Artisti</value>
+	</string>
+	<string>
+		<id>270</id>
+		<value>Järjestä: Albumi</value>
+	</string>
+	<string>
+		<id>271</id>
+		<value>Top 100</value>
+	</string>
+	<string>
+		<id>272</id>
+		<value>Ylä vasen Overscan kompensaatio</value>
+	</string>
+	<string>
+		<id>273</id>
+		<value>Ala oikea Overscan kompensaatio</value>
+	</string>
+	<string>
+		<id>274</id>
+		<value>Tekstityksen sijainti</value>
+	</string>
+	<string>
+		<id>275</id>
+		<value>Pikselisuhteen säätö</value>
+	</string>
+	<string>
+		<id>276</id>
+		<value>Säädä overscanin määrää nuolilla</value>
+	</string>
+	<string>
+		<id>277</id>
+		<value>Säädä tekstityksen paikkaa nuolilla.</value>
+	</string>
+	<string>
+		<id>278</id>
+		<value>Huom! Parhaan kuvanlaadun saavuttamiseksi. Säädä neliö tasasivuiseksi.</value>
+	</string>
+	<string>
+		<id>279</id>
+		<value>Asetusten lataaminen epäonnistui</value>
+	</string>
+	<string>
+		<id>280</id>
+		<value>Käytetään oletusarvoja</value>
+	</string>
+	<string>
+		<id>281</id>
+		<value>Tarkista .xml tiedostot</value>
+	</string>
+	<string>
+		<id>282</id>
+		<value>löytyi %i kohdetta</value>
+	</string>
+	<string>
+		<id>283</id>
+		<value>Haun tulokset</value>
+	</string>
+	<string>
+		<id>284</id>
+		<value>Kohteita ei löytynyt</value>
+	</string>
+	<string>
+		<id>285</id>
+		<value>Deinterlace suodatin</value>
+	</string>
+	<string>
+		<id>286</id>
+		<value>Jälki suodatin</value>
+	</string>
+	<string>
+		<id>287</id>
+		<value>Tekstitys</value>
+	</string>
+	<string>
+		<id>288</id>
+		<value>Fontti</value>
+	</string>
+	<string>
+		<id>289</id>
+		<value>Koko</value>
+	</string>
+	<string>
+		<id>290</id>
+		<value>äänen vahvistus (dB)</value>
+	</string>
+	<string>
+		<id>291</id>
+		<value>Video</value>
+	</string>
+	<string>
+		<id>292</id>
+		<value>Audio</value>
+	</string>
+	<string>
+		<id>293</id>
+		<value>Tekstitys</value>
+	</string>
+	<string>
+		<id>294</id>
+		<value>Luo kirjamerkki</value>
+	</string>
+	<string>
+		<id>295</id>
+		<value>Selaa kirjamerkkejä</value>
+	</string>
+	<string>
+		<id>296</id>
+		<value>Poista kirjamerkit</value>
+	</string>
+	<string>
+		<id>297</id>
+		<value>AV Viive</value>
+	</string>
+	<string>
+		<id>298</id>
+		<value>Slider</value>
+	</string>
+	<string>
+		<id>299</id>
+		<value>Kesto:</value>
+	</string>
+	<string>
+		<id>300</id>
+		<value>1. Kieli</value>
+	</string>
+	<string>
+		<id>301</id>
+		<value>2. äänenvoimakkuus</value>
+	</string>
+	<string>
+		<id>302</id>
+		<value>3. Stream</value>
+	</string>
+	<string>
+		<id>303</id>
+		<value>Viive</value>
+	</string>
+	<string>
+		<id>304</id>
+		<value>Kieli</value>
+	</string>
+	<string>
+		<id>305</id>
+		<value>Päällä</value>
+	</string>
+	<string>
+		<id>306</id>
+		<value>Non-Interleaved</value>
+	</string>
+	<string>
+		<id>307</id>
+		<value>Auto</value>
+	</string>
+	<string>
+		<id>308</id>
+		<value>vertikaalinen deblocking suodatin</value>
+	</string>
+	<string>
+		<id>309</id>
+		<value>horisontaalinen deblocking suodatin</value>
+	</string>
+	<string>
+		<id>310</id>
+		<value>Automaattinen kirkkaus/kontrasti</value>
+	</string>
+	<string>
+		<id>311</id>
+		<value>Dering</value>
+	</string>
+	<string>
+		<id>312</id>
+		<value>(0=automaattinen)</value>
+	</string>
+	<string>
+		<id>313</id>
+		<value>Uudelleenjärjestä tietokanta</value>
+	</string>
+	<string>
+		<id>314</id>
+		<value>Valmistelee...</value>
+	</string>
+	<string>
+		<id>315</id>
+		<value>Tietokantavirhe</value>
+	</string>
+	<string>
+		<id>316</id>
+		<value>Etsin kappaleita...</value>
+	</string>
+	<string>
+		<id>317</id>
+		<value>Uudelleenjärjestely onnistui</value>
+	</string>
+	<string>
+		<id>318</id>
+		<value>Merkitään poistettavat kappaleet</value>
+	</string>
+	<string>
+		<id>319</id>
+		<value>Uudelleenjärjestely epäonnistui</value>
+	</string>
+	<string>
+		<id>320</id>
+		<value>Etsin artisteja...</value>
+	</string>
+	<string>
+		<id>321</id>
+		<value>Artistien uudelleenjärjestely epäonnistui</value>
+	</string>
+	<string>
+		<id>322</id>
+		<value>Etsin genrejä...</value>
+	</string>
+	<string>
+		<id>323</id>
+		<value>Genrejen uudelleenjärjestely epäonnistui</value>
+	</string>
+	<string>
+		<id>324</id>
+		<value>Etsii polkuja...</value>
+	</string>
+	<string>
+		<id>325</id>
+		<value>virhe uudelleenjärjestettäessä polkuja...</value>
+	</string>
+	<string>
+		<id>326</id>
+		<value>Etsin albumeja...</value>
+	</string>
+	<string>
+		<id>327</id>
+		<value>Albumien uudelleenjärjestely epäonnistui</value>
+	</string>
+	<string>
+		<id>328</id>
+		<value>Tallennetaan muutokset...</value>
+	</string>
+	<string>
+		<id>329</id>
+		<value>Muutosten tallentaminen epäonnistui</value>
+	</string>
+	<string>
+		<id>330</id>
+		<value>Tämä saattaa kestää jonkin aikaa...</value>
+	</string>
+	<string>
+		<id>331</id>
+		<value>Tietokantaa tiivistetään...</value>
+	</string>
+	<string>
+		<id>332</id>
+		<value>Tietokannan tiivistys epäonnistui</value>
+	</string>
+	<string>
+		<id>333</id>
+		<value>Haluatko uudelleenjärjestää musiikki-tietokannan?</value>
+	</string>
+	<string>
+		<id>334</id>
+		<value>Uudelleenjärjestä musiikki-tietokanta</value>
+	</string>
+	<string>
+		<id>335</id>
+		<value>Aloita</value>
+	</string>
+	<string>
+		<id>336</id>
+		<value>Säädä kuvanopeus</value>
+	</string>
+	<string>
+		<id>337</id>
+		<value>äänilähtö:</value>
+	</string>
+	<string>
+		<id>338</id>
+		<value>Analoginen</value>
+	</string>
+	<string>
+		<id>339</id>
+		<value>Digitaalinen</value>
+	</string>
+	<string>
+		<id>340</id>
+		<value>Useita Artisteja</value>
+	</string>
+	<string>
+		<id>341</id>
+		<value>Toista DVD</value>
+	</string>
+	<string>
+		<id>342</id>
+		<value>Elokuvat</value>
+	</string>
+	<string>
+		<id>343</id>
+		<value>Säädä kuvanopeus</value>
+	</string>
+	<string>
+		<id>344</id>
+		<value>Näyttelijät</value>
+	</string>
+	<string>
+		<id>345</id>
+		<value>Vuosi</value>
+	</string>
+	<string>
+		<id>346</id>
+		<value>Pinoa</value>
+	</string>
+	<string>
+		<id>347</id>
+		<value>Poista pinosta</value>
+	</string>
+	<string>
+		<id>348</id>
+		<value>Tasoita hakemistohierarkia</value>
+	</string>
+	<string>
+		<id>349</id>
+		<value>Näytä .xbe</value>
+	</string>
+	<string>
+		<id>350</id>
+		<value>Ohjelmat</value>
+	</string>
+	<string>
+		<id>351</id>
+		<value>off</value>
+	</string>
+	<string>
+		<id>352</id>
+		<value>Dim</value>
+	</string>
+	<string>
+		<id>353</id>
+		<value>Musta</value>
+	</string>
+	<string>
+		<id>354</id>
+		<value>Matrix Trails</value>
+	</string>
+	<string>
+		<id>355</id>
+		<value>Näytönsäästäjän aikavakio</value>
+	</string>
+	<string>
+		<id>356</id>
+		<value>Näytönsäästäjän moodi</value>
+	</string>
+	<string>
+		<id>357</id>
+		<value>Sammutus aikavakio</value>
+	</string>
+	<string>
+		<id>358</id>
+		<value>Kaikki albumit</value>
+	</string>
+	<string>
+		<id>359</id>
+		<value>Viimeaikaiset albumit</value>
+	</string>
+	<string>
+		<id>360</id>
+		<value>Ruudunsäästäjä</value>
+	</string>
+	<string>
+		<id>361</id>
+		<value>K. Kuvaesitys</value>
+	</string>
+	<string>
+		<id>362</id>
+		<value>Näytönsäästäjän häivytystaso (%)</value>
+	</string>
+	<string>
+		<id>363</id>
+		<value>Järjestä: Tiedosto</value>
+	</string>
+	<string>
+		<id>364</id>
+		<value>DD/DTS Monikanava läpipäästö</value>
+	</string>
+	<string>
+		<id>365</id>
+		<value>Järjestä: Nimi</value>
+	</string>
+	<string>
+		<id>366</id>
+		<value>Järjestä: Vuosi</value>
+	</string>
+	<string>
+		<id>367</id>
+		<value>Järjestä: Arvosana</value>
+	</string>
+	<string>
+		<id>368</id>
+		<value>IMDB</value>
+	</string>
+	<string>
+		<id>369</id>
+		<value>Nimi</value>
+	</string>
+	<string>
+		<id>370</id>
+		<value>Ukkosta</value>
+	</string>
+	<string>
+		<id>371</id>
+		<value>Osittain</value>
+	</string>
+	<string>
+		<id>372</id>
+		<value>Enimmäkseen</value>
+	</string>
+	<string>
+		<id>373</id>
+		<value>Aurinkoista</value>
+	</string>
+	<string>
+		<id>374</id>
+		<value>Pilvistä</value>
+	</string>
+	<string>
+		<id>375</id>
+		<value>Lumisadetta</value>
+	</string>
+	<string>
+		<id>376</id>
+		<value>Sadetta</value>
+	</string>
+	<string>
+		<id>377</id>
+		<value>Kevyttä</value>
+	</string>
+	<string>
+		<id>378</id>
+		<value>AM</value>
+	</string>
+	<string>
+		<id>379</id>
+		<value>PM</value>
+	</string>
+	<string>
+		<id>380</id>
+		<value>Sadekuuroja</value>
+	</string>
+	<string>
+		<id>381</id>
+		<value>Muutama</value>
+	</string>
+	<string>
+		<id>382</id>
+		<value>Satunnaista</value>
+	</string>
+	<string>
+		<id>383</id>
+		<value>Tuuli</value>
+	</string>
+	<string>
+		<id>384</id>
+		<value>Voimakasta</value>
+	</string>
+	<string>
+		<id>385</id>
+		<value>Kohtalaista</value>
+	</string>
+	<string>
+		<id>386</id>
+		<value>Selkeää</value>
+	</string>
+	<string>
+		<id>387</id>
+		<value>Aikainen</value>
+	</string>
+	<string>
+		<id>388</id>
+		<value>ja</value>
+	</string>
+	<string>
+		<id>389</id>
+		<value>Sumua</value>
+	</string>
+	<string>
+		<id>390</id>
+		<value>Usvaa</value>
+	</string>
+	<string>
+		<id>391</id>
+		<value>Tuulista</value>
+	</string>
+	<string>
+		<id>392</id>
+		<value>Tihkusadetta</value>
+	</string>
+	<string>
+		<id>393</id>
+		<value>Jäätävää</value>
+	</string>
+	<string>
+		<id>394</id>
+		<value>N/A</value>
+	</string>
+	<string>
+		<id>396</id>
+		<value>Valitse paikka</value>
+	</string>
+	<string>
+		<id>397</id>
+		<value>Päivitysaika</value>
+	</string>
+	<string>
+		<id>398</id>
+		<value>Lämpötilan yksikkö</value>
+	</string>
+	<string>
+		<id>399</id>
+		<value>Nopeuden yksikkö</value>
+	</string>
+	<string>
+		<id>400</id>
+		<value>Säätila</value>
+	</string>
+	<string>
+		<id>401</id>
+		<value>Lämpötila</value>
+	</string>
+	<string>
+		<id>402</id>
+		<value>Tuntuu kuin</value>
+	</string>
+	<string>
+		<id>403</id>
+		<value>UV indeksi</value>
+	</string>
+	<string>
+		<id>404</id>
+		<value>Tuulen</value>
+	</string>
+	<string>
+		<id>405</id>
+		<value>Kastepiste</value>
+	</string>
+	<string>
+		<id>406</id>
+		<value>Kosteus</value>
+	</string>
+	<string>
+		<id>410</id>
+		<value>Haetaan säätiedot Weather.com:sta</value>
+	</string>
+	<string>
+		<id>411</id>
+		<value>Paikka:</value>
+	</string>
+	<string>
+		<id>412</id>
+		<value>Säätietojen haku ei onnistunut</value>
+	</string>
+	<string>
+		<id>413</id>
+		<value>Manuaalinen</value>
+	</string>
+	<string>
+		<id>414</id>
+		<value>Ei arvostelua tästä albumista</value>
+	</string>
+	<string>
+		<id>415</id>
+		<value>Lataan pikkukuvaa..</value>
+	</string>
+	<string>
+		<id>416</id>
+		<value>Ei saatavilla</value>
+	</string>
+	<string>
+		<id>417</id>
+		<value>Näytä: Isot ikonit</value>
+	</string>
+	<string>
+		<id>418</id>
+		<value>Videot / Genre</value>
+	</string>
+	<string>
+		<id>419</id>
+		<value>Videot / Näyttelijät</value>
+	</string>
+	<string>
+		<id>420</id>
+		<value>Videot / Vuodet</value>
+	</string>
+	<string>
+		<id>421</id>
+		<value>Videot / Nimi</value>
+	</string>
+	<string>
+		<id>422</id>
+		<value>Poista albumin tiedot</value>
+	</string>
+	<string>
+		<id>423</id>
+		<value>Poista CDDB tiedot</value>
+	</string>
+	<string>
+		<id>424</id>
+		<value>Valitse</value>
+	</string>
+	<string>
+		<id>425</id>
+		<value>Albumin tietoja ei löytynyt.</value>
+	</string>
+	<string>
+		<id>426</id>
+		<value>CDDB tietoja ei löytynyt.</value>
+	</string>
+	<string>
+		<id>427</id>
+		<value>Levy:</value>
+	</string>
+	<string>
+		<id>428</id>
+		<value>Anna oikea CD/DVD</value>
+	</string>
+	<string>
+		<id>429</id>
+		<value>Anna seuraava CD/DVD</value>
+	</string>
+	<string>
+		<id>430</id>
+		<value>Järjestä: DVD#</value>
+	</string>
+	<string>
+		<id>431</id>
+		<value>Ei välimuistia</value>
+	</string>
+	<string>
+		<id>432</id>
+		<value>Poista elokuva tietokannasta</value>
+	</string>
+	<string>
+		<id>433</id>
+		<value>Haluatko varmasti poistaa</value>
+	</string>
+	<string>
+		<id>434</id>
+		<value>elokuvan?</value>
+	</string>
+	<string>
+		<id>435</id>
+		<value>Raita:</value>
+	</string>
+	<string>
+		<id>436</id>
+		<value>Vuosi:</value>
+	</string>
+	<string>
+		<id>437</id>
+		<value>Kesto:</value>
+	</string>
+	<string>
+		<id>438</id>
+		<value>Avaa tiedosto</value>
+	</string>
+	<string>
+		<id>439</id>
+		<value>Välimuisti</value>
+	</string>
+	<string>
+		<id>440</id>
+		<value>Kiintolevy</value>
+	</string>
+	<string>
+		<id>441</id>
+		<value>UDF</value>
+	</string>
+	<string>
+		<id>442</id>
+		<value>LAN</value>
+	</string>
+	<string>
+		<id>443</id>
+		<value>Internet</value>
+	</string>
+	<string>
+		<id>444</id>
+		<value>video</value>
+	</string>
+	<string>
+		<id>445</id>
+		<value>audio</value>
+	</string>
+	<string>
+		<id>446</id>
+		<value>DVD</value>
+	</string>
+	<string>
+		<id>447</id>
+		<value>Automaattikäynnistys</value>
+	</string>
+	<string>
+		<id>448</id>
+		<value>LCD</value>
+	</string>
+	<string>
+		<id>449</id>
+		<value>Päällä</value>
+	</string>
+	<string>
+		<id>450</id>
+		<value>Sarakkeet</value>
+	</string>
+	<string>
+		<id>451</id>
+		<value>Rivin 1 osoite:</value>
+	</string>
+	<string>
+		<id>452</id>
+		<value>Rivin 2 osoite:</value>
+	</string>
+	<string>
+		<id>453</id>
+		<value>Rivin 3 osoite:</value>
+	</string>
+	<string>
+		<id>454</id>
+		<value>Rivin 4 osoite:</value>
+	</string>
+	<string>
+		<id>455</id>
+		<value>Rivit:</value>
+	</string>
+	<string>
+		<id>456</id>
+		<value>Tila:</value>
+	</string>
+	<string>
+		<id>457</id>
+		<value>Muuta näkymä</value>
+	</string>
+	<string>
+		<id>458</id>
+		<value>B/Mark</value>
+	</string>
+	<string>
+		<id>459</id>
+		<value>Tekstitykset</value>
+	</string>
+	<string>
+		<id>460</id>
+		<value>Ääni raita</value>
+	</string>
+	<string>
+		<id>461</id>
+		<value>[aktiivinen]</value>
+	</string>
+	<string>
+		<id>462</id>
+		<value>Tekstitys</value>
+	</string>
+	<string>
+		<id>463</id>
+		<value>Taustavalo</value>
+	</string>
+	<string>
+		<id>464</id>
+		<value>Kirkkaus</value>
+	</string>
+	<string>
+		<id>465</id>
+		<value>Kontrasti</value>
+	</string>
+	<string>
+		<id>466</id>
+		<value>Gamma</value>
+	</string>
+	<string>
+		<id>467</id>
+		<value>Tyyppi</value>
+	</string>
+	<string>
+		<id>468</id>
+		<value>Valitse OSD:n sijainti palkilla</value>
+	</string>
+	<string>
+		<id>469</id>
+		<value>OSD Paikka</value>
+	</string>
+	<string>
+		<id>470</id>
+		<value>Credits</value>
+	</string>
+	<string>
+		<id>471</id>
+		<value>Modpiiri</value>
+	</string>
+	<string>
+		<id>472</id>
+		<value>OSD Timeout</value>
+	</string>
+	<string>
+		<id>473</id>
+		<value>Hyvälaatuinen uudelleen näytteistys</value>
+	</string>
+	<string>
+		<id>474</id>
+		<value>Sammuta</value>
+	</string>
+	<string>
+		<id>475</id>
+		<value>Vain musiikki</value>
+	</string>
+	<string>
+		<id>476</id>
+		<value>Musiikki&amp;Video</value>
+	</string>
+	<string>
+		<id>477</id>
+		<value>Soittolistan lataus ei onnistu</value>
+	</string>
+	<string>
+		<id>478</id>
+		<value>OSD</value>
+	</string>
+	<string>
+		<id>479</id>
+		<value>Skin ja kieli</value>
+	</string>
+	<string>
+		<id>480</id>
+		<value>Käyttöliittymä</value>
+	</string>
+	<string>
+		<id>481</id>
+		<value>ääniasetukset</value>
+	</string>
+	<string>
+		<id>482</id>
+		<value>Tietoa XBMC:stä</value>
+	</string>
+	<string>
+		<id>483</id>
+		<value>Albumi</value>
+	</string>
+	<string>
+		<id>484</id>
+		<value>Artisti</value>
+	</string>
+	<string>
+		<id>485</id>
+		<value>Poista albumi</value>
+	</string>
+	<string>
+		<id>486</id>
+		<value>Toista</value>
+	</string>
+	<string>
+		<id>487</id>
+		<value>Toista kerran</value>
+	</string>
+	<string>
+		<id>488</id>
+		<value>Toista hakemiston soittolista</value>
+	</string>
+	<string>
+		<id>489</id>
+		<value>Käytä soittolistaa kappaleissa</value>
+	</string>
+	<string>
+		<id>490</id>
+		<value>Vaihda lista/ikoninäkymää automaattisesti musiikissa</value>
+	</string>
+	<string>
+		<id>491</id>
+		<value>Käytä isoja ikoneja</value>
+	</string>
+	<string>
+		<id>492</id>
+		<value>Audiokieli</value>
+	</string>
+	<string>
+		<id>493</id>
+		<value>Näyttelijä</value>
+	</string>
+	<string>
+		<id>500</id>
+		<value>Tiedostovalikko</value>
+	</string>
+	<string>
+		<id>501</id>
+		<value>Aseta kohteeksi</value>
+	</string>
+	<string>
+		<id>502</id>
+		<value>Toiminto epäonnistui</value>
+	</string>
+	<string>
+		<id>503</id>
+		<value>Poista tämä kansio</value>
+	</string>
+	<string>
+		<id>504</id>
+		<value>Siirry kohde kansioon</value>
+	</string>
+	<string>
+		<id>505</id>
+		<value>Laskee...</value>
+	</string>
+	<string>
+		<id>506</id>
+		<value>Oletko varma?</value>
+	</string>
+	<string>
+		<id>507</id>
+		<value>kohtia</value>
+	</string>
+	<string>
+		<id>508</id>
+		<value>,</value>
+	</string>
+	<string>
+		<id>509</id>
+		<value>Ylikirjoitetaanko tiedosto?</value>
+	</string>
+	<string>
+		<id>510</id>
+		<value>Peruuta</value>
+	</string>
+	<string>
+		<id>511</id>
+		<value>Aina</value>
+	</string>
+	<string>
+		<id>512</id>
+		<value>Ei koskaan</value>
+	</string>
+	<string>
+		<id>513</id>
+		<value>Kohde kirjoitussuojattu, toiminto epäonnistui</value>
+	</string>
+	<string>
+		<id>514</id>
+		<value>Virhe luotaessa kansiota, toiminto epäonnistui</value>
+	</string>
+	<string>
+		<id>515</id>
+		<value>Virhe poistaessa kansiota, toiminto epäonnistui</value>
+	</string>
+	<string>
+		<id>516</id>
+		<value>Virhe poistaessa kohde tiedostoa, toiminto epäonnistui</value>
+	</string>
+	<string>
+		<id>517</id>
+		<value>Vakava virhe, toiminto epäonnistui</value>
+	</string>
+	<string>
+		<id>518</id>
+		<value>Poistetaanko kappale?</value>
+	</string>
+	<string>
+		<id>530</id>
+		<value>Haluatko avata valokuva CD:n?</value>
+	</string>
+	<string>
+		<id>531</id>
+		<value>Haluatko avata video CD:n?</value>
+	</string>
+	<string>
+		<id>532</id>
+		<value>Haluatko avata CD:n?</value>
+	</string>
+	<string>
+		<id>533</id>
+		<value>Open</value>
+	</string>
+	<string>
+		<id>550</id>
+		<value>Rajaa</value>
+	</string>
+	<string>
+		<id>555</id>
+		<value>Suunta {0} , {1} {2}</value>
+	</string>
+	<string>
+		<id>600</id>
+		<value>Ohjelmaopas</value>
+	</string>
+	<string>
+		<id>601</id>
+		<value>Tallenna</value>
+	</string>
+	<string>
+		<id>602</id>
+		<value>Kanava</value>
+	</string>
+	<string>
+		<id>603</id>
+		<value>Ajastukset</value>
+	</string>
+	<string>
+		<id>604</id>
+		<value>Tallennukset</value>
+	</string>
+	<string>
+		<id>605</id>
+		<value>TV</value>
+	</string>
+	<string>
+		<id>606</id>
+		<value>Lataan uudet ohjelmatiedot</value>
+	</string>
+	<string>
+		<id>607</id>
+		<value>Lataa</value>
+	</string>
+	<string>
+		<id>608</id>
+		<value>Ohjelmatietojen lataus epäonnistui</value>
+	</string>
+	<string>
+		<id>609</id>
+		<value>Ohjelmatietojen lataus onnistui</value>
+	</string>
+	<string>
+		<id>610</id>
+		<value>Ei mitään</value>
+	</string>
+	<string>
+		<id>611</id>
+		<value>Tallenna kerran</value>
+	</string>
+	<string>
+		<id>612</id>
+		<value>Tallenna aina tältä kanavalta</value>
+	</string>
+	<string>
+		<id>613</id>
+		<value>Tallenna aina kaikilta kanavilta</value>
+	</string>
+	<string>
+		<id>614</id>
+		<value>Tallenna joka viikko tähän aikaan</value>
+	</string>
+	<string>
+		<id>615</id>
+		<value>Tallenna joka päivä tähän aikaan</value>
+	</string>
+	<string>
+		<id>616</id>
+		<value>Valitse tallennustyyppi</value>
+	</string>
+	<string>
+		<id>617</id>
+		<value>Uusi</value>
+	</string>
+	<string>
+		<id>618</id>
+		<value>Poista</value>
+	</string>
+	<string>
+		<id>619</id>
+		<value>Muuta Päivä/Aika</value>
+	</string>
+	<string>
+		<id>620</id>
+		<value>Järjestä: Kanava</value>
+	</string>
+	<string>
+		<id>621</id>
+		<value>Järjestä: Pvm</value>
+	</string>
+	<string>
+		<id>622</id>
+		<value>Järjestä: Nimi</value>
+	</string>
+	<string>
+		<id>623</id>
+		<value>Järjestä: Tyyppi</value>
+	</string>
+	<string>
+		<id>624</id>
+		<value>Poista kaikki</value>
+	</string>
+	<string>
+		<id>625</id>
+		<value>Poistetut ajastukset:</value>
+	</string>
+	<string>
+		<id>626</id>
+		<value>Vaihda tyyppi</value>
+	</string>
+	<string>
+		<id>627</id>
+		<value>Kanavat:</value>
+	</string>
+	<string>
+		<id>628</id>
+		<value>Ohjelmat:</value>
+	</string>
+	<string>
+		<id>629</id>
+		<value>Lopeta tallennus</value>
+	</string>
+	<string>
+		<id>630</id>
+		<value>Käynnistetäänkö tietokone uudelleen?</value>
+	</string>
+	<string>
+		<id>631</id>
+		<value>Suljetaanko tietokone?</value>
+	</string>
+	<string>
+		<id>632</id>
+		<value>Kohdetta</value>
+	</string>
+	<string>
+		<id>633</id>
+		<value>Aloituspäivä/aika</value>
+	</string>
+	<string>
+		<id>634</id>
+		<value>Lopetuspäivä/aika</value>
+	</string>
+	<string>
+		<id>635</id>
+		<value>Kello</value>
+	</string>
+	<string>
+		<id>636</id>
+		<value>Pvm</value>
+	</string>
+	<string>
+		<id>637</id>
+		<value>Muokkaa Tallennusta</value>
+	</string>
+	<string>
+		<id>638</id>
+		<value>Uusi Tallennus</value>
+	</string>
+	<string>
+		<id>639</id>
+		<value>Albumit</value>
+	</string>
+	<string>
+		<id>640</id>
+		<value>Värikylläisyys</value>
+	</string>
+	<string>
+		<id>641</id>
+		<value>Terävyys</value>
+	</string>
+	<string>
+		<id>642</id>
+		<value>Ladataan TV-kanavat</value>
+	</string>
+	<string>
+		<id>643</id>
+		<value>Ladataan TV-ohjelmat</value>
+	</string>
+	<string>
+		<id>644</id>
+		<value>Järjestellään TV-ohjelmat</value>
+	</string>
+	<string>
+		<id>645</id>
+		<value>Ladataan XML tiedosto</value>
+	</string>
+	<string>
+		<id>646</id>
+		<value>Ajastetut tallennukset</value>
+	</string>
+	<string>
+		<id>647</id>
+		<value>Kerran</value>
+	</string>
+	<string>
+		<id>648</id>
+		<value>Päivittäin</value>
+	</string>
+	<string>
+		<id>649</id>
+		<value>Joka kerta</value>
+	</string>
+	<string>
+		<id>650</id>
+		<value>Aina tältä kanavalta</value>
+	</string>
+	<string>
+		<id>651</id>
+		<value>Aina kaikilta kanavilta</value>
+	</string>
+	<string>
+		<id>652</id>
+		<value>Tallennukset</value>
+	</string>
+	<string>
+		<id>653</id>
+		<value>Poista tallennus?</value>
+	</string>
+	<string>
+		<id>654</id>
+		<value>Anna levy</value>
+	</string>
+	<string>
+		<id>655</id>
+		<value>Toista tallennettu TV-ohjelma</value>
+	</string>
+	<string>
+		<id>656</id>
+		<value>Poista tallennettu TV-ohjelma</value>
+	</string>
+	<string>
+		<id>657</id>
+		<value>ma</value>
+	</string>
+	<string>
+		<id>658</id>
+		<value>ti</value>
+	</string>
+	<string>
+		<id>659</id>
+		<value>ke</value>
+	</string>
+	<string>
+		<id>660</id>
+		<value>to</value>
+	</string>
+	<string>
+		<id>661</id>
+		<value>pe</value>
+	</string>
+	<string>
+		<id>662</id>
+		<value>la</value>
+	</string>
+	<string>
+		<id>663</id>
+		<value>su</value>
+	</string>
+	<string>
+		<id>664</id>
+		<value>Poista tämä kuva?</value>
+	</string>
+	<string>
+		<id>665</id>
+		<value>Radio</value>
+	</string>
+	<string>
+		<id>666</id>
+		<value>Radioasema</value>
+	</string>
+	<string>
+		<id>667</id>
+		<value>Automaattinen viritys</value>
+	</string>
+	<string>
+		<id>668</id>
+		<value>Järjestä: Tyyppi</value>
+	</string>
+	<string>
+		<id>669</id>
+		<value>Järjestä: Genre</value>
+	</string>
+	<string>
+		<id>670</id>
+		<value>Järjestä: Bitrate</value>
+	</string>
+	<string>
+		<id>671</id>
+		<value>Järjestä: Katsotut</value>
+	</string>
+	<string>
+		<id>672</id>
+		<value>Tallenna MA-PE</value>
+	</string>
+	<string>
+		<id>673</id>
+		<value>Vieritys nopeus</value>
+	</string>
+	<string>
+		<id>674</id>
+		<value>GUI asetukset</value>
+	</string>
+	<string>
+		<id>675</id>
+		<value>Esimerkki:</value>
+	</string>
+	<string>
+		<id>676</id>
+		<value>Poista katsotut tallennukset?</value>
+	</string>
+	<string>
+		<id>677</id>
+		<value>Kertaa</value>
+	</string>
+	<string>
+		<id>678</id>
+		<value>Järjestä: Genre</value>
+	</string>
+	<string>
+		<id>679</id>
+		<value>Viikottain</value>
+	</string>
+	<string>
+		<id>680</id>
+		<value>ma-pe</value>
+	</string>
+	<string>
+		<id>681</id>
+		<value>Odotan</value>
+	</string>
+	<string>
+		<id>682</id>
+		<value>Tallentaa</value>
+	</string>
+	<string>
+		<id>683</id>
+		<value>Valmis</value>
+	</string>
+	<string>
+		<id>684</id>
+		<value>Peruutettu</value>
+	</string>
+	<string>
+		<id>685</id>
+		<value>Järjestä: Tila</value>
+	</string>
+	<string>
+		<id>686</id>
+		<value>Syntynyt</value>
+	</string>
+	<string>
+		<id>687</id>
+		<value>Aktiivi vuodet</value>
+	</string>
+	<string>
+		<id>688</id>
+		<value>Instrumentit</value>
+	</string>
+	<string>
+		<id>689</id>
+		<value>Biografia</value>
+	</string>
+	<string>
+		<id>690</id>
+		<value>Diskografia (Albumit)</value>
+	</string>
+	<string>
+		<id>691</id>
+		<value>Diskografia (kokoelmat, boxit)</value>
+	</string>
+	<string>
+		<id>700</id>
+		<value>Diskografia (ept, singlet)</value>
+	</string>
+	<string>
+		<id>701</id>
+		<value>Diskografia (bootlegit, videot, haastattelut)</value>
+	</string>
+	<string>
+		<id>702</id>
+		<value>Artistia ei löytynyt</value>
+	</string>
+	<string>
+		<id>703</id>
+		<value>Ei internet yhteyttä!</value>
+	</string>
+	<string>
+		<id>704</id>
+		<value>Yritä uudelleen</value>
+	</string>
+	<string>
+		<id>705</id>
+		<value>Haetaan RSS:ta</value>
+	</string>
+	<string>
+		<id>706</id>
+		<value>Valitse</value>
+	</string>
+	<string>
+		<id>707</id>
+		<value>TV päälle</value>
+	</string>
+	<string>
+		<id>708</id>
+		<value>Ajansiirto</value>
+	</string>
+	<string>
+		<id>709</id>
+		<value>Automaattinen päivitys</value>
+	</string>
+	<string>
+		<id>710</id>
+		<value>Uusi versio saatavilla</value>
+	</string>
+	<string>
+		<id>711</id>
+		<value>Päivitä v#old -&gt;v#new ?</value>
+	</string>
+	<string>
+		<id>712</id>
+		<value>Takaisin</value>
+	</string>
+	<string>
+		<id>713</id>
+		<value>Autoplay</value>
+	</string>
+	<string>
+		<id>714</id>
+		<value>Uusi levy, haluatko soittaa sen?</value>
+	</string>
+	<string>
+		<id>715</id>
+		<value>Uusi CD, haluatko soittaa sen?</value>
+	</string>
+	<string>
+		<id>716</id>
+		<value>Satelliitti</value>
+	</string>
+	<string>
+		<id>717</id>
+		<value>Sää</value>
+	</string>
+	<string>
+		<id>718</id>
+		<value>Tyhjennä top 100</value>
+	</string>
+	<string>
+		<id>719</id>
+		<value>Haluatko varmasti tyhjentää top 100-listan</value>
+	</string>
+	<string>
+		<id>720</id>
+		<value>Näytä: kesto</value>
+	</string>
+	<string>
+		<id>721</id>
+		<value>Näytä: soittokerrat</value>
+	</string>
+	<string>
+		<id>722</id>
+		<value>Levyn soitto epäonnistui</value>
+	</string>
+	<string>
+		<id>723</id>
+		<value>Asetitko levyn?</value>
+	</string>
+	<string>
+		<id>724</id>
+		<value>Etsi TV-oppaasta</value>
+	</string>
+	<string>
+		<id>725</id>
+		<value>Genret</value>
+	</string>
+	<string>
+		<id>726</id>
+		<value>Otsikko</value>
+	</string>
+	<string>
+		<id>727</id>
+		<value>TV kuva taustalle</value>
+	</string>
+	<string>
+		<id>728</id>
+		<value>Käynnistys epäonnistui</value>
+	</string>
+	<string>
+		<id>729</id>
+		<value>Tarkista käytätkö VMR9:ää sekä käynnistä toisto</value>
+	</string>
+	<string>
+		<id>730</id>
+		<value>Tämä tallennus on ajastettu. Jos poistat ajastuksen</value>
+	</string>
+	<string>
+		<id>731</id>
+		<value>tallennus pysäytetään.</value>
+	</string>
+	<string>
+		<id>732</id>
+		<value>Oletko varma?</value>
+	</string>
+	<string>
+		<id>733</id>
+		<value>Näytä: Filminauha</value>
+	</string>
+	<string>
+		<id>734</id>
+		<value>Kuva:</value>
+	</string>
+	<string>
+		<id>735</id>
+		<value>Käännä</value>
+	</string>
+	<string>
+		<id>736</id>
+		<value>Tietoja ei saatavilla</value>
+	</string>
+	<string>
+		<id>737</id>
+		<value>Näytä: Satelliitti</value>
+	</string>
+	<string>
+		<id>738</id>
+		<value>Näytä: Lämpötila</value>
+	</string>
+	<string>
+		<id>739</id>
+		<value>Näytä: UV Indeksi</value>
+	</string>
+	<string>
+		<id>740</id>
+		<value>Näytä: Tuulet</value>
+	</string>
+	<string>
+		<id>741</id>
+		<value>Näytä: Kosteus</value>
+	</string>
+	<string>
+		<id>742</id>
+		<value>Näytä: Sademäärä</value>
+	</string>
+	<string>
+		<id>743</id>
+		<value>4 Päivän ennuste</value>
+	</string>
+	<string>
+		<id>744</id>
+		<value>Auringon nousu</value>
+	</string>
+	<string>
+		<id>745</id>
+		<value>Auringon lasku</value>
+	</string>
+	<string>
+		<id>746</id>
+		<value>Ylä</value>
+	</string>
+	<string>
+		<id>747</id>
+		<value>Ala</value>
+	</string>
+	<string>
+		<id>748</id>
+		<value>Sademäärä</value>
+	</string>
+	<string>
+		<id>750</id>
+		<value>Kuvat</value>
+	</string>
+	<string>
+		<id>751</id>
+		<value>Näytä kaikki artistin kappaleet</value>
+	</string>
+	<string>
+		<id>752</id>
+		<value>Tallennusta ei ole määritelty</value>
+	</string>
+	<string>
+		<id>753</id>
+		<value>Viritintä ei ole asennettu</value>
+	</string>
+	<string>
+		<id>754</id>
+		<value>Ohjelman tallentamiseen ei ole määritelty viritintä </value>
+	</string>
+	<string>
+		<id>755</id>
+		<value>Viritin ei vastaanota</value>
+	</string>
+	<string>
+		<id>756</id>
+		<value>Viritin ei voi vastaanottaa: {0}</value>
+	</string>
+	<string>
+		<id>757</id>
+		<value>Kaikki virittimet ovat varattuja</value>
+	</string>
+	<string>
+		<id>758</id>
+		<value>Viritin ei tallenna</value>
+	</string>
+	<string>
+		<id>759</id>
+		<value>Ajansiirron käynnistys epäonnistui</value>
+	</string>
+	<string>
+		<id>760</id>
+		<value>Ei vapaata viritintä ajansiirtoon</value>
+	</string>
+	<string>
+		<id>761</id>
+		<value>Ajansiirron pysäytys epäonnistui</value>
+	</string>
+	<string>
+		<id>762</id>
+		<value>TV käynnistys epäonnistui</value>
+	</string>
+	<string>
+		<id>763</id>
+		<value>Tallennin on varattu</value>
+	</string>
+	<string>
+		<id>764</id>
+		<value>Tallennin on taukotilassa</value>
+	</string>
+	<string>
+		<id>800</id>
+		<value>Alkaa kirjaimella</value>
+	</string>
+	<string>
+		<id>801</id>
+		<value>Sisältää</value>
+	</string>
+	<string>
+		<id>802</id>
+		<value>Päättyy kirjaimeen</value>
+	</string>
+	<string>
+		<id>803</id>
+		<value>On</value>
+	</string>
+	<string>
+		<id>804</id>
+		<value>Valmis</value>
+	</string>
+	<string>
+		<id>805</id>
+		<value>Tyhjennä</value>
+	</string>
+	<string>
+		<id>806</id>
+		<value>Otsikko</value>
+	</string>
+	<string>
+		<id>807</id>
+		<value>tuottaa</value>
+	</string>
+	<string>
+		<id>808</id>
+		<value>Ainesosat</value>
+	</string>
+	<string>
+		<id>809</id>
+		<value>Suunnat</value>
+	</string>
+	<string>
+		<id>810</id>
+		<value>Kortti</value>
+	</string>
+	<string>
+		<id>850</id>
+		<value>Hälytys</value>
+	</string>
+	<string>
+		<id>851</id>
+		<value>Soittolista</value>
+	</string>
+	<string>
+		<id>852</id>
+		<value>Hälytys päällä</value>
+	</string>
+	<string>
+		<id>853</id>
+		<value>Valitse soittolista</value>
+	</string>
+	<string>
+		<id>854</id>
+		<value>Päällä näinä päivinä</value>
+	</string>
+	<string>
+		<id>855</id>
+		<value>Hälytys aika</value>
+	</string>
+	<string>
+		<id>856</id>
+		<value>Uniajastin päällä</value>
+	</string>
+	<string>
+		<id>857</id>
+		<value>Torkku</value>
+	</string>
+	<string>
+		<id>858</id>
+		<value>Torkku aika</value>
+	</string>
+	<string>
+		<id>859</id>
+		<value>Väli aika</value>
+	</string>
+	<string>
+		<id>860</id>
+		<value>Äänenvoimakkuuden häivytys in/out</value>
+	</string>
+	<string>
+		<id>861</id>
+		<value>Yksityiskohdat</value>
+	</string>
+	<string>
+		<id>862</id>
+		<value>Radio</value>
+	</string>
+	<string>
+		<id>863</id>
+		<value>Tiedosto</value>
+	</string>
+	<string>
+		<id>864</id>
+		<value>Median tyyppi</value>
+	</string>
+	<string>
+		<id>865</id>
+		<value>Minuuttia sammutukseen:</value>
+	</string>
+	<string>
+		<id>866</id>
+		<value>Laske äänenvoimakkuutta ajan kuluessa</value>
+	</string>
+	<string>
+		<id>867</id>
+		<value>Sulje tietokone</value>
+	</string>
+	<string>
+		<id>868</id>
+		<value>Reset</value>
+	</string>
+	<string>
+		<id>869</id>
+		<value>Uusi hälytys</value>
+	</string>
+	<string>
+		<id>870</id>
+		<value>Toistuva</value>
+	</string>
+	<string>
+		<id>871</id>
+		<value>Herätä pc</value>
+	</string>
+	<string>
+		<id>872</id>
+		<value>Alkaa</value>
+	</string>
+	<string>
+		<id>873</id>
+		<value>TV sarja</value>
+	</string>
+	<string>
+		<id>874</id>
+		<value>Jakso</value>
+	</string>
+	<string>
+		<id>875</id>
+		<value>Nykyinen ohjelma</value>
+	</string>
+	<string>
+		<id>876</id>
+		<value>Manuaalinen keskeytys</value>
+	</string>
+	<string>
+		<id>877</id>
+		<value>Prioriteetit</value>
+	</string>
+	<string>
+		<id>878</id>
+		<value>Säilytystila</value>
+	</string>
+	<string>
+		<id>879</id>
+		<value>Ristiriita tallennuksessa</value>
+	</string>
+	<string>
+		<id>880</id>
+		<value>Tallennettava kanava:</value>
+	</string>
+	<string>
+		<id>881</id>
+		<value>Valitse keskeytettävä tallennus:</value>
+	</string>
+	<string>
+		<id>882</id>
+		<value>Laatuasetukset</value>
+	</string>
+	<string>
+		<id>883</id>
+		<value>Heikko</value>
+	</string>
+	<string>
+		<id>884</id>
+		<value>Kohtalainen</value>
+	</string>
+	<string>
+		<id>885</id>
+		<value>Korkea</value>
+	</string>
+	<string>
+		<id>886</id>
+		<value>Oletus</value>
+	</string>
+	<string>
+		<id>887</id>
+		<value>Säilytettävien jaksojen lukumäärä</value>
+	</string>
+	<string>
+		<id>888</id>
+		<value>Jaksojenhallinta</value>
+	</string>
+	<string>
+		<id>889</id>
+		<value>Kaikki jaksot</value>
+	</string>
+	<string>
+		<id>890</id>
+		<value>Soita CD</value>
+	</string>
+	<string>
+		<id>891</id>
+		<value>Valitse TV-kanava</value>
+	</string>
+	<string>
+		<id>892</id>
+		<value>Ristiriidat</value>
+	</string>
+	<string>
+		<id>893</id>
+		<value>Siirrettävä</value>
+	</string>
+	<string>
+		<id>894</id>
+		<value>Pakkaa TV tallenteet</value>
+	</string>
+	<string>
+		<id>895</id>
+		<value>Automaattinen pakkaus</value>
+	</string>
+	<string>
+		<id>896</id>
+		<value>Pakkaa</value>
+	</string>
+	<string>
+		<id>897</id>
+		<value>Asetukset</value>
+	</string>
+	<string>
+		<id>898</id>
+		<value>MPEG-2</value>
+	</string>
+	<string>
+		<id>899</id>
+		<value>WMV</value>
+	</string>
+	<string>
+		<id>900</id>
+		<value>Jatketaanko elokuvan katselua?</value>
+	</string>
+	<string>
+		<id>901</id>
+		<value>MSN Pikaviestin</value>
+	</string>
+	<string>
+		<id>902</id>
+		<value>Kontaktit</value>
+	</string>
+	<string>
+		<id>903</id>
+		<value>Yhdistä</value>
+	</string>
+	<string>
+		<id>904</id>
+		<value>Katkaise yhteys</value>
+	</string>
+	<string>
+		<id>905</id>
+		<value>Asetukset puuttuvat</value>
+	</string>
+	<string>
+		<id>906</id>
+		<value>Täytä sähköpostiasetukset</value>
+	</string>
+	<string>
+		<id>907</id>
+		<value>Ei voitu yhdistää MSN palveluun</value>
+	</string>
+	<string>
+		<id>908</id>
+		<value>kirjoittaa viestiä...</value>
+	</string>
+	<string>
+		<id>909</id>
+		<value>Yhdistää...</value>
+	</string>
+	<string>
+		<id>910</id>
+		<value>Kirjautuu...</value>
+	</string>
+	<string>
+		<id>911</id>
+		<value>Ei kanavia</value>
+	</string>
+	<string>
+		<id>912</id>
+		<value>Ei uusia uutisia</value>
+	</string>
+	<string>
+		<id>913</id>
+		<value>Lisäosat</value>
+	</string>
+	<string>
+		<id>914</id>
+		<value>Tallennukset</value>
+	</string>
+	<string>
+		<id>915</id>
+		<value>TV-kanavat</value>
+	</string>
+	<string>
+		<id>916</id>
+		<value>Etätiedosto</value>
+	</string>
+	<string>
+		<id>917</id>
+		<value>Tämä palvelu on etä kansiossa</value>
+	</string>
+	<string>
+		<id>918</id>
+		<value>Siirretäänkö tiedosto paikalliseen</value>
+	</string>
+	<string>
+		<id>919</id>
+		<value>Paikallinen jako?</value>
+	</string>
+	<string>
+		<id>920</id>
+		<value>Etätiedoston lataus epäonnistui</value>
+	</string>
+	<string>
+		<id>921</id>
+		<value>Tiedosto latautuu ...</value>
+	</string>
+	<string>
+		<id>922</id>
+		<value>Kuvaus</value>
+	</string>
+	<string>
+		<id>923</id>
+		<value>Näytä</value>
+	</string>
+	<string>
+		<id>924</id>
+		<value>Valikko</value>
+	</string>
+	<string>
+		<id>925</id>
+		<value>Poistetaanko elokuva?</value>
+	</string>
+	<string>
+		<id>926</id>
+		<value>Lisätään soittolistaan</value>
+	</string>
+	<string>
+		<id>927</id>
+		<value>Varoitus</value>
+	</string>
+	<string>
+		<id>928</id>
+		<value>Etsi kansikuva</value>
+	</string>
+	<string>
+		<id>929</id>
+		<value>Sulje valikko</value>
+	</string>
+	<string>
+		<id>930</id>
+		<value>Lisää suosikkeihin</value>
+	</string>
+	<string>
+		<id>931</id>
+		<value>Arvostelu</value>
+	</string>
+	<string>
+		<id>932</id>
+		<value>Suosikit</value>
+	</string>
+	<string>
+		<id>933</id>
+		<value>Poista suosikeista</value>
+	</string>
+	<string>
+		<id>934</id>
+		<value>Aseta arvostelu</value>
+	</string>
+	<string>
+		<id>935</id>
+		<value>Näytä: Arvostelu</value>
+	</string>
+	<string>
+		<id>936</id>
+		<value>Jatka kohdasta:</value>
+	</string>
+	<string>
+		<id>937</id>
+		<value>Tuo ohjelmatiedot</value>
+	</string>
+	<string>
+		<id>938</id>
+		<value>Katso tätä kanavaa</value>
+	</string>
+	<string>
+		<id>939</id>
+		<value>Vaihda tilaa</value>
+	</string>
+	<string>
+		<id>940</id>
+		<value>Asetukset</value>
+	</string>
+	<string>
+		<id>941</id>
+		<value>Vaihda kuvasuhdetta</value>
+	</string>
+	<string>
+		<id>942</id>
+		<value>Venytä</value>
+	</string>
+	<string>
+		<id>943</id>
+		<value>Normaali</value>
+	</string>
+	<string>
+		<id>944</id>
+		<value>Alkuperäinen</value>
+	</string>
+	<string>
+		<id>945</id>
+		<value>Letterbox</value>
+	</string>
+	<string>
+		<id>946</id>
+		<value>Pan and Scan</value>
+	</string>
+	<string>
+		<id>947</id>
+		<value>Zoom</value>
+	</string>
+	<string>
+		<id>948</id>
+		<value>Linjalla</value>
+	</string>
+	<string>
+		<id>949</id>
+		<value>Varattu</value>
+	</string>
+	<string>
+		<id>950</id>
+		<value>Palaan kohta</value>
+	</string>
+	<string>
+		<id>951</id>
+		<value>Poissa</value>
+	</string>
+	<string>
+		<id>952</id>
+		<value>Puhelin</value>
+	</string>
+	<string>
+		<id>953</id>
+		<value>Lounaalla</value>
+	</string>
+	<string>
+		<id>954</id>
+		<value>Piilotettu</value>
+	</string>
+	<string>
+		<id>955</id>
+		<value>Idle</value>
+	</string>
+	<string>
+		<id>956</id>
+		<value>Linjalla</value>
+	</string>
+	<string>
+		<id>957</id>
+		<value>MSN Pikaviestin</value>
+	</string>
+	<string>
+		<id>958</id>
+		<value>Keskustelee</value>
+	</string>
+	<string>
+		<id>959</id>
+		<value>on liittynyt keskusteluun</value>
+	</string>
+	<string>
+		<id>960</id>
+		<value>on poistunut keskustelusta</value>
+	</string>
+	<string>
+		<id>961</id>
+		<value>MSN tila</value>
+	</string>
+	<string>
+		<id>970</id>
+		<value>Edellinen ikkuna</value>
+	</string>
+	<string>
+		<id>971</id>
+		<value>Ryhmä</value>
+	</string>
+	<string>
+		<id>972</id>
+		<value>Kaikki kanavat</value>
+	</string>
+	<string>
+		<id>973</id>
+		<value>Maksimi FPS</value>
+	</string>
+	<string>
+		<id>974</id>
+		<value>Päävalikko</value>
+	</string>
+	<string>
+		<id>975</id>
+		<value>Edellinen kohtaus</value>
+	</string>
+	<string>
+		<id>976</id>
+		<value>Seuraava kohtaus</value>
+	</string>
+	<string>
+		<id>977</id>
+		<value>Ei vapaata korttia</value>
+	</string>
+	<string>
+		<id>978</id>
+		<value>jolla voi katsella tätä kanavaa.</value>
+	</string>
+	<string>
+		<id>979</id>
+		<value>Toista tallennus alusta</value>
+	</string>
+	<string>
+		<id>980</id>
+		<value>Siirry nykyhetkeen</value>
+	</string>
+	<string>
+		<id>981</id>
+		<value>Peruuta ohjelman tallennus</value>
+	</string>
+	<string>
+		<id>982</id>
+		<value>Poista tallennus</value>
+	</string>
+	<string>
+		<id>983</id>
+		<value>Soittolistat</value>
+	</string>
+	<string>
+		<id>984</id>
+		<value>Haetaan elokuvaa</value>
+	</string>
+	<string>
+		<id>985</id>
+		<value>Haetaan elokuvan tietoja</value>
+	</string>
+	<string>
+		<id>986</id>
+		<value>Haetaan näyttelijää</value>
+	</string>
+	<string>
+		<id>987</id>
+		<value>Vuosia</value>
+	</string>
+	<string>
+		<id>988</id>
+		<value>Laatu</value>
+	</string>
+	<string>
+		<id>989</id>
+		<value>Kuvaa sekuntissa</value>
+	</string>
+	<string>
+		<id>990</id>
+		<value>Bitrate</value>
+	</string>
+	<string>
+		<id>991</id>
+		<value>Prioriteetti</value>
+	</string>
+	<string>
+		<id>992</id>
+		<value>Poista alkuperäinen tiedosto</value>
+	</string>
+	<string>
+		<id>993</id>
+		<value>Oma</value>
+	</string>
+	<string>
+		<id>994</id>
+		<value>Automaattinen pakkaus</value>
+	</string>
+	<string>
+		<id>995</id>
+		<value>Oletko varma että haluat</value>
+	</string>
+	<string>
+		<id>996</id>
+		<value>pakata valitut tallenteet?</value>
+	</string>
+	<string>
+		<id>997</id>
+		<value>Valmis</value>
+	</string>
+	<string>
+		<id>998</id>
+		<value>XviD</value>
+	</string>
+	<string>
+		<id>999</id>
+		<value>Tämän pluginin avulla voit muuntaa TV tallenteet</value>
+	</string>
+	<string>
+		<id>1000</id>
+		<value>DVR-MS-tiedostomuodosta MPG, XVID tai</value>
+	</string>
+	<string>
+		<id>1001</id>
+		<value>WMV -muotoon sinulla tulee olla</value>
+	</string>
+	<string>
+		<id>1002</id>
+		<value>elecard MPEG2 video decoderi asennettuna</value>
+	</string>
+	<string>
+		<id>1003</id>
+		<value>XVID muunnosta varten.</value>
+	</string>
+	<string>
+		<id>1004</id>
+		<value>Aloitetaan tallennus</value>
+	</string>
+	<string>
+		<id>1005</id>
+		<value>kanavalla</value>
+	</string>
+	<string>
+		<id>1006</id>
+		<value>Salli tallennuksen aloitus</value>
+	</string>
+	<string>
+		<id>1007</id>
+		<value>Peruuta tallennus ja jatka TV:n katsomista</value>
+	</string>
+	<string>
+		<id>1008</id>
+		<value>Jono</value>
+	</string>
+	<string>
+		<id>1009</id>
+		<value>Ladataan kansikuvaa</value>
+	</string>
+	<string>
+		<id>1010</id>
+		<value>Katsottu</value>
+	</string>
+	<string>
+		<id>1011</id>
+		<value>Biografia</value>
+	</string>
+	<string>
+		<id>1012</id>
+		<value>Tämän ohjelman keskellä on</value>
+	</string>
+	<string>
+		<id>1013</id>
+		<value>Haluatko tallentaa myös jälkimmäisen osan?</value>
+	</string>
+	<string>
+		<id>1014</id>
+		<value>Ilmoitus ohjelman alkaessa</value>
+	</string>
+	<string>
+		<id>1015</id>
+		<value>Ei ilmoitusta ohjelman alkaessa</value>
+	</string>
+	<string>
+		<id>1016</id>
+		<value>Ohjelma alkaa 5 minuutin päästä</value>
+	</string>
+	<string>
+		<id>1017</id>
+		<value>Järjestä: Kesto</value>
+	</string>
+	<string>
+		<id>1020</id>
+		<value>Tiedot</value>
+	</string>
+	<string>
+		<id>1021</id>
+		<value>Paina Alt+Enter</value>
+	</string>
+	<string>
+		<id>1022</id>
+		<value>palauttaaksesi ohjelman ikkuna näkymän</value>
+	</string>
+	<string>
+		<id>1023</id>
+		<value>saapuva puhelu</value>
+	</string>
+	<string>
+		<id>1024</id>
+		<value>,</value>
+	</string>
+	<string>
+		<id>1025</id>
+		<value>Tapahtui virhetilanne.</value>
+	</string>
+	<string>
+		<id>1026</id>
+		<value>Lisätietoja virheestä löydät lokitiedostosta.</value>
+	</string>
+	<string>
+		<id>1027</id>
+		<value>DVD</value>
+	</string>
+	<string>
+		<id>1028</id>
+		<value>Kaupunki</value>
+	</string>
+	<string>
+		<id>1029</id>
+		<value>Tekstitys kieli</value>
+	</string>
+	<string>
+		<id>1030</id>
+		<value>Sammuta</value>
+	</string>
+	<string>
+		<id>1031</id>
+		<value>Käynnistä uudelleen</value>
+	</string>
+	<string>
+		<id>1032</id>
+		<value>Siirry unitilaan</value>
+	</string>
+	<string>
+		<id>1033</id>
+		<value>Ohjelma tallennetaan nyt</value>
+	</string>
+	<string>
+		<id>1034</id>
+		<value>Ei signaalia!</value>
+	</string>
+	<string>
+		<id>1035</id>
+		<value>Salattu TV kanava!</value>
+	</string>
+	<string>
+		<id>1036</id>
+		<value>Tiedostoa ei löytynyt</value>
+	</string>
+	<string>
+		<id>1037</id>
+		<value>TV - Ohjelmatiedot</value>
+	</string>
+	<string>
+		<id>1038</id>
+		<value>Lisäasetukset</value>
+	</string>
+	<string>
+		<id>1039</id>
+		<value>Älä tallenna</value>
+	</string>
+	<string>
+		<id>1040</id>
+		<value>Huomauta</value>
+	</string>
+	<string>
+		<id>1041</id>
+		<value>Tulevat jaksot</value>
+	</string>
+	<string>
+		<id>1042</id>
+		<value>Säilytä asti</value>
+	</string>
+	<string>
+		<id>1043</id>
+		<value>kunnes katsottu</value>
+	</string>
+	<string>
+		<id>1044</id>
+		<value>kunnes tila loppuu</value>
+	</string>
+	<string>
+		<id>1045</id>
+		<value>saakka</value>
+	</string>
+	<string>
+		<id>1046</id>
+		<value>Aina</value>
+	</string>
+	<string>
+		<id>1047</id>
+		<value>Kokoruutu käynnistyessä</value>
+	</string>
+	<string>
+		<id>1048</id>
+		<value>Asetukset</value>
+	</string>
+	<string>
+		<id>1049</id>
+		<value>Unitila</value>
+	</string>
+	<string>
+		<id>1050</id>
+		<value>La -Su</value>
+	</string>
+	<string>
+		<id>1051</id>
+		<value>Tallenna La -Su</value>
+	</string>
+	<string>
+		<id>1052</id>
+		<value>Kappaleet</value>
+	</string>
+	<string>
+		<id>1100</id>
+		<value>Tuo CD</value>
+	</string>
+	<string>
+		<id>1101</id>
+		<value>Tuo valittu kappale</value>
+	</string>
+	<string>
+		<id>1102</id>
+		<value>Peruuta CD:n tuonti</value>
+	</string>
+	<string>
+		<id>1103</id>
+		<value>Tuon kappaletta</value>
+	</string>
+	<string>
+		<id>1104</id>
+		<value>vasen</value>
+	</string>
+	<string>
+		<id>1105</id>
+		<value>Tuon kappaleita</value>
+	</string>
+	<string>
+		<id>1440</id>
+		<value>Teksti-tv</value>
+	</string>
+	<string>
+		<id>1441</id>
+		<value>Teksti-tv</value>
+	</string>
+	<string>
+		<id>1442</id>
+		<value>Vieritysnopeus (vaaka)</value>
+	</string>
+	<string>
+		<id>1443</id>
+		<value>Vieritysnopeus (pysty)</value>
+	</string>
+	<string>
+		<id>1444</id>
+		<value>Ennakko</value>
+	</string>
+	<string>
+		<id>1445</id>
+		<value>Ylimäärä</value>
+	</string>
+	<string>
+		<id>1446</id>
+		<value>Tallennus aloitettu:</value>
+	</string>
+	<string>
+		<id>1447</id>
+		<value>Tallennus lopetettu:</value>
+	</string>
+	<string>
+		<id>1448</id>
+		<value>Tyhjää valinnat</value>
+	</string>
+	<string>
+		<id>1449</id>
+		<value>Lopeta tallennus</value>
+	</string>
+	<string>
+		<id>1450</id>
+		<value>Hakuatko varmasti pysäyttää tallennuksen?</value>
+	</string>
+	<string>
+		<id>1950</id>
+		<value>Tila</value>
+	</string>
+	<string>
+		<id>1951</id>
+		<value>Kiintolevy</value>
+	</string>
+	<string>
+		<id>1952</id>
+		<value>Tuuletin</value>
+	</string>
+	<string>
+		<id>1953</id>
+		<value>Vapaa</value>
+	</string>
+	<string>
+		<id>1954</id>
+		<value>Lämpötila</value>
+	</string>
+	<string>
+		<id>1955</id>
+		<value>C</value>
+	</string>
+	<string>
+		<id>1956</id>
+		<value>Valitse hälytysääni</value>
+	</string>
+	<string>
+		<id>1957</id>
+		<value>Asetukset</value>
+	</string>
+	<string>
+		<id>1958</id>
+		<value>CPU käyttö</value>
+	</string>
+	<string>
+		<id>1959</id>
+		<value>Jännite</value>
+	</string>
+	<string>
+		<id>1960</id>
+		<value>Volttia</value>
+	</string>
+	<string>
+		<id>1961</id>
+		<value>Kellotaajuus</value>
+	</string>
+	<string>
+		<id>1962</id>
+		<value>Asetukset</value>
+	</string>
+	<string>
+		<id>1963</id>
+		<value>Tunnistimen yksityiskohdat</value>
+	</string>
+	<string>
+		<id>1964</id>
+		<value>Tunnistin hälytys</value>
+	</string>
+	<string>
+		<id>1965</id>
+		<value>Korkein arvo</value>
+	</string>
+	<string>
+		<id>1966</id>
+		<value>Matalin arvo</value>
+	</string>
+	<string>
+		<id>1967</id>
+		<value>Ylin hälytysraja</value>
+	</string>
+	<string>
+		<id>1968</id>
+		<value>Alin hälytysraja</value>
+	</string>
+	<string>
+		<id>1969</id>
+		<value>Testiääni</value>
+	</string>
+	<string>
+		<id>1970</id>
+		<value>Hälytysten väliaika (sekunttia)</value>
+	</string>
+	<string>
+		<id>1971</id>
+		<value>Sammuta hälytyksen jälkeen</value>
+	</string>
+	<string>
+		<id>1972</id>
+		<value>Yksityiskohdat</value>
+	</string>
+	<string>
+		<id>1973</id>
+		<value>,</value>
+	</string>
+	<string>
+		<id>1974</id>
+		<value>Muisti</value>
+	</string>
+	<string>
+		<id>1975</id>
+		<value>Seuraava</value>
+	</string>
+	<string>
+		<id>1976</id>
+		<value>kier/min</value>
+	</string>
+	<string>
+		<id>1977</id>
+		<value>Tiedostojärjestelmä</value>
+	</string>
+	<string>
+		<id>1978</id>
+		<value>Virtuaalimuisti</value>
+	</string>
+	<string>
+		<id>2005</id>
+		<value>Poista</value>
+	</string>
+	<string>
+		<id>2006</id>
+		<value>Otsikko</value>
+	</string>
+	<string>
+		<id>2007</id>
+		<value>Lisää</value>
+	</string>
+	<string>
+		<id>2008</id>
+		<value>Aineosat</value>
+	</string>
+	<string>
+		<id>2009</id>
+		<value>Suunnat</value>
+	</string>
+	<string>
+		<id>2010</id>
+		<value>Kortti</value>
+	</string>
+	<string>
+		<id>2011</id>
+		<value>Tulosta</value>
+	</string>
+	<string>
+		<id>2012</id>
+		<value>Poista</value>
+	</string>
+	<string>
+		<id>2013</id>
+		<value>Suosikit</value>
+	</string>
+	<string>
+		<id>2014</id>
+		<value>Tuntematon</value>
+	</string>
+	<string>
+		<id>2015</id>
+		<value>Syöjää kohti</value>
+	</string>
+	<string>
+		<id>2016</id>
+		<value>pieni</value>
+	</string>
+	<string>
+		<id>2017</id>
+		<value>nesteunssi</value>
+	</string>
+	<string>
+		<id>2018</id>
+		<value>kuppi</value>
+	</string>
+	<string>
+		<id>2019</id>
+		<value>pint</value>
+	</string>
+	<string>
+		<id>2020</id>
+		<value>keskikokoinen</value>
+	</string>
+	<string>
+		<id>2021</id>
+		<value>suuri</value>
+	</string>
+	<string>
+		<id>2022</id>
+		<value>kannu</value>
+	</string>
+	<string>
+		<id>2023</id>
+		<value>paketti</value>
+	</string>
+	<string>
+		<id>2024</id>
+		<value>hyppysellinen</value>
+	</string>
+	<string>
+		<id>2025</id>
+		<value>hieman</value>
+	</string>
+	<string>
+		<id>2026</id>
+		<value>vadillinen</value>
+	</string>
+	<string>
+		<id>2027</id>
+		<value>tölkki</value>
+	</string>
+	<string>
+		<id>2028</id>
+		<value>muutama</value>
+	</string>
+	<string>
+		<id>2029</id>
+		<value>viipale</value>
+	</string>
+	<string>
+		<id>2030</id>
+		<value>kutakin</value>
+	</string>
+	<string>
+		<id>2031</id>
+		<value>teelusikka</value>
+	</string>
+	<string>
+		<id>2032</id>
+		<value>teelusikka</value>
+	</string>
+	<string>
+		<id>2033</id>
+		<value>ruokalusikka</value>
+	</string>
+	<string>
+		<id>2034</id>
+		<value>ruokalusikka</value>
+	</string>
+	<string>
+		<id>2035</id>
+		<value>quart</value>
+	</string>
+	<string>
+		<id>2036</id>
+		<value>gallona</value>
+	</string>
+	<string>
+		<id>2037</id>
+		<value>unssi</value>
+	</string>
+	<string>
+		<id>2038</id>
+		<value>pound</value>
+	</string>
+	<string>
+		<id>2039</id>
+		<value>millilitra</value>
+	</string>
+	<string>
+		<id>2040</id>
+		<value>millilitra</value>
+	</string>
+	<string>
+		<id>2041</id>
+		<value>senttilitra</value>
+	</string>
+	<string>
+		<id>2042</id>
+		<value>desilitra</value>
+	</string>
+	<string>
+		<id>2043</id>
+		<value>litra</value>
+	</string>
+	<string>
+		<id>2044</id>
+		<value>milligramma</value>
+	</string>
+	<string>
+		<id>2045</id>
+		<value>senttigramma</value>
+	</string>
+	<string>
+		<id>2046</id>
+		<value>desigrammaa</value>
+	</string>
+	<string>
+		<id>2047</id>
+		<value>gramma</value>
+	</string>
+	<string>
+		<id>2048</id>
+		<value>kilogramma</value>
+	</string>
+	<string>
+		<id>2049</id>
+		<value>Poistetaanko resepti?</value>
+	</string>
+	<string>
+		<id>2050</id>
+		<value>Poistetaanko luokka?</value>
+	</string>
+	<string>
+		<id>2051</id>
+		<value>Etsi otsikoista</value>
+	</string>
+	<string>
+		<id>2052</id>
+		<value>Etsi reseptistä</value>
+	</string>
+	<string>
+		<id>2053</id>
+		<value>Luokka</value>
+	</string>
+	<string>
+		<id>2054</id>
+		<value>Ei tietoja!</value>
+	</string>
+	<string>
+		<id>2100</id>
+		<value>Polta</value>
+	</string>
+	<string>
+		<id>2101</id>
+		<value>Kopioi CD/DVD</value>
+	</string>
+	<string>
+		<id>2102</id>
+		<value>Luo CD</value>
+	</string>
+	<string>
+		<id>2103</id>
+		<value>Luo video-CD</value>
+	</string>
+	<string>
+		<id>2104</id>
+		<value>Luo DVD</value>
+	</string>
+	<string>
+		<id>2105</id>
+		<value>Luo data-CD</value>
+	</string>
+	<string>
+		<id>2106</id>
+		<value>Luo data-DVD</value>
+	</string>
+	<string>
+		<id>2107</id>
+		<value>Aloita kopiointi</value>
+	</string>
+	<string>
+		<id>2108</id>
+		<value>Aseta tyhjä CD/DVD</value>
+	</string>
+	<string>
+		<id>2109</id>
+		<value>ja paina OK</value>
+	</string>
+	<string>
+		<id>2110</id>
+		<value>Aseta alkuperäinen CD/DVD</value>
+	</string>
+	<string>
+		<id>2111</id>
+		<value>Valmis</value>
+	</string>
+	<string>
+		<id>2112</id>
+		<value>Odottaa CD/DVD:tä</value>
+	</string>
+	<string>
+		<id>2113</id>
+		<value>Kopioi kaikki</value>
+	</string>
+	<string>
+		<id>2114</id>
+		<value>Tyhjennä levy</value>
+	</string>
+	<string>
+		<id>2115</id>
+		<value>Aseta CD/DVD RW</value>
+	</string>
+	<string>
+		<id>2116</id>
+		<value>Asema ei ole valmis</value>
+	</string>
+	<string>
+		<id>2117</id>
+		<value>Vakava virhe!</value>
+	</string>
+	<string>
+		<id>2118</id>
+		<value>Muunna DVR-MS</value>
+	</string>
+	<string>
+		<id>2119</id>
+		<value>Aloita muunnos</value>
+	</string>
+	<string>
+		<id>2120</id>
+		<value>Muunnan tiedostoja ...</value>
+	</string>
+	<string>
+		<id>2121</id>
+		<value>Ei voitu muuntaa!</value>
+	</string>
+	<string>
+		<id>2122</id>
+		<value>Alkaa</value>
+	</string>
+	<string>
+		<id>2123</id>
+		<value>Levyn tiedot</value>
+	</string>
+	<string>
+		<id>2124</id>
+		<value>Ei voi tyhjentää. Media ei ole R/W tyyppinen</value>
+	</string>
+	<string>
+		<id>2125</id>
+		<value>Tyhjentää levyn....</value>
+	</string>
+	<string>
+		<id>2126</id>
+		<value>Poista CD</value>
+	</string>
+	<string>
+		<id>2127</id>
+		<value>CD:lle ei voi kirjoittaa</value>
+	</string>
+	<string>
+		<id>2128</id>
+		<value>Valmistautuu polttoon: arvioitu aika:</value>
+	</string>
+	<string>
+		<id>2129</id>
+		<value>Valmistautuu polttoon</value>
+	</string>
+	<string>
+		<id>2130</id>
+		<value>Lohko</value>
+	</string>
+	<string>
+		<id>2131</id>
+		<value>,</value>
+	</string>
+	<string>
+		<id>2132</id>
+		<value>Viimeistellään levyä, arvioitu aika:</value>
+	</string>
+	<string>
+		<id>2133</id>
+		<value>Tallennetut</value>
+	</string>
+	<string>
+		<id>2134</id>
+		<value>Video</value>
+	</string>
+	<string>
+		<id>2135</id>
+		<value>Audio</value>
+	</string>
+	<string>
+		<id>2136</id>
+		<value>Data</value>
+	</string>
+	<string>
+		<id>2137</id>
+		<value>Muunna</value>
+	</string>
+	<string>
+		<id>2138</id>
+		<value>Leikkaa</value>
+	</string>
+	<string>
+		<id>2139</id>
+		<value>Luo MP3-CD</value>
+	</string>
+	<string>
+		<id>2140</id>
+		<value>Luo MP3-DVD</value>
+	</string>
+	<string>
+		<id>2141</id>
+		<value>MPEG2 -&gt;DivX</value>
+	</string>
+	<string>
+		<id>2142</id>
+		<value>MPEG2 -&gt;MPEG4</value>
+	</string>
+	<string>
+		<id>2143</id>
+		<value>Etusivu</value>
+	</string>
+	<string>
+		<id>2200</id>
+		<value>Tiedostonhallinta</value>
+	</string>
+	<string>
+		<id>2201</id>
+		<value>Valitse lähde</value>
+	</string>
+	<string>
+		<id>2202</id>
+		<value>Valitse kohde</value>
+	</string>
+	<string>
+		<id>2203</id>
+		<value>Kopioi tiedot</value>
+	</string>
+	<string>
+		<id>2204</id>
+		<value>Luo kansio</value>
+	</string>
+	<string>
+		<id>2205</id>
+		<value>Palauta valinnat</value>
+	</string>
+	<string>
+		<id>2206</id>
+		<value>Valitse kaikki</value>
+	</string>
+	<string>
+		<id>2207</id>
+		<value>Haluatko</value>
+	</string>
+	<string>
+		<id>2208</id>
+		<value>luoda kansion?</value>
+	</string>
+	<string>
+		<id>2209</id>
+		<value>Haluatko kopioida tiedostot?</value>
+	</string>
+	<string>
+		<id>2210</id>
+		<value>Tiedostojen kopiointi valmis</value>
+	</string>
+	<string>
+		<id>2211</id>
+		<value>Odota, tiedostoja kopioidaan.</value>
+	</string>
+	<string>
+		<id>2212</id>
+		<value>Poista</value>
+	</string>
+	<string>
+		<id>2213</id>
+		<value>Siirrä</value>
+	</string>
+	<string>
+		<id>2214</id>
+		<value>Haluatko siirtää tiedostot</value>
+	</string>
+	<string>
+		<id>2215</id>
+		<value>Odota, tiedostoja siirretään.</value>
+	</string>
+	<string>
+		<id>2216</id>
+		<value>Tiedostot siirretty</value>
+	</string>
+	<string>
+		<id>2217</id>
+		<value>Kohde tiedosto olemassa!</value>
+	</string>
+	<string>
+		<id>2218</id>
+		<value>Ylikirjoita tiedosto?</value>
+	</string>
+	<string>
+		<id>2219</id>
+		<value>Valitusta asemasta ei voi siirtää!</value>
+	</string>
+	<string>
+		<id>2220</id>
+		<value>Kopioidaanko valittu tiedosto?</value>
+	</string>
+	<string>
+		<id>2221</id>
+		<value>Poistetaanko valitut tiedostot?</value>
+	</string>
+	<string>
+		<id>2222</id>
+		<value>Tiedostot poistettu!</value>
+	</string>
+	<string>
+		<id>2223</id>
+		<value>Roskakori</value>
+	</string>
+	<string>
+		<id>2224</id>
+		<value>Kansio on olemassa!</value>
+	</string>
+	<string>
+		<id>2225</id>
+		<value>Kansio luotu</value>
+	</string>
+	<string>
+		<id>3000</id>
+		<value>Ohjelma valinnat</value>
+	</string>
+	<string>
+		<id>3001</id>
+		<value>Tunti</value>
+	</string>
+	<string>
+		<id>3002</id>
+		<value>Tuntia</value>
+	</string>
+	<string>
+		<id>3003</id>
+		<value>Minuutti</value>
+	</string>
+	<string>
+		<id>3004</id>
+		<value>Minuuttia</value>
+	</string>
+	<string>
+		<id>3005</id>
+		<value>Tunti sitten</value>
+	</string>
+	<string>
+		<id>3006</id>
+		<value>Tuntia sitten</value>
+	</string>
+	<string>
+		<id>3007</id>
+		<value>Minuutti sitten</value>
+	</string>
+	<string>
+		<id>3008</id>
+		<value>Minuuttia sitten</value>
+	</string>
+	<string>
+		<id>3009</id>
+		<value>Alkaa</value>
+	</string>
+	<string>
+		<id>3010</id>
+		<value>Minuuttia jäljellä</value>
+	</string>
+	<string>
+		<id>3011</id>
+		<value>Tunti jäljellä</value>
+	</string>
+	<string>
+		<id>3012</id>
+		<value>Tuntia jäljellä</value>
+	</string>
+	<string>
+		<id>3013</id>
+		<value>Alkaa nyt</value>
+	</string>
+	<string>
+		<id>3014</id>
+		<value>Päivä</value>
+	</string>
+	<string>
+		<id>3015</id>
+		<value>Päiviä</value>
+	</string>
+	<string>
+		<id>3016</id>
+		<value>Loppunut</value>
+	</string>
+	<string>
+		<id>3017</id>
+		<value>Aloitettu</value>
+	</string>
+	<string>
+		<id>3018</id>
+		<value>Minuutti jäljellä</value>
+	</string>
+	<string>
+		<id>3019</id>
+		<value>Sarja</value>
+	</string>
+	<string>
+		<id>3020</id>
+		<value>Jakso</value>
+	</string>
+	<string>
+		<id>3021</id>
+		<value>Osa</value>
+	</string>
+	<string>
+		<id>3022</id>
+		<value>,</value>
+	</string>
+	<string>
+		<id>5900</id>
+		<value>Trailerit</value>
+	</string>
+	<string>
+		<id>5901</id>
+		<value>Näytä elokuvat</value>
+	</string>
+	<string>
+		<id>5902</id>
+		<value>Mitkä elokuvat näytetään?</value>
+	</string>
+	<string>
+		<id>5903</id>
+		<value>Viimeksi lisätyt elokuvat</value>
+	</string>
+	<string>
+		<id>5904</id>
+		<value>Eniten katsotut elokuvat</value>
+	</string>
+	<string>
+		<id>5905</id>
+		<value>Kaikki elokuvat</value>
+	</string>
+	<string>
+		<id>5906</id>
+		<value>Trailerit</value>
+	</string>
+	<string>
+		<id>5907</id>
+		<value>Leike</value>
+	</string>
+	<string>
+		<id>5908</id>
+		<value>Lisää</value>
+	</string>
+	<string>
+		<id>5909</id>
+		<value>Trailerin haku epäonnistui!</value>
+	</string>
+	<string>
+		<id>5910</id>
+		<value>Ladataan elokuvan tietoja</value>
+	</string>
+	<string>
+		<id>5911</id>
+		<value>Uutuus elokuvateattereissa</value>
+	</string>
+	<string>
+		<id>5912</id>
+		<value>Edellinen viikko</value>
+	</string>
+	<string>
+		<id>5913</id>
+		<value>Kuluva viikko</value>
+	</string>
+	<string>
+		<id>5914</id>
+		<value>Seuraava viikko</value>
+	</string>
+	<string>
+		<id>5915</id>
+		<value>Ei elokuva-arvosteluja vielä saatavilla</value>
+	</string>
+	<string>
+		<id>5916</id>
+		<value>Ei traileria saatavilla.</value>
+	</string>
+	<string>
+		<id>5917</id>
+		<value>Saksalaiset trailerit</value>
+	</string>
+	<string>
+		<id>5918</id>
+		<value>Video On Demand (Sveitsin TV)</value>
+	</string>
+	<string>
+		<id>5919</id>
+		<value>Lippukassa</value>
+	</string>
+	<string>
+		<id>5920</id>
+		<value>Uutuudet tällä viikolla</value>
+	</string>
+	<string>
+		<id>5921</id>
+		<value>Tulossa olevat</value>
+	</string>
+	<string>
+		<id>5922</id>
+		<value>Myydyimmät DVD:t</value>
+	</string>
+	<string>
+		<id>5923</id>
+		<value>Tämän viikon DVD uutuudet</value>
+	</string>
+	<string>
+		<id>5924</id>
+		<value>Ensi viikon DVD uutuudet</value>
+	</string>
+	<string>
+		<id>5925</id>
+		<value>DVD esitilaus</value>
+	</string>
+	<string>
+		<id>8000</id>
+		<value>Sähköposti</value>
+	</string>
+	<string>
+		<id>8001</id>
+		<value>Tarkista postilaatikko</value>
+	</string>
+	<string>
+		<id>8002</id>
+		<value>Automaattitarkistus pois päältä</value>
+	</string>
+	<string>
+		<id>8003</id>
+		<value>Automaattitarkistus päälle</value>
+	</string>
+	<string>
+		<id>8004</id>
+		<value>Uusia viestejä</value>
+	</string>
+	<string>
+		<id>8005</id>
+		<value>Luetaan postilaatikkoa</value>
+	</string>
+	<string>
+		<id>8007</id>
+		<value>Automaattitarkistus päällä</value>
+	</string>
+	<string>
+		<id>8008</id>
+		<value>Takaisin</value>
+	</string>
+	<string>
+		<id>8009</id>
+		<value>Merkitse kaikki lukemattomiksi</value>
+	</string>
+	<string>
+		<id>8010</id>
+		<value>Sähköpostilaatikkoa ei määriteltynä</value>
+	</string>
+	<string>
+		<id>8011</id>
+		<value>Määritä asetuksista ainakin</value>
+	</string>
+	<string>
+		<id>8012</id>
+		<value>yksi postilaatikko käytettäväksi Mail-Pluginin kanssa.</value>
+	</string>
+	<string>
+		<id>8013</id>
+		<value>Palvelin ei vastaa</value>
+	</string>
+	<string>
+		<id>8014</id>
+		<value>Palvelin&apos;{0}&apos;ei vastaa!</value>
+	</string>
+	<string>
+		<id>8015</id>
+		<value>Tarkista sähköpostilaatikon asetukset&apos;{0}&apos;</value>
+	</string>
+	<string>
+		<id>8016</id>
+		<value>Lähettäjä</value>
+	</string>
+	<string>
+		<id>8017</id>
+		<value>Vastaanottaja</value>
+	</string>
+	<string>
+		<id>8018</id>
+		<value>Otsikko</value>
+	</string>
+	<string>
+		<id>8019</id>
+		<value>Viesti</value>
+	</string>
+	<string>
+		<id>8020</id>
+		<value>Näytä HTML</value>
+	</string>
+	<string>
+		<id>8021</id>
+		<value>Merkitse luetuksi</value>
+	</string>
+	<string>
+		<id>8022</id>
+		<value>Näytä liitteet</value>
+	</string>
+	<string>
+		<id>8023</id>
+		<value>Uusia viestejä</value>
+	</string>
+	<string>
+		<id>8024</id>
+		<value>Näytä viesti</value>
+	</string>
+	<string>
+		<id>8025</id>
+		<value>Avaan viestiä</value>
+	</string>
+	<string>
+		<id>8030</id>
+		<value>Yhdistetty palvelimeen</value>
+	</string>
+	<string>
+		<id>8031</id>
+		<value>Haen viestin numeroa</value>
+	</string>
+	<string>
+		<id>8033</id>
+		<value>Tilanne</value>
+	</string>
+	<string>
+		<id>8034</id>
+		<value>Näytä HTML</value>
+	</string>
+	<string>
+		<id>9000</id>
+		<value>Kuvan Mitat:</value>
+	</string>
+	<string>
+		<id>9001</id>
+		<value>Resoluutio:</value>
+	</string>
+	<string>
+		<id>9002</id>
+		<value>Salama:</value>
+	</string>
+	<string>
+		<id>9003</id>
+		<value>Mittaus asetus:</value>
+	</string>
+	<string>
+		<id>9004</id>
+		<value>Valotuksen korjaus:</value>
+	</string>
+	<string>
+		<id>9005</id>
+		<value>Sulkimen nopeus:</value>
+	</string>
+	<string>
+		<id>9006</id>
+		<value>Kuvattu:</value>
+	</string>
+	<string>
+		<id>9007</id>
+		<value>Aukko:</value>
+	</string>
+	<string>
+		<id>9008</id>
+		<value>Valotusaika:</value>
+	</string>
+	<string>
+		<id>9009</id>
+		<value>Kameran malli:</value>
+	</string>
+	<string>
+		<id>9010</id>
+		<value>Valmistaja:</value>
+	</string>
+	<string>
+		<id>9011</id>
+		<value>Kommentit:</value>
+	</string>
+	<string>
+		<id>99845</id>
+		<value>Etsi TV.com:sta</value>
+	</string>
+	<string>
+		<id>12902</id>
+		<value>MSN Messenger OSD</value>
+	</string>
+	<string>
+		<id>13000</id>
+		<value>Järjestelmä:</value>
+	</string>
+	<string>
+		<id>13001</id>
+		<value>Valmistaja:</value>
+	</string>
+	<string>
+		<id>13002</id>
+		<value>Käynnistä</value>
+	</string>
+	<string>
+		<id>13003</id>
+		<value>Avaa *.mlf tiedostoja</value>
+	</string>
+	<string>
+		<id>13004</id>
+		<value>Avaa *.my tiedostoja</value>
+	</string>
+	<string>
+		<id>13005</id>
+		<value>Vimeinen avattu tiedosto:</value>
+	</string>
+	<string>
+		<id>13006</id>
+		<value>Pieni kuva</value>
+	</string>
+	<string>
+		<id>13007</id>
+		<value>Iso kuva</value>
+	</string>
+	<string>
+		<id>13008</id>
+		<value>Ken Burns efekti</value>
+	</string>
+	<string>
+		<id>13009</id>
+		<value>Satunnainen siirtymä</value>
+	</string>
+	<string>
+		<id>13010</id>
+		<value>X-fade siirtymät</value>
+	</string>
+	<string>
+		<id>13011</id>
+		<value>Ken Burns nopeus</value>
+	</string>
+	<string>
+		<id>13012</id>
+		<value>Avataan kuvaa, odota hetkinen</value>
+	</string>
+	<string>
+		<id>13013</id>
+		<value>Avataan videota, odota hetkinen</value>
+	</string>
+	<string>
+		<id>13014</id>
+		<value>Haen kansiosta</value>
+	</string>
+	<string>
+		<id>13015</id>
+		<value>Tuon pelitietokantaa</value>
+	</string>
+	<string>
+		<id>13016</id>
+		<value>Järjestä: Käynnistyskerrat</value>
+	</string>
+	<string>
+		<id>13017</id>
+		<value>Järjestä: Viimeaikaiset</value>
+	</string>
+	<string>
+		<id>13018</id>
+		<value>Järjestä: Arvosana</value>
+	</string>
+	<string>
+		<id>16001</id>
+		<value>Jukeboxi</value>
+	</string>
+	<string>
+		<id>25001</id>
+		<value>Ladataan sivua {0:X}...!</value>
+	</string>
+	<string>
+		<id>19001</id>
+		<value>Tetris</value>
+	</string>
+	<string>
+		<id>19002</id>
+		<value>Uusi Peli</value>
+	</string>
+	<string>
+		<id>19003</id>
+		<value>Musiikki</value>
+	</string>
+	<string>
+		<id>19004</id>
+		<value>Äänet</value>
+	</string>
+	<string>
+		<id>19005</id>
+		<value>Tulos</value>
+	</string>
+	<string>
+		<id>19006</id>
+		<value>Taso</value>
+	</string>
+	<string>
+		<id>19007</id>
+		<value>Rivit</value>
+	</string>
+	<string>
+		<id>19008</id>
+		<value>Ennätys</value>
+	</string>
+	<string>
+		<id>19009</id>
+		<value>Seuraava</value>
+	</string>
+	<string>
+		<id>19010</id>
+		<value>Paina enter aloittaaksesi</value>
+	</string>
+	<string>
+		<id>19011</id>
+		<value>Tauko</value>
+	</string>
+	<string>
+		<id>19012</id>
+		<value>Peli loppu</value>
+	</string>
+	<string>
+		<id>19100</id>
+		<value>Geokello</value>
+	</string>
+	<string>
+		<id>100000</id>
+		<value>Home</value>
+	</string>
+	<string>
+		<id>100001</id>
+		<value>TV</value>
+	</string>
+	<string>
+		<id>100002</id>
+		<value>Kuvat</value>
+	</string>
+	<string>
+		<id>100003</id>
+		<value>Tiedostot</value>
+	</string>
+	<string>
+		<id>100004</id>
+		<value>Asetukset</value>
+	</string>
+	<string>
+		<id>100005</id>
+		<value>Musiikki</value>
+	</string>
+	<string>
+		<id>100006</id>
+		<value>Videot</value>
+	</string>
+	<string>
+		<id>100007</id>
+		<value>Järjestelmätiedot</value>
+	</string>
+	<string>
+		<id>100008</id>
+		<value>Asetukset-&gt;yleiset</value>
+	</string>
+	<string>
+		<id>100009</id>
+		<value>Asetukset-&gt;Näyttö</value>
+	</string>
+	<string>
+		<id>100010</id>
+		<value>Asetukset-&gt;Näyttö-&gt;KL Kalibrointi</value>
+	</string>
+	<string>
+		<id>100011</id>
+		<value>Asetukset-&gt;Näyttö-&gt;Kalibrointi</value>
+	</string>
+	<string>
+		<id>100012</id>
+		<value>Asetukset-&gt;diaesitys</value>
+	</string>
+	<string>
+		<id>100013</id>
+		<value>Asetukset-&gt;Näyttö-&gt;Suodattimet</value>
+	</string>
+	<string>
+		<id>100014</id>
+		<value>Asetukset-&gt;Musiikki</value>
+	</string>
+	<string>
+		<id>100015</id>
+		<value>Asetukset-&gt;Näyttö-&gt;Tekstitys</value>
+	</string>
+	<string>
+		<id>100016</id>
+		<value>Asetukset-&gt;Näyttö-&gt;Näytönsäästäjä</value>
+	</string>
+	<string>
+		<id>100017</id>
+		<value>Asetukset-&gt;Sää</value>
+	</string>
+	<string>
+		<id>100020</id>
+		<value>Asetukset-&gt;Scriptit</value>
+	</string>
+	<string>
+		<id>100021</id>
+		<value>Videot/genre</value>
+	</string>
+	<string>
+		<id>100022</id>
+		<value>Videot/näyttelijä</value>
+	</string>
+	<string>
+		<id>100023</id>
+		<value>Videot/vuosi</value>
+	</string>
+	<string>
+		<id>100024</id>
+		<value>Asetukset-&gt;Ohjelmat</value>
+	</string>
+	<string>
+		<id>100025</id>
+		<value>Videot/otsikko</value>
+	</string>
+	<string>
+		<id>100026</id>
+		<value>Asetukset-&gt;Yleiset-&gt;välimuisti</value>
+	</string>
+	<string>
+		<id>100027</id>
+		<value>Asetukset-&gt;Yleinen-&gt;Automaattinen toisto</value>
+	</string>
+	<string>
+		<id>100028</id>
+		<value>Videot/soittolista</value>
+	</string>
+	<string>
+		<id>100029</id>
+		<value>Asetukset-&gt;yleinen-&gt;LCD</value>
+	</string>
+	<string>
+		<id>100030</id>
+		<value>Radio</value>
+	</string>
+	<string>
+		<id>100031</id>
+		<value>Asetukset-&gt;Näyttö-&gt;vieritysnopeus</value>
+	</string>
+	<string>
+		<id>100032</id>
+		<value>MSN Pikaviestin</value>
+	</string>
+	<string>
+		<id>100033</id>
+		<value>MSN chat</value>
+	</string>
+	<string>
+		<id>100034</id>
+		<value>Lisäosat</value>
+	</string>
+	<string>
+		<id>100100</id>
+		<value>Kyllä/Ei dialogi</value>
+	</string>
+	<string>
+		<id>100101</id>
+		<value>Progress dialog</value>
+	</string>
+	<string>
+		<id>100500</id>
+		<value>Musiikki/soittolista</value>
+	</string>
+	<string>
+		<id>100501</id>
+		<value>Musiikki/tiedostot</value>
+	</string>
+	<string>
+		<id>100502</id>
+		<value>Musiikki/albumit</value>
+	</string>
+	<string>
+		<id>100503</id>
+		<value>Musiikki/artistit</value>
+	</string>
+	<string>
+		<id>100504</id>
+		<value>Musiikki/genret</value>
+	</string>
+	<string>
+		<id>100505</id>
+		<value>Musiikki/top 100</value>
+	</string>
+	<string>
+		<id>100506</id>
+		<value>Musiikki/suosikit</value>
+	</string>
+	<string>
+		<id>100600</id>
+		<value>TV opas</value>
+	</string>
+	<string>
+		<id>100601</id>
+		<value>TV ajastus</value>
+	</string>
+	<string>
+		<id>100602</id>
+		<value>TV kokoruutu</value>
+	</string>
+	<string>
+		<id>100603</id>
+		<value>TV tallennukset</value>
+	</string>
+	<string>
+		<id>100604</id>
+		<value>TV haku</value>
+	</string>
+	<string>
+		<id>100605</id>
+		<value>TV/tallennukset/Genre</value>
+	</string>
+	<string>
+		<id>100606</id>
+		<value>TV/tallennukset/kanavat</value>
+	</string>
+	<string>
+		<id>100607</id>
+		<value>TV/Ajastukset/Prioriteetti</value>
+	</string>
+	<string>
+		<id>100608</id>
+		<value>TV/Ajastukset/Ristiriidat</value>
+	</string>
+	<string>
+		<id>100609</id>
+		<value>TV/Pakkaus/Päävalikko</value>
+	</string>
+	<string>
+		<id>100610</id>
+		<value>TV/Pakkaus/Asetukset</value>
+	</string>
+	<string>
+		<id>100611</id>
+		<value>TV/Pakkaus/Auto</value>
+	</string>
+	<string>
+		<id>100612</id>
+		<value>TV/Pakkaus/Pakkaus</value>
+	</string>
+	<string>
+		<id>100613</id>
+		<value>TV/Pakkaus/Tila</value>
+	</string>
+	<string>
+		<id>100614</id>
+		<value>Video artisti tiedot</value>
+	</string>
+	<string>
+		<id>100615</id>
+		<value>Avustaja / Tervetuloa</value>
+	</string>
+	<string>
+		<id>100616</id>
+		<value>Avustaja / tunnistetut TV kortit</value>
+	</string>
+	<string>
+		<id>100617</id>
+		<value>Avustaja / Maaasetukset</value>
+	</string>
+	<string>
+		<id>100618</id>
+		<value>Avustaja / Kanavahaku</value>
+	</string>
+	<string>
+		<id>100619</id>
+		<value>Avustaja / DVBC / Maa asetukset</value>
+	</string>
+	<string>
+		<id>100620</id>
+		<value>Avustaja / DVBC / Kanavahaku</value>
+	</string>
+	<string>
+		<id>100621</id>
+		<value>Avustaja / DVBS/ LNB</value>
+	</string>
+	<string>
+		<id>100622</id>
+		<value>Avustaja / DVBS/ LNB yksityiskohdat</value>
+	</string>
+	<string>
+		<id>100623</id>
+		<value>Avustaja / DVBS/ Transponderi</value>
+	</string>
+	<string>
+		<id>100624</id>
+		<value>Avustaja / DVBS/ Kanavahaku</value>
+	</string>
+	<string>
+		<id>100625</id>
+		<value>Avustaja / ATSC/ Kanavahaku</value>
+	</string>
+	<string>
+		<id>100626</id>
+		<value>Avustaja / Analoginen / Maa-asetukset</value>
+	</string>
+	<string>
+		<id>100627</id>
+		<value>Avustaja / Analoginen / Kaupunki</value>
+	</string>
+	<string>
+		<id>100628</id>
+		<value>Avustaja / Analoginen / Tietojen tuonti</value>
+	</string>
+	<string>
+		<id>100629</id>
+		<value>Avustaja / Analoginen / Käsinsyöttö</value>
+	</string>
+	<string>
+		<id>100630</id>
+		<value>Avustaja / Analoginen / Kanavahaku</value>
+	</string>
+	<string>
+		<id>100631</id>
+		<value>Avustaja / Analoginen / Uudellen nimeä</value>
+	</string>
+	<string>
+		<id>100632</id>
+		<value>Avustaja / Analoginen / Radio</value>
+	</string>
+	<string>
+		<id>100633</id>
+		<value>Avustaja / Analoginen / Uudeleen nimeä radio</value>
+	</string>
+	<string>
+		<id>100634</id>
+		<value>Avustaja / Kauko ohjain</value>
+	</string>
+	<string>
+		<id>100635</id>
+		<value>Avustaja / Ohjelmatiedot EPG</value>
+	</string>
+	<string>
+		<id>100699</id>
+		<value>Avustaja / Valmis</value>
+	</string>
+	<string>
+		<id>100700</id>
+		<value>TV asetukset</value>
+	</string>
+	<string>
+		<id>100701</id>
+		<value>TV tallennuksen asetukset</value>
+	</string>
+	<string>
+		<id>100702</id>
+		<value>TV Kanavien järjestys</value>
+	</string>
+	<string>
+		<id>100703</id>
+		<value>TV Elokuvien asetukset</value>
+	</string>
+	<string>
+		<id>100704</id>
+		<value>DVD Asetukset</value>
+	</string>
+	<string>
+		<id>100705</id>
+		<value>Ulkoasu asetukset</value>
+	</string>
+	<string>
+		<id>100748</id>
+		<value>Ohjelma tiedot</value>
+	</string>
+	<string>
+		<id>100749</id>
+		<value>TV / Ei signaalia</value>
+	</string>
+	<string>
+		<id>100750</id>
+		<value>Reseptit</value>
+	</string>
+	<string>
+		<id>100755</id>
+		<value>Tila</value>
+	</string>
+	<string>
+		<id>100756</id>
+		<value>Tila yksityiskohdat</value>
+	</string>
+	<string>
+		<id>100757</id>
+		<value>Tila asetukset</value>
+	</string>
+	<string>
+		<id>100758</id>
+		<value>Tiedosto dialogi</value>
+	</string>
+	<string>
+		<id>100759</id>
+		<value>Talletetut TV tiedot</value>
+	</string>
+	<string>
+		<id>100760</id>
+		<value>CD/DVD Poltin</value>
+	</string>
+	<string>
+		<id>100770</id>
+		<value>Tiedostonhallinta</value>
+	</string>
+	<string>
+		<id>101000</id>
+		<value>näppäimistö</value>
+	</string>
+	<string>
+		<id>102000</id>
+		<value>Valitse dialogi</value>
+	</string>
+	<string>
+		<id>102001</id>
+		<value>Musiikki/info</value>
+	</string>
+	<string>
+		<id>102002</id>
+		<value>Dialogi OK</value>
+	</string>
+	<string>
+		<id>102003</id>
+		<value>Videot Info</value>
+	</string>
+	<string>
+		<id>102004</id>
+		<value>Scriptit Info</value>
+	</string>
+	<string>
+		<id>102005</id>
+		<value>Kokoruudun video</value>
+	</string>
+	<string>
+		<id>102006</id>
+		<value>Audio visusalisointi</value>
+	</string>
+	<string>
+		<id>102007</id>
+		<value>Kuvat / kuvaesitys</value>
+	</string>
+	<string>
+		<id>102008</id>
+		<value>Tiedostojen pinoamis dialogi</value>
+	</string>
+	<string>
+		<id>102009</id>
+		<value>Valinta dialogi</value>
+	</string>
+	<string>
+		<id>102010</id>
+		<value>Pvm / Aika</value>
+	</string>
+	<string>
+		<id>102011</id>
+		<value>Artisti tiedot</value>
+	</string>
+	<string>
+		<id>102012</id>
+		<value>Context menu</value>
+	</string>
+	<string>
+		<id>102013</id>
+		<value>Anna arvostelu</value>
+	</string>
+	<string>
+		<id>102014</id>
+		<value>Kuvan tiedot</value>
+	</string>
+	<string>
+		<id>102015</id>
+		<value>Valikko</value>
+	</string>
+	<string>
+		<id>102016</id>
+		<value>Ilmoitus</value>
+	</string>
+	<string>
+		<id>102600</id>
+		<value>Sää</value>
+	</string>
+	<string>
+		<id>102700</id>
+		<value>Uutiset</value>
+	</string>
+	<string>
+		<id>102900</id>
+		<value>Näytönsäästäjä</value>
+	</string>
+	<string>
+		<id>102901</id>
+		<value>Kokoruudun OSD</value>
+	</string>
+	<string>
+		<id>103003</id>
+		<value>TV/OSD</value>
+	</string>
+	<string>
+		<id>103006</id>
+		<value>TV/MSN OSD</value>
+	</string>
+	<string>
+		<id>103007</id>
+		<value>TV/Zap OSD</value>
+	</string>
+	<string>
+		<id>107700</id>
+		<value>TV/Teksti-TV</value>
+	</string>
+	<string>
+		<id>107701</id>
+		<value>TV/Teksti-TV</value>
+	</string>
+	<string>
+		<id>200000</id>
+		<value>Valitse ohjelmatietojen hakutapa. HUOM: Jos maata ei ole</value>
+	</string>
+	<string>
+		<id>200001</id>
+		<value>listalla joudut tuomaan ohjelma tiedot käsin.</value>
+	</string>
+	<string>
+		<id>200002</id>
+		<value>Yhdistä ohjelmatietojen kanavat TV kanaviin.</value>
+	</string>
+	<string>
+		<id>200003</id>
+		<value>Valitse kanava ja paina enter yhditääksesi kanavat.</value>
+	</string>
+	<string>
+		<id>200004</id>
+		<value>Anna polku tvguide.xml tiedostoon</value>
+	</string>
+	<string>
+		<id>200005</id>
+		<value>Valitse käyttämäsi kauko ohjain:</value>
+	</string>
+	<string>
+		<id>200006</id>
+		<value>Paina seuraava jatkaaksesi asennusta:</value>
+	</string>
+	<string>
+		<id>200007</id>
+		<value>&lt;Takaisin</value>
+	</string>
+	<string>
+		<id>200008</id>
+		<value>Asennus - Kauko ohjain</value>
+	</string>
+	<string>
+		<id>200009</id>
+		<value>Seuraava&gt;</value>
+	</string>
+	<string>
+		<id>200010</id>
+		<value>MediaPortal ohjelmiston avulla tietokoneestasi tulee edistynyt multimediakeskus / HTPC.</value>
+	</string>
+	<string>
+		<id>200011</id>
+		<value>Voit nauttia lempi musiikistasi ja radio lähetyksistä. Voit katsoa kiintolevylle, CD ja DVD levyille talletettuja videoita.</value>
+	</string>
+	<string>
+		<id>200012</id>
+		<value>Voit esitellä valokuvia, tallentaa tv lähetyksiä, selata web sivuja ja paljon muuta.</value>
+	</string>
+	<string>
+		<id>200013</id>
+		<value>Tämä avustaja auttaa sinua asentamaan MediaPortal ohjelmiston nopeasti ja helposti.</value>
+	</string>
+	<string>
+		<id>200014</id>
+		<value>Ole hyvä ja aloita valitsemalla kieli.</value>
+	</string>
+	<string>
+		<id>200015</id>
+		<value>Paina seuraava, jatkaaksesi.</value>
+	</string>
+	<string>
+		<id>200017</id>
+		<value>Tervetuloa MediaPortal ohjelmiston käyttäjäksi.</value>
+	</string>
+	<string>
+		<id>200018</id>
+		<value>Mediaportal on nyt asennettu ja on valmis käytettäväksi</value>
+	</string>
+	<string>
+		<id>200019</id>
+		<value>Paina Valmis lopettaksesi tämän avustajan</value>
+	</string>
+	<string>
+		<id>200020</id>
+		<value>Valmis</value>
+	</string>
+	<string>
+		<id>200021</id>
+		<value>TV asetukset - EPG</value>
+	</string>
+	<string>
+		<id>200022</id>
+		<value>MediaPortal on löytänyt nämä TV-kortit:</value>
+	</string>
+	<string>
+		<id>200023</id>
+		<value>Paina Seuraava TV-korttien asetusten muuttamiseksi</value>
+	</string>
+	<string>
+		<id>200024</id>
+		<value>TV asetukset</value>
+	</string>
+	<string>
+		<id>200025</id>
+		<value>Kieli</value>
+	</string>
+	<string>
+		<id>200026</id>
+		<value>Maa</value>
+	</string>
+	<string>
+		<id>200027</id>
+		<value>Asetukset</value>
+	</string>
+	<string>
+		<id>200028</id>
+		<value>Onko tietokoneessa Internet yhteys määriteltynä?</value>
+	</string>
+	<string>
+		<id>200029</id>
+		<value>Käytätkö mediaportal ohjelmistoa?</value>
+	</string>
+	<string>
+		<id>200030</id>
+		<value>Täysin MediaPortal ohjelmistolle varatussa tietokoneessa</value>
+	</string>
+	<string>
+		<id>200038</id>
+		<value>Yleiskäyttöisessä tietokoneessa yhdessä muiden ohjelmistojen kanssa</value>
+	</string>
+	<string>
+		<id>200031</id>
+		<value>Kyllä</value>
+	</string>
+	<string>
+		<id>200032</id>
+		<value>Ei</value>
+	</string>
+	<string>
+		<id>200033</id>
+		<value>Asetukset - Analoginen TV</value>
+	</string>
+	<string>
+		<id>200034</id>
+		<value>Valitse kaupunki listasta.</value>
+	</string>
+	<string>
+		<id>200035</id>
+		<value>HUOM: Jos kaupunkiasi ei ole merkitty. Tee viritys manuaalisesti.</value>
+	</string>
+	<string>
+		<id>200036</id>
+		<value>Manuaalinen viritys</value>
+	</string>
+	<string>
+		<id>200037</id>
+		<value>Ohita&gt;</value>
+	</string>
+	<string>
+		<id>4000</id>
+		<value>Web selain</value>
+	</string>
+	<string>
+		<id>4001</id>
+		<value>Suosikit</value>
+	</string>
+	<string>
+		<id>4002</id>
+		<value>URL haku epäonnistui</value>
+	</string>
+	<string>
+		<id>4003</id>
+		<value>Määritä suosikit kansion sijainti.</value>
+	</string>
+	<string>
+		<id>4500</id>
+		<value>Ohita albumit joilla on jo kansikuvat</value>
+	</string>
+	<string>
+		<id>4501</id>
+		<value>Tallenna kansikuva albumin kansioon</value>
+	</string>
+	<string>
+		<id>4502</id>
+		<value>Tallenna kansikuva minikuvat kansioon</value>
+	</string>
+	<string>
+		<id>4503</id>
+		<value>Lasketaan albumit. Hetkinen ...</value>
+	</string>
+	<string>
+		<id>4504</id>
+		<value>{0}% - {1} / {2}</value>
+	</string>
+	<string>
+		<id>4505</id>
+		<value>Haetaan {0} ...</value>
+	</string>
+	<string>
+		<id>4506</id>
+		<value>Tyhjä</value>
+	</string>
+	<string>
+		<id>4507</id>
+		<value>Kansikuvan haku keskeytetty</value>
+	</string>
+	<string>
+		<id>4508</id>
+		<value>Kansikuvan haku onnistui</value>
+	</string>
+	<string>
+		<id>4509</id>
+		<value>Kansikuvan haku keskeytyi virheeseen</value>
+	</string>
+	<string>
+		<id>4510</id>
+		<value>{0} kansikuvaa haettu</value>
+	</string>
+	<string>
+		<id>4511</id>
+		<value>Kansikuvien haku valmis</value>
+	</string>
+	<string>
+		<id>4512</id>
+		<value>Kaikki kansikuvat ajantasalla</value>
+	</string>
+	<string>
+		<id>4513</id>
+		<value>sekalaiset</value>
+	</string>
+	<string>
+		<id>4514</id>
+		<value>Kansikuvien haku</value>
+	</string>
+	<string>
+		<id>4515</id>
+		<value>Kansikuvien etsinnän tulokset</value>
+	</string>
+	<string>
+		<id>4516</id>
+		<value>Sopivaa kansikuvaa ei löytynyt</value>
+	</string>
+	<string>
+		<id>4517</id>
+		<value>Sulje</value>
+	</string>
+	<string>
+		<id>4518</id>
+		<value>Albumin nimeä ei löytynyt \r\n</value>
+	</string>
+	<string>
+		<id>4519</id>
+		<value>Tämänhetkinen kansikuva</value>
+	</string>
+	<string>
+		<id>4520</id>
+		<value>Ohita</value>
+	</string>
+	<string>
+		<id>4521</id>
+		<value>Näytä albumin tiedot</value>
+	</string>
+	<string>
+		<id>4522</id>
+		<value>Hakee: {0}</value>
+	</string>
+	<string>
+		<id>4540</id>
+		<value>Nyt soi</value>
+	</string>
+	<string>
+		<id>4541</id>
+		<value>Seuraavana</value>
+	</string>
+	<string>
+		<id>4542</id>
+		<value>Ei soittolistaa</value>
+	</string>
+	<string>
+		<id>4543</id>
+		<value>Raidan tietoja ei ole saatavilla</value>
+	</string>
+	<string>
+		<id>4550</id>
+		<value>Laita jonoon</value>
+	</string>
+	<string>
+		<id>4551</id>
+		<value>Soita seuraavaksi</value>
+	</string>
+	<string>
+		<id>4552</id>
+		<value>Soita nyt</value>
+	</string>
+	<string>
+		<id>4553</id>
+		<value>Näytä soittolista</value>
+	</string>
+	<string>
+		<id>4554</id>
+		<value>Hae CD:n tiedot</value>
+	</string>
+	<string>
+		<id>4555</id>
+		<value>Aktiivinen soittolista</value>
+	</string>
+	<string>
+		<id>10100</id>
+		<value>Miinaa piilossa</value>
+	</string>
+	<string>
+		<id>10101</id>
+		<value>Peliaika</value>
+	</string>
+	<string>
+		<id>10102</id>
+		<value>Nopein aika</value>
+	</string>
+	<string>
+		<id>10103</id>
+		<value>Miinaharava</value>
+	</string>
+</strings>

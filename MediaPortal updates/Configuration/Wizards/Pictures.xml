@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<wizard>
+   <caption>MediaPortal - Picture Wizard</caption>
+   <sections>
+      <section>
+         <description>Welcome screen</description>
+         <name>Wizard_Welcome</name>
+         <topic>MediaPortal Wizard</topic>
+         <information></information>
+         <header>Welcome to the Picture setup wizard</header>
+         <body>This wizard will take you through the steps needed to configuration MediaPortals picture module. Take your time to read the information on each page carefully for a successful setup.</body>
+         <image>wizards/wizard_picture.png</image>
+      </section>
+      <section>
+         <description/>
+         <name>Pictures</name>
+         <topic>General Picture Settings</topic>
+         <information>The slide duration is the time, in seconds, each picture is shown. The transition time is the time spent on changing pictures.</information>
+      </section>
+      <section>
+         <description/>
+         <name>PictureExtensions</name>
+         <topic>Picture Extension Settings</topic>
+         <information>You may add, or change the default extensions you want MediaPortal to recognize and play. Please note that additional codecs must be supported by Windows.</information>
+      </section>
+      <section>
+         <description/>
+         <name>PictureShares</name>
+         <topic>Picture Shares</topic>
+         <information>Setup your specific share requirements, including network shares. Checking the share will make it the default share to view when entering the pictures module.</information>
+      </section>
+      <section>
+         <description>Wizard done screen</description>
+         <name>Wizard_Finished</name>
+         <topic>Congratulations!</topic>
+         <information></information>
+         <header>This Modules Configuration is Complete!</header>
+         <body>You have now finished the configuration of this Wizard. If at anytime, you wish to alter any of these settings, press F2 from within MediaPortal. Please consult the appropriate MediaPortal documentation for further explanation of each setting.</body>
+         <image>wizards/wizard_done.png</image>
+      </section>
+   </sections>
+</wizard>

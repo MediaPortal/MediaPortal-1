@@ -1,0 +1,5136 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<strings>
+	<characters></characters>
+	<string>
+		<id>0</id>
+		<value>Rhaglenni</value>
+	</string>
+	<string>
+		<id>1</id>
+		<value>Lluniau</value>
+	</string>
+	<string>
+		<id>2</id>
+		<value>Cerddoriaeth</value>
+	</string>
+	<string>
+		<id>3</id>
+		<value>Fideo</value>
+	</string>
+	<string>
+		<id>4</id>
+		<value>Rhaglen Teledu</value>
+	</string>
+	<string>
+		<id>5</id>
+		<value>Gosodiadau</value>
+	</string>
+	<string>
+		<id>6</id>
+		<value>Adeiledd CVS Canolfan Cyfrwng XBOX</value>
+	</string>
+	<string>
+		<id>7</id>
+		<value>Ffeiliau</value>
+	</string>
+	<string>
+		<id>8</id>
+		<value>Tywydd</value>
+	</string>
+	<string>
+		<id>9</id>
+		<value>Newyddion</value>
+	</string>
+	<string>
+		<id>10</id>
+		<value>Ryseitiau</value>
+	</string>
+	<string>
+		<id>11</id>
+		<value>Llun</value>
+	</string>
+	<string>
+		<id>12</id>
+		<value>Mawrth</value>
+	</string>
+	<string>
+		<id>13</id>
+		<value>Mercher</value>
+	</string>
+	<string>
+		<id>14</id>
+		<value>Iau</value>
+	</string>
+	<string>
+		<id>15</id>
+		<value>Gwener</value>
+	</string>
+	<string>
+		<id>16</id>
+		<value>Sadwrn</value>
+	</string>
+	<string>
+		<id>17</id>
+		<value>Sul</value>
+	</string>
+	<string>
+		<id>21</id>
+		<value>Ionawr</value>
+	</string>
+	<string>
+		<id>22</id>
+		<value>Chwefror</value>
+	</string>
+	<string>
+		<id>23</id>
+		<value>Mawrth</value>
+	</string>
+	<string>
+		<id>24</id>
+		<value>Ebrill</value>
+	</string>
+	<string>
+		<id>25</id>
+		<value>Mai</value>
+	</string>
+	<string>
+		<id>26</id>
+		<value>Mehefin</value>
+	</string>
+	<string>
+		<id>27</id>
+		<value>Gorffennaf</value>
+	</string>
+	<string>
+		<id>28</id>
+		<value>Awst</value>
+	</string>
+	<string>
+		<id>29</id>
+		<value>Medi</value>
+	</string>
+	<string>
+		<id>30</id>
+		<value>Hydref</value>
+	</string>
+	<string>
+		<id>31</id>
+		<value>Tachwedd</value>
+	</string>
+	<string>
+		<id>32</id>
+		<value>Rhagfyr</value>
+	</string>
+	<string>
+		<id>50</id>
+		<value>DVD</value>
+	</string>
+	<string>
+		<id>100</id>
+		<value>Golwg: Eicon</value>
+	</string>
+	<string>
+		<id>101</id>
+		<value>Golwg: Rhestr</value>
+	</string>
+	<string>
+		<id>102</id>
+		<value>Sganio</value>
+	</string>
+	<string>
+		<id>103</id>
+		<value>Trefnu: Enw</value>
+	</string>
+	<string>
+		<id>104</id>
+		<value>Trefnu: Dyddiad</value>
+	</string>
+	<string>
+		<id>105</id>
+		<value>Trefnu: Maint</value>
+	</string>
+	<string>
+		<id>106</id>
+		<value>Na</value>
+	</string>
+	<string>
+		<id>107</id>
+		<value>Iawn</value>
+	</string>
+	<string>
+		<id>108</id>
+		<value>SioeSleidiau</value>
+	</string>
+	<string>
+		<id>109</id>
+		<value>Creu Lluniau</value>
+	</string>
+	<string>
+		<id>110</id>
+		<value>Creu Lluniau Bach</value>
+	</string>
+	<string>
+		<id>111</id>
+		<value>Llwybrau Byr</value>
+	</string>
+	<string>
+		<id>112</id>
+		<value>OEDWYD</value>
+	</string>
+	<string>
+		<id>113</id>
+		<value>Ffeil: Ffynhonnell</value>
+	</string>
+	<string>
+		<id>114</id>
+		<value>Ffeil: Cyrchfan</value>
+	</string>
+	<string>
+		<id>115</id>
+		<value>Copi</value>
+	</string>
+	<string>
+		<id>116</id>
+		<value>Symud</value>
+	</string>
+	<string>
+		<id>117</id>
+		<value>Dileu</value>
+	</string>
+	<string>
+		<id>118</id>
+		<value>Ailenwi</value>
+	</string>
+	<string>
+		<id>119</id>
+		<value>Ffolder Newydd</value>
+	</string>
+	<string>
+		<id>120</id>
+		<value>Cadarnhau copio ffeil</value>
+	</string>
+	<string>
+		<id>121</id>
+		<value>Cadarnhau symud ffeil</value>
+	</string>
+	<string>
+		<id>122</id>
+		<value>Cadarnhau dileu ffeil</value>
+	</string>
+	<string>
+		<id>123</id>
+		<value>Copio&apos;r ffeiliau hyn?</value>
+	</string>
+	<string>
+		<id>124</id>
+		<value>Symud y ffeiliau hyn?</value>
+	</string>
+	<string>
+		<id>125</id>
+		<value>Dileu&apos;r ffeiliau hyn?</value>
+	</string>
+	<string>
+		<id>126</id>
+		<value>Statws</value>
+	</string>
+	<string>
+		<id>127</id>
+		<value>Gwrthrychau</value>
+	</string>
+	<string>
+		<id>128</id>
+		<value>Cyffredinol</value>
+	</string>
+	<string>
+		<id>129</id>
+		<value>SioeSleidiau</value>
+	</string>
+	<string>
+		<id>130</id>
+		<value>Gwyb. System</value>
+	</string>
+	<string>
+		<id>131</id>
+		<value>Sgrin</value>
+	</string>
+	<string>
+		<id>132</id>
+		<value>Albumau</value>
+	</string>
+	<string>
+		<id>133</id>
+		<value>Artistiaid</value>
+	</string>
+	<string>
+		<id>134</id>
+		<value>Rhannau</value>
+	</string>
+	<string>
+		<id>135</id>
+		<value>Genres</value>
+	</string>
+	<string>
+		<id>136</id>
+		<value>Rhest Chwarae</value>
+	</string>
+	<string>
+		<id>137</id>
+		<value>Chwilio</value>
+	</string>
+	<string>
+		<id>138</id>
+		<value>GWYBODAETH SYSTEM</value>
+	</string>
+	<string>
+		<id>139</id>
+		<value>Tymheredd:</value>
+	</string>
+	<string>
+		<id>140</id>
+		<value>CPU:</value>
+	</string>
+	<string>
+		<id>141</id>
+		<value>GPU:</value>
+	</string>
+	<string>
+		<id>142</id>
+		<value>Amser</value>
+	</string>
+	<string>
+		<id>143</id>
+		<value>Cyfredol:</value>
+	</string>
+	<string>
+		<id>144</id>
+		<value>Adeiledd:</value>
+	</string>
+	<string>
+		<id>145</id>
+		<value>Rhwydwaith</value>
+	</string>
+	<string>
+		<id>146</id>
+		<value>Math:</value>
+	</string>
+	<string>
+		<id>147</id>
+		<value>Statig</value>
+	</string>
+	<string>
+		<id>148</id>
+		<value>DHCP</value>
+	</string>
+	<string>
+		<id>149</id>
+		<value>MAC</value>
+	</string>
+	<string>
+		<id>150</id>
+		<value>IP:</value>
+	</string>
+	<string>
+		<id>151</id>
+		<value>Cyswllt:</value>
+	</string>
+	<string>
+		<id>152</id>
+		<value>Hanner duplex</value>
+	</string>
+	<string>
+		<id>153</id>
+		<value>Duplex llawn</value>
+	</string>
+	<string>
+		<id>154</id>
+		<value>Storio</value>
+	</string>
+	<string>
+		<id>155</id>
+		<value>Gyrrwr</value>
+	</string>
+	<string>
+		<id>156</id>
+		<value>Rhydd</value>
+	</string>
+	<string>
+		<id>157</id>
+		<value>Fideo</value>
+	</string>
+	<string>
+		<id>158</id>
+		<value>Coff Rhydd</value>
+	</string>
+	<string>
+		<id>159</id>
+		<value>Dim cyswllt</value>
+	</string>
+	<string>
+		<id>160</id>
+		<value>Rhydd</value>
+	</string>
+	<string>
+		<id>161</id>
+		<value>Dim ar gael</value>
+	</string>
+	<string>
+		<id>162</id>
+		<value>Dror ar agor</value>
+	</string>
+	<string>
+		<id>163</id>
+		<value>Darllen</value>
+	</string>
+	<string>
+		<id>164</id>
+		<value>Dim Disg</value>
+	</string>
+	<string>
+		<id>165</id>
+		<value>Disg ar Gael</value>
+	</string>
+	<string>
+		<id>166</id>
+		<value>Croen:</value>
+	</string>
+	<string>
+		<id>167</id>
+		<value>Gweinydd FTP:</value>
+	</string>
+	<string>
+		<id>168</id>
+		<value>Cydweddu Amser:</value>
+	</string>
+	<string>
+		<id>169</id>
+		<value>Cydraniad:</value>
+	</string>
+	<string>
+		<id>170</id>
+		<value>Album:</value>
+	</string>
+	<string>
+		<id>171</id>
+		<value>Artist:</value>
+	</string>
+	<string>
+		<id>172</id>
+		<value>Dyddiad Ryddhad</value>
+	</string>
+	<string>
+		<id>173</id>
+		<value>Poblogrwydd:</value>
+	</string>
+	<string>
+		<id>174</id>
+		<value>Genre:</value>
+	</string>
+	<string>
+		<id>175</id>
+		<value>Ton:</value>
+	</string>
+	<string>
+		<id>176</id>
+		<value>Arddulliau:</value>
+	</string>
+	<string>
+		<id>177</id>
+		<value>Adolygiad:</value>
+	</string>
+	<string>
+		<id>178</id>
+		<value>Traciau:</value>
+	</string>
+	<string>
+		<id>179</id>
+		<value>Can</value>
+	</string>
+	<string>
+		<id>180</id>
+		<value>Hyd</value>
+	</string>
+	<string>
+		<id>181</id>
+		<value>Dewis album</value>
+	</string>
+	<string>
+		<id>182</id>
+		<value>Traciau</value>
+	</string>
+	<string>
+		<id>183</id>
+		<value>Adolygiad</value>
+	</string>
+	<string>
+		<id>184</id>
+		<value>Adnewyddu</value>
+	</string>
+	<string>
+		<id>185</id>
+		<value>Chwilio album</value>
+	</string>
+	<string>
+		<id>186</id>
+		<value>Iawn</value>
+	</string>
+	<string>
+		<id>187</id>
+		<value>Heb ganfod album!</value>
+	</string>
+	<string>
+		<id>188</id>
+		<value>Dewis popeth</value>
+	</string>
+	<string>
+		<id>189</id>
+		<value>Sganio gwybodaeth cyfrwng</value>
+	</string>
+	<string>
+		<id>190</id>
+		<value>Cadw</value>
+	</string>
+	<string>
+		<id>191</id>
+		<value>Cymysgu</value>
+	</string>
+	<string>
+		<id>192</id>
+		<value>Clirio</value>
+	</string>
+	<string>
+		<id>193</id>
+		<value>Sganio</value>
+	</string>
+	<string>
+		<id>194</id>
+		<value>Chwilio...</value>
+	</string>
+	<string>
+		<id>195</id>
+		<value>Heb ganfod gwybodaeth IMDB</value>
+	</string>
+	<string>
+		<id>196</id>
+		<value>Dewis ffilm:</value>
+	</string>
+	<string>
+		<id>197</id>
+		<value>Ymholi gwybodaeth IMDB</value>
+	</string>
+	<string>
+		<id>198</id>
+		<value>Estyn manylion y Ffilm</value>
+	</string>
+	<string>
+		<id>199</id>
+		<value>Cyfarwyddwr:</value>
+	</string>
+	<string>
+		<id>200</id>
+		<value>Awdur:</value>
+	</string>
+	<string>
+		<id>201</id>
+		<value>Blwyddyn:</value>
+	</string>
+	<string>
+		<id>202</id>
+		<value>Broliant?</value>
+	</string>
+	<string>
+		<id>203</id>
+		<value>Amlinelliad o&apos;r stori:</value>
+	</string>
+	<string>
+		<id>204</id>
+		<value>Canmoliaeth:</value>
+	</string>
+	<string>
+		<id>205</id>
+		<value>Pleidleisiau:</value>
+	</string>
+	<string>
+		<id>206</id>
+		<value>Cast</value>
+	</string>
+	<string>
+		<id>207</id>
+		<value>Stori</value>
+	</string>
+	<string>
+		<id>208</id>
+		<value>Chwarae</value>
+	</string>
+	<string>
+		<id>209</id>
+		<value>Nesaf</value>
+	</string>
+	<string>
+		<id>210</id>
+		<value>Blaenorol</value>
+	</string>
+	<string>
+		<id>211</id>
+		<value>Chwilio am raglen</value>
+	</string>
+	<string>
+		<id>212</id>
+		<value>wedi canfod rhaglen</value>
+	</string>
+	<string>
+		<id>213</id>
+		<value>Calibro&apos;r Rhyngwyneb</value>
+	</string>
+	<string>
+		<id>214</id>
+		<value>Calibro&apos;r Sgrin</value>
+	</string>
+	<string>
+		<id>215</id>
+		<value>Meddalu</value>
+	</string>
+	<string>
+		<id>216</id>
+		<value>Chwyddo</value>
+	</string>
+	<string>
+		<id>217</id>
+		<value>Ymestyn</value>
+	</string>
+	<string>
+		<id>218</id>
+		<value>Gyrrwr DVD</value>
+	</string>
+	<string>
+		<id>219</id>
+		<value>Rhowch y ddisg i fewn</value>
+	</string>
+	<string>
+		<id>220</id>
+		<value>Rhan Pell</value>
+	</string>
+	<string>
+		<id>221</id>
+		<value>Rhwydwaith heb ei gysylltu</value>
+	</string>
+	<string>
+		<id>222</id>
+		<value>Diddymu</value>
+	</string>
+	<string>
+		<id>223</id>
+		<value>Newid sgrin llydan awtomatig</value>
+	</string>
+	<string>
+		<id>224</id>
+		<value>Cyflymder</value>
+	</string>
+	<string>
+		<id>225</id>
+		<value>Amser newid</value>
+	</string>
+	<string>
+		<id>226</id>
+		<value>Galluogi PAL60</value>
+	</string>
+	<string>
+		<id>227</id>
+		<value>Galluogi CDDB</value>
+	</string>
+	<string>
+		<id>228</id>
+		<value>Cymysgu&apos;r Rhestr Chwarae wrth gychwyn</value>
+	</string>
+	<string>
+		<id>229</id>
+		<value>Amser arafu&apos;r Disg Caled (mun)</value>
+	</string>
+	<string>
+		<id>230</id>
+		<value>Hidlau</value>
+	</string>
+	<string>
+		<id>231</id>
+		<value>Dim</value>
+	</string>
+	<string>
+		<id>232</id>
+		<value>Pwynt</value>
+	</string>
+	<string>
+		<id>233</id>
+		<value>Llinellol</value>
+	</string>
+	<string>
+		<id>234</id>
+		<value>Anistropig</value>
+	</string>
+	<string>
+		<id>235</id>
+		<value>Quincunx</value>
+	</string>
+	<string>
+		<id>236</id>
+		<value>Ciwbig Gauseaidd</value>
+	</string>
+	<string>
+		<id>237</id>
+		<value>Lleihad:</value>
+	</string>
+	<string>
+		<id>238</id>
+		<value>Chwyddhad:</value>
+	</string>
+	<string>
+		<id>240</id>
+		<value>Awtoredeg DVD-Video</value>
+	</string>
+	<string>
+		<id>241</id>
+		<value>Awtoredeg VCD/SVCD</value>
+	</string>
+	<string>
+		<id>242</id>
+		<value>Awtoredeg CD Sain</value>
+	</string>
+	<string>
+		<id>243</id>
+		<value>Awtoredeg Gemau XBOX</value>
+	</string>
+	<string>
+		<id>244</id>
+		<value>Awtoredeg Fideo</value>
+	</string>
+	<string>
+		<id>245</id>
+		<value>Awtoredeg Cerddoriaeth</value>
+	</string>
+	<string>
+		<id>246</id>
+		<value>Awtoredeg Lluniau</value>
+	</string>
+	<string>
+		<id>247</id>
+		<value>Sgriptiau</value>
+	</string>
+	<string>
+		<id>248</id>
+		<value>Iaith</value>
+	</string>
+	<string>
+		<id>249</id>
+		<value>Cerddoriaeth</value>
+	</string>
+	<string>
+		<id>250</id>
+		<value>Delweddiad</value>
+	</string>
+	<string>
+		<id>251</id>
+		<value>Dewis cyfeiriadur cyrchfan</value>
+	</string>
+	<string>
+		<id>252</id>
+		<value>Allbwn i&apos;r holl seinyddion</value>
+	</string>
+	<string>
+		<id>253</id>
+		<value>Nifer o sianeli</value>
+	</string>
+	<string>
+		<id>254</id>
+		<value>Pasio drwodd Stereo DD</value>
+	</string>
+	<string>
+		<id>255</id>
+		<value>CDDB</value>
+	</string>
+	<string>
+		<id>256</id>
+		<value>Holi freedb am wybodaeth CDDB</value>
+	</string>
+	<string>
+		<id>257</id>
+		<value>Gwall</value>
+	</string>
+	<string>
+		<id>258</id>
+		<value>Galluogi tagiau ID3</value>
+	</string>
+	<string>
+		<id>259</id>
+		<value>Agor</value>
+	</string>
+	<string>
+		<id>260</id>
+		<value>Shoutcast</value>
+	</string>
+	<string>
+		<id>261</id>
+		<value>Aros i gychwyn...</value>
+	</string>
+	<string>
+		<id>262</id>
+		<value>Allbwn sgriptiau</value>
+	</string>
+	<string>
+		<id>263</id>
+		<value>Gweinydd HTTP:</value>
+	</string>
+	<string>
+		<id>264</id>
+		<value>Recordio</value>
+	</string>
+	<string>
+		<id>265</id>
+		<value>Atal Rec.</value>
+	</string>
+	<string>
+		<id>266</id>
+		<value>Trefnu: Traciau</value>
+	</string>
+	<string>
+		<id>267</id>
+		<value>Trefnu: Amser</value>
+	</string>
+	<string>
+		<id>268</id>
+		<value>Trefnu: Teitl</value>
+	</string>
+	<string>
+		<id>269</id>
+		<value>Trefn: Artist</value>
+	</string>
+	<string>
+		<id>270</id>
+		<value>Trefn: Album</value>
+	</string>
+	<string>
+		<id>271</id>
+		<value>100 Uchaf</value>
+	</string>
+	<string>
+		<id>272</id>
+		<value>Cywiro Gorsgan Brig Chwith</value>
+	</string>
+	<string>
+		<id>273</id>
+		<value>Cywiro Gorsgan Gwaelod De</value>
+	</string>
+	<string>
+		<id>274</id>
+		<value>Safle&apos;r Is-deitlau</value>
+	</string>
+	<string>
+		<id>275</id>
+		<value>Newid Cyfradd Picseli</value>
+	</string>
+	<string>
+		<id>276</id>
+		<value>-RHYBUDD!- Gadewch ar 0,0 am yr ansawdd gorau, newid i leihau fideo i ffitio.</value>
+	</string>
+	<string>
+		<id>277</id>
+		<value>Symudwch y bar i newid safle&apos;r is-deitlau</value>
+	</string>
+	<string>
+		<id>278</id>
+		<value>-Pwysig!- am yr ansawdd gorau, newidiwch yr hirsgwar nes ei fod yn gwbl sgwar</value>
+	</string>
+	<string>
+		<id>279</id>
+		<value>Methu llwytho gosodiadau</value>
+	</string>
+	<string>
+		<id>280</id>
+		<value>defnyddio&apos;r cyn-osodiadau rhagosodedig</value>
+	</string>
+	<string>
+		<id>281</id>
+		<value>Gwiriwch y ffeil .xml</value>
+	</string>
+	<string>
+		<id>282</id>
+		<value>wedi canfod %i eitem</value>
+	</string>
+	<string>
+		<id>283</id>
+		<value>Canlyniadau Chwilio</value>
+	</string>
+	<string>
+		<id>284</id>
+		<value>Dim canlyniad</value>
+	</string>
+	<string>
+		<id>285</id>
+		<value>Hidl dadblethu</value>
+	</string>
+	<string>
+		<id>286</id>
+		<value>Hidl olbrosesu</value>
+	</string>
+	<string>
+		<id>287</id>
+		<value>Is-deitlau</value>
+	</string>
+	<string>
+		<id>288</id>
+		<value>Ffont</value>
+	</string>
+	<string>
+		<id>289</id>
+		<value>Maint</value>
+	</string>
+	<string>
+		<id>290</id>
+		<value>Chwyddo sain (dB)</value>
+	</string>
+	<string>
+		<id>291</id>
+		<value>Fideo</value>
+	</string>
+	<string>
+		<id>292</id>
+		<value>Sain</value>
+	</string>
+	<string>
+		<id>293</id>
+		<value>Is-deitlau</value>
+	</string>
+	<string>
+		<id>294</id>
+		<value>Creu nodau tudalen</value>
+	</string>
+	<string>
+		<id>295</id>
+		<value>Cylchu nodau tudalen</value>
+	</string>
+	<string>
+		<id>296</id>
+		<value>Clirio nodau tudalen</value>
+	</string>
+	<string>
+		<id>297</id>
+		<value>AVDelay</value>
+	</string>
+	<string>
+		<id>298</id>
+		<value>Llithrwr</value>
+	</string>
+	<string>
+		<id>299</id>
+		<value>Amser Rhedeg:</value>
+	</string>
+	<string>
+		<id>300</id>
+		<value>1. Iaith</value>
+	</string>
+	<string>
+		<id>301</id>
+		<value>2. Sain</value>
+	</string>
+	<string>
+		<id>302</id>
+		<value>3. Llif</value>
+	</string>
+	<string>
+		<id>303</id>
+		<value>Oedi</value>
+	</string>
+	<string>
+		<id>304</id>
+		<value>Iaith</value>
+	</string>
+	<string>
+		<id>305</id>
+		<value>Galluogwyd</value>
+	</string>
+	<string>
+		<id>306</id>
+		<value>Anrhyngleswyd</value>
+	</string>
+	<string>
+		<id>307</id>
+		<value>Awto</value>
+	</string>
+	<string>
+		<id>308</id>
+		<value>hidlau dadflocio fertigol</value>
+	</string>
+	<string>
+		<id>309</id>
+		<value>hidl dadflocio llorweddol</value>
+	</string>
+	<string>
+		<id>310</id>
+		<value>Awtoddisgleirdeb/cyferbyniad</value>
+	</string>
+	<string>
+		<id>311</id>
+		<value>Dering</value>
+	</string>
+	<string>
+		<id>312</id>
+		<value>(0=awto)</value>
+	</string>
+	<string>
+		<id>313</id>
+		<value>Ad-drefnu&apos;r gronfa ddata</value>
+	</string>
+	<string>
+		<id>314</id>
+		<value>Paratoi...</value>
+	</string>
+	<string>
+		<id>315</id>
+		<value>Gwall cronfa ddata</value>
+	</string>
+	<string>
+		<id>316</id>
+		<value>Chwilio drwy&apos;r caneuon...</value>
+	</string>
+	<string>
+		<id>317</id>
+		<value>Ad-drefnu llwyddiannus</value>
+	</string>
+	<string>
+		<id>318</id>
+		<value>Marcio caneuon wedi eu dileu</value>
+	</string>
+	<string>
+		<id>319</id>
+		<value>Gwall wrth ad-drefnu caneuon</value>
+	</string>
+	<string>
+		<id>320</id>
+		<value>Chwilio drwy&apos;r artistiaid...</value>
+	</string>
+	<string>
+		<id>321</id>
+		<value>Gwall wrth ad-drefnu artistiaid</value>
+	</string>
+	<string>
+		<id>322</id>
+		<value>Chwilio drwy&apos;r genres...</value>
+	</string>
+	<string>
+		<id>323</id>
+		<value>Gwall wrth ad-drefnu genres</value>
+	</string>
+	<string>
+		<id>324</id>
+		<value>Chwilio drwy&apos;r pathes...</value>
+	</string>
+	<string>
+		<id>325</id>
+		<value>Gwall wrth ad-drefnu pathes</value>
+	</string>
+	<string>
+		<id>326</id>
+		<value>Chwilio drwy&apos;r albums...</value>
+	</string>
+	<string>
+		<id>327</id>
+		<value>Gwall wrth ad-drefnu albums</value>
+	</string>
+	<string>
+		<id>328</id>
+		<value>Ysgrifennu&apos;r newidiadau...</value>
+	</string>
+	<string>
+		<id>329</id>
+		<value>Gwall wrth ysgrifennu&apos;r newid</value>
+	</string>
+	<string>
+		<id>330</id>
+		<value>Gall hyn gymryd amser...</value>
+	</string>
+	<string>
+		<id>331</id>
+		<value>Cywasgu&apos;r gronfa ddata...</value>
+	</string>
+	<string>
+		<id>332</id>
+		<value>Gwall wrth gywasgu&apos;r gronfa ddata</value>
+	</string>
+	<string>
+		<id>333</id>
+		<value>Hoffech chi ad-drefnu cronfa ddata cerddoriaeth?</value>
+	</string>
+	<string>
+		<id>334</id>
+		<value>Ad-drefnu&apos;r gronfa ddata</value>
+	</string>
+	<string>
+		<id>335</id>
+		<value>Cychwyn</value>
+	</string>
+	<string>
+		<id>336</id>
+		<value>Newid graddfa fframiau</value>
+	</string>
+	<string>
+		<id>337</id>
+		<value>Allbwn sain:</value>
+	</string>
+	<string>
+		<id>338</id>
+		<value>Analog</value>
+	</string>
+	<string>
+		<id>339</id>
+		<value>Digidol</value>
+	</string>
+	<string>
+		<id>340</id>
+		<value>Artistiaid Amrywiol</value>
+	</string>
+	<string>
+		<id>341</id>
+		<value>Chwarae DVD</value>
+	</string>
+	<string>
+		<id>342</id>
+		<value>Ffilmiau</value>
+	</string>
+	<string>
+		<id>343</id>
+		<value>Newid graddfa fframiau</value>
+	</string>
+	<string>
+		<id>344</id>
+		<value>Actorion</value>
+	</string>
+	<string>
+		<id>345</id>
+		<value>Blwyddyn</value>
+	</string>
+	<string>
+		<id>346</id>
+		<value>Stacio</value>
+	</string>
+	<string>
+		<id>347</id>
+		<value>Dadstacio</value>
+	</string>
+	<string>
+		<id>348</id>
+		<value>Gwastatau Hierarchaeth Strwythur</value>
+	</string>
+	<string>
+		<id>349</id>
+		<value>Dangos dim ond y Default.xb</value>
+	</string>
+	<string>
+		<id>350</id>
+		<value>Rhaglenni</value>
+	</string>
+	<string>
+		<id>351</id>
+		<value>Diffodd</value>
+	</string>
+	<string>
+		<id>352</id>
+		<value>Pylu</value>
+	</string>
+	<string>
+		<id>353</id>
+		<value>Du</value>
+	</string>
+	<string>
+		<id>354</id>
+		<value>Matrix Trails?</value>
+	</string>
+	<string>
+		<id>355</id>
+		<value>Amser Allan Oedi&apos;r Arbedwr Sgrin</value>
+	</string>
+	<string>
+		<id>356</id>
+		<value>Modd Arbedwr Sgrin</value>
+	</string>
+	<string>
+		<id>357</id>
+		<value>Amser Allan Oedi cyn Cau</value>
+	</string>
+	<string>
+		<id>358</id>
+		<value>Pob albu</value>
+	</string>
+	<string>
+		<id>359</id>
+		<value>Albums diweddar</value>
+	</string>
+	<string>
+		<id>360</id>
+		<value>Arbedwr Sgrin</value>
+	</string>
+	<string>
+		<id>361</id>
+		<value>Sioe Lluniau</value>
+	</string>
+	<string>
+		<id>362</id>
+		<value>Lefel Pylu&apos;r Arbedwr Sgrin (%)</value>
+	</string>
+	<string>
+		<id>363</id>
+		<value>Trefnu: Ffeil</value>
+	</string>
+	<string>
+		<id>364</id>
+		<value>Pasio Drwodd DD/DTS Amlsianel</value>
+	</string>
+	<string>
+		<id>365</id>
+		<value>Trefnu: Enw&lt;</value>
+	</string>
+	<string>
+		<id>366</id>
+		<value>Trefnu: Blwyddyn</value>
+	</string>
+	<string>
+		<id>367</id>
+		<value>Trefn: Cyfraddiad</value>
+	</string>
+	<string>
+		<id>368</id>
+		<value>IMDB</value>
+	</string>
+	<string>
+		<id>369</id>
+		<value>Teitl</value>
+	</string>
+	<string>
+		<id>370</id>
+		<value>Taranau</value>
+	</string>
+	<string>
+		<id>371</id>
+		<value>Rhannol</value>
+	</string>
+	<string>
+		<id>372</id>
+		<value>Mwyaf</value>
+	</string>
+	<string>
+		<id>373</id>
+		<value>Heulog</value>
+	</string>
+	<string>
+		<id>374</id>
+		<value>Cymylog</value>
+	</string>
+	<string>
+		<id>375</id>
+		<value>Eira</value>
+	</string>
+	<string>
+		<id>376</id>
+		<value>Glaw</value>
+	</string>
+	<string>
+		<id>377</id>
+		<value>Ysgafn</value>
+	</string>
+	<string>
+		<id>378</id>
+		<value>Bore</value>
+	</string>
+	<string>
+		<id>379</id>
+		<value>Pnawn</value>
+	</string>
+	<string>
+		<id>380</id>
+		<value>Cawodydd</value>
+	</string>
+	<string>
+		<id>381</id>
+		<value>Ychydig</value>
+	</string>
+	<string>
+		<id>382</id>
+		<value>Gwasgarog</value>
+	</string>
+	<string>
+		<id>383</id>
+		<value>Gwynt</value>
+	</string>
+	<string>
+		<id>384</id>
+		<value>Cryf</value>
+	</string>
+	<string>
+		<id>385</id>
+		<value>Teg</value>
+	</string>
+	<string>
+		<id>386</id>
+		<value>Clir</value>
+	</string>
+	<string>
+		<id>387</id>
+		<value>Cynnar</value>
+	</string>
+	<string>
+		<id>388</id>
+		<value>a</value>
+	</string>
+	<string>
+		<id>389</id>
+		<value>Niwl</value>
+	</string>
+	<string>
+		<id>390</id>
+		<value>Tarth</value>
+	</string>
+	<string>
+		<id>391</id>
+		<value>Gwyntog</value>
+	</string>
+	<string>
+		<id>392</id>
+		<value>Glaw Man</value>
+	</string>
+	<string>
+		<id>393</id>
+		<value>Rhewi</value>
+	</string>
+	<string>
+		<id>394</id>
+		<value>Anhysbys</value>
+	</string>
+	<string>
+		<id>396</id>
+		<value>Dewis Lleoliad</value>
+	</string>
+	<string>
+		<id>397</id>
+		<value>Amser Adnewyddu</value>
+	</string>
+	<string>
+		<id>398</id>
+		<value>Uned Tymheredd</value>
+	</string>
+	<string>
+		<id>399</id>
+		<value>Uned Cyflymder</value>
+	</string>
+	<string>
+		<id>400</id>
+		<value>Tywydd</value>
+	</string>
+	<string>
+		<id>401</id>
+		<value>Tymheredd</value>
+	</string>
+	<string>
+		<id>402</id>
+		<value>Teimlo fel</value>
+	</string>
+	<string>
+		<id>403</id>
+		<value>Mynegai UV</value>
+	</string>
+	<string>
+		<id>404</id>
+		<value>Gwynt</value>
+	</string>
+	<string>
+		<id>405</id>
+		<value>Pwynt Gwlith</value>
+	</string>
+	<string>
+		<id>406</id>
+		<value>Lleithder</value>
+	</string>
+	<string>
+		<id>410</id>
+		<value>Gan Weather.com</value>
+	</string>
+	<string>
+		<id>411</id>
+		<value>Estyn Tywydd am:</value>
+	</string>
+	<string>
+		<id>412</id>
+		<value>Methu estyn data tywydd:</value>
+	</string>
+	<string>
+		<id>413</id>
+		<value>Gyda llaw</value>
+	</string>
+	<string>
+		<id>414</id>
+		<value>Dim adolygiad i&apos;r album</value>
+	</string>
+	<string>
+		<id>415</id>
+		<value>Llwytho llun bach i lawr...</value>
+	</string>
+	<string>
+		<id>416</id>
+		<value>Dim ar gael</value>
+	</string>
+	<string>
+		<id>417</id>
+		<value>Golwg: Eicon Mawr</value>
+	</string>
+	<string>
+		<id>418</id>
+		<value>Fideo/Genres</value>
+	</string>
+	<string>
+		<id>419</id>
+		<value>Fideo/Actorion</value>
+	</string>
+	<string>
+		<id>420</id>
+		<value>Fideo/Blwyddyn</value>
+	</string>
+	<string>
+		<id>421</id>
+		<value>Fideo/Teitl</value>
+	</string>
+	<string>
+		<id>422</id>
+		<value>Dileu gwybodaeth album</value>
+	</string>
+	<string>
+		<id>423</id>
+		<value>Dileu gwybodaeth CDDB</value>
+	</string>
+	<string>
+		<id>424</id>
+		<value>Dewis</value>
+	</string>
+	<string>
+		<id>425</id>
+		<value>Heb ganfod gwybodaeth album.</value>
+	</string>
+	<string>
+		<id>426</id>
+		<value>Heb ganfod gwybodaeth CDDB.</value>
+	</string>
+	<string>
+		<id>427</id>
+		<value>Disg:</value>
+	</string>
+	<string>
+		<id>428</id>
+		<value>Rhowch y CD/DVD cywir i mewn</value>
+	</string>
+	<string>
+		<id>429</id>
+		<value>Rhowch y CD/DVD canlynol i mewn</value>
+	</string>
+	<string>
+		<id>430</id>
+		<value>Trefn: DVD#</value>
+	</string>
+	<string>
+		<id>431</id>
+		<value>Dim Storfa</value>
+	</string>
+	<string>
+		<id>432</id>
+		<value>Dileu&apos;r ffilm o&apos;r gronfa ddata</value>
+	</string>
+	<string>
+		<id>433</id>
+		<value>Ydych chi&apos;n siwr eich bod</value>
+	</string>
+	<string>
+		<id>434</id>
+		<value>am dynnu&apos;r ffilm?</value>
+	</string>
+	<string>
+		<id>435</id>
+		<value>Trac</value>
+	</string>
+	<string>
+		<id>436</id>
+		<value>Blwyddyn:</value>
+	</string>
+	<string>
+		<id>437</id>
+		<value>Hyd:</value>
+	</string>
+	<string>
+		<id>438</id>
+		<value>Agor y ffeil</value>
+	</string>
+	<string>
+		<id>439</id>
+		<value>Storfa</value>
+	</string>
+	<string>
+		<id>440</id>
+		<value>Disg Caled</value>
+	</string>
+	<string>
+		<id>441</id>
+		<value>UDF&lt;</value>
+	</string>
+	<string>
+		<id>442</id>
+		<value>LAN</value>
+	</string>
+	<string>
+		<id>443</id>
+		<value>Rhyngrwyd</value>
+	</string>
+	<string>
+		<id>444</id>
+		<value>fideo</value>
+	</string>
+	<string>
+		<id>445</id>
+		<value>sain</value>
+	</string>
+	<string>
+		<id>446</id>
+		<value>DVD</value>
+	</string>
+	<string>
+		<id>447</id>
+		<value>Awtoredeg</value>
+	</string>
+	<string>
+		<id>448</id>
+		<value>LCD</value>
+	</string>
+	<string>
+		<id>449</id>
+		<value>Galluogwyd</value>
+	</string>
+	<string>
+		<id>450</id>
+		<value>Colofnau</value>
+	</string>
+	<string>
+		<id>451</id>
+		<value>Cyfeiriad rhes 1:</value>
+	</string>
+	<string>
+		<id>452</id>
+		<value>Cyfeiriad rhes 2:</value>
+	</string>
+	<string>
+		<id>453</id>
+		<value>Cyfeiriad rhes 3:</value>
+	</string>
+	<string>
+		<id>454</id>
+		<value>Cyfeiriad rhes 4:</value>
+	</string>
+	<string>
+		<id>455</id>
+		<value>Rhesi:</value>
+	</string>
+	<string>
+		<id>456</id>
+		<value>Modd</value>
+	</string>
+	<string>
+		<id>457</id>
+		<value>Newid golwg</value>
+	</string>
+	<string>
+		<id>458</id>
+		<value>B/Mark</value>
+	</string>
+	<string>
+		<id>459</id>
+		<value>Subs</value>
+	</string>
+	<string>
+		<id>460</id>
+		<value>Llif sain</value>
+	</string>
+	<string>
+		<id>461</id>
+		<value>[gweithredol]</value>
+	</string>
+	<string>
+		<id>462</id>
+		<value>Is-deitl</value>
+	</string>
+	<string>
+		<id>463</id>
+		<value>Golau o&apos;r cefn</value>
+	</string>
+	<string>
+		<id>464</id>
+		<value>Disgleirdeb</value>
+	</string>
+	<string>
+		<id>465</id>
+		<value>Cyferbyniad</value>
+	</string>
+	<string>
+		<id>466</id>
+		<value>Gamma</value>
+	</string>
+	<string>
+		<id>467</id>
+		<value>Math</value>
+	</string>
+	<string>
+		<id>468</id>
+		<value>Symudwch y bar i newid safle&apos;r osd</value>
+	</string>
+	<string>
+		<id>469</id>
+		<value>Safle&apos;r OSD</value>
+	</string>
+	<string>
+		<id>470</id>
+		<value>Diolchiadau</value>
+	</string>
+	<string>
+		<id>471</id>
+		<value>Modchip</value>
+	</string>
+	<string>
+		<id>472</id>
+		<value>Amser allan OSD</value>
+	</string>
+	<string>
+		<id>473</id>
+		<value>Ail samplo o Safon Uchel</value>
+	</string>
+	<string>
+		<id>474</id>
+		<value>Diffodd</value>
+	</string>
+	<string>
+		<id>475</id>
+		<value>Cerddoriaeth yn unig</value>
+	</string>
+	<string>
+		<id>476</id>
+		<value>Cerddoriaeth a Fideo</value>
+	</string>
+	<string>
+		<id>477</id>
+		<value>Methu llwytho&apos;r rhestr chwarae</value>
+	</string>
+	<string>
+		<id>478</id>
+		<value>OSD</value>
+	</string>
+	<string>
+		<id>479</id>
+		<value>Croen ac Iaith</value>
+	</string>
+	<string>
+		<id>480</id>
+		<value>Rhyngwyneb Defnyddiwr</value>
+	</string>
+	<string>
+		<id>481</id>
+		<value>Dewisiadau Sain</value>
+	</string>
+	<string>
+		<id>482</id>
+		<value>Ynghylch XBMC</value>
+	</string>
+	<string>
+		<id>483</id>
+		<value>Album</value>
+	</string>
+	<string>
+		<id>484</id>
+		<value>Artist</value>
+	</string>
+	<string>
+		<id>485</id>
+		<value>Dileu&apos;r album</value>
+	</string>
+	<string>
+		<id>486</id>
+		<value>Ailadrodd</value>
+	</string>
+	<string>
+		<id>487</id>
+		<value>Ailadrodd Un</value>
+	</string>
+	<string>
+		<id>488</id>
+		<value>Ailadrodd folder y rhestr chwarae</value>
+	</string>
+	<string>
+		<id>489</id>
+		<value>Defnyddio&apos;r rhestr chwarae gyda&apos;r caneuon</value>
+	</string>
+	<string>
+		<id>490</id>
+		<value>Awtonewid rhestr ac eiconau gyda&apos;r caneuon</value>
+	</string>
+	<string>
+		<id>491</id>
+		<value>Defnyddio eiconau mawr</value>
+	</string>
+	<string>
+		<id>492</id>
+		<value>Iaith sain</value>
+	</string>
+	<string>
+		<id>493</id>
+		<value>Actorion</value>
+	</string>
+	<string>
+		<id>500</id>
+		<value>Dewislen ffeil</value>
+	</string>
+	<string>
+		<id>501</id>
+		<value>Gosod fel cyrchfan</value>
+	</string>
+	<string>
+		<id>502</id>
+		<value>Methu cwblhau&apos;r weithred</value>
+	</string>
+	<string>
+		<id>503</id>
+		<value>Dileu&apos;r ffolder</value>
+	</string>
+	<string>
+		<id>504</id>
+		<value>Mynd i&apos;r cyrchfan</value>
+	</string>
+	<string>
+		<id>505</id>
+		<value>Cyfrifo</value>
+	</string>
+	<string>
+		<id>506</id>
+		<value>Ydych chi&apos;n siwr?</value>
+	</string>
+	<string>
+		<id>507</id>
+		<value>eitemau</value>
+	</string>
+	<string>
+		<id>508</id>
+		<value>At</value>
+	</string>
+	<string>
+		<id>509</id>
+		<value>Ffeil cyrchfan yn bodoli. Ysgrifennu dros y ffeil?</value>
+	</string>
+	<string>
+		<id>510</id>
+		<value>Diddymu</value>
+	</string>
+	<string>
+		<id>511</id>
+		<value>Pob Tro</value>
+	</string>
+	<string>
+		<id>512</id>
+		<value>Byth</value>
+	</string>
+	<string>
+		<id>513</id>
+		<value>Mae&apos;r eitem wedi ei hamddiffyn, heb gwblhau&apos;r weithred</value>
+	</string>
+	<string>
+		<id>514</id>
+		<value>Gwall wrth greu ffolder, heb gwblhau&apos;r weithred</value>
+	</string>
+	<string>
+		<id>515</id>
+		<value>Gwall dileu&apos;r ffolder, heb gwblhau&apos;r weithred</value>
+	</string>
+	<string>
+		<id>516</id>
+		<value>Methu dileu&apos;r ffeil cyrchfan, heb gwblhau&apos;r weithred</value>
+	</string>
+	<string>
+		<id>517</id>
+		<value>Gwall terfynol, heb gwblhau&apos;r weithred</value>
+	</string>
+	<string>
+		<id>518</id>
+		<value>Dileu&apos;r gân?</value>
+	</string>
+	<string>
+		<id>530</id>
+		<value>Disg lluniau wedi ei mewnosod, ei hagor?</value>
+	</string>
+	<string>
+		<id>531</id>
+		<value>Disg ffilm wedi ei mewnosod, ei hagor?</value>
+	</string>
+	<string>
+		<id>532</id>
+		<value>Disg sain wedi ei mewnosod, ei hagor?</value>
+	</string>
+	<string>
+		<id>533</id>
+		<value>Canllaw</value>
+	</string>
+	<string>
+		<id>550</id>
+		<value>Tocio</value>
+	</string>
+	<string>
+		<id>555</id>
+		<value>O {0} at {1} {2}</value>
+	</string>
+	<string>
+		<id>600</id>
+		<value>Amserlen Teledu</value>
+	</string>
+	<string>
+		<id>601</id>
+		<value>Recordio Nawr</value>
+	</string>
+	<string>
+		<id>602</id>
+		<value>Sianel</value>
+	</string>
+	<string>
+		<id>603</id>
+		<value>Amserlenwyd</value>
+	</string>
+	<string>
+		<id>604</id>
+		<value>Teledu a Recordiwyd</value>
+	</string>
+	<string>
+		<id>605</id>
+		<value>Teledu</value>
+	</string>
+	<string>
+		<id>606</id>
+		<value>Llwytho Amserlen Teledu Newydd</value>
+	</string>
+	<string>
+		<id>607</id>
+		<value>Llwytho</value>
+	</string>
+	<string>
+		<id>608</id>
+		<value>Methodd mewnforio&apos;r Amserlen Teledu</value>
+	</string>
+	<string>
+		<id>609</id>
+		<value>Cwblhau Mewnforio&apos;r Amserlen Teledu</value>
+	</string>
+	<string>
+		<id>610</id>
+		<value>Peidio recordio</value>
+	</string>
+	<string>
+		<id>611</id>
+		<value>Recordio unwaith</value>
+	</string>
+	<string>
+		<id>612</id>
+		<value>Recordio bob tro ar y sianel yma</value>
+	</string>
+	<string>
+		<id>613</id>
+		<value>Recordio bob tro ar bob sianel</value>
+	</string>
+	<string>
+		<id>614</id>
+		<value>Recordio pob wythnos ar yr amser yma</value>
+	</string>
+	<string>
+		<id>615</id>
+		<value>Recordio pob dydd ar yr amser yma</value>
+	</string>
+	<string>
+		<id>616</id>
+		<value>Dewis y math o recordio</value>
+	</string>
+	<string>
+		<id>617</id>
+		<value>Newydd</value>
+	</string>
+	<string>
+		<id>618</id>
+		<value>Dileu</value>
+	</string>
+	<string>
+		<id>619</id>
+		<value>Golygu&apos;r Dyddiad/Amser</value>
+	</string>
+	<string>
+		<id>620</id>
+		<value>Trefnu: Sianel</value>
+	</string>
+	<string>
+		<id>621</id>
+		<value>Trefnu: Dyddiad</value>
+	</string>
+	<string>
+		<id>622</id>
+		<value>Trefnu: Enw</value>
+	</string>
+	<string>
+		<id>623</id>
+		<value>Trefnu: Math</value>
+	</string>
+	<string>
+		<id>624</id>
+		<value>Glanhau</value>
+	</string>
+	<string>
+		<id>625</id>
+		<value>Tynnu&apos;r amserlenni:</value>
+	</string>
+	<string>
+		<id>626</id>
+		<value>Newid math</value>
+	</string>
+	<string>
+		<id>627</id>
+		<value>Sianeli:</value>
+	</string>
+	<string>
+		<id>628</id>
+		<value>Rhaglenni:</value>
+	</string>
+	<string>
+		<id>629</id>
+		<value>Atal Recordio</value>
+	</string>
+	<string>
+		<id>630</id>
+		<value>Hoffech chi ailgychwyn?</value>
+	</string>
+	<string>
+		<id>631</id>
+		<value>Hoffech chi gau?</value>
+	</string>
+	<string>
+		<id>632</id>
+		<value>Eitem</value>
+	</string>
+	<string>
+		<id>633</id>
+		<value>Cychwyn</value>
+	</string>
+	<string>
+		<id>634</id>
+		<value>Gorffen</value>
+	</string>
+	<string>
+		<id>635</id>
+		<value>Amser</value>
+	</string>
+	<string>
+		<id>636</id>
+		<value>Dyddiad</value>
+	</string>
+	<string>
+		<id>637</id>
+		<value>Golygu&apos;r Recordiadau</value>
+	</string>
+	<string>
+		<id>638</id>
+		<value>Recordiadau Newydd</value>
+	</string>
+	<string>
+		<id>639</id>
+		<value>Albums</value>
+	</string>
+	<string>
+		<id>640</id>
+		<value>Dirlawnder</value>
+	</string>
+	<string>
+		<id>641</id>
+		<value>Siarprwydd</value>
+	</string>
+	<string>
+		<id>642</id>
+		<value>Llwytho sianel Teledu</value>
+	</string>
+	<string>
+		<id>643</id>
+		<value>Llwytho rhaglenni Teledu</value>
+	</string>
+	<string>
+		<id>644</id>
+		<value>Trefn rhaglenni Teledu</value>
+	</string>
+	<string>
+		<id>645</id>
+		<value>Lwytho ffeil XML</value>
+	</string>
+	<string>
+		<id>646</id>
+		<value>Recordiadau wedi eu hamserlenni</value>
+	</string>
+	<string>
+		<id>647</id>
+		<value>Unwaith</value>
+	</string>
+	<string>
+		<id>648</id>
+		<value>Dyddiol</value>
+	</string>
+	<string>
+		<id>649</id>
+		<value>Pob</value>
+	</string>
+	<string>
+		<id>650</id>
+		<value>Pob tro ar y sianel yma</value>
+	</string>
+	<string>
+		<id>651</id>
+		<value>Bob tro ar unrhyw sianel</value>
+	</string>
+	<string>
+		<id>652</id>
+		<value>Teledu wedi ei recordio</value>
+	</string>
+	<string>
+		<id>653</id>
+		<value>Dileu&apos;r recordiad?</value>
+	</string>
+	<string>
+		<id>654</id>
+		<value>Bwrw allan?</value>
+	</string>
+	<string>
+		<id>655</id>
+		<value>Chwarae teledu wedi ei recordio</value>
+	</string>
+	<string>
+		<id>656</id>
+		<value>Dileu teledu wedi ei recordio</value>
+	</string>
+	<string>
+		<id>657</id>
+		<value>Llun</value>
+	</string>
+	<string>
+		<id>658</id>
+		<value>Maw</value>
+	</string>
+	<string>
+		<id>659</id>
+		<value>Mer</value>
+	</string>
+	<string>
+		<id>660</id>
+		<value>Iau</value>
+	</string>
+	<string>
+		<id>661</id>
+		<value>Gwe</value>
+	</string>
+	<string>
+		<id>662</id>
+		<value>Sad</value>
+	</string>
+	<string>
+		<id>663</id>
+		<value>Sul</value>
+	</string>
+	<string>
+		<id>664</id>
+		<value>Dileu&apos;r llun?</value>
+	</string>
+	<string>
+		<id>665</id>
+		<value>Radio</value>
+	</string>
+	<string>
+		<id>666</id>
+		<value>Gorsafoedd</value>
+	</string>
+	<string>
+		<id>667</id>
+		<value>AwtoTiwnio</value>
+	</string>
+	<string>
+		<id>668</id>
+		<value>Trefnu: Math</value>
+	</string>
+	<string>
+		<id>669</id>
+		<value>Trefnu: Genre</value>
+	</string>
+	<string>
+		<id>670</id>
+		<value>Trefn: Didradd</value>
+	</string>
+	<string>
+		<id>671</id>
+		<value>Trefnu: Gwyliwyd</value>
+	</string>
+	<string>
+		<id>672</id>
+		<value>Recordio Llun-Gwe</value>
+	</string>
+	<string>
+		<id>673</id>
+		<value>Cyflymder Sgrolio</value>
+	</string>
+	<string>
+		<id>674</id>
+		<value>Gosodiadau&apos;r Rhyngwyneb</value>
+	</string>
+	<string>
+		<id>675</id>
+		<value>Esiampl:</value>
+	</string>
+	<string>
+		<id>676</id>
+		<value>Dileu recordiadau wedi eu gwylio?</value>
+	</string>
+	<string>
+		<id>677</id>
+		<value>amserau</value>
+	</string>
+	<string>
+		<id>678</id>
+		<value>Trefnu: Genre</value>
+	</string>
+	<string>
+		<id>679</id>
+		<value>Wythnosol</value>
+	</string>
+	<string>
+		<id>680</id>
+		<value>Llun-Gwe</value>
+	</string>
+	<string>
+		<id>681</id>
+		<value>Aros</value>
+	</string>
+	<string>
+		<id>682</id>
+		<value>Recordio</value>
+	</string>
+	<string>
+		<id>683</id>
+		<value>Gorffennwyd</value>
+	</string>
+	<string>
+		<id>684</id>
+		<value>Dilewyd</value>
+	</string>
+	<string>
+		<id>685</id>
+		<value>Trefnu: Statws</value>
+	</string>
+	<string>
+		<id>686</id>
+		<value>Ganwyd</value>
+	</string>
+	<string>
+		<id>687</id>
+		<value>Bly. Creadigol</value>
+	</string>
+	<string>
+		<id>688</id>
+		<value>Offerynnau</value>
+	</string>
+	<string>
+		<id>689</id>
+		<value>Hanes</value>
+	</string>
+	<string>
+		<id>690</id>
+		<value>Disgyddiaeth (Albums)</value>
+	</string>
+	<string>
+		<id>691</id>
+		<value>Disgyddiaeth (casgliadau, ac ati)</value>
+	</string>
+	<string>
+		<id>700</id>
+		<value>Disgyddiaeth (eps, senglau)</value>
+	</string>
+	<string>
+		<id>701</id>
+		<value>Disgyddiaeth (bootlegs, fideos, cyfweliadau)</value>
+	</string>
+	<string>
+		<id>702</id>
+		<value>Heb ganfod artist!</value>
+	</string>
+	<string>
+		<id>703</id>
+		<value>Dim cyswllt â&apos;r Rhyngrwyd!</value>
+	</string>
+	<string>
+		<id>704</id>
+		<value>Estyn Llif</value>
+	</string>
+	<string>
+		<id>705</id>
+		<value>Estyn Llif RSS am</value>
+	</string>
+	<string>
+		<id>706</id>
+		<value>Dewis Llif</value>
+	</string>
+	<string>
+		<id>707</id>
+		<value>Teledu Ymlaen</value>
+	</string>
+	<string>
+		<id>708</id>
+		<value>Newid Amser</value>
+	</string>
+	<string>
+		<id>709</id>
+		<value>Awto diweddaru</value>
+	</string>
+	<string>
+		<id>710</id>
+		<value>Mae fersiwn newydd ar gael</value>
+	</string>
+	<string>
+		<id>711</id>
+		<value>Diweddaru o v#old -&amp;gt;v#new ?</value>
+	</string>
+	<string>
+		<id>712</id>
+		<value>Nôl</value>
+	</string>
+	<string>
+		<id>713</id>
+		<value>Awtochwarae</value>
+	</string>
+	<string>
+		<id>714</id>
+		<value>Disg yn y dror, chwarae?</value>
+	</string>
+	<string>
+		<id>715</id>
+		<value>CD yn y dror, chwarae?</value>
+	</string>
+	<string>
+		<id>716</id>
+		<value>Lloeren</value>
+	</string>
+	<string>
+		<id>717</id>
+		<value>Tywydd</value>
+	</string>
+	<string>
+		<id>718</id>
+		<value>Clirio&apos;r 100 Uchaf</value>
+	</string>
+	<string>
+		<id>719</id>
+		<value>Ydych chi am ail osod y 100 Uchaf?</value>
+	</string>
+	<string>
+		<id>720</id>
+		<value>Dangos: Hyd</value>
+	</string>
+	<string>
+		<id>721</id>
+		<value>Dangos: Chwaraewyd</value>
+	</string>
+	<string>
+		<id>722</id>
+		<value>Methu chwarae Disg:</value>
+	</string>
+	<string>
+		<id>723</id>
+		<value>Ydy&apos;r ddisg yn y dror?</value>
+	</string>
+	<string>
+		<id>724</id>
+		<value>Chwilio&apos;r Amserlen Teledu</value>
+	</string>
+	<string>
+		<id>725</id>
+		<value>Genres</value>
+	</string>
+	<string>
+		<id>726</id>
+		<value>Teitl</value>
+	</string>
+	<string>
+		<id>727</id>
+		<value>Teledu byw yn y cefndir</value>
+	</string>
+	<string>
+		<id>728</id>
+		<value>Dim Video/Teledu&apos;n</value>
+	</string>
+	<string>
+		<id>729</id>
+		<value>Defnyddiwch VMR9 a bod rhywbeth yn chwarae</value>
+	</string>
+	<string>
+		<id>730</id>
+		<value>Mae&apos;r trefniant yma&apos;n recordio. Os byddwch yn dileu&apos;r</value>
+	</string>
+	<string>
+		<id>731</id>
+		<value>trefniant bydd y recordiad yn cael ei atal.</value>
+	</string>
+	<string>
+		<id>732</id>
+		<value>Ydych chi&apos;n siwr?</value>
+	</string>
+	<string>
+		<id>733</id>
+		<value>Gweld: Filmstrip</value>
+	</string>
+	<string>
+		<id>734</id>
+		<value>Delwedd:</value>
+	</string>
+	<string>
+		<id>735</id>
+		<value>Cylchdroi</value>
+	</string>
+	<string>
+		<id>736</id>
+		<value>Dim data Amserlen Teledu ar gael</value>
+	</string>
+	<string>
+		<id>737</id>
+		<value>Gweld: Lloeren</value>
+	</string>
+	<string>
+		<id>738</id>
+		<value>Gweld: Tymheredd</value>
+	</string>
+	<string>
+		<id>739</id>
+		<value>Gweld: Mynegai UV</value>
+	</string>
+	<string>
+		<id>740</id>
+		<value>Gweld: Gwyntoed</value>
+	</string>
+	<string>
+		<id>741</id>
+		<value>Gweld: Lleithder</value>
+	</string>
+	<string>
+		<id>742</id>
+		<value>Gweld: Dyddodiad</value>
+	</string>
+	<string>
+		<id>743</id>
+		<value>Rhagolwg 4 Diwrnod</value>
+	</string>
+	<string>
+		<id>744</id>
+		<value>Codiad Haul</value>
+	</string>
+	<string>
+		<id>745</id>
+		<value>Machlud Haul</value>
+	</string>
+	<string>
+		<id>746</id>
+		<value>Uchel</value>
+	</string>
+	<string>
+		<id>747</id>
+		<value>Isel</value>
+	</string>
+	<string>
+		<id>748</id>
+		<value>Ddyddodiad</value>
+	</string>
+	<string>
+		<id>750</id>
+		<value>Delweddau</value>
+	</string>
+	<string>
+		<id>751</id>
+		<value>Dangos pob can gan yr artist yma</value>
+	</string>
+	<string>
+		<id>800</id>
+		<value>Cychwyn gyda</value>
+	</string>
+	<string>
+		<id>801</id>
+		<value>Cynnwys</value>
+	</string>
+	<string>
+		<id>802</id>
+		<value>Gorffen gyda</value>
+	</string>
+	<string>
+		<id>803</id>
+		<value>Yn</value>
+	</string>
+	<string>
+		<id>804</id>
+		<value>Gorffen</value>
+	</string>
+	<string>
+		<id>805</id>
+		<value>Clir</value>
+	</string>
+	<string>
+		<id>806</id>
+		<value>Teitl</value>
+	</string>
+	<string>
+		<id>807</id>
+		<value>Cynnyrch</value>
+	</string>
+	<string>
+		<id>808</id>
+		<value>Cynnwys</value>
+	</string>
+	<string>
+		<id>809</id>
+		<value>Cyfarwyddiadau</value>
+	</string>
+	<string>
+		<id>810</id>
+		<value>Cerdyn</value>
+	</string>
+	<string>
+		<id>850</id>
+		<value>Larwm</value>
+	</string>
+	<string>
+		<id>851</id>
+		<value>Rhestr Chwarae</value>
+	</string>
+	<string>
+		<id>852</id>
+		<value>Larwm Ymlaen</value>
+	</string>
+	<string>
+		<id>853</id>
+		<value>Enw</value>
+	</string>
+	<string>
+		<id>854</id>
+		<value>Ar gyfer...</value>
+	</string>
+	<string>
+		<id>855</id>
+		<value>Amser Larwm</value>
+	</string>
+	<string>
+		<id>856</id>
+		<value>Cloc Cysgu Ymlaen</value>
+	</string>
+	<string>
+		<id>857</id>
+		<value>Hepian</value>
+	</string>
+	<string>
+		<id>858</id>
+		<value>Amser Hepian</value>
+	</string>
+	<string>
+		<id>859</id>
+		<value>Cloc Cysgu</value>
+	</string>
+	<string>
+		<id>860</id>
+		<value>Cynyddu&apos;r sain</value>
+	</string>
+	<string>
+		<id>861</id>
+		<value>Manylion Larwm</value>
+	</string>
+	<string>
+		<id>862</id>
+		<value>Radio</value>
+	</string>
+	<string>
+		<id>863</id>
+		<value>Ffeil</value>
+	</string>
+	<string>
+		<id>864</id>
+		<value>Math o Gyfrwng</value>
+	</string>
+	<string>
+		<id>865</id>
+		<value>Nifer o funudau cyn cysgu:</value>
+	</string>
+	<string>
+		<id>866</id>
+		<value>Lleihau&apos;r sain</value>
+	</string>
+	<string>
+		<id>867</id>
+		<value>Cau&apos;r cyfrifiadur</value>
+	</string>
+	<string>
+		<id>868</id>
+		<value>Ailosod</value>
+	</string>
+	<string>
+		<id>869</id>
+		<value>Larwm Newydd</value>
+	</string>
+	<string>
+		<id>870</id>
+		<value>Ailadrodd</value>
+	</string>
+	<string>
+		<id>871</id>
+		<value>Deffro&apos;r cyfrifiadur ar gyfer y larwm</value>
+	</string>
+	<string>
+		<id>872</id>
+		<value>Cychwyn gyda</value>
+	</string>
+	<string>
+		<id>873</id>
+		<value>Sioe Deledu</value>
+	</string>
+	<string>
+		<id>874</id>
+		<value>Rhifyn</value>
+	</string>
+	<string>
+		<id>875</id>
+		<value>Rhaglen bresennol</value>
+	</string>
+	<string>
+		<id>876</id>
+		<value>Tan atal â llaw</value>
+	</string>
+	<string>
+		<id>877</id>
+		<value>Blaenoroaethau</value>
+	</string>
+	<string>
+		<id>878</id>
+		<value>Storfa</value>
+	</string>
+	<string>
+		<id>879</id>
+		<value>Gwrthdaro rhaglenni</value>
+	</string>
+	<string>
+		<id>880</id>
+		<value>Amser i&apos;w recordio</value>
+	</string>
+	<string>
+		<id>881</id>
+		<value>Dewis pa recordiad i&apos;w atal:</value>
+	</string>
+	<string>
+		<id>882</id>
+		<value>Gosodiad ansawdd</value>
+	</string>
+	<string>
+		<id>883</id>
+		<value>Isel</value>
+	</string>
+	<string>
+		<id>884</id>
+		<value>Canolig</value>
+	</string>
+	<string>
+		<id>885</id>
+		<value>Uchel</value>
+	</string>
+	<string>
+		<id>886</id>
+		<value>Rhagosodedig</value>
+	</string>
+	<string>
+		<id>887</id>
+		<value>Pennu&apos;r nifer o rifynnau i&apos;w cadw</value>
+	</string>
+	<string>
+		<id>888</id>
+		<value>Rheoli Rhifynnau</value>
+	</string>
+	<string>
+		<id>889</id>
+		<value>Pob rhifyn</value>
+	</string>
+	<string>
+		<id>890</id>
+		<value>Chwarae CD</value>
+	</string>
+	<string>
+		<id>891</id>
+		<value>Dewis Sianel Deledu</value>
+	</string>
+	<string>
+		<id>892</id>
+		<value>Gwrthdaro</value>
+	</string>
+	<string>
+		<id>893</id>
+		<value>Cludadwy</value>
+	</string>
+	<string>
+		<id>894</id>
+		<value>Cywasgu Recordiadau&apos;r Teledu</value>
+	</string>
+	<string>
+		<id>895</id>
+		<value>Awtogywasgu</value>
+	</string>
+	<string>
+		<id>896</id>
+		<value>Cywasgu</value>
+	</string>
+	<string>
+		<id>897</id>
+		<value>Gosodiadau</value>
+	</string>
+	<string>
+		<id>898</id>
+		<value>MPEG-2</value>
+	</string>
+	<string>
+		<id>899</id>
+		<value>WMV</value>
+	</string>
+	<string>
+		<id>900</id>
+		<value>Ailgychwyn y ffilm ers tro diwethaf</value>
+	</string>
+	<string>
+		<id>901</id>
+		<value>MSN Messenger</value>
+	</string>
+	<string>
+		<id>902</id>
+		<value>Cysylltiadau ar-lein</value>
+	</string>
+	<string>
+		<id>903</id>
+		<value>Mewngofnodi</value>
+	</string>
+	<string>
+		<id>904</id>
+		<value>Allgofnodi</value>
+	</string>
+	<string>
+		<id>905</id>
+		<value>Rhaid ffurfweddu&apos;r ategyn yn gyntaf</value>
+	</string>
+	<string>
+		<id>906</id>
+		<value>Rhowch eich cyfeiriad e-bost er mwyn gosod</value>
+	</string>
+	<string>
+		<id>907</id>
+		<value>Methu cysylltu ag MSN</value>
+	</string>
+	<string>
+		<id>908</id>
+		<value>yn teipio neges...</value>
+	</string>
+	<string>
+		<id>909</id>
+		<value>Cysylltu...</value>
+	</string>
+	<string>
+		<id>910</id>
+		<value>Mewngofnodi...</value>
+	</string>
+	<string>
+		<id>911</id>
+		<value>Dim sianel</value>
+	</string>
+	<string>
+		<id>912</id>
+		<value>Methu estyn y newyddion diweddaraf</value>
+	</string>
+	<string>
+		<id>913</id>
+		<value>Ategynnau</value>
+	</string>
+	<string>
+		<id>914</id>
+		<value>Recordiadau</value>
+	</string>
+	<string>
+		<id>915</id>
+		<value>Sianeli Teledu</value>
+	</string>
+	<string>
+		<id>916</id>
+		<value>Ffeil bell</value>
+	</string>
+	<string>
+		<id>917</id>
+		<value>Mae&apos;r ffeil wedi ei lleoli ar rannu pell</value>
+	</string>
+	<string>
+		<id>918</id>
+		<value>A ddylwn ei lwytho i lawr i&apos;ch rhagosodedig?</value>
+	</string>
+	<string>
+		<id>919</id>
+		<value>rhannu lleol?</value>
+	</string>
+	<string>
+		<id>920</id>
+		<value>Methu llwytho ffeiliau pell i lawr</value>
+	</string>
+	<string>
+		<id>921</id>
+		<value>Mae&apos;r ffeil yn cael ei lwytho i fyny</value>
+	</string>
+	<string>
+		<id>922</id>
+		<value>Disgrifiad</value>
+	</string>
+	<string>
+		<id>923</id>
+		<value>Dangos</value>
+	</string>
+	<string>
+		<id>924</id>
+		<value>Dewislen</value>
+	</string>
+	<string>
+		<id>925</id>
+		<value>Dileu&apos;r ffilm</value>
+	</string>
+	<string>
+		<id>926</id>
+		<value>Ychwanegu at y rhestr chwarae</value>
+	</string>
+	<string>
+		<id>927</id>
+		<value>Rhybudd</value>
+	</string>
+	<string>
+		<id>928</id>
+		<value>Canfod celf y clawr</value>
+	</string>
+	<string>
+		<id>929</id>
+		<value>Cau&apos;r ddewislen</value>
+	</string>
+	<string>
+		<id>930</id>
+		<value>Ychwanegu at ffefrynnau</value>
+	</string>
+	<string>
+		<id>931</id>
+		<value>Cyfraddiad</value>
+	</string>
+	<string>
+		<id>932</id>
+		<value>Ffefrynnau</value>
+	</string>
+	<string>
+		<id>933</id>
+		<value>Tynnu o ffefrynnau</value>
+	</string>
+	<string>
+		<id>934</id>
+		<value>Gosod cyfraddiad</value>
+	</string>
+	<string>
+		<id>935</id>
+		<value>Dangos: Cyfraddiad</value>
+	</string>
+	<string>
+		<id>936</id>
+		<value>Ailgychwyn o:</value>
+	</string>
+	<string>
+		<id>937</id>
+		<value>Mewnforio Amserlen Teledu</value>
+	</string>
+	<string>
+		<id>938</id>
+		<value>Gwylio&apos;r sianel hon</value>
+	</string>
+	<string>
+		<id>939</id>
+		<value>Newid modd</value>
+	</string>
+	<string>
+		<id>940</id>
+		<value>Priodweddau</value>
+	</string>
+	<string>
+		<id>941</id>
+		<value>Newid cyfradd agwedd</value>
+	</string>
+	<string>
+		<id>942</id>
+		<value>Ymestyn</value>
+	</string>
+	<string>
+		<id>943</id>
+		<value>Normal</value>
+	</string>
+	<string>
+		<id>944</id>
+		<value>Gwreiddiol</value>
+	</string>
+	<string>
+		<id>945</id>
+		<value>Blwch Llythyr</value>
+	</string>
+	<string>
+		<id>946</id>
+		<value>Pan a Sgan</value>
+	</string>
+	<string>
+		<id>947</id>
+		<value>Chwyddo</value>
+	</string>
+	<string>
+		<id>948</id>
+		<value>Ar-lein</value>
+	</string>
+	<string>
+		<id>949</id>
+		<value>Prysur</value>
+	</string>
+	<string>
+		<id>950</id>
+		<value>Nol Mewn Munud</value>
+	</string>
+	<string>
+		<id>951</id>
+		<value>Allan</value>
+	</string>
+	<string>
+		<id>952</id>
+		<value>Ffôn</value>
+	</string>
+	<string>
+		<id>953</id>
+		<value>Cinio</value>
+	</string>
+	<string>
+		<id>954</id>
+		<value>Cudd</value>
+	</string>
+	<string>
+		<id>955</id>
+		<value>Segur</value>
+	</string>
+	<string>
+		<id>956</id>
+		<value>Ar-lein</value>
+	</string>
+	<string>
+		<id>957</id>
+		<value>MSN Messenger</value>
+	</string>
+	<string>
+		<id>958</id>
+		<value>Siarad gyda</value>
+	</string>
+	<string>
+		<id>959</id>
+		<value>wedi ymuno a&apos;r sgwrs</value>
+	</string>
+	<string>
+		<id>960</id>
+		<value>wedi gadael y sgwrs</value>
+	</string>
+	<string>
+		<id>961</id>
+		<value>Statws MSN</value>
+	</string>
+	<string>
+		<id>970</id>
+		<value>Ffenestr flaenorol</value>
+	</string>
+	<string>
+		<id>971</id>
+		<value>Grwp</value>
+	</string>
+	<string>
+		<id>972</id>
+		<value>Pob Sianel</value>
+	</string>
+	<string>
+		<id>973</id>
+		<value>Lleiafswm FPS</value>
+	</string>
+	<string>
+		<id>974</id>
+		<value>Dewislen Gwraidd</value>
+	</string>
+	<string>
+		<id>975</id>
+		<value>Pennod flaenorol</value>
+	</string>
+	<string>
+		<id>976</id>
+		<value>Pennod nesaf</value>
+	</string>
+	<string>
+		<id>977</id>
+		<value>Nid oes cerdyn rhydd ar gael</value>
+	</string>
+	<string>
+		<id>978</id>
+		<value>sy&apos;n gallu gwylio&apos;r sianel yma</value>
+	</string>
+	<string>
+		<id>979</id>
+		<value>Chwarae&apos;r recordiad o&apos;r cychwyn</value>
+	</string>
+	<string>
+		<id>980</id>
+		<value>Chwarae&apos;r recordiad o&apos;r pwynt byw</value>
+	</string>
+	<string>
+		<id>981</id>
+		<value>Diddymu&apos;r sioe</value>
+	</string>
+	<string>
+		<id>982</id>
+		<value>Dileu&apos;r recordiad cyfan</value>
+	</string>
+	<string>
+		<id>983</id>
+		<value>Rhestrau Chwarae</value>
+	</string>
+	<string>
+		<id>984</id>
+		<value>Estyn rhestr ffilmiau</value>
+	</string>
+	<string>
+		<id>985</id>
+		<value>Estyn manylion ffilmiau</value>
+	</string>
+	<string>
+		<id>986</id>
+		<value>Estyn manylion actor</value>
+	</string>
+	<string>
+		<id>987</id>
+		<value>Blynyddoedd</value>
+	</string>
+	<string>
+		<id>988</id>
+		<value>Ansawdd</value>
+	</string>
+	<string>
+		<id>989</id>
+		<value>FPS</value>
+	</string>
+	<string>
+		<id>990</id>
+		<value>Didradd</value>
+	</string>
+	<string>
+		<id>991</id>
+		<value>Blaenoriaeth</value>
+	</string>
+	<string>
+		<id>992</id>
+		<value>Dileu&apos;r ffeil wreiddiol</value>
+	</string>
+	<string>
+		<id>993</id>
+		<value>Addasu</value>
+	</string>
+	<string>
+		<id>994</id>
+		<value>Galluogi Awtogywasgu</value>
+	</string>
+	<string>
+		<id>995</id>
+		<value>Ydych chi wir am gywasgu&apos;r</value>
+	</string>
+	<string>
+		<id>996</id>
+		<value>recordiadau hyn?</value>
+	</string>
+	<string>
+		<id>997</id>
+		<value>Cwblhawyd</value>
+	</string>
+	<string>
+		<id>998</id>
+		<value>XviD</value>
+	</string>
+	<string>
+		<id>999</id>
+		<value>Mae&apos;r ategyn yn caniatáu i chi drawsgodio eich</value>
+	</string>
+	<string>
+		<id>1000</id>
+		<value>Recordiadau Teledu o vr-ms i mpg, xvid neu wmv</value>
+	</string>
+	<string>
+		<id>1001</id>
+		<value>Sylwch. Rhaid fod cerdyn dadcodio</value>
+	</string>
+	<string>
+		<id>1002</id>
+		<value>MPEG2 Elecard wedi ei osod</value>
+	</string>
+	<string>
+		<id>1003</id>
+		<value>ar gyfer trawsgodio i xvid</value>
+	</string>
+	<string>
+		<id>1004</id>
+		<value>Ar fin cychwyn redordio</value>
+	</string>
+	<string>
+		<id>1005</id>
+		<value>ar sianel</value>
+	</string>
+	<string>
+		<id>1006</id>
+		<value>Caniatáu i recordio gychwyn</value>
+	</string>
+	<string>
+		<id>1007</id>
+		<value>Diddymu recordio a pharhau i wylio&apos;r teledu</value>
+	</string>
+	<string>
+		<id>1008</id>
+		<value>Ciw</value>
+	</string>
+	<string>
+		<id>1009</id>
+		<value>Estyn celf clawr</value>
+	</string>
+	<string>
+		<id>1010</id>
+		<value>Gwyliwyd</value>
+	</string>
+	<string>
+		<id>1011</id>
+		<value>Hanes bywyd</value>
+	</string>
+	<string>
+		<id>1012</id>
+		<value>Byd y rhaglen yn cael ei atal gan</value>
+	</string>
+	<string>
+		<id>1013</id>
+		<value>Hoffech chi recordio&apos;r ail ran hefyd?</value>
+	</string>
+	<string>
+		<id>1014</id>
+		<value>Dweud wrthyf pan fydd y rhaglen yn cychwyn</value>
+	</string>
+	<string>
+		<id>1015</id>
+		<value>Peidio dweud wrthyf pan fydd y rhaglen yn cychwyn</value>
+	</string>
+	<string>
+		<id>1016</id>
+		<value>Rhaglen yn cychwyn mewn 5 munud</value>
+	</string>
+	<string>
+		<id>1017</id>
+		<value>Trefnu: Hyd</value>
+	</string>
+	<string>
+		<id>1020</id>
+		<value>Gwybodaeth</value>
+	</string>
+	<string>
+		<id>1021</id>
+		<value>Pwyswch Alt+Enter i</value>
+	</string>
+	<string>
+		<id>1022</id>
+		<value>ddychwelyd i&apos;r modd ffenestr</value>
+	</string>
+	<string>
+		<id>1023</id>
+		<value>Galwad</value>
+	</string>
+	<string>
+		<id>1024</id>
+		<value>gan</value>
+	</string>
+	<string>
+		<id>1025</id>
+		<value>Digwyddodd gwall</value>
+	</string>
+	<string>
+		<id>1026</id>
+		<value>Gweler y ffeiliau cofnod am fanylion</value>
+	</string>
+	<string>
+		<id>1027</id>
+		<value>DVD</value>
+	</string>
+	<string>
+		<id>1028</id>
+		<value>Dinas</value>
+	</string>
+	<string>
+		<id>1029</id>
+		<value>Iaith Is-deitlau</value>
+	</string>
+	<string>
+		<id>1030</id>
+		<value>Cau</value>
+	</string>
+	<string>
+		<id>1031</id>
+		<value>Ailgychwyn</value>
+	</string>
+	<string>
+		<id>1032</id>
+		<value>Cysgu</value>
+	</string>
+	<string>
+		<id>1033</id>
+		<value>Mae rhaglenni&apos;n cael eu recordio</value>
+	</string>
+	<string>
+		<id>1034</id>
+		<value>Heb ganfod signal</value>
+	</string>
+	<string>
+		<id>1035</id>
+		<value>Mae&apos;r sianel teledu&apos;n chwil!</value>
+	</string>
+	<string>
+		<id>1036</id>
+		<value>Heb ganfod fideo</value>
+	</string>
+	<string>
+		<id>1037</id>
+		<value>Teledu - Gwybodaeth am raglenni</value>
+	</string>
+	<string>
+		<id>1038</id>
+		<value>Recordio uwch</value>
+	</string>
+	<string>
+		<id>1039</id>
+		<value>Peidio recordio</value>
+	</string>
+	<string>
+		<id>1040</id>
+		<value>Rhybuddio fi</value>
+	</string>
+	<string>
+		<id>1041</id>
+		<value>Rhifynnau i ddod</value>
+	</string>
+	<string>
+		<id>1042</id>
+		<value>Cadw tan</value>
+	</string>
+	<string>
+		<id>1043</id>
+		<value>Tan ei wylio</value>
+	</string>
+	<string>
+		<id>1044</id>
+		<value>Tan bod angen y lle</value>
+	</string>
+	<string>
+		<id>1045</id>
+		<value>Tan ddyddiad</value>
+	</string>
+	<string>
+		<id>1046</id>
+		<value>Bob tro</value>
+	</string>
+	<string>
+		<id>1047</id>
+		<value>Cychwyn ym modd sgrin llawn</value>
+	</string>
+	<string>
+		<id>1048</id>
+		<value>Gosodiadau</value>
+	</string>
+	<string>
+		<id>1049</id>
+		<value>Cysgu</value>
+	</string>
+	<string>
+		<id>1050</id>
+		<value>Sad-Sul</value>
+	</string>
+	<string>
+		<id>1051</id>
+		<value>Recordio Sad-Sul</value>
+	</string>
+	<string>
+		<id>1052</id>
+		<value>Caneuon</value>
+	</string>
+	<string>
+		<id>1100</id>
+		<value>Mewnforio CD</value>
+	</string>
+	<string>
+		<id>1101</id>
+		<value>Mewnforio&apos;r trac yma</value>
+	</string>
+	<string>
+		<id>1102</id>
+		<value>Diddymu mewnforio&apos;r trac</value>
+	</string>
+	<string>
+		<id>1103</id>
+		<value>Mewnforio Trac</value>
+	</string>
+	<string>
+		<id>1104</id>
+		<value>chwith</value>
+	</string>
+	<string>
+		<id>1105</id>
+		<value>Mewnforio Traciau</value>
+	</string>
+	<string>
+		<id>1440</id>
+		<value>TeleTestun</value>
+	</string>
+	<string>
+		<id>1441</id>
+		<value>TeleTestun</value>
+	</string>
+	<string>
+		<id>1442</id>
+		<value>Cyflymder sgrolio (llorweddol)</value>
+	</string>
+	<string>
+		<id>1443</id>
+		<value>Cyflymder sgrolio (fertigol)</value>
+	</string>
+	<string>
+		<id>1444</id>
+		<value>Cyn-recordio</value>
+	</string>
+	<string>
+		<id>1445</id>
+		<value>Ol-recordio</value>
+	</string>
+	<string>
+		<id>1446</id>
+		<value>Cychwyn recordio:</value>
+	</string>
+	<string>
+		<id>1447</id>
+		<value>Atal recordio:</value>
+	</string>
+	<string>
+		<id>1448</id>
+		<value>Dewis Dim</value>
+	</string>
+	<string>
+		<id>1449</id>
+		<value>Atal recordio</value>
+	</string>
+	<string>
+		<id>1450</id>
+		<value>Ydych chi&apos;n siwr o stopio&apos;r recordio</value>
+	</string>
+	<string>
+		<id>1950</id>
+		<value>Statws</value>
+	</string>
+	<string>
+		<id>1951</id>
+		<value>Disg Caled</value>
+	</string>
+	<string>
+		<id>1952</id>
+		<value>Ffan</value>
+	</string>
+	<string>
+		<id>1953</id>
+		<value>Rhydd</value>
+	</string>
+	<string>
+		<id>1954</id>
+		<value>Tymheredd</value>
+	</string>
+	<string>
+		<id>1955</id>
+		<value>c</value>
+	</string>
+	<string>
+		<id>1956</id>
+		<value>Dewis sain y larwm</value>
+	</string>
+	<string>
+		<id>1957</id>
+		<value>Dewisiadau</value>
+	</string>
+	<string>
+		<id>1958</id>
+		<value>Defnydd</value>
+	</string>
+	<string>
+		<id>1959</id>
+		<value>Foltedd</value>
+	</string>
+	<string>
+		<id>1960</id>
+		<value>Folt</value>
+	</string>
+	<string>
+		<id>1961</id>
+		<value>Amledd y Cloc</value>
+	</string>
+	<string>
+		<id>1962</id>
+		<value>Dewisiadau</value>
+	</string>
+	<string>
+		<id>1963</id>
+		<value>Manylion y synhwyrydd</value>
+	</string>
+	<string>
+		<id>1964</id>
+		<value>Larwm y synhwyrydd</value>
+	</string>
+	<string>
+		<id>1965</id>
+		<value>Gwerth Uchaf</value>
+	</string>
+	<string>
+		<id>1966</id>
+		<value>Gwerth Isa</value>
+	</string>
+	<string>
+		<id>1967</id>
+		<value>trothwy uchaf y larwm</value>
+	</string>
+	<string>
+		<id>1968</id>
+		<value>trothwy isaf y larwm</value>
+	</string>
+	<string>
+		<id>1969</id>
+		<value>Sain prawf</value>
+	</string>
+	<string>
+		<id>1970</id>
+		<value>Cyfnod larwm (eil.)</value>
+	</string>
+	<string>
+		<id>1971</id>
+		<value>Cau yn sgil rhybudd</value>
+	</string>
+	<string>
+		<id>1972</id>
+		<value>Manylion statws</value>
+	</string>
+	<string>
+		<id>1973</id>
+		<value>o&apos;r</value>
+	</string>
+	<string>
+		<id>1974</id>
+		<value>Cof</value>
+	</string>
+	<string>
+		<id>1975</id>
+		<value>Tudalen nesaf</value>
+	</string>
+	<string>
+		<id>1976</id>
+		<value>cylch y funud</value>
+	</string>
+	<string>
+		<id>1977</id>
+		<value>System ffei</value>
+	</string>
+	<string>
+		<id>1978</id>
+		<value>VirtualMem</value>
+	</string>
+	<string>
+		<id>2005</id>
+		<value>Dileu</value>
+	</string>
+	<string>
+		<id>2006</id>
+		<value>Teitl</value>
+	</string>
+	<string>
+		<id>2007</id>
+		<value>Cynnyrc</value>
+	</string>
+	<string>
+		<id>2008</id>
+		<value>Cynhwysion</value>
+	</string>
+	<string>
+		<id>2009</id>
+		<value>Cyfarwyddiadau</value>
+	</string>
+	<string>
+		<id>2010</id>
+		<value>Cerdyn</value>
+	</string>
+	<string>
+		<id>2011</id>
+		<value>Argraffu</value>
+	</string>
+	<string>
+		<id>2012</id>
+		<value>Dileu</value>
+	</string>
+	<string>
+		<id>2013</id>
+		<value>Ffefrynnau</value>
+	</string>
+	<string>
+		<id>2014</id>
+		<value>Anhysbys</value>
+	</string>
+	<string>
+		<id>2015</id>
+		<value>y pryd</value>
+	</string>
+	<string>
+		<id>2016</id>
+		<value>bach</value>
+	</string>
+	<string>
+		<id>2017</id>
+		<value>owns hylifol</value>
+	</string>
+	<string>
+		<id>2018</id>
+		<value>cwpan</value>
+	</string>
+	<string>
+		<id>2019</id>
+		<value>peint</value>
+	</string>
+	<string>
+		<id>2020</id>
+		<value>canolig</value>
+	</string>
+	<string>
+		<id>2021</id>
+		<value>mawr</value>
+	</string>
+	<string>
+		<id>2022</id>
+		<value>can</value>
+	</string>
+	<string>
+		<id>2023</id>
+		<value>pecyn</value>
+	</string>
+	<string>
+		<id>2024</id>
+		<value>pinsiad</value>
+	</string>
+	<string>
+		<id>2025</id>
+		<value>dropyn</value>
+	</string>
+	<string>
+		<id>2026</id>
+		<value>dash?</value>
+	</string>
+	<string>
+		<id>2027</id>
+		<value>carton</value>
+	</string>
+	<string>
+		<id>2028</id>
+		<value>bwnsh</value>
+	</string>
+	<string>
+		<id>2029</id>
+		<value>sleisen</value>
+	</string>
+	<string>
+		<id>2030</id>
+		<value>yr un</value>
+	</string>
+	<string>
+		<id>2031</id>
+		<value>llwy de</value>
+	</string>
+	<string>
+		<id>2032</id>
+		<value>llwy de</value>
+	</string>
+	<string>
+		<id>2033</id>
+		<value>llwy fwrdd</value>
+	</string>
+	<string>
+		<id>2034</id>
+		<value>llwy fwrdd</value>
+	</string>
+	<string>
+		<id>2035</id>
+		<value>cwart</value>
+	</string>
+	<string>
+		<id>2036</id>
+		<value>galwyn</value>
+	</string>
+	<string>
+		<id>2037</id>
+		<value>owns</value>
+	</string>
+	<string>
+		<id>2038</id>
+		<value>pwys</value>
+	</string>
+	<string>
+		<id>2039</id>
+		<value>mililitr</value>
+	</string>
+	<string>
+		<id>2040</id>
+		<value>mililitr</value>
+	</string>
+	<string>
+		<id>2041</id>
+		<value>centilitr</value>
+	</string>
+	<string>
+		<id>2042</id>
+		<value>decilitr</value>
+	</string>
+	<string>
+		<id>2043</id>
+		<value>litr</value>
+	</string>
+	<string>
+		<id>2044</id>
+		<value>milligram</value>
+	</string>
+	<string>
+		<id>2045</id>
+		<value>milligram</value>
+	</string>
+	<string>
+		<id>2046</id>
+		<value>decigram</value>
+	</string>
+	<string>
+		<id>2047</id>
+		<value>gram</value>
+	</string>
+	<string>
+		<id>2048</id>
+		<value>kilogram</value>
+	</string>
+	<string>
+		<id>2049</id>
+		<value>Dileu&apos;r Rysait?</value>
+	</string>
+	<string>
+		<id>2050</id>
+		<value>Dileu&apos;r Categori?</value>
+	</string>
+	<string>
+		<id>2051</id>
+		<value>Chwilio yn y Teitl</value>
+	</string>
+	<string>
+		<id>2052</id>
+		<value>Chwilio yn y Rysait</value>
+	</string>
+	<string>
+		<id>2053</id>
+		<value>Categori</value>
+	</string>
+	<string>
+		<id>2054</id>
+		<value>Dim Mynediad!</value>
+	</string>
+	<string>
+		<id>2100</id>
+		<value>Llosgi</value>
+	</string>
+	<string>
+		<id>2101</id>
+		<value>Copïo&apos;r CD/DVD</value>
+	</string>
+	<string>
+		<id>2102</id>
+		<value>Creu CD Sain</value>
+	</string>
+	<string>
+		<id>2103</id>
+		<value>Creu CD Fideo</value>
+	</string>
+	<string>
+		<id>2104</id>
+		<value>Creu DVD Fideo</value>
+	</string>
+	<string>
+		<id>2105</id>
+		<value>Creu CD Data</value>
+	</string>
+	<string>
+		<id>2106</id>
+		<value>Creu DVD Data</value>
+	</string>
+	<string>
+		<id>2107</id>
+		<value>Cychwyn copïo</value>
+	</string>
+	<string>
+		<id>2108</id>
+		<value>Mewnosod CD/DVD gwag</value>
+	</string>
+	<string>
+		<id>2109</id>
+		<value>yna clicio Iawn</value>
+	</string>
+	<string>
+		<id>2110</id>
+		<value>Mewnosod y CD/DVD wreiddiol</value>
+	</string>
+	<string>
+		<id>2111</id>
+		<value>Gorffen !</value>
+	</string>
+	<string>
+		<id>2112</id>
+		<value>Aros am CD/DVD</value>
+	</string>
+	<string>
+		<id>2113</id>
+		<value>Copio&apos;r cyfan</value>
+	</string>
+	<string>
+		<id>2114</id>
+		<value>Dileu&apos;r ddisg</value>
+	</string>
+	<string>
+		<id>2115</id>
+		<value>Mewnosod CD/DVD RW</value>
+	</string>
+	<string>
+		<id>2116</id>
+		<value>Nid yw&apos;r gyrrwr yn barod</value>
+	</string>
+	<string>
+		<id>2117</id>
+		<value>digwyddodd gwall terfynol!</value>
+	</string>
+	<string>
+		<id>2118</id>
+		<value>Trosi DVR-MS</value>
+	</string>
+	<string>
+		<id>2119</id>
+		<value>Cychwyn trosi</value>
+	</string>
+	<string>
+		<id>2120</id>
+		<value>Trosi ffeil(iau)...</value>
+	</string>
+	<string>
+		<id>2121</id>
+		<value>Methu trosi ffeil(iau)!</value>
+	</string>
+	<string>
+		<id>2122</id>
+		<value>cychwyn!</value>
+	</string>
+	<string>
+		<id>2123</id>
+		<value>Gwybodaeth am y ddisg</value>
+	</string>
+	<string>
+		<id>2124</id>
+		<value>Methu Dileu: Methu ysgrifennu ar y cyfrwng</value>
+	</string>
+	<string>
+		<id>2125</id>
+		<value>Dileu&apos;r Ddisg...</value>
+	</string>
+	<string>
+		<id>2126</id>
+		<value>Bwrw allan CD</value>
+	</string>
+	<string>
+		<id>2127</id>
+		<value>Methu ysgrifennu ar y CD</value>
+	</string>
+	<string>
+		<id>2128</id>
+		<value>Paratoi i Losgi: amcan amser:</value>
+	</string>
+	<string>
+		<id>2129</id>
+		<value>Paratoi i Losgi</value>
+	</string>
+	<string>
+		<id>2130</id>
+		<value>Bloc</value>
+	</string>
+	<string>
+		<id>2131</id>
+		<value>o</value>
+	</string>
+	<string>
+		<id>2132</id>
+		<value>Cau&apos;r ddisg: amcan amser:</value>
+	</string>
+	<string>
+		<id>2133</id>
+		<value>Recordiadau o&apos;r Teledu</value>
+	</string>
+	<string>
+		<id>2134</id>
+		<value>Fideo</value>
+	</string>
+	<string>
+		<id>2135</id>
+		<value>Sain</value>
+	</string>
+	<string>
+		<id>2136</id>
+		<value>Data</value>
+	</string>
+	<string>
+		<id>2137</id>
+		<value>Trosi</value>
+	</string>
+	<string>
+		<id>2138</id>
+		<value>Torri</value>
+	</string>
+	<string>
+		<id>2139</id>
+		<value>Creu CD MP3</value>
+	</string>
+	<string>
+		<id>2140</id>
+		<value>Creu DVD MP3</value>
+	</string>
+	<string>
+		<id>2141</id>
+		<value>MPEG2 -&gt;DivX</value>
+	</string>
+	<string>
+		<id>2142</id>
+		<value>MPEG2 -&gt;MPEG4</value>
+	</string>
+	<string>
+		<id>2143</id>
+		<value>Cartref</value>
+	</string>
+	<string>
+		<id>2200</id>
+		<value>Explorer</value>
+	</string>
+	<string>
+		<id>2201</id>
+		<value>Dewis ffynhonnell</value>
+	</string>
+	<string>
+		<id>2202</id>
+		<value>Dewis cyrchfan</value>
+	</string>
+	<string>
+		<id>2203</id>
+		<value>Copïo data</value>
+	</string>
+	<string>
+		<id>2204</id>
+		<value>Creu ffolder</value>
+	</string>
+	<string>
+		<id>2205</id>
+		<value>Adfer y dewis</value>
+	</string>
+	<string>
+		<id>2206</id>
+		<value>Dewis popeth</value>
+	</string>
+	<string>
+		<id>2207</id>
+		<value>Hoffech chi</value>
+	</string>
+	<string>
+		<id>2208</id>
+		<value>greu ffolder?</value>
+	</string>
+	<string>
+		<id>2209</id>
+		<value>Hoffech chi gopïo&apos;r ffeiliau?</value>
+	</string>
+	<string>
+		<id>2210</id>
+		<value>Wedi copïo&apos;r ffeiliau!</value>
+	</string>
+	<string>
+		<id>2211</id>
+		<value>Arhoswch, mae&apos;r ffeiliau&apos;n cael eu copïo.</value>
+	</string>
+	<string>
+		<id>2212</id>
+		<value>Dileu</value>
+	</string>
+	<string>
+		<id>2213</id>
+		<value>Symud</value>
+	</string>
+	<string>
+		<id>2214</id>
+		<value>Hoffech chi symud y ffeiliau hyn?</value>
+	</string>
+	<string>
+		<id>2215</id>
+		<value>Arhoswch, symud ffeiliau.</value>
+	</string>
+	<string>
+		<id>2216</id>
+		<value>Wedi symud ffeiliau!</value>
+	</string>
+	<string>
+		<id>2217</id>
+		<value>Ffeil Cyrchfan yn bodoli!</value>
+	</string>
+	<string>
+		<id>2218</id>
+		<value>Ysgrifennu dros y ffeil?</value>
+	</string>
+	<string>
+		<id>2219</id>
+		<value>Methu symud o&apos;r gyrrwr!</value>
+	</string>
+	<string>
+		<id>2220</id>
+		<value>Copio&apos;r ffeil?</value>
+	</string>
+	<string>
+		<id>2221</id>
+		<value>Hoffech chi ddileu&apos;r ffeiliau?</value>
+	</string>
+	<string>
+		<id>2222</id>
+		<value>Ffeiliau wedi eu dileu!</value>
+	</string>
+	<string>
+		<id>2223</id>
+		<value>Sbwriel</value>
+	</string>
+	<string>
+		<id>2224</id>
+		<value>Ffolder yn bodoli!</value>
+	</string>
+	<string>
+		<id>2225</id>
+		<value>Ffolder wedi ei greu</value>
+	</string>
+	<string>
+		<id>3000</id>
+		<value>Dewisiadau&apos;r Rhaglen</value>
+	</string>
+	<string>
+		<id>3001</id>
+		<value>Awr</value>
+	</string>
+	<string>
+		<id>3002</id>
+		<value>Awr</value>
+	</string>
+	<string>
+		<id>3003</id>
+		<value>Munud</value>
+	</string>
+	<string>
+		<id>3004</id>
+		<value>Munud</value>
+	</string>
+	<string>
+		<id>3005</id>
+		<value>Awr yn ôl</value>
+	</string>
+	<string>
+		<id>3006</id>
+		<value>Awr yn ol</value>
+	</string>
+	<string>
+		<id>3007</id>
+		<value>Munud yn ol</value>
+	</string>
+	<string>
+		<id>3008</id>
+		<value>Munud yn ol</value>
+	</string>
+	<string>
+		<id>3009</id>
+		<value>Cychwyn ymhen</value>
+	</string>
+	<string>
+		<id>3010</id>
+		<value>Munud yn weddill</value>
+	</string>
+	<string>
+		<id>3011</id>
+		<value>Awr yn weddill</value>
+	</string>
+	<string>
+		<id>3012</id>
+		<value>Awr yn weddill</value>
+	</string>
+	<string>
+		<id>3013</id>
+		<value>Cychwyn nawr</value>
+	</string>
+	<string>
+		<id>3014</id>
+		<value>Diwrnod</value>
+	</string>
+	<string>
+		<id>3015</id>
+		<value>Diwrnod</value>
+	</string>
+	<string>
+		<id>3016</id>
+		<value>Gorffen yn barod</value>
+	</string>
+	<string>
+		<id>3017</id>
+		<value>Cychwynwyd</value>
+	</string>
+	<string>
+		<id>3018</id>
+		<value>Munud yn weddill</value>
+	</string>
+	<string>
+		<id>3019</id>
+		<value>Cyfres</value>
+	</string>
+	<string>
+		<id>3020</id>
+		<value>Rhifyn</value>
+	</string>
+	<string>
+		<id>3021</id>
+		<value>Rhan</value>
+	</string>
+	<string>
+		<id>3022</id>
+		<value>o</value>
+	</string>
+	<string>
+		<id>5900</id>
+		<value>Rhagflas</value>
+	</string>
+	<string>
+		<id>5901</id>
+		<value>Dangos ffilmiau</value>
+	</string>
+	<string>
+		<id>5902</id>
+		<value>Dangos pa ffilm?</value>
+	</string>
+	<string>
+		<id>5903</id>
+		<value>Ffilmiau ychwanegwyd</value>
+	</string>
+	<string>
+		<id>5904</id>
+		<value>Ffilm mwyaf poblogaidd</value>
+	</string>
+	<string>
+		<id>5905</id>
+		<value>Pob ffilm</value>
+	</string>
+	<string>
+		<id>5906</id>
+		<value>Rhagflas</value>
+	</string>
+	<string>
+		<id>5907</id>
+		<value>Clip</value>
+	</string>
+	<string>
+		<id>5908</id>
+		<value>Rhagor</value>
+	</string>
+	<string>
+		<id>5909</id>
+		<value>Methu creu llif ffilm!</value>
+	</string>
+	<string>
+		<id>5910</id>
+		<value>Estyn gwybodaeth ffilm</value>
+	</string>
+	<string>
+		<id>5911</id>
+		<value>Newydd mewn theatrau</value>
+	</string>
+	<string>
+		<id>5912</id>
+		<value>Yr wythnos flaenorol</value>
+	</string>
+	<string>
+		<id>5913</id>
+		<value>Yr wythnos hon</value>
+	</string>
+	<string>
+		<id>5914</id>
+		<value>Wythnos nesaf</value>
+	</string>
+	<string>
+		<id>5915</id>
+		<value>Dim adolygiadau ffilm eto</value>
+	</string>
+	<string>
+		<id>5916</id>
+		<value>Heb ganfod rhagflas</value>
+	</string>
+	<string>
+		<id>5917</id>
+		<value>Rhagflas Almaenig</value>
+	</string>
+	<string>
+		<id>5918</id>
+		<value>Télévision Suisse Romande VOD</value>
+	</string>
+	<string>
+		<id>5919</id>
+		<value>Gorau&apos;r penwythnos</value>
+	</string>
+	<string>
+		<id>5920</id>
+		<value>Ffilmau&apos;n agor wythnos yma</value>
+	</string>
+	<string>
+		<id>5921</id>
+		<value>Ffilmiau ar eu ffordd</value>
+	</string>
+	<string>
+		<id>5922</id>
+		<value>DVD mwyaf poblogaidd</value>
+	</string>
+	<string>
+		<id>5923</id>
+		<value>Newydd ar DVD wythnos yma</value>
+	</string>
+	<string>
+		<id>5924</id>
+		<value>Newydd ar DVD wythnos nesaf</value>
+	</string>
+	<string>
+		<id>5925</id>
+		<value>Archebion DVD</value>
+	</string>
+	<string>
+		<id>8000</id>
+		<value>E-bost</value>
+	</string>
+	<string>
+		<id>8001</id>
+		<value>Gwirio&apos;r Bwlch E-bost</value>
+	</string>
+	<string>
+		<id>8002</id>
+		<value>Diffod Awtogwirio</value>
+	</string>
+	<string>
+		<id>8003</id>
+		<value>Awtogwirio Ymlaen</value>
+	</string>
+	<string>
+		<id>8004</id>
+		<value>Mae gennych e-bost newydd!</value>
+	</string>
+	<string>
+		<id>8005</id>
+		<value>Adnewyddu&apos;r Blwch E-bost</value>
+	</string>
+	<string>
+		<id>8007</id>
+		<value>Awtogwirio</value>
+	</string>
+	<string>
+		<id>8008</id>
+		<value>Nôl</value>
+	</string>
+	<string>
+		<id>8009</id>
+		<value>Marcio popeth heb eu darllen</value>
+	</string>
+	<string>
+		<id>8010</id>
+		<value>Heb ddiffinio Blwch E-bost</value>
+	</string>
+	<string>
+		<id>8011</id>
+		<value>Ewch i&apos;r Gosod a diffinio o leiaf un</value>
+	</string>
+	<string>
+		<id>8012</id>
+		<value>Blwch E-bost i ddefnyddio&apos;r Ategyn E-bost.</value>
+	</string>
+	<string>
+		<id>8013</id>
+		<value>Dim ymateb gan y Gweinydd</value>
+	</string>
+	<string>
+		<id>8014</id>
+		<value>Nid yw Gweinydd&apos;{0}&apos;yn ymateb!</value>
+	</string>
+	<string>
+		<id>8015</id>
+		<value>Gwiriwch ffurfweddiad eich Blwch E-bost&apos;{0}&apos;</value>
+	</string>
+	<string>
+		<id>8016</id>
+		<value>Oddi wrth</value>
+	</string>
+	<string>
+		<id>8017</id>
+		<value>At</value>
+	</string>
+	<string>
+		<id>8018</id>
+		<value>Pwnc</value>
+	</string>
+	<string>
+		<id>8019</id>
+		<value>Neges</value>
+	</string>
+	<string>
+		<id>8020</id>
+		<value>Dileu E-bost</value>
+	</string>
+	<string>
+		<id>8021</id>
+		<value>Gosod wedi darllen</value>
+	</string>
+	<string>
+		<id>8022</id>
+		<value>Dangos Atodiadau</value>
+	</string>
+	<string>
+		<id>8023</id>
+		<value>Neges newydd wedi cyrraedd</value>
+	</string>
+	<string>
+		<id>8024</id>
+		<value>Dangos y Neges</value>
+	</string>
+	<string>
+		<id>8025</id>
+		<value>Dosrannu&apos;r Negeseuon</value>
+	</string>
+	<string>
+		<id>8030</id>
+		<value>Cysylltwyd a&apos;r gweinydd</value>
+	</string>
+	<string>
+		<id>8031</id>
+		<value>Estyn rhif e-bost</value>
+	</string>
+	<string>
+		<id>8033</id>
+		<value>Cynnydd</value>
+	</string>
+	<string>
+		<id>8034</id>
+		<value>Dangos HTML</value>
+	</string>
+	<string>
+		<id>9000</id>
+		<value>Maint y ddelwedd:</value>
+	</string>
+	<string>
+		<id>9001</id>
+		<value>Cydraniad:</value>
+	</string>
+	<string>
+		<id>9002</id>
+		<value>Flash:</value>
+	</string>
+	<string>
+		<id>9003</id>
+		<value>Modd Mesur:</value>
+	</string>
+	<string>
+		<id>9004</id>
+		<value>Cywiro:</value>
+	</string>
+	<string>
+		<id>9005</id>
+		<value>Cyflymder y Caead</value>
+	</string>
+	<string>
+		<id>9006</id>
+		<value>Dyddiad crewyd</value>
+	</string>
+	<string>
+		<id>9007</id>
+		<value>Fstop:</value>
+	</string>
+	<string>
+		<id>9008</id>
+		<value>Amser dinoethiad</value>
+	</string>
+	<string>
+		<id>9009</id>
+		<value>Model y Camera</value>
+	</string>
+	<string>
+		<id>9010</id>
+		<value>Marc Cynhyrchydd:</value>
+	</string>
+	<string>
+		<id>9011</id>
+		<value>Darllen Sylwadau:</value>
+	</string>
+	<string>
+		<id>99845</id>
+		<value>Gwybodaeth gan TV.com</value>
+	</string>
+	<string>
+		<id>12902</id>
+		<value>Rheolwr MSN Messenger</value>
+	</string>
+	<string>
+		<id>13000</id>
+		<value>System:</value>
+	</string>
+	<string>
+		<id>13001</id>
+		<value>Gwneuthurwr;</value>
+	</string>
+	<string>
+		<id>13002</id>
+		<value>Cychwyn</value>
+	</string>
+	<string>
+		<id>13003</id>
+		<value>Mewnforio ffeil *.mlf</value>
+	</string>
+	<string>
+		<id>13004</id>
+		<value>Mewnforio ffeil *.my</value>
+	</string>
+	<string>
+		<id>13005</id>
+		<value>Ffeil wedi ei mewnforio diwethaf</value>
+	</string>
+	<string>
+		<id>13006</id>
+		<value>Llun Bach</value>
+	</string>
+	<string>
+		<id>13007</id>
+		<value>Llun Mawr</value>
+	</string>
+	<string>
+		<id>13008</id>
+		<value>Effaith Ken Burns</value>
+	</string>
+	<string>
+		<id>13009</id>
+		<value>Hap trawsnewid</value>
+	</string>
+	<string>
+		<id>13010</id>
+		<value>Trawsnewid X-fade</value>
+	</string>
+	<string>
+		<id>13011</id>
+		<value>Cyflymder Ken Burns</value>
+	</string>
+	<string>
+		<id>13012</id>
+		<value>Llwytho llun, arhoswch</value>
+	</string>
+	<string>
+		<id>13013</id>
+		<value>Llwytho fideo, arhoswch</value>
+	</string>
+	<string>
+		<id>13014</id>
+		<value>Sganio cyfeiriadur</value>
+	</string>
+	<string>
+		<id>13015</id>
+		<value>Mewnforio ffeil gamebase</value>
+	</string>
+	<string>
+		<id>13016</id>
+		<value>Trefnu: Cychwyn</value>
+	</string>
+	<string>
+		<id>13017</id>
+		<value>Trefnu: Diweddar</value>
+	</string>
+	<string>
+		<id>13018</id>
+		<value>Trefnu: Poblogrwydd</value>
+	</string>
+	<string>
+		<id>16001</id>
+		<value>Cymysgu Parti</value>
+	</string>
+	<string>
+		<id>25001</id>
+		<value>Aros am Dudalen {0:X}...!</value>
+	</string>
+	<string>
+		<id>19001</id>
+		<value>Tetris</value>
+	</string>
+	<string>
+		<id>19002</id>
+		<value>Gêm Newydd</value>
+	</string>
+	<string>
+		<id>19003</id>
+		<value>Cerddoriaeth</value>
+	</string>
+	<string>
+		<id>19004</id>
+		<value>Seiniau</value>
+	</string>
+	<string>
+		<id>19005</id>
+		<value>Sgor</value>
+	</string>
+	<string>
+		<id>19006</id>
+		<value>Lefel</value>
+	</string>
+	<string>
+		<id>19007</id>
+		<value>Llinell</value>
+	</string>
+	<string>
+		<id>19008</id>
+		<value>Sgôr Uchel</value>
+	</string>
+	<string>
+		<id>19009</id>
+		<value>Nesaf</value>
+	</string>
+	<string>
+		<id>19010</id>
+		<value>Clicio i gychwyn...</value>
+	</string>
+	<string>
+		<id>19011</id>
+		<value>Oedwyd</value>
+	</string>
+	<string>
+		<id>19012</id>
+		<value>Gem Drosodd</value>
+	</string>
+	<string>
+		<id>19100</id>
+		<value>GeoCloc</value>
+	</string>
+	<string>
+		<id>100000</id>
+		<value>Cartref</value>
+	</string>
+	<string>
+		<id>100001</id>
+		<value>Teledu</value>
+	</string>
+	<string>
+		<id>100002</id>
+		<value>Lluniau</value>
+	</string>
+	<string>
+		<id>100003</id>
+		<value>Ffeiliau</value>
+	</string>
+	<string>
+		<id>100004</id>
+		<value>Gosodiadau</value>
+	</string>
+	<string>
+		<id>100005</id>
+		<value>Cerddoriaeth</value>
+	</string>
+	<string>
+		<id>100006</id>
+		<value>Fideos</value>
+	</string>
+	<string>
+		<id>100007</id>
+		<value>Gwybodaeth System</value>
+	</string>
+	<string>
+		<id>100008</id>
+		<value>Gosodiadau-&gt;Cyffredinol</value>
+	</string>
+	<string>
+		<id>100009</id>
+		<value>Gosodiadau-&gt;Sgrin</value>
+	</string>
+	<string>
+		<id>100010</id>
+		<value>Gosodiadau-&gt;Sgrin-&gt;Calibro&apos;r Rhyngwyneb</value>
+	</string>
+	<string>
+		<id>100011</id>
+		<value>Gosodiadau-&gt;Sgrin-&gt;Calibro&apos;r Sgrin</value>
+	</string>
+	<string>
+		<id>100012</id>
+		<value>Gosodiadau-&gt;SioeSleidiau</value>
+	</string>
+	<string>
+		<id>100013</id>
+		<value>Gosodiadau-&gt;Sgrin-&gt;Hidlau</value>
+	</string>
+	<string>
+		<id>100014</id>
+		<value>Gosodiadau-&gt;Cerddoriaeth</value>
+	</string>
+	<string>
+		<id>100015</id>
+		<value>Gosodiadau-&gt;Sgrin-&gt;Is-deitlau</value>
+	</string>
+	<string>
+		<id>100016</id>
+		<value>Gosodiadau-&gt;Sgrin-&gt;Arbedwr Sgrin</value>
+	</string>
+	<string>
+		<id>100017</id>
+		<value>Gosodiadau-&gt;Tywydd</value>
+	</string>
+	<string>
+		<id>100020</id>
+		<value>Gosodiadau-&gt;Sgriptiau</value>
+	</string>
+	<string>
+		<id>100021</id>
+		<value>Fideos/genre</value>
+	</string>
+	<string>
+		<id>100022</id>
+		<value>Fideos/actor</value>
+	</string>
+	<string>
+		<id>100023</id>
+		<value>Fideos/blwyddyn</value>
+	</string>
+	<string>
+		<id>100024</id>
+		<value>osodiadau-&gt;Rhaglenni</value>
+	</string>
+	<string>
+		<id>100025</id>
+		<value>Fideos/teitl</value>
+	</string>
+	<string>
+		<id>100026</id>
+		<value>Gosodiadau-&gt;Cyffredinol-&gt;Storfa</value>
+	</string>
+	<string>
+		<id>100027</id>
+		<value>Gosodiadau-&gt;Cyffredinol-&gt;Awtoredeg</value>
+	</string>
+	<string>
+		<id>100028</id>
+		<value>Fideos/rhestr chwarae</value>
+	</string>
+	<string>
+		<id>100029</id>
+		<value>Gosodiadau-&gt;Cyffredinol-&gt;LCD</value>
+	</string>
+	<string>
+		<id>100030</id>
+		<value>Radio</value>
+	</string>
+	<string>
+		<id>100031</id>
+		<value>Gosodiadau-&gt;Sgrin-&gt;cyflymder sgrolio</value>
+	</string>
+	<string>
+		<id>100032</id>
+		<value>MSN Messenger</value>
+	</string>
+	<string>
+		<id>100033</id>
+		<value>Sgwrs MSN Messenger</value>
+	</string>
+	<string>
+		<id>100034</id>
+		<value>Ategynna</value>
+	</string>
+	<string>
+		<id>100100</id>
+		<value>Deialog Iawn/Na</value>
+	</string>
+	<string>
+		<id>100101</id>
+		<value>Deialog cynnydd</value>
+	</string>
+	<string>
+		<id>100500</id>
+		<value>Cerddoriaeth/rhestr chwarae</value>
+	</string>
+	<string>
+		<id>100501</id>
+		<value>Cerddoriaeth/ffeiliau</value>
+	</string>
+	<string>
+		<id>100502</id>
+		<value>Cerddoriaeth/album</value>
+	</string>
+	<string>
+		<id>100503</id>
+		<value>Cerddoriaeth/artistiaid</value>
+	</string>
+	<string>
+		<id>100504</id>
+		<value>Cerddoriaeth/genres</value>
+	</string>
+	<string>
+		<id>100505</id>
+		<value>Cerddoriaeth/100 Uchaf</value>
+	</string>
+	<string>
+		<id>100506</id>
+		<value>Cerddoriaeth/Ffefrynnau</value>
+	</string>
+	<string>
+		<id>100600</id>
+		<value>Teledu/Amserlen</value>
+	</string>
+	<string>
+		<id>100601</id>
+		<value>Teledu/Trefnydd</value>
+	</string>
+	<string>
+		<id>100602</id>
+		<value>Teledu/sgrin lawn</value>
+	</string>
+	<string>
+		<id>100603</id>
+		<value>Teledu/Teledu Recordiwyd</value>
+	</string>
+	<string>
+		<id>100604</id>
+		<value>Teledu/Chwilio</value>
+	</string>
+	<string>
+		<id>100605</id>
+		<value>Teledu/Teledu Recordiwyd/Genre</value>
+	</string>
+	<string>
+		<id>100606</id>
+		<value>Teledu/Teledu Recordiwyd/Sianeli</value>
+	</string>
+	<string>
+		<id>100607</id>
+		<value>Teledu/Trefnydd/Blaenoriaethau</value>
+	</string>
+	<string>
+		<id>100608</id>
+		<value>Teledu/Trefnydd/Gwrthdaro</value>
+	</string>
+	<string>
+		<id>100609</id>
+		<value>Teledu/Cywasgu/Prif</value>
+	</string>
+	<string>
+		<id>100610</id>
+		<value>Teledu/Cywasgu/Gosodiadau</value>
+	</string>
+	<string>
+		<id>100611</id>
+		<value>Teledu/Cywasgu/Awto</value>
+	</string>
+	<string>
+		<id>100612</id>
+		<value>Teledu/Cywasgu/Cywasgu</value>
+	</string>
+	<string>
+		<id>100613</id>
+		<value>Teledu/Cywasgu/Statws</value>
+	</string>
+	<string>
+		<id>100614</id>
+		<value>Gwybodaeth Artist Fideo</value>
+	</string>
+	<string>
+		<id>100615</id>
+		<value>Dewin/Croeso</value>
+	</string>
+	<string>
+		<id>100616</id>
+		<value>Dewin/Canfod cardiau</value>
+	</string>
+	<string>
+		<id>100617</id>
+		<value>Dewin/Gwlad</value>
+	</string>
+	<string>
+		<id>100618</id>
+		<value>Dewin/Sganio</value>
+	</string>
+	<string>
+		<id>100619</id>
+		<value>Dewin/DVBC/Gwlad</value>
+	</string>
+	<string>
+		<id>100620</id>
+		<value>Dewin/DVBC/Sganio</value>
+	</string>
+	<string>
+		<id>100621</id>
+		<value>Dewin/DVBS/LNB</value>
+	</string>
+	<string>
+		<id>100622</id>
+		<value>Dewin/DVBS/manylion LNB</value>
+	</string>
+	<string>
+		<id>100623</id>
+		<value>Dewin/DVBS/Trawsymatebydd</value>
+	</string>
+	<string>
+		<id>100624</id>
+		<value>Dewin/DVBS/Scanio</value>
+	</string>
+	<string>
+		<id>100625</id>
+		<value>Dewin/ATSC/Scanio</value>
+	</string>
+	<string>
+		<id>100626</id>
+		<value>Dewin/Analog/Gwlad</value>
+	</string>
+	<string>
+		<id>100627</id>
+		<value>Dewin/Analog/Tref</value>
+	</string>
+	<string>
+		<id>100628</id>
+		<value>Dewin/Analog/Mewnforiwyd</value>
+	</string>
+	<string>
+		<id>100629</id>
+		<value>Dewin/Analog/Gyda Llaw</value>
+	</string>
+	<string>
+		<id>100630</id>
+		<value>Dewin/Analog/Sganio</value>
+	</string>
+	<string>
+		<id>100631</id>
+		<value>Dewin/Analog/Ailenwi</value>
+	</string>
+	<string>
+		<id>100632</id>
+		<value>Dewin/Analog/Radio</value>
+	</string>
+	<string>
+		<id>100633</id>
+		<value>Dewin/Analog/Ailenwi Radio</value>
+	</string>
+	<string>
+		<id>100634</id>
+		<value>Dewin/Pell</value>
+	</string>
+	<string>
+		<id>100635</id>
+		<value>Dewin/Rhaglenni</value>
+	</string>
+	<string>
+		<id>100699</id>
+		<value>Dewin/Gorffen</value>
+	</string>
+	<string>
+		<id>100700</id>
+		<value>Gosidiadau Teledu</value>
+	</string>
+	<string>
+		<id>100701</id>
+		<value>Gosodiadau Recordio Teledu</value>
+	</string>
+	<string>
+		<id>100702</id>
+		<value>Trefnu sianeli</value>
+	</string>
+	<string>
+		<id>100703</id>
+		<value>Gosodiadau ffilmiau telrdu</value>
+	</string>
+	<string>
+		<id>100704</id>
+		<value>Gosodiadau DVD</value>
+	</string>
+	<string>
+		<id>100705</id>
+		<value>Gosodiadau Crwyn</value>
+	</string>
+	<string>
+		<id>100748</id>
+		<value>Gwybodaeth rhaglenni</value>
+	</string>
+	<string>
+		<id>100749</id>
+		<value>Teledu/dim signal</value>
+	</string>
+	<string>
+		<id>100750</id>
+		<value>Ryseitiau</value>
+	</string>
+	<string>
+		<id>100755</id>
+		<value>Statws</value>
+	</string>
+	<string>
+		<id>100756</id>
+		<value>Manylion Statws</value>
+	</string>
+	<string>
+		<id>100757</id>
+		<value>Dewisiadau Statws</value>
+	</string>
+	<string>
+		<id>100758</id>
+		<value>Deialog ffeil</value>
+	</string>
+	<string>
+		<id>100759</id>
+		<value>Gwybodaeth Teledu Recordiwyd</value>
+	</string>
+	<string>
+		<id>100760</id>
+		<value>Llosgwr</value>
+	</string>
+	<string>
+		<id>100770</id>
+		<value>Explorer</value>
+	</string>
+	<string>
+		<id>101000</id>
+		<value>bysellfwrdd</value>
+	</string>
+	<string>
+		<id>102000</id>
+		<value>Dewis deialog</value>
+	</string>
+	<string>
+		<id>102001</id>
+		<value>Cerddoriaeth/gwyb</value>
+	</string>
+	<string>
+		<id>102002</id>
+		<value>Deialog Iawn</value>
+	</string>
+	<string>
+		<id>102003</id>
+		<value>Fideo/Info</value>
+	</string>
+	<string>
+		<id>102004</id>
+		<value>Sgriptiau/Gwyb</value>
+	</string>
+	<string>
+		<id>102005</id>
+		<value>Fideo Sgrin Lawn</value>
+	</string>
+	<string>
+		<id>102006</id>
+		<value>Delweddu Sain</value>
+	</string>
+	<string>
+		<id>102007</id>
+		<value>Lluniau/SioeSleidiau</value>
+	</string>
+	<string>
+		<id>102008</id>
+		<value>Deialog Stacio Ffeiliau</value>
+	</string>
+	<string>
+		<id>102009</id>
+		<value>Deialog dewis</value>
+	</string>
+	<string>
+		<id>102010</id>
+		<value>Dyddiad/Amser</value>
+	</string>
+	<string>
+		<id>102011</id>
+		<value>Gwyg.Artis</value>
+	</string>
+	<string>
+		<id>102012</id>
+		<value>Dewislen cyd-destun</value>
+	</string>
+	<string>
+		<id>102013</id>
+		<value>Gosod Cyfraddiad</value>
+	</string>
+	<string>
+		<id>102014</id>
+		<value>Gwyb. Llun</value>
+	</string>
+	<string>
+		<id>102015</id>
+		<value>Dewislen Fach</value>
+	</string>
+	<string>
+		<id>102016</id>
+		<value>Hysbysiad</value>
+	</string>
+	<string>
+		<id>102600</id>
+		<value>Tywydd</value>
+	</string>
+	<string>
+		<id>102700</id>
+		<value>Newyddion</value>
+	</string>
+	<string>
+		<id>102900</id>
+		<value>Arbedwr Sgrin</value>
+	</string>
+	<string>
+		<id>102901</id>
+		<value>Rheolwr Sgrin Lawn</value>
+	</string>
+	<string>
+		<id>103003</id>
+		<value>Teledu/Rheolwr</value>
+	</string>
+	<string>
+		<id>103006</id>
+		<value>Teledu/Rheolwr MSN</value>
+	</string>
+	<string>
+		<id>103007</id>
+		<value>Teledu/Rheolwr Zap</value>
+	</string>
+	<string>
+		<id>107700</id>
+		<value>Teledu/TeleTestun</value>
+	</string>
+	<string>
+		<id>107701</id>
+		<value>Teledu/TeleTestun</value>
+	</string>
+	<string>
+		<id>200000</id>
+		<value>Dewiswch eich cipiwr EPG. Sylwch os nad yw eich gwlad</value>
+	</string>
+	<string>
+		<id>200001</id>
+		<value>wedi ei restru byd rhaid gosod yr EPG gyda llaw</value>
+	</string>
+	<string>
+		<id>200002</id>
+		<value>allwch fapio sianeli&apos;r EPG i&apos;ch sianeli teledu</value>
+	</string>
+	<string>
+		<id>200003</id>
+		<value>dewiswch sianel a phwyso Enter i newid y mapio</value>
+	</string>
+	<string>
+		<id>200004</id>
+		<value>Darparwyd tvguide.xml</value>
+	</string>
+	<string>
+		<id>200005</id>
+		<value>Manylion eich rheolydd pell:</value>
+	</string>
+	<string>
+		<id>200006</id>
+		<value>Cliciwch Nesaf i barhau</value>
+	</string>
+	<string>
+		<id>200007</id>
+		<value>&lt;Nôl</value>
+	</string>
+	<string>
+		<id>200008</id>
+		<value>Gosod - Rheolwr pell</value>
+	</string>
+	<string>
+		<id>200009</id>
+		<value>Nesaf-&gt;</value>
+	</string>
+	<string>
+		<id>200010</id>
+		<value>Mae MediaPortal yn troi eich PC yn Ganolfan Aml Gyfrwng grymus iawn.&lt;</value>
+	</string>
+	<string>
+		<id>200011</id>
+		<value>Gyda MediaPortal gallwch fwynhau eich hoff gerddoriaeth, radio</value>
+	</string>
+	<string>
+		<id>200012</id>
+		<value>gwylio Fideo, DVD, teledu byw a rhagor.</value>
+	</string>
+	<string>
+		<id>200013</id>
+		<value>Mae&apos;n caniatáu i chi wrando ar eich hoff gerddoriaeth, radio, gwylio eich fideos a DVDs</value>
+	</string>
+	<string>
+		<id>200014</id>
+		<value>lluniau, fideos a gwylio/recordio teledu byw a llawer mwy</value>
+	</string>
+	<string>
+		<id>200015</id>
+		<value>Bydd y dewin yma&apos;n eich cynorthwyo i osod Mediaportal yn gyflym a hawdd. Dilynwch y camau hyn</value>
+	</string>
+	<string>
+		<id>200017</id>
+		<value>Croeso i MediaPortal.</value>
+	</string>
+	<string>
+		<id>200018</id>
+		<value>Llongyfarchiadau. Mae Mediaportal wedi ei osod ac yn barod i&apos;w ddefnyddio</value>
+	</string>
+	<string>
+		<id>200019</id>
+		<value>Cliciwch Gorffen i gau&apos;r dewin</value>
+	</string>
+	<string>
+		<id>200020</id>
+		<value>Gorffen</value>
+	</string>
+	<string>
+		<id>200021</id>
+		<value>Gosod y Teledu - EPG</value>
+	</string>
+	<string>
+		<id>200022</id>
+		<value>Mae MediaPortal wedi canfod y cardiau teledu canlynol:</value>
+	</string>
+	<string>
+		<id>200023</id>
+		<value>Cliciwch Nesaf i ffurfweddu&apos;r cardiau hyn</value>
+	</string>
+	<string>
+		<id>200024</id>
+		<value>Gosod y Teledu</value>
+	</string>
+	<string>
+		<id>200025</id>
+		<value>Iaith</value>
+	</string>
+	<string>
+		<id>200026</id>
+		<value>Gwlad</value>
+	</string>
+	<string>
+		<id>200027</id>
+		<value>Gosod - Cyffredinol</value>
+	</string>
+	<string>
+		<id>200028</id>
+		<value>Oes gan y cyfrifiadur fynediad i&apos;r We?</value>
+	</string>
+	<string>
+		<id>200029</id>
+		<value>Cychwyn Media Portal ym modd Sgrin Lawn?</value>
+	</string>
+	<string>
+		<id>200030</id>
+		<value>Cychwyn Media Portal wrth gychwyn y cyfrifiadur?</value>
+	</string>
+	<string>
+		<id>200031</id>
+		<value>Iawn</value>
+	</string>
+	<string>
+		<id>200032</id>
+		<value>Na</value>
+	</string>
+	<string>
+		<id>200033</id>
+		<value>Gosodiad Teledu - Teledu Analog</value>
+	</string>
+	<string>
+		<id>200034</id>
+		<value>Dewiswch eich lleoliad o&apos;r rhestr</value>
+	</string>
+	<string>
+		<id>200035</id>
+		<value>Sylwch oso nad yw eich lleoliad wedi ei restri bydd yn rhaid ei diwnio a llaw.</value>
+	</string>
+	<string>
+		<id>200036</id>
+		<value>Tiwnio a llaw</value>
+	</string>
+	<string>
+		<id>200037</id>
+		<value>Hepgor&gt;</value>
+	</string>
+	<string>
+		<id>4000</id>
+		<value>Porwr Gwe</value>
+	</string>
+	<string>
+		<id>4001</id>
+		<value>Ffefrynnau</value>
+	</string>
+	<string>
+		<id>4002</id>
+		<value>Methu llwytho&apos;r URL</value>
+	</string>
+	<string>
+		<id>4003</id>
+		<value>Enwch ffolder ffefrynnau wrth osod</value>
+	</string>
+	<string>
+		<id>4500</id>
+		<value>Hepgor album gyda chelf clawr</value>
+	</string>
+	<string>
+		<id>4501</id>
+		<value>Cadw celf clawr mewn ffolder album</value>
+	</string>
+	<string>
+		<id>4502</id>
+		<value>Cadw celf clawr mewn ffolder bach</value>
+	</string>
+	<string>
+		<id>4503</id>
+		<value>Estyn cyfrif ffolder. Arhoswch...</value>
+	</string>
+	<string>
+		<id>4504</id>
+		<value>{0}% - {1} o {2}</value>
+	</string>
+	<string>
+		<id>4505</id>
+		<value>Chwilio {0}...</value>
+	</string>
+	<string>
+		<id>4506</id>
+		<value>[Gwag]</value>
+	</string>
+	<string>
+		<id>4507</id>
+		<value>Atal y cipiwr cloriau gan y defnyddiwr</value>
+	</string>
+	<string>
+		<id>4508</id>
+		<value>Cwblhawyd cipoi cloriau&apos;n llwyddiannus</value>
+	</string>
+	<string>
+		<id>4509</id>
+		<value>Cwblhawyd y cipio cloriau gyda gwallau</value>
+	</string>
+	<string>
+		<id>4510</id>
+		<value>Diweddarwyd {0} delwedd clawr</value>
+	</string>
+	<string>
+		<id>4511</id>
+		<value>Cipiwr Cloriau wedi gorffen</value>
+	</string>
+	<string>
+		<id>4512</id>
+		<value>Pob clawr wedi ei ddiweddaru</value>
+	</string>
+	<string>
+		<id>4513</id>
+		<value>Amrywiol</value>
+	</string>
+	<string>
+		<id>4514</id>
+		<value>Cipiwr Celf Cloriau</value>
+	</string>
+	<string>
+		<id>4515</id>
+		<value>Canlyniadau cipio cloriau</value>
+	</string>
+	<string>
+		<id>4516</id>
+		<value>Heb ganfod celf cloriau</value>
+	</string>
+	<string>
+		<id>4517</id>
+		<value>Cau</value>
+	</string>
+	<string>
+		<id>4518</id>
+		<value>Heb ganfod teitl album\r\nCeisio: {0}</value>
+	</string>
+	<string>
+		<id>4519</id>
+		<value>Celf clawr presennol</value>
+	</string>
+	<string>
+		<id>4520</id>
+		<value>Hepgor</value>
+	</string>
+	<string>
+		<id>4521</id>
+		<value>Dangos gwybodaeth album</value>
+	</string>
+	<string>
+		<id>4522</id>
+		<value>Cipio: {0}...</value>
+	</string>
+	<string>
+		<id>4540</id>
+		<value>Nawr yn chwarae</value>
+	</string>
+	<string>
+		<id>4541</id>
+		<value>Chwarae nesaf</value>
+	</string>
+	<string>
+		<id>4542</id>
+		<value>Heb lwythoo rhestrau chwarae</value>
+	</string>
+	<string>
+		<id>4543</id>
+		<value>Dim gwybodaeth trac ar gael</value>
+	</string>
+	<string>
+		<id>4550</id>
+		<value>Gosod mewn ciw</value>
+	</string>
+	<string>
+		<id>4551</id>
+		<value>Chwarae nesaf</value>
+	</string>
+	<string>
+		<id>4552</id>
+		<value>Chwarae nawr</value>
+	</string>
+	<string>
+		<id>4553</id>
+		<value>Dangos rhestr chwarae</value>
+	</string>
+	<string>
+		<id>4554</id>
+		<value>Chwilio am wyb. CD</value>
+	</string>
+	<string>
+		<id>10100</id>
+		<value>Ffrwydron cudd</value>
+	</string>
+	<string>
+		<id>10101</id>
+		<value>Amser chwarae</value>
+	</string>
+	<string>
+		<id>10102</id>
+		<value>Amser cyflymaf</value>
+	</string>
+	<string>
+		<id>10103</id>
+		<value>Chwilio am ffrwydryn...</value>
+	</string>
+</strings>

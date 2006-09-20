@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<profiles>
+	<profile>
+		<id>100</id>
+		<section>Emulator Profiles</section>
+		<title>MAME</title>
+		<launchingApplication>...yourpathhere...\Mame32.exe</launchingApplication>
+		<useShellExecute>T</useShellExecute>
+		<arguments>-joy -skip_disclaimer -skip_gameinfo</arguments>
+		<windowStyle>minimized</windowStyle>
+		<useQuotes>T</useQuotes>
+		<fileextensions>.zip</fileextensions>
+	</profile>
+	<profile>
+		<id>110</id>
+		<section>Emulator Profiles</section>
+		<title>Project 64 (Nintendo 64)</title>
+		<launchingApplication>...yourpathhere...\Project64.exe</launchingApplication>
+		<useShellExecute>T</useShellExecute>
+		<arguments></arguments>
+		<windowStyle>hidden</windowStyle>
+		<useQuotes>F</useQuotes>
+		<fileextensions>.zip,.usa</fileextensions>
+	</profile>
+	<profile>
+		<id>120</id>
+		<section>Emulator Profiles</section>
+		<title>ePSXe</title>
+		<launchingApplication>...yourpathhere...\ePSXe.exe</launchingApplication>
+		<useShellExecute>T</useShellExecute>
+		<arguments>-nogui -loadbin</arguments>
+		<windowStyle>minimized</windowStyle>
+		<startupDir>...yourpathhere...</startupDir>
+		<useQuotes>T</useQuotes>
+		<fileextensions>.bin,.iso</fileextensions>
+	</profile>
+	<profile>
+		<id>130</id>
+		<section>Emulator Profiles</section>
+		<title>zSNESw</title>
+		<launchingApplication>...yourpathhere...\zsnesw.exe</launchingApplication>
+		<useShellExecute>T</useShellExecute>
+		<arguments></arguments>
+		<windowStyle>minimized</windowStyle>
+		<useQuotes>T</useQuotes>
+		<fileextensions>.zip</fileextensions>
+	</profile>
+	<profile>
+		<id>140</id>
+		<section>Emulator Profiles</section>
+		<title>Gens</title>
+		<launchingApplication>...yourGENSpathhere...\gens.exe</launchingApplication>
+		<useShellExecute>T</useShellExecute>
+		<arguments></arguments>
+		<windowStyle>minimized</windowStyle>
+		<startupDir>...yourGENSpathhere...</startupDir>
+		<useQuotes>T</useQuotes>
+		<fileextensions>.zip</fileextensions>
+	</profile>
+	<profile>
+		<id>145</id>
+		<section>Emulator Profiles</section>
+		<title>Kawaks</title>
+		<launchingApplication>...yourKawaksPathHere...\WinKawaks.exe</launchingApplication>
+		<useShellExecute>T</useShellExecute>
+		<arguments>%FILEnoPATHnoEXT% -fullscreen</arguments>
+		<windowStyle>minimized</windowStyle>
+		<startupDir>...yourKawaksPathHere...</startupDir>
+		<useQuotes>F</useQuotes>
+		<fileextensions>.zip</fileextensions>
+	</profile>
+	<profile>
+		<id>150</id>
+		<section>Emulator Profiles</section>
+		<title>Kega Fusion (for Sega Genesis)</title>
+		<launchingApplication>...yourKEGApathhere...\fusion.exe</launchingApplication>
+		<useShellExecute>T</useShellExecute>
+		<arguments>%FILE% -fullscreen</arguments>
+		<windowStyle>hidden</windowStyle>
+		<startupDir>...yourKEGApathhere...</startupDir>
+		<useQuotes>T</useQuotes>
+		<fileextensions>.zip</fileextensions>
+	</profile>
+	<profile>
+		<id>160</id>
+		<section>Emulator Profiles</section>
+		<title>Kega Fusion (for Sega Master System)</title>
+		<launchingApplication>...yourKEGApathhere...\fusion.exe</launchingApplication>
+		<useShellExecute>T</useShellExecute>
+		<arguments>%FILE% -sms -fullscreen</arguments>
+		<windowStyle>hidden</windowStyle>
+		<startupDir>...yourKEGApathhere...</startupDir>
+		<useQuotes>T</useQuotes>
+		<fileextensions>.zip</fileextensions>
+	</profile>
+	<profile>
+		<id>170</id>
+		<section>Emulator Profiles</section>
+		<title>Kega Fusion (for Sega Game Gear)</title>
+		<launchingApplication>...yourKEGApathhere...\fusion.exe</launchingApplication>
+		<useShellExecute>T</useShellExecute>
+		<arguments>%FILE% -gg -fullscreen</arguments>
+		<windowStyle>hidden</windowStyle>
+		<startupDir>...yourKEGApathhere...</startupDir>
+		<useQuotes>T</useQuotes>
+		<fileextensions>.zip</fileextensions>
+	</profile>
+	<profile>
+		<id>180</id>
+		<section>Emulator Profiles</section>
+		<title>Nestopia</title>
+		<launchingApplication>...yourpathToNESTOPIAhere...\nestopia.exe</launchingApplication>
+		<useShellExecute>F</useShellExecute>
+		<arguments></arguments>
+		<windowStyle>minimized</windowStyle>
+		<startupDir>...yourpathToNESTOPIAhere...</startupDir>
+		<useQuotes>T</useQuotes>
+		<fileextensions>.nes,.zip</fileextensions>
+	</profile>
+	<profile>
+		<id>190</id>
+		<section>Emulator Profiles</section>
+		<title>Magic Engine</title>
+		<launchingApplication>...yourpathhere...\pce.exe</launchingApplication>
+		<useShellExecute>F</useShellExecute>
+		<arguments></arguments>
+		<windowStyle>minimized</windowStyle>
+		<startupDir></startupDir>
+		<useQuotes>T</useQuotes>
+		<fileextensions>.pce</fileextensions>
+	</profile>
+	<profile>
+		<id>195</id>
+		<section>Emulator Profiles</section>
+		<title>Visual Boy Advance</title>
+		<launchingApplication>...yourpathhere...\VisualBoyAdvance.exe</launchingApplication>
+		<useShellExecute>T</useShellExecute>
+		<arguments></arguments>
+		<windowStyle>minimized</windowStyle>
+		<startupDir></startupDir>
+		<useQuotes>T</useQuotes>
+		<fileextensions>.gba</fileextensions>
+	</profile>
+	<profile>
+		<id>200</id>
+		<section>Emulator Profiles</section>
+		<title>WinVice</title>
+		<launchingApplication>...yourpathhere...\x64.exe</launchingApplication>
+		<useShellExecute>F</useShellExecute>
+		<arguments></arguments>
+		<windowStyle>minimized</windowStyle>
+		<startupDir></startupDir>
+		<useQuotes>T</useQuotes>
+		<fileextensions>.d64,.t64</fileextensions>
+	</profile>
+	<profile>
+		<id>210</id>
+		<section>Emulator Profiles</section>
+		<title>WinUAE</title>
+		<launchingApplication>...yourWINUAEpathhere...\winuae.exe</launchingApplication>
+		<useShellExecute>F</useShellExecute>
+		<arguments>-config=...pathtoyourconfigfile ( see wiki :-) ) ...\winuae\configurations\my_nogui.uae -0</arguments>
+		<windowStyle>minimized</windowStyle>
+		<startupDir>...yourWINUAEpathhere...</startupDir>
+		<useQuotes>F</useQuotes>
+		<fileextensions>.adf</fileextensions>
+	</profile>
+	<profile>
+		<id>220</id>
+		<section>Emulator Profiles</section>
+		<title>Atari 7800</title>
+		<launchingApplication>...yourMESSpathhere...\mess.exe</launchingApplication>
+		<useShellExecute>T</useShellExecute>
+		<arguments>a7800 -cart %FILE% -skip_gameinfo -skip_disclaimer -nonewui</arguments>
+		<windowStyle>minimized</windowStyle>
+		<startupDir>...yourMESSpathhere...</startupDir>
+		<useQuotes>T</useQuotes>
+		<fileextensions>.a78</fileextensions>
+	</profile>
+
+</profiles>

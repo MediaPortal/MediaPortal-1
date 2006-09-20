@@ -1,0 +1,3732 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<strings>
+	<characters></characters>
+	<string>
+		<id>0</id>
+		<value>Programak</value>
+	</string>
+	<string>
+		<id>1</id>
+		<value>Irudiak</value>
+	</string>
+	<string>
+		<id>2</id>
+		<value>Musika</value>
+	</string>
+	<string>
+		<id>3</id>
+		<value>Bideoak</value>
+	</string>
+	<string>
+		<id>4</id>
+		<value>TV Gida</value>
+	</string>
+	<string>
+		<id>5</id>
+		<value>Aukerak</value>
+	</string>
+	<string>
+		<id>6</id>
+		<value>XBOX Media Center CVX</value>
+	</string>
+	<string>
+		<id>7</id>
+		<value>Fitxategiak</value>
+	</string>
+	<string>
+		<id>8</id>
+		<value>Eguraldia</value>
+	</string>
+	<string>
+		<id>9</id>
+		<value>Berriak</value>
+	</string>
+	<string>
+		<id>10</id>
+		<value>Errezetak</value>
+	</string>
+	<string>
+		<id>11</id>
+		<value>Astelehena</value>
+	</string>
+	<string>
+		<id>12</id>
+		<value>Asteartea</value>
+	</string>
+	<string>
+		<id>13</id>
+		<value>Asteazkena</value>
+	</string>
+	<string>
+		<id>14</id>
+		<value>Osteguna</value>
+	</string>
+	<string>
+		<id>15</id>
+		<value>Ostirala</value>
+	</string>
+	<string>
+		<id>16</id>
+		<value>Larunbata</value>
+	</string>
+	<string>
+		<id>17</id>
+		<value>Igandea</value>
+	</string>
+	<string>
+		<id>21</id>
+		<value>Urtarrila</value>
+	</string>
+	<string>
+		<id>22</id>
+		<value>Otsaila</value>
+	</string>
+	<string>
+		<id>23</id>
+		<value>Martxoa</value>
+	</string>
+	<string>
+		<id>24</id>
+		<value>Apirila</value>
+	</string>
+	<string>
+		<id>25</id>
+		<value>Maiatza</value>
+	</string>
+	<string>
+		<id>26</id>
+		<value>Ekaina</value>
+	</string>
+	<string>
+		<id>27</id>
+		<value>Uztaila</value>
+	</string>
+	<string>
+		<id>28</id>
+		<value>Abuztua</value>
+	</string>
+	<string>
+		<id>29</id>
+		<value>Iraila</value>
+	</string>
+	<string>
+		<id>30</id>
+		<value>Urria</value>
+	</string>
+	<string>
+		<id>31</id>
+		<value>Azaroa</value>
+	</string>
+	<string>
+		<id>32</id>
+		<value>Abendua</value>
+	</string>
+	<string>
+		<id>50</id>
+		<value>DVdak</value>
+	</string>
+	<string>
+		<id>100</id>
+		<value>Ikusi:Ikonoak</value>
+	</string>
+	<string>
+		<id>101</id>
+		<value>Ikusi:Zerrenda</value>
+	</string>
+	<string>
+		<id>102</id>
+		<value>Skaneatu</value>
+	</string>
+	<string>
+		<id>103</id>
+		<value>Izenez Sailkatu</value>
+	</string>
+	<string>
+		<id>104</id>
+		<value>Dataz Sailkatu</value>
+	</string>
+	<string>
+		<id>105</id>
+		<value>Luzeraz Sailkatu</value>
+	</string>
+	<string>
+		<id>106</id>
+		<value>Ez</value>
+	</string>
+	<string>
+		<id>107</id>
+		<value>Bai</value>
+	</string>
+	<string>
+		<id>108</id>
+		<value>Diapositiba Ikuskizuna</value>
+	</string>
+	<string>
+		<id>109</id>
+		<value>Iruditxoak Sortu</value>
+	</string>
+	<string>
+		<id>110</id>
+		<value>Irudiak Sortu</value>
+	</string>
+	<string>
+		<id>111</id>
+		<value>Laburbideak</value>
+	</string>
+	<string>
+		<id>112</id>
+		<value>GELDITUA</value>
+	</string>
+	<string>
+		<id>113</id>
+		<value>Fitxategiak: Nondik</value>
+	</string>
+	<string>
+		<id>114</id>
+		<value>Fitxategiak: Norakoa</value>
+	</string>
+	<string>
+		<id>115</id>
+		<value>Kopiatu</value>
+	</string>
+	<string>
+		<id>116</id>
+		<value>Mugitu</value>
+	</string>
+	<string>
+		<id>117</id>
+		<value>Ezabatu</value>
+	</string>
+	<string>
+		<id>118</id>
+		<value>Izena Aldatu</value>
+	</string>
+	<string>
+		<id>119</id>
+		<value>Karpeta Berria</value>
+	</string>
+	<string>
+		<id>120</id>
+		<value>Fitxategia Kopiaketa Baieztatu</value>
+	</string>
+	<string>
+		<id>121</id>
+		<value>Fitxategi Mugitzea Baieztatu</value>
+	</string>
+	<string>
+		<id>122</id>
+		<value>Fitxategi Ezabatzea Baieztatu</value>
+	</string>
+	<string>
+		<id>123</id>
+		<value>Fitxategi hauek Kopiatu?</value>
+	</string>
+	<string>
+		<id>124</id>
+		<value>Fitxategi hauek Mugitu?</value>
+	</string>
+	<string>
+		<id>125</id>
+		<value>Fitxategi hauek Ezabatu?</value>
+	</string>
+	<string>
+		<id>126</id>
+		<value>Egoera</value>
+	</string>
+	<string>
+		<id>127</id>
+		<value>Objektuak</value>
+	</string>
+	<string>
+		<id>128</id>
+		<value>Orokorra</value>
+	</string>
+	<string>
+		<id>129</id>
+		<value>Irudi Ikuskizuna</value>
+	</string>
+	<string>
+		<id>130</id>
+		<value>Sistemaren egoera</value>
+	</string>
+	<string>
+		<id>131</id>
+		<value>Irudia</value>
+	</string>
+	<string>
+		<id>132</id>
+		<value>Albumak</value>
+	</string>
+	<string>
+		<id>133</id>
+		<value>Artistak</value>
+	</string>
+	<string>
+		<id>134</id>
+		<value>Konpartitzeak</value>
+	</string>
+	<string>
+		<id>135</id>
+		<value>Generoak</value>
+	</string>
+	<string>
+		<id>136</id>
+		<value>Erreprodukzio Zerrenda</value>
+	</string>
+	<string>
+		<id>137</id>
+		<value>Bilaketa</value>
+	</string>
+	<string>
+		<id>138</id>
+		<value>SISTEMAREN ARGIBIDEAK</value>
+	</string>
+	<string>
+		<id>139</id>
+		<value>Hotzberoak:</value>
+	</string>
+	<string>
+		<id>140</id>
+		<value>CPU:</value>
+	</string>
+	<string>
+		<id>141</id>
+		<value>GPU:</value>
+	</string>
+	<string>
+		<id>142</id>
+		<value>Ordua:</value>
+	</string>
+	<string>
+		<id>143</id>
+		<value>Oraingoa:</value>
+	</string>
+	<string>
+		<id>144</id>
+		<value>Osaketa Zkia:</value>
+	</string>
+	<string>
+		<id>145</id>
+		<value>Sarea:</value>
+	</string>
+	<string>
+		<id>146</id>
+		<value>Mota:</value>
+	</string>
+	<string>
+		<id>147</id>
+		<value>Estatikoa</value>
+	</string>
+	<string>
+		<id>148</id>
+		<value>DHCP</value>
+	</string>
+	<string>
+		<id>149</id>
+		<value>MAC</value>
+	</string>
+	<string>
+		<id>150</id>
+		<value>IP:</value>
+	</string>
+	<string>
+		<id>151</id>
+		<value>Lotura:</value>
+	</string>
+	<string>
+		<id>152</id>
+		<value>Hald Duplex</value>
+	</string>
+	<string>
+		<id>153</id>
+		<value>Full Duplex</value>
+	</string>
+	<string>
+		<id>154</id>
+		<value>Gordelekua</value>
+	</string>
+	<string>
+		<id>155</id>
+		<value>Unitatea</value>
+	</string>
+	<string>
+		<id>156</id>
+		<value>Erabili gabe</value>
+	</string>
+	<string>
+		<id>157</id>
+		<value>Bideoa</value>
+	</string>
+	<string>
+		<id>158</id>
+		<value>Memoria Ez Erabilia</value>
+	</string>
+	<string>
+		<id>159</id>
+		<value>Loturarik Ez</value>
+	</string>
+	<string>
+		<id>160</id>
+		<value>Erabili Gabe</value>
+	</string>
+	<string>
+		<id>161</id>
+		<value>Ezin Aurkitua</value>
+	</string>
+	<string>
+		<id>162</id>
+		<value>Tray Open</value>
+	</string>
+	<string>
+		<id>163</id>
+		<value>Irakutzen</value>
+	</string>
+	<string>
+		<id>164</id>
+		<value>Diskorik Ez</value>
+	</string>
+	<string>
+		<id>165</id>
+		<value>Diskoa Bertan</value>
+	</string>
+	<string>
+		<id>166</id>
+		<value>Kanpo Itxura:</value>
+	</string>
+	<string>
+		<id>167</id>
+		<value>FTP Zerbitzaria:</value>
+	</string>
+	<string>
+		<id>168</id>
+		<value>Ordua sinkronizatu:</value>
+	</string>
+	<string>
+		<id>169</id>
+		<value>Bereizmena:</value>
+	</string>
+	<string>
+		<id>170</id>
+		<value>Albuma:</value>
+	</string>
+	<string>
+		<id>171</id>
+		<value>Artista:</value>
+	</string>
+	<string>
+		<id>172</id>
+		<value>Argital Data:</value>
+	</string>
+	<string>
+		<id>173</id>
+		<value>Norentzakoa:</value>
+	</string>
+	<string>
+		<id>174</id>
+		<value>Generoa:</value>
+	</string>
+	<string>
+		<id>175</id>
+		<value>Tonuak:</value>
+	</string>
+	<string>
+		<id>176</id>
+		<value>Estiloa:</value>
+	</string>
+	<string>
+		<id>177</id>
+		<value>Ikuskapena:</value>
+	</string>
+	<string>
+		<id>178</id>
+		<value>Pistak:</value>
+	</string>
+	<string>
+		<id>179</id>
+		<value>Kantua:</value>
+	</string>
+	<string>
+		<id>180</id>
+		<value>Iraupena</value>
+	</string>
+	<string>
+		<id>181</id>
+		<value>Albuma Aukeratu</value>
+	</string>
+	<string>
+		<id>182</id>
+		<value>Kantuak</value>
+	</string>
+	<string>
+		<id>183</id>
+		<value>Ikuskapena</value>
+	</string>
+	<string>
+		<id>184</id>
+		<value>Berirakurri</value>
+	</string>
+	<string>
+		<id>185</id>
+		<value>Albumaren Bila</value>
+	</string>
+	<string>
+		<id>186</id>
+		<value>ONGI</value>
+	</string>
+	<string>
+		<id>187</id>
+		<value>Albumik Aurkitu EZ!</value>
+	</string>
+	<string>
+		<id>188</id>
+		<value>Aukeratu Guztia</value>
+	</string>
+	<string>
+		<id>189</id>
+		<value>Media Datuak Eskaneatzen</value>
+	</string>
+	<string>
+		<id>190</id>
+		<value>Gorde</value>
+	</string>
+	<string>
+		<id>191</id>
+		<value>Shuffle</value>
+	</string>
+	<string>
+		<id>192</id>
+		<value>Ezabatu</value>
+	</string>
+	<string>
+		<id>193</id>
+		<value>Eskaneatu</value>
+	</string>
+	<string>
+		<id>194</id>
+		<value>Bilatzen...</value>
+	</string>
+	<string>
+		<id>195</id>
+		<value>IMDB Daturik ez da Aurkitu!</value>
+	</string>
+	<string>
+		<id>196</id>
+		<value>Aukeratu Filmea:</value>
+	</string>
+	<string>
+		<id>197</id>
+		<value>IMDB Datuen bila</value>
+	</string>
+	<string>
+		<id>198</id>
+		<value>FIlmaren datuak deskargatzen</value>
+	</string>
+	<string>
+		<id>199</id>
+		<value>Zuzendaria:</value>
+	</string>
+	<string>
+		<id>200</id>
+		<value>Idazlea:</value>
+	</string>
+	<string>
+		<id>201</id>
+		<value>Urtea:</value>
+	</string>
+	<string>
+		<id>202</id>
+		<value>Argumentua:</value>
+	</string>
+	<string>
+		<id>203</id>
+		<value>Plot Outline:</value>
+	</string>
+	<string>
+		<id>204</id>
+		<value>Rating:</value>
+	</string>
+	<string>
+		<id>205</id>
+		<value>Bozka kopurua:</value>
+	</string>
+	<string>
+		<id>206</id>
+		<value>Errepartua</value>
+	</string>
+	<string>
+		<id>207</id>
+		<value>Plot</value>
+	</string>
+	<string>
+		<id>208</id>
+		<value>Ikusi</value>
+	</string>
+	<string>
+		<id>209</id>
+		<value>Hurrengoa</value>
+	</string>
+	<string>
+		<id>210</id>
+		<value>Aurrekoa</value>
+	</string>
+	<string>
+		<id>211</id>
+		<value>Aplikazioen Bila</value>
+	</string>
+	<string>
+		<id>212</id>
+		<value>Aplikazioak Aurkituak</value>
+	</string>
+	<string>
+		<id>213</id>
+		<value>UI Kalibrazioa</value>
+	</string>
+	<string>
+		<id>214</id>
+		<value>Pantailaren Kalib.</value>
+	</string>
+	<string>
+		<id>215</id>
+		<value>Biguntzen</value>
+	</string>
+	<string>
+		<id>216</id>
+		<value>Zoom-a</value>
+	</string>
+	<string>
+		<id>217</id>
+		<value>Stretch-a</value>
+	</string>
+	<string>
+		<id>218</id>
+		<value>DVD Irakurgailua</value>
+	</string>
+	<string>
+		<id>219</id>
+		<value>Mesedez diskoa sartu</value>
+	</string>
+	<string>
+		<id>220</id>
+		<value>Urruneko konpartizioa</value>
+	</string>
+	<string>
+		<id>221</id>
+		<value>Sarea ez dago konektatuta</value>
+	</string>
+	<string>
+		<id>222</id>
+		<value>Ezeztatu</value>
+	</string>
+	<string>
+		<id>223</id>
+		<value>Pantailaren Ajuste Automatikoa</value>
+	</string>
+	<string>
+		<id>224</id>
+		<value>Abiadura</value>
+	</string>
+	<string>
+		<id>225</id>
+		<value>Aldatze Denbora</value>
+	</string>
+	<string>
+		<id>226</id>
+		<value>PAL60 Ezarri</value>
+	</string>
+	<string>
+		<id>227</id>
+		<value>CDDB Ezarri</value>
+	</string>
+	<string>
+		<id>228</id>
+		<value>Shuffle Playlista kargatua</value>
+	</string>
+	<string>
+		<id>229</id>
+		<value>HD Spindoen denbora (minutuak)</value>
+	</string>
+	<string>
+		<id>230</id>
+		<value>Filtroak</value>
+	</string>
+	<string>
+		<id>231</id>
+		<value>Bat ere ez</value>
+	</string>
+	<string>
+		<id>232</id>
+		<value>Puntua</value>
+	</string>
+	<string>
+		<id>233</id>
+		<value>Lineala</value>
+	</string>
+	<string>
+		<id>234</id>
+		<value>Anistropikoa</value>
+	</string>
+	<string>
+		<id>235</id>
+		<value>Quincunx</value>
+	</string>
+	<string>
+		<id>236</id>
+		<value>Gaussian Cubic</value>
+	</string>
+	<string>
+		<id>237</id>
+		<value>MInifikazioa:</value>
+	</string>
+	<string>
+		<id>238</id>
+		<value>Magnifikazioa:</value>
+	</string>
+	<string>
+		<id>240</id>
+		<value>DVD Bideo Autorruna</value>
+	</string>
+	<string>
+		<id>241</id>
+		<value>VCD/SVCD Autorruna</value>
+	</string>
+	<string>
+		<id>242</id>
+		<value>Audio-CD Autorruna</value>
+	</string>
+	<string>
+		<id>243</id>
+		<value>XBOX Jokuen Autorruna</value>
+	</string>
+	<string>
+		<id>244</id>
+		<value>Bideoen Autorruna</value>
+	</string>
+	<string>
+		<id>245</id>
+		<value>Musika Autorruna</value>
+	</string>
+	<string>
+		<id>246</id>
+		<value>Irudien Autorruna</value>
+	</string>
+	<string>
+		<id>247</id>
+		<value>Skriptak</value>
+	</string>
+	<string>
+		<id>248</id>
+		<value>Hizkuntza</value>
+	</string>
+	<string>
+		<id>249</id>
+		<value>Musika</value>
+	</string>
+	<string>
+		<id>250</id>
+		<value>Ikustea</value>
+	</string>
+	<string>
+		<id>251</id>
+		<value>Bukaera karpeta Aukeratu</value>
+	</string>
+	<string>
+		<id>252</id>
+		<value>Bozgorailu guztietara irteera</value>
+	</string>
+	<string>
+		<id>253</id>
+		<value>Kanale Kopurua</value>
+	</string>
+	<string>
+		<id>254</id>
+		<value>DD Stereo Passthrough</value>
+	</string>
+	<string>
+		<id>255</id>
+		<value>CDDB</value>
+	</string>
+	<string>
+		<id>256</id>
+		<value>CDDBarentzako Freedb-aren eske</value>
+	</string>
+	<string>
+		<id>257</id>
+		<value>Akatsa</value>
+	</string>
+	<string>
+		<id>258</id>
+		<value>ID3 tag-ak abiarazi</value>
+	</string>
+	<string>
+		<id>259</id>
+		<value>Irekitzen</value>
+	</string>
+	<string>
+		<id>260</id>
+		<value>Shoutcast</value>
+	</string>
+	<string>
+		<id>261</id>
+		<value>Hasieraren zain...</value>
+	</string>
+	<string>
+		<id>262</id>
+		<value>Irteera scriptak</value>
+	</string>
+	<string>
+		<id>263</id>
+		<value>HTTP Zerbitzaria:</value>
+	</string>
+	<string>
+		<id>264</id>
+		<value>Grabaketa</value>
+	</string>
+	<string>
+		<id>265</id>
+		<value>Gelditu Grab.</value>
+	</string>
+	<string>
+		<id>266</id>
+		<value>Kantaz Sailkatu</value>
+	</string>
+	<string>
+		<id>267</id>
+		<value>Orduaz Saikatu</value>
+	</string>
+	<string>
+		<id>268</id>
+		<value>Izenburuaz Sailkatu</value>
+	</string>
+	<string>
+		<id>269</id>
+		<value>Artistaz Sailkatu</value>
+	</string>
+	<string>
+		<id>270</id>
+		<value>Albumez Sailkatu</value>
+	</string>
+	<string>
+		<id>271</id>
+		<value>TOP 100</value>
+	</string>
+	<string>
+		<id>272</id>
+		<value>Goiko Ezkerreko Overscanaren konpensazioa</value>
+	</string>
+	<string>
+		<id>273</id>
+		<value>Beheko eskubiko Overscanaren konpensazioa</value>
+	</string>
+	<string>
+		<id>274</id>
+		<value>Azpitituloen Kokapena</value>
+	</string>
+	<string>
+		<id>275</id>
+		<value>Pixelen Ratio Zehaztapena</value>
+	</string>
+	<string>
+		<id>276</id>
+		<value>-KONTUZ !- Utzi 0,0 kalitate onenerako, aldatu bideo ajustatzeko.</value>
+	</string>
+	<string>
+		<id>277</id>
+		<value>Barra mugitu azpitituloen kokapena aldatzeko</value>
+	</string>
+	<string>
+		<id>278</id>
+		<value>-Garrantzizkoa !- Kalitate onena lortzeko, aldatu errektangelua erabat karratua bihurtuz</value>
+	</string>
+	<string>
+		<id>279</id>
+		<value>Aukerak ezin dira kargatu</value>
+	</string>
+	<string>
+		<id>280</id>
+		<value>Defektuzko Fallbackak erabiltzen</value>
+	</string>
+	<string>
+		<id>281</id>
+		<value>Mesedez zihurtatu .xml fitxategiak ongi daudela</value>
+	</string>
+	<string>
+		<id>282</id>
+		<value>%i elementuak aurkituak</value>
+	</string>
+	<string>
+		<id>283</id>
+		<value>Bilaketaren Emaitzak</value>
+	</string>
+	<string>
+		<id>284</id>
+		<value>Ez da emaitzarik aurkitu</value>
+	</string>
+	<string>
+		<id>285</id>
+		<value>Deinterlace filtroa</value>
+	</string>
+	<string>
+		<id>286</id>
+		<value>Filtroa postprozesatzen</value>
+	</string>
+	<string>
+		<id>287</id>
+		<value>Azpitituloak</value>
+	</string>
+	<string>
+		<id>288</id>
+		<value>Fuentea</value>
+	</string>
+	<string>
+		<id>289</id>
+		<value>Tamaina</value>
+	</string>
+	<string>
+		<id>290</id>
+		<value>Bolumenaren haunditzea (db)</value>
+	</string>
+	<string>
+		<id>291</id>
+		<value>Bideoa</value>
+	</string>
+	<string>
+		<id>292</id>
+		<value>Audioa</value>
+	</string>
+	<string>
+		<id>293</id>
+		<value>Azpitituloak</value>
+	</string>
+	<string>
+		<id>294</id>
+		<value>Bookmark bat Sortu</value>
+	</string>
+	<string>
+		<id>295</id>
+		<value>Bookmark ziklikoak</value>
+	</string>
+	<string>
+		<id>296</id>
+		<value>Ezabatu Bookmarkak</value>
+	</string>
+	<string>
+		<id>297</id>
+		<value>AVDelay</value>
+	</string>
+	<string>
+		<id>298</id>
+		<value>Slider</value>
+	</string>
+	<string>
+		<id>299</id>
+		<value>Runtime:</value>
+	</string>
+	<string>
+		<id>300</id>
+		<value>1. Hizkuntza</value>
+	</string>
+	<string>
+		<id>301</id>
+		<value>2. Bolumena</value>
+	</string>
+	<string>
+		<id>302</id>
+		<value>3. Stream</value>
+	</string>
+	<string>
+		<id>303</id>
+		<value>Atzerapena</value>
+	</string>
+	<string>
+		<id>304</id>
+		<value>Hizkuntza</value>
+	</string>
+	<string>
+		<id>305</id>
+		<value>Aktibatuta</value>
+	</string>
+	<string>
+		<id>306</id>
+		<value>Non-Interleaved</value>
+	</string>
+	<string>
+		<id>307</id>
+		<value>Auto</value>
+	</string>
+	<string>
+		<id>308</id>
+		<value>vertical deblocking filter</value>
+	</string>
+	<string>
+		<id>309</id>
+		<value>horizontal deblocking filter</value>
+	</string>
+	<string>
+		<id>310</id>
+		<value>Auto brightness/contrast</value>
+	</string>
+	<string>
+		<id>311</id>
+		<value>Dering</value>
+	</string>
+	<string>
+		<id>312</id>
+		<value>(0=auto)</value>
+	</string>
+	<string>
+		<id>313</id>
+		<value>Databasea birantolatu</value>
+	</string>
+	<string>
+		<id>314</id>
+		<value>Prestatzen...</value>
+	</string>
+	<string>
+		<id>315</id>
+		<value>Databasearen akatsa</value>
+	</string>
+	<string>
+		<id>316</id>
+		<value>Kantuen Bila...</value>
+	</string>
+	<string>
+		<id>317</id>
+		<value>Birantolaketa zuzen joan da</value>
+	</string>
+	<string>
+		<id>318</id>
+		<value>Ezabatutako kantuak markatzen</value>
+	</string>
+	<string>
+		<id>319</id>
+		<value>Kantuen birantolaketa ez da ongi joan</value>
+	</string>
+	<string>
+		<id>320</id>
+		<value>Artisten bila...</value>
+	</string>
+	<string>
+		<id>321</id>
+		<value>Artisten birantolaketa ez da ongi joan</value>
+	</string>
+	<string>
+		<id>322</id>
+		<value>Generoen bila...</value>
+	</string>
+	<string>
+		<id>323</id>
+		<value>Generoen birantolaketa ez da ongi joan</value>
+	</string>
+	<string>
+		<id>324</id>
+		<value>Kokapenen bila...</value>
+	</string>
+	<string>
+		<id>325</id>
+		<value>Kokapenen birantolaketa ez da ongi joan</value>
+	</string>
+	<string>
+		<id>326</id>
+		<value>Alubumen bila...</value>
+	</string>
+	<string>
+		<id>327</id>
+		<value>Albumen birantolaketa ez da ongi joan</value>
+	</string>
+	<string>
+		<id>328</id>
+		<value>Aldaketen bila...</value>
+	</string>
+	<string>
+		<id>329</id>
+		<value>Akatsa datoak idazterakoan</value>
+	</string>
+	<string>
+		<id>330</id>
+		<value>Honek denboratxo bat iraun lezake...</value>
+	</string>
+	<string>
+		<id>331</id>
+		<value>Datubasea konprimitzen...</value>
+	</string>
+	<string>
+		<id>332</id>
+		<value>Datubasearen konprimitzea ez da ongi joan</value>
+	</string>
+	<string>
+		<id>333</id>
+		<value>Nahi ahal duzu my music datubasea birantolatzea?</value>
+	</string>
+	<string>
+		<id>334</id>
+		<value>Birantolatu my music datubasea</value>
+	</string>
+	<string>
+		<id>335</id>
+		<value>Hasi</value>
+	</string>
+	<string>
+		<id>336</id>
+		<value>Ajus. Framerate-a</value>
+	</string>
+	<string>
+		<id>337</id>
+		<value>Audio Irteera:</value>
+	</string>
+	<string>
+		<id>338</id>
+		<value>Analogikoa</value>
+	</string>
+	<string>
+		<id>339</id>
+		<value>Digitala</value>
+	</string>
+	<string>
+		<id>340</id>
+		<value>Zenbait Artista</value>
+	</string>
+	<string>
+		<id>341</id>
+		<value>Irakurri DVD-a</value>
+	</string>
+	<string>
+		<id>342</id>
+		<value>Filmak</value>
+	</string>
+	<string>
+		<id>343</id>
+		<value>Framerata ajustatu</value>
+	</string>
+	<string>
+		<id>344</id>
+		<value>Aktoreak</value>
+	</string>
+	<string>
+		<id>345</id>
+		<value>Urtea</value>
+	</string>
+	<string>
+		<id>346</id>
+		<value>Stack</value>
+	</string>
+	<string>
+		<id>347</id>
+		<value>UnStack</value>
+	</string>
+	<string>
+		<id>348</id>
+		<value>Karpeten hierarkia lautu</value>
+	</string>
+	<string>
+		<id>349</id>
+		<value>Deketuzko .xbe soilik erakutsi</value>
+	</string>
+	<string>
+		<id>350</id>
+		<value>Programak</value>
+	</string>
+	<string>
+		<id>351</id>
+		<value>Off</value>
+	</string>
+	<string>
+		<id>352</id>
+		<value>Dim</value>
+	</string>
+	<string>
+		<id>353</id>
+		<value>Beltza</value>
+	</string>
+	<string>
+		<id>354</id>
+		<value>Matrix Trailak</value>
+	</string>
+	<string>
+		<id>355</id>
+		<value>Screensaver Idle Timeout</value>
+	</string>
+	<string>
+		<id>356</id>
+		<value>Screensaverraren Modua</value>
+	</string>
+	<string>
+		<id>357</id>
+		<value>Shutdown Idle Timeout</value>
+	</string>
+	<string>
+		<id>358</id>
+		<value>Album Guztiak</value>
+	</string>
+	<string>
+		<id>359</id>
+		<value>Azkenaldiko Albumak</value>
+	</string>
+	<string>
+		<id>360</id>
+		<value>Screensaver</value>
+	</string>
+	<string>
+		<id>361</id>
+		<value>R. SlideShow</value>
+	</string>
+	<string>
+		<id>362</id>
+		<value>Screensaverraren Ixkutatze Maila(%)</value>
+	</string>
+	<string>
+		<id>363</id>
+		<value>Fitxategiaz Sailkatu</value>
+	</string>
+	<string>
+		<id>364</id>
+		<value>DD / DTS Multichannel Passthrough</value>
+	</string>
+	<string>
+		<id>365</id>
+		<value>Izenez Sailkatu</value>
+	</string>
+	<string>
+		<id>366</id>
+		<value>Urteaz Sailkatu</value>
+	</string>
+	<string>
+		<id>367</id>
+		<value>Ratingaz Sailkatu</value>
+	</string>
+	<string>
+		<id>368</id>
+		<value>IMDB</value>
+	</string>
+	<string>
+		<id>369</id>
+		<value>Izenburua</value>
+	</string>
+	<string>
+		<id>370</id>
+		<value>T_Storms</value>
+	</string>
+	<string>
+		<id>371</id>
+		<value>Zati bat</value>
+	</string>
+	<string>
+		<id>372</id>
+		<value>Gehiengoa</value>
+	</string>
+	<string>
+		<id>373</id>
+		<value>Eguzkitsua</value>
+	</string>
+	<string>
+		<id>374</id>
+		<value>Lainotua</value>
+	</string>
+	<string>
+		<id>375</id>
+		<value>Elurra</value>
+	</string>
+	<string>
+		<id>376</id>
+		<value>Euria</value>
+	</string>
+	<string>
+		<id>377</id>
+		<value>Argia</value>
+	</string>
+	<string>
+		<id>378</id>
+		<value>AM</value>
+	</string>
+	<string>
+		<id>379</id>
+		<value>PM</value>
+	</string>
+	<string>
+		<id>380</id>
+		<value>Showers</value>
+	</string>
+	<string>
+		<id>381</id>
+		<value>Gutxi</value>
+	</string>
+	<string>
+		<id>382</id>
+		<value>Noizbehinka</value>
+	</string>
+	<string>
+		<id>383</id>
+		<value>Haizea</value>
+	</string>
+	<string>
+		<id>384</id>
+		<value>Gogorra</value>
+	</string>
+	<string>
+		<id>385</id>
+		<value>Ona</value>
+	</string>
+	<string>
+		<id>386</id>
+		<value>Lainorik ez</value>
+	</string>
+	<string>
+		<id>387</id>
+		<value>Goiz</value>
+	</string>
+	<string>
+		<id>388</id>
+		<value>eta</value>
+	</string>
+	<string>
+		<id>389</id>
+		<value>behelainoa</value>
+	</string>
+	<string>
+		<id>390</id>
+		<value>Lainoak</value>
+	</string>
+	<string>
+		<id>391</id>
+		<value>Haizetsu</value>
+	</string>
+	<string>
+		<id>392</id>
+		<value>Xirimiria</value>
+	</string>
+	<string>
+		<id>393</id>
+		<value>Izozten</value>
+	</string>
+	<string>
+		<id>394</id>
+		<value>E/A</value>
+	</string>
+	<string>
+		<id>396</id>
+		<value>Aukeratu Kokapena</value>
+	</string>
+	<string>
+		<id>397</id>
+		<value>Berirakurtze Denbora</value>
+	</string>
+	<string>
+		<id>398</id>
+		<value>Tenperatura Unitateak</value>
+	</string>
+	<string>
+		<id>399</id>
+		<value>Abiadura Unitateak</value>
+	</string>
+	<string>
+		<id>400</id>
+		<value>Eguraldia</value>
+	</string>
+	<string>
+		<id>401</id>
+		<value>Tenperatura</value>
+	</string>
+	<string>
+		<id>402</id>
+		<value>Ematen du</value>
+	</string>
+	<string>
+		<id>403</id>
+		<value>UV Indizea</value>
+	</string>
+	<string>
+		<id>404</id>
+		<value>Haizea</value>
+	</string>
+	<string>
+		<id>405</id>
+		<value>Rocio Puntua</value>
+	</string>
+	<string>
+		<id>406</id>
+		<value>Hezetasuna</value>
+	</string>
+	<string>
+		<id>410</id>
+		<value>Weather.com-en begiratzen</value>
+	</string>
+	<string>
+		<id>411</id>
+		<value>Eguraldia hemen:</value>
+	</string>
+	<string>
+		<id>412</id>
+		<value>Eguraldi datuak ezin dira lortu</value>
+	</string>
+	<string>
+		<id>413</id>
+		<value>Eskuz</value>
+	</string>
+	<string>
+		<id>414</id>
+		<value>Ikuskapenik ez album honentzat</value>
+	</string>
+	<string>
+		<id>415</id>
+		<value>Irudia deskargatzen...</value>
+	</string>
+	<string>
+		<id>416</id>
+		<value>Ez da aurkitu</value>
+	</string>
+	<string>
+		<id>417</id>
+		<value>Ikusi: Ikono Haundiak</value>
+	</string>
+	<string>
+		<id>418</id>
+		<value>Bideoak / Generoak</value>
+	</string>
+	<string>
+		<id>419</id>
+		<value>Bideoak / Aktoreak</value>
+	</string>
+	<string>
+		<id>420</id>
+		<value>Bideoak / Urteak</value>
+	</string>
+	<string>
+		<id>421</id>
+		<value>Bideoak / Izenburuak</value>
+	</string>
+	<string>
+		<id>422</id>
+		<value>Ezabatu albumaren datuak</value>
+	</string>
+	<string>
+		<id>423</id>
+		<value>CDDB Datuak Ezabatu</value>
+	</string>
+	<string>
+		<id>424</id>
+		<value>Aukeratu</value>
+	</string>
+	<string>
+		<id>425</id>
+		<value>Album daturik ez da aurkitu.</value>
+	</string>
+	<string>
+		<id>426</id>
+		<value>CDDB daturik ez da aurkitu.</value>
+	</string>
+	<string>
+		<id>427</id>
+		<value>Diskoa:</value>
+	</string>
+	<string>
+		<id>428</id>
+		<value>Zuzeneko CD / DVD-a sartu</value>
+	</string>
+	<string>
+		<id>429</id>
+		<value>Mesede sartu honako CD / DVD-a</value>
+	</string>
+	<string>
+		<id>430</id>
+		<value>DVD#-z Sailkatu</value>
+	</string>
+	<string>
+		<id>431</id>
+		<value>Cache-rik Ez</value>
+	</string>
+	<string>
+		<id>432</id>
+		<value>Ezabatu Filma datubasetik</value>
+	</string>
+	<string>
+		<id>433</id>
+		<value>Zihur zaude ezabatu nahi duzula?</value>
+	</string>
+	<string>
+		<id>434</id>
+		<value>filma?</value>
+	</string>
+	<string>
+		<id>435</id>
+		<value>Track-a</value>
+	</string>
+	<string>
+		<id>436</id>
+		<value>Urtea:</value>
+	</string>
+	<string>
+		<id>437</id>
+		<value>Luzera:</value>
+	</string>
+	<string>
+		<id>438</id>
+		<value>Fitxategia irekitzen</value>
+	</string>
+	<string>
+		<id>439</id>
+		<value>Cache</value>
+	</string>
+	<string>
+		<id>440</id>
+		<value>Disko Gogorra</value>
+	</string>
+	<string>
+		<id>441</id>
+		<value>UDF</value>
+	</string>
+	<string>
+		<id>442</id>
+		<value>Sare Lokala</value>
+	</string>
+	<string>
+		<id>443</id>
+		<value>Internet</value>
+	</string>
+	<string>
+		<id>444</id>
+		<value>bideoa</value>
+	</string>
+	<string>
+		<id>445</id>
+		<value>audioa</value>
+	</string>
+	<string>
+		<id>446</id>
+		<value>DVD-a</value>
+	</string>
+	<string>
+		<id>447</id>
+		<value>Autorruna</value>
+	</string>
+	<string>
+		<id>448</id>
+		<value>LCD-a</value>
+	</string>
+	<string>
+		<id>449</id>
+		<value>Abiarazita</value>
+	</string>
+	<string>
+		<id>450</id>
+		<value>Zutabeak</value>
+	</string>
+	<string>
+		<id>451</id>
+		<value>Helbidearen 1. Lerroa:</value>
+	</string>
+	<string>
+		<id>452</id>
+		<value>Helbidearen 2. Lerroa:</value>
+	</string>
+	<string>
+		<id>453</id>
+		<value>Helbidearen 3. Lerroa:</value>
+	</string>
+	<string>
+		<id>454</id>
+		<value>Helbidearen 4. Lerroa:</value>
+	</string>
+	<string>
+		<id>455</id>
+		<value>Lerroak:</value>
+	</string>
+	<string>
+		<id>456</id>
+		<value>Modua:</value>
+	</string>
+	<string>
+		<id>457</id>
+		<value>Ikusteko modua aldatu</value>
+	</string>
+	<string>
+		<id>458</id>
+		<value>B/Mark</value>
+	</string>
+	<string>
+		<id>459</id>
+		<value>Azp</value>
+	</string>
+	<string>
+		<id>460</id>
+		<value>Audio Stream-a</value>
+	</string>
+	<string>
+		<id>461</id>
+		<value>[martxan]</value>
+	</string>
+	<string>
+		<id>462</id>
+		<value>Azpitituloa</value>
+	</string>
+	<string>
+		<id>463</id>
+		<value>Ateko Argia</value>
+	</string>
+	<string>
+		<id>464</id>
+		<value>Brightness</value>
+	</string>
+	<string>
+		<id>465</id>
+		<value>Kontrastea</value>
+	</string>
+	<string>
+		<id>466</id>
+		<value>Gamma</value>
+	</string>
+	<string>
+		<id>467</id>
+		<value>Mota</value>
+	</string>
+	<string>
+		<id>468</id>
+		<value>Mugitu barra OSD kokapena aldatu ahal izateko</value>
+	</string>
+	<string>
+		<id>469</id>
+		<value>OSD Kokapena</value>
+	</string>
+	<string>
+		<id>470</id>
+		<value>Kreditoak</value>
+	</string>
+	<string>
+		<id>471</id>
+		<value>Modtxip</value>
+	</string>
+	<string>
+		<id>472</id>
+		<value>OSD Timeout</value>
+	</string>
+	<string>
+		<id>473</id>
+		<value>Kalitate haundiko resampling-a</value>
+	</string>
+	<string>
+		<id>474</id>
+		<value>Off</value>
+	</string>
+	<string>
+		<id>475</id>
+		<value>Musika Soilik</value>
+	</string>
+	<string>
+		<id>476</id>
+		<value>Musika Eta Bideoa</value>
+	</string>
+	<string>
+		<id>477</id>
+		<value>Zerrenda ezin da kargatu</value>
+	</string>
+	<string>
+		<id>478</id>
+		<value>OSD</value>
+	</string>
+	<string>
+		<id>479</id>
+		<value>Skin-a eta Hizkuntza</value>
+	</string>
+	<string>
+		<id>480</id>
+		<value>Eabiltzaile Interfasea</value>
+	</string>
+	<string>
+		<id>481</id>
+		<value>Soinu Aukerak</value>
+	</string>
+	<string>
+		<id>482</id>
+		<value>XBMC-ri buruz</value>
+	</string>
+	<string>
+		<id>483</id>
+		<value>Albuma</value>
+	</string>
+	<string>
+		<id>484</id>
+		<value>Artista</value>
+	</string>
+	<string>
+		<id>485</id>
+		<value>Ezabatu albuma</value>
+	</string>
+	<string>
+		<id>486</id>
+		<value>Errepikatu</value>
+	</string>
+	<string>
+		<id>487</id>
+		<value>Bat Errepikatu</value>
+	</string>
+	<string>
+		<id>488</id>
+		<value>Errepikatu karpetako zerrenda</value>
+	</string>
+	<string>
+		<id>489</id>
+		<value>Erabili zerrendak kantuetan</value>
+	</string>
+	<string>
+		<id>490</id>
+		<value>Aldatu automatikoki zerrendak eta ikonoak kantuetan</value>
+	</string>
+	<string>
+		<id>491</id>
+		<value>Ikono haundiak erabili</value>
+	</string>
+	<string>
+		<id>492</id>
+		<value>Soinuaren hizkuntza</value>
+	</string>
+	<string>
+		<id>493</id>
+		<value>Aktorea:</value>
+	</string>
+	<string>
+		<id>500</id>
+		<value>Fitxategi menua</value>
+	</string>
+	<string>
+		<id>501</id>
+		<value>Ezarri helmuga bezala</value>
+	</string>
+	<string>
+		<id>502</id>
+		<value>Aginduakoa ezin izan da bete</value>
+	</string>
+	<string>
+		<id>503</id>
+		<value>Karpeta hau ezabatu</value>
+	</string>
+	<string>
+		<id>504</id>
+		<value>Helmugara joan</value>
+	</string>
+	<string>
+		<id>505</id>
+		<value>Kalkuloak egiten</value>
+	</string>
+	<string>
+		<id>506</id>
+		<value>Zihur zaude?</value>
+	</string>
+	<string>
+		<id>507</id>
+		<value>elementuak</value>
+	</string>
+	<string>
+		<id>508</id>
+		<value>NORA</value>
+	</string>
+	<string>
+		<id>509</id>
+		<value>Helmuga fitxategia auldez aurretik badago. Gainean idatzi?</value>
+	</string>
+	<string>
+		<id>510</id>
+		<value>Ezeztatu</value>
+	</string>
+	<string>
+		<id>511</id>
+		<value>Beti</value>
+	</string>
+	<string>
+		<id>512</id>
+		<value>Inoiz</value>
+	</string>
+	<string>
+		<id>513</id>
+		<value>Elementua babestua dago, agindutakoa ezin izan da bete.</value>
+	</string>
+	<string>
+		<id>514</id>
+		<value>Arazoa karpeta sortzerakoan, agindutakoa ezin izan da bete.</value>
+	</string>
+	<string>
+		<id>515</id>
+		<value>Arazoa karpeta ezabatzerakoan, agindutakoa ezin izan da bete.</value>
+	</string>
+	<string>
+		<id>516</id>
+		<value>Ezin izan da helmuga fitxategia ezabatu, agindutakoa ezin izan da bete.</value>
+	</string>
+	<string>
+		<id>517</id>
+		<value>Arazoa potola, agindutakoa ezin izan da bete.</value>
+	</string>
+	<string>
+		<id>518</id>
+		<value>Kantu hau ezabatu?</value>
+	</string>
+	<string>
+		<id>530</id>
+		<value>Argazki diska sartu da, irekitzea nahi duzu?</value>
+	</string>
+	<string>
+		<id>531</id>
+		<value>Bideo diska sartu da, irekitzea nahi duzu?</value>
+	</string>
+	<string>
+		<id>532</id>
+		<value>Soinu diska sartu da, irekitzea nahi duzu?</value>
+	</string>
+	<string>
+		<id>550</id>
+		<value>Crop</value>
+	</string>
+	<string>
+		<id>555</id>
+		<value>Nondik {0} nora {1} {2}</value>
+	</string>
+	<string>
+		<id>600</id>
+		<value>Telebista Gida</value>
+	</string>
+	<string>
+		<id>601</id>
+		<value>Grabatu Orain</value>
+	</string>
+	<string>
+		<id>602</id>
+		<value>Kanala:</value>
+	</string>
+	<string>
+		<id>603</id>
+		<value>Programatua</value>
+	</string>
+	<string>
+		<id>604</id>
+		<value>Grabatutako Telebista</value>
+	</string>
+	<string>
+		<id>605</id>
+		<value>Telebista</value>
+	</string>
+	<string>
+		<id>606</id>
+		<value>Telebista Gida kargatzen</value>
+	</string>
+	<string>
+		<id>607</id>
+		<value>Kargatu</value>
+	</string>
+	<string>
+		<id>608</id>
+		<value>Telebista Gida inportazio okerra</value>
+	</string>
+	<string>
+		<id>609</id>
+		<value>Telebista Gida inportatu da</value>
+	</string>
+	<string>
+		<id>610</id>
+		<value>Ez grabatu</value>
+	</string>
+	<string>
+		<id>611</id>
+		<value>Behin Grabatu</value>
+	</string>
+	<string>
+		<id>612</id>
+		<value>Beti grabatu kanal hau</value>
+	</string>
+	<string>
+		<id>613</id>
+		<value>Beti grabatu kanal guztietan</value>
+	</string>
+	<string>
+		<id>614</id>
+		<value>Ordu honetan astero grabatu</value>
+	</string>
+	<string>
+		<id>615</id>
+		<value>Ordu honetan egunero grabatu</value>
+	</string>
+	<string>
+		<id>616</id>
+		<value>Grabaketa mota aukeratu</value>
+	</string>
+	<string>
+		<id>617</id>
+		<value>Berria</value>
+	</string>
+	<string>
+		<id>618</id>
+		<value>Ezabatu</value>
+	</string>
+	<string>
+		<id>619</id>
+		<value>Aldatu Eguna/Ordua</value>
+	</string>
+	<string>
+		<id>620</id>
+		<value>Kanalez Erakutsi</value>
+	</string>
+	<string>
+		<id>621</id>
+		<value>Dataz Erakutsi</value>
+	</string>
+	<string>
+		<id>622</id>
+		<value>Izenez Erakutsi</value>
+	</string>
+	<string>
+		<id>623</id>
+		<value>Motaz Erakutsi</value>
+	</string>
+	<string>
+		<id>624</id>
+		<value>Garbiketa</value>
+	</string>
+	<string>
+		<id>625</id>
+		<value>Programazioak kendu dira:</value>
+	</string>
+	<string>
+		<id>626</id>
+		<value>Mota Aldatu</value>
+	</string>
+	<string>
+		<id>627</id>
+		<value>Kanalak:</value>
+	</string>
+	<string>
+		<id>628</id>
+		<value>Programak:</value>
+	</string>
+	<string>
+		<id>629</id>
+		<value>Grabaketa Gelditu</value>
+	</string>
+	<string>
+		<id>630</id>
+		<value>Berrabiaraztea nahi duzu?</value>
+	</string>
+	<string>
+		<id>631</id>
+		<value>Itzaltzea nahi duzu?</value>
+	</string>
+	<string>
+		<id>632</id>
+		<value>Objektuak</value>
+	</string>
+	<string>
+		<id>633</id>
+		<value>Hasi Data/Ordua</value>
+	</string>
+	<string>
+		<id>634</id>
+		<value>Bukatu Data/Ordua</value>
+	</string>
+	<string>
+		<id>635</id>
+		<value>Ordua</value>
+	</string>
+	<string>
+		<id>636</id>
+		<value>Data</value>
+	</string>
+	<string>
+		<id>637</id>
+		<value>Aldatu Grabaketa</value>
+	</string>
+	<string>
+		<id>638</id>
+		<value>Grabaketa Berria</value>
+	</string>
+	<string>
+		<id>639</id>
+		<value>Honen Albumak:</value>
+	</string>
+	<string>
+		<id>640</id>
+		<value>Saturazioa</value>
+	</string>
+	<string>
+		<id>641</id>
+		<value>Sharpness</value>
+	</string>
+	<string>
+		<id>642</id>
+		<value>Telebista Kanalak Kargatzen</value>
+	</string>
+	<string>
+		<id>643</id>
+		<value>Telebista Programak Kargatzen</value>
+	</string>
+	<string>
+		<id>644</id>
+		<value>Telebista Programak erakusten</value>
+	</string>
+	<string>
+		<id>645</id>
+		<value>XML Fitxategia kargatzen</value>
+	</string>
+	<string>
+		<id>646</id>
+		<value>Programatutako grabaketak</value>
+	</string>
+	<string>
+		<id>647</id>
+		<value>Behin</value>
+	</string>
+	<string>
+		<id>648</id>
+		<value>Egunero</value>
+	</string>
+	<string>
+		<id>649</id>
+		<value>Beti</value>
+	</string>
+	<string>
+		<id>650</id>
+		<value>Beti kanale honetan</value>
+	</string>
+	<string>
+		<id>651</id>
+		<value>Beti edozein kanaletan</value>
+	</string>
+	<string>
+		<id>652</id>
+		<value>Grabatutako Telebista</value>
+	</string>
+	<string>
+		<id>653</id>
+		<value>Grabaketa hau ezabatu?</value>
+	</string>
+	<string>
+		<id>654</id>
+		<value>Atera</value>
+	</string>
+	<string>
+		<id>655</id>
+		<value>Ikusi grabatutako telebista</value>
+	</string>
+	<string>
+		<id>656</id>
+		<value>Ezabatu Grabatutako telebista</value>
+	</string>
+	<string>
+		<id>657</id>
+		<value>Astel</value>
+	</string>
+	<string>
+		<id>658</id>
+		<value>Astear</value>
+	</string>
+	<string>
+		<id>659</id>
+		<value>Asteaz</value>
+	</string>
+	<string>
+		<id>660</id>
+		<value>Oste</value>
+	</string>
+	<string>
+		<id>661</id>
+		<value>Osti</value>
+	</string>
+	<string>
+		<id>662</id>
+		<value>Laru</value>
+	</string>
+	<string>
+		<id>663</id>
+		<value>Igan</value>
+	</string>
+	<string>
+		<id>664</id>
+		<value>Irudi hau ezabatu?</value>
+	</string>
+	<string>
+		<id>665</id>
+		<value>Irratia</value>
+	</string>
+	<string>
+		<id>666</id>
+		<value>Estazioak</value>
+	</string>
+	<string>
+		<id>667</id>
+		<value>Kanale Bilaketa automatikoa</value>
+	</string>
+	<string>
+		<id>668</id>
+		<value>Motaz Sailkatu</value>
+	</string>
+	<string>
+		<id>669</id>
+		<value>Generoaz Sailkatu</value>
+	</string>
+	<string>
+		<id>670</id>
+		<value>Bitrateaz Sailkatu</value>
+	</string>
+	<string>
+		<id>671</id>
+		<value>Ikusitakoak Sailkatu</value>
+	</string>
+	<string>
+		<id>672</id>
+		<value>Ast-Ost Grabatu</value>
+	</string>
+	<string>
+		<id>673</id>
+		<value>Scroll abiadura</value>
+	</string>
+	<string>
+		<id>674</id>
+		<value>GUI ezarpenak</value>
+	</string>
+	<string>
+		<id>675</id>
+		<value>Adibidez:</value>
+	</string>
+	<string>
+		<id>676</id>
+		<value>Ikusitako grabazioak ezabatu?</value>
+	</string>
+	<string>
+		<id>677</id>
+		<value>orduak</value>
+	</string>
+	<string>
+		<id>678</id>
+		<value>Generoaz Sailkatu</value>
+	</string>
+	<string>
+		<id>679</id>
+		<value>Astero</value>
+	</string>
+	<string>
+		<id>680</id>
+		<value>Ast-Ost</value>
+	</string>
+	<string>
+		<id>681</id>
+		<value>Itxaroten</value>
+	</string>
+	<string>
+		<id>682</id>
+		<value>Grabatzen</value>
+	</string>
+	<string>
+		<id>683</id>
+		<value>Bukatuta</value>
+	</string>
+	<string>
+		<id>684</id>
+		<value>Ezeztatuta</value>
+	</string>
+	<string>
+		<id>685</id>
+		<value>Statusaz Sailkatu</value>
+	</string>
+	<string>
+		<id>686</id>
+		<value>Jaioa</value>
+	</string>
+	<string>
+		<id>687</id>
+		<value>Aktibo Urteak</value>
+	</string>
+	<string>
+		<id>688</id>
+		<value>Instrumentuak</value>
+	</string>
+	<string>
+		<id>689</id>
+		<value>Bio.</value>
+	</string>
+	<string>
+		<id>690</id>
+		<value>Diskografia (Albumak)</value>
+	</string>
+	<string>
+		<id>691</id>
+		<value>Diskografia (bilduma, kaxak)</value>
+	</string>
+	<string>
+		<id>700</id>
+		<value>Diskografia (eps, singelak)</value>
+	</string>
+	<string>
+		<id>701</id>
+		<value>Diskogradia (bootlegs, bideoak, elkarrizketak)</value>
+	</string>
+	<string>
+		<id>702</id>
+		<value>Ez da artistarik aurkitu!</value>
+	</string>
+	<string>
+		<id>703</id>
+		<value>Ez zaude Internetera konektatuta!</value>
+	</string>
+	<string>
+		<id>704</id>
+		<value>Feed Retrieval</value>
+	</string>
+	<string>
+		<id>705</id>
+		<value>RSS datuen bila</value>
+	</string>
+	<string>
+		<id>706</id>
+		<value>Feed aukeratu</value>
+	</string>
+	<string>
+		<id>707</id>
+		<value>Telebista On</value>
+	</string>
+	<string>
+		<id>708</id>
+		<value>Timeshifting</value>
+	</string>
+	<string>
+		<id>709</id>
+		<value>Eguneratze automatikoa</value>
+	</string>
+	<string>
+		<id>710</id>
+		<value>Bersio berri bat eskuragarri</value>
+	</string>
+	<string>
+		<id>711</id>
+		<value>Egunera tu v#old etik v#new ra?</value>
+	</string>
+	<string>
+		<id>712</id>
+		<value>Itzuli</value>
+	</string>
+	<string>
+		<id>713</id>
+		<value>Autoplay</value>
+	</string>
+	<string>
+		<id>714</id>
+		<value>Disko bat sartu da, abiaraztea nahi duzu?</value>
+	</string>
+	<string>
+		<id>715</id>
+		<value>CD bat sartu da, abiaraztea nahi duzu?</value>
+	</string>
+	<string>
+		<id>716</id>
+		<value>Satelitea</value>
+	</string>
+	<string>
+		<id>717</id>
+		<value>Eguraldia</value>
+	</string>
+	<string>
+		<id>718</id>
+		<value>Top 100-a ezabatu</value>
+	</string>
+	<string>
+		<id>719</id>
+		<value>Top 100 berrabiaraztea bahi duzu benetan?</value>
+	</string>
+	<string>
+		<id>720</id>
+		<value>Luzeraz Erakutsi</value>
+	</string>
+	<string>
+		<id>721</id>
+		<value>Ikusitako Aldiz Erakutsi</value>
+	</string>
+	<string>
+		<id>722</id>
+		<value>Ezin da diskoa abiarazi</value>
+	</string>
+	<string>
+		<id>723</id>
+		<value>Diskorik sartu duzu?</value>
+	</string>
+	<string>
+		<id>724</id>
+		<value>Telebista Gida bilatu</value>
+	</string>
+	<string>
+		<id>725</id>
+		<value>Generoak</value>
+	</string>
+	<string>
+		<id>726</id>
+		<value>Izenburua</value>
+	</string>
+	<string>
+		<id>727</id>
+		<value>Zuzeneko Telebista atzekaldean</value>
+	</string>
+	<string>
+		<id>728</id>
+		<value>Bideorik ez /Telebista martxan</value>
+	</string>
+	<string>
+		<id>729</id>
+		<value>Zihurtatu VMR9 daukazula eta zerbait martxan dagoela</value>
+	</string>
+	<string>
+		<id>730</id>
+		<value>Programazio haugrabatzen ari da. Ezabatzen baduzu</value>
+	</string>
+	<string>
+		<id>731</id>
+		<value>programazioa, grabaketa etengo da.</value>
+	</string>
+	<string>
+		<id>732</id>
+		<value>Zihur zaude?</value>
+	</string>
+	<string>
+		<id>733</id>
+		<value>Filmstripa Ikusi</value>
+	</string>
+	<string>
+		<id>734</id>
+		<value>Irudia:</value>
+	</string>
+	<string>
+		<id>735</id>
+		<value>Biratu</value>
+	</string>
+	<string>
+		<id>736</id>
+		<value>Telebista Gida Daturik ez dago eskuragarri</value>
+	</string>
+	<string>
+		<id>737</id>
+		<value>Satelitea Ikusi</value>
+	</string>
+	<string>
+		<id>738</id>
+		<value>Hotzberoa Ikusi</value>
+	</string>
+	<string>
+		<id>739</id>
+		<value>UV Indizea Ikusi</value>
+	</string>
+	<string>
+		<id>740</id>
+		<value>Haizeak Ikusi</value>
+	</string>
+	<string>
+		<id>741</id>
+		<value>Hezetasuna Ikusi</value>
+	</string>
+	<string>
+		<id>742</id>
+		<value>Prezipitazio maila Ikusi</value>
+	</string>
+	<string>
+		<id>743</id>
+		<value>4 Egunetarako Aurreikuspena</value>
+	</string>
+	<string>
+		<id>744</id>
+		<value>Eguzkia Sartu</value>
+	</string>
+	<string>
+		<id>745</id>
+		<value>Eguzkia Atera</value>
+	</string>
+	<string>
+		<id>746</id>
+		<value>Altua</value>
+	</string>
+	<string>
+		<id>747</id>
+		<value>Baxua</value>
+	</string>
+	<string>
+		<id>748</id>
+		<value>Prezipitazioa</value>
+	</string>
+	<string>
+		<id>750</id>
+		<value>Irudiak</value>
+	</string>
+	<string>
+		<id>800</id>
+		<value>Honekin hasten da</value>
+	</string>
+	<string>
+		<id>801</id>
+		<value>Badu</value>
+	</string>
+	<string>
+		<id>802</id>
+		<value>Honekin bukatzen da</value>
+	</string>
+	<string>
+		<id>803</id>
+		<value>Da</value>
+	</string>
+	<string>
+		<id>804</id>
+		<value>Egina</value>
+	</string>
+	<string>
+		<id>805</id>
+		<value>Ezabatu</value>
+	</string>
+	<string>
+		<id>806</id>
+		<value>Izenburua</value>
+	</string>
+	<string>
+		<id>807</id>
+		<value>Yield</value>
+	</string>
+	<string>
+		<id>808</id>
+		<value>Osagarriak</value>
+	</string>
+	<string>
+		<id>809</id>
+		<value>Zuzenbideak</value>
+	</string>
+	<string>
+		<id>810</id>
+		<value>Karta</value>
+	</string>
+	<string>
+		<id>850</id>
+		<value>Alarma</value>
+	</string>
+	<string>
+		<id>851</id>
+		<value>Zerrenda</value>
+	</string>
+	<string>
+		<id>852</id>
+		<value>Alarma Abiarazita</value>
+	</string>
+	<string>
+		<id>853</id>
+		<value>Izena:</value>
+	</string>
+	<string>
+		<id>854</id>
+		<value>Aktibatu egun hauetan</value>
+	</string>
+	<string>
+		<id>855</id>
+		<value>Alarma Ordua</value>
+	</string>
+	<string>
+		<id>856</id>
+		<value>Sleep funtzioa Abiarazita</value>
+	</string>
+	<string>
+		<id>857</id>
+		<value>Snooze</value>
+	</string>
+	<string>
+		<id>858</id>
+		<value>Snooze Ordua</value>
+	</string>
+	<string>
+		<id>859</id>
+		<value>Sleep Timerra</value>
+	</string>
+	<string>
+		<id>860</id>
+		<value>Fade-in ahotsmaila</value>
+	</string>
+	<string>
+		<id>861</id>
+		<value>Alarmaren Xehetasunak</value>
+	</string>
+	<string>
+		<id>862</id>
+		<value>Irratia</value>
+	</string>
+	<string>
+		<id>863</id>
+		<value>Fitxateiga</value>
+	</string>
+	<string>
+		<id>864</id>
+		<value>Euskarri mota</value>
+	</string>
+	<string>
+		<id>865</id>
+		<value>Sleep-ararte minutu kopurua</value>
+	</string>
+	<string>
+		<id>866</id>
+		<value>Fade-out ahotsmaila</value>
+	</string>
+	<string>
+		<id>867</id>
+		<value>Itzali ordenagailua</value>
+	</string>
+	<string>
+		<id>868</id>
+		<value>Berrabiarazi</value>
+	</string>
+	<string>
+		<id>869</id>
+		<value>Alarma Berria</value>
+	</string>
+	<string>
+		<id>870</id>
+		<value>Berriro</value>
+	</string>
+	<string>
+		<id>871</id>
+		<value>Esnatu ordenagilua alarma honekin</value>
+	</string>
+	<string>
+		<id>872</id>
+		<value>Hasten da</value>
+	</string>
+	<string>
+		<id>873</id>
+		<value>Telebista Showa</value>
+	</string>
+	<string>
+		<id>874</id>
+		<value>Kapitulua</value>
+	</string>
+	<string>
+		<id>875</id>
+		<value>Oraingo programa</value>
+	</string>
+	<string>
+		<id>876</id>
+		<value>Gelditze manualerarte</value>
+	</string>
+	<string>
+		<id>877</id>
+		<value>Lehentasunak</value>
+	</string>
+	<string>
+		<id>878</id>
+		<value>Gordeketa</value>
+	</string>
+	<string>
+		<id>879</id>
+		<value>Gordetze gatazka</value>
+	</string>
+	<string>
+		<id>880</id>
+		<value>Grabaketaraino denbora:</value>
+	</string>
+	<string>
+		<id>881</id>
+		<value>Aukeratu gelditu beharreko grabaketa:</value>
+	</string>
+	<string>
+		<id>882</id>
+		<value>Kalitate ajusteak</value>
+	</string>
+	<string>
+		<id>883</id>
+		<value>Txikia</value>
+	</string>
+	<string>
+		<id>884</id>
+		<value>Erdi mailakoa</value>
+	</string>
+	<string>
+		<id>885</id>
+		<value>Haundia</value>
+	</string>
+	<string>
+		<id>886</id>
+		<value>Defektuzkoa</value>
+	</string>
+	<string>
+		<id>887</id>
+		<value>Gorde beharreko kapitulu kopurua</value>
+	</string>
+	<string>
+		<id>888</id>
+		<value>Kapitulueb Kontrola</value>
+	</string>
+	<string>
+		<id>889</id>
+		<value>Kapitulu guztiak</value>
+	</string>
+	<string>
+		<id>890</id>
+		<value>CD abiarazi</value>
+	</string>
+	<string>
+		<id>891</id>
+		<value>Aukeratu Telebista Kanala</value>
+	</string>
+	<string>
+		<id>892</id>
+		<value>Gatazkak</value>
+	</string>
+	<string>
+		<id>893</id>
+		<value>Eramangarria</value>
+	</string>
+	<string>
+		<id>894</id>
+		<value>Telebista grabaketak konprimitu</value>
+	</string>
+	<string>
+		<id>895</id>
+		<value>Konprimaketa automatikoa</value>
+	</string>
+	<string>
+		<id>896</id>
+		<value>Konprimitu</value>
+	</string>
+	<string>
+		<id>897</id>
+		<value>Ezarpenak</value>
+	</string>
+	<string>
+		<id>898</id>
+		<value>MPEG-2</value>
+	</string>
+	<string>
+		<id>899</id>
+		<value>WMV</value>
+	</string>
+	<string>
+		<id>900</id>
+		<value>Oraingo puntuntik jarraitu pelikula hurrengoan?</value>
+	</string>
+	<string>
+		<id>901</id>
+		<value>MSN Messengerra</value>
+	</string>
+	<string>
+		<id>902</id>
+		<value>Online dauden kontaktuak</value>
+	</string>
+	<string>
+		<id>903</id>
+		<value>Sesioan Sartu</value>
+	</string>
+	<string>
+		<id>904</id>
+		<value>Sesiotik Atera</value>
+	</string>
+	<string>
+		<id>905</id>
+		<value>Plugin hau konfiguratu behar duzu lehenik eta behin</value>
+	</string>
+	<string>
+		<id>906</id>
+		<value>Sartu zure posta-e helbidea Setup barruan</value>
+	</string>
+	<string>
+		<id>907</id>
+		<value>Ezin da MSN-ra konektatu</value>
+	</string>
+	<string>
+		<id>908</id>
+		<value>idazten ari da...</value>
+	</string>
+	<string>
+		<id>909</id>
+		<value>Konektatzen...</value>
+	</string>
+	<string>
+		<id>910</id>
+		<value>Sesioan Sartzen...</value>
+	</string>
+	<string>
+		<id>911</id>
+		<value>Kanalerik ez</value>
+	</string>
+	<string>
+		<id>912</id>
+		<value>Azkeneko berriak ezin dira deskargatu</value>
+	</string>
+	<string>
+		<id>913</id>
+		<value>Plugin-ak</value>
+	</string>
+	<string>
+		<id>914</id>
+		<value>Grabaketak</value>
+	</string>
+	<string>
+		<id>915</id>
+		<value>Telebista Kanaleak</value>
+	</string>
+	<string>
+		<id>916</id>
+		<value>Urrutiko Fitxategia</value>
+	</string>
+	<string>
+		<id>917</id>
+		<value>Urrutiko ordenagailu batean dago fitxategi hau</value>
+	</string>
+	<string>
+		<id>918</id>
+		<value>Zure defektuzko kokapenera deskargu behar da?</value>
+	</string>
+	<string>
+		<id>919</id>
+		<value>Konpartizioa Lokala?</value>
+	</string>
+	<string>
+		<id>920</id>
+		<value>Ezin da urruneko fitxategia deskargatu</value>
+	</string>
+	<string>
+		<id>921</id>
+		<value>Fitxategia deskargatzen</value>
+	</string>
+	<string>
+		<id>922</id>
+		<value>Deskripzioa</value>
+	</string>
+	<string>
+		<id>923</id>
+		<value>Erakutsi</value>
+	</string>
+	<string>
+		<id>924</id>
+		<value>Menua</value>
+	</string>
+	<string>
+		<id>925</id>
+		<value>Ezabatu filma hau</value>
+	</string>
+	<string>
+		<id>926</id>
+		<value>Sartu zerrendara</value>
+	</string>
+	<string>
+		<id>927</id>
+		<value>Kontuz</value>
+	</string>
+	<string>
+		<id>928</id>
+		<value>Azala Bilatu</value>
+	</string>
+	<string>
+		<id>929</id>
+		<value>Itxi Menua</value>
+	</string>
+	<string>
+		<id>930</id>
+		<value>Sartu Gogokoetara</value>
+	</string>
+	<string>
+		<id>931</id>
+		<value>Rating</value>
+	</string>
+	<string>
+		<id>932</id>
+		<value>Gogokoak</value>
+	</string>
+	<string>
+		<id>933</id>
+		<value>Ezabatu gogokoetatik</value>
+	</string>
+	<string>
+		<id>934</id>
+		<value>Ipini rating-a</value>
+	</string>
+	<string>
+		<id>935</id>
+		<value>Rating-a ikusi</value>
+	</string>
+	<string>
+		<id>936</id>
+		<value>Jarraitu hemendik:</value>
+	</string>
+	<string>
+		<id>937</id>
+		<value>Telebista Gida inportatu</value>
+	</string>
+	<string>
+		<id>938</id>
+		<value>Ikusi kanale hau</value>
+	</string>
+	<string>
+		<id>939</id>
+		<value>Aldatu modua</value>
+	</string>
+	<string>
+		<id>940</id>
+		<value>Ezaugarriak</value>
+	</string>
+	<string>
+		<id>941</id>
+		<value>Aspect ratio-a aldatu</value>
+	</string>
+	<string>
+		<id>942</id>
+		<value>Ajustatu pantailara</value>
+	</string>
+	<string>
+		<id>943</id>
+		<value>Arrunta</value>
+	</string>
+	<string>
+		<id>944</id>
+		<value>Originala</value>
+	</string>
+	<string>
+		<id>945</id>
+		<value>Letterbox</value>
+	</string>
+	<string>
+		<id>946</id>
+		<value>Pan eta Scan</value>
+	</string>
+	<string>
+		<id>947</id>
+		<value>Zoom-a</value>
+	</string>
+	<string>
+		<id>948</id>
+		<value>Konektatuta</value>
+	</string>
+	<string>
+		<id>949</id>
+		<value>Lanpetuta</value>
+	</string>
+	<string>
+		<id>950</id>
+		<value>Oraintxe bueltatzen naiz</value>
+	</string>
+	<string>
+		<id>951</id>
+		<value>Kanpoan</value>
+	</string>
+	<string>
+		<id>952</id>
+		<value>Telefonoan</value>
+	</string>
+	<string>
+		<id>953</id>
+		<value>Jaten ari naiz</value>
+	</string>
+	<string>
+		<id>954</id>
+		<value>Ixkutatuta</value>
+	</string>
+	<string>
+		<id>955</id>
+		<value>Ez dago</value>
+	</string>
+	<string>
+		<id>956</id>
+		<value>Konentatuta</value>
+	</string>
+	<string>
+		<id>957</id>
+		<value>MSN Messengerra</value>
+	</string>
+	<string>
+		<id>958</id>
+		<value>Honekin Hitzegiten</value>
+	</string>
+	<string>
+		<id>959</id>
+		<value>elkarrizketara sartu da</value>
+	</string>
+	<string>
+		<id>960</id>
+		<value>elkarrizketa utzi du</value>
+	</string>
+	<string>
+		<id>961</id>
+		<value>MSN Egoera</value>
+	</string>
+	<string>
+		<id>970</id>
+		<value>Aurreko pantaila</value>
+	</string>
+	<string>
+		<id>971</id>
+		<value>Taldea</value>
+	</string>
+	<string>
+		<id>972</id>
+		<value>Kanale guztiak</value>
+	</string>
+	<string>
+		<id>973</id>
+		<value>FPS maximoa</value>
+	</string>
+	<string>
+		<id>974</id>
+		<value>Menu Nagusia</value>
+	</string>
+	<string>
+		<id>975</id>
+		<value>Aurreko kapitulua</value>
+	</string>
+	<string>
+		<id>976</id>
+		<value>Hurrengo kapitulua</value>
+	</string>
+	<string>
+		<id>977</id>
+		<value>Free Cardi-ik ez dago eskuragarri</value>
+	</string>
+	<string>
+		<id>978</id>
+		<value>kanalea ikusi ahal izateko</value>
+	</string>
+	<string>
+		<id>979</id>
+		<value>Ikusi grabaketa hasieratik</value>
+	</string>
+	<string>
+		<id>980</id>
+		<value>Ikusi grabaketa orain dagoen puntutik</value>
+	</string>
+	<string>
+		<id>981</id>
+		<value>Show  hau gelditu</value>
+	</string>
+	<string>
+		<id>982</id>
+		<value>Ezabatu grabaketa osoa</value>
+	</string>
+	<string>
+		<id>983</id>
+		<value>Playlist-ak</value>
+	</string>
+	<string>
+		<id>984</id>
+		<value>Deskargatu filma zerrenda</value>
+	</string>
+	<string>
+		<id>985</id>
+		<value>Deskargatu filmen datuak</value>
+	</string>
+	<string>
+		<id>986</id>
+		<value>Aktorea deskargatzen</value>
+	</string>
+	<string>
+		<id>987</id>
+		<value>Urteak</value>
+	</string>
+	<string>
+		<id>988</id>
+		<value>Kalitatea</value>
+	</string>
+	<string>
+		<id>989</id>
+		<value>FPS</value>
+	</string>
+	<string>
+		<id>990</id>
+		<value>Bitrate</value>
+	</string>
+	<string>
+		<id>991</id>
+		<value>Lehentasuna</value>
+	</string>
+	<string>
+		<id>992</id>
+		<value>Fitxaegi originala ezabatu</value>
+	</string>
+	<string>
+		<id>993</id>
+		<value>Custom</value>
+	</string>
+	<string>
+		<id>994</id>
+		<value>Konprimaketa automatikoa ezarri</value>
+	</string>
+	<string>
+		<id>995</id>
+		<value>Zihur zaude konprimatu nahi duzula</value>
+	</string>
+	<string>
+		<id>996</id>
+		<value>aukeratutako grabaketa?</value>
+	</string>
+	<string>
+		<id>997</id>
+		<value>Eginda</value>
+	</string>
+	<string>
+		<id>998</id>
+		<value>XviD</value>
+	</string>
+	<string>
+		<id>999</id>
+		<value>Plugin honek aldatzeko zure Telebista grabaketak</value>
+	</string>
+	<string>
+		<id>1000</id>
+		<value>dvd-ms-tik mpg, xvif edo wmv-ra aldatzeko aukera ematen du</value>
+	</string>
+	<string>
+		<id>1001</id>
+		<value>Hartu kontuan. Elecard MPEG-2</value>
+	</string>
+	<string>
+		<id>1002</id>
+		<value>bideo enkoderra instalatuta behar duzu</value>
+	</string>
+	<string>
+		<id>1003</id>
+		<value>xvid-era aldatzeko</value>
+	</string>
+	<string>
+		<id>1004</id>
+		<value>Grabaketa hastera doa</value>
+	</string>
+	<string>
+		<id>1005</id>
+		<value>honako kanalean</value>
+	</string>
+	<string>
+		<id>1006</id>
+		<value>Baimendu grabaketa hastea</value>
+	</string>
+	<string>
+		<id>1007</id>
+		<value>Ezeztatu grabaketa eta jarraitu telebista ikusten</value>
+	</string>
+	<string>
+		<id>1008</id>
+		<value>Itxarote zerrenda</value>
+	</string>
+	<string>
+		<id>1009</id>
+		<value>Azala deskargatzen</value>
+	</string>
+	<string>
+		<id>1010</id>
+		<value>Ikusita</value>
+	</string>
+	<string>
+		<id>1011</id>
+		<value>Biografia</value>
+	</string>
+	<string>
+		<id>1012</id>
+		<value>Prorama hau geldituko du honek:</value>
+	</string>
+	<string>
+		<id>1013</id>
+		<value>Bigarren zatia ere grabatzea nahi duzu?</value>
+	</string>
+	<string>
+		<id>1014</id>
+		<value>Abixatu programa hasten denean</value>
+	</string>
+	<string>
+		<id>1015</id>
+		<value>Ez Abixatu programa hasten denean</value>
+	</string>
+	<string>
+		<id>1016</id>
+		<value>Programa 5 minututan hasten da</value>
+	</string>
+	<string>
+		<id>1017</id>
+		<value>Luzeraz Sailkatu</value>
+	</string>
+	<string>
+		<id>1020</id>
+		<value>Argibideak</value>
+	</string>
+	<string>
+		<id>1021</id>
+		<value>Sakatu Alt+Enter</value>
+	</string>
+	<string>
+		<id>1022</id>
+		<value>pantaila modura itzultzeko.</value>
+	</string>
+	<string>
+		<id>1023</id>
+		<value>Deia duzu</value>
+	</string>
+	<string>
+		<id>1024</id>
+		<value>hemendik:</value>
+	</string>
+	<string>
+		<id>1025</id>
+		<value>Ezustekoa gertatu da.</value>
+	</string>
+	<string>
+		<id>1026</id>
+		<value>Ikusi log fitxategua zehaztapenetarako.</value>
+	</string>
+	<string>
+		<id>1027</id>
+		<value>DVD</value>
+	</string>
+	<string>
+		<id>1028</id>
+		<value>Hiria</value>
+	</string>
+	<string>
+		<id>1029</id>
+		<value>Azpitituluen Hizkuntza</value>
+	</string>
+	<string>
+		<id>1030</id>
+		<value>Gelditu</value>
+	</string>
+	<string>
+		<id>1031</id>
+		<value>Berrabiarazi</value>
+	</string>
+	<string>
+		<id>1032</id>
+		<value>Lotara</value>
+	</string>
+	<string>
+		<id>1033</id>
+		<value>Showak oraintxe ari dira grabatzen</value>
+	</string>
+	<string>
+		<id>1034</id>
+		<value>Ez da sinalerik detektatu!</value>
+	</string>
+	<string>
+		<id>1035</id>
+		<value>TB seinalea izorratuta!</value>
+	</string>
+	<string>
+		<id>1036</id>
+		<value>Ez da bideorik aurkitu</value>
+	</string>
+	<string>
+		<id>1037</id>
+		<value>TB - Programa  argibideak</value>
+	</string>
+	<string>
+		<id>1038</id>
+		<value>Grabaketa aurreratua</value>
+	</string>
+	<string>
+		<id>1039</id>
+		<value>Ez grabatu</value>
+	</string>
+	<string>
+		<id>1040</id>
+		<value>Abixatu niri</value>
+	</string>
+	<string>
+		<id>1041</id>
+		<value>Datozten kapituluak</value>
+	</string>
+	<string>
+		<id>1042</id>
+		<value>Gorde honaino</value>
+	</string>
+	<string>
+		<id>1043</id>
+		<value>Ikusi arte</value>
+	</string>
+	<string>
+		<id>1044</id>
+		<value>Tokia behar arte</value>
+	</string>
+	<string>
+		<id>1045</id>
+		<value>Egun batetaraino</value>
+	</string>
+	<string>
+		<id>1046</id>
+		<value>Beti</value>
+	</string>
+	<string>
+		<id>1047</id>
+		<value>Pantaila osoko moduan hasi</value>
+	</string>
+	<string>
+		<id>1048</id>
+		<value>Aukerak</value>
+	</string>
+	<string>
+		<id>1049</id>
+		<value>Hibernatu</value>
+	</string>
+	<string>
+		<id>1050</id>
+		<value>Ast-Iga</value>
+	</string>
+	<string>
+		<id>1051</id>
+		<value>Grabatu Ast-Iga</value>
+	</string>
+	<string>
+		<id>1052</id>
+		<value>Kantuak</value>
+	</string>
+	<string>
+		<id>1100</id>
+		<value>CD-a inportatu</value>
+	</string>
+	<string>
+		<id>1101</id>
+		<value>Aukeratutako kantua inportatu</value>
+	</string>
+	<string>
+		<id>1102</id>
+		<value>Ezeztatu CD inportazioa</value>
+	</string>
+	<string>
+		<id>1103</id>
+		<value>Kantua inportatzen</value>
+	</string>
+	<string>
+		<id>1104</id>
+		<value>ezkerra</value>
+	</string>
+	<string>
+		<id>1105</id>
+		<value>Kantuak inportatzen</value>
+	</string>
+	<string>
+		<id>1440</id>
+		<value>Teletestoa</value>
+	</string>
+	<string>
+		<id>1441</id>
+		<value>Teletestoa</value>
+	</string>
+	<string>
+		<id>1442</id>
+		<value>Scroll abiadura (horizontala)</value>
+	</string>
+	<string>
+		<id>1443</id>
+		<value>Scroll abiadura (bertikala)</value>
+	</string>
+	<string>
+		<id>1444</id>
+		<value>Aurre-grabaketa</value>
+	</string>
+	<string>
+		<id>1445</id>
+		<value>Grabaketa-ondorena</value>
+	</string>
+	<string>
+		<id>1446</id>
+		<value>Grabaketa hasita:</value>
+	</string>
+	<string>
+		<id>1447</id>
+		<value>Grabaketa geldituta:</value>
+	</string>
+	<string>
+		<id>1448</id>
+		<value>Ez aukeratu</value>
+	</string>
+	<string>
+		<id>1449</id>
+		<value>Gelditu grabaketa</value>
+	</string>
+	<string>
+		<id>1450</id>
+		<value>Benetan grabaketa gelditu nahi duzula?</value>
+	</string>
+	<string>
+		<id>1950</id>
+		<value>Egoera</value>
+	</string>
+	<string>
+		<id>1951</id>
+		<value>Disko gogorra</value>
+	</string>
+	<string>
+		<id>1952</id>
+		<value>Bentiladorea</value>
+	</string>
+	<string>
+		<id>1953</id>
+		<value>Aske</value>
+	</string>
+	<string>
+		<id>1954</id>
+		<value>Tenperatura</value>
+	</string>
+	<string>
+		<id>1955</id>
+		<value>c</value>
+	</string>
+	<string>
+		<id>1956</id>
+		<value>Aukeratu alarma soinua</value>
+	</string>
+	<string>
+		<id>1957</id>
+		<value>Gogokoak</value>
+	</string>
+	<string>
+		<id>1958</id>
+		<value>CPU erabilera</value>
+	</string>
+	<string>
+		<id>1959</id>
+		<value>Boltaia</value>
+	</string>
+	<string>
+		<id>1960</id>
+		<value>Volt</value>
+	</string>
+	<string>
+		<id>1961</id>
+		<value>Erloju maiztasuna</value>
+	</string>
+	<string>
+		<id>1962</id>
+		<value>Gogokoak</value>
+	</string>
+	<string>
+		<id>1963</id>
+		<value>Sentsore datuak</value>
+	</string>
+	<string>
+		<id>1964</id>
+		<value>Sentsore alarma</value>
+	</string>
+	<string>
+		<id>1965</id>
+		<value>Baliorik handiena</value>
+	</string>
+	<string>
+		<id>1966</id>
+		<value>Baliorik txikiena</value>
+	</string>
+	<string>
+		<id>1967</id>
+		<value>top alarm threshold</value>
+	</string>
+	<string>
+		<id>1968</id>
+		<value>lower alarm threshold</value>
+	</string>
+	<string>
+		<id>1969</id>
+		<value>Soinua frogatu</value>
+	</string>
+	<string>
+		<id>1970</id>
+		<value>Alarma tartea (segundutan)</value>
+	</string>
+	<string>
+		<id>1971</id>
+		<value>Gelditu on alarma</value>
+	</string>
+	<string>
+		<id>1972</id>
+		<value>Egoera datuak</value>
+	</string>
+	<string>
+		<id>1973</id>
+		<value>ren</value>
+	</string>
+	<string>
+		<id>1974</id>
+		<value>Memoria</value>
+	</string>
+	<string>
+		<id>1975</id>
+		<value>Hurrengo orria</value>
+	</string>
+	<string>
+		<id>1976</id>
+		<value>bira/min</value>
+	</string>
+	<string>
+		<id>1977</id>
+		<value>Fitxategi sistema</value>
+	</string>
+	<string>
+		<id>1978</id>
+		<value>MemBirtua</value>
+	</string>
+	<string>
+		<id>2005</id>
+		<value>Ezabatu</value>
+	</string>
+	<string>
+		<id>2006</id>
+		<value>Izenburua</value>
+	</string>
+	<string>
+		<id>2007</id>
+		<value>Kanpoa</value>
+	</string>
+	<string>
+		<id>2008</id>
+		<value>Osagaiak</value>
+	</string>
+	<string>
+		<id>2009</id>
+		<value>Zuzenbideak</value>
+	</string>
+	<string>
+		<id>2010</id>
+		<value>Karta</value>
+	</string>
+	<string>
+		<id>2011</id>
+		<value>Inprimitu</value>
+	</string>
+	<string>
+		<id>2012</id>
+		<value>Ezabatu</value>
+	</string>
+	<string>
+		<id>2013</id>
+		<value>Gogokoak</value>
+	</string>
+	<string>
+		<id>2014</id>
+		<value>Ezezaguna</value>
+	</string>
+	<string>
+		<id>2015</id>
+		<value>zerbitzariko</value>
+	</string>
+	<string>
+		<id>2016</id>
+		<value>txikia</value>
+	</string>
+	<string>
+		<id>2017</id>
+		<value>fluid ounce</value>
+	</string>
+	<string>
+		<id>2018</id>
+		<value>cup</value>
+	</string>
+	<string>
+		<id>2019</id>
+		<value>pint</value>
+	</string>
+	<string>
+		<id>2020</id>
+		<value>erdikoa</value>
+	</string>
+	<string>
+		<id>2021</id>
+		<value>zabala</value>
+	</string>
+	<string>
+		<id>2022</id>
+		<value>ahal du</value>
+	</string>
+	<string>
+		<id>2023</id>
+		<value>paketea</value>
+	</string>
+	<string>
+		<id>2024</id>
+		<value>pinch</value>
+	</string>
+	<string>
+		<id>2025</id>
+		<value>drop</value>
+	</string>
+	<string>
+		<id>2026</id>
+		<value>dash</value>
+	</string>
+	<string>
+		<id>2027</id>
+		<value>carton</value>
+	</string>
+	<string>
+		<id>2028</id>
+		<value>bunch</value>
+	</string>
+	<string>
+		<id>2029</id>
+		<value>slice</value>
+	</string>
+	<string>
+		<id>2030</id>
+		<value>each</value>
+	</string>
+	<string>
+		<id>2031</id>
+		<value>teaspoon</value>
+	</string>
+	<string>
+		<id>2032</id>
+		<value>teaspoon</value>
+	</string>
+	<string>
+		<id>2033</id>
+		<value>tablespoon</value>
+	</string>
+	<string>
+		<id>2034</id>
+		<value>tablespoon</value>
+	</string>
+	<string>
+		<id>2035</id>
+		<value>quart</value>
+	</string>
+	<string>
+		<id>2036</id>
+		<value>gallon</value>
+	</string>
+	<string>
+		<id>2037</id>
+		<value>ounce</value>
+	</string>
+	<string>
+		<id>2038</id>
+		<value>pount</value>
+	</string>
+	<string>
+		<id>2039</id>
+		<value>mililitroa</value>
+	</string>
+	<string>
+		<id>2040</id>
+		<value>mililitroa</value>
+	</string>
+	<string>
+		<id>2041</id>
+		<value>zentilitroa</value>
+	</string>
+	<string>
+		<id>2042</id>
+		<value>dezilitroa</value>
+	</string>
+	<string>
+		<id>2043</id>
+		<value>litroa</value>
+	</string>
+	<string>
+		<id>2044</id>
+		<value>miligramoa</value>
+	</string>
+	<string>
+		<id>2045</id>
+		<value>zentigramoa</value>
+	</string>
+	<string>
+		<id>2046</id>
+		<value>dezigramoa</value>
+	</string>
+	<string>
+		<id>2047</id>
+		<value>gramoa</value>
+	</string>
+	<string>
+		<id>2048</id>
+		<value>kilogramoa</value>
+	</string>
+	<string>
+		<id>2049</id>
+		<value>Ezabatu errezeta hau?</value>
+	</string>
+	<string>
+		<id>2050</id>
+		<value>Ezabatu Kategori hau?</value>
+	</string>
+	<string>
+		<id>2051</id>
+		<value>Aurkitu Izenburuz</value>
+	</string>
+	<string>
+		<id>2052</id>
+		<value>Aurkitu Errezetaz</value>
+	</string>
+	<string>
+		<id>2053</id>
+		<value>Kategoria</value>
+	</string>
+	<string>
+		<id>2054</id>
+		<value>Ez dago!</value>
+	</string>
+	<string>
+		<id>2100</id>
+		<value>Grabatzailea</value>
+	</string>
+	<string>
+		<id>2101</id>
+		<value>Kopiatu CD/DVD</value>
+	</string>
+	<string>
+		<id>2102</id>
+		<value>Sortu Audio-CD</value>
+	</string>
+	<string>
+		<id>2103</id>
+		<value>Sortu Video-CD</value>
+	</string>
+	<string>
+		<id>2104</id>
+		<value>Sortu Video-DVD</value>
+	</string>
+	<string>
+		<id>2105</id>
+		<value>Sortu Datu-CD</value>
+	</string>
+	<string>
+		<id>2106</id>
+		<value>Sortu Datu-DVD</value>
+	</string>
+	<string>
+		<id>2107</id>
+		<value>Hasi kopiatzen</value>
+	</string>
+	<string>
+		<id>2108</id>
+		<value>Sartu CD/DVD hutsa</value>
+	</string>
+	<string>
+		<id>2109</id>
+		<value>eta OK sakatu gero</value>
+	</string>
+	<string>
+		<id>2110</id>
+		<value>Sartu CD/DVD originala</value>
+	</string>
+	<string>
+		<id>2111</id>
+		<value>Bukatuta !</value>
+	</string>
+	<string>
+		<id>2112</id>
+		<value>CD/DVD itxaroten</value>
+	</string>
+	<string>
+		<id>2113</id>
+		<value>Kopiatu guztia</value>
+	</string>
+	<string>
+		<id>2114</id>
+		<value>Ezabatu Diskoa</value>
+	</string>
+	<string>
+		<id>2115</id>
+		<value>Sartu CD/DVD RW</value>
+	</string>
+	<string>
+		<id>2116</id>
+		<value>Unitatea ez dago prest</value>
+	</string>
+	<string>
+		<id>2117</id>
+		<value>Erabateko akatsa izan da!</value>
+	</string>
+	<string>
+		<id>2118</id>
+		<value>Konbertitu DVR-MS</value>
+	</string>
+	<string>
+		<id>2119</id>
+		<value>Hasi konbertsioa</value>
+	</string>
+	<string>
+		<id>2120</id>
+		<value>Fitxategia(k) konbertitzen</value>
+	</string>
+	<string>
+		<id>2121</id>
+		<value>Ezin da/dira fitxategia(k) konbertitu!</value>
+	</string>
+	<string>
+		<id>2122</id>
+		<value>hasi!</value>
+	</string>
+	<string>
+		<id>2123</id>
+		<value>Disko datuak</value>
+	</string>
+	<string>
+		<id>200017</id>
+		<value>Ongietorria MediaPortalera.</value>
+	</string>
+	<string>
+		<id>200018</id>
+		<value>Zorionak. MediaPortal konfiguratuta dago era erabiltzeko prest</value>
+	</string>
+	<string>
+		<id>200019</id>
+		<value>Sakatu Bukatu botoia laguntzaile hau itxi ahal izateko</value>
+	</string>
+	<string>
+		<id>200020</id>
+		<value>Bukatu</value>
+	</string>
+	<string>
+		<id>200021</id>
+		<value>Telebista Aukerak - EPG</value>
+	</string>
+	<string>
+		<id>200022</id>
+		<value>MediaPortalek Telebista txartel hauek aurkitu ditu:</value>
+	</string>
+	<string>
+		<id>200023</id>
+		<value>Sakatu Hurrengoa botoia txartel hauek konfiguratu ahal izateko</value>
+	</string>
+	<string>
+		<id>200024</id>
+		<value>Telebista Aukerak</value>
+	</string>
+	<string>
+		<id>200025</id>
+		<value>Hizkuntza</value>
+	</string>
+	<string>
+		<id>200026</id>
+		<value>Herrialdea</value>
+	</string>
+	<string>
+		<id>200027</id>
+		<value>Konfigurazioa - Orokorra</value>
+	</string>
+	<string>
+		<id>200028</id>
+		<value>Internetera konexiorik badu ordenagailuak?</value>
+	</string>
+	<string>
+		<id>200029</id>
+		<value>Pantaila osoan abiarazi MediaPortal?</value>
+	</string>
+	<string>
+		<id>200030</id>
+		<value>Automatikoki abiariazi MediaPortal ordenagailua abiarazterakoan?</value>
+	</string>
+	<string>
+		<id>200031</id>
+		<value>Bai</value>
+	</string>
+	<string>
+		<id>200032</id>
+		<value>Ez</value>
+	</string>
+	<string>
+		<id>200033</id>
+		<value>TB Konfigurazio - TB Analogikoa</value>
+	</string>
+	<string>
+		<id>200036</id>
+		<value>Sintonizazio Manuala</value>
+	</string>
+	<string>
+		<id>200037</id>
+		<value>Salto egin&gt;</value>
+	</string>
+	<string>
+		<id>4000</id>
+		<value>Web Nabigatzailea</value>
+	</string>
+	<string>
+		<id>4001</id>
+		<value>Gogokoak</value>
+	</string>
+	<string>
+		<id>4002</id>
+		<value>URL-a ezin da kargatu</value>
+	</string>
+</strings>

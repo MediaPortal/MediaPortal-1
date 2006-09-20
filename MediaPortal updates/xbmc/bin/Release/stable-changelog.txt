@@ -1,0 +1,105 @@
+______________
+stable patch 4
+--------------
+Fixed:
+- MP crash in powerscheduler with daily scheduled recordings
+- CPU usage spikes while playing music
+- DiSEqC configuration per LNB#
+- weird behavior of TV on/off button on manual recordings
+- Hebrew language support
+
+Improved:
+- Significantly reduced CPU load of the GUI
+- Audioscrobbler plugin's handling of server errors / song caching
+- Dvrms/Mpeg-Cut-plugin has new features like joining recordings
+
+Added:
+- Playlist support for MyVideo
+- Suggestions for MyMusic (autofill playlists based on last.fm recommendations)
+- Hidden option to remove "scanlines" (as seen for some TV stations)
+- new capturecards
+
+Removed:
+- Support for mce and Project-X skin
+- Party mode
+- TV.com support (broken due to website's change)
+
+______________
+stable patch 3
+--------------
+Fixed:
+- Mantis 745: TV progress bar wrong after zapping.
+- No music notification in MyPicture slideshow
+- FireDTV DiSEqC setup for 2:1 and 4:1 switches
+- Global DiSEqC config handling
+- Incorrect DiSEqC value stored when autotuning
+- DiSEqC config wasn't stored for radio stations
+- NullReference Exception in GUIImage
+- GUIWindow lost focus during mouse movements
+- IMDB info not stored correctly to database for DVD movies or DVD images
+- Disabled xmltv import option if using clickfinder plugin
+- Channel config: "delete scrambled" did not always delete every encrypted channel on first try
+
+Improved:
+- Font texture uses DDS instead of png. Faster load!
+- Overlay disabled now when using wallpaper-mode (tv as background)
+
+Added:
+- Audioscrobbler plugin for live-journal support on last.fm - please join our group!
+- TVGuide: if you click on a program currently recording you're asked for starting playback at its starting point (e.g. avoids spoiling sport events)
+- Support for some tv cards
+
+______________
+stable patch 2
+--------------
+Fixed:
+
+- Standby issue: Some cards didn't record after resume
+- Standby issue: No volume buttons on remote
+- Standby issue: Some remotes stopped working
+- Standby issue: Turn Monitor or TV on after standby
+- Mantis 786: ”remember last used folder” for Videos could loop DVD iso playback
+- GUIConfigWizard crashed when web-epg mapping was obsolete
+- Music importer ignored abr bitrate setting
+- Wrong String for creating picture thumbnails
+
+Improved:
+- MyPictures does pre-caching now - switch immediately to the next/previous pic
+- Config's skin and language settings, description of DVD subtitle settings
+- SVN versioning scheme
+- Fullscreen teletext respecting screen calibration now
+
+Removed:
+- Waitcursor for internet radio streams to workaround a MusicVideo plugin bug
+
+Added:
+- 14:9 mode to watch 4:3 sources zoomed on 16:9 displays with correct aspect ratio
+- Right-To-Left language support (Hebrew currently)
+- Switchable prefixes for Norwegian and German translation
+- Support for some new tv cards
+
+______________
+stable patch 1
+--------------
+Fixed:
+- Scheduled recordings sometimes failed with powerscheduler
+- Manual scheduled recordings failed for channels without EPG data
+- MCE remote produced "double clicks" after standby on some machines
+- Cursor selection changed text color
+- crash in dvblib.dll in rare occasions
+- MPSA had "normal" merits; this is okay but gb-pvr has problems with this
+- Project X settings navigation
+- DiSEqC SimpleA/SimpleB for FireDTV-S (SimpleB wasn't working)
+- crash of config wizard's media scan when path was longer than 260 chars
+- minor fixes for TV Movie plugin
+
+Improved:
+- Video files start much faster now
+- TV Guide does not display "unknow" any longer if no description is available
+- music context menu, reordered for faster playlist building, little speedup
+
+Added:
+- Wait cursor while loading internet-streams.
+- Weather plugin's city search can be canceled now
+- Support for some new tv cards
+- Notification on song change while watching picture slideshows
