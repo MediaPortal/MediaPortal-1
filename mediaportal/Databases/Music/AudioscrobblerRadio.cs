@@ -31,6 +31,7 @@ using System.Text;
 using System.Threading;
 
 using MediaPortal.GUI.Library;
+using MediaPortal.Player;
 
 namespace MediaPortal.Music.Database
 {
@@ -40,7 +41,8 @@ namespace MediaPortal.Music.Database
     initialized = 1,
     starting = 2,
     streaming = 3,
-    paused = 4
+    paused = 4,
+    nocontent = 5,
   }
 
   public enum StreamControls : int
@@ -64,6 +66,7 @@ namespace MediaPortal.Music.Database
     private string _currentUser = String.Empty;
     private bool _isSubscriber = false;
     private bool _recordToProfile = true;
+    private bool _discoveryMode = false;
 
     private StreamPlaybackState _currentState = StreamPlaybackState.offline;
 
@@ -79,13 +82,13 @@ namespace MediaPortal.Music.Database
     // 2. http.request.uri = Request URI: http://streamer1.last.fm/last.mp3?Session=e5b0c80f5b5d0937d407fb77a913cb6a
     // 3. http.request.uri = Request URI: http://ws.audioscrobbler.com/radio/control.php?session=e5b0c80f5b5d0937d407fb77a913cb6a&command=rtp
     // 4. http.request.uri = Request URI: http://ws.audioscrobbler.com/radio/adjust.php?session=e5b0c80f5b5d0937d407fb77a913cb6a&url=lastfm://settings/discovery/off
-    
+
     // TASKS:
     // Stopwatch and Parser for nowplaying
     // 5. http.request.uri = Request URI: http://ws.audioscrobbler.com/radio/np.php?session=e5b0c80f5b5d0937d407fb77a913cb6a
     // 6. http.request.uri = Request URI: http://ws.audioscrobbler.com/ass/artistmetadata.php?artist=Sportfreunde%20Stiller&lang=en
     // 7. http.request.uri = Request URI: http://ws.audioscrobbler.com/ass/metadata.php?artist=Sportfreunde%20Stiller&track=Alles%20Das&album=Macht%20doch%20was%20ihr%20wollt%20-%20Ich%20geh%2527%20jetzt%2521
-    
+
     // SKIP Button
     // 8. http.request.uri = Request URI: http://ws.audioscrobbler.com/radio/control.php?session=e5b0c80f5b5d0937d407fb77a913cb6a&command=skip
 
@@ -123,17 +126,15 @@ namespace MediaPortal.Music.Database
           _isSubscriber = AudioscrobblerBase.Subscriber;
           _currentRadioURL = "http://streamer1.last.fm/last.mp3?Session=" + _currentSession;
           _currentState = StreamPlaybackState.initialized;
-          
+
           //List<String> MyTags = new List<string>();
           //MyTags.Add("cover");
           //MyTags.Add("melodic death metal");
           //TuneIntoTags(MyTags);
-          
-          //TuneIntoPersonalRadio(_currentUser);  <-- subscriber only
-          TuneIntoGroupRadio("MediaPortal Users");
 
-          Thread.Sleep(250);
-          ToggleRecordToProfile(_recordToProfile);
+          //TuneIntoPersonalRadio(_currentUser);  <-- subscriber only
+          //TuneIntoGroupRadio("MediaPortal Users");
+          TuneIntoRecommendedRadio(_currentUser);
         }
       }
     }
@@ -170,13 +171,44 @@ namespace MediaPortal.Music.Database
         if (value != _recordToProfile)
         {
           ToggleRecordToProfile(value);
-        }        
+        }
+      }
+    }
+
+    public bool DiscoveryMode
+    {
+      get { return _discoveryMode; }
+
+      set
+      {
+        if (value != _discoveryMode)
+        {
+          ToggleDiscoveryMode(value);
+        }
       }
     }
 
 
 
     #region Control functions
+
+    public bool PlayStream()
+    {
+      _currentState = StreamPlaybackState.starting;
+      // often the buffer is too slow for the playback to start
+      for (int i = 0; i < 5; i++)
+      {
+        if (g_Player.Play(_currentRadioURL))
+        {
+          _currentState = StreamPlaybackState.streaming;
+          ToggleRecordToProfile(_recordToProfile);
+          ToggleDiscoveryMode(_discoveryMode);
+          return true;
+        }
+      }
+      return false;
+    }
+
     public bool ToggleRecordToProfile(bool submitTracks_)
     {
       bool success = false;
@@ -188,7 +220,7 @@ namespace MediaPortal.Music.Database
           success = true;
           _recordToProfile = true;
           Log.Info("AudioscrobblerRadio: Enabled submitting of radio tracks to profile");
-        }        
+        }
       }
       else
         if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/control.php?session=" + _currentSession + "&command=nortp"))
@@ -200,11 +232,26 @@ namespace MediaPortal.Music.Database
       return success;
     }
 
+    public bool ToggleDiscoveryMode(bool enableDiscovery_)
+    {
+      bool success = false;
+      string actionCommand = enableDiscovery_ ? "on" : "off";
+
+      if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/adjust.php?session=" + _currentSession + @"&url=lastfm://settings/discovery/" + actionCommand))
+      {
+        success = true;
+        _discoveryMode = enableDiscovery_;
+        Log.Info("AudioscrobblerRadio: Toggled discovery mode {0}", actionCommand);
+      }
+
+      return success;
+    }
+
     public bool SendControlCommand(StreamControls command_)
     {
       bool success = false;
       if (_currentState == StreamPlaybackState.streaming)
-      {        
+      {
         string baseUrl = @"http://ws.audioscrobbler.com/radio/control.php?session=" + _currentSession;
 
         switch (command_)
@@ -246,6 +293,19 @@ namespace MediaPortal.Music.Database
         return false;
     }
 
+    public bool TuneIntoLovedTracks(string username_)
+    {
+      string TuneUser = InfoScrobbler.getValidURLLastFMString(username_);
+
+      if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/adjust.php?session=" + _currentSession + @"&url=lastfm://user/" + TuneUser + "/loved"))
+      {
+        Log.Info("AudioscrobblerRadio: Tune into loved tracks of: {0}", username_);
+        return true;
+      }
+      else
+        return false;
+    }
+
     public bool TuneIntoGroupRadio(string groupname_)
     {
       string TuneGroup = InfoScrobbler.getValidURLLastFMString(groupname_);
@@ -253,6 +313,19 @@ namespace MediaPortal.Music.Database
       if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/adjust.php?session=" + _currentSession + @"&url=lastfm://group/" + TuneGroup))
       {
         Log.Info("AudioscrobblerRadio: Tune into group radio for: {0}", groupname_);
+        return true;
+      }
+      else
+        return false;
+    }
+
+    public bool TuneIntoRecommendedRadio(string username_)
+    {
+      string TuneUser = InfoScrobbler.getValidURLLastFMString(username_);
+
+      if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/adjust.php?session=" + _currentSession + @"&url=lastfm://user/" + TuneUser + "/recommended"))
+      {
+        Log.Info("AudioscrobblerRadio: Tune into recommended station for: {0}", username_);
         return true;
       }
       else
@@ -312,6 +385,7 @@ namespace MediaPortal.Music.Database
       }
 
       StreamReader reader = null;
+      HttpStatusCode responseCode = new HttpStatusCode();
 
       // get the response
       try
@@ -322,6 +396,7 @@ namespace MediaPortal.Music.Database
           throw (new Exception());
 
         reader = new StreamReader(response.GetResponseStream());
+        responseCode = response.StatusCode;
       }
       catch (Exception e)
       {
@@ -334,14 +409,23 @@ namespace MediaPortal.Music.Database
       {
         string responseMessage = reader.ReadLine();
 
-        if (responseMessage.StartsWith("response=OK"))
+        if (responseMessage.StartsWith("response=OK") || responseCode == HttpStatusCode.OK)
           return true;
+
         else
         {
           string logmessage = "AudioscrobblerRadio: ***** Unknown response! - " + responseMessage;
           while ((responseMessage = reader.ReadLine()) != null)
             logmessage += "\n" + responseMessage;
-          Log.Warn(logmessage);
+
+          if (logmessage.Contains("Not enough content"))
+          {
+            _currentState = StreamPlaybackState.nocontent;
+            Log.Warn("AudioscrobblerRadio: Not enough content left to play this station");
+            return false;
+          }
+          else
+            Log.Warn(logmessage);
         }
       }
       catch (Exception e)

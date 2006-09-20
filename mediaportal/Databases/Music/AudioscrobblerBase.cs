@@ -402,7 +402,6 @@ namespace MediaPortal.Music.Database
         }
       }
 
-      //Log.Info("AudioscrobblerBase.DoHandshake: {0}", "Attempting handshake");
       string url = SCROBBLER_URL
                  + "?hs=true"
                  + "&p=" + PROTOCOL_VERSION
