@@ -1,9 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using MediaPortal.GUI.Library;
 using MediaPortal.Utils.Services;
 using MediaPortal.ControlDevices;
+using ILog=MediaPortal.Utils.Services.ILog;
 
 namespace MediaPortal.ControlDevices
 {

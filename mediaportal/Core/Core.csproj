@@ -277,6 +277,7 @@
     <Compile Include="guilib\GUIGridRow.cs" />
     <Compile Include="guilib\GUIPlayListItemListControl.cs" />
     <Compile Include="guilib\GUIPlayListtButtonControl.cs" />
+    <Compile Include="guilib\ILog.cs" />
     <Compile Include="MusicPlayer\BASS\BassAudio.cs" />
     <Compile Include="MusicPlayer\Visualization\IVisualization.cs" />
     <Compile Include="MusicPlayer\Visualization\IVisualizationManager.cs" />
