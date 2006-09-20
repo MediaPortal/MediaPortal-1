@@ -39,34 +39,42 @@ namespace ProcessPlugins.TvMovie
 
     private TvMovieDatabase _database;
     private System.Threading.Timer _stateTimer;
+    private bool _isImporting = false;
 
     private void ImportThread()
     {
+      _isImporting = true;
+
       Log.Info("TVMovie: Checking database");
       _database = new TvMovieDatabase();
 
-      if (!_database.WasUpdated)
-        return;
+      if (_database.WasUpdated)
+      {
+        TVDatabase.SupressEvents = true;
 
-      TVDatabase.SupressEvents = true;
+        //GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_DISABLEGUIDEREFRESH, 0, 0, 0, 0, 0, null);
+        //GUIGraphicsContext.SendMessage(message);
 
-      //GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_DISABLEGUIDEREFRESH, 0, 0, 0, 0, 0, null);
-      //GUIGraphicsContext.SendMessage(message);
+        _database.Import();
 
-      _database.Import();
+        //message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ENABLEGUIDEREFRESH, 0, 0, 0, 0, 0, null);
+        //GUIGraphicsContext.SendMessage(message);
 
-      //message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ENABLEGUIDEREFRESH, 0, 0, 0, 0, 0, null);
-      //GUIGraphicsContext.SendMessage(message);
+        TVDatabase.SupressEvents = false;
+      }
 
-      TVDatabase.SupressEvents = false;
+      _isImporting = false;
     }
 
 
     private void StartImportThread(Object stateInfo)
     {
-      Thread importThread = new Thread(new ThreadStart(ImportThread));
-      importThread.Priority = ThreadPriority.Lowest;
-      importThread.Start();
+      if (!_isImporting)
+      {
+        Thread importThread = new Thread(new ThreadStart(ImportThread));
+        importThread.Priority = ThreadPriority.Lowest;
+        importThread.Start();
+      }
     }
 
 
