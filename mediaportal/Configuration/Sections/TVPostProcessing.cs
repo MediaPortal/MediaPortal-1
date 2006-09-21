@@ -39,21 +39,12 @@ namespace MediaPortal.Configuration.Sections
   public class TVPostProcessing : MediaPortal.Configuration.SectionSettings
   {
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox3;
-    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
-    private MediaPortal.UserInterface.Controls.MPTextBox bottomscanlinesTextBox;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
-    private MediaPortal.UserInterface.Controls.MPTextBox topscanlinesTextBox;
-    private MediaPortal.UserInterface.Controls.MPTextBox leftcolumnsTextBox;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel4;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel3;
-    private MediaPortal.UserInterface.Controls.MPTextBox rightcolumnsTextBox;
     private CheckedListBox cLBDSFilter;
     private MediaPortal.UserInterface.Controls.MPLabel label3;
     private Label labelPropertiesHint;
     private Button bSetup;
     private ListBox lBDSFilter;
+    private MediaPortal.UserInterface.Controls.MPGroupBox allFiltersGroupBox;
     private System.ComponentModel.IContainer components = null;
 
     public TVPostProcessing()
@@ -81,10 +72,6 @@ namespace MediaPortal.Configuration.Sections
       lBDSFilter.FormattingEnabled = true;
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
-        topscanlinesTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("mytv", "topscanlinestoremove", 0));
-        bottomscanlinesTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("mytv", "bottomscanlinestoremove", 0));
-        leftcolumnsTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("mytv", "leftcolumnstoremove", 0));
-        rightcolumnsTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("mytv", "rightcolumnstoremove", 0));
         int intCount = 0;
         while (xmlreader.GetValueAsString("mytv", "filter" + intCount.ToString(), "undefined") != "undefined")
         {
@@ -127,10 +114,6 @@ namespace MediaPortal.Configuration.Sections
       DsDevice tmpDevice = null;
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
-        xmlwriter.SetValue("mytv", "topscanlinestoremove", topscanlinesTextBox.Text);
-        xmlwriter.SetValue("mytv", "bottomscanlinestoremove", bottomscanlinesTextBox.Text);
-        xmlwriter.SetValue("mytv", "leftcolumnstoremove", leftcolumnsTextBox.Text);
-        xmlwriter.SetValue("mytv", "rightcolumnstoremove", rightcolumnsTextBox.Text);
         for (int i = 0; i < cLBDSFilter.Items.Count; i++)
         {
           tmpDevice = (DsDevice)cLBDSFilter.Items[i];
@@ -163,182 +146,47 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.rightcolumnsTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.leftcolumnsTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.mpLabel4 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.bottomscanlinesTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.topscanlinesTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpGroupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.lBDSFilter = new System.Windows.Forms.ListBox();
       this.labelPropertiesHint = new System.Windows.Forms.Label();
       this.bSetup = new System.Windows.Forms.Button();
       this.cLBDSFilter = new System.Windows.Forms.CheckedListBox();
+      this.lBDSFilter = new System.Windows.Forms.ListBox();
       this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpGroupBox1.SuspendLayout();
+      this.allFiltersGroupBox = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.mpGroupBox3.SuspendLayout();
+      this.allFiltersGroupBox.SuspendLayout();
       this.SuspendLayout();
-      // 
-      // mpGroupBox1
-      // 
-      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpGroupBox1.Controls.Add(this.rightcolumnsTextBox);
-      this.mpGroupBox1.Controls.Add(this.leftcolumnsTextBox);
-      this.mpGroupBox1.Controls.Add(this.mpLabel4);
-      this.mpGroupBox1.Controls.Add(this.mpLabel3);
-      this.mpGroupBox1.Controls.Add(this.bottomscanlinesTextBox);
-      this.mpGroupBox1.Controls.Add(this.mpLabel2);
-      this.mpGroupBox1.Controls.Add(this.label1);
-      this.mpGroupBox1.Controls.Add(this.topscanlinesTextBox);
-      this.mpGroupBox1.Controls.Add(this.mpLabel1);
-      this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox1.Location = new System.Drawing.Point(3, 3);
-      this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(466, 112);
-      this.mpGroupBox1.TabIndex = 1;
-      this.mpGroupBox1.TabStop = false;
-      this.mpGroupBox1.Text = "Cropping";
-      // 
-      // rightcolumnsTextBox
-      // 
-      this.rightcolumnsTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.rightcolumnsTextBox.BorderColor = System.Drawing.Color.Empty;
-      this.rightcolumnsTextBox.Location = new System.Drawing.Point(263, 66);
-      this.rightcolumnsTextBox.MaxLength = 3;
-      this.rightcolumnsTextBox.Name = "rightcolumnsTextBox";
-      this.rightcolumnsTextBox.Size = new System.Drawing.Size(26, 20);
-      this.rightcolumnsTextBox.TabIndex = 9;
-      this.rightcolumnsTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-      // 
-      // leftcolumnsTextBox
-      // 
-      this.leftcolumnsTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.leftcolumnsTextBox.BorderColor = System.Drawing.Color.Empty;
-      this.leftcolumnsTextBox.Location = new System.Drawing.Point(200, 66);
-      this.leftcolumnsTextBox.MaxLength = 3;
-      this.leftcolumnsTextBox.Name = "leftcolumnsTextBox";
-      this.leftcolumnsTextBox.Size = new System.Drawing.Size(26, 20);
-      this.leftcolumnsTextBox.TabIndex = 8;
-      this.leftcolumnsTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-      // 
-      // mpLabel4
-      // 
-      this.mpLabel4.AutoSize = true;
-      this.mpLabel4.Location = new System.Drawing.Point(295, 69);
-      this.mpLabel4.Name = "mpLabel4";
-      this.mpLabel4.Size = new System.Drawing.Size(124, 13);
-      this.mpLabel4.TabIndex = 7;
-      this.mpLabel4.Text = "Right columns to remove";
-      // 
-      // mpLabel3
-      // 
-      this.mpLabel3.AutoSize = true;
-      this.mpLabel3.Location = new System.Drawing.Point(77, 69);
-      this.mpLabel3.Name = "mpLabel3";
-      this.mpLabel3.Size = new System.Drawing.Size(117, 13);
-      this.mpLabel3.TabIndex = 6;
-      this.mpLabel3.Text = "Left columns to remove";
-      // 
-      // bottomscanlinesTextBox
-      // 
-      this.bottomscanlinesTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.bottomscanlinesTextBox.BorderColor = System.Drawing.Color.Empty;
-      this.bottomscanlinesTextBox.Location = new System.Drawing.Point(232, 86);
-      this.bottomscanlinesTextBox.MaxLength = 3;
-      this.bottomscanlinesTextBox.Name = "bottomscanlinesTextBox";
-      this.bottomscanlinesTextBox.Size = new System.Drawing.Size(26, 20);
-      this.bottomscanlinesTextBox.TabIndex = 5;
-      this.bottomscanlinesTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-      // 
-      // mpLabel2
-      // 
-      this.mpLabel2.AutoSize = true;
-      this.mpLabel2.Location = new System.Drawing.Point(264, 89);
-      this.mpLabel2.Name = "mpLabel2";
-      this.mpLabel2.Size = new System.Drawing.Size(137, 13);
-      this.mpLabel2.TabIndex = 4;
-      this.mpLabel2.Text = "Bottom scanlines to remove";
-      // 
-      // label1
-      // 
-      this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(103, 48);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(123, 13);
-      this.label1.TabIndex = 3;
-      this.label1.Text = "Top scanlines to remove";
-      // 
-      // topscanlinesTextBox
-      // 
-      this.topscanlinesTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.topscanlinesTextBox.BorderColor = System.Drawing.Color.Empty;
-      this.topscanlinesTextBox.Location = new System.Drawing.Point(232, 45);
-      this.topscanlinesTextBox.MaxLength = 3;
-      this.topscanlinesTextBox.Name = "topscanlinesTextBox";
-      this.topscanlinesTextBox.Size = new System.Drawing.Size(26, 20);
-      this.topscanlinesTextBox.TabIndex = 2;
-      this.topscanlinesTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-      // 
-      // mpLabel1
-      // 
-      this.mpLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpLabel1.Location = new System.Drawing.Point(16, 24);
-      this.mpLabel1.Name = "mpLabel1";
-      this.mpLabel1.Size = new System.Drawing.Size(434, 24);
-      this.mpLabel1.TabIndex = 0;
-      this.mpLabel1.Text = "MediaPortal can crop the picture for you if you need to remove unwanted video.";
       // 
       // mpGroupBox3
       // 
       this.mpGroupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpGroupBox3.Controls.Add(this.lBDSFilter);
       this.mpGroupBox3.Controls.Add(this.labelPropertiesHint);
       this.mpGroupBox3.Controls.Add(this.bSetup);
       this.mpGroupBox3.Controls.Add(this.cLBDSFilter);
-      this.mpGroupBox3.Controls.Add(this.label3);
       this.mpGroupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox3.Location = new System.Drawing.Point(3, 121);
+      this.mpGroupBox3.Location = new System.Drawing.Point(3, 30);
       this.mpGroupBox3.Name = "mpGroupBox3";
-      this.mpGroupBox3.Size = new System.Drawing.Size(466, 284);
+      this.mpGroupBox3.Size = new System.Drawing.Size(466, 124);
       this.mpGroupBox3.TabIndex = 0;
       this.mpGroupBox3.TabStop = false;
-      this.mpGroupBox3.Text = "Custom Filters";
-      // 
-      // lBDSFilter
-      // 
-      this.lBDSFilter.FormattingEnabled = true;
-      this.lBDSFilter.Location = new System.Drawing.Point(13, 161);
-      this.lBDSFilter.Name = "lBDSFilter";
-      this.lBDSFilter.Size = new System.Drawing.Size(441, 108);
-      this.lBDSFilter.TabIndex = 8;
-      this.lBDSFilter.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lBDSFilter_MouseDoubleClick);
+      this.mpGroupBox3.Text = "Activated filters";
       // 
       // labelPropertiesHint
       // 
       this.labelPropertiesHint.AutoSize = true;
-      this.labelPropertiesHint.Location = new System.Drawing.Point(134, 123);
+      this.labelPropertiesHint.Location = new System.Drawing.Point(134, 94);
       this.labelPropertiesHint.Name = "labelPropertiesHint";
       this.labelPropertiesHint.Size = new System.Drawing.Size(265, 13);
-      this.labelPropertiesHint.TabIndex = 7;
+      this.labelPropertiesHint.TabIndex = 3;
       this.labelPropertiesHint.Text = "Use this button to edit the settings of the selected filter.";
       // 
       // bSetup
       // 
-      this.bSetup.Location = new System.Drawing.Point(13, 118);
+      this.bSetup.Location = new System.Drawing.Point(13, 89);
       this.bSetup.Name = "bSetup";
       this.bSetup.Size = new System.Drawing.Size(115, 23);
-      this.bSetup.TabIndex = 6;
+      this.bSetup.TabIndex = 2;
       this.bSetup.Text = "Filter properties";
       this.bSetup.UseVisualStyleBackColor = true;
       this.bSetup.Click += new System.EventHandler(this.bSetup_Click);
@@ -346,34 +194,55 @@ namespace MediaPortal.Configuration.Sections
       // cLBDSFilter
       // 
       this.cLBDSFilter.FormattingEnabled = true;
-      this.cLBDSFilter.Location = new System.Drawing.Point(13, 63);
+      this.cLBDSFilter.Location = new System.Drawing.Point(13, 19);
       this.cLBDSFilter.Name = "cLBDSFilter";
-      this.cLBDSFilter.Size = new System.Drawing.Size(441, 49);
-      this.cLBDSFilter.TabIndex = 3;
+      this.cLBDSFilter.Size = new System.Drawing.Size(441, 64);
+      this.cLBDSFilter.TabIndex = 1;
       this.cLBDSFilter.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.cLBDSFilter_MouseDoubleClick);
+      // 
+      // lBDSFilter
+      // 
+      this.lBDSFilter.FormattingEnabled = true;
+      this.lBDSFilter.Location = new System.Drawing.Point(13, 19);
+      this.lBDSFilter.Name = "lBDSFilter";
+      this.lBDSFilter.Size = new System.Drawing.Size(441, 212);
+      this.lBDSFilter.TabIndex = 4;
+      this.lBDSFilter.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lBDSFilter_MouseDoubleClick);
       // 
       // label3
       // 
       this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.label3.ForeColor = System.Drawing.Color.Red;
-      this.label3.Location = new System.Drawing.Point(14, 17);
+      this.label3.Location = new System.Drawing.Point(3, 7);
       this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(440, 41);
-      this.label3.TabIndex = 2;
+      this.label3.Size = new System.Drawing.Size(440, 13);
+      this.label3.TabIndex = 0;
       this.label3.Text = "USE THIS AT YOUR OWN RISK!";
       this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
       // 
+      // allFiltersGroupBox
+      // 
+      this.allFiltersGroupBox.Controls.Add(this.lBDSFilter);
+      this.allFiltersGroupBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.allFiltersGroupBox.Location = new System.Drawing.Point(3, 160);
+      this.allFiltersGroupBox.Name = "allFiltersGroupBox";
+      this.allFiltersGroupBox.Size = new System.Drawing.Size(466, 245);
+      this.allFiltersGroupBox.TabIndex = 1;
+      this.allFiltersGroupBox.TabStop = false;
+      this.allFiltersGroupBox.Text = "Available filters";
+      // 
       // TVPostProcessing
       // 
-      this.Controls.Add(this.mpGroupBox1);
+      this.Controls.Add(this.allFiltersGroupBox);
       this.Controls.Add(this.mpGroupBox3);
+      this.Controls.Add(this.label3);
       this.Name = "TVPostProcessing";
       this.Size = new System.Drawing.Size(472, 408);
-      this.mpGroupBox1.ResumeLayout(false);
-      this.mpGroupBox1.PerformLayout();
       this.mpGroupBox3.ResumeLayout(false);
       this.mpGroupBox3.PerformLayout();
+      this.allFiltersGroupBox.ResumeLayout(false);
       this.ResumeLayout(false);
 
     }
