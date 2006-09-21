@@ -5,6 +5,7 @@
 extern void LogDebug(const char *fmt, ...) ;
 CMhwParser::CMhwParser(void)
 {
+	CEnterCriticalSection enter(m_section);
 	m_bGrabbing=false;
 	m_bDone=false;
 
@@ -33,6 +34,7 @@ CMhwParser::CMhwParser(void)
 
 CMhwParser::~CMhwParser(void)
 {
+	CEnterCriticalSection enter(m_section);
 	for (int i=0; i < m_vecDecoders.size();++i)
 	{
 		CSectionDecoder* pDecoder = m_vecDecoders[i];
@@ -43,6 +45,7 @@ CMhwParser::~CMhwParser(void)
 
 void CMhwParser::Reset()
 {
+	CEnterCriticalSection enter(m_section);
 	for (int i=0; i < m_vecDecoders.size();++i)
 	{
 		CSectionDecoder* pDecoder = m_vecDecoders[i];
@@ -59,6 +62,7 @@ void CMhwParser::OnTsPacket(byte* tsPacket)
 {
 	if (m_bGrabbing==false) return;
 
+	CEnterCriticalSection enter(m_section);
 	for (int i=0; i < m_vecDecoders.size();++i)
 	{
 		CSectionDecoder* pDecoder = m_vecDecoders[i];
@@ -68,6 +72,7 @@ void CMhwParser::OnTsPacket(byte* tsPacket)
 
 void CMhwParser::OnNewSection(int pid, int tableId, CSection& sections)
 {
+	CEnterCriticalSection enter(m_section);
   //LogDebug("mhw new section pid:%x tableid:%x onid:%x sid:%x",pid,tableId,sections.NetworkId,sections.TransportId);
   byte* section=&(sections.Data[5]);
   int sectionLength=sections.SectionLength;
@@ -115,6 +120,7 @@ void CMhwParser::OnNewSection(int pid, int tableId, CSection& sections)
 }
 void CMhwParser::GrabEPG()
 {
+	CEnterCriticalSection enter(m_section);
 	Reset();
 	m_bGrabbing=true;
 	m_bDone=false;
@@ -123,10 +129,12 @@ void CMhwParser::GrabEPG()
 }
 bool CMhwParser::isGrabbing()
 {
+	CEnterCriticalSection enter(m_section);
 	return m_bGrabbing;
 }
 bool	CMhwParser::IsEPGReady()
 {
+	CEnterCriticalSection enter(m_section);
 	int passed=time(NULL)-m_TimeOutTimer;
   if (passed>30)
   {
@@ -139,21 +147,26 @@ bool	CMhwParser::IsEPGReady()
 
 void CMhwParser::GetTitleCount(WORD* count)
 {
+	CEnterCriticalSection enter(m_section);
 	*count=m_mhwDecoder.GetTitleCount();
 }
 void CMhwParser::GetTitle(WORD program, WORD* id, WORD* transportId, WORD* networkId, WORD* channelId, WORD* programId, WORD* themeId, WORD* PPV, BYTE* Summaries, WORD* duration, ULONG* dateStart, ULONG* timeStart,char** title,char** programName)
 {
+	CEnterCriticalSection enter(m_section);
 	m_mhwDecoder.GetTitle(program, id, transportId, networkId, channelId, programId, themeId, PPV, Summaries, duration, dateStart, timeStart,title,programName);
 }
 void CMhwParser::GetChannel(WORD channelNr, WORD* channelId, WORD* networkId, WORD* transportId, char** channelName)
 {
+	CEnterCriticalSection enter(m_section);
 	m_mhwDecoder.GetChannel(channelNr, channelId,  networkId, transportId, channelName);
 }
 void CMhwParser::GetSummary(WORD programId, char** summary)
 {
+	CEnterCriticalSection enter(m_section);
 	m_mhwDecoder.GetSummary(programId, summary);
 }
 void CMhwParser::GetTheme(WORD themeId, char** theme)
 {
+	CEnterCriticalSection enter(m_section);
 	m_mhwDecoder.GetTheme(themeId, theme);
 }

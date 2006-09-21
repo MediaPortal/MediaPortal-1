@@ -4,6 +4,7 @@
 extern void LogDebug(const char *fmt, ...) ;
 CEpgParser::CEpgParser(void)
 {
+	CEnterCriticalSection enter(m_section);
 	m_bGrabbing=false;
   for (int i=0x4e; i <=0x6f;++i)
   {
@@ -17,6 +18,7 @@ CEpgParser::CEpgParser(void)
 
 CEpgParser::~CEpgParser(void)
 {
+	CEnterCriticalSection enter(m_section);
 	for (int i=0; i < m_vecDecoders.size();++i)
 	{
 		CSectionDecoder* pDecoder = m_vecDecoders[i];
@@ -27,6 +29,7 @@ CEpgParser::~CEpgParser(void)
 
 void CEpgParser::Reset()
 {
+	CEnterCriticalSection enter(m_section);
 	for (int i=0; i < m_vecDecoders.size();++i)
 	{
 		CSectionDecoder* pDecoder = m_vecDecoders[i];
@@ -37,6 +40,7 @@ void CEpgParser::Reset()
 }
 void CEpgParser::GrabEPG()
 {
+	CEnterCriticalSection enter(m_section);
 	LogDebug("epg:GrabEPG");
 	Reset();
 	m_bGrabbing=true;
@@ -44,11 +48,13 @@ void CEpgParser::GrabEPG()
 }
 bool CEpgParser::isGrabbing()
 {
+	CEnterCriticalSection enter(m_section);
 	m_bGrabbing= m_epgDecoder.IsEPGGrabbing();
 	return m_bGrabbing;
 }
 bool	CEpgParser::IsEPGReady()
 {
+	CEnterCriticalSection enter(m_section);
 	bool result= m_epgDecoder.IsEPGReady();
 	if (result)
 	{
@@ -58,22 +64,27 @@ bool	CEpgParser::IsEPGReady()
 }
 ULONG	CEpgParser::GetEPGChannelCount( )
 {
+	CEnterCriticalSection enter(m_section);
 	return m_epgDecoder.GetEPGChannelCount();
 }
 ULONG	CEpgParser::GetEPGEventCount( ULONG channel)
 {
+	CEnterCriticalSection enter(m_section);
 	return m_epgDecoder.GetEPGEventCount(channel);
 }
 void	CEpgParser::GetEPGChannel( ULONG channel,  WORD* networkId,  WORD* transportid, WORD* service_id  )
 {
+	CEnterCriticalSection enter(m_section);
 	m_epgDecoder.GetEPGChannel(  channel,  networkId,  transportid, service_id  );
 }
 void	CEpgParser::GetEPGEvent( ULONG channel,  ULONG levent,ULONG* language, ULONG* dateMJD, ULONG* timeUTC, ULONG* duration, char** strgenre    )
 {
+	CEnterCriticalSection enter(m_section);
 	m_epgDecoder.GetEPGEvent(  channel, levent,language, dateMJD, timeUTC, duration, strgenre    );
 }
 void  CEpgParser::GetEPGLanguage(ULONG channel, ULONG eventid,ULONG languageIndex,ULONG* language, char** eventText, char** eventDescription    )
 {
+	CEnterCriticalSection enter(m_section);
 	m_epgDecoder.GetEPGLanguage(channel, eventid,languageIndex,language, eventText, eventDescription    );
 }
 
@@ -81,6 +92,7 @@ void  CEpgParser::GetEPGLanguage(ULONG channel, ULONG eventid,ULONG languageInde
 void CEpgParser::OnTsPacket(byte* tsPacket)
 {
 	if (m_bGrabbing==false) return;
+	CEnterCriticalSection enter(m_section);
 	for (int i=0; i < m_vecDecoders.size();++i)
 	{
 		CSectionDecoder* pDecoder = m_vecDecoders[i];
@@ -90,12 +102,16 @@ void CEpgParser::OnTsPacket(byte* tsPacket)
 
 void CEpgParser::OnNewSection(int pid, int tableId, CSection& sections)
 {
+	CEnterCriticalSection enter(m_section);
 	try
 	{
 		//LogDebug("epg new section pid:%x tableid:%x onid:%x sid:%x len:%x",pid,tableId,sections.NetworkId,sections.TransportId,sections.SectionLength);
 		byte* section=&(sections.Data[5]);
 		int sectionLength=sections.SectionLength;
-		m_epgDecoder.DecodeEPG(section,	sectionLength);
+		if (sectionLength>0)
+		{
+			m_epgDecoder.DecodeEPG(section,	sectionLength);
+		}
 	}
 	catch(...)
 	{

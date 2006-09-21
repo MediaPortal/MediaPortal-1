@@ -22,6 +22,8 @@
 #include "sectiondecoder.h"
 #include "isectioncallback.h"
 #include "mhwdecoder.h"
+#include "criticalsection.h"
+#include "entercriticalsection.h"
 #include <vector>
 using namespace std;
 
@@ -48,5 +50,6 @@ private:
 	time_t      m_TimeOutTimer;
 	bool				m_bGrabbing;
 	bool				m_bDone;
+	CCriticalSection m_section;
 };
 
