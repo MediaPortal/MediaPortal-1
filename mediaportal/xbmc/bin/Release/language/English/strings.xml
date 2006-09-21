@@ -5171,6 +5171,83 @@
       <id>19100</id>
       <value>GeoClock</value>
    </string>
+<!--
+   Please be aware that Sudoku is a trademark in some
+   countries. Use "Nanpure" (like the playstation does)
+   if this applies for your country, too.
+-->
+   <string Prefix="My ">
+      <id>19101</id>
+      <value>Sudoku</value>
+   </string>
+   <string>
+      <id>19102</id>
+      <value>New game</value>
+   </string>
+   <string>
+      <id>19103</id>
+      <value>Solve</value>
+   </string>
+   <string>
+      <id>19104</id>
+      <value>Clear</value>
+   </string>
+   <string>
+      <id>19105</id>
+      <value>Block invalid moves</value>
+   </string>
+   <string>
+      <id>19106</id>
+      <value>Show invalid moves</value>
+   </string>
+   <string>
+      <id>19107</id>
+      <value>Level: </value>
+   </string>
+   <string>
+      <id>19108</id>
+      <value>easy</value>
+   </string>
+   <string>
+      <id>19109</id>
+      <value>medium</value>
+   </string>
+   <string>
+      <id>19110</id>
+      <value>difficult</value>
+   </string>
+   <string>
+      <id>19111</id>
+      <value>Game Over</value>
+   </string>
+   <string>
+      <id>19112</id>
+      <value>Congratulation!</value>
+   </string>
+   <string>
+      <id>19113</id>
+      <value>You have solved the game correctly.</value>
+   </string>
+   <string>
+      <id>19114</id>
+      <value>Sorry, but your solution is wrong.</value>
+   </string>
+   <string>
+      <id>19115</id>
+      <value>kids</value>
+   </string>
+   <string>
+      <id>19116</id>
+      <value>Cell value</value>
+   </string>
+   <string>
+      <id>19117</id>
+      <value>Clear cell</value>
+   </string>
+   <string>
+      <id>19118</id>
+      <value>Help once</value>
+   </string>
    <string>
       <id>25001</id>
       <value>Waiting for Page {0:X}...!</value>

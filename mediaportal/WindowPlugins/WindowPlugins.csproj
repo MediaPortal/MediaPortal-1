@@ -764,6 +764,10 @@
     <Compile Include="GUISettings\Wizard\Remotes\GUIWizardRemote.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="GUINumberPlace\CellControl.cs" />
+    <Compile Include="GUINumberPlace\Grid.cs" />
+    <Compile Include="GUINumberPlace\GUINumberPlace.cs" />
+    <Compile Include="GUINumberPlace\Solver.cs" />
     <Compile Include="GUITetris\MyTetris.cs">
       <SubType>Code</SubType>
     </Compile>

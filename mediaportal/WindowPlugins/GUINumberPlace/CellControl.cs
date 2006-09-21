@@ -1,0 +1,162 @@
+#region Copyright (C) 2006 Team MediaPortal
+
+/* 
+ *	Copyright (C) 2006 Team MediaPortal
+ *	http://www.team-mediaportal.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+#endregion
+
+using System;
+using MediaPortal.GUI.Library;
+
+namespace MediaPortal.GUI.NumberPlace
+{
+  /// <summary>
+  /// Summary description for CellControl.
+  /// </summary>
+  public class CellControl : GUIButtonControl
+  {
+    [XMLSkinElement("textcolor")]
+    //protected long m_dwNonEditableTextColor=0x770000FF;
+    protected static long m_dwCellIncorrectTextColor = 0xFFFFFFFF;
+    protected static long m_dwTextColor = 0xFFFFFFFF;
+    protected long m_dwDisabledColor = 0xFF000000;
+    protected int m_iTextOffsetY = 2;
+
+    GUIImage m_imgFocus = null;
+    GUIImage m_imgNoFocus = null;
+    GUILabelControl m_label = null;
+
+
+
+    public int SolutionValue = 0;
+    public bool editable = true;
+
+    private int cellValue = 0;
+    public int CellValue
+    {
+      get
+      {
+        return cellValue;
+      }
+      set
+      {
+        if (editable)
+        {
+          cellValue = value;
+        }
+      }
+    }
+
+    public static long M_dwCellIncorrectTextColor
+    {
+      get
+      {
+        return m_dwCellIncorrectTextColor;
+      }
+      set
+      {
+        m_dwCellIncorrectTextColor = value;
+      }
+    }
+
+    public static long M_dwTextColor
+    {
+      get
+      {
+        return m_dwTextColor;
+      }
+
+    }
+
+    public CellControl(int dwParentID)
+      : base(dwParentID)
+    {
+    }
+
+    public CellControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight, string strTextureFocus, string strTextureNoFocus)
+      : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight, strTextureFocus, strTextureNoFocus)
+    {
+    }
+    public override void AllocResources()
+    {
+      base.AllocResources();
+
+      m_imgFocus = new GUIImage(GetID, GetID * 10, _positionX, _positionY, this.Width, this.Height, "icon_empty_focus.png", 0xFFFFFFFF);
+      m_imgFocus.AllocResources();
+      m_imgNoFocus = new GUIImage(GetID, GetID * 100, _positionX, _positionY, this.Width, this.Height, "icon_empty_nofocus.png", 0xFFFFFFFF);
+      m_imgNoFocus.AllocResources();
+      m_label = new GUILabelControl(GetID, GetID * 1000, _positionX, _positionY, this.Width, this.Height, "font18", String.Empty, 0xFFFFFFFF, GUIControl.Alignment.ALIGN_CENTER, false);
+
+    }
+
+    public override void Render(float timePassed)
+    {
+      base.Render(timePassed);
+      // Do not render if not visible.
+      if (GUIGraphicsContext.EditMode == false)
+      {
+        if (!IsVisible) return;
+      }
+
+      // The GUIButtonControl has the focus
+
+      //if (value < 0)
+      //{
+
+      if (Focus)
+      {
+        //render the focused image
+        m_imgFocus.Render(timePassed);
+      }
+      else
+      {
+        //render the non-focused image
+        m_imgNoFocus.Render(timePassed);
+      }
+      //}
+
+      m_label.TextAlignment = Alignment.ALIGN_CENTER;
+      m_label.Label = (CellValue > 0) ? CellValue.ToString() : "";
+
+      if (CellValue > 0)
+      {
+        if (editable)
+        {
+          if (CellValue == SolutionValue)
+          {
+            m_label.TextColor = m_dwTextColor;
+          }
+          else
+          {
+            m_label.TextColor = m_dwCellIncorrectTextColor;
+          }
+        }
+        else
+        {
+          m_label.TextColor = m_dwDisabledColor;
+        }
+      }
+
+      m_label.SetPosition(XPosition, YPosition + m_iTextOffsetY);
+      m_label.Render(timePassed);
+
+    }
+  }
+}

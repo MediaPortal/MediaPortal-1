@@ -5171,6 +5171,84 @@
       <id>19100</id>
       <value>Sonnenuhr</value>
    </string>
+<!--
+   Please be aware that Sudoku is a trademark in some
+   countries. Use "Nanpure" (like the playstation does)
+   if this applies for your country, too.
+-->
+   <string Prefix="Mein ">
+      <id>19101</id>
+      <value>Su-ji wa doku</value>
+   </string>
+   <string>
+      <id>19102</id>
+      <value>Neues Spiel</value>
+   </string>
+   <string>
+      <id>19103</id>
+      <value>Lösen</value>
+   </string>
+   <string>
+      <id>19104</id>
+      <value>Leeren</value>
+   </string>
+   <string>
+      <id>19105</id>
+      <value>Sperre falsche Züge</value>
+   </string>
+   <string>
+      <id>19106</id>
+      <value>Zeige falsche Züge</value>
+   </string>
+   <string>
+      <id>19107</id>
+      <value>Stufe: </value>
+   </string>
+   <string>
+      <id>19108</id>
+      <value>leicht</value>
+   </string>
+   <string>
+      <id>19109</id>
+      <value>mittel</value>
+   </string>
+   <string>
+      <id>19110</id>
+      <value>schwer</value>
+   </string>
+   <string>
+      <id>19111</id>
+      <value>Spiel beendet</value>
+   </string>
+   <string>
+      <id>19112</id>
+      <value>Glückwunsch!</value>
+   </string>
+   <string>
+      <id>19113</id>
+      <value>Sie haben das Spiel erfolgreich gelöst.</value>
+   </string>
+   <string>
+      <id>19114</id>
+      <value>Ihre Lösung ist leider nicht korrekt.</value>
+   </string>
+   <string>
+      <id>19115</id>
+      <value>kinderleicht</value>
+   </string>
+   <string>
+      <id>19116</id>
+      <value>Feld Wert</value>
+   </string>
+   <string>
+      <id>19117</id>
+      <value>Feld leeren</value>
+   </string>
+   <string>
+      <id>19118</id>
+      <value>Einmal helfen</value>
+   </string>
+
    <string>
       <id>25001</id>
       <value>Warte auf Seite {0:X}...!</value>
