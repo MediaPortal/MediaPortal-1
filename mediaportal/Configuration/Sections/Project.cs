@@ -187,10 +187,10 @@ namespace MediaPortal.Configuration.Sections
       this.linkLabelOnlineDocumentation.AutoSize = true;
       this.linkLabelOnlineDocumentation.Location = new System.Drawing.Point(24, 120);
       this.linkLabelOnlineDocumentation.Name = "linkLabelOnlineDocumentation";
-      this.linkLabelOnlineDocumentation.Size = new System.Drawing.Size(205, 13);
+      this.linkLabelOnlineDocumentation.Size = new System.Drawing.Size(162, 13);
       this.linkLabelOnlineDocumentation.TabIndex = 5;
       this.linkLabelOnlineDocumentation.TabStop = true;
-      this.linkLabelOnlineDocumentation.Text = "http://www.team-mediaportal.com/mpwiki";
+      this.linkLabelOnlineDocumentation.Text = "http://wiki.team-mediaportal.com";
       this.linkLabelOnlineDocumentation.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel3_LinkClicked);
       // 
       // labelOnlineDocumentation
