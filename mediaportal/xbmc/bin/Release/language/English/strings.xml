@@ -5368,8 +5368,53 @@
    <string>
       <id>33040</id>
       <value>Copy now playing spam to clipboard</value>
-   </string>                          
-                 
+   </string>
+                          
+   <string Prefix="My ">
+      <id>34000</id>
+      <value>Last.fm</value>
+   </string>   
+   <string>
+      <id>34001</id>
+      <value>Start stream</value>
+   </string>
+   <string>
+      <id>34002</id>
+      <value>Friend: </value>
+   </string>
+   <string>
+      <id>34003</id>
+      <value>Neighbour: </value>
+   </string>
+   <string>
+      <id>34004</id>
+      <value>Group: </value>
+   </string>
+   <string>
+      <id>34010</id>
+      <value>Love</value>
+   </string>
+   <string>
+      <id>34011</id>
+      <value>Ban</value>
+   </string>
+   <string>
+      <id>34012</id>
+      <value>Skip</value>
+   </string>
+   <string>
+      <id>34020</id>
+      <value>Submit to profile</value>
+   </string>
+   <string>
+      <id>34013</id>
+      <value>Discovery mode</value>
+   </string>
+   <string>
+      <id>34020</id>
+      <value>Current stream: </value>
+   </string>
+                    
    <string>
       <id>100000</id>
       <value>Home</value>

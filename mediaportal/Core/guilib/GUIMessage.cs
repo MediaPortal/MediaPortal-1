@@ -122,6 +122,8 @@ namespace MediaPortal.GUI.Library
       GUI_MSG_ENABLEGUIDEREFRESH = 84,
       GUI_MSG_PLANESCENE_CROP = 85,
       GUI_MSG_PLAYBACK_CROSSFADING = 86, //SV Added by SteveV 2006-09-07
+      GUI_MSG_SHOW_BALLONTIP = 87, // rtv
+      GUI_MSG_SHOW_BALLONTIP_SONGCHANGE = 88, // rtv
     };
 
     private string _label = "";

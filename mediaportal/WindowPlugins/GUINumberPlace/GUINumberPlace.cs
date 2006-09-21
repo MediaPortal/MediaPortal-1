@@ -36,7 +36,7 @@ using MediaPortal.Util;
 
 namespace MediaPortal.GUI.NumberPlace
 {
-  public class GUINumberPlace : GUIWindow, ISetupForm
+  public class GUINumberPlace : GUIWindow, ISetupForm, IShowPlugin
   {
     #region Serialization
 
@@ -133,12 +133,12 @@ namespace MediaPortal.GUI.NumberPlace
 
     public string PluginName()
     {
-      return "My Su-ji wa doku";
+      return "My Numberplace";
     }
 
     public string Description()
     {
-      return "Play Su-ji wa doku during commercials!";
+      return "Play a Sudoku during commercials!";
     }
 
     public string Author()
@@ -176,6 +176,11 @@ namespace MediaPortal.GUI.NumberPlace
     public void ShowPlugin()
     {
       MessageBox.Show("Nothing to setup.");
+    }
+
+    public bool ShowDefaultHome()
+    {
+      return false;
     }
     #endregion
 

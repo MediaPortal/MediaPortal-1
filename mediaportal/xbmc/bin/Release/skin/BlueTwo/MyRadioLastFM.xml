@@ -1,0 +1,78 @@
+<window>
+	<id>7890</id>
+	<defaultcontrol>10</defaultcontrol>
+	<allowoverlay>no</allowoverlay>
+	<define>#header.label:34000</define>
+	<define>#header.image:radio_logo.png</define>
+	<define>#header.hover:hover_my radio.png</define>
+
+	<controls>
+		<import>common.time.xml</import>
+		<import>common.window.xml</import>
+		<control>
+			<type>group</type>
+			<description>group element</description>
+			<animation>FlyInFromLeft</animation>
+			<posX>60</posX>
+			<posY>117</posY>
+			<layout>StackLayout</layout>
+
+			<control>
+				<description>Lastfm</description>
+				<type>button</type>
+				<id>10</id>
+				<label>34001</label>
+				<onleft>7</onleft>
+				<onright>50</onright>
+				<onup>666</onup>
+				<ondown>20</ondown>
+			</control>
+
+		<control>
+			<type>label</type>
+			<description>track label</description>
+			<id>0</id>
+			<posX>460</posX>
+			<posY>600</posY>
+			<width>150</width>
+			<height>20</height>
+			<label>#duration</label>
+			<font>font14</font>
+			<align>left</align>
+		</control>
+
+		</control>
+
+
+     <control>
+         <type>label</type>
+         <description>track label</description>
+         <id>0</id>
+         <posX>400</posX>
+         <posY>600</posY>
+         <width>150</width>
+         <height>20</height>
+         <label>#Play.Current.Title</label>
+         <font>font14</font>
+         <align>left</align>
+      </control>
+
+
+
+     <control>
+         <type>label</type>
+         <description>track label</description>
+         <id>0</id>
+         <posX>430</posX>
+         <posY>600</posY>
+         <width>150</width>
+         <height>20</height>
+         <label>#Play.Current.Artist</label>
+         <font>font14</font>
+         <align>left</align>
+      </control>
+
+
+
+	</controls>
+</window>

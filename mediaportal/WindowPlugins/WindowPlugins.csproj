@@ -532,6 +532,8 @@
     <Compile Include="GUIPrograms\taggedMenuItem.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="GUIRadioLastFM\GUIRadioLastFM.cs" />
+    <Compile Include="GUIRadioLastFM\StreamControl.cs" />
     <Compile Include="GUIRadio\GUIRadio.cs">
       <SubType>Code</SubType>
     </Compile>

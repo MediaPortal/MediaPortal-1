@@ -34,7 +34,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Dialogs;
 using MediaPortal.Radio.Database;
-using MediaPortal.Music.Database;
+//using MediaPortal.Music.Database;
 using MediaPortal.Playlists;
 
 namespace MediaPortal.GUI.Radio
@@ -44,8 +44,7 @@ namespace MediaPortal.GUI.Radio
     [SkinControlAttribute(2)]     protected GUIButtonControl btnViewAs = null;
     [SkinControlAttribute(3)]     protected GUISortButtonControl btnSortBy = null;
     [SkinControlAttribute(6)]     protected GUIButtonControl btnPrevious = null;
-    [SkinControlAttribute(7)]     protected GUIButtonControl btnNext = null;
-    [SkinControlAttribute(21)]    protected GUIButtonControl btnLastFM = null;
+    [SkinControlAttribute(7)]     protected GUIButtonControl btnNext = null;    
     [SkinControlAttribute(50)]    protected GUIListControl listView = null;
     [SkinControlAttribute(51)]    protected GUIThumbnailPanel thumbnailView = null;
 
@@ -78,9 +77,9 @@ namespace MediaPortal.GUI.Radio
     int selectedItemIndex = -1;
     PlayList currentPlayList = null;
     PlayListPlayer playlistPlayer;
-    AudioscrobblerRadio LastFMStation;
+    //GUIRadioLastFM LastFMStation;
 
-    bool _useLastFM = false;
+    //bool _useLastFM = false;
     #endregion
 
     public GUIRadio()
@@ -129,7 +128,7 @@ namespace MediaPortal.GUI.Radio
 
         sortAscending = xmlreader.GetValueAsBool("myradio", "sortascending", true);
 
-        _useLastFM = xmlreader.GetValueAsBool("plugins", "Audioscrobbler", false);
+        //_useLastFM = xmlreader.GetValueAsBool("plugins", "Audioscrobbler", false);
       }
     }
 
@@ -211,11 +210,6 @@ namespace MediaPortal.GUI.Radio
         return;
       }
 
-      if (action.wID == Action.ActionType.ACTION_NEXT_ITEM && _useLastFM)
-      {
-        LastFMStation.SendControlCommand(StreamControls.skiptrack);
-      }
-
       base.OnAction(action);
     }
 
@@ -255,13 +249,13 @@ namespace MediaPortal.GUI.Radio
       LoadDirectory(currentFolder);
       btnSortBy.SortChanged += new SortEventHandler(SortChanged);
 
-      if (btnLastFM != null)
-      {
-        if (_useLastFM)
-          btnLastFM.Visible = true;
-        else
-          btnLastFM.Visible = false;
-      }
+      //if (btnLastFM != null)
+      //{
+      //  if (_useLastFM)
+      //    btnLastFM.Visible = true;
+      //  else
+      //    btnLastFM.Visible = false;
+      //}
     }
 
     protected override void OnPageDestroy(int newWindowId)
@@ -274,19 +268,6 @@ namespace MediaPortal.GUI.Radio
     protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
     {
       base.OnClicked(controlId, control, actionType);
-
-      if (control == btnLastFM)
-      {
-        if (LastFMStation == null)
-          LastFMStation = new AudioscrobblerRadio();
-
-        if (LastFMStation.CurrentStreamState == StreamPlaybackState.initialized)
-        {
-          LastFMStation.PlayStream();
-        }
-        else
-          Log.Info("GUIRadio: Didn't start LastFM radio because stream state is {0}", LastFMStation.CurrentStreamState.ToString());
-      }
 
       if (control == btnViewAs)
       {
@@ -319,16 +300,16 @@ namespace MediaPortal.GUI.Radio
     {
       switch (message.Message)
       {
-        case GUIMessage.MessageType.GUI_MSG_PLAYBACK_ENDED:
-          if (_useLastFM)
-          {
-            if ((int)LastFMStation.CurrentStreamState > 1)
-              LastFMStation.CurrentStreamState = StreamPlaybackState.initialized;
-          }
-          break;
+        //case GUIMessage.MessageType.GUI_MSG_PLAYBACK_ENDED:
+        //  if (_useLastFM)
+        //  {
+        //    if ((int)LastFMStation.CurrentStreamState > 1)
+        //      LastFMStation.CurrentStreamState = StreamPlaybackState.initialized;
+        //  }
+        //  break;
 
-        case GUIMessage.MessageType.GUI_MSG_PLAYBACK_STOPPED:
-          goto case GUIMessage.MessageType.GUI_MSG_PLAYBACK_ENDED;
+        //case GUIMessage.MessageType.GUI_MSG_PLAYBACK_STOPPED:
+        //  goto case GUIMessage.MessageType.GUI_MSG_PLAYBACK_ENDED;
 
         case GUIMessage.MessageType.GUI_MSG_PLAY_RADIO_STATION:
           if (message.Label.Length == 0) return true;
@@ -864,16 +845,6 @@ namespace MediaPortal.GUI.Radio
 
     void Play(GUIListItem item)
     {
-      if (LastFMStation != null)
-      {
-        if ((int)LastFMStation.CurrentStreamState > 1)
-        {
-          if (g_Player.Playing)
-            g_Player.Stop();
-          LastFMStation.CurrentStreamState = StreamPlaybackState.initialized;
-        }
-      }
-
       if (MediaPortal.Util.Utils.IsPlayList(item.Path))
       {
         currentPlayList = new PlayList();

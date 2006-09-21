@@ -211,6 +211,7 @@ namespace MediaPortal.GUI.Library
       WINDOW_SUNCLOCK = 8000,
       WINDOW_TRAILERS = 5900,
       WINDOW_NUMBERPLACE = 7777, // rtv - sudoku clone
+      WINDOW_RADIO_LASTFM = 7890,
 
       // IMPORTANT!!! WHEN ADDING NEW WINDOW IDs,
       // ADD DIALOGS TO InputMappingForm.cs BLACKLIST!!!

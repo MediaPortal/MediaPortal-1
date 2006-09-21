@@ -5370,6 +5370,51 @@
       <id>33040</id>
       <value>Aktuellen Titel für IRC in die Zwischenablage kopieren</value>
    </string>
+   
+   <string Prefix="Mein ">
+      <id>34000</id>
+      <value>Last.fm</value>
+   </string>
+   <string>
+      <id>34001</id>
+      <value>Starte Stream</value>
+   </string>
+   <string>
+      <id>34002</id>
+      <value>Freund: </value>
+   </string>
+   <string>
+      <id>34003</id>
+      <value>Nachbar: </value>
+   </string>
+   <string>
+      <id>34004</id>
+      <value>Gruppe: </value>
+   </string>
+   <string>
+      <id>34010</id>
+      <value>Favoriten</value>
+   </string>
+   <string>
+      <id>34011</id>
+      <value>Ausschließen</value>
+   </string>
+   <string>
+      <id>34012</id>
+      <value>Nächster Titel</value>
+   </string>
+   <string>
+      <id>34020</id>
+      <value>Ins Profil eintragen</value>
+   </string>
+   <string>
+      <id>34013</id>
+      <value>Entdecker Modus</value>
+   </string>
+   <string>
+      <id>34020</id>
+      <value>Aktueller Stream: </value>
+   </string>
       
    <string>
       <id>100000</id>
