@@ -127,9 +127,6 @@
           <type>listcontrol</type>
           <id>50</id>
           <onleft>2</onleft>
-          <onright>51</onright>
-          <onup>2</onup>
-          <ondown>2</ondown>
           <textcolor>FFFFFFFF</textcolor>
         </control>
         <control>
@@ -137,9 +134,6 @@
           <type>thumbnailpanel</type>
           <id>51</id>
           <onleft>2</onleft>
-          <onright>52</onright>
-          <onup>2</onup>
-          <ondown>2</ondown>
         </control>
         <control>
           <description>album view listcontrol</description>
@@ -163,9 +157,6 @@
           <spaceBetweenItems>4</spaceBetweenItems>
           <textureHeight>99</textureHeight>
           <onleft>2</onleft>
-          <onright>53</onright>
-          <onup>2</onup>
-          <ondown>2</ondown>
         </control>
         <control>
           <description>Filmstrip view</description>
