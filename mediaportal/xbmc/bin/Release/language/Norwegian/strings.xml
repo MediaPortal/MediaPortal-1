@@ -3911,11 +3911,11 @@
    </string>
    <string>
       <id>2082</id>
-      <value>Mpeg:Ferdig med å kutte videoen</value>
+      <value>Ferdig med å kutte videoen</value>
    </string>
    <string>
       <id>2083</id>
-      <value>Dvrms:Ferdig med å kutte videoen</value>
+      <value>Vil du slette den originale filen?</value>
    </string>
    <string>
       <id>2084</id>
@@ -5173,6 +5173,83 @@
    <string>
       <id>19100</id>
       <value>GeoClock</value>
+   </string>
+<!--
+   Please be aware that Sudoku is a trademark in some
+   countries. Use "Nanpure" (like the playstation does)
+   if this applies for your country, too.
+-->
+   <string Prefix="Min ">
+      <id>19101</id>
+      <value>Sudoku</value>
+   </string>
+   <string>
+      <id>19102</id>
+      <value>Nytt spill</value>
+   </string>
+   <string>
+      <id>19103</id>
+      <value>Solve</value>
+   </string>
+   <string>
+      <id>19104</id>
+      <value>Fjern</value>
+   </string>
+   <string>
+      <id>19105</id>
+      <value>Blokker gale flytt</value>
+   </string>
+   <string>
+      <id>19106</id>
+      <value>Vis gale flytt</value>
+   </string>
+   <string>
+      <id>19107</id>
+      <value>Nivå: </value>
+   </string>
+   <string>
+      <id>19108</id>
+      <value>lett</value>
+   </string>
+   <string>
+      <id>19109</id>
+      <value>midium</value>
+   </string>
+   <string>
+      <id>19110</id>
+      <value>vanskelig</value>
+   </string>
+   <string>
+      <id>19111</id>
+      <value>Spill Over</value>
+   </string>
+   <string>
+      <id>19112</id>
+      <value>Gratulerer!</value>
+   </string>
+   <string>
+      <id>19113</id>
+      <value>Du har løst spillet korrekt.</value>
+   </string>
+   <string>
+      <id>19114</id>
+      <value>Beklager, men din løsning er feil.</value>
+   </string>
+   <string>
+      <id>19115</id>
+      <value>unger</value>
+   </string>
+   <string>
+      <id>19116</id>
+      <value>Celle verdi</value>
+   </string>
+   <string>
+      <id>19117</id>
+      <value>Fjern celler</value>
+   </string>
+   <string>
+      <id>19118</id>
+      <value>Hjelp en gang</value>
    </string>
    <string>
       <id>25001</id>
