@@ -95,6 +95,8 @@ namespace MediaPortal.Music.Database
     private DateTime _lastQueueActivity;
 
     public delegate void RequestCompletedDelegate(ScrobblerUtilsResponse response);
+    private delegate void AddRequestDelegate(ScrobblerUtilsRequest request);
+    private delegate void RemoveRequestDelegate(ScrobblerUtilsRequest request);
 
     // List<Song> songList = null;
     List<String> _unwantedTags = null;
@@ -112,6 +114,11 @@ namespace MediaPortal.Music.Database
     AudioscrobblerUtils()
     {
       LoadSettings();
+    }
+
+    ~AudioscrobblerUtils()
+    {
+      _run = false;
     }
 
     /// <summary>
@@ -149,23 +156,46 @@ namespace MediaPortal.Music.Database
     }
 
     /// <summary>
+    /// Asynchronously adds a request to the request queue.
+    /// </summary>
+    /// <param name="request">ScrobblerUtilsRequest to add to the queue</param>
+    public void AddRequestAsync(ScrobblerUtilsRequest request)
+    {
+      AddRequestDelegate ard = new AddRequestDelegate(AddRequest);
+      ard.BeginInvoke(request, delegate(IAsyncResult iar)
+      {
+        ard.EndInvoke(iar);
+      }, null);
+    }
+
+    /// <summary>
     /// Removes a request from the request queue.
     /// </summary>
     /// <param name="request">ScrobblerUtilsRequest to remove from the queue</param>
     /// <returns></returns>
-    public bool RemoveRequest(ScrobblerUtilsRequest request)
+    public void RemoveRequest(ScrobblerUtilsRequest request)
     {
-      lock (_queueMutex)
+      if (request != null)
       {
-        if (request != null)
+        lock (_queueMutex)
         {
           Log.Debug("AudioScrobblerUtils.RemoveRequest:{0}, requestID:{1}", request.Request.ToString(), request.ID);
-          bool result = _requestQueue.Remove(request);
-          _requestQueue.TrimExcess();
-          return result;
+          _requestQueue.Remove(request);
         }
       }
-      return false;
+    }
+
+    /// <summary>
+    /// Asynchronously removes a request from the request queue.
+    /// </summary>
+    /// <param name="request">ScrobblerUtilsRequest to remove from the queue</param>
+    public void RemoveRequestAsync(ScrobblerUtilsRequest request)
+    {
+      RemoveRequestDelegate rrd = new RemoveRequestDelegate(RemoveRequest);
+      rrd.BeginInvoke(request, delegate(IAsyncResult iar)
+      {
+        rrd.EndInvoke(iar);
+      }, null);
     }
 
     /// <summary>
@@ -207,6 +237,10 @@ namespace MediaPortal.Music.Database
             Thread.Sleep(100);
           }
         }
+      }
+      lock (_queueMutex)
+      {
+        _requestQueue.TrimExcess();
       }
       Log.Debug("AudioScrobblerUtils: thread ended");
     }
