@@ -109,9 +109,12 @@ namespace MediaPortal.GUI.NumberPlace
     private Grid grid = new Grid(3);
     private static Random random = new Random(DateTime.Now.Millisecond);
 
-    [SkinControlAttribute(6)]    protected GUIToggleButtonControl btnBlockInvalidMoves = null;
-    [SkinControlAttribute(7)]    protected GUIToggleButtonControl btnShowInvalidMoves = null;
-    [SkinControlAttribute(8)]    protected GUIButtonControl btnLevel = null;
+    [SkinControlAttribute(6)]
+    protected GUIToggleButtonControl btnBlockInvalidMoves = null;
+    [SkinControlAttribute(7)]
+    protected GUIToggleButtonControl btnShowInvalidMoves = null;
+    [SkinControlAttribute(8)]
+    protected GUIButtonControl btnLevel = null;
 
     static private readonly string pluginConfigFileName = "mynumberplace";
 
@@ -133,7 +136,7 @@ namespace MediaPortal.GUI.NumberPlace
 
     public string PluginName()
     {
-      return "My Numberplace";
+      return "My Sudoku";
     }
 
     public string Description()
