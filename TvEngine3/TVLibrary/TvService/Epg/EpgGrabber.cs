@@ -683,68 +683,9 @@ namespace TvService
         newProgram.Title = title;
         newProgram.Genre = genre;
         lastProgram = program.EndTime;
-        /*
-        bool changed = false;
-        foreach (TvDatabase.Program dbsProgram in programsInDbs)
-        {
-          if (_state != EpgState.Updating) return false;
-          if (IsCardIdle(_currentCard) == false) return false;
-          bool isCorrect = false;
-          if (dbsProgram.EndTime > program.StartTime && dbsProgram.EndTime < program.EndTime) isCorrect = true;
-          else if (dbsProgram.StartTime >= program.StartTime && dbsProgram.StartTime <= program.EndTime) isCorrect = true;
-          else if (dbsProgram.StartTime <= program.StartTime && dbsProgram.EndTime >= program.EndTime) isCorrect = true;
-          if (isCorrect)
-          {
-            if (changed)
-            {
-              programsToDelete.Add(dbsProgram);
-            }
-            else
-            {
-              changed = true;
-              dbsProgram.StartTime = program.StartTime;
-              dbsProgram.EndTime = program.EndTime;
-              dbsProgram.Description = description;
-              dbsProgram.Title = title;
-              dbsProgram.Genre = genre;
-            }
-          }
-        }
 
-        if (!changed)
-        {
-          TvDatabase.Program newProgram = TvDatabase.Program.Create();
-          newProgram.Channel = channel;
-          newProgram.IdChannel = channel.IdChannel;
-          newProgram.StartTime = program.StartTime;
-          newProgram.EndTime = program.EndTime;
-          newProgram.Description = description;
-          newProgram.Title = title;
-          newProgram.Genre = genre;
-
-        }
-        foreach (TvDatabase.Program dbsProgram in programsToDelete)
-        {
-          programsInDbs.Remove(dbsProgram);
-        }*/
       }//foreach (EpgProgram program in epgChannel.Programs)
 
-      /*
-    foreach (TvDatabase.Program dbsProgram in programsToDelete)
-    {
-      if (_state != EpgState.Updating)
-      {
-        Log.Write("EPG: stopped updating state changed");
-        return false;
-      }
-      //System.Threading.Thread.Sleep(100);
-      if (IsCardIdle(_currentCard) == false) return false;
-      if (dbsProgram.RowState != System.Data.DataRowState.Deleted &&
-          dbsProgram.RowState != System.Data.DataRowState.Detached)
-      {
-        dbsProgram.Delete();
-      }
-    }*/
       channel.LastGrabTime = DateTime.Now;
       return true;
     }
