@@ -24,6 +24,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -143,6 +144,9 @@ namespace MediaPortal.GUI.RADIOLASTFM
         dlg.Reset();
         dlg.SetHeading(34001);                // Start Stream
         dlg.Add("Recommendation radio");
+        //dlg.Add("Neighbour radio");
+        // temporary
+        dlg.Add("Tune into Tag: Cover");
         dlg.Add("MediaPortal User's group radio");
 
         if (isSubscriber)
@@ -161,6 +165,13 @@ namespace MediaPortal.GUI.RADIOLASTFM
             TuneIntoSelected = StreamType.Recommended;
             LastFMStation.StreamsUser = LastFMStation.AccountUser;
             break;
+          //case "Neighbour radio":
+          //  TuneIntoSelected = StreamType.Personal;
+          //  LastFMStation.StreamsUser. 
+          case "Tune into Tag: Cover":
+            TuneIntoSelected = StreamType.Tags;
+            //LastFMStation.StreamsUser = LastFMStation.AccountUser;
+            break;
           case "MediaPortal User's group radio":
             TuneIntoSelected = StreamType.Group;
             LastFMStation.StreamsUser = "MediaPortal Users";
@@ -171,24 +182,30 @@ namespace MediaPortal.GUI.RADIOLASTFM
             break;
         }
 
-        if (LastFMStation.CurrentTuneType != TuneIntoSelected)
+        g_Player.Stop();
+        // LastFMStation.CurrentTuneType = TuneIntoSelected;
+        switch (TuneIntoSelected)
         {
-          g_Player.Stop();
-          switch (TuneIntoSelected)
-          {
-            case StreamType.Recommended:
-              LastFMStation.TuneIntoRecommendedRadio(LastFMStation.StreamsUser);
-              break;
+          case StreamType.Recommended:
+            LastFMStation.TuneIntoRecommendedRadio(LastFMStation.StreamsUser);
+            break;            
 
-            case StreamType.Group:
-              LastFMStation.TuneIntoGroupRadio(LastFMStation.StreamsUser);
-              break;
+          case StreamType.Group:
+            LastFMStation.TuneIntoGroupRadio(LastFMStation.StreamsUser);
+            break;
 
-            case StreamType.Personal:
-              LastFMStation.TuneIntoPersonalRadio(LastFMStation.AccountUser);
-              break;
-          }
+          case StreamType.Personal:
+            LastFMStation.TuneIntoPersonalRadio(LastFMStation.AccountUser);
+            break;
+
+          case StreamType.Tags:
+            List<String> MyTags = new List<string>();
+            MyTags.Add("cover");
+            //MyTags.Add("melodic death metal");
+            LastFMStation.TuneIntoTags(MyTags);
+            break;
         }
+
 
         if (LastFMStation.CurrentStreamState == StreamPlaybackState.initialized)
         {
