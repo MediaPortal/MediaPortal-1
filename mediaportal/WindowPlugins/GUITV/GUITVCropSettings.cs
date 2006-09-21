@@ -39,9 +39,9 @@ using MediaPortal.Util;
 namespace MediaPortal.GUI.TV
 {
   /// <summary>
-  /// GUICropSettings
+  /// GUITVCropSettings
   /// </summary>
-  public class GUICropSettings : GUIWindow, IRenderLayer
+  public class GUITVCropSettings : GUIWindow, IRenderLayer
   {
     [SkinControlAttribute(2)]
     protected GUIButtonControl btnClose = null;
@@ -76,7 +76,7 @@ namespace MediaPortal.GUI.TV
     /// <summary>
     /// Constructor
     /// </summary>
-    public GUICropSettings()
+    public GUITVCropSettings()
     {
       GetID = (int)GUIWindow.Window.WINDOW_TV_CROP_SETTINGS;
     }

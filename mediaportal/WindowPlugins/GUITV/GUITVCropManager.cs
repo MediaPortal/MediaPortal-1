@@ -41,16 +41,12 @@ namespace MediaPortal.GUI.TV
 {
   public class GUITVCropManager
   {
-    bool _wasTimeshifting;
-    int _previousCard = -1;
-    object _mutex = new object();
 
     #region Ctor/Dtor
 
     public GUITVCropManager()
     {
       Recorder.OnTvViewingStarted += new Recorder.OnTvViewHandler(Recorder_OnTvViewingStarted);
-      Recorder.OnTvViewingStopped += new Recorder.OnTvViewHandler(Recorder_OnTvViewingStopped);
       g_Player.PlayBackStarted += new g_Player.StartedHandler(g_Player_PlayBackStarted);
       Log.Info("GUITVCropManager: Started");
     }
@@ -58,7 +54,6 @@ namespace MediaPortal.GUI.TV
     ~GUITVCropManager()
     {
       Recorder.OnTvViewingStarted -= new Recorder.OnTvViewHandler(Recorder_OnTvViewingStarted);
-      Recorder.OnTvViewingStopped -= new Recorder.OnTvViewHandler(Recorder_OnTvViewingStopped);
       g_Player.PlayBackStarted -= new g_Player.StartedHandler(g_Player_PlayBackStarted);
       Log.Info("GUITVCropManager: Stopped");
     }
@@ -75,21 +70,7 @@ namespace MediaPortal.GUI.TV
       if (Recorder.IsViewing() && !Recorder.IsTimeShifting())
       {
         Log.Debug("GUITVCropManager.Recorder_OnTvViewingStarted: not timeshifting");
-        SendCropMessage(card, device, Recorder.IsTimeShifting());
-      }
-    }
-
-    /// <summary>
-    /// Gets called by the Recorder when viewing of TV stopped.
-    /// </summary>
-    /// <param name="card"></param>
-    /// <param name="device"></param>
-    void Recorder_OnTvViewingStopped(int card, TVCaptureDevice device)
-    {
-      Log.Debug("GUITVCropManager.Recorder_OnTvViewingStopped");
-      lock (_mutex)
-      {
-        _previousCard = -1;
+        SendCropMessage(device);
       }
     }
 
@@ -105,7 +86,7 @@ namespace MediaPortal.GUI.TV
         Log.Debug("GUITVCropManager.g_Player_PlackBackStarted: media: {0} tv:{1} ts:{2}", type, g_Player.IsTV, g_Player.IsTimeShifting);
         if (type == g_Player.MediaType.TV && !g_Player.IsTVRecording)
         {
-          SendCropMessage(Recorder.CommandProcessor.CurrentCardIndex, Recorder.CommandProcessor.TVCards[Recorder.CommandProcessor.CurrentCardIndex], Recorder.IsTimeShifting());
+          SendCropMessage(Recorder.CommandProcessor.TVCards[Recorder.CommandProcessor.CurrentCardIndex]);
         }
         else if (g_Player.IsTVRecording)
         {
@@ -113,7 +94,7 @@ namespace MediaPortal.GUI.TV
           if (TVDatabase.GetRecordedTVByFilename(filename, ref recording))
           {
             Log.Debug("GUITVCropManager.g_Player_PlackBackStarted: cropping recorded tv:{0} card:{1}", filename, recording.RecordedCardIndex);
-            SendCropMessage(recording.RecordedCardIndex - 1, Recorder.CommandProcessor.TVCards[recording.RecordedCardIndex - 1], true);
+            SendCropMessage(Recorder.CommandProcessor.TVCards[recording.RecordedCardIndex - 1]);
           }
         }
       }
@@ -124,19 +105,10 @@ namespace MediaPortal.GUI.TV
     /// </summary>
     /// <param name="card">current card index</param>
     /// <param name="device">current TvCaptureDevice</param>
-    void SendCropMessage(int card, TVCaptureDevice device, bool isTimeshifting)
+    void SendCropMessage(TVCaptureDevice device)
     {
-      lock (_mutex)
-      {
-        Log.Debug("GUITVCropManager.SendCropMessage: previous:{0} current:{1}", _previousCard, card);
-        if (_previousCard != card || _wasTimeshifting != isTimeshifting || isTimeshifting)
-        {
-          _wasTimeshifting = isTimeshifting;
-          _previousCard = card;
-          device.SendCropMessage();
-          Log.Debug("GUITVCropManager.SendCropMessage: message sent");
-        }
-      }
+      Log.Debug("GUITVCropManager.SendCropMessage: send message for card:{0}", device.CommercialName);
+      device.SendCropMessage();
     }
 
   }

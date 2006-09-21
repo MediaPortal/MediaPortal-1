@@ -801,7 +801,6 @@
     <Compile Include="GUITrailers\TrailersUtility.cs" />
     <Compile Include="GUITrailers\TSRVodTrailers.cs" />
     <Compile Include="GUITrailers\YahooTrailers.cs" />
-    <Compile Include="GUITV\GUICropSettings.cs" />
     <Compile Include="GUITV\GUIFullscreenTeletext.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -837,6 +836,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="GUITV\GUITVCropManager.cs" />
+    <Compile Include="GUITV\GUITVCropSettings.cs" />
     <Compile Include="GUITV\GUITVGuide.cs">
       <SubType>Code</SubType>
     </Compile>

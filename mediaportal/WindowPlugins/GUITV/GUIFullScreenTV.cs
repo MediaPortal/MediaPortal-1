@@ -1455,7 +1455,7 @@ namespace MediaPortal.GUI.TV
           GUIWindowManager.ShowPreviousWindow();
           break;
         case 11000:
-          GUICropSettings cropSettings = (GUICropSettings)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TV_CROP_SETTINGS);
+          GUITVCropSettings cropSettings = (GUITVCropSettings)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TV_CROP_SETTINGS);
           _isDialogVisible = true;
           cropSettings.DoModal(GetID);
           _isDialogVisible = false;
