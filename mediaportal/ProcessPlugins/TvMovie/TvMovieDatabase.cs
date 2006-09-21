@@ -47,6 +47,10 @@ namespace ProcessPlugins.TvMovie
     private ArrayList _stations = null;
     private ArrayList _channelList = null;
     private int _programsCounter = 0;
+    private bool _useShortProgramDesc = false;
+    private bool _extendDescription = false;
+    private bool _showAudioFormat = false;
+    private bool _slowImport = false;
 
     static string _xmlFile;
 
@@ -223,17 +227,24 @@ namespace ProcessPlugins.TvMovie
 
     public TvMovieDatabase()
     {
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      {
+        _useShortProgramDesc = xmlreader.GetValueAsBool("tvmovie", "shortprogramdesc", false);
+        _extendDescription = xmlreader.GetValueAsBool("tvmovie", "extenddescription", false);
+        _showAudioFormat = xmlreader.GetValueAsBool("tvmovie", "showaudioformat", false);
+        _slowImport = xmlreader.GetValueAsBool("tvmovie", "slowimport", false);
+      }
+
       _xmlFile = Config.Get(Config.Dir.Config) + "TVMovieMapping.xml";
 
       string dataProviderString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source={0}";
 
-      Log.Info("TVMovie: DB path: {0}", DatabasePath);
+      Log.Debug("TVMovie: DB path: {0}", DatabasePath);
 
       if (DatabasePath != string.Empty)
         dataProviderString = string.Format(dataProviderString, DatabasePath);
       else
         return;
-
 
       _databaseConnection = new OleDbConnection(dataProviderString);
 
@@ -250,8 +261,8 @@ namespace ProcessPlugins.TvMovie
       }
       catch (System.Data.OleDb.OleDbException ex)
       {
-        Log.Info("TVMovie: Error accessing TV Movie Clickfinder database while reading stations");
-        Log.Info("TVMovie: Exception: {0}", ex);
+        Log.Error("TVMovie: Error accessing TV Movie Clickfinder database while reading stations");
+        Log.Error("TVMovie: Exception: {0}", ex);
         _canceled = true;
         return;
       }
@@ -273,7 +284,7 @@ namespace ProcessPlugins.TvMovie
     {
       if (!File.Exists(_xmlFile))
       {
-        Log.Info("TVMovie: Mapping file \"{0}\" does not exist", _xmlFile);
+        Log.Error("TVMovie: Mapping file \"{0}\" does not exist", _xmlFile);
         return null;
       }
       ArrayList mappingList = new ArrayList();
@@ -304,8 +315,8 @@ namespace ProcessPlugins.TvMovie
       }
       catch (System.Xml.XmlException ex)
       {
-        Log.Info("TVMovie: The mapping file \"{0}\" seems to be corrupt", _xmlFile);
-        Log.Info("TVMovie: {0}", ex.Message);
+        Log.Error("TVMovie: The mapping file \"{0}\" seems to be corrupt", _xmlFile);
+        Log.Error("TVMovie: {0}", ex.Message);
         return null;
       }
 
@@ -395,33 +406,23 @@ namespace ProcessPlugins.TvMovie
 
     private int ImportStation(string stationName, ArrayList channelNames)
     {
-      bool useShortProgramDesc = false;
-      bool extendDescription = false;
-      bool showAudioFormat = false;
-      bool slowImport = false;
+      Log.Debug("TVMovie: ImportStation({0})", stationName);
+
       string sqlSelect = string.Empty;
       string audioFormat = String.Empty;
 
       if (_databaseConnection == null)
         return 0;
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      if (_useShortProgramDesc)
       {
-        useShortProgramDesc = xmlreader.GetValueAsBool("tvmovie", "shortprogramdesc", false);
-        extendDescription = xmlreader.GetValueAsBool("tvmovie", "extenddescription", false);
-        showAudioFormat = xmlreader.GetValueAsBool("tvmovie", "showaudioformat", false);
-        slowImport = xmlreader.GetValueAsBool("tvmovie", "slowimport", false);
-      }
-
-      if (useShortProgramDesc)
-      {
-        if (showAudioFormat)
+        if (_showAudioFormat)
           sqlSelect = string.Format("SELECT TVDaten.FSK, TVDaten.Herstellungsjahr, TVDaten.KurzBeschreibung, TVDaten.Ende, TVDaten.Originaltitel, TVDaten.Genre, TVDaten.Wiederholung, TVDaten.Interessant, TVDaten.Beginn, TVDaten.Sendung, TVDaten.Audiodescription, TVDaten.DolbySuround, TVDaten.Stereo, TVDaten.DolbyDigital, TVDaten.Dolby, TVDaten.Zweikanalton FROM TVDaten WHERE (((TVDaten.SenderKennung)=\"{0}\") AND ([Ende]>=Now())) ORDER BY TVDaten.Beginn;", stationName);
         else
           sqlSelect = string.Format("SELECT TVDaten.FSK, TVDaten.Herstellungsjahr, TVDaten.KurzBeschreibung, TVDaten.Ende, TVDaten.Originaltitel, TVDaten.Genre, TVDaten.Wiederholung, TVDaten.Interessant, TVDaten.Beginn, TVDaten.Sendung FROM TVDaten WHERE (((TVDaten.SenderKennung)=\"{0}\") AND ([Ende]>=Now())) ORDER BY TVDaten.Beginn;", stationName);
       }
       else
-        if (showAudioFormat)
+        if (_showAudioFormat)
           sqlSelect = string.Format("SELECT TVDaten.FSK, TVDaten.Herstellungsjahr, TVDaten.Beschreibung, TVDaten.Ende, TVDaten.Originaltitel, TVDaten.Genre, TVDaten.Wiederholung, TVDaten.Interessant, TVDaten.Beginn, TVDaten.Sendung, TVDaten.Audiodescription, TVDaten.DolbySuround, TVDaten.Stereo, TVDaten.DolbyDigital, TVDaten.Dolby, TVDaten.Zweikanalton FROM TVDaten WHERE (((TVDaten.SenderKennung)=\"{0}\") AND ([Ende]>=Now())) ORDER BY TVDaten.Beginn;", stationName);
         else
           sqlSelect = string.Format("SELECT TVDaten.FSK, TVDaten.Herstellungsjahr, TVDaten.Beschreibung, TVDaten.Ende, TVDaten.Originaltitel, TVDaten.Genre, TVDaten.Wiederholung, TVDaten.Interessant, TVDaten.Beginn, TVDaten.Sendung FROM TVDaten WHERE (((TVDaten.SenderKennung)=\"{0}\") AND ([Ende]>=Now())) ORDER BY TVDaten.Beginn;", stationName);
@@ -431,6 +432,8 @@ namespace ProcessPlugins.TvMovie
 
       DataSet tvMovieTable = new DataSet();
 
+      Log.Debug("TVMovie: Getting data for station");
+
       try
       {
         _databaseConnection.Open();
@@ -438,8 +441,8 @@ namespace ProcessPlugins.TvMovie
       }
       catch (System.Data.OleDb.OleDbException ex)
       {
-        Log.Info("TVMovie: Error accessing TV Movie Clickfinder database - Current import canceled, waiting for next schedule");
-        Log.Info("TVMovie: Exception: {0}", ex);
+        Log.Error("TVMovie: Error accessing TV Movie Clickfinder database - Current import canceled, waiting for next schedule");
+        Log.Error("TVMovie: Exception: {0}", ex);
         return 0;
       }
       finally
@@ -447,12 +450,16 @@ namespace ProcessPlugins.TvMovie
         _databaseConnection.Close();
       }
 
+      Log.Debug("TVMovie: Getting data for station done");
+
       int programsCount = tvMovieTable.Tables["TVDaten"].Rows.Count;
 
       if (OnProgramsChanged != null)
         OnProgramsChanged(0, programsCount + 1, string.Empty);
 
       int counter = 0;
+
+      Log.Debug("TVMovie: Importing data for station");
 
       foreach (DataRow guideEntry in tvMovieTable.Tables["TVDaten"].Rows)
       {
@@ -463,7 +470,7 @@ namespace ProcessPlugins.TvMovie
         string classification = guideEntry["FSK"].ToString();             // strClassification ==> FSK
         string date = guideEntry["Herstellungsjahr"].ToString();          // strDate ==> Herstellungsjahr
         string description;
-        if (useShortProgramDesc)
+        if (_useShortProgramDesc)
           description = guideEntry["KurzBeschreibung"].ToString();
         else
           description = guideEntry["Beschreibung"].ToString();            // strDescription ==> Beschreibung
@@ -478,7 +485,7 @@ namespace ProcessPlugins.TvMovie
         DateTime start = DateTime.Parse(guideEntry["Beginn"].ToString()); // iStartTime ==> Beginn (15.06.2006 22:45:00 ==> 20060615224500)
         string title = guideEntry["Sendung"].ToString();                  // strTitle ==> Sendung
 
-        if (showAudioFormat)
+        if (_showAudioFormat)
         {
           bool audioDesc = Convert.ToBoolean(guideEntry["Audiodescription"]);     // strAudioDesc ==> Tonformat "Stereo"
           bool dolbyDigital = Convert.ToBoolean(guideEntry["DolbyDigital"]);
@@ -520,7 +527,7 @@ namespace ProcessPlugins.TvMovie
             if (starRating != -1)
               epgEntry.StarRating = string.Format("{0}/5", starRating);
 
-            if (extendDescription)
+            if (_extendDescription)
             {
               StringBuilder sb = new StringBuilder();
 
@@ -538,11 +545,14 @@ namespace ProcessPlugins.TvMovie
             }
 
             TVDatabase.UpdateProgram(epgEntry);
-            if (slowImport)
+            if (_slowImport)
               Thread.Sleep(50);
           }
         }
       }
+
+      Log.Debug("TVMovie: Importing data for station done");
+
       if (OnProgramsChanged != null)
         OnProgramsChanged(programsCount + 1, programsCount + 1, string.Empty);
       return counter;
@@ -579,16 +589,19 @@ namespace ProcessPlugins.TvMovie
 
       if (mappingList == null)
       {
-        Log.Info("TVMovie: Cannot import from TV Movie database");
+        Log.Error("TVMovie: Cannot import from TV Movie database");
         return;
       }
 
-      Log.Info("TVMovie: Importing database");
+      Log.Debug("TVMovie: Importing database");
 
+      Log.Debug("TVMovie: Removal of old EPG data");
       TVDatabase.RemoveOldPrograms();
+      Log.Debug("TVMovie: Removal done");
 
       int maximum = 0;
 
+      Log.Debug("TVMovie: Calculating stations");
       foreach (string station in _stations)
         foreach (Mapping mapping in mappingList)
           if (mapping.Station == station)
@@ -598,8 +611,11 @@ namespace ProcessPlugins.TvMovie
           }
       if (OnStationsChanged != null)
         OnStationsChanged(1, maximum, string.Empty);
+      Log.Debug("TVMovie: Calculating stations done");
 
       int counter = 0;
+
+      Log.Debug("TVMovie: Importing stations");
 
       foreach (string station in _stations)
       {
@@ -628,6 +644,10 @@ namespace ProcessPlugins.TvMovie
       if (OnStationsChanged != null)
         OnStationsChanged(maximum, maximum, "Import done");
 
+      Log.Debug("TVMovie: Importing stations done");
+
+      Log.Debug("TVMovie: Setting last update time stamp");
+
       if (!_canceled)
       {
         long lastUpdate = 0;
@@ -644,6 +664,8 @@ namespace ProcessPlugins.TvMovie
 
         MediaPortal.Profile.Settings.SaveCache();
       }
+
+      Log.Debug("TVMovie: Setting last update time stamp done");
 
       Log.Info("TVMovie: Imported {0} database entries for {1} stations", _programsCounter, counter);
     }

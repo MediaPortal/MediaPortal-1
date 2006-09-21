@@ -45,7 +45,7 @@ namespace ProcessPlugins.TvMovie
     {
       _isImporting = true;
 
-      Log.Info("TVMovie: Checking database");
+      Log.Debug("TVMovie: Checking database");
       _database = new TvMovieDatabase();
 
       if (_database.WasUpdated)
