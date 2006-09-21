@@ -132,6 +132,64 @@ namespace MediaPortal.GUI.RADIOLASTFM
     {
       if (control == btnLastFM)
       {
+        bool isSubscriber = LastFMStation.IsSubscriber;
+        StreamType TuneIntoSelected = LastFMStation.CurrentTuneType;
+
+        GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+
+        if (dlg == null)
+          return;
+
+        dlg.Reset();
+        dlg.SetHeading(34001);                // Start Stream
+        dlg.Add("Recommendation radio");
+        dlg.Add("MediaPortal User's group radio");
+
+        if (isSubscriber)
+          dlg.Add("Personal radio");
+        //....
+
+        dlg.DoModal(GetID);
+
+        if (dlg.SelectedId == -1)
+          return;
+
+        // this will be buttons soon containing chosen users
+        switch (dlg.SelectedLabelText)
+        {
+          case "Recommendation radio":
+            TuneIntoSelected = StreamType.Recommended;
+            LastFMStation.StreamsUser = LastFMStation.AccountUser;
+            break;
+          case "MediaPortal User's group radio":
+            TuneIntoSelected = StreamType.Group;
+            LastFMStation.StreamsUser = "MediaPortal Users";
+            break;
+          case "Personal radio":
+            TuneIntoSelected = StreamType.Personal;
+            LastFMStation.StreamsUser = LastFMStation.AccountUser;
+            break;
+        }
+
+        if (LastFMStation.CurrentTuneType != TuneIntoSelected)
+        {
+          g_Player.Stop();
+          switch (TuneIntoSelected)
+          {
+            case StreamType.Recommended:
+              LastFMStation.TuneIntoRecommendedRadio(LastFMStation.StreamsUser);
+              break;
+
+            case StreamType.Group:
+              LastFMStation.TuneIntoGroupRadio(LastFMStation.StreamsUser);
+              break;
+
+            case StreamType.Personal:
+              LastFMStation.TuneIntoPersonalRadio(LastFMStation.AccountUser);
+              break;
+          }
+        }
+
         if (LastFMStation.CurrentStreamState == StreamPlaybackState.initialized)
         {
           LastFMStation.PlayStream();
@@ -153,8 +211,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       return base.OnMessage(message);
     }
     #endregion
-
-
+    
     #region Handlers
     private void PlayBackStoppedHandler(g_Player.MediaType type, int stoptime, string filename)
     {
@@ -224,7 +281,12 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     public bool CanEnable()
     {
-      return true;
+      bool AudioScrobblerOn = false;
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      {
+        AudioScrobblerOn = xmlreader.GetValueAsBool("plugins", "Audioscrobbler", false);
+      }
+      return AudioScrobblerOn;
     }
 
     public bool DefaultEnabled()
@@ -255,7 +317,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     public void ShowPlugin()
     {
-      MessageBox.Show("Nothing to setup now. \nPlaying your recommendation radio");
+      MessageBox.Show("Nothing to setup now. \nPlaying your recommendation radio.");
     }
     #endregion
   }

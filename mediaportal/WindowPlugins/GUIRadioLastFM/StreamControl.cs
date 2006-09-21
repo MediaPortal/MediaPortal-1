@@ -53,6 +53,17 @@ namespace MediaPortal.GUI.RADIOLASTFM
   {
     skiptrack = 0,
     lovetrack = 1,
+    bantrack = 2,
+  }
+
+  public enum StreamType : int
+  {
+    Artist = 0,
+    Group = 1,
+    Loved = 2,
+    Personal = 3,
+    Recommended = 4,
+    Tags = 5,
   }
 
   class StreamControl
@@ -62,6 +73,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     private string _currentRadioURL = String.Empty;
     private string _currentSession = String.Empty;
     private string _currentUser = String.Empty;
+    private string _currentStreamsUser = String.Empty;
     private bool _isSubscriber = false;
     private bool _recordToProfile = true;
     private bool _discoveryMode = false;
@@ -71,22 +83,13 @@ namespace MediaPortal.GUI.RADIOLASTFM
     private MusicTag CurrentSongTag;
     private System.Timers.Timer _nowPlayingTimer;
     private StreamPlaybackState _currentState = StreamPlaybackState.offline;
+    private StreamType _currentTuneType = StreamType.Recommended;
 
-    // TO DO: 
-    // Steps to get a stream:
-    // 1. http.request.uri = Request URI: http://ws.audioscrobbler.com/radio/adjust.php?session=e5b0c80f5b5d0937d407fb77a913cb6a&url=lastfm://globaltags/alternative%20rock,ebm,progressive%20rock
-    // or http.request.uri = Request URI: http://ws.audioscrobbler.com/radio/adjust.php?session=e5b0c80f5b5d0937d407fb77a913cb6a&url=lastfm://artist/Subway%20To%20Sally/similarartists
-    // or http.request.uri = Request URI: http://ws.audioscrobbler.com/radio/adjust.php?session=e5b0c80f5b5d0937d407fb77a913cb6a&url=lastfm://user/f1n4rf1n/personal
-    // or http.request.uri = Request URI: http://ws.audioscrobbler.com/radio/adjust.php?session=e5b0c80f5b5d0937d407fb77a913cb6a&url=lastfm://user/f1n4rf1n/neighbours
-    // or http.request.uri = Request URI: http://ws.audioscrobbler.com/radio/adjust.php?session=e5b0c80f5b5d0937d407fb77a913cb6a&url=lastfm://user/f1n4rf1n/recommended
-    // or http.request.uri = Request URI: http://ws.audioscrobbler.com/radio/adjust.php?session=e5b0c80f5b5d0937d407fb77a913cb6a&url=lastfm://group/MediaPortal%20Users
+    private DateTime _lastConnectAttempt = DateTime.MinValue;
+    private TimeSpan _minConnectWaitTime = new TimeSpan(0, 0, 3);
 
-    // 2. http.request.uri = Request URI: http://streamer1.last.fm/last.mp3?Session=e5b0c80f5b5d0937d407fb77a913cb6a
-    // 3. http.request.uri = Request URI: http://ws.audioscrobbler.com/radio/control.php?session=e5b0c80f5b5d0937d407fb77a913cb6a&command=rtp
-    // 4. http.request.uri = Request URI: http://ws.audioscrobbler.com/radio/adjust.php?session=e5b0c80f5b5d0937d407fb77a913cb6a&url=lastfm://settings/discovery/off
 
-    // TASKS:
-    // Stopwatch and Parser for nowplaying
+    #region Examples
     // 5. http.request.uri = Request URI: http://ws.audioscrobbler.com/radio/np.php?session=e5b0c80f5b5d0937d407fb77a913cb6a
     // 6. http.request.uri = Request URI: http://ws.audioscrobbler.com/ass/artistmetadata.php?artist=Sportfreunde%20Stiller&lang=en
     // 7. http.request.uri = Request URI: http://ws.audioscrobbler.com/ass/metadata.php?artist=Sportfreunde%20Stiller&track=Alles%20Das&album=Macht%20doch%20was%20ihr%20wollt%20-%20Ich%20geh%2527%20jetzt%2521
@@ -112,6 +115,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     //trackduration=222
     //radiomode=1
     //recordtoprofile=1
+    #endregion
 
     #region Serialisation
     private void LoadSettings()
@@ -128,6 +132,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
       if (_currentUser.Length > 0)
       {
         _currentSession = AudioscrobblerBase.RadioSession;
+        // for now..
+        _currentStreamsUser = _currentUser;
 
         if (_currentSession != String.Empty)
         {
@@ -140,14 +146,33 @@ namespace MediaPortal.GUI.RADIOLASTFM
           //MyTags.Add("melodic death metal");
           //TuneIntoTags(MyTags);
           //TuneIntoPersonalRadio();
-          //TuneIntoPersonalRadio(_currentUser);  <-- subscriber only
-          //TuneIntoGroupRadio("MediaPortal Users");
-          TuneIntoRecommendedRadio(_currentUser); 
+          //TuneIntoPersonalRadio(_currentStreamsUser);  <-- subscriber only
+          //TuneIntoGroupRadio(_currentStreamsUser);
+          //TuneIntoRecommendedRadio(_currentStreamsUser); 
           _isInit = true;
         }
       }
     }
     #endregion
+
+    public string AccountUser
+    {
+      get { return _currentUser; }
+    }
+
+    public string StreamsUser
+    {
+      get { return _currentStreamsUser; }
+
+      set
+      {
+        if (value != _currentStreamsUser)
+        {
+          _currentStreamsUser = value;
+          Log.Debug("GUIRadioLastFM: Setting StreamsUser to {0}", _currentStreamsUser);
+        }
+      }
+    }
 
     /// <summary>
     /// URL for playback with buffering audioplayers
@@ -155,6 +180,18 @@ namespace MediaPortal.GUI.RADIOLASTFM
     public string CurrentStream
     {
       get { return _currentRadioURL; }
+    }
+
+    public StreamType CurrentTuneType
+    {
+      get { return _currentTuneType; }
+
+      //set
+      //{
+      //  if (value != _currentTuneType)
+      //    _currentTuneType = value;
+      //  Log.Debug("GUIRadioLastFM: Setting CurrentTuneType to {0}", _currentTuneType.ToString());
+      //}
     }
 
     public StreamPlaybackState CurrentStreamState
@@ -168,6 +205,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
         Log.Debug("GUIRadioLastFM: Setting CurrentStreamState to {0}", _currentState.ToString());
       }
     }
+
+
 
     public MusicTag CurrentTrackTag
     {
@@ -211,7 +250,14 @@ namespace MediaPortal.GUI.RADIOLASTFM
       get { return _isInit; }
     }
 
-
+    /// <summary>
+    /// Determines if the user has access to restricted streams
+    /// </summary>
+    public bool IsSubscriber
+    {
+      get { return _isSubscriber; }
+    }
+    
 
     #region Control functions
 
@@ -224,13 +270,9 @@ namespace MediaPortal.GUI.RADIOLASTFM
         if (g_Player.Play(_currentRadioURL))
         {
           _currentState = StreamPlaybackState.streaming;
-          Thread.Sleep(50);
           ToggleRecordToProfile(_recordToProfile);
-          Thread.Sleep(50);
           ToggleDiscoveryMode(_discoveryMode);
-          Thread.Sleep(50);
           _nowPlayingTimer.Start();
-          Thread.Sleep(50);
           UpdateNowPlaying();
 
           return true;
@@ -354,9 +396,9 @@ namespace MediaPortal.GUI.RADIOLASTFM
           case StreamControls.skiptrack:
             if (SendCommandRequest(baseUrl + @"&command=skip"))
             {
-              Thread.Sleep(750);
+              Thread.Sleep(1000);
               Log.Info("GUIRadioLastFM: Successfully send skip command");
-              Thread.Sleep(750);
+              Thread.Sleep(1000);
               success = true;
               Thread.Sleep(750);
               // the website has to refresh therefore we wait a little bit
@@ -369,6 +411,19 @@ namespace MediaPortal.GUI.RADIOLASTFM
             {
               Log.Info("GUIRadioLastFM: Track added to loved tracks list");
               success = true;
+            }
+            break;
+          case StreamControls.bantrack:
+            if (SendCommandRequest(baseUrl + @"&command=ban"))
+            {
+              Thread.Sleep(1000);
+              Log.Info("GUIRadioLastFM: Track added to banned tracks list");
+              Thread.Sleep(1000);
+              success = true;
+              Thread.Sleep(750);
+              // the website has to refresh therefore we wait a little bit
+              Thread.Sleep(750);
+              UpdateNowPlaying();
             }
             break;
         }
@@ -387,6 +442,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
       if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/adjust.php?session=" + _currentSession + @"&url=lastfm://user/" + TuneUser + "/personal"))
       {
+        _currentTuneType = StreamType.Personal;
         Log.Info("GUIRadioLastFM: Tune into personal station of: {0}", username_);
         return true;
       }
@@ -400,6 +456,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
       if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/adjust.php?session=" + _currentSession + @"&url=lastfm://user/" + TuneUser + "/loved"))
       {
+        _currentTuneType = StreamType.Loved;
         Log.Info("GUIRadioLastFM: Tune into loved tracks of: {0}", username_);
         return true;
       }
@@ -413,6 +470,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
       if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/adjust.php?session=" + _currentSession + @"&url=lastfm://group/" + TuneGroup))
       {
+        _currentTuneType = StreamType.Group;
         Log.Info("GUIRadioLastFM: Tune into group radio for: {0}", groupname_);
         return true;
       }
@@ -426,6 +484,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
       if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/adjust.php?session=" + _currentSession + @"&url=lastfm://user/" + TuneUser + "/recommended"))
       {
+        _currentTuneType = StreamType.Recommended;
         Log.Info("GUIRadioLastFM: Tune into recommended station for: {0}", username_);
         return true;
       }
@@ -439,6 +498,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
       if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/adjust.php?session=" + _currentSession + @"&url=lastfm://artist/" + TuneArtist + "/similarartists"))
       {
+        _currentTuneType = StreamType.Artist;
         Log.Info("GUIRadioLastFM: Tune into artists similar to: {0}", artist_);
         return true;
       }
@@ -459,6 +519,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
       if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/adjust.php?session=" + _currentSession + @"&url=lastfm://globaltags/" + TuneTags))
       {
+        _currentTuneType = StreamType.Tags;
         Log.Info("GUIRadioLastFM: Tune into tags: {0}", TuneTags);
         return true;
       }
@@ -470,6 +531,17 @@ namespace MediaPortal.GUI.RADIOLASTFM
     #region Network related
     private bool SendCommandRequest(string url_)
     {
+      // Enforce a minimum wait time between connects.
+      DateTime nextconnect = _lastConnectAttempt.Add(_minConnectWaitTime);
+      if (DateTime.Now < nextconnect)
+      {
+        TimeSpan waittime = nextconnect - DateTime.Now;
+        string logmessage = "Avoiding too fast connects. Sleeping until " + nextconnect.ToString();
+        Log.Debug("GUIRadioLastFM: {0}", logmessage);
+        Thread.Sleep(waittime);
+      }
+      _lastConnectAttempt = DateTime.Now;
+
       HttpWebRequest request = null;
 
       // send the command
