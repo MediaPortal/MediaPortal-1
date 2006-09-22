@@ -68,6 +68,10 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
   class StreamControl
   {
+    public delegate void SongChangedHandler(MusicTag newCurrentSong, DateTime startTime);
+    public event SongChangedHandler StreamSongChanged;
+    //static public event SongChangedHandler StreamSongChanged;
+
     protected AudioscrobblerUtils InfoScrobbler;
 
     private string _currentRadioURL = String.Empty;
@@ -169,7 +173,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         if (value != _currentStreamsUser)
         {
           _currentStreamsUser = value;
-          Log.Debug("GUIRadioLastFM: Setting StreamsUser to {0}", _currentStreamsUser);
+          Log.Debug("StreamControl: Setting StreamsUser to {0}", _currentStreamsUser);
         }
       }
     }
@@ -190,7 +194,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       //{
       //  if (value != _currentTuneType)
       //    _currentTuneType = value;
-      //  Log.Debug("GUIRadioLastFM: Setting CurrentTuneType to {0}", _currentTuneType.ToString());
+      //  Log.Debug("StreamControl: Setting CurrentTuneType to {0}", _currentTuneType.ToString());
       //}
     }
 
@@ -202,7 +206,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       {
         if (value != _currentState)
           _currentState = value;
-        Log.Debug("GUIRadioLastFM: Setting CurrentStreamState to {0}", _currentState.ToString());
+        Log.Debug("StreamControl: Setting CurrentStreamState to {0}", _currentState.ToString());
       }
     }
 
@@ -358,7 +362,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         {
           success = true;
           _recordToProfile = true;
-          Log.Info("GUIRadioLastFM: Enabled submitting of radio tracks to profile");
+          Log.Info("StreamControl: Enabled submitting of radio tracks to profile");
         }
       }
       else
@@ -366,7 +370,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         {
           success = true;
           _recordToProfile = false;
-          Log.Info("GUIRadioLastFM: Disabled submitting of radio tracks to profile");
+          Log.Info("StreamControl: Disabled submitting of radio tracks to profile");
         }
       return success;
     }
@@ -380,7 +384,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       {
         success = true;
         _discoveryMode = enableDiscovery_;
-        Log.Info("GUIRadioLastFM: Toggled discovery mode {0}", actionCommand);
+        Log.Info("StreamControl: Toggled discovery mode {0}", actionCommand);
       }
 
       return success;
@@ -398,7 +402,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
           case StreamControls.skiptrack:
             if (SendCommandRequest(baseUrl + @"&command=skip"))
             {
-              Log.Info("GUIRadioLastFM: Successfully send skip command");
+              Log.Info("StreamControl: Successfully send skip command");
               success = true;
               Thread.Sleep(750);
               // the website has to refresh therefore we wait a little bit
@@ -409,14 +413,14 @@ namespace MediaPortal.GUI.RADIOLASTFM
           case StreamControls.lovetrack:
             if (SendCommandRequest(baseUrl + @"&command=love"))
             {
-              Log.Info("GUIRadioLastFM: Track added to loved tracks list");
+              Log.Info("StreamControl: Track added to loved tracks list");
               success = true;
             }
             break;
           case StreamControls.bantrack:
             if (SendCommandRequest(baseUrl + @"&command=ban"))
             {
-              Log.Info("GUIRadioLastFM: Track added to banned tracks list");
+              Log.Info("StreamControl: Track added to banned tracks list");
               success = true;
               Thread.Sleep(750);
               // the website has to refresh therefore we wait a little bit
@@ -427,7 +431,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         }
       }
       else
-        Log.Info("GUIRadioLastFM: Currently not streaming - ignoring command");
+        Log.Info("StreamControl: Currently not streaming - ignoring command");
 
       return success;
     }
@@ -441,7 +445,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/adjust.php?session=" + _currentSession + @"&url=lastfm://user/" + TuneUser + "/personal"))
       {
         _currentTuneType = StreamType.Personal;
-        Log.Info("GUIRadioLastFM: Tune into personal station of: {0}", username_);
+        Log.Info("StreamControl: Tune into personal station of: {0}", username_);
         return true;
       }
       else
@@ -455,7 +459,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/adjust.php?session=" + _currentSession + @"&url=lastfm://user/" + TuneUser + "/loved"))
       {
         _currentTuneType = StreamType.Loved;
-        Log.Info("GUIRadioLastFM: Tune into loved tracks of: {0}", username_);
+        Log.Info("StreamControl: Tune into loved tracks of: {0}", username_);
         return true;
       }
       else
@@ -469,7 +473,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/adjust.php?session=" + _currentSession + @"&url=lastfm://group/" + TuneGroup))
       {
         _currentTuneType = StreamType.Group;
-        Log.Info("GUIRadioLastFM: Tune into group radio for: {0}", groupname_);
+        Log.Info("StreamControl: Tune into group radio for: {0}", groupname_);
         return true;
       }
       else
@@ -483,7 +487,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/adjust.php?session=" + _currentSession + @"&url=lastfm://user/" + TuneUser + "/recommended"))
       {
         _currentTuneType = StreamType.Recommended;
-        Log.Info("GUIRadioLastFM: Tune into recommended station for: {0}", username_);
+        Log.Info("StreamControl: Tune into recommended station for: {0}", username_);
         return true;
       }
       else
@@ -497,7 +501,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/adjust.php?session=" + _currentSession + @"&url=lastfm://artist/" + TuneArtist + "/similarartists"))
       {
         _currentTuneType = StreamType.Artist;
-        Log.Info("GUIRadioLastFM: Tune into artists similar to: {0}", artist_);
+        Log.Info("StreamControl: Tune into artists similar to: {0}", artist_);
         return true;
       }
       else
@@ -518,7 +522,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/adjust.php?session=" + _currentSession + @"&url=lastfm://globaltags/" + TuneTags))
       {
         _currentTuneType = StreamType.Tags;
-        Log.Info("GUIRadioLastFM: Tune into tags: {0}", TuneTags);
+        Log.Info("StreamControl: Tune into tags: {0}", TuneTags);
         return true;
       }
       else
@@ -534,7 +538,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       if (DateTime.Now < nextconnect)
       {
         TimeSpan waittime = nextconnect - DateTime.Now;
-        Log.Debug("GUIRadioLastFM: Avoiding too fast connects for {0} - sleeping until {1}", url_, nextconnect.ToString());
+        Log.Debug("StreamControl: Avoiding too fast connects for {0} - sleeping until {1}", url_, nextconnect.ToString());
         Thread.Sleep(waittime);
       }
       _lastConnectAttempt = DateTime.Now;
@@ -555,7 +559,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       }
       catch (Exception e)
       {
-        Log.Error("GUIRadioLastFM: SendCommandRequest failed - {0}", e.Message);
+        Log.Error("StreamControl: SendCommandRequest failed - {0}", e.Message);
         return false;
       }
 
@@ -575,7 +579,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       }
       catch (Exception e)
       {
-        Log.Error("GUIRadioLastFM: SendCommandRequest: Response failed {0}", e.Message);
+        Log.Error("StreamControl: SendCommandRequest: Response failed {0}", e.Message);
         return false;
       }
 
@@ -597,14 +601,14 @@ namespace MediaPortal.GUI.RADIOLASTFM
         }
         else
         {
-          string logmessage = "GUIRadioLastFM: ***** Unknown response! - " + responseMessage;
+          string logmessage = "StreamControl: ***** Unknown response! - " + responseMessage;
           while ((responseMessage = reader.ReadLine()) != null)
             logmessage += "\n" + responseMessage;
 
           if (logmessage.Contains("Not enough content"))
           {
             _currentState = StreamPlaybackState.nocontent;
-            Log.Warn("GUIRadioLastFM: Not enough content left to play this station");
+            Log.Warn("StreamControl: Not enough content left to play this station");
             return false;
           }
           else
@@ -613,7 +617,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       }
       catch (Exception e)
       {
-        Log.Error("GUIRadioLastFM: SendCommandRequest: Parsing response failed {0}", e.Message);
+        Log.Error("StreamControl: SendCommandRequest: Parsing response failed {0}", e.Message);
         return false;
       }
 
@@ -687,6 +691,9 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
         if (CurrentSongTag.Title != prevTitle)
         {
+          if (StreamSongChanged != null)
+            StreamSongChanged(CurrentSongTag, DateTime.Now);
+          // Send msg for Ballon Tip on song change
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SHOW_BALLONTIP_SONGCHANGE, 0, 0, 0, 0, 0, null);
           msg.Label = GUIPropertyManager.GetProperty("#Play.Current.Title");
           msg.Label2 = GUIPropertyManager.GetProperty("#Play.Current.Artist") + " (" + GUIPropertyManager.GetProperty("#Play.Current.Album") + ")";
@@ -694,13 +701,19 @@ namespace MediaPortal.GUI.RADIOLASTFM
           GUIGraphicsContext.SendMessage(msg);
           msg = null;
         }
+        else // maybe we asked to early - try again
+        {
+          Thread.Sleep(5000);
+          Log.Debug("StreamControl: Same title found - trying again now..");
+          UpdateNowPlaying();
+        }
 
 
-        Log.Info("GUIRadioLastFM: Current track: {0} [{1}] - {2} ({3})", CurrentSongTag.Artist, CurrentSongTag.Album, CurrentSongTag.Title, Util.Utils.SecondsToHMSString(CurrentSongTag.Duration));
+        Log.Info("StreamControl: Current track: {0} [{1}] - {2} ({3})", CurrentSongTag.Artist, CurrentSongTag.Album, CurrentSongTag.Title, Util.Utils.SecondsToHMSString(CurrentSongTag.Duration));
       }
       catch (Exception ex)
       {
-        Log.Error("GUIRadioLastFM: Error parsing now playing info: {0}", ex.Message);
+        Log.Error("StreamControl: Error parsing now playing info: {0}", ex.Message);
       }
     }
     #endregion
@@ -710,6 +723,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     {
       UpdateNowPlaying();
     }
+
     #endregion
 
   }
