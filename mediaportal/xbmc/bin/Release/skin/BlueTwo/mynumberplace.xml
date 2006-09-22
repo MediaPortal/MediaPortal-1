@@ -1,10 +1,7 @@
 <window>
-	<id>#id#</id>
+	<id>7777</id>
 	<defaultcontrol>1</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
-	<define>#header.image:mynumberplace_logo.png</define>
-  	<define>#header.label:19101</define>
-  	<define>#header.hover:hover_mynumberplace.png</define>
 	
 	<controls>
 	
@@ -18,7 +15,7 @@
 			<posY>0</posY>
 			<texture>background.png</texture>
 		</control>
-
+<!--
 		<control>
 			<type>image</type>
 			<id>1</id>
@@ -26,7 +23,7 @@
 			<posY>20</posY>
 			<texture>mynumberplace_logo.png</texture>
 		</control>
-		
+-->	
 		<control>
 			<description>Main label</description>
 			<type>label</type>
@@ -263,8 +260,8 @@
 			<control>
 				<type>cell</type>
 				<id>1000</id>
-				<posX>294</posX>
-				<posY>114</posY>
+				<posX>291</posX>
+				<posY>110</posY>
 				<onleft>2</onleft>
 				<onright>1001</onright>
 				<onup>9000</onup>
@@ -280,8 +277,8 @@
 			<control>
 				<type>cell</type>
 				<id>1001</id>
-				<posX>337</posX>
-				<posY>114</posY>
+				<posX>334</posX>
+				<posY>110</posY>
 				<onleft>1000</onleft>
 				<onright>1002</onright>
 				<onup>9001</onup>
@@ -296,8 +293,8 @@
 			<control>
 				<type>cell</type>
 				<id>1002</id>
-				<posX>381</posX>
-				<posY>114</posY>
+				<posX>378</posX>
+				<posY>110</posY>
 				<onleft>1001</onleft>
 				<onright>1003</onright>
 				<onup>9002</onup>
@@ -314,7 +311,7 @@
 				<type>cell</type>
 				<id>1003</id>
 				<posX>426</posX>
-				<posY>114</posY>
+				<posY>110</posY>
 				<onleft>1002</onleft>
 				<onright>1004</onright>
 				<onup>9003</onup>
@@ -330,7 +327,7 @@
 				<type>cell</type>
 				<id>1004</id>
 				<posX>469</posX>
-				<posY>114</posY>
+				<posY>110</posY>
 				<onleft>1003</onleft>
 				<onright>1005</onright>
 				<onup>9004</onup>
@@ -346,7 +343,7 @@
 				<type>cell</type>
 				<id>1005</id>
 				<posX>513</posX>
-				<posY>114</posY>
+				<posY>110</posY>
 				<onleft>1004</onleft>
 				<onright>1006</onright>
 				<onup>9005</onup>
@@ -362,8 +359,8 @@
 			<control>
 				<type>cell</type>
 				<id>1006</id>
-				<posX>558</posX>
-				<posY>114</posY>
+				<posX>561</posX>
+				<posY>110</posY>
 				<onleft>1005</onleft>
 				<onright>1007</onright>
 				<onup>9006</onup>
@@ -378,8 +375,8 @@
 			<control>
 				<type>cell</type>
 				<id>1007</id>
-				<posX>601</posX>
-				<posY>114</posY>
+				<posX>604</posX>
+				<posY>110</posY>
 				<onleft>1006</onleft>
 				<onright>1008</onright>
 				<onup>9007</onup>
@@ -394,8 +391,8 @@
 			<control>
 				<type>cell</type>
 				<id>1008</id>
-				<posX>645</posX>
-				<posY>114</posY>
+				<posX>648</posX>
+				<posY>110</posY>
 				<onleft>1007</onleft>
 				<onright>1000</onright>
 				<onup>9008</onup>
@@ -412,8 +409,8 @@
 			<control>
 				<type>cell</type>
 				<id>2000</id>
-				<posX>294</posX>
-				<posY>157</posY>
+				<posX>291</posX>
+				<posY>153</posY>
 				<onleft>2</onleft>
 				<onright>2001</onright>
 				<onup>1000</onup>
@@ -428,8 +425,8 @@
 			<control>
 				<type>cell</type>
 				<id>2001</id>
-				<posX>337</posX>
-				<posY>157</posY>
+				<posX>334</posX>
+				<posY>153</posY>
 				<onleft>2000</onleft>
 				<onright>2002</onright>
 				<onup>1001</onup>
@@ -444,8 +441,8 @@
 			<control>
 				<type>cell</type>
 				<id>2002</id>
-				<posX>381</posX>
-				<posY>157</posY>
+				<posX>378</posX>
+				<posY>153</posY>
 				<onleft>2001</onleft>
 				<onright>2003</onright>
 				<onup>1002</onup>
@@ -462,7 +459,7 @@
 				<type>cell</type>
 				<id>2003</id>
 				<posX>426</posX>
-				<posY>157</posY>
+				<posY>153</posY>
 				<onleft>2002</onleft>
 				<onright>2004</onright>
 				<onup>1003</onup>
@@ -478,7 +475,7 @@
 				<type>cell</type>
 				<id>2004</id>
 				<posX>469</posX>
-				<posY>157</posY>
+				<posY>153</posY>
 				<onleft>2003</onleft>
 				<onright>2005</onright>
 				<onup>1004</onup>
@@ -494,7 +491,7 @@
 				<type>cell</type>
 				<id>2005</id>
 				<posX>513</posX>
-				<posY>157</posY>
+				<posY>153</posY>
 				<onleft>2004</onleft>
 				<onright>2006</onright>
 				<onup>1005</onup>
@@ -510,8 +507,8 @@
 			<control>
 				<type>cell</type>
 				<id>2006</id>
-				<posX>558</posX>
-				<posY>157</posY>
+				<posX>561</posX>
+				<posY>153</posY>
 				<onleft>2005</onleft>
 				<onright>2007</onright>
 				<onup>1006</onup>
@@ -526,8 +523,8 @@
 			<control>
 				<type>cell</type>
 				<id>2007</id>
-				<posX>601</posX>
-				<posY>157</posY>
+				<posX>604</posX>
+				<posY>153</posY>
 				<onleft>2006</onleft>
 				<onright>2008</onright>
 				<onup>1007</onup>
@@ -542,8 +539,8 @@
 			<control>
 				<type>cell</type>
 				<id>2008</id>
-				<posX>645</posX>
-				<posY>157</posY>
+				<posX>648</posX>
+				<posY>153</posY>
 				<onleft>2007</onleft>
 				<onright>2000</onright>
 				<onup>1008</onup>
@@ -560,8 +557,8 @@
 			<control>
 				<type>cell</type>
 				<id>3000</id>
-				<posX>294</posX>
-				<posY>201</posY>
+				<posX>291</posX>
+				<posY>197</posY>
 				<onleft>2</onleft>
 				<onright>3001</onright>
 				<onup>2000</onup>
@@ -576,8 +573,8 @@
 			<control>
 				<type>cell</type>
 				<id>3001</id>
-				<posX>337</posX>
-				<posY>201</posY>
+				<posX>334</posX>
+				<posY>197</posY>
 				<onleft>3000</onleft>
 				<onright>3002</onright>
 				<onup>2001</onup>
@@ -592,8 +589,8 @@
 			<control>
 				<type>cell</type>
 				<id>3002</id>
-				<posX>381</posX>
-				<posY>201</posY>
+				<posX>378</posX>
+				<posY>197</posY>
 				<onleft>3001</onleft>
 				<onright>3003</onright>
 				<onup>2002</onup>
@@ -610,7 +607,7 @@
 				<type>cell</type>
 				<id>3003</id>
 				<posX>426</posX>
-				<posY>201</posY>
+				<posY>197</posY>
 				<onleft>3002</onleft>
 				<onright>3004</onright>
 				<onup>2003</onup>
@@ -626,7 +623,7 @@
 				<type>cell</type>
 				<id>3004</id>
 				<posX>469</posX>
-				<posY>201</posY>
+				<posY>197</posY>
 				<onleft>3003</onleft>
 				<onright>3005</onright>
 				<onup>2004</onup>
@@ -642,7 +639,7 @@
 				<type>cell</type>
 				<id>3005</id>
 				<posX>513</posX>
-				<posY>201</posY>
+				<posY>197</posY>
 				<onleft>3004</onleft>
 				<onright>3006</onright>
 				<onup>2005</onup>
@@ -658,8 +655,8 @@
 			<control>
 				<type>cell</type>
 				<id>3006</id>
-				<posX>558</posX>
-				<posY>201</posY>
+				<posX>561</posX>
+				<posY>197</posY>
 				<onleft>3005</onleft>
 				<onright>3007</onright>
 				<onup>2006</onup>
@@ -674,8 +671,8 @@
 			<control>
 				<type>cell</type>
 				<id>3007</id>
-				<posX>601</posX>
-				<posY>201</posY>
+				<posX>604</posX>
+				<posY>197</posY>
 				<onleft>3006</onleft>
 				<onright>3008</onright>
 				<onup>2007</onup>
@@ -690,8 +687,8 @@
 			<control>
 				<type>cell</type>
 				<id>3008</id>
-				<posX>645</posX>
-				<posY>201</posY>
+				<posX>648</posX>
+				<posY>197</posY>
 				<onleft>3007</onleft>
 				<onright>3000</onright>
 				<onup>2008</onup>
@@ -708,7 +705,7 @@
 			<control>
 				<type>cell</type>
 				<id>4000</id>
-				<posX>294</posX>
+				<posX>291</posX>
 				<posY>246</posY>
 				<onleft>2</onleft>
 				<onright>4001</onright>
@@ -724,7 +721,7 @@
 			<control>
 				<type>cell</type>
 				<id>4001</id>
-				<posX>337</posX>
+				<posX>334</posX>
 				<posY>246</posY>
 				<onleft>4000</onleft>
 				<onright>4002</onright>
@@ -740,7 +737,7 @@
 			<control>
 				<type>cell</type>
 				<id>4002</id>
-				<posX>381</posX>
+				<posX>378</posX>
 				<posY>246</posY>
 				<onleft>4001</onleft>
 				<onright>4003</onright>
@@ -806,7 +803,7 @@
 			<control>
 				<type>cell</type>
 				<id>4006</id>
-				<posX>558</posX>
+				<posX>561</posX>
 				<posY>246</posY>
 				<onleft>4005</onleft>
 				<onright>4007</onright>
@@ -822,7 +819,7 @@
 			<control>
 				<type>cell</type>
 				<id>4007</id>
-				<posX>601</posX>
+				<posX>604</posX>
 				<posY>246</posY>
 				<onleft>4006</onleft>
 				<onright>4008</onright>
@@ -838,7 +835,7 @@
 			<control>
 				<type>cell</type>
 				<id>4008</id>
-				<posX>645</posX>
+				<posX>648</posX>
 				<posY>246</posY>
 				<onleft>4007</onleft>
 				<onright>4000</onright>
@@ -856,7 +853,7 @@
 			<control>
 				<type>cell</type>
 				<id>5000</id>
-				<posX>294</posX>
+				<posX>291</posX>
 				<posY>289</posY>
 				<onleft>2</onleft>
 				<onright>5001</onright>
@@ -872,7 +869,7 @@
 			<control>
 				<type>cell</type>
 				<id>5001</id>
-				<posX>337</posX>
+				<posX>334</posX>
 				<posY>289</posY>
 				<onleft>5000</onleft>
 				<onright>5002</onright>
@@ -888,7 +885,7 @@
 			<control>
 				<type>cell</type>
 				<id>5002</id>
-				<posX>381</posX>
+				<posX>378</posX>
 				<posY>289</posY>
 				<onleft>5001</onleft>
 				<onright>5003</onright>
@@ -954,7 +951,7 @@
 			<control>
 				<type>cell</type>
 				<id>5006</id>
-				<posX>558</posX>
+				<posX>561</posX>
 				<posY>289</posY>
 				<onleft>5005</onleft>
 				<onright>5007</onright>
@@ -970,7 +967,7 @@
 			<control>
 				<type>cell</type>
 				<id>5007</id>
-				<posX>601</posX>
+				<posX>604</posX>
 				<posY>289</posY>
 				<onleft>5006</onleft>
 				<onright>5008</onright>
@@ -986,7 +983,7 @@
 			<control>
 				<type>cell</type>
 				<id>5008</id>
-				<posX>645</posX>
+				<posX>648</posX>
 				<posY>289</posY>
 				<onleft>5007</onleft>
 				<onright>5000</onright>
@@ -1004,7 +1001,7 @@
 			<control>
 				<type>cell</type>
 				<id>6000</id>
-				<posX>294</posX>
+				<posX>291</posX>
 				<posY>333</posY>
 				<onleft>2</onleft>
 				<onright>6001</onright>
@@ -1020,7 +1017,7 @@
 			<control>
 				<type>cell</type>
 				<id>6001</id>
-				<posX>337</posX>
+				<posX>334</posX>
 				<posY>333</posY>
 				<onleft>6000</onleft>
 				<onright>6002</onright>
@@ -1036,7 +1033,7 @@
 			<control>
 				<type>cell</type>
 				<id>6002</id>
-				<posX>381</posX>
+				<posX>378</posX>
 				<posY>333</posY>
 				<onleft>6001</onleft>
 				<onright>6003</onright>
@@ -1102,7 +1099,7 @@
 			<control>
 				<type>cell</type>
 				<id>6006</id>
-				<posX>558</posX>
+				<posX>561</posX>
 				<posY>333</posY>
 				<onleft>6005</onleft>
 				<onright>6007</onright>
@@ -1118,7 +1115,7 @@
 			<control>
 				<type>cell</type>
 				<id>6007</id>
-				<posX>601</posX>
+				<posX>604</posX>
 				<posY>333</posY>
 				<onleft>6006</onleft>
 				<onright>6008</onright>
@@ -1134,7 +1131,7 @@
 			<control>
 				<type>cell</type>
 				<id>6008</id>
-				<posX>645</posX>
+				<posX>648</posX>
 				<posY>333</posY>
 				<onleft>6007</onleft>
 				<onright>6000</onright>
@@ -1152,8 +1149,8 @@
 			<control>
 				<type>cell</type>
 				<id>7000</id>
-				<posX>294</posX>
-				<posY>378</posY>
+				<posX>291</posX>
+				<posY>381</posY>
 				<onleft>2</onleft>
 				<onright>7001</onright>
 				<onup>6000</onup>
@@ -1168,8 +1165,8 @@
 			<control>
 				<type>cell</type>
 				<id>7001</id>
-				<posX>337</posX>
-				<posY>378</posY>
+				<posX>334</posX>
+				<posY>381</posY>
 				<onleft>7000</onleft>
 				<onright>7002</onright>
 				<onup>6001</onup>
@@ -1184,8 +1181,8 @@
 			<control>
 				<type>cell</type>
 				<id>7002</id>
-				<posX>381</posX>
-				<posY>378</posY>
+				<posX>378</posX>
+				<posY>381</posY>
 				<onleft>7001</onleft>
 				<onright>7003</onright>
 				<onup>6002</onup>
@@ -1202,7 +1199,7 @@
 				<type>cell</type>
 				<id>7003</id>
 				<posX>426</posX>
-				<posY>378</posY>
+				<posY>381</posY>
 				<onleft>7002</onleft>
 				<onright>7004</onright>
 				<onup>6003</onup>
@@ -1218,7 +1215,7 @@
 				<type>cell</type>
 				<id>7004</id>
 				<posX>469</posX>
-				<posY>378</posY>
+				<posY>381</posY>
 				<onleft>7003</onleft>
 				<onright>7005</onright>
 				<onup>6004</onup>
@@ -1234,7 +1231,7 @@
 				<type>cell</type>
 				<id>7005</id>
 				<posX>513</posX>
-				<posY>378</posY>
+				<posY>381</posY>
 				<onleft>7004</onleft>
 				<onright>7006</onright>
 				<onup>6005</onup>
@@ -1250,8 +1247,8 @@
 			<control>
 				<type>cell</type>
 				<id>7006</id>
-				<posX>558</posX>
-				<posY>378</posY>
+				<posX>561</posX>
+				<posY>381</posY>
 				<onleft>7005</onleft>
 				<onright>7007</onright>
 				<onup>6006</onup>
@@ -1266,8 +1263,8 @@
 			<control>
 				<type>cell</type>
 				<id>7007</id>
-				<posX>601</posX>
-				<posY>378</posY>
+				<posX>604</posX>
+				<posY>381</posY>
 				<onleft>7006</onleft>
 				<onright>7008</onright>
 				<onup>6007</onup>
@@ -1282,8 +1279,8 @@
 			<control>
 				<type>cell</type>
 				<id>7008</id>
-				<posX>645</posX>
-				<posY>378</posY>
+				<posX>648</posX>
+				<posY>381</posY>
 				<onleft>7007</onleft>
 				<onright>7000</onright>
 				<onup>6008</onup>
@@ -1300,8 +1297,8 @@
 			<control>
 				<type>cell</type>
 				<id>8000</id>
-				<posX>294</posX>
-				<posY>421</posY>
+				<posX>291</posX>
+				<posY>424</posY>
 				<onleft>2</onleft>
 				<onright>8001</onright>
 				<onup>7000</onup>
@@ -1316,8 +1313,8 @@
 			<control>
 				<type>cell</type>
 				<id>8001</id>
-				<posX>337</posX>
-				<posY>421</posY>
+				<posX>334</posX>
+				<posY>424</posY>
 				<onleft>8000</onleft>
 				<onright>8002</onright>
 				<onup>7001</onup>
@@ -1332,8 +1329,8 @@
 			<control>
 				<type>cell</type>
 				<id>8002</id>
-				<posX>381</posX>
-				<posY>421</posY>
+				<posX>378</posX>
+				<posY>424</posY>
 				<onleft>8001</onleft>
 				<onright>8003</onright>
 				<onup>7002</onup>
@@ -1350,7 +1347,7 @@
 				<type>cell</type>
 				<id>8003</id>
 				<posX>426</posX>
-				<posY>421</posY>
+				<posY>424</posY>
 				<onleft>8002</onleft>
 				<onright>8004</onright>
 				<onup>7003</onup>
@@ -1366,7 +1363,7 @@
 				<type>cell</type>
 				<id>8004</id>
 				<posX>469</posX>
-				<posY>421</posY>
+				<posY>424</posY>
 				<onleft>8003</onleft>
 				<onright>8005</onright>
 				<onup>7004</onup>
@@ -1382,7 +1379,7 @@
 				<type>cell</type>
 				<id>8005</id>
 				<posX>513</posX>
-				<posY>421</posY>
+				<posY>424</posY>
 				<onleft>8004</onleft>
 				<onright>8006</onright>
 				<onup>7005</onup>
@@ -1398,8 +1395,8 @@
 			<control>
 				<type>cell</type>
 				<id>8006</id>
-				<posX>558</posX>
-				<posY>421</posY>
+				<posX>561</posX>
+				<posY>424</posY>
 				<onleft>8005</onleft>
 				<onright>8007</onright>
 				<onup>7006</onup>
@@ -1414,8 +1411,8 @@
 			<control>
 				<type>cell</type>
 				<id>8007</id>
-				<posX>601</posX>
-				<posY>421</posY>
+				<posX>604</posX>
+				<posY>424</posY>
 				<onleft>8006</onleft>
 				<onright>8008</onright>
 				<onup>7007</onup>
@@ -1430,8 +1427,8 @@
 			<control>
 				<type>cell</type>
 				<id>8008</id>
-				<posX>645</posX>
-				<posY>421</posY>
+				<posX>648</posX>
+				<posY>424</posY>
 				<onleft>8007</onleft>
 				<onright>8000</onright>
 				<onup>7008</onup>
@@ -1448,8 +1445,8 @@
 			<control>
 				<type>cell</type>
 				<id>9000</id>
-				<posX>294</posX>
-				<posY>465</posY>
+				<posX>291</posX>
+				<posY>468</posY>
 				<onleft>2</onleft>
 				<onright>9001</onright>
 				<onup>8000</onup>
@@ -1464,8 +1461,8 @@
 			<control>
 				<type>cell</type>
 				<id>9001</id>
-				<posX>337</posX>
-				<posY>465</posY>
+				<posX>334</posX>
+				<posY>468</posY>
 				<onleft>9000</onleft>
 				<onright>9002</onright>
 				<onup>8001</onup>
@@ -1480,8 +1477,8 @@
 			<control>
 				<type>cell</type>
 				<id>9002</id>
-				<posX>381</posX>
-				<posY>465</posY>
+				<posX>378</posX>
+				<posY>468</posY>
 				<onleft>9001</onleft>
 				<onright>9003</onright>
 				<onup>8002</onup>
@@ -1498,7 +1495,7 @@
 				<type>cell</type>
 				<id>9003</id>
 				<posX>426</posX>
-				<posY>465</posY>
+				<posY>468</posY>
 				<onleft>9002</onleft>
 				<onright>9004</onright>
 				<onup>8003</onup>
@@ -1514,7 +1511,7 @@
 				<type>cell</type>
 				<id>9004</id>
 				<posX>469</posX>
-				<posY>465</posY>
+				<posY>468</posY>
 				<onleft>9003</onleft>
 				<onright>9005</onright>
 				<onup>8004</onup>
@@ -1530,7 +1527,7 @@
 				<type>cell</type>
 				<id>9005</id>
 				<posX>513</posX>
-				<posY>465</posY>
+				<posY>468</posY>
 				<onleft>9004</onleft>
 				<onright>9006</onright>
 				<onup>8005</onup>
@@ -1546,8 +1543,8 @@
 			<control>
 				<type>cell</type>
 				<id>9006</id>
-				<posX>558</posX>
-				<posY>465</posY>
+				<posX>561</posX>
+				<posY>468</posY>
 				<onleft>9005</onleft>
 				<onright>9007</onright>
 				<onup>8006</onup>
@@ -1562,8 +1559,8 @@
 			<control>
 				<type>cell</type>
 				<id>9007</id>
-				<posX>601</posX>
-				<posY>465</posY>
+				<posX>604</posX>
+				<posY>468</posY>
 				<onleft>9006</onleft>
 				<onright>9008</onright>
 				<onup>8007</onup>
@@ -1578,8 +1575,8 @@
 			<control>
 				<type>cell</type>
 				<id>9008</id>
-				<posX>645</posX>
-				<posY>465</posY>
+				<posX>648</posX>
+				<posY>468</posY>
 				<onleft>9007</onleft>
 				<onright>9000</onright>
 				<onup>8008</onup>
