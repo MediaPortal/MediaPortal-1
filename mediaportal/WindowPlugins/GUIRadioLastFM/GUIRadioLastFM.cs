@@ -240,13 +240,16 @@ namespace MediaPortal.GUI.RADIOLASTFM
     #endregion
     
     #region Handlers
-    private void PlayBackStoppedHandler(g_Player.MediaType type, int stoptime, string filename)
+    protected void PlayBackStoppedHandler(g_Player.MediaType type, int stoptime, string filename)
     {
       LastFMStation.CurrentStreamState = StreamPlaybackState.initialized;
     }
 
-    private void PlayBackEndedHandler(g_Player.MediaType type, string filename)
+    protected void PlayBackEndedHandler(g_Player.MediaType type, string filename)
     {
+      if (!filename.Contains(@"last.fm/last.mp3") || LastFMStation.CurrentStreamState != StreamPlaybackState.streaming)
+        return;
+
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
 
       if (dlg == null)
@@ -260,6 +263,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
       if (dlg.SelectedId == -1)
         return;
+
+      LastFMStation.CurrentStreamState = StreamPlaybackState.nocontent;
       //dlg.AddLocalizedString(930);        //Add to favorites
     }
     #endregion
