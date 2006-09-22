@@ -70,7 +70,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         //  _trayBallonSongChange.BalloonTipIcon = new ToolTipIcon(BaseDir + @"BallonTrack.ico");
 
         _trayBallonSongChange.Text = "MediaPortal Last.fm Radio";
-        _trayBallonSongChange.Visible = true;
+        _trayBallonSongChange.Visible = false;
       }
 
       //g_Player.PlayBackStarted += new g_Player.StartedHandler(g_Player_PlayBackStarted);
@@ -127,6 +127,16 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
       SaveSettings();
       base.OnPageDestroy(newWindowId);
+    }
+
+    public override void DeInit()
+    {
+      if (_trayBallonSongChange != null)
+      {
+        _trayBallonSongChange.Visible = false;
+        _trayBallonSongChange = null;
+      }
+      base.DeInit();
     }
 
     protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
