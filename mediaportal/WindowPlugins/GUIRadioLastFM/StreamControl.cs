@@ -86,7 +86,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     private StreamType _currentTuneType = StreamType.Recommended;
 
     private DateTime _lastConnectAttempt = DateTime.MinValue;
-    private TimeSpan _minConnectWaitTime = new TimeSpan(0, 0, 3);
+    private TimeSpan _minConnectWaitTime = new TimeSpan(0, 0, 1);
 
 
     #region Examples
@@ -272,7 +272,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
           _currentState = StreamPlaybackState.streaming;
           ToggleRecordToProfile(_recordToProfile);
           ToggleDiscoveryMode(_discoveryMode);
-          _nowPlayingTimer.Start();
+          _nowPlayingTimer.Start();          
           UpdateNowPlaying();
 
           return true;
@@ -343,6 +343,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     public void UpdateNowPlaying()
     {
+      // give the site some time to update
+      Thread.Sleep(2500);
       SendCommandRequest(@"http://ws.audioscrobbler.com/radio/np.php?session=" + _currentSession);
     }
 
@@ -396,9 +398,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
           case StreamControls.skiptrack:
             if (SendCommandRequest(baseUrl + @"&command=skip"))
             {
-              Thread.Sleep(1000);
               Log.Info("GUIRadioLastFM: Successfully send skip command");
-              Thread.Sleep(1000);
               success = true;
               Thread.Sleep(750);
               // the website has to refresh therefore we wait a little bit
@@ -416,9 +416,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
           case StreamControls.bantrack:
             if (SendCommandRequest(baseUrl + @"&command=ban"))
             {
-              Thread.Sleep(1000);
               Log.Info("GUIRadioLastFM: Track added to banned tracks list");
-              Thread.Sleep(1000);
               success = true;
               Thread.Sleep(750);
               // the website has to refresh therefore we wait a little bit
@@ -536,8 +534,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       if (DateTime.Now < nextconnect)
       {
         TimeSpan waittime = nextconnect - DateTime.Now;
-        string logmessage = "Avoiding too fast connects. Sleeping until " + nextconnect.ToString();
-        Log.Debug("GUIRadioLastFM: {0}", logmessage);
+        Log.Debug("GUIRadioLastFM: Avoiding too fast connects for {0} - sleeping until {1}", url_, nextconnect.ToString());
         Thread.Sleep(waittime);
       }
       _lastConnectAttempt = DateTime.Now;
@@ -549,7 +546,10 @@ namespace MediaPortal.GUI.RADIOLASTFM
       {
 
         request = (HttpWebRequest)WebRequest.Create(url_);
-        request.Timeout = 20000;
+        request.Timeout = 10000;
+        // prevent them from blocking us
+        request.UserAgent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)";
+        
         if (request == null)
           throw (new Exception());
       }
