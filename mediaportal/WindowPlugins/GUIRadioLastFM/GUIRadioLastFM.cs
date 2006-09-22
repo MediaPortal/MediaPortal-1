@@ -49,7 +49,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     [SkinControlAttribute((int)SkinControlIDs.BTN_START_STREAM)]    protected GUIButtonControl btnStartStream = null;
     [SkinControlAttribute((int)SkinControlIDs.LIST_TRACK_TAGS)]     protected GUIListControl facadeTrackTags = null;
 
-    protected AudioscrobblerUtils InfoScrobbler;
+    private AudioscrobblerUtils InfoScrobbler = null;
     private StreamControl LastFMStation = null;
     private NotifyIcon _trayBallonSongChange = null;
     private ScrobblerUtilsRequest _lastTrackTagRequest;
@@ -66,6 +66,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       bool bResult = Load(GUIGraphicsContext.Skin + @"\MyRadioLastFM.xml");
 
       LastFMStation = new StreamControl();
+      InfoScrobbler = AudioscrobblerUtils.Instance;
 
       if (_trayBallonSongChange == null)
       {
@@ -126,6 +127,9 @@ namespace MediaPortal.GUI.RADIOLASTFM
       base.OnPageLoad();
       if (_trayBallonSongChange != null)
         _trayBallonSongChange.Visible = true;
+
+      if (facadeTrackTags != null)
+        facadeTrackTags.Focusable = false;
 
       LoadSettings();
     }
@@ -261,7 +265,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
     #region Handlers
     void LastFMStation_StreamSongChanged(MusicTag newCurrentSong, DateTime startTime)
     {
-      InfoScrobbler.RemoveRequest(_lastTrackTagRequest);
+      if (_lastTrackTagRequest != null)
+        InfoScrobbler.RemoveRequest(_lastTrackTagRequest);
       if (LastFMStation.CurrentTrackTag != null)
         if (LastFMStation.CurrentTrackTag.Artist != String.Empty)
           if (LastFMStation.CurrentTrackTag.Title != String.Empty)
@@ -271,31 +276,12 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     private void UpdateTrackTagsInfo(string _trackArtist, string _trackTitle)
     {
-      //ScrobblerUtilsRequest request = new ScrobblerUtilsRequest(
-      //                ScrobblerUtilsRequest.RequestType.GetTagsForTrack,
-      //                new AudioscrobblerUtils.RequestCompletedDelegate(OnUpdateTrackTagsInfoCompleted),
-      //                _trackArtist, _trackTitle);
-      //_lastTrackTagRequest = request;
-      //InfoScrobbler.AddRequest(request);
-
-
-      GUIListItem item = null;
-      List<Song> TagTracks = InfoScrobbler.getTagsForTrack(_trackArtist, _trackTitle);
-      {
-        facadeTrackTags.Clear();
-
-        for (int i = 0; i < TagTracks.Count; i++)
-        {
-          item = new GUIListItem(TagTracks[i].ToShortString());
-          item.Label = TagTracks[i].Genre;
-
-          facadeTrackTags.Add(item);
-
-          // display 3 items only
-          if (i >= 2)
-            break;
-        }
-      }
+      ScrobblerUtilsRequest request = new ScrobblerUtilsRequest(
+                      ScrobblerUtilsRequest.RequestType.GetTagsForTrack,
+                      new AudioscrobblerUtils.RequestCompletedDelegate(OnUpdateTrackTagsInfoCompleted),
+                      _trackArtist, _trackTitle);
+      _lastTrackTagRequest = request;
+      InfoScrobbler.AddRequest(request);
     }
 
     protected void PlayBackStoppedHandler(g_Player.MediaType type, int stoptime, string filename)
@@ -336,7 +322,9 @@ namespace MediaPortal.GUI.RADIOLASTFM
       if (response.Response != null && response.Request.Equals(_lastTrackTagRequest) && response.Response is List<Song>)
       {
         GUIListItem item = null;
-        List<Song> TagTracks = response.Response as List<Song>;
+        List<Song> TagTracks = new List<Song>();
+        //TagTracks = InfoScrobbler.getTagsForTrack(_trackArtist, _trackTitle);
+        TagTracks = response.Response as List<Song>;
         {
           facadeTrackTags.Clear();
 

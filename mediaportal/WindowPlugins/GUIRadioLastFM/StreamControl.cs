@@ -72,7 +72,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     public event SongChangedHandler StreamSongChanged;
     //static public event SongChangedHandler StreamSongChanged;
 
-    protected AudioscrobblerUtils InfoScrobbler;
+    private AudioscrobblerUtils InfoScrobbler = null;
 
     private string _currentRadioURL = String.Empty;
     private string _currentSession = String.Empty;

@@ -83,7 +83,7 @@
 		<description>track label</description>
 		<id>0</id>
 		<posX>138</posX>
-		<posY>452</posY>
+		<posY>460</posY>
 		<width>320</width>
 		<height>20</height>
 		<label>#Play.Current.Title</label>
@@ -97,7 +97,7 @@
 		<description>track label</description>
 		<id>0</id>
 		<posX>138</posX>
-		<posY>484</posY>
+		<posY>498</posY>
 		<width>288</width>
 		<height>20</height>
 		<label>#Play.Current.Artist</label>
@@ -113,7 +113,7 @@
          <id>0</id>
          <posX>404</posX>
          <posY>79</posY>
-         <width>180</width>
+         <width>240</width>
          <label>#Play.Current.Album</label>
          <font>font14</font>
          <align>left</align>
@@ -151,15 +151,16 @@
          <id>66</id>
          <onright>55</onright>
          <ondown>55</ondown>
-         <posX>38</posX>
+         <posX>60</posX>
          <posY>136</posY>
-         <width>300</width>
+         <width>250</width>
          <height>135</height>
          <spinColor>-</spinColor>
          <textureUp>-</textureUp>
          <textureDown>-</textureDown>
          <textureUpFocus>-</textureUpFocus>
          <textureDownFocus>-</textureDownFocus>
+         <textureNoFocus>list_sub_nofocus.png</textureNoFocus>
          <textcolor>White</textcolor>
       </control>
 
@@ -169,15 +170,19 @@
          <id>55</id>
          <onup>66</onup>
          <onleft>66</onleft>
-         <posX>38</posX>
-         <posY>288</posY>
-         <width>300</width>
+         <posX>40</posX>
+         <posY>308</posY>
+         <width>250</width>
          <height>135</height>
          <spinColor>-</spinColor>
          <textureUp>-</textureUp>
 	 <textureDown>-</textureDown>
 	 <textureUpFocus>-</textureUpFocus>
          <textureDownFocus>-</textureDownFocus>
+         <textureNoFocus>-</textureNoFocus>
+<!--
+         <textureNoFocus>list_sub_nofocus.png</textureNoFocus>
+-->
          <textcolor>White</textcolor>
       </control>
 	</controls>
