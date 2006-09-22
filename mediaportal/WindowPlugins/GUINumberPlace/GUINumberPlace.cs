@@ -490,8 +490,7 @@ namespace MediaPortal.GUI.NumberPlace
         _Settings.Block = btnBlockInvalidMoves.Selected;
         if (btnBlockInvalidMoves.Selected)
           if (btnShowInvalidMoves.Selected)
-            btnShowInvalidMoves.Selected = false;
-
+            _Settings.Show = btnShowInvalidMoves.Selected = false;
         _Settings.Save();
       }
       else if (controlId == 4)
@@ -503,7 +502,7 @@ namespace MediaPortal.GUI.NumberPlace
         _Settings.Show = btnShowInvalidMoves.Selected;
         if (btnShowInvalidMoves.Selected)
           if (btnBlockInvalidMoves.Selected)
-            btnBlockInvalidMoves.Selected = false;
+            _Settings.Block = btnBlockInvalidMoves.Selected = false;
         ShowInvalid();
         _Settings.Save();
       }
