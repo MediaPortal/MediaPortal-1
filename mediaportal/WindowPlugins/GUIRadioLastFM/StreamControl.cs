@@ -550,7 +550,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       {
 
         request = (HttpWebRequest)WebRequest.Create(url_);
-        request.Timeout = 10000;
+        request.Timeout = 20000;
         // prevent them from blocking us
         request.UserAgent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)";
         

@@ -147,7 +147,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
         _trayBallonSongChange = null;
       }
 
-      InfoScrobbler.RemoveRequest(_lastTrackTagRequest);
+      if (_lastTrackTagRequest != null)
+        InfoScrobbler.RemoveRequest(_lastTrackTagRequest);
 
       base.DeInit();
     }
@@ -204,6 +205,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
             LastFMStation.StreamsUser = LastFMStation.AccountUser;
             break;
         }
+        if (LastFMStation.CurrentStreamState == StreamPlaybackState.nocontent)
+          LastFMStation.CurrentStreamState = StreamPlaybackState.initialized;
 
         g_Player.Stop();
         // LastFMStation.CurrentTuneType = TuneIntoSelected;
@@ -268,16 +271,38 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     private void UpdateTrackTagsInfo(string _trackArtist, string _trackTitle)
     {
-      ScrobblerUtilsRequest request = new ScrobblerUtilsRequest(
-                      ScrobblerUtilsRequest.RequestType.GetTagsForTrack,
-                      new AudioscrobblerUtils.RequestCompletedDelegate(OnUpdateTrackTagsInfoCompleted),
-                      _trackArtist, _trackTitle);
-      _lastTrackTagRequest = request;
-      InfoScrobbler.AddRequest(request);
+      //ScrobblerUtilsRequest request = new ScrobblerUtilsRequest(
+      //                ScrobblerUtilsRequest.RequestType.GetTagsForTrack,
+      //                new AudioscrobblerUtils.RequestCompletedDelegate(OnUpdateTrackTagsInfoCompleted),
+      //                _trackArtist, _trackTitle);
+      //_lastTrackTagRequest = request;
+      //InfoScrobbler.AddRequest(request);
+
+
+      GUIListItem item = null;
+      List<Song> TagTracks = InfoScrobbler.getTagsForTrack(_trackArtist, _trackTitle);
+      {
+        facadeTrackTags.Clear();
+
+        for (int i = 0; i < TagTracks.Count; i++)
+        {
+          item = new GUIListItem(TagTracks[i].ToShortString());
+          item.Label = TagTracks[i].Genre;
+
+          facadeTrackTags.Add(item);
+
+          // display 3 items only
+          if (i >= 2)
+            break;
+        }
+      }
     }
 
     protected void PlayBackStoppedHandler(g_Player.MediaType type, int stoptime, string filename)
     {
+      if (!filename.Contains(@"last.fm/last.mp3") || LastFMStation.CurrentStreamState != StreamPlaybackState.streaming)
+        return;
+
       LastFMStation.CurrentStreamState = StreamPlaybackState.initialized;
     }
 
@@ -299,7 +324,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
       //if (dlg.SelectedId == -1)
       //  return;
-
+      Log.Info("GUIRadio: No more content for this stream");
       LastFMStation.CurrentStreamState = StreamPlaybackState.nocontent;
       //dlg.AddLocalizedString(930);        //Add to favorites
     }
