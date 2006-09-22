@@ -1590,11 +1590,10 @@ namespace MediaPortal.Configuration
                 checkBox5vAntennae.Visible = true;
             }
             // load crop settings
-            MediaPortal.Player.CropSettings cropSettings = capture.CropSettings;
-            mpNumericUpDownTop.Value = cropSettings.Top;
-            mpNumericUpDownBottom.Value = cropSettings.Bottom;
-            mpNumericUpDownLeft.Value = cropSettings.Left;
-            mpNumericUpDownRight.Value = cropSettings.Right;
+            mpNumericUpDownTop.Value = capture.CropSettings.Top;
+            mpNumericUpDownBottom.Value = capture.CropSettings.Bottom;
+            mpNumericUpDownLeft.Value = capture.CropSettings.Left;
+            mpNumericUpDownRight.Value = capture.CropSettings.Right;
           }
           else return false;
         }
