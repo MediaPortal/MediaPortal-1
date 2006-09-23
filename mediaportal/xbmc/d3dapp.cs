@@ -1324,7 +1324,7 @@ namespace MediaPortal
               PlayListItem itemNew = _currentPlayList[i];
               playlist.Add(itemNew);
             }
-          if (playlist[0].Type.Equals(PlayListItem.PlayListItemType.DVD))
+          if (playlist.Count > 0 && playlist[0].Type.Equals(PlayListItem.PlayListItemType.DVD))
           {
             // we were watching DVD
             IMDBMovie movieDetails = new IMDBMovie();
