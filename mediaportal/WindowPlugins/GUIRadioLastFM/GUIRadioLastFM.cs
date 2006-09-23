@@ -532,7 +532,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     {
       if ((int)LastFMStation.CurrentStreamState > 2)
       {
-        LastFMStation.SendControlCommand(StreamControls.skiptrack);
+        LastFMStation.SendControlCommand(StreamControls.lovetrack);
       }
     }
 
@@ -550,7 +550,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     {
       if ((int)LastFMStation.CurrentStreamState > 2)
       {
-        LastFMStation.SendControlCommand(StreamControls.lovetrack);
+        LastFMStation.SendControlCommand(StreamControls.skiptrack);
       }
     }
     #endregion
