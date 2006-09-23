@@ -585,6 +585,9 @@ namespace ProcessPlugins.TvMovie
 
     public void Import()
     {
+      if (_canceled)
+        return;
+
       ArrayList mappingList = GetMappingList();
 
       if (mappingList == null)
@@ -598,6 +601,9 @@ namespace ProcessPlugins.TvMovie
       Log.Debug("TVMovie: Removal of old EPG data");
       TVDatabase.RemoveOldPrograms();
       Log.Debug("TVMovie: Removal done");
+
+      if (_canceled)
+        return;
 
       int maximum = 0;
 
@@ -620,7 +626,7 @@ namespace ProcessPlugins.TvMovie
       foreach (string station in _stations)
       {
         if (_canceled)
-          break;
+          return;
 
         ArrayList channelNames = new ArrayList();
 
@@ -663,11 +669,11 @@ namespace ProcessPlugins.TvMovie
           xmlwriter.SetValue("tvmovie", "lastupdate", lastUpdate);
 
         MediaPortal.Profile.Settings.SaveCache();
+
+        Log.Debug("TVMovie: Setting last update time stamp done");
+
+        Log.Info("TVMovie: Imported {0} database entries for {1} stations", _programsCounter, counter);
       }
-
-      Log.Debug("TVMovie: Setting last update time stamp done");
-
-      Log.Info("TVMovie: Imported {0} database entries for {1} stations", _programsCounter, counter);
     }
   }
 

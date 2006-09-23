@@ -161,6 +161,7 @@ namespace ProcessPlugins.TvMovie
     {
       if (_database != null)
         _database.Canceled = true;
+      _stateTimer.Dispose();
     }
 
 
