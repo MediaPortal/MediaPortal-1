@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Net;
@@ -9,7 +10,7 @@ namespace MediaPortal.Utils.Web
 {
   public class AsyncGetRequest
   {
-    public delegate void AsyncGetRequestCompleted(StreamReader responseStream, HttpStatusCode responseStatus, String requestedURLCommand);
+    public delegate void AsyncGetRequestCompleted(List<String> responseStrings, HttpStatusCode responseStatus, String requestedURLCommand);
     public event AsyncGetRequestCompleted workerFinished;
 
     public delegate void AsyncGetRequestError(String commandURL, Exception errorReason);
@@ -47,51 +48,77 @@ namespace MediaPortal.Utils.Web
     private void SendWorkerRequest(String targetURL, int delayMSecs)
     {
       HttpWebRequest request = null;
-      // send the command
+      HttpWebResponse response = null;
       try
       {
-        request = (HttpWebRequest)WebRequest.Create(targetURL);
-        request.Timeout = 20000;
-        request.UserAgent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)";
-        //request.ContentType = "application/x-www-form-urlencoded";
+        // send the command
+        try
+        {
+          request = (HttpWebRequest)WebRequest.Create(targetURL);
+          //request.Timeout = 20000;
+          request.Pipelined = false;
 
-        if (delayMSecs > 0)
-          Thread.Sleep(delayMSecs);
+          request.UserAgent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)";
+          //request.ContentType = "application/x-www-form-urlencoded";
 
-        if (request == null)
-          throw (new Exception());
+          if (delayMSecs > 0)
+            Thread.Sleep(delayMSecs);
+
+          if (request == null)
+            throw (new Exception());
+        }
+        catch (Exception ex1)
+        {
+          if (workerError != null)
+            workerError(targetURL, ex1);
+          return;
+        }
+
+        StreamReader reader = null;
+        HttpStatusCode responseCode = new HttpStatusCode();
+
+        // get the response
+        try
+        {
+          response = (HttpWebResponse)request.GetResponse();
+          // most likely timed out..
+          if (response == null)
+            throw (new Exception());
+
+          reader = new StreamReader(response.GetResponseStream());
+          responseCode = response.StatusCode;
+          
+          //request = null;
+        }
+        catch (Exception ex2)
+        {
+          if (workerError != null)
+            workerError(targetURL, ex2);
+          return;
+        }
+        _workerCompleted = true;
+
+
+        List<String> responseStrings = new List<string>();
+        String tmp = String.Empty;
+        while ((tmp = reader.ReadLine()) != null)
+          responseStrings.Add(tmp);
+
+
+        if (workerFinished != null)
+          workerFinished(responseStrings, responseCode, targetURL);
       }
-      catch (Exception ex1)
+      finally
       {
-        if (workerError != null)
-          workerError(targetURL, ex1);
-        return;
+        if (request != null)
+          request = null;
+
+        if (response != null)
+        {
+          response.Close();
+          response = null;
+        }
       }
-
-      StreamReader reader = null;
-      HttpStatusCode responseCode = new HttpStatusCode();
-
-      // get the response
-      try
-      {
-        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-        // most likely timed out..
-        if (response == null)
-          throw (new Exception());
-
-        reader = new StreamReader(response.GetResponseStream());
-        responseCode = response.StatusCode;
-      }
-      catch (Exception ex2)
-      {
-        if (workerError != null)
-          workerError(targetURL, ex2);
-        return;
-      }
-      _workerCompleted = true;
-
-      if (workerFinished != null)
-        workerFinished(reader, responseCode, targetURL);     
     }
   }
 }

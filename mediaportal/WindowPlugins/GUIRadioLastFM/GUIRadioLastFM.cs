@@ -338,7 +338,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
                       _trackArtist,
                       new ArtistInfoRequest.ArtistInfoRequestHandler(OnUpdateArtistCoverCompleted));
         _lastArtistCoverRequest = request;
-        InfoScrobbler.AddRequestAsync(request);
+        InfoScrobbler.AddRequest(request);
       }
     }
 
@@ -415,7 +415,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       if (_lastTrackTagRequest != null)
         InfoScrobbler.RemoveRequest(_lastTrackTagRequest);
       if (_lastArtistCoverRequest != null)
-        InfoScrobbler.RemoveRequestAsync(_lastArtistCoverRequest);
+        InfoScrobbler.RemoveRequest(_lastArtistCoverRequest);
 
 
       if (LastFMStation.CurrentTrackTag != null)
@@ -471,16 +471,22 @@ namespace MediaPortal.GUI.RADIOLASTFM
     {
       if (_trayBallonSongChange != null)
       {
+        // Length may only be 64 chars
+        if (notifyTitle.Length > 63)
+          notifyTitle = notifyTitle.Remove(63);
+        if (notifyMessage_.Length > 63)
+          notifyMessage_ = notifyMessage_.Remove(63);
+
         // XP hides "inactive" icons therefore change the text
-        _trayBallonSongChange.Text = "MediaPortal \n" + notifyMessage_ + " - " + notifyTitle;
+        String IconText = "MediaPortal \n" + notifyMessage_ + " - " + notifyTitle;
+        if (IconText.Length > 63)
+          IconText = IconText.Remove(60) + "..";
+        _trayBallonSongChange.Text = IconText;
         _trayBallonSongChange.Visible = true;        
 
         _trayBallonSongChange.BalloonTipTitle = notifyTitle;
         _trayBallonSongChange.BalloonTipText = notifyMessage_;
         _trayBallonSongChange.ShowBalloonTip(showSeconds_);
-
-        // needs some sleep or it will vanish inmediately
-        //_trayBallonSongChange.Visible = false;
       }
     }
 

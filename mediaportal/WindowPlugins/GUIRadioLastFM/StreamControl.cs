@@ -94,7 +94,9 @@ namespace MediaPortal.GUI.RADIOLASTFM
     private DateTime _lastConnectAttempt = DateTime.MinValue;
     private TimeSpan _minConnectWaitTime = new TimeSpan(0, 0, 2);
     private int _retryFetchCount = 0;
-    AsyncGetRequest httpcommand = null;    
+    private Object BadLock = null;
+
+    private AsyncGetRequest httpcommand = null;
 
     #region Examples
     // 5. http.request.uri = Request URI: http://ws.audioscrobbler.com/radio/np.php?session=e5b0c80f5b5d0937d407fb77a913cb6a
@@ -127,6 +129,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
     #region Serialisation
     private void LoadSettings()
     {
+      BadLock = new object();
+
       CurrentSongTag = new MusicTag();
       _nowPlayingTimer = new System.Timers.Timer();
       _nowPlayingTimer.Interval = 180000;
@@ -540,43 +544,62 @@ namespace MediaPortal.GUI.RADIOLASTFM
       Log.Warn("StreamControl: Async request for {0} unsuccessful: {1}", urlCommand, errorReason.Message);
     }
 
-    private void OnParseAsyncResponse(StreamReader reader, HttpStatusCode responseCode, String requestedURLCommand)
+    private void OnParseAsyncResponse(List<String> responseList, HttpStatusCode responseCode, String requestedURLCommand)
     {
       // parse the response
       try
       {
-        string responseMessage = reader.ReadLine();
-
-        if (responseCode == HttpStatusCode.OK)
+        lock (BadLock)
         {
-          if (responseMessage.StartsWith("response=OK"))
+          string responseMessage = String.Empty;
+          if (responseList.Count > 0)
           {
-            ParseSuccessful(reader, requestedURLCommand);
-            return;
-          }
+            List<String> responseStrings = new List<string>();
 
-          if (responseMessage.StartsWith("price="))
-          {
-            ParseNowPlaying(reader);
-            //return true;
-            return;
-          }
-        }
-        else
-        {
-          string logmessage = "StreamControl: ***** Unknown response! - " + responseMessage;
-          while ((responseMessage = reader.ReadLine()) != null)
-            logmessage += "\n" + responseMessage;
+            foreach (String responsestr in responseList)
+            {
+              responseStrings.Add(responsestr);
+            }
 
-          if (logmessage.Contains("Not enough content"))
-          {
-            _currentState = StreamPlaybackState.nocontent;
-            Log.Warn("StreamControl: Not enough content left to play this station");
-            //return false;
-            return;
+            if (responseCode == HttpStatusCode.OK)
+            {
+              responseMessage = responseStrings[0];
+              {
+                if (responseMessage.StartsWith("response=OK"))
+                {
+                  ParseSuccessful(responseStrings, requestedURLCommand);
+                  return;
+                }
+
+                if (responseMessage.StartsWith("price="))
+                {
+                  ParseNowPlaying(responseStrings);
+                  //return true;
+                  return;
+                }
+              }
+            }
+            else
+            {
+              string logmessage = "StreamControl: ***** Unknown response! - " + responseMessage;
+              foreach (String unkStr in responseStrings)
+              {
+                logmessage += "\n" + unkStr; 
+              }
+
+              if (logmessage.Contains("Not enough content"))
+              {
+                _currentState = StreamPlaybackState.nocontent;
+                Log.Warn("StreamControl: Not enough content left to play this station");
+                //return false;
+                return;
+              }
+              else
+                Log.Warn(logmessage);
+            }
           }
           else
-            Log.Warn(logmessage);
+            Log.Debug("StreamControl: SendCommandRequest: Reader object already destroyed");
         }
       }
       catch (Exception e)
@@ -593,7 +616,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
 
     #region Response parser
-    private void ParseSuccessful(StreamReader responseStream_, String formerRequest_)
+    private void ParseSuccessful(List<String> responseList_, String formerRequest_)
     {
       if (formerRequest_.Contains(@"&command=skip"))
       {
@@ -616,17 +639,19 @@ namespace MediaPortal.GUI.RADIOLASTFM
       }
     }
 
-    private void ParseNowPlaying(StreamReader responseStream_)
+    private void ParseNowPlaying(List<String> responseList_)
     {
       List<String> NowPlayingInfo = new List<string>();
-      String tmpString = String.Empty;
       String prevTitle = CurrentSongTag.Title;
       CurrentSongTag.Clear();
 
       try
       {
-        while ((tmpString = responseStream_.ReadLine()) != null)
-          NowPlayingInfo.Add(tmpString);
+        foreach (String respStr in responseList_)
+        {
+          NowPlayingInfo.Add(respStr);
+        }
+          
 
         foreach (String token in NowPlayingInfo)
         {
