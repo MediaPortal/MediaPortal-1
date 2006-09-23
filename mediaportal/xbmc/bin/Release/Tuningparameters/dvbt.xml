@@ -824,7 +824,7 @@
 		<carrier frequency="714000" bandwidth="8" />
 		<carrier frequency="746000" bandwidth="8" />
 	</country>
-	<country name="Germany - Duesseldorf/Ruhrgebiet" offset="125">
+	<country name="Germany - Düsseldorf/Ruhrgebiet" offset="125">
 		<carrier frequency="506000" bandwidth="8" />
 		<carrier frequency="538000" bandwidth="8" />
 		<carrier frequency="586000" bandwidth="8" />
@@ -834,7 +834,7 @@
 		<carrier frequency="746000" bandwidth="8" />
 		<carrier frequency="778000" bandwidth="8" />
 	</country>
-	<country name="Germany - Goettingen" offset="125">
+	<country name="Germany - Göttingen" offset="125">
 		<carrier frequency="474000" bandwidth="8" />
 		<carrier frequency="594000" bandwidth="8" />
 		<carrier frequency="770000" bandwidth="8" />
@@ -849,7 +849,7 @@
 		<carrier frequency="594000" bandwidth="8" />
 		<carrier frequency="658000" bandwidth="8" />
 	</country>
-	<country name="Germany - Koeln/Bonn" offset="125">
+	<country name="Germany - Köln/Bonn" offset="125">
 		<carrier frequency="514000" bandwidth="8" />
 		<carrier frequency="538000" bandwidth="8" />
 		<carrier frequency="594000" bandwidth="8" />
@@ -857,7 +857,7 @@
 		<carrier frequency="698000" bandwidth="8" />
 		<carrier frequency="826000" bandwidth="8" />
 	</country>
-	<country name="Germany - Muenchen" offset="125">
+	<country name="Germany - Munich" offset="125">
 		<carrier frequency="212500" bandwidth="10" />
 		<carrier frequency="578000" bandwidth="10" />
 		<carrier frequency="586000" bandwidth="10" />
@@ -865,7 +865,7 @@
 		<carrier frequency="754000" bandwidth="10" />
 		<carrier frequency="834000" bandwidth="10" />
 	</country>
-	<country name="Germany - Osnabrueck/Lingen" offset="125">
+	<country name="Germany - Osnabrück/Lingen" offset="125">
 		<carrier frequency="602000" bandwidth="8" />
 		<carrier frequency="634000" bandwidth="8" />
 		<carrier frequency="770000" bandwidth="8" />
