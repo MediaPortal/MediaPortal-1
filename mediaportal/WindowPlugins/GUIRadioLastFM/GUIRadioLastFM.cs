@@ -69,23 +69,9 @@ namespace MediaPortal.GUI.RADIOLASTFM
       bool bResult = Load(GUIGraphicsContext.Skin + @"\MyRadioLastFM.xml");
 
       LastFMStation = new StreamControl();
-      InfoScrobbler = AudioscrobblerUtils.Instance;      
+      InfoScrobbler = AudioscrobblerUtils.Instance;
 
-      if (_trayBallonSongChange == null)
-      {
-        String BaseDir = Config.Get(Config.Dir.Base);
-        _trayBallonSongChange = new NotifyIcon();
-        if (System.IO.File.Exists(BaseDir + @"BallonRadio.ico"))
-          _trayBallonSongChange.Icon = new Icon(BaseDir + @"BallonRadio.ico");
-        else
-          _trayBallonSongChange.Icon = SystemIcons.Information;
-
-        //if (System.IO.File.Exists(BaseDir + @"BallonTrack.ico"))
-        //  _trayBallonSongChange.BalloonTipIcon = new ToolTipIcon(BaseDir + @"BallonTrack.ico");
-
-        _trayBallonSongChange.Text = "MediaPortal Last.fm Radio";
-        _trayBallonSongChange.Visible = false;
-      }
+      InitTrayIcon();
 
       //g_Player.PlayBackStarted += new g_Player.StartedHandler(g_Player_PlayBackStarted);
       g_Player.PlayBackStopped += new g_Player.StoppedHandler(PlayBackStoppedHandler);
@@ -98,10 +84,10 @@ namespace MediaPortal.GUI.RADIOLASTFM
     #region Serialisation
     private void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
-      {
+      //using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      //{
 
-      }
+      //}
       if (!LastFMStation.IsInit)
         LastFMStation.LoadConfig();
     }
@@ -134,6 +120,20 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
       if (facadeTrackTags != null)
         facadeTrackTags.Focusable = false;
+
+      if (imgArtistArt != null)
+      {
+        if (LastFMStation.CurrentTrackTag != null && LastFMStation.CurrentTrackTag.Artist != String.Empty)
+        {
+          String ThumbFileName = Util.Utils.GetCoverArtName(Thumbs.MusicArtists, Util.Utils.FilterFileName(LastFMStation.CurrentTrackTag.Artist));
+          if (ThumbFileName.Length > 0)
+          {
+            imgArtistArt.SetFileName(ThumbFileName);
+          }
+        }
+        else
+          imgArtistArt.SetFileName(GUIGraphicsContext.Skin + @"\media\missing_coverart.png");
+      }
 
       LoadSettings();
     }
@@ -336,24 +336,37 @@ namespace MediaPortal.GUI.RADIOLASTFM
       }
     }
 
+    private void OnPlaybackStopped()
+    {
+      LastFMStation.CurrentTrackTag.Clear();
+      LastFMStation.CurrentStreamState = StreamPlaybackState.initialized;
+
+      if (imgArtistArt != null)
+        imgArtistArt.SetFileName(GUIGraphicsContext.Skin + @"\media\missing_coverart.png");
+      if (facadeTrackTags != null)
+        facadeTrackTags.Clear();
+    }
     #endregion
 
 
     #region Handlers
-    void LastFMStation_StreamSongChanged(MusicTag newCurrentSong, DateTime startTime)
+    private void LastFMStation_StreamSongChanged(MusicTag newCurrentSong, DateTime startTime)
     {
       if (_lastTrackTagRequest != null)
         InfoScrobbler.RemoveRequest(_lastTrackTagRequest);
       if (_lastArtistCoverRequest != null)
         InfoScrobbler.RemoveRequestAsync(_lastArtistCoverRequest);
 
+
       if (LastFMStation.CurrentTrackTag != null)
         if (LastFMStation.CurrentTrackTag.Artist != String.Empty)
         {
-          UpdateArtistInfo(newCurrentSong.Artist);
+          if (imgArtistArt != null)
+            UpdateArtistInfo(newCurrentSong.Artist);
 
           if (LastFMStation.CurrentTrackTag.Title != String.Empty)
-            UpdateTrackTagsInfo(LastFMStation.CurrentTrackTag.Artist, LastFMStation.CurrentTrackTag.Title);
+            if (facadeTrackTags != null)
+              UpdateTrackTagsInfo(LastFMStation.CurrentTrackTag.Artist, LastFMStation.CurrentTrackTag.Title);
         }
     }
 
@@ -362,7 +375,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       if (!filename.Contains(@"last.fm/last.mp3") || LastFMStation.CurrentStreamState != StreamPlaybackState.streaming)
         return;
 
-      LastFMStation.CurrentStreamState = StreamPlaybackState.initialized;
+      OnPlaybackStopped();
     }
 
     protected void PlayBackEndedHandler(g_Player.MediaType type, string filename)
@@ -383,6 +396,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
       //if (dlg.SelectedId == -1)
       //  return;
+
+      OnPlaybackStopped();
       Log.Info("GUIRadio: No more content for this stream");
       LastFMStation.CurrentStreamState = StreamPlaybackState.nocontent;
       //dlg.AddLocalizedString(930);        //Add to favorites
@@ -397,9 +412,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
       if (_trayBallonSongChange != null)
       {
         // XP hides "inactive" icons therefore change the text
-        _trayBallonSongChange.Text = "MediaPortal";
-        _trayBallonSongChange.Text = "MediaPortal Last.fm Radio";
-        _trayBallonSongChange.Visible = true;
+        _trayBallonSongChange.Text = "MediaPortal \n" + notifyMessage_ + " - " + notifyTitle;
+        _trayBallonSongChange.Visible = true;        
 
         _trayBallonSongChange.BalloonTipTitle = notifyTitle;
         _trayBallonSongChange.BalloonTipText = notifyMessage_;
@@ -407,6 +421,76 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
         // needs some sleep or it will vanish inmediately
         //_trayBallonSongChange.Visible = false;
+      }
+    }
+
+    void InitTrayIcon()
+    {
+      if (_trayBallonSongChange == null)
+      {
+
+        ContextMenu contextMenuLastFM = new ContextMenu();
+        MenuItem menuItem1 = new MenuItem();
+        MenuItem menuItem2 = new MenuItem();
+        MenuItem menuItem3 = new MenuItem();
+
+        // Initialize contextMenuLastFM
+        contextMenuLastFM.MenuItems.AddRange(new MenuItem[] { menuItem1, menuItem2, menuItem3 });
+
+        // Initialize menuItem1
+        menuItem1.Index = 0;
+        menuItem1.Text = "&Skip";
+        menuItem1.Click += new System.EventHandler(Tray_menuItem1_Click);
+        // Initialize menuItem2
+        menuItem2.Index = 1;
+        menuItem2.Text = "&Ban";
+        menuItem2.Click += new System.EventHandler(Tray_menuItem2_Click);
+        // Initialize menuItem3
+        menuItem3.Index = 2;
+        menuItem3.Text = "&Love";
+        menuItem3.Click += new System.EventHandler(Tray_menuItem3_Click);
+
+        String BaseDir = Config.Get(Config.Dir.Base);
+        _trayBallonSongChange = new NotifyIcon();
+        _trayBallonSongChange.ContextMenu = contextMenuLastFM;
+
+        if (System.IO.File.Exists(BaseDir + @"BallonRadio.ico"))
+          _trayBallonSongChange.Icon = new Icon(BaseDir + @"BallonRadio.ico");
+        else
+          _trayBallonSongChange.Icon = SystemIcons.Information;
+
+        //if (System.IO.File.Exists(BaseDir + @"BallonTrack.ico"))
+        //  _trayBallonSongChange.BalloonTipIcon = new ToolTipIcon(BaseDir + @"BallonTrack.ico");
+
+        _trayBallonSongChange.Text = "MediaPortal Last.fm Radio";
+        _trayBallonSongChange.Visible = false;
+      }
+    }
+
+    // skip
+    void Tray_menuItem1_Click(object Sender, EventArgs e)
+    {
+      if ((int)LastFMStation.CurrentStreamState > 2)
+      {
+        LastFMStation.SendControlCommand(StreamControls.skiptrack);
+      }
+    }
+
+    // ban
+    void Tray_menuItem2_Click(object Sender, EventArgs e)
+    {
+      if ((int)LastFMStation.CurrentStreamState > 2)
+      {
+        LastFMStation.SendControlCommand(StreamControls.bantrack);
+      }
+    }
+
+    // love
+    void Tray_menuItem3_Click(object Sender, EventArgs e)
+    {
+      if ((int)LastFMStation.CurrentStreamState > 2)
+      {
+        LastFMStation.SendControlCommand(StreamControls.lovetrack);
       }
     }
     #endregion

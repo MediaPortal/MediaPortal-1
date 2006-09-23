@@ -145,6 +145,7 @@ namespace MediaPortal.Music.Database
       TrackToSearch = trackToSearch;
       RandomizeUsedTag = randomizeUsedTag;
       SortBestTracks = sortBestTracks;
+      AddAvailableTracksOnly = addAvailableTracksOnly;
     }
     public TagInfoRequest(string artistToSearch, string trackToSearch, bool randomizeUsedTag, bool sortBestTracks, bool addAvailableTracksOnly, TagInfoRequestHandler handler)
       : this(artistToSearch, trackToSearch, randomizeUsedTag, sortBestTracks, addAvailableTracksOnly)
@@ -750,6 +751,7 @@ namespace MediaPortal.Music.Database
                     if (mdb.GetSong(unfilteredList_[s].Title, ref dbSong))
                     {
                       tmpSong = dbSong.Clone();
+                      Log.Debug("Audioscrobber: Track filter for {1} found db song - {0}", tmpSong.FileName, unfilteredList_[s].Title);
                       // check and prevent entries from the same artist
                       for (int j = 0; j < tmpSongs.Count; j++)
                       {
