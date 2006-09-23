@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="iso-8859-1" ?>
-<!-- changed : 20-June-2006 by Maschine				-->
+<!-- changed : 23-Sept-2006 by mPod				-->
 <!-- contains:								-->
 <!--   - Australia 								-->
 <!--   - Belgium   								-->
@@ -792,7 +792,7 @@
 		<carrier frequency="850000" bandwidth="8" />
 		<carrier frequency="858000" bandwidth="8" />
 	</country>
-	<country name="Germany - Berlin" offset="125">
+	<country name="Germany - Berlin/Brandenburg" offset="125">
 		<carrier frequency="177500" bandwidth="7" />
 		<carrier frequency="191500" bandwidth="7" />
 		<carrier frequency="506000" bandwidth="8" />
@@ -802,7 +802,7 @@
 		<carrier frequency="658000" bandwidth="8" />
 		<carrier frequency="754000" bandwidth="8" />
 		<carrier frequency="778000" bandwidth="8" />
-		<carrier frequency="826000" bandwidth="8" />		
+		<carrier frequency="826000" bandwidth="8" />
 	</country>
 	<country name="Germany - Bremen-Unterweser" offset="125">
 		<carrier frequency="482000" bandwidth="8" />
@@ -813,7 +813,6 @@
 		<carrier frequency="698000" bandwidth="8" />
 		<carrier frequency="746000" bandwidth="8" />
 	</country>
-	
 	<country name="Germany - Bremerhaven-Cuxhaven" offset="125">
 		<carrier frequency="482000" bandwidth="8" />
 		<carrier frequency="498000" bandwidth="8" />
@@ -825,16 +824,15 @@
 		<carrier frequency="714000" bandwidth="8" />
 		<carrier frequency="746000" bandwidth="8" />
 	</country>
-	
 	<country name="Germany - Duesseldorf/Ruhrgebiet" offset="125">
-	   <carrier frequency="506000" bandwidth="8" />
-	   <carrier frequency="538000" bandwidth="8" />
-	   <carrier frequency="586000" bandwidth="8" />
-	   <carrier frequency="674000" bandwidth="8" />
-	   <carrier frequency="690000" bandwidth="8" />
-	   <carrier frequency="722000" bandwidth="8" />
-	   <carrier frequency="746000" bandwidth="8" />
-	   <carrier frequency="778000" bandwidth="8" />
+		<carrier frequency="506000" bandwidth="8" />
+		<carrier frequency="538000" bandwidth="8" />
+		<carrier frequency="586000" bandwidth="8" />
+		<carrier frequency="674000" bandwidth="8" />
+		<carrier frequency="690000" bandwidth="8" />
+		<carrier frequency="722000" bandwidth="8" />
+		<carrier frequency="746000" bandwidth="8" />
+		<carrier frequency="778000" bandwidth="8" />
 	</country>
 	<country name="Germany - Goettingen" offset="125">
 		<carrier frequency="474000" bandwidth="8" />
@@ -1018,13 +1016,13 @@
 		<carrier frequency="850000" />
 		<carrier frequency="858000" />
 	</country>
-  <country name="New Zealand Auckland">
-    <carrier frequency="698000" bandwidth="8" />
-  </country>
-	<country name="Norway - Oslo (trials)" offset="0">
+	<country name="New Zealand Auckland">
+		<carrier frequency="698000" bandwidth="8" />
+	</country>
+	<country name="Norway - Oslo">
 		<carrier frequency="722000" bandwidth="8" />
 		<carrier frequency="770000" bandwidth="8" />
-	</country> 
+	</country>
 	<country name="Spain - Andalucia - Almeria">
 		<carrier frequency="778000" bandwidth="8" />
 		<carrier frequency="762000" bandwidth="8" />
