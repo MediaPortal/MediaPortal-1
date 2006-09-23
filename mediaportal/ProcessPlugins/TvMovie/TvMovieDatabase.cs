@@ -239,7 +239,7 @@ namespace ProcessPlugins.TvMovie
 
       string dataProviderString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source={0}";
 
-      Log.Debug("TVMovie: DB path: {0}", DatabasePath);
+      //Log.Debug("TVMovie: DB path: {0}", DatabasePath);
 
       if (DatabasePath != string.Empty)
         dataProviderString = string.Format(dataProviderString, DatabasePath);
@@ -406,7 +406,7 @@ namespace ProcessPlugins.TvMovie
 
     private int ImportStation(string stationName, ArrayList channelNames)
     {
-      Log.Debug("TVMovie: ImportStation({0})", stationName);
+      //Log.Debug("TVMovie: ImportStation({0})", stationName);
 
       string sqlSelect = string.Empty;
       string audioFormat = String.Empty;
@@ -432,7 +432,7 @@ namespace ProcessPlugins.TvMovie
 
       DataSet tvMovieTable = new DataSet();
 
-      Log.Debug("TVMovie: Getting data for station");
+      //Log.Debug("TVMovie: Getting data for station");
 
       try
       {
@@ -450,7 +450,7 @@ namespace ProcessPlugins.TvMovie
         _databaseConnection.Close();
       }
 
-      Log.Debug("TVMovie: Getting data for station done");
+      //Log.Debug("TVMovie: Getting data for station done");
 
       int programsCount = tvMovieTable.Tables["TVDaten"].Rows.Count;
 
@@ -459,7 +459,7 @@ namespace ProcessPlugins.TvMovie
 
       int counter = 0;
 
-      Log.Debug("TVMovie: Importing data for station");
+      //Log.Debug("TVMovie: Importing data for station");
 
       foreach (DataRow guideEntry in tvMovieTable.Tables["TVDaten"].Rows)
       {
@@ -551,7 +551,7 @@ namespace ProcessPlugins.TvMovie
         }
       }
 
-      Log.Debug("TVMovie: Importing data for station done");
+      //Log.Debug("TVMovie: Importing data for station done");
 
       if (OnProgramsChanged != null)
         OnProgramsChanged(programsCount + 1, programsCount + 1, string.Empty);
@@ -598,16 +598,16 @@ namespace ProcessPlugins.TvMovie
 
       Log.Debug("TVMovie: Importing database");
 
-      Log.Debug("TVMovie: Removal of old EPG data");
+      //Log.Debug("TVMovie: Removal of old EPG data");
       TVDatabase.RemoveOldPrograms();
-      Log.Debug("TVMovie: Removal done");
+      //Log.Debug("TVMovie: Removal done");
 
       if (_canceled)
         return;
 
       int maximum = 0;
 
-      Log.Debug("TVMovie: Calculating stations");
+      //Log.Debug("TVMovie: Calculating stations");
       foreach (string station in _stations)
         foreach (Mapping mapping in mappingList)
           if (mapping.Station == station)
@@ -617,11 +617,11 @@ namespace ProcessPlugins.TvMovie
           }
       if (OnStationsChanged != null)
         OnStationsChanged(1, maximum, string.Empty);
-      Log.Debug("TVMovie: Calculating stations done");
+      //Log.Debug("TVMovie: Calculating stations done");
 
       int counter = 0;
 
-      Log.Debug("TVMovie: Importing stations");
+      //Log.Debug("TVMovie: Importing stations");
 
       foreach (string station in _stations)
       {
@@ -650,9 +650,9 @@ namespace ProcessPlugins.TvMovie
       if (OnStationsChanged != null)
         OnStationsChanged(maximum, maximum, "Import done");
 
-      Log.Debug("TVMovie: Importing stations done");
+      //Log.Debug("TVMovie: Importing stations done");
 
-      Log.Debug("TVMovie: Setting last update time stamp");
+      //Log.Debug("TVMovie: Setting last update time stamp");
 
       if (!_canceled)
       {
@@ -670,9 +670,9 @@ namespace ProcessPlugins.TvMovie
 
         MediaPortal.Profile.Settings.SaveCache();
 
-        Log.Debug("TVMovie: Setting last update time stamp done");
+        //Log.Debug("TVMovie: Setting last update time stamp done");
 
-        Log.Info("TVMovie: Imported {0} database entries for {1} stations", _programsCounter, counter);
+        Log.Debug("TVMovie: Imported {0} database entries for {1} stations", _programsCounter, counter);
       }
     }
   }
