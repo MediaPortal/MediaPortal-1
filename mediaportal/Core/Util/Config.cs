@@ -25,162 +25,162 @@ using System.Xml;
 
 namespace MediaPortal.Util
 {
-    public class Config
-    {
-        private static Dictionary<Dir, string> directories;
+  public class Config
+  {
+    private static Dictionary<Dir, string> directories;
 
-        public enum Dir
-        {
-            // Path holding Path Information
-            Base,
-            Log,
-            Skin,
-            Language,
-            Database,
-            Plugins,
-            Thumbs,
-            Cache,
-            Weather,
-            CustomInputDevice,
-            Config
-        }
-
-        /// <summary>
-        /// Private constructor. Singleton. Do not allow any instance of this class.
-        /// </summary>
-        ///
-        /*
-    private Config()
+    public enum Dir
     {
+      // Path holding Path Information
+      Base,
+      Log,
+      Skin,
+      Language,
+      Database,
+      Plugins,
+      Thumbs,
+      Cache,
+      Weather,
+      CustomInputDevice,
+      Config
     }
-    */
-        static Config()
-        {
-            directories = new Dictionary<Dir, string>();
-            LoadDirs(AppDomain.CurrentDomain.BaseDirectory);
-        }
 
-        /// <summary>
-        /// Read the Directory Configuration from the Config File.
-        /// First we look for the file in MyDocuments of the logged on user. If file is not there or invalid, 
-        /// we use the one from the MediaPortal InstallPath.
-        /// </summary>
-        private static void LoadDirs(string startuppath)
-        {
-            Set(Dir.Base, startuppath + @"\");
-            if (!ReadConfig(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Team MediaPortal\"))
-            {
-                if (!ReadConfig(Get(Dir.Base)))
-                {
-                    LoadDefaultDirs();
-                }
-            }
-        }
+    /// <summary>
+    /// Private constructor. Singleton. Do not allow any instance of this class.
+    /// </summary>
+    ///
+    /*
+private Config()
+{
+}
+*/
+    static Config()
+    {
+      directories = new Dictionary<Dir, string>();
+      LoadDirs(AppDomain.CurrentDomain.BaseDirectory);
+    }
 
-        /// <summary>
-        /// Load the Path information from the Config File into the dictionary
-        /// </summary>
-        /// <returns></returns>
-        private static bool ReadConfig(string configDir)
+    /// <summary>
+    /// Read the Directory Configuration from the Config File.
+    /// First we look for the file in MyDocuments of the logged on user. If file is not there or invalid, 
+    /// we use the one from the MediaPortal InstallPath.
+    /// </summary>
+    private static void LoadDirs(string startuppath)
+    {
+      Set(Dir.Base, startuppath);
+      if (!ReadConfig(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Team MediaPortal\"))
+      {
+        if (!ReadConfig(Get(Dir.Base)))
         {
-            // Make sure the file exists before we try to do any processing
-            string strFileName = configDir + "MediaPortalDirs.xml";
-            if (File.Exists(strFileName))
-            {
-                try
-                {
-                    XmlDocument xml = new XmlDocument();
-                    xml.Load(strFileName);
-                    if (xml.DocumentElement == null)
-                    {
-                        return false;
-                    }
-                    XmlNodeList dirList = xml.DocumentElement.SelectNodes("/Config/Dir");
-                    if (dirList == null || dirList.Count == 0)
-                    {
-                        return false;
-                    }
-                    foreach (XmlNode nodeDir in dirList)
-                    {
-                        if (nodeDir.Attributes != null)
-                        {
-                            XmlNode dirId = nodeDir.Attributes.GetNamedItem("id");
-                            if (dirId != null && dirId.InnerText != null && dirId.InnerText.Length > 0)
-                            {
-                                XmlNode path = nodeDir.SelectSingleNode("Path");
-                                if (path != null)
-                                {
-                                    string strPath = path.InnerText;
-                                    // Check to see, if the location was specified with an absolute or relative path.
-                                    // In case of relative path, prefix it with the startuppath                 
-                                    if (!Path.IsPathRooted(path.InnerText))
-                                    {
-                                        strPath = Get(Dir.Base) + path.InnerText;
-                                    }
-                                    // See if we got a slash at the end. If not add one.
-                                    if (!strPath.EndsWith(@"\"))
-                                    {
-                                        strPath += @"\";
-                                    }
-                                    try
-                                    {
-                                        Set((Dir) Enum.Parse(typeof(Dir), dirId.InnerText), strPath);
-                                    }
-                                    catch (Exception)
-                                    {
-                                        return false;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    return true;
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
-            }
+          LoadDefaultDirs();
+        }
+      }
+    }
+
+    /// <summary>
+    /// Load the Path information from the Config File into the dictionary
+    /// </summary>
+    /// <returns></returns>
+    private static bool ReadConfig(string configDir)
+    {
+      // Make sure the file exists before we try to do any processing
+      string strFileName = configDir + "MediaPortalDirs.xml";
+      if (File.Exists(strFileName))
+      {
+        try
+        {
+          XmlDocument xml = new XmlDocument();
+          xml.Load(strFileName);
+          if (xml.DocumentElement == null)
+          {
             return false;
+          }
+          XmlNodeList dirList = xml.DocumentElement.SelectNodes("/Config/Dir");
+          if (dirList == null || dirList.Count == 0)
+          {
+            return false;
+          }
+          foreach (XmlNode nodeDir in dirList)
+          {
+            if (nodeDir.Attributes != null)
+            {
+              XmlNode dirId = nodeDir.Attributes.GetNamedItem("id");
+              if (dirId != null && dirId.InnerText != null && dirId.InnerText.Length > 0)
+              {
+                XmlNode path = nodeDir.SelectSingleNode("Path");
+                if (path != null)
+                {
+                  string strPath = path.InnerText;
+                  // Check to see, if the location was specified with an absolute or relative path.
+                  // In case of relative path, prefix it with the startuppath                 
+                  if (!Path.IsPathRooted(path.InnerText))
+                  {
+                    strPath = Get(Dir.Base) + path.InnerText;
+                  }
+                  // See if we got a slash at the end. If not add one.
+                  if (!strPath.EndsWith(@"\"))
+                  {
+                    strPath += @"\";
+                  }
+                  try
+                  {
+                    Set((Dir)Enum.Parse(typeof(Dir), dirId.InnerText), strPath);
+                  }
+                  catch (Exception)
+                  {
+                    return false;
+                  }
+                }
+              }
+            }
+          }
+          return true;
         }
-
-        private static void LoadDefaultDirs()
+        catch (Exception)
         {
-            string baseDir = Get(Dir.Base);
-            Set(Dir.Cache, baseDir + @"cache\");
-            Set(Dir.Config, baseDir);
-            Set(Dir.CustomInputDevice, baseDir + @"InputDeviceMappings\custom\");
-            Set(Dir.Database, baseDir + @"database\");
-            Set(Dir.Language, baseDir + @"language\");
-            Set(Dir.Log, baseDir + @"log\");
-            Set(Dir.Plugins, baseDir + @"plugins\");
-            Set(Dir.Skin, baseDir + @"skin\");
-            Set(Dir.Thumbs, baseDir + @"thumbs\");
-            Set(Dir.Weather, baseDir + @"weather\");
+          return false;
         }
-
-        public static string Get(Dir path)
-        {
-            string returnVal = "";
-            if (directories.TryGetValue(path, out returnVal))
-            {
-                return returnVal;
-            }
-            else
-            {
-                return "";
-            }
-        }
-
-        private static void Set(Dir path, string value)
-        {
-            try
-            {
-                directories.Add(path, value);
-            }
-            catch (ArgumentException)
-            {
-            }
-        }
+      }
+      return false;
     }
+
+    private static void LoadDefaultDirs()
+    {
+      string baseDir = Get(Dir.Base);
+      Set(Dir.Cache, baseDir + @"cache\");
+      Set(Dir.Config, baseDir);
+      Set(Dir.CustomInputDevice, baseDir + @"InputDeviceMappings\custom\");
+      Set(Dir.Database, baseDir + @"database\");
+      Set(Dir.Language, baseDir + @"language\");
+      Set(Dir.Log, baseDir + @"log\");
+      Set(Dir.Plugins, baseDir + @"plugins\");
+      Set(Dir.Skin, baseDir + @"skin\");
+      Set(Dir.Thumbs, baseDir + @"thumbs\");
+      Set(Dir.Weather, baseDir + @"weather\");
+    }
+
+    public static string Get(Dir path)
+    {
+      string returnVal = "";
+      if (directories.TryGetValue(path, out returnVal))
+      {
+        return returnVal;
+      }
+      else
+      {
+        return "";
+      }
+    }
+
+    private static void Set(Dir path, string value)
+    {
+      try
+      {
+        directories.Add(path, value);
+      }
+      catch (ArgumentException)
+      {
+      }
+    }
+  }
 }
