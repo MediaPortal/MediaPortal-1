@@ -264,6 +264,66 @@ namespace MediaPortal.GUI.RADIOLASTFM
       }
       return base.OnMessage(message);
     }
+
+    protected override void OnShowContextMenu()
+    {
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+
+      if (dlg == null)
+        return;
+
+      dlg.Reset();
+      dlg.SetHeading(924);                  // Menu
+
+      dlg.AddLocalizedString(34010);        // Love
+      dlg.AddLocalizedString(34011);        // Ban
+      dlg.AddLocalizedString(34012);        // Skip
+
+      if (LastFMStation.CurrentTrackTag != null)
+        dlg.AddLocalizedString(33040);  // copy IRC spam
+
+      dlg.DoModal(GetID);
+
+      if (dlg.SelectedId == -1)
+        return;
+
+      switch (dlg.SelectedId)
+      {
+        case 34010:     // Love
+          {
+            LastFMStation.SendControlCommand(StreamControls.lovetrack);
+            break;
+          }
+        case 34011:     // Ban
+          {
+            LastFMStation.SendControlCommand(StreamControls.bantrack);
+            break;
+          }
+        case 34012:     // Skip
+          {
+            LastFMStation.SendControlCommand(StreamControls.skiptrack);
+            break;
+          }
+
+        case 33040:    // IRC spam
+          {
+            try
+            {
+              if (LastFMStation.CurrentTrackTag != null)
+              {
+                string tmpTrack = LastFMStation.CurrentTrackTag.Track > 0 ? (Convert.ToString(LastFMStation.CurrentTrackTag.Track) + ". ") : String.Empty;
+                Clipboard.SetDataObject(@"/me is listening on last.fm: " + LastFMStation.CurrentTrackTag.Artist + " [" + LastFMStation.CurrentTrackTag.Album + "] - " + tmpTrack + LastFMStation.CurrentTrackTag.Title, true);
+              }
+              break;
+            }
+            catch (Exception ex)
+            {
+              Log.Error("GUIRadioLastFM: could not copy song spam to clipboard - {0}", ex.Message);
+              break;
+            }
+          }
+      }
+    }
     #endregion    
     
 
@@ -439,15 +499,15 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
         // Initialize menuItem1
         menuItem1.Index = 0;
-        menuItem1.Text = "&Skip";
+        menuItem1.Text = GUILocalizeStrings.Get(34010); // Love
         menuItem1.Click += new System.EventHandler(Tray_menuItem1_Click);
         // Initialize menuItem2
         menuItem2.Index = 1;
-        menuItem2.Text = "&Ban";
+        menuItem2.Text = GUILocalizeStrings.Get(34011); // Ban
         menuItem2.Click += new System.EventHandler(Tray_menuItem2_Click);
         // Initialize menuItem3
         menuItem3.Index = 2;
-        menuItem3.Text = "&Love";
+        menuItem3.Text = GUILocalizeStrings.Get(34012); // Skip
         menuItem3.Click += new System.EventHandler(Tray_menuItem3_Click);
 
         String BaseDir = Config.Get(Config.Dir.Base);

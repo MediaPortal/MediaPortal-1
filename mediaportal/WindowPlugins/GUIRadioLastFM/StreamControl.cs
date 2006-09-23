@@ -35,6 +35,8 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Music.Database;
 using MediaPortal.Player;
 using MediaPortal.TagReader;
+using MediaPortal.Utils.Web;
+
 
 namespace MediaPortal.GUI.RADIOLASTFM
 {
@@ -91,7 +93,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     private DateTime _lastConnectAttempt = DateTime.MinValue;
     private TimeSpan _minConnectWaitTime = new TimeSpan(0, 0, 1);
-
+    AsyncGetRequest httpcommand = null;    
 
     #region Examples
     // 5. http.request.uri = Request URI: http://ws.audioscrobbler.com/radio/np.php?session=e5b0c80f5b5d0937d407fb77a913cb6a
@@ -130,6 +132,9 @@ namespace MediaPortal.GUI.RADIOLASTFM
       _nowPlayingTimer.Elapsed += new ElapsedEventHandler(OnTimerTick);
 
       InfoScrobbler = AudioscrobblerUtils.Instance;
+      httpcommand = new AsyncGetRequest();
+      httpcommand.workerFinished += new AsyncGetRequest.AsyncGetRequestCompleted(OnParseAsyncResponse);
+      httpcommand.workerError += new AsyncGetRequest.AsyncGetRequestError(OnAsyncRequestError);
 
       _currentUser = AudioscrobblerBase.Username;
 
@@ -404,9 +409,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
             {
               Log.Info("StreamControl: Successfully send skip command");
               success = true;
-              Thread.Sleep(750);
               // the website has to refresh therefore we wait a little bit
-              Thread.Sleep(750);
               UpdateNowPlaying();
             }
             break;
@@ -543,46 +546,17 @@ namespace MediaPortal.GUI.RADIOLASTFM
       }
       _lastConnectAttempt = DateTime.Now;
 
-      HttpWebRequest request = null;
+      httpcommand.SendAsyncGetRequest(url_);
+      return true;
+    }
 
-      // send the command
-      try
-      {
+    private void OnAsyncRequestError(String urlCommand, Exception errorReason)
+    {
+      Log.Warn("StreamControl: Async request for {0} unsuccessful: {1}", urlCommand, errorReason.Message);
+    }
 
-        request = (HttpWebRequest)WebRequest.Create(url_);
-        request.Timeout = 20000;
-        // prevent them from blocking us
-        request.UserAgent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)";
-        
-        if (request == null)
-          throw (new Exception());
-      }
-      catch (Exception e)
-      {
-        Log.Error("StreamControl: SendCommandRequest failed - {0}", e.Message);
-        return false;
-      }
-
-      StreamReader reader = null;
-      HttpStatusCode responseCode = new HttpStatusCode();
-
-      // get the response
-      try
-      {
-
-        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-        if (response == null)
-          throw (new Exception());
-
-        reader = new StreamReader(response.GetResponseStream());
-        responseCode = response.StatusCode;
-      }
-      catch (Exception e)
-      {
-        Log.Error("StreamControl: SendCommandRequest: Response failed {0}", e.Message);
-        return false;
-      }
-
+    private void OnParseAsyncResponse(StreamReader reader, HttpStatusCode responseCode)
+    {
       // parse the response
       try
       {
@@ -591,12 +565,14 @@ namespace MediaPortal.GUI.RADIOLASTFM
         if (responseCode == HttpStatusCode.OK)
         {
           if (responseMessage.StartsWith("response=OK"))
-            return true;
+            //return true;
+            return;
 
           if (responseMessage.StartsWith("price="))
           {
             ParseNowPlaying(reader);
-            return true;
+            //return true;
+            return;
           }
         }
         else
@@ -609,7 +585,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
           {
             _currentState = StreamPlaybackState.nocontent;
             Log.Warn("StreamControl: Not enough content left to play this station");
-            return false;
+            //return false;
+            return;
           }
           else
             Log.Warn(logmessage);
@@ -618,12 +595,15 @@ namespace MediaPortal.GUI.RADIOLASTFM
       catch (Exception e)
       {
         Log.Error("StreamControl: SendCommandRequest: Parsing response failed {0}", e.Message);
-        return false;
+        //return false;
+        return;
       }
 
-      return false;
+      //return false;
+      return;
     }
     # endregion
+
 
     #region Response parser
     private void ParseNowPlaying(StreamReader responseStream_)
@@ -707,7 +687,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
           Log.Debug("StreamControl: Same title found - trying again now..");
           UpdateNowPlaying();
         }
-
 
         Log.Info("StreamControl: Current track: {0} [{1}] - {2} ({3})", CurrentSongTag.Artist, CurrentSongTag.Album, CurrentSongTag.Title, Util.Utils.SecondsToHMSString(CurrentSongTag.Duration));
       }
