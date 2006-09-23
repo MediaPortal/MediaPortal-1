@@ -92,7 +92,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     private StreamType _currentTuneType = StreamType.Recommended;
 
     private DateTime _lastConnectAttempt = DateTime.MinValue;
-    private TimeSpan _minConnectWaitTime = new TimeSpan(0, 0, 2);
+    private TimeSpan _minConnectWaitTime = new TimeSpan(0, 0, 1);
     private int _retryFetchCount = 0;
     private Object BadLock = null;
 
@@ -286,8 +286,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
           _currentState = StreamPlaybackState.streaming;
           ToggleRecordToProfile(_recordToProfile);
           ToggleDiscoveryMode(_discoveryMode);
-          _nowPlayingTimer.Start();          
-          UpdateNowPlaying();
+          _nowPlayingTimer.Start();
+          SendCommandRequest(@"http://ws.audioscrobbler.com/radio/np.php?session=" + _currentSession);
 
           return true;
         }
@@ -544,7 +544,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       Log.Warn("StreamControl: Async request for {0} unsuccessful: {1}", urlCommand, errorReason.Message);
     }
 
-    private void OnParseAsyncResponse(List<String> responseList, HttpStatusCode responseCode, String requestedURLCommand)
+    private void OnParseAsyncResponse(List<string> responseList, HttpStatusCode responseCode, String requestedURLCommand)
     {
       // parse the response
       try
@@ -554,12 +554,12 @@ namespace MediaPortal.GUI.RADIOLASTFM
           string responseMessage = String.Empty;
           if (responseList.Count > 0)
           {
-            List<String> responseStrings = new List<string>();
+            List<string> responseStrings = new List<string>(responseList);
 
-            foreach (String responsestr in responseList)
-            {
-              responseStrings.Add(responsestr);
-            }
+            //foreach (String responsestr in responseList)
+            //{
+            //  responseStrings.Add(responsestr);
+            //}
 
             if (responseCode == HttpStatusCode.OK)
             {

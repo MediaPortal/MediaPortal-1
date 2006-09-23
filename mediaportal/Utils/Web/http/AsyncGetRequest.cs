@@ -16,8 +16,6 @@ namespace MediaPortal.Utils.Web
     public delegate void AsyncGetRequestError(String commandURL, Exception errorReason);
     public event AsyncGetRequestError workerError;
 
-    private bool _workerCompleted = false;
-
     // not really threadsafe but this is only used for the following param - no harm if overwritten
     private int _requestDelay = 0;
 
@@ -25,7 +23,6 @@ namespace MediaPortal.Utils.Web
     {
       BackgroundWorker worker = new BackgroundWorker();
       _requestDelay = 0;
-      _workerCompleted = false;
       worker.DoWork += new DoWorkEventHandler(RequestWorker_DoWork);
       worker.RunWorkerAsync(_url);
     }
@@ -34,7 +31,6 @@ namespace MediaPortal.Utils.Web
     {
       BackgroundWorker worker = new BackgroundWorker();
       _requestDelay = _delayMSecs;
-      _workerCompleted = false;
       worker.DoWork += new DoWorkEventHandler(RequestWorker_DoWork);
       worker.RunWorkerAsync(_url);
     }
@@ -95,15 +91,12 @@ namespace MediaPortal.Utils.Web
           if (workerError != null)
             workerError(targetURL, ex2);
           return;
-        }
-        _workerCompleted = true;
-
+        }        
 
         List<String> responseStrings = new List<string>();
         String tmp = String.Empty;
         while ((tmp = reader.ReadLine()) != null)
           responseStrings.Add(tmp);
-
 
         if (workerFinished != null)
           workerFinished(responseStrings, responseCode, targetURL);
