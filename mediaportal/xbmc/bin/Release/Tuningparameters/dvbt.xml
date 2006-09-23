@@ -1902,6 +1902,73 @@
 		<carrier frequency="850000" bandwidth="8" />
 		<carrier frequency="858000" bandwidth="8" />
 	</country>
+	<country name="UK - Caradon Hill" offset="167">
+		<carrier frequency="474000" bandwidth="8" />
+		<carrier frequency="497833" bandwidth="8" />
+		<carrier frequency="521833" bandwidth="8" />
+		<carrier frequency="553833" bandwidth="8" />
+		<carrier frequency="578000" bandwidth="8" />
+		<carrier frequency="690000" bandwidth="8" />
+	</country>
+	<country name="UK - Crystal Palace" offset="167">
+		<carrier frequency="482000" bandwidth="8" />
+		<carrier frequency="506000" bandwidth="8" />
+		<carrier frequency="522000" bandwidth="8" />
+		<carrier frequency="530000" bandwidth="8" />
+		<carrier frequency="538000" bandwidth="8" />
+		<carrier frequency="554000" bandwidth="8" />
+		<carrier frequency="556000" bandwidth="8" />
+		<carrier frequency="578000" bandwidth="8" />
+	</country>
+	<country name="UK - Emley Moor" offset="167">
+		<carrier frequency="626000" bandwidth="8" />
+		<carrier frequency="650000" bandwidth="8" />
+		<carrier frequency="674000" bandwidth="8" />
+		<carrier frequency="698000" bandwidth="8" />
+		<carrier frequency="706000" bandwidth="8" />
+		<carrier frequency="722000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+	</country>
+	<country name="UK - Fenham" offset="167">
+		<carrier frequency="482000" bandwidth="8" />
+		<carrier frequency="506000" bandwidth="8" />
+		<carrier frequency="530000" bandwidth="8" />
+		<carrier frequency="546000" bandwidth="8" />
+		<carrier frequency="562000" bandwidth="8" />
+		<carrier frequency="762000" bandwidth="8" />
+	</country>
+	<country name="UK - Pontop" offset="167">
+		<carrier frequency="690000" bandwidth="8" />
+		<carrier frequency="730000" bandwidth="8" />
+		<carrier frequency="746000" bandwidth="8" />
+		<carrier frequency="778000" bandwidth="8" />
+		<carrier frequency="802000" bandwidth="8" />
+		<carrier frequency="826000" bandwidth="8" />
+	</country>
+	<country name="UK - Stockland Hill" offset="167">
+		<carrier frequency="482000" bandwidth="8" />
+		<carrier frequency="506000" bandwidth="8" />
+		<carrier frequency="530000" bandwidth="8" />
+		<carrier frequency="546000" bandwidth="8" />
+		<carrier frequency="562000" bandwidth="8" />
+		<carrier frequency="578000" bandwidth="8" />
+	</country>
+	<country name="UK - Tacolneston" offset="167">
+		<carrier frequency="730000" bandwidth="8" />
+		<carrier frequency="770000" bandwidth="8" />
+		<carrier frequency="786000" bandwidth="8" />
+		<carrier frequency="794000" bandwidth="8" />
+		<carrier frequency="810000" bandwidth="8" />
+		<carrier frequency="818000" bandwidth="8" />
+	</country>
+	<country name="UK - Whitehawk Hill (Brighton)" offset="167">
+		<carrier frequency="690000" bandwidth="8" />
+		<carrier frequency="706000" bandwidth="8" />
+		<carrier frequency="746000" bandwidth="8" />
+		<carrier frequency="770000" bandwidth="8" />
+		<carrier frequency="794000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+	</country>
 	<country name="UK - Winter Hill" offset="167">
 		<carrier frequency="754000" bandwidth="8" />
 		<carrier frequency="786000" bandwidth="8" />
