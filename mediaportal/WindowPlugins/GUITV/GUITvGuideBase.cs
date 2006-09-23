@@ -123,6 +123,8 @@ namespace MediaPortal.GUI.TV
     string _lineInput = String.Empty;
     static bool _workerThreadRunning = false;
 
+    bool _byIndex = false;
+
     #endregion
 
     #region ctor
@@ -172,6 +174,7 @@ namespace MediaPortal.GUI.TV
         _channelOffset = xmlreader.GetValueAsInt("tvguide", "yoffset", 0);
         _autoTurnOnTv = xmlreader.GetValueAsBool("mytv", "autoturnontv", false);
         _disableXMLTVImportOption = xmlreader.GetValueAsBool("plugins", "TV Movie Clickfinder", false);
+        _byIndex = xmlreader.GetValueAsBool("mytv", "byindex", true);
       }
     }
 
@@ -2805,7 +2808,47 @@ namespace MediaPortal.GUI.TV
 
     void ChangeChannelNr(int iChannelNr)
     {
-      iChannelNr--;
+      if (_byIndex) // Check if channel changing should be byIndex
+      {
+        // Channel change by index
+        iChannelNr--;
+      }
+      else
+      {
+        // Change channel by using actual channel number
+        int iCounter = 0;
+        bool found = false;
+        TVChannel chan;
+
+        // Loop through complete channel list until match is found
+        while (iCounter < _channelList.Count && found == false)
+        {
+          chan = (TVChannel)_channelList[iCounter];
+
+          // Check if channel is an external channel
+          if (chan.External == false)
+          {
+            //Not External Channel
+            if (chan.Number == iChannelNr)
+            {
+              iChannelNr = iCounter;
+              found = true;
+            }
+          }
+          else
+          {
+            //External channel
+            if (Int32.Parse(chan.ExternalTunerChannel) == iChannelNr)
+            {
+              iChannelNr = iCounter;
+              found = true;
+            }
+          }
+          iCounter++;  // Increment loop counter
+        }
+      }
+
+
       if (iChannelNr >= 0 && iChannelNr < _channelList.Count)
       {
         UnFocus();

@@ -99,7 +99,7 @@ namespace MediaPortal.GUI.TV
     #region Serialisation
     void LoadSettings()
     {
-      if ( _settingsLoaded )
+      if (_settingsLoaded)
         return;
       _settingsLoaded = true;
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(MediaPortal.Util.Config.Get(MediaPortal.Util.Config.Dir.Config) + "MediaPortal.xml"))
@@ -110,19 +110,19 @@ namespace MediaPortal.GUI.TV
         _autoTurnOnTv = xmlreader.GetValueAsBool("mytv", "autoturnontv", false);
 
         string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "normal");
-        if ( strValue.Equals("zoom") )
+        if (strValue.Equals("zoom"))
           GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom;
-        if ( strValue.Equals("stretch") )
+        if (strValue.Equals("stretch"))
           GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Stretch;
-        if ( strValue.Equals("normal") )
+        if (strValue.Equals("normal"))
           GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Normal;
-        if ( strValue.Equals("original") )
+        if (strValue.Equals("original"))
           GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Original;
-        if ( strValue.Equals("letterbox") )
+        if (strValue.Equals("letterbox"))
           GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.LetterBox43;
-        if ( strValue.Equals("panscan") )
+        if (strValue.Equals("panscan"))
           GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.PanScan43;
-        if ( strValue.Equals("zoom149") )
+        if (strValue.Equals("zoom149"))
           GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom14to9;
       }
     }
@@ -156,14 +156,14 @@ namespace MediaPortal.GUI.TV
       return bResult;
     }
 
-    public override void OnAction( Action action )
+    public override void OnAction(Action action)
     {
-      switch ( action.wID )
+      switch (action.wID)
       {
         case Action.ActionType.ACTION_RECORD:
           //record current program on current channel
           //are we watching tv?
-          if ( GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN )
+          if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
           {
             Log.Info("send message to fullscreen tv");
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORD, GUIWindowManager.ActiveWindow, 0, 0, 0, 0, null);
@@ -174,24 +174,24 @@ namespace MediaPortal.GUI.TV
           }
 
           Log.Info("GUITvHome:Record action");
-          if ( Recorder.IsViewing() || Recorder.IsTimeShifting() )
+          if (Recorder.IsViewing() || Recorder.IsTimeShifting())
           {
             string channel = Recorder.GetTVChannelName();
             //yes, are we recording this channel already ?
             TVProgram prog = Navigator.GetTVChannel(channel).CurrentProgram;
-            if ( !Recorder.IsRecordingChannel(channel) )
+            if (!Recorder.IsRecordingChannel(channel))
             {
-              if ( prog != null )
+              if (prog != null)
               {
                 GUIDialogMenuBottomRight pDlgOK = (GUIDialogMenuBottomRight)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT);
-                if ( pDlgOK != null )
+                if (pDlgOK != null)
                 {
                   pDlgOK.Reset();
                   pDlgOK.SetHeading(605);//my tv
                   pDlgOK.AddLocalizedString(875); //current program
                   pDlgOK.AddLocalizedString(876); //till manual stop
                   pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
-                  switch ( pDlgOK.SelectedId )
+                  switch (pDlgOK.SelectedId)
                   {
                     case 875:
                       //record current program
@@ -239,10 +239,10 @@ namespace MediaPortal.GUI.TV
           {
             // goto home 
             // are we watching tv & doing timeshifting
-            if ( !g_Player.Playing && !Recorder.IsRadio() )
+            if (!g_Player.Playing && !Recorder.IsRadio())
             {
               //yes, do we want tv as background
-              if ( GUIGraphicsContext.ShowBackground )
+              if (GUIGraphicsContext.ShowBackground)
               {
                 // No, then stop viewing... 
                 Recorder.StopViewing();
@@ -253,17 +253,17 @@ namespace MediaPortal.GUI.TV
           }
 
         case Action.ActionType.ACTION_SHOW_GUI:
-          if ( !g_Player.Playing && Recorder.IsViewing() )
+          if (!g_Player.Playing && Recorder.IsViewing())
           {
             //if we're watching tv
             GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
           }
-          else if ( g_Player.Playing && g_Player.IsTV && !g_Player.IsTVRecording )
+          else if (g_Player.Playing && g_Player.IsTV && !g_Player.IsTVRecording)
           {
             //if we're watching a tv recording
             GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
           }
-          else if ( g_Player.Playing && g_Player.HasVideo )
+          else if (g_Player.Playing && g_Player.HasVideo)
           {
             GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
           }
@@ -271,7 +271,7 @@ namespace MediaPortal.GUI.TV
 
         case Action.ActionType.ACTION_KEY_PRESSED:
           {
-            if ( (char)action.m_key.KeyChar == '0' )
+            if ((char)action.m_key.KeyChar == '0')
               OnLastViewedChannel();
           }
           break;
@@ -281,7 +281,7 @@ namespace MediaPortal.GUI.TV
 
     protected override void OnPageLoad()
     {
-      if ( m_navigator == null )
+      if (m_navigator == null)
       {
         m_navigator = new ChannelNavigator();			// Create the channel navigator (it will load groups and channels)
       }
@@ -298,7 +298,7 @@ namespace MediaPortal.GUI.TV
       */
 
       //set video window position
-      if ( videoWindow != null )
+      if (videoWindow != null)
       {
         GUIGraphicsContext.VideoWindow = new Rectangle(videoWindow.XPosition, videoWindow.YPosition, videoWindow.Width, videoWindow.Height);
       }
@@ -306,24 +306,24 @@ namespace MediaPortal.GUI.TV
       // start viewing tv... 
       GUIGraphicsContext.IsFullScreenVideo = false;
       string channelName = Navigator.CurrentChannel;
-      if ( Navigator.CurrentChannel == String.Empty )
+      if (Navigator.CurrentChannel == String.Empty)
       {
-        if ( Navigator.CurrentGroup == null && Navigator.Groups.Count > 0 )
+        if (Navigator.CurrentGroup == null && Navigator.Groups.Count > 0)
         {
           Navigator.SetCurrentGroup(Navigator.Groups[0].GroupName);
         }
-        if ( Navigator.CurrentGroup != null )
+        if (Navigator.CurrentGroup != null)
         {
-          if ( Navigator.CurrentGroup.TvChannels.Count > 0 )
+          if (Navigator.CurrentGroup.TvChannels.Count > 0)
           {
             channelName = Navigator.CurrentGroup.TvChannels[0].Name;
           }
         }
       }
 
-      if ( channelName != String.Empty )
+      if (channelName != String.Empty)
       {
-        if ( Recorder.View )
+        if (Recorder.View)
         {
           channelName = Recorder.TVChannelName;
           _isTimeShifting = Recorder.IsTimeShifting();
@@ -337,17 +337,17 @@ namespace MediaPortal.GUI.TV
       UpdateStateOfButtons();
       UpdateProgressPercentageBar();
     }
-    protected override void OnPageDestroy( int newWindowId )
+    protected override void OnPageDestroy(int newWindowId)
     {
 
       //if we're switching to another plugin
-      if ( !GUIGraphicsContext.IsTvWindow(newWindowId) )
+      if (!GUIGraphicsContext.IsTvWindow(newWindowId))
       {
         //and we're not playing which means we dont timeshift tv
-        if ( Recorder.IsViewing() && !( Recorder.IsTimeShifting() || Recorder.IsRecording() ) )
+        if (Recorder.IsViewing() && !(Recorder.IsTimeShifting() || Recorder.IsRecording()))
         {
           // and we dont want tv in the background
-          if ( GUIGraphicsContext.ShowBackground )
+          if (GUIGraphicsContext.ShowBackground)
           {
             // then stop timeshifting & viewing... 
             Recorder.StopViewing();
@@ -363,27 +363,27 @@ namespace MediaPortal.GUI.TV
     void OnSelectGroup()
     {
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-      if ( dlg == null )
+      if (dlg == null)
         return;
       dlg.Reset();
       dlg.SetHeading(971); // group
       int selected = 0;
-      for ( int i = 0; i < Navigator.Groups.Count; ++i )
+      for (int i = 0; i < Navigator.Groups.Count; ++i)
       {
         dlg.Add(Navigator.Groups[i].GroupName);
-        if ( Navigator.Groups[i].GroupName == Navigator.CurrentGroup.GroupName )
+        if (Navigator.Groups[i].GroupName == Navigator.CurrentGroup.GroupName)
         {
           selected = i;
         }
       }
       dlg.SelectedLabel = selected;
       dlg.DoModal(this.GetID);
-      if ( dlg.SelectedLabel < 0 )
+      if (dlg.SelectedLabel < 0)
         return;
       Navigator.SetCurrentGroup(dlg.SelectedLabelText);
-      if ( Navigator.CurrentGroup != null )
+      if (Navigator.CurrentGroup != null)
       {
-        if ( Navigator.CurrentGroup.TvChannels.Count > 0 )
+        if (Navigator.CurrentGroup.TvChannels.Count > 0)
         {
           ViewChannelAndCheck(Navigator.CurrentGroup.TvChannels[0].Name);
         }
@@ -393,17 +393,17 @@ namespace MediaPortal.GUI.TV
     void OnSelectChannel()
     {
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-      if ( dlg == null )
+      if (dlg == null)
         return;
       dlg.Reset();
       dlg.SetHeading(891); // Select TV channel
       int selected = 0;
-      for ( int i = 0; i < Navigator.CurrentGroup.TvChannels.Count; ++i )
+      for (int i = 0; i < Navigator.CurrentGroup.TvChannels.Count; ++i)
       {
         dlg.Add(Navigator.CurrentGroup.TvChannels[i].Name);
-        if ( Navigator.CurrentTVChannel != null )
+        if (Navigator.CurrentTVChannel != null)
         {
-          if ( Navigator.CurrentGroup.TvChannels[i].Name == Navigator.CurrentTVChannel.Name )
+          if (Navigator.CurrentGroup.TvChannels[i].Name == Navigator.CurrentTVChannel.Name)
           {
             selected = i;
           }
@@ -411,16 +411,16 @@ namespace MediaPortal.GUI.TV
       }
       dlg.SelectedLabel = selected;
       dlg.DoModal(this.GetID);
-      if ( dlg.SelectedLabel < 0 )
+      if (dlg.SelectedLabel < 0)
         return;
       ViewChannelAndCheck(dlg.SelectedLabelText);
     }
 
-    protected override void OnClicked( int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType )
+    protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
     {
-      if ( control == btnTvOnOff )
+      if (control == btnTvOnOff)
       {
-        if ( Recorder.IsViewing() )
+        if (Recorder.IsViewing())
         {
           //tv off
           Log.Info("TVHome:turn tv off");
@@ -430,7 +430,7 @@ namespace MediaPortal.GUI.TV
         }
         else
         {
-          if ( !Recorder.Running )
+          if (!Recorder.Running)
           {
             Log.Info("TVHome: Recorder.Start()");
             Recorder.Start();
@@ -440,9 +440,9 @@ namespace MediaPortal.GUI.TV
           _isTvOn = true;
 
           //stop playing anything
-          if ( g_Player.Playing )
+          if (g_Player.Playing)
           {
-            if ( g_Player.IsTV && !g_Player.IsTVRecording )
+            if (g_Player.IsTV && !g_Player.IsTVRecording)
             {
               //already playing tv...
             }
@@ -460,7 +460,7 @@ namespace MediaPortal.GUI.TV
         UpdateProgressPercentageBar();
       }
 
-      if ( control == btnTimeshiftingOnOff )
+      if (control == btnTimeshiftingOnOff)
       {
         //turn timeshifting off 
         _isTimeShifting = !Recorder.IsTimeShifting();
@@ -473,21 +473,21 @@ namespace MediaPortal.GUI.TV
         UpdateProgressPercentageBar();
       }
 
-      if ( control == btnGroup )
+      if (control == btnGroup)
       {
         OnSelectGroup();
       }
-      if ( control == btnTeletext )
+      if (control == btnTeletext)
       {
         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TELETEXT);
         return;
       }
 
-      if ( control == btnRecord )
+      if (control == btnRecord)
       {
         OnRecord();
       }
-      if ( control == btnChannel )
+      if (control == btnChannel)
       {
         OnSelectChannel();
       }
@@ -495,14 +495,14 @@ namespace MediaPortal.GUI.TV
     }
 
 
-    public override bool OnMessage( GUIMessage message )
+    public override bool OnMessage(GUIMessage message)
     {
-      switch ( message.Message )
+      switch (message.Message)
       {
         case GUIMessage.MessageType.GUI_MSG_RESUME_TV:
           {
             LoadSettings();
-            if ( _autoTurnOnTv )
+            if (_autoTurnOnTv)
             {
               //restart viewing...  
               _isTvOn = true;
@@ -531,9 +531,9 @@ namespace MediaPortal.GUI.TV
     {
       TimeSpan ts = DateTime.Now - _updateTimer;
 
-      if ( GUIGraphicsContext.InVmr9Render )
+      if (GUIGraphicsContext.InVmr9Render)
         return;
-      if ( ts.TotalMilliseconds < 100 )
+      if (ts.TotalMilliseconds < 100)
         return;
       _updateTimer = DateTime.Now;
 
@@ -572,20 +572,20 @@ namespace MediaPortal.GUI.TV
     {
       //record now.
       //Are we recording this channel already?
-      if ( !Recorder.IsRecordingChannel(Navigator.CurrentChannel) )
+      if (!Recorder.IsRecordingChannel(Navigator.CurrentChannel))
       {
         //no then start recording
         TVProgram prog = Navigator.CurrentTVChannel.CurrentProgram;
-        if ( prog != null )
+        if (prog != null)
         {
           GUIDialogMenuBottomRight pDlgOK = (GUIDialogMenuBottomRight)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT);
-          if ( pDlgOK != null )
+          if (pDlgOK != null)
           {
             pDlgOK.SetHeading(605);//my tv
             pDlgOK.AddLocalizedString(875); //current program
             pDlgOK.AddLocalizedString(876); //till manual stop
             pDlgOK.DoModal(this.GetID);
-            switch ( pDlgOK.SelectedId )
+            switch (pDlgOK.SelectedId)
             {
               case 875:
                 //record current program
@@ -607,7 +607,7 @@ namespace MediaPortal.GUI.TV
       }
       else
       {
-        if ( Recorder.IsRecording() )
+        if (Recorder.IsRecording())
         {
           //yes then stop recording
           Navigator.UpdateCurrentChannel();
@@ -616,7 +616,7 @@ namespace MediaPortal.GUI.TV
           // No need to  re-start viewing, because the recorder starts to play TS file
         }
       }
-     // UpdateStateOfButtons();
+      // UpdateStateOfButtons();
     }
 
     /// <summary>
@@ -630,7 +630,7 @@ namespace MediaPortal.GUI.TV
       btnTvOnOff.Selected = Recorder.IsViewing();
       btnTeletext.IsVisible = Recorder.HasTeletext();
       //are we recording a tv program?
-      if ( Recorder.IsRecording() )
+      if (Recorder.IsRecording())
       {
         //yes then disable the timeshifting on/off buttons
         //and change the Record Now button into Stop Record
@@ -646,18 +646,18 @@ namespace MediaPortal.GUI.TV
 
         //is current card is not supporting timeshifting
         bool supportstimeshifting = Recorder.DoesSupportTimeshifting();
-        if ( btnTvOnOff.Selected == false || supportstimeshifting == false )
+        if (btnTvOnOff.Selected == false || supportstimeshifting == false)
         {
           //then disable the timeshifting button
           btnTimeshiftingOnOff.Disabled = true;
           btnTimeshiftingOnOff.Selected = false;
         }
-        else if ( supportstimeshifting )
+        else if (supportstimeshifting)
         {
           //enable the timeshifting button
           btnTimeshiftingOnOff.Disabled = false;
           // set state of timeshifting button
-          if ( Recorder.IsTimeShifting() )
+          if (Recorder.IsTimeShifting())
           {
             btnTimeshiftingOnOff.Selected = true;
           }
@@ -672,12 +672,12 @@ namespace MediaPortal.GUI.TV
     void UpdateRecordingIndicator()
     {
       // if we're recording tv, update gui with info
-      if ( Recorder.IsRecording() )
+      if (Recorder.IsRecording())
       {
         TVRecording rec = Recorder.GetTVRecording();
-        if ( rec != null )
+        if (rec != null)
         {
-          if ( rec.RecType != TVRecording.RecordingType.Once )
+          if (rec.RecType != TVRecording.RecordingType.Once)
             imgRecordingIcon.SetFileName(Thumbs.TvRecordingSeriesIcon);
           else
             imgRecordingIcon.SetFileName(Thumbs.TvRecordingIcon);
@@ -698,20 +698,20 @@ namespace MediaPortal.GUI.TV
     {
       try
       {
-        if ( Navigator.CurrentTVChannel == null )
+        if (Navigator.CurrentTVChannel == null)
         {
           GUIPropertyManager.SetProperty("#TV.View.Percentage", "0");
           return;
         }
         //get current tv program
         TVProgram prog = Navigator.CurrentTVChannel.CurrentProgram;
-        if ( prog == null )
+        if (prog == null)
         {
           GUIPropertyManager.SetProperty("#TV.View.Percentage", "0");
           return;
         }
         TimeSpan ts = prog.EndTime - prog.StartTime;
-        if ( ts.TotalSeconds <= 0 )
+        if (ts.TotalSeconds <= 0)
         {
           GUIPropertyManager.SetProperty("#TV.View.Percentage", "0");
           return;
@@ -719,11 +719,11 @@ namespace MediaPortal.GUI.TV
         double iTotalSecs = ts.TotalSeconds;
         ts = DateTime.Now - prog.StartTime;
         double iCurSecs = ts.TotalSeconds;
-        double fPercent = ( (double)iCurSecs ) / ( (double)iTotalSecs );
+        double fPercent = ((double)iCurSecs) / ((double)iTotalSecs);
         fPercent *= 100.0d;
-        GUIPropertyManager.SetProperty("#TV.View.Percentage", ( (int)fPercent ).ToString());
+        GUIPropertyManager.SetProperty("#TV.View.Percentage", ((int)fPercent).ToString());
       }
-      catch ( Exception ex )
+      catch (Exception ex)
       {
         Log.Info("grrrr:{0}", ex.Source, ex.StackTrace);
       }
@@ -735,11 +735,11 @@ namespace MediaPortal.GUI.TV
     static public void OnPreviousChannel()
     {
       Log.Info("GUITVHome:OnPreviousChannel()");
-      if ( GUIGraphicsContext.IsFullScreenVideo )
+      if (GUIGraphicsContext.IsFullScreenVideo)
       {
         // where in fullscreen so delayzap channel instead of immediatly tune..
         GUIFullScreenTV TVWindow = (GUIFullScreenTV)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-        if ( TVWindow != null )
+        if (TVWindow != null)
           TVWindow.ZapPreviousChannel();
         return;
       }
@@ -748,50 +748,50 @@ namespace MediaPortal.GUI.TV
       Navigator.ZapToPreviousChannel(false);
     }
 
-    static public bool ViewChannelAndCheck( string channel )
+    static public bool ViewChannelAndCheck(string channel)
     {
-      if ( !Recorder.Running )
+      if (!Recorder.Running)
       {
         Log.Info("GUITVHome.ViewChannelAndCheck(): Recorder.Running = false");
         return false;
       }
-      if ( g_Player.Playing )
+      if (g_Player.Playing)
       {
-        if ( g_Player.IsTVRecording )
+        if (g_Player.IsTVRecording)
           return true;
-        if ( g_Player.IsVideo )
+        if (g_Player.IsVideo)
           return true;
-        if ( g_Player.IsDVD )
+        if (g_Player.IsDVD)
           return true;
-        if ( ( g_Player.IsMusic && g_Player.HasVideo ) )
+        if ((g_Player.IsMusic && g_Player.HasVideo))
           return true;
       }
-      if ( _isTvOn )
+      if (_isTvOn)
         Log.Info("GUITVHome.ViewChannelAndCheck(): View channel={0} ts:{1}", channel, _isTimeShifting);
       else
         Log.Info("GUITVHome.ViewChannelAndCheckl(): _isTvOn = off - autostart doesn't apply");
 
-      if ( channel != Navigator.CurrentChannel )
+      if (channel != Navigator.CurrentChannel)
         Navigator.LastViewedChannel = Navigator.CurrentChannel;
 
       string errorMessage;
       bool succeeded = Recorder.StartViewing(channel, _isTvOn, _isTimeShifting, true, out errorMessage);
 
-      if ( succeeded )
+      if (succeeded)
         return true;
 
       GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-      if ( pDlgOK != null )
+      if (pDlgOK != null)
       {
         string[] lines = errorMessage.Split('\r');
         pDlgOK.SetHeading(605);//my tv
         pDlgOK.SetLine(1, lines[0]);
-        if ( lines.Length > 1 )
+        if (lines.Length > 1)
           pDlgOK.SetLine(2, lines[1]);
         else
           pDlgOK.SetLine(2, "");
 
-        if ( lines.Length > 2 )
+        if (lines.Length > 2)
           pDlgOK.SetLine(3, lines[2]);
         else
           pDlgOK.SetLine(3, "");
@@ -800,25 +800,25 @@ namespace MediaPortal.GUI.TV
       return false;
     }
 
-    static public void ViewChannel( string channel )
+    static public void ViewChannel(string channel)
     {
-      if ( g_Player.Playing )
+      if (g_Player.Playing)
       {
-        if ( g_Player.IsTVRecording )
+        if (g_Player.IsTVRecording)
           return;
-        if ( g_Player.IsVideo )
+        if (g_Player.IsVideo)
           return;
-        if ( g_Player.IsDVD )
+        if (g_Player.IsDVD)
           return;
-        if ( ( g_Player.IsMusic && g_Player.HasVideo ) )
+        if ((g_Player.IsMusic && g_Player.HasVideo))
           return;
       }
-      if ( _isTvOn )
+      if (_isTvOn)
         Log.Info("GUITVHome.ViewChannel(): View channel={0} ts:{1}", channel, _isTimeShifting);
       else
         Log.Info("GUITVHome.ViewChannel(): _isTvOn = off");
 
-      if ( channel != Navigator.CurrentChannel )
+      if (channel != Navigator.CurrentChannel)
         Navigator.LastViewedChannel = Navigator.CurrentChannel;
 
       string errorMessage;
@@ -831,11 +831,11 @@ namespace MediaPortal.GUI.TV
     static public void OnNextChannel()
     {
       Log.Info("GUITVHome:OnNextChannel()");
-      if ( GUIGraphicsContext.IsFullScreenVideo )
+      if (GUIGraphicsContext.IsFullScreenVideo)
       {
         // where in fullscreen so delayzap channel instead of immediatly tune..
         GUIFullScreenTV TVWindow = (GUIFullScreenTV)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-        if ( TVWindow != null )
+        if (TVWindow != null)
         {
           TVWindow.ZapNextChannel();
         }
@@ -890,7 +890,7 @@ namespace MediaPortal.GUI.TV
       return GetID;
     }
 
-    public bool GetHome( out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage )
+    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
     {
       // TODO:  Add GUITVHome.GetHome implementation
       strButtonText = GUILocalizeStrings.Get(605);
@@ -976,7 +976,7 @@ namespace MediaPortal.GUI.TV
       TVDatabase.GetChannels(ref channels); // Load all channels
       TVGroup tvgroup = new TVGroup();
       tvgroup.GroupName = GUILocalizeStrings.Get(972); //all channels
-      foreach ( TVChannel channel in channels )
+      foreach (TVChannel channel in channels)
         tvgroup.TvChannels.Add(channel);
       m_groups.Add(tvgroup);
 
@@ -1038,7 +1038,7 @@ namespace MediaPortal.GUI.TV
     {
       get
       {
-        if ( m_zapchannel == null )
+        if (m_zapchannel == null)
           return m_currentchannel;
         return m_zapchannel;
       }
@@ -1059,9 +1059,9 @@ namespace MediaPortal.GUI.TV
     {
       get
       {
-        if ( m_zapgroup == -1 )
+        if (m_zapgroup == -1)
           return CurrentGroup.GroupName;
-        return ( (TVGroup)m_groups[m_zapgroup] ).GroupName;
+        return ((TVGroup)m_groups[m_zapgroup]).GroupName;
       }
     }
     #endregion
@@ -1083,25 +1083,25 @@ namespace MediaPortal.GUI.TV
     /// </summary>
     public bool CheckChannelChange()
     {
-      if ( reentrant )
+      if (reentrant)
         return false;
-      if ( GUIGraphicsContext.InVmr9Render )
+      if (GUIGraphicsContext.InVmr9Render)
         return false;
       reentrant = true;
       UpdateCurrentChannel();
 
       // Zapping to another group or channel?
-      if ( m_zapgroup != -1 || m_zapchannel != null )
+      if (m_zapgroup != -1 || m_zapchannel != null)
       {
         // Time to zap?
-        if ( DateTime.Now >= m_zaptime )
+        if (DateTime.Now >= m_zaptime)
         {
           // Zapping to another group?
-          if ( m_zapgroup != -1 && m_zapgroup != m_currentgroup )
+          if (m_zapgroup != -1 && m_zapgroup != m_currentgroup)
           {
             // Change current group and zap to the first channel of the group
             m_currentgroup = m_zapgroup;
-            if ( CurrentGroup.TvChannels.Count > 0 )
+            if (CurrentGroup.TvChannels.Count > 0)
             {
               TVChannel chan = (TVChannel)CurrentGroup.TvChannels[0];
               m_zapchannel = chan.Name;
@@ -1128,7 +1128,7 @@ namespace MediaPortal.GUI.TV
     /// Changes the current channel group.
     /// </summary>
     /// <param name="groupname">The name of the group to change to.</param>
-    public void SetCurrentGroup( string groupname )
+    public void SetCurrentGroup(string groupname)
     {
       m_currentgroup = GetGroupIndex(groupname);
     }
@@ -1140,28 +1140,28 @@ namespace MediaPortal.GUI.TV
     {
       string newChannel = String.Empty;
       //if current card is watching tv then use that channel
-      if ( Recorder.IsViewing() || Recorder.IsTimeShifting() )
+      if (Recorder.IsViewing() || Recorder.IsTimeShifting())
       {
         newChannel = Recorder.GetTVChannelName();
       }
-      else if ( Recorder.IsRecording() )
+      else if (Recorder.IsRecording())
       { // else if current card is recording, then use that channel
         newChannel = Recorder.GetTVRecording().Channel;
       }
-      else if ( Recorder.IsAnyCardRecording() )
+      else if (Recorder.IsAnyCardRecording())
       { // else if any card is recording
         //then get & use that channel
-        for ( int i = 0; i < Recorder.Count; ++i )
+        for (int i = 0; i < Recorder.Count; ++i)
         {
-          if ( Recorder.Get(i).IsRecording )
+          if (Recorder.Get(i).IsRecording)
           {
             newChannel = Recorder.Get(i).CurrentTVRecording.Channel;
           }
         }
       }
-      if ( newChannel == String.Empty )
+      if (newChannel == String.Empty)
         newChannel = m_currentchannel;
-      if ( m_currentchannel != newChannel && newChannel != String.Empty )
+      if (m_currentchannel != newChannel && newChannel != String.Empty)
       {
         m_currentchannel = newChannel;
         m_currentTvChannel = GetTVChannel(m_currentchannel);
@@ -1173,11 +1173,11 @@ namespace MediaPortal.GUI.TV
     /// </summary>
     /// <param name="channelName">The channel to switch to.</param>
     /// <param name="useZapDelay">If true, the configured zap delay is used. Otherwise it zaps immediately.</param>
-    public void ZapToChannel( string channelName, bool useZapDelay )
+    public void ZapToChannel(string channelName, bool useZapDelay)
     {
       m_zapchannel = channelName;
 
-      if ( useZapDelay )
+      if (useZapDelay)
         m_zaptime = DateTime.Now.AddMilliseconds(m_zapdelay);
       else
         m_zaptime = DateTime.Now;
@@ -1188,24 +1188,35 @@ namespace MediaPortal.GUI.TV
     /// </summary>
     /// <param name="channelNr">The nr of the channel to change to.</param>
     /// <param name="useZapDelay">If true, the configured zap delay is used. Otherwise it zaps immediately.</param>
-    public void ZapToChannelNumber( int channelNr, bool useZapDelay )
+    public void ZapToChannelNumber(int channelNr, bool useZapDelay)
     {
       List<TVChannel> channels = CurrentGroup.TvChannels;
-      if ( channelNr >= 0 )
+
+      if (channelNr >= 0)
       {
         bool found = false;
         int ChannelCnt = 0;
         TVChannel chan;
-        while ( found == false && ChannelCnt < channels.Count )
+        while (found == false && ChannelCnt < channels.Count)
         {
           chan = (TVChannel)channels[ChannelCnt];
-          if ( chan.Number == channelNr )
+          if (chan.External == false)
           {
-            ZapToChannel(chan.Name, useZapDelay);
-            found = true;
+            if (chan.Number == channelNr)
+            {
+              ZapToChannel(chan.Name, useZapDelay);
+              found = true;
+            }
           }
           else
-            ChannelCnt++;
+          {
+            if (Int32.Parse(chan.ExternalTunerChannel) == channelNr)
+            {
+              ZapToChannel(chan.Name, useZapDelay);
+              found = true;
+            }
+          }
+          ChannelCnt++;
         }
       }
     }
@@ -1215,11 +1226,11 @@ namespace MediaPortal.GUI.TV
     /// </summary>
     /// <param name="channelNr">The nr of the channel to change to.</param>
     /// <param name="useZapDelay">If true, the configured zap delay is used. Otherwise it zaps immediately.</param>
-    public void ZapToChannel( int channelNr, bool useZapDelay )
+    public void ZapToChannel(int channelNr, bool useZapDelay)
     {
       List<TVChannel> channels = CurrentGroup.TvChannels;
       channelNr--;
-      if ( channelNr >= 0 && channelNr < channels.Count )
+      if (channelNr >= 0 && channelNr < channels.Count)
       {
         TVChannel chan = (TVChannel)channels[channelNr];
         ZapToChannel(chan.Name, useZapDelay);
@@ -1230,11 +1241,11 @@ namespace MediaPortal.GUI.TV
     /// Changes to the next channel in the current group.
     /// </summary>
     /// <param name="useZapDelay">If true, the configured zap delay is used. Otherwise it zaps immediately.</param>
-    public void ZapToNextChannel( bool useZapDelay )
+    public void ZapToNextChannel(bool useZapDelay)
     {
       string currentChan = String.Empty;
       int currindex;
-      if ( m_zapchannel == null )
+      if (m_zapchannel == null)
       {
         currindex = GetChannelIndex(CurrentChannel);
         currentChan = CurrentChannel;
@@ -1246,15 +1257,15 @@ namespace MediaPortal.GUI.TV
       }
       // Step to next channel
       currindex++;
-      if ( currindex >= CurrentGroup.TvChannels.Count )
+      if (currindex >= CurrentGroup.TvChannels.Count)
         currindex = 0;
       TVChannel chan = (TVChannel)CurrentGroup.TvChannels[currindex];
       m_zapchannel = chan.Name;
 
       Log.Info("Navigator:ZapNext {0}->{1}", currentChan, m_zapchannel);
-      if ( GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN )
+      if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
       {
-        if ( useZapDelay )
+        if (useZapDelay)
           m_zaptime = DateTime.Now.AddMilliseconds(m_zapdelay);
         else
           m_zaptime = DateTime.Now;
@@ -1269,11 +1280,11 @@ namespace MediaPortal.GUI.TV
     /// Changes to the previous channel in the current group.
     /// </summary>
     /// <param name="useZapDelay">If true, the configured zap delay is used. Otherwise it zaps immediately.</param>
-    public void ZapToPreviousChannel( bool useZapDelay )
+    public void ZapToPreviousChannel(bool useZapDelay)
     {
       string currentChan = String.Empty;
       int currindex;
-      if ( m_zapchannel == null )
+      if (m_zapchannel == null)
       {
         currentChan = CurrentChannel;
         currindex = GetChannelIndex(CurrentChannel);
@@ -1285,16 +1296,16 @@ namespace MediaPortal.GUI.TV
       }
       // Step to previous channel
       currindex--;
-      if ( currindex < 0 )
+      if (currindex < 0)
         currindex = CurrentGroup.TvChannels.Count - 1;
 
       TVChannel chan = (TVChannel)CurrentGroup.TvChannels[currindex];
       m_zapchannel = chan.Name;
 
       Log.Info("Navigator:ZapPrevious {0}->{1}", currentChan, m_zapchannel);
-      if ( GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN )
+      if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
       {
-        if ( useZapDelay )
+        if (useZapDelay)
           m_zaptime = DateTime.Now.AddMilliseconds(m_zapdelay);
         else
           m_zaptime = DateTime.Now;
@@ -1308,17 +1319,17 @@ namespace MediaPortal.GUI.TV
     /// <summary>
     /// Changes to the next channel group.
     /// </summary>
-    public void ZapToNextGroup( bool useZapDelay )
+    public void ZapToNextGroup(bool useZapDelay)
     {
-      if ( m_zapgroup == -1 )
+      if (m_zapgroup == -1)
         m_zapgroup = m_currentgroup + 1;
       else
         m_zapgroup = m_zapgroup + 1;			// Zap from last zap group
 
-      if ( m_zapgroup >= m_groups.Count )
+      if (m_zapgroup >= m_groups.Count)
         m_zapgroup = 0;
 
-      if ( useZapDelay )
+      if (useZapDelay)
         m_zaptime = DateTime.Now.AddMilliseconds(m_zapdelay);
       else
         m_zaptime = DateTime.Now;
@@ -1327,17 +1338,17 @@ namespace MediaPortal.GUI.TV
     /// <summary>
     /// Changes to the previous channel group.
     /// </summary>
-    public void ZapToPreviousGroup( bool useZapDelay )
+    public void ZapToPreviousGroup(bool useZapDelay)
     {
-      if ( m_zapgroup == -1 )
+      if (m_zapgroup == -1)
         m_zapgroup = m_currentgroup - 1;
       else
         m_zapgroup = m_zapgroup - 1;
 
-      if ( m_zapgroup < 0 )
+      if (m_zapgroup < 0)
         m_zapgroup = m_groups.Count - 1;
 
-      if ( useZapDelay )
+      if (useZapDelay)
         m_zaptime = DateTime.Now.AddMilliseconds(m_zapdelay);
       else
         m_zaptime = DateTime.Now;
@@ -1348,7 +1359,7 @@ namespace MediaPortal.GUI.TV
     /// </summary>
     public void ZapToLastViewedChannel()
     {
-      if ( _lastViewedChannel != string.Empty )
+      if (_lastViewedChannel != string.Empty)
       {
         m_zapchannel = _lastViewedChannel;
         m_zaptime = DateTime.Now;
@@ -1361,7 +1372,7 @@ namespace MediaPortal.GUI.TV
     void OnChannelsChanged()
     {
       // Load all groups
-      if ( GUIGraphicsContext.DX9Device == null )
+      if (GUIGraphicsContext.DX9Device == null)
         return;
       List<TVGroup> groups = new List<TVGroup>();
       TVDatabase.GetGroups(ref groups); // Put groups in a local variable to ensure the "All" group is first always
@@ -1372,15 +1383,15 @@ namespace MediaPortal.GUI.TV
       TVDatabase.GetChannels(ref channels); // Load all channels
       TVGroup tvgroup = new TVGroup();
       tvgroup.GroupName = GUILocalizeStrings.Get(972); //all channels
-      foreach ( TVChannel channel in channels )
+      foreach (TVChannel channel in channels)
         tvgroup.TvChannels.Add(channel);
       m_groups.Add(tvgroup);
       m_groups.AddRange(groups); // Add rest of the groups to the end of the list
 
-      if ( m_currentchannel.Trim() == String.Empty )
+      if (m_currentchannel.Trim() == String.Empty)
       {
         TVGroup group = (TVGroup)m_groups[m_currentgroup];
-        m_currentchannel = ( (TVChannel)group.TvChannels[0] ).Name;
+        m_currentchannel = ((TVChannel)group.TvChannels[0]).Name;
       }
       m_currentTvChannel = GetTVChannel(m_currentchannel);
 
@@ -1390,12 +1401,12 @@ namespace MediaPortal.GUI.TV
     /// Retrieves the index of the current channel.
     /// </summary>
     /// <returns></returns>
-    private int GetChannelIndex( string channelName )
+    private int GetChannelIndex(string channelName)
     {
-      for ( int i = 0; i < CurrentGroup.TvChannels.Count; i++ )
+      for (int i = 0; i < CurrentGroup.TvChannels.Count; i++)
       {
         TVChannel chan = (TVChannel)CurrentGroup.TvChannels[i];
-        if ( chan.Name == channelName )
+        if (chan.Name == channelName)
           return i;
       }
       return 0; // Not found, return first channel index
@@ -1406,21 +1417,21 @@ namespace MediaPortal.GUI.TV
     /// </summary>
     /// <param name="groupname"></param>
     /// <returns></returns>
-    private int GetGroupIndex( string groupname )
+    private int GetGroupIndex(string groupname)
     {
-      for ( int i = 0; i < m_groups.Count; i++ )
+      for (int i = 0; i < m_groups.Count; i++)
       {
         TVGroup group = (TVGroup)m_groups[i];
-        if ( group.GroupName == groupname )
+        if (group.GroupName == groupname)
           return i;
       }
       return -1;
     }
-    public TVChannel GetTVChannel( string channelName )
+    public TVChannel GetTVChannel(string channelName)
     {
-      foreach ( TVChannel chan in channels )
+      foreach (TVChannel chan in channels)
       {
-        if ( chan.Name == channelName )
+        if (chan.Name == channelName)
           return chan;
       }
       return null;
@@ -1430,31 +1441,31 @@ namespace MediaPortal.GUI.TV
 
     #region Serialization
 
-    public void LoadSettings( MediaPortal.Profile.Settings xmlreader )
+    public void LoadSettings(MediaPortal.Profile.Settings xmlreader)
     {
       m_currentchannel = xmlreader.GetValueAsString("mytv", "channel", String.Empty);
       m_zapdelay = 1000 * xmlreader.GetValueAsInt("movieplayer", "zapdelay", 2);
       string groupname = xmlreader.GetValueAsString("mytv", "group", GUILocalizeStrings.Get(972));
       m_currentgroup = GetGroupIndex(groupname);
-      if ( m_currentgroup < 0 || m_currentgroup >= m_groups.Count )		// Group no longer exists?
+      if (m_currentgroup < 0 || m_currentgroup >= m_groups.Count)		// Group no longer exists?
         m_currentgroup = 0;
 
       m_currentTvChannel = GetTVChannel(m_currentchannel);
-      if ( m_currentTvChannel == null )
+      if (m_currentTvChannel == null)
       {
         TVGroup group = (TVGroup)m_groups[m_currentgroup];
-        if ( group.TvChannels.Count > 0 )
-          m_currentchannel = ( (TVChannel)group.TvChannels[0] ).Name;
+        if (group.TvChannels.Count > 0)
+          m_currentchannel = ((TVChannel)group.TvChannels[0]).Name;
         m_currentTvChannel = GetTVChannel(m_currentchannel);
       }
     }
 
-    public void SaveSettings( MediaPortal.Profile.Settings xmlwriter )
+    public void SaveSettings(MediaPortal.Profile.Settings xmlwriter)
     {
-      if ( m_currentchannel.Trim() != String.Empty )
+      if (m_currentchannel.Trim() != String.Empty)
         xmlwriter.SetValue("mytv", "channel", m_currentchannel);
 
-      if ( CurrentGroup.GroupName.Trim() != String.Empty )
+      if (CurrentGroup.GroupName.Trim() != String.Empty)
         xmlwriter.SetValue("mytv", "group", CurrentGroup.GroupName);
     }
 
