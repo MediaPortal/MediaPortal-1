@@ -92,7 +92,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
     private StreamType _currentTuneType = StreamType.Recommended;
 
     private DateTime _lastConnectAttempt = DateTime.MinValue;
-    private TimeSpan _minConnectWaitTime = new TimeSpan(0, 0, 1);
+    private TimeSpan _minConnectWaitTime = new TimeSpan(0, 0, 2);
+    private int _retryFetchCount = 0;
     AsyncGetRequest httpcommand = null;    
 
     #region Examples
@@ -353,8 +354,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     public void UpdateNowPlaying()
     {
       // give the site some time to update
-      Thread.Sleep(2500);
-      SendCommandRequest(@"http://ws.audioscrobbler.com/radio/np.php?session=" + _currentSession);
+      SendDelayedCommandRequest(@"http://ws.audioscrobbler.com/radio/np.php?session=" + _currentSession, 3000);
     }
 
     public bool ToggleRecordToProfile(bool submitTracks_)
@@ -395,9 +395,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
       return success;
     }
 
-    public bool SendControlCommand(StreamControls command_)
+    public void SendControlCommand(StreamControls command_)
     {
-      bool success = false;
       if (_currentState == StreamPlaybackState.streaming)
       {
         string baseUrl = @"http://ws.audioscrobbler.com/radio/control.php?session=" + _currentSession;
@@ -405,40 +404,21 @@ namespace MediaPortal.GUI.RADIOLASTFM
         switch (command_)
         {
           case StreamControls.skiptrack:
-            if (SendCommandRequest(baseUrl + @"&command=skip"))
-            {
-              Log.Info("StreamControl: Successfully send skip command");
-              success = true;
-              // the website has to refresh therefore we wait a little bit
-              UpdateNowPlaying();
-            }
+            SendCommandRequest(baseUrl + @"&command=skip");
             break;
           case StreamControls.lovetrack:
-            if (SendCommandRequest(baseUrl + @"&command=love"))
-            {
-              Log.Info("StreamControl: Track added to loved tracks list");
-              success = true;
-            }
+            SendCommandRequest(baseUrl + @"&command=love");
             break;
           case StreamControls.bantrack:
-            if (SendCommandRequest(baseUrl + @"&command=ban"))
-            {
-              Log.Info("StreamControl: Track added to banned tracks list");
-              success = true;
-              Thread.Sleep(750);
-              // the website has to refresh therefore we wait a little bit
-              Thread.Sleep(750);
-              UpdateNowPlaying();
-            }
+            SendCommandRequest(baseUrl + @"&command=ban");
             break;
         }
       }
       else
         Log.Info("StreamControl: Currently not streaming - ignoring command");
-
-      return success;
     }
     #endregion
+
 
     #region Tuning functions
     public bool TuneIntoPersonalRadio(string username_)
@@ -550,12 +530,17 @@ namespace MediaPortal.GUI.RADIOLASTFM
       return true;
     }
 
+    private void SendDelayedCommandRequest(string url_, int delayMSecs_)
+    {
+      httpcommand.SendDelayedAsyncGetRequest(url_, delayMSecs_);
+    }
+
     private void OnAsyncRequestError(String urlCommand, Exception errorReason)
     {
       Log.Warn("StreamControl: Async request for {0} unsuccessful: {1}", urlCommand, errorReason.Message);
     }
 
-    private void OnParseAsyncResponse(StreamReader reader, HttpStatusCode responseCode)
+    private void OnParseAsyncResponse(StreamReader reader, HttpStatusCode responseCode, String requestedURLCommand)
     {
       // parse the response
       try
@@ -565,8 +550,10 @@ namespace MediaPortal.GUI.RADIOLASTFM
         if (responseCode == HttpStatusCode.OK)
         {
           if (responseMessage.StartsWith("response=OK"))
-            //return true;
+          {
+            ParseSuccessful(reader, requestedURLCommand);
             return;
+          }
 
           if (responseMessage.StartsWith("price="))
           {
@@ -606,6 +593,29 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
 
     #region Response parser
+    private void ParseSuccessful(StreamReader responseStream_, String formerRequest_)
+    {
+      if (formerRequest_.Contains(@"&command=skip"))
+      {
+        Log.Info("StreamControl: Successfully send skip command");
+        UpdateNowPlaying();
+        return;
+      }
+
+      if (formerRequest_.Contains(@"&command=love"))
+      {
+        Log.Info("StreamControl: Track added to loved tracks list");
+        return;
+      }
+
+      if (formerRequest_.Contains(@"&command=ban"))
+      {
+        Log.Info("StreamControl: Track added to banned tracks list");
+        UpdateNowPlaying();
+        return;
+      }
+    }
+
     private void ParseNowPlaying(StreamReader responseStream_)
     {
       List<String> NowPlayingInfo = new List<string>();
@@ -673,6 +683,9 @@ namespace MediaPortal.GUI.RADIOLASTFM
         {
           if (StreamSongChanged != null)
             StreamSongChanged(CurrentSongTag, DateTime.Now);
+
+          _retryFetchCount = 0;
+
           // Send msg for Ballon Tip on song change
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SHOW_BALLONTIP_SONGCHANGE, 0, 0, 0, 0, 0, null);
           msg.Label = GUIPropertyManager.GetProperty("#Play.Current.Title");
@@ -683,9 +696,13 @@ namespace MediaPortal.GUI.RADIOLASTFM
         }
         else // maybe we asked to early - try again
         {
-          Thread.Sleep(5000);
-          Log.Debug("StreamControl: Same title found - trying again now..");
-          UpdateNowPlaying();
+          //Thread.Sleep(2000);
+          _retryFetchCount++;
+          if (_retryFetchCount < 3)
+          {
+            Log.Debug("StreamControl: Same title found ({0}) - trying again now..", _retryFetchCount);
+            UpdateNowPlaying();
+          }
         }
 
         Log.Info("StreamControl: Current track: {0} [{1}] - {2} ({3})", CurrentSongTag.Artist, CurrentSongTag.Album, CurrentSongTag.Title, Util.Utils.SecondsToHMSString(CurrentSongTag.Duration));
