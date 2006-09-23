@@ -254,7 +254,6 @@
     </Compile>
     <Compile Include="Music\AudioscrobblerQueue.cs" />
     <Compile Include="Music\ScrobblerUtilsRequest.cs" />
-    <Compile Include="Music\ScrobblerUtilsResponse.cs" />
     <Compile Include="Music\Song.cs">
       <SubType>Code</SubType>
     </Compile>

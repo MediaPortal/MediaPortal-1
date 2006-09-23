@@ -274,10 +274,9 @@ namespace MediaPortal.GUI.RADIOLASTFM
         return;
       if (_trackArtist != String.Empty)
       {
-        ScrobblerUtilsRequest request = new ScrobblerUtilsRequest(
-                      ScrobblerUtilsRequest.RequestType.GetArtistInfo,
-                      new AudioscrobblerUtils.RequestCompletedDelegate(OnUpdateArtistCoverCompleted),
-                      _trackArtist);
+        ArtistInfoRequest request = new ArtistInfoRequest(
+                      _trackArtist,
+                      new ArtistInfoRequest.ArtistInfoRequestHandler(OnUpdateArtistCoverCompleted));
         _lastArtistCoverRequest = request;
         InfoScrobbler.AddRequestAsync(request);
       }
@@ -285,17 +284,17 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     private void UpdateTrackTagsInfo(string _trackArtist, string _trackTitle)
     {
-      ScrobblerUtilsRequest request = new ScrobblerUtilsRequest(
-                      ScrobblerUtilsRequest.RequestType.GetTagsForTrack,
-                      new AudioscrobblerUtils.RequestCompletedDelegate(OnUpdateTrackTagsInfoCompleted),
-                      _trackArtist, _trackTitle);
+      TagsForTrackRequest request = new TagsForTrackRequest(
+                      _trackArtist,
+                      _trackTitle,
+                      new TagsForTrackRequest.TagsForTrackRequestHandler(OnUpdateTrackTagsInfoCompleted));
       _lastTrackTagRequest = request;
       InfoScrobbler.AddRequest(request);
     }
 
-    public void OnUpdateArtistCoverCompleted(ScrobblerUtilsResponse response)
+    public void OnUpdateArtistCoverCompleted(ArtistInfoRequest request, Song song)
     {
-      if (response.Response != null && response.Request.Equals(_lastArtistCoverRequest) && response.Response is Song)
+      if (request.Equals(_lastArtistCoverRequest))
       {
         String ThumbFileName = Util.Utils.GetCoverArtName(Thumbs.MusicArtists, Util.Utils.FilterFileName(LastFMStation.CurrentTrackTag.Artist));
         if (ThumbFileName.Length > 0)
@@ -305,18 +304,16 @@ namespace MediaPortal.GUI.RADIOLASTFM
       }
       else
       {
-        Log.Warn("NowPlaying.OnUpdateArtistInfoCompleted: unexpected response for request: {1}", response.Request.Request);
+        Log.Warn("NowPlaying.OnUpdateArtistInfoCompleted: unexpected response for request: {0}", request.Type);
       }
     }
 
-    public void OnUpdateTrackTagsInfoCompleted(ScrobblerUtilsResponse response)
-    {      
-      if (response.Response != null && response.Request.Equals(_lastTrackTagRequest) && response.Response is List<Song>)
+    public void OnUpdateTrackTagsInfoCompleted(TagsForTrackRequest request, List<Song> TagTracks)
+    {
+      if (request.Equals(_lastTrackTagRequest))
       {
         GUIListItem item = null;
-        List<Song> TagTracks = new List<Song>();
         //TagTracks = InfoScrobbler.getTagsForTrack(_trackArtist, _trackTitle);
-        TagTracks = response.Response as List<Song>;
         {
           facadeTrackTags.Clear();
 
@@ -335,7 +332,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       }
       else
       {
-        Log.Warn("NowPlaying.OnUpdateTagInfoCompleted: unexpected response for request: {1}", response.Request.Request);
+        Log.Warn("NowPlaying.OnUpdateTagInfoCompleted: unexpected response for request: {0}", request.Type);
       }
     }
 

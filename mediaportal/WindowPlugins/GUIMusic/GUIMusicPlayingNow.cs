@@ -615,10 +615,11 @@ namespace MediaPortal.GUI.Music
           Log.Warn("GUIMusicPlayingNow: current tag invalid for album info lookup. File: {0}", g_Player.CurrentFile);
           return;
         }
-        ScrobblerUtilsRequest request = new ScrobblerUtilsRequest(
-                                        ScrobblerUtilsRequest.RequestType.GetAlbumInfo, 
-                                        new AudioscrobblerUtils.RequestCompletedDelegate(OnUpdateAlbumInfoCompleted),
-                                        CurrentTrackTag.Artist, CurrentTrackTag.Album, true
+        AlbumInfoRequest request = new AlbumInfoRequest(
+                                        CurrentTrackTag.Artist,
+                                        CurrentTrackTag.Album,
+                                        true,
+                                        new AlbumInfoRequest.AlbumInfoRequestHandler(OnUpdateAlbumInfoCompleted)
                                         );
         _lastAlbumRequest = request;
         InfoScrobbler.AddRequestAsync(request);
@@ -641,10 +642,9 @@ namespace MediaPortal.GUI.Music
           Log.Warn("GUIMusicPlayingNow: current tag invalid for artist info lookup. File: {0}", g_Player.CurrentFile);
           return;
         }
-        ScrobblerUtilsRequest request = new ScrobblerUtilsRequest(
-                                        ScrobblerUtilsRequest.RequestType.GetArtistInfo,
-                                        new AudioscrobblerUtils.RequestCompletedDelegate(OnUpdateArtistInfoCompleted),
-                                        CurrentTrackTag.Artist
+        ArtistInfoRequest request = new ArtistInfoRequest(
+                                        CurrentTrackTag.Artist,
+                                        new ArtistInfoRequest.ArtistInfoRequestHandler(OnUpdateArtistInfoCompleted)
                                         );
         _lastArtistRequest = request;
         InfoScrobbler.AddRequestAsync(request);
@@ -667,10 +667,13 @@ namespace MediaPortal.GUI.Music
           Log.Warn("GUIMusicPlayingNow: current tag invalid for tag info lookup. File: {0}", g_Player.CurrentFile);
           return;
         }
-        ScrobblerUtilsRequest request = new ScrobblerUtilsRequest(
-                                        ScrobblerUtilsRequest.RequestType.GetTagInfo,
-                                        new AudioscrobblerUtils.RequestCompletedDelegate(OnUpdateTagInfoCompleted),
-                                        CurrentTrackTag.Artist, CurrentTrackTag.Title, true, false, true
+        TagInfoRequest request = new TagInfoRequest(
+                                        CurrentTrackTag.Artist,
+                                        CurrentTrackTag.Title,
+                                        true,
+                                        false,
+                                        true,
+                                        new TagInfoRequest.TagInfoRequestHandler(OnUpdateTagInfoCompleted)
                                         );
         _lastTagRequest = request;
         InfoScrobbler.AddRequestAsync(request);
@@ -1182,13 +1185,12 @@ namespace MediaPortal.GUI.Music
     }
 
 
-    public void OnUpdateAlbumInfoCompleted(ScrobblerUtilsResponse response)
+    public void OnUpdateAlbumInfoCompleted(AlbumInfoRequest request, List<Song> AlbumTracks)
     {
-      Log.Debug("NowPlaying.OnUpdateAlbumInfoCompleted: response with ID: {0} for: {1}", response.Request.ID, response.Request.Request);
-      if (response.Response != null && response.Request.Equals(_lastAlbumRequest) && response.Response is List<Song>)
+      Log.Debug("NowPlaying.OnUpdateAlbumInfoCompleted: response with ID: {0} for: {1}", request.ID, request.Type);
+      if (request.Equals(_lastAlbumRequest))
       {
         GUIListItem item = null;
-        List<Song> AlbumTracks = response.Response as List<Song>;
         facadeAlbumInfo.Clear();
         if (AlbumTracks.Count > 0)
         {
@@ -1253,14 +1255,14 @@ namespace MediaPortal.GUI.Music
       }
       else
       {
-        Log.Warn("PlayingNow:.OnUpdateAlbumInfoCompleted: unexpected responsetype for request: {1}", response.Request.Request);
+        Log.Warn("PlayingNow:.OnUpdateAlbumInfoCompleted: unexpected responsetype for request: {0}", request.Type);
       }
     }
 
-    public void OnUpdateArtistInfoCompleted(ScrobblerUtilsResponse response)
+    public void OnUpdateArtistInfoCompleted(ArtistInfoRequest request, Song song)
     {
-      Log.Debug("NowPlaying.OnUpdateArtistInfoCompleted: response with ID: {0} for: {1}", response.Request.ID, response.Request.Request);
-      if (response.Response != null && response.Request.Equals(_lastArtistRequest) && response.Response is Song)
+      Log.Debug("NowPlaying.OnUpdateArtistInfoCompleted: response with ID: {0} for: {1}", request.ID, request.Type);
+      if (request.Equals(_lastArtistRequest))
       {
         CurrentThumbFileName = Util.Utils.GetCoverArtName(Thumbs.MusicArtists, Util.Utils.FilterFileName(CurrentTrackTag.Artist));
         if (CurrentThumbFileName.Length > 0)
@@ -1271,17 +1273,16 @@ namespace MediaPortal.GUI.Music
       }
       else
       {
-        Log.Warn("NowPlaying.OnUpdateArtistInfoCompleted: unexpected response for request: {1}", response.Request.Request);
+        Log.Warn("NowPlaying.OnUpdateArtistInfoCompleted: unexpected response for request: {0}", request.Type);
       }
     }
 
-    public void OnUpdateTagInfoCompleted(ScrobblerUtilsResponse response)
+    public void OnUpdateTagInfoCompleted(TagInfoRequest request, List<Song> TagTracks)
     {
-      Log.Debug("NowPlaying.OnUpdateTagInfoCompleted: response with ID: {0} for: {1}", response.Request.ID, response.Request.Request);
-      if (response.Response != null && response.Request.Equals(_lastTagRequest) && response.Response is List<Song>)
+      Log.Debug("NowPlaying.OnUpdateTagInfoCompleted: response with ID: {0} for: {1}", request.ID, request.Type);
+      if (request.Equals(_lastTagRequest))
       {
         GUIListItem item = null;
-        List<Song> TagTracks = response.Response as List<Song>;
         // lock (_infoUpdateMutex)
         {
           facadeTagInfo.Clear();
@@ -1317,7 +1318,7 @@ namespace MediaPortal.GUI.Music
       }
       else
       {
-        Log.Warn("NowPlaying.OnUpdateTagInfoCompleted: unexpected response for request: {1}", response.Request.Request);
+        Log.Warn("NowPlaying.OnUpdateTagInfoCompleted: unexpected response for request: {0}", request.Type);
       }
     }
 

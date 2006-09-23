@@ -33,6 +33,12 @@ using System.Text;
 
 namespace MediaPortal.Music.Database
 {
+
+  public class ScrobblerRequestException : System.ApplicationException
+  {
+    public ScrobblerRequestException(string message) : base(message) { }
+  }
+
   public class ScrobblerUtilsRequest
   {
 
@@ -64,19 +70,19 @@ namespace MediaPortal.Music.Database
     static private uint _lastRequestID = 0;
 
     public readonly uint ID;
-    public readonly RequestType Request;
-    public readonly AudioscrobblerUtils.RequestCompletedDelegate Caller;
-    public object[] Params;
+    public readonly RequestType Type;
 
-
-    public ScrobblerUtilsRequest(RequestType request, AudioscrobblerUtils.RequestCompletedDelegate caller, params object[] args)
+    public ScrobblerUtilsRequest(RequestType type)
     {
       if (_lastRequestID == 4294967295)
         _lastRequestID = 0;
       ID = ++_lastRequestID;
-      Request = request;
-      Caller = caller;
-      Params = args;
+      Type = type;
+    }
+
+    public virtual void PerformRequest()
+    {
+      throw new ScrobblerRequestException("not implemented");
     }
 
     public override bool Equals(object o)
@@ -90,4 +96,5 @@ namespace MediaPortal.Music.Database
     }
 
   }
+
 }
