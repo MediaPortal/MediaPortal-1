@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Text;
 using MediaPortal.GUI.Library;
 using MediaPortal.Radio.Database;
+using MediaPortal.Services;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
 
@@ -72,7 +73,7 @@ namespace MediaPortal.TV.Epg
           string provider;
           _tvChannel = TVDatabase.GetTVChannelByStream(Network == NetworkType.ATSC, Network == NetworkType.DVBT, Network == NetworkType.DVBC, Network == NetworkType.DVBS, _networkId, _transportId, _serviceId, out provider);
           if (_tvChannel!=null)
-            Log.WriteFile(Log.LogType.EPG, "epg-grab: channel:{0} events:{1}", _tvChannel.Name, _listEvents.Count);
+            Log.WriteFile(LogType.EPG, "epg-grab: channel:{0} events:{1}", _tvChannel.Name, _listEvents.Count);
         }
         return _tvChannel;
       }
@@ -86,7 +87,7 @@ namespace MediaPortal.TV.Epg
           string provider;
           _station = RadioDatabase.GetStationByStream(Network == NetworkType.ATSC, Network == NetworkType.DVBT, Network == NetworkType.DVBC, Network == NetworkType.DVBS, _networkId, _transportId, _serviceId, out provider);
           if (_station != null)
-            Log.WriteFile(Log.LogType.EPG, "epg-grab: station:{0} events:{1}", _station.Name, _listEvents.Count);
+            Log.WriteFile(LogType.EPG, "epg-grab: station:{0} events:{1}", _station.Name, _listEvents.Count);
         }
         return _station;
       }

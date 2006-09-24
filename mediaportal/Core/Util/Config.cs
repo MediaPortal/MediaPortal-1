@@ -50,10 +50,10 @@ namespace MediaPortal.Util
         /// </summary>
         ///
         /*
-    private Config()
-    {
-    }
-    */
+private Config()
+{
+}
+*/
         static Config()
         {
             directories = new Dictionary<Dir, string>();
@@ -159,6 +159,14 @@ namespace MediaPortal.Util
             Set(Dir.Weather, baseDir + @"weather\");
         }
 
+
+        //TODO: Make Get method private, when all external references are replaced by a call to GetFolder or GetFile
+        /// <summary>
+        /// Returns the complete path for the specified MP directory.
+        /// </summary>
+        /// <param name="path">A <see cref="Dir"/> value, indicating the directory to return</param>
+        /// <returns>a string containing the complete path, with trailing backslash</returns>
+        [Obsolete("This method is obsolete and will disappear in the future.  Use GetFolder(Dir path) or GetFile(Dir path, string fileName) instead.",false)]
         public static string Get(Dir path)
         {
             string returnVal = "";
@@ -172,15 +180,47 @@ namespace MediaPortal.Util
             }
         }
 
+        /// <summary>
+        /// Returns the complete path for the specified file in the specified MP directory.
+        /// </summary>
+        /// <param name="directory">A <see cref="Dir"/> value, indicating the directory where the file should be located</param>
+        /// <param name="fileName">The name of the file for which to return the complete path.</param>
+        /// <returns>A string containing the complete path.</returns>
+        public static string GetFile(Dir directory, string fileName)
+        {
+            string dirName = Get(directory);
+            if (!dirName.EndsWith(@"\"))
+            {
+                dirName += @"\";
+            }
+            if (fileName.StartsWith(@"\"))
+            {
+                fileName = fileName.Substring(1);
+            }
+            return dirName + fileName;
+        }
+
+        /// <summary>
+        /// Returns the complete path for the specified MP directory.
+        /// </summary>
+        /// <param name="directory">A <see cref="Dir"/> value, indicating the directory to return</param>
+        /// <returns>a string containing the complete path, without trailing backslash</returns>
+        public static string GetFolder(Dir directory)
+        {
+            string dirName = Get(directory);
+            if (dirName.EndsWith(@"\"))
+                return dirName.Substring(0, dirName.Length - 1);
+            return dirName;
+        }
+
         private static void Set(Dir path, string value)
         {
-            try
-            {
-                directories.Add(path, value);
-            }
-            catch (ArgumentException)
-            {
-            }
+            value = value.Replace('/', '\\');
+            value = value.Replace(@"\\", @"\");
+            if (!value.EndsWith(@"\"))
+                value += '\\';
+            directories[path]= value;
         }
+
     }
 }

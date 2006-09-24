@@ -43,6 +43,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
+using MediaPortal.Services;
 using MediaPortal.TV.Database;
 using MediaPortal.Util;
 
@@ -379,7 +380,7 @@ namespace MediaPortal.TV.Recording
         }
 
 
-        Log.WriteFile(Log.LogType.EPG, "epg-grab: {0} {1}-{2} {3}", tv.Channel, tv.Start, tv.End, tv.Title);
+        Log.WriteFile(LogType.EPG, "epg-grab: {0} {1}-{2} {3}", tv.Channel, tv.Start, tv.End, tv.Title);
         ArrayList programsInDatabase = new ArrayList();
         TVDatabase.GetProgramsPerChannel(tv.Channel, tv.Start + 1, tv.End - 1, ref programsInDatabase);
         if (programsInDatabase.Count == 0)
@@ -629,7 +630,7 @@ namespace MediaPortal.TV.Recording
         return; // already got channles table
 
       int dataLen = data.Length;
-      Log.WriteFile(Log.LogType.EPG, "mhw-epg: start parse channels for mhw", m_namesBuffer.Count);
+      Log.WriteFile(LogType.EPG, "mhw-epg: start parse channels for mhw", m_namesBuffer.Count);
       lock (m_namesBuffer.SyncRoot)
       {
         for (int n = 4; n < dataLen; n += 22)
@@ -643,7 +644,7 @@ namespace MediaPortal.TV.Recording
           ch.ChannelName = System.Text.Encoding.ASCII.GetString(data, n + 6, 16);
           ch.ChannelName = ch.ChannelName.Trim();
           m_namesBuffer.Add(ch);
-          Log.WriteFile(Log.LogType.EPG, "mhw-epg: added channel {0} to mhw channels table", ch.ChannelName);
+          Log.WriteFile(LogType.EPG, "mhw-epg: added channel {0} to mhw channels table", ch.ChannelName);
         }// for(int n=0
         //Log.Info("mhw-epg: found {0} channels for mhw",m_namesBuffer.Count);
         m_mhwChannelsCount = m_namesBuffer.Count;
@@ -680,7 +681,7 @@ namespace MediaPortal.TV.Recording
             th.ThemeText = th.ThemeText.Trim();
             th.ThemeIndex = val;
             m_themeBuffer.Add(th);
-            Log.WriteFile(Log.LogType.EPG, "mhw-epg: theme '{0}' with id 0x{1:X} found", th.ThemeText, th.ThemeIndex);
+            Log.WriteFile(LogType.EPG, "mhw-epg: theme '{0}' with id 0x{1:X} found", th.ThemeText, th.ThemeIndex);
             val++;
             themesNames += 15;
           }
@@ -790,8 +791,8 @@ namespace MediaPortal.TV.Recording
 
       lock (m_titleBuffer.SyncRoot)
       {
-        Log.WriteFile(Log.LogType.EPG, "mhw-epg: count of programms={0}", m_titleBuffer.Count);
-        Log.WriteFile(Log.LogType.EPG, "mhw-epg: buffer contains {0} summaries now", m_summaryBuffer.Count);
+        Log.WriteFile(LogType.EPG, "mhw-epg: count of programms={0}", m_titleBuffer.Count);
+        Log.WriteFile(LogType.EPG, "mhw-epg: buffer contains {0} summaries now", m_summaryBuffer.Count);
         ArrayList list = new ArrayList();
         foreach (Programm prg in m_titleBuffer)
         {
@@ -910,9 +911,9 @@ namespace MediaPortal.TV.Recording
 
         if (count > 0)
         {
-          Log.WriteFile(Log.LogType.EPG, "mhw-epg: added {0} entries to database", m_addsToDatabase);
-          Log.WriteFile(Log.LogType.EPG, "mhw-epg: titles buffer contains {0} objects", m_titleBuffer.Count);
-          Log.WriteFile(Log.LogType.EPG, "mhw-epg: summaries buffer contains {0} objects", m_summaryBuffer.Count);
+          Log.WriteFile(LogType.EPG, "mhw-epg: added {0} entries to database", m_addsToDatabase);
+          Log.WriteFile(LogType.EPG, "mhw-epg: titles buffer contains {0} objects", m_titleBuffer.Count);
+          Log.WriteFile(LogType.EPG, "mhw-epg: summaries buffer contains {0} objects", m_summaryBuffer.Count);
         }
         //m_titleBuffer.Clear();
         for (int i = 0; i < reGrabTimes.Length; ++i)

@@ -22,6 +22,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using MediaPortal.GUI.Library;
+using MediaPortal.Services;
 using MediaPortal.Util;
 using SQLite.NET;
 using MediaPortal.Database;
@@ -1297,7 +1298,7 @@ namespace MediaPortal.Radio.Database
           strSQL = String.Format("insert into tblPrograms (idProgram,idChannel,idGenre,strTitle,iStartTime,iEndTime,strDescription,strEpisodeName,strRepeat,strSeriesNum,strEpisodeNum,strEpisodePart,strDate,strStarRating,strClassification) values ( NULL, {0}, {1}, '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}')",
             iChannelId, iGenreId, strTitle, prog.Start.ToString(),
             prog.End.ToString(), strDescription, strEpisode, strRepeat, strSeriesNum, strEpisodeNum, strEpisodePart, strDate, strStarRating, strClassification);
-          //          Log.WriteFile(Log.LogType.EPG,strSQL);
+          //          Log.WriteFile(LogType.EPG,strSQL);
           m_db.Execute(strSQL);
           lRetId = m_db.LastInsertID();
         }
@@ -1318,7 +1319,7 @@ namespace MediaPortal.Radio.Database
     /// </summary>
     public void RemoveOldPrograms()
     {
-      Log.WriteFile(Log.LogType.EPG, "RemoveOldPrograms()");
+      Log.WriteFile(LogType.EPG, "RemoveOldPrograms()");
       if (m_db == null) return;
       lock (m_db)
       {
@@ -1331,7 +1332,7 @@ namespace MediaPortal.Radio.Database
           strSQL = String.Format("DELETE FROM tblPrograms WHERE iEndTime < '{0}'", longYesterday);
           m_db.Execute(strSQL);
           DatabaseUtility.CompactDatabase(m_db);
-          Log.WriteFile(Log.LogType.EPG, "vacuum done");
+          Log.WriteFile(LogType.EPG, "vacuum done");
         }
         catch (Exception ex)
         {

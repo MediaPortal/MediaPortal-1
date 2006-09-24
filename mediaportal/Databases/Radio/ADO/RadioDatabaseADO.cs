@@ -1175,7 +1175,7 @@ namespace MediaPortal.Radio.Database
         strSQL = String.Format("insert into tblRadioPrograms (idChannel,idGenre,strTitle,iStartTime,iEndTime,strDescription,strEpisodeName,strRepeat,strSeriesNum,strEpisodeNum,strEpisodePart,strDate,strStarRating,strClassification) values ( {0}, {1}, '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}')",
           iChannelId, iGenreId, strTitle, prog.Start.ToString(),
           prog.End.ToString(), strDescription, strEpisode, strRepeat, strSeriesNum, strEpisodeNum, strEpisodePart, strDate, strStarRating, strClassification);
-        //          Log.WriteFile(Log.LogType.EPG,strSQL);
+        //          Log.WriteFile(LogType.EPG,strSQL);
         return SqlServerUtility.InsertRecord(_connection, strSQL);
       }
       catch (Exception ex)

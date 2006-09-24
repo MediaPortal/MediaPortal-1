@@ -30,6 +30,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization.Formatters.Soap;
 using System.Management;
 using MediaPortal.GUI.Library;
+using MediaPortal.Services;
 using MediaPortal.Util;
 using MediaPortal.TV.Database;
 using MediaPortal.Video.Database;
@@ -62,7 +63,7 @@ namespace MediaPortal.TV.Recording
       TimeSpan ts = DateTime.Now - _epgTimer;
       if (ts.TotalSeconds < 60) return;
 
-      //Log.WriteFile(Log.LogType.EPG,"epg grabber process");
+      //Log.WriteFile(LogType.EPG,"epg grabber process");
       bool isGrabbing = false;
       for (int counter = 0; counter < handler.TVCards.Count; counter++)
       {
@@ -102,16 +103,16 @@ namespace MediaPortal.TV.Recording
             if (TVDatabase.CanCardViewTVChannel(chan.Name, card.ID) == false) continue;
           }
 
-          //Log.WriteFile(Log.LogType.EPG, "  card:{0} ch:{1} epg hrs:{2} last:{3} {4} hrs:{5}", card.ID,chan.Name,chan.EpgHours, chan.LastDateTimeEpgGrabbed.ToShortDateString(), chan.LastDateTimeEpgGrabbed.ToLongTimeString(),ts.TotalHours);
+          //Log.WriteFile(LogType.EPG, "  card:{0} ch:{1} epg hrs:{2} last:{3} {4} hrs:{5}", card.ID,chan.Name,chan.EpgHours, chan.LastDateTimeEpgGrabbed.ToShortDateString(), chan.LastDateTimeEpgGrabbed.ToLongTimeString(),ts.TotalHours);
           TVProgram prog = TVDatabase.GetLastProgramForChannel(chan);
-          //Log.WriteFile(Log.LogType.EPG,"last prog in tvguide:{0} {1}", prog.EndTime.ToShortDateString(), prog.EndTime.ToLongTimeString());
+          //Log.WriteFile(LogType.EPG,"last prog in tvguide:{0} {1}", prog.EndTime.ToShortDateString(), prog.EndTime.ToLongTimeString());
           if (prog.EndTime < DateTime.Now.AddHours(chan.EpgHours))
           {
             ts = DateTime.Now - chan.LastDateTimeEpgGrabbed;
             if (ts.TotalHours > 2)
             {
               //grab the epg
-              Log.WriteFile(Log.LogType.EPG, "auto-epg: card:{0} grab epg for channel:{1} expected:{2} hours, last event in tv guide:{3} {4}, last grab :{5} {6}",
+              Log.WriteFile(LogType.EPG, "auto-epg: card:{0} grab epg for channel:{1} expected:{2} hours, last event in tv guide:{3} {4}, last grab :{5} {6}",
                           card.CommercialName,
                           chan.Name, chan.EpgHours, prog.EndTime.ToShortDateString(), prog.EndTime.ToLongTimeString(),
                            chan.LastDateTimeEpgGrabbed.Date.ToShortDateString(), chan.LastDateTimeEpgGrabbed.Date.ToLongTimeString());

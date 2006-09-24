@@ -1,6 +1,6 @@
+using MediaPortal.Services;
 using MediaPortal.Utils.Services;
 using MediaPortal.ControlDevices;
-using ILog=MediaPortal.Utils.Services.ILog;
 
 namespace MediaPortal.ControlDevices
 {

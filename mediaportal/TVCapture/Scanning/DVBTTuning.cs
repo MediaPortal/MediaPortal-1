@@ -184,7 +184,7 @@ namespace MediaPortal.TV.Scanning
       percent *= 100.0f;
       _callback.OnProgress((int)percent);
       int[] tmp = _listFrequencies[currentFreq] as int[];
-      //Log.WriteFile(Log.LogType.Log,"dvbt-scan:FREQ: {0} BWDTH: {1}", tmp[0], tmp[1]);
+      //Log.WriteFile(LogType.Log,"dvbt-scan:FREQ: {0} BWDTH: {1}", tmp[0], tmp[1]);
       float frequency = tmp[0];
       frequency /= 1000;
       string description = String.Format("Transponder:{0:###.##} MHz. Bandwidth:{1} MHz", frequency, tmp[1]);

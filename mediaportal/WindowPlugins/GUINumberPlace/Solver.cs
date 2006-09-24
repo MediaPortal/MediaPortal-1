@@ -372,7 +372,7 @@ namespace MediaPortal.GUI.NumberPlace
 
       }
       //				rateAll += rate;
-      //				MediaPortal.GUI.Library.Log.WriteFile(MediaPortal.GUI.Library.Log.LogType.Log, "Soduko Rate end "+trys+" notes: {0}", rate);
+      //				MediaPortal.GUI.Library.Log.WriteFile(MediaPortal.GUI.Library.LogType.Log, "Soduko Rate end "+trys+" notes: {0}", rate);
       //			}
       return rate;
 

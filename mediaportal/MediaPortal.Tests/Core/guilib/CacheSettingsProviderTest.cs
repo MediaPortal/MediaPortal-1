@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using MediaPortal.Services;
+using MediaPortal.Tests.MockObjects;
 using NUnit.Framework;
 using MediaPortal.Profile;
 using System.IO;
@@ -62,11 +64,7 @@ namespace MediaPortal.Tests.Core.Profile
     [SetUp]
     public void Init()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      StringWriter logString = new StringWriter();
-      Log log = new Log(logString, Log.Level.Debug);
-      services.Replace<ILog>(log);
-
+        GlobalServiceProvider.Replace<ILog>(new NoLog());
       this.getValueReturns = null;
       this.getValueHits = 0;
       this.removeEntryHits = 0;

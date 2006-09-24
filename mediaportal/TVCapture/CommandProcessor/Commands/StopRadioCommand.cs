@@ -30,6 +30,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization.Formatters.Soap;
 using System.Management;
 using MediaPortal.GUI.Library;
+using MediaPortal.Services;
 using MediaPortal.Util;
 using MediaPortal.TV.Database;
 using MediaPortal.Video.Database;
@@ -48,7 +49,7 @@ namespace MediaPortal.TV.Recording
     {
       bool stopped = false;
 
-      Log.WriteFile(Log.LogType.Recorder, "Command:Stop radio");
+      Log.WriteFile(LogType.Recorder, "Command:Stop radio");
 
       if (g_Player.Playing && g_Player.IsRadio)
       {
@@ -66,7 +67,7 @@ namespace MediaPortal.TV.Recording
         TVCaptureDevice dev = handler.TVCards[i];
         if (dev.IsRadio)
         {
-          Log.WriteFile(Log.LogType.Recorder, "Recorder: StopRadio() stop radio on card:{0}", dev.CommercialName);
+          Log.WriteFile(LogType.Recorder, "Recorder: StopRadio() stop radio on card:{0}", dev.CommercialName);
           dev.StopRadio();
           if (i == handler.CurrentCardIndex)
           {

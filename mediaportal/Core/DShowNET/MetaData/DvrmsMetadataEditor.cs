@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 using DirectShowLib;
 using DShowNET.Helper;
 using MediaPortal.GUI.Library;
+using MediaPortal.Services;
 
 namespace Toub.MediaCenter.Dvrms.Metadata
 {
@@ -152,13 +153,13 @@ namespace Toub.MediaCenter.Dvrms.Metadata
 			sourceFilter = ClassId.CoCreateInstance(ClassId.RecordingAttributes) as Toub.MediaCenter.Dvrms.Metadata.IFileSourceFilter;
 			if (sourceFilter==null)
 			{
-        Log.WriteFile(Log.LogType.Recorder, true, "Unable to create IFileSourceFilter");
+        Log.WriteFile(LogType.Recorder, true, "Unable to create IFileSourceFilter");
 				return;
 			}
 			int hr=sourceFilter.Load(filepath, null);
 			if (hr!=0)
 			{
-				//Log.WriteFile(Log.LogType.Recorder,true,"Unable to open:{0} hr:0x{1:X}",filepath,hr);
+				//Log.WriteFile(LogType.Recorder,true,"Unable to open:{0} hr:0x{1:X}",filepath,hr);
 				return;
 			}
 			_editor = sourceFilter as Toub.MediaCenter.Dvrms.Metadata.IStreamBufferRecordingAttribute;

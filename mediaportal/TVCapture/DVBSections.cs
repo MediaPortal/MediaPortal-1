@@ -1029,7 +1029,7 @@ namespace MediaPortal.TV.Recording
 
       byte[] b = new byte[5];
       loop = (section_length - 9) / 4;
-      //Log.WriteFile(Log.LogType.Log,"dvbsections:decodePatTable() loop={0}", loop);
+      //Log.WriteFile(LogType.Log,"dvbsections:decodePatTable() loop={0}", loop);
       if (loop < 1)
       {
         Log.Info("decodePATTable() loop < 1 loop={0}", buf.Length);
@@ -1044,7 +1044,7 @@ namespace MediaPortal.TV.Recording
         ch.program_number = (b[0] << 8) + b[1];
         ch.reserved = ((b[2] >> 5) & 7);
         ch.network_pmt_PID = ((b[2] & 0x1F) << 8) + b[3];
-        //Log.WriteFile(Log.LogType.Log,"dvbsections:decodePatTable() chan:{0} {1} {2}", ch.transportStreamID,ch.networkID,ch.network_pmt_PID);
+        //Log.WriteFile(LogType.Log,"dvbsections:decodePatTable() chan:{0} {1} {2}", ch.transportStreamID,ch.networkID,ch.network_pmt_PID);
         if (ch.program_number != 0)
         {
           tp.PMTTable.Add(ch);
@@ -2032,7 +2032,7 @@ namespace MediaPortal.TV.Recording
       eit.seLanguageCode = System.Text.Encoding.ASCII.GetString(buf, 2, 3);
       if (eit.seLanguageCode.Length > 0)
       {
-        //Log.WriteFile(Log.LogType.Log,"epg-grab: language={0}", eit.seLanguageCode);
+        //Log.WriteFile(LogType.Log,"epg-grab: language={0}", eit.seLanguageCode);
       }
       eit.event_name = "";
       eit.event_text = "";
@@ -2295,7 +2295,7 @@ namespace MediaPortal.TV.Recording
 
         if (eit.eeLanguageCode.Length > 0)
         {
-          //Log.WriteFile(Log.LogType.Log,"epg-grab: language={0}", eit.eeLanguageCode);
+          //Log.WriteFile(LogType.Log,"epg-grab: language={0}", eit.eeLanguageCode);
         }
         pointer += 7;
         lenB = descriptor_length - 5;
@@ -2310,7 +2310,7 @@ namespace MediaPortal.TV.Recording
           string testText = getString468A(b, item_description_length);
           if (testText == null)
             testText = "-not avail.-";
-          //Log.WriteFile(Log.LogType.Log,"dvbsections: item-description={0}",testText);
+          //Log.WriteFile(LogType.Log,"dvbsections: item-description={0}",testText);
           item_length = b[0];
           System.Array.Copy(buf, pointer + 1, b, 0, item_length);
           item = getString468A(b, item_length);

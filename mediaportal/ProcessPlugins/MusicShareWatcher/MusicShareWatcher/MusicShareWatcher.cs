@@ -23,15 +23,10 @@
 
 #endregion
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
-using MediaPortal.Util;
 using MediaPortal.MusicShareWatcher;
+using MediaPortal.Services;
 
 namespace MediaPortal.MusicShareWatcher
 {
@@ -63,7 +58,7 @@ namespace MediaPortal.MusicShareWatcher
     // Close the Watcher Application
     private void closeMenuItem_Click(object sender, EventArgs e)
     {
-      Log.Info(Log.LogType.MusicShareWatcher, "MusicShareWatcher terminated.");
+      Log.Info(LogType.MusicShareWatcher, "MusicShareWatcher terminated.");
       Application.Exit();
     }
 
@@ -90,7 +85,7 @@ namespace MediaPortal.MusicShareWatcher
     {
       if (msg.Msg == WM_QUERYENDSESSION)
       {
-        Log.Info(Log.LogType.MusicShareWatcher, "MusicShareWatcher terminated because of System/Session shutdown.");
+        Log.Info(LogType.MusicShareWatcher, "MusicShareWatcher terminated because of System/Session shutdown.");
         // If system is shutting down, allow exit.
         Application.Exit();
       }

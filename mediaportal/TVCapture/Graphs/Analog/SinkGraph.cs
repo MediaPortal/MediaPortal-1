@@ -31,6 +31,7 @@ using System.Threading;
 using DShowNET;
 using DShowNET.Helper;
 using DirectShowLib;
+using MediaPortal.Services;
 using MediaPortal.Util;
 using MediaPortal.Player;
 using MediaPortal.GUI.Library;
@@ -227,7 +228,7 @@ namespace MediaPortal.TV.Recording
       if ( freeSpace < ( 1024L * 1024L * 1024L ) )// 1 GB
       {
         _lastError = GUILocalizeStrings.Get(765);// "Not enough free diskspace";
-        Log.WriteFile(Log.LogType.Recorder, true, "Recorder:  failed to start timeshifting since drive {0}: has less then 1GB freediskspace", strFileName[0]);
+        Log.WriteFile(LogType.Recorder, true, "Recorder:  failed to start timeshifting since drive {0}: has less then 1GB freediskspace", strFileName[0]);
         return false;
       }
       if ( _mpeg2DemuxHelper == null )
@@ -268,7 +269,7 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     protected bool ConnectVideoCaptureToMPEG2Demuxer()
     {
-      //			Log.WriteFile(Log.LogType.Log,"SinkGraph:Connect VideoCapture device to MPEG2Demuxer filter");
+      //			Log.WriteFile(LogType.Log,"SinkGraph:Connect VideoCapture device to MPEG2Demuxer filter");
       if ( _filterCapture == null || _graphBuilderInterface == null )
       {
         Log.Error("SinkGraph:ConnectVideoCaptureToMPEG2Demuxer() FAILED capture filter=null");
@@ -299,7 +300,7 @@ namespace MediaPortal.TV.Recording
       }
 
       //ok, that failed. seems we have to do it ourselves
-      //				Log.WriteFile(Log.LogType.Log,"SinkGraph:find MPEG2 demuxer input pin");
+      //				Log.WriteFile(LogType.Log,"SinkGraph:find MPEG2 demuxer input pin");
       IPin pinIn = DsFindPin.ByDirection(_mpeg2DemuxHelper.BaseFilter, PinDirection.Input, 0);
       if ( pinIn == null )
       {
@@ -307,7 +308,7 @@ namespace MediaPortal.TV.Recording
         return false;
       }
 
-      //					Log.WriteFile(Log.LogType.Log,"SinkGraph:found MPEG2 demuxer input pin");
+      //					Log.WriteFile(LogType.Log,"SinkGraph:found MPEG2 demuxer input pin");
       hr = _graphBuilderInterface.Connect(_videoCaptureHelper.CapturePin, pinIn);
       if ( hr != 0 )
       {

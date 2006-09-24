@@ -32,6 +32,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
 using MediaPortal.EPG.config;
+using MediaPortal.Services;
 using MediaPortal.Utils.Services;
 using MediaPortal.Util;
 
@@ -101,7 +102,7 @@ namespace WebEPG_conf
       lbChannels.SelectedValueChanged += handler;
 
       //ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = new Log("WebEPG", Log.Level.Debug);
+      _log = GlobalServiceProvider.Get<ILog>();
       //services.Add<ILog>(_log);
 
       startDirectory = Environment.CurrentDirectory;
@@ -472,10 +473,10 @@ namespace WebEPG_conf
 
       if (source == bImport)
       {
-        _log.Info("WebEPG Config: Button: Import");
+          _log.WriteFile(LogType.WebEPG, Level.Information, "WebEPG Config: Button: Import");
         if (importFile.ShowDialog() != DialogResult.Cancel)
         {
-          _log.Info("WebEPG Config: Importing channels: {0}", importFile.FileName);
+            _log.WriteFile(LogType.WebEPG, Level.Information, "WebEPG Config: Importing channels: {0}", importFile.FileName);
           MediaPortal.Webepg.Profile.Xml xmlreader = new MediaPortal.Webepg.Profile.Xml(importFile.FileName);
           int channelCount = xmlreader.GetValueAsInt("ChannelInfo", "TotalChannels", 0);
 
@@ -540,7 +541,7 @@ namespace WebEPG_conf
 
       if (source == bSave)
       {
-        _log.Info("WebEPG Config: Button: Save");
+          _log.WriteFile(LogType.WebEPG, Level.Information, "WebEPG Config: Button: Save");
         string confFile = startDirectory + "\\channels\\channels.xml";
         if (System.IO.File.Exists(confFile))
         {
@@ -605,7 +606,7 @@ namespace WebEPG_conf
 
       if (source == bUpdate)
       {
-        _log.Info("WebEPG Config: Button: Update");
+          _log.WriteFile(LogType.WebEPG, Level.Information, "WebEPG Config: Button: Update");
         ReplaceCurrent();
       }
 
@@ -624,7 +625,7 @@ namespace WebEPG_conf
 
       if (source == bRemove)
       {
-        _log.Info("WebEPG Config: Button: Remove");
+          _log.WriteFile(LogType.WebEPG, Level.Information, "WebEPG Config: Button: Remove");
         if (lbChannels.SelectedIndex != -1)
         {
           ChannelList.Remove(lbChannels.SelectedValue);
@@ -634,7 +635,7 @@ namespace WebEPG_conf
 
       if (source == bAdd)
       {
-        _log.Info("WebEPG Config: Button: Add");
+          _log.WriteFile(LogType.WebEPG, Level.Information, "WebEPG Config: Button: Add");
         ChannelInfo info = new ChannelInfo();
         //
         //				while(ChannelList[info.DisplayName] != null)
@@ -767,7 +768,7 @@ namespace WebEPG_conf
     private void GetGrabbers(string Location)
     {
       System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(Location);
-      _log.Info("WebEPG Config: Directory: {0}", Location);
+      _log.WriteFile(LogType.WebEPG, Level.Information, "WebEPG Config: Directory: {0}", Location);
       GrabberInfo gInfo;
       foreach (System.IO.FileInfo file in dir.GetFiles("*.xml"))
       {
@@ -776,7 +777,7 @@ namespace WebEPG_conf
         XmlNodeList channelList;
         try
         {
-          _log.Info("WebEPG Config: File: {0}", file.Name);
+            _log.WriteFile(LogType.WebEPG, Level.Information, "WebEPG Config: File: {0}", file.Name);
           xml.Load(file.FullName);
           channelList = xml.DocumentElement.SelectNodes("/profile/section/entry");
 
@@ -793,7 +794,7 @@ namespace WebEPG_conf
         }
         catch (System.Xml.XmlException) // ex) 
         {
-          _log.Info("WebEPG Config: File open failed - XML error");
+            _log.WriteFile(LogType.WebEPG, Level.Information, "WebEPG Config: File open failed - XML error");
           return;
         }
 
@@ -880,10 +881,10 @@ namespace WebEPG_conf
     private void GetChannels(string Location) //ref TreeNode Main, string Location)
     {
       System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(Location);
-      _log.Info("WebEPG Config: Directory: {0}", Location);
+      _log.WriteFile(LogType.WebEPG, Level.Information, "WebEPG Config: Directory: {0}", Location);
       foreach (System.IO.FileInfo file in dir.GetFiles("*.xml"))
       {
-        _log.Info("WebEPG Config: File: {0}", file.Name);
+          _log.WriteFile(LogType.WebEPG, Level.Information, "WebEPG Config: File: {0}", file.Name);
         ChannelInfo info = GetChannelInfo(file.FullName);
         if (info != null)
         {
@@ -907,19 +908,19 @@ namespace WebEPG_conf
       info.FullName = xmlreader.GetValueAsString("ChannelInfo", "FullName", "");
       if (info.FullName == "")
       {
-        _log.Info("WebEPG Config: File error: FullName not found");
+          _log.WriteFile(LogType.WebEPG, Level.Information, "WebEPG Config: File error: FullName not found");
         return null;
       }
       info.ChannelID = xmlreader.GetValueAsString("ChannelInfo", "ChannelID", "");
       if (info.ChannelID == "")
       {
-        _log.Info("WebEPG Config: File error: ChannelID not found");
+          _log.WriteFile(LogType.WebEPG, Level.Information, "WebEPG Config: File error: ChannelID not found");
         return null;
       }
       int GrabberCount = xmlreader.GetValueAsInt("ChannelInfo", "Grabbers", 0);
       if (GrabberCount == 0)
       {
-        _log.Info("WebEPG Config: File error: Grabbers not found");
+          _log.WriteFile(LogType.WebEPG, Level.Information, "WebEPG Config: File error: Grabbers not found");
         return null;
       }
 
@@ -968,7 +969,7 @@ namespace WebEPG_conf
             }
             catch (System.ArgumentException ex)
             {
-              _log.Error("WebEPG Config: Regex error: {0}", ex.ToString());
+                _log.WriteFile(LogType.WebEPG, Level.Error, "WebEPG Config: Regex error: {0}", ex.ToString());
             }
             if (result.Success)
             {

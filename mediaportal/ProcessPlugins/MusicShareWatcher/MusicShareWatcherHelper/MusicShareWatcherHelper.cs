@@ -30,6 +30,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.IO;
 using System.Threading;
+using MediaPortal.Services;
 using SQLite.NET;
 using MediaPortal.GUI.Library;
 using MediaPortal.TagReader;
@@ -54,7 +55,7 @@ namespace MediaPortal.MusicShareWatcher
     public MusicShareWatcherHelper()
     {
       // Create Log File
-      Log.BackupLogFile(Log.LogType.MusicShareWatcher);
+      Log.BackupLogFile(LogType.MusicShareWatcher);
 
       musicDB = new MusicDatabase();
       m_CheckForVariousArtistsThread = new Thread(new ThreadStart(CheckForVariousArtists));
@@ -89,7 +90,7 @@ namespace MediaPortal.MusicShareWatcher
         {
           watcher.EnableRaisingEvents = true;
         }
-        Log.Info(Log.LogType.MusicShareWatcher, "Monitoring of shares enabled");
+        Log.Info(LogType.MusicShareWatcher, "Monitoring of shares enabled");
       }
       else
       {
@@ -98,16 +99,16 @@ namespace MediaPortal.MusicShareWatcher
         {
           watcher.EnableRaisingEvents = false;
         }
-        Log.Info(Log.LogType.MusicShareWatcher, "Monitoring of shares disabled");
+        Log.Info(LogType.MusicShareWatcher, "Monitoring of shares disabled");
       }
     }
 
     private void WatchShares()
     {
-      Log.Info(Log.LogType.MusicShareWatcher, "MusicShareWatcher starting up!");
+      Log.Info(LogType.MusicShareWatcher, "MusicShareWatcher starting up!");
       LoadShares();
-      Log.Info(Log.LogType.MusicShareWatcher, "Monitoring active for following shares:");
-      Log.Info(Log.LogType.MusicShareWatcher, "---------------------------------------");
+      Log.Info(LogType.MusicShareWatcher, "Monitoring active for following shares:");
+      Log.Info(LogType.MusicShareWatcher, "---------------------------------------");
       foreach (String sharename in m_shares)
       {
         try
@@ -145,15 +146,15 @@ namespace MediaPortal.MusicShareWatcher
           watcherDirectory.EnableRaisingEvents = true;
           m_watchers.Add(watcherFile);
           m_watchers.Add(watcherDirectory);
-          Log.Info(Log.LogType.MusicShareWatcher, sharename);
+          Log.Info(LogType.MusicShareWatcher, sharename);
         }
         catch (System.ArgumentException ex)
         {
-          Log.Info(Log.LogType.MusicShareWatcher, "Unable to turn on monitoring for: " + sharename + " ( " + ex.Message + " )");
+          Log.Info(LogType.MusicShareWatcher, "Unable to turn on monitoring for: " + sharename + " ( " + ex.Message + " )");
         }
       }
-      Log.Info(Log.LogType.MusicShareWatcher, "---------------------------------------");
-      Log.Info(Log.LogType.MusicShareWatcher, "Note: Errors reported for CD/DVD drives can be ignored.");
+      Log.Info(LogType.MusicShareWatcher, "---------------------------------------");
+      Log.Info(LogType.MusicShareWatcher, "Note: Errors reported for CD/DVD drives can be ignored.");
     }
     #endregion Main
 
@@ -206,7 +207,7 @@ namespace MediaPortal.MusicShareWatcher
         song.Track = tag.Track;
         song.Duration = tag.Duration;
         musicDB.AddSong(song, true);
-        Log.Info(Log.LogType.MusicShareWatcher, "Added Song: " + strFileName);
+        Log.Info(LogType.MusicShareWatcher, "Added Song: " + strFileName);
         /// Whenever a new song is added it might happen that multiple artists are there for the same album. 
         /// Scan all albums in cache
         if (m_CheckForVariousArtistsThread.ThreadState == ThreadState.Stopped || m_CheckForVariousArtistsThread.ThreadState == ThreadState.Unstarted)
@@ -293,12 +294,12 @@ namespace MediaPortal.MusicShareWatcher
         if (musicDB.GetSongByFileName(e.FullPath, ref song))
         {
           if (musicDB.UpdateSong(e.FullPath, song.songId))
-            Log.Info(Log.LogType.MusicShareWatcher, "Updated Song: " + e.FullPath);
+            Log.Info(LogType.MusicShareWatcher, "Updated Song: " + e.FullPath);
         }
         else
         {
           // The song was not found in the database, add it
-          Log.Warn(Log.LogType.MusicShareWatcher, "Song was not found in database. Added it." + e.FullPath);
+          Log.Warn(LogType.MusicShareWatcher, "Song was not found in database. Added it." + e.FullPath);
           AddNewSong(e.FullPath);
         }
       }
@@ -307,17 +308,17 @@ namespace MediaPortal.MusicShareWatcher
     // Event handler handling the Delete of a file
     private static void OnDeleted(object source, FileSystemEventArgs e)
     {
-      Log.Debug(Log.LogType.MusicShareWatcher, "Delete Song Fired: " + e.FullPath);
+      Log.Debug(LogType.MusicShareWatcher, "Delete Song Fired: " + e.FullPath);
       musicDB.DeleteSong(e.FullPath, true);
-      Log.Info(Log.LogType.MusicShareWatcher, "Deleted Song: " + e.FullPath);
+      Log.Info(LogType.MusicShareWatcher, "Deleted Song: " + e.FullPath);
     }
 
     // Event handler handling the Delete of a directory
     private static void OnDirectoryDeleted(object source, FileSystemEventArgs e)
     {
-      Log.Debug(Log.LogType.MusicShareWatcher, "Delete Directory Fired: " + e.FullPath);
+      Log.Debug(LogType.MusicShareWatcher, "Delete Directory Fired: " + e.FullPath);
       musicDB.DeleteSongDirectory(e.FullPath);
-      Log.Info(Log.LogType.MusicShareWatcher, "Deleted Directory: " + e.FullPath);
+      Log.Info(LogType.MusicShareWatcher, "Deleted Directory: " + e.FullPath);
     }
 
     // Event handler handling the Rename of a file/directory
@@ -325,7 +326,7 @@ namespace MediaPortal.MusicShareWatcher
     {
       // A File has been renamed.
       if (musicDB.RenameSong(e.OldFullPath, e.FullPath))
-        Log.Info(Log.LogType.MusicShareWatcher, "Song / Directory: " + e.OldFullPath + " renamed to " + e.FullPath);
+        Log.Info(LogType.MusicShareWatcher, "Song / Directory: " + e.OldFullPath + " renamed to " + e.FullPath);
     }
     #endregion EventHandlers
 

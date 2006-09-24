@@ -28,6 +28,7 @@ using System.Management;
 using System.Drawing;
 using System.Collections;
 using System.Collections.Generic;
+using MediaPortal.Services;
 using Microsoft.Win32;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
@@ -1622,7 +1623,7 @@ namespace MediaPortal.TV.Recording
       ulong freeSpace = MediaPortal.Util.Utils.GetFreeDiskSpace(fullFileName);
       if (freeSpace < (1024L * 1024L * 1024L))// 1 GB
       {
-        Log.WriteFile(Log.LogType.Recorder, true, "Recorder:  failed to start recording since drive {0}: has less then 1GB freediskspace", fullFileName[0]);
+        Log.WriteFile(LogType.Recorder, true, "Recorder:  failed to start recording since drive {0}: has less then 1GB freediskspace", fullFileName[0]);
         return false;
       }
       Log.Info("Recorder: recording to {0}", fullFileName);

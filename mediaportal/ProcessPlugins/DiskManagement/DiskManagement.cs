@@ -29,6 +29,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using MediaPortal.GUI.Library;
+using MediaPortal.Services;
 using MediaPortal.Util;
 using MediaPortal.TV.Database;
 using MediaPortal.Video.Database;
@@ -158,8 +159,8 @@ namespace ProcessPlugins.DiskSpace
       List<RecordingFileInfo> recordings = GetRecordingsOnDrive(drive);
       if (recordings.Count == 0) return;
 
-      Log.WriteFile(Log.LogType.Recorder, "Recorder: not enough free space on drive:{0}.", drive);
-      Log.WriteFile(Log.LogType.Recorder, "Recorder: found {0} recordings on drive:{0}", recordings.Count, drive);
+      Log.WriteFile(LogType.Recorder, "Recorder: not enough free space on drive:{0}.", drive);
+      Log.WriteFile(LogType.Recorder, "Recorder: found {0} recordings on drive:{0}", recordings.Count, drive);
 
       // Not enough free diskspace
       // start deleting recordings (oldest ones first)
@@ -170,7 +171,7 @@ namespace ProcessPlugins.DiskSpace
         RecordingFileInfo fi = (RecordingFileInfo)recordings[0];
         if (fi.record.KeepRecordingMethod == TVRecorded.KeepMethod.UntilSpaceNeeded)
         {
-          Log.WriteFile(Log.LogType.Recorder, "Recorder: delete recording:{0} size:{1} date:{2} {3}",
+          Log.WriteFile(LogType.Recorder, "Recorder: delete recording:{0} size:{1} date:{2} {3}",
                                               fi.filename,
                                               Utils.GetSize(fi.info.Length),
                                               fi.info.CreationTime.ToShortDateString(), fi.info.CreationTime.ToShortTimeString());

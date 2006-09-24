@@ -278,7 +278,6 @@
     <Compile Include="guilib\GUIMenuControl.cs" />
     <Compile Include="guilib\GUIPlayListItemListControl.cs" />
     <Compile Include="guilib\GUIPlayListtButtonControl.cs" />
-    <Compile Include="guilib\ILog.cs" />
     <Compile Include="MusicPlayer\BASS\BassAudio.cs" />
     <Compile Include="MusicPlayer\Visualization\IVisualization.cs" />
     <Compile Include="MusicPlayer\Visualization\IVisualizationManager.cs" />
@@ -301,6 +300,12 @@
     <Compile Include="Player\DummyPlayerFactory.cs" />
     <Compile Include="Player\IPlayerFactory.cs" />
     <Compile Include="Player\RTSPPlayer.cs" />
+    <Compile Include="Services\GlobalServiceProvider.cs" />
+    <Compile Include="Services\ILog.cs" />
+    <Compile Include="Services\Level.cs" />
+    <Compile Include="Services\LogType.cs" />
+    <Compile Include="Services\ServiceCreatorCallback.cs" />
+    <Compile Include="Services\ServiceProvider.cs" />
     <Compile Include="ThumbDbLib\Thumbnail.cs" />
     <Compile Include="ThumbDbLib\ThumbnailCreator.cs" />
     <Compile Include="ThumbDbLib\ThumbnailCreatorNet.cs" />

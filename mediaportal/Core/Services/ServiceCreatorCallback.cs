@@ -1,3 +1,5 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
  *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,34 +20,11 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
 
-namespace MediaPortal.Utils.Services
+#endregion
+
+namespace MediaPortal.Services
 {
-  // Singleton Class to provide a global instance of ServiceProvider
-  public sealed class GlobalServiceProvider
-  {
-    static readonly ServiceProvider _instance = new ServiceProvider();
-
-    // Explicit static constructor to tell C# compiler
-    // not to mark type as beforefieldinit
-    static GlobalServiceProvider()
-    {
-    }
-
-    GlobalServiceProvider()
-    {
-    }
-
-    public static ServiceProvider Instance
-    {
-      get
-      {
-        return _instance;
-      }
-    }
-  }
+    public delegate T ServiceCreatorCallback<T>(ServiceProvider provider);
 }
+

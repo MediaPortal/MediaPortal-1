@@ -30,6 +30,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization.Formatters.Soap;
 using System.Management;
 using MediaPortal.GUI.Library;
+using MediaPortal.Services;
 using MediaPortal.Util;
 using MediaPortal.TV.Database;
 using MediaPortal.Video.Database;
@@ -59,7 +60,7 @@ namespace MediaPortal.TV.Recording
 
     public override void Execute(CommandProcessor handler)
     {
-      Log.WriteFile(Log.LogType.Recorder, "Command:Start radio:{0}", RadioStation);
+      Log.WriteFile(LogType.Recorder, "Command:Start radio:{0}", RadioStation);
       
       if (handler.TVCards.Count == 0)
       {
@@ -77,7 +78,7 @@ namespace MediaPortal.TV.Recording
       {
         Succeeded = false;
         ErrorMessage = String.Format(GUILocalizeStrings.Get(753), RadioStation);//"No tuner can receive:"
-        Log.WriteFile(Log.LogType.Recorder, "Recorder:StartRadio()  unknown station:{0}", RadioStation);
+        Log.WriteFile(LogType.Recorder, "Recorder:StartRadio()  unknown station:{0}", RadioStation);
         return;
       }
 
@@ -100,13 +101,13 @@ namespace MediaPortal.TV.Recording
               }
             }
             handler.CurrentCardIndex = i;
-            Log.WriteFile(Log.LogType.Recorder, "Recorder:StartRadio()  start on card:{0} station:{1}", tvcard.CommercialName, RadioStation);
+            Log.WriteFile(LogType.Recorder, "Recorder:StartRadio()  start on card:{0} station:{1}", tvcard.CommercialName, RadioStation);
             tvcard.StartRadio(radiostation);
             /*if (tvcard.IsTimeShifting)
             {
               string strTimeShiftFileName=GetTimeShiftFileNameByCardId(tvcard.ID);
 
-              Log.WriteFile(Log.LogType.Recorder,"Recorder:  currentfile:{0} newfile:{1}", g_Player.CurrentFile,strTimeShiftFileName);
+              Log.WriteFile(LogType.Recorder,"Recorder:  currentfile:{0} newfile:{1}", g_Player.CurrentFile,strTimeShiftFileName);
               g_Player.Play(strTimeShiftFileName);
             }*/
             Succeeded = true;
@@ -114,7 +115,7 @@ namespace MediaPortal.TV.Recording
           }
         }
       }
-      Log.WriteFile(Log.LogType.Recorder, "Recorder:StartRadio()  no free card which can listen to radio channel:{0}", RadioStation);
+      Log.WriteFile(LogType.Recorder, "Recorder:StartRadio()  no free card which can listen to radio channel:{0}", RadioStation);
       Succeeded = false;
       ErrorMessage = GUILocalizeStrings.Get(757);// "All tuners are busy";
     }

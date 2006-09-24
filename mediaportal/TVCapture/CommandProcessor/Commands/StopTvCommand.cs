@@ -30,6 +30,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization.Formatters.Soap;
 using System.Management;
 using MediaPortal.GUI.Library;
+using MediaPortal.Services;
 using MediaPortal.Util;
 using MediaPortal.TV.Database;
 using MediaPortal.Video.Database;
@@ -61,7 +62,7 @@ namespace MediaPortal.TV.Recording
 
     public override void Execute(CommandProcessor handler)
     {
-      Log.WriteFile(Log.LogType.Recorder, "Command:Stop all card except card:{0}", CardNo);
+      Log.WriteFile(LogType.Recorder, "Command:Stop all card except card:{0}", CardNo);
       
       if (handler.TVCards.Count == 0)
       {
@@ -80,7 +81,7 @@ namespace MediaPortal.TV.Recording
         string timeShiftFileName = handler.GetTimeShiftFileName(i);
         if (g_Player.Playing && g_Player.CurrentFile == timeShiftFileName)
         {
-          Log.WriteFile(Log.LogType.Recorder, "Recorder:  stop playing timeshifting file for card:{0}", dev.CommercialName);
+          Log.WriteFile(LogType.Recorder, "Recorder:  stop playing timeshifting file for card:{0}", dev.CommercialName);
 
           handler.StopPlayer();
           stopped = true;
@@ -92,7 +93,7 @@ namespace MediaPortal.TV.Recording
           if (dev.IsTimeShifting || dev.View || dev.IsRadio)
           {
             stopped = (dev.View);
-            Log.WriteFile(Log.LogType.Recorder, "Recorder:  stop card:{0}", dev.CommercialName);
+            Log.WriteFile(LogType.Recorder, "Recorder:  stop card:{0}", dev.CommercialName);
             
             dev.StopTimeShifting();
             dev.StopViewing();

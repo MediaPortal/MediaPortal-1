@@ -30,6 +30,7 @@ using System.Collections;
 using System.Text;
 using System.Windows.Forms; // used for Keys definition
 using System.Windows.Media.Animation;
+using MediaPortal.Services;
 using MediaPortal.Utils.Services;
 using MediaPortal.GUI.Library;
 using Microsoft.DirectX;

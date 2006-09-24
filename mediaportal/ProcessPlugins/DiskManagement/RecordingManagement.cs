@@ -29,6 +29,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using MediaPortal.GUI.Library;
+using MediaPortal.Services;
 using MediaPortal.Util;
 using MediaPortal.TV.Database;
 using MediaPortal.Video.Database;
@@ -68,7 +69,7 @@ namespace ProcessPlugins.DiskSpace
       {
         if (!rec.ShouldBeDeleted) continue;
 
-        Log.WriteFile(Log.LogType.Recorder, "Recorder: delete old recording:{0} date:{1}",
+        Log.WriteFile(LogType.Recorder, "Recorder: delete old recording:{0} date:{1}",
                           rec.FileName,
                           rec.StartTime.ToShortDateString());
         Recorder.DeleteRecording(rec);

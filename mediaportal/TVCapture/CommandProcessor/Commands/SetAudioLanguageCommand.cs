@@ -30,6 +30,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization.Formatters.Soap;
 using System.Management;
 using MediaPortal.GUI.Library;
+using MediaPortal.Services;
 using MediaPortal.Util;
 using MediaPortal.TV.Database;
 using MediaPortal.Video.Database;
@@ -70,7 +71,7 @@ namespace MediaPortal.TV.Recording
         ErrorMessage = GUILocalizeStrings.Get(755);// "No tuner is viewing tv";
         return;
       }
-      Log.WriteFile(Log.LogType.Recorder, "Command:Select audio stream with pid: 0x{0:X}", AudioPid);
+      Log.WriteFile(LogType.Recorder, "Command:Select audio stream with pid: 0x{0:X}", AudioPid);
       TVCaptureDevice device = handler.TVCards[handler.CurrentCardIndex];
       device.SetAudioLanguage(AudioPid);
       Succeeded = true;

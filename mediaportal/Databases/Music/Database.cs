@@ -26,6 +26,7 @@
 using System;
 using System.Threading;
 using MediaPortal.GUI.Library;
+using MediaPortal.Services;
 using MediaPortal.Util;
 using System.Collections.Generic;
 using System.Collections;
@@ -3808,7 +3809,7 @@ namespace MediaPortal.Music.Database
               catch (Exception)
               {
                 RollbackTransaction();
-                Log.Info(Log.LogType.MusicShareWatcher, "RenameSong: Rename for {0} failed because of DB exception", strPath);
+                Log.Info(LogType.MusicShareWatcher, "RenameSong: Rename for {0} failed because of DB exception", strPath);
                 return false;
               }
             }
@@ -3822,7 +3823,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        Log.Error(Log.LogType.MusicShareWatcher, "musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error(LogType.MusicShareWatcher, "musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         return false;
       }
     }
@@ -3880,14 +3881,14 @@ namespace MediaPortal.Music.Database
           catch (Exception)
           {
             RollbackTransaction();
-            Log.Error(Log.LogType.MusicShareWatcher, "Delete Directory for {0} failed because of DB exception", strPath);
+            Log.Error(LogType.MusicShareWatcher, "Delete Directory for {0} failed because of DB exception", strPath);
             return false;
           }
         }
       }
       catch (Exception ex)
       {
-        Log.Error(Log.LogType.MusicShareWatcher, "musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error(LogType.MusicShareWatcher, "musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         return false;
       }
       return true;

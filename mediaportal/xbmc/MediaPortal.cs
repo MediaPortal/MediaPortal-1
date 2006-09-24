@@ -172,9 +172,9 @@ public class MediaPortalApp : D3DApp, IRender
     Log.BackupLogFiles();
     Log.Info("Main: MediaPortal is starting up");
     Log.Info("Main: Using Directories:");
-    foreach (string options in Enum.GetNames(typeof(Config.Dir)))
+    foreach (Config.Dir option in Enum.GetValues(typeof(Config.Dir)))
     {
-      Log.Info("{0} - {1}", options, Config.Get((Config.Dir)Enum.Parse(typeof(Config.Dir), options)));
+      Log.Info("{0} - {1}", option, Config.GetFolder(option));
     }
 
     FileInfo mpFi = new FileInfo(Assembly.GetExecutingAssembly().Location);

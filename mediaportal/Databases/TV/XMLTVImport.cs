@@ -29,6 +29,7 @@ using System.Net;
 using System.Threading;
 //using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
+using MediaPortal.Services;
 using MediaPortal.Util;
 
 namespace MediaPortal.TV.Database
@@ -592,7 +593,7 @@ namespace MediaPortal.TV.Database
               if (prog.EndTime > dtStartDate)
               {
                 Thread.Sleep(_backgroundDelay);
-                Log.WriteFile(Log.LogType.EPG, "epg-import :{0,-20} {1} {2}-{3} {4}",
+                Log.WriteFile(LogType.EPG, "epg-import :{0,-20} {1} {2}-{3} {4}",
                           prog.Channel,
                           prog.StartTime.ToShortDateString(),
                           prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
@@ -697,7 +698,7 @@ namespace MediaPortal.TV.Database
         day < 0 || day > 31 ||
         month < 0 || month > 12)
       {
-        Log.WriteFile(Log.LogType.EPG, true, "epg-import:tvguide.xml contains invalid date/time :{0} converted it to:{1}",
+        Log.WriteFile(LogType.EPG, true, "epg-import:tvguide.xml contains invalid date/time :{0} converted it to:{1}",
                       orgDateTime, newDateTime);
       }
 

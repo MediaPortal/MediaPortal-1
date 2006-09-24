@@ -27,6 +27,7 @@ using System.Text;
 using System.Threading;
 using System.Collections;
 using System.Globalization;
+using MediaPortal.Services;
 using MediaPortal.Webepg.Profile;
 using MediaPortal.TV.Database;
 using MediaPortal.WebEPG;

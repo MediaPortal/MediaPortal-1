@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using MediaPortal.Player;
 using MediaPortal.GUI.Library;
+using MediaPortal.Services;
 using MediaPortal.Util;
 using MediaPortal.TV.Database;
 
@@ -298,7 +299,7 @@ namespace MediaPortal.TV.Recording
 
     private static void Recorder_OnTvChannelChanged(string tvChannelName)
     {
-      Log.WriteFile(Log.LogType.Recorder, "Recorder: tv channel changed:{0}", tvChannelName);
+      Log.WriteFile(LogType.Recorder, "Recorder: tv channel changed:{0}", tvChannelName);
       UpdateTvProgramProperties(tvChannelName);
     }
 
@@ -426,7 +427,7 @@ namespace MediaPortal.TV.Recording
 
     private static void Recorder_OnTvRecordingChanged()
     {
-      Log.WriteFile(Log.LogType.Recorder, "Recorder: recording state changed");
+      Log.WriteFile(LogType.Recorder, "Recorder: recording state changed");
       if (Recorder.IsRecording())
       {
         if (_lastTvRecording != Recorder.CurrentTVRecording || _lastProgramRecording != Recorder.ProgramRecording)

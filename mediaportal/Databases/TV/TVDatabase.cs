@@ -25,6 +25,7 @@
 
 using System;
 using MediaPortal.GUI.Library;
+using MediaPortal.Services;
 using MediaPortal.Util;
 using System.Collections;
 using System.Collections.Generic;
@@ -1147,7 +1148,7 @@ namespace MediaPortal.TV.Database
             for (int i = 0; i < results2.Rows.Count; ++i)
             {
               long idProgram = DatabaseUtility.GetAsInt64(results2, i, "idProgram");
-              //Log.WriteFile(Log.LogType.EPG, "sql: del {0} id:{1} {2}-{3}", i, idProgram, DatabaseUtility.Get(results2, i, "iStartTime"), DatabaseUtility.Get(results2, i, "iEndTime"));
+              //Log.WriteFile(LogType.EPG, "sql: del {0} id:{1} {2}-{3}", i, idProgram, DatabaseUtility.Get(results2, i, "iStartTime"), DatabaseUtility.Get(results2, i, "iEndTime"));
               strSQL = String.Format("DELETE FROM tblPrograms WHERE idProgram={0}", idProgram);
               m_db.Execute(strSQL);
             }
@@ -1156,7 +1157,7 @@ namespace MediaPortal.TV.Database
           strSQL = String.Format("insert into tblPrograms (idProgram,idChannel,idGenre,strTitle,iStartTime,iEndTime,strDescription,strEpisodeName,strRepeat,strSeriesNum,strEpisodeNum,strEpisodePart,strDate,strStarRating,strClassification) values ( NULL, {0}, {1}, '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}')",
             iChannelId, iGenreId, strTitle, prog.Start.ToString(),
             prog.End.ToString(), strDescription, strEpisode, strRepeat, strSeriesNum, strEpisodeNum, strEpisodePart, strDate, strStarRating, strClassification);
-          //          Log.WriteFile(Log.LogType.EPG,strSQL);
+          //          Log.WriteFile(LogType.EPG,strSQL);
           m_db.Execute(strSQL);
           lRetId = m_db.LastInsertID();
         }
@@ -2804,7 +2805,7 @@ namespace MediaPortal.TV.Database
     /// </summary>
     static public void RemoveOldPrograms()
     {
-      Log.WriteFile(Log.LogType.EPG, "RemoveOldPrograms()");
+      Log.WriteFile(LogType.EPG, "RemoveOldPrograms()");
       if (m_db == null) return;
       lock (typeof(TVDatabase))
       {
@@ -2816,19 +2817,19 @@ namespace MediaPortal.TV.Database
           long longYesterday = MediaPortal.Util.Utils.datetolong(yesterday);
           strSQL = String.Format("DELETE FROM tblPrograms WHERE iEndTime < '{0}'", longYesterday);
 
-          Log.WriteFile(Log.LogType.EPG, "sql:{0}", strSQL);
+          Log.WriteFile(LogType.EPG, "sql:{0}", strSQL);
           m_db.Execute(strSQL);
           strSQL = String.Format("DELETE FROM canceledseries where iCancelTime < '{0}'", longYesterday);
-          Log.WriteFile(Log.LogType.EPG, "sql:{0}", strSQL);
+          Log.WriteFile(LogType.EPG, "sql:{0}", strSQL);
           m_db.Execute(strSQL);
-          Log.WriteFile(Log.LogType.EPG, "RemoveOldPrograms done");
+          Log.WriteFile(LogType.EPG, "RemoveOldPrograms done");
 
           DatabaseUtility.CompactDatabase(m_db);
-          Log.WriteFile(Log.LogType.EPG, "vacuum done");
+          Log.WriteFile(LogType.EPG, "vacuum done");
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.EPG, true, "TVDatabase exception err:{0} stack:{1} {2}", ex.Message, ex.StackTrace, strSQL);
+          Log.WriteFile(LogType.EPG, true, "TVDatabase exception err:{0} stack:{1} {2}", ex.Message, ex.StackTrace, strSQL);
           Open();
         }
         return;

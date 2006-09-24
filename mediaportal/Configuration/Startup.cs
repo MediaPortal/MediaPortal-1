@@ -29,6 +29,7 @@ using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
+using MediaPortal.Services;
 using MediaPortal.Util;
 using System.Reflection;
 using System.IO;
@@ -76,7 +77,7 @@ namespace MediaPortal.Configuration
     {
       // Logger should write into Configuration.log
       Log.SetConfigurationMode();
-      Log.BackupLogFile(Log.LogType.Config);
+      Log.BackupLogFile(LogType.Config);
       Log.Info("Using Directories:");
       foreach (string options in Enum.GetNames(typeof(Config.Dir)))
       {

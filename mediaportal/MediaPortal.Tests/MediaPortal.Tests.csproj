@@ -75,6 +75,8 @@
     <Compile Include="Core\Playlists\PlayListWPLTest.cs" />
     <Compile Include="Core\UdpHelper\UdpHelperTest.cs" />
     <Compile Include="Core\InputDevices\InputHandlerTest.cs" />
+    <Compile Include="Core\Util\TestConfig.cs" />
+    <Compile Include="MockObjects\NoLog.cs" />
     <Compile Include="Utils\Services\ServiceTest.cs" />
     <Compile Include="WebEPG\ProgramDataTest.cs" />
     <Compile Include="Support\DxDiagLogTests.cs" />

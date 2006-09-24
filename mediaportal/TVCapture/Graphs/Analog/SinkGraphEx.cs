@@ -1019,17 +1019,17 @@ namespace MediaPortal.TV.Recording
       }
 
       //disconnect the output pins of the crossbar->video capture filter
-      //			Log.WriteFile(Log.LogType.Log,"SinkGraphEx:disconnect crossbar outputs");
+      //			Log.WriteFile(LogType.Log,"SinkGraphEx:disconnect crossbar outputs");
       DirectShowUtil.DisconnectOutputPins(_graphBuilderInterface, (IBaseFilter)crossbar);
 
       //connect the output pins of the tvtuner
-      //			Log.WriteFile(Log.LogType.Log,"SinkGraphEx:connect tvtuner outputs");
+      //			Log.WriteFile(LogType.Log,"SinkGraphEx:connect tvtuner outputs");
       bool bAllConnected = DirectShowUtil.RenderOutputPins(_graphBuilderInterface, (IBaseFilter)_tvTunerInterface);
       if (!bAllConnected)
         Log.Info("SinkGraphEx:FAILED, not all pins connected");
 
       //reconnect the output pins of the crossbar
-      //			Log.WriteFile(Log.LogType.Log,"SinkGraphEx:reconnect crossbar output pins");
+      //			Log.WriteFile(LogType.Log,"SinkGraphEx:reconnect crossbar output pins");
 
       bAllConnected = DirectShowUtil.RenderOutputPins(_graphBuilderInterface, (IBaseFilter)crossbar);
       if (!bAllConnected)

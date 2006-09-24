@@ -18,7 +18,7 @@
     <DefaultTargetSchema>IE50</DefaultTargetSchema>
     <DelaySign>false</DelaySign>
     <OutputType>Library</OutputType>
-    <RootNamespace>Utils</RootNamespace>
+    <RootNamespace>MediaPortal</RootNamespace>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
     <StartupObject>
     </StartupObject>
@@ -112,12 +112,8 @@
     </Compile>
     <Compile Include="Service\LogSharedFileWriter.cs" />
     <Compile Include="Service\LogFile.cs" />
-    <Compile Include="Service\GlobalServiceProvider.cs" />
-    <Compile Include="Service\ILog.cs" />
     <Compile Include="Service\Log.cs" />
     <Compile Include="Service\LogFileWriter.cs" />
-    <Compile Include="Service\ServiceCreatorCallback.cs" />
-    <Compile Include="Service\ServiceProvider.cs" />
     <Compile Include="Time\BasicTime.cs" />
     <Compile Include="Time\TimeRange.cs" />
     <Compile Include="Time\WorldTimeZone.cs" />
@@ -156,6 +152,9 @@
       <WrapperTool>tlbimp</WrapperTool>
       <Isolated>False</Isolated>
     </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Services\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

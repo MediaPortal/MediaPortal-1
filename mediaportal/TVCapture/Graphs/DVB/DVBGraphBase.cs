@@ -37,6 +37,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
+using MediaPortal.Services;
 using Microsoft.Win32;
 using DShowNET;
 using DShowNET.Helper;
@@ -664,7 +665,7 @@ namespace MediaPortal.TV.Recording
       }
 
       //start the graph
-      //Log.WriteFile(Log.LogType.Log,"DVBGraph: start graph");
+      //Log.WriteFile(LogType.Log,"DVBGraph: start graph");
       hr = _mediaControl.Run();
       if ( hr < 0 )
       {
@@ -778,7 +779,7 @@ namespace MediaPortal.TV.Recording
       if ( freeSpace < ( 1024L * 1024L * 1024L ) )// 1 GB
       {
         _lastError = GUILocalizeStrings.Get(765);// "Not enough free diskspace";
-        Log.WriteFile(Log.LogType.Recorder, true, "Recorder:  failed to start timeshifting since drive {0}: has less then 1GB freediskspace", strFileName[0]);
+        Log.WriteFile(LogType.Recorder, true, "Recorder:  failed to start timeshifting since drive {0}: has less then 1GB freediskspace", strFileName[0]);
         return false;
       }
 
@@ -1388,7 +1389,7 @@ namespace MediaPortal.TV.Recording
         int iFileDuration = iTimeShiftBuffer / 6;
 
         //create StreamBufferSink filter
-        //				Log.WriteFile(Log.LogType.Log,"DVBGraph:CreateSinkSource()");
+        //				Log.WriteFile(LogType.Log,"DVBGraph:CreateSinkSource()");
         hr = _graphBuilder.AddFilter((IBaseFilter)m_StreamBufferSink, "StreamBufferSink");
         if ( hr != 0 )
         {
@@ -1397,7 +1398,7 @@ namespace MediaPortal.TV.Recording
           return false;
         }
         //create MPEG2 Analyzer filter
-        //				Log.WriteFile(Log.LogType.Log,"DVBGraph:Add mpeg2 analyzer()");
+        //				Log.WriteFile(LogType.Log,"DVBGraph:Add mpeg2 analyzer()");
         hr = _graphBuilder.AddFilter((IBaseFilter)m_mpeg2Analyzer, "Mpeg2 Analyzer");
         if ( hr != 0 )
         {
@@ -1408,7 +1409,7 @@ namespace MediaPortal.TV.Recording
 
         //connect mpeg2 demuxer video out->mpeg2 analyzer input pin
         //get input pin of MPEG2 Analyzer filter
-        //				Log.WriteFile(Log.LogType.Log,"DVBGraph:find mpeg2 analyzer input pin()");
+        //				Log.WriteFile(LogType.Log,"DVBGraph:find mpeg2 analyzer input pin()");
         pinObj0 = DsFindPin.ByDirection((IBaseFilter)m_mpeg2Analyzer, PinDirection.Input, 0);
         if ( pinObj0 == null )
         {
@@ -1417,7 +1418,7 @@ namespace MediaPortal.TV.Recording
           return false;
         }
 
-        //				Log.WriteFile(Log.LogType.Log,"DVBGraph:connect demux video output->mpeg2 analyzer");
+        //				Log.WriteFile(LogType.Log,"DVBGraph:connect demux video output->mpeg2 analyzer");
         hr = _graphBuilder.Connect(_pinDemuxerVideo, pinObj0);
         if ( hr != 0 )
         {
@@ -1428,7 +1429,7 @@ namespace MediaPortal.TV.Recording
 
         //connect MPEG2 analyzer Filter->stream buffer sink pin 0
         //get output pin #0 from MPEG2 analyzer Filter
-        //				Log.WriteFile(Log.LogType.Log,"DVBGraph:mpeg2 analyzer output->streambuffersink in");
+        //				Log.WriteFile(LogType.Log,"DVBGraph:mpeg2 analyzer output->streambuffersink in");
         pinObj1 = DsFindPin.ByDirection((IBaseFilter)m_mpeg2Analyzer, PinDirection.Output, 0);
         if ( hr != 0 )
         {
@@ -1517,7 +1518,7 @@ namespace MediaPortal.TV.Recording
         hr = pTemp.SetHKEY(subKey);
 
         //set timeshifting folder
-        //				Log.WriteFile(Log.LogType.Log,"DVBGraph:set timeshift folder to:{0}", strDir);
+        //				Log.WriteFile(LogType.Log,"DVBGraph:set timeshift folder to:{0}", strDir);
         hr = m_IStreamBufferConfig.SetDirectory(strDir);
         if ( hr != 0 )
         {
@@ -1551,7 +1552,7 @@ namespace MediaPortal.TV.Recording
         RegOpenKeyEx(HKEY, "SOFTWARE\\MediaPortal", 0, 0x3f, out subKey);
         hr = pConfig.SetHKEY(subKey);
         //set timeshifting filename
-        //				Log.WriteFile(Log.LogType.Log,"DVBGraph:set timeshift file to:{0}", fileName);
+        //				Log.WriteFile(LogType.Log,"DVBGraph:set timeshift file to:{0}", fileName);
 
         IStreamBufferConfigure2 streamConfig2 = m_StreamBufferConfig as IStreamBufferConfigure2;
         if ( streamConfig2 != null )
@@ -2775,7 +2776,7 @@ namespace MediaPortal.TV.Recording
         case NetworkType.ATSC:
           {
             //get the ATSC tuning details from the tv database
-            //Log.WriteFile(Log.LogType.Log,"DVBGraph:TuneChannel() get ATSC tuning details");
+            //Log.WriteFile(LogType.Log,"DVBGraph:TuneChannel() get ATSC tuning details");
             int symbolrate = 0, innerFec = 0, modulation = 0, physicalChannel = 0;
             int minorChannel = 0, majorChannel = 0;
             TVDatabase.GetATSCTuneRequest(channel.ID, out physicalChannel, out providerName, out frequency, out symbolrate, out innerFec, out modulation, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out audio1, out audio2, out audio3, out ac3Pid, out audioLanguage, out audioLanguage1, out audioLanguage2, out audioLanguage3, out minorChannel, out majorChannel, out HasEITPresentFollow, out HasEITSchedule, out pcrPid);
@@ -2818,14 +2819,14 @@ namespace MediaPortal.TV.Recording
             _currentTuningObject.HasEITSchedule = HasEITSchedule;
             _currentTuningObject.HasEITPresentFollow = HasEITPresentFollow;
             _currentTuningObject.ServiceType = 1;
-            //Log.WriteFile(Log.LogType.Log,"DVBGraph:TuneChannel() submit tuning request");
+            //Log.WriteFile(LogType.Log,"DVBGraph:TuneChannel() submit tuning request");
           }
           break;
 
         case NetworkType.DVBC:
           {
             //get the DVB-C tuning details from the tv database
-            //Log.WriteFile(Log.LogType.Log,"DVBGraph:TuneChannel() get DVBC tuning details");
+            //Log.WriteFile(LogType.Log,"DVBGraph:TuneChannel() get DVBC tuning details");
             int symbolrate = 0, innerFec = 0, modulation = 0;
             TVDatabase.GetDVBCTuneRequest(channel.ID, out providerName, out frequency, out symbolrate, out innerFec, out modulation, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out audio1, out audio2, out audio3, out ac3Pid, out audioLanguage, out audioLanguage1, out audioLanguage2, out audioLanguage3, out HasEITPresentFollow, out HasEITSchedule, out pcrPid);
             if ( frequency <= 0 )
@@ -2882,7 +2883,7 @@ namespace MediaPortal.TV.Recording
           {
             //get the DVB-S tuning details from the tv database
             //for DVB-S this is the frequency, polarisation, symbolrate,lnb-config, diseqc-config
-            //Log.WriteFile(Log.LogType.Log,"DVBGraph:TuneChannel() get DVBS tuning details");
+            //Log.WriteFile(LogType.Log,"DVBGraph:TuneChannel() get DVBS tuning details");
             DVBChannel ch = new DVBChannel();
             if ( TVDatabase.GetSatChannel(channel.ID, Mpeg2VideoServiceType, ref ch) == false )//only television
             {
@@ -2946,7 +2947,7 @@ namespace MediaPortal.TV.Recording
           {
             //get the DVB-T tuning details from the tv database
             //for DVB-T this is the frequency, ONID , TSID and SID
-            //Log.WriteFile(Log.LogType.Log,"DVBGraph:TuneChannel() get DVBT tuning details");
+            //Log.WriteFile(LogType.Log,"DVBGraph:TuneChannel() get DVBT tuning details");
             TVDatabase.GetDVBTTuneRequest(channel.ID, out providerName, out frequency, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out bandWidth, out audio1, out audio2, out audio3, out ac3Pid, out audioLanguage, out audioLanguage1, out audioLanguage2, out audioLanguage3, out HasEITPresentFollow, out HasEITSchedule, out pcrPid);
             if ( frequency <= 0 )
             {
@@ -3873,7 +3874,7 @@ namespace MediaPortal.TV.Recording
         }
         else if ( info.serviceType == Mpeg2AudioServiceType ) //radio
         {
-          //Log.WriteFile(Log.LogType.Log,"DVBGraph: channel {0} is a radio channel",newchannel.ServiceName);
+          //Log.WriteFile(LogType.Log,"DVBGraph: channel {0} is a radio channel",newchannel.ServiceName);
           //check if this channel already exists in the radio database
           bool isNewChannel = true;
           int channelId = -1;
@@ -4015,7 +4016,7 @@ namespace MediaPortal.TV.Recording
         case NetworkType.ATSC:
           {
             //get the ATSC tuning details from the tv database
-            //Log.WriteFile(Log.LogType.Log,"DVBGraph:TuneChannel() get ATSC tuning details");
+            //Log.WriteFile(LogType.Log,"DVBGraph:TuneChannel() get ATSC tuning details");
             int symbolrate = 0, innerFec = 0, modulation = 0, physicalChannel = 0;
             int minorChannel = 0, majorChannel = 0;
             RadioDatabase.GetATSCTuneRequest(channel.ID, out physicalChannel, out minorChannel, out majorChannel, out providerName, out frequency, out symbolrate, out innerFec, out modulation, out ONID, out TSID, out SID, out audioPid, out pmtPid, out pcrPid);
@@ -4048,7 +4049,7 @@ namespace MediaPortal.TV.Recording
         case NetworkType.DVBC:
           {
             //get the DVB-C tuning details from the tv database
-            //Log.WriteFile(Log.LogType.Log,"DVBGraph:TuneRadioChannel() get DVBC tuning details");
+            //Log.WriteFile(LogType.Log,"DVBGraph:TuneRadioChannel() get DVBC tuning details");
             int symbolrate = 0, innerFec = 0, modulation = 0;
             RadioDatabase.GetDVBCTuneRequest(channel.ID, out providerName, out frequency, out symbolrate, out innerFec, out modulation, out ONID, out TSID, out SID, out audioPid, out pmtPid, out pcrPid);
             if ( frequency <= 0 )
@@ -4082,7 +4083,7 @@ namespace MediaPortal.TV.Recording
           {
             //get the DVB-S tuning details from the tv database
             //for DVB-S this is the frequency, polarisation, symbolrate,lnb-config, diseqc-config
-            //Log.WriteFile(Log.LogType.Log,"DVBGraph:TuneRadioChannel() get DVBS tuning details");
+            //Log.WriteFile(LogType.Log,"DVBGraph:TuneRadioChannel() get DVBS tuning details");
             DVBChannel ch = new DVBChannel();
             if ( RadioDatabase.GetDVBSTuneRequest(channel.ID, 0, ref ch) == false )//only radio
             {
@@ -4127,7 +4128,7 @@ namespace MediaPortal.TV.Recording
           {
             //get the DVB-T tuning details from the tv database
             //for DVB-T this is the frequency, ONID , TSID and SID
-            //Log.WriteFile(Log.LogType.Log,"DVBGraph:TuneRadioChannel() get DVBT tuning details");
+            //Log.WriteFile(LogType.Log,"DVBGraph:TuneRadioChannel() get DVBT tuning details");
             RadioDatabase.GetDVBTTuneRequest(channel.ID, out providerName, out frequency, out ONID, out TSID, out SID, out audioPid, out pmtPid, out bandwidth, out pcrPid);
             if ( frequency <= 0 )
             {
@@ -4253,7 +4254,7 @@ namespace MediaPortal.TV.Recording
           _mediaControl = _graphBuilder as IMediaControl;
 
         //start the graph
-        //Log.WriteFile(Log.LogType.Log,"DVBGraph: start graph");
+        //Log.WriteFile(LogType.Log,"DVBGraph: start graph");
         if ( _mediaControl != null )
         {
           int hr = _mediaControl.Run();

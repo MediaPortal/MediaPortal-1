@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using MediaPortal.Services;
+using MediaPortal.Tests.MockObjects;
 using NUnit.Framework;
 using MediaPortal.WebEPG;
 using System.IO;
@@ -15,10 +17,7 @@ namespace MediaPortal.Tests.WebEPG.Parser
     [SetUp]
     public void Init()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      StringWriter logString = new StringWriter();
-      Log log = new Log(logString, Log.Level.Debug);
-      services.Replace<ILog>(log);
+        GlobalServiceProvider.Replace<ILog>(new NoLog());
     }
 
     [Test]

@@ -35,6 +35,7 @@ using System.Runtime.Serialization.Formatters.Soap;
 using System.Management;
 using System.Threading;
 using MediaPortal.GUI.Library;
+using MediaPortal.Services;
 using MediaPortal.Util;
 using MediaPortal.TV.Database;
 using MediaPortal.Video.Database;
@@ -263,14 +264,14 @@ namespace MediaPortal.TV.Recording
       if (GUIGraphicsContext.IsTvWindow(windowId))
       {
         // we enter my tv, enable exclusive mode
-        Log.WriteFile(Log.LogType.Recorder, "Recorder: Enabling DX9 exclusive mode");
+        Log.WriteFile(LogType.Recorder, "Recorder: Enabling DX9 exclusive mode");
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
         GUIWindowManager.SendMessage(msg);
       }
       else
       {
         // we leave my tv, disable exclusive mode
-        Log.WriteFile(Log.LogType.Recorder, "Recorder: Disabling DX9 exclusive mode");
+        Log.WriteFile(LogType.Recorder, "Recorder: Disabling DX9 exclusive mode");
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
         GUIWindowManager.SendMessage(msg);
       }
@@ -354,12 +355,12 @@ namespace MediaPortal.TV.Recording
         tmpRec.End = program.End;
         tmpRec.Title = program.Title;
         tmpRec.IsContentRecording = false;//make a reference recording! (record from timeshift buffer)
-        Log.WriteFile(Log.LogType.Recorder, "Recorder:record now:{0} program:{1}", channelName, program.Title);
+        Log.WriteFile(LogType.Recorder, "Recorder:record now:{0} program:{1}", channelName, program.Title);
       }
       else
       {
         //no tvguide data, just record the next 2 hours
-        Log.WriteFile(Log.LogType.Recorder, "Recorder:record now:{0} for next 4 hours", channelName);
+        Log.WriteFile(LogType.Recorder, "Recorder:record now:{0} for next 4 hours", channelName);
         tmpRec.Start = MediaPortal.Util.Utils.datetolong(DateTime.Now);
         tmpRec.End = MediaPortal.Util.Utils.datetolong(DateTime.Now.AddHours(4));
         tmpRec.Title = GUILocalizeStrings.Get(413);
@@ -368,8 +369,8 @@ namespace MediaPortal.TV.Recording
         tmpRec.IsContentRecording = true;//make a content recording! (record from now)
       }
 
-      Log.WriteFile(Log.LogType.Recorder, "Recorder:   start: {0} {1}", tmpRec.StartTime.ToShortDateString(), tmpRec.StartTime.ToShortTimeString());
-      Log.WriteFile(Log.LogType.Recorder, "Recorder:   end  : {0} {1}", tmpRec.EndTime.ToShortDateString(), tmpRec.EndTime.ToShortTimeString());
+      Log.WriteFile(LogType.Recorder, "Recorder:   start: {0} {1}", tmpRec.StartTime.ToShortDateString(), tmpRec.StartTime.ToShortTimeString());
+      Log.WriteFile(LogType.Recorder, "Recorder:   end  : {0} {1}", tmpRec.EndTime.ToShortDateString(), tmpRec.EndTime.ToShortTimeString());
 
       AddRecording(ref tmpRec);
       CheckRecordingsCommand cmd = new CheckRecordingsCommand();
@@ -410,7 +411,7 @@ namespace MediaPortal.TV.Recording
       if (!Running) return;
       //add a new RecorderCommand which holds 'rec'
       //and tell the process thread to handle it
-      Log.WriteFile(Log.LogType.Recorder, "Recorder:StopRecording({0})", rec.Title);
+      Log.WriteFile(LogType.Recorder, "Recorder:StopRecording({0})", rec.Title);
       CancelRecordingCommand cmd = new CancelRecordingCommand(rec);
       _commandProcessor.AddCommand(cmd);
     }
@@ -425,7 +426,7 @@ namespace MediaPortal.TV.Recording
       if (!Running) return;
       //add a new RecorderCommand to tell the process thread
       //that it must stop recording
-      Log.WriteFile(Log.LogType.Recorder, "Recorder:StopRecording()");
+      Log.WriteFile(LogType.Recorder, "Recorder:StopRecording()");
       StopRecordingCommand cmd = new StopRecordingCommand();
       _commandProcessor.AddCommand(cmd);
     }
@@ -944,7 +945,7 @@ namespace MediaPortal.TV.Recording
         if (reEntrantStartViewing)
         {
           errorMessage = GUILocalizeStrings.Get(763);// "Recorder is busy";
-          Log.WriteFile(Log.LogType.Recorder, true, "Recorder:StartViewing() reentrant");
+          Log.WriteFile(LogType.Recorder, true, "Recorder:StartViewing() reentrant");
           return false;
         }
         if (TVOnOff)

@@ -121,7 +121,7 @@ namespace MediaPortal.TV.DiskSpace
           {
             if (item == null) continue;
             if (item.Name == null) continue;
-            //Log.WriteFile(Log.LogType.Recorder,"attribute:{0} value:{1}", item.Name,item.Value.ToString());
+            //Log.WriteFile(LogType.Recorder,"attribute:{0} value:{1}", item.Name,item.Value.ToString());
             try { if (item.Name.ToLower() == "channel") newRec.Channel = (string)item.Value.ToString(); }
             catch (Exception) { }
             try { if (item.Name.ToLower() == "title") newRec.Title = (string)item.Value.ToString(); }

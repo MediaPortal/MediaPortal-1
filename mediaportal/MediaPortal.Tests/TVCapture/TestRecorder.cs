@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using MediaPortal.Services;
+using MediaPortal.Tests.MockObjects;
 using NUnit.Framework;
 using ProcessPlugins.DiskSpace;
 using MediaPortal.Util;
@@ -30,10 +32,7 @@ namespace MediaPortal.Tests.TVCapture
     [SetUp]
     public void Init()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      StringWriter logString = new StringWriter();
-      Log log = new Log(logString, Log.Level.Debug);
-      services.Replace<ILog>(log);
+        GlobalServiceProvider.Replace<ILog>(new NoLog());
 
       TVChannel ch;
       TVDatabase.ClearAll();

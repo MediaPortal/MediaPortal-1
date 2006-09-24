@@ -24,6 +24,7 @@ using System.Text;
 using System.Xml;
 using System.Collections;
 using System.Reflection;
+using MediaPortal.Services;
 using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Webepg.Profile

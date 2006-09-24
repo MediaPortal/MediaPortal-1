@@ -30,6 +30,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization.Formatters.Soap;
 using System.Management;
 using MediaPortal.GUI.Library;
+using MediaPortal.Services;
 using MediaPortal.Util;
 using MediaPortal.TV.Database;
 using MediaPortal.Video.Database;
@@ -46,7 +47,7 @@ namespace MediaPortal.TV.Recording
   {
     public override void Execute(CommandProcessor handler)
     {
-      Log.WriteFile(Log.LogType.Recorder, "Command:CheckRecordingsCommand");
+      Log.WriteFile(LogType.Recorder, "Command:CheckRecordingsCommand");
       handler.scheduler.ResetTimer();
       Succeeded = true;
     }

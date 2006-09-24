@@ -207,21 +207,21 @@ namespace MediaPortal.TV.Recording
         _vmr9 = new VMR9Util();
 
         // Make a new filter graph
-        //Log.WriteFile(Log.LogType.Log,"DVBGraphSkyStar2:create new filter graph (IGraphBuilder)");
+        //Log.WriteFile(LogType.Log,"DVBGraphSkyStar2:create new filter graph (IGraphBuilder)");
         _graphBuilder = (IGraphBuilder)new FilterGraph();
 
 
         // Get the Capture Graph Builder
         _captureGraphBuilderInterface = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
 
-        //Log.WriteFile(Log.LogType.Log,"DVBGraphSkyStar2:Link the CaptureGraphBuilder to the filter graph (SetFiltergraph)");
+        //Log.WriteFile(LogType.Log,"DVBGraphSkyStar2:Link the CaptureGraphBuilder to the filter graph (SetFiltergraph)");
         int hr = _captureGraphBuilderInterface.SetFiltergraph(_graphBuilder);
         if (hr < 0)
         {
           Log.Error("DVBGraphSkyStar2:FAILED link :0x{0:X}", hr);
           return false;
         }
-        //Log.WriteFile(Log.LogType.Log,"DVBGraphSkyStar2:Add graph to ROT table");
+        //Log.WriteFile(LogType.Log,"DVBGraphSkyStar2:Add graph to ROT table");
         _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
 
 
@@ -748,7 +748,7 @@ namespace MediaPortal.TV.Recording
         StopRecording();
         StopTimeShifting();
         StopViewing();
-        //Log.WriteFile(Log.LogType.Log,"DVBGraphSkyStar2: free tuner interfaces");
+        //Log.WriteFile(LogType.Log,"DVBGraphSkyStar2: free tuner interfaces");
 
         // to clear buffers for epg and teletext
         if (_streamDemuxer != null)
@@ -841,13 +841,13 @@ namespace MediaPortal.TV.Recording
         if (_videoWindowInterface != null)
         {
           //Log.Info("DVBGraphSkyStar2:hide window");
-          //Log.WriteFile(Log.LogType.Log,"DVBGraphSkyStar2: hide video window");
+          //Log.WriteFile(LogType.Log,"DVBGraphSkyStar2: hide video window");
           _videoWindowInterface.put_Visible(OABool.False);
           //_videoWindowInterface.put_Owner(IntPtr.Zero);
           _videoWindowInterface = null;
         }
 
-        //Log.WriteFile(Log.LogType.Log,"DVBGraphSkyStar2: free other interfaces");
+        //Log.WriteFile(LogType.Log,"DVBGraphSkyStar2: free other interfaces");
         _sampleInterface = null;
         if (_filterSampleGrabber != null)
         {
@@ -897,7 +897,7 @@ namespace MediaPortal.TV.Recording
           _filterMpeg2Demultiplexer = null;
         }
 
-        //Log.WriteFile(Log.LogType.Log,"DVBGraphSkyStar2: remove filters");
+        //Log.WriteFile(LogType.Log,"DVBGraphSkyStar2: remove filters");
 
         if (_graphBuilder != null)
           DirectShowUtil.RemoveFilters(_graphBuilder);
@@ -909,7 +909,7 @@ namespace MediaPortal.TV.Recording
           _rotEntry.Dispose();
         }
         _rotEntry = null;
-        //Log.WriteFile(Log.LogType.Log,"DVBGraphSkyStar2: remove graph");
+        //Log.WriteFile(LogType.Log,"DVBGraphSkyStar2: remove graph");
         if (_captureGraphBuilderInterface != null)
         {
           //Log.Info("DVBGraphSkyStar2:free remove capturegraphbuilder");
@@ -936,7 +936,7 @@ namespace MediaPortal.TV.Recording
 
         GC.Collect(); GC.Collect(); GC.Collect();
         _graphState = State.None;
-        //Log.WriteFile(Log.LogType.Log,"DVBGraphSkyStar2: delete graph done");
+        //Log.WriteFile(LogType.Log,"DVBGraphSkyStar2: delete graph done");
       }
       catch (Exception ex)
       {
@@ -1452,20 +1452,20 @@ namespace MediaPortal.TV.Recording
       try
       {
         // Make a new filter graph
-        //Log.WriteFile(Log.LogType.Log,"DVBGraphSkyStar2:create new filter graph (IGraphBuilder)");
+        //Log.WriteFile(LogType.Log,"DVBGraphSkyStar2:create new filter graph (IGraphBuilder)");
         _graphBuilder = (IGraphBuilder)new FilterGraph();
 
         // Get the Capture Graph Builder
         _captureGraphBuilderInterface = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
 
-        //Log.WriteFile(Log.LogType.Log,"DVBGraphSkyStar2:Link the CaptureGraphBuilder to the filter graph (SetFiltergraph)");
+        //Log.WriteFile(LogType.Log,"DVBGraphSkyStar2:Link the CaptureGraphBuilder to the filter graph (SetFiltergraph)");
         int hr = _captureGraphBuilderInterface.SetFiltergraph(_graphBuilder);
         if (hr < 0)
         {
           Log.Error("DVBGraphSkyStar2:FAILED link :0x{0:X}", hr);
           return;
         }
-        //Log.WriteFile(Log.LogType.Log,"DVBGraphSkyStar2:Add graph to ROT table");
+        //Log.WriteFile(LogType.Log,"DVBGraphSkyStar2:Add graph to ROT table");
         _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
 
         //=========================================================================================================
@@ -1552,7 +1552,7 @@ namespace MediaPortal.TV.Recording
           _rotEntry.Dispose();
         }
         _rotEntry = null;
-        //Log.WriteFile(Log.LogType.Capture,"DVBGraphSkyStar2: remove graph");
+        //Log.WriteFile(LogType.Capture,"DVBGraphSkyStar2: remove graph");
         if (_captureGraphBuilderInterface != null)
         {
           //Log.Info("DVBGraphSkyStar2:free remove capturegraphbuilder");

@@ -22,6 +22,7 @@ using System;
 using System.IO;
 using System.Threading;
 using MediaPortal.Profile;
+using MediaPortal.Services;
 using MediaPortal.Util;
 
 namespace MediaPortal.GUI.Library
@@ -29,25 +30,6 @@ namespace MediaPortal.GUI.Library
     public class Log
     {
         private static ILog _instance = new LogImpl();
-
-        public enum LogType
-        {
-            Log,
-            Recorder,
-            Error,
-            EPG,
-            VMR9,
-            Config,
-            MusicShareWatcher
-        }
-
-        public enum Level
-        {
-            Error = 0,
-            Warning = 1,
-            Information = 2,
-            Debug = 3
-        }
 
         public static void SetConfigurationMode()
         {
@@ -152,7 +134,7 @@ namespace MediaPortal.GUI.Library
         /// <summary>
         /// An implementation of a log mechanism for the GUI library.
         /// </summary>
-        private class LogImpl : ILog
+        internal class LogImpl : ILog
         {
             private static DateTime _previousDate;
             private static Level _minLevel;
@@ -168,10 +150,11 @@ namespace MediaPortal.GUI.Library
             public LogImpl()
             {
                 _previousDate = DateTime.Now.Date;
-                logDir = Config.Get(Config.Dir.Log);
-                Directory.CreateDirectory(logDir);
+                logDir = Config.GetFolder(Config.Dir.Log);
+                if (!Directory.Exists(logDir))
+                    Directory.CreateDirectory(logDir);
                 //BackupLogFiles();
-                using (Settings xmlReader = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+                using (Settings xmlReader = new Settings(Config.GetFile(Config.Dir.Config,"MediaPortal.xml")))
                 {
                     _minLevel =
                         (Level) Enum.Parse(typeof(Level), xmlReader.GetValueAsString("general", "loglevel", "3"));
@@ -336,31 +319,34 @@ namespace MediaPortal.GUI.Library
 
             private string GetFileName(LogType type)
             {
-                string fname = logDir + "MediaPortal.log";
+                string fname = "MediaPortal.log";
                 if (bConfiguration)
                 {
-                    fname = logDir + "Configuration.log";
-                    return fname;
+                    fname = "Configuration.log";
                 }
+                else
                 switch (type)
                 {
                     case LogType.Recorder:
-                        fname = logDir + "recorder.log";
+                        fname = "recorder.log";
                         break;
                     case LogType.Error:
-                        fname = logDir + "error.log";
+                        fname = "error.log";
                         break;
                     case LogType.EPG:
-                        fname = logDir + "epg.log";
+                        fname = "epg.log";
                         break;
                     case LogType.VMR9:
-                        fname = logDir + "vmr9.log";
+                        fname = "vmr9.log";
                         break;
                     case LogType.MusicShareWatcher:
-                        fname = logDir + "MusicshareWatcher.log";
+                        fname = "MusicshareWatcher.log";
+                        break;
+                    case LogType.WebEPG:
+                        fname = "webEPG.log";
                         break;
                 }
-                return fname;
+                return Config.GetFile(Config.Dir.Log,fname);
             }
 
             private string GetLevelName(Level logLevel)

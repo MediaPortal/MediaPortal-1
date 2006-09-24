@@ -161,12 +161,12 @@ namespace MediaPortal.TV.Recording
         _vmr9 = new VMR9Util();
 
         // Make a new filter graph
-        // Log.WriteFile(Log.LogType.Log,"DVBGraphTTPremium:create new filter graph (IGraphBuilder)");
+        // Log.WriteFile(LogType.Log,"DVBGraphTTPremium:create new filter graph (IGraphBuilder)");
         _graphBuilder = (IGraphBuilder)new FilterGraph();
 
         _captureGraphBuilderInterface = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
 
-        //Log.WriteFile(Log.LogType.Log,"DVBGraphTTPremium:Link the CaptureGraphBuilder to the filter graph (SetFiltergraph)");
+        //Log.WriteFile(LogType.Log,"DVBGraphTTPremium:Link the CaptureGraphBuilder to the filter graph (SetFiltergraph)");
         int hr = _captureGraphBuilderInterface.SetFiltergraph(_graphBuilder);
         if (hr < 0)
         {
@@ -615,7 +615,7 @@ namespace MediaPortal.TV.Recording
         _epgGrabber.AnalyzerInterface = _analyzerInterface;
         _epgGrabber.Network = Network();
 
-        //Log.WriteFile(Log.LogType.Log,"DVBGraphSkyStar2:Add graph to ROT table");
+        //Log.WriteFile(LogType.Log,"DVBGraphSkyStar2:Add graph to ROT table");
         _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
       }
       catch (Exception ex)
@@ -643,7 +643,7 @@ namespace MediaPortal.TV.Recording
         StopRecording();
         StopTimeShifting();
         StopViewing();
-        //Log.WriteFile(Log.LogType.Log,"DVBGraphTTPremium: free tuner interfaces");
+        //Log.WriteFile(LogType.Log,"DVBGraphTTPremium: free tuner interfaces");
 
         // to clear buffers for epg and teletext
         if (_streamDemuxer != null)
@@ -753,13 +753,13 @@ namespace MediaPortal.TV.Recording
         if (_videoWindowInterface != null)
         {
           //Log.Info("DVBGraphTTPremium:hide window");
-          //Log.WriteFile(Log.LogType.Log,"DVBGraphTTPremium: hide video window");
+          //Log.WriteFile(LogType.Log,"DVBGraphTTPremium: hide video window");
           _videoWindowInterface.put_Visible(OABool.False);
           //_videoWindowInterface.put_Owner(IntPtr.Zero);
           _videoWindowInterface = null;
         }
 
-        //Log.WriteFile(Log.LogType.Log,"DVBGraphTTPremium: free other interfaces");
+        //Log.WriteFile(LogType.Log,"DVBGraphTTPremium: free other interfaces");
         _sampleInterface = null;
         if (_filterSampleGrabber != null)
         {
@@ -809,7 +809,7 @@ namespace MediaPortal.TV.Recording
           _filterMpeg2Demultiplexer = null;
         }
 
-        //Log.WriteFile(Log.LogType.Log,"DVBGraphTTPremium: remove filters");
+        //Log.WriteFile(LogType.Log,"DVBGraphTTPremium: remove filters");
 
         if (_graphBuilder != null)
         {
@@ -823,7 +823,7 @@ namespace MediaPortal.TV.Recording
         }
         _rotEntry = null;
 
-        //Log.WriteFile(Log.LogType.Log,"DVBGraphTTPremium: remove graph");
+        //Log.WriteFile(LogType.Log,"DVBGraphTTPremium: remove graph");
         if (_captureGraphBuilderInterface != null)
         {
           //Log.Info("DVBGraphTTPremium:free remove capturegraphbuilder");
@@ -852,7 +852,7 @@ namespace MediaPortal.TV.Recording
         _graphState = State.None;
 
         Thread.Sleep(200);
-        //Log.WriteFile(Log.LogType.Log,"DVBGraphTTPremium: delete graph done");
+        //Log.WriteFile(LogType.Log,"DVBGraphTTPremium: delete graph done");
       }
       catch (Exception ex)
       {
