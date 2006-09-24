@@ -1186,7 +1186,7 @@ namespace MediaPortal.TV.Recording
       MediaPortal.Util.Utils.DeleteRecording(rec.FileName);
       TVDatabase.RemoveRecordedTV(rec);
       VideoDatabase.DeleteMovie(rec.FileName);
-      VideoDatabase.DeleteMovieInfo(rec.FileName);
+
     }
 
     static public bool IsRecordingSchedule(TVRecording rec, out int card)
