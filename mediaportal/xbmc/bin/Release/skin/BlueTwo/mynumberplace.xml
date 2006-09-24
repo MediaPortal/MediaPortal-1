@@ -1,6 +1,6 @@
 <window>
 	<id>7777</id>
-	<defaultcontrol>1</defaultcontrol>
+	<defaultcontrol>2</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
 	
 	<controls>
@@ -18,7 +18,7 @@
 <!--
 		<control>
 			<type>image</type>
-			<id>1</id>
+			<id>0</id>
 			<posX>60</posX>
 			<posY>20</posY>
 			<texture>mynumberplace_logo.png</texture>
@@ -27,7 +27,7 @@
 		<control>
 			<description>Main label</description>
 			<type>label</type>
-			<id>1</id>
+			<id>0</id>
 			<posX>250</posX>
 			<posY>70</posY>
 			<label>19101</label>
