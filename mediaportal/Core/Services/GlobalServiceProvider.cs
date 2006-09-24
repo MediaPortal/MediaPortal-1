@@ -24,6 +24,7 @@
 #endregion
 
 using MediaPortal.GUI.Library;
+using MediaPortal.ServiceImplementations;
 
 namespace MediaPortal.Services
 {
@@ -61,7 +62,7 @@ namespace MediaPortal.Services
 
         private static ILog LogServiceRequested(ServiceProvider services)
         {
-            ILog log = new Log.LogImpl();
+            ILog log = new LogImpl();
             services.Add<ILog>(log);
             return log;
         }
@@ -69,6 +70,11 @@ namespace MediaPortal.Services
         public static void Replace<T>(T service)
         {
             _instance.Replace<T>(service);
+        }
+        
+        public static void Add<T>(T service)
+        {
+            _instance.Add<T>(service);
         }
     }
 }

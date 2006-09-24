@@ -48,7 +48,7 @@ namespace MediaPortal.Services
         /// <typeparam name="T">The type of the service to add</typeparam>
         /// <param name="service">The service implementation to add</param>
         /// <exception cref="ArgumentException">the added service is already present</exception>
-        public void Add<T>(object service)
+        public void Add<T>(T service)
         {
             // Make sure service implements type
             Type t = typeof(T);
@@ -100,6 +100,11 @@ namespace MediaPortal.Services
             }
             return default(T);
         }
+
+        //public Y Get<T,Y>(string instanceName) where T: INamedInstanceService
+        //{
+        //    return Get<T>().GetInstance<Y>(instanceName);
+        //}
 
         /// <summary>
         /// Removes the specified service from the ServiceProvider.

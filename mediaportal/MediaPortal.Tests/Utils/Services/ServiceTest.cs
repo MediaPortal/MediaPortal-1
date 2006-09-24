@@ -51,5 +51,14 @@ namespace MediaPortal.Tests.Utils.Services
         {
             return new NoLog();
         }
+        
+        //[Test]
+        //public void TestNamedInstanceServices()
+        //{
+        //    ServiceProvider provider = new ServiceProvider();
+        //    provider.Add<ILogManager>(new LogManager());
+        //    ILog log = provider.Get<ILogManager,ILog >("MediaPortal");
+        //    log.Debug("Hello");
+        //}
     }
 }
