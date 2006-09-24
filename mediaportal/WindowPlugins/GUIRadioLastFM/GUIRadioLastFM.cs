@@ -458,7 +458,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       //  return;
 
       OnPlaybackStopped();
-      Log.Info("GUIRadio: No more content for this stream");
+      Log.Info("GUIRadio: No more content for this selection or interrupted stream..");
       LastFMStation.CurrentStreamState = StreamPlaybackState.nocontent;
       //dlg.AddLocalizedString(930);        //Add to favorites
     }  
@@ -518,17 +518,13 @@ namespace MediaPortal.GUI.RADIOLASTFM
         menuItem3.DefaultItem = true;
         menuItem3.Click += new System.EventHandler(Tray_menuItem3_Click);
 
-        String BaseDir = Config.GetFolder(Config.Dir.Base);
         _trayBallonSongChange = new NotifyIcon();
         _trayBallonSongChange.ContextMenu = contextMenuLastFM;
 
-        if (System.IO.File.Exists(BaseDir + @"BallonRadio.ico"))
-          _trayBallonSongChange.Icon = new Icon(BaseDir + @"BallonRadio.ico");
+        if (System.IO.File.Exists(Config.GetFile(Config.Dir.Base, @"BallonRadio.ico")))
+          _trayBallonSongChange.Icon = new Icon(Config.GetFile(Config.Dir.Base, @"BallonRadio.ico"));
         else
           _trayBallonSongChange.Icon = SystemIcons.Information;
-
-        //if (System.IO.File.Exists(BaseDir + @"BallonTrack.ico"))
-        //  _trayBallonSongChange.BalloonTipIcon = new ToolTipIcon(BaseDir + @"BallonTrack.ico");
 
         _trayBallonSongChange.Text = "MediaPortal Last.fm Radio";
         _trayBallonSongChange.Visible = false;
