@@ -266,6 +266,14 @@ namespace MediaPortal.GUI.Library
         GetTextExtent(label, ref fW, ref fH);
         DrawText(xpos - fW, ypos, Color.FromArgb(alpha, red, green, blue), label, RenderFlags.Filtered, maxWidth);
       }
+      else if (alignment == GUIControl.Alignment.ALIGN_CENTER)
+      {
+        float fW = 0, fH = 0;
+        GetTextExtent(label, ref fW, ref fH);
+        int off = (int)((maxWidth - fW) / 2);
+        if (off < 0) off = 0;
+        DrawText(xpos + off, ypos, Color.FromArgb(alpha, red, green, blue), label, RenderFlags.Filtered, maxWidth);
+      }
     }
 
     /// <summary>

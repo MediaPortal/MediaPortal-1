@@ -33,6 +33,7 @@ namespace MediaPortal.GUI.Library
     protected int _offset = 0;
     protected int _itemsPerPage = 10;
     protected int _itemHeight = 10;
+    protected int _xOffset = 16;
     [XMLSkinElement("spaceBetweenItems")] protected int _spaceBetweenItems = 2;
     [XMLSkinElement("font")] protected string _fontName = "";
     [XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
@@ -207,12 +208,12 @@ namespace MediaPortal.GUI.Library
             strLabel1 = Seperator;
           }
 
-          int ixoff = 16;
+          int ixoff = _xOffset;
           int ioffy = 2;
           GUIGraphicsContext.ScaleVertical(ref ioffy);
           GUIGraphicsContext.ScaleHorizontal(ref ixoff);
           string wszText1 = String.Format("{0}", strLabel1);
-          int dMaxWidth = _width + ixoff;
+          int dMaxWidth = _width - ixoff;
           float x = dwPosX;
           if (strLabel2.Length > 0)
           {
@@ -223,29 +224,31 @@ namespace MediaPortal.GUI.Library
             dMaxWidth -= (int) (fTextWidth);
 
 	          switch (_textAlignment)
-			  {
+			      {
 			      case Alignment.ALIGN_LEFT:
+            case Alignment.ALIGN_CENTER:
 			        x = dwPosX + dMaxWidth;
 			        break;
 			
 			      case Alignment.ALIGN_RIGHT:
 			        x = dwPosX + dMaxWidth + _width;
 			        break;
-			  }
+			      }
 	          
 	          _font.DrawTextWidth(x, (float) dwPosY + ioffy, _textColor, wszText2.Trim(), fTextWidth, _textAlignment);
-	      }
+	        }
           
           switch (_textAlignment)
-		  {
-		      case Alignment.ALIGN_LEFT:
+		      {
+           case Alignment.ALIGN_CENTER:
+           case Alignment.ALIGN_LEFT:
 		        x = dwPosX;
 		        break;
 		
 		      case Alignment.ALIGN_RIGHT:
 		        x = dwPosX + _width;
 		        break;
-		  }
+		      }
           _font.DrawTextWidth(x, (float) dwPosY + ioffy, _textColor, wszText1.Trim(), (float) dMaxWidth, _textAlignment);
           
           //            Log.Write("dw _positionY, dwPosY, _yPositionScroll, _scrollOffset: {0} {1} {2} {3}", _positionY, dwPosY, _yPositionScroll, _scrollOffset);
@@ -460,7 +463,7 @@ namespace MediaPortal.GUI.Library
           float fwidth = 0, fheight = 0;
           string wsTmp = szLine;
           _font.GetTextExtent(wsTmp, ref fwidth, ref fheight);
-          if (fwidth > _width)
+          if (fwidth > (_width - _xOffset))
           {
             if (iLastSpace > 0 && iLastSpaceInLine != lpos)
             {
