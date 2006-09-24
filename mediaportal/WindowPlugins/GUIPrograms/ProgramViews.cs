@@ -187,9 +187,9 @@ namespace WindowPlugins.GUIPrograms
       // This call is required by the Windows Form Designer.
       InitializeComponent();
       views = new ArrayList();
-      if (System.IO.File.Exists(Config.Get(Config.Dir.Config) + "programViews2.xml"))
+      if (System.IO.File.Exists(Config.GetFile(Config.Dir.Config, "programViews2.xml")))
       {
-        using (FileStream fileStream = new FileStream(Config.Get(Config.Dir.Config) + "programViews2.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+        using (FileStream fileStream = new FileStream(Config.GetFile(Config.Dir.Config, "programViews2.xml"), FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
         {
           try
           {
@@ -536,7 +536,7 @@ namespace WindowPlugins.GUIPrograms
       StoreGridInView();
       try
       {
-        using (FileStream fileStream = new FileStream(Config.Get(Config.Dir.Config) + "programViews2.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
+        using (FileStream fileStream = new FileStream(Config.GetFile(Config.Dir.Config, "programViews2.xml"), FileMode.Create, FileAccess.Write, FileShare.Read))
         {
           SoapFormatter formatter = new SoapFormatter();
           formatter.Serialize(fileStream, views);

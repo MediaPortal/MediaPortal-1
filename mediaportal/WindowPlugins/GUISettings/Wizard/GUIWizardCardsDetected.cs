@@ -104,7 +104,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 						cardsDetected+="SkyStar 2 DVB-S";
 
 
-            string filename = String.Format(Config.Get(Config.Dir.Database) + "card_{0}.xml", cd.FriendlyName);
+            string filename = Config.GetFile(Config.Dir.Database, String.Format("card_{0}.xml", cd.FriendlyName));
 						// save settings for get the filename in mp.xml
             using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
 						{
@@ -136,7 +136,7 @@ namespace MediaPortal.GUI.Settings.Wizard
             cardsDetected += "Techno Trend Premium";
 
 
-            string filename = String.Format(Config.Get(Config.Dir.Database) + "card_{0}.xml", cd.FriendlyName);
+            string filename = Config.GetFile(Config.Dir.Database, String.Format("card_{0}.xml", cd.FriendlyName));
             // save settings for get the filename in mp.xml
             using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
             {
@@ -186,7 +186,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 
 		void SaveCaptureCards(ArrayList availableCards)
 		{
-      using (FileStream fileStream = new FileStream(Config.Get(Config.Dir.Config) + "capturecards.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
+      using (FileStream fileStream = new FileStream(Config.GetFile(Config.Dir.Config, "capturecards.xml"), FileMode.Create, FileAccess.Write, FileShare.Read))
 			{
 				SoapFormatter formatter = new SoapFormatter();
 				formatter.Serialize(fileStream, availableCards);

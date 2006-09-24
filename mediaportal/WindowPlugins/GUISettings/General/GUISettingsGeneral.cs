@@ -74,7 +74,7 @@ namespace WindowPlugins.GUISettings
     public override bool Init()
     {
       //SkinDirectory = GUIGraphicsContext.Skin.Remove(GUIGraphicsContext.Skin.LastIndexOf(@"\"));
-      SkinDirectory = Config.Get(Config.Dir.Skin);  
+      SkinDirectory = Config.GetFolder(Config.Dir.Skin);  
       return Load(GUIGraphicsContext.Skin + @"\settings_general.xml");
     }
 
@@ -149,7 +149,7 @@ namespace WindowPlugins.GUISettings
       {
         currentLanguage = xmlreader.GetValueAsString("skin", "language", "English");
       }
-      string LanguageDirectory = Config.Get(Config.Dir.Language);
+      string LanguageDirectory = Config.GetFolder(Config.Dir.Language);
       int lang = 0;
       if (Directory.Exists(LanguageDirectory))
       {
@@ -264,7 +264,7 @@ namespace WindowPlugins.GUISettings
     {
       SaveSettings();
       GUILocalizeStrings.Clear();
-      GUILocalizeStrings.Load(Config.Get(Config.Dir.Language) + btnLanguage.SelectedLabel + @"\strings.xml");
+      GUILocalizeStrings.Load(Config.GetFile(Config.Dir.Language, btnLanguage.SelectedLabel + @"\strings.xml"));
       GUIWindowManager.OnResize();
       GUIWindowManager.ActivateWindow(GetID); // without this you cannot change skins / lang any more..
       GUIControl.FocusControl(GetID, btnLanguage.GetID);

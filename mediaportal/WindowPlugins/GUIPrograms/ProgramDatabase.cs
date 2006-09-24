@@ -52,10 +52,10 @@ namespace ProgramsDatabase
         // Open database
         try
         {
-          Directory.CreateDirectory(Config.Get(Config.Dir.Database));
+          Directory.CreateDirectory(Config.GetFolder(Config.Dir.Database));
         }
         catch (Exception){}
-        sqlDB = new SQLiteClient(Config.Get(Config.Dir.Database) + "ProgramDatabaseV4.db3");
+        sqlDB = new SQLiteClient(Config.GetFile(Config.Dir.Database, "ProgramDatabaseV4.db3"));
 
         MediaPortal.Database.DatabaseUtility.SetPragmas(sqlDB);
 

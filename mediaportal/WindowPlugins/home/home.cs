@@ -318,7 +318,7 @@ namespace MediaPortal.GUI.Home
           break;
 
         case GUIMessage.MessageType.GUI_MSG_WRONG_PASSWORD:
-          using (Profile.Settings xmlreader = new Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+          using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
           {
             if (!xmlreader.GetValueAsBool("general", "hidewrongpin", false))
             {

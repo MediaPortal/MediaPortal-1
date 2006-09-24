@@ -206,8 +206,8 @@ namespace MediaPortal.GUI.Weather
       //loop here as well
       for (int i = 0; i < NUM_DAYS; i++)
       {
-        _forecast[i].iconImageNameLow = Config.Get(Config.Dir.Weather) + @"64x64\na.png";
-        _forecast[i].iconImageNameHigh = Config.Get(Config.Dir.Weather) + @"128x128\na.png";
+        _forecast[i].iconImageNameLow = Config.GetFile(Config.Dir.Weather, @"64x64\na.png");
+        _forecast[i].iconImageNameHigh = Config.GetFile(Config.Dir.Weather, @"128x128\na.png");
         _forecast[i].Overview = String.Empty;
         _forecast[i].Day = String.Empty;
         _forecast[i].High = String.Empty;
@@ -1173,7 +1173,7 @@ namespace MediaPortal.GUI.Weather
         lock (this)
         {
           //message strings for refresh of images
-          string weatherFile = Config.Get(Config.Dir.Weather) + "curWeather.xml";
+          string weatherFile = Config.GetFile(Config.Dir.Weather, "curWeather.xml");
 
           GUIDialogOK dialogOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
           bool dlRes = false, ldRes = false;
@@ -1294,7 +1294,7 @@ namespace MediaPortal.GUI.Weather
         _nowUpdated = RelocalizeDateTime(_nowUpdated);
 
         GetInteger(element, "icon", out tempInteger);
-        _nowIcon = String.Format(Config.Get(Config.Dir.Weather) + @"128x128\{0}.png", tempInteger);
+        _nowIcon = Config.GetFile(Config.Dir.Weather, String.Format(@"128x128\{0}.png", tempInteger));
 
         GetString(element, "t", out _nowCond, String.Empty);			//current condition
         _nowCond = LocalizeOverview(_nowCond);
@@ -1378,8 +1378,8 @@ namespace MediaPortal.GUI.Weather
             if (null != pDayTimeElement)
             {
               GetInteger(pDayTimeElement, "icon", out tempInteger);
-              _forecast[i].iconImageNameLow = String.Format(Config.Get(Config.Dir.Weather) + "64x64\\{0}.png", tempInteger);
-              _forecast[i].iconImageNameHigh = String.Format(Config.Get(Config.Dir.Weather) + "128x128\\{0}.png", tempInteger);
+              _forecast[i].iconImageNameLow = Config.GetFile(Config.Dir.Weather, String.Format("64x64\\{0}.png", tempInteger));
+              _forecast[i].iconImageNameHigh = Config.GetFile(Config.Dir.Weather, String.Format("128x128\\{0}.png", tempInteger));
               GetString(pDayTimeElement, "t", out  _forecast[i].Overview, String.Empty);
               _forecast[i].Overview = LocalizeOverview(_forecast[i].Overview);
               SplitLongString(ref _forecast[i].Overview, 6, 15);

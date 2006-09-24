@@ -1446,7 +1446,7 @@ namespace home
           if (l1 > 0)
           {
             strBtnFile = name.Substring(l1 + 1, (l2 - l1) - 1);
-            pictureBox1.Image = Image.FromFile(Config.Get(Config.Dir.Skin) + skinName + "\\media\\" + strBtnFile, true);
+            pictureBox1.Image = Image.FromFile(Config.GetFile(Config.Dir.Skin, skinName + "\\media\\" + strBtnFile), true);
             groupBox3.Text = strBtnFile;
           }
           label3.Text = "Tag Type";
@@ -1484,7 +1484,7 @@ namespace home
                 label8.Text = "Description";
                 textBox6.Text = tag.description;
                 groupBox3.Text = tag.picture;
-                pictureBox1.Image = Image.FromFile(Config.Get(Config.Dir.Skin) + skinName + "\\media\\" + tag.picture, true);
+                pictureBox1.Image = Image.FromFile(Config.GetFile(Config.Dir.Skin, skinName + "\\media\\" + tag.picture), true);
               }
               break;
             }
@@ -1559,11 +1559,11 @@ namespace home
 
     private void EnumeratePlugins()
     {
-      EnumeratePluginDirectory(Config.Get(Config.Dir.Plugins) + "windows");
-      EnumeratePluginDirectory(Config.Get(Config.Dir.Plugins) + "subtitle");
-      EnumeratePluginDirectory(Config.Get(Config.Dir.Plugins) + "tagreaders");
-      EnumeratePluginDirectory(Config.Get(Config.Dir.Plugins) + "externalplayers");
-      EnumeratePluginDirectory(Config.Get(Config.Dir.Plugins) + "process");
+      EnumeratePluginDirectory(Config.GetSubFolder(Config.Dir.Plugins, "windows"));
+      EnumeratePluginDirectory(Config.GetSubFolder(Config.Dir.Plugins, "subtitle"));
+      EnumeratePluginDirectory(Config.GetSubFolder(Config.Dir.Plugins, "tagreaders"));
+      EnumeratePluginDirectory(Config.GetSubFolder(Config.Dir.Plugins, "externalplayers"));
+      EnumeratePluginDirectory(Config.GetSubFolder(Config.Dir.Plugins, "process"));
     }
 
     private void LoadPlugins()
@@ -1793,7 +1793,7 @@ namespace home
       openFileDialog1.RestoreDirectory = true;
       openFileDialog1.DefaultExt = ".png";
       openFileDialog1.FileName = "hover*";
-      openFileDialog1.InitialDirectory = Config.Get(Config.Dir.Config) + skinName + "\\media";
+      openFileDialog1.InitialDirectory = Config.GetSubFolder(Config.Dir.Config, skinName + "\\media");
       if (openFileDialog1.ShowDialog(this) == DialogResult.OK)
       {
         string appName = openFileDialog1.FileName;
@@ -2374,7 +2374,7 @@ namespace home
       {
         AddSpecial.Enabled = true;
         SpecialFunctions.Enabled = true;
-        string scriptdir = Config.Get(Config.Dir.Base) + "scripts";
+        string scriptdir = Config.GetSubFolder(Config.Dir.Base, "scripts");
         if (!Directory.Exists(scriptdir))
         {
           SpecialFunctions.Items.Clear();

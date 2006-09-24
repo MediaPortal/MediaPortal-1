@@ -44,7 +44,7 @@ namespace MediaPortal.GUI.Video
 		ArrayList      views=new ArrayList();
 		public VideoViewHandler()
 		{
-      if (!System.IO.File.Exists(Config.Get(Config.Dir.Config) + "videoViews.xml"))
+      if (!System.IO.File.Exists(Config.GetFile(Config.Dir.Config, "videoViews.xml")))
 			{
 				//genres
 				FilterDefinition filter1,filter2;
@@ -83,7 +83,7 @@ namespace MediaPortal.GUI.Video
 				listViews.Add(viewTitles);
 				listViews.Add(viewYears);
 
-        using (FileStream fileStream = new FileStream(Config.Get(Config.Dir.Config) + "videoViews.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
+        using (FileStream fileStream = new FileStream(Config.GetFile(Config.Dir.Config, "videoViews.xml"), FileMode.Create, FileAccess.Write, FileShare.Read))
         {
           ArrayList list = new ArrayList();
           foreach (ViewDefinition view in listViews)
@@ -96,7 +96,7 @@ namespace MediaPortal.GUI.Video
 
 			try
 			{
-        using (FileStream fileStream = new FileStream(Config.Get(Config.Dir.Config) + "videoViews.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+        using (FileStream fileStream = new FileStream(Config.GetFile(Config.Dir.Config, "videoViews.xml"), FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
 				{
 					try
 					{

@@ -1397,7 +1397,7 @@ namespace WindowPlugins.GUIPrograms
       this.menuItemReadFromProfile.Enabled = false;
       if ((curApp != null) && (curApp.ProfileLoadingAllowed()))
       {
-        if (File.Exists(Config.Get(Config.Dir.Config) + "ProgramSettingProfiles.xml"))
+        if (File.Exists(Config.GetFile(Config.Dir.Config, "ProgramSettingProfiles.xml")))
         {
           this.menuItemReadFromProfile.Enabled = true;
           FillProfileMenu();
@@ -1494,7 +1494,7 @@ namespace WindowPlugins.GUIPrograms
         menuItemReadFromProfile.MenuItems.Clear();
 
         XmlDocument document = new XmlDocument();
-        document.Load(Config.Get(Config.Dir.Config) + "ProgramSettingProfiles.xml");
+        document.Load(Config.GetFile(Config.Dir.Config, "ProgramSettingProfiles.xml"));
         XmlElement rootElement = document.DocumentElement;
 
         if (rootElement != null && rootElement.Name.Equals("profiles"))

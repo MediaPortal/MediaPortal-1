@@ -55,7 +55,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBC
     {
       listCountries.Clear();
       XmlDocument doc = new XmlDocument();
-      string[] files = System.IO.Directory.GetFiles(Config.Get(Config.Dir.Base) + "Tuningparameters");
+      string[] files = System.IO.Directory.GetFiles(Config.GetSubFolder(Config.Dir.Base, "Tuningparameters"));
       foreach (string file in files)
       {
         if (file.ToLower().IndexOf(".dvbc") >= 0)

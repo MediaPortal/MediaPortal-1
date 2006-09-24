@@ -86,7 +86,7 @@ namespace Wikipedia
     {
       if (language == "Default")
       {
-        MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml");
+        MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml"));
         language = xmlreader.GetValueAsString("skin", "language", "English");
       }
       this.language = language;

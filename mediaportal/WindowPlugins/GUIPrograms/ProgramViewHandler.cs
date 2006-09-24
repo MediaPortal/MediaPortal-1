@@ -44,7 +44,7 @@ namespace WindowPlugins.GUIPrograms
 
     public ProgramViewHandler()
     {
-      if (!System.IO.File.Exists(Config.Get(Config.Dir.Config) + "programViews3.xml"))
+      if (!System.IO.File.Exists(Config.GetFile(Config.Dir.Config, "programViews3.xml")))
       {
         FilterDefinition filter1 = null;
         FilterDefinition filter2 = null;
@@ -114,7 +114,7 @@ namespace WindowPlugins.GUIPrograms
         listViews.Add(viewMostLaunched);
         listViews.Add(viewMostRecentlyLaunched);
 
-        using (FileStream fileStream = new FileStream(Config.Get(Config.Dir.Config) + "programViews2.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
+        using (FileStream fileStream = new FileStream(Config.GetFile(Config.Dir.Config, "programViews2.xml"), FileMode.Create, FileAccess.Write, FileShare.Read))
         {
           SoapFormatter formatter = new SoapFormatter();
           formatter.Serialize(fileStream, listViews);
@@ -122,9 +122,9 @@ namespace WindowPlugins.GUIPrograms
         }
         
       }
-      if (System.IO.File.Exists(Config.Get(Config.Dir.Config) + "programViews2.xml"))
+      if (System.IO.File.Exists(Config.GetFile(Config.Dir.Config, "programViews2.xml")))
       {
-        using (FileStream fileStream = new FileStream(Config.Get(Config.Dir.Config) + "programViews2.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+        using (FileStream fileStream = new FileStream(Config.GetFile(Config.Dir.Config, "programViews2.xml"), FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
         {
           try
           {

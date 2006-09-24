@@ -275,7 +275,7 @@ namespace MyMail
       applicationPath = Path.GetFullPath(applicationPath);
       applicationPath = Path.GetDirectoryName(applicationPath);
 
-      using (Settings xmlwriter = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         MailBox tmpBox;
         int boxCount = m_mailBox.Count;
@@ -333,7 +333,7 @@ namespace MyMail
 
     void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         int boxCount = 0;
         MailBox tmpBox;

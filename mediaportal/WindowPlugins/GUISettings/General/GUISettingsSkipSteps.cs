@@ -90,7 +90,7 @@ namespace WindowPlugins.GUISettings
       Log.Info("GUISkipSteps: {0}", "Load settings");
       ArrayList StepArray = new ArrayList();
 
-      using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml") )
+      using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         foreach ( string token in ( xmlreader.GetValueAsString("movieplayer", "skipsteps", "0;1;1;0;1;1;1;0;1;1;1;0;1;0;1;0").Split(new char[] { ',', ';', ' ' }) ) )
         {
           if ( token == string.Empty )

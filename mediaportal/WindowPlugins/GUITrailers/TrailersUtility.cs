@@ -107,9 +107,9 @@ namespace MediaPortal.GUI.Video
                       int i = moviename.IndexOf("opens");
                       moviename = moviename.Remove(i);
                     }
-					wc.DownloadFile(downloadurl, Config.Get(Config.Dir.Thumbs) + "MPTemp -"+moviename + ".jpg");
+					wc.DownloadFile(downloadurl, Config.GetFile(Config.Dir.Thumbs, "MPTemp -"+moviename + ".jpg"));
 
-          while (System.IO.File.Exists(Config.Get(Config.Dir.Thumbs) + "MPTemp -" + moviename + ".jpg") != true)
+          while (System.IO.File.Exists(Config.GetFile(Config.Dir.Thumbs, "MPTemp -" + moviename + ".jpg")) != true)
 						GUIWindowManager.Process();
 				}
 		}

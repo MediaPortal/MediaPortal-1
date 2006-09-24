@@ -125,12 +125,12 @@ namespace WindowPlugins.GUIPrograms
     static ProgramContentManager()
     {
 
-      if (System.IO.File.Exists(Config.Get(Config.Dir.Config) + "FileDetailContents.xml"))
+      if (System.IO.File.Exists(Config.GetFile(Config.Dir.Config, "FileDetailContents.xml")))
       {
         try
         {
           XmlDocument document = new XmlDocument();
-          document.Load(Config.Get(Config.Dir.Config) + "FileDetailContents.xml");
+          document.Load(Config.GetFile(Config.Dir.Config, "FileDetailContents.xml"));
           rootElement = document.DocumentElement;
           if ((rootElement != null) && (rootElement.Name.Equals("contentprofiles")))
           {

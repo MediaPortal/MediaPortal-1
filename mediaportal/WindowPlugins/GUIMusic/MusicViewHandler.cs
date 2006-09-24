@@ -52,7 +52,7 @@ namespace MediaPortal.GUI.Music
 
     public MusicViewHandler()
     {
-      if (!System.IO.File.Exists(Config.Get(Config.Dir.Config) + "musicviews.xml"))
+      if (!System.IO.File.Exists(Config.GetFile(Config.Dir.Config, "musicviews.xml")))
       {
         //genres
         FilterDefinition filter1, filter2, filter3;
@@ -118,7 +118,7 @@ namespace MediaPortal.GUI.Music
         listViews.Add(viewFavorites);
         listViews.Add(viewAllSongs);
 
-        using (FileStream fileStream = new FileStream(Config.Get(Config.Dir.Config) + "musicViews.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
+        using (FileStream fileStream = new FileStream(Config.GetFile(Config.Dir.Config, "musicViews.xml"), FileMode.Create, FileAccess.Write, FileShare.Read))
         {
           ArrayList list = new ArrayList();
           foreach (ViewDefinition view in listViews)
@@ -130,7 +130,7 @@ namespace MediaPortal.GUI.Music
       }
 
       database = new MusicDatabase();
-      using (FileStream fileStream = new FileStream(Config.Get(Config.Dir.Config) + "musicViews.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+      using (FileStream fileStream = new FileStream(Config.GetFile(Config.Dir.Config, "musicViews.xml"), FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
       {
         try
         {

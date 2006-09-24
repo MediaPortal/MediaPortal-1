@@ -120,7 +120,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBS
 			GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
 			dlg.Reset();
 			dlg.SetHeading("Select transponder");//Menu
-      string[] files = System.IO.Directory.GetFiles(Config.Get(Config.Dir.Base) + "Tuningparameters");
+      string[] files = System.IO.Directory.GetFiles(Config.GetSubFolder(Config.Dir.Base, "Tuningparameters"));
 			ArrayList items = new ArrayList();
 			foreach (string file in files)
 			{
@@ -148,7 +148,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBS
 			TVCaptureDevice captureCard= Recorder.Get(card);
 			if (captureCard!=null) 
 			{
-				string filename=String.Format(Config.Get(Config.Dir.Database) + "card_{0}.xml",captureCard.FriendlyName);
+        string filename = Config.GetFile(Config.Dir.Database, String.Format("card_{0}.xml", captureCard.FriendlyName));
 
 				using(MediaPortal.Profile.Settings   xmlwriter=new MediaPortal.Profile.Settings(filename))
 				{
