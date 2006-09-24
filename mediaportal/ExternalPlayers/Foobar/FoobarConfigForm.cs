@@ -327,7 +327,7 @@ namespace MediaPortal.FoobarPlugin
     /// <param name="e">the event.  Form load!</param>
     private void FoobarConfigForm_Load(object sender, System.EventArgs e)
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         textBoxFoobarExtensions.Text = xmlreader.GetValueAsString("foobarplugin", "enabledextensions", ".cda,.mp3,.mid,.wav,.mpc,.aac,.shn,.wma,.ac3,.ogg");
         textBoxPortNumber.Text = xmlreader.GetValueAsString("foobarplugin", "port", "8989");
@@ -358,7 +358,7 @@ namespace MediaPortal.FoobarPlugin
     /// <param name="e">the event.  Closing!</param>
     private void FoobarConfigForm_Closing(object sender, System.ComponentModel.CancelEventArgs e)
     {
-      using (MediaPortal.Profile.Settings xmlWriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlWriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlWriter.SetValue("foobarplugin", "port", textBoxPortNumber.Text);
         xmlWriter.SetValue("foobarplugin", "host", textBoxHostname.Text);

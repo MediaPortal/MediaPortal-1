@@ -129,7 +129,7 @@ namespace MediaPortal.ITunesPlayer
     private void readConfig()
     {
       string strExt = null;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         strExt = xmlreader.GetValueAsString("itunesplugin", "enabledextensions", "");
       }

@@ -114,7 +114,7 @@ namespace WindowPlugins.GUISettings
 
     void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValueAsBool("general", "startfullscreen", btnFullscreen.Selected);
         xmlwriter.SetValueAsBool("general", "screensaver", btnScreenSaver.Selected);
@@ -125,7 +125,7 @@ namespace WindowPlugins.GUISettings
 
     void SetFullScreen()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         bool fullscreen = xmlreader.GetValueAsBool("general", "startfullscreen", false);
         btnFullscreen.Selected = fullscreen;
@@ -134,7 +134,7 @@ namespace WindowPlugins.GUISettings
 
     void SetScreenSaver()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         bool screensaver = xmlreader.GetValueAsBool("general", "screensaver", false);
         btnScreenSaver.Selected = screensaver;
@@ -145,7 +145,7 @@ namespace WindowPlugins.GUISettings
     {
       GUIControl.ClearControl(GetID, btnLanguage.GetID);
       string currentLanguage = String.Empty;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         currentLanguage = xmlreader.GetValueAsString("skin", "language", "English");
       }
@@ -183,7 +183,7 @@ namespace WindowPlugins.GUISettings
     void SetSkins()
     {
       string currentSkin = "";
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         currentSkin = xmlreader.GetValueAsString("skin", "name", "BlueTwo");
       }

@@ -117,7 +117,7 @@ namespace MediaPortal.TV.Recording
       Size ScreenSize = new Size(0, 0);
 
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         bitRate = xmlreader.GetValueAsInt("compression", "bitrate", 4);
         FPS = xmlreader.GetValueAsInt("compression", "fps", 1);

@@ -24,7 +24,7 @@ namespace MediaPortal.Picture.Database
     {
 
       string connectionString;
-      using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "mediaportal.xml"))
+      using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         connectionString = reader.GetValueAsString("database", "connectionstring", SqlServerUtility.DefaultConnectionString);
       }

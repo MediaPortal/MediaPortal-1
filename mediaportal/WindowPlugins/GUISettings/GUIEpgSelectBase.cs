@@ -252,7 +252,7 @@ namespace WindowPlugins.GUISettings.Epg
     protected void OnManual()
     {
       string _strTVGuideFile;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _strTVGuideFile = xmlreader.GetValueAsString("xmltv", "folder", "xmltv");
         _strTVGuideFile = MediaPortal.Util.Utils.RemoveTrailingSlash(_strTVGuideFile);

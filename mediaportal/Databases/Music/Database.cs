@@ -132,7 +132,7 @@ namespace MediaPortal.Music.Database
 
     static MusicDatabase()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         TreatFolderAsAlbum = xmlreader.GetValueAsBool("musicfiles", "treatFolderAsAlbum", false);
         ScanForVariousArtists = xmlreader.GetValueAsBool("musicfiles", "scanForVariousArtists", true);
@@ -3211,7 +3211,7 @@ namespace MediaPortal.Music.Database
       bool fileMenuEnabled = false;
       string fileMenuPinCode = String.Empty;
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         fileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
 

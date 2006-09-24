@@ -189,7 +189,7 @@ namespace MediaPortal.FoobarPlugin
       string windowName = null;
       string startupparameter = null;
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         // extensions to play by this player
         strExt = xmlreader.GetValueAsString("foobarplugin", "enabledextensions", "");

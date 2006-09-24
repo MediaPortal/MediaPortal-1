@@ -240,7 +240,7 @@ namespace MediaPortal.Core.Transcoding
 				//add mpeg2 audio/video codecs
 				string strVideoCodec=@"DScaler Mpeg2 Video Decoder";
         string strAudioCodec = "MPA Decoder Filter";
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
 				{
 					//strVideoCodec=xmlreader.GetValueAsString("mytv","videocodec","MPEG2Dec Filter");
 				}

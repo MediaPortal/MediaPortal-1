@@ -154,7 +154,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         checkBoxReplace.Checked = xmlreader.GetValueAsBool("musicimport", "mp3replaceexisting", true);
         checkBoxMono.Checked = xmlreader.GetValueAsBool("musicimport", "mp3mono", false);
@@ -182,7 +182,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("musicimport", "mp3importdir", textBoxImportDir.Text);
         xmlwriter.SetValue("musicimport", "mp3priority", hScrollBarPriority.Value);

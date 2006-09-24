@@ -95,7 +95,7 @@ namespace MediaPortal.InputDevices
     public void Init()
     {
       _exit = false;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _controlEnabled = xmlreader.GetValueAsBool("remote", "HCW", false);
         _allowExternal = xmlreader.GetValueAsBool("remote", "HCWAllowExternal", false);
@@ -185,7 +185,7 @@ namespace MediaPortal.InputDevices
 
         if (!_exit)
         {
-          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
             _controlEnabled = xmlreader.GetValueAsBool("remote", "HCW", false);
           if (_controlEnabled)
             Process.Start(System.Windows.Forms.Application.StartupPath + @"\HcwHelper.exe");

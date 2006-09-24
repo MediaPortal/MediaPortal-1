@@ -503,7 +503,7 @@ namespace MediaPortal.Configuration.Sections
             regValue = (Int32)subkey.GetValue("EnableDXVA", 1);
             if (regValue == 0) checkBoxDxVA.Checked = false;
             if (regValue == 1) checkBoxDxVA.Checked = true;
-            using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+            using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
             {
               xmlwriter.SetValue("videocodec", "nvidia", regValue);
             }

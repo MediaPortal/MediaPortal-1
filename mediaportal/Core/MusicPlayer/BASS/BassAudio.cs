@@ -69,7 +69,7 @@ namespace MediaPortal.Player
             {
                 if (!SettingsLoaded)
                 {
-                    using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+                    using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
                     {
                         string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "Internal dshow player");
                         _IsDefaultMusicPlayer = String.Compare(strAudioPlayer, "BASS engine", true) == 0;
@@ -498,7 +498,7 @@ namespace MediaPortal.Player
 
         private void LoadSettings()
         {
-            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
             {
                 int vizType = xmlreader.GetValueAsInt("musicvisualization", "vizType", (int)VisualizationInfo.PluginType.None);
                 string vizName = xmlreader.GetValueAsString("musicvisualization", "name", "");

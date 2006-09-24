@@ -161,7 +161,7 @@ namespace MediaPortal.Player
         string strAudiorenderer = "";
         int intFilters = 0; // FlipGer: count custom filters
         string strFilters = ""; // FlipGer: collect custom filters
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           strVideoCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2videocodec", "");
           strAudioCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2audiocodec", "");

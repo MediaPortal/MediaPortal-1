@@ -60,7 +60,7 @@ namespace MediaPortal.InputDevices.HcwHelper
     {
       InitializeComponent();
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         logVerbose = xmlreader.GetValueAsBool("remote", "HCWVerboseLog", false);
         port = xmlreader.GetValueAsInt("remote", "HCWHelperPort", 2110);

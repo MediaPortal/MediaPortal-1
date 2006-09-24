@@ -496,7 +496,7 @@ namespace MediaPortal.Player
     {
       if (!_isVmr9Initialized) return;
       int DeInterlaceMode = 3;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         //None
         //Bob
@@ -510,7 +510,7 @@ namespace MediaPortal.Player
     {
       if (!_isVmr9Initialized) return;
       int DeInterlaceMode = 3;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         //None
         //Bob

@@ -256,7 +256,7 @@ namespace MediaPortal
 
     private void button1_Click(object sender, System.EventArgs e)
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlreader.SetValueAsBool("general", "checkcodecs", !checkBox1.Checked);
       }
@@ -291,7 +291,7 @@ namespace MediaPortal
 
     public bool AreCodecsInstalled()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         bool checkCodecs = xmlreader.GetValueAsBool("general", "checkcodecs", true);
         if (!checkCodecs) return true;

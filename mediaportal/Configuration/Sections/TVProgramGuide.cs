@@ -840,7 +840,7 @@ namespace MediaPortal.Configuration.Sections
     {
       FillInEPGLanguages();
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         cbGrabDVBEPG.Checked = xmlreader.GetValueAsBool("xmltv", "epgdvb", false);
         useColorCheckBox.Checked = xmlreader.GetValueAsBool("xmltv", "colors", false);
@@ -912,7 +912,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValueAsBool("xmltv", "epgdvb", cbGrabDVBEPG.Checked);
         xmlwriter.SetValueAsBool("xmltv", "colors", useColorCheckBox.Checked);
@@ -1242,7 +1242,7 @@ namespace MediaPortal.Configuration.Sections
         "MediaPortal Configuration", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
       // provoke tvmovie to re-import the database, too
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         xmlwriter.SetValue("tvmovie", "lastupdate", 1);
     }
 

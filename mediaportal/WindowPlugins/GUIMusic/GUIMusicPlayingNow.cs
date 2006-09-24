@@ -132,7 +132,7 @@ namespace MediaPortal.GUI.Music
       g_Player.PlayBackStopped += new g_Player.StoppedHandler(g_Player_PlayBackStopped);
       g_Player.PlayBackEnded += new g_Player.EndedHandler(g_Player_PlayBackEnded);
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         UseID3 = xmlreader.GetValueAsBool("musicfiles", "showid3", true);
         ShowVisualization = xmlreader.GetValueAsBool("musicmisc", "showVisInNowPlaying", true);

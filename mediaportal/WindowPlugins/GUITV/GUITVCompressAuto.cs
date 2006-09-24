@@ -58,7 +58,7 @@ namespace MediaPortal.GUI.TV
     }
     void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         spinHour.Value = xmlreader.GetValueAsInt("autocompression", "hour", 4);
         checkDeleteOriginal.Selected = xmlreader.GetValueAsBool("autocompression", "deleteoriginal", true);
@@ -70,7 +70,7 @@ namespace MediaPortal.GUI.TV
     void SaveSettings()
     {
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlreader.SetValue("autocompression", "hour", spinHour.Value);
         xmlreader.SetValueAsBool("autocompression", "deleteoriginal", checkDeleteOriginal.Selected);

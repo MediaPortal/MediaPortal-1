@@ -215,7 +215,7 @@ namespace MediaPortal.GUI.TV
     #region serialisation
     void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _isMsnChatPopup = ( xmlreader.GetValueAsInt("MSNmessenger", "popupwindow", 0) == 1 );
         _timeOsdOnscreen = 1000 * xmlreader.GetValueAsInt("movieplayer", "osdtimeout", 5);
@@ -254,7 +254,7 @@ namespace MediaPortal.GUI.TV
     //		}
     void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         GUITVHome.Navigator.SaveSettings(xmlwriter);
         switch ( GUIGraphicsContext.ARType )

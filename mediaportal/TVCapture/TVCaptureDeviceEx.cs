@@ -189,7 +189,7 @@ namespace MediaPortal.TV.Recording
       string tunerInput = "Antenna";
 
 
-      using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         tunerInput = xmlReader.GetValueAsString("capture", "tuner", "Antenna");
         countryCode = xmlReader.GetValueAsInt("capture", "country", 31);
@@ -927,7 +927,7 @@ namespace MediaPortal.TV.Recording
       _recordedTvObject.End = MediaPortal.Util.Utils.datetolong(DateTime.Now);
       TVDatabase.AddRecordedTV(_recordedTvObject);
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         bool addMovieToDatabase = xmlreader.GetValueAsBool("capture", "addrecordingstomoviedatabase", true);
         if (addMovieToDatabase)
@@ -1543,7 +1543,7 @@ namespace MediaPortal.TV.Recording
 
         timeProgStart = currentRunningProgram.StartTime;
 
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
           if (isMovie)
             strInput = xmlreader.GetValueAsString("capture", "moviesformat", string.Empty);
           else

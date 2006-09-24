@@ -130,7 +130,7 @@ namespace MediaPortal.Player
     {
       ArrayList StepArray = new ArrayList();
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         foreach (string token in (xmlreader.GetValueAsString("movieplayer", "skipsteps", "0;1;1;0;1;1;1;0;1;1;1;0;1;0;1;0").Split(new char[] { ',', ';', ' ' })))
         {
@@ -388,7 +388,7 @@ namespace MediaPortal.Player
         }
         _isInitalized = true;
         int iUseVMR9 = 0;
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           iUseVMR9 = xmlreader.GetValueAsInt("dvdplayer", "vmr9", 0);
         }
@@ -511,7 +511,7 @@ namespace MediaPortal.Player
           GC.Collect(); GC.Collect(); GC.Collect(); GC.Collect();
         }
         //int iUseVMR9inMYMovies = 0;
-        //using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+        //using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         //{
         //  iUseVMR9inMYMovies = xmlreader.GetValueAsInt("movieplayer", "vmr9", 1);
         //}
@@ -632,7 +632,7 @@ namespace MediaPortal.Player
           {
 
             int iUseVMR9 = 0;
-            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
             {
               iUseVMR9 = xmlreader.GetValueAsInt("dvdplayer", "vmr9", 0);
             }
@@ -768,7 +768,7 @@ namespace MediaPortal.Player
           {
 
             int iUseVMR9 = 0;
-            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
             {
               iUseVMR9 = xmlreader.GetValueAsInt("dvdplayer", "vmr9", 0);
             }

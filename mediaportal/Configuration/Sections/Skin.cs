@@ -228,7 +228,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         checkBoxUsePrefix.Checked = xmlreader.GetValueAsBool("general", "myprefix", true);
         checkBoxlangRTL.Checked = xmlreader.GetValueAsBool("skin", "rtllang", false);
@@ -253,7 +253,7 @@ namespace MediaPortal.Configuration.Sections
     {
       if ( listViewAvailableSkins.SelectedItems.Count == 0 )
         return;
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         string prevSkin = xmlwriter.GetValueAsString("skin", "name", "BlueTwo");
         if ( prevSkin != listViewAvailableSkins.SelectedItems[0].Text )

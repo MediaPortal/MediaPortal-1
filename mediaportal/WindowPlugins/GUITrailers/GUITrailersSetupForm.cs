@@ -324,7 +324,7 @@ namespace MediaPortal.GUI.Video
 
     private void GUITrailersSetupForm_Load(object sender, System.EventArgs e)
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         if (xmlreader.GetValue("mytrailers", "speed") == "300")
           checkBox300.Checked = true;
@@ -361,7 +361,7 @@ namespace MediaPortal.GUI.Video
 
     private void button1_Click(object sender, System.EventArgs e)
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         if (checkBox300.Checked == true)
           xmlwriter.SetValue("mytrailers", "speed", "300".ToString());

@@ -145,7 +145,7 @@ namespace WindowPlugins.GUISettings
                          ( Convert.ToInt16(checkMarkButtonStep14.Selected) ).ToString() + ";" +
                          ( Convert.ToInt16(checkMarkButtonStep15.Selected) ).ToString() + ";" +
                          ( Convert.ToInt16(checkMarkButtonStep16.Selected) ).ToString();
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("movieplayer", "skipsteps", skipSteps);
       }

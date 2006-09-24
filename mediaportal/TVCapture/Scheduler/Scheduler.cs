@@ -77,7 +77,7 @@ namespace MediaPortal.TV.Recording
       _preRecordInterval = 0;
       _postRecordInterval = 0;
       //m_bAlwaysTimeshift=false;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _preRecordInterval = xmlreader.GetValueAsInt("capture", "prerecord", 5);
         _postRecordInterval = xmlreader.GetValueAsInt("capture", "postrecord", 5);

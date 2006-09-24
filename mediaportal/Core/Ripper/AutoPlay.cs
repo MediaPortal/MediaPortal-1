@@ -103,7 +103,7 @@ namespace MediaPortal.Ripper
 
     private static void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         m_dvd = xmlreader.GetValueAsString("dvdplayer", "autoplay", "Ask");
         m_audiocd = xmlreader.GetValueAsString("audioplayer", "autoplay", "No");

@@ -572,7 +572,7 @@ namespace MediaPortal.GUI.Weather
     void LoadSettings()
     {
       _listLocations.Clear();
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _locationCode = xmlreader.GetValueAsString("weather", "location", String.Empty);
         _temperatureFarenheit = xmlreader.GetValueAsString("weather", "temperature", "C");
@@ -630,7 +630,7 @@ namespace MediaPortal.GUI.Weather
 
     void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("weather", "location", _locationCode);
         xmlwriter.SetValue("weather", "temperature", _temperatureFarenheit);
@@ -895,7 +895,7 @@ namespace MediaPortal.GUI.Weather
 
       bool skipConnectionTest = false;
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         skipConnectionTest = xmlreader.GetValueAsBool("weather", "skipconnectiontest", false);
 
       Log.Info("MyWeather.SkipConnectionTest: {0}", skipConnectionTest);

@@ -113,7 +113,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         try
         {
@@ -148,7 +148,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValueAsBool("USBUIRT", "internal", inputCheckBox.Checked);
         xmlwriter.SetValueAsBool("USBUIRT", "external", outputCheckBox.Checked);

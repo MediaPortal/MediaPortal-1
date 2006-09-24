@@ -1859,7 +1859,7 @@ namespace MediaPortal.Configuration
             capture.CardType == TVCapture.CardTypes.Digital_TTPremium)
         {
           // save settings for get the filename in mp.xml
-          using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+          using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
           {
             xmlwriter.SetValue("dvb_ts_cards", "filename", filename);
           }
@@ -1897,7 +1897,7 @@ namespace MediaPortal.Configuration
         if (capture.CardType == TVCapture.CardTypes.Digital_SS2)
         {
           // save settings for get the filename in mp.xml
-          using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+          using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
           {
             xmlwriter.SetValue("dvb_ts_cards", "filename", filename);
           }

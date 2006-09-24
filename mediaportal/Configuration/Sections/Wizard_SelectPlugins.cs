@@ -335,7 +335,7 @@ namespace MediaPortal.Configuration.Sections
         }
       }
 
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("music", "default", AddAudioShare(Util.Win32API.GetFolderPath(Util.Win32API.CSIDL_MYMUSIC)));
         xmlwriter.SetValue("pictures", "default", AddPhotoShare(Util.Win32API.GetFolderPath(Util.Win32API.CSIDL_MYPICTURES)));
@@ -581,7 +581,7 @@ namespace MediaPortal.Configuration.Sections
 
     void SaveShare(ArrayList sharesList, string mediaType)
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         for (int index = 0; index < MaximumShares; index++)
         {

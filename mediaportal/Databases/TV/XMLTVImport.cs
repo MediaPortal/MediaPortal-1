@@ -120,7 +120,7 @@ namespace MediaPortal.TV.Database
       TVDatabase.SupressEvents = true;
       bool bUseTimeZone = false;
       int iTimeZoneCorrection = 0;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         bUseTimeZone = xmlreader.GetValueAsBool("xmltv", "usetimezone", true);
         int hours = xmlreader.GetValueAsInt("xmltv", "timezonecorrectionhours", 0);

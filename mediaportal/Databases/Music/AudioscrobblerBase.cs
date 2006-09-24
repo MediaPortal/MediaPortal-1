@@ -104,7 +104,7 @@ namespace MediaPortal.Music.Database
 
     static void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _disableTimerThread = xmlreader.GetValueAsBool("audioscrobbler", "disabletimerthread", true);
 
@@ -284,7 +284,7 @@ namespace MediaPortal.Music.Database
         }
         username = scrobbleUser_;
         password = tmpPass;
-        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           xmlwriter.SetValue("audioscrobbler", "user", username);
           //xmlwriter.SetValue("audioscrobbler", "pass", password);

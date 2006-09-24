@@ -69,7 +69,7 @@ namespace WindowPlugins.GUISettings.TV
     void OnVideoCodec()
     {
       string strVideoCodec = "";
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         strVideoCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2videocodec", "");
       }
@@ -93,7 +93,7 @@ namespace WindowPlugins.GUISettings.TV
       }
       dlg.DoModal(GetID);
       if (dlg.SelectedLabel < 0) return;
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("movieplayer", "mpeg2videocodec", (string)availableVideoFilters[dlg.SelectedLabel]);
       }
@@ -102,7 +102,7 @@ namespace WindowPlugins.GUISettings.TV
     void OnAudioCodec()
     {
       string strAudioCodec = "";
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         strAudioCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2audiocodec", "");
       }
@@ -126,7 +126,7 @@ namespace WindowPlugins.GUISettings.TV
       }
       dlg.DoModal(GetID);
       if (dlg.SelectedLabel < 0) return;
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("movieplayer", "mpeg2audiocodec", (string)availableAudioFilters[dlg.SelectedLabel]);
       }
@@ -160,7 +160,7 @@ namespace WindowPlugins.GUISettings.TV
       //string[] aspectRatio = { "normal", "original", "stretch", "zoom", "letterbox", "panscan" };
       string[] aspectRatio = { "normal", "original", "stretch", "zoom149", "zoom", "letterbox", "panscan" };
       string defaultAspectRatio = "";
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         defaultAspectRatio = xmlreader.GetValueAsString("movieplayer", "defaultar", "normal");
       }
@@ -182,7 +182,7 @@ namespace WindowPlugins.GUISettings.TV
         dlg.SelectedLabel = selected;
         dlg.DoModal(GetID);
         if (dlg.SelectedLabel < 0) return;
-        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           xmlwriter.SetValue("movieplayer", "defaultar", aspectRatio[dlg.SelectedLabel]);
         }
@@ -191,7 +191,7 @@ namespace WindowPlugins.GUISettings.TV
     void OnAudioRenderer()
     {
       string strAudioRenderer = "";
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         strAudioRenderer = xmlreader.GetValueAsString("movieplayer", "audiorenderer", "Default DirectSound Device");
       }
@@ -215,7 +215,7 @@ namespace WindowPlugins.GUISettings.TV
       }
       dlg.DoModal(GetID);
       if (dlg.SelectedLabel < 0) return;
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("movieplayer", "audiorenderer", (string)availableAudioFilters[dlg.SelectedLabel]);
       }

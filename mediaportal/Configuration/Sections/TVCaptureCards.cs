@@ -467,7 +467,7 @@ namespace MediaPortal.Configuration.Sections
 
             string filename = String.Format(Config.Get(Config.Dir.Database) + "card_{0}.xml", cd.FriendlyName);
             // save settings for get the filename in mp.xml
-            using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+            using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
             {
               xmlwriter.SetValue("dvb_ts_cards", "filename", filename);
             }
@@ -496,7 +496,7 @@ namespace MediaPortal.Configuration.Sections
 
             string filename = String.Format(Config.Get(Config.Dir.Database) + "card_{0}.xml", cd.FriendlyName);
             // save settings for get the filename in mp.xml
-            using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+            using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
             {
               xmlwriter.SetValue("dvb_ts_cards", "filename", filename);
             }

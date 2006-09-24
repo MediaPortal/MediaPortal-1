@@ -154,7 +154,7 @@ namespace MediaPortal.GUI.Radio
     #region Serialisation
     void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _currentRadioStation = xmlreader.GetValueAsString("radioguide", "channel", String.Empty);
         _cursorX = xmlreader.GetValueAsInt("radioguide", "ypos", 0);
@@ -164,7 +164,7 @@ namespace MediaPortal.GUI.Radio
 
     void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("radioguide", "channel", _currentRadioStation);
         xmlwriter.SetValue("radioguide", "ypos", _cursorX.ToString());
@@ -185,7 +185,7 @@ namespace MediaPortal.GUI.Radio
 
     protected void Initialize()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _useColorsForGenres = xmlreader.GetValueAsBool("xmltv", "colors", false);
       }

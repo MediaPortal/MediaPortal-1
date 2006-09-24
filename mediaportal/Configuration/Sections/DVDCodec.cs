@@ -115,7 +115,7 @@ namespace MediaPortal.Configuration.Sections
     {
       if (_init == false) return;
       Log.Info("load dvd");
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         string audioRenderer = xmlreader.GetValueAsString("dvdplayer", "audiorenderer", "Default DirectSound Device");
         string videoCodec = xmlreader.GetValueAsString("dvdplayer", "videocodec", "");
@@ -187,7 +187,7 @@ namespace MediaPortal.Configuration.Sections
     {
       if (_init == false) return;
 
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("dvdplayer", "audiorenderer", audioRendererComboBox.Text);
         xmlwriter.SetValue("dvdplayer", "videocodec", videoCodecComboBox.Text);

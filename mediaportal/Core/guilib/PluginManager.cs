@@ -374,7 +374,7 @@ namespace MediaPortal.GUI.Library
       if (strDllname.IndexOf("WindowPlugins.dll") >= 0) return true;
       if (strDllname.IndexOf("ProcessPlugins.dll") >= 0) return true;
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         // from the assembly name check the reference to plugin name
         // if available check to see if the plugin is enabled
@@ -387,19 +387,19 @@ namespace MediaPortal.GUI.Library
 
     static public bool IsWindowPlugInEnabled(string strType)
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         return xmlreader.GetValueAsBool("pluginswindows", strType, true);
     }
 
     static public bool IsPluginNameEnabled(string strPluginName)
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         return xmlreader.GetValueAsBool("plugins", strPluginName, true);
     }
 
     static public bool PluginEntryExists(string strPluginName)
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         return (xmlreader.GetValueAsString("plugins", strPluginName, string.Empty) != string.Empty);
     }
 

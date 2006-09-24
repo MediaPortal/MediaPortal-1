@@ -610,7 +610,7 @@ namespace MediaPortal.Configuration.Sections
 
           }
         }
-      /*using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      /*using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("videocodec", "", audioRendererComboBox.Text);
       }*/
@@ -622,7 +622,7 @@ namespace MediaPortal.Configuration.Sections
           if (checkBoxUIUseHVA.Checked) regUIUseHVA = 1;
           else regUIUseHVA = 0;
           subkey.SetValue("UIUseHVA", regUIUseHVA);
-          using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+          using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
           {
             xmlwriter.SetValue("videocodec", "cyberlink", regUIUseHVA);
           }

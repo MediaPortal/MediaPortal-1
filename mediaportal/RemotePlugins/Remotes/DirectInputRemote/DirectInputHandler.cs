@@ -603,7 +603,7 @@ namespace MediaPortal.InputDevices
 
     public void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _active = xmlreader.GetValueAsBool("remote", "DirectInput", false);
         string strGUID = xmlreader.GetValueAsString("remote", "DirectInputDeviceGUID", "");
@@ -619,7 +619,7 @@ namespace MediaPortal.InputDevices
 
     public void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValueAsBool("remote", "DirectInput", _active);
         xmlwriter.SetValue("remote", "DirectInputDeviceGUID", SelectedDeviceGUID);

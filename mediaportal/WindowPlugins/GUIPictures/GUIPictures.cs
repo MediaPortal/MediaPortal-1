@@ -151,7 +151,7 @@ namespace MediaPortal.GUI.Pictures
     #region Serialisation
     void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         isFileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
         fileMenuPinCode = MediaPortal.Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", String.Empty));
@@ -660,7 +660,7 @@ namespace MediaPortal.GUI.Pictures
           mapSettings.ViewAs = (int)share.DefaultView;
         }
       }
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         if (xmlreader.GetValueAsBool("pictures", "rememberlastfolder", false))
           xmlreader.SetValue("pictures", "lastfolder", folderName);
     }

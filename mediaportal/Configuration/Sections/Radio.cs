@@ -157,7 +157,7 @@ namespace MediaPortal.Configuration.Sections
     }
     public override void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         folderNameTextBox.Text = xmlreader.GetValueAsString("radio", "folder", "");
 
@@ -166,7 +166,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("radio", "folder", folderNameTextBox.Text);
       }

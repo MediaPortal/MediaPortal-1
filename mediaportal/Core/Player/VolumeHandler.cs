@@ -46,7 +46,7 @@ namespace MediaPortal.Player
 			bool isDigital = true;
       //string mixerControlledComponent = "Wave";
 
-      using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
 			{
 				int levelStyle = reader.GetValueAsInt("volume", "startupstyle", 0);
 
@@ -74,7 +74,7 @@ namespace MediaPortal.Player
 
 		static VolumeHandler CreateInstance()
 		{
-      using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
 			{
 				int volumeStyle = reader.GetValueAsInt("volume", "handler", 0);
 
@@ -100,7 +100,7 @@ namespace MediaPortal.Player
 			if (_instance==null) return;
 			if(_instance._mixer != null)
 			{
-        using (MediaPortal.Profile.Settings writer = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings writer = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
 					writer.SetValue("volume", "lastknown", _instance._mixer.Volume);
 
 				_instance._mixer.Dispose();

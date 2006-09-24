@@ -289,7 +289,7 @@ namespace MediaPortal.GUI.Library
         m_fZoomVertical /= 10000f;
       }
 
-      using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         m_iMaxFPS = xmlReader.GetValueAsInt("screen", "maxguifps", 25);
         SyncFrameTime();

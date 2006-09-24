@@ -85,7 +85,7 @@ namespace MediaPortal.Configuration.Sections
       ArrayList StepArray = new ArrayList();
       string regValue;
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         try
         {
@@ -135,7 +135,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         string skipSteps = (Convert.ToInt16(checkBoxStep1.Checked)).ToString() + ";" +
                            (Convert.ToInt16(checkBoxStep2.Checked)).ToString() + ";" +

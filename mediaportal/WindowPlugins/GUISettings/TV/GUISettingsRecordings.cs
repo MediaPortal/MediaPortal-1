@@ -28,7 +28,7 @@ namespace WindowPlugins.GUISettings.TV
 			base.OnPageLoad ();
 			spinPreRecord.SetRange(0,30);
 			spinPostRecord.SetRange(0,30);
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
 			{
 				spinPreRecord.Value = (xmlreader.GetValueAsInt("capture", "prerecord", 5));
 				spinPostRecord.Value = (xmlreader.GetValueAsInt("capture", "postrecord", 5));				
@@ -49,7 +49,7 @@ namespace WindowPlugins.GUISettings.TV
 
 		void OnAutoDeleteRecordings()
 		{
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
 			{
 				xmlwriter.SetValueAsBool("capture", "deletewatchedshows", cbAutoDeleteRecordings.Selected);
 			}		
@@ -57,7 +57,7 @@ namespace WindowPlugins.GUISettings.TV
 
 		void OnAddRecordingsToMovieDatabase()
 		{
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
 			{
 				xmlwriter.SetValueAsBool("capture", "addrecordingstomoviedatabase", cbAddRecordingsToDbs.Selected);
 			}		
@@ -66,7 +66,7 @@ namespace WindowPlugins.GUISettings.TV
 
 		void OnPreRecord()
 		{
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
 			{
 				xmlwriter.SetValue("capture", "prerecord", spinPreRecord.Value.ToString());
 			}		
@@ -74,7 +74,7 @@ namespace WindowPlugins.GUISettings.TV
 		
 		void OnPostRecord()
 		{
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
 			{
 				xmlwriter.SetValue("capture", "postrecord", spinPostRecord.Value.ToString());
 			}		

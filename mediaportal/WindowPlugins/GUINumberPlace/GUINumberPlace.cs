@@ -96,7 +96,7 @@ namespace MediaPortal.GUI.NumberPlace
 
       public void Load()
       {
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           m_bShow = xmlreader.GetValueAsBool("NumberPlace", "showerrormoves", false);
           m_bBlock = xmlreader.GetValueAsBool("NumberPlace", "blockerrormoves", false);
@@ -106,7 +106,7 @@ namespace MediaPortal.GUI.NumberPlace
 
       public void Save()
       {
-        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           xmlwriter.SetValueAsBool("NumberPlace", "showerrormoves", m_bShow);
           xmlwriter.SetValueAsBool("NumberPlace", "blockerrormoves", m_bBlock);

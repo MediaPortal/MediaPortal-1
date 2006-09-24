@@ -780,7 +780,7 @@ namespace MediaPortal.Configuration.Sections
       {
         TunerCountry tunerCountry = cbCountry.SelectedItem as TunerCountry;
         _card.DefaultCountryCode = tunerCountry.Id;
-        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           xmlwriter.SetValue("capture", "countryname", tunerCountry.Country);
           xmlwriter.SetValue("capture", "country", tunerCountry.Id.ToString());
@@ -801,7 +801,7 @@ namespace MediaPortal.Configuration.Sections
         Boolean isCableInput = false;
         if (!cbInput.Text.Equals("Antenna")) isCableInput = true;
         _card.IsCableInput = isCableInput;
-        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           xmlwriter.SetValue("capture", "tuner", cbInput.Text);
         }
@@ -1104,7 +1104,7 @@ namespace MediaPortal.Configuration.Sections
     }
     public override void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         cbInput.SelectedItem = xmlreader.GetValueAsString("capture", "tuner", "Antenna");
         string countryName = xmlreader.GetValueAsString("capture", "countryname", "The Netherlands");
@@ -1122,7 +1122,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("capture", "tuner", cbInput.Text);
         if (cbCountry.Text.Length > 0)

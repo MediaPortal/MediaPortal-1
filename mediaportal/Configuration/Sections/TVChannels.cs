@@ -687,7 +687,7 @@ namespace MediaPortal.Configuration.Sections
       if (_itemsModified)
       {
         int countryCode = 31;
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
           countryCode = xmlreader.GetValueAsInt("capture", "country", 31);
 
         string[] registryLocations = new string[] { String.Format(@"Software\Microsoft\TV System Services\TVAutoTune\TS{0}-1", countryCode),
@@ -945,7 +945,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void buttonImportFromTvGuide_Click(object sender, System.EventArgs e)
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         string strTVGuideFile = xmlreader.GetValueAsString("xmltv", "folder", "xmltv");
         strTVGuideFile = RemoveTrailingSlash(strTVGuideFile);

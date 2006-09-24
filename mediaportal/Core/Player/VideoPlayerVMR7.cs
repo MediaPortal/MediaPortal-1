@@ -831,7 +831,7 @@ namespace MediaPortal.Player
         int intFilters = 0; // FlipGer: count custom filters
         string strFilters = ""; // FlipGer: collect custom filters
         string defaultLanguage;
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           strVideoCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2videocodec", "");
           strAudioCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2audiocodec", "");
@@ -883,7 +883,7 @@ namespace MediaPortal.Player
         vobSub = filter as IDirectVobSub;
         if (vobSub != null)
         {
-          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
           {
             string strTmp = "";
             string strFont = xmlreader.GetValueAsString("subtitles", "fontface", "Arial");

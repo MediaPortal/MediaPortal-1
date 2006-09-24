@@ -70,7 +70,7 @@ namespace MediaPortal.GUI.Library
     {
       bool isPrefixEnabled = true;
 
-      using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         isPrefixEnabled = reader.GetValueAsBool("general", "myprefix", true);
 
       if (strFileName == null) return false;

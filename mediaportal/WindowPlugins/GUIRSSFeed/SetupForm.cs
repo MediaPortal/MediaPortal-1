@@ -99,7 +99,7 @@ namespace GUIRSSFeed
       string tempText;
       for (int i = 0; i < 100; i++)
       {
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           tempText = xmlreader.GetValueAsString("rss", "siteName" + i, "");
           if (tempText == (string)listBox.Items[iItem])
@@ -128,7 +128,7 @@ namespace GUIRSSFeed
       string tempText;
       for (int i = 0; i < 100; i++)
       {
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           tempText = xmlreader.GetValueAsString("rss", "siteName" + i, "");
           if (tempText == (string)listBox.Items[iItem])
@@ -142,7 +142,7 @@ namespace GUIRSSFeed
       string strNameTag = String.Format("siteName{0}", ID);
       string strURLTag = String.Format("siteURL{0}", ID);
       string strDescriptionTag = String.Format("siteDescription{0}", ID);
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("rss", strNameTag, "");
         xmlwriter.SetValue("rss", strURLTag, "");
@@ -175,7 +175,7 @@ namespace GUIRSSFeed
     /// </summary>
     public void PopulateFields()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         for (int i = 0; i < 100; i++)
         {
@@ -409,7 +409,7 @@ namespace GUIRSSFeed
 
     private void button3_Click(object sender, System.EventArgs e)
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("rss", "iRefreshTime", textRefreshInterval.Text);
 

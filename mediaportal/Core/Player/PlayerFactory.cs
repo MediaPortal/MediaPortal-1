@@ -97,7 +97,7 @@ namespace MediaPortal.Player
 
       foreach (IExternalPlayer player in _externalPlayerList)
       {
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           bool enabled = xmlreader.GetValueAsBool("plugins", player.PlayerName, false);
           player.Enabled = enabled;
@@ -121,7 +121,7 @@ namespace MediaPortal.Player
       if (fileName.StartsWith("mms:") && fileName.EndsWith(".ymvp"))
       {
           bool useVMR9;
-          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
           {
               useVMR9 = xmlreader.GetValueAsBool("musicvideo", "useVMR9", true);
           }
@@ -195,7 +195,7 @@ namespace MediaPortal.Player
 
       if (MediaPortal.Util.Utils.IsAudio(fileName))
       {
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           //SV
           ////string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "Windows Media Player 9");
@@ -302,7 +302,7 @@ namespace MediaPortal.Player
 
       if (MediaPortal.Util.Utils.IsAudio(fileName))
       {
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "Windows Media Player 9");
           if (String.Compare(strAudioPlayer, "Windows Media Player 9", true) == 0)

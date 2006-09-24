@@ -279,7 +279,7 @@ namespace MediaPortal.Player
           return false;
         }
 
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           _defaultAudioLanguage = xmlreader.GetValueAsString("dvdplayer", "audiolanguage", "english");
           _defaultSubtitleLanguage = xmlreader.GetValueAsString("dvdplayer", "subtitlelanguage", "english");
@@ -505,7 +505,7 @@ namespace MediaPortal.Player
       string aspectRatioMode = "";
       string displayMode = "";
       bool useAC3Filter = false;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         dvdNavigator = xmlreader.GetValueAsString("dvdplayer", "navigator", "DVD Navigator");
         aspectRatioMode = xmlreader.GetValueAsString("dvdplayer", "armode", "").ToLower();
@@ -1493,7 +1493,7 @@ namespace MediaPortal.Player
         m_geometry.ScreenWidth = nw;
         m_geometry.ScreenHeight = nh;
         m_geometry.ARType = GUIGraphicsContext.ARType;
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           bool bUseAR = xmlreader.GetValueAsBool("dvdplayer", "pixelratiocorrection", false);
           if (bUseAR) m_geometry.PixelRatio = GUIGraphicsContext.PixelRatio;
@@ -1920,7 +1920,7 @@ namespace MediaPortal.Player
       string strAudiorenderer = "";
       int intFilters = 0; // FlipGer: count custom filters
       string strFilters = ""; // FlipGer: collect custom filters
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         // FlipGer: load infos for custom filters
           int intCount = 0;

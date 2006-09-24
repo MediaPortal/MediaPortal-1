@@ -214,7 +214,7 @@ namespace MediaPortal.GUI.Library
     bool LoadPackedSkin(string skinName)
     {
       string packedXml = String.Format(@"{0}\packedgfx2.bxml", skinName);
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         if (xmlreader.GetValueAsBool("debug", "skincaching", true) && File.Exists(packedXml))
         {

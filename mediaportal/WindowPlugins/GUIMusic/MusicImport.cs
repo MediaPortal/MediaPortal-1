@@ -88,7 +88,7 @@ namespace MediaPortal.MusicImport
     public MusicImport()
     {
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         mp3VBR = xmlreader.GetValueAsBool("musicimport", "mp3vbr", true);
         mp3MONO = xmlreader.GetValueAsBool("musicimport", "mp3mono", false);
@@ -218,7 +218,7 @@ namespace MediaPortal.MusicImport
     {
       string strInput = string.Empty;
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         strInput = xmlreader.GetValueAsString("musicimport", "format", "%artist%\\%album%\\%track% %title%");
 
       string fileFormat = string.Empty;

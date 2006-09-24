@@ -314,7 +314,7 @@ namespace MediaPortal.GUI.RSS
     {
       String firstSite = "";
       m_sites.Clear();
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         for (int i = 0; i < NUM_STORIES; i++)
         {

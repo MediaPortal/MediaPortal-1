@@ -127,7 +127,7 @@ namespace MediaPortal
 
 		private void button1_Click(object sender, System.EventArgs e)
 		{
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
 			{
 				xmlreader.SetValueAsBool("general", "dontshowskinversion", checkBox1.Checked);
 			}
@@ -136,7 +136,7 @@ namespace MediaPortal
 		
 		public bool CheckSkinVersion(string skin)
 		{
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
 			{
 				bool ignoreErrors=false;
 				ignoreErrors=xmlreader.GetValueAsBool("general", "dontshowskinversion", false);

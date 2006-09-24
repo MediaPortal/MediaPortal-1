@@ -97,7 +97,7 @@ namespace MediaPortal.Configuration.Sections
     public override void LoadSettings()
     {
       if (_init == false) return;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         fileNameTextBox.Text = xmlreader.GetValueAsString("movieplayer", "path", "");
         parametersTextBox.Text = xmlreader.GetValueAsString("movieplayer", "arguments", "");
@@ -171,7 +171,7 @@ namespace MediaPortal.Configuration.Sections
     public override void SaveSettings()
     {
       if (_init == false) return;
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("movieplayer", "path", fileNameTextBox.Text);
         xmlwriter.SetValue("movieplayer", "arguments", parametersTextBox.Text);

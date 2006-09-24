@@ -84,7 +84,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     #region Serialisation
     private void LoadSettings()
     {
-      //using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      //using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       //{
 
       //}
@@ -94,7 +94,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
       }
     }
@@ -588,7 +588,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     public bool CanEnable()
     {
       bool AudioScrobblerOn = false;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         AudioScrobblerOn = xmlreader.GetValueAsBool("plugins", "Audioscrobbler", false);
       }
