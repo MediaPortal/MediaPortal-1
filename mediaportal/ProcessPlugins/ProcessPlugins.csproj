@@ -419,13 +419,13 @@
     <Compile Include="TvMovie\TvMovieDatabase.cs" />
     <Compile Include="TvMovie\TvMovie.cs" />
     <Compile Include="TvNotifies\NotifyManager.cs" />
+    <Compile Include="WebEPG\WebEPGGrabber.cs" />
     <Compile Include="WebEPG\WebEPGGrabberSettings.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="WebEPG\WebEPGGrabberSettings.Designer.cs">
       <DependentUpon>WebEPGGrabberSettings.cs</DependentUpon>
     </Compile>
-    <Compile Include="WebEPG\WebEPGPGrabber.cs" />
     <EmbeddedResource Include="AudioScrobbler\AudioscrobblerSettings.resx">
       <SubType>Designer</SubType>
       <DependentUpon>AudioscrobblerSettings.cs</DependentUpon>
