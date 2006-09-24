@@ -73,7 +73,7 @@ namespace ProcessPlugins.CallerId
       {
         if (areaCodeLookup == null)
         {
-          string areaCodeXMLFile = Config.Get(Config.Dir.Config) + "ISDNCodes.xml";
+          string areaCodeXMLFile = Config.GetFile(Config.Dir.Config, "ISDNCodes.xml");
           string areaCode, location;
           Hashtable areaTable = new Hashtable();
           areaTable.Add("", Strings.Unknown);
@@ -122,7 +122,7 @@ namespace ProcessPlugins.CallerId
       {
         if (countryCodeLookup == null)
         {
-          string countryCodeXMLFile = Config.Get(Config.Dir.Config) + "ISDNCodes.xml";
+          string countryCodeXMLFile = Config.GetFile(Config.Dir.Config, "ISDNCodes.xml");
           string countryCode, country;
           Hashtable countryTable = new Hashtable();
           countryTable.Add("+", Strings.Unknown);
@@ -166,7 +166,7 @@ namespace ProcessPlugins.CallerId
       {
         if (countryTranslator == null)
         {
-          string translatorXMLFile = Config.Get(Config.Dir.Config) + "ISDNCodes.xml";
+          string translatorXMLFile = Config.GetFile(Config.Dir.Config, "ISDNCodes.xml");
           string countryShort, countryLong;
           Hashtable translatorTable = new Hashtable();
           translatorTable.Add(Strings.Unknown, Strings.Unknown);
@@ -296,7 +296,7 @@ namespace ProcessPlugins.CallerId
         Log.Info("ISDN: CAPI error. No ISDN card installed? Caller-ID disabled.");
       }
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         useOutlook    = xmlreader.GetValueAsBool("isdn", "useoutlook", false);
         stopMedia     = xmlreader.GetValueAsBool("isdn", "stopmedia", true);

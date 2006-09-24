@@ -56,7 +56,7 @@ namespace ProcessPlugins.CallerId
 			{
 				if (areaCodeLookup == null)
 				{
-          string areaCodeXMLFile = Config.Get(Config.Dir.Config) + "yac-area-codes.xml";
+          string areaCodeXMLFile = Config.GetFile(Config.Dir.Config, "yac-area-codes.xml");
 					string npa, location;
 					Hashtable temp = new Hashtable();
 

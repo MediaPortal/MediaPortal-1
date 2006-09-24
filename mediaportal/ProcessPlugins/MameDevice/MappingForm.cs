@@ -513,8 +513,8 @@ namespace MediaPortal.InputDevices
       treeMapping.Nodes.Clear();
       XmlDocument doc = new XmlDocument();
       string path = "InputDeviceMappings\\defaults\\" + xmlFile;
-      if (!defaults && File.Exists(Config.Get(Config.Dir.CustomInputDevice) + xmlFile))
-        path = Config.Get(Config.Dir.CustomInputDevice) + xmlFile;
+      if (!defaults && File.Exists(Config.GetFile(Config.Dir.CustomInputDevice, xmlFile)))
+        path = Config.GetFile(Config.Dir.CustomInputDevice, xmlFile);
       doc.Load(path);
       XmlNodeList listRemotes = doc.DocumentElement.SelectNodes("/mappings/remote");
 
@@ -670,7 +670,7 @@ namespace MediaPortal.InputDevices
     {
       try
       {
-        DirectoryInfo dir = Directory.CreateDirectory(Config.Get(Config.Dir.CustomInputDevice));
+        DirectoryInfo dir = Directory.CreateDirectory(Config.GetFolder(Config.Dir.CustomInputDevice));
       }
       catch
       {
@@ -680,7 +680,7 @@ namespace MediaPortal.InputDevices
         "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
       try
       {
-        XmlTextWriter writer = new XmlTextWriter(Config.Get(Config.Dir.CustomInputDevice) + xmlFile, System.Text.Encoding.UTF8);
+        XmlTextWriter writer = new XmlTextWriter(Config.GetFile(Config.Dir.CustomInputDevice, xmlFile), System.Text.Encoding.UTF8);
         writer.Formatting = Formatting.Indented;
         writer.Indentation = 1;
         writer.IndentChar = (char)9;

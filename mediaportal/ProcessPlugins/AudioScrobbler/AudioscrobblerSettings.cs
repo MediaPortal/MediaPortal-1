@@ -62,7 +62,7 @@ namespace MediaPortal.AudioScrobbler
         string tmpuser = "";
         string tmppass = "";
 
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           tmpuser = xmlreader.GetValueAsString("audioscrobbler", "user", "");
 
@@ -262,7 +262,7 @@ namespace MediaPortal.AudioScrobbler
 
       if (comboBoxUserName.Text != String.Empty)
       {
-        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           xmlwriter.SetValue("audioscrobbler", "user", comboBoxUserName.Text);
 
@@ -841,7 +841,7 @@ namespace MediaPortal.AudioScrobbler
     private void comboBoxUserName_SelectedIndexChanged(object sender, EventArgs e)
     {
       _currentUser = comboBoxUserName.Text;
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         xmlwriter.SetValue("audioscrobbler", "user", _currentUser);
       LoadSettings();
     }

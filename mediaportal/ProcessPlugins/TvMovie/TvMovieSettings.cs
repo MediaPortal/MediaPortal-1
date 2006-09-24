@@ -87,7 +87,7 @@ namespace ProcessPlugins.TvMovie
     /// </summary>
     public TvMovieSettings()
     {
-      _xmlFile = Config.Get(Config.Dir.Config) + "TVMovieMapping.xml";
+      _xmlFile = Config.GetFile(Config.Dir.Config, "TVMovieMapping.xml");
 
       InitializeComponent();
       LoadStations();
@@ -136,7 +136,7 @@ namespace ProcessPlugins.TvMovie
 
     private void LoadOptions()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         checkBoxUseShortDesc.Checked = xmlreader.GetValueAsBool("tvmovie", "shortprogramdesc", false);
         checkBoxAdditionalInfo.Checked = xmlreader.GetValueAsBool("tvmovie", "extenddescription", false);
@@ -148,7 +148,7 @@ namespace ProcessPlugins.TvMovie
 
     private void SaveOptions()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValueAsBool("tvmovie", "shortprogramdesc", checkBoxUseShortDesc.Checked);
         xmlwriter.SetValueAsBool("tvmovie", "extenddescription", checkBoxAdditionalInfo.Checked);

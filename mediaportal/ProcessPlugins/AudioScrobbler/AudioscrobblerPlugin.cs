@@ -328,7 +328,7 @@ namespace MediaPortal.Audioscrobbler
 
       startStopSongCheckTimer(true);
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         currentUser = xmlreader.GetValueAsString("audioscrobbler", "user", "");
       }

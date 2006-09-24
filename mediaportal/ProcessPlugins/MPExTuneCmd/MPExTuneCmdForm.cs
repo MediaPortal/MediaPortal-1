@@ -80,7 +80,7 @@ namespace MediaPortal.MPExTuneCmd
 
     private void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         MpExTuneCmdLoc.Text = xmlreader.GetValueAsString("MPExTuneCmd", "commandloc", "C:\\dtvcon\\dtvcmd.exe");
         MPExTuneCmdDelim.Text = xmlreader.GetValueAsString("MPExTuneCmd", "commanddelim", "#");
@@ -89,7 +89,7 @@ namespace MediaPortal.MPExTuneCmd
 
     private bool SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("MPExTuneCmd", "commandloc", MpExTuneCmdLoc.Text);
         xmlwriter.SetValue("MPExTuneCmd", "commanddelim", MPExTuneCmdDelim.Text);

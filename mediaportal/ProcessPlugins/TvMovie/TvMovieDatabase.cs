@@ -154,7 +154,7 @@ namespace ProcessPlugins.TvMovie
           if (rkey != null)
             path = string.Format("{0}", rkey.GetValue("DBDatei"));
 
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
           mpPath = xmlreader.GetValueAsString("tvmovie", "databasepath", path);
 
         if (File.Exists(mpPath))
@@ -176,10 +176,10 @@ namespace ProcessPlugins.TvMovie
           newPath = path;
 
         string mpPath = string.Empty;
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
           mpPath = xmlreader.GetValueAsString("tvmovie", "databasepath", string.Empty);
 
-        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
           if (newPath == path)
             xmlwriter.SetValue("tvmovie", "databasepath", string.Empty);
           else
@@ -227,7 +227,7 @@ namespace ProcessPlugins.TvMovie
 
     public TvMovieDatabase()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _useShortProgramDesc = xmlreader.GetValueAsBool("tvmovie", "shortprogramdesc", false);
         _extendDescription = xmlreader.GetValueAsBool("tvmovie", "extenddescription", false);
@@ -235,7 +235,7 @@ namespace ProcessPlugins.TvMovie
         _slowImport = xmlreader.GetValueAsBool("tvmovie", "slowimport", false);
       }
 
-      _xmlFile = Config.Get(Config.Dir.Config) + "TVMovieMapping.xml";
+      _xmlFile = Config.GetFile(Config.Dir.Config, "TVMovieMapping.xml");
 
       string dataProviderString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source={0}";
 
@@ -574,7 +574,7 @@ namespace ProcessPlugins.TvMovie
           else
             return false;
 
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
           if (Convert.ToInt64(xmlreader.GetValueAsString("tvmovie", "lastupdate", "0")) == lastUpdate)
             return false;
 
@@ -665,7 +665,7 @@ namespace ProcessPlugins.TvMovie
             lastUpdate = Convert.ToInt64(regLastUpdate.Substring(8));
           }
 
-        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
           xmlwriter.SetValue("tvmovie", "lastupdate", lastUpdate);
 
         MediaPortal.Profile.Settings.SaveCache();
