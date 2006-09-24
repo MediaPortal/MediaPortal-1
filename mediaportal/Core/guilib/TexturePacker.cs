@@ -249,9 +249,9 @@ namespace MediaPortal.GUI.Library
 
       _packedTextures = new List<PackedTexture>();
       string[] files1 = System.IO.Directory.GetFiles(String.Format(@"{0}\media", skinName), "*.png");
-      string[] files2 = System.IO.Directory.GetFiles(Config.Get(Config.Dir.Thumbs) + @"tv\logos", "*.png");
-      string[] files3 = System.IO.Directory.GetFiles(Config.Get(Config.Dir.Weather) + "64x64", "*.png");
-      string[] files4 = System.IO.Directory.GetFiles(Config.Get(Config.Dir.Weather) + "128x128", "*.png");
+      string[] files2 = System.IO.Directory.GetFiles(Config.GetSubFolder(Config.Dir.Thumbs, @"tv\logos"), "*.png");
+      string[] files3 = System.IO.Directory.GetFiles(Config.GetSubFolder(Config.Dir.Weather, "64x64"), "*.png");
+      string[] files4 = System.IO.Directory.GetFiles(Config.GetSubFolder(Config.Dir.Weather, "128x128"), "*.png");
       string[] files5 = System.IO.Directory.GetFiles(String.Format(@"{0}\media\tetris", skinName), "*.png");
       string[] files = new string[files1.Length + files2.Length + files3.Length + files4.Length + files5.Length];
 

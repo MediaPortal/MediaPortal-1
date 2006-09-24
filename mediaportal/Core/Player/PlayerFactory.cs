@@ -46,7 +46,7 @@ namespace MediaPortal.Player
     private void LoadExternalPlayers()
     {
       Log.Info("Loading external players plugins");
-      string[] fileList = System.IO.Directory.GetFiles(Config.Get(Config.Dir.Plugins) + "ExternalPlayers", "*.dll");
+      string[] fileList = System.IO.Directory.GetFiles(Config.GetSubFolder(Config.Dir.Plugins, "ExternalPlayers"), "*.dll");
       foreach (string fileName in fileList)
       {
         try

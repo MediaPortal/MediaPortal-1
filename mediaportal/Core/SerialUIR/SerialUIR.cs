@@ -68,7 +68,7 @@ namespace MediaPortal.SerialIR
 		/// </summary>
 		private SerialUIR()
 		{
-      remotefile = Config.Get(Config.Dir.Config) + "remotevalues.xml";
+      remotefile = Config.GetFile(Config.Dir.Config, "remotevalues.xml");
 		}
 
 		public delegate void OnRemoteCommand(object command);

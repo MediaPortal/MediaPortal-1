@@ -57,9 +57,9 @@ namespace MediaPortal.GUI.Library
 			int x=0;
 			while (true)
 			{
-				string tempFile=String.Format(Config.Get(Config.Dir.Thumbs) + "MPTemp{0}.gif",x);
-        string tempFile2 = String.Format(Config.Get(Config.Dir.Thumbs) + "MPTemp{0}.jpg", x);
-        string tempFile3 = String.Format(Config.Get(Config.Dir.Thumbs) + "MPTemp{0}.bmp", x);
+        string tempFile = Config.GetFile(Config.Dir.Thumbs, String.Format("MPTemp{0}.gif", x));
+        string tempFile2 = Config.GetFile(Config.Dir.Thumbs, String.Format("MPTemp{0}.jpg", x));
+        string tempFile3 = Config.GetFile(Config.Dir.Thumbs, String.Format("MPTemp{0}.bmp", x));
 				if (!System.IO.File.Exists(tempFile) && 
 					!System.IO.File.Exists(tempFile2) &&
 					!System.IO.File.Exists(tempFile3))

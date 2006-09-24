@@ -802,7 +802,7 @@ namespace MediaPortal.Util
         CRCTool crc = new CRCTool();
         crc.Init(CRCTool.CRCCode.CRC32);
         ulong dwcrc = crc.calc(strLine);
-        string strRet = System.IO.Path.GetFullPath(String.Format("{0}{1}.jpg", Config.Get(Config.Dir.Thumbs),dwcrc));
+        string strRet = System.IO.Path.GetFullPath(String.Format("{0}{1}.jpg", Config.GetFolder(Config.Dir.Thumbs),dwcrc));
         return strRet;
       }
       catch (Exception)

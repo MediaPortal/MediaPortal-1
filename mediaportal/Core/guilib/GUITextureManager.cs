@@ -78,7 +78,7 @@ namespace MediaPortal.GUI.Library
       }
       _cacheDownload.Clear();
 
-      string[] files = System.IO.Directory.GetFiles(Config.Get(Config.Dir.Thumbs), "MPTemp*.*");
+      string[] files = System.IO.Directory.GetFiles(Config.GetFolder(Config.Dir.Thumbs), "MPTemp*.*");
       if (files != null)
       {
         foreach (string file in files)
@@ -578,8 +578,8 @@ namespace MediaPortal.GUI.Library
       if (fileName == String.Empty) return;
 
       //dont dispose radio/tv logo's since they are used by the overlay windows
-      if (fileName.ToLower().IndexOf(Config.Get(Config.Dir.Thumbs) + @"tv\logos") >= 0) return;
-      if (fileName.ToLower().IndexOf(Config.Get(Config.Dir.Thumbs) + @"radio") >= 0) return;
+      if (fileName.ToLower().IndexOf(Config.GetSubFolder(Config.Dir.Thumbs, @"tv\logos")) >= 0) return;
+      if (fileName.ToLower().IndexOf(Config.GetSubFolder(Config.Dir.Thumbs, "radio")) >= 0) return;
       try
       {
         bool continueRemoving = false;
@@ -644,8 +644,8 @@ namespace MediaPortal.GUI.Library
       if (fileName.Length == 0) return false;
       if (fileName == "-") return false;
 
-      if (fileName.ToLower().IndexOf(Config.Get(Config.Dir.Thumbs) + @"tv\logos") >= 0) return false;
-      if (fileName.ToLower().IndexOf(Config.Get(Config.Dir.Thumbs) + "radio") >= 0) return false;
+      if (fileName.ToLower().IndexOf(Config.GetSubFolder(Config.Dir.Thumbs, @"tv\logos")) >= 0) return false;
+      if (fileName.ToLower().IndexOf(Config.GetSubFolder(Config.Dir.Thumbs, "radio")) >= 0) return false;
 
       /* Temporary: (textures that are disposed)
        * - all not skin images

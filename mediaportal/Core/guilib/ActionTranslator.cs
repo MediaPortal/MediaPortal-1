@@ -68,7 +68,7 @@ namespace MediaPortal.GUI.Library
     {
 
       mapWindows.Clear();
-      string strFilename= Config.Get(Config.Dir.Config) + "keymap.xml";
+      string strFilename = Config.GetFile(Config.Dir.Config, "keymap.xml");
       Log.Info("  Load key mapping from {0}", strFilename);
       try
       {

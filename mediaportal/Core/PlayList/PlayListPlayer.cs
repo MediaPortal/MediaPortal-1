@@ -466,7 +466,7 @@ namespace MediaPortal.Playlists
         {
           _currentPlayList = value;
           _entriesNotFound = 0;
-          using (Settings settings = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+          using (Settings settings = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
           {
             if (value == PlayListType.PLAYLIST_MUSIC || value == PlayListType.PLAYLIST_MUSIC_TEMP)
             {

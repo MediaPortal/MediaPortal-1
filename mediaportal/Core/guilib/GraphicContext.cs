@@ -207,7 +207,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     static public void Save()
     {
-      string strFileName = String.Format(Config.Get(Config.Dir.Config) + "ScreenCalibration{0}x{1}", Width, Height);
+      string strFileName = Config.GetFile(Config.Dir.Config, String.Format("ScreenCalibration{0}x{1}", Width, Height));
       if (Fullscreen)
         strFileName += ".fs.xml";
       else
@@ -258,7 +258,7 @@ namespace MediaPortal.GUI.Library
       ZoomHorizontal = 1.0f;
       ZoomVertical = 1.0f;
 
-      string strFileName = String.Format(Config.Get(Config.Dir.Config) + "ScreenCalibration{0}x{1}", Width, Height);
+      string strFileName = Config.GetFile(Config.Dir.Config, String.Format("ScreenCalibration{0}x{1}", Width, Height));
       if (Fullscreen)
         strFileName += ".fs.xml";
       else
@@ -508,7 +508,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     static public string Skin
     {
-      set { m_strSkin = Config.Get(Config.Dir.Skin) + value; }
+      set { m_strSkin = Config.GetSubFolder(Config.Dir.Skin, value); }
       get { return m_strSkin; }
     }
 

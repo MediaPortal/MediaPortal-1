@@ -249,7 +249,7 @@ namespace DShowNET.Helper
       int videoSVHS = 1;
       int videoRgb = 1;
 
-      string filename = String.Format(Config.Get(Config.Dir.Database) + "card_{0}.xml", cardName);
+      string filename = Config.GetFile(Config.Dir.Database, String.Format("card_{0}.xml", cardName));
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename))
       {
         audioCVBS1 = 1 + xmlreader.GetValueAsInt("mapping", "audio1", 0);

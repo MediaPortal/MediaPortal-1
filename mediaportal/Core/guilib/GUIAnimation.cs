@@ -110,7 +110,7 @@ namespace MediaPortal.GUI.Library
 
     public override void AllocResources()
     {
-      using (Profile.Settings xmlreader = new Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         _hidePngAnimations = (xmlreader.GetValueAsBool("general", "hidepnganimations", false));
 
       if (_filenames == null)

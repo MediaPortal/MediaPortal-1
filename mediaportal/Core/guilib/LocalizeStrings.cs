@@ -149,13 +149,13 @@ namespace MediaPortal.GUI.Library
       if (strFileName == String.Empty) return false;
       System.Collections.Generic.Dictionary<int, string> mapEnglish = new System.Collections.Generic.Dictionary<int, string>();
       m_mapStrings.Clear();
-      LanguageDirectory = Config.Get(Config.Dir.Language);
+      LanguageDirectory = Config.GetFolder(Config.Dir.Language);
 
       Log.Info("  load localized strings from:{0}", strFileName);
       // load the text for the current language
       LoadMap(strFileName, ref m_mapStrings, true);
       //load the text for the english language
-      LoadMap(Config.Get(Config.Dir.Language) + @"English\strings.xml", ref mapEnglish, false);
+      LoadMap(Config.GetFile(Config.Dir.Language, @"English\strings.xml"), ref mapEnglish, false);
 
       // check if current language contains an entry for each textline found
       // in the english version

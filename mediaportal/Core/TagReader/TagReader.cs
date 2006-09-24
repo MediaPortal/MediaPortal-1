@@ -46,7 +46,7 @@ namespace MediaPortal.TagReader
 		{
 
       Log.Info("Loading tag reader plugins");
-      string[] strFiles=System.IO.Directory.GetFiles(Config.Get(Config.Dir.Plugins) + "tagreaders", "*.dll");
+      string[] strFiles=System.IO.Directory.GetFiles(Config.GetSubFolder(Config.Dir.Plugins, "tagreaders"), "*.dll");
       foreach (string strFile in strFiles)
       {
         try

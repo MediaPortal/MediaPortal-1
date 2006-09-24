@@ -33,29 +33,29 @@ namespace MediaPortal.Util
 		static public readonly string TvRecordingSeriesIcon="tvguide_recordserie_button.png";
 		static public readonly string TvConflictRecordingIcon="tvguide_recordconflict_button.png";
 
-    static public readonly string MusicAlbum = Config.Get(Config.Dir.Thumbs) + @"music\albums";
-    static public readonly string MusicArtists = Config.Get(Config.Dir.Thumbs) + @"music\artists";
-    static public readonly string MusicGenre = Config.Get(Config.Dir.Thumbs) + @"music\genre";
+    static public readonly string MusicAlbum = Config.GetSubFolder(Config.Dir.Thumbs, @"music\albums");
+    static public readonly string MusicArtists = Config.GetSubFolder(Config.Dir.Thumbs, @"music\artists");
+    static public readonly string MusicGenre = Config.GetSubFolder(Config.Dir.Thumbs, @"music\genre");
 
-    static public readonly string MovieTitle = Config.Get(Config.Dir.Thumbs) + @"Videos\Title";
-    static public readonly string MovieActors = Config.Get(Config.Dir.Thumbs) + @"Videos\Actors";
-    static public readonly string MovieGenre = Config.Get(Config.Dir.Thumbs) + @"Videos\genre";
+    static public readonly string MovieTitle = Config.GetSubFolder(Config.Dir.Thumbs, @"Videos\Title");
+    static public readonly string MovieActors = Config.GetSubFolder(Config.Dir.Thumbs, @"Videos\Actors");
+    static public readonly string MovieGenre = Config.GetSubFolder(Config.Dir.Thumbs, @"Videos\genre");
 
-    static public readonly string TVChannel = Config.Get(Config.Dir.Thumbs) + @"tv\logos";
-    static public readonly string TVShows = Config.Get(Config.Dir.Thumbs) + @"tv\shows";
+    static public readonly string TVChannel = Config.GetSubFolder(Config.Dir.Thumbs, @"tv\logos");
+    static public readonly string TVShows = Config.GetSubFolder(Config.Dir.Thumbs, @"tv\shows");
 
-    static public readonly string Radio = Config.Get(Config.Dir.Thumbs) + @"Radio";
-    static public readonly string Pictures = Config.Get(Config.Dir.Thumbs) + @"Pictures";
-    static public readonly string Yac = Config.Get(Config.Dir.Thumbs) + @"yac";
+    static public readonly string Radio = Config.GetSubFolder(Config.Dir.Thumbs, @"Radio");
+    static public readonly string Pictures = Config.GetSubFolder(Config.Dir.Thumbs, @"Pictures");
+    static public readonly string Yac = Config.GetSubFolder(Config.Dir.Thumbs, @"yac");
 
 		static public void CreateFolders()
 		{
 				try
 				{
-					System.IO.Directory.CreateDirectory(Config.Get(Config.Dir.Thumbs));
-          System.IO.Directory.CreateDirectory(Config.Get(Config.Dir.Thumbs) + "music");
-          System.IO.Directory.CreateDirectory(Config.Get(Config.Dir.Thumbs) + "videos");
-          System.IO.Directory.CreateDirectory(Config.Get(Config.Dir.Thumbs) + "tv");
+					System.IO.Directory.CreateDirectory(Config.GetFolder(Config.Dir.Thumbs));
+          System.IO.Directory.CreateDirectory(Config.GetSubFolder(Config.Dir.Thumbs, "music"));
+          System.IO.Directory.CreateDirectory(Config.GetSubFolder(Config.Dir.Thumbs, "videos"));
+          System.IO.Directory.CreateDirectory(Config.GetSubFolder(Config.Dir.Thumbs, "tv"));
 					System.IO.Directory.CreateDirectory(MusicAlbum);
 					System.IO.Directory.CreateDirectory(MusicArtists);
 					System.IO.Directory.CreateDirectory(MusicGenre);
