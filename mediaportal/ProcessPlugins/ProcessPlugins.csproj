@@ -192,6 +192,10 @@
       <Project>{6DA0E4DF-6230-4642-98B5-E690BB6942BB}</Project>
       <Name>Utils</Name>
     </ProjectReference>
+    <ProjectReference Include="..\WebEPG\WebEPG\WebEPG.csproj">
+      <Project>{F7CB2A9F-004E-4667-BEAF-782F1C28E2D3}</Project>
+      <Name>WebEPG %28WebEPG\WebEPG%29</Name>
+    </ProjectReference>
     <ProjectReference Include="MusicShareWatcher\MusicShareWatcherHelper\MusicShareWatcherHelper.csproj">
       <Project>{C6564AA7-976B-43EF-9E35-7E607EE1DD12}</Project>
       <Name>MusicShareWatcherHelper</Name>
@@ -415,6 +419,13 @@
     <Compile Include="TvMovie\TvMovieDatabase.cs" />
     <Compile Include="TvMovie\TvMovie.cs" />
     <Compile Include="TvNotifies\NotifyManager.cs" />
+    <Compile Include="WebEPG\WebEPGGrabberSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WebEPG\WebEPGGrabberSettings.Designer.cs">
+      <DependentUpon>WebEPGGrabberSettings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WebEPG\WebEPGPGrabber.cs" />
     <EmbeddedResource Include="AudioScrobbler\AudioscrobblerSettings.resx">
       <SubType>Designer</SubType>
       <DependentUpon>AudioscrobblerSettings.cs</DependentUpon>
@@ -454,6 +465,10 @@
     <EmbeddedResource Include="TvMovie\TvMovieSettings.resx">
       <DependentUpon>TvMovieSettings.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WebEPG\WebEPGGrabberSettings.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>WebEPGGrabberSettings.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

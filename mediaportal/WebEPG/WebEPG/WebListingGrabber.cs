@@ -111,14 +111,14 @@ namespace MediaPortal.EPG
     {
       string listingTemplate;
 
-      _log.Info("WebEPG: Opening {0}", File);
+      _log.Info(LogType.WebEPG, "WebEPG: Opening {0}", File);
 
       _xmlreader = new MediaPortal.Webepg.Profile.Xml(_strBaseDir + File);
 
       string baseUrl = _xmlreader.GetValueAsString("Listing", "BaseURL", "");
       if (baseUrl == "")
       {
-        _log.Error("WebEPG: {0}: No BaseURL defined", File);
+        _log.Error(LogType.WebEPG, "WebEPG: {0}: No BaseURL defined", File);
         return false;
       }
 
@@ -137,16 +137,16 @@ namespace MediaPortal.EPG
       if (strTimeZone != "")
       {
         //_timeAdjustOnly = _xmlreader.GetValueAsBool("Info", "TimeAdjustOnly", false);
-        _log.Info("WebEPG: TimeZone, Local: {0}", TimeZone.CurrentTimeZone.StandardName);
+        _log.Info(LogType.WebEPG, "WebEPG: TimeZone, Local: {0}", TimeZone.CurrentTimeZone.StandardName);
         try
         {
-          _log.Info("WebEPG: TimeZone, Site : {0}", strTimeZone);
-          //_log.Info(false, "[Debug] WebEPG: TimeZone, debug: {0}", _timeAdjustOnly);
+          _log.Info(LogType.WebEPG, "WebEPG: TimeZone, Site : {0}", strTimeZone);
+          //_log.Info(LogType.WebEPG, false, "[Debug] WebEPG: TimeZone, debug: {0}", _timeAdjustOnly);
           _SiteTimeZone = new WorldTimeZone(strTimeZone);
         }
         catch (ArgumentException)
         {
-          _log.Error("WebEPG: TimeZone Not valid");
+          _log.Error(LogType.WebEPG, "WebEPG: TimeZone Not valid");
           _SiteTimeZone = null;
         }
       }
@@ -178,7 +178,7 @@ namespace MediaPortal.EPG
           listingTemplate = _xmlreader.GetValueAsString("Listing", "Template", "");
           if (listingTemplate == "")
           {
-            _log.Error("WebEPG: {0}: No Template", File);
+            _log.Error(LogType.WebEPG, "WebEPG: {0}: No Template", File);
             return false;
           }
           _templateProfile = new DataProfiler(listingTemplate, strDataDelimitor[0], strListingDelimitor[0]);
@@ -188,7 +188,7 @@ namespace MediaPortal.EPG
           _siteGuideDays = _xmlreader.GetValueAsInt("Info", "GuideDays", 0);
           if (_siteGuideDays < _maxGrabDays)
           {
-            _log.Warn("WebEPG: GrabDays {0} more than GuideDays {0}, limiting grab days", _siteGuideDays, _maxGrabDays);
+            _log.Warn(LogType.WebEPG, "WebEPG: GrabDays {0} more than GuideDays {0}, limiting grab days", _siteGuideDays, _maxGrabDays);
             _maxGrabDays = _siteGuideDays;
           }
           string strGuideStart = _xmlreader.GetValueAsString("Listing", "Start", "<body");
@@ -199,7 +199,7 @@ namespace MediaPortal.EPG
           listingTemplate = _xmlreader.GetValueAsString("Listing", "Template", "");
           if (listingTemplate == "")
           {
-            _log.Error("WebEPG: {0}: No Template", File);
+            _log.Error(LogType.WebEPG, "WebEPG: {0}: No Template", File);
             return false;
           }
           //_templateProfile = new HTMLProfiler(listingTemplate, bAhrefs, strGuideStart, strGuideEnd);
@@ -231,7 +231,7 @@ namespace MediaPortal.EPG
             string sublistingTemplate = _xmlreader.GetValueAsString("SubListing", "Template", "");
             if (sublistingTemplate == "")
             {
-              _log.Error("WebEPG: {0}: No SubTemplate", File);
+              _log.Error(LogType.WebEPG, "WebEPG: {0}: No SubTemplate", File);
               _SubListingLink = "";
             }
             else
@@ -449,7 +449,7 @@ namespace MediaPortal.EPG
       }
       catch
       {
-        _log.Error("WebEPG: DateTime Error Program: {0}", guideData.Title);
+        _log.Error(LogType.WebEPG, "WebEPG: DateTime Error Program: {0}", guideData.Title);
         return false; // DateTime error
       }
       if (_bNextDay)
@@ -486,7 +486,7 @@ namespace MediaPortal.EPG
         guideData.EndTime.Year = dtEnd.Year;
       }
 
-      _log.Debug("WebEPG: Guide, Program Debug: [{0} {1}]", _GrabDay, _bNextDay);
+      _log.Debug(LogType.WebEPG, "WebEPG: Guide, Program Debug: [{0} {1}]", _GrabDay, _bNextDay);
 
       return true;
     }
@@ -499,11 +499,11 @@ namespace MediaPortal.EPG
       // Check TimeZone
       if (_SiteTimeZone != null && !_SiteTimeZone.IsLocalTimeZone())
       {
-        _log.Debug("WebEPG: TimeZone, Adjusting from start Guide Time: {0} {1}", dtStart.ToShortTimeString(), dtStart.ToShortDateString());
+        _log.Debug(LogType.WebEPG, "WebEPG: TimeZone, Adjusting from start Guide Time: {0} {1}", dtStart.ToShortTimeString(), dtStart.ToShortDateString());
         dtStart = _SiteTimeZone.ToLocalTime(dtStart);
         //if (_timeAdjustOnly)
         //  dtStart = new DateTime(guideData.StartTime.Year, guideData.StartTime.Month, guideData.StartTime.Day, dtStart.Hour, dtStart.Minute, 0);
-        _log.Debug("WebEPG: TimeZone, Adjusting to   start Local Time: {0} {1}", dtStart.ToShortTimeString(), dtStart.ToShortDateString());
+        _log.Debug(LogType.WebEPG, "WebEPG: TimeZone, Adjusting to   start Local Time: {0} {1}", dtStart.ToShortTimeString(), dtStart.ToShortDateString());
       }
 
       program.Start = GetLongDateTime(dtStart);
@@ -516,20 +516,20 @@ namespace MediaPortal.EPG
         // Check TimeZone
         if (_SiteTimeZone != null && !_SiteTimeZone.IsLocalTimeZone())
         {
-          _log.Debug("WebEPG: TimeZone, Adjusting from end Guide Time: {0} {1}", dtEnd.ToShortTimeString(), dtEnd.ToShortDateString());
+          _log.Debug(LogType.WebEPG, "WebEPG: TimeZone, Adjusting from end Guide Time: {0} {1}", dtEnd.ToShortTimeString(), dtEnd.ToShortDateString());
           dtEnd = _SiteTimeZone.ToLocalTime(dtEnd);
           //if (_timeAdjustOnly)
           //  dtEnd = new DateTime(guideData.EndTime.Year, guideData.EndTime.Month, guideData.EndTime.Day, dtEnd.Hour, dtEnd.Minute, 0, 0);
-          _log.Debug("WebEPG: TimeZone, Adjusting to   end Local Time: {0} {1}", dtEnd.ToShortTimeString(), dtEnd.ToShortDateString());
+          _log.Debug(LogType.WebEPG, "WebEPG: TimeZone, Adjusting to   end Local Time: {0} {1}", dtEnd.ToShortTimeString(), dtEnd.ToShortDateString());
         }
 
         program.End = GetLongDateTime(dtEnd);
 
-        _log.Info("WebEPG: Guide, Program Info: {0} / {1} - {2}", program.Start, program.End, guideData.Title);
+        _log.Info(LogType.WebEPG, "WebEPG: Guide, Program Info: {0} / {1} - {2}", program.Start, program.End, guideData.Title);
       }
       else
       {
-        _log.Info("WebEPG: Guide, Program Info: {0} - {1}", program.Start, guideData.Title);
+        _log.Info(LogType.WebEPG, "WebEPG: Guide, Program Info: {0} - {1}", program.Start, guideData.Title);
       }
     }
 
@@ -561,12 +561,12 @@ namespace MediaPortal.EPG
       if (guideData.IsProgram(_removeProgramsList))
         return null;
 
-      _log.Debug("WebEPG: Guide, Program title: {0}", guideData.Title);
-      _log.Debug("WebEPG: Guide, Program start: {0}:{1} - {2}/{3}/{4}", guideData.StartTime.Hour, guideData.StartTime.Minute, guideData.StartTime.Day, guideData.StartTime.Month, guideData.StartTime.Year);
+      _log.Debug(LogType.WebEPG, "WebEPG: Guide, Program title: {0}", guideData.Title);
+      _log.Debug(LogType.WebEPG, "WebEPG: Guide, Program start: {0}:{1} - {2}/{3}/{4}", guideData.StartTime.Hour, guideData.StartTime.Minute, guideData.StartTime.Day, guideData.StartTime.Month, guideData.StartTime.Year);
       if (guideData.EndTime != null)
-        _log.Debug("WebEPG: Guide, Program end  : {0}:{1} - {2}/{3}/{4}", guideData.EndTime.Hour, guideData.EndTime.Minute, guideData.EndTime.Day, guideData.EndTime.Month, guideData.EndTime.Year);
-      _log.Debug("WebEPG: Guide, Program desc.: {0}", guideData.Description);
-      _log.Debug("WebEPG: Guide, Program genre: {0}", guideData.Genre);
+        _log.Debug(LogType.WebEPG, "WebEPG: Guide, Program end  : {0}:{1} - {2}/{3}/{4}", guideData.EndTime.Hour, guideData.EndTime.Minute, guideData.EndTime.Day, guideData.EndTime.Month, guideData.EndTime.Year);
+      _log.Debug(LogType.WebEPG, "WebEPG: Guide, Program desc.: {0}", guideData.Description);
+      _log.Debug(LogType.WebEPG, "WebEPG: Guide, Program genre: {0}", guideData.Genre);
 
       program.Channel = _strID;
       program.Title = guideData.Title;
@@ -587,7 +587,7 @@ namespace MediaPortal.EPG
         TVProgram dbProg = dbProgram(program.Title, program.Start);
         if (dbProg != null)
         {
-          _log.Info("WebEPG: Program in db copying it");
+          _log.Info(LogType.WebEPG, "WebEPG: Program in db copying it");
           dbProg.Channel = _strID;
           return dbProg;
         }
@@ -614,18 +614,18 @@ namespace MediaPortal.EPG
 
         if (htmlProf.GetHyperLink(index, _SubListingLink, ref sublinkRequest))
         {
-          _log.Info("WebEPG: Reading {0}", sublinkRequest.ToString());
+          _log.Info(LogType.WebEPG, "WebEPG: Reading {0}", sublinkRequest.ToString());
           Thread.Sleep(_grabDelay);
           Profiler SubProfile = _templateSubProfile.GetPageProfiler(sublinkRequest);
           int Count = 0;
           if (SubProfile != null)
             Count = SubProfile.subProfileCount();
           else
-            _log.Error("Linked page error");
+            _log.Error(LogType.WebEPG, "Linked page error");
 
           if (Count > 0)
           {
-            _log.Debug("Count {0}", Count);
+            _log.Debug(LogType.WebEPG, "Count {0}", Count);
             ProgramData SubData = new ProgramData();
             ParserData refdata = (ParserData)SubData;
             SubProfile.GetParserData(0, ref refdata);
@@ -636,19 +636,19 @@ namespace MediaPortal.EPG
             //if (program.EndTime == null && SubData.EndTime != null)
             //{
             //  program.EndTime = SubData.EndTime;
-            //  _log.Info(false, "[Debug] WebEPG: Guide, Program end  : {0}:{1} - {2}/{3}/{4}", SubData.EndTime.Hour, guideData.EndTime.Minute, SubData.EndTime.Day, SubData.EndTime.Month, guideData.EndTime.Year);
+            //  _log.Info(LogType.WebEPG, false, "[Debug] WebEPG: Guide, Program end  : {0}:{1} - {2}/{3}/{4}", SubData.EndTime.Hour, guideData.EndTime.Minute, SubData.EndTime.Day, SubData.EndTime.Month, guideData.EndTime.Year);
             //}
 
             if (SubData.Description != "")
             {
               program.Description = SubData.Description;
-              _log.Debug("WebEPG: Guide, Program desc.: {0}", program.Description);
+              _log.Debug(LogType.WebEPG, "WebEPG: Guide, Program desc.: {0}", program.Description);
             }
 
             if (SubData.Genre != "")
             {
               program.Genre = getGenre(SubData.Genre);
-              _log.Debug("WebEPG: Guide, Program genre: {0}", program.Genre);
+              _log.Debug(LogType.WebEPG, "WebEPG: Guide, Program genre: {0}", program.Genre);
             }
 
             if (SubData.SubTitle != "")
@@ -656,7 +656,7 @@ namespace MediaPortal.EPG
           }
           else
           {
-            _log.Warn("No information found on linked page");
+            _log.Warn(LogType.WebEPG, "No information found on linked page");
           }
         }
 
@@ -675,7 +675,7 @@ namespace MediaPortal.EPG
       request.ReplaceTag("[LIST_OFFSET]", (offset * _maxListingCount).ToString());
       request.ReplaceTag("[PAGE_OFFSET]", (offset + _pageStart).ToString());
 
-      _log.Info("WebEPG: Reading {0}", request.ToString());
+      _log.Info(LogType.WebEPG, "WebEPG: Reading {0}", request.ToString());
 
       if (_templateProfile is XMLProfiler)
       {
@@ -690,19 +690,19 @@ namespace MediaPortal.EPG
       {
         if (_maxListingCount == 0 || (_maxListingCount != 0 && offset == 0))
         {
-          _log.Info("WebEPG: No Listings Found");
+          _log.Info(LogType.WebEPG, "WebEPG: No Listings Found");
           _GrabDay++;
           error = true;
         }
         else
         {
-          _log.Info("WebEPG: Listing Count 0");
+          _log.Info(LogType.WebEPG, "WebEPG: Listing Count 0");
         }
         //_GrabDay++;
       }
       else
       {
-        _log.Info("WebEPG: Listing Count {0}", listingCount);
+        _log.Info(LogType.WebEPG, "WebEPG: Listing Count {0}", listingCount);
 
         if (listingCount == _maxListingCount) // || _pageStart + offset < _pageEnd)
           bMore = true;
@@ -753,7 +753,7 @@ namespace MediaPortal.EPG
 
       if (searchID == "")
       {
-        _log.Info("WebEPG: ChannelId: {0} not found!", strChannelID);
+        _log.Info(LogType.WebEPG, "WebEPG: ChannelId: {0} not found!", strChannelID);
         return null;
       }
 
@@ -763,24 +763,24 @@ namespace MediaPortal.EPG
       channelRequest.ReplaceTag("[ID]", searchID);
       HTTPRequest pageRequest;
 
-      _log.Info("WebEPG: ChannelId: {0}", strChannelID);
+      _log.Info(LogType.WebEPG, "WebEPG: ChannelId: {0}", strChannelID);
 
       _GrabDay = 0;
       _StartGrab = startDateTime;
-      _log.Debug("WebEPG: Grab Start {0} {1}", _StartGrab.ToShortTimeString(), _StartGrab.ToShortDateString());
+      _log.Debug(LogType.WebEPG, "WebEPG: Grab Start {0} {1}", _StartGrab.ToShortTimeString(), _StartGrab.ToShortDateString());
       int requestedStartDay = startDateTime.Subtract(DateTime.Now).Days;
       if (requestedStartDay > 0)
       {
         if (requestedStartDay > _siteGuideDays)
         {
-          _log.Error("WebEPG: Trying to grab pass guide days");
+          _log.Error(LogType.WebEPG, "WebEPG: Trying to grab pass guide days");
           return null;
         }
 
         if (requestedStartDay + _maxGrabDays > _siteGuideDays)
         {
           _maxGrabDays = _siteGuideDays - requestedStartDay;
-          _log.Warn("WebEPG: Grab days more than Guide days, limiting to {0}", _maxGrabDays);
+          _log.Warn(LogType.WebEPG, "WebEPG: Grab days more than Guide days, limiting to {0}", _maxGrabDays);
         }
 
         _GrabDay = requestedStartDay;
@@ -808,7 +808,7 @@ namespace MediaPortal.EPG
       }
       catch (Exception)
       {
-        _log.Error("WebEPG: Database failed, disabling db lookup");
+        _log.Error(LogType.WebEPG, "WebEPG: Database failed, disabling db lookup");
         _dblookup = false;
       }
 
@@ -846,7 +846,7 @@ namespace MediaPortal.EPG
         }
         if (error)
         {
-          _log.Error("WebEPG: ChannelId: {0} grabber error", strChannelID);
+          _log.Error(LogType.WebEPG, "WebEPG: ChannelId: {0} grabber error", strChannelID);
           break;
         }
         //_GrabDay++;

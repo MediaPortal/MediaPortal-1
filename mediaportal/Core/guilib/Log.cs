@@ -343,7 +343,7 @@ namespace MediaPortal.GUI.Library
                         fname = "MusicshareWatcher.log";
                         break;
                     case LogType.WebEPG:
-                        fname = "webEPG.log";
+                        fname = "WebEPG.log";
                         break;
                 }
                 return Config.GetFile(Config.Dir.Log,fname);
@@ -422,7 +422,7 @@ namespace MediaPortal.GUI.Library
 
                 //
                 if (type != LogType.Log && type != LogType.Error && type != LogType.EPG &&
-                    type != LogType.MusicShareWatcher)
+                    type != LogType.MusicShareWatcher && type != LogType.WebEPG)
                 {
                     WriteFile(LogType.Log, format, arg);
                 }

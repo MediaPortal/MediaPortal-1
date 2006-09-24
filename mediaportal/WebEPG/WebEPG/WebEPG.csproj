@@ -157,6 +157,7 @@
     <Compile Include="Utils\XMLTVExport.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="WebEPG.cs" />
     <Compile Include="WebListingGrabber.cs">
       <SubType>Code</SubType>
     </Compile>

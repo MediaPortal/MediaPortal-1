@@ -135,9 +135,6 @@
     <Compile Include="WebEPG-xmltv.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="WebEPG.cs">
-      <SubType>Code</SubType>
-    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
