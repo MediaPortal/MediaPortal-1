@@ -1283,7 +1283,7 @@ namespace MediaPortal.TV.Recording
       int cbandMHZ = 0;
       int circularMHZ = 0;
 
-      string filename = String.Format(Config.Get(Config.Dir.Database) + "card_{0}.xml", _card.FriendlyName);
+      string filename = Config.GetFile(Config.Dir.Database, String.Format("card_{0}.xml", _card.FriendlyName));
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename))
       {
         lnb0MHZ = xmlreader.GetValueAsInt("dvbs", "LNB0", 9750);
@@ -1357,7 +1357,7 @@ namespace MediaPortal.TV.Recording
     protected override void SetupDiseqc(int disNo)
     {
       if (_currentTuningObject == null) return;
-      string filename = String.Format(Config.Get(Config.Dir.Database) + "card_{0}.xml", _card.FriendlyName);
+      string filename = Config.GetFile(Config.Dir.Database, String.Format("card_{0}.xml", _card.FriendlyName));
 
       int lnbKhz = 0;
       int lnbKhzVal = 0;

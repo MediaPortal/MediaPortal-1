@@ -90,7 +90,7 @@ namespace MediaPortal.TV.Scanning
     }
     void GetNumberOfDiseqcs(TVCaptureDevice card)
     {
-      string filename = String.Format(Config.Get(Config.Dir.Database) + "card_{0}.xml", card.FriendlyName);
+      string filename = Config.GetFile(Config.Dir.Database, String.Format("card_{0}.xml", card.FriendlyName));
       //
       // load card settings to check diseqc
       _diseqcLoops = 1;

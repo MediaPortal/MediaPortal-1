@@ -1725,7 +1725,7 @@ namespace MediaPortal.TV.Recording
     {
       try
       {
-        string filename = String.Format(Config.Get(Config.Dir.Database) + "card_{0}.xml", _friendlyName);
+        string filename = Config.GetFile(Config.Dir.Database, String.Format("card_{0}.xml", _friendlyName));
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename))
         {
           int contrast = xmlreader.GetValueAsInt("tv", "contrast", -1);
@@ -1748,7 +1748,7 @@ namespace MediaPortal.TV.Recording
       if (_friendlyName != null && _friendlyName != String.Empty)
       {
 
-        string filename = String.Format(Config.Get(Config.Dir.Database) + @"card_{0}.xml", _friendlyName);
+        string filename = Config.GetFile(Config.Dir.Database, String.Format(@"card_{0}.xml", _friendlyName));
         using (MediaPortal.Profile.Settings xmlWriter = new MediaPortal.Profile.Settings(filename))
         {
           xmlWriter.SetValue("tv", "contrast", GUIGraphicsContext.Contrast);
@@ -1767,7 +1767,7 @@ namespace MediaPortal.TV.Recording
     {
       try
       {
-        string filename = String.Format(Config.Get(Config.Dir.Database) + "card_{0}.xml", _friendlyName);
+        string filename = Config.GetFile(Config.Dir.Database, String.Format("card_{0}.xml", _friendlyName));
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename))
         {
           _cropSettings = new CropSettings(
@@ -1789,7 +1789,7 @@ namespace MediaPortal.TV.Recording
     {
       if (_friendlyName != null && _friendlyName != String.Empty)
       {
-        string filename = String.Format(Config.Get(Config.Dir.Database) + @"card_{0}.xml", _friendlyName);
+        string filename = Config.GetFile(Config.Dir.Database, String.Format(@"card_{0}.xml", _friendlyName));
         using (MediaPortal.Profile.Settings xmlWriter = new MediaPortal.Profile.Settings(filename))
         {
           xmlWriter.SetValue("tv", "croptop", _cropSettings.Top);

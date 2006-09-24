@@ -727,7 +727,7 @@ namespace MediaPortal.TV.Recording
       _mpeg2DemuxHelper.StartViewing(GUIGraphicsContext.ActiveForm, _vmr9);
 
       DirectShowUtil.EnableDeInterlace(_graphBuilderInterface);
-      using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml") )
+      using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "normal");
         if ( strValue.Equals("zoom") )
@@ -897,7 +897,7 @@ namespace MediaPortal.TV.Recording
       string strAudioRenderer = "";
       int intFilters = 0;
       string strFilters = "";
-      using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml") )
+      using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
           int intCount = 0;
           while (xmlreader.GetValueAsString("mytv", "filter" + intCount.ToString(), "undefined") != "undefined")
@@ -1468,7 +1468,7 @@ namespace MediaPortal.TV.Recording
     {
       if ( _videoCaptureHelper == null )
         return;
-      string filename = String.Format(Config.Get(Config.Dir.Database) + "card_{0}.xml", _card.FriendlyName);
+      string filename = Config.GetFile(Config.Dir.Database, String.Format("card_{0}.xml", _card.FriendlyName));
       using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename) )
       {
         string frameRate = xmlreader.GetValueAsString("analog", "framerate", "25 fps (PAL/SECAM)");
@@ -1502,7 +1502,7 @@ namespace MediaPortal.TV.Recording
     }
     protected void SetQuality( int Quality )
     {
-      string filename = String.Format(Config.Get(Config.Dir.Database) + "card_{0}.xml", _card.FriendlyName);
+      string filename = Config.GetFile(Config.Dir.Database, String.Format("card_{0}.xml", _card.FriendlyName));
       using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename) )
       {
         bool enabled = xmlreader.GetValueAsBool("quality", "enabled", false);

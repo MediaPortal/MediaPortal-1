@@ -275,7 +275,7 @@ namespace TVCapture
 
 
       XmlDocument doc = new XmlDocument();
-      if (!System.IO.File.Exists(Config.Get(Config.Dir.Config) + "CaptureCardDefinitions.xml"))
+      if (!System.IO.File.Exists(Config.GetFile(Config.Dir.Config, "CaptureCardDefinitions.xml")))
       {
         Log.Info(" Error: CaptureCardDefinitions.xml file not found!");
         Log.Info("CaptureCardDefinitions:ctor OUT");
@@ -284,7 +284,7 @@ namespace TVCapture
 
       try
       {
-        doc.Load(Config.Get(Config.Dir.Config) + "CaptureCardDefinitions.xml");
+        doc.Load(Config.GetFile(Config.Dir.Config, "CaptureCardDefinitions.xml"));
       }
       catch (Exception ex)
       {
