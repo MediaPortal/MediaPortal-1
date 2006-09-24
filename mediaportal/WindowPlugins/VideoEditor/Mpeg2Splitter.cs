@@ -68,12 +68,14 @@ namespace Mpeg2SplitterPackage
     const int NR_OF_SPILTER_TIME_STAMPS = 40;
     SPLITTER_TIME_STAMP[] tSplitterTime = new SPLITTER_TIME_STAMP[NR_OF_SPILTER_TIME_STAMPS];
     SPLITTER_TIME_STAMP tStamp;
+    SPLITTER_TIME_STAMP tPreviousStamp;
     FileStream fsIn;
     FileStream fsOut;
     //StreamWriter swLog;
     BinaryReader bwIn;
     BinaryWriter bwOut;
     Int64 iSourceBitAddress;
+    long lFileSizeSaved;
 
     const int FIFO_SIZE = 1024 * 1024 * 20;
 
@@ -87,7 +89,7 @@ namespace Mpeg2SplitterPackage
     const int RIPPER_TIME_STAMP_MODE_1 = 1;  // to mili 
     const int RIPPER_TIME_STAMP_MODE_2 = 2;  // to 33 bit time stamp
 
-    bool bLogEnabled = false;
+    bool bLogEnabled = true;
 
 		System.Timers.Timer progressTime;
 		public delegate void Finished();
@@ -105,12 +107,14 @@ namespace Mpeg2SplitterPackage
 
 		void progressTime_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
-			int progress = 0;
+			//int progress = 0;
 			//if (recCompcut != null)
 			//	recCompcut.GetCurrentLength(out progress);
 			//percent = System.Convert.ToInt32((progress * 100) / newDuration);
 			// progressBar.Percentage = percent;
 			//progressLbl.Label = percent.ToString();
+      percent = (int)((fsIn.Length - lFileSizeSaved) * 100 / fsIn.Length);
+            Logging("percent:"+percent.ToString());
 			if (OnProgress != null)
 				OnProgress(percent);
 		}
@@ -152,6 +156,7 @@ namespace Mpeg2SplitterPackage
 
     void CloseInOutFile()
     {
+			progressTime.Stop();
       fsIn.Close();
       bwIn.Close();
       fsOut.Close();
@@ -368,7 +373,6 @@ namespace Mpeg2SplitterPackage
     }
     bool SplitProgramStreamCut()
     {
-      long lFileSizeSaved;
       int iLeftBufferSize;
       Int64 x = 0;
       int c_times = 0;
@@ -378,12 +382,10 @@ namespace Mpeg2SplitterPackage
 
       Logging("Start SplitProgramStreamCut");
 
+      progressTime.Start();
       lFileSizeSaved = fsIn.Length;
       iLeftBufferSize = (int)Math.Min(lFileSizeSaved, FIFO_SIZE);
       Logging("step 0 " + iLeftBufferSize);
-      //ER	        if (_read(InFileHnd , ptBuffers , iLeftBufferSize) != iLeftBufferSize) { 
-      //ER		         return ERROR_READING_FROM_INPUT_FILE; 
-      //ER	        }
       if (bwIn.Read(ptBuffers, 0, iLeftBufferSize) != iLeftBufferSize) return false; //ERROR_READING_FROM_INPUT_FILE
 
       lFileSizeSaved = lFileSizeSaved - iLeftBufferSize;
@@ -391,13 +393,11 @@ namespace Mpeg2SplitterPackage
       /* Also get the first time stamp to see what is the zero time */
       GetTimeStamp(iReadCounter, c_times, ref tStamp);
       AdjustTimeStampOffset(c_times, ref tStamp);
+      tPreviousStamp = tStamp;
       iReadCounter += 14; // 14 - 4 bytes of the first pack header minus the pack header start code 
       iLeftBufferSize -= 14;
       if (!CompareTimeStampStartPoint(c_times, ref tStamp))
       {
-        //ER		        if (_write(OutFileHnd , ptBuffers + iWriteCounter , iReadCounter) != iReadCounter) { 
-        //ER			         return ERROR_WRITEING_TO_OUTPUT_FILE; 
-        //ER		        }
         fsOut.Write(ptBuffers, (int)iWriteCounter, (int)(iReadCounter - iWriteCounter));
         iWriteCounter = iReadCounter;
       }
@@ -430,7 +430,11 @@ namespace Mpeg2SplitterPackage
           }
           iReadCounter += 14;
           iLeftBufferSize -= 14;
-          Logging("TimeA " + tStamp.s_min + " " + tStamp.s_sec);
+          if ((tStamp.s_min != tPreviousStamp.s_min) || (tStamp.s_sec != tPreviousStamp.s_sec))
+          {
+            Logging("TimeA " + tStamp.s_min + " " + tStamp.s_sec);
+          }
+          tPreviousStamp = tStamp;
         }
         //ER               else if (x == 0x000001B9) // it terminates the Program Stream
         //ER               {
@@ -444,9 +448,6 @@ namespace Mpeg2SplitterPackage
         if (iLeftBufferSize == 0)
         {
           iLeftBufferSize = (int)Math.Min(lFileSizeSaved, FIFO_SIZE);
-          //ER			        if (_read(InFileHnd , ptBuffers , iLeftBufferSize) != iLeftBufferSize) { 
-          //ER				         return ERROR_READING_FROM_INPUT_FILE; 
-          //ER			        }
           if (bwIn.Read(ptBuffers, 0, iLeftBufferSize) != iLeftBufferSize)
           {
             return false; //ERROR_READING_FROM_INPUT_FILE
@@ -459,9 +460,6 @@ namespace Mpeg2SplitterPackage
       if (iLeftBufferSize == 0)
       {
         iLeftBufferSize = (int)Math.Min(lFileSizeSaved, FIFO_SIZE);
-        //ER			        if (_read(InFileHnd , ptBuffers , iLeftBufferSize) != iLeftBufferSize) { 
-        //ER				         return ERROR_READING_FROM_INPUT_FILE; 
-        //ER			        }
         if (bwIn.Read(ptBuffers, 0, iLeftBufferSize) != iLeftBufferSize) return false; //ERROR_READING_FROM_INPUT_FILE
         Logging("Read-buffer length " + FIFO_SIZE + " size left " + iLeftBufferSize + " @ Time " + tStamp.s_min + " " + tStamp.s_sec);
         lFileSizeSaved -= iLeftBufferSize;
@@ -485,7 +483,11 @@ namespace Mpeg2SplitterPackage
           GetTimeStamp(iReadCounter, c_times, ref tStamp);
           iReadCounter += 14;
           iLeftBufferSize -= 14;
-          Logging("TimeB " + tStamp.s_min + " " + tStamp.s_sec);
+          if ((tStamp.s_min != tPreviousStamp.s_min) || (tStamp.s_sec != tPreviousStamp.s_sec))
+          {
+              Logging("TimeB " + tStamp.s_min + " " + tStamp.s_sec);
+          }
+          tPreviousStamp = tStamp;
         }
         //ER                else if (x == 0x000001B9) // it terminates the Program Stream
         //ER                { 
@@ -500,9 +502,6 @@ namespace Mpeg2SplitterPackage
         if (iLeftBufferSize == 0)
         {
           iLeftBufferSize = (int)Math.Min(lFileSizeSaved, FIFO_SIZE);
-          //ER			        if (_read(InFileHnd , ptBuffers , iLeftBufferSize) != iLeftBufferSize) { 
-          //ER				         return ERROR_READING_FROM_INPUT_FILE; 
-          //ER			        }
           if (bwIn.Read(ptBuffers, 0, iLeftBufferSize) != iLeftBufferSize) return false; //ERROR_READING_FROM_INPUT_FILE
           lFileSizeSaved -= iLeftBufferSize;
           iWriteCounter = iReadCounter = 0;
@@ -512,12 +511,8 @@ namespace Mpeg2SplitterPackage
       c_times++;
       if (c_times < iPointCounter)
       {
-
         /* write the pack header */
         iWriteCounter -= 14;
-        //ER		        if (_write(OutFileHnd , ptBuffers + iWriteCounter , 14) != 14) { 
-        //ER			        return ERROR_WRITEING_TO_OUTPUT_FILE; 
-        //ER		        }
         fsOut.Write(ptBuffers, (int)iWriteCounter, 14);
         iWriteCounter = iReadCounter;
         goto cut_more;
@@ -527,42 +522,29 @@ namespace Mpeg2SplitterPackage
       iLeftBufferSize += 14;
       /* else copy the entire file to output */
       /* start with the last header */
-      //ER	        if (_write(OutFileHnd , ptBuffers + iReadCounter, 14) != 14) { 
-      //ER		         return ERROR_WRITEING_TO_OUTPUT_FILE; 
-      //ER	        }
       fsOut.Write(ptBuffers, (int)iReadCounter, 14);
       iReadCounter += 14;
       iLeftBufferSize -= 14;
-      //ER	        if (_write(OutFileHnd , ptBuffers + iReadCounter , iLeftBufferSize) != iLeftBufferSize) { 
-      //ER		         return ERROR_WRITEING_TO_OUTPUT_FILE; 
-      //ER	        }
       fsOut.Write(ptBuffers, (int)iReadCounter, iLeftBufferSize);
       Logging("test1");
       while (lFileSizeSaved != 0)
       {
         iLeftBufferSize = (int)Math.Min(lFileSizeSaved, FIFO_SIZE);
         lFileSizeSaved -= iLeftBufferSize;
-        //ER		        if (_read(InFileHnd , ptBuffers , iLeftBufferSize) != iLeftBufferSize) { 
-        //ER			        return ERROR_READING_FROM_INPUT_FILE; 
-        //ER		        }
         if (bwIn.Read(ptBuffers, 0, iLeftBufferSize) != iLeftBufferSize) return false; //ERROR_READING_FROM_INPUT_FILE
-        //ER	           if (_write(OutFileHnd , ptBuffers , iLeftBufferSize) != iLeftBufferSize) { 
-        //ER		            return ERROR_WRITEING_TO_OUTPUT_FILE; 
-        //ER		        }
         fsOut.Write(ptBuffers, 0, iLeftBufferSize);
       }
 
-			progressTime.Stop();
-			percent = 100;
+	  progressTime.Stop();
+	  percent = 100;
 
-			if (OnFinished != null)
-				OnFinished();
+	  if (OnFinished != null)
+		  OnFinished();
 
       return true;
     }
     bool SplitProgramStreamTrim()
     {
-      long lFileSizeSaved;
       int iLeftBufferSize;
       Int64 x = 0;
       int c_times = 0;
@@ -570,12 +552,10 @@ namespace Mpeg2SplitterPackage
       Int64 iWriteCounter = 0;
       bool bCheckOffset = true;
 
+      progressTime.Start();
       lFileSizeSaved = fsIn.Length;
       iLeftBufferSize = (int)Math.Min(lFileSizeSaved, FIFO_SIZE);
 
-      //ER	        if (_read(InFileHnd , ptBuffers , iLeftBufferSize) != iLeftBufferSize) { 
-      //ER		         return ERROR_READING_FROM_INPUT_FILE; 
-      //ER	        }
       if (bwIn.Read(ptBuffers, 0, iLeftBufferSize) != iLeftBufferSize) return false; //ERROR_READING_FROM_INPUT_FILE
 
       lFileSizeSaved = lFileSizeSaved - iLeftBufferSize;
@@ -583,13 +563,11 @@ namespace Mpeg2SplitterPackage
       /* Also get the first time stamp to see what is the zero time */
       GetTimeStamp(iReadCounter, c_times, ref tStamp);
       AdjustTimeStampOffset(c_times, ref tStamp);
+      tPreviousStamp = tStamp;
       iReadCounter += 14; // 14 - 4 bytes of the first pack header minus the pack header start code 
       iLeftBufferSize -= 14;
       if (CompareTimeStampStartPoint(c_times, ref tStamp))
       {
-        //ER		        if (_write(OutFileHnd , ptBuffers + iWriteCounter , iReadCounter) != iReadCounter) { 
-        //ER			         return ERROR_WRITEING_TO_OUTPUT_FILE; 
-        //ER		        }
         fsOut.Write(ptBuffers, (int)iWriteCounter, (int)(iReadCounter - iWriteCounter));
         iWriteCounter = iReadCounter;
       }
@@ -608,9 +586,6 @@ namespace Mpeg2SplitterPackage
         }
         if (x == 0x000001BA)
         {
-          //ER		           if (_write(OutFileHnd , ptBuffers + iWriteCounter , iReadCounter - iWriteCounter) != (iReadCounter - iWriteCounter)) { 
-          //ER			            return ERROR_WRITEING_TO_OUTPUT_FILE; 
-          //ER			        }
           //                    fsOut.Write(ptBuffers, (int)iWriteCounter, (int)(iReadCounter - iWriteCounter));
           //                    iWriteCounter = iReadCounter;
           GetTimeStamp(iReadCounter, c_times, ref tStamp);
@@ -621,8 +596,12 @@ namespace Mpeg2SplitterPackage
           }
           iReadCounter += 14;
           iLeftBufferSize -= 14;
-          Logging("TimeA " + tStamp.s_min + " " + tStamp.s_sec);
-        }
+          if ((tStamp.s_min != tPreviousStamp.s_min) || (tStamp.s_sec != tPreviousStamp.s_sec))
+          {
+              Logging("TimeA " + tStamp.s_min + " " + tStamp.s_sec);
+          }
+          tPreviousStamp = tStamp;
+      }
         //Temp disabled due to my test mpeg file, it contains somewhere in the stream this code (0x000001B9)
         //ER               else if (x == 0x000001B9) // it terminates the Program Stream
         //ER               {
@@ -636,9 +615,6 @@ namespace Mpeg2SplitterPackage
         if (iLeftBufferSize == 0)
         {
           iLeftBufferSize = (int)Math.Min(lFileSizeSaved, FIFO_SIZE);
-          //ER			        if (_read(InFileHnd , ptBuffers , iLeftBufferSize) != iLeftBufferSize) { 
-          //ER				         return ERROR_READING_FROM_INPUT_FILE; 
-          //ER			        }
           if (bwIn.Read(ptBuffers, 0, iLeftBufferSize) != iLeftBufferSize)
           {
             return false; //ERROR_READING_FROM_INPUT_FILE
@@ -651,9 +627,6 @@ namespace Mpeg2SplitterPackage
       if (iLeftBufferSize == 0)
       {
         iLeftBufferSize = (int)Math.Min(lFileSizeSaved, FIFO_SIZE);
-        //ER			        if (_read(InFileHnd , ptBuffers , iLeftBufferSize) != iLeftBufferSize) { 
-        //ER				         return ERROR_READING_FROM_INPUT_FILE; 
-        //ER			        }
         if (bwIn.Read(ptBuffers, 0, iLeftBufferSize) != iLeftBufferSize) return false; //ERROR_READING_FROM_INPUT_FILE
         Logging("Read-buffer length " + FIFO_SIZE + " size left " + iLeftBufferSize + " @ Time " + tStamp.s_min + " " + tStamp.s_sec);
         lFileSizeSaved -= iLeftBufferSize;
@@ -679,8 +652,12 @@ namespace Mpeg2SplitterPackage
           GetTimeStamp(iReadCounter, c_times, ref tStamp);
           iReadCounter += 14;
           iLeftBufferSize -= 14;
-          Logging("TimeB " + tStamp.s_min + " " + tStamp.s_sec);
-        }
+          if ((tStamp.s_min != tPreviousStamp.s_min) || (tStamp.s_sec != tPreviousStamp.s_sec))
+          {
+              Logging("TimeB " + tStamp.s_min + " " + tStamp.s_sec);
+          }
+          tPreviousStamp = tStamp;
+      }
         //ER                else if (x == 0x000001B9) // it terminates the Program Stream
         //ER                {
         //ER                    return true;
@@ -694,9 +671,6 @@ namespace Mpeg2SplitterPackage
         if (iLeftBufferSize == 0)
         {
           iLeftBufferSize = (int)Math.Min(lFileSizeSaved, FIFO_SIZE);
-          //ER			        if (_read(InFileHnd , ptBuffers , iLeftBufferSize) != iLeftBufferSize) { 
-          //ER				         return ERROR_READING_FROM_INPUT_FILE; 
-          //ER			        }
           if (bwIn.Read(ptBuffers, 0, iLeftBufferSize) != iLeftBufferSize) return false; //ERROR_READING_FROM_INPUT_FILE
           lFileSizeSaved -= iLeftBufferSize;
           iWriteCounter = iReadCounter = 0;

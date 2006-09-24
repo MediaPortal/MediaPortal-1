@@ -103,7 +103,7 @@ namespace WindowPlugins.VideoEditor
     FileInfo outFilename;
     FileTypes cutType;
     Thread cutThread;
-    IStreamBufferRecComp recCompcut = null;
+    //IStreamBufferRecComp recCompcut = null;
     System.Timers.Timer cutProgressTime;
     bool cutFinished = false;
     List<TimeDomain> cutPointsList;
@@ -648,6 +648,9 @@ namespace WindowPlugins.VideoEditor
       string newInFilename = inFilename.FullName.Remove(tmp) + "_original" + inFilename.Extension;
       inFilename.MoveTo(newInFilename);
       Mpeg2Splitter cMpeg2Splitter = new Mpeg2Splitter();
+      cMpeg2Splitter.OnProgress += new Mpeg2Splitter.Progress(dvrMod_OnProgress);
+      cMpeg2Splitter.OnFinished += new Mpeg2Splitter.Finished(dvrMod_OnFinished);
+
       //CutProgressTime();
       if (eMode == EMode.E_CUT)
       {
