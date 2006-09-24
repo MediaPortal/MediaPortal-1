@@ -87,9 +87,9 @@ namespace MediaPortal.GUI.Library
 		protected int _animationTimeMin     = 100;        // min duration for a scrolling - speedup
 		protected int _animationTimeMax     = 160;        // max. duration for a scrolling - normal
 		protected int _focusPosition        = 0;          // current position of the focus bar 
-		protected bool _fixedScroll         = false; 		  // fix scrollbar in the middle of menu
+		protected bool _fixedScroll         = true; 		  // fix scrollbar in the middle of menu
 		protected bool _useMyPlugins        = true;
-		protected bool _ignoreFirstUpDown   = true;
+		protected bool _ignoreFirstUpDown   = false;
     protected GUIAnimation _hoverImage  = null;
     #endregion
 
@@ -107,6 +107,12 @@ namespace MediaPortal.GUI.Library
 			}
 		}
 
+    public bool FixedScroll
+    {
+      get { return _fixedScroll;  }
+      set { _fixedScroll = value; }
+    }
+
 		public List<PlugInInfo> ButtonInfos
 		{
 			get { return _buttonInfos; }
@@ -117,6 +123,7 @@ namespace MediaPortal.GUI.Library
 		#region Constructor & OnInit
 		public GUIMenuControl(int dwParentID) : base(dwParentID)
 		{
+      Log.Debug("GUIMenuControl: Constructor");
 	  }
 
 		public override void FinalizeConstruction()
@@ -129,7 +136,8 @@ namespace MediaPortal.GUI.Library
 
 		public override void OnInit()
 		{
-			_animationTime = _animationTimeMax;
+      Log.Debug("GUIMenuControl: onInit");
+      _animationTime = _animationTimeMax;
 			LoadSetting();
       LoadHoverImage(FocusedButton);
 			base.OnInit();
@@ -184,6 +192,7 @@ namespace MediaPortal.GUI.Library
 		#region Resources functions
 		public override void AllocResources()
 		{
+      Log.Debug("GUIMenuControl: AllocResources");
 			int buttonX = _positionX + _buttonOffset;
 			int buttonY = _positionY + _spaceBetweenButtons + _buttonOffset;
 			buttonY -= (_buttonHeight + _spaceBetweenButtons);  // one invisible button for scrolling 
@@ -204,6 +213,7 @@ namespace MediaPortal.GUI.Library
 					button.FontName = _buttonFont;
 					button.TextOffsetX = _buttonTextXOffset;
 					button.TextOffsetY = _buttonTextYOffset;
+          button.DimColor = DimColor;
 					button.AllocResources();
 					_buttonList.Add(button);
 					buttonY += (_buttonHeight + _spaceBetweenButtons);
@@ -236,7 +246,8 @@ namespace MediaPortal.GUI.Library
 
 		public override void FreeResources()
 		{
-			SaveSetting();
+      Log.Debug("GUIMenuControl: FreeResources");
+      SaveSetting();
 			foreach (GUIControl control in _buttonList)	control.FreeResources();
       foreach (GUIAnimation hover in _hoverList)  hover.FreeResources();
 			_buttonList.Clear();
@@ -399,7 +410,6 @@ namespace MediaPortal.GUI.Library
 		{
 			if (_backgroundImage != null) _backgroundImage.Render(timePassed);
       if (_hoverImage != null) _hoverImage.Render(timePassed);
-			ShowDebugInfo();	
 			_oldViewport = GUIGraphicsContext.DX9Device.Viewport;
 			_newViewport.X = _positionX;
 			_newViewport.Y = _positionY + _buttonOffset;
@@ -410,7 +420,7 @@ namespace MediaPortal.GUI.Library
 			GUIGraphicsContext.DX9Device.Viewport = _newViewport;
 			
 			if (_currentState != State.Idle) AnimationMovement(timePassed);
-			_focusImage.Render(timePassed);
+			if (Focus) _focusImage.Render(timePassed);
 			foreach (GUIButtonControl button in _buttonList)
 			{
 				button.Render(timePassed);
@@ -519,27 +529,13 @@ namespace MediaPortal.GUI.Library
 
       foreach (GUIAnimation hover in _hoverList)
       {
-        if (hover.GetID == _buttonList[position].GetID) _hoverImage = hover;
+        if (hover.GetID == _buttonList[position].GetID)
+        {
+          _hoverImage = hover;
+          break;
+        }
       }
     }
-
-		private void LogButtons(string text)
-		{
-			/*_log.Debug(text);
-			foreach (GUIControl control in _buttonList)
-			{
-				_log.Debug("  Button{0}: Y = {1}", control.GetID, control.YPosition);
-			}
-			*/
-		}
-
-		private void ShowDebugInfo()
-		{
-			//GUIPropertyManager.SetProperty("#test1", Focus.ToString());
-			//GUIPropertyManager.SetProperty("#test2", FocusedButton.ToString());
-		}
-
-
     #endregion
 
 		#region Overrides
@@ -565,11 +561,14 @@ namespace MediaPortal.GUI.Library
 
 		public override void ScaleToScreenResolution()
 		{
-			base.ScaleToScreenResolution();
+      Log.Debug("GUIMenuControl: ScaleToScreenResolution");
+      base.ScaleToScreenResolution();
 			GUIGraphicsContext.ScaleVertical(ref _buttonOffset);
 			GUIGraphicsContext.ScaleVertical(ref _spaceBetweenButtons);
 			GUIGraphicsContext.ScaleVertical(ref _buttonHeight);
 			GUIGraphicsContext.ScalePosToScreenResolution(ref _buttonTextXOffset, ref _buttonTextYOffset);
+      GUIGraphicsContext.ScalePosToScreenResolution(ref _hoverPositionX, ref _hoverPositionY);
+      GUIGraphicsContext.ScalePosToScreenResolution(ref _hoverWidth, ref _hoverHeight);
 		}
 
 		#endregion
@@ -579,9 +578,9 @@ namespace MediaPortal.GUI.Library
 		{
 			if (_currentState != State.Idle)
 			{
-				_nextState = State.ScrollUp;
+        _nextState = State.ScrollUp;
 				_scrollLabel.StopAnimation = true;
-				if (_animationTime > _animationTimeMin) _animationTime -= 5;
+				if (_animationTime > _animationTimeMin) _animationTime -= 10;
 				return;
 			}
 			_currentState = State.ScrollUp;
@@ -591,7 +590,8 @@ namespace MediaPortal.GUI.Library
 			_scrollLabel = new ScrollAnimator(_animationTime, 0, _buttonHeight + _spaceBetweenButtons);
 			_scrollLabel.Begin();
 			if (_mouseState != State.Idle) _scrollLabel.StopAnimation = true; // speed up
-      LoadHoverImage(FocusedButton-1);
+      if (_fixedScroll) LoadHoverImage(FocusedButton + 1);
+      else LoadHoverImage(FocusedButton-1);
 		}
 
 		protected void OnDown()
@@ -600,7 +600,7 @@ namespace MediaPortal.GUI.Library
 			{
 				_nextState = State.ScrollDown;
 				_scrollLabel.StopAnimation = true;
-				if (_animationTime > _animationTimeMin) _animationTime -= 5;
+				if (_animationTime > _animationTimeMin) _animationTime -= 10;
 				return;
 			}
 			_currentState = State.ScrollDown;
@@ -610,7 +610,8 @@ namespace MediaPortal.GUI.Library
 			_scrollLabel = new ScrollAnimator(_animationTime, 0, _buttonHeight + _spaceBetweenButtons);
 			_scrollLabel.Begin();
 			if (_mouseState != State.Idle) _scrollLabel.StopAnimation = true;  // speed up
-      LoadHoverImage(FocusedButton+1);
+      if (_fixedScroll) LoadHoverImage(FocusedButton - 1);
+      else LoadHoverImage(FocusedButton + 1);
 		}
 		#endregion
 
