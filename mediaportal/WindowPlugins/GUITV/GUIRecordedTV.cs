@@ -713,10 +713,7 @@ namespace MediaPortal.GUI.TV
       {
         return;
       }
-      TVDatabase.RemoveRecordedTV(rec);
-      VideoDatabase.DeleteMovieInfo(rec.FileName);
-      VideoDatabase.DeleteMovie(rec.FileName);
-      MediaPortal.Util.Utils.DeleteRecording(rec.FileName);
+      Recorder.DeleteRecording(rec);
 
       LoadDirectory();
       while (m_iSelectedItem >= GetItemCount() && m_iSelectedItem > 0) m_iSelectedItem--;
