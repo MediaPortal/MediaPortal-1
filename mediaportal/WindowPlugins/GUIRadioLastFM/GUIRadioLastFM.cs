@@ -514,9 +514,11 @@ namespace MediaPortal.GUI.RADIOLASTFM
         // Initialize menuItem3
         menuItem3.Index = 2;
         menuItem3.Text = GUILocalizeStrings.Get(34012); // Skip
+        //menuItem3.Break = true;
+        menuItem3.DefaultItem = true;
         menuItem3.Click += new System.EventHandler(Tray_menuItem3_Click);
 
-        String BaseDir = Config.Get(Config.Dir.Base);
+        String BaseDir = Config.GetFolder(Config.Dir.Base);
         _trayBallonSongChange = new NotifyIcon();
         _trayBallonSongChange.ContextMenu = contextMenuLastFM;
 

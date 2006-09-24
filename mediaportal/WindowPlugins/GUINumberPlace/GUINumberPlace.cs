@@ -38,6 +38,25 @@ namespace MediaPortal.GUI.NumberPlace
 {
   public class GUINumberPlace : GUIWindow, ISetupForm, IShowPlugin
   {
+    private enum SkinControlIDs
+    {
+      BTN_NEW_GAME = 2,
+      BTN_SOLVE = 3,
+      BTN_CLEAR = 4,
+      BTN_BLOCK_INVALID_MOVES = 6,
+      BTN_SHOW_INVALID_MOVES = 7,
+      BTN_LEVEL = 8,
+      BTN_HELP_ONCE = 9,
+    }
+
+    private enum LevelName
+    {
+      Kids = 0,
+      Easy = 1,
+      Medium = 2,
+      Hard = 3
+    }
+
     #region Serialization
 
     [Serializable]
@@ -98,20 +117,16 @@ namespace MediaPortal.GUI.NumberPlace
 
     #endregion Serialization
 
-    enum LevelName
-    {
-      Kids = 0,
-      Easy = 1,
-      Medium = 2,
-      Hard = 3
-    }
-
     private Grid grid = new Grid(3);
     private static Random random = new Random(DateTime.Now.Millisecond);
 
-    [SkinControlAttribute(6)]    protected GUIToggleButtonControl btnBlockInvalidMoves = null;
-    [SkinControlAttribute(7)]    protected GUIToggleButtonControl btnShowInvalidMoves = null;
-    [SkinControlAttribute(8)]    protected GUIButtonControl btnLevel = null;
+    [SkinControlAttribute((int)SkinControlIDs.BTN_NEW_GAME)]               protected GUIButtonControl btnNewGame = null;
+    [SkinControlAttribute((int)SkinControlIDs.BTN_SOLVE)]                  protected GUIButtonControl btnSolve = null;
+    [SkinControlAttribute((int)SkinControlIDs.BTN_CLEAR)]                  protected GUIButtonControl btnClear = null;
+    [SkinControlAttribute((int)SkinControlIDs.BTN_BLOCK_INVALID_MOVES)]    protected GUIToggleButtonControl btnBlockInvalidMoves = null;
+    [SkinControlAttribute((int)SkinControlIDs.BTN_SHOW_INVALID_MOVES)]     protected GUIToggleButtonControl btnShowInvalidMoves = null;
+    [SkinControlAttribute((int)SkinControlIDs.BTN_LEVEL)]                  protected GUIButtonControl btnLevel = null;
+    [SkinControlAttribute((int)SkinControlIDs.BTN_HELP_ONCE)]              protected GUIButtonControl btnHelpOnce = null;
 
     static private readonly string pluginConfigFileName = "mynumberplace";
 
@@ -124,65 +139,6 @@ namespace MediaPortal.GUI.NumberPlace
     {
       GetID = (int)GUIWindow.Window.WINDOW_NUMBERPLACE;
     }
-
-    #region ISetupForm Members
-    public int GetWindowId()
-    {
-      return GetID;
-    }
-
-    public string PluginName()
-    {
-      return "My Sudoku";
-    }
-
-    public string Description()
-    {
-      return "Play a Sudoku during commercials!";
-    }
-
-    public string Author()
-    {
-      return "Cosmo/IMOON/rtv";
-    }
-
-    public bool CanEnable()
-    {
-      return true;
-    }
-
-    public bool DefaultEnabled()
-    {
-      return false;
-    }
-
-    public bool HasSetup()
-    {
-      return false;
-    }
-    #endregion
-
-
-    #region IShowPlugin Members
-    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
-    {
-      strButtonText = GUILocalizeStrings.Get(19101);
-      strButtonImage = String.Empty;
-      strButtonImageFocus = String.Empty;
-      strPictureImage = "hover_" + pluginConfigFileName + ".png";
-      return true;
-    }
-
-    public void ShowPlugin()
-    {
-      MessageBox.Show("Nothing to setup.");
-    }
-
-    public bool ShowDefaultHome()
-    {
-      return false;
-    }
-    #endregion
 
 
     public override bool Init()
@@ -257,20 +213,20 @@ namespace MediaPortal.GUI.NumberPlace
 
         if (_Settings.Show)
         {
-          GUIControl.SelectControl(GetID, 7);
+          GUIControl.SelectControl(GetID, ((int)SkinControlIDs.BTN_SHOW_INVALID_MOVES));
         }
         else
         {
-          GUIControl.DeSelectControl(GetID, 7);
+          GUIControl.DeSelectControl(GetID, ((int)SkinControlIDs.BTN_SHOW_INVALID_MOVES));
         }
 
         if (_Settings.Block)
         {
-          GUIControl.SelectControl(GetID, 6);
+          GUIControl.SelectControl(GetID, ((int)SkinControlIDs.BTN_BLOCK_INVALID_MOVES));
         }
         else
         {
-          GUIControl.DeSelectControl(GetID, 6);
+          GUIControl.DeSelectControl(GetID, ((int)SkinControlIDs.BTN_BLOCK_INVALID_MOVES));
         }
         UpdateButtonStates();
       }
@@ -405,7 +361,7 @@ namespace MediaPortal.GUI.NumberPlace
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
-      if (controlId == 3)
+      if (control == btnSolve)
       {
         // Solve grid
         Grid solution = Solver.Solve(grid);
@@ -424,7 +380,7 @@ namespace MediaPortal.GUI.NumberPlace
         }
 
       }
-      else if (controlId == 2)
+      else if (control == btnNewGame)
       {
         //new game
         int minrating = 0;
@@ -490,7 +446,7 @@ namespace MediaPortal.GUI.NumberPlace
             _Settings.Show = btnShowInvalidMoves.Selected = false;
         _Settings.Save();
       }
-      else if (controlId == 4)
+      else if (control == btnClear)
       {
         ClearGrid();
       }
@@ -523,7 +479,7 @@ namespace MediaPortal.GUI.NumberPlace
         UpdateButtonStates();
         _Settings.Save();
       }
-      else if (controlId == 9)
+      else if (control == btnHelpOnce)
       {
         int candidateIndex = random.Next(81 - grid.CountFilledCells());
         int m = -1, row = 0, column = 0;
@@ -661,5 +617,66 @@ namespace MediaPortal.GUI.NumberPlace
 
       base.OnAction(action);
     }
+    
+
+    #region ISetupForm Members
+    public int GetWindowId()
+    {
+      return GetID;
+    }
+
+    public string PluginName()
+    {
+      return "My Sudoku";
+    }
+
+    public string Description()
+    {
+      return "Play a Sudoku during commercials!";
+    }
+
+    public string Author()
+    {
+      return "Cosmo/IMOON/rtv";
+    }
+
+    public bool CanEnable()
+    {
+      return true;
+    }
+
+    public bool DefaultEnabled()
+    {
+      return false;
+    }
+
+    public bool HasSetup()
+    {
+      return false;
+    }
+    #endregion
+
+
+    #region IShowPlugin Members
+    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
+    {
+      strButtonText = GUILocalizeStrings.Get(19101);
+      strButtonImage = String.Empty;
+      strButtonImageFocus = String.Empty;
+      strPictureImage = "hover_" + pluginConfigFileName + ".png";
+      return true;
+    }
+
+    public void ShowPlugin()
+    {
+      MessageBox.Show("Nothing to setup.");
+    }
+
+    public bool ShowDefaultHome()
+    {
+      return false;
+    }
+    #endregion
+
   }
 }
