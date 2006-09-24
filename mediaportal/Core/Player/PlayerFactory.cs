@@ -207,11 +207,11 @@ namespace MediaPortal.Player
           ////newPlayer = new Player.AudioPlayerVMR7();
           ////return newPlayer;
 
-          string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "Internal Music Player");
+          string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "Internal dshow player");
 
-          if (String.Compare(strAudioPlayer, "Internal Music Player", true) == 0)
+          if (String.Compare(strAudioPlayer, "BASS engine", true) == 0)
           {
-              return CoreMusicPlayer.Player;
+              return BassMusicPlayer.Player;
           }
 
           else if (String.Compare(strAudioPlayer, "Windows Media Player 9", true) == 0)
@@ -226,7 +226,7 @@ namespace MediaPortal.Player
 
       // use BASS player for Internet radio streams 
       if (fileName.IndexOf(@"last.fm/last.mp3") > 0)
-        return CoreMusicPlayer.Player;
+        return BassMusicPlayer.Player;
 
 
       newPlayer = new Player.AudioPlayerWMP9();

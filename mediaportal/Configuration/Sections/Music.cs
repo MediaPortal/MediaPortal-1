@@ -84,9 +84,10 @@ namespace MediaPortal.Configuration.Sections
         };
 
     string[] PlayerOptions = new string[]{
-            "Internal Music Player",
+            "BASS engine",
+            "Internal dshow player",
             //"Windows Media Player 9",
-            "DirectShow" 
+            
         };
 
     private const string LyricsValue0 = "never";
@@ -155,10 +156,6 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPTextBox playlistFolderTextBox;
     private MediaPortal.UserInterface.Controls.MPLabel label1;
     private TabPage MiscTabPg;
-    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox4;
-    private MediaPortal.UserInterface.Controls.MPCheckBox ShowVizInNowPlayingChkBox;
-    private ComboBox ShowLyricsCmbBox;
-    private Label label9;
     private GroupBox groupBox2;
     private ComboBox PlayNowJumpToCmbBox;
     private Label label8;
@@ -167,7 +164,15 @@ namespace MediaPortal.Configuration.Sections
     private CheckBox GaplessPlaybackChkBox;
     private HScrollBar hScrollBarCrossFade;
     private HScrollBar hScrollBarBuffering;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxDisableInternetLookups;
+    private TabPage tabPageNowPlaying;
+    private GroupBox groupBoxDynamicContent;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxDisableTagLookups;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxDisableAlbumLookups;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxDisableCoverLookups;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxVizOptions;
+    private MediaPortal.UserInterface.Controls.MPCheckBox ShowVizInNowPlayingChkBox;
+    private ComboBox ShowLyricsCmbBox;
+    private Label label9;
     private MediaPortal.UserInterface.Controls.MPComboBox autoPlayComboBox;
 
     #endregion
@@ -215,7 +220,7 @@ namespace MediaPortal.Configuration.Sections
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         // Player Settings
-        audioPlayerComboBox.SelectedItem = xmlreader.GetValueAsString("audioplayer", "player", "Internal Music Player");
+        audioPlayerComboBox.SelectedItem = xmlreader.GetValueAsString("audioplayer", "player", "Internal dshow player");
         showID3CheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "showid3", false);
         enableVisualisation.Checked = xmlreader.GetValueAsBool("musicfiles", "doVisualisation", true);
 
@@ -374,7 +379,9 @@ namespace MediaPortal.Configuration.Sections
         }
 
         ShowVizInNowPlayingChkBox.Checked = xmlreader.GetValueAsBool("musicmisc", "showVisInNowPlaying", false);
-        checkBoxDisableInternetLookups.Checked = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmthumbs", true) ? false : true;
+        checkBoxDisableCoverLookups.Checked = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmthumbs", true) ? false : true;
+        checkBoxDisableAlbumLookups.Checked = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmtopalbums", true) ? false : true;
+        checkBoxDisableTagLookups.Checked = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmtracktags", true) ? false : true;
       }
     }
 
@@ -495,7 +502,9 @@ namespace MediaPortal.Configuration.Sections
 
         xmlwriter.SetValue("musicmisc", "lyrics", showLyrics);
         xmlwriter.SetValueAsBool("musicmisc", "showVisInNowPlaying", ShowVizInNowPlayingChkBox.Checked);
-        xmlwriter.SetValueAsBool("musicmisc", "fetchlastfmthumbs", !checkBoxDisableInternetLookups.Checked);        
+        xmlwriter.SetValueAsBool("musicmisc", "fetchlastfmthumbs", !checkBoxDisableCoverLookups.Checked);
+        xmlwriter.SetValueAsBool("musicmisc", "fetchlastfmtopalbums", !checkBoxDisableAlbumLookups.Checked);
+        xmlwriter.SetValueAsBool("musicmisc", "fetchlastfmtracktags", !checkBoxDisableTagLookups.Checked);
       }
 
       // Make sure we shut down the viz engine
@@ -537,7 +546,7 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
-        this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.MusicSettingsTabCtl = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.PlayerTabPg = new System.Windows.Forms.TabPage();
       this.PlaybackSettingsGrpBox = new MediaPortal.UserInterface.Controls.MPGroupBox();
@@ -580,17 +589,21 @@ namespace MediaPortal.Configuration.Sections
       this.playlistFolderTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.MiscTabPg = new System.Windows.Forms.TabPage();
-      this.mpGroupBox4 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.checkBoxDisableInternetLookups = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.ShowVizInNowPlayingChkBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.ShowLyricsCmbBox = new System.Windows.Forms.ComboBox();
-      this.label9 = new System.Windows.Forms.Label();
       this.groupBox2 = new System.Windows.Forms.GroupBox();
       this.PlayNowJumpToCmbBox = new System.Windows.Forms.ComboBox();
       this.label8 = new System.Windows.Forms.Label();
       this.mpGroupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.labelAutoPlay = new MediaPortal.UserInterface.Controls.MPLabel();
       this.autoPlayComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.tabPageNowPlaying = new System.Windows.Forms.TabPage();
+      this.groupBoxVizOptions = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.ShowVizInNowPlayingChkBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.ShowLyricsCmbBox = new System.Windows.Forms.ComboBox();
+      this.label9 = new System.Windows.Forms.Label();
+      this.groupBoxDynamicContent = new System.Windows.Forms.GroupBox();
+      this.checkBoxDisableTagLookups = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxDisableAlbumLookups = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxDisableCoverLookups = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.MusicSettingsTabCtl.SuspendLayout();
       this.PlayerTabPg.SuspendLayout();
       this.PlaybackSettingsGrpBox.SuspendLayout();
@@ -602,23 +615,26 @@ namespace MediaPortal.Configuration.Sections
       this.PlaylistTabPg.SuspendLayout();
       this.groupBox1.SuspendLayout();
       this.MiscTabPg.SuspendLayout();
-      this.mpGroupBox4.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.mpGroupBox2.SuspendLayout();
+      this.tabPageNowPlaying.SuspendLayout();
+      this.groupBoxVizOptions.SuspendLayout();
+      this.groupBoxDynamicContent.SuspendLayout();
       this.SuspendLayout();
       // 
-        // label4
-        // 
-        this.label4.Location = new System.Drawing.Point(0, 0);
-        this.label4.Name = "label4";
-        this.label4.Size = new System.Drawing.Size(100, 23);
-        this.label4.TabIndex = 0;
-        // 
+      // label4
+      // 
+      this.label4.Location = new System.Drawing.Point(0, 0);
+      this.label4.Name = "label4";
+      this.label4.Size = new System.Drawing.Size(100, 23);
+      this.label4.TabIndex = 0;
+      // 
       // MusicSettingsTabCtl
       // 
       this.MusicSettingsTabCtl.Controls.Add(this.PlayerTabPg);
       this.MusicSettingsTabCtl.Controls.Add(this.VisualizationsTabPg);
       this.MusicSettingsTabCtl.Controls.Add(this.PlaylistTabPg);
+      this.MusicSettingsTabCtl.Controls.Add(this.tabPageNowPlaying);
       this.MusicSettingsTabCtl.Controls.Add(this.MiscTabPg);
       this.MusicSettingsTabCtl.Location = new System.Drawing.Point(0, 8);
       this.MusicSettingsTabCtl.Name = "MusicSettingsTabCtl";
@@ -657,7 +673,7 @@ namespace MediaPortal.Configuration.Sections
       this.PlaybackSettingsGrpBox.Size = new System.Drawing.Size(432, 180);
       this.PlaybackSettingsGrpBox.TabIndex = 1;
       this.PlaybackSettingsGrpBox.TabStop = false;
-      this.PlaybackSettingsGrpBox.Text = "Playback Settings (Internal player only)";
+      this.PlaybackSettingsGrpBox.Text = "Playback Settings (BASS player only)";
       // 
       // hScrollBarBuffering
       // 
@@ -790,9 +806,9 @@ namespace MediaPortal.Configuration.Sections
       this.enableVisualisation.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.enableVisualisation.Location = new System.Drawing.Point(87, 89);
       this.enableVisualisation.Name = "enableVisualisation";
-      this.enableVisualisation.Size = new System.Drawing.Size(214, 17);
+      this.enableVisualisation.Size = new System.Drawing.Size(202, 17);
       this.enableVisualisation.TabIndex = 3;
-      this.enableVisualisation.Text = "Enable visualization (Internal player only)";
+      this.enableVisualisation.Text = "Enable visualization (Bass player only)";
       this.enableVisualisation.UseVisualStyleBackColor = true;
       // 
       // label2
@@ -821,6 +837,9 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.audioPlayerComboBox.BorderColor = System.Drawing.Color.Empty;
       this.audioPlayerComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.audioPlayerComboBox.Items.AddRange(new object[] {
+            "Internal dshow player",
+            "BASS engine"});
       this.audioPlayerComboBox.Location = new System.Drawing.Point(87, 32);
       this.audioPlayerComboBox.Name = "audioPlayerComboBox";
       this.audioPlayerComboBox.Size = new System.Drawing.Size(289, 21);
@@ -1035,9 +1054,9 @@ namespace MediaPortal.Configuration.Sections
       this.ResumePlaylistChkBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.ResumePlaylistChkBox.Location = new System.Drawing.Point(88, 129);
       this.ResumePlaylistChkBox.Name = "ResumePlaylistChkBox";
-      this.ResumePlaylistChkBox.Size = new System.Drawing.Size(234, 17);
+      this.ResumePlaylistChkBox.Size = new System.Drawing.Size(246, 17);
       this.ResumePlaylistChkBox.TabIndex = 5;
-      this.ResumePlaylistChkBox.Text = "Resume last playlist when entering My Music";
+      this.ResumePlaylistChkBox.Text = "Resume last playlist when re-entering My Music";
       this.ResumePlaylistChkBox.UseVisualStyleBackColor = true;
       // 
       // SavePlaylistOnExitChkBox
@@ -1046,9 +1065,9 @@ namespace MediaPortal.Configuration.Sections
       this.SavePlaylistOnExitChkBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.SavePlaylistOnExitChkBox.Location = new System.Drawing.Point(88, 106);
       this.SavePlaylistOnExitChkBox.Name = "SavePlaylistOnExitChkBox";
-      this.SavePlaylistOnExitChkBox.Size = new System.Drawing.Size(211, 17);
+      this.SavePlaylistOnExitChkBox.Size = new System.Drawing.Size(311, 17);
       this.SavePlaylistOnExitChkBox.TabIndex = 5;
-      this.SavePlaylistOnExitChkBox.Text = "Save playlist and playlist position on exit";
+      this.SavePlaylistOnExitChkBox.Text = "Save playlist and position when leaving to use another plugin";
       this.SavePlaylistOnExitChkBox.UseVisualStyleBackColor = true;
       // 
       // repeatPlaylistCheckBox
@@ -1094,7 +1113,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // MiscTabPg
       // 
-      this.MiscTabPg.Controls.Add(this.mpGroupBox4);
       this.MiscTabPg.Controls.Add(this.groupBox2);
       this.MiscTabPg.Controls.Add(this.mpGroupBox2);
       this.MiscTabPg.Location = new System.Drawing.Point(4, 22);
@@ -1104,68 +1122,11 @@ namespace MediaPortal.Configuration.Sections
       this.MiscTabPg.Text = "Misc Settings";
       this.MiscTabPg.UseVisualStyleBackColor = true;
       // 
-      // mpGroupBox4
-      // 
-      this.mpGroupBox4.Controls.Add(this.checkBoxDisableInternetLookups);
-      this.mpGroupBox4.Controls.Add(this.ShowVizInNowPlayingChkBox);
-      this.mpGroupBox4.Controls.Add(this.ShowLyricsCmbBox);
-      this.mpGroupBox4.Controls.Add(this.label9);
-      this.mpGroupBox4.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox4.Location = new System.Drawing.Point(16, 152);
-      this.mpGroupBox4.Name = "mpGroupBox4";
-      this.mpGroupBox4.Size = new System.Drawing.Size(432, 110);
-      this.mpGroupBox4.TabIndex = 2;
-      this.mpGroupBox4.TabStop = false;
-      this.mpGroupBox4.Text = "Now Playing";
-      // 
-      // checkBoxDisableInternetLookups
-      // 
-      this.checkBoxDisableInternetLookups.AutoSize = true;
-      this.checkBoxDisableInternetLookups.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxDisableInternetLookups.Location = new System.Drawing.Point(114, 78);
-      this.checkBoxDisableInternetLookups.Name = "checkBoxDisableInternetLookups";
-      this.checkBoxDisableInternetLookups.Size = new System.Drawing.Size(294, 17);
-      this.checkBoxDisableInternetLookups.TabIndex = 5;
-      this.checkBoxDisableInternetLookups.Text = "Disable internet lookups for covers and track suggestions";
-      this.checkBoxDisableInternetLookups.UseVisualStyleBackColor = true;
-      // 
-      // ShowVizInNowPlayingChkBox
-      // 
-      this.ShowVizInNowPlayingChkBox.AutoSize = true;
-      this.ShowVizInNowPlayingChkBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.ShowVizInNowPlayingChkBox.Location = new System.Drawing.Point(114, 55);
-      this.ShowVizInNowPlayingChkBox.Name = "ShowVizInNowPlayingChkBox";
-      this.ShowVizInNowPlayingChkBox.Size = new System.Drawing.Size(208, 17);
-      this.ShowVizInNowPlayingChkBox.TabIndex = 4;
-      this.ShowVizInNowPlayingChkBox.Text = "Show visualization (Internal player only)";
-      this.ShowVizInNowPlayingChkBox.UseVisualStyleBackColor = true;
-      // 
-      // ShowLyricsCmbBox
-      // 
-      this.ShowLyricsCmbBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.ShowLyricsCmbBox.Enabled = false;
-      this.ShowLyricsCmbBox.FormattingEnabled = true;
-      this.ShowLyricsCmbBox.Location = new System.Drawing.Point(114, 19);
-      this.ShowLyricsCmbBox.Name = "ShowLyricsCmbBox";
-      this.ShowLyricsCmbBox.Size = new System.Drawing.Size(293, 21);
-      this.ShowLyricsCmbBox.TabIndex = 1;
-      // 
-      // label9
-      // 
-      this.label9.AutoSize = true;
-      this.label9.Enabled = false;
-      this.label9.Location = new System.Drawing.Point(47, 22);
-      this.label9.Name = "label9";
-      this.label9.Size = new System.Drawing.Size(63, 13);
-      this.label9.TabIndex = 0;
-      this.label9.Text = "Show lyrics:";
-      this.label9.TextAlign = System.Drawing.ContentAlignment.TopRight;
-      // 
       // groupBox2
       // 
       this.groupBox2.Controls.Add(this.PlayNowJumpToCmbBox);
       this.groupBox2.Controls.Add(this.label8);
-      this.groupBox2.Location = new System.Drawing.Point(16, 84);
+      this.groupBox2.Location = new System.Drawing.Point(16, 96);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(432, 64);
       this.groupBox2.TabIndex = 1;
@@ -1223,6 +1184,108 @@ namespace MediaPortal.Configuration.Sections
       this.autoPlayComboBox.Size = new System.Drawing.Size(293, 21);
       this.autoPlayComboBox.TabIndex = 1;
       // 
+      // tabPageNowPlaying
+      // 
+      this.tabPageNowPlaying.Controls.Add(this.groupBoxDynamicContent);
+      this.tabPageNowPlaying.Controls.Add(this.groupBoxVizOptions);
+      this.tabPageNowPlaying.Location = new System.Drawing.Point(4, 22);
+      this.tabPageNowPlaying.Name = "tabPageNowPlaying";
+      this.tabPageNowPlaying.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPageNowPlaying.Size = new System.Drawing.Size(464, 374);
+      this.tabPageNowPlaying.TabIndex = 5;
+      this.tabPageNowPlaying.Text = "Now Playing";
+      this.tabPageNowPlaying.UseVisualStyleBackColor = true;
+      // 
+      // groupBoxVizOptions
+      // 
+      this.groupBoxVizOptions.Controls.Add(this.ShowVizInNowPlayingChkBox);
+      this.groupBoxVizOptions.Controls.Add(this.ShowLyricsCmbBox);
+      this.groupBoxVizOptions.Controls.Add(this.label9);
+      this.groupBoxVizOptions.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxVizOptions.Location = new System.Drawing.Point(16, 131);
+      this.groupBoxVizOptions.Name = "groupBoxVizOptions";
+      this.groupBoxVizOptions.Size = new System.Drawing.Size(432, 84);
+      this.groupBoxVizOptions.TabIndex = 3;
+      this.groupBoxVizOptions.TabStop = false;
+      this.groupBoxVizOptions.Text = "Visualization options";
+      // 
+      // ShowVizInNowPlayingChkBox
+      // 
+      this.ShowVizInNowPlayingChkBox.AutoSize = true;
+      this.ShowVizInNowPlayingChkBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.ShowVizInNowPlayingChkBox.Location = new System.Drawing.Point(114, 55);
+      this.ShowVizInNowPlayingChkBox.Name = "ShowVizInNowPlayingChkBox";
+      this.ShowVizInNowPlayingChkBox.Size = new System.Drawing.Size(201, 17);
+      this.ShowVizInNowPlayingChkBox.TabIndex = 4;
+      this.ShowVizInNowPlayingChkBox.Text = "Show visualization (BASS player only)";
+      this.ShowVizInNowPlayingChkBox.UseVisualStyleBackColor = true;
+      // 
+      // ShowLyricsCmbBox
+      // 
+      this.ShowLyricsCmbBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.ShowLyricsCmbBox.Enabled = false;
+      this.ShowLyricsCmbBox.FormattingEnabled = true;
+      this.ShowLyricsCmbBox.Location = new System.Drawing.Point(114, 19);
+      this.ShowLyricsCmbBox.Name = "ShowLyricsCmbBox";
+      this.ShowLyricsCmbBox.Size = new System.Drawing.Size(293, 21);
+      this.ShowLyricsCmbBox.TabIndex = 1;
+      // 
+      // label9
+      // 
+      this.label9.AutoSize = true;
+      this.label9.Enabled = false;
+      this.label9.Location = new System.Drawing.Point(47, 22);
+      this.label9.Name = "label9";
+      this.label9.Size = new System.Drawing.Size(63, 13);
+      this.label9.TabIndex = 0;
+      this.label9.Text = "Show lyrics:";
+      this.label9.TextAlign = System.Drawing.ContentAlignment.TopRight;
+      // 
+      // groupBoxDynamicContent
+      // 
+      this.groupBoxDynamicContent.Controls.Add(this.checkBoxDisableTagLookups);
+      this.groupBoxDynamicContent.Controls.Add(this.checkBoxDisableAlbumLookups);
+      this.groupBoxDynamicContent.Controls.Add(this.checkBoxDisableCoverLookups);
+      this.groupBoxDynamicContent.Location = new System.Drawing.Point(16, 16);
+      this.groupBoxDynamicContent.Name = "groupBoxDynamicContent";
+      this.groupBoxDynamicContent.Size = new System.Drawing.Size(432, 100);
+      this.groupBoxDynamicContent.TabIndex = 4;
+      this.groupBoxDynamicContent.TabStop = false;
+      this.groupBoxDynamicContent.Text = "Dynamic content";
+      // 
+      // checkBoxDisableTagLookups
+      // 
+      this.checkBoxDisableTagLookups.AutoSize = true;
+      this.checkBoxDisableTagLookups.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxDisableTagLookups.Location = new System.Drawing.Point(60, 70);
+      this.checkBoxDisableTagLookups.Name = "checkBoxDisableTagLookups";
+      this.checkBoxDisableTagLookups.Size = new System.Drawing.Size(294, 17);
+      this.checkBoxDisableTagLookups.TabIndex = 10;
+      this.checkBoxDisableTagLookups.Text = "Disable internet lookups for covers and track suggestions";
+      this.checkBoxDisableTagLookups.UseVisualStyleBackColor = true;
+      // 
+      // checkBoxDisableAlbumLookups
+      // 
+      this.checkBoxDisableAlbumLookups.AutoSize = true;
+      this.checkBoxDisableAlbumLookups.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxDisableAlbumLookups.Location = new System.Drawing.Point(60, 47);
+      this.checkBoxDisableAlbumLookups.Name = "checkBoxDisableAlbumLookups";
+      this.checkBoxDisableAlbumLookups.Size = new System.Drawing.Size(238, 17);
+      this.checkBoxDisableAlbumLookups.TabIndex = 9;
+      this.checkBoxDisableAlbumLookups.Text = "Disable internet lookups for best album tracks";
+      this.checkBoxDisableAlbumLookups.UseVisualStyleBackColor = true;
+      // 
+      // checkBoxDisableCoverLookups
+      // 
+      this.checkBoxDisableCoverLookups.AutoSize = true;
+      this.checkBoxDisableCoverLookups.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxDisableCoverLookups.Location = new System.Drawing.Point(60, 24);
+      this.checkBoxDisableCoverLookups.Name = "checkBoxDisableCoverLookups";
+      this.checkBoxDisableCoverLookups.Size = new System.Drawing.Size(197, 17);
+      this.checkBoxDisableCoverLookups.TabIndex = 8;
+      this.checkBoxDisableCoverLookups.Text = "Disable internet lookups for cover art";
+      this.checkBoxDisableCoverLookups.UseVisualStyleBackColor = true;
+      // 
       // Music
       // 
       this.Controls.Add(this.MusicSettingsTabCtl);
@@ -1243,12 +1306,15 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
       this.MiscTabPg.ResumeLayout(false);
-      this.mpGroupBox4.ResumeLayout(false);
-      this.mpGroupBox4.PerformLayout();
       this.groupBox2.ResumeLayout(false);
       this.groupBox2.PerformLayout();
       this.mpGroupBox2.ResumeLayout(false);
       this.mpGroupBox2.PerformLayout();
+      this.tabPageNowPlaying.ResumeLayout(false);
+      this.groupBoxVizOptions.ResumeLayout(false);
+      this.groupBoxVizOptions.PerformLayout();
+      this.groupBoxDynamicContent.ResumeLayout(false);
+      this.groupBoxDynamicContent.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -1309,7 +1375,7 @@ namespace MediaPortal.Configuration.Sections
           VizPlaceHolderLbl.Text = "Not available.";
 
           VisualizationsTabPg.Enabled = false;
-          MessageBox.Show(this, "Visualization settings are only available with the Internal Music Player.",
+          MessageBox.Show(this, "Visualization settings are only available with the BASS music player.",
               "MediaPortal - Setup", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         }
       }
@@ -1317,8 +1383,9 @@ namespace MediaPortal.Configuration.Sections
 
     private void audioPlayerComboBox_SelectedIndexChanged(object sender, EventArgs e)
     {
-      bool useInternalPlayer = audioPlayerComboBox.SelectedIndex == 0;
-      PlaybackSettingsGrpBox.Enabled = useInternalPlayer;
+      bool _useBassEngine = audioPlayerComboBox.SelectedIndex == 0;
+      PlaybackSettingsGrpBox.Enabled = _useBassEngine;
+      groupBoxVizOptions.Enabled = _useBassEngine;
     }
 
     private void hScrollBarCrossFade_ValueChanged(object sender, EventArgs e)
@@ -1446,7 +1513,7 @@ namespace MediaPortal.Configuration.Sections
       //System.Diagnostics.Debugger.Launch();
       Cursor.Current = Cursors.WaitCursor;
 
-      MediaPortal.Player.BassAudioEngine bassEngine = MediaPortal.Player.CoreMusicPlayer.Player;
+      MediaPortal.Player.BassAudioEngine bassEngine = MediaPortal.Player.BassMusicPlayer.Player;
 
       IVizMgr = bassEngine.IVizManager;
       VizWindow = bassEngine.VisualizationWindow;

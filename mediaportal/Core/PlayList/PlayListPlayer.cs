@@ -156,7 +156,7 @@ namespace MediaPortal.Playlists
           }
           break;
 
-      // SV Allows CoreMusicPlayer to continuously play
+      // SV Allows BassMusicPlayer to continuously play
       case GUIMessage.MessageType.GUI_MSG_PLAYBACK_CROSSFADING:
           {
             PlayNext();

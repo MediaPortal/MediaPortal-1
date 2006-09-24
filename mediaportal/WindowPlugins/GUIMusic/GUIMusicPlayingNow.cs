@@ -113,7 +113,9 @@ namespace MediaPortal.GUI.Music
     private List<String> ImagePathContainer = null;
     private bool UseID3 = false;
     private bool _trackChanged = true;
-    private bool _doInternetLookups = true;
+    private bool _doArtistLookups = true;
+    private bool _doAlbumLookups = true;
+    private bool _doTrackTagLookups = true;
 
     //SV Added by SteveV 2006-09-07
     private bool UsingInternalMusicPlayer = false;
@@ -134,10 +136,12 @@ namespace MediaPortal.GUI.Music
       {
         UseID3 = xmlreader.GetValueAsBool("musicfiles", "showid3", true);
         ShowVisualization = xmlreader.GetValueAsBool("musicmisc", "showVisInNowPlaying", true);
-        _doInternetLookups = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmthumbs", true);
+        _doArtistLookups = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmthumbs", true);
+        _doAlbumLookups = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmtopalbums", true);
+        _doTrackTagLookups = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmtracktags", true);
       }
 
-      UsingInternalMusicPlayer = CoreMusicPlayer.IsDefaultMusicPlayer;
+      UsingInternalMusicPlayer = BassMusicPlayer.IsDefaultMusicPlayer;
     }
 
     void g_Player_PlayBackEnded(g_Player.MediaType type, string filename)
@@ -247,7 +251,7 @@ namespace MediaPortal.GUI.Music
       // Check if we should let the visualization window handle image flipping
       if (UsingInternalMusicPlayer && ShowVisualization)
       {
-        Visualization.VisualizationWindow vizWindow = CoreMusicPlayer.Player.VisualizationWindow;
+        Visualization.VisualizationWindow vizWindow = BassMusicPlayer.Player.VisualizationWindow;
 
         if (vizWindow != null)
         {
@@ -524,7 +528,7 @@ namespace MediaPortal.GUI.Music
               AddImageToImagePathContainer(CurrentThumbFileName);
 
             if (UsingInternalMusicPlayer)
-              CoreMusicPlayer.Player.VisualizationWindow.CoverArtImagePath = CurrentThumbFileName;
+              BassMusicPlayer.Player.VisualizationWindow.CoverArtImagePath = CurrentThumbFileName;
 
             UpdateImagePathContainer();
 
@@ -606,7 +610,7 @@ namespace MediaPortal.GUI.Music
     /// </summary>
     private void UpdateAlbumInfo()
     {
-      if (_doInternetLookups)
+      if (_doAlbumLookups)
       {
         if (CurrentTrackTag == null)
           return;
@@ -633,7 +637,7 @@ namespace MediaPortal.GUI.Music
     /// </summary>
     private void UpdateArtistInfo()
     {
-      if (_doInternetLookups)
+      if (_doArtistLookups)
       {
         if (CurrentTrackTag == null)
           return;
@@ -658,7 +662,7 @@ namespace MediaPortal.GUI.Music
     /// </summary>
     private void UpdateTagInfo()
     {
-      if (_doInternetLookups)
+      if (_doTrackTagLookups)
       {
         if (CurrentTrackTag == null)
           return;
@@ -1151,7 +1155,7 @@ namespace MediaPortal.GUI.Music
       if (!ControlsInitialized || !UsingInternalMusicPlayer || !ShowVisualization)
         return;
 
-      Visualization.VisualizationWindow vizWindow = CoreMusicPlayer.Player.VisualizationWindow;
+      Visualization.VisualizationWindow vizWindow = BassMusicPlayer.Player.VisualizationWindow;
 
       if (vizWindow != null)
       {
@@ -1178,7 +1182,7 @@ namespace MediaPortal.GUI.Music
       if (!UsingInternalMusicPlayer || !ShowVisualization)
         return;
 
-      Visualization.VisualizationWindow vizWindow = CoreMusicPlayer.Player.VisualizationWindow;
+      Visualization.VisualizationWindow vizWindow = BassMusicPlayer.Player.VisualizationWindow;
 
       if (vizWindow != null)
         vizWindow.ClearImages();

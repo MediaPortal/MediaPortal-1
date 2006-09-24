@@ -690,7 +690,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
               if (trackLength > 0)
               {
                 _nowPlayingTimer.Stop();
-                _nowPlayingTimer.Interval = (trackLength - 2) * 1000;
+                _nowPlayingTimer.Interval = (trackLength - 1) * 1000;
                 _nowPlayingTimer.Start();
               }
             }

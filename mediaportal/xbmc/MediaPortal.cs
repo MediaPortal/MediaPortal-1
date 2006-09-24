@@ -915,9 +915,9 @@ public class MediaPortalApp : D3DApp, IRender
     }
 
     //SV Added by SteveV 2006-09-07
-    // Asynchronously pre-initialize the music engine if we're using the CoreMusicPlayer
-    if (CoreMusicPlayer.IsDefaultMusicPlayer)
-      CoreMusicPlayer.CreatePlayerAsync();
+    // Asynchronously pre-initialize the music engine if we're using the BassMusicPlayer
+    if (BassMusicPlayer.IsDefaultMusicPlayer)
+      BassMusicPlayer.CreatePlayerAsync();
 
     GUIPropertyManager.SetProperty("#date", GetDate());
     GUIPropertyManager.SetProperty("#time", GetTime());
@@ -1804,7 +1804,7 @@ public class MediaPortalApp : D3DApp, IRender
                   {
                     //SV
                     //GUIWindowManager.ActivateWindow((int) GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
-                    if (g_Player.IsMusic && CoreMusicPlayer.IsDefaultMusicPlayer)
+                    if (g_Player.IsMusic && BassMusicPlayer.IsDefaultMusicPlayer)
                       GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_MUSIC);                      //GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
 
                     else
@@ -1896,7 +1896,7 @@ public class MediaPortalApp : D3DApp, IRender
             if (!GUIGraphicsContext.IsFullScreenVideo)
             {
               //SV Fixes Music player seek with new Bass Audio Engine
-              if (g_Player.IsMusic && CoreMusicPlayer.IsDefaultMusicPlayer)
+              if (g_Player.IsMusic && BassMusicPlayer.IsDefaultMusicPlayer)
                 break;
 
               if (!g_Player.IsTV)
@@ -1913,7 +1913,7 @@ public class MediaPortalApp : D3DApp, IRender
             if (!GUIGraphicsContext.IsFullScreenVideo)
             {
               //SV Fixes Music player seek with new Bass Audio Engine
-              if (g_Player.IsMusic && CoreMusicPlayer.IsDefaultMusicPlayer)
+              if (g_Player.IsMusic && BassMusicPlayer.IsDefaultMusicPlayer)
                 break;
 
               if (!g_Player.IsTV)

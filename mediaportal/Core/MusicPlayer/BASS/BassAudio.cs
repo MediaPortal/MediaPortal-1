@@ -37,7 +37,7 @@ using MediaPortal.Util;
 
 namespace MediaPortal.Player
 {
-    public class CoreMusicPlayer
+    public class BassMusicPlayer
     {
         internal static BassAudioEngine _Player;
         private static System.Threading.Thread BassAsyncLoadThread = null;
@@ -71,8 +71,8 @@ namespace MediaPortal.Player
                 {
                     using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
                     {
-                        string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "Internal Music Player");
-                        _IsDefaultMusicPlayer = String.Compare(strAudioPlayer, "Internal Music Player", true) == 0;
+                        string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "Internal dshow player");
+                        _IsDefaultMusicPlayer = String.Compare(strAudioPlayer, "BASS engine", true) == 0;
                         SettingsLoaded = true;
                     }
                 }
@@ -82,7 +82,7 @@ namespace MediaPortal.Player
         }
 
         // Singleton -- make sure we can't instantiate this class
-        private CoreMusicPlayer()
+        private BassMusicPlayer()
         {
         }
 

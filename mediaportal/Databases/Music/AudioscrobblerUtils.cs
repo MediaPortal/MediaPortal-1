@@ -193,6 +193,7 @@ namespace MediaPortal.Music.Database
   public class AudioscrobblerUtils
   {
     private bool _useDebugLog = false;
+    private bool _doCoverLookups = true;
     private string _defaultUser = "";
     private Object LookupLock;
 
@@ -495,6 +496,7 @@ namespace MediaPortal.Music.Database
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         _defaultUser = xmlreader.GetValueAsString("audioscrobbler", "user", "");
+        _doCoverLookups = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmthumbs", true);
       }
       MusicDatabase mdb = new MusicDatabase();
       _currentNeighbourMode = lastFMFeed.weeklyartistchart;
@@ -1260,6 +1262,10 @@ namespace MediaPortal.Music.Database
     private bool fetchWebImage(string imageUrl, string fileName, string thumbspath)
     {
       bool success = false;
+
+      if (!_doCoverLookups)
+        return success;
+
       //string singleFileName = null;
       //string singlePathName = null;
 

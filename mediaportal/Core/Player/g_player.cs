@@ -737,8 +737,8 @@ namespace MediaPortal.Player
 
           if (MediaPortal.Util.Utils.IsAudio(strFile))
           {
-              if (CoreMusicPlayer.IsDefaultMusicPlayer && CoreMusicPlayer.Player.Playing)
-                  doStop = !CoreMusicPlayer.Player.CrossFadingEnabled;
+              if (BassMusicPlayer.IsDefaultMusicPlayer && BassMusicPlayer.Player.Playing)
+                  doStop = !BassMusicPlayer.Player.CrossFadingEnabled;
           }
 
           if (doStop)

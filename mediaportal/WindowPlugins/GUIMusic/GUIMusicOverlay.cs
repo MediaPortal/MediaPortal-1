@@ -61,7 +61,7 @@ namespace MediaPortal.GUI.Music
         int m_iFrame = 0;
         string m_strThumb = String.Empty;
         bool VisualisationEnabled = true;
-        bool UseInternalPlayer = false; //SV Added by SteveV 2006-09-07
+        bool _useBassEngine = false; //SV Added by SteveV 2006-09-07
 
         enum Controls
         {
@@ -89,7 +89,7 @@ namespace MediaPortal.GUI.Music
         {
             GetID = (int)GUIWindow.Window.WINDOW_MUSIC_OVERLAY;
             playlistPlayer = PlayListPlayer.SingletonPlayer;
-            UseInternalPlayer = CoreMusicPlayer.IsDefaultMusicPlayer; //SV
+            _useBassEngine = BassMusicPlayer.IsDefaultMusicPlayer; //SV
 
             using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
             {
@@ -397,10 +397,10 @@ namespace MediaPortal.GUI.Music
                     // if we also have video or visualsation
                     if (VisualisationEnabled && g_Player.HasVideo && g_Player.IsDVD == false && g_Player.IsTV == false && g_Player.IsTVRecording == false)
                     {
-                        if (!UseInternalPlayer)
+                        if (!_useBassEngine)
                             DoSlideAnimation(AlbumArtPicture, fXPos, fYPos, iWidth, iHeight);
 
-                        // We're using the CoreMusicPlayer so just show the visualization window and it will handle
+                        // We're using the BassMusicPlayer so just show the visualization window and it will handle
                         // it's own rendering of the visualizationa nd album art
                         else
                         {

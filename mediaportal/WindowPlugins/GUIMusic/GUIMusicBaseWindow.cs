@@ -175,7 +175,7 @@ namespace MediaPortal.GUI.Music
                 _autoShuffleOnLoad = xmlreader.GetValueAsBool("musicfiles", "autoshuffle", false);
             }
 
-            UsingInternalMusicPlayer = CoreMusicPlayer.IsDefaultMusicPlayer;
+            UsingInternalMusicPlayer = BassMusicPlayer.IsDefaultMusicPlayer;
         }
 
 
