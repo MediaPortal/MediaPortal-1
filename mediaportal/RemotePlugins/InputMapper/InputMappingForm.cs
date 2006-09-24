@@ -733,8 +733,8 @@ namespace MediaPortal.InputDevices
         treeMapping.Nodes.Clear();
         XmlDocument doc = new XmlDocument();
         string path = "InputDeviceMappings\\defaults\\" + xmlFile;
-        if (!defaults && File.Exists(Config.Get(Config.Dir.CustomInputDevice) + xmlFile))
-          path = Config.Get(Config.Dir.CustomInputDevice) + xmlFile;
+        if (!defaults && File.Exists(Config.GetFile(Config.Dir.CustomInputDevice, xmlFile)))
+          path = Config.GetFile(Config.Dir.CustomInputDevice, xmlFile);
         if (!File.Exists(path))
         {
           MessageBox.Show("Can't locate mapping file " + xmlFile + "\n\nMake sure it exists in /InputDeviceMappings/defaults", "Mapping file missing", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -886,7 +886,7 @@ namespace MediaPortal.InputDevices
       catch (Exception ex)
       {
         Log.Error(ex);
-        File.Delete(Config.Get(Config.Dir.CustomInputDevice) + xmlFile);
+        File.Delete(Config.GetFile(Config.Dir.CustomInputDevice, xmlFile));
         LoadMapping(xmlFile, true);
       }
     }
@@ -897,7 +897,7 @@ namespace MediaPortal.InputDevices
       try
 #endif
       {
-        DirectoryInfo dir = Directory.CreateDirectory(Config.Get(Config.Dir.CustomInputDevice));
+        DirectoryInfo dir = Directory.CreateDirectory(Config.GetFolder(Config.Dir.CustomInputDevice));
       }
 #if !DEBUG
       catch
@@ -908,7 +908,7 @@ namespace MediaPortal.InputDevices
       //try
 #endif
       {
-        XmlTextWriter writer = new XmlTextWriter(Config.Get(Config.Dir.CustomInputDevice) + xmlFile, System.Text.Encoding.UTF8);
+        XmlTextWriter writer = new XmlTextWriter(Config.GetFile(Config.Dir.CustomInputDevice, xmlFile), System.Text.Encoding.UTF8);
         writer.Formatting = Formatting.Indented;
         writer.Indentation = 1;
         writer.IndentChar = (char)9;
@@ -1614,8 +1614,8 @@ namespace MediaPortal.InputDevices
 
     private void buttonDefault_Click(object sender, System.EventArgs e)
     {
-      if (File.Exists(Config.Get(Config.Dir.CustomInputDevice) + inputClassName + ".xml"))
-        File.Delete(Config.Get(Config.Dir.CustomInputDevice) + inputClassName + ".xml");
+      if (File.Exists(Config.GetFile(Config.Dir.CustomInputDevice, inputClassName + ".xml")))
+        File.Delete(Config.GetFile(Config.Dir.CustomInputDevice, inputClassName + ".xml"));
       LoadMapping(inputClassName + ".xml", true);
     }
 

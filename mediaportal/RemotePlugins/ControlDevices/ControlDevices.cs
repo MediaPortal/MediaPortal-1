@@ -196,7 +196,7 @@ namespace MediaPortal.ControlDevices
     public static System.Collections.Generic.List<IControlPlugin> PluginInstances()
     {
       ArrayList cioPlugins = new ArrayList();
-      cioPlugins.Add(Config.Get(Config.Dir.Base) + "\\RemotePlugins.dll");
+      cioPlugins.Add(Config.GetFile(Config.Dir.Base, "RemotePlugins.dll"));
 
       System.Collections.Generic.List<IControlPlugin> pluginInstances = new System.Collections.Generic.List<IControlPlugin>();
 

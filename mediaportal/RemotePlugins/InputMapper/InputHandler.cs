@@ -131,7 +131,7 @@ namespace MediaPortal.InputDevices
     public InputHandler(string deviceXmlName)
     {
 
-      using (Profile.Settings xmlreader = new Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         _basicHome = xmlreader.GetValueAsBool("general", "startbasichome", false);
 
       string xmlPath = GetXmlPath(deviceXmlName);
@@ -178,7 +178,7 @@ namespace MediaPortal.InputDevices
     public string GetXmlPath(string deviceXmlName)
     {
       string path = string.Empty;
-      string pathCustom = Config.Get(Config.Dir.CustomInputDevice) + deviceXmlName + ".xml";
+      string pathCustom = Config.GetFile(Config.Dir.CustomInputDevice, deviceXmlName + ".xml");
       string pathDefault = "InputDeviceMappings\\defaults\\" + deviceXmlName + ".xml";
 
       if (System.IO.File.Exists(pathCustom) && CheckXmlFile(pathCustom))

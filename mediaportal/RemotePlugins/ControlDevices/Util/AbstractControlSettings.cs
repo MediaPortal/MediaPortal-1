@@ -77,7 +77,7 @@ namespace MediaPortal.ControlDevices
 
     protected void SetValueAsBool(string name, bool val)
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + CONFIG_FILE))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, CONFIG_FILE)))
       {
         xmlwriter.SetValueAsBool(CONFIG_SECTION, _prefix + "_" + name, val);
       }
@@ -85,7 +85,7 @@ namespace MediaPortal.ControlDevices
 
     protected void SetValue(string name,object val)
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + CONFIG_FILE))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, CONFIG_FILE)))
       {
         xmlwriter.SetValue(CONFIG_SECTION, _prefix + "_" + name, val);
       }
@@ -94,7 +94,7 @@ namespace MediaPortal.ControlDevices
 
     protected object GetValue(string name)
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + CONFIG_FILE))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, CONFIG_FILE)))
       {
         return xmlreader.GetValue(CONFIG_SECTION, _prefix + "_" + name);
       }
@@ -103,7 +103,7 @@ namespace MediaPortal.ControlDevices
 
     protected bool GetValueAsBool(string name, bool def)
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + CONFIG_FILE))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, CONFIG_FILE)))
       {
         return xmlreader.GetValueAsBool(CONFIG_SECTION, _prefix + "_" + name, def);
       }
