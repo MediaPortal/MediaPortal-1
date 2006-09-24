@@ -49,13 +49,13 @@ namespace MediaPortal.Video.Database
       try
       {
         // Open database
-        String strPath = Config.Get(Config.Dir.Database);
+        String strPath = Config.GetFolder(Config.Dir.Database);
         try
         {
           System.IO.Directory.CreateDirectory(strPath);
         }
         catch (Exception) { }
-        m_db = new SQLiteClient(strPath + @"VideoDatabaseV5.db3");
+        m_db = new SQLiteClient(Config.GetFile(Config.Dir.Database, @"VideoDatabaseV5.db3"));
         DatabaseUtility.SetPragmas(m_db);
         CreateTables();
 

@@ -59,10 +59,10 @@ namespace MediaPortal.Radio.Database
 
         try
         {
-          System.IO.Directory.CreateDirectory(Config.Get(Config.Dir.Database));
+          System.IO.Directory.CreateDirectory(Config.GetFolder(Config.Dir.Database));
         }
         catch (Exception) { }
-        m_db = new SQLiteClient(Config.Get(Config.Dir.Database) + "RadioDatabase4.db3");
+        m_db = new SQLiteClient(Config.GetFile(Config.Dir.Database, "RadioDatabase4.db3"));
 
         if (m_db != null)
         {

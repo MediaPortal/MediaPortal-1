@@ -249,7 +249,7 @@ namespace MediaPortal.TV.Database
                       if (nodeSrc != null)
                       {
                         string strURL = htmlUtil.ConvertHTMLToAnsi(nodeSrc.InnerText);
-                        string strLogoPng = MediaPortal.Util.Utils.GetCoverArtName(Config.Get(Config.Dir.Thumbs) + @"tv\logos", chan.Name);
+                        string strLogoPng = MediaPortal.Util.Utils.GetCoverArtName(Config.GetSubFolder(Config.Dir.Thumbs, @"tv\logos"), chan.Name);
                         if (!System.IO.File.Exists(strLogoPng))
                         {
                           MediaPortal.Util.Utils.DownLoadImage(strURL, strLogoPng, System.Drawing.Imaging.ImageFormat.Png);

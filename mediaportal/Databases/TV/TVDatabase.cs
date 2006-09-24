@@ -130,11 +130,11 @@ namespace MediaPortal.TV.Database
 
           try
           {
-            System.IO.Directory.CreateDirectory(Config.Get(Config.Dir.Database));
+            System.IO.Directory.CreateDirectory(Config.GetFolder(Config.Dir.Database));
           }
           catch (Exception) { }
           //Upgrade();
-          m_db = new SQLiteClient(Config.Get(Config.Dir.Database) + "TVDatabaseV21.db3");
+          m_db = new SQLiteClient(Config.GetFile(Config.Dir.Database, "TVDatabaseV21.db3"));
           if (m_db != null)
           {
             DatabaseUtility.SetPragmas(m_db);

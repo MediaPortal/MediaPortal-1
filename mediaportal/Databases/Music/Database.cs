@@ -148,18 +148,18 @@ namespace MediaPortal.Music.Database
         // Open database
         try
         {
-          System.IO.Directory.CreateDirectory(Config.Get(Config.Dir.Database));
+          System.IO.Directory.CreateDirectory(Config.GetFolder(Config.Dir.Database));
         }
         catch (Exception) { }
 
         // no database V7 - copy and update V6
-        if (!File.Exists(Config.Get(Config.Dir.Database) + "MusicDatabaseV7.db3"))
+        if (!File.Exists(Config.GetFile(Config.Dir.Database, "MusicDatabaseV7.db3")))
         {
-          if (!File.Exists(Config.Get(Config.Dir.Database) + "MusicDatabaseV6.db3"))
+          if (!File.Exists(Config.GetFile(Config.Dir.Database, "MusicDatabaseV6.db3")))
           {
-            if (File.Exists(Config.Get(Config.Dir.Database) + "musicdatabase5.db3"))
+            if (File.Exists(Config.GetFile(Config.Dir.Database, "musicdatabase5.db3")))
             {
-              File.Copy((Config.Get(Config.Dir.Database) + "musicdatabase5.db3"), (Config.Get(Config.Dir.Database) + "MusicDatabaseV7.db3"), false);
+              File.Copy((Config.GetFile(Config.Dir.Database, "musicdatabase5.db3")), (Config.GetFile(Config.Dir.Database, "MusicDatabaseV7.db3")), false);
 
             }
             else
@@ -170,14 +170,14 @@ namespace MediaPortal.Music.Database
             if (UpdateDB_V6_to_V7())
             {
               Log.Info("MusicDatabaseV7: old V6 database successfully updated");
-              File.Copy((Config.Get(Config.Dir.Database) + "MusicDatabaseV6.db3"), (Config.Get(Config.Dir.Database) + "MusicDatabaseV7.db3"), false);
+              File.Copy((Config.GetFile(Config.Dir.Database, "MusicDatabaseV6.db3")), (Config.GetFile(Config.Dir.Database, "MusicDatabaseV7.db3")), false);
             }
             else
               Log.Error("MusicDatabaseV6: error while trying to update your database to V7");
           }
         }
 
-        m_db = new SQLiteClient(Config.Get(Config.Dir.Database) + "MusicDatabaseV7.db3");
+        m_db = new SQLiteClient(Config.GetFile(Config.Dir.Database, "MusicDatabaseV7.db3"));
 
         DatabaseUtility.SetPragmas(m_db);
 
@@ -239,7 +239,7 @@ namespace MediaPortal.Music.Database
     static bool UpdateDB_V6_to_V7()
     {
       bool success = true;
-      m_db = new SQLiteClient(Config.Get(Config.Dir.Database) + "MusicDatabaseV6.db3");
+      m_db = new SQLiteClient(Config.GetFile(Config.Dir.Database, "MusicDatabaseV6.db3"));
       SQLiteResultSet results;
 
       string strSQL = "ALTER TABLE scrobblesettings ADD COLUMN iOfflineMode integer";
@@ -2731,7 +2731,7 @@ namespace MediaPortal.Music.Database
         UpdateSortableArtistNames();
 
         // Check for a database backup and delete it if it exists       
-        string backupDbPath = Path.Combine(Config.Get(Config.Dir.Database), "musicdatabase4.db3.bak");
+        string backupDbPath = Config.GetFile(Config.Dir.Database, "musicdatabase4.db3.bak");
 
         if (File.Exists(backupDbPath))
         {

@@ -79,8 +79,7 @@ namespace MediaPortal.MusicVideos.Database
                     Log.Info("Yahoo Settings: {0}", moBitRateList == null);
                     YahooSite loSite;
                     string lsValue;
-                    using (loXmlreader = new XmlTextReader(Config.Get(Config.Dir.Config) + "MusicVideoSettings.xml"))
-                    //using (MediaPortal.Profile.Settings loXmlreader = new MediaPortal.Profile.Settings("MusicVideoSettings.xml"))
+                    using (loXmlreader = new XmlTextReader(Config.GetFile(Config.Dir.Config, "MusicVideoSettings.xml")))
                     {
                         while (loXmlreader.Read())
                         {
@@ -144,7 +143,7 @@ namespace MediaPortal.MusicVideos.Database
             Log.Info("Yahoo Settings: saving settings.");
             try
             {
-                string filename = Config.Get(Config.Dir.Config) + "MyMusicVideoSettings.xml";
+                string filename = Config.GetFile(Config.Dir.Config, "MyMusicVideoSettings.xml");
 
                 loReader = new XmlTextReader(filename);
 

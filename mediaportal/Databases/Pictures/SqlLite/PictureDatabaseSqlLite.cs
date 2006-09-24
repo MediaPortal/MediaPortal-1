@@ -54,10 +54,10 @@ namespace MediaPortal.Picture.Database
           // Open database
           try
           {
-            System.IO.Directory.CreateDirectory(Config.Get(Config.Dir.Database));
+            System.IO.Directory.CreateDirectory(Config.GetFolder(Config.Dir.Database));
           }
           catch (Exception) { }
-          m_db = new SQLiteClient(Config.Get(Config.Dir.Database) + "PictureDatabase.db3");
+          m_db = new SQLiteClient(Config.GetFile(Config.Dir.Database, "PictureDatabase.db3"));
 
           DatabaseUtility.SetPragmas(m_db);
           CreateTables();

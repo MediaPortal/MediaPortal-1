@@ -116,8 +116,8 @@ namespace MediaPortal.MusicVideos.Database
 
       try
       {
-        string filename = Config.Get(Config.Dir.Config) + "MusicVideoFavorites.xml";
-        string newfilename = Config.Get(Config.Dir.Config) + "MusicVideoFavorites.xml.arc";
+        string filename = Config.GetFile(Config.Dir.Config, "MusicVideoFavorites.xml");
+        string newfilename = Config.GetFile(Config.Dir.Config, "MusicVideoFavorites.xml.arc");
         //rename the file
         File.Move(filename, newfilename);
 

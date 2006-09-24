@@ -44,7 +44,7 @@ namespace Databases.Folders
       {
         // Open database
         Log.Info("open folderdatabase");
-        m_db = new SQLiteClient(Config.Get(Config.Dir.Database) + "FolderDatabase3.db3");
+        m_db = new SQLiteClient(Config.GetFile(Config.Dir.Database, "FolderDatabase3.db3"));
 
         DatabaseUtility.SetPragmas(m_db);
         DatabaseUtility.AddTable(m_db, "tblPath", "CREATE TABLE tblPath ( idPath integer primary key, strPath text)");
