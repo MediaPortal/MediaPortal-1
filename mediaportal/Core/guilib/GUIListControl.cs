@@ -374,14 +374,14 @@ namespace MediaPortal.GUI.Library
             for (int x = _offset; x < _offset + _itemsPerPage && x < _listItems.Count; x++)
             {
               GUIListItem pItem2 = _listItems[x];
-              pItem2.RetrieveArt = false;
+              //pItem2.RetrieveArt = false;
               if ((pItem.IconImage != "" && pItem.IconImage == pItem2.IconImage) ||
                 (pItem.IconImageBig != "" && pItem.IconImageBig == pItem2.IconImageBig))
               {
                 dispose = false;
                 break;
               }
-              pItem2.RetrieveArt = true;
+              //pItem2.RetrieveArt = true;
             }
             pItem.RetrieveArt = true;
             if (dispose)
@@ -398,14 +398,14 @@ namespace MediaPortal.GUI.Library
             for (int x = _offset; x < _offset + _itemsPerPage && x < _listItems.Count; x++)
             {
               GUIListItem pItem2 = _listItems[x];
-              pItem2.RetrieveArt = false;
+              //pItem2.RetrieveArt = false;
               if ((pItem.IconImageBig != "" && pItem.IconImage == pItem2.IconImageBig) ||
                 (pItem.IconImageBig != "" && pItem.IconImageBig == pItem2.IconImageBig))
               {
                 dispose = false;
                 break;
               }
-              pItem2.RetrieveArt = true;
+              //pItem2.RetrieveArt = true;
             }
             if (dispose)
               pItem.FreeMemory();
