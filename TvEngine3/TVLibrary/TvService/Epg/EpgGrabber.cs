@@ -70,7 +70,7 @@ namespace TvService
 
     bool _reEntrant = false;
     List<EpgChannel> _epg;
-    int _currentCardId;
+    int _currentCardId = -1;
     Channel _currentChannel;
     DateTime _grabStartTime;
     bool _isRunning;
@@ -100,6 +100,7 @@ namespace TvService
       _lastEpgGrabTime = DateTime.MinValue;
       _grabStartTime = DateTime.MinValue;
       _state = EpgState.Idle;
+      _currentCardId = -1;
 
 
       _epgTimer.Interval = 1000;
@@ -114,6 +115,8 @@ namespace TvService
       Log.Write("epg grabber:epg cancelled");
       _state = EpgState.Idle;
       _currentChannel = null;
+
+      _currentCardId = -1;
       return;
     }
 
@@ -148,6 +151,7 @@ namespace TvService
         if (IsCardIdle(_currentCardId) == false)
         {
           _state = EpgState.Idle;
+          _currentCardId = -1;
           return 0;
         }
 
@@ -166,6 +170,7 @@ namespace TvService
             _currentChannel = null;
           }
           _state = EpgState.Idle;
+          _currentCardId = -1;
           return 0;
         }
 
@@ -213,6 +218,7 @@ namespace TvService
       _isRunning = true;
       _epgTimer.Enabled = true;
       _state = EpgState.Idle;
+      _currentCardId = -1;
       _grabStartTime = DateTime.Now;
     }
 
@@ -223,6 +229,11 @@ namespace TvService
     {
       if (_isRunning == false) return;
       Log.Write("EPG: grabber stopped..");
+      if (_state != EpgState.Idle && _currentCardId >= 0)
+      {
+        _tvController.StopGrabbingEpg(_currentCardId);
+      }
+      _currentCardId = -1;
       _epgTimer.Enabled = false;
       _state = EpgState.Stopped;
       _isRunning = false;
@@ -260,6 +271,7 @@ namespace TvService
             {
               //not idle? then cancel epg grabbing
               _state = EpgState.Idle;
+              _currentCardId = -1;
               return;
             }
           }
@@ -278,6 +290,7 @@ namespace TvService
             _currentChannel = null;
             _grabStartTime = DateTime.MinValue;
             _state = EpgState.Idle;
+            _currentCardId = -1;
           }
         }
       }
@@ -392,7 +405,7 @@ namespace TvService
               if (cardLocked == false) continue;
               RemoteControl.Instance.TuneScan(card.IdCard, tuning);
               _currentCardId = card.IdCard;
-              _tvController.GrabEpg(this,card.IdCard);
+              _tvController.GrabEpg(this, card.IdCard);
             }
             catch (Exception ex)
             {
@@ -569,6 +582,10 @@ namespace TvService
               }
               if (success)
               {
+                SaveOptions options = new SaveOptions();
+                options.IsTransactional = false;
+                options.UpdateBatchSize = 5000;
+                DatabaseManager.Instance.SaveChanges(options);
                 DatabaseManager.Instance.SaveChanges();
                 Thread.Sleep(500);
               }
@@ -592,10 +609,14 @@ namespace TvService
         if (_currentChannel != null)
         {
           _currentChannel.LastGrabTime = DateTime.Now;
-          DatabaseManager.Instance.SaveChanges();
+          SaveOptions options = new SaveOptions();
+          options.IsTransactional = false;
+          options.UpdateBatchSize = 100;
+          DatabaseManager.Instance.SaveChanges(options);
           Log.Write("EPG: database updated for {0} {1} {2}", _currentChannel.Name, _state, IsCardIdle(_currentCardId));
         }
         _state = EpgState.Idle;
+        _currentCardId = -1;
       }
     }
 
@@ -632,7 +653,6 @@ namespace TvService
         lastProgram = programsInDbs[0].EndTime;
       }
 
-      int added = 0;
       foreach (EpgProgram program in epgChannel.Programs)
       {
         if (_state != EpgState.Updating)
@@ -684,13 +704,6 @@ namespace TvService
         newProgram.Title = title;
         newProgram.Genre = genre;
         lastProgram = program.EndTime;
-        added++;
-        if (added > 25)
-        {
-          DatabaseManager.Instance.SaveChanges();
-          added = 0;
-          Thread.Sleep(500);
-        }
 
       }//foreach (EpgProgram program in epgChannel.Programs)
 

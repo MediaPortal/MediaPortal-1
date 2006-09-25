@@ -1619,6 +1619,19 @@ namespace TvService
         return true;
       }
     }
+
+    public void StopGrabbingEpg(int cardId)
+    {
+      if (IsLocal(_allDbscards[cardId].Server.HostName) == false)
+      {
+        // RemoteControl.HostName = _allDbscards[cardId].Server.HostName;
+       // RemoteControl.Instance.StopGrabbingEpg(cardId);
+        return;
+      }
+
+       _localCards[cardId].IsEpgGrabbing = false;
+    }
+
     #endregion
 
     #endregion

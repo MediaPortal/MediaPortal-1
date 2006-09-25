@@ -90,7 +90,7 @@ namespace TvLibrary.Interfaces
     /// <summary>
     /// returns true if card is currently grabbing the epg
     /// </summary>
-    bool IsEpgGrabbing { get;}
+    bool IsEpgGrabbing { get;set;}
 
     /// <summary>
     /// returns true if card is currently scanning

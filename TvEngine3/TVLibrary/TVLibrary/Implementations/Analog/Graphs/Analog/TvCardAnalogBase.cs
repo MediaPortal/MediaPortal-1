@@ -2033,6 +2033,9 @@ namespace TvLibrary.Implementations.Analog
       {
         return false;
       }
+      set
+      {
+      }
     }
 
     /// <summary>

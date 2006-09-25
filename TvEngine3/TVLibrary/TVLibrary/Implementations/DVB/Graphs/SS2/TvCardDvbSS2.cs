@@ -467,7 +467,7 @@ namespace TvLibrary.Implementations.DVB
       if (_epgGrabbing)
       {
         _epgGrabbing = false;
-        if (_epgGrabberCallback != null)
+        if (_epgGrabberCallback != null && _epgGrabbing)
         {
           Log.Log.WriteFile("ss2:cancel epg->stop graph");
           _epgGrabberCallback.OnEpgCancelled();
@@ -1317,7 +1317,7 @@ namespace TvLibrary.Implementations.DVB
       if (_epgGrabbing)
       {
         _epgGrabbing = false;
-        if (_epgGrabberCallback != null)
+        if (_epgGrabberCallback != null && _epgGrabbing)
         {
           _epgGrabberCallback.OnEpgCancelled();
         }
@@ -1786,7 +1786,7 @@ namespace TvLibrary.Implementations.DVB
       if (_epgGrabbing)
       {
         _epgGrabbing = false;
-        if (_epgGrabberCallback != null)
+        if (_epgGrabberCallback != null && _epgGrabbing)
         {
           _epgGrabberCallback.OnEpgCancelled();
         }
@@ -1954,6 +1954,11 @@ namespace TvLibrary.Implementations.DVB
       {
         return _epgGrabbing;
       }
+      set
+      {
+        if (_epgGrabbing && value == false) _interfaceEpgGrabber.Reset();
+        _epgGrabbing = value;
+      }
     }
 
     /// <summary>
@@ -1971,7 +1976,7 @@ namespace TvLibrary.Implementations.DVB
         if (_isScanning)
         {
           _epgGrabbing = false;
-          if (_epgGrabberCallback != null)
+          if (_epgGrabberCallback != null && _epgGrabbing)
           {
             _epgGrabberCallback.OnEpgCancelled();
           }
