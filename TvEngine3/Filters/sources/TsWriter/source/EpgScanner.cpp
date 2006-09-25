@@ -44,6 +44,7 @@ CEpgScanner::~CEpgScanner(void)
 
 STDMETHODIMP CEpgScanner::SetCallBack(IEpgCallback* callback)
 {
+	LogDebug("epg: set callback");
   m_pCallBack=callback;
 	return S_OK;
 }
@@ -51,7 +52,7 @@ STDMETHODIMP CEpgScanner::SetCallBack(IEpgCallback* callback)
 STDMETHODIMP CEpgScanner::Reset()
 {
 	CEnterCriticalSection enter(m_section);
-	LogDebug("analyzer CEpgScanner::reset");
+	LogDebug("epg: reset");
 	m_bGrabbing=false;
 	m_epgParser.Reset();
 	return S_OK;
@@ -67,7 +68,7 @@ STDMETHODIMP CEpgScanner::GrabEPG()
 	}
 	catch(...)
 	{
-		LogDebug("analyzer CEpgScanner::GrabEPG exception");
+		LogDebug("epg: GrabEPG exception");
 	}
 	return S_OK;
 }
@@ -80,7 +81,7 @@ STDMETHODIMP CEpgScanner::IsEPGReady(BOOL* yesNo)
 	}
 	catch(...)
 	{
-		LogDebug("analyzer CEpgScanner::IsEPGReady exception");
+		LogDebug("epg: IsEPGReady exception");
 	}
 	return S_OK;
 }
@@ -94,7 +95,7 @@ STDMETHODIMP CEpgScanner::GetEPGChannelCount( ULONG* channelCount)
 	}
 	catch(...)
 	{
-		LogDebug("analyzer CEpgScanner::GetEPGChannelCount exception");
+		LogDebug("epg: GetEPGChannelCount exception");
 	}
 	return S_OK;
 }
@@ -108,7 +109,7 @@ STDMETHODIMP CEpgScanner::GetEPGEventCount( ULONG channel,  ULONG* eventCount)
 	}
 	catch(...)
 	{
-		LogDebug("analyzer CEpgScanner::GetEPGEventCount exception");
+		LogDebug("epg: GetEPGEventCount exception");
 	}
 	return S_OK;
 }
@@ -122,7 +123,7 @@ STDMETHODIMP CEpgScanner::GetEPGChannel( ULONG channel,  WORD* networkId,  WORD*
 	}
 	catch(...)
 	{
-		LogDebug("analyzer CEpgScanner::GetEPGChannel exception");
+		LogDebug("epg: GetEPGChannel exception");
 	}
 	return S_OK;
 }
@@ -136,7 +137,7 @@ STDMETHODIMP CEpgScanner::GetEPGEvent( ULONG channel,  ULONG eventid,ULONG* lang
 	}
 	catch(...)
 	{
-		LogDebug("analyzer CEpgScanner::GetEPGEvent exception");
+		LogDebug("epg: GetEPGEvent exception");
 	}
 	return S_OK;
 }
@@ -150,7 +151,7 @@ STDMETHODIMP CEpgScanner::GetEPGLanguage(THIS_ ULONG channel, ULONG eventid,ULON
 	}
 	catch(...)
 	{
-		LogDebug("analyzer CEpgScanner::GetEPGLanguage exception");
+		LogDebug("epg: GetEPGLanguage exception");
 	}
 	return S_OK;
 }
@@ -166,7 +167,7 @@ STDMETHODIMP CEpgScanner::GrabMHW()
 	}
 	catch(...)
 	{
-		LogDebug("analyzer CEpgScanner::GrabMHW exception");
+		LogDebug("epg: GrabMHW exception");
 	}
 	return S_OK;
 }
@@ -184,7 +185,7 @@ STDMETHODIMP CEpgScanner::IsMHWReady(BOOL* yesNo)
 	}
 	catch(...)
 	{
-		LogDebug("analyzer CEpgScanner::IsMHWReady exception");
+		LogDebug("epg: IsMHWReady exception");
 	}
 	return S_OK;
 }
@@ -198,7 +199,7 @@ STDMETHODIMP CEpgScanner::GetMHWTitleCount(WORD* count)
 	}
 	catch(...)
 	{
-		LogDebug("analyzer CEpgScanner::GetMHWTitleCount exception");
+		LogDebug("epg: GetMHWTitleCount exception");
 	}
 	return S_OK;
 }
@@ -212,7 +213,7 @@ STDMETHODIMP CEpgScanner::GetMHWTitle(WORD program, WORD* id, WORD* transportId,
 	}
 	catch(...)
 	{
-		LogDebug("analyzer CEpgScanner::GetMHWTitle exception");
+		LogDebug("epg: GetMHWTitle exception");
 	}
 	return S_OK;
 }
@@ -226,7 +227,7 @@ STDMETHODIMP CEpgScanner::GetMHWChannel(WORD channelNr, WORD* channelId,WORD* ne
 	}
 	catch(...)
 	{
-		LogDebug("analyzer CEpgScanner::GetMHWChannel exception");
+		LogDebug("epg: GetMHWChannel exception");
 	}
 	return S_OK;
 }
@@ -240,7 +241,7 @@ STDMETHODIMP CEpgScanner::GetMHWSummary(WORD programId, char** summary)
 	}
 	catch(...)
 	{
-		LogDebug("analyzer CEpgScanner::GetMHWSummary exception");
+		LogDebug("epg: GetMHWSummary exception");
 	}
 	return S_OK;
 }
@@ -254,7 +255,7 @@ STDMETHODIMP CEpgScanner::GetMHWTheme(WORD themeId, char** theme)
 	}
 	catch(...)
 	{
-		LogDebug("analyzer CEpgScanner::GetMHWTheme exception");
+		LogDebug("epg: GetMHWTheme exception");
 	}
 	return S_OK;
 }
@@ -272,6 +273,7 @@ void CEpgScanner::OnTsPacket(byte* tsPacket)
 			  m_mhwParser.OnTsPacket(tsPacket);
 			  if (m_epgParser.IsEPGReady() && m_mhwParser.IsEPGReady())
 			  {
+	        LogDebug("epg: epg received");
 				  m_bGrabbing=false;
 			  }
       }
@@ -280,6 +282,7 @@ void CEpgScanner::OnTsPacket(byte* tsPacket)
       {
         if (m_pCallBack!=NULL)
         {
+	        LogDebug("epg: do callback");
           m_pCallBack->OnEpgReceived();
         }
       }

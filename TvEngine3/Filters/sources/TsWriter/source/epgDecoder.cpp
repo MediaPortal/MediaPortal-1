@@ -578,7 +578,7 @@ void CEpgDecoder::ResetEPG()
 	EPGEvent evt;
 
 	m_prevChannel=ch;
-	m_prevChannelIndex-1;
+	m_prevChannelIndex=-1;
 	m_prevEvent = evt;
 	m_prevEventIndex=-1;
 
