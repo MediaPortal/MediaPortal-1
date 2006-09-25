@@ -164,6 +164,7 @@ namespace TvLibrary.Implementations.DVB
 #else
     System.Timers.Timer _pmtTimer = new System.Timers.Timer();
 #endif
+    bool _pmtTimerRentrant = false;
     #endregion
 
     #region graph building
@@ -1806,6 +1807,7 @@ namespace TvLibrary.Implementations.DVB
                 int starttime_y = year;
                 int starttime_m = month;
                 int starttime_d = day;
+                if (year < 2000) continue;
 
                 try
                 {
@@ -1882,6 +1884,8 @@ namespace TvLibrary.Implementations.DVB
       try
       {
         if (_graphRunning == false) return;
+        if (_pmtTimerRentrant) return;
+        _pmtTimerRentrant = true;
 #if FORM
         if (_newPMT)
         {
@@ -1908,6 +1912,10 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.WriteFile("dvb:{0}", ex.Message);
         Log.Log.WriteFile("dvb:{0}", ex.Source);
         Log.Log.WriteFile("dvb:{0}", ex.StackTrace);
+      }
+      finally
+      {
+        _pmtTimerRentrant = false;
       }
     }
     /// <summary>

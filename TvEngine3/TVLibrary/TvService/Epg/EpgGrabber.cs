@@ -109,7 +109,7 @@ namespace TvService
 
     #region epg callback
 
-    public virtual void OnEpgCancelled()
+    public override void OnEpgCancelled()
     {
       Log.Write("epg grabber:epg cancelled");
       _state = EpgState.Idle;
@@ -124,7 +124,7 @@ namespace TvService
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="epg">new epg data</param>
-    public virtual int OnEpgReceived()
+    public override int OnEpgReceived()
     {
       try
       {

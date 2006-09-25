@@ -114,8 +114,8 @@ namespace TvLibrary.Epg
     /// </returns>
     public int CompareTo(EpgProgram other)
     {
-      if (other._endTime <= StartTime) return 1;
-      if (other.StartTime >= EndTime) return -1;
+      if (other.StartTime > StartTime) return -1;
+      if (other.StartTime < StartTime) return 1;
       return 0;
     }
 
