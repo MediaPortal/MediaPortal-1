@@ -15,7 +15,7 @@ namespace WindowPlugins.VideoEditor
   {
     protected DsROTEntry _rotEntry = null;
     protected IGraphBuilder graphBuilder = null;
-		protected IFileSinkFilter bufferSource = null;//IStreamBufferSource bufferSource = null;
+	protected IFileSinkFilter bufferSource = null;//IStreamBufferSource bufferSource = null;
     protected IFileSinkFilter2 fileWriterFilter = null;			// DShow Filter: file writer
     protected IMediaControl mediaControl = null;
     protected IStreamBufferMediaSeeking mediaSeeking = null;
@@ -346,12 +346,12 @@ namespace WindowPlugins.VideoEditor
     bool AddCodecs(IGraphBuilder graphBuilder, TranscodeInfo info)
     {
       int hr;
-      Log.Info("DVR2XVID: add XVID codec to graph");
+      Log.Info("MPEG2DIVX: add Divx codec to graph");
       string monikerXVID = @"@device:cm:{33D9A760-90C8-11D0-BD43-00A0C911CE86}\xvid";
       xvidCodec = Marshal.BindToMoniker(monikerXVID) as IBaseFilter;
       if (xvidCodec == null)
       {
-        Log.Error("DVR2XVID:FAILED:Unable to create XviD MPEG-4 Codec");
+          Log.Error("MPEG2DIVX:FAILED:Unable to create Divx MPEG-4 Codec");
         Cleanup();
         return false;
       }
