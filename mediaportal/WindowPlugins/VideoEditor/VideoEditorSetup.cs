@@ -46,7 +46,7 @@ namespace WindowPlugins.VideoEditor
 
 		public bool DefaultEnabled()
 		{
-			return true;
+			return false;
 		}
 
 		public string Description()

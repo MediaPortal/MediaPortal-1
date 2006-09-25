@@ -84,7 +84,7 @@ namespace MediaPortal.GUI.Video
     // Indicates if plugin is enabled by default;
     public bool DefaultEnabled()
     {
-      return true;
+      return false;
     }
     // indicates if a plugin has its own setup screen
     public bool HasSetup()

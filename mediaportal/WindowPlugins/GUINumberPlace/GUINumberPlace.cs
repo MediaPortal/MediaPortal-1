@@ -647,7 +647,7 @@ namespace MediaPortal.GUI.NumberPlace
 
     public bool DefaultEnabled()
     {
-      return false;
+      return true;
     }
 
     public bool HasSetup()

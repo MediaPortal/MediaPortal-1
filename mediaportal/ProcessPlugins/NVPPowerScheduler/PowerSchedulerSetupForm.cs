@@ -84,11 +84,11 @@ namespace MediaPortal.PowerScheduler
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         nud_wakeup.Value = xmlreader.GetValueAsInt("powerscheduler", "wakeupinterval", 1);
-        nud_shutdown.Value = xmlreader.GetValueAsInt("powerscheduler", "shutdowninterval", 3);
+        nud_shutdown.Value = xmlreader.GetValueAsInt("powerscheduler", "shutdowninterval", 0);
         cobx_shutdown.Text = xmlreader.GetValueAsString("powerscheduler", "shutdownmode", "Suspend");
         cbxExtensive.Checked = xmlreader.GetValueAsBool("powerscheduler", "extensivelogging", false);
         cbxForced.Checked = xmlreader.GetValueAsBool("powerscheduler", "forcedshutdown", false);
-        cbxReinit.Checked = xmlreader.GetValueAsBool("powerscheduler", "reinitonresume", false);
+        cbxReinit.Checked = xmlreader.GetValueAsBool("powerscheduler", "reinitonresume", true);
 
       }
     }

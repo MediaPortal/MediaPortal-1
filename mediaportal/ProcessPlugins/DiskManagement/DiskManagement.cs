@@ -206,7 +206,7 @@ namespace ProcessPlugins.DiskSpace
 
     public string Description()
     {
-      return "Deletes old TV recordings when there is not enough free disk space";
+      return "Deletes old TV recordings according to the defined quota when there is not enough free disk space";
     }
 
     public bool DefaultEnabled()
