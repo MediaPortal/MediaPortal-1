@@ -5237,7 +5237,7 @@
    </string>
    <string>
       <id>19115</id>
-      <value>unger</value>
+      <value>barn</value>
    </string>
    <string>
       <id>19116</id>
@@ -5370,7 +5370,52 @@
    <string>
       <id>33040</id>
       <value>Kopier nå spilles spam til utklippstavlen</value>
-   </string>  
+   </string>
+  <string Prefix="Min ">
+      <id>34000</id>
+      <value>Last.fm</value>
+   </string>   
+   <string>
+      <id>34001</id>
+      <value>Start stream</value>
+   </string>
+   <string>
+      <id>34002</id>
+      <value>Venn: </value>
+   </string>
+   <string>
+      <id>34003</id>
+      <value>Naboer: </value>
+   </string>
+   <string>
+      <id>34004</id>
+      <value>Gruppe: </value>
+   </string>
+   <string>
+      <id>34010</id>
+      <value>Love</value>
+   </string>
+   <string>
+      <id>34011</id>
+      <value>Utesteng</value>
+   </string>
+   <string>
+      <id>34012</id>
+      <value>Neste</value>
+   </string>
+   <string>
+      <id>34020</id>
+      <value>Legg til i profil</value>
+   </string>
+   <string>
+      <id>34013</id>
+      <value>Oppdagelse Modus</value>
+   </string>
+   <string>
+      <id>34020</id>
+      <value>Gjeldende stream: </value>
+   </string>
+    
    <string>
       <id>99845</id>
       <value>TV.com sjekk</value>
