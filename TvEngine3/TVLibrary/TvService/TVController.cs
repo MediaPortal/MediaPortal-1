@@ -1603,6 +1603,22 @@ namespace TvService
         }
       }
     }
+    public bool AllCardsIdle
+    {
+      get
+      {
+        Dictionary<int, Card>.Enumerator enumer = _allDbscards.GetEnumerator();
+        while (enumer.MoveNext())
+        {
+          int cardId = enumer.Current.Key;
+          if (IsRecording(cardId)) return false;
+          if (IsTimeShifting(cardId)) return false;
+          if (IsScanning(cardId)) return false;
+          if (IsLocked(cardId)) return false;
+        }
+        return true;
+      }
+    }
     #endregion
 
     #endregion

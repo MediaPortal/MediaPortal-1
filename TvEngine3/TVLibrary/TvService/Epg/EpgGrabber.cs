@@ -570,6 +570,7 @@ namespace TvService
               if (success)
               {
                 DatabaseManager.Instance.SaveChanges();
+                Thread.Sleep(100);
               }
               break;
             }
@@ -698,11 +699,11 @@ namespace TvService
     {
       if (_isRunning == false) return false;
       if (cardId < 0) return false;
-      if (RemoteControl.Instance.IsRecording(cardId)) return false;
-      if (RemoteControl.Instance.IsTimeShifting(cardId)) return false;
-      if (RemoteControl.Instance.IsScanning(cardId)) return false;
-      if (_tvController.IsLocked(cardId)) return false;
-      return true;
+      //if (RemoteControl.Instance.IsRecording(cardId)) return false;
+      //if (RemoteControl.Instance.IsTimeShifting(cardId)) return false;
+      //if (RemoteControl.Instance.IsScanning(cardId)) return false;
+      //if (_tvController.IsLocked(cardId)) return false;
+      return _tvController.AllCardsIdle;
     }
     #endregion
   }

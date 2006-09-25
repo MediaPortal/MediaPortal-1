@@ -9,7 +9,7 @@
     <port>0</port>
   </logging>
   <rdbKey name="default" databaseProduct="Unknown">
-    <connection>Provider=SQLOLEDB.1;Password=;Persist Security Info=True;User ID=sa;Initial Catalog=TvLibrary;Data Source=-;</connection>
+    <connection>Provider=SQLOLEDB.1;Password=ffmpeg;Persist Security Info=True;User ID=sa;Initial Catalog=TvLibrary;Data Source=mediacenter\SQLEXPRESS;</connection>
     <probeAssemblyName>TVDatabase</probeAssemblyName>
   </rdbKey>
   <remoting>
