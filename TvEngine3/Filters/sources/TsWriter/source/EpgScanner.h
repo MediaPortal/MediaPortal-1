@@ -29,6 +29,15 @@ using namespace Mediaportal;
 // {5CDAC655-D9FB-4c71-8119-DD07FE86A9CE}
 DEFINE_GUID(IID_ITsEpgScanner, 0x5cdac655, 0xd9fb, 0x4c71, 0x81, 0x19, 0xdd, 0x7, 0xfe, 0x86, 0xa9, 0xce);
 
+// {FFAB5D98-2309-4d90-9C71-E4B2F490CF5A}
+DEFINE_GUID(IID_IEpgCallback,0xffab5d98, 0x2309, 0x4d90,  0x9c, 0x71, 0xe4, 0xb2, 0xf4, 0x90, 0xcf, 0x5a );
+
+DECLARE_INTERFACE_(IEpgCallback, IUnknown)
+{
+	STDMETHOD(OnEpgReceived)()PURE;
+};
+
+
 // video anayzer interface
 DECLARE_INTERFACE_(ITsEpgScanner, IUnknown)
 {
@@ -50,6 +59,8 @@ DECLARE_INTERFACE_(ITsEpgScanner, IUnknown)
 	STDMETHOD(GetMHWSummary)(THIS_ WORD programId, char** summary)PURE;
 	STDMETHOD(GetMHWTheme)(THIS_ WORD themeId, char** theme)PURE;
 	STDMETHOD(Reset)(THIS_)PURE;
+  
+	STDMETHOD(SetCallBack)(THIS_ IEpgCallback* callback)PURE;
 };
 
 class CEpgScanner: public CUnknown, public ITsEpgScanner
@@ -77,11 +88,13 @@ public:
 	STDMETHODIMP GetMHWSummary(WORD programId, char** summary);
 	STDMETHODIMP GetMHWTheme(WORD themeId, char** theme);
 	STDMETHODIMP Reset();
+	STDMETHODIMP SetCallBack(IEpgCallback* callback);
 
 	void OnTsPacket(byte* tsPacket);
 protected:
 	CEpgParser m_epgParser;
 	CMhwParser m_mhwParser;
+  IEpgCallback* m_pCallBack;
 private:
 	bool m_bGrabbing;
 	CCriticalSection m_section;

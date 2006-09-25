@@ -20,37 +20,47 @@
  */
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text;
 using TvLibrary.Epg;
 
 namespace TvLibrary.Interfaces
 {
-  #region delegates
-  /// <summary>
-  /// delegate callback which for the OnEpgReceived event
-  /// </summary>
-  /// <param name="sender">sender</param>
-  /// <param name="epg">list containing all epg information</param>
-  public delegate void EpgReceivedHandler(object sender, List<EpgChannel> epg);
-  #endregion
+
+  [ComVisible(true), ComImport,
+ Guid("FFAB5D98-2309-4d90-9C71-E4B2F490CF5A"),
+  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface IEpgCallback
+  {
+    [PreserveSig]
+    int OnEpgReceived();
+  };
+
+  public abstract class BaseEpgGrabber : IEpgCallback
+  {
+    public virtual void OnEpgCancelled() 
+    { 
+    }
+    public virtual int OnEpgReceived()
+    {
+      return 0;
+    }
+
+  }
 
   /// <summary>
   /// interface for dvb epg grabbing
   /// </summary>
   public interface ITVEPG
   {
-    #region events
-    /// <summary>
-    /// Event which gets fired when epg has been received
-    /// </summary>
-    event EpgReceivedHandler OnEpgReceived;
-    #endregion
 
     /// <summary>
     /// Starts the EPG grabber.
     /// When the epg has been received the OnEpgReceived event will be fired
     /// </summary>
-    void GrabEpg();
+    void GrabEpg(BaseEpgGrabber callback);
+
+    List<EpgChannel> Epg { get;}
 
   }
 }

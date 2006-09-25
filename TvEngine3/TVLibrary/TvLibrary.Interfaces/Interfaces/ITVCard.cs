@@ -70,7 +70,7 @@ namespace TvLibrary.Interfaces
     /// Returns true when unscrambled audio/video is received otherwise false
     /// </summary>
     /// <returns>true of false</returns>
-    bool IsReceivingAudioVideo{get;}
+    bool IsReceivingAudioVideo { get;}
 
     /// <summary>
     /// gets the current filename used for recording
@@ -115,15 +115,15 @@ namespace TvLibrary.Interfaces
     #endregion
 
     #region epg & scanning
+    void GrabEpg(BaseEpgGrabber callback);
+
+    List<EpgChannel> Epg { get;}
+
     /// <summary>
     /// returns the ITVScanning interface used for scanning channels
     /// </summary>
     ITVScanning ScanningInterface { get;}
 
-    /// <summary>
-    /// returns the ITVEPG interface used for grabbing the epg
-    /// </summary>
-    ITVEPG EpgInterface { get;}
 
     #endregion
 

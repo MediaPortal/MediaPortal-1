@@ -56,16 +56,11 @@ namespace TvService
     EpgGrabber _epgGrabber;
     Scheduler _scheduler;
     RtspStreaming _streamer;
-    EpgReceivedHandler _handler;
     bool _isMaster = false;
     Dictionary<int, bool> _cardLocks;
     Dictionary<int, Card> _allDbscards;
     Dictionary<int, ITVCard> _localCards;
     Dictionary<int, int> _clientReferenceCount;
-    #endregion
-
-    #region events
-    public event EpgReceivedHandler OnEpgReceived;
     #endregion
 
     #region ctor
@@ -194,7 +189,6 @@ namespace TvService
 
         _streamer = new RtspStreaming();
 
-        _handler = new EpgReceivedHandler(epgGrabber_OnEpgReceived);
         if (_isMaster)
         {
           _epgGrabber = new EpgGrabber(this);
@@ -214,32 +208,6 @@ namespace TvService
     public override object InitializeLifetimeService()
     {
       return null;
-    }
-    #endregion
-
-    #region epg event callback
-    /// <summary>
-    /// Callback fired by one of the tvcards when EPG data has been received
-    /// The method instructs the epg grabber to handle the new epg and update the database
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="epg">new epg data</param>
-    void epgGrabber_OnEpgReceived(object sender, List<EpgChannel> epg)
-    {
-      try
-      {
-        ITVEPG grabber = (ITVEPG)sender;
-        grabber.OnEpgReceived -= _handler;
-
-        if (OnEpgReceived != null)
-        {
-          OnEpgReceived(sender, epg);
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Write(ex);
-      }
     }
     #endregion
 
@@ -1261,20 +1229,18 @@ namespace TvService
     /// </summary>
     /// <param name="cardId">id of the card.</param>
     /// <returns></returns>
-    public void GrabEpg(int cardId)
+    public void GrabEpg(BaseEpgGrabber grabber, int cardId)
     {
       try
       {
         if (IsLocal(_allDbscards[cardId].Server.HostName) == false)
         {
-          RemoteControl.HostName = _allDbscards[cardId].Server.HostName;
-          RemoteControl.Instance.GrabEpg(cardId);
+          //RemoteControl.HostName = _allDbscards[cardId].Server.HostName;
+          //RemoteControl.Instance.GrabEpg(cardId);
           return;
         }
 
-        ITVEPG epgGrabber = _localCards[cardId].EpgInterface;
-        epgGrabber.OnEpgReceived += _handler;
-        epgGrabber.GrabEpg();
+        _localCards[cardId].GrabEpg(grabber);
 
       }
       catch (Exception ex)
@@ -1282,6 +1248,17 @@ namespace TvService
         Log.Write(ex);
         return;
       }
+    }
+    public List<EpgChannel> Epg(int cardId)
+    {
+      if (IsLocal(_allDbscards[cardId].Server.HostName) == false)
+      {
+        //RemoteControl.HostName = _allDbscards[cardId].Server.HostName;
+        //RemoteControl.Instance.GrabEpg(cardId);
+        return new List<EpgChannel>();
+      }
+
+      return _localCards[cardId].Epg;
     }
 
     public int GetRecordingSchedule(int cardId)

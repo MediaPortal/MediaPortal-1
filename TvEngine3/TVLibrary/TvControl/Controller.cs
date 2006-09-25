@@ -304,7 +304,7 @@ namespace TvControl
     /// </summary>
     /// <param name="cardId">id of the card.</param>
     /// <returns></returns>
-    void GrabEpg(int cardId);
+    //void GrabEpg(int cardId);
 
     /// <summary>
     /// returns the minium channel numbers for analog cards

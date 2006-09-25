@@ -42,7 +42,6 @@
     <Compile Include="DeviceSorter.cs" />
     <Compile Include="Implementations\Analog\Graphs\Analog\TvCardAnalogBase.cs" />
     <Compile Include="Implementations\DVB\Graphs\DvbBaseScanning.cs" />
-    <Compile Include="Implementations\DVB\Graphs\SS2\DvbSS2EpgGrabber.cs" />
     <Compile Include="Implementations\DVB\Graphs\SS2\DVBSS2Scanning.cs" />
     <Compile Include="Implementations\Helper\DevicesInUse.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\ConditionalAccess.cs" />
@@ -55,7 +54,6 @@
     <Compile Include="Implementations\DVB\Graphs\ATSC\TvCardATSC.cs" />
     <Compile Include="Implementations\DVB\Graphs\DVBC\DVBCScanning.cs" />
     <Compile Include="Implementations\DVB\Graphs\DVBC\TvCardDVBC.cs" />
-    <Compile Include="Implementations\DVB\Graphs\DvbEpgGrabber.cs" />
     <Compile Include="Implementations\DVB\Graphs\DVBS\DVBSScanning.cs" />
     <Compile Include="Implementations\DVB\Graphs\DVBS\TvCardDVBS.cs" />
     <Compile Include="Implementations\DVB\Graphs\SS2\DVBSkyStar2Helper.cs" />

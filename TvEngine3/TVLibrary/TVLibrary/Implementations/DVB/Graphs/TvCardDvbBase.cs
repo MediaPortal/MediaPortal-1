@@ -76,10 +76,6 @@ namespace TvLibrary.Implementations.DVB
 
 
 
-    #region delegates
-    public delegate void EpgProcessedHandler(object sender, List<EpgChannel> epg);
-    public event EpgProcessedHandler OnEpgReceived;
-    #endregion
 
     #region constants
 
@@ -149,6 +145,7 @@ namespace TvLibrary.Implementations.DVB
     protected GraphState _graphState = GraphState.Idle;
     protected bool _startTimeShifting = false;
     DVBAudioStream _currentAudioStream;
+    BaseEpgGrabber _epgGrabberCallback=null;
 
 
 
@@ -476,10 +473,10 @@ namespace TvLibrary.Implementations.DVB
       if (_epgGrabbing)
       {
         _epgGrabbing = false;
-        if (OnEpgReceived != null)
+        if (_epgGrabberCallback != null)
         {
           Log.Log.WriteFile("dvb:cancel epg->stop graph");
-          OnEpgReceived(this, null);
+          _epgGrabberCallback.OnEpgCancelled();
         }
       }
       _graphRunning = false;
@@ -1094,10 +1091,10 @@ namespace TvLibrary.Implementations.DVB
       if (_epgGrabbing)
       {
         _epgGrabbing = false;
-        if (OnEpgReceived != null)
+        if (_epgGrabberCallback != null)
         {
           Log.Log.WriteFile("dvb:cancel epg->decompose");
-          OnEpgReceived(this, null);
+          _epgGrabberCallback.OnEpgCancelled();
         }
       }
       _pmtTimer.Enabled = false;
@@ -1628,23 +1625,15 @@ namespace TvLibrary.Implementations.DVB
 
 
     /// <summary>
-    /// returns the ITVEPG interface used for grabbing the epg
-    /// </summary>
-    public ITVEPG EpgInterface
-    {
-      get
-      {
-        return new DvbEpgGrabber(this);
-      }
-    }
-    /// <summary>
     /// Start grabbing the epg
     /// </summary>
-    public void GrabEpg()
+    public void GrabEpg(BaseEpgGrabber callback)
     {
       if (!CheckThreadId()) return;
 
+      _epgGrabberCallback = callback;
       Log.Log.Write("dvb:grab epg...");
+      _interfaceEpgGrabber.SetCallBack((IEpgCallback)callback);
       _interfaceEpgGrabber.GrabEPG();
       _interfaceEpgGrabber.GrabMHW();
       _epgGrabbing = true;
@@ -1904,22 +1893,6 @@ namespace TvLibrary.Implementations.DVB
         }
 #endif
 
-        if (_epgGrabbing)
-        {
-          bool dvbReady, mhwReady;
-          _interfaceEpgGrabber.IsEPGReady(out dvbReady);
-          _interfaceEpgGrabber.IsMHWReady(out mhwReady);
-          if (dvbReady && mhwReady)
-          {
-            _epgGrabbing = false;
-            Log.Log.Write("epg done");
-            if (OnEpgReceived != null)
-            {
-              OnEpgReceived(this, Epg);
-            }
-          }
-        }
-
         /*if (IsReceivingAudioVideo == false)
         {
           Log.Log.WriteFile("dvb: resend pmt to cam");
@@ -2131,10 +2104,10 @@ namespace TvLibrary.Implementations.DVB
         if (_isScanning)
         {
           _epgGrabbing = false;
-          if (OnEpgReceived != null)
+          if (_epgGrabberCallback != null)
           {
             Log.Log.WriteFile("dvb:cancel epg->scanning");
-            OnEpgReceived(this, null);
+            _epgGrabberCallback.OnEpgCancelled();
           }
         }
       }
@@ -2293,5 +2266,8 @@ namespace TvLibrary.Implementations.DVB
       return false;
     }
     #endregion
+
+
+
   }
 }

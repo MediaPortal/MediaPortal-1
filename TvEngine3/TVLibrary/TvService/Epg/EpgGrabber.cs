@@ -44,7 +44,7 @@ namespace TvService
   ///  - if at least 2 hours have past since the previous time the epg for the channel was grabbed
   ///  - if no cards are timeshifting or recording
   /// </summary>
-  public class EpgGrabber
+  public class EpgGrabber : BaseEpgGrabber
   {
     #region enums
     enum EpgState
@@ -102,13 +102,20 @@ namespace TvService
       _state = EpgState.Idle;
 
 
-      controller.OnEpgReceived += new EpgReceivedHandler(OnEpgReceived);
       _epgTimer.Interval = 1000;
       _epgTimer.Elapsed += new System.Timers.ElapsedEventHandler(_epgTimer_Elapsed);
     }
     #endregion
 
     #region epg callback
+
+    public virtual void OnEpgCancelled()
+    {
+      Log.Write("epg grabber:epg cancelled");
+      _state = EpgState.Idle;
+      _currentChannel = null;
+      return;
+    }
 
     /// <summary>
     /// Callback fired by the tvcontroller when EPG data has been received
@@ -117,7 +124,7 @@ namespace TvService
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="epg">new epg data</param>
-    void OnEpgReceived(object sender, List<EpgChannel> epg)
+    public virtual int OnEpgReceived()
     {
       try
       {
@@ -125,35 +132,26 @@ namespace TvService
         if (_state == EpgState.Idle)
         {
           Log.Write("epg grabber:OnEpgReceived while idle");
-          return;
+          return 0;
         }
         //is epg grabber already updating the database?
 
         if (_state == EpgState.Updating)
         {
           Log.Write("epg grabber:OnEpgReceived while updating");
-          return;
+          return 0;
         }
         // which channel is the epg grabber currently grabbing
-        if (_currentChannel == null) return;
+        if (_currentChannel == null) return 0;
 
         //is the card still idle?
         if (IsCardIdle(_currentCardId) == false)
         {
           _state = EpgState.Idle;
-          return;
+          return 0;
         }
 
-        //was epg grabbing canceled?
-        if (epg == null)
-        {
-          //epg grabbing was canceled
-          Log.Write("EPG canceled..");
-          _currentChannel = null;
-          _state = EpgState.Idle;
-          return;
-        }
-
+        List<EpgChannel> epg = _tvController.Epg(_currentCardId);
         //did we receive epg info?
         if (epg.Count == 0)
         {
@@ -168,7 +166,7 @@ namespace TvService
             _currentChannel = null;
           }
           _state = EpgState.Idle;
-          return;
+          return 0;
         }
 
         if (_currentChannel != null)
@@ -187,6 +185,7 @@ namespace TvService
       {
         Log.Write(ex);
       }
+      return 0;
     }
     #endregion
 
@@ -393,7 +392,7 @@ namespace TvService
               if (cardLocked == false) continue;
               RemoteControl.Instance.TuneScan(card.IdCard, tuning);
               _currentCardId = card.IdCard;
-              RemoteControl.Instance.GrabEpg(card.IdCard);
+              _tvController.GrabEpg(this,card.IdCard);
             }
             catch (Exception ex)
             {
@@ -430,7 +429,7 @@ namespace TvService
               if (cardLocked == false) continue;
               RemoteControl.Instance.TuneScan(card.IdCard, tuning);
               _currentCardId = card.IdCard;
-              RemoteControl.Instance.GrabEpg(card.IdCard);
+              _tvController.GrabEpg(this, card.IdCard);
             }
             catch (Exception ex)
             {
@@ -466,7 +465,7 @@ namespace TvService
               if (cardLocked == false) continue;
               RemoteControl.Instance.TuneScan(card.IdCard, tuning);
               _currentCardId = card.IdCard;
-              RemoteControl.Instance.GrabEpg(card.IdCard);
+              _tvController.GrabEpg(this, card.IdCard);
             }
             catch (Exception ex)
             {
@@ -502,7 +501,7 @@ namespace TvService
               if (cardLocked == false) continue;
               RemoteControl.Instance.TuneScan(card.IdCard, tuning);
               _currentCardId = card.IdCard;
-              RemoteControl.Instance.GrabEpg(card.IdCard);
+              _tvController.GrabEpg(this, card.IdCard);
             }
             catch (Exception ex)
             {

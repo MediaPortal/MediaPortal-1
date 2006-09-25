@@ -25,6 +25,8 @@ using System.Runtime.InteropServices;
 
 namespace TvLibrary.Interfaces.Analyzer
 {
+
+
   [ComVisible(true), ComImport,
  Guid("5CDAC655-D9FB-4c71-8119-DD07FE86A9CE"),
   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -75,5 +77,7 @@ namespace TvLibrary.Interfaces.Analyzer
 
     [PreserveSig]
     int Reset();
+    [PreserveSig]
+    int SetCallBack(IEpgCallback callback);
   }
 }

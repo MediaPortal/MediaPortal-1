@@ -52,10 +52,6 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
 
-    #region delegates
-    public delegate void EpgProcessedHandler(object sender, List<EpgChannel> epg);
-    public event EpgProcessedHandler OnEpgReceived;
-    #endregion
 
     #region variables
     DsDevice _tunerDevice;
@@ -95,6 +91,7 @@ namespace TvLibrary.Implementations.DVB
     int _signalLevel;
     DateTime _lastSignalUpdate;
     bool _startTimeShifting = false;
+    BaseEpgGrabber _epgGrabberCallback;
 
 #if FORM
      bool _newPMT = false;
@@ -470,10 +467,10 @@ namespace TvLibrary.Implementations.DVB
       if (_epgGrabbing)
       {
         _epgGrabbing = false;
-        if (OnEpgReceived != null)
+        if (_epgGrabberCallback != null)
         {
           Log.Log.WriteFile("ss2:cancel epg->stop graph");
-          OnEpgReceived(this, null);
+          _epgGrabberCallback.OnEpgCancelled();
         }
       }
       _graphRunning = false;
@@ -922,14 +919,17 @@ namespace TvLibrary.Implementations.DVB
 
 
     #region epg
+
     /// <summary>
     /// Start grabbing the epg
     /// </summary>
-    public void GrabEpg()
+    public void GrabEpg(BaseEpgGrabber callback)
     {
       if (!CheckThreadId()) return;
-      if (_graphState == GraphState.Idle) return;
-      if (_interfaceEpgGrabber == null) return;
+
+      _epgGrabberCallback = callback;
+      Log.Log.Write("ss2:grab epg...");
+      _interfaceEpgGrabber.SetCallBack((IEpgCallback)callback);
       _interfaceEpgGrabber.GrabEPG();
       _interfaceEpgGrabber.GrabMHW();
       _epgGrabbing = true;
@@ -1226,17 +1226,6 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
-    /// <summary>
-    /// returns the ITVEPG interface used for grabbing the epg
-    /// </summary>
-    public ITVEPG EpgInterface
-    {
-      get
-      {
-        return new DvbSs2EpgGrabber(this);
-      }
-    }
-
     #endregion
 
     #region teletext
@@ -1328,9 +1317,9 @@ namespace TvLibrary.Implementations.DVB
       if (_epgGrabbing)
       {
         _epgGrabbing = false;
-        if (OnEpgReceived != null)
+        if (_epgGrabberCallback != null)
         {
-          OnEpgReceived(this, null);
+          _epgGrabberCallback.OnEpgCancelled();
         }
       }
       DVBSChannel dvbsChannel = channel as DVBSChannel;
@@ -1797,9 +1786,9 @@ namespace TvLibrary.Implementations.DVB
       if (_epgGrabbing)
       {
         _epgGrabbing = false;
-        if (OnEpgReceived != null)
+        if (_epgGrabberCallback != null)
         {
-          OnEpgReceived(this, null);
+          _epgGrabberCallback.OnEpgCancelled();
         }
       }
       Log.Log.WriteFile("ss2:Decompose");
@@ -1894,21 +1883,6 @@ namespace TvLibrary.Implementations.DVB
         }
 #endif
 
-        if (_epgGrabbing)
-        {
-          bool dvbReady, mhwReady;
-          _interfaceEpgGrabber.IsEPGReady(out dvbReady);
-          _interfaceEpgGrabber.IsMHWReady(out mhwReady);
-          if (dvbReady && mhwReady)
-          {
-            _epgGrabbing = false;
-            Log.Log.Write("epg done");
-            if (OnEpgReceived != null)
-            {
-              OnEpgReceived(this, Epg);
-            }
-          }
-        }
 
         /*if (IsReceivingAudioVideo == false)
         {
@@ -1997,9 +1971,9 @@ namespace TvLibrary.Implementations.DVB
         if (_isScanning)
         {
           _epgGrabbing = false;
-          if (OnEpgReceived != null)
+          if (_epgGrabberCallback != null)
           {
-            OnEpgReceived(this, null);
+            _epgGrabberCallback.OnEpgCancelled();
           }
         }
       }

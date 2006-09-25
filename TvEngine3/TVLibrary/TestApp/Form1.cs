@@ -233,9 +233,9 @@ namespace TestApp
         MessageBox.Show("EPG grabbing is not possible for analog tv cards");
         return;
       }
-      ITVEPG epgGrabber = _currentCard.EpgInterface;
-      epgGrabber.OnEpgReceived += new EpgReceivedHandler(epgGrabber_OnEpgReceived);
-      epgGrabber.GrabEpg();
+     // ITVEPG epgGrabber = _currentCard.EpgInterface;
+      // epgGrabber.OnEpgReceived += new EpgReceivedHandler(epgGrabber_OnEpgReceived);
+      //epgGrabber.GrabEpg();
       MessageBox.Show("Grabbing epg...");
     }
 

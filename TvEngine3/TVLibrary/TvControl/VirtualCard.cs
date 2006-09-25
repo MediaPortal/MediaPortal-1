@@ -481,12 +481,12 @@ namespace TvControl
     /// Starts the epg grabber to grab the epg and update the tvguide
     /// </summary>
     /// <returns></returns>
-    public void GrabEpg()
-    {
-      if (_cardId < 0) return;
-      RemoteControl.HostName = _server;
-      RemoteControl.Instance.GrabEpg(_cardId);
-    }
+    //public void GrabEpg()
+    //{
+    //  if (_cardId < 0) return;
+    //  RemoteControl.HostName = _server;
+    //  RemoteControl.Instance.GrabEpg(_cardId);
+    //}
 
     /// <summary>
     /// scans current transponder for channels.

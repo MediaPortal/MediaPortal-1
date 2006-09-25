@@ -140,14 +140,7 @@ namespace TvLibrary.Implementations.Analog
         return null;
       }
     }
-
-    /// <summary>
-    /// Start grabbing the epg
-    /// </summary>
-    public void GrabEpg()
-    {
-    }
-
+ 
     /// <summary>
     /// Returns the EPG grabbed or null if epg grabbing is still busy
     /// </summary>
@@ -504,6 +497,11 @@ namespace TvLibrary.Implementations.Analog
     {
       return _name;
     }
+
+    public void GrabEpg(BaseEpgGrabber callback)
+    {
+    }
+
   }
 }
 

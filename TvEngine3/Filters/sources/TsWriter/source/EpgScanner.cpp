@@ -34,12 +34,20 @@ extern void LogDebug(const char *fmt, ...) ;
 CEpgScanner::CEpgScanner(LPUNKNOWN pUnk, HRESULT *phr) 
 :CUnknown( NAME ("MpTsEpgScanner"), pUnk)
 {
+  m_pCallBack=NULL;
 	m_bGrabbing=false;
 }
 
 CEpgScanner::~CEpgScanner(void)
 {
 }
+
+STDMETHODIMP CEpgScanner::SetCallBack(IEpgCallback* callback)
+{
+  m_pCallBack=callback;
+	return S_OK;
+}
+
 STDMETHODIMP CEpgScanner::Reset()
 {
 	CEnterCriticalSection enter(m_section);
@@ -258,13 +266,24 @@ void CEpgScanner::OnTsPacket(byte* tsPacket)
 	{
 		if (m_bGrabbing)
 		{
-			CEnterCriticalSection enter(m_section);
-			m_epgParser.OnTsPacket(tsPacket);
-			m_mhwParser.OnTsPacket(tsPacket);
-			if (m_epgParser.IsEPGReady() && m_mhwParser.IsEPGReady())
-			{
-				m_bGrabbing=false;
-			}
+      {//criticalsection
+			  CEnterCriticalSection enter(m_section);
+			  m_epgParser.OnTsPacket(tsPacket);
+			  m_mhwParser.OnTsPacket(tsPacket);
+			  if (m_epgParser.IsEPGReady() && m_mhwParser.IsEPGReady())
+			  {
+				  m_bGrabbing=false;
+			  }
+      }
+
+      if (false==m_bGrabbing)
+      {
+        if (m_pCallBack!=NULL)
+        {
+          m_pCallBack->OnEpgReceived();
+        }
+      }
+
 		}
 	}
 	catch(...)
