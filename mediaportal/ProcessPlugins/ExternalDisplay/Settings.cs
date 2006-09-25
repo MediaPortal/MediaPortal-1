@@ -544,7 +544,8 @@ namespace ProcessPlugins.ExternalDisplay
             //
             msg = new Message();
             msg.Status = Status.Idle;
-            msg.Lines.Add(new Line(new Text("\x0\x1 MediaPortal"), Alignment.Centered));
+            //do not use custom characters as default, as iMon displays don't like them
+            msg.Lines.Add(new Line(new Text("MediaPortal"), Alignment.Centered));
             msg.Lines.Add(new Line(new Property("#time"), Alignment.Centered));
             //msg.Images.Add(new Image(0, 0, @".\Thumbs\ExternalDisplay\MPLogoText160x128BW.bmp"));
             _settings.Messages.Add(msg);
@@ -593,7 +594,7 @@ namespace ProcessPlugins.ExternalDisplay
                 new Parse(", from the album #Play.Current.Album", new NotNullCondition("#Play.Current.Album")));
             msg.Lines.Add(line);
             line = new Line();
-            line.values.Add(new TextProgressBar("#currentplaytime","#duration",16));
+            line.values.Add(new Parse("#currentplaytime/#duration"));
             line.values.Add(new Text(" (#112)", new NotNullCondition("#paused")));
             msg.Lines.Add(line);
             _settings.Messages.Add(msg);
