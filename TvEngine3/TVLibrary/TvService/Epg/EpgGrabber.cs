@@ -570,7 +570,7 @@ namespace TvService
               if (success)
               {
                 DatabaseManager.Instance.SaveChanges();
-                Thread.Sleep(100);
+                Thread.Sleep(500);
               }
               break;
             }
@@ -685,11 +685,11 @@ namespace TvService
         newProgram.Genre = genre;
         lastProgram = program.EndTime;
         added++;
-        if (added > 50)
+        if (added > 25)
         {
           DatabaseManager.Instance.SaveChanges();
           added = 0;
-          Thread.Sleep(100);
+          Thread.Sleep(500);
         }
 
       }//foreach (EpgProgram program in epgChannel.Programs)
