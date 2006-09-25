@@ -517,6 +517,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     }
     #endregion
 
+
     #region Network related
     private bool SendCommandRequest(string url_)
     {
@@ -697,13 +698,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
           }
         }
 
-        GUIPropertyManager.SetProperty("#Play.Current.Artist", CurrentSongTag.Artist);
-        GUIPropertyManager.SetProperty("#Play.Current.Album", CurrentSongTag.Album);
-        GUIPropertyManager.SetProperty("#Play.Current.Title", CurrentSongTag.Title);
-        GUIPropertyManager.SetProperty("#Play.Current.Genre", CurrentSongTag.Genre);
-        GUIPropertyManager.SetProperty("#Play.Current.Thumb", CurrentSongTag.Comment);
-        GUIPropertyManager.SetProperty("#trackduration", Convert.ToString(CurrentSongTag.Duration));
-
         if (CurrentSongTag.Title != prevTitle)
         {
           if (StreamSongChanged != null)
@@ -738,6 +732,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       }
     }
     #endregion
+
 
     #region Utils
     private void OnTimerTick(object trash_, ElapsedEventArgs args_)

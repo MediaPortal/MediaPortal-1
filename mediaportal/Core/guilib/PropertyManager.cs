@@ -196,6 +196,12 @@ namespace MediaPortal.GUI.Library
       _properties["#Play.Current.MPAARating"] = String.Empty;
       _properties["#Play.Current.IsWatched"] = String.Empty;
 
+      _properties["#Play.Current.ArtistThumb"] = String.Empty;
+      _properties["#Play.Current.Lastfm.TrackTags"] = String.Empty;
+      _properties["#Play.Current.Lastfm.SimilarArtists"] = String.Empty;
+      _properties["#Play.Current.Lastfm.ArtistInfo"] = String.Empty;
+
+
       _properties["#Play.Next.Thumb"] = String.Empty;
       _properties["#Play.Next.File"] = String.Empty;
       _properties["#Play.Next.Title"] = String.Empty;

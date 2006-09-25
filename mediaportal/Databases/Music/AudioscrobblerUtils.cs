@@ -103,6 +103,34 @@ namespace MediaPortal.Music.Database
     }
   }
 
+  public class SimilarArtistRequest : ScrobblerUtilsRequest
+  {
+    public string ArtistToSearch;
+    public bool RandomizeArtists;
+
+    public delegate void SimilarArtistRequestHandler(SimilarArtistRequest request, List<Song> songs);
+    public event SimilarArtistRequestHandler SimilarArtistRequestCompleted;
+
+    public SimilarArtistRequest(string artistToSearch, bool randomizeArtists)
+      : base(RequestType.GetSimilarArtists)
+    {
+      ArtistToSearch = artistToSearch;
+      RandomizeArtists = randomizeArtists;
+    }
+    public SimilarArtistRequest(string artistToSearch, bool randomizeArtists, SimilarArtistRequestHandler handler)
+      : this(artistToSearch, randomizeArtists)
+    {
+      SimilarArtistRequestCompleted += handler;
+    }
+    public override void PerformRequest()
+    {
+      List<Song> songs = AudioscrobblerUtils.Instance.getSimilarArtists(ArtistToSearch, RandomizeArtists);
+      if (SimilarArtistRequestCompleted != null)
+        SimilarArtistRequestCompleted(this, songs);
+    }
+  }
+
+
   public class ArtistInfoRequest : ScrobblerUtilsRequest
   {
     public string ArtistToSearch;
