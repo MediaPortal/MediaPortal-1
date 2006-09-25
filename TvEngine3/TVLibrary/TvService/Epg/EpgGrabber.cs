@@ -632,6 +632,7 @@ namespace TvService
         lastProgram = programsInDbs[0].EndTime;
       }
 
+      int added = 0;
       foreach (EpgProgram program in epgChannel.Programs)
       {
         if (_state != EpgState.Updating)
@@ -683,6 +684,13 @@ namespace TvService
         newProgram.Title = title;
         newProgram.Genre = genre;
         lastProgram = program.EndTime;
+        added++;
+        if (added > 50)
+        {
+          DatabaseManager.Instance.SaveChanges();
+          added = 0;
+          Thread.Sleep(100);
+        }
 
       }//foreach (EpgProgram program in epgChannel.Programs)
 
