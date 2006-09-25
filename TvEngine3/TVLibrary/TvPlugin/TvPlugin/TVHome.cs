@@ -97,7 +97,7 @@ namespace TvPlugin
 
     public TVHome()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
+      //ServiceProvider services = GlobalServiceProvider.Instance;
 
 
       MediaPortal.GUI.Library.Log.Info("TVHome:ctor");
@@ -1327,7 +1327,7 @@ namespace TvPlugin
     public ChannelNavigator()
     {
       // Load all groups
-      ServiceProvider services = GlobalServiceProvider.Instance;
+      //ServiceProvider services = GlobalServiceProvider.Instance;
 
       MediaPortal.GUI.Library.Log.Info("ChannelNavigator::ctor()");
       string ipadres = Dns.GetHostName();
