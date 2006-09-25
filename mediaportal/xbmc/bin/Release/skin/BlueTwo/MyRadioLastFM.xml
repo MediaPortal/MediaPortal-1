@@ -70,19 +70,36 @@
 		<centered>yes</centered>
 	</control>
 
+
+
+
 	<control>
-		<description>Lastfm</description>
+		<description>start a stream</description>
 		<type>button</type>
 		<id>10</id>
         	<posX>60</posX>
 	        <posY>110</posY>
 		<label>34001</label>
-		<onleft>7</onleft>
+		<onleft>10</onleft>
 		<onright>50</onright>
 		<onup>666</onup>
 		<ondown>20</ondown>
 	</control>
-			
+
+	<control>
+		<description>chose tag</description>
+		<type>button</type>
+		<id>20</id>
+        	<posX>60</posX>
+	        <posY>144</posY>
+		<label>Tags</label>
+		<onleft>20</onleft>
+		<onright>50</onright>
+		<onup>10</onup>
+		<ondown>20</ondown>
+	</control>			
+
+
 			
 	<control>
 		<type>fadelabel</type>

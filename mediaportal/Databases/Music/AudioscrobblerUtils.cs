@@ -216,6 +216,33 @@ namespace MediaPortal.Music.Database
     }
   }
 
+  public class GeneralFeedRequest : ScrobblerUtilsRequest
+  {
+    public lastFMFeed FeedToSearch;
+    public string UserForFeed;
+
+    public delegate void GeneralFeedRequestHandler(GeneralFeedRequest request, List<Song> songs);
+    public event GeneralFeedRequestHandler GeneralFeedRequestCompleted;
+
+    public GeneralFeedRequest(lastFMFeed feedToSearch, string userForFeed)
+      : base(RequestType.GetAudioScrobblerFeed)
+    {
+      FeedToSearch = feedToSearch;
+      UserForFeed = userForFeed;
+    }
+    public GeneralFeedRequest(lastFMFeed feedToSearch, string userForFeed, GeneralFeedRequestHandler handler)
+      : this(feedToSearch, userForFeed)
+    {
+      GeneralFeedRequestCompleted += handler;
+    }
+    public override void PerformRequest()
+    {
+      List<Song> songs = AudioscrobblerUtils.Instance.getAudioScrobblerFeed(FeedToSearch, UserForFeed);
+      if (GeneralFeedRequestCompleted != null)
+        GeneralFeedRequestCompleted(this, songs);
+    }
+  }
+
   #endregion
   
   public class AudioscrobblerUtils
