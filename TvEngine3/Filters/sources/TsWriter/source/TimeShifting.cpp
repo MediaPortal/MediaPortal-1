@@ -58,7 +58,11 @@ STDMETHODIMP CTimeShifting::SetPcrPid(int pcrPid)
 	try
 	{
 		LogDebug("Timeshifter:pcr pid:%x",pcrPid);
-		m_multiPlexer.SetPcrPid(pcrPid);
+		if (pcrPid!=m_multiPlexer.GetPcrPid())
+		{
+			m_multiPlexer.SetPcrPid(pcrPid);
+			m_multiPlexer.ClearStreams();
+		}
 	}
 	catch(...)
 	{

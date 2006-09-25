@@ -44,6 +44,7 @@ public:
 	void RemovePesStream(int pid);
 	void OnTsPacket(byte* tsPacket);
 	void Reset();
+	void ClearStreams();
 	void SetFileWriterCallBack(IFileWriter* callback);
 	int OnNewPesPacket(int streamid,byte* header, int headerlen,byte* data, int len, bool isStart);
 private:

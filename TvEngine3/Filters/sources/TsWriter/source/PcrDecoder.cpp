@@ -147,6 +147,7 @@ void CPcrDecoder::ChangePtsDts(byte* header, __int64 startPcr)
 			pts=0;
 		else
 			pts-=startPcr;
+	//	LogDebug(" pts:%x start:%x", (DWORD)pts,(DWORD)startPcr);
 		byte marker=0x21;
 		if (dts!=0) marker=0x31;
 		header[13]=(((pts&0x7f)<<1)+1); pts>>=7;

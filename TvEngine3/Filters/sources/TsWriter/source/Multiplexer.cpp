@@ -53,6 +53,13 @@ void CMultiplexer::Reset()
   m_audioPacketCounter=0;
 	m_startPcr=0;
 	m_currentPcr=0;
+	m_pcrDecoder.Reset();
+	ClearStreams();
+}
+
+void CMultiplexer::ClearStreams()
+{
+	LogDebug("mux: clear streams");
 	ivecPesDecoders it;
 	for (it=m_pesDecoders.begin(); it != m_pesDecoders.end();++it)
 	{
@@ -60,7 +67,6 @@ void CMultiplexer::Reset()
 		delete decoder;
 	}
 	m_pesDecoders.clear();
-	m_pcrDecoder.Reset();
 }
 
 void CMultiplexer::SetPcrPid(int pcrPid)
@@ -115,13 +121,23 @@ void CMultiplexer::AddPesStream(int pid, bool isAudio, bool isVideo)
 	CPesDecoder* decoder = new CPesDecoder(this);
 	decoder->SetPid(pid);
 	if (isAudio)
+	{
+		LogDebug("mux pid:%x audio stream id:%x", pid,audioStreamId);
 		decoder->SetStreamId(audioStreamId);
+	}
 	else if (isVideo)
+	{
+		LogDebug("mux pid:%x video stream id:%x", pid,videoStreamId);
 		decoder->SetStreamId(videoStreamId);
+	}
 	else
+	{
+		LogDebug("mux pid:%x video stream id:-1", pid);
 		decoder->SetStreamId(-1);
+	}
 	decoder->SetMaxLength(0x7e9);
 	m_pesDecoders.push_back(decoder);
+	LogDebug("mux streams:%d", m_pesDecoders.size());
 }
 
 
@@ -223,6 +239,7 @@ __int64 pcrHi=m_pcrDecoder.PcrHigh() ;
   return PACK_HEADER_LENGTH;
 }
 
+static __int64 maxDiff=0;
 int CMultiplexer::SplitPesPacket(int streamId,byte* header, int headerlen, byte* pesPacket, int sectionLength, bool isStart)
 { 
 //	LogDebug("sid:%x len:%x start:%d headerlen:%x %02.2x%02.2x %02.2x%02.2x %02.2x%02.2x %02.2x%02.2x %02.2x%02.2x %02.2x%02.2x", 
@@ -233,13 +250,31 @@ int CMultiplexer::SplitPesPacket(int streamId,byte* header, int headerlen, byte*
   if (m_pCallback == NULL) return sectionLength;
 	
 
-  __int64 pcrHi=m_pcrDecoder.Pcr();
+  __int64 pcrNew=m_pcrDecoder.Pcr();
   
 	if (m_startPcr==0)
 	{
-		m_startPcr = pcrHi;
+		m_startPcr = pcrNew;
+		m_currentPcr=pcrNew;
+		LogDebug("Pcr new start pcr :%x", (DWORD)m_startPcr);
 	}
-	m_currentPcr=pcrHi;
+	//correct pcr rollover
+	__int64 pcrDiff=pcrNew - m_currentPcr;
+	if (pcrDiff < 0) pcrDiff =- pcrDiff;
+	if (pcrDiff>maxDiff)
+	{
+		maxDiff=pcrDiff;
+		LogDebug("Pcr max diff :%x", (DWORD)maxDiff);
+	}
+	if (pcrDiff > 0x3000)
+	{
+		//pcr changed!!!
+		maxDiff=0;
+		LogDebug("Pcr change detected of start:%x prev:%x new:%x", (DWORD)m_startPcr,(DWORD)m_currentPcr, (DWORD)pcrNew );
+		m_startPcr = pcrNew- (m_currentPcr - m_startPcr) ;
+		LogDebug("Pcr new start pcr :%x", (DWORD)m_startPcr);
+	}
+	m_currentPcr=pcrNew;
 
   if (sectionLength != 0x7e9)
   {
