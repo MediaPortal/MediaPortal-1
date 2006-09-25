@@ -5249,6 +5249,10 @@
       <value>Help once</value>
    </string>
    <string>
+      <id>19119</id>
+      <value>Reset game</value>
+   </string>
+   <string>
       <id>25001</id>
       <value>Waiting for Page {0:X}...!</value>
    </string>   

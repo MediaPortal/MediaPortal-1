@@ -41,12 +41,13 @@ namespace MediaPortal.GUI.NumberPlace
     private enum SkinControlIDs
     {
       BTN_NEW_GAME = 2,
-      BTN_SOLVE = 3,
-      BTN_CLEAR = 4,
+      BTN_HELP_ONCE = 3,
+      BTN_RESET_GAME = 4,
+      BTN_SOLVE = 5,
       BTN_BLOCK_INVALID_MOVES = 6,
       BTN_SHOW_INVALID_MOVES = 7,
       BTN_LEVEL = 8,
-      BTN_HELP_ONCE = 9,
+      BTN_CLEAR = 9,
     }
 
     private enum LevelName
@@ -121,12 +122,14 @@ namespace MediaPortal.GUI.NumberPlace
     private static Random random = new Random(DateTime.Now.Millisecond);
 
     [SkinControlAttribute((int)SkinControlIDs.BTN_NEW_GAME)]               protected GUIButtonControl btnNewGame = null;
+    [SkinControlAttribute((int)SkinControlIDs.BTN_HELP_ONCE)]              protected GUIButtonControl btnHelpOnce = null;
+    [SkinControlAttribute((int)SkinControlIDs.BTN_RESET_GAME)]             protected GUIButtonControl btnResetGame = null;
     [SkinControlAttribute((int)SkinControlIDs.BTN_SOLVE)]                  protected GUIButtonControl btnSolve = null;
-    [SkinControlAttribute((int)SkinControlIDs.BTN_CLEAR)]                  protected GUIButtonControl btnClear = null;
     [SkinControlAttribute((int)SkinControlIDs.BTN_BLOCK_INVALID_MOVES)]    protected GUIToggleButtonControl btnBlockInvalidMoves = null;
     [SkinControlAttribute((int)SkinControlIDs.BTN_SHOW_INVALID_MOVES)]     protected GUIToggleButtonControl btnShowInvalidMoves = null;
     [SkinControlAttribute((int)SkinControlIDs.BTN_LEVEL)]                  protected GUIButtonControl btnLevel = null;
-    [SkinControlAttribute((int)SkinControlIDs.BTN_HELP_ONCE)]              protected GUIButtonControl btnHelpOnce = null;
+    [SkinControlAttribute((int)SkinControlIDs.BTN_CLEAR)]                  protected GUIButtonControl btnClear = null;
+    
 
     static private readonly string pluginConfigFileName = "mynumberplace";
 
@@ -250,6 +253,7 @@ namespace MediaPortal.GUI.NumberPlace
           cntlFoc.editable = true;
           cntlFoc.CellValue = 0;
           cntlFoc.SolutionValue = 0;
+          cntlFoc.M_dwDisabledColor = 0xFF000000;
         }
       }
     }
@@ -337,6 +341,23 @@ namespace MediaPortal.GUI.NumberPlace
       }
       GUIControl.SetControlLabel(GetID, btnLevel.GetID, textLine);
     }
+    
+    private void ResetGame()
+    {
+        for (int row = 0; row < grid.CellsInRow; row++)
+        {
+            for (int column = 0; column < grid.CellsInRow; column++)
+            {
+                int cellControlId = (1000 * (row + 1)) + column;
+                CellControl cntlFoc = (CellControl)GetControl(cellControlId);
+                if( cntlFoc.editable)
+                {
+                    cntlFoc.CellValue = 0;
+                    grid.cells[row , column] = 0;
+                }
+            }
+        }
+    }
 
     private void Result()
     {
@@ -373,8 +394,12 @@ namespace MediaPortal.GUI.NumberPlace
             {
               int cellControlId = (1000 * (row + 1)) + column;
               CellControl cntlFoc = (CellControl)GetControl(cellControlId);
-              cntlFoc.CellValue = solution.cells[row, column];
-              cntlFoc.editable = false;
+              if( cntlFoc.editable)
+              {
+              	cntlFoc.CellValue = solution.cells[row, column];
+              	cntlFoc.M_dwDisabledColor = m_dwCellIncorrectTextColor;
+              	cntlFoc.editable = false;
+              }
             }
           }
         }
@@ -502,6 +527,10 @@ namespace MediaPortal.GUI.NumberPlace
           }
         }
 
+      }
+      else if (control == btnResetGame)
+      {
+        ResetGame();
       }
       base.OnClicked(controlId, control, actionType);
     }

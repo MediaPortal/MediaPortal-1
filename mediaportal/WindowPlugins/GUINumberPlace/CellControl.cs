@@ -85,6 +85,13 @@ namespace MediaPortal.GUI.NumberPlace
 
     }
 
+    public long M_dwDisabledColor 
+ 	{	
+        get { return m_dwDisabledColor;	}
+ 		
+        set { m_dwDisabledColor = value;}
+ 	}
+    
     public CellControl(int dwParentID)
       : base(dwParentID)
     {
