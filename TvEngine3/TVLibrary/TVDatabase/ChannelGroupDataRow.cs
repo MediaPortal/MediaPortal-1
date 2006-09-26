@@ -146,12 +146,17 @@ namespace TvDatabase {
     //**************************************
     //* Relation properties
     //**************************************
-
+    
     public virtual ReadOnlyEntityList<GroupMap> GroupMaps {
-      get {
-        return this.GetManagedChildren<GroupMap>(EntityRelations.ChannelGroup_GroupMap);
+      get { 
+        ReadOnlyEntityList<GroupMap> result;
+        if (GetInterceptor<ReadOnlyEntityList<GroupMap>>("GroupMaps", GetGroupMapsCore, out result)) return result;
+        return GetGroupMapsCore();
       }
     }
+    private ReadOnlyEntityList<GroupMap> GetGroupMapsCore() {
+      return this.GetManagedChildren<GroupMap>(EntityRelations.ChannelGroup_GroupMap);
+    } 
 
     #endregion
     
@@ -178,8 +183,16 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 IdGroup {
-      get { return (System.Int32) GetColumnValue(IdGroupColumn, typeof(System.Int32), false); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("IdGroup", GetIdGroupCore, out result)) return result;
+        return GetIdGroupCore();
+      }
     }
+    private System.Int32 GetIdGroupCore() {
+      return (System.Int32) GetColumnValue(IdGroupColumn, typeof(System.Int32), false); 
+    }
+        
     //**************************************
     //* GroupName methods
     //**************************************
@@ -192,11 +205,24 @@ namespace TvDatabase {
     [MaxTextLength(200)]
     [DBDataType(typeof(System.String))]
     public virtual System.String GroupName {
-      get { return (System.String) GetColumnValue(GroupNameColumn, typeof(System.String), false); }
-      set { this.SetColumnValue(GroupNameColumn, value); }
+      get { 
+        System.String result;
+        if (GetInterceptor<System.String>("GroupName", GetGroupNameCore, out result)) return result;
+        return GetGroupNameCore();
+      }
+      set { 
+        if (SetInterceptor<System.String>("GroupName", value, SetGroupNameCore)) return;
+        SetGroupNameCore(value);
+      }
     }
+    private System.String GetGroupNameCore() {
+      return (System.String) GetColumnValue(GroupNameColumn, typeof(System.String), false); 
+    }
+    private void SetGroupNameCore(System.String value) {
+      SetColumnValue(GroupNameColumn, value);
+    }
+        
     #endregion
-    
     
   }
   #endregion

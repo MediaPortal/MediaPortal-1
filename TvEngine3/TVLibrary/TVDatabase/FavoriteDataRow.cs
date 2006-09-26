@@ -166,18 +166,28 @@ namespace TvDatabase {
     //**************************************
     //* Relation properties
     //**************************************
-
+    
     public virtual Program Program {
-      get {
-        return this.PersistenceManager.GetParent<Program>(this, EntityRelations.Program_Favorite);
+      get { 
+        Program result;
+        if (GetInterceptor<Program>("Program", GetProgramCore, out result)) return result;
+        return GetProgramCore();
       }
-      set {
-        if (value == null) {
-          this.SetNull(this.IdProgramColumn);
-        } else {
-          SetColumnValue(this.IdProgramColumn, value, value.IdProgramColumn);
-        }
+      set { 
+        if (SetInterceptor<Program>("Program", value, SetProgramCore)) return;
+        SetProgramCore(value);
       }
+    }
+    private Program GetProgramCore() {
+      return GetParent<Program>(EntityRelations.Program_Favorite, this.PersistenceManager.DefaultQueryStrategy);
+    }
+    private void SetProgramCore(Program value) {
+      if (value == null) {
+        SetNull(this.IdProgramColumn);
+      } else {
+        SetColumnValue(this.IdProgramColumn, value, value.IdProgramColumn);
+      }
+      OnPropertyChanged(new PropertyChangedEventArgs("Program"));
     }
 
     #endregion
@@ -209,8 +219,16 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 IdFavorite {
-      get { return (System.Int32) GetColumnValue(IdFavoriteColumn, typeof(System.Int32), false); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("IdFavorite", GetIdFavoriteCore, out result)) return result;
+        return GetIdFavoriteCore();
+      }
     }
+    private System.Int32 GetIdFavoriteCore() {
+      return (System.Int32) GetColumnValue(IdFavoriteColumn, typeof(System.Int32), false); 
+    }
+        
     //**************************************
     //* IdProgram methods
     //**************************************
@@ -222,9 +240,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 IdProgram {
-      get { return (System.Int32) GetColumnValue(IdProgramColumn, typeof(System.Int32), false); }
-      set { this.SetColumnValue(IdProgramColumn, value); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("IdProgram", GetIdProgramCore, out result)) return result;
+        return GetIdProgramCore();
+      }
+      set { 
+        if (SetInterceptor<System.Int32>("IdProgram", value, SetIdProgramCore)) return;
+        SetIdProgramCore(value);
+      }
     }
+    private System.Int32 GetIdProgramCore() {
+      return (System.Int32) GetColumnValue(IdProgramColumn, typeof(System.Int32), false); 
+    }
+    private void SetIdProgramCore(System.Int32 value) {
+      SetColumnValue(IdProgramColumn, value);
+    }
+        
     //**************************************
     //* Priority methods
     //**************************************
@@ -236,9 +268,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 Priority {
-      get { return (System.Int32) GetColumnValue(PriorityColumn, typeof(System.Int32), false); }
-      set { this.SetColumnValue(PriorityColumn, value); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("Priority", GetPriorityCore, out result)) return result;
+        return GetPriorityCore();
+      }
+      set { 
+        if (SetInterceptor<System.Int32>("Priority", value, SetPriorityCore)) return;
+        SetPriorityCore(value);
+      }
     }
+    private System.Int32 GetPriorityCore() {
+      return (System.Int32) GetColumnValue(PriorityColumn, typeof(System.Int32), false); 
+    }
+    private void SetPriorityCore(System.Int32 value) {
+      SetColumnValue(PriorityColumn, value);
+    }
+        
     //**************************************
     //* TimesWatched methods
     //**************************************
@@ -250,11 +296,24 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 TimesWatched {
-      get { return (System.Int32) GetColumnValue(TimesWatchedColumn, typeof(System.Int32), false); }
-      set { this.SetColumnValue(TimesWatchedColumn, value); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("TimesWatched", GetTimesWatchedCore, out result)) return result;
+        return GetTimesWatchedCore();
+      }
+      set { 
+        if (SetInterceptor<System.Int32>("TimesWatched", value, SetTimesWatchedCore)) return;
+        SetTimesWatchedCore(value);
+      }
     }
+    private System.Int32 GetTimesWatchedCore() {
+      return (System.Int32) GetColumnValue(TimesWatchedColumn, typeof(System.Int32), false); 
+    }
+    private void SetTimesWatchedCore(System.Int32 value) {
+      SetColumnValue(TimesWatchedColumn, value);
+    }
+        
     #endregion
-    
     
   }
   #endregion

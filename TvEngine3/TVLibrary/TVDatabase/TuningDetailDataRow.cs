@@ -386,18 +386,28 @@ namespace TvDatabase {
     //**************************************
     //* Relation properties
     //**************************************
-
+    
     public virtual Channel Channel {
-      get {
-        return this.PersistenceManager.GetParent<Channel>(this, EntityRelations.Channel_TuningDetail);
+      get { 
+        Channel result;
+        if (GetInterceptor<Channel>("Channel", GetChannelCore, out result)) return result;
+        return GetChannelCore();
       }
-      set {
-        if (value == null) {
-          this.SetNull(this.IdChannelColumn);
-        } else {
-          SetColumnValue(this.IdChannelColumn, value, value.IdChannelColumn);
-        }
+      set { 
+        if (SetInterceptor<Channel>("Channel", value, SetChannelCore)) return;
+        SetChannelCore(value);
       }
+    }
+    private Channel GetChannelCore() {
+      return GetParent<Channel>(EntityRelations.Channel_TuningDetail, this.PersistenceManager.DefaultQueryStrategy);
+    }
+    private void SetChannelCore(Channel value) {
+      if (value == null) {
+        SetNull(this.IdChannelColumn);
+      } else {
+        SetColumnValue(this.IdChannelColumn, value, value.IdChannelColumn);
+      }
+      OnPropertyChanged(new PropertyChangedEventArgs("Channel"));
     }
 
     #endregion
@@ -473,8 +483,16 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 IdTuning {
-      get { return (System.Int32) GetColumnValue(IdTuningColumn, typeof(System.Int32), false); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("IdTuning", GetIdTuningCore, out result)) return result;
+        return GetIdTuningCore();
+      }
     }
+    private System.Int32 GetIdTuningCore() {
+      return (System.Int32) GetColumnValue(IdTuningColumn, typeof(System.Int32), false); 
+    }
+        
     //**************************************
     //* IdChannel methods
     //**************************************
@@ -486,9 +504,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 IdChannel {
-      get { return (System.Int32) GetColumnValue(IdChannelColumn, typeof(System.Int32), false); }
-      set { this.SetColumnValue(IdChannelColumn, value); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("IdChannel", GetIdChannelCore, out result)) return result;
+        return GetIdChannelCore();
+      }
+      set { 
+        if (SetInterceptor<System.Int32>("IdChannel", value, SetIdChannelCore)) return;
+        SetIdChannelCore(value);
+      }
     }
+    private System.Int32 GetIdChannelCore() {
+      return (System.Int32) GetColumnValue(IdChannelColumn, typeof(System.Int32), false); 
+    }
+    private void SetIdChannelCore(System.Int32 value) {
+      SetColumnValue(IdChannelColumn, value);
+    }
+        
     //**************************************
     //* Name methods
     //**************************************
@@ -501,9 +533,23 @@ namespace TvDatabase {
     [MaxTextLength(200)]
     [DBDataType(typeof(System.String))]
     public virtual System.String Name {
-      get { return (System.String) GetColumnValue(NameColumn, typeof(System.String), false); }
-      set { this.SetColumnValue(NameColumn, value); }
+      get { 
+        System.String result;
+        if (GetInterceptor<System.String>("Name", GetNameCore, out result)) return result;
+        return GetNameCore();
+      }
+      set { 
+        if (SetInterceptor<System.String>("Name", value, SetNameCore)) return;
+        SetNameCore(value);
+      }
     }
+    private System.String GetNameCore() {
+      return (System.String) GetColumnValue(NameColumn, typeof(System.String), false); 
+    }
+    private void SetNameCore(System.String value) {
+      SetColumnValue(NameColumn, value);
+    }
+        
     //**************************************
     //* Provider methods
     //**************************************
@@ -516,9 +562,23 @@ namespace TvDatabase {
     [MaxTextLength(200)]
     [DBDataType(typeof(System.String))]
     public virtual System.String Provider {
-      get { return (System.String) GetColumnValue(ProviderColumn, typeof(System.String), false); }
-      set { this.SetColumnValue(ProviderColumn, value); }
+      get { 
+        System.String result;
+        if (GetInterceptor<System.String>("Provider", GetProviderCore, out result)) return result;
+        return GetProviderCore();
+      }
+      set { 
+        if (SetInterceptor<System.String>("Provider", value, SetProviderCore)) return;
+        SetProviderCore(value);
+      }
     }
+    private System.String GetProviderCore() {
+      return (System.String) GetColumnValue(ProviderColumn, typeof(System.String), false); 
+    }
+    private void SetProviderCore(System.String value) {
+      SetColumnValue(ProviderColumn, value);
+    }
+        
     //**************************************
     //* ChannelType methods
     //**************************************
@@ -530,9 +590,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 ChannelType {
-      get { return (System.Int32) GetColumnValue(ChannelTypeColumn, typeof(System.Int32), false); }
-      set { this.SetColumnValue(ChannelTypeColumn, value); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("ChannelType", GetChannelTypeCore, out result)) return result;
+        return GetChannelTypeCore();
+      }
+      set { 
+        if (SetInterceptor<System.Int32>("ChannelType", value, SetChannelTypeCore)) return;
+        SetChannelTypeCore(value);
+      }
     }
+    private System.Int32 GetChannelTypeCore() {
+      return (System.Int32) GetColumnValue(ChannelTypeColumn, typeof(System.Int32), false); 
+    }
+    private void SetChannelTypeCore(System.Int32 value) {
+      SetColumnValue(ChannelTypeColumn, value);
+    }
+        
     //**************************************
     //* ChannelNumber methods
     //**************************************
@@ -544,9 +618,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 ChannelNumber {
-      get { return (System.Int32) GetColumnValue(ChannelNumberColumn, typeof(System.Int32), false); }
-      set { this.SetColumnValue(ChannelNumberColumn, value); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("ChannelNumber", GetChannelNumberCore, out result)) return result;
+        return GetChannelNumberCore();
+      }
+      set { 
+        if (SetInterceptor<System.Int32>("ChannelNumber", value, SetChannelNumberCore)) return;
+        SetChannelNumberCore(value);
+      }
     }
+    private System.Int32 GetChannelNumberCore() {
+      return (System.Int32) GetColumnValue(ChannelNumberColumn, typeof(System.Int32), false); 
+    }
+    private void SetChannelNumberCore(System.Int32 value) {
+      SetColumnValue(ChannelNumberColumn, value);
+    }
+        
     //**************************************
     //* Frequency methods
     //**************************************
@@ -558,9 +646,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 Frequency {
-      get { return (System.Int32) GetColumnValue(FrequencyColumn, typeof(System.Int32), false); }
-      set { this.SetColumnValue(FrequencyColumn, value); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("Frequency", GetFrequencyCore, out result)) return result;
+        return GetFrequencyCore();
+      }
+      set { 
+        if (SetInterceptor<System.Int32>("Frequency", value, SetFrequencyCore)) return;
+        SetFrequencyCore(value);
+      }
     }
+    private System.Int32 GetFrequencyCore() {
+      return (System.Int32) GetColumnValue(FrequencyColumn, typeof(System.Int32), false); 
+    }
+    private void SetFrequencyCore(System.Int32 value) {
+      SetColumnValue(FrequencyColumn, value);
+    }
+        
     //**************************************
     //* CountryId methods
     //**************************************
@@ -572,9 +674,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 CountryId {
-      get { return (System.Int32) GetColumnValue(CountryIdColumn, typeof(System.Int32), false); }
-      set { this.SetColumnValue(CountryIdColumn, value); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("CountryId", GetCountryIdCore, out result)) return result;
+        return GetCountryIdCore();
+      }
+      set { 
+        if (SetInterceptor<System.Int32>("CountryId", value, SetCountryIdCore)) return;
+        SetCountryIdCore(value);
+      }
     }
+    private System.Int32 GetCountryIdCore() {
+      return (System.Int32) GetColumnValue(CountryIdColumn, typeof(System.Int32), false); 
+    }
+    private void SetCountryIdCore(System.Int32 value) {
+      SetColumnValue(CountryIdColumn, value);
+    }
+        
     //**************************************
     //* IsRadio methods
     //**************************************
@@ -586,9 +702,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Boolean))]
     public virtual System.Boolean IsRadio {
-      get { return (System.Boolean) GetColumnValue(IsRadioColumn, typeof(System.Boolean), false); }
-      set { this.SetColumnValue(IsRadioColumn, value); }
+      get { 
+        System.Boolean result;
+        if (GetInterceptor<System.Boolean>("IsRadio", GetIsRadioCore, out result)) return result;
+        return GetIsRadioCore();
+      }
+      set { 
+        if (SetInterceptor<System.Boolean>("IsRadio", value, SetIsRadioCore)) return;
+        SetIsRadioCore(value);
+      }
     }
+    private System.Boolean GetIsRadioCore() {
+      return (System.Boolean) GetColumnValue(IsRadioColumn, typeof(System.Boolean), false); 
+    }
+    private void SetIsRadioCore(System.Boolean value) {
+      SetColumnValue(IsRadioColumn, value);
+    }
+        
     //**************************************
     //* IsTv methods
     //**************************************
@@ -600,9 +730,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Boolean))]
     public virtual System.Boolean IsTv {
-      get { return (System.Boolean) GetColumnValue(IsTvColumn, typeof(System.Boolean), false); }
-      set { this.SetColumnValue(IsTvColumn, value); }
+      get { 
+        System.Boolean result;
+        if (GetInterceptor<System.Boolean>("IsTv", GetIsTvCore, out result)) return result;
+        return GetIsTvCore();
+      }
+      set { 
+        if (SetInterceptor<System.Boolean>("IsTv", value, SetIsTvCore)) return;
+        SetIsTvCore(value);
+      }
     }
+    private System.Boolean GetIsTvCore() {
+      return (System.Boolean) GetColumnValue(IsTvColumn, typeof(System.Boolean), false); 
+    }
+    private void SetIsTvCore(System.Boolean value) {
+      SetColumnValue(IsTvColumn, value);
+    }
+        
     //**************************************
     //* NetworkId methods
     //**************************************
@@ -614,9 +758,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 NetworkId {
-      get { return (System.Int32) GetColumnValue(NetworkIdColumn, typeof(System.Int32), false); }
-      set { this.SetColumnValue(NetworkIdColumn, value); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("NetworkId", GetNetworkIdCore, out result)) return result;
+        return GetNetworkIdCore();
+      }
+      set { 
+        if (SetInterceptor<System.Int32>("NetworkId", value, SetNetworkIdCore)) return;
+        SetNetworkIdCore(value);
+      }
     }
+    private System.Int32 GetNetworkIdCore() {
+      return (System.Int32) GetColumnValue(NetworkIdColumn, typeof(System.Int32), false); 
+    }
+    private void SetNetworkIdCore(System.Int32 value) {
+      SetColumnValue(NetworkIdColumn, value);
+    }
+        
     //**************************************
     //* TransportId methods
     //**************************************
@@ -628,9 +786,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 TransportId {
-      get { return (System.Int32) GetColumnValue(TransportIdColumn, typeof(System.Int32), false); }
-      set { this.SetColumnValue(TransportIdColumn, value); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("TransportId", GetTransportIdCore, out result)) return result;
+        return GetTransportIdCore();
+      }
+      set { 
+        if (SetInterceptor<System.Int32>("TransportId", value, SetTransportIdCore)) return;
+        SetTransportIdCore(value);
+      }
     }
+    private System.Int32 GetTransportIdCore() {
+      return (System.Int32) GetColumnValue(TransportIdColumn, typeof(System.Int32), false); 
+    }
+    private void SetTransportIdCore(System.Int32 value) {
+      SetColumnValue(TransportIdColumn, value);
+    }
+        
     //**************************************
     //* ServiceId methods
     //**************************************
@@ -642,9 +814,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 ServiceId {
-      get { return (System.Int32) GetColumnValue(ServiceIdColumn, typeof(System.Int32), false); }
-      set { this.SetColumnValue(ServiceIdColumn, value); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("ServiceId", GetServiceIdCore, out result)) return result;
+        return GetServiceIdCore();
+      }
+      set { 
+        if (SetInterceptor<System.Int32>("ServiceId", value, SetServiceIdCore)) return;
+        SetServiceIdCore(value);
+      }
     }
+    private System.Int32 GetServiceIdCore() {
+      return (System.Int32) GetColumnValue(ServiceIdColumn, typeof(System.Int32), false); 
+    }
+    private void SetServiceIdCore(System.Int32 value) {
+      SetColumnValue(ServiceIdColumn, value);
+    }
+        
     //**************************************
     //* PmtPid methods
     //**************************************
@@ -656,9 +842,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 PmtPid {
-      get { return (System.Int32) GetColumnValue(PmtPidColumn, typeof(System.Int32), false); }
-      set { this.SetColumnValue(PmtPidColumn, value); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("PmtPid", GetPmtPidCore, out result)) return result;
+        return GetPmtPidCore();
+      }
+      set { 
+        if (SetInterceptor<System.Int32>("PmtPid", value, SetPmtPidCore)) return;
+        SetPmtPidCore(value);
+      }
     }
+    private System.Int32 GetPmtPidCore() {
+      return (System.Int32) GetColumnValue(PmtPidColumn, typeof(System.Int32), false); 
+    }
+    private void SetPmtPidCore(System.Int32 value) {
+      SetColumnValue(PmtPidColumn, value);
+    }
+        
     //**************************************
     //* FreeToAir methods
     //**************************************
@@ -670,9 +870,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Boolean))]
     public virtual System.Boolean FreeToAir {
-      get { return (System.Boolean) GetColumnValue(FreeToAirColumn, typeof(System.Boolean), false); }
-      set { this.SetColumnValue(FreeToAirColumn, value); }
+      get { 
+        System.Boolean result;
+        if (GetInterceptor<System.Boolean>("FreeToAir", GetFreeToAirCore, out result)) return result;
+        return GetFreeToAirCore();
+      }
+      set { 
+        if (SetInterceptor<System.Boolean>("FreeToAir", value, SetFreeToAirCore)) return;
+        SetFreeToAirCore(value);
+      }
     }
+    private System.Boolean GetFreeToAirCore() {
+      return (System.Boolean) GetColumnValue(FreeToAirColumn, typeof(System.Boolean), false); 
+    }
+    private void SetFreeToAirCore(System.Boolean value) {
+      SetColumnValue(FreeToAirColumn, value);
+    }
+        
     //**************************************
     //* Modulation methods
     //**************************************
@@ -684,9 +898,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 Modulation {
-      get { return (System.Int32) GetColumnValue(ModulationColumn, typeof(System.Int32), false); }
-      set { this.SetColumnValue(ModulationColumn, value); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("Modulation", GetModulationCore, out result)) return result;
+        return GetModulationCore();
+      }
+      set { 
+        if (SetInterceptor<System.Int32>("Modulation", value, SetModulationCore)) return;
+        SetModulationCore(value);
+      }
     }
+    private System.Int32 GetModulationCore() {
+      return (System.Int32) GetColumnValue(ModulationColumn, typeof(System.Int32), false); 
+    }
+    private void SetModulationCore(System.Int32 value) {
+      SetColumnValue(ModulationColumn, value);
+    }
+        
     //**************************************
     //* Polarisation methods
     //**************************************
@@ -698,9 +926,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 Polarisation {
-      get { return (System.Int32) GetColumnValue(PolarisationColumn, typeof(System.Int32), false); }
-      set { this.SetColumnValue(PolarisationColumn, value); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("Polarisation", GetPolarisationCore, out result)) return result;
+        return GetPolarisationCore();
+      }
+      set { 
+        if (SetInterceptor<System.Int32>("Polarisation", value, SetPolarisationCore)) return;
+        SetPolarisationCore(value);
+      }
     }
+    private System.Int32 GetPolarisationCore() {
+      return (System.Int32) GetColumnValue(PolarisationColumn, typeof(System.Int32), false); 
+    }
+    private void SetPolarisationCore(System.Int32 value) {
+      SetColumnValue(PolarisationColumn, value);
+    }
+        
     //**************************************
     //* Symbolrate methods
     //**************************************
@@ -712,9 +954,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 Symbolrate {
-      get { return (System.Int32) GetColumnValue(SymbolrateColumn, typeof(System.Int32), false); }
-      set { this.SetColumnValue(SymbolrateColumn, value); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("Symbolrate", GetSymbolrateCore, out result)) return result;
+        return GetSymbolrateCore();
+      }
+      set { 
+        if (SetInterceptor<System.Int32>("Symbolrate", value, SetSymbolrateCore)) return;
+        SetSymbolrateCore(value);
+      }
     }
+    private System.Int32 GetSymbolrateCore() {
+      return (System.Int32) GetColumnValue(SymbolrateColumn, typeof(System.Int32), false); 
+    }
+    private void SetSymbolrateCore(System.Int32 value) {
+      SetColumnValue(SymbolrateColumn, value);
+    }
+        
     //**************************************
     //* Diseqc methods
     //**************************************
@@ -726,9 +982,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 Diseqc {
-      get { return (System.Int32) GetColumnValue(DiseqcColumn, typeof(System.Int32), false); }
-      set { this.SetColumnValue(DiseqcColumn, value); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("Diseqc", GetDiseqcCore, out result)) return result;
+        return GetDiseqcCore();
+      }
+      set { 
+        if (SetInterceptor<System.Int32>("Diseqc", value, SetDiseqcCore)) return;
+        SetDiseqcCore(value);
+      }
     }
+    private System.Int32 GetDiseqcCore() {
+      return (System.Int32) GetColumnValue(DiseqcColumn, typeof(System.Int32), false); 
+    }
+    private void SetDiseqcCore(System.Int32 value) {
+      SetColumnValue(DiseqcColumn, value);
+    }
+        
     //**************************************
     //* SwitchingFrequency methods
     //**************************************
@@ -740,9 +1010,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 SwitchingFrequency {
-      get { return (System.Int32) GetColumnValue(SwitchingFrequencyColumn, typeof(System.Int32), false); }
-      set { this.SetColumnValue(SwitchingFrequencyColumn, value); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("SwitchingFrequency", GetSwitchingFrequencyCore, out result)) return result;
+        return GetSwitchingFrequencyCore();
+      }
+      set { 
+        if (SetInterceptor<System.Int32>("SwitchingFrequency", value, SetSwitchingFrequencyCore)) return;
+        SetSwitchingFrequencyCore(value);
+      }
     }
+    private System.Int32 GetSwitchingFrequencyCore() {
+      return (System.Int32) GetColumnValue(SwitchingFrequencyColumn, typeof(System.Int32), false); 
+    }
+    private void SetSwitchingFrequencyCore(System.Int32 value) {
+      SetColumnValue(SwitchingFrequencyColumn, value);
+    }
+        
     //**************************************
     //* Bandwidth methods
     //**************************************
@@ -754,9 +1038,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 Bandwidth {
-      get { return (System.Int32) GetColumnValue(BandwidthColumn, typeof(System.Int32), false); }
-      set { this.SetColumnValue(BandwidthColumn, value); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("Bandwidth", GetBandwidthCore, out result)) return result;
+        return GetBandwidthCore();
+      }
+      set { 
+        if (SetInterceptor<System.Int32>("Bandwidth", value, SetBandwidthCore)) return;
+        SetBandwidthCore(value);
+      }
     }
+    private System.Int32 GetBandwidthCore() {
+      return (System.Int32) GetColumnValue(BandwidthColumn, typeof(System.Int32), false); 
+    }
+    private void SetBandwidthCore(System.Int32 value) {
+      SetColumnValue(BandwidthColumn, value);
+    }
+        
     //**************************************
     //* MajorChannel methods
     //**************************************
@@ -768,9 +1066,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 MajorChannel {
-      get { return (System.Int32) GetColumnValue(MajorChannelColumn, typeof(System.Int32), false); }
-      set { this.SetColumnValue(MajorChannelColumn, value); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("MajorChannel", GetMajorChannelCore, out result)) return result;
+        return GetMajorChannelCore();
+      }
+      set { 
+        if (SetInterceptor<System.Int32>("MajorChannel", value, SetMajorChannelCore)) return;
+        SetMajorChannelCore(value);
+      }
     }
+    private System.Int32 GetMajorChannelCore() {
+      return (System.Int32) GetColumnValue(MajorChannelColumn, typeof(System.Int32), false); 
+    }
+    private void SetMajorChannelCore(System.Int32 value) {
+      SetColumnValue(MajorChannelColumn, value);
+    }
+        
     //**************************************
     //* MinorChannel methods
     //**************************************
@@ -782,9 +1094,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 MinorChannel {
-      get { return (System.Int32) GetColumnValue(MinorChannelColumn, typeof(System.Int32), false); }
-      set { this.SetColumnValue(MinorChannelColumn, value); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("MinorChannel", GetMinorChannelCore, out result)) return result;
+        return GetMinorChannelCore();
+      }
+      set { 
+        if (SetInterceptor<System.Int32>("MinorChannel", value, SetMinorChannelCore)) return;
+        SetMinorChannelCore(value);
+      }
     }
+    private System.Int32 GetMinorChannelCore() {
+      return (System.Int32) GetColumnValue(MinorChannelColumn, typeof(System.Int32), false); 
+    }
+    private void SetMinorChannelCore(System.Int32 value) {
+      SetColumnValue(MinorChannelColumn, value);
+    }
+        
     //**************************************
     //* PcrPid methods
     //**************************************
@@ -796,9 +1122,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 PcrPid {
-      get { return (System.Int32) GetColumnValue(PcrPidColumn, typeof(System.Int32), false); }
-      set { this.SetColumnValue(PcrPidColumn, value); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("PcrPid", GetPcrPidCore, out result)) return result;
+        return GetPcrPidCore();
+      }
+      set { 
+        if (SetInterceptor<System.Int32>("PcrPid", value, SetPcrPidCore)) return;
+        SetPcrPidCore(value);
+      }
     }
+    private System.Int32 GetPcrPidCore() {
+      return (System.Int32) GetColumnValue(PcrPidColumn, typeof(System.Int32), false); 
+    }
+    private void SetPcrPidCore(System.Int32 value) {
+      SetColumnValue(PcrPidColumn, value);
+    }
+        
     //**************************************
     //* VideoSource methods
     //**************************************
@@ -810,9 +1150,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 VideoSource {
-      get { return (System.Int32) GetColumnValue(VideoSourceColumn, typeof(System.Int32), false); }
-      set { this.SetColumnValue(VideoSourceColumn, value); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("VideoSource", GetVideoSourceCore, out result)) return result;
+        return GetVideoSourceCore();
+      }
+      set { 
+        if (SetInterceptor<System.Int32>("VideoSource", value, SetVideoSourceCore)) return;
+        SetVideoSourceCore(value);
+      }
     }
+    private System.Int32 GetVideoSourceCore() {
+      return (System.Int32) GetColumnValue(VideoSourceColumn, typeof(System.Int32), false); 
+    }
+    private void SetVideoSourceCore(System.Int32 value) {
+      SetColumnValue(VideoSourceColumn, value);
+    }
+        
     //**************************************
     //* TuningSource methods
     //**************************************
@@ -824,11 +1178,24 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 TuningSource {
-      get { return (System.Int32) GetColumnValue(TuningSourceColumn, typeof(System.Int32), false); }
-      set { this.SetColumnValue(TuningSourceColumn, value); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("TuningSource", GetTuningSourceCore, out result)) return result;
+        return GetTuningSourceCore();
+      }
+      set { 
+        if (SetInterceptor<System.Int32>("TuningSource", value, SetTuningSourceCore)) return;
+        SetTuningSourceCore(value);
+      }
     }
+    private System.Int32 GetTuningSourceCore() {
+      return (System.Int32) GetColumnValue(TuningSourceColumn, typeof(System.Int32), false); 
+    }
+    private void SetTuningSourceCore(System.Int32 value) {
+      SetColumnValue(TuningSourceColumn, value);
+    }
+        
     #endregion
-    
     
   }
   #endregion

@@ -156,7 +156,7 @@ namespace TvDatabase {
     //**************************************
     //* Relation properties
     //**************************************
-
+    
     #endregion
     
     #region EntityColumn definitions
@@ -184,8 +184,16 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 IdSetting {
-      get { return (System.Int32) GetColumnValue(IdSettingColumn, typeof(System.Int32), false); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("IdSetting", GetIdSettingCore, out result)) return result;
+        return GetIdSettingCore();
+      }
     }
+    private System.Int32 GetIdSettingCore() {
+      return (System.Int32) GetColumnValue(IdSettingColumn, typeof(System.Int32), false); 
+    }
+        
     //**************************************
     //* Tag methods
     //**************************************
@@ -198,9 +206,23 @@ namespace TvDatabase {
     [MaxTextLength(200)]
     [DBDataType(typeof(System.String))]
     public virtual System.String Tag {
-      get { return (System.String) GetColumnValue(TagColumn, typeof(System.String), false); }
-      set { this.SetColumnValue(TagColumn, value); }
+      get { 
+        System.String result;
+        if (GetInterceptor<System.String>("Tag", GetTagCore, out result)) return result;
+        return GetTagCore();
+      }
+      set { 
+        if (SetInterceptor<System.String>("Tag", value, SetTagCore)) return;
+        SetTagCore(value);
+      }
     }
+    private System.String GetTagCore() {
+      return (System.String) GetColumnValue(TagColumn, typeof(System.String), false); 
+    }
+    private void SetTagCore(System.String value) {
+      SetColumnValue(TagColumn, value);
+    }
+        
     //**************************************
     //* Value methods
     //**************************************
@@ -213,11 +235,24 @@ namespace TvDatabase {
     [MaxTextLength(4096)]
     [DBDataType(typeof(System.String))]
     public virtual System.String Value {
-      get { return (System.String) GetColumnValue(ValueColumn, typeof(System.String), false); }
-      set { this.SetColumnValue(ValueColumn, value); }
+      get { 
+        System.String result;
+        if (GetInterceptor<System.String>("Value", GetValueCore, out result)) return result;
+        return GetValueCore();
+      }
+      set { 
+        if (SetInterceptor<System.String>("Value", value, SetValueCore)) return;
+        SetValueCore(value);
+      }
     }
+    private System.String GetValueCore() {
+      return (System.String) GetColumnValue(ValueColumn, typeof(System.String), false); 
+    }
+    private void SetValueCore(System.String value) {
+      SetColumnValue(ValueColumn, value);
+    }
+        
     #endregion
-    
     
   }
   #endregion

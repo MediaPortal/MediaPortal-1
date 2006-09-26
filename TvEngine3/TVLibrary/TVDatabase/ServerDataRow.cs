@@ -156,18 +156,28 @@ namespace TvDatabase {
     //**************************************
     //* Relation properties
     //**************************************
-
+    
     public virtual ReadOnlyEntityList<Card> Cards {
-      get {
-        return this.GetManagedChildren<Card>(EntityRelations.Server_Card);
+      get { 
+        ReadOnlyEntityList<Card> result;
+        if (GetInterceptor<ReadOnlyEntityList<Card>>("Cards", GetCardsCore, out result)) return result;
+        return GetCardsCore();
       }
     }
+    private ReadOnlyEntityList<Card> GetCardsCore() {
+      return this.GetManagedChildren<Card>(EntityRelations.Server_Card);
+    } 
 
     public virtual ReadOnlyEntityList<Recording> Recordings {
-      get {
-        return this.GetManagedChildren<Recording>(EntityRelations.Server_Recording);
+      get { 
+        ReadOnlyEntityList<Recording> result;
+        if (GetInterceptor<ReadOnlyEntityList<Recording>>("Recordings", GetRecordingsCore, out result)) return result;
+        return GetRecordingsCore();
       }
     }
+    private ReadOnlyEntityList<Recording> GetRecordingsCore() {
+      return this.GetManagedChildren<Recording>(EntityRelations.Server_Recording);
+    } 
 
     #endregion
     
@@ -196,8 +206,16 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 IdServer {
-      get { return (System.Int32) GetColumnValue(IdServerColumn, typeof(System.Int32), false); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("IdServer", GetIdServerCore, out result)) return result;
+        return GetIdServerCore();
+      }
     }
+    private System.Int32 GetIdServerCore() {
+      return (System.Int32) GetColumnValue(IdServerColumn, typeof(System.Int32), false); 
+    }
+        
     //**************************************
     //* IsMaster methods
     //**************************************
@@ -209,9 +227,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Boolean))]
     public virtual System.Boolean IsMaster {
-      get { return (System.Boolean) GetColumnValue(IsMasterColumn, typeof(System.Boolean), false); }
-      set { this.SetColumnValue(IsMasterColumn, value); }
+      get { 
+        System.Boolean result;
+        if (GetInterceptor<System.Boolean>("IsMaster", GetIsMasterCore, out result)) return result;
+        return GetIsMasterCore();
+      }
+      set { 
+        if (SetInterceptor<System.Boolean>("IsMaster", value, SetIsMasterCore)) return;
+        SetIsMasterCore(value);
+      }
     }
+    private System.Boolean GetIsMasterCore() {
+      return (System.Boolean) GetColumnValue(IsMasterColumn, typeof(System.Boolean), false); 
+    }
+    private void SetIsMasterCore(System.Boolean value) {
+      SetColumnValue(IsMasterColumn, value);
+    }
+        
     //**************************************
     //* HostName methods
     //**************************************
@@ -224,11 +256,24 @@ namespace TvDatabase {
     [MaxTextLength(256)]
     [DBDataType(typeof(System.String))]
     public virtual System.String HostName {
-      get { return (System.String) GetColumnValue(HostNameColumn, typeof(System.String), false); }
-      set { this.SetColumnValue(HostNameColumn, value); }
+      get { 
+        System.String result;
+        if (GetInterceptor<System.String>("HostName", GetHostNameCore, out result)) return result;
+        return GetHostNameCore();
+      }
+      set { 
+        if (SetInterceptor<System.String>("HostName", value, SetHostNameCore)) return;
+        SetHostNameCore(value);
+      }
     }
+    private System.String GetHostNameCore() {
+      return (System.String) GetColumnValue(HostNameColumn, typeof(System.String), false); 
+    }
+    private void SetHostNameCore(System.String value) {
+      SetColumnValue(HostNameColumn, value);
+    }
+        
     #endregion
-    
     
   }
   #endregion

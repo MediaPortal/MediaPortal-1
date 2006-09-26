@@ -156,31 +156,51 @@ namespace TvDatabase {
     //**************************************
     //* Relation properties
     //**************************************
-
+    
     public virtual Card Card {
-      get {
-        return this.PersistenceManager.GetParent<Card>(this, EntityRelations.Card_ChannelMap);
+      get { 
+        Card result;
+        if (GetInterceptor<Card>("Card", GetCardCore, out result)) return result;
+        return GetCardCore();
       }
-      set {
-        if (value == null) {
-          this.SetNull(this.IdCardColumn);
-        } else {
-          SetColumnValue(this.IdCardColumn, value, value.IdCardColumn);
-        }
+      set { 
+        if (SetInterceptor<Card>("Card", value, SetCardCore)) return;
+        SetCardCore(value);
       }
+    }
+    private Card GetCardCore() {
+      return GetParent<Card>(EntityRelations.Card_ChannelMap, this.PersistenceManager.DefaultQueryStrategy);
+    }
+    private void SetCardCore(Card value) {
+      if (value == null) {
+        SetNull(this.IdCardColumn);
+      } else {
+        SetColumnValue(this.IdCardColumn, value, value.IdCardColumn);
+      }
+      OnPropertyChanged(new PropertyChangedEventArgs("Card"));
     }
 
     public virtual Channel Channel {
-      get {
-        return this.PersistenceManager.GetParent<Channel>(this, EntityRelations.Channel_ChannelMap);
+      get { 
+        Channel result;
+        if (GetInterceptor<Channel>("Channel", GetChannelCore, out result)) return result;
+        return GetChannelCore();
       }
-      set {
-        if (value == null) {
-          this.SetNull(this.IdChannelColumn);
-        } else {
-          SetColumnValue(this.IdChannelColumn, value, value.IdChannelColumn);
-        }
+      set { 
+        if (SetInterceptor<Channel>("Channel", value, SetChannelCore)) return;
+        SetChannelCore(value);
       }
+    }
+    private Channel GetChannelCore() {
+      return GetParent<Channel>(EntityRelations.Channel_ChannelMap, this.PersistenceManager.DefaultQueryStrategy);
+    }
+    private void SetChannelCore(Channel value) {
+      if (value == null) {
+        SetNull(this.IdChannelColumn);
+      } else {
+        SetColumnValue(this.IdChannelColumn, value, value.IdChannelColumn);
+      }
+      OnPropertyChanged(new PropertyChangedEventArgs("Channel"));
     }
 
     #endregion
@@ -210,8 +230,16 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 IdChannelMap {
-      get { return (System.Int32) GetColumnValue(IdChannelMapColumn, typeof(System.Int32), false); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("IdChannelMap", GetIdChannelMapCore, out result)) return result;
+        return GetIdChannelMapCore();
+      }
     }
+    private System.Int32 GetIdChannelMapCore() {
+      return (System.Int32) GetColumnValue(IdChannelMapColumn, typeof(System.Int32), false); 
+    }
+        
     //**************************************
     //* IdChannel methods
     //**************************************
@@ -223,9 +251,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 IdChannel {
-      get { return (System.Int32) GetColumnValue(IdChannelColumn, typeof(System.Int32), false); }
-      set { this.SetColumnValue(IdChannelColumn, value); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("IdChannel", GetIdChannelCore, out result)) return result;
+        return GetIdChannelCore();
+      }
+      set { 
+        if (SetInterceptor<System.Int32>("IdChannel", value, SetIdChannelCore)) return;
+        SetIdChannelCore(value);
+      }
     }
+    private System.Int32 GetIdChannelCore() {
+      return (System.Int32) GetColumnValue(IdChannelColumn, typeof(System.Int32), false); 
+    }
+    private void SetIdChannelCore(System.Int32 value) {
+      SetColumnValue(IdChannelColumn, value);
+    }
+        
     //**************************************
     //* IdCard methods
     //**************************************
@@ -237,11 +279,24 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 IdCard {
-      get { return (System.Int32) GetColumnValue(IdCardColumn, typeof(System.Int32), false); }
-      set { this.SetColumnValue(IdCardColumn, value); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("IdCard", GetIdCardCore, out result)) return result;
+        return GetIdCardCore();
+      }
+      set { 
+        if (SetInterceptor<System.Int32>("IdCard", value, SetIdCardCore)) return;
+        SetIdCardCore(value);
+      }
     }
+    private System.Int32 GetIdCardCore() {
+      return (System.Int32) GetColumnValue(IdCardColumn, typeof(System.Int32), false); 
+    }
+    private void SetIdCardCore(System.Int32 value) {
+      SetColumnValue(IdCardColumn, value);
+    }
+        
     #endregion
-    
     
   }
   #endregion

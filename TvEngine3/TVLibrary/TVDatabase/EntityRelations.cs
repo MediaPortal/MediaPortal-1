@@ -15,7 +15,7 @@ namespace TvDatabase {
   ///    ** next time this code is regenerated   
   ///    **
   ///    ** Generated from: EntityRelations.template    
-  ///    ** Generated on:   2006-07-17T14:35:49.328125+02:00             
+  ///    ** Generated on:   2006-09-26T09:20:08.4903386+02:00             
   ///    **************************************************** 
   /// </summary>
   [Serializable]

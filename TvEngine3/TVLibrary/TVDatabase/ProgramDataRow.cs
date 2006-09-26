@@ -206,24 +206,39 @@ namespace TvDatabase {
     //**************************************
     //* Relation properties
     //**************************************
-
+    
     public virtual ReadOnlyEntityList<Favorite> Favorites {
-      get {
-        return this.GetManagedChildren<Favorite>(EntityRelations.Program_Favorite);
+      get { 
+        ReadOnlyEntityList<Favorite> result;
+        if (GetInterceptor<ReadOnlyEntityList<Favorite>>("Favorites", GetFavoritesCore, out result)) return result;
+        return GetFavoritesCore();
       }
     }
+    private ReadOnlyEntityList<Favorite> GetFavoritesCore() {
+      return this.GetManagedChildren<Favorite>(EntityRelations.Program_Favorite);
+    } 
 
     public virtual Channel Channel {
-      get {
-        return this.PersistenceManager.GetParent<Channel>(this, EntityRelations.Channel_Program);
+      get { 
+        Channel result;
+        if (GetInterceptor<Channel>("Channel", GetChannelCore, out result)) return result;
+        return GetChannelCore();
       }
-      set {
-        if (value == null) {
-          this.SetNull(this.IdChannelColumn);
-        } else {
-          SetColumnValue(this.IdChannelColumn, value, value.IdChannelColumn);
-        }
+      set { 
+        if (SetInterceptor<Channel>("Channel", value, SetChannelCore)) return;
+        SetChannelCore(value);
       }
+    }
+    private Channel GetChannelCore() {
+      return GetParent<Channel>(EntityRelations.Channel_Program, this.PersistenceManager.DefaultQueryStrategy);
+    }
+    private void SetChannelCore(Channel value) {
+      if (value == null) {
+        SetNull(this.IdChannelColumn);
+      } else {
+        SetColumnValue(this.IdChannelColumn, value, value.IdChannelColumn);
+      }
+      OnPropertyChanged(new PropertyChangedEventArgs("Channel"));
     }
 
     #endregion
@@ -263,8 +278,16 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 IdProgram {
-      get { return (System.Int32) GetColumnValue(IdProgramColumn, typeof(System.Int32), false); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("IdProgram", GetIdProgramCore, out result)) return result;
+        return GetIdProgramCore();
+      }
     }
+    private System.Int32 GetIdProgramCore() {
+      return (System.Int32) GetColumnValue(IdProgramColumn, typeof(System.Int32), false); 
+    }
+        
     //**************************************
     //* IdChannel methods
     //**************************************
@@ -276,9 +299,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 IdChannel {
-      get { return (System.Int32) GetColumnValue(IdChannelColumn, typeof(System.Int32), false); }
-      set { this.SetColumnValue(IdChannelColumn, value); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("IdChannel", GetIdChannelCore, out result)) return result;
+        return GetIdChannelCore();
+      }
+      set { 
+        if (SetInterceptor<System.Int32>("IdChannel", value, SetIdChannelCore)) return;
+        SetIdChannelCore(value);
+      }
     }
+    private System.Int32 GetIdChannelCore() {
+      return (System.Int32) GetColumnValue(IdChannelColumn, typeof(System.Int32), false); 
+    }
+    private void SetIdChannelCore(System.Int32 value) {
+      SetColumnValue(IdChannelColumn, value);
+    }
+        
     //**************************************
     //* StartTime methods
     //**************************************
@@ -290,9 +327,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.DateTime))]
     public virtual System.DateTime StartTime {
-      get { return (System.DateTime) GetColumnValue(StartTimeColumn, typeof(System.DateTime), false); }
-      set { this.SetColumnValue(StartTimeColumn, value); }
+      get { 
+        System.DateTime result;
+        if (GetInterceptor<System.DateTime>("StartTime", GetStartTimeCore, out result)) return result;
+        return GetStartTimeCore();
+      }
+      set { 
+        if (SetInterceptor<System.DateTime>("StartTime", value, SetStartTimeCore)) return;
+        SetStartTimeCore(value);
+      }
     }
+    private System.DateTime GetStartTimeCore() {
+      return (System.DateTime) GetColumnValue(StartTimeColumn, typeof(System.DateTime), false); 
+    }
+    private void SetStartTimeCore(System.DateTime value) {
+      SetColumnValue(StartTimeColumn, value);
+    }
+        
     //**************************************
     //* EndTime methods
     //**************************************
@@ -304,9 +355,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.DateTime))]
     public virtual System.DateTime EndTime {
-      get { return (System.DateTime) GetColumnValue(EndTimeColumn, typeof(System.DateTime), false); }
-      set { this.SetColumnValue(EndTimeColumn, value); }
+      get { 
+        System.DateTime result;
+        if (GetInterceptor<System.DateTime>("EndTime", GetEndTimeCore, out result)) return result;
+        return GetEndTimeCore();
+      }
+      set { 
+        if (SetInterceptor<System.DateTime>("EndTime", value, SetEndTimeCore)) return;
+        SetEndTimeCore(value);
+      }
     }
+    private System.DateTime GetEndTimeCore() {
+      return (System.DateTime) GetColumnValue(EndTimeColumn, typeof(System.DateTime), false); 
+    }
+    private void SetEndTimeCore(System.DateTime value) {
+      SetColumnValue(EndTimeColumn, value);
+    }
+        
     //**************************************
     //* Title methods
     //**************************************
@@ -319,9 +384,23 @@ namespace TvDatabase {
     [MaxTextLength(2000)]
     [DBDataType(typeof(System.String))]
     public virtual System.String Title {
-      get { return (System.String) GetColumnValue(TitleColumn, typeof(System.String), false); }
-      set { this.SetColumnValue(TitleColumn, value); }
+      get { 
+        System.String result;
+        if (GetInterceptor<System.String>("Title", GetTitleCore, out result)) return result;
+        return GetTitleCore();
+      }
+      set { 
+        if (SetInterceptor<System.String>("Title", value, SetTitleCore)) return;
+        SetTitleCore(value);
+      }
     }
+    private System.String GetTitleCore() {
+      return (System.String) GetColumnValue(TitleColumn, typeof(System.String), false); 
+    }
+    private void SetTitleCore(System.String value) {
+      SetColumnValue(TitleColumn, value);
+    }
+        
     //**************************************
     //* Description methods
     //**************************************
@@ -334,9 +413,23 @@ namespace TvDatabase {
     [MaxTextLength(4000)]
     [DBDataType(typeof(System.String))]
     public virtual System.String Description {
-      get { return (System.String) GetColumnValue(DescriptionColumn, typeof(System.String), false); }
-      set { this.SetColumnValue(DescriptionColumn, value); }
+      get { 
+        System.String result;
+        if (GetInterceptor<System.String>("Description", GetDescriptionCore, out result)) return result;
+        return GetDescriptionCore();
+      }
+      set { 
+        if (SetInterceptor<System.String>("Description", value, SetDescriptionCore)) return;
+        SetDescriptionCore(value);
+      }
     }
+    private System.String GetDescriptionCore() {
+      return (System.String) GetColumnValue(DescriptionColumn, typeof(System.String), false); 
+    }
+    private void SetDescriptionCore(System.String value) {
+      SetColumnValue(DescriptionColumn, value);
+    }
+        
     //**************************************
     //* Genre methods
     //**************************************
@@ -349,9 +442,23 @@ namespace TvDatabase {
     [MaxTextLength(200)]
     [DBDataType(typeof(System.String))]
     public virtual System.String Genre {
-      get { return (System.String) GetColumnValue(GenreColumn, typeof(System.String), false); }
-      set { this.SetColumnValue(GenreColumn, value); }
+      get { 
+        System.String result;
+        if (GetInterceptor<System.String>("Genre", GetGenreCore, out result)) return result;
+        return GetGenreCore();
+      }
+      set { 
+        if (SetInterceptor<System.String>("Genre", value, SetGenreCore)) return;
+        SetGenreCore(value);
+      }
     }
+    private System.String GetGenreCore() {
+      return (System.String) GetColumnValue(GenreColumn, typeof(System.String), false); 
+    }
+    private void SetGenreCore(System.String value) {
+      SetColumnValue(GenreColumn, value);
+    }
+        
     //**************************************
     //* Notify methods
     //**************************************
@@ -363,11 +470,24 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Boolean))]
     public virtual System.Boolean Notify {
-      get { return (System.Boolean) GetColumnValue(NotifyColumn, typeof(System.Boolean), false); }
-      set { this.SetColumnValue(NotifyColumn, value); }
+      get { 
+        System.Boolean result;
+        if (GetInterceptor<System.Boolean>("Notify", GetNotifyCore, out result)) return result;
+        return GetNotifyCore();
+      }
+      set { 
+        if (SetInterceptor<System.Boolean>("Notify", value, SetNotifyCore)) return;
+        SetNotifyCore(value);
+      }
     }
+    private System.Boolean GetNotifyCore() {
+      return (System.Boolean) GetColumnValue(NotifyColumn, typeof(System.Boolean), false); 
+    }
+    private void SetNotifyCore(System.Boolean value) {
+      SetColumnValue(NotifyColumn, value);
+    }
+        
     #endregion
-    
     
   }
   #endregion

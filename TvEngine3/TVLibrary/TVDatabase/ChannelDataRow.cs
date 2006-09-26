@@ -226,42 +226,72 @@ namespace TvDatabase {
     //**************************************
     //* Relation properties
     //**************************************
-
+    
     public virtual ReadOnlyEntityList<ChannelMap> ChannelMaps {
-      get {
-        return this.GetManagedChildren<ChannelMap>(EntityRelations.Channel_ChannelMap);
+      get { 
+        ReadOnlyEntityList<ChannelMap> result;
+        if (GetInterceptor<ReadOnlyEntityList<ChannelMap>>("ChannelMaps", GetChannelMapsCore, out result)) return result;
+        return GetChannelMapsCore();
       }
     }
+    private ReadOnlyEntityList<ChannelMap> GetChannelMapsCore() {
+      return this.GetManagedChildren<ChannelMap>(EntityRelations.Channel_ChannelMap);
+    } 
 
     public virtual ReadOnlyEntityList<GroupMap> GroupMaps {
-      get {
-        return this.GetManagedChildren<GroupMap>(EntityRelations.Channel_GroupMap);
+      get { 
+        ReadOnlyEntityList<GroupMap> result;
+        if (GetInterceptor<ReadOnlyEntityList<GroupMap>>("GroupMaps", GetGroupMapsCore, out result)) return result;
+        return GetGroupMapsCore();
       }
     }
+    private ReadOnlyEntityList<GroupMap> GetGroupMapsCore() {
+      return this.GetManagedChildren<GroupMap>(EntityRelations.Channel_GroupMap);
+    } 
 
     public virtual ReadOnlyEntityList<Program> Programs {
-      get {
-        return this.GetManagedChildren<Program>(EntityRelations.Channel_Program);
+      get { 
+        ReadOnlyEntityList<Program> result;
+        if (GetInterceptor<ReadOnlyEntityList<Program>>("Programs", GetProgramsCore, out result)) return result;
+        return GetProgramsCore();
       }
     }
+    private ReadOnlyEntityList<Program> GetProgramsCore() {
+      return this.GetManagedChildren<Program>(EntityRelations.Channel_Program);
+    } 
 
     public virtual ReadOnlyEntityList<Recording> Recordings {
-      get {
-        return this.GetManagedChildren<Recording>(EntityRelations.Channel_Recording);
+      get { 
+        ReadOnlyEntityList<Recording> result;
+        if (GetInterceptor<ReadOnlyEntityList<Recording>>("Recordings", GetRecordingsCore, out result)) return result;
+        return GetRecordingsCore();
       }
     }
+    private ReadOnlyEntityList<Recording> GetRecordingsCore() {
+      return this.GetManagedChildren<Recording>(EntityRelations.Channel_Recording);
+    } 
 
     public virtual ReadOnlyEntityList<TuningDetail> TuningDetails {
-      get {
-        return this.GetManagedChildren<TuningDetail>(EntityRelations.Channel_TuningDetail);
+      get { 
+        ReadOnlyEntityList<TuningDetail> result;
+        if (GetInterceptor<ReadOnlyEntityList<TuningDetail>>("TuningDetails", GetTuningDetailsCore, out result)) return result;
+        return GetTuningDetailsCore();
       }
     }
+    private ReadOnlyEntityList<TuningDetail> GetTuningDetailsCore() {
+      return this.GetManagedChildren<TuningDetail>(EntityRelations.Channel_TuningDetail);
+    } 
 
     public virtual ReadOnlyEntityList<Schedule> Schedules {
-      get {
-        return this.GetManagedChildren<Schedule>(EntityRelations.Channel_Schedule);
+      get { 
+        ReadOnlyEntityList<Schedule> result;
+        if (GetInterceptor<ReadOnlyEntityList<Schedule>>("Schedules", GetSchedulesCore, out result)) return result;
+        return GetSchedulesCore();
       }
     }
+    private ReadOnlyEntityList<Schedule> GetSchedulesCore() {
+      return this.GetManagedChildren<Schedule>(EntityRelations.Channel_Schedule);
+    } 
 
     #endregion
     
@@ -304,8 +334,16 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 IdChannel {
-      get { return (System.Int32) GetColumnValue(IdChannelColumn, typeof(System.Int32), false); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("IdChannel", GetIdChannelCore, out result)) return result;
+        return GetIdChannelCore();
+      }
     }
+    private System.Int32 GetIdChannelCore() {
+      return (System.Int32) GetColumnValue(IdChannelColumn, typeof(System.Int32), false); 
+    }
+        
     //**************************************
     //* Name methods
     //**************************************
@@ -318,9 +356,23 @@ namespace TvDatabase {
     [MaxTextLength(200)]
     [DBDataType(typeof(System.String))]
     public virtual System.String Name {
-      get { return (System.String) GetColumnValue(NameColumn, typeof(System.String), false); }
-      set { this.SetColumnValue(NameColumn, value); }
+      get { 
+        System.String result;
+        if (GetInterceptor<System.String>("Name", GetNameCore, out result)) return result;
+        return GetNameCore();
+      }
+      set { 
+        if (SetInterceptor<System.String>("Name", value, SetNameCore)) return;
+        SetNameCore(value);
+      }
     }
+    private System.String GetNameCore() {
+      return (System.String) GetColumnValue(NameColumn, typeof(System.String), false); 
+    }
+    private void SetNameCore(System.String value) {
+      SetColumnValue(NameColumn, value);
+    }
+        
     //**************************************
     //* IsRadio methods
     //**************************************
@@ -332,9 +384,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Boolean))]
     public virtual System.Boolean IsRadio {
-      get { return (System.Boolean) GetColumnValue(IsRadioColumn, typeof(System.Boolean), false); }
-      set { this.SetColumnValue(IsRadioColumn, value); }
+      get { 
+        System.Boolean result;
+        if (GetInterceptor<System.Boolean>("IsRadio", GetIsRadioCore, out result)) return result;
+        return GetIsRadioCore();
+      }
+      set { 
+        if (SetInterceptor<System.Boolean>("IsRadio", value, SetIsRadioCore)) return;
+        SetIsRadioCore(value);
+      }
     }
+    private System.Boolean GetIsRadioCore() {
+      return (System.Boolean) GetColumnValue(IsRadioColumn, typeof(System.Boolean), false); 
+    }
+    private void SetIsRadioCore(System.Boolean value) {
+      SetColumnValue(IsRadioColumn, value);
+    }
+        
     //**************************************
     //* IsTv methods
     //**************************************
@@ -346,9 +412,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Boolean))]
     public virtual System.Boolean IsTv {
-      get { return (System.Boolean) GetColumnValue(IsTvColumn, typeof(System.Boolean), false); }
-      set { this.SetColumnValue(IsTvColumn, value); }
+      get { 
+        System.Boolean result;
+        if (GetInterceptor<System.Boolean>("IsTv", GetIsTvCore, out result)) return result;
+        return GetIsTvCore();
+      }
+      set { 
+        if (SetInterceptor<System.Boolean>("IsTv", value, SetIsTvCore)) return;
+        SetIsTvCore(value);
+      }
     }
+    private System.Boolean GetIsTvCore() {
+      return (System.Boolean) GetColumnValue(IsTvColumn, typeof(System.Boolean), false); 
+    }
+    private void SetIsTvCore(System.Boolean value) {
+      SetColumnValue(IsTvColumn, value);
+    }
+        
     //**************************************
     //* TimesWatched methods
     //**************************************
@@ -360,9 +440,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 TimesWatched {
-      get { return (System.Int32) GetColumnValue(TimesWatchedColumn, typeof(System.Int32), false); }
-      set { this.SetColumnValue(TimesWatchedColumn, value); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("TimesWatched", GetTimesWatchedCore, out result)) return result;
+        return GetTimesWatchedCore();
+      }
+      set { 
+        if (SetInterceptor<System.Int32>("TimesWatched", value, SetTimesWatchedCore)) return;
+        SetTimesWatchedCore(value);
+      }
     }
+    private System.Int32 GetTimesWatchedCore() {
+      return (System.Int32) GetColumnValue(TimesWatchedColumn, typeof(System.Int32), false); 
+    }
+    private void SetTimesWatchedCore(System.Int32 value) {
+      SetColumnValue(TimesWatchedColumn, value);
+    }
+        
     //**************************************
     //* TotalTimeWatched methods
     //**************************************
@@ -374,9 +468,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.DateTime))]
     public virtual System.DateTime TotalTimeWatched {
-      get { return (System.DateTime) GetColumnValue(TotalTimeWatchedColumn, typeof(System.DateTime), false); }
-      set { this.SetColumnValue(TotalTimeWatchedColumn, value); }
+      get { 
+        System.DateTime result;
+        if (GetInterceptor<System.DateTime>("TotalTimeWatched", GetTotalTimeWatchedCore, out result)) return result;
+        return GetTotalTimeWatchedCore();
+      }
+      set { 
+        if (SetInterceptor<System.DateTime>("TotalTimeWatched", value, SetTotalTimeWatchedCore)) return;
+        SetTotalTimeWatchedCore(value);
+      }
     }
+    private System.DateTime GetTotalTimeWatchedCore() {
+      return (System.DateTime) GetColumnValue(TotalTimeWatchedColumn, typeof(System.DateTime), false); 
+    }
+    private void SetTotalTimeWatchedCore(System.DateTime value) {
+      SetColumnValue(TotalTimeWatchedColumn, value);
+    }
+        
     //**************************************
     //* GrabEpg methods
     //**************************************
@@ -388,9 +496,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Boolean))]
     public virtual System.Boolean GrabEpg {
-      get { return (System.Boolean) GetColumnValue(GrabEpgColumn, typeof(System.Boolean), false); }
-      set { this.SetColumnValue(GrabEpgColumn, value); }
+      get { 
+        System.Boolean result;
+        if (GetInterceptor<System.Boolean>("GrabEpg", GetGrabEpgCore, out result)) return result;
+        return GetGrabEpgCore();
+      }
+      set { 
+        if (SetInterceptor<System.Boolean>("GrabEpg", value, SetGrabEpgCore)) return;
+        SetGrabEpgCore(value);
+      }
     }
+    private System.Boolean GetGrabEpgCore() {
+      return (System.Boolean) GetColumnValue(GrabEpgColumn, typeof(System.Boolean), false); 
+    }
+    private void SetGrabEpgCore(System.Boolean value) {
+      SetColumnValue(GrabEpgColumn, value);
+    }
+        
     //**************************************
     //* LastGrabTime methods
     //**************************************
@@ -402,9 +524,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.DateTime))]
     public virtual System.DateTime LastGrabTime {
-      get { return (System.DateTime) GetColumnValue(LastGrabTimeColumn, typeof(System.DateTime), false); }
-      set { this.SetColumnValue(LastGrabTimeColumn, value); }
+      get { 
+        System.DateTime result;
+        if (GetInterceptor<System.DateTime>("LastGrabTime", GetLastGrabTimeCore, out result)) return result;
+        return GetLastGrabTimeCore();
+      }
+      set { 
+        if (SetInterceptor<System.DateTime>("LastGrabTime", value, SetLastGrabTimeCore)) return;
+        SetLastGrabTimeCore(value);
+      }
     }
+    private System.DateTime GetLastGrabTimeCore() {
+      return (System.DateTime) GetColumnValue(LastGrabTimeColumn, typeof(System.DateTime), false); 
+    }
+    private void SetLastGrabTimeCore(System.DateTime value) {
+      SetColumnValue(LastGrabTimeColumn, value);
+    }
+        
     //**************************************
     //* SortOrder methods
     //**************************************
@@ -416,9 +552,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 SortOrder {
-      get { return (System.Int32) GetColumnValue(SortOrderColumn, typeof(System.Int32), false); }
-      set { this.SetColumnValue(SortOrderColumn, value); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("SortOrder", GetSortOrderCore, out result)) return result;
+        return GetSortOrderCore();
+      }
+      set { 
+        if (SetInterceptor<System.Int32>("SortOrder", value, SetSortOrderCore)) return;
+        SetSortOrderCore(value);
+      }
     }
+    private System.Int32 GetSortOrderCore() {
+      return (System.Int32) GetColumnValue(SortOrderColumn, typeof(System.Int32), false); 
+    }
+    private void SetSortOrderCore(System.Int32 value) {
+      SetColumnValue(SortOrderColumn, value);
+    }
+        
     //**************************************
     //* VisibleInGuide methods
     //**************************************
@@ -430,11 +580,24 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Boolean))]
     public virtual System.Boolean VisibleInGuide {
-      get { return (System.Boolean) GetColumnValue(VisibleInGuideColumn, typeof(System.Boolean), false); }
-      set { this.SetColumnValue(VisibleInGuideColumn, value); }
+      get { 
+        System.Boolean result;
+        if (GetInterceptor<System.Boolean>("VisibleInGuide", GetVisibleInGuideCore, out result)) return result;
+        return GetVisibleInGuideCore();
+      }
+      set { 
+        if (SetInterceptor<System.Boolean>("VisibleInGuide", value, SetVisibleInGuideCore)) return;
+        SetVisibleInGuideCore(value);
+      }
     }
+    private System.Boolean GetVisibleInGuideCore() {
+      return (System.Boolean) GetColumnValue(VisibleInGuideColumn, typeof(System.Boolean), false); 
+    }
+    private void SetVisibleInGuideCore(System.Boolean value) {
+      SetColumnValue(VisibleInGuideColumn, value);
+    }
+        
     #endregion
-    
     
   }
   #endregion

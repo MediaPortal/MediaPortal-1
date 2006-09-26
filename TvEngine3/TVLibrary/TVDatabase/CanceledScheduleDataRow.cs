@@ -156,18 +156,28 @@ namespace TvDatabase {
     //**************************************
     //* Relation properties
     //**************************************
-
+    
     public virtual Schedule Schedule {
-      get {
-        return this.PersistenceManager.GetParent<Schedule>(this, EntityRelations.Schedule_CanceledSchedule);
+      get { 
+        Schedule result;
+        if (GetInterceptor<Schedule>("Schedule", GetScheduleCore, out result)) return result;
+        return GetScheduleCore();
       }
-      set {
-        if (value == null) {
-          this.SetNull(this.IdScheduleColumn);
-        } else {
-          SetColumnValue(this.IdScheduleColumn, value, value.IdScheduleColumn);
-        }
+      set { 
+        if (SetInterceptor<Schedule>("Schedule", value, SetScheduleCore)) return;
+        SetScheduleCore(value);
       }
+    }
+    private Schedule GetScheduleCore() {
+      return GetParent<Schedule>(EntityRelations.Schedule_CanceledSchedule, this.PersistenceManager.DefaultQueryStrategy);
+    }
+    private void SetScheduleCore(Schedule value) {
+      if (value == null) {
+        SetNull(this.IdScheduleColumn);
+      } else {
+        SetColumnValue(this.IdScheduleColumn, value, value.IdScheduleColumn);
+      }
+      OnPropertyChanged(new PropertyChangedEventArgs("Schedule"));
     }
 
     #endregion
@@ -197,8 +207,16 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 IdCanceledSchedule {
-      get { return (System.Int32) GetColumnValue(IdCanceledScheduleColumn, typeof(System.Int32), false); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("IdCanceledSchedule", GetIdCanceledScheduleCore, out result)) return result;
+        return GetIdCanceledScheduleCore();
+      }
     }
+    private System.Int32 GetIdCanceledScheduleCore() {
+      return (System.Int32) GetColumnValue(IdCanceledScheduleColumn, typeof(System.Int32), false); 
+    }
+        
     //**************************************
     //* IdSchedule methods
     //**************************************
@@ -210,9 +228,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 IdSchedule {
-      get { return (System.Int32) GetColumnValue(IdScheduleColumn, typeof(System.Int32), false); }
-      set { this.SetColumnValue(IdScheduleColumn, value); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("IdSchedule", GetIdScheduleCore, out result)) return result;
+        return GetIdScheduleCore();
+      }
+      set { 
+        if (SetInterceptor<System.Int32>("IdSchedule", value, SetIdScheduleCore)) return;
+        SetIdScheduleCore(value);
+      }
     }
+    private System.Int32 GetIdScheduleCore() {
+      return (System.Int32) GetColumnValue(IdScheduleColumn, typeof(System.Int32), false); 
+    }
+    private void SetIdScheduleCore(System.Int32 value) {
+      SetColumnValue(IdScheduleColumn, value);
+    }
+        
     //**************************************
     //* CancelDateTime methods
     //**************************************
@@ -224,11 +256,24 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.DateTime))]
     public virtual System.DateTime CancelDateTime {
-      get { return (System.DateTime) GetColumnValue(CancelDateTimeColumn, typeof(System.DateTime), false); }
-      set { this.SetColumnValue(CancelDateTimeColumn, value); }
+      get { 
+        System.DateTime result;
+        if (GetInterceptor<System.DateTime>("CancelDateTime", GetCancelDateTimeCore, out result)) return result;
+        return GetCancelDateTimeCore();
+      }
+      set { 
+        if (SetInterceptor<System.DateTime>("CancelDateTime", value, SetCancelDateTimeCore)) return;
+        SetCancelDateTimeCore(value);
+      }
     }
+    private System.DateTime GetCancelDateTimeCore() {
+      return (System.DateTime) GetColumnValue(CancelDateTimeColumn, typeof(System.DateTime), false); 
+    }
+    private void SetCancelDateTimeCore(System.DateTime value) {
+      SetColumnValue(CancelDateTimeColumn, value);
+    }
+        
     #endregion
-    
     
   }
   #endregion

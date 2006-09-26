@@ -276,25 +276,40 @@ namespace TvDatabase {
     //**************************************
     //* Relation properties
     //**************************************
-
+    
     public virtual Channel Channel {
-      get {
-        return this.PersistenceManager.GetParent<Channel>(this, EntityRelations.Channel_Schedule);
+      get { 
+        Channel result;
+        if (GetInterceptor<Channel>("Channel", GetChannelCore, out result)) return result;
+        return GetChannelCore();
       }
-      set {
-        if (value == null) {
-          this.SetNull(this.IdChannelColumn);
-        } else {
-          SetColumnValue(this.IdChannelColumn, value, value.IdChannelColumn);
-        }
+      set { 
+        if (SetInterceptor<Channel>("Channel", value, SetChannelCore)) return;
+        SetChannelCore(value);
       }
+    }
+    private Channel GetChannelCore() {
+      return GetParent<Channel>(EntityRelations.Channel_Schedule, this.PersistenceManager.DefaultQueryStrategy);
+    }
+    private void SetChannelCore(Channel value) {
+      if (value == null) {
+        SetNull(this.IdChannelColumn);
+      } else {
+        SetColumnValue(this.IdChannelColumn, value, value.IdChannelColumn);
+      }
+      OnPropertyChanged(new PropertyChangedEventArgs("Channel"));
     }
 
     public virtual ReadOnlyEntityList<CanceledSchedule> CanceledSchedules {
-      get {
-        return this.GetManagedChildren<CanceledSchedule>(EntityRelations.Schedule_CanceledSchedule);
+      get { 
+        ReadOnlyEntityList<CanceledSchedule> result;
+        if (GetInterceptor<ReadOnlyEntityList<CanceledSchedule>>("CanceledSchedules", GetCanceledSchedulesCore, out result)) return result;
+        return GetCanceledSchedulesCore();
       }
     }
+    private ReadOnlyEntityList<CanceledSchedule> GetCanceledSchedulesCore() {
+      return this.GetManagedChildren<CanceledSchedule>(EntityRelations.Schedule_CanceledSchedule);
+    } 
 
     #endregion
     
@@ -347,8 +362,16 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 IdSchedule {
-      get { return (System.Int32) GetColumnValue(IdScheduleColumn, typeof(System.Int32), false); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("IdSchedule", GetIdScheduleCore, out result)) return result;
+        return GetIdScheduleCore();
+      }
     }
+    private System.Int32 GetIdScheduleCore() {
+      return (System.Int32) GetColumnValue(IdScheduleColumn, typeof(System.Int32), false); 
+    }
+        
     //**************************************
     //* IdChannel methods
     //**************************************
@@ -360,9 +383,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 IdChannel {
-      get { return (System.Int32) GetColumnValue(IdChannelColumn, typeof(System.Int32), false); }
-      set { this.SetColumnValue(IdChannelColumn, value); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("IdChannel", GetIdChannelCore, out result)) return result;
+        return GetIdChannelCore();
+      }
+      set { 
+        if (SetInterceptor<System.Int32>("IdChannel", value, SetIdChannelCore)) return;
+        SetIdChannelCore(value);
+      }
     }
+    private System.Int32 GetIdChannelCore() {
+      return (System.Int32) GetColumnValue(IdChannelColumn, typeof(System.Int32), false); 
+    }
+    private void SetIdChannelCore(System.Int32 value) {
+      SetColumnValue(IdChannelColumn, value);
+    }
+        
     //**************************************
     //* ScheduleType methods
     //**************************************
@@ -374,9 +411,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 ScheduleType {
-      get { return (System.Int32) GetColumnValue(ScheduleTypeColumn, typeof(System.Int32), false); }
-      set { this.SetColumnValue(ScheduleTypeColumn, value); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("ScheduleType", GetScheduleTypeCore, out result)) return result;
+        return GetScheduleTypeCore();
+      }
+      set { 
+        if (SetInterceptor<System.Int32>("ScheduleType", value, SetScheduleTypeCore)) return;
+        SetScheduleTypeCore(value);
+      }
     }
+    private System.Int32 GetScheduleTypeCore() {
+      return (System.Int32) GetColumnValue(ScheduleTypeColumn, typeof(System.Int32), false); 
+    }
+    private void SetScheduleTypeCore(System.Int32 value) {
+      SetColumnValue(ScheduleTypeColumn, value);
+    }
+        
     //**************************************
     //* ProgramName methods
     //**************************************
@@ -389,9 +440,23 @@ namespace TvDatabase {
     [MaxTextLength(256)]
     [DBDataType(typeof(System.String))]
     public virtual System.String ProgramName {
-      get { return (System.String) GetColumnValue(ProgramNameColumn, typeof(System.String), false); }
-      set { this.SetColumnValue(ProgramNameColumn, value); }
+      get { 
+        System.String result;
+        if (GetInterceptor<System.String>("ProgramName", GetProgramNameCore, out result)) return result;
+        return GetProgramNameCore();
+      }
+      set { 
+        if (SetInterceptor<System.String>("ProgramName", value, SetProgramNameCore)) return;
+        SetProgramNameCore(value);
+      }
     }
+    private System.String GetProgramNameCore() {
+      return (System.String) GetColumnValue(ProgramNameColumn, typeof(System.String), false); 
+    }
+    private void SetProgramNameCore(System.String value) {
+      SetColumnValue(ProgramNameColumn, value);
+    }
+        
     //**************************************
     //* StartTime methods
     //**************************************
@@ -403,9 +468,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.DateTime))]
     public virtual System.DateTime StartTime {
-      get { return (System.DateTime) GetColumnValue(StartTimeColumn, typeof(System.DateTime), false); }
-      set { this.SetColumnValue(StartTimeColumn, value); }
+      get { 
+        System.DateTime result;
+        if (GetInterceptor<System.DateTime>("StartTime", GetStartTimeCore, out result)) return result;
+        return GetStartTimeCore();
+      }
+      set { 
+        if (SetInterceptor<System.DateTime>("StartTime", value, SetStartTimeCore)) return;
+        SetStartTimeCore(value);
+      }
     }
+    private System.DateTime GetStartTimeCore() {
+      return (System.DateTime) GetColumnValue(StartTimeColumn, typeof(System.DateTime), false); 
+    }
+    private void SetStartTimeCore(System.DateTime value) {
+      SetColumnValue(StartTimeColumn, value);
+    }
+        
     //**************************************
     //* EndTime methods
     //**************************************
@@ -417,9 +496,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.DateTime))]
     public virtual System.DateTime EndTime {
-      get { return (System.DateTime) GetColumnValue(EndTimeColumn, typeof(System.DateTime), false); }
-      set { this.SetColumnValue(EndTimeColumn, value); }
+      get { 
+        System.DateTime result;
+        if (GetInterceptor<System.DateTime>("EndTime", GetEndTimeCore, out result)) return result;
+        return GetEndTimeCore();
+      }
+      set { 
+        if (SetInterceptor<System.DateTime>("EndTime", value, SetEndTimeCore)) return;
+        SetEndTimeCore(value);
+      }
     }
+    private System.DateTime GetEndTimeCore() {
+      return (System.DateTime) GetColumnValue(EndTimeColumn, typeof(System.DateTime), false); 
+    }
+    private void SetEndTimeCore(System.DateTime value) {
+      SetColumnValue(EndTimeColumn, value);
+    }
+        
     //**************************************
     //* MaxAirings methods
     //**************************************
@@ -431,9 +524,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 MaxAirings {
-      get { return (System.Int32) GetColumnValue(MaxAiringsColumn, typeof(System.Int32), false); }
-      set { this.SetColumnValue(MaxAiringsColumn, value); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("MaxAirings", GetMaxAiringsCore, out result)) return result;
+        return GetMaxAiringsCore();
+      }
+      set { 
+        if (SetInterceptor<System.Int32>("MaxAirings", value, SetMaxAiringsCore)) return;
+        SetMaxAiringsCore(value);
+      }
     }
+    private System.Int32 GetMaxAiringsCore() {
+      return (System.Int32) GetColumnValue(MaxAiringsColumn, typeof(System.Int32), false); 
+    }
+    private void SetMaxAiringsCore(System.Int32 value) {
+      SetColumnValue(MaxAiringsColumn, value);
+    }
+        
     //**************************************
     //* Priority methods
     //**************************************
@@ -445,9 +552,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 Priority {
-      get { return (System.Int32) GetColumnValue(PriorityColumn, typeof(System.Int32), false); }
-      set { this.SetColumnValue(PriorityColumn, value); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("Priority", GetPriorityCore, out result)) return result;
+        return GetPriorityCore();
+      }
+      set { 
+        if (SetInterceptor<System.Int32>("Priority", value, SetPriorityCore)) return;
+        SetPriorityCore(value);
+      }
     }
+    private System.Int32 GetPriorityCore() {
+      return (System.Int32) GetColumnValue(PriorityColumn, typeof(System.Int32), false); 
+    }
+    private void SetPriorityCore(System.Int32 value) {
+      SetColumnValue(PriorityColumn, value);
+    }
+        
     //**************************************
     //* Directory methods
     //**************************************
@@ -460,9 +581,23 @@ namespace TvDatabase {
     [MaxTextLength(1024)]
     [DBDataType(typeof(System.String))]
     public virtual System.String Directory {
-      get { return (System.String) GetColumnValue(DirectoryColumn, typeof(System.String), false); }
-      set { this.SetColumnValue(DirectoryColumn, value); }
+      get { 
+        System.String result;
+        if (GetInterceptor<System.String>("Directory", GetDirectoryCore, out result)) return result;
+        return GetDirectoryCore();
+      }
+      set { 
+        if (SetInterceptor<System.String>("Directory", value, SetDirectoryCore)) return;
+        SetDirectoryCore(value);
+      }
     }
+    private System.String GetDirectoryCore() {
+      return (System.String) GetColumnValue(DirectoryColumn, typeof(System.String), false); 
+    }
+    private void SetDirectoryCore(System.String value) {
+      SetColumnValue(DirectoryColumn, value);
+    }
+        
     //**************************************
     //* Quality methods
     //**************************************
@@ -474,9 +609,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 Quality {
-      get { return (System.Int32) GetColumnValue(QualityColumn, typeof(System.Int32), false); }
-      set { this.SetColumnValue(QualityColumn, value); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("Quality", GetQualityCore, out result)) return result;
+        return GetQualityCore();
+      }
+      set { 
+        if (SetInterceptor<System.Int32>("Quality", value, SetQualityCore)) return;
+        SetQualityCore(value);
+      }
     }
+    private System.Int32 GetQualityCore() {
+      return (System.Int32) GetColumnValue(QualityColumn, typeof(System.Int32), false); 
+    }
+    private void SetQualityCore(System.Int32 value) {
+      SetColumnValue(QualityColumn, value);
+    }
+        
     //**************************************
     //* KeepMethod methods
     //**************************************
@@ -488,9 +637,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 KeepMethod {
-      get { return (System.Int32) GetColumnValue(KeepMethodColumn, typeof(System.Int32), false); }
-      set { this.SetColumnValue(KeepMethodColumn, value); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("KeepMethod", GetKeepMethodCore, out result)) return result;
+        return GetKeepMethodCore();
+      }
+      set { 
+        if (SetInterceptor<System.Int32>("KeepMethod", value, SetKeepMethodCore)) return;
+        SetKeepMethodCore(value);
+      }
     }
+    private System.Int32 GetKeepMethodCore() {
+      return (System.Int32) GetColumnValue(KeepMethodColumn, typeof(System.Int32), false); 
+    }
+    private void SetKeepMethodCore(System.Int32 value) {
+      SetColumnValue(KeepMethodColumn, value);
+    }
+        
     //**************************************
     //* KeepDate methods
     //**************************************
@@ -502,9 +665,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.DateTime))]
     public virtual System.DateTime KeepDate {
-      get { return (System.DateTime) GetColumnValue(KeepDateColumn, typeof(System.DateTime), false); }
-      set { this.SetColumnValue(KeepDateColumn, value); }
+      get { 
+        System.DateTime result;
+        if (GetInterceptor<System.DateTime>("KeepDate", GetKeepDateCore, out result)) return result;
+        return GetKeepDateCore();
+      }
+      set { 
+        if (SetInterceptor<System.DateTime>("KeepDate", value, SetKeepDateCore)) return;
+        SetKeepDateCore(value);
+      }
     }
+    private System.DateTime GetKeepDateCore() {
+      return (System.DateTime) GetColumnValue(KeepDateColumn, typeof(System.DateTime), false); 
+    }
+    private void SetKeepDateCore(System.DateTime value) {
+      SetColumnValue(KeepDateColumn, value);
+    }
+        
     //**************************************
     //* PreRecordInterval methods
     //**************************************
@@ -516,9 +693,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 PreRecordInterval {
-      get { return (System.Int32) GetColumnValue(PreRecordIntervalColumn, typeof(System.Int32), false); }
-      set { this.SetColumnValue(PreRecordIntervalColumn, value); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("PreRecordInterval", GetPreRecordIntervalCore, out result)) return result;
+        return GetPreRecordIntervalCore();
+      }
+      set { 
+        if (SetInterceptor<System.Int32>("PreRecordInterval", value, SetPreRecordIntervalCore)) return;
+        SetPreRecordIntervalCore(value);
+      }
     }
+    private System.Int32 GetPreRecordIntervalCore() {
+      return (System.Int32) GetColumnValue(PreRecordIntervalColumn, typeof(System.Int32), false); 
+    }
+    private void SetPreRecordIntervalCore(System.Int32 value) {
+      SetColumnValue(PreRecordIntervalColumn, value);
+    }
+        
     //**************************************
     //* PostRecordInterval methods
     //**************************************
@@ -530,9 +721,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 PostRecordInterval {
-      get { return (System.Int32) GetColumnValue(PostRecordIntervalColumn, typeof(System.Int32), false); }
-      set { this.SetColumnValue(PostRecordIntervalColumn, value); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("PostRecordInterval", GetPostRecordIntervalCore, out result)) return result;
+        return GetPostRecordIntervalCore();
+      }
+      set { 
+        if (SetInterceptor<System.Int32>("PostRecordInterval", value, SetPostRecordIntervalCore)) return;
+        SetPostRecordIntervalCore(value);
+      }
     }
+    private System.Int32 GetPostRecordIntervalCore() {
+      return (System.Int32) GetColumnValue(PostRecordIntervalColumn, typeof(System.Int32), false); 
+    }
+    private void SetPostRecordIntervalCore(System.Int32 value) {
+      SetColumnValue(PostRecordIntervalColumn, value);
+    }
+        
     //**************************************
     //* Canceled methods
     //**************************************
@@ -544,11 +749,24 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.DateTime))]
     public virtual System.DateTime Canceled {
-      get { return (System.DateTime) GetColumnValue(CanceledColumn, typeof(System.DateTime), false); }
-      set { this.SetColumnValue(CanceledColumn, value); }
+      get { 
+        System.DateTime result;
+        if (GetInterceptor<System.DateTime>("Canceled", GetCanceledCore, out result)) return result;
+        return GetCanceledCore();
+      }
+      set { 
+        if (SetInterceptor<System.DateTime>("Canceled", value, SetCanceledCore)) return;
+        SetCanceledCore(value);
+      }
     }
+    private System.DateTime GetCanceledCore() {
+      return (System.DateTime) GetColumnValue(CanceledColumn, typeof(System.DateTime), false); 
+    }
+    private void SetCanceledCore(System.DateTime value) {
+      SetColumnValue(CanceledColumn, value);
+    }
+        
     #endregion
-    
     
   }
   #endregion

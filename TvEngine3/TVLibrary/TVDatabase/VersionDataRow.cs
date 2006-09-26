@@ -146,7 +146,7 @@ namespace TvDatabase {
     //**************************************
     //* Relation properties
     //**************************************
-
+    
     #endregion
     
     #region EntityColumn definitions
@@ -172,8 +172,16 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 IdVersion {
-      get { return (System.Int32) GetColumnValue(IdVersionColumn, typeof(System.Int32), false); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("IdVersion", GetIdVersionCore, out result)) return result;
+        return GetIdVersionCore();
+      }
     }
+    private System.Int32 GetIdVersionCore() {
+      return (System.Int32) GetColumnValue(IdVersionColumn, typeof(System.Int32), false); 
+    }
+        
     //**************************************
     //* VersionNumber methods
     //**************************************
@@ -185,11 +193,24 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 VersionNumber {
-      get { return (System.Int32) GetColumnValue(VersionNumberColumn, typeof(System.Int32), false); }
-      set { this.SetColumnValue(VersionNumberColumn, value); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("VersionNumber", GetVersionNumberCore, out result)) return result;
+        return GetVersionNumberCore();
+      }
+      set { 
+        if (SetInterceptor<System.Int32>("VersionNumber", value, SetVersionNumberCore)) return;
+        SetVersionNumberCore(value);
+      }
     }
+    private System.Int32 GetVersionNumberCore() {
+      return (System.Int32) GetColumnValue(VersionNumberColumn, typeof(System.Int32), false); 
+    }
+    private void SetVersionNumberCore(System.Int32 value) {
+      SetColumnValue(VersionNumberColumn, value);
+    }
+        
     #endregion
-    
     
   }
   #endregion

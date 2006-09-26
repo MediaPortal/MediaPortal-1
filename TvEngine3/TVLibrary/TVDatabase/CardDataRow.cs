@@ -21,7 +21,7 @@ namespace TvDatabase {
   ///    ** next time this code is regenerated.
   ///    **
   ///    ** Generated from: EntityBaseclass.template
-  ///    ** Last modified : 2006-07-17T14:35:11.25+02:00
+  ///    ** Last modified : 2006-09-26T09:20:03.6154322+02:00
   ///    ****************************************************
   ///</summary>
   [BindingBrowsable(false)]
@@ -112,6 +112,14 @@ namespace TvDatabase {
         return mIdServerColumn;
       }
     }
+    private DataColumn mEnabledColumn;
+    public DataColumn EnabledColumn {
+      get {
+        if (mEnabledColumn!=null) return mEnabledColumn;
+        mEnabledColumn = GetColumn("Enabled", true);
+        return mEnabledColumn;
+      }
+    }
     #endregion    
 
     protected override TableMappingInfo CreateTableMappingInfo() {
@@ -132,6 +140,7 @@ namespace TvDatabase {
       columnMappings.Add("lastEpgGrab", "LastEpgGrab");
       columnMappings.Add("recordingFolder", "RecordingFolder");
       columnMappings.Add("idServer", "IdServer");
+      columnMappings.Add("enabled", "Enabled");
       return mappingInfo;
     }
   
@@ -150,6 +159,7 @@ namespace TvDatabase {
       LastEpgGrabColumn.Caption = "lastEpgGrab";
       RecordingFolderColumn.Caption = "recordingFolder";
       IdServerColumn.Caption = "idServer";
+      EnabledColumn.Caption = "enabled";
     }
   }
   #endregion
@@ -162,7 +172,7 @@ namespace TvDatabase {
   ///    ** next time this code is regenerated
   ///    **
   ///    ** Generated from: EntityBaseclass.template
-  ///    ** Generated on:   2006-07-17T14:35:11.25+02:00
+  ///    ** Generated on:   2006-09-26T09:20:03.6154322+02:00
   ///    ****************************************************
   ///</summary>
   [Serializable]
@@ -206,24 +216,39 @@ namespace TvDatabase {
     //**************************************
     //* Relation properties
     //**************************************
-
+    
     public virtual ReadOnlyEntityList<ChannelMap> ChannelMaps {
-      get {
-        return this.GetManagedChildren<ChannelMap>(EntityRelations.Card_ChannelMap);
+      get { 
+        ReadOnlyEntityList<ChannelMap> result;
+        if (GetInterceptor<ReadOnlyEntityList<ChannelMap>>("ChannelMaps", GetChannelMapsCore, out result)) return result;
+        return GetChannelMapsCore();
       }
     }
+    private ReadOnlyEntityList<ChannelMap> GetChannelMapsCore() {
+      return this.GetManagedChildren<ChannelMap>(EntityRelations.Card_ChannelMap);
+    } 
 
     public virtual Server Server {
-      get {
-        return this.PersistenceManager.GetParent<Server>(this, EntityRelations.Server_Card);
+      get { 
+        Server result;
+        if (GetInterceptor<Server>("Server", GetServerCore, out result)) return result;
+        return GetServerCore();
       }
-      set {
-        if (value == null) {
-          this.SetNull(this.IdServerColumn);
-        } else {
-          SetColumnValue(this.IdServerColumn, value, value.IdServerColumn);
-        }
+      set { 
+        if (SetInterceptor<Server>("Server", value, SetServerCore)) return;
+        SetServerCore(value);
       }
+    }
+    private Server GetServerCore() {
+      return GetParent<Server>(EntityRelations.Server_Card, this.PersistenceManager.DefaultQueryStrategy);
+    }
+    private void SetServerCore(Server value) {
+      if (value == null) {
+        SetNull(this.IdServerColumn);
+      } else {
+        SetColumnValue(this.IdServerColumn, value, value.IdServerColumn);
+      }
+      OnPropertyChanged(new PropertyChangedEventArgs("Server"));
     }
 
     #endregion
@@ -249,6 +274,8 @@ namespace TvDatabase {
       new EntityColumn(typeof(Card), "RecordingFolder", typeof(System.String), false, false, false, DataSourceAccessType.ReadWrite);      
     public static readonly EntityColumn IdServerEntityColumn =
       new EntityColumn(typeof(Card), "IdServer", typeof(System.Int32), false, false, false, DataSourceAccessType.ReadWrite);      
+    public static readonly EntityColumn EnabledEntityColumn =
+      new EntityColumn(typeof(Card), "Enabled", typeof(System.Boolean), false, false, false, DataSourceAccessType.ReadWrite);      
     #endregion
     
     #region Properties
@@ -263,8 +290,16 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 IdCard {
-      get { return (System.Int32) GetColumnValue(IdCardColumn, typeof(System.Int32), false); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("IdCard", GetIdCardCore, out result)) return result;
+        return GetIdCardCore();
+      }
     }
+    private System.Int32 GetIdCardCore() {
+      return (System.Int32) GetColumnValue(IdCardColumn, typeof(System.Int32), false); 
+    }
+        
     //**************************************
     //* DevicePath methods
     //**************************************
@@ -277,9 +312,23 @@ namespace TvDatabase {
     [MaxTextLength(2000)]
     [DBDataType(typeof(System.String))]
     public virtual System.String DevicePath {
-      get { return (System.String) GetColumnValue(DevicePathColumn, typeof(System.String), false); }
-      set { this.SetColumnValue(DevicePathColumn, value); }
+      get { 
+        System.String result;
+        if (GetInterceptor<System.String>("DevicePath", GetDevicePathCore, out result)) return result;
+        return GetDevicePathCore();
+      }
+      set { 
+        if (SetInterceptor<System.String>("DevicePath", value, SetDevicePathCore)) return;
+        SetDevicePathCore(value);
+      }
     }
+    private System.String GetDevicePathCore() {
+      return (System.String) GetColumnValue(DevicePathColumn, typeof(System.String), false); 
+    }
+    private void SetDevicePathCore(System.String value) {
+      SetColumnValue(DevicePathColumn, value);
+    }
+        
     //**************************************
     //* Name methods
     //**************************************
@@ -292,9 +341,23 @@ namespace TvDatabase {
     [MaxTextLength(200)]
     [DBDataType(typeof(System.String))]
     public virtual System.String Name {
-      get { return (System.String) GetColumnValue(NameColumn, typeof(System.String), false); }
-      set { this.SetColumnValue(NameColumn, value); }
+      get { 
+        System.String result;
+        if (GetInterceptor<System.String>("Name", GetNameCore, out result)) return result;
+        return GetNameCore();
+      }
+      set { 
+        if (SetInterceptor<System.String>("Name", value, SetNameCore)) return;
+        SetNameCore(value);
+      }
     }
+    private System.String GetNameCore() {
+      return (System.String) GetColumnValue(NameColumn, typeof(System.String), false); 
+    }
+    private void SetNameCore(System.String value) {
+      SetColumnValue(NameColumn, value);
+    }
+        
     //**************************************
     //* Priority methods
     //**************************************
@@ -306,9 +369,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 Priority {
-      get { return (System.Int32) GetColumnValue(PriorityColumn, typeof(System.Int32), false); }
-      set { this.SetColumnValue(PriorityColumn, value); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("Priority", GetPriorityCore, out result)) return result;
+        return GetPriorityCore();
+      }
+      set { 
+        if (SetInterceptor<System.Int32>("Priority", value, SetPriorityCore)) return;
+        SetPriorityCore(value);
+      }
     }
+    private System.Int32 GetPriorityCore() {
+      return (System.Int32) GetColumnValue(PriorityColumn, typeof(System.Int32), false); 
+    }
+    private void SetPriorityCore(System.Int32 value) {
+      SetColumnValue(PriorityColumn, value);
+    }
+        
     //**************************************
     //* GrabEPG methods
     //**************************************
@@ -320,9 +397,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Boolean))]
     public virtual System.Boolean GrabEPG {
-      get { return (System.Boolean) GetColumnValue(GrabEPGColumn, typeof(System.Boolean), false); }
-      set { this.SetColumnValue(GrabEPGColumn, value); }
+      get { 
+        System.Boolean result;
+        if (GetInterceptor<System.Boolean>("GrabEPG", GetGrabEPGCore, out result)) return result;
+        return GetGrabEPGCore();
+      }
+      set { 
+        if (SetInterceptor<System.Boolean>("GrabEPG", value, SetGrabEPGCore)) return;
+        SetGrabEPGCore(value);
+      }
     }
+    private System.Boolean GetGrabEPGCore() {
+      return (System.Boolean) GetColumnValue(GrabEPGColumn, typeof(System.Boolean), false); 
+    }
+    private void SetGrabEPGCore(System.Boolean value) {
+      SetColumnValue(GrabEPGColumn, value);
+    }
+        
     //**************************************
     //* LastEpgGrab methods
     //**************************************
@@ -334,9 +425,23 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.DateTime))]
     public virtual System.DateTime LastEpgGrab {
-      get { return (System.DateTime) GetColumnValue(LastEpgGrabColumn, typeof(System.DateTime), false); }
-      set { this.SetColumnValue(LastEpgGrabColumn, value); }
+      get { 
+        System.DateTime result;
+        if (GetInterceptor<System.DateTime>("LastEpgGrab", GetLastEpgGrabCore, out result)) return result;
+        return GetLastEpgGrabCore();
+      }
+      set { 
+        if (SetInterceptor<System.DateTime>("LastEpgGrab", value, SetLastEpgGrabCore)) return;
+        SetLastEpgGrabCore(value);
+      }
     }
+    private System.DateTime GetLastEpgGrabCore() {
+      return (System.DateTime) GetColumnValue(LastEpgGrabColumn, typeof(System.DateTime), false); 
+    }
+    private void SetLastEpgGrabCore(System.DateTime value) {
+      SetColumnValue(LastEpgGrabColumn, value);
+    }
+        
     //**************************************
     //* RecordingFolder methods
     //**************************************
@@ -349,9 +454,23 @@ namespace TvDatabase {
     [MaxTextLength(256)]
     [DBDataType(typeof(System.String))]
     public virtual System.String RecordingFolder {
-      get { return (System.String) GetColumnValue(RecordingFolderColumn, typeof(System.String), false); }
-      set { this.SetColumnValue(RecordingFolderColumn, value); }
+      get { 
+        System.String result;
+        if (GetInterceptor<System.String>("RecordingFolder", GetRecordingFolderCore, out result)) return result;
+        return GetRecordingFolderCore();
+      }
+      set { 
+        if (SetInterceptor<System.String>("RecordingFolder", value, SetRecordingFolderCore)) return;
+        SetRecordingFolderCore(value);
+      }
     }
+    private System.String GetRecordingFolderCore() {
+      return (System.String) GetColumnValue(RecordingFolderColumn, typeof(System.String), false); 
+    }
+    private void SetRecordingFolderCore(System.String value) {
+      SetColumnValue(RecordingFolderColumn, value);
+    }
+        
     //**************************************
     //* IdServer methods
     //**************************************
@@ -363,11 +482,52 @@ namespace TvDatabase {
 
     [DBDataType(typeof(System.Int32))]
     public virtual System.Int32 IdServer {
-      get { return (System.Int32) GetColumnValue(IdServerColumn, typeof(System.Int32), false); }
-      set { this.SetColumnValue(IdServerColumn, value); }
+      get { 
+        System.Int32 result;
+        if (GetInterceptor<System.Int32>("IdServer", GetIdServerCore, out result)) return result;
+        return GetIdServerCore();
+      }
+      set { 
+        if (SetInterceptor<System.Int32>("IdServer", value, SetIdServerCore)) return;
+        SetIdServerCore(value);
+      }
     }
+    private System.Int32 GetIdServerCore() {
+      return (System.Int32) GetColumnValue(IdServerColumn, typeof(System.Int32), false); 
+    }
+    private void SetIdServerCore(System.Int32 value) {
+      SetColumnValue(IdServerColumn, value);
+    }
+        
+    //**************************************
+    //* Enabled methods
+    //**************************************
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    [BindingBrowsable(false)]
+    public virtual DataColumn EnabledColumn {
+      get { return TypedTable.EnabledColumn; }
+    }
+
+    [DBDataType(typeof(System.Boolean))]
+    public virtual System.Boolean Enabled {
+      get { 
+        System.Boolean result;
+        if (GetInterceptor<System.Boolean>("Enabled", GetEnabledCore, out result)) return result;
+        return GetEnabledCore();
+      }
+      set { 
+        if (SetInterceptor<System.Boolean>("Enabled", value, SetEnabledCore)) return;
+        SetEnabledCore(value);
+      }
+    }
+    private System.Boolean GetEnabledCore() {
+      return (System.Boolean) GetColumnValue(EnabledColumn, typeof(System.Boolean), false); 
+    }
+    private void SetEnabledCore(System.Boolean value) {
+      SetColumnValue(EnabledColumn, value);
+    }
+        
     #endregion
-    
     
   }
   #endregion
