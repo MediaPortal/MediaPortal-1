@@ -669,6 +669,7 @@ namespace Tag.WMA
 
       try
       {
+        AttributeList = new List<WMFAttribute>();
         for (int i = 0; i < AtrributeCount; i++)
         {
           WMFAttribute wmfAttrib = GetAttributeByIndex(i);
