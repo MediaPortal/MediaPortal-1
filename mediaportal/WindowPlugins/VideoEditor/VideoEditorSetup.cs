@@ -25,64 +25,64 @@ using MediaPortal.GUI.Library;
 
 namespace WindowPlugins.VideoEditor
 {
-	public class VideoEditorSetup : ISetupForm
-	{
-		int windowID = 170601;
+  public class VideoEditorSetup : ISetupForm
+  {
+    int windowID = 170601;
 
-		public VideoEditorSetup()
-		{ }
+    public VideoEditorSetup()
+    { }
 
-		#region ISetupForm Member
+    #region ISetupForm Member
 
-		public string Author()
-		{
-			return "kaybe and brutus, skin by Ralph";
-		}
+    public string Author()
+    {
+      return "kaybe and brutus, skin by Ralph";
+    }
 
-		public bool CanEnable()
-		{
-			return true;
-		}
+    public bool CanEnable()
+    {
+      return true;
+    }
 
-		public bool DefaultEnabled()
-		{
-			return false;
-		}
+    public bool DefaultEnabled()
+    {
+      return false;
+    }
 
-		public string Description()
-		{
-			return "This plugin allows to cut .mpeg and .dvr-ms files";
-		}
+    public string Description()
+    {
+      return "This plugin allows to cut .mpeg and .dvr-ms files";
+    }
 
-		public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
-		{
+    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
+    {
       strButtonText = GUILocalizeStrings.Get(2090);
-			strButtonImage = String.Empty;
-			strButtonImageFocus = String.Empty;
-			strPictureImage = String.Empty;
-			return true;
-		}
+      strButtonImage = String.Empty;
+      strButtonImageFocus = String.Empty;
+      strPictureImage = "hover_videoeditor.png";
+      return true;
+    }
 
-		public int GetWindowId()
-		{
-			return windowID;
-		}
+    public int GetWindowId()
+    {
+      return windowID;
+    }
 
-		public bool HasSetup()
-		{
-			return false;
-		}
+    public bool HasSetup()
+    {
+      return false;
+    }
 
-		public string PluginName()
-		{
+    public string PluginName()
+    {
       return "VideoEditor";
-		}
+    }
 
-		public void ShowPlugin()
-		{
-			System.Windows.Forms.MessageBox.Show("Nothing to configure - just enable and start MP ;)");
-		}
+    public void ShowPlugin()
+    {
+      System.Windows.Forms.MessageBox.Show("Nothing to configure - just enable and start MP ;)");
+    }
 
-		#endregion
-	}
+    #endregion
+  }
 }

@@ -363,7 +363,7 @@ namespace MediaPortal.GUI.X10Plugin
       strButtonText = PLUGIN_NAME;
       strButtonImage = "";
       strButtonImageFocus = "";
-      strPictureImage = "";
+      strPictureImage = "hover_x10.png";
       return true;
     }
 
