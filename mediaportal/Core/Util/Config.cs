@@ -188,6 +188,8 @@ private Config()
     /// <returns>A string containing the complete path.</returns>
     public static string GetFile(Dir directory, string fileName)
     {
+        if (fileName.StartsWith(@"\") || fileName.StartsWith("/"))
+            fileName = fileName.Substring(1);
       return Path.Combine(Get(directory), fileName);
     }
 

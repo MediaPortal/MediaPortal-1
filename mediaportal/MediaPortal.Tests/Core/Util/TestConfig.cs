@@ -72,6 +72,37 @@ namespace MediaPortal.Tests.Core.Util
             DoTest(Config.Dir.Thumbs);
         }
 
+        [Test]
+        public void TestFileWithSubFolder()
+        {
+            Assert.AreEqual(Config.GetFolder(Config.Dir.Base) + @"\folder\file.ext",Config.GetFile(Config.Dir.Base, @"folder\file.ext"));
+        }
+
+        [Test]
+        public void TestFileWithSubFolderWithLeadingBackSlash()
+        {
+            Assert.AreEqual(Config.GetFolder(Config.Dir.Base) + @"\folder\file.ext",Config.GetFile(Config.Dir.Base, @"\folder\file.ext"));
+        }
+
+        [Test]
+        public void TestFileWithSubFolderWithLeadingSlash()
+        {
+            Assert.AreEqual(Config.GetFolder(Config.Dir.Base) + @"\folder\file.ext",Config.GetFile(Config.Dir.Base, @"/folder\file.ext"));
+        }
+
+        [Test]
+        public void TestFileWithLeadingBackSlash()
+        {
+            Assert.AreEqual(Config.GetFolder(Config.Dir.Base) + @"\file.ext",Config.GetFile(Config.Dir.Base, @"\file.ext"));
+        }
+
+        [Test]
+        public void TestFileWithLeadingSlash()
+        {
+            Assert.AreEqual(Config.GetFolder(Config.Dir.Base) + @"\file.ext",Config.GetFile(Config.Dir.Base, @"/file.ext"));
+        }
+
+
         private static void DoTest(Config.Dir directory)
         {
             Assert.IsTrue(Config.Get(directory).EndsWith(@"\"),string.Format("Config.Get({0}) returns a folder with no trailing backslash",directory));
