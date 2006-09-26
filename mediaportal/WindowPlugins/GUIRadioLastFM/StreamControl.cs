@@ -350,7 +350,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     public void UpdateNowPlaying()
     {
       // give the site some time to update and sync with the stream switch
-      SendDelayedCommandRequest(@"http://ws.audioscrobbler.com/radio/np.php?session=" + _currentSession, 4500);
+      SendDelayedCommandRequest(@"http://ws.audioscrobbler.com/radio/np.php?session=" + _currentSession, 4750);
     }
 
     public bool ToggleRecordToProfile(bool submitTracks_)
@@ -640,11 +640,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
       try
       {
-        foreach (String respStr in responseList_)
-        {
-          NowPlayingInfo.Add(respStr);
-        }
-          
+        foreach (String respStr in responseList_)        
+          NowPlayingInfo.Add(respStr);                
 
         foreach (String token in NowPlayingInfo)
         {
@@ -683,7 +680,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
               if (trackLength > 0)
               {
                 _nowPlayingTimer.Stop();
-                _nowPlayingTimer.Interval = (trackLength - 1) * 1000;
+                _nowPlayingTimer.Interval = (trackLength) * 1000 - 750;
                 _nowPlayingTimer.Start();
               }
             }
