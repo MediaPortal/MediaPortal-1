@@ -51461,7 +51461,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:MediaPortal"
         "ProductCode" = "8:{87819CFA-1786-484D-B0DE-10B5FBF2625D}"
-        "PackageCode" = "8:{44FC74FA-608B-49EE-928A-1AF129731D0F}"
+        "PackageCode" = "8:{C1C4B63D-B012-49FC-B487-A057160CE269}"
         "UpgradeCode" = "8:{D194CC39-ABB8-4BC5-8C2D-4D4383088C67}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
@@ -51924,7 +51924,7 @@
         {
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_1F876F45441A466DA00997BDB1948661"
             {
-            "Name" = "8:Setup MediaPortal"
+            "Name" = "8:MediaPortal Setup"
             "Arguments" = "8:"
             "Description" = "8:"
             "ShowCmd" = "3:1"
@@ -51938,7 +51938,7 @@
             }
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_BCE9AA55E164480DB417A128F205D8F5"
             {
-            "Name" = "8:Setup"
+            "Name" = "8:MediaPortal Setup"
             "Arguments" = "8:"
             "Description" = "8:"
             "ShowCmd" = "3:1"
