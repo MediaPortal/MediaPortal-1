@@ -419,7 +419,7 @@ namespace Tag.MP3
 
           catch (Exception ex)
           {
-            Log.Error("MP3Tag.get_CoverArtImageBytes caused an exception: {0}", ex.Message);
+            Log.Error("MP3Tag.get_CoverArtImageBytes caused an exception in file {0}: {1}", base.FileName, ex.Message);
             return null;
           }
         }
@@ -550,7 +550,7 @@ namespace Tag.MP3
 
         catch (Exception ex)
         {
-          Log.Error("MP3Tag.get_Length caused an exception: {0}", ex.Message);
+          Log.Error("MP3Tag.get_Length caused an exception in file {0}: {1}", base.FileName, ex.Message);
         }
 
         return string.Empty;
@@ -824,7 +824,7 @@ namespace Tag.MP3
 
         catch (Exception ex)
         {
-          Log.Error("MP3Tag.get_Track caused an exception: {0}", ex.Message);
+          Log.Error("MP3Tag.get_Track caused an exception in file {0}: {1}", base.FileName, ex.Message);
         }
 
         return 0;
@@ -887,7 +887,7 @@ namespace Tag.MP3
 
         catch (Exception ex)
         {
-          Log.Error("MP3Tag.get_Year caused an exception: {0}", ex.Message);
+          Log.Error("MP3Tag.get_Year caused an exception in file {0}: {1}", base.FileName, ex.Message);
           return 0;
         }
       }
@@ -961,7 +961,7 @@ namespace Tag.MP3
 
       catch (Exception ex)
       {
-        Log.Error("MP3Tag.Read caused an exception: {0}", ex.Message);
+        Log.Error("MP3Tag.Read caused an exception in file {0} : {1}", base.FileName, ex.Message);
         result = false;
       }
 
@@ -1153,7 +1153,7 @@ namespace Tag.MP3
 
       catch (Exception ex)
       {
-        Log.Error("MP3Tag.GetUnsynchronizedLyrics caused an exception: {0}", ex.Message);
+        Log.Error("MP3Tag.GetUnsynchronizedLyrics caused an exception in file {0} : {1}", base.FileName, ex.Message);
         return string.Empty;
       }
 

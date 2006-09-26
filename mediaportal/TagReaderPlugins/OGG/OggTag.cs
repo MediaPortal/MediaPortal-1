@@ -439,7 +439,7 @@ namespace Tag.OGG
 
         catch (Exception ex)
         {
-          Log.Error("OggTag.get_Length caused an exception: {0}", ex.Message);
+          Log.Error("OggTag.get_Length caused an exception in file {0} : {1}", base.FileName, ex.Message);
         }
 
         return 0;
@@ -463,7 +463,7 @@ namespace Tag.OGG
 
         catch (Exception ex)
         {
-          Log.Error("OggTag.get_Year caused an exception: {0}", ex.Message);
+          Log.Error("OggTag.get_Year caused an exception in file {0} : {1}", base.FileName, ex.Message);
           return 0;
         }
       }
@@ -526,7 +526,7 @@ namespace Tag.OGG
 
       catch (Exception ex)
       {
-        Log.Error("OggTag.Read caused an exception: {0}", ex.Message);
+        Log.Error("OggTag.Read caused an exception in file {0} : {1}", base.FileName, ex.Message);
         result = false;
       }
 
@@ -782,7 +782,7 @@ namespace Tag.OGG
 
         catch (Exception ex)
         {
-          Log.Error("OggTag.GetLastPage caused an exception: {0}", ex.Message);
+          Log.Error("OggTag.GetLastPage caused an exception in file {0} : {1}", base.FileName, ex.Message);
         }
 
         finally

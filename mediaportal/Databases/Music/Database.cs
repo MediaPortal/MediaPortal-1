@@ -2833,7 +2833,7 @@ namespace MediaPortal.Music.Database
           int idSong = Int32.Parse(DatabaseUtility.Get(FileList, i, "song.idSong"));
           if (!UpdateSong(strFileName, idSong))
           {
-            Log.Info("Musicdatabasereorg: Song update after tag update failed for", strFileName);
+            Log.Info("Musicdatabasereorg: Song update after tag update failed for: {0}", strFileName);
             //m_db.Execute("rollback"); 
             return (int)Errors.ERROR_REORG_SONGS;
           }

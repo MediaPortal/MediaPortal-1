@@ -295,7 +295,7 @@ namespace Tag.MAC
 
         catch (Exception ex)
         {
-          Log.Error("ApeTag.get_CoverArtImageBytes caused an exception: {0}", ex.Message);
+          Log.Error("ApeTag.get_CoverArtImageBytes caused an exception in file {0} : {1}", base.FileName, ex.Message);
         }
 
         return null;
@@ -441,7 +441,7 @@ namespace Tag.MAC
 
         catch (Exception ex)
         {
-          Log.Error("    ApeTag.get_Year caused an exception: {0}", ex.Message);
+          Log.Error("    ApeTag.get_Year caused an exception in file {0} : {1}", base.FileName, ex.Message);
           return 0;
         }
       }
@@ -589,7 +589,7 @@ namespace Tag.MAC
 
       catch (Exception ex)
       {
-        Log.Error("ApeTag.ReadTags cause an exception: {0}", ex.Message);
+        Log.Error("ApeTag.ReadTags cause an exception in file {0} : {1}", base.FileName, ex.Message);
         result = false;
       }
 

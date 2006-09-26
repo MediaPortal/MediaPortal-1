@@ -370,7 +370,7 @@ namespace Tag.WMA
 
         catch (Exception ex)
         {
-          Log.Error("WmaTag.get_PeakLevel caused an exception: {0}", ex.Message);
+          Log.Error("WmaTag.get_PeakLevel caused an exception in file {0} : {1}", base.FileName, ex.Message);
           return string.Empty;
         }
       }
@@ -428,7 +428,7 @@ namespace Tag.WMA
 
         catch (Exception ex)
         {
-          Log.Error("WmaTag.get_PeakLevel caused an exception: {0}", ex.Message);
+          Log.Error("WmaTag.get_PeakLevel caused an exception in file {0} : {1}", base.FileName, ex.Message);
           return 0;
         }
       }
@@ -473,7 +473,7 @@ namespace Tag.WMA
 
         catch (Exception ex)
         {
-          Log.Error("WmaTag.get_Track caused an exception: {0}", ex.Message);
+          Log.Error("WmaTag.get_Track caused an exception in file {0} : {1}", base.FileName, ex.Message);
         }
 
         return 0;
@@ -502,7 +502,7 @@ namespace Tag.WMA
 
         catch (Exception ex)
         {
-          Log.Error("WmaTag.get_Year caused an exception: {0}", ex.Message);
+          Log.Error("WmaTag.get_Year caused an exception in file {0} : {1}", base.FileName, ex.Message);
           return 0;
         }
       }
@@ -554,7 +554,7 @@ namespace Tag.WMA
 
       catch (Exception ex)
       {
-        Log.Error("WmaTag.Read caused an exception: {0}", ex.Message);
+        Log.Error("WmaTag.Read caused an exception in file {0} : {1}", base.FileName, ex.Message);
         result = false;
       }
 
@@ -578,7 +578,7 @@ namespace Tag.WMA
 
       catch (COMException cex)
       {
-        Log.Error("WmaTag.GetWmaAttribute caused an exception: {0}", cex.Message);
+        Log.Error("WmaTag.GetWmaAttribute caused an exception in file {0} : {1}", base.FileName, cex.Message);
 
         result = false;
 
@@ -648,7 +648,7 @@ namespace Tag.WMA
 
       catch (Exception ex)
       {
-        Log.Error("WmaTag.GetWmaProperty caused an exception: {0}", ex.Message);
+        Log.Error("WmaTag.GetWmaProperty caused an exception in file {0} : {1}", base.FileName, ex.Message);
         result = false;
       }
 
@@ -684,7 +684,7 @@ namespace Tag.WMA
 
       catch (Exception ex)
       {
-        Log.Error("WmaTag.GetAttributes caused an exception: {0}", ex.Message);
+        Log.Error("WmaTag.GetAttributes caused an exception in file {0} : {1}", base.FileName, ex.Message);
         result = false;
       }
 
@@ -754,7 +754,7 @@ namespace Tag.WMA
       // Nope, re-throw the exception
         else
         {
-          Log.Error("WmaTag.GetAttribute caused an exception: {0}", comEx.Message);
+          Log.Error("WmaTag.GetAttribute caused an exception in file {0} : {1}", base.FileName, comEx.Message);
           throw comEx;
         }
       }

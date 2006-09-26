@@ -264,7 +264,7 @@ namespace Tag.MP4
 
         catch (Exception ex)
         {
-          Log.Error("MP4Tag.get_AverageBitrate caused an exception: {0}", ex.Message);
+          Log.Error("MP4Tag.get_AverageBitrate caused an exception in file {0} : {1}", base.FileName, ex.Message);
           return 0;
         }
       }
@@ -380,7 +380,7 @@ namespace Tag.MP4
 
           catch (Exception ex)
           {
-            Log.Error("MP4Tag.get_CoverArtImageBytes caused an exception: {0}", ex.Message);
+            Log.Error("MP4Tag.get_CoverArtImageBytes caused an exception in file {0} : {1}", base.FileName, ex.Message);
           }
         }
 
@@ -611,7 +611,7 @@ namespace Tag.MP4
 
         catch (Exception ex)
         {
-          Log.Error("MP4Tag.get_Year caused an exception: {0}", ex.Message);
+          Log.Error("MP4Tag.get_Year caused an exception in file {0} : {1}", base.FileName, ex.Message);
           return 0;
         }
       }
@@ -668,7 +668,7 @@ namespace Tag.MP4
 
       catch (Exception ex)
       {
-        Log.Error("MP3Tag.Read caused an exception: {0}", ex.Message);
+        Log.Error("MP4Tag.Read caused an exception in file {0} : {1}", base.FileName, ex.Message);
         result = false;
       }
 

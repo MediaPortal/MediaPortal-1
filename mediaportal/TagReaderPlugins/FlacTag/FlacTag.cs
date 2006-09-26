@@ -311,7 +311,7 @@ namespace Tag.FLAC
 
         catch (Exception ex)
         {
-          Log.Error("FlacTag.get_Track caused an exception: {0}", ex.Message);
+          Log.Error("FlacTag.get_Track caused an exception in file {0} : {1}", base.FileName, ex.Message);
         }
 
         return 0;
@@ -335,7 +335,7 @@ namespace Tag.FLAC
 
         catch (Exception ex)
         {
-          Log.Error("FlacTag.get_Year caused an exception: {0}", ex.Message);
+          Log.Error("FlacTag.get_Year caused an exception in file {0} : {1}", base.FileName, ex.Message);
           return 0;
         }
       }
@@ -406,7 +406,7 @@ namespace Tag.FLAC
 
       catch (Exception ex)
       {
-        Log.Error("FlacTag.Read cause an exception: {0}", ex.Message);
+        Log.Error("FlacTag.Read cause an exception in file {0} : {1}", base.FileName, ex.Message);
         result = false;
       }
 

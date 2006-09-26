@@ -354,7 +354,7 @@ namespace Tag.MPC
 
       catch (Exception ex)
       {
-        Log.Error("MPCTag.Read caused an exception: {0}", ex.Message);
+        Log.Error("MPCTag.Read caused an exception in file {0} : {1}", base.FileName, ex.Message);
         result = false;
       }
 
@@ -456,7 +456,7 @@ namespace Tag.MPC
 
       catch (Exception ex)
       {
-        Log.Error("MPCTag.ReadMpcStreamV6 caused an exception: {0}", ex.Message);
+        Log.Error("MPCTag.ReadMpcStreamV6 caused an exception in file {0} : {1}", base.FileName, ex.Message);
         result = false;
       }
 
@@ -556,7 +556,7 @@ namespace Tag.MPC
 
       catch (Exception ex)
       {
-        Log.Error("    MPCTag.ReadMpcStreamV7 caused an exception: {0}", ex.Message);
+        Log.Error("MPCTag.ReadMpcStreamV7 caused an exception in file {0} : {1}", base.FileName, ex.Message);
         result = false;
       }
 

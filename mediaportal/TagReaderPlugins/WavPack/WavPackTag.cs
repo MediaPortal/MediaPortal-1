@@ -236,7 +236,7 @@ namespace Tag.WavPack
 
         catch (Exception ex)
         {
-          Log.Error("WavPackTag.get_LengthMS caused an exception: {0}", ex.Message);
+          Log.Error("WavPackTag.get_LengthMS caused an exception in file {0} : {1}", base.FileName, ex.Message);
           return 0;
         }
       }
@@ -324,7 +324,7 @@ namespace Tag.WavPack
 
         catch (Exception ex)
         {
-          Log.Error("WavPackTag.get_Year caused an exception: {0}", ex.Message);
+          Log.Error("WavPackTag.get_Year caused an exception in file {0} : {1}", base.FileName, ex.Message);
           return 0;
         }
       }
@@ -397,7 +397,7 @@ namespace Tag.WavPack
 
       catch (Exception ex)
       {
-        Log.Error("WavPackTag.Read caused an exception: {0}", ex.Message);
+        Log.Error("WavPackTag.Read caused an exception in file {0} : {1}", base.FileName, ex.Message);
         result = false;
       }
 
@@ -484,7 +484,7 @@ namespace Tag.WavPack
 
       catch (Exception ex)
       {
-        Log.Error("WavPackTag.ReadHeader caused an exception: {0}", ex.Message);
+        Log.Error("WavPackTag.ReadHeader caused an exception in file {0} : {1}", base.FileName, ex.Message);
         result = false;
       }
 
