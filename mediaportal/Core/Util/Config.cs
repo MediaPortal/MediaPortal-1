@@ -124,7 +124,7 @@ private Config()
                   }
                   try
                   {
-                    Set((Dir)Enum.Parse(typeof(Dir), dirId.InnerText), strPath);
+                    Set((Dir) Enum.Parse(typeof(Dir), dirId.InnerText), strPath);
                   }
                   catch (Exception)
                   {
@@ -150,13 +150,13 @@ private Config()
       Set(Dir.Cache, Path.Combine(baseDir, @"cache\"));
       Set(Dir.Config, baseDir);
       Set(Dir.CustomInputDevice, Path.Combine(baseDir, @"InputDeviceMappings\custom\"));
-      Set(Dir.Database, Path.Combine(baseDir,  @"database\"));
-      Set(Dir.Language, Path.Combine(baseDir,  @"language\"));
-      Set(Dir.Log, Path.Combine(baseDir,  @"log\"));
-      Set(Dir.Plugins, Path.Combine(baseDir,  @"plugins\"));
-      Set(Dir.Skin, Path.Combine(baseDir,  @"skin\"));
-      Set(Dir.Thumbs, Path.Combine(baseDir,  @"thumbs\"));
-      Set(Dir.Weather, Path.Combine(baseDir,  @"weather\"));
+      Set(Dir.Database, Path.Combine(baseDir, @"database\"));
+      Set(Dir.Language, Path.Combine(baseDir, @"language\"));
+      Set(Dir.Log, Path.Combine(baseDir, @"log\"));
+      Set(Dir.Plugins, Path.Combine(baseDir, @"plugins\"));
+      Set(Dir.Skin, Path.Combine(baseDir, @"skin\"));
+      Set(Dir.Thumbs, Path.Combine(baseDir, @"thumbs\"));
+      Set(Dir.Weather, Path.Combine(baseDir, @"weather\"));
     }
 
 
@@ -169,7 +169,7 @@ private Config()
     [Obsolete("This method is obsolete and will disappear in the future.  Use GetFolder(Dir path) or GetFile(Dir path, string fileName) instead.", false)]
     public static string Get(Dir path)
     {
-      string returnVal = "";
+      string returnVal;
       if (directories.TryGetValue(path, out returnVal))
       {
         return returnVal;
@@ -188,8 +188,10 @@ private Config()
     /// <returns>A string containing the complete path.</returns>
     public static string GetFile(Dir directory, string fileName)
     {
-        if (fileName.StartsWith(@"\") || fileName.StartsWith("/"))
-            throw new ArgumentException("The passed file name cannot start with a slash or backslash", "fileName");
+      if (fileName.StartsWith(@"\") || fileName.StartsWith("/"))
+      {
+        throw new ArgumentException("The passed file name cannot start with a slash or backslash", "fileName");
+      }
       return Path.Combine(Get(directory), fileName);
     }
 
@@ -226,10 +228,13 @@ private Config()
     private static void Set(Dir path, string value)
     {
       if (!Path.IsPathRooted(value) && IsSet(Dir.Base))
+      {
         directories[path] = Path.Combine(Get(Dir.Base), value);
+      }
       else
+      {
         directories[path] = Path.GetFullPath(value);
+      }
     }
-
   }
 }
