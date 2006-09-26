@@ -169,6 +169,7 @@ namespace MediaPortal.GUI.Library
       return fileName;
     }
 
+
     static public int Load(string fileNameOrg, long lColorKey, int iMaxWidth, int iMaxHeight)
     {
       string fileName = GetFileName(fileNameOrg);
@@ -196,63 +197,68 @@ namespace MediaPortal.GUI.Library
         Image theImage = null;
         try
         {
-          theImage = Image.FromFile(fileName);
-          if (theImage != null)
+
+          using (FileStream imgstream = new FileStream(fileName, FileMode.Open))
           {
-            CachedTexture newCache = new CachedTexture();
+            theImage = Image.FromStream(imgstream, true, false);
 
-            newCache.Name = fileName;
-            FrameDimension oDimension = new FrameDimension(theImage.FrameDimensionsList[0]);
-            newCache.Frames = theImage.GetFrameCount(oDimension);
-            int[] frameDelay = new int[newCache.Frames];
-            for (int num2 = 0; (num2 < newCache.Frames); ++num2) frameDelay[num2] = 0;
-
-            int num1 = 20736;
-            PropertyItem item1 = theImage.GetPropertyItem(num1);
-            if (item1 != null)
+            if (theImage != null)
             {
-              byte[] buffer1 = item1.Value;
-              for (int num2 = 0; (num2 < newCache.Frames); ++num2)
+              CachedTexture newCache = new CachedTexture();
+
+              newCache.Name = fileName;
+              FrameDimension oDimension = new FrameDimension(theImage.FrameDimensionsList[0]);
+              newCache.Frames = theImage.GetFrameCount(oDimension);
+              int[] frameDelay = new int[newCache.Frames];
+              for (int num2 = 0; (num2 < newCache.Frames); ++num2) frameDelay[num2] = 0;
+
+              int num1 = 20736;
+              PropertyItem item1 = theImage.GetPropertyItem(num1);
+              if (item1 != null)
               {
-                frameDelay[num2] = (((buffer1[(num2 * 4)] + (256 * buffer1[((num2 * 4) + 1)])) + (65536 * buffer1[((num2 * 4) + 2)])) + (16777216 * buffer1[((num2 * 4) + 3)]));
+                byte[] buffer1 = item1.Value;
+                for (int num2 = 0; (num2 < newCache.Frames); ++num2)
+                {
+                  frameDelay[num2] = (((buffer1[(num2 * 4)] + (256 * buffer1[((num2 * 4) + 1)])) + (65536 * buffer1[((num2 * 4) + 2)])) + (16777216 * buffer1[((num2 * 4) + 3)]));
+                }
               }
-            }
-            for (int i = 0; i < newCache.Frames; ++i)
-            {
-              theImage.SelectActiveFrame(oDimension, i);
-
-
-              //load gif into texture
-              using (System.IO.MemoryStream stream = new System.IO.MemoryStream())
+              for (int i = 0; i < newCache.Frames; ++i)
               {
-                theImage.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
-                ImageInformation info2 = new ImageInformation();
-                stream.Flush();
-                stream.Seek(0, System.IO.SeekOrigin.Begin);
-                Direct3D.Texture texture = TextureLoader.FromStream(
-                                                                  GUIGraphicsContext.DX9Device,
-                                                                  stream,
-                                                                  0, 0,//width/height
-                                                                  1,//mipslevels
-                                                                  0,//Usage.Dynamic,
-                                                                  Direct3D.Format.A8R8G8B8,
-                                                                  Pool.Managed,
-                                                                  Filter.None,
-                                                                  Filter.None,
-                                                                  (int)lColorKey,
-                                                                  ref info2);
-                newCache.Width = info2.Width;
-                newCache.Height = info2.Height;
-                newCache[i] = new CachedTexture.Frame(fileName, texture, (frameDelay[i] / 5) * 50);
+                theImage.SelectActiveFrame(oDimension, i);
+
+
+                //load gif into texture
+                using (System.IO.MemoryStream stream = new System.IO.MemoryStream())
+                {
+                  theImage.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+                  ImageInformation info2 = new ImageInformation();
+                  stream.Flush();
+                  stream.Seek(0, System.IO.SeekOrigin.Begin);
+                  Direct3D.Texture texture = TextureLoader.FromStream(
+                                                                    GUIGraphicsContext.DX9Device,
+                                                                    stream,
+                                                                    0, 0,//width/height
+                                                                    1,//mipslevels
+                                                                    0,//Usage.Dynamic,
+                                                                    Direct3D.Format.A8R8G8B8,
+                                                                    Pool.Managed,
+                                                                    Filter.None,
+                                                                    Filter.None,
+                                                                    (int)lColorKey,
+                                                                    ref info2);
+                  newCache.Width = info2.Width;
+                  newCache.Height = info2.Height;
+                  newCache[i] = new CachedTexture.Frame(fileName, texture, (frameDelay[i] / 5) * 50);
+                }
               }
+
+              theImage.Dispose();
+              theImage = null;
+              _cache.Add(newCache);
+
+              //Log.Info("  texturemanager:added:" + fileName + " total:" + _cache.Count + " mem left:" + GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
+              return newCache.Frames;
             }
-
-            theImage.Dispose();
-            theImage = null;
-            _cache.Add(newCache);
-
-            //Log.Info("  texturemanager:added:" + fileName + " total:" + _cache.Count + " mem left:" + GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
-            return newCache.Frames;
           }
         }
         catch (Exception ex)
@@ -333,7 +339,7 @@ namespace MediaPortal.GUI.Library
         memoryImage = null;
         _cache.Add(newCache);
 
-        Log.Info("  texturemanager:added: memoryImage  " + " total:" + _cache.Count + " mem left:" + GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());        return newCache.Frames;
+        Log.Info("  texturemanager:added: memoryImage  " + " total:" + _cache.Count + " mem left:" + GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString()); return newCache.Frames;
 
       }
       catch (Exception ex)
@@ -398,37 +404,45 @@ namespace MediaPortal.GUI.Library
           //fmt=Format.Dxt3;
           iMaxWidth = MAX_THUMB_WIDTH;
           iMaxHeight = MAX_THUMB_HEIGHT;
-          imgSrc = Image.FromFile(fileName);
-          if (imgSrc == null) return null;
-          if (imgSrc.Width >= iMaxWidth || imgSrc.Height >= iMaxHeight)
-          {
-            Image imgResampled = Resample(imgSrc, iMaxWidth, iMaxHeight);
-            imgSrc.Dispose();
-            imgSrc = imgResampled;
-            imgResampled = null;
-          }
-          //load jpg or png into texture
-          using (System.IO.MemoryStream stream = new System.IO.MemoryStream())
-          {
-            imgSrc.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
-            ImageInformation info2 = new ImageInformation();
-            stream.Flush();
-            stream.Seek(0, System.IO.SeekOrigin.Begin);
-            texture = TextureLoader.FromStream(GUIGraphicsContext.DX9Device,
-              stream,
-              0, 0,//width/height
-              1,//mipslevels
-              0,//Usage.Dynamic,
-              Direct3D.Format.A8R8G8B8,
-              Pool.Managed,
-              Filter.None,
-              Filter.None,
-              (int)lColorKey,
-              ref info2);
-            width = info2.Width;
-            height = info2.Height;
 
-            //Log.Info("Texturemanager loaded temporay:{0} {1}x{2} format:{3}", fileName, width, height, info2.Format);
+
+
+          using (FileStream imgstream = new FileStream(fileName, FileMode.Open))
+          {
+            imgSrc = Image.FromStream(imgstream, true, false);
+
+
+            if (imgSrc == null) return null;
+            if (imgSrc.Width >= iMaxWidth || imgSrc.Height >= iMaxHeight)
+            {
+              Image imgResampled = Resample(imgSrc, iMaxWidth, iMaxHeight);
+              imgSrc.Dispose();
+              imgSrc = imgResampled;
+              imgResampled = null;
+            }
+            //load jpg or png into texture
+            using (System.IO.MemoryStream stream = new System.IO.MemoryStream())
+            {
+              imgSrc.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+              ImageInformation info2 = new ImageInformation();
+              stream.Flush();
+              stream.Seek(0, System.IO.SeekOrigin.Begin);
+              texture = TextureLoader.FromStream(GUIGraphicsContext.DX9Device,
+                stream,
+                0, 0,//width/height
+                1,//mipslevels
+                0,//Usage.Dynamic,
+                Direct3D.Format.A8R8G8B8,
+                Pool.Managed,
+                Filter.None,
+                Filter.None,
+                (int)lColorKey,
+                ref info2);
+              width = info2.Width;
+              height = info2.Height;
+
+              //Log.Info("Texturemanager loaded temporay:{0} {1}x{2} format:{3}", fileName, width, height, info2.Format);
+            }
           }
         }
         else
@@ -508,7 +522,14 @@ namespace MediaPortal.GUI.Library
 
             try
             {
-              cached.image = Image.FromFile(fileName);
+              using (FileStream imgstream = new FileStream(fileName, FileMode.Open))
+              {
+                cached.image = Image.FromStream(imgstream, true, false);
+                using (Graphics g = Graphics.FromImage(cached.image))
+                {
+                  g.DrawImage(cached.image, 0, 0);
+                }
+              }
             }
             catch (Exception ex)
             {
@@ -525,7 +546,15 @@ namespace MediaPortal.GUI.Library
       Image img = null;
       try
       {
-        img = Image.FromFile(fileName);
+        using (FileStream imgstream = new FileStream(fileName, FileMode.Open))
+        {
+
+          img = Image.FromStream(imgstream, true, false);
+          using (Graphics g = Graphics.FromImage(img))
+          {
+            g.DrawImage(img, 0, 0);
+          }
+        }
       }
       catch (Exception ex)
       {

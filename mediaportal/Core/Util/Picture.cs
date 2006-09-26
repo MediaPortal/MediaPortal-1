@@ -78,118 +78,122 @@ namespace MediaPortal.Util
       Image theImage = null;
       try
       {
-        theImage = Image.FromFile(strPic);
-        if (theImage == null) return null;
-        if (iRotate > 0)
+        using (FileStream stream = new FileStream(strPic, FileMode.Open))
         {
-          RotateFlipType fliptype;
-          switch (iRotate)
+          theImage = Image.FromStream(stream, true, false);
+
+
+          if (theImage == null) return null;
+          if (iRotate > 0)
           {
-            case 1:
-              fliptype = RotateFlipType.Rotate90FlipNone;
-              theImage.RotateFlip(fliptype);
-              break;
-            case 2:
-              fliptype = RotateFlipType.Rotate180FlipNone;
-              theImage.RotateFlip(fliptype);
-              break;
-            case 3:
-              fliptype = RotateFlipType.Rotate270FlipNone;
-              theImage.RotateFlip(fliptype);
-              break;
-            default:
-              fliptype = RotateFlipType.RotateNoneFlipNone;
-              break;
-          }
-        }
-        iWidth = theImage.Size.Width;
-        iHeight = theImage.Size.Height;
-
-        int iBitmapWidth = iWidth;
-        int iBitmapHeight = iHeight;
-
-        bool bResize = false;
-        float fOutputFrameAR;
-        if (bZoom)
-        {
-          bResize = true;
-          iBitmapWidth = iMaxWidth;
-          iBitmapHeight = iMaxHeight;
-          while (iWidth < iMaxWidth || iHeight < iMaxHeight)
-          {
-            iWidth *= 2;
-            iHeight *= 2;
-          }
-          int iOffsetX1 = GUIGraphicsContext.OverScanLeft;
-          int iOffsetY1 = GUIGraphicsContext.OverScanTop;
-          int iScreenWidth = GUIGraphicsContext.OverScanWidth;
-          int iScreenHeight = GUIGraphicsContext.OverScanHeight;
-          float fPixelRatio = GUIGraphicsContext.PixelRatio;
-          float fSourceFrameAR = ((float)iWidth) / ((float)iHeight);
-          fOutputFrameAR = fSourceFrameAR / fPixelRatio;
-        }
-        else
-        {
-          fOutputFrameAR = ((float)iWidth) / ((float)iHeight);
-        }
-
-        if (iWidth > iMaxWidth)
-        {
-          bResize = true;
-          iWidth = iMaxWidth;
-          iHeight = (int)(((float)iWidth) / fOutputFrameAR);
-        }
-
-        if (iHeight > (int)iMaxHeight)
-        {
-          bResize = true;
-          iHeight = iMaxHeight;
-          iWidth = (int)(fOutputFrameAR * ((float)iHeight));
-        }
-
-        if (!bOversized)
-        {
-          iBitmapWidth = iWidth;
-          iBitmapHeight = iHeight;
-        }
-        else
-        {
-          // Adjust width/height 2 pixcels for smoother zoom actions at the edges
-          iBitmapWidth = iWidth + 2;
-          iBitmapHeight = iHeight + 2;
-          bResize = true;
-        }
-
-
-        if (bResize)
-        {
-          using (Bitmap result = new Bitmap(iBitmapWidth, iBitmapHeight))
-          {
-            using (Graphics g = Graphics.FromImage(result))
+            RotateFlipType fliptype;
+            switch (iRotate)
             {
-              g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
-              g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-              g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-              if (bOversized)
-              {
-                // Set picture at center position
-                int xpos = 1;// (iMaxWidth-iWidth)/2;
-                int ypos = 1;// (iMaxHeight-iHeight)/2;
-                g.DrawImage(theImage, new Rectangle(xpos, ypos, iWidth, iHeight));
-              }
-              else
-              {
-                g.DrawImage(theImage, new Rectangle(0, 0, iWidth, iHeight));
-              }
+              case 1:
+                fliptype = RotateFlipType.Rotate90FlipNone;
+                theImage.RotateFlip(fliptype);
+                break;
+              case 2:
+                fliptype = RotateFlipType.Rotate180FlipNone;
+                theImage.RotateFlip(fliptype);
+                break;
+              case 3:
+                fliptype = RotateFlipType.Rotate270FlipNone;
+                theImage.RotateFlip(fliptype);
+                break;
+              default:
+                fliptype = RotateFlipType.RotateNoneFlipNone;
+                break;
             }
-            texture = Picture.ConvertImageToTexture(result, out iWidth, out iHeight);
+          }
+          iWidth = theImage.Size.Width;
+          iHeight = theImage.Size.Height;
+
+          int iBitmapWidth = iWidth;
+          int iBitmapHeight = iHeight;
+
+          bool bResize = false;
+          float fOutputFrameAR;
+          if (bZoom)
+          {
+            bResize = true;
+            iBitmapWidth = iMaxWidth;
+            iBitmapHeight = iMaxHeight;
+            while (iWidth < iMaxWidth || iHeight < iMaxHeight)
+            {
+              iWidth *= 2;
+              iHeight *= 2;
+            }
+            int iOffsetX1 = GUIGraphicsContext.OverScanLeft;
+            int iOffsetY1 = GUIGraphicsContext.OverScanTop;
+            int iScreenWidth = GUIGraphicsContext.OverScanWidth;
+            int iScreenHeight = GUIGraphicsContext.OverScanHeight;
+            float fPixelRatio = GUIGraphicsContext.PixelRatio;
+            float fSourceFrameAR = ((float)iWidth) / ((float)iHeight);
+            fOutputFrameAR = fSourceFrameAR / fPixelRatio;
+          }
+          else
+          {
+            fOutputFrameAR = ((float)iWidth) / ((float)iHeight);
+          }
+
+          if (iWidth > iMaxWidth)
+          {
+            bResize = true;
+            iWidth = iMaxWidth;
+            iHeight = (int)(((float)iWidth) / fOutputFrameAR);
+          }
+
+          if (iHeight > (int)iMaxHeight)
+          {
+            bResize = true;
+            iHeight = iMaxHeight;
+            iWidth = (int)(fOutputFrameAR * ((float)iHeight));
+          }
+
+          if (!bOversized)
+          {
+            iBitmapWidth = iWidth;
+            iBitmapHeight = iHeight;
+          }
+          else
+          {
+            // Adjust width/height 2 pixcels for smoother zoom actions at the edges
+            iBitmapWidth = iWidth + 2;
+            iBitmapHeight = iHeight + 2;
+            bResize = true;
+          }
+
+
+          if (bResize)
+          {
+            using (Bitmap result = new Bitmap(iBitmapWidth, iBitmapHeight))
+            {
+              using (Graphics g = Graphics.FromImage(result))
+              {
+                g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+                if (bOversized)
+                {
+                  // Set picture at center position
+                  int xpos = 1;// (iMaxWidth-iWidth)/2;
+                  int ypos = 1;// (iMaxHeight-iHeight)/2;
+                  g.DrawImage(theImage, new Rectangle(xpos, ypos, iWidth, iHeight));
+                }
+                else
+                {
+                  g.DrawImage(theImage, new Rectangle(0, 0, iWidth, iHeight));
+                }
+              }
+              texture = Picture.ConvertImageToTexture(result, out iWidth, out iHeight);
+            }
+          }
+          else
+          {
+            texture = Picture.ConvertImageToTexture((Bitmap)theImage, out iWidth, out iHeight);
           }
         }
-        else
-        {
-          texture = Picture.ConvertImageToTexture((Bitmap)theImage, out iWidth, out iHeight);
-        }
-
       }
       catch (Exception ex)
       {
@@ -845,12 +849,16 @@ namespace MediaPortal.Util
 
       try
       {
-        theImage = Image.FromFile(strFile);
+        using (FileStream stream = new FileStream(strFile, FileMode.Open))
+        {
+          theImage = Image.FromStream(stream, true, false);
 
-        if (CreateThumbnail(theImage, strThumb, iMaxWidth, iMaxHeight, iRotate))
-          return true;
-        else
-          return false;
+
+          if (CreateThumbnail(theImage, strThumb, iMaxWidth, iMaxHeight, iRotate))
+            return true;
+          else
+            return false;
+        }
       }
       catch (Exception ex)
       {

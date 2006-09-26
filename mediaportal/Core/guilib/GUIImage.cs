@@ -194,10 +194,14 @@ namespace MediaPortal.GUI.Library
             if (strFileNameTemp.Length > 0 && strFileNameTemp.IndexOf(@"\#") != -1)
               return;
 
-            using (Image img = Image.FromFile(strFileNameTemp))
+
+            using (FileStream stream = new FileStream(strFileNameTemp, FileMode.Open))
             {
-              if (0 == _width) _width = img.Width;
-              if (0 == _height) _height = img.Height;
+              using (Image img = Image.FromStream(stream, true, false))
+              {
+                if (0 == _width) _width = img.Width;
+                if (0 == _height) _height = img.Height;
+              }
             }
           }
           catch (Exception)
@@ -1066,6 +1070,7 @@ namespace MediaPortal.GUI.Library
           FontEngineDrawTexture(_packedTextureNo, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, (int)_diffuseColor);
         return;
       }
+
       else if (_listTextures != null)
       {
         if (_listTextures.Length > 0)

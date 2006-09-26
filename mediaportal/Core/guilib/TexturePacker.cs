@@ -376,26 +376,31 @@ namespace MediaPortal.GUI.Library
     {
       bool result = false;
       dontAdd = false;
-      using (Image bmp = Image.FromFile(file))
+
+
+      using (FileStream stream = new FileStream(file, FileMode.Open))
       {
-        if (bmp.Width >= GUIGraphicsContext.Width ||
-          bmp.Height >= GUIGraphicsContext.Height)
+        using (Image bmp = Image.FromStream(stream, true, false))
         {
-          //dontAdd=true;
-          //return false;
+          if (bmp.Width >= GUIGraphicsContext.Width ||
+            bmp.Height >= GUIGraphicsContext.Height)
+          {
+            //dontAdd=true;
+            //return false;
+          }
+          int pos;
+          string skinName = String.Format(@"{0}\media", GUIGraphicsContext.Skin).ToLower();
+          pos = file.IndexOf(skinName);
+          if (pos >= 0)
+          {
+            file = file.Remove(pos, skinName.Length);
+          }
+          if (file.StartsWith(@"\"))
+          {
+            file = file.Remove(0, 1);
+          }
+          result = Add(root, bmp, rootImage, file);
         }
-        int pos;
-        string skinName = String.Format(@"{0}\media", GUIGraphicsContext.Skin).ToLower();
-        pos = file.IndexOf(skinName);
-        if (pos >= 0)
-        {
-          file = file.Remove(pos, skinName.Length);
-        }
-        if (file.StartsWith(@"\"))
-        {
-          file = file.Remove(0, 1);
-        }
-        result = Add(root, bmp, rootImage, file);
       }
       return result;
     }

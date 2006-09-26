@@ -1222,101 +1222,105 @@ namespace MediaPortal.GUI.Pictures
       }
       if (pictureList.Count > 0)
       {
-        using (Image imgFolder = Image.FromFile(GUIGraphicsContext.Skin + @"\media\previewbackground.png"))
+
+        using (FileStream stream = new FileStream(GUIGraphicsContext.Skin + @"\media\previewbackground.png", FileMode.Open))
         {
-          int width = imgFolder.Width;
-          int height = imgFolder.Height;
-
-          int thumbnailWidth = (width - 30) / 2;
-          int thumbnailHeight = (height - 30) / 2;
-
-          using (Bitmap bmp = new Bitmap(width, height))
+          using (Image imgFolder = Image.FromStream(stream, true, false))
           {
-            using (Graphics g = Graphics.FromImage(bmp))
+            int width = imgFolder.Width;
+            int height = imgFolder.Height;
+
+            int thumbnailWidth = (width - 30) / 2;
+            int thumbnailHeight = (height - 30) / 2;
+
+            using (Bitmap bmp = new Bitmap(width, height))
             {
-              g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
-              g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-              g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+              using (Graphics g = Graphics.FromImage(bmp))
+              {
+                g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
 
-              g.DrawImage(imgFolder, 0, 0, width, height);
-              int x, y, w, h;
-              x = 0; y = 0; w = thumbnailWidth; h = thumbnailHeight;
+                g.DrawImage(imgFolder, 0, 0, width, height);
+                int x, y, w, h;
+                x = 0; y = 0; w = thumbnailWidth; h = thumbnailHeight;
 
-              //Load first of 4 images for the folder thumb.
-              //Avoid crashes caused by damaged image files:
+                //Load first of 4 images for the folder thumb.
+                //Avoid crashes caused by damaged image files:
+                try
+                {
+                  using (Image img = LoadPicture((string)pictureList[0]))
+                  {
+                    g.DrawImage(img, x + 10, y + 10, w, h);
+                  }
+                }
+                catch (Exception)
+                {
+                  Log.Info("Damaged picture file found: {0}. Try to repair or delete this file please!", (string)pictureList[0]);
+                }
+
+                //If exists load second of 4 images for the folder thumb.
+                if (pictureList.Count > 1)
+                {
+                  try
+                  {
+                    using (Image img = LoadPicture((string)pictureList[1]))
+                    {
+                      g.DrawImage(img, x + thumbnailWidth + 20, y + 10, w, h);
+                    }
+                  }
+                  catch (Exception)
+                  {
+                    Log.Info("Damaged picture file found: {0}. Try to repair or delete this file please!", (string)pictureList[1]);
+                  }
+                }
+
+                //If exists load third of 4 images for the folder thumb.
+                if (pictureList.Count > 2)
+                {
+                  try
+                  {
+                    using (Image img = LoadPicture((string)pictureList[2]))
+                    {
+                      g.DrawImage(img, x + 10, y + thumbnailHeight + 20, w, h);
+                    }
+                  }
+                  catch (Exception)
+                  {
+                    Log.Info("Damaged picture file found: {0}. Try to repair or delete this file please!", (string)pictureList[2]);
+                  }
+                }
+
+                //If exists load fourth of 4 images for the folder thumb.
+                if (pictureList.Count > 3)
+                {
+                  try
+                  {
+                    using (Image img = LoadPicture((string)pictureList[3]))
+                    {
+                      g.DrawImage(img, x + thumbnailWidth + 20, y + thumbnailHeight + 20, w, h);
+                    }
+                  }
+                  catch (Exception)
+                  {
+                    Log.Info("Damaged picture file found: {0}. Try to repair or delete this file please!", (string)pictureList[3]);
+                  }
+                }
+              }//using (Graphics g = Graphics.FromImage(bmp) )
               try
               {
-                using (Image img = LoadPicture((string)pictureList[0]))
-                {
-                  g.DrawImage(img, x + 10, y + 10, w, h);
-                }
+                string thumbnailImageName = path + @"\folder.jpg";
+                if (System.IO.File.Exists(thumbnailImageName))
+                  MediaPortal.Util.Utils.FileDelete(thumbnailImageName);
+                bmp.Save(thumbnailImageName, System.Drawing.Imaging.ImageFormat.Jpeg);
+
+                File.SetAttributes(thumbnailImageName, FileAttributes.Hidden);
               }
               catch (Exception)
               {
-                Log.Info("Damaged picture file found: {0}. Try to repair or delete this file please!", (string)pictureList[0]);
               }
-
-              //If exists load second of 4 images for the folder thumb.
-              if (pictureList.Count > 1)
-              {
-                try
-                {
-                  using (Image img = LoadPicture((string)pictureList[1]))
-                  {
-                    g.DrawImage(img, x + thumbnailWidth + 20, y + 10, w, h);
-                  }
-                }
-                catch (Exception)
-                {
-                  Log.Info("Damaged picture file found: {0}. Try to repair or delete this file please!", (string)pictureList[1]);
-                }
-              }
-
-              //If exists load third of 4 images for the folder thumb.
-              if (pictureList.Count > 2)
-              {
-                try
-                {
-                  using (Image img = LoadPicture((string)pictureList[2]))
-                  {
-                    g.DrawImage(img, x + 10, y + thumbnailHeight + 20, w, h);
-                  }
-                }
-                catch (Exception)
-                {
-                  Log.Info("Damaged picture file found: {0}. Try to repair or delete this file please!", (string)pictureList[2]);
-                }
-              }
-
-              //If exists load fourth of 4 images for the folder thumb.
-              if (pictureList.Count > 3)
-              {
-                try
-                {
-                  using (Image img = LoadPicture((string)pictureList[3]))
-                  {
-                    g.DrawImage(img, x + thumbnailWidth + 20, y + thumbnailHeight + 20, w, h);
-                  }
-                }
-                catch (Exception)
-                {
-                  Log.Info("Damaged picture file found: {0}. Try to repair or delete this file please!", (string)pictureList[3]);
-                }
-              }
-            }//using (Graphics g = Graphics.FromImage(bmp) )
-            try
-            {
-              string thumbnailImageName = path + @"\folder.jpg";
-              if (System.IO.File.Exists(thumbnailImageName))
-                MediaPortal.Util.Utils.FileDelete(thumbnailImageName);
-              bmp.Save(thumbnailImageName, System.Drawing.Imaging.ImageFormat.Jpeg);
-
-              File.SetAttributes(thumbnailImageName, FileAttributes.Hidden);
-            }
-            catch (Exception)
-            {
-            }
-          }//using (Bitmap bmp = new Bitmap(210,210))
+            }//using (Bitmap bmp = new Bitmap(210,210))
+          }
         }
       }//if (pictureList.Count>0)
     }
@@ -1327,29 +1331,34 @@ namespace MediaPortal.GUI.Pictures
       using (PictureDatabase dbs = new PictureDatabase())
       {
         int iRotate = dbs.GetRotation(strFileName);
-        img = Image.FromFile(strFileName);
-        if (img != null)
+
+        using (FileStream stream = new FileStream(strFileName, FileMode.Open))
         {
-          if (iRotate > 0)
+          img = Image.FromStream(stream, true, false);
+
+          if (img != null)
           {
-            RotateFlipType flipType;
-            switch (iRotate)
+            if (iRotate > 0)
             {
-              case 1:
-                flipType = RotateFlipType.Rotate90FlipNone;
-                img.RotateFlip(flipType);
-                break;
-              case 2:
-                flipType = RotateFlipType.Rotate180FlipNone;
-                img.RotateFlip(flipType);
-                break;
-              case 3:
-                flipType = RotateFlipType.Rotate270FlipNone;
-                img.RotateFlip(flipType);
-                break;
-              default:
-                flipType = RotateFlipType.RotateNoneFlipNone;
-                break;
+              RotateFlipType flipType;
+              switch (iRotate)
+              {
+                case 1:
+                  flipType = RotateFlipType.Rotate90FlipNone;
+                  img.RotateFlip(flipType);
+                  break;
+                case 2:
+                  flipType = RotateFlipType.Rotate180FlipNone;
+                  img.RotateFlip(flipType);
+                  break;
+                case 3:
+                  flipType = RotateFlipType.Rotate270FlipNone;
+                  img.RotateFlip(flipType);
+                  break;
+                default:
+                  flipType = RotateFlipType.RotateNoneFlipNone;
+                  break;
+              }
             }
           }
         }

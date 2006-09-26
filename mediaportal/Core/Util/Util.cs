@@ -802,7 +802,7 @@ namespace MediaPortal.Util
         CRCTool crc = new CRCTool();
         crc.Init(CRCTool.CRCCode.CRC32);
         ulong dwcrc = crc.calc(strLine);
-        string strRet = System.IO.Path.GetFullPath(String.Format("{0}{1}.jpg", Config.GetFolder(Config.Dir.Thumbs),dwcrc));
+        string strRet = System.IO.Path.GetFullPath(String.Format("{0}{1}.jpg", Config.GetFolder(Config.Dir.Thumbs), dwcrc));
         return strRet;
       }
       catch (Exception)
@@ -830,13 +830,13 @@ namespace MediaPortal.Util
         }
         if (i >= 0)
         {
-            strPath = strFileNameAndPath.Substring(0, i).Trim();
-            strFileName = strFileNameAndPath.Substring(i + 1).Trim();
+          strPath = strFileNameAndPath.Substring(0, i).Trim();
+          strFileName = strFileNameAndPath.Substring(i + 1).Trim();
         }
         else
         {
-            strPath = "";
-            strFileName = strFileNameAndPath;
+          strPath = "";
+          strFileName = strFileNameAndPath;
         }
       }
       catch (Exception)
@@ -1214,9 +1214,13 @@ namespace MediaPortal.Util
             client.DownloadFile(strURL, strLogo);
             if (extensionURL != extensionFile)
             {
-              using (Image imgSrc = Image.FromFile(strLogo))
+
+              using (FileStream stream = new FileStream(strFile, FileMode.Open))
               {
-                imgSrc.Save(strFile, imageFormat);
+                using (Image imgSrc = Image.FromStream(stream, true, false))
+                {
+                  imgSrc.Save(strFile, imageFormat);
+                }
               }
               Utils.FileDelete(strLogo);
             }
@@ -1559,35 +1563,36 @@ namespace MediaPortal.Util
       return strName;
     }
 
-      static public string RemoveParenthesis(string name)
+    static public string RemoveParenthesis(string name)
+    {
+      while (name.IndexOf("(") != -1)
       {
-          while (name.IndexOf("(")!=-1) {
-              int start = name.IndexOf("(");
-              int end = name.IndexOf(")");
-              if (end != -1)
-              {
-                  name = name.Substring(0, start) + name.Substring(end + 1);
-              }
-              else
-              {
-                  break;
-              }
-          }
-          while (name.IndexOf("[") != -1)
-          {
-              int start = name.IndexOf("[");
-              int end = name.IndexOf("]");
-              if (end != -1)
-              {
-                  name = name.Substring(0, start) + name.Substring(end + 1);
-              }
-              else
-              {
-                  break;
-              }
-          }
-          return name;
+        int start = name.IndexOf("(");
+        int end = name.IndexOf(")");
+        if (end != -1)
+        {
+          name = name.Substring(0, start) + name.Substring(end + 1);
+        }
+        else
+        {
+          break;
+        }
       }
+      while (name.IndexOf("[") != -1)
+      {
+        int start = name.IndexOf("[");
+        int end = name.IndexOf("]");
+        if (end != -1)
+        {
+          name = name.Substring(0, start) + name.Substring(end + 1);
+        }
+        else
+        {
+          break;
+        }
+      }
+      return name;
+    }
     static public string EncryptLine(string strLine)
     {
       if (strLine == null) return String.Empty;
@@ -1622,7 +1627,7 @@ namespace MediaPortal.Util
 			catch(Exception){}*/
 
       string strThumb = String.Format(@"{0}\{1}", strFolder, Utils.FilterFileName(strFileName));
-      
+
       if (System.IO.File.Exists(strThumb + ".png")) return strThumb + ".png";
       else if (System.IO.File.Exists(strThumb + ".jpg")) return strThumb + ".jpg";
       else if (System.IO.File.Exists(strThumb + ".gif")) return strThumb + ".gif";
@@ -1649,7 +1654,7 @@ namespace MediaPortal.Util
       string strThumb = Utils.GetCoverArt(strFolder, strFileName);
       if (strThumb == string.Empty)
       {
-          strThumb = String.Format(@"{0}\{1}.jpg", strFolder, Utils.FilterFileName(strFileName));
+        strThumb = String.Format(@"{0}\{1}.jpg", strFolder, Utils.FilterFileName(strFileName));
       }
       return strThumb;
     }
@@ -1661,7 +1666,7 @@ namespace MediaPortal.Util
       if (strFileName == null) return String.Empty;
       if (strFileName.Length == 0) return String.Empty;
 
-      return Utils.GetCoverArtName(strFolder, strFileName+"L");
+      return Utils.GetCoverArtName(strFolder, strFileName + "L");
     }
 
 
@@ -1970,7 +1975,7 @@ namespace MediaPortal.Util
                 System.IO.File.Delete(fileName);
               }
               //delete Thumbnails
-              if ( fileName.ToLower().IndexOf(".jpg") >= 0 )
+              if (fileName.ToLower().IndexOf(".jpg") >= 0)
               {
                 System.IO.File.Delete(fileName);
               }
