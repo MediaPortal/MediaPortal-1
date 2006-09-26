@@ -41,8 +41,9 @@ namespace MediaPortal.InputDevices.HcwHelper
 {
   public partial class HcwHelper : Form
   {
-    const int HCWPVR2 = 0x001E;  // 43-Button Remote
-    const int HCWPVR = 0x001F;  // 34-Button Remote
+    const int HCWPVR2 = 0x001E;     // 45-Button Remote
+    const int HCWPVR = 0x001F;      // 34-Button Remote
+    const int HCWCLASSIC = 0x0000;  // 21-Button Remote
     const int WM_TIMER = 0x0113;
 
     private bool cancelWait = false;
@@ -248,6 +249,9 @@ namespace MediaPortal.InputDevices.HcwHelper
           int remoteCommand = 0;
           switch (remoteCode)
           {
+            case HCWCLASSIC:
+              remoteCommand = keyCode;
+              break;
             case HCWPVR:
               remoteCommand = keyCode + 1000;
               break;
