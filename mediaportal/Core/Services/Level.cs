@@ -25,11 +25,11 @@
 
 namespace MediaPortal.Services
 {
-    public enum Level
-    {
-        Error = 0,
-        Warning = 1,
-        Information = 2,
-        Debug = 3
-    }
+  public enum Level
+  {
+    Error = 0,
+    Warning = 1,
+    Information = 2,
+    Debug = 3
+  }
 }

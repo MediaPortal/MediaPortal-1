@@ -25,15 +25,15 @@
 
 namespace MediaPortal.Services
 {
-    public enum LogType
-    {
-        Log,
-        Recorder,
-        Error,
-        EPG,
-        VMR9,
-        Config,
-        MusicShareWatcher,
-        WebEPG
-    }
+  public enum LogType
+  {
+    Log,
+    Recorder,
+    Error,
+    EPG,
+    VMR9,
+    Config,
+    MusicShareWatcher,
+    WebEPG
+  }
 }

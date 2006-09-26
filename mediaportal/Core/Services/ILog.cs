@@ -27,44 +27,44 @@ using System;
 
 namespace MediaPortal.Services
 {
-    public interface ILog
-    {
-        void BackupLogFiles();
-        void BackupLogFile(LogType logType);
-        void Write(Exception ex);
+  public interface ILog
+  {
+    void BackupLogFiles();
+    void BackupLogFile(LogType logType);
+    void Write(Exception ex);
 
-        /// <summary>
-        /// Write a string to the logfile.
-        /// </summary>
-        /// <param name="format">The format of the string.</param>
-        /// <param name="arg">An array containing the actual data of the string.</param>
-        void Write(string format, params object[] arg);
+    /// <summary>
+    /// Write a string to the logfile.
+    /// </summary>
+    /// <param name="format">The format of the string.</param>
+    /// <param name="arg">An array containing the actual data of the string.</param>
+    void Write(string format, params object[] arg);
 
-        void Info(string format, params object[] arg);
-        void Info(LogType type, string format, params object[] arg);
-        void Warn(string format, params object[] arg);
-        void Warn(LogType type, string format, params object[] arg);
-        void Debug(string format, params object[] arg);
-        void Debug(LogType type, string format, params object[] arg);
-        void Error(string format, params object[] arg);
-        void Error(LogType type, string format, params object[] arg);
-        void Error(Exception ex);
+    void Info(string format, params object[] arg);
+    void Info(LogType type, string format, params object[] arg);
+    void Warn(string format, params object[] arg);
+    void Warn(LogType type, string format, params object[] arg);
+    void Debug(string format, params object[] arg);
+    void Debug(LogType type, string format, params object[] arg);
+    void Error(string format, params object[] arg);
+    void Error(LogType type, string format, params object[] arg);
+    void Error(Exception ex);
 
-        /// <summary>
-        /// Write a string to the logfile.
-        /// </summary>
-        /// <param name="format">The format of the string.</param>
-        /// <param name="arg">An array containing the actual data of the string.</param>
-        void WriteThreadId(string format, params object[] arg);
+    /// <summary>
+    /// Write a string to the logfile.
+    /// </summary>
+    /// <param name="format">The format of the string.</param>
+    /// <param name="arg">An array containing the actual data of the string.</param>
+    void WriteThreadId(string format, params object[] arg);
 
-        void WriteThreadId(LogType type, string format, params object[] arg);
-        void WriteFileThreadId(LogType type, bool isError, string format, params object[] arg);
-        void InfoThread(string format, params object[] arg);
-        void WarnThread(string format, params object[] arg);
-        void ErrorThread(string format, params object[] arg);
-        void SetConfigurationMode();
-        void WriteFile(LogType type, bool isError, string format, params object[] arg);
-        void WriteFile(LogType type, string format, params object[] arg);
-        void WriteFile(LogType type, Level logLevel, string format, params object[] arg);
-    }
+    void WriteThreadId(LogType type, string format, params object[] arg);
+    void WriteFileThreadId(LogType type, bool isError, string format, params object[] arg);
+    void InfoThread(string format, params object[] arg);
+    void WarnThread(string format, params object[] arg);
+    void ErrorThread(string format, params object[] arg);
+    void SetConfigurationMode();
+    void WriteFile(LogType type, bool isError, string format, params object[] arg);
+    void WriteFile(LogType type, string format, params object[] arg);
+    void WriteFile(LogType type, Level logLevel, string format, params object[] arg);
+  }
 }

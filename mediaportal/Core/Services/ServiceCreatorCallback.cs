@@ -25,6 +25,5 @@
 
 namespace MediaPortal.Services
 {
-    public delegate T ServiceCreatorCallback<T>(ServiceProvider provider);
+  public delegate T ServiceCreatorCallback<T>(ServiceProvider provider);
 }
-

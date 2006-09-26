@@ -23,58 +23,57 @@
 
 #endregion
 
-using MediaPortal.GUI.Library;
 using MediaPortal.ServiceImplementations;
 
 namespace MediaPortal.Services
 {
-    /// <summary>
-    /// Static wrapper class for the single global instance of the ServiceProvider 
-    /// </summary>
-    /// <remarks>
-    /// This global service provider instance is initialized with a number of
-    /// default services.
-    /// </remarks>
-    public static class GlobalServiceProvider
+  /// <summary>
+  /// Static wrapper class for the single global instance of the ServiceProvider 
+  /// </summary>
+  /// <remarks>
+  /// This global service provider instance is initialized with a number of
+  /// default services.
+  /// </remarks>
+  public static class GlobalServiceProvider
+  {
+    private static readonly ServiceProvider _instance;
+
+    static GlobalServiceProvider()
     {
-        private static readonly ServiceProvider _instance;
-
-        static GlobalServiceProvider()
-        {
-            _instance = new ServiceProvider();
-            _instance.Add<ILog>(new ServiceCreatorCallback<ILog>(LogServiceRequested));
-        }
-
-        /// <summary>
-        /// Gets the implementation of the requested service type.
-        /// </summary>
-        /// <typeparam name="T">The type of service to request.</typeparam>
-        /// <returns>The service implementation</returns>
-        public static T Get<T>()
-        {
-            return _instance.Get<T>();
-        }
-        
-        public static ServiceProvider Instance
-        {
-            get { return _instance; }
-        }
-
-        private static ILog LogServiceRequested(ServiceProvider services)
-        {
-            ILog log = new LogImpl();
-            services.Add<ILog>(log);
-            return log;
-        }
-
-        public static void Replace<T>(T service)
-        {
-            _instance.Replace<T>(service);
-        }
-        
-        public static void Add<T>(T service)
-        {
-            _instance.Add<T>(service);
-        }
+      _instance = new ServiceProvider();
+      _instance.Add<ILog>(new ServiceCreatorCallback<ILog>(LogServiceRequested));
     }
+
+    /// <summary>
+    /// Gets the implementation of the requested service type.
+    /// </summary>
+    /// <typeparam name="T">The type of service to request.</typeparam>
+    /// <returns>The service implementation</returns>
+    public static T Get<T>()
+    {
+      return _instance.Get<T>();
+    }
+
+    public static ServiceProvider Instance
+    {
+      get { return _instance; }
+    }
+
+    private static ILog LogServiceRequested(ServiceProvider services)
+    {
+      ILog log = new LogImpl();
+      services.Add<ILog>(log);
+      return log;
+    }
+
+    public static void Replace<T>(T service)
+    {
+      _instance.Replace<T>(service);
+    }
+
+    public static void Add<T>(T service)
+    {
+      _instance.Add<T>(service);
+    }
+  }
 }
