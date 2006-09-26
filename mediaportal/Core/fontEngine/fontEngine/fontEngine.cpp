@@ -113,6 +113,11 @@ void Log(char* txt)
 	fclose(fp);
 
 }
+void FontEngineStartFrame()
+{
+	//Log("-\n");
+}
+
 //*******************************************************************************************************************
 void FontEngineInitialize(int screenWidth, int screenHeight)
 {
@@ -378,7 +383,7 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
 	//Log(log);
 	if (textureNo < 0 || textureNo>=MAX_TEXTURES) return;
 	TEXTURE_DATA_T* texture;
-	
+/*	
 	//1-2-1
 	bool needRedraw=false;
 	bool textureAlreadyDrawn=false;
@@ -408,11 +413,11 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
 			}
 		}
 	}
-
+*/
   //save original viewport
   D3DVIEWPORT9 viewport;
 	m_pDevice->GetViewport(&viewport);
- 
+ /*
 
 	if (needRedraw)
 	{
@@ -429,6 +434,7 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
 		FontEnginePresentTextures();
 		m_pDevice->SetViewport(&viewport);
 	}
+*/
 	texture=&textureData[textureNo];
 	if (texture->iv==0)
 	{
@@ -525,7 +531,7 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
 //*******************************************************************************************************************
 void FontEnginePresentTextures()
 {
-
+	
 	for (int i=0; i < textureCount; ++i)
 	{
 		int index=textureZ[i];
@@ -560,6 +566,9 @@ void FontEnginePresentTextures()
 												0,					 //StartIndex,
 												texture->dwNumTriangles //MaxPrimitives
 												);
+				//char log[128];
+				//sprintf(log,"Fontengine:texture:%d/%d triangles:%d\n", i,textureCount,texture->dwNumTriangles);
+				//Log(log);
 			}
 		}
 		catch(...)
@@ -896,6 +905,9 @@ void FontEnginePresent3D(int fontNumber)
 											0,					 //StartIndex,
 											font->dwNumTriangles //MaxPrimitives
 											);
+			//char log[128];
+			//sprintf(log,"Fontengine:font:%d triangles:%d\n", fontNumber,font->dwNumTriangles);
+			//Log(log);
 			font->dwNumTriangles = 0;
 			font->iv = 0;
 			font->updateVertexBuffer=false;
