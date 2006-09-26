@@ -133,10 +133,16 @@ namespace MediaPortal.GUI.RADIOLASTFM
         _trayBallonSongChange.Visible = true;
 
       if (_usersOwnTags.Count < 1)
+      {
         btnChooseTag.Disabled = true;
+        btnChooseTag.Label = "No tags";
+      }
 
       if (_usersFriends.Count < 1)
+      {
         btnChooseFriend.Disabled = true;
+        btnChooseFriend.Label = "No friends";
+      }
 
       String ThumbFileName = String.Empty;
 
@@ -206,16 +212,27 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
 // 4
         if (btnChooseFriend.Label != String.Empty)
-          desiredFriend = "Friend's radio of: " + btnChooseFriend.Label;
+          desiredFriend = "Personal radio of: " + btnChooseFriend.Label;
         else
           desiredFriend = "No Friend has been chosen yet";
         dlg.Add(desiredFriend);
 
 // 5
-        if (isSubscriber)
-          dlg.Add("My personal radio");
-        //....
+        if (btnChooseFriend.Label != String.Empty)
+          desiredFriend = "Loved tracks of: " + btnChooseFriend.Label;
+        else
+          desiredFriend = "No Friend has been chosen yet";
+        dlg.Add(desiredFriend);
 
+
+        if (isSubscriber)
+        {
+// 6
+          dlg.Add("My personal radio");
+// 7
+          dlg.Add("My loved tracks");
+        }
+        
         dlg.DoModal(GetID);
         if (dlg.SelectedId == -1)
           return;
@@ -239,7 +256,15 @@ namespace MediaPortal.GUI.RADIOLASTFM
             LastFMStation.StreamsUser = btnChooseFriend.Label;
             break;
           case 5:
+            TuneIntoSelected = StreamType.Loved;
+            LastFMStation.StreamsUser = btnChooseFriend.Label;
+            break;
+          case 6:
             TuneIntoSelected = StreamType.Personal;
+            LastFMStation.StreamsUser = LastFMStation.AccountUser;
+            break;
+          case 7:
+            TuneIntoSelected = StreamType.Loved;
             LastFMStation.StreamsUser = LastFMStation.AccountUser;
             break;
           default:
@@ -262,6 +287,10 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
           case StreamType.Personal:
             LastFMStation.TuneIntoPersonalRadio(LastFMStation.StreamsUser);
+            break;
+
+          case StreamType.Loved:
+            LastFMStation.TuneIntoLovedTracks(LastFMStation.StreamsUser);
             break;
 
           case StreamType.Tags:

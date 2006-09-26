@@ -350,7 +350,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     public void UpdateNowPlaying()
     {
       // give the site some time to update and sync with the stream switch
-      SendDelayedCommandRequest(@"http://ws.audioscrobbler.com/radio/np.php?session=" + _currentSession, 3500);
+      SendDelayedCommandRequest(@"http://ws.audioscrobbler.com/radio/np.php?session=" + _currentSession, 4500);
     }
 
     public bool ToggleRecordToProfile(bool submitTracks_)
@@ -729,7 +729,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
     #region Utils
     private void OnTimerTick(object trash_, ElapsedEventArgs args_)
     {
-      UpdateNowPlaying();
+      // call without delay
+      SendCommandRequest(@"http://ws.audioscrobbler.com/radio/np.php?session=" + _currentSession);
     }
 
     #endregion
