@@ -41,46 +41,10 @@ namespace MediaPortal.TV.Recording
     {
       TVDatabase.OnRecordingsChanged += new MediaPortal.TV.Database.TVDatabase.OnRecordingChangedHandler(TVDatabase_OnRecordingsChanged);
     }
-    static bool AllocateCard(string ChannelName)
-    {
-      int cardNo = -1;
-      int minRecs = Int32.MaxValue;
-      for (int i = 0; i < cards.Length; ++i)
-      {
-        TVCaptureDevice dev = Recorder.Get(i);
-        if (!dev.UseForRecording) continue;
-        if (cards.Length > 1)
-        {
-          if (!TVDatabase.CanCardViewTVChannel(ChannelName, dev.ID)) continue;
-        }
-        if (cards[i] == 0)
-        {
-          cardNo = i;
-          break;
-        }
-        if (cards[i] < minRecs)
-        {
-          minRecs = cards[i];
-          cardNo = i;
-        }
-      }
-      if (cardNo >= 0)
-      {
-        cards[cardNo]++;
-        //Log.Info("  card:{0} {1} {2}",cardNo,cards[cardNo], ChannelName);
-        if (cards[cardNo] > 1) return true;
-      }
-      return false;
-    }
-
-    static void FreeCards()
-    {
-      for (int i = 0; i < cards.Length; ++i)
-        cards[i] = 0;
-    }
 
     static void Initialize()
     {
+      Log.Info("ConflictManager.Initialize()");
       _util = new TVUtil(14);
       _recordings = new List<TVRecording>();
       _conflictingRecordings = new List<TVRecording>();
@@ -92,7 +56,7 @@ namespace MediaPortal.TV.Recording
     static void WorkerThreadFunction()
     {
       System.Threading.Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
-      DateTime dtStart = DateTime.Now;
+      //DateTime dtStart = DateTime.Now;
       foreach (TVRecording rec in _recordings)
       {
         DetermineIsConflict(rec);
@@ -116,6 +80,7 @@ namespace MediaPortal.TV.Recording
     }
     static bool DetermineIsConflict(TVRecording rec)
     {
+      //Log.Info("ConflictManager.DetermineisConflict");
       if (Recorder.Count <= 0)
         return false;
       if (rec.Canceled > 0 || rec.IsDone()) return false;
@@ -124,28 +89,30 @@ namespace MediaPortal.TV.Recording
       {
         Initialize();
       }
-      cards = new int[Recorder.Count];
+      List<TVRecording>[] _cardrecordings = new List<TVRecording>[Recorder.Count];
+      for (int i = 0; i < Recorder.Count; i++) _cardrecordings[i] = new List<TVRecording>();
       if (_recordings.Count == 0) return false;
       List<TVRecording> episodes = _util.GetRecordingTimes(rec);
       foreach (TVRecording episode in episodes)
       {
         if (episode.Canceled != 0) continue;
-        FreeCards();
-        AllocateCard(episode.Channel);
+        freeCardsRecordings(_cardrecordings);
+        //Log.Info("Trying to assign Rec {0} - {1} on channel {2}", episode.Start.ToString(), episode.End.ToString(), episode.Channel);
+        //Log.Info("Succeed = {0}", AssignRecToCard(episode, _cardrecordings));
         foreach (TVRecording otherRecording in _recordings)
         {
           List<TVRecording> otherEpisodes = _util.GetRecordingTimes(otherRecording);
           foreach (TVRecording otherEpisode in otherEpisodes)
           {
             if (otherEpisode.Canceled != 0) continue;
-            if (otherEpisode.ID == episode.ID &&
-              otherEpisode.Start == episode.Start &&
-              otherEpisode.End == episode.End) continue;
+            if (isSameRecordings(episode, otherEpisode)) continue;
 
-            if (IsOverlap(episode,otherEpisode))
+            if (IsOverlap(episode, otherEpisode))
             {
-              if (AllocateCard(otherEpisode.Channel))
+              //Log.Info("Overlapping : Trying to assign Rec {0} - {1} on channel {2}", episode.Start.ToString(), episode.End.ToString(), episode.Channel);
+              if (!AssignRecToCard(otherEpisode, _cardrecordings))
               {
+                //Log.Info("Added conflicting recording  {0} - {1} on channel {2}", episode.Start.ToString(), episode.End.ToString(), episode.Channel);
                 _conflictingRecordings.Add(rec);
                 return true;
               }
@@ -165,7 +132,8 @@ namespace MediaPortal.TV.Recording
       {
         Initialize();
       }
-      cards = new int[Recorder.Count];
+      List<TVRecording>[] _cardrecordings = new List<TVRecording>[Recorder.Count];
+      for (int i = 0; i < Recorder.Count; i++) _cardrecordings[i] = new List<TVRecording>();
       if (_recordings.Count == 0) return;
 
       List<TVRecording> episodes = _util.GetRecordingTimes(rec);
@@ -174,21 +142,19 @@ namespace MediaPortal.TV.Recording
         if (episode.Canceled != 0) continue;
 
         bool epsiodeConflict = false;
-        FreeCards();
-        AllocateCard(episode.Channel);
+        freeCardsRecordings(_cardrecordings);
+        AssignRecToCard(episode, _cardrecordings);
         foreach (TVRecording otherRecording in _recordings)
         {
           List<TVRecording> otherEpisodes = _util.GetRecordingTimes(otherRecording);
           foreach (TVRecording otherEpisode in otherEpisodes)
           {
             if (otherEpisode.Canceled != 0) continue;
-            if (otherEpisode.ID == episode.ID &&
-              otherEpisode.Start == episode.Start &&
-              otherEpisode.End == episode.End) continue;
+            if (isSameRecordings(episode, otherEpisode)) continue;
 
-            if (IsOverlap(episode,otherEpisode))
+            if (IsOverlap(episode, otherEpisode))
             {
-              if (AllocateCard(otherEpisode.Channel))
+              if (!AssignRecToCard(otherEpisode, _cardrecordings))
               {
                 epsiodeConflict = true;
                 break;
@@ -224,11 +190,9 @@ namespace MediaPortal.TV.Recording
         foreach (TVRecording otherEpisode in otherEpisodes)
         {
           if (otherEpisode.Canceled != 0) continue;
-          if (otherEpisode.ID == episode.ID &&
-            otherEpisode.Start == episode.Start &&
-            otherEpisode.End == episode.End) continue;
+          if (isSameRecordings(episode, otherEpisode)) continue;
 
-          if (IsOverlap(episode,otherEpisode))
+          if (IsOverlap(episode, otherEpisode))
           {
             conflicts.Add(otherEpisode);
           }
@@ -262,18 +226,80 @@ namespace MediaPortal.TV.Recording
       }
     }
     /// <summary>
-    /// Tests the time overlapping of two recordings
+    /// Tests if two recordings are overlapping
     /// </summary>
+    /// <param name="record_1">A recording...</param>
+    /// <param name="record_1">Another recording</param>
     /// <returns>true : overlapping, false : no overlapping</returns>
-    static private bool IsOverlap(TVRecording rec_1, TVRecording rec_2)
+    static private bool IsOverlap(TVRecording record_1, TVRecording record_2)
     {
       // rec_1        s------------------------e
       // rec_2    ---------s-----------------------------
       // rec_2  ------------------e
-      if ((rec_2.Start >= rec_1.Start && rec_2.Start < rec_1.End) ||
-          (rec_2.Start <= rec_1.Start && rec_2.End >= rec_1.End) ||
-          (rec_2.End > rec_1.Start && rec_2.Start <= rec_1.End)) return true;
+      if ((record_2.Start >= record_1.Start && record_2.Start < record_1.End) ||
+          (record_2.Start <= record_1.Start && record_2.End >= record_1.End) ||
+          (record_2.End > record_1.Start && record_2.Start <= record_1.End)) return true;
       return false;
     }
+    /// <summary>Tries to assign a recording to a card</summary>
+    /// <param name="arec">The recording you wan't to try to assign</param>
+    /// <param name="cardrec">An array of Recordings lists (one list for each card)</param>
+    /// <returns>True if succeed, False either</returns>
+    static private bool AssignRecToCard(TVRecording arec, List<TVRecording>[] cardrec)
+    {
+      int _cardscount = Recorder.Count;
+      //Log.Info("Found {0} cards", _cardscount);
+      if (_cardscount == 0) return false;
+      int _currentcardNo = 0;
+      for (_currentcardNo = 0; _currentcardNo < _cardscount; _currentcardNo++)
+      {
+        //Log.Info("Current Card", _currentcardNo);
+        TVCaptureDevice dev = Recorder.Get(_currentcardNo);
+        if (!dev.UseForRecording) continue;
+        //Log.Info("Card {} is used for recording", _currentcardNo);
+        if (!TVDatabase.CanCardViewTVChannel(arec.Channel, dev.ID))
+        {
+          //Log.Info("Card {0} cannot view {1}",_currentcardNo.ToString(),arec.Channel);
+          continue;
+        }
+        bool _free = true;
+        //Log.Info("Trying to assign : {0} - {1} on channel {3}  to  card {4}", arec.Start.ToString(), arec.End.ToString(), arec.Channel, _currentcardNo.ToString());
+        foreach (TVRecording _inrec in cardrec[_currentcardNo])
+        {
+          if (IsOverlap(_inrec, arec) && !isSameRecordings(_inrec, arec)) _free = false;
+          //Log.Info("IsOverloap: {0} ,  isSameRecording : {0}", IsOverlap(_inrec, arec), isSameRecordings(_inrec, arec));
+        }
+        if (_free)
+        {
+          cardrec[_currentcardNo].Add(arec);
+          //Log.Info("Recording : {0} - {1} on channel {3}  allocated to card {4}", arec.Start.ToString(), arec.End.ToString(), arec.Channel, _currentcardNo.ToString());
+          return true;
+        }
+      }
+      //Log.Info("Could Not assign...");
+      return false;
+    }
+    /// <summary>Clears an array of Recordings lists</summary>
+    /// <param name="cardrec">An array of Recordings lists (one list for each card)</param>
+    /// <returns>Nothing</returns>
+    static void freeCardsRecordings(List<TVRecording>[] cardrec)
+    {
+      for (int i = 0; i < cardrec.Length; i++)
+      {
+        cardrec[i].Clear();
+      }
+    }
+    /// <summary>Checks if two recording are the same</summary>
+    /// <param name="record_1">First recording to test</param>
+    /// <param name="record_2">Second recording to test</param>
+    /// <returns>Nothing</returns>
+    static bool isSameRecordings(TVRecording record_1, TVRecording record_2)
+    {
+      if (record_2.ID == record_1.ID &&
+        record_2.Start == record_1.Start &&
+        record_2.End == record_1.End) return true;
+      return false;
+    }
+
   }
 }
