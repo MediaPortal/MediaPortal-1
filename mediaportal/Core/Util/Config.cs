@@ -189,7 +189,7 @@ private Config()
     public static string GetFile(Dir directory, string fileName)
     {
         if (fileName.StartsWith(@"\") || fileName.StartsWith("/"))
-            fileName = fileName.Substring(1);
+            throw new ArgumentException("The passed file name cannot start with a slash or backslash", "fileName");
       return Path.Combine(Get(directory), fileName);
     }
 
