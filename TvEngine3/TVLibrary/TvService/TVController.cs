@@ -345,6 +345,7 @@ namespace TvService
     {
       try
       {
+        if (_allDbscards[cardId].Enabled == false) return false;
         if (IsLocal(_allDbscards[cardId].Server.HostName) == false)
         {
           RemoteControl.HostName = _allDbscards[cardId].Server.HostName;
@@ -391,6 +392,7 @@ namespace TvService
     {
       try
       {
+        if (_allDbscards[cardId].Enabled == false) return null;
         if (IsLocal(_allDbscards[cardId].Server.HostName) == false)
         {
           RemoteControl.HostName = _allDbscards[cardId].Server.HostName;
@@ -414,6 +416,7 @@ namespace TvService
     {
       try
       {
+        if (_allDbscards[cardId].Enabled == false) return "";
         if (IsLocal(_allDbscards[cardId].Server.HostName) == false)
         {
           RemoteControl.HostName = _allDbscards[cardId].Server.HostName;
@@ -439,6 +442,7 @@ namespace TvService
     {
       try
       {
+        if (_allDbscards[cardId].Enabled == false) return false;
         if (IsLocal(_allDbscards[cardId].Server.HostName) == false)
         {
           RemoteControl.HostName = _allDbscards[cardId].Server.HostName;
@@ -462,6 +466,7 @@ namespace TvService
     {
       try
       {
+        if (_allDbscards[cardId].Enabled == false) return 0;
         if (IsLocal(_allDbscards[cardId].Server.HostName) == false)
         {
           RemoteControl.HostName = _allDbscards[cardId].Server.HostName;
@@ -485,6 +490,7 @@ namespace TvService
     {
       try
       {
+        if (_allDbscards[cardId].Enabled == false) return 0;
         if (IsLocal(_allDbscards[cardId].Server.HostName) == false)
         {
           RemoteControl.HostName = _allDbscards[cardId].Server.HostName;
@@ -508,6 +514,7 @@ namespace TvService
     {
       try
       {
+        if (_allDbscards[cardId].Enabled == false) return "";
         if (IsLocal(_allDbscards[cardId].Server.HostName) == false)
         {
           RemoteControl.HostName = _allDbscards[cardId].Server.HostName;
@@ -526,6 +533,7 @@ namespace TvService
     {
       try
       {
+        if (_allDbscards[cardId].Enabled == false) return "";
         if (IsLocal(_allDbscards[cardId].Server.HostName) == false)
         {
           RemoteControl.HostName = _allDbscards[cardId].Server.HostName;
@@ -549,6 +557,7 @@ namespace TvService
     {
       try
       {
+        if (_allDbscards[cardId].Enabled == false) return false;
         if (IsLocal(_allDbscards[cardId].Server.HostName) == false)
         {
           RemoteControl.HostName = _allDbscards[cardId].Server.HostName;
@@ -572,6 +581,7 @@ namespace TvService
     {
       try
       {
+        if (_allDbscards[cardId].Enabled == false) return false;
         if (IsLocal(_allDbscards[cardId].Server.HostName) == false)
         {
           RemoteControl.HostName = _allDbscards[cardId].Server.HostName;
@@ -595,6 +605,7 @@ namespace TvService
     {
       try
       {
+        if (_allDbscards[cardId].Enabled == false) return false;
         if (IsLocal(_allDbscards[cardId].Server.HostName) == false)
         {
           RemoteControl.HostName = _allDbscards[cardId].Server.HostName;
@@ -618,6 +629,7 @@ namespace TvService
     {
       try
       {
+        if (_allDbscards[cardId].Enabled == false) return false;
         if (IsLocal(_allDbscards[cardId].Server.HostName) == false)
         {
           RemoteControl.HostName = _allDbscards[cardId].Server.HostName;
@@ -641,6 +653,7 @@ namespace TvService
     {
       try
       {
+        if (_allDbscards[cardId].Enabled == false) return false;
         if (IsLocal(_allDbscards[cardId].Server.HostName) == false)
         {
           RemoteControl.HostName = _allDbscards[cardId].Server.HostName;
@@ -663,6 +676,7 @@ namespace TvService
     /// <returns>yes if channel has teletext otherwise false</returns>
     public bool HasTeletext(int cardId)
     {
+      if (_allDbscards[cardId].Enabled == false) return false;
       if (IsLocal(_allDbscards[cardId].Server.HostName) == false)
       {
         RemoteControl.HostName = _allDbscards[cardId].Server.HostName;
@@ -681,6 +695,7 @@ namespace TvService
     {
       try
       {
+        if (_allDbscards[cardId].Enabled == false) return new TimeSpan(0, 0, 0, 15); 
         if (IsLocal(_allDbscards[cardId].Server.HostName) == false)
         {
           RemoteControl.HostName = _allDbscards[cardId].Server.HostName;
@@ -704,6 +719,7 @@ namespace TvService
     {
       try
       {
+        if (_allDbscards[cardId].Enabled == false) return DateTime.MinValue;
         if (IsLocal(_allDbscards[cardId].Server.HostName) == false)
         {
           RemoteControl.HostName = _allDbscards[cardId].Server.HostName;
@@ -727,6 +743,7 @@ namespace TvService
     {
       try
       {
+        if (_allDbscards[cardId].Enabled == false) return DateTime.MinValue;
         if (IsLocal(_allDbscards[cardId].Server.HostName) == false)
         {
           RemoteControl.HostName = _allDbscards[cardId].Server.HostName;
@@ -770,6 +787,7 @@ namespace TvService
     {
       try
       {
+        if (_allDbscards[cardId].Enabled == false) return true;
         if (IsLocal(_allDbscards[cardId].Server.HostName) == false)
         {
           RemoteControl.HostName = _allDbscards[cardId].Server.HostName;
@@ -791,6 +809,7 @@ namespace TvService
     {
       try
       {
+        if (_allDbscards[cardId].Enabled == false) return 0;
         if (IsLocal(_allDbscards[cardId].Server.HostName) == false)
         {
           RemoteControl.HostName = _allDbscards[cardId].Server.HostName;
@@ -809,6 +828,7 @@ namespace TvService
     {
       try
       {
+        if (_allDbscards[cardId].Enabled == false) return 0;
         if (IsLocal(_allDbscards[cardId].Server.HostName) == false)
         {
           RemoteControl.HostName = _allDbscards[cardId].Server.HostName;
@@ -833,6 +853,7 @@ namespace TvService
     {
       try
       {
+        if (_allDbscards[cardId].Enabled == false) return false;
         Log.Write("Controller:Tune {0} to {1}", cardId, channel.Name);
         lock (this)
         {
@@ -863,6 +884,7 @@ namespace TvService
     {
       try
       {
+        if (_allDbscards[cardId].Enabled == false) return false;
         Log.Write("Controller:TuneScan {0} to {1}", cardId, channel.Name);
         lock (this)
         {
@@ -934,6 +956,7 @@ namespace TvService
     {
       try
       {
+        if (_allDbscards[cardId].Enabled == false) return ;
         if (IsLocal(_allDbscards[cardId].Server.HostName) == false)
         {
           RemoteControl.HostName = _allDbscards[cardId].Server.HostName;
@@ -960,6 +983,7 @@ namespace TvService
     {
       try
       {
+        if (_allDbscards[cardId].Enabled == false) return new byte[] { 1 }; 
         if (IsLocal(_allDbscards[cardId].Server.HostName) == false)
         {
           RemoteControl.HostName = _allDbscards[cardId].Server.HostName;
@@ -985,6 +1009,7 @@ namespace TvService
     {
       try
       {
+        if (_allDbscards[cardId].Enabled == false) return -1;
         if (IsLocal(_allDbscards[cardId].Server.HostName) == false)
         {
           RemoteControl.HostName = _allDbscards[cardId].Server.HostName;
@@ -1010,6 +1035,7 @@ namespace TvService
     {
       try
       {
+        if (_allDbscards[cardId].Enabled == false) return TvResult.UnableToStartGraph;
         Log.Write("Controller: StartTimeShifting {0} {1} ", cardId, fileName);
         lock (this)
         {
@@ -1078,6 +1104,7 @@ namespace TvService
     {
       try
       {
+        if (_allDbscards[cardId].Enabled == false) return true;
         Log.Write("Controller: StopTimeShifting {0}", cardId);
         lock (this)
         {
@@ -1141,6 +1168,7 @@ namespace TvService
     {
       try
       {
+        if (_allDbscards[cardId].Enabled == false) return false;
         Log.Write("Controller: StartRecording {0} {1}", cardId, fileName);
         lock (this)
         {
@@ -1171,6 +1199,7 @@ namespace TvService
     {
       try
       {
+        if (_allDbscards[cardId].Enabled == false) return false;
         Log.Write("Controller: StopRecording {0}", cardId);
         lock (this)
         {
@@ -1204,6 +1233,7 @@ namespace TvService
     {
       try
       {
+        if (_allDbscards[cardId].Enabled == false) return new List<IChannel>().ToArray();
         if (IsLocal(_allDbscards[cardId].Server.HostName) == false)
         {
           RemoteControl.HostName = _allDbscards[cardId].Server.HostName;
@@ -1233,6 +1263,7 @@ namespace TvService
     {
       try
       {
+        if (_allDbscards[cardId].Enabled == false) return ;
         if (IsLocal(_allDbscards[cardId].Server.HostName) == false)
         {
           //RemoteControl.HostName = _allDbscards[cardId].Server.HostName;
@@ -1251,6 +1282,7 @@ namespace TvService
     }
     public List<EpgChannel> Epg(int cardId)
     {
+      if (_allDbscards[cardId].Enabled == false) return new List<EpgChannel>();
       if (IsLocal(_allDbscards[cardId].Server.HostName) == false)
       {
         //RemoteControl.HostName = _allDbscards[cardId].Server.HostName;
@@ -1266,6 +1298,7 @@ namespace TvService
       try
       {
         if (_isMaster == false) return -1;
+        if (_allDbscards[cardId].Enabled == false) return -1;
         return _scheduler.GetRecordingScheduleForCard(cardId);
       }
       catch (Exception ex)
@@ -1278,6 +1311,7 @@ namespace TvService
     #region audio streams
     public IAudioStream[] AvailableAudioStreams(int cardId)
     {
+      if (_allDbscards[cardId].Enabled == false) return new List<IAudioStream>().ToArray();
       if (IsLocal(_allDbscards[cardId].Server.HostName) == false)
       {
         RemoteControl.HostName = _allDbscards[cardId].Server.HostName;
@@ -1289,6 +1323,7 @@ namespace TvService
 
     public IAudioStream GetCurrentAudioStream(int cardId)
     {
+      if (_allDbscards[cardId].Enabled == false) return null;
       if (IsLocal(_allDbscards[cardId].Server.HostName) == false)
       {
         RemoteControl.HostName = _allDbscards[cardId].Server.HostName;
@@ -1299,6 +1334,7 @@ namespace TvService
 
     public void SetCurrentAudioStream(int cardId, IAudioStream stream)
     {
+      if (_allDbscards[cardId].Enabled == false) return ;
       Log.WriteFile("Controller: setaudiostream:{0} {1}", cardId, stream);
       if (IsLocal(_allDbscards[cardId].Server.HostName) == false)
       {
@@ -1311,6 +1347,7 @@ namespace TvService
 
     public string GetStreamingUrl(int cardId)
     {
+      if (_allDbscards[cardId].Enabled == false) return "";
       if (IsLocal(_allDbscards[cardId].Server.HostName) == false)
       {
         RemoteControl.HostName = _allDbscards[cardId].Server.HostName;
@@ -1689,6 +1726,11 @@ namespace TvService
             if (check == false) continue;
 
             //check if card can tune to this channel
+            if (keyPair.Value.Enabled == false)
+            {
+              Log.Write("Controller:    card:{0} type:{1} is disabled", keyPair.Value.IdCard, Type(keyPair.Value.IdCard));
+              continue;
+            }
             if (IsLocked(keyPair.Value.IdCard))
             {
               Log.Write("Controller:    card:{0} type:{1} is locked", keyPair.Value.IdCard, Type(keyPair.Value.IdCard));
@@ -1741,6 +1783,7 @@ namespace TvService
     {
       try
       {
+        if (_allDbscards[idCard].Enabled == false) return TvResult.UnknownError;
         bool result;
         Log.WriteFile("Controller: CardTune {0} {1}", idCard, channel.Name);
         if (IsScrambled(idCard))
@@ -1774,6 +1817,7 @@ namespace TvService
     {
       try
       {
+        if (_allDbscards[idCard].Enabled == false) return TvResult.UnknownError;
         Log.WriteFile("Controller: CardTimeShift {0} {1}", idCard, fileName);
         if (IsTimeShifting(idCard)) return TvResult.Succeeded;
         return StartTimeShifting(idCard, fileName);
@@ -1823,6 +1867,7 @@ namespace TvService
     /// <returns>true if channel is unscrambled else false</returns>
     bool WaitForUnScrambledSignal(int cardId)
     {
+      if (_allDbscards[cardId].Enabled == false) return false;
       Log.Write("Controller: WaitForUnScrambledSignal");
       DateTime timeStart = DateTime.Now;
       while (true)
@@ -1854,6 +1899,7 @@ namespace TvService
     /// <returns>true when timeshift files is at least of 300kb, else timeshift file is less then 300kb</returns>
     bool WaitForTimeShiftFile(int cardId, string fileName)
     {
+      if (_allDbscards[cardId].Enabled == false) return false;
       Log.Write("Controller: WaitForTimeShiftFile");
       if (!WaitForUnScrambledSignal(cardId)) return false;
       DateTime timeStart = DateTime.Now;

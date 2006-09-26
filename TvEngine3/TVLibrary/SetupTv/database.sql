@@ -104,6 +104,7 @@ CREATE TABLE Card(
 	lastEpgGrab datetime NOT NULL,
 	recordingFolder varchar(256) NOT NULL,
 	idServer int NOT NULL,
+	enabled bit NOT NULL,
  CONSTRAINT PK_Cards PRIMARY KEY  
 (
 	idCard ASC
@@ -388,5 +389,5 @@ GO
 GO
 delete from version
 GO
-insert into version(versionNumber) values(7)
+insert into version(versionNumber) values(8)
 GO

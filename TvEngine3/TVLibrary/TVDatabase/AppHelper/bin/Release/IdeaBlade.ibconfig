@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <ideaBlade xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" useDeclarativeTransactions="false" version="1.03">
   <useDTC>false</useDTC>
   <copyLocal>false</copyLocal>
@@ -9,7 +9,7 @@
     <port>0</port>
   </logging>
   <rdbKey name="default" databaseProduct="Unknown">
-    <connection>Provider=SQLOLEDB.1;Password=sa;Persist Security Info=True;User ID=sa;Initial Catalog=TvLibrary;Data Source=PCEBECKERS</connection>
+    <connection>Provider=SQLOLEDB.1;Password=ffmpeg;Persist Security Info=True;User ID=sa;Initial Catalog=TvLibrary;Data Source=mediacenter\SQLEXPRESS;</connection>
     <probeAssemblyName>TVDatabase</probeAssemblyName>
   </rdbKey>
   <remoting>

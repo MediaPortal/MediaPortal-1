@@ -47,6 +47,7 @@ namespace SetupTv.Sections
     {
       InitializeComponent();
     }
+
     public override void OnSectionActivated()
     {
       base.OnSectionActivated();
@@ -63,6 +64,7 @@ namespace SetupTv.Sections
       catch (Exception)
       {
       }
+
       try
       {
         EntityQuery query = new EntityQuery(typeof(Card));
@@ -77,6 +79,8 @@ namespace SetupTv.Sections
             cardType = cardTypes[cards[i].DevicePath].ToString();
           }
           ListViewItem item = mpListView1.Items.Add(cards[i].Priority.ToString());
+          if (cards[i].Enabled) item.Checked = true;
+          else item.Checked = false;
           item.SubItems.Add(cardType);
           item.SubItems.Add(cards[i].Name);
           item.Tag = cards[i];
@@ -137,6 +141,7 @@ namespace SetupTv.Sections
 
         Card card = (Card)mpListView1.Items[i].Tag;
         card.Priority = mpListView1.Items.Count - i;
+        card.Enabled = mpListView1.Items[i].Checked;
       }
     }
   }
