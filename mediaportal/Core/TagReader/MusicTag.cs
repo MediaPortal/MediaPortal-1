@@ -18,165 +18,266 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
 using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Drawing;
+
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.TagReader
 {
-	/// <summary>
-	/// Class holding all information about a music file (like an .mp3)
-	/// </summary>
-	public class MusicTag
-	{
-    string m_strArtist="";
-    string m_strAlbum="";
-    string m_strGenre="";
-    string m_strTitle="";
-    string m_strComment="";
-    int    m_iYear=0;
-    int    m_iDuration=0;
-    int    m_iTrack=0;
-    int    _TimesPlayed=0;
-		int    m_iRating=0;
-		
-		/// <summary>
-		/// empty constructor
-		/// </summary>
+  public class MusicTag
+  {
+    #region Variables
+    internal string m_strArtist = "";
+    internal string m_strAlbum = "";
+    internal string m_strGenre = "";
+    internal string m_strTitle = "";
+    internal string m_strComment = "";
+    internal int m_iYear = 0;
+    internal int m_iDuration = 0;
+    internal int m_iTrack = 0;
+    internal int m_TimesPlayed = 0;
+    internal int m_iRating = 0;
+    internal byte[] m_CoverArtImageBytes = null;
+    internal string m_AlbumArtist = string.Empty;
+    internal string m_Composer = string.Empty;
+    internal string m_FileType = string.Empty;
+    internal int m_BitRate = 0;
+    internal string m_FileName = string.Empty;
+    internal string m_Lyrics = string.Empty;
+    #endregion
+
+    #region ctor
+    /// <summary>
+    /// empty constructor
+    /// </summary>
     public MusicTag()
-		{
+    {
     }
 
-		/// <summary>
-		/// copy constructor
-		/// </summary>
-		/// <param name="tag"></param>
+    /// <summary>
+    /// copy constructor
+    /// </summary>
+    /// <param name="tag"></param>
     public MusicTag(MusicTag tag)
     {
-			if (tag==null) return;
-      _TimesPlayed=tag._TimesPlayed;
-      Artist=tag.Artist;
-      Album=tag.Album;
-      Genre=tag.Genre;
-      Title=tag.Title;
-      Comment=tag.Comment;
-      Year=tag.Year;
-      Duration=tag.Duration;
-      Track=tag.Track;
-			Rating=tag.Rating;
+      if (tag == null) return;
+      Artist = tag.Artist;
+      Album = tag.Album;
+      Genre = tag.Genre;
+      Title = tag.Title;
+      Comment = tag.Comment;
+      Year = tag.Year;
+      Duration = tag.Duration;
+      Track = tag.Track;
+      TimesPlayed = tag.m_TimesPlayed;
+      Rating = tag.Rating;
+      BitRate = tag.BitRate;
+      Composer = tag.Composer;
+      CoverArtImageBytes = tag.CoverArtImageBytes;
+      AlbumArtist = tag.AlbumArtist;
+      Lyrics = tag.Lyrics;
     }
-		/// <summary>
-		/// Property to get/set the comment field of the music file
-		/// </summary>
-    public string Comment
-    {
-      get { return m_strComment;}
-      set {
-				if (value==null) return;
-				m_strComment=value.Trim();
-			}
-		}
-		/// <summary>
-		/// Property to get/set the Title field of the music file
-		/// </summary>
-    public string Title
-    {
-      get { return m_strTitle;}
-			set 
-			{
-				if (value==null) return;
-				m_strTitle=value.Trim();
-			}
-		}
-		/// <summary>
-		/// Property to get/set the Artist field of the music file
-		/// </summary>
-    public string Artist
-    {
-      get { return m_strArtist;}
-			set 
-			{
-				if (value==null) return;
-				m_strArtist=value.Trim();
-			}
-		}
-		/// <summary>
-		/// Property to get/set the comment Album name of the music file
-		/// </summary>
-    public string Album
-    {
-      get { return m_strAlbum;}
-			set 
-			{
-				if (value==null) return;
-				m_strAlbum=value.Trim();
-			}
-		}
-		/// <summary>
-		/// Property to get/set the Genre field of the music file
-		/// </summary>
-    public string Genre
-    {
-      get { return m_strGenre;}
-			set 
-			{
-				if (value==null) return;
-				m_strGenre=value.Trim();
-			}
-		}
-		/// <summary>
-		/// Property to get/set the Year field of the music file
-		/// </summary>
-    public int Year
-    {
-      get { return m_iYear;}
-      set {m_iYear=value;}
-		}
-		/// <summary>
-		/// Property to get/set the duration in seconds of the music file
-		/// </summary>
-    public int Duration
-    {
-      get { return m_iDuration;}
-      set {m_iDuration=value;}
-		}
-		/// <summary>
-		/// Property to get/set the Track number field of the music file
-		/// </summary>
-    public int Track
-    {
-      get { return m_iTrack;}
-      set {m_iTrack=value;}
-		}
-		/// <summary>
-		/// Property to get/set the Track number field of the music file
-		/// </summary>
-		public int Rating
-		{
-			get { return m_iRating;}
-			set {m_iRating=value;}
-		}
-		/// <summary>
-		/// Property to get/set the number of times this file has been played
-		/// </summary>
-    public int TimesPlayed
-    {
-      get { return _TimesPlayed;}
-      set {_TimesPlayed=value;}
-		}
-		/// <summary>
-		/// Method to clear the current item
-		/// </summary>
+    #endregion
+
+    #region Methods
+    /// <summary>
+    /// Method to clear the current item
+    /// </summary>
     public void Clear()
     {
-      _TimesPlayed=0;
-      m_strArtist="";
-      m_strAlbum="";
-      m_strGenre="";
-      m_strTitle="";
-      m_strComment="";
-      m_iYear=0;
-      m_iDuration=0;
-      m_iTrack=0;
-			m_iRating=0;
+      m_strArtist = "";
+      m_strAlbum = "";
+      m_strGenre = "";
+      m_strTitle = "";
+      m_strComment = "";
+      m_iYear = 0;
+      m_iDuration = 0;
+      m_iTrack = 0;
+      m_TimesPlayed = 0;
+      m_iRating = 0;
+      m_BitRate = 0;
+      m_Composer = "";
+      m_AlbumArtist = "";
+      m_Lyrics = "";
     }
-	}
+
+    public bool IsMissingData
+    {
+      get
+      {
+        return Artist.Length == 0
+            || Album.Length == 0
+            || Title.Length == 0
+            || Artist.Length == 0
+            || Genre.Length == 0
+            || Track == 0
+            || Duration == 0;
+      }
+    }
+    #endregion
+
+    #region Properties
+    /// <summary>
+    /// Property to get/set the comment field of the music file
+    /// </summary>
+    public string Comment
+    {
+      get { return m_strComment; }
+      set
+      {
+        if (value == null) return;
+        m_strComment = value.Trim();
+      }
+    }
+
+    /// <summary>
+    /// Property to get/set the Title field of the music file
+    /// </summary>
+    public string Title
+    {
+      get { return m_strTitle; }
+      set
+      {
+        if (value == null) return;
+        m_strTitle = value.Trim();
+      }
+    }
+
+    /// <summary>
+    /// Property to get/set the Artist field of the music file
+    /// </summary>
+    public string Artist
+    {
+      get { return m_strArtist; }
+      set
+      {
+        if (value == null) return;
+        m_strArtist = value.Trim();
+      }
+    }
+
+    /// <summary>
+    /// Property to get/set the comment Album name of the music file
+    /// </summary>
+    public string Album
+    {
+      get { return m_strAlbum; }
+      set
+      {
+        if (value == null) return;
+        m_strAlbum = value.Trim();
+      }
+    }
+
+    /// <summary>
+    /// Property to get/set the Genre field of the music file
+    /// </summary>
+    public string Genre
+    {
+      get { return m_strGenre; }
+      set
+      {
+        if (value == null) return;
+        m_strGenre = value.Trim();
+      }
+    }
+
+    /// <summary>
+    /// Property to get/set the Year field of the music file
+    /// </summary>
+    public int Year
+    {
+      get { return m_iYear; }
+      set { m_iYear = value; }
+    }
+
+    /// <summary>
+    /// Property to get/set the duration in seconds of the music file
+    /// </summary>
+    public int Duration
+    {
+      get { return m_iDuration; }
+      set { m_iDuration = value; }
+    }
+
+    /// <summary>
+    /// Property to get/set the Track number field of the music file
+    /// </summary>
+    public int Track
+    {
+      get { return m_iTrack; }
+      set { m_iTrack = value; }
+    }
+
+    /// <summary>
+    /// Property to get/set the Track number field of the music file
+    /// </summary>
+    public int Rating
+    {
+      get { return m_iRating; }
+      set { m_iRating = value; }
+    }
+
+    /// <summary>
+    /// Property to get/set the number of times this file has been played
+    /// </summary>
+    public int TimesPlayed
+    {
+      get { return m_TimesPlayed; }
+      set { m_TimesPlayed = value; }
+    }
+
+    public string FileType
+    {
+      get { return m_FileType; }
+      set { m_FileType = value; }
+    }
+
+    public int BitRate
+    {
+      get { return m_BitRate; }
+      set { m_BitRate = value; }
+    }
+
+    public string AlbumArtist
+    {
+      get { return m_AlbumArtist; }
+      set { m_AlbumArtist = value; }
+    }
+
+    public string Composer
+    {
+      get { return m_Composer; }
+      set { m_Composer = value; }
+    }
+
+    public string FileName
+    {
+      get { return m_FileName; }
+      set { m_FileName = value; }
+    }
+
+    public string Lyrics
+    {
+      get { return m_Lyrics; }
+      set { m_Lyrics = value; }
+    }
+
+    public byte[] CoverArtImageBytes
+    {
+      get { return m_CoverArtImageBytes; }
+      set { m_CoverArtImageBytes = value; }
+    }
+
+
+    public Image CoverArtImage
+    {
+      get { return Utils.GetImage(m_CoverArtImageBytes); }
+    }
+    #endregion
+  }
 }

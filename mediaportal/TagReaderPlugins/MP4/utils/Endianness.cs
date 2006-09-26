@@ -21,20 +21,20 @@
 
 using System;
 
-namespace MediaPortal.TagReader.MP4.MiscUtil.Conversion
+namespace Tag.MP4.MiscUtil.Conversion
 {
-	/// <summary>
-	/// Endianness of a converter
-	/// </summary>
-	public enum Endianness
-	{
-		/// <summary>
-		/// Little endian - least significant byte first
-		/// </summary>
-		LittleEndian,
-		/// <summary>
-		/// Big endian - most significant byte first
-		/// </summary>
-		BigEndian
-	}
+  /// <summary>
+  /// Endianness of a converter
+  /// </summary>
+  public enum Endianness
+  {
+    /// <summary>
+    /// Little endian - least significant byte first
+    /// </summary>
+    LittleEndian,
+    /// <summary>
+    /// Big endian - most significant byte first
+    /// </summary>
+    BigEndian
+  }
 }

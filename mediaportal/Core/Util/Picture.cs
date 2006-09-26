@@ -836,11 +836,10 @@ namespace MediaPortal.Util
     /// 2 = rotate 180 degrees
     /// 3 = rotate 270 degrees
     /// </param>
-    static public void CreateThumbnail(string strFile, string strThumb, int iMaxWidth, int iMaxHeight, int iRotate)
+    static public bool CreateThumbnail(string strFile, string strThumb, int iMaxWidth, int iMaxHeight, int iRotate)
     {
-      //Log.Info("create thumbnail for {0}-{1}", strFile, strThumb);
-      if (strFile == null || strThumb == null || iMaxHeight <= 0 || iMaxHeight <= 0) return;
-      if (strFile == String.Empty || strThumb == String.Empty) return;
+      if (strFile == null || strThumb == null || iMaxHeight <= 0 || iMaxHeight <= 0) return false;
+      if (strFile == String.Empty || strThumb == String.Empty) return false;
 
       Image theImage = null;
 
@@ -848,11 +847,15 @@ namespace MediaPortal.Util
       {
         theImage = Image.FromFile(strFile);
 
-        CreateThumbnail(theImage, strThumb, iMaxWidth, iMaxHeight, iRotate);
+        if (CreateThumbnail(theImage, strThumb, iMaxWidth, iMaxHeight, iRotate))
+          return true;
+        else
+          return false;
       }
       catch (Exception ex)
       {
-        Log.Info("Picture.CreateThumbnail exception {0} err:{1} stack:{2}", strFile, ex.Message, ex.StackTrace);
+        Log.Error("Picture.CreateThumbnail exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        return false;
       }
       finally
       {
@@ -876,13 +879,11 @@ namespace MediaPortal.Util
     /// 2 = rotate 180 degrees
     /// 3 = rotate 270 degrees
     /// </param>
-    static public void CreateThumbnail(Image theImage, string strThumb, int iMaxWidth, int iMaxHeight, int iRotate)
+    static public bool CreateThumbnail(Image theImage, string strThumb, int iMaxWidth, int iMaxHeight, int iRotate)
     {
-      if (strThumb == null || iMaxHeight <= 0 || iMaxHeight <= 0) return;
-      if (strThumb == String.Empty) return;
-      if (theImage == null) return;
-
-      //Log.Info("create {0}x{1} thumbnail ->{2}", iMaxWidth, iMaxHeight, strThumb);
+      if (strThumb == null || iMaxHeight <= 0 || iMaxHeight <= 0) return false;
+      if (strThumb == String.Empty) return false;
+      if (theImage == null) return false;
 
       try
       {
@@ -930,6 +931,7 @@ namespace MediaPortal.Util
               g.DrawImage(theImage, new Rectangle(0, 0, iWidth, iHeight));
             }
             result.Save(strThumb, System.Drawing.Imaging.ImageFormat.Jpeg);
+            return true;
           }
 
         }
@@ -941,7 +943,8 @@ namespace MediaPortal.Util
       }
       catch (Exception ex)
       {
-        Log.Info("Picture.CreateThumbnail exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("Picture.CreateThumbnail exception err. Exception: {0} stack:{1}", ex.Message, ex.StackTrace);
+        return false;
       }
     }//static public void CreateThumbnail(string strFile, string strThumb, int iMaxWidth, int iMaxHeight, int iRotate)
 

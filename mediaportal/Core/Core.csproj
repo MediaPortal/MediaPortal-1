@@ -311,6 +311,8 @@
     <Compile Include="Services\LogType.cs" />
     <Compile Include="Services\ServiceCreatorCallback.cs" />
     <Compile Include="Services\ServiceProvider.cs" />
+    <Compile Include="TagReader\ITag.cs" />
+    <Compile Include="TagReader\Utils.cs" />
     <Compile Include="ThumbDbLib\Thumbnail.cs" />
     <Compile Include="ThumbDbLib\ThumbnailCreator.cs" />
     <Compile Include="ThumbDbLib\ThumbnailCreatorNet.cs" />
@@ -1820,9 +1822,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Windows\WriteLocalValueOverride.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="TagReader\ITagReader.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="TagReader\MusicTag.cs">

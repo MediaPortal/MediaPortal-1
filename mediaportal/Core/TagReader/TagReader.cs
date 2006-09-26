@@ -27,32 +27,32 @@ using MediaPortal.Util;
 
 namespace MediaPortal.TagReader
 {
-	/// <summary>
-	/// This class will manage all tagreader plugins
-	/// See the ITagReader.cs for more information about tagreader plugins
-	/// It will load all tagreader plugins and when Mediaportal wants information for a given music file
-	/// it will check which tagreader plugin supports it and ask it to read the information
-	/// which is then returned to mediaportal
-	/// </summary>
-	public class TagReader
-	{
-    static ArrayList m_readers=new ArrayList();
-		
-		/// <summary>
-		/// Constructor
-		/// This will load all tagreader plugins from plugins/tagreaders
-		/// </summary>
+  /// <summary>
+  /// This class will manage all tagreader plugins
+  /// See the ITag.cs for more information about tagreader plugins
+  /// It will load all tagreader plugins and when Mediaportal wants information for a given music file
+  /// it will check which tagreader plugin supports it and ask it to read the information
+  /// which is then returned to mediaportal
+  /// </summary>
+  public class TagReader
+  {
+    static ArrayList m_readers = new ArrayList();
+
+    /// <summary>
+    /// Constructor
+    /// This will load all tagreader plugins from plugins/tagreaders
+    /// </summary>
     static TagReader()
-		{
+    {
 
       Log.Info("Loading tag reader plugins");
-      string[] strFiles=System.IO.Directory.GetFiles(Config.GetSubFolder(Config.Dir.Plugins, "tagreaders"), "*.dll");
+      string[] strFiles = System.IO.Directory.GetFiles(Config.GetSubFolder(Config.Dir.Plugins, "tagreaders"), "*.dll");
       foreach (string strFile in strFiles)
       {
         try
         {
           Assembly assem = Assembly.LoadFrom(strFile);
-          if (assem!=null)
+          if (assem != null)
           {
             Type[] types = assem.GetExportedTypes();
 
@@ -62,69 +62,27 @@ namespace MediaPortal.TagReader
               {
                 if (t.IsClass)
                 {
-                  if (t.IsSubclassOf (typeof(ITagReader)))
+                  if (t.GetInterface("ITag") != null)
                   {
-                    object newObj=(object)Activator.CreateInstance(t);
-                    Log.Info("  found plugin:{0} in {1}",t.ToString(), strFile);
-                    ITagReader reader=(ITagReader)newObj;
+                    object newObj = (object)Activator.CreateInstance(t);
+                    Log.Debug("  found plugin:{0} in {1}", t.ToString(), strFile);
+                    ITag reader = (ITag)newObj;
                     m_readers.Add(reader);
                   }
                 }
               }
               catch (System.NullReferenceException)
-              {	
+              {
               }
             }
           }
         }
-        catch (Exception )
+        catch (Exception)
         {
         }
       }
-		}
-
-		/// <summary>
-		/// This method is called by mediaportal when it wants information for a music file
-		/// The method will check which tagreader supports the file and ask it to extract the information from it
-		/// </summary>
-		/// <param name="strFile">filename of the music file</param>
-		/// <returns>
-		/// MusicTag instance when file has been read
-		/// null when file type is not supported or if the file does not contain any information
-		/// </returns>
-    static public MusicTag ReadTag(string strFile)
-    {
-      ITagReader reader = null;
-      int prio = -1;
-      if (strFile == null) return null;
-      foreach (ITagReader tmpReader in m_readers)
-      {
-        if (tmpReader.SupportsFile(strFile) && tmpReader.Priority > prio)
-        {
-          prio = tmpReader.Priority;
-          reader = tmpReader;
-        }
-      }
-      if (reader!=null)
-      {
-        try
-        {
-          if (reader.SupportsFile(strFile))
-          {
-            if (reader.ReadTag(strFile))
-            {
-              MusicTag newTag = new MusicTag(reader.Tag);
-              return newTag;
-            }
-          }
-        }
-        catch(Exception ex)
-        { 
-          Log.Info("Tag reader generated exception:{0}",ex.ToString());
-        }
-      }
-      return null;
     }
+
     /// <summary>
     /// This method is called by mediaportal when it wants information for a music file
     /// The method will check which tagreader supports the file and ask it to extract the information from it
@@ -134,12 +92,12 @@ namespace MediaPortal.TagReader
     /// MusicTag instance when file has been read
     /// null when file type is not supported or if the file does not contain any information
     /// </returns>
-    static public MusicTag ReadTag(string strFile, ref byte[] imageBytes )
+    static public MusicTag ReadTag(string strFile)
     {
-      ITagReader reader = null;
+      ITag reader = null;
       int prio = -1;
       if (strFile == null) return null;
-      foreach (ITagReader tmpReader in m_readers)
+      foreach (ITag tmpReader in m_readers)
       {
         if (tmpReader.SupportsFile(strFile) && tmpReader.Priority > prio)
         {
@@ -153,17 +111,50 @@ namespace MediaPortal.TagReader
         {
           if (reader.SupportsFile(strFile))
           {
-            if (reader.ReadTag(strFile))
+            if (reader.Read(strFile))
             {
-              MusicTag newTag = new MusicTag(reader.Tag);
-              imageBytes = reader.Image;
-              return newTag;
+              MusicTag musicTag = new MusicTag();
+              musicTag.Album = reader.Album;
+              musicTag.Artist = reader.Artist;
+              musicTag.AlbumArtist = reader.AlbumArtist;
+              musicTag.Comment = reader.Comment;
+              musicTag.Duration = (int)Math.Round(reader.LengthMS / 1000.00);
+              musicTag.Genre = reader.Genre;
+              musicTag.Title = reader.Title;
+              musicTag.Track = reader.Track;
+              musicTag.Year = reader.Year;
+
+              musicTag.CoverArtImageBytes = reader.CoverArtImageBytes;
+              musicTag.FileName = strFile;
+              musicTag.BitRate = reader.AverageBitrate;
+              musicTag.Lyrics = Utils.CleanLyrics(reader.Lyrics);
+
+              if (musicTag.CoverArtImageBytes != null)
+              {
+                System.Drawing.Image img = musicTag.CoverArtImage;
+
+                if (img == null)
+                {
+                  musicTag.CoverArtImageBytes = null;
+                  Log.Info("Image probably corrupted: {0}", strFile);
+                }
+
+                else
+                {
+                  img.Dispose();
+                  img = null;
+                }
+              }
+
+              reader.Dispose();
+
+              return musicTag;
             }
           }
         }
-        catch(Exception ex)
-        { 
-          Log.Info("Tag reader generated exception:{0}",ex.ToString());
+        catch (Exception ex)
+        {
+          Log.Error("Tag reader generated exception on file {0}: {1}", strFile, ex.ToString());
         }
       }
       return null;
