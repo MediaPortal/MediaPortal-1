@@ -172,7 +172,7 @@ namespace MediaPortal.GUI.Home
     {
       base.OnWindowLoaded();
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, @"\MediaPortal.xml")))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         m_iDateLayout = xmlreader.GetValueAsInt("home", "datelayout", 0);
         MAX_FRAMES = xmlreader.GetValueAsInt("home", "scrollspeed", 5);
