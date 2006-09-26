@@ -28,36 +28,36 @@ using MediaPortal.GUI.Library;
 
 namespace ProcessPlugins.ExternalDisplay.Setting
 {
-    /// <summary>
-    /// The Property class represents a single property reference.
-    /// </summary>
-    /// <author>JoeDalton</author>
-    [Serializable]
-    public class Property : FixedValue
+  /// <summary>
+  /// The Property class represents a single property reference.
+  /// </summary>
+  /// <author>JoeDalton</author>
+  [Serializable]
+  public class Property : FixedValue
+  {
+    public Property()
     {
-        public Property()
-        {
-        }
-
-        public Property(string _text)
-        {
-            value = _text;
-        }
-
-        public Property(string _text, Condition _condition) : this(_text)
-        {
-            Condition = _condition;
-        }
-
-        /// <summary>
-        /// Evaluates the property
-        /// </summary>
-        /// <returns>
-        /// The property's value, or an empty string if the associated <see cref="Condition"/> evaluates to false.
-        /// </returns>
-        protected override string DoEvaluate()
-        {
-            return GUIPropertyManager.GetProperty(value);
-        }
     }
+
+    public Property(string _text)
+    {
+      value = _text;
+    }
+
+    public Property(string _text, Condition _condition) : this(_text)
+    {
+      Condition = _condition;
+    }
+
+    /// <summary>
+    /// Evaluates the property
+    /// </summary>
+    /// <returns>
+    /// The property's value, or an empty string if the associated <see cref="Condition"/> evaluates to false.
+    /// </returns>
+    protected override string DoEvaluate()
+    {
+      return GUIPropertyManager.GetProperty(value);
+    }
+  }
 }

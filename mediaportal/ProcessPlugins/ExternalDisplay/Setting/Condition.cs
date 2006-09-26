@@ -29,42 +29,42 @@ using System.Xml.Serialization;
 
 namespace ProcessPlugins.ExternalDisplay.Setting
 {
+  /// <summary>
+  /// The abstract base class for all conditions
+  /// </summary>
+  /// <author>JoeDalton</author>
+  [XmlInclude(typeof(NotNullCondition))]
+  [XmlInclude(typeof(IsNullCondition))]
+  [XmlInclude(typeof(AndCondition))]
+  [XmlInclude(typeof(OrCondition))]
+  [Serializable]
+  public abstract class Condition
+  {
     /// <summary>
-    /// The abstract base class for all conditions
+    /// The property to evaluate
     /// </summary>
-    /// <author>JoeDalton</author>
-    [XmlInclude(typeof(NotNullCondition))]
-    [XmlInclude(typeof(IsNullCondition))]
-    [XmlInclude(typeof(AndCondition))]
-    [XmlInclude(typeof(OrCondition))]
-    [Serializable]
-    public abstract class Condition
+    [XmlIgnore]
+    protected Property Property;
+
+    [XmlAttribute]
+    [DefaultValue("")]
+    public string Value
     {
-        /// <summary>
-        /// The property to evaluate
-        /// </summary>
-        [XmlIgnore]
-        protected Property Property;
-
-        [XmlAttribute]
-        [DefaultValue("")]
-        public string Value
+      get
+      {
+        if (Property == null)
         {
-            get
-            {
-                if (Property == null)
-                {
-                    return "";
-                }
-                return Property.value;
-            }
-            set { Property = new Property(value); }
+          return "";
         }
-
-        /// <summary>
-        /// Evaluates the condition
-        /// </summary>
-        /// <returns></returns>
-        public abstract bool Evaluate();
+        return Property.value;
+      }
+      set { Property = new Property(value); }
     }
+
+    /// <summary>
+    /// Evaluates the condition
+    /// </summary>
+    /// <returns></returns>
+    public abstract bool Evaluate();
+  }
 }

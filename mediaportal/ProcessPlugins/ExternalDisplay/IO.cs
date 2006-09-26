@@ -58,9 +58,12 @@ namespace ProcessPlugins.ExternalDisplay
       }
 
       /* For sending to a port */
+
       [DllImport("inpout32.dll", EntryPoint="Out32")]
       private static extern void Output(uint _addres, int _value);
+
       /* For receiving from a port */
+
       [DllImport("inpout32.dll", EntryPoint="Inp32")]
       private static extern int Input(uint _addres);
 
@@ -73,9 +76,8 @@ namespace ProcessPlugins.ExternalDisplay
       public int this[uint _addres]
       {
         get { return Input(_addres); }
-        set { Output(_addres,value); }
+        set { Output(_addres, value); }
       }
-    
     }
   }
 }

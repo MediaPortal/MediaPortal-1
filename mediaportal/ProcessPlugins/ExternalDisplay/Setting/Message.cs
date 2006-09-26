@@ -30,67 +30,67 @@ using System.Xml.Serialization;
 
 namespace ProcessPlugins.ExternalDisplay.Setting
 {
+  /// <summary>
+  /// This class represents a display message
+  /// </summary>
+  /// <remarks>
+  /// A message has a number of triggers like the MediaPortal status, a list of window IDs and a 
+  /// condition.  Only if all triggers match the message will be sent to the 
+  /// <see cref="DisplayHandler"/> who is responsible for formatting it and sending it to the display.
+  /// </remarks>
+  /// <author>JoeDalton</author>
+  [Serializable]
+  public class Message
+  {
     /// <summary>
-    /// This class represents a display message
+    /// MP status that will trigger this message
     /// </summary>
-    /// <remarks>
-    /// A message has a number of triggers like the MediaPortal status, a list of window IDs and a 
-    /// condition.  Only if all triggers match the message will be sent to the 
-    /// <see cref="DisplayHandler"/> who is responsible for formatting it and sending it to the display.
-    /// </remarks>
-    /// <author>JoeDalton</author>
-    [Serializable]
-    public class Message
+    [XmlAttribute]
+    [DefaultValue(Status.Any)]
+    public Status Status = Status.Any;
+
+    /// <summary>
+    /// List of active windows that will trigger this message
+    /// </summary>
+    [XmlElement("Window", typeof(int))]
+    public List<int> Windows = new List<int>();
+
+    /// <summary>
+    /// List of lines that this message contains
+    /// </summary>
+    [XmlElement("Line", typeof(Line))]
+    public List<Line> Lines = new List<Line>();
+
+    /// <summary>
+    /// Condition for this message
+    /// </summary>
+    [XmlElement("IsNull", typeof(IsNullCondition))]
+    [XmlElement("NotNull", typeof(NotNullCondition))]
+    [XmlElement("And", typeof(AndCondition))]
+    [XmlElement("Or", typeof(OrCondition))]
+    [DefaultValue(null)]
+    public Condition Condition = null;
+
+    [XmlElement("Image", typeof(Image))]
+    public List<Image> Images = new List<Image>();
+
+    /// <summary>
+    /// Process the message
+    /// </summary>
+    /// <param name="_keeper">The <see cref="DisplayHandler"/> that will put this message on the display</param>
+    /// <returns>A boolean, indicating whether this message is processed</returns>
+    public bool Process(DisplayHandler _keeper)
     {
-        /// <summary>
-        /// MP status that will trigger this message
-        /// </summary>
-        [XmlAttribute]
-        [DefaultValue(Status.Any)]
-        public Status Status = Status.Any;
-
-        /// <summary>
-        /// List of active windows that will trigger this message
-        /// </summary>
-        [XmlElement("Window", typeof(int))]
-        public List<int> Windows = new List<int>();
-
-        /// <summary>
-        /// List of lines that this message contains
-        /// </summary>
-        [XmlElement("Line", typeof(Line))]
-        public List<Line> Lines = new List<Line>();
-
-        /// <summary>
-        /// Condition for this message
-        /// </summary>
-        [XmlElement("IsNull", typeof(IsNullCondition))]
-        [XmlElement("NotNull", typeof(NotNullCondition))]
-        [XmlElement("And", typeof(AndCondition))]
-        [XmlElement("Or", typeof(OrCondition))]
-        [DefaultValue(null)]
-        public Condition Condition = null;
-
-        [XmlElement("Image", typeof(Image))]
-        public List<Image> Images = new List<Image>();
-
-        /// <summary>
-        /// Process the message
-        /// </summary>
-        /// <param name="_keeper">The <see cref="DisplayHandler"/> that will put this message on the display</param>
-        /// <returns>A boolean, indicating whether this message is processed</returns>
-        public bool Process(DisplayHandler _keeper)
+      if (Condition == null || Condition.Evaluate())
+      {
+        for (int i = 0; i < Lines.Count; i++)
         {
-            if (Condition == null || Condition.Evaluate())
-            {
-                for (int i = 0; i < Lines.Count; i++)
-                {
-                    _keeper.SetLine(i, Lines[i]);
-                }
-                _keeper.Images = Images;
-                return true;
-            }
-            return false;
+          _keeper.SetLine(i, Lines[i]);
         }
+        _keeper.Images = Images;
+        return true;
+      }
+      return false;
     }
+  }
 }

@@ -23,15 +23,14 @@
 
 #endregion
 
-
 namespace ProcessPlugins.ExternalDisplay
 {
-    /// <summary>
-    /// The common interface for all displays that this plug-in supports
-    /// </summary>
-    /// <author>James</author>
-    /// <author>JoeDalton</author>
-    public abstract class BaseDisplay
-    {
-    }
+  /// <summary>
+  /// The common interface for all displays that this plug-in supports
+  /// </summary>
+  /// <author>James</author>
+  /// <author>JoeDalton</author>
+  public abstract class BaseDisplay
+  {
+  }
 }

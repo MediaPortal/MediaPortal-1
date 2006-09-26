@@ -29,34 +29,34 @@ using System.Xml.Serialization;
 
 namespace ProcessPlugins.ExternalDisplay.Setting
 {
-    /// <summary>
-    /// The abstract base class for all values.
-    /// </summary>
-    /// <author>JoeDalton</author>
-    [XmlInclude(typeof(Property))]
-    [XmlInclude(typeof(Text))]
-    [XmlInclude(typeof(Parse))]
-    [XmlInclude(typeof(PerformanceCounter))]
-    [XmlInclude(typeof(TextProgressBar))]
-    [Serializable]
-    public abstract class Value
+  /// <summary>
+  /// The abstract base class for all values.
+  /// </summary>
+  /// <author>JoeDalton</author>
+  [XmlInclude(typeof(Property))]
+  [XmlInclude(typeof(Text))]
+  [XmlInclude(typeof(Parse))]
+  [XmlInclude(typeof(PerformanceCounter))]
+  [XmlInclude(typeof(TextProgressBar))]
+  [Serializable]
+  public abstract class Value
+  {
+    [XmlElement("IsNull", typeof(IsNullCondition))]
+    [XmlElement("NotNull", typeof(NotNullCondition))]
+    [XmlElement("And", typeof(AndCondition))]
+    [XmlElement("Or", typeof(OrCondition))]
+    [DefaultValue(null)]
+    public Condition Condition = null;
+
+    public string Evaluate()
     {
-        [XmlElement("IsNull", typeof(IsNullCondition))]
-        [XmlElement("NotNull", typeof(NotNullCondition))]
-        [XmlElement("And", typeof(AndCondition))]
-        [XmlElement("Or", typeof(OrCondition))]
-        [DefaultValue(null)]
-        public Condition Condition = null;
-
-        public string Evaluate()
-        {
-            if (Condition == null || Condition.Evaluate())
-            {
-                return DoEvaluate();
-            }
-            return "";
-        }
-
-        protected abstract string DoEvaluate();
+      if (Condition == null || Condition.Evaluate())
+      {
+        return DoEvaluate();
+      }
+      return "";
     }
+
+    protected abstract string DoEvaluate();
+  }
 }

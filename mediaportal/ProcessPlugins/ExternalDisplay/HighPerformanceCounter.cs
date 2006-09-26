@@ -30,8 +30,8 @@ namespace ProcessPlugins.ExternalDisplay
   /// <summary>
   /// Wrapper class for the Windows HighPerformanceCounter.
   /// </summary>
-    /// <author>JoeDalton</author>
-    public class HighPerformanceCounter
+  /// <author>JoeDalton</author>
+  public class HighPerformanceCounter
   {
     private static long frequency;
     private long start;
@@ -102,9 +102,9 @@ namespace ProcessPlugins.ExternalDisplay
         long period = PeriodCount;
         if (period < 0x8637bd05af6)
         {
-          return ((period * 1000000) / frequency);
+          return ((period*1000000)/frequency);
         }
-        return ((period / frequency) * 1000000);
+        return ((period/frequency)*1000000);
       }
     }
 
@@ -122,9 +122,9 @@ namespace ProcessPlugins.ExternalDisplay
         long period = PeriodCount;
         if (period < 0x20c49ba5e353f7)
         {
-          return ((period * 1000) / frequency);
+          return ((period*1000)/frequency);
         }
-        return ((period / frequency) * 1000);
+        return ((period/frequency)*1000);
       }
     }
 
@@ -137,8 +137,7 @@ namespace ProcessPlugins.ExternalDisplay
     /// </value>
     public long Seconds
     {
-      get { return (PeriodCount / frequency); }
+      get { return (PeriodCount/frequency); }
     }
-
   }
 }

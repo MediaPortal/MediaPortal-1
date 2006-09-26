@@ -25,14 +25,14 @@
 
 namespace ExternalDisplay.Setting
 {
-    /// <summary>
-    /// Specifies the possible text alignments
-    /// </summary>
-    /// <author>JoeDalton</author>
-    public enum Alignment
-    {
-        Left = 0,
-        Centered,
-        Right
-    }
+  /// <summary>
+  /// Specifies the possible text alignments
+  /// </summary>
+  /// <author>JoeDalton</author>
+  public enum Alignment
+  {
+    Left = 0,
+    Centered,
+    Right
+  }
 }
