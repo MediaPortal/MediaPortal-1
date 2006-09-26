@@ -188,7 +188,7 @@ private Config()
     /// <returns>A string containing the complete path.</returns>
     public static string GetFile(Dir directory, string fileName)
     {
-      return Path.Combine(Get(directory), Path.GetFileName(fileName));
+      return Path.Combine(Get(directory), fileName);
     }
 
     /// <summary>
