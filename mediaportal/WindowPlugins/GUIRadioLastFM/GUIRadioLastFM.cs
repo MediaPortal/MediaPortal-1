@@ -44,12 +44,14 @@ namespace MediaPortal.GUI.RADIOLASTFM
     {
       BTN_START_STREAM = 10,
       BTN_CHOOSE_TAG = 20,
+      BTN_CHOOSE_FRIEND = 30,
       LIST_TRACK_TAGS = 55,
       IMG_ARTIST_ART = 112,
     }
 
     [SkinControlAttribute((int)SkinControlIDs.BTN_START_STREAM)]    protected GUIButtonControl btnStartStream = null;
     [SkinControlAttribute((int)SkinControlIDs.BTN_CHOOSE_TAG)]      protected GUIButtonControl btnChooseTag = null;
+    [SkinControlAttribute((int)SkinControlIDs.BTN_CHOOSE_FRIEND)]   protected GUIButtonControl btnChooseFriend = null;
     [SkinControlAttribute((int)SkinControlIDs.LIST_TRACK_TAGS)]     protected GUIListControl facadeTrackTags = null;
     [SkinControlAttribute((int)SkinControlIDs.IMG_ARTIST_ART)]      protected GUIImage imgArtistArt = null;
 
@@ -57,10 +59,12 @@ namespace MediaPortal.GUI.RADIOLASTFM
     private StreamControl LastFMStation = null;
     private NotifyIcon _trayBallonSongChange = null;
     private List<string> _usersOwnTags = null;
+    private List<string> _usersFriends = null;
     private ScrobblerUtilsRequest _lastTrackTagRequest;
     private ScrobblerUtilsRequest _lastArtistCoverRequest;
     private ScrobblerUtilsRequest _lastSimilarArtistRequest;
-    private ScrobblerUtilsRequest _lastGeneralFeedRequest;
+    private ScrobblerUtilsRequest _lastUsersTagsRequest;
+    private ScrobblerUtilsRequest _lastUsersFriendsRequest;
 
     // constructor
     public GUIRadioLastFM()
@@ -76,6 +80,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       LastFMStation = new StreamControl();
       InfoScrobbler = AudioscrobblerUtils.Instance;
       _usersOwnTags = new List<string>();
+      _usersFriends = new List<string>();
 
       InitTrayIcon();
 
@@ -97,7 +102,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
       if (!LastFMStation.IsInit)
         LastFMStation.LoadConfig();
 
-      UpdateGeneralFeed(lastFMFeed.toptags, LastFMStation.AccountUser);
+      UpdateUsersTags(LastFMStation.AccountUser);
+      UpdateUsersFriends(LastFMStation.AccountUser);
     }
 
     void SaveSettings()
@@ -127,10 +133,10 @@ namespace MediaPortal.GUI.RADIOLASTFM
         _trayBallonSongChange.Visible = true;
 
       if (_usersOwnTags.Count < 1)
-      {
         btnChooseTag.Disabled = true;
-        btnChooseTag.Label = "Rock";
-      }
+
+      if (_usersFriends.Count < 1)
+        btnChooseFriend.Disabled = true;
 
       String ThumbFileName = String.Empty;
 
@@ -165,8 +171,10 @@ namespace MediaPortal.GUI.RADIOLASTFM
         InfoScrobbler.RemoveRequest(_lastArtistCoverRequest);
       if (_lastSimilarArtistRequest != null)
         InfoScrobbler.RemoveRequest(_lastSimilarArtistRequest);
-      if (_lastGeneralFeedRequest != null)
-        InfoScrobbler.RemoveRequest(_lastGeneralFeedRequest);
+      if (_lastUsersTagsRequest != null)
+        InfoScrobbler.RemoveRequest(_lastUsersTagsRequest);
+      if (_lastUsersFriendsRequest != null)
+        InfoScrobbler.RemoveRequest(_lastUsersFriendsRequest);
 
       base.DeInit();
     }
@@ -176,29 +184,39 @@ namespace MediaPortal.GUI.RADIOLASTFM
       if (control == btnStartStream)
       {
         bool isSubscriber = LastFMStation.IsSubscriber;
-        String desiredTag = "Rock";
+        String desiredTag = String.Empty;
+        String desiredFriend = String.Empty;
         StreamType TuneIntoSelected = LastFMStation.CurrentTuneType;
 
         GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-
         if (dlg == null)
           return;
-
         dlg.Reset();
         dlg.SetHeading(34001);                // Start Stream
+// 1
         dlg.Add("Recommendation radio");
-        //dlg.Add("Neighbour radio");
-        // temporary
-        desiredTag = "Tune into chosen Tag: " + btnChooseTag.Label;
-        dlg.Add(desiredTag);
+// 2
         dlg.Add("MediaPortal User's group radio");
+// 3
+        if (btnChooseTag.Label != String.Empty)
+          desiredTag = "Tune into chosen Tag: " + btnChooseTag.Label;
+        else
+          desiredTag = "No tag has been chosen yet";
+        dlg.Add(desiredTag);        
 
+// 4
+        if (btnChooseFriend.Label != String.Empty)
+          desiredFriend = "Friend's radio of: " + btnChooseFriend.Label;
+        else
+          desiredFriend = "No Friend has been chosen yet";
+        dlg.Add(desiredFriend);
+
+// 5
         if (isSubscriber)
-          dlg.Add("Personal radio");
+          dlg.Add("My personal radio");
         //....
 
         dlg.DoModal(GetID);
-
         if (dlg.SelectedId == -1)
           return;
 
@@ -209,21 +227,23 @@ namespace MediaPortal.GUI.RADIOLASTFM
             TuneIntoSelected = StreamType.Recommended;
             LastFMStation.StreamsUser = LastFMStation.AccountUser;
             break;
-          //case "Neighbour radio":
-          //  TuneIntoSelected = StreamType.Personal;
-          //  LastFMStation.StreamsUser. 
           case 2:
-            TuneIntoSelected = StreamType.Tags;
-            //LastFMStation.StreamsUser = LastFMStation.AccountUser;
-            break;
-          case 3:
             TuneIntoSelected = StreamType.Group;
             LastFMStation.StreamsUser = "MediaPortal Users";
             break;
+          case 3:
+            TuneIntoSelected = StreamType.Tags;            
+            break;
           case 4:
+            TuneIntoSelected = StreamType.Personal;
+            LastFMStation.StreamsUser = btnChooseFriend.Label;
+            break;
+          case 5:
             TuneIntoSelected = StreamType.Personal;
             LastFMStation.StreamsUser = LastFMStation.AccountUser;
             break;
+          default:
+            return;
         }
         if (LastFMStation.CurrentStreamState == StreamPlaybackState.nocontent)
           LastFMStation.CurrentStreamState = StreamPlaybackState.initialized;
@@ -241,7 +261,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
             break;
 
           case StreamType.Personal:
-            LastFMStation.TuneIntoPersonalRadio(LastFMStation.AccountUser);
+            LastFMStation.TuneIntoPersonalRadio(LastFMStation.StreamsUser);
             break;
 
           case StreamType.Tags:
@@ -251,7 +271,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
             LastFMStation.TuneIntoTags(MyTags);
             break;
         }
-
 
         if (LastFMStation.CurrentStreamState == StreamPlaybackState.initialized)
         {
@@ -272,11 +291,25 @@ namespace MediaPortal.GUI.RADIOLASTFM
           dlg.Add(ownTag);
 
         dlg.DoModal(GetID);
-
         if (dlg.SelectedId == -1)
           return;
-
         btnChooseTag.Label = _usersOwnTags[dlg.SelectedId -1];
+      }
+
+      if (control == btnChooseFriend)
+      {
+        GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+        if (dlg == null)
+          return;
+        dlg.Reset();
+        dlg.SetHeading(33016); // tracks your friends like
+        foreach (string Friend in _usersFriends)
+          dlg.Add(Friend);
+
+        dlg.DoModal(GetID);
+        if (dlg.SelectedId == -1)
+          return;
+        btnChooseFriend.Label = _usersFriends[dlg.SelectedId - 1];
       }
 
       base.OnClicked(controlId, control, actionType);
@@ -350,13 +383,21 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
 
     #region Internet Lookups
-    private void UpdateGeneralFeed(lastFMFeed _desiredService, string _serviceUser)
+    private void UpdateUsersFriends(string _serviceUser)
     {
-      GeneralFeedRequest request = new GeneralFeedRequest(
-              _desiredService,
+      UsersFriendsRequest request = new UsersFriendsRequest(
               _serviceUser,
-              new GeneralFeedRequest.GeneralFeedRequestHandler(OnUpdateGeneralFeedCompleted));
-      _lastGeneralFeedRequest = request;
+              new UsersFriendsRequest.UsersFriendsRequestHandler(OnUpdateUsersFriendsCompleted));
+      _lastUsersFriendsRequest = request;
+      InfoScrobbler.AddRequest(request);
+    }
+
+    private void UpdateUsersTags(string _serviceUser)
+    {
+      UsersTagsRequest request = new UsersTagsRequest(
+              _serviceUser,
+              new UsersTagsRequest.UsersTagsRequestHandler(OnUpdateUsersTagsCompleted));
+      _lastUsersTagsRequest = request;
       InfoScrobbler.AddRequest(request);
     }
 
@@ -459,31 +500,51 @@ namespace MediaPortal.GUI.RADIOLASTFM
       }
     }
 
-    public void OnUpdateGeneralFeedCompleted(GeneralFeedRequest request, List<Song> FeedItems)
+    public void OnUpdateUsersTagsCompleted(UsersTagsRequest request, List<Song> FeedItems)
     {
-      if (request.Equals(_lastGeneralFeedRequest))
+      if (request.Equals(_lastUsersTagsRequest))
       {
         if (_usersOwnTags != null)
           _usersOwnTags.Clear();
-
         for (int i = 0; i < FeedItems.Count; i++)
         {
           _usersOwnTags.Add(FeedItems[i].Artist);
-
           // display 15 items only
           if (i >= 14)
             break;
         }
-
         if (_usersOwnTags.Count > 0)
+        {
           btnChooseTag.Disabled = false;
+          btnChooseTag.Label = _usersOwnTags[0];
+        }
       }
       else
-      {
-        Log.Warn("NowPlaying.OnUpdateTrackTagsInfoCompleted: unexpected response for request: {0}", request.Type);
-      }
+        Log.Warn("NowPlaying.OnUpdateUsersTagsCompleted: unexpected response for request: {0}", request.Type);
     }
 
+    public void OnUpdateUsersFriendsCompleted(UsersFriendsRequest request, List<Song> FeedItems)
+    {
+      if (request.Equals(_lastUsersFriendsRequest))
+      {
+        if (_usersFriends != null)
+          _usersFriends.Clear();
+        for (int i = 0; i < FeedItems.Count; i++)
+        {
+          _usersFriends.Add(FeedItems[i].Artist);
+          // display 15 items only
+          if (i >= 14)
+            break;
+        }
+        if (_usersFriends.Count > 0)
+        {
+          btnChooseFriend.Disabled = false;
+          btnChooseFriend.Label = _usersFriends[0];
+        }
+      }
+      else
+        Log.Warn("NowPlaying.OnUpdateUsersFriendsCompleted: unexpected response for request: {0}", request.Type);
+    }
 
     private void OnPlaybackStopped()
     {
@@ -734,7 +795,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     public void ShowPlugin()
     {
-      MessageBox.Show("Nothing to setup now. \nPlaying your recommendation radio.");
+      MessageBox.Show("Nothing to setup now. \nThis plugin depends on the audioscrobbler process plugin.");
     }
     #endregion
   }

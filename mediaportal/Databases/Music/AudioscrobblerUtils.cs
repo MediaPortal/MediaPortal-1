@@ -216,6 +216,56 @@ namespace MediaPortal.Music.Database
     }
   }
 
+  public class UsersTagsRequest : ScrobblerUtilsRequest
+  {
+    public string UserForFeed;
+
+    public delegate void UsersTagsRequestHandler(UsersTagsRequest request, List<Song> songs);
+    public event UsersTagsRequestHandler UsersTagsRequestCompleted;
+
+    public UsersTagsRequest(string userForFeed)
+      : base(RequestType.GetAudioScrobblerFeed)
+    {
+      UserForFeed = userForFeed;
+    }
+    public UsersTagsRequest(string userForFeed, UsersTagsRequestHandler handler)
+      : this(userForFeed)
+    {
+      UsersTagsRequestCompleted += handler;
+    }
+    public override void PerformRequest()
+    {
+      List<Song> songs = AudioscrobblerUtils.Instance.getAudioScrobblerFeed(lastFMFeed.toptags, UserForFeed);
+      if (UsersTagsRequestCompleted != null)
+        UsersTagsRequestCompleted(this, songs);
+    }
+  }
+
+  public class UsersFriendsRequest : ScrobblerUtilsRequest
+  {
+    public string UserForFeed;
+
+    public delegate void UsersFriendsRequestHandler(UsersFriendsRequest request, List<Song> songs);
+    public event UsersFriendsRequestHandler UsersFriendsRequestCompleted;
+
+    public UsersFriendsRequest(string userForFeed)
+      : base(RequestType.GetAudioScrobblerFeed)
+    {
+      UserForFeed = userForFeed;
+    }
+    public UsersFriendsRequest(string userForFeed, UsersFriendsRequestHandler handler)
+      : this(userForFeed)
+    {
+      UsersFriendsRequestCompleted += handler;
+    }
+    public override void PerformRequest()
+    {
+      List<Song> songs = AudioscrobblerUtils.Instance.getAudioScrobblerFeed(lastFMFeed.friends, UserForFeed);
+      if (UsersFriendsRequestCompleted != null)
+        UsersFriendsRequestCompleted(this, songs);
+    }
+  }
+
   public class GeneralFeedRequest : ScrobblerUtilsRequest
   {
     public lastFMFeed FeedToSearch;

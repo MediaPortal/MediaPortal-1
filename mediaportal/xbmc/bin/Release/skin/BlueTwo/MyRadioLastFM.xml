@@ -91,14 +91,26 @@
 		<type>button</type>
 		<id>20</id>
         	<posX>60</posX>
-	        <posY>144</posY>
+	        <posY>161</posY>
 		<label>Tags</label>
 		<onleft>20</onleft>
 		<onright>50</onright>
 		<onup>10</onup>
-		<ondown>20</ondown>
+		<ondown>30</ondown>
 	</control>			
 
+	<control>
+		<description>chose friend</description>
+		<type>button</type>
+		<id>30</id>
+        	<posX>60</posX>
+	        <posY>195</posY>
+		<label>Friends</label>
+		<onleft>30</onleft>
+		<onright>50</onright>
+		<onup>20</onup>
+		<ondown>30</ondown>
+	</control>	
 
 			
 	<control>

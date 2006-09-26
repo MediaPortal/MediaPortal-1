@@ -155,14 +155,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
           _currentRadioURL = "http://streamer1.last.fm/last.mp3?Session=" + _currentSession;
           _currentState = StreamPlaybackState.initialized;
 
-          //List<String> MyTags = new List<string>();
-          //MyTags.Add("cover");
-          //MyTags.Add("melodic death metal");
-          //TuneIntoTags(MyTags);
-          //TuneIntoPersonalRadio();
-          //TuneIntoPersonalRadio(_currentStreamsUser);  <-- subscriber only
-          //TuneIntoGroupRadio(_currentStreamsUser);
-          //TuneIntoRecommendedRadio(_currentStreamsUser); 
           _isInit = true;
         }
       }
