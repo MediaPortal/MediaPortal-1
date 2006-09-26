@@ -290,6 +290,7 @@ namespace MediaPortal.GUI.Library
     }
     static public int LoadFromMemory(System.Drawing.Image memoryImage, string name, long lColorKey, int iMaxWidth, int iMaxHeight)
     {
+      Log.Write("load from memory:{0}", name);
       string cacheName = name;
       for (int i = 0; i < _cache.Count; ++i)
       {
@@ -399,7 +400,7 @@ namespace MediaPortal.GUI.Library
 #endif
 
         //Format fmt=Format.A8R8G8B8;
-        if (IsTemporary(fileName))
+        if (true==false && IsTemporary(fileName))
         {
           //fmt=Format.Dxt3;
           iMaxWidth = MAX_THUMB_WIDTH;
@@ -448,14 +449,15 @@ namespace MediaPortal.GUI.Library
         else
         {
           //fmt=GetCompression(fileName);
-          //fmt=Direct3D.Format.Dxt3;
+          Direct3D.Format fmt = Direct3D.Format.A8R8G8B8;
+          
           ImageInformation info2 = new ImageInformation();
           texture = TextureLoader.FromFile(GUIGraphicsContext.DX9Device,
                                           fileName,
                                           0, 0,//width/height
                                           1,//mipslevels
                                           0,//Usage.Dynamic,
-                                          Direct3D.Format.A8R8G8B8,
+                                          fmt,
                                           Pool.Managed,
                                           Filter.None,
                                           Filter.None,
@@ -623,6 +625,7 @@ namespace MediaPortal.GUI.Library
               _cache.Remove(cached);
               cached.Dispose();
               continueRemoving = true;
+              //Log.Write("free:{0}", fileName);
               break;
             }
           }

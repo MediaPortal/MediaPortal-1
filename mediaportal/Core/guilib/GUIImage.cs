@@ -478,11 +478,12 @@ namespace MediaPortal.GUI.Library
 					}
 					else
 					{
+            //Log.Write("load:{0}", fileName);
 						frameCount = GUITextureManager.Load(fileName, m_dwColorKey, m_iRenderWidth, _textureHeight);
 						if (0 == frameCount)
 						{
 							continue;// unable to load texture
-						}
+            }
 					}
 					//get each frame of the texture
 					int iStartCopy = 0;
