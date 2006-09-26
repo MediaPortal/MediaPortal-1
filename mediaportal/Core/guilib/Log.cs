@@ -23,106 +23,106 @@ using MediaPortal.Services;
 
 namespace MediaPortal.GUI.Library
 {
-    public class Log
+  public class Log
+  {
+    public static void SetConfigurationMode()
     {
-        public static void SetConfigurationMode()
-        {
-            GlobalServiceProvider.Get<ILog>().SetConfigurationMode();
-        }
-
-        public static void BackupLogFiles()
-        {
-            GlobalServiceProvider.Get<ILog>().BackupLogFiles();
-        }
-
-        public static void BackupLogFile(LogType logType)
-        {
-            GlobalServiceProvider.Get<ILog>().BackupLogFile(logType);
-        }
-
-        public static void Info(string format, params object[] arg)
-        {
-            GlobalServiceProvider.Get<ILog>().Info(format, arg);
-        }
-
-        public static void Info(LogType type, string format, params object[] arg)
-        {
-            GlobalServiceProvider.Get<ILog>().Info(type, format, arg);
-        }
-
-        public static void Error(string format, params object[] arg)
-        {
-            GlobalServiceProvider.Get<ILog>().Error(format, arg);
-        }
-
-        public static void Error(Exception ex)
-        {
-            GlobalServiceProvider.Get<ILog>().Error(ex);
-        }
-
-        public static void Error(LogType type, string format, params object[] arg)
-        {
-            GlobalServiceProvider.Get<ILog>().Error(type, format, arg);
-        }
-
-        public static void Warn(string format, params object[] arg)
-        {
-            GlobalServiceProvider.Get<ILog>().Warn(format, arg);
-        }
-
-        public static void Warn(LogType type, string format, params object[] arg)
-        {
-            GlobalServiceProvider.Get<ILog>().Warn(type, format, arg);
-        }
-
-        public static void Debug(string format, params object[] arg)
-        {
-            GlobalServiceProvider.Get<ILog>().Debug(format, arg);
-        }
-
-        public static void Debug(LogType type, string format, params object[] arg)
-        {
-            GlobalServiceProvider.Get<ILog>().Debug(type, format, arg);
-        }
-
-        public static void WriteFile(LogType type, bool isError, string format, params object[] arg)
-        {
-            GlobalServiceProvider.Get<ILog>().WriteFile(type, isError, format, arg);
-        }
-
-        public static void WriteFile(LogType type, string format, params object[] arg)
-        {
-            GlobalServiceProvider.Get<ILog>().WriteFile(type, format, arg);
-        }
-
-        public static void WriteFileThreadId(LogType type, bool isError, string format, params object[] arg)
-        {
-            GlobalServiceProvider.Get<ILog>().WriteFileThreadId(type, isError, format, arg);
-        }
-
-        public static void InfoThread(string format, params object[] arg)
-        {
-            GlobalServiceProvider.Get<ILog>().InfoThread(format, arg);
-        }
-
-        public static void WarnThread(string format, params object[] arg)
-        {
-            GlobalServiceProvider.Get<ILog>().WarnThread(format, arg);
-        }
-
-        public static void ErrorThread(string format, params object[] arg)
-        {
-            GlobalServiceProvider.Get<ILog>().ErrorThread(format, arg);
-        }
-
-        public static void Write(string format, params object[] arg)
-        {
-            GlobalServiceProvider.Get<ILog>().Write(format, arg);
-        }
-
-        public static void Write(Exception ex)
-        {
-            GlobalServiceProvider.Get<ILog>().Write(ex);
-        }
+      GlobalServiceProvider.Get<ILog>().SetConfigurationMode();
     }
+
+    public static void BackupLogFiles()
+    {
+      GlobalServiceProvider.Get<ILog>().BackupLogFiles();
+    }
+
+    public static void BackupLogFile(LogType logType)
+    {
+      GlobalServiceProvider.Get<ILog>().BackupLogFile(logType);
+    }
+
+    public static void Info(string format, params object[] arg)
+    {
+      GlobalServiceProvider.Get<ILog>().Info(format, arg);
+    }
+
+    public static void Info(LogType type, string format, params object[] arg)
+    {
+      GlobalServiceProvider.Get<ILog>().Info(type, format, arg);
+    }
+
+    public static void Error(string format, params object[] arg)
+    {
+      GlobalServiceProvider.Get<ILog>().Error(format, arg);
+    }
+
+    public static void Error(Exception ex)
+    {
+      GlobalServiceProvider.Get<ILog>().Error(ex);
+    }
+
+    public static void Error(LogType type, string format, params object[] arg)
+    {
+      GlobalServiceProvider.Get<ILog>().Error(type, format, arg);
+    }
+
+    public static void Warn(string format, params object[] arg)
+    {
+      GlobalServiceProvider.Get<ILog>().Warn(format, arg);
+    }
+
+    public static void Warn(LogType type, string format, params object[] arg)
+    {
+      GlobalServiceProvider.Get<ILog>().Warn(type, format, arg);
+    }
+
+    public static void Debug(string format, params object[] arg)
+    {
+      GlobalServiceProvider.Get<ILog>().Debug(format, arg);
+    }
+
+    public static void Debug(LogType type, string format, params object[] arg)
+    {
+      GlobalServiceProvider.Get<ILog>().Debug(type, format, arg);
+    }
+
+    public static void WriteFile(LogType type, bool isError, string format, params object[] arg)
+    {
+      GlobalServiceProvider.Get<ILog>().WriteFile(type, isError, format, arg);
+    }
+
+    public static void WriteFile(LogType type, string format, params object[] arg)
+    {
+      GlobalServiceProvider.Get<ILog>().WriteFile(type, format, arg);
+    }
+
+    public static void WriteFileThreadId(LogType type, bool isError, string format, params object[] arg)
+    {
+      GlobalServiceProvider.Get<ILog>().WriteFileThreadId(type, isError, format, arg);
+    }
+
+    public static void InfoThread(string format, params object[] arg)
+    {
+      GlobalServiceProvider.Get<ILog>().InfoThread(format, arg);
+    }
+
+    public static void WarnThread(string format, params object[] arg)
+    {
+      GlobalServiceProvider.Get<ILog>().WarnThread(format, arg);
+    }
+
+    public static void ErrorThread(string format, params object[] arg)
+    {
+      GlobalServiceProvider.Get<ILog>().ErrorThread(format, arg);
+    }
+
+    public static void Write(string format, params object[] arg)
+    {
+      GlobalServiceProvider.Get<ILog>().Write(format, arg);
+    }
+
+    public static void Write(Exception ex)
+    {
+      GlobalServiceProvider.Get<ILog>().Write(ex);
+    }
+  }
 }
