@@ -147,16 +147,16 @@ private Config()
     private static void LoadDefaultDirs()
     {
       string baseDir = Get(Dir.Base);
-      Set(Dir.Cache, baseDir + @"cache\");
+      Set(Dir.Cache, Path.Combine(baseDir, @"cache\"));
       Set(Dir.Config, baseDir);
-      Set(Dir.CustomInputDevice, baseDir + @"InputDeviceMappings\custom\");
-      Set(Dir.Database, baseDir + @"database\");
-      Set(Dir.Language, baseDir + @"language\");
-      Set(Dir.Log, baseDir + @"log\");
-      Set(Dir.Plugins, baseDir + @"plugins\");
-      Set(Dir.Skin, baseDir + @"skin\");
-      Set(Dir.Thumbs, baseDir + @"thumbs\");
-      Set(Dir.Weather, baseDir + @"weather\");
+      Set(Dir.CustomInputDevice, Path.Combine(baseDir, @"InputDeviceMappings\custom\"));
+      Set(Dir.Database, Path.Combine(baseDir,  @"database\"));
+      Set(Dir.Language, Path.Combine(baseDir,  @"language\"));
+      Set(Dir.Log, Path.Combine(baseDir,  @"log\"));
+      Set(Dir.Plugins, Path.Combine(baseDir,  @"plugins\"));
+      Set(Dir.Skin, Path.Combine(baseDir,  @"skin\"));
+      Set(Dir.Thumbs, Path.Combine(baseDir,  @"thumbs\"));
+      Set(Dir.Weather, Path.Combine(baseDir,  @"weather\"));
     }
 
 
