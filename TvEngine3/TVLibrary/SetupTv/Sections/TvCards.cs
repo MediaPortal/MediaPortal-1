@@ -48,6 +48,11 @@ namespace SetupTv.Sections
       InitializeComponent();
     }
 
+    public override void OnSectionDeActivated()
+    {
+      ReOrder();
+      base.OnSectionDeActivated();
+    }
     public override void OnSectionActivated()
     {
       base.OnSectionActivated();
