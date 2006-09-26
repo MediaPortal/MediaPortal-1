@@ -18,13 +18,11 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  * todo:
- *     - zapping
  *     - settings
  *     - conflict management
  *     - radio?
  *     - disable cards
  *     - hybrid cards
- *     - epg grabbing priority
  * test:
  *     - master/slave
  *     - streaming

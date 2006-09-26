@@ -113,9 +113,11 @@ namespace TvService
     public override void OnEpgCancelled()
     {
       Log.Write("epg grabber:epg cancelled");
+
+      if (_state == EpgState.Idle) return;
       _state = EpgState.Idle;
       _currentChannel = null;
-
+      _tvController.StopGrabbingEpg(_currentCardId);
       _currentCardId = -1;
       return;
     }
@@ -151,6 +153,7 @@ namespace TvService
         if (IsCardIdle(_currentCardId) == false)
         {
           _state = EpgState.Idle;
+          _tvController.StopGrabbingEpg(_currentCardId);
           _currentCardId = -1;
           return 0;
         }
@@ -170,6 +173,7 @@ namespace TvService
             _currentChannel = null;
           }
           _state = EpgState.Idle;
+          _tvController.StopGrabbingEpg(_currentCardId);
           _currentCardId = -1;
           return 0;
         }
