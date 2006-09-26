@@ -397,7 +397,7 @@ namespace ProcessPlugins.ExternalDisplay
                     Log.Debug("ExternalDisplay(Background): Detected status is {0}", status.ToString());
                 }
                 //Update propertybrowser's Status and ActiveWindow fields
-                if (browser != null)
+                if (browser != null && !browser.IsDisposed)
                 {
                     if (Settings.Instance.ExtensiveLogging)
                     {
