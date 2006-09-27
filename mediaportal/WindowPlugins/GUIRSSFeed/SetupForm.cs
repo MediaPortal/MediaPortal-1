@@ -43,9 +43,8 @@ namespace GUIRSSFeed
     private MediaPortal.UserInterface.Controls.MPButton buttonDelete;
     private MediaPortal.UserInterface.Controls.MPButton button3;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkAutoRefresh;
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
+    private MediaPortal.UserInterface.Controls.MPLabel labelRefresh;
     private MediaPortal.UserInterface.Controls.MPTextBox textRefreshInterval;
-    private MediaPortal.UserInterface.Controls.MPLabel label2;
     private DetailsForm form;
 
     public SetupForm()
@@ -142,11 +141,13 @@ namespace GUIRSSFeed
       string strNameTag = String.Format("siteName{0}", ID);
       string strURLTag = String.Format("siteURL{0}", ID);
       string strDescriptionTag = String.Format("siteDescription{0}", ID);
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      string strEncodingTag = String.Format("siteEncoding{0}", ID);
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
       {
         xmlwriter.SetValue("rss", strNameTag, "");
         xmlwriter.SetValue("rss", strURLTag, "");
         xmlwriter.SetValue("rss", strDescriptionTag, "");
+        xmlwriter.SetValue("rss", strEncodingTag, "windows-1252");
       }
 
       listBox.Items.Clear();
@@ -181,10 +182,12 @@ namespace GUIRSSFeed
         {
           string strNameTag = String.Format("siteName{0}", i);
           string strURLTag = String.Format("siteURL{0}", i);
+          string strEncodingTag = String.Format("siteEncoding{0}",i);
 
           string strName = xmlreader.GetValueAsString("rss", strNameTag, "");
           string strURL = xmlreader.GetValueAsString("rss", strURLTag, "");
-
+          string strEncoding = xmlreader.GetValueAsString("rss", strEncodingTag, "windows-1252");
+          
           if (strName.Length > 0 && strURL.Length > 0)
           {
             this.listBox.Items.Add(strName);
@@ -298,27 +301,28 @@ namespace GUIRSSFeed
       this.label = new MediaPortal.UserInterface.Controls.MPLabel();
       this.button3 = new MediaPortal.UserInterface.Controls.MPButton();
       this.checkAutoRefresh = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelRefresh = new MediaPortal.UserInterface.Controls.MPLabel();
       this.textRefreshInterval = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.SuspendLayout();
       // 
       // buttonDelete
       // 
-      this.buttonDelete.Location = new System.Drawing.Point(264, 176);
+      this.buttonDelete.Location = new System.Drawing.Point(264, 172);
       this.buttonDelete.Name = "buttonDelete";
       this.buttonDelete.Size = new System.Drawing.Size(88, 23);
       this.buttonDelete.TabIndex = 3;
       this.buttonDelete.Text = "Delete Site";
+      this.buttonDelete.UseVisualStyleBackColor = true;
       this.buttonDelete.Click += new System.EventHandler(this.deleteSite);
       // 
       // buttonEdit
       // 
-      this.buttonEdit.Location = new System.Drawing.Point(144, 176);
+      this.buttonEdit.Location = new System.Drawing.Point(147, 172);
       this.buttonEdit.Name = "buttonEdit";
       this.buttonEdit.Size = new System.Drawing.Size(88, 23);
       this.buttonEdit.TabIndex = 2;
       this.buttonEdit.Text = "Edit Site";
+      this.buttonEdit.UseVisualStyleBackColor = true;
       this.buttonEdit.Click += new System.EventHandler(this.editSite);
       // 
       // listBox
@@ -330,20 +334,21 @@ namespace GUIRSSFeed
       // 
       // buttonAdd
       // 
-      this.buttonAdd.Location = new System.Drawing.Point(24, 176);
+      this.buttonAdd.Location = new System.Drawing.Point(24, 172);
       this.buttonAdd.Name = "buttonAdd";
       this.buttonAdd.Size = new System.Drawing.Size(88, 23);
       this.buttonAdd.TabIndex = 1;
       this.buttonAdd.Text = "Add Site";
+      this.buttonAdd.UseVisualStyleBackColor = true;
       this.buttonAdd.Click += new System.EventHandler(this.addSite);
       // 
       // label
       // 
       this.label.Location = new System.Drawing.Point(24, 8);
       this.label.Name = "label";
-      this.label.Size = new System.Drawing.Size(368, 23);
+      this.label.Size = new System.Drawing.Size(328, 23);
       this.label.TabIndex = 4;
-      this.label.Text = "Add sites to get news for, and edit options here";
+      this.label.Text = "Add news sites here and edit their options";
       // 
       // button3
       // 
@@ -352,46 +357,44 @@ namespace GUIRSSFeed
       this.button3.Size = new System.Drawing.Size(72, 23);
       this.button3.TabIndex = 12;
       this.button3.Text = "Done";
+      this.button3.UseVisualStyleBackColor = true;
       this.button3.Click += new System.EventHandler(this.button3_Click);
       // 
       // checkAutoRefresh
       // 
-      this.checkAutoRefresh.Location = new System.Drawing.Point(24, 224);
+      this.checkAutoRefresh.AutoSize = true;
+      this.checkAutoRefresh.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkAutoRefresh.Location = new System.Drawing.Point(24, 235);
       this.checkAutoRefresh.Name = "checkAutoRefresh";
-      this.checkAutoRefresh.Size = new System.Drawing.Size(112, 16);
+      this.checkAutoRefresh.Size = new System.Drawing.Size(81, 17);
       this.checkAutoRefresh.TabIndex = 4;
       this.checkAutoRefresh.Text = "Auto refresh";
+      this.checkAutoRefresh.UseVisualStyleBackColor = true;
       // 
-      // label1
+      // labelRefresh
       // 
-      this.label1.Location = new System.Drawing.Point(24, 248);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(88, 16);
-      this.label1.TabIndex = 13;
-      this.label1.Text = "Refresh interval:";
+      this.labelRefresh.AutoSize = true;
+      this.labelRefresh.Location = new System.Drawing.Point(24, 261);
+      this.labelRefresh.Name = "labelRefresh";
+      this.labelRefresh.Size = new System.Drawing.Size(109, 13);
+      this.labelRefresh.TabIndex = 13;
+      this.labelRefresh.Text = "Refresh interval (min):";
       // 
       // textRefreshInterval
       // 
-      this.textRefreshInterval.Location = new System.Drawing.Point(113, 245);
+      this.textRefreshInterval.BorderColor = System.Drawing.Color.Empty;
+      this.textRefreshInterval.Location = new System.Drawing.Point(137, 258);
       this.textRefreshInterval.Name = "textRefreshInterval";
       this.textRefreshInterval.Size = new System.Drawing.Size(31, 20);
       this.textRefreshInterval.TabIndex = 14;
       this.textRefreshInterval.Text = "15";
       // 
-      // label2
-      // 
-      this.label2.Location = new System.Drawing.Point(144, 248);
-      this.label2.Name = "label2";
-      this.label2.TabIndex = 15;
-      this.label2.Text = "minutes";
-      // 
       // SetupForm
       // 
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
       this.ClientSize = new System.Drawing.Size(376, 294);
-      this.Controls.Add(this.label2);
       this.Controls.Add(this.textRefreshInterval);
-      this.Controls.Add(this.label1);
+      this.Controls.Add(this.labelRefresh);
       this.Controls.Add(this.checkAutoRefresh);
       this.Controls.Add(this.button3);
       this.Controls.Add(this.listBox);
@@ -403,6 +406,7 @@ namespace GUIRSSFeed
       this.Text = "My News Settings";
       this.Load += new System.EventHandler(this.SetupForm_Load);
       this.ResumeLayout(false);
+      this.PerformLayout();
 
     }
     #endregion

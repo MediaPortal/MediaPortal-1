@@ -34,17 +34,19 @@ namespace GUIRSSFeed
   /// </summary>
   public class DetailsForm : System.Windows.Forms.Form
   {
-    private MediaPortal.UserInterface.Controls.MPLabel label3;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDescription;
+    private MediaPortal.UserInterface.Controls.MPLabel labelEncoding;
     public MediaPortal.UserInterface.Controls.MPTextBox textName;
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
-    private MediaPortal.UserInterface.Controls.MPLabel label;
+    private MediaPortal.UserInterface.Controls.MPLabel labelThumbnail;
+    private MediaPortal.UserInterface.Controls.MPLabel labelFeedName;
     private MediaPortal.UserInterface.Controls.MPButton buttonBrowse;
     private MediaPortal.UserInterface.Controls.MPTextBox textImage;
     private MediaPortal.UserInterface.Controls.MPLabel label2;
     private MediaPortal.UserInterface.Controls.MPButton buttonClear;
     private MediaPortal.UserInterface.Controls.MPTextBox textDescription;
     private MediaPortal.UserInterface.Controls.MPButton buttonSave;
-    private MediaPortal.UserInterface.Controls.MPTextBox textURL;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxURL;
+    private MediaPortal.UserInterface.Controls.MPTextBox textEncoding;
     private System.Windows.Forms.OpenFileDialog openFileDialog1;
     public int ID;
     //private SetupForm form;
@@ -119,8 +121,9 @@ namespace GUIRSSFeed
     void textClear(object obj, EventArgs ea)
     {
       textName.Text = "";
-      textURL.Text = "";
+      textBoxURL.Text = "";
       textDescription.Text = "";
+      textEncoding.Text = "windows-1252";
     }
 
     void LoadSettings()
@@ -129,7 +132,8 @@ namespace GUIRSSFeed
       {
 
         textName.Text = xmlreader.GetValueAsString("rss", "siteName" + ID, "");
-        textURL.Text = xmlreader.GetValueAsString("rss", "siteURL" + ID, "");
+        textBoxURL.Text = xmlreader.GetValueAsString("rss", "siteURL" + ID, "");
+        textEncoding.Text = xmlreader.GetValueAsString("rss", "siteEncoding" + ID, "windows-1252");
         textDescription.Text = xmlreader.GetValueAsString("rss", "siteDescription" + ID, "");
         textImage.Text = xmlreader.GetValueAsString("rss", "siteImage" + ID, "");
       }
@@ -140,7 +144,8 @@ namespace GUIRSSFeed
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("rss", "siteName" + this.ID, textName.Text);
-        xmlwriter.SetValue("rss", "siteURL" + this.ID, textURL.Text);
+        xmlwriter.SetValue("rss", "siteURL" + this.ID, textBoxURL.Text);
+        xmlwriter.SetValue("rss", "siteEncoding" + this.ID, textEncoding.Text);
         xmlwriter.SetValue("rss", "siteDescription" + this.ID, textDescription.Text);
         xmlwriter.SetValue("rss", "siteImage" + this.ID, textImage.Text);
       }
@@ -155,123 +160,158 @@ namespace GUIRSSFeed
     private void InitializeComponent()
     {
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-      this.textURL = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.textBoxURL = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.textEncoding = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.buttonSave = new MediaPortal.UserInterface.Controls.MPButton();
       this.textDescription = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.buttonClear = new MediaPortal.UserInterface.Controls.MPButton();
       this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.textImage = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.buttonBrowse = new MediaPortal.UserInterface.Controls.MPButton();
-      this.label = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelFeedName = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelThumbnail = new MediaPortal.UserInterface.Controls.MPLabel();
       this.textName = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelDescription = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelEncoding = new MediaPortal.UserInterface.Controls.MPLabel();
       this.SuspendLayout();
       // 
-      // textURL
+      // textBoxURL
       // 
-      this.textURL.Location = new System.Drawing.Point(112, 88);
-      this.textURL.Name = "textURL";
-      this.textURL.Size = new System.Drawing.Size(352, 20);
-      this.textURL.TabIndex = 4;
-      this.textURL.Text = "";
+      this.textBoxURL.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxURL.Location = new System.Drawing.Point(80, 58);
+      this.textBoxURL.Name = "textBoxURL";
+      this.textBoxURL.Size = new System.Drawing.Size(396, 20);
+      this.textBoxURL.TabIndex = 4;
+      // 
+      // textEncoding
+      // 
+      this.textEncoding.BorderColor = System.Drawing.Color.Empty;
+      this.textEncoding.Location = new System.Drawing.Point(80, 93);
+      this.textEncoding.Name = "textEncoding";
+      this.textEncoding.Size = new System.Drawing.Size(136, 20);
+      this.textEncoding.TabIndex = 6;
+      this.textEncoding.Text = "windows-1252";
       // 
       // buttonSave
       // 
-      this.buttonSave.Location = new System.Drawing.Point(112, 224);
+      this.buttonSave.Location = new System.Drawing.Point(320, 180);
       this.buttonSave.Name = "buttonSave";
-      this.buttonSave.TabIndex = 6;
+      this.buttonSave.Size = new System.Drawing.Size(75, 23);
+      this.buttonSave.TabIndex = 7;
       this.buttonSave.Text = "Save";
+      this.buttonSave.UseVisualStyleBackColor = true;
       this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
       // 
       // textDescription
       // 
-      this.textDescription.Location = new System.Drawing.Point(112, 136);
+      this.textDescription.BorderColor = System.Drawing.Color.Empty;
+      this.textDescription.Location = new System.Drawing.Point(340, 24);
       this.textDescription.Name = "textDescription";
-      this.textDescription.Size = new System.Drawing.Size(192, 20);
+      this.textDescription.Size = new System.Drawing.Size(136, 20);
       this.textDescription.TabIndex = 5;
-      this.textDescription.Text = "";
       // 
       // buttonClear
       // 
-      this.buttonClear.Location = new System.Drawing.Point(224, 224);
+      this.buttonClear.Location = new System.Drawing.Point(401, 180);
       this.buttonClear.Name = "buttonClear";
-      this.buttonClear.TabIndex = 7;
+      this.buttonClear.Size = new System.Drawing.Size(75, 23);
+      this.buttonClear.TabIndex = 8;
       this.buttonClear.Text = "Clear";
+      this.buttonClear.UseVisualStyleBackColor = true;
       // 
       // label2
       // 
-      this.label2.Location = new System.Drawing.Point(32, 88);
+      this.label2.AutoSize = true;
+      this.label2.Location = new System.Drawing.Point(12, 61);
       this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(72, 23);
+      this.label2.Size = new System.Drawing.Size(54, 13);
       this.label2.TabIndex = 1;
       this.label2.Text = "RSS URL";
       // 
       // textImage
       // 
-      this.textImage.Location = new System.Drawing.Point(112, 184);
+      this.textImage.BorderColor = System.Drawing.Color.Empty;
+      this.textImage.Location = new System.Drawing.Point(80, 128);
       this.textImage.Name = "textImage";
-      this.textImage.Size = new System.Drawing.Size(192, 20);
+      this.textImage.Size = new System.Drawing.Size(315, 20);
       this.textImage.TabIndex = 9;
-      this.textImage.Text = "";
       // 
       // buttonBrowse
       // 
-      this.buttonBrowse.Location = new System.Drawing.Point(312, 184);
+      this.buttonBrowse.Location = new System.Drawing.Point(401, 126);
       this.buttonBrowse.Name = "buttonBrowse";
+      this.buttonBrowse.Size = new System.Drawing.Size(75, 23);
       this.buttonBrowse.TabIndex = 10;
       this.buttonBrowse.Text = "Browse";
+      this.buttonBrowse.UseVisualStyleBackColor = true;
       // 
-      // label
+      // labelFeedName
       // 
-      this.label.Location = new System.Drawing.Point(32, 40);
-      this.label.Name = "label";
-      this.label.Size = new System.Drawing.Size(72, 23);
-      this.label.TabIndex = 0;
-      this.label.Text = "Site Name";
+      this.labelFeedName.AutoSize = true;
+      this.labelFeedName.Location = new System.Drawing.Point(12, 27);
+      this.labelFeedName.Name = "labelFeedName";
+      this.labelFeedName.Size = new System.Drawing.Size(60, 13);
+      this.labelFeedName.TabIndex = 0;
+      this.labelFeedName.Text = "Feed name";
       // 
-      // label1
+      // labelThumbnail
       // 
-      this.label1.Location = new System.Drawing.Point(32, 184);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(64, 23);
-      this.label1.TabIndex = 8;
-      this.label1.Text = "Image";
+      this.labelThumbnail.AutoSize = true;
+      this.labelThumbnail.Location = new System.Drawing.Point(12, 131);
+      this.labelThumbnail.Name = "labelThumbnail";
+      this.labelThumbnail.Size = new System.Drawing.Size(56, 13);
+      this.labelThumbnail.TabIndex = 8;
+      this.labelThumbnail.Text = "Thumbnail";
       // 
       // textName
       // 
-      this.textName.Location = new System.Drawing.Point(112, 40);
+      this.textName.BorderColor = System.Drawing.Color.Empty;
+      this.textName.Location = new System.Drawing.Point(80, 24);
       this.textName.Name = "textName";
-      this.textName.Size = new System.Drawing.Size(192, 20);
+      this.textName.Size = new System.Drawing.Size(136, 20);
       this.textName.TabIndex = 3;
-      this.textName.Text = "";
       // 
-      // label3
+      // labelDescription
       // 
-      this.label3.Location = new System.Drawing.Point(32, 136);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(72, 23);
-      this.label3.TabIndex = 2;
-      this.label3.Text = "Description";
+      this.labelDescription.AutoSize = true;
+      this.labelDescription.Location = new System.Drawing.Point(253, 27);
+      this.labelDescription.Name = "labelDescription";
+      this.labelDescription.Size = new System.Drawing.Size(81, 13);
+      this.labelDescription.TabIndex = 2;
+      this.labelDescription.Text = "Title description";
+      // 
+      // labelEncoding
+      // 
+      this.labelEncoding.AutoSize = true;
+      this.labelEncoding.Location = new System.Drawing.Point(12, 96);
+      this.labelEncoding.Name = "labelEncoding";
+      this.labelEncoding.Size = new System.Drawing.Size(52, 13);
+      this.labelEncoding.TabIndex = 1;
+      this.labelEncoding.Text = "Encoding";
       // 
       // DetailsForm
       // 
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-      this.ClientSize = new System.Drawing.Size(488, 270);
+      this.ClientSize = new System.Drawing.Size(488, 215);
       this.Controls.Add(this.buttonBrowse);
       this.Controls.Add(this.textImage);
+      this.Controls.Add(this.textEncoding);
       this.Controls.Add(this.textDescription);
-      this.Controls.Add(this.textURL);
+      this.Controls.Add(this.textBoxURL);
       this.Controls.Add(this.textName);
-      this.Controls.Add(this.label1);
+      this.Controls.Add(this.labelThumbnail);
       this.Controls.Add(this.buttonClear);
       this.Controls.Add(this.buttonSave);
-      this.Controls.Add(this.label3);
+      this.Controls.Add(this.labelEncoding);
+      this.Controls.Add(this.labelDescription);
       this.Controls.Add(this.label2);
-      this.Controls.Add(this.label);
+      this.Controls.Add(this.labelFeedName);
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
       this.Name = "DetailsForm";
+      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
       this.Text = "DetailsForm";
       this.ResumeLayout(false);
+      this.PerformLayout();
 
     }
     #endregion

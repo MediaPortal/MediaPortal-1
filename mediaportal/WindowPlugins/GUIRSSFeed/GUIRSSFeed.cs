@@ -50,6 +50,7 @@ namespace MediaPortal.GUI.RSS
       public string m_URL;
       public string m_Image;
       public string m_Description;
+      public string m_Encoding;
     }
 
     struct feed_details
@@ -87,6 +88,7 @@ namespace MediaPortal.GUI.RSS
     string m_strSiteIcon = DEFAULT_NEWS_ICON;
     string m_strSiteName = "";
     string m_strSiteURL = "";
+    string m_strSiteEncoding = "windows-1252";
     string m_strDescription = "";
     DateTime m_lRefreshTime = DateTime.Now.AddHours(-1);		//for autorefresh
     feed_details[] m_feed_details = new feed_details[NUM_STORIES];
@@ -221,6 +223,7 @@ namespace MediaPortal.GUI.RSS
       m_strSiteName = ((Site)m_sites[nSelected]).m_Name;
       m_strSiteIcon = ((Site)m_sites[nSelected]).m_Image;
       m_strDescription = ((Site)m_sites[nSelected]).m_Description;
+      m_strSiteEncoding = ((Site)m_sites[nSelected]).m_Encoding;
 
       if (m_strDescription == "")
       {
@@ -320,11 +323,13 @@ namespace MediaPortal.GUI.RSS
         {
           string strNameTag = String.Format("siteName{0}", i);
           string strURLTag = String.Format("siteURL{0}", i);
+          string strEncodingTag = String.Format("siteEncoding{0}", i);
           string strImageTag = String.Format("siteImage{0}", i);
           string strDescriptionTag = String.Format("siteDescription{0}", i);
 
           string strName = xmlreader.GetValueAsString("rss", strNameTag, "");
           string strURL = xmlreader.GetValueAsString("rss", strURLTag, "");
+          string strEncoding = xmlreader.GetValueAsString("rss", strEncodingTag, "windows-1252");
           string strImage = xmlreader.GetValueAsString("rss", strImageTag, "");
           string strDescription = xmlreader.GetValueAsString("rss", strDescriptionTag, "");
 
@@ -338,6 +343,7 @@ namespace MediaPortal.GUI.RSS
               m_strSiteURL = strURL;
               m_strSiteIcon = strImage;
               m_strDescription = strDescription;
+              m_strSiteEncoding = strEncoding;
               firstSite = strURL;
             }
 
@@ -346,6 +352,7 @@ namespace MediaPortal.GUI.RSS
             loc.m_URL = strURL;
             loc.m_Image = strImage;
             loc.m_Description = strDescription;
+            loc.m_Encoding = strEncoding;
             m_sites.Add(loc);
           }
         }
@@ -615,8 +622,8 @@ namespace MediaPortal.GUI.RSS
           }
           catch
           {
-            // Default to Codepage 1252
-            enc = Encoding.GetEncoding(1252);
+            // Using Default Encoding
+            enc = Encoding.GetEncoding(m_strSiteEncoding);
           }
           using (StreamReader r = new StreamReader(stream, enc))
           {
