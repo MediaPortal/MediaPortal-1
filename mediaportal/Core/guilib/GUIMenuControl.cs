@@ -492,7 +492,7 @@ namespace MediaPortal.GUI.Library
       _scrollLabel = null;
 			_currentState = State.Idle;
 			if ((_nextState == State.ScrollDown) || (_mouseState == State.ScrollDown)) OnDown();
-			else if ((_nextState == State.ScrollDown) || (_mouseState == State.ScrollUp)) OnUp();
+			else if ((_nextState == State.ScrollUp) || (_mouseState == State.ScrollUp)) OnUp();
 		}
 
 		protected void AnimationMovement(float timePassed)
