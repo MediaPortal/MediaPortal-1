@@ -5193,4 +5193,865 @@
 		<id>10103</id>
 		<value>Mijnenveger</value>
 	</string>
+  <string>
+    <id>395</id>
+    <value>Mist</value>
+  </string>
+  <string>
+    <id>519</id>
+    <value>Ondertiteling uit</value>
+  </string>
+  <string>
+    <id>529</id>
+    <value>Bekijk: gr.Iconen Lijst</value>
+  </string>
+  <string>
+    <id>534</id>
+    <value>Gemiddled</value>
+  </string>
+  <string>
+    <id>535</id>
+    <value>N</value>
+  </string>
+  <string>
+    <id>536</id>
+    <value>E</value>
+  </string>
+  <string>
+    <id>537</id>
+    <value>S</value>
+  </string>
+  <string>
+    <id>538</id>
+    <value>W</value>
+  </string>
+  <string>
+    <id>539</id>
+    <value>NE</value>
+  </string>
+  <string>
+    <id>540</id>
+    <value>SE</value>
+  </string>
+  <string>
+    <id>541</id>
+    <value>SW</value>
+  </string>
+  <string>
+    <id>542</id>
+    <value>NW</value>
+  </string>
+  <string>
+    <id>543</id>
+    <value>Onweer</value>
+  </string>
+  <string>
+    <id>544</id>
+    <value>NNE</value>
+  </string>
+  <string>
+    <id>545</id>
+    <value>ENE</value>
+  </string>
+  <string>
+    <id>546</id>
+    <value>ESE</value>
+  </string>
+  <string>
+    <id>547</id>
+    <value>SSE</value>
+  </string>
+  <string>
+    <id>548</id>
+    <value>SSW</value>
+  </string>
+  <string>
+    <id>549</id>
+    <value>WSW</value>
+  </string>
+  <string>
+    <id>551</id>
+    <value>WNW</value>
+  </string>
+  <string>
+    <id>552</id>
+    <value>NNW</value>
+  </string>
+  <string>
+    <id>553</id>
+    <value>Laat</value>
+  </string>
+  <string>
+    <id>554</id>
+    <value>Erg</value>
+  </string>
+  <string>
+    <id>556</id>
+    <value>Divers</value>
+  </string>
+  <string>
+    <id>557</id>
+    <value>Kalm</value>
+  </string>
+  <string>
+    <id>558</id>
+    <value>Geen wind</value>
+  </string>
+  <string>
+    <id>559</id>
+    <value>In de buurt</value>
+  </string>
+  <string>
+    <id>560</id>
+    <value>Clearing</value>
+  </string>
+  <string>
+    <id>590</id>
+    <value>P. 100</value>
+  </string>
+  <string>
+    <id>591</id>
+    <value>P. 200</value>
+  </string>
+  <string>
+    <id>592</id>
+    <value>P. 300</value>
+  </string>
+  <string>
+    <id>593</id>
+    <value>Verborgen</value>
+  </string>
+  <string>
+    <id>594</id>
+    <value>Subpagina</value>
+  </string>
+  <string>
+    <id>595</id>
+    <value>Volledig scherm</value>
+  </string>
+  <string>
+    <id>596</id>
+    <value>Wacht op pagina {0}/{1}...</value>
+  </string>
+  <string>
+    <id>599</id>
+    <value>Storm</value>
+  </string>
+  <string>
+    <id>765</id>
+    <value>Niet voldoende vrije diskruimte</value>
+  </string>
+  <string>
+    <id>766</id>
+    <value>Al bezig met importeren...</value>
+  </string>
+  <string>
+    <id>767</id>
+    <value>ongeldige XMLTV file</value>
+  </string>
+  <string>
+    <id>768</id>
+    <value>Geen kanalen gevonden</value>
+  </string>
+  <string>
+    <id>769</id>
+    <value>Geen programma's gevonden</value>
+  </string>
+  <string>
+    <id>770</id>
+    <value>Geen xmltv file gevonden</value>
+  </string>
+  <string>
+    <id>771</id>
+    <value>Ongeldige pin code</value>
+  </string>
+  <string>
+    <id>772</id>
+    <value>Opnieuw proberen?</value>
+  </string>
+  <string>
+    <id>773</id>
+    <value>START</value>
+  </string>
+  <string>
+    <id>774</id>
+    <value>EINDE</value>
+  </string>
+  <string>
+    <id>775</id>
+    <value>Start My Tv automatisch</value>
+  </string>
+  <string>
+    <id>776</id>
+    <value>Start My Tv niet automatisch</value>
+  </string>
+  <string>
+    <id>777</id>
+    <value>Timeshift mode</value>
+  </string>
+  <string>
+    <id>778</id>
+    <value>Timeshifting default aan</value>
+  </string>
+  <string>
+    <id>779</id>
+    <value>Timeshifting default uit</value>
+  </string>
+  <string>
+    <id>780</id>
+    <value>Selecteer opneem methode:</value>
+  </string>
+  <string>
+    <id>781</id>
+    <value>Opnemen</value>
+  </string>
+  <string>
+    <id>782</id>
+    <value>Geavanceerd opnemen</value>
+  </string>
+  <string>
+    <id>789</id>
+    <value>Nu: </value>
+  </string>
+  <string>
+    <id>790</id>
+    <value>Straks: </value>
+  </string>
+  <string>
+    <id>798</id>
+    <value>Laag</value>
+  </string>
+  <string>
+    <id>799</id>
+    <value>Hoog</value>
+  </string>
+  <string>
+    <id>820</id>
+    <value>Niet bekeken opname verwijderen?</value>
+  </string>
+  <string>
+    <id>1018</id>
+    <value>Programma start over {0} minuten</value>
+  </string>
+  <string>
+    <id>1019</id>
+    <value>Programma begint zometeen</value>
+  </string>
+  <string>
+    <id>1190</id>
+    <value>Zoom 14:9</value>
+  </string>
+  <string>
+    <id>1200</id>
+    <value>Setup Wizard</value>
+  </string>
+  <string>
+    <id>2069</id>
+    <value>Video files zijn samengevoegd</value>
+  </string>
+  <string>
+    <id>2070</id>
+    <value>Video file is geconverteerd</value>
+  </string>
+  <string>
+    <id>2071</id>
+    <value>Dvr-ms naar mpeg</value>
+  </string>
+  <string>
+    <id>2072</id>
+    <value>Start converteren</value>
+  </string>
+  <string>
+    <id>2073</id>
+    <value>Selecteer dvr-ms file om te convertern:</value>
+  </string>
+  <string>
+    <id>2074</id>
+    <value>Selecteer files om samen te voegen:</value>
+  </string>
+  <string>
+    <id>2075</id>
+    <value>Defineer tijdlijnen</value>
+  </string>
+  <string>
+    <id>2076</id>
+    <value>Bewerken</value>
+  </string>
+  <string>
+    <id>2077</id>
+    <value>Verwijderen</value>
+  </string>
+  <string>
+    <id>2078</id>
+    <value>Samenvoegen</value>
+  </string>
+  <string>
+    <id>2079</id>
+    <value>Start</value>
+  </string>
+  <string>
+    <id>2080</id>
+    <value>Ongeldig filetype</value>
+  </string>
+  <string>
+    <id>2081</id>
+    <value>Can niet verwijderen</value>
+  </string>
+  <string>
+    <id>2082</id>
+    <value>Verwijderen is gedaan</value>
+  </string>
+  <string>
+    <id>2083</id>
+    <value>Wilt u de orginele file verwijderen ?</value>
+  </string>
+  <string>
+    <id>2084</id>
+    <value>start</value>
+  </string>
+  <string>
+    <id>2085</id>
+    <value>eind</value>
+  </string>
+  <string>
+    <id>2086</id>
+    <value>vooruit</value>
+  </string>
+  <string>
+    <id>2087</id>
+    <value>achteruit</value>
+  </string>
+  <string>
+    <id>2088</id>
+    <value>Verwijder lijst:</value>
+  </string>
+  <string>
+    <id>2089</id>
+    <value>Pas kwaliteit aan</value>
+  </string>
+  <string>
+    <id>2090</id>
+    <value>My Video-Editor</value>
+  </string>
+  <string>
+    <id>2091</id>
+    <value>Process is afgebroken</value>
+  </string>
+  <string>
+    <id>2092</id>
+    <value>Selecteer file om te bewerken:</value>
+  </string>
+  <string>
+    <id>2093</id>
+    <value>Voeg toe</value>
+  </string>
+  <string>
+    <id>2094</id>
+    <value>Video lijst</value>
+  </string>
+  <string>
+    <id>2095</id>
+    <value>Verwijder</value>
+  </string>
+  <string>
+    <id>2097</id>
+    <value>Oude tijdsduur:</value>
+  </string>
+  <string>
+    <id>2098</id>
+    <value>Nieuwe tijdsduur:</value>
+  </string>
+  <string>
+    <id>2099</id>
+    <value>Huidige positie:</value>
+  </string>
+  <string>
+    <id>2500</id>
+    <value>Geen zoekterm opgegeven!</value>
+  </string>
+  <string>
+    <id>2501</id>
+    <value>Geef een geldige zoekterm!</value>
+  </string>
+  <string>
+    <id>2502</id>
+    <value>Selecteer uw lokale Wikipedia:</value>
+  </string>
+  <string>
+    <id>2503</id>
+    <value>Geselecteerde Wikipedia:</value>
+  </string>
+  <string>
+    <id>2504</id>
+    <value>Geen zoekresultaten...</value>
+  </string>
+  <string>
+    <id>2505</id>
+    <value>Verwijzingen naar andere artikelen:</value>
+  </string>
+  <string>
+    <id>2506</id>
+    <value>Artikel bevat geen verwijzigingen.</value>
+  </string>
+  <string>
+    <id>2507</id>
+    <value>Plaatjes behorende bij dit artikel:</value>
+  </string>
+  <string>
+    <id>2508</id>
+    <value>Artikel bevat geen plaatjes.</value>
+  </string>
+  <string>
+    <id>2509</id>
+    <value>Deze pagina is alleen een verwijzing.</value>
+  </string>
+  <string>
+    <id>2510</id>
+    <value>Selecteer de verwijzing.</value>
+  </string>
+  <string>
+    <id>2511</id>
+    <value>Verwijzingen</value>
+  </string>
+  <string>
+    <id>2512</id>
+    <value>Het plaatje kan niet worden getoond.</value>
+  </string>
+  <string>
+    <id>2513</id>
+    <value>Bekijk de log-file.</value>
+  </string>
+  <string>
+    <id>2514</id>
+    <value>Terug naar het artikel</value>
+  </string>
+  <string>
+    <id>2515</id>
+    <value>Plaatjes</value>
+  </string>
+  <string>
+    <id>2516</id>
+    <value>Mijn Wikipedia</value>
+  </string>
+  <string>
+    <id>2600</id>
+    <value>Engels</value>
+  </string>
+  <string>
+    <id>2601</id>
+    <value>Duits</value>
+  </string>
+  <string>
+    <id>2602</id>
+    <value>Frans</value>
+  </string>
+  <string>
+    <id>2603</id>
+    <value>Nederlands</value>
+  </string>
+  <string>
+    <id>2604</id>
+    <value>Noors</value>
+  </string>
+  <string>
+    <id>2605</id>
+    <value>Zweeds</value>
+  </string>
+  <string>
+    <id>2606</id>
+    <value>Italiaans</value>
+  </string>
+  <string>
+    <id>2997</id>
+    <value>uur</value>
+  </string>
+  <string>
+    <id>2998</id>
+    <value>min</value>
+  </string>
+  <string>
+    <id>2999</id>
+    <value>sec</value>
+  </string>
+  <string>
+    <id>4557</id>
+    <value>Voeg alles toe aan de playlist</value>
+  </string>
+  <string>
+    <id>6000</id>
+    <value>Video Codec</value>
+  </string>
+  <string>
+    <id>6001</id>
+    <value>Audio Codec</value>
+  </string>
+  <string>
+    <id>6002</id>
+    <value>Audio Renderer</value>
+  </string>
+  <string>
+    <id>6003</id>
+    <value>Deinterlacing</value>
+  </string>
+  <string>
+    <id>6004</id>
+    <value>Aspect ratio</value>
+  </string>
+  <string>
+    <id>6005</id>
+    <value>Timeshift buffer</value>
+  </string>
+  <string>
+    <id>6006</id>
+    <value>Zet TV automatisch aan</value>
+  </string>
+  <string>
+    <id>6007</id>
+    <value>Opneem opties</value>
+  </string>
+  <string>
+    <id>6008</id>
+    <value>Sorteer kanelen</value>
+  </string>
+  <string>
+    <id>6009</id>
+    <value>DVB TV gids</value>
+  </string>
+  <string>
+    <id>6010</id>
+    <value>XMLTV TV gids</value>
+  </string>
+  <string>
+    <id>6011</id>
+    <value>DVB TV gids:</value>
+  </string>
+  <string>
+    <id>6012</id>
+    <value>Vul de tvgids vanuit de volgende DVB kanalen:</value>
+  </string>
+  <string>
+    <id>6013</id>
+    <value>manuale XMTV</value>
+  </string>
+  <string>
+    <id>6014</id>
+    <value>TV setup</value>
+  </string>
+  <string>
+    <id>6015</id>
+    <value>DVD setup</value>
+  </string>
+  <string>
+    <id>6016</id>
+    <value>Verwijder opnames nadat ze beken zijn</value>
+  </string>
+  <string>
+    <id>6017</id>
+    <value>Voeg opnames toe aan de film database</value>
+  </string>
+  <string>
+    <id>6018</id>
+    <value>minuten voor het programma start</value>
+  </string>
+  <string>
+    <id>6019</id>
+    <value>minuten na het programma is afgelopen</value>
+  </string>
+  <string>
+    <id>6020</id>
+    <value>Herhaal slideshows</value>
+  </string>
+  <string>
+    <id>6021</id>
+    <value>Shuffle slideshow</value>
+  </string>
+  <string>
+    <id>6022</id>
+    <value>Film setup</value>
+  </string>
+  <string>
+    <id>6023</id>
+    <value>Scherm setup</value>
+  </string>
+  <string>
+    <id>6024</id>
+    <value>Stap groottes</value>
+  </string>
+  <string>
+    <id>6025</id>
+    <value>Stap grootte setup</value>
+  </string>
+  <string>
+    <id>9997</id>
+    <value>Seconden:</value>
+  </string>
+  <string>
+    <id>9998</id>
+    <value>Minuten:</value>
+  </string>
+  <string>
+    <id>9999</id>
+    <value>Uren:</value>
+  </string>
+  <string>
+    <id>10104</id>
+    <value>Mini TvGids</value>
+  </string>
+  <string>
+    <id>11000</id>
+    <value>Crop instellingen</value>
+  </string>
+  <string>
+    <id>11001</id>
+    <value>Boven:</value>
+  </string>
+  <string>
+    <id>11002</id>
+    <value>Onder:</value>
+  </string>
+  <string>
+    <id>11003</id>
+    <value>Links:</value>
+  </string>
+  <string>
+    <id>11004</id>
+    <value>Rechts:</value>
+  </string>
+  <string>
+    <id>19101</id>
+    <value>Mijn Sudoku</value>
+  </string>
+  <string>
+    <id>19102</id>
+    <value>Nieuw Spel</value>
+  </string>
+  <string>
+    <id>19103</id>
+    <value>Los Op</value>
+  </string>
+  <string>
+    <id>19104</id>
+    <value>Wis</value>
+  </string>
+  <string>
+    <id>19105</id>
+    <value>Blokkeer ongeldige zetten</value>
+  </string>
+  <string>
+    <id>19106</id>
+    <value>Toon ongeldige zetten</value>
+  </string>
+  <string>
+    <id>19107</id>
+    <value>Level: </value>
+  </string>
+  <string>
+    <id>19108</id>
+    <value>Makkelijk</value>
+  </string>
+  <string>
+    <id>19109</id>
+    <value>Gemiddeld</value>
+  </string>
+  <string>
+    <id>19110</id>
+    <value>Moeilijk</value>
+  </string>
+  <string>
+    <id>19111</id>
+    <value>Game Over</value>
+  </string>
+  <string>
+    <id>19112</id>
+    <value>Gefeliciteerd!</value>
+  </string>
+  <string>
+    <id>19113</id>
+    <value>U heeft de sodoku goed opgelost.</value>
+  </string>
+  <string>
+    <id>19114</id>
+    <value>Sorry, uw oplossing is niet goed.</value>
+  </string>
+  <string>
+    <id>19115</id>
+    <value>Kinderen</value>
+  </string>
+  <string>
+    <id>19116</id>
+    <value>Blok waarde</value>
+  </string>
+  <string>
+    <id>19117</id>
+    <value>Wis blok</value>
+  </string>
+  <string>
+    <id>19118</id>
+    <value>Help 1 keer</value>
+  </string>
+  <string>
+    <id>19119</id>
+    <value>Reset game</value>
+  </string>
+  <string>
+    <id>30000</id>
+    <value>Mijn Muziek Films</value>
+  </string>
+  <string>
+    <id>30001</id>
+    <value>Meest gewild</value>
+  </string>
+  <string>
+    <id>30002</id>
+    <value>Nieuw</value>
+  </string>
+  <string>
+    <id>30003</id>
+    <value>Speel alles</value>
+  </string>
+  <string>
+    <id>30004</id>
+    <value>Vorige pagina</value>
+  </string>
+  <string>
+    <id>30005</id>
+    <value>Volgende pagina</value>
+  </string>
+  <string>
+    <id>30006</id>
+    <value>Stop</value>
+  </string>
+  <string>
+    <id>30007</id>
+    <value>Zoek overige video's van deze artiest</value>
+  </string>
+  <string>
+    <id>30008</id>
+    <value>Waardering</value>
+  </string>
+  <string>
+    <id>30009</id>
+    <value>Pagina</value>
+  </string>
+  <string>
+    <id>30010</id>
+    <value>Zoek resultaten voor {0} - pagina {1} </value>
+  </string>
+  <string>
+    <id>33000</id>
+    <value>Scrobble aan</value>
+  </string>
+  <string>
+    <id>33001</id>
+    <value>Scrobble: Gelijk</value>
+  </string>
+  <string>
+    <id>33002</id>
+    <value>Scrobble: Buren</value>
+  </string>
+  <string>
+    <id>33003</id>
+    <value>Scrobble: Tags</value>
+  </string>
+  <string>
+    <id>33004</id>
+    <value>Scrobble: Recentelijk</value>
+  </string>
+  <string>
+    <id>33005</id>
+    <value>Account: </value>
+  </string>
+  <string>
+    <id>33006</id>
+    <value>Scrobble: Vrienden</value>
+  </string>
+  <string>
+    <id>33007</id>
+    <value>Scrobble: uit</value>
+  </string>
+  <string>
+    <id>33010</id>
+    <value>Vul playlist met </value>
+  </string>
+  <string>
+    <id>33011</id>
+    <value>gelijksoortige nummers</value>
+  </string>
+  <string>
+    <id>33012</id>
+    <value>Nummers van uw buren</value>
+  </string>
+  <string>
+    <id>33013</id>
+    <value>Nummers welke voldoen aan een tag</value>
+  </string>
+  <string>
+    <id>33014</id>
+    <value>Recentelijk gespeelde nummers</value>
+  </string>
+  <string>
+    <id>33016</id>
+    <value>Nummers van uw vrienden</value>
+  </string>
+  <string>
+    <id>33017</id>
+    <value>Random nummers</value>
+  </string>
+  <string>
+    <id>33030</id>
+    <value>Top album nummers</value>
+  </string>
+  <string>
+    <id>33031</id>
+    <value>Andere nummers met tag :</value>
+  </string>
+  <string>
+    <id>33040</id>
+    <value>Kopieer nu spelend naar klembord</value>
+  </string>
+  <string>
+    <id>34000</id>
+    <value>Mijn Last.fm</value>
+  </string>
+  <string>
+    <id>34001</id>
+    <value>Start stream</value>
+  </string>
+  <string>
+    <id>34002</id>
+    <value>Vriend: </value>
+  </string>
+  <string>
+    <id>34003</id>
+    <value>Buren: </value>
+  </string>
+  <string>
+    <id>34004</id>
+    <value>Groep: </value>
+  </string>
+  <string>
+    <id>34010</id>
+    <value>Goed</value>
+  </string>
+  <string>
+    <id>34011</id>
+    <value>Slecht</value>
+  </string>
+  <string>
+    <id>34012</id>
+    <value>Volgende</value>
+  </string>
+  <string>
+    <id>34020</id>
+    <value>Huidige stream: </value>
+  </string>
+  <string>
+    <id>34013</id>
+    <value>Ontdekkings mode</value>
+  </string>
+  <string>
+    <id>100511</id>
+    <value>Mijn muziek/volledig scherm</value>
+  </string>
+
 </strings>
