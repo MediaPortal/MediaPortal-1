@@ -128,7 +128,9 @@ namespace MediaPortal.Configuration.Sections
         { }
       }
     }
+
     private DataGrid dataGrid1;
+    private DataTable datasetFilters; 
     private MediaPortal.UserInterface.Controls.MPLabel label1;
     private MediaPortal.UserInterface.Controls.MPComboBox cbViews;
     private MediaPortal.UserInterface.Controls.MPButton btnSave;
@@ -167,6 +169,7 @@ namespace MediaPortal.Configuration.Sections
         "like",
         "group",
       };
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
 
     private string[] viewsAs = new string[]
 			{
@@ -186,7 +189,7 @@ namespace MediaPortal.Configuration.Sections
       // This call is required by the Windows Form Designer.
       InitializeComponent();
       views = new ArrayList();
-      FileInfo fi = new FileInfo(Config.Get(Config.Dir.Config) + "MusicViews.xml");
+      FileInfo fi = new FileInfo(Config.GetFile(Config.Dir.Config,"MusicViews.xml"));
       if (fi.Exists)
       {
         try
@@ -251,7 +254,7 @@ namespace MediaPortal.Configuration.Sections
       DataColumn dtCol = null; //Data Column variable
       string[] arrColumnNames = null; //string array variable
       SyncedComboBox cbSelection, cbOperators; //combo box var              
-      DataTable datasetFilters; //Data Table var
+      //DataTable datasetFilters; //Data Table var
 
       //Create the combo box object and set its properties
       cbSelection = new SyncedComboBox();
@@ -310,7 +313,7 @@ namespace MediaPortal.Configuration.Sections
       dtcCheck.DataType = Type.GetType("System.Boolean"); //Set its //data Type
       dtcCheck.DefaultValue = false; //Set the default value
       dtcCheck.AllowDBNull = false;
-      dtcCheck.ColumnName = "Sort Ascending";
+      dtcCheck.ColumnName = "Asc";
       datasetFilters.Columns.Add(dtcCheck); //Add the above column to the //Data Table
 
 
@@ -332,7 +335,11 @@ namespace MediaPortal.Configuration.Sections
       cbView.Cell = 1;
       cbView.SelectionChangeCommitted += new EventHandler(cbView_SelectionChangeCommitted);
 
-
+      // Add the Action column
+      dtCol = new DataColumn("Act");
+      dtCol.DataType = Type.GetType("System.String");
+      dtCol.DefaultValue = "";
+      datasetFilters.Columns.Add(dtCol);
 
       //fill in all rows...
       for (int i = 0; i < currentView.Filters.Count; ++i)
@@ -346,7 +353,7 @@ namespace MediaPortal.Configuration.Sections
         datasetFilters.Rows.Add(
             new object[] {
 													 def.Where, def.SqlOperator, def.Restriction, limit, def.SortAscending,
-													 def.DefaultView
+													 def.DefaultView, ""
 												 }
                                );
       }
@@ -379,9 +386,15 @@ namespace MediaPortal.Configuration.Sections
         GridColumnStylesCollection colStyle;
         colStyle = dataGrid1.TableStyles[0].GridColumnStyles;
         colStyle[0].Width = 100;
-        colStyle[1].Width = 50;
-        colStyle[2].Width = 50;
-        colStyle[3].Width = 80;
+        colStyle[1].Width = 60;
+        colStyle[2].Width = 80;
+        colStyle[3].Width = 60;
+        colStyle[4].Width = 30;
+        colStyle[6].Width = 30;
+
+        // Set an eventhandler to be fired, when entering something in the action column
+        DataGridTextBoxColumn tbAction = (DataGridTextBoxColumn)dgdtblStyle.GridColumnStyles[6];
+        tbAction.TextBox.KeyPress += new KeyPressEventHandler(tbAction_KeyPress);
 
         /*
 				DataGridColumnStyle boolCol = new FormattableBooleanColumn();
@@ -406,7 +419,6 @@ namespace MediaPortal.Configuration.Sections
 
       updating = false;
     }
-
 
     /// <summary>
     /// Clean up any resources being used.
@@ -439,6 +451,7 @@ namespace MediaPortal.Configuration.Sections
       this.cbViews = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.dataGrid1 = new System.Windows.Forms.DataGrid();
+      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBox1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.dataGrid1)).BeginInit();
       this.SuspendLayout();
@@ -466,6 +479,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.tbViewName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.tbViewName.BorderColor = System.Drawing.Color.Empty;
       this.tbViewName.Location = new System.Drawing.Point(168, 44);
       this.tbViewName.Name = "tbViewName";
       this.tbViewName.Size = new System.Drawing.Size(288, 20);
@@ -505,6 +519,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.cbViews.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.cbViews.BorderColor = System.Drawing.Color.Empty;
       this.cbViews.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbViews.Location = new System.Drawing.Point(168, 20);
       this.cbViews.Name = "cbViews";
@@ -533,8 +548,18 @@ namespace MediaPortal.Configuration.Sections
       this.dataGrid1.Size = new System.Drawing.Size(440, 237);
       this.dataGrid1.TabIndex = 4;
       // 
+      // mpLabel1
+      // 
+      this.mpLabel1.Location = new System.Drawing.Point(16, 366);
+      this.mpLabel1.Name = "mpLabel1";
+      this.mpLabel1.Size = new System.Drawing.Size(440, 21);
+      this.mpLabel1.TabIndex = 7;
+      this.mpLabel1.Text = "Actions Codes in last column: a = Insert line after, b = Insert line before, d = " +
+          "delete line";
+      // 
       // MusicViews
       // 
+      this.Controls.Add(this.mpLabel1);
       this.Controls.Add(this.groupBox1);
       this.Name = "MusicViews";
       this.Size = new System.Drawing.Size(472, 408);
@@ -623,6 +648,28 @@ namespace MediaPortal.Configuration.Sections
 
     }
 
+    void tbAction_KeyPress(object sender, KeyPressEventArgs e)
+    {
+      int rowSelected;
+      DataRow row = datasetFilters.NewRow();
+      row[0] = row[1] = row[2] = row[3] = row[5] = row[6] = "";
+      row[4] = false;
+      rowSelected = dataGrid1.CurrentRowIndex;
+      if (e.KeyChar == 'a')
+      {
+        datasetFilters.Rows.InsertAt(row, rowSelected + 1);
+      }
+      else if (e.KeyChar == 'b')
+      {
+        datasetFilters.Rows.InsertAt(row, rowSelected);
+      }
+      else if (e.KeyChar == 'd')
+      {
+        datasetFilters.Rows.RemoveAt(rowSelected);
+      }
+      e.Handled = true;
+    }
+
     private void btnSave_Click(object sender, EventArgs e)
     {
       StoreGridInView();
@@ -632,7 +679,7 @@ namespace MediaPortal.Configuration.Sections
       if (settingsChanged)
         try
         {
-          using (FileStream fileStream = new FileStream(Config.Get(Config.Dir.Config) + "musicViews.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
+          using (FileStream fileStream = new FileStream(Config.GetFile(Config.Dir.Config,"musicViews.xml"), FileMode.Create, FileAccess.Write, FileShare.Read))
           {
             SoapFormatter formatter = new SoapFormatter();
             formatter.Serialize(fileStream, views);
