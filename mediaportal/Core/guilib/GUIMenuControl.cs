@@ -234,8 +234,10 @@ namespace MediaPortal.GUI.Library
         foreach (GUIButtonControl btn in _buttonList)
         {
           string fileName = GetHoverFileName(btn.Label);
+          Log.Debug("MenuControl: PlugIn: " + btn.Label);
           if (fileName != null)
           {
+            Log.Debug("           Hover: " + fileName);
             GUIAnimation hover = LoadAnimationControl(GetID, btn.GetID, _hoverPositionX, _hoverPositionY, _hoverWidth, _hoverHeight, fileName);
             hover.AllocResources();
             _hoverList.Add(hover);
