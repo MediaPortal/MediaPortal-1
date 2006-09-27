@@ -18,4 +18,3 @@ FontEngineAddSurface            @11
 FontEngineSetTexture			@12
 FontEngineDrawSurface			@13
 FontEngineSetDevice				@14
-FontEngineStartFrame			@15
