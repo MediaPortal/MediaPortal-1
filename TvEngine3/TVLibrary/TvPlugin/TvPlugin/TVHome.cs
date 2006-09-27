@@ -1265,7 +1265,7 @@ namespace TvPlugin
     {
       double pos = g_Player.Duration;
       MediaPortal.GUI.Library.Log.Info("tvhome:seektoend dur:{0} pos:{1}", g_Player.Duration, g_Player.CurrentPosition);
-      if (pos > 2) pos -= 2;
+      //if (pos > 2) pos -= 2;
       g_Player.SeekAbsolute(pos);
     }
   }
