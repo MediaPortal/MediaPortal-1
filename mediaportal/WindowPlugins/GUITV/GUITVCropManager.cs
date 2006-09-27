@@ -94,7 +94,7 @@ namespace MediaPortal.GUI.TV
         else if (g_Player.IsTVRecording)
         {
           // This is a TV recording
-          // Find out if the any of the cards is still recording this file
+          // Find out if any of the cards is still recording this file
           if (Recorder.IsAnyCardRecording())
           {
             for (int i = 0; i < Recorder.CommandProcessor.TVCards.Count; i++)
@@ -112,15 +112,18 @@ namespace MediaPortal.GUI.TV
           TVRecorded recording = new TVRecorded();
           if (TVDatabase.GetRecordedTVByFilename(filename, ref recording))
           {
-            try
+            if ((recording.RecordedCardIndex > 0) && (recording.RecordedCardIndex-1 < Recorder.CommandProcessor.TVCards.Count))
             {
-              TVCaptureDevice dev = Recorder.CommandProcessor.TVCards[recording.RecordedCardIndex - 1];
-              Log.Debug("GUITVCropManager.g_Player_PlackBackStarted: cropping recorded tv:{0} card:{1}", filename, dev.CommercialName);
-              SendCropMessage(dev);
-            }
-            catch (IndexOutOfRangeException)
-            {
-              Log.Warn("GUITVCropManager.g_Player_PlackBackStarted: unable to find tvcard for recorded file:{0} with index:{1}", filename, recording.RecordedCardIndex);
+              try
+              {
+                TVCaptureDevice dev = Recorder.CommandProcessor.TVCards[recording.RecordedCardIndex - 1];
+                Log.Debug("GUITVCropManager.g_Player_PlackBackStarted: cropping recorded tv:{0} card:{1}", filename, dev.CommercialName);
+                SendCropMessage(dev);
+              }
+              catch (ArgumentOutOfRangeException)
+              {
+                Log.Warn("GUITVCropManager.g_Player_PlackBackStarted: unable to find tvcard for recorded file:{0} with index:{1}", filename, recording.RecordedCardIndex);
+              }
             }
           }
         }
