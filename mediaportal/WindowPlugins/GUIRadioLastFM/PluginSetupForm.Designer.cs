@@ -28,6 +28,7 @@
     /// </summary>
     private void InitializeComponent()
     {
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PluginSetupForm));
       this.panelBannerAlign = new System.Windows.Forms.Panel();
       this.pictureBoxBanner = new System.Windows.Forms.PictureBox();
       this.groupBoxSettings = new System.Windows.Forms.GroupBox();
@@ -52,7 +53,7 @@
       // pictureBoxBanner
       // 
       this.pictureBoxBanner.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.pictureBoxBanner.Image = global::WindowPlugins.Properties.Resources.LastfmBanner;
+      this.pictureBoxBanner.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxBanner.Image")));
       this.pictureBoxBanner.Location = new System.Drawing.Point(0, 0);
       this.pictureBoxBanner.Name = "pictureBoxBanner";
       this.pictureBoxBanner.Size = new System.Drawing.Size(400, 75);
