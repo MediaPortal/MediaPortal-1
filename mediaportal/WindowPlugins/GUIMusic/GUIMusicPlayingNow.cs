@@ -1237,7 +1237,7 @@ namespace MediaPortal.GUI.Music
             facadeAlbumInfo.Add(item);
 
             // display 3 items only
-            if (i >= 2)
+            if (facadeAlbumInfo.Count == 3)
               break;
           }
         }
@@ -1304,7 +1304,7 @@ namespace MediaPortal.GUI.Music
             facadeTagInfo.Add(item);
 
             // display 3 items only
-            if (i >= 2)
+            if (facadeTagInfo.Count == 3)
               break;
           }
 

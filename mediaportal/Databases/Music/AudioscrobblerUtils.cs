@@ -859,9 +859,10 @@ namespace MediaPortal.Music.Database
                     {
                       tmpSong = dbSong.Clone();
                       Log.Debug("Audioscrobber: Track filter for {1} found db song - {0}", tmpSong.FileName, unfilteredList_[s].Title);
+                      foundDoubleEntry = false;
                       // check and prevent entries from the same artist
                       for (int j = 0; j < tmpSongs.Count; j++)
-                      {
+                      {                        
                         if (tmpSong.Artist == tmpSongs[j].Artist)
                         {
                           foundDoubleEntry = true;
@@ -895,9 +896,10 @@ namespace MediaPortal.Music.Database
                       // only use the first hit for now..
                       if (dbArtists.Count > 0)
                       {
+                        foundDoubleEntry = false;
                         // check and prevent double entries 
                         for (int j = 0; j < tmpSongs.Count; j++)
-                        {
+                        {                          
                           if (dbArtists[0].Artist == (tmpSongs[j].Artist))
                           {
                             foundDoubleEntry = true;
@@ -930,9 +932,10 @@ namespace MediaPortal.Music.Database
                       // only use the first hit for now..
                       if (dbAlbums.Count > 0)
                       {
+                        foundDoubleEntry = false;
                         // check and prevent double entries 
                         for (int j = 0; j < tmpSongs.Count; j++)
-                        {
+                        {                          
                           if (dbAlbums[0].Album == (tmpSongs[j].Album))
                           {
                             foundDoubleEntry = true;
