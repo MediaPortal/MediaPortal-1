@@ -251,7 +251,7 @@
 		<carrier frequency="767500" bandwidth="7" />
 		<carrier frequency="788500" bandwidth="7" />
 	</country>
-	<country name="Austria - All regions" offset="125">
+	<country name="Austria - All regions">
 		<carrier frequency="754000" bandwidth="8" />
 		<carrier frequency="794000" bandwidth="8" />
 		<carrier frequency="802000" bandwidth="8" />
@@ -261,31 +261,31 @@
 		<carrier frequency="850000" bandwidth="8" />
 		<carrier frequency="858000" bandwidth="8" />
 	</country>
-	<country name="Austria - Burgenland" offset="125">
+	<country name="Austria - Burgenland">
 		<carrier frequency="754000" bandwidth="8" />
 	</country>
-	<country name="Austria - Kaernten" offset="125">
+	<country name="Austria - Kärnten">
 		<carrier frequency="858000" bandwidth="8" />
 	</country>
-	<country name="Austria - Niederösterreich" offset="125">
+	<country name="Austria - Niederösterreich">
 		<carrier frequency="794000" bandwidth="8" />
 		<carrier frequency="850000" bandwidth="8" />
 	</country>
-	<country name="Austria - Oberösterreich" offset="125">
+	<country name="Austria - Oberösterreich">
 		<carrier frequency="818000" bandwidth="8" />
 		<carrier frequency="826000" bandwidth="8" />
 	</country>
-	<country name="Austria - Salzburg" offset="125">
+	<country name="Austria - Salzburg">
 		<carrier frequency="826000" bandwidth="8" />
 	</country>
-	<country name="Austria - Steiermark" offset="125">
+	<country name="Austria - Steiermark">
 		<carrier frequency="802000" bandwidth="8" />
 		<carrier frequency="858000" bandwidth="8" />
 	</country>
-	<country name="Austria - Tirol" offset="125">
+	<country name="Austria - Tirol">
 		<carrier frequency="818000" bandwidth="8" />
 	</country>
-	<country name="Austria - Wien" offset="125">
+	<country name="Austria - Wien">
 		<carrier frequency="794000" bandwidth="8" />
 	</country>
 	<country name="Belgium - All regions" offset="125">
