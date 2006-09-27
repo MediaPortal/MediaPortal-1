@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <strings>
    <characters>512</characters>
-   <string>
+  <string>
       <id>0</id>
       <value>תוכניות</value>
    </string>
@@ -5205,4 +5205,185 @@
       <id>200038</id>
       <value>במחשב אישי משותף עם תכניות נוספות</value>
    </string>
+<string><id>395 </id><value>מיסטי</value></string>
+<string><id>519 </id><value>בטל כתוביות</value></string>
+<string><id>529 </id><value>תצוגה: סמלים גדולים</value></string>
+<string><id>534 </id><value>מתון</value></string>
+<string><id>535 </id><value>N</value></string>
+<string><id>536 </id><value>E</value></string>
+<string><id>537 </id><value>S</value></string>
+<string><id>538 </id><value>W</value></string>
+<string><id>539 </id><value>NE</value></string>
+<string><id>540 </id><value>SE</value></string>
+<string><id>541 </id><value>SW</value></string>
+<string><id>542 </id><value>NW</value></string>
+<string><id>543 </id><value>רעם</value></string>
+<string><id>544 </id><value>NNE</value></string>
+<string><id>545 </id><value>ENE</value></string>
+<string><id>546 </id><value>ESE</value></string>
+<string><id>547 </id><value>SSE</value></string>
+<string><id>548 </id><value>SSW</value></string>
+<string><id>549 </id><value>WSW</value></string>
+<string><id>551 </id><value>WNW</value></string>
+<string><id>552 </id><value>NNW</value></string>
+<string><id>553 </id><value>מאוחר</value></string>
+<string><id>554 </id><value>מאוד</value></string>
+<string><id>555 </id><value>מ {0} ב {1} {2}</value></string>
+<string><id>556 </id><value>מגוון</value></string>
+<string><id>557 </id><value>רגוע</value></string>
+<string><id>558 </id><value>אין רוח</value></string>
+<string><id>559 </id><value>בסביבה</value></string>
+<string><id>560 </id><value>בהיר</value></string>
+<string><id>590 </id><value>P. 100</value></string>
+<string><id>591 </id><value>P. 200</value></string>
+<string><id>592 </id><value>P. 300</value></string>
+<string><id>593 </id><value>נסתר</value></string>
+<string><id>594 </id><value>תת-עמוד</value></string>
+<string><id>595 </id><value>מסך מלא</value></string>
+<string><id>596 </id><value>ממתין לעמוד {0} מתוך {1}</value></string>
+<string><id>599 </id><value>סופה</value></string>
+<string><id>766 </id><value>כבר מייבא....</value></string>
+<string><id>767 </id><value>קובץ XMLTV שגוי</value></string>
+<string><id>768 </id><value>לא נמצאו ערוצים</value></string>
+<string><id>769 </id><value>לא נמצאו תוכניות</value></string>
+<string><id>770 </id><value>לא נמצא קובץ xmltv</value></string>
+<string><id>771 </id><value>קוד הPIN שהקשת לא מתקבל</value></string>
+<string><id>772 </id><value>האם ברצונך לנסות שוב?</value></string>
+<string><id>773 </id><value>התחלה</value></string>
+<string><id>774 </id><value>סיום</value></string>
+<string><id>775 </id><value>התחל טלויזיה אוטומטית</value></string>
+<string><id>776 </id><value>אל תתחיל/תעבור לטלויזיה אוטומטית</value></string>
+<string><id>777 </id><value>שימוש במצב הזזת זמן</value></string>
+<string><id>778 </id><value>התחל עם מצב הזזת זמן באופן אוטומטי</value></string>
+<string><id>779 </id><value>מצב הזזת זמן מופעל ידנית</value></string>
+<string><id>780 </id><value>בחר אופן תזמון</value></string>
+<string><id>781 </id><value>הקלטה מהירה</value></string>
+<string><id>782 </id><value>הקלטה מתקדמת</value></string>
+<string><id>789 </id><value>כעת:</value></string>
+<string><id>790 </id><value>הבא:</value></string>
+<string><id>798 </id><value>נמוך</value></string>
+<string><id>799 </id><value>גבוה</value></string>
+<string><id>820 </id><value>מחק הקלטות שלא נצפו?</value></string>
+<string><id>1018 </id><value>התכנית מתחילה בעוד {0} דקות</value></string>
+<string><id>1019 </id><value>התכנית עומדת להתחיל</value></string>
+<string><id>1190 </id><value>התקרבות 14:9</value></string>
+<string><id>1200 </id><value>אשף תצורה</value></string>
+<string><id>2074 </id><value>אנא, בחר את הקבצים שאתה רוצה לצרף:</value></string>
+<string><id>2075 </id><value>הגדר את נקודות החיתוך</value></string>
+<string><id>2076 </id><value>ערוך</value></string>
+<string><id>2077 </id><value>חתוך</value></string>
+<string><id>2078 </id><value>צרף</value></string>
+<string><id>2079 </id><value>התחל לצרף</value></string>
+<string><id>2080 </id><value>סוג קובץ לא נתמך</value></string>
+<string><id>2081 </id><value>לא ניתן לחתוך</value></string>
+<string><id>2082 </id><value>Mpeg: חיתוך הקובץ הסתיים</value></string>
+<string><id>2083 </id><value>Dvrms: חיתוך הקובץ הסתיים</value></string>
+<string><id>2084 </id><value>התחלה</value></string>
+<string><id>2085 </id><value>סיום</value></string>
+<string><id>2086 </id><value>קדימה</value></string>
+<string><id>2087 </id><value>אחורה</value></string>
+<string><id>2088 </id><value>רשימת חיתוך:</value></string>
+<string><id>2089 </id><value>כוון איכות</value></string>
+<string><id>2090 </id><value>עורך הווידאו</value></string>
+<string><id>2091 </id><value>התהליך בוטל</value></string>
+<string><id>2092 </id><value>אנא, בחר קובץ שברצונך לערוך:</value></string>
+<string><id>2093 </id><value>הוסף</value></string>
+<string><id>2094 </id><value>רשימת קטעי וידיאו</value></string>
+<string><id>2095 </id><value>חתוך</value></string>
+<string><id>2097 </id><value>משך ישן:</value></string>
+<string><id>2098 </id><value>משך חדש:</value></string>
+<string><id>2099 </id><value>מיקום נוכחי:</value></string>
+<string><id>2500 </id><value>לא הוקש ביטוי לחיפוש!</value></string>
+<string><id>2501 </id><value>אנא רשום ביטוי לחיפוש תקין!</value></string>
+<string><id>2502 </id><value>בחר את הוויקיפדיה המקומי שלך:</value></string>
+<string><id>2503 </id><value>בחר וויקיפדיה:</value></string>
+<string><id>2504 </id><value>לא נמצא ערך לביטוי שחיפשת...</value></string>
+<string><id>2505 </id><value>קישור לערכים אחרים:</value></string>
+<string><id>2506 </id><value>אין קישורים בערך זה.</value></string>
+<string><id>2507 </id><value>תמונות מערך זה:</value></string>
+<string><id>2508 </id><value>אין תמונות המקושרות לערך זה.</value></string>
+<string><id>2509 </id><value>דף זה הינו קישור בלבד.</value></string>
+<string><id>2510 </id><value>אנא בחר את יעד הקישור מרשימת הקישורים</value></string>
+<string><id>2511 </id><value>קישורים</value></string>
+<string><id>2512 </id><value>לא ניתן להציג את התמונה</value></string>
+<string><id>2513 </id><value>פרטים נוספים בקובץ הלוג</value></string>
+<string><id>2514 </id><value>חזרה לטקסט</value></string>
+<string><id>2515 </id><value>תמונות</value></string>
+<string><id>2516 </id><value>וויקיפדיה</value></string>
+<string><id>2600 </id><value>אנגלית</value></string>
+<string><id>2601 </id><value>גרמנית</value></string>
+<string><id>2602 </id><value>צרפתית</value></string>
+<string><id>2603 </id><value>הולדנית</value></string>
+<string><id>2604 </id><value>נורווגית</value></string>
+<string><id>2605 </id><value>שוודית</value></string>
+<string><id>2606 </id><value>איטלקית</value></string>
+<string><id>2997 </id><value>שעות</value></string>
+<string><id>2998 </id><value>דקות</value></string>
+<string><id>2999 </id><value>שניות</value></string>
+<string><id>4557 </id><value>הוסף הכל לרשימת הניגון</value></string>
+<string><id>6000 </id><value>מקודד וידיאו</value></string>
+<string><id>6001 </id><value>מקודד אודיו</value></string>
+<string><id>6002 </id><value>מחולל אודיו</value></string>
+<string><id>6003 </id><value>ביטול Interlacing</value></string>
+<string><id>6004 </id><value>יחס גובה-רוחב</value></string>
+<string><id>6005 </id><value>מטמון מצב הזזת זמן</value></string>
+<string><id>6006 </id><value>הדלק טלויזיה באופן אוטומטי</value></string>
+<string><id>6007 </id><value>אפשרויות הקלטה</value></string>
+<string><id>6008 </id><value>מיון ערוצים</value></string>
+<string><id>6009 </id><value>מדריך DVB</value></string>
+<string><id>6010 </id><value>מוריד XMLTV EPG</value></string>
+<string><id>6011 </id><value>הורדה על ידי DVB EPG:</value></string>
+<string><id>6012 </id><value>עדכן מדריך טלויזיה מערוצי הDVB הבאים:</value></string>
+<string><id>6013 </id><value>קובץ XMLTV ידני</value></string>
+<string><id>6014 </id><value>תצורת טלויזיה</value></string>
+<string><id>6015 </id><value>תצורת DVD</value></string>
+<string><id>6016 </id><value>מחק אוטומטית הקלטות לאחר צפייה בהם</value></string>
+<string><id>6017 </id><value>הוסף הקלטות אוטומטית למאגר נתוני הסרטים</value></string>
+<string><id>6018 </id><value>דקות לפני שהתכנית מתחילה</value></string>
+<string><id>6019 </id><value>דקות לאחר שהתכנית מסתיימת</value></string>
+<string><id>6020 </id><value>תצוגת תמונות מחזורית/חוזרת</value></string>
+<string><id>6021 </id><value>ערבב אוטומטית תצוגת תמונות</value></string>
+<string><id>6022 </id><value>תצורת סרטים</value></string>
+<string><id>6023 </id><value>תצורת תצוגה</value></string>
+<string><id>6024 </id><value>צעדי דילוג</value></string>
+<string><id>6025 </id><value>תצורת צעדי דילוג</value></string>
+<string><id>9997 </id><value>שניות:</value></string>
+<string><id>9998 </id><value>דקות:</value></string>
+<string><id>9999 </id><value>שעות:</value></string>
+<string><id>11000 </id><value>מאפייני חיתוך</value></string>
+<string><id>11001 </id><value>עליון:</value></string>
+<string><id>11002 </id><value>תחתון:</value></string>
+<string><id>11003 </id><value>שמאל:</value></string>
+<string><id>11004 </id><value>ימין:</value></string>
+<string><id>30000 </id><value>וידיאו קליפים</value></string>
+<string><id>30001 </id><value>המבוקשים</value></string>
+<string><id>30002 </id><value>החדשים</value></string>
+<string><id>30003 </id><value>נגן הכל</value></string>
+<string><id>30004 </id><value>עמוד קודם</value></string>
+<string><id>30005 </id><value>עמוד הבא</value></string>
+<string><id>30006 </id><value>עצור</value></string>
+<string><id>30007 </id><value>מצא קליפים נוספים לאמן זה</value></string>
+<string><id>30008 </id><value>דירוג</value></string>
+<string><id>30009 </id><value>עמוד</value></string>
+<string><id>30010 </id><value>תוצאות חיפוש עבור {0} - עמוד {1}</value></string>
+<string><id>33000 </id><value>שיבוץ מופעל</value></string>
+<string><id>33001 </id><value>שבץ: דומים</value></string>
+<string><id>33002 </id><value>שבץ: שכנים</value></string>
+<string><id>33003 </id><value>שבץ: סימונים</value></string>
+<string><id>33004 </id><value>שבץ: אחרונים</value></string>
+<string><id>33005 </id><value>חשבון:</value></string>
+<string><id>33006 </id><value>שבץ: חברים</value></string>
+<string><id>33007 </id><value>שיבוץ מבוטל</value></string>
+<string><id>33010 </id><value>מלא רשימת אוטומטית ב</value></string>
+<string><id>33011 </id><value>רצועות דומות</value></string>
+<string><id>33012 </id><value>רצועות בעלות שכנים דומים</value></string>
+<string><id>33013 </id><value>רצועות בעלות סימונים מתאימים</value></string>
+<string><id>33014 </id><value>רצועות שנוגנו לאחרונה</value></string>
+<string><id>33016 </id><value>רצועות בעלות חברים דומים</value></string>
+<string><id>33017 </id><value>רצועות אקראיות</value></string>
+<string><id>33030 </id><value>רצועות האלבומים הטובים ביותר</value></string>
+<string><id>33031 </id><value>רצועות אחרות המסומנות ב:</value></string>
+<string><id>33040 </id><value>העתק תוכן 'נגן עכשיו' ללוח.</value></string>
+<string><id>100511 </id><value>מוזיקה/מסך מלא</value></string>
+
 </strings>
