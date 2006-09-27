@@ -33,6 +33,7 @@ namespace TvDatabase
       newCard.Priority = 1;
       newCard.DevicePath = devicePath;
       newCard.Server = server;
+      newCard.Enabled = true;
       return newCard;
     }
 
