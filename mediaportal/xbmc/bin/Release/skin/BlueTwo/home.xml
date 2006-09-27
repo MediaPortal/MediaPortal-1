@@ -21,11 +21,8 @@
 			<posY>20</posY>
 			<width>94</width>
 			<height>125</height>
-			<type>animation</type>
-			<textures>animations\1.png;animations\2.png;animations\3.png;animations\4.png;animations\5.png;animations\6.png;animations\7.png;animations\8.png;animations\9.png;animations\10.png;animations\11.png;animations\12.png;animations\13.png;animations\14.png;animations\15.png;animations\16.png;animations\17.png;animations\18.png;animations\19.png;animations\20.png;animations\21.png;animations\22.png;animations\23.png;animations\24.png;animations\25.png;animations\26.png;animations\27.png;animations\28.png;animations\29.png;animations\30.png;animations\31.png;animations\32.png;animations\33.png;animations\34.png;animations\35.png;animations\36.png;animations\37.png;animations\38.png;animations\39.png;animations\40.png;animations\41.png;animations\42.png;animations\43.png;animations\44.png;animations\45.png;animations\46.png;animations\47.png;animations\48.png;animations\49.png;animations\50.png;animations\51.png;animations\52.png;animations\53.png;animations\54.png;animations\55.png;animations\56.png;animations\57.png;animations\58.png;animations\59.png;animations\60.png;animations\61.png;animations\62.png;animations\63.png;animations\64.png;animations\65.png;animations\66.png;animations\67.png;animations\68.png;animations\69.png;animations\70.png;animations\71.png;animations\72.png;animations\73.png;animations\74.png;animations\75.png;animations\76.png;animations\77.png;animations\78.png;animations\79.png;animations\80.png;animations\81.png;animations\82.png;animations\83.png;animations\84.png;animations\85.png;animations\86.png;animations\87.png;animations\88.png;animations\89.png</textures>
-			<Duration>0:0:19</Duration>
-			<RepeatBehavior>1</RepeatBehavior>
-			<FillBehavior>HoldEnd</FillBehavior>
+			<type>image</type>
+			<texture>animations\89.png</texture>
 		</control>
 		<control>
 			<description>menu background image</description>
