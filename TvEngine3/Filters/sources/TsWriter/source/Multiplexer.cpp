@@ -266,7 +266,7 @@ int CMultiplexer::SplitPesPacket(int streamId,byte* header, int headerlen, byte*
 		maxDiff=pcrDiff;
 		LogDebug("Pcr max diff :%x", (DWORD)maxDiff);
 	}
-	if (pcrDiff > 0x3000)
+	if (pcrDiff > 0x30000)
 	{
 		//pcr changed!!!
 		maxDiff=0;
