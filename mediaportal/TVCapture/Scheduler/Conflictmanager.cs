@@ -98,7 +98,7 @@ namespace MediaPortal.TV.Recording
         if (episode.Canceled != 0) continue;
         freeCardsRecordings(_cardrecordings);
         //Log.Info("Trying to assign Rec {0} - {1} on channel {2}", episode.Start.ToString(), episode.End.ToString(), episode.Channel);
-        //Log.Info("Succeed = {0}", AssignRecToCard(episode, _cardrecordings));
+        AssignRecToCard(episode, _cardrecordings);
         foreach (TVRecording otherRecording in _recordings)
         {
           List<TVRecording> otherEpisodes = _util.GetRecordingTimes(otherRecording);
