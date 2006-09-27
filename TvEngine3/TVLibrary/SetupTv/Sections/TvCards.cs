@@ -84,8 +84,16 @@ namespace SetupTv.Sections
             cardType = cardTypes[cards[i].DevicePath].ToString();
           }
           ListViewItem item = mpListView1.Items.Add(cards[i].Priority.ToString());
-          if (cards[i].Enabled) item.Checked = true;
-          else item.Checked = false;
+          if (cards[i].Enabled)
+          {
+            item.Checked = true;
+            item.Font = new Font(item.Font, FontStyle.Regular);
+          }
+          else
+          {
+            item.Checked = false;
+            item.Font = new Font(item.Font, FontStyle.Strikeout);
+          }
           item.SubItems.Add(cardType);
           item.SubItems.Add(cards[i].Name);
           item.Tag = cards[i];
@@ -148,6 +156,14 @@ namespace SetupTv.Sections
         card.Priority = mpListView1.Items.Count - i;
         card.Enabled = mpListView1.Items[i].Checked;
       }
+    }
+
+    private void mpListView1_ItemChecked(object sender, ItemCheckedEventArgs e)
+    {
+      if (e.Item.Checked)
+        e.Item.Font = new Font(e.Item.Font, FontStyle.Regular);
+      else
+        e.Item.Font = new Font(e.Item.Font, FontStyle.Strikeout);
     }
   }
 }
