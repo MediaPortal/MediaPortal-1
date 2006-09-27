@@ -282,7 +282,7 @@ namespace MediaPortal.RemoteControls.FireDTV
     /// Remove a FilterSource, but first close it.
     /// </summary>
     /// <param name="index">index of the filter</param>
-    public void RemoveAt(int index)
+    public new void RemoveAt(int index)
     {
       if (index > List.Count - 1 || index < 0)
       {

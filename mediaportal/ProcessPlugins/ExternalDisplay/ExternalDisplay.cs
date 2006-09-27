@@ -104,6 +104,7 @@ namespace ProcessPlugins.ExternalDisplay
         //Start the background thread
         stopRequested = false;
         t = new Thread(new ThreadStart(Run));
+        t.Name = "ExternalDisplay";
         t.Start();
         //subscribe for action notification
         GUIWindowManager.OnNewAction += new OnActionHandler(GUIWindowManager_OnNewAction);
@@ -128,18 +129,18 @@ namespace ProcessPlugins.ExternalDisplay
       bool doLog = Settings.Instance.ExtensiveLogging;
       if (doLog)
       {
-        Log.Debug("ExternalDisplay(Background): Entering run loop.");
+        Log.Debug("Entering run loop.");
       }
       try
       {
         if (doLog)
         {
-          Log.Debug("ExternalDisplay(Background): Creating displayhandler.");
+          Log.Debug("Creating displayhandler.");
         }
         handler = new DisplayHandler(display);
         if (doLog)
         {
-          Log.Debug("ExternalDisplay(Background): Starting displayhandler.");
+          Log.Debug("Starting displayhandler.");
         }
         handler.Start();
         //Start property browser if needed
@@ -149,14 +150,14 @@ namespace ProcessPlugins.ExternalDisplay
           handler.DisplayLines();
           if (doLog)
           {
-            Log.Debug("ExternalDisplay(Background): Sleeping...");
+            Log.Debug("Sleeping...");
           }
           Thread.Sleep(Settings.Instance.ScrollDelay);
         }
         //stop display handler
         if (doLog)
         {
-          Log.Debug("ExternalDisplay(Background): Stopping displayhandler.");
+          Log.Debug("Stopping displayhandler.");
         }
         handler.Stop();
       }
@@ -166,7 +167,7 @@ namespace ProcessPlugins.ExternalDisplay
       }
       if (doLog)
       {
-        Log.Debug("ExternalDisplay(Background): Exiting run loop.");
+        Log.Debug("Exiting run loop.");
       }
     }
 
@@ -340,13 +341,13 @@ namespace ProcessPlugins.ExternalDisplay
       {
         if (Settings.Instance.ExtensiveLogging)
         {
-          Log.Debug("ExternalDisplay(Background): Processing status.");
+          Log.Debug("Processing status.");
         }
         Debug.Assert(display != null);
         GUIWindow.Window activeWindow = (GUIWindow.Window) GUIWindowManager.ActiveWindow;
         if (Settings.Instance.ExtensiveLogging)
         {
-          Log.Debug("ExternalDisplay(Background): Active window is {0}", activeWindow.ToString());
+          Log.Debug("Active window is {0}", activeWindow.ToString());
         }
         //Determine MediaPortal status
         status = Status.Idle;
@@ -354,7 +355,7 @@ namespace ProcessPlugins.ExternalDisplay
         {
           if (Settings.Instance.ExtensiveLogging)
           {
-            Log.Debug("ExternalDisplay(Background): Active player detected");
+            Log.Debug("Active player detected");
           }
           GUIPropertyManager.SetProperty("#paused", g_Player.Paused ? "true" : string.Empty);
           if (g_Player.IsDVD)
@@ -400,14 +401,14 @@ namespace ProcessPlugins.ExternalDisplay
         }
         if (Settings.Instance.ExtensiveLogging)
         {
-          Log.Debug("ExternalDisplay(Background): Detected status is {0}", status.ToString());
+          Log.Debug("Detected status is {0}", status.ToString());
         }
         //Update propertybrowser's Status and ActiveWindow fields
         if (browser != null && !browser.IsDisposed)
         {
           if (Settings.Instance.ExtensiveLogging)
           {
-            Log.Debug("ExternalDisplay(Background): Updating PropertyBrowser.");
+            Log.Debug("Updating PropertyBrowser.");
           }
           browser.SetStatus(status);
           browser.SetActiveWindow(activeWindow);

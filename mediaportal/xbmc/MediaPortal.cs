@@ -156,6 +156,7 @@ public class MediaPortalApp : D3DApp, IRender
   [STAThread]
   public static void Main(string[] args)
   {
+    Thread.CurrentThread.Name = "MPMain";
     if (args.Length > 0)
     {
       foreach (string arg in args)

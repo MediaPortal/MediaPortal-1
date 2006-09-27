@@ -71,7 +71,7 @@ namespace MediaPortal.Tests.TVCapture.Commands
       _cards[MEDIUM].RecordingPath = "c:";
       _cards[LOWEST].RecordingPath = "c:";
 
-      using (FileStream fileStream = new FileStream(Config.Get(Config.Dir.Config) + "capturecards.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
+      using (FileStream fileStream = new FileStream(Config.GetFile(Config.Dir.Config, "capturecards.xml"), FileMode.Create, FileAccess.Write, FileShare.Read))
       {
         SoapFormatter formatter = new SoapFormatter();
         formatter.Serialize(fileStream, _cards);

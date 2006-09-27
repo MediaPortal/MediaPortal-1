@@ -153,7 +153,7 @@ namespace MediaPortal.Configuration
       {
         try
         {
-          using (FileStream fileStream = new FileStream(Config.Get(Config.Dir.Config) + "capturecards.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+          using (FileStream fileStream = new FileStream(Config.GetFile(Config.Dir.Config,"capturecards.xml"), FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
           {
 
             SoapFormatter formatter = new SoapFormatter();
@@ -1432,7 +1432,7 @@ namespace MediaPortal.Configuration
 
       if (CaptureCard != null && CaptureCard.FriendlyName != String.Empty)
       {
-        string filename = String.Format(Config.Get(Config.Dir.Database) + "card_{0}.xml", CaptureCard.FriendlyName);
+        string filename = String.Format(Config.GetFile(Config.Dir.Database,"card_{0}.xml"), CaptureCard.FriendlyName);
         using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(filename))
         {
           xmlwriter.SetValueAsBool("quality", "enabled", checkBoxHiQuality.Checked);
@@ -1684,7 +1684,7 @@ namespace MediaPortal.Configuration
           FillAutotuneTab();
           if (capture.FriendlyName != String.Empty)
           {
-            string filename = String.Format(Config.Get(Config.Dir.Database) + "card_{0}.xml", capture.FriendlyName);
+            string filename = String.Format(Config.GetFile(Config.Dir.Database,"card_{0}.xml"), capture.FriendlyName);
             using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename))
             {
               checkBoxHiQuality.Checked = xmlreader.GetValueAsBool("quality", "enabled", false);
@@ -1841,7 +1841,7 @@ namespace MediaPortal.Configuration
       // save settings for card
       if (capture != null)
       {
-        string filename = String.Format(Config.Get(Config.Dir.Database) + "card_{0}.xml", capture.FriendlyName);
+        string filename = String.Format(Config.GetFile(Config.Dir.Database,"card_{0}.xml"), capture.FriendlyName);
         using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(filename))
         {
           if (checkBoxHWPidFiltering.Visible)
@@ -1880,7 +1880,7 @@ namespace MediaPortal.Configuration
       // save settings for card
       if (capture != null)
       {
-        string filename = String.Format(Config.Get(Config.Dir.Database) + "card_{0}.xml", capture.FriendlyName);
+        string filename = String.Format(Config.GetFile(Config.Dir.Database, "card_{0}.xml"), capture.FriendlyName);
         using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(filename))
         {
           if (checkBoxHWPidFiltering.Visible)

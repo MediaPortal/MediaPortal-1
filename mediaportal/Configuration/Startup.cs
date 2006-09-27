@@ -81,9 +81,9 @@ namespace MediaPortal.Configuration
       Log.Info("Using Directories:");
       foreach (string options in Enum.GetNames(typeof(Config.Dir)))
       {
-        Log.Info("{0} - {1}", options, Config.Get((Config.Dir)Enum.Parse(typeof(Config.Dir), options)));
+        Log.Info("{0} - {1}", options, Config.GetFolder((Config.Dir)Enum.Parse(typeof(Config.Dir), options)));
       }
-      if (!System.IO.File.Exists(Config.Get(Config.Dir.Config) + "mediaportal.xml"))
+      if (!File.Exists(Config.GetFile(Config.Dir.Config, "mediaportal.xml")))
         startupMode = StartupMode.Wizard;
 
       else if (arguments != null)

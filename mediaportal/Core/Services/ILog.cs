@@ -31,6 +31,7 @@ namespace MediaPortal.Services
   {
     void BackupLogFiles();
     void BackupLogFile(LogType logType);
+    [Obsolete("This method will disappear.  Use one of the Info, Warn, Debug or Error variants instead.", false)]
     void Write(Exception ex);
 
     /// <summary>
@@ -38,6 +39,7 @@ namespace MediaPortal.Services
     /// </summary>
     /// <param name="format">The format of the string.</param>
     /// <param name="arg">An array containing the actual data of the string.</param>
+    [Obsolete("This method will disappear.  Use one of the Info, Warn, Debug or Error variants instead.", false)]
     void Write(string format, params object[] arg);
 
     void Info(string format, params object[] arg);
@@ -55,12 +57,17 @@ namespace MediaPortal.Services
     /// </summary>
     /// <param name="format">The format of the string.</param>
     /// <param name="arg">An array containing the actual data of the string.</param>
+    [Obsolete("This method will disappear because the thread information is always logged now.",false)]
     void WriteThreadId(string format, params object[] arg);
-
+    [Obsolete("This method will disappear because the thread information is always logged now.", false)]
     void WriteThreadId(LogType type, string format, params object[] arg);
+    [Obsolete("This method will disappear because the thread information is always logged now.", false)]
     void WriteFileThreadId(LogType type, bool isError, string format, params object[] arg);
+    [Obsolete("This method will disappear because the thread information is always logged now.", false)]
     void InfoThread(string format, params object[] arg);
+    [Obsolete("This method will disappear because the thread information is always logged now.", false)]
     void WarnThread(string format, params object[] arg);
+    [Obsolete("This method will disappear because the thread information is always logged now.", false)]
     void ErrorThread(string format, params object[] arg);
     void SetConfigurationMode();
     void WriteFile(LogType type, bool isError, string format, params object[] arg);

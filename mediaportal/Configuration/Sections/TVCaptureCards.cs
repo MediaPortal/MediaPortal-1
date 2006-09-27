@@ -334,9 +334,9 @@ namespace MediaPortal.Configuration.Sections
     public void LoadCaptureCards()
     {
 
-      if (File.Exists(Config.Get(Config.Dir.Config) + "capturecards.xml"))
+      if (File.Exists(Config.GetFile(Config.Dir.Config, "capturecards.xml")))
       {
-        using (FileStream fileStream = new FileStream(Config.Get(Config.Dir.Config) + "capturecards.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+        using (FileStream fileStream = new FileStream(Config.GetFile(Config.Dir.Config, "capturecards.xml"), FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
         {
           try
           {
@@ -371,7 +371,7 @@ namespace MediaPortal.Configuration.Sections
 
     void SaveCaptureCards(ArrayList availableCards)
     {
-      using (FileStream fileStream = new FileStream(Config.Get(Config.Dir.Config) + "capturecards.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
+      using (FileStream fileStream = new FileStream(Config.GetFile(Config.Dir.Config, "capturecards.xml"), FileMode.Create, FileAccess.Write, FileShare.Read))
       {
         //
         // Create Soap Formatter
@@ -465,7 +465,7 @@ namespace MediaPortal.Configuration.Sections
             cd.Priority = 10;
             captureCards.Add(cd);
 
-            string filename = String.Format(Config.Get(Config.Dir.Database) + "card_{0}.xml", cd.FriendlyName);
+            string filename = String.Format(Config.GetFile(Config.Dir.Database, "card_{0}.xml"), cd.FriendlyName);
             // save settings for get the filename in mp.xml
             using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
             {

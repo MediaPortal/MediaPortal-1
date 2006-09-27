@@ -142,7 +142,7 @@ namespace GUIRSSFeed
       string strURLTag = String.Format("siteURL{0}", ID);
       string strDescriptionTag = String.Format("siteDescription{0}", ID);
       string strEncodingTag = String.Format("siteEncoding{0}", ID);
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config,"MediaPortal.xml")))
       {
         xmlwriter.SetValue("rss", strNameTag, "");
         xmlwriter.SetValue("rss", strURLTag, "");

@@ -445,7 +445,7 @@ namespace MediaPortal.Configuration.Sections
 
             if (dialogResult == DialogResult.Yes)
             {
-              string database = Config.Get(Config.Dir.Config) + "MusicDatabaseV7.db3";
+              string database = Config.GetFile(Config.Dir.Config, "MusicDatabaseV7.db3");
                 
                 if (File.Exists(database))
                     File.Delete(database);

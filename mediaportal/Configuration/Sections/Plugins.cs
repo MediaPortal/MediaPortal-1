@@ -169,11 +169,11 @@ namespace MediaPortal.Configuration.Sections
 
     private void EnumeratePlugins()
     {
-      EnumeratePluginDirectory(Config.Get(Config.Dir.Plugins) + "windows");
-      EnumeratePluginDirectory(Config.Get(Config.Dir.Plugins) + "subtitle");
-      EnumeratePluginDirectory(Config.Get(Config.Dir.Plugins) + "tagreaders");
-      EnumeratePluginDirectory(Config.Get(Config.Dir.Plugins) + "externalplayers");
-      EnumeratePluginDirectory(Config.Get(Config.Dir.Plugins) + "process");
+      EnumeratePluginDirectory(Config.GetSubFolder(Config.Dir.Plugins, "windows"));
+      EnumeratePluginDirectory(Config.GetSubFolder(Config.Dir.Plugins, "subtitle"));
+      EnumeratePluginDirectory(Config.GetSubFolder(Config.Dir.Plugins, "tagreaders"));
+      EnumeratePluginDirectory(Config.GetSubFolder(Config.Dir.Plugins, "externalplayers"));
+      EnumeratePluginDirectory(Config.GetSubFolder(Config.Dir.Plugins, "process"));
     }
 
     private void LoadPlugins()
@@ -274,7 +274,7 @@ namespace MediaPortal.Configuration.Sections
     {
       try
       {
-        using (Settings xmlreader = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           foreach (DataRow row in ds.Tables[0].Rows)
           {
@@ -318,7 +318,7 @@ namespace MediaPortal.Configuration.Sections
       LoadAll();
       try
       {
-        using (Settings xmlwriter = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+        using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           foreach (DataRow row in ds.Tables[0].Rows)
           {
