@@ -58,6 +58,9 @@ namespace MediaPortal.GUI.RADIOLASTFM
     private AudioscrobblerUtils InfoScrobbler = null;
     private StreamControl LastFMStation = null;
     private NotifyIcon _trayBallonSongChange = null;
+    private bool _configShowTrayIcon = true;
+    private bool _configShowBallonTips = true;
+    private bool _configSubmitToProfile = true;
     private List<string> _usersOwnTags = null;
     private List<string> _usersFriends = null;
     private ScrobblerUtilsRequest _lastTrackTagRequest;
@@ -77,12 +80,20 @@ namespace MediaPortal.GUI.RADIOLASTFM
     {
       bool bResult = Load(GUIGraphicsContext.Skin + @"\MyRadioLastFM.xml");
 
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        _configShowTrayIcon = xmlreader.GetValueAsBool("audioscrobbler", "showtrayicon", true);
+        _configShowBallonTips = xmlreader.GetValueAsBool("audioscrobbler", "showballontips", true);
+        _configSubmitToProfile = xmlreader.GetValueAsBool("audioscrobbler", "submitradiotracks", true);
+      }
+
       LastFMStation = new StreamControl();
       InfoScrobbler = AudioscrobblerUtils.Instance;
       _usersOwnTags = new List<string>();
       _usersFriends = new List<string>();
 
-      InitTrayIcon();
+      if (_configShowTrayIcon)
+        InitTrayIcon();
 
       //g_Player.PlayBackStarted += new g_Player.StartedHandler(g_Player_PlayBackStarted);
       g_Player.PlayBackStopped += new g_Player.StoppedHandler(PlayBackStoppedHandler);
@@ -95,23 +106,21 @@ namespace MediaPortal.GUI.RADIOLASTFM
     #region Serialisation
     private void LoadSettings()
     {
-      //using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-      //{
-
-      //}
       if (!LastFMStation.IsInit)
+      {
         LastFMStation.LoadConfig();
-
+        LastFMStation.SubmitRadioSongs = _configSubmitToProfile;
+      }
       UpdateUsersTags(LastFMStation.AccountUser);
       UpdateUsersFriends(LastFMStation.AccountUser);
     }
 
-    void SaveSettings()
-    {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-      {
-      }
-    }
+    //void SaveSettings()
+    //{
+    //  using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+    //  {
+    //  }
+    //}
     #endregion
 
 
@@ -143,6 +152,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         btnChooseFriend.Disabled = true;
         btnChooseFriend.Label = "No friends";
       }
+      GUIPropertyManager.SetProperty("#trackduration", " ");
 
       String ThumbFileName = String.Empty;
 
@@ -159,7 +169,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
       if (_trayBallonSongChange != null)
         _trayBallonSongChange.Visible = false;
 
-      SaveSettings();
       base.OnPageDestroy(newWindowId);
     }
 
@@ -349,7 +358,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
       switch (message.Message)
       {
         case GUIMessage.MessageType.GUI_MSG_SHOW_BALLONTIP_SONGCHANGE:
-          ShowSongTrayBallon(message.Label, message.Label2, message.Param1);
+          if (_configShowBallonTips)
+            ShowSongTrayBallon(message.Label, message.Label2, message.Param1);
           break;
       }
       return base.OnMessage(message);
@@ -583,6 +593,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
       SetArtistThumb(String.Empty);
       GUIPropertyManager.SetProperty("#Play.Current.Lastfm.TrackTags", String.Empty);
       GUIPropertyManager.SetProperty("#Play.Current.Lastfm.SimilarArtists", String.Empty);
+      GUIPropertyManager.SetProperty("#trackduration", " ");
+      GUIPropertyManager.SetProperty("#currentplaytime", String.Empty);
     }
     #endregion
 
@@ -615,7 +627,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         GUIPropertyManager.SetProperty("#Play.Current.Title", newCurrentSong.Title);
         GUIPropertyManager.SetProperty("#Play.Current.Genre", newCurrentSong.Genre);
         GUIPropertyManager.SetProperty("#Play.Current.Thumb", newCurrentSong.Comment);
-        GUIPropertyManager.SetProperty("#trackduration", Convert.ToString(newCurrentSong.Duration));
+        GUIPropertyManager.SetProperty("#trackduration", Util.Utils.SecondsToHMSString(newCurrentSong.Duration));
       }
     }
 
@@ -683,7 +695,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
     {
       if (_trayBallonSongChange == null)
       {
-
         ContextMenu contextMenuLastFM = new ContextMenu();
         MenuItem menuItem1 = new MenuItem();
         MenuItem menuItem2 = new MenuItem();
@@ -822,9 +833,11 @@ namespace MediaPortal.GUI.RADIOLASTFM
       return false;
     }
 
+    // show the setup dialog
     public void ShowPlugin()
     {
-      MessageBox.Show("Nothing to setup now. \nThis plugin depends on the audioscrobbler process plugin.");
+      PluginSetupForm lastfmsetup = new PluginSetupForm();
+      lastfmsetup.ShowDialog();
     }
     #endregion
   }

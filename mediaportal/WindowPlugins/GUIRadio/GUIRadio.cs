@@ -906,6 +906,16 @@ namespace MediaPortal.GUI.Radio
       }
     }
 
+    void SortChanged(object sender, SortEventArgs e)
+    {
+      sortAscending = e.Order != System.Windows.Forms.SortOrder.Descending;
+
+      OnSort();
+      UpdateButtons();
+
+      GUIControl.FocusControl(GetID, ((GUIControl)sender).GetID);
+    }
+
     #region ISetupForm Members
 
     public bool CanEnable()
@@ -967,15 +977,7 @@ namespace MediaPortal.GUI.Radio
 
     #endregion
 
-    void SortChanged(object sender, SortEventArgs e)
-    {
-      sortAscending = e.Order != System.Windows.Forms.SortOrder.Descending;
 
-      OnSort();
-      UpdateButtons();
-
-      GUIControl.FocusControl(GetID, ((GUIControl)sender).GetID);
-    }
 
   }
 }

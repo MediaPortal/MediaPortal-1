@@ -52,6 +52,7 @@ namespace MediaPortal.AudioScrobbler
       LoadSettings();
     }
 
+
     #region Serialisation
     protected void LoadSettings()
     {
@@ -333,8 +334,8 @@ namespace MediaPortal.AudioScrobbler
     }
     #endregion
 
-    #region control events
 
+    #region control events
     // Implements the manual sorting of items by columns.
     class ListViewItemComparer : IComparer
     {
@@ -479,8 +480,24 @@ namespace MediaPortal.AudioScrobbler
         buttonGetTaggedArtists_Click(sender, e);
     }
 
+    private void comboBoxUserName_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      _currentUser = comboBoxUserName.Text;
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        xmlwriter.SetValue("audioscrobbler", "user", _currentUser);
+      LoadSettings();
+    }
+
+
+    private void maskedTextBoxASPassword_KeyUp(object sender, KeyEventArgs e)
+    {
+      if (e.KeyCode == Keys.Enter)
+        buttonOk_Click(sender, e);
+    }
     #endregion
 
+
+    #region Internal formatting
     private ListViewItem BuildListViewItemSingleTag(Song song_)
     {
       ListViewItem listItem = new ListViewItem(song_.Artist);          
@@ -530,9 +547,10 @@ namespace MediaPortal.AudioScrobbler
       listItem.Tag = song_;
       return listItem;
     }
+    #endregion
+
 
     #region Button events
-
     private void buttonCancel_Click(object sender, EventArgs e)
     {
       this.Close();
@@ -836,16 +854,6 @@ namespace MediaPortal.AudioScrobbler
       tabControlLiveFeeds.Enabled = true;
     }
 
-    #endregion
-
-    private void comboBoxUserName_SelectedIndexChanged(object sender, EventArgs e)
-    {
-      _currentUser = comboBoxUserName.Text;
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-        xmlwriter.SetValue("audioscrobbler", "user", _currentUser);
-      LoadSettings();
-    }
-
     private void buttonAddUser_Click(object sender, EventArgs e)
     {
       if (tabControlSettings.TabCount > 1)
@@ -864,13 +872,6 @@ namespace MediaPortal.AudioScrobbler
       comboBoxUserName.Focus();
     }
 
-    private void maskedTextBoxASPassword_KeyUp(object sender, KeyEventArgs e)
-    {
-      if (e.KeyCode == Keys.Enter)
-        buttonOk_Click(sender, e);
-    }
-
-
     private void buttonDelUser_Click(object sender, EventArgs e)
     {
       MusicDatabase mdb = new MusicDatabase();
@@ -883,6 +884,6 @@ namespace MediaPortal.AudioScrobbler
       comboBoxUserName.Items.Clear();
       LoadSettings();
     }
-    
+    #endregion   
   }
 }

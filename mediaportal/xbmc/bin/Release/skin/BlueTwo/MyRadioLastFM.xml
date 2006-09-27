@@ -174,7 +174,7 @@
          <id>0</id>
          <posX>675</posX>
          <posY>373</posY>
-         <label>#duration</label>
+         <label>#trackduration</label>
          <font>font14</font>
           <align>right</align>
          <textcolor>80ffffff</textcolor>

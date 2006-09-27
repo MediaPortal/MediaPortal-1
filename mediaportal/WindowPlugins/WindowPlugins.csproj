@@ -533,6 +533,12 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="GUIRadioLastFM\GUIRadioLastFM.cs" />
+    <Compile Include="GUIRadioLastFM\PluginSetupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUIRadioLastFM\PluginSetupForm.Designer.cs">
+      <DependentUpon>PluginSetupForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="GUIRadioLastFM\StreamControl.cs" />
     <Compile Include="GUIRadio\GUIRadio.cs">
       <SubType>Code</SubType>
@@ -949,6 +955,11 @@
     <Compile Include="Home\SetupForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="VideoEditor\DvrMsModifier.cs" />
     <Compile Include="VideoEditor\GUIVideoEditor.cs" />
     <Compile Include="VideoEditor\Mpeg2Divx.cs" />
@@ -1031,6 +1042,10 @@
     <EmbeddedResource Include="GUIPrograms\taggedMenuItem.resx">
       <DependentUpon>taggedMenuItem.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="GUIRadioLastFM\PluginSetupForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>PluginSetupForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="GUIRSSFeed\DetailsForm.resx">
       <DependentUpon>DetailsForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -1060,8 +1075,14 @@
     <EmbeddedResource Include="Home\SetupForm.resx">
       <DependentUpon>SetupForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <Content Include="GUIPrograms\FileDetailContents.xml" />
     <Content Include="GUIPrograms\ProgramSettingProfiles.xml" />
+    <None Include="Resources\LastfmBanner.bmp" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
