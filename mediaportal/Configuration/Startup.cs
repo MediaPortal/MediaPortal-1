@@ -27,6 +27,7 @@ using System;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using System.Threading;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.Services;
@@ -75,6 +76,7 @@ namespace MediaPortal.Configuration
     /// <param name="arguments"></param>
     public Startup(string[] arguments)
     {
+      Thread.CurrentThread.Name = "Config Main";
       // Logger should write into Configuration.log
       Log.SetConfigurationMode();
       Log.BackupLogFile(LogType.Config);
