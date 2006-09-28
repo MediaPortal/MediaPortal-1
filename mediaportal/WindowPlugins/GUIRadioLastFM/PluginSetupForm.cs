@@ -26,6 +26,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         checkBoxUseTrayIcon.Checked = xmlreader.GetValueAsBool("audioscrobbler", "showtrayicon", true);
         checkBoxShowBallonTips.Checked = xmlreader.GetValueAsBool("audioscrobbler", "showballontips", true);
         checkBoxSubmitToProfile.Checked = xmlreader.GetValueAsBool("audioscrobbler", "submitradiotracks", true);
+        numericUpDownListEntries.Value = xmlreader.GetValueAsInt("audioscrobbler", "listentrycount", 12);
       }
     }
 
@@ -36,6 +37,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         xmlwriter.SetValueAsBool("audioscrobbler", "showtrayicon", checkBoxUseTrayIcon.Checked);
         xmlwriter.SetValueAsBool("audioscrobbler", "showballontips", checkBoxShowBallonTips.Checked);
         xmlwriter.SetValueAsBool("audioscrobbler", "submitradiotracks", checkBoxSubmitToProfile.Checked);
+        xmlwriter.SetValue("audioscrobbler", "listentrycount", numericUpDownListEntries.Value);
       }
     }
     #endregion

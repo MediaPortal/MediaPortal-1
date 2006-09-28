@@ -1082,7 +1082,9 @@
     </EmbeddedResource>
     <Content Include="GUIPrograms\FileDetailContents.xml" />
     <Content Include="GUIPrograms\ProgramSettingProfiles.xml" />
-    <None Include="Resources\LastfmBanner.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

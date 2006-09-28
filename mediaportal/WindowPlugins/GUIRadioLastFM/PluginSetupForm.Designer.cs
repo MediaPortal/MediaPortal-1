@@ -37,9 +37,12 @@
       this.checkBoxUseTrayIcon = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.buttonCancel = new System.Windows.Forms.Button();
       this.buttonSave = new System.Windows.Forms.Button();
+      this.numericUpDownListEntries = new System.Windows.Forms.NumericUpDown();
+      this.labelListEntries = new MediaPortal.UserInterface.Controls.MPLabel();
       this.panelBannerAlign.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxBanner)).BeginInit();
       this.groupBoxSettings.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownListEntries)).BeginInit();
       this.SuspendLayout();
       // 
       // panelBannerAlign
@@ -62,6 +65,8 @@
       // 
       // groupBoxSettings
       // 
+      this.groupBoxSettings.Controls.Add(this.labelListEntries);
+      this.groupBoxSettings.Controls.Add(this.numericUpDownListEntries);
       this.groupBoxSettings.Controls.Add(this.checkBoxShowBallonTips);
       this.groupBoxSettings.Controls.Add(this.checkBoxSubmitToProfile);
       this.groupBoxSettings.Controls.Add(this.checkBoxUseTrayIcon);
@@ -76,7 +81,7 @@
       // 
       this.checkBoxShowBallonTips.AutoSize = true;
       this.checkBoxShowBallonTips.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxShowBallonTips.Location = new System.Drawing.Point(32, 48);
+      this.checkBoxShowBallonTips.Location = new System.Drawing.Point(32, 70);
       this.checkBoxShowBallonTips.Name = "checkBoxShowBallonTips";
       this.checkBoxShowBallonTips.Size = new System.Drawing.Size(188, 17);
       this.checkBoxShowBallonTips.TabIndex = 2;
@@ -87,7 +92,7 @@
       // 
       this.checkBoxSubmitToProfile.AutoSize = true;
       this.checkBoxSubmitToProfile.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxSubmitToProfile.Location = new System.Drawing.Point(15, 72);
+      this.checkBoxSubmitToProfile.Location = new System.Drawing.Point(15, 27);
       this.checkBoxSubmitToProfile.Name = "checkBoxSubmitToProfile";
       this.checkBoxSubmitToProfile.Size = new System.Drawing.Size(215, 17);
       this.checkBoxSubmitToProfile.TabIndex = 1;
@@ -98,11 +103,11 @@
       // 
       this.checkBoxUseTrayIcon.AutoSize = true;
       this.checkBoxUseTrayIcon.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxUseTrayIcon.Location = new System.Drawing.Point(15, 30);
+      this.checkBoxUseTrayIcon.Location = new System.Drawing.Point(15, 50);
       this.checkBoxUseTrayIcon.Name = "checkBoxUseTrayIcon";
-      this.checkBoxUseTrayIcon.Size = new System.Drawing.Size(313, 17);
+      this.checkBoxUseTrayIcon.Size = new System.Drawing.Size(189, 17);
       this.checkBoxUseTrayIcon.TabIndex = 0;
-      this.checkBoxUseTrayIcon.Text = "Show tray icon (with important commands in its context menu)";
+      this.checkBoxUseTrayIcon.Text = "Show tray icon (with context menu)";
       this.checkBoxUseTrayIcon.UseVisualStyleBackColor = true;
       this.checkBoxUseTrayIcon.CheckedChanged += new System.EventHandler(this.checkBoxUseTrayIcon_CheckedChanged);
       // 
@@ -126,6 +131,32 @@
       this.buttonSave.UseVisualStyleBackColor = true;
       this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
       // 
+      // numericUpDownListEntries
+      // 
+      this.numericUpDownListEntries.Location = new System.Drawing.Point(15, 106);
+      this.numericUpDownListEntries.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      this.numericUpDownListEntries.Name = "numericUpDownListEntries";
+      this.numericUpDownListEntries.Size = new System.Drawing.Size(44, 20);
+      this.numericUpDownListEntries.TabIndex = 3;
+      this.numericUpDownListEntries.Value = new decimal(new int[] {
+            12,
+            0,
+            0,
+            0});
+      // 
+      // labelListEntries
+      // 
+      this.labelListEntries.AutoSize = true;
+      this.labelListEntries.Location = new System.Drawing.Point(65, 108);
+      this.labelListEntries.Name = "labelListEntries";
+      this.labelListEntries.Size = new System.Drawing.Size(260, 13);
+      this.labelListEntries.TabIndex = 4;
+      this.labelListEntries.Text = "Maximum number of menu entries (for tags, friends, ...)";
+      // 
       // PluginSetupForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -143,6 +174,7 @@
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxBanner)).EndInit();
       this.groupBoxSettings.ResumeLayout(false);
       this.groupBoxSettings.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownListEntries)).EndInit();
       this.ResumeLayout(false);
 
     }
@@ -157,5 +189,7 @@
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxUseTrayIcon;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxSubmitToProfile;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxShowBallonTips;
+    private MediaPortal.UserInterface.Controls.MPLabel labelListEntries;
+    private System.Windows.Forms.NumericUpDown numericUpDownListEntries;
   }
 }

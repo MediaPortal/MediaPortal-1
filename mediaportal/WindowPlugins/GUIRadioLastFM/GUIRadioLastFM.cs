@@ -61,6 +61,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     private bool _configShowTrayIcon = true;
     private bool _configShowBallonTips = true;
     private bool _configSubmitToProfile = true;
+    private int _configListEntryCount = 12;
     private List<string> _usersOwnTags = null;
     private List<string> _usersFriends = null;
     private ScrobblerUtilsRequest _lastTrackTagRequest;
@@ -85,6 +86,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         _configShowTrayIcon = xmlreader.GetValueAsBool("audioscrobbler", "showtrayicon", true);
         _configShowBallonTips = xmlreader.GetValueAsBool("audioscrobbler", "showballontips", true);
         _configSubmitToProfile = xmlreader.GetValueAsBool("audioscrobbler", "submitradiotracks", true);
+        _configListEntryCount = xmlreader.GetValueAsInt("audioscrobbler", "listentrycount", 12);
       }
 
       LastFMStation = new StreamControl();
@@ -144,13 +146,13 @@ namespace MediaPortal.GUI.RADIOLASTFM
       if (_usersOwnTags.Count < 1)
       {
         btnChooseTag.Disabled = true;
-        btnChooseTag.Label = "No tags";
+        btnChooseTag.Label = GUILocalizeStrings.Get(34030);
       }
 
       if (_usersFriends.Count < 1)
       {
         btnChooseFriend.Disabled = true;
-        btnChooseFriend.Label = "No friends";
+        btnChooseFriend.Label = GUILocalizeStrings.Get(34031);
       }
       GUIPropertyManager.SetProperty("#trackduration", " ");
 
@@ -207,39 +209,39 @@ namespace MediaPortal.GUI.RADIOLASTFM
         if (dlg == null)
           return;
         dlg.Reset();
-        dlg.SetHeading(34001);                // Start Stream
+        dlg.SetHeading(34001);                   // Start Stream
 // 1
-        dlg.Add("Recommendation radio");
+        dlg.Add(GUILocalizeStrings.Get(34040));  // Recommendation radio
 // 2
         dlg.Add("MediaPortal User's group radio");
 // 3
         if (btnChooseTag.Label != String.Empty)
-          desiredTag = "Tune into chosen Tag: " + btnChooseTag.Label;
+          desiredTag = GUILocalizeStrings.Get(34041) + btnChooseTag.Label;  // Tune into chosen Tag: 
         else
-          desiredTag = "No tag has been chosen yet";
+          desiredTag = GUILocalizeStrings.Get(34042);                       // No tag has been chosen yet
         dlg.Add(desiredTag);        
 
 // 4
         if (btnChooseFriend.Label != String.Empty)
-          desiredFriend = "Personal radio of: " + btnChooseFriend.Label;
+          desiredFriend = GUILocalizeStrings.Get(34043) + btnChooseFriend.Label; // Personal radio of: 
         else
-          desiredFriend = "No Friend has been chosen yet";
+          desiredFriend = GUILocalizeStrings.Get(34045); // No Friend has been chosen yet
         dlg.Add(desiredFriend);
 
 // 5
         if (btnChooseFriend.Label != String.Empty)
-          desiredFriend = "Loved tracks of: " + btnChooseFriend.Label;
+          desiredFriend = GUILocalizeStrings.Get(34044) + btnChooseFriend.Label; // Loved tracks of: 
         else
-          desiredFriend = "No Friend has been chosen yet";
+          desiredFriend = GUILocalizeStrings.Get(34045); // No Friend has been chosen yet
         dlg.Add(desiredFriend);
 
 
         if (isSubscriber)
         {
 // 6
-          dlg.Add("My personal radio");
+          dlg.Add(GUILocalizeStrings.Get(34046)); // My personal radio
 // 7
-          dlg.Add("My loved tracks");
+          dlg.Add(GUILocalizeStrings.Get(34047)); // My loved tracks
         }
         
         dlg.DoModal(GetID);
@@ -258,13 +260,22 @@ namespace MediaPortal.GUI.RADIOLASTFM
             LastFMStation.StreamsUser = "MediaPortal Users";
             break;
           case 3:
+            // bail out if no tags available
+            if (btnChooseTag.Label == GUILocalizeStrings.Get(34030))
+              return;
             TuneIntoSelected = StreamType.Tags;            
             break;
           case 4:
+            // bail out if no friends have been made
+            if (btnChooseFriend.Label == GUILocalizeStrings.Get(34031))
+              return;
             TuneIntoSelected = StreamType.Personal;
             LastFMStation.StreamsUser = btnChooseFriend.Label;
             break;
           case 5:
+            // bail out if no friends have been made
+            if (btnChooseFriend.Label == GUILocalizeStrings.Get(34031))
+              return;
             TuneIntoSelected = StreamType.Loved;
             LastFMStation.StreamsUser = btnChooseFriend.Label;
             break;
@@ -359,7 +370,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       {
         case GUIMessage.MessageType.GUI_MSG_SHOW_BALLONTIP_SONGCHANGE:
           if (_configShowBallonTips)
-            ShowSongTrayBallon(message.Label, message.Label2, message.Param1);
+            ShowSongTrayBallon(message.Label, message.Label2, message.Param1, true);
           break;
       }
       return base.OnMessage(message);
@@ -548,8 +559,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         for (int i = 0; i < FeedItems.Count; i++)
         {
           _usersOwnTags.Add(FeedItems[i].Artist);
-          // display 15 items only
-          if (i >= 14)
+          if (i == _configListEntryCount -1)
             break;
         }
         if (_usersOwnTags.Count > 0)
@@ -571,8 +581,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         for (int i = 0; i < FeedItems.Count; i++)
         {
           _usersFriends.Add(FeedItems[i].Artist);
-          // display 15 items only
-          if (i >= 14)
+          if (i == _configListEntryCount -1)
             break;
         }
         if (_usersFriends.Count > 0)
@@ -595,6 +604,9 @@ namespace MediaPortal.GUI.RADIOLASTFM
       GUIPropertyManager.SetProperty("#Play.Current.Lastfm.SimilarArtists", String.Empty);
       GUIPropertyManager.SetProperty("#trackduration", " ");
       GUIPropertyManager.SetProperty("#currentplaytime", String.Empty);
+
+      //reset the TrayIcon
+      ShowSongTrayBallon(GUILocalizeStrings.Get(34050), " ", 1, false); // Stream stopped
     }
     #endregion
 
@@ -657,8 +669,10 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
       //if (dlg.SelectedId == -1)
       //  return;
-
       OnPlaybackStopped();
+
+      ShowSongTrayBallon(GUILocalizeStrings.Get(34051), GUILocalizeStrings.Get(34052), 15, true); // Stream ended, No more content or bad connection
+
       Log.Info("GUIRadio: No more content for this selection or interrupted stream..");
       LastFMStation.CurrentStreamState = StreamPlaybackState.nocontent;
       //dlg.AddLocalizedString(930);        //Add to favorites
@@ -668,7 +682,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
 
     #region Utils
-    void ShowSongTrayBallon(String notifyTitle, String notifyMessage_, int showSeconds_)
+    void ShowSongTrayBallon(String notifyTitle, String notifyMessage_, int showSeconds_, bool popup_)
     {
       if (_trayBallonSongChange != null)
       {
@@ -679,7 +693,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
           notifyMessage_ = notifyMessage_.Remove(63);
 
         // XP hides "inactive" icons therefore change the text
-        String IconText = "MediaPortal \n" + notifyMessage_ + " - " + notifyTitle;
+        String IconText = "MP Last.fm radio\n" + notifyMessage_ + " - " + notifyTitle;
         if (IconText.Length > 63)
           IconText = IconText.Remove(60) + "..";
         _trayBallonSongChange.Text = IconText;
@@ -687,7 +701,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
         _trayBallonSongChange.BalloonTipTitle = notifyTitle;
         _trayBallonSongChange.BalloonTipText = notifyMessage_;
-        _trayBallonSongChange.ShowBalloonTip(showSeconds_);
+        if (popup_)
+          _trayBallonSongChange.ShowBalloonTip(showSeconds_);
       }
     }
 

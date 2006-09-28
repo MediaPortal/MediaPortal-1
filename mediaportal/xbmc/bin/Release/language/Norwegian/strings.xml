@@ -5252,6 +5252,10 @@
       <value>Hjelp en gang</value>
    </string>
    <string>
+      <id>19119</id>
+      <value>Nullstill</value>
+   </string>
+   <string>
       <id>25001</id>
       <value>Venter på side {0:X}...!</value>
    </string>

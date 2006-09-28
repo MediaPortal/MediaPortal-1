@@ -5381,7 +5381,7 @@
    </string>
    <string>
       <id>34001</id>
-      <value>Starte Stream</value>
+      <value>Starte / Wechsle Stream</value>
    </string>
    <string>
       <id>34002</id>
@@ -5408,16 +5408,68 @@
       <value>Nächster Titel</value>
    </string>
    <string>
-      <id>34020</id>
-      <value>Ins Profil eintragen</value>
-   </string>
-   <string>
       <id>34013</id>
       <value>Entdecker Modus</value>
    </string>
    <string>
+      <id>34014</id>
+      <value>Ins Profil eintragen</value>
+   </string>
+   <string>
       <id>34020</id>
       <value>Aktueller Stream: </value>
+   </string>
+   <string>
+      <id>34030</id>
+      <value>Keine Tags</value>
+   </string>
+   <string>
+      <id>34031</id>
+      <value>Keine Freunde</value>
+   </string>
+   <string>
+      <id>34040</id>
+      <value>Recommendation Radio</value>
+   </string>
+   <string>
+      <id>34041</id>
+      <value>Ähnlich zu Tag: </value>
+   </string>
+   <string>
+      <id>34042</id>
+      <value>Kein Tag ausgewählt</value>
+   </string>
+   <string>
+      <id>34043</id>
+      <value>Persönliches Radio von: </value>
+   </string>
+   <string>
+      <id>34044</id>
+      <value>Favoriten von: </value>
+   </string>
+   <string>
+      <id>34045</id>
+      <value>Kein Freund ausgewählt</value>
+   </string>
+   <string>
+      <id>34046</id>
+      <value>Mein persönliches Radio</value>
+   </string>
+   <string>
+      <id>34047</id>
+      <value>Meine Favoriten</value>
+   </string>
+   <string>
+      <id>34050</id>
+      <value>Kein Stream aktiv</value>
+   </string>
+   <string>
+      <id>34051</id>
+      <value>Stream unterbrochen!</value>
+   </string>   
+   <string>
+      <id>34052</id>
+      <value>Keine weiteren Lieder oder schlechte Verbindung</value>
    </string>
       
    <string>

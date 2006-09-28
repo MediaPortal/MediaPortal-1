@@ -5380,7 +5380,7 @@
    </string>   
    <string>
       <id>34001</id>
-      <value>Start stream</value>
+      <value>Start / Change stream</value>
    </string>
    <string>
       <id>34002</id>
@@ -5407,18 +5407,70 @@
       <value>Skip</value>
    </string>
    <string>
-      <id>34020</id>
-      <value>Submit to profile</value>
-   </string>
-   <string>
       <id>34013</id>
       <value>Discovery mode</value>
+   </string>
+   <string>
+      <id>34014</id>
+      <value>Submit to profile</value>
    </string>
    <string>
       <id>34020</id>
       <value>Current stream: </value>
    </string>
-                    
+   <string>
+      <id>34030</id>
+      <value>No tags</value>
+   </string>
+   <string>
+      <id>34031</id>
+      <value>No friends</value>
+   </string>
+   <string>
+      <id>34040</id>
+      <value>Recommendation radio</value>
+   </string>
+   <string>
+      <id>34041</id>
+      <value>Tune into chosen Tag: </value>
+   </string>
+   <string>
+      <id>34042</id>
+      <value>No tag has been chosen yet</value>
+   </string>
+   <string>
+      <id>34043</id>
+      <value>Personal radio of: </value>
+   </string>
+   <string>
+      <id>34044</id>
+      <value>Loved tracks of: </value>
+   </string>
+   <string>
+      <id>34045</id>
+      <value>No Friend has been chosen yet</value>
+   </string>
+   <string>
+      <id>34046</id>
+      <value>My personal radio</value>
+   </string>
+   <string>
+      <id>34047</id>
+      <value>My loved tracks</value>
+   </string>
+   <string>
+      <id>34050</id>
+      <value>No stream active</value>
+   </string>
+   <string>
+      <id>34051</id>
+      <value>Stream ended!</value>
+   </string>   
+   <string>
+      <id>34052</id>
+      <value>No more content or bad connection</value>
+   </string>
+           
    <string>
       <id>100000</id>
       <value>Home</value>
