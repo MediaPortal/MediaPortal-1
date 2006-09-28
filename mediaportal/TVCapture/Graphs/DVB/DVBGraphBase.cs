@@ -4801,6 +4801,12 @@ namespace MediaPortal.TV.Recording
        */
     }
     #endregion
+    
+    public VideoCaptureProperties CardProperties
+    {
+      get { return _cardProperties; }
+    }
+
   }//public class DVBGraphBDA
 
 

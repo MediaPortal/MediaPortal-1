@@ -1099,6 +1099,13 @@ namespace MediaPortal.TV.Recording
       StopViewing();
       StopEpgGrabbing();
       StopRadio();
+      //Call the Dispose method to close the TT CI
+      DVBGraphBase dvbGraph = _currentGraph as DVBGraphBase;
+      if (dvbGraph != null)
+      {
+        Log.Info("TVCapture.Stop() cardproperties.Dispose()");
+        dvbGraph.CardProperties.Dispose();
+      }
       DeleteGraph();
     }
 
