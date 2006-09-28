@@ -61,5 +61,6 @@ private:
 	bool  m_streams[255];
   byte* m_pesBuffer;
 	__int64 m_startPcr;
-	__int64 m_currentPcr;
+	__int64 m_highestPcr;
+  bool    m_bDetermineNewStartPcr;
 };

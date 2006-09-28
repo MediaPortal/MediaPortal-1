@@ -32,7 +32,7 @@ public:
   virtual ~CVirtualChannelTableParser(void);
 
   void  Reset();
-	void  OnNewSection(CSection** sections, int maxSections);
+  void OnNewSection(CSection& section);
 
   int   Count();
   bool  GetChannelInfo(int serviceId,CChannelInfo& info);

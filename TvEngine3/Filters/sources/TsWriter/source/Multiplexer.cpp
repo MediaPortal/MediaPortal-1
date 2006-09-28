@@ -52,8 +52,9 @@ void CMultiplexer::Reset()
 	m_videoPacketCounter= 0;
   m_audioPacketCounter=0;
 	m_startPcr=0;
-	m_currentPcr=0;
+	m_highestPcr=0;
 	m_pcrDecoder.Reset();
+  m_bDetermineNewStartPcr=false;
 	ClearStreams();
 }
 
@@ -65,6 +66,7 @@ void CMultiplexer::ClearStreams()
 	{
 		CPesDecoder* decoder=*it;
 		delete decoder;
+    m_bDetermineNewStartPcr=true;
 	}
 	m_pesDecoders.clear();
 }
@@ -255,26 +257,26 @@ int CMultiplexer::SplitPesPacket(int streamId,byte* header, int headerlen, byte*
 	if (m_startPcr==0)
 	{
 		m_startPcr = pcrNew;
-		m_currentPcr=pcrNew;
+    m_highestPcr=pcrNew;
 		LogDebug("Pcr new start pcr :%x", (DWORD)m_startPcr);
-	}
-	//correct pcr rollover
-	__int64 pcrDiff=pcrNew - m_currentPcr;
-	if (pcrDiff < 0) pcrDiff =- pcrDiff;
-	if (pcrDiff>maxDiff)
-	{
-		maxDiff=pcrDiff;
-		LogDebug("Pcr max diff :%x", (DWORD)maxDiff);
-	}
-	if (pcrDiff > 0x30000)
-	{
-		//pcr changed!!!
-		maxDiff=0;
-		LogDebug("Pcr change detected of start:%x prev:%x new:%x", (DWORD)m_startPcr,(DWORD)m_currentPcr, (DWORD)pcrNew );
-		m_startPcr = pcrNew- (m_currentPcr - m_startPcr) ;
-		LogDebug("Pcr new start pcr :%x", (DWORD)m_startPcr);
-	}
-	m_currentPcr=pcrNew;
+	} 
+
+  if (m_bDetermineNewStartPcr && pcrNew!=0)
+  {
+    m_bDetermineNewStartPcr=false;
+	  //correct pcr rollover
+	  __int64 pcrDiff=pcrNew - m_highestPcr;
+	  if (pcrDiff < 0) pcrDiff =- pcrDiff;
+  
+	  LogDebug("Pcr change detected from:%x to:%x", (DWORD)m_highestPcr, (DWORD)pcrNew );
+	  m_startPcr = pcrNew- (m_highestPcr - m_startPcr) ;
+	  LogDebug("Pcr new start pcr :%x", (DWORD)m_startPcr);
+  }
+
+  if (pcrNew > m_highestPcr)
+  {
+	  m_highestPcr=pcrNew;
+  }
 
   if (sectionLength != 0x7e9)
   {

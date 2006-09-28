@@ -1018,6 +1018,10 @@ namespace TvPlugin
           TVHome.Card.ChannelName != channel)
       {
 
+        if (g_Player.Playing )
+        {
+          SeekToEnd();
+        }
         VirtualCard card;
         succeeded = RemoteControl.Instance.StartTimeShifting(channel, out card);
         TVHome.Card = card;
@@ -1028,9 +1032,7 @@ namespace TvPlugin
           {
             g_Player.Stop();
           }
-          if (g_Player.Playing)
-            SeekToEnd();
-          else
+          if (!g_Player.Playing)
             StartPlay();
           return true;
         }
@@ -1103,7 +1105,10 @@ namespace TvPlugin
 
       if (TVHome.Card.IsTimeShifting == false || TVHome.Card.ChannelName != channel)
       {
-
+        if (g_Player.Playing )
+        {
+          SeekToEnd();
+        }
         VirtualCard card;
         TvResult succeeded = RemoteControl.Instance.StartTimeShifting(channel, out card);
         TVHome.Card = card;
@@ -1113,8 +1118,7 @@ namespace TvPlugin
           {
             g_Player.Stop();
           }
-          if (g_Player.Playing) SeekToEnd();
-          else StartPlay();
+          if (!g_Player.Playing)   StartPlay();
           return;
         }
         else
@@ -1266,7 +1270,9 @@ namespace TvPlugin
       double pos = g_Player.Duration;
       MediaPortal.GUI.Library.Log.Info("tvhome:seektoend dur:{0} pos:{1}", g_Player.Duration, g_Player.CurrentPosition);
       //if (pos > 2) pos -= 2;
-      g_Player.SeekAbsolute(pos);
+      g_Player.SeekAbsolute(pos); 
+      MediaPortal.GUI.Library.Log.Info("tvhome:seektoend  done dur:{0} pos:{1}", g_Player.Duration, g_Player.CurrentPosition);
+      
     }
   }
 

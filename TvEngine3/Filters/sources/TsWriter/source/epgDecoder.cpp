@@ -611,10 +611,10 @@ bool CEpgDecoder::IsEPGGrabbing()
 }
 bool CEpgDecoder::IsEPGReady()
 {
-	if (m_bEpgDone)
-	{
-		LogDebug("CEpgDecoder::IsEPGReady() ->yes");
-	}
+	//if (m_bEpgDone)
+	//{
+	//	LogDebug("CEpgDecoder::IsEPGReady() ->yes");
+	//}
 	return m_bEpgDone;
 }
 ULONG CEpgDecoder::GetEPGChannelCount( )

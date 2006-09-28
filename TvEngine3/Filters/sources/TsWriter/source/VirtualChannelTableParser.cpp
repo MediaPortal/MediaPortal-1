@@ -69,154 +69,152 @@ bool CVirtualChannelTableParser::GetChannelInfo(int serviceId,CChannelInfo& info
 	return false;
 }
 
-void CVirtualChannelTableParser::OnNewSection(CSection** sections, int maxSections)
+void CVirtualChannelTableParser::OnNewSection(CSection& newSection)
 {
-  for (int iSection=0; iSection < maxSections;++iSection)
+  byte* section=newSection.Data;
+  int sectionLen=newSection.SectionLength;
+  CTsHeader header(section);
+  int startOff=header.PayLoadStart+1;
+  byte* buf=&section[startOff];
+  int table_id = buf[0];
+  if (table_id!=0xc8 && table_id != 0xc9) return;
+
+  //dump table!
+
+  int section_syntax_indicator = (buf[1]>>7) & 1;
+  int private_indicator = (buf[1]>>6) & 1;
+  int section_length = ((buf[1]& 0xF)<<8) + buf[2];
+  int transport_stream_id = (buf[3]<<8)+buf[4];
+  int version_number = ((buf[5]>>1)&0x1F);
+  if (version_number==m_iVctVersion) return;
+	LogDebug("VCT: received vct table id:%x version:%d", table_id,version_number);
+  m_iVctVersion=version_number;
+  int current_next_indicator = buf[5] & 1;
+  int section_number = buf[6];
+  int last_section_number = buf[7];
+  int protocol_version = buf[8];
+  int num_channels_in_section = buf[9];
+	LogDebug("VCT:  channels:%d", num_channels_in_section);
+  if (num_channels_in_section <= 0) return;
+  int start=10;
+  for (int i=0; i < num_channels_in_section;i++)
   {
-    byte* section=sections[iSection]->Data;
-    int sectionLen=sections[iSection]->SectionLength;
-    CTsHeader header(section);
-    int startOff=header.PayLoadStart+1;
-    byte* buf=&section[startOff];
-	  int table_id = buf[0];
-	  if (table_id!=0xc8 && table_id != 0xc9) return;
-
-	  //dump table!
-
-	  int section_syntax_indicator = (buf[1]>>7) & 1;
-	  int private_indicator = (buf[1]>>6) & 1;
-	  int section_length = ((buf[1]& 0xF)<<8) + buf[2];
-	  int transport_stream_id = (buf[3]<<8)+buf[4];
-	  int version_number = ((buf[5]>>1)&0x1F);
-    if (version_number==m_iVctVersion) return;
-		LogDebug("VCT: received vct table id:%x version:%d", table_id,version_number);
-    m_iVctVersion=version_number;
-	  int current_next_indicator = buf[5] & 1;
-	  int section_number = buf[6];
-	  int last_section_number = buf[7];
-	  int protocol_version = buf[8];
-	  int num_channels_in_section = buf[9];
-		LogDebug("VCT:  channels:%d", num_channels_in_section);
-	  if (num_channels_in_section <= 0) return;
-	  int start=10;
-	  for (int i=0; i < num_channels_in_section;i++)
+	  char shortName[127];
+	  strcpy(shortName,"unknown");
+	  try
 	  {
-		  char shortName[127];
-		  strcpy(shortName,"unknown");
-		  try
+		  //shortname 7*16 bits (14 bytes) in UTF-16
+		  for (int count=0; count < 7; count++)
 		  {
-			  //shortname 7*16 bits (14 bytes) in UTF-16
-			  for (int count=0; count < 7; count++)
-			  {
-				  shortName[count] = buf[1+start+count*2];
-				  shortName[count+1]=0; 
-			  }
+			  shortName[count] = buf[1+start+count*2];
+			  shortName[count+1]=0; 
 		  }
-		  catch(...)
-		  {
-		  }
-  		
+	  }
+	  catch(...)
+	  {
+	  }
+		
 
-		  start+= 7*2;
-		  // 4---10-- ------10 -------- 8------- 32------ -------- -------- -------- 16------ -------- 16------ -------- 2-111113 --6----- 16------ -------- 6-----10 --------
-		  // 76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210
-		  //    112      113      114       115      116    117      118       119     120     121       123      124      125      126      127      128      129      130
-		  //     0        1        2         3        4      5        6         7       8       9        10       11       12       13       14       15       16       17 
-		  //  ++++++++ ++++++++ --+-++-	
-		  // 76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210
-		  int major_channel    		 =((buf[start  ]&0xf)<<8) + (buf[start+1]>>2);
-		  int minor_channel    		 =((buf[start+1]&0x3)<<8) + buf[start+2];
-		  int modulation_mode  		 = buf[start+3];
-		  int carrier_frequency		 = (buf[start+4]<<24) + (buf[start+5]<<16) + (buf[start+6]<<8) + (buf[start+7]);
-		  int channel_TSID			 = ((buf[start+8])<<8) + buf[start+9];
-		  int program_number			 = ((buf[start+10])<<8) + buf[start+11];
-		  int ETM_location			 = ((buf[start+12]>>6)&0x3);
-		  int access_controlled		 = ((buf[start+12]>>4)&0x1);
-		  int hidden          		 = ((buf[start+12]>>3)&0x1);
-		  int path_select     		 = ((buf[start+12]>>2)&0x1);
-		  int out_of_band     		 = ((buf[start+12]>>1)&0x1);
-		  int hide_guide     		     = ((buf[start+12]   )&0x1);
-		  int service_type             = ((buf[start+13]   )&0x3f);
-		  int source_id				 = ((buf[start+14])<<8) + buf[start+15];
-		  int descriptors_length		 = ((buf[start+16]&0x3)<<8) + buf[start+17];
+	  start+= 7*2;
+	  // 4---10-- ------10 -------- 8------- 32------ -------- -------- -------- 16------ -------- 16------ -------- 2-111113 --6----- 16------ -------- 6-----10 --------
+	  // 76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210
+	  //    112      113      114       115      116    117      118       119     120     121       123      124      125      126      127      128      129      130
+	  //     0        1        2         3        4      5        6         7       8       9        10       11       12       13       14       15       16       17 
+	  //  ++++++++ ++++++++ --+-++-	
+	  // 76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210
+	  int major_channel    		 =((buf[start  ]&0xf)<<8) + (buf[start+1]>>2);
+	  int minor_channel    		 =((buf[start+1]&0x3)<<8) + buf[start+2];
+	  int modulation_mode  		 = buf[start+3];
+	  int carrier_frequency		 = (buf[start+4]<<24) + (buf[start+5]<<16) + (buf[start+6]<<8) + (buf[start+7]);
+	  int channel_TSID			 = ((buf[start+8])<<8) + buf[start+9];
+	  int program_number			 = ((buf[start+10])<<8) + buf[start+11];
+	  int ETM_location			 = ((buf[start+12]>>6)&0x3);
+	  int access_controlled		 = ((buf[start+12]>>4)&0x1);
+	  int hidden          		 = ((buf[start+12]>>3)&0x1);
+	  int path_select     		 = ((buf[start+12]>>2)&0x1);
+	  int out_of_band     		 = ((buf[start+12]>>1)&0x1);
+	  int hide_guide     		     = ((buf[start+12]   )&0x1);
+	  int service_type             = ((buf[start+13]   )&0x3f);
+	  int source_id				 = ((buf[start+14])<<8) + buf[start+15];
+	  int descriptors_length		 = ((buf[start+16]&0x3)<<8) + buf[start+17];
 
-		  if (major_channel==0 && minor_channel==0 && channel_TSID==0 && service_type==0 )
+	  if (major_channel==0 && minor_channel==0 && channel_TSID==0 && service_type==0 )
+	  {
+		  return;
+	  }
+	  if (modulation_mode < 0 || modulation_mode > 5)
+	  {
+		  return;
+	  }
+	  CChannelInfo info;
+	  strcpy(info.ProviderName,"");
+	  strcpy(info.ServiceName,"");
+	  strcpy((char*)info.ProviderName,"unknown");
+	  strcpy((char*)info.ServiceName,shortName);
+	  info.MinorChannel = minor_channel;
+	  info.MajorChannel = major_channel;
+	  info.Frequency    = carrier_frequency;
+	  info.ServiceId= program_number;
+	  info.TransportId = channel_TSID;		
+
+	  if (service_type==1||service_type==2) info.ServiceType=1;//ATSC video
+	  if (service_type==3) info.ServiceType=2;//ATSC audio
+	  switch (modulation_mode)
+	  {
+		  case 0: //reserved
+			  info.Modulation   = BDA_MOD_NOT_SET;
+		  break;
+		  case 1: //analog
+			  info.Modulation   = BDA_MOD_ANALOG_FREQUENCY;
+		  break;
+		  case 2: //QAM64
+			  info.Modulation   = BDA_MOD_64QAM;
+		  break;
+		  case 3: //QAM256
+			  info.Modulation   = BDA_MOD_256QAM;
+		  break;
+		  case 4: //8 VSB
+			  info.Modulation   = BDA_MOD_8VSB;
+		  break;
+		  case 5: //16 VSB
+			  info.Modulation   = BDA_MOD_16VSB;
+		  break;
+		  default: //
+			  info.Modulation   = BDA_MOD_NOT_SET;
+		  break;
+
+	  }
+
+	  start += 18;
+	  int len=0;
+	  while (len < descriptors_length && descriptors_length>0)
+	  {
+		  int descriptor_tag = buf[start+len];
+		  int descriptor_len = buf[start+len+1];
+		  if (descriptor_len==0 || descriptor_len+start > section_length)
 		  {
 			  return;
-		  }
-		  if (modulation_mode < 0 || modulation_mode > 5)
+		  }			
+		  switch (descriptor_tag)
 		  {
-			  return;
+			  case 0xa1:
+				  DecodeServiceLocationDescriptor( buf,start+len, info);
+			  break;
+			  case 0xa0:
+				  DecodeExtendedChannelNameDescriptor( buf,start+len,info, sectionLen);
+			  break;
 		  }
-		  CChannelInfo info;
-		  strcpy(info.ProviderName,"");
-		  strcpy(info.ServiceName,"");
-		  strcpy((char*)info.ProviderName,"unknown");
-		  strcpy((char*)info.ServiceName,shortName);
-		  info.MinorChannel = minor_channel;
-		  info.MajorChannel = major_channel;
-		  info.Frequency    = carrier_frequency;
-		  info.ServiceId= program_number;
-		  info.TransportId = channel_TSID;		
-
-		  if (service_type==1||service_type==2) info.ServiceType=1;//ATSC video
-		  if (service_type==3) info.ServiceType=2;//ATSC audio
-		  switch (modulation_mode)
-		  {
-			  case 0: //reserved
-				  info.Modulation   = BDA_MOD_NOT_SET;
-			  break;
-			  case 1: //analog
-				  info.Modulation   = BDA_MOD_ANALOG_FREQUENCY;
-			  break;
-			  case 2: //QAM64
-				  info.Modulation   = BDA_MOD_64QAM;
-			  break;
-			  case 3: //QAM256
-				  info.Modulation   = BDA_MOD_256QAM;
-			  break;
-			  case 4: //8 VSB
-				  info.Modulation   = BDA_MOD_8VSB;
-			  break;
-			  case 5: //16 VSB
-				  info.Modulation   = BDA_MOD_16VSB;
-			  break;
-			  default: //
-				  info.Modulation   = BDA_MOD_NOT_SET;
-			  break;
-
-		  }
-
-		  start += 18;
-		  int len=0;
-		  while (len < descriptors_length && descriptors_length>0)
-		  {
-			  int descriptor_tag = buf[start+len];
-			  int descriptor_len = buf[start+len+1];
-			  if (descriptor_len==0 || descriptor_len+start > section_length)
-			  {
-				  return;
-			  }			
-			  switch (descriptor_tag)
-			  {
-				  case 0xa1:
-					  DecodeServiceLocationDescriptor( buf,start+len, info);
-				  break;
-				  case 0xa0:
-					  DecodeExtendedChannelNameDescriptor( buf,start+len,info, sectionLen);
-				  break;
-			  }
-			  len += (descriptor_len+2);
-		  }
-			
-			LogDebug("VCT:  #%d major:%d minor:%d freq:%d tsid:%x sid:%x servicetype:%x name:%s video:%x audio:%x ac3:%x", 
-					m_vecChannels.size(),
-					info.MajorChannel,info.MinorChannel,info.Frequency,
-					info.ServiceId,info.TransportId,info.ServiceType,
-					info.ServiceName,info.PidTable.VideoPid,info.PidTable.AudioPid1,info.PidTable.AC3Pid);
-      m_vecChannels.push_back(info);
-    }
+		  len += (descriptor_len+2);
+	  }
+		
+		LogDebug("VCT:  #%d major:%d minor:%d freq:%d tsid:%x sid:%x servicetype:%x name:%s video:%x audio:%x ac3:%x", 
+				m_vecChannels.size(),
+				info.MajorChannel,info.MinorChannel,info.Frequency,
+				info.ServiceId,info.TransportId,info.ServiceType,
+				info.ServiceName,info.PidTable.VideoPid,info.PidTable.AudioPid1,info.PidTable.AC3Pid);
+    m_vecChannels.push_back(info);
   }
+  
 }
 
 void CVirtualChannelTableParser::DecodeServiceLocationDescriptor( byte* buf,int start,CChannelInfo& channelInfo)
