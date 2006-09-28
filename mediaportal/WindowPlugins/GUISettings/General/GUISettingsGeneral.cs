@@ -49,8 +49,6 @@ namespace WindowPlugins.GUISettings
     [SkinControlAttribute(20)]
     protected GUIImage imgSkinPreview = null;
 
-    private string SkinDirectory;
-
     class CultureComparer : IComparer
     {
       #region IComparer Members
@@ -73,8 +71,7 @@ namespace WindowPlugins.GUISettings
 
     public override bool Init()
     {
-      //SkinDirectory = GUIGraphicsContext.Skin.Remove(GUIGraphicsContext.Skin.LastIndexOf(@"\"));
-      SkinDirectory = Config.GetFolder(Config.Dir.Skin);  
+      //SkinDirectory = GUIGraphicsContext.Skin.Remove(GUIGraphicsContext.Skin.LastIndexOf(@"\")); 
       return Load(GUIGraphicsContext.Skin + @"\settings_general.xml");
     }
 
@@ -190,46 +187,27 @@ namespace WindowPlugins.GUISettings
 
       GUIControl.ClearControl(GetID, btnSkin.GetID);
       int skinNo = 0;
-      if (Directory.Exists(SkinDirectory))
+
+      DirectoryInfo skinFolder = new DirectoryInfo(Config.GetFolder(Config.Dir.Skin));
+      if (skinFolder.Exists)
       {
-        string[] skinFolders = Directory.GetDirectories(SkinDirectory, "*.*");
-
-        foreach (string skinFolder in skinFolders)
+        DirectoryInfo[] skinDirList = skinFolder.GetDirectories();
+        foreach (DirectoryInfo skinDir in skinDirList)
         {
-          bool isInvalidDirectory = false;
-          string[] invalidDirectoryNames = new string[] { "cvs", ".svn" };
-
-          string directoryName = skinFolder.Substring(SkinDirectory.Length);
-
-          if (directoryName != null && directoryName.Length > 0)
+          //
+          // Check if we have a home.xml located in the directory, if so we consider it as a
+          // valid skin directory
+          //
+          FileInfo refFile = new FileInfo(Config.GetFile(Config.Dir.Skin, skinDir.Name, "references.xml"));
+          if (refFile.Exists)
           {
-            foreach (string invalidDirectory in invalidDirectoryNames)
+            GUIControl.AddItemLabelControl(GetID, btnSkin.GetID, skinDir.Name);
+            if (String.Compare(skinDir.Name, currentSkin, true) == 0)
             {
-              if (invalidDirectory.Equals(directoryName.ToLower()))
-              {
-                isInvalidDirectory = true;
-                break;
-              }
+              GUIControl.SelectItemControl(GetID, btnSkin.GetID, skinNo);
+              imgSkinPreview.SetFileName(Config.GetFile(Config.Dir.Skin, skinDir.Name, @"media\preview.png"));
             }
-
-            if (isInvalidDirectory == false)
-            {
-              //
-              // Check if we have a home.xml located in the directory, if so we consider it as a
-              // valid skin directory
-              //
-              string filename = Path.Combine(SkinDirectory, Path.Combine(directoryName, "references.xml"));
-              if (File.Exists(filename))
-              {
-                GUIControl.AddItemLabelControl(GetID, btnSkin.GetID, directoryName);
-                if (String.Compare(directoryName, currentSkin, true) == 0)
-                {
-                  GUIControl.SelectItemControl(GetID, btnSkin.GetID, skinNo);
-                  imgSkinPreview.SetFileName(Path.Combine(SkinDirectory, Path.Combine(directoryName, @"media\preview.png")));
-                }
-                skinNo++;
-              }
-            }
+            skinNo++;
           }
         }
       }
@@ -237,7 +215,7 @@ namespace WindowPlugins.GUISettings
 
     void RefreshSkinPreview(object sender, EventArgs e)
     {
-      imgSkinPreview.SetFileName(Path.Combine(SkinDirectory, Path.Combine(btnSkin.SelectedLabel, @"media\preview.png")));
+      imgSkinPreview.SetFileName(Config.GetFile(Config.Dir.Skin, btnSkin.SelectedLabel, @"media\preview.png"));
     }
 
     void OnSkinChanged()

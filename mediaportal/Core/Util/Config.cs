@@ -196,6 +196,25 @@ private Config()
     }
 
     /// <summary>
+    /// Returns the complete path for the specified file in the specified MP directory.
+    /// </summary>
+    /// <param name="directory">A <see cref="Dir"/> value, indicating the directory where the file should be located</param>
+    /// <param name="fileName">The name of the file for which to return the complete path.</param>
+    /// <returns>A string containing the complete path.</returns>
+    public static string GetFile(Dir directory, string subDirectory, string fileName)
+    {
+      if (fileName.StartsWith(@"\") || fileName.StartsWith("/"))
+      {
+        throw new ArgumentException("The passed file name cannot start with a slash or backslash", "fileName");
+      }
+      if (subDirectory.StartsWith(@"\") || subDirectory.StartsWith("/"))
+      {
+        throw new ArgumentException("The passed subDirectory cannot start with a slash or backslash", "fileName");
+      }
+      return GetFile(directory, Path.Combine(subDirectory, fileName));
+    }
+
+    /// <summary>
     /// Returns the complete path for the specified MP directory.
     /// </summary>
     /// <param name="directory">A <see cref="Dir"/> value, indicating the directory to return</param>
