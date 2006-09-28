@@ -780,8 +780,8 @@
         <filter cat="capture"         name="Bluebird, WDM TsCapture"			checkdevice="true"/>
       </filters>
       <connections>
-		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
-		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
       </connections>
     </tv>
   </capturecard>
@@ -1102,28 +1102,28 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"		name="ATI TV Tuner"						checkdevice="true"/>
-        <filter cat="tvaudio"		name="ATI TV Audio"						checkdevice="true"/>
-        <filter cat="crossbaraudio" name="ATI TV Audio Crossbar"    		checkdevice="true"/>      
+        <filter cat="tvtuner"		    name="ATI TV Tuner"						          checkdevice="true"/>
+        <filter cat="tvaudio"		    name="ATI TV Audio"						          checkdevice="true"/>
+        <filter cat="crossbaraudio" name="ATI TV Audio Crossbar"     		    checkdevice="true"/>      
         <filter cat="crossbarvideo" name="ATI Rage Theater Video Crossbar"	checkdevice="true"/>
-        <filter cat="capture"  		name="ATI Rage Theater Video Capture"  	checkdevice="true"/>
-        <filter cat="videncoder"	name="ATI Media Center Video Encoder"	checkdevice="false"/>
-        <filter cat="audencoder"	name="ATI Media Center Audio Encoder" 	checkdevice="false"/>
-        <filter cat="mux"      		name="ATI Media Center Multiplexer"		checkdevice="false"/>
+        <filter cat="capture"  		  name="ATI Rage Theater Video Capture"  	checkdevice="true"/>
+        <filter cat="videncoder"	  name="ATI Media Center Video Encoder"	  checkdevice="false"/>
+        <filter cat="audencoder"	  name="ATI Media Center Audio Encoder" 	checkdevice="false"/>
+        <filter cat="mux"      		  name="ATI Media Center Multiplexer"		  checkdevice="false"/>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"			sourcepin="0" sinkfilter="crossbaraudio"	sinkpin="2"/>
-        <connection sourcefilter="tvtuner"			sourcepin="1" sinkfilter="tvaudio"			sinkpin="0"/>
-        <connection sourcefilter="tvaudio"			sourcepin="0" sinkfilter="crossbaraudio"	sinkpin="4"/>
+        <connection sourcefilter="tvtuner"			  sourcepin="0" sinkfilter="crossbaraudio"	sinkpin="2"/>
+        <connection sourcefilter="tvtuner"			  sourcepin="1" sinkfilter="tvaudio"			  sinkpin="0"/>
+        <connection sourcefilter="tvaudio"			  sourcepin="0" sinkfilter="crossbaraudio"	sinkpin="4"/>
         <connection sourcefilter="crossbaraudio"	sourcepin="0" sinkfilter="crossbarvideo"	sinkpin="0"/>
         <connection sourcefilter="crossbaraudio"	sourcepin="1" sinkfilter="crossbarvideo"	sinkpin="2"/>
         <connection sourcefilter="crossbaraudio"	sourcepin="2" sinkfilter="crossbarvideo"	sinkpin="1"/>
-        <connection sourcefilter="crossbaraudio"	sourcepin="3" sinkfilter="capture"			sinkpin="1"/>
-        <connection sourcefilter="crossbarvideo"	sourcepin="0" sinkfilter="capture"			sinkpin="0"/>
-        <connection sourcefilter="capture"			sourcepin="0" sinkfilter="videncoder"		sinkpin="0"/>
-        <connection sourcefilter="capture"			sourcepin="3" sinkfilter="audencoder"		sinkpin="0"/>
-        <connection sourcefilter="videncoder"		sourcepin="0" sinkfilter="mux"				sinkpin="1"/>
-        <connection sourcefilter="audencoder"		sourcepin="0" sinkfilter="mux"				sinkpin="0"/>
+        <connection sourcefilter="crossbaraudio"	sourcepin="3" sinkfilter="capture"			  sinkpin="1"/>
+        <connection sourcefilter="crossbarvideo"	sourcepin="0" sinkfilter="capture"			  sinkpin="0"/>
+        <connection sourcefilter="capture"			  sourcepin="0" sinkfilter="videncoder"		  sinkpin="0"/>
+        <connection sourcefilter="capture"			  sourcepin="3" sinkfilter="audencoder"		  sinkpin="0"/>
+        <connection sourcefilter="videncoder"		  sourcepin="0" sinkfilter="mux"				    sinkpin="1"/>
+        <connection sourcefilter="audencoder"		  sourcepin="0" sinkfilter="mux"				    sinkpin="0"/>
       </connections>
     </tv>
   </capturecard>
@@ -1156,12 +1156,12 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"  		name="Plextor ConvertX TV402U TV Tuner"		checkdevice="true"/>
-        <filter cat="tvaudio"  		name="Plextor ConvertX TV402U TV Audio"		checkdevice="true"/>
-        <filter cat="crossbar"	 	name="Plextor ConvertX TV402U CrossBar"		checkdevice="true"/>
+        <filter cat="tvtuner"  		name="Plextor ConvertX TV402U TV Tuner"		  checkdevice="true"/>
+        <filter cat="tvaudio"  		name="Plextor ConvertX TV402U TV Audio"		  checkdevice="true"/>
+        <filter cat="crossbar"	 	name="Plextor ConvertX TV402U CrossBar"		  checkdevice="true"/>
         <filter cat="capture"  		name="Plextor ConvertX TV402U A/V Capture"  checkdevice="true"/>
-        <filter cat="audencoder"	name="InterVideo Audio Encoder"		  		checkdevice="false"/>
-        <filter cat="mux"  			  name="InterVideo Multiplexer"		  		checkdevice="false"/>
+        <filter cat="audencoder"	name="InterVideo Audio Encoder"		  		    checkdevice="false"/>
+        <filter cat="mux"  			  name="InterVideo Multiplexer"		  		      checkdevice="false"/>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
@@ -1169,8 +1169,8 @@
         <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
         <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
         <connection sourcefilter="capture"		sourcepin="2" sinkfilter="audencoder"	sinkpin="0"/>
-        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
-        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
       </connections>
     </tv>
   </capturecard>
@@ -16376,6 +16376,118 @@
         <filter cat="networkprovider" name="Microsoft DVBS Network Provider"		      checkdevice="false"/>
         <filter cat="tunerdevice"     name="Hauppauge WinTV 88x DVB-S/S2 Tuner/Demod"	checkdevice="true"/>
         <filter cat="capture"         name="Hauppauge WinTV 88x TS Capture"			      checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"		  sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Hauppauge WinTV Nova-T 500 MCE (Tuner 1)" capturename="Nova-DT DVB-T Capture (Dev1 Path0) " devid="vid_2040&amp;pid_9911&amp;mi_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider"	name="Microsoft DVBT Network Provider"	    checkdevice="false"/>
+        <filter cat="tunerdevice"		  name="Nova-DT DVB-T Tuner (Dev1 Path0) "	  checkdevice="true"/>
+        <filter cat="capture"			    name="Nova-DT DVB-T Capture (Dev1 Path0) "	checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"      sourcepin="0" sinkfilter="capture"		  sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Hauppauge WinTV Nova-T 500 MCE (Tuner 2)" capturename="Nova-DT DVB-T Capture (Dev1 Path1) " devid="vid_2040&amp;pid_9911&amp;mi_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider"	name="Microsoft DVBT Network Provider"	    checkdevice="false"/>
+        <filter cat="tunerdevice"		  name="Nova-DT DVB-T Tuner (Dev1 Path1) "	  checkdevice="true"/>
+        <filter cat="capture"			    name="Nova-DT DVB-T Capture (Dev1 Path1) "	checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"      sourcepin="0" sinkfilter="capture"		  sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Hauppauge WinTV Nova-T 500 MCE (Tuner 1)" capturename="Nova-DT DVB-T Capture (Dev1 Path0) " devid="vid_2040&amp;pid_9901">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider"	name="Microsoft DVBT Network Provider"	    checkdevice="false"/>
+        <filter cat="tunerdevice"		  name="Nova-DT DVB-T Tuner (Dev1 Path0) "	  checkdevice="true"/>
+        <filter cat="capture"			    name="Nova-DT DVB-T Capture (Dev1 Path0) "	checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"      sourcepin="0" sinkfilter="capture"		  sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Hauppauge WinTV Nova-T 500 MCE (Tuner 2)" capturename="Nova-DT DVB-T Capture (Dev1 Path1) " devid="vid_2040&amp;pid_9901">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider"	name="Microsoft DVBT Network Provider"	    checkdevice="false"/>
+        <filter cat="tunerdevice"		  name="Nova-DT DVB-T Tuner (Dev1 Path1) "	  checkdevice="true"/>
+        <filter cat="capture"			    name="Nova-DT DVB-T Capture (Dev1 Path1) "	checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"      sourcepin="0" sinkfilter="capture"		  sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+  
+  <capturecard commercialname="Hauppauge WinTV Nova-T 500 MCE (Tuner 1)" capturename="Nova-DT DVB-T Capture (Dev1 Path0) " devid="vid_2040&amp;pid_9951&amp;mi_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider"	name="Microsoft DVBT Network Provider"	    checkdevice="false"/>
+        <filter cat="tunerdevice"		  name="Nova-DT DVB-T Tuner (Dev1 Path0) "	  checkdevice="true"/>
+        <filter cat="capture"			    name="Nova-DT DVB-T Capture (Dev1 Path0) "	checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"      sourcepin="0" sinkfilter="capture"		  sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Hauppauge WinTV Nova-T 500 MCE (Tuner 2)" capturename="Nova-DT DVB-T Capture (Dev1 Path1) " devid="vid_2040&amp;pid_9951&amp;mi_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider"	name="Microsoft DVBT Network Provider"	    checkdevice="false"/>
+        <filter cat="tunerdevice"		  name="Nova-DT DVB-T Tuner (Dev1 Path1) "	  checkdevice="true"/>
+        <filter cat="capture"			    name="Nova-DT DVB-T Capture (Dev1 Path1) "	checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"      sourcepin="0" sinkfilter="capture"		  sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Dvico FusionHDTV DVB-T Dual Digital 2" capturename="Bluebird, WDM TsCapture" devid="vid_0fe9&amp;pid_db58">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"/>
+        <filter cat="tunerdevice"     name="Bluebird, BDA Tuner"              checkdevice="true"/>
+        <filter cat="capture"         name="Bluebird, WDM TsCapture"			    checkdevice="true"/>
       </filters>
       <connections>
         <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
