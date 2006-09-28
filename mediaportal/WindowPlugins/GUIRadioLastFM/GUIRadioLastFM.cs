@@ -699,7 +699,11 @@ namespace MediaPortal.GUI.RADIOLASTFM
         _trayBallonSongChange.Text = IconText;
         _trayBallonSongChange.Visible = true;
 
+        if (notifyTitle == String.Empty)
+          notifyTitle = "MediaPortal";
         _trayBallonSongChange.BalloonTipTitle = notifyTitle;
+        if (notifyMessage_ == String.Empty)
+          notifyMessage_ = IconText;
         _trayBallonSongChange.BalloonTipText = notifyMessage_;
         if (popup_)
           _trayBallonSongChange.ShowBalloonTip(showSeconds_);
