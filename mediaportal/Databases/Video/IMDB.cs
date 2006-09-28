@@ -2335,12 +2335,10 @@ namespace MediaPortal.Video.Database
           movieDetails.Votes = info.Groups["votes"].Value;
           // rating
           info = Regex.Match(strBody, @"film_votes.*gemiddelde:\s(?<rating>.*?)<");
-          try
+          float rating;
+          if (Single.TryParse(info.Groups["rating"].Value, out rating))
           {
-              movieDetails.Rating = (float)System.Double.Parse(info.Groups["rating"].Value)*2;
-          }
-          catch(Exception ex)
-          {
+            movieDetails.Rating = rating * 2;
           }
         }
         // mpaRating

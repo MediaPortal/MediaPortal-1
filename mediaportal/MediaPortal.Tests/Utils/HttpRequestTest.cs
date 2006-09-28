@@ -23,12 +23,7 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
 using NUnit.Framework;
-using MediaPortal.Utils;
 using MediaPortal.Utils.Web;
 
 namespace MediaPortal.Tests.Utils.Web
@@ -85,15 +80,17 @@ namespace MediaPortal.Tests.Utils.Web
     {
       HTTPRequest request1 = new HTTPRequest("http://www.somewhere.com/1/1");
       HTTPRequest request2 = new HTTPRequest("http://www.somewhere.com/2/2");
+      HTTPRequest request3 = new HTTPRequest("http://www.somewhere.com/1/1");
 
-      Assert.IsTrue(request1 == request1);
+      Assert.IsTrue(request1 == request3);
       Assert.IsFalse(request1 == request2);
       Assert.IsTrue(request1 != request2);
 
       request1.PostQuery = "post1";
       request2.PostQuery = "post2";
+      request3.PostQuery = "post1";
 
-      Assert.IsTrue(request1 == request1);
+      Assert.IsTrue(request1 == request3);
       Assert.IsFalse(request1 == request2);
       Assert.IsTrue(request1 != request2);
 

@@ -1320,15 +1320,15 @@ namespace MediaPortal.GUI.Library
     {
 //BAV: Testing
 return;      
-			if (_children == null)
-        return;
+      //if (_children == null)
+      //  return;
 
-      // this method is a temporary fix to Harley's animation not starting on subsequent selection of a page
-      foreach (UIElement element in _children)
-      {
-        if (element is GUIAnimation)
-          ((GUIAnimation)element).Begin();
-      }
+      //// this method is a temporary fix to Harley's animation not starting on subsequent selection of a page
+      //foreach (UIElement element in _children)
+      //{
+      //  if (element is GUIAnimation)
+      //    ((GUIAnimation)element).Begin();
+      //}
     }
 
 		void AnimationTrigger(GUIMessage message)

@@ -123,10 +123,10 @@ namespace MediaPortal.Player
     {
 
       _useVmr9 = true;
-      Log.InfoThread("vmr9:ctor()");
+      Log.Info("vmr9:ctor()");
       if (!GUIGraphicsContext.VMR9Allowed)
       {
-        Log.InfoThread("vmr9:ctor() not allowed");
+        Log.Info("vmr9:ctor() not allowed");
         _useVmr9 = false;
         return;
       }
@@ -134,19 +134,19 @@ namespace MediaPortal.Player
       if (GUIGraphicsContext.DX9Device == null)
       {
         _useVmr9 = false;
-        Log.InfoThread("vmr9:ctor() DX9Device=null");
+        Log.Info("vmr9:ctor() DX9Device=null");
       }
       if (_renderFrame == null)
       {
         _useVmr9 = false;
-        Log.InfoThread("vmr9:ctor() _renderFrame=null");
+        Log.Info("vmr9:ctor() _renderFrame=null");
       }
       if (g_vmr9 != null || GUIGraphicsContext.Vmr9Active)
       {
         _useVmr9 = false;
-        Log.InfoThread("vmr9:ctor() already active");
+        Log.Info("vmr9:ctor() already active");
       }
-      Log.InfoThread("vmr9:ctor() done:{0}", _useVmr9);
+      Log.Info("vmr9:ctor() done:{0}", _useVmr9);
     }
     #endregion
 
@@ -264,7 +264,7 @@ namespace MediaPortal.Player
         // check if vmr9 is enabled and if initialized
         if (_vmr9Filter == null || !_useVmr9)
         {
-          Log.WarnThread("vmr9: not used or no filter:{0} {1:x}", _useVmr9, _vmr9Filter);
+          Log.Warn("vmr9: not used or no filter:{0} {1:x}", _useVmr9, _vmr9Filter);
           return false;
         }
 
@@ -277,7 +277,7 @@ namespace MediaPortal.Player
           if (pinIn == null)
           {
             //no input pin found, vmr9 is not possible
-            Log.WarnThread("vmr9: no input pin {0} found", i);
+            Log.Warn("vmr9: no input pin {0} found", i);
             continue;
           }
 
@@ -286,7 +286,7 @@ namespace MediaPortal.Player
           if (pinConnected == null)
           {
             //no pin is not connected so vmr9 is not possible
-            Log.WarnThread("vmr9: pin:{0} not connected:{1:x}", i, hr);
+            Log.Warn("vmr9: pin:{0} not connected:{1:x}", i, hr);
           }
           else
           {
@@ -315,21 +315,21 @@ namespace MediaPortal.Player
     /// <param name="graphBuilder"></param>
     public bool AddVMR9(IGraphBuilder graphBuilder)
     {
-      Log.InfoThread("vmr9:addvmr9");
+      Log.Info("vmr9:addvmr9");
       if (!_useVmr9)
       {
-        Log.InfoThread("vmr9:addvmr9: dont use vmr9");
+        Log.Info("vmr9:addvmr9: dont use vmr9");
         return false;
       }
       if (_isVmr9Initialized)
       {
-        Log.InfoThread("vmr9:addvmr9: vmr9 already initialized");
+        Log.Info("vmr9:addvmr9: vmr9 already initialized");
         return false;
       }
       //Log.Info("VMR9Helper:AddVmr9");
       if (_instanceCounter != 0)
       {
-        Log.ErrorThread("VMR9Helper:Multiple instances of VMR9 running!!!");
+        Log.Error("VMR9Helper:Multiple instances of VMR9 running!!!");
         throw new Exception("VMR9Helper:Multiple instances of VMR9 running!!!");
       }
 
@@ -337,7 +337,7 @@ namespace MediaPortal.Player
       if (_vmr9Filter == null)
       {
         Error.SetError("Unable to play movie", "VMR9 is not installed");
-        Log.ErrorThread("VMR9Helper:Failed to get instance of VMR9 ");
+        Log.Error("VMR9Helper:Failed to get instance of VMR9 ");
         return false;
       }
 
@@ -362,7 +362,7 @@ namespace MediaPortal.Player
         Marshal.ReleaseComObject(_vmr9Filter);
         _vmr9Filter = null;
         Error.SetError("Unable to play movie", "Unable to initialize VMR9");
-        Log.ErrorThread("vmr9:Failed to add vmr9 to filtergraph");
+        Log.Error("vmr9:Failed to add vmr9 to filtergraph");
         return false;
       }
 
@@ -403,7 +403,7 @@ namespace MediaPortal.Player
       _threadId = Thread.CurrentThread.ManagedThreadId;
       GUIGraphicsContext.Vmr9Active = true;
       g_vmr9 = this;
-      Log.InfoThread("VMR9Helper:Vmr9 Added");
+      Log.Info("VMR9Helper:Vmr9 Added");
       return true;
     }
 
@@ -470,7 +470,7 @@ namespace MediaPortal.Player
 
       if (currentVmr9State == Vmr9PlayState.Repaint && frames > 0)
       {
-        Log.InfoThread("VMR9Helper: repaint->playing {0}", frames);
+        Log.Info("VMR9Helper: repaint->playing {0}", frames);
         GUIGraphicsContext.Vmr9FPS = 50f;
         currentVmr9State = Vmr9PlayState.Playing;
         _scene.DrawVideo = true;
@@ -478,7 +478,7 @@ namespace MediaPortal.Player
       }
       else if (currentVmr9State == Vmr9PlayState.Playing && GUIGraphicsContext.Vmr9FPS < 5f)
       {
-        Log.InfoThread("VMR9Helper: playing->repaint {0}", frames);
+        Log.Info("VMR9Helper: playing->repaint {0}", frames);
         GUIGraphicsContext.Vmr9FPS = 0f;
         currentVmr9State = Vmr9PlayState.Repaint;
         _scene.DrawVideo = false;
@@ -548,7 +548,7 @@ namespace MediaPortal.Player
 
       if (GUIGraphicsContext.Vmr9Active == false)
       {
-        Log.InfoThread("SaveVMR9Bitmap() failed, no VMR9");
+        Log.Info("SaveVMR9Bitmap() failed, no VMR9");
         return false;
       }
       int hr = 0;
@@ -674,16 +674,16 @@ namespace MediaPortal.Player
     /// </summary>
     public void Dispose()
     {
-      Log.InfoThread("vmr9:Dispose");
+      Log.Info("vmr9:Dispose");
       if (false == _isVmr9Initialized) return;
       if (_threadId != Thread.CurrentThread.ManagedThreadId)
       {
-        Log.ErrorThread("VMR9:Dispose() from wrong thread");
+        Log.Error("VMR9:Dispose() from wrong thread");
         return;
       }
       if (_vmr9Filter == null)
       {
-        Log.ErrorThread("VMR9:Dispose() no filter");
+        Log.Error("VMR9:Dispose() no filter");
         return;
       }
 
@@ -713,7 +713,7 @@ namespace MediaPortal.Player
       try
       {
         result = _graphBuilderInterface.RemoveFilter(_vmr9Filter);
-        if (result != 0) Log.InfoThread("VMR9:RemoveFilter():{0}", result);
+        if (result != 0) Log.Info("VMR9:RemoveFilter():{0}", result);
       }
       catch (Exception)
       {
@@ -724,7 +724,7 @@ namespace MediaPortal.Player
         do
         {
           result = Marshal.ReleaseComObject(_vmr9Filter);
-          Log.InfoThread("VMR9:ReleaseComObject():{0}", result);
+          Log.Info("VMR9:ReleaseComObject():{0}", result);
         }
         while (result > 0);
       }

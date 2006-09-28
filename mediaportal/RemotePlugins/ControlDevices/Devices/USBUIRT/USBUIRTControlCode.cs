@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 using MediaPortal.ControlDevices;
 
 namespace MediaPortal.ControlDevices.USBUIRT

@@ -75,7 +75,7 @@ namespace MediaPortal.TV.Recording
 						_tvcards.Add(dev);
 					}
 				}
-				catch (Exception ex)
+				catch (Exception)
 				{
           Log.WriteFile(LogType.Recorder, true, "Recorder: invalid capturecards.xml found! please delete it");
 				}

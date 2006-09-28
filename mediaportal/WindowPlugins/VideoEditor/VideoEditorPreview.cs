@@ -286,7 +286,7 @@ namespace WindowPlugins.VideoEditor
           if (videoWindow != null)
           {
             GUIGraphicsContext.VideoWindow = new System.Drawing.Rectangle(videoWindow.XPosition, videoWindow.YPosition, videoWindow.Width, videoWindow.Height);
-            //Log.Write("Test " +videoWindow.XPosition  + " " + videoWindow.Width + " " + videoWindow.Height);
+            //Log.Info("Test " +videoWindow.XPosition  + " " + videoWindow.Width + " " + videoWindow.Height);
           }
           g_Player.FullScreen = false;
           g_Player.Play(inFilename.FullName);

@@ -68,8 +68,8 @@ namespace MediaPortal.MusicVideos.Database
       //byte[] HTMLbuffer;
       string lsHtml = loUtil.getHTMLData(lsGenreListUrl);
       //string lsHtml = Encoding.UTF8.GetString(HTMLbuffer);
-      //Log.Write("{0}", lsHtml);
-      //Log.Write("{0}",lsHtml);
+      //Log.Info(lsHtml);
+      //Log.Info(lsHtml);
       //Regex loGenreRegex = new Regex("http://" + loSite.countryId + ".rd.yahoo.com/launch/mv/hp/genre/(\\w+)/\\*http://[\\.\\w]+/genrehub.asp?genreID=(\\d+)");
       Regex loGenreRegex = new Regex("([\\w,&,;,\\-,/]*)/\\*http://[\\.,\\w]*music.yahoo.com[\\s.]+/musicvideos/genrehub.asp\\?genreID=(\\d+)");
       MatchCollection loGenreMatches = loGenreRegex.Matches(lsHtml);
@@ -77,7 +77,7 @@ namespace MediaPortal.MusicVideos.Database
       string lsGenreId;
       string lsGenreName;
       GroupCollection loGenreGrpCol;
-      Log.Write("Found {0} genres", loGenreMatches.Count);
+      Log.Info("Found {0} genres", loGenreMatches.Count);
       // Loop through the match collection to retrieve all 
       // matches and positions
       for (int i = 0; i < loGenreMatches.Count; i++)
@@ -88,27 +88,27 @@ namespace MediaPortal.MusicVideos.Database
         lsGenreId = loGenreGrpCol[2].Value;
         try
         {
-          Log.Write("{0}", loGenreGrpCol[0].Value);
-          Log.Write("{0}", loGenreGrpCol[1].Value);
-          Log.Write("{0}", loGenreGrpCol[2].Value);
-          Log.Write("{0}", loGenreGrpCol[3].Value);
-          Log.Write("{0}", loGenreGrpCol[4].Value);
+          Log.Info(loGenreGrpCol[0].Value);
+          Log.Info(loGenreGrpCol[1].Value);
+          Log.Info(loGenreGrpCol[2].Value);
+          Log.Info(loGenreGrpCol[3].Value);
+          Log.Info(loGenreGrpCol[4].Value);
         }
         catch (Exception e)
         {
-          Log.Write(e);
+          Log.Error(e);
         }
 
         if (!moGenreList.ContainsValue(lsGenreId))
         {
-          Log.Write("Adding genre id:{0}", lsGenreId);
-          Log.Write("Adding genre name:{0}", lsGenreName);
+          Log.Info("Adding genre id:{0}", lsGenreId);
+          Log.Info("Adding genre name:{0}", lsGenreName);
           moGenreList.Add(lsGenreName, lsGenreId);
-          Log.Write("Genre found with name:{0} and id:{0}", lsGenreName, lsGenreId);
+          Log.Info("Genre found with name:{0} and id:{0}", lsGenreName, lsGenreId);
         }
         else
         {
-          Log.Write("found a duplicate genre:{0}", lsGenreName);
+          Log.Info("found a duplicate genre:{0}", lsGenreName);
         }
         moSortedGenreList = new ArrayList(moGenreList.Keys);
         moSortedGenreList.Sort();
@@ -138,11 +138,11 @@ namespace MediaPortal.MusicVideos.Database
       string lsGenreUrl = loSite.GenreURL + msCurrentGenreId + "&p=" + miCurrentPage;
       //string lsGenreUrl = "http://music.yahoo.com/musicvideos/genrehub.asp?genreID=" + msCurrentGenreId; //+ "&p=" + miCurrentPage;
       string lsHtml = loUtil.getHTMLData(lsGenreUrl);
-      Log.Write("genre url={0}", lsGenreUrl);
+      Log.Info("genre url={0}", lsGenreUrl);
       moGenreVideoList = loUtil.getVideoList(lsHtml, loSite.countryId, loUtil.moArtistRegex, loUtil.moSongRegex);
-      Log.Write("video count ={0}", moGenreVideoList.Count);
+      Log.Info("video count ={0}", moGenreVideoList.Count);
       setNavigationFlags(lsHtml);
-      //Log.Write("{0}",lsHtml);
+      //Log.Info(lsHtml);
     }
     public void loadFirstGenreVideos(string fsGenreName)
     {
@@ -150,7 +150,7 @@ namespace MediaPortal.MusicVideos.Database
       //List<YahooVideo> loGenreVideos = null;
       if (moGenreList[fsGenreName] == null)
       {
-        Log.Write("Genre not found in list.");
+        Log.Info("Genre not found in list.");
         return; ;
       }
       msCurrentGenreId = moGenreList[fsGenreName];

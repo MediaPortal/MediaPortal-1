@@ -102,8 +102,8 @@ namespace Tag.MAC
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 29)]
       public char[] Comment;
 
-      byte Track;        // track
-      byte Genre;        // genre
+      public byte Track;        // track
+      public byte Genre;        // genre
     };
 
     // Footer (and header) flags

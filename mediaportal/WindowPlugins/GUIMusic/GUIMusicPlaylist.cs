@@ -1273,7 +1273,7 @@ namespace MediaPortal.GUI.Music
               //if (_preferCountForTracks != 2)
               //{
               //  _preferCountForTracks = 2;
-              //  Log.Write("ScrobbleLookupThread: could not find enough songs - temporarily accepting all songs");
+              //  Log.Info("ScrobbleLookupThread: could not find enough songs - temporarily accepting all songs");
               //  loops = 0;
               //}
               //else

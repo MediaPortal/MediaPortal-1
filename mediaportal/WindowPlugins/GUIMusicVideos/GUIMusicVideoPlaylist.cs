@@ -24,14 +24,12 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.TagReader;
-using MediaPortal.Music.Database;
 using MediaPortal.Dialogs;
 using MediaPortal.MusicVideos.Database;
 
@@ -48,11 +46,11 @@ namespace MediaPortal.GUI.MusicVideos
         string m_strDirectory = String.Empty;
         int m_iItemSelected = -1;
         int m_iLastControl = 0;
-        int m_nTempPlayListWindow = 0;
-        string m_strTempPlayListDirectory = String.Empty;
+        //int m_nTempPlayListWindow = 0;
+        //string m_strTempPlayListDirectory = String.Empty;
         string m_strCurrentFile = String.Empty;
         VirtualDirectory m_directory = new VirtualDirectory();
-        const int MaxNumPShuffleSongPredict = 12;
+        //const int MaxNumPShuffleSongPredict = 12;
         PlayListPlayer playlistPlayer;
         protected string _currentPlaying;
         //private bool PShuffleOn = false;
@@ -91,14 +89,14 @@ namespace MediaPortal.GUI.MusicVideos
         public override bool Init()
         {
             m_strDirectory = System.IO.Directory.GetCurrentDirectory();            
-            GUIWindowManager.Receivers += new SendMessageHandler(this.OnThreadMessage);
+            GUIWindowManager.Receivers += new SendMessageHandler(OnThreadMessage);
             return Load(GUIGraphicsContext.Skin + @"\mymusicvideoplaylist.xml");
         }
         public override int GetID
         {
             get
             {
-                return this.WINDOW_ID;
+                return WINDOW_ID;
             }
             set
             {
@@ -182,7 +180,7 @@ namespace MediaPortal.GUI.MusicVideos
             base.OnPageDestroy(newWindowId);
         }
 
-        protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+        protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
         {
             base.OnClicked(controlId, control, actionType);
             if (control == btnShuffle)
@@ -297,7 +295,7 @@ namespace MediaPortal.GUI.MusicVideos
             if (item == null) return;
             if (item.IsFolder) return;
 
-                string strPath = item.Path;
+                //string strPath = item.Path;
                 playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC_VIDEO;
                 playlistPlayer.Reset();
                 playlistPlayer.Play(iItem);
@@ -386,15 +384,15 @@ namespace MediaPortal.GUI.MusicVideos
             m_strDirectory = strNewDirectory;
             GUIControl.ClearControl(GetID, facadeView.GetID);
 
-            string strObjects = String.Empty;
+            string strObjects;
 
             List<GUIListItem> itemlist = new List<GUIListItem>();
 
             PlayList playlist = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_VIDEO);
             /* copy playlist from general playlist*/
-            int iCurrentSong = -1;
-            if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC_VIDEO)
-                iCurrentSong = playlistPlayer.CurrentSong;
+            //int iCurrentSong = -1;
+            //if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC_VIDEO)
+            //    iCurrentSong = playlistPlayer.CurrentSong;
 
             string strFileName;
             YahooVideo loVideo;
@@ -431,7 +429,7 @@ namespace MediaPortal.GUI.MusicVideos
                 itemlist.Add(pItem);
             }
             //OnRetrieveMusicInfo(ref itemlist);
-            iCurrentSong = 0;
+            //iCurrentSong = 0;
             strFileName = String.Empty;
             //	Search current playlist item
             /*
@@ -533,7 +531,7 @@ namespace MediaPortal.GUI.MusicVideos
             if (pItem == null) return;
             //string strFileName = pItem.Path;
 
-            PlayList loPlayList = this.playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_VIDEO);
+            PlayList loPlayList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_VIDEO);
             string strFileName = string.Empty;
             foreach (MVPlayListItem loItem in loPlayList)
             {
@@ -767,7 +765,7 @@ namespace MediaPortal.GUI.MusicVideos
             string currentFile = g_Player.CurrentFile;
             GUIListItem item = facadeView[iItem];
             PlayList loPlayList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_VIDEO);
-            string strFileName = string.Empty;
+            //string strFileName = string.Empty;
             MVPlayListItem loItemToDelete = null;
             foreach (MVPlayListItem loItem in loPlayList)
             {                
@@ -819,7 +817,7 @@ namespace MediaPortal.GUI.MusicVideos
                 MusicTag tag = (MusicTag)item.MusicTag;
                 if (tag != null)
                 {
-                    int playCount = tag.TimesPlayed;
+                    //int playCount = tag.TimesPlayed;
                     string duration = MediaPortal.Util.Utils.SecondsToHMSString(tag.Duration);
                     item.Label = string.Format("{0} - {1}", tag.Artist, tag.Title);
                     item.Label2 = duration;
@@ -835,7 +833,7 @@ namespace MediaPortal.GUI.MusicVideos
         }
         protected bool GetKeyboard(ref string strLine)
         {
-            VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
+            VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
             if (null == keyboard) return false;
             keyboard.Reset();
             keyboard.DoModal(GetID);

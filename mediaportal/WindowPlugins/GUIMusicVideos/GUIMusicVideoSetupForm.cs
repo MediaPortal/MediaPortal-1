@@ -155,17 +155,17 @@ namespace MediaPortal.GUI.MusicVideos
 
     private void AddBtn_Click(object sender, EventArgs e)
     {
-      Log.Write("in");
+      Log.Info("in");
       //string lsFavName = loSelectedList[0].Text;
       SetupFavoriteForm loFavForm = new SetupFavoriteForm();
-      Log.Write("0");
+      Log.Info("0");
       //loFavForm.msFavoriteName = "tes";
-      Log.Write("1");
+      Log.Info("1");
       DialogResult dialogResult = loFavForm.ShowDialog(this);
-      Log.Write("2");
+      Log.Info("2");
       if (dialogResult == DialogResult.OK)
       {
-        Log.Write("3");
+        Log.Info("3");
         //YahooFavorites loFavManager = new YahooFavorites();
         String lsFavName = loFavForm.textBoxFavoriteName.Text;
         if (!String.IsNullOrEmpty(lsFavName))
@@ -178,7 +178,7 @@ namespace MediaPortal.GUI.MusicVideos
     }
     private void updateFavoriteList()
     {
-      Log.Write("in Update Favorites");
+      Log.Info("in Update Favorites");
       YahooFavorites loFavorites = new YahooFavorites();
       ArrayList loFavList = loFavorites.getFavoriteNames();
       FavoriteList.Clear();

@@ -256,7 +256,7 @@ namespace MediaPortal.Visualization
                         }
                     }
 
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         return false;
                     }
@@ -338,7 +338,7 @@ namespace MediaPortal.Visualization
 
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Exception occurred at index {0}", i);
+                    Console.WriteLine("Exception occurred at index {0}: {1}", i,ex.Message);
                     return false;
                 }
             }

@@ -371,7 +371,7 @@ namespace MediaPortal.Configuration.Sections
         }
         catch (Exception e)
         {
-          //Log.Write("FireDTVRemote: Exception during setting combo {0}",e.Message);
+          //Log.Info("FireDTVRemote: Exception during setting combo {0}",e.Message);
         }
 
         // Set the rest of the controls
@@ -384,7 +384,7 @@ namespace MediaPortal.Configuration.Sections
         }
         catch (InvalidOperationException ex)
         {
-          //Log.Write("FireDTV: Error setting device name - device unplugged?! - {0}", ex.Message);
+          //Log.Info("FireDTV: Error setting device name - device unplugged?! - {0}", ex.Message);
         }
 
         // Enable/Disable the controls

@@ -99,7 +99,7 @@ namespace MediaPortal.MusicVideos.Database
       string lsVideoUrl;
       //get the video hash here
       string lsVideoHash = getMediaHash(foVideo.songId, loSite.countryId);
-      Log.Write("Hash ={0}", lsVideoHash);
+      Log.Info("Hash ={0}", lsVideoHash);
       if (loSite.countryId == "us")
       {
         lsVideoUrl = "http://launchtoday.launch.yahoo.com/player/medialog.asp?vid=" + foVideo.songId;
@@ -112,8 +112,8 @@ namespace MediaPortal.MusicVideos.Database
       lsVideoUrl += "&bw=" + fsBitRate + "&mf=1&pid=505&ps=0&p1=2&p2=21&p3=2&rpid=35&pv=10&bp=Windows%2520NT&csid=791020104&uid=1886812234&pguid=einsJELEt4VkQCKMov00bg&etid=0&uguid=3e5u3891dirro&fcv=";
       lsVideoUrl += "&mh=" + lsVideoHash;
       lsVideoUrl += "&z=ms.asx";
-      Log.Write("Using BitRate:{0}", fsBitRate);
-      Log.Write("url={0}", lsVideoUrl);
+      Log.Info("Using BitRate:{0}", fsBitRate);
+      Log.Info("url={0}", lsVideoUrl);
 
       string HTMLdownload = getHTMLData(lsVideoUrl);
 
@@ -206,7 +206,7 @@ namespace MediaPortal.MusicVideos.Database
       }
       catch (Exception e)
       {
-        Log.Write(e);
+        Log.Error(e);
       }
 
       return lsVideoHash;
@@ -216,7 +216,7 @@ namespace MediaPortal.MusicVideos.Database
     {
       List<YahooVideo> loVideoList = new List<YahooVideo>();
 
-      Log.Write("in");
+      Log.Info("in");
       YahooVideo loVideoInfo;
       GroupCollection loSongGrpCol = null;
       GroupCollection loArtistGrpCol = null;
@@ -266,7 +266,7 @@ namespace MediaPortal.MusicVideos.Database
       }
       else
       {
-        Log.Write("Number of artist found doesn't equal number of songs.Artist count={0} song count={1}", loArtistMatches.Count, loSongMatches.Count);
+        Log.Info("Number of artist found doesn't equal number of songs.Artist count={0} song count={1}", loArtistMatches.Count, loSongMatches.Count);
       }
 
       return loVideoList;
@@ -278,7 +278,7 @@ namespace MediaPortal.MusicVideos.Database
       string lsVideoUrl;
       //get the video hash here
       string lsVideoHash = getMediaHash(foVideo.songId, loSite.countryId);
-      Log.Write("Hash ={0}", lsVideoHash);
+      Log.Info("Hash ={0}", lsVideoHash);
       if (loSite.countryId == "us")
       {
         lsVideoUrl = "http://launchtoday.launch.yahoo.com/player/medialog.asp?vid=" + foVideo.songId;
@@ -291,8 +291,8 @@ namespace MediaPortal.MusicVideos.Database
       lsVideoUrl += "&bw=" + fsBitRate + "&mf=1&pid=505&ps=0&p1=2&p2=21&p3=2&rpid=35&pv=10&bp=Windows%2520NT&csid=791020104&uid=1886812234&pguid=einsJELEt4VkQCKMov00bg&etid=0&uguid=3e5u3891dirro&fcv=";
       lsVideoUrl += "&mh=" + lsVideoHash;
       lsVideoUrl += "&z=ms.asx";
-      Log.Write("Using BitRate:{0}", fsBitRate);
-      Log.Write("url={0}", lsVideoUrl);
+      Log.Info("Using BitRate:{0}", fsBitRate);
+      Log.Info("url={0}", lsVideoUrl);
 
       HTMLdownload = downloadHtml(lsVideoUrl);
       //HTMLdownload = this.HTMLdownload;

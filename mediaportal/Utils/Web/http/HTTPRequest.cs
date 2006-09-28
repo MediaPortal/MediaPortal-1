@@ -24,8 +24,6 @@
 #endregion
 
 using System;
-using System.Collections;
-using System.Net;
 
 namespace MediaPortal.Utils.Web
 {
@@ -153,22 +151,13 @@ namespace MediaPortal.Utils.Web
 
     public static bool operator ==(HTTPRequest r1, HTTPRequest r2)
     {
-      object o1 = (object)r1;
-      object o2 = (object)r2;
-      if (o1 == null || o2 == null)
+      if ((object)r1 == null || (object)r2 == null)
       {
-        if (o1 == null && o2 == null)
+        if ((object)r1 == null && (object)r2 == null)
           return true;
         return false;
       }
-
-      if (r1._scheme == r2._scheme &&
-          r1._host == r2._host &&
-          r1._getQuery == r2._getQuery &&
-          r1._postQuery == r2._postQuery)
-        return true;
-
-      return false;
+      return r1.Equals(r2);
     }
 
     public static bool operator !=(HTTPRequest r1, HTTPRequest r2)
@@ -176,6 +165,24 @@ namespace MediaPortal.Utils.Web
       return !(r1 == r2);
     }
 
+    public override bool Equals(object obj)
+    {
+      HTTPRequest req = obj as HTTPRequest;
+      if (req==null)
+        return false;
+      if (_scheme == req._scheme &&
+          _host == req._host &&
+          _getQuery == req._getQuery &&
+          _postQuery == req._postQuery)
+        return true;
+
+      return false;
+    }
+
+    public override int GetHashCode()
+    {
+      return (_host + _getQuery + _scheme + _postQuery).GetHashCode();
+    }
     #endregion
   }
 }

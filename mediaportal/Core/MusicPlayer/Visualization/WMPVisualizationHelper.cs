@@ -55,12 +55,12 @@ namespace MediaPortal.Visualization
                 }
             }
 
-            catch (FormatException fmtEx)
+            catch (FormatException)
             {
                 isValidVizObject = false;
             }
 
-            catch (COMException comEx)
+            catch (COMException)
             {
                 isValidVizObject = false;
             }

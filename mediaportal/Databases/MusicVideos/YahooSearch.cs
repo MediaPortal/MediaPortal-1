@@ -93,7 +93,7 @@ namespace MediaPortal.MusicVideos.Database
       YahooUtil loUtil = YahooUtil.getInstance();
       string lsHtml = loUtil.getHTMLData(msSearchUrl + miCurrentPage);
       List<YahooVideo> loTempResultList = loUtil.getVideoList(lsHtml, loSite.countryId, loUtil.moArtistRegex, loUtil.moSearchSongRegex);
-      Log.Write("search returned {0} videos", loTempResultList.Count);
+      Log.Info("search returned {0} videos", loTempResultList.Count);
 
       moLastSearchResult = loTempResultList;
       setNavigationFlags(lsHtml);

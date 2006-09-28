@@ -20,12 +20,7 @@
  */
 
 using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Text;
 using System.IO;
-using System.Drawing;
-using System.Runtime.InteropServices;
 using MediaPortal.TagReader;
 using Tag.MAC;
 
@@ -37,32 +32,32 @@ namespace Tag.MPC
   {
     internal struct MpcHeaderInfo
     {
-      internal int SampleRate;
-      internal int Channels;
-      internal long HeaderPosition;
-      internal long HeaderLength;
-      internal int MPCStreamVersion;
-      internal int Bitrate;
-      internal double AverageBitrate;
-      internal uint Frames;
-      internal UInt64 PCMSamples;
-      internal uint MaxBand;
-      internal uint IntensityStereo;
-      internal uint MidSideStereo;
-      internal uint BlockSize;
-      internal uint Profile;
-      internal string ProfileName;
+      public int SampleRate;
+      public int Channels;
+      public long HeaderPosition;
+      public long HeaderLength;
+      public int MPCStreamVersion;
+      public int Bitrate;
+      public double AverageBitrate;
+      public uint Frames;
+      public UInt64 PCMSamples;
+      public uint MaxBand;
+      public uint IntensityStereo;
+      public uint MidSideStereo;
+      public uint BlockSize;
+      public uint Profile;
+      public string ProfileName;
 
-      internal short GainTitle;
-      internal short GainAlbum;
-      internal ushort PeakAlbum;
-      internal ushort PeakTitle;
+      public short GainTitle;
+      public short GainAlbum;
+      public ushort PeakAlbum;
+      public ushort PeakTitle;
 
-      internal uint IsTrueGapless;
-      internal uint LastFrameSamples;
+      public uint IsTrueGapless;
+      public uint LastFrameSamples;
 
-      internal uint EncoderVersion;
-      internal string Encoder;
+      public uint EncoderVersion;
+      public string Encoder;
     }
 
     string[] ProfileNames = new string[]
@@ -101,110 +96,14 @@ namespace Tag.MPC
 
     #region Properties
 
-    override public string Album
-    {
-      get { return base.Album; }
-    }
-
-    override public string Artist
-    {
-      get { return base.Artist; }
-    }
-
-    override public string AlbumArtist
-    {
-      get { return base.AlbumArtist; }
-    }
-
-    override public string ArtistURL
-    {
-      get { return base.ArtistURL; }
-    }
-
     override public int AverageBitrate
     {
       get { return (int)(HeaderInfo.AverageBitrate / 1000 + .5); }
     }
 
-    override public int BitsPerSample
-    {
-      get { return base.BitsPerSample; }
-    }
-
-    override public int BlocksPerFrame
-    {
-      get { return base.BlocksPerFrame; }
-    }
-
-    override public string BuyURL
-    {
-      get { return base.BuyURL; }
-    }
-
-    override public int BytesPerSample
-    {
-      get { return base.BytesPerSample; }
-    }
-
     override public int Channels
     {
       get { return HeaderInfo.Channels; }
-    }
-
-    override public string Comment
-    {
-      get { return base.Comment; }
-    }
-
-    override public string Composer
-    {
-      get { return base.Composer; }
-    }
-
-    override public int CompressionLevel
-    {
-      get { return base.CompressionLevel; }
-    }
-
-    override public string Copyright
-    {
-      get { return base.Copyright; }
-    }
-
-    override public string CopyrightURL
-    {
-      get { return base.CopyrightURL; }
-    }
-
-    override public byte[] CoverArtImageBytes
-    {
-      get { return base.CoverArtImageBytes; }
-    }
-
-    override public string FileURL
-    {
-      get { return base.FileURL; }
-    }
-
-    override public int FormatFlags
-    {
-      get { return base.FormatFlags; }
-    }
-
-    override public string Genre
-    {
-      get { return base.Genre; }
-
-    }
-
-    override public bool IsVBR
-    {
-      get { return base.IsVBR; }
-    }
-
-    override public string Keywords
-    {
-      get { return base.Keywords; }
     }
 
     override public string Length
@@ -217,31 +116,11 @@ namespace Tag.MPC
       get
       {
         int frameLength = 1152;
-        double framesSize = ((double)HeaderInfo.Frames - .5) * frameLength;
+        double framesSize = (HeaderInfo.Frames - .5) * frameLength;
         int durationSecs = (int)(framesSize / HeaderInfo.SampleRate);
 
         return durationSecs * 1000;
       }
-    }
-
-    override public string Lyrics
-    {
-      get { return base.Lyrics; }
-    }
-
-    override public string Notes
-    {
-      get { return base.Notes; }
-    }
-
-    override public string PeakLevel
-    {
-      get { return base.PeakLevel; }
-    }
-
-    override public string PublisherURL
-    {
-      get { return base.PublisherURL; }
     }
 
     override public string ReplayGainAlbum
@@ -249,55 +128,11 @@ namespace Tag.MPC
       get { return HeaderInfo.GainAlbum.ToString(); }
     }
 
-    override public string ReplayGainRadio
-    {
-      get { return base.ReplayGainRadio; }
-    }
-
     override public int SampleRate
     {
       get { return HeaderInfo.SampleRate; }
     }
 
-    override public string Title
-    {
-      get { return base.Title; }
-    }
-
-    override public string ToolName
-    {
-      get { return base.ToolName; }
-    }
-
-    override public string ToolVersion
-    {
-      get { return ToolVersion; }
-    }
-
-    override public int TotalBlocks
-    {
-      get { return base.TotalBlocks; }
-    }
-
-    override public int TotalFrames
-    {
-      get { return base.TotalFrames; }
-    }
-
-    override public int Track
-    {
-      get { return base.Track; }
-    }
-
-    override public string Version
-    {
-      get { return base.Version; }
-    }
-
-    override public int Year
-    {
-      get { return base.Year; }
-    }
 
     #endregion
 
@@ -319,7 +154,7 @@ namespace Tag.MPC
 
     override public bool SupportsFile(string strFileName)
     {
-      if (System.IO.Path.GetExtension(strFileName).ToLower() == ".mpc") return true;
+      if (Path.GetExtension(strFileName).ToLower() == ".mpc") return true;
       return false;
     }
 
@@ -341,7 +176,7 @@ namespace Tag.MPC
       bool result = true;
 
       if (AudioFileStream == null)
-        AudioFileStream = new FileStream(this.AudioFilePath, FileMode.Open, FileAccess.Read);
+        AudioFileStream = new FileStream(AudioFilePath, FileMode.Open, FileAccess.Read);
 
       try
       {
@@ -354,7 +189,7 @@ namespace Tag.MPC
 
       catch (Exception ex)
       {
-        Log.Error("MPCTag.Read caused an exception in file {0} : {1}", base.FileName, ex.Message);
+        Log.Error("MPCTag.Read caused an exception in file {0} : {1}", FileName, ex.Message);
         result = false;
       }
 
@@ -456,7 +291,7 @@ namespace Tag.MPC
 
       catch (Exception ex)
       {
-        Log.Error("MPCTag.ReadMpcStreamV6 caused an exception in file {0} : {1}", base.FileName, ex.Message);
+        Log.Error("MPCTag.ReadMpcStreamV6 caused an exception in file {0} : {1}", FileName, ex.Message);
         result = false;
       }
 
@@ -556,7 +391,7 @@ namespace Tag.MPC
 
       catch (Exception ex)
       {
-        Log.Error("MPCTag.ReadMpcStreamV7 caused an exception in file {0} : {1}", base.FileName, ex.Message);
+        Log.Error("MPCTag.ReadMpcStreamV7 caused an exception in file {0} : {1}", FileName, ex.Message);
         result = false;
       }
 

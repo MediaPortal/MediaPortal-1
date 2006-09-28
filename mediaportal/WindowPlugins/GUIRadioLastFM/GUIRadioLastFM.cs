@@ -418,12 +418,10 @@ namespace MediaPortal.GUI.RADIOLASTFM
               string tmpTrack = LastFMStation.CurrentTrackTag.Track > 0 ? (Convert.ToString(LastFMStation.CurrentTrackTag.Track) + ". ") : String.Empty;
               Clipboard.SetDataObject(@"/me is listening on last.fm: " + LastFMStation.CurrentTrackTag.Artist + " [" + LastFMStation.CurrentTrackTag.Album + "] - " + tmpTrack + LastFMStation.CurrentTrackTag.Title, true);
             }
-            break;
           }
           catch (Exception ex)
           {
             Log.Error("GUIRadioLastFM: could not copy song spam to clipboard - {0}", ex.Message);
-            break;
           }
           break;
 

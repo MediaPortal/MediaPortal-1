@@ -109,7 +109,7 @@ namespace MediaPortal.MusicVideos.Database
     //}
     //protected override void OnPageLoad()
     //{
-    //    Log.Write("YahooTopVideos onPageLoad.");
+    //    Log.Info("YahooTopVideos onPageLoad.");
     //    //load the top videos
     //    YahooSettings loSettings= YahooSettings.getInstance();
     //    loadTopVideos(loSettings.msDefaultCountryName);
@@ -121,11 +121,11 @@ namespace MediaPortal.MusicVideos.Database
     private void loadTopVideos(int fiPageNo)
     {
       YahooUtil loUtil = YahooUtil.getInstance();
-      Log.Write("in loadTopVideos");
+      Log.Info("in loadTopVideos");
       //if (mbTopVideoLoaded && fsCountryName == msLastTopVideoRunCountry)
       //{
       //    TimeSpan loDataDiff = DateTime.Now - moLastImportTopVideoDt;
-      //    Log.Write("date difference={0}", loDataDiff.Minutes);
+      //    Log.Info("date difference={0}", loDataDiff.Minutes);
       //    if (loDataDiff.Minutes < 60)
       //    {
       //        return;
@@ -154,12 +154,12 @@ namespace MediaPortal.MusicVideos.Database
     public void loadAllTopVideos()
     {
       YahooUtil loUtil = YahooUtil.getInstance();
-      Log.Write("in loadTopVideos");
+      Log.Info("in loadTopVideos");
       //if (mbTopVideoLoaded && msCountry == msLastTopVideoRunCountry)
       ///if(mbTopVideoLoaded)
       ///{
       ///    TimeSpan loDataDiff = DateTime.Now - moLastImportTopVideoDt;
-      ///    Log.Write("date difference={0}", loDataDiff.Minutes);
+      ///    Log.Info("date difference={0}", loDataDiff.Minutes);
       ///    if (loDataDiff.Minutes < 60)
       ///    {
       ///         return;

@@ -57,17 +57,17 @@ namespace Tag.WavPack
     internal struct WavPackHeader
     {
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-      internal char[] ID;                 // wvpk
+      public char[] ID;                 // wvpk
 
-      internal UInt32 BlockSize;          // frame length not including ID and BlockSize
-      internal short Version;             // Currently 0x403
-      internal byte Track;                // Unused - 0
-      internal byte IndexNumber;          // Unused - 0
-      internal UInt32 TotalSamples;       // Total sample count in file. -1 if unknown
-      internal UInt32 BlockIndex;         // 
-      internal UInt32 BlockSamples;       // Number os samples in this block
-      internal UInt32 Flags;
-      internal UInt32 CRC;                // CRC for decoded data
+      public UInt32 BlockSize;          // frame length not including ID and BlockSize
+      public short Version;             // Currently 0x403
+      public byte Track;                // Unused - 0
+      public byte IndexNumber;          // Unused - 0
+      public UInt32 TotalSamples;       // Total sample count in file. -1 if unknown
+      public UInt32 BlockIndex;         // 
+      public UInt32 BlockSamples;       // Number os samples in this block
+      public UInt32 Flags;
+      public UInt32 CRC;                // CRC for decoded data
     };
 
     #region Constants

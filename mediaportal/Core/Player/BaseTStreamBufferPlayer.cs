@@ -180,7 +180,7 @@ namespace MediaPortal.Player
       _updateNeeded = true;
       //if (_fileSource != null)
       //{
-      //  Log.Write("TSStreamBufferPlayer:replay {0}", strFile);
+      //  Log.Info("TSStreamBufferPlayer:replay {0}", strFile);
       //  IFileSourceFilter interFaceFile = (IFileSourceFilter)_fileSource;
       //  interFaceFile.Load(strFile, null);
       //}

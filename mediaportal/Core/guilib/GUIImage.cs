@@ -478,7 +478,7 @@ namespace MediaPortal.GUI.Library
 					}
 					else
 					{
-            //Log.Write("load:{0}", fileName);
+            //Log.Info("load:{0}", fileName);
 						frameCount = GUITextureManager.Load(fileName, m_dwColorKey, m_iRenderWidth, _textureHeight);
 						if (0 == frameCount)
 						{

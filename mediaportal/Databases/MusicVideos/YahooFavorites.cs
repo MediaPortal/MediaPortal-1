@@ -86,7 +86,7 @@ namespace MediaPortal.MusicVideos.Database
       //                    moFavoriteTable.Add(lsCurrentName, moFavoriteList);
       //                }
       //                lsCurrentName = loXmlreader.GetAttribute("name");
-      //                Log.Write("Xml name = {0}",lsCurrentName);
+      //                Log.Info("Xml name = {0}",lsCurrentName);
 
 
       //            }
@@ -98,13 +98,13 @@ namespace MediaPortal.MusicVideos.Database
       //                loVideo.songId = loXmlreader.GetAttribute("SongId");
       //                loVideo.songName = loXmlreader.GetAttribute("SongTitle");
       //                loVideo.countryId = loXmlreader.GetAttribute("CtryId");
-      //                Log.Write("found favorite:{0}", loVideo.ToString());
+      //                Log.Info("found favorite:{0}", loVideo.ToString());
       //                moFavoriteList.Add(loVideo);
       //            }
       //        }
       //        loXmlreader.Close();
       //    }
-      //    catch (Exception e) { Log.Write(e); }
+      //    catch (Exception e) { Log.Info(e); }
       //}
       //if (!mbNameEnabled)
       //{

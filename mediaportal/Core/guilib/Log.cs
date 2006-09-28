@@ -98,25 +98,25 @@ namespace MediaPortal.GUI.Library
     [Obsolete("This method will disappear because the thread information is always logged now.", false)]
     public static void WriteFileThreadId(LogType type, bool isError, string format, params object[] arg)
     {
-      GlobalServiceProvider.Get<ILog>().WriteFileThreadId(type, isError, format, arg);
+      GlobalServiceProvider.Get<ILog>().WriteFile(type, isError, format, arg);
     }
 
     [Obsolete("This method will disappear because the thread information is always logged now.", false)]
     public static void InfoThread(string format, params object[] arg)
     {
-      GlobalServiceProvider.Get<ILog>().InfoThread(format, arg);
+      GlobalServiceProvider.Get<ILog>().Info(format, arg);
     }
 
     [Obsolete("This method will disappear because the thread information is always logged now.", false)]
     public static void WarnThread(string format, params object[] arg)
     {
-      GlobalServiceProvider.Get<ILog>().WarnThread(format, arg);
+      GlobalServiceProvider.Get<ILog>().Warn(format, arg);
     }
 
     [Obsolete("This method will disappear because the thread information is always logged now.", false)]
     public static void ErrorThread(string format, params object[] arg)
     {
-      GlobalServiceProvider.Get<ILog>().ErrorThread(format, arg);
+      GlobalServiceProvider.Get<ILog>().Error(format, arg);
     }
 
     [Obsolete("This method will disappear.  Use one of the Info, Warn, Debug or Error variants instead.", false)]

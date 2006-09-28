@@ -61,7 +61,7 @@ namespace MediaPortal.MusicVideos.Database
     {
       YahooUtil loUtil = YahooUtil.getInstance();
 
-      Log.Write("in loadNewVideos");
+      Log.Info("in loadNewVideos");
 
       if (moNewVideoList == null)
       {

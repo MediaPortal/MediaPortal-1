@@ -208,7 +208,7 @@ namespace MediaPortal.Visualization
         private int DefaultRewImageX = 0;
         private int DefaultRewImageY = 0;
 
-        private string StopImageName = "logo_stop.png";
+        //private string StopImageName = "logo_stop.png";
         private Image StopImage = null;
         private int StopImageWidth = 65;
         private int StopImageHeight = 65;
@@ -267,17 +267,17 @@ namespace MediaPortal.Visualization
         private int DefaultLabel4PosY = 0;
         private float DefaultLabel4FontSize = 0;
 
-        private int TrackInfoTextLeftMargin = 10;
+        //private int TrackInfoTextLeftMargin = 10;
         private int TrackInfoTextRightMargin = 35;
 
         private float DefaultFontSize = 11f;
-        private Color TextColor = Color.White;
+        //private Color TextColor = Color.White;
         private Font TextFont = new Font("Arial", 11f, FontStyle.Regular);
         private StringFormat TextStringFormat = (StringFormat)StringFormat.GenericTypographic.Clone();
 
         #endregion
 
-        private FormWindowState LastWindowState = FormWindowState.Normal;
+        //private FormWindowState LastWindowState = FormWindowState.Normal;
         private Size OldSize = Size.Empty;
         private bool VizWindowNeedsResize = false;
         private bool OutputContextNeedsUpdating = false;
@@ -912,7 +912,7 @@ namespace MediaPortal.Visualization
                 if (img == null)
                     return;
 
-                StopImageName = imgName;
+                //StopImageName = imgName;
                 DefaultStopImageX = StopImageX = imgX;
                 DefaultStopImageY = StopImageY = imgY;
                 DefaultStopImageWidth = imgWidth;

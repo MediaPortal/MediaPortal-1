@@ -287,7 +287,7 @@ namespace MediaPortal.Visualization
         #region SoundSpectrum Callback
 
         int NotImplemented = -55012;
-        int NoError = 0;
+        //int NoError = 0;
 
         private int SSCallbackFunc(int inCallbackParam, int inMessage, int inParam1, int inParam2)
         {

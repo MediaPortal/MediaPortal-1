@@ -151,16 +151,16 @@ namespace MediaPortal.Visualization
             // No support yet!
              return false;
 
-            string mpVizDll = Path.Combine(Application.StartupPath, "mpviz.dll");
+            //string mpVizDll = Path.Combine(Application.StartupPath, "mpviz.dll");
 
-            if (!File.Exists(mpVizDll))
-                return false;
+            //if (!File.Exists(mpVizDll))
+            //    return false;
 
-            SoundSpectrumViz viz = new SoundSpectrumViz(new VisualizationInfo(VisualizationInfo.PluginType.SoftSkies, "", "softskies", "", 0));
-            bool engineInstalled = viz.IsEngineInstalled();
-            viz.Dispose();
+            //SoundSpectrumViz viz = new SoundSpectrumViz(new VisualizationInfo(VisualizationInfo.PluginType.SoftSkies, "", "softskies", "", 0));
+            //bool engineInstalled = viz.IsEngineInstalled();
+            //viz.Dispose();
 
-            return engineInstalled;
+            //return engineInstalled;
         }
 
         private bool IsMilkDropInstalled()
@@ -328,7 +328,7 @@ namespace MediaPortal.Visualization
                     return vizPluginInfo;
                 }
 
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return null;
                 }

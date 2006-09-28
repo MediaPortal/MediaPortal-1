@@ -136,7 +136,7 @@ namespace MediaPortal.Visualization
                 }
             }
 
-            catch (Exception ex)
+            catch (Exception)
             {
                 //Console.WriteLine("Sonique viz caused an exception: {0}", ex.Message);
             }
