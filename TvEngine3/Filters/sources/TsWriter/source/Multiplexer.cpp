@@ -60,7 +60,7 @@ void CMultiplexer::Reset()
 
 void CMultiplexer::ClearStreams()
 {
-	LogDebug("mux: clear streams");
+  LogDebug("mux: clear streams startpcr:%x highestpcr:%x",(DWORD)m_startPcr,(DWORD)m_highestPcr);
 	ivecPesDecoders it;
 	for (it=m_pesDecoders.begin(); it != m_pesDecoders.end();++it)
 	{
@@ -253,6 +253,25 @@ int CMultiplexer::SplitPesPacket(int streamId,byte* header, int headerlen, byte*
 	
 
   __int64 pcrNew=m_pcrDecoder.Pcr();
+  if (m_bDetermineNewStartPcr )
+  {
+    if (pcrNew==0) 
+    {
+      LogDebug("Pcr: skip..");
+      return sectionLength;
+    }
+
+    m_bDetermineNewStartPcr=false;
+	  //correct pcr rollover
+    __int64 duration=m_highestPcr-m_startPcr;
+  
+    LogDebug("Pcr change detected from:%x to:%x duration:%x", (DWORD)m_highestPcr, (DWORD)pcrNew,(DWORD)duration);
+	  __int64 newStartPcr = pcrNew- (duration) ;
+	  LogDebug("Pcr new start pcr from:%x to %x ", (DWORD)m_startPcr,(DWORD)newStartPcr);
+    m_startPcr=newStartPcr;
+    m_highestPcr=newStartPcr;
+  }
+
   
 	if (m_startPcr==0)
 	{
@@ -260,18 +279,6 @@ int CMultiplexer::SplitPesPacket(int streamId,byte* header, int headerlen, byte*
     m_highestPcr=pcrNew;
 		LogDebug("Pcr new start pcr :%x", (DWORD)m_startPcr);
 	} 
-
-  if (m_bDetermineNewStartPcr && pcrNew!=0)
-  {
-    m_bDetermineNewStartPcr=false;
-	  //correct pcr rollover
-	  __int64 pcrDiff=pcrNew - m_highestPcr;
-	  if (pcrDiff < 0) pcrDiff =- pcrDiff;
-  
-	  LogDebug("Pcr change detected from:%x to:%x", (DWORD)m_highestPcr, (DWORD)pcrNew );
-	  m_startPcr = pcrNew- (m_highestPcr - m_startPcr) ;
-	  LogDebug("Pcr new start pcr :%x", (DWORD)m_startPcr);
-  }
 
   if (pcrNew > m_highestPcr)
   {

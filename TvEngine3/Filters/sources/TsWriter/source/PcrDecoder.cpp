@@ -42,6 +42,8 @@ void CPcrDecoder::Reset()
 
 void CPcrDecoder::SetPcrPid(int pid)
 {
+	m_pcrHigh=0;
+	m_pcrLow=0;
 	m_pcrPid=pid;
 }
 
