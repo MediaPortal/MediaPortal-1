@@ -257,12 +257,14 @@ namespace DShowNET
       if (_handle != 0xffffffff)
       {
         _isCamInitializedTable.Remove(_handle);
-        Log.Info("Technotrend: close");
+        Log.Info("Technotrend: closing");
         if (_hasCam)
         {
           bdaapiCloseCI(_handle);
+          Log.Info("Technotrend: close CI");
         }
         bdaapiClose(_handle);
+        Log.Info("Technotrend: closed");
       }
       _handle = 0xffffffff;
       _hasCam = false;
