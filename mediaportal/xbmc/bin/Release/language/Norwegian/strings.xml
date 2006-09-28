@@ -5349,7 +5349,7 @@
    </string>
    <string>
       <id>33013</id>
-      <value>Spor etter valgt tag</value>
+      <value>Velg spor etter tag</value>
    </string>
    <string>
       <id>33014</id>
@@ -5357,7 +5357,7 @@
    </string>
    <string>
       <id>33016</id>
-      <value>Spor som dine venner liker</value>
+      <value>Velg spor som en av dine venner liker</value>
    </string>
    <string>
       <id>33017</id>
@@ -5381,7 +5381,7 @@
    </string>   
    <string>
       <id>34001</id>
-      <value>Start stream</value>
+      <value>Start stream fra</value>
    </string>
    <string>
       <id>34002</id>
@@ -5397,7 +5397,7 @@
    </string>
    <string>
       <id>34010</id>
-      <value>Love</value>
+      <value>Liker</value>
    </string>
    <string>
       <id>34011</id>
@@ -5416,8 +5416,64 @@
       <value>Oppdagelse Modus</value>
    </string>
    <string>
+      <id>34014</id>
+      <value>Overfør til profil</value>
+   </string>
+   <string>
       <id>34020</id>
       <value>Gjeldende stream: </value>
+   </string>
+   <string>
+      <id>34030</id>
+      <value>Ingen tagger</value>
+   </string>
+   <string>
+      <id>34031</id>
+      <value>Ingen venner</value>
+   </string>
+   <string>
+      <id>34040</id>
+      <value>Anbefalt radio</value>
+   </string>
+   <string>
+      <id>34041</id>
+      <value>Spille fra valgte Tag: </value>
+   </string>
+   <string>
+      <id>34042</id>
+      <value>Ingen tag har blitt valgt enda</value>
+   </string>
+   <string>
+      <id>34043</id>
+      <value>Personlig radio fra: </value>
+   </string>
+   <string>
+      <id>34044</id>
+      <value>Likte spor fra: </value>
+   </string>
+   <string>
+      <id>34045</id>
+      <value>Ingen venner har blitt valgt enda</value>
+   </string>
+   <string>
+      <id>34046</id>
+      <value>Min personlige radio</value>
+   </string>
+   <string>
+      <id>34047</id>
+      <value>Mine elskede spor</value>
+   </string>
+   <string>
+      <id>34050</id>
+      <value>Ingen stream aktiv</value>
+   </string>
+   <string>
+      <id>34051</id>
+      <value>Stream stoppet!</value>
+   </string>   
+   <string>
+      <id>34052</id>
+      <value>Ingen flere eller dårlig tilkobling</value>
    </string>
     
    <string>
