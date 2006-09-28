@@ -318,7 +318,6 @@ namespace MediaPortal.GUI.Video
       if (ShowTrailerButton != true)
       {
         btnTrailers.Visible = false;
-        btnPlayDVD.NavigateDown = 99;
       }
       LoadFolderSettings(_currentFolder);
       LoadDirectory(_currentFolder);

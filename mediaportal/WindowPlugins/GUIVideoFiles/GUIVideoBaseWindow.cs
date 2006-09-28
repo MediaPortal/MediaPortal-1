@@ -69,10 +69,10 @@ namespace MediaPortal.GUI.Video
     protected GUIButtonControl btnViews = null;
     [SkinControlAttribute(6)]
     protected GUIButtonControl btnPlayDVD = null;
-    [SkinControlAttribute(7)]
+    [SkinControlAttribute(8)]
     protected GUIButtonControl btnTrailers = null;
-		[SkinControlAttribute(9)]
-		protected GUIButtonControl btnPlaylistFolder = null;
+	[SkinControlAttribute(9)]
+	protected GUIButtonControl btnPlaylistFolder = null;
 
     protected PlayListPlayer playlistPlayer;
 
