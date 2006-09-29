@@ -305,6 +305,8 @@
 		<thumbPosXBig>12</thumbPosXBig>
 		<thumbPosYBig>12</thumbPosYBig>		
 		<thumbZoom>no</thumbZoom>
+    <textOffsetX>0</textOffsetX>
+    <textOffsetY>0</textOffsetY>
 	</control>
 	<control>
 		<description>default filmstrip</description>
