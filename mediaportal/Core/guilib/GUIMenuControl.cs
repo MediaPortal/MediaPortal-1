@@ -85,8 +85,8 @@ namespace MediaPortal.GUI.Library
 		protected Viewport _oldViewport;                  // storage of the currrent Viewport 
 		ScrollAnimator _scrollLabel         = null;
 		protected int _animationTime        = 0;          // duration for a scroll animation
-		protected int _animationTimeMin     = 100;        // min duration for a scrolling - speedup
-		protected int _animationTimeMax     = 160;        // max. duration for a scrolling - normal
+		protected int _animationTimeMin     = 140;        // min duration for a scrolling - speedup
+		protected int _animationTimeMax     = 180;        // max. duration for a scrolling - normal
 		protected int _focusPosition        = 0;          // current position of the focus bar 
 		protected bool _fixedScroll         = true; 		  // fix scrollbar in the middle of menu
 		protected bool _useMyPlugins        = true;
@@ -233,7 +233,15 @@ namespace MediaPortal.GUI.Library
       {
         foreach (GUIButtonControl btn in _buttonList)
         {
-          string fileName = GetHoverFileName(btn.Label);
+          string fileName = null;
+          foreach (PlugInInfo info in _buttonInfos)
+          {
+            if (info.Text.Equals(btn.Label))
+            {
+              fileName = info.Hover;
+              break;
+            }
+          }
           Log.Debug("MenuControl: PlugIn: " + btn.Label);
           if (fileName != null)
           {
@@ -247,20 +255,7 @@ namespace MediaPortal.GUI.Library
 			base.AllocResources();
 		}
 
-		public override void FreeResources()
-		{
-      Log.Debug("GUIMenuControl: FreeResources");
-      SaveSetting();
-			foreach (GUIControl control in _buttonList)	control.FreeResources();
-      foreach (GUIAnimation hover in _hoverList)  hover.FreeResources();
-			_buttonList.Clear();
-      _hoverList.Clear();
-			if (_backgroundImage != null) _backgroundImage.FreeResources();
-			if (_focusImage != null) _focusImage.FreeResources();
-			base.FreeResources();
-		}
-
-    protected string GetHoverFileName(string name)
+    public string GetHoverFileName(string name)
     {
       name = String.Format(@"{0}\media\hover_{1}", GUIGraphicsContext.Skin, name);
       string filename = name + ".png";
@@ -277,6 +272,21 @@ namespace MediaPortal.GUI.Library
 
       return null;
     }
+
+		public override void FreeResources()
+		{
+      Log.Debug("GUIMenuControl: FreeResources");
+      SaveSetting();
+			foreach (GUIControl control in _buttonList)	control.FreeResources();
+      foreach (GUIAnimation hover in _hoverList)  hover.FreeResources();
+			_buttonList.Clear();
+      _hoverList.Clear();
+			if (_backgroundImage != null) _backgroundImage.FreeResources();
+			if (_focusImage != null) _focusImage.FreeResources();
+			base.FreeResources();
+		}
+
+    
 
 		#endregion
 
@@ -583,7 +593,7 @@ namespace MediaPortal.GUI.Library
 			{
         _nextState = State.ScrollUp;
 				_scrollLabel.StopAnimation = true;
-				if (_animationTime > _animationTimeMin) _animationTime -= 10;
+				if (_animationTime > _animationTimeMin) _animationTime -= 5;
 				return;
 			}
 			_currentState = State.ScrollUp;
@@ -603,7 +613,7 @@ namespace MediaPortal.GUI.Library
 			{
 				_nextState = State.ScrollDown;
 				_scrollLabel.StopAnimation = true;
-				if (_animationTime > _animationTimeMin) _animationTime -= 10;
+				if (_animationTime > _animationTimeMin) _animationTime -= 5;
 				return;
 			}
 			_currentState = State.ScrollDown;
@@ -625,31 +635,21 @@ namespace MediaPortal.GUI.Library
 	public class PlugInInfo
 	{
 		protected string _text;
-		protected string _image;
-		protected string _imageFocus;
-		protected string _pictureImage;
+		protected string _hover;
 		protected int    _pluginID;
 
-		public PlugInInfo(string Text, string Image, string ImageFocus, string PicImage, int PlugInID)
+		public PlugInInfo(string Text, string Hover, int PlugInID)
 		{
 			_text = Text;
-			_image = Image;
-			_imageFocus = ImageFocus;
-			_pictureImage = PicImage;
+			_hover = Hover;
 			_pluginID = PlugInID;      
 		}
 
 		public string Text
 		{ get { return _text; } }
 
-		public string Image
-		{ get { return _image; } }
-
-		public string ImageFocus
-		{ get { return _imageFocus; } }
-
-		public string PictureImage
-		{ get { return _pictureImage; } }
+		public string Hover
+		{ get { return _hover; } }
 
 		public int PluginID
 		{ get { return _pluginID; } }
