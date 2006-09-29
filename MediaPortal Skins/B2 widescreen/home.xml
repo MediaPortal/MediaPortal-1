@@ -107,7 +107,7 @@
       <posY>220</posY>
       <label>#time</label>
       <align>right</align>
-      <font>font15</font>
+      <font>font16</font>
       <textcolor>ffffffff</textcolor>
     </control>
   </controls>
