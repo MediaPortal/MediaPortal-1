@@ -27,21 +27,39 @@
 extern void LogDebug(const char *fmt, ...) ;
 CVirtualChannelTableParser::CVirtualChannelTableParser(void)
 {
-  SetPid(0x1ffb);
-  SetTableId(0xc8);
-  Reset();
+  m_decoder[0] = new CSectionDecoder();
+  m_decoder[0]->SetPid(0x1ffb);
+  m_decoder[0]->SetTableId(0xc8);
+  m_decoder[0]->SetCallBack(this);
+  m_decoder[0]->Reset();
+
+  
+  m_decoder[1] = new CSectionDecoder();
+  m_decoder[1]->SetPid(0x1ffb);
+  m_decoder[1]->SetTableId(0xc9);
+  m_decoder[1]->SetCallBack(this);
+  m_decoder[1]->Reset();
 }
 
 CVirtualChannelTableParser::~CVirtualChannelTableParser(void)
 {
+  delete m_decoder[0];
+  delete m_decoder[1];
 }
 
 
 void CVirtualChannelTableParser::Reset()
 {
-	CSectionDecoder::Reset();
+	m_decoder[0]->Reset();
+	m_decoder[1]->Reset();
   m_vecChannels.clear();
   m_iVctVersion=-1;
+}
+
+void CVirtualChannelTableParser::OnTsPacket(byte* tsPacket)
+{
+	m_decoder[0]->OnTsPacket(tsPacket);
+	m_decoder[1]->OnTsPacket(tsPacket);
 }
 
 int CVirtualChannelTableParser::Count()
@@ -69,7 +87,7 @@ bool CVirtualChannelTableParser::GetChannelInfo(int serviceId,CChannelInfo& info
 	return false;
 }
 
-void CVirtualChannelTableParser::OnNewSection(CSection& newSection)
+void CVirtualChannelTableParser::OnNewSection(int pid, int tableId, CSection& newSection)
 {
   byte* section=newSection.Data;
   int sectionLen=newSection.SectionLength;

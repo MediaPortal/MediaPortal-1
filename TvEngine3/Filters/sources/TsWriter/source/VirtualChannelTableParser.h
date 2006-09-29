@@ -24,19 +24,19 @@
 #include "pidtable.h"
 #include <vector>
 using namespace std;
-class CVirtualChannelTableParser :
-  public CSectionDecoder
+class CVirtualChannelTableParser : ISectionCallback
 {
 public:
   CVirtualChannelTableParser(void);
   virtual ~CVirtualChannelTableParser(void);
 
   void  Reset();
-  void OnNewSection(CSection& section);
+	void OnNewSection(int pid, int tableId, CSection& section);
 
   int   Count();
   bool  GetChannelInfo(int serviceId,CChannelInfo& info);
 	bool  GetChannel(int index,CChannelInfo& info);
+  void  OnTsPacket(byte* tsPacket);
 private:
   void DecodeServiceLocationDescriptor( byte* buf,int start,CChannelInfo& channelInfo);
   void DecodeExtendedChannelNameDescriptor( byte* buf,int start,CChannelInfo& channelInfo, int maxLen);
@@ -44,4 +44,5 @@ private:
   char* DecodeString(byte* buf, int offset, int compression_type, int mode, int number_of_bytes);
   vector<CChannelInfo> m_vecChannels;
   int m_iVctVersion;
+  CSectionDecoder* m_decoder[2];
 };
