@@ -1,4 +1,5 @@
-﻿<window>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
 	<id>5900</id>
 	<defaultcontrol>2</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
@@ -18,23 +19,23 @@
 		<control>
 			<type>image</type>
 			<id>1</id>
-			<posX>60</posX>
-			<posY>20</posY>
+			<posX>113</posX>
+			<posY>26</posY>
 			<texture>trailers_logo.png</texture>
 		</control>
 		<control>
 			<type>togglebutton</type>
 			<description>Plot</description>
 			<id>5</id>
-			<posX>60</posX>
-			<posY>132</posY>
+			<posX>113</posX>
+			<posY>176</posY>
 			<onleft>4</onleft>
 			<onright>4</onright>
 			<onup>3</onup>
 			<ondown>6</ondown>
 			<label>207</label>
-			<width>190</width>
-			<height>32</height>
+			<width>253</width>
+			<height>42</height>
 			<textureFocus>togglebutton-on-focus.png</textureFocus>
 			<textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
 			<AltTextureFocus>togglebutton-off-focus.png</AltTextureFocus>
@@ -44,15 +45,15 @@
 			<type>togglebutton</type>
 			<description>Cast</description>
 			<id>6</id>
-			<posX>60</posX>
-			<posY>167</posY>
+			<posX>113</posX>
+			<posY>222</posY>
 			<onleft>4</onleft>
 			<onright>4</onright>
 			<onup>5</onup>
 			<ondown>2</ondown>
 			<label>206</label>
-			<width>190</width>
-			<height>32</height>
+			<width>253</width>
+			<height>42</height>
 			<textureFocus>togglebutton-on-focus.png</textureFocus>
 			<textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
 			<AltTextureFocus>togglebutton-off-focus.png</AltTextureFocus>
@@ -62,8 +63,8 @@
 			<type>fadelabel</type>
 			<description>genre value</description>
 			<id>51</id>
-			<posX>315</posX>
-			<posY>280</posY>
+			<posX>597</posX>
+			<posY>373</posY>
 			<label>#genre</label>
 			<disabledcolor>ff808080</disabledcolor>
 		</control>
@@ -71,10 +72,10 @@
 			<type>textboxscrollup</type>
 			<description>Cast value</description>
 			<id>57</id>
-			<posX>250</posX>
-			<posY>330</posY>
-			<width>440</width>
-			<height>192</height>
+			<posX>474</posX>
+			<posY>440</posY>
+			<width>586</width>
+			<height>256</height>
 			<colordiffuse>ffffffff</colordiffuse>
 			<font>font13</font>
 			<label>#cast</label>
@@ -84,8 +85,8 @@
 			<type>label</type>
 			<description>Genre txt</description>
 			<id>56</id>
-			<posX>250</posX>
-			<posY>305</posY>
+			<posX>474</posX>
+			<posY>406</posY>
 			<label>Cast:</label>
 			<textcolor>ffb2d4f5</textcolor>
 		</control>
@@ -93,8 +94,8 @@
 			<type>label</type>
 			<description>Runtime value</description>
 			<id>55</id>
-			<posX>380</posX>
-			<posY>255</posY>
+			<posX>720</posX>
+			<posY>340</posY>
 			<label>#year</label>
 			<textcolor>ffffffff</textcolor>
 		</control>
@@ -102,8 +103,8 @@
 			<type>label</type>
 			<description>Runtime txt</description>
 			<id>54</id>
-			<posX>250</posX>
-			<posY>255</posY>
+			<posX>474</posX>
+			<posY>340</posY>
 			<label>172</label>
 			<textcolor>ffb2d4f5</textcolor>
 		</control>
@@ -111,8 +112,8 @@
 			<type>label</type>
 			<description>Runtime value</description>
 			<id>53</id>
-			<posX>325</posX>
-			<posY>230</posY>
+			<posX>616</posX>
+			<posY>306</posY>
 			<label>#runtime</label>
 			<textcolor>ffffffff</textcolor>
 		</control>
@@ -120,8 +121,8 @@
 			<type>label</type>
 			<description>Runtime txt</description>
 			<id>52</id>
-			<posX>250</posX>
-			<posY>230</posY>
+			<posX>474</posX>
+			<posY>306</posY>
 			<label>299</label>
 			<textcolor>ffb2d4f5</textcolor>
 		</control>
@@ -129,8 +130,8 @@
 			<type>label</type>
 			<description>Genre txt</description>
 			<id>50</id>
-			<posX>250</posX>
-			<posY>280</posY>
+			<posX>474</posX>
+			<posY>373</posY>
 			<label>174</label>
 			<textcolor>ffb2d4f5</textcolor>
 		</control>
@@ -138,8 +139,8 @@
 			<type>label</type>
 			<description>Genre txt</description>
 			<id>58</id>
-			<posX>250</posX>
-			<posY>305</posY>
+			<posX>474</posX>
+			<posY>406</posY>
 			<visible>no</visible>
 			<label>Plot:</label>
 			<textcolor>ffb2d4f5</textcolor>
@@ -148,8 +149,8 @@
 			<type>selectbutton</type>
 			<description>Letter button</description>
 			<id>3</id>
-			<posX>60</posX>
-			<posY>97</posY>
+			<posX>113</posX>
+			<posY>129</posY>
 			<onleft>4</onleft>
 			<onright>4</onright>
 			<onup>17</onup>
@@ -157,16 +158,15 @@
 			<subitems>-</subitems>
 			<label>872</label>
 			<textureFocus>menu_list_nofocus.png</textureFocus>
-			<subitems />
 		</control>
 		<control>
 			<type>textboxscrollup</type>
 			<description>Plot value</description>
 			<id>59</id>
-			<posX>250</posX>
-			<posY>328</posY>
-			<width>440</width>
-			<height>200</height>
+			<posX>474</posX>
+			<posY>437</posY>
+			<width>586</width>
+			<height>266</height>
 			<colordiffuse>ffffffff</colordiffuse>
 			<visible>no</visible>
 			<font>font13</font>
@@ -177,8 +177,8 @@
 			<type>fadelabel</type>
 			<description>Movie Title value</description>
 			<id>1</id>
-			<posX>256</posX>
-			<posY>44</posY>
+			<posX>485</posX>
+			<posY>58</posY>
 			<label>#title</label>
 			<font>font18</font>
 			<disabledcolor>ff808080</disabledcolor>
@@ -187,10 +187,10 @@
 			<type>listcontrol</type>
 			<description>listview</description>
 			<id>4</id>
-			<posX>250</posX>
-			<posY>97</posY>
-			<width>440</width>
-			<height>432</height>
+			<posX>474</posX>
+			<posY>129</posY>
+			<width>586</width>
+			<height>576</height>
 			<onleft>3</onleft>
 			<onright>3</onright>
 			<onup>3</onup>
@@ -199,27 +199,27 @@
 			<downloadColor>ff80ff80</downloadColor>
 			<remoteColor>ffFFA075</remoteColor>
 			<textXOff2>0</textXOff2>
-			<IconYOff>8</IconYOff>
-			<textYOff>4</textYOff>
+			<IconYOff>10</IconYOff>
+			<textYOff>5</textYOff>
 			<textureFocus>list_sub_focus.png</textureFocus>
 			<font>font13</font>
 			<textureUp>page_up_nofocus.png</textureUp>
-			<textXOff>5</textXOff>
+			<textXOff>9</textXOff>
 			<shadedColor>20ffffff</shadedColor>
-			<textureHeight>32</textureHeight>
+			<textureHeight>42</textureHeight>
 			<selectedColor>FFF8BC70</selectedColor>
 			<textureNoFocus>list_sub_nofocus.png</textureNoFocus>
-			<IconXOff>8</IconXOff>
+			<IconXOff>15</IconXOff>
 			<textureDownFocus>page_down_focus.png</textureDownFocus>
 			<spinColor>ffffffff</spinColor>
-			<spinPosX>590</spinPosX>
-			<spinPosY>530</spinPosY>
-			<spinHeight>27</spinHeight>
-			<spinWidth>26</spinWidth>
+			<spinPosX>1119</spinPosX>
+			<spinPosY>706</spinPosY>
+			<spinHeight>36</spinHeight>
+			<spinWidth>34</spinWidth>
 			<suffix>|</suffix>
 			<textcolor2>ffffffff</textcolor2>
 			<textcolor3>ffffffff</textcolor3>
-			<textYOff2>4</textYOff2>
+			<textYOff2>5</textYOff2>
 			<image>folder_focus.png</image>
 			<textureUpFocus>page_up_focus.png</textureUpFocus>
 			<textureDown>page_down_nofocus.png</textureDown>
@@ -228,27 +228,27 @@
 			<type>image</type>
 			<description>movie border</description>
 			<id>0</id>
-			<posX>96</posX>
-			<posY>208</posY>
-			<width>120</width>
-			<height>184</height>
+			<posX>182</posX>
+			<posY>277</posY>
+			<width>160</width>
+			<height>245</height>
 			<texture>playback_background.png</texture>
 		</control>
 		<control>
 			<type>image</type>
 			<id>1</id>
-			<posX>75</posX>
-			<posY>370</posY>
+			<posX>142</posX>
+			<posY>493</posY>
 			<texture>#header.hover</texture>
 		</control>
 		<control>
 			<type>image</type>
 			<description>movie poster</description>
 			<id>24</id>
-			<posX>104</posX>
-			<posY>222</posY>
-			<width>101</width>
-			<height>150</height>
+			<posX>197</posX>
+			<posY>296</posY>
+			<width>134</width>
+			<height>200</height>
 			<texture>background.png</texture>
 		</control>
 	</controls>

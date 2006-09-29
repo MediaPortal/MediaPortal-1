@@ -1,43 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
-  <controls>
-    <control>
-
-      <type>image</type>
-      <description>BG</description>
-      <id>1</id>
-      <posX>0</posX>
-      <posY>0</posY>
-      <width>1366</width>
-      <height>768</height>
-      <texture>background.png</texture>
-    </control>
-
-    <control>
-      <type>image</type>
-      <id>1</id>
-      <posX>64</posX>
-      <posY>519</posY>
-      <texture>#header.hover</texture>
-    </control>
-
-    <control>
-      <type>image</type>
-      <description>MP Logo</description>
-      <id>1</id>
-      <posX>42</posX>
-      <posY>32</posY>
-      <texture>mplogo.png</texture>
-    </control>
-
-    <control>
-      <type>label</type>
-      <description>e.g. Setup TV</description>
-      <id>1</id>
-      <posX>42</posX>
-      <posY>128</posY>
-      <label>#header.label</label>
-      <font>font18</font>
-    </control>
-
-  </controls>
+	<controls>
+		<control>
+			<type>image</type>
+			<description>BG</description>
+			<id>1</id>
+			<posX>0</posX>
+			<posY>0</posY>
+			<width>1366</width>
+			<height>768</height>
+			<texture>background.png</texture>
+		</control>
+		<control>
+			<type>image</type>
+			<id>1</id>
+			<posX>91</posX>
+			<posY>520</posY>
+			<texture>#header.hover</texture>
+		</control>
+		<control>
+			<type>image</type>
+			<description>MP	Logo</description>
+			<id>1</id>
+			<posX>60</posX>
+			<posY>32</posY>
+			<texture>mplogo.png</texture>
+		</control>
+		<control>
+			<type>label</type>
+			<description>e.g. Setup TV</description>
+			<id>1</id>
+			<posX>60</posX>
+			<posY>128</posY>
+			<label>#header.label</label>
+			<font>font18</font>
+		</control>
+	</controls>
 </window>

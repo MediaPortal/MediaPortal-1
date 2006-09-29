@@ -1,3 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
 	<id>748</id>
 	<defaultcontrol>2</defaultcontrol>
@@ -13,17 +14,16 @@
 			<layout>StackLayout</layout>
 			<description>group element</description>
 			<animation>FlyInFromLeft</animation>
-			<posX>60</posX>
-			<posY>97</posY>
+			<posX>113</posX>
+			<posY>129</posY>
 			<control>
 				<description>Record</description>
 				<type>button</type>
 				<id>2</id>
-				<label></label>
 				<onup>17</onup>
 				<ondown>3</ondown>
 				<onright>10</onright>
-			</control>	
+			</control>
 			<control>
 				<description>Advanced Record</description>
 				<type>button</type>
@@ -32,7 +32,7 @@
 				<onup>2</onup>
 				<ondown>4</ondown>
 				<onright>10</onright>
-			</control>	
+			</control>
 			<control>
 				<description>Keep</description>
 				<type>button</type>
@@ -41,16 +41,16 @@
 				<onup>2</onup>
 				<ondown>5</ondown>
 				<onright>10</onright>
-			</control>	
+			</control>
 			<control>
 				<description>Notify</description>
 				<type>togglebutton</type>
 				<id>5</id>
 				<label>1040</label>
-				<width>190</width>
-				<height>32</height>
-				<textXOff>10</textXOff>
-				<textYOff>5</textYOff>
+				<width>253</width>
+				<height>42</height>
+				<textXOff>18</textXOff>
+				<textYOff>6</textYOff>
 				<font>font13</font>
 				<textcolor>White</textcolor>
 				<colordiffuse>White</colordiffuse>
@@ -62,7 +62,7 @@
 				<onup>4</onup>
 				<ondown>6</ondown>
 				<onright>10</onright>
-			</control>	
+			</control>
 			<control>
 				<description>Quality</description>
 				<type>button</type>
@@ -71,7 +71,7 @@
 				<onup>5</onup>
 				<ondown>7</ondown>
 				<onright>10</onright>
-			</control>	
+			</control>
 			<control>
 				<description>Episodes</description>
 				<type>button</type>
@@ -80,7 +80,7 @@
 				<onup>6</onup>
 				<ondown>8</ondown>
 				<onright>10</onright>
-			</control>	
+			</control>
 			<control>
 				<description>PreRecord</description>
 				<type>button</type>
@@ -89,7 +89,7 @@
 				<onup>7</onup>
 				<ondown>9</ondown>
 				<onright>10</onright>
-			</control>	
+			</control>
 			<control>
 				<description>PostRecord</description>
 				<type>button</type>
@@ -98,14 +98,14 @@
 				<onup>8</onup>
 				<ondown>99</ondown>
 				<onright>10</onright>
-			</control>	
+			</control>
 		</control>
 		<control>
 			<description>upcoming episodes label</description>
 			<type>label</type>
 			<id>11</id>
-			<posX>260</posX>
-			<posY>280</posY>
+			<posX>493</posX>
+			<posY>373</posY>
 			<label>1041</label>
 			<align>left</align>
 			<font>font13</font>
@@ -115,28 +115,28 @@
 			<description>upcoming episodes listcontrol</description>
 			<type>listcontrol</type>
 			<id>10</id>
-			<posX>260</posX>
-			<posY>300</posY>
-			<width>450</width>
-			<height>250</height>		
-			<textXOff>50</textXOff>
+			<posX>493</posX>
+			<posY>400</posY>
+			<width>600</width>
+			<height>333</height>
+			<textXOff>94</textXOff>
 			<textYOff>2</textYOff>
-			<textXOff2>420</textXOff2>
-			<textYOff2>29</textYOff2>
-			<textXOff3>100</textXOff3>
-			<textYOff3>29</textYOff3>
-			<IconXOff>12</IconXOff>
-			<IconYOff>8</IconYOff>
+			<textXOff2>796</textXOff2>
+			<textYOff2>38</textYOff2>
+			<textXOff3>189</textXOff3>
+			<textYOff3>38</textYOff3>
+			<IconXOff>22</IconXOff>
+			<IconYOff>10</IconYOff>
 			<PinIconXOff>45</PinIconXOff>
 			<PinIconYOff>19</PinIconYOff>
-			<spinPosX>580</spinPosX>
-			<spinPosY>530</spinPosY>		
-			<itemWidth>35</itemWidth>
-			<itemHeight>35</itemHeight>
+			<spinPosX>1100</spinPosX>
+			<spinPosY>706</spinPosY>
+			<itemWidth>46</itemWidth>
+			<itemHeight>46</itemHeight>
 			<textureFocus>recording_background_focus.png</textureFocus>
-			<textureNoFocus>recording_background_nofocus.png</textureNoFocus>		
-			<spaceBetweenItems>5</spaceBetweenItems>
-			<textureHeight>50</textureHeight>
+			<textureNoFocus>recording_background_nofocus.png</textureNoFocus>
+			<spaceBetweenItems>6</spaceBetweenItems>
+			<textureHeight>66</textureHeight>
 			<keepaspectratio>no</keepaspectratio>
 			<font2>font10</font2>
 			<font3>font10</font3>
@@ -149,10 +149,9 @@
 			<description>Current program title</description>
 			<type>fadelabel</type>
 			<id>13</id>
-			<posX>260</posX>
-			<posY>100</posY>
-			<width>250</width>
-			<label></label>
+			<posX>493</posX>
+			<posY>133</posY>
+			<width>333</width>
 			<font>font13</font>
 			<align>left</align>
 			<textcolor>FFFFFFFF</textcolor>
@@ -161,9 +160,8 @@
 			<description>Current program time</description>
 			<type>label</type>
 			<id>14</id>
-			<posX>260</posX>
-			<posY>120</posY>
-			<label></label>
+			<posX>493</posX>
+			<posY>160</posY>
 			<align>left</align>
 			<font>font13</font>
 			<textcolor>FFB2D4F5</textcolor>
@@ -172,10 +170,10 @@
 			<description>Description1</description>
 			<type>textboxscrollup</type>
 			<id>15</id>
-			<posX>260</posX>
-			<posY>140</posY>
-			<width>430</width> 
-			<height>130</height> 
+			<posX>493</posX>
+			<posY>186</posY>
+			<width>573</width>
+			<height>173</height>
 			<label>#TV.RecordedTV.Description</label>
 			<font>font13</font>
 			<textcolor>FFFFFFFF</textcolor>
@@ -184,9 +182,8 @@
 			<description>genre</description>
 			<type>label</type>
 			<id>17</id>
-			<posX>660</posX>
-			<posY>120</posY>
-			<label></label>
+			<posX>1252</posX>
+			<posY>160</posY>
 			<align>right</align>
 			<font>font13</font>
 			<textcolor>FFB2D4F5</textcolor>
@@ -195,32 +192,31 @@
 			<description>Current program background</description>
 			<type>image</type>
 			<id>1</id>
-			<posX>75</posX> 
-			<posY>419</posY> 
-			<width>161</width> 
-			<height>134</height> 
+			<posX>142</posX>
+			<posY>558</posY>
+			<width>214</width>
+			<height>178</height>
 			<texture>playback_background.png</texture>
 		</control>
 		<control>
-			<description>TV preview window</description> 
-			<type>videowindow</type> 
-			<id>99</id> 
-			<posX>86</posX> 
-			<posY>431</posY> 
-			<width>135</width> 
-			<height>108</height> 
+			<description>TV preview window</description>
+			<type>videowindow</type>
+			<id>99</id>
+			<posX>163</posX>
+			<posY>574</posY>
+			<width>180</width>
+			<height>144</height>
 			<onup>5</onup>
 			<action>18</action>
-			<textureFocus>tv_green_border.png</textureFocus> 
-		</control>					
+			<textureFocus>tv_green_border.png</textureFocus>
+		</control>
 		<control>
 			<description>Current program title</description>
 			<type>fadelabel</type>
 			<id>13</id>
-			<posX>260</posX>
-			<posY>440</posY>
-			<width>250</width>
-			<label></label>
+			<posX>493</posX>
+			<posY>586</posY>
+			<width>333</width>
 			<font>font14</font>
 			<align>left</align>
 			<textcolor>FFFFFFFF</textcolor>
@@ -229,9 +225,8 @@
 			<description>Current program time</description>
 			<type>label</type>
 			<id>14</id>
-			<posX>260</posX>
-			<posY>460</posY>
-			<label></label>
+			<posX>493</posX>
+			<posY>613</posY>
 			<align>left</align>
 			<font>font13</font>
 			<textcolor>FFB2D4F5</textcolor>
@@ -240,11 +235,10 @@
 			<description>Description1</description>
 			<type>textboxscrollup</type>
 			<id>15</id>
-			<posX>260</posX>
-			<posY>485</posY>
-			<width>430</width> 
-			<height>65</height> 
-			<label></label>
+			<posX>493</posX>
+			<posY>646</posY>
+			<width>573</width>
+			<height>86</height>
 			<font>font13</font>
 			<textcolor>FFFFFFFF</textcolor>
 		</control>
@@ -252,9 +246,8 @@
 			<description>genre</description>
 			<type>label</type>
 			<id>17</id>
-			<posX>660</posX>
-			<posY>460</posY>
-			<label></label>
+			<posX>1252</posX>
+			<posY>613</posY>
 			<align>right</align>
 			<font>font13</font>
 			<textcolor>FFB2D4F5</textcolor>

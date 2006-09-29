@@ -1,3 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
 	<id>32</id>
 	<defaultcontrol>2</defaultcontrol>
@@ -9,30 +10,30 @@
 			<id>1</id>
 			<posX>0</posX>
 			<posY>0</posY>
-			<width>720</width>
-			<height>576</height>
+			<width>1366</width>
+			<height>768</height>
 			<texture>background.png</texture>
 		</control>
 		<control>
 			<type>image</type>
 			<id>1</id>
-			<posX>75</posX>
-			<posY>370</posY>
+			<posX>142</posX>
+			<posY>493</posY>
 			<texture>hover_msn messenger.png</texture>
-		</control>		
+		</control>
 		<control>
 			<type>image</type>
 			<id>1</id>
-			<posX>60</posX>
-			<posY>20</posY>
+			<posX>113</posX>
+			<posY>26</posY>
 			<texture>messenger_logo.png</texture>
 		</control>
 		<control>
 			<description>online contacts label</description>
 			<type>label</type>
 			<id>1</id>
-			<posX>250</posX>
-			<posY>70</posY>
+			<posX>474</posX>
+			<posY>93</posY>
 			<label>902</label>
 			<font>font16</font>
 			<align>right</align>
@@ -42,8 +43,8 @@
 			<description>Number of Files Label</description>
 			<type>label</type>
 			<id>1</id>
-			<posX>260</posX>
-			<posY>530</posY>
+			<posX>493</posX>
+			<posY>706</posY>
 			<label>#itemcount</label>
 			<align>left</align>
 			<textcolor>ffffffff</textcolor>
@@ -52,9 +53,9 @@
 			<description>Selected item Label</description>
 			<type>fadelabel</type>
 			<id>1</id>
-			<posX>660</posX>
-			<posY>70</posY>
-			<width>400</width>
+			<posX>1252</posX>
+			<posY>93</posY>
+			<width>533</width>
 			<label>#selecteditem</label>
 			<font>font13</font>
 			<align>right</align>
@@ -68,19 +69,19 @@
 				<description>View-As button</description>
 				<type>button</type>
 				<id>2</id>
-				<posX>60</posX>
-				<posY>97</posY>
+				<posX>113</posX>
+				<posY>129</posY>
 				<label>100</label>
 				<onleft>2</onleft>
 				<onright>50</onright>
 				<onup>20</onup>
 				<ondown>3</ondown>
-			</control>	
+			</control>
 			<control>
 				<type>sortbutton</type>
 				<id>3</id>
-				<posX>60</posX>
-				<posY>131</posY>
+				<posX>113</posX>
+				<posY>174</posY>
 				<label>103</label>
 				<onleft>3</onleft>
 				<onright>50</onright>
@@ -91,8 +92,8 @@
 				<description>Status button</description>
 				<type>selectbutton</type>
 				<id>5</id>
-				<posX>60</posX>
-				<posY>165</posY>
+				<posX>113</posX>
+				<posY>220</posY>
 				<label>936</label>
 				<onleft>3</onleft>
 				<onright>50</onright>
@@ -107,13 +108,13 @@
 					<subitem>953</subitem>
 					<subitem>954</subitem>
 				</subitems>
-			</control>					
+			</control>
 			<control>
 				<description>Connect button</description>
 				<type>button</type>
 				<id>6</id>
-				<posX>60</posX>
-				<posY>199</posY>
+				<posX>113</posX>
+				<posY>265</posY>
 				<label>903</label>
 				<onleft>6</onleft>
 				<onright>50</onright>

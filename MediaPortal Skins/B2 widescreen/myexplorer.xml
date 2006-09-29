@@ -1,3 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
 	<id>770</id>
 	<defaultcontrol>2</defaultcontrol>
@@ -11,8 +12,8 @@
 			<description>My explorer File Size label</description>
 			<type>label</type>
 			<id>1</id>
-			<posX>40</posX>
-			<posY>530</posY>
+			<posX>75</posX>
+			<posY>706</posY>
 			<label>#explorer_size</label>
 			<font>font16</font>
 			<align>left</align>
@@ -22,8 +23,8 @@
 			<type>group</type>
 			<description>group element</description>
 			<animation>FlyInFromLeft</animation>
-			<posX>60</posX>
-			<posY>97</posY>
+			<posX>113</posX>
+			<posY>129</posY>
 			<layout>StackLayout</layout>
 			<control>
 				<description>select source</description>
@@ -117,16 +118,16 @@
 			</control>
 		</control>
 		<control>
-			<description>file listcontrol</description> 
-			<type>listcontrol</type> 
-			<id>20</id> 
-			<posX>270</posX>
-			<posY>97</posY>
-			<height>450</height>
-			<onright>2</onright> 
-			<onleft>2</onleft> 
-			<onup>4</onup> 
-			<ondown>2</ondown> 
+			<description>file listcontrol</description>
+			<type>listcontrol</type>
+			<id>20</id>
+			<posX>512</posX>
+			<posY>129</posY>
+			<height>600</height>
+			<onright>2</onright>
+			<onleft>2</onleft>
+			<onup>4</onup>
+			<ondown>2</ondown>
 		</control>
 	</controls>
 </window>

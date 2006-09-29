@@ -1,16 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
-  <id>3002</id> 
-  <defaultcontrol>2</defaultcontrol> 
-  <allowoverlay>no</allowoverlay>
-  <controls>
-	<control>
-		<description>rec logo</description> 
-		<type>image</type> 
-		<id>4</id> 
-		<posX>600</posX> 
-		<posY>20</posY> 
-		<texture>rec.png</texture> 
-		<colordiffuse>ffffffff</colordiffuse>
-	</control>
-  </controls>
+	<id>3002</id>
+	<defaultcontrol>2</defaultcontrol>
+	<allowoverlay>no</allowoverlay>
+	<controls>
+		<control>
+			<description>rec logo</description>
+			<type>image</type>
+			<id>4</id>
+			<posX>1138</posX>
+			<posY>26</posY>
+			<texture>rec.png</texture>
+			<colordiffuse>ffffffff</colordiffuse>
+		</control>
+	</controls>
 </window>

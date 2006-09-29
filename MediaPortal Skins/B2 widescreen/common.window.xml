@@ -1,3 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
 	<controls>
 		<control>
@@ -13,14 +14,14 @@
 		<control>
 			<type>image</type>
 			<id>1</id>
-			<posX>80</posX>
-			<posY>27</posY>
+			<posX>113</posX>
+			<posY>26</posY>
 			<texture>#header.image</texture>
 		</control>
 		<control>
 			<type>label</type>
 			<id>1</id>
-			<posX>33</posX>
+			<posX>474</posX>
 			<posY>93</posY>
 			<label>#header.label</label>
 			<font>font16</font>
@@ -31,8 +32,8 @@
 			<description>Number of Files Label</description>
 			<type>label</type>
 			<id>1</id>
-			<posX>346</posX>
-			<posY>705</posY>
+			<posX>493</posX>
+			<posY>706</posY>
 			<label>#itemcount</label>
 			<align>left</align>
 			<textcolor>White</textcolor>
@@ -41,9 +42,9 @@
 			<description>Selected item Label</description>
 			<type>fadelabel</type>
 			<id>1</id>
-			<posX>878</posX>
+			<posX>1252</posX>
 			<posY>93</posY>
-			<width>532</width>
+			<width>533</width>
 			<label>#selecteditem</label>
 			<font>font14</font>
 			<align>right</align>
@@ -52,9 +53,9 @@
 		<control>
 			<type>image</type>
 			<id>1</id>
-			<posX>100</posX>
-			<posY>492</posY>
+			<posX>142</posX>
+			<posY>493</posY>
 			<texture>#header.hover</texture>
-		</control>		
+		</control>
 	</controls>
 </window>

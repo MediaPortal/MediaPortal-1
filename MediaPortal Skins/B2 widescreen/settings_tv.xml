@@ -1,3 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
 	<id>700</id>
 	<defaultcontrol>24</defaultcontrol>
@@ -9,8 +10,8 @@
 		<control>
 			<type>group</type>
 			<layout>GridLayout(2, 6, 52, 8, 1)</layout>
-			<posX>56</posX>
-			<posY>151</posY>
+			<posX>106</posX>
+			<posY>201</posY>
 			<control>
 				<type>button</type>
 				<id>24</id>
@@ -42,7 +43,6 @@
 				<label>6007</label>
 				<hyperlink>701</hyperlink>
 			</control>
-
 			<control>
 				<type>button</type>
 				<id>30</id>
@@ -58,25 +58,24 @@
 				<id>29</id>
 				<label>6005</label>
 			</control>
-
 			<control>
 				<type>button</type>
 				<id>32</id>
 				<label>6008</label>
 				<hyperlink>702</hyperlink>
 			</control>
-                  <control>
-                        <type>button</type>
-                        <id>34</id>
-                        <label>6009</label>
-                        <hyperlink>706</hyperlink>
-                  </control>
-                  <control>
-                        <type>button</type>
-                        <id>35</id>
-                        <label>6010</label>
-                        <hyperlink>707</hyperlink>
-                  </control>
+			<control>
+				<type>button</type>
+				<id>34</id>
+				<label>6009</label>
+				<hyperlink>706</hyperlink>
+			</control>
+			<control>
+				<type>button</type>
+				<id>35</id>
+				<label>6010</label>
+				<hyperlink>707</hyperlink>
+			</control>
 		</control>
 	</controls>
 </window>

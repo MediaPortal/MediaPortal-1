@@ -1,6 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
 	<id>5501</id>
-	<defaultcontrol>3</defaultcontrol> 
+	<defaultcontrol>3</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
 	<define>#header.label:4001</define>
 	<define>#header.image:alarm_logo.png</define>
@@ -12,16 +13,16 @@
 			<description>group element</description>
 			<animation>FlyInFromLeft</animation>
 			<layout>StackLayout</layout>
-			<posX>60</posX>
-			<posY>97</posY>
+			<posX>113</posX>
+			<posY>129</posY>
 			<control>
 				<description>Back Button</description>
 				<type>button</type>
 				<id>3</id>
-				<posX>60</posX>
-				<posY>97</posY>
+				<posX>113</posX>
+				<posY>129</posY>
 				<label>712</label>
-				<onright>50</onright> 
+				<onright>50</onright>
 				<onleft>50</onleft>
 				<onup>4</onup>
 				<ondown>4</ondown>

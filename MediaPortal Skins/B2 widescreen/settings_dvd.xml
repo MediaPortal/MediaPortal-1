@@ -1,3 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
 	<id>704</id>
 	<defaultcontrol>24</defaultcontrol>
@@ -9,8 +10,8 @@
 		<control>
 			<type>group</type>
 			<layout>GridLayout(0, 6, 52, 8, 1)</layout>
-			<posX>56</posX>
-			<posY>151</posY>
+			<posX>106</posX>
+			<posY>201</posY>
 			<control>
 				<type>button</type>
 				<id>24</id>

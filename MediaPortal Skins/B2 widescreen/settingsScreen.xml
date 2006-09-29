@@ -1,3 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
 	<id>9</id>
 	<defaultcontrol>2</defaultcontrol>
@@ -14,10 +15,10 @@
 				<description>UI Calibration button</description>
 				<type>button</type>
 				<id>2</id>
-				<posX>280</posX>
-				<posY>165</posY>
-				<width>197</width>
-				<height>32</height>
+				<posX>531</posX>
+				<posY>220</posY>
+				<width>262</width>
+				<height>42</height>
 				<font>font13</font>
 				<label>213</label>
 				<hyperlink>10</hyperlink>
@@ -30,10 +31,10 @@
 				<description>Screen Calibration button</description>
 				<type>button</type>
 				<id>3</id>
-				<posX>280</posX>
-				<posY>199</posY>
-				<width>197</width>
-				<height>32</height>
+				<posX>531</posX>
+				<posY>265</posY>
+				<width>262</width>
+				<height>42</height>
 				<font>font13</font>
 				<label>214</label>
 				<hyperlink>11</hyperlink>
@@ -46,10 +47,10 @@
 				<description>Scroll speed button</description>
 				<type>button</type>
 				<id>4</id>
-				<posX>280</posX>
-				<posY>233</posY>
-				<width>197</width>
-				<height>32</height>
+				<posX>531</posX>
+				<posY>310</posY>
+				<width>262</width>
+				<height>42</height>
 				<font>font13</font>
 				<label>673</label>
 				<hyperlink>31</hyperlink>

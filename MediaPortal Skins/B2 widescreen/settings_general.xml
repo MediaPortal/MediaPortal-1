@@ -1,3 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
 	<id>705</id>
 	<defaultcontrol>10</defaultcontrol>
@@ -10,10 +11,10 @@
 			<description>Skin</description>
 			<type>selectbutton</type>
 			<id>10</id>
-			<posX>60</posX>
-			<posY>131</posY>
-			<width>210</width>
-			<height>32</height>
+			<posX>113</posX>
+			<posY>174</posY>
+			<width>280</width>
+			<height>42</height>
 			<label>166</label>
 			<onup>99</onup>
 			<ondown>11</ondown>
@@ -22,10 +23,10 @@
 			<description>Language</description>
 			<type>selectbutton</type>
 			<id>11</id>
-			<posX>60</posX>
-			<posY>165</posY>
-			<width>210</width>
-			<height>32</height>
+			<posX>113</posX>
+			<posY>220</posY>
+			<width>280</width>
+			<height>42</height>
 			<label>248</label>
 			<onup>10</onup>
 			<ondown>12</ondown>
@@ -35,12 +36,12 @@
 			<description>Start in fullscreen mode</description>
 			<type>togglebutton</type>
 			<id>12</id>
-			<posX>60</posX>
-			<posY>199</posY>
-			<width>210</width>
-			<height>32</height>
-			<textXOff>10</textXOff>
-			<textYOff>5</textYOff>
+			<posX>113</posX>
+			<posY>265</posY>
+			<width>280</width>
+			<height>42</height>
+			<textXOff>18</textXOff>
+			<textYOff>6</textYOff>
 			<font>font13</font>
 			<textcolor>White</textcolor>
 			<colordiffuse>White</colordiffuse>
@@ -57,12 +58,12 @@
 			<description>Screensaver</description>
 			<type>togglebutton</type>
 			<id>13</id>
-			<posX>60</posX>
-			<posY>233</posY>
-			<width>210</width>
-			<height>32</height>
-			<textXOff>10</textXOff>
-			<textYOff>5</textYOff>
+			<posX>113</posX>
+			<posY>310</posY>
+			<width>280</width>
+			<height>42</height>
+			<textXOff>18</textXOff>
+			<textYOff>6</textYOff>
 			<font>font13</font>
 			<textcolor>White</textcolor>
 			<colordiffuse>White</colordiffuse>
@@ -79,22 +80,21 @@
 			<description>Skin Preview</description>
 			<type>image</type>
 			<id>20</id>
-			<posX>250</posX>
-			<posY>131</posY>
-			<posX>281</posX>
-			<width>400</width>
-			<height>300</height>
+			<posX>474</posX>
+			<posY>174</posY>
+			<posX>533</posX>
+			<width>533</width>
+			<height>400</height>
 			<colordiffuse>ffffffff</colordiffuse>
-			<texture></texture>
 		</control>
 		<control>
 			<description>Skip steps screen button</description>
 			<type>button</type>
 			<id>21</id>
-			<posX>60</posX>
-			<posY>266</posY>
-			<width>210</width>
-			<height>32</height>
+			<posX>113</posX>
+			<posY>354</posY>
+			<width>280</width>
+			<height>42</height>
 			<label>6024</label>
 			<hyperlink>708</hyperlink>
 			<onup>13</onup>

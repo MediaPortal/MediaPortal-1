@@ -1,25 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
-	<id>3006</id> 
-	<defaultcontrol>51</defaultcontrol> 
+	<id>3006</id>
+	<defaultcontrol>51</defaultcontrol>
 	<allowoverlay>no</allowoverlay>
-<controls>
-  <control>
-		<description>background</description> 
-		<type>image</type> 
-		<id>0</id> 
-		<posX>43</posX> 
-		<posY>346</posY>
-		<width>550</width>
-		<height>128</height>
-		<texture>osd_dialog.png</texture>		
-		<visible>yes</visible> 
-	</control>
+	<controls>
+		<control>
+			<description>background</description>
+			<type>image</type>
+			<id>0</id>
+			<posX>81</posX>
+			<posY>461</posY>
+			<width>733</width>
+			<height>170</height>
+			<texture>osd_dialog.png</texture>
+			<visible>yes</visible>
+		</control>
 		<control>
 			<description>status</description>
 			<type>label</type>
 			<id>2</id>
-			<posX>66</posX>
-			<posY>347</posY>
+			<posX>125</posX>
+			<posY>462</posY>
 			<label>-</label>
 			<font>font12</font>
 			<onleft>51</onleft>
@@ -32,8 +33,8 @@
 			<description>Talking to username label</description>
 			<type>label</type>
 			<id>3</id>
-			<posX>560</posX>
-			<posY>347</posY>
+			<posX>1062</posX>
+			<posY>462</posY>
 			<label>-</label>
 			<font>font12</font>
 			<onleft>51</onleft>
@@ -47,10 +48,10 @@
 			<description>listcontrol</description>
 			<type>listcontrol</type>
 			<id>50</id>
-			<posX>32</posX>
-			<posY>368</posY>
-			<width>550</width>
-			<height>95</height>
+			<posX>60</posX>
+			<posY>490</posY>
+			<width>733</width>
+			<height>126</height>
 			<spinWidth>-</spinWidth>
 			<spinHeight>-</spinHeight>
 			<spinPosX>-</spinPosX>
@@ -63,16 +64,15 @@
 			<textureFocus>-</textureFocus>
 			<textureNoFocus>-</textureNoFocus>
 			<textureUp>-</textureUp>
-		    <textureDown>-</textureDown>
-		    <textureHeight>21</textureHeight>
-		    <scrollbarbg>-</scrollbarbg>
+			<textureDown>-</textureDown>
+			<textureHeight>28</textureHeight>
+			<scrollbarbg>-</scrollbarbg>
 			<scrollbartop>-</scrollbartop>
 			<scrollbarbottom>-</scrollbarbottom>
 		</control>
 		<control>
 			<description>sms input</description>
 			<type>smsinput</type>
-			
 			<id>51</id>
 			<posX>-</posX>
 			<posY>-</posY>
@@ -93,5 +93,5 @@
 			<textboxColor>ffffff00</textboxColor>
 			<textboxBgColor>ffffffff</textboxBgColor>
 		</control>
-</controls>
+	</controls>
 </window>

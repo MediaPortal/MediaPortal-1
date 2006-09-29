@@ -1,3 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
 	<id>760</id>
 	<defaultcontrol>3</defaultcontrol>
@@ -11,8 +12,8 @@
 			<description>My burner File Size label</description>
 			<type>label</type>
 			<id>1</id>
-			<posX>60</posX>
-			<posY>510</posY>
+			<posX>113</posX>
+			<posY>680</posY>
 			<label>#burner_size</label>
 			<font>font16</font>
 			<align>left</align>
@@ -22,38 +23,38 @@
 			<description>DVR Convert Info Label</description>
 			<type>label</type>
 			<id>1</id>
-			<posX>60</posX>
-			<posY>475</posY>
+			<posX>113</posX>
+			<posY>633</posY>
 			<label>#convert_info</label>
 			<font>font16</font>
 			<align>left</align>
 			<textcolor>ffffffff</textcolor>
-		</control>		
+		</control>
 		<control>
 			<description>My burner Info Label</description>
 			<type>label</type>
 			<id>1</id>
-			<posX>60</posX>
-			<posY>490</posY>
+			<posX>113</posX>
+			<posY>653</posY>
 			<label>#burner_info</label>
 			<font>font16</font>
 			<align>left</align>
 			<textcolor>ffffffff</textcolor>
 		</control>
 		<control>
-			<description>Status Bar</description> 
-			<type>statusbar</type> 
-			<id>1</id> 
-			<posX>60</posX> 
-			<posY>530</posY> 
-			<width>420</width>
-			<height>22</height>
+			<description>Status Bar</description>
+			<type>statusbar</type>
+			<id>1</id>
+			<posX>113</posX>
+			<posY>706</posY>
+			<width>560</width>
+			<height>29</height>
 			<posYTop>500</posYTop>
-			<texturebg>statusbar_back.png</texturebg> 
-			<lefttexture>statusbar_left.png</lefttexture> 
-			<midtexture>statusbar_mid.png</midtexture> 
-			<righttexture>statusbar_right.png</righttexture> 
-			<visible>yes</visible> 
+			<texturebg>statusbar_back.png</texturebg>
+			<lefttexture>statusbar_left.png</lefttexture>
+			<midtexture>statusbar_mid.png</midtexture>
+			<righttexture>statusbar_right.png</righttexture>
+			<visible>yes</visible>
 			<label>#burner_perc</label>
 		</control>
 		<control>
@@ -61,23 +62,23 @@
 			<type>textbox</type>
 			<id>50</id>
 			<label>-</label>
-			<posY>97</posY>
-			<posX>260</posX>
-			<height>400</height>
-			<width>410</width>
-			<onleft>2</onleft> 
-			<onright>3</onright> 
-			<onup>3</onup> 
-			<ondown>3</ondown> 
+			<posY>129</posY>
+			<posX>493</posX>
+			<height>533</height>
+			<width>546</width>
+			<onleft>2</onleft>
+			<onright>3</onright>
+			<onup>3</onup>
+			<ondown>3</ondown>
 			<font>font13</font>
 			<textcolor>FFFFFFFF</textcolor>
-		</control>		
+		</control>
 		<control>
 			<type>group</type>
 			<description>group element</description>
 			<animation>FlyInFromLeft</animation>
-			<posX>60</posX>
-			<posY>97</posY>
+			<posX>113</posX>
+			<posY>129</posY>
 			<layout>StackLayout</layout>
 			<control>
 				<description>Audio</description>
@@ -113,30 +114,30 @@
 			</control>
 		</control>
 		<control>
-			<description>file listcontrol</description> 
-			<type>listcontrol</type> 
-			<id>20</id> 
-			<posX>270</posX>
-			<posY>97</posY>
-			<spinPosX>585</spinPosX>
-			<spinPosY>310</spinPosY>
-			<height>250</height>
-			<onright>3</onright> 
-			<onleft>3</onleft> 
-			<onup>3</onup> 
-			<ondown>3</ondown> 
+			<description>file listcontrol</description>
+			<type>listcontrol</type>
+			<id>20</id>
+			<posX>512</posX>
+			<posY>129</posY>
+			<spinPosX>1109</spinPosX>
+			<spinPosY>413</spinPosY>
+			<height>333</height>
+			<onright>3</onright>
+			<onleft>3</onleft>
+			<onup>3</onup>
+			<ondown>3</ondown>
 		</control>
 		<control>
-			<description>copy listcontrol</description> 
-			<type>listcontrol</type> 
-			<id>30</id> 
-			<posX>270</posX>
-			<posY>345</posY>
-			<height>200</height>
-			<onright>3</onright> 
-			<onleft>3</onleft> 
-			<onup>3</onup> 
-			<ondown>3</ondown> 
+			<description>copy listcontrol</description>
+			<type>listcontrol</type>
+			<id>30</id>
+			<posX>512</posX>
+			<posY>460</posY>
+			<height>266</height>
+			<onright>3</onright>
+			<onleft>3</onleft>
+			<onup>3</onup>
+			<ondown>3</ondown>
 		</control>
 	</controls>
 </window>

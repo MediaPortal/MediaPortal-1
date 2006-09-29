@@ -1,3 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
 	<id>3</id>
 	<defaultcontrol>2</defaultcontrol>
@@ -15,20 +16,20 @@
 				<description>View-As button</description>
 				<type>button</type>
 				<id>2</id>
-				<posX>60</posX>
-				<posY>97</posY>
+				<posX>113</posX>
+				<posY>129</posY>
 				<label>100</label>
 				<onleft>2</onleft>
 				<onright>50</onright>
 				<onup>17</onup>
 				<ondown>4</ondown>
-			</control>	
+			</control>
 			<control>
 				<description>Switch-view button</description>
 				<type>button</type>
 				<id>4</id>
-				<posX>60</posX>
-				<posY>131</posY>
+				<posX>113</posX>
+				<posY>174</posY>
 				<label>457</label>
 				<onleft>4</onleft>
 				<onright>50</onright>
@@ -39,8 +40,8 @@
 				<description>Refresh Button</description>
 				<type>button</type>
 				<id>3</id>
-				<posX>60</posX>
-				<posY>165</posY>
+				<posX>113</posX>
+				<posY>220</posY>
 				<label>184</label>
 				<onleft>3</onleft>
 				<onright>50</onright>
@@ -49,15 +50,15 @@
 			</control>
 		</control>
 		<control>
-			<description>Screenshot</description> 
-			<type>image</type> 
-			<id>6</id> 
-			<posX>60</posX> 
-			<posY>200</posY> 
-			<width>190</width> 
-			<height>190</height> 
-			<texture>-</texture> 
-			<colorkey>#FFFF00FF</colorkey> 
+			<description>Screenshot</description>
+			<type>image</type>
+			<id>6</id>
+			<posX>113</posX>
+			<posY>266</posY>
+			<width>253</width>
+			<height>253</height>
+			<texture>-</texture>
+			<colorkey>#FFFF00FF</colorkey>
 			<colordiffuse>White</colordiffuse>
 			<keepaspectratio>yes</keepaspectratio>
 		</control>

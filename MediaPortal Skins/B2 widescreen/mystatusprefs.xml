@@ -1,38 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
-  <id>757</id> 
-  <defaultcontrol>2</defaultcontrol> 
-  <allowoverlay>yes</allowoverlay>
-    <controls>
+	<id>757</id>
+	<defaultcontrol>2</defaultcontrol>
+	<allowoverlay>yes</allowoverlay>
+	<controls>
 		<control>
-			<description>background image</description> 
-			<type>image</type> 
-			<id>1</id> 
-			<posX>0</posX> 
-			<posY>0</posY> 
-			<width>720</width> 
-			<height>576</height> 
-			<texture>background.png</texture> 
+			<description>background image</description>
+			<type>image</type>
+			<id>1</id>
+			<posX>0</posX>
+			<posY>0</posY>
+			<width>1366</width>
+			<height>768</height>
+			<texture>background.png</texture>
 		</control>
 		<control>
 			<type>image</type>
 			<id>1</id>
-			<posX>60</posX>
-			<posY>20</posY>
+			<posX>113</posX>
+			<posY>26</posY>
 			<texture>status_logo.png</texture>
 		</control>
 		<control>
 			<type>image</type>
 			<id>1</id>
-			<posX>75</posX>
-			<posY>370</posY>
+			<posX>142</posX>
+			<posY>493</posY>
 			<texture>hover_my status.png</texture>
-		</control>		
+		</control>
 		<control>
 			<description>mystatus text label</description>
 			<type>label</type>
 			<id>1</id>
-			<posX>250</posX>
-			<posY>70</posY>
+			<posX>474</posX>
+			<posY>93</posY>
 			<label>1962</label>
 			<font>font16</font>
 			<align>right</align>
@@ -42,8 +43,8 @@
 			<description>Interval</description>
 			<type>label</type>
 			<id>1</id>
-			<posX>270</posX>
-			<posY>97</posY>
+			<posX>512</posX>
+			<posY>129</posY>
 			<label>1970</label>
 			<font>font13</font>
 			<align>left</align>
@@ -56,8 +57,8 @@
 			<orientation>vertical</orientation>
 			<digits>2</digits>
 			<id>4</id>
-			<posX>520</posX>
-			<posY>102</posY>
+			<posX>986</posX>
+			<posY>136</posY>
 			<reverse>yes</reverse>
 			<showrange>no</showrange>
 			<onup>5</onup>
@@ -74,12 +75,12 @@
 			<description>shutdown</description>
 			<type>togglebutton</type>
 			<id>5</id>
-			<posX>270</posX>
-			<posY>127</posY>
-			<height>32</height>
-			<width>190</width>
-			<textXOff>10</textXOff>
-			<textYOff>5</textYOff>
+			<posX>512</posX>
+			<posY>169</posY>
+			<height>42</height>
+			<width>253</width>
+			<textXOff>18</textXOff>
+			<textYOff>6</textYOff>
 			<font>font13</font>
 			<textcolor>ffffffff</textcolor>
 			<colordiffuse>ffffffff</colordiffuse>
@@ -102,8 +103,8 @@
 				<description>back button</description>
 				<type>button</type>
 				<id>2</id>
-				<posX>60</posX>
-				<posY>97</posY>
+				<posX>113</posX>
+				<posY>129</posY>
 				<label>712</label>
 				<onleft>2</onleft>
 				<onright>4</onright>
@@ -114,8 +115,8 @@
 				<description>test button</description>
 				<type>button</type>
 				<id>3</id>
-				<posX>60</posX>
-				<posY>131</posY>
+				<posX>113</posX>
+				<posY>174</posY>
 				<label>1969</label>
 				<onleft>2</onleft>
 				<onright>4</onright>
@@ -124,16 +125,16 @@
 			</control>
 		</control>
 		<control>
-			<description>alarm sounds listcontrol</description> 
-			<type>listcontrol</type> 
-			<id>10</id> 
-			<posX>270</posX>
-			<posY>190</posY>
-			<height>370</height>
-			<onright>2</onright> 
-			<onleft>2</onleft> 
-			<onup>4</onup> 
-			<ondown>2</ondown> 
+			<description>alarm sounds listcontrol</description>
+			<type>listcontrol</type>
+			<id>10</id>
+			<posX>512</posX>
+			<posY>253</posY>
+			<height>493</height>
+			<onright>2</onright>
+			<onleft>2</onleft>
+			<onup>4</onup>
+			<ondown>2</ondown>
 		</control>
-  </controls>
+	</controls>
 </window>
