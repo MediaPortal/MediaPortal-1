@@ -155,6 +155,11 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("folderSuffix")]
     protected string _folderSuffix = "]";
 
+    [XMLSkinElement("textOffsetX")]
+    protected int _textOffsetX = 0;
+    [XMLSkinElement("textOffsetY")]
+    protected int _textOffsetY = 0;
+
     [XMLSkinElement("unfocusedAlpha")]
     protected int _unfocusedAlpha = 0xFF;
 
@@ -376,7 +381,7 @@ namespace MediaPortal.GUI.Library
           if (true == _showTexture) btn.Render(timePassed);
           return;
         }
-        if (fTextPosY >= _positionY) RenderText((float)dwPosX, fTextPosY, dwColor, pItem.Label, true);
+        if (fTextPosY >= _positionY) RenderText((float)dwPosX + _textOffsetX, fTextPosY + _textOffsetY, dwColor, pItem.Label, true);
       }
       else
       {
@@ -388,7 +393,7 @@ namespace MediaPortal.GUI.Library
           if (true == _showTexture) btn.Render(timePassed);
           return;
         }
-        if (fTextPosY >= _positionY) RenderText((float)dwPosX, fTextPosY, dwColor, pItem.Label, false);
+        if (fTextPosY >= _positionY) RenderText((float)dwPosX+_textOffsetX, fTextPosY+_textOffsetY, dwColor, pItem.Label, false);
       }
 
       // Set oversized value
