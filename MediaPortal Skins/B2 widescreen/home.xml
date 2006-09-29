@@ -31,8 +31,8 @@
       <description>menu background image</description>
       <type>image</type>
       <id>1</id>
-      <posX>0</posX>
-      <posY>160</posY>
+      <posX>45</posX>
+      <posY>200</posY>
       <width>500</width>
       <height>466</height>
 <!--       <height>499</height> -->

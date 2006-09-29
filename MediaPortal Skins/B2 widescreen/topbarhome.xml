@@ -5,13 +5,13 @@
   <controls>
 
     <control>
-      <description>Back button</description>
+      <description>shutdown button</description>
       <type>button</type>
       <id>10</id>
       <posX>790</posX>
       <posY>60</posY>
-      <width>74</width>
-      <height>98</height>
+      <width>78</width>
+      <height>100</height>
       <textureFocus>button_shutdown_focus.png</textureFocus>
       <textureNoFocus>button_shutdown_nofocus.png</textureNoFocus>
       <label>-</label>
@@ -28,8 +28,8 @@
       <id>11</id>
       <posX>870</posX>
       <posY>60</posY>
-      <width>74</width>
-      <height>108</height>
+      <width>78</width>
+      <height>110</height>
       <textureFocus>button_tvdesktop_focus.png</textureFocus>
       <textureNoFocus>button_tvdesktop_nofocus.png</textureNoFocus>
       <label>-</label>
@@ -46,7 +46,7 @@
       <id>12</id>
       <posX>950</posX>
       <posY>60</posY>
-      <width>74</width>
+      <width>78</width>
       <height>102</height>
       <textureFocus>Basic_focus.png</textureFocus>
       <textureNoFocus>Basic_nofocus.png</textureNoFocus>
@@ -64,7 +64,7 @@
       <id>13</id>
       <posX>1030</posX>
       <posY>60</posY>
-      <width>74</width>
+      <width>78</width>
       <height>102</height>
       <textureFocus>button_close_focus.png</textureFocus>
       <textureNoFocus>button_close_nofocus.png</textureNoFocus>
