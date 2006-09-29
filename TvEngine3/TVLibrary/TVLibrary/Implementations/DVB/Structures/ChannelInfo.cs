@@ -312,14 +312,14 @@ namespace TvLibrary.Implementations.DVB.Structures
       int program_info_length = ((buf[10] & 0xF) << 8) + buf[11];
 
 
-      //pat.caPMT = new CaPMT();
-      //pat.caPMT.CADescriptors_ES = new ArrayList();
-      //pat.caPMT.CADescriptors_PRG = new ArrayList();
+      caPMT = new CaPMT();
+      caPMT.CADescriptors_ES = new ArrayList();
+      caPMT.CADescriptors_PRG = new ArrayList();
 
-      //pat.caPMT.ProgramNumber = program_number;
-      //pat.caPMT.CurrentNextIndicator = current_next_indicator;
-      //pat.caPMT.VersionNumber = version_number;
-      //pat.caPMT.CAPmt_Listmanagement = 0x9f8032;
+      caPMT.ProgramNumber = program_number;
+      caPMT.CurrentNextIndicator = current_next_indicator;
+      caPMT.VersionNumber = version_number;
+      caPMT.CAPmt_Listmanagement = ListManagementType.Only;
 
       //if (pat.program_number != program_number)
       //{
@@ -348,20 +348,20 @@ namespace TvLibrary.Implementations.DVB.Structures
         System.Array.Copy(buf, pointer, data, 0, x);
         if (indicator == 0x9)
         {
-          //pat.caPMT.CADescriptors_PRG.Add(data);
-          //pat.caPMT.ProgramInfoLength += data.Length;
+          pat.caPMT.CADescriptors_PRG.Add(data);
+          pat.caPMT.ProgramInfoLength += data.Length;
           //string tmpString = DVB_CADescriptor(data);
           //if (pidText.IndexOf(tmpString, 0) == -1)
           // pidText += tmpString + ";";
         }
-        //if (pat.caPMT.ProgramInfoLength > 0)
-        //{
-        //  pat.caPMT.CAPmt_CommandID_PRG = 1;
-        // pat.caPMT.ProgramInfoLength += 1;
-        //}
         len2 -= x;
         pointer += x;
         len1 -= x;
+      }
+      if (caPMT.ProgramInfoLength > 0)
+      {
+        caPMT.CAPmt_CommandID_PRG = CommandIdType.Descrambling;
+        caPMT.ProgramInfoLength += 1;
       }
       //byte[] b = new byte[6];
       PidInfo pmt;
@@ -425,12 +425,12 @@ namespace TvLibrary.Implementations.DVB.Structures
                     //Log.Write("dvbsections: indicator {1} {0} found",(indicator==0x02?"for video":"for audio"),indicator);
                     break;
                   case 0x09:
-                    //pat.caPMT.StreamType = pmt.stream_type;
-                    //pat.caPMT.ElementaryStreamPID = pmt.elementary_PID;
-                    //pat.caPMT.CAPmt_CommandID_ES = 1;
-                    //pat.caPMT.CADescriptors_ES.Add(data);
-                    //pat.caPMT.ElementaryStreamInfoLength = pmt.ES_info_length;
-                    //pat.caData.Add(data);
+                    caPMT.StreamType = pmt.stream_type;
+                    caPMT.ElementaryStreamPID = pmt.elementary_PID;
+                    caPMT.CAPmt_CommandID_ES = CommandIdType.Descrambling;
+                    caPMT.CADescriptors_ES.Add(data);
+                    caPMT.ElementaryStreamInfoLength = pmt.ES_info_length;
+                    //caData.Add(data);
                     //string tmpString = DVB_CADescriptor(data);
                     //if (pidText.IndexOf(tmpString, 0) == -1)
                     //  pidText += tmpString + ";";

@@ -43,6 +43,7 @@ private:
   char* DecodeMultipleStrings(byte* buf, int offset, int maxLen);
   char* DecodeString(byte* buf, int offset, int compression_type, int mode, int number_of_bytes);
   vector<CChannelInfo> m_vecChannels;
-  int m_iVctVersion;
+  int m_iVctVersionC8;
+	int m_iVctVersionC9;
   CSectionDecoder* m_decoder[2];
 };
