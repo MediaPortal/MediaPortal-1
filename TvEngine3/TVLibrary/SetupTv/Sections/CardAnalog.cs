@@ -110,6 +110,13 @@ namespace SetupTv.Sections
 
     private void mpButtonScan_Click(object sender, EventArgs e)
     {
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
+      if (card.Enabled == false)
+      {
+        MessageBox.Show("Card is disabled, please enable the card before scanning");
+        return;
+      }
       Thread scanThread = new Thread(new ThreadStart(DoTvScan));
       scanThread.Start();
     }
