@@ -24,136 +24,145 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
-using System.Windows.Forms;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.IO;
 using System.Diagnostics;
-using System.Reflection;
-using Microsoft.Win32;
+using System.Drawing;
+using System.IO;
+using System.Net.Sockets;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
+using AxX10;
 using MediaPortal.GUI.Library;
 using MediaPortal.InputDevices;
+using MediaPortal.Profile;
+using MediaPortal.RemoteControls.FireDTV;
+using MediaPortal.UserInterface.Controls;
 using MediaPortal.Util;
-
-using System.Net.Sockets;
-
 #pragma warning disable 108
 
 namespace MediaPortal.Configuration.Sections
 {
-  public class Remote : MediaPortal.Configuration.SectionSettings
+  public class Remote : SectionSettings
   {
-
     #region Fields & Constants
-    MediaPortal.RemoteControls.FireDTV.FireDTVControl fireDTV = null;
 
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxMceEnabled;
-    private System.Windows.Forms.PictureBox pictureBoxMceUsa;
-    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonMceUsa;
-    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonMceEurope;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxHcwSettings;
-    private MediaPortal.UserInterface.Controls.MPLabel labelHcwButtonRelease;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxHcwAllowExternal;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxHcwKeepControl;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxHcwExtendedLogging;
-    private MediaPortal.UserInterface.Controls.MPButton buttonHcwDefaults;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxHcwEnabled;
-    private MediaPortal.UserInterface.Controls.MPLabel labelHcwDriverStatus;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxHcwStatus;
-    private MediaPortal.UserInterface.Controls.MPTabPage tabPageMce;
-    private MediaPortal.UserInterface.Controls.MPTabPage tabPageHcw;
-    private MediaPortal.UserInterface.Controls.MPLabel labelHcw1000msec;
-    private MediaPortal.UserInterface.Controls.MPLabel labelHcw20msec;
-    private MediaPortal.UserInterface.Controls.MPButton buttonHcwMapping;
-    private MediaPortal.UserInterface.Controls.MPTabControl tabControlRemotes;
-    private MediaPortal.UserInterface.Controls.MPTabPage tabPageFireDtv;
-    private System.Windows.Forms.PictureBox pictureBoxMceEurope;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxMceGeneralx;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxHcwGeneral;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxHcwRepeatDelay;
+    private FireDTVControl fireDTV = null;
+
+    private MPCheckBox checkBoxMceEnabled;
+    private PictureBox pictureBoxMceUsa;
+    private MPRadioButton radioButtonMceUsa;
+    private MPRadioButton radioButtonMceEurope;
+    private MPGroupBox groupBoxHcwSettings;
+    private MPLabel labelHcwButtonRelease;
+    private MPCheckBox checkBoxHcwAllowExternal;
+    private MPCheckBox checkBoxHcwKeepControl;
+    private MPCheckBox checkBoxHcwExtendedLogging;
+    private MPButton buttonHcwDefaults;
+    private MPCheckBox checkBoxHcwEnabled;
+    private MPLabel labelHcwDriverStatus;
+    private MPGroupBox groupBoxHcwStatus;
+    private MPTabPage tabPageMce;
+    private MPTabPage tabPageHcw;
+    private MPLabel labelHcw1000msec;
+    private MPLabel labelHcw20msec;
+    private MPButton buttonHcwMapping;
+    private MPTabControl tabControlRemotes;
+    private MPTabPage tabPageFireDtv;
+    private PictureBox pictureBoxMceEurope;
+    private MPGroupBox groupBoxMceGeneralx;
+    private MPGroupBox groupBoxHcwGeneral;
+    private MPGroupBox groupBoxHcwRepeatDelay;
     private HScrollBar hScrollBarHcwButtonRelease;
     private HScrollBar hScrollBarHcwRepeatSpeed;
-    private MediaPortal.UserInterface.Controls.MPLabel labelHcwFast;
-    private MediaPortal.UserInterface.Controls.MPLabel labelHcwRepeatSpeed;
-    private MediaPortal.UserInterface.Controls.MPLabel labelHcwSlow;
+    private MPLabel labelHcwFast;
+    private MPLabel labelHcwRepeatSpeed;
+    private MPLabel labelHcwSlow;
     private HScrollBar hScrollBarHcwRepeatFilter;
-    private MediaPortal.UserInterface.Controls.MPLabel labelHcwMax;
-    private MediaPortal.UserInterface.Controls.MPLabel labelHcwRepeatFilter;
-    private MediaPortal.UserInterface.Controls.MPLabel labelHcwMin;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxHcwFilterDoubleKlicks;
+    private MPLabel labelHcwMax;
+    private MPLabel labelHcwRepeatFilter;
+    private MPLabel labelHcwMin;
+    private MPCheckBox checkBoxHcwFilterDoubleKlicks;
     private ToolTip toolTip;
-    private MediaPortal.UserInterface.Controls.MPTabPage tabPageX10;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxX10General;
-    private MediaPortal.UserInterface.Controls.MPButton buttonX10Mapping;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxX10Enabled;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxX10Settings;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxX10ExtendedLogging;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxX10Status;
-    private MediaPortal.UserInterface.Controls.MPButton buttonX10Defaults;
+    private MPTabPage tabPageX10;
+    private MPGroupBox groupBoxX10General;
+    private MPButton buttonX10Mapping;
+    private MPCheckBox checkBoxX10Enabled;
+    private MPGroupBox groupBoxX10Settings;
+    private MPCheckBox checkBoxX10ExtendedLogging;
+    private MPGroupBox groupBoxX10Status;
+    private MPButton buttonX10Defaults;
     private LinkLabel linkLabelHcwDownload;
-    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonX10Ati;
-    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonX10Medion;
-    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonX10Other;
+    private MPRadioButton radioButtonX10Ati;
+    private MPRadioButton radioButtonX10Medion;
+    private MPRadioButton radioButtonX10Other;
     private LinkLabel linkLabelDownloadX10;
     private Label labelX10DriverInfo;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxX10ChannelControl;
-    private MediaPortal.UserInterface.Controls.MPButton buttonX10LearnChannel;
-    private System.ComponentModel.IContainer components = null;
-    private MediaPortal.UserInterface.Controls.MPLabel labelX10Status;
-    private MediaPortal.UserInterface.Controls.MPTabPage tabPageHid;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxHidGeneral;
-    private MediaPortal.UserInterface.Controls.MPButton buttonHidMapping;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxHidEnabled;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxHidInfo;
-    private MediaPortal.UserInterface.Controls.MPLabel labelHidInfo;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxHidSettings;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxHidExtendedLogging;
-    private MediaPortal.UserInterface.Controls.MPButton buttonHidDefaults;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxMceGeneral;
-    private MediaPortal.UserInterface.Controls.MPButton buttonMceMapping;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxMceExtendedLogging;
-    private MediaPortal.UserInterface.Controls.MPButton buttonMceDefaults;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxMceColouredButtons;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxMceSettings;
-    private MediaPortal.UserInterface.Controls.MPTabPage tabPageIrTrans;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxIrTransGeneral;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxIrTransEnabled;
-    private MediaPortal.UserInterface.Controls.MPButton buttonIrTransMapping;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxIrTransStatus;
-    private MediaPortal.UserInterface.Controls.MPLabel labelIrTransStatus;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxIrTransServerSettings;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxIrTransExtendedLogging;
-    private MediaPortal.UserInterface.Controls.MPTextBox textBoxRemoteModel;
-    private MediaPortal.UserInterface.Controls.MPLabel labelIrTransRemoteModel;
-    private MediaPortal.UserInterface.Controls.MPNumericTextBox textBoxIrTransServerPort;
-    private MediaPortal.UserInterface.Controls.MPLabel labelIrTransServerPort;
-    private MediaPortal.UserInterface.Controls.MPLabel labelIrTransNoteModel;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxIrTransSettings;
+    private MPCheckBox checkBoxX10ChannelControl;
+    private MPButton buttonX10LearnChannel;
+    private new IContainer components = null;
+    private MPLabel labelX10Status;
+    private MPTabPage tabPageHid;
+    private MPGroupBox groupBoxHidGeneral;
+    private MPButton buttonHidMapping;
+    private MPCheckBox checkBoxHidEnabled;
+    private MPGroupBox groupBoxHidInfo;
+    private MPLabel labelHidInfo;
+    private MPGroupBox groupBoxHidSettings;
+    private MPCheckBox checkBoxHidExtendedLogging;
+    private MPButton buttonHidDefaults;
+    private MPGroupBox groupBoxMceGeneral;
+    private MPButton buttonMceMapping;
+    private MPCheckBox checkBoxMceExtendedLogging;
+    private MPButton buttonMceDefaults;
+    private MPCheckBox checkBoxMceColouredButtons;
+    private MPGroupBox groupBoxMceSettings;
+    private MPTabPage tabPageIrTrans;
+    private MPGroupBox groupBoxIrTransGeneral;
+    private MPCheckBox checkBoxIrTransEnabled;
+    private MPButton buttonIrTransMapping;
+    private MPGroupBox groupBoxIrTransStatus;
+    private MPLabel labelIrTransStatus;
+    private MPGroupBox groupBoxIrTransServerSettings;
+    private MPCheckBox checkBoxIrTransExtendedLogging;
+    private MPTextBox textBoxRemoteModel;
+    private MPLabel labelIrTransRemoteModel;
+    private MPNumericTextBox textBoxIrTransServerPort;
+    private MPLabel labelIrTransServerPort;
+    private MPLabel labelIrTransNoteModel;
+    private MPGroupBox groupBoxIrTransSettings;
 
-    X10RemoteForm x10Form = null;
-    private enum hcwRepeatSpeed { slow, medium, fast };
+    private X10RemoteForm x10Form = null;
+
+    private enum hcwRepeatSpeed
+    {
+      slow,
+      medium,
+      fast
+    } ;
+
     private int x10Channel = 0;
 
-    const string errHcwNotInstalled = "The Hauppauge IR components have not been found.\nInstall the latest Hauppauge IR drivers and use XPSP2.";
-    const string errHcwOutOfDate = "The driver components are not up to date.\nUpdate your Hauppauge IR drivers to the current version.";
-    private MediaPortal.UserInterface.Controls.MPButton buttonIrTransTest;
-    private LinkLabel linkLabelIRTransConfig;
-    private MediaPortal.UserInterface.Controls.MPLabel labelIrTransNoteWarning;
-    const string errHcwMissingExe = "IR application not found. You might want to use it to control external applications.\nReinstall the Hauppauge IR drivers to fix this problem.";
+    private const string errHcwNotInstalled =
+      "The Hauppauge IR components have not been found.\nInstall the latest Hauppauge IR drivers and use XPSP2.";
+
+    private const string errHcwOutOfDate =
+      "The driver components are not up to date.\nUpdate your Hauppauge IR drivers to the current version.";
+
+    private MPButton buttonIrTransTest;
+
+    private const string errHcwMissingExe =
+      "IR application not found. You might want to use it to control external applications.\nReinstall the Hauppauge IR drivers to fix this problem.";
 
     // FireDTV controls
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxFireDTVRecieiverSettings;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxFireDTVSettings;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxFireDTVReceiverGeneral;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxFireDTVEnabled;
-    private MediaPortal.UserInterface.Controls.MPLabel labelFireDTVReceiver;
-    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxFireDTVReceiver;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxFireDTVExtendedLogging;
-    private MediaPortal.UserInterface.Controls.MPButton buttonFireDTVMapping;
-    private MediaPortal.UserInterface.Controls.MPLabel labelFireDTVModel;
+    private MPGroupBox groupBoxFireDTVRecieiverSettings;
+    private MPGroupBox groupBoxFireDTVSettings;
+    private MPGroupBox groupBoxFireDTVReceiverGeneral;
+    private MPCheckBox checkBoxFireDTVEnabled;
+    private MPLabel labelFireDTVReceiver;
+    private MPComboBox comboBoxFireDTVReceiver;
+    private MPCheckBox checkBoxFireDTVExtendedLogging;
+    private MPButton buttonFireDTVMapping;
+    private MPLabel labelFireDTVModel;
 
     #endregion
 
@@ -172,7 +181,7 @@ namespace MediaPortal.Configuration.Sections
     #region Interop
 
     [DllImport("User32.dll", EntryPoint = "RegisterRawInputDevices", SetLastError = true)]
-    public extern static bool RegisterRawInputDevices(
+    public static extern bool RegisterRawInputDevices(
       [In] RAWINPUTDEVICE[] pRawInputDevices,
       [In] uint uiNumDevices,
       [In] uint cbSize);
@@ -202,9 +211,8 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-
         #region MCE
 
         checkBoxMceEnabled.Checked = xmlreader.GetValueAsBool("remote", "MCE", true);
@@ -252,9 +260,13 @@ namespace MediaPortal.Configuration.Sections
         checkBoxHcwFilterDoubleKlicks.Checked = xmlreader.GetValueAsBool("remote", "HCWFilterDoubleKlicks", false);
 
         if (checkBoxHcwAllowExternal.Checked)
+        {
           checkBoxHcwKeepControl.Enabled = true;
+        }
         else
+        {
           checkBoxHcwKeepControl.Enabled = false;
+        }
 
         if (!checkBoxHcwEnabled.Checked)
         {
@@ -262,13 +274,13 @@ namespace MediaPortal.Configuration.Sections
           groupBoxHcwRepeatDelay.Enabled = false;
         }
 
-        string exePath = InputDevices.irremote.GetHCWPath();
-        string dllPath = InputDevices.irremote.GetDllPath();
+        string exePath = irremote.GetHCWPath();
+        string dllPath = irremote.GetDllPath();
 
         if (File.Exists(exePath + "Ir.exe"))
         {
           FileVersionInfo exeVersionInfo = FileVersionInfo.GetVersionInfo(exePath + "Ir.exe");
-          if (exeVersionInfo.FileVersion.CompareTo(InputDevices.irremote.CurrentVersion) < 0)
+          if (exeVersionInfo.FileVersion.CompareTo(irremote.CurrentVersion) < 0)
           {
             labelHcwDriverStatus.ForeColor = Color.Red;
             labelHcwDriverStatus.Text = errHcwOutOfDate;
@@ -287,7 +299,7 @@ namespace MediaPortal.Configuration.Sections
         if (File.Exists(dllPath + "irremote.DLL"))
         {
           FileVersionInfo dllVersionInfo = FileVersionInfo.GetVersionInfo(dllPath + "irremote.DLL");
-          if (dllVersionInfo.FileVersion.CompareTo(InputDevices.irremote.CurrentVersion) < 0)
+          if (dllVersionInfo.FileVersion.CompareTo(irremote.CurrentVersion) < 0)
           {
             labelHcwDriverStatus.ForeColor = Color.Red;
             labelHcwDriverStatus.Text = errHcwOutOfDate;
@@ -302,19 +314,21 @@ namespace MediaPortal.Configuration.Sections
           checkBoxHcwEnabled.Enabled = false;
           groupBoxHcwSettings.Enabled = false;
           groupBoxHcwRepeatDelay.Enabled = false;
-          using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+          using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
           {
             xmlwriter.SetValueAsBool("remote", "HCW", false);
           }
         }
         buttonHcwMapping.Enabled = checkBoxHcwEnabled.Checked;
 
-        toolTip.SetToolTip(this.hScrollBarHcwButtonRelease, string.Format("{0} msec.", hScrollBarHcwButtonRelease.Value));
-        toolTip.SetToolTip(this.hScrollBarHcwRepeatFilter, hScrollBarHcwRepeatFilter.Value.ToString());
+        toolTip.SetToolTip(hScrollBarHcwButtonRelease, string.Format("{0} msec.", hScrollBarHcwButtonRelease.Value));
+        toolTip.SetToolTip(hScrollBarHcwRepeatFilter, hScrollBarHcwRepeatFilter.Value.ToString());
         Type repeatSpeed = typeof(hcwRepeatSpeed);
-        toolTip.SetToolTip(this.hScrollBarHcwRepeatSpeed, Enum.GetName(repeatSpeed, 2 - hScrollBarHcwRepeatSpeed.Value));
-        toolTip.SetToolTip(this.checkBoxHcwKeepControl, "If checked, MediaPortal keeps control of the remote. Only applications launched by\nMediaPortal can steal focus (external Players, MyPrograms, ...).");
-        toolTip.SetToolTip(this.checkBoxHcwAllowExternal, "If checked, MediaPortal does not keep control of the remote\nwhen it looses focus.");
+        toolTip.SetToolTip(hScrollBarHcwRepeatSpeed, Enum.GetName(repeatSpeed, 2 - hScrollBarHcwRepeatSpeed.Value));
+        toolTip.SetToolTip(checkBoxHcwKeepControl,
+                           "If checked, MediaPortal keeps control of the remote. Only applications launched by\nMediaPortal can steal focus (external Players, MyPrograms, ...).");
+        toolTip.SetToolTip(checkBoxHcwAllowExternal,
+                           "If checked, MediaPortal does not keep control of the remote\nwhen it looses focus.");
 
         #endregion
 
@@ -327,7 +341,10 @@ namespace MediaPortal.Configuration.Sections
         checkBoxX10ExtendedLogging.Checked = xmlreader.GetValueAsBool("remote", "X10VerboseLog", false);
         checkBoxX10ChannelControl.Checked = xmlreader.GetValueAsBool("remote", "X10UseChannelControl", false);
         x10Channel = xmlreader.GetValueAsInt("remote", "X10Channel", 0);
-        radioButtonX10Medion.Enabled = radioButtonX10Ati.Enabled = radioButtonX10Other.Enabled = buttonX10Mapping.Enabled = groupBoxX10Settings.Enabled = checkBoxX10Enabled.Checked;
+        radioButtonX10Medion.Enabled =
+          radioButtonX10Ati.Enabled =
+          radioButtonX10Other.Enabled =
+          buttonX10Mapping.Enabled = groupBoxX10Settings.Enabled = checkBoxX10Enabled.Checked;
         buttonX10LearnChannel.Enabled = checkBoxX10ChannelControl.Enabled && checkBoxX10ChannelControl.Checked;
 
         #endregion
@@ -349,19 +366,20 @@ namespace MediaPortal.Configuration.Sections
         textBoxIrTransServerPort.Text = textBoxIrTransServerPort.Value.ToString();
         checkBoxIrTransExtendedLogging.Checked = xmlreader.GetValueAsBool("remote", "IRTransVerboseLog", false);
         buttonIrTransMapping.Enabled = checkBoxIrTransEnabled.Checked;
-        groupBoxIrTransSettings.Enabled = groupBoxIrTransStatus.Enabled = groupBoxIrTransServerSettings.Enabled = checkBoxIrTransEnabled.Checked;
+        groupBoxIrTransSettings.Enabled =
+          groupBoxIrTransStatus.Enabled = groupBoxIrTransServerSettings.Enabled = checkBoxIrTransEnabled.Checked;
 
         #endregion
 
         #region FireDTV
 
         // Is the FireDTV remote enabled
-        this.checkBoxFireDTVEnabled.Checked = xmlreader.GetValueAsBool("remote", "FireDTV", false);
+        checkBoxFireDTVEnabled.Checked = xmlreader.GetValueAsBool("remote", "FireDTV", false);
 
         // Fill combobox with list of availabe FireDTV recievers
         try
         {
-          fireDTV = new MediaPortal.RemoteControls.FireDTV.FireDTVControl((IntPtr)0);
+          fireDTV = new FireDTVControl((IntPtr) 0);
           if (fireDTV.OpenDrivers())
           {
             comboBoxFireDTVReceiver.DataSource = fireDTV.SourceFilters;
@@ -371,7 +389,7 @@ namespace MediaPortal.Configuration.Sections
         }
         catch (Exception e)
         {
-          //Log.Info("FireDTVRemote: Exception during setting combo {0}",e.Message);
+          Log.Error("FireDTVRemote: Exception during setting combo {0}",e.Message);
         }
 
         // Set the rest of the controls
@@ -380,11 +398,13 @@ namespace MediaPortal.Configuration.Sections
         try
         {
           if ((deviceName != null) && (!deviceName.Equals(string.Empty)))
+          {
             comboBoxFireDTVReceiver.SelectedValue = deviceName;
+          }
         }
         catch (InvalidOperationException ex)
         {
-          //Log.Info("FireDTV: Error setting device name - device unplugged?! - {0}", ex.Message);
+          Log.Error("FireDTV: Error setting device name - device unplugged?! - {0}", ex.Message);
         }
 
         // Enable/Disable the controls
@@ -393,13 +413,14 @@ namespace MediaPortal.Configuration.Sections
         comboBoxFireDTVReceiver.Enabled = checkBoxFireDTVEnabled.Checked;
         groupBoxFireDTVSettings.Enabled = checkBoxFireDTVEnabled.Checked;
         groupBoxFireDTVRecieiverSettings.Enabled = checkBoxFireDTVEnabled.Checked;
+
         #endregion
       }
     }
 
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         #region MCE
 
@@ -452,13 +473,14 @@ namespace MediaPortal.Configuration.Sections
         #endregion
 
         #region FireDTV
+
         // Load FireDTV specific settings.
         xmlwriter.SetValueAsBool("remote", "FireDTV", checkBoxFireDTVEnabled.Checked);
-        xmlwriter.SetValue("remote", "FireDTVDeviceName", this.comboBoxFireDTVReceiver.SelectedValue);
+        xmlwriter.SetValue("remote", "FireDTVDeviceName", comboBoxFireDTVReceiver.SelectedValue);
         xmlwriter.SetValue("remote", "FireDTVVerboseLog", checkBoxFireDTVExtendedLogging.Checked);
+
         #endregion
       }
-
     }
 
     #endregion
@@ -481,6 +503,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #region Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -1450,9 +1473,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxIrTransServerSettings
       // 
-      this.groupBoxIrTransServerSettings.Controls.Add(this.linkLabelIRTransConfig);
       this.groupBoxIrTransServerSettings.Controls.Add(this.buttonIrTransTest);
-      this.groupBoxIrTransServerSettings.Controls.Add(this.labelIrTransNoteWarning);
       this.groupBoxIrTransServerSettings.Controls.Add(this.labelIrTransNoteModel);
       this.groupBoxIrTransServerSettings.Controls.Add(this.textBoxRemoteModel);
       this.groupBoxIrTransServerSettings.Controls.Add(this.labelIrTransRemoteModel);
@@ -1487,6 +1508,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // textBoxRemoteModel
       // 
+      this.textBoxRemoteModel.BorderColor = System.Drawing.Color.Empty;
       this.textBoxRemoteModel.Location = new System.Drawing.Point(138, 52);
       this.textBoxRemoteModel.MaxLength = 128;
       this.textBoxRemoteModel.Name = "textBoxRemoteModel";
@@ -1637,7 +1659,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxFireDTVExtendedLogging.Text = "Extended logging";
       this.checkBoxFireDTVExtendedLogging.UseVisualStyleBackColor = true;
       // 
-      // groupBoxFireDTVRecieiverGeneral
+      // groupBoxFireDTVReceiverGeneral
       // 
       this.groupBoxFireDTVReceiverGeneral.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
@@ -1645,7 +1667,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxFireDTVReceiverGeneral.Controls.Add(this.checkBoxFireDTVEnabled);
       this.groupBoxFireDTVReceiverGeneral.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxFireDTVReceiverGeneral.Location = new System.Drawing.Point(12, 8);
-      this.groupBoxFireDTVReceiverGeneral.Name = "groupBoxFireDTVRecieiverGeneral";
+      this.groupBoxFireDTVReceiverGeneral.Name = "groupBoxFireDTVReceiverGeneral";
       this.groupBoxFireDTVReceiverGeneral.Size = new System.Drawing.Size(440, 56);
       this.groupBoxFireDTVReceiverGeneral.TabIndex = 0;
       this.groupBoxFireDTVReceiverGeneral.TabStop = false;
@@ -1732,6 +1754,7 @@ namespace MediaPortal.Configuration.Sections
       this.ResumeLayout(false);
 
     }
+
     #endregion
 
     #endregion
@@ -1741,7 +1764,7 @@ namespace MediaPortal.Configuration.Sections
     //
     // USA version
     //
-    private void radioButtonMceUsa_CheckedChanged(object sender, System.EventArgs e)
+    private void radioButtonMceUsa_CheckedChanged(object sender, EventArgs e)
     {
       pictureBoxMceUsa.Visible = radioButtonMceUsa.Checked;
       pictureBoxMceEurope.Visible = !radioButtonMceUsa.Checked;
@@ -1751,7 +1774,7 @@ namespace MediaPortal.Configuration.Sections
     //
     // European version
     //
-    private void radioButtonMceEurope_CheckedChanged(object sender, System.EventArgs e)
+    private void radioButtonMceEurope_CheckedChanged(object sender, EventArgs e)
     {
       pictureBoxMceUsa.Visible = !radioButtonMceEurope.Checked;
       pictureBoxMceEurope.Visible = radioButtonMceEurope.Checked;
@@ -1761,7 +1784,7 @@ namespace MediaPortal.Configuration.Sections
     //
     // Use Microsoft MCE remote
     //
-    private void checkBoxMceEnabled_CheckedChanged(object sender, System.EventArgs e)
+    private void checkBoxMceEnabled_CheckedChanged(object sender, EventArgs e)
     {
       groupBoxMceSettings.Enabled = buttonMceMapping.Enabled = checkBoxMceEnabled.Checked;
 
@@ -1785,7 +1808,7 @@ namespace MediaPortal.Configuration.Sections
 
     #region Helper methods/commands MCE
 
-    static public bool IsMceRemoteInstalled(IntPtr hwnd)
+    public static bool IsMceRemoteInstalled(IntPtr hwnd)
     {
       try
       {
@@ -1795,7 +1818,7 @@ namespace MediaPortal.Configuration.Sections
         rid1[0].usUsage = 0x88;
         rid1[0].dwFlags = 0;
         rid1[0].hwndTarget = hwnd;
-        bool Success = RegisterRawInputDevices(rid1, (uint)rid1.Length, (uint)Marshal.SizeOf(rid1[0]));
+        bool Success = RegisterRawInputDevices(rid1, (uint) rid1.Length, (uint) Marshal.SizeOf(rid1[0]));
         if (Success)
         {
           return true;
@@ -1805,14 +1828,15 @@ namespace MediaPortal.Configuration.Sections
         rid1[0].usUsage = 0x01;
         rid1[0].dwFlags = 0;
         rid1[0].hwndTarget = hwnd;
-        Success = RegisterRawInputDevices(rid1, (uint)rid1.Length, (uint)Marshal.SizeOf(rid1[0]));
+        Success = RegisterRawInputDevices(rid1, (uint) rid1.Length, (uint) Marshal.SizeOf(rid1[0]));
         if (Success)
         {
           return true;
         }
       }
       catch (Exception)
-      { }
+      {
+      }
 
       return false;
     }
@@ -1826,7 +1850,7 @@ namespace MediaPortal.Configuration.Sections
     //
     // External processes may use the remote control
     //
-    private void checkBoxHcwAllowExternal_CheckedChanged(object sender, System.EventArgs e)
+    private void checkBoxHcwAllowExternal_CheckedChanged(object sender, EventArgs e)
     {
       checkBoxHcwKeepControl.Enabled = checkBoxHcwAllowExternal.Checked;
     }
@@ -1834,7 +1858,7 @@ namespace MediaPortal.Configuration.Sections
     //
     // Use Hauppauge remote
     //
-    private void checkBoxHcwEnabled_CheckedChanged(object sender, System.EventArgs e)
+    private void checkBoxHcwEnabled_CheckedChanged(object sender, EventArgs e)
     {
       groupBoxHcwSettings.Enabled = checkBoxHcwEnabled.Checked;
       groupBoxHcwRepeatDelay.Enabled = checkBoxHcwEnabled.Checked;
@@ -1844,7 +1868,7 @@ namespace MediaPortal.Configuration.Sections
     //
     // Reset to default
     //    
-    private void buttonHcwDefaults_Click(object sender, System.EventArgs e)
+    private void buttonHcwDefaults_Click(object sender, EventArgs e)
     {
       checkBoxHcwAllowExternal.Checked = false;
       checkBoxHcwKeepControl.Checked = false;
@@ -1855,7 +1879,7 @@ namespace MediaPortal.Configuration.Sections
       checkBoxHcwFilterDoubleKlicks.Checked = false;
     }
 
-    private void buttonHcwMapping_Click(object sender, System.EventArgs e)
+    private void buttonHcwMapping_Click(object sender, EventArgs e)
     {
       InputMappingForm dlg = new InputMappingForm("Hauppauge HCW");
       dlg.ShowDialog(this);
@@ -1863,23 +1887,23 @@ namespace MediaPortal.Configuration.Sections
 
     private void hScrollBarHcwButtonRelease_ValueChanged(object sender, EventArgs e)
     {
-      toolTip.SetToolTip(this.hScrollBarHcwButtonRelease, string.Format("{0} msec.", hScrollBarHcwButtonRelease.Value));
+      toolTip.SetToolTip(hScrollBarHcwButtonRelease, string.Format("{0} msec.", hScrollBarHcwButtonRelease.Value));
     }
 
     private void hScrollBarHcwRepeatFilter_ValueChanged(object sender, EventArgs e)
     {
-      toolTip.SetToolTip(this.hScrollBarHcwRepeatFilter, hScrollBarHcwRepeatFilter.Value.ToString());
+      toolTip.SetToolTip(hScrollBarHcwRepeatFilter, hScrollBarHcwRepeatFilter.Value.ToString());
     }
 
     private void hScrollBarHcwRepeatSpeed_ValueChanged(object sender, EventArgs e)
     {
       Type repeatSpeed = typeof(hcwRepeatSpeed);
-      toolTip.SetToolTip(this.hScrollBarHcwRepeatSpeed, Enum.GetName(repeatSpeed, 2 - hScrollBarHcwRepeatSpeed.Value));
+      toolTip.SetToolTip(hScrollBarHcwRepeatSpeed, Enum.GetName(repeatSpeed, 2 - hScrollBarHcwRepeatSpeed.Value));
     }
 
     private void linkLabelHcwDownload_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      System.Diagnostics.Process.Start("http://www.team-mediaportal.com/component/option,com_remository/Itemid,35/func,select/id,28/");
+      Process.Start("http://www.team-mediaportal.com/component/option,com_remository/Itemid,35/func,select/id,28/");
     }
 
     #endregion
@@ -1888,13 +1912,19 @@ namespace MediaPortal.Configuration.Sections
 
     private void buttonX10Mapping_Click(object sender, EventArgs e)
     {
-      InputMappingForm dlg = null;
+      InputMappingForm dlg;
       if (radioButtonX10Medion.Checked)
+      {
         dlg = new InputMappingForm("Medion X10");
+      }
       else if (radioButtonX10Ati.Checked)
+      {
         dlg = new InputMappingForm("ATI X10");
+      }
       else
+      {
         dlg = new InputMappingForm("Other X10");
+      }
       dlg.ShowDialog(this);
     }
 
@@ -1907,13 +1937,16 @@ namespace MediaPortal.Configuration.Sections
 
     private void checkBoxX10Enabled_CheckedChanged(object sender, EventArgs e)
     {
-      radioButtonX10Medion.Enabled = radioButtonX10Ati.Enabled = radioButtonX10Other.Enabled = buttonX10Mapping.Enabled = groupBoxX10Settings.Enabled = checkBoxX10Enabled.Checked;
+      radioButtonX10Medion.Enabled =
+        radioButtonX10Ati.Enabled =
+        radioButtonX10Other.Enabled =
+        buttonX10Mapping.Enabled = groupBoxX10Settings.Enabled = checkBoxX10Enabled.Checked;
       buttonX10LearnChannel.Enabled = checkBoxX10ChannelControl.Enabled && checkBoxX10ChannelControl.Checked;
     }
 
     private void linkLabelDownloadX10_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      System.Diagnostics.Process.Start("http://www1.medion.de/downloads/download.pl?id=1675&type=treiber&filename=remote_x10.exe&lang=de");
+      Process.Start("http://www1.medion.de/downloads/download.pl?id=1675&type=treiber&filename=remote_x10.exe&lang=de");
     }
 
     private void checkBoxX10ChannelControl_CheckedChanged(object sender, EventArgs e)
@@ -1927,9 +1960,11 @@ namespace MediaPortal.Configuration.Sections
       try
       {
         if (x10Form == null)
-          x10Form = new X10RemoteForm(new AxX10._DIX10InterfaceEvents_X10CommandEventHandler(this.IX10_X10Command));
+        {
+          x10Form = new X10RemoteForm(new _DIX10InterfaceEvents_X10CommandEventHandler(IX10_X10Command));
+        }
       }
-      catch (System.Runtime.InteropServices.COMException)
+      catch (COMException)
       {
         Log.Warn("x10Remote: Can't initialize");
         x10Form = null;
@@ -1948,7 +1983,7 @@ namespace MediaPortal.Configuration.Sections
 
     #region Helper methods/commands X10
 
-    public void IX10_X10Command(object sender, AxX10._DIX10InterfaceEvents_X10CommandEvent e)
+    public void IX10_X10Command(object sender, _DIX10InterfaceEvents_X10CommandEvent e)
     {
       if (e.eKeyState.ToString() == "X10KEY_ON" || e.eKeyState.ToString() == "X10KEY_REPEAT")
       {
@@ -2018,7 +2053,8 @@ namespace MediaPortal.Configuration.Sections
     private void checkBoxIrTransEnabled_CheckedChanged(object sender, EventArgs e)
     {
       buttonIrTransMapping.Enabled = checkBoxIrTransEnabled.Checked;
-      groupBoxIrTransSettings.Enabled = groupBoxIrTransStatus.Enabled = groupBoxIrTransServerSettings.Enabled = checkBoxIrTransEnabled.Checked;
+      groupBoxIrTransSettings.Enabled =
+        groupBoxIrTransStatus.Enabled = groupBoxIrTransServerSettings.Enabled = checkBoxIrTransEnabled.Checked;
     }
 
     private void buttonIrTransMapping_Click(object sender, EventArgs e)
@@ -2027,14 +2063,6 @@ namespace MediaPortal.Configuration.Sections
       string keyfile = "IrTrans " + textBoxRemoteModel.Text.Trim();
       InputMappingForm dlg = new InputMappingForm(keyfile);
       dlg.ShowDialog(this);
-    }
-
-    private void buttonIrTransDefaults_Click(object sender, EventArgs e)
-    {
-      textBoxRemoteModel.Text = "mediacenter";
-      textBoxIrTransServerPort.Value = 21000;
-      textBoxIrTransServerPort.Text = textBoxIrTransServerPort.Value.ToString();
-      checkBoxIrTransExtendedLogging.Checked = false;
     }
 
     private void buttonIrTransTest_Click(object sender, EventArgs e)
@@ -2056,12 +2084,7 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void linkLabelIRTransConfig_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-    {
-      System.Diagnostics.Process.Start("http://wiki.team-mediaportal.com/MediaPortalSetup_Remote/IRTrans");
-    }
+ 
     #endregion
-
   }
-
 }
