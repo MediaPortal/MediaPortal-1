@@ -14,19 +14,19 @@
 		</control>
 		<control>
 			<type>image</type>
-			<description>menu background image</description>
+			<description>OSD background image</description>
 			<id>0</id>
 			<posX>58</posX>
 			<posY>566</posY>
-			<width>893</width>
+			<width>1250</width>
 			<height>189</height>
 			<texture>osd_bg.png</texture>
 		</control>
 		<control>
 			<type>image</type>
-			<description>menu background image</description>
+			<description>background hover image</description>
 			<id>0</id>
-			<posX>75</posX>
+			<posX>120</posX>
 			<posY>590</posY>
 			<width>120</width>
 			<height>168</height>
@@ -44,10 +44,10 @@
 			<type>image</type>
 			<description>nowplaying background</description>
 			<id>0</id>
-			<posX>738</posX>
-			<posY>77</posY>
-			<width>409</width>
-			<height>477</height>
+			<posX>835</posX>
+			<posY>124</posY>
+			<width>460</width>
+			<height>400</height>
 			<texture>nowplaying_background.png</texture>
 			<keepaspectratio>no</keepaspectratio>
 		</control>
@@ -55,10 +55,10 @@
 			<type>image</type>
 			<description>artist art image</description>
 			<id>112</id>
-			<posX>787</posX>
-			<posY>146</posY>
-			<width>333</width>
-			<height>333</height>
+			<posX>862</posX>
+			<posY>180</posY>
+			<width>400</width>
+			<height>290</height>			
 			<texture>#Play.Current.ArtistThumb</texture>
 			<!-- <texture>F:\\Quellen\\Mediaportal-trunk\\xbmc\\bin\\Debug\\skin\\BlueTwo\\media\\missing_coverart.png</texture>  -->
 			<visible>yes</visible>
@@ -104,9 +104,9 @@
 			<type>fadelabel</type>
 			<description>track label</description>
 			<id>0</id>
-			<posX>261</posX>
-			<posY>613</posY>
-			<width>600</width>
+			<posX>285</posX>
+			<posY>611</posY>
+			<width>800</width>
 			<height>26</height>
 			<label>#Play.Current.Title</label>
 			<font>font18</font>
@@ -117,9 +117,9 @@
 			<type>fadelabel</type>
 			<description>artist label</description>
 			<id>0</id>
-			<posX>261</posX>
-			<posY>664</posY>
-			<width>600</width>
+			<posX>285</posX>
+			<posY>668</posY>
+			<width>800</width>
 			<height>26</height>
 			<label>#Play.Current.Artist</label>
 			<font>font16</font>
@@ -130,9 +130,9 @@
 			<type>label</type>
 			<description>album label</description>
 			<id>0</id>
-			<posX>766</posX>
-			<posY>105</posY>
-			<width>320</width>
+			<posX>860</posX>
+			<posY>144</posY>
+			<width>370</width>
 			<label>#Play.Current.Album</label>
 			<font>font14</font>
 			<align>left</align>
@@ -142,8 +142,8 @@
 			<type>label</type>
 			<description>track progress label</description>
 			<id>0</id>
-			<posX>766</posX>
-			<posY>497</posY>
+			<posX>860</posX>
+			<posY>478</posY>
 			<label>#currentplaytime</label>
 			<font>font14</font>
 			<align>left</align>
@@ -153,8 +153,8 @@
 			<type>label</type>
 			<description>track duration label</description>
 			<id>0</id>
-			<posX>1280</posX>
-			<posY>497</posY>
+			<posX>1258</posX>
+			<posY>478</posY>
 			<label>#trackduration</label>
 			<font>font14</font>
 			<align>right</align>
@@ -165,8 +165,8 @@
 			<description>Similar artists box</description>
 			<id>0</id>
 			<posX>113</posX>
-			<posY>377</posY>
-			<width>320</width>
+			<posY>397</posY>
+			<width>580</width>
 			<label>#Play.Current.Lastfm.SimilarArtists</label>
 			<font>font13</font>
 			<align>left</align>
@@ -178,7 +178,7 @@
 			<id>0</id>
 			<posX>113</posX>
 			<posY>484</posY>
-			<width>320</width>
+			<width>580</width>
 			<label>#Play.Current.Lastfm.TrackTags</label>
 			<font>font13</font>
 			<align>left</align>
