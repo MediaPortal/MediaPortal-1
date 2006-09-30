@@ -51,7 +51,7 @@ namespace MediaPortal.GUI.Music
       Neighbours = 1,
       Friends = 2,
       Tags = 3,
-      Recent = 4,      
+      Recent = 4,
       Random = 5,
     }
 
@@ -119,27 +119,25 @@ namespace MediaPortal.GUI.Music
     private bool ScrobblerOn = false;
     private bool _enableScrobbling = false;
     private bool _enablePlaylistLimit = false;
-    private bool _useSimilarRandom = true;    
+    private bool _useSimilarRandom = true;
     private bool _rememberStartTrack = true;
-    private AudioscrobblerUtils ascrobbler;
-    private Thread ScrobbleThread;
-    private Object ScrobbleLock;
+    private AudioscrobblerUtils ascrobbler = null;
+    private ScrobblerUtilsRequest _lastSimilarArtistRequest;
+    //private Thread ScrobbleThread;
+    //private Object ScrobbleLock;
     #endregion
 
     protected ScrobbleMode currentScrobbleMode = ScrobbleMode.Similar;
-    protected offlineMode  currentOfflineMode  = offlineMode.random;
-    
+    protected offlineMode currentOfflineMode = offlineMode.random;
+
     [SkinControlAttribute(20)]    protected GUIButtonControl btnShuffle = null;
     [SkinControlAttribute(21)]    protected GUIButtonControl btnSave = null;
     [SkinControlAttribute(22)]    protected GUIButtonControl btnClear = null;
     [SkinControlAttribute(23)]    protected GUIButtonControl btnPlay = null;
-    //[SkinControlAttribute(24)]        protected GUIButtonControl btnNext = null;
-    //[SkinControlAttribute(25)]        protected GUIButtonControl btnPrevious = null;
-    //[SkinControlAttribute(26)]    protected GUIToggleButtonControl btnPartyShuffle = null;
     [SkinControlAttribute(27)]    protected GUIToggleButtonControl btnScrobble = null;
     [SkinControlAttribute(28)]    protected GUIButtonControl btnScrobbleMode = null;
     [SkinControlAttribute(29)]    protected GUIButtonControl btnScrobbleUser = null;
-    
+
 
     public GUIMusicPlayList()
     {
@@ -178,7 +176,7 @@ namespace MediaPortal.GUI.Music
         default:
           currentOfflineMode = offlineMode.random;
           break;
-      }      
+      }
       Log.Info("GUIMusicPlayList: Scrobblesettings loaded for {0} - Active: {1} , Trackpreference: {2}", _currentScrobbleUser, Convert.ToString(ScrobblerOn), Convert.ToString(_preferCountForTracks));
     }
 
@@ -189,7 +187,7 @@ namespace MediaPortal.GUI.Music
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        _enableScrobbling = xmlreader.GetValueAsBool("plugins", "Audioscrobbler", false);               
+        _enableScrobbling = xmlreader.GetValueAsBool("plugins", "Audioscrobbler", false);
         _currentScrobbleUser = xmlreader.GetValueAsString("audioscrobbler", "user", "Username");
         _useSimilarRandom = xmlreader.GetValueAsBool("audioscrobbler", "usesimilarrandom", false);
       }
@@ -197,10 +195,18 @@ namespace MediaPortal.GUI.Music
       LoadScrobbleUserSettings();
 
       ascrobbler = AudioscrobblerUtils.Instance;
-      ScrobbleLock = new object();
+//      ScrobbleLock = new object();
       //added by Sam
       GUIWindowManager.Receivers += new SendMessageHandler(this.OnThreadMessage);
       return Load(GUIGraphicsContext.Skin + @"\myMusicplaylist.xml");
+    }
+
+    public override void DeInit()
+    {
+      if (_lastSimilarArtistRequest != null)
+        ascrobbler.RemoveRequest(_lastSimilarArtistRequest);
+
+      base.DeInit();
     }
     protected override string SerializeName
     {
@@ -209,6 +215,7 @@ namespace MediaPortal.GUI.Music
         return "mymusicplaylist";
       }
     }
+
     protected override bool AllowView(View view)
     {
       if (view == View.List)
@@ -219,6 +226,7 @@ namespace MediaPortal.GUI.Music
         return false;
       return true;
     }
+
     public override void OnAction(Action action)
     {
       if (action.wID == Action.ActionType.ACTION_SHOW_PLAYLIST)
@@ -265,7 +273,6 @@ namespace MediaPortal.GUI.Music
       base.OnAction(action);
     }
 
-
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
@@ -274,7 +281,7 @@ namespace MediaPortal.GUI.Music
       if (ScrobblerOn)
         btnScrobble.Selected = true;
 
-      btnScrobbleUser.Label = GUILocalizeStrings.Get(33005) + _currentScrobbleUser;      
+      btnScrobbleUser.Label = GUILocalizeStrings.Get(33005) + _currentScrobbleUser;
 
       LoadDirectory(String.Empty);
       if (m_iItemSelected >= 0)
@@ -341,7 +348,7 @@ namespace MediaPortal.GUI.Music
 
           AudioscrobblerBase.ChangeUser(_currentScrobbleUser, mdb.AddScrobbleUserPassword(Convert.ToString(mdb.AddScrobbleUser(_currentScrobbleUser)), ""));
           LoadScrobbleUserSettings();
-          UpdateButtonStates();          
+          UpdateButtonStates();
         }
 
         GUIControl.FocusControl(GetID, controlId);
@@ -523,7 +530,7 @@ namespace MediaPortal.GUI.Music
     {
       base.UpdateButtonStates();
       // only update while playlist is visible
-      if (GUIWindowManager.ActiveWindow ==  (int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST)
+      if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST)
       {
         if (facadeView != null)
         {
@@ -622,14 +629,15 @@ namespace MediaPortal.GUI.Music
         case GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED:
           if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC && playlistPlayer.CurrentSong != 0)
           {
-//
+            //
           }
           break;
         // delaying internet lookups for smooth playback start
         case GUIMessage.MessageType.GUI_MSG_PLAYING_10SEC:
           if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC && ScrobblerOn == true) // && playlistPlayer.CurrentSong != 0)
           {
-            StartScrobbleThread();
+            //StartScrobbleThread();
+            DoScrobbleLookups();
           }
           break;
       }
@@ -1114,14 +1122,14 @@ namespace MediaPortal.GUI.Music
     }
 
     //added by rtv
-    private void StartScrobbleThread()
-    {
-      ScrobbleThread = new Thread(new ThreadStart(ScrobbleLookupThread));
-      // allow windows to kill the thread if the main app was closed
-      ScrobbleThread.IsBackground = true;
-      ScrobbleThread.Priority = ThreadPriority.BelowNormal;
-      ScrobbleThread.Start();
-    }
+    //private void StartScrobbleThread()
+    //{
+    //  ScrobbleThread = new Thread(new ThreadStart(ScrobbleLookupThread));
+    //  // allow windows to kill the thread if the main app was closed
+    //  ScrobbleThread.IsBackground = true;
+    //  ScrobbleThread.Priority = ThreadPriority.BelowNormal;
+    //  ScrobbleThread.Start();
+    //}
 
     void CheckScrobbleInstantStart()
     {
@@ -1134,18 +1142,33 @@ namespace MediaPortal.GUI.Music
           // if scrobbling gets activated after 10 sec event nothing would happen without this
           if (playList.Count == 1 && g_Player.CurrentPosition > 10)
           {
-            StartScrobbleThread();
+            DoScrobbleLookups();
           }
         }
         if (playList.Count == 0)
           if (currentScrobbleMode != ScrobbleMode.Similar)
           {
-            StartScrobbleThread();
+            DoScrobbleLookups();
           }
       }
     }
 
-    void ScrobbleLookupThread()
+    private void UpdateSimilarArtists(string _trackArtist)
+    {
+      if (_trackArtist == null)
+        return;
+      if (_trackArtist != String.Empty)
+      {
+        SimilarArtistRequest request2 = new SimilarArtistRequest(
+                      _trackArtist,
+                      _useSimilarRandom,
+                      new SimilarArtistRequest.SimilarArtistRequestHandler(OnUpdateSimilarArtistsCompleted));
+        _lastSimilarArtistRequest = request2;
+        ascrobbler.AddRequest(request2);
+      }
+    }
+
+    void DoScrobbleLookups()
     {
       PlayList currentPlaylist = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
       // ignore list count if setting is disabled
@@ -1179,24 +1202,27 @@ namespace MediaPortal.GUI.Music
                 if (_scrobbleStartTrack == null || _scrobbleStartTrack.Artist == String.Empty)
                   _scrobbleStartTrack = current10SekSong.Clone();
 
-                lock (ScrobbleLock)
+                try
                 {
-                  try
-                  {
-                    scrobbledArtists = ascrobbler.getSimilarArtists(current10SekSong.ToURLArtistString(), _useSimilarRandom);
-                  }
-                  catch (Exception ex)
-                  {
-                    Log.Error("ScrobbleLookupThread: exception on lookup Similar - {0}", ex.Message);
-                  }
+                  if (_lastSimilarArtistRequest != null)
+                    ascrobbler.RemoveRequest(_lastSimilarArtistRequest);
+
+                  UpdateSimilarArtists(current10SekSong.Artist);
+                  //scrobbledArtists = ascrobbler.getSimilarArtists(current10SekSong.ToURLArtistString(), _useSimilarRandom);
+                  return;
                 }
+                catch (Exception ex)
+                {
+                  Log.Error("ScrobbleLookupThread: exception on lookup Similar - {0}", ex.Message);
+                }
+
               }
             }
             break;
 
           case ScrobbleMode.Neighbours:
-            lock (ScrobbleLock)
-            {
+            //lock (ScrobbleLock)
+            //{
               try
               {
                 scrobbledArtists = ascrobbler.getNeighboursArtists(true);
@@ -1205,12 +1231,12 @@ namespace MediaPortal.GUI.Music
               {
                 Log.Error("ScrobbleLookupThread: exception on lookup Neighbours - {0}", ex.Message);
               }
-            }
+            //}
             break;
 
           case ScrobbleMode.Friends:
-            lock (ScrobbleLock)
-            {
+            //lock (ScrobbleLock)
+            //{
               try
               {
                 scrobbledArtists = ascrobbler.getFriendsArtists(true);
@@ -1219,11 +1245,11 @@ namespace MediaPortal.GUI.Music
               {
                 Log.Error("ScrobbleLookupThread: exception on lookup - Friends {0}", ex.Message);
               }
-            }
+            //}
             break;
           case ScrobbleMode.Random:
-            lock (ScrobbleLock)
-            {
+            //lock (ScrobbleLock)
+            //{
               try
               {
                 switch (currentOfflineMode)
@@ -1246,53 +1272,67 @@ namespace MediaPortal.GUI.Music
               {
                 Log.Error("ScrobbleLookupThread: exception on lookup - Random {0}", ex.Message);
               }
-            }
+            //}
             break;
         }
 
-        if (scrobbledArtists.Count < _maxScrobbledArtistsForSongs)
-        {
-          if (scrobbledArtists.Count > 0)
-            for (int i = 0; i < scrobbledArtists.Count; i++)
-              ScrobbleSimilarArtists(scrobbledArtists[i].Artist);
-        }
-        else // enough artists
-        {
-          int addedSimilarSongs = 0;
-          int loops = 0;
-          int previouspreferCount = _preferCountForTracks;
-          // we WANT to get songs from _maxScrobbledArtistsForSongs
-          while (addedSimilarSongs < _maxScrobbledArtistsForSongs)
-          {
-            if (ScrobbleSimilarArtists(scrobbledArtists[loops].Artist))
-              addedSimilarSongs++;
-            loops++;
-            // okay okay seems like there aren't enough files to add
-            if (loops == scrobbledArtists.Count - 1)
-              // make sure we get a few songs at least...
-              //if (_preferCountForTracks != 2)
-              //{
-              //  _preferCountForTracks = 2;
-              //  Log.Info("ScrobbleLookupThread: could not find enough songs - temporarily accepting all songs");
-              //  loops = 0;
-              //}
-              //else
-                break;
-          }
-          _preferCountForTracks = previouspreferCount;
-        }
-        if (facadeView != null)
-        {          
-          // only focus the file while playlist is visible
-          if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST)
-          {
-            LoadDirectory(String.Empty);
-            SelectCurrentPlayingSong();
-          }
-        }
+        OnScrobbleLookupsCompleted(scrobbledArtists);
       }
       else
         Log.Debug("ScrobbleLookupThread: too many items ({0}) in playlist - pausing...", Convert.ToString(currentPlaylist.Count));
+    }
+
+
+    public void OnUpdateSimilarArtistsCompleted(SimilarArtistRequest request2, List<Song> SimilarArtists)
+    {
+      if (request2.Equals(_lastSimilarArtistRequest))
+        OnScrobbleLookupsCompleted(SimilarArtists);
+      else
+        Log.Warn("GUIMusicPlaylist: OnUpdateSimilarArtistsCompleted: unexpected response for request: {0}", request2.Type);
+    }
+
+    void OnScrobbleLookupsCompleted(List<Song> LookupArtists)
+    {
+      if (LookupArtists.Count < _maxScrobbledArtistsForSongs)
+      {
+        if (LookupArtists.Count > 0)
+          for (int i = 0; i < LookupArtists.Count; i++)
+            ScrobbleSimilarArtists(LookupArtists[i].Artist);
+      }
+      else // enough artists
+      {
+        int addedSimilarSongs = 0;
+        int loops = 0;
+        int previouspreferCount = _preferCountForTracks;
+        // we WANT to get songs from _maxScrobbledArtistsForSongs
+        while (addedSimilarSongs < _maxScrobbledArtistsForSongs)
+        {
+          if (ScrobbleSimilarArtists(LookupArtists[loops].Artist))
+            addedSimilarSongs++;
+          loops++;
+          // okay okay seems like there aren't enough files to add
+          if (loops == LookupArtists.Count - 1)
+            // make sure we get a few songs at least...
+            //if (_preferCountForTracks != 2)
+            //{
+            //  _preferCountForTracks = 2;
+            //  Log.Info("ScrobbleLookupThread: could not find enough songs - temporarily accepting all songs");
+            //  loops = 0;
+            //}
+            //else
+            break;
+        }
+        _preferCountForTracks = previouspreferCount;
+      }
+      if (facadeView != null)
+      {
+        // only focus the file while playlist is visible
+        if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST)
+        {
+          LoadDirectory(String.Empty);
+          SelectCurrentPlayingSong();
+        }
+      }
     }
 
     bool ScrobbleSimilarArtists(string Artist_)
