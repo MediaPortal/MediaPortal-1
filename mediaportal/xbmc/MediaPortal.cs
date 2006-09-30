@@ -218,7 +218,7 @@ public class MediaPortalApp : D3DApp, IRender
       splashScreen = new SplashScreen();
       splashScreen.Version = version;
       splashScreen.Run();
-            //clientInfo=null;
+      //clientInfo=null;
 #endif
 
 
@@ -320,41 +320,41 @@ public class MediaPortalApp : D3DApp, IRender
       try
       {
 #endif
-      if (splashScreen != null)
-      {
-        splashScreen.SetInformation("Initializing DirectX...");
-      }
-      MediaPortalApp app = new MediaPortalApp();
-      Log.Info("Main: Initializing DirectX");
-      if (app.CreateGraphicsSample())
-      {
-        IMessageFilter filter = new ThreadMessageFilter(app);
-        Application.AddMessageFilter(filter);
+        if (splashScreen != null)
+        {
+          splashScreen.SetInformation("Initializing DirectX...");
+        }
+        MediaPortalApp app = new MediaPortalApp();
+        Log.Info("Main: Initializing DirectX");
+        if (app.CreateGraphicsSample())
+        {
+          IMessageFilter filter = new ThreadMessageFilter(app);
+          Application.AddMessageFilter(filter);
 
-        // Initialize Input Devices
-        InputDevices.Init();
+          // Initialize Input Devices
+          InputDevices.Init();
 
-        try
-        {
-          //app.PreRun();
-          Log.Info("Main: Running");
-          GUIGraphicsContext.BlankScreen = false;
-          Application.Run(app);
-          Debug.WriteLine("after Application.Run");
+          try
+          {
+            //app.PreRun();
+            Log.Info("Main: Running");
+            GUIGraphicsContext.BlankScreen = false;
+            Application.Run(app);
+            Debug.WriteLine("after Application.Run");
+          }
+          //#if !DEBUG
+          catch (Exception ex)
+          {
+            Log.Error(ex);
+            Log.Error("MediaPortal stopped due 2 an exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+          }
+          //#endif
+          finally
+          {
+            Application.RemoveMessageFilter(filter);
+          }
+          app.OnExit();
         }
-        //#if !DEBUG
-        catch (Exception ex)
-        {
-          Log.Error(ex);
-          Log.Error("MediaPortal stopped due 2 an exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
-        }
-        //#endif
-        finally
-        {
-          Application.RemoveMessageFilter(filter);
-        }
-        app.OnExit();
-      }
 #if !DEBUG
       }
       catch (Exception ex)
@@ -430,15 +430,15 @@ public class MediaPortalApp : D3DApp, IRender
   }
 
 #if !DEBUG
-    private static UnhandledExceptionLogger logger;
+  private static UnhandledExceptionLogger logger;
 
-    /// <remark>This method is only used in release builds.
-    private static void AddExceptionHandler()
-    {
-        logger = new UnhandledExceptionLogger();
-        AppDomain current = AppDomain.CurrentDomain;
-        current.UnhandledException += new UnhandledExceptionEventHandler(logger.LogCrash);
-    }
+  /// <remark>This method is only used in release builds.
+  private static void AddExceptionHandler()
+  {
+    logger = new UnhandledExceptionLogger();
+    AppDomain current = AppDomain.CurrentDomain;
+    current.UnhandledException += new UnhandledExceptionEventHandler(logger.LogCrash);
+  }
 #endif
 
   #endregion
@@ -456,11 +456,16 @@ public class MediaPortalApp : D3DApp, IRender
 
   public MediaPortalApp()
   {
+    int clientSizeX = 720;
+    int clientSizeY = 576;
+
     // check to load plugins
     using (Settings xmlreader = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
     {
       useScreenSaver = xmlreader.GetValueAsBool("general", "screensaver", true);
       timeScreenSaver = xmlreader.GetValueAsInt("general", "screensavertime", 60);
+      clientSizeX = xmlreader.GetValueAsInt("general", "sizex", clientSizeX);
+      clientSizeY = xmlreader.GetValueAsInt("general", "sizey", clientSizeY);
     }
 
     // check if MediaPortal is already running...
@@ -469,9 +474,9 @@ public class MediaPortalApp : D3DApp, IRender
 
     Log.Info(@"Main: Deleting old log\capture.log");
     Utils.FileDelete(Config.Get(Config.Dir.Log) + "capture.log");
-    if (Screen.PrimaryScreen.Bounds.Width > 720)
+    if (Screen.PrimaryScreen.Bounds.Width > clientSizeX)
     {
-      MinimumSize = new Size(720 + 8, 576 + 27);
+      MinimumSize = new Size(clientSizeX + 8, clientSizeY + 27);
     }
     else
     {
@@ -1935,12 +1940,12 @@ public class MediaPortalApp : D3DApp, IRender
       Close();
     }
 #if !DEBUG
-        catch (Exception ex)
-        {
-          Log.Error(ex);
-          Log.Error("  exception: {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
-          throw new Exception("exception occured", ex);
-        }
+    catch (Exception ex)
+    {
+      Log.Error(ex);
+      Log.Error("  exception: {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+      throw new Exception("exception occured", ex);
+    }
 #endif
   }
 
