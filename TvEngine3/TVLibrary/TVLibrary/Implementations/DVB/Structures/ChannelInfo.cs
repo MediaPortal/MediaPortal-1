@@ -348,8 +348,8 @@ namespace TvLibrary.Implementations.DVB.Structures
         System.Array.Copy(buf, pointer, data, 0, x);
         if (indicator == 0x9)
         {
-          pat.caPMT.CADescriptors_PRG.Add(data);
-          pat.caPMT.ProgramInfoLength += data.Length;
+          caPMT.CADescriptors_PRG.Add(data);
+          caPMT.ProgramInfoLength += data.Length;
           //string tmpString = DVB_CADescriptor(data);
           //if (pidText.IndexOf(tmpString, 0) == -1)
           // pidText += tmpString + ";";
@@ -426,7 +426,7 @@ namespace TvLibrary.Implementations.DVB.Structures
                     break;
                   case 0x09:
                     caPMT.StreamType = pmt.stream_type;
-                    caPMT.ElementaryStreamPID = pmt.elementary_PID;
+                    caPMT.ElementaryStreamPID = pmt.pid;
                     caPMT.CAPmt_CommandID_ES = CommandIdType.Descrambling;
                     caPMT.CADescriptors_ES.Add(data);
                     caPMT.ElementaryStreamInfoLength = pmt.ES_info_length;

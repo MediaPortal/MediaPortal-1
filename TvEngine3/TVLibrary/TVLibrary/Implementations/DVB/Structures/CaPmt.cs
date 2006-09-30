@@ -5,7 +5,7 @@ using System.Text;
 
 namespace TvLibrary.Implementations.DVB.Structures
 {
-  enum ListManagementType : byte
+  public enum ListManagementType : byte
   {
     More=0,
     First=1,
@@ -14,7 +14,7 @@ namespace TvLibrary.Implementations.DVB.Structures
     Add=4,
     Update=5
   };
-  enum CommandIdType: byte
+  public enum CommandIdType: byte
   {
     Descrambling=1,
     MMI=2,
