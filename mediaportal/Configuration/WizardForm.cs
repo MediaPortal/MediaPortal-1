@@ -775,6 +775,14 @@ namespace MediaPortal.Configuration
       DVDClass.SaveSettings();
       DVDClass.Dispose();
 
+      //
+      // Make sure default enabled plugins are activated in MediaPortal.xml
+      // (required since PluginManager only loads plugins which are listed in there)
+      //
+      Sections.PluginsNew pluginSettings = new MediaPortal.Configuration.Sections.PluginsNew();
+      pluginSettings.OnSectionActivated();
+      pluginSettings.SaveSettings();
+
       MediaPortal.Profile.Settings.SaveCache();
     }
   }
