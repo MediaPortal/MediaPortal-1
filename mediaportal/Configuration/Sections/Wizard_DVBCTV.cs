@@ -24,18 +24,8 @@
 #endregion
 
 using System;
-using System.IO;
-using System.Xml;
-using System.Drawing;
-using System.Collections;
-using System.ComponentModel;
-using System.Windows.Forms;
-using System.Threading;
-using MediaPortal.GUI.Library;
 using MediaPortal.Util;
-using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
-using MediaPortal.TV.Scanning;
 
 namespace MediaPortal.Configuration.Sections
 {

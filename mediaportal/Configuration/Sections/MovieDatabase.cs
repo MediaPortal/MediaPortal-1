@@ -25,15 +25,11 @@
 
 using System;
 using System.Collections;
-using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
 using System.IO;
-using System.Threading;
 using MediaPortal.GUI.Library;
-using MediaPortal.Playlists;
-using MediaPortal.TagReader;
 using MediaPortal.Video.Database;
 using MediaPortal.Util;
 
@@ -1462,7 +1458,7 @@ namespace MediaPortal.Configuration.Sections
 
       if (dialogResult == DialogResult.Yes)
       {
-        string database = Config.Get(Config.Dir.Database) + "VideoDatabaseV5.db3";
+        string database = Config.GetFile(Config.Dir.Database, "VideoDatabaseV5.db3");
         if (File.Exists(database))
         {
           VideoDatabase.Dispose();

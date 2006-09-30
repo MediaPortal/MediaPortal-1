@@ -51,11 +51,9 @@ using Microsoft.DirectX.DirectDraw;
 using Caps = Microsoft.DirectX.Direct3D.Caps;
 using CreateFlags = Microsoft.DirectX.Direct3D.CreateFlags;
 using Device = Microsoft.DirectX.DirectDraw.Device;
-using ResourceManager = System.Resources.ResourceManager;
 using Surface = Microsoft.DirectX.DirectDraw.Surface;
 using SurfaceDescription = Microsoft.DirectX.DirectDraw.SurfaceDescription;
 using Timer = System.Windows.Forms.Timer;
-using Utils = MediaPortal.Util.Utils;
 using MediaPortal.TV.Recording;
 using MediaPortal.Video.Database;
 
@@ -330,7 +328,7 @@ namespace MediaPortal
       showCursorWhenFullscreen = false;
       bool debugChangeDeviceHack = false;
 
-      using (Settings xmlreader = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         useExclusiveDirectXMode = xmlreader.GetValueAsBool("general", "exclusivemode", true);
         autoHideTaskbar = xmlreader.GetValueAsBool("general", "hidetaskbar", true);
@@ -414,7 +412,7 @@ namespace MediaPortal
         storedLocation = this.Location;
         oldBounds = new Rectangle(Bounds.X, Bounds.Y, Bounds.Width, Bounds.Height);
 
-        using (Settings xmlreader = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           string strStartFull;
           if (_fullscreenOverride == "yes")
@@ -1719,7 +1717,7 @@ namespace MediaPortal
       Cursor.Show();
       Invalidate(true);
 
-      using (Settings xmlreader = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         xmlreader.Clear();
 
       MediaPortal.Util.Utils.StartProcess("Configuration.exe", "", false, false);
@@ -2365,7 +2363,7 @@ namespace MediaPortal
       if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false)
         SwitchFullScreenOrWindowed(true);
 
-      using (Settings xmlreader = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         xmlreader.Clear();
 
       Process.Start("configuration.exe", @"/wizard /section=wizards\television.xml");
@@ -2378,7 +2376,7 @@ namespace MediaPortal
       if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false)
         SwitchFullScreenOrWindowed(true);
 
-      using (Settings xmlreader = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         xmlreader.Clear();
 
       Process.Start("configuration.exe", @"/wizard /section=wizards\pictures.xml");
@@ -2391,7 +2389,7 @@ namespace MediaPortal
       if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false)
         SwitchFullScreenOrWindowed(true);
 
-      using (Settings xmlreader = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         xmlreader.Clear();
 
       Process.Start("configuration.exe", @"/wizard /section=wizards\music.xml");
@@ -2404,7 +2402,7 @@ namespace MediaPortal
       if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false)
         SwitchFullScreenOrWindowed(true);
 
-      using (Settings xmlreader = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         xmlreader.Clear();
 
       Process.Start("configuration.exe", @"/wizard /section=wizards\movies.xml");
@@ -2417,7 +2415,7 @@ namespace MediaPortal
       if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false)
         SwitchFullScreenOrWindowed(true);
 
-      using (Settings xmlreader = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         xmlreader.Clear();
 
       Process.Start("configuration.exe", @"/wizard /section=wizards\dvd.xml");

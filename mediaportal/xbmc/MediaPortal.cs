@@ -199,7 +199,7 @@ public class MediaPortalApp : D3DApp, IRender
       Directory.SetCurrentDirectory(applicationPath);
       Log.Info("Main: Set current directory to: {0}", applicationPath);
       //check if mediaportal has been configured
-      if (!File.Exists(Config.Get(Config.Dir.Config) + "mediaportal.xml"))
+      if (!File.Exists(Config.GetFile(Config.Dir.Config, "mediaportal.xml")))
       {
         //no, then start configuration.exe in wizard form
         System.Diagnostics.Process.Start("configuration.exe", @"/wizard");
@@ -460,7 +460,7 @@ public class MediaPortalApp : D3DApp, IRender
     int clientSizeY = 576;
 
     // check to load plugins
-    using (Settings xmlreader = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+    using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
     {
       useScreenSaver = xmlreader.GetValueAsBool("general", "screensaver", true);
       timeScreenSaver = xmlreader.GetValueAsInt("general", "screensavertime", 60);
@@ -473,7 +473,7 @@ public class MediaPortalApp : D3DApp, IRender
     Log.Info("Main: Checking for running MediaPortal instance");
 
     Log.Info(@"Main: Deleting old log\capture.log");
-    Utils.FileDelete(Config.Get(Config.Dir.Log) + "capture.log");
+    Utils.FileDelete(Config.GetFile(Config.Dir.Log, "capture.log"));
     if (Screen.PrimaryScreen.Bounds.Width > clientSizeX)
     {
       MinimumSize = new Size(clientSizeX + 8, clientSizeY + 27);
@@ -491,7 +491,7 @@ public class MediaPortalApp : D3DApp, IRender
 
     try
     {
-      using (Settings xmlreader = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         m_strSkin = xmlreader.GetValueAsString("skin", "name", "BlueTwo");
         m_strLanguage = xmlreader.GetValueAsString("skin", "language", "English");
@@ -761,7 +761,7 @@ public class MediaPortalApp : D3DApp, IRender
 
     EXECUTION_STATE oldState = EXECUTION_STATE.ES_CONTINUOUS;
     bool turnMonitorOn;
-    using (Settings xmlreader = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+    using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
     {
       turnMonitorOn = xmlreader.GetValueAsBool("general", "turnmonitoronafterresume", false);
       if (turnMonitorOn)
@@ -897,7 +897,7 @@ public class MediaPortalApp : D3DApp, IRender
     tMouseClickTimer.Elapsed += new ElapsedEventHandler(tMouseClickTimer_Elapsed);
     tMouseClickTimer.SynchronizingObject = this;
 
-    using (Settings xmlreader = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+    using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
     {
       string strDefault = xmlreader.GetValueAsString("myradio", "default", "");
       if (strDefault != "")
@@ -1029,7 +1029,7 @@ public class MediaPortalApp : D3DApp, IRender
     }
     GUIGraphicsContext.Skin = m_strSkin;
     GUIGraphicsContext.ActiveForm = Handle;
-    GUILocalizeStrings.Load(Config.Get(Config.Dir.Language) + m_strLanguage + @"\strings.xml");
+    GUILocalizeStrings.Load(Config.GetFile(Config.Dir.Language, m_strLanguage , "strings.xml"));
 
     if (splashScreen != null)
     {
@@ -1040,7 +1040,7 @@ public class MediaPortalApp : D3DApp, IRender
     {
       splashScreen.SetInformation("Loading fonts...");
     }
-    GUIFontManager.LoadFonts(Config.Get(Config.Dir.Skin) + m_strSkin + @"\fonts.xml");
+    GUIFontManager.LoadFonts(Config.GetFile(Config.Dir.Skin, m_strSkin,"fonts.xml"));
 
     if (splashScreen != null)
     {
@@ -1077,7 +1077,7 @@ public class MediaPortalApp : D3DApp, IRender
 
     Log.Info("Main: Activating windowmanager");
     // Edit Michel
-    using (Settings xmlreader = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+    using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
     {
       _startWithBasicHome = xmlreader.GetValueAsBool("general", "startbasichome", false);
     }
@@ -1136,7 +1136,7 @@ public class MediaPortalApp : D3DApp, IRender
     {
       Log.Info("Main: Resetting DX9 device");
       GUIWaitCursor.Dispose();
-      GUIFontManager.LoadFonts(Config.Get(Config.Dir.Skin) + m_strSkin + @"\fonts.xml");
+      GUIFontManager.LoadFonts(Config.GetFile(Config.Dir.Skin, m_strSkin ,"fonts.xml"));
       GUIFontManager.InitializeDeviceObjects();
       if (GUIGraphicsContext.DX9Device != null)
       {
@@ -2903,7 +2903,7 @@ GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter = TextureFilter.None;
     //
     // Only load the USBUIRT device if it has been enabled in the configuration
     //
-    using (Settings xmlreader = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+    using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
     {
       bool inputEnabled = xmlreader.GetValueAsBool("USBUIRT", "internal", false);
       bool outputEnabled = xmlreader.GetValueAsBool("USBUIRT", "external", false);
@@ -3028,7 +3028,7 @@ GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter = TextureFilter.None;
     catch (Exception)
     {
     }
-    using (Settings xmlreader = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+    using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
     {
       m_iDateLayout = xmlreader.GetValueAsInt("home", "datelayout", 0);
     }
@@ -3070,7 +3070,7 @@ GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter = TextureFilter.None;
         }
         //Check the general.enables3trick configuration option and create/delete the USBBIOSx
         //value accordingly
-        using (Settings xmlreader = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           bool enableS3Trick = xmlreader.GetValueAsBool("general", "enables3trick", true);
           if (enableS3Trick)

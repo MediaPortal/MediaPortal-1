@@ -25,27 +25,18 @@
 
 using System;
 using System.IO;
-using System.Xml;
 using System.Collections;
-using System.ComponentModel;
-using System.Drawing;
 using System.Windows.Forms;
 #pragma warning disable 108
-using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Soap;
-using DShowNET;
-using DShowNET.Helper;
-using MediaPortal.Player;
-using SQLite.NET;
 using MediaPortal.GUI.Library;
 using MediaPortal.Radio.Database;
 using MediaPortal.TV.Recording;
-using MediaPortal.Configuration.Controls;
 using MediaPortal.Util;
 
 namespace MediaPortal.Configuration.Sections
 {
-  public class RadioStations : MediaPortal.Configuration.SectionSettings
+  public class RadioStations : SectionSettings
   {
     public class ComboCard
     {
@@ -773,9 +764,9 @@ namespace MediaPortal.Configuration.Sections
     {
 
 			comboBoxCard.Items.Clear();
-      if (File.Exists(Config.Get(Config.Dir.Config) + "capturecards.xml"))
+      if (File.Exists(Config.GetFile(Config.Dir.Config, "capturecards.xml")))
       {
-        using (FileStream fileStream = new FileStream(Config.Get(Config.Dir.Config) + "capturecards.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+        using (FileStream fileStream = new FileStream(Config.GetFile(Config.Dir.Config, "capturecards.xml"), FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
         {
           try
           {

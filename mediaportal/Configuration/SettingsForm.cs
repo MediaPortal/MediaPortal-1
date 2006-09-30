@@ -114,7 +114,7 @@ namespace MediaPortal.Configuration
       //
 
       string strLanguage;
-      using (Settings xmlreader = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         strLanguage = xmlreader.GetValueAsString("skin", "language", "English");
       }
@@ -683,7 +683,7 @@ namespace MediaPortal.Configuration
     {
       int MaximumShares = 20;
       //Do we have 1 or more music,picture,video shares?
-      using (Settings xmlreader = new Settings(Config.Get(Config.Dir.Config) + "MediaPortal.xml"))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         string playlistFolder = xmlreader.GetValueAsString("music", "playlists", "");
         if (playlistFolder == String.Empty)

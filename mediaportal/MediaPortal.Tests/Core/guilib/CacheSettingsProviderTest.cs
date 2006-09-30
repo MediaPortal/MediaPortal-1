@@ -1,12 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using MediaPortal.Services;
 using MediaPortal.Tests.MockObjects;
 using NUnit.Framework;
 using MediaPortal.Profile;
-using System.IO;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Tests.Core.Profile
 {

@@ -23,13 +23,8 @@
 
 #endregion
 
-using System;
 using System.IO;
 using System.Xml;
-using System.Drawing;
-using System.Collections;
-using System.ComponentModel;
-using System.Windows.Forms;
 using MediaPortal.Util;
 
 namespace MediaPortal
@@ -145,7 +140,7 @@ namespace MediaPortal
 
 			string versionBlueTwoSkin="";
 			string versionSkin="";
-			string filename= Config.Get(Config.Dir.Skin) + @"BlueTwo\references.xml";
+			string filename= Config.GetFile(Config.Dir.Skin, "BlueTwo\references.xml");
 			if(File.Exists(filename))
 			{	
 				XmlDocument doc=new XmlDocument();
@@ -154,7 +149,7 @@ namespace MediaPortal
 				if (node!=null && node.InnerText!=null)
 					versionBlueTwoSkin=node.InnerText;
 			}
-      filename = String.Format(Config.Get(Config.Dir.Skin) + @"{0}\references.xml", skin);
+      filename = Config.GetFile(Config.Dir.Skin, skin, "references.xml");
 			if(File.Exists(filename))
 			{	
 				XmlDocument doc=new XmlDocument();

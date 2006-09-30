@@ -23,12 +23,8 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using MediaPortal.InputDevices;
 using NUnit.Framework;
-using System.IO;
 using MediaPortal.Util;
 
 namespace MediaPortal.Tests.Core.InputDevices
@@ -55,7 +51,7 @@ namespace MediaPortal.Tests.Core.InputDevices
     {
       string xmlFile = "TestCustom";
       InputHandler inputHandler = new InputHandler(xmlFile);
-      Assert.AreEqual(Config.Get(Config.Dir.CustomInputDevice) + xmlFile + ".xml", inputHandler.GetXmlPath(xmlFile));
+      Assert.AreEqual(Config.GetFile(Config.Dir.CustomInputDevice, xmlFile + ".xml"), inputHandler.GetXmlPath(xmlFile));
     }
 
     [Test]
