@@ -213,7 +213,7 @@ namespace MediaPortal.GUI.Alarm
 		}
 		public string PluginName()
 		{
-			return GUILocalizeStrings.Get(850);
+			return "My Alarm";
 		}
 
 		#endregion
