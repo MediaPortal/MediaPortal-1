@@ -500,6 +500,7 @@ namespace Tag.MAC
 
       ID3Tag = new ID3_TAG();
       ApeTagBytes = 0;
+      FieldList = new List<ApeTagField>();
 
       try
       {
@@ -529,7 +530,7 @@ namespace Tag.MAC
             ApeTagBytes += ID3_TAG_BYTES;
           }
         }
-
+ 
         if (!HasId3Tag)
         {
           // Clear the invalid data we read in earlier

@@ -376,6 +376,15 @@ namespace Tag.FLAC
       if (Path.GetExtension(fileName).ToLower() != ".flac")
         throw new AudioFileTypeException("Expected FLAC file type.");
 
+      CommentList = new List<VorbisComment>();
+      ApeHeader = new APE_HEADER();
+      StreamInfo = new StreamInfoBlock();
+      PaddingBlock = new PaddingInfoBlock();
+      ApplicationInfo = new ApplicationInfoBlock();
+      VorbisCommentsInfo = new VorbisCommentInfoBlock();
+      CueSheetInfo = new CueSheetInfoBlock();
+
+
       base.Read(fileName);
       bool result = true;
 

@@ -504,6 +504,10 @@ namespace Tag.OGG
       if (Path.GetExtension(fileName).ToLower() != ".ogg")
         throw new AudioFileTypeException("Expected OGG file type.");
 
+      CommentList = new List<VorbisComment>();
+      PageTable = new Hashtable();
+      TotalSamples = 0;
+
       base.Read(fileName);
       bool result = true;
 

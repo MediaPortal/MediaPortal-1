@@ -123,12 +123,10 @@ namespace MediaPortal.TagReader
               musicTag.Title = reader.Title;
               musicTag.Track = reader.Track;
               musicTag.Year = reader.Year;
-
               musicTag.CoverArtImageBytes = reader.CoverArtImageBytes;
               musicTag.FileName = strFile;
               musicTag.BitRate = reader.AverageBitrate;
               musicTag.Lyrics = Utils.CleanLyrics(reader.Lyrics);
-
               if (musicTag.CoverArtImageBytes != null)
               {
                 System.Drawing.Image img = musicTag.CoverArtImage;
