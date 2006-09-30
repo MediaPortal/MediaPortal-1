@@ -1303,7 +1303,7 @@
 	</string>
 	<string>
 		<id>395</id>
-		<value>lätt dimma</value>
+		<value>dis</value>
 	</string>
 	<string>
 		<id>396</id>
@@ -1857,6 +1857,10 @@
 		<id>549</id>
 		<value>VSV</value>
 	</string>
+	<string>
+      <id>550</id>
+      <value>Beskär</value>
+   </string>
 	<string>
 		<id>551</id>
 		<value>VNV</value>
@@ -2556,6 +2560,10 @@
 	<string>
 		<id>770</id>
 		<value>Hittade ingen XMLTV-fil</value>
+	</string>
+	<string>
+      <id>777</id>
+      <value>Start av timeshift</value>
 	</string>
 	<string>
 		<id>778</id>
@@ -4053,6 +4061,104 @@
 		<id>2225</id>
 		<value>Mappen skapad!</value>
 	</string>
+		<!-- Wikipedia Strings -->
+	<string>
+		<id>2500</id>
+		<value>Inga söktermer inmatade!</value>
+	</string>
+	<string>
+		<id>2501</id>
+	<value>Vänligen mata in en giltig sökterm!</value>
+	</string>
+	<string>
+		<id>2502</id>
+		<value>Välj din lokala Wikipedia:</value>
+	</string>
+	<string>
+		<id>2503</id>
+		<value>Vald Wikipedia:</value>
+	</string>
+	<string>
+		<id>2504</id>
+		<value>Tyvärr, inga artiklar funna...</value>
+	</string>
+	<string>
+		<id>2505</id>
+		<value>Länkar till andra artiklar:</value>
+	</string>
+	<string>
+		<id>2506</id>
+		<value>Inga länkar funna i denna artikeln.</value>
+	</string>
+	<string>
+		<id>2507</id>
+		<value>Bilder i denna artikel:</value>
+	</string>
+	<string>
+		<id>2508</id>
+		<value>Inga bilder funna i denna artikeln.</value>
+	</string>
+	<string>
+		<id>2509</id>
+		<value>Den här sidan är bara en omdirigering.</value>
+	</string>
+	<string>
+		<id>2510</id>
+		<value>Vänligen välj mål för omdirigeringen i länklistan.</value>
+	</string>
+	<string>
+		<id>2511</id>
+		<value>Länkar</value>
+	</string>
+	<string>
+		<id>2512</id>
+		<value>Bilden kan inte visas.</value>
+	</string>
+	<string>
+		<id>2513</id>
+		<value>Vänligen kontrollera logfilen.</value>
+	</string>
+	<string>
+		<id>2514</id>
+		<value>Tillbaka till texten</value>
+	</string>
+	<string>
+		<id>2515</id>
+		<value>Bilder</value>
+	</string>
+	<string Prefix="Min ">
+		<id>2516</id>
+		<value>Wikipedia</value>
+	</string>	
+	<string>
+		<id>2600</id>
+		<value>Engelska</value>
+	</string>
+	<string>
+		<id>2601</id>
+		<value>Tyska</value>
+	</string>
+	<string>
+		<id>2602</id>
+		<value>Franska</value>
+	</string>
+	<string>
+		<id>2603</id>
+		<value>Holländska</value>
+	</string>
+	<string>
+		<id>2604</id>
+		<value>Norska</value>
+	</string>
+	<string>
+		<id>2605</id>
+		<value>Svenska</value>
+	</string>
+	<string>
+		<id>2606</id>
+		<value>Italienska</value>
+	</string>
+	<!-- End of Wikipedia Strings -->
 	<string>
 		<id>3000</id>
 		<value>Programalternativ</value>
@@ -4249,6 +4355,18 @@
 		<id>5925</id>
 		<value>Förbeställda DVD:er</value>
 	</string>
+	<string>
+      <id>6005</id>
+      <value>Timeshiftbuffer</value>
+    </string>
+	<string>
+      <id>6006</id>
+      <value>Start av TV</value>
+   </string>
+	<string>
+      <id>6008</id>
+      <value>Kanalordning</value>
+   </string>
 	<string>
 		<id>8000</id>
 		<value>Min e-post</value>
@@ -5405,4 +5523,8 @@
 		<id>10104</id>
 		<value>Liten TV-tablå</value>
 	</string>
+	<string>
+      <id>11000</id>
+      <value>Inställingar beskärning</value>
+   </string>
 </strings>
