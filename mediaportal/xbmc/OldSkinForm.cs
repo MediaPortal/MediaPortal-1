@@ -140,7 +140,7 @@ namespace MediaPortal
 
 			string versionBlueTwoSkin="";
 			string versionSkin="";
-			string filename= Config.GetFile(Config.Dir.Skin, "BlueTwo\references.xml");
+			string filename= Config.GetFile(Config.Dir.Skin, "BlueTwo\\references.xml");
 			if(File.Exists(filename))
 			{	
 				XmlDocument doc=new XmlDocument();
