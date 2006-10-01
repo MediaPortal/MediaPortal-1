@@ -20,16 +20,16 @@
 			<id>0</id>
 			<posX>142</posX>
 			<posY>532</posY>
-			<width>214</width>
-			<height>178</height>
+			<width>220</width>
+			<height>182</height>
 			<texture>playback_background.png</texture>
 		</control>
 		<control>
 			<description>music logo</description>
 			<type>image</type>
 			<id>1</id>
-			<posX>163</posX>
-			<posY>546</posY>
+			<posX>160</posX>
+			<posY>548</posY>
 			<width>180</width>
 			<height>144</height>
 			<keepaspectratio>yes</keepaspectratio>
