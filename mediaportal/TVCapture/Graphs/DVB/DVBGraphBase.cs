@@ -3593,7 +3593,7 @@ namespace MediaPortal.TV.Recording
 
         if ( info.serviceType != Mpeg2VideoServiceType && info.serviceType != Mpeg2AudioServiceType && info.serviceType != Mpeg4VideoServiceType )
         {
-          Log.Info("DVBGraph:unknown service type: provider:{0} service:{1} scrambled:{2} frequency:{3} kHz networkid:{4} transportid:{5} serviceid:{6} tv:{7} radio:{8} audiopid:0x{9:X} videopid:0x{10:X} teletextpid:0x{11:X} program:{12} pcr pid:0x{13:X} service type:{14} major:{15} minor:{16}",
+          Log.Info("DVBGraph:unknown service type: provider:{0} service:{1} scrambled:{2} frequency:{3} kHz networkid:{4} transportid:{5} serviceid:{6} tv:{7} radio:{8} audiopid:0x{9:X} videopid:0x{10:X} teletextpid:0x{11:X} program:{12} pcr pid:0x{13:X} service type:{14} major:{15} minor:{16} pmt:0x{19:X}",
                                             info.service_provider_name,
                                             info.service_name,
                                             info.scrambled,
@@ -3605,10 +3605,10 @@ namespace MediaPortal.TV.Recording
                                             _currentTuningObject.AudioPid, _currentTuningObject.VideoPid, _currentTuningObject.TeletextPid,
                                             info.program_number,
                                             info.pcr_pid,
-                                            info.serviceType, info.majorChannel, info.minorChannel);
+                                            info.serviceType, info.majorChannel, info.minorChannel, info.network_pmt_PID);
           continue;
         }
-        Log.Info("DVBGraph:Found provider:{0} service:{1} scrambled:{2} frequency:{3} kHz networkid:{4} transportid:{5} serviceid:{6} tv:{7} radio:{8} audiopid:0x{9:X} videopid:0x{10:X} teletextpid:0x{11:X} program:{12} pcr pid:0x{13:X} ac3 pid:0x{14:X} major:{15} minor:{16} LCN:{17} type:{18}",
+        Log.Info("DVBGraph:Found provider:{0} service:{1} scrambled:{2} frequency:{3} kHz networkid:{4} transportid:{5} serviceid:{6} tv:{7} radio:{8} audiopid:0x{9:X} videopid:0x{10:X} teletextpid:0x{11:X} program:{12} pcr pid:0x{13:X} ac3 pid:0x{14:X} major:{15} minor:{16} LCN:{17} type:{18} pmt:0x{19)",
                                             info.service_provider_name,
                                             info.service_name,
                                             info.scrambled,
@@ -3619,7 +3619,7 @@ namespace MediaPortal.TV.Recording
                                             hasVideo, ( ( !hasVideo ) && hasAudio ),
                                             _currentTuningObject.AudioPid, _currentTuningObject.VideoPid, _currentTuningObject.TeletextPid,
                                             info.program_number,
-                                            info.pcr_pid, _currentTuningObject.AC3Pid, info.majorChannel, info.minorChannel, info.LCN, info.serviceType);
+                                            info.pcr_pid, _currentTuningObject.AC3Pid, info.majorChannel, info.minorChannel, info.LCN, info.serviceType,info.network_pmt_PID);
 
         if ( info.serviceID == 0 )
         {
@@ -3706,25 +3706,28 @@ namespace MediaPortal.TV.Recording
               //check if provider differs
               if ( String.Compare(providerName, newchannel.ServiceProvider, true) != 0 )
               {
-                //different provider. change Tv channel name to include the provider as well
-
-                isNewChannel = true;
-                channelId = -1;
-                newchannel.ServiceName = String.Format("{0}-{1}", newchannel.ServiceName, newchannel.ServiceProvider);
-                existingTvChannel = new TVChannel();
-                existingTvChannel.Name = newchannel.ServiceName;
-
-                //check if there is a TV channel with the name: servicename-providername
-                foreach ( TVChannel tvchan in tvChannels )
+                if (providerName.Length > 0 && newchannel.ServiceProvider.Length > 0)
                 {
-                  if ( String.Compare(tvchan.Name, newchannel.ServiceName, true) == 0 )
-                  {
-                    //yes TV channel with this name exists in the database...
+                  //different provider. change Tv channel name to include the provider as well
 
-                    existingTvChannel = tvchan;
-                    isNewChannel = false;
-                    channelId = tvchan.ID;
-                    break;
+                  isNewChannel = true;
+                  channelId = -1;
+                  newchannel.ServiceName = String.Format("{0}-{1}", newchannel.ServiceName, newchannel.ServiceProvider);
+                  existingTvChannel = new TVChannel();
+                  existingTvChannel.Name = newchannel.ServiceName;
+
+                  //check if there is a TV channel with the name: servicename-providername
+                  foreach (TVChannel tvchan in tvChannels)
+                  {
+                    if (String.Compare(tvchan.Name, newchannel.ServiceName, true) == 0)
+                    {
+                      //yes TV channel with this name exists in the database...
+
+                      existingTvChannel = tvchan;
+                      isNewChannel = false;
+                      channelId = tvchan.ID;
+                      break;
+                    }
                   }
                 }
               }
