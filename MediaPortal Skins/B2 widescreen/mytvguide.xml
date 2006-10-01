@@ -24,9 +24,9 @@
 		<control>
 			<type>image</type>
 			<id>1</id>
-			<posX>142</posX>
-			<posY>493</posY>
-			<texture>hover_my tv.png</texture>
+			<posX>1142</posX>
+			<posY>563</posY>
+			<texture>-</texture>
 		</control>
 		<control>
 			<description>Date</description>
@@ -67,8 +67,8 @@
 			<id>2</id>
 			<posX>113</posX>
 			<posY>120</posY>
-			<width>806</width>
-			<height>420</height>
+			<width>1140</width>
+			<height>440</height>
 			<colordiffuse>60ffffff</colordiffuse>
 			<texture>-</texture>
 		</control>
@@ -78,7 +78,7 @@
 			<id>32</id>
 			<posX>436</posX>
 			<posY>120</posY>
-			<font>font16</font>
+			<font>font10</font>
 			<align>left</align>
 			<textcolor>FFFFFFFF</textcolor>
 		</control>
@@ -120,7 +120,9 @@
 			<description>day spin control</description>
 			<type>spincontrol</type>
 			<id>6</id>
-			<posX>113</posX>
+			<width>24</width>
+			<height>24</height>
+			<posX>119</posX>
 			<posY>122</posY>
 			<showrange>no</showrange>
 			<orientation>horizontal</orientation>
@@ -137,8 +139,10 @@
 			<description>time interval spin control</description>
 			<type>spincontrol</type>
 			<id>8</id>
+			<width>24</width>
+			<height>24</height>
 			<posX>313</posX>
-			<posY>133</posY>
+			<posY>128</posY>
 			<showrange>no</showrange>
 			<orientation>vertical</orientation>
 			<align>center</align>
@@ -156,8 +160,8 @@
 			<id>20</id>
 			<posX>117</posX>
 			<posY>166</posY>
-			<width>165</width>
-			<height>45</height>
+			<width>240</width>
+			<height>35</height>
 		</control>
 		<control>
 			<description>Channel image template</description>
@@ -180,16 +184,16 @@
 			<posY>6</posY>
 			<width>86</width>
 			<height>20</height>
-			<font>font13</font>
+			<font>font10</font>
 			<textcolor>FFFFFFFF</textcolor>
 		</control>
 		<control>
 			<description>Current program title</description>
 			<type>fadelabel</type>
 			<id>13</id>
-			<posX>474</posX>
-			<posY>560</posY>
-			<width>466</width>
+			<posX>374</posX>
+			<posY>574</posY>
+			<width>666</width>
 			<align>left</align>
 			<label>#TV.Guide.Title</label>
 			<font>font16</font>
@@ -199,8 +203,8 @@
 			<description>Current program time</description>
 			<type>label</type>
 			<id>14</id>
-			<posX>474</posX>
-			<posY>706</posY>
+			<posX>374</posX>
+			<posY>720</posY>
 			<label>#TV.Guide.Time</label>
 			<align>left</align>
 			<font>font16</font>
@@ -211,7 +215,7 @@
 			<type>label</type>
 			<id>27</id>
 			<posX>891</posX>
-			<posY>706</posY>
+			<posY>720</posY>
 			<label>#TV.Guide.Genre</label>
 			<align>left</align>
 			<font>font16</font>
@@ -221,9 +225,9 @@
 			<description>Description1</description>
 			<type>textboxscrollup</type>
 			<id>15</id>
-			<posX>474</posX>
-			<posY>600</posY>
-			<width>533</width>
+			<posX>374</posX>
+			<posY>614</posY>
+			<width>879</width>
 			<height>93</height>
 			<seperator>----------------------------------------------------------------------------------------------</seperator>
 			<label>#TV.Guide.Description</label>
@@ -244,7 +248,7 @@
 			<id>24</id>
 			<visible>no</visible>
 			<label>-</label>
-			<font>font13</font>
+			<font>font10</font>
 			<textcolor>FF101010</textcolor>
 		</control>
 		<control>
@@ -253,7 +257,7 @@
 			<id>25</id>
 			<posX>56</posX>
 			<posY>165</posY>
-			<height>364</height>
+			<height>381</height>
 			<colordiffuse>c0ffffff</colordiffuse>
 			<texture>tvguide_slider.png</texture>
 		</control>
@@ -263,7 +267,7 @@
 			<visible>no</visible>
 			<id>26</id>
 			<label>-</label>
-			<font>font13</font>
+			<font>font10</font>
 			<textcolor>FFFFFFFF</textcolor>
 		</control>
 		<!--	<control>
@@ -280,9 +284,9 @@
 			<type>image</type>
 			<id>98</id>
 			<posX>113</posX>
-			<posY>560</posY>
-			<width>240</width>
-			<height>180</height>
+			<posY>574</posY>
+			<width>235</width>
+			<height>175</height>
 			<colordiffuse>60ffffff</colordiffuse>
 			<texture>previewbackground.png</texture>
 		</control>
@@ -290,10 +294,10 @@
 			<description>TV preview window</description>
 			<type>videowindow</type>
 			<id>99</id>
-			<posX>123</posX>
-			<posY>566</posY>
-			<width>226</width>
-			<height>166</height>
+			<posX>121</posX>
+			<posY>580</posY>
+			<width>221</width>
+			<height>161</height>
 			<action>18</action>
 			<textureFocus>tv_green_border.png</textureFocus>
 		</control>
@@ -302,9 +306,9 @@
 			<type>hscrollbar</type>
 			<id>28</id>
 			<posX>115</posX>
-			<posY>532</posY>
-			<width>797</width>
-			<height>26</height>
+			<posY>550</posY>
+			<width>1132</width>
+			<height>24</height>
 			<visible>yes</visible>
 		</control>
 		<control>
@@ -314,7 +318,7 @@
 			<posX>1261</posX>
 			<posY>166</posY>
 			<width>26</width>
-			<height>392</height>
+			<height>409</height>
 			<visible>yes</visible>
 		</control>
 		<control>
