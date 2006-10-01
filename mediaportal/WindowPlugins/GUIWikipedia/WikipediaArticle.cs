@@ -122,6 +122,11 @@ namespace Wikipedia
           this.imagePattern = "Image";
           Log.Info("Wikipedia: Language set to Italian");
           break;
+        case "Swedish":
+          this.WikipediaURL = "http://sv.wikipedia.org/wiki/Special:Export/";
+          this.imagePattern = "Image";
+          Log.Info("Wikipedia: Language set to Swedish");
+          break;
         default:
           this.WikipediaURL = "http://en.wikipedia.org/wiki/Special:Export/";
           this.imagePattern = "Image";
