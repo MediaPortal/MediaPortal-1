@@ -66,21 +66,21 @@
 		<end>58</end>
 		<name>font32</name>
 		<filename>Arial</filename>
-		<height>42</height>
+		<height>32</height>
 	</font>
 	<font>
 		<start>48</start>
 		<end>58</end>
 		<name>font48</name>
 		<filename>Arial</filename>
-		<height>64</height>
+		<height>48</height>
 	</font>
 	<font>
 		<start>48</start>
 		<end>58</end>
 		<name>font72</name>
 		<filename>Arial</filename>
-		<height>96</height>
+		<height>72</height>
 	</font>
 	<font>
 		<name>fontSVT</name>

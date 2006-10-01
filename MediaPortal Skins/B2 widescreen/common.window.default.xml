@@ -47,14 +47,14 @@
 			<type>image</type>
 			<id>1</id>
 			<posX>142</posX>
-			<posY>493</posY>
+			<posY>523</posY>
 			<texture>#header.hover</texture>
 		</control>
 		<control>
 			<description>Number of Files Label</description>
 			<type>label</type>
 			<id>1</id>
-			<posX>493</posX>
+			<posX>733</posX>
 			<posY>706</posY>
 			<label>#itemcount</label>
 			<align>left</align>
@@ -64,7 +64,7 @@
 			<description>Date</description>
 			<type>label</type>
 			<id>1</id>
-			<posX>1271</posX>
+			<posX>1165</posX>
 			<posY>40</posY>
 			<label>#date</label>
 			<align>right</align>
@@ -76,7 +76,7 @@
 			<type>label</type>
 			<id>1</id>
 			<posX>1271</posX>
-			<posY>66</posY>
+			<posY>40</posY>
 			<label>#time</label>
 			<align>right</align>
 			<font>font14</font>
