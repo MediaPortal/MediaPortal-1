@@ -52,7 +52,6 @@
     <Compile Include="ChannelMap.cs" />
     <Compile Include="Favorite.cs" />
     <Compile Include="GroupMap.cs" />
-    <Compile Include="MainProgram.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Recording.cs" />
