@@ -306,7 +306,7 @@ namespace MediaPortal.ServiceImplementations
 
       //
       if (type != LogType.Log && type != LogType.Error && type != LogType.EPG &&
-          type != LogType.MusicShareWatcher)
+          type != LogType.MusicShareWatcher && type != LogType.WebEPG)
       {
         WriteFile(LogType.Log, format, arg);
       }
