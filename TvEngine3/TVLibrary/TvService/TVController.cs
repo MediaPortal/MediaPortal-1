@@ -1606,8 +1606,9 @@ namespace TvService
         try
         {
           XmlDocument doc = new XmlDocument();
-          doc.Load("IdeaBlade.ibconfig");
-          XmlNode node = doc.SelectSingleNode("/ideaBlade/rdbKey/connection");
+          doc.Load("TvService.exe.config");
+          XmlNode nodeKey = doc.SelectSingleNode("/configuration/gentle/Gentle.Framework/DefaultProvider");
+          XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString"); ;
           return node.InnerText;
         }
         catch (Exception ex)
@@ -1621,10 +1622,11 @@ namespace TvService
         try
         {
           XmlDocument doc = new XmlDocument();
-          doc.Load("IdeaBlade.ibconfig");
-          XmlNode node = doc.SelectSingleNode("/ideaBlade/rdbKey/connection");
+          doc.Load("TvService.exe.config");
+          XmlNode nodeKey = doc.SelectSingleNode("/configuration/gentle/Gentle.Framework/DefaultProvider");
+          XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString"); ;
           node.InnerText = value;
-          doc.Save("IdeaBlade.ibconfig");
+          doc.Save("TvService.exe.config");
           Init();
         }
         catch (Exception ex)
