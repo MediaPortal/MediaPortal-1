@@ -45,8 +45,9 @@ namespace SetupTv
       try
       {
         XmlDocument doc = new XmlDocument();
-        doc.Load("IdeaBlade.ibconfig");
-        XmlNode node = doc.SelectSingleNode("/ideaBlade/rdbKey/connection");
+        doc.Load("SetupTv.exe.config");
+        XmlNode nodeKey = doc.SelectSingleNode("/configuration/gentle/Gentle.Framework/DefaultProvider");
+        XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString");
         string text = node.InnerText;
         string[] parts = text.Split(';');
         for (int i = 0; i < parts.Length; ++i)
@@ -76,7 +77,7 @@ namespace SetupTv
       }
       catch (Exception)
       {
-        MessageBox.Show("IdeaBlade.ibconfig file not found!");
+        MessageBox.Show("SetupTv.exe.config file not found!");
       }
     }
     private void SetupDatabaseForm_Load(object sender, EventArgs e)

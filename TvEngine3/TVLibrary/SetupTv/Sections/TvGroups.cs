@@ -19,20 +19,18 @@
  *
  */
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
+
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using TvControl;
 using DirectShowLib;
 
-using IdeaBlade.Persistence;
-using IdeaBlade.Rdb;
-using IdeaBlade.Persistence.Rdb;
-using IdeaBlade.Util;
-
+using Gentle.Common;
+using Gentle.Framework;
 using TvDatabase;
 using TvLibrary;
 using TvLibrary.Interfaces;
@@ -75,7 +73,7 @@ namespace SetupTv.Sections
     void Init()
     {
       mpListViewGroups.Items.Clear();
-      EntityList<ChannelGroup> groups = DatabaseManager.Instance.GetEntities<ChannelGroup>();
+      IList groups = ChannelGroup.ListAll();
       foreach (ChannelGroup group in groups)
       {
         ListViewItem item = mpListViewGroups.Items.Add(group.GroupName);
@@ -88,10 +86,9 @@ namespace SetupTv.Sections
       foreach (ListViewItem item in mpListViewGroups.SelectedItems)
       {
         ChannelGroup group = (ChannelGroup)item.Tag;
-        group.DeleteAll();
+        group.Remove();
         mpListViewGroups.Items.Remove(item);
       }
-      DatabaseManager.Instance.SaveChanges();
     }
 
     private void mpButtonAddGroup_Click(object sender, EventArgs e)
@@ -99,9 +96,8 @@ namespace SetupTv.Sections
       GroupNameForm dlg = new GroupNameForm();
       dlg.ShowDialog(this);
       if (dlg.GroupName.Length == 0) return;
-      ChannelGroup newGroup = ChannelGroup.Create();
-      newGroup.GroupName = dlg.GroupName;
-      DatabaseManager.Instance.SaveChanges();
+      ChannelGroup newGroup = new ChannelGroup(dlg.GroupName);
+      newGroup.Persist();
       Init();
     }
     private void mpTabControl1_TabIndexChanged(object sender, EventArgs e)
@@ -115,7 +111,7 @@ namespace SetupTv.Sections
     void InitMapping()
     {
       mpComboBoxGroup.Items.Clear();
-      EntityList<ChannelGroup> groups = DatabaseManager.Instance.GetEntities<ChannelGroup>();
+      IList groups = ChannelGroup.ListAll();
       foreach (ChannelGroup group in groups)
       {
         ComboGroup g = new ComboGroup();
@@ -124,38 +120,39 @@ namespace SetupTv.Sections
       }
       if (mpComboBoxGroup.Items.Count > 0)
         mpComboBoxGroup.SelectedIndex = 0;
-      mpComboBoxGroup_SelectedIndexChanged(null,null);
+      //mpComboBoxGroup_SelectedIndexChanged(null,null);
     }
 
     private void mpComboBoxGroup_SelectedIndexChanged(object sender, EventArgs e)
     {
       if (mpComboBoxGroup.SelectedItem == null) return;
       ComboGroup g = (ComboGroup)mpComboBoxGroup.SelectedItem;
-      mpListViewMapped.Items.Clear();
-      g.Group.GroupMaps.ApplySort(new GroupMap.Comparer(), false);
+      //g.Group.GroupMaps.ApplySort(new GroupMap.Comparer(), false);
 
-      mpListViewMapped.BeginUpdate();
-      foreach (GroupMap map in g.Group.GroupMaps)
-      {
-        ListViewItem item=mpListViewMapped.Items.Add(map.Channel.Name);
-        item.Tag = map;
-      }
-      mpListViewMapped.EndUpdate();
-
+      
       mpListViewChannels.BeginUpdate();
+      mpListViewMapped.BeginUpdate();
+
       mpListViewChannels.Items.Clear();
-      EntityQuery query = new EntityQuery(typeof(Channel));
-      query.AddOrderBy(Channel.SortOrderEntityColumn);
-      EntityList<Channel> channels = DatabaseManager.Instance.GetEntities<Channel>(query);
+      mpListViewMapped.Items.Clear();
+
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
+      sb.AddOrderByField(true, "sortOrder");
+      SqlStatement stmt = sb.GetStatement(true);
+      IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
+
+      IList groupMaps = g.Group.ReferringGroupMap();
       foreach (Channel channel in channels)
       {
         if (channel.IsTv == false) continue;
         bool add = true;
-        foreach (GroupMap map in g.Group.GroupMaps)
+        foreach (GroupMap map in groupMaps)
         {
-          if (map.Channel.IdChannel == channel.IdChannel)
+          if (map.IdChannel == channel.IdChannel)
           {
             add = false;
+            ListViewItem mappedItem = mpListViewMapped.Items.Add(channel.Name);
+            mappedItem.Tag = map;
             break;
           }
         }
@@ -165,6 +162,7 @@ namespace SetupTv.Sections
       }
       mpListViewChannels.Sort();
       mpListViewChannels.EndUpdate();
+      mpListViewMapped.EndUpdate();
     }
 
     private void mpButtonMap_Click(object sender, EventArgs e)
@@ -177,9 +175,8 @@ namespace SetupTv.Sections
       foreach (ListViewItem item in selectedItems)
       {
         Channel channel = (Channel)item.Tag;
-        GroupMap newMap = GroupMap.Create();
-        newMap.Channel = channel;
-        newMap.ChannelGroup = g.Group;
+        GroupMap newMap = new GroupMap(g.Group.IdGroup, channel.IdChannel);
+        newMap.Persist();
 
         mpListViewChannels.Items.Remove(item);
 
@@ -190,7 +187,6 @@ namespace SetupTv.Sections
       mpListViewChannels.Sort();
       mpListViewChannels.EndUpdate();
       mpListViewMapped.EndUpdate();
-      DatabaseManager.Instance.SaveChanges();
     }
 
     private void mpButtonUnmap_Click(object sender, EventArgs e)
@@ -205,17 +201,16 @@ namespace SetupTv.Sections
         mpListViewMapped.Items.Remove(item);
 
 
-        ListViewItem newItem = mpListViewChannels.Items.Add(map.Channel.Name);
-        newItem.Tag = map.Channel;
+        ListViewItem newItem = mpListViewChannels.Items.Add(map.ReferencedChannel().Name);
+        newItem.Tag = map.ReferencedChannel();
 
 
-        map.Delete();
+        map.Remove();
       }
 //      mpListViewMapped.Sort();
       mpListViewChannels.Sort();
       mpListViewChannels.EndUpdate();
       mpListViewMapped.EndUpdate();
-      DatabaseManager.Instance.SaveChanges();
     }
 
     private void mpTabControl1_SelectedIndexChanged(object sender, EventArgs e)

@@ -19,19 +19,18 @@
  *
  */
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
+
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using TvControl;
 
-using IdeaBlade.Persistence;
-using IdeaBlade.Rdb;
-using IdeaBlade.Persistence.Rdb;
-using IdeaBlade.Util;
 
+using Gentle.Common;
+using Gentle.Framework;
 using TvDatabase;
 namespace SetupTv.Sections
 {
@@ -60,7 +59,7 @@ namespace SetupTv.Sections
       Dictionary<string, CardType> cardTypes = new Dictionary<string, CardType>();
       try
       {
-        EntityList<Card> dbsCards = DatabaseManager.Instance.GetEntities<Card>();
+        IList dbsCards = Card.ListAll();
         foreach (Card card in dbsCards)
         {
           cardTypes[card.DevicePath] = RemoteControl.Instance.Type(card.IdCard);
@@ -72,19 +71,21 @@ namespace SetupTv.Sections
 
       try
       {
-        EntityQuery query = new EntityQuery(typeof(Card));
-        query.AddOrderBy(Card.PriorityEntityColumn, ListSortDirection.Descending);
+        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Card));
+        sb.AddOrderByField(false, "priority");
+        SqlStatement stmt = sb.GetStatement(true);
+        IList cards = ObjectFactory.GetCollection(typeof(Card), stmt.Execute());
 
-        EntityList<Card> cards = DatabaseManager.Instance.GetEntities<Card>(query);
         for (int i = 0; i < cards.Count; ++i)
         {
+          Card card = (Card)cards[i];
           string cardType = "";
-          if (cardTypes.ContainsKey(cards[i].DevicePath))
+          if (cardTypes.ContainsKey(card.DevicePath))
           {
-            cardType = cardTypes[cards[i].DevicePath].ToString();
+            cardType = cardTypes[card.DevicePath].ToString();
           }
-          ListViewItem item = mpListView1.Items.Add(cards[i].Priority.ToString());
-          if (cards[i].Enabled)
+          ListViewItem item = mpListView1.Items.Add(card.Priority.ToString());
+          if (card.Enabled)
           {
             item.Checked = true;
             item.Font = new Font(item.Font, FontStyle.Regular);
@@ -95,8 +96,8 @@ namespace SetupTv.Sections
             item.Font = new Font(item.Font, FontStyle.Strikeout);
           }
           item.SubItems.Add(cardType);
-          item.SubItems.Add(cards[i].Name);
-          item.Tag = cards[i];
+          item.SubItems.Add(card.Name);
+          item.Tag = card;
         }
       }
       catch (Exception)
@@ -155,6 +156,7 @@ namespace SetupTv.Sections
         Card card = (Card)mpListView1.Items[i].Tag;
         card.Priority = mpListView1.Items.Count - i;
         card.Enabled = mpListView1.Items[i].Checked;
+        card.Persist();
       }
     }
 

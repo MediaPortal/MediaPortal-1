@@ -30,10 +30,6 @@ using System.Windows.Forms;
 using System.Xml;
 using DirectShowLib;
 
-using IdeaBlade.Persistence;
-using IdeaBlade.Rdb;
-using IdeaBlade.Persistence.Rdb;
-using IdeaBlade.Util;
 
 using TvDatabase;
 
@@ -229,8 +225,9 @@ namespace SetupTv.Sections
         long longQuota = (long)quota;
         longQuota /= 1024; // kbyte
         TvBusinessLayer layer = new TvBusinessLayer();
-        layer.GetSetting("freediskspace" + drive[0].ToString()).Value = longQuota.ToString();
-        DatabaseManager.Instance.SaveChanges();
+        Setting setting = layer.GetSetting("freediskspace" + drive[0].ToString());
+        setting.Value = longQuota.ToString();
+        setting.Persist();
         //using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
         //{
         //  long longQuota = (long)quota;
@@ -324,18 +321,36 @@ namespace SetupTv.Sections
     public override void SaveSettings()
     {
       TvBusinessLayer layer = new TvBusinessLayer();
-      layer.GetSetting("preRecordInterval", "5").Value = textBoxPreInterval.Text;
-      layer.GetSetting("postRecordInterval", "5").Value = textBoxPostInterval.Text;
-      layer.GetSetting("moviesformat", "").Value = formatString[0];
-      layer.GetSetting("seriesformat", "").Value = formatString[1];
+      Setting setting;
+      setting = layer.GetSetting("preRecordInterval", "5");
+      setting.Value = textBoxPreInterval.Text;
+      setting.Persist();
+      setting = layer.GetSetting("postRecordInterval", "5");
+      setting.Value = textBoxPostInterval.Text;
+      setting.Persist();
+      setting = layer.GetSetting("moviesformat", "");
+      setting.Value = formatString[0];
+      setting.Persist();
+      setting = layer.GetSetting("seriesformat", "");
+      setting.Value = formatString[1];
+      setting.Persist();
 
       if (checkBoxComSkipEnabled.Checked)
-        layer.GetSetting("comskipEnabled", "yes").Value = "yes";
+      {
+        setting = layer.GetSetting("comskipEnabled", "yes");
+        setting.Value = "yes";
+      }
       else
-        layer.GetSetting("comskipEnabled", "yes").Value = "no";
+      {
+        setting = layer.GetSetting("comskipEnabled", "yes");
+        setting.Value = "no";
+      }
+      setting.Persist();
 
-      layer.GetSetting("comskipLocation", "").Value = textBoxComSkip.Text;
-      DatabaseManager.Instance.SaveChanges();
+      setting = layer.GetSetting("comskipLocation", "");
+      setting.Value = textBoxComSkip.Text;
+      setting.Persist();
+      //DatabaseManager.Instance.SaveChanges();
       /*
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
@@ -373,14 +388,14 @@ namespace SetupTv.Sections
         textBoxFolder.Text = dlg.SelectedPath;
         CardInfo info = (CardInfo)comboBoxCards.SelectedItem;
         info.card.RecordingFolder = textBoxFolder.Text;
-        DatabaseManager.Instance.SaveChanges();
+        info.card.Persist();
       }
     }
 
     public override void OnSectionActivated()
     {
       comboBoxCards.Items.Clear();
-      EntityList<Card> cards = DatabaseManager.Instance.GetEntities<Card>();
+      IList cards = Card.ListAll();
       foreach (Card card in cards)
       {
         comboBoxCards.Items.Add(new CardInfo(card));

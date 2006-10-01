@@ -30,10 +30,6 @@ using System.Collections.Generic;
 using System.Threading;
 
 
-using IdeaBlade.Persistence;
-using IdeaBlade.Rdb;
-using IdeaBlade.Persistence.Rdb;
-using IdeaBlade.Util;
 using TvDatabase;
 using TvLibrary.Log;
 
@@ -65,7 +61,7 @@ namespace TvService
     /// </remarks>
     void DeleteOldRecordings()
     {
-      EntityList<Recording> recordings = DatabaseManager.Instance.GetEntities<Recording>();
+      IList recordings = Recording.ListAll();
       bool deleted = false;
       do
       {
@@ -77,7 +73,7 @@ namespace TvService
                             rec.FileName,
                             rec.StartTime.ToShortDateString());
           recordings.Remove(rec);
-          rec.Delete();
+          rec.Remove();
           break;
         }
       } while (deleted==true);

@@ -28,21 +28,21 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="IdeaBlade.Persistence, Version=3.1.4.4, Culture=neutral, PublicKeyToken=287b5094865421c0, processorArchitecture=MSIL">
+    <Reference Include="Gentle.Common, Version=1.2.9.1285, Culture=neutral, PublicKeyToken=80b5de62e27be49b">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\TVDatabase\references\IdeaBlade.Persistence.dll</HintPath>
+      <HintPath>..\TVDatabase\references\Gentle.Common.dll</HintPath>
     </Reference>
-    <Reference Include="IdeaBlade.Persistence.Rdb, Version=3.1.4.4, Culture=neutral, PublicKeyToken=287b5094865421c0, processorArchitecture=MSIL">
+    <Reference Include="Gentle.Framework, Version=1.2.9.1286, Culture=neutral, PublicKeyToken=80b5de62e27be49b">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\TVDatabase\references\IdeaBlade.Persistence.Rdb.dll</HintPath>
+      <HintPath>..\TVDatabase\references\Gentle.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="IdeaBlade.Rdb, Version=3.1.4.4, Culture=neutral, PublicKeyToken=287b5094865421c0, processorArchitecture=MSIL">
+    <Reference Include="Gentle.Provider.SQLServer, Version=1.2.9.1289, Culture=neutral, PublicKeyToken=80b5de62e27be49b">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\TVDatabase\references\IdeaBlade.Rdb.dll</HintPath>
+      <HintPath>..\TVDatabase\references\Gentle.Provider.SQLServer.dll</HintPath>
     </Reference>
-    <Reference Include="IdeaBlade.Util, Version=3.1.4.4, Culture=neutral, PublicKeyToken=287b5094865421c0, processorArchitecture=MSIL">
+    <Reference Include="log4net, Version=1.2.9.0, Culture=neutral, PublicKeyToken=b32731d11ce58905">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\TVDatabase\references\IdeaBlade.Util.dll</HintPath>
+      <HintPath>..\TVDatabase\references\log4net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -163,6 +163,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <None Include="App.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

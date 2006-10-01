@@ -34,10 +34,6 @@ using System.Net;
 using System.Net.Sockets;
 using SetupTv.Sections;
 using MediaPortal.UserInterface.Controls;
-using IdeaBlade.Persistence;
-using IdeaBlade.Rdb;
-using IdeaBlade.Persistence.Rdb;
-using IdeaBlade.Util;
 
 
 using TvDatabase;
@@ -91,31 +87,33 @@ namespace SetupTv
         //
         // Build options tree
         //
-        EntityList<Server> dbsServers = DatabaseManager.Instance.GetEntities<Server>();
+        IList dbsServers = Server.ListAll();
         if (dbsServers.Count == 0)
         {
           XmlDocument doc = new XmlDocument();
-          doc.Load("IdeaBlade.ibconfig");
-          XmlNode node = doc.SelectSingleNode("/ideaBlade/rdbKey/connection");
+          doc.Load("SetupTv.exe.config");
+          XmlNode nodeKey = doc.SelectSingleNode("/configuration/gentle/Gentle.Framework/DefaultProvider");
+          XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString");;
           RemoteControl.Instance.DatabaseConnectionString = node.InnerText;
-          DatabaseManager.Instance.Clear();
+          //DatabaseManager.Instance.Clear();
         }
 
         TvBusinessLayer layer = new TvBusinessLayer();
         Servers servers = new Servers();
         AddSection(servers);
-        dbsServers = DatabaseManager.Instance.GetEntities<Server>();
+        dbsServers = Server.ListAll();
 
         foreach (Server server in dbsServers)
         {
           if (server.IsMaster)
           {
             RemoteControl.HostName = server.HostName;
-            if (server.Cards.Count > 0)
+            if (server.ReferringCard().Count > 0)
             {
               try
               {
-                CardType type = RemoteControl.Instance.Type(server.Cards[0].IdCard);
+                Card c = (Card)server.ReferringCard()[0];
+                CardType type = RemoteControl.Instance.Type(c.IdCard);
               }
               catch
               {
@@ -126,12 +124,12 @@ namespace SetupTv
           }
         }
 
-        EntityList<Card> cards = DatabaseManager.Instance.GetEntities<Card>();
+        IList cards = Card.ListAll();
         foreach (Server server in dbsServers)
         {
           TvCards cardPage = new TvCards(server.HostName);
           AddChildSection(servers, cardPage);
-          foreach (Card dbsCard in server.Cards)
+          foreach (Card dbsCard in server.ReferringCard())
           {
             CardType type = RemoteControl.Instance.Type(dbsCard.IdCard);
             string cardName = RemoteControl.Instance.CardName(dbsCard.IdCard);
@@ -435,7 +433,7 @@ namespace SetupTv
         catch (Exception)
         {
         }
-        DatabaseManager.Instance.SaveChanges();
+        //DatabaseManager.Instance.SaveChanges();
         //DatabaseManager.Instance.ClearQueryCache();
         section.Dock = DockStyle.Fill;
         section.OnSectionActivated();
@@ -560,7 +558,7 @@ namespace SetupTv
         _previousSection = null;
       }
       Close();
-      DatabaseManager.Instance.SaveChanges();
+      //DatabaseManager.Instance.SaveChanges();
     }
 
 

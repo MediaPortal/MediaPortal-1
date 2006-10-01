@@ -28,21 +28,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="IdeaBlade.Persistence, Version=3.1.4.4, Culture=neutral, PublicKeyToken=287b5094865421c0, processorArchitecture=MSIL">
+    <Reference Include="Gentle.Common, Version=1.2.9.1285, Culture=neutral, PublicKeyToken=80b5de62e27be49b">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\references\IdeaBlade.Persistence.dll</HintPath>
+      <HintPath>..\references\Gentle.Common.dll</HintPath>
     </Reference>
-    <Reference Include="IdeaBlade.Persistence.Rdb, Version=3.1.4.4, Culture=neutral, PublicKeyToken=287b5094865421c0, processorArchitecture=MSIL">
+    <Reference Include="Gentle.Framework, Version=1.2.9.1286, Culture=neutral, PublicKeyToken=80b5de62e27be49b">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\references\IdeaBlade.Persistence.Rdb.dll</HintPath>
+      <HintPath>..\references\Gentle.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="IdeaBlade.Rdb, Version=3.1.4.4, Culture=neutral, PublicKeyToken=287b5094865421c0, processorArchitecture=MSIL">
+    <Reference Include="Gentle.Provider.SQLServer, Version=1.2.9.1289, Culture=neutral, PublicKeyToken=80b5de62e27be49b">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\references\IdeaBlade.Rdb.dll</HintPath>
-    </Reference>
-    <Reference Include="IdeaBlade.Util, Version=3.1.4.4, Culture=neutral, PublicKeyToken=287b5094865421c0, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\references\IdeaBlade.Util.dll</HintPath>
+      <HintPath>..\references\Gentle.Provider.SQLServer.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />

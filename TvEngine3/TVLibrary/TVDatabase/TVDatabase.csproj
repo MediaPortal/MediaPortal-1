@@ -28,21 +28,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="IdeaBlade.Persistence, Version=3.1.4.4, Culture=neutral, PublicKeyToken=287b5094865421c0, processorArchitecture=MSIL">
+    <Reference Include="Gentle.Common, Version=1.2.9.1285, Culture=neutral, PublicKeyToken=80b5de62e27be49b">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>references\IdeaBlade.Persistence.dll</HintPath>
+      <HintPath>references\Gentle.Common.dll</HintPath>
     </Reference>
-    <Reference Include="IdeaBlade.Persistence.Rdb, Version=3.1.4.4, Culture=neutral, PublicKeyToken=287b5094865421c0, processorArchitecture=MSIL">
+    <Reference Include="Gentle.Framework, Version=1.2.9.1286, Culture=neutral, PublicKeyToken=80b5de62e27be49b">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>references\IdeaBlade.Persistence.Rdb.dll</HintPath>
+      <HintPath>references\Gentle.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="IdeaBlade.Rdb, Version=3.1.4.4, Culture=neutral, PublicKeyToken=287b5094865421c0, processorArchitecture=MSIL">
+    <Reference Include="Gentle.Provider.SQLServer, Version=1.2.9.1289, Culture=neutral, PublicKeyToken=80b5de62e27be49b">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>references\IdeaBlade.Rdb.dll</HintPath>
-    </Reference>
-    <Reference Include="IdeaBlade.Util, Version=3.1.4.4, Culture=neutral, PublicKeyToken=287b5094865421c0, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>references\IdeaBlade.Util.dll</HintPath>
+      <HintPath>references\Gentle.Provider.SQLServer.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -50,101 +46,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CanceledSchedule.cs" />
-    <Compile Include="CanceledScheduleDataRow.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Card.cs">
-      <CustomToolNamespace>Orm:User:2a107138-2c04-44de-a519-de293d36594d</CustomToolNamespace>
-    </Compile>
-    <Compile Include="CardDataRow.cs">
-      <DependentUpon>Card.cs</DependentUpon>
-      <CustomToolNamespace>Orm:Auto:2a107138-2c04-44de-a519-de293d36594d</CustomToolNamespace>
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Channel.cs">
-      <CustomToolNamespace>Orm:User:2a107138-2c04-44de-a519-de293d36594d</CustomToolNamespace>
-    </Compile>
-    <Compile Include="ChannelDataRow.cs">
-      <DependentUpon>Channel.cs</DependentUpon>
-      <CustomToolNamespace>Orm:Auto:2a107138-2c04-44de-a519-de293d36594d</CustomToolNamespace>
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Card.cs" />
+    <Compile Include="Channel.cs" />
     <Compile Include="ChannelGroup.cs" />
-    <Compile Include="ChannelGroupDataRow.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="ChannelMap.cs">
-      <CustomToolNamespace>Orm:User:2a107138-2c04-44de-a519-de293d36594d</CustomToolNamespace>
-    </Compile>
-    <Compile Include="ChannelMapDataRow.cs">
-      <DependentUpon>ChannelMap.cs</DependentUpon>
-      <CustomToolNamespace>Orm:Auto:2a107138-2c04-44de-a519-de293d36594d</CustomToolNamespace>
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="DatabaseManager.cs" />
-    <Compile Include="EntityRelations.cs">
-      <CustomToolNamespace>Orm:Auto:2a107138-2c04-44de-a519-de293d36594d</CustomToolNamespace>
-    </Compile>
-    <Compile Include="Favorite.cs">
-      <CustomToolNamespace>Orm:User:2a107138-2c04-44de-a519-de293d36594d</CustomToolNamespace>
-    </Compile>
-    <Compile Include="FavoriteDataRow.cs">
-      <DependentUpon>Favorite.cs</DependentUpon>
-      <CustomToolNamespace>Orm:Auto:2a107138-2c04-44de-a519-de293d36594d</CustomToolNamespace>
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="ChannelMap.cs" />
+    <Compile Include="Favorite.cs" />
     <Compile Include="GroupMap.cs" />
-    <Compile Include="GroupMapDataRow.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Program.cs">
-      <CustomToolNamespace>Orm:User:2a107138-2c04-44de-a519-de293d36594d</CustomToolNamespace>
-    </Compile>
-    <Compile Include="ProgramDataRow.cs">
-      <DependentUpon>Program.cs</DependentUpon>
-      <CustomToolNamespace>Orm:Auto:2a107138-2c04-44de-a519-de293d36594d</CustomToolNamespace>
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="MainProgram.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Recording.cs">
-      <CustomToolNamespace>Orm:User:2a107138-2c04-44de-a519-de293d36594d</CustomToolNamespace>
-    </Compile>
-    <Compile Include="RecordingDataRow.cs">
-      <DependentUpon>Recording.cs</DependentUpon>
-      <CustomToolNamespace>Orm:Auto:2a107138-2c04-44de-a519-de293d36594d</CustomToolNamespace>
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Schedule.cs">
-      <CustomToolNamespace>Orm:User:2a107138-2c04-44de-a519-de293d36594d</CustomToolNamespace>
-    </Compile>
-    <Compile Include="ScheduleDataRow.cs">
-      <DependentUpon>Schedule.cs</DependentUpon>
-      <CustomToolNamespace>Orm:Auto:2a107138-2c04-44de-a519-de293d36594d</CustomToolNamespace>
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Recording.cs" />
+    <Compile Include="Schedule.cs" />
     <Compile Include="Server.cs" />
-    <Compile Include="ServerDataRow.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Setting.cs" />
-    <Compile Include="SettingDataRow.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="TuningDetail.cs" />
-    <Compile Include="TuningDetailDataRow.cs">
-      <SubType>Component</SubType>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="AppHelper\AppHelper.csproj">
-      <Project>{1A2B4993-F0A9-4CEA-A27C-9B2E9DBF1FF5}</Project>
-      <Name>AppHelper</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="TVDatabase.orm">
-      <CustomToolNamespace>Orm:User:2a107138-2c04-44de-a519-de293d36594d</CustomToolNamespace>
-    </None>
+    <Compile Include="Version.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

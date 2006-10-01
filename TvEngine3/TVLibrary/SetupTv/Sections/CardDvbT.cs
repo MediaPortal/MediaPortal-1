@@ -31,11 +31,6 @@ using System.Threading;
 using System.Xml;
 using DirectShowLib;
 
-using IdeaBlade.Persistence;
-using IdeaBlade.Rdb;
-using IdeaBlade.Persistence.Rdb;
-using IdeaBlade.Util;
-
 using TvDatabase;
 
 using TvControl;
@@ -93,17 +88,9 @@ namespace SetupTv.Sections
 
     void UpdateStatus()
     {
-      mpLabelTunerLocked.Text = "No";
-      if (RemoteControl.Instance.TunerLocked(_cardNumber))
-        mpLabelTunerLocked.Text = "Yes";
       progressBarLevel.Value = RemoteControl.Instance.SignalLevel(_cardNumber);
       progressBarQuality.Value = RemoteControl.Instance.SignalQuality(_cardNumber);
 
-      DVBTChannel channel = RemoteControl.Instance.CurrentChannel(_cardNumber) as DVBTChannel;
-      if (channel == null)
-        mpLabelChannel.Text = "none";
-      else
-        mpLabelChannel.Text = String.Format("Frequency:{0} Bandwidth:{1}", channel.Frequency, channel.BandWidth, channel.NetworkId);
       
     }
 
@@ -111,8 +98,6 @@ namespace SetupTv.Sections
     {
       base.OnSectionActivated();
       UpdateStatus();
-      labelScan1.Text = "";
-      labelScan2.Text = "";
       TvBusinessLayer layer = new TvBusinessLayer();
       mpComboBoxCountry.SelectedIndex = Int32.Parse(layer.GetSetting("dvbt" + _cardNumber.ToString() + "Country", "0").Value);
     }
@@ -122,8 +107,10 @@ namespace SetupTv.Sections
     {
       base.OnSectionDeActivated();
       TvBusinessLayer layer = new TvBusinessLayer();
-      layer.GetSetting("dvbt" + _cardNumber.ToString() + "Country", "0").Value = mpComboBoxCountry.SelectedIndex.ToString();
-      DatabaseManager.Instance.SaveChanges();
+      Setting setting=layer.GetSetting("dvbt" + _cardNumber.ToString() + "Country", "0");
+      setting.Value = mpComboBoxCountry.SelectedIndex.ToString();
+
+      setting.Persist();
     }
 
 
@@ -148,8 +135,7 @@ namespace SetupTv.Sections
         int radioChannelsNew = 0;
         int tvChannelsUpdated = 0;
         int radioChannelsUpdated = 0;
-        labelScan1.Text = "";
-        labelScan2.Text = "";
+        listViewStatus.Items.Clear();
 
         Dictionary<int, int> frequencies = new Dictionary<int, int>();
         XmlDocument doc = new XmlDocument();
@@ -178,10 +164,11 @@ namespace SetupTv.Sections
         TvBusinessLayer layer = new TvBusinessLayer();
         Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
 
-        int index = 0;
+        int index = -1;
         Dictionary<int, int>.Enumerator enumerator = frequencies.GetEnumerator();
         while (enumerator.MoveNext())
         {
+          index++;
           float percent = ((float)(index)) / frequencies.Count;
           percent *= 100f;
           if (percent > 100f) percent = 100f;
@@ -191,6 +178,10 @@ namespace SetupTv.Sections
           DVBTChannel tuneChannel = new DVBTChannel();
           tuneChannel.Frequency = values.Key;
           tuneChannel.BandWidth = values.Value;
+
+          string line = String.Format("{0}tp- {1} {2}", 1 + index, tuneChannel.Frequency, tuneChannel.BandWidth);
+          ListViewItem item = listViewStatus.Items.Add(new ListViewItem(line));
+          item.EnsureVisible();
           if (index == 0)
           {
             RemoteControl.Instance.Tune(_cardNumber, tuneChannel);
@@ -198,17 +189,39 @@ namespace SetupTv.Sections
           IChannel[] channels = RemoteControl.Instance.Scan(_cardNumber, tuneChannel);
 
           UpdateStatus();
-          index++;
-          if (channels == null) continue;
-          if (channels.Length == 0) continue;
+          if (channels == null || channels.Length == 0)
+          {
+            if (RemoteControl.Instance.TunerLocked(_cardNumber) == false)
+            {
+              line = String.Format("{0}tp- {1} {2}:No Signal", 1 + index, tuneChannel.Frequency, tuneChannel.BandWidth);
+              item.Text = line;
+              item.ForeColor = Color.Red;
+              continue;
+            }
+            else
+            {
+              line = String.Format("{0}tp- {1} {2}:Nothing found", 1 + index, tuneChannel.Frequency, tuneChannel.BandWidth);
+              item.Text = line;
+              item.ForeColor = Color.Red;
+              continue;
+            }
+          }
+
+          int newChannels = 0;
+          int updatedChannels = 0;
 
           for (int i = 0; i < channels.Length; ++i)
           {
             DVBTChannel channel = (DVBTChannel)channels[i];
 
-            bool exists = (layer.GetChannelByName(channel.Name) != null);
 
-            Channel dbChannel = layer.AddChannel(channel.Name);
+            Channel dbChannel = layer.GetChannelByName(channel.Name);
+            bool exists = (dbChannel != null);
+            if (!exists)
+            {
+              dbChannel = layer.AddChannel(channel.Name);
+            }
+
             dbChannel.IsTv = channel.IsTv;
             dbChannel.IsRadio = channel.IsRadio;
             if (dbChannel.IsRadio)
@@ -220,31 +233,44 @@ namespace SetupTv.Sections
             {
               dbChannel.SortOrder = channel.LogicalChannelNumber;
             }
+            dbChannel.Persist();
             layer.AddTuningDetails(dbChannel, channel);
+            
             if (channel.IsTv)
             {
               if (exists)
+              {
                 tvChannelsUpdated++;
+                updatedChannels++;
+              }
               else
+              {
                 tvChannelsNew++;
+                newChannels++;
+              }
             }
             if (channel.IsRadio)
             {
               if (exists)
+              {
                 radioChannelsUpdated++;
+                updatedChannels++;
+              }
               else
+              {
                 radioChannelsNew++;
+                newChannels++;
+              }
             }
-            labelScan1.Text = String.Format("Tv channels New:{0} Updated:{1}", tvChannelsNew, tvChannelsUpdated);
-            labelScan2.Text = String.Format("Radio channels New:{0} Updated:{1}", radioChannelsNew, radioChannelsUpdated);
             layer.MapChannelToCard(card, dbChannel);
-
+            line = String.Format("{0}tp- {1} {2}:New:{3} Updated:{4}", 1 + index, tuneChannel.Frequency, tuneChannel.BandWidth, newChannels, updatedChannels);
+            item.Text = line;
           }
         }
         progressBar1.Value = 100;
         mpButtonScanTv.Enabled = true;
         mpComboBoxCountry.Enabled = true;
-        DatabaseManager.Instance.SaveChanges();
+        //DatabaseManager.Instance.SaveChanges();
       }
       catch (Exception ex)
       {
@@ -254,6 +280,8 @@ namespace SetupTv.Sections
       {
         RemoteControl.Instance.EpgGrabberEnabled = true;
       }
+      ListViewItem lastItem = listViewStatus.Items.Add(new ListViewItem("Scan done..."));
+      lastItem.EnsureVisible();
     }
 
     private void CardDvbT_Load(object sender, EventArgs e)

@@ -31,10 +31,6 @@ using System.Threading;
 using System.Xml;
 using DirectShowLib;
 
-using IdeaBlade.Persistence;
-using IdeaBlade.Rdb;
-using IdeaBlade.Persistence.Rdb;
-using IdeaBlade.Util;
 
 using TvDatabase;
 using TvControl;
@@ -49,31 +45,41 @@ namespace SetupTv.Sections
 {
   public partial class CardDvbS : SectionSettings
   {
-    class Transponder : IComparable
+    class Sattelite : IComparable<Sattelite>
     {
-      public string SatName;
+      public string SatteliteName;
       public string FileName;
       public override string ToString()
       {
-        return SatName;
+        return SatteliteName;
       }
-      public int CompareTo(object o)
+      public int CompareTo(Sattelite other)
       {
-        Transponder k = (Transponder)o;
-        return SatName.CompareTo(k.SatName);
+        return SatteliteName.CompareTo(other.SatteliteName);
       }
 
     }
 
-    struct TPList
+    class Transponder : IComparable<Transponder>
     {
-      public int TPfreq; // frequency
-      public Polarisation TPpol;  // polarisation 0=hori, 1=vert
-      public int TPsymb; // symbol rate
+      public int CarrierFrequency; // frequency
+      public Polarisation Polarisation;  // polarisation 0=hori, 1=vert
+      public int SymbolRate; // symbol rate
+
+      public int CompareTo(Transponder other)
+      {
+        if (Polarisation < other.Polarisation) return 1;
+        if (Polarisation > other.Polarisation) return -1;
+        if (CarrierFrequency > other.CarrierFrequency) return 1;
+        if (CarrierFrequency < other.CarrierFrequency) return -1;
+        if (SymbolRate > other.SymbolRate) return 1;
+        if (SymbolRate < other.SymbolRate) return -1;
+        return 0;
+      }
     }
 
     int _cardNumber;
-    TPList[] _transponders = new TPList[1000];
+    List<Transponder> _transponders = new List<Transponder>();
     int _channelCount = 0;
 
     int _tvChannelsNew = 0;
@@ -99,11 +105,11 @@ namespace SetupTv.Sections
       Init();
     }
 
-    Transponder LoadTransponderName(string fileName)
+    Sattelite LoadSatteliteName(string fileName)
     {
-      Transponder ts = new Transponder();
+      Sattelite ts = new Sattelite();
       ts.FileName = @"Tuningparameters\" + fileName;
-      ts.SatName = fileName;
+      ts.SatteliteName = fileName;
 
       string line;
       System.IO.TextReader tin = System.IO.File.OpenText(@"Tuningparameters\" + fileName);
@@ -118,8 +124,8 @@ namespace SetupTv.Sections
           pos = search.IndexOf("=");
           if (pos > 0)
           {
-            ts.SatName = line.Substring(pos + 1);
-            ts.SatName = ts.SatName.Trim();
+            ts.SatteliteName = line.Substring(pos + 1);
+            ts.SatteliteName = ts.SatteliteName.Trim();
             break;
           }
         }
@@ -128,14 +134,14 @@ namespace SetupTv.Sections
 
       return ts;
     }
-    void LoadList(string fileName)
+    void LoadTransponders(string satteliteFileName)
     {
-
+      _transponders.Clear();
       _channelCount = 0;
       string line;
       string[] tpdata;
       // load transponder list and start scan
-      System.IO.TextReader tin = System.IO.File.OpenText(fileName);
+      System.IO.TextReader tin = System.IO.File.OpenText(satteliteFileName);
       int _count = 0;
       do
       {
@@ -154,23 +160,22 @@ namespace SetupTv.Sections
               try
               {
 
-                _transponders[_count].TPfreq = Int32.Parse(tpdata[0]) * 1000;
+                Transponder transponder = new Transponder();
+                transponder.CarrierFrequency = Int32.Parse(tpdata[0]) * 1000;
                 switch (tpdata[1].ToLower())
                 {
                   case "v":
-
-                    _transponders[_count].TPpol = Polarisation.LinearV;
+                    transponder.Polarisation = Polarisation.LinearV;
                     break;
                   case "h":
-
-                    _transponders[_count].TPpol = Polarisation.LinearH;
+                    transponder.Polarisation = Polarisation.LinearH;
                     break;
                   default:
-
-                    _transponders[_count].TPpol = Polarisation.LinearH;
+                    transponder.Polarisation = Polarisation.LinearH;
                     break;
                 }
-                _transponders[_count].TPsymb = Int32.Parse(tpdata[2]);
+                transponder.SymbolRate = Int32.Parse(tpdata[2]);
+                _transponders.Add(transponder);
                 _count += 1;
               }
               catch
@@ -180,6 +185,7 @@ namespace SetupTv.Sections
       } while (!(line == null));
       tin.Close();
       _channelCount = _count;
+      _transponders.Sort();
     }
 
     void Init()
@@ -189,19 +195,19 @@ namespace SetupTv.Sections
       mpTransponder3.Items.Clear();
       mpTransponder4.Items.Clear();
       string[] files = System.IO.Directory.GetFiles(System.IO.Directory.GetCurrentDirectory() + @"\Tuningparameters", "*.tpl");
-      Transponder[] transponders = new Transponder[files.Length];
-      int trans = 0;
+      List<Sattelite> satellites = new List<Sattelite>();
+      
       foreach (string file in files)
       {
         string fileName = System.IO.Path.GetFileName(file);
-        Transponder ts = LoadTransponderName(fileName);
+        Sattelite ts = LoadSatteliteName(fileName);
         if (ts != null)
         {
-          transponders[trans++] = ts;
+          satellites.Add(ts);
         }
       }
-      Array.Sort(transponders);
-      foreach (Transponder ts in transponders)
+      satellites.Sort();
+      foreach (Sattelite ts in satellites)
       {
         mpTransponder1.Items.Add(ts);
         mpTransponder2.Items.Add(ts);
@@ -260,10 +266,10 @@ namespace SetupTv.Sections
       mpDisEqc4.SelectedIndex = 0;
 
       TvBusinessLayer layer = new TvBusinessLayer();
-      mpTransponder1.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber.ToString() + "Transponder1", "0").Value);
-      mpTransponder2.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber.ToString() + "Transponder2", "0").Value);
-      mpTransponder3.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber.ToString() + "Transponder3", "0").Value);
-      mpTransponder4.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber.ToString() + "Transponder4", "0").Value);
+      mpTransponder1.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber.ToString() + "Sattelite1", "0").Value);
+      mpTransponder2.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber.ToString() + "Sattelite2", "0").Value);
+      mpTransponder3.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber.ToString() + "Sattelite3", "0").Value);
+      mpTransponder4.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber.ToString() + "Sattelite4", "0").Value);
 
 
       mpDisEqc1.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber.ToString() + "DisEqc1", "0").Value);
@@ -282,45 +288,56 @@ namespace SetupTv.Sections
     {
       TvBusinessLayer layer = new TvBusinessLayer();
       base.OnSectionDeActivated();
-      layer.GetSetting("dvbs" + _cardNumber.ToString() + "Transponder1", "0").Value = mpTransponder1.SelectedIndex.ToString();
-      layer.GetSetting("dvbs" + _cardNumber.ToString() + "Transponder2", "0").Value = mpTransponder2.SelectedIndex.ToString();
-      layer.GetSetting("dvbs" + _cardNumber.ToString() + "Transponder3", "0").Value = mpTransponder3.SelectedIndex.ToString();
-      layer.GetSetting("dvbs" + _cardNumber.ToString() + "Transponder4", "0").Value = mpTransponder4.SelectedIndex.ToString();
+      Setting setting;
+      setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "Sattelite1", "0");
+      setting.Value = mpTransponder1.SelectedIndex.ToString();
+      setting.Persist();
+      setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "Sattelite2", "0");
+      setting.Value = mpTransponder2.SelectedIndex.ToString();
+      setting.Persist();
+      setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "Sattelite3", "0");
+      setting.Value = mpTransponder3.SelectedIndex.ToString();
+      setting.Persist();
+      setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "Sattelite4", "0");
+      setting.Value = mpTransponder4.SelectedIndex.ToString();
+      setting.Persist();
 
-      layer.GetSetting("dvbs" + _cardNumber.ToString() + "DisEqc1", "0").Value = mpDisEqc1.SelectedIndex.ToString();
-      layer.GetSetting("dvbs" + _cardNumber.ToString() + "DisEqc2", "0").Value = mpDisEqc2.SelectedIndex.ToString();
-      layer.GetSetting("dvbs" + _cardNumber.ToString() + "DisEqc3", "0").Value = mpDisEqc3.SelectedIndex.ToString();
-      layer.GetSetting("dvbs" + _cardNumber.ToString() + "DisEqc4", "0").Value = mpDisEqc4.SelectedIndex.ToString();
+      setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "DisEqc1", "0");
+      setting.Value = mpDisEqc1.SelectedIndex.ToString();
+      setting.Persist();
+      setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "DisEqc2", "0");
+      setting.Value = mpDisEqc2.SelectedIndex.ToString();
+      setting.Persist();
+      setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "DisEqc3", "0");
+      setting.Value = mpDisEqc3.SelectedIndex.ToString();
+      setting.Persist();
+      setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "DisEqc4", "0");
+      setting.Value = mpDisEqc4.SelectedIndex.ToString();
+      setting.Persist();
 
-      layer.GetSetting("dvbs" + _cardNumber.ToString() + "LNB2", "false").Value = mpLNB2.Checked ? "true" : "false";
-      layer.GetSetting("dvbs" + _cardNumber.ToString() + "LNB3", "false").Value = mpLNB3.Checked ? "true" : "false";
-      layer.GetSetting("dvbs" + _cardNumber.ToString() + "LNB4", "false").Value = mpLNB4.Checked ? "true" : "false";
-      DatabaseManager.Instance.SaveChanges();
+      setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "LNB2", "false");
+      setting.Value = mpLNB2.Checked ? "true" : "false";
+      setting.Persist();
+      setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "LNB3", "false");
+      setting.Value = mpLNB3.Checked ? "true" : "false";
+      setting.Persist();
+      setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "LNB4", "false");
+      setting.Value = mpLNB4.Checked ? "true" : "false";
+      setting.Persist();
     }
 
     void UpdateStatus(int LNB)
     {
-      mpLabelTunerLocked.Text = "No";
-      if (RemoteControl.Instance.TunerLocked(_cardNumber))
-        mpLabelTunerLocked.Text = "Yes";
       progressBarLevel.Value = RemoteControl.Instance.SignalLevel(_cardNumber);
       progressBarQuality.Value = RemoteControl.Instance.SignalQuality(_cardNumber);
 
-      DVBSChannel channel = RemoteControl.Instance.CurrentChannel(_cardNumber) as DVBSChannel;
-      if (channel == null)
-        mpLabelChannel.Text = "none";
-      else
-        mpLabelChannel.Text = String.Format("LNB:{0} Freq:{1} Pol:{2}",
-            LNB, channel.Frequency, channel.Polarisation);
-      
+
     }
 
     public override void OnSectionActivated()
     {
       base.OnSectionActivated();
       UpdateStatus(1);
-      labelScan1.Text = "";
-      labelScan2.Text = "";
     }
 
 
@@ -356,24 +373,24 @@ namespace SetupTv.Sections
         mpLNB3.Enabled = false;
         mpLNB4.Enabled = false;
 
-        labelScan1.Text = "";
-        labelScan2.Text = "";
-
+        listViewStatus.Items.Clear();
         _tvChannelsNew = 0;
         _radioChannelsNew = 0;
         _tvChannelsUpdated = 0;
         _radioChannelsUpdated = 0;
 
-        Scan(1, (DisEqcType)mpDisEqc1.SelectedIndex, (Transponder)mpTransponder1.SelectedItem);
+        Scan(1, (DisEqcType)mpDisEqc1.SelectedIndex, (Sattelite)mpTransponder1.SelectedItem);
         if (mpLNB2.Checked)
-          Scan(2, (DisEqcType)mpDisEqc2.SelectedIndex, (Transponder)mpTransponder2.SelectedItem);
+          Scan(2, (DisEqcType)mpDisEqc2.SelectedIndex, (Sattelite)mpTransponder2.SelectedItem);
 
         if (mpLNB3.Checked)
-          Scan(3, (DisEqcType)mpDisEqc3.SelectedIndex, (Transponder)mpTransponder3.SelectedItem);
+          Scan(3, (DisEqcType)mpDisEqc3.SelectedIndex, (Sattelite)mpTransponder3.SelectedItem);
 
         if (mpLNB4.Checked)
-          Scan(4, (DisEqcType)mpDisEqc2.SelectedIndex, (Transponder)mpTransponder4.SelectedItem);
+          Scan(4, (DisEqcType)mpDisEqc2.SelectedIndex, (Sattelite)mpTransponder4.SelectedItem);
 
+        ListViewItem item=listViewStatus.Items.Add(new ListViewItem("Scan done..."));
+        item.EnsureVisible();
         mpButtonScanTv.Enabled = true;
         mpTransponder1.Enabled = true;
         mpTransponder2.Enabled = true;
@@ -399,12 +416,12 @@ namespace SetupTv.Sections
       }
     }
 
-    void Scan(int LNB, DisEqcType disEqc, Transponder transponder)
+    void Scan(int LNB, DisEqcType disEqc, Sattelite sattelite)
     {
-      LoadList(transponder.FileName);
+      LoadTransponders(sattelite.FileName);
       if (_channelCount == 0) return;
 
-      
+
       TvBusinessLayer layer = new TvBusinessLayer();
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
 
@@ -415,31 +432,56 @@ namespace SetupTv.Sections
         if (percent > 100f) percent = 100f;
         progressBar1.Value = (int)percent;
 
-        
+
         DVBSChannel tuneChannel = new DVBSChannel();
-        tuneChannel.Frequency = _transponders[index].TPfreq;
-        tuneChannel.Polarisation = _transponders[index].TPpol;
-        tuneChannel.SymbolRate = _transponders[index].TPsymb;
+        tuneChannel.Frequency = _transponders[index].CarrierFrequency;
+        tuneChannel.Polarisation = _transponders[index].Polarisation;
+        tuneChannel.SymbolRate = _transponders[index].SymbolRate;
         tuneChannel.DisEqc = disEqc;
+        string line = String.Format("lnb:{0} {1}tp- {2} {3} {4}", LNB, 1 + index, tuneChannel.Frequency, tuneChannel.Polarisation, tuneChannel.SymbolRate);
+        ListViewItem item = listViewStatus.Items.Add(new ListViewItem(line));
+        item.EnsureVisible();
 
         if (index == 0)
         {
           RemoteControl.Instance.Tune(_cardNumber, tuneChannel);
         }
         UpdateStatus(LNB);
-        
+
         IChannel[] channels = RemoteControl.Instance.Scan(_cardNumber, tuneChannel);
         UpdateStatus(LNB);
-        
-        if (channels == null) continue;
-        if (channels.Length == 0) continue;
 
+        if (channels == null || channels.Length == 0) 
+        {
+          if (RemoteControl.Instance.TunerLocked(_cardNumber) == false)
+          {
+            line = String.Format("lnb:{0} {1}tp- {2} {3} {4}:No signal", LNB, 1 + index, tuneChannel.Frequency, tuneChannel.Polarisation, tuneChannel.SymbolRate);
+            item.Text = line;
+            item.ForeColor = Color.Red;
+            continue;
+          }
+          else
+          {
+            line = String.Format("lnb:{0} {1}tp- {2} {3} {4}:Nothing found", LNB, 1 + index, tuneChannel.Frequency, tuneChannel.Polarisation, tuneChannel.SymbolRate);
+            item.Text = line;
+            item.ForeColor = Color.Red;
+            continue;
+          }
+
+        }
+
+
+        int newChannels = 0;
+        int updatedChannels = 0;
         for (int i = 0; i < channels.Length; ++i)
         {
           DVBSChannel channel = (DVBSChannel)channels[i];
-          bool exists = (layer.GetChannelByName(channel.Name) != null);
-
-          Channel dbChannel = layer.AddChannel(channel.Name);
+          Channel dbChannel = layer.GetChannelByName(channel.Name);
+          bool exists = (dbChannel != null);
+          if (!exists)
+          {
+            dbChannel = layer.AddChannel(channel.Name);
+          }
           dbChannel.IsTv = channel.IsTv;
           dbChannel.IsRadio = channel.IsRadio;
           if (dbChannel.IsRadio)
@@ -451,31 +493,43 @@ namespace SetupTv.Sections
           {
             dbChannel.SortOrder = channel.LogicalChannelNumber;
           }
+          dbChannel.Persist();
+
           layer.AddTuningDetails(dbChannel, channel);
           if (channel.IsTv)
           {
             if (exists)
+            {
               _tvChannelsUpdated++;
+              updatedChannels++;
+            }
             else
+            {
               _tvChannelsNew++;
+              newChannels++;
+            }
           }
           if (channel.IsRadio)
           {
             if (exists)
+            {
               _radioChannelsUpdated++;
+              updatedChannels++;
+            }
             else
+            {
               _radioChannelsNew++;
+              newChannels++;
+            }
           }
           layer.MapChannelToCard(card, dbChannel);
-
-          labelScan1.Text = String.Format("Tv channels New:{0} Updated:{1}", _tvChannelsNew, _tvChannelsUpdated);
-          labelScan2.Text = String.Format("Radio channels New:{0} Updated:{1}", _radioChannelsNew, _radioChannelsUpdated);
-
-          
+          line = String.Format("lnb:{0} {1}tp- {2} {3} {4}:New:{5} Updated:{6}",
+              LNB,1 + index, tuneChannel.Frequency, tuneChannel.Polarisation, tuneChannel.SymbolRate, newChannels, updatedChannels);
+          item.Text = line;
         }
       }
 
-      DatabaseManager.Instance.SaveChanges();
+      // DatabaseManager.Instance.SaveChanges();
 
     }
 

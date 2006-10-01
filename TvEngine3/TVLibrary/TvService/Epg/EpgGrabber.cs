@@ -19,14 +19,13 @@
  *
  */
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using TvControl;
 
-using IdeaBlade.Persistence;
-using IdeaBlade.Rdb;
-using IdeaBlade.Persistence.Rdb;
-using IdeaBlade.Util;
+using Gentle.Common;
+using Gentle.Framework;
 using TvDatabase;
 using TvLibrary;
 using TvLibrary.Log;
@@ -87,8 +86,8 @@ namespace TvService
       _tvController = controller;
       try
       {
-        DatabaseManager.Instance.DefaultQueryStrategy = QueryStrategy.Normal;
-        EntityList<Channel> channels = DatabaseManager.Instance.GetEntities<Channel>();
+        //DatabaseManager.Instance.DefaultQueryStrategy = QueryStrategy.Normal;
+        IList channels = Channel.ListAll();
         Log.Write("dbs:{0} channels", channels.Count);
       }
       catch (Exception)
@@ -168,8 +167,9 @@ namespace TvService
           {
             //update database
             _currentChannel.LastGrabTime = DateTime.Now;
-            DatabaseManager.Instance.SaveChanges();
-            DatabaseManager.Instance.ClearQueryCache();
+            _currentChannel.Persist();
+            //DatabaseManager.Instance.SaveChanges();
+            //DatabaseManager.Instance.ClearQueryCache();
             _currentChannel = null;
           }
           _state = EpgState.Idle;
@@ -218,7 +218,7 @@ namespace TvService
     {
       if (_isRunning) return;
       Log.Write("EPG: grabber started..");
-      DatabaseManager.Instance.ClearQueryCache();
+      //DatabaseManager.Instance.ClearQueryCache();
       _isRunning = true;
       _epgTimer.Enabled = true;
       _state = EpgState.Idle;
@@ -288,8 +288,9 @@ namespace TvService
             //and go back to idle mode
             Log.Write("EPG timeout:{0}.", ts.TotalSeconds);
             _currentChannel.LastGrabTime = DateTime.Now;
-            DatabaseManager.Instance.SaveChanges();
-            DatabaseManager.Instance.ClearQueryCache();
+            _currentChannel.Persist();
+            //DatabaseManager.Instance.SaveChanges();
+            //DatabaseManager.Instance.ClearQueryCache();
 
             _currentChannel = null;
             _grabStartTime = DateTime.MinValue;
@@ -315,7 +316,7 @@ namespace TvService
     /// <returns>true if channel is digital otherwise false</returns>
     bool IsDigitalChannel(Channel channel)
     {
-      foreach (TuningDetail detail in channel.TuningDetails)
+      foreach (TuningDetail detail in channel.ReferringTuningDetail())
       {
         if (detail.ChannelType > 0)
         {
@@ -337,7 +338,7 @@ namespace TvService
       if (ts.TotalSeconds < EpgGrabInterval) return;
       _lastEpgGrabTime = DateTime.Now;
       TvBusinessLayer layer = new TvBusinessLayer();
-      EntityList<Channel> channels = DatabaseManager.Instance.GetEntities<Channel>();
+      IList channels = Channel.ListAll();
       try
       {
         foreach (Channel channel in channels)
@@ -352,13 +353,14 @@ namespace TvService
             //dont grab epg for analog channels
             channel.GrabEpg = false;
             channel.LastGrabTime = DateTime.Now;
-            DatabaseManager.Instance.SaveChanges();
-            DatabaseManager.Instance.ClearQueryCache();
+            channel.Persist();
+            //DatabaseManager.Instance.SaveChanges();
+            //DatabaseManager.Instance.ClearQueryCache();
             continue;
           }
           // this channel needs its epg to be updated.
           // check which cards can receive it and if one is free
-          List<IChannel> tuningList = layer.GetTuningChannelByName(channel.Name);
+          IList tuningList = layer.GetTuningChannelByName(channel.Name);
           foreach (IChannel tuning in tuningList)
           {
             //try grabbing the epg for this channel
@@ -387,7 +389,7 @@ namespace TvService
     /// <returns></returns>
     bool GrabEpgForChannel(Channel channel, IChannel tuning)
     {
-      EntityList<Card> dbsCards = DatabaseManager.Instance.GetEntities<Card>();
+      IList dbsCards = Card.ListAll();
 
       //handle ATSC
       ATSCChannel atscChannel = tuning as ATSCChannel;
@@ -550,13 +552,13 @@ namespace TvService
       Log.Write("EPG: Remove old programs from database...");
       TvBusinessLayer layer = new TvBusinessLayer();
       layer.RemoveOldPrograms();
-      DatabaseManager.Instance.SaveChanges();
-      DatabaseManager.Instance.ClearQueryCache();
+      //DatabaseManager.Instance.SaveChanges();
+      //DatabaseManager.Instance.ClearQueryCache();
 
       Log.Write("EPG: Updating database with new programs...");
       try
       {
-        EntityList<TuningDetail> channels = DatabaseManager.Instance.GetEntities<TuningDetail>();
+        IList channels = TuningDetail.ListAll();
         int channelNr = 0;
         foreach (EpgChannel epgChannel in _epg)
         {
@@ -571,7 +573,7 @@ namespace TvService
                 detail.ServiceId == dvbChannel.ServiceId)
             {
               found = true;
-              bool success = UpdateDatabaseChannel(channelNr, epgChannel, detail.Channel);
+              bool success = UpdateDatabaseChannel(channelNr, epgChannel, detail.ReferencedChannel());
               if (_state != EpgState.Updating)
               {
                 _currentChannel = null;
@@ -586,11 +588,11 @@ namespace TvService
               }
               if (success)
               {
-                SaveOptions options = new SaveOptions();
-                options.IsTransactional = false;
-                options.UpdateBatchSize = 5000;
-                DatabaseManager.Instance.SaveChanges(options);
-                DatabaseManager.Instance.SaveChanges();
+                //SaveOptions options = new SaveOptions();
+                //options.IsTransactional = false;
+                //options.UpdateBatchSize = 5000;
+                //DatabaseManager.Instance.SaveChanges(options);
+                //DatabaseManager.Instance.SaveChanges();
                 Thread.Sleep(500);
               }
               break;
@@ -613,10 +615,11 @@ namespace TvService
         if (_currentChannel != null)
         {
           _currentChannel.LastGrabTime = DateTime.Now;
-          SaveOptions options = new SaveOptions();
-          options.IsTransactional = false;
-          options.UpdateBatchSize = 100;
-          DatabaseManager.Instance.SaveChanges(options);
+          //SaveOptions options = new SaveOptions();
+          //options.IsTransactional = false;
+          //options.UpdateBatchSize = 100;
+          //DatabaseManager.Instance.SaveChanges(options);
+          
           Log.Write("EPG: database updated for {0} {1} {2}", _currentChannel.Name, _state, IsCardIdle(_currentCardId));
         }
         _state = EpgState.Idle;
@@ -644,17 +647,19 @@ namespace TvService
       }
       Log.Write("EPG: channel:{0} {1} titles:{2} lastUpdate:{3}", channelNr, channel.Name, epgChannel.Programs.Count, channel.LastGrabTime);
 
-      ReadOnlyEntityList<TvDatabase.Program> progs = channel.Programs;
-      //List<TvDatabase.Program> programsToDelete = new List<TvDatabase.Program>();
-      EntityQuery query = new EntityQuery(typeof(TvDatabase.Program));
-      query.AddClause(TvDatabase.Program.IdChannelEntityColumn, EntityQueryOp.EQ, channel.IdChannel);
-      query.AddOrderBy(TvDatabase.Program.StartTimeEntityColumn, System.ComponentModel.ListSortDirection.Descending);
-      query.Top = 5;
-      EntityList<TvDatabase.Program> programsInDbs = DatabaseManager.Instance.GetEntities<TvDatabase.Program>(query);
+      //IList progs = channel.ReferringProgram();
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(TvDatabase.Program));
+      sb.AddConstraint(Operator.Equals, "idChannel", channel.IdChannel);
+      sb.AddOrderByField(false,"starttime");
+      sb.SetRowLimit(5);
+      SqlStatement stmt = sb.GetStatement(true);
+      IList programsInDbs = ObjectFactory.GetCollection(typeof(TvDatabase.Program), stmt.Execute());
+
       DateTime lastProgram = DateTime.MinValue;
       if (programsInDbs.Count > 0)
       {
-        lastProgram = programsInDbs[0].EndTime;
+        TvDatabase.Program p = (TvDatabase.Program)programsInDbs[0];
+        lastProgram = p.EndTime;
       }
 
       foreach (EpgProgram program in epgChannel.Programs)
@@ -699,14 +704,8 @@ namespace TvService
         if (description == null) description = "";
         if (genre == null) genre = "";
 
-        TvDatabase.Program newProgram = TvDatabase.Program.Create();
-        newProgram.Channel = channel;
-        newProgram.IdChannel = channel.IdChannel;
-        newProgram.StartTime = program.StartTime;
-        newProgram.EndTime = program.EndTime;
-        newProgram.Description = description;
-        newProgram.Title = title;
-        newProgram.Genre = genre;
+        TvDatabase.Program newProgram = new TvDatabase.Program(channel.IdChannel, program.StartTime, program.EndTime, title, description, genre, false);
+        newProgram.Persist();
         lastProgram = program.EndTime;
 
       }//foreach (EpgProgram program in epgChannel.Programs)

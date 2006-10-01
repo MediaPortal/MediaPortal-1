@@ -29,10 +29,6 @@ using TvLibrary.Implementations.Analog;
 using TvLibrary.Implementations.DVB;
 using TvLibrary.Channels;
 
-using IdeaBlade.Persistence;
-using IdeaBlade.Rdb;
-using IdeaBlade.Persistence.Rdb;
-using IdeaBlade.Util;
 using TvDatabase;
 namespace TvService
 {

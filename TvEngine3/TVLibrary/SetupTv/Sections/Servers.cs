@@ -19,18 +19,17 @@
  *
  */
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
+
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using TvControl;
 
-using IdeaBlade.Persistence;
-using IdeaBlade.Rdb;
-using IdeaBlade.Persistence.Rdb;
-using IdeaBlade.Util;
+using Gentle.Common;
+using Gentle.Framework;
 
 using TvDatabase;
 namespace SetupTv.Sections
@@ -50,7 +49,7 @@ namespace SetupTv.Sections
 
     public override void OnSectionActivated()
     {
-      EntityList<Server> servers=DatabaseManager.Instance.GetEntities<Server>();
+      IList servers=Server.ListAll();
       mpListView1.Items.Clear();
       foreach (Server server in servers)
       {
@@ -79,7 +78,7 @@ namespace SetupTv.Sections
       int index = mpListView1.SelectedIndices[0];
       ListViewItem item = mpListView1.Items[index];
       Server server = (Server)item.Tag;
-      server.DeleteAll();
+      server.Remove();
       OnSectionActivated();
     }
 

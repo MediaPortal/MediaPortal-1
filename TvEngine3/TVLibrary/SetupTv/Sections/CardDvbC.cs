@@ -31,10 +31,6 @@ using System.Threading;
 using System.Xml;
 using DirectShowLib;
 
-using IdeaBlade.Persistence;
-using IdeaBlade.Rdb;
-using IdeaBlade.Persistence.Rdb;
-using IdeaBlade.Util;
 
 using TvDatabase;
 
@@ -223,17 +219,8 @@ namespace SetupTv.Sections
 
     void UpdateStatus()
     {
-      mpLabelTunerLocked.Text = "No";
-      if (RemoteControl.Instance.TunerLocked(_cardNumber))
-        mpLabelTunerLocked.Text = "Yes";
       progressBarLevel.Value = RemoteControl.Instance.SignalLevel(_cardNumber);
       progressBarQuality.Value = RemoteControl.Instance.SignalQuality(_cardNumber);
-
-      DVBCChannel channel = RemoteControl.Instance.CurrentChannel(_cardNumber) as DVBCChannel;
-      if (channel == null)
-        mpLabelChannel.Text = "none";
-      else
-        mpLabelChannel.Text = String.Format("Frequency:{0} Modulation:{1}", channel.Frequency, channel.ModulationType);
       
     }
 
@@ -241,8 +228,6 @@ namespace SetupTv.Sections
     {
       base.OnSectionActivated();
       UpdateStatus();
-      labelScan1.Text = "";
-      labelScan2.Text = "";
       TvBusinessLayer layer = new TvBusinessLayer();
       mpComboBoxCountry.SelectedIndex = Int32.Parse(layer.GetSetting("dvbc" + _cardNumber.ToString() + "Country", "0").Value);
 
@@ -252,7 +237,7 @@ namespace SetupTv.Sections
       base.OnSectionDeActivated();
       TvBusinessLayer layer = new TvBusinessLayer();
       layer.GetSetting("dvbc" + _cardNumber.ToString() + "Country", "0").Value = mpComboBoxCountry.SelectedIndex.ToString();
-      DatabaseManager.Instance.SaveChanges();
+      //DatabaseManager.Instance.SaveChanges();
     }
 
 
@@ -274,8 +259,6 @@ namespace SetupTv.Sections
       try
       {
         RemoteControl.Instance.EpgGrabberEnabled = false;
-        labelScan1.Text = "";
-        labelScan2.Text = "";
         int tvChannelsNew = 0;
         int radioChannelsNew = 0;
         int tvChannelsUpdated = 0;
@@ -285,6 +268,7 @@ namespace SetupTv.Sections
 
         mpButtonScanTv.Enabled = false;
         mpComboBoxCountry.Enabled = false;
+        listViewStatus.Items.Clear();
 
         TvBusinessLayer layer = new TvBusinessLayer();
         Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
@@ -301,6 +285,9 @@ namespace SetupTv.Sections
           tuneChannel.Frequency = _dvbcChannels[index].frequency;
           tuneChannel.ModulationType = _dvbcChannels[index].modulation;
           tuneChannel.SymbolRate = _dvbcChannels[index].symbolrate;
+          string line = String.Format("{0}tp- {1} {2} {3}",  1 + index, tuneChannel.Frequency, tuneChannel.ModulationType, tuneChannel.SymbolRate);
+          ListViewItem item = listViewStatus.Items.Add(new ListViewItem(line));
+          item.EnsureVisible();
 
           if (index == 0)
           {
@@ -309,16 +296,37 @@ namespace SetupTv.Sections
           
           IChannel[] channels = RemoteControl.Instance.Scan(_cardNumber, tuneChannel);
           UpdateStatus();
-          
-          if (channels == null) continue;
-          if (channels.Length == 0) continue;
 
+          if (channels == null || channels.Length == 0)
+          {
+            if (RemoteControl.Instance.TunerLocked(_cardNumber) == false)
+            {
+              line = String.Format("{0}tp- {1} {2} {3}:No signal", 1 + index, tuneChannel.Frequency, tuneChannel.ModulationType, tuneChannel.SymbolRate);
+              item.Text = line;
+              item.ForeColor = Color.Red;
+              continue;
+            }
+            else
+            {
+              line = String.Format("{0}tp- {1} {2} {3}:Nothing found", 1 + index, tuneChannel.Frequency, tuneChannel.ModulationType, tuneChannel.SymbolRate);
+              item.Text = line;
+              item.ForeColor = Color.Red;
+              continue;
+            }
+          }
+
+          int newChannels = 0;
+          int updatedChannels = 0;
           for (int i = 0; i < channels.Length; ++i)
           {
             DVBCChannel channel = (DVBCChannel)channels[i];
 
-            bool exists = (layer.GetChannelByName(channel.Name) != null);
-            Channel dbChannel = layer.AddChannel(channel.Name);
+            Channel dbChannel = layer.GetChannelByName(channel.Name);
+            bool exists = (dbChannel != null);
+            if (!exists)
+            {
+              dbChannel = layer.AddChannel(channel.Name);
+            }
             dbChannel.IsTv = channel.IsTv;
             dbChannel.IsRadio = channel.IsRadio;
             if (dbChannel.IsRadio)
@@ -330,33 +338,44 @@ namespace SetupTv.Sections
             {
               dbChannel.SortOrder = channel.LogicalChannelNumber;
             }
+            dbChannel.Persist();
             layer.AddTuningDetails(dbChannel, channel);
             if (channel.IsTv)
             {
               if (exists)
+              {
                 tvChannelsUpdated++;
+                updatedChannels++;
+              }
               else
+              {
                 tvChannelsNew++;
+                newChannels++;
+              }
             }
             if (channel.IsRadio)
             {
               if (exists)
+              {
                 radioChannelsUpdated++;
+                updatedChannels++;
+              }
               else
+              {
                 radioChannelsNew++;
+                newChannels++;
+              }
             }
             layer.MapChannelToCard(card, dbChannel);
-
-            labelScan1.Text = String.Format("Tv channels New:{0} Updated:{1}", tvChannelsNew, tvChannelsUpdated);
-            labelScan2.Text = String.Format("Radio channels New:{0} Updated:{1}", radioChannelsNew, radioChannelsUpdated);
-            
+            line = String.Format("{0}tp- {1} {2} {3}:New:{4} Updated:{5}", 1 + index, tuneChannel.Frequency, tuneChannel.ModulationType, tuneChannel.SymbolRate, newChannels, updatedChannels);
+            item.Text = line;
           }
         }
 
         progressBar1.Value = 100;
         mpButtonScanTv.Enabled = true;
         mpComboBoxCountry.Enabled = true;
-        DatabaseManager.Instance.SaveChanges();
+        //DatabaseManager.Instance.SaveChanges();
         
       }
       catch (Exception ex)
@@ -367,6 +386,8 @@ namespace SetupTv.Sections
       {
         RemoteControl.Instance.EpgGrabberEnabled = true;
       }
+      ListViewItem lastItem = listViewStatus.Items.Add(new ListViewItem("Scan done..."));
+      lastItem.EnsureVisible();
     }
 
   }

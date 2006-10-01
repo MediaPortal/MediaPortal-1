@@ -23,10 +23,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 
-using IdeaBlade.Persistence;
-using IdeaBlade.Rdb;
-using IdeaBlade.Persistence.Rdb;
-using IdeaBlade.Util;
 using TvDatabase;
 
 namespace TvService

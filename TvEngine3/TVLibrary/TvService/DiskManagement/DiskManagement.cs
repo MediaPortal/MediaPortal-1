@@ -29,10 +29,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 
-using IdeaBlade.Persistence;
-using IdeaBlade.Rdb;
-using IdeaBlade.Persistence.Rdb;
-using IdeaBlade.Util;
 using TvDatabase;
 using TvLibrary.Log;
 
@@ -129,7 +125,7 @@ namespace TvService
     List<RecordingFileInfo> GetRecordingsOnDrive(string drive)
     {
       List<RecordingFileInfo> recordings = new List<RecordingFileInfo>();
-      EntityList<Recording> recordedTvShows = DatabaseManager.Instance.GetEntities<Recording>();
+      IList recordedTvShows = Recording.ListAll();
       
       foreach (Recording recorded in recordedTvShows)
       {
@@ -181,7 +177,7 @@ namespace TvService
                                               fi.filename,
                                               Utils.GetSize(fi.info.Length),
                                               fi.info.CreationTime.ToShortDateString(), fi.info.CreationTime.ToShortTimeString());
-          fi.record.Delete();
+          fi.record.Remove();
         }
         recordings.RemoveAt(0);
       }//while ( OutOfDiskSpace(drive) && recordings.Count > 0)

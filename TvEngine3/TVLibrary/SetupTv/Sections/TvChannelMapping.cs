@@ -19,20 +19,18 @@
  *
  */
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using TvControl;
 using DirectShowLib;
 
-using IdeaBlade.Persistence;
-using IdeaBlade.Rdb;
-using IdeaBlade.Persistence.Rdb;
-using IdeaBlade.Util;
 
+using Gentle.Common;
+using Gentle.Framework;
 using TvDatabase;
 using TvLibrary;
 using TvLibrary.Interfaces;
@@ -80,7 +78,7 @@ namespace SetupTv.Sections
     public override void OnSectionActivated()
     {
       mpComboBoxCard.Items.Clear();
-      EntityList<Card> cards = DatabaseManager.Instance.GetEntities<Card>();
+      IList cards = Card.ListAll();
       foreach (Card card in cards)
       {
         mpComboBoxCard.Items.Add(new CardInfo(card));
@@ -107,7 +105,7 @@ namespace SetupTv.Sections
       }
       mpListViewChannels.EndUpdate();
       mpListViewMapped.EndUpdate();
-      DatabaseManager.Instance.SaveChanges();
+      //DatabaseManager.Instance.SaveChanges();
     }
 
     private void mpButtonUnmap_Click(object sender, EventArgs e)
@@ -122,38 +120,39 @@ namespace SetupTv.Sections
         mpListViewMapped.Items.Remove(item);
 
 
-        ListViewItem newItem = mpListViewChannels.Items.Add(map.Channel.Name);
-        newItem.Tag = map.Channel;
+        ListViewItem newItem = mpListViewChannels.Items.Add(map.ReferencedChannel().Name);
+        newItem.Tag = map.ReferencedChannel();
 
 
-        map.Delete();
+        map.Remove();
       }
       mpListViewChannels.Sort();
 
       mpListViewChannels.EndUpdate();
       mpListViewMapped.EndUpdate();
-      DatabaseManager.Instance.SaveChanges();
+     // DatabaseManager.Instance.SaveChanges();
     }
 
     private void mpComboBoxCard_SelectedIndexChanged(object sender, EventArgs e)
     {
-      DatabaseManager.Instance.SaveChanges();
+      //DatabaseManager.Instance.SaveChanges();
 
       mpListViewChannels.BeginUpdate();
       mpListViewMapped.BeginUpdate();
       mpListViewMapped.Items.Clear();
       mpListViewChannels.Items.Clear();
 
-      EntityQuery query = new EntityQuery(typeof(Channel));
-      query.AddOrderBy(Channel.SortOrderEntityColumn);
-      EntityList<Channel> channels = DatabaseManager.Instance.GetEntities<Channel>(query);
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
+      sb.AddOrderByField(true, "sortOrder");
+      SqlStatement stmt = sb.GetStatement(true);
+      IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
 
       Card card = ((CardInfo)mpComboBoxCard.SelectedItem).Card;
-      ReadOnlyEntityList<ChannelMap> maps = card.ChannelMaps;
-      maps.ApplySort(new ChannelMap.Comparer(), false);
+      IList maps = card.ReferringChannelMap();
+      //maps.ApplySort(new ChannelMap.Comparer(), false);
       foreach (ChannelMap map in maps)
       {
-        Channel channel = map.Channel;
+        Channel channel = map.ReferencedChannel();
         if (channel.IsTv == false) continue;
         ListViewItem item = mpListViewMapped.Items.Add(channel.Name);
         item.Tag = map;

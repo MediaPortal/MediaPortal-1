@@ -19,9 +19,9 @@
  *
  */
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -30,11 +30,9 @@ using TvDatabase;
 using TvLibrary.Interfaces;
 using TvLibrary.Implementations;
 
-using IdeaBlade.Persistence;
-using IdeaBlade.Rdb;
-using IdeaBlade.Persistence.Rdb;
-using IdeaBlade.Util;
 
+using Gentle.Common;
+using Gentle.Framework;
 namespace SetupTv.Sections
 {
   public partial class TestService : SectionSettings
@@ -58,9 +56,11 @@ namespace SetupTv.Sections
       mpGroupBox1.Visible = false;
       RemoteControl.Instance.EpgGrabberEnabled = true;
       mpComboBoxChannels.Items.Clear();
-      EntityQuery query = new EntityQuery(typeof(Channel));
-      query.AddOrderBy(Channel.SortOrderEntityColumn);
-      EntityList<Channel> channels = DatabaseManager.Instance.GetEntities<Channel>(query);
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
+      sb.AddOrderByField(true, "sortOrder");
+      SqlStatement stmt = sb.GetStatement(true);
+      IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
+
       foreach (Channel ch in channels)
       {
         if (ch.IsTv == false) continue;
@@ -74,7 +74,7 @@ namespace SetupTv.Sections
       mpListView1.Items.Clear();
       try
       {
-        EntityList<Card> cards = DatabaseManager.Instance.GetEntities<Card>();
+        IList cards = Card.ListAll();
         TvServer server = new TvServer();
         foreach (Card dbsCard in cards)
         {
@@ -307,12 +307,13 @@ namespace SetupTv.Sections
     private void mpButtonReGrabEpg_Click(object sender, EventArgs e)
     {
       RemoteControl.Instance.EpgGrabberEnabled = false;
-      EntityList<Channel> channels = DatabaseManager.Instance.GetEntities<Channel>();
+      IList channels = Channel.ListAll();
       foreach (Channel ch in channels)
       {
         ch.LastGrabTime = Schedule.MinSchedule;
+        ch.Persist();
       }
-      DatabaseManager.SaveChanges();
+      
       RemoteControl.Instance.EpgGrabberEnabled = true;
     }
 
@@ -324,7 +325,7 @@ namespace SetupTv.Sections
     /// <returns>virtual card</returns>
     public VirtualCard GetCardTimeShiftingChannel(string channelName)
     {
-      EntityList<Card> cards = DatabaseManager.Instance.GetEntities<Card>();
+      IList cards = Card.ListAll();
       foreach (Card card in cards)
       {
         if (RemoteControl.Instance.IsTimeShifting(card.IdCard))
@@ -347,7 +348,7 @@ namespace SetupTv.Sections
     /// <returns>virtual card</returns>
     public VirtualCard GetCardRecordingChannel(string channel)
     {
-      EntityList<Card> cards = DatabaseManager.Instance.GetEntities<Card>();
+      IList cards = Card.ListAll();
       foreach (Card card in cards)
       {
         if (RemoteControl.Instance.IsRecording(card.IdCard))

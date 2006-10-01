@@ -19,6 +19,7 @@
  *
  */
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Net;
@@ -27,10 +28,6 @@ using System.Net.Sockets;
 
 using TvLibrary.Log;
 
-using IdeaBlade.Persistence;
-using IdeaBlade.Rdb;
-using IdeaBlade.Persistence.Rdb;
-using IdeaBlade.Util;
 using TvDatabase;
 using TvControl;
 
@@ -56,7 +53,7 @@ namespace TvService
     System.Timers.Timer _timer = new System.Timers.Timer();
     DateTime _scheduleCheckTimer;
     List<RecordingDetail> _recordingsInProgressList;
-    EntityList<Channel> _channels;
+    IList _channels;
     int _preRecordInterval = 5;
     int _postRecordInterval = 5;
     #endregion
@@ -90,8 +87,8 @@ namespace TvService
       Log.Write("Scheduler: started");
       _controller = RemoteControl.Instance;
       _recordingsInProgressList = new List<RecordingDetail>();
-      _channels = DatabaseManager.Instance.GetEntities<Channel>();
-      EntityList<Schedule> schedules = DatabaseManager.Instance.GetEntities<Schedule>();
+      _channels = Channel.ListAll();
+      IList schedules = Schedule.ListAll();
       Log.Write("Scheduler: loaded {0} schedules", schedules.Count);
       _scheduleCheckTimer = DateTime.MinValue;
       _timer.Interval = 1000;
@@ -162,7 +159,7 @@ namespace TvService
       _postRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
 
       DateTime now = DateTime.Now;
-      EntityList<Schedule> schedules = DatabaseManager.Instance.GetEntities<Schedule>();
+      IList schedules = Schedule.ListAll();
       foreach (Schedule schedule in schedules)
       {
         //if schedule has been canceled then do nothing
@@ -224,7 +221,7 @@ namespace TvService
             currentTime <= schedule.EndTime.AddMinutes(_postRecordInterval))
         {
 
-          newRecording = new RecordingDetail(schedule, schedule.Channel.Name, schedule.EndTime.AddMinutes(_postRecordInterval));
+          newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel().Name, schedule.EndTime.AddMinutes(_postRecordInterval));
           return true;
         }
         return false;
@@ -239,7 +236,7 @@ namespace TvService
         {
           if (!schedule.IsSerieIsCanceled(start))
           {
-            newRecording = new RecordingDetail(schedule, schedule.Channel.Name, end.AddMinutes(_postRecordInterval));
+            newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel().Name, end.AddMinutes(_postRecordInterval));
             return true;
           }
         }
@@ -258,7 +255,7 @@ namespace TvService
 
             if (!schedule.IsSerieIsCanceled(start))
             {
-              newRecording = new RecordingDetail(schedule, schedule.Channel.Name, end.AddMinutes(_postRecordInterval));
+              newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel().Name, end.AddMinutes(_postRecordInterval));
               return true;
             }
           }
@@ -276,7 +273,7 @@ namespace TvService
           {
             if (!schedule.IsSerieIsCanceled(start))
             {
-              newRecording = new RecordingDetail(schedule, schedule.Channel.Name, end.AddMinutes(_postRecordInterval));
+              newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel().Name, end.AddMinutes(_postRecordInterval));
               return true;
             }
           }
@@ -295,7 +292,7 @@ namespace TvService
           {
             if (!schedule.IsSerieIsCanceled(start))
             {
-              newRecording = new RecordingDetail(schedule, schedule.Channel.Name, end.AddMinutes(_postRecordInterval));
+              newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel().Name, end.AddMinutes(_postRecordInterval));
               return true;
             }
           }
@@ -305,8 +302,8 @@ namespace TvService
 
       if (type == ScheduleRecordingType.EveryTimeOnThisChannel)
       {
-        TvDatabase.Program current = schedule.Channel.CurrentProgram;
-        TvDatabase.Program next = schedule.Channel.NextProgram;
+        TvDatabase.Program current = schedule.ReferencedChannel().CurrentProgram;
+        TvDatabase.Program next = schedule.ReferencedChannel().NextProgram;
         if (current != null)
         {
           if (currentTime >= current.StartTime.AddMinutes(-_preRecordInterval) && currentTime <= current.EndTime.AddMinutes(_postRecordInterval))
@@ -315,7 +312,7 @@ namespace TvService
             {
               if (!schedule.IsSerieIsCanceled(current.StartTime))
               {
-                newRecording = new RecordingDetail(schedule, current.Channel.Name, current.EndTime.AddMinutes(_postRecordInterval));
+                newRecording = new RecordingDetail(schedule, current.ReferencedChannel().Name, current.EndTime.AddMinutes(_postRecordInterval));
                 return true;
               }
             }
@@ -329,7 +326,7 @@ namespace TvService
             {
               if (!schedule.IsSerieIsCanceled(next.StartTime))
               {
-                newRecording = new RecordingDetail(schedule, next.Channel.Name, next.EndTime.AddMinutes(_postRecordInterval));
+                newRecording = new RecordingDetail(schedule, next.ReferencedChannel().Name, next.EndTime.AddMinutes(_postRecordInterval));
                 return true;
               }
             }
@@ -351,7 +348,7 @@ namespace TvService
               {
                 if (!schedule.IsSerieIsCanceled(current.StartTime))
                 {
-                  newRecording = new RecordingDetail(schedule, current.Channel.Name, current.EndTime.AddMinutes(_postRecordInterval));
+                  newRecording = new RecordingDetail(schedule, current.ReferencedChannel().Name, current.EndTime.AddMinutes(_postRecordInterval));
                   return true;
                 }
               }
@@ -365,7 +362,7 @@ namespace TvService
               {
                 if (!schedule.IsSerieIsCanceled(next.StartTime))
                 {
-                  newRecording = new RecordingDetail(schedule, next.Channel.Name, next.EndTime.AddMinutes(_postRecordInterval));
+                  newRecording = new RecordingDetail(schedule, next.ReferencedChannel().Name, next.EndTime.AddMinutes(_postRecordInterval));
                   return true;
                 }
               }
@@ -439,40 +436,33 @@ namespace TvService
       _controller.StopRecording(recording.CardInfo.Id);
       _controller.StopTimeShifting(recording.CardInfo.Id);
 
-      EntityList<Server> servers = DatabaseManager.Instance.GetEntities<Server>();
+      IList servers = Server.ListAll();
       Server ourServer = null;
       foreach (Server server in servers)
       {
         if (server.HostName == Dns.GetHostName())
           ourServer = server;
       }
-      Recording newRec = Recording.Create();
-      newRec.IdChannel = recording.Schedule.IdChannel;
-      newRec.StartTime = recording.Program.StartTime;
-      newRec.EndTime = recording.Program.EndTime;
-      newRec.FileName = recording.FileName;
-      newRec.Title = recording.Program.Title;
-      newRec.Description = recording.Program.Description;
-      newRec.Genre = recording.Program.Genre;
-      newRec.KeepUntilDate = recording.Schedule.KeepDate;
-      newRec.KeepUntil = (int)recording.Schedule.KeepMethod;
-      newRec.TimesWatched = 0;
-      newRec.Server = ourServer;
+      Recording newRec = new Recording(recording.Schedule.IdChannel, recording.Program.StartTime, recording.Program.EndTime, recording.Program.Title,
+                          recording.Program.Description, recording.Program.Genre, "", (int)recording.Schedule.KeepMethod,
+                          recording.Schedule.KeepDate, 0, ourServer.IdServer);
+      newRec.Persist();
       Log.Write("recList:count:{0} DEL scheduleid:{1} card:{2}", _recordingsInProgressList.Count, recording.Schedule.IdSchedule, recording.CardInfo.Card.Name);
 
-      DatabaseManager.Instance.SaveChanges();
+      //DatabaseManager.Instance.SaveChanges();
 
       PostProcessing processor = new PostProcessing();
       processor.Process(recording);
       if ((ScheduleRecordingType)recording.Schedule.ScheduleType == ScheduleRecordingType.Once)
       {
-        recording.Schedule.DeleteAll();
+        //@TODO
+        //recording.Schedule.DeleteAll();
       }
       else
       {
         _episodeManagement.OnScheduleEnded(recording.FileName, recording.Schedule, recording.Program);
       }
-      DatabaseManager.Instance.SaveChanges();
+      //DatabaseManager.Instance.SaveChanges();
       _recordingsInProgressList.Remove(recording);
 
     }

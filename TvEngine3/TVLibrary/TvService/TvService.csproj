@@ -28,21 +28,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="IdeaBlade.Persistence, Version=3.1.4.4, Culture=neutral, PublicKeyToken=287b5094865421c0, processorArchitecture=MSIL">
+    <Reference Include="Gentle.Common, Version=1.2.9.1285, Culture=neutral, PublicKeyToken=80b5de62e27be49b">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\TVDatabase\references\IdeaBlade.Persistence.dll</HintPath>
+      <HintPath>..\TVDatabase\references\Gentle.Common.dll</HintPath>
     </Reference>
-    <Reference Include="IdeaBlade.Persistence.Rdb, Version=3.1.4.4, Culture=neutral, PublicKeyToken=287b5094865421c0, processorArchitecture=MSIL">
+    <Reference Include="Gentle.Framework, Version=1.2.9.1286, Culture=neutral, PublicKeyToken=80b5de62e27be49b">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\TVDatabase\references\IdeaBlade.Persistence.Rdb.dll</HintPath>
+      <HintPath>..\TVDatabase\references\Gentle.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="IdeaBlade.Rdb, Version=3.1.4.4, Culture=neutral, PublicKeyToken=287b5094865421c0, processorArchitecture=MSIL">
+    <Reference Include="Gentle.Provider.SQLServer, Version=1.2.9.1289, Culture=neutral, PublicKeyToken=80b5de62e27be49b">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\TVDatabase\references\IdeaBlade.Rdb.dll</HintPath>
-    </Reference>
-    <Reference Include="IdeaBlade.Util, Version=3.1.4.4, Culture=neutral, PublicKeyToken=287b5094865421c0, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\TVDatabase\references\IdeaBlade.Util.dll</HintPath>
+      <HintPath>..\TVDatabase\references\Gentle.Provider.SQLServer.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration.Install" />
@@ -97,10 +93,6 @@
     <ProjectReference Include="..\TvControl\TvControl.csproj">
       <Project>{0DB878C6-1B68-4DC5-B6EF-564B7C08486F}</Project>
       <Name>TvControl</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TVDatabase\AppHelper\AppHelper.csproj">
-      <Project>{1A2B4993-F0A9-4CEA-A27C-9B2E9DBF1FF5}</Project>
-      <Name>AppHelper</Name>
     </ProjectReference>
     <ProjectReference Include="..\TVDatabase\TvBusinessLayer\TvBusinessLayer.csproj">
       <Project>{58C35C9D-F18D-40F2-8024-24E50D01E9C5}</Project>

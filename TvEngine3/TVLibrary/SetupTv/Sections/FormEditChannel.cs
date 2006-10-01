@@ -27,10 +27,6 @@ using System.Text;
 using System.Windows.Forms;
 
 
-using IdeaBlade.Persistence;
-using IdeaBlade.Rdb;
-using IdeaBlade.Persistence.Rdb;
-using IdeaBlade.Util;
 using TvDatabase;
 using TvLibrary;
 using TvLibrary.Implementations;
@@ -80,7 +76,7 @@ namespace SetupTv.Sections
       _channel.Name = textBoxName.Text;
       _channel.VisibleInGuide = checkBoxVisibleInTvGuide.Checked;
 
-      foreach (TuningDetail detail in _channel.TuningDetails)
+      foreach (TuningDetail detail in _channel.ReferringTuningDetail())
       {
         //analog tab
         if (detail.ChannelType == 0)
@@ -165,7 +161,7 @@ namespace SetupTv.Sections
       textBoxName.Text = _channel.Name;
       checkBoxVisibleInTvGuide.Checked = _channel.VisibleInGuide;
 
-      foreach (TuningDetail detail in _channel.TuningDetails)
+      foreach (TuningDetail detail in _channel.ReferringTuningDetail())
       {
 
         //analog tab

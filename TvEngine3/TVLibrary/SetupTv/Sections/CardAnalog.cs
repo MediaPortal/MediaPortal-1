@@ -27,10 +27,6 @@ using System.Text;
 using System.Windows.Forms;
 using System.Threading;
 using DirectShowLib;
-using IdeaBlade.Persistence;
-using IdeaBlade.Rdb;
-using IdeaBlade.Persistence.Rdb;
-using IdeaBlade.Util;
 
 using TvDatabase;
 
@@ -103,9 +99,13 @@ namespace SetupTv.Sections
     {
       base.OnSectionDeActivated();
       TvBusinessLayer layer = new TvBusinessLayer();
-      layer.GetSetting("analog" + _cardNumber.ToString() + "Country", "0").Value = mpComboBoxCountry.SelectedIndex.ToString();
-      layer.GetSetting("analog" + _cardNumber.ToString() + "Source", "0").Value = mpComboBoxSource.SelectedIndex.ToString();
-      DatabaseManager.Instance.SaveChanges();
+      Setting setting;
+      setting = layer.GetSetting("analog" + _cardNumber.ToString() + "Country", "0");
+      setting.Value = mpComboBoxCountry.SelectedIndex.ToString();
+      setting.Persist();
+      setting = layer.GetSetting("analog" + _cardNumber.ToString() + "Source", "0");
+      setting.Value = mpComboBoxSource.SelectedIndex.ToString();
+      setting.Persist();
     }
 
     private void mpButtonScan_Click(object sender, EventArgs e)
@@ -178,7 +178,7 @@ namespace SetupTv.Sections
         mpComboBoxSource.Enabled = true;
         mpButtonScanRadio.Enabled = true;
         mpButtonScanTv.Enabled = true;
-        DatabaseManager.Instance.SaveChanges();
+        //DatabaseManager.Instance.SaveChanges();
 
       }
       finally
@@ -278,7 +278,7 @@ namespace SetupTv.Sections
         mpButtonScanRadio.Enabled = true;
         mpButtonScanTv.Enabled = true;
         mpComboBoxSensitivity.Enabled = true;
-        DatabaseManager.Instance.SaveChanges();
+        //DatabaseManager.Instance.SaveChanges();
 
       }
       catch (Exception ex)

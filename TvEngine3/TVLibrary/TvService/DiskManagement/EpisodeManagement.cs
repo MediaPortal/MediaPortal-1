@@ -29,10 +29,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 
-using IdeaBlade.Persistence;
-using IdeaBlade.Rdb;
-using IdeaBlade.Persistence.Rdb;
-using IdeaBlade.Util;
+
 using TvDatabase;
 using TvLibrary.Log;
 
@@ -44,7 +41,7 @@ namespace TvService
     {
     }
 
-    public List<Recording> GetEpisodes(string title, EntityList<Recording> recordings)
+    public List<Recording> GetEpisodes(string title, IList recordings)
     {
       List<Recording> episodes = new List<Recording>();
       foreach (Recording recording in recordings)
@@ -87,7 +84,7 @@ namespace TvService
       //check how many episodes we got
       while (true)
       {
-        EntityList<Recording> recordings = DatabaseManager.Instance.GetEntities<Recording>();
+        IList recordings = Recording.ListAll();
 
         List<Recording> episodes = GetEpisodes(program.Title, recordings);
         if (episodes.Count <= schedule.MaxAirings) return;
@@ -95,12 +92,12 @@ namespace TvService
         Recording oldestEpisode = GetOldestEpisode(episodes);
         if (oldestEpisode == null) return;
         Log.Write(  "diskmanagement:   Delete episode {0} {1} {2} {3}",
-                             oldestEpisode.Channel,
+                             oldestEpisode.ReferencedChannel(),
                              oldestEpisode.Title,
                              oldestEpisode.StartTime.ToLongDateString(),
                              oldestEpisode.StartTime.ToLongTimeString());
 
-        oldestEpisode.Delete();
+        oldestEpisode.Remove();
       }
     }
     #endregion

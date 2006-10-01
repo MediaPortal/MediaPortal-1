@@ -31,10 +31,6 @@ using System.Threading;
 using System.Xml;
 using DirectShowLib;
 
-using IdeaBlade.Persistence;
-using IdeaBlade.Rdb;
-using IdeaBlade.Persistence.Rdb;
-using IdeaBlade.Util;
 
 using TvDatabase;
 
@@ -180,7 +176,7 @@ namespace SetupTv.Sections
 
         progressBar1.Value = 100;
         mpButtonScanTv.Enabled = true;
-        DatabaseManager.Instance.SaveChanges();
+        //DatabaseManager.Instance.SaveChanges();
 
       }
       catch (Exception ex)

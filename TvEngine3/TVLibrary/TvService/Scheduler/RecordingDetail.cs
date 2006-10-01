@@ -24,10 +24,6 @@ using System.Text;
 
 using TvLibrary.Log;
 
-using IdeaBlade.Persistence;
-using IdeaBlade.Rdb;
-using IdeaBlade.Persistence.Rdb;
-using IdeaBlade.Util;
 using TvDatabase;
 using TvControl;
 
@@ -61,19 +57,19 @@ namespace TvService
       _endTime = endTime;
 
       //find which program we are recording
-      _program = schedule.Channel.CurrentProgram;
+      _program = schedule.ReferencedChannel().CurrentProgram;
       if (_program != null)
       {
         //if we started recording before the schedule start time
         if (DateTime.Now < _schedule.StartTime)
         {
           // and the schedule endtime is past the current program endtime
-          if (schedule.Channel.NextProgram != null)
+          if (schedule.ReferencedChannel().NextProgram != null)
           {
             if (_schedule.EndTime >= _program.EndTime)
             {
               //then we are not recording the current program, but the next one
-              _program = schedule.Channel.NextProgram;
+              _program = schedule.ReferencedChannel().NextProgram;
             }
           }
         }
@@ -82,12 +78,7 @@ namespace TvService
       //no program? then treat this as a manual recording
       if (_program == null)
       {
-        _program = TvDatabase.Program.New();
-        _program.Title = "manual";
-        _program.StartTime = DateTime.Now;
-        _program.EndTime = endTime;
-        _program.Description = "";
-        _program.Genre = "";
+        _program = new TvDatabase.Program(0, DateTime.Now, endTime, "manual", "", "", false);
       }
     }
     #endregion
@@ -205,7 +196,7 @@ namespace TvService
       string fileName = string.Empty;
       string recEngineExt = ".mpg";
 
-      strInput = Utils.ReplaceTag(strInput, "%channel%", Utils.MakeFileName(_schedule.Channel.Name), "unknown");
+      strInput = Utils.ReplaceTag(strInput, "%channel%", Utils.MakeFileName(_schedule.ReferencedChannel().Name), "unknown");
       strInput = Utils.ReplaceTag(strInput, "%title%", Utils.MakeFileName(Program.Title), "unknown");
       //strInput = Utils.ReplaceTag(strInput, "%name%", Utils.MakeFileName(Program.Episode), "unknown");
       //strInput = Utils.ReplaceTag(strInput, "%series%", Utils.MakeFileName(Program.SeriesNum), "unknown");
@@ -248,7 +239,7 @@ namespace TvService
       {
         DateTime dt = Program.StartTime;
         fileName = String.Format("{0}_{1}_{2}{3:00}{4:00}{5:00}{6:00}p{7}{8}",
-                                  _schedule.Channel.Name, Program.Title,
+                                  _schedule.ReferencedChannel().Name, Program.Title,
                                   dt.Year, dt.Month, dt.Day,
                                   dt.Hour,
                                   dt.Minute,

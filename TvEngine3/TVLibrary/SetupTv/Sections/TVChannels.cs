@@ -19,20 +19,18 @@
  *
  */
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using TvControl;
 using DirectShowLib;
 
-using IdeaBlade.Persistence;
-using IdeaBlade.Rdb;
-using IdeaBlade.Persistence.Rdb;
-using IdeaBlade.Util;
 
+using Gentle.Common;
+using Gentle.Framework;
 using TvDatabase;
 using TvLibrary;
 using TvLibrary.Log;
@@ -63,8 +61,10 @@ namespace SetupTv.Sections
           ch.SortOrder = i + 1;
         }
         ch.VisibleInGuide = mpListView1.Items[i].Checked;
+        ch.Persist();
       }
-      DatabaseManager.Instance.SaveChanges();
+      
+      //DatabaseManager.Instance.SaveChanges();
       RemoteControl.Instance.OnNewSchedule();
       base.OnSectionDeActivated();
     }
@@ -72,20 +72,23 @@ namespace SetupTv.Sections
     {
 
       CountryCollection countries = new CountryCollection();
-      Dictionary<string, CardType> cards = new Dictionary<string, CardType>();
-      EntityList<Card> dbsCards = DatabaseManager.Instance.GetEntities<Card>();
+      Dictionary<int, CardType> cards = new Dictionary<int, CardType>();
+      IList dbsCards = Card.ListAll();
       foreach (Card card in dbsCards)
       {
-        cards[card.DevicePath] = RemoteControl.Instance.Type(card.IdCard);
+        cards[card.IdCard] = RemoteControl.Instance.Type(card.IdCard);
       }
       base.OnSectionActivated();
+      
       mpListView1.BeginUpdate();
       mpListView1.Items.Clear();
-
+      IList chs = Channel.ListAll();
       int channelCount = 0;
-      EntityQuery query = new EntityQuery(typeof(Channel));
-      query.AddOrderBy(Channel.SortOrderEntityColumn);
-      EntityList<Channel> channels = DatabaseManager.Instance.GetEntities<Channel>(query);
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
+      sb.AddOrderByField(true, "sortOrder");
+      SqlStatement stmt = sb.GetStatement(true);
+      IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
+      IList allmaps = ChannelMap.ListAll();
       foreach (Channel ch in channels)
       {
         bool analog = false;
@@ -95,13 +98,12 @@ namespace SetupTv.Sections
         bool atsc = false;
         if (ch.IsTv == false) continue;
         channelCount++;
-        ListViewItem item = mpListView1.Items.Add((mpListView1.Items.Count + 1).ToString());
-        item.SubItems.Add(ch.Name);
-        foreach (ChannelMap map in ch.ChannelMaps)
+        IList maps = ch.ReferringChannelMap();
+        foreach (ChannelMap map in maps)
         {
-          if (cards.ContainsKey(map.Card.DevicePath))
+          if (cards.ContainsKey(map.IdCard))
           {
-            CardType type = cards[map.Card.DevicePath];
+            CardType type = cards[map.IdCard];
             switch (type)
             {
               case CardType.Analog: analog = true; break;
@@ -112,7 +114,8 @@ namespace SetupTv.Sections
             }
           }
         }
-        string line = "";
+        StringBuilder builder = new StringBuilder();
+        
         string[] details = new string[4];
         details[0] = "";
         details[1] = "";
@@ -120,35 +123,35 @@ namespace SetupTv.Sections
         details[3] = "";
         if (analog)
         {
-          line += "Analog";
+          builder.Append("Analog");
         }
         if (dvbc)
         {
-          if (line != "") line += ",";
-          line += "DVB-C";
+          if (builder.Length > 0) builder.Append(",");
+          builder.Append("DVB-C");
         }
         if (dvbt)
         {
-          if (line != "") line += ",";
-          line += "DVB-T";
+          if (builder.Length > 0) builder.Append(",");
+          builder.Append("DVB-T");
         }
         if (dvbs)
         {
-          if (line != "") line += ",";
-          line += "DVB-S";
+          if (builder.Length > 0) builder.Append(",");
+          builder.Append("DVB-S");
         }
         if (atsc)
         {
-          if (line != "") line += ",";
-          line += "ATSC";
+          if (builder.Length > 0) builder.Append(",");
+          builder.Append("ATSC");
         }
+        ListViewItem item = new ListViewItem((mpListView1.Items.Count + 1).ToString());
+        item.SubItems.Add(ch.Name);
         item.Checked = ch.VisibleInGuide;
         item.Tag = ch;
-        item.SubItems.Add(line);
-        item.SubItems.Add(details[0]);
-        item.SubItems.Add(details[1]);
-        item.SubItems.Add(details[2]);
-        item.SubItems.Add(details[3]);
+        item.SubItems.Add(builder.ToString());
+        mpListView1.Items.Add(item);
+        
       }
       mpListView1.EndUpdate();
       mpLabelChannelCount.Text = String.Format("Total channels:{0}", channelCount);
@@ -156,7 +159,7 @@ namespace SetupTv.Sections
 
     private void mpButtonClear_Click(object sender, EventArgs e)
     {
-
+      /*
       mpListView1.BeginUpdate();
       EntityList<TuningDetail> details = DatabaseManager.Instance.GetEntities<TuningDetail>();
       while (details.Count > 0) details[0].Delete();
@@ -178,7 +181,7 @@ namespace SetupTv.Sections
       mpListView1.EndUpdate();
       DatabaseManager.Instance.SaveChanges();
       DatabaseManager.Instance.ClearQueryCache();
-      OnSectionActivated();
+      OnSectionActivated();*/
     }
 
     private void TvChannels_Load(object sender, EventArgs e)
@@ -189,26 +192,26 @@ namespace SetupTv.Sections
     private void mpButtonClearEncrypted_Click(object sender, EventArgs e)
     {
       //@ TODO : does not work
-      EntityList<Channel> channels = DatabaseManager.Instance.GetEntities<Channel>();
-      channels.ShouldRemoveDeletedEntities = false;
+      IList channels = Channel.ListAll();
 
       mpListView1.BeginUpdate();
       for (int i = 0; i < channels.Count; ++i)
       {
-        if (channels[i].IsTv)
+        Channel ch = (Channel)channels[i];
+        if (ch.IsTv)
         {
-          for (int x = 0; x < channels[i].TuningDetails.Count; x++)
+          for (int x = 0; x < ch.ReferringTuningDetail().Count; x++)
           {
-            if (channels[i].TuningDetails[x].FreeToAir == false)
+            TuningDetail detail = (TuningDetail)ch.ReferringTuningDetail()[x];
+            if (detail.FreeToAir == false)
             {
-              channels[i].DeleteAll();
+              ch.Remove();
               break;
             }
           }
         }
       }
       mpListView1.EndUpdate();
-      DatabaseManager.Instance.SaveChanges();
       OnSectionActivated();
     }
 
@@ -218,11 +221,10 @@ namespace SetupTv.Sections
       foreach (ListViewItem item in mpListView1.SelectedItems)
       {
         Channel channel = (Channel)item.Tag;
-        channel.DeleteAll();
+        channel.Remove();
         mpListView1.Items.Remove(item);
       }
       mpListView1.EndUpdate();
-      DatabaseManager.Instance.SaveChanges();
     }
 
     private void buttonUtp_Click(object sender, EventArgs e)
@@ -302,7 +304,7 @@ namespace SetupTv.Sections
       FormEditChannel dlg = new FormEditChannel();
       dlg.Channel = channel;
       dlg.ShowDialog();
-      DatabaseManager.SaveChanges();
+      channel.Persist();
       OnSectionActivated();
     }
   }

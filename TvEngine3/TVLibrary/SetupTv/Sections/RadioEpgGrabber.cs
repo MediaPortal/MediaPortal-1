@@ -19,20 +19,18 @@
  *
  */
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
+
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using TvControl;
 using DirectShowLib;
 
-using IdeaBlade.Persistence;
-using IdeaBlade.Rdb;
-using IdeaBlade.Persistence.Rdb;
-using IdeaBlade.Util;
-
+using Gentle.Common;
+using Gentle.Framework;
 using TvDatabase;
 using TvLibrary;
 using TvLibrary.Interfaces;
@@ -90,7 +88,7 @@ namespace SetupTv.Sections
       if (setting.Value == "")
       {
         setting.Value = values;
-        DatabaseManager.Instance.SaveChanges();
+        setting.Persist();
       }
     }
     public override void OnSectionDeActivated()
@@ -105,7 +103,7 @@ namespace SetupTv.Sections
       mpListView1.BeginUpdate();
       CountryCollection countries = new CountryCollection();
       Dictionary<string, CardType> cards = new Dictionary<string, CardType>();
-      EntityList<Card> dbsCards = DatabaseManager.Instance.GetEntities<Card>();
+      IList dbsCards = Card.ListAll();
       foreach (Card card in dbsCards)
       {
         cards[card.DevicePath] = RemoteControl.Instance.Type(card.IdCard);
@@ -113,9 +111,10 @@ namespace SetupTv.Sections
       base.OnSectionActivated();
       mpListView1.Items.Clear();
 
-      EntityQuery query = new EntityQuery(typeof(Channel));
-      query.AddOrderBy(Channel.SortOrderEntityColumn);
-      EntityList<Channel> channels = DatabaseManager.Instance.GetEntities<Channel>(query);
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
+      sb.AddOrderByField(true, "sortOrder");
+      SqlStatement stmt = sb.GetStatement(true);
+      IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
 
       foreach (Channel ch in channels)
       {
@@ -126,11 +125,11 @@ namespace SetupTv.Sections
         bool atsc = false;
         if (ch.IsRadio == false) continue;
         ListViewItem item = mpListView1.Items.Add(ch.Name);
-        foreach (ChannelMap map in ch.ChannelMaps)
+        foreach (ChannelMap map in ch.ReferringChannelMap())
         {
-          if (cards.ContainsKey(map.Card.DevicePath))
+          if (cards.ContainsKey(map.ReferencedCard().DevicePath))
           {
-            CardType type = cards[map.Card.DevicePath];
+            CardType type = cards[map.ReferencedCard().DevicePath];
             switch (type)
             {
               case CardType.Analog: analog = true; break;
@@ -219,7 +218,7 @@ namespace SetupTv.Sections
 
         }
       }
-      DatabaseManager.Instance.SaveChanges();
+      setting.Persist();
       base.SaveSettings();
     }
 

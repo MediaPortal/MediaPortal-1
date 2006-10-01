@@ -1,13 +1,13 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using System.Data;
-using System.Data.OleDb;
+//using System.Data;
+//using System.Data.OleDb;
 using TvDatabase;
-using IdeaBlade.Persistence;
-using IdeaBlade.Rdb;
-using IdeaBlade.Persistence.Rdb;
-using IdeaBlade.Util;
+using Gentle.Common;
+using Gentle.Framework;
+
 using TvLibrary.Interfaces;
 using TvLibrary.Implementations;
 using TvLibrary.Channels;
@@ -25,38 +25,30 @@ namespace TvDatabase
       if (card != null)
       {
         card.Name = name;
-        card.Server = server;
+        card.IdServer = server.IdServer;
         return card;
       }
-      Card newCard = Card.Create();
-      newCard.Name = name;
-      newCard.Priority = 1;
-      newCard.DevicePath = devicePath;
-      newCard.Server = server;
-      newCard.Enabled = true;
+      Card newCard = new Card(devicePath,name,1,true,new DateTime(2000,1,1),"",server.IdServer,true);
+      newCard.Persist();
       return newCard;
     }
 
-    public EntityList<Card> Cards
+    public IList Cards
     {
       get
       {
-        EntityList<Card> cards = DatabaseManager.Instance.GetEntities<Card>();
-        return cards;
+        return Card.ListAll();
       }
     }
     public void DeleteCard(Card card)
     {
-      card.Delete();
+      card.Remove();
     }
 
     public Card GetCardByName(string name)
     {
-      EntityList<Card> cards = Cards;
-      if (cards == null) return null;
-      if (cards.Count == 0) return null;
-
-      foreach (Card card in cards)
+      IList cards = Cards;
+      foreach(Card card in cards)
       {
         if (card.Name == name) return card;
       }
@@ -65,9 +57,7 @@ namespace TvDatabase
 
     public Card GetCardByDevicePath(string path)
     {
-      EntityList<Card> cards = Cards;
-      if (cards == null) return null;
-      if (cards.Count == 0) return null;
+      IList cards = Cards;
       foreach (Card card in cards)
       {
         if (card.DevicePath == path) return card;
@@ -86,71 +76,62 @@ namespace TvDatabase
         channel.Name = name;
         return channel;
       }
-      Channel newChannel = Channel.Create();
-      newChannel.GrabEpg = true;
-      newChannel.IsRadio = false;
-      newChannel.IsTv = false;
-      newChannel.LastGrabTime = new DateTime(2000, 1, 1, 0, 0, 0);
-      newChannel.SortOrder = -1;
-      newChannel.TimesWatched = 0;
-      newChannel.TotalTimeWatched = new DateTime(2000, 1, 1, 0, 0, 0);
-      newChannel.Name = name;
-
+      Channel newChannel = new Channel(name, false, false, 0, new DateTime(2000, 1, 1), true, new DateTime(2000, 1, 1), -1, true);
+      
       return newChannel;
     }
-    public void AddChannelToGroup(Channel channel, string groupName)
-    {
-      ChannelGroup nullGroup = DatabaseManager.Instance.GetNullEntity<ChannelGroup>();
-      EntityQuery query = new EntityQuery(typeof(ChannelGroup));
-      query.AddClause(ChannelGroup.GroupNameEntityColumn, EntityQueryOp.EQ, groupName);
-      EntityList<ChannelGroup> groups = DatabaseManager.Instance.GetEntities<ChannelGroup>(query);
 
+    public void AddChannelToGroup(Channel channel, string groupName)
+    { 
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(ChannelGroup));
+      sb.AddConstraint(Operator.Equals, "groupName", groupName);
+      SqlStatement stmt = sb.GetStatement(true);
+      IList groups=ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
       ChannelGroup group;
       if (groups.Count == 0)
       {
-        group = ChannelGroup.Create();
-        group.GroupName = groupName;
+        group = new ChannelGroup(groupName);
+        group.Persist();
       }
       else
       {
-        group = groups[0];
+        group = (ChannelGroup)groups[0];
       }
       bool found = false;
-      foreach (GroupMap map in group.GroupMaps)
+      IList groupMaps = group.ReferringGroupMap();
+      foreach (GroupMap map in groupMaps)
       {
-        if (map.Channel.Name == channel.Name) found = true;
+        if (map.ReferencedChannel().Name == channel.Name) found = true;
       }
       if (!found)
       {
-        GroupMap map = GroupMap.Create();
-        map.Channel = channel;
-        map.ChannelGroup = group;
+        GroupMap map = new GroupMap(group.IdGroup, channel.IdChannel);
+        map.Persist();
       }
     }
 
-    public EntityList<Channel> Channels
+    public IList Channels
     {
       get
       {
-        EntityList<Channel> channels = DatabaseManager.Instance.GetEntities<Channel>();
-        return channels;
+        return Channel.ListAll();
       }
     }
 
     public void DeleteChannel(Channel channel)
     {
-      channel.Delete();
+      channel.Remove();
     }
 
     public Channel GetChannelByName(string name)
     {
-      Channel channel = DatabaseManager.Instance.GetNullEntity<Channel>();
-      EntityQuery query = new EntityQuery(typeof(Channel));
-      query.AddClause(channel.NameColumn.ColumnName, EntityQueryOp.EQ, name);
-      EntityList<Channel> channels = DatabaseManager.Instance.GetEntities<Channel>(query);
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
+      sb.AddConstraint(Operator.Equals, "name", name);
+      SqlStatement stmt = sb.GetStatement(true);
+      IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
       if (channels == null) return null;
       if (channels.Count == 0) return null;
-      return channels[0];
+      return (Channel)channels[0];
     }
 
     public Setting GetSetting(string tagName, string defaultValue)
@@ -158,62 +139,49 @@ namespace TvDatabase
       if (defaultValue == null) return null;
       if (tagName == null) return null;
       if (tagName == "") return null;
-      EntityQuery query = new EntityQuery(typeof(Setting));
-      query.AddClause(Setting.TagEntityColumn.ColumnName, EntityQueryOp.EQ, tagName);
-      EntityList<Setting> settingsFound = DatabaseManager.Instance.GetEntities<Setting>(query);
-      if (settingsFound == null)
+
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Setting));
+      sb.AddConstraint(Operator.Equals, "tag", tagName);
+      SqlStatement stmt = sb.GetStatement(true);
+      IList settingsFound = ObjectFactory.GetCollection(typeof(Setting), stmt.Execute());
+      if (settingsFound.Count==0)
       {
-        Setting set = Setting.Create();
-        set.Tag = tagName;
-        set.Value = defaultValue;
+        Setting set = new Setting(tagName, defaultValue);
+        set.Persist();
         return set;
       }
-      if (settingsFound.Count == 0)
-      {
-        Setting set = Setting.Create();
-        set.Tag = tagName;
-        set.Value = defaultValue;
-        return set;
-      }
-      return settingsFound[0];
+      return (Setting)settingsFound[0];
     }
     public Setting GetSetting(string tagName)
     {
-      if (tagName == null) return null;
-      if (tagName == "") return null;
-      EntityQuery query = new EntityQuery(typeof(Setting));
-      query.AddClause(Setting.TagEntityColumn.ColumnName, EntityQueryOp.EQ, tagName);
-      EntityList<Setting> settingsFound = DatabaseManager.Instance.GetEntities<Setting>(query);
-      if (settingsFound == null)
-      {
-        Setting set = Setting.Create();
-        set.Tag = tagName;
-        set.Value = "";
-        return set;
-      }
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Setting));
+      sb.AddConstraint(Operator.Equals, "tag", tagName);
+      SqlStatement stmt = sb.GetStatement(true);
+      IList settingsFound = ObjectFactory.GetCollection(typeof(Setting), stmt.Execute());
       if (settingsFound.Count == 0)
       {
-        Setting set = Setting.Create();
-        set.Tag = tagName;
-        set.Value = "";
+        Setting set = new Setting(tagName, "");
+        set.Persist();
         return set;
       }
-      return settingsFound[0];
+      return (Setting)settingsFound[0];
     }
 
-    public List<IChannel> GetTuningChannelByName(string name)
+    public IList GetTuningChannelByName(string name)
     {
-      Channel channel = DatabaseManager.Instance.GetNullEntity<Channel>();
-      EntityQuery query = new EntityQuery(typeof(Channel));
-      query.AddClause(channel.NameColumn.ColumnName, EntityQueryOp.EQ, name);
-      EntityList<Channel> channels = DatabaseManager.Instance.GetEntities<Channel>(query);
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
+      sb.AddConstraint(Operator.Equals, "name", name);
+      SqlStatement stmt = sb.GetStatement(true);
+      IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
       if (channels == null) return null;
       if (channels.Count == 0) return null;
       List<IChannel> tvChannels = new List<IChannel>();
+      Channel channel = (Channel)channels[0];
       CountryCollection collection = new CountryCollection();
-      for (int i = 0; i < channels[0].TuningDetails.Count; ++i)
+      IList tuningDetails = channel.ReferringTuningDetail();
+      for (int i = 0; i < tuningDetails.Count; ++i)
       {
-        TuningDetail detail = channels[0].TuningDetails[i];
+        TuningDetail detail = (TuningDetail)tuningDetails[i];
         switch (detail.ChannelType)
         {
           case 0: //AnalogChannel
@@ -306,14 +274,14 @@ namespace TvDatabase
 
     public ChannelMap MapChannelToCard(Card card, Channel channel)
     {
-      for (int i = 0; i < card.ChannelMaps.Count; ++i)
+      IList channelMaps = card.ReferringChannelMap();
+      for (int i = 0; i < channelMaps.Count; ++i)
       {
-        ChannelMap map = card.ChannelMaps[i];
-        if (map.Channel.IdChannel == channel.IdChannel) return map;
+        ChannelMap map = (ChannelMap)channelMaps[i];
+        if (map.IdChannel == channel.IdChannel) return map;
       }
-      ChannelMap newMap = ChannelMap.Create();
-      newMap.Card = card;
-      newMap.Channel = channel;
+      ChannelMap newMap = new ChannelMap(channel.IdChannel, card.IdCard);
+      newMap.Persist();
       return newMap;
     }
     #endregion
@@ -409,66 +377,46 @@ namespace TvDatabase
         freeToAir = dvbChannel.FreeToAir;
       }
 
-      for (int i = 0; i < channel.TuningDetails.Count; ++i)
+      IList tuningDetails = channel.ReferringTuningDetail();
+      for (int i = 0; i < tuningDetails.Count; ++i)
       {
-        if (channel.TuningDetails[i].Name == channelName &&
-            channel.TuningDetails[i].Provider == provider &&
-            channel.TuningDetails[i].NetworkId == networkId &&
-            channel.TuningDetails[i].TransportId == transportId &&
-            channel.TuningDetails[i].ServiceId == serviceId &&
-            channel.TuningDetails[i].Frequency == channelFrequency &&
-            channel.TuningDetails[i].MinorChannel == minorChannel &&
-            channel.TuningDetails[i].MajorChannel == majorChannel &&
-            channel.TuningDetails[i].ChannelNumber == channelNumber &&
-            channel.TuningDetails[i].IsTv == isTv &&
-            channel.TuningDetails[i].ChannelType == channelType &&
-            channel.TuningDetails[i].IsRadio == isRadio)
+        TuningDetail tuningdetail = (TuningDetail)tuningDetails[i];
+        if (tuningdetail.Name == channelName &&
+            tuningdetail.Provider == provider &&
+            tuningdetail.NetworkId == networkId &&
+            tuningdetail.TransportId == transportId &&
+            tuningdetail.ServiceId == serviceId &&
+            tuningdetail.Frequency == channelFrequency &&
+            tuningdetail.MinorChannel == minorChannel &&
+            tuningdetail.MajorChannel == majorChannel &&
+            tuningdetail.ChannelNumber == channelNumber &&
+            tuningdetail.IsTv == isTv &&
+            tuningdetail.ChannelType == channelType &&
+            tuningdetail.IsRadio == isRadio)
         {
-          channel.TuningDetails[i].Bandwidth = bandwidth;
-          channel.TuningDetails[i].CountryId = country;
-          channel.TuningDetails[i].Diseqc = diseqc;
-          channel.TuningDetails[i].FreeToAir = freeToAir;
-          channel.TuningDetails[i].Modulation = modulation;
-          channel.TuningDetails[i].PcrPid = pcrPid;
-          channel.TuningDetails[i].PmtPid = pmtPid;
-          channel.TuningDetails[i].Polarisation = polarisation;
-          channel.TuningDetails[i].SwitchingFrequency = switchFrequency;
-          channel.TuningDetails[i].Symbolrate = symbolRate;
-          channel.TuningDetails[i].VideoSource = videoInputType;
-          channel.TuningDetails[i].TuningSource = tunerSource;
-          channel.TuningDetails[i].ChannelType = channelType;
-          return channel.TuningDetails[i];
+          tuningdetail.Bandwidth = bandwidth;
+          tuningdetail.CountryId = country;
+          tuningdetail.Diseqc = diseqc;
+          tuningdetail.FreeToAir = freeToAir;
+          tuningdetail.Modulation = modulation;
+          tuningdetail.PcrPid = pcrPid;
+          tuningdetail.PmtPid = pmtPid;
+          tuningdetail.Polarisation = polarisation;
+          tuningdetail.SwitchingFrequency = switchFrequency;
+          tuningdetail.Symbolrate = symbolRate;
+          tuningdetail.VideoSource = videoInputType;
+          tuningdetail.TuningSource = tunerSource;
+          tuningdetail.ChannelType = channelType;
+          return tuningdetail;
         }
       }
 
-      TuningDetail detail = TuningDetail.Create();
-      detail.Channel = channel;
-      detail.IdChannel = channel.IdChannel;
-      detail.Name = channelName;
-      detail.Provider = provider;
-      detail.NetworkId = networkId;
-      detail.TransportId = transportId;
-      detail.ServiceId = serviceId;
-      detail.Frequency = (int)channelFrequency;
-      detail.MinorChannel = minorChannel;
-      detail.MajorChannel = majorChannel;
-      detail.ChannelNumber = channelNumber;
-      detail.IsTv = isTv;
-      detail.IsRadio = isRadio;
-
-      detail.Bandwidth = bandwidth;
-      detail.CountryId = country;
-      detail.Diseqc = diseqc;
-      detail.FreeToAir = freeToAir;
-      detail.Modulation = modulation;
-      detail.PcrPid = pcrPid;
-      detail.PmtPid = pmtPid;
-      detail.Polarisation = polarisation;
-      detail.SwitchingFrequency = switchFrequency;
-      detail.Symbolrate = symbolRate;
-      detail.VideoSource = videoInputType;
-      detail.TuningSource = tunerSource;
-      detail.ChannelType = channelType;
+      TuningDetail detail = new TuningDetail(channel.IdChannel, channelName, provider,
+                              channelType, channelNumber, (int)channelFrequency, country, isRadio, isTv,
+                              networkId, transportId, serviceId, pmtPid, freeToAir,
+                              modulation, polarisation, symbolRate, diseqc, switchFrequency,
+                              bandwidth, majorChannel, minorChannel, pcrPid, videoInputType, tunerSource);
+      detail.Persist();
       return detail;
     }
     #endregion
@@ -476,84 +424,59 @@ namespace TvDatabase
     #region programs
     public void RemoveOldPrograms()
     {
-      PassthruRdbQuery query = new PassthruRdbQuery(typeof(Program), "delete from program where (dateadd(day,-1,getdate()) >= endTime)");
-      DatabaseManager.Instance.GetEntities<Program>(query);
-    }
-    public List<Program> GetOnairNow()
-    {
-      List<Program> returnProgs = new List<Program>();
-      PassthruRdbQuery query = new PassthruRdbQuery(typeof(Program), "select * from program where (getdate() >= startTime and getdate() <=endTime) ");
-      EntityList<Program> programs = DatabaseManager.Instance.GetEntities<Program>(query);
-      foreach (Program prog in programs)
-      {
-        returnProgs.Add(prog);
-      }
-      return returnProgs;
-    }
+      SqlBuilder sb = new SqlBuilder(StatementType.Delete, typeof(Program));
+      DateTime dtYesterday = DateTime.Now.AddDays(-1);
+      sb.AddConstraint(Operator.LessThan, "endTime", dtYesterday);
+      SqlStatement stmt = sb.GetStatement(true);
+      ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
 
-    public List<Program> GetPrograms(Channel channel, DateTime startTime, DateTime endTime)
+    }
+    public IList GetOnairNow()
     {
-      Program program = DatabaseManager.Instance.GetNullEntity<Program>();
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
+      sb.AddConstraint(Operator.GreaterThanOrEquals, "startTime", DateTime.Now);
+      sb.AddConstraint(Operator.LessThanOrEquals, "endTime",DateTime.Now);
+      SqlStatement stmt = sb.GetStatement(true);
+      IList progs=ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
+      return progs;
+    }
+    
+    public IList GetPrograms(Channel channel, DateTime startTime, DateTime endTime)
+    {
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
 
       string sub1 = String.Format("(EndTime > '{0}' and EndTime < '{1}')", startTime.ToString("MM/dd/yyyy HH:mm:ss"), endTime.ToString("MM/dd/yyyy HH:mm:ss"));
       string sub2 = String.Format("(StartTime >= '{0}' and StartTime <= '{1}')", startTime.ToString("MM/dd/yyyy HH:mm:ss"), endTime.ToString("MM/dd/yyyy HH:mm:ss"));
       string sub3 = String.Format("(StartTime <= '{0}' and EndTime >= '{1}')", startTime.ToString("MM/dd/yyyy HH:mm:ss"), endTime.ToString("MM/dd/yyyy HH:mm:ss"));
-      PassthruRdbQuery query = new PassthruRdbQuery(typeof(Program),
-        String.Format(
-            "select * from program where program.idChannel={0} and ( {1} or {2} or {3})  order by starttime asc"
-        , channel.IdChannel, sub1, sub2, sub3));
 
-      EntityList<Program> programs = DatabaseManager.Instance.GetEntities<Program>(query);
-      List<Program> filteredProgs = new List<Program>();
-      if (programs == null) return filteredProgs;
-      if (programs.Count == 0) return filteredProgs;
-      foreach (Program prog in programs)
-      {
-        bool add = false;
-        if (prog.EndTime > startTime && prog.EndTime < endTime) add = true;
-        if (prog.StartTime >= startTime && prog.StartTime <= endTime) add = true;
-        if (prog.StartTime <= startTime && prog.EndTime >= endTime) add = true;
-        if (add)
-        {
-          filteredProgs.Add(prog);
-        }
-      }
-      return filteredProgs;
+      sb.AddConstraint(Operator.Equals,"idChannel",channel.IdChannel);
+      sb.AddConstraint(string.Format("and ({0} or {1} or {2}) ", sub1,sub2,sub3));
+      sb.AddOrderByField(true,"starttime");
+
+      SqlStatement stmt = sb.GetStatement(true);
+      IList progs=ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
+      return progs;
     }
 
-    public List<Program> GetPrograms(DateTime startTime, DateTime endTime)
+    public IList GetPrograms(DateTime startTime, DateTime endTime)
     {
-      Program program = DatabaseManager.Instance.GetNullEntity<Program>();
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
 
       string sub1 = String.Format("(EndTime > '{0}' and EndTime < '{1}')", startTime.ToString("MM/dd/yyyy HH:mm:ss"), endTime.ToString("MM/dd/yyyy HH:mm:ss"));
       string sub2 = String.Format("(StartTime >= '{0}' and StartTime <= '{1}')", startTime.ToString("MM/dd/yyyy HH:mm:ss"), endTime.ToString("MM/dd/yyyy HH:mm:ss"));
       string sub3 = String.Format("(StartTime <= '{0}' and EndTime >= '{1}')", startTime.ToString("MM/dd/yyyy HH:mm:ss"), endTime.ToString("MM/dd/yyyy HH:mm:ss"));
-      PassthruRdbQuery query = new PassthruRdbQuery(typeof(Program),
-        String.Format(
-            "select * from program where  ( {0} or {1} or {2})  order by starttime asc"
-        , sub1, sub2, sub3));
-
-      EntityList<Program> programs = DatabaseManager.Instance.GetEntities<Program>(query);
-      List<Program> filteredProgs = new List<Program>();
-      if (programs == null) return filteredProgs;
-      if (programs.Count == 0) return filteredProgs;
-      foreach (Program prog in programs)
-      {
-        bool add = false;
-        if (prog.EndTime > startTime && prog.EndTime < endTime) add = true;
-        if (prog.StartTime >= startTime && prog.StartTime <= endTime) add = true;
-        if (prog.StartTime <= startTime && prog.EndTime >= endTime) add = true;
-        if (add)
-        {
-          filteredProgs.Add(prog);
-        }
-      }
-      return filteredProgs;
+      
+      sb.AddConstraint(string.Format(" ({0} or {1} or {2}) ", sub1,sub2,sub3));
+      sb.AddOrderByField(true, "starttime");
+      SqlStatement stmt = sb.GetStatement(true);
+      IList progs=ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
+      return progs;
     }
-    public List<Program> SearchMinimalPrograms(DateTime startTime, DateTime endTime, string programName, Channel channel)
+
+    public IList SearchMinimalPrograms(DateTime startTime, DateTime endTime, string programName, Channel channel)
     {
-      List<Program> programs;
-      List<Program> progsReturn = new List<Program>();
+      IList programs;
+      IList progsReturn = new List<Program>();
       if (channel != null)
         programs = GetPrograms(channel, startTime, endTime);
       else
@@ -568,8 +491,10 @@ namespace TvDatabase
       }
       return progsReturn;
     }
-    public List<string> GetGenres()
+    
+    public IList GetGenres()
     {
+      /*
       List<string> genres = new List<string>();
       ICollection<IDataSourceKey> coll = DatabaseManager.Instance.DataSourceResolver.DataSourceKeys;
       IEnumerator<IDataSourceKey> enumer = coll.GetEnumerator();
@@ -594,71 +519,72 @@ namespace TvDatabase
         }
         connect.Close();
       }
-      return genres;
+      return genres;*/
+      return null;
     }
-    public EntityList<Program> SearchProgramsPerGenre(string currentGenre, string currentSearchCriteria)
+
+    public IList SearchProgramsPerGenre(string currentGenre, string currentSearchCriteria)
     {
-      string sql = String.Format("select * from program where genre like '{0}' and title like '{1}%' order by title,starttime",
-            currentGenre, currentSearchCriteria);
+			SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
+      
       if (currentSearchCriteria.Length == 0)
       {
-        sql = String.Format("select * from program where genre like '{0}' order by title,starttime", currentGenre);
+        sb.AddConstraint(Operator.Like, "genre", currentGenre);
+        sb.AddOrderByField("title");
+        sb.AddOrderByField("starttime");      }
+      else
+      {
+			  sb.AddConstraint(Operator.Like, "genre", currentGenre);
+        sb.AddConstraint(Operator.Like, "title", String.Format("{0}%",currentSearchCriteria));
+        sb.AddOrderByField("title");
+        sb.AddOrderByField("starttime");
       }
-      PassthruRdbQuery query = new PassthruRdbQuery(typeof(Program), sql);
 
-      EntityList<Program> programs = DatabaseManager.Instance.GetEntities<Program>(query);
-
-      return programs;
+      SqlStatement stmt = sb.GetStatement(true);
+      return ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
     }
 
-    public List<Program> SearchPrograms(string searchCriteria)
+    public IList SearchPrograms(string searchCriteria)
     {
-      string sql;
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
       if (searchCriteria.Length > 0)
       {
-        sql = String.Format("select * from program where endtime>=getdate() and title like '{0}%' order  by title,starttime asc", searchCriteria);
+        sb.AddConstraint(Operator.GreaterThan, "endtime", "getdate()");
+        sb.AddConstraint(Operator.Like, "title", String.Format("{0}%", searchCriteria));
+        sb.AddOrderByField("title");
+        sb.AddOrderByField("starttime");
       }
       else
       {
-        sql = String.Format("select * from program where endtime>=getdate() order  by title,starttime asc");
+        sb.AddConstraint(Operator.GreaterThan, "endtime", "getdate()");
+        sb.AddOrderByField("title");
+        sb.AddOrderByField("starttime");
       }
 
-      PassthruRdbQuery query = new PassthruRdbQuery(typeof(Program), sql);
+      SqlStatement stmt = sb.GetStatement(true);
+      return ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
 
-      EntityList<Program> programs = DatabaseManager.Instance.GetEntities<Program>(query);
-      List<Program> filteredProgs = new List<Program>();
-      if (programs == null) return filteredProgs;
-      if (programs.Count == 0) return filteredProgs;
-      foreach (Program prog in programs)
-      {
-        filteredProgs.Add(prog);
-      }
-      return filteredProgs;
     }
-    public List<Program> SearchProgramsByDescription(string searchCriteria)
+    public IList SearchProgramsByDescription(string searchCriteria)
     {
-
-      string sql;
+      
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
       if (searchCriteria.Length > 0)
       {
-        sql = String.Format("select * from program where endtime>=getdate() and description like '{0}%' order  by description,starttime asc", searchCriteria);
+        sb.AddConstraint(Operator.GreaterThan, "endtime", "getdate()");
+        sb.AddConstraint(Operator.Like, "description", String.Format("{0}%", searchCriteria));
+        sb.AddOrderByField("description");
+        sb.AddOrderByField("starttime");
       }
       else
       {
-        sql = String.Format("select * from program where endtime>=getdate() order  by description,starttime asc");
+        sb.AddConstraint(Operator.GreaterThan, "endtime", "getdate()");
+        sb.AddOrderByField("description");
+        sb.AddOrderByField("starttime");
       }
 
-      PassthruRdbQuery query = new PassthruRdbQuery(typeof(Program), sql);
-      EntityList<Program> programs = DatabaseManager.Instance.GetEntities<Program>(query);
-
-      List<Program> filteredProgs = new List<Program>();
-      if (programs == null) return filteredProgs;
-      if (programs.Count == 0) return filteredProgs;
-      foreach (Program prog in programs)
-      {
-        filteredProgs.Add(prog);
-      }
-      return filteredProgs;
+      SqlStatement stmt = sb.GetStatement(true);
+      return ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
     }
 
     #endregion

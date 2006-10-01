@@ -28,10 +28,8 @@ using System.Windows.Forms;
 using System.Reflection;
 using System.IO;
 using System.Threading;
-using IdeaBlade.Persistence;
-using IdeaBlade.Rdb;
-using IdeaBlade.Persistence.Rdb;
-using IdeaBlade.Util;
+
+
 using TvControl;
 using TvLibrary.Log;
 
@@ -138,9 +136,11 @@ namespace SetupTv
 
         ServiceHelper.Restart();
       }
-
-      // fill the cache
       int cards = 0;
+#if DEBUG
+      RemoteControl.HostName="mediacenter";
+#else
+      // fill the cache
       //auto start the tv-service
       if (!ServiceHelper.IsInstalled)
       {
@@ -151,7 +151,7 @@ namespace SetupTv
       {
         ServiceHelper.Restart();
       }
-
+#endif
       try
       {
         cards = RemoteControl.Instance.Cards;
@@ -160,16 +160,6 @@ namespace SetupTv
       catch (Exception)
       {
         MessageBox.Show("The Tv service is not running");
-        return;
-      }
-      try
-      {
-        DatabaseManager.Instance.DefaultQueryStrategy = QueryStrategy.Normal;
-        DatabaseManager.Instance.GetEntities<Channel>();
-      }
-      catch (Exception)
-      {
-        MessageBox.Show("Unable to open Tv Database");
         return;
       }
 
