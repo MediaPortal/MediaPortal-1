@@ -42,10 +42,8 @@ using TvDatabase;
 using TvControl;
 using TvLibrary.Interfaces;
 
-using IdeaBlade.Persistence;
-using IdeaBlade.Rdb;
-using IdeaBlade.Persistence.Rdb;
-using IdeaBlade.Util;
+using Gentle.Common;
+using Gentle.Framework;
 #endregion
 
 namespace TvPlugin

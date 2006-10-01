@@ -31,10 +31,8 @@ using MediaPortal.Player;
 using TvDatabase;
 using TvControl;
 
-using IdeaBlade.Persistence;
-using IdeaBlade.Rdb;
-using IdeaBlade.Persistence.Rdb;
-using IdeaBlade.Util;
+using Gentle.Common;
+using Gentle.Framework;
 
 namespace TvPlugin
 {
@@ -382,13 +380,13 @@ namespace TvPlugin
         case SortMethod.Channel:
           if (m_bSortAscending)
           {
-            iComp = String.Compare(rec1.Channel.Name, rec2.Channel.Name, true);
+            iComp = String.Compare(rec1.ReferencedChannel().Name, rec2.ReferencedChannel().Name, true);
             if (iComp == 0) goto case SortMethod.Date;
             else return iComp;
           }
           else
           {
-            iComp = String.Compare(rec2.Channel.Name, rec1.Channel.Name, true);
+            iComp = String.Compare(rec2.ReferencedChannel().Name, rec1.ReferencedChannel().Name, true);
             if (iComp == 0) goto case SortMethod.Date;
             else return iComp;
           }
@@ -430,11 +428,11 @@ namespace TvPlugin
               return (int)(ts.Minutes);
             }
           }
-          if (rec1.Channel.Name != rec2.Channel.Name)
+          if (rec1.ReferencedChannel().Name != rec2.ReferencedChannel().Name)
             if (m_bSortAscending)
-              return String.Compare(rec1.Channel.Name, rec2.Channel.Name);
+              return String.Compare(rec1.ReferencedChannel().Name, rec2.ReferencedChannel().Name);
             else
-              return String.Compare(rec2.Channel.Name, rec1.Channel.Name);
+              return String.Compare(rec2.ReferencedChannel().Name, rec1.ReferencedChannel().Name);
           if (rec1.ProgramName != rec2.ProgramName)
             if (m_bSortAscending)
               return String.Compare(rec1.ProgramName, rec2.ProgramName);
@@ -451,7 +449,7 @@ namespace TvPlugin
     {
       GUIControl.ClearControl(GetID, listSchedules.GetID);
 
-      EntityList<Schedule> itemlist = DatabaseManager.Instance.GetEntities<Schedule>();
+      IList itemlist = Schedule.ListAll();
       int total = 0;
       if (currentShow == String.Empty)
       {
@@ -470,7 +468,7 @@ namespace TvPlugin
           }
           else
           {
-            string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel.Name);
+            string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.ReferencedChannel().Name);
             if (!System.IO.File.Exists(strLogo))
             {
               strLogo = "defaultVideoBig.png";
@@ -529,7 +527,7 @@ namespace TvPlugin
               item.Label = recSeries.ProgramName;
               item.TVTag = recSeries;
               item.MusicTag = rec;
-              string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, recSeries.Channel.Name);
+              string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, recSeries.ReferencedChannel().Name);
               if (!System.IO.File.Exists(strLogo))
               {
                 strLogo = "defaultVideoBig.png";
@@ -881,7 +879,7 @@ namespace TvPlugin
 
         case 980: // Play recording from live point
 
-          TVHome.ViewChannel(rec.Channel.Name);
+          TVHome.ViewChannel(rec.ReferencedChannel().Name);
           if (TVHome.Card.IsTimeShifting)
           {
             if (g_Player.Playing)
@@ -998,11 +996,11 @@ namespace TvPlugin
 
       dlg.Reset();
       dlg.SetHeading(GUILocalizeStrings.Get(891));  //Select TV Channel
-      ReadOnlyEntityList<GroupMap> channels = TVHome.Navigator.CurrentGroup.GroupMaps;
+      IList channels = TVHome.Navigator.CurrentGroup.ReferringGroupMap();
       foreach (GroupMap chan in channels)
       {
-        GUIListItem item = new GUIListItem(chan.Channel.Name);
-        string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, chan.Channel.Name);
+        GUIListItem item = new GUIListItem(chan.ReferencedChannel().Name);
+        string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, chan.ReferencedChannel().Name);
         if (!System.IO.File.Exists(strLogo))
         {
           strLogo = "defaultVideoBig.png";
@@ -1138,7 +1136,7 @@ namespace TvPlugin
       dtNow = DateTime.Now.AddDays(day);
       rec.StartTime = new DateTime(dtNow.Year, dtNow.Month, dtNow.Day, hour, minute, 0, 0);
       rec.EndTime = rec.StartTime.AddMinutes(duration);
-      rec.ProgramName = GUILocalizeStrings.Get(413) + " (" + rec.Channel.Name + ")";
+      rec.ProgramName = GUILocalizeStrings.Get(413) + " (" + rec.ReferencedChannel().Name + ")";
       DatabaseManager.SaveChanges();
       RemoteControl.Instance.OnNewSchedule();
       DatabaseManager.FillCache();
@@ -1151,7 +1149,7 @@ namespace TvPlugin
       if (dlg != null)
       {
         VirtualCard card;
-        EntityList<Channel> channels = DatabaseManager.Instance.GetEntities<Channel>();
+        IList channels = Channel.ListAll();
         dlg.SetHeading(637);
         dlg.Items.Clear();
         dlg.EnableChannel = true;
@@ -1165,7 +1163,7 @@ namespace TvPlugin
         {
           dlg.Items.Add(chan.Name);
         }
-        dlg.Channel = rec.Channel.Name;
+        dlg.Channel = rec.ReferencedChannel().Name;
         dlg.StartDateTime = rec.StartTime;
         dlg.EndDateTime = rec.EndTime;
         dlg.DoModal(GetID);
@@ -1216,8 +1214,7 @@ namespace TvPlugin
     void OnCleanup()
     {
       int iCleaned = 0;
-      EntityList<Schedule> itemlist = DatabaseManager.Instance.GetEntities<Schedule>();
-      itemlist.ShouldRemoveDeletedEntities = false;
+      IList itemlist = Schedule.ListAll();
       foreach (Schedule rec in itemlist)
       {
         if (rec.IsDone() || rec.Canceled != Schedule.MinSchedule)
@@ -1249,7 +1246,7 @@ namespace TvPlugin
       GUIPropertyManager.SetProperty("#TV.RecordedTV.Genre", "");
       GUIPropertyManager.SetProperty("#TV.RecordedTV.Time", strTime);
       GUIPropertyManager.SetProperty("#TV.RecordedTV.Description", "");
-      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel.Name);
+      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.ReferencedChannel().Name);
       if (System.IO.File.Exists(strLogo))
       {
         GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb", strLogo);
@@ -1287,7 +1284,7 @@ namespace TvPlugin
       }
 
 
-      string logo = Utils.GetCoverArt(Thumbs.TVChannel, schedule.Channel.Name);
+      string logo = Utils.GetCoverArt(Thumbs.TVChannel, schedule.ReferencedChannel().Name);
       if (System.IO.File.Exists(logo))
       {
         GUIPropertyManager.SetProperty("#TV.Scheduled.thumb", logo);
@@ -1310,7 +1307,7 @@ namespace TvPlugin
       rec = pItem.TVTag as Schedule;
       if (rec == null) return;
 
-      Program prog = rec.Channel.GetProgramAt(rec.StartTime.AddMinutes(1));
+      Program prog = rec.ReferencedChannel().GetProgramAt(rec.StartTime.AddMinutes(1));
       SetProperties(rec, prog);
     }
     #endregion

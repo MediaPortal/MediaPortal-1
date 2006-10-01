@@ -39,10 +39,8 @@ using MediaPortal.Radio.Database;
 using TvDatabase;
 using TvControl;
 
-using IdeaBlade.Persistence;
-using IdeaBlade.Rdb;
-using IdeaBlade.Persistence.Rdb;
-using IdeaBlade.Util;
+using Gentle.Common;
+using Gentle.Framework;
 namespace TvPlugin
 {
   /// <summary>
@@ -333,7 +331,7 @@ namespace TvPlugin
             }
           }
 
-          EntityList<Channel> channels = DatabaseManager.Instance.GetEntities<Channel>();
+          IList channels = Channel.ListAll();
           foreach (Channel ch in channels)
           {
             if (ch.IsRadio == false) continue;
@@ -507,7 +505,7 @@ namespace TvPlugin
             }
           }
 
-          EntityList<Channel> channels = DatabaseManager.Instance.GetEntities<Channel>();
+          IList channels = Channel.ListAll();
           foreach (Channel ch in channels)
           {
             if (ch.IsRadio == false) continue;

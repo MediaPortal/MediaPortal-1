@@ -24,10 +24,8 @@ using System.Collections.Generic;
 using MediaPortal.Util;
 
 using TvDatabase;
-using IdeaBlade.Persistence;
-using IdeaBlade.Rdb;
-using IdeaBlade.Persistence.Rdb;
-using IdeaBlade.Util;
+using Gentle.Common;
+using Gentle.Framework;
 
 namespace TvPlugin
 {
@@ -123,7 +121,7 @@ namespace TvPlugin
       if (rec.ScheduleType == (int)ScheduleRecordingType.Weekends)
       {
         List<Program> progList = new List<Program>();
-        progList = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(_days), rec.ProgramName, rec.Channel);
+        progList = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(_days), rec.ProgramName, rec.ReferencedChannel());
 
         foreach (Program prog in progList)
         {
@@ -172,9 +170,9 @@ namespace TvPlugin
       }
 
 
-      List<Program> programs;
+      IList programs;
       if (rec.ScheduleType == (int)ScheduleRecordingType.EveryTimeOnThisChannel)
-        programs = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(_days), rec.ProgramName, rec.Channel);
+        programs = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(_days), rec.ProgramName, rec.ReferencedChannel());
       else
         programs = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(_days), rec.ProgramName, null);
       foreach (Program prog in programs)

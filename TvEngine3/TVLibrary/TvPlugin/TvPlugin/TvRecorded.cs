@@ -34,10 +34,8 @@ using Toub.MediaCenter.Dvrms.Metadata;
 
 using TvDatabase;
 
-using IdeaBlade.Persistence;
-using IdeaBlade.Rdb;
-using IdeaBlade.Persistence.Rdb;
-using IdeaBlade.Util;
+using Gentle.Common;
+using Gentle.Framework;
 
 namespace TvPlugin
 {
@@ -443,8 +441,7 @@ namespace TvPlugin
       GUIControl.ClearControl(GetID, listViews.GetID);
 
       List<GUIListItem> itemlist = new List<GUIListItem>();
-      EntityList<Recording> recordings = DatabaseManager.Instance.GetEntities<Recording>();
-      recordings.ShouldRemoveDeletedEntities = false;
+      IList recordings = Recording.ListAll();
       if (currentShow == String.Empty)
       {
         foreach (Recording rec in recordings)
@@ -476,7 +473,7 @@ namespace TvPlugin
             string strLogo = System.IO.Path.ChangeExtension(rec.FileName, ".jpg");
             if (!System.IO.File.Exists(strLogo))
             {
-              strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel.Name);
+              strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.ReferencedChannel().Name);
               if (!System.IO.File.Exists(strLogo))
               {
                 strLogo = "defaultVideoBig.png";
@@ -506,7 +503,7 @@ namespace TvPlugin
             string strLogo = System.IO.Path.ChangeExtension(rec.FileName, ".jpg");
             if (!System.IO.File.Exists(strLogo))
             {
-              strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel.Name);
+              strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.ReferencedChannel().Name);
               if (!System.IO.File.Exists(strLogo))
               {
                 strLogo = "defaultVideoBig.png";
@@ -624,7 +621,7 @@ namespace TvPlugin
         else
         {
           if (currentSortMethod == SortMethod.Channel)
-            item1.Label2 = item2.Label2 = rec.Channel.Name;
+            item1.Label2 = item2.Label2 = rec.ReferencedChannel().Name;
         }
       }
     }
@@ -651,7 +648,7 @@ namespace TvPlugin
         TVHome.Card.StopTimeShifting();
 
         rec.TimesWatched++;
-        DatabaseManager.SaveChanges();
+        rec.Persist();
         ///@
         int stoptime = 0;
         /*
@@ -716,7 +713,7 @@ namespace TvPlugin
       if (null == dlgYesNo) return;
       if (rec.TimesWatched > 0) dlgYesNo.SetHeading(GUILocalizeStrings.Get(653));
       else dlgYesNo.SetHeading(GUILocalizeStrings.Get(820));
-      dlgYesNo.SetLine(1, rec.Channel.Name);
+      dlgYesNo.SetLine(1, rec.ReferencedChannel().Name);
       dlgYesNo.SetLine(2, rec.Title);
       dlgYesNo.SetLine(3, String.Empty);
       dlgYesNo.SetDefaultToYes(false);
@@ -754,8 +751,7 @@ namespace TvPlugin
       dlgYesNo.DoModal(GetID);
 
       if (!dlgYesNo.IsConfirmed) return;
-      EntityList<Recording> itemlist = DatabaseManager.Instance.GetEntities<Recording>();
-      itemlist.ShouldRemoveDeletedEntities = false;
+      IList itemlist = Recording.ListAll();
       foreach (Recording rec in itemlist)
       {
         if (rec.TimesWatched > 0)
@@ -818,7 +814,7 @@ namespace TvPlugin
       GUIPropertyManager.SetProperty("#TV.RecordedTV.Genre", rec.Genre);
       GUIPropertyManager.SetProperty("#TV.RecordedTV.Time", strTime);
       GUIPropertyManager.SetProperty("#TV.RecordedTV.Description", rec.Description);
-      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel.Name);
+      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.ReferencedChannel().Name);
       if (System.IO.File.Exists(strLogo))
       {
         GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb", strLogo);
@@ -929,13 +925,13 @@ namespace TvPlugin
         case SortMethod.Channel:
           if (m_bSortAscending)
           {
-            iComp = String.Compare(rec1.Channel.Name, rec2.Channel.Name, true);
+            iComp = String.Compare(rec1.ReferencedChannel().Name, rec2.ReferencedChannel().Name, true);
             if (iComp == 0) goto case SortMethod.Date;
             else return iComp;
           }
           else
           {
-            iComp = String.Compare(rec2.Channel.Name, rec1.Channel.Name, true);
+            iComp = String.Compare(rec2.ReferencedChannel().Name, rec1.ReferencedChannel().Name, true);
             if (iComp == 0) goto case SortMethod.Date;
             else return iComp;
           }
@@ -995,11 +991,11 @@ namespace TvPlugin
               return (int)(ts.Minutes);
             }
           }
-          if (rec1.Channel != rec2.Channel)
+          if (rec1.IdChannel != rec2.IdChannel)
             if (m_bSortAscending)
-              return String.Compare(rec1.Channel.Name, rec2.Channel.Name);
+              return String.Compare(rec1.ReferencedChannel().Name, rec2.ReferencedChannel().Name);
             else
-              return String.Compare(rec2.Channel.Name, rec1.Channel.Name);
+              return String.Compare(rec2.ReferencedChannel().Name, rec1.ReferencedChannel().Name);
           if (rec1.Title != rec2.Title)
             if (m_bSortAscending)
               return String.Compare(rec1.Title, rec2.Title);
@@ -1042,8 +1038,7 @@ namespace TvPlugin
 
       g_Player.Stop();
 
-      EntityList<Recording> itemlist = DatabaseManager.Instance.GetEntities<Recording>();
-      itemlist.ShouldRemoveDeletedEntities = false;
+      IList itemlist = Recording.ListAll();
       foreach (Recording rec in itemlist)
       {
         if (_deleteWatchedShows || rec.KeepUntil == (int)KeepMethodType.UntilWatched)
@@ -1092,7 +1087,7 @@ namespace TvPlugin
       try
       {
         _creatingThumbNails = true;
-        EntityList<Recording> recordings = DatabaseManager.Instance.GetEntities<Recording>();
+        IList recordings = Recording.ListAll();
         foreach (Recording rec in recordings)
         {
           string thumbNail = System.IO.Path.ChangeExtension(rec.FileName, ".jpg");

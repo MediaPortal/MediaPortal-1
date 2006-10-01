@@ -40,10 +40,8 @@ using MediaPortal.Dialogs;
 using MediaPortal.Player;
 
 using TvDatabase;
-using IdeaBlade.Persistence;
-using IdeaBlade.Rdb;
-using IdeaBlade.Persistence.Rdb;
-using IdeaBlade.Util;
+using Gentle.Common;
+using Gentle.Framework;
 
 #endregion
 
@@ -91,7 +89,7 @@ namespace TvPlugin
     DateTime _viewingTime = DateTime.Now;
     int _channelOffset = 0;
     List<Channel> _channelList = new List<Channel>();
-    EntityList<Schedule> _recordingList = new EntityList<Schedule>();
+    IList _recordingList = new ArrayList();
     int _timePerBlock = 30; // steps of 30 minutes
     int _channelCount = 5;
     int _numberOfBlocks = 4;
@@ -979,7 +977,7 @@ namespace TvPlugin
         long iEnd = Int64.Parse(strEnd);
 
 
-        _recordingList = DatabaseManager.Instance.GetEntities<Schedule>();
+        _recordingList = Schedule.ListAll();
 
         if (_channelOffset > _channelList.Count)
         {
@@ -1180,7 +1178,7 @@ namespace TvPlugin
         if (chan >= _channelList.Count) chan = 0;
       }
 
-      List<Program> programs = new List<Program>();
+      IList programs = new ArrayList();
       DateTime dtStart = DateTime.Now;
       DateTime dtEnd = dtStart.AddDays(30);
       long iStart = Utils.datetolong(dtStart);
@@ -1212,15 +1210,7 @@ namespace TvPlugin
           program = (Program)programs[offset + ichan];
         else
         {
-          program = Program.New();
-          if (ichan == 0)
-          {
-            program.StartTime = DateTime.Now;
-            program.EndTime = DateTime.Now;
-            program.Title = "-";
-            program.Genre = "-";
-          }
-          program.Channel = channel;
+          program = new Program(channel.IdChannel,DateTime.Now,DateTime.Now,"-","-","-",false);
         }
 
         int ypos = GetControl(ichan + (int)Controls.IMG_CHAN1).YPosition;
@@ -1393,7 +1383,7 @@ namespace TvPlugin
       }
 
 
-      List<Program> programs = new List<Program>();
+      IList programs = new ArrayList();
       TvBusinessLayer layer = new TvBusinessLayer();
       programs = layer.GetPrograms(channel, Utils.longtodate(iStart), Utils.longtodate(iEnd));
 
@@ -1402,12 +1392,7 @@ namespace TvPlugin
         DateTime dt = Utils.longtodate(iEnd);
         //dt=dt.AddMinutes(_timePerBlock);
         long iProgEnd = Utils.datetolong(dt);
-        Program prog = Program.New();
-        prog.Channel = channel;
-        prog.StartTime = Utils.longtodate(iStart);
-        prog.EndTime = Utils.longtodate(iProgEnd);
-        prog.Channel = channel;
-        prog.Title = GUILocalizeStrings.Get(736);//no tvguide data
+        Program prog = new Program(channel.IdChannel,Utils.longtodate(iStart),Utils.longtodate(iProgEnd),GUILocalizeStrings.Get(736),"","",false);
         programs.Add(prog);
       }
       if (programs.Count > 0)
@@ -2256,7 +2241,7 @@ namespace TvPlugin
 
             Log.Write("viewch channel:{0}", _currentChannel);
             TVHome.ViewChannelAndCheck(_currentChannel);
-            if (TVHome.Card.IsTimeShifting && TVHome.Card.ChannelName == _currentProgram.Channel.Name)
+            if (TVHome.Card.IsTimeShifting && TVHome.Card.ChannelName == _currentProgram.ReferencedChannel().Name)
             {
               GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
             }
@@ -2364,7 +2349,7 @@ namespace TvPlugin
                         break;
 
                       case 980: // Play recording from live point
-                        TVHome.ViewChannel(rec.Channel.Name);
+                        TVHome.ViewChannel(rec.ReferencedChannel().Name);
                         if (g_Player.Playing)
                         {
                           Log.Info("TVGuide: Show recording {0} at live point", _currentTitle);
@@ -2380,7 +2365,7 @@ namespace TvPlugin
               }
               if (recMatchFound == false)
               {
-                TVHome.ViewChannelAndCheck(_currentProgram.Channel.Name);
+                TVHome.ViewChannelAndCheck(_currentProgram.ReferencedChannel().Name);
                 if (g_Player.Playing)
                 {
                   GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
@@ -2389,7 +2374,7 @@ namespace TvPlugin
             }
             else
             {
-              TVHome.ViewChannelAndCheck(_currentProgram.Channel.Name);
+              TVHome.ViewChannelAndCheck(_currentProgram.ReferencedChannel().Name);
               if (g_Player.Playing)
               {
                 GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
@@ -2567,11 +2552,11 @@ namespace TvPlugin
       {
         if (TVHome.Navigator.CurrentGroup != null)
         {
-          foreach (GroupMap chan in TVHome.Navigator.CurrentGroup.GroupMaps)
+          foreach (GroupMap chan in TVHome.Navigator.CurrentGroup.ReferringGroupMap())
           {
-            if (chan.Channel.VisibleInGuide)
+            if (chan.ReferencedChannel().VisibleInGuide)
             {
-              _channelList.Add(chan.Channel);
+              _channelList.Add(chan.ReferencedChannel());
             }
           }
         }
@@ -2582,8 +2567,7 @@ namespace TvPlugin
 
       if (_channelList.Count == 0)
       {
-        Channel newChannel = Channel.New();
-        newChannel.Name = GUILocalizeStrings.Get(911);
+        Channel newChannel = new Channel(GUILocalizeStrings.Get(911),false,true,0,DateTime.MinValue,false,DateTime.MinValue,0,true);
         for (int i = 0; i < 10; ++i)
           _channelList.Add(newChannel);
       }

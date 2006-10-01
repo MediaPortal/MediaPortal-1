@@ -37,10 +37,8 @@ using MediaPortal.Player;
 using TvDatabase;
 using TvControl;
 
-using IdeaBlade.Persistence;
-using IdeaBlade.Rdb;
-using IdeaBlade.Persistence.Rdb;
-using IdeaBlade.Util;
+using Gentle.Common;
+using Gentle.Framework;
 #endregion
 
 

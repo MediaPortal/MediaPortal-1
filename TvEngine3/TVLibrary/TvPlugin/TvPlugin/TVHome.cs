@@ -43,11 +43,9 @@ using TvDatabase;
 using TvControl;
 using TvLibrary.Interfaces;
 
-using IdeaBlade.Persistence;
-using IdeaBlade.Rdb;
-using IdeaBlade.Persistence.Rdb;
-using IdeaBlade.Util;
 
+using Gentle.Common;
+using Gentle.Framework;
 namespace TvPlugin
 {
   /// <summary>v
@@ -470,9 +468,10 @@ namespace TvPlugin
         }
         if (Navigator.CurrentGroup != null)
         {
-          if (Navigator.CurrentGroup.GroupMaps.Count > 0)
+          if (Navigator.CurrentGroup.ReferringGroupMap().Count > 0)
           {
-            channelName = Navigator.CurrentGroup.GroupMaps[0].Channel.Name;
+            GroupMap gm = Navigator.CurrentGroup.GroupMaps[0];
+            channelName = gm.ReferencedChannel().Name;
           }
         }
       }
@@ -529,9 +528,10 @@ namespace TvPlugin
       Navigator.SetCurrentGroup(dlg.SelectedLabelText);
       if (Navigator.CurrentGroup != null)
       {
-        if (Navigator.CurrentGroup.GroupMaps.Count > 0)
+        if (Navigator.CurrentGroup.ReferringGroupMap().Count > 0)
         {
-          ViewChannelAndCheck(Navigator.CurrentGroup.GroupMaps[0].Channel.Name);
+          GroupMap gm = (GroupMap)Navigator.CurrentGroup.GroupMaps[0];
+          ViewChannelAndCheck(gm.ReferencedChannel().Name);
         }
       }
     }
@@ -543,12 +543,13 @@ namespace TvPlugin
       dlg.Reset();
       dlg.SetHeading(891); // Select TV channel
       int selected = 0;
-      for (int i = 0; i < Navigator.CurrentGroup.GroupMaps.Count; ++i)
+      for (int i = 0; i < Navigator.CurrentGroup.ReferringGroupMap().Count; ++i)
       {
-        dlg.Add(Navigator.CurrentGroup.GroupMaps[i].Channel.Name);
+        GroupMap gm = (GroupMap)Navigator.CurrentGroup.GroupMaps[i];
+        dlg.Add(gm.ReferencedChannel().Name);
         if (Navigator.CurrentChannel != null)
         {
-          if (Navigator.CurrentGroup.GroupMaps[i].Channel.Name == Navigator.CurrentChannel)
+          if (gm.ReferencedChannel().Name == Navigator.CurrentChannel)
           {
             selected = i;
           }
@@ -837,20 +838,14 @@ namespace TvPlugin
         int scheduleId = TVHome.Card.RecordingScheduleId;
         if (scheduleId > 0)
         {
-          EntityQuery query = new EntityQuery(typeof(Schedule));
-          query.AddClause(Schedule.IdScheduleEntityColumn, EntityQueryOp.EQ, scheduleId);
-
-          EntityList<Schedule> schedules = DatabaseManager.Instance.GetEntities<Schedule>(query);
-          if (schedules.Count > 0)
+          Schedule schedule = Schedule.Retrieve(scheduleId);
+          if (schedule.ScheduleType == (int)ScheduleRecordingType.Once)
           {
-            if (schedules[0].ScheduleType == (int)ScheduleRecordingType.Once)
-            {
-              imgRecordingIcon.SetFileName(Thumbs.TvRecordingIcon);
-            }
-            else
-            {
-              imgRecordingIcon.SetFileName(Thumbs.TvRecordingSeriesIcon);
-            }
+            imgRecordingIcon.SetFileName(Thumbs.TvRecordingIcon);
+          }
+          else
+          {
+            imgRecordingIcon.SetFileName(Thumbs.TvRecordingSeriesIcon);
           }
         }
       }
@@ -1323,7 +1318,7 @@ namespace TvPlugin
     private int m_zapgroup = -1;
     private string _lastViewedChannel = string.Empty; // saves the last viewed Channel  // mPod
     private Channel m_currentChannel = null;
-    private EntityList<Channel> channels = new EntityList<Channel>();
+    private IList channels = new ArrayList();
     private bool reentrant = false;
 
     #endregion
@@ -1361,16 +1356,17 @@ namespace TvPlugin
         MediaPortal.GUI.Library.Log.Info("ChannelNavigator::Reload()");
         CreateDatabaseConfigFile(RemoteControl.Instance.DatabaseConnectionString);
         MediaPortal.GUI.Library.Log.Info("get channels from database");
-        EntityQuery query = new EntityQuery(typeof(Channel));
-        query.AddClause(Channel.IsTvEntityColumn, EntityQueryOp.EQ, 1);
-        query.AddOrderBy(Channel.SortOrderEntityColumn);
-        channels = DatabaseManager.Instance.GetEntities<Channel>(query);
+        SqlBuilder sb = new SqlBuilder(StatementType.Delete, typeof(Channel));
+        sb.AddConstraint(Operator.Equals, "istv", "1");
+        sb.AddOrderByField(true, "sortOrder");
+        SqlStatement stmt = sb.GetStatement(true);
+        channels = ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
         MediaPortal.GUI.Library.Log.Info("found:{0} tv channels", channels.Count);
 
         m_groups.Clear();
-        DatabaseManager.Instance.DefaultQueryStrategy = QueryStrategy.Normal;
+
         MediaPortal.GUI.Library.Log.Info("get all groups from database");
-        EntityList<ChannelGroup> groups = DatabaseManager.Instance.GetEntities<ChannelGroup>();
+        IList groups = ChannelGroup.ListAll();
         bool found = false;
         foreach (ChannelGroup group in groups)
         {
@@ -1381,9 +1377,9 @@ namespace TvPlugin
             foreach (Channel channel in channels)
             {
               bool groupContainsChannel = false;
-              foreach (GroupMap map in group.GroupMaps)
+              foreach (GroupMap map in group.ReferringGroupMap())
               {
-                if (map.Channel.IdChannel == channel.IdChannel)
+                if (map.IdChannel == channel.IdChannel)
                 {
                   groupContainsChannel = true;
                   break;
@@ -1412,7 +1408,7 @@ namespace TvPlugin
         }
 
         DatabaseManager.Instance.ClearQueryCache();
-        groups = DatabaseManager.Instance.GetEntities<ChannelGroup>();
+        groups = ChannelGroup.ListAll();
         foreach (ChannelGroup group in groups)
         {
           group.GroupMaps.ApplySort(new GroupMap.Comparer(), false);
@@ -1538,9 +1534,10 @@ namespace TvPlugin
           {
             // Change current group and zap to the first channel of the group
             m_currentgroup = m_zapgroup;
-            if (CurrentGroup.GroupMaps.Count > 0)
+            if (CurrentGroup.ReferringGroupMap().Count > 0)
             {
-              Channel chan = (Channel)CurrentGroup.GroupMaps[0].Channel;
+              GroupMap gm = (GroupMap)CurrentGroup.GroupMaps[0];
+              Channel chan = (Channel)gm.ReferencedChannel();
               m_zapchannel = chan.Name;
             }
           }
@@ -1630,7 +1627,7 @@ namespace TvPlugin
     /// <param name="useZapDelay">If true, the configured zap delay is used. Otherwise it zaps immediately.</param>
     public void ZapToChannelNumber(int channelNr, bool useZapDelay)
     {
-      ReadOnlyEntityList<GroupMap> channels = CurrentGroup.GroupMaps;
+      IList channels = CurrentGroup.ReferringGroupMap();
       if (channelNr >= 0)
       {
         bool found = false;
@@ -1638,7 +1635,8 @@ namespace TvPlugin
         Channel chan;
         while (found == false && ChannelCnt < channels.Count)
         {
-          chan = (Channel)channels[ChannelCnt].Channel;
+          GroupMap gm = (GroupMap)channels[channelNr];
+          chan = (Channel)gm.ReferencedChannel();
           if (chan.SortOrder == channelNr)
           {
             ZapToChannel(chan.Name, useZapDelay);
@@ -1657,11 +1655,12 @@ namespace TvPlugin
     /// <param name="useZapDelay">If true, the configured zap delay is used. Otherwise it zaps immediately.</param>
     public void ZapToChannel(int channelNr, bool useZapDelay)
     {
-      ReadOnlyEntityList<GroupMap> channels = CurrentGroup.GroupMaps;
+      IList channels = CurrentGroup.ReferringGroupMap();
       channelNr--;
       if (channelNr >= 0 && channelNr < channels.Count)
       {
-        Channel chan = channels[channelNr].Channel;
+        GroupMap gm=(GroupMap)channels[channelNr];
+        Channel chan = gm.ReferencedChannel();
         ZapToChannel(chan.Name, useZapDelay);
       }
     }
@@ -1686,9 +1685,10 @@ namespace TvPlugin
       }
       // Step to next channel
       currindex++;
-      if (currindex >= CurrentGroup.GroupMaps.Count)
+      if (currindex >= CurrentGroup.ReferringGroupMap().Count)
         currindex = 0;
-      Channel chan = (Channel)CurrentGroup.GroupMaps[currindex].Channel;
+      GroupMap gm = (GroupMap)CurrentGroup.GroupMaps[currindex];
+      Channel chan = (Channel)gm.ReferencedChannel();
       m_zapchannel = chan.Name;
 
       MediaPortal.GUI.Library.Log.Info("Navigator:ZapNext {0}->{1}", currentChan, m_zapchannel);
@@ -1726,9 +1726,11 @@ namespace TvPlugin
       // Step to previous channel
       currindex--;
       if (currindex < 0)
-        currindex = CurrentGroup.GroupMaps.Count - 1;
+        currindex = CurrentGroup.ReferringGroupMap().Count - 1;
 
-      Channel chan = (Channel)CurrentGroup.GroupMaps[currindex].Channel;
+
+      GroupMap gm = (GroupMap)CurrentGroup.ReferringGroupMap()[currindex];
+      Channel chan = (Channel)gm.ReferencedChannel();
       m_zapchannel = chan.Name;
 
       MediaPortal.GUI.Library.Log.Info("Navigator:ZapPrevious {0}->{1}", currentChan, m_zapchannel);
@@ -1805,9 +1807,10 @@ namespace TvPlugin
     /// <returns></returns>
     private int GetChannelIndex(string channelName)
     {
-      for (int i = 0; i < CurrentGroup.GroupMaps.Count; i++)
+      for (int i = 0; i < CurrentGroup.ReferringGroupMap().Count; i++)
       {
-        Channel chan = (Channel)CurrentGroup.GroupMaps[i].Channel;
+        GroupMap gm = (GroupMap)CurrentGroup.ReferringGroupMap()[i];
+        Channel chan = (Channel)gm.ReferencedChannel();
         if (chan.Name == channelName)
           return i;
       }
@@ -1856,8 +1859,11 @@ namespace TvPlugin
       if (m_currentChannel == null)
       {
         ChannelGroup group = (ChannelGroup)m_groups[m_currentgroup];
-        if (group.GroupMaps.Count > 0)
-          m_currentchannel = group.GroupMaps[0].Channel.Name;
+        if (group.ReferringGroupMap().Count > 0)
+        {
+          GroupMap gm = (GroupMap)group.ReferringGroupMap()[0];
+          m_currentchannel = gm.ReferencedChannel().Name;
+        }
         m_currentChannel = GetChannel(m_currentchannel);
       }
     }

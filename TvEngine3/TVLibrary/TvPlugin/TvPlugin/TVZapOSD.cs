@@ -27,6 +27,7 @@ using System;
 using System.Globalization;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Collections;
 using System.Collections.Generic;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
@@ -34,10 +35,8 @@ using MediaPortal.Util;
 using TvDatabase;
 using TvControl;
 
-using IdeaBlade.Persistence;
-using IdeaBlade.Rdb;
-using IdeaBlade.Persistence.Rdb;
-using IdeaBlade.Util;
+using Gentle.Common;
+using Gentle.Framework;
 namespace TvPlugin
 {
   /// <summary>
@@ -68,7 +67,7 @@ namespace TvPlugin
     bool m_bNeedRefresh = false;
     DateTime m_dateTime = DateTime.Now;
 
-    EntityList<Channel> tvChannelList;
+    IList tvChannelList;
 
     public TvZapOsd()
     {
@@ -157,10 +156,11 @@ namespace TvPlugin
       Log.Write("zaposd pageload");
       // following line should stay. Problems with OSD not
       // appearing are already fixed elsewhere
-      EntityQuery query = new EntityQuery(typeof(Channel));
-      query.AddClause(Channel.IsTvEntityColumn, EntityQueryOp.EQ, 1);
-      query.AddOrderBy(Channel.SortOrderEntityColumn);
-      tvChannelList = DatabaseManager.Instance.GetEntities<Channel>(query);
+      SqlBuilder sb = new SqlBuilder(StatementType.Delete, typeof(Channel));
+      sb.AddConstraint(Operator.Equals, "istv", "1");
+      sb.AddOrderByField(true, "sortOrder");
+      SqlStatement stmt = sb.GetStatement(true);
+      tvChannelList = ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
 
       AllocResources();
       // if (g_application.m_pPlayer) g_application.m_pPlayer.ShowOSD(false);

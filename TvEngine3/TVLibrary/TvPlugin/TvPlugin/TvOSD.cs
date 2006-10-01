@@ -35,10 +35,8 @@ using MediaPortal.Util;
 
 using TvDatabase;
 using TvControl;
-using IdeaBlade.Persistence;
-using IdeaBlade.Rdb;
-using IdeaBlade.Persistence.Rdb;
-using IdeaBlade.Util;
+using Gentle.Common;
+using Gentle.Framework;
 
 namespace TvPlugin
 {
@@ -131,7 +129,7 @@ namespace TvPlugin
     DateTime m_dateTime = DateTime.Now;
     Program previousProgram = null;
 
-    EntityList<Channel> listTvChannels;
+    IList listTvChannels;
     public TvOsd()
     {
       GetID = (int)GUIWindow.Window.WINDOW_TVOSD;
@@ -345,10 +343,11 @@ namespace TvPlugin
           {
             // following line should stay. Problems with OSD not
             // appearing are already fixed elsewhere
-            EntityQuery query = new EntityQuery(typeof(Channel));
-            query.AddClause(Channel.IsTvEntityColumn, EntityQueryOp.EQ, 1);
-            query.AddOrderBy(Channel.SortOrderEntityColumn);
-            listTvChannels = DatabaseManager.Instance.GetEntities<Channel>(query);
+            SqlBuilder sb = new SqlBuilder(StatementType.Delete, typeof(Channel));
+            sb.AddConstraint(Operator.Equals, "istv", "1");
+            sb.AddOrderByField(true, "sortOrder");
+            SqlStatement stmt = sb.GetStatement(true);
+            listTvChannels=ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
 
             GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + GetID));
             previousProgram = null;
@@ -1384,7 +1383,7 @@ namespace TvPlugin
         ShowPrograms();
         updateProperties = true;
       }
-      else if (previousProgram.StartTime != prog.StartTime || previousProgram.Channel != prog.Channel)
+      else if (previousProgram.StartTime != prog.StartTime || previousProgram.IdChannel != prog.IdChannel)
       {
         m_dateTime = DateTime.Now;
         previousProgram = prog;

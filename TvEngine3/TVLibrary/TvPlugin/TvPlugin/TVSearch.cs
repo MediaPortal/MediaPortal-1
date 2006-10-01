@@ -28,10 +28,8 @@ using MediaPortal.Util;
 using MediaPortal.Dialogs;
 using MediaPortal.Player;
 
-using IdeaBlade.Persistence;
-using IdeaBlade.Rdb;
-using IdeaBlade.Persistence.Rdb;
-using IdeaBlade.Util;
+using Gentle.Common;
+using Gentle.Framework;
 using TvDatabase;
 using TvControl;
 
@@ -87,7 +85,7 @@ namespace TvPlugin
     }
     SortMethod currentSortMethod = SortMethod.Name;
     bool sortAscending = true;
-    EntityList<Schedule> listRecordings;
+    IList listRecordings;
     //		int        currentSearchKind=-1;
 
     SearchMode currentSearchMode = SearchMode.Genre;
@@ -183,7 +181,7 @@ namespace TvPlugin
     {
       base.OnPageLoad();
       //currentSearchKind=-1;
-      listRecordings = DatabaseManager.Instance.GetEntities<Schedule>();
+      listRecordings = Schedule.ListAll();
 
 
 
@@ -416,7 +414,7 @@ namespace TvPlugin
         case SearchMode.Genre:
           if (currentLevel == 0)
           {
-            List<string> genres = new List<string>();
+            IList genres ;
             TvBusinessLayer layer = new TvBusinessLayer();
             genres = layer.GetGenres();
             foreach (string genre in genres)
@@ -444,7 +442,7 @@ namespace TvPlugin
             listView.Add(item);
             titleView.Add(item);
 
-            EntityList<Program> titles;
+            IList titles;
             TvBusinessLayer layer = new TvBusinessLayer();
             titles = layer.SearchProgramsPerGenre(currentGenre, filterShow);
             foreach (Program program in titles)
@@ -522,7 +520,7 @@ namespace TvPlugin
               listView.Add(item);
               titleView.Add(item);
             }
-            List<Program> titles = new List<Program>();
+            IList titles = new ArrayList();
             TvBusinessLayer layer = new TvBusinessLayer();
             if (filterLetter == "#")
             {
@@ -622,7 +620,7 @@ namespace TvPlugin
 
         case SearchMode.Description:
           {
-            List<Program> titles = new List<Program>();
+            IList titles = new ArrayList();
             long start = Utils.datetolong(DateTime.Now);
             long end = Utils.datetolong(DateTime.Now.AddMonths(1));
             TvBusinessLayer layer = new TvBusinessLayer();
@@ -834,12 +832,12 @@ namespace TvPlugin
           {
             if (sortAscending)
             {
-              iComp = String.Compare(prog1.Channel.Name, prog2.Channel.Name, true);
+              iComp = String.Compare(prog1.ReferencedChannel().Name, prog2.ReferencedChannel().Name, true);
             }
             else
             {
 
-              iComp = String.Compare(prog2.Channel.Name, prog1.Channel.Name, true);
+              iComp = String.Compare(prog2.ReferencedChannel().Name, prog1.ReferencedChannel().Name, true);
             }
             return iComp;
           }
@@ -961,7 +959,7 @@ namespace TvPlugin
 
     void SetChannelLogo(Program prog, ref GUIListItem item)
     {
-      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, prog.Channel.Name);
+      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, prog.ReferencedChannel().Name);
       if (!System.IO.File.Exists(strLogo))
       {
         strLogo = "defaultVideoBig.png";
@@ -1005,11 +1003,8 @@ namespace TvPlugin
 
         dlg.DoModal(GetID);
         if (dlg.SelectedLabel == -1) return;
-        Schedule rec = Schedule.Create();
-        rec.ProgramName = program.Title;
-        rec.Channel = program.Channel;
-        rec.StartTime = program.StartTime;
-        rec.EndTime = program.EndTime;
+        Schedule rec = new Schedule(program.IdChannel, (int)ScheduleRecordingType.Once, program.Title,
+                                program.StartTime, program.EndTime, 1, 1, "", 1, 0, Schedule.MinSchedule, 5, 5, Schedule.MinSchedule);
 
         switch (dlg.SelectedLabel)
         {
@@ -1022,10 +1017,8 @@ namespace TvPlugin
                 {
                   //delete specific series
                   RemoteControl.Instance.StopRecordingSchedule(rec1.IdSchedule);
-                  CanceledSchedule schedule = CanceledSchedule.Create();
-                  schedule.CancelDateTime = program.StartTime;
-                  schedule.Schedule = rec1;
-                  DatabaseManager.Instance.SaveChanges();
+                  CanceledSchedule schedule = new CanceledSchedule(rec1.IdSchedule, program.StartTime);
+                  schedule.Persist();
                   RemoteControl.Instance.OnNewSchedule();
                 }
                 else
@@ -1033,13 +1026,13 @@ namespace TvPlugin
                   //cancel recording
                   rec1.Canceled = DateTime.Now;
                   RemoteControl.Instance.StopRecordingSchedule(rec1.IdSchedule);
-                  DatabaseManager.Instance.SaveChanges();
+                  rec1.Persist();
                   RemoteControl.Instance.OnNewSchedule();
                 }
 
               }
             }
-            listRecordings = DatabaseManager.Instance.GetEntities<Schedule>();
+            listRecordings = Schedule.ListAll();
             Update();
             return;
           case 1://once
@@ -1064,9 +1057,9 @@ namespace TvPlugin
             rec.ScheduleType = (int)ScheduleRecordingType.Weekends;
             break;
         }
-        DatabaseManager.Instance.SaveChanges();
+        rec.Persist();
         RemoteControl.Instance.OnNewSchedule();
-        listRecordings = DatabaseManager.Instance.GetEntities<Schedule>();
+        listRecordings = Schedule.ListAll();
         Update();
       }
     }
@@ -1135,7 +1128,7 @@ namespace TvPlugin
       }
 
 
-      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, prog.Channel.Name);
+      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, prog.ReferencedChannel().Name);
       if (System.IO.File.Exists(strLogo))
       {
         GUIPropertyManager.SetProperty("#TV.Search.thumb", strLogo);

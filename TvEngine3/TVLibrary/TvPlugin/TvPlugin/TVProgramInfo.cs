@@ -8,10 +8,8 @@ using MediaPortal.GUI.Library;
 
 using TvDatabase;
 using TvControl;
-using IdeaBlade.Persistence;
-using IdeaBlade.Rdb;
-using IdeaBlade.Persistence.Rdb;
-using IdeaBlade.Util;
+using Gentle.Common;
+using Gentle.Framework;
 namespace TvPlugin
 {
   /// <summary>
@@ -86,7 +84,7 @@ namespace TvPlugin
       set
       {
         CurrentProgram = null;
-        List<Program> programs = new List<Program>();
+        IList programs = new ArrayList();
         TvBusinessLayer layer = new TvBusinessLayer();
         programs = layer.GetPrograms(DateTime.Now, DateTime.Now.AddDays(10));
         foreach (Program prog in programs)
@@ -103,14 +101,14 @@ namespace TvPlugin
     void UpdateProgramDescription(Schedule rec)
     {
       if (rec == null) return;
-      List<Program> progs = new List<Program>();
+      IList progs = new ArrayList();
       TvBusinessLayer layer = new TvBusinessLayer();
-      progs = layer.GetPrograms(rec.Channel, rec.StartTime, rec.EndTime);
+      progs = layer.GetPrograms(rec.ReferencedChannel(), rec.StartTime, rec.EndTime);
       if (progs.Count > 0)
       {
         foreach (Program prog in progs)
         {
-          if (prog.StartTime == rec.StartTime && prog.EndTime == rec.EndTime && prog.Channel == rec.Channel)
+          if (prog.StartTime == rec.StartTime && prog.EndTime == rec.EndTime && prog.ReferencedChannel()== rec.ReferencedChannel())
           {
             currentProgram = prog;
             break;
@@ -147,7 +145,7 @@ namespace TvPlugin
       lblProgramTitle.Label = currentProgram.Title;
 
 
-      EntityList<Schedule> recordings = DatabaseManager.Instance.GetEntities<Schedule>();
+      IList recordings = Schedule.ListAll();
       bool bRecording = false;
       bool bSeries = false;
       foreach (Schedule record in recordings)
@@ -188,13 +186,9 @@ namespace TvPlugin
       btnNotify.Selected = currentProgram.Notify;
 
       lstUpcomingEpsiodes.Clear();
-      Schedule recTmp = Schedule.New();
-      recTmp.Channel = currentProgram.Channel;
-      recTmp.ProgramName = currentProgram.Title;
-      recTmp.StartTime = currentProgram.StartTime;
-      recTmp.EndTime = currentProgram.EndTime;
-      recTmp.ScheduleType = (int)ScheduleRecordingType.EveryTimeOnEveryChannel;
-      List<Schedule> recs = TVHome.Util.GetRecordingTimes(recTmp);
+      Schedule recTmp = new Schedule(currentProgram.IdChannel, (int)ScheduleRecordingType.EveryTimeOnEveryChannel, currentProgram.Title,
+                      currentProgram.StartTime, currentProgram.EndTime, 1, 1, "", 1, 1, Schedule.MinSchedule, 5, 5, Schedule.MinSchedule);
+      IList recs = TVHome.Util.GetRecordingTimes(recTmp);
       foreach (Schedule recSeries in recs)
       {
         GUIListItem item = new GUIListItem();
@@ -202,7 +196,7 @@ namespace TvPlugin
         item.TVTag = recSeries;
         item.MusicTag = null;
         item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
-        string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, recSeries.Channel.Name);
+        string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, recSeries.ReferencedChannel().Name);
         if (!System.IO.File.Exists(strLogo))
         {
           strLogo = "defaultVideoBig.png";
@@ -228,7 +222,7 @@ namespace TvPlugin
     bool IsRecordingSchedule(Schedule rec, out Schedule recOrg, bool filterOutCanceled)
     {
       recOrg = null;
-      EntityList<Schedule> recordings = DatabaseManager.Instance.GetEntities<Schedule>();
+      IList recordings = Schedule.ListAll();
 
       foreach (Schedule record in recordings)
       {
@@ -239,7 +233,7 @@ namespace TvPlugin
         {
           if (!record.IsSerieIsCanceled(recSeries.StartTime) || (filterOutCanceled == false))
           {
-            if (rec.Channel == recSeries.Channel &&
+            if (rec.IdChannel == recSeries.IdChannel &&
               rec.ProgramName == recSeries.ProgramName &&
               rec.StartTime == recSeries.StartTime)
             {
@@ -286,7 +280,7 @@ namespace TvPlugin
     {
       bool bRecording = false;
       Schedule rec = null;
-      EntityList<Schedule> recordings = DatabaseManager.Instance.GetEntities<Schedule>();
+      IList recordings = Schedule.ListAll();
 
       foreach (Schedule record in recordings)
       {
@@ -319,7 +313,7 @@ namespace TvPlugin
         dlg.DoModal(GetID);
         if (dlg.SelectedLabel < 0) return;
         rec.PreRecordInterval = dlg.SelectedLabel - 1;
-        DatabaseManager.SaveChanges();
+        rec.Persist();
         RemoteControl.Instance.OnNewSchedule();
       }
       Update();
@@ -329,7 +323,7 @@ namespace TvPlugin
     {
       bool bRecording = false;
       Schedule rec = null;
-      EntityList<Schedule> recordings = DatabaseManager.Instance.GetEntities<Schedule>();
+      IList recordings = Schedule.ListAll();
 
       foreach (Schedule record in recordings)
       {
@@ -362,7 +356,7 @@ namespace TvPlugin
         dlg.DoModal(GetID);
         if (dlg.SelectedLabel < 0) return;
         rec.PostRecordInterval = dlg.SelectedLabel - 1;
-        DatabaseManager.SaveChanges();
+        rec.Persist();
       }
       Update();
     }
@@ -371,7 +365,7 @@ namespace TvPlugin
     {
       bool bRecording = false;
       Schedule rec = null;
-      EntityList<Schedule> recordings = DatabaseManager.Instance.GetEntities<Schedule>();
+      IList recordings = Schedule.ListAll();
 
       foreach (Schedule record in recordings)
       {
@@ -396,7 +390,7 @@ namespace TvPlugin
     {
       bool bRecording = false;
       Schedule rec = null;
-      EntityList<Schedule> recordings = DatabaseManager.Instance.GetEntities<Schedule>();
+      IList recordings = Schedule.ListAll();
 
       foreach (Schedule record in recordings)
       {
@@ -427,13 +421,13 @@ namespace TvPlugin
         if (IsRecordingSchedule(recSeries, out recOrg, false))
         {
           recOrg.UnCancelSerie(recSeries.StartTime);
-          DatabaseManager.SaveChanges();
+          recOrg.Persist();
           RemoteControl.Instance.OnNewSchedule();
         }
         else
         {
           recSeries.ScheduleType = (int)ScheduleRecordingType.Once;
-          DatabaseManager.SaveChanges();
+          recSeries.Persist();
           RemoteControl.Instance.OnNewSchedule();
         }
         Update();
@@ -458,10 +452,9 @@ namespace TvPlugin
                 if (CheckIfRecording(rec))
                 {
                   //delete specific series
-                  CanceledSchedule canceledSerie = CanceledSchedule.Create();
-                  canceledSerie.Schedule = rec;
-                  canceledSerie.CancelDateTime = recSeries.StartTime;
-                  DatabaseManager.SaveChanges();
+                  CanceledSchedule canceledSerie = new CanceledSchedule(rec.IdSchedule,recSeries.StartTime);
+
+                  canceledSerie.Persist();
                   RemoteControl.Instance.StopRecordingSchedule(rec.IdSchedule);
                   RemoteControl.Instance.OnNewSchedule();
                 }
@@ -499,11 +492,11 @@ namespace TvPlugin
       Log.Write("OnRecordProgram");
       bool bRecording = false;
       Schedule rec = null;
-      EntityList<Schedule> recordings = DatabaseManager.Instance.GetEntities<Schedule>();
+      IList recordings = Schedule.ListAll();
       Log.Write("{0} schedules", recordings.Count);
       foreach (Schedule record in recordings)
       {
-        Log.Write("record:{0}",record.RowState);
+        
         if (record.Canceled != Schedule.MinSchedule) continue;
         if (record.IsRecordingProgram(program, true))
         {
@@ -521,20 +514,19 @@ namespace TvPlugin
         Log.Write("not recording");
         foreach (Schedule record in recordings)
         {
-          Log.Write("2record:{0}", record.RowState);
           if (record.IsRecordingProgram(program, false))
           {
             if (record.Canceled != Schedule.MinSchedule)
             {
               record.ScheduleType = (int)ScheduleRecordingType.Once;
               record.Canceled = Schedule.MinSchedule;
-              DatabaseManager.SaveChanges();
+              record.Persist();
               RemoteControl.Instance.OnNewSchedule();
             }
             else if (record.IsSerieIsCanceled(program.StartTime))
             {
               record.UnCancelSerie(program.StartTime);
-              DatabaseManager.SaveChanges();
+              record.Persist();
               RemoteControl.Instance.OnNewSchedule();
             }
             Update();
@@ -542,13 +534,9 @@ namespace TvPlugin
           }
         }
         Log.Write("new record");
-        rec = Schedule.Create();
-        rec.ProgramName = program.Title;
-        rec.Channel = program.Channel;
-        rec.StartTime = program.StartTime;
-        rec.EndTime = program.EndTime;
-        rec.ScheduleType = (int)ScheduleRecordingType.Once;
-        DatabaseManager.SaveChanges();
+        rec = new Schedule(program.IdChannel, (int)ScheduleRecordingType.Once, program.Title,
+                            program.StartTime, program.EndTime, 1, 1, "", 1, 1, Schedule.MinSchedule, 5, 5, Schedule.MinSchedule);
+        rec.Persist();
         RemoteControl.Instance.OnNewSchedule();
       }
       else
@@ -575,10 +563,8 @@ namespace TvPlugin
                   if (CheckIfRecording(rec))
                   {
                     //delete specific series
-                    CanceledSchedule canceledSchedule = CanceledSchedule.Create();
-                    canceledSchedule.Schedule = rec;
-                    canceledSchedule.CancelDateTime = program.StartTime;
-                    DatabaseManager.SaveChanges();
+                    CanceledSchedule canceledSchedule = new CanceledSchedule(rec.IdSchedule, program.StartTime);
+                    canceledSchedule.Persist();
                     RemoteControl.Instance.StopRecordingSchedule(rec.IdSchedule);
                     RemoteControl.Instance.OnNewSchedule();
                   }
@@ -643,11 +629,9 @@ namespace TvPlugin
         dlg.DoModal(GetID);
         if (dlg.SelectedLabel == -1) return;
 
-        Schedule rec = Schedule.Create();
-        rec.ProgramName = currentProgram.Title;
-        rec.Channel = currentProgram.Channel;
-        rec.StartTime = currentProgram.StartTime;
-        rec.EndTime = currentProgram.EndTime;
+        Schedule rec = new Schedule(currentProgram.IdChannel, (int)ScheduleRecordingType.Once,currentProgram.Title,
+                                      currentProgram.StartTime,currentProgram.EndTime,
+                                      1,1,"",1,1,Schedule.MinSchedule,5,5,Schedule.MinSchedule);
         switch (dlg.SelectedId)
         {
           case 611://once
@@ -672,18 +656,18 @@ namespace TvPlugin
             rec.ScheduleType = (int)ScheduleRecordingType.Weekends;
             break;
         }
-        DatabaseManager.SaveChanges();
+        rec.Persist();
         RemoteControl.Instance.OnNewSchedule();
 
         //check if this program is interrupted (for example by a news bulletin)
         //ifso ask the user if he wants to record the 2nd part also
-        List<Program> programs = new List<Program>();
+        IList programs = new ArrayList();
         DateTime dtStart = rec.EndTime.AddMinutes(1);
         DateTime dtEnd = dtStart.AddHours(3);
         long iStart = Utils.datetolong(dtStart);
         long iEnd = Utils.datetolong(dtEnd);
         TvBusinessLayer layer = new TvBusinessLayer();
-        programs = layer.GetPrograms(rec.Channel, dtStart, dtEnd);
+        programs = layer.GetPrograms(rec.ReferencedChannel(), dtStart, dtEnd);
         if (programs.Count >= 2)
         {
           Program next = programs[0] as Program;
@@ -701,12 +685,10 @@ namespace TvPlugin
               dlgYesNo.DoModal(GetID);
               if (dlgYesNo.IsConfirmed)
               {
-                rec = Schedule.Create();
-                rec.ProgramName = currentProgram.Title;
-                rec.Channel = currentProgram.Channel;
-                rec.StartTime = nextNext.StartTime;
-                rec.EndTime = nextNext.EndTime;
-                DatabaseManager.SaveChanges();
+                rec=new Schedule(currentProgram.IdChannel, (int)ScheduleRecordingType.Once, currentProgram.Title,
+                              nextNext.StartTime, nextNext.EndTime,
+                              1, 1, "", 1, 1, Schedule.MinSchedule, 5, 5, Schedule.MinSchedule);
+                rec.Persist();
                 RemoteControl.Instance.OnNewSchedule();
               }
             }
@@ -740,7 +722,7 @@ namespace TvPlugin
     void OnNotify()
     {
       currentProgram.Notify = !currentProgram.Notify;
-      DatabaseManager.SaveChanges();
+      currentProgram.Persist();
       Update();
     }
 
@@ -748,7 +730,7 @@ namespace TvPlugin
     {
       bool bRecording = false;
       Schedule rec = null;
-      EntityList<Schedule> recordings = DatabaseManager.Instance.GetEntities<Schedule>();
+      IList recordings = Schedule.ListAll();
 
       foreach (Schedule record in recordings)
       {
@@ -824,7 +806,7 @@ namespace TvPlugin
           rec.KeepMethod = (int)KeepMethodType.Always;
           break;
       }
-      DatabaseManager.SaveChanges();
+      rec.Persist();
       RemoteControl.Instance.OnNewSchedule();
 
     }

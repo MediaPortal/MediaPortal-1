@@ -40,10 +40,8 @@ using MediaPortal.Player;
 
 using TvDatabase;
 
-using IdeaBlade.Persistence;
-using IdeaBlade.Rdb;
-using IdeaBlade.Persistence.Rdb;
-using IdeaBlade.Util;
+using Gentle.Common;
+using Gentle.Framework;
 #endregion
 
 
@@ -89,7 +87,7 @@ namespace TvPlugin
 
     DateTime _viewingTime = DateTime.Now;
     int _channelOffset = 0;
-    List<Channel> _channelList = new List<Channel>();
+    IList _channelList = new ArrayList();
 
     int _timePerBlock = 30; // steps of 30 minutes
     int _channelCount = 5;
@@ -1071,7 +1069,7 @@ namespace TvPlugin
         if (chan >= _channelList.Count) chan = 0;
       }
 
-      List<Program> programs = new List<Program>();
+      IList programs ;
       DateTime dtStart = DateTime.Now;
       DateTime dtEnd = dtStart.AddDays(30);
       long iStart = Utils.datetolong(dtStart);
@@ -1270,7 +1268,7 @@ namespace TvPlugin
       }
 
 
-      List<Program> programs = new List<Program>();
+      IList programs ;
       TvBusinessLayer layer = new TvBusinessLayer();
       programs = layer.GetPrograms(channel, Utils.longtodate(iStart), Utils.longtodate(iEnd));
       if (programs.Count == 0)
@@ -2131,8 +2129,8 @@ namespace TvPlugin
 
     void GetChannels()
     {
-      _channelList = new List<Channel>();
-      EntityList<Channel> channels = DatabaseManager.Instance.GetEntities<Channel>();
+      _channelList = new ArrayList();
+      IList channels = Channel.ListAll();
       foreach (Channel chan in channels)
       {
         if (chan.IsRadio)
