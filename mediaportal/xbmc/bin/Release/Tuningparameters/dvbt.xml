@@ -1940,7 +1940,7 @@
 		<carrier frequency="850000" bandwidth="8" />
 		<carrier frequency="858000" bandwidth="8" />
 	</country>
-		<country name="UK - Caradon Hill" offset="167">
+	<country name="UK - Caradon Hill" offset="167">
 		<carrier frequency="474000" bandwidth="8" />
 		<carrier frequency="497833" bandwidth="8" />
 		<carrier frequency="521833" bandwidth="8" />
