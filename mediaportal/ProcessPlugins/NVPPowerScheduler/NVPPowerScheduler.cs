@@ -626,13 +626,12 @@ namespace MediaPortal.PowerScheduler
               }
             case (TVRecording.RecordingType.Weekly):
               {
-								tmpNextStarttime = new DateTime(earliestStarttime.Year, earliestStarttime.Month, earliestStarttime.Day,
-																								tmpNextStarttime.Hour, tmpNextStarttime.Minute, tmpNextStarttime.Second, 0);
-
+                tmpNextStarttime = recording.StartTime;
+ 
 								// Skip past dates
 								while (tmpNextStarttime.Ticks < earliestStarttime.Ticks)
 								{
-									tmpNextStarttime = tmpNextStarttime.AddDays(1);
+									tmpNextStarttime = tmpNextStarttime.AddDays(7);
 								}
                                 
                 if (m_bExtensiveLog)
