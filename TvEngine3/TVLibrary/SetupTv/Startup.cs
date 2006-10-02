@@ -137,9 +137,7 @@ namespace SetupTv
         ServiceHelper.Restart();
       }
       int cards = 0;
-#if DEBUG
-      RemoteControl.HostName="mediacenter";
-#else
+      //RemoteControl.HostName="mediacenter";
       // fill the cache
       //auto start the tv-service
       if (!ServiceHelper.IsInstalled)
@@ -151,7 +149,7 @@ namespace SetupTv
       {
         ServiceHelper.Restart();
       }
-#endif
+
       try
       {
         cards = RemoteControl.Instance.Cards;

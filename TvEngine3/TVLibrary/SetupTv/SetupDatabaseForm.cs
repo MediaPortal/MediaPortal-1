@@ -45,8 +45,8 @@ namespace SetupTv
       try
       {
         XmlDocument doc = new XmlDocument();
-        doc.Load("SetupTv.exe.config");
-        XmlNode nodeKey = doc.SelectSingleNode("/configuration/gentle/Gentle.Framework/DefaultProvider");
+        doc.Load("gentle.config");
+        XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
         XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString");
         string text = node.InnerText;
         string[] parts = text.Split(';');
@@ -77,7 +77,7 @@ namespace SetupTv
       }
       catch (Exception)
       {
-        MessageBox.Show("SetupTv.exe.config file not found!");
+        MessageBox.Show("gentle.config file not found!");
       }
     }
     private void SetupDatabaseForm_Load(object sender, EventArgs e)
@@ -181,13 +181,15 @@ namespace SetupTv
     }
     void Save()
     {
-      string connectionString = String.Format("Provider=SQLOLEDB.1;Password={0};Persist Security Info=True;User ID={1};Initial Catalog=TvLibrary;Data Source={2};",
+      string connectionString = String.Format("Password={0};Persist Security Info=True;User ID={1};Initial Catalog=TvLibrary;Data Source={2};",
             mpTextBoxPassword.Text, mpTextBoxUserId.Text, mpTextBoxServer.Text);
       XmlDocument doc = new XmlDocument();
-      doc.Load("IdeaBlade.ibconfig");
-      XmlNode node = doc.SelectSingleNode("/ideaBlade/rdbKey/connection");
+
+      doc.Load("gentle.config");
+      XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
+      XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString"); ;
       node.InnerText = connectionString;
-      doc.Save("IdeaBlade.ibconfig");
+      doc.Save("gentle.config");
     }
 
     private void mpButtonSave_Click(object sender, EventArgs e)
