@@ -913,6 +913,7 @@ namespace Tag.MP3
       Dispose();
     }
 
+
     override public bool SupportsFile(string strFileName)
     {
       if (System.IO.Path.GetExtension(strFileName).ToLower() == ".mp3") return true;
@@ -943,6 +944,7 @@ namespace Tag.MP3
         if (AudioFileStream == null)
           AudioFileStream = new FileStream(AudioFilePath, FileMode.Open, FileAccess.Read);
 
+        Id3Tag = null;
         Id3Tag = new ID3.ID3Tag(AudioFileStream);
 
         bHasID3v1Tag = Id3Tag.HasV1Header;
