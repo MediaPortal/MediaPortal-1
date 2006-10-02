@@ -964,6 +964,14 @@ namespace Tag.MP3
         Log.Error("MP3Tag.Read caused an exception in file {0} : {1}", base.FileName, ex.Message);
         result = false;
       }
+      finally
+      {
+        if (AudioFileStream == null)
+        {
+          AudioFileStream.Close();
+          AudioFileStream.Dispose();
+        }
+      }
 
       return result;
     }
