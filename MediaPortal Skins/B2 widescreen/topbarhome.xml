@@ -10,8 +10,8 @@
       <id>10</id>
       <posX>740</posX>
       <posY>60</posY>
-      <width>100</width>
-      <height>100</height>
+      <width>74</width>
+      <height>98</height>
       <textureFocus>button_shutdown_focus.png</textureFocus>
       <textureNoFocus>button_shutdown_nofocus.png</textureNoFocus>
       <label>-</label>
@@ -28,7 +28,7 @@
       <id>11</id>
       <posX>845</posX>
       <posY>60</posY>
-      <width>100</width>
+      <width>74</width>
       <height>108</height>
       <textureFocus>button_tvdesktop_focus.png</textureFocus>
       <textureNoFocus>button_tvdesktop_nofocus.png</textureNoFocus>
@@ -46,8 +46,8 @@
       <id>12</id>
       <posX>950</posX>
       <posY>60</posY>
-      <width>100</width>
-      <height>100</height>
+      <width>74</width>
+      <height>102</height>
       <textureFocus>Basic_focus.png</textureFocus>
       <textureNoFocus>Basic_nofocus.png</textureNoFocus>
       <label>-</label>
@@ -64,8 +64,8 @@
       <id>13</id>
       <posX>1055</posX>
       <posY>60</posY>
-      <width>100</width>
-      <height>100</height>
+      <width>74</width>
+      <height>102</height>
       <textureFocus>button_close_focus.png</textureFocus>
       <textureNoFocus>button_close_nofocus.png</textureNoFocus>
       <label>-</label>
