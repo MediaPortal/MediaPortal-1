@@ -112,6 +112,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
     <None Include="Gentle.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
