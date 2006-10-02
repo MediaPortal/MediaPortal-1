@@ -382,7 +382,7 @@ namespace TvDatabase
       DateTime startTime = DateTime.Now;
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
       sb.AddConstraint(Operator.Equals,"idChannel", IdChannel);
-      sb.AddConstraint(Operator.GreaterThanOrEquals,"endtime",String.Format("'{1}-{2}-{3} {4}'",date.Year, date.Month, date.Day, date.ToLongTimeString()));
+      sb.AddConstraint(Operator.GreaterThanOrEquals,"endtime",date);
       sb.AddOrderByField(true,"starttime");
       sb.SetRowLimit(1);
       SqlStatement stmt = sb.GetStatement(true);
@@ -406,10 +406,10 @@ namespace TvDatabase
       _currentProgram = null;
       _nextProgram = null;
 
-      DateTime startTime = DateTime.Now;
+      DateTime date = DateTime.Now;
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
       sb.AddConstraint(Operator.Equals, "idChannel", IdChannel);
-      sb.AddConstraint(Operator.GreaterThanOrEquals, "endtime", "GetDate()");
+      sb.AddConstraint(Operator.GreaterThanOrEquals, "endtime", date);
       sb.AddOrderByField(true, "starttime");
       sb.SetRowLimit(2);
       SqlStatement stmt = sb.GetStatement(true);

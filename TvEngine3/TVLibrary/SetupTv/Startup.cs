@@ -25,6 +25,7 @@
 
 using System;
 using System.Windows.Forms;
+using System.Collections;
 using System.Reflection;
 using System.IO;
 using System.Threading;
@@ -136,6 +137,7 @@ namespace SetupTv
 
         ServiceHelper.Restart();
       }
+
       int cards = 0;
       //RemoteControl.HostName="mediacenter";
       // fill the cache
