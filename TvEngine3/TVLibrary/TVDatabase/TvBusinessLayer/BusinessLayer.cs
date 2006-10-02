@@ -549,14 +549,14 @@ namespace TvDatabase
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
       if (searchCriteria.Length > 0)
       {
-        sb.AddConstraint(Operator.GreaterThan, "endtime", "getdate()");
+        sb.AddConstraint(Operator.GreaterThan, "endtime", DateTime.Now);
         sb.AddConstraint(Operator.Like, "title", String.Format("{0}%", searchCriteria));
         sb.AddOrderByField("title");
         sb.AddOrderByField("starttime");
       }
       else
       {
-        sb.AddConstraint(Operator.GreaterThan, "endtime", "getdate()");
+        sb.AddConstraint(Operator.GreaterThan, "endtime", DateTime.Now);
         sb.AddOrderByField("title");
         sb.AddOrderByField("starttime");
       }
@@ -571,14 +571,14 @@ namespace TvDatabase
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
       if (searchCriteria.Length > 0)
       {
-        sb.AddConstraint(Operator.GreaterThan, "endtime", "getdate()");
+        sb.AddConstraint(Operator.GreaterThan, "endtime", DateTime.Now);
         sb.AddConstraint(Operator.Like, "description", String.Format("{0}%", searchCriteria));
         sb.AddOrderByField("description");
         sb.AddOrderByField("starttime");
       }
       else
       {
-        sb.AddConstraint(Operator.GreaterThan, "endtime", "getdate()");
+        sb.AddConstraint(Operator.GreaterThan, "endtime", DateTime.Now);
         sb.AddOrderByField("description");
         sb.AddOrderByField("starttime");
       }
