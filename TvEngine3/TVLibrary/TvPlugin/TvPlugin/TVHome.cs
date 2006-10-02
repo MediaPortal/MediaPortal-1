@@ -1338,7 +1338,7 @@ namespace TvPlugin
         MediaPortal.GUI.Library.Log.Info("ChannelNavigator::Reload()");
         Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(RemoteControl.Instance.DatabaseConnectionString);
         MediaPortal.GUI.Library.Log.Info("get channels from database");
-        SqlBuilder sb = new SqlBuilder(StatementType.Delete, typeof(Channel));
+        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
         sb.AddConstraint(Operator.Equals, "isTv", 1);
         sb.AddOrderByField(true, "sortOrder");
         SqlStatement stmt = sb.GetStatement(true);

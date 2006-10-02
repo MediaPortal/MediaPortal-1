@@ -156,7 +156,7 @@ namespace TvPlugin
       Log.Write("zaposd pageload");
       // following line should stay. Problems with OSD not
       // appearing are already fixed elsewhere
-      SqlBuilder sb = new SqlBuilder(StatementType.Delete, typeof(Channel));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
       sb.AddConstraint(Operator.Equals, "istv", 1);
       sb.AddOrderByField(true, "sortOrder");
       SqlStatement stmt = sb.GetStatement(true);

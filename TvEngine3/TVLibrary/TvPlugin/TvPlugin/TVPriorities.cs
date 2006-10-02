@@ -220,7 +220,7 @@ namespace TvPlugin
     void LoadDirectory()
     {
       GUIControl.ClearControl(GetID, listPriorities.GetID);
-      SqlBuilder sb = new SqlBuilder(StatementType.Delete, typeof(Schedule));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Schedule));
       sb.AddOrderByField(true, "priority");
       SqlStatement stmt = sb.GetStatement(true);
       IList itemlist = ObjectFactory.GetCollection(typeof(Schedule), stmt.Execute());
