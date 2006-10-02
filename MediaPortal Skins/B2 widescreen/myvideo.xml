@@ -69,6 +69,6 @@
 				<ondown>99</ondown>
 			</control>
 		</control>
-		<import>common.facade.xml</import>
+		<import>common.facade.video.xml</import>
 	</controls>
 </window>

@@ -406,13 +406,13 @@
 		<thumbPosXBig>22</thumbPosXBig>
 		<thumbPosYBig>16</thumbPosYBig>
 		<background>filmstrip_bg.png</background>
-		<backgroundx>588</backgroundx>
+		<backgroundx>672</backgroundx>
 		<backgroundy>126</backgroundy>
 		<backgroundwidth>427</backgroundwidth>
 		<backgroundheight>446</backgroundheight>
 		<backgrounddiffuse>60ffffff</backgrounddiffuse>
 		<InfoImage>-</InfoImage>
-		<InfoImagex>608</InfoImagex>
+		<InfoImagex>692</InfoImagex>
 		<InfoImagey>152</InfoImagey>
 		<InfoImagewidth>375</InfoImagewidth>
 		<InfoImageheight>375</InfoImageheight>
