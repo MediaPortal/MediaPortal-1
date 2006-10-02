@@ -148,5 +148,6 @@ namespace TvDatabase
 			return Channel.Retrieve(IdChannel);
 		}
 		#endregion
+
 	}
 }

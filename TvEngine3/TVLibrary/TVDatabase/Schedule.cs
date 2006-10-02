@@ -389,5 +389,12 @@ namespace TvDatabase
       if (DateTime.Now > EndTime) return true;
       return false;
     }
+
+    public void Delete()
+    {
+      IList list = ReferringCanceledSchedule();
+      foreach (CanceledSchedule schedule in list)
+        schedule.Remove();
+    }
 	}
 }

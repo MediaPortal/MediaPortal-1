@@ -139,7 +139,7 @@ namespace SetupTv.Sections
       foreach (ListViewItem item in mpListView1.SelectedItems)
       {
         Channel channel = (Channel)item.Tag;
-        channel.Remove();
+        channel.Delete();
         mpListView1.Items.Remove(item);
       }
       //DatabaseManager.Instance.SaveChanges();

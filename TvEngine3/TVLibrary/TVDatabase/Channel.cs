@@ -425,5 +425,32 @@ namespace TvDatabase
       }
     }
 
+    public void Delete()
+    {
+      IList list = ReferringGroupMap();
+      foreach (GroupMap map in list)
+        map.Remove();
+
+      list = ReferringProgram();
+      foreach (Program program in list)
+        program.Delete();
+
+      list = ReferringSchedule();
+      foreach (Schedule schedule in list)
+        schedule.Delete();
+
+      list = ReferringRecording();
+      foreach (Recording rec in list)
+        rec.Remove();
+
+      list = ReferringChannelMap();
+      foreach (ChannelMap channelMap in list)
+        channelMap.Remove();
+
+      list = ReferringTuningDetail();
+      foreach (TuningDetail detail in list)
+        detail.Remove();
+      Remove();
+    }
 	}
 }

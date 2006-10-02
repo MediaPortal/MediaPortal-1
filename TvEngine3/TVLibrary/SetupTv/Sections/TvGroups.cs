@@ -86,7 +86,7 @@ namespace SetupTv.Sections
       foreach (ListViewItem item in mpListViewGroups.SelectedItems)
       {
         ChannelGroup group = (ChannelGroup)item.Tag;
-        group.Remove();
+        group.Delete();
         mpListViewGroups.Items.Remove(item);
       }
     }

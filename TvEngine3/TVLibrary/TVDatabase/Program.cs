@@ -233,5 +233,11 @@ namespace TvDatabase
 		#endregion
 
 
+    public void Delete()
+    {
+      IList list = ReferringFavorite();
+      foreach (Favorite favorite in list)
+        favorite.Remove();
+    }
 	}
 }

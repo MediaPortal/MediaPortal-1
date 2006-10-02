@@ -159,29 +159,34 @@ namespace SetupTv.Sections
 
     private void mpButtonClear_Click(object sender, EventArgs e)
     {
-      /*
       mpListView1.BeginUpdate();
-      EntityList<TuningDetail> details = DatabaseManager.Instance.GetEntities<TuningDetail>();
-      while (details.Count > 0) details[0].Delete();
-      EntityList<GroupMap> groupmaps = DatabaseManager.Instance.GetEntities<GroupMap>();
-      while (groupmaps.Count > 0) groupmaps[0].Delete();
-      EntityList<ChannelMap> channelMaps = DatabaseManager.Instance.GetEntities<ChannelMap>();
-      while (channelMaps.Count > 0) channelMaps[0].Delete();
-      EntityList<Recording> recordings = DatabaseManager.Instance.GetEntities<Recording>();
-      while (recordings.Count > 0) recordings[0].Delete();
-      EntityList<CanceledSchedule> canceled = DatabaseManager.Instance.GetEntities<CanceledSchedule>();
-      while (canceled.Count > 0) canceled[0].Delete();
-      EntityList<Schedule> schedules = DatabaseManager.Instance.GetEntities<Schedule>();
-      while (schedules.Count > 0) schedules[0].Delete();
-      EntityList<Program> progs = DatabaseManager.Instance.GetEntities<Program>();
-      while (progs.Count > 0) progs[0].Delete();
-      EntityList<Channel> channels = DatabaseManager.Instance.GetEntities<Channel>();
-      while (channels.Count > 0) channels[0].Delete();
+      IList details = TuningDetail.ListAll();
+      foreach(TuningDetail detail in details) detail.Remove();
+      
+      IList groupmaps = GroupMap.ListAll();
+      foreach (TuningDetail groupmap in groupmaps) groupmap.Remove();
+      
+      IList channelMaps = ChannelMap.ListAll();
+      foreach(ChannelMap channelMap in channelMaps) channelMap.Remove();
+
+      IList recordings = Recording.ListAll();
+      foreach(Recording recording in recordings) recording.Remove();
+
+      IList canceledSchedules = CanceledSchedule.ListAll();
+      foreach(CanceledSchedule canceledSchedule in canceledSchedules) canceledSchedule.Remove();
+
+      IList schedules = Schedule.ListAll();
+      foreach(Schedule schedule in schedules) schedule.Remove();
+
+      IList programs = Program.ListAll();
+      foreach(Program program in programs) program.Remove();
+
+      IList channels = Channel.ListAll();
+      foreach(Channel channel in channels) channel.Remove();
+
 
       mpListView1.EndUpdate();
-      DatabaseManager.Instance.SaveChanges();
-      DatabaseManager.Instance.ClearQueryCache();
-      OnSectionActivated();*/
+      OnSectionActivated();
     }
 
     private void TvChannels_Load(object sender, EventArgs e)
@@ -205,7 +210,7 @@ namespace SetupTv.Sections
             TuningDetail detail = (TuningDetail)ch.ReferringTuningDetail()[x];
             if (detail.FreeToAir == false)
             {
-              ch.Remove();
+              ch.Delete();
               break;
             }
           }
@@ -221,7 +226,7 @@ namespace SetupTv.Sections
       foreach (ListViewItem item in mpListView1.SelectedItems)
       {
         Channel channel = (Channel)item.Tag;
-        channel.Remove();
+        channel.Delete();
         mpListView1.Items.Remove(item);
       }
       mpListView1.EndUpdate();
