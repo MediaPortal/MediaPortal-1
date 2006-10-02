@@ -92,7 +92,7 @@
 			    <onright>1000</onright>
 			    <onup>7</onup>
 			    <ondown>9</ondown>
-		    </control>
+		 </control>
 		 <control>
 			    <description>Help once</description>
 			    <type>button</type>
@@ -114,7 +114,7 @@
 				<posX>639</posX>
 				<posY>92</posY>
 				<width>4</width>
-				<height>445</height>
+				<height>450</height>
 				<texture>bar_vert.png</texture>
 			</control>
 			<control>
@@ -136,7 +136,7 @@
 				<id>976</id>
 				<posX>490</posX>
 				<posY>236</posY>
-				<width>445</width>				
+				<width>450</width>				
 				<height>4</height>				
 				<texture>bar_hor.png</texture>
 			</control>
@@ -144,8 +144,8 @@
 				<type>image</type>
 				<id>977</id>
 				<posX>490</posX>
-				<posY>428</posY>
-				<width>445</width>
+				<posY>380</posY>
+				<width>450</width>
 				<height>4</height>
 				<texture>bar_hor.png</texture>
 			</control>
