@@ -1606,7 +1606,7 @@ namespace TvService
         try
         {
           XmlDocument doc = new XmlDocument();
-          doc.Load("TvService.exe.config");
+          doc.Load("gentle.config");
           XmlNode nodeKey = doc.SelectSingleNode("/configuration/gentle/Gentle.Framework/DefaultProvider");
           XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString"); ;
           return node.InnerText;
@@ -1622,11 +1622,11 @@ namespace TvService
         try
         {
           XmlDocument doc = new XmlDocument();
-          doc.Load("TvService.exe.config");
+          doc.Load("gentle.config");
           XmlNode nodeKey = doc.SelectSingleNode("/configuration/gentle/Gentle.Framework/DefaultProvider");
           XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString"); ;
           node.InnerText = value;
-          doc.Save("TvService.exe.config");
+          doc.Save("gentle.config");
           Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(value);
           Init();
         }

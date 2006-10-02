@@ -91,7 +91,7 @@ namespace SetupTv
         if (dbsServers.Count == 0)
         {
           XmlDocument doc = new XmlDocument();
-          doc.Load("SetupTv.exe.config");
+          doc.Load("gentle.config");
           XmlNode nodeKey = doc.SelectSingleNode("/configuration/gentle/Gentle.Framework/DefaultProvider");
           XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString");;
           RemoteControl.Instance.DatabaseConnectionString = node.InnerText;

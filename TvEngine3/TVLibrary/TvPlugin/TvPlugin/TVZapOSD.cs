@@ -157,7 +157,7 @@ namespace TvPlugin
       // following line should stay. Problems with OSD not
       // appearing are already fixed elsewhere
       SqlBuilder sb = new SqlBuilder(StatementType.Delete, typeof(Channel));
-      sb.AddConstraint(Operator.Equals, "istv", "1");
+      sb.AddConstraint(Operator.Equals, "istv", 1);
       sb.AddOrderByField(true, "sortOrder");
       SqlStatement stmt = sb.GetStatement(true);
       tvChannelList = ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
