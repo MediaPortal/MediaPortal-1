@@ -1074,7 +1074,12 @@ public class MediaPortalApp : D3DApp, IRender
     {
       bool autosize = xmlreader.GetValueAsBool("general", "autosize", true);
       if (autosize && !GUIGraphicsContext.Fullscreen)
-        Size = new Size(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);
+      {
+        if (Screen.PrimaryScreen.Bounds.Width > GUIGraphicsContext.SkinSize.Width)
+          Size = new Size(GUIGraphicsContext.SkinSize.Width + 8, GUIGraphicsContext.SkinSize.Height + 54);
+        else
+          Size = new Size(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);        
+      }
     }
     GUIWindowManager.OnResize();
     Log.Info("Main: Initializing windowmanager");
