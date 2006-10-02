@@ -169,7 +169,7 @@
 				<font3>font10</font3>
 				<font2>font10</font2>
 				<textYOff3>38</textYOff3>
-				<textXOff2>796</textXOff2>
+				<textXOff2>736</textXOff2>
 				<IconYOff>10</IconYOff>
 				<textYOff>2</textYOff>
 				<textureFocus>recording_background_focus.png</textureFocus>
@@ -245,6 +245,7 @@
 				<id>13</id>
 				<posX>493</posX>
 				<posY>586</posY>
+				<width>573</width>
 				<label>#TV.RecordedTV.Title</label>
 				<disabledcolor>ff808080</disabledcolor>
 			</control>
@@ -274,7 +275,7 @@
 				<type>label</type>
 				<description>genre</description>
 				<id>17</id>
-				<posX>766</posX>
+				<posX>966</posX>
 				<posY>613</posY>
 				<label>#TV.RecordedTV.Genre</label>
 				<align>right</align>
@@ -285,7 +286,7 @@
 			<type>image</type>
 			<description>Current program background</description>
 			<id>300</id>
-			<posX>113</posX>
+			<posX>140</posX>
 			<posY>560</posY>
 			<width>240</width>
 			<height>180</height>
@@ -296,7 +297,7 @@
 			<type>videowindow</type>
 			<description>TV preview window</description>
 			<id>99</id>
-			<posX>123</posX>
+			<posX>147</posX>
 			<posY>566</posY>
 			<width>226</width>
 			<height>166</height>

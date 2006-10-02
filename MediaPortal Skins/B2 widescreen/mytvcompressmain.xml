@@ -169,26 +169,28 @@
 			</control>
 		</control>
 		<control>
-			<description>Current program background</description>
 			<type>image</type>
-			<id>1</id>
-			<posX>142</posX>
-			<posY>558</posY>
-			<width>214</width>
-			<height>178</height>
-			<texture>playback_background.png</texture>
+			<description>Current program background</description>
+			<id>300</id>
+			<posX>140</posX>
+			<posY>560</posY>
+			<width>240</width>
+			<height>180</height>
+			<colordiffuse>60ffffff</colordiffuse>
+			<texture>previewbackground.png</texture>
 		</control>
 		<control>
-			<description>TV preview window</description>
 			<type>videowindow</type>
+			<description>TV preview window</description>
 			<id>99</id>
-			<posX>163</posX>
-			<posY>574</posY>
-			<width>180</width>
-			<height>144</height>
+			<posX>147</posX>
+			<posY>566</posY>
+			<width>226</width>
+			<height>166</height>
+			<colordiffuse>ffffffff</colordiffuse>
 			<onup>5</onup>
-			<action>18</action>
 			<textureFocus>tv_green_border.png</textureFocus>
+			<action>18</action>
 		</control>
 	</controls>
 </window>

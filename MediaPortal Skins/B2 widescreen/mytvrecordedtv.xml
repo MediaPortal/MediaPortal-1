@@ -207,7 +207,7 @@
 				<font3>font10</font3>
 				<font2>font10</font2>
 				<textYOff3>38</textYOff3>
-				<textXOff2>796</textXOff2>
+				<textXOff2>736</textXOff2>
 				<IconYOff>10</IconYOff>
 				<textYOff>2</textYOff>
 				<textureFocus>recording_background_focus.png</textureFocus>
@@ -226,7 +226,7 @@
 				<spaceBetweenItems>6</spaceBetweenItems>
 				<textureDownFocus>page_down_focus.png</textureDownFocus>
 				<spinColor>ffffffff</spinColor>
-				<spinPosX>1149</spinPosX>
+				<spinPosX>1119</spinPosX>
 				<spinPosY>557</spinPosY>
 				<spinHeight>36</spinHeight>
 				<spinWidth>34</spinWidth>
@@ -283,6 +283,7 @@
 				<id>13</id>
 				<posX>493</posX>
 				<posY>586</posY>
+				<width>573</width>
 				<label>#TV.RecordedTV.Title</label>
 				<disabledcolor>ff808080</disabledcolor>
 			</control>
@@ -312,7 +313,7 @@
 				<type>label</type>
 				<description>genre</description>
 				<id>17</id>
-				<posX>766</posX>
+				<posX>966</posX>
 				<posY>613</posY>
 				<label>#TV.RecordedTV.Genre</label>
 				<align>right</align>
@@ -323,20 +324,21 @@
 			<type>image</type>
 			<description>Current program background</description>
 			<id>300</id>
-			<posX>142</posX>
-			<posY>558</posY>
-			<width>214</width>
-			<height>178</height>
-			<texture>playback_background.png</texture>
+			<posX>140</posX>
+			<posY>560</posY>
+			<width>240</width>
+			<height>180</height>
+			<colordiffuse>60ffffff</colordiffuse>
+			<texture>previewbackground.png</texture>
 		</control>
 		<control>
 			<type>videowindow</type>
 			<description>TV preview window</description>
 			<id>99</id>
-			<posX>163</posX>
-			<posY>574</posY>
-			<width>180</width>
-			<height>144</height>
+			<posX>147</posX>
+			<posY>566</posY>
+			<width>226</width>
+			<height>166</height>
 			<colordiffuse>ffffffff</colordiffuse>
 			<onup>5</onup>
 			<textureFocus>tv_green_border.png</textureFocus>
