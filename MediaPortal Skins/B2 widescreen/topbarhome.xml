@@ -8,10 +8,10 @@
       <description>Back button</description>
       <type>button</type>
       <id>10</id>
-      <posX>740</posX>
+      <posX>810</posX>
       <posY>60</posY>
-      <width>74</width>
-      <height>98</height>
+      <width>56</width>
+      <height>74</height>
       <textureFocus>button_shutdown_focus.png</textureFocus>
       <textureNoFocus>button_shutdown_nofocus.png</textureNoFocus>
       <label>-</label>
@@ -26,10 +26,10 @@
       <description>videowallpaper button</description>
       <type>button</type>
       <id>11</id>
-      <posX>845</posX>
+      <posX>880</posX>
       <posY>60</posY>
-      <width>74</width>
-      <height>108</height>
+      <width>56</width>
+      <height>81</height>
       <textureFocus>button_tvdesktop_focus.png</textureFocus>
       <textureNoFocus>button_tvdesktop_nofocus.png</textureNoFocus>
       <label>-</label>
@@ -46,8 +46,8 @@
       <id>12</id>
       <posX>950</posX>
       <posY>60</posY>
-      <width>74</width>
-      <height>102</height>
+      <width>56</width>
+      <height>77</height>
       <textureFocus>Basic_focus.png</textureFocus>
       <textureNoFocus>Basic_nofocus.png</textureNoFocus>
       <label>-</label>
@@ -62,10 +62,10 @@
       <description>Exit button</description>
       <type>button</type>
       <id>13</id>
-      <posX>1055</posX>
+      <posX>1020</posX>
       <posY>60</posY>
-      <width>74</width>
-      <height>102</height>
+      <width>56</width>
+      <height>77</height>
       <textureFocus>button_close_focus.png</textureFocus>
       <textureNoFocus>button_close_nofocus.png</textureNoFocus>
       <label>-</label>
