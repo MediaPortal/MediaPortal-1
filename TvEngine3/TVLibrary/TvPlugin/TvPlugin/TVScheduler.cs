@@ -1233,14 +1233,21 @@ namespace TvPlugin
       GUIPropertyManager.SetProperty("#TV.RecordedTV.Genre", "");
       GUIPropertyManager.SetProperty("#TV.RecordedTV.Time", strTime);
       GUIPropertyManager.SetProperty("#TV.RecordedTV.Description", "");
-      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.ReferencedChannel().Name);
-      if (System.IO.File.Exists(strLogo))
-      {
-        GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb", strLogo);
-      }
+
+      if (rec.IdChannel < 0)
+        GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb", "defaultVideoBig.png");
       else
       {
-        GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb", "defaultVideoBig.png");
+
+        string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.ReferencedChannel().Name);
+        if (System.IO.File.Exists(strLogo))
+        {
+          GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb", strLogo);
+        }
+        else
+        {
+          GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb", "defaultVideoBig.png");
+        }
       }
     }
     public void SetProperties(Schedule schedule, Program prog)
@@ -1270,11 +1277,17 @@ namespace TvPlugin
         GUIPropertyManager.SetProperty("#TV.Scheduled.Genre", String.Empty);
       }
 
-
-      string logo = Utils.GetCoverArt(Thumbs.TVChannel, schedule.ReferencedChannel().Name);
-      if (System.IO.File.Exists(logo))
+      if (schedule.IdChannel < 0)
       {
-        GUIPropertyManager.SetProperty("#TV.Scheduled.thumb", logo);
+        string logo = Utils.GetCoverArt(Thumbs.TVChannel, schedule.ReferencedChannel().Name);
+        if (System.IO.File.Exists(logo))
+        {
+          GUIPropertyManager.SetProperty("#TV.Scheduled.thumb", logo);
+        }
+        else
+        {
+          GUIPropertyManager.SetProperty("#TV.Scheduled.thumb", "defaultVideoBig.png");
+        }
       }
       else
       {
@@ -1284,7 +1297,7 @@ namespace TvPlugin
 
     void UpdateDescription()
     {
-      Schedule rec = new Schedule(1, "", Schedule.MinSchedule, Schedule.MinSchedule);
+      Schedule rec = new Schedule(-1, "", Schedule.MinSchedule, Schedule.MinSchedule);
       SetProperties(rec);
       GUIListItem pItem = GetItem(GetSelectedItemNo());
       if (pItem == null)

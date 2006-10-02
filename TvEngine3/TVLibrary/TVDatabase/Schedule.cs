@@ -82,6 +82,8 @@ namespace TvDatabase
 
     public Schedule(int idChannel, string programName, DateTime startTime, DateTime endTime)
     {
+      isChanged = true;
+      this.idChannel = idChannel;
       ProgramName = programName;
       Canceled = MinSchedule;
       Directory = "";
@@ -541,6 +543,7 @@ namespace TvDatabase
       IList list = ReferringCanceledSchedule();
       foreach (CanceledSchedule schedule in list)
         schedule.Remove();
+      Remove();
     }
 
     public bool Series

@@ -160,7 +160,7 @@ namespace TvPlugin
       sb.AddConstraint(Operator.Equals, "istv", 1);
       sb.AddOrderByField(true, "sortOrder");
       SqlStatement stmt = sb.GetStatement(true);
-      tvChannelList = ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
+      tvChannelList = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
 
       AllocResources();
       // if (g_application.m_pPlayer) g_application.m_pPlayer.ShowOSD(false);

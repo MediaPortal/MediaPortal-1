@@ -347,7 +347,7 @@ namespace TvPlugin
             sb.AddConstraint(Operator.Equals, "istv", 1);
             sb.AddOrderByField(true, "sortOrder");
             SqlStatement stmt = sb.GetStatement(true);
-            listTvChannels=ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
+            listTvChannels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
 
             GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + GetID));
             previousProgram = null;

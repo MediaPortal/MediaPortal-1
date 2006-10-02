@@ -534,9 +534,10 @@ namespace TvPlugin
       dlg.Reset();
       dlg.SetHeading(891); // Select TV channel
       int selected = 0;
-      for (int i = 0; i < Navigator.CurrentGroup.ReferringGroupMap().Count; ++i)
+      IList groups = Navigator.CurrentGroup.ReferringGroupMap();
+      for (int i = 0; i < groups.Count; ++i)
       {
-        GroupMap gm = (GroupMap)Navigator.CurrentGroup.ReferringGroupMap()[i];
+        GroupMap gm = (GroupMap)groups[i];
         dlg.Add(gm.ReferencedChannel().Name);
         if (Navigator.CurrentChannel != null)
         {
@@ -1336,19 +1337,21 @@ namespace TvPlugin
       try
       {
         MediaPortal.GUI.Library.Log.Info("ChannelNavigator::Reload()");
+        MediaPortal.GUI.Library.Log.Info("ChannelNavigator::database:{0}", RemoteControl.Instance.DatabaseConnectionString);
         Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(RemoteControl.Instance.DatabaseConnectionString);
         MediaPortal.GUI.Library.Log.Info("get channels from database");
         SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
         sb.AddConstraint(Operator.Equals, "isTv", 1);
         sb.AddOrderByField(true, "sortOrder");
         SqlStatement stmt = sb.GetStatement(true);
-        channels = ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
+        channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
         MediaPortal.GUI.Library.Log.Info("found:{0} tv channels", channels.Count);
 
         m_groups.Clear();
 
         MediaPortal.GUI.Library.Log.Info("get all groups from database");
         IList groups = ChannelGroup.ListAll();
+        IList allgroupMaps = GroupMap.ListAll();
         bool found = false;
         foreach (ChannelGroup group in groups)
         {
@@ -1358,8 +1361,10 @@ namespace TvPlugin
             TvBusinessLayer layer = new TvBusinessLayer();
             foreach (Channel channel in channels)
             {
+              if (channel.IsTv == false) continue;
               bool groupContainsChannel = false;
-              foreach (GroupMap map in group.ReferringGroupMap())
+              IList groupMaps = group.ReferringGroupMap();
+              foreach (GroupMap map in groupMaps)
               {
                 if (map.IdChannel == channel.IdChannel)
                 {
@@ -1787,9 +1792,10 @@ namespace TvPlugin
     /// <returns></returns>
     private int GetChannelIndex(string channelName)
     {
-      for (int i = 0; i < CurrentGroup.ReferringGroupMap().Count; i++)
+      IList groupMaps = CurrentGroup.ReferringGroupMap();
+      for (int i = 0; i < groupMaps.Count; i++)
       {
-        GroupMap gm = (GroupMap)CurrentGroup.ReferringGroupMap()[i];
+        GroupMap gm = (GroupMap)groupMaps[i];
         Channel chan = (Channel)gm.ReferencedChannel();
         if (chan.Name == channelName)
           return i;

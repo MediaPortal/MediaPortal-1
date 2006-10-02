@@ -144,8 +144,10 @@ namespace TvPlugin
       lblProgramDescription.Label = currentProgram.Description;
       lblProgramTitle.Label = currentProgram.Title;
 
-
+      Log.Write("Schedule.ListAll()");
       IList recordings = Schedule.ListAll();
+      Log.Write("Schedule.ListAll() returns {0}", recordings);
+      Log.Write("Schedule.ListAll() returns {0}", recordings.Count);
       bool bRecording = false;
       bool bSeries = false;
       foreach (Schedule record in recordings)
@@ -187,7 +189,7 @@ namespace TvPlugin
 
       lstUpcomingEpsiodes.Clear();
       Schedule recTmp = new Schedule(currentProgram.IdChannel,  currentProgram.Title,currentProgram.StartTime, currentProgram.EndTime);
-      IList recs = TVHome.Util.GetRecordingTimes(recTmp);
+      List<Schedule> recs = TVHome.Util.GetRecordingTimes(recTmp);
       foreach (Schedule recSeries in recs)
       {
         GUIListItem item = new GUIListItem();

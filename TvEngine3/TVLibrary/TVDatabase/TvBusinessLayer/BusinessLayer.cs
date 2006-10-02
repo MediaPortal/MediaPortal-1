@@ -450,7 +450,7 @@ namespace TvDatabase
       string sub3 = String.Format("(StartTime <= '{0}' and EndTime >= '{1}')", startTime.ToString("MM/dd/yyyy HH:mm:ss"), endTime.ToString("MM/dd/yyyy HH:mm:ss"));
 
       sb.AddConstraint(Operator.Equals,"idChannel",channel.IdChannel);
-      sb.AddConstraint(string.Format("and ({0} or {1} or {2}) ", sub1,sub2,sub3));
+      sb.AddConstraint(string.Format("({0} or {1} or {2}) ", sub1,sub2,sub3));
       sb.AddOrderByField(true,"starttime");
 
       SqlStatement stmt = sb.GetStatement(true);
