@@ -380,7 +380,7 @@
 		<textureDown>page_down_nofocus.png</textureDown>
 		<textureUpFocus>page_up_focus.png</textureUpFocus>
 		<textureDownFocus>page_down_focus.png</textureDownFocus>
-		<itemWidth>136</itemWidth>
+		<itemWidth>120</itemWidth>
 		<itemHeight>136</itemHeight>
 		<textureWidth>112</textureWidth>
 		<textureHeight>112</textureHeight>
