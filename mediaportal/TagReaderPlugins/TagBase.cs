@@ -270,6 +270,7 @@ namespace Tag
       if (AudioFileStream != null)
       {
         AudioFileStream.Close();
+        AudioFileStream.Dispose();
         AudioFileStream = null;
       }
 

@@ -524,8 +524,9 @@ namespace MediaPortal.TagReader
             return 0;
         }
       }
-
-      return int.Parse(sYear);
+      int yearValue;
+      if (!Int32.TryParse(sYear, out yearValue)) yearValue = 0;
+      return yearValue;
     }
 
     /// <summary>
