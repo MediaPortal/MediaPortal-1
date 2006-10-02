@@ -21,10 +21,9 @@
 
 using System;
 using System.IO;
+using MediaPortal.GUI.Library;
 using MediaPortal.TagReader;
 using Tag.MAC;
-
-using MediaPortal.GUI.Library;
 
 namespace Tag.MPC
 {
@@ -58,35 +57,67 @@ namespace Tag.MPC
 
       public uint EncoderVersion;
       public string Encoder;
+
+      public static MpcHeaderInfo Empty
+      {
+        get
+        {
+          MpcHeaderInfo mhi = new MpcHeaderInfo();
+          mhi.SampleRate = 0;
+          mhi.Channels = 0;
+          mhi.HeaderPosition = 0;
+          mhi.HeaderLength = 0;
+          mhi.MPCStreamVersion = 0;
+          mhi.Bitrate = 0;
+          mhi.AverageBitrate = 0;
+          mhi.Frames = 0;
+          mhi.PCMSamples = 0;
+          mhi.MaxBand = 0;
+          mhi.IntensityStereo = 0;
+          mhi.MidSideStereo = 0;
+          mhi.BlockSize = 0;
+          mhi.Profile = 0;
+          mhi.ProfileName = String.Empty;
+          mhi.GainTitle = 0;
+          mhi.GainAlbum = 0;
+          mhi.PeakAlbum = 0;
+          mhi.PeakTitle = 0;
+          mhi.IsTrueGapless = 0;
+          mhi.LastFrameSamples = 0;
+          mhi.EncoderVersion = 0;
+          mhi.Encoder = String.Empty;
+          return mhi;
+        }
+      }
     }
 
-    string[] ProfileNames = new string[]
-            {
-                "Uknown", 
-                "'Unstable/Experimental'", 
-                "Uknown", 
-                "Uknown",
-                "Uknown", 
-                "Below 'Telephone'", 
-                "Below 'Telephone'", 
-                "'Telephone'",
-                "'Thumb'", 
-                "'Radio'", 
-                "'Standard'", 
-                "'Xtreme'",
-                "'Insane'", 
-                "'BrainDead'", 
-                "above 'BrainDead'", 
-                "above 'BrainDead'"
-            };
+    private string[] ProfileNames = new string[]
+      {
+        "Uknown",
+        "'Unstable/Experimental'",
+        "Uknown",
+        "Uknown",
+        "Uknown",
+        "Below 'Telephone'",
+        "Below 'Telephone'",
+        "'Telephone'",
+        "'Thumb'",
+        "'Radio'",
+        "'Standard'",
+        "'Xtreme'",
+        "'Insane'",
+        "'BrainDead'",
+        "above 'BrainDead'",
+        "above 'BrainDead'"
+      };
 
-    int[] SampleRates = new int[]
-            {
-                44100,
-                48000,
-                37800,
-                32000
-            };
+    private int[] SampleRates = new int[]
+      {
+        44100,
+        48000,
+        37800,
+        32000
+      };
 
     #region Variables
 
@@ -96,53 +127,58 @@ namespace Tag.MPC
 
     #region Properties
 
-    override public int AverageBitrate
+    public override int AverageBitrate
     {
-      get { return (int)(HeaderInfo.AverageBitrate / 1000 + .5); }
+      get { return (int) (HeaderInfo.AverageBitrate/1000 + .5); }
     }
 
-    override public int Channels
+    public override int Channels
     {
       get { return HeaderInfo.Channels; }
     }
 
-    override public string Length
+    public override string Length
     {
       get { return Utils.GetDurationString(LengthMS); }
     }
 
-    override public int LengthMS
+    public override int LengthMS
     {
       get
       {
         int frameLength = 1152;
-        double framesSize = (HeaderInfo.Frames - .5) * frameLength;
-        int durationSecs = (int)(framesSize / HeaderInfo.SampleRate);
+        double framesSize = (HeaderInfo.Frames - .5)*frameLength;
+        int durationSecs = (int) (framesSize/HeaderInfo.SampleRate);
 
-        return durationSecs * 1000;
+        return durationSecs*1000;
       }
     }
 
-    override public string ReplayGainAlbum
+    public override string ReplayGainAlbum
     {
       get { return HeaderInfo.GainAlbum.ToString(); }
     }
 
-    override public int SampleRate
+    public override int SampleRate
     {
       get { return HeaderInfo.SampleRate; }
     }
 
-
     #endregion
 
-    public MpcTag()
-      : base()
+    public MpcTag() : base()
     {
+      HeaderInfo = MpcHeaderInfo.Empty;
     }
 
-    public MpcTag(string fileName)
-      : base(fileName)
+    public static MpcTag FromFile(string fileName)
+    {
+      MpcTag tag = new MpcTag();
+      tag.Read(fileName);
+      return tag;
+    }
+    
+    public MpcTag(string fileName) : base(fileName)
     {
       Read(fileName);
     }
@@ -152,22 +188,31 @@ namespace Tag.MPC
       Dispose();
     }
 
-    override public bool SupportsFile(string strFileName)
+    public override bool SupportsFile(string strFileName)
     {
-      if (Path.GetExtension(strFileName).ToLower() == ".mpc") return true;
+      if (Path.GetExtension(strFileName).ToLower() == ".mpc")
+      {
+        return true;
+      }
       return false;
     }
 
-    override public bool Read(string fileName)
+    public override bool Read(string fileName)
     {
       if (fileName.Length == 0)
+      {
         throw new Exception("No file name specified");
+      }
 
       if (!File.Exists(fileName))
+      {
         throw new Exception("Unable to open file.  File does not exist.");
+      }
 
       if (Path.GetExtension(fileName).ToLower() != ".mpc")
+      {
         throw new AudioFileTypeException("Expected MPC file type.");
+      }
 
       AudioFilePath = fileName;
       FileName = Path.GetFileName(fileName);
@@ -176,15 +221,21 @@ namespace Tag.MPC
       bool result = true;
 
       if (AudioFileStream == null)
+      {
         AudioFileStream = new FileStream(AudioFilePath, FileMode.Open, FileAccess.Read);
+      }
 
       try
       {
         if (!ReadMpcHeader())
+        {
           return false;
+        }
 
         if (!ReadTags())
+        {
           return false;
+        }
       }
 
       catch (Exception ex)
@@ -205,7 +256,9 @@ namespace Tag.MPC
       AudioFileStream.Read(buffer, 0, 3);
 
       if (buffer[0] != 'M' || buffer[1] != 'P' || buffer[2] != '+')
+      {
         return false;
+      }
 
       HeaderInfo.MPCStreamVersion = AudioFileStream.ReadByte();
       result = ReadStream(HeaderInfo.MPCStreamVersion);
@@ -214,13 +267,18 @@ namespace Tag.MPC
       HeaderInfo.HeaderLength = AudioFileStream.Position - HeaderInfo.HeaderPosition;
 
 
-      HeaderInfo.PCMSamples = 1152 * HeaderInfo.Frames - 576; // estimation, exact value takes too much time
+      HeaderInfo.PCMSamples = 1152*HeaderInfo.Frames - 576; // estimation, exact value takes too much time
 
       if (HeaderInfo.PCMSamples != 0)
-        HeaderInfo.AverageBitrate = (ulong)((AudioFileStream.Length - HeaderInfo.HeaderPosition) * 8 * HeaderInfo.SampleRate) / HeaderInfo.PCMSamples;
+      {
+        HeaderInfo.AverageBitrate =
+          (ulong) ((AudioFileStream.Length - HeaderInfo.HeaderPosition)*8*HeaderInfo.SampleRate)/HeaderInfo.PCMSamples;
+      }
 
       else
+      {
         HeaderInfo.AverageBitrate = 0;
+      }
 
       return result;
     }
@@ -228,12 +286,19 @@ namespace Tag.MPC
     private bool ReadStream(int version)
     {
       if (version <= 6)
+      {
         return ReadMpcStreamV6();
+      }
 
       else if (version >= 7)
+      {
         return ReadMpcStreamV7();
+      }
 
-      else return false;
+      else
+      {
+        return false;
+      }
     }
 
     private bool ReadMpcStreamV6()
@@ -316,33 +381,38 @@ namespace Tag.MPC
 
         HeaderInfo.IntensityStereo = 0;
         HeaderInfo.MidSideStereo = (flag1 >> 30) & 0x0001;
-        HeaderInfo.MaxBand = (flag1 >> 24) & 0x003F; ;
+        HeaderInfo.MaxBand = (flag1 >> 24) & 0x003F;
+        ;
         HeaderInfo.BlockSize = 1;
         HeaderInfo.Profile = (flag1 << 8) >> 28;
 
         if (HeaderInfo.Profile >= 0 && HeaderInfo.Profile < ProfileNames.Length)
+        {
           HeaderInfo.ProfileName = ProfileNames[HeaderInfo.Profile];
+        }
 
-        int sampleRateIndex = (int)((flag1 >> 16) & 0x003);
+        int sampleRateIndex = (int) ((flag1 >> 16) & 0x003);
 
         if (sampleRateIndex >= 0 && sampleRateIndex < SampleRates.Length)
+        {
           HeaderInfo.SampleRate = SampleRates[sampleRateIndex];
+        }
 
-        ushort EstimatedPeakTitle = (byte)(flag1 & 0xFFFF);
+        ushort EstimatedPeakTitle = (byte) (flag1 & 0xFFFF);
 
         buffer = new byte[4];
         AudioFileStream.Read(buffer, 0, buffer.Length);
         uint flag2 = BitConverter.ToUInt32(buffer, 0);
 
-        HeaderInfo.GainTitle = (byte)(flag2 & 0xffff);
-        HeaderInfo.PeakTitle = (byte)((flag2 >> 16) & 0xffff);
+        HeaderInfo.GainTitle = (byte) (flag2 & 0xffff);
+        HeaderInfo.PeakTitle = (byte) ((flag2 >> 16) & 0xffff);
 
         buffer = new byte[4];
         AudioFileStream.Read(buffer, 0, buffer.Length);
         uint flag3 = BitConverter.ToUInt32(buffer, 0);
 
-        HeaderInfo.GainAlbum = (byte)(flag3 & 0xffff);
-        HeaderInfo.PeakAlbum = (byte)((flag3 >> 16) & 0xffff);
+        HeaderInfo.GainAlbum = (byte) (flag3 & 0xffff);
+        HeaderInfo.PeakAlbum = (byte) ((flag3 >> 16) & 0xffff);
 
         buffer = new byte[4];
         AudioFileStream.Read(buffer, 0, buffer.Length);
@@ -359,34 +429,43 @@ namespace Tag.MPC
         HeaderInfo.EncoderVersion = (flag5 >> 24) & 0x00ff;
 
         if (HeaderInfo.EncoderVersion == 0)
+        {
           HeaderInfo.Encoder = "Buschmann 1.7.0...9, Klemm 0.90...1.05";
+        }
 
         else
         {
-          switch (HeaderInfo.EncoderVersion % 10)
+          switch (HeaderInfo.EncoderVersion%10)
           {
             case 0:
-              HeaderInfo.Encoder = string.Format("Release {0}.{1:D2}", HeaderInfo.EncoderVersion / 100, HeaderInfo.EncoderVersion % 100);
+              HeaderInfo.Encoder =
+                string.Format("Release {0}.{1:D2}", HeaderInfo.EncoderVersion/100, HeaderInfo.EncoderVersion%100);
               break;
 
             case 2:
             case 4:
             case 6:
             case 8:
-              HeaderInfo.Encoder = string.Format("Beta {0}.{1:D2}", HeaderInfo.EncoderVersion / 100, HeaderInfo.EncoderVersion % 100);
+              HeaderInfo.Encoder =
+                string.Format("Beta {0}.{1:D2}", HeaderInfo.EncoderVersion/100, HeaderInfo.EncoderVersion%100);
               break;
 
             default:
-              HeaderInfo.Encoder = string.Format("Alpha {0}.{1:D2}", HeaderInfo.EncoderVersion / 100, HeaderInfo.EncoderVersion % 100);
+              HeaderInfo.Encoder =
+                string.Format("Alpha {0}.{1:D2}", HeaderInfo.EncoderVersion/100, HeaderInfo.EncoderVersion%100);
               break;
           }
         }
 
         if (HeaderInfo.PeakTitle == 0)
-          HeaderInfo.PeakTitle = (ushort)(EstimatedPeakTitle * 1.18);
+        {
+          HeaderInfo.PeakTitle = (ushort) (EstimatedPeakTitle*1.18);
+        }
 
         if (HeaderInfo.PeakAlbum == 0)
+        {
           HeaderInfo.PeakAlbum = HeaderInfo.PeakTitle;
+        }
       }
 
       catch (Exception ex)

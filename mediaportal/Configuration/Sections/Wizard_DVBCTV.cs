@@ -31,14 +31,14 @@ namespace MediaPortal.Configuration.Sections
 {
   public class Wizard_DVBCTV : Wizard_ScanBase
   {
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
-    private MediaPortal.UserInterface.Controls.MPLabel label2;
-    private MediaPortal.UserInterface.Controls.MPComboBox cbCountry;
-    private MediaPortal.UserInterface.Controls.MPLabel label3;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel3;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
+    private UserInterface.Controls.MPGroupBox groupBox1;
+    private UserInterface.Controls.MPLabel label1;
+    private UserInterface.Controls.MPLabel label2;
+    private UserInterface.Controls.MPComboBox cbCountry;
+    private UserInterface.Controls.MPLabel label3;
+    private UserInterface.Controls.MPLabel mpLabel3;
+    private UserInterface.Controls.MPLabel mpLabel2;
+    private UserInterface.Controls.MPLabel mpLabel1;
 
 
 
@@ -259,7 +259,7 @@ namespace MediaPortal.Configuration.Sections
               }
           }
       }
-      string[] files = System.IO.Directory.GetFiles(Config.Get(Config.Dir.Base) + "Tuningparameters", "*.dvbc");
+      string[] files = System.IO.Directory.GetFiles(Config.GetFile(Config.Dir.Base, "Tuningparameters", "*.dvbc"));
       Array.Sort(files);
       foreach (string file in files)
       {
@@ -268,15 +268,15 @@ namespace MediaPortal.Configuration.Sections
 
       if (cbCountry.Items.Count > 0)
         cbCountry.SelectedIndex = 0;
-      this.OnScanFinished += new MediaPortal.Configuration.Sections.Wizard_ScanBase.ScanFinishedHandler(this.dlg_OnScanFinished);
-      this.OnScanStarted += new MediaPortal.Configuration.Sections.Wizard_ScanBase.ScanStartedHandler(this.dlg_OnScanStarted);
+      OnScanFinished += new ScanFinishedHandler(dlg_OnScanFinished);
+      OnScanStarted += new ScanStartedHandler(dlg_OnScanStarted);
     }
 
       protected override String[] GetScanParameters()
       {
           String[] parameters = new String[1];
           string countryName = (string)cbCountry.SelectedItem;
-          parameters[0] = Config.Get(Config.Dir.Base) + @"Tuningparameters\" + countryName;
+          parameters[0] = Config.GetFile(Config.Dir.Base, "Tuningparameters" , countryName);
           return parameters;
       }
 

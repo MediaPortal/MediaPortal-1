@@ -494,7 +494,7 @@ namespace MediaPortal.Configuration.Sections
             cd.Priority = 10;
             captureCards.Add(cd);
 
-            string filename = String.Format(Config.Get(Config.Dir.Database) + "card_{0}.xml", cd.FriendlyName);
+            string filename = String.Format(Config.GetFile(Config.Dir.Database, "card_{0}.xml"), cd.FriendlyName);
             // save settings for get the filename in mp.xml
             using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
             {

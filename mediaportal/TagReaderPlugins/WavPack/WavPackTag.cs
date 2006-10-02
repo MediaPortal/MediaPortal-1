@@ -20,83 +20,96 @@
  */
 
 using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Text;
 using System.IO;
-using System.Drawing;
 using System.Runtime.InteropServices;
+using MediaPortal.GUI.Library;
 using MediaPortal.TagReader;
 using Tag.MAC;
-
-using MediaPortal.GUI.Library;
 
 namespace Tag.WavPack
 {
   public class WavPackTag : ApeTag
   {
-    int[] SampleRates = new int[] 
-        { 
-            6000, 
-            8000, 
-            9600, 
-            11025, 
-            12000, 
-            16000, 
-            22050,
-            24000, 
-            32000, 
-            44100, 
-            48000, 
-            64000, 
-            88200, 
-            96000, 
-            192000 
-        };
+    private int[] SampleRates = new int[]
+      {
+        6000,
+        8000,
+        9600,
+        11025,
+        12000,
+        16000,
+        22050,
+        24000,
+        32000,
+        44100,
+        48000,
+        64000,
+        88200,
+        96000,
+        192000
+      };
 
     internal struct WavPackHeader
     {
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-      public char[] ID;                 // wvpk
+      public char[] ID; // wvpk
 
-      public UInt32 BlockSize;          // frame length not including ID and BlockSize
-      public short Version;             // Currently 0x403
-      public byte Track;                // Unused - 0
-      public byte IndexNumber;          // Unused - 0
-      public UInt32 TotalSamples;       // Total sample count in file. -1 if unknown
-      public UInt32 BlockIndex;         // 
-      public UInt32 BlockSamples;       // Number os samples in this block
+      public UInt32 BlockSize; // frame length not including ID and BlockSize
+      public short Version; // Currently 0x403
+      public byte Track; // Unused - 0
+      public byte IndexNumber; // Unused - 0
+      public UInt32 TotalSamples; // Total sample count in file. -1 if unknown
+      public UInt32 BlockIndex; // 
+      public UInt32 BlockSamples; // Number os samples in this block
       public UInt32 Flags;
-      public UInt32 CRC;                // CRC for decoded data
-    };
+      public UInt32 CRC; // CRC for decoded data
+
+      public static WavPackHeader Empty
+      {
+        get
+        {
+          WavPackHeader wph = new WavPackHeader();
+          wph.ID = new char[0];
+          wph.BlockSize = 0;
+          wph.Version = 0;
+          wph.Track = 0;
+          wph.IndexNumber = 0;
+          wph.TotalSamples = 0;
+          wph.BlockIndex = 0;
+          wph.BlockSamples = 0;
+          wph.Flags = 0;
+          wph.CRC = 0;
+          return wph;
+        }
+      }
+    } ;
 
     #region Constants
 
-    private const int INITIAL_BLOCK = 0x800;    // initial block of multichannel segment
-    private const int FINAL_BLOCK = 0x1000; 	// final block of multichannel segment
+    private const int INITIAL_BLOCK = 0x800; // initial block of multichannel segment
+    //private const int FINAL_BLOCK = 0x1000; // final block of multichannel segment
     private const int SRATE_LSB = 23;
     private const int SRATE_MASK = (0xf << SRATE_LSB);
 
     private const int BYTE_PER_SAMPLE = 0x0003;
     private const int MONO = 0x0004;
     private const int HYBRID = 0x0008;
-    private const int JOINT_STEREO = 0x0010;
-    private const int CROSS_DECORRELATION = 0x0020;
-    private const int HYBRID_NOISESHAPE = 0x0040;
-    private const int IEEE_32BIT_FLOAT = 0x0080;
-    private const int INT_32BIT = 0x0100;
-    private const int HYBRID_BITRATE_NOISE = 0x0200;
-    private const int HYBRID_BALANCE_NOISE = 0x0400;
-    private const int MULTICHANNEL_INITIAL = 0x0800;
+    //private const int JOINT_STEREO = 0x0010;
+    //private const int CROSS_DECORRELATION = 0x0020;
+    //private const int HYBRID_NOISESHAPE = 0x0040;
+    //private const int IEEE_32BIT_FLOAT = 0x0080;
+    //private const int INT_32BIT = 0x0100;
+    //private const int HYBRID_BITRATE_NOISE = 0x0200;
+    //private const int HYBRID_BALANCE_NOISE = 0x0400;
+    //private const int MULTICHANNEL_INITIAL = 0x0800;
 
 
     private int _SampleRate = 0;
     private int _BitsPerSample = 0;
     private int _Channels = 0;
     private int _BitRate = 0;
-    private string _Encoding = "";
-    private string _ChannelType = "";
-
+    private string _Encoding;
+    private string _ChannelType;
 
     #endregion
 
@@ -108,223 +121,69 @@ namespace Tag.WavPack
 
     #region Properties
 
-    override public string Album
-    {
-      get { return base.Album; }
-    }
-
-    override public string Artist
-    {
-      get { return base.Artist; }
-    }
-
-    override public string AlbumArtist
-    {
-      get { return base.AlbumArtist; }
-    }
-
-    override public string ArtistURL
-    {
-      get { return base.ArtistURL; }
-    }
-
-    override public int AverageBitrate
+    public override int AverageBitrate
     {
       get
       {
         if (_BitRate > 0)
-          return _BitRate / 1000;
+        {
+          return _BitRate/1000;
+        }
 
         return 0;
       }
     }
 
-    override public int BitsPerSample
+    public override int BitsPerSample
     {
       get { return _BitsPerSample; }
     }
 
-    override public int BlocksPerFrame
-    {
-      get { return base.BlocksPerFrame; }
-    }
-
-    override public string BuyURL
-    {
-      get { return base.BuyURL; }
-    }
-
-    override public int BytesPerSample
-    {
-      get { return base.BytesPerSample; }
-    }
-
-    override public int Channels
+    public override int Channels
     {
       get { return _Channels; }
     }
 
-    override public string Comment
-    {
-      get { return base.Comment; }
-    }
-
-    override public string Composer
-    {
-      get { return base.Composer; }
-    }
-
-    override public int CompressionLevel
-    {
-      get { return base.CompressionLevel; }
-    }
-
-    override public string Copyright
-    {
-      get { return base.Copyright; }
-    }
-
-    override public string CopyrightURL
-    {
-      get { return base.CopyrightURL; }
-    }
-
-    override public byte[] CoverArtImageBytes
-    {
-      get { return base.CoverArtImageBytes; }
-    }
-
-    override public string FileURL
-    {
-      get { return base.FileURL; }
-    }
-
-    override public int FormatFlags
-    {
-      get { return base.FormatFlags; }
-    }
-
-    override public string Genre
-    {
-      get { return base.Genre; }
-
-    }
-
-    override public bool IsVBR
-    {
-      get { return base.IsVBR; }
-    }
-
-    override public string Keywords
-    {
-      get { return base.Keywords; }
-    }
-
-    override public string Length
+     public override string Length
     {
       get { return Utils.GetDurationString(LengthMS); }
     }
 
-    override public int LengthMS
+    public override int LengthMS
     {
       get
       {
         try
         {
-          return (int)((FirstHeader.TotalSamples / (uint)_SampleRate) * 1000);
+          return (int) ((FirstHeader.TotalSamples/(uint) _SampleRate)*1000);
         }
 
         catch (Exception ex)
         {
-          Log.Error("WavPackTag.get_LengthMS caused an exception in file {0} : {1}", base.FileName, ex.Message);
+          Log.Error("WavPackTag.get_LengthMS caused an exception in file {0} : {1}", FileName, ex.Message);
           return 0;
         }
       }
     }
 
-    override public string Lyrics
-    {
-      get { return base.Lyrics; }
-    }
-
-    override public string Notes
-    {
-      get { return base.Notes; }
-    }
-
-    override public string PeakLevel
-    {
-      get { return base.PeakLevel; }
-    }
-
-    override public string PublisherURL
-    {
-      get { return base.PublisherURL; }
-    }
-
-    override public string ReplayGainAlbum
-    {
-      get { return base.ReplayGainAlbum; }
-    }
-
-    override public string ReplayGainRadio
-    {
-      get { return base.ReplayGainRadio; }
-    }
-
-    override public int SampleRate
+    public override int SampleRate
     {
       get { return _SampleRate; }
     }
 
-    override public string Title
-    {
-      get { return base.Title; }
-    }
-
-    override public string ToolName
-    {
-      get { return base.ToolName; }
-    }
-
-    override public string ToolVersion
-    {
-      get { return base.ToolVersion; }
-    }
-
-    override public int TotalBlocks
-    {
-      get { return base.TotalBlocks; }
-    }
-
-    override public int TotalFrames
-    {
-      get { return base.TotalFrames; }
-    }
-
-    override public int Track
-    {
-      get { return base.Track; }
-    }
-
-    override public string Version
-    {
-      get { return base.Version; }
-    }
-
-    override public int Year
+    public override int Year
     {
       get
       {
         try
         {
-          string sYear = GetFieldString(ApeTag.APE_TAG_FIELD_YEAR);
+          string sYear = GetFieldString(APE_TAG_FIELD_YEAR);
           return Utils.GetYear(sYear);
         }
 
         catch (Exception ex)
         {
-          Log.Error("WavPackTag.get_Year caused an exception in file {0} : {1}", base.FileName, ex.Message);
+          Log.Error("WavPackTag.get_Year caused an exception in file {0} : {1}", FileName, ex.Message);
           return 0;
         }
       }
@@ -348,22 +207,31 @@ namespace Tag.WavPack
       Dispose();
     }
 
-    override public bool SupportsFile(string strFileName)
+    public override bool SupportsFile(string strFileName)
     {
-      if (System.IO.Path.GetExtension(strFileName).ToLower() == ".wv") return true;
+      if (Path.GetExtension(strFileName).ToLower() == ".wv")
+      {
+        return true;
+      }
       return false;
     }
 
-    override public bool Read(string fileName)
+    public override bool Read(string fileName)
     {
       if (fileName.Length == 0)
+      {
         throw new Exception("No file name specified");
+      }
 
       if (!File.Exists(fileName))
+      {
         throw new Exception("Unable to open file.  File does not exist.");
+      }
 
       if (Path.GetExtension(fileName).ToLower() != ".wv")
+      {
         throw new AudioFileTypeException("Expected WavPack file type.");
+      }
 
       AudioFilePath = fileName;
       FileName = Path.GetFileName(fileName);
@@ -372,15 +240,21 @@ namespace Tag.WavPack
       bool result = true;
 
       if (AudioFileStream == null)
-        AudioFileStream = new FileStream(this.AudioFilePath, FileMode.Open, FileAccess.Read);
+      {
+        AudioFileStream = new FileStream(AudioFilePath, FileMode.Open, FileAccess.Read);
+      }
 
       try
       {
         if (!ReadTags())
+        {
           return false;
+        }
 
         if (!ReadHeader())
+        {
           return false;
+        }
 
         if (HasApeV1Tags())
         {
@@ -397,14 +271,14 @@ namespace Tag.WavPack
 
       catch (Exception ex)
       {
-        Log.Error("WavPackTag.Read caused an exception in file {0} : {1}", base.FileName, ex.Message);
+        Log.Error("WavPackTag.Read caused an exception in file {0} : {1}", FileName, ex.Message);
         result = false;
       }
 
       return result;
     }
 
-    new private bool ReadHeader()
+    private new bool ReadHeader()
     {
       bool result = true;
 
@@ -413,13 +287,13 @@ namespace Tag.WavPack
         AudioFileStream.Seek(0, SeekOrigin.Begin);
         int readChunkSize = 1024;
         int totalBytesRead = 0;
-        int maxReadBytes = 1024 * 1024;
+        int maxReadBytes = 1024*1024;
         bool headerFound = false;
         byte[] buffer;
 
         while (!headerFound)
         {
-          int readSize = (int)Math.Min(readChunkSize, AudioFileStream.Length - AudioFileStream.Position);
+          int readSize = (int) Math.Min(readChunkSize, AudioFileStream.Length - AudioFileStream.Position);
           buffer = new byte[readSize];
           int bytesRead = AudioFileStream.Read(buffer, 0, readSize);
           totalBytesRead += bytesRead;
@@ -427,7 +301,9 @@ namespace Tag.WavPack
           for (int i = 0; i < buffer.Length; i += 4)
           {
             if (i + 4 > buffer.Length)
+            {
               break;
+            }
 
             if (buffer[i + 0] == 'w' && buffer[i + 1] == 'v'
                 && buffer[i + 2] == 'p' && buffer[i + 3] == 'k')
@@ -439,17 +315,21 @@ namespace Tag.WavPack
           }
 
           if (totalBytesRead >= maxReadBytes)
+          {
             break;
+          }
         }
 
         if (!headerFound)
+        {
           return false;
+        }
 
         FirstHeader = new WavPackHeader();
         int headerSize = Marshal.SizeOf(FirstHeader);
         buffer = new byte[headerSize];
         AudioFileStream.Read(buffer, 0, headerSize);
-        FirstHeader = (WavPackHeader)Utils.RawDeserializeEx(buffer, typeof(WavPackHeader));
+        FirstHeader = (WavPackHeader) Utils.RawDeserializeEx(buffer, typeof(WavPackHeader));
 
         if (FirstHeader.BlockSamples > 0)
         {
@@ -461,9 +341,11 @@ namespace Tag.WavPack
           uint sampleRateIndex = (FirstHeader.Flags & SRATE_MASK) >> SRATE_LSB;
 
           if (sampleRateIndex >= 0 && sampleRateIndex < SampleRates.Length)
+          {
             _SampleRate = SampleRates[sampleRateIndex];
+          }
 
-          _BitsPerSample = (int)(1 + (FirstHeader.Flags & BYTE_PER_SAMPLE)) * 8;
+          _BitsPerSample = (int) (1 + (FirstHeader.Flags & BYTE_PER_SAMPLE))*8;
           _Channels = (FirstHeader.Flags & MONO) > 0 ? 1 : 2;
           _Encoding = (FirstHeader.Flags & HYBRID) > 0 ? "Hybrid" : "Lossless";
           _ChannelType = (FirstHeader.Flags & MONO) > 0 ? "Mono" : "Stereo";
@@ -473,18 +355,21 @@ namespace Tag.WavPack
 
           if (FirstHeader.TotalSamples > 0)
           {
-            double output_time = (double)FirstHeader.TotalSamples / _SampleRate;
-            double input_size = AudioFileStream.Length - (AudioFileStream.Position + (AudioFileStream.Length - ApeTagStreamPosition));
+            double output_time = (double) FirstHeader.TotalSamples/_SampleRate;
+            double input_size = AudioFileStream.Length -
+                                (AudioFileStream.Position + (AudioFileStream.Length - ApeTagStreamPosition));
 
             if (output_time >= 1.0 && input_size >= 1.0)
-              _BitRate = (int)(input_size * 8.0 / output_time);
+            {
+              _BitRate = (int) (input_size*8.0/output_time);
+            }
           }
         }
       }
 
       catch (Exception ex)
       {
-        Log.Error("WavPackTag.ReadHeader caused an exception in file {0} : {1}", base.FileName, ex.Message);
+        Log.Error("WavPackTag.ReadHeader caused an exception in file {0} : {1}", FileName, ex.Message);
         result = false;
       }
 

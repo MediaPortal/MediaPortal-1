@@ -107,7 +107,6 @@ namespace MediaPortal.Configuration
       //
       // Set caption
       //
-      Text = "MediaPortal - Setup";
 
       //
       // Build options tree
@@ -118,7 +117,7 @@ namespace MediaPortal.Configuration
       {
         strLanguage = xmlreader.GetValueAsString("skin", "language", "English");
       }
-      GUILocalizeStrings.Load(Config.Get(Config.Dir.Language) + strLanguage + @"\strings.xml");
+      GUILocalizeStrings.Load(Config.GetFile(Config.Dir.Language,  strLanguage , "strings.xml"));
 
       Log.Info("add project section");
       Project project = new Project();
@@ -502,11 +501,10 @@ namespace MediaPortal.Configuration
       this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.Name = "SettingsForm";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-      this.Text = "Settings";
+      this.Text = "MediaPortal - Setup";
       this.Closed += new System.EventHandler(this.SettingsForm_Closed);
       this.Load += new System.EventHandler(this.SettingsForm_Load);
       this.ResumeLayout(false);
-
     }
 
     #endregion

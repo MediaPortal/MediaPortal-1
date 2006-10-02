@@ -25,108 +25,125 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Drawing;
 using System.IO;
 using System.Threading;
-using System.Collections;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
-using MediaPortal;
-using DirectShowLib.SBE;
-using DirectShowLib;
-using DShowNET.Helper;
-using System.Runtime.InteropServices;
-using Mpeg2SplitterPackage;
 using MediaPortal.TV.Database;
+using MediaPortal.Util;
 using MediaPortal.Video.Database;
+using Mpeg2SplitterPackage;
 
 namespace WindowPlugins.VideoEditor
 {
-  class VideoEditorPreview : GUIWindow
+  internal class VideoEditorPreview : GUIWindow
   {
-    enum EMode
+    private enum EMode
     {
       E_CUT,
       E_TRIM
-    };
-    const int windowID = 170602;
+    } ;
+
+    private const int windowID = 170602;
 
     #region GUIControls
+
     [SkinControlAttribute(24)]
     protected GUIButtonControl cutBtn = null;
+
     [SkinControlAttribute(25)]
     protected GUIButtonControl cancelBtn = null;
+
     [SkinControlAttribute(30)]
     protected GUIButtonControl endBtn = null;
+
     [SkinControlAttribute(29)]
     protected GUIButtonControl startBtn = null;
+
     [SkinControlAttribute(28)]
     protected GUIButtonControl addBtn = null;
+
     [SkinControlAttribute(31)]
     protected GUIButtonControl forwardBtn = null;
+
     [SkinControlAttribute(34)]
     protected GUIButtonControl backwardBtn = null;
+
     [SkinControlAttribute(33)]
     protected GUILabelControl currentPosLbl = null;
+
     [SkinControlAttribute(35)]
     protected GUILabelControl oldLenghtLbl = null;
+
     [SkinControlAttribute(36)]
     protected GUILabelControl newLenghtLbl = null;
+
     [SkinControlAttribute(37)]
     protected GUILabelControl startPosLbl = null;
+
     [SkinControlAttribute(38)]
     protected GUILabelControl endPosLbl = null;
+
     [SkinControlAttribute(99)]
     protected GUIVideoControl videoWindow = null;
+
     [SkinControlAttribute(100)]
     protected GUISliderControl positionSld = null;
+
     [SkinControlAttribute(101)]
     protected GUIListControl cutListCtrl = null;
+
     [SkinControlAttribute(102)]
     protected GUILabelControl progressLbl = null;
+
     [SkinControlAttribute(103)]
     protected GUIStatusbarControl progressBar = null;
+
     [SkinControlAttribute(104)]
     protected GUIProgressControl progressBar_ = null;
-		[SkinControlAttribute(105)]
-		protected GUILabelControl editCutPointsLbl = null;
+
+    [SkinControlAttribute(105)]
+    protected GUILabelControl editCutPointsLbl = null;
+
     #endregion
 
     #region Own variables
-    double durationOld;
-    double durationNew;
+
+    private double durationOld;
+    private double durationNew;
     //double curPosition;
-    double startCut = 0;
-    double endCut = 0;
-    FileInfo inFilename;
-    FileInfo outFilename;
-    FileTypes cutType;
-    Thread cutThread;
+    private double startCut = 0;
+    private double endCut = 0;
+    private FileInfo inFilename;
+    private FileInfo outFilename;
+    private FileTypes cutType;
+    private Thread cutThread;
     //IStreamBufferRecComp recCompcut = null;
-    System.Timers.Timer cutProgressTime;
-    bool cutFinished = false;
-    List<TimeDomain> cutPointsList;
-    DvrMsModifier dvrMod;
-		bool goToStartPoint;
-		bool editCutPoint;
-		int editCutPointsIndex;
-		int lastIndexedCutPoint;
+    //System.Timers.Timer cutProgressTime; JoeDalton: unused
+    //bool cutFinished = false; //JoeDalton: unused
+    private List<TimeDomain> cutPointsList;
+    private DvrMsModifier dvrMod;
+    private bool goToStartPoint;
+    private bool editCutPoint;
+    private int editCutPointsIndex;
+    private int lastIndexedCutPoint;
 
     //EMode eMode = EMode.E_CUT;
-    EMode eMode = EMode.E_TRIM;
-    const int NR_OF_SPILTER_TIME_STAMPS = 40;
-    SPLITTER_TIME_STAMP[] tStamp = new SPLITTER_TIME_STAMP[NR_OF_SPILTER_TIME_STAMPS];
-    int iCount = 0;
+    private EMode eMode = EMode.E_TRIM;
+    private const int NR_OF_SPILTER_TIME_STAMPS = 40;
+    private SPLITTER_TIME_STAMP[] tStamp = new SPLITTER_TIME_STAMP[NR_OF_SPILTER_TIME_STAMPS];
+    private int iCount = 0;
 
     #endregion
 
     #region constructor
+
     public VideoEditorPreview(string filepath)
     {
       try
       {
-				
         if (filepath != String.Empty)
         {
           inFilename = new FileInfo(filepath);
@@ -138,24 +155,25 @@ namespace WindowPlugins.VideoEditor
       {
         Log.Error("VideoEditor: (DvrMpegCutPreview) " + ex.StackTrace);
       }
-
     }
+
     #endregion
 
     #region overrides
+
     public override bool Init()
     {
-			try
-			{
-				iCount = 0;
-				return Load(GUIGraphicsContext.Skin + @"\VideoEditorCutScreen.xml");
-			}
-			catch (Exception ex)
-			{
-				MessageBox("Error loading skinfile: CutScreen.xml", "Skin Error");
-				Log.Error(ex);
-				return false;
-			}
+      try
+      {
+        iCount = 0;
+        return Load(GUIGraphicsContext.Skin + @"\VideoEditorCutScreen.xml");
+      }
+      catch (Exception ex)
+      {
+        MessageBox("Error loading skinfile: CutScreen.xml", "Skin Error");
+        Log.Error(ex);
+        return false;
+      }
     }
 
     protected override void OnPageLoad()
@@ -167,23 +185,24 @@ namespace WindowPlugins.VideoEditor
         durationNew = 0;
         GUIGraphicsContext.VMR9Allowed = true;
         GUIGraphicsContext.IsFullScreenVideo = false;
-        GUIWindowManager.ActiveWindow = (int)GUIWindow.Window.WINDOW_TV;
+        GUIWindowManager.ActiveWindow = (int) Window.WINDOW_TV;
         if (videoWindow != null)
         {
-          GUIGraphicsContext.VideoWindow = new System.Drawing.Rectangle(videoWindow.XPosition, videoWindow.YPosition, videoWindow.Width, videoWindow.Height);
+          GUIGraphicsContext.VideoWindow =
+            new Rectangle(videoWindow.XPosition, videoWindow.YPosition, videoWindow.Width, videoWindow.Height);
           //Log.Info("Test " +videoWindow.XPosition  + " " + videoWindow.Width + " " + videoWindow.Height);
         }
         g_Player.FullScreen = false;
         g_Player.Play(inFilename.FullName);
         g_Player.Pause();
         durationOld = g_Player.Duration;
-        oldLenghtLbl.Label = MediaPortal.Util.Utils.SecondsToHMSString((int)durationOld);
-        newLenghtLbl.Label = MediaPortal.Util.Utils.SecondsToHMSString((int)durationNew);
+        oldLenghtLbl.Label = Utils.SecondsToHMSString((int) durationOld);
+        newLenghtLbl.Label = Utils.SecondsToHMSString((int) durationNew);
         //postitionSld.Percentage = 100;
         //postitionSld.SpinType = GUISpinControl.SpinType.SPIN_CONTROL_TYPE_FLOAT;
         //positionSld.SetFloatRange(0, (float)durationOld);
-       // positionSld.FloatInterval = (float)0.5;
-       // positionSld.SpinType = GUISpinControl.SpinType.Float;
+        // positionSld.FloatInterval = (float)0.5;
+        // positionSld.SpinType = GUISpinControl.SpinType.Float;
         positionSld.Percentage = 0;
         progressBar.Percentage = 0;
         progressBar.IsVisible = false;
@@ -191,17 +210,17 @@ namespace WindowPlugins.VideoEditor
         progressLbl.IsVisible = false;
         progressBar_.Percentage = 50;
         progressBar_.IsVisible = false;
-				editCutPointsLbl.IsVisible = false;
+        editCutPointsLbl.IsVisible = false;
         cutPointsList = new List<TimeDomain>();
         dvrMod = new DvrMsModifier();
         dvrMod.OnProgress += new DvrMsModifier.Progress(dvrMod_OnProgress);
         dvrMod.OnFinished += new DvrMsModifier.Finished(dvrMod_OnFinished);
-				goToStartPoint = true;
-				lastIndexedCutPoint = 0;
-				cutBtn.IsEnabled = false;
-				editCutPoint = false;
-				editCutPointsIndex = 0;
-				addBtn.IsEnabled = true;
+        goToStartPoint = true;
+        lastIndexedCutPoint = 0;
+        cutBtn.IsEnabled = false;
+        editCutPoint = false;
+        editCutPointsIndex = 0;
+        addBtn.IsEnabled = true;
       }
       catch (Exception ex)
       {
@@ -210,52 +229,54 @@ namespace WindowPlugins.VideoEditor
       //schneideListeLct.Add(new GUIListItem("Test"));
     }
 
-    void dvrMod_OnFinished()
+    private void dvrMod_OnFinished()
     {
-			progressBar.Percentage = 100;
+      progressBar.Percentage = 100;
       //MessageBox(GUILocalizeStrings.Get(2083), GUILocalizeStrings.Get(2111)); //Dvrms:Finished to cut the video file , 
-			GUIDialogYesNo yesnoDialog = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-			yesnoDialog.SetHeading(2111); // Finished !
-			yesnoDialog.SetLine(1, 2082); // //Finished to cut the video file
-			yesnoDialog.SetLine(2, 2083); // Would you like to delete the original file?
-			yesnoDialog.DoModal(GetID);
-			if (yesnoDialog.IsConfirmed)
-			{
-				System.IO.File.Delete(inFilename.FullName);
-			}
+      GUIDialogYesNo yesnoDialog = (GUIDialogYesNo) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_YES_NO);
+      yesnoDialog.SetHeading(2111); // Finished !
+      yesnoDialog.SetLine(1, 2082); // //Finished to cut the video file
+      yesnoDialog.SetLine(2, 2083); // Would you like to delete the original file?
+      yesnoDialog.DoModal(GetID);
+      if (yesnoDialog.IsConfirmed)
+      {
+        File.Delete(inFilename.FullName);
+      }
       progressBar.IsVisible = false;
       progressBar.Percentage = 0;
       progressLbl.IsVisible = false;
       progressLbl.Label = "0";
-			cutListCtrl.Clear();
-			cutPointsList.Clear();
-			cutBtn.IsEnabled = false;
-			addBtn.IsEnabled = false;
-			TVRecorded rec = new TVRecorded();
-			int fileId = VideoDatabase.GetFileId(inFilename.FullName);
-			VideoDatabase.SetMovieDuration(fileId, (int) durationNew);
-			if (TVDatabase.GetRecordedTVByFilename(inFilename.FullName.Replace("_original" + inFilename.Extension, inFilename.Extension), ref rec))
-			{
-				TVDatabase.RemoveRecordedTV(rec);
-				DateTime ende = rec.StartTime.AddSeconds(durationNew);
-				rec.End = MediaPortal.Util.Utils.datetolong(ende);
-				TVDatabase.AddRecordedTV(rec);	
-			}
-			else
-			{
-				//TVDatabase.CommitTransaction();	
-				//rec.Channel = "Pro7";
-				//rec.Start = MediaPortal.Util.Utils.datetolong(DateTime.Now);
-				//rec.End = MediaPortal.Util.Utils.datetolong(rec.StartTime.AddSeconds(durationNew));
-				//rec.FileName = inFilename.FullName.Replace("_original" + inFilename.Extension, inFilename.Extension);
-				//rec.Title = "pro7Test";
-				//rec.Description = "werbung";
-				//rec.KeepRecordingMethod = TVRecorded.KeepMethod.Always;
-				//int i = TVDatabase.AddRecordedTV(rec);
-			}
+      cutListCtrl.Clear();
+      cutPointsList.Clear();
+      cutBtn.IsEnabled = false;
+      addBtn.IsEnabled = false;
+      TVRecorded rec = new TVRecorded();
+      int fileId = VideoDatabase.GetFileId(inFilename.FullName);
+      VideoDatabase.SetMovieDuration(fileId, (int) durationNew);
+      if (
+        TVDatabase.GetRecordedTVByFilename(
+          inFilename.FullName.Replace("_original" + inFilename.Extension, inFilename.Extension), ref rec))
+      {
+        TVDatabase.RemoveRecordedTV(rec);
+        DateTime ende = rec.StartTime.AddSeconds(durationNew);
+        rec.End = Utils.datetolong(ende);
+        TVDatabase.AddRecordedTV(rec);
+      }
+      else
+      {
+        //TVDatabase.CommitTransaction();	
+        //rec.Channel = "Pro7";
+        //rec.Start = MediaPortal.Util.Utils.datetolong(DateTime.Now);
+        //rec.End = MediaPortal.Util.Utils.datetolong(rec.StartTime.AddSeconds(durationNew));
+        //rec.FileName = inFilename.FullName.Replace("_original" + inFilename.Extension, inFilename.Extension);
+        //rec.Title = "pro7Test";
+        //rec.Description = "werbung";
+        //rec.KeepRecordingMethod = TVRecorded.KeepMethod.Always;
+        //int i = TVDatabase.AddRecordedTV(rec);
+      }
     }
 
-    void dvrMod_OnProgress(int percentage)
+    private void dvrMod_OnProgress(int percentage)
     {
       progressBar.Percentage = percentage;
       progressLbl.Label = percentage.ToString();
@@ -268,83 +289,83 @@ namespace WindowPlugins.VideoEditor
       base.OnPageDestroy(new_windowId);
     }
 
-    public override void OnAction(Action action)
+    //public override void OnAction(Action action)
+    //{
+    //  //code provided by Davide
+    //  /* switch (action.wID)
+    //  {
+    //    case Action.ActionType.ACTION_STOP:
+    //      g_Player.Stop();
+    //      break;
+    //    case Action.ActionType.ACTION_PAUSE:
+    //      g_Player.Pause();
+    //      break;
+    //    case Action.ActionType.ACTION_PLAY:
+    //      GUIGraphicsContext.VMR9Allowed = true;
+    //      GUIGraphicsContext.IsFullScreenVideo = false;
+    //      GUIWindowManager.ActiveWindow = (int)GUIWindow.Window.WINDOW_TV;
+    //      if (videoWindow != null)
+    //      {
+    //        GUIGraphicsContext.VideoWindow = new System.Drawing.Rectangle(videoWindow.XPosition, videoWindow.YPosition, videoWindow.Width, videoWindow.Height);
+    //        //Log.Info("Test " +videoWindow.XPosition  + " " + videoWindow.Width + " " + videoWindow.Height);
+    //      }
+    //      g_Player.FullScreen = false;
+    //      g_Player.Play(inFilename.FullName);
+    //      break;
+    //    case Action.ActionType.ACTION_REWIND:
+    //      g_Player.SeekAbsolute((double)(g_Player.CurrentPosition - 5.0));
+    //      break;
+    //    case Action.ActionType.ACTION_STEP_BACK:
+    //      g_Player.SeekAbsolute((double)(g_Player.CurrentPosition - 30.0));
+    //      break;
+    //    case Action.ActionType.ACTION_PREV_ITEM:
+    //      g_Player.SeekAbsolute((double)(g_Player.CurrentPosition - 2.0));
+    //      break;
+    //    case Action.ActionType.ACTION_FORWARD:
+    //      g_Player.SeekAbsolute((double)(g_Player.CurrentPosition + 5.0));
+    //      break;
+    //    case Action.ActionType.ACTION_STEP_FORWARD:
+    //      g_Player.SeekAbsolute((double)(g_Player.CurrentPosition + 30.0));
+    //      break;
+    //    case Action.ActionType.ACTION_NEXT_ITEM:
+    //      g_Player.SeekAbsolute((double)(g_Player.CurrentPosition + 2.0));
+    //      break;
+    //  }*/
+
+    //  base.OnAction(action);
+    //}
+
+    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
-      //code provided by Davide
-     /* switch (action.wID)
+      if (control == cutBtn)
       {
-        case Action.ActionType.ACTION_STOP:
-          g_Player.Stop();
-          break;
-        case Action.ActionType.ACTION_PAUSE:
-          g_Player.Pause();
-          break;
-        case Action.ActionType.ACTION_PLAY:
-          GUIGraphicsContext.VMR9Allowed = true;
-          GUIGraphicsContext.IsFullScreenVideo = false;
-          GUIWindowManager.ActiveWindow = (int)GUIWindow.Window.WINDOW_TV;
-          if (videoWindow != null)
-          {
-            GUIGraphicsContext.VideoWindow = new System.Drawing.Rectangle(videoWindow.XPosition, videoWindow.YPosition, videoWindow.Width, videoWindow.Height);
-            //Log.Info("Test " +videoWindow.XPosition  + " " + videoWindow.Width + " " + videoWindow.Height);
-          }
-          g_Player.FullScreen = false;
-          g_Player.Play(inFilename.FullName);
-          break;
-        case Action.ActionType.ACTION_REWIND:
-          g_Player.SeekAbsolute((double)(g_Player.CurrentPosition - 5.0));
-          break;
-        case Action.ActionType.ACTION_STEP_BACK:
-          g_Player.SeekAbsolute((double)(g_Player.CurrentPosition - 30.0));
-          break;
-        case Action.ActionType.ACTION_PREV_ITEM:
-          g_Player.SeekAbsolute((double)(g_Player.CurrentPosition - 2.0));
-          break;
-        case Action.ActionType.ACTION_FORWARD:
-          g_Player.SeekAbsolute((double)(g_Player.CurrentPosition + 5.0));
-          break;
-        case Action.ActionType.ACTION_STEP_FORWARD:
-          g_Player.SeekAbsolute((double)(g_Player.CurrentPosition + 30.0));
-          break;
-        case Action.ActionType.ACTION_NEXT_ITEM:
-          g_Player.SeekAbsolute((double)(g_Player.CurrentPosition + 2.0));
-          break;
-      }*/
-
-       base.OnAction(action);
-    }
-
-		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
-		{
-			if (control == cutBtn)
-			{
-				Cut();
-			}
-			if (control == cancelBtn)
-			{
-				if (cutThread != null)
-				{
-					cutThread.Abort();
-					cutProgressTime.Stop();
-					MessageBox(GUILocalizeStrings.Get(2091), GUILocalizeStrings.Get(510));
-					progressBar.IsVisible = false;
-					progressLbl.IsVisible = false;
-					cutBtn.IsEnabled = true;
-				}
-			}
-			if (control == startBtn)
-			{
-				startCut = g_Player.CurrentPosition;
-				startPosLbl.Label = MediaPortal.Util.Utils.SecondsToHMSString((int)startCut);
-			}
-			if (control == endBtn)
-			{
-				endCut = g_Player.CurrentPosition;
-				endPosLbl.Label = MediaPortal.Util.Utils.SecondsToHMSString((int)endCut);
-			}
-			if (control == addBtn)
-			{
-				/*if (addBtn.Label == GUILocalizeStrings.Get(510)) //cancel
+        Cut();
+      }
+      if (control == cancelBtn)
+      {
+        if (cutThread != null)
+        {
+          cutThread.Abort();
+          //cutProgressTime.Stop();  JoeDalton: unused
+          MessageBox(GUILocalizeStrings.Get(2091), GUILocalizeStrings.Get(510));
+          progressBar.IsVisible = false;
+          progressLbl.IsVisible = false;
+          cutBtn.IsEnabled = true;
+        }
+      }
+      if (control == startBtn)
+      {
+        startCut = g_Player.CurrentPosition;
+        startPosLbl.Label = Utils.SecondsToHMSString((int) startCut);
+      }
+      if (control == endBtn)
+      {
+        endCut = g_Player.CurrentPosition;
+        endPosLbl.Label = Utils.SecondsToHMSString((int) endCut);
+      }
+      if (control == addBtn)
+      {
+        /*if (addBtn.Label == GUILocalizeStrings.Get(510)) //cancel
 				{
 					editCutPointsLbl.IsVisible = false;
 					editCutPoint = false;
@@ -352,137 +373,160 @@ namespace WindowPlugins.VideoEditor
 				}
 				else
 				{*/
-				if (startCut < endCut)
-				{
-					// cutList.Add((startCut.ToString() + ":" + endCut.ToString()));
-					if (editCutPoint)
-					{
-						cutPointsList.RemoveAt(editCutPointsIndex);
-						cutPointsList.Insert(editCutPointsIndex, new TimeDomain(startCut, endCut));
-						ReloadCutList();
-						editCutPointsLbl.IsVisible = false;
-						editCutPoint = false;
-						//_log.Info("Days::" + cutPointsList[0].StartTimeSp.Days.ToString() + "::Seconds::" + cutPointsList[0].StartTimeSp.Seconds.ToString(), null);
-					}
-					else
-					{
-						cutListCtrl.Add(new GUIListItem(MediaPortal.Util.Utils.SecondsToHMSString((int)startCut) + " - " + MediaPortal.Util.Utils.SecondsToHMSString((int)endCut)));
-						durationNew += (endCut - startCut);
-						newLenghtLbl.Label = MediaPortal.Util.Utils.SecondsToHMSString((int)durationNew);
-						cutPointsList.Add(new TimeDomain(startCut, endCut));
-					}
-					
-					startPosLbl.Label = "";
-					endPosLbl.Label = "";
-					cutBtn.IsEnabled = true;
-				}
-				//}
-			}
-			if (control == forwardBtn)
-			{
-				g_Player.SeekAbsolute((double)(g_Player.CurrentPosition + 1.3)); //org 1.5
-				positionSld.Percentage = (int)((100 / durationOld) * (g_Player.CurrentPosition + 1.0)); 
-			}
-			if (control == backwardBtn)
-			{
-				g_Player.SeekAbsolute((double)(g_Player.CurrentPosition - 1.0)); //org 1.0
-				positionSld.Percentage = (int)((100 / durationOld) * g_Player.CurrentPosition);
-			}
-			if (control == positionSld)
-			{
-				g_Player.SeekAbsolute((double)((durationOld / 100) * positionSld.Percentage));
-			}
-			if (control == cutListCtrl)
-			{
-				if (cutListCtrl.SelectedListItem == null)
-					return;
-				if (lastIndexedCutPoint != cutListCtrl.SelectedListItemIndex)
-				{
-					goToStartPoint = true;
-				}
-				if (goToStartPoint)
-				{
-					g_Player.SeekAbsolute(cutPointsList[cutListCtrl.SelectedListItemIndex].StartTime);
-					goToStartPoint = false;
-					lastIndexedCutPoint = cutListCtrl.SelectedListItemIndex;
-					positionSld.Percentage = (int)((100 / durationOld) * cutPointsList[cutListCtrl.SelectedListItemIndex].StartTime);
-				}
-				else
-				{
-					g_Player.SeekAbsolute(cutPointsList[cutListCtrl.SelectedListItemIndex].EndTime);
-					goToStartPoint = true;
-					lastIndexedCutPoint = cutListCtrl.SelectedListItemIndex;
-					positionSld.Percentage = (int)((100 / durationOld) * cutPointsList[cutListCtrl.SelectedListItemIndex].EndTime);
-				}
-			}
-			//positionSld.Percentage = (int)((100 / durationOld) * g_Player.CurrentPosition);
-			base.OnClicked(controlId, control, actionType);
-		}
+        if (startCut < endCut)
+        {
+          // cutList.Add((startCut.ToString() + ":" + endCut.ToString()));
+          if (editCutPoint)
+          {
+            cutPointsList.RemoveAt(editCutPointsIndex);
+            cutPointsList.Insert(editCutPointsIndex, new TimeDomain(startCut, endCut));
+            ReloadCutList();
+            editCutPointsLbl.IsVisible = false;
+            editCutPoint = false;
+            //_log.Info("Days::" + cutPointsList[0].StartTimeSp.Days.ToString() + "::Seconds::" + cutPointsList[0].StartTimeSp.Seconds.ToString(), null);
+          }
+          else
+          {
+            cutListCtrl.Add(
+              new GUIListItem(Utils.SecondsToHMSString((int) startCut) + " - " + Utils.SecondsToHMSString((int) endCut)));
+            durationNew += (endCut - startCut);
+            newLenghtLbl.Label = Utils.SecondsToHMSString((int) durationNew);
+            cutPointsList.Add(new TimeDomain(startCut, endCut));
+          }
+
+          startPosLbl.Label = "";
+          endPosLbl.Label = "";
+          cutBtn.IsEnabled = true;
+        }
+        //}
+      }
+      if (control == forwardBtn)
+      {
+        g_Player.SeekAbsolute(g_Player.CurrentPosition + 1.3); //org 1.5
+        positionSld.Percentage = (int) ((100/durationOld)*(g_Player.CurrentPosition + 1.0));
+      }
+      if (control == backwardBtn)
+      {
+        g_Player.SeekAbsolute(g_Player.CurrentPosition - 1.0); //org 1.0
+        positionSld.Percentage = (int) ((100/durationOld)*g_Player.CurrentPosition);
+      }
+      if (control == positionSld)
+      {
+        g_Player.SeekAbsolute((durationOld/100)*positionSld.Percentage);
+      }
+      if (control == cutListCtrl)
+      {
+        if (cutListCtrl.SelectedListItem == null)
+        {
+          return;
+        }
+        if (lastIndexedCutPoint != cutListCtrl.SelectedListItemIndex)
+        {
+          goToStartPoint = true;
+        }
+        if (goToStartPoint)
+        {
+          g_Player.SeekAbsolute(cutPointsList[cutListCtrl.SelectedListItemIndex].StartTime);
+          goToStartPoint = false;
+          lastIndexedCutPoint = cutListCtrl.SelectedListItemIndex;
+          positionSld.Percentage = (int) ((100/durationOld)*cutPointsList[cutListCtrl.SelectedListItemIndex].StartTime);
+        }
+        else
+        {
+          g_Player.SeekAbsolute(cutPointsList[cutListCtrl.SelectedListItemIndex].EndTime);
+          goToStartPoint = true;
+          lastIndexedCutPoint = cutListCtrl.SelectedListItemIndex;
+          positionSld.Percentage = (int) ((100/durationOld)*cutPointsList[cutListCtrl.SelectedListItemIndex].EndTime);
+        }
+      }
+      //positionSld.Percentage = (int)((100 / durationOld) * g_Player.CurrentPosition);
+      base.OnClicked(controlId, control, actionType);
+    }
 
     protected override void OnShowContextMenu()
     {
-			if (cutListCtrl.SelectedListItem == null) return;
-			if (editCutPoint)
-			{
-				GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-				if (dlg == null) return;
-				dlg.Reset();
-				dlg.SetHeading(924); // menu
-				dlg.AddLocalizedString(510);  //cancel
-				dlg.DoModal(GetID);
-				if (dlg.SelectedId == -1) return;
-				else
-				{
-					editCutPoint = false;
-					editCutPointsLbl.IsVisible = false;
-				}
-			}
-			else
-			{
-				GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-				if (dlg == null) return;
-				dlg.Reset();
-				dlg.SetHeading(924); // menu
-				dlg.AddLocalizedString(117);  //Delete
-				dlg.AddLocalizedString(2076); //edit
-				dlg.DoModal(GetID);
-				if (dlg.SelectedId == -1) return;
-				switch (dlg.SelectedId)
-				{
-					case 117:
-						cutPointsList.RemoveAt(cutListCtrl.SelectedListItemIndex);
-						ReloadCutList();
-						break;
-					case 2076:
-						editCutPoint = true;
-						//positionSld.Percentage = (int)((100 / durationOld) * cutPointsList[cutListCtrl.SelectedListItemIndex].StartTime);
-						//g_Player.SeekAbsolute(cutPointsList[cutListCtrl.SelectedListItemIndex].StartTime);
-						editCutPointsIndex = cutListCtrl.SelectedListItemIndex;
-						editCutPointsLbl.IsVisible = true;
-						//addBtn.Label = GUILocalizeStrings.Get(510);
-						break;
-				}
-				//joinListCtrl.RemoveSubItem(joinListCtrl.SelectedListItemIndex);//joinListCtrl.SelectedListItem.);//SelectedLabelText);
-				//System.Windows.Forms.MessageBox.Show(selected.Label + "::" + joinListCtrl.SelectedItem.ToString() + "::" + joinListCtrl.SelectedListItemIndex.ToString());
-			}
-			if (cutPointsList.Count == 0)
-				cutBtn.IsEnabled = false;
+      if (cutListCtrl.SelectedListItem == null)
+      {
+        return;
+      }
+      if (editCutPoint)
+      {
+        GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+        if (dlg == null)
+        {
+          return;
+        }
+        dlg.Reset();
+        dlg.SetHeading(924); // menu
+        dlg.AddLocalizedString(510); //cancel
+        dlg.DoModal(GetID);
+        if (dlg.SelectedId == -1)
+        {
+          return;
+        }
+        else
+        {
+          editCutPoint = false;
+          editCutPointsLbl.IsVisible = false;
+        }
+      }
+      else
+      {
+        GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+        if (dlg == null)
+        {
+          return;
+        }
+        dlg.Reset();
+        dlg.SetHeading(924); // menu
+        dlg.AddLocalizedString(117); //Delete
+        dlg.AddLocalizedString(2076); //edit
+        dlg.DoModal(GetID);
+        if (dlg.SelectedId == -1)
+        {
+          return;
+        }
+        switch (dlg.SelectedId)
+        {
+          case 117:
+            cutPointsList.RemoveAt(cutListCtrl.SelectedListItemIndex);
+            ReloadCutList();
+            break;
+          case 2076:
+            editCutPoint = true;
+            //positionSld.Percentage = (int)((100 / durationOld) * cutPointsList[cutListCtrl.SelectedListItemIndex].StartTime);
+            //g_Player.SeekAbsolute(cutPointsList[cutListCtrl.SelectedListItemIndex].StartTime);
+            editCutPointsIndex = cutListCtrl.SelectedListItemIndex;
+            editCutPointsLbl.IsVisible = true;
+            //addBtn.Label = GUILocalizeStrings.Get(510);
+            break;
+        }
+        //joinListCtrl.RemoveSubItem(joinListCtrl.SelectedListItemIndex);//joinListCtrl.SelectedListItem.);//SelectedLabelText);
+        //System.Windows.Forms.MessageBox.Show(selected.Label + "::" + joinListCtrl.SelectedItem.ToString() + "::" + joinListCtrl.SelectedListItemIndex.ToString());
+      }
+      if (cutPointsList.Count == 0)
+      {
+        cutBtn.IsEnabled = false;
+      }
     }
 
-		private void ReloadCutList()
-		{
-			cutListCtrl.Clear();
-			durationNew = 0;
-			foreach (TimeDomain cutPoints in cutPointsList)
-			{
-				cutListCtrl.Add(new GUIListItem(MediaPortal.Util.Utils.SecondsToHMSString((int)cutPoints.StartTime) + " - " + MediaPortal.Util.Utils.SecondsToHMSString((int)cutPoints.EndTime)));
-				durationNew += (cutPoints.EndTime - cutPoints.StartTime);
-			}
-			newLenghtLbl.Label = MediaPortal.Util.Utils.SecondsToHMSString((int)durationNew);
-		}
+    private void ReloadCutList()
+    {
+      cutListCtrl.Clear();
+      durationNew = 0;
+      foreach (TimeDomain cutPoints in cutPointsList)
+      {
+        cutListCtrl.Add(
+          new GUIListItem(Utils.SecondsToHMSString((int) cutPoints.StartTime) + " - " +
+                          Utils.SecondsToHMSString((int) cutPoints.EndTime)));
+        durationNew += (cutPoints.EndTime - cutPoints.StartTime);
+      }
+      newLenghtLbl.Label = Utils.SecondsToHMSString((int) durationNew);
+    }
+
     #endregion
 
-    enum FileTypes
+    private enum FileTypes
     {
       Unknown,
       Dvrms,
@@ -506,15 +550,11 @@ namespace WindowPlugins.VideoEditor
           cutType = FileTypes.Unknown;
           break;
       }
-
     }
 
     public string CutFileName
     {
-      get
-      {
-        return inFilename.FullName;
-      }
+      get { return inFilename.FullName; }
       set
       {
         inFilename = new FileInfo(value);
@@ -524,7 +564,7 @@ namespace WindowPlugins.VideoEditor
 
     private void MessageBox(string text, string title)
     {
-      GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+      GUIDialogOK dlg = (GUIDialogOK) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_OK);
       dlg.SetHeading(title);
       dlg.SetLine(1, text);
       dlg.SetLine(2, String.Empty);
@@ -533,6 +573,7 @@ namespace WindowPlugins.VideoEditor
     }
 
     #region cutmethods
+
     protected void Cut()
     {
       g_Player.Release();
@@ -541,53 +582,52 @@ namespace WindowPlugins.VideoEditor
         case FileTypes.Dvrms:
           //dvrMod.CutPoints = cutPointsList;
           //dvrMod.InFilename = inFilename;
-         // cutThread = new Thread(new ThreadStart(dvrMod.CutDvr));//CutDvrms));
+          // cutThread = new Thread(new ThreadStart(dvrMod.CutDvr));//CutDvrms));
           //cutThread.SetApartmentState(ApartmentState.STA);
           //cutThread.IsBackground = true;
           //cutThread.Priority = ThreadPriority.BelowNormal;
-					
+
           progressBar.Percentage = 0;
           progressBar.IsVisible = true;
           progressLbl.IsVisible = true;
-					cutBtn.IsEnabled = false;
-					dvrMod.CutDvr(inFilename, cutPointsList);
-         // cutThread.Start();
-         // CutDvrms();
+          cutBtn.IsEnabled = false;
+          dvrMod.CutDvr(inFilename, cutPointsList);
+          // cutThread.Start();
+          // CutDvrms();
           break;
         case FileTypes.Mpeg:
-					for (int iCount = 0; iCount < cutPointsList.Count; iCount++)
-					{
-						if (iCount < NR_OF_SPILTER_TIME_STAMPS)
-						{
-							tStamp[iCount].s_sec = (int)cutPointsList[iCount].StartTime;
-							tStamp[iCount].s_min = tStamp[iCount].s_sec / 60;
-							tStamp[iCount].s_hour = tStamp[iCount].s_min / 60;
-							tStamp[iCount].s_min = tStamp[iCount].s_min % 60;
-							tStamp[iCount].s_sec = tStamp[iCount].s_sec % 60;
+          for (int iCount = 0; iCount < cutPointsList.Count; iCount++)
+          {
+            if (iCount < NR_OF_SPILTER_TIME_STAMPS)
+            {
+              tStamp[iCount].s_sec = (int) cutPointsList[iCount].StartTime;
+              tStamp[iCount].s_min = tStamp[iCount].s_sec/60;
+              tStamp[iCount].s_hour = tStamp[iCount].s_min/60;
+              tStamp[iCount].s_min = tStamp[iCount].s_min%60;
+              tStamp[iCount].s_sec = tStamp[iCount].s_sec%60;
 
-							tStamp[iCount].e_sec = (int)cutPointsList[iCount].EndTime;
-							tStamp[iCount].e_min = tStamp[iCount].e_sec / 60;
-							tStamp[iCount].e_hour = tStamp[iCount].e_min / 60;
-							tStamp[iCount].e_min = tStamp[iCount].e_min % 60;
-							tStamp[iCount].e_sec = tStamp[iCount].e_sec % 60;
-							//iCount++;
-						}
-					}
+              tStamp[iCount].e_sec = (int) cutPointsList[iCount].EndTime;
+              tStamp[iCount].e_min = tStamp[iCount].e_sec/60;
+              tStamp[iCount].e_hour = tStamp[iCount].e_min/60;
+              tStamp[iCount].e_min = tStamp[iCount].e_min%60;
+              tStamp[iCount].e_sec = tStamp[iCount].e_sec%60;
+              //iCount++;
+            }
+          }
           cutThread = new Thread(new ThreadStart(CutMpeg));
           cutThread.Priority = ThreadPriority.BelowNormal;
-         
-					progressBar.Percentage = 0;
-					progressBar.IsVisible = true;
-					progressLbl.IsVisible = true;
-					cutBtn.IsEnabled = false;
-					cutThread.Start();
+
+          progressBar.Percentage = 0;
+          progressBar.IsVisible = true;
+          progressLbl.IsVisible = true;
+          cutBtn.IsEnabled = false;
+          cutThread.Start();
           //CutMpeg();
           break;
         default:
           MessageBox(GUILocalizeStrings.Get(2080), GUILocalizeStrings.Get(2081)); // Unsupported filetype, Cannot cut
           break;
       }
-
     }
 
     /*private void CutDvrms()
@@ -660,16 +700,16 @@ namespace WindowPlugins.VideoEditor
       {
         cMpeg2Splitter.Trim(inFilename.FullName, outFilename.FullName, ref tStamp[0]);
       }
-      cutFinished = true;
+      //cutFinished = true;
       progressLbl.Label = "100";
       progressBar.Percentage = 100;
       MessageBox(GUILocalizeStrings.Get(2082), GUILocalizeStrings.Get(2111));
-     // progressBar.IsVisible = false;
+      // progressBar.IsVisible = false;
       //progressLbl.IsVisible = false;
-			//cutBtn.IsEnabled = true;
+      //cutBtn.IsEnabled = true;
     }
 
-  /*  private void CutProgressTime()
+    /*  private void CutProgressTime()
     {
       cutFinished = false;
       cutProgressTime = new System.Timers.Timer(1000);
@@ -694,65 +734,88 @@ namespace WindowPlugins.VideoEditor
       else
         cutProgressTime.Stop();
     }*/
+
     #endregion
 
-    #region obsolete
-    /// <summary>
-    /// Converts the time in sec to hh:mm:ss format
-    /// </summary>
-    /// <remarks>now using: MediaPortal.Util.Utils.SecondsToHMSString()</remarks>
-    /// <param name="timeSec">time in sec</param>
-    /// <returns>time in hh:mm:ss</returns>
-    private string TimeCalc(double timeSec)
-    {
-      int hr, min, sec;
-      string hr_ = "", min_ = "", sec_ = "";
-      //calc min
-      min = (int)timeSec / 60;
-      //only sec
-      if (min < 1)
-      {
-        sec = (int)timeSec;
-        hr_ = "00";
-        min_ = "00";
-        if (sec < 10)
-          sec_ = "0" + Convert.ToInt32(sec).ToString();
-        else
-          sec_ = Convert.ToInt32(sec).ToString();
-      }
-      //less than one hour
-      if (min >= 1 && min < 60)
-      {
-        sec = (int)timeSec % 60;
-        hr_ = "00";
-        if (min < 10)
-          min_ = "0" + Convert.ToInt32(min).ToString();
-        else
-          min_ = Convert.ToInt32(min).ToString();
-        if (sec < 10)
-          sec_ = "0" + Convert.ToInt32(sec).ToString();
-        else
-          sec_ = Convert.ToInt32(sec).ToString();
-      }
-      //more than one hour
-      if (min >= 60)
-      {
-        sec = (int)timeSec % 60;
-        hr = (int)min / 60;
-        min = (int)min % 60;
-        if (min < 10)
-          min_ = "0" + Convert.ToInt32(min).ToString();
-        else
-          min_ = Convert.ToInt32(min).ToString();
-        if (sec < 10)
-          sec_ = "0" + Convert.ToInt32(sec).ToString();
-        else
-          sec_ = Convert.ToInt32(sec).ToString();
-        hr_ = Convert.ToInt32(hr).ToString();
-      }
+    //#region obsolete
 
-      return hr_ + ":" + min_ + ":" + sec_;
-    }
-    #endregion
+    ///// <summary>
+    ///// Converts the time in sec to hh:mm:ss format
+    ///// </summary>
+    ///// <remarks>now using: MediaPortal.Util.Utils.SecondsToHMSString()</remarks>
+    ///// <param name="timeSec">time in sec</param>
+    ///// <returns>time in hh:mm:ss</returns>
+    //private string TimeCalc(double timeSec)
+    //{
+    //  int hr, min, sec;
+    //  string hr_ = "", min_ = "", sec_ = "";
+    //  //calc min
+    //  min = (int) timeSec/60;
+    //  //only sec
+    //  if (min < 1)
+    //  {
+    //    sec = (int) timeSec;
+    //    hr_ = "00";
+    //    min_ = "00";
+    //    if (sec < 10)
+    //    {
+    //      sec_ = "0" + Convert.ToInt32(sec).ToString();
+    //    }
+    //    else
+    //    {
+    //      sec_ = Convert.ToInt32(sec).ToString();
+    //    }
+    //  }
+    //  //less than one hour
+    //  if (min >= 1 && min < 60)
+    //  {
+    //    sec = (int) timeSec%60;
+    //    hr_ = "00";
+    //    if (min < 10)
+    //    {
+    //      min_ = "0" + Convert.ToInt32(min).ToString();
+    //    }
+    //    else
+    //    {
+    //      min_ = Convert.ToInt32(min).ToString();
+    //    }
+    //    if (sec < 10)
+    //    {
+    //      sec_ = "0" + Convert.ToInt32(sec).ToString();
+    //    }
+    //    else
+    //    {
+    //      sec_ = Convert.ToInt32(sec).ToString();
+    //    }
+    //  }
+    //  //more than one hour
+    //  if (min >= 60)
+    //  {
+    //    sec = (int) timeSec%60;
+    //    hr = (int) min/60;
+    //    min = (int) min%60;
+    //    if (min < 10)
+    //    {
+    //      min_ = "0" + Convert.ToInt32(min).ToString();
+    //    }
+    //    else
+    //    {
+    //      min_ = Convert.ToInt32(min).ToString();
+    //    }
+    //    if (sec < 10)
+    //    {
+    //      sec_ = "0" + Convert.ToInt32(sec).ToString();
+    //    }
+    //    else
+    //    {
+    //      sec_ = Convert.ToInt32(sec).ToString();
+    //    }
+    //    hr_ = Convert.ToInt32(hr).ToString();
+    //  }
+
+    //  return hr_ + ":" + min_ + ":" + sec_;
+    //}
+
+    //#endregion
   }
 }

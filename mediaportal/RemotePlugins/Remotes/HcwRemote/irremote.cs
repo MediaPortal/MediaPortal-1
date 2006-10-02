@@ -24,8 +24,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.InteropServices;
 using Microsoft.Win32;
 using MediaPortal.GUI.Library;
@@ -92,10 +90,6 @@ namespace MediaPortal.InputDevices
     #endregion
 
 
-    static irremote()
-    {
-    }
-
     public static string CurrentVersion = "2.49.23332";
 
     public static bool IRClose(IntPtr WindowHandle, uint Msg)
@@ -113,7 +107,7 @@ namespace MediaPortal.InputDevices
       {
         result = IR_GetSystemKeyCode(out RepeatCount, out RemoteCode, out KeyCode);
       }
-      catch (System.AccessViolationException)
+      catch (AccessViolationException)
       {
       }
       catch (Exception ex)
@@ -140,21 +134,17 @@ namespace MediaPortal.InputDevices
     public static string GetHCWPath()
     {
       string dllPath = null;
-      try
-      {
         using (RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Hauppauge WinTV Infrared Remote"))
         {
-          dllPath = rkey.GetValue("UninstallString").ToString();
-          if (dllPath.IndexOf("UNir32") > 0)
-            dllPath = dllPath.Substring(0, dllPath.IndexOf("UNir32"));
-          else if (dllPath.IndexOf("UNIR32") > 0)
-            dllPath = dllPath.Substring(0, dllPath.IndexOf("UNIR32"));
+          if (rkey != null)
+          {
+            dllPath = rkey.GetValue("UninstallString").ToString();
+            if (dllPath.IndexOf("UNir32") > 0)
+              dllPath = dllPath.Substring(0, dllPath.IndexOf("UNir32"));
+            else if (dllPath.IndexOf("UNIR32") > 0)
+              dllPath = dllPath.Substring(0, dllPath.IndexOf("UNIR32"));
+          }
         }
-      }
-      catch (System.NullReferenceException)
-      {
-        Log.Info("HCW: Could not find registry entries for driver components! (Not installed?)");
-      }
       return dllPath;
     }
 

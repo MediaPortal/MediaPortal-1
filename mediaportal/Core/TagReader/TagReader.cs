@@ -148,13 +148,14 @@ namespace MediaPortal.TagReader
 
               return musicTag;
             }
+            reader.Dispose();
           }
         }
         catch (Exception ex)
         {
-          reader.Dispose();
           Log.Error("Tag reader generated exception on file {0}: {1}", strFile, ex.ToString());
         }
+        reader.Dispose();
       }
       return null;
     }

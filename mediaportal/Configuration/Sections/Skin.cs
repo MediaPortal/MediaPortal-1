@@ -24,48 +24,48 @@
 #endregion
 
 using System;
-using System.IO;
-using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
+using System.Globalization;
+using System.IO;
 using System.Windows.Forms;
 using System.Xml;
-using System.Globalization;
+using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
 using MediaPortal.Util;
-
 #pragma warning disable 108
 
 namespace MediaPortal.Configuration.Sections
 {
-  public class Skin : MediaPortal.Configuration.SectionSettings
+  public class Skin : SectionSettings
   {
-    private  string SkinDirectory; 
-    private string LanguageDirectory; 
+    private string SkinDirectory;
+    private string LanguageDirectory;
 
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxAppearance;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxSkin;
+    private MPGroupBox groupBoxAppearance;
+    private MPGroupBox groupBoxSkin;
     private ListView listViewAvailableSkins;
     private ColumnHeader colName;
     private ColumnHeader colVersion;
-    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
+    private MPGroupBox mpGroupBox1;
     private CheckBox checkBoxlangRTL;
-    private MediaPortal.UserInterface.Controls.MPComboBox languageComboBox;
-    private MediaPortal.UserInterface.Controls.MPLabel label2;
+    private MPComboBox languageComboBox;
+    private MPLabel label2;
     private CheckBox checkBoxUsePrefix;
     private Panel panelFitImage;
     private PictureBox previewPictureBox;
-    private System.ComponentModel.IContainer components = null;
+    private new IContainer components = null;
 
     public Skin()
       : this("Skin")
     {
     }
 
-    public Skin( string name )
+    public Skin(string name)
       : base(name)
     {
-      SkinDirectory = Config.Get(Config.Dir.Skin);
-      LanguageDirectory = Config.Get(Config.Dir.Language);
+      SkinDirectory = Config.GetFolder(Config.Dir.Skin);
+      LanguageDirectory = Config.GetFolder(Config.Dir.Language);
       // This call is required by the Windows Form Designer.
       InitializeComponent();
 
@@ -75,45 +75,49 @@ namespace MediaPortal.Configuration.Sections
       //
       listViewAvailableSkins.Items.Clear();
 
-      if ( Directory.Exists(SkinDirectory) )
+      if (Directory.Exists(SkinDirectory))
       {
         string[] skinFolders = Directory.GetDirectories(SkinDirectory, "*.*");
 
-        foreach ( string skinFolder in skinFolders )
+        foreach (string skinFolder in skinFolders)
         {
           bool isInvalidDirectory = false;
-          string[] invalidDirectoryNames = new string[] { "cvs" };
+          string[] invalidDirectoryNames = new string[] {"cvs"};
 
-          string directoryName = skinFolder.Substring(SkinDirectory.Length);
+          string directoryName = skinFolder.Substring(SkinDirectory.Length+1);
 
-          if ( directoryName != null && directoryName.Length > 0 )
+          if (directoryName != null && directoryName.Length > 0)
           {
-            foreach ( string invalidDirectory in invalidDirectoryNames )
+            foreach (string invalidDirectory in invalidDirectoryNames)
             {
-              if ( invalidDirectory.Equals(directoryName.ToLower()) )
+              if (invalidDirectory.Equals(directoryName.ToLower()))
               {
                 isInvalidDirectory = true;
                 break;
               }
             }
 
-            if ( isInvalidDirectory == false )
+            if (isInvalidDirectory == false)
             {
               //
               // Check if we have a home.xml located in the directory, if so we consider it as a
               // valid skin directory
               //
               string filename = Path.Combine(SkinDirectory, Path.Combine(directoryName, "references.xml"));
-              if ( File.Exists(filename) )
+              if (File.Exists(filename))
               {
                 XmlDocument doc = new XmlDocument();
                 doc.Load(filename);
                 XmlNode node = doc.SelectSingleNode("/controls/skin/version");
                 ListViewItem item = listViewAvailableSkins.Items.Add(directoryName);
-                if ( node != null && node.InnerText != null )
+                if (node != null && node.InnerText != null)
+                {
                   item.SubItems.Add(node.InnerText);
+                }
                 else
+                {
                   item.SubItems.Add("?");
+                }
               }
             }
           }
@@ -129,31 +133,31 @@ namespace MediaPortal.Configuration.Sections
       string strShortLanguage = strLongLanguage.Substring(0, iTrimIndex);
 
       bool bExactLanguageFound = false;
-      if ( Directory.Exists(LanguageDirectory) )
+      if (Directory.Exists(LanguageDirectory))
       {
         string[] folders = Directory.GetDirectories(LanguageDirectory, "*.*");
 
-        foreach ( string folder in folders )
+        foreach (string folder in folders)
         {
           string fileName = folder.Substring(folder.LastIndexOf(@"\") + 1);
 
           //
           // Exclude cvs folder
           //
-          if ( fileName.ToLower() != "cvs" )
+          if (fileName.ToLower() != "cvs")
           {
-            if ( fileName.Length > 0 )
+            if (fileName.Length > 0)
             {
               fileName = fileName.Substring(0, 1).ToUpper() + fileName.Substring(1);
               languageComboBox.Items.Add(fileName);
 
               // Check language file to user region language
-              if ( fileName.ToLower() == strLongLanguage.ToLower() )
+              if (fileName.ToLower() == strLongLanguage.ToLower())
               {
                 languageComboBox.Text = fileName;
                 bExactLanguageFound = true;
               }
-              else if ( !bExactLanguageFound && ( fileName.ToLower() == strShortLanguage.ToLower() ) )
+              else if (!bExactLanguageFound && (fileName.ToLower() == strShortLanguage.ToLower()))
               {
                 languageComboBox.Text = fileName;
               }
@@ -162,32 +166,33 @@ namespace MediaPortal.Configuration.Sections
         }
       }
 
-      if ( languageComboBox.Text == "" )
+      if (languageComboBox.Text == "")
       {
         languageComboBox.Text = "English";
       }
     }
 
-    private void listViewAvailableSkins_SelectedIndexChanged( object sender, System.EventArgs e )
+    private void listViewAvailableSkins_SelectedIndexChanged(object sender, EventArgs e)
     {
-      if ( listViewAvailableSkins.SelectedItems.Count == 0 )
+      if (listViewAvailableSkins.SelectedItems.Count == 0)
       {
         previewPictureBox.Image = null;
         previewPictureBox.Visible = false;
         return;
       }
-      string currentSkin = (string)listViewAvailableSkins.SelectedItems[0].Text;
-      string previewFile = String.Format(@"{0}{1}\media\preview.png", SkinDirectory, currentSkin);
+      string currentSkin = listViewAvailableSkins.SelectedItems[0].Text;
+      string previewFile = Path.Combine(Path.Combine(SkinDirectory,currentSkin),@"media\preview.png");
 
       //
       // Clear image
       //
       previewPictureBox.Image = null;
-      System.Drawing.Image img = null;
+      Image img;
 
-      if ( File.Exists(previewFile) )
+      if (File.Exists(previewFile))
       {
-        img = Image.FromFile(previewFile);
+        using(Stream s = new FileStream(previewFile,FileMode.Open,FileAccess.Read))
+        {img = Image.FromStream(s);}
         previewPictureBox.Width = img.Width;
         previewPictureBox.Height = img.Height;
         previewPictureBox.Image = img;
@@ -197,7 +202,7 @@ namespace MediaPortal.Configuration.Sections
       {
         string logoFile = "mplogo.gif";
 
-        if ( File.Exists(logoFile) )
+        if (File.Exists(logoFile))
         {
           img = Image.FromFile(logoFile);
           previewPictureBox.Width = img.Width;
@@ -211,11 +216,11 @@ namespace MediaPortal.Configuration.Sections
     /// <summary>
     /// Clean up any resources being used.
     /// </summary>
-    protected override void Dispose( bool disposing )
+    protected override void Dispose(bool disposing)
     {
-      if ( disposing )
+      if (disposing)
       {
-        if ( components != null )
+        if (components != null)
         {
           components.Dispose();
         }
@@ -228,7 +233,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         checkBoxUsePrefix.Checked = xmlreader.GetValueAsBool("general", "myprefix", true);
         checkBoxlangRTL.Checked = xmlreader.GetValueAsBool("skin", "rtllang", false);
@@ -238,9 +243,9 @@ namespace MediaPortal.Configuration.Sections
         //
         // Make sure the skin actually exists before setting it as the current skin
         //
-        foreach ( ListViewItem item in listViewAvailableSkins.Items )
+        foreach (ListViewItem item in listViewAvailableSkins.Items)
         {
-          if ( item.SubItems[0].Text.Equals(currentSkin) )
+          if (item.SubItems[0].Text.Equals(currentSkin))
           {
             item.Selected = true;
             break;
@@ -251,21 +256,25 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      if ( listViewAvailableSkins.SelectedItems.Count == 0 )
+      if (listViewAvailableSkins.SelectedItems.Count == 0)
+      {
         return;
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      }
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         string prevSkin = xmlwriter.GetValueAsString("skin", "name", "BlueTwo");
-        if ( prevSkin != listViewAvailableSkins.SelectedItems[0].Text )
+        if (prevSkin != listViewAvailableSkins.SelectedItems[0].Text)
         {
-          MediaPortal.Util.Utils.DeleteFiles(Config.Get(Config.Dir.Skin) + listViewAvailableSkins.Text + @"\fonts", "*");
+          Util.Utils.DeleteFiles(Config.GetSubFolder(Config.Dir.Skin, listViewAvailableSkins.Text + @"\fonts"), "*");
         }
         xmlwriter.SetValue("skin", "name", listViewAvailableSkins.SelectedItems[0].Text);
         // Set language
         string prevLanguage = xmlwriter.GetValueAsString("skin", "language", "English");
         string skin = xmlwriter.GetValueAsString("skin", "name", "BlueTwo");
-        if ( prevLanguage != languageComboBox.Text )
-          MediaPortal.Util.Utils.DeleteFiles(Config.Get(Config.Dir.Skin) + skin + @"\fonts", "*");
+        if (prevLanguage != languageComboBox.Text)
+        {
+          Util.Utils.DeleteFiles(Config.GetSubFolder(Config.Dir.Skin, skin + @"\fonts"), "*");
+        }
 
         xmlwriter.SetValue("skin", "language", languageComboBox.Text);
         xmlwriter.SetValueAsBool("skin", "rtllang", checkBoxlangRTL.Checked);
@@ -274,6 +283,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #region Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -296,14 +306,16 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.SuspendLayout();
       this.groupBoxSkin.SuspendLayout();
       this.panelFitImage.SuspendLayout();
-      ( (System.ComponentModel.ISupportInitialize)( this.previewPictureBox ) ).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.previewPictureBox)).BeginInit();
       this.SuspendLayout();
       // 
       // groupBoxAppearance
       // 
-      this.groupBoxAppearance.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
-                  | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.groupBoxAppearance.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxAppearance.Controls.Add(this.mpGroupBox1);
       this.groupBoxAppearance.Controls.Add(this.groupBoxSkin);
       this.groupBoxAppearance.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -316,8 +328,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox1
       // 
-      this.mpGroupBox1.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.mpGroupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox1.Controls.Add(this.checkBoxUsePrefix);
       this.mpGroupBox1.Controls.Add(this.checkBoxlangRTL);
       this.mpGroupBox1.Controls.Add(this.languageComboBox);
@@ -352,8 +366,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // languageComboBox
       // 
-      this.languageComboBox.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.languageComboBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.languageComboBox.BorderColor = System.Drawing.Color.Empty;
       this.languageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.languageComboBox.Location = new System.Drawing.Point(118, 21);
@@ -371,9 +387,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxSkin
       // 
-      this.groupBoxSkin.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
-                  | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.groupBoxSkin.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxSkin.Controls.Add(this.panelFitImage);
       this.groupBoxSkin.Controls.Add(this.listViewAvailableSkins);
       this.groupBoxSkin.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -386,11 +404,15 @@ namespace MediaPortal.Configuration.Sections
       // 
       // listViewAvailableSkins
       // 
-      this.listViewAvailableSkins.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
-                  | System.Windows.Forms.AnchorStyles.Left ) ) );
-      this.listViewAvailableSkins.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.colName,
-            this.colVersion});
+      this.listViewAvailableSkins.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+           | System.Windows.Forms.AnchorStyles.Left)));
+      this.listViewAvailableSkins.Columns.AddRange(new System.Windows.Forms.ColumnHeader[]
+                                                     {
+                                                       this.colName,
+                                                       this.colVersion
+                                                     });
       this.listViewAvailableSkins.FullRowSelect = true;
       this.listViewAvailableSkins.HideSelection = false;
       this.listViewAvailableSkins.Location = new System.Drawing.Point(15, 22);
@@ -399,7 +421,8 @@ namespace MediaPortal.Configuration.Sections
       this.listViewAvailableSkins.TabIndex = 3;
       this.listViewAvailableSkins.UseCompatibleStateImageBehavior = false;
       this.listViewAvailableSkins.View = System.Windows.Forms.View.Details;
-      this.listViewAvailableSkins.SelectedIndexChanged += new System.EventHandler(this.listViewAvailableSkins_SelectedIndexChanged);
+      this.listViewAvailableSkins.SelectedIndexChanged +=
+        new System.EventHandler(this.listViewAvailableSkins_SelectedIndexChanged);
       // 
       // colName
       // 
@@ -413,9 +436,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // panelFitImage
       // 
-      this.panelFitImage.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
-                  | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.panelFitImage.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.panelFitImage.Controls.Add(this.previewPictureBox);
       this.panelFitImage.Location = new System.Drawing.Point(243, 22);
       this.panelFitImage.Name = "panelFitImage";
@@ -445,11 +470,10 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.PerformLayout();
       this.groupBoxSkin.ResumeLayout(false);
       this.panelFitImage.ResumeLayout(false);
-      ( (System.ComponentModel.ISupportInitialize)( this.previewPictureBox ) ).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.previewPictureBox)).EndInit();
       this.ResumeLayout(false);
-
     }
+
     #endregion
   }
 }
-

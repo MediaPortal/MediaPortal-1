@@ -21,13 +21,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Drawing;
-using MediaPortal.TagReader;
-
+using System.Text;
 using MediaPortal.GUI.Library;
+using MediaPortal.TagReader;
 
 namespace Tag.MAC
 {
@@ -85,13 +83,13 @@ namespace Tag.MAC
     public struct ID3_TAG
     {
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-      public char[] Header;              // should equal 'TAG'    
+      public char[] Header; // should equal 'TAG'    
 
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 30)]
-      public char[] Title;              // should equal 'APETAGEX'    
+      public char[] Title; // should equal 'APETAGEX'    
 
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 30)]
-      public char[] Artist;              // artist    
+      public char[] Artist; // artist    
 
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 30)]
       public char[] Album;
@@ -102,9 +100,9 @@ namespace Tag.MAC
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 29)]
       public char[] Comment;
 
-      public byte Track;        // track
-      public byte Genre;        // genre
-    };
+      public byte Track; // track
+      public byte Genre; // genre
+    } ;
 
     // Footer (and header) flags
     public const int APE_TAG_FLAG_CONTAINS_HEADER = (1 << 31);
@@ -124,6 +122,7 @@ namespace Tag.MAC
 
     // The footer at the end of APE tagged files (can also optionally be at the front of the tag)
     public const int APE_TAG_FOOTER_BYTES = 32;
+
     #endregion
 
     #region Variables
@@ -142,7 +141,7 @@ namespace Tag.MAC
 
     #region Properties
 
-    override public string Album
+    public override string Album
     {
       get
       {
@@ -157,7 +156,7 @@ namespace Tag.MAC
       }
     }
 
-    override public string Artist
+    public override string Artist
     {
       get
       {
@@ -172,55 +171,57 @@ namespace Tag.MAC
       }
     }
 
-    override public string AlbumArtist
+    public override string AlbumArtist
     {
       get
       {
         string sVal = GetFieldString("album artist");
 
         if (sVal.Length == 0)
+        {
           sVal = GetFieldString("albumartist");
+        }
 
         return sVal;
       }
     }
 
-    override public string ArtistURL
+    public override string ArtistURL
     {
       get { return GetFieldString(APE_TAG_FIELD_ARTIST_URL); }
     }
 
-    override public int AverageBitrate
+    public override int AverageBitrate
     {
       get { return ApeHeader.ApeFileInfo.nAverageBitrate; }
     }
 
-    override public int BitsPerSample
+    public override int BitsPerSample
     {
       get { return ApeHeader.ApeFileInfo.nBitsPerSample; }
     }
 
-    override public int BlocksPerFrame
+    public override int BlocksPerFrame
     {
       get { return ApeHeader.ApeFileInfo.nBlocksPerFrame; }
     }
 
-    override public string BuyURL
+    public override string BuyURL
     {
       get { return GetFieldString(APE_TAG_FIELD_BUY_URL); }
     }
 
-    override public int BytesPerSample
+    public override int BytesPerSample
     {
       get { return ApeHeader.ApeFileInfo.nBytesPerSample; }
     }
 
-    override public int Channels
+    public override int Channels
     {
       get { return ApeHeader.ApeFileInfo.nChannels; }
     }
 
-    override public string Comment
+    public override string Comment
     {
       get
       {
@@ -235,27 +236,27 @@ namespace Tag.MAC
       }
     }
 
-    override public string Composer
+    public override string Composer
     {
       get { return GetFieldString(APE_TAG_FIELD_COMPOSER); }
     }
 
-    override public int CompressionLevel
+    public override int CompressionLevel
     {
       get { return ApeHeader.ApeFileInfo.nCompressionLevel; }
     }
 
-    override public string Copyright
+    public override string Copyright
     {
       get { return GetFieldString(APE_TAG_FIELD_COPYRIGHT); }
     }
 
-    override public string CopyrightURL
+    public override string CopyrightURL
     {
       get { return GetFieldString(APE_TAG_FIELD_COPYRIGHT_URL); }
     }
 
-    override public byte[] CoverArtImageBytes
+    public override byte[] CoverArtImageBytes
     {
       get
       {
@@ -264,15 +265,17 @@ namespace Tag.MAC
           byte[] tempBytes = GetFieldBinary(APE_TAG_FIELD_COVER_ART_FRONT);
 
           if (tempBytes == null)
+          {
             return null;
+          }
 
           string imgFileName = "";
-          int i = 0;
+          int i;
           bool foundFileName = false;
 
           for (i = 0; i < tempBytes.Length; i++)
           {
-            char c = (char)tempBytes[i];
+            char c = (char) tempBytes[i];
 
             if (c == 0)
             {
@@ -295,84 +298,84 @@ namespace Tag.MAC
 
         catch (Exception ex)
         {
-          Log.Error("ApeTag.get_CoverArtImageBytes caused an exception in file {0} : {1}", base.FileName, ex.Message);
+          Log.Error("ApeTag.get_CoverArtImageBytes caused an exception in file {0} : {1}", FileName, ex.Message);
         }
 
         return null;
       }
     }
 
-    override public string FileURL
+    public override string FileURL
     {
       get { return GetFieldString(APE_TAG_FIELD_FILE_URL); }
     }
 
-    override public int FormatFlags
+    public override int FormatFlags
     {
       get { return ApeHeader.ApeFileInfo.nFormatFlags; }
     }
 
-    override public bool IsVBR
+    public override bool IsVBR
     {
       get { return false; }
     }
 
-    override public string Genre
+    public override string Genre
     {
       get { return GetFieldString(APE_TAG_FIELD_GENRE); }
     }
 
-    override public string Keywords
+    public override string Keywords
     {
       get { return GetFieldString(APE_TAG_FIELD_KEYWORDS); }
     }
 
-    override public string Length
+    public override string Length
     {
       get { return Utils.GetDurationString(ApeHeader.ApeFileInfo.nLengthMS); }
     }
 
-    override public int LengthMS
+    public override int LengthMS
     {
       get { return ApeHeader.ApeFileInfo.nLengthMS; }
     }
 
-    override public string Lyrics
+    public override string Lyrics
     {
       get { return GetFieldString(APE_TAG_FIELD_LYRICS); }
     }
 
-    override public string Notes
+    public override string Notes
     {
       get { return GetFieldString(APE_TAG_FIELD_NOTES); }
     }
 
-    override public string PeakLevel
+    public override string PeakLevel
     {
       get { return GetFieldString(APE_TAG_FIELD_PEAK_LEVEL); }
     }
 
-    override public string PublisherURL
+    public override string PublisherURL
     {
       get { return GetFieldString(APE_TAG_FIELD_PUBLISHER_URL); }
     }
 
-    override public string ReplayGainAlbum
+    public override string ReplayGainAlbum
     {
       get { return GetFieldString(APE_TAG_FIELD_REPLAY_GAIN_ALBUM); }
     }
 
-    override public string ReplayGainRadio
+    public override string ReplayGainRadio
     {
       get { return GetFieldString(APE_TAG_FIELD_REPLAY_GAIN_RADIO); }
     }
 
-    override public int SampleRate
+    public override int SampleRate
     {
       get { return ApeHeader.ApeFileInfo.nSampleRate; }
     }
 
-    override public string Title
+    public override string Title
     {
       get
       {
@@ -387,44 +390,48 @@ namespace Tag.MAC
       }
     }
 
-    override public string ToolName
+    public override string ToolName
     {
       get { return GetFieldString(APE_TAG_FIELD_TOOL_NAME); }
     }
 
-    override public string ToolVersion
+    public override string ToolVersion
     {
       get { return GetFieldString(APE_TAG_FIELD_TOOL_VERSION); }
     }
 
-    override public int TotalBlocks
+    public override int TotalBlocks
     {
       get { return ApeHeader.ApeFileInfo.nTotalBlocks; }
     }
 
-    override public int TotalFrames
+    public override int TotalFrames
     {
       get { return ApeHeader.ApeFileInfo.nTotalFrames; }
     }
 
-    override public int Track
+    public override int Track
     {
       get { return GetFieldInt(APE_TAG_FIELD_TRACK); }
     }
 
-    override public string Version
+    public override string Version
     {
       get
       {
         if (ApeHeader.ApeFileInfo.nVersion > 0)
-          return string.Format("{0}", (float)ApeHeader.ApeFileInfo.nVersion / 1000f);
+        {
+          return string.Format("{0}", ApeHeader.ApeFileInfo.nVersion/1000f);
+        }
 
         else
+        {
           return string.Empty;
+        }
       }
     }
 
-    override public int Year
+    public override int Year
     {
       get
       {
@@ -434,14 +441,16 @@ namespace Tag.MAC
           int year = Utils.GetYear(sYear);
 
           if (year == 0)
+          {
             year = Utils.GetYear(new string(ID3Tag.Year));
+          }
 
           return year;
         }
 
         catch (Exception ex)
         {
-          Log.Error("    ApeTag.get_Year caused an exception in file {0} : {1}", base.FileName, ex.Message);
+          Log.Error("    ApeTag.get_Year caused an exception in file {0} : {1}", FileName, ex.Message);
           return 0;
         }
       }
@@ -465,28 +474,39 @@ namespace Tag.MAC
       Dispose();
     }
 
-    override public bool SupportsFile(string strFileName)
+    public override bool SupportsFile(string strFileName)
     {
-      if (System.IO.Path.GetExtension(strFileName).ToLower() == ".ape") return true;
+      if (Path.GetExtension(strFileName).ToLower() == ".ape")
+      {
+        return true;
+      }
       return false;
     }
 
-    override public bool Read(string fileName)
+    public override bool Read(string fileName)
     {
       if (fileName.Length == 0)
+      {
         throw new Exception("No file name specified");
+      }
 
       if (!File.Exists(fileName))
+      {
         throw new Exception("Unable to open file.  File does not exist.");
+      }
 
       if (Path.GetExtension(fileName).ToLower() != ".ape")
+      {
         throw new AudioFileTypeException("Expected APE file type.");
+      }
 
       base.Read(fileName);
       bool result = ReadTags();
 
       if (!result)
+      {
         return false;
+      }
 
       result = ReadHeader();
       AudioDataStartPostion = AudioFileStream.Position;
@@ -505,7 +525,9 @@ namespace Tag.MAC
       try
       {
         if (AudioFileStream == null)
-          AudioFileStream = new FileStream(this.AudioFilePath, FileMode.Open, FileAccess.Read);
+        {
+          AudioFileStream = new FileStream(AudioFilePath, FileMode.Open, FileAccess.Read);
+        }
 
         long nOriginalPosition = AudioFileStream.Position;
 
@@ -520,7 +542,7 @@ namespace Tag.MAC
         int ID3TagSize = Marshal.SizeOf(ID3Tag);
         nBytesRead = AudioFileStream.Read(id3TagBytes, 0, ID3TagSize);
 
-        ID3Tag = (ID3_TAG)Utils.RawDeserializeEx(id3TagBytes, typeof(ID3_TAG));
+        ID3Tag = (ID3_TAG) Utils.RawDeserializeEx(id3TagBytes, typeof(ID3_TAG));
 
         if (nBytesRead == ID3TagSize && nBytesRead == id3TagBytes.Length)
         {
@@ -530,21 +552,23 @@ namespace Tag.MAC
             ApeTagBytes += ID3_TAG_BYTES;
           }
         }
- 
+
         if (!HasId3Tag)
         {
           // Clear the invalid data we read in earlier
           ID3Tag = new ID3_TAG();
 
           APE_TAG_FOOTER APETagFooter = new APE_TAG_FOOTER();
-          AudioFileStream.Seek(-(int)ApeTagField.APE_TAG_FOOTER_BYTES, SeekOrigin.End);
+          AudioFileStream.Seek(-ApeTagField.APE_TAG_FOOTER_BYTES, SeekOrigin.End);
 
           byte[] appeTagFooterBytes = Utils.RawSerializeEx(APETagFooter.TagFooter);
           nBytesRead = AudioFileStream.Read(appeTagFooterBytes, 0, APE_TAG_FOOTER_BYTES);
 
           if (nBytesRead == APE_TAG_FOOTER_BYTES && nBytesRead == appeTagFooterBytes.Length)
           {
-            APETagFooter.TagFooter = (APE_TAG_FOOTER.ApeFooterData)Utils.RawDeserializeEx(appeTagFooterBytes, typeof(APE_TAG_FOOTER.ApeFooterData));
+            APETagFooter.TagFooter =
+              (APE_TAG_FOOTER.ApeFooterData)
+              Utils.RawDeserializeEx(appeTagFooterBytes, typeof(APE_TAG_FOOTER.ApeFooterData));
 
             if (APETagFooter.GetIsValid(false))
             {
@@ -590,7 +614,7 @@ namespace Tag.MAC
 
       catch (Exception ex)
       {
-        Log.Error("ApeTag.ReadTags cause an exception in file {0} : {1}", base.FileName, ex.Message);
+        Log.Error("ApeTag.ReadTags cause an exception in file {0} : {1}", FileName, ex.Message);
         result = false;
       }
 
@@ -604,7 +628,7 @@ namespace Tag.MAC
       AudioFileStream.Read(buffer, 0, 8);
 
       bool hasV1Tag = (buffer[0] == 'A' && buffer[1] == 'P' && buffer[2] == 'E' && buffer[3] == 'T'
-          && buffer[4] == 'A' && buffer[5] == 'G' && buffer[6] == 'E' && buffer[7] == 'X');
+                       && buffer[4] == 'A' && buffer[5] == 'G' && buffer[6] == 'E' && buffer[7] == 'X');
 
       AudioFileStream.Position = currentStreamPosition;
       return hasV1Tag;
@@ -612,25 +636,29 @@ namespace Tag.MAC
 
     protected bool ReadHeader()
     {
-      int nBytesRead = 0;
-
       // find the descriptor
       ApeHeader.ApeFileInfo.nJunkHeaderBytes = FindDescriptor(true);
 
       if (ApeHeader.ApeFileInfo.nJunkHeaderBytes < 0)
+      {
         return false;
+      }
 
       // read the first 8 bytes of the descriptor (ID and version)
       byte[] commonHdrBytes = Utils.RawSerializeEx(ApeHeader.CommonHeader);
 
-      nBytesRead = AudioFileStream.Read(commonHdrBytes, 0, commonHdrBytes.Length);
-      ApeHeader.CommonHeader = (APE_HEADER.ApeCommonHeader)Utils.RawDeserializeEx(commonHdrBytes, typeof(APE_HEADER.ApeCommonHeader));
+      AudioFileStream.Read(commonHdrBytes, 0, commonHdrBytes.Length);
+      ApeHeader.CommonHeader =
+        (APE_HEADER.ApeCommonHeader) Utils.RawDeserializeEx(commonHdrBytes, typeof(APE_HEADER.ApeCommonHeader));
 
       // make sure we're at the ID
-      if (ApeHeader.CommonHeader.cID[0] != 'M' || ApeHeader.CommonHeader.cID[1] != 'A' || ApeHeader.CommonHeader.cID[2] != 'C' || ApeHeader.CommonHeader.cID[3] != ' ')
+      if (ApeHeader.CommonHeader.cID[0] != 'M' || ApeHeader.CommonHeader.cID[1] != 'A' ||
+          ApeHeader.CommonHeader.cID[2] != 'C' || ApeHeader.CommonHeader.cID[3] != ' ')
+      {
         return false;
+      }
 
-      bool result = false;
+      bool result;
 
       if (ApeHeader.CommonHeader.nVersion >= 3980)
       {
@@ -648,48 +676,60 @@ namespace Tag.MAC
 
     protected bool ReadHeaderCurrent(ref APE_HEADER.APE_FILE_INFO pInfo)
     {
-      int nBytesRead = 0;
+      int nBytesRead;
 
       // read the descriptor
       AudioFileStream.Seek(pInfo.nJunkHeaderBytes, SeekOrigin.Begin);
       byte[] apeDescriptorBytes = Utils.RawSerializeEx(pInfo.spAPEDescriptor);
 
       nBytesRead = AudioFileStream.Read(apeDescriptorBytes, 0, apeDescriptorBytes.Length);
-      pInfo.spAPEDescriptor = (APE_HEADER.APE_DESCRIPTOR)Utils.RawDeserializeEx(apeDescriptorBytes, typeof(APE_HEADER.APE_DESCRIPTOR));
+      pInfo.spAPEDescriptor =
+        (APE_HEADER.APE_DESCRIPTOR) Utils.RawDeserializeEx(apeDescriptorBytes, typeof(APE_HEADER.APE_DESCRIPTOR));
 
       if ((pInfo.spAPEDescriptor.nDescriptorBytes - nBytesRead) > 0)
+      {
         AudioFileStream.Seek(pInfo.spAPEDescriptor.nDescriptorBytes - nBytesRead, SeekOrigin.Current);
+      }
 
       // read the header
       byte[] headerBytes = Utils.RawSerializeEx(ApeHeader.Header);
       nBytesRead = AudioFileStream.Read(headerBytes, 0, headerBytes.Length);
-      ApeHeader.Header = (APE_HEADER.ApeHeader)Utils.RawDeserializeEx(headerBytes, typeof(APE_HEADER.ApeHeader));
+      ApeHeader.Header = (APE_HEADER.ApeHeader) Utils.RawDeserializeEx(headerBytes, typeof(APE_HEADER.ApeHeader));
 
       if ((pInfo.spAPEDescriptor.nHeaderBytes - nBytesRead) > 0)
+      {
         AudioFileStream.Seek(pInfo.spAPEDescriptor.nHeaderBytes - nBytesRead, SeekOrigin.Current);
+      }
 
       // fill the APE info structure
-      pInfo.nVersion = (int)(pInfo.spAPEDescriptor.nVersion);
-      pInfo.nCompressionLevel = (int)(ApeHeader.Header.nCompressionLevel);
-      pInfo.nFormatFlags = (int)(ApeHeader.Header.nFormatFlags);
-      pInfo.nTotalFrames = (int)(ApeHeader.Header.nTotalFrames);
-      pInfo.nFinalFrameBlocks = (int)(ApeHeader.Header.nFinalFrameBlocks);
-      pInfo.nBlocksPerFrame = (int)(ApeHeader.Header.nBlocksPerFrame);
-      pInfo.nChannels = (int)(ApeHeader.Header.nChannels);
-      pInfo.nSampleRate = (int)(ApeHeader.Header.nSampleRate);
-      pInfo.nBitsPerSample = (int)(ApeHeader.Header.nBitsPerSample);
-      pInfo.nBytesPerSample = pInfo.nBitsPerSample / 8;
-      pInfo.nBlockAlign = pInfo.nBytesPerSample * pInfo.nChannels;
-      pInfo.nTotalBlocks = (ApeHeader.Header.nTotalFrames == 0) ? 0 : (int)(((ApeHeader.Header.nTotalFrames - 1) * pInfo.nBlocksPerFrame) + ApeHeader.Header.nFinalFrameBlocks);
+      pInfo.nVersion = pInfo.spAPEDescriptor.nVersion;
+      pInfo.nCompressionLevel = ApeHeader.Header.nCompressionLevel;
+      pInfo.nFormatFlags = ApeHeader.Header.nFormatFlags;
+      pInfo.nTotalFrames = (int) (ApeHeader.Header.nTotalFrames);
+      pInfo.nFinalFrameBlocks = (int) (ApeHeader.Header.nFinalFrameBlocks);
+      pInfo.nBlocksPerFrame = (int) (ApeHeader.Header.nBlocksPerFrame);
+      pInfo.nChannels = ApeHeader.Header.nChannels;
+      pInfo.nSampleRate = (int) (ApeHeader.Header.nSampleRate);
+      pInfo.nBitsPerSample = ApeHeader.Header.nBitsPerSample;
+      pInfo.nBytesPerSample = pInfo.nBitsPerSample/8;
+      pInfo.nBlockAlign = pInfo.nBytesPerSample*pInfo.nChannels;
+      pInfo.nTotalBlocks = (ApeHeader.Header.nTotalFrames == 0)
+                             ? 0
+                             :
+                           (int)
+                           (((ApeHeader.Header.nTotalFrames - 1)*pInfo.nBlocksPerFrame) +
+                            ApeHeader.Header.nFinalFrameBlocks);
       //pInfo.nWAVHeaderBytes = (ApeHeader.Header.nFormatFlags & MAC_FORMAT_FLAG_CREATE_WAV_HEADER) ? sizeof(WAVE_HEADER) : pInfo.spAPEDescriptor.nHeaderDataBytes;
-      pInfo.nWAVTerminatingBytes = (int)pInfo.spAPEDescriptor.nTerminatingDataBytes;
-      pInfo.nWAVDataBytes = pInfo.nTotalBlocks * pInfo.nBlockAlign;
+      pInfo.nWAVTerminatingBytes = (int) pInfo.spAPEDescriptor.nTerminatingDataBytes;
+      pInfo.nWAVDataBytes = pInfo.nTotalBlocks*pInfo.nBlockAlign;
       pInfo.nWAVTotalBytes = pInfo.nWAVDataBytes + pInfo.nWAVHeaderBytes + pInfo.nWAVTerminatingBytes;
-      pInfo.nAPETotalBytes = (int)AudioFileStream.Length;
-      pInfo.nLengthMS = (int)(((double)(pInfo.nTotalBlocks) * (double)(1000)) / (double)(pInfo.nSampleRate));
-      pInfo.nAverageBitrate = (pInfo.nLengthMS <= 0) ? 0 : (int)(((double)(pInfo.nAPETotalBytes) * (double)(8)) / (double)(pInfo.nLengthMS));
-      pInfo.nDecompressedBitrate = (pInfo.nBlockAlign * pInfo.nSampleRate * 8) / 1000;
-      pInfo.nSeekTableElements = (int)pInfo.spAPEDescriptor.nSeekTableBytes / 4;
+      pInfo.nAPETotalBytes = (int) AudioFileStream.Length;
+      pInfo.nLengthMS = (int) (((double) (pInfo.nTotalBlocks)*(double) (1000))/pInfo.nSampleRate);
+      pInfo.nAverageBitrate = (pInfo.nLengthMS <= 0)
+                                ? 0
+                                : (int) (((double) (pInfo.nAPETotalBytes)*(double) (8))/pInfo.nLengthMS);
+      pInfo.nDecompressedBitrate = (pInfo.nBlockAlign*pInfo.nSampleRate*8)/1000;
+      pInfo.nSeekTableElements = (int) pInfo.spAPEDescriptor.nSeekTableBytes/4;
 
       return true;
     }
@@ -711,31 +751,31 @@ namespace Tag.MAC
       int nJunkBytes = 0;
 
       // skip an ID3v2 tag (which we really don't support anyway...)
-      int nBytesRead = 0;
+      int nBytesRead;
       byte[] cID3v2Header = new byte[10];
 
-      nBytesRead = AudioFileStream.Read(cID3v2Header, 0, 10);
+      AudioFileStream.Read(cID3v2Header, 0, 10);
       if (cID3v2Header[0] == 'I' && cID3v2Header[1] == 'D' && cID3v2Header[2] == '3')
       {
-        // why is it so hard to figure the lenght of an ID3v2 tag ?!?
-        uint nLength = cID3v2Header[6];
+        //// why is it so hard to figure the lenght of an ID3v2 tag ?!?
+        //uint nLength = cID3v2Header[6];  JoeDalton: unused
 
-        uint nSyncSafeLength = 0;
-        nSyncSafeLength = (uint)(cID3v2Header[6] & 127) << 21;
-        nSyncSafeLength += (uint)(cID3v2Header[7] & 127) << 14;
-        nSyncSafeLength += (uint)(cID3v2Header[8] & 127) << 7;
-        nSyncSafeLength += (uint)(cID3v2Header[9] & 127);
+        uint nSyncSafeLength;
+        nSyncSafeLength = (uint) (cID3v2Header[6] & 127) << 21;
+        nSyncSafeLength += (uint) (cID3v2Header[7] & 127) << 14;
+        nSyncSafeLength += (uint) (cID3v2Header[8] & 127) << 7;
+        nSyncSafeLength += (uint) (cID3v2Header[9] & 127);
 
         bool bHasTagFooter = false;
 
         if ((cID3v2Header[5] & 16) > 0)
         {
           bHasTagFooter = true;
-          nJunkBytes = (int)nSyncSafeLength + 20;
+          nJunkBytes = (int) nSyncSafeLength + 20;
         }
         else
         {
-          nJunkBytes = (int)nSyncSafeLength + 10;
+          nJunkBytes = (int) nSyncSafeLength + 10;
         }
 
         // error check
@@ -771,13 +811,15 @@ namespace Tag.MAC
       int nReadID = BitConverter.ToInt32(readIDBytes, 0);
 
       if (nBytesRead != 4)
+      {
         return -1;
+      }
 
       nBytesRead = 1;
 
       int nScanBytes = 0;
 
-      while ((nGoalID != nReadID) && (nBytesRead == 1) && (nScanBytes < (1024 * 1024)))
+      while ((nGoalID != nReadID) && (nBytesRead == 1) && (nScanBytes < (1024*1024)))
       {
         byte[] cTempBytes = new byte[1];
         nBytesRead = AudioFileStream.Read(cTempBytes, 0, 1);
@@ -789,7 +831,9 @@ namespace Tag.MAC
       }
 
       if (nGoalID != nReadID)
+      {
         nJunkBytes = -1;
+      }
 
       // seek to the proper place (depending on result and settings)
       if (bSeek && (nJunkBytes != -1))
@@ -854,16 +898,20 @@ namespace Tag.MAC
       buffer = new byte[4];
       ms.Read(buffer, 0, 4);
       int fieldFlags = BitConverter.ToInt32(buffer, 0);
-      int nameLength = 0;
+      int nameLength;
 
       for (nameLength = 0; nameLength < pBuffer.Length; nameLength++)
       {
         if (pBuffer[ms.Position + nameLength] == 0)
+        {
           break;
+        }
       }
 
       if (nameLength >= pBuffer.Length)
+      {
         return false;
+      }
 
       buffer = new byte[nameLength];
       ms.Read(buffer, 0, buffer.Length);
@@ -875,7 +923,7 @@ namespace Tag.MAC
       ms.Read(buffer, 0, buffer.Length);
 
       SetFieldBinary(fieldName, buffer, fieldSize, fieldFlags);
-      pBytes = (int)ms.Position;
+      pBytes = (int) ms.Position;
       return true;
     }
 
@@ -883,18 +931,20 @@ namespace Tag.MAC
     {
       //Console.WriteLine(pFieldName);
       if (pFieldName.Length == 0)
-        return false;
-
-      // check to see if we're trying to remove the field (by setting it to NULL or an empty string)
-      bool bRemoving = (pFieldValue == null) || (nFieldBytes <= 0);
-
-      // get the index
-      int nFieldIndex = GetTagFieldIndex(pFieldName);
-
-      if (nFieldIndex != -1)
       {
-        nFieldIndex = FieldList.Count;
+        return false;
       }
+
+      //// check to see if we're trying to remove the field (by setting it to NULL or an empty string)
+      //bool bRemoving = (pFieldValue == null) || (nFieldBytes <= 0);  JoeDalton: not used
+
+      //JoeDalton: not used
+      // get the index
+      //int nFieldIndex = GetTagFieldIndex(pFieldName);
+      //if (nFieldIndex != -1)
+      //{
+      //  nFieldIndex = FieldList.Count;
+      //}
 
       // create the field and add it to the field array
       FieldList.Add(new ApeTagField(pFieldName, pFieldValue, nFieldBytes, nFieldFlags));
@@ -904,12 +954,16 @@ namespace Tag.MAC
     protected int GetTagFieldIndex(string pFieldName)
     {
       if (pFieldName == null)
+      {
         return -1;
+      }
 
       for (int z = 0; z < FieldList.Count; z++)
       {
         if (FieldList[z].GetFieldName().CompareTo(pFieldName) == 0)
+        {
           return z;
+        }
       }
 
       return -1;
@@ -924,7 +978,9 @@ namespace Tag.MAC
         ApeTagField field = FieldList[i];
 
         if (field.GetFieldName().ToLower().CompareTo(sFieldName) == 0)
+        {
           return field;
+        }
       }
 
       return null;
@@ -935,20 +991,26 @@ namespace Tag.MAC
       ApeTagField field = GetTagField(sFieldName);
 
       if (field == null)
+      {
         return string.Empty;
+      }
 
       byte[] val = field.FieldValue;
 
       if (val == null)
+      {
         return string.Empty;
+      }
 
-      return System.Text.Encoding.UTF8.GetString(val);
+      return Encoding.UTF8.GetString(val);
     }
 
     protected string GetFieldStringSearch(string sPartialFieldName)
     {
       if (sPartialFieldName.Length < 5)
+      {
         return string.Empty;
+      }
 
       sPartialFieldName = sPartialFieldName.ToLower();
 
@@ -959,9 +1021,11 @@ namespace Tag.MAC
           byte[] val = tagField.FieldValue;
 
           if (val == null)
+          {
             return string.Empty;
+          }
 
-          return System.Text.Encoding.UTF8.GetString(val);
+          return Encoding.UTF8.GetString(val);
         }
       }
 
@@ -973,7 +1037,9 @@ namespace Tag.MAC
       string sVal = GetFieldString(sFieldName);
 
       if (sVal.Length == 0)
+      {
         return 0;
+      }
 
       try
       {
@@ -991,7 +1057,9 @@ namespace Tag.MAC
       ApeTagField field = GetTagField(sFieldName);
 
       if (field == null)
+      {
         return null;
+      }
 
       return field.FieldValue;
     }

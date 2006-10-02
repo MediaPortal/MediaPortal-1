@@ -20,16 +20,8 @@
  */
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Drawing;
-using Tag;
-using Tag.MAC;
-using Tag.OGG;
-
-using MediaPortal.GUI.Library;
 
 namespace Tag
 {
@@ -279,6 +271,7 @@ namespace Tag
         _CoverImage.Dispose();
         _CoverImage = null;
       }
+      GC.SuppressFinalize(this);  //if Dispose is called, don't call the destructor anymore
     }
 
     virtual public bool Read(string fileName)
