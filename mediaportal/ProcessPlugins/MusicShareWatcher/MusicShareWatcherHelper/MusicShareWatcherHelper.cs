@@ -267,18 +267,25 @@ namespace MediaPortal.MusicShareWatcher
     // Method to scan sub directories for files
     private static void ScanDir(DirectoryInfo di)
     {
-      // First add all files found in this directory
-      FileSystemInfo[] files = di.GetFiles();
-      foreach (FileInfo newfile in files)
+      try
       {
-        string strFileName = di.FullName + "\\" + newfile;
-        AddNewSong(strFileName);
+        // First add all files found in this directory
+        FileSystemInfo[] files = di.GetFiles();
+        foreach (FileInfo newfile in files)
+        {
+          string strFileName = di.FullName + "\\" + newfile;
+          AddNewSong(strFileName);
+        }
+        // Now we get all Sub directories and scan trough them as well
+        FileSystemInfo[] dirs = di.GetDirectories();
+        foreach (DirectoryInfo subDir in dirs)
+        {
+          ScanDir(subDir);
+        }
       }
-      // Now we get all Sub directories and scan trough them as well
-      FileSystemInfo[] dirs = di.GetDirectories();
-      foreach (DirectoryInfo subDir in dirs)
+      catch (DirectoryNotFoundException)
       {
-        ScanDir(subDir);
+        Log.Warn(LogType.MusicShareWatcher, "Directory Deleted or renamed before scanning: {0}", di.Name);
       }
     }
 
