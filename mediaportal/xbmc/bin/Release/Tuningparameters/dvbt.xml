@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="iso-8859-1" ?>
-<!-- changed : 27-September-2006 by infinityloop				-->
+<!-- changed : 02-October-2006 by dman_lfc				-->
 <!-- contains:										-->
 <!--   - Australia 								-->
 <!--   - Austria 									-->
@@ -13,6 +13,7 @@
 <!--   - Netherlands 							-->
 <!--   - New Zealand							-->
 <!--   - Norway 									-->
+<!--   - Singapore                -->
 <!--   - Spain 										-->
 <!--   - Sweden 									-->
 <!--   - Taiwan 									-->
@@ -1062,8 +1063,13 @@
 	<country name="Norway - Oslo (trials)" offset="0">
 		<carrier frequency="722000" bandwidth="8" />
 		<carrier frequency="770000" bandwidth="8" />
-	</country> 
-	<country name="Spain - Andalucia - Almeria">
+	</country>
+  <country name="Singapore">
+    <carrier frequency="538000" bandwidth="8" />
+    <carrier frequency="602000" bandwidth="8" />
+    <carrier frequency="610000" bandwidth="8" />
+  </country>
+  <country name="Spain - Andalucia - Almeria">
 		<carrier frequency="778000" bandwidth="8" />
 		<carrier frequency="762000" bandwidth="8" />
 		<carrier frequency="834000" bandwidth="8" />
