@@ -72,10 +72,11 @@
         <control>
         	<type>image</type>
             	<id>1021</id>
-         	<posX>190</posX>
+         	<posX>160</posX>
          	<posY>248</posY>
-         	<width>150</width>
-         	<height>225</height>
+		<width>200</width>
+		<height>240</height>
+		<align>right</align>
             	<texture>-</texture>
 	</control>
 	<control>
