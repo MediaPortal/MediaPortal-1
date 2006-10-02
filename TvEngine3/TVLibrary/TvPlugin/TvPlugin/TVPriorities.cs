@@ -439,10 +439,8 @@ namespace TvPlugin
                 if (dlgYesNo.IsConfirmed)
                 {
                   RemoteControl.Instance.StopRecordingSchedule(rec.IdSchedule);
-                  CanceledSchedule schedule = CanceledSchedule.Create();
-                  schedule.CancelDateTime = rec.StartTime;
-                  schedule.Schedule = rec;
-                  DatabaseManager.Instance.SaveChanges();
+                  CanceledSchedule schedule = new CanceledSchedule(rec.IdSchedule,rec.StartTime);
+                  rec.Persist();
                   RemoteControl.Instance.OnNewSchedule();
                 }
               }
@@ -450,10 +448,8 @@ namespace TvPlugin
             else
             {
               RemoteControl.Instance.StopRecordingSchedule(rec.IdSchedule);
-              CanceledSchedule schedule = CanceledSchedule.Create();
-              schedule.CancelDateTime = rec.StartTime;
-              schedule.Schedule = rec;
-              DatabaseManager.Instance.SaveChanges();
+              CanceledSchedule schedule = new CanceledSchedule(rec.IdSchedule, rec.StartTime);
+              rec.Persist();
               RemoteControl.Instance.OnNewSchedule();
             }
             LoadDirectory();
@@ -479,14 +475,14 @@ namespace TvPlugin
                 if (dlgYesNo.IsConfirmed)
                 {
                   RemoteControl.Instance.StopRecordingSchedule(rec.IdSchedule);
-                  rec.DeleteAll();
+                  rec.Delete();
                   RemoteControl.Instance.OnNewSchedule();
                 }
               }
             }
             else
             {
-              rec.DeleteAll();
+              rec.Delete();
               RemoteControl.Instance.OnNewSchedule();
             }
             LoadDirectory();
@@ -601,7 +597,7 @@ namespace TvPlugin
             rec.Canceled = Schedule.MinSchedule;
             break;
         }
-        DatabaseManager.Instance.SaveChanges();
+        rec.Persist();
         RemoteControl.Instance.OnNewSchedule();
         LoadDirectory();
 
@@ -679,7 +675,7 @@ namespace TvPlugin
       }
 
       rec.Priority = Schedule.HighestPriority - item - 1;
-      DatabaseManager.Instance.SaveChanges();
+      rec.Persist();
       RemoteControl.Instance.OnNewSchedule();
       LoadDirectory();
     }
@@ -714,7 +710,7 @@ namespace TvPlugin
 
       rec.Priority = Schedule.HighestPriority - item + 1;
 
-      DatabaseManager.Instance.SaveChanges();
+      rec.Persist();
       RemoteControl.Instance.OnNewSchedule();
       LoadDirectory();
     }
@@ -781,7 +777,7 @@ namespace TvPlugin
 
     void UpdateDescription()
     {
-      Schedule rec = Schedule.New();
+      Schedule rec = new Schedule(1,  "", Schedule.MinSchedule, Schedule.MinSchedule);
       SetProperties(rec);
       GUIListItem pItem = GetItem(GetSelectedItemNo());
       if (pItem == null)
@@ -814,7 +810,7 @@ namespace TvPlugin
 
       if (dlg.SelectedLabel == 0) rec.MaxAirings = Int32.MaxValue;
       else rec.MaxAirings = dlg.SelectedLabel;
-      DatabaseManager.Instance.SaveChanges();
+      rec.Persist();
       RemoteControl.Instance.OnNewSchedule();
     }
 
@@ -849,7 +845,7 @@ namespace TvPlugin
         case 884: rec.Quality = (int)Schedule.QualityType.Medium; break;
         case 885: rec.Quality = (int)Schedule.QualityType.High; break;
       }
-      DatabaseManager.Instance.SaveChanges();
+      rec.Persist();
       RemoteControl.Instance.OnNewSchedule();
     }
     #endregion

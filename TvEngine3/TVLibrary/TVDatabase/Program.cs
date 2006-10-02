@@ -239,5 +239,34 @@ namespace TvDatabase
       foreach (Favorite favorite in list)
         favorite.Remove();
     }
+    /// <summary>
+    /// Checks if the program is running between the specified start and end time/dates
+    /// </summary>
+    /// <param name="tStartTime">Start date and time</param>
+    /// <param name="tEndTime">End date and time</param>
+    /// <returns>true if program is running between tStartTime-tEndTime</returns>
+    public bool RunningAt(DateTime tStartTime, DateTime tEndTime)
+    {
+      DateTime dtStart = StartTime;
+      DateTime dtEnd = EndTime;
+
+      bool bRunningAt = false;
+      if (dtEnd >= tStartTime && dtEnd <= tEndTime) bRunningAt = true;
+      if (dtStart >= tStartTime && dtStart <= tEndTime) bRunningAt = true;
+      if (dtStart <= tStartTime && dtEnd >= tEndTime) bRunningAt = true;
+      return bRunningAt;
+    }
+
+    /// <summary>
+    /// Checks if the program is running at the specified date/time
+    /// </summary>
+    /// <param name="tCurTime">date and time</param>
+    /// <returns>true if program is running at tCurTime</returns>
+    public bool IsRunningAt(DateTime tCurTime)
+    {
+      bool bRunningAt = false;
+      if (tCurTime >= StartTime && tCurTime <= EndTime) bRunningAt = true;
+      return bRunningAt;
+    }
 	}
 }

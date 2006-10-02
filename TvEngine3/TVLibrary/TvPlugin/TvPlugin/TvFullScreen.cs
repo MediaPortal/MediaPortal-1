@@ -736,7 +736,7 @@ namespace TvPlugin
 
         Program prog = TVHome.Navigator.GetChannel(channel).CurrentProgram;
         VirtualCard card;
-        if (RemoteControl.Instance.IsRecording(channel,out card))
+        if (RemoteControl.Instance.IsRecording(channel, out card))
         {
           _dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
           _dlgYesNo.SetHeading(1449); // stop recording
@@ -798,19 +798,15 @@ namespace TvPlugin
 
               Log.Write("5");
               _bottomDialogMenuVisible = false;
+              Schedule rec;
               switch (_dialogBottomMenu.SelectedId)
               {
                 case 875:
                   //record current program
                   _isStartingTSForRecording = !g_Player.IsTimeShifting;
                   Program program = TVHome.Navigator.Channel.CurrentProgram;
-                  Schedule rec = Schedule.Create();
-                  rec.ProgramName = program.Title;
-                  rec.Channel = program.Channel;
-                  rec.StartTime = program.StartTime;
-                  rec.EndTime = program.EndTime;
-                  rec.ScheduleType = (int)ScheduleRecordingType.Once;
-                  DatabaseManager.SaveChanges();
+                  rec = new Schedule(program.IdChannel, program.Title, program.StartTime, program.EndTime);
+                  rec.Persist();
                   RemoteControl.Instance.OnNewSchedule();
                   break;
 
@@ -818,12 +814,8 @@ namespace TvPlugin
                   //manual record
                   _isStartingTSForRecording = !g_Player.IsTimeShifting;
 
-                  Schedule newSchedule = Schedule.Create();
-                  newSchedule.Channel = TVHome.Navigator.Channel;
-                  newSchedule.StartTime = DateTime.Now;
-                  newSchedule.EndTime = DateTime.Now.AddDays(1);
-                  newSchedule.ProgramName = GUILocalizeStrings.Get(413) + " (" + TVHome.Navigator.Channel.Name + ")";
-                  DatabaseManager.SaveChanges();
+                  rec = new Schedule(TVHome.Navigator.Channel.IdChannel, GUILocalizeStrings.Get(413) + " (" + TVHome.Navigator.Channel.Name + ")", DateTime.Now, DateTime.Now.AddDays(1));
+                  rec.Persist();
                   RemoteControl.Instance.OnNewSchedule();
                   break;
                 default:
@@ -837,13 +829,9 @@ namespace TvPlugin
 
             Log.Write("bah");
             _isStartingTSForRecording = !g_Player.IsTimeShifting;
+            Schedule rec = new Schedule(TVHome.Navigator.Channel.IdChannel, (int)ScheduleRecordingType.Once, GUILocalizeStrings.Get(413) + " (" + TVHome.Navigator.Channel.Name + ")", DateTime.Now, DateTime.Now.AddDays(1), 1, 1, "", 1, 1, Schedule.MinSchedule, 5, 5, Schedule.MinSchedule);
 
-            Schedule newSchedule = Schedule.Create();
-            newSchedule.Channel = TVHome.Navigator.Channel;
-            newSchedule.StartTime = DateTime.Now;
-            newSchedule.EndTime = DateTime.Now.AddDays(1);
-            newSchedule.ProgramName = GUILocalizeStrings.Get(413) + " (" + TVHome.Navigator.Channel.Name + ")";
-            DatabaseManager.SaveChanges();
+            rec.Persist();
             RemoteControl.Instance.OnNewSchedule();
           }
 
@@ -1279,7 +1267,7 @@ namespace TvPlugin
         dlg.AddLocalizedString(902); // MSN Online contacts
       }
 
-      IAudioStream[] streams=TVHome.Card.AvailableAudioStreams;
+      IAudioStream[] streams = TVHome.Card.AvailableAudioStreams;
       if (streams != null && streams.Length > 0)
       {
         dlg.AddLocalizedString(492); // Audio language menu
@@ -1486,13 +1474,13 @@ namespace TvPlugin
       dlg.SetHeading(492); // set audio language menu
 
       dlg.ShowQuickNumbers = true;
-      
-      IAudioStream[] streams=TVHome.Card.AvailableAudioStreams;
-      IAudioStream streamCurrent=TVHome.Card.AudioStream;
+
+      IAudioStream[] streams = TVHome.Card.AvailableAudioStreams;
+      IAudioStream streamCurrent = TVHome.Card.AudioStream;
       int selected = 0;
       for (int i = 0; i < streams.Length; i++)
       {
-        if (streamCurrent==streams[i])
+        if (streamCurrent == streams[i])
         {
           selected = i;
         }
@@ -1512,7 +1500,7 @@ namespace TvPlugin
       // Set new language			
       if ((dlg.SelectedLabel >= 0) && (dlg.SelectedLabel < streams.Length))
       {
-        TVHome.Card.AudioStream=streams[dlg.SelectedLabel];
+        TVHome.Card.AudioStream = streams[dlg.SelectedLabel];
         if (g_Player.Paused == false)
         {
           g_Player.Pause();
@@ -1674,7 +1662,7 @@ namespace TvPlugin
 
           // Set recorder status
           VirtualCard card;
-          if (RemoteControl.Instance.IsRecording(TVHome.Navigator.CurrentChannel,out card))
+          if (RemoteControl.Instance.IsRecording(TVHome.Navigator.CurrentChannel, out card))
           {
             ShowControl(GetID, (int)Control.REC_LOGO);
           }
@@ -2086,17 +2074,19 @@ namespace TvPlugin
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
 
         string displayedChannelName = string.Empty;
-
+        GroupMap map = (GroupMap)TVHome.Navigator.CurrentGroup.ReferringGroupMap()[Int32.Parse(_channelName) - 1];
         if (_byIndex)
-          displayedChannelName = TVHome.Navigator.CurrentGroup.GroupMaps[Int32.Parse(_channelName) - 1].Channel.Name;
+          displayedChannelName = map.ReferencedChannel().Name;
         else
-          for (int ChannelCnt = 0; ChannelCnt < TVHome.Navigator.CurrentGroup.GroupMaps.Count; ChannelCnt++)
-            if (TVHome.Navigator.CurrentGroup.GroupMaps[ChannelCnt].Channel.SortOrder == Int32.Parse(_channelName))
+          for (int ChannelCnt = 0; ChannelCnt < TVHome.Navigator.CurrentGroup.ReferringGroupMap().Count; ChannelCnt++)
+          {
+            map = (GroupMap)TVHome.Navigator.CurrentGroup.ReferringGroupMap()[ChannelCnt];
+            if (map.ReferencedChannel().SortOrder == Int32.Parse(_channelName))
             {
-              displayedChannelName = TVHome.Navigator.CurrentGroup.GroupMaps[ChannelCnt].Channel.Name;
+              displayedChannelName = map.ReferencedChannel().Name;
               break;
             }
-
+          }
         if (displayedChannelName != string.Empty)
           msg.Label = String.Format("{0} {1} ({2})", GUILocalizeStrings.Get(602), _channelName, displayedChannelName);  // Channel
         else

@@ -1100,15 +1100,8 @@ namespace TvPlugin
           program = (Program)programs[offset + ichan];
         else
         {
-          program = Program.New();
-          if (ichan == 0)
-          {
-            program.StartTime = DateTime.Now;
-            program.EndTime = DateTime.Now;
-            program.Title = "-";
-            program.Genre = "-";
-          }
-          program.Channel = channel;
+          program = new Program(channel.IdChannel, DateTime.Now, DateTime.Now, "-", "-", "-", false);
+
         }
 
         int ypos = GetControl(ichan + (int)Controls.IMG_CHAN1).YPosition;
@@ -1276,12 +1269,7 @@ namespace TvPlugin
         DateTime dt = Utils.longtodate(iEnd);
         //dt=dt.AddMinutes(_timePerBlock);
         long iProgEnd = Utils.datetolong(dt);
-        Program prog = Program.New();
-        prog.Channel = channel;
-        prog.StartTime = Utils.longtodate(iStart);
-        prog.EndTime = Utils.longtodate(iProgEnd);
-        prog.Channel = channel;
-        prog.Title = GUILocalizeStrings.Get(736);//no tvguide data
+        Program prog = new Program(channel.IdChannel, Utils.longtodate(iStart), Utils.longtodate(iProgEnd), GUILocalizeStrings.Get(736), "", "", false);
         programs.Add(prog);
       }
       if (programs.Count > 0)
@@ -2141,8 +2129,7 @@ namespace TvPlugin
 
       if (_channelList.Count == 0)
       {
-        Channel newChannel = Channel.New();
-        newChannel.Name = GUILocalizeStrings.Get(911);
+        Channel newChannel = new Channel(GUILocalizeStrings.Get(911), false, true, 0, DateTime.MinValue, false, DateTime.MinValue, 0, true);
         for (int i = 0; i < 10; ++i)
           _channelList.Add(newChannel);
       }

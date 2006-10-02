@@ -258,7 +258,6 @@ namespace TvPlugin
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
-      DatabaseManager.FillCache();
 
 
       //DiskManagement.ImportDvrMsFiles();
@@ -729,8 +728,6 @@ namespace TvPlugin
       Utils.DeleteRecording(rec.FileName);
 
       rec.Delete();
-      DatabaseManager.SaveChanges();
-      DatabaseManager.Instance.ClearQueryCache();
 
       LoadDirectory();
       while (m_iSelectedItem >= GetItemCount() && m_iSelectedItem > 0) m_iSelectedItem--;
@@ -757,16 +754,12 @@ namespace TvPlugin
         if (rec.TimesWatched > 0)
         {
           rec.Delete();
-          DatabaseManager.SaveChanges();
-          DatabaseManager.Instance.Clear();
           //@Recorder.DeleteRecording(rec);
         }
         else if (!System.IO.File.Exists(rec.FileName))
         {
           //@Recorder.DeleteRecording(rec);
           rec.Delete();
-          DatabaseManager.SaveChanges();
-          DatabaseManager.Instance.Clear();
         }
       }
 
@@ -1046,8 +1039,6 @@ namespace TvPlugin
           if (String.Compare(rec.FileName, filename, true) == 0)
           {
             rec.Delete();
-            DatabaseManager.SaveChanges();
-            DatabaseManager.Instance.Clear();
             return;
           }
         }

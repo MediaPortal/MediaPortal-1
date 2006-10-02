@@ -186,8 +186,7 @@ namespace TvPlugin
       btnNotify.Selected = currentProgram.Notify;
 
       lstUpcomingEpsiodes.Clear();
-      Schedule recTmp = new Schedule(currentProgram.IdChannel, (int)ScheduleRecordingType.EveryTimeOnEveryChannel, currentProgram.Title,
-                      currentProgram.StartTime, currentProgram.EndTime, 1, 1, "", 1, 1, Schedule.MinSchedule, 5, 5, Schedule.MinSchedule);
+      Schedule recTmp = new Schedule(currentProgram.IdChannel,  currentProgram.Title,currentProgram.StartTime, currentProgram.EndTime);
       IList recs = TVHome.Util.GetRecordingTimes(recTmp);
       foreach (Schedule recSeries in recs)
       {
@@ -465,8 +464,7 @@ namespace TvPlugin
                 if (CheckIfRecording(rec))
                 {
                   RemoteControl.Instance.StopRecordingSchedule(rec.IdSchedule);
-                  rec.DeleteAll();
-                  DatabaseManager.SaveChanges();
+                  rec.Delete();
                   RemoteControl.Instance.OnNewSchedule();
                 }
               }
@@ -478,8 +476,7 @@ namespace TvPlugin
           if (CheckIfRecording(rec))
           {
             RemoteControl.Instance.StopRecordingSchedule(rec.IdSchedule);
-            rec.DeleteAll();
-            DatabaseManager.SaveChanges();
+            rec.Delete();
             RemoteControl.Instance.OnNewSchedule();
           }
         }
@@ -534,8 +531,7 @@ namespace TvPlugin
           }
         }
         Log.Write("new record");
-        rec = new Schedule(program.IdChannel, (int)ScheduleRecordingType.Once, program.Title,
-                            program.StartTime, program.EndTime, 1, 1, "", 1, 1, Schedule.MinSchedule, 5, 5, Schedule.MinSchedule);
+        rec = new Schedule(program.IdChannel, program.Title,program.StartTime, program.EndTime);
         rec.Persist();
         RemoteControl.Instance.OnNewSchedule();
       }
@@ -576,8 +572,7 @@ namespace TvPlugin
                   {
                     //cancel recording
                     RemoteControl.Instance.StopRecordingSchedule(rec.IdSchedule);
-                    rec.DeleteAll();
-                    DatabaseManager.SaveChanges();
+                    rec.Delete();
                     RemoteControl.Instance.OnNewSchedule();
                   }
                 }
@@ -592,8 +587,7 @@ namespace TvPlugin
               Log.Write("CheckIfRecording done");
               RemoteControl.Instance.StopRecordingSchedule(rec.IdSchedule);
               Log.Write("rec deleted");
-              rec.DeleteAll();
-              DatabaseManager.SaveChanges();
+              rec.Delete();
               RemoteControl.Instance.OnNewSchedule();
             }
           }
@@ -629,9 +623,7 @@ namespace TvPlugin
         dlg.DoModal(GetID);
         if (dlg.SelectedLabel == -1) return;
 
-        Schedule rec = new Schedule(currentProgram.IdChannel, (int)ScheduleRecordingType.Once,currentProgram.Title,
-                                      currentProgram.StartTime,currentProgram.EndTime,
-                                      1,1,"",1,1,Schedule.MinSchedule,5,5,Schedule.MinSchedule);
+        Schedule rec = new Schedule(currentProgram.IdChannel, currentProgram.Title,currentProgram.StartTime,currentProgram.EndTime);
         switch (dlg.SelectedId)
         {
           case 611://once
@@ -685,9 +677,7 @@ namespace TvPlugin
               dlgYesNo.DoModal(GetID);
               if (dlgYesNo.IsConfirmed)
               {
-                rec=new Schedule(currentProgram.IdChannel, (int)ScheduleRecordingType.Once, currentProgram.Title,
-                              nextNext.StartTime, nextNext.EndTime,
-                              1, 1, "", 1, 1, Schedule.MinSchedule, 5, 5, Schedule.MinSchedule);
+                rec=new Schedule(currentProgram.IdChannel,  currentProgram.Title,nextNext.StartTime, nextNext.EndTime);
                 rec.Persist();
                 RemoteControl.Instance.OnNewSchedule();
               }

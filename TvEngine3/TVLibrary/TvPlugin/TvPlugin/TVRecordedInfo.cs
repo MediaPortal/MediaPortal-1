@@ -146,7 +146,7 @@ namespace TvPlugin
           currentProgram.KeepUntil = (int)KeepMethodType.Always;
 					break;
 			}
-      DatabaseManager.Instance.SaveChanges();
+      currentProgram.Persist();
 		}
 	}
 }

@@ -251,9 +251,9 @@ namespace TvPlugin
     public void FillChannelList()
     {
       tvChannelList = new List<Channel>();
-      foreach (GroupMap map in TVHome.Navigator.CurrentGroup.GroupMaps)
+      foreach (GroupMap map in TVHome.Navigator.CurrentGroup.ReferringGroupMap())
       {
-        tvChannelList.Add(map.Channel);
+        tvChannelList.Add(map.ReferencedChannel());
       }
       lstChannels.Clear();
       Channel current = null;

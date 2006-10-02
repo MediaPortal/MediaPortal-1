@@ -321,24 +321,18 @@ namespace TvPlugin
                     case 875:
                       {
                         //record current program
-                        Schedule newSchedule = Schedule.Create();
-                        newSchedule.Channel = Navigator.Channel;
-                        newSchedule.StartTime = Navigator.Channel.CurrentProgram.StartTime;
-                        newSchedule.EndTime = Navigator.Channel.CurrentProgram.EndTime;
-                        newSchedule.ProgramName = Navigator.Channel.CurrentProgram.Title;
-                        DatabaseManager.SaveChanges();
+                        Schedule newSchedule = new Schedule(Navigator.Channel.IdChannel, Navigator.Channel.CurrentProgram.Title,
+                                                    Navigator.Channel.CurrentProgram.StartTime, Navigator.Channel.CurrentProgram.EndTime);
+                        newSchedule.Persist();
                         RemoteControl.Instance.OnNewSchedule();
                       }
                       break;
 
                     case 876:
                       {
-                        Schedule newSchedule = Schedule.Create();
-                        newSchedule.Channel = Navigator.Channel;
-                        newSchedule.StartTime = DateTime.Now;
-                        newSchedule.EndTime = DateTime.Now.AddDays(1);
-                        newSchedule.ProgramName = GUILocalizeStrings.Get(413) + " (" + Navigator.Channel.Name + ")";
-                        DatabaseManager.SaveChanges();
+                        Schedule newSchedule = new Schedule(Navigator.Channel.IdChannel, GUILocalizeStrings.Get(413) + " (" + Navigator.Channel.Name + ")",
+                                                    DateTime.Now, DateTime.Now.AddDays(1));
+                        newSchedule.Persist();
                         RemoteControl.Instance.OnNewSchedule();
                       }
                       break;
@@ -347,12 +341,9 @@ namespace TvPlugin
               }
               else
               {
-                Schedule newSchedule = Schedule.Create();
-                newSchedule.Channel = Navigator.Channel;
-                newSchedule.StartTime = DateTime.Now;
-                newSchedule.EndTime = DateTime.Now.AddDays(1);
-                newSchedule.ProgramName = GUILocalizeStrings.Get(413) + " (" + Navigator.Channel.Name + ")";
-                DatabaseManager.SaveChanges();
+                Schedule newSchedule = new Schedule(Navigator.Channel.IdChannel,  GUILocalizeStrings.Get(413) + " (" + Navigator.Channel.Name + ")",
+                                                    DateTime.Now, DateTime.Now.AddDays(1));
+                newSchedule.Persist();
                 RemoteControl.Instance.OnNewSchedule();
               }
             }
@@ -470,7 +461,7 @@ namespace TvPlugin
         {
           if (Navigator.CurrentGroup.ReferringGroupMap().Count > 0)
           {
-            GroupMap gm = Navigator.CurrentGroup.GroupMaps[0];
+            GroupMap gm = (GroupMap)Navigator.CurrentGroup.ReferringGroupMap()[0];
             channelName = gm.ReferencedChannel().Name;
           }
         }
@@ -530,7 +521,7 @@ namespace TvPlugin
       {
         if (Navigator.CurrentGroup.ReferringGroupMap().Count > 0)
         {
-          GroupMap gm = (GroupMap)Navigator.CurrentGroup.GroupMaps[0];
+          GroupMap gm = (GroupMap)Navigator.CurrentGroup.ReferringGroupMap()[0];
           ViewChannelAndCheck(gm.ReferencedChannel().Name);
         }
       }
@@ -545,7 +536,7 @@ namespace TvPlugin
       int selected = 0;
       for (int i = 0; i < Navigator.CurrentGroup.ReferringGroupMap().Count; ++i)
       {
-        GroupMap gm = (GroupMap)Navigator.CurrentGroup.GroupMaps[i];
+        GroupMap gm = (GroupMap)Navigator.CurrentGroup.ReferringGroupMap()[i];
         dlg.Add(gm.ReferencedChannel().Name);
         if (Navigator.CurrentChannel != null)
         {
@@ -746,24 +737,18 @@ namespace TvPlugin
             {
               case 875:
                 {
-                  Schedule newSchedule = Schedule.Create();
-                  newSchedule.Channel = Navigator.Channel;
-                  newSchedule.StartTime = Navigator.Channel.CurrentProgram.StartTime;
-                  newSchedule.EndTime = Navigator.Channel.CurrentProgram.EndTime;
-                  newSchedule.ProgramName = Navigator.Channel.CurrentProgram.Title;
-                  DatabaseManager.SaveChanges();
+                  Schedule newSchedule = new Schedule(Navigator.Channel.IdChannel,  Navigator.Channel.CurrentProgram.Title,
+                            Navigator.Channel.CurrentProgram.StartTime, Navigator.Channel.CurrentProgram.EndTime);
+                  newSchedule.Persist();
                   RemoteControl.Instance.OnNewSchedule();
                 }
                 break;
 
               case 876:
                 {
-                  Schedule newSchedule = Schedule.Create();
-                  newSchedule.Channel = Navigator.Channel;
-                  newSchedule.StartTime = DateTime.Now;
-                  newSchedule.EndTime = DateTime.Now.AddDays(1);
-                  newSchedule.ProgramName = GUILocalizeStrings.Get(413) + " (" + Navigator.Channel.Name + ")";
-                  DatabaseManager.SaveChanges();
+                  Schedule newSchedule = new Schedule(Navigator.Channel.IdChannel,  GUILocalizeStrings.Get(413) + " (" + Navigator.Channel.Name + ")",
+                                              DateTime.Now, DateTime.Now.AddDays(1));
+                  newSchedule.Persist();
                   RemoteControl.Instance.OnNewSchedule();
                 }
                 break;
@@ -773,12 +758,9 @@ namespace TvPlugin
         else
         {
           //manual record
-          Schedule newSchedule = Schedule.Create();
-          newSchedule.Channel = Navigator.Channel;
-          newSchedule.StartTime = DateTime.Now;
-          newSchedule.EndTime = DateTime.Now.AddDays(1);
-          newSchedule.ProgramName = GUILocalizeStrings.Get(413) + " (" + Navigator.Channel.Name + ")";
-          DatabaseManager.SaveChanges();
+          Schedule newSchedule = new Schedule(Navigator.Channel.IdChannel,  GUILocalizeStrings.Get(413) + " (" + Navigator.Channel.Name + ")",
+                                      DateTime.Now, DateTime.Now.AddDays(1));
+          newSchedule.Persist();
           RemoteControl.Instance.OnNewSchedule();
         }
       }
@@ -1013,7 +995,7 @@ namespace TvPlugin
           TVHome.Card.ChannelName != channel)
       {
 
-        if (g_Player.Playing )
+        if (g_Player.Playing)
         {
           SeekToEnd();
         }
@@ -1100,7 +1082,7 @@ namespace TvPlugin
 
       if (TVHome.Card.IsTimeShifting == false || TVHome.Card.ChannelName != channel)
       {
-        if (g_Player.Playing )
+        if (g_Player.Playing)
         {
           SeekToEnd();
         }
@@ -1113,7 +1095,7 @@ namespace TvPlugin
           {
             g_Player.Stop();
           }
-          if (!g_Player.Playing)   StartPlay();
+          if (!g_Player.Playing) StartPlay();
           return;
         }
         else
@@ -1265,9 +1247,9 @@ namespace TvPlugin
       double pos = g_Player.Duration;
       MediaPortal.GUI.Library.Log.Info("tvhome:seektoend dur:{0} pos:{1}", g_Player.Duration, g_Player.CurrentPosition);
       //if (pos > 2) pos -= 2;
-      g_Player.SeekAbsolute(pos); 
+      g_Player.SeekAbsolute(pos);
       MediaPortal.GUI.Library.Log.Info("tvhome:seektoend  done dur:{0} pos:{1}", g_Player.Duration, g_Player.CurrentPosition);
-      
+
     }
   }
 
@@ -1388,7 +1370,7 @@ namespace TvPlugin
               if (!groupContainsChannel)
               {
                 layer.AddChannelToGroup(channel, GUILocalizeStrings.Get(972));
-                DatabaseManager.SaveChanges();
+                
               }
             }
             break;
@@ -1403,15 +1385,13 @@ namespace TvPlugin
           {
             layer.AddChannelToGroup(channel, GUILocalizeStrings.Get(972));
           }
-          DatabaseManager.SaveChanges();
           MediaPortal.GUI.Library.Log.Info(" group:{0} created", GUILocalizeStrings.Get(972));
         }
 
-        DatabaseManager.Instance.ClearQueryCache();
         groups = ChannelGroup.ListAll();
         foreach (ChannelGroup group in groups)
         {
-          group.GroupMaps.ApplySort(new GroupMap.Comparer(), false);
+          //group.GroupMaps.ApplySort(new GroupMap.Comparer(), false);
           m_groups.Add(group);
         }
 
@@ -1536,7 +1516,7 @@ namespace TvPlugin
             m_currentgroup = m_zapgroup;
             if (CurrentGroup.ReferringGroupMap().Count > 0)
             {
-              GroupMap gm = (GroupMap)CurrentGroup.GroupMaps[0];
+              GroupMap gm = (GroupMap)CurrentGroup.ReferringGroupMap()[0];
               Channel chan = (Channel)gm.ReferencedChannel();
               m_zapchannel = chan.Name;
             }
@@ -1659,7 +1639,7 @@ namespace TvPlugin
       channelNr--;
       if (channelNr >= 0 && channelNr < channels.Count)
       {
-        GroupMap gm=(GroupMap)channels[channelNr];
+        GroupMap gm = (GroupMap)channels[channelNr];
         Channel chan = gm.ReferencedChannel();
         ZapToChannel(chan.Name, useZapDelay);
       }
@@ -1687,7 +1667,7 @@ namespace TvPlugin
       currindex++;
       if (currindex >= CurrentGroup.ReferringGroupMap().Count)
         currindex = 0;
-      GroupMap gm = (GroupMap)CurrentGroup.GroupMaps[currindex];
+      GroupMap gm = (GroupMap)CurrentGroup.ReferringGroupMap()[currindex];
       Channel chan = (Channel)gm.ReferencedChannel();
       m_zapchannel = chan.Name;
 

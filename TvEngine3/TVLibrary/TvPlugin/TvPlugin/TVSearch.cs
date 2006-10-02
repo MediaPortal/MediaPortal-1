@@ -1003,8 +1003,7 @@ namespace TvPlugin
 
         dlg.DoModal(GetID);
         if (dlg.SelectedLabel == -1) return;
-        Schedule rec = new Schedule(program.IdChannel, (int)ScheduleRecordingType.Once, program.Title,
-                                program.StartTime, program.EndTime, 1, 1, "", 1, 0, Schedule.MinSchedule, 5, 5, Schedule.MinSchedule);
+        Schedule rec = new Schedule(program.IdChannel, program.Title,program.StartTime, program.EndTime);
 
         switch (dlg.SelectedLabel)
         {

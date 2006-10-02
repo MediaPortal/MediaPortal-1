@@ -275,5 +275,9 @@ namespace TvDatabase
         return true;
       }
     }
+    public void Delete()
+    {
+      Remove();
+    }
 	}
 }

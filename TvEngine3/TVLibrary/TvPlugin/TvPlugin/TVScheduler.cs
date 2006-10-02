@@ -186,8 +186,6 @@ namespace TvPlugin
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
-      DatabaseManager.Instance.ClearQueryCache();
-      DatabaseManager.FillCache();
       //@      ConflictManager.OnConflictsUpdated += new MediaPortal.TV.Recording.ConflictManager.OnConflictsUpdatedHandler(ConflictManager_OnConflictsUpdated);
 
       LoadSettings();
@@ -807,24 +805,18 @@ namespace TvPlugin
                 if (dlgYesNo.IsConfirmed)
                 {
                   RemoteControl.Instance.StopRecordingSchedule(rec.IdSchedule);
-                  CanceledSchedule schedule = CanceledSchedule.Create();
-                  schedule.CancelDateTime = rec.StartTime;
-                  schedule.Schedule = rec;
-                  DatabaseManager.Instance.SaveChanges();
+                  CanceledSchedule schedule = new CanceledSchedule(rec.IdSchedule, rec.StartTime);
+                  schedule.Persist();
                   RemoteControl.Instance.OnNewSchedule();
-                  DatabaseManager.FillCache();
                 }
               }
             }
             else
             {
               RemoteControl.Instance.StopRecordingSchedule(rec.IdSchedule);
-              CanceledSchedule schedule = CanceledSchedule.Create();
-              schedule.CancelDateTime = rec.StartTime;
-              schedule.Schedule = rec;
-              DatabaseManager.Instance.SaveChanges();
+              CanceledSchedule schedule = new CanceledSchedule(rec.IdSchedule, rec.StartTime);
+              schedule.Persist();
               RemoteControl.Instance.OnNewSchedule();
-              DatabaseManager.FillCache();
             }
             LoadDirectory();
           }
@@ -857,7 +849,7 @@ namespace TvPlugin
             {
               rec.Delete();
               RemoteControl.Instance.OnNewSchedule();
-              DatabaseManager.FillCache();
+              
             }
             LoadDirectory();
           }
@@ -970,9 +962,8 @@ namespace TvPlugin
             rec.Canceled = Schedule.MinSchedule;
             break;
         }
-        DatabaseManager.SaveChanges();
+        rec.Persist();
         RemoteControl.Instance.OnNewSchedule();
-        DatabaseManager.FillCache();
         LoadDirectory();
 
       }
@@ -1013,7 +1004,7 @@ namespace TvPlugin
       dlg.DoModal(GetID);
       if (dlg.SelectedLabel < 0) return;
 
-      Channel selectedChannel = channels[dlg.SelectedLabel].Channel as Channel;
+      Channel selectedChannel = ((GroupMap)channels[dlg.SelectedLabel]).ReferencedChannel() as Channel;
       dlg.Reset();
       dlg.SetHeading(616);//select recording type
       for (int i = 611; i <= 615; ++i)
@@ -1023,8 +1014,7 @@ namespace TvPlugin
       dlg.Add(GUILocalizeStrings.Get(672));// 672=Record Mon-Fri
       dlg.Add(GUILocalizeStrings.Get(1051));// 1051=Record Sat-Sun
 
-      Schedule rec = Schedule.Create();
-      rec.Channel = selectedChannel;
+      Schedule rec = new Schedule(selectedChannel.IdChannel, "", Schedule.MinSchedule, Schedule.MinSchedule);
 
       if (!isQuickRecord)
       {
@@ -1137,9 +1127,8 @@ namespace TvPlugin
       rec.StartTime = new DateTime(dtNow.Year, dtNow.Month, dtNow.Day, hour, minute, 0, 0);
       rec.EndTime = rec.StartTime.AddMinutes(duration);
       rec.ProgramName = GUILocalizeStrings.Get(413) + " (" + rec.ReferencedChannel().Name + ")";
-      DatabaseManager.SaveChanges();
+      rec.Persist();
       RemoteControl.Instance.OnNewSchedule();
-      DatabaseManager.FillCache();
       LoadDirectory();
     }
 
@@ -1172,9 +1161,8 @@ namespace TvPlugin
           //@rec.Channel = dlg.Channel;
           rec.EndTime = dlg.EndDateTime;
           rec.Canceled = Schedule.MinSchedule;
-          DatabaseManager.SaveChanges();
+          rec.Persist();
           RemoteControl.Instance.OnNewSchedule();
-          DatabaseManager.FillCache();
           LoadDirectory();
         }
       }
@@ -1220,10 +1208,9 @@ namespace TvPlugin
         if (rec.IsDone() || rec.Canceled != Schedule.MinSchedule)
         {
           iCleaned++;
-          rec.DeleteAll();
+          rec.Delete();
         }
       }
-      DatabaseManager.FillCache();
       GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
       LoadDirectory();
       if (pDlgOK != null)
@@ -1297,7 +1284,7 @@ namespace TvPlugin
 
     void UpdateDescription()
     {
-      Schedule rec = Schedule.New();
+      Schedule rec = new Schedule(1, "", Schedule.MinSchedule, Schedule.MinSchedule);
       SetProperties(rec);
       GUIListItem pItem = GetItem(GetSelectedItemNo());
       if (pItem == null)

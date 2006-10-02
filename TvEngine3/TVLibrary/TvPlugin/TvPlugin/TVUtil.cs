@@ -71,7 +71,7 @@ namespace TvPlugin
       {
         for (int i = 0; i < _days; ++i)
         {
-          Schedule recNew = Schedule.New(rec);
+          Schedule recNew = rec.Clone();
           recNew.ScheduleType = (int)ScheduleRecordingType.Once;
           recNew.StartTime = new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.StartTime.Hour, rec.StartTime.Minute, 0);
           if (rec.EndTime.Day > rec.StartTime.Day)
@@ -97,7 +97,7 @@ namespace TvPlugin
         {
           if (dtDay.DayOfWeek != DayOfWeek.Saturday && dtDay.DayOfWeek != DayOfWeek.Sunday)
           {
-            Schedule recNew = Schedule.New(rec);
+            Schedule recNew = rec.Clone();
             recNew.ScheduleType = (int)ScheduleRecordingType.Once;
             recNew.StartTime = new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.StartTime.Hour, rec.StartTime.Minute, 0);
             if (rec.EndTime.Day > rec.StartTime.Day)
@@ -120,7 +120,7 @@ namespace TvPlugin
 
       if (rec.ScheduleType == (int)ScheduleRecordingType.Weekends)
       {
-        List<Program> progList = new List<Program>();
+        IList progList;
         progList = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(_days), rec.ProgramName, rec.ReferencedChannel());
 
         foreach (Program prog in progList)
@@ -128,7 +128,7 @@ namespace TvPlugin
           if ((rec.IsRecordingProgram(prog, false)) &&
                       (prog.StartTime.DayOfWeek == DayOfWeek.Saturday || prog.StartTime.DayOfWeek == DayOfWeek.Sunday))
           {
-            Schedule recNew = Schedule.New(rec);
+            Schedule recNew = rec.Clone();
             recNew.ScheduleType = (int)ScheduleRecordingType.Once;
             recNew.StartTime = prog.StartTime;
             recNew.EndTime = prog.EndTime;
@@ -148,7 +148,7 @@ namespace TvPlugin
         {
           if (dtDay.DayOfWeek == rec.StartTime.DayOfWeek)
           {
-            Schedule recNew = Schedule.New(rec);
+            Schedule recNew = rec.Clone();
             recNew.ScheduleType = (int)ScheduleRecordingType.Once;
             recNew.StartTime = new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.StartTime.Hour, rec.StartTime.Minute, 0);
             if (rec.EndTime.Day > rec.StartTime.Day)
@@ -179,9 +179,9 @@ namespace TvPlugin
       {
         if (rec.IsRecordingProgram(prog, false))
         {
-          Schedule recNew = Schedule.New(rec);
+          Schedule recNew = rec.Clone();
           recNew.ScheduleType = (int)ScheduleRecordingType.Once;
-          recNew.Channel = prog.Channel;
+          recNew.IdChannel= prog.IdChannel;
           recNew.StartTime = prog.StartTime;
           recNew.EndTime = prog.EndTime;
           recNew.Series = true;
@@ -192,5 +192,7 @@ namespace TvPlugin
       }
       return recordings;
     }
+
+    bool _isSeries = false;
   }
 }
