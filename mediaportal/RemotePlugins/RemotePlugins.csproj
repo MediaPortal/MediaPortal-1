@@ -156,7 +156,7 @@
     </Compile>
     <Compile Include="ControlDevices\Util\AbstractControlPlugin.cs" />
     <Compile Include="ControlDevices\Util\AbstractControlSettings.cs" />
-    <Compile Include="ControlDevices\Util\AbstractLearnCode.cs" />
+    <None Include="ControlDevices\Util\AbstractLearnCode.cs" />
     <Compile Include="ControlDevices\Util\LearnCodePanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -226,7 +226,7 @@
     <Compile Include="Remotes\MCE2005Remote\MediaPortal.Hardware\RemoteEventHandler.cs" />
     <Compile Include="ControlDevices\Devices\USBUIRT\USBUIRTPlugin.cs" />
     <Compile Include="ControlDevices\Devices\USBUIRT\USBUIRTAPI.cs" />
-    <Compile Include="ControlDevices\Devices\USBUIRT\USBUIRTControlCode.cs" />
+    <None Include="ControlDevices\Devices\USBUIRT\USBUIRTControlCode.cs" />
     <None Include="ControlDevices\Devices\USBUIRT\USBUIRTLearnForm.cs">
       <SubType>Form</SubType>
     </None>

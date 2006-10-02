@@ -160,14 +160,12 @@ private Config()
     }
 
 
-    //TODO: Make Get method private, when all external references are replaced by a call to GetFolder or GetFile
     /// <summary>
     /// Returns the complete path for the specified MP directory.
     /// </summary>
     /// <param name="path">A <see cref="Dir"/> value, indicating the directory to return</param>
     /// <returns>a string containing the complete path, with trailing backslash</returns>
-    [Obsolete("This method is obsolete and will disappear in the future.  Use GetFolder(Dir path) or GetFile(Dir path, string fileName) instead.", false)]
-    public static string Get(Dir path)
+    private static string Get(Dir path)
     {
       string returnVal;
       if (directories.TryGetValue(path, out returnVal))

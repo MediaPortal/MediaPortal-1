@@ -21,15 +21,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
-using System.Runtime.InteropServices;
-using System.Drawing;
+using System.Text;
+using ID3;
+using MediaPortal.GUI.Library;
 using MediaPortal.TagReader;
 using Tag.MAC;
 using Tag.OGG;
-
-using MediaPortal.GUI.Library;
 
 namespace Tag.FLAC
 {
@@ -45,7 +43,7 @@ namespace Tag.FLAC
       CueSheet = 5,
       //6-126 : reserved 
       Invalid = 127,
-    };
+    } ;
 
     private struct StreamInfoBlock
     {
@@ -61,7 +59,28 @@ namespace Tag.FLAC
       public int BitsPerSample;
       public UInt64 TotalSamples;
       public byte[] Md5Signature;
-    };
+      
+      public static StreamInfoBlock Empty
+      {
+        get
+        {
+          StreamInfoBlock info = new StreamInfoBlock();
+          info.StreamPosition = 0;
+          info.LastMetadataBlock = false;
+          info.MetadataLength = 0;
+          info.MinimumBlockSamples = 0;
+          info.MaximumBlockSamples = 0;
+          info.MinimumFrameSize = 0;
+          info.MaximumFrameSize = 0;
+          info.SampleRate = 0;
+          info.Channels = 0;
+          info.BitsPerSample = 0;
+          info.TotalSamples = 0;
+          info.Md5Signature = new byte[0];
+          return info;
+        }
+      }
+    } 
 
     private struct PaddingInfoBlock
     {
@@ -85,6 +104,19 @@ namespace Tag.FLAC
       public bool LastMetadataBlock;
       public int MetadataLength;
       public int CommentsLength;
+
+      public static VorbisCommentInfoBlock Empty
+      {
+        get
+        {
+          VorbisCommentInfoBlock info = new VorbisCommentInfoBlock();
+          info.StreamPosition = 0;
+          info.LastMetadataBlock = false;
+          info.MetadataLength = 0;
+          info.CommentsLength = 0;
+          return info;
+        }
+      }
     }
 
     private struct CueSheetInfoBlock
@@ -111,48 +143,46 @@ namespace Tag.FLAC
     private VorbisCommentInfoBlock VorbisCommentsInfo = new VorbisCommentInfoBlock();
     private CueSheetInfoBlock CueSheetInfo = new CueSheetInfoBlock();
 
-
     #endregion
 
     #region ITag Members
 
-    override public string Album
+    public override string Album
     {
       get { return GetStringCommentValue("ALBUM"); }
     }
 
-    override public string Artist
+    public override string Artist
     {
       get { return GetStringCommentValue("ARTIST"); }
     }
 
-    override public string AlbumArtist
+    public override string AlbumArtist
     {
       get { return GetStringCommentValue("ALBUMARTIST"); }
     }
 
-    override public string ArtistURL
+    public override string ArtistURL
     {
       get { return ""; }
-
     }
 
-    override public int AverageBitrate
+    public override int AverageBitrate
     {
       get
       {
         long AudioDataLength = FileLength - AudioDataStartPostion;
-        long bitrate = (((AudioDataLength * 8000) / LengthMS) + 500) / 1000;
-        return (int)bitrate;
+        long bitrate = (((AudioDataLength*8000)/LengthMS) + 500)/1000;
+        return (int) bitrate;
       }
     }
 
-    override public int BitsPerSample
+    public override int BitsPerSample
     {
       get { return StreamInfo.BitsPerSample; }
     }
 
-    override public int BlocksPerFrame
+    public override int BlocksPerFrame
     {
       get { return StreamInfo.MaximumBlockSamples; }
     }
@@ -162,142 +192,142 @@ namespace Tag.FLAC
       get { return base.BuyURL; }
     }
 
-    override public int BytesPerSample
+    public override int BytesPerSample
     {
       get { return StreamInfo.BitsPerSample; }
     }
 
-    override public int Channels
+    public override int Channels
     {
-      get { return (int)StreamInfo.Channels; }
+      get { return (int) StreamInfo.Channels; }
     }
 
-    override public string Comment
+    public override string Comment
     {
       get { return base.Comment; }
     }
 
-    override public string Composer
+    public override string Composer
     {
       get { return base.Composer; }
     }
 
-    override public int CompressionLevel
+    public override int CompressionLevel
     {
       get { return base.CompressionLevel; }
     }
 
-    override public string Copyright
+    public override string Copyright
     {
       get { return base.Copyright; }
     }
 
-    override public string CopyrightURL
+    public override string CopyrightURL
     {
       get { return base.CopyrightURL; }
     }
 
-    override public byte[] CoverArtImageBytes
+    public override byte[] CoverArtImageBytes
     {
       get { return GetBase64StringCommentValue("COVERART"); }
     }
 
-    override public string FileURL
+    public override string FileURL
     {
       get { return base.FileURL; }
     }
 
-    override public int FormatFlags
+    public override int FormatFlags
     {
       get { return base.FormatFlags; }
     }
 
-    override public string Genre
+    public override string Genre
     {
       get { return GetStringCommentValue("GENRE"); }
     }
 
-    override public bool IsVBR
+    public override bool IsVBR
     {
       get { return base.IsVBR; }
     }
 
-    override public string Keywords
+    public override string Keywords
     {
       get { return base.Keywords; }
     }
 
-    override public string Length
+    public override string Length
     {
       get { return Utils.GetDurationString(LengthMS); }
     }
 
-    override public int LengthMS
+    public override int LengthMS
     {
-      get { return (int)((StreamInfo.TotalSamples / (UInt64)StreamInfo.SampleRate) * 1000); }
+      get { return (int) ((StreamInfo.TotalSamples/(UInt64) StreamInfo.SampleRate)*1000); }
     }
 
-    override public string Lyrics
+    public override string Lyrics
     {
       get { return GetStringCommentValue("LYRICS"); }
     }
 
-    override public string Notes
+    public override string Notes
     {
       get { return base.Notes; }
     }
 
-    override public string PeakLevel
+    public override string PeakLevel
     {
       get { return base.PeakLevel; }
     }
 
-    override public string PublisherURL
+    public override string PublisherURL
     {
       get { return base.PublisherURL; }
     }
 
-    override public string ReplayGainAlbum
+    public override string ReplayGainAlbum
     {
       get { return base.ReplayGainAlbum; }
     }
 
-    override public string ReplayGainRadio
+    public override string ReplayGainRadio
     {
       get { return base.ReplayGainRadio; }
     }
 
-    override public int SampleRate
+    public override int SampleRate
     {
       get { return StreamInfo.SampleRate; }
     }
 
-    override public string Title
+    public override string Title
     {
       get { return GetStringCommentValue("TITLE"); }
     }
 
-    override public string ToolName
+    public override string ToolName
     {
       get { return base.ToolName; }
     }
 
-    override public string ToolVersion
+    public override string ToolVersion
     {
       get { return base.ToolVersion; }
     }
 
-    override public int TotalBlocks
+    public override int TotalBlocks
     {
       get { return base.TotalBlocks; }
     }
 
-    override public int TotalFrames
+    public override int TotalFrames
     {
       get { return base.TotalFrames; }
     }
 
-    override public int Track
+    public override int Track
     {
       get
       {
@@ -306,7 +336,9 @@ namespace Tag.FLAC
           string sTrack = GetStringCommentValue("TRACKNUMBER");
 
           if (sTrack.Length > 0)
+          {
             return int.Parse(sTrack);
+          }
         }
 
         catch (Exception ex)
@@ -318,12 +350,12 @@ namespace Tag.FLAC
       }
     }
 
-    override public string Version
+    public override string Version
     {
       get { return base.Version; }
     }
 
-    override public int Year
+    public override int Year
     {
       get
       {
@@ -359,22 +391,31 @@ namespace Tag.FLAC
       Dispose();
     }
 
-    override public bool SupportsFile(string strFileName)
+    public override bool SupportsFile(string strFileName)
     {
-      if (System.IO.Path.GetExtension(strFileName).ToLower() == ".flac") return true;
+      if (Path.GetExtension(strFileName).ToLower() == ".flac")
+      {
+        return true;
+      }
       return false;
     }
 
-    override public bool Read(string fileName)
+    public override bool Read(string fileName)
     {
       if (fileName.Length == 0)
+      {
         throw new Exception("No file name specified");
+      }
 
       if (!File.Exists(fileName))
+      {
         throw new Exception("Unable to open file.  File does not exist.");
+      }
 
       if (Path.GetExtension(fileName).ToLower() != ".flac")
+      {
         throw new AudioFileTypeException("Expected FLAC file type.");
+      }
 
       CommentList = new List<VorbisComment>();
       ApeHeader = new APE_HEADER();
@@ -391,10 +432,14 @@ namespace Tag.FLAC
       try
       {
         if (AudioFileStream == null)
-          AudioFileStream = new FileStream(this.AudioFilePath, FileMode.Open, FileAccess.Read);
+        {
+          AudioFileStream = new FileStream(AudioFilePath, FileMode.Open, FileAccess.Read);
+        }
 
         if (!IsFlacFile())
+        {
           throw new AudioFileTypeException("Invalid Flac file");
+        }
 
         int metadataBlocksRead = 0;
 
@@ -403,12 +448,16 @@ namespace Tag.FLAC
         {
           // ReadMetadataBlocks will return false once we've read the last block
           if (!ReadMetadataBlocks(ref metadataBlocksRead))
+          {
             break;
+          }
         }
 
         // Did we read at least one block
         if (metadataBlocksRead > 0)
+        {
           AudioDataStartPostion = AudioFileStream.Position;
+        }
 
         AudioDataStartPostion = AudioFileStream.Position;
       }
@@ -429,21 +478,23 @@ namespace Tag.FLAC
       // It's possible, though rare, that the beginning of the file could contain and ID3V2.x tag
       // so we'll check for that first...
 
-      ID3.ID3v2RawHeader id3v2RawHeader = new ID3.ID3v2RawHeader();
+      ID3v2RawHeader id3v2RawHeader = new ID3v2RawHeader();
       byte[] id3v2RawHeaderBytes = Utils.RawSerializeEx(id3v2RawHeader);
       AudioFileStream.Read(id3v2RawHeaderBytes, 0, id3v2RawHeaderBytes.Length);
-      id3v2RawHeader = (ID3.ID3v2RawHeader)Utils.RawDeserializeEx(id3v2RawHeaderBytes, typeof(ID3.ID3v2RawHeader));
+      id3v2RawHeader = (ID3v2RawHeader) Utils.RawDeserializeEx(id3v2RawHeaderBytes, typeof(ID3v2RawHeader));
       int iD3v2TagSize = Utils.ReadUnsynchronizedData(id3v2RawHeader.Size, 0, 4);
 
-      if (id3v2RawHeader.Header[0] == (byte)'I'
-          && id3v2RawHeader.Header[1] == (byte)'D'
-          && id3v2RawHeader.Header[2] == (byte)'3')
+      if (id3v2RawHeader.Header[0] == (byte) 'I'
+          && id3v2RawHeader.Header[1] == (byte) 'D'
+          && id3v2RawHeader.Header[2] == (byte) '3')
       {
         AudioFileStream.Seek(iD3v2TagSize, SeekOrigin.Current);
       }
 
       else
+      {
         AudioFileStream.Position = 0;
+      }
 
       byte[] buffer = new byte[4];
       AudioFileStream.Read(buffer, 0, 4);
@@ -469,72 +520,82 @@ namespace Tag.FLAC
       bool hasMoreMetadataBlocks = (hdrInfo & 1) == 0;
       bool isLastMetadataBlock = !hasMoreMetadataBlocks;
 
-      byte blockType = (byte)(hdrInfo & 254);
+      byte blockType = (byte) (hdrInfo & 254);
 
       int metadataLength = Utils.ReadSynchronizedData(buffer, 1, 3);
 
-      if (blockType == (byte)BlockType.StreamInfo)
+      if (blockType == (byte) BlockType.StreamInfo)
       {
         // Have we already read the Stream Info block?  If so, something's wrong so bail out
         if (StreamInfo.StreamPosition > 0)
+        {
           return false;
+        }
 
         ReadStreamInfoBlock(metadataLength, isLastMetadataBlock);
         metadataBlocksRead++;
         return true;
       }
 
-      else if (blockType == (byte)BlockType.Padding)
+      else if (blockType == (byte) BlockType.Padding)
       {
         // Have we already read the Padding block?  If so, something's wrong so bail out
         if (PaddingBlock.StreamPosition > 0)
+        {
           return false;
+        }
 
         ReadBlockPadding(metadataLength, isLastMetadataBlock);
         metadataBlocksRead++;
         return true;
       }
 
-      else if (blockType == (byte)BlockType.Application)
+      else if (blockType == (byte) BlockType.Application)
       {
         // Have we already read the Application block?  If so, something's wrong so bail out
         if (ApplicationInfo.StreamPosition > 0)
+        {
           return false;
+        }
 
         ReadApplicationBlock(metadataLength, isLastMetadataBlock);
         metadataBlocksRead++;
         return true;
       }
 
-      else if (blockType == (byte)BlockType.VorbisComment)
+      else if (blockType == (byte) BlockType.VorbisComment)
       {
         // Have we already read the Vorbis Comments block?  If so, something's wrong so bail out
         if (VorbisCommentsInfo.StreamPosition > 0)
+        {
           return false;
+        }
 
         ReadVorbisCommentsBlock(metadataLength, isLastMetadataBlock);
         metadataBlocksRead++;
         return true;
       }
 
-      else if (blockType == (byte)BlockType.CueSheet)
+      else if (blockType == (byte) BlockType.CueSheet)
       {
         // Have we already read the CueSheet block?  If so, something's wrong so bail out
         if (CueSheetInfo.StreamPosition > 0)
+        {
           return false;
+        }
 
         ReadCueSheetBlock(metadataLength, isLastMetadataBlock);
         metadataBlocksRead++;
         return true;
       }
 
-      else if (blockType == (byte)BlockType.Invalid)
+      else if (blockType == (byte) BlockType.Invalid)
       {
         AudioFileStream.Seek(-4, SeekOrigin.Current);
         return false;
       }
 
-      else    // The block type wasn't a valid value type.  We must be done
+      else // The block type wasn't a valid value type.  We must be done
       {
         AudioFileStream.Seek(-4, SeekOrigin.Current);
         return false;
@@ -567,10 +628,10 @@ namespace Tag.FLAC
       AudioFileStream.Read(buffer, 0, 8);
       UInt64 sampleInfo = Utils.ReadUInt64SynchronizedData(buffer, 0, 8);
 
-      StreamInfo.SampleRate = (int)(sampleInfo >> 44);
-      StreamInfo.Channels = (byte)(((int)(sampleInfo >> 41) & 7) + 1);
+      StreamInfo.SampleRate = (int) (sampleInfo >> 44);
+      StreamInfo.Channels = (byte) (((int) (sampleInfo >> 41) & 7) + 1);
 
-      StreamInfo.BitsPerSample = ((int)(sampleInfo >> 36) & 31) + 1;
+      StreamInfo.BitsPerSample = ((int) (sampleInfo >> 36) & 31) + 1;
       StreamInfo.TotalSamples = sampleInfo & 68719476735;
 
       byte[] md5Signature = new byte[16];
@@ -596,7 +657,7 @@ namespace Tag.FLAC
 
       byte[] buffer = new byte[4];
       AudioFileStream.Read(buffer, 0, 4);
-      ApplicationInfo.ApplicationID = (uint)Utils.ReadSynchronizedData(buffer, 0, 4);
+      ApplicationInfo.ApplicationID = (uint) Utils.ReadSynchronizedData(buffer, 0, 4);
 
       int dataLength = blockLength;
 
@@ -628,7 +689,9 @@ namespace Tag.FLAC
       int commentsCount = BitConverter.ToInt32(buffer, 0);
 
       if (commentsCount == 0)
+      {
         return;
+      }
 
       for (int i = 0; i < commentsCount; i++)
       {
@@ -645,7 +708,9 @@ namespace Tag.FLAC
 
         int pos = comment.IndexOf("=");
         if (pos == -1)
+        {
           continue;
+        }
 
         comment = comment.Substring(0, pos);
         AudioFileStream.Position += comment.Length + 1;
@@ -682,7 +747,7 @@ namespace Tag.FLAC
       {
         if (comment.FieldName.ToLower().CompareTo(commentName) == 0)
         {
-          return System.Text.Encoding.UTF8.GetString(comment.FieldValue);
+          return Encoding.UTF8.GetString(comment.FieldValue);
         }
       }
 

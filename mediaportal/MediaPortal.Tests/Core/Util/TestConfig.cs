@@ -88,8 +88,6 @@ namespace MediaPortal.Tests.Core.Util
 
     private static void DoTest(Config.Dir directory)
     {
-      Assert.IsTrue(Config.Get(directory).EndsWith(@"\"),
-                    string.Format("Config.Get({0}) returns a folder with no trailing backslash", directory));
       Assert.IsFalse(Config.GetFolder(directory).EndsWith(@"\"),
                      string.Format("Config.GetFolder({0}) returns a folder with a trailing backslash", directory));
       Assert.IsFalse(Config.GetFile(directory, "test.xml").Contains(@"\\"),
