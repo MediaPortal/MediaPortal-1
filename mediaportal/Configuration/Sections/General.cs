@@ -58,7 +58,6 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.CheckedListBox settingsCheckedListBox;
     private MediaPortal.UserInterface.Controls.MPComboBox cbDebug;
     private Label lbDebug;
-    private GroupBox groupBoxLogging;
     private System.ComponentModel.IContainer components = null;
 
     public General()
@@ -111,7 +110,8 @@ namespace MediaPortal.Configuration.Sections
       new string[] { "general", "turnoffmonitor", "false" },
 	    new string[] { "general", "startbasichome", "false" },
       new string[] { "general", "turnmonitoronafterresume", "false" },
-      new string[] { "general", "enables3trick","true" }
+      new string[] { "general", "enables3trick","true" },
+      new string[] { "general", "autosize", "true" }
       //new string[] { "general", "allowfocus", "false" }
       };
 
@@ -223,9 +223,7 @@ namespace MediaPortal.Configuration.Sections
       this.settingsCheckedListBox = new System.Windows.Forms.CheckedListBox();
       this.cbDebug = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.lbDebug = new System.Windows.Forms.Label();
-      this.groupBoxLogging = new System.Windows.Forms.GroupBox();
       this.groupBoxGeneralSettings.SuspendLayout();
-      this.groupBoxLogging.SuspendLayout();
       this.SuspendLayout();
       // 
       // groupBoxGeneralSettings
@@ -233,11 +231,13 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxGeneralSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxGeneralSettings.Controls.Add(this.lbDebug);
+      this.groupBoxGeneralSettings.Controls.Add(this.cbDebug);
       this.groupBoxGeneralSettings.Controls.Add(this.settingsCheckedListBox);
       this.groupBoxGeneralSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxGeneralSettings.Location = new System.Drawing.Point(0, 3);
       this.groupBoxGeneralSettings.Name = "groupBoxGeneralSettings";
-      this.groupBoxGeneralSettings.Size = new System.Drawing.Size(472, 333);
+      this.groupBoxGeneralSettings.Size = new System.Drawing.Size(472, 397);
       this.groupBoxGeneralSettings.TabIndex = 1;
       this.groupBoxGeneralSettings.TabStop = false;
       this.groupBoxGeneralSettings.Text = "General Settings";
@@ -267,10 +267,11 @@ namespace MediaPortal.Configuration.Sections
             "Turn off monitor when blanking screen",
             "Start with basic home screen",
             "Turn monitor/tv on when resuming from standby",
-            "Allow S3 standby although wake up devices are present"});
+            "Allow S3 standby although wake up devices are present",
+            "Autosize window mode to skin"});
       this.settingsCheckedListBox.Location = new System.Drawing.Point(16, 24);
       this.settingsCheckedListBox.Name = "settingsCheckedListBox";
-      this.settingsCheckedListBox.Size = new System.Drawing.Size(440, 289);
+      this.settingsCheckedListBox.Size = new System.Drawing.Size(440, 304);
       this.settingsCheckedListBox.TabIndex = 0;
       // 
       // cbDebug
@@ -283,7 +284,7 @@ namespace MediaPortal.Configuration.Sections
             "Warning",
             "Information",
             "Debug"});
-      this.cbDebug.Location = new System.Drawing.Point(80, 24);
+      this.cbDebug.Location = new System.Drawing.Point(84, 352);
       this.cbDebug.Name = "cbDebug";
       this.cbDebug.Size = new System.Drawing.Size(121, 21);
       this.cbDebug.TabIndex = 2;
@@ -291,33 +292,20 @@ namespace MediaPortal.Configuration.Sections
       // lbDebug
       // 
       this.lbDebug.AutoSize = true;
-      this.lbDebug.Location = new System.Drawing.Point(16, 28);
+      this.lbDebug.Location = new System.Drawing.Point(20, 356);
       this.lbDebug.Name = "lbDebug";
       this.lbDebug.Size = new System.Drawing.Size(57, 13);
       this.lbDebug.TabIndex = 3;
       this.lbDebug.Text = "Log Level:";
       // 
-      // groupBoxLogging
-      // 
-      this.groupBoxLogging.Controls.Add(this.lbDebug);
-      this.groupBoxLogging.Controls.Add(this.cbDebug);
-      this.groupBoxLogging.Location = new System.Drawing.Point(0, 344);
-      this.groupBoxLogging.Name = "groupBoxLogging";
-      this.groupBoxLogging.Size = new System.Drawing.Size(472, 64);
-      this.groupBoxLogging.TabIndex = 4;
-      this.groupBoxLogging.TabStop = false;
-      this.groupBoxLogging.Text = "Logging";
-      // 
       // General
       // 
       this.BackColor = System.Drawing.SystemColors.Control;
-      this.Controls.Add(this.groupBoxLogging);
       this.Controls.Add(this.groupBoxGeneralSettings);
       this.Name = "General";
       this.Size = new System.Drawing.Size(472, 408);
       this.groupBoxGeneralSettings.ResumeLayout(false);
-      this.groupBoxLogging.ResumeLayout(false);
-      this.groupBoxLogging.PerformLayout();
+      this.groupBoxGeneralSettings.PerformLayout();
       this.ResumeLayout(false);
 
     }

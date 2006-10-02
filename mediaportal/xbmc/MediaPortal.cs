@@ -1029,7 +1029,7 @@ public class MediaPortalApp : D3DApp, IRender
     }
     GUIGraphicsContext.Skin = m_strSkin;
     GUIGraphicsContext.ActiveForm = Handle;
-    GUILocalizeStrings.Load(Config.GetFile(Config.Dir.Language, m_strLanguage , "strings.xml"));
+    GUILocalizeStrings.Load(Config.GetFile(Config.Dir.Language, m_strLanguage, "strings.xml"));
 
     if (splashScreen != null)
     {
@@ -1040,7 +1040,7 @@ public class MediaPortalApp : D3DApp, IRender
     {
       splashScreen.SetInformation("Loading fonts...");
     }
-    GUIFontManager.LoadFonts(Config.GetFile(Config.Dir.Skin, m_strSkin,"fonts.xml"));
+    GUIFontManager.LoadFonts(Config.GetFile(Config.Dir.Skin, m_strSkin, "fonts.xml"));
 
     if (splashScreen != null)
     {
@@ -1070,6 +1070,12 @@ public class MediaPortalApp : D3DApp, IRender
       splashScreen.SetInformation("Initializing skin...");
     }
     Log.Info("Main: Resizing windowmanager");
+    using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+    {
+      bool autosize = xmlreader.GetValueAsBool("general", "autosize", true);
+      if (autosize && !GUIGraphicsContext.Fullscreen)
+        Size = new Size(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);
+    }
     GUIWindowManager.OnResize();
     Log.Info("Main: Initializing windowmanager");
     GUIWindowManager.PreInit();
@@ -1136,7 +1142,7 @@ public class MediaPortalApp : D3DApp, IRender
     {
       Log.Info("Main: Resetting DX9 device");
       GUIWaitCursor.Dispose();
-      GUIFontManager.LoadFonts(Config.GetFile(Config.Dir.Skin, m_strSkin ,"fonts.xml"));
+      GUIFontManager.LoadFonts(Config.GetFile(Config.Dir.Skin, m_strSkin, "fonts.xml"));
       GUIFontManager.InitializeDeviceObjects();
       if (GUIGraphicsContext.DX9Device != null)
       {

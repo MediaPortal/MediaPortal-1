@@ -27,6 +27,7 @@ using System;
 using System.IO;
 using System.Collections;
 using System.Globalization;
+using System.Windows.Forms;
 using MediaPortal.Util;
 using MediaPortal.GUI.Library;
 using MediaPortal.Dialogs;
@@ -232,6 +233,12 @@ namespace WindowPlugins.GUISettings
       GUIFontManager.InitializeDeviceObjects();
       GUIControlFactory.ClearReferences();
       GUIControlFactory.LoadReferences(GUIGraphicsContext.Skin + @"\references.xml");
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        bool autosize = xmlreader.GetValueAsBool("general", "autosize", true);
+        if (autosize && !GUIGraphicsContext.Fullscreen)
+          Form.ActiveForm.Size = new System.Drawing.Size(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);
+      }
       GUIWindowManager.OnResize();
       GUIWindowManager.ActivateWindow(GetID);
       GUIControl.FocusControl(GetID, btnSkin.GetID);

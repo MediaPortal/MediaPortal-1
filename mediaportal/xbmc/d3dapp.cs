@@ -65,7 +65,7 @@ namespace MediaPortal
   public class D3DApp : Form
   {
     private const int MILLI_SECONDS_TIMER = 1;
-    protected string m_strSkin = "mce";
+    protected string m_strSkin = "BlueTwo";
     protected string m_strLanguage = "english";
 
     #region Menu Information
@@ -126,7 +126,7 @@ namespace MediaPortal
 
     internal static string _fullscreenOverride = string.Empty;
 
-     protected Caps Caps
+    protected Caps Caps
     {
       get { return graphicsCaps; }
     }
@@ -1382,14 +1382,14 @@ namespace MediaPortal
         try
         {
 #endif
-        if ((deviceLost) || (ActiveForm != this))
-        {
-          // Yield some CPU time to other processes
+          if ((deviceLost) || (ActiveForm != this))
+          {
+            // Yield some CPU time to other processes
 #if !PROFILING
-          Thread.Sleep(100); // 100 milliseconds
+            Thread.Sleep(100); // 100 milliseconds
 #endif
-        }
-        Render3DEnvironment();
+          }
+          Render3DEnvironment();
 #if DEBUG
 #else
         }
@@ -1950,6 +1950,15 @@ namespace MediaPortal
         this.Menu = menuStripMain;
         this.Location = storedLocation;
         this.Bounds = new Rectangle(oldBounds.X, oldBounds.Y, oldBounds.Width, oldBounds.Height);
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        {
+          bool autosize = xmlreader.GetValueAsBool("general", "autosize", true);
+          if (autosize && !GUIGraphicsContext.Fullscreen)
+          {
+            storedSize.Height = GUIGraphicsContext.SkinSize.Height;
+            storedSize.Width = GUIGraphicsContext.SkinSize.Width;
+          }
+        }
         this.ClientSize = storedSize;
         this.Update();
 
@@ -2355,7 +2364,7 @@ namespace MediaPortal
       // Associate the front buffer to back buffer with specified caps
       m_ddback = m_ddfront.GetAttachedSurface(caps);
     }
-    
+
     private void televisionMenuItem_Click(object sender, EventArgs e)
     {
       g_Player.Stop();
