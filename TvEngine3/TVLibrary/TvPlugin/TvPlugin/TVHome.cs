@@ -1363,9 +1363,9 @@ namespace TvPlugin
             {
               if (channel.IsTv == false) continue;
               bool groupContainsChannel = false;
-              IList groupMaps = group.ReferringGroupMap();
-              foreach (GroupMap map in groupMaps)
+              foreach (GroupMap map in allgroupMaps)
               {
+                if (map.IdGroup != group.IdGroup) continue;
                 if (map.IdChannel == channel.IdChannel)
                 {
                   groupContainsChannel = true;
