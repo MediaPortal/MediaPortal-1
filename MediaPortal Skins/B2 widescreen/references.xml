@@ -3,7 +3,7 @@
 	<skin>
 		<width>1366</width>
 		<height>768</height>
-		<version>0.1.0.15</version>
+		<version>0.2.1.0</version>
 	</skin>
 	<control>
 		<description>default image</description>
@@ -338,11 +338,11 @@
 		<textureDownFocus>page_down_focus.png</textureDownFocus>
 		<itemWidth>136</itemWidth>
 		<itemHeight>168</itemHeight>
-		<textureWidth>132</textureWidth>
+		<textureWidth>138</textureWidth>
 		<textureHeight>138</textureHeight>
 		<thumbWidth>100</thumbWidth>
 		<thumbHeight>100</thumbHeight>
-		<thumbPosX>15</thumbPosX>
+		<thumbPosX>18</thumbPosX>
 		<thumbPosY>18</thumbPosY>
 		<imageFolder>icon_empty_nofocus.png</imageFolder>
 		<imageFolderFocus>icon_empty_focus.png</imageFolderFocus>
@@ -353,13 +353,13 @@
 		<remoteColor>ffFFA075</remoteColor>
 		<downloadColor>ff80ff80</downloadColor>
 		<suffix>|</suffix>
-		<textureWidthBig>248</textureWidthBig>
+		<textureWidthBig>260</textureWidthBig>
 		<textureHeightBig>260</textureHeightBig>
 		<itemWidthBig>276</itemWidthBig>
 		<itemHeightBig>290</itemHeightBig>
 		<thumbWidthBig>200</thumbWidthBig>
 		<thumbHeightBig>200</thumbHeightBig>
-		<thumbPosXBig>22</thumbPosXBig>
+		<thumbPosXBig>28</thumbPosXBig>
 		<thumbPosYBig>28</thumbPosYBig>
 		<thumbZoom>no</thumbZoom>
 	</control>
@@ -382,11 +382,11 @@
 		<textureDownFocus>page_down_focus.png</textureDownFocus>
 		<itemWidth>136</itemWidth>
 		<itemHeight>136</itemHeight>
-		<textureWidth>106</textureWidth>
+		<textureWidth>112</textureWidth>
 		<textureHeight>112</textureHeight>
 		<thumbWidth>85</thumbWidth>
 		<thumbHeight>85</thumbHeight>
-		<thumbPosX>10</thumbPosX>
+		<thumbPosX>13</thumbPosX>
 		<thumbPosY>13</thumbPosY>
 		<imageFolder>icon_empty_nofocus.png</imageFolder>
 		<imageFolderFocus>icon_empty_focus.png</imageFolderFocus>
@@ -399,8 +399,8 @@
 		<suffix>|</suffix>
 		<textureWidthBig>150</textureWidthBig>
 		<textureHeightBig>150</textureHeightBig>
-		<itemWidthBig>181</itemWidthBig>
-		<itemHeightBig>178</itemHeightBig>
+		<itemWidthBig>180</itemWidthBig>
+		<itemHeightBig>180</itemHeightBig>
 		<thumbWidthBig>112</thumbWidthBig>
 		<thumbHeightBig>112</thumbHeightBig>
 		<thumbPosXBig>22</thumbPosXBig>
@@ -408,11 +408,11 @@
 		<background>filmstrip_bg.png</background>
 		<backgroundx>588</backgroundx>
 		<backgroundy>126</backgroundy>
-		<backgroundwidth>406</backgroundwidth>
+		<backgroundwidth>427</backgroundwidth>
 		<backgroundheight>446</backgroundheight>
 		<backgrounddiffuse>60ffffff</backgrounddiffuse>
 		<InfoImage>-</InfoImage>
-		<InfoImagex>610</InfoImagex>
+		<InfoImagex>608</InfoImagex>
 		<InfoImagey>152</InfoImagey>
 		<InfoImagewidth>375</InfoImagewidth>
 		<InfoImageheight>375</InfoImageheight>
