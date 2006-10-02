@@ -1627,6 +1627,7 @@ namespace TvService
           XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString"); ;
           node.InnerText = value;
           doc.Save("TvService.exe.config");
+          Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(value);
           Init();
         }
         catch (Exception ex)
