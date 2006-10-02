@@ -165,13 +165,17 @@ namespace MediaPortal.GUI.Music
 
     void g_Player_PlayBackStarted(g_Player.MediaType type, string filename)
     {
+      Log.Debug("GUIMusicPlayingNow: g_Player_PlayBackStarted for {0}", filename);
       if (!ControlsInitialized)
         return;
 
       // Remove pending requests from the request queue
-      InfoScrobbler.RemoveRequestAsync(_lastAlbumRequest);
-      InfoScrobbler.RemoveRequestAsync(_lastArtistRequest);
-      InfoScrobbler.RemoveRequestAsync(_lastTagRequest);
+      if (_lastAlbumRequest != null)
+        InfoScrobbler.RemoveRequestAsync(_lastAlbumRequest);
+      if (_lastArtistRequest != null)
+        InfoScrobbler.RemoveRequestAsync(_lastArtistRequest);
+      if (_lastTagRequest != null)
+        InfoScrobbler.RemoveRequestAsync(_lastTagRequest);
 
       ImagePathContainer.Clear();
       ClearVisualizationImages();
@@ -237,8 +241,9 @@ namespace MediaPortal.GUI.Music
         AddImageToImagePathContainer(GUIGraphicsContext.Skin + @"\media\missing_coverart.png");
       }
 
-      if (g_Player.Duration > 0 && ImagePathContainer.Count > 1) // change each cover 8x
-        ImageChangeTimer.Interval = (g_Player.Duration * 1000) / (ImagePathContainer.Count * 8);
+      if (g_Player.Duration > 0 && ImagePathContainer.Count > 1)
+        //  ImageChangeTimer.Interval = (g_Player.Duration * 1000) / (ImagePathContainer.Count * 8); // change each cover 8x
+        ImageChangeTimer.Interval = 15 * 1000;  // change covers every 15 seconds
       else
         ImageChangeTimer.Interval = 3600 * 1000;
 
@@ -251,6 +256,7 @@ namespace MediaPortal.GUI.Music
       // Check if we should let the visualization window handle image flipping
       if (UsingInternalMusicPlayer && ShowVisualization)
       {
+        Log.Debug("GUIMusicPlayingNow: adding image to visualization - {0}", newImage);
         Visualization.VisualizationWindow vizWindow = BassMusicPlayer.Player.VisualizationWindow;
 
         if (vizWindow != null)
@@ -263,6 +269,7 @@ namespace MediaPortal.GUI.Music
       bool success = false;
       if (ImagePathContainer != null)
       {
+        Log.Debug("GUIMusicPlayingNow: adding image to container - {0}", newImage);
         if (ImagePathContainer.Contains(newImage))
           return false;
 

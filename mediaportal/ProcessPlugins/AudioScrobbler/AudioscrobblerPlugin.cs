@@ -171,63 +171,66 @@ namespace MediaPortal.Audioscrobbler
       {
         if (currentSong == null)
           currentSong = new Song();
-        // Track has changed
-        if (g_Player.CurrentFile != currentSong.FileName)
+        if (g_Player.Playing)
         {
-          bool songFound = false;
-          if (g_Player.IsCDA)
+          // Track has changed
+          if (g_Player.CurrentFile != currentSong.FileName)
           {
-            if (g_Player.CurrentFile.IndexOf("Track") > 0 && g_Player.CurrentFile.IndexOf(".cda") > 0)
+            bool songFound = false;
+            if (g_Player.IsCDA)
             {
-              currentSong.Artist = GUIPropertyManager.GetProperty("#Play.Current.Artist");
-              currentSong.Title = GUIPropertyManager.GetProperty("#Play.Current.Title");
-              currentSong.Album = GUIPropertyManager.GetProperty("#Play.Current.Album");              
-              //currentSong.Track = Int32.Parse(GUIPropertyManager.GetProperty("#Play.Current.Track"), System.Globalization.NumberStyles.Integer, new System.Globalization.CultureInfo("en-US"));              
-              currentSong.Duration = Convert.ToInt32(g_Player.Duration);
-              currentSong.Genre = GUIPropertyManager.GetProperty("#Play.Current.Genre");              
-              currentSong.FileName = g_Player.CurrentFile;
+              if (g_Player.CurrentFile.IndexOf("Track") > 0 && g_Player.CurrentFile.IndexOf(".cda") > 0)
+              {
+                currentSong.Artist = GUIPropertyManager.GetProperty("#Play.Current.Artist");
+                currentSong.Title = GUIPropertyManager.GetProperty("#Play.Current.Title");
+                currentSong.Album = GUIPropertyManager.GetProperty("#Play.Current.Album");
+                //currentSong.Track = Int32.Parse(GUIPropertyManager.GetProperty("#Play.Current.Track"), System.Globalization.NumberStyles.Integer, new System.Globalization.CultureInfo("en-US"));              
+                currentSong.Duration = Convert.ToInt32(g_Player.Duration);
+                currentSong.Genre = GUIPropertyManager.GetProperty("#Play.Current.Genre");
+                currentSong.FileName = g_Player.CurrentFile;
 
-              songFound = currentSong.Artist != "" ? true : false;
-              //return;
+                songFound = currentSong.Artist != "" ? true : false;
+                //return;
+              }
             }
-          }
-          else
-          {
-            // local DB file
-            MusicDatabase dbs = new MusicDatabase();
-            string strFile = g_Player.Player.CurrentFile;
-            songFound = dbs.GetSongByFileName(strFile, ref currentSong);
-          }
-
-          if (songFound)
-          {
-            // playback couuuuld be stopped in theory
-            if (g_Player.Playing)
+            else
             {
-              currentSong.AudioScrobblerStatus = SongStatus.Init;
-              currentSong.DateTimePlayed = DateTime.UtcNow - TimeSpan.FromSeconds(g_Player.CurrentPosition);
-              // avoid false skip detection            
-              lastPosition = Convert.ToInt32(g_Player.Player.CurrentPosition);
-              OnSongChangedEvent(currentSong);
-            }
-          }
-          // DB lookup of song failed
-          else
-            if (g_Player.IsMusic)
-            {
-              Log.Info("Audioscrobbler plugin: database does not contain track - ignoring track: {0} by {1} from {2}", currentSong.Title, currentSong.Artist, currentSong.Album);
-              Log.Debug("g_player: filename of current song - {0}", g_Player.CurrentFile);
+              // local DB file
+              MusicDatabase dbs = new MusicDatabase();
+              string strFile = g_Player.Player.CurrentFile;
+              songFound = dbs.GetSongByFileName(strFile, ref currentSong);
             }
 
-        }
-        else // Track was paused / unpaused
-        {
-          // avoid false skip detection
-          if (g_Player.Playing && g_Player.CurrentPosition > 0)
+            if (songFound)
+            {
+              // playback couuuuld be stopped in theory
+              if (g_Player.Playing)
+              {
+                currentSong.AudioScrobblerStatus = SongStatus.Init;
+                currentSong.DateTimePlayed = DateTime.UtcNow - TimeSpan.FromSeconds(g_Player.CurrentPosition);
+                // avoid false skip detection            
+                lastPosition = Convert.ToInt32(g_Player.Player.CurrentPosition);
+                OnSongChangedEvent(currentSong);
+              }
+            }
+            // DB lookup of song failed
+            else
+              if (g_Player.IsMusic)
+              {
+                Log.Info("Audioscrobbler plugin: database does not contain track - ignoring track: {0} by {1} from {2}", currentSong.Title, currentSong.Artist, currentSong.Album);
+                Log.Debug("g_player: filename of current song - {0}", g_Player.CurrentFile);
+              }
+
+          }
+          else // Track was paused / unpaused
           {
-            lastPosition = Convert.ToInt32(g_Player.CurrentPosition);
-            if (currentSong.AudioScrobblerStatus == SongStatus.Init)
-              Log.Info("Audioscrobbler plugin: {0}", "track paused - avoid skip protection");
+            // avoid false skip detection
+            if (g_Player.Playing && g_Player.CurrentPosition > 0)
+            {
+              lastPosition = Convert.ToInt32(g_Player.CurrentPosition);
+              if (currentSong.AudioScrobblerStatus == SongStatus.Init)
+                Log.Info("Audioscrobbler plugin: {0}", "track paused - avoid skip protection");
+            }
           }
         }
       }

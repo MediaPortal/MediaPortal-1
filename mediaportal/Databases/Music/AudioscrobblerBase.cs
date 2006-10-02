@@ -739,6 +739,8 @@ namespace MediaPortal.Music.Database
         }
 
         // Remove the submitted songs from the queue.
+        if (_useDebugLog)
+          Log.Debug("AudioscrobblerBase: remove submitted songs from queue - set lock");
         lock (queueLock)
         {
           try
@@ -751,6 +753,7 @@ namespace MediaPortal.Music.Database
             Log.Error("AudioscrobblerBase: submit thread clearing cache - {0}", ex.Message);
           }
         }
+        Log.Debug("AudioscrobblerBase: submitted songs successfully removed from queue. Idle...");
       }
     }
 
