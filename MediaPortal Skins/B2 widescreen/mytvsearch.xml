@@ -75,10 +75,6 @@
 				<id>4</id>
 				<posX>113</posX>
 				<posY>174</posY>
-				<width>253</width>
-				<height>42</height>
-				<textXOff>18</textXOff>
-				<textYOff>6</textYOff>
 				<font>font13</font>
 				<textcolor>ffffffff</textcolor>
 				<colordiffuse>ffffffff</colordiffuse>
@@ -99,10 +95,6 @@
 				<id>5</id>
 				<posX>113</posX>
 				<posY>220</posY>
-				<width>253</width>
-				<height>42</height>
-				<textXOff>18</textXOff>
-				<textYOff>6</textYOff>
 				<font>font13</font>
 				<textcolor>ffffffff</textcolor>
 				<colordiffuse>ffffffff</colordiffuse>
@@ -123,11 +115,7 @@
 				<id>6</id>
 				<posX>113</posX>
 				<posY>265</posY>
-				<width>253</width>
-				<height>42</height>
 				<label>922</label>
-				<textXOff>18</textXOff>
-				<textYOff>6</textYOff>
 				<font>font13</font>
 				<textcolor>ffffffff</textcolor>
 				<colordiffuse>ffffffff</colordiffuse>
