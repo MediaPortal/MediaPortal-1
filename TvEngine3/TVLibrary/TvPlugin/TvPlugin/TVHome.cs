@@ -1336,7 +1336,7 @@ namespace TvPlugin
       try
       {
         MediaPortal.GUI.Library.Log.Info("ChannelNavigator::Reload()");
-        CreateDatabaseConfigFile(RemoteControl.Instance.DatabaseConnectionString);
+        Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(RemoteControl.Instance.DatabaseConnectionString);
         MediaPortal.GUI.Library.Log.Info("get channels from database");
         SqlBuilder sb = new SqlBuilder(StatementType.Delete, typeof(Channel));
         sb.AddConstraint(Operator.Equals, "istv", "1");
