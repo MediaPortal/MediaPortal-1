@@ -39,8 +39,8 @@
 			<id>2</id>
 			<posX>905</posX>
 			<posY>190</posY>
-			<width>48</width>
-			<height>48</height>
+			<width>58</width>
+			<height>58</height>
 			<textureFocus>dialogue_shutdown_focus.png</textureFocus>
 			<textureNoFocus>dialogue_shutdown_nofocus.png</textureNoFocus>
 			<label>-</label>
