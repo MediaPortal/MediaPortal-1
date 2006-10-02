@@ -9,7 +9,7 @@
 			<type>image</type>
 			<id>4</id>
 			<posX>1138</posX>
-			<posY>26</posY>
+			<posY>66</posY>
 			<texture>rec.png</texture>
 			<colordiffuse>ffffffff</colordiffuse>
 		</control>
