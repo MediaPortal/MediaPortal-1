@@ -4,14 +4,14 @@
 	<defaultcontrol>10</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
 	<controls>
-  <import>common.dialog.xml</import>
+                <import>common.dialog.xml</import>
 		<control>
 			<description>No button</description>
 			<type>button</type>
 			<id>10</id>
 			<posX>733</posX>
 			<posY>420</posY>
-			<textXOff>54</textXOff>
+			<textXOff>44</textXOff>
 			<textYOff>9</textYOff>
 			<width>140</width>
 			<height>50</height>
