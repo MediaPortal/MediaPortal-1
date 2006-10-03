@@ -79,6 +79,6 @@
 				<label>5906</label>
 			</control>
 		</control>
-		<import>common.facade.xml</import>
+		<import>common.facade.video.xml</import>
 	</controls>
 </window>

@@ -17,18 +17,18 @@
 		<control>
 			<type>image</type>
 			<id>0</id>
-			<posX>335</posX>
-			<posY>300</posY>
-			<width>545</width>
-			<height>269</height>
+			<posX>366</posX>
+			<posY>250</posY>
+			<width>634</width>
+			<height>268</height>
 			<texture>dialog_background.png</texture>
 		</control>
 		<control>
 			<description>dialog Heading</description>
 			<type>label</type>
 			<id>1</id>
-			<posX>398</posX>
-			<posY>333</posY>
+			<posX>428</posX>
+			<posY>290</posY>
 			<label>0</label>
 			<font>font13</font>
 			<textcolor>ffffffff</textcolor>
@@ -37,8 +37,8 @@
 			<description>dialog line 1</description>
 			<type>label</type>
 			<id>2</id>
-			<posX>398</posX>
-			<posY>373</posY>
+			<posX>428</posX>
+			<posY>330</posY>
 			<label>0</label>
 			<font>font13</font>
 			<textcolor>ffffffff</textcolor>
@@ -47,8 +47,8 @@
 			<description>dialog line 2</description>
 			<type>label</type>
 			<id>3</id>
-			<posX>398</posX>
-			<posY>400</posY>
+			<posX>428</posX>
+			<posY>358</posY>
 			<label>0</label>
 			<font>font13</font>
 			<textcolor>ffffffff</textcolor>
@@ -57,8 +57,8 @@
 			<description>dialog line 3</description>
 			<type>label</type>
 			<id>4</id>
-			<posX>398</posX>
-			<posY>426</posY>
+			<posX>428</posX>
+			<posY>386</posY>
 			<label>0</label>
 			<font>font13</font>
 			<textcolor>ffffffff</textcolor>
@@ -67,9 +67,9 @@
 			<description>No button</description>
 			<type>button</type>
 			<id>10</id>
-			<posX>758</posX>
-			<posY>466</posY>
-			<textXOff>56</textXOff>
+			<posX>733</posX>
+			<posY>420</posY>
+			<textXOff>54</textXOff>
 			<textYOff>9</textYOff>
 			<width>140</width>
 			<height>50</height>
@@ -86,8 +86,8 @@
 			<type>button</type>
 			<id>11</id>
 			<posX>493</posX>
-			<posY>466</posY>
-			<textXOff>60</textXOff>
+			<posY>420</posY>
+			<textXOff>50</textXOff>
 			<textYOff>9</textYOff>
 			<width>140</width>
 			<height>50</height>
