@@ -170,6 +170,8 @@ CREATE TABLE TuningDetail(
 	pcrPid int NOT NULL,
 	videoSource int NOT NULL,
 	tuningSource int NOT NULL,
+	videoPid int NOT NULL,
+	audioPid int NOT NULL,
  CONSTRAINT PK_TuningDetail PRIMARY KEY  
 (
 	idTuning ASC
@@ -389,5 +391,5 @@ GO
 GO
 delete from version
 GO
-insert into version(versionNumber) values(8)
+insert into version(versionNumber) values(9)
 GO

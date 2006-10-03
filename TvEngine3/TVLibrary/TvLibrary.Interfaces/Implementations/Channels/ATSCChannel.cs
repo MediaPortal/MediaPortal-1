@@ -36,6 +36,8 @@ namespace TvLibrary.Channels
     int _majorChannel;
     int _minorChannel;
     int _symbolRate;
+    int _videoPid;
+    int _audioPid;
     ModulationType _modulation;
     #endregion
 
@@ -48,6 +50,8 @@ namespace TvLibrary.Channels
       _minorChannel = -1;
       _symbolRate = -1;
       _physicalChannel = -1;
+      _audioPid = -1;
+      _videoPid = 1;
     }
 
     #region properties
@@ -121,6 +125,34 @@ namespace TvLibrary.Channels
         _symbolRate = value;
       }
     }
+    /// <summary>
+    /// gets/sets the AudioPid
+    /// </summary>
+    public int AudioPid
+    {
+      get
+      {
+        return _audioPid;
+      }
+      set
+      {
+        _audioPid = value;
+      }
+    }
+    /// <summary>
+    /// gets/sets the VideoPid
+    /// </summary>
+    public int VideoPid
+    {
+      get
+      {
+        return _videoPid;
+      }
+      set
+      {
+        _videoPid = value;
+      }
+    }
     #endregion
 
     /// <summary>
@@ -129,8 +161,8 @@ namespace TvLibrary.Channels
     /// <returns></returns>
     public override string ToString()
     {
-      return String.Format("{0} phys:{1} maj:{2} min:{3} SR:{4} mod:{5}",
-        base.ToString(), _physicalChannel, _majorChannel, _minorChannel, _symbolRate, _modulation);
+      return String.Format("{0} phys:{1} maj:{2} min:{3} SR:{4} mod:{5} audio pid:{6:X} video pid:{7:X}",
+        base.ToString(), _physicalChannel, _majorChannel, _minorChannel, _symbolRate, _modulation,_audioPid,_videoPid);
     }
 
     /// <summary>
@@ -146,6 +178,8 @@ namespace TvLibrary.Channels
       if (ch.MajorChannel != MajorChannel) return false;
       if (ch.MinorChannel != MinorChannel) return false;
       if (ch.SymbolRate != SymbolRate) return false;
+      if (ch.AudioPid != AudioPid) return false;
+      if (ch.VideoPid != VideoPid) return false;
 
       return true;
     }
@@ -158,7 +192,7 @@ namespace TvLibrary.Channels
     public override int GetHashCode()
     {
       return base.GetHashCode() ^ _physicalChannel.GetHashCode() ^ _majorChannel.GetHashCode()
-             ^ _minorChannel.GetHashCode() ^ _symbolRate.GetHashCode() ^ _modulation.GetHashCode();
+             ^ _minorChannel.GetHashCode() ^ _symbolRate.GetHashCode() ^ _modulation.GetHashCode() ^ _videoPid.GetHashCode() ^ _audioPid.GetHashCode();
     }
   }
 }

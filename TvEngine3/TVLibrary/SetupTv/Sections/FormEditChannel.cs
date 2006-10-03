@@ -95,6 +95,8 @@ namespace SetupTv.Sections
           detail.ChannelNumber = Int32.Parse(textBox12.Text);
           detail.MajorChannel = Int32.Parse(textBox11.Text);
           detail.MinorChannel = Int32.Parse(textBox10.Text);
+          detail.AudioPid = Int32.Parse(textBoxAudioPid.Text);
+          detail.VideoPid = Int32.Parse(textBoxVideoPid.Text);
         }
 
         //DVBC tab
@@ -188,6 +190,8 @@ namespace SetupTv.Sections
           textBox12.Text = detail.ChannelNumber.ToString();
           textBox11.Text = detail.MajorChannel.ToString();
           textBox10.Text = detail.MinorChannel.ToString();
+          textBoxAudioPid.Text = detail.AudioPid.ToString();
+          textBoxVideoPid.Text = detail.VideoPid.ToString();
         }
 
         //DVBC tab

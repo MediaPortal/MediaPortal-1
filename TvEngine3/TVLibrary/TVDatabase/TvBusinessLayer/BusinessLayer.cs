@@ -213,6 +213,8 @@ namespace TvDatabase
             atscChannel.ServiceId = detail.ServiceId;
             atscChannel.SymbolRate = detail.Symbolrate;
             atscChannel.TransportId = detail.TransportId;
+            atscChannel.AudioPid = detail.AudioPid;
+            atscChannel.VideoPid = detail.VideoPid;
             tvChannels.Add(atscChannel);
             break;
           case 2: //DVBCChannel
@@ -313,6 +315,8 @@ namespace TvDatabase
       int majorChannel = -1;
       string provider = "";
       int channelType = 0;
+      int videoPid = -1;
+      int audioPid = -1;
 
       AnalogChannel analogChannel = tvChannel as AnalogChannel;
       if (analogChannel != null)
@@ -333,6 +337,8 @@ namespace TvDatabase
         majorChannel = atscChannel.MajorChannel;
         minorChannel = atscChannel.MinorChannel;
         channelNumber = atscChannel.PhysicalChannel;
+        videoPid = atscChannel.VideoPid;
+        audioPid = atscChannel.AudioPid;
         channelType = 1;
       }
 
@@ -392,7 +398,9 @@ namespace TvDatabase
             tuningdetail.ChannelNumber == channelNumber &&
             tuningdetail.IsTv == isTv &&
             tuningdetail.ChannelType == channelType &&
-            tuningdetail.IsRadio == isRadio)
+            tuningdetail.IsRadio == isRadio &&
+            tuningdetail.AudioPid==audioPid &&
+            tuningdetail.VideoPid == videoPid)
         {
           tuningdetail.Bandwidth = bandwidth;
           tuningdetail.CountryId = country;
@@ -407,6 +415,8 @@ namespace TvDatabase
           tuningdetail.VideoSource = videoInputType;
           tuningdetail.TuningSource = tunerSource;
           tuningdetail.ChannelType = channelType;
+          tuningdetail.VideoPid = videoPid;
+          tuningdetail.AudioPid = audioPid;
           return tuningdetail;
         }
       }
@@ -415,7 +425,7 @@ namespace TvDatabase
                               channelType, channelNumber, (int)channelFrequency, country, isRadio, isTv,
                               networkId, transportId, serviceId, pmtPid, freeToAir,
                               modulation, polarisation, symbolRate, diseqc, switchFrequency,
-                              bandwidth, majorChannel, minorChannel, pcrPid, videoInputType, tunerSource);
+                              bandwidth, majorChannel, minorChannel, pcrPid, videoInputType, tunerSource,videoPid,audioPid);
       detail.Persist();
       return detail;
     }

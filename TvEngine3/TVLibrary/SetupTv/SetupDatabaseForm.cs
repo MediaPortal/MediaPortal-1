@@ -230,7 +230,7 @@ namespace SetupTv
                 int version = (int)reader["versionNumber"];
                 reader.Close();
                 connect.Close();
-                if (version != 8)
+                if (version != 9)
                 {
                   return true;
                 }

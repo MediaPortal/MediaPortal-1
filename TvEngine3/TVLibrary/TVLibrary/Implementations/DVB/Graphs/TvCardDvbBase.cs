@@ -145,7 +145,7 @@ namespace TvLibrary.Implementations.DVB
     protected GraphState _graphState = GraphState.Idle;
     protected bool _startTimeShifting = false;
     DVBAudioStream _currentAudioStream;
-    BaseEpgGrabber _epgGrabberCallback=null;
+    BaseEpgGrabber _epgGrabberCallback = null;
 
 
 
@@ -1202,9 +1202,31 @@ namespace TvLibrary.Implementations.DVB
     {
       if (pmtPid < 0) return;
       if (!CheckThreadId()) return;
-      _interfacePmtGrabber.SetCallBack(this);
-      _interfacePmtGrabber.SetPmtPid(pmtPid);
-      //Log.Log.WriteFile("dvb:SetAnalyzerMapping done");
+
+
+      if ((_currentChannel as ATSCChannel) != null)
+      {
+        Log.Log.Write("SetAnalyzerMapping for atsc");
+        ATSCChannel atscChannel = (ATSCChannel)_currentChannel;
+        _channelInfo = new ChannelInfo();
+        _channelInfo.network_pmt_PID = atscChannel.PmtPid;
+        _channelInfo.pcr_pid = atscChannel.PcrPid;
+        PidInfo audioInfo = new PidInfo();
+        audioInfo.Ac3Pid(atscChannel.AudioPid,"");
+        _channelInfo.AddPid(audioInfo);
+        PidInfo videoInfo = new PidInfo();
+        videoInfo.VideoPid(atscChannel.VideoPid);
+        _channelInfo.AddPid(videoInfo);
+
+        Log.Log.Write(" video:{0:X} audio:{1:X} pcr:{2:X} pmt:{3:X}",
+            atscChannel.VideoPid,atscChannel.AudioPid,atscChannel.PcrPid,atscChannel.PmtPid);
+        SetMpegPidMapping(_channelInfo);
+      }
+      else
+      {
+        _interfacePmtGrabber.SetCallBack(this);
+        _interfacePmtGrabber.SetPmtPid(pmtPid);
+      }
     }
 
 
@@ -2225,6 +2247,7 @@ namespace TvLibrary.Implementations.DVB
     {
       lock (this)
       {
+        if ((_currentChannel as ATSCChannel) != null) return true;
         DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
         if (channel == null) return false;
         IntPtr pmtMem = Marshal.AllocCoTaskMem(4096);// max. size for pmt
@@ -2265,6 +2288,7 @@ namespace TvLibrary.Implementations.DVB
                 return true;
               }
             }
+
           }
         }
         catch (Exception ex)
