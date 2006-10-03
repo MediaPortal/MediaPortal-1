@@ -770,7 +770,14 @@ namespace Tag.OGG
       // byte at a time...
       int maxSearchBytes = 1024 * 20;
       byte[] buffer = new byte[maxSearchBytes];
-      AudioFileStream.Seek(-maxSearchBytes, SeekOrigin.End);
+      try
+      {
+        AudioFileStream.Seek(-maxSearchBytes, SeekOrigin.End);
+      }
+      catch (IOException)
+      {
+        AudioFileStream.Position = 0;
+      }
       AudioFileStream.Read(buffer, 0, maxSearchBytes);
 
       for (int i = buffer.Length - 1; i >= 0; i--)
