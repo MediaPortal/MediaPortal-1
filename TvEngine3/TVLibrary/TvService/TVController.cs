@@ -1656,6 +1656,7 @@ namespace TvService
 
     public void StopGrabbingEpg(int cardId)
     {
+      if (false==_allDbscards.ContainsKey(cardId)) return;
       if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
       {
         // RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
