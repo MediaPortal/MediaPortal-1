@@ -236,7 +236,9 @@ namespace SetupTv.Sections
     {
       base.OnSectionDeActivated();
       TvBusinessLayer layer = new TvBusinessLayer();
-      layer.GetSetting("dvbc" + _cardNumber.ToString() + "Country", "0").Value = mpComboBoxCountry.SelectedIndex.ToString();
+      Setting setting=layer.GetSetting("dvbc" + _cardNumber.ToString() + "Country", "0");
+      setting.Value = mpComboBoxCountry.SelectedIndex.ToString();
+      setting.Persist();
       //DatabaseManager.Instance.SaveChanges();
     }
 

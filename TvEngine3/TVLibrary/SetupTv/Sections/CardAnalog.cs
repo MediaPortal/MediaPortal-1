@@ -266,6 +266,7 @@ namespace SetupTv.Sections
             Channel dbChannel = layer.AddChannel(channel.Name);
             dbChannel.IsTv = channel.IsTv;
             dbChannel.IsRadio = channel.IsRadio;
+            layer.AddChannelToGroup(dbChannel, "Analog channels");
             layer.AddTuningDetails(dbChannel, channel);
 
             layer.MapChannelToCard(card, dbChannel);
