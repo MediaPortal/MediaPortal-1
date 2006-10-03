@@ -101,7 +101,11 @@ namespace TvDatabase
       IList groupMaps = group.ReferringGroupMap();
       foreach (GroupMap map in groupMaps)
       {
-        if (map.IdChannel == channel.IdChannel) found = true;
+        if (map.IdChannel == channel.IdChannel)
+        {
+          found = true;
+          break;
+        }
       }
       if (!found)
       {
