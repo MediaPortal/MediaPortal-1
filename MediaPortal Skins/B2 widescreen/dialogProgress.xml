@@ -17,28 +17,28 @@
 		<control>
 			<type>image</type>
 			<id>0</id>
-			<posX>309</posX>
+			<posX>366</posX>
 			<posY>285</posY>
-			<width>581</width>
+			<width>634</width>
 			<height>328</height>
 			<texture>dialog_background.png</texture>
 		</control>
 		<control>
 			<type>image</type>
 			<id>100</id>
-			<posX>390</posX>
-			<posY>434</posY>
-			<width>460</width>
+			<posX>428</posX>
+			<posY>479</posY>
+			<width>488</width>
 			<texture>osd_progress_background.png</texture>
 		</control>
 		<control>
 			<description>dialog Heading</description>
 			<type>label</type>
 			<id>2</id>
-			<posX>398</posX>
+			<posX>428</posX>
 			<posY>333</posY>
 			<label>0</label>
-			<width>493</width>
+			<width>393</width>
 			<font>font13</font>
 			<textcolor>ffffffff</textcolor>
 		</control>
@@ -46,40 +46,40 @@
 			<description>dialog line 1</description>
 			<type>label</type>
 			<id>3</id>
-			<posX>398</posX>
-			<posY>373</posY>
+			<posX>428</posX>
+			<posY>383</posY>
 			<hasPath>yes</hasPath>
 			<label>0</label>
 			<font>font13</font>
-			<width>493</width>
+			<width>393</width>
 			<textcolor>ffffffff</textcolor>
 		</control>
 		<control>
 			<description>dialog line 2</description>
 			<type>label</type>
 			<id>4</id>
-			<posX>398</posX>
-			<posY>400</posY>
+			<posX>428</posX>
+			<posY>416</posY>
 			<hasPath>yes</hasPath>
 			<label>0</label>
 			<font>font13</font>
-			<width>493</width>
+			<width>393</width>
 			<textcolor>ffffffff</textcolor>
 		</control>
 		<control>
 			<description>progress control</description>
 			<type>progress</type>
 			<id>20</id>
-			<posX>369</posX>
-			<posY>433</posY>
-			<width>489</width>
+			<posX>418</posX>
+			<posY>478</posY>
+			<width>509</width>
 			<height>33</height>
 		</control>
 		<control>
 			<description>Cancel button</description>
 			<type>button</type>
 			<id>10</id>
-			<posX>977</posX>
+			<posX>877</posX>
 			<posY>336</posY>
 			<width>58</width>
 			<height>58</height>

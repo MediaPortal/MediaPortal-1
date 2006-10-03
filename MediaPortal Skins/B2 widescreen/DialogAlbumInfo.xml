@@ -36,60 +36,66 @@
 			<description>Artist</description>
 			<type>label</type>
 			<id>1</id>
-			<posX>189</posX>
+			<posX>319</posX>
 			<posY>133</posY>
 			<label>171</label>
 			<font>font13</font>
+			<align>right</align>
 			<textcolor>FFB2D4F5</textcolor>
 		</control>
 		<control>
 			<description>Date of Release</description>
 			<type>label</type>
 			<id>1</id>
-			<posX>189</posX>
+			<posX>319</posX>
 			<posY>160</posY>
 			<label>201</label>
 			<font>font13</font>
+			<align>right</align>
 			<textcolor>FFB2D4F5</textcolor>
 		</control>
 		<control>
 			<description>Rating</description>
 			<type>label</type>
 			<id>1</id>
-			<posX>189</posX>
+			<posX>319</posX>
 			<posY>186</posY>
 			<label>173</label>
 			<font>font13</font>
+			<align>right</align>
 			<textcolor>FFB2D4F5</textcolor>
 		</control>
 		<control>
 			<description>Genre</description>
 			<type>label</type>
 			<id>1</id>
-			<posX>189</posX>
+			<posX>319</posX>
 			<posY>213</posY>
 			<label>174</label>
 			<font>font13</font>
+			<align>right</align>
 			<textcolor>FFB2D4F5</textcolor>
 		</control>
 		<control>
 			<description>Tones</description>
 			<type>label</type>
 			<id>1</id>
-			<posX>189</posX>
+			<posX>319</posX>
 			<posY>240</posY>
 			<label>175</label>
 			<font>font13</font>
+			<align>right</align>
 			<textcolor>FFB2D4F5</textcolor>
 		</control>
 		<control>
 			<description>Styles</description>
 			<type>label</type>
 			<id>1</id>
-			<posX>189</posX>
+			<posX>319</posX>
 			<posY>266</posY>
 			<label>176</label>
 			<font>font13</font>
+			<align>right</align>
 			<textcolor>FFB2D4F5</textcolor>
 		</control>
 		<control>
@@ -138,7 +144,7 @@
 			<id>25</id>
 			<posX>417</posX>
 			<posY>240</posY>
-			<width>533</width>
+			<width>733</width>
 			<label>-</label>
 			<font>font13</font>
 			<textcolor>FFFFFFFF</textcolor>
@@ -149,7 +155,7 @@
 			<id>26</id>
 			<posX>417</posX>
 			<posY>266</posY>
-			<width>533</width>
+			<width>733</width>
 			<label>-</label>
 			<font>font13</font>
 			<textcolor>FFFFFFFF</textcolor>
@@ -172,8 +178,8 @@
 			<type>textbox</type>
 			<id>4</id>
 			<posX>417</posX>
-			<posY>306</posY>
-			<width>546</width>
+			<posY>316</posY>
+			<width>796</width>
 			<height>400</height>
 			<onleft>5</onleft>
 			<onright>5</onright>
@@ -186,7 +192,7 @@
 			<id>5</id>
 			<posX>189</posX>
 			<posY>506</posY>
-			<width>120</width>
+			<width>132</width>
 			<height>42</height>
 			<label>182</label>
 			<onleft>4</onleft>
@@ -200,7 +206,7 @@
 			<id>6</id>
 			<posX>189</posX>
 			<posY>554</posY>
-			<width>120</width>
+			<width>132</width>
 			<height>42</height>
 			<label>184</label>
 			<font>font13</font>
