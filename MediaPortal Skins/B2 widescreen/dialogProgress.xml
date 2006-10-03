@@ -1,29 +1,11 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <window>
 	<id>101</id>
 	<defaultcontrol>10</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
 	<controls>
-		<control>
-			<type>image</type>
-			<id>0</id>
-			<posX>0</posX>
-			<posY>0</posY>
-			<width>1366</width>
-			<height>768</height>
-			<texture>black.bmp</texture>
-			<colordiffuse>60ffffff</colordiffuse>
-		</control>
-		<control>
-			<type>image</type>
-			<id>0</id>
-			<posX>366</posX>
-			<posY>285</posY>
-			<width>634</width>
-			<height>328</height>
-			<texture>dialog_background.png</texture>
-		</control>
-		<control>
+	<import>common.dialog.xml</import>
+   <control>
 			<type>image</type>
 			<id>100</id>
 			<posX>428</posX>
@@ -40,30 +22,6 @@
 			<label>0</label>
 			<width>393</width>
 			<font>font13</font>
-			<textcolor>ffffffff</textcolor>
-		</control>
-		<control>
-			<description>dialog line 1</description>
-			<type>label</type>
-			<id>3</id>
-			<posX>428</posX>
-			<posY>383</posY>
-			<hasPath>yes</hasPath>
-			<label>0</label>
-			<font>font13</font>
-			<width>393</width>
-			<textcolor>ffffffff</textcolor>
-		</control>
-		<control>
-			<description>dialog line 2</description>
-			<type>label</type>
-			<id>4</id>
-			<posX>428</posX>
-			<posY>416</posY>
-			<hasPath>yes</hasPath>
-			<label>0</label>
-			<font>font13</font>
-			<width>393</width>
 			<textcolor>ffffffff</textcolor>
 		</control>
 		<control>
