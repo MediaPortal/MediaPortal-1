@@ -1,67 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <window>
   <id>100</id>
   <defaultcontrol>10</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
   <controls>
-    <control>
-      <type>image</type>
-      <id>0</id>
-      <posX>0</posX>
-      <posY>0</posY>
-      <width>720</width>
-      <height>576</height>
-      <texture>black.bmp</texture>
-      <colordiffuse>60ffffff</colordiffuse>
-    </control>
-    <control>
-      <type>image</type>
-      <id>0</id>
-      <posX>177</posX>
-      <posY>225</posY>
-      <width>409</width>
-      <height>202</height>
-      <texture>dialog_background.png</texture>
-    </control>
-    <control>
-      <description>dialog Heading</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>210</posX>
-      <posY>250</posY>
-      <label>0</label>
-      <font>font13</font>
-      <textcolor>ffffffff</textcolor>
-    </control>
-    <control>
-      <description>dialog line 1</description>
-      <type>label</type>
-      <id>2</id>
-      <posX>210</posX>
-      <posY>280</posY>
-      <label>0</label>
-      <font>font13</font>
-      <textcolor>ffffffff</textcolor>
-    </control>
-    <control>
-      <description>dialog line 2</description>
-      <type>label</type>
-      <id>3</id>
-      <posX>210</posX>
-      <posY>300</posY>
-      <label>0</label>
-      <font>font13</font>
-      <textcolor>ffffffff</textcolor>
-    </control>
-    <control>
-      <description>dialog line 3</description>
-      <type>label</type>
-      <id>4</id>
-      <posX>210</posX>
-      <posY>320</posY>
-      <label>0</label>
-      <font>font13</font>
-      <textcolor>ffffffff</textcolor>
-    </control>
+  <import>common.dialog.xml</import>
     <control>
       <description>No button</description>
       <type>button</type>
