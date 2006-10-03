@@ -144,16 +144,25 @@ namespace SetupTv
       //auto start the tv-service
       if (!ServiceHelper.IsInstalled)
       {
+#if DEBUG
+#else
         MessageBox.Show("The Tv service is not installed");
         return;
+#endif
       }
       if (ServiceHelper.IsInstalled && !ServiceHelper.IsRunning)
       {
+#if DEBUG
+#else
         ServiceHelper.Restart();
+#endif
       }
 
       try
       {
+#if DEBUG
+        RemoteControl.HostName = "mediacenter";
+#endif
         cards = RemoteControl.Instance.Cards;
 
       }

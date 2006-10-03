@@ -80,7 +80,10 @@ namespace TvDatabase
 		public string Value
 		{
 			get { return value; }
-			set { isChanged |= value != value; value = value; }
+			set {
+        isChanged |= this.value != value;
+        this.value = value; 
+      }
 		}
 		#endregion
 
