@@ -455,8 +455,7 @@ namespace TvService
       processor.Process(recording);
       if ((ScheduleRecordingType)recording.Schedule.ScheduleType == ScheduleRecordingType.Once)
       {
-        //@TODO
-        //recording.Schedule.DeleteAll();
+        recording.Schedule.Delete();
       }
       else
       {
