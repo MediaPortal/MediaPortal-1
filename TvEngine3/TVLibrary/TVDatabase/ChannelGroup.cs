@@ -143,5 +143,15 @@ namespace TvDatabase
 			//return new GentleList( typeof(GroupMap), this );
 		}
 		#endregion
+
+    public void Delete()
+    {
+      IList list=ReferringGroupMap();
+      foreach (GroupMap map in list)
+      {
+        map.Remove();
+      }
+      Remove();
+    }
 	}
 }

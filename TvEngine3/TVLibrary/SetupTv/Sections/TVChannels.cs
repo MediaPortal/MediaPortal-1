@@ -134,6 +134,9 @@ namespace SetupTv.Sections
       SqlStatement stmt = sb.GetStatement(true);
       IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
       IList allmaps = ChannelMap.ListAll();
+      
+
+      List<ListViewItem> items = new List<ListViewItem>();
       foreach (Channel ch in channels)
       {
         bool analog = false;
@@ -195,9 +198,10 @@ namespace SetupTv.Sections
         item.Checked = ch.VisibleInGuide;
         item.Tag = ch;
         item.SubItems.Add(builder.ToString());
-        mpListView1.Items.Add(item);
+        items.Add(item);
 
       }
+      mpListView1.Items.AddRange(items.ToArray());
       mpListView1.EndUpdate();
       mpLabelChannelCount.Text = String.Format("Total channels:{0}", channelCount);
     }

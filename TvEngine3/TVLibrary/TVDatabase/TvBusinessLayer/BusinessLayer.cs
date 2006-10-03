@@ -84,7 +84,7 @@ namespace TvDatabase
     public void AddChannelToGroup(Channel channel, string groupName)
     { 
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(ChannelGroup));
-      sb.AddConstraint(Operator.Equals, "groupName", groupName);
+      sb.AddConstraint(Operator.Like, "groupName", groupName);
       SqlStatement stmt = sb.GetStatement(true);
       IList groups = ObjectFactory.GetCollection(typeof(ChannelGroup), stmt.Execute());
       ChannelGroup group;
@@ -402,9 +402,7 @@ namespace TvDatabase
             tuningdetail.ChannelNumber == channelNumber &&
             tuningdetail.IsTv == isTv &&
             tuningdetail.ChannelType == channelType &&
-            tuningdetail.IsRadio == isRadio &&
-            tuningdetail.AudioPid==audioPid &&
-            tuningdetail.VideoPid == videoPid)
+            tuningdetail.IsRadio == isRadio)
         {
           tuningdetail.Bandwidth = bandwidth;
           tuningdetail.CountryId = country;

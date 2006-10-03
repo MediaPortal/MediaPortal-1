@@ -97,7 +97,7 @@ namespace SetupTv.Sections
       foreach (ListViewItem item in selectedItems)
       {
         Channel channel = (Channel)item.Tag;
-        ChannelMap map=layer.MapChannelToCard(card, channel);
+        ChannelMap map = layer.MapChannelToCard(card, channel);
         mpListViewChannels.Items.Remove(item);
 
         ListViewItem newItem = mpListViewMapped.Items.Add(channel.Name);
@@ -130,7 +130,7 @@ namespace SetupTv.Sections
 
       mpListViewChannels.EndUpdate();
       mpListViewMapped.EndUpdate();
-     // DatabaseManager.Instance.SaveChanges();
+      // DatabaseManager.Instance.SaveChanges();
     }
 
     private void mpComboBoxCard_SelectedIndexChanged(object sender, EventArgs e)
@@ -149,13 +149,16 @@ namespace SetupTv.Sections
 
       Card card = ((CardInfo)mpComboBoxCard.SelectedItem).Card;
       IList maps = card.ReferringChannelMap();
-      //maps.ApplySort(new ChannelMap.Comparer(), false);
+
+
+      List<ListViewItem> items = new List<ListViewItem>();
       foreach (ChannelMap map in maps)
       {
         Channel channel = map.ReferencedChannel();
         if (channel.IsTv == false) continue;
-        ListViewItem item = mpListViewMapped.Items.Add(channel.Name);
+        ListViewItem item = new ListViewItem(channel.Name);
         item.Tag = map;
+        items.Add(item);
         bool remove = false;
         foreach (Channel ch in channels)
         {
@@ -169,17 +172,18 @@ namespace SetupTv.Sections
         {
           channels.Remove(channel);
         }
-        
-
       }
+      mpListViewMapped.Items.AddRange(items.ToArray());
 
-
+      items = new List<ListViewItem>();
       foreach (Channel channel in channels)
       {
         if (channel.IsTv == false) continue;
-        ListViewItem item = mpListViewChannels.Items.Add(channel.Name);
+        ListViewItem item = new ListViewItem(channel.Name);
         item.Tag = channel;
+        items.Add(item);
       }
+      mpListViewChannels.Items.AddRange(items.ToArray());
       mpListViewChannels.Sort();
       mpListViewChannels.EndUpdate();
       mpListViewMapped.EndUpdate();
