@@ -115,6 +115,8 @@ namespace MediaPortal.Utils.Web
     // Add relative or absolute url
     public HTTPRequest Add(string relativeUri)
     {
+      if(relativeUri.StartsWith("?"))
+        relativeUri = Uri.LocalPath + relativeUri;
       Uri newUri = new Uri(Uri, relativeUri);
       return new HTTPRequest(newUri);
     }
