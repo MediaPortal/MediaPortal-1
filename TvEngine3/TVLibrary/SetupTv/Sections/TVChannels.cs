@@ -28,7 +28,6 @@ using System.Windows.Forms;
 using TvControl;
 using DirectShowLib;
 
-
 using Gentle.Common;
 using Gentle.Framework;
 using TvDatabase;
@@ -40,6 +39,48 @@ namespace SetupTv.Sections
 {
   public partial class TvChannels : SectionSettings
   {
+    public class ListViewColumnSorter : IComparer
+    {
+      public int SortColumn;
+      public SortOrder Order;
+      public int Compare(object x, object y)
+      {
+        int compareResult;
+        ListViewItem listviewX, listviewY;
+        // Cast the objects to be compared to ListViewItem objects
+        listviewX = (ListViewItem)x;
+        listviewY = (ListViewItem)y;
+        if (SortColumn == 0)
+        {
+          compareResult = String.Compare(listviewX.Text, listviewY.Text);
+        }
+        else
+        {
+          // Compare the two items
+          compareResult = String.Compare(listviewX.SubItems[SortColumn].Text,
+            listviewY.SubItems[SortColumn].Text);
+        }
+        // Calculate correct return value based on object comparison
+        if (Order == SortOrder.Ascending)
+        {
+          // Ascending sort is selected,
+          // return normal result of compare operation
+          return compareResult;
+        }
+        else if (Order == SortOrder.Descending)
+        {
+          // Descending sort is selected,
+          // return negative result of compare operation
+          return (-compareResult);
+        }
+        else
+        {
+          // Return '0' to indicate they are equal
+          return 0;
+        }
+      }
+    }
+    private ListViewColumnSorter lvwColumnSorter;
     public TvChannels()
       : this("TV Channels")
     {
@@ -49,6 +90,10 @@ namespace SetupTv.Sections
       : base(name)
     {
       InitializeComponent();
+
+      lvwColumnSorter = new ListViewColumnSorter();
+      this.mpListView1.ListViewItemSorter = lvwColumnSorter;
+
     }
 
     public override void OnSectionDeActivated()
@@ -63,7 +108,7 @@ namespace SetupTv.Sections
         ch.VisibleInGuide = mpListView1.Items[i].Checked;
         ch.Persist();
       }
-      
+
       //DatabaseManager.Instance.SaveChanges();
       RemoteControl.Instance.OnNewSchedule();
       base.OnSectionDeActivated();
@@ -79,7 +124,7 @@ namespace SetupTv.Sections
         cards[card.IdCard] = RemoteControl.Instance.Type(card.IdCard);
       }
       base.OnSectionActivated();
-      
+
       mpListView1.BeginUpdate();
       mpListView1.Items.Clear();
       IList chs = Channel.ListAll();
@@ -115,7 +160,7 @@ namespace SetupTv.Sections
           }
         }
         StringBuilder builder = new StringBuilder();
-        
+
         string[] details = new string[4];
         details[0] = "";
         details[1] = "";
@@ -151,7 +196,7 @@ namespace SetupTv.Sections
         item.Tag = ch;
         item.SubItems.Add(builder.ToString());
         mpListView1.Items.Add(item);
-        
+
       }
       mpListView1.EndUpdate();
       mpLabelChannelCount.Text = String.Format("Total channels:{0}", channelCount);
@@ -161,28 +206,28 @@ namespace SetupTv.Sections
     {
       mpListView1.BeginUpdate();
       IList details = TuningDetail.ListAll();
-      foreach(TuningDetail detail in details) detail.Remove();
-      
+      foreach (TuningDetail detail in details) detail.Remove();
+
       IList groupmaps = GroupMap.ListAll();
       foreach (TuningDetail groupmap in groupmaps) groupmap.Remove();
-      
+
       IList channelMaps = ChannelMap.ListAll();
-      foreach(ChannelMap channelMap in channelMaps) channelMap.Remove();
+      foreach (ChannelMap channelMap in channelMaps) channelMap.Remove();
 
       IList recordings = Recording.ListAll();
-      foreach(Recording recording in recordings) recording.Remove();
+      foreach (Recording recording in recordings) recording.Remove();
 
       IList canceledSchedules = CanceledSchedule.ListAll();
-      foreach(CanceledSchedule canceledSchedule in canceledSchedules) canceledSchedule.Remove();
+      foreach (CanceledSchedule canceledSchedule in canceledSchedules) canceledSchedule.Remove();
 
       IList schedules = Schedule.ListAll();
-      foreach(Schedule schedule in schedules) schedule.Remove();
+      foreach (Schedule schedule in schedules) schedule.Remove();
 
       IList programs = Program.ListAll();
-      foreach(Program program in programs) program.Remove();
+      foreach (Program program in programs) program.Remove();
 
       IList channels = Channel.ListAll();
-      foreach(Channel channel in channels) channel.Remove();
+      foreach (Channel channel in channels) channel.Remove();
 
 
       mpListView1.EndUpdate();
@@ -278,7 +323,11 @@ namespace SetupTv.Sections
         mpListView1.Items[i].Text = (i + 1).ToString();
 
         Channel channel = (Channel)mpListView1.Items[i].Tag;
-        channel.SortOrder = i;
+        if (channel.SortOrder != i)
+        {
+          channel.SortOrder = i;
+          channel.Persist();
+        }
       }
     }
 
@@ -311,6 +360,32 @@ namespace SetupTv.Sections
       dlg.ShowDialog();
       channel.Persist();
       OnSectionActivated();
+    }
+
+    private void mpListView1_ColumnClick(object sender, ColumnClickEventArgs e)
+    {
+      if (e.Column == lvwColumnSorter.SortColumn)
+      {
+        // Reverse the current sort direction for this column.
+        if (lvwColumnSorter.Order == SortOrder.Ascending)
+        {
+          lvwColumnSorter.Order = SortOrder.Descending;
+        }
+        else
+        {
+          lvwColumnSorter.Order = SortOrder.Ascending;
+        }
+      }
+      else
+      {
+        // Set the column number that is to be sorted; default to ascending.
+        lvwColumnSorter.SortColumn = e.Column;
+        lvwColumnSorter.Order = SortOrder.Ascending;
+      }
+
+      // Perform the sort with these new sort options.
+      this.mpListView1.Sort();
+      ReOrder();
     }
   }
 }

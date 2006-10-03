@@ -389,7 +389,9 @@ namespace SetupTv.Sections
         if (mpLNB4.Checked)
           Scan(4, (DisEqcType)mpDisEqc2.SelectedIndex, (Sattelite)mpTransponder4.SelectedItem);
 
-        ListViewItem item=listViewStatus.Items.Add(new ListViewItem("Scan done..."));
+        ListViewItem item = listViewStatus.Items.Add(new ListViewItem(String.Format("Total radio channels new:{0} updated:{1}",_radioChannelsNew,_radioChannelsUpdated)));
+        item = listViewStatus.Items.Add(new ListViewItem(String.Format("Total tv channels new:{0} updated:{1}", _tvChannelsNew, _tvChannelsUpdated)));
+        item = listViewStatus.Items.Add(new ListViewItem("Scan done..."));
         item.EnsureVisible();
         mpButtonScanTv.Enabled = true;
         mpTransponder1.Enabled = true;
@@ -495,6 +497,7 @@ namespace SetupTv.Sections
           }
           dbChannel.Persist();
 
+          layer.AddChannelToGroup(dbChannel, channel.Provider);
           layer.AddTuningDetails(dbChannel, channel);
           if (channel.IsTv)
           {

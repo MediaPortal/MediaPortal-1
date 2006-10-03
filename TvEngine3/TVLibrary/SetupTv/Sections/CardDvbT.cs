@@ -128,13 +128,13 @@ namespace SetupTv.Sections
     }
     void DoScan()
     {
+      int tvChannelsNew = 0;
+      int radioChannelsNew = 0;
+      int tvChannelsUpdated = 0;
+      int radioChannelsUpdated = 0;
       try
       {
         RemoteControl.Instance.EpgGrabberEnabled = false;
-        int tvChannelsNew = 0;
-        int radioChannelsNew = 0;
-        int tvChannelsUpdated = 0;
-        int radioChannelsUpdated = 0;
         listViewStatus.Items.Clear();
 
         Dictionary<int, int> frequencies = new Dictionary<int, int>();
@@ -234,6 +234,7 @@ namespace SetupTv.Sections
               dbChannel.SortOrder = channel.LogicalChannelNumber;
             }
             dbChannel.Persist();
+            layer.AddChannelToGroup(dbChannel, channel.Provider);
             layer.AddTuningDetails(dbChannel, channel);
             
             if (channel.IsTv)
@@ -281,6 +282,8 @@ namespace SetupTv.Sections
         RemoteControl.Instance.EpgGrabberEnabled = true;
       }
       ListViewItem lastItem = listViewStatus.Items.Add(new ListViewItem("Scan done..."));
+       lastItem = listViewStatus.Items.Add(new ListViewItem(String.Format("Total radio channels new:{0} updated:{1}", radioChannelsNew, radioChannelsUpdated)));
+       lastItem = listViewStatus.Items.Add(new ListViewItem(String.Format("Total tv channels new:{0} updated:{1}", tvChannelsNew, tvChannelsUpdated)));
       lastItem.EnsureVisible();
     }
 
