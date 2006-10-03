@@ -101,6 +101,13 @@ namespace TvLibrary.Implementations.DVB
       atscChannel.PmtPid = info.network_pmt_PID;
       atscChannel.PcrPid = info.pcr_pid;
       atscChannel.FreeToAir = !info.scrambled;
+      foreach (PidInfo pid in info.pids)
+      {
+        if (pid.isAC3Audio || pid.isAudio)
+          atscChannel.AudioPid = pid.pid;
+        if (pid.isVideo)
+          atscChannel.VideoPid = pid.pid;
+      }
       Log.Log.Write("Found: {1}", atscChannel);
       return atscChannel;
     }
