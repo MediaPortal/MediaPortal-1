@@ -143,7 +143,7 @@ namespace DShowNET.Helper
             }
         }
 
-        public bool SendPMT(string camType, int serviceId, int videoPid, int audioPid, byte[] PMT, int pmtLength)
+        public bool SendPMT(string camType, int serviceId, int videoPid, int audioPid, byte[] PMT, int pmtLength, byte[] caPmt, int caPmtLen)
         {
             if (_digitalEverywhere.IsDigitalEverywhere)
             {
@@ -151,7 +151,7 @@ namespace DShowNET.Helper
             }
             if (_twinhan.IsTwinhan)
             {
-                _twinhan.SendPMT(camType, (uint)videoPid, (uint)audioPid, PMT, pmtLength);
+                _twinhan.SendPMT(camType, (uint)videoPid, (uint)audioPid, caPmt, caPmtLen);
                 return true;
             }
             if (_technoTrend.IsTechnoTrend)

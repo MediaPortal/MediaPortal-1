@@ -230,6 +230,7 @@
     <Compile Include="BDA\BdaFilterCategories.cs" />
     <Compile Include="BDA\BdaNetworkProviders.cs" />
     <Compile Include="BDA\BdaTuningSpaces.cs" />
+    <Compile Include="CaPmt.cs" />
     <Compile Include="CommandProcessor\Commands\CancelRecordingCommand.cs" />
     <Compile Include="CommandProcessor\Commands\CardCommand.cs" />
     <Compile Include="CommandProcessor\Commands\CheckRecordingsCommand.cs" />

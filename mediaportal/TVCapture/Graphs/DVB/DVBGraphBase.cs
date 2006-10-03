@@ -2032,9 +2032,11 @@ namespace MediaPortal.TV.Recording
             }
             Log.Info("DVBGraph:Send PMT#{0} version:{1} signal strength:{2} signal quality:{3} locked:{4} cam:{5}", _pmtSendCounter, pmtVersion, SignalStrength(), SignalQuality(), _tunerLocked, camType);
             _streamDemuxer.DumpPMT(pmt);
+            int caPmtLen;
+            byte[] caPmt = info.caPMT.CaPmtStruct(out caPmtLen);
             if ( _currentTuningObject.AC3Pid != 0x0 )
             {
-              if ( _cardProperties.SendPMT(camType, _currentTuningObject.ProgramNumber, _currentTuningObject.VideoPid, _currentTuningObject.AC3Pid, pmt, (int)pmt.Length) )
+              if (_cardProperties.SendPMT(camType, _currentTuningObject.ProgramNumber, _currentTuningObject.VideoPid, _currentTuningObject.AC3Pid, pmt, (int)pmt.Length, caPmt, caPmtLen))
               {
                 return true;
               }
@@ -2049,7 +2051,7 @@ namespace MediaPortal.TV.Recording
             }
             else
             {
-              if ( _cardProperties.SendPMT(camType, _currentTuningObject.ProgramNumber, _currentTuningObject.VideoPid, _currentTuningObject.AudioPid, pmt, (int)pmt.Length) )
+              if (_cardProperties.SendPMT(camType, _currentTuningObject.ProgramNumber, _currentTuningObject.VideoPid, _currentTuningObject.AudioPid, pmt, (int)pmt.Length, caPmt, caPmtLen))
               {
                 return true;
               }
@@ -2239,9 +2241,11 @@ namespace MediaPortal.TV.Recording
               }
               Log.Info("DVBGraph:Send PMT#{0} version:{1} signal strength:{2} signal quality:{3} locked:{4} cam:{5}", _pmtSendCounter, pmtVersion, SignalStrength(), SignalQuality(), _tunerLocked, camType);
               _streamDemuxer.DumpPMT(pmt);
+              int caPmtLen;
+              byte[] caPmt = info.caPMT.CaPmtStruct(out caPmtLen);
               if ( _currentTuningObject.AC3Pid != 0x0 )
               {
-                if ( _cardProperties.SendPMT(camType, _currentTuningObject.ProgramNumber, _currentTuningObject.VideoPid, _currentTuningObject.AC3Pid, pmt, (int)pmt.Length) )
+                if (_cardProperties.SendPMT(camType, _currentTuningObject.ProgramNumber, _currentTuningObject.VideoPid, _currentTuningObject.AC3Pid, pmt, (int)pmt.Length, caPmt, caPmtLen))
                 {
                   return true;
                 }
@@ -2256,7 +2260,7 @@ namespace MediaPortal.TV.Recording
               }
               else
               {
-                if ( _cardProperties.SendPMT(camType, _currentTuningObject.ProgramNumber, _currentTuningObject.VideoPid, _currentTuningObject.AudioPid, pmt, (int)pmt.Length) )
+                if (_cardProperties.SendPMT(camType, _currentTuningObject.ProgramNumber, _currentTuningObject.VideoPid, _currentTuningObject.AudioPid, pmt, (int)pmt.Length, caPmt, caPmtLen))
                 {
                   return true;
                 }

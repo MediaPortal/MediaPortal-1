@@ -269,27 +269,7 @@ namespace MediaPortal.TV.Recording
     #region tables
     // tables
 
-    public struct CaPMT
-    {
-      public int CAPmt_Listmanagement;
-      public int ProgramNumber;
-      public int reserved0;
-      public int VersionNumber;
-      public int CurrentNextIndicator;
-      public int reserved1;
-      public int ProgramInfoLength;
-      public int CAPmt_CommandID_PRG;
-      public ArrayList CADescriptors_PRG;
-      public int StreamType;
-      public int reserved2;
-      public int ElementaryStreamPID;
-      public int reserved3;
-      public int ElementaryStreamInfoLength;
-      public int CAPmt_CommandID_ES;
-      public ArrayList CADescriptors_ES;
 
-
-    }
     public struct EITDescr
     {
       public int version;
@@ -1107,13 +1087,10 @@ namespace MediaPortal.TV.Recording
       // store info about the channel
       //
       pat.caPMT = new CaPMT();
-      pat.caPMT.CADescriptors_ES = new ArrayList();
-      pat.caPMT.CADescriptors_PRG = new ArrayList();
-
       pat.caPMT.ProgramNumber = program_number;
       pat.caPMT.CurrentNextIndicator = current_next_indicator;
       pat.caPMT.VersionNumber = version_number;
-      pat.caPMT.CAPmt_Listmanagement = 0x9f8032;
+      pat.caPMT.CAPmt_Listmanagement = ListManagementType.Only;
 
       if (pat.program_number != program_number)
       {
@@ -1143,20 +1120,17 @@ namespace MediaPortal.TV.Recording
         System.Array.Copy(buf, pointer, data, 0, x);
         if (indicator == 0x9)
         {
-          pat.caPMT.CADescriptors_PRG.Add(data);
+          pat.caPMT.Descriptors.Add(data);
           pat.caPMT.ProgramInfoLength += data.Length;
-          string tmpString = DVB_CADescriptor(data);
-          if (pidText.IndexOf(tmpString, 0) == -1)
-            pidText += tmpString + ";";
-        }
-        if (pat.caPMT.ProgramInfoLength > 0)
-        {
-          pat.caPMT.CAPmt_CommandID_PRG = 1;
-          pat.caPMT.ProgramInfoLength += 1;
         }
         len2 -= x;
         pointer += x;
         len1 -= x;
+      }
+      if (pat.caPMT.ProgramInfoLength > 0)
+      {
+        pat.caPMT.CommandId = CommandIdType.Descrambling;
+        pat.caPMT.ProgramInfoLength += 1;
       }
       //byte[] b = new byte[6];
       PMTData pmt;
@@ -1197,6 +1171,10 @@ namespace MediaPortal.TV.Recording
         pointer += 5;
         len1 -= 5;
         len2 = pmt.ES_info_length;
+        CaPmtEs pmtEs = new CaPmtEs();
+        pmtEs.StreamType = pmt.stream_type;
+        pmtEs.ElementaryStreamPID = pmt.elementary_PID;
+        pmtEs.CommandId = CommandIdType.Descrambling;
         if (len1 > 0)
         {
           while (len2 > 0)
@@ -1217,15 +1195,8 @@ namespace MediaPortal.TV.Recording
                     //Log.Info("dvbsections: indicator {1} {0} found",(indicator==0x02?"for video":"for audio"),indicator);
                     break;
                   case 0x09:
-                    pat.caPMT.StreamType = pmt.stream_type;
-                    pat.caPMT.ElementaryStreamPID = pmt.elementary_PID;
-                    pat.caPMT.CAPmt_CommandID_ES = 1;
-                    pat.caPMT.CADescriptors_ES.Add(data);
-                    pat.caPMT.ElementaryStreamInfoLength = pmt.ES_info_length;
-                    //pat.caData.Add(data);
-                    string tmpString = DVB_CADescriptor(data);
-                    if (pidText.IndexOf(tmpString, 0) == -1)
-                      pidText += tmpString + ";";
+                    pmtEs.Descriptors.Add(data);
+                    pmtEs.ElementaryStreamInfoLength += data.Length;
                     break;
                   case 0x0A:
                     pmt.data = DVB_GetMPEGISO639Lang(data);
@@ -1261,8 +1232,16 @@ namespace MediaPortal.TV.Recording
             pointer += x;
           }
         }
+        if (pmt.isVideo || pmt.isAC3Audio || pmt.isAudio)
+        {
+          if (pmtEs.ElementaryStreamInfoLength > 0)
+          {
+            pmtEs.CommandId = CommandIdType.Descrambling;
+            pmtEs.ElementaryStreamInfoLength += 1;
+          }
+          pat.caPMT.CaPmtEsList.Add(pmtEs);
+        }
         pat.pid_list.Add(pmt);
-
       }
       pat.pidCache = pidText;
       return 1;
