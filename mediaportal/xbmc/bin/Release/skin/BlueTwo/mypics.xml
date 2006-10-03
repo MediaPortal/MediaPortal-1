@@ -53,6 +53,6 @@
 				<ondown>99</ondown>
 			</control>
 		</control>
-		<import>common.facade.xml</import>
+		<import>common.facade.pictures.xml</import>
 	</controls>
 </window>
