@@ -1767,13 +1767,13 @@ namespace MediaPortal.TV.Recording
       try
       {
         //load PMT from disk
-        string pmtName = String.Format(@"database\pmt\pmt_{0}_{1}_{2}_{3}_{4}.dat",
+        string pmtName = Config.GetFile(Config.Dir.Database, @"pmt\", String.Format("pmt_{0}_{1}_{2}_{3}_{4}.dat",
           MediaPortal.Util.Utils.FilterFileName(_currentTuningObject.ServiceName),
           _currentTuningObject.NetworkID,
           _currentTuningObject.TransportStreamID,
           _currentTuningObject.ProgramNumber,
-          (int)Network());
-        if ( !System.IO.File.Exists(pmtName) )
+          (int)Network()));
+        if (!System.IO.File.Exists(pmtName))
         {
           //PMT is not on disk...
           Log.Error("pmt {0} not found", pmtName);
@@ -2080,13 +2080,13 @@ namespace MediaPortal.TV.Recording
       try
       {
         //load PMT from disk
-        string pmtName = String.Format(@"database\pmt\pmt_{0}_{1}_{2}_{3}_{4}.dat",
+        string pmtName = Config.GetFile(Config.Dir.Database, @"pmt\", String.Format("pmt_{0}_{1}_{2}_{3}_{4}.dat",
           MediaPortal.Util.Utils.FilterFileName(_currentTuningObject.ServiceName),
           _currentTuningObject.NetworkID,
           _currentTuningObject.TransportStreamID,
           _currentTuningObject.ProgramNumber,
-          (int)Network());
-        if ( !System.IO.File.Exists(pmtName) )
+          (int)Network()));
+        if (!System.IO.File.Exists(pmtName))
         {
           //PMT is not on disk...
           Log.Error("pmt {0} not found", pmtName);
@@ -4335,12 +4335,12 @@ namespace MediaPortal.TV.Recording
         return;
       try
       {
-        string pmtName = String.Format(@"database\pmt\pmt_{0}_{1}_{2}_{3}_{4}.dat",
+        string pmtName = Config.GetFile(Config.Dir.Database, @"pmt\", String.Format("pmt_{0}_{1}_{2}_{3}_{4}.dat",
           MediaPortal.Util.Utils.FilterFileName(_currentTuningObject.ServiceName),
           _currentTuningObject.NetworkID,
           _currentTuningObject.TransportStreamID,
           _currentTuningObject.ProgramNumber,
-          (int)Network());
+          (int)Network()));
 #if COMPARE_PMT
         bool isSame = false;
         if ( System.IO.File.Exists(pmtName) )
