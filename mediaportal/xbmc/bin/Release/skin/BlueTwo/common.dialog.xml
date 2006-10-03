@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <window>
-	<controls>
+  <controls>
     <control>
       <type>image</type>
       <id>0</id>
@@ -14,9 +14,9 @@
     <control>
       <type>image</type>
       <id>0</id>
-      <posX>177</posX>
-      <posY>225</posY>
-      <width>409</width>
+      <posX>158</posX>
+      <posY>187</posY>
+      <width>404</width>
       <height>202</height>
       <texture>dialog_background.png</texture>
     </control>
@@ -25,7 +25,7 @@
       <type>label</type>
       <id>1</id>
       <posX>210</posX>
-      <posY>250</posY>
+      <posY>214</posY>
       <label>0</label>
       <font>font13</font>
       <textcolor>ffffffff</textcolor>
@@ -35,7 +35,7 @@
       <type>label</type>
       <id>2</id>
       <posX>210</posX>
-      <posY>280</posY>
+      <posY>242</posY>
       <label>0</label>
       <font>font13</font>
       <textcolor>ffffffff</textcolor>
@@ -45,7 +45,7 @@
       <type>label</type>
       <id>3</id>
       <posX>210</posX>
-      <posY>300</posY>
+      <posY>270</posY>
       <label>0</label>
       <font>font13</font>
       <textcolor>ffffffff</textcolor>
@@ -55,7 +55,7 @@
       <type>label</type>
       <id>4</id>
       <posX>210</posX>
-      <posY>320</posY>
+      <posY>290</posY>
       <label>0</label>
       <font>font13</font>
       <textcolor>ffffffff</textcolor>

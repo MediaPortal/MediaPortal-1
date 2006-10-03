@@ -12,7 +12,7 @@
             <id>101</id>
             <posX>650</posX>
             <posY>50</posY>
-            <width>100</width>
+            <width>170</width>
             <height>32</height>
             <textureWidth>16</textureWidth>
             <textureHeight>16</textureHeight>
@@ -78,6 +78,6 @@
                 <label>5906</label>
             </control>
         </control>
-        <import>common.facade.video.xml</import>  
+        <import>common.facade.video.xml</import>
     </controls>
 </window>

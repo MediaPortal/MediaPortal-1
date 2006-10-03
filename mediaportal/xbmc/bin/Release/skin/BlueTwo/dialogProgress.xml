@@ -10,7 +10,7 @@
       <id>100</id>
       <posX>206</posX>
       <posY>326</posY>
-      <width>345</width>
+      <width>305</width>
       <texture>osd_progress_background.png</texture>
     </control>
     <control>
@@ -19,15 +19,15 @@
       <id>20</id>
       <posX>195</posX>
       <posY>325</posY>
-      <width>367</width>
+      <width>327</width>
       <height>25</height>
     </control>
     <control>
       <description>Cancel button</description>
       <type>button</type>
       <id>10</id>
-      <posX>515</posX>
-      <posY>252</posY>
+      <posX>478</posX>
+      <posY>218</posY>
       <width>44</width>
       <height>44</height>
       <textureFocus>dialogue_shutdown_focus.png</textureFocus>
