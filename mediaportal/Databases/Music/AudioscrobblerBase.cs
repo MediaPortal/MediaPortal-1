@@ -401,6 +401,10 @@ namespace MediaPortal.Music.Database
           return true;
         }
       }
+      
+      string authTime = Convert.ToString(Util.Utils.GetUnixTime(DateTime.UtcNow));
+      string tmpPass = HashSingleString(password);
+      string tmpAuth = HashSingleString(tmpPass + authTime);
 
       string url = SCROBBLER_URL
                  + "?hs=true"
@@ -408,7 +412,9 @@ namespace MediaPortal.Music.Database
                  + "&c=" + CLIENT_NAME
                  + "&v=" + CLIENT_VERSION
                  + "&u=" + System.Web.HttpUtility.UrlEncode(username);
-
+                 //+ "&t=" + authTime
+                 //+ "&a=" + tmpAuth;  
+      
       // Request URI: http://post.audioscrobbler.com/?hs=true&p=1.1&c=ass&v=1.0.6&u=f1n4rf1n
       // Parse handshake response
       bool success = GetResponse(url, "", false);
@@ -458,10 +464,10 @@ namespace MediaPortal.Music.Database
 
       // http://ws.audioscrobbler.com/radio/handshake.php?version=1.0.6&platform=win32&username=f1n4rf1n&passwordmd5=3847af7ab43a1c31503e8bef7736c41f&language=en    
       string tmpUser = System.Web.HttpUtility.UrlEncode(username).ToLower();
-      string tmpPass = HashPassword(true);
+      string tmpPass = HashSingleString(password);
       string url = RADIO_SCROBBLER_URL
                  + "handshake.php"
-                 + "?version=" + "1.0.6"
+                 + "?version=" + "1.0.7"
                  + "&platform=" + "win32"
                  + "&username=" + tmpUser
                  + "&passwordmd5=" + tmpPass
@@ -712,9 +718,35 @@ namespace MediaPortal.Music.Database
         // takes time, and the user could quit, losing one valuable song...
         queue.Save();
 
+     /*
+        s=<sessionID>            The Session ID string as returned by the handshake. Required.
+        a[0]=<artist>            The artist name. Required.
+        t[0]=<track>             The track title. Required.
+        i[0]=<time>              The time the track started playing, in UNIX timestamp format (integer number of seconds since 00:00:00, January 1st 1970 UTC). This must be in the UTC time zone, and is required.
+        o[0]=<source>            The source of the track. Required, must be one of the following codes:
+
+            P = Chosen by the user, no shuffle
+            S = Chosen by the user, shuffle enabled
+            T = Chosen by the user, unknown shuffle status (e.g. iPod)
+            R = Non-personalised broadcast (e.g. Shoutcast, BBC Radio 1)
+            E = Personalised recommendation except Last.fm (e.g. Pandora, Launchcast)
+            L = Last.fm (any mode)
+            U = Source unknown
+
+        r[0]=<rating>
+
+            L = Love
+            B = Ban
+            S = Skip (only if source=L)
+
+        b[0]=<album>             The album title, or empty if not known.
+        n[0]=<tracknumber>       The position of the track on the album, or empty if not known.
+        m[0]=<mb-trackid>        The MusicBrainz Track ID, or empty if not known.
+        l[0]=<secs>              The length of the track in seconds, or empty if not known. 
+     */
         // Build POST data from the username and the password.
         string webUsername = System.Web.HttpUtility.UrlEncode(username);
-        string md5resp = HashPassword(false);
+        string md5resp = HashSubmitToken();
         string postData = "u=" + webUsername + "&s=" + md5resp;
 
         StringBuilder sb = new StringBuilder();
@@ -895,7 +927,17 @@ namespace MediaPortal.Music.Database
       submitTimer.Start();
     }
 
-    private static string HashPassword(bool passwordOnly_)
+    private static string HashSubmitToken()
+    {
+      return HashMD5LoginStrings(false, password);
+    }
+
+    private static string HashSingleString(string singleString)
+    {
+      return HashMD5LoginStrings(true, singleString);
+    }
+
+    private static string HashMD5LoginStrings(bool passwordOnly_, string inputString_)
     {
       // generate MD5 response from user's password
 
@@ -917,7 +959,7 @@ namespace MediaPortal.Music.Database
 
       MD5 hash = MD5CryptoServiceProvider.Create();
       UTF8Encoding encoding = new UTF8Encoding();
-      byte[] barr = hash.ComputeHash(encoding.GetBytes(password));
+      byte[] barr = hash.ComputeHash(encoding.GetBytes(inputString_));
 
       string tmp = String.Empty;
       for (int i = 0; i < barr.Length; i++)

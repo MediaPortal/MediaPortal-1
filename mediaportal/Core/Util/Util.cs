@@ -631,6 +631,7 @@ namespace MediaPortal.Util
       }
       return String.Empty;
     }
+
     static public string SecondsToHMString(int lSeconds)
     {
       if (lSeconds < 0) return "0:00";
@@ -644,6 +645,14 @@ namespace MediaPortal.Util
       else
         strHM = String.Format("0:{0:00}", mm);
       return strHM;
+    }
+
+    static public double GetUnixTime(DateTime desiredTime_)
+    {
+      TimeSpan ts = (desiredTime_ - new DateTime(1970, 1, 1, 0, 0, 0));
+      double unixTime = ts.TotalSeconds;
+
+      return unixTime;
     }
 
     static public void GetQualifiedFilename(string strBasePath, ref string strFileName)
