@@ -278,7 +278,7 @@ namespace TvDatabase
       for (int i = 0; i < channelMaps.Count; ++i)
       {
         ChannelMap map = (ChannelMap)channelMaps[i];
-        if (map.IdChannel == channel.IdChannel) return map;
+        if (map.IdChannel == channel.IdChannel && map.IdCard==card.IdCard) return map;
       }
       ChannelMap newMap = new ChannelMap(channel.IdChannel, card.IdCard);
       newMap.Persist();

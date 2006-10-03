@@ -72,16 +72,16 @@ namespace SetupTv.Sections
       this.label12 = new System.Windows.Forms.Label();
       this.comboBoxCards = new System.Windows.Forms.ComboBox();
       this.tabPage5 = new System.Windows.Forms.TabPage();
-      this.checkBoxComSkipEnabled = new System.Windows.Forms.CheckBox();
+      this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+      this.label21 = new System.Windows.Forms.Label();
+      this.label20 = new System.Windows.Forms.Label();
+      this.label19 = new System.Windows.Forms.Label();
+      this.label18 = new System.Windows.Forms.Label();
+      this.label17 = new System.Windows.Forms.Label();
       this.buttonLocateComSkip = new System.Windows.Forms.Button();
       this.label16 = new System.Windows.Forms.Label();
       this.textBoxComSkip = new System.Windows.Forms.TextBox();
-      this.label17 = new System.Windows.Forms.Label();
-      this.label18 = new System.Windows.Forms.Label();
-      this.label19 = new System.Windows.Forms.Label();
-      this.label20 = new System.Windows.Forms.Label();
-      this.label21 = new System.Windows.Forms.Label();
-      this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+      this.checkBoxComSkipEnabled = new System.Windows.Forms.CheckBox();
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
@@ -519,6 +519,7 @@ namespace SetupTv.Sections
       this.textBoxFolder.Name = "textBoxFolder";
       this.textBoxFolder.Size = new System.Drawing.Size(284, 20);
       this.textBoxFolder.TabIndex = 2;
+      this.textBoxFolder.TextChanged += new System.EventHandler(this.textBoxFolder_TextChanged);
       // 
       // label12
       // 
@@ -558,16 +559,71 @@ namespace SetupTv.Sections
       this.tabPage5.Text = "Commercials";
       this.tabPage5.UseVisualStyleBackColor = true;
       // 
-      // checkBoxComSkipEnabled
+      // linkLabel1
       // 
-      this.checkBoxComSkipEnabled.AutoSize = true;
-      this.checkBoxComSkipEnabled.Location = new System.Drawing.Point(26, 18);
-      this.checkBoxComSkipEnabled.Name = "checkBoxComSkipEnabled";
-      this.checkBoxComSkipEnabled.Size = new System.Drawing.Size(324, 17);
-      this.checkBoxComSkipEnabled.TabIndex = 0;
-      this.checkBoxComSkipEnabled.Text = "Use comskip/comclean to remove commercials from recordings";
-      this.checkBoxComSkipEnabled.UseVisualStyleBackColor = true;
-      this.checkBoxComSkipEnabled.CheckedChanged += new System.EventHandler(this.checkBoxComSkipEnabled_CheckedChanged);
+      this.linkLabel1.AutoSize = true;
+      this.linkLabel1.Location = new System.Drawing.Point(23, 197);
+      this.linkLabel1.Name = "linkLabel1";
+      this.linkLabel1.Size = new System.Drawing.Size(174, 13);
+      this.linkLabel1.TabIndex = 13;
+      this.linkLabel1.TabStop = true;
+      this.linkLabel1.Text = "http://mk.kaashoek.com/comskip/";
+      // 
+      // label21
+      // 
+      this.label21.AutoSize = true;
+      this.label21.Location = new System.Drawing.Point(23, 184);
+      this.label21.Name = "label21";
+      this.label21.Size = new System.Drawing.Size(230, 13);
+      this.label21.TabIndex = 12;
+      this.label21.Tag = "";
+      this.label21.Text = "More information about comskip and comclean:";
+      this.label21.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+      // 
+      // label20
+      // 
+      this.label20.AutoSize = true;
+      this.label20.Location = new System.Drawing.Point(23, 160);
+      this.label20.Name = "label20";
+      this.label20.Size = new System.Drawing.Size(64, 13);
+      this.label20.TabIndex = 11;
+      this.label20.Tag = "";
+      this.label20.Text = "from the file.";
+      this.label20.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+      // 
+      // label19
+      // 
+      this.label19.AutoSize = true;
+      this.label19.Location = new System.Drawing.Point(23, 147);
+      this.label19.Name = "label19";
+      this.label19.Size = new System.Drawing.Size(379, 13);
+      this.label19.TabIndex = 10;
+      this.label19.Tag = "";
+      this.label19.Text = "configurable parameters. After analysis it can remove the commercials detected";
+      this.label19.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+      // 
+      // label18
+      // 
+      this.label18.AutoSize = true;
+      this.label18.Location = new System.Drawing.Point(23, 134);
+      this.label18.Name = "label18";
+      this.label18.Size = new System.Drawing.Size(350, 13);
+      this.label18.TabIndex = 9;
+      this.label18.Tag = "";
+      this.label18.Text = "reads an mpeg file and analyses the content based on a large amount of ";
+      this.label18.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+      this.label18.Click += new System.EventHandler(this.label18_Click);
+      // 
+      // label17
+      // 
+      this.label17.AutoSize = true;
+      this.label17.Location = new System.Drawing.Point(23, 121);
+      this.label17.Name = "label17";
+      this.label17.Size = new System.Drawing.Size(379, 13);
+      this.label17.TabIndex = 8;
+      this.label17.Tag = "";
+      this.label17.Text = "Comskip is a free commercial detector. Its an windows console application that ";
+      this.label17.TextAlign = System.Drawing.ContentAlignment.TopCenter;
       // 
       // buttonLocateComSkip
       // 
@@ -595,71 +651,16 @@ namespace SetupTv.Sections
       this.textBoxComSkip.Size = new System.Drawing.Size(284, 20);
       this.textBoxComSkip.TabIndex = 5;
       // 
-      // label17
+      // checkBoxComSkipEnabled
       // 
-      this.label17.AutoSize = true;
-      this.label17.Location = new System.Drawing.Point(23, 121);
-      this.label17.Name = "label17";
-      this.label17.Size = new System.Drawing.Size(379, 13);
-      this.label17.TabIndex = 8;
-      this.label17.Tag = "";
-      this.label17.Text = "Comskip is a free commercial detector. Its an windows console application that ";
-      this.label17.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-      // 
-      // label18
-      // 
-      this.label18.AutoSize = true;
-      this.label18.Location = new System.Drawing.Point(23, 134);
-      this.label18.Name = "label18";
-      this.label18.Size = new System.Drawing.Size(350, 13);
-      this.label18.TabIndex = 9;
-      this.label18.Tag = "";
-      this.label18.Text = "reads an mpeg file and analyses the content based on a large amount of ";
-      this.label18.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-      this.label18.Click += new System.EventHandler(this.label18_Click);
-      // 
-      // label19
-      // 
-      this.label19.AutoSize = true;
-      this.label19.Location = new System.Drawing.Point(23, 147);
-      this.label19.Name = "label19";
-      this.label19.Size = new System.Drawing.Size(379, 13);
-      this.label19.TabIndex = 10;
-      this.label19.Tag = "";
-      this.label19.Text = "configurable parameters. After analysis it can remove the commercials detected";
-      this.label19.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-      // 
-      // label20
-      // 
-      this.label20.AutoSize = true;
-      this.label20.Location = new System.Drawing.Point(23, 160);
-      this.label20.Name = "label20";
-      this.label20.Size = new System.Drawing.Size(64, 13);
-      this.label20.TabIndex = 11;
-      this.label20.Tag = "";
-      this.label20.Text = "from the file.";
-      this.label20.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-      // 
-      // label21
-      // 
-      this.label21.AutoSize = true;
-      this.label21.Location = new System.Drawing.Point(23, 184);
-      this.label21.Name = "label21";
-      this.label21.Size = new System.Drawing.Size(230, 13);
-      this.label21.TabIndex = 12;
-      this.label21.Tag = "";
-      this.label21.Text = "More information about comskip and comclean:";
-      this.label21.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-      // 
-      // linkLabel1
-      // 
-      this.linkLabel1.AutoSize = true;
-      this.linkLabel1.Location = new System.Drawing.Point(23, 197);
-      this.linkLabel1.Name = "linkLabel1";
-      this.linkLabel1.Size = new System.Drawing.Size(174, 13);
-      this.linkLabel1.TabIndex = 13;
-      this.linkLabel1.TabStop = true;
-      this.linkLabel1.Text = "http://mk.kaashoek.com/comskip/";
+      this.checkBoxComSkipEnabled.AutoSize = true;
+      this.checkBoxComSkipEnabled.Location = new System.Drawing.Point(26, 18);
+      this.checkBoxComSkipEnabled.Name = "checkBoxComSkipEnabled";
+      this.checkBoxComSkipEnabled.Size = new System.Drawing.Size(324, 17);
+      this.checkBoxComSkipEnabled.TabIndex = 0;
+      this.checkBoxComSkipEnabled.Text = "Use comskip/comclean to remove commercials from recordings";
+      this.checkBoxComSkipEnabled.UseVisualStyleBackColor = true;
+      this.checkBoxComSkipEnabled.CheckedChanged += new System.EventHandler(this.checkBoxComSkipEnabled_CheckedChanged);
       // 
       // openFileDialog1
       // 

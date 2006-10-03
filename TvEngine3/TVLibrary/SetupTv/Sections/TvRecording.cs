@@ -428,5 +428,11 @@ namespace SetupTv.Sections
 
     }
 
+    private void textBoxFolder_TextChanged(object sender, EventArgs e)
+    {
+      CardInfo info = (CardInfo)comboBoxCards.SelectedItem;
+      info.card.RecordingFolder = textBoxFolder.Text;
+      info.card.Persist();
+    }
   }
 }
