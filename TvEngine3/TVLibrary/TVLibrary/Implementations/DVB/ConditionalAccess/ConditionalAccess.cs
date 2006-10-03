@@ -125,7 +125,9 @@ namespace TvLibrary.Implementations.DVB
           if (pmtData.isAudio && audioPid<0) audioPid = pmtData.pid;
           if (videoPid >= 0 && audioPid >= 0) break;
         }
-        _twinhan.SendPMT("default", (uint)videoPid, (uint)audioPid, PMT, pmtLength);
+        int caPmtLen;
+        byte[] caPmt = info.caPMT.CaPmtStruct(out caPmtLen);
+        _twinhan.SendPMT("default", (uint)videoPid, (uint)audioPid, caPmt,caPmtLen);
         return true;
       }
       if (_technoTrend != null)

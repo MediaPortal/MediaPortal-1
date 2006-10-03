@@ -313,9 +313,6 @@ namespace TvLibrary.Implementations.DVB.Structures
 
 
       caPMT = new CaPMT();
-      caPMT.CADescriptors_ES = new ArrayList();
-      caPMT.CADescriptors_PRG = new ArrayList();
-
       caPMT.ProgramNumber = program_number;
       caPMT.CurrentNextIndicator = current_next_indicator;
       caPMT.VersionNumber = version_number;
@@ -335,7 +332,7 @@ namespace TvLibrary.Implementations.DVB.Structures
       int x;
       int len1 = section_length - pointer;
       int len2 = program_info_length;
-
+      Log.Log.Write("Decode pmt");
       while (len2 > 0)
       {
         if (pointer + 2 > buf.Length) break;
@@ -346,9 +343,11 @@ namespace TvLibrary.Implementations.DVB.Structures
 
         if (pointer + x > buf.Length) break;
         System.Array.Copy(buf, pointer, data, 0, x);
-        if (indicator == 0x9)
+       
+        if (indicator == 0x9) //MPEG CA Descriptor
         {
-          caPMT.CADescriptors_PRG.Add(data);
+          Log.Log.Write("  descriptor1:{0:X} len:{1} {2:X} {3:X}", indicator,data.Length,buf[pointer],buf[pointer+1]);
+          caPMT.Descriptors.Add(data);
           caPMT.ProgramInfoLength += data.Length;
           //string tmpString = DVB_CADescriptor(data);
           //if (pidText.IndexOf(tmpString, 0) == -1)
@@ -360,7 +359,7 @@ namespace TvLibrary.Implementations.DVB.Structures
       }
       if (caPMT.ProgramInfoLength > 0)
       {
-        caPMT.CAPmt_CommandID_PRG = CommandIdType.Descrambling;
+        caPMT.CommandId = CommandIdType.Descrambling;
         caPMT.ProgramInfoLength += 1;
       }
       //byte[] b = new byte[6];
@@ -381,6 +380,7 @@ namespace TvLibrary.Implementations.DVB.Structures
         catch
         {
         }
+        
         switch (pmt.stream_type)
         {
           case 0x1b://H.264
@@ -405,6 +405,12 @@ namespace TvLibrary.Implementations.DVB.Structures
         pointer += 5;
         len1 -= 5;
         len2 = pmt.ES_info_length;
+
+        CaPmtEs pmtEs = new CaPmtEs();
+        pmtEs.StreamType = pmt.stream_type;
+        pmtEs.ElementaryStreamPID = pmt.pid;
+        pmtEs.CommandId = CommandIdType.Descrambling;
+
         if (len1 > 0)
         {
           while (len2 > 0)
@@ -414,6 +420,7 @@ namespace TvLibrary.Implementations.DVB.Structures
             {
               int indicator = buf[pointer];
               x = buf[pointer + 1] + 2;
+              //Log.Log.Write("  descriptor2:{0:X}", indicator);
               if (x + pointer < buf.Length) // parse descriptor data
               {
                 byte[] data = new byte[x];
@@ -425,11 +432,11 @@ namespace TvLibrary.Implementations.DVB.Structures
                     //Log.Write("dvbsections: indicator {1} {0} found",(indicator==0x02?"for video":"for audio"),indicator);
                     break;
                   case 0x09:
-                    caPMT.StreamType = pmt.stream_type;
-                    caPMT.ElementaryStreamPID = pmt.pid;
-                    caPMT.CAPmt_CommandID_ES = CommandIdType.Descrambling;
-                    caPMT.CADescriptors_ES.Add(data);
-                    caPMT.ElementaryStreamInfoLength = pmt.ES_info_length;
+                    Log.Log.Write("  descriptor2:{0:X} len:{1:X} {2:X} {3:X}",
+                        indicator,data.Length, buf[pointer], buf[pointer + 1]);
+                    
+                    pmtEs.Descriptors.Add(data);
+                    pmtEs.ElementaryStreamInfoLength+= data.Length;
                     //caData.Add(data);
                     //string tmpString = DVB_CADescriptor(data);
                     //if (pidText.IndexOf(tmpString, 0) == -1)
@@ -457,7 +464,6 @@ namespace TvLibrary.Implementations.DVB.Structures
                     pmt.language = "";
                     break;
                 }
-
               }
             }
             else
@@ -469,9 +475,19 @@ namespace TvLibrary.Implementations.DVB.Structures
             pointer += x;
           }
         }
+        if (pmt.isVideo || pmt.isAC3Audio || pmt.isAudio)
+        {
+          if (pmtEs.ElementaryStreamInfoLength > 0)
+          {
+            pmtEs.CommandId = CommandIdType.Descrambling;
+            pmtEs.ElementaryStreamInfoLength += 1;
+          }
+          caPMT.CaPmtEsList.Add(pmtEs);
+        }
         pids.Add(pmt);
       }
       //pat.pidCache = pidText;
+      //caPMT.Dump();
     }
     private string DVB_GetMPEGISO639Lang(byte[] b)
     {

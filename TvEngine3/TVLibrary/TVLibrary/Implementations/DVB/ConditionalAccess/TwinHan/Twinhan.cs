@@ -118,7 +118,7 @@ namespace TvLibrary.Implementations.DVB
     #region guids
     readonly Guid THBDA_TUNER = new Guid("E5644CC4-17A1-4eed-BD90-74FDA1D65423");
     readonly Guid GUID_THBDA_CMD = new Guid("255E0082-2017-4b03-90F8-856A62CB3D67");
-    //readonly uint THBDA_IOCTL_CI_SEND_PMT = 0xaa000338;
+    readonly uint THBDA_IOCTL_CI_SEND_PMT = 0xaa000338;
     readonly uint THBDA_IOCTL_CHECK_INTERFACE = 0xaa0001e4;
     readonly uint THBDA_IOCTL_CI_PARSER_PMT = 0xaa00033c;
     readonly uint THBDA_IOCTL_CI_GET_STATE = 0xaa000320;//CTL_CODE(THBDA_IO_INDEX, 200, METHOD_BUFFERED, FILE_ANY_ACCESS)
@@ -350,7 +350,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="audioPid">The audio pid.</param>
     /// <param name="PMT">The PMT.</param>
     /// <param name="pmtLen">The PMT lenght</param>
-    public void SendPMT(string camType, uint videoPid, uint audioPid, byte[] PMT, int pmtLen)
+    public void SendPMT(string camType, uint videoPid, uint audioPid, byte[] caPMT, int caPMTLen)
     {
       if (IsCamPresent() == false) return;
       int camNumber = 1;
@@ -361,40 +361,30 @@ namespace TvLibrary.Implementations.DVB
       else if (camType.ToLower() == "conax") camNumber = 3;
       else if (camType.ToLower() == "cryptoworks") camNumber = 4;
 
-      IntPtr ptrPMT = Marshal.AllocCoTaskMem(pmtLen + 1);
+      IntPtr ptrPMT = Marshal.AllocCoTaskMem(caPMTLen);
 
-      Log.Log.WriteFile("Twinhan: send PMT cam:{0} {1} len:{2} video:0x{3:X} audio:0x{4:X}", camType, camNumber, pmtLen, videoPid, audioPid);
-
-      if (ptrPMT == IntPtr.Zero)
-        return;
-      Marshal.Copy(PMT, 0, (IntPtr)(((int)ptrPMT) + 1), pmtLen);
-      Marshal.WriteByte(ptrPMT, 0);
-      pmtLen += 1;
-      int lenParserPMTInfo = 20;
-      IntPtr ptrPARSERPMTINFO = Marshal.AllocCoTaskMem(lenParserPMTInfo);
-      if (ptrPMT == IntPtr.Zero)
-      {
-        Marshal.FreeCoTaskMem(ptrPMT);
-        return;
+      Log.Log.WriteFile("Twinhan: send PMT cam:{0} {1} len:{2} video:0x{3:X} audio:0x{4:X}", camType, camNumber, caPMTLen, videoPid, audioPid);
+     /* string line = "";
+      for (int i = 0; i < caPMTLen; ++i)
+      { 
+        string tmp=String.Format("{0:X} ",caPMT[i]);
+        line+=tmp;
       }
-      Marshal.WriteInt32(ptrPARSERPMTINFO, 0, (int)ptrPMT);
-      Marshal.WriteInt32(ptrPARSERPMTINFO, 4, pmtLen);
-      Marshal.WriteInt32(ptrPARSERPMTINFO, 8, (int)videoPid);
-      Marshal.WriteInt32(ptrPARSERPMTINFO, 12, (int)audioPid);
-      Marshal.WriteInt32(ptrPARSERPMTINFO, 16, camNumber);//default cam
+      Log.Log.WriteFile(line);*/
+      if (caPMT.Length==0)
+        return;
+      Marshal.Copy(caPMT, 0, ptrPMT, caPMTLen);
 
       IntPtr ptrDwBytesReturned = Marshal.AllocCoTaskMem(4);
       if (ptrDwBytesReturned == IntPtr.Zero)
       {
         Marshal.FreeCoTaskMem(ptrPMT);
-        Marshal.FreeCoTaskMem(ptrPARSERPMTINFO);
         return;
       }
       IntPtr ksBla = Marshal.AllocCoTaskMem(0x18);
       if (ksBla == IntPtr.Zero)
       {
         Marshal.FreeCoTaskMem(ptrPMT);
-        Marshal.FreeCoTaskMem(ptrPARSERPMTINFO);
         Marshal.FreeCoTaskMem(ptrDwBytesReturned);
         return;
       }
@@ -404,14 +394,13 @@ namespace TvLibrary.Implementations.DVB
       if (thbdaBuf == IntPtr.Zero)
       {
         Marshal.FreeCoTaskMem(ptrPMT);
-        Marshal.FreeCoTaskMem(ptrPARSERPMTINFO);
         Marshal.FreeCoTaskMem(ptrDwBytesReturned);
         Marshal.FreeCoTaskMem(ksBla);
         return;
       }
 
 
-      Marshal.WriteInt32(thbdaBuf, 0, 0x255e0082);
+      Marshal.WriteInt32(thbdaBuf, 0, 0x255e0082);//GUID_THBDA_CMD  = new Guid( "255E0082-2017-4b03-90F8-856A62CB3D67" );
       Marshal.WriteInt16(thbdaBuf, 4, 0x2017);
       Marshal.WriteInt16(thbdaBuf, 6, 0x4b03);
       Marshal.WriteByte(thbdaBuf, 8, 0x90);
@@ -422,12 +411,12 @@ namespace TvLibrary.Implementations.DVB
       Marshal.WriteByte(thbdaBuf, 13, 0xcb);
       Marshal.WriteByte(thbdaBuf, 14, 0x3d);
       Marshal.WriteByte(thbdaBuf, 15, 0x67);
-      Marshal.WriteInt32(thbdaBuf, 16, (int)THBDA_IOCTL_CI_PARSER_PMT);
-      Marshal.WriteInt32(thbdaBuf, 20, (int)ptrPARSERPMTINFO);
-      Marshal.WriteInt32(thbdaBuf, 24, 20);
-      Marshal.WriteInt32(thbdaBuf, 28, 0);
-      Marshal.WriteInt32(thbdaBuf, 32, 0);
-      Marshal.WriteInt32(thbdaBuf, 36, (int)ptrDwBytesReturned);
+      Marshal.WriteInt32(thbdaBuf, 16, (int)THBDA_IOCTL_CI_SEND_PMT);//dwIoControlCode
+      Marshal.WriteInt32(thbdaBuf, 20, (int)ptrPMT);//lpInBuffer
+      Marshal.WriteInt32(thbdaBuf, 24, caPMTLen);//nInBufferSize
+      Marshal.WriteInt32(thbdaBuf, 28, 0);//lpOutBuffer
+      Marshal.WriteInt32(thbdaBuf, 32, 0);//nOutBufferSize
+      Marshal.WriteInt32(thbdaBuf, 36, (int)ptrDwBytesReturned);//lpBytesReturned
 
       IPin pin = DsFindPin.ByDirection(_captureFilter, PinDirection.Input, 0);
       if (pin != null)
@@ -455,7 +444,6 @@ namespace TvLibrary.Implementations.DVB
 
       Marshal.FreeCoTaskMem(thbdaBuf);
       Marshal.FreeCoTaskMem(ptrDwBytesReturned);
-      Marshal.FreeCoTaskMem(ptrPARSERPMTINFO);
       Marshal.FreeCoTaskMem(ptrPMT);
       Marshal.FreeCoTaskMem(ksBla);
     }
