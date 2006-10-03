@@ -648,13 +648,12 @@ namespace MediaPortal.GUI.TV
         TVDatabase.PlayedRecordedTV(rec);
         IMDBMovie movieDetails = new IMDBMovie();
         VideoDatabase.GetMovieInfo(rec.FileName, ref movieDetails);
-        int idMovie = VideoDatabase.GetMovieId(rec.FileName);
         int idFile = VideoDatabase.GetFileId(rec.FileName);
         int stoptime = 0;
-        if (idMovie >= 0 && idFile >= 0)
+        if ( idFile >= 0)
         {
-          Log.Info("play got movie id:{0} for {1}", idMovie, rec.FileName);
-          stoptime = VideoDatabase.GetMovieStopTime(idMovie);
+          Log.Info("play got file id:{0} for {1}", idFile, rec.FileName);
+          stoptime = VideoDatabase.GetMovieStopTime(idFile);
           if (stoptime > 0)
           {
             string title = System.IO.Path.GetFileName(rec.FileName);
@@ -962,12 +961,12 @@ namespace MediaPortal.GUI.TV
     private void OnPlayRecordingBackStopped(MediaPortal.Player.g_Player.MediaType type, int stoptime, string filename)
     {
       if (type != g_Player.MediaType.Recording) return;
-      int movieid = VideoDatabase.GetMovieId(filename);
-      if (movieid < 0) return;
+      int fileid = VideoDatabase.GetFileId(filename);
+      if (fileid < 0) return;
       if (stoptime > 0)
-        VideoDatabase.SetMovieStopTime(movieid, stoptime);
+        VideoDatabase.SetMovieStopTime(fileid, stoptime);
       else
-        VideoDatabase.DeleteMovieStopTime(movieid);
+        VideoDatabase.DeleteMovieStopTime(fileid);
       if (GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindow))
       {
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RESUME_TV, (int)GUIWindow.Window.WINDOW_TV, GetID, 0, 0, 0, null);
@@ -979,10 +978,11 @@ namespace MediaPortal.GUI.TV
     private void OnPlayRecordingBackEnded(MediaPortal.Player.g_Player.MediaType type, string filename)
     {
       if (type != g_Player.MediaType.Recording) return;
+      int fileid = VideoDatabase.GetFileId(filename);
       int movieid = VideoDatabase.GetMovieId(filename);
-      if (movieid < 0) return;
+      if (fileid < 0) return;
 
-      VideoDatabase.DeleteMovieStopTime(movieid);
+      VideoDatabase.DeleteMovieStopTime(fileid);
 
       g_Player.Stop();
 
