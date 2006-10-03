@@ -1313,6 +1313,8 @@ namespace TvLibrary.Implementations.DVB
     /// <returns>true if succeeded else false</returns>
     public bool Tune(IChannel channel)
     {
+      _pmtVersion = -1;
+
       Log.Log.WriteFile("ss2:Tune({0})", channel);
       if (_epgGrabbing)
       {
@@ -1686,6 +1688,8 @@ namespace TvLibrary.Implementations.DVB
           recorder.AddPesStream((short)audioStream.Pid, true, false);
         }
         _currentAudioStream = audioStream;
+        _pmtVersion = -1;
+        SendPmtToCam();
       }
     }
     #endregion
@@ -2033,8 +2037,17 @@ namespace TvLibrary.Implementations.DVB
       get
       {
         if (_graphRunning == false) return false;
-        if (_pmtVersion == -1) return false;
-        return true;
+        if (_filterTsAnalyzer == null) return false;
+        if (_currentChannel == null) return false;
+        ITsVideoAnalyzer writer = (ITsVideoAnalyzer)_filterTsAnalyzer;
+        short audioEncrypted = 0;
+        short videoEncrypted = 0;
+        writer.IsAudioEncrypted(out audioEncrypted);
+        if (_currentChannel.IsTv)
+        {
+          writer.IsVideoEncrypted(out videoEncrypted);
+        }
+        return ((audioEncrypted == 0) && (videoEncrypted == 0));
       }
     }
     #region pmtcallback interface
