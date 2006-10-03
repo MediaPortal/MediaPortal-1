@@ -102,7 +102,9 @@ namespace MediaPortal.TagReader
         if (tmpReader.SupportsFile(strFile) && tmpReader.Priority > prio)
         {
           prio = tmpReader.Priority;
-          reader = tmpReader;
+          Type t = tmpReader.GetType();
+          object newObj = (object)Activator.CreateInstance(t);
+          reader = (ITag)newObj;
         }
       }
       if (reader != null)

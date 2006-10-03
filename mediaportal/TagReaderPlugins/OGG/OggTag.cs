@@ -1,3 +1,4 @@
+#region Copyright (C) 2006 Team MediaPortal
 /* 
  *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,6 +19,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#endregion
 
 using System;
 using System.Collections.Generic;
@@ -33,6 +35,7 @@ namespace Tag.OGG
 {
   public class OggTag : TagBase
   {
+    #region Enums
     public struct VorbisIdHeader
     {
       public Int32 VorbisVersion;
@@ -44,9 +47,11 @@ namespace Tag.OGG
       public int BlockSize0;
       public int BlockSize1;
     }
+    #endregion
 
     public class PageHeader
     {
+      #region Variables
       private long _StreamPosition = -1;
       private byte _StreamStructureVersion;
       private byte _HeaderTypeFlag;
@@ -61,6 +66,7 @@ namespace Tag.OGG
       private bool _IsFreshPacket = true;
       private bool _IsBeginningOfStream = true;
       private bool _IsEndOfStream = true;
+      #endregion
 
       #region Properties
 
@@ -193,9 +199,11 @@ namespace Tag.OGG
 
       #endregion
 
+      #region Constructors/Destructors
       public PageHeader()
       {
       }
+      #endregion
     }
 
     #region Constants
@@ -227,19 +235,31 @@ namespace Tag.OGG
 
     #endregion
 
-    #region ITag Properties
+    #region Constructors/Destructors
+    public OggTag()
+      : base()
+    {
+    }
 
-    override public string Album
+    ~OggTag()
+    {
+      Dispose();
+    }
+    #endregion
+
+    #region Properties
+
+    public override string Album
     {
       get { return GetStringCommentValue("ALBUM"); }
     }
 
-    override public string Artist
+    public override string Artist
     {
       get { return GetStringCommentValue("ARTIST"); }
     }
 
-    override public string AlbumArtist
+    public override string AlbumArtist
     {
       get
       {
@@ -248,12 +268,12 @@ namespace Tag.OGG
       }
     }
 
-    override public string ArtistURL
+    public override string ArtistURL
     {
       get { return base.ArtistURL; }
     }
 
-    override public int AverageBitrate
+    public override int AverageBitrate
     {
       get
       {
@@ -266,72 +286,72 @@ namespace Tag.OGG
       }
     }
 
-    override public int BitsPerSample
+    public override int BitsPerSample
     {
       get { return 16; }
     }
 
-    override public int BlocksPerFrame
+    public override int BlocksPerFrame
     {
       get { return base.BlocksPerFrame; }
     }
 
-    override public string BuyURL
+    public override string BuyURL
     {
       get { return base.BuyURL; }
     }
 
-    override public int BytesPerSample
+    public override int BytesPerSample
     {
       get { return base.BytesPerSample; }
     }
 
-    override public int Channels
+    public override int Channels
     {
       get { return VorbisIdHdr.AudioChannels; }
     }
 
-    override public string Comment
+    public override string Comment
     {
       get { return base.Comment; }
     }
 
-    override public string Composer
+    public override string Composer
     {
       get { return base.Composer; }
     }
 
-    override public int CompressionLevel
+    public override int CompressionLevel
     {
       get { return base.CompressionLevel; }
     }
 
-    override public string Copyright
+    public override string Copyright
     {
       get { return base.Copyright; }
     }
 
-    override public string CopyrightURL
+    public override string CopyrightURL
     {
       get { return base.CopyrightURL; }
     }
 
-    override public byte[] CoverArtImageBytes
+    public override byte[] CoverArtImageBytes
     {
       get { return GetBase64StringCommentValue("COVERART"); }
     }
 
-    override public string FileURL
+    public override string FileURL
     {
       get { return base.FileURL; }
     }
 
-    override public int FormatFlags
+    public override int FormatFlags
     {
       get { return base.FormatFlags; }
     }
 
-    override public bool IsVBR
+    public override bool IsVBR
     {
       get
       {
@@ -339,22 +359,22 @@ namespace Tag.OGG
       }
     }
 
-    override public string Genre
+    public override string Genre
     {
       get { return GetStringCommentValue("GENRE"); }
     }
 
-    override public string Keywords
+    public override string Keywords
     {
       get { return base.Keywords; }
     }
 
-    override public string Length
+    public override string Length
     {
       get { return Utils.GetDurationString(LengthMS); }
     }
 
-    override public int LengthMS
+    public override int LengthMS
     {
       get
       {
@@ -365,67 +385,67 @@ namespace Tag.OGG
       }
     }
 
-    override public string Lyrics
+    public override string Lyrics
     {
       get { return GetStringCommentValue("LYRICS"); }
     }
 
-    override public string Notes
+    public override string Notes
     {
       get { return base.Notes; }
     }
 
-    override public string PeakLevel
+    public override string PeakLevel
     {
       get { return base.PeakLevel; }
     }
 
-    override public string PublisherURL
+    public override string PublisherURL
     {
       get { return base.PublisherURL; }
     }
 
-    override public string ReplayGainAlbum
+    public override string ReplayGainAlbum
     {
       get { return base.ReplayGainAlbum; }
     }
 
-    override public string ReplayGainRadio
+    public override string ReplayGainRadio
     {
       get { return base.ReplayGainRadio; }
     }
 
-    override public int SampleRate
+    public override int SampleRate
     {
       get { return (int)VorbisIdHdr.AudioSampleRate; }
     }
 
-    override public string Title
+    public override string Title
     {
       get { return GetStringCommentValue("TITLE"); }
     }
 
-    override public string ToolName
+    public override string ToolName
     {
       get { return base.ToolName; }
     }
 
-    override public string ToolVersion
+    public override string ToolVersion
     {
       get { return base.ToolVersion; }
     }
 
-    override public int TotalBlocks
+    public override int TotalBlocks
     {
       get { return base.TotalBlocks; }
     }
 
-    override public int TotalFrames
+    public override int TotalFrames
     {
       get { return base.TotalFrames; }
     }
 
-    override public int Track
+    public override int Track
     {
       get
       {
@@ -446,12 +466,12 @@ namespace Tag.OGG
       }
     }
 
-    override public string Version
+    public override string Version
     {
       get { return base.Version; }
     }
 
-    override public int Year
+    public override int Year
     {
       get
       {
@@ -471,29 +491,14 @@ namespace Tag.OGG
 
     #endregion
 
-    public OggTag()
-      : base()
-    {
-    }
-
-    public OggTag(string fileName)
-      : base(fileName)
-    {
-      Read(fileName);
-    }
-
-    ~OggTag()
-    {
-      Dispose();
-    }
-
-    override public bool SupportsFile(string strFileName)
+    #region Public Methods
+    public override bool SupportsFile(string strFileName)
     {
       if (System.IO.Path.GetExtension(strFileName).ToLower() == ".ogg") return true;
       return false;
     }
 
-    override public bool Read(string fileName)
+    public override bool Read(string fileName)
     {
       if (fileName.Length == 0)
         throw new Exception("No file name specified");
@@ -503,10 +508,6 @@ namespace Tag.OGG
 
       if (Path.GetExtension(fileName).ToLower() != ".ogg")
         throw new AudioFileTypeException("Expected OGG file type.");
-
-      CommentList = new List<VorbisComment>();
-      PageTable = new Hashtable();
-      TotalSamples = 0;
 
       base.Read(fileName);
       bool result = true;
@@ -536,7 +537,9 @@ namespace Tag.OGG
 
       return result;
     }
+    #endregion
 
+    #region Private Methods
     private bool ReadVorbisIDHeader()
     {
       long curStreamPos = AudioFileStream.Position;
@@ -1030,5 +1033,6 @@ namespace Tag.OGG
 
       return null;
     }
+    #endregion
   }
 }

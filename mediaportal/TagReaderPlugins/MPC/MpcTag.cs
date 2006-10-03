@@ -1,3 +1,4 @@
+#region Copyright (C) 2006 Team MediaPortal
 /* 
  *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,6 +19,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#endregion
+
 
 using System;
 using System.IO;
@@ -29,6 +32,7 @@ namespace Tag.MPC
 {
   public class MpcTag : ApeTag
   {
+    #region Variables
     internal struct MpcHeaderInfo
     {
       public int SampleRate;
@@ -119,10 +123,20 @@ namespace Tag.MPC
         32000
       };
 
-    #region Variables
-
     internal MpcHeaderInfo HeaderInfo = new MpcHeaderInfo();
+    #endregion
 
+    #region Constructors/Destructors
+    public MpcTag()
+      : base()
+    {
+      HeaderInfo = MpcHeaderInfo.Empty;
+    }
+
+    ~MpcTag()
+    {
+      Dispose();
+    }
     #endregion
 
     #region Properties
@@ -166,28 +180,7 @@ namespace Tag.MPC
 
     #endregion
 
-    public MpcTag() : base()
-    {
-      HeaderInfo = MpcHeaderInfo.Empty;
-    }
-
-    public static MpcTag FromFile(string fileName)
-    {
-      MpcTag tag = new MpcTag();
-      tag.Read(fileName);
-      return tag;
-    }
-    
-    public MpcTag(string fileName) : base(fileName)
-    {
-      Read(fileName);
-    }
-
-    ~MpcTag()
-    {
-      Dispose();
-    }
-
+    #region Public Methods
     public override bool SupportsFile(string strFileName)
     {
       if (Path.GetExtension(strFileName).ToLower() == ".mpc")
@@ -246,7 +239,9 @@ namespace Tag.MPC
 
       return result;
     }
+    #endregion
 
+    #region Private Methods
     private bool ReadMpcHeader()
     {
       bool result;
@@ -476,5 +471,6 @@ namespace Tag.MPC
 
       return result;
     }
+    #endregion
   }
 }

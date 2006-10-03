@@ -1,3 +1,4 @@
+#region Copyright (C) 2006 Team MediaPortal
 /* 
  *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,6 +19,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#endregion
 
 using System;
 using System.IO;
@@ -30,6 +32,7 @@ namespace Tag.WavPack
 {
   public class WavPackTag : ApeTag
   {
+    #region Enums
     private int[] SampleRates = new int[]
       {
         6000,
@@ -83,6 +86,7 @@ namespace Tag.WavPack
         }
       }
     } ;
+    #endregion
 
     #region Constants
 
@@ -117,6 +121,18 @@ namespace Tag.WavPack
 
     private WavPackHeader FirstHeader;
 
+    #endregion
+
+    #region Constructors/Destructors
+    public WavPackTag()
+      : base()
+    {
+    }
+
+    ~WavPackTag()
+    {
+      Dispose();
+    }
     #endregion
 
     #region Properties
@@ -191,22 +207,7 @@ namespace Tag.WavPack
 
     #endregion
 
-    public WavPackTag()
-      : base()
-    {
-    }
-
-    public WavPackTag(string fileName)
-      : base(fileName)
-    {
-      Read(fileName);
-    }
-
-    ~WavPackTag()
-    {
-      Dispose();
-    }
-
+    #region Public Methods
     public override bool SupportsFile(string strFileName)
     {
       if (Path.GetExtension(strFileName).ToLower() == ".wv")
@@ -277,7 +278,9 @@ namespace Tag.WavPack
 
       return result;
     }
+    #endregion
 
+    #region Private Methods
     private new bool ReadHeader()
     {
       bool result = true;
@@ -375,5 +378,6 @@ namespace Tag.WavPack
 
       return result;
     }
+    #endregion
   }
 }

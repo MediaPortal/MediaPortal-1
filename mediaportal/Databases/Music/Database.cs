@@ -3329,7 +3329,6 @@ namespace MediaPortal.Music.Database
     {
       /// This seems to clear the arraylist and make it valid
       availableFiles = new ArrayList();
-      Log.Info("13");
 
       DatabaseReorgEventArgs MyArgs = new DatabaseReorgEventArgs();
       string strSQL;

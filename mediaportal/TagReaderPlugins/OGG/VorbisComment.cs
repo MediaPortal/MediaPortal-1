@@ -1,3 +1,4 @@
+#region Copyright (C) 2006 Team MediaPortal
 /* 
  *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,6 +19,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#endregion
 
 using System;
 using System.Collections.Generic;
@@ -36,6 +38,14 @@ namespace Tag.OGG
 
     #endregion
 
+    #region Constructors/Destructors
+    public VorbisComment(string fieldName, byte[] fieldValue)
+    {
+      _FieldName = fieldName;
+      _FieldValue = fieldValue;
+    }
+    #endregion
+
     #region Properties
 
     public string FieldName
@@ -49,11 +59,5 @@ namespace Tag.OGG
     }
 
     #endregion
-
-    public VorbisComment(string fieldName, byte[] fieldValue)
-    {
-      _FieldName = fieldName;
-      _FieldValue = fieldValue;
-    }
   }
 }

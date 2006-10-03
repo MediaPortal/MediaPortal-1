@@ -1,3 +1,4 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
 /* 
  *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,6 +19,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#endregion
 
 using System;
 using System.Collections.Generic;
@@ -33,6 +35,7 @@ namespace Tag.FLAC
 {
   public class FlacTag : TagBase
   {
+    #region Enums
     private enum BlockType
     {
       StreamInfo = 0,
@@ -125,6 +128,7 @@ namespace Tag.FLAC
       public bool LastMetadataBlock;
       public int MetadataLength;
     }
+    #endregion
 
     #region Constants
 
@@ -145,7 +149,19 @@ namespace Tag.FLAC
 
     #endregion
 
-    #region ITag Members
+    #region Constructors/Destructors
+    public FlacTag()
+      : base()
+    {
+    }
+
+    ~FlacTag()
+    {
+      Dispose();
+    }
+    #endregion
+
+    #region Properties
 
     public override string Album
     {
@@ -375,22 +391,7 @@ namespace Tag.FLAC
 
     #endregion
 
-    public FlacTag()
-      : base()
-    {
-    }
-
-    public FlacTag(string fileName)
-      : base(fileName)
-    {
-      Read(fileName);
-    }
-
-    ~FlacTag()
-    {
-      Dispose();
-    }
-
+    #region Public Methods
     public override bool SupportsFile(string strFileName)
     {
       if (Path.GetExtension(strFileName).ToLower() == ".flac")
@@ -416,15 +417,6 @@ namespace Tag.FLAC
       {
         throw new AudioFileTypeException("Expected FLAC file type.");
       }
-
-      CommentList = new List<VorbisComment>();
-      ApeHeader = new APE_HEADER();
-      StreamInfo = new StreamInfoBlock();
-      PaddingBlock = new PaddingInfoBlock();
-      ApplicationInfo = new ApplicationInfoBlock();
-      VorbisCommentsInfo = new VorbisCommentInfoBlock();
-      CueSheetInfo = new CueSheetInfoBlock();
-
 
       base.Read(fileName);
       bool result = true;
@@ -470,7 +462,9 @@ namespace Tag.FLAC
 
       return result;
     }
+    #endregion
 
+    #region Private Methods
     private bool IsFlacFile()
     {
       AudioFileStream.Seek(0, SeekOrigin.Begin);
@@ -769,5 +763,6 @@ namespace Tag.FLAC
 
       return null;
     }
+    #endregion
   }
 }

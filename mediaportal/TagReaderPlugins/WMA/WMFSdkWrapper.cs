@@ -1,3 +1,4 @@
+#region Copyright (C) 2006 Team MediaPortal
 /* 
  *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,6 +19,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#endregion
 
 using System;
 using System.Runtime.InteropServices;
@@ -25,6 +27,7 @@ using System.Text;
 
 namespace Tag.WMA
 {
+  #region Enums
   public enum WMT_STREAM_SELECTION
   {
     WMT_OFF = 0,
@@ -48,7 +51,9 @@ namespace Tag.WMA
     public uint dwUserbits;
     public uint dwAmFlags;
   };
+  #endregion
 
+  #region IWMSyncreader Implementations
   // IWMSyncReader
   [
       ComImport,
@@ -127,7 +132,9 @@ namespace Tag.WMA
 
     void OpenStream([In, MarshalAs(UnmanagedType.Interface)] System.Runtime.InteropServices.ComTypes.IStream pStream);
   }
+  #endregion
 
+  #region IWMSyncReader2 Implementations
   // IWMSyncReader2
   [
       ComImport,
@@ -239,7 +246,9 @@ namespace Tag.WMA
         [In] ushort dwSreamNum,
         [Out, MarshalAs(UnmanagedType.Interface)] out IWMReaderAllocatorEx ppAllocator);
   }
+  #endregion
 
+  #region IWMReaderAllocatorEx Implementations
   // IWMReaderAllocatorEx
   [
       ComImport,
@@ -268,7 +277,9 @@ namespace Tag.WMA
         [In] ulong cnsSampleDuration,
         [In] IntPtr pvContext);
   }
+  #endregion
 
+  #region IWMProfileManager Implementations
   // IWMProfileManager
   [
       ComImport,
@@ -301,7 +312,9 @@ namespace Tag.WMA
         [Out, MarshalAs(UnmanagedType.Interface)] out IWMProfile ppProfile);
 
   }
+  #endregion
 
+  #region IWMProfile Implementations
   // IWMProfile
   [
       ComImport,
@@ -352,7 +365,9 @@ namespace Tag.WMA
     void CreateNewMutualExclusion([Out, MarshalAs(UnmanagedType.Interface)] out IWMMutualExclusion ppME);
 
   }
+  #endregion
 
+  #region IWMStreamConfig Implementations
   // IWMStreamConfig
   [
       ComImport,
@@ -387,7 +402,9 @@ namespace Tag.WMA
     void SetBufferWindow([In] uint msBufferWindow);
 
   };
+  #endregion
 
+  #region IWMMutualExclusion Implementations
   // IWMMutualExclusion
   [
       ComImport,
@@ -407,7 +424,9 @@ namespace Tag.WMA
 
     void SetType([In] ref Guid guidType);
   };
+  #endregion
 
+  #region IWMMutualExclusions2 Implementations
   // IWMMutualExclusion2
   [
       ComImport,
@@ -458,7 +477,9 @@ namespace Tag.WMA
     void RemoveStreamForRecord([In] ushort wRecordNumber, [In] ushort wStreamNumber);
 
   }
+  #endregion
 
+  #region IWMBandwithSharing Implementations
   // IWMBandwidthSharing
   [
       ComImport,
@@ -485,7 +506,9 @@ namespace Tag.WMA
     void SetBandwidth([In] uint dwBitrate, [In] uint msBufferWindow);
 
   }
+  #endregion
 
+  #region IWMStreamList Implementations
   // IWMStreamList
   [
       ComImport,
@@ -501,7 +524,9 @@ namespace Tag.WMA
 
     void RemoveStream([In] ushort wStreamNum);
   };
+  #endregion
 
+  #region IWMReader Implementations
   //IWMReader
   [
       ComImport,
@@ -548,7 +573,9 @@ namespace Tag.WMA
     void Resume();
 
   }
+  #endregion
 
+  #region IWMOutputMediaProps Implementations
   // IWMOutputMediaProps
   [
       ComImport,
@@ -565,7 +592,9 @@ namespace Tag.WMA
         [Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder pwszName,
         [In, Out] ref ushort pcchName);
   }
+  #endregion
 
+  #region IWMStatusCallBack Implementations
   //IWMStatusCallback
   [
       ComImport,
@@ -591,7 +620,9 @@ namespace Tag.WMA
         [In, MarshalAs(UnmanagedType.Interface)] INSSBuffer pSample,
         [In] IntPtr pvContext);
   }
+  #endregion
 
+  #region IWMStatusCallback Implementations
   //IWMStatusCallback
   [
       ComImport,
@@ -607,7 +638,9 @@ namespace Tag.WMA
         [In] IntPtr pValue,
         [In] IntPtr pvContext);
   }
+  #endregion
 
+  #region INSSBuffer Implementations
   //INSSBuffer
   [
       ComImport,
@@ -632,7 +665,9 @@ namespace Tag.WMA
         [Out] out IntPtr ppdwBuffer,
         [Out] out uint pdwLength);
   }
+  #endregion
 
+  #region IWMMediaProps Implementations
   // IWMMediaProps
   [
       ComImport,
@@ -650,7 +685,9 @@ namespace Tag.WMA
 
     void SetMediaType([In] ref WM_MEDIA_TYPE pType);
   }
+  #endregion
 
+  #region IWMHeaderInfo3 Implementations
   // IWMHeaderInfo3
   [
       ComImport,
@@ -708,8 +745,9 @@ namespace Tag.WMA
         [In]									ushort wStreamNum,
         [In]									ushort wIndex);
   }
+  #endregion
 
-
+  #region IWMMetsDataEditor2 Implementations
   // IWMMetadataEditor2
   [
       ComImport,
@@ -724,6 +762,7 @@ namespace Tag.WMA
 
     void Close();
   }
+  #endregion
 
 
   public class WindowsMediaWrapper// : IDisposable
@@ -735,6 +774,7 @@ namespace Tag.WMA
     {
     }
 
+    #region Imports
     [DllImport("WMVCore.dll", EntryPoint = "WMCreateEditor", PreserveSig = false,
         CharSet = CharSet.Unicode, ExactSpelling = true, SetLastError = true)]
     public static extern void CreateEditor(
@@ -764,8 +804,10 @@ namespace Tag.WMA
     CharSet = CharSet.Unicode, ExactSpelling = true,
     CallingConvention = CallingConvention.StdCall)]
     private static extern int WMCreateProfileManager([Out, MarshalAs(UnmanagedType.Interface)] out IWMProfileManager ppProfileManager);
+    #endregion
   }
 
+  #region Enums
   // Just the ones we handle
   public enum ComError
   {
@@ -877,4 +919,5 @@ namespace Tag.WMA
     public short wBitsPerSample;
     public short cbSize;
   }
+  #endregion
 }

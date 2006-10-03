@@ -1,3 +1,4 @@
+#region Copyright (C) 2006 Team MediaPortal
 /* 
  *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,6 +19,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#endregion
 
 using System;
 using System.Collections.Generic;
@@ -194,6 +196,18 @@ namespace Tag.MP4
     private ParsedMvhdAtom MvhdAtom = null;
     private ParsedStsdAtom StsdAtom = null;
 
+    #endregion
+
+    #region Constructors/Destructors
+    public Mp4Tag()
+      : base()
+    {
+    }
+
+    ~Mp4Tag()
+    {
+      Dispose();
+    }
     #endregion
 
     #region Properties
@@ -619,23 +633,8 @@ namespace Tag.MP4
 
     #endregion
 
-    public Mp4Tag()
-      : base()
-    {
-    }
-
-    public Mp4Tag(string fileName)
-      : base(fileName)
-    {
-      Read(fileName);
-    }
-
-    ~Mp4Tag()
-    {
-      Dispose();
-    }
-
-    override public bool SupportsFile(string strFileName)
+    #region Public Methods
+    public override bool SupportsFile(string strFileName)
     {
       string ext = System.IO.Path.GetExtension(strFileName).ToLower();
       if (ext == ".m4a" || ext == ".m4p") return true;
@@ -674,7 +673,9 @@ namespace Tag.MP4
 
       return result;
     }
+    #endregion
 
+    #region Private Methods
     protected static String GetGenre(int genreNr)
     {
       if (m_genreArray.Length > genreNr)
@@ -688,5 +689,6 @@ namespace Tag.MP4
         return "Uknown";
       }
     }
+    #endregion
   }
 }

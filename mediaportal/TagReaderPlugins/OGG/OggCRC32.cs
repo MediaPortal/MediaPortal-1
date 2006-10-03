@@ -1,3 +1,4 @@
+#region Copyright (C) 2006 Team MediaPortal
 /* 
  *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,6 +19,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#endregion
 
 using System;
 using System.Collections.Generic;
@@ -29,6 +31,21 @@ namespace Tag.OGG
 {
   public class OggCRC32
   {
+    #region Public Methods
+    public static int GetCRCChecksum(byte[] data)
+    {
+      int chkSum = 0;
+
+      for (int i = 0; i < data.Length; i++)
+      {
+        chkSum = (chkSum << 8) ^ CRCLookupArray[((chkSum >> 24) & 0xff) ^ (data[i] & 0xff)];
+      }
+
+      return chkSum;
+    }
+    #endregion
+
+    #region Private Methods
     private static int[] CRCLookupArray = new int[256];
 
     public OggCRC32()
@@ -58,17 +75,6 @@ namespace Tag.OGG
 
       return (r & 0xffff);
     }
-
-    public static int GetCRCChecksum(byte[] data)
-    {
-      int chkSum = 0;
-
-      for (int i = 0; i < data.Length; i++)
-      {
-        chkSum = (chkSum << 8) ^ CRCLookupArray[((chkSum >> 24) & 0xff) ^ (data[i] & 0xff)];
-      }
-
-      return chkSum;
-    }
+    #endregion
   }
 }

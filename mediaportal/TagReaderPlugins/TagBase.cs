@@ -40,7 +40,18 @@ namespace Tag
 
     #endregion
 
-    #region ITag Members
+    #region Constructors/Destructors
+    public TagBase()
+    {
+    }
+
+    public TagBase(string filePath)
+    {
+      AudioFilePath = filePath;
+    }
+    #endregion
+
+    #region Properties
 
     virtual public string Album
     {
@@ -248,15 +259,7 @@ namespace Tag
     }
     #endregion
 
-    public TagBase()
-    {
-    }
-
-    public TagBase(string filePath)
-    {
-      AudioFilePath = filePath;
-    }
-
+    #region Public Methods
     virtual public void Dispose()
     {
       if (AudioFileStream != null)
@@ -281,5 +284,6 @@ namespace Tag
       FileLength = new FileInfo(fileName).Length;
       return false;
     }
+    #endregion
   }
 }

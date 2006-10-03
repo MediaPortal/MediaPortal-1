@@ -1,3 +1,4 @@
+#region Copyright (C) 2006 Team MediaPortal
 /* 
  *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,6 +19,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#endregion
 
 using System;
 using System.IO;
@@ -34,6 +36,7 @@ namespace Tag.MP4
   /// </summary>
   public class MP4Parser
   {
+    #region Variables
     static string[] ATOM_CONTAINER_TYPES = 
 		{
 			"MOOV", "UDTA", "META",
@@ -48,11 +51,15 @@ namespace Tag.MP4
     static byte[] atomSizeBuf = new byte[4];
     static byte[] atomTypeBuf = new byte[4];
     static byte[] extendedAtomSizeBuf = new byte[8];
+    #endregion
 
+    #region Constructors/Destructors
     public MP4Parser()
     {
     }
+    #endregion
 
+    #region Public Methods
     public static ParsedAtom[] parseAtoms(string fileName)
     {
       FileInfo f = new FileInfo(fileName);
@@ -110,7 +117,9 @@ namespace Tag.MP4
         found = false;
       }
     }
+    #endregion
 
+    #region Private Methods
     protected static ParsedAtom[] parseAtoms(Stream s, long offset, long stopAt)
     {
       ArrayList parsedAtomList = new ArrayList();
@@ -225,5 +234,6 @@ namespace Tag.MP4
 
       return (ParsedAtom[])parsedAtomList.ToArray(typeof(ParsedAtom));
     }
+    #endregion
   }
 }

@@ -1,3 +1,4 @@
+#region Copyright (C) 2006 Team MediaPortal
 /* 
  *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,6 +19,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#endregion
 
 using System;
 using System.Collections.Generic;
@@ -39,6 +41,7 @@ namespace ID3
 
   public class ID3Frame
   {
+    #region Variables
     // Status Flag Values
     //                              0abc 0000 
     //                              ========
@@ -83,7 +86,7 @@ namespace ID3
     private int id3HeaderLength = 10;
     private int id3IdLength = 4;
     private int id3FrameSizeLength = 4;
-
+    #endregion
 
     #region Properties
 
@@ -115,6 +118,7 @@ namespace ID3
 
     #endregion
 
+    #region Constructors/Destructors
     public ID3Frame(FileStream s, int Version)
     {
       // Check for the id3 Version to adjust the Header Length
@@ -214,12 +218,14 @@ namespace ID3
         }
       }
 
-// If it's not a binary data frame or a text frame what is it?
+      // If it's not a binary data frame or a text frame what is it?
       // It could be a lyrics frame (USLT)
       else
         _Data = dataBytes;
     }
+    #endregion
 
+    #region Private Methods
     private bool IsBinaryFrame(string frameID)
     {
       switch (frameID)
@@ -240,5 +246,6 @@ namespace ID3
       else
         return false;
     }
+    #endregion
   }
 }

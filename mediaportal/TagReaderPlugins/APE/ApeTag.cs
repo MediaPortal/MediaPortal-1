@@ -1,3 +1,4 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
 /* 
  *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,6 +19,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#endregion
 
 using System;
 using System.Collections.Generic;
@@ -137,6 +139,18 @@ namespace Tag.MAC
     protected long ApeTagStreamPosition = 0;
     private ID3_TAG ID3Tag = new ID3_TAG();
 
+    #endregion
+
+    #region Constructors/Destructors
+    public ApeTag()
+      : base()
+    {
+    }
+
+    ~ApeTag()
+    {
+      Dispose();
+    }
     #endregion
 
     #region Properties
@@ -458,22 +472,7 @@ namespace Tag.MAC
 
     #endregion
 
-    public ApeTag()
-      : base()
-    {
-    }
-
-    public ApeTag(string fileName)
-      : base(fileName)
-    {
-      Read(fileName);
-    }
-
-    ~ApeTag()
-    {
-      Dispose();
-    }
-
+    #region Public Methods
     public override bool SupportsFile(string strFileName)
     {
       if (Path.GetExtension(strFileName).ToLower() == ".ape")
@@ -517,10 +516,6 @@ namespace Tag.MAC
     protected bool ReadTags()
     {
       bool result = true;
-
-      ID3Tag = new ID3_TAG();
-      ApeTagBytes = 0;
-      FieldList = new List<ApeTagField>();
 
       try
       {
@@ -1063,5 +1058,6 @@ namespace Tag.MAC
 
       return field.FieldValue;
     }
+    #endregion
   }
 }

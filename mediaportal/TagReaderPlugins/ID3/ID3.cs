@@ -1,3 +1,4 @@
+#region Copyright (C) 2006 Team MediaPortal
 /* 
  *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,6 +19,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#endregion
 
 using System;
 using System.Collections.Generic;
@@ -25,11 +27,11 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.IO;
 using MediaPortal.TagReader;
-
 using MediaPortal.GUI.Library;
 
 namespace ID3
 {
+  #region Structs
   public struct ID3v1
   {
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
@@ -67,9 +69,11 @@ namespace ID3
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
     public byte[] Size;         // ID3v2 size               4 * %0xxxxxxx (4 bytes)
   }
+  #endregion
 
   public class ID3Tag
   {
+    #region Enums
     public enum MPEG_VERSION
     {
       UKNOWN = -1,
@@ -87,7 +91,9 @@ namespace ID3
       LAYER_II = 2,
       LAYER_I = 3,
     };
+    #endregion
 
+    #region Variables
     private static int[,] BitrateTable = new int[5, 16]
             {
                 //Version1 Layer1
@@ -175,6 +181,15 @@ namespace ID3
     private int _ChannelMode = 0;
     private string _ChannelModeString = "";
     private bool _VariableBitRate = false;
+    #endregion
+
+    #region Constructors/Destructors
+    public ID3Tag(FileStream s)
+    {
+      bool foundV1Tag = GetID3v1Tag(s);
+      bool foundV2Tag = GetID3v2Tag(s);
+    }
+    #endregion
 
     #region Properties
 
@@ -243,12 +258,7 @@ namespace ID3
 
     #endregion
 
-    public ID3Tag(FileStream s)
-    {
-      bool foundV1Tag = GetID3v1Tag(s);
-      bool foundV2Tag = GetID3v2Tag(s);
-    }
-
+    #region Private Methods
     private bool GetID3v1Tag(FileStream s)
     {
       s.Seek(-ID3.ID3Tag.ID3_TAG_BYTES, SeekOrigin.End);
@@ -1062,5 +1072,6 @@ namespace ID3
           return 0;
       }
     }
+    #endregion
   }
 }

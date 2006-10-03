@@ -1,3 +1,4 @@
+#region Copyright (C) 2006 Team MediaPortal
 /* 
  *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,6 +19,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#endregion
 
 using System;
 using System.Collections.Generic;
@@ -55,6 +57,7 @@ namespace Tag.MP3
 
     #endregion
 
+    #region Constructors/Destructors
     public Mp3TagField(string fieldName, byte[] fieldValue)
     {
       _FieldName = fieldName;
@@ -65,6 +68,8 @@ namespace Tag.MP3
     {
       Dispose();
     }
+    #endregion
+
 
     public void Dispose()
     {
@@ -79,11 +84,21 @@ namespace Tag.MP3
 
     #endregion
 
+    #region Constructors/Destructors
+    public Mp3Tag()
+      : base()
+    {
+    }
+
+    ~Mp3Tag()
+    {
+      Dispose();
+    }
+    #endregion
+
     #region Properties
 
-    #region ITag Properties
-
-    override public string Album
+    public override string Album
     {
       get
       {
@@ -109,7 +124,7 @@ namespace Tag.MP3
       }
     }
 
-    override public string Artist
+    public override string Artist
     {
       get
       {
@@ -136,7 +151,7 @@ namespace Tag.MP3
       }
     }
 
-    override public string AlbumArtist
+    public override string AlbumArtist
     {
       get
       {
@@ -154,7 +169,7 @@ namespace Tag.MP3
       }
     }
 
-    override public string ArtistURL
+    public override string ArtistURL
     {
       get
       {
@@ -172,12 +187,12 @@ namespace Tag.MP3
       }
     }
 
-    override public int AverageBitrate
+    public override int AverageBitrate
     {
       get { return Id3Tag.BitRate; }
     }
 
-    override public int BitsPerSample
+    public override int BitsPerSample
     {
       get
       {
@@ -190,7 +205,7 @@ namespace Tag.MP3
       }
     }
 
-    override public int BlocksPerFrame
+    public override int BlocksPerFrame
     {
       get
       {
@@ -203,7 +218,7 @@ namespace Tag.MP3
       }
     }
 
-    override public string BuyURL
+    public override string BuyURL
     {
       get
       {
@@ -221,7 +236,7 @@ namespace Tag.MP3
       }
     }
 
-    override public int BytesPerSample
+    public override int BytesPerSample
     {
       get
       {
@@ -234,12 +249,12 @@ namespace Tag.MP3
       }
     }
 
-    override public int Channels
+    public override int Channels
     {
       get { return Id3Tag.Channels; }
     }
 
-    override public string Comment
+    public override string Comment
     {
       get
       {
@@ -266,7 +281,7 @@ namespace Tag.MP3
       }
     }
 
-    override public string Composer
+    public override string Composer
     {
       get
       {
@@ -277,7 +292,7 @@ namespace Tag.MP3
       }
     }
 
-    override public int CompressionLevel
+    public override int CompressionLevel
     {
       get
       {
@@ -295,7 +310,7 @@ namespace Tag.MP3
       }
     }
 
-    override public string Copyright
+    public override string Copyright
     {
       get
       {
@@ -313,7 +328,7 @@ namespace Tag.MP3
       }
     }
 
-    override public string CopyrightURL
+    public override string CopyrightURL
     {
       get
       {
@@ -331,7 +346,7 @@ namespace Tag.MP3
       }
     }
 
-    override public byte[] CoverArtImageBytes
+    public override byte[] CoverArtImageBytes
     {
       //<Header for 'Attached picture', ID: "APIC">
       //Text encoding      $xx
@@ -428,7 +443,7 @@ namespace Tag.MP3
       }
     }
 
-    override public string FileURL
+    public override string FileURL
     {
       get
       {
@@ -446,7 +461,7 @@ namespace Tag.MP3
       }
     }
 
-    override public int FormatFlags
+    public override int FormatFlags
     {
       get
       {
@@ -459,12 +474,12 @@ namespace Tag.MP3
       }
     }
 
-    override public bool IsVBR
+    public override bool IsVBR
     {
       get { return this.Id3Tag.IsVBR; }
     }
 
-    override public string Genre
+    public override string Genre
     {
       get
       {
@@ -515,7 +530,7 @@ namespace Tag.MP3
       }
     }
 
-    override public string Keywords
+    public override string Keywords
     {
       get
       {
@@ -533,7 +548,7 @@ namespace Tag.MP3
       }
     }
 
-    override public string Length
+    public override string Length
     {
       get
       {
@@ -557,7 +572,7 @@ namespace Tag.MP3
       }
     }
 
-    override public int LengthMS
+    public override int LengthMS
     {
       get
       {
@@ -570,7 +585,7 @@ namespace Tag.MP3
       }
     }
 
-    override public string Lyrics
+    public override string Lyrics
     {
       get
       {
@@ -588,7 +603,7 @@ namespace Tag.MP3
       }
     }
 
-    override public string Notes
+    public override string Notes
     {
       get
       {
@@ -606,7 +621,7 @@ namespace Tag.MP3
       }
     }
 
-    override public string PeakLevel
+    public override string PeakLevel
     {
       get
       {
@@ -624,7 +639,7 @@ namespace Tag.MP3
       }
     }
 
-    override public string PublisherURL
+    public override string PublisherURL
     {
       get
       {
@@ -642,7 +657,7 @@ namespace Tag.MP3
       }
     }
 
-    override public string ReplayGainAlbum
+    public override string ReplayGainAlbum
     {
       get
       {
@@ -660,7 +675,7 @@ namespace Tag.MP3
       }
     }
 
-    override public string ReplayGainRadio
+    public override string ReplayGainRadio
     {
       get
       {
@@ -678,7 +693,7 @@ namespace Tag.MP3
       }
     }
 
-    override public int SampleRate
+    public override int SampleRate
     {
       get
       {
@@ -691,7 +706,7 @@ namespace Tag.MP3
       }
     }
 
-    override public string Title
+    public override string Title
     {
       get
       {
@@ -718,7 +733,7 @@ namespace Tag.MP3
       }
     }
 
-    override public string ToolName
+    public override string ToolName
     {
       get
       {
@@ -736,7 +751,7 @@ namespace Tag.MP3
       }
     }
 
-    override public string ToolVersion
+    public override string ToolVersion
     {
       get
       {
@@ -754,7 +769,7 @@ namespace Tag.MP3
       }
     }
 
-    override public int TotalBlocks
+    public override int TotalBlocks
     {
       get
       {
@@ -767,7 +782,7 @@ namespace Tag.MP3
       }
     }
 
-    override public int TotalFrames
+    public override int TotalFrames
     {
       get
       {
@@ -780,7 +795,7 @@ namespace Tag.MP3
       }
     }
 
-    override public int Track
+    public override int Track
     {
       get
       {
@@ -831,7 +846,7 @@ namespace Tag.MP3
       }
     }
 
-    override public string Version
+    public override string Version
     {
       get
       {
@@ -849,7 +864,7 @@ namespace Tag.MP3
       }
     }
 
-    override public int Year
+    public override int Year
     {
       get
       {
@@ -893,34 +908,16 @@ namespace Tag.MP3
       }
     }
 
-    #endregion ITag Interface
+    #endregion
 
-    #endregion Properties
-
-    public Mp3Tag()
-      : base()
-    {
-    }
-
-    public Mp3Tag(string fileName)
-      : base(fileName)
-    {
-      Read(fileName);
-    }
-
-    ~Mp3Tag()
-    {
-      Dispose();
-    }
-
-
-    override public bool SupportsFile(string strFileName)
+    #region Public Methods
+    public override bool SupportsFile(string strFileName)
     {
       if (System.IO.Path.GetExtension(strFileName).ToLower() == ".mp3") return true;
       return false;
     }
 
-    override public bool Read(string fileName)
+    public override bool Read(string fileName)
     {
       if (fileName.Length == 0)
         throw new Exception("No file name specified");
@@ -944,7 +941,6 @@ namespace Tag.MP3
         if (AudioFileStream == null)
           AudioFileStream = new FileStream(AudioFilePath, FileMode.Open, FileAccess.Read);
 
-        Id3Tag = null;
         Id3Tag = new ID3.ID3Tag(AudioFileStream);
 
         bHasID3v1Tag = Id3Tag.HasV1Header;
@@ -977,7 +973,9 @@ namespace Tag.MP3
 
       return result;
     }
+    #endregion
 
+    #region Private Methods
     private ID3Frame GetFrame(string sFrameID)
     {
       return GetFrame(sFrameID, "");
@@ -1176,5 +1174,6 @@ namespace Tag.MP3
         }
       }
     }
+    #endregion
   }
 }
