@@ -241,5 +241,13 @@ namespace TvDatabase
 			return Server.Retrieve(IdServer);
 		}
 		#endregion
+
+    public void Delete()
+    {
+      IList list = ReferringChannelMap();
+      foreach (ChannelMap map in list)
+        map.Delete();
+      Remove(); 
+    }
 	}
 }

@@ -149,5 +149,9 @@ namespace TvDatabase
 		}
 		#endregion
 
+    public void Delete()
+    {
+      Remove();
+    }
 	}
 }

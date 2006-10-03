@@ -86,7 +86,7 @@ namespace TvDatabase
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(ChannelGroup));
       sb.AddConstraint(Operator.Equals, "groupName", groupName);
       SqlStatement stmt = sb.GetStatement(true);
-      IList groups=ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
+      IList groups = ObjectFactory.GetCollection(typeof(ChannelGroup), stmt.Execute());
       ChannelGroup group;
       if (groups.Count == 0)
       {

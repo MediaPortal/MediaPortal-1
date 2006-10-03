@@ -78,7 +78,8 @@ namespace SetupTv.Sections
       int index = mpListView1.SelectedIndices[0];
       ListViewItem item = mpListView1.Items[index];
       Server server = (Server)item.Tag;
-      //server.Delete();
+      server.Delete();
+      MessageBox.Show("Changes made require TvService to restart. Please restart the tvservice");
       OnSectionActivated();
     }
 
@@ -106,8 +107,9 @@ namespace SetupTv.Sections
           server.IsMaster = true;
           RemoteControl.HostName = server.HostName;
         }
-        server.IsMaster = false;
+        server.Persist();
       }
+      MessageBox.Show("Changes made require TvService to restart. Please restart the tvservice");
     }
   }
 }
