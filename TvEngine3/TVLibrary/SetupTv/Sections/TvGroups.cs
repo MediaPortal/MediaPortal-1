@@ -79,6 +79,7 @@ namespace SetupTv.Sections
         ListViewItem item = mpListViewGroups.Items.Add(group.GroupName);
         item.Tag = group;
       }
+      mpListViewGroups.Sort();
     }
 
     private void mpButtonDeleteGroup_Click(object sender, EventArgs e)
@@ -118,6 +119,7 @@ namespace SetupTv.Sections
         g.Group = group;
         mpComboBoxGroup.Items.Add(g);
       }
+      
       if (mpComboBoxGroup.Items.Count > 0)
         mpComboBoxGroup.SelectedIndex = 0;
       //mpComboBoxGroup_SelectedIndexChanged(null,null);

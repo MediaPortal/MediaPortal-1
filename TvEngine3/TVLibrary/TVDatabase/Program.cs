@@ -238,6 +238,7 @@ namespace TvDatabase
       IList list = ReferringFavorite();
       foreach (Favorite favorite in list)
         favorite.Remove();
+      Remove();
     }
     /// <summary>
     /// Checks if the program is running between the specified start and end time/dates

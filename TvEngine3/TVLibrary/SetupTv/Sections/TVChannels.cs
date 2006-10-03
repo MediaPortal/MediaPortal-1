@@ -209,7 +209,7 @@ namespace SetupTv.Sections
       foreach (TuningDetail detail in details) detail.Remove();
 
       IList groupmaps = GroupMap.ListAll();
-      foreach (TuningDetail groupmap in groupmaps) groupmap.Remove();
+      foreach (GroupMap groupmap in groupmaps) groupmap.Remove();
 
       IList channelMaps = ChannelMap.ListAll();
       foreach (ChannelMap channelMap in channelMaps) channelMap.Remove();
