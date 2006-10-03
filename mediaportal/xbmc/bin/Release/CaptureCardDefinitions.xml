@@ -11140,7 +11140,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Twinhan DVB-C (Mantis)" capturename="DTV-DVB Mantis Virtual BDA Receiver" devid="ven_1822&amp;dev_4e35&amp;subsys_00241822&amp;rev_11">
+  <capturecard commercialname="Twinhan DVB-C (Mantis)" capturename="DTV-DVB Mantis Virtual BDA Receiver" devid="ven_1822&amp;dev_4e35&amp;subsys_00011822&amp;rev_11">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
     <tv>
       <interface cat="tunerdevice" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
