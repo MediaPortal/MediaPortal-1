@@ -18,10 +18,10 @@
 			<description>Back button</description>
 			<type>button</type>
 			<id>21</id>
-			<posX>85</posX>
-			<posY>6</posY>
-			<width>77</width>
-			<height>56</height>
+			<posX>66</posX>
+			<posY>4</posY>
+			<width>62</width>
+			<height>54</height>
 			<textureFocus>back_enabled.png</textureFocus>
 			<textureNoFocus>back_disabled.png</textureNoFocus>
 			<action>10</action>
@@ -36,10 +36,10 @@
 			<description>basichome button button</description>
 			<type>button</type>
 			<id>26</id>
-			<posX>184</posX>
-			<posY>6</posY>
-			<width>77</width>
-			<height>56</height>
+			<posX>144</posX>
+			<posY>3</posY>
+			<width>65</width>
+			<height>55</height>
 			<textureFocus>nav_refresh_focus.png</textureFocus>
 			<textureNoFocus>nav_refresh_nofocus.png</textureNoFocus>
 			<label>-</label>
@@ -53,10 +53,10 @@
 			<description>back button</description>
 			<type>button</type>
 			<id>22</id>
-			<posX>341</posX>
-			<posY>6</posY>
-			<width>77</width>
-			<height>56</height>
+			<posX>523</posX>
+			<posY>4</posY>
+			<width>60</width>
+			<height>53</height>
 			<textureFocus>skipback_enabled.png</textureFocus>
 			<textureNoFocus>skipback_disabled.png</textureNoFocus>
 			<action>15</action>
@@ -70,10 +70,10 @@
 			<description>rewind button</description>
 			<type>button</type>
 			<id>23</id>
-			<posX>436</posX>
-			<posY>6</posY>
-			<width>77</width>
-			<height>56</height>
+			<posX>598</posX>
+			<posY>4</posY>
+			<width>60</width>
+			<height>53</height>
 			<textureFocus>rew_enabled.png</textureFocus>
 			<textureNoFocus>rew_disabled.png</textureNoFocus>
 			<action>78</action>
@@ -87,10 +87,10 @@
 			<description>play button</description>
 			<type>button</type>
 			<id>24</id>
-			<posX>531</posX>
-			<posY>6</posY>
-			<width>77</width>
-			<height>56</height>
+			<posX>674</posX>
+			<posY>4</posY>
+			<width>60</width>
+			<height>53</height>
 			<textureFocus>play_enabled.png</textureFocus>
 			<textureNoFocus>play_disabled.png</textureNoFocus>
 			<action>79</action>
@@ -104,10 +104,10 @@
 			<description>pause button</description>
 			<type>button</type>
 			<id>25</id>
-			<posX>626</posX>
-			<posY>6</posY>
-			<width>77</width>
-			<height>56</height>
+			<posX>748</posX>
+			<posY>4</posY>
+			<width>60</width>
+			<height>53</height>
 			<textureFocus>pause_enabled.png</textureFocus>
 			<textureNoFocus>pause_disabled.png</textureNoFocus>
 			<action>12</action>
@@ -121,10 +121,10 @@
 			<description>stop button</description>
 			<type>button</type>
 			<id>27</id>
-			<posX>720</posX>
-			<posY>6</posY>
-			<width>77</width>
-			<height>56</height>
+			<posX>823</posX>
+			<posY>4</posY>
+			<width>60</width>
+			<height>53</height>
 			<textureFocus>stop_enabled.png</textureFocus>
 			<textureNoFocus>stop_disabled.png</textureNoFocus>
 			<action>13</action>
@@ -138,10 +138,10 @@
 			<description>fast forward button</description>
 			<type>button</type>
 			<id>28</id>
-			<posX>815</posX>
-			<posY>6</posY>
-			<width>77</width>
-			<height>56</height>
+			<posX>899</posX>
+			<posY>4</posY>
+			<width>60</width>
+			<height>53</height>
 			<textureFocus>fastforward_enabled.png</textureFocus>
 			<textureNoFocus>fastforward_disabled.png</textureNoFocus>
 			<action>77</action>
@@ -155,10 +155,10 @@
 			<description>next button</description>
 			<type>button</type>
 			<id>29</id>
-			<posX>910</posX>
-			<posY>6</posY>
-			<width>77</width>
-			<height>56</height>
+			<posX>973</posX>
+			<posY>4</posY>
+			<width>60</width>
+			<height>53</height>
 			<textureFocus>skipforward_enabled.png</textureFocus>
 			<textureNoFocus>skipforward_disabled.png</textureNoFocus>
 			<action>14</action>
@@ -172,10 +172,10 @@
 			<description>Minimize button</description>
 			<type>button</type>
 			<id>30</id>
-			<posX>1121</posX>
-			<posY>6</posY>
-			<width>77</width>
-			<height>56</height>
+			<posX>1176</posX>
+			<posY>4</posY>
+			<width>60</width>
+			<height>53</height>
 			<textureFocus>minimize_enabled.png</textureFocus>
 			<textureNoFocus>minimize_disabled.png</textureNoFocus>
 			<label>-</label>
@@ -189,10 +189,10 @@
 			<description>Exit button</description>
 			<type>button</type>
 			<id>31</id>
-			<posX>1216</posX>
-			<posY>6</posY>
-			<width>77</width>
-			<height>56</height>
+			<posX>1250</posX>
+			<posY>4</posY>
+			<width>60</width>
+			<height>53</height>
 			<textureFocus>exit_enabled.png</textureFocus>
 			<textureNoFocus>exit_disabled.png</textureNoFocus>
 			<action>97</action>
