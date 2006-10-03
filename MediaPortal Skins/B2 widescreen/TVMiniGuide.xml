@@ -9,8 +9,8 @@
 			<type>image</type>
 			<id>0</id>
 			<texture>context_background.png</texture>
-			<width>-</width>
-			<height>-</height>
+			<width>1020</width>
+			<height>490</height>
 			<posX>189</posX>
 			<posY>133</posY>
 		</control>
@@ -36,13 +36,13 @@
 			<id>35</id>
 			<posX>276</posX>
 			<posY>240</posY>
-			<width>592</width>
+			<width>840</width>
 			<height>373</height>
 			<textXOff>9</textXOff>
 			<textYOff>26</textYOff>
 			<textXOff2>815</textXOff2>
 			<textYOff2>26</textYOff2>
-			<textXOff3>94</textXOff3>
+			<textXOff3>62</textXOff3>
 			<textYOff3>6</textYOff3>
 			<IconXOff>22</IconXOff>
 			<IconYOff>5</IconYOff>
