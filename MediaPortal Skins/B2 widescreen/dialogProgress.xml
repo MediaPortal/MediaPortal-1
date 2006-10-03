@@ -4,32 +4,22 @@
 	<defaultcontrol>10</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
 	<controls>
-	<import>common.dialog.xml</import>
-   <control>
+	        <import>common.dialog.xml</import>
+                <control>
 			<type>image</type>
 			<id>100</id>
 			<posX>428</posX>
-			<posY>479</posY>
+			<posY>437</posY>
 			<width>488</width>
 			<texture>osd_progress_background.png</texture>
 		</control>
-		<control>
-			<description>dialog Heading</description>
-			<type>label</type>
-			<id>2</id>
-			<posX>428</posX>
-			<posY>333</posY>
-			<label>0</label>
-			<width>393</width>
-			<font>font13</font>
-			<textcolor>ffffffff</textcolor>
-		</control>
+
 		<control>
 			<description>progress control</description>
 			<type>progress</type>
 			<id>20</id>
 			<posX>418</posX>
-			<posY>478</posY>
+			<posY>436</posY>
 			<width>509</width>
 			<height>33</height>
 		</control>
@@ -37,10 +27,10 @@
 			<description>Cancel button</description>
 			<type>button</type>
 			<id>10</id>
-			<posX>877</posX>
-			<posY>336</posY>
-			<width>58</width>
-			<height>58</height>
+			<posX>888</posX>
+			<posY>296</posY>
+			<width>46</width>
+			<height>46</height>
 			<textureFocus>dialogue_shutdown_focus.png</textureFocus>
 			<textureNoFocus>dialogue_shutdown_nofocus.png</textureNoFocus>
 			<label>-</label>
