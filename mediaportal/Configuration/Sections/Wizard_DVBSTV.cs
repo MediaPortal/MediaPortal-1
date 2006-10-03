@@ -785,7 +785,7 @@ namespace MediaPortal.Configuration.Sections
       cbTransponder2.Items.Clear();
       cbTransponder3.Items.Clear();
       cbTransponder4.Items.Clear();
-      string[] files = System.IO.Directory.GetFiles(Config.GetFile(Config.Dir.Base, "Tuningparameters", "*.tpl"));
+      string[] files = System.IO.Directory.GetFiles(Config.GetFile(Config.Dir.Base, "Tuningparameters"), "*.tpl");
       Transponder[] transponders = new Transponder[files.Length];
       int trans = 0;
       foreach (string file in files)
@@ -832,22 +832,22 @@ namespace MediaPortal.Configuration.Sections
       if (useLNB4.Checked) m_diseqcLoops++;
       String[] parameters = new String[m_diseqcLoops];
       Transponder ts = (Transponder)cbTransponder.SelectedItem;
-      parameters[0] = Config.GetFile(Config.Dir.Base, "Tuningparameters" + ts.FileName);
+      parameters[0] = Config.GetFile(Config.Dir.Base, @"Tuningparameters\" + ts.FileName);
 
       if (useLNB2.Checked)
       {
         ts = (Transponder)cbTransponder2.SelectedItem;
-        parameters[1] = Config.GetFile(Config.Dir.Base, "Tuningparameters" , ts.FileName);
+        parameters[1] = Config.GetFile(Config.Dir.Base, @"Tuningparameters\" , ts.FileName);
       }
       if (useLNB3.Checked)
       {
         ts = (Transponder)cbTransponder3.SelectedItem;
-        parameters[2] = Config.GetFile(Config.Dir.Base, "Tuningparameters" , ts.FileName);
+        parameters[2] = Config.GetFile(Config.Dir.Base, @"Tuningparameters\" , ts.FileName);
       }
       if (useLNB4.Checked)
       {
         ts = (Transponder)cbTransponder4.SelectedItem;
-        parameters[3] = Config.GetFile(Config.Dir.Base, "Tuningparameters", ts.FileName);
+        parameters[3] = Config.GetFile(Config.Dir.Base, @"Tuningparameters\", ts.FileName);
       }
       return parameters;
     }
