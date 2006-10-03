@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window>
+	<controls>
+		<control>
+			<type>image</type>
+			<id>0</id>
+			<posX>0</posX>
+			<posY>0</posY>
+			<width>1366</width>
+			<height>768</height>
+			<texture>black.bmp</texture>
+			<colordiffuse>60ffffff</colordiffuse>
+		</control>
+		<control>
+			<type>image</type>
+			<id>0</id>
+			<posX>366</posX>
+			<posY>250</posY>
+			<width>634</width>
+			<height>268</height>
+			<texture>dialog_background.png</texture>
+		</control>
+		<control>
+			<description>dialog Heading</description>
+			<type>label</type>
+			<id>1</id>
+			<posX>428</posX>
+			<posY>290</posY>
+			<label>0</label>
+			<font>font13</font>
+			<textcolor>ffffffff</textcolor>
+		</control>
+		<control>
+			<description>dialog line 1</description>
+			<type>label</type>
+			<id>2</id>
+			<posX>428</posX>
+			<posY>330</posY>
+			<label>0</label>
+			<font>font13</font>
+			<textcolor>ffffffff</textcolor>
+		</control>
+		<control>
+			<description>dialog line 2</description>
+			<type>label</type>
+			<id>3</id>
+			<posX>428</posX>
+			<posY>358</posY>
+			<label>0</label>
+			<font>font13</font>
+			<textcolor>ffffffff</textcolor>
+		</control>
+		<control>
+			<description>dialog line 3</description>
+			<type>label</type>
+			<id>4</id>
+			<posX>428</posX>
+			<posY>386</posY>
+			<label>0</label>
+			<font>font13</font>
+			<textcolor>ffffffff</textcolor>
+		</control>	
+  </controls>
+</window>
