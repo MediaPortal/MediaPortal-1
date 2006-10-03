@@ -77,6 +77,7 @@
     <Compile Include="Core\InputDevices\InputHandlerTest.cs" />
     <Compile Include="Core\Util\TestConfig.cs" />
     <Compile Include="MockObjects\NoLog.cs" />
+    <Compile Include="TagReader\TestTagReader.cs" />
     <Compile Include="Utils\Services\ServiceTest.cs" />
     <Compile Include="WebEPG\ProgramDataTest.cs" />
     <Compile Include="Support\DxDiagLogTests.cs" />
@@ -178,6 +179,21 @@
     <None Include="Support\TestData\MediaPortal.log">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="TagReader\Music\DingDong.ape">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TagReader\Music\DingDong.flac">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TagReader\Music\DingDong.mpc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TagReader\Music\DingDong.ogg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TagReader\Music\DingDong.wv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="capturecards.xml">
@@ -216,6 +232,21 @@
     <Content Include="sqlite.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="TagReader\Music\DingDong.m4a">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TagReader\Music\DingDong.wma">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TagReader\Music\DingDongNoTag.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TagReader\Music\DingDongV1.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TagReader\Music\DingDongV2.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Support\TestData\TestOutput\" />
@@ -228,4 +259,7 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <PropertyGroup>
+    <PostBuildEvent>"$(ProjectDir)PostBuild.bat"</PostBuildEvent>
+  </PropertyGroup>
 </Project>
