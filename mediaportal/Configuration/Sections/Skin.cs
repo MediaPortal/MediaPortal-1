@@ -279,6 +279,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("skin", "language", languageComboBox.Text);
         xmlwriter.SetValueAsBool("skin", "rtllang", checkBoxlangRTL.Checked);
         xmlwriter.SetValueAsBool("general", "myprefix", checkBoxUsePrefix.Checked);
+        xmlwriter.SetValue("general", "skinobsoletecount", 0);
       }
     }
 

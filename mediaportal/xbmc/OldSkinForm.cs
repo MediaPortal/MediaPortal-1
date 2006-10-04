@@ -35,13 +35,15 @@ namespace MediaPortal
 	public class OldSkinForm : System.Windows.Forms.Form
 	{
 		private MediaPortal.UserInterface.Controls.MPLabel label1;
-		private MediaPortal.UserInterface.Controls.MPCheckBox checkBox1;
+		private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxIgnoreMsg;
 		private MediaPortal.UserInterface.Controls.MPButton button1;
 
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
 		private System.ComponentModel.Container components = null;
+
+    private int _nagCount = 0;
 
 		public OldSkinForm()
 		{
@@ -77,54 +79,68 @@ namespace MediaPortal
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
-			this.checkBox1 = new MediaPortal.UserInterface.Controls.MPCheckBox();
-			this.button1 = new MediaPortal.UserInterface.Controls.MPButton();
-			this.SuspendLayout();
-			// 
-			// label1
-			// 
-			this.label1.Location = new System.Drawing.Point(16, 16);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(272, 32);
-			this.label1.TabIndex = 0;
-			this.label1.Text = "The current skin is not up-2-date. This can cause problems when using MP.";
-			// 
-			// checkBox1
-			// 
-			this.checkBox1.Location = new System.Drawing.Point(16, 96);
-			this.checkBox1.Name = "checkBox1";
-			this.checkBox1.Size = new System.Drawing.Size(120, 40);
-			this.checkBox1.TabIndex = 0;
-			this.checkBox1.Text = "Dont show this message again";
-			// 
-			// button1
-			// 
-			this.button1.Location = new System.Drawing.Point(216, 104);
-			this.button1.Name = "button1";
-			this.button1.TabIndex = 1;
-			this.button1.Text = "OK";
-			this.button1.Click += new System.EventHandler(this.button1_Click);
-			// 
-			// OldSkinForm
-			// 
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.ClientSize = new System.Drawing.Size(304, 141);
-			this.Controls.Add(this.button1);
-			this.Controls.Add(this.checkBox1);
-			this.Controls.Add(this.label1);
-			this.Name = "OldSkinForm";
-			this.Text = "Warning! Old skin in use";
-			this.ResumeLayout(false);
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.checkBoxIgnoreMsg = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.button1 = new MediaPortal.UserInterface.Controls.MPButton();
+      this.SuspendLayout();
+      // 
+      // label1
+      // 
+      this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.label1.Location = new System.Drawing.Point(29, 19);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(291, 106);
+      this.label1.TabIndex = 0;
+      this.label1.Text = "The currently selected skin is outdated.\r\n\r\nThis will cause problems when using M" +
+          "P!\r\n\r\n(Do NOT file bugreports using this skin)";
+      // 
+      // checkBoxIgnoreMsg
+      // 
+      this.checkBoxIgnoreMsg.AutoSize = true;
+      this.checkBoxIgnoreMsg.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxIgnoreMsg.Location = new System.Drawing.Point(32, 131);
+      this.checkBoxIgnoreMsg.Name = "checkBoxIgnoreMsg";
+      this.checkBoxIgnoreMsg.Size = new System.Drawing.Size(177, 17);
+      this.checkBoxIgnoreMsg.TabIndex = 0;
+      this.checkBoxIgnoreMsg.Text = "Do not show this message again";
+      this.checkBoxIgnoreMsg.UseVisualStyleBackColor = true;
+      this.checkBoxIgnoreMsg.Visible = false;
+      // 
+      // button1
+      // 
+      this.button1.Location = new System.Drawing.Point(206, 128);
+      this.button1.Name = "button1";
+      this.button1.Size = new System.Drawing.Size(103, 23);
+      this.button1.TabIndex = 1;
+      this.button1.Text = "Ignore and try..";
+      this.button1.UseVisualStyleBackColor = true;
+      this.button1.Click += new System.EventHandler(this.button1_Click);
+      // 
+      // OldSkinForm
+      // 
+      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+      this.BackColor = System.Drawing.Color.OrangeRed;
+      this.ClientSize = new System.Drawing.Size(345, 163);
+      this.Controls.Add(this.button1);
+      this.Controls.Add(this.checkBoxIgnoreMsg);
+      this.Controls.Add(this.label1);
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+      this.Name = "OldSkinForm";
+      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+      this.Text = "Warning! Outdated skin!";
+      this.ResumeLayout(false);
+      this.PerformLayout();
 
 		}
 		#endregion
 
 		private void button1_Click(object sender, System.EventArgs e)
 		{
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      _nagCount++;
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
 			{
-				xmlreader.SetValueAsBool("general", "dontshowskinversion", checkBox1.Checked);
+        xmlwriter.SetValueAsBool("general", "dontshowskinversion", checkBoxIgnoreMsg.Checked);
+        xmlwriter.SetValue("general", "skinobsoletecount", _nagCount);
 			}
 			this.Close();
 		}
@@ -135,8 +151,10 @@ namespace MediaPortal
 			{
 				bool ignoreErrors=false;
 				ignoreErrors=xmlreader.GetValueAsBool("general", "dontshowskinversion", false);
+        _nagCount = xmlreader.GetValueAsInt("general", "skinobsoletecount", 0);
 				if (ignoreErrors) return true;
 			}
+      checkBoxIgnoreMsg.Visible = _nagCount > 4 ? true : false;
 
 			string versionBlueTwoSkin="";
 			string versionSkin="";

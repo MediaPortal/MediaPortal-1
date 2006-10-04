@@ -235,6 +235,7 @@ namespace WindowPlugins.GUISettings
       GUIControlFactory.LoadReferences(GUIGraphicsContext.Skin + @"\references.xml");
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
+        xmlreader.SetValue("general", "skinobsoletecount", 0);
         bool autosize = xmlreader.GetValueAsBool("general", "autosize", true);
         if (autosize && !GUIGraphicsContext.Fullscreen)
           Form.ActiveForm.Size = new System.Drawing.Size(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);
