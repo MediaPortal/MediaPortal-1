@@ -151,6 +151,7 @@ namespace SetupTv.Sections
             {
               dbChannel.SortOrder = channel.LogicalChannelNumber;
             }
+            dbChannel.Persist();
             layer.AddChannelToGroup(dbChannel, "ATSC");
             layer.AddTuningDetails(dbChannel, channel);
             if (channel.IsTv)

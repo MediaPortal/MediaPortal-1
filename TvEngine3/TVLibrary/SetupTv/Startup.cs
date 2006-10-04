@@ -161,7 +161,7 @@ namespace SetupTv
       try
       {
 #if DEBUG
-        RemoteControl.HostName = "mediacenter";
+      //  RemoteControl.HostName = "mediacenter";
 #endif
         cards = RemoteControl.Instance.Cards;
 

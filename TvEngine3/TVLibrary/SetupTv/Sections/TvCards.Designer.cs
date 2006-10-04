@@ -34,6 +34,7 @@ namespace SetupTv.Sections
       this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
       this.buttonDown = new System.Windows.Forms.Button();
       this.buttonUp = new System.Windows.Forms.Button();
+      this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
       this.SuspendLayout();
       // 
       // mpListView1
@@ -42,6 +43,7 @@ namespace SetupTv.Sections
       this.mpListView1.AllowRowReorder = true;
       this.mpListView1.CheckBoxes = true;
       this.mpListView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader3,
             this.columnHeader1,
             this.columnHeader2,
             this.columnHeader4});
@@ -87,6 +89,10 @@ namespace SetupTv.Sections
       this.buttonUp.UseVisualStyleBackColor = true;
       this.buttonUp.Click += new System.EventHandler(this.buttonUp_Click);
       // 
+      // columnHeader3
+      // 
+      this.columnHeader3.Text = "Enabled";
+      // 
       // TvCards
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -108,5 +114,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ColumnHeader columnHeader4;
     private System.Windows.Forms.Button buttonDown;
     private System.Windows.Forms.Button buttonUp;
+    private System.Windows.Forms.ColumnHeader columnHeader3;
   }
 }

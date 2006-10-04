@@ -131,6 +131,7 @@ namespace SetupTv.Sections
         mpComboBoxSource.Enabled = false;
         mpButtonScanRadio.Enabled = false;
         mpButtonScanTv.Enabled = false;
+        mpComboBoxSensitivity.Enabled = false;
         UpdateStatus();
         mpListView1.Items.Clear();
         CountryCollection countries = new CountryCollection();
@@ -167,10 +168,12 @@ namespace SetupTv.Sections
           Channel dbChannel = layer.AddChannel(channel.Name);
           dbChannel.IsTv = channel.IsTv;
           dbChannel.IsRadio = channel.IsRadio;
+          dbChannel.Persist();
           layer.AddTuningDetails(dbChannel, channel);
 
 
           layer.MapChannelToCard(card, dbChannel);
+          layer.AddChannelToGroup(dbChannel, "Analog");
         }
 
         progressBar1.Value = 100;
@@ -178,6 +181,7 @@ namespace SetupTv.Sections
         mpComboBoxSource.Enabled = true;
         mpButtonScanRadio.Enabled = true;
         mpButtonScanTv.Enabled = true;
+        mpComboBoxSensitivity.Enabled = true;
         //DatabaseManager.Instance.SaveChanges();
 
       }
@@ -266,6 +270,7 @@ namespace SetupTv.Sections
             Channel dbChannel = layer.AddChannel(channel.Name);
             dbChannel.IsTv = channel.IsTv;
             dbChannel.IsRadio = channel.IsRadio;
+            dbChannel.Persist();
             layer.AddChannelToGroup(dbChannel, "Analog channels");
             layer.AddTuningDetails(dbChannel, channel);
 
