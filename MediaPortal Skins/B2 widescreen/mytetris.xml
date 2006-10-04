@@ -49,7 +49,9 @@
 				<type>image</type>
 				<id>200</id>
 				<posX>113</posX>
-				<posY>429</posY>
+				<posY>525</posY>
+				<width>363</width>
+				<height>200</height>
 				<texture>tetris\scoreboard.png</texture>
 				<colordiffuse>60ffffff</colordiffuse>
 			</control>

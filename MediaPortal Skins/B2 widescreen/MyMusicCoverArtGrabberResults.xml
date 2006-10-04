@@ -99,7 +99,7 @@
 			<type>listcontrol</type>
 			<description>album view listcontrol</description>
 			<id>25</id>
-			<posX>546</posX>
+			<posX>478</posX>
 			<posY>309</posY>
 			<height>452</height>
 			<onleft>20</onleft>
@@ -112,7 +112,7 @@
 			<remoteColor>ffFFA075</remoteColor>
 			<selectedColor2>FFFF6600</selectedColor2>
 			<font2>font13</font2>
-			<textXOff2>777</textXOff2>
+			<textXOff2>677</textXOff2>
 			<IconYOff>10</IconYOff>
 			<textYOff>5</textYOff>
 			<textureFocus>list_sub_focus.png</textureFocus>

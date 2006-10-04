@@ -126,6 +126,7 @@
 				<onup>50</onup>
 				<ondown>50</ondown>
 				<spinPosY>408</spinPosY>
+				<spinPosX>1111</spinPosX>
 				<spinColor>FFFFFFFF</spinColor>
 				<textcolor>FFFFFFFF</textcolor>
 			</control>

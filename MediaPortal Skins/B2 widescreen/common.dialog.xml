@@ -25,8 +25,8 @@
 			<type>label</type>
 			<id>1</id>
 			<posX>428</posX>
-			<posY>288</posY>
-			<label>0</label>
+			<posY>258</posY>
+			<label>-</label>
 			<font>font13</font>
 			<textcolor>ffffffff</textcolor>
 		</control>
@@ -35,8 +35,8 @@
 			<type>label</type>
 			<id>2</id>
 			<posX>428</posX>
-			<posY>328</posY>
-			<label>0</label>
+			<posY>288</posY>
+			<label>-</label>
 			<font>font13</font>
 			<textcolor>ffffffff</textcolor>
 		</control>
@@ -45,8 +45,8 @@
 			<type>label</type>
 			<id>3</id>
 			<posX>428</posX>
-			<posY>360</posY>
-			<label>0</label>
+			<posY>328</posY>
+			<label>-</label>
 			<font>font13</font>
 			<textcolor>ffffffff</textcolor>
 		</control>
@@ -55,8 +55,8 @@
 			<type>label</type>
 			<id>4</id>
 			<posX>428</posX>
-			<posY>388</posY>
-			<label>0</label>
+			<posY>360</posY>
+			<label>-</label>
 			<font>font13</font>
 			<textcolor>ffffffff</textcolor>
 		</control>	

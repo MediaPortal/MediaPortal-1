@@ -118,7 +118,7 @@
 			<id>20</id>
 			<posX>531</posX>
 			<posY>93</posY>
-			<width>506</width>
+			<width>686</width>
 			<height>621</height>
 			<spinWidth>21</spinWidth>
 			<spinColor>ffffffff</spinColor>
@@ -133,9 +133,9 @@
 			<description>Article Image</description>
 			<type>image</type>
 			<id>25</id>
-			<posX>500</posX>
-			<posY>96</posY>
-			<width>586</width>
+			<posX>531</posX>
+			<posY>93</posY>
+			<width>686</width>
 			<height>621</height>
 			<visible>no</visible>
 			<colorkey>00000000</colorkey>

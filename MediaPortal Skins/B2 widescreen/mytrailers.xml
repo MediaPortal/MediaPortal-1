@@ -34,7 +34,7 @@
 			<onup>3</onup>
 			<ondown>6</ondown>
 			<label>207</label>
-			<width>253</width>
+			<width>285</width>
 			<height>42</height>
 			<textureFocus>togglebutton-on-focus.png</textureFocus>
 			<textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
@@ -52,7 +52,7 @@
 			<onup>5</onup>
 			<ondown>2</ondown>
 			<label>206</label>
-			<width>253</width>
+			<width>285</width>
 			<height>42</height>
 			<textureFocus>togglebutton-on-focus.png</textureFocus>
 			<textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
@@ -63,16 +63,18 @@
 			<type>fadelabel</type>
 			<description>genre value</description>
 			<id>51</id>
-			<posX>597</posX>
+			<posX>1050</posX>
 			<posY>373</posY>
 			<label>#genre</label>
 			<disabledcolor>ff808080</disabledcolor>
+			<width>400</width>
+			<align>right</align>
 		</control>
 		<control>
 			<type>textboxscrollup</type>
 			<description>Cast value</description>
 			<id>57</id>
-			<posX>474</posX>
+			<posX>1050</posX>
 			<posY>440</posY>
 			<width>586</width>
 			<height>256</height>
@@ -80,10 +82,11 @@
 			<font>font13</font>
 			<label>#cast</label>
 			<textcolor>FFFFFFFF</textcolor>
+			<align>right</align>
 		</control>
 		<control>
 			<type>label</type>
-			<description>Genre txt</description>
+			<description>cast txt</description>
 			<id>56</id>
 			<posX>474</posX>
 			<posY>406</posY>
@@ -92,12 +95,13 @@
 		</control>
 		<control>
 			<type>label</type>
-			<description>Runtime value</description>
+			<description>year value</description>
 			<id>55</id>
-			<posX>720</posX>
+			<posX>1050</posX>
 			<posY>340</posY>
 			<label>#year</label>
 			<textcolor>ffffffff</textcolor>
+			<align>right</align>
 		</control>
 		<control>
 			<type>label</type>
@@ -112,10 +116,11 @@
 			<type>label</type>
 			<description>Runtime value</description>
 			<id>53</id>
-			<posX>616</posX>
+			<posX>1050</posX>
 			<posY>306</posY>
 			<label>#runtime</label>
 			<textcolor>ffffffff</textcolor>
+			<align>right</align>
 		</control>
 		<control>
 			<type>label</type>
@@ -137,7 +142,7 @@
 		</control>
 		<control>
 			<type>label</type>
-			<description>Genre txt</description>
+			<description>Plot txt</description>
 			<id>58</id>
 			<posX>474</posX>
 			<posY>406</posY>
