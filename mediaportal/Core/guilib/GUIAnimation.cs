@@ -144,6 +144,7 @@ namespace MediaPortal.GUI.Library
 				_images[index].ColourDiffuse = ColourDiffuse;
 				_images[index].DimColor = DimColor;
 				_images[index].Filtering = Filtering;
+        _images[index].RepeatBehavior = _repeatBehavior;
         _images[index].AllocResources();
         //_images[index].ScaleToScreenResolution(); -> causes too big images in fullscreen
 
@@ -408,6 +409,8 @@ namespace MediaPortal.GUI.Library
 
       if (index >= _images.Length)
         index = _images.Length - 1;
+      //if (_animating) _images[index].BeginAnimation();
+
 
       _images[index].Render(timePassed);
     }
@@ -447,7 +450,13 @@ namespace MediaPortal.GUI.Library
     public RepeatBehavior RepeatBehavior
     {
       get { return _repeatBehavior; }
-      set { _repeatBehavior = value; }
+      set 
+      {
+        _repeatBehavior = value;
+        if (_images == null) return;
+        for (int index = 0; index < _images.Length; index++)
+          _images[index].RepeatBehavior = value;
+      }
     }
 
     public new VerticalAlignment VerticalAlignment

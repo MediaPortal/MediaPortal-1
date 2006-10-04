@@ -259,6 +259,7 @@ namespace MediaPortal.GUI.Library
           {
             GUIAnimation hover = LoadAnimationControl(GetID, btn.GetID, _hoverPositionX, _hoverPositionY, _hoverWidth, _hoverHeight, fileName);
             hover.KeepAspectRatio = true;
+            hover.RepeatBehavior = new RepeatBehavior(1);
             hover.AllocResources();
             _hoverList.Add(hover);
           }
@@ -539,6 +540,7 @@ namespace MediaPortal.GUI.Library
         if (hover.GetID == _buttonList[position].GetID)
         {
           _hoverImage = hover;
+          _hoverImage.Begin();
           break;
         }
       }
