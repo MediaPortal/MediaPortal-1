@@ -493,6 +493,8 @@ namespace TvLibrary.Implementations.DVB
       _pmtVersion = -1;
       _recordingFileName = "";
       _channelInfo = new ChannelInfo();
+      _currentChannel = null;
+
       if (_filterTsAnalyzer != null)
       {
         ITsRecorder recorder = _filterTsAnalyzer as ITsRecorder;
@@ -1919,15 +1921,6 @@ namespace TvLibrary.Implementations.DVB
         }
 #endif
 
-        /*if (IsReceivingAudioVideo == false)
-        {
-          Log.Log.WriteFile("dvb: resend pmt to cam");
-          _pmtVersion = -1;
-          if (SendPmtToCam())
-          {
-                SetMpegPidMapping(_channelInfo);
-          } 
-        }*/
       }
       catch (Exception ex)
       {

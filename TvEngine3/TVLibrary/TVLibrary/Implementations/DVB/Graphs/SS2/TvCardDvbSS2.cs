@@ -362,6 +362,63 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
+    void SetTimeShiftPids()
+    {
+      if (_channelInfo == null) return;
+      if (_currentChannel == null) return;
+      if (_currentAudioStream == null) return;
+      DVBBaseChannel dvbChannel = _currentChannel as DVBBaseChannel;
+      if (dvbChannel == null) return;
+
+      ITsTimeShift timeshift = _filterTsAnalyzer as ITsTimeShift;
+      timeshift.SetPcrPid((short)dvbChannel.PcrPid);
+      foreach (PidInfo info in _channelInfo.pids)
+      {
+        if (info.isAC3Audio || info.isAudio || info.isVideo)
+        {
+          bool addPid = false;
+          if (info.isVideo) addPid = true;
+          if (info.isAudio || info.isAC3Audio)
+          {
+            if (info.pid == _currentAudioStream.Pid) addPid = true;
+          }
+          if (addPid)
+          {
+            Log.Log.WriteFile("ss2: set timeshift {0}", info);
+            timeshift.AddPesStream((short)info.pid, (info.isAC3Audio || info.isAudio), info.isVideo);
+          }
+        }
+      }
+    }
+
+    void SetRecorderPids()
+    {
+      if (_channelInfo == null) return;
+      if (_currentChannel == null) return;
+      if (_currentAudioStream == null) return;
+      DVBBaseChannel dvbChannel = _currentChannel as DVBBaseChannel;
+      if (dvbChannel == null) return;
+
+      ITsRecorder recorder = _filterTsAnalyzer as ITsRecorder;
+      recorder.SetPcrPid((short)dvbChannel.PcrPid);
+      foreach (PidInfo info in _channelInfo.pids)
+      {
+        if (info.isAC3Audio || info.isAudio || info.isVideo)
+        {
+          bool addPid = false;
+          if (info.isVideo) addPid = true;
+          if (info.isAudio || info.isAC3Audio)
+          {
+            if (info.pid == _currentAudioStream.Pid) addPid = true;
+          }
+          if (addPid)
+          {
+            Log.Log.WriteFile("ss2: set record {0}", info);
+            recorder.AddPesStream((short)info.pid, (info.isAC3Audio || info.isAudio), info.isVideo);
+          }
+        }
+      }
+    }
     /// <summary>
     /// sets the filename used for timeshifting
     /// </summary>
@@ -374,13 +431,13 @@ namespace TvLibrary.Implementations.DVB
       int hr;
       if (_filterTsAnalyzer != null)
       {
-        ITsTimeShift record = _filterTsAnalyzer as ITsTimeShift;
-        if (record == null)
+        ITsTimeShift timeshift = _filterTsAnalyzer as ITsTimeShift;
+        if (timeshift == null)
         {
           Log.Log.WriteFile("ss2:unable to get ITsTimeShift");
           throw new TvException("unable to get ITsTimeShift");
         }
-        record.SetTimeShiftingFileName(fileName);
+        timeshift.SetTimeShiftingFileName(fileName);
         if (_channelInfo.pids.Count == 0)
         {
           Log.Log.WriteFile("ss2:SetTimeShiftFileName no pmt received yet");
@@ -390,19 +447,8 @@ namespace TvLibrary.Implementations.DVB
         {
           Log.Log.WriteFile("ss2:SetTimeShiftFileName fill in pids");
           _startTimeShifting = false;
-          DVBBaseChannel dvbChannel = _currentChannel as DVBBaseChannel;
-          if (_currentChannel != null)
-          {
-            record.SetPcrPid((short)dvbChannel.PcrPid);
-            foreach (PidInfo info in _channelInfo.pids)
-            {
-              if (info.isAC3Audio || info.isAudio || info.isVideo)
-              {
-                record.AddPesStream((short)info.pid, (info.isAC3Audio || info.isAudio), info.isVideo);
-              }
-            }
-            record.Start();
-          }
+          SetTimeShiftPids();
+          timeshift.Start();
         }
       }
     }
@@ -418,9 +464,9 @@ namespace TvLibrary.Implementations.DVB
       if (state == FilterState.Running)
       {
         Log.Log.WriteFile("ss2:RunGraph already running");
+        _pmtVersion = -1;
         DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
         SetAnalyzerMapping(channel.PmtPid);
-        _pmtVersion = -1;
         return;
       }
 
@@ -486,6 +532,7 @@ namespace TvLibrary.Implementations.DVB
       _recordingFileName = "";
       _pmtVersion = -1;
       _channelInfo = new ChannelInfo();
+      _currentChannel = null;
       if (_filterTsAnalyzer != null)
       {
         ITsRecorder recorder = _filterTsAnalyzer as ITsRecorder;
@@ -820,35 +867,16 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.WriteFile("ss2: set timeshifting pids");
         _startTimeShifting = false;
         ITsTimeShift record = _filterTsAnalyzer as ITsTimeShift;
-        DVBBaseChannel dvbChannel = _currentChannel as DVBBaseChannel;
-        record.SetPcrPid((short)dvbChannel.PcrPid);
-        foreach (PidInfo pidInfo in info.pids)
-        {
-          if (pidInfo.isAC3Audio || pidInfo.isAudio || pidInfo.isVideo)
-          {
-            record.AddPesStream((short)pidInfo.pid, (pidInfo.isAC3Audio || pidInfo.isAudio), pidInfo.isVideo);
-          }
-        }
+        record.Reset();
+        SetTimeShiftPids();
+        record.Start();
         Log.Log.WriteFile("ss2: start timeshifting");
         record.Start();
       }
       else if (_graphState == GraphState.TimeShifting || _graphState == GraphState.Recording)
       {
         Log.Log.WriteFile("ss2: update timeshifting pids");
-        ITsTimeShift record = _filterTsAnalyzer as ITsTimeShift;
-        DVBBaseChannel dvbChannel = _currentChannel as DVBBaseChannel;
-        if (dvbChannel != null)
-        {
-          record.Reset();
-          record.SetPcrPid((short)dvbChannel.PcrPid);
-          foreach (PidInfo pidInfo in info.pids)
-          {
-            if (pidInfo.isAC3Audio || pidInfo.isAudio || pidInfo.isVideo)
-            {
-              record.AddPesStream((short)pidInfo.pid, (pidInfo.isAC3Audio || pidInfo.isAudio), pidInfo.isVideo);
-            }
-          }
-        }
+        SetTimeShiftPids();
       }
     }
     #endregion
@@ -873,27 +901,17 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.WriteFile("ss2:SetRecordingFileName: uses .mpg");
         ITsRecorder record = _filterTsAnalyzer as ITsRecorder;
         hr = record.SetRecordingFileName(fileName);
-        DVBBaseChannel dvbChannel = _currentChannel as DVBBaseChannel;
-        record.SetPcrPid((short)dvbChannel.PcrPid);
-        foreach (PidInfo info in _channelInfo.pids)
-        {
-          if (info.isAC3Audio || info.isAudio || info.isVideo)
-          {
-            record.AddPesStream((short)info.pid, (info.isAC3Audio || info.isAudio), info.isVideo);
-          }
-        }
         if (hr != 0)
         {
           Log.Log.WriteFile("ss2:SetRecordingFileName failed:{0:X}", hr);
         }
+        SetRecorderPids();
         hr = record.StartRecord();
         if (hr != 0)
         {
           Log.Log.WriteFile("ss2:StartRecord failed:{0:X}", hr);
         }
-
       }
-
       _dateRecordingStarted = DateTime.Now;
     }
 
@@ -1314,6 +1332,8 @@ namespace TvLibrary.Implementations.DVB
     public bool Tune(IChannel channel)
     {
       _pmtVersion = -1;
+      _startTimeShifting = false;
+      _channelInfo = new ChannelInfo();
 
       Log.Log.WriteFile("ss2:Tune({0})", channel);
       if (_epgGrabbing)
@@ -1882,18 +1902,14 @@ namespace TvLibrary.Implementations.DVB
 #if FORM
         if (_newPMT)
         {
-          SendPmtToCam();
-          _newPMT = false;
+          if (SendPmtToCam())
+          {
+                SetMpegPidMapping(_channelInfo);
+          } 
+          _newPMT=false;
         }
 #endif
 
-
-        /*if (IsReceivingAudioVideo == false)
-        {
-          Log.Log.WriteFile("ss2: resend pmt to cam");
-          _pmtVersion = -1;
-          SendPmtToCam();
-        }*/
       }
       catch (Exception ex)
       {
@@ -2064,7 +2080,10 @@ namespace TvLibrary.Implementations.DVB
 #if FORM
         _newPMT = true;
 #else
-        SendPmtToCam();
+        if (SendPmtToCam())
+        {
+          SetMpegPidMapping(_channelInfo);
+        }
 #endif
       }
       catch (Exception ex)
@@ -2078,12 +2097,12 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Sends the PMT to cam.
     /// </summary>
-    protected void SendPmtToCam()
+    protected bool SendPmtToCam()
     {
       lock (this)
       {
         DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
-        if (channel == null) return;
+        if (channel == null) return false;
         IntPtr pmtMem = Marshal.AllocCoTaskMem(4096);// max. size for pmt
         try
         {
@@ -2107,7 +2126,7 @@ namespace TvLibrary.Implementations.DVB
 
 
                 _pmtVersion = version;
-                SetMpegPidMapping(_channelInfo);
+                return true;
               }
             }
           }
@@ -2121,6 +2140,7 @@ namespace TvLibrary.Implementations.DVB
           Marshal.FreeCoTaskMem(pmtMem);
         }
       }
+      return false;
     }
   }
 }

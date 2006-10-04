@@ -158,6 +158,10 @@ namespace TvService
         }
 
         List<EpgChannel> epg = _tvController.Epg(_currentCardId);
+        if (epg == null)
+        {
+          epg = new List<EpgChannel>();
+        }
         //did we receive epg info?
         if (epg.Count == 0)
         {
