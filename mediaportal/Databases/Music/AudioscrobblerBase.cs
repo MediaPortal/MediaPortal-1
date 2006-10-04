@@ -130,7 +130,7 @@ namespace MediaPortal.Music.Database
         }
       }  
 
-      queue = new AudioscrobblerQueue("Trackcache-" + Username + ".xml");
+      queue = new AudioscrobblerQueue(Config.GetFile(Config.Dir.Base, "Trackcache-" + Username + ".xml"));
 
       queueLock = new Object();
       submitLock = new Object();
