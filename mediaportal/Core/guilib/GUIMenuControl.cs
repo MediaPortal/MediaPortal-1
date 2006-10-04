@@ -45,7 +45,7 @@ namespace MediaPortal.GUI.Library
 		#region Properties (Skin)
 		[XMLSkinElement("spaceBetweenButtons")]	 protected int    _spaceBetweenButtons  = 8;
 		[XMLSkinElement("textcolor")]        		 protected long   _textColor = 0xFFFFFFFF;
-    //[XMLSkinElement("align")]                Alignment        _textAlignment = Alignment.ALIGN_LEFT;
+    //[XMLSkinElement("textAlign")]                Alignment        _textAlignment = Alignment.ALIGN_LEFT;
 		[XMLSkinElement("buttonHeight")]         protected int    _buttonHeight         = 30;
 		[XMLSkinElement("buttonTextXOff")] 		   protected int    _buttonTextXOffset    = 10;
 		[XMLSkinElement("buttonTextYOff")]    	 protected int    _buttonTextYOffset    = 8;
@@ -59,6 +59,8 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("hoverY")]               protected int    _hoverPositionY       = 0;
     [XMLSkinElement("hoverWidth")]           protected int    _hoverWidth           = 0;
     [XMLSkinElement("hoverHeight")]          protected int    _hoverHeight          = 0;
+    [XMLSkinElement("scrollTimeMin")]        protected int    _scrollTimeMin        = 100;        // min duration for a scrolling - speedup
+    [XMLSkinElement("scrollTime")]           protected int    _scrollTimeMax        = 160;        // max. duration for a scrolling - normal
 
 		#endregion
 
@@ -74,7 +76,7 @@ namespace MediaPortal.GUI.Library
 		#endregion
 
 		#region Variables
-		protected List<PlugInInfo> _buttonInfos = new List<PlugInInfo>();
+		protected List<MenuButtonInfo> _buttonInfos = new List<MenuButtonInfo>();
 		protected List<GUIButtonControl> _buttonList = new List<GUIButtonControl>();
     protected List<GUIAnimation> _hoverList = new List<GUIAnimation>();
     protected GUIAnimation _backgroundImage = null;
@@ -86,8 +88,6 @@ namespace MediaPortal.GUI.Library
 		protected Viewport _newViewport     = new Viewport(); // own viewport for scrolling
 		protected Viewport _oldViewport;                  // storage of the currrent Viewport 
 		protected int _animationTime        = 0;          // duration for a scroll animation
-		protected int _animationTimeMin     = 120;        // min duration for a scrolling - speedup
-		protected int _animationTimeMax     = 180;        // max. duration for a scrolling - normal
 		protected int _focusPosition        = 0;          // current position of the focus bar 
 		protected bool _fixedScroll         = true; 		  // fix scrollbar in the middle of menu
 		protected bool _useMyPlugins        = true;
@@ -97,6 +97,8 @@ namespace MediaPortal.GUI.Library
     protected AnimationGroup _scrollText   = new AnimationGroup(); 
     protected int _lastButtonValue         = 0;
     protected int _lastTextValue           = 0;
+    protected bool _reverseAnimation       = false;
+    protected bool _enableAnimation        = true;
     #endregion
 
 		#region Properties
@@ -119,7 +121,15 @@ namespace MediaPortal.GUI.Library
       set { _fixedScroll = value; }
     }
 
-		public List<PlugInInfo> ButtonInfos
+    public bool EnableAnimation
+    {
+      get { return _enableAnimation;  }
+      set { _enableAnimation = value; }
+    }
+
+
+
+		public List<MenuButtonInfo> ButtonInfos
 		{
 			get { return _buttonInfos; }
 		}
@@ -141,7 +151,7 @@ namespace MediaPortal.GUI.Library
 
 		public override void OnInit()
 		{
-      _animationTime = _animationTimeMax;
+      _animationTime = _scrollTimeMax;
 			LoadSetting();
       LoadHoverImage(FocusedButton);
 			base.OnInit();
@@ -197,19 +207,20 @@ namespace MediaPortal.GUI.Library
 		public override void AllocResources()
 		{
 			int buttonX = _positionX + _buttonOffset;
-			int buttonY = _positionY + _spaceBetweenButtons + _buttonOffset;
+      int buttonY = _positionY + _buttonOffset + _spaceBetweenButtons;
 			buttonY -= (_buttonHeight + _spaceBetweenButtons);  // one invisible button for scrolling 
 
 			int controlID = 1;
 			_buttonList.Clear();
       _hoverList.Clear();
-			while ((_buttonInfos.Count > 0) && (_buttonList.Count < _numberOfButtons))
+			while ((_buttonInfos.Count > 0) && (_buttonList.Count < _numberOfButtons+1))
 			{
 				for (int i = 0; i < _buttonInfos.Count; i++)
 				{
-					PlugInInfo info = _buttonInfos[i];
-					GUIButtonControl button = new GUIButtonControl(GetID, controlID, buttonX, buttonY, _buttonWidth, _buttonHeight,
-																		_textureButtonFocus, _textureButtonNoFocus);
+					MenuButtonInfo info = _buttonInfos[i];					
+          GUIButtonControl button = new GUIButtonControl(GetID, controlID, buttonX, buttonY, _buttonWidth, _buttonHeight,
+						                        (info.FocusTextureName != null) ? info.FocusTextureName : _textureButtonFocus,
+ 												            (info.NonFocusTextureName != null) ? info.NonFocusTextureName : _textureButtonNoFocus);
 					button.Label = info.Text;
 					button.Data = info;
 					button.ParentControl = this;
@@ -236,17 +247,18 @@ namespace MediaPortal.GUI.Library
         foreach (GUIButtonControl btn in _buttonList)
         {
           string fileName = null;
-          foreach (PlugInInfo info in _buttonInfos)
+          foreach (MenuButtonInfo info in _buttonInfos)
           {
             if (info.Text.Equals(btn.Label))
             {
-              fileName = info.Hover;
+              fileName = info.HoverName;
               break;
             }
           }
           if (fileName != null)
           {
             GUIAnimation hover = LoadAnimationControl(GetID, btn.GetID, _hoverPositionX, _hoverPositionY, _hoverWidth, _hoverHeight, fileName);
+            hover.KeepAspectRatio = true;
             hover.AllocResources();
             _hoverList.Add(hover);
           }
@@ -254,25 +266,7 @@ namespace MediaPortal.GUI.Library
       }
 			base.AllocResources();
 		}
-
-    public string GetHoverFileName(string name)
-    {
-      name = String.Format(@"{0}\media\hover_{1}", GUIGraphicsContext.Skin, name);
-      string filename = name + ".png";
-      if (System.IO.File.Exists(filename)) return filename;
-
-      filename = name + ".gif";
-      if (System.IO.File.Exists(filename)) return filename;
-
-      filename = name + ".bmp";
-      if (System.IO.File.Exists(filename)) return filename;
-
-      filename = name + ".xml";
-      if (System.IO.File.Exists(filename)) return filename;
-
-      return null;
-    }
-
+        
 		public override void FreeResources()
 		{
       SaveSetting();
@@ -308,18 +302,18 @@ namespace MediaPortal.GUI.Library
 							if (y < middlePos - _buttonHeight / 2 - _spaceBetweenButtons)
 							{
 								middlePos -= _buttonHeight / 2;
-								_animationTime = _animationTimeMax - (int)((_animationTimeMax - _animationTimeMin) *
+								_animationTime = _scrollTimeMax - (int)((_scrollTimeMax - _scrollTimeMin) *
 																 (Math.Abs(middlePos - y) / (middlePos - YPosition)));
-								_mouseState = State.ScrollUp;
 								if (_currentState == State.Idle) OnUp();
+                else _mouseState = State.ScrollUp;
 							}
 							else if (y > middlePos + _buttonHeight / 2 + _spaceBetweenButtons)
 							{
 								middlePos += _buttonHeight / 2;
-								_animationTime = _animationTimeMax - (int)((_animationTimeMax - _animationTimeMin) *
+								_animationTime = _scrollTimeMax - (int)((_scrollTimeMax - _scrollTimeMin) *
 																 (Math.Abs(middlePos - y) / (middlePos - YPosition)));
-								_mouseState = State.ScrollDown;
 								if (_currentState == State.Idle) OnDown();
+                else _mouseState = State.ScrollDown;
 							}
 							else
 							{
@@ -330,13 +324,13 @@ namespace MediaPortal.GUI.Library
 						{
 							if (y < YPosition + _buttonOffset + _spaceBetweenButtons + _buttonHeight)
 							{
-								_mouseState = State.ScrollUp;
 								if (_currentState == State.Idle) OnUp();
+                else _mouseState = State.ScrollUp;
 							}
 							else if (y > YPosition + Height - _buttonOffset - 2*_spaceBetweenButtons - _buttonHeight)
 							{
-								_mouseState = State.ScrollDown;
 								if (_currentState == State.Idle) OnDown();
+                else _mouseState = State.ScrollDown;
 							}
 							else  // direct selection in the middle
 							{
@@ -365,7 +359,7 @@ namespace MediaPortal.GUI.Library
 						_ignoreFirstUpDown = false;
 						return;
 					}
-					if (_currentState == State.Idle) _animationTime = _animationTimeMax;
+					if (_currentState == State.Idle) _animationTime = _scrollTimeMax;
 					_mouseState = State.Idle;
 				  OnUp();
 					return;
@@ -378,7 +372,7 @@ namespace MediaPortal.GUI.Library
 						_ignoreFirstUpDown = false;
 						return;
 					}
-					if (_currentState == State.Idle) _animationTime = _animationTimeMax;
+					if (_currentState == State.Idle) _animationTime = _scrollTimeMax;
 					_mouseState = State.Idle;
 					OnDown();
 					return;
@@ -388,7 +382,7 @@ namespace MediaPortal.GUI.Library
 				case Action.ActionType.ACTION_MOUSE_CLICK:
 				{
 					if (_currentState != State.Idle) return;
-					PlugInInfo info = _buttonList[FocusedButton].Data as PlugInInfo;
+					MenuButtonInfo info = _buttonList[FocusedButton].Data as MenuButtonInfo;
 					if (info != null)
 					{
 						// button selected.
@@ -408,7 +402,8 @@ namespace MediaPortal.GUI.Library
 		#region Reder functions
 		public override void Render(float timePassed)
 		{
-			if (_backgroundImage != null) _backgroundImage.Render(timePassed);
+      Log.Debug("time = " + timePassed.ToString());
+      if (_backgroundImage != null) _backgroundImage.Render(timePassed);
       if (_hoverImage != null) _hoverImage.Render(timePassed);
 			_oldViewport = GUIGraphicsContext.DX9Device.Viewport;
 			_newViewport.X = _positionX;
@@ -472,7 +467,7 @@ namespace MediaPortal.GUI.Library
       if (_scrollButton.Count > 0) _scrollButton.Clear();
       if (_scrollText.Count > 0)   _scrollText.Clear();
 
-      if ((_nextState == State.Idle) && (_mouseState == State.Idle))                      // let us check if we should do the final animation
+      if ((_enableAnimation) && (_nextState == State.Idle) && (_mouseState == State.Idle))                      // let us check if we should do the final animation
       {
         switch (_currentState)
         {
@@ -563,10 +558,10 @@ namespace MediaPortal.GUI.Library
         }
         else
         {
+          //_ignoreFirstUpDown = true;
           if (_backgroundImage != null) _backgroundImage.Begin();
           if (_focusImage != null) _focusImage.Begin();
         }
-				//else _ignoreFirstUpDown = true;
 				base.Focus = value;
 				if (_buttonList.Count > FocusedButton) _buttonList[FocusedButton].Focus = value;
 			}
@@ -591,7 +586,7 @@ namespace MediaPortal.GUI.Library
 			if (_currentState != State.Idle)
 			{
         _nextState = State.ScrollUp;
-        if (_animationTime > _animationTimeMin) _animationTime -= 5;
+        if (_animationTime > _scrollTimeMin) _animationTime -= 5;
 				return;
 			}
 			_buttonList[_focusPosition].Focus = false;  // hide button focus for animation
@@ -607,7 +602,7 @@ namespace MediaPortal.GUI.Library
 			if (_currentState != State.Idle)
 			{
 				_nextState = State.ScrollDown;
-        if (_animationTime > _animationTimeMin) _animationTime -= 5;
+        if (_animationTime > _scrollTimeMin) _animationTime -= 5;
 				return;
 			}
 			_buttonList[_focusPosition].Focus = false;  // hide button focus for animation
@@ -637,13 +632,14 @@ namespace MediaPortal.GUI.Library
           _scrollText.Add(new Animation(_animationTime, 0, _buttonHeight + _spaceBetweenButtons));
           _scrollText.Begin();
           _lastTextValue = (int)_scrollText.StartValue;
+          _reverseAnimation = true;
 
-          int delta = (_buttonHeight + _spaceBetweenButtons)*2/3;
+        /*  int delta = (_buttonHeight + _spaceBetweenButtons)*2/3;
           _scrollButton.Add(new Animation(_animationTime*2/3, 0, -delta));
           _scrollButton.Add(new Animation(_animationTime*2/3, -delta, 0));
           _scrollButton.Begin();
           _lastButtonValue = (int)_scrollButton.StartValue;
-
+          */
         }
         else
         {
@@ -659,51 +655,77 @@ namespace MediaPortal.GUI.Library
       if (_scrollButton.Count > 0) _scrollButton.Clear();
       if (_scrollText.Count > 0) _scrollText.Clear();
       int delta = 4;
-
+      int time = _scrollTimeMax / 4;
+      
       _buttonList[FocusedButton].Focus = false;                                             
       if (_fixedScroll)     // we have a fixed scrollbar -> move the text
       {
-        _scrollText.Add(new Animation(20 * 2 * delta, _buttonHeight + _spaceBetweenButtons, _buttonHeight + _spaceBetweenButtons + 2 * delta));
-        _scrollText.Add(new Animation(20 * 3 * delta, _buttonHeight + _spaceBetweenButtons + 2 * delta, _buttonHeight + _spaceBetweenButtons - delta));
-        _scrollText.Add(new Animation(20 * 1 * delta, _buttonHeight + _spaceBetweenButtons - delta, _buttonHeight + _spaceBetweenButtons));
+        _scrollText.Add(new Animation(2 * time, 0, 2 * delta));
+        _scrollText.Add(new Animation(3 * time, 2 * delta, -delta));
+        _scrollText.Add(new Animation(1 * time, -delta, 0));
         _scrollText.Begin();
         _lastTextValue = (int)_scrollText.StartValue;
       }
       else
       {
-        _scrollButton.Add(new Animation(20 * 2 * delta, _buttonHeight + _spaceBetweenButtons, _buttonHeight + _spaceBetweenButtons + 2 * delta));
-        _scrollButton.Add(new Animation(20 * 3 * delta, _buttonHeight + _spaceBetweenButtons + 2 * delta, _buttonHeight + _spaceBetweenButtons - delta));
-        _scrollButton.Add(new Animation(20 * 1 * delta, _buttonHeight + _spaceBetweenButtons - delta, _buttonHeight + _spaceBetweenButtons));
-        _scrollButton.Begin();
-        _lastButtonValue = (int)_scrollButton.StartValue;
+        if (_reverseAnimation)
+        {
+          _scrollText.Add(new Animation(2 * time, 0, 2 * delta));
+          _scrollText.Add(new Animation(3 * time, 2 * delta, -delta));
+          _scrollText.Add(new Animation(1 * time, -delta, 0));
+          _scrollText.Begin();
+          _lastTextValue = (int)_scrollText.StartValue;
+          delta = -delta;
+          _reverseAnimation = false;
+        }
+        else
+        {
+          _scrollButton.Add(new Animation(2 * time, 0, 2 * delta));
+          _scrollButton.Add(new Animation(3 * time, 2 * delta, -delta));
+          _scrollButton.Add(new Animation(1 * time, -delta, 0));
+          _scrollButton.Begin();
+          _lastButtonValue = (int)_scrollButton.StartValue;
+        }
       }
     }
     #endregion
 
   }
 
-  #region PlugInInfo
-  public class PlugInInfo
+  #region MenuButtonInfo
+  public class MenuButtonInfo
 	{
 		protected string _text;
-		protected string _hover;
-		protected int    _pluginID;
+    protected int    _pluginID;
+    protected string _focusedTextureName;
+    protected string _nonFocusedTextureName;
+		protected string _hoverName;
 
-		public PlugInInfo(string Text, string Hover, int PlugInID)
+
+    public MenuButtonInfo(string Text, int PlugInID, string FocusTextureName, string NonFocusName, string HoverName)
 		{
 			_text = Text;
-			_hover = Hover;
-			_pluginID = PlugInID;      
+			_pluginID = PlugInID;
+      _focusedTextureName = FocusTextureName;
+      _nonFocusedTextureName = NonFocusName;
+      _hoverName = HoverName;
 		}
 
 		public string Text
 		{ get { return _text; } }
 
-		public string Hover
-		{ get { return _hover; } }
-
 		public int PluginID
 		{ get { return _pluginID; } }
+
+    public string FocusTextureName
+    { get { return _focusedTextureName; } }
+
+    public string NonFocusTextureName
+    { get { return _nonFocusedTextureName; } }
+
+    public string HoverName
+    { get { return _hoverName; } }
+
 	}
 
 	#endregion

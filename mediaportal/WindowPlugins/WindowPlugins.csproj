@@ -299,6 +299,14 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="GUIDVD\GUIDVDFullscreen.cs" />
+    <Compile Include="Home\GUIHome.cs" />
+    <Compile Include="Home\GUIHomeBaseWindow.cs" />
+    <Compile Include="Home\GUIHomeSetupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Home\GUIHomeSetupForm.Designer.cs">
+      <DependentUpon>GUIHomeSetupForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="GUIMSNPlugin\GUIMSNChatWindow.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -785,9 +793,6 @@
     <Compile Include="GUITopbar\GUITopbar.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="GUITopbar\GUITopbarHome.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="GUITopbar\TopBarSetup.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -949,12 +954,7 @@
     <Compile Include="Home\GUIBasicHome.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Home\home.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Home\SetupForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="Home\GUIPlugIns.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -970,6 +970,10 @@
     <Compile Include="VideoEditor\VideoEditorSetup.cs" />
     <EmbeddedResource Include="GUIAlarm\AlarmSetupForm.resx">
       <DependentUpon>AlarmSetupForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Home\GUIHomeSetupForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>GUIHomeSetupForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GUIMSNPlugin\MessengerSetup.resx">
       <DependentUpon>MessengerSetup.cs</DependentUpon>
@@ -1072,9 +1076,6 @@
     <EmbeddedResource Include="Home\resources\folder.png" />
     <EmbeddedResource Include="Home\resources\node.png" />
     <EmbeddedResource Include="Home\resources\script.png" />
-    <EmbeddedResource Include="Home\SetupForm.resx">
-      <DependentUpon>SetupForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
