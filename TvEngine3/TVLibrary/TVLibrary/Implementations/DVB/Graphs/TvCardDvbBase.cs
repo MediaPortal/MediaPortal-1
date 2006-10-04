@@ -1317,10 +1317,10 @@ namespace TvLibrary.Implementations.DVB
         if (_startTimeShifting)
         {
           _startTimeShifting = false;
-          ITsTimeShift record = _filterTsAnalyzer as ITsTimeShift;
-          record.Reset();
+          ITsTimeShift timeshift = _filterTsAnalyzer as ITsTimeShift;
+          timeshift.Reset();
           SetTimeShiftPids();
-          record.Start();
+          timeshift.Start();
         }
         else if (_graphState == GraphState.TimeShifting || _graphState == GraphState.Recording)
         {

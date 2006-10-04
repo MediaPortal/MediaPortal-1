@@ -509,6 +509,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     protected void StopGraph()
     {
+      Log.Log.WriteFile("ss2:StopGraph");
       if (!CheckThreadId()) return;
       if (_epgGrabbing)
       {
@@ -545,7 +546,7 @@ namespace TvLibrary.Implementations.DVB
         _teletextDecoder.ClearBuffer();
       }
       if (state == FilterState.Stopped) return;
-      Log.Log.WriteFile("ss2:StopGraph");
+      Log.Log.WriteFile("ss2:graph stopped");
       int hr = 0;
       //hr = (_graphBuilder as IMediaControl).StopWhenReady();
       hr = (_graphBuilder as IMediaControl).Stop();
@@ -862,20 +863,19 @@ namespace TvLibrary.Implementations.DVB
         SendHWPids(hwPids);
       }
 
+
       if (_startTimeShifting)
       {
-        Log.Log.WriteFile("ss2: set timeshifting pids");
+        Log.Log.Write("ss2:fill in timeshift pids");
         _startTimeShifting = false;
-        ITsTimeShift record = _filterTsAnalyzer as ITsTimeShift;
-        record.Reset();
+        ITsTimeShift timeshift = _filterTsAnalyzer as ITsTimeShift;
+        timeshift.Reset();
         SetTimeShiftPids();
-        record.Start();
-        Log.Log.WriteFile("ss2: start timeshifting");
-        record.Start();
+        timeshift.Start();
       }
       else if (_graphState == GraphState.TimeShifting || _graphState == GraphState.Recording)
       {
-        Log.Log.WriteFile("ss2: update timeshifting pids");
+        Log.Log.Write("ss2:update timeshift pids");
         SetTimeShiftPids();
       }
     }
@@ -1332,8 +1332,6 @@ namespace TvLibrary.Implementations.DVB
     public bool Tune(IChannel channel)
     {
       _pmtVersion = -1;
-      _startTimeShifting = false;
-      _channelInfo = new ChannelInfo();
 
       Log.Log.WriteFile("ss2:Tune({0})", channel);
       if (_epgGrabbing)
@@ -1346,20 +1344,23 @@ namespace TvLibrary.Implementations.DVB
       }
       DVBSChannel dvbsChannel = channel as DVBSChannel;
       _hasTeletext = false;
-      if (IsReceivingAudioVideo == false)
+      if (dvbsChannel == null)
       {
-        if (dvbsChannel == null)
-        {
-          Log.Log.WriteFile("Channel is not a DVBS channel!!! {0}", channel.GetType().ToString());
-          return false;
-        }
+        Log.Log.WriteFile("Channel is not a DVBS channel!!! {0}", channel.GetType().ToString());
+        return false;
+      }
 
-        DVBSChannel oldChannel = _currentChannel as DVBSChannel;
-        if (_currentChannel != null)
+      DVBSChannel oldChannel = _currentChannel as DVBSChannel;
+      if (_currentChannel != null)
+      {
+        if (oldChannel.Equals(channel))
         {
-          if (oldChannel.Equals(channel)) return true;
+          Log.Log.WriteFile("ss2:already tuned on this channel");
+          return true;
         }
       }
+      _startTimeShifting = false;
+      _channelInfo = new ChannelInfo();
       _currentChannel = channel;
       if (_graphState == GraphState.Idle)
       {
