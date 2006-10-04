@@ -93,7 +93,7 @@ namespace MediaPortal.GUI.Settings.Wizard
       cmX10Ati.Selected = false;
       cmFireDTV.Selected = false;
       cmOther.Selected = false;
-      imgRemote.SetFileName(@"Wizards\remote_mce_eu.png");
+      imgRemote.SetFileName(Config.GetFile(Config.Dir.Base, "Wizards", "remote_mce_eu.png"));
       GUIControl.FocusControl(GetID, cmMicrosoftMCE.GetID);
     }
 
@@ -106,7 +106,7 @@ namespace MediaPortal.GUI.Settings.Wizard
       cmX10Ati.Selected = false;
       cmFireDTV.Selected = false;
       cmOther.Selected = false;
-      imgRemote.SetFileName(@"Wizards\remote_hcw.png");
+      imgRemote.SetFileName(Config.GetFile(Config.Dir.Base, "Wizards", "remote_hcw.png"));
       GUIControl.FocusControl(GetID, cmHauppauge.GetID);
     }
 
@@ -119,7 +119,7 @@ namespace MediaPortal.GUI.Settings.Wizard
       cmX10Ati.Selected = false;
       cmFireDTV.Selected = false;
       cmOther.Selected = false;
-      imgRemote.SetFileName(@"Wizards\remote_x10.png");
+      imgRemote.SetFileName(Config.GetFile(Config.Dir.Base, "Wizards", "remote_x10.png"));
       GUIControl.FocusControl(GetID, cmX10Medion.GetID);
     }
 
@@ -132,7 +132,7 @@ namespace MediaPortal.GUI.Settings.Wizard
       cmX10Ati.Selected = true;
       cmFireDTV.Selected = false;
       cmOther.Selected = false;
-      imgRemote.SetFileName(@"Wizards\remote_x10.png");
+      imgRemote.SetFileName(Config.GetFile(Config.Dir.Base, "Wizards", "remote_x10.png"));
       GUIControl.FocusControl(GetID, cmX10Ati.GetID);
     }
 
@@ -145,7 +145,7 @@ namespace MediaPortal.GUI.Settings.Wizard
       cmX10Ati.Selected = false;
       cmFireDTV.Selected = true;
       cmOther.Selected = false;
-      imgRemote.SetFileName(@"Wizards\remote_firedtv.png");
+      imgRemote.SetFileName(Config.GetFile(Config.Dir.Base, "Wizards", "remote_firedtv.png"));
       GUIControl.FocusControl(GetID, cmFireDTV.GetID);
     }
 
@@ -158,7 +158,7 @@ namespace MediaPortal.GUI.Settings.Wizard
       cmX10Ati.Selected = false;
       cmFireDTV.Selected = false;
       cmOther.Selected = true;
-      imgRemote.SetFileName(@"Wizards\remote_other.png");
+      imgRemote.SetFileName(Config.GetFile(Config.Dir.Base, "Wizards", "remote_other.png"));
       GUIControl.FocusControl(GetID, cmOther.GetID);
     }
 
