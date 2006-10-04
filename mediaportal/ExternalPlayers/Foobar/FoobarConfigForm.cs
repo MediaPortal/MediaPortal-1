@@ -341,10 +341,18 @@ namespace MediaPortal.FoobarPlugin
         {
           using (RegistryKey subkey = pRegKey.OpenSubKey("Software\\foobar2000"))
           {
-            Object val = subkey.GetValue("InstallDir");
-            if (val.ToString().Trim().Length > 0)
+            if (subkey != null)
             {
-              textBoxFoobarPath.Text = val.ToString() + "\\foobar2000.exe";
+              Object val = subkey.GetValue("InstallDir");
+              if (val.ToString().Trim().Length > 0)
+              {
+                textBoxFoobarPath.Text = val.ToString() + "\\foobar2000.exe";
+              }
+            }
+            else
+            {
+              MessageBox.Show("Foobar2000 is not installed on your system!\r\nPlease install it first before actually trying to use this plugin!", "Foobar2000 plugin error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+              Close();
             }
           }
         }
