@@ -3257,7 +3257,7 @@ namespace MediaPortal.TV.Database
           {
             strSQL = String.Format("update tblATSCMapping set frequency='{0}', symbolrate={1}, innerFec={2}, modulation={3}, ONID={4}, TSID={5}, SID={6}, strChannel='{7}', strProvider='{8}',audioPid={9}, videoPid={10}, teletextPid={11}, pmtPid={12},ac3Pid={13},audio1Pid={14},audio2Pid={15},audio3Pid={16},sAudioLang='{17}',sAudioLang1='{18}',sAudioLang2='{19}',sAudioLang3='{20}', channelNumber={21}, majorChannel={22}, minorChannel={23},HasEITPresentFollow={24} , HasEITSchedule={25},pcrPid={26}  where iLCN like '{27}'",
               frequency, symbolrate, innerFec, modulation, ONID, TSID, SID, strChannel.Trim(), strProvider.Trim(), audioPid, videoPid, teletextPid, pmtPid,
-              ac3Pid, audio1, audio2, audio3, al, al1, al2, al3, physicalChannel, minorChannel, majorChannel,
+              ac3Pid, audio1, audio2, audio3, al, al1, al2, al3, physicalChannel, majorChannel, minorChannel,
               (HasEITPresentFollow == true ? 1 : 0), (HasEITSchedule == true ? 1 : 0), pcrPid,
               idChannel);
             //Log.Error("sql:{0}", strSQL);
