@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<profile>
+  <section name="ChannelList">
+    <entry name="Rai 1">1</entry>
+    <!-- Rai 1 -->
+    <entry name="Rai 2">3</entry>
+    <!-- Rai 2 -->
+    <entry name="Rai 3">16</entry>
+    <!-- Rai 3 -->
+    <entry name="Canale 5">22</entry>
+    <!-- Canale 5 -->
+    <entry name="Italia 1">23</entry>
+    <!-- Italia 1 -->
+    <entry name="Rete 4">24</entry>
+    <!-- Rete 4 -->
+    <entry name="La7">75</entry>
+    <!-- La7 -->
+    <entry name="All Music">72</entry>
+    <!-- All Music -->
+    <entry name="MTV Italia">24</entry>
+    <!-- Mtv -->
+  </section>
+
+  <section name="Listing">
+    <entry name="BaseURL">http://spettacolo.alice.it</entry>
+    <entry name="SearchURL">/guidatv/cgi/index.cgi?tipo=3&amp;channel=[ID]&amp;day=[DD]/[MM]/[YYYY]</entry>
+    <entry name="Tags">TDA</entry>
+
+    <!-- Template of the Listing information -->
+    <entry name="Template">
+      &#60;tr&#62;
+      &#60;td&#62;
+      &#60;div&#62;
+      &#60;#START&#62;
+      &#60;/div&#62;
+      &#60;/td&#62;
+      &#60;td&#62;
+      &#60;div&#62;
+      &#60;a href&#62;
+      &#60;#TITLE&#62;
+      &#60;/div&#62;
+      &#60;/td&#62;
+      &#60;td&#62;
+      &#60;div&#62;
+      &#60;#GENRE&#62;
+      &#60;/div&#62;
+      &#60;/td&#62;
+      &#60;/tr&#62;
+    </entry>
+    <entry name="SubListingLink">tipo</entry>
+  </section>
+  <section name="SubListing">
+    <entry name="Tags">D</entry>
+    <entry name="Template">
+      &#60;div&#62;
+      &#60;#DESCRIPTION&#62;
+      &#60;br&#62;&#60;br&#62;
+      &#60;b&#62;&#60;/b&#62;
+      &#60;br&#62;
+      &#60;br&#62;
+      &#60;/div&#62;
+    </entry>
+  </section>
+  <section name="Info">
+    <entry name="GuideDays">6</entry>
+    <entry name="Language">it</entry>
+    <entry name="SiteDescription">alice.it</entry>
+    <entry name="TimeZone">W. Europe Standard Time</entry>
+  </section>
+</profile>
