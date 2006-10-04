@@ -191,10 +191,9 @@ namespace MediaPortal.PowerScheduler
 
       // If it's been more than 25 secs since last time this method was called
       // assume system has been asleep 
-      if (DateTime.Now.Subtract(m_dtLastTimercheck).TotalSeconds > 25)
+/*      if (DateTime.Now.Subtract(m_dtLastTimercheck).TotalSeconds > 25)
       {
-        Log.Info("PowerScheduler: System powerup detected ");
-
+        Log.Info("PowerScheduler: System powerup detected - >> DEACTIVATED <<");
         if (m_bReinitOnResume)
         {
             if (m_bExtensiveLog) Log.Debug("Stopping recorder before starting it in OnTimer");
@@ -207,6 +206,7 @@ namespace MediaPortal.PowerScheduler
         m_bShutdownEnabled = false;
         ResetShutdownTimer(m_iShutdownInterval);
       }
+*/ 
       m_dtLastTimercheck = DateTime.Now;
 
       // Manages when to wake up
