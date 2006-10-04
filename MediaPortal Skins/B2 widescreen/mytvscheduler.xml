@@ -3,7 +3,11 @@
 	<id>601</id>
 	<defaultcontrol>2</defaultcontrol>
 	<allowoverlay>no</allowoverlay>
+	<define>#header.label:646</define>
+<!-- 	<define>#header.text:music</define> -->
+	<define>#header.hover:hover_my tv.png</define>
 	<controls>
+		<import>common.time.xml</import>
 		<control>
 			<description>BG</description>
 			<type>image</type>
@@ -24,8 +28,10 @@
 		<control>
 			<type>image</type>
 			<id>1</id>
-			<posX>142</posX>
-			<posY>493</posY>
+			<posX>155</posX>
+			<posY>522</posY>
+			<width>217</width>
+			<height>213</height>
 			<texture>hover_my tv.png</texture>
 		</control>
 		<control>
@@ -38,28 +44,7 @@
 			<align>right</align>
 			<textcolor>FFFFFFFF</textcolor>
 		</control>
-		<control>
-			<description>Date</description>
-			<type>label</type>
-			<id>200</id>
-			<posX>1309</posX>
-			<posY>40</posY>
-			<label>#date</label>
-			<align>right</align>
-			<font>font13</font>
-			<textcolor>ffa9d0f7</textcolor>
-		</control>
-		<control>
-			<description>Time</description>
-			<type>label</type>
-			<id>201</id>
-			<posX>1309</posX>
-			<posY>66</posY>
-			<label>#time</label>
-			<align>right</align>
-			<font>font13</font>
-			<textcolor>ffa9d0f7</textcolor>
-		</control>
+
 		<control>
 			<description>Number of Files Label</description>
 			<type>label</type>
@@ -237,7 +222,7 @@
 			<type>image</type>
 			<id>1</id>
 			<posX>113</posX>
-			<posY>560</posY>
+			<posY>550</posY>
 			<width>240</width>
 			<height>180</height>
 			<colordiffuse>60ffffff</colordiffuse>
@@ -248,7 +233,7 @@
 			<type>videowindow</type>
 			<id>99</id>
 			<posX>123</posX>
-			<posY>566</posY>
+			<posY>556</posY>
 			<width>226</width>
 			<height>166</height>
 			<onup>7</onup>

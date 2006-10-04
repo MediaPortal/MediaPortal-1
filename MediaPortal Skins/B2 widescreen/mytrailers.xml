@@ -10,14 +10,6 @@
 		<import>common.window.xml</import>
 		<control>
 			<type>image</type>
-			<description>BackGround</description>
-			<id>1</id>
-			<posX>0</posX>
-			<posY>0</posY>
-			<texture>background.png</texture>
-		</control>
-		<control>
-			<type>image</type>
 			<id>1</id>
 			<posX>113</posX>
 			<posY>26</posY>
@@ -233,28 +225,22 @@
 			<type>image</type>
 			<description>movie border</description>
 			<id>0</id>
-			<posX>182</posX>
+			<posX>178</posX>
 			<posY>277</posY>
 			<width>160</width>
 			<height>245</height>
 			<texture>playback_background.png</texture>
 		</control>
-		<control>
-			<type>image</type>
-			<id>1</id>
-			<posX>142</posX>
-			<posY>493</posY>
-			<texture>#header.hover</texture>
-		</control>
-		<control>
+
+<!-- 		<control>
 			<type>image</type>
 			<description>movie poster</description>
 			<id>24</id>
-			<posX>197</posX>
+			<posX>194</posX>
 			<posY>296</posY>
 			<width>134</width>
 			<height>200</height>
 			<texture>background.png</texture>
-		</control>
+		</control> -->
 	</controls>
 </window>

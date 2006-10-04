@@ -3,28 +3,16 @@
 	<id>170601</id>
 	<defaultcontrol>101</defaultcontrol>
 	<allowoverlay>no</allowoverlay>
+	<define>#header.label:2090</define>
+<!--	<define>#header.text:music</define> -->
+	<define>#header.hover:hover_my videos.png</define>
 	<controls>
-		<control>
-			<type>image</type>
-			<description>BackGround</description>
-			<id>1</id>
-			<posX>0</posX>
-			<posY>0</posY>
-			<texture>background.png</texture>
-		</control>
-		<control>
-			<type>image</type>
-			<description>an Image</description>
-			<id>11</id>
-			<posX>142</posX>
-			<posY>493</posY>
-			<texture>hover_my videos.png</texture>
-		</control>
+		<import>common.window.xml</import>
 		<control>
 			<type>label</type>
 			<id>23</id>
-			<posX>113</posX>
-			<posY>73</posY>
+			<posX>424</posX>
+			<posY>58</posY>
 			<align>left</align>
 			<font>font14</font>
 			<label>2092</label>

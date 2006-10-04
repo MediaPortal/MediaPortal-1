@@ -2,8 +2,8 @@
 <window>
 	<controls>
 		<control>
-			<type>image</type>
 			<description>BG</description>
+			<type>image</type>
 			<id>1</id>
 			<posX>0</posX>
 			<posY>0</posY>
@@ -14,8 +14,10 @@
 		<control>
 			<type>image</type>
 			<id>1</id>
-			<posX>91</posX>
-			<posY>520</posY>
+			<posX>155</posX>
+			<posY>522</posY>
+			<width>217</width>
+			<height>213</height>
 			<texture>#header.hover</texture>
 		</control>
 		<control>

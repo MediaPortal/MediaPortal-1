@@ -3,43 +3,19 @@
 	<id>12</id>
 	<defaultcontrol>2</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
+	<define>#header.label:1</define>
+	<define>#header.hover:hover_my pictures.png</define>
 	<controls>
-		<control>
-			<description>background image</description>
-			<type>image</type>
-			<id>1</id>
-			<posX>0</posX>
-			<posY>0</posY>
-			<width>1366</width>
-			<height>768</height>
-			<texture>background.png</texture>
-			<colorkey>0</colorkey>
-			<colordiffuse>ffffffff</colordiffuse>
-		</control>
-		<control>
+		<import>common.settings.xml</import>
+<!-- 		<control>
 			<type>image</type>
 			<description>MP Logo</description>
 			<id>1</id>
 			<posX>60</posX>
 			<posY>32</posY>
 			<texture>mplogo.png</texture>
-		</control>
-		<control>
-			<type>label</type>
-			<description>Setup My Pictures</description>
-			<id>1</id>
-			<posX>60</posX>
-			<posY>128</posY>
-			<label>1</label>
-			<font>font18</font>
-		</control>
-		<control>
-			<type>image</type>
-			<id>1</id>
-			<posX>142</posX>
-			<posY>493</posY>
-			<texture>hover_my pictures.png</texture>
-		</control>
+		</control> -->
+
 		<control>
 			<description>Speed label</description>
 			<type>label</type>

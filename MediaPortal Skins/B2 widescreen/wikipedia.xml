@@ -1,148 +1,123 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
-	<id>4711</id>
-	<defaultcontrol>10</defaultcontrol>
-	<allowoverlay>yes</allowoverlay>
+    <id>4711</id>
+    <defaultcontrol>10</defaultcontrol>
+    <allowoverlay>yes</allowoverlay>
+	<define>#header.label:2516</define>
+<!-- 	<define>#header.text:Wikipedia</define> -->
+	<define>#header.hover:hover_wikipedia.png</define>
 	<controls>
-		<control>
-			<type>image</type>
-			<description>Background</description>
-			<id>1</id>
-			<posX>0</posX>
-			<posY>0</posY>
-			<width>1366</width>
-			<height>768</height>
-			<texture>background.png</texture>
-		</control>
-		<control>
-			<type>image</type>
-			<description>wikipedia text logo</description>
-			<id>2</id>
-			<posX>113</posX>
-			<posY>26</posY>
-			<texture>wikipedia_logo.png</texture>
-		</control>
-		<control>
-			<type>image</type>
-			<description>Reading buddy</description>
-			<id>3</id>
-			<posX>142</posX>
-			<posY>493</posY>
-			<texture>hover_wikipedia.png</texture>
-		</control>
-		<control>
-			<type>label</type>
-			<description>Article title/searchterm</description>
-			<id>4</id>
-			<posX>474</posX>
-			<posY>93</posY>
-			<label>Wikipedia</label>
-			<font>font16</font>
-			<align>right</align>
-		</control>
-		<control>
-			<type>label</type>
-			<description>Image description</description>
-			<id>5</id>
-			<posX>474</posX>
-			<posY>93</posY>
-			<label>Wikipedia</label>
-			<font>font16</font>
-			<align>right</align>
-			<visible>no</visible>
-		</control>
-		<control>
-			<type>button</type>
-			<description>Search Button</description>
-			<id>10</id>
-			<posX>113</posX>
-			<posY>129</posY>
-			<onleft>20</onleft>
-			<onright>20</onright>
-			<onup>14</onup>
-			<ondown>11</ondown>
-			<label>137</label>
-		</control>
-		<control>
-			<type>button</type>
-			<description>Select local Wikipedia Button</description>
-			<id>11</id>
-			<posX>113</posX>
-			<posY>174</posY>
-			<onleft>20</onleft>
-			<onright>20</onright>
-			<onup>10</onup>
-			<ondown>14</ondown>
-			<label>200025</label>
-		</control>
-		<control>
-			<type>button</type>
-			<description>Back to the text (when viewing an image)</description>
-			<id>14</id>
-			<posX>113</posX>
-			<posY>220</posY>
-			<onleft>20</onleft>
-			<onright>20</onright>
-			<onup>11</onup>
-			<ondown>12</ondown>
-			<label>2514</label>
-			<visible>no</visible>
-		</control>
-		<control>
-			<type>button</type>
-			<description>Links Button</description>
-			<id>12</id>
-			<posX>113</posX>
-			<posY>265</posY>
-			<onleft>20</onleft>
-			<onright>20</onright>
-			<onup>14</onup>
-			<ondown>13</ondown>
-			<label>2511</label>
-		</control>
-		<control>
-			<type>button</type>
-			<description>Images Button</description>
-			<id>13</id>
-			<posX>113</posX>
-			<posY>310</posY>
-			<onleft>20</onleft>
-			<onright>20</onright>
-			<onup>12</onup>
-			<ondown>10</ondown>
-			<label>2515</label>
-		</control>
-		<control>
-			<description>Here is the article text displayed</description>
-			<type>textbox</type>
-			<id>20</id>
-			<posX>531</posX>
-			<posY>93</posY>
-			<width>686</width>
-			<height>621</height>
-			<spinWidth>21</spinWidth>
-			<spinColor>ffffffff</spinColor>
-			<image>icon-folder.png</image>
-			<spinHeight>21</spinHeight>
-			<spinPosY>706</spinPosY>
-			<spinPosX>1157</spinPosX>
-			<SpinPosX>264</SpinPosX>
-			<SpinPosY>538</SpinPosY>
-		</control>
-		<control>
-			<description>Article Image</description>
-			<type>image</type>
-			<id>25</id>
-			<posX>531</posX>
-			<posY>93</posY>
-			<width>686</width>
-			<height>621</height>
-			<visible>no</visible>
-			<colorkey>00000000</colorkey>
-			<colordiffuse>White</colordiffuse>
-			<filtered>yes</filtered>
-			<centered>yes</centered>
-			<keepaspectratio>yes</keepaspectratio>
-		</control>
-	</controls>
+	  <import>common.window.xml</import>
+          <control>
+              <type>image</type>
+              <description>wikipedia text logo</description>
+              <id>2</id>
+              <posX>113</posX>
+              <posY>26</posY>
+              <texture>wikipedia_logo.png</texture>
+          </control>
+          <control>
+              <type>label</type>
+              <description>Article title/searchterm</description>
+              <id>4</id>
+              <posX>474</posX>
+              <posY>93</posY>
+              <label>Wikipedia</label>
+              <font>font16</font>
+              <align>right</align>
+          </control>
+          <control>
+              <type>button</type>
+              <description>Search Button</description>
+              <id>10</id>
+              <posX>113</posX>
+              <posY>129</posY>
+              <onleft>20</onleft>
+              <onright>20</onright>
+              <onup>14</onup>
+              <ondown>11</ondown>
+              <label>137</label>
+          </control>
+          <control>
+              <type>button</type>
+              <description>Select local Wikipedia Button</description>
+              <id>11</id>
+              <posX>113</posX>
+              <posY>174</posY>
+              <onleft>20</onleft>
+              <onright>20</onright>
+              <onup>10</onup>
+              <ondown>14</ondown>
+              <label>200025</label>
+          </control>
+          <control>
+              <type>button</type>
+              <description>Back to the text (when viewing an image)</description>
+              <id>14</id>
+              <posX>113</posX>
+              <posY>220</posY>
+              <onleft>20</onleft>
+              <onright>20</onright>
+              <onup>11</onup>
+              <ondown>12</ondown>
+              <label>2514</label>
+              <visible>no</visible>
+          </control>
+          <control>
+              <type>button</type>
+              <description>Links Button</description>
+              <id>12</id>
+              <posX>113</posX>
+              <posY>265</posY>
+              <onleft>20</onleft>
+              <onright>20</onright>
+              <onup>14</onup>
+              <ondown>13</ondown>
+              <label>2511</label>
+          </control>
+          <control>
+              <type>button</type>
+              <description>Images Button</description>
+              <id>13</id>
+              <posX>113</posX>
+              <posY>310</posY>
+              <onleft>20</onleft>
+              <onright>20</onright>
+              <onup>12</onup>
+              <ondown>10</ondown>
+              <label>2515</label>
+          </control>
+          <control>
+              <description>Here is the article text displayed</description>
+              <type>textbox</type>
+              <id>20</id>
+              <posX>531</posX>
+              <posY>93</posY>
+              <width>686</width>
+              <height>621</height>
+              <spinWidth>21</spinWidth>
+              <spinColor>ffffffff</spinColor>
+              <image>icon-folder.png</image>
+              <spinHeight>21</spinHeight>
+              <spinPosY>706</spinPosY>
+              <spinPosX>1157</spinPosX>
+              <SpinPosX>264</SpinPosX>
+              <SpinPosY>538</SpinPosY>
+          </control>
+          <control>
+              <description>Article Image</description>
+              <type>image</type>
+              <id>25</id>
+              <posX>531</posX>
+              <posY>93</posY>
+              <width>686</width>
+              <height>621</height>
+              <visible>no</visible>
+              <colorkey>00000000</colorkey>
+              <colordiffuse>White</colordiffuse>
+              <filtered>yes</filtered>
+              <centered>yes</centered>
+              <keepaspectratio>yes</keepaspectratio>
+          </control>
+    </controls>
 </window>

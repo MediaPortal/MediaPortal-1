@@ -53,10 +53,10 @@
 		<control>
 			<type>image</type>
 			<id>1</id>
-			<posX>120</posX>
-			<posY>512</posY>
-			<width>280</width>
-			<height>275</height>
+			<posX>155</posX>
+			<posY>522</posY>
+			<width>217</width>
+			<height>213</height>
 			<texture>#header.hover</texture>
 		</control>
 	</controls>

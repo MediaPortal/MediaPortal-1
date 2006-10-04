@@ -5,9 +5,9 @@
 	<allowoverlay>yes</allowoverlay>
 	<define>#header.label:136</define>
 	<define>#header.text:music</define>
-<!--	<define>#header.hover:hover_my music.png</define> -->
+	<define>#header.hover:hover_my music.png</define>
 	<controls>
-		<import>common.window.default.xml</import>
+		<import>common.window.xml</import>
 		<control>
 			<type>group</type>
 			<description>group element</description>

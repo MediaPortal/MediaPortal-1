@@ -3,36 +3,12 @@
 	<id>7777</id>
 	<defaultcontrol>2</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
+	<define>#header.label:19101</define>
+<!-- 	<define>#header.text:music</define> -->
+	<define>#header.hover:hover_mynumberplace.png</define>
 	<controls>
+		<import>common.window.xml</import>
 		<import>common.time.xml</import>
-		<control>
-			<type>image</type>
-			<description>BackGround</description>
-			<id>2626</id>
-			<posX>0</posX>
-			<posY>0</posY>
-			<texture>background.png</texture>
-		</control>
-		<!--
-		<control>
-			<type>image</type>
-			<id>0</id>
-			<posX>60</posX>
-			<posY>20</posY>
-			<texture>mynumberplace_logo.png</texture>
-		</control>
--->
-		<control>
-			<description>Main label</description>
-			<type>label</type>
-			<id>0</id>
-			<posX>474</posX>
-			<posY>93</posY>
-			<label>19101</label>
-			<font>font16</font>
-			<align>right</align>
-			<textcolor>ffffffff</textcolor>
-		</control>
 		<control>
 			<type>group</type>
 			<description>group element</description>
@@ -171,8 +147,8 @@
 			<description>BarVerGroup</description>
 			<id>700</id>
 			<posX>550</posX>
-			<posY>154</posY>
-			<width>533</width>
+			<posY>150</posY>
+			<width>733</width>
 			<height>533</height>
 			<animation>FlyInFromTop</animation>
 			<mpe>
@@ -189,19 +165,19 @@
 			<control>
 				<type>image</type>
 				<id>901</id>
-				<posX>800</posX>
-				<posY>154</posY>
-				<width>5</width>
-				<height>533</height>
+				<posX>788</posX>
+				<posY>145</posY>
+				<width>6</width>
+				<height>532</height>
 				<texture>bar_vert.png</texture>
 			</control>
 			<control>
 				<type>image</type>
 				<id>902</id>
-				<posX>1051</posX>
-				<posY>154</posY>
-				<width>5</width>
-				<height>533</height>
+				<posX>1044</posX>
+				<posY>145</posY>
+				<width>6</width>
+				<height>532</height>
 				<texture>bar_vert.png</texture>
 			</control>
 		</control>
@@ -218,18 +194,18 @@
 				<type>image</type>
 				<id>976</id>
 				<posX>550</posX>
-				<posY>328</posY>
-				<width>533</width>
-				<height>5</height>
+				<posY>318</posY>
+				<width>733</width>
+				<height>6</height>
 				<texture>bar_hor.png</texture>
 			</control>
 			<control>
 				<type>image</type>
 				<id>977</id>
 				<posX>550</posX>
-				<posY>506</posY>
-				<width>533</width>
-				<height>5</height>
+				<posY>499</posY>
+				<width>733</width>
+				<height>6</height>
 				<texture>bar_hor.png</texture>
 			</control>
 		</control>

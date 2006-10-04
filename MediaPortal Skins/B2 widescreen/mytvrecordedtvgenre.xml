@@ -4,6 +4,7 @@
 	<defaultcontrol>3</defaultcontrol>
 	<allowoverlay>no</allowoverlay>
 	<controls>
+	    <import>common.time.xml</import>
 		<control>
 			<type>image</type>
 			<description>BG</description>
@@ -22,8 +23,10 @@
 		<control>
 			<type>image</type>
 			<id>1</id>
-			<posX>142</posX>
-			<posY>493</posY>
+			<posX>155</posX>
+			<posY>522</posY>
+			<width>217</width>
+			<height>213</height>
 			<texture>hover_my tv.png</texture>
 		</control>
 		<control>
@@ -36,26 +39,6 @@
 			<font>font16</font>
 			<align>right</align>
 			<textcolor>ffffffff</textcolor>
-		</control>
-		<control>
-			<type>label</type>
-			<description>Date</description>
-			<id>200</id>
-			<posX>1309</posX>
-			<posY>40</posY>
-			<label>#date</label>
-			<align>right</align>
-			<textcolor>ffa9d0f7</textcolor>
-		</control>
-		<control>
-			<type>label</type>
-			<description>Time</description>
-			<id>201</id>
-			<posX>1309</posX>
-			<posY>66</posY>
-			<label>#time</label>
-			<align>right</align>
-			<textcolor>ffa9d0f7</textcolor>
 		</control>
 		<control>
 			<type>label</type>
@@ -106,7 +89,6 @@
 				<onup>5</onup>
 				<ondown>5</ondown>
 				<textXOff>18</textXOff>
-				<offsetSortButtonY>10</offsetSortButtonY>
 				<font>font13</font>
 				<label>620</label>
 				<disabledcolor>60ffffff</disabledcolor>
@@ -116,7 +98,6 @@
 				<textureAscending>arrow_round_up_nofocus.png</textureAscending>
 				<textureFocus>menu_list_focus.png</textureFocus>
 				<textureNoFocus>menu_list_nofocus.png</textureNoFocus>
-				<offsetSortButtonX>313</offsetSortButtonX>
 				<textcolor>White</textcolor>
 				<textureDescending>arrow_round_down_nofocus.png</textureDescending>
 			</control>

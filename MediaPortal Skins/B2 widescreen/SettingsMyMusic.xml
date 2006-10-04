@@ -52,7 +52,7 @@
 			<posY>381</posY>
 			<textXOff>28</textXOff>
 			<textYOff>2</textYOff>
-			<width>101</width>
+			<width>111</width>
 			<height>33</height>
 			<textureFocus>button_small_settings_focus.png</textureFocus>
 			<textureNoFocus>button_small_settings_nofocus.png</textureNoFocus>
@@ -80,7 +80,7 @@
 			<posY>426</posY>
 			<textXOff>28</textXOff>
 			<textYOff>2</textYOff>
-			<width>101</width>
+			<width>111</width>
 			<height>33</height>
 			<textureFocus>button_small_settings_focus.png</textureFocus>
 			<textureNoFocus>button_small_settings_nofocus.png</textureNoFocus>
@@ -108,7 +108,7 @@
 			<posY>472</posY>
 			<textXOff>28</textXOff>
 			<textYOff>2</textYOff>
-			<width>101</width>
+			<width>111</width>
 			<height>33</height>
 			<textureFocus>button_small_settings_focus.png</textureFocus>
 			<textureNoFocus>button_small_settings_nofocus.png</textureNoFocus>

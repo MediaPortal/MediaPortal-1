@@ -24,16 +24,18 @@
 		<control>
 			<type>image</type>
 			<id>1</id>
-			<posX>142</posX>
-			<posY>493</posY>
+			<posX>155</posX>
+			<posY>522</posY>
+			<width>217</width>
+			<height>213</height>
 			<texture>hover_my radio.png</texture>
 		</control>
 		<control>
 			<description>Date</description>
 			<type>label</type>
 			<id>1</id>
-			<posX>1309</posX>
-			<posY>40</posY>
+			<posX>1271</posX>
+			<posY>66</posY>
 			<label>#date</label>
 			<align>right</align>
 			<font>font13</font>
@@ -43,8 +45,8 @@
 			<description>Time</description>
 			<type>label</type>
 			<id>1</id>
-			<posX>1309</posX>
-			<posY>66</posY>
+			<posX>1271</posX>
+			<posY>93</posY>
 			<label>#time</label>
 			<align>right</align>
 			<font>font13</font>
@@ -67,8 +69,8 @@
 			<id>2</id>
 			<posX>113</posX>
 			<posY>120</posY>
-			<width>806</width>
-			<height>420</height>
+			<width>1140</width>
+			<height>440</height>
 			<colordiffuse>60ffffff</colordiffuse>
 			<texture>-</texture>
 		</control>
@@ -97,7 +99,9 @@
 			<description>day spin control</description>
 			<type>spincontrol</type>
 			<id>6</id>
-			<posX>113</posX>
+			<width>24</width>
+			<height>24</height>
+			<posX>119</posX>
 			<posY>122</posY>
 			<showrange>no</showrange>
 			<orientation>horizontal</orientation>
@@ -114,8 +118,10 @@
 			<description>time interval spin control</description>
 			<type>spincontrol</type>
 			<id>8</id>
+			<width>24</width>
+			<height>24</height>
 			<posX>313</posX>
-			<posY>133</posY>
+			<posY>128</posY>
 			<showrange>no</showrange>
 			<orientation>vertical</orientation>
 			<align>center</align>
@@ -133,8 +139,8 @@
 			<id>20</id>
 			<posX>117</posX>
 			<posY>166</posY>
-			<width>165</width>
-			<height>45</height>
+			<width>240</width>
+			<height>35</height>
 		</control>
 		<control>
 			<description>Channel image template</description>
@@ -157,16 +163,16 @@
 			<posY>6</posY>
 			<width>86</width>
 			<height>20</height>
-			<font>font13</font>
+			<font>font10</font>
 			<textcolor>FFFFFFFF</textcolor>
 		</control>
 		<control>
 			<description>Current program title</description>
 			<type>fadelabel</type>
 			<id>13</id>
-			<posX>474</posX>
-			<posY>560</posY>
-			<width>466</width>
+			<posX>374</posX>
+			<posY>574</posY>
+			<width>666</width>
 			<align>left</align>
 			<label>#Radio.Guide.Title</label>
 			<font>font16</font>
@@ -176,8 +182,8 @@
 			<description>Current program time</description>
 			<type>label</type>
 			<id>14</id>
-			<posX>474</posX>
-			<posY>706</posY>
+			<posX>374</posX>
+			<posY>720</posY>
 			<label>#Radio.Guide.Time</label>
 			<align>left</align>
 			<font>font16</font>
@@ -188,7 +194,7 @@
 			<type>label</type>
 			<id>27</id>
 			<posX>891</posX>
-			<posY>706</posY>
+			<posY>720</posY>
 			<label>#Radio.Guide.Genre</label>
 			<align>left</align>
 			<font>font16</font>
@@ -198,10 +204,10 @@
 			<description>Description1</description>
 			<type>textboxscrollup</type>
 			<id>15</id>
-			<posX>474</posX>
-			<posY>600</posY>
-			<width>533</width>
-			<height>86</height>
+			<posX>374</posX>
+			<posY>614</posY>
+			<width>879</width>
+			<height>93</height>
 			<seperator>----------------------------------------------------------------------------------------------</seperator>
 			<label>#Radio.Guide.Description</label>
 			<font>font13</font>
@@ -221,7 +227,7 @@
 			<id>24</id>
 			<visible>no</visible>
 			<label>-</label>
-			<font>font13</font>
+			<font>font10</font>
 			<textcolor>FF101010</textcolor>
 		</control>
 		<control>
@@ -229,8 +235,8 @@
 			<type>image</type>
 			<id>25</id>
 			<posX>56</posX>
-			<posY>166</posY>
-			<height>360</height>
+			<posY>165</posY>
+			<height>381</height>
 			<colordiffuse>c0ffffff</colordiffuse>
 			<texture>tvguide_slider.png</texture>
 		</control>
@@ -240,7 +246,7 @@
 			<visible>no</visible>
 			<id>26</id>
 			<label>-</label>
-			<font>font13</font>
+			<font>font10</font>
 			<textcolor>FFFFFFFF</textcolor>
 		</control>
 		<!--	<control>
@@ -257,9 +263,9 @@
 			<type>hscrollbar</type>
 			<id>28</id>
 			<posX>115</posX>
-			<posY>532</posY>
-			<width>797</width>
-			<height>26</height>
+			<posY>550</posY>
+			<width>1132</width>
+			<height>24</height>
 			<visible>yes</visible>
 		</control>
 		<control>
@@ -269,7 +275,7 @@
 			<posX>1261</posX>
 			<posY>166</posY>
 			<width>26</width>
-			<height>392</height>
+			<height>409</height>
 			<visible>yes</visible>
 		</control>
 		<control>
