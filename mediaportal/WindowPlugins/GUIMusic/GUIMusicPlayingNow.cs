@@ -529,7 +529,7 @@ namespace MediaPortal.GUI.Music
         case 928:       // Find Coverart
           {
             string albumFolderPath = System.IO.Path.GetDirectoryName(CurrentTrackFileName);
-            _MusicWindow.FindCoverArt(false, CurrentTrackTag.Artist, CurrentTrackTag.Album, albumFolderPath, CurrentTrackTag, -1);
+            if (_MusicWindow != null) _MusicWindow.FindCoverArt(false, CurrentTrackTag.Artist, CurrentTrackTag.Album, albumFolderPath, CurrentTrackTag, -1);
             CurrentThumbFileName = GUIMusicFiles.GetCoverArt(false, CurrentTrackFileName, CurrentTrackTag);
 
             if (CurrentThumbFileName.Length > 0)
@@ -547,7 +547,7 @@ namespace MediaPortal.GUI.Music
         case 4521:      // Show Album Info
           {
             string albumFolderPath = System.IO.Path.GetDirectoryName(CurrentTrackFileName);
-            _MusicWindow.ShowAlbumInfo(GetID, false, CurrentTrackTag.Artist, CurrentTrackTag.Album, albumFolderPath, CurrentTrackTag, -1);
+            if (_MusicWindow != null) _MusicWindow.ShowAlbumInfo(GetID, false, CurrentTrackTag.Artist, CurrentTrackTag.Album, albumFolderPath, CurrentTrackTag, -1);
             break;
           }
 
