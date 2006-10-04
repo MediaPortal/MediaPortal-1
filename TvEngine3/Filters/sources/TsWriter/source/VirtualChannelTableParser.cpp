@@ -54,7 +54,7 @@ CVirtualChannelTableParser::~CVirtualChannelTableParser(void)
 
 void CVirtualChannelTableParser::Reset()
 {
-	LogDebug("vct: Reset");
+	LogDebug("vct: Reset()");
 	m_decoder[0]->Reset();
 	m_decoder[1]->Reset();
   m_vecChannels.clear();
