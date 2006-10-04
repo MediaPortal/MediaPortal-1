@@ -44,10 +44,10 @@
 			<type>image</type>
 			<description>nowplaying background</description>
 			<id>0</id>
-			<posX>835</posX>
-			<posY>124</posY>
-			<width>460</width>
-			<height>400</height>
+			<posX>886</posX>
+			<posY>56</posY>
+			<width>400</width>
+			<height>484</height>
 			<texture>nowplaying_background.png</texture>
 			<keepaspectratio>no</keepaspectratio>
 		</control>
@@ -55,10 +55,10 @@
 			<type>image</type>
 			<description>album art image</description>
 			<id>112</id>
-			<posX>862</posX>
-			<posY>180</posY>
-			<width>400</width>
-			<height>290</height>			
+			<posX>908</posX>
+			<posY>122</posY>
+			<width>350</width>
+			<height>350</height>
 			<texture>-</texture>
 			<centered>yes</centered>
 			<keepaspectratio>no</keepaspectratio>
@@ -106,11 +106,11 @@
 			<type>fadelabel</type>
 			<description>year label</description>
 			<id>114</id>
-			<posX>1262</posX>
-			<posY>142</posY>
-			<width>160</width>
+			<posX>1258</posX>
+			<posY>86</posY>
+			<width>150</width>
 			<label>#Play.Current.Year</label>
-			<font>font14</font>
+			<font>font13</font>
 			<align>right</align>
 			<disabledcolor>ff808080</disabledcolor>
 		</control>
@@ -118,19 +118,19 @@
 			<type>label</type>
 			<description>album label</description>
 			<id>6</id>
-			<posX>860</posX>
-			<posY>142</posY>
-			<width>240</width>
+			<posX>908</posX>
+			<posY>86</posY>
+			<width>230</width>
 			<label>#Play.Current.Album</label>
-			<font>font14</font>
+			<font>font13</font>
 			<align>left</align>
 			<textcolor>ffffffff</textcolor>
 		</control>
 		<control>
 			<type>image</type>
 			<id>117</id>
-			<posX>940</posX>
-			<posY>478</posY>
+			<posX>970</posX>
+			<posY>482</posY>
 			<width>220</width>
 			<texture>osd_progress_background.png</texture>
 		</control>
@@ -138,8 +138,8 @@
 			<type>progress</type>
 			<description>track progress</description>
 			<id>118</id>
-			<posX>930</posX>
-			<posY>478</posY>
+			<posX>960</posX>
+			<posY>482</posY>
 			<width>240</width>
 			<visible>no</visible>
 			<lefttexture>osd_progress_left.png</lefttexture>
@@ -151,8 +151,8 @@
 			<type>label</type>
 			<description>track progress label</description>
 			<id>119</id>
-			<posX>860</posX>
-			<posY>478</posY>
+			<posX>908</posX>
+			<posY>482</posY>
 			<label>#currentplaytime</label>
 			<font>font14</font>
 			<align>left</align>
@@ -163,7 +163,7 @@
 			<description>track duration label</description>
 			<id>110</id>
 			<posX>1258</posX>
-			<posY>478</posY>
+			<posY>482</posY>
 			<label>#duration</label>
 			<font>font14</font>
 			<align>right</align>
