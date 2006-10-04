@@ -183,7 +183,7 @@ namespace Wikipedia
       if (imageurl != "")
       {
         //Check if we already have the file.
-        string thumbspath = "thumbs/wikipedia/";
+        string thumbspath = Config.GetSubFolder(Config.Dir.Thumbs, @"wikipedia\");
 
         //Create the wikipedia subdir in thumbs when it not exists.
         if (!System.IO.Directory.Exists(thumbspath))
