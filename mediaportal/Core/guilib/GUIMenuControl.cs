@@ -402,7 +402,6 @@ namespace MediaPortal.GUI.Library
 		#region Reder functions
 		public override void Render(float timePassed)
 		{
-      Log.Debug("time = " + timePassed.ToString());
       if (_backgroundImage != null) _backgroundImage.Render(timePassed);
       if (_hoverImage != null) _hoverImage.Render(timePassed);
 			_oldViewport = GUIGraphicsContext.DX9Device.Viewport;
