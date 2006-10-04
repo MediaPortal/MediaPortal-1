@@ -33,6 +33,7 @@ using System.Net;
 using System.Web;
 using System.Threading;
 using System.ComponentModel;
+using MediaPortal.Util;
 using MediaPortal.Music.Database;
 
 
@@ -322,7 +323,7 @@ namespace MediaPortal.MusicVideos.Database
       String lsImageUrl = loMatch.Groups[1].Value;
       WebClient wc = new WebClient();
       //moviename = moviename.Replace(":", "-");
-      wc.DownloadFile(lsImageUrl, @"thumbs\MPTemp -" + fsArtistId + ".jpg");
+      wc.DownloadFile(lsImageUrl, Config.GetFile(Config.Dir.Thumbs, "MPTemp -" + fsArtistId + ".jpg"));
     }
     private string convertHtmlToText(String fsHtml)
     {
