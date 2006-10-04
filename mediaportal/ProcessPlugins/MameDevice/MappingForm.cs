@@ -512,7 +512,7 @@ namespace MediaPortal.InputDevices
       groupBoxAction.Enabled = false;
       treeMapping.Nodes.Clear();
       XmlDocument doc = new XmlDocument();
-      string path = "InputDeviceMappings\\defaults\\" + xmlFile;
+      string path = Config.GetFile(Config.Dir.Base, @"InputDeviceMappings\defaults", xmlFile);
       if (!defaults && File.Exists(Config.GetFile(Config.Dir.CustomInputDevice, xmlFile)))
         path = Config.GetFile(Config.Dir.CustomInputDevice, xmlFile);
       doc.Load(path);
