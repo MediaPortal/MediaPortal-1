@@ -268,12 +268,13 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.WriteFile("Channel is not a ATSC channel!!! {0}", channel.GetType().ToString());
           return false;
         }
-        if (IsReceivingAudioVideo == false)
+        ATSCChannel oldChannel = _currentChannel as ATSCChannel;
+        if (_currentChannel != null)
         {
-          ATSCChannel oldChannel = _currentChannel as ATSCChannel;
-          if (_currentChannel != null)
+          if (oldChannel.Equals(channel))
           {
-            if (oldChannel.Equals(channel)) return true;
+            Log.Log.WriteFile("atsc:Already tuned to channel!!! ");
+            return true;
           }
         }
         if (_graphState == GraphState.Idle)
@@ -287,11 +288,11 @@ namespace TvLibrary.Implementations.DVB
         _tuningSpace.get_DefaultLocator(out locator);
         IATSCLocator atscLocator = (IATSCLocator)locator;
         int hr;
-        hr = locator.put_CarrierFrequency(-1);//(int)atscChannel.Frequency);
         hr = atscLocator.put_PhysicalChannel(atscChannel.PhysicalChannel);
         hr = atscLocator.put_SymbolRate(-1);//atscChannel.SymbolRate);
         hr = atscLocator.put_TSID(-1);//atscChannel.TransportId);
 
+        hr = atscLocator.put_CarrierFrequency(-1);//(int)atscChannel.Frequency);
         hr = atscLocator.put_InnerFEC(FECMethod.MethodNotSet);
         hr = atscLocator.put_Modulation(atscChannel.ModulationType);
         hr = _tuneRequest.put_MinorChannel(atscChannel.MinorChannel);
@@ -300,8 +301,6 @@ namespace TvLibrary.Implementations.DVB
 
         _currentChannel = channel;
         SubmitTuneRequest(_tuneRequest);
-
-
         SetAnalyzerMapping(atscChannel.PmtPid);
       }
       catch (Exception ex)

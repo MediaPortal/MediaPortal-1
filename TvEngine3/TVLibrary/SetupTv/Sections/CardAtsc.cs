@@ -127,7 +127,7 @@ namespace SetupTv.Sections
 
           if (index == 2)
           {
-            RemoteControl.Instance.Tune(_cardNumber, tuneChannel);
+            RemoteControl.Instance.TuneScan(_cardNumber, tuneChannel);
           }
           IChannel[] channels = RemoteControl.Instance.Scan(_cardNumber, tuneChannel);
           UpdateStatus();

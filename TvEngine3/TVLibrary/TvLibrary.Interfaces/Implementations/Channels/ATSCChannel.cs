@@ -177,6 +177,8 @@ namespace TvLibrary.Channels
       ATSCChannel ch = obj as ATSCChannel;
       if (ch.MajorChannel != MajorChannel) return false;
       if (ch.MinorChannel != MinorChannel) return false;
+      if (ch.ModulationType != ModulationType) return false;
+      if (ch.PhysicalChannel != PhysicalChannel) return false;
       if (ch.SymbolRate != SymbolRate) return false;
       if (ch.AudioPid != AudioPid) return false;
       if (ch.VideoPid != VideoPid) return false;
