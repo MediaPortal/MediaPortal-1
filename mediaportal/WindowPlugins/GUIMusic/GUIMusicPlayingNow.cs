@@ -504,8 +504,8 @@ namespace MediaPortal.GUI.Music
 
       dlg.AddLocalizedString(930);        //Add to favorites
 
-      dlg.AddLocalizedString(928);        // Find Coverart
-      dlg.AddLocalizedString(4521);       // Show Album Info
+      //dlg.AddLocalizedString(928);        // Find Coverart
+      //dlg.AddLocalizedString(4521);       // Show Album Info
 
       if (IsCdTrack(CurrentTrackFileName))
         dlg.AddLocalizedString(4554);   // Lookup CD info
@@ -525,6 +525,7 @@ namespace MediaPortal.GUI.Music
 
       switch (dlg.SelectedId)
       {
+          /// broken
         case 928:       // Find Coverart
           {
             string albumFolderPath = System.IO.Path.GetDirectoryName(CurrentTrackFileName);
@@ -542,6 +543,7 @@ namespace MediaPortal.GUI.Music
             break;
           }
 
+          /// broken
         case 4521:      // Show Album Info
           {
             string albumFolderPath = System.IO.Path.GetDirectoryName(CurrentTrackFileName);
