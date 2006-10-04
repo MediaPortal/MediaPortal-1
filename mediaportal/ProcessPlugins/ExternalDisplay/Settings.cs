@@ -31,6 +31,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 using ExternalDisplay.Setting;
+using MediaPortal.Util;
 using MediaPortal.GUI.Library;
 using ProcessPlugins.ExternalDisplay.Drivers;
 using ProcessPlugins.ExternalDisplay.Setting;
@@ -480,7 +481,7 @@ namespace ProcessPlugins.ExternalDisplay
         Log.Debug("ExternalDisplay: Loading NoritakeGU7000...");
       }
       list.Add(new NoritakeGU7000());
-      DirectoryInfo dinfo = new DirectoryInfo(@"plugins\process\LCDDrivers");
+      DirectoryInfo dinfo = new DirectoryInfo(Config.GetSubFolder(Config.Dir.Plugins, @"process\LCDDrivers"));
       if (!dinfo.Exists)
       {
         dinfo.Create();
