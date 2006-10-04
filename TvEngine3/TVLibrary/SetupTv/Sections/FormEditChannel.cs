@@ -92,9 +92,9 @@ namespace SetupTv.Sections
         //ATSC tab
         if (detail.ChannelType == 1)
         {
-          detail.ChannelNumber = Int32.Parse(textBox12.Text);
-          detail.MajorChannel = Int32.Parse(textBox11.Text);
-          detail.MinorChannel = Int32.Parse(textBox10.Text);
+          detail.ChannelNumber = Int32.Parse(textBoxProgram.Text);
+          detail.MajorChannel = Int32.Parse(textBoxMajor.Text);
+          detail.MinorChannel = Int32.Parse(textBoxMinor.Text);
           detail.AudioPid = Int32.Parse(textBoxAudioPid.Text);
           detail.VideoPid = Int32.Parse(textBoxVideoPid.Text);
         }
@@ -187,9 +187,9 @@ namespace SetupTv.Sections
         if (detail.ChannelType == 1)
         {
           _atsc = true;
-          textBox12.Text = detail.ChannelNumber.ToString();
-          textBox11.Text = detail.MajorChannel.ToString();
-          textBox10.Text = detail.MinorChannel.ToString();
+          textBoxProgram.Text = detail.ChannelNumber.ToString();
+          textBoxMajor.Text = detail.MajorChannel.ToString();
+          textBoxMinor.Text = detail.MinorChannel.ToString();
           textBoxAudioPid.Text = detail.AudioPid.ToString();
           textBoxVideoPid.Text = detail.VideoPid.ToString();
         }

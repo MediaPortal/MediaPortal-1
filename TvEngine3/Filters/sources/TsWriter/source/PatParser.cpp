@@ -71,11 +71,11 @@ void CPatParser::SetConditionalAccess(CConditionalAccess* access)
  
 int CPatParser::Count()
 {
-	if (m_nitDecoder.Ready()==false) return 0;
   if (m_vctParser.Count() > 0)
   {
     return m_vctParser.Count();
   }
+	if (m_nitDecoder.Ready()==false) return 0;
   int count= m_pmtParsers.size();
 	return count;
 }

@@ -180,7 +180,7 @@ namespace TvLibrary.Implementations.DVB
       try
       {
         _analyzer.Start();
-        if (_card.IsTunerLocked || _card.SignalQuality>0 || _card.SignalLevel>0)
+        if (_card.IsTunerLocked || _card.SignalQuality > 0 || _card.SignalLevel > 0)
         {
           Log.Log.WriteFile("Signal detected, wait for good signal quality");
           startTime = DateTime.Now;
@@ -258,7 +258,12 @@ namespace TvLibrary.Implementations.DVB
                   out freeCAMode, out serviceType, out modulation, out providerName, out serviceName,
                   out pcrPid, out pmtPid, out videoPid, out audio1Pid, out audio2Pid, out audio3Pid,
                   out ac3Pid, out  audioLanguage1, out audioLanguage2, out audioLanguage3, out teletextPid, out subtitlePid);
-            if ((networkId != 0 || transportId != 0 || serviceId != 0) && pmtPid != 0)
+            bool isValid = ((networkId != 0 || transportId != 0 || serviceId != 0) && pmtPid != 0);
+            if ((channel as ATSCChannel) != null)
+            {
+              isValid = (ac3Pid != 0 && videoPid != 0 && pcrPid != 0 && majorChannel != 0 && minorChannel != 0);
+            }
+            if (isValid)
             {
               channelFound[i] = true;
               found++;
@@ -278,6 +283,7 @@ namespace TvLibrary.Implementations.DVB
               info.service_name = Marshal.PtrToStringAnsi(serviceName);
               info.pcr_pid = pcrPid;
               info.network_pmt_PID = pmtPid;
+
               strAudioLanguage1 = Marshal.PtrToStringAnsi(audioLanguage1);
               strAudioLanguage2 = Marshal.PtrToStringAnsi(audioLanguage2);
               strAudioLanguage3 = Marshal.PtrToStringAnsi(audioLanguage3);

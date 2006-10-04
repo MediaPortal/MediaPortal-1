@@ -81,16 +81,16 @@ namespace SetupTv.Sections
       this.label20 = new System.Windows.Forms.Label();
       this.label21 = new System.Windows.Forms.Label();
       this.tabPage6 = new System.Windows.Forms.TabPage();
-      this.textBox10 = new System.Windows.Forms.TextBox();
-      this.textBox11 = new System.Windows.Forms.TextBox();
-      this.textBox12 = new System.Windows.Forms.TextBox();
+      this.textBoxVideoPid = new System.Windows.Forms.TextBox();
+      this.label27 = new System.Windows.Forms.Label();
+      this.textBoxAudioPid = new System.Windows.Forms.TextBox();
+      this.label26 = new System.Windows.Forms.Label();
+      this.textBoxMinor = new System.Windows.Forms.TextBox();
+      this.textBoxMajor = new System.Windows.Forms.TextBox();
+      this.textBoxProgram = new System.Windows.Forms.TextBox();
       this.label22 = new System.Windows.Forms.Label();
       this.label23 = new System.Windows.Forms.Label();
       this.label24 = new System.Windows.Forms.Label();
-      this.label26 = new System.Windows.Forms.Label();
-      this.textBoxAudioPid = new System.Windows.Forms.TextBox();
-      this.label27 = new System.Windows.Forms.Label();
-      this.textBoxVideoPid = new System.Windows.Forms.TextBox();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.tabPage2.SuspendLayout();
@@ -631,9 +631,9 @@ namespace SetupTv.Sections
       this.tabPage6.Controls.Add(this.label27);
       this.tabPage6.Controls.Add(this.textBoxAudioPid);
       this.tabPage6.Controls.Add(this.label26);
-      this.tabPage6.Controls.Add(this.textBox10);
-      this.tabPage6.Controls.Add(this.textBox11);
-      this.tabPage6.Controls.Add(this.textBox12);
+      this.tabPage6.Controls.Add(this.textBoxMinor);
+      this.tabPage6.Controls.Add(this.textBoxMajor);
+      this.tabPage6.Controls.Add(this.textBoxProgram);
       this.tabPage6.Controls.Add(this.label22);
       this.tabPage6.Controls.Add(this.label23);
       this.tabPage6.Controls.Add(this.label24);
@@ -644,29 +644,63 @@ namespace SetupTv.Sections
       this.tabPage6.Text = "ATSC";
       this.tabPage6.UseVisualStyleBackColor = true;
       // 
-      // textBox10
+      // textBoxVideoPid
       // 
-      this.textBox10.Location = new System.Drawing.Point(103, 76);
-      this.textBox10.Name = "textBox10";
-      this.textBox10.Size = new System.Drawing.Size(146, 20);
-      this.textBox10.TabIndex = 24;
-      this.textBox10.Text = "-1";
+      this.textBoxVideoPid.Location = new System.Drawing.Point(103, 134);
+      this.textBoxVideoPid.Name = "textBoxVideoPid";
+      this.textBoxVideoPid.Size = new System.Drawing.Size(146, 20);
+      this.textBoxVideoPid.TabIndex = 28;
+      this.textBoxVideoPid.Text = "-1";
       // 
-      // textBox11
+      // label27
       // 
-      this.textBox11.Location = new System.Drawing.Point(103, 50);
-      this.textBox11.Name = "textBox11";
-      this.textBox11.Size = new System.Drawing.Size(146, 20);
-      this.textBox11.TabIndex = 23;
-      this.textBox11.Text = "-1";
+      this.label27.AutoSize = true;
+      this.label27.Location = new System.Drawing.Point(25, 141);
+      this.label27.Name = "label27";
+      this.label27.Size = new System.Drawing.Size(52, 13);
+      this.label27.TabIndex = 27;
+      this.label27.Text = "VideoPid:";
       // 
-      // textBox12
+      // textBoxAudioPid
       // 
-      this.textBox12.Location = new System.Drawing.Point(103, 24);
-      this.textBox12.Name = "textBox12";
-      this.textBox12.Size = new System.Drawing.Size(146, 20);
-      this.textBox12.TabIndex = 22;
-      this.textBox12.Text = "34";
+      this.textBoxAudioPid.Location = new System.Drawing.Point(103, 109);
+      this.textBoxAudioPid.Name = "textBoxAudioPid";
+      this.textBoxAudioPid.Size = new System.Drawing.Size(146, 20);
+      this.textBoxAudioPid.TabIndex = 26;
+      this.textBoxAudioPid.Text = "-1";
+      // 
+      // label26
+      // 
+      this.label26.AutoSize = true;
+      this.label26.Location = new System.Drawing.Point(25, 112);
+      this.label26.Name = "label26";
+      this.label26.Size = new System.Drawing.Size(52, 13);
+      this.label26.TabIndex = 25;
+      this.label26.Text = "AudioPid:";
+      // 
+      // textBoxMinor
+      // 
+      this.textBoxMinor.Location = new System.Drawing.Point(103, 76);
+      this.textBoxMinor.Name = "textBoxMinor";
+      this.textBoxMinor.Size = new System.Drawing.Size(146, 20);
+      this.textBoxMinor.TabIndex = 24;
+      this.textBoxMinor.Text = "-1";
+      // 
+      // textBoxMajor
+      // 
+      this.textBoxMajor.Location = new System.Drawing.Point(103, 50);
+      this.textBoxMajor.Name = "textBoxMajor";
+      this.textBoxMajor.Size = new System.Drawing.Size(146, 20);
+      this.textBoxMajor.TabIndex = 23;
+      this.textBoxMajor.Text = "-1";
+      // 
+      // textBoxProgram
+      // 
+      this.textBoxProgram.Location = new System.Drawing.Point(103, 24);
+      this.textBoxProgram.Name = "textBoxProgram";
+      this.textBoxProgram.Size = new System.Drawing.Size(146, 20);
+      this.textBoxProgram.TabIndex = 22;
+      this.textBoxProgram.Text = "34";
       // 
       // label22
       // 
@@ -694,40 +728,6 @@ namespace SetupTv.Sections
       this.label24.Size = new System.Drawing.Size(49, 13);
       this.label24.TabIndex = 19;
       this.label24.Text = "Channel:";
-      // 
-      // label26
-      // 
-      this.label26.AutoSize = true;
-      this.label26.Location = new System.Drawing.Point(25, 112);
-      this.label26.Name = "label26";
-      this.label26.Size = new System.Drawing.Size(52, 13);
-      this.label26.TabIndex = 25;
-      this.label26.Text = "AudioPid:";
-      // 
-      // textBoxAudioPid
-      // 
-      this.textBoxAudioPid.Location = new System.Drawing.Point(103, 109);
-      this.textBoxAudioPid.Name = "textBoxAudioPid";
-      this.textBoxAudioPid.Size = new System.Drawing.Size(146, 20);
-      this.textBoxAudioPid.TabIndex = 26;
-      this.textBoxAudioPid.Text = "-1";
-      // 
-      // label27
-      // 
-      this.label27.AutoSize = true;
-      this.label27.Location = new System.Drawing.Point(25, 141);
-      this.label27.Name = "label27";
-      this.label27.Size = new System.Drawing.Size(52, 13);
-      this.label27.TabIndex = 27;
-      this.label27.Text = "VideoPid:";
-      // 
-      // textBoxVideoPid
-      // 
-      this.textBoxVideoPid.Location = new System.Drawing.Point(103, 134);
-      this.textBoxVideoPid.Name = "textBoxVideoPid";
-      this.textBoxVideoPid.Size = new System.Drawing.Size(146, 20);
-      this.textBoxVideoPid.TabIndex = 28;
-      this.textBoxVideoPid.Text = "-1";
       // 
       // FormEditChannel
       // 
@@ -808,9 +808,9 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label19;
     private System.Windows.Forms.Label label20;
     private System.Windows.Forms.Label label21;
-    private System.Windows.Forms.TextBox textBox10;
-    private System.Windows.Forms.TextBox textBox11;
-    private System.Windows.Forms.TextBox textBox12;
+    private System.Windows.Forms.TextBox textBoxMinor;
+    private System.Windows.Forms.TextBox textBoxMajor;
+    private System.Windows.Forms.TextBox textBoxProgram;
     private System.Windows.Forms.Label label22;
     private System.Windows.Forms.Label label23;
     private System.Windows.Forms.Label label24;

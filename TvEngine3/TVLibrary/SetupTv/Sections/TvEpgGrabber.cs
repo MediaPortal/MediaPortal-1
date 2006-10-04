@@ -185,6 +185,7 @@ namespace SetupTv.Sections
       Channel channel = e.Item.Tag as Channel;
       if (channel == null) return;
       channel.GrabEpg = e.Item.Checked;
+      channel.Persist();
     }
 
     private void mpButtonAll_Click(object sender, EventArgs e)
