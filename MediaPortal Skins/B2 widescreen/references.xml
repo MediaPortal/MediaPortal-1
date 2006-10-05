@@ -301,12 +301,12 @@
 		<upBtnWidth>39</upBtnWidth>
 		<downBtnWidth>39</downBtnWidth>
 		<deleteBtnWidth>46</deleteBtnWidth>
-		<upBtnHeight>42</upBtnHeight>
-		<downBtnHeight>42</downBtnHeight>
-		<deleteBtnHeight>42</deleteBtnHeight>
+		<upBtnHeight>41</upBtnHeight>
+		<downBtnHeight>41</downBtnHeight>
+		<deleteBtnHeight>41</deleteBtnHeight>
 		<upBtnXOffset>670</upBtnXOffset>
-		<downBtnXOffset>710</downBtnXOffset>
-		<deleteBtnXOffset>750</deleteBtnXOffset>
+		<downBtnXOffset>709</downBtnXOffset>
+		<deleteBtnXOffset>748</deleteBtnXOffset>
 		<upBtnYOffset>0</upBtnYOffset>
 		<downBtnYOffset>0</downBtnYOffset>
 		<deleteBtnYOffset>0</deleteBtnYOffset>
