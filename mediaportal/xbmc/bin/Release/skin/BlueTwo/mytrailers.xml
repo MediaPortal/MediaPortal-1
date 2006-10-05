@@ -8,21 +8,6 @@
 	<controls>
 		<import>common.window.xml</import>
 		<control>
-			<type>image</type>
-			<description>BackGround</description>
-			<id>1</id>
-			<posX>0</posX>
-			<posY>0</posY>
-			<texture>background.png</texture>
-		</control>
-		<control>
-			<type>image</type>
-			<id>1</id>
-			<posX>60</posX>
-			<posY>20</posY>
-			<texture>trailers_logo.png</texture>
-		</control>
-		<control>
 			<type>togglebutton</type>
 			<description>Plot</description>
 			<id>5</id>
@@ -180,6 +165,7 @@
 			<posX>256</posX>
 			<posY>44</posY>
 			<label>#title</label>
+			<width>400</width>
 			<font>font18</font>
 			<disabledcolor>ff808080</disabledcolor>
 		</control>
@@ -233,13 +219,6 @@
 			<width>120</width>
 			<height>184</height>
 			<texture>playback_background.png</texture>
-		</control>
-		<control>
-			<type>image</type>
-			<id>1</id>
-			<posX>75</posX>
-			<posY>370</posY>
-			<texture>#header.hover</texture>
 		</control>
 		<control>
 			<type>image</type>

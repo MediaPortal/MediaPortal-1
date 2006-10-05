@@ -1,45 +1,14 @@
 <window>
-<id>4711</id>
-<defaultcontrol>10</defaultcontrol>
-<allowoverlay>yes</allowoverlay>
-<controls>
+    <id>4711</id>
+    <defaultcontrol>10</defaultcontrol>
+    <allowoverlay>yes</allowoverlay>
+    <define>#header.label:2516</define>
+    <define>#header.image:wikipedia_logo.png</define>
+    <define>#header.hover:hover_wikipedia.png</define>
+    <controls>
+    <import>common.window.xml</import>
+
     <control>
-        <type>image</type>
-        <description>Background</description>
-        <id>1</id>
-        <posX>0</posX>
-        <posY>0</posY>
-        <width>720</width>
-        <height>576</height>
-		<texture>background.png</texture>
-    </control>
-    <control>
-        <type>image</type>
-        <description>wikipedia text logo</description>
-        <id>2</id>
-        <posX>60</posX>
-        <posY>20</posY>
-        <texture>wikipedia_logo.png</texture>
-    </control>
-    <control>
-        <type>image</type>
-        <description>Reading buddy</description>
-        <id>3</id>
-        <posX>75</posX>
-        <posY>370</posY>
-        <texture>hover_wikipedia.png</texture>
-    </control>
-    <control>
-        <type>label</type>
-        <description>Article title/searchterm</description>
-        <id>4</id>
-        <posX>250</posX>
-        <posY>70</posY>
-        <label>Wikipedia</label>
-        <font>font16</font>
-        <align>right</align>
-    </control>
-	<control>
         <type>label</type>
         <description>Image description</description>
         <id>5</id>
@@ -48,7 +17,7 @@
         <label>Wikipedia</label>
         <font>font16</font>
         <align>right</align>
-		<visible>no</visible>		
+        <visible>no</visible>		
     </control>
     <control>
          <type>button</type>
