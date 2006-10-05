@@ -253,10 +253,13 @@ void CVirtualChannelTableParser::OnNewSection(int pid, int tableId, CSection& ne
     int nr=1;
     for (int ch=0; ch < m_vecChannels.size();++ch)
     {
-      CChannelInfo& infoCh = m_vecChannels[i];
+      CChannelInfo& infoCh = m_vecChannels[ch];
       if (strcmp(infoCh.ServiceName, info.ServiceName)==0)
       {
-        sprintf(infoCh.ServiceName,"%s#%d", infoCh.ServiceName,nr++);
+        if (infoCh.MajorChannel!=info.MajorChannel || infoCh.MinorChannel!=info.MinorChannel)
+        {
+          sprintf(infoCh.ServiceName,"%s#%d", infoCh.ServiceName,nr++);
+        }
       }
     }
     if (nr>1)
