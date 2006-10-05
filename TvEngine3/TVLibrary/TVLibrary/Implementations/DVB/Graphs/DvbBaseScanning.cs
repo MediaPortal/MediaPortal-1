@@ -163,8 +163,8 @@ namespace TvLibrary.Implementations.DVB
       ResetSignalUpdate();
       bool locked = (_card.IsTunerLocked);
       TimeSpan tsUpdate = DateTime.Now - startTime;
-      Log.Log.WriteFile("Scan: signal status update took %d msec",tsUpdate.TotalMilliseconds);
-      if (tsUpdate.TotalMilliseconds > 1000)
+      Log.Log.WriteFile("Scan: signal status update took {0} msec",tsUpdate.TotalMilliseconds);
+      if (tsUpdate.TotalMilliseconds > 2000)
       {
         //getting signal status takes a looong time due to card driver issue
         //so we do a simple check
