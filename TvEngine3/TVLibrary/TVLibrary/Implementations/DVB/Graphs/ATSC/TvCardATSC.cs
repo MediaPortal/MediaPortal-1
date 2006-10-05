@@ -283,7 +283,7 @@ namespace TvLibrary.Implementations.DVB
         }
         if (!CheckThreadId()) return false;
         ILocator locator;
-        Log.Log.WriteFile("Tune: ", atscChannel.ToString());
+        Log.Log.WriteFile("Tune: {0}", atscChannel.ToString());
 
         _tuningSpace.get_DefaultLocator(out locator);
         IATSCLocator atscLocator = (IATSCLocator)locator;

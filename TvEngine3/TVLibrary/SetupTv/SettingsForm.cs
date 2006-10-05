@@ -82,7 +82,7 @@ namespace SetupTv
         //
         // Set caption
         //
-        Text = "MediaPortal - TV";
+        Text = "MediaPortal - TV Server management console";
 
         //
         // Build options tree

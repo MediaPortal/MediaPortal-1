@@ -1352,27 +1352,56 @@ namespace TvLibrary.Implementations.DVB
       if (ts.TotalMilliseconds < 5000) return;
       try
       {
-        _tunerLocked = false;
-        _signalLevel = 0;
-        _signalPresent = false;
-        _signalQuality = 0;
-        if (_graphRunning == false) return;
-        if (Channel == null) return;
-        if (_filterNetworkProvider == null)
+        if (_graphRunning == false)
         {
+          _tunerLocked = false;
+          _signalLevel = 0;
+          _signalPresent = false;
+          _signalQuality = 0;
           return;
         }
-        if (!CheckThreadId()) return;
+        if (Channel == null)
+        {
+          _tunerLocked = false;
+          _signalLevel = 0;
+          _signalPresent = false;
+          _signalQuality = 0;
+          return;
+        }
+        if (_filterNetworkProvider == null)
+        {
+          _tunerLocked = false;
+          _signalLevel = 0;
+          _signalPresent = false;
+          _signalQuality = 0;
+          return;
+        }
+        if (!CheckThreadId())
+        {
+          _tunerLocked = false;
+          _signalLevel = 0;
+          _signalPresent = false;
+          _signalQuality = 0;
+          return;
+        }
 
         //Log.Log.WriteFile("dvb:UpdateSignalQuality");
         //if we dont have an IBDA_SignalStatistics interface then return
         if (_tunerStatistics == null)
         {
+          _tunerLocked = false;
+          _signalLevel = 0;
+          _signalPresent = false;
+          _signalQuality = 0;
 //          Log.Log.WriteFile("dvb:UpdateSignalPresent() no tuner stat interfaces");
           return;
         }
         if (_tunerStatistics.Count == 0)
         {
+          _tunerLocked = false;
+          _signalLevel = 0;
+          _signalPresent = false;
+          _signalQuality = 0;
 //          Log.Log.WriteFile("dvb:UpdateSignalPresent() no tuner stat interfaces");
           return;
         }
@@ -1381,7 +1410,7 @@ namespace TvLibrary.Implementations.DVB
         long signalQuality = 0;
         long signalStrength = 0;
 
-//        Log.Log.Write("dvb:UpdateSignalQuality() count:{0}", _tunerStatistics.Count);
+//       Log.Log.Write("dvb:UpdateSignalQuality() count:{0}", _tunerStatistics.Count);
         for (int i = 0; i < _tunerStatistics.Count; i++)
         {
           IBDA_SignalStatistics stat = (IBDA_SignalStatistics)_tunerStatistics[i];

@@ -160,10 +160,10 @@ namespace TvLibrary.Implementations.DVB
       _analyzer = GetAnalyzer();
       _card.IsScanning = false;
 
+      System.Threading.Thread.Sleep(2000);
       DateTime startTime = DateTime.Now;
       while (true)
       {
-        System.Threading.Thread.Sleep(100);
         ResetSignalUpdate();
         if (_card.IsTunerLocked)
         {
@@ -171,10 +171,12 @@ namespace TvLibrary.Implementations.DVB
         }
         TimeSpan ts = DateTime.Now - startTime;
         if (ts.TotalMilliseconds >= 2000) break;
+        System.Threading.Thread.Sleep(100);
       }
       if (_card.IsTunerLocked == false)
       {
-        if (_card.SignalQuality < 30 && _card.SignalLevel <30)
+        ResetSignalUpdate();
+        if (_card.SignalQuality < 10 && _card.SignalLevel <10)
         {
           Log.Log.WriteFile("Scan! no signal detected: locked:{0} signal level:{1} signal quality:{2}", _card.IsTunerLocked, _card.SignalLevel, _card.SignalQuality);
           return null;
@@ -182,7 +184,8 @@ namespace TvLibrary.Implementations.DVB
       }
       try
       {
-         _analyzer.Start();
+        _analyzer.Start();
+        ResetSignalUpdate();
         if (_card.IsTunerLocked || _card.SignalQuality > 0 || _card.SignalLevel > 0)
         {
           Log.Log.WriteFile("Signal detected, wait for good signal quality");

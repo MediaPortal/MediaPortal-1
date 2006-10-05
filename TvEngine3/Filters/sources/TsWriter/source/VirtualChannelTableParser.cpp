@@ -250,28 +250,38 @@ void CVirtualChannelTableParser::OnNewSection(int pid, int tableId, CSection& ne
 	  }
 		start += descriptors_length;
 		
-    int nr=1;
-    for (int ch=0; ch < m_vecChannels.size();++ch)
-    {
-      CChannelInfo& infoCh = m_vecChannels[ch];
-      if (strcmp(infoCh.ServiceName, info.ServiceName)==0)
-      {
-        if (infoCh.MajorChannel!=info.MajorChannel || infoCh.MinorChannel!=info.MinorChannel)
-        {
-          sprintf(infoCh.ServiceName,"%s#%d", infoCh.ServiceName,nr++);
-        }
-      }
-    }
-    if (nr>1)
-    {
-        sprintf(info.ServiceName,"%s#%d", info.ServiceName,nr++);
-    }
 		LogDebug("VCT:  #%d major:%d minor:%d freq:%d tsid:%x sid:%x servicetype:%x name:%s video:%x audio:%x ac3:%x", 
 				m_vecChannels.size(),
 				info.MajorChannel,info.MinorChannel,info.Frequency,
 				info.ServiceId,info.TransportId,info.ServiceType,
 				info.ServiceName,info.PidTable.VideoPid,info.PidTable.AudioPid1,info.PidTable.AC3Pid);
     m_vecChannels.push_back(info);
+  }
+
+  try
+  {
+    for (int ch1=0; ch1 < m_vecChannels.size();++ch1)
+    {
+      int nr=1;
+      CChannelInfo& infoCh1 = m_vecChannels[ch1];
+
+      for (int ch2=0; ch2 < m_vecChannels.size();++ch2)
+      {
+        if (ch2==ch1) continue;
+        CChannelInfo& infoCh2 = m_vecChannels[ch2];
+        if (strcmp(infoCh1.ServiceName, infoCh2.ServiceName)==0)
+        {
+          if (infoCh1.MajorChannel!=infoCh2.MajorChannel || infoCh1.MinorChannel!=infoCh2.MinorChannel)
+          {
+            sprintf(infoCh2.ServiceName,"%s#%d", infoCh2.ServiceName,nr++);
+          }
+        }
+      }
+    }
+  }
+  catch(...)
+  {
+    LogDebug("VCT: exception");
   }
 }
 
