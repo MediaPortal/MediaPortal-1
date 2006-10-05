@@ -28,6 +28,7 @@ using System;
 using System.Collections;
 using MediaPortal.GUI.Library;
 using MediaPortal.Utils.Services;
+using MediaPortal.Util;
 using MediaPortal.Player;
 using MediaPortal.Topbar;
 #endregion
@@ -59,26 +60,40 @@ namespace MediaPortal.GUI.Home
 			if (menuMain == null) return;
 			menuMain.ButtonInfos.Clear();
 			ArrayList plugins = PluginManager.SetupForms;
-			foreach (ISetupForm setup in plugins)
-			{
-				string plugInText;
-				string focusTexture;
-				string nonFocusTexture;
-				string hover;
-				if (setup.GetHome(out plugInText, out focusTexture, out nonFocusTexture, out hover))
-				{
-					IShowPlugin showPlugin = setup as IShowPlugin;
-          if (setup.PluginName().Equals("Home")) continue;
-					if ((showPlugin != null) && (showPlugin.ShowDefaultHome() == true)) continue;
-          if ((focusTexture == null) || (focusTexture.Length < 1))       focusTexture    = setup.PluginName();
-          if ((nonFocusTexture == null) || (nonFocusTexture.Length < 1)) nonFocusTexture = setup.PluginName();
-          if ((hover == null) || (hover.Length < 1))                     hover           = setup.PluginName();
-          focusTexture = GetFocusTextureFileName(focusTexture);
-          nonFocusTexture = GetNonFocusTextureFileName(nonFocusTexture);
-          hover = GetHoverFileName(hover); 
-          menuMain.ButtonInfos.Add(new MenuButtonInfo(plugInText, setup.GetWindowId(), focusTexture, nonFocusTexture, hover));
-				}
-			}
+
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        foreach (ISetupForm setup in plugins)
+        {
+          string plugInText;
+          string focusTexture;
+          string nonFocusTexture;
+          string hover;
+          if (setup.GetHome(out plugInText, out focusTexture, out nonFocusTexture, out hover))
+          {
+            if (setup.PluginName().Equals("Home")) continue;
+            IShowPlugin showPlugin = setup as IShowPlugin;
+
+            string showInPlugIns = xmlreader.GetValue("myplugins", setup.PluginName());
+            if ((showInPlugIns == null) || (showInPlugIns.Length < 1))
+            {
+              if ((showPlugin != null) && (showPlugin.ShowDefaultHome() == true)) continue;
+            }
+            else
+            {
+              if (showInPlugIns.ToLower().Equals("no")) continue;
+            }
+            
+            if ((focusTexture == null) || (focusTexture.Length < 1)) focusTexture = setup.PluginName();
+            if ((nonFocusTexture == null) || (nonFocusTexture.Length < 1)) nonFocusTexture = setup.PluginName();
+            if ((hover == null) || (hover.Length < 1)) hover = setup.PluginName();
+            focusTexture = GetFocusTextureFileName(focusTexture);
+            nonFocusTexture = GetNonFocusTextureFileName(nonFocusTexture);
+            hover = GetHoverFileName(hover);
+            menuMain.ButtonInfos.Add(new MenuButtonInfo(plugInText, setup.GetWindowId(), focusTexture, nonFocusTexture, hover));
+          }
+        }
+      }
     }
     #endregion
   }
