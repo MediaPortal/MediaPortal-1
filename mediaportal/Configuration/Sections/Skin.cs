@@ -265,6 +265,7 @@ namespace MediaPortal.Configuration.Sections
         string prevSkin = xmlwriter.GetValueAsString("skin", "name", "BlueTwo");
         if (prevSkin != listViewAvailableSkins.SelectedItems[0].Text)
         {
+          xmlwriter.SetValueAsBool("general", "dontshowskinversion", false);
           Util.Utils.DeleteFiles(Config.GetSubFolder(Config.Dir.Skin, listViewAvailableSkins.Text + @"\fonts"), "*");
         }
         xmlwriter.SetValue("skin", "name", listViewAvailableSkins.SelectedItems[0].Text);

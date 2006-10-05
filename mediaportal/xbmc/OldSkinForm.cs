@@ -126,7 +126,7 @@ namespace MediaPortal
       this.Controls.Add(this.label1);
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
       this.Name = "OldSkinForm";
-      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+      this.StartPosition = System.Windows.Forms.FormStartPosition.WindowsDefaultLocation;
       this.Text = "Warning! Outdated skin!";
       this.ResumeLayout(false);
       this.PerformLayout();
