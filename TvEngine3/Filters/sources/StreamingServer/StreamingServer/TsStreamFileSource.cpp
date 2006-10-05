@@ -58,12 +58,12 @@ TsStreamFileSource* TsStreamFileSource::createNew(UsageEnvironment& env, MultiFi
 
 void TsStreamFileSource::seekToByteAbsolute(u_int64_t byteNumber) 
 {
-  m_reader->setFilePointer((int64_t)byteNumber, FILE_BEGIN);
+	m_reader->SetFilePointer((int64_t)byteNumber, FILE_BEGIN);
 }
 
 void TsStreamFileSource::seekToByteRelative(int64_t offset) 
 {
-  m_reader->setFilePointer((int64_t)offset, FILE_CURRENT 	);
+  m_reader->SetFilePointer((int64_t)offset, FILE_CURRENT 	);
 }
 
 TsStreamFileSource::TsStreamFileSource(UsageEnvironment& env, MultiFileReader* fid,
