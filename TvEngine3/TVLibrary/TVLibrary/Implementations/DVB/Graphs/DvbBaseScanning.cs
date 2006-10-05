@@ -175,7 +175,7 @@ namespace TvLibrary.Implementations.DVB
         }
         if (!_card.IsTunerLocked && _card.SignalQuality == 0 && _card.SignalLevel == 0)
         {
-          Log.Log.WriteFile("Scan: no signal detected:");
+          Log.Log.WriteFile("Scan: no signal detected");
           return null;
         }
         Log.Log.WriteFile("Scan: signal detected.");
