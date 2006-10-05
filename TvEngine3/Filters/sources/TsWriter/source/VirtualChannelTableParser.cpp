@@ -41,12 +41,12 @@ CVirtualChannelTableParser::CVirtualChannelTableParser(void)
   m_decoder[1]->Reset();
   m_iVctVersionC8=-1;
   m_iVctVersionC9=-1;
-	LogDebug("vct: ctor");
+	//LogDebug("vct: ctor");
 }
 
 CVirtualChannelTableParser::~CVirtualChannelTableParser(void)
 {
-	LogDebug("vct: dtor");
+	//LogDebug("vct: dtor");
   delete m_decoder[0];
   delete m_decoder[1];
 }
@@ -54,7 +54,7 @@ CVirtualChannelTableParser::~CVirtualChannelTableParser(void)
 
 void CVirtualChannelTableParser::Reset()
 {
-	LogDebug("vct: Reset()");
+	//LogDebug("vct: Reset()");
 	m_decoder[0]->Reset();
 	m_decoder[1]->Reset();
   m_vecChannels.clear();
@@ -120,14 +120,14 @@ void CVirtualChannelTableParser::OnNewSection(int pid, int tableId, CSection& ne
 		if (version_number==m_iVctVersionC9) return;
 		m_iVctVersionC9=version_number;
 	}
-	LogDebug("VCT: received vct table id:%x version:%d", table_id,version_number);
+	//LogDebug("VCT: received vct table id:%x version:%d", table_id,version_number);
   int current_next_indicator = buf[5] & 1;
   int section_number = buf[6];
   int last_section_number = buf[7];
   int protocol_version = buf[8];
   int num_channels_in_section = buf[9];
 	int slen=((buf[1]& 0xF)<<8) + buf[2];
-	LogDebug("VCT:  channels:%d len:%d %d (%d/%d)", num_channels_in_section,section_length,slen,section_number,last_section_number);
+	//LogDebug("VCT:  channels:%d len:%d %d (%d/%d)", num_channels_in_section,section_length,slen,section_number,last_section_number);
   if (num_channels_in_section <= 0) return;
   int start=10;
   for (int i=0; i < num_channels_in_section;i++)
@@ -146,7 +146,7 @@ void CVirtualChannelTableParser::OnNewSection(int pid, int tableId, CSection& ne
 	  catch(...)
 	  {
 	  }
-		LogDebug("VCT:      shortname:%s", shortName);
+		//LogDebug("VCT:      shortname:%s", shortName);
 
 	  start+= 7*2;
 	  // 4---10-- ------10 -------- 8------- 32------ -------- -------- -------- 16------ -------- 16------ -------- 2-111113 --6----- 16------ -------- 6-----10 --------
@@ -171,16 +171,16 @@ void CVirtualChannelTableParser::OnNewSection(int pid, int tableId, CSection& ne
 	  int source_id				 = ((buf[start+14])<<8) + buf[start+15];
 	  int descriptors_length		 = ((buf[start+16]&0x3)<<8) + buf[start+17];
 
-		LogDebug("VCT:      major:%d minor:%d tsid:%x sid:%x mod:%d servicetype:%d desclen:%d", 
-			major_channel,minor_channel,channel_TSID, program_number,modulation_mode, service_type,descriptors_length);
+		//LogDebug("VCT:      major:%d minor:%d tsid:%x sid:%x mod:%d servicetype:%d desclen:%d", 
+		//	major_channel,minor_channel,channel_TSID, program_number,modulation_mode, service_type,descriptors_length);
 	  if (major_channel==0 && minor_channel==0 && channel_TSID==0 && service_type==0 )
 	  {
-			LogDebug("VCT:      skip, all is 0");
+			//LogDebug("VCT:      skip, all is 0");
 		  return;
 	  }
 	  if (modulation_mode < 0 || modulation_mode > 5)
 	  {
-			LogDebug("VCT:      skip, invalid modulation mode:%d",modulation_mode);
+			//LogDebug("VCT:      skip, invalid modulation mode:%d",modulation_mode);
 		  return;
 	  }
 	  CChannelInfo info;
@@ -224,7 +224,7 @@ void CVirtualChannelTableParser::OnNewSection(int pid, int tableId, CSection& ne
 
 	  }
 
-		LogDebug("VCT:      descriptors_length:%d", descriptors_length);
+		//LogDebug("VCT:      descriptors_length:%d", descriptors_length);
 	  start += 18;
 	  int len=0;
 	  while (len < descriptors_length && descriptors_length>0)
@@ -233,10 +233,10 @@ void CVirtualChannelTableParser::OnNewSection(int pid, int tableId, CSection& ne
 		  int descriptor_len = buf[start+len+1];
 		  if (descriptor_len==0 || descriptor_len+start > section_length)
 		  {
-				LogDebug("VCT:      end of descriptors");
+				//LogDebug("VCT:      end of descriptors");
 			  break;
 		  }			
-			LogDebug("VCT:      tag:%x len:%d", descriptor_tag,descriptor_len);
+			//LogDebug("VCT:      tag:%x len:%d", descriptor_tag,descriptor_len);
 		  switch (descriptor_tag)
 		  {
 			  case 0xa1:
@@ -250,6 +250,19 @@ void CVirtualChannelTableParser::OnNewSection(int pid, int tableId, CSection& ne
 	  }
 		start += descriptors_length;
 		
+    int nr=1;
+    for (int ch=0; ch < m_vecChannels.size();++ch)
+    {
+      CChannelInfo& infoCh = m_vecChannels[i];
+      if (strcmp(infoCh.ServiceName, info.ServiceName)==0)
+      {
+        sprintf(infoCh.ServiceName,"%s#%d", infoCh.ServiceName,nr++);
+      }
+    }
+    if (nr>1)
+    {
+        sprintf(info.ServiceName,"%s#%d", info.ServiceName,nr++);
+    }
 		LogDebug("VCT:  #%d major:%d minor:%d freq:%d tsid:%x sid:%x servicetype:%x name:%s video:%x audio:%x ac3:%x", 
 				m_vecChannels.size(),
 				info.MajorChannel,info.MinorChannel,info.Frequency,
@@ -262,7 +275,7 @@ void CVirtualChannelTableParser::OnNewSection(int pid, int tableId, CSection& ne
 void CVirtualChannelTableParser::DecodeServiceLocationDescriptor( byte* buf,int start,CChannelInfo& channelInfo)
 {
 
-	LogDebug("DecodeServiceLocationDescriptor");
+	//LogDebug("DecodeServiceLocationDescriptor");
 	//  8------ 8------- 3--13--- -------- 8-------       
 	// 76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210
 	//    0        1        2         3        4       5       6         7        8       9     
@@ -273,7 +286,7 @@ void CVirtualChannelTableParser::DecodeServiceLocationDescriptor( byte* buf,int 
 
 	if (number_of_elements==0) return;
 	
-	LogDebug("  pcrpid:%x, nr of elements:%d",pcr_pid,number_of_elements);
+	//LogDebug("  pcrpid:%x, nr of elements:%d",pcr_pid,number_of_elements);
 	for (int i=0; i < number_of_elements;++i)
 	{
 
@@ -284,7 +297,7 @@ void CVirtualChannelTableParser::DecodeServiceLocationDescriptor( byte* buf,int 
 		int elementary_pid		  = ((buf[off+1]&0x1f)<<8) + buf[off+2];
 		int ISO_639_language_code =	(buf[off+3]<<16) +(buf[off+4]<<8) + (buf[off+5]);
 
-		LogDebug("  nr:%d streamtype:%x pid:%x", i,streamtype,elementary_pid);
+		//LogDebug("  nr:%d streamtype:%x pid:%x", i,streamtype,elementary_pid);
 		off+=6;
 		//pmtData.data=ISO_639_language_code;
 		switch (streamtype)
@@ -302,7 +315,7 @@ void CVirtualChannelTableParser::DecodeServiceLocationDescriptor( byte* buf,int 
 }
 void CVirtualChannelTableParser::DecodeExtendedChannelNameDescriptor( byte* buf,int start,CChannelInfo& channelInfo, int maxLen)
 {
-	LogDebug("  DecodeExtendedChannelNameDescriptor");
+	//LogDebug("  DecodeExtendedChannelNameDescriptor");
 	// tid   
 	//  8       8------- 8-------
 	// 76543210|76543210|76543210
@@ -310,7 +323,7 @@ void CVirtualChannelTableParser::DecodeExtendedChannelNameDescriptor( byte* buf,
 	int descriptor_tag = buf[start+0];
 	int descriptor_len = buf[start+1];
 	
-	LogDebug("  tag:%x len:%d",descriptor_tag,descriptor_len);
+	//LogDebug("  tag:%x len:%d",descriptor_tag,descriptor_len);
 	char* label = DecodeMultipleStrings(buf,start+2,maxLen);
 	if (label==NULL) return ;
 	strcpy((char*)channelInfo.ServiceName,label);
@@ -321,33 +334,33 @@ void CVirtualChannelTableParser::DecodeExtendedChannelNameDescriptor( byte* buf,
 char* CVirtualChannelTableParser::DecodeMultipleStrings(byte* buf, int offset, int maxLen)
 {
 	int number_of_strings = buf[offset];
-	LogDebug("DecodeMultipleStrings() number_of_strings:%d",number_of_strings);
+	//LogDebug("DecodeMultipleStrings() number_of_strings:%d",number_of_strings);
 	
 
 	for (int i=0; i < number_of_strings;++i)
 	{
-		LogDebug("  string:%d", i);
+		//LogDebug("  string:%d", i);
 		if (offset+4>=maxLen)
 		{
-			LogDebug("  eob");
+			//LogDebug("  eob");
 			return "";
 		}
 		int ISO_639_language_code = (buf[offset+1]<<16)+(buf[offset+2]<<8)+(buf[offset+3]);
 		int number_of_segments=buf[offset+4];
 		int start=offset+5;
-		LogDebug("  segments:%d", number_of_segments);
+		//LogDebug("  segments:%d", number_of_segments);
 		for (int k=0; k < number_of_segments;++k)
 		{
 			if (start+2>=maxLen)
 			{
-				LogDebug("  eob2");
+				//LogDebug("  eob2");
 				return "";
 			}
 			int compression_type = buf[start];
 			int mode             = buf[start+1];
 			int number_bytes     = buf[start+2];
 			
-			LogDebug("  decode segment:%d type:%d mode:%d bytes:%d", k,compression_type,mode,number_bytes);
+			//LogDebug("  decode segment:%d type:%d mode:%d bytes:%d", k,compression_type,mode,number_bytes);
 			//decode text....
 			char *label=DecodeString(buf, start+3, compression_type,mode,number_bytes);
 			start += (number_bytes+3);
@@ -359,7 +372,7 @@ char* CVirtualChannelTableParser::DecodeMultipleStrings(byte* buf, int offset, i
 
 char* CVirtualChannelTableParser::DecodeString(byte* buf, int offset, int compression_type, int mode, int number_of_bytes)
 {
-	LogDebug("DecodeString() compression type:%d numberofbytes:%d",compression_type, mode);
+	//LogDebug("DecodeString() compression type:%d numberofbytes:%d",compression_type, mode);
 	if (compression_type==0 && mode==0)
 	{
 		char* label = new char[number_of_bytes+1];

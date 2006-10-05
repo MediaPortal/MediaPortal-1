@@ -258,7 +258,7 @@ STDMETHODIMP CMpTsFilterPin::Receive(IMediaSample *pSample)
 		long sampleLen=pSample->GetActualDataLength();
 		if (sampleLen<=0)
 		{
-			LogDebug("pin:receive samplelen:%d",sampleLen);
+			//LogDebug("pin:receive samplelen:%d",sampleLen);
 			return S_OK;
 		}
 		
