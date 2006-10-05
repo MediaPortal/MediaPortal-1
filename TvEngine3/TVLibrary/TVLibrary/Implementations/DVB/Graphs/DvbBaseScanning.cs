@@ -170,7 +170,7 @@ namespace TvLibrary.Implementations.DVB
         //so we do a simple check
         if (!_card.IsTunerLocked && _card.SignalQuality == 0 && _card.SignalLevel == 0)
         {
-          System.Threading.Thread.Sleep(5000);
+          System.Threading.Thread.Sleep(10000);
           ResetSignalUpdate();
         }
         if (!_card.IsTunerLocked && _card.SignalQuality == 0 && _card.SignalLevel == 0)
