@@ -1720,7 +1720,7 @@ namespace MediaPortal
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         xmlreader.Clear();
 
-      MediaPortal.Util.Utils.StartProcess("Configuration.exe", "", false, false);
+      MediaPortal.Util.Utils.StartProcess(Config.GetFile(Config.Dir.Base, "Configuration.exe"), "", false, false);
     }
 
     /// <summary>
@@ -2375,7 +2375,7 @@ namespace MediaPortal
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         xmlreader.Clear();
 
-      Process.Start("configuration.exe", @"/wizard /section=wizards\television.xml");
+      Process.Start(Config.GetFile(Config.Dir.Base, "configuration.exe"), @"/wizard /section=wizards\television.xml");
     }
 
     private void picturesMenuItem_Click(object sender, EventArgs e)
@@ -2388,7 +2388,7 @@ namespace MediaPortal
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         xmlreader.Clear();
 
-      Process.Start("configuration.exe", @"/wizard /section=wizards\pictures.xml");
+      Process.Start(Config.GetFile(Config.Dir.Base, "configuration.exe"), @"/wizard /section=wizards\pictures.xml");
     }
 
     private void musicMenuItem_Click(object sender, EventArgs e)
@@ -2401,7 +2401,7 @@ namespace MediaPortal
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         xmlreader.Clear();
 
-      Process.Start("configuration.exe", @"/wizard /section=wizards\music.xml");
+      Process.Start(Config.GetFile(Config.Dir.Base, "configuration.exe"), @"/wizard /section=wizards\music.xml");
     }
 
     private void moviesMenuItem_Click(object sender, EventArgs e)
@@ -2414,7 +2414,7 @@ namespace MediaPortal
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         xmlreader.Clear();
 
-      Process.Start("configuration.exe", @"/wizard /section=wizards\movies.xml");
+      Process.Start(Config.GetFile(Config.Dir.Base, "configuration.exe"), @"/wizard /section=wizards\movies.xml");
     }
 
     private void dvdMenuItem_Click(object sender, EventArgs e)
@@ -2427,7 +2427,7 @@ namespace MediaPortal
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         xmlreader.Clear();
 
-      Process.Start("configuration.exe", @"/wizard /section=wizards\dvd.xml");
+      Process.Start(Config.GetFile(Config.Dir.Base, "configuration.exe"), @"/wizard /section=wizards\dvd.xml");
     }
 
     private Win32API.MSG msgApi = new Win32API.MSG();

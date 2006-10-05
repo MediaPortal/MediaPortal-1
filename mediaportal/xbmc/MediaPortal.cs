@@ -202,7 +202,7 @@ public class MediaPortalApp : D3DApp, IRender
       if (!File.Exists(Config.GetFile(Config.Dir.Config, "mediaportal.xml")))
       {
         //no, then start configuration.exe in wizard form
-        System.Diagnostics.Process.Start("configuration.exe", @"/wizard");
+        System.Diagnostics.Process.Start(Config.GetFile(Config.Dir.Base, "configuration.exe"), @"/wizard");
         return;
       }
       //CodecsForm form = new CodecsForm();
