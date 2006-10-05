@@ -171,7 +171,7 @@ namespace TvLibrary.Implementations.DVB
       }
       if (_card.IsTunerLocked == false)
       {
-        if ((channel as ATSCChannel) == null)
+        if (_card.SignalQuality < 30 && _card.SignalLevel <30)
         {
           Log.Log.WriteFile("Scan! no signal detected: locked:{0} signal level:{1} signal quality:{2}", _card.IsTunerLocked, _card.SignalLevel, _card.SignalQuality);
           return null;
