@@ -21,21 +21,16 @@ namespace MediaPortal.GUI.Home
 
     private void LoadSettings()
     {
-      cboxFormat.Items.Add("<Day> <DD>.<Month>");
-      cboxFormat.Items.Add("<Day> <Month> <DD>");
-
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         chkboxFixScrollbar.Checked = xmlreader.GetValueAsBool("home", "scrollfixed", false);
         chkBoxUseMyPlugins.Checked = xmlreader.GetValueAsBool("home", "usemyplugins", true);
         chkBoxAnimation.Checked = xmlreader.GetValueAsBool("home", "enableanimation", true);
-        int index = xmlreader.GetValueAsInt("home", "dateformatindex", 1);
-        if (index > 1)
-        {
-          string text = xmlreader.GetValueAsString("home", "dateformat", "<Day> <Month> <DD>");
-          cboxFormat.Items.Add(text);
-        }
-        cboxFormat.SelectedIndex = index;
+        string text = xmlreader.GetValueAsString("home", "dateformat", "<Day> <Month> <DD>");
+        cboxFormat.Items.Add(text);
+        if (!text.Equals("<Day> <DD>.<Month>")) cboxFormat.Items.Add("<Day> <DD>.<Month>");
+        if (!text.Equals("<Day> <Month> <DD>")) cboxFormat.Items.Add("<Day> <Month> <DD>");
+        cboxFormat.Text = text;
       }
     }
 
@@ -47,8 +42,7 @@ namespace MediaPortal.GUI.Home
         xmlWriter.SetValueAsBool("home", "scrollfixed",  chkboxFixScrollbar.Checked);
         xmlWriter.SetValueAsBool("home", "usemyplugins", chkBoxUseMyPlugins.Checked);
         xmlWriter.SetValueAsBool("home", "enableanimation", chkBoxAnimation.Checked);
-        xmlWriter.SetValue("home", "dateformatindex", cboxFormat.SelectedIndex);
-        xmlWriter.SetValue("home", "dateformat", cboxFormat.SelectedText);
+        xmlWriter.SetValue("home", "dateformat", cboxFormat.Text);
       }
     }
 

@@ -55,7 +55,7 @@ namespace MediaPortal.GUI.Home
     protected bool _fixedScroll = true;  // fix scrollbar in the middle of menu
     protected bool _enableAnimation = true;
     protected string _dateFormat = String.Empty;
-    protected DateTime _updateTimer = DateTime.Now;
+    protected DateTime _updateTimer = DateTime.MinValue;
     protected int  _notifyTVTimeout = 15;
     protected bool _playNotifyBeep = true;
     protected int  _preNotifyConfig = 60;
