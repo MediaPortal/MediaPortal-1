@@ -341,7 +341,7 @@ namespace TvPlugin
               }
               else
               {
-                Schedule newSchedule = new Schedule(Navigator.Channel.IdChannel,  GUILocalizeStrings.Get(413) + " (" + Navigator.Channel.Name + ")",
+                Schedule newSchedule = new Schedule(Navigator.Channel.IdChannel, GUILocalizeStrings.Get(413) + " (" + Navigator.Channel.Name + ")",
                                                     DateTime.Now, DateTime.Now.AddDays(1));
                 newSchedule.Persist();
                 RemoteControl.Instance.OnNewSchedule();
@@ -538,10 +538,12 @@ namespace TvPlugin
       for (int i = 0; i < groups.Count; ++i)
       {
         GroupMap gm = (GroupMap)groups[i];
-        dlg.Add(gm.ReferencedChannel().Name);
+        Channel channel = gm.ReferencedChannel();
+        if (channel.IsTv == false) continue;
+        dlg.Add(channel.Name);
         if (Navigator.CurrentChannel != null)
         {
-          if (gm.ReferencedChannel().Name == Navigator.CurrentChannel)
+          if (channel.Name == Navigator.CurrentChannel)
           {
             selected = i;
           }
@@ -738,7 +740,7 @@ namespace TvPlugin
             {
               case 875:
                 {
-                  Schedule newSchedule = new Schedule(Navigator.Channel.IdChannel,  Navigator.Channel.CurrentProgram.Title,
+                  Schedule newSchedule = new Schedule(Navigator.Channel.IdChannel, Navigator.Channel.CurrentProgram.Title,
                             Navigator.Channel.CurrentProgram.StartTime, Navigator.Channel.CurrentProgram.EndTime);
                   newSchedule.Persist();
                   RemoteControl.Instance.OnNewSchedule();
@@ -747,7 +749,7 @@ namespace TvPlugin
 
               case 876:
                 {
-                  Schedule newSchedule = new Schedule(Navigator.Channel.IdChannel,  GUILocalizeStrings.Get(413) + " (" + Navigator.Channel.Name + ")",
+                  Schedule newSchedule = new Schedule(Navigator.Channel.IdChannel, GUILocalizeStrings.Get(413) + " (" + Navigator.Channel.Name + ")",
                                               DateTime.Now, DateTime.Now.AddDays(1));
                   newSchedule.Persist();
                   RemoteControl.Instance.OnNewSchedule();
@@ -759,7 +761,7 @@ namespace TvPlugin
         else
         {
           //manual record
-          Schedule newSchedule = new Schedule(Navigator.Channel.IdChannel,  GUILocalizeStrings.Get(413) + " (" + Navigator.Channel.Name + ")",
+          Schedule newSchedule = new Schedule(Navigator.Channel.IdChannel, GUILocalizeStrings.Get(413) + " (" + Navigator.Channel.Name + ")",
                                       DateTime.Now, DateTime.Now.AddDays(1));
           newSchedule.Persist();
           RemoteControl.Instance.OnNewSchedule();
@@ -1375,7 +1377,7 @@ namespace TvPlugin
               if (!groupContainsChannel)
               {
                 layer.AddChannelToGroup(channel, GUILocalizeStrings.Get(972));
-                
+
               }
             }
             break;
