@@ -19,7 +19,7 @@
 			<id>0</id>
 			<posX>335</posX>
 			<posY>261</posY>
-			<width>581</width>
+			<width>800</width>
 			<height>328</height>
 			<texture>dialog_background.png</texture>
 		</control>

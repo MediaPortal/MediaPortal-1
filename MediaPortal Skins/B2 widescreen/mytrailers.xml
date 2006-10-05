@@ -8,13 +8,13 @@
 	<define>#header.hover:hover_my trailers.png</define>
 	<controls>
 		<import>common.window.xml</import>
-		<control>
+<!-- 		<control>
 			<type>image</type>
 			<id>1</id>
 			<posX>113</posX>
 			<posY>26</posY>
 			<texture>trailers_logo.png</texture>
-		</control>
+		</control> -->
 		<control>
 			<type>togglebutton</type>
 			<description>Plot</description>
@@ -176,6 +176,7 @@
 			<id>1</id>
 			<posX>485</posX>
 			<posY>58</posY>
+			<width>585</width>
 			<label>#title</label>
 			<font>font18</font>
 			<disabledcolor>ff808080</disabledcolor>
@@ -232,15 +233,15 @@
 			<texture>playback_background.png</texture>
 		</control>
 
-<!-- 		<control>
+		<control>
 			<type>image</type>
 			<description>movie poster</description>
 			<id>24</id>
-			<posX>194</posX>
+			<posX>188</posX>
 			<posY>296</posY>
-			<width>134</width>
+			<width>136</width>
 			<height>200</height>
 			<texture>background.png</texture>
-		</control> -->
+		</control>
 	</controls>
 </window>
