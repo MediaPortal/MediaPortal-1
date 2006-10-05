@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
 	<id>7890</id>
 	<defaultcontrol>10</defaultcontrol>
@@ -44,10 +44,10 @@
 			<type>image</type>
 			<description>nowplaying background</description>
 			<id>0</id>
-			<posX>835</posX>
-			<posY>124</posY>
-			<width>460</width>
-			<height>400</height>
+			<posX>886</posX>
+			<posY>56</posY>
+			<width>400</width>
+			<height>484</height>
 			<texture>nowplaying_background.png</texture>
 			<keepaspectratio>no</keepaspectratio>
 		</control>
@@ -55,10 +55,10 @@
 			<type>image</type>
 			<description>artist art image</description>
 			<id>112</id>
-			<posX>862</posX>
-			<posY>180</posY>
-			<width>400</width>
-			<height>290</height>			
+			<posX>908</posX>
+			<posY>122</posY>
+			<width>350</width>
+			<height>350</height>		
 			<texture>#Play.Current.ArtistThumb</texture>
 			<!-- <texture>F:\\Quellen\\Mediaportal-trunk\\xbmc\\bin\\Debug\\skin\\BlueTwo\\media\\missing_coverart.png</texture>  -->
 			<visible>yes</visible>
@@ -129,12 +129,12 @@
 		<control>
 			<type>label</type>
 			<description>album label</description>
-			<id>0</id>
-			<posX>860</posX>
-			<posY>144</posY>
-			<width>370</width>
+			<id>6</id>
+			<posX>908</posX>
+			<posY>86</posY>
+			<width>230</width>
 			<label>#Play.Current.Album</label>
-			<font>font14</font>
+			<font>font13</font>
 			<align>left</align>
 			<textcolor>ffffffff</textcolor>
 		</control>
@@ -142,8 +142,8 @@
 			<type>label</type>
 			<description>track progress label</description>
 			<id>0</id>
-			<posX>860</posX>
-			<posY>478</posY>
+			<posX>908</posX>
+			<posY>482</posY>
 			<label>#currentplaytime</label>
 			<font>font14</font>
 			<align>left</align>
@@ -154,7 +154,7 @@
 			<description>track duration label</description>
 			<id>0</id>
 			<posX>1258</posX>
-			<posY>478</posY>
+			<posY>482</posY>
 			<label>#trackduration</label>
 			<font>font14</font>
 			<align>right</align>
