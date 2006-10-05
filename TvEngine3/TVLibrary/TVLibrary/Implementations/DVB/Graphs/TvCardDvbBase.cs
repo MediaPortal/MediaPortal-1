@@ -1455,6 +1455,7 @@ namespace TvLibrary.Implementations.DVB
             //is a signal quality ok?
             stat.get_SignalQuality(out quality); //1-100
             if (quality > 0) signalQuality += quality;
+            else signalQuality -= quality;
           }
           catch (COMException )
           {

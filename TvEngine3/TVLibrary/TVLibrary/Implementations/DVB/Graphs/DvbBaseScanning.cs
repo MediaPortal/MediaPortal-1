@@ -176,7 +176,7 @@ namespace TvLibrary.Implementations.DVB
       if (_card.IsTunerLocked == false)
       {
         ResetSignalUpdate();
-        if (_card.SignalQuality < 10 && _card.SignalLevel <10)
+        if (_card.SignalQuality == 0 && _card.SignalLevel == 0)
         {
           Log.Log.WriteFile("Scan! no signal detected: locked:{0} signal level:{1} signal quality:{2}", _card.IsTunerLocked, _card.SignalLevel, _card.SignalQuality);
           return null;
