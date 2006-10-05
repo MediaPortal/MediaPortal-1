@@ -563,7 +563,8 @@ namespace MediaPortal.GUI.Library
             label2.Label = pItem.Label2;
             label2.TextAlignment = GUIControl.Alignment.ALIGN_RIGHT;
             label2.FontName = _fontName2Name;
-            dMaxWidth -= (label2.TextWidth + GUIGraphicsContext.ScaleHorizontal(20));
+            dMaxWidth = label2._positionX - dwPosX - label2.TextWidth - GUIGraphicsContext.ScaleHorizontal(20);
+            //dMaxWidth -= (label2.TextWidth + GUIGraphicsContext.ScaleHorizontal(20));
           }
         }
       }

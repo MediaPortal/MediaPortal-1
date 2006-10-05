@@ -719,7 +719,7 @@ namespace MediaPortal.GUI.Library
                     // render the icon
                     RenderIcon(timePassed, i, dwPosX + _iconOffsetX, dwPosY + _iconOffsetY, gotFocus);
 
-                    dwPosX += (_imageWidth + 10);
+                    dwPosX += (_imageWidth + GUIGraphicsContext.ScaleHorizontal(10));
 
                     // render the text
                     RenderLabel(timePassed, i, dwPosX, dwPosY, gotFocus);
@@ -782,10 +782,10 @@ namespace MediaPortal.GUI.Library
             }
 
             GUIPlayListButtonControl btn = (GUIPlayListButtonControl)_listButtons[buttonNr];
-            int dMaxWidth = (_width - _imageWidth - 8);
+            int dMaxWidth = (_width - _imageWidth - PinIconOffsetX - GUIGraphicsContext.ScaleHorizontal(8));
 
             if (btn != null)
-                dMaxWidth = (_upBtnXOffset - _imageWidth - 8);
+              dMaxWidth = (_upBtnXOffset - _imageWidth - PinIconOffsetX - GUIGraphicsContext.ScaleHorizontal(8));
 
             if (_text2Visible && pItem.Label2.Length > 0)
             {
@@ -805,7 +805,7 @@ namespace MediaPortal.GUI.Library
                     int ypos = dwPosY;
 
                     if (0 == _textOffsetX2)
-                        xpos = _positionX + _upBtnXOffset - 8;
+                      xpos = _positionX + _upBtnXOffset - GUIGraphicsContext.ScaleHorizontal(8);
 
                     else
                         xpos = _positionX + _textOffsetX2;
@@ -817,7 +817,7 @@ namespace MediaPortal.GUI.Library
                             GUILabelControl label2 = _labelControls2[buttonNr];
                             if (label2 != null)
                             {
-                                label2.SetPosition(xpos, ypos + 2 + _textOffsetY2);
+                              label2.SetPosition(xpos, ypos + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY2);
                                 if (gotFocus)
                                     label2.TextColor = dwColor;
                                 else
@@ -825,7 +825,7 @@ namespace MediaPortal.GUI.Library
                                 label2.Label = pItem.Label2;
                                 label2.TextAlignment = GUIControl.Alignment.ALIGN_RIGHT;
                                 label2.FontName = _fontName2Name;
-                                dMaxWidth -= label2.TextWidth + 20;
+                                dMaxWidth = label2._positionX - dwPosX - label2.TextWidth - GUIGraphicsContext.ScaleHorizontal(20);
                             }
                         }
                     }
@@ -851,7 +851,7 @@ namespace MediaPortal.GUI.Library
                 if (!gotFocus)
                     dwColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
 
-                RenderText(timePassed, buttonNr, (float)dwPosX, (float)dwPosY + 2 + _textOffsetY, (float)dMaxWidth, dwColor, _textLine, bSelected);
+                  RenderText(timePassed, buttonNr, (float)dwPosX, (float)dwPosY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY, (float)dMaxWidth, dwColor, _textLine, bSelected);
             }
 
             if (pItem.Label2.Length > 0)
@@ -869,7 +869,7 @@ namespace MediaPortal.GUI.Library
                 }
 
                 if (0 == _textOffsetX2)
-                    dwPosX = _positionX + _upBtnXOffset - 8;
+                  dwPosX = _positionX + _upBtnXOffset - GUIGraphicsContext.ScaleHorizontal(8);
 
                 else
                     dwPosX = _positionX + _textOffsetX2;
@@ -885,7 +885,7 @@ namespace MediaPortal.GUI.Library
                             GUILabelControl label2 = _labelControls2[buttonNr];
                             if (label2 != null)
                             {
-                                label2.SetPosition(dwPosX, dwPosY + 2 + _textOffsetY2);
+                              label2.SetPosition(dwPosX, dwPosY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY2);
                                 if (gotFocus)
                                     label2.TextColor = dwColor;
                                 else
