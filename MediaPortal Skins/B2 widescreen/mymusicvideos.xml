@@ -155,12 +155,13 @@
             <onup>2</onup>
             <ondown>2</ondown>
         </control>
-<!--         <control>
+        <control>
              <type>image</type>
              <id>36</id>
-             <posX>65</posX>
-             <posY>369</posY>
+             <posX>206</posX>
+             <posY>485</posY>
              <texture></texture>
-        </control> -->
+             <visible>no</visible>
+        </control>
     </controls>
 </window>
