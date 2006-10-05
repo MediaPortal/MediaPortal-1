@@ -92,15 +92,14 @@ namespace SetupTv.Sections
     }
     void DoScan()
     {
+      int tvChannelsNew = 0;
+      int radioChannelsNew = 0;
+      int tvChannelsUpdated = 0;
+      int radioChannelsUpdated = 0;
       try
       {
         RemoteControl.Instance.EpgGrabberEnabled = false;
-        labelScan1.Text = "";
-        labelScan2.Text = "";
-        int tvChannelsNew = 0;
-        int radioChannelsNew = 0;
-        int tvChannelsUpdated = 0;
-        int radioChannelsUpdated = 0;
+        listViewStatus.Items.Clear();
 
         mpButtonScanTv.Enabled = false;
 
@@ -125,15 +124,36 @@ namespace SetupTv.Sections
           tuneChannel.PhysicalChannel = index;
           tuneChannel.ModulationType = ModulationType.ModNotSet;
 
+          string line = String.Format("{0}tp- channel:{1}", 1 + index, tuneChannel.PhysicalChannel);
+          ListViewItem item = listViewStatus.Items.Add(new ListViewItem(line));
+          item.EnsureVisible();
           if (index == 2)
           {
             RemoteControl.Instance.TuneScan(_cardNumber, tuneChannel);
           }
           IChannel[] channels = RemoteControl.Instance.Scan(_cardNumber, tuneChannel);
           UpdateStatus();
-          if (channels == null) continue;
-          if (channels.Length == 0) continue;
 
+          if (channels == null || channels.Length == 0)
+          {
+            if (RemoteControl.Instance.TunerLocked(_cardNumber) == false)
+            {
+              line = line = String.Format("{0}tp- channel:{1}:No signal", 1 + index, tuneChannel.PhysicalChannel);
+              item.Text = line;
+              item.ForeColor = Color.Red;
+              continue;
+            }
+            else
+            {
+              line = line = String.Format("{0}tp- channel:{1}:Nothing found", 1 + index, tuneChannel.PhysicalChannel);
+              item.Text = line;
+              item.ForeColor = Color.Red;
+              continue;
+            }
+          }
+
+          int newChannels = 0;
+          int updatedChannels = 0;
           for (int i = 0; i < channels.Length; ++i)
           {
             ATSCChannel channel = (ATSCChannel)channels[i];
@@ -154,25 +174,37 @@ namespace SetupTv.Sections
             dbChannel.Persist();
             layer.AddChannelToGroup(dbChannel, "ATSC");
             layer.AddTuningDetails(dbChannel, channel);
+
             if (channel.IsTv)
             {
               if (exists)
+              {
                 tvChannelsUpdated++;
+                updatedChannels++;
+              }
               else
+              {
                 tvChannelsNew++;
+                newChannels++;
+              }
             }
             if (channel.IsRadio)
             {
               if (exists)
+              {
                 radioChannelsUpdated++;
+                updatedChannels++;
+              }
               else
+              {
                 radioChannelsNew++;
+                newChannels++;
+              }
             }
             layer.MapChannelToCard(card, dbChannel);
 
-            labelScan1.Text = String.Format("Tv channels New:{0} Updated:{1}", tvChannelsNew, tvChannelsUpdated);
-            labelScan2.Text = String.Format("Radio channels New:{0} Updated:{1}", radioChannelsNew, radioChannelsUpdated);
-
+            line = line = String.Format("{0}tp- channel:{1}:New:{2} Updated:{3}", 1 + index, tuneChannel.PhysicalChannel, newChannels, updatedChannels);
+            item.Text = line;
           }
         }
 
@@ -189,6 +221,11 @@ namespace SetupTv.Sections
       {
         RemoteControl.Instance.EpgGrabberEnabled = true;
       }
+      ListViewItem lastItem = listViewStatus.Items.Add(new ListViewItem(String.Format("Total radio channels new:{0} updated:{1}", radioChannelsNew, radioChannelsUpdated)));
+      lastItem = listViewStatus.Items.Add(new ListViewItem(String.Format("Total tv channels new:{0} updated:{1}", tvChannelsNew, tvChannelsUpdated)));
+
+      lastItem = listViewStatus.Items.Add(new ListViewItem("Scan done..."));
+      lastItem.EnsureVisible();
     }
   }
 }

@@ -160,13 +160,15 @@ namespace TvLibrary.Implementations.DVB
       _analyzer = GetAnalyzer();
       _card.IsScanning = false;
 
-      Log.Log.WriteFile("Scan! wait for tuner lock");
       DateTime startTime = DateTime.Now;
       while (true)
       {
         System.Threading.Thread.Sleep(100);
         ResetSignalUpdate();
-        if (_card.IsTunerLocked) break;
+        if (_card.IsTunerLocked)
+        {
+          break;
+        }
         TimeSpan ts = DateTime.Now - startTime;
         if (ts.TotalMilliseconds >= 2000) break;
       }
@@ -180,9 +182,7 @@ namespace TvLibrary.Implementations.DVB
       }
       try
       {
-         Log.Log.WriteFile("Scan! start");
          _analyzer.Start();
-         Log.Log.WriteFile("wait for signal quality");
         if (_card.IsTunerLocked || _card.SignalQuality > 0 || _card.SignalLevel > 0)
         {
           Log.Log.WriteFile("Signal detected, wait for good signal quality");
@@ -213,7 +213,6 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.WriteFile("Scan! timeout...found no channels tuner locked:{0} signal level:{1} signal quality:{2} {3}", _card.IsTunerLocked, _card.SignalLevel, _card.SignalQuality, channelCount);
           return new List<IChannel>();
         }
-        Log.Log.WriteFile("Scan! detected {0} channels",channelCount);
         short networkId;
         short transportId;
         short serviceId;
@@ -245,6 +244,7 @@ namespace TvLibrary.Implementations.DVB
         string strAudioLanguage3 = "";
         int found = 0;
         short lcn = -1;
+        _analyzer.GetCount(out channelCount);
         bool[] channelFound = new bool[channelCount];
         List<IChannel> channelsFound = new List<IChannel>();
         startTime = DateTime.Now;
@@ -265,7 +265,7 @@ namespace TvLibrary.Implementations.DVB
             bool isValid = ((networkId != 0 || transportId != 0 || serviceId != 0) && pmtPid != 0);
             if ((channel as ATSCChannel) != null)
             {
-              isValid = (ac3Pid != 0 && videoPid != 0 && pcrPid != 0 && majorChannel != 0 && minorChannel != 0);
+              isValid = ( majorChannel != 0 && minorChannel != 0);
             }
             if (isValid)
             {

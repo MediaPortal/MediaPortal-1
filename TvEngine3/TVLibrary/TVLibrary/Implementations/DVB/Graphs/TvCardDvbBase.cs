@@ -1214,14 +1214,14 @@ namespace TvLibrary.Implementations.DVB
         _channelInfo.network_pmt_PID = atscChannel.PmtPid;
         _channelInfo.pcr_pid = atscChannel.PcrPid;
         PidInfo audioInfo = new PidInfo();
-        audioInfo.Ac3Pid(atscChannel.AudioPid,"");
+        audioInfo.Ac3Pid(atscChannel.AudioPid, "");
         _channelInfo.AddPid(audioInfo);
         PidInfo videoInfo = new PidInfo();
         videoInfo.VideoPid(atscChannel.VideoPid);
         _channelInfo.AddPid(videoInfo);
 
         Log.Log.Write(" video:{0:X} audio:{1:X} pcr:{2:X} pmt:{3:X}",
-            atscChannel.VideoPid,atscChannel.AudioPid,atscChannel.PcrPid,atscChannel.PmtPid);
+            atscChannel.VideoPid, atscChannel.AudioPid, atscChannel.PcrPid, atscChannel.PmtPid);
         SetMpegPidMapping(_channelInfo);
       }
       else
@@ -1350,118 +1350,130 @@ namespace TvLibrary.Implementations.DVB
     {
       TimeSpan ts = DateTime.Now - _lastSignalUpdate;
       if (ts.TotalMilliseconds < 5000) return;
-      _lastSignalUpdate = DateTime.Now;
-      _tunerLocked = false;
-      _signalLevel = 0;
-      _signalPresent = false;
-      _signalQuality = 0;
-      if (_graphRunning == false) return;
-      if (Channel == null) return;
-      if (_filterNetworkProvider == null)
+      try
       {
-        return;
-      }
-      if (!CheckThreadId()) return;
-
-      //Log.Log.WriteFile("dvb:UpdateSignalQuality");
-      //if we dont have an IBDA_SignalStatistics interface then return
-      if (_tunerStatistics == null)
-      {
-        Log.Log.WriteFile("dvb:UpdateSignalPresent() no tuner stat interfaces");
-        return;
-      }
-      if (_tunerStatistics.Count == 0)
-      {
-        Log.Log.WriteFile("dvb:UpdateSignalPresent() no tuner stat interfaces");
-        return;
-      }
-      bool isTunerLocked = false;
-      bool isSignalPresent = false;
-      long signalQuality = 0;
-      long signalStrength = 0;
-
-      for (int i = 0; i < _tunerStatistics.Count; i++)
-      {
-        IBDA_SignalStatistics stat = (IBDA_SignalStatistics)_tunerStatistics[i];
-        bool isLocked = false;
-        bool isPresent = false;
-        int quality = 0;
-        int strength = 0;
-        try
-        {
-          //is the tuner locked?
-          stat.get_SignalLocked(out isLocked);
-          isTunerLocked |= isLocked;
-        }
-        catch (COMException)
-        {
-          //          Log.Log.WriteFile( "UpdateSignalPresent() locked :{0}", ex.Message);
-        }
-        catch (Exception)
-        {
-          //          Log.Log.WriteFile( "UpdateSignalPresent() locked :{0}", ex.Message);
-        }
-        try
-        {
-          //is a signal present?
-          stat.get_SignalPresent(out isPresent);
-          isSignalPresent |= isPresent;
-        }
-        catch (COMException)
-        {
-          //          Log.Log.WriteFile( "UpdateSignalPresent() present :{0}", ex.Message);
-        }
-        catch (Exception)
-        {
-          //           Log.Log.WriteFile( "UpdateSignalPresent() present :{0}", ex.Message);
-        }
-        try
-        {
-          //is a signal quality ok?
-          stat.get_SignalQuality(out quality); //1-100
-          if (quality > 0) signalQuality += quality;
-        }
-        catch (COMException)
-        {
-          //          Log.Log.WriteFile( "UpdateSignalPresent() quality :{0}", ex.Message);
-        }
-        catch (Exception)
-        {
-          //          Log.Log.WriteFile( "UpdateSignalPresent() quality :{0}", ex.Message);
-        }
-        try
-        {
-          //is a signal strength ok?
-          stat.get_SignalStrength(out strength); //1-100
-          if (strength > 0) signalStrength += strength;
-        }
-        catch (COMException)
-        {
-          //          Log.Log.WriteFile( "UpdateSignalPresent() quality :{0}", ex.Message);
-        }
-        catch (Exception)
-        {
-          //          Log.Log.WriteFile( "UpdateSignalPresent() quality :{0}", ex.Message);
-        }
-        //        Log.Log.WriteFile( "  #{0}  locked:{1} present:{2} quality:{3} strength:{4}", i, isLocked, isPresent, quality, strength);
-      }
-      if (_tunerStatistics.Count > 0)
-      {
-        _signalQuality = (int)signalQuality / _tunerStatistics.Count;
-        _signalLevel = (int)signalStrength / _tunerStatistics.Count;
-      }
-      if (isTunerLocked)
-        _tunerLocked = true;
-      else
         _tunerLocked = false;
-
-      if (isTunerLocked)
-      {
-        _signalPresent = true;
-      }
-      else
-      {
+        _signalLevel = 0;
         _signalPresent = false;
+        _signalQuality = 0;
+        if (_graphRunning == false) return;
+        if (Channel == null) return;
+        if (_filterNetworkProvider == null)
+        {
+          return;
+        }
+        if (!CheckThreadId()) return;
+
+        //Log.Log.WriteFile("dvb:UpdateSignalQuality");
+        //if we dont have an IBDA_SignalStatistics interface then return
+        if (_tunerStatistics == null)
+        {
+//          Log.Log.WriteFile("dvb:UpdateSignalPresent() no tuner stat interfaces");
+          return;
+        }
+        if (_tunerStatistics.Count == 0)
+        {
+//          Log.Log.WriteFile("dvb:UpdateSignalPresent() no tuner stat interfaces");
+          return;
+        }
+        bool isTunerLocked = false;
+        bool isSignalPresent = false;
+        long signalQuality = 0;
+        long signalStrength = 0;
+
+//        Log.Log.Write("dvb:UpdateSignalQuality() count:{0}", _tunerStatistics.Count);
+        for (int i = 0; i < _tunerStatistics.Count; i++)
+        {
+          IBDA_SignalStatistics stat = (IBDA_SignalStatistics)_tunerStatistics[i];
+          bool isLocked = false;
+          bool isPresent = false;
+          int quality = 0;
+          int strength = 0;
+//          Log.Log.Write("   dvb:  #{0} get locked",i );
+          try
+          {
+            //is the tuner locked?
+            stat.get_SignalLocked(out isLocked);
+            isTunerLocked |= isLocked;
+          }
+          catch (COMException )
+          {
+//            Log.Log.WriteFile("get_SignalLocked() locked :{0}", ex);
+          }
+          catch (Exception )
+          {
+//            Log.Log.WriteFile("get_SignalLocked() locked :{0}", ex);
+          }
+
+//          Log.Log.Write("   dvb:  #{0} get signalpresent", i);
+          try
+          {
+            //is a signal present?
+            stat.get_SignalPresent(out isPresent);
+            isSignalPresent |= isPresent;
+          }
+          catch (COMException )
+          {
+//            Log.Log.WriteFile("get_SignalPresent() locked :{0}", ex);
+          }
+          catch (Exception )
+          {
+//            Log.Log.WriteFile("get_SignalPresent() locked :{0}", ex);
+          }
+//          Log.Log.Write("   dvb:  #{0} get signalquality", i);
+          try
+          {
+            //is a signal quality ok?
+            stat.get_SignalQuality(out quality); //1-100
+            if (quality > 0) signalQuality += quality;
+          }
+          catch (COMException )
+          {
+//            Log.Log.WriteFile("get_SignalQuality() locked :{0}", ex);
+          }
+          catch (Exception )
+          {
+//            Log.Log.WriteFile("get_SignalQuality() locked :{0}", ex);
+          }
+//          Log.Log.Write("   dvb:  #{0} get signalstrength", i);
+          try
+          {
+            //is a signal strength ok?
+            stat.get_SignalStrength(out strength); //1-100
+            if (strength > 0) signalStrength += strength;
+          }
+          catch (COMException )
+          {
+//            Log.Log.WriteFile("get_SignalQuality() locked :{0}", ex);
+          }
+          catch (Exception )
+          {
+//            Log.Log.WriteFile("get_SignalQuality() locked :{0}", ex);
+          }
+//          Log.Log.WriteFile("  dvb:#{0}  locked:{1} present:{2} quality:{3} strength:{4}", i, isLocked, isPresent, quality, strength);
+        }
+        if (_tunerStatistics.Count > 0)
+        {
+          _signalQuality = (int)signalQuality / _tunerStatistics.Count;
+          _signalLevel = (int)signalStrength / _tunerStatistics.Count;
+        }
+        if (isTunerLocked)
+          _tunerLocked = true;
+        else
+          _tunerLocked = false;
+
+        if (isTunerLocked)
+        {
+          _signalPresent = true;
+        }
+        else
+        {
+          _signalPresent = false;
+        }
+      }
+      finally
+      {
+        _lastSignalUpdate = DateTime.Now;
       }
     }//public bool SignalPresent()
     #endregion
