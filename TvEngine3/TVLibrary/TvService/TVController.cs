@@ -155,7 +155,7 @@ namespace TvService
             if (!found)
             {
               Log.WriteFile("Controller: del card:{0}", dbsCard.Name);
-              dbsCard.Remove();
+              dbsCard.Delete();
             }
           }
         }
