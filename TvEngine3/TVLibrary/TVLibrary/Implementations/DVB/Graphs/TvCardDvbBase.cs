@@ -1424,7 +1424,7 @@ namespace TvLibrary.Implementations.DVB
             //is the tuner locked?
             stat.get_SignalLocked(out isLocked);
             isTunerLocked |= isLocked;
-            Log.Log.Write("   dvb:  #{0} isTunerLocked:{1}", i,isLocked);
+            //  Log.Log.Write("   dvb:  #{0} isTunerLocked:{1}", i,isLocked);
           }
           catch (COMException)
           {
@@ -1441,7 +1441,7 @@ namespace TvLibrary.Implementations.DVB
             //is a signal present?
             stat.get_SignalPresent(out isPresent);
             isSignalPresent |= isPresent;
-            Log.Log.Write("   dvb:  #{0} isSignalPresent:{1}", i, isPresent);
+            //  Log.Log.Write("   dvb:  #{0} isSignalPresent:{1}", i, isPresent);
           }
           catch (COMException)
           {
@@ -1457,8 +1457,7 @@ namespace TvLibrary.Implementations.DVB
             //is a signal quality ok?
             stat.get_SignalQuality(out quality); //1-100
             if (quality > 0) signalQuality += quality;
-            else signalQuality -= quality;
-            Log.Log.Write("   dvb:  #{0} signalQuality:{1}", i, quality);
+            //   Log.Log.Write("   dvb:  #{0} signalQuality:{1}", i, quality);
           }
           catch (COMException)
           {
@@ -1474,7 +1473,7 @@ namespace TvLibrary.Implementations.DVB
             //is a signal strength ok?
             stat.get_SignalStrength(out strength); //1-100
             if (strength > 0) signalStrength += strength;
-            Log.Log.Write("   dvb:  #{0} signalStrength:{1}", i, strength);
+            //    Log.Log.Write("   dvb:  #{0} signalStrength:{1}", i, strength);
           }
           catch (COMException)
           {

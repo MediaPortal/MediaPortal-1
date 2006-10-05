@@ -168,8 +168,11 @@ namespace TvLibrary.Implementations.DVB
       {
         //getting signal status takes a looong time due to card driver issue
         //so we do a simple check
-        System.Threading.Thread.Sleep(5000);
-        ResetSignalUpdate();
+        if (!_card.IsTunerLocked && _card.SignalQuality == 0 && _card.SignalLevel == 0)
+        {
+          System.Threading.Thread.Sleep(5000);
+          ResetSignalUpdate();
+        }
         if (!_card.IsTunerLocked && _card.SignalQuality == 0 && _card.SignalLevel == 0)
         {
           Log.Log.WriteFile("Scan: no signal detected:");
