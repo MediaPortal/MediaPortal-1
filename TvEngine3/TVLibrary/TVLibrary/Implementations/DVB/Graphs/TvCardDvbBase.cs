@@ -1393,7 +1393,7 @@ namespace TvLibrary.Implementations.DVB
           _signalLevel = 0;
           _signalPresent = false;
           _signalQuality = 0;
-//          Log.Log.WriteFile("dvb:UpdateSignalPresent() no tuner stat interfaces");
+          //          Log.Log.WriteFile("dvb:UpdateSignalPresent() no tuner stat interfaces");
           return;
         }
         if (_tunerStatistics.Count == 0)
@@ -1402,7 +1402,7 @@ namespace TvLibrary.Implementations.DVB
           _signalLevel = 0;
           _signalPresent = false;
           _signalQuality = 0;
-//          Log.Log.WriteFile("dvb:UpdateSignalPresent() no tuner stat interfaces");
+          //          Log.Log.WriteFile("dvb:UpdateSignalPresent() no tuner stat interfaces");
           return;
         }
         bool isTunerLocked = false;
@@ -1410,7 +1410,7 @@ namespace TvLibrary.Implementations.DVB
         long signalQuality = 0;
         long signalStrength = 0;
 
-//       Log.Log.Write("dvb:UpdateSignalQuality() count:{0}", _tunerStatistics.Count);
+        //       Log.Log.Write("dvb:UpdateSignalQuality() count:{0}", _tunerStatistics.Count);
         for (int i = 0; i < _tunerStatistics.Count; i++)
         {
           IBDA_SignalStatistics stat = (IBDA_SignalStatistics)_tunerStatistics[i];
@@ -1418,69 +1418,73 @@ namespace TvLibrary.Implementations.DVB
           bool isPresent = false;
           int quality = 0;
           int strength = 0;
-//          Log.Log.Write("   dvb:  #{0} get locked",i );
+          //          Log.Log.Write("   dvb:  #{0} get locked",i );
           try
           {
             //is the tuner locked?
             stat.get_SignalLocked(out isLocked);
             isTunerLocked |= isLocked;
+            Log.Log.Write("   dvb:  #{0} isTunerLocked:{1}", i,isLocked);
           }
-          catch (COMException )
+          catch (COMException)
           {
-//            Log.Log.WriteFile("get_SignalLocked() locked :{0}", ex);
+            //            Log.Log.WriteFile("get_SignalLocked() locked :{0}", ex);
           }
-          catch (Exception )
+          catch (Exception)
           {
-//            Log.Log.WriteFile("get_SignalLocked() locked :{0}", ex);
+            //            Log.Log.WriteFile("get_SignalLocked() locked :{0}", ex);
           }
 
-//          Log.Log.Write("   dvb:  #{0} get signalpresent", i);
+          //          Log.Log.Write("   dvb:  #{0} get signalpresent", i);
           try
           {
             //is a signal present?
             stat.get_SignalPresent(out isPresent);
             isSignalPresent |= isPresent;
+            Log.Log.Write("   dvb:  #{0} isSignalPresent:{1}", i, isPresent);
           }
-          catch (COMException )
+          catch (COMException)
           {
-//            Log.Log.WriteFile("get_SignalPresent() locked :{0}", ex);
+            //            Log.Log.WriteFile("get_SignalPresent() locked :{0}", ex);
           }
-          catch (Exception )
+          catch (Exception)
           {
-//            Log.Log.WriteFile("get_SignalPresent() locked :{0}", ex);
+            //            Log.Log.WriteFile("get_SignalPresent() locked :{0}", ex);
           }
-//          Log.Log.Write("   dvb:  #{0} get signalquality", i);
+          //          Log.Log.Write("   dvb:  #{0} get signalquality", i);
           try
           {
             //is a signal quality ok?
             stat.get_SignalQuality(out quality); //1-100
             if (quality > 0) signalQuality += quality;
             else signalQuality -= quality;
+            Log.Log.Write("   dvb:  #{0} signalQuality:{1}", i, quality);
           }
-          catch (COMException )
+          catch (COMException)
           {
-//            Log.Log.WriteFile("get_SignalQuality() locked :{0}", ex);
+            //            Log.Log.WriteFile("get_SignalQuality() locked :{0}", ex);
           }
-          catch (Exception )
+          catch (Exception)
           {
-//            Log.Log.WriteFile("get_SignalQuality() locked :{0}", ex);
+            //            Log.Log.WriteFile("get_SignalQuality() locked :{0}", ex);
           }
-//          Log.Log.Write("   dvb:  #{0} get signalstrength", i);
+          //          Log.Log.Write("   dvb:  #{0} get signalstrength", i);
           try
           {
             //is a signal strength ok?
             stat.get_SignalStrength(out strength); //1-100
             if (strength > 0) signalStrength += strength;
+            Log.Log.Write("   dvb:  #{0} signalStrength:{1}", i, strength);
           }
-          catch (COMException )
+          catch (COMException)
           {
-//            Log.Log.WriteFile("get_SignalQuality() locked :{0}", ex);
+            //            Log.Log.WriteFile("get_SignalQuality() locked :{0}", ex);
           }
-          catch (Exception )
+          catch (Exception)
           {
-//            Log.Log.WriteFile("get_SignalQuality() locked :{0}", ex);
+            //            Log.Log.WriteFile("get_SignalQuality() locked :{0}", ex);
           }
-//          Log.Log.WriteFile("  dvb:#{0}  locked:{1} present:{2} quality:{3} strength:{4}", i, isLocked, isPresent, quality, strength);
+          //Log.Log.WriteFile("  dvb:#{0}  locked:{1} present:{2} quality:{3} strength:{4}", i, isLocked, isPresent, quality, strength);
         }
         if (_tunerStatistics.Count > 0)
         {

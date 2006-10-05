@@ -108,7 +108,7 @@ namespace TvLibrary.Implementations.DVB
         if (pid.isVideo)
           atscChannel.VideoPid = pid.pid;
       }
-      Log.Log.Write("Found: {0}", atscChannel);
+      Log.Log.Write("atsc:Found: {0}", atscChannel);
       return atscChannel;
     }
   }

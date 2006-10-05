@@ -257,7 +257,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public bool Tune(IChannel channel)
     {
-      Log.Log.WriteFile("atsc:  Tune:{0}", channel);
+      Log.Log.WriteFile("atsc:Tune:{0}", channel);
       try
       {
         _pmtVersion = -1;
@@ -265,7 +265,7 @@ namespace TvLibrary.Implementations.DVB
 
         if (atscChannel == null)
         {
-          Log.Log.WriteFile("Channel is not a ATSC channel!!! {0}", channel.GetType().ToString());
+          Log.Log.WriteFile("atsc:Channel is not a ATSC channel!!! {0}", channel.GetType().ToString());
           return false;
         }
         ATSCChannel oldChannel = _currentChannel as ATSCChannel;
@@ -283,7 +283,6 @@ namespace TvLibrary.Implementations.DVB
         }
         if (!CheckThreadId()) return false;
         ILocator locator;
-        Log.Log.WriteFile("Tune: {0}", atscChannel.ToString());
 
         _tuningSpace.get_DefaultLocator(out locator);
         IATSCLocator atscLocator = (IATSCLocator)locator;
@@ -318,7 +317,7 @@ namespace TvLibrary.Implementations.DVB
     public bool StartTimeShifting(string fileName)
     {
       if (!CheckThreadId()) return false;
-      Log.Log.WriteFile("StartTimeShifting()");
+      Log.Log.WriteFile("atsc:StartTimeShifting()");
       if (_graphState == GraphState.TimeShifting)
       {
         return true;
@@ -380,7 +379,7 @@ namespace TvLibrary.Implementations.DVB
     public bool StartRecording(RecordingType recordingType, string fileName, long startTime)
     {
       if (!CheckThreadId()) return false;
-      Log.Log.WriteFile("StartRecording to {0}", fileName);
+      Log.Log.WriteFile("atsc:tartRecording to {0}", fileName);
       if (_graphState != GraphState.TimeShifting)
       {
         throw new TvException("Card must be timeshifting before starting recording");
@@ -389,7 +388,7 @@ namespace TvLibrary.Implementations.DVB
 
       _graphState = GraphState.Recording;
       StartRecord(fileName, recordingType, ref startTime);
-      Log.Log.WriteFile("Started recording on {0}", startTime);
+      Log.Log.WriteFile("atsc:Started recording on {0}", startTime);
       return true;
     }
     /// <summary>
