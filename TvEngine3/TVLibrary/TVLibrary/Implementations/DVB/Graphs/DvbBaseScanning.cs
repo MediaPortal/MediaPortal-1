@@ -160,6 +160,7 @@ namespace TvLibrary.Implementations.DVB
       _analyzer = GetAnalyzer();
       _card.IsScanning = false;
 
+      Log.Log.WriteFile("Scan! wait for tuner lock");
       DateTime startTime = DateTime.Now;
       while (true)
       {
@@ -179,7 +180,9 @@ namespace TvLibrary.Implementations.DVB
       }
       try
       {
-        _analyzer.Start();
+         Log.Log.WriteFile("Scan! start");
+         _analyzer.Start();
+         Log.Log.WriteFile("wait for signal quality");
         if (_card.IsTunerLocked || _card.SignalQuality > 0 || _card.SignalLevel > 0)
         {
           Log.Log.WriteFile("Signal detected, wait for good signal quality");
@@ -210,6 +213,7 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.WriteFile("Scan! timeout...found no channels tuner locked:{0} signal level:{1} signal quality:{2} {3}", _card.IsTunerLocked, _card.SignalLevel, _card.SignalQuality, channelCount);
           return new List<IChannel>();
         }
+        Log.Log.WriteFile("Scan! detected {0} channels",channelCount);
         short networkId;
         short transportId;
         short serviceId;
