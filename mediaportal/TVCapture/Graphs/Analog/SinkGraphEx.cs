@@ -789,7 +789,7 @@ namespace MediaPortal.TV.Recording
       if (String.Compare(filterName, "%audioencoder%", true) == 0)
       {
         Log.Info("SinkGraphEx:  preferred filter %audioencoder%");
-        string[] audioEncoders = new string[] { "InterVideo Audio Encoder", "MainConcept MPEG Audio Encoder", "MainConcept Demo MPEG Audio Encoder", "CyberLink Audio Encoder" };
+        string[] audioEncoders = new string[] { "InterVideo Audio Encoder", "MainConcept MPEG Audio Encoder", "MainConcept Demo MPEG Audio Encoder", "CyberLink Audio Encoder", "CyberLink Audio Encoder(Twinhan)" };
 
         FilterCollection audioCodecs = Filters.AudioCompressors;
         FilterCollection legacyFilters = Filters.LegacyFilters;
@@ -862,7 +862,7 @@ namespace MediaPortal.TV.Recording
       if (String.Compare(filterName, "%videoencoder%", true) == 0)
       {
         Log.Info("SinkGraphEx:  preferred filter %videoencoder%");
-        string[] videoEncoders = new string[] { "InterVideo Video Encoder", "MainConcept MPEG Video Encoder", "MainConcept Demo MPEG Video Encoder", "CyberLink MPEG Video Encoder" };
+        string[] videoEncoders = new string[] { "InterVideo Video Encoder", "MainConcept MPEG Video Encoder", "MainConcept Demo MPEG Video Encoder", "CyberLink MPEG Video Encoder", "CyberLink MPEG Video Encoder(Twinhan)" };
 
         FilterCollection legacyFilters = Filters.LegacyFilters;
         FilterCollection videoCodecs = Filters.VideoCompressors;
