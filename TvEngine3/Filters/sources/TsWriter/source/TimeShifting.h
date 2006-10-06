@@ -100,18 +100,20 @@ public:
 	STDMETHODIMP SetPmtPid(int pmtPid);
 	void OnTsPacket(byte* tsPacket);
 	void Write(byte* buffer, int len);
-	void WriteTs(byte* tsPacket);
 
 private:
-  
+	void WriteTs(byte* tsPacket);
+  void WriteFakePAT();  
+  void WriteFakePMT();
+
 	MultiFileWriterParam m_params;
-  TimeShiftingMode m_timeShiftMode;
-	CMultiplexer m_multiPlexer;
-	bool				 m_bTimeShifting;
-	char				 m_szFileName[2048];
-	MultiFileWriter* m_pTimeShiftFile;
-	CCriticalSection m_section;
-  int m_pmtPid;
-  vector<int>  m_pids;
+  TimeShiftingMode     m_timeShiftMode;
+	CMultiplexer         m_multiPlexer;
+	bool				         m_bTimeShifting;
+	char				         m_szFileName[2048];
+	MultiFileWriter*     m_pTimeShiftFile;
+	CCriticalSection     m_section;
+  int                  m_pmtPid;
+  vector<int>          m_pids;
   typedef vector<int>::iterator ivecPids;
 };

@@ -29,6 +29,18 @@
 #include "timeshifting.h"
 #include "tsheader.h"
 
+#define PID_PAT   0
+#define TABLE_ID_PAT 0
+#define TABLE_ID_SDT 0x42
+
+
+int FAKE_NETWORK_ID  = 0x456;
+int FAKE_TRANSPORT_ID =0x4;
+int FAKE_SERVICE_ID   =0x89;
+int FAKE_PMT_PID     = 0x20;
+int FAKE_PCR_PID      =0x21;
+int FAKE_VIDEO_PID    =0x30;
+int FAKE_AUDIO_PID    =0x31;
 
 extern void LogDebug(const char *fmt, ...) ;
 
@@ -376,4 +388,94 @@ void CTimeShifting::WriteTs(byte* tsPacket)
   }
   if (write==false) return;
   Write(tsPacket,188);
+}
+
+void CTimeShifting::WriteFakePAT()
+{
+  int tableId=TABLE_ID_PAT;
+  int transportId=FAKE_TRANSPORT_ID;
+  int pmtPid=FAKE_PMT_PID;
+  int sectionLenght=9+4;
+  int version_number=0;
+  int current_next_indicator=1;
+  int section_number = 0;
+  int last_section_number = 0;
+
+  int pid=PID_PAT;
+  int PayLoadUnitStart=1;
+  int AdaptionControl=1;
+  int ContinuityCounter=0;
+
+  BYTE pat[200];
+  memset(pat,0,sizeof(pat));
+  pat[0]=0x47;
+  pat[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
+  pat[2]=(pid&0xff);
+  pat[3]=(AdaptionControl<<4) +ContinuityCounter;
+  pat[4]=0;
+
+  pat[5]=tableId;//table id
+  pat[6]=0x80+((sectionLenght>>8)&0xf);
+  pat[7]=sectionLenght&0xff;
+  pat[8]=(transportId>>8)&0xff;
+  pat[9]=(transportId)&0xff;
+  pat[10]=((version_number&0x1f)<<1)+current_next_indicator;
+  pat[11]=section_number;
+  pat[12]=last_section_number;
+  pat[13]=(FAKE_NETWORK_ID>>8)&0xff;
+  pat[14]=(FAKE_NETWORK_ID)&0xff;
+  pat[15]=(pmtPid>>8)&0xff;
+  pat[16]=(pmtPid)&0xff;
+  Write(pat,188);
+}
+void CTimeShifting::WriteFakePMT()
+{
+  int program_info_length=0;
+  int sectionLenght=9+2*5+3;
+  int version_number=0;
+  int current_next_indicator=1;
+  int section_number = 0;
+  int last_section_number = 0;
+  int transportId=FAKE_TRANSPORT_ID;
+
+  int tableId=2;
+  int pid=FAKE_PMT_PID;
+  int PayLoadUnitStart=1;
+  int AdaptionControl=1;
+  int ContinuityCounter=0;
+
+  BYTE pmt[200];
+  memset(pmt,0,sizeof(pmt));
+  pmt[0]=0x47;
+  pmt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
+  pmt[2]=(pid&0xff);
+  pmt[3]=(AdaptionControl<<4) +ContinuityCounter;
+  pmt[4]=0;
+  pmt[5]=tableId;//table id
+  pmt[6]=0x80+((sectionLenght>>8)&0xf);
+  pmt[7]=sectionLenght&0xff;
+  pmt[8]=(transportId>>8)&0xff;
+  pmt[9]=(transportId)&0xff;
+  pmt[10]=((version_number&0x1f)<<1)+current_next_indicator;
+  pmt[11]=section_number;
+  pmt[12]=last_section_number;
+  pmt[13]=(FAKE_PCR_PID>>8)&0xff;
+  pmt[14]=(FAKE_PCR_PID)&0xff;
+  pmt[15]=(program_info_length>>8)&0xff;
+  pmt[16]=(program_info_length)&0xff;
+  
+  pmt[17]=2;//video stream_type
+  pmt[18]=(FAKE_VIDEO_PID>>8)&0x1F;
+  pmt[19]=(FAKE_VIDEO_PID)&0xffF;
+  pmt[20]=0;
+  pmt[21]=0;
+
+
+  pmt[22]=3;//audio stream_type
+  pmt[23]=(FAKE_AUDIO_PID>>8)&0x1F;
+  pmt[24]=(FAKE_AUDIO_PID)&0xffF;
+  pmt[25]=0;
+  pmt[26]=0;
+
+  Write(pmt,188);
 }
