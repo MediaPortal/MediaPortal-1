@@ -32,7 +32,7 @@
 			<description>Date</description>
 			<type>label</type>
 			<id>1</id>
-			<posX>1271</posX>
+			<posX>1254</posX>
 			<posY>66</posY>
 			<label>#date</label>
 			<align>right</align>
@@ -43,7 +43,7 @@
 			<description>Time</description>
 			<type>label</type>
 			<id>1</id>
-			<posX>1271</posX>
+			<posX>1254</posX>
 			<posY>93</posY>
 			<label>#time</label>
 			<align>right</align>
@@ -86,10 +86,10 @@
 			<description>Single Channel Image</description>
 			<type>image</type>
 			<id>33</id>
-			<posX>352</posX>
-			<posY>106</posY>
-			<width>53</width>
-			<height>53</height>
+			<posX>350</posX>
+			<posY>117</posY>
+			<width>46</width>
+			<height>46</height>
 			<keepaspectratio>yes</keepaspectratio>
 			<centered>no</centered>
 			<zoom>yes</zoom>
@@ -169,11 +169,11 @@
 			<id>7</id>
 			<posX>0</posX>
 			<posY>0</posY>
-			<width>42</width>
-			<height>42</height>
-			<keepaspectratio>yes</keepaspectratio>
+			<width>36</width>
+			<height>32</height>
+			<keepaspectratio>no</keepaspectratio>
 			<centered>no</centered>
-			<zoom>yes</zoom>
+			<zoom>no</zoom>
 			<texture>defaultVideoBig.png</texture>
 		</control>
 		<control>
@@ -196,7 +196,7 @@
 			<width>666</width>
 			<align>left</align>
 			<label>#TV.Guide.Title</label>
-			<font>font16</font>
+			<font>font14</font>
 			<textcolor>FFFFFFFF</textcolor>
 		</control>
 		<control>
@@ -207,7 +207,7 @@
 			<posY>720</posY>
 			<label>#TV.Guide.Time</label>
 			<align>left</align>
-			<font>font16</font>
+			<font>font14</font>
 			<textcolor>FFB2D4F5</textcolor>
 		</control>
 		<control>
@@ -218,7 +218,7 @@
 			<posY>720</posY>
 			<label>#TV.Guide.Genre</label>
 			<align>left</align>
-			<font>font16</font>
+			<font>font14</font>
 			<textcolor>FFB2D4F5</textcolor>
 		</control>
 		<control>
@@ -231,7 +231,7 @@
 			<height>93</height>
 			<seperator>----------------------------------------------------------------------------------------------</seperator>
 			<label>#TV.Guide.Description</label>
-			<font>font13</font>
+			<font>font12</font>
 			<textcolor>FFFFFFFF</textcolor>
 		</control>
 		<!--	<control>
@@ -255,9 +255,9 @@
 			<description>vertical timeline</description>
 			<type>image</type>
 			<id>25</id>
-			<posX>56</posX>
-			<posY>165</posY>
-			<height>381</height>
+			<posX>55</posX>
+			<posY>163</posY>
+			<height>390</height>
 			<colordiffuse>c0ffffff</colordiffuse>
 			<texture>tvguide_slider.png</texture>
 		</control>
