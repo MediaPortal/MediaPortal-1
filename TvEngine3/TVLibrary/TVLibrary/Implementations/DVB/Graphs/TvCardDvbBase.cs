@@ -268,6 +268,7 @@ namespace TvLibrary.Implementations.DVB
 
       ITsTimeShift timeshift = _filterTsAnalyzer as ITsTimeShift;
       timeshift.SetPcrPid((short)dvbChannel.PcrPid);
+      timeshift.SetPmtPid((short)dvbChannel.PmtPid);
       foreach (PidInfo info in _channelInfo.pids)
       {
         if (info.isAC3Audio || info.isAudio || info.isVideo)

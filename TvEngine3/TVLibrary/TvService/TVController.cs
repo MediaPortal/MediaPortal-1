@@ -1075,7 +1075,7 @@ namespace TvService
           if (System.IO.File.Exists(fileName))
           {
             _streamer.Start();
-            _streamer.Add(String.Format("stream{0}", cardId), fileName);
+            _streamer.AddTimeShiftFile(String.Format("stream{0}", cardId), fileName,true);
           }
           else
           {
@@ -1363,7 +1363,7 @@ namespace TvService
         return RemoteControl.Instance.GetRecordingUrl(idRecording);
       }
       _streamer.Start();
-      string streamName = _streamer.Add(recording.FileName);
+      string streamName = _streamer.AddMpegFile(recording.FileName);
       string hostName = Dns.GetHostName();
       string url = String.Format("rtsp://{0}/{1}", hostName, streamName);
       Log.WriteFile("Controller: streaming url:{0} file:{1}", url, recording.FileName);

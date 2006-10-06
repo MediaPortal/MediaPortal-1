@@ -40,10 +40,10 @@ namespace TVLibrary.Streaming
     protected static extern void StreamRun();
 
     [DllImport("StreamingServer.dll", CharSet = CharSet.Ansi)]
-    protected static extern void StreamAddTs(string streamName, string fileName);
+    protected static extern void StreamAddTimeShiftFile(string streamName, string fileName,bool isProgramStream);
 
     [DllImport("StreamingServer.dll", CharSet = CharSet.Ansi)]
-    protected static extern void StreamAddMpg(string streamName, string fileName);
+    protected static extern void StreamAddMpegFile(string streamName, string fileName);
 
     [DllImport("StreamingServer.dll", CharSet = CharSet.Ansi)]
     protected static extern void StreamRemove(string streamName);
@@ -105,8 +105,8 @@ namespace TVLibrary.Streaming
     /// Creates a new RTSP stream
     /// </summary>
     /// <param name="streamName">Name of the stream.</param>
-    /// <param name="fileName">Name of the file.</param>
-    public void Add(string streamName, string fileName)
+    /// <param name="fileName">Name of the timeshift file.</param>
+    public void AddTimeShiftFile(string streamName, string fileName, bool isProgramStream)
     {
       if (_initialized == false) return;
       if (_streams.ContainsKey(streamName))
@@ -117,7 +117,7 @@ namespace TVLibrary.Streaming
       if (System.IO.File.Exists(fileName))
       {
         Log.WriteFile("RTSP: add stream {0} file:{1}", streamName, fileName);
-        StreamAddTs(streamName, fileName);
+        StreamAddTimeShiftFile(streamName, fileName, isProgramStream);
         _streams[streamName] = fileName;
       }
     }
@@ -127,7 +127,7 @@ namespace TVLibrary.Streaming
     /// </summary>
     /// <param name="fileName">file to stream.</param>
     /// <returns>name of the stream</returns>
-    public string Add(string fileName)
+    public string AddMpegFile(string fileName)
     {
       if (_initialized == false) return "";
       string streamName = String.Format("file{0}", _streamIndex++);
@@ -141,7 +141,7 @@ namespace TVLibrary.Streaming
         if (fileName.ToLower().IndexOf(".mpg") >= 0)
         {
           Log.WriteFile("RTSP: add stream {0} file:{1}", streamName, fileName);
-          StreamAddMpg(streamName, fileName);
+          StreamAddMpegFile(streamName, fileName);
           _streams[streamName] = fileName;
         }
       }
