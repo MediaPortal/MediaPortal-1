@@ -1,3 +1,26 @@
+#region Copyright (C) 2006 Team MediaPortal
+/* 
+ *	Copyright (C) 2005-2006 Team MediaPortal
+ *	http://www.team-mediaportal.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+#endregion
+
 using System;
 using System.IO;
 using System.Threading;
@@ -13,14 +36,15 @@ namespace MediaPortal.ServiceImplementations
   /// </summary>
   internal class LogImpl : ILog
   {
+    #region Variables
     private static DateTime _previousDate;
     private static Level _minLevel;
     private static string logDir;
-
     private static bool bConfiguration;
+    #endregion
     // when Configuartion.exe is running the logging should take place in Configuration.log
 
-
+    #region Constructors/Destructors
     /// <summary>
     /// Private constructor of the GUIPropertyManager. Singleton. Do not allow any instance of this class.
     /// </summary>
@@ -40,21 +64,9 @@ namespace MediaPortal.ServiceImplementations
       }
       bConfiguration = false;
     }
+    #endregion
 
-    public void BackupLogFiles()
-    {
-      BackupLogFile(LogType.Log);
-      BackupLogFile(LogType.Recorder);
-      BackupLogFile(LogType.Error);
-      BackupLogFile(LogType.EPG);
-      BackupLogFile(LogType.VMR9);
-    }
-
-    public void BackupLogFile(LogType logType)
-    {
-      Initialize(logType);
-    }
-
+    #region Private Methods
     private void Initialize(LogType type)
     {
       try
@@ -74,6 +86,77 @@ namespace MediaPortal.ServiceImplementations
       {
         Write(ex);
       }
+    }
+
+    private string GetFileName(LogType type)
+    {
+      string fname = "MediaPortal.log";
+      if (bConfiguration)
+      {
+        fname = "Configuration.log";
+      }
+      else
+      {
+        switch (type)
+        {
+          case LogType.Recorder:
+            fname = "recorder.log";
+            break;
+          case LogType.Error:
+            fname = "error.log";
+            break;
+          case LogType.EPG:
+            fname = "epg.log";
+            break;
+          case LogType.VMR9:
+            fname = "vmr9.log";
+            break;
+          case LogType.MusicShareWatcher:
+            fname = "MusicshareWatcher.log";
+            break;
+          case LogType.WebEPG:
+            fname = "webEPG.log";
+            break;
+        }
+      }
+      return Config.GetFile(Config.Dir.Log, fname);
+    }
+
+    private string GetLevelName(Level logLevel)
+    {
+      switch (logLevel)
+      {
+        case Level.Error:
+          return "ERROR";
+
+        case Level.Warning:
+          return "Warn.";
+
+        case Level.Information:
+          return "Info.";
+
+        case Level.Debug:
+          return "Debug";
+      }
+
+      return "Unknown";
+    }
+    #endregion
+
+    #region ILog Implementations
+    public void BackupLogFiles()
+    {
+      BackupLogFile(LogType.Log);
+      BackupLogFile(LogType.Recorder);
+      BackupLogFile(LogType.Error);
+      BackupLogFile(LogType.EPG);
+      BackupLogFile(LogType.VMR9);
+      BackupLogFile(LogType.WebEPG);
+    }
+
+    public void BackupLogFile(LogType logType)
+    {
+      Initialize(logType);
     }
 
     public void Write(Exception ex)
@@ -196,60 +279,6 @@ namespace MediaPortal.ServiceImplementations
       WriteThreadId(format, arg);
     }
 
-    private string GetFileName(LogType type)
-    {
-      string fname = "MediaPortal.log";
-      if (bConfiguration)
-      {
-        fname = "Configuration.log";
-      }
-      else
-      {
-        switch (type)
-        {
-          case LogType.Recorder:
-            fname = "recorder.log";
-            break;
-          case LogType.Error:
-            fname = "error.log";
-            break;
-          case LogType.EPG:
-            fname = "epg.log";
-            break;
-          case LogType.VMR9:
-            fname = "vmr9.log";
-            break;
-          case LogType.MusicShareWatcher:
-            fname = "MusicshareWatcher.log";
-            break;
-          case LogType.WebEPG:
-            fname = "webEPG.log";
-            break;
-        }
-      }
-      return Config.GetFile(Config.Dir.Log, fname);
-    }
-
-    private string GetLevelName(Level logLevel)
-    {
-      switch (logLevel)
-      {
-        case Level.Error:
-          return "ERROR";
-
-        case Level.Warning:
-          return "Warn.";
-
-        case Level.Information:
-          return "Info.";
-
-        case Level.Debug:
-          return "Debug";
-      }
-
-      return "Unknown";
-    }
-
     public void SetConfigurationMode()
     {
       bConfiguration = true;
@@ -311,5 +340,6 @@ namespace MediaPortal.ServiceImplementations
         WriteFile(LogType.Log, format, arg);
       }
     } //static public void WriteFile(LogType type, string format, params object[] arg)
+    #endregion
   }
 }
