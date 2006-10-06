@@ -4,106 +4,241 @@
 	<allowoverlay>no</allowoverlay>
 <controls>
 	<control>
-		<description>background</description> 
-		<type>image</type> 
-		<id>0</id> 
-		<posX>10</posX> 
-		<posY>357</posY>
-		<texture>osd_bg.png</texture>		
-		<visible>yes</visible> 
-	</control>
-	<control>
-		<description>background</description> 
-		<type>image</type> 
-		<id>0</id> 
-		<posX>170</posX> 
-		<posY>390</posY>
-		<width>375</width>
-		<height>22</height>
-		<texture>osd_progress_background.png</texture>		
-		<visible>yes</visible> 
-	</control>
-	<control>
-		<description>Progress Bar</description> 
-		<type>progress</type> 
-		<id>1</id> 
-		<posX>159</posX> 
-		<posY>391</posY> 
+		<description>background</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>20</posX>
+		<posY>330</posY>
 		<width>400</width>
+		<height>230</height>
+		<texture>osd_bg_video.png</texture>
+		<visible>yes</visible>
+	</control>
+	<control>
+		<description>progressbar background</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>20</posX>
+		<posY>20</posY>
+		<width>680</width>
+		<height>40</height>
+		<texture>osd_bg_top.png</texture>
+	</control>
+	<control>
+		<description>background</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>86</posX>
+		<posY>29</posY>
+		<width>450</width>
 		<height>20</height>
-		<texturebg>osd_progress_back.png</texturebg> 
-		<lefttexture>osd_progress_left.png</lefttexture> 
-		<midtexture>osd_progress_mid.png</midtexture> 
-		<righttexture>osd_progress_right.png</righttexture> 
-		<visible>yes</visible> 
+		<texture>osd_progress_background.png</texture>
+		<visible>yes</visible>
+	</control>
+	<control>
+		<description>Progress Bar</description>
+		<type>progress</type>
+		<id>1</id>
+		<posX>76</posX>
+		<posY>30</posY>
+		<width>470</width>
+		<height>20</height>
+		<texturebg>osd_progress_back.png</texturebg>
+		<lefttexture>osd_progress_left.png</lefttexture>
+		<midtexture>osd_progress_mid.png</midtexture>
+		<righttexture>osd_progress_right.png</righttexture>
+		<visible>yes</visible>
 		<label>#percentage</label>
 	</control>
+
+
 	<control>
-		<description>Start Time Info</description> 
-		<type>label</type> 
-		<id>101</id> 
-		<posX>160</posX> 
-		<posY>390</posY> 
-		<label>#currentplaytime</label> 
-		<align>right</align> 
-		<font>font16</font> 
-		<textcolor>FFFFFFFF</textcolor> 
-	</control>
-	<control>
-		<description>Remaining Time</description> 
-		<type>label</type> 
-		<id>102</id> 
-		<posX>555</posX> 
-		<posY>390</posY> 
-		<label>-#currentremaining</label> 
-		<align>left</align> 
-		<font>font16</font> 
-		<textcolor>FFFFFFFF</textcolor> 
-	</control>
-	<control>
-		<description>Movie thumb</description> 
-		<type>image</type> 
-		<id>102</id> 
-		<posX>585</posX> 
-		<posY>420</posY> 
-		<texture>#Play.Current.Thumb</texture> 
-		<height>130</height>
-		<width>80</width>
-		<visible>yes</visible>
-		<keepaspectratio>yes</keepaspectratio>
-	</control>
-	<control>
-		<description>Plot</description> 
-		<id>1</id> 
-		<type>textboxscrollup</type> 
-		<posX>210</posX> 
-		<posY>420</posY>
-		<width>330</width> 
-		<height>120</height>
-		<align>left</align> 
+		<description>Start Time Info</description>
+		<type>label</type>
+		<id>101</id>
+		<posX>40</posX>
+		<posY>30</posY>
+		<label>#currentplaytime</label>
+		<align>left</align>
 		<font>font13</font>
-		<label>#Play.Current.Plot</label>
 		<textcolor>FFFFFFFF</textcolor>
 	</control>
 	<control>
-		<description>Play</description> 
-		<type>togglebutton</type> 
-		<id>213</id> 
-		<posX>60</posX> 
-		<posY>415</posY>
-		<width>130</width>
-		<height>130</height> 
-		<AltTextureFocus>osd_pause_focus.png</AltTextureFocus> 
-		<AltTextureNoFocus>osd_pause_nofocus.png</AltTextureNoFocus> 
-		<textureFocus>osd_play_focus.png</textureFocus> 
-		<textureNoFocus>osd_play_nofocus.png</textureNoFocus> 
-		<label>-</label> 
-		<font>-</font> 
-		<onleft>211</onleft> 
-		<onright>214</onright> 
-		<onup>215</onup> 
-		<ondown>210</ondown> 
+		<description>End Time Info</description>
+		<type>label</type>
+		<id>102</id>
+		<posX>545</posX>
+		<posY>30</posY>
+		<label>#currentremaining</label>
+		<align>left</align>
+		<font>font13</font>
+		<textcolor>FFFFFFFF</textcolor>
 	</control>
+
+	<control>
+		<description>Current Time Info</description>
+		<type>label</type>
+		<id>0</id>
+		<posX>630</posX>
+		<posY>30</posY>
+		<label>#time</label>
+		<align>left</align>
+		<font>font13</font>
+		<textcolor>FF071422</textcolor>
+	</control>
+
+	<control>
+		<description>TV Logo</description>
+		<type>image</type>
+		<id>102</id>
+		<posX>40</posX>
+		<posY>350</posY>
+		<width>50</width>
+		<height>68</height>
+		<texture>#Play.Current.Thumb</texture>
+		<keepaspectratio>yes</keepaspectratio>
+		<centered>yes</centered>
+	</control>
+
+	<control>
+		<description>Movie Name</description>
+		<id>36</id>
+		<type>textbox</type>
+		<width>290</width>
+		<height>30</height>
+		<posX>110</posX>
+		<posY>350</posY>
+		<align>left</align>
+		<font>font13</font>
+		<label>#Play.Current.Title</label>
+		<textcolor>FFB2D4F5</textcolor>
+	</control>
+	
+	<control>
+		<description>Plot</description>
+		<type>textboxscrollup</type>
+		<id>1</id>
+		<posX>110</posX>
+		<posY>375</posY>
+		<width>290</width>
+		<height>170</height>
+		<align>left</align>
+		<label>#Play.Current.Plot</label>
+		<font>font13</font>
+		<textcolor>FFFFFFFF</textcolor>
+	</control>
+
+	<control>
+		<description>Play</description>
+		<type>togglebutton</type>
+		<id>213</id>
+		<posX>40</posX>
+		<posY>440</posY>
+		<width>50</width>
+		<height>50</height>
+		<AltTextureFocus>osd_pause_focus.png</AltTextureFocus>
+		<AltTextureNoFocus>osd_pause_nofocus.png</AltTextureNoFocus>
+		<textureFocus>osd_play_focus.png</textureFocus>
+		<textureNoFocus>osd_play_nofocus.png</textureNoFocus>
+		<label>-</label>
+		<font>-</font>
+		<onleft>213</onleft>
+		<onright>213</onright>
+		<onup>213</onup>
+		<ondown>218</ondown>
+	</control>
+
+	<control>
+		<description>Subtitles Menu</description>
+		<type>togglebutton</type>
+		<id>218</id>
+		<posX>50</posX>
+		<posY>495</posY>
+		<width>30</width>
+		<height>30</height>
+		<AltTextureFocus>osd_subtitles_focus.png</AltTextureFocus>
+		<AltTextureNoFocus>osd_subtitles_nofocus.png</AltTextureNoFocus>
+		<textureFocus>osd_subtitles_focus.png</textureFocus>
+		<textureNoFocus>osd_subtitles_nofocus.png</textureNoFocus>
+		<label>-</label>
+		<font>-</font>
+		<onleft>218</onleft>
+		<onright>218</onright>
+		<onup>213</onup>
+		<ondown>218</ondown>
+	</control>
+	<control>
+		<description>Sub Menu Background (subtitles)</description>
+		<type>image</type>
+		<id>302</id>
+		<posX>440</posX>
+		<posY>330</posY>
+		<width>260</width>
+		<height>230</height>
+		<texture>osd_bg_settngs.png</texture>
+		<colorkey>0</colorkey>
+		<colordiffuse>ffffffff</colordiffuse>
+		<visible>no</visible>
+	</control>
+	<control>
+		<description>SubTitle Delay label</description>
+		<type>label</type>
+		<id>850</id>
+		<posX>470</posX>
+		<posY>400</posY>
+		<label>303</label>
+		<font>font13</font>
+		<textcolor>FFFFFFFF</textcolor>
+		<visible>no</visible>
+	</control>
+	<control>
+		<description>SubTitle Delay Slider</description>
+		<type>slider</type>
+		<id>800</id>
+		<posX>470</posX>
+		<posY>430</posY>
+		<spintype>float</spintype>
+		<textureSliderBar>osd_slider_bg.png</textureSliderBar>
+		<textureSliderNib>osd_slider_nibNF.png</textureSliderNib>
+		<textureSliderNibFocus>osd_slider_nibFO.png</textureSliderNibFocus>
+		<onup>801</onup>
+		<ondown>800</ondown>
+		<onleft>218</onleft>
+		<onright>800</onright>
+		<visible>no</visible>
+	</control>
+	<control>
+		<description>SubTitles On/Off Checkbox</description>
+		<type>checkmark</type>
+		<id>801</id>
+		<posX>470</posX>
+		<posY>360</posY>
+		<label>305</label>
+		<onup>801</onup>
+		<ondown>800</ondown>
+		<onleft>218</onleft>
+		<onright>801</onright>
+		<visible>no</visible>
+	</control>
+	<control>
+		<description>Sub Titles List Control</description>
+		<type>listcontrol</type>
+		<id>802</id>
+		<posX>470</posX>
+		<posY>455</posY>
+		<width>220</width>
+		<height>100</height>
+		<onleft>801</onleft>
+		<onright>800</onright>
+		<onup>802</onup>
+		<ondown>802</ondown>
+		<visible>no</visible>
+	</control>
+	
+	
+	
+	
+	
 	<control>
 		<description>Skip Bwd</description> 
 		<type>togglebutton</type> 
@@ -121,7 +256,8 @@
 		<onleft>212</onleft> 
 		<onright>216</onright> 
 		<onup>213</onup> 
-		<ondown>215</ondown> 
+		<ondown>215</ondown>
+		<visible>no</visible>
 	</control>
 	<control>
 		<description>Rewind</description> 
@@ -140,7 +276,8 @@
 		<onleft>214</onleft> 
 		<onright>213</onright> 
 		<onup>218</onup> 
-		<ondown>212</ondown> 
+		<ondown>212</ondown>
+		<visible>no</visible>
 	</control>
 	<control>
 		<description>Stop</description> 
@@ -157,7 +294,8 @@
 		<onleft>216</onleft> 
 		<onright>213</onright> 
 		<onup>211</onup> 
-		<ondown>210</ondown> 
+		<ondown>210</ondown>
+		<visible>no</visible>
 	</control>
 	<control>
 		<description>Fast Forward</description> 
@@ -176,7 +314,8 @@
 		<onleft>213</onleft> 
 		<onright>211</onright> 
 		<onup>219</onup> 
-		<ondown>216</ondown> 
+		<ondown>216</ondown>
+		<visible>no</visible>
 	</control>
 	<control>
 		<description>Skip Fwd</description> 
@@ -195,7 +334,8 @@
 		<onleft>218</onleft> 
 		<onright>219</onright> 
 		<onup>210</onup> 
-		<ondown>213</ondown> 
+		<ondown>213</ondown>
+		<visible>no</visible>
 	</control>
 	<control>
 		<description>Mute</description> 
@@ -214,27 +354,10 @@
 		<onleft>213</onleft> 
 		<onright>212</onright> 
 		<onup>214</onup> 
-		<ondown>210</ondown> 
+		<ondown>210</ondown>
+		<visible>no</visible>
 	</control>
-	<control>
-		<description>Subtitles Menu</description> 
-		<type>togglebutton</type> 
-		<id>218</id> 
-		<posX>71</posX> 
-		<posY>430</posY>
-		<width>35</width>
-		<height>35</height> 
-		<AltTextureFocus>osd_settings_subs_focus.png</AltTextureFocus> 
-		<AltTextureNoFocus>osd_settings_subs_nofocus.png</AltTextureNoFocus> 
-		<textureFocus>-</textureFocus> 
-		<textureNoFocus>osd_settings_subs_focus.png</textureNoFocus> 
-		<label>-</label> 
-		<font>-</font> 
-		<onleft>219</onleft> 
-		<onright>213</onright> 
-		<onup>215</onup> 
-		<ondown>211</ondown> 
-	</control>
+
 	<control>
 		<description>Bookmarks Menu</description> 
 		<type>togglebutton</type> 
@@ -252,7 +375,8 @@
 		<onleft>213</onleft> 
 		<onright>218</onright> 
 		<onup>215</onup> 
-		<ondown>214</ondown> 
+		<ondown>214</ondown>
+		<visible>no</visible>
 	</control>
 	<control>
 		<description>Sub Menu Background (volume)</description> 
@@ -263,7 +387,7 @@
 		<texture>osd_dialog.png</texture> 
 		<colorkey>0</colorkey> 
 		<colordiffuse>ffffffff</colordiffuse> 
-		<visible>no</visible> 
+		<visible>no</visible>
 	</control>
 	<control>
 		<description>Sub Menu Background (subtitles)</description> 
@@ -333,60 +457,6 @@
 		<ondown>216</ondown> 
 		<onleft>400</onleft> 
 		<onright>400</onright> 
-		<visible>no</visible> 
-	</control>
-	<control>
-		<description>SubTitle Delay label</description> 
-		<type>label</type> 
-		<id>850</id> 
-		<posX>185</posX> 
-		<posY>370</posY> 
-		<label>303</label> 
-		<font>font13</font> 
-		<textcolor>FFFFFFFF</textcolor> 
-		<visible>no</visible> 
-	</control>
-	<control>
-		<description>SubTitle Delay Slider</description> 
-		<type>slider</type> 
-		<id>800</id> 
-		<posX>300</posX> 
-		<posY>370</posY> 
-		<spintype>float</spintype> 
-		<textureSliderBar>osd_slider_bg.png</textureSliderBar> 
-		<textureSliderNib>osd_slider_nibNF.png</textureSliderNib> 
-		<textureSliderNibFocus>osd_slider_nibFO.png</textureSliderNibFocus> 
-		<onup>800</onup> 
-		<ondown>801</ondown> 
-		<onleft>800</onleft> 
-		<onright>800</onright> 
-		<visible>no</visible> 
-	</control>
-	<control>
-		<description>SubTitles On/Off Checkbox</description> 
-		<type>checkmark</type> 
-		<id>801</id> 
-		<posX>185</posX> 
-		<posY>390</posY> 
-		<label>305</label> 
-		<onup>800</onup> 
-		<ondown>802</ondown> 
-		<onleft>801</onleft> 
-		<onright>801</onright> 
-		<visible>no</visible> 
-	</control>
-	<control>
-		<description>Sub Titles List Control</description> 
-		<type>listcontrol</type> 
-		<id>802</id> 
-		<posX>185</posX> 
-		<posY>425</posY> 
-		<width>300</width> 
-		<height>100</height> 
-		<onleft>801</onleft> 
-		<onright>800</onright> 
-		<onup>802</onup> 
-		<ondown>802</ondown> 
 		<visible>no</visible> 
 	</control>
 	<control>
