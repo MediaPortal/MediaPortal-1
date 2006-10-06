@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
 	<id>510</id>
 	<defaultcontrol>33</defaultcontrol>
@@ -221,8 +221,8 @@
 			<textureDownFocus>-</textureDownFocus>
 			<textcolor>White</textcolor>
 			<textXOff>12</textXOff>
-        		<textYOff>6</textYOff>
-	        	<textXOff2>550</textXOff2>
+                        <textYOff>6</textYOff>
+	                <textXOff2>550</textXOff2>
 		        <textYOff2>6</textYOff2>
  		</control>
 
@@ -243,10 +243,131 @@
 			<textureDownFocus>-</textureDownFocus>
 			<textcolor>White</textcolor>
 			<textXOff>12</textXOff>
-        		<textYOff>6</textYOff>
-	        	<textXOff2>550</textXOff2>
+                        <textYOff>6</textYOff>
+	                <textXOff2>550</textXOff2>
 		        <textYOff2>6</textYOff2>
 		</control>
+      
+            <control>
+                <description>unknown rating1</description>
+                <type>imagelist</type>
+                <id>77</id>
+                <posX>545</posX>
+                <posY>190</posY>
+                <width>100</width>
+                <height>32</height>
+                <textureWidth>18</textureWidth>
+                <textureHeight>18</textureHeight>
+                <subitems>
+                  <subitem>greystar.png</subitem>
+                  <subitem>stargood.png</subitem>
+                </subitems>
+                <orientation>horizontal</orientation>
+                <align>left</align>
+                <percentage>#Lastfm.Rating.AlbumTrack1</percentage>
+                <visible>yes</visible>
+            </control>
+
+            <control>
+                <description>unknown rating2</description>
+                <type>imagelist</type>
+                <id>78</id>
+                <posX>545</posX>
+                <posY>235</posY>
+                <width>100</width>
+                <height>32</height>
+                <textureWidth>18</textureWidth>
+                <textureHeight>18</textureHeight>
+                <subitems>
+                  <subitem>greystar.png</subitem>
+                  <subitem>stargood.png</subitem>
+                </subitems>
+                <orientation>horizontal</orientation>
+                <align>left</align>
+                <percentage>#Lastfm.Rating.AlbumTrack2</percentage>
+                <visible>yes</visible>
+            </control>
+
+            <control>
+                <description>unknown rating3</description>
+                <type>imagelist</type>
+                <id>78</id>
+                <posX>545</posX>
+                <posY>278</posY>
+                <width>100</width>
+                <height>32</height>
+                <textureWidth>18</textureWidth>
+                <textureHeight>18</textureHeight>
+                <subitems>
+                  <subitem>greystar.png</subitem>
+                  <subitem>stargood.png</subitem>
+                </subitems>
+                <orientation>horizontal</orientation>
+                <align>left</align>
+                <percentage>#Lastfm.Rating.AlbumTrack3</percentage>
+                <visible>yes</visible>
+            </control>
+      
+            <control>
+                <description>famous rating1</description>
+                <type>imagelist</type>
+                <id>77</id>
+                <posX>545</posX>
+                <posY>190</posY>
+                <width>100</width>
+                <height>32</height>
+                <textureWidth>18</textureWidth>
+                <textureHeight>18</textureHeight>
+                <subitems>
+                  <subitem>greystar.png</subitem>
+                  <subitem>starbest.png</subitem>
+                </subitems>
+                <orientation>horizontal</orientation>
+                <align>left</align>
+                <percentage>#Lastfm.Rating.AlbumTrack1</percentage>
+                <visible>yes</visible>
+            </control>
+
+            <control>
+                <description>famous rating2</description>
+                <type>imagelist</type>
+                <id>78</id>
+                <posX>545</posX>
+                <posY>235</posY>
+                <width>100</width>
+                <height>32</height>
+                <textureWidth>18</textureWidth>
+                <textureHeight>18</textureHeight>
+                <subitems>
+                  <subitem>greystar.png</subitem>
+                  <subitem>starbest.png</subitem>
+                </subitems>
+                <orientation>horizontal</orientation>
+                <align>left</align>
+                <percentage>#Lastfm.Rating.AlbumTrack2</percentage>
+                <visible>yes</visible>
+            </control>
+
+            <control>
+                <description>famous rating3</description>
+                <type>imagelist</type>
+                <id>78</id>
+                <posX>545</posX>
+                <posY>278</posY>
+                <width>100</width>
+                <height>32</height>
+                <textureWidth>18</textureWidth>
+                <textureHeight>18</textureHeight>
+                <subitems>
+                  <subitem>greystar.png</subitem>
+                  <subitem>starbest.png</subitem>
+                </subitems>
+                <orientation>horizontal</orientation>
+                <align>left</align>
+                <percentage>#Lastfm.Rating.AlbumTrack3</percentage>
+                <visible>yes</visible>
+            </control>
+
 		<control>
 			<type>fadelabel</type>
 			<description>best album tracks label</description>
