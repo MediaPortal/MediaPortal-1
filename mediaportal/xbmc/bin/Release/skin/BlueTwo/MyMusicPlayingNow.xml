@@ -209,32 +209,43 @@
          <id>166</id>
          <onright>155</onright>
          <ondown>155</ondown>
-         <posX>38</posX>
+         <posX>24</posX>
          <posY>136</posY>
-         <width>300</width>
+         <width>220</width>
          <height>135</height>
+         <textXOff>4</textXOff>
+         <IconXOff>1</IconXOff>
          <spinColor>-</spinColor>
+         <image>-</image>
          <textureUp>-</textureUp>
          <textureDown>-</textureDown>
          <textureUpFocus>-</textureUpFocus>
          <textureDownFocus>-</textureDownFocus>
-         <textcolor>White</textcolor>
+         <textureFocus>list_sub_focus_arrow_small.png</textureFocus>
+         <textureNoFocus>-</textureNoFocus>
       </control>
+      
+
       <control>
          <type>listcontrol</type>
          <description>list of best tag tracks</description>
          <id>155</id>
          <onup>166</onup>
          <onleft>166</onleft>
-         <posX>38</posX>
+         <posX>24</posX>
          <posY>288</posY>
          <width>300</width>
          <height>135</height>
+         <textXOff>4</textXOff>
+         <IconXOff>1</IconXOff>
          <spinColor>-</spinColor>
+         <image>-</image>
          <textureUp>-</textureUp>
-	       <textureDown>-</textureDown>
-	       <textureUpFocus>-</textureUpFocus>
+         <textureNoFocus>-</textureNoFocus>
+         <textureDown>-</textureDown>
+         <textureUpFocus>-</textureUpFocus>
          <textureDownFocus>-</textureDownFocus>
+         <textureFocus>list_sub_focus_arrow.png</textureFocus>
          <textcolor>White</textcolor>
       </control>
       
