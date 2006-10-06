@@ -92,6 +92,7 @@ namespace MediaPortal.GUI.Library
     static bool m_bAutoHideTopBar = false;      // Topbar autohide status
     static bool m_bDefaultTopBarHide = false;      // Topbar.xml default autohide status
     static DateTime m_dtTopBarTimeOut = DateTime.Now; // Topbar timeout timer
+    static bool _disableTopBar = false;        // Topbar diaanled view status   
     static int m_iSubtitles = 550; 						// Y position for subtitles
     static bool m_bCalibrating = false;					// boolean indicating if we are in calibration mode or in normal mode
     static bool m_bPlaying;										// boolean indicating if we are playing any media or not
@@ -716,6 +717,15 @@ namespace MediaPortal.GUI.Library
     {
       get { return m_dtTopBarTimeOut; }
       set { m_dtTopBarTimeOut = value; }
+    }
+
+    /// <summary>
+    /// Get/Set disable topbar view status
+    /// </summary>
+    static public bool DisableTopBar
+    {
+      get { return _disableTopBar; }
+      set { _disableTopBar = value; }
     }
 
     /// <summary>

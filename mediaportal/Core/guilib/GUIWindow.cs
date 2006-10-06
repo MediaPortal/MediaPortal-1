@@ -242,6 +242,7 @@ namespace MediaPortal.GUI.Library
     // 1=true  from skin.xml
     protected AutoHideTopBar _autoHideTopbarType = AutoHideTopBar.UseDefault;
     protected bool _autoHideTopbar = false;
+    protected bool _disableTopBar = false;                      // skin file can hide Topbar when needed
     bool _isSkinLoaded = false;
     bool _shouldRestore = false;
     private string _lastSkin = string.Empty;
@@ -514,6 +515,19 @@ namespace MediaPortal.GUI.Library
               _autoHideTopbarType = AutoHideTopBar.Yes;
             if (allowed == "no" || allowed == "false")
               _autoHideTopbarType = AutoHideTopBar.No;
+          }
+        }
+
+        // Configure the Topbar disable setting
+        XmlNode nodeDisableTopbar = doc.DocumentElement.SelectSingleNode("/window/disabletopbar");
+        _disableTopBar = false;
+        if (nodeDisableTopbar != null)
+        {
+          if (nodeDisableTopbar.InnerText != null)
+          {
+            string allowed = nodeDisableTopbar.InnerText.ToLower();
+            if (allowed == "yes" || allowed == "true")
+              _disableTopBar = true;
           }
         }
 
@@ -1184,6 +1198,7 @@ namespace MediaPortal.GUI.Library
                 }
                 GUIGraphicsContext.AutoHideTopBar = _autoHideTopbar;
                 GUIGraphicsContext.TopBarHidden = _autoHideTopbar;
+                GUIGraphicsContext.DisableTopBar = _disableTopBar;
 
                 if (message.Param1 != (int)GUIWindow.Window.WINDOW_INVALID)
                 {
