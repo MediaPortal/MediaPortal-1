@@ -1075,7 +1075,7 @@ namespace TvService
           if (System.IO.File.Exists(fileName))
           {
             _streamer.Start();
-            _streamer.AddTimeShiftFile(String.Format("stream{0}", cardId), fileName,true);
+            _streamer.AddTimeShiftFile(String.Format("stream{0}", cardId), fileName, (false==_localCards[cardId].IsTransportStream));
           }
           else
           {

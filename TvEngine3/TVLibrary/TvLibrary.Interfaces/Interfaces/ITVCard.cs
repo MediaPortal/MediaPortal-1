@@ -112,6 +112,8 @@ namespace TvLibrary.Interfaces
     /// </summary>
     /// <value>The max channel.</value>
     int MaxChannel { get;}
+
+    bool IsTransportStream { get;}
     #endregion
 
     #region epg & scanning

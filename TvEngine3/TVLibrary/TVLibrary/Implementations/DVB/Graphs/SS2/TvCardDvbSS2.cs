@@ -420,6 +420,14 @@ namespace TvLibrary.Implementations.DVB
         }
       }
     }
+
+    public bool IsTransportStream
+    {
+      get
+      {
+        return true;
+      }
+    }
     /// <summary>
     /// sets the filename used for timeshifting
     /// </summary>
@@ -439,6 +447,7 @@ namespace TvLibrary.Implementations.DVB
           throw new TvException("unable to get ITsTimeShift");
         }
         timeshift.SetTimeShiftingFileName(fileName);
+        timeshift.SetMode(TimeShiftingMode.TransportStream);
         if (_channelInfo.pids.Count == 0)
         {
           Log.Log.WriteFile("ss2:SetTimeShiftFileName no pmt received yet");

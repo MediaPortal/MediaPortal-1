@@ -2038,6 +2038,13 @@ namespace TvLibrary.Implementations.Analog
       }
     }
 
+    public bool IsTransportStream
+    {
+      get
+      {
+        return false;
+      }
+    }
     /// <summary>
     /// returns true if card is currently scanning
     /// </summary>

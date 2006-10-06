@@ -34,13 +34,13 @@
 #define TABLE_ID_SDT 0x42
 
 
-int FAKE_NETWORK_ID  = 0x456;
-int FAKE_TRANSPORT_ID =0x4;
-int FAKE_SERVICE_ID   =0x89;
-int FAKE_PMT_PID     = 0x20;
-int FAKE_PCR_PID      =0x21;
-int FAKE_VIDEO_PID    =0x30;
-int FAKE_AUDIO_PID    =0x31;
+int FAKE_NETWORK_ID   = 0x456;
+int FAKE_TRANSPORT_ID = 0x4;
+int FAKE_SERVICE_ID   = 0x89;
+int FAKE_PMT_PID      = 0x20;
+int FAKE_PCR_PID      = 0x21;
+int FAKE_VIDEO_PID    = 0x30;
+int FAKE_AUDIO_PID    = 0x31;
 
 extern void LogDebug(const char *fmt, ...) ;
 
@@ -52,8 +52,11 @@ CTimeShifting::CTimeShifting(LPUNKNOWN pUnk, HRESULT *phr)
 	m_params.maxFiles=20;
 	m_params.maxSize=1024*1024*256;
 	m_params.minFiles=6;
-  m_pids.clear();
+  
   m_pmtPid=-1;
+  m_pcrPid=-1;
+  m_audioPid=-1;
+  m_videoPid=-1;
   m_timeShiftMode=ProgramStream;
 	m_bTimeShifting=false;
 	m_pTimeShiftFile=NULL;
@@ -85,10 +88,10 @@ STDMETHODIMP CTimeShifting::SetPcrPid(int pcrPid)
 	CEnterCriticalSection enter(m_section);
 	try
 	{
-		LogDebug("Timeshifter:pcr pid:%x",pcrPid);
-    m_pids.push_back(pcrPid);
+		LogDebug("Timeshifter:pcr pid:%x",pcrPid); 
 		m_multiPlexer.ClearStreams();
 		m_multiPlexer.SetPcrPid(pcrPid);
+    m_pcrPid=pcrPid;
 	}
 	catch(...)
 	{
@@ -133,13 +136,20 @@ STDMETHODIMP CTimeShifting::AddPesStream(int pid, bool isAudio, bool isVideo)
 	CEnterCriticalSection enter(m_section);
 	try
 	{
-    m_pids.push_back(pid);
 		if (isAudio)
+    {
 			LogDebug("Timeshifter:add audio pes stream pid:%x",pid);
+      m_audioPid=pid;
+    }
 		else if (isVideo)
+    {
 			LogDebug("Timeshifter:add video pes stream pid:%x",pid);
+      m_videoPid=pid;
+    }
 		else 
-			LogDebug("Timeshifter:add private pes stream pid:%x",pid);
+    {
+			LogDebug("Timeshifter:add private pes stream pid:%x",pid); 
+    }
 		m_multiPlexer.AddPesStream(pid,isAudio,isVideo);
 	}
 	catch(...)
@@ -155,18 +165,6 @@ STDMETHODIMP CTimeShifting::RemovePesStream(int pid)
 	{
 		LogDebug("Timeshifter:remove pes stream pid:%x",pid);
 		m_multiPlexer.RemovePesStream(pid);
-    ivecPids it = m_pids.begin();
-    while (it!=m_pids.end())
-    {
-      if (*it == pid)
-      {
-        it=m_pids.erase(it);
-      }
-      else
-      {
-        ++it;
-      }
-    }
 	}
 	catch(...)
 	{
@@ -191,11 +189,23 @@ STDMETHODIMP CTimeShifting::SetTimeShiftingFileName(char* pszFileName)
 	}
 	return S_OK;
 }
+
 STDMETHODIMP CTimeShifting::Start()
 {
 	CEnterCriticalSection enter(m_section);
 	try
 	{
+
+    if (m_pcrPid == m_videoPid)
+    {
+      FAKE_PCR_PID      = 0x30;
+      FAKE_VIDEO_PID    = 0x30;
+    }
+    else
+    {
+      FAKE_PCR_PID      = 0x21;
+      FAKE_VIDEO_PID    = 0x30;
+    }
 		if (strlen(m_szFileName)==0) return E_FAIL;
 		::DeleteFile((LPCTSTR) m_szFileName);
 		WCHAR wstrFileName[2048];
@@ -212,6 +222,8 @@ STDMETHODIMP CTimeShifting::Start()
 		}
 
 		LogDebug("Timeshifter:Start timeshifting:'%s'",m_szFileName);
+    WriteFakePAT();
+    WriteFakePMT();
 		m_bTimeShifting=true;
 	}
 	catch(...)
@@ -227,7 +239,9 @@ STDMETHODIMP CTimeShifting::Reset()
 	{
 		LogDebug("Timeshifter:Reset");
     m_pmtPid=-1;
-    m_pids.clear();
+    m_pcrPid=-1;
+    m_audioPid=-1;
+    m_videoPid=-1;
 		m_multiPlexer.Reset();
 	}
 	catch(...)
@@ -236,6 +250,7 @@ STDMETHODIMP CTimeShifting::Reset()
 	}
 	return S_OK;
 }
+
 STDMETHODIMP CTimeShifting::Stop()
 {
 	CEnterCriticalSection enter(m_section);
@@ -368,26 +383,64 @@ STDMETHODIMP CTimeShifting::GetFileBufferSize(__int64 *lpllsize)
 
 void CTimeShifting::WriteTs(byte* tsPacket)
 {
-  if (m_pids.size()==0) return;
+  if (m_pcrPid<0 || m_audioPid<0 || m_pmtPid<0) return;
+
 	CTsHeader header(tsPacket);
-  bool write=false;
-  if (header.Pid==0 || header.Pid==0x10 || header.Pid==m_pmtPid) 
+  if (header.Pid==0)
   {
-    write=true;
-  }
-  else
-  {
-    for (int i=0; i < m_pids.size();++i)
+    //PAT
+    if (header.PayloadUnitStart)
     {
-      if (m_pids[i] ==header.Pid)
-      {
-        write=true;
-        break;
-      }
+      WriteFakePAT();
     }
+    return;
   }
-  if (write==false) return;
-  Write(tsPacket,188);
+
+  if (header.Pid==m_pmtPid)
+  {
+    //PMT
+    if (header.PayloadUnitStart)
+    {
+      WriteFakePMT();
+    }
+    return;
+  }
+
+  int PayLoadUnitStart=0;
+  if (header.PayloadUnitStart) PayLoadUnitStart=1;
+
+  if (header.Pid==m_pcrPid)
+  {
+      byte pkt[200];
+      memcpy(pkt,tsPacket,188);
+      int pid=FAKE_PCR_PID;
+      pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
+      pkt[2]=(pid&0xff);
+      Write(pkt,188);
+      return;
+  }
+
+  if (header.Pid==m_videoPid)
+  {
+    byte pkt[200];
+    memcpy(pkt,tsPacket,188);
+    int pid=FAKE_VIDEO_PID;
+    pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
+    pkt[2]=(pid&0xff);
+    Write(pkt,188);
+    return;
+  }
+
+  if (header.Pid==m_audioPid)
+  {
+    byte pkt[200];
+    memcpy(pkt,tsPacket,188);
+    int pid=FAKE_AUDIO_PID;
+    pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
+    pkt[2]=(pid&0xff);
+    Write(pkt,188);
+    return;
+  }
 }
 
 void CTimeShifting::WriteFakePAT()

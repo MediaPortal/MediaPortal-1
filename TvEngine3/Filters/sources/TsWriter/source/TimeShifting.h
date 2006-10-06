@@ -32,6 +32,12 @@ enum TimeShiftingMode
     ProgramStream=0,
     TransportStream=1
 };
+enum PidType
+{
+  Video=0,
+  Audio=1,
+  Other=2
+};
 
 // {89459BF6-D00E-4d28-928E-9DA8F76B6D3A}
 DEFINE_GUID(IID_ITsTimeshifting,0x89459bf6, 0xd00e, 0x4d28, 0x92, 0x8e, 0x9d, 0xa8, 0xf7, 0x6b, 0x6d, 0x3a);
@@ -114,6 +120,7 @@ private:
 	MultiFileWriter*     m_pTimeShiftFile;
 	CCriticalSection     m_section;
   int                  m_pmtPid;
-  vector<int>          m_pids;
-  typedef vector<int>::iterator ivecPids;
+  int                  m_pcrPid;
+  int                  m_audioPid;
+  int                  m_videoPid;
 };
