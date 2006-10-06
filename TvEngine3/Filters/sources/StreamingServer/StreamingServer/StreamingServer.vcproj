@@ -205,6 +205,22 @@
 				RelativePath=".\MultiFileReader.h"
 				>
 			</File>
+			<File
+				RelativePath=".\TsMPEG1or2DemuxedServerMediaSubsession.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TsMPEG1or2FileServerDemux.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TsMPEG1or2VideoFileServerMediaSubsession.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TsMPEG2TransportFileServerMediaSubsession.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
@@ -764,25 +780,41 @@
 			Name="TsFileSource"
 			>
 			<File
-				RelativePath=".\FileReader.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\MultiFileReader.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\TsFileSinkDemux.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\TsFileSourceDemuxedServerMediaSubsession.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\TsStreamFileSource.cpp"
 				>
 			</File>
+			<Filter
+				Name="Transport"
+				>
+				<File
+					RelativePath=".\TsMPEG2TransportFileServerMediaSubsession.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Program"
+				>
+				<File
+					RelativePath=".\TsMPEG1or2DemuxedServerMediaSubsession.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TsMPEG1or2FileServerDemux.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="FileReader"
+				>
+				<File
+					RelativePath=".\FileReader.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\MultiFileReader.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 	</Files>
 	<Globals>

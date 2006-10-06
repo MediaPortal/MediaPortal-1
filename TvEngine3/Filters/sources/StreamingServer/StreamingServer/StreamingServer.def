@@ -3,6 +3,6 @@ LIBRARY     StreamServer
 EXPORTS
 StreamSetup			@1
 StreamRun			@2
-StreamAddTs			@3
-StreamAddMpg		@4
+StreamAddTimeShiftFile			@3
+StreamAddMpegFile		@4
 StreamRemove		@5

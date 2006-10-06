@@ -23,8 +23,15 @@
 #include "multifilewriter.h"
 #include "criticalsection.h"
 #include "entercriticalsection.h"
-
+#include <vector>
+using namespace std;
 using namespace Mediaportal;
+
+enum TimeShiftingMode
+{
+    ProgramStream=0,
+    TransportStream=1
+};
 
 // {89459BF6-D00E-4d28-928E-9DA8F76B6D3A}
 DEFINE_GUID(IID_ITsTimeshifting,0x89459bf6, 0xd00e, 0x4d28, 0x92, 0x8e, 0x9d, 0xa8, 0xf7, 0x6b, 0x6d, 0x3a);
@@ -54,6 +61,9 @@ DECLARE_INTERFACE_(ITsTimeshifting, IUnknown)
 	STDMETHOD(GetChunkReserve) (THIS_ __int64 *chunkSize) PURE;
 	STDMETHOD(SetChunkReserve) (THIS_ __int64 chunkSize) PURE;
 	STDMETHOD(GetFileBufferSize) (THIS_ __int64 *lpllsize) PURE;
+	STDMETHOD(SetMode) (THIS_ int mode) PURE;
+	STDMETHOD(GetMode) (THIS_ int *mode) PURE;
+	STDMETHOD(SetPmtPid) (THIS_ int pmtPid) PURE;
 };
 
 class CTimeShifting: public CUnknown, public ITsTimeshifting, public IFileWriter
@@ -85,12 +95,23 @@ public:
 	STDMETHODIMP GetChunkReserve( __int64 *chunkSize) ;
 	STDMETHODIMP SetChunkReserve( __int64 chunkSize) ;
 	STDMETHODIMP GetFileBufferSize( __int64 *lpllsize) ;
+	STDMETHODIMP SetMode(int mode) ;
+	STDMETHODIMP GetMode(int *mode) ;
+	STDMETHODIMP SetPmtPid(int pmtPid);
 	void OnTsPacket(byte* tsPacket);
 	void Write(byte* buffer, int len);
+	void WriteTs(byte* tsPacket);
+
 private:
+  
+	MultiFileWriterParam m_params;
+  TimeShiftingMode m_timeShiftMode;
 	CMultiplexer m_multiPlexer;
 	bool				 m_bTimeShifting;
 	char				 m_szFileName[2048];
 	MultiFileWriter* m_pTimeShiftFile;
 	CCriticalSection m_section;
+  int m_pmtPid;
+  vector<int>  m_pids;
+  typedef vector<int>::iterator ivecPids;
 };

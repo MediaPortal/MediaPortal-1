@@ -36,14 +36,14 @@ public:
   // "playTimePerFrame" is in microseconds
 
   static TsStreamFileSource* createNew(UsageEnvironment& env,
-					 MultiFileReader* fid,
+					 FILE* fid,
 					 Boolean deleteFidOnClose = False,
 					 unsigned preferredFrameSize = 0,
 					 unsigned playTimePerFrame = 0);
       // an alternative version of "createNew()" that's used if you already have
       // an open file.
 
-  u_int64_t fileSize() const ;
+  u_int64_t fileSize() const { return fFileSize; }
       // 0 means zero-length, unbounded, or unknown
 
   void seekToByteAbsolute(u_int64_t byteNumber);
@@ -51,7 +51,7 @@ public:
 
 protected:
   TsStreamFileSource(UsageEnvironment& env,
-		       MultiFileReader* fid, Boolean deleteFidOnClose,
+		       FILE* fid, Boolean deleteFidOnClose,
 		       unsigned preferredFrameSize,
 		       unsigned playTimePerFrame);
 	// called only by createNew()
@@ -63,10 +63,10 @@ private:
   virtual void doGetNextFrame();
 
 private:
-  MultiFileReader* m_reader;
   unsigned fPreferredFrameSize;
   unsigned fPlayTimePerFrame;
   unsigned fLastPlayTime;
+  u_int64_t fFileSize;
   Boolean fDeleteFidOnClose;
 };
 

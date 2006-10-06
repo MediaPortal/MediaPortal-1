@@ -27,6 +27,7 @@
 #include <initguid.h>
 
 #include "timeshifting.h"
+#include "tsheader.h"
 
 
 extern void LogDebug(const char *fmt, ...) ;
@@ -34,6 +35,14 @@ extern void LogDebug(const char *fmt, ...) ;
 CTimeShifting::CTimeShifting(LPUNKNOWN pUnk, HRESULT *phr) 
 :CUnknown( NAME ("MpTsTimeshifting"), pUnk)
 {
+
+	m_params.chunkSize=1024*1024*256;
+	m_params.maxFiles=20;
+	m_params.maxSize=1024*1024*256;
+	m_params.minFiles=6;
+  m_pids.clear();
+  m_pmtPid=-1;
+  m_timeShiftMode=ProgramStream;
 	m_bTimeShifting=false;
 	m_pTimeShiftFile=NULL;
 	m_multiPlexer.SetFileWriterCallBack(this);
@@ -47,7 +56,14 @@ void CTimeShifting::OnTsPacket(byte* tsPacket)
 	CEnterCriticalSection enter(m_section);
 	if (m_bTimeShifting)
 	{
-		m_multiPlexer.OnTsPacket(tsPacket);
+    if (m_timeShiftMode==ProgramStream)
+    {
+		  m_multiPlexer.OnTsPacket(tsPacket);
+    }
+    else
+    {
+      WriteTs(tsPacket);
+    }
 	}
 }
 
@@ -58,6 +74,7 @@ STDMETHODIMP CTimeShifting::SetPcrPid(int pcrPid)
 	try
 	{
 		LogDebug("Timeshifter:pcr pid:%x",pcrPid);
+    m_pids.push_back(pcrPid);
 		m_multiPlexer.ClearStreams();
 		m_multiPlexer.SetPcrPid(pcrPid);
 	}
@@ -67,11 +84,44 @@ STDMETHODIMP CTimeShifting::SetPcrPid(int pcrPid)
 	}
 	return S_OK;
 }
+
+STDMETHODIMP CTimeShifting::SetPmtPid(int pmtPid)
+{
+  CEnterCriticalSection enter(m_section);
+	try
+	{
+		LogDebug("Timeshifter:pmt pid:%x",pmtPid);
+    m_pmtPid=pmtPid;
+	}
+	catch(...)
+	{
+		LogDebug("Timeshifter:SetPmtPid exception");
+	}
+	return S_OK;
+}
+
+STDMETHODIMP CTimeShifting::SetMode(int mode) 
+{
+  m_timeShiftMode=(TimeShiftingMode)mode;
+  if (mode==ProgramStream)
+			LogDebug("Timeshifter:program stream mode");
+  else
+      LogDebug("Timeshifter:transport stream mode");
+	return S_OK;
+}
+
+STDMETHODIMP CTimeShifting::GetMode(int *mode) 
+{
+  *mode=(int)m_timeShiftMode;
+	return S_OK;
+}
+
 STDMETHODIMP CTimeShifting::AddPesStream(int pid, bool isAudio, bool isVideo)
 {
 	CEnterCriticalSection enter(m_section);
 	try
 	{
+    m_pids.push_back(pid);
 		if (isAudio)
 			LogDebug("Timeshifter:add audio pes stream pid:%x",pid);
 		else if (isVideo)
@@ -93,6 +143,18 @@ STDMETHODIMP CTimeShifting::RemovePesStream(int pid)
 	{
 		LogDebug("Timeshifter:remove pes stream pid:%x",pid);
 		m_multiPlexer.RemovePesStream(pid);
+    ivecPids it = m_pids.begin();
+    while (it!=m_pids.end())
+    {
+      if (*it == pid)
+      {
+        it=m_pids.erase(it);
+      }
+      else
+      {
+        ++it;
+      }
+    }
 	}
 	catch(...)
 	{
@@ -127,12 +189,7 @@ STDMETHODIMP CTimeShifting::Start()
 		WCHAR wstrFileName[2048];
 		MultiByteToWideChar(CP_ACP,0,m_szFileName,-1,wstrFileName,1+strlen(m_szFileName));
 
-		MultiFileWriterParam params;
-		params.chunkSize=1024*1024*256;
-		params.maxFiles=20;
-		params.maxSize=1024*1024*256;
-		params.minFiles=6;
-		m_pTimeShiftFile = new MultiFileWriter(&params);
+		m_pTimeShiftFile = new MultiFileWriter(&m_params);
 		if (FAILED(m_pTimeShiftFile->OpenFile(wstrFileName))) 
 		{
 			LogDebug("Timeshifter:failed to open filename:%s %d",m_szFileName,GetLastError());
@@ -157,6 +214,8 @@ STDMETHODIMP CTimeShifting::Reset()
 	try
 	{
 		LogDebug("Timeshifter:Reset");
+    m_pmtPid=-1;
+    m_pids.clear();
 		m_multiPlexer.Reset();
 	}
 	catch(...)
@@ -238,53 +297,52 @@ STDMETHODIMP CTimeShifting::GetCurrentFileId(WORD *fileID)
 STDMETHODIMP CTimeShifting::GetMinTSFiles(WORD *minFiles)
 {
     CheckPointer(minFiles, E_POINTER);
-	*minFiles = (WORD) m_pTimeShiftFile->getMinTSFiles();
+	*minFiles = (WORD) m_params.minFiles;
     return NOERROR;
 }
 
 STDMETHODIMP CTimeShifting::SetMinTSFiles(WORD minFiles)
 {
-	m_pTimeShiftFile->setMinTSFiles((long)minFiles);
+	m_params.minFiles=(long)minFiles;
     return NOERROR;
 }
 
 STDMETHODIMP CTimeShifting::GetMaxTSFiles(WORD *maxFiles)
 {
     CheckPointer(maxFiles, E_POINTER);
-	*maxFiles = (WORD) m_pTimeShiftFile->getMaxTSFiles();
+	*maxFiles = (WORD) m_params.maxFiles;
 	return NOERROR;
 }
 
 STDMETHODIMP CTimeShifting::SetMaxTSFiles(WORD maxFiles)
 {
-	m_pTimeShiftFile->setMaxTSFiles((long)maxFiles);
+	m_params.maxFiles=(long)maxFiles;
     return NOERROR;
 }
 
 STDMETHODIMP CTimeShifting::GetMaxTSFileSize(__int64 *maxSize)
 {
     CheckPointer(maxSize, E_POINTER);
-	*maxSize = m_pTimeShiftFile->getMaxTSFileSize();
+	*maxSize = m_params.maxSize;
 	return NOERROR;
 }
 
 STDMETHODIMP CTimeShifting::SetMaxTSFileSize(__int64 maxSize)
 {
-	m_pTimeShiftFile->setMaxTSFileSize(maxSize);
+	m_params.maxSize=maxSize;
     return NOERROR;
 }
 
 STDMETHODIMP CTimeShifting::GetChunkReserve(__int64 *chunkSize)
 {
-    CheckPointer(chunkSize, E_POINTER);
-	*chunkSize = m_pTimeShiftFile->getChunkReserve();
+  CheckPointer(chunkSize, E_POINTER);
+	*chunkSize = m_params.chunkSize;
 	return NOERROR;
 }
 
 STDMETHODIMP CTimeShifting::SetChunkReserve(__int64 chunkSize)
 {
-
-	m_pTimeShiftFile->setChunkReserve(chunkSize);
+  m_params.chunkSize=chunkSize;
     return NOERROR;
 }
 
@@ -295,3 +353,27 @@ STDMETHODIMP CTimeShifting::GetFileBufferSize(__int64 *lpllsize)
 	return NOERROR;
 }
 
+
+void CTimeShifting::WriteTs(byte* tsPacket)
+{
+  if (m_pids.size()==0) return;
+	CTsHeader header(tsPacket);
+  bool write=false;
+  if (header.Pid==0 || header.Pid==0x10 || header.Pid==m_pmtPid) 
+  {
+    write=true;
+  }
+  else
+  {
+    for (int i=0; i < m_pids.size();++i)
+    {
+      if (m_pids[i] ==header.Pid)
+      {
+        write=true;
+        break;
+      }
+    }
+  }
+  if (write==false) return;
+  Write(tsPacket,188);
+}

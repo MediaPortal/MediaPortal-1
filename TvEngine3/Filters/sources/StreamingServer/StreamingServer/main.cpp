@@ -3,6 +3,10 @@
 #include "GroupsockHelper.hh"
 #include "TsStreamFileSource.hh"
 #include "TsFileSinkDemux.hh"
+#include "MPEG2TransportFileServerMediaSubsession.hh"
+#include "TsMPEG2TransportFileServerMediaSubsession.h" 
+#include "TsMPEG1or2FileServerDemux.h" 
+#include "MPEG1or2FileServerDemux.hh" 
 
 const char* STREAM_NAME = "testStream";
 const char* STREAM_DESCRIPTION = "Session streamed by \"Streamserver v1.0\"";
@@ -13,21 +17,10 @@ RTSPServer* rtspServer;
 void StreamSetup();
 void StreamRun();
 void announceStream(RTSPServer* rtspServer, ServerMediaSession* sms,char * streamName, char * inputFileName); // fwd
-void StreamAddTs(char* streamName, char* fileName);
-void StreamAddMpg(char* streamName, char* fileName);
+void StreamAddTimeShiftFile(char* streamName, char* fileName,bool isProgramStream);
+void StreamAddMpegFile(char* streamName, char* fileName);
 void StreamRemove(char* streamName);
-/*
-int main(int argc, char** argv) 
-{
-  printf("Starting...");
 
-  Setup();
-  AddStreamTs(rtspServer,STREAM_NAME, FILE_NAME);
-
-  Run();
-
-  return 0; // only to prevent compiler warning
-}*/
 
 void StreamSetup()
 {
@@ -53,37 +46,49 @@ void StreamRemove( char* streamName)
 	rtspServer->removeServerMediaSession(streamName);
 }
 
-void StreamAddTs(char* streamName, char* fileName)
+void StreamAddTimeShiftFile(char* streamName, char* fileName,bool isProgramStream)
 {
 	try
 	{
-		Log("Stream server: add stream %s filename:%s", streamName,fileName);
 		//add a stream...
-		UsageEnvironment& env = rtspServer->envir(); 
-		ServerMediaSession* sms= ServerMediaSession::createNew(env, streamName,streamName,STREAM_DESCRIPTION,false);
-		TsFileSinkDemux* demux= TsFileSinkDemux::createNew(env, fileName, false);
-		sms->addSubsession(demux->newVideoServerMediaSubsession(false));
-		sms->addSubsession(demux->newAudioServerMediaSubsession());
-		rtspServer->addServerMediaSession(sms);
-	  
-		announceStream(rtspServer, sms, streamName, fileName);
+    if (isProgramStream)
+    {
+		  Log("Stream server: add timeshift  mpeg-2 program stream %s filename:%s", streamName,fileName);
+		  ServerMediaSession* sms= ServerMediaSession::createNew(*env, streamName, streamName,STREAM_DESCRIPTION,false);
+
+      TsMPEG1or2FileServerDemux* demux= TsMPEG1or2FileServerDemux::createNew(*env, fileName, False);
+      sms->addSubsession(demux->newVideoServerMediaSubsession(False));
+      sms->addSubsession(demux->newAudioServerMediaSubsession());
+      rtspServer->addServerMediaSession(sms);
+
+  	  
+		  announceStream(rtspServer, sms, streamName, fileName);
+    }
+    else
+    { 
+      Log("Stream server: add timeshift  mpeg-2 transport stream %s filename:%s", streamName,fileName);
+      ServerMediaSession* sms= ServerMediaSession::createNew(*env, streamName, streamName,STREAM_DESCRIPTION,false);
+      sms->addSubsession(TsMPEG2TransportFileServerMediaSubsession::createNew(*env, fileName, false));
+      rtspServer->addServerMediaSession(sms);
+
+		  announceStream(rtspServer, sms, streamName, fileName);
+    }
 	}
 	catch(...)
 	{
 		Log("Stream server: unable to add stream %s filename:%s", streamName,fileName);
 	}
 }
-void StreamAddMpg(char* streamName, char* fileName)
+void StreamAddMpegFile(char* streamName, char* fileName)
 {
 	try
 	{
-		Log("Stream server: add stream %s filename:%s", streamName,fileName);
+		Log("Stream server: add mpeg-2 stream %s filename:%s", streamName,fileName);
 		//add a stream...
-		UsageEnvironment& env = rtspServer->envir(); 
-		ServerMediaSession* sms= ServerMediaSession::createNew(env, streamName,streamName,STREAM_DESCRIPTION,false);
-		MPEG1or2FileServerDemux* demux= MPEG1or2FileServerDemux::createNew(env, fileName, false);
-		sms->addSubsession(demux->newVideoServerMediaSubsession(false));
-		sms->addSubsession(demux->newAudioServerMediaSubsession());
+    ServerMediaSession* sms= ServerMediaSession::createNew(*env, streamName, streamName,STREAM_DESCRIPTION,false);
+    MPEG1or2FileServerDemux* demux= MPEG1or2FileServerDemux::createNew(*env, fileName, False);
+    sms->addSubsession(demux->newVideoServerMediaSubsession(False));
+    sms->addSubsession(demux->newAudioServerMediaSubsession());
 		rtspServer->addServerMediaSession(sms);
 	  
 		announceStream(rtspServer, sms, streamName, fileName);
