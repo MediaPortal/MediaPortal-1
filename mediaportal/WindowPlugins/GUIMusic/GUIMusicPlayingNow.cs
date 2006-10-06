@@ -71,6 +71,10 @@ namespace MediaPortal.GUI.Music
 
       LIST_TAG_INFO = 155,
       LIST_ALBUM_INFO = 166,
+
+      IMGLIST_TRACK1 = 77,
+      IMGLIST_TRACK2 = 78,
+      IMGLIST_TRACK3 = 79,
     }
 
     #region Properties
@@ -91,6 +95,9 @@ namespace MediaPortal.GUI.Music
     [SkinControlAttribute((int)ControlIDs.LIST_ALBUM_INFO)]       protected GUIListControl facadeAlbumInfo = null;
     [SkinControlAttribute((int)ControlIDs.BEST_ALBUM_TRACKS)]     protected GUIFadeLabel LblBestAlbumTracks = null;
     [SkinControlAttribute((int)ControlIDs.BEST_TAG_TRACKS)]       protected GUIFadeLabel LblBestTagTracks = null;
+    [SkinControlAttribute((int)ControlIDs.IMGLIST_TRACK1)]        protected GUIImageList ImgListTrack1 = null;
+    [SkinControlAttribute((int)ControlIDs.IMGLIST_TRACK2)]        protected GUIImageList ImgListTrack2 = null;
+    [SkinControlAttribute((int)ControlIDs.IMGLIST_TRACK3)]        protected GUIImageList ImgListTrack3 = null;
 
     public enum TrackProgressType { Elapsed, CountDown };
 
@@ -430,6 +437,13 @@ namespace MediaPortal.GUI.Music
 
       _trackChanged = true;
 
+      if (ImgListTrack1 != null && ImgListTrack2 != null && ImgListTrack3 != null)
+      {
+        ImgListTrack1.Visible = false;
+        ImgListTrack2.Visible = false;
+        ImgListTrack3.Visible = false;
+      }
+
       GUIPropertyManager.SetProperty("#currentmodule", String.Format("{0}/{1}", GUILocalizeStrings.Get(100005), GUILocalizeStrings.Get(4540)));
       LblUpNext.Label = GUILocalizeStrings.Get(4541);
 
@@ -525,11 +539,12 @@ namespace MediaPortal.GUI.Music
 
       switch (dlg.SelectedId)
       {
-          /// broken
         case 928:       // Find Coverart
+          if (_MusicWindow != null)
           {
             string albumFolderPath = System.IO.Path.GetDirectoryName(CurrentTrackFileName);
-            if (_MusicWindow != null) _MusicWindow.FindCoverArt(false, CurrentTrackTag.Artist, CurrentTrackTag.Album, albumFolderPath, CurrentTrackTag, -1);
+
+            _MusicWindow.FindCoverArt(false, CurrentTrackTag.Artist, CurrentTrackTag.Album, albumFolderPath, CurrentTrackTag, -1);
             CurrentThumbFileName = GUIMusicFiles.GetCoverArt(false, CurrentTrackFileName, CurrentTrackTag);
 
             if (CurrentThumbFileName.Length > 0)
@@ -539,17 +554,19 @@ namespace MediaPortal.GUI.Music
               BassMusicPlayer.Player.VisualizationWindow.CoverArtImagePath = CurrentThumbFileName;
 
             UpdateImagePathContainer();
-
-            break;
           }
+          break;
 
-          /// broken
+
         case 4521:      // Show Album Info
+          if (_MusicWindow != null)
           {
             string albumFolderPath = System.IO.Path.GetDirectoryName(CurrentTrackFileName);
-            if (_MusicWindow != null) _MusicWindow.ShowAlbumInfo(GetID, false, CurrentTrackTag.Artist, CurrentTrackTag.Album, albumFolderPath, CurrentTrackTag, -1);
-            break;
+            if (_MusicWindow != null)
+              _MusicWindow.ShowAlbumInfo(GetID, false, CurrentTrackTag.Artist, CurrentTrackTag.Album, albumFolderPath, CurrentTrackTag, -1);
           }
+            break;
+
 
         case 4554:      // Lookup CD info
           {
@@ -724,6 +741,12 @@ namespace MediaPortal.GUI.Music
                 LblBestTagTracks.Visible = false;
               facadeAlbumInfo.Clear();
               facadeTagInfo.Clear();
+              if (ImgListTrack1 != null && ImgListTrack2 != null && ImgListTrack3 != null)
+              {
+                ImgListTrack1.Visible = false;
+                ImgListTrack2.Visible = false;
+                ImgListTrack3.Visible = false;
+              }
             }
           }
           else
@@ -1199,12 +1222,15 @@ namespace MediaPortal.GUI.Music
 
 
     public void OnUpdateAlbumInfoCompleted(AlbumInfoRequest request, List<Song> AlbumTracks)
-    {
-      Log.Debug("NowPlaying.OnUpdateAlbumInfoCompleted: response with ID: {0} for: {1}", request.ID, request.Type);
+    {      
       if (request.Equals(_lastAlbumRequest))
       {
         GUIListItem item = null;
         facadeAlbumInfo.Clear();
+        //GUIPropertyManager.SetProperty("#Lastfm.Rating.AlbumTrack1", "0");
+        //GUIPropertyManager.SetProperty("#Lastfm.Rating.AlbumTrack2", "0");
+        //GUIPropertyManager.SetProperty("#Lastfm.Rating.AlbumTrack3", "0");
+
         if (AlbumTracks.Count > 0)
         {
           // get total ratings
@@ -1229,7 +1255,7 @@ namespace MediaPortal.GUI.Music
             float rating = 0;
 
             if (i == 0)
-              AlbumTracks[i].Rating = 10;
+              AlbumTracks[i].Rating = 11;
             else
             {
               rating = (int)(ratingBase * Convert.ToSingle(AlbumTracks[i].TimesPlayed));
@@ -1239,11 +1265,29 @@ namespace MediaPortal.GUI.Music
             item = new GUIListItem(AlbumTracks[i].ToShortString());
             item.Label = AlbumTracks[i].Title;
             //item.Label2 = " (" + GUILocalizeStrings.Get(931) + ": " + Convert.ToString(AlbumTracks[i].TimesPlayed) + ")";
-            item.Label2 = " (" + GUILocalizeStrings.Get(931) + ": " + Convert.ToString(AlbumTracks[i].Rating) + ")";
+            
+            //item.Label2 = " (" + GUILocalizeStrings.Get(931) + ": " + Convert.ToString(AlbumTracks[i].Rating) + ")";
 
             item.MusicTag = BuildMusicTagFromSong(AlbumTracks[i]);
 
             facadeAlbumInfo.Add(item);
+
+            string currentTrackRatingProperty = "#Lastfm.Rating.AlbumTrack" + Convert.ToString(i + 1);
+            try
+            {
+              GUIPropertyManager.SetProperty(currentTrackRatingProperty, Convert.ToString(AlbumTracks[i].Rating));
+              if (ImgListTrack1 != null && ImgListTrack2 != null && ImgListTrack3 != null)
+              {
+                ImgListTrack1.Visible = true;
+                ImgListTrack2.Visible = true;
+                ImgListTrack3.Visible = true;
+              }
+            }
+            catch (Exception ex)
+            {
+              Log.Warn("GUIMusicPlayingNow: Could not set last.fm rating - {0}", ex.Message);
+              break;
+            }
 
             // display 3 items only
             if (facadeAlbumInfo.Count == 3)
@@ -1268,13 +1312,12 @@ namespace MediaPortal.GUI.Music
       }
       else
       {
-        Log.Warn("PlayingNow:.OnUpdateAlbumInfoCompleted: unexpected responsetype for request: {0}", request.Type);
+        Log.Warn("GUIMusicPlayingNow: OnUpdateAlbumInfoCompleted: unexpected responsetype for request: {0}", request.Type);
       }
     }
 
     public void OnUpdateArtistInfoCompleted(ArtistInfoRequest request, Song song)
     {
-      Log.Debug("NowPlaying.OnUpdateArtistInfoCompleted: response with ID: {0} for: {1}", request.ID, request.Type);
       if (request.Equals(_lastArtistRequest))
       {
         CurrentThumbFileName = Util.Utils.GetCoverArtName(Thumbs.MusicArtists, Util.Utils.FilterFileName(CurrentTrackTag.Artist));
@@ -1292,7 +1335,6 @@ namespace MediaPortal.GUI.Music
 
     public void OnUpdateTagInfoCompleted(TagInfoRequest request, List<Song> TagTracks)
     {
-      Log.Debug("NowPlaying.OnUpdateTagInfoCompleted: response with ID: {0} for: {1}", request.ID, request.Type);
       if (request.Equals(_lastTagRequest))
       {
         GUIListItem item = null;

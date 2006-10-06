@@ -227,7 +227,9 @@ namespace MediaPortal.GUI.Library
       _properties["#Play.Next.MPAARating"] = String.Empty;
       _properties["#Play.Next.IsWatched"] = String.Empty;
 
-
+      _properties["#Lastfm.Rating.AlbumTrack1"] = String.Empty;
+      _properties["#Lastfm.Rating.AlbumTrack2"] = String.Empty;
+      _properties["#Lastfm.Rating.AlbumTrack3"] = String.Empty;
     }
 
     /// <summary>

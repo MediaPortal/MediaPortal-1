@@ -237,6 +237,63 @@
          <textureDownFocus>-</textureDownFocus>
          <textcolor>White</textcolor>
       </control>
+      
+      <control>
+        <type>imagelist</type>
+        <id>77</id>
+        <posX>245</posX>
+        <posY>144</posY>
+        <width>80</width>
+        <height>32</height>
+        <textureWidth>16</textureWidth>
+        <textureHeight>16</textureHeight>
+        <subitems>
+          <subitem>greystar.png</subitem>
+          <subitem>star.png</subitem>
+        </subitems>
+        <orientation>horizontal</orientation>
+        <align>left</align>
+        <percentage>#Lastfm.Rating.AlbumTrack1</percentage>
+        <visible>yes</visible>
+      </control>
+      
+      <control>
+        <type>imagelist</type>
+        <id>78</id>
+        <posX>245</posX>
+        <posY>178</posY>
+        <width>80</width>
+        <height>32</height>
+        <textureWidth>16</textureWidth>
+        <textureHeight>16</textureHeight>
+        <subitems>
+          <subitem>greystar.png</subitem>
+          <subitem>star.png</subitem>
+        </subitems>
+        <orientation>horizontal</orientation>
+        <align>left</align>
+        <percentage>#Lastfm.Rating.AlbumTrack2</percentage>
+        <visible>yes</visible>
+      </control>
+      
+      <control>
+        <type>imagelist</type>
+        <id>79</id>
+        <posX>245</posX>
+        <posY>212</posY>
+        <width>80</width>
+        <height>32</height>
+        <textureWidth>16</textureWidth>
+        <textureHeight>16</textureHeight>
+        <subitems>
+          <subitem>greystar.png</subitem>
+          <subitem>star.png</subitem>
+        </subitems>
+        <orientation>horizontal</orientation>
+        <align>left</align>
+        <percentage>#Lastfm.Rating.AlbumTrack3</percentage>
+        <visible>yes</visible>
+      </control>
 
       <control>
          <type>fadelabel</type>
