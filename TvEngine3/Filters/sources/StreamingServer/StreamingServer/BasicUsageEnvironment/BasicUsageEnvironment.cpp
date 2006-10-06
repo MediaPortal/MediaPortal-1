@@ -23,6 +23,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 
 ////////// BasicUsageEnvironment //////////
 
+extern void Log(const char *fmt, ...) ;
 #if defined(__WIN32__) || defined(_WIN32)
 extern "C" int initializeWinsockIfNecessary();
 #endif
@@ -65,7 +66,7 @@ UsageEnvironment& BasicUsageEnvironment::operator<<(char const* str)
 {
   char buffer[2048];
 	sprintf(buffer, "%s", str);
-  ::OutputDebugStringA(buffer);
+  Log(buffer);
 	return *this;
 }
 
@@ -73,7 +74,7 @@ UsageEnvironment& BasicUsageEnvironment::operator<<(int i) {
 
   char buffer[2048];
 	sprintf(buffer, "%d", i);
-  ::OutputDebugStringA(buffer);
+  Log(buffer);
 	return *this;
 }
 
@@ -81,7 +82,7 @@ UsageEnvironment& BasicUsageEnvironment::operator<<(unsigned u) {
 
   char buffer[2048];
 	sprintf(buffer, "%u", u);
-  ::OutputDebugStringA(buffer);
+  Log(buffer);
 	return *this;
 }
 
@@ -89,7 +90,7 @@ UsageEnvironment& BasicUsageEnvironment::operator<<(double d) {
 
   char buffer[2048];
 	sprintf(buffer, "%f", d);
-  ::OutputDebugStringA(buffer);
+  Log(buffer);
 	return *this;
 }
 
@@ -97,7 +98,7 @@ UsageEnvironment& BasicUsageEnvironment::operator<<(void* p) {
 
   char buffer[2048];
 	sprintf(buffer, "%p", p);
-  ::OutputDebugStringA(buffer);
+  Log(buffer);
 	return *this;
 }
 #endif

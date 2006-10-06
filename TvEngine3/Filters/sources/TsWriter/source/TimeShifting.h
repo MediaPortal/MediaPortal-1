@@ -123,4 +123,6 @@ private:
   int                  m_pcrPid;
   int                  m_audioPid;
   int                  m_videoPid;
+	bool								 m_bSeenAudioStart;
+	bool								 m_bSeenVideoStart;
 };

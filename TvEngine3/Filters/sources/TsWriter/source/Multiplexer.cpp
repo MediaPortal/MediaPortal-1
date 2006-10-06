@@ -60,7 +60,7 @@ void CMultiplexer::Reset()
 
 void CMultiplexer::ClearStreams()
 {
-  LogDebug("mux: clear streams startpcr:%x highestpcr:%x",(DWORD)m_startPcr,(DWORD)m_highestPcr);
+  //LogDebug("mux: clear streams startpcr:%x highestpcr:%x",(DWORD)m_startPcr,(DWORD)m_highestPcr);
 	ivecPesDecoders it;
 	for (it=m_pesDecoders.begin(); it != m_pesDecoders.end();++it)
 	{
@@ -124,22 +124,22 @@ void CMultiplexer::AddPesStream(int pid, bool isAudio, bool isVideo)
 	decoder->SetPid(pid);
 	if (isAudio)
 	{
-		LogDebug("mux pid:%x audio stream id:%x", pid,audioStreamId);
+		//LogDebug("mux pid:%x audio stream id:%x", pid,audioStreamId);
 		decoder->SetStreamId(audioStreamId);
 	}
 	else if (isVideo)
 	{
-		LogDebug("mux pid:%x video stream id:%x", pid,videoStreamId);
+		//LogDebug("mux pid:%x video stream id:%x", pid,videoStreamId);
 		decoder->SetStreamId(videoStreamId);
 	}
 	else
 	{
-		LogDebug("mux pid:%x video stream id:-1", pid);
+		//LogDebug("mux pid:%x video stream id:-1", pid);
 		decoder->SetStreamId(-1);
 	}
 	decoder->SetMaxLength(0x7e9);
 	m_pesDecoders.push_back(decoder);
-	LogDebug("mux streams:%d", m_pesDecoders.size());
+	//LogDebug("mux streams:%d", m_pesDecoders.size());
 }
 
 

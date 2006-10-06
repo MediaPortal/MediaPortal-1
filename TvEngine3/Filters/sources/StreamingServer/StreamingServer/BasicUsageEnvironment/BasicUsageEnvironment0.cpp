@@ -21,7 +21,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include <stdio.h>
 
 ////////// BasicUsageEnvironment //////////
-
+extern void Log(const char *fmt, ...) ;
 BasicUsageEnvironment0::BasicUsageEnvironment0(TaskScheduler& taskScheduler)
   : UsageEnvironment(taskScheduler),
     fBufferMaxSize(RESULT_MSG_BUFFER_MAX) {
@@ -82,7 +82,8 @@ void BasicUsageEnvironment0::appendToResultMsg(MsgString msg) {
   fResultMsgBuffer[fCurBufferSize] = '\0';
 }
 
-void BasicUsageEnvironment0::reportBackgroundError() {
-  fputs(fResultMsgBuffer, stderr);
+void BasicUsageEnvironment0::reportBackgroundError() 
+{
+	Log("%s\n",fResultMsgBuffer);
 }
 

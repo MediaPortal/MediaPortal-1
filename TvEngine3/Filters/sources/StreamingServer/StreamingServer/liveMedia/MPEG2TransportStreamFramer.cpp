@@ -18,12 +18,14 @@
 
 ////////// PIDStatus //////////
 
-class PIDStatus {
+class PIDStatus 
+{
 public:
   PIDStatus(double _firstClock, double _firstRealTime)
     : firstClock(_firstClock), lastClock(_firstClock),
       firstRealTime(_firstRealTime), lastRealTime(_firstRealTime),
-      lastPacketNum(0) {
+      lastPacketNum(0) 
+	{
   }
 
   double firstClock, lastClock, firstRealTime, lastRealTime;
@@ -33,62 +35,63 @@ public:
 
 ////////// MPEG2TransportStreamFramer //////////
 
-MPEG2TransportStreamFramer* MPEG2TransportStreamFramer
-::createNew(UsageEnvironment& env, FramedSource* inputSource) {
+MPEG2TransportStreamFramer* MPEG2TransportStreamFramer::createNew(UsageEnvironment& env, FramedSource* inputSource) 
+{
   return new MPEG2TransportStreamFramer(env, inputSource);
 }
 
-MPEG2TransportStreamFramer
-::MPEG2TransportStreamFramer(UsageEnvironment& env, FramedSource* inputSource)
+MPEG2TransportStreamFramer::MPEG2TransportStreamFramer(UsageEnvironment& env, FramedSource* inputSource)
   : FramedFilter(env, inputSource),
-    fTSPacketCount(0), fTSPacketDurationEstimate(0.0) {
+    fTSPacketCount(0), fTSPacketDurationEstimate(0.0) 
+{
   fPIDStatusTable = HashTable::create(ONE_WORD_HASH_KEYS);
 }
 
-MPEG2TransportStreamFramer::~MPEG2TransportStreamFramer() {
+MPEG2TransportStreamFramer::~MPEG2TransportStreamFramer() 
+{
   PIDStatus* pidStatus;
-  while ((pidStatus = (PIDStatus*)fPIDStatusTable->RemoveNext()) != NULL) {
+  while ((pidStatus = (PIDStatus*)fPIDStatusTable->RemoveNext()) != NULL) 
+	{
     delete pidStatus;
   }
   delete fPIDStatusTable;
 }
 
-void MPEG2TransportStreamFramer::doGetNextFrame() {
+void MPEG2TransportStreamFramer::doGetNextFrame() 
+{
   // Read directly from our input source into our client's buffer:
   fFrameSize = 0;
-  fInputSource->getNextFrame(fTo, fMaxSize,
-			     afterGettingFrame, this,
-			     FramedSource::handleClosure, this);
+  fInputSource->getNextFrame(fTo, fMaxSize,afterGettingFrame, this,FramedSource::handleClosure, this);
 }
 
-void MPEG2TransportStreamFramer::doStopGettingFrames() {
+void MPEG2TransportStreamFramer::doStopGettingFrames() 
+{
   FramedFilter::doStopGettingFrames();
   fTSPacketCount = 0;
 
   // Clear out the existing PID status table:
   PIDStatus* pidStatus;
-  while ((pidStatus = (PIDStatus*)fPIDStatusTable->RemoveNext()) != NULL) {
+  while ((pidStatus = (PIDStatus*)fPIDStatusTable->RemoveNext()) != NULL) 
+	{
     delete pidStatus;
   }
 }
 
-void MPEG2TransportStreamFramer
-::afterGettingFrame(void* clientData, unsigned frameSize,
-		    unsigned /*numTruncatedBytes*/,
-		    struct timeval presentationTime,
-		    unsigned /*durationInMicroseconds*/) {
+void MPEG2TransportStreamFramer::afterGettingFrame(void* clientData, unsigned frameSize,unsigned /*numTruncatedBytes*/,struct timeval presentationTime,unsigned /*durationInMicroseconds*/) 
+{
   MPEG2TransportStreamFramer* framer = (MPEG2TransportStreamFramer*)clientData;
   framer->afterGettingFrame1(frameSize, presentationTime);
 }
 
 #define TRANSPORT_SYNC_BYTE 0x47
 
-void MPEG2TransportStreamFramer::afterGettingFrame1(unsigned frameSize,
-						    struct timeval presentationTime) {
+void MPEG2TransportStreamFramer::afterGettingFrame1(unsigned frameSize,struct timeval presentationTime) 
+{
   fFrameSize += frameSize;
   unsigned const numTSPackets = fFrameSize/TRANSPORT_PACKET_SIZE;
   fFrameSize = numTSPackets*TRANSPORT_PACKET_SIZE; // an integral # of TS packets
-  if (fFrameSize == 0) {
+  if (fFrameSize == 0) 
+	{
     // We didn't read a complete TS packet; assume that the input source has closed.
     handleClosure(this);
     return;
@@ -96,21 +99,23 @@ void MPEG2TransportStreamFramer::afterGettingFrame1(unsigned frameSize,
 
   // Make sure the data begins with a sync byte:
   unsigned syncBytePosition;
-  for (syncBytePosition = 0; syncBytePosition < fFrameSize; ++syncBytePosition) {
+  for (syncBytePosition = 0; syncBytePosition < fFrameSize; ++syncBytePosition) 
+	{
     if (fTo[syncBytePosition] == TRANSPORT_SYNC_BYTE) break;
   }
-  if (syncBytePosition == fFrameSize) {
+  if (syncBytePosition == fFrameSize) 
+	{
     envir() << "No Transport Stream sync byte in data.";
     handleClosure(this);
     return;
-  } else if (syncBytePosition > 0) {
+  } 
+	else if (syncBytePosition > 0) 
+	{
     // There's a sync byte, but not at the start of the data.  Move the good data
     // to the start of the buffer, then read more to fill it up again:
     memmove(fTo, &fTo[syncBytePosition], fFrameSize - syncBytePosition);
     fFrameSize -= syncBytePosition;
-    fInputSource->getNextFrame(&fTo[fFrameSize], syncBytePosition,
-			       afterGettingFrame, this,
-			       FramedSource::handleClosure, this);
+    fInputSource->getNextFrame(&fTo[fFrameSize], syncBytePosition,afterGettingFrame, this,FramedSource::handleClosure, this);
     return;
   } // else normal case: the data begins with a sync byte
 
@@ -121,21 +126,22 @@ void MPEG2TransportStreamFramer::afterGettingFrame1(unsigned frameSize,
   struct timeval tvNow;
   gettimeofday(&tvNow, NULL);
   double timeNow = tvNow.tv_sec + tvNow.tv_usec/1000000.0;
-  for (unsigned i = 0; i < numTSPackets; ++i) {
+  for (unsigned i = 0; i < numTSPackets; ++i) 
+	{
     updateTSPacketDurationEstimate(&fTo[i*TRANSPORT_PACKET_SIZE], timeNow);
   }
 
-  fDurationInMicroseconds
-    = numTSPackets * (unsigned)(fTSPacketDurationEstimate*1000000);
+  fDurationInMicroseconds    = numTSPackets * (unsigned)(fTSPacketDurationEstimate*1000000);
 
   // Complete the delivery to our client:
   afterGetting(this);
 }
 
-void MPEG2TransportStreamFramer
-::updateTSPacketDurationEstimate(unsigned char* pkt, double timeNow) {
+void MPEG2TransportStreamFramer::updateTSPacketDurationEstimate(unsigned char* pkt, double timeNow) 
+{
   // Sanity check: Make sure we start with the sync byte:
-  if (pkt[0] != TRANSPORT_SYNC_BYTE) {
+  if (pkt[0] != TRANSPORT_SYNC_BYTE) 
+	{
     envir() << "Missing sync byte!\n";
     return;
   }
@@ -165,34 +171,42 @@ void MPEG2TransportStreamFramer
 
   // Check whether we already have a record of a PCR for this PID:
   PIDStatus* pidStatus = (PIDStatus*)(fPIDStatusTable->Lookup((char*)pid));
-  if (pidStatus == NULL) {
+  if (pidStatus == NULL) 
+	{
     // We're seeing this PID's PCR for the first time:
     pidStatus = new PIDStatus(clock, timeNow);
     fPIDStatusTable->Add((char*)pid, pidStatus);
 #ifdef DEBUG_PCR
     fprintf(stderr, "PID 0x%x, FIRST PCR 0x%08x+%d:%03x == %f @ %f, pkt #%lu\n", pid, pcrBaseHigh, pkt[10]>>7, pcrExt, clock, timeNow, fTSPacketCount);
 #endif
-  } else {
+  } 
+	else 
+	{
     // We've seen this PID's PCR before; update our per-packet duration estimate:
-    double durationPerPacket
-      = (clock - pidStatus->lastClock)/(fTSPacketCount - pidStatus->lastPacketNum);
-    if (fTSPacketDurationEstimate == 0.0) { // we've just started
+    double durationPerPacket= (clock - pidStatus->lastClock)/(fTSPacketCount - pidStatus->lastPacketNum);
+    if (fTSPacketDurationEstimate == 0.0) 
+		{ // we've just started
       fTSPacketDurationEstimate = durationPerPacket;
-    } else if (discontinuity_indicator == 0 && durationPerPacket >= 0.0) {
-      fTSPacketDurationEstimate
-	= durationPerPacket*NEW_DURATION_WEIGHT
-	+ fTSPacketDurationEstimate*(1-NEW_DURATION_WEIGHT);
+    } 
+		else if (discontinuity_indicator == 0 && durationPerPacket >= 0.0) 
+		{
+      fTSPacketDurationEstimate= durationPerPacket*NEW_DURATION_WEIGHT+ fTSPacketDurationEstimate*(1-NEW_DURATION_WEIGHT);
 
       // Also adjust the duration estimate to try to ensure that the transmission
       // rate matches the playout rate:
       double transmitDuration = timeNow - pidStatus->firstRealTime;
       double playoutDuration = clock - pidStatus->firstClock;
-      if (transmitDuration > playoutDuration) {
-	fTSPacketDurationEstimate *= TIME_ADJUSTMENT_FACTOR; // reduce estimate
-      } else if (transmitDuration + MAX_PLAYOUT_BUFFER_DURATION < playoutDuration) {
-	fTSPacketDurationEstimate /= TIME_ADJUSTMENT_FACTOR; // increase estimate
+      if (transmitDuration > playoutDuration) 
+			{
+				fTSPacketDurationEstimate *= TIME_ADJUSTMENT_FACTOR; // reduce estimate
+      } 
+			else if (transmitDuration + MAX_PLAYOUT_BUFFER_DURATION < playoutDuration) 
+			{
+				fTSPacketDurationEstimate /= TIME_ADJUSTMENT_FACTOR; // increase estimate
       }
-    } else {
+    } 
+		else 
+		{
       // the PCR has a discontinuity from its previous value; don't use it now,
       // but reset our PCR and real-time values to compensate:
       pidStatus->firstClock = clock;
