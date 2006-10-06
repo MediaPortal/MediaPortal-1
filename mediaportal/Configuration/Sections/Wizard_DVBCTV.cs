@@ -259,7 +259,7 @@ namespace MediaPortal.Configuration.Sections
               }
           }
       }
-      string[] files = System.IO.Directory.GetFiles(Config.GetFile(Config.Dir.Base, "Tuningparameters", "*.dvbc"));
+      string[] files = System.IO.Directory.GetFiles(Config.GetSubFolder(Config.Dir.Base, "Tuningparameters"), "*.dvbc");
       Array.Sort(files);
       foreach (string file in files)
       {

@@ -785,7 +785,7 @@ namespace MediaPortal.Configuration.Sections
       cbTransponder2.Items.Clear();
       cbTransponder3.Items.Clear();
       cbTransponder4.Items.Clear();
-      string[] files = System.IO.Directory.GetFiles(Config.GetFile(Config.Dir.Base, "Tuningparameters"), "*.tpl");
+      string[] files = System.IO.Directory.GetFiles(Config.GetSubFolder(Config.Dir.Base, "Tuningparameters"), "*.tpl");
       Transponder[] transponders = new Transponder[files.Length];
       int trans = 0;
       foreach (string file in files)
