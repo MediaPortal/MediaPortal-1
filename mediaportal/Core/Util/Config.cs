@@ -1,3 +1,4 @@
+#region Copyright (C) 2006 Team MediaPortal
 /* 
  *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,6 +19,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#endregion
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -27,8 +30,7 @@ namespace MediaPortal.Util
 {
   public class Config
   {
-    private static Dictionary<Dir, string> directories;
-
+    #region Enums
     public enum Dir
     {
       // Path holding Path Information
@@ -44,7 +46,13 @@ namespace MediaPortal.Util
       CustomInputDevice,
       Config
     }
+    #endregion
 
+    #region Variables
+    private static Dictionary<Dir, string> directories;
+    #endregion
+
+    #region Constructors/Destructors
     /// <summary>
     /// Private constructor. Singleton. Do not allow any instance of this class.
     /// </summary>
@@ -59,7 +67,121 @@ private Config()
       directories = new Dictionary<Dir, string>();
       LoadDirs(AppDomain.CurrentDomain.BaseDirectory);
     }
+    #endregion
 
+    #region Public Methods
+    /// <summary>
+    /// Returns the complete path for the specified file in the specified MP directory.
+    /// </summary>
+    /// <param name="directory">A <see cref="Dir"/> value, indicating the directory where the file should be located</param>
+    /// <param name="fileName">The name of the file for which to return the complete path.</param>
+    /// <returns>A string containing the complete path.</returns>
+    public static string GetFile(Dir directory, string fileName)
+    {
+      if (fileName.StartsWith(@"\") || fileName.StartsWith("/"))
+      {
+        throw new ArgumentException("The passed file name cannot start with a slash or backslash", "fileName");
+      }
+      return Path.Combine(Get(directory), fileName);
+    }
+
+    /// <summary>
+    /// Returns the complete path for the specified file in the specified MP directory.
+    /// </summary>
+    /// <param name="directory">A <see cref="Dir"/> value, indicating the directory where the file should be located</param>
+    /// <param name="fileName">The name of the file for which to return the complete path.</param>
+    /// <returns>A FileInfo object containing the complete path.</returns>
+    public static FileInfo GetFileInfo(Dir directory, string fileName)
+    {
+      return new FileInfo(GetFile(directory, fileName));
+    }
+
+    /// <summary>
+    /// Returns the complete path for the specified file in the specified MP directory.
+    /// </summary>
+    /// <param name="directory">A <see cref="Dir"/> value, indicating the directory where the file should be located</param>
+    /// <param name="subDirectory">A subdirectory</param>
+    /// <param name="fileName">The name of the file for which to return the complete path.</param>
+    /// <returns>A string containing the complete path.</returns>
+    public static string GetFile(Dir directory, string subDirectory, string fileName)
+    {
+      if (fileName.StartsWith(@"\") || fileName.StartsWith("/"))
+      {
+        throw new ArgumentException("The passed file name cannot start with a slash or backslash", "fileName");
+      }
+      if (subDirectory.StartsWith(@"\") || subDirectory.StartsWith("/"))
+      {
+        throw new ArgumentException("The passed subDirectory cannot start with a slash or backslash", "fileName");
+      }
+      return GetFile(directory, Path.Combine(subDirectory, fileName));
+    }
+
+    /// <summary>
+    /// Returns the complete path for the specified file in the specified MP directory.
+    /// </summary>
+    /// <param name="directory">A <see cref="Dir"/> value, indicating the directory where the file should be located</param>
+    /// <param name="subDirectory">A subdirectory</param>
+    /// <param name="fileName">The name of the file for which to return the complete path.</param>
+    /// <returns>A FileInfo object containing the complete path.</returns>
+    public static FileInfo GetFileInfo(Dir directory, string subDirectory, string fileName)
+    {
+      return new FileInfo(GetFile(directory, subDirectory, fileName));
+    }
+
+    /// <summary>
+    /// Returns the complete path for the specified MP directory.
+    /// </summary>
+    /// <param name="directory">A <see cref="Dir"/> value, indicating the directory to return</param>
+    /// <returns>a string containing the complete path, without trailing backslash</returns>
+    public static string GetFolder(Dir directory)
+    {
+      return Path.GetDirectoryName(Get(directory));
+    }
+
+    /// <summary>
+    /// Returns the complete path for the specified MP directory.
+    /// </summary>
+    /// <param name="directory">A <see cref="Dir"/> value, indicating the directory to return</param>
+    /// <returns>a DirectoryInfo object containing the complete path, without trailing backslash</returns>
+    public static DirectoryInfo GetDirectoryInfo(Dir directory)
+    {
+      return new DirectoryInfo(Path.GetDirectoryName(Get(directory)));
+    }
+
+    /// <summary>
+    /// Returns the complete path for the specified sub directory in the specified MP directory
+    /// </summary>
+    /// <param name="directory">A <see cref="Dir"/> value, indicating the directory to return</param>
+    /// <param name="subDirectory">A subdirectory</param>
+    /// <returns>a string containing the complete path, without trailing backslash</returns>
+    public static string GetSubFolder(Dir directory, string subDirectory)
+    {
+      return Path.Combine(Get(directory), subDirectory);
+    }
+
+    /// <summary>
+    /// Returns the complete path for the specified sub directory in the specified MP directory
+    /// </summary>
+    /// <param name="directory">A <see cref="Dir"/> value, indicating the directory to return</param>
+    /// <param name="subDirectory">A subdirectory</param>
+    /// <returns>a string containing the complete path, without trailing backslash</returns>
+    public static DirectoryInfo GetSubDirectoryInfo(Dir directory, string subDirectory)
+    {
+      return new DirectoryInfo(Path.Combine(Get(directory), subDirectory));
+    }
+
+    /// <summary>
+    /// Checks if a path is set for the specified MP directory.
+    /// </summary>
+    /// <param name="path">A <see cref="Dir"/> value, indicating the directory to return</param>
+    /// <returns>a bool indicating if the directory is set</returns>
+    public static bool IsSet(Dir path)
+    {
+      return directories.ContainsKey(path);
+    }
+    #endregion
+
+    #region Private Methods
     /// <summary>
     /// Read the Directory Configuration from the Config File.
     /// First we look for the file in MyDocuments of the logged on user. If file is not there or invalid, 
@@ -124,7 +246,7 @@ private Config()
                   }
                   try
                   {
-                    Set((Dir) Enum.Parse(typeof(Dir), dirId.InnerText), strPath);
+                    Set((Dir)Enum.Parse(typeof(Dir), dirId.InnerText), strPath);
                   }
                   catch (Exception)
                   {
@@ -178,70 +300,6 @@ private Config()
       }
     }
 
-    /// <summary>
-    /// Returns the complete path for the specified file in the specified MP directory.
-    /// </summary>
-    /// <param name="directory">A <see cref="Dir"/> value, indicating the directory where the file should be located</param>
-    /// <param name="fileName">The name of the file for which to return the complete path.</param>
-    /// <returns>A string containing the complete path.</returns>
-    public static string GetFile(Dir directory, string fileName)
-    {
-      if (fileName.StartsWith(@"\") || fileName.StartsWith("/"))
-      {
-        throw new ArgumentException("The passed file name cannot start with a slash or backslash", "fileName");
-      }
-      return Path.Combine(Get(directory), fileName);
-    }
-
-    /// <summary>
-    /// Returns the complete path for the specified file in the specified MP directory.
-    /// </summary>
-    /// <param name="directory">A <see cref="Dir"/> value, indicating the directory where the file should be located</param>
-    /// <param name="fileName">The name of the file for which to return the complete path.</param>
-    /// <returns>A string containing the complete path.</returns>
-    public static string GetFile(Dir directory, string subDirectory, string fileName)
-    {
-      if (fileName.StartsWith(@"\") || fileName.StartsWith("/"))
-      {
-        throw new ArgumentException("The passed file name cannot start with a slash or backslash", "fileName");
-      }
-      if (subDirectory.StartsWith(@"\") || subDirectory.StartsWith("/"))
-      {
-        throw new ArgumentException("The passed subDirectory cannot start with a slash or backslash", "fileName");
-      }
-      return GetFile(directory, Path.Combine(subDirectory, fileName));
-    }
-
-    /// <summary>
-    /// Returns the complete path for the specified MP directory.
-    /// </summary>
-    /// <param name="directory">A <see cref="Dir"/> value, indicating the directory to return</param>
-    /// <returns>a string containing the complete path, without trailing backslash</returns>
-    public static string GetFolder(Dir directory)
-    {
-      return Path.GetDirectoryName(Get(directory));
-    }
-
-    /// <summary>
-    /// Returns the complete path for the specified sub directory in the specified MP directory
-    /// </summary>
-    /// <param name="directory">A <see cref="Dir"/> value, indicating the directory to return</param>
-    /// <returns>a string containing the complete path, without trailing backslash</returns>
-    public static string GetSubFolder(Dir directory, string subDirectory)
-    {
-      return Path.Combine(Get(directory), subDirectory);
-    }
-
-    /// <summary>
-    /// Checks if a path is set for the specified MP directory.
-    /// </summary>
-    /// <param name="path">A <see cref="Dir"/> value, indicating the directory to return</param>
-    /// <returns>a bool indicating if the directory is set</returns>
-    public static bool IsSet(Dir path)
-    {
-      return directories.ContainsKey(path);
-    }
-
     private static void Set(Dir path, string value)
     {
       if (!Path.IsPathRooted(value) && IsSet(Dir.Base))
@@ -253,5 +311,6 @@ private Config()
         directories[path] = Path.GetFullPath(value);
       }
     }
+    #endregion
   }
 }
