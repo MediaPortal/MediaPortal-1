@@ -212,18 +212,18 @@
 			<ondown>155</ondown>
 			<posX>72</posX>
 			<posY>181</posY>
-			<width>585</width>
+			<width>465</width>
 			<height>180</height>
+                        <textXOff>1</textXOff>
+                        <IconXOff>4</IconXOff>
 			<spinColor>-</spinColor>
+                        <image>-</image>
 			<textureUp>-</textureUp>
 			<textureDown>-</textureDown>
 			<textureUpFocus>-</textureUpFocus>
 			<textureDownFocus>-</textureDownFocus>
-			<textcolor>White</textcolor>
-			<textXOff>12</textXOff>
-                        <textYOff>6</textYOff>
-	                <textXOff2>550</textXOff2>
-		        <textYOff2>6</textYOff2>
+                        <textureFocus>list_sub_focus_arrow.png</textureFocus>
+                        <textureNoFocus>-</textureNoFocus>
  		</control>
 
 	        <control>
@@ -234,25 +234,26 @@
 			<onleft>166</onleft>
 			<posX>72</posX>
 			<posY>384</posY>
-			<width>585</width>
+			<width>465</width>
 			<height>180</height>
+                        <textXOff>4</textXOff>
+                        <IconXOff>1</IconXOff>
 			<spinColor>-</spinColor>
+                        <image>-</image>
 			<textureUp>-</textureUp>
+                        <textureNoFocus>-</textureNoFocus>
 			<textureDown>-</textureDown>
 			<textureUpFocus>-</textureUpFocus>
 			<textureDownFocus>-</textureDownFocus>
+                        <textureFocus>list_sub_focus_arrow.png</textureFocus>
 			<textcolor>White</textcolor>
-			<textXOff>12</textXOff>
-                        <textYOff>6</textYOff>
-	                <textXOff2>550</textXOff2>
-		        <textYOff2>6</textYOff2>
 		</control>
       
             <control>
                 <description>unknown rating1</description>
                 <type>imagelist</type>
                 <id>77</id>
-                <posX>545</posX>
+                <posX>445</posX>
                 <posY>190</posY>
                 <width>100</width>
                 <height>32</height>
@@ -272,7 +273,7 @@
                 <description>unknown rating2</description>
                 <type>imagelist</type>
                 <id>78</id>
-                <posX>545</posX>
+                <posX>445</posX>
                 <posY>235</posY>
                 <width>100</width>
                 <height>32</height>
@@ -291,8 +292,8 @@
             <control>
                 <description>unknown rating3</description>
                 <type>imagelist</type>
-                <id>78</id>
-                <posX>545</posX>
+                <id>79</id>
+                <posX>445</posX>
                 <posY>278</posY>
                 <width>100</width>
                 <height>32</height>
@@ -311,8 +312,8 @@
             <control>
                 <description>famous rating1</description>
                 <type>imagelist</type>
-                <id>77</id>
-                <posX>545</posX>
+                <id>87</id>
+                <posX>445</posX>
                 <posY>190</posY>
                 <width>100</width>
                 <height>32</height>
@@ -331,8 +332,8 @@
             <control>
                 <description>famous rating2</description>
                 <type>imagelist</type>
-                <id>78</id>
-                <posX>545</posX>
+                <id>88</id>
+                <posX>445</posX>
                 <posY>235</posY>
                 <width>100</width>
                 <height>32</height>
@@ -351,8 +352,8 @@
             <control>
                 <description>famous rating3</description>
                 <type>imagelist</type>
-                <id>78</id>
-                <posX>545</posX>
+                <id>89</id>
+                <posX>445</posX>
                 <posY>278</posY>
                 <width>100</width>
                 <height>32</height>
