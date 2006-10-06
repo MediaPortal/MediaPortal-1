@@ -18,13 +18,15 @@ namespace WindowPlugins.VideoEditor
 	protected IFileSinkFilter bufferSource = null;//IStreamBufferSource bufferSource = null;
     protected IFileSinkFilter2 fileWriterFilter = null;			// DShow Filter: file writer
     protected IMediaControl mediaControl = null;
-    protected IStreamBufferMediaSeeking mediaSeeking = null;
+    //protected IStreamBufferMediaSeeking mediaSeeking = null;
+		protected IMediaSeeking mediaSeeking = null;
     protected IMediaPosition mediaPos = null;
-    protected IBaseFilter xvidCodec = null;
+    protected IBaseFilter divxCodec = null;
     protected IBaseFilter mp3Codec = null;
     protected IBaseFilter Mpeg2VideoCodec = null;
     protected IBaseFilter Mpeg2AudioCodec = null;
     protected IBaseFilter aviMuxer = null;
+		protected IBaseFilter mpegDemuxer = null;
     protected IMediaEventEx mediaEvt = null;
     protected int bitrate;
     protected int fps;
@@ -41,7 +43,7 @@ namespace WindowPlugins.VideoEditor
 
     public bool Supports(MediaPortal.Core.Transcoding.VideoFormat format)
     {
-      if (format == VideoFormat.Xvid) return true;
+      if (format == VideoFormat.Divx) return true;
       return false;
     }
     public void CreateProfile(Size videoSize, int bitRate, int FPS)
@@ -49,7 +51,6 @@ namespace WindowPlugins.VideoEditor
       bitrate = bitRate;
       screenSize = videoSize;
       fps = FPS;
-
     }
 
     public bool Transcode(TranscodeInfo info, MediaPortal.Core.Transcoding.VideoFormat format, MediaPortal.Core.Transcoding.Quality quality)
@@ -59,7 +60,7 @@ namespace WindowPlugins.VideoEditor
       if (ext.ToLower() != ".mpeg" && ext.ToLower() != ".mpg") return false;
 
       //disable xvid status window while encoding
-      try
+    /*  try
       {
         using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Software\GNU\XviD", true))
         {
@@ -77,7 +78,7 @@ namespace WindowPlugins.VideoEditor
       }
       catch (Exception)
       {
-      }
+      }*/
       //Type comtype = null;
       //object comobj = null;
       try
@@ -89,15 +90,29 @@ namespace WindowPlugins.VideoEditor
         Log.Info("DVR2XVID: add streambuffersource");
 				//bufferSource = new AsyncReader();//(IStreamBufferSource)new StreamBufferSource();
 
-
-        IBaseFilter filter = (IBaseFilter)bufferSource;
-        graphBuilder.AddFilter(filter, "SBE SOURCE");
 				IFileSourceFilter fileSource = (IFileSourceFilter)new AsyncReader();//(IFileSourceFilter)bufferSource;
+        IBaseFilter filter = (IBaseFilter)fileSource;
+        graphBuilder.AddFilter(filter, "File Source");
+				
         Log.Info("DVR2XVID: load file:{0}", info.file);
         int hr = fileSource.Load(info.file, null);
 
+				string strDemuxerMoniker = @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{AFB6C280-2C41-11D3-8A60-0000F81E0E4A}";
 
-
+				mpegDemuxer = Marshal.BindToMoniker(strDemuxerMoniker) as IBaseFilter;
+				if(mpegDemuxer == null)
+				{
+					Log.Error("DVR2XVID:FAILED:unable to add mpeg2 demuxer");
+          Cleanup();
+          return false;
+				}
+				 hr = graphBuilder.AddFilter(mpegDemuxer, "MPEG-2 Demultiplexer");
+        if (hr != 0)
+					{
+          Log.Error("DVR2XVID:FAILED:Add mpeg2 demuxer to filtergraph :0x{0:X}", hr);
+          Cleanup();
+          return false;
+        }
         //add mpeg2 audio/video codecs
 				string strVideoCodecMoniker = @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{39F498AF-1A09-4275-B193-673B0BA3D478}";
         string strAudioCodec = "MPA Decoder Filter";
@@ -109,7 +124,7 @@ namespace WindowPlugins.VideoEditor
           Cleanup();
           return false;
         }
-        hr = graphBuilder.AddFilter(Mpeg2VideoCodec, "Elecard mpeg2 video decoder");
+        hr = graphBuilder.AddFilter(Mpeg2VideoCodec, "MPV Decoder Filter");
         if (hr != 0)
         {
           Log.Error("DVR2XVID:FAILED:Add Elecard mpeg2 video  to filtergraph :0x{0:X}", hr);
@@ -131,11 +146,36 @@ namespace WindowPlugins.VideoEditor
         Log.Info("DVR2XVID: connect streambufer source->mpeg audio/video decoders");
         IPin pinOut0, pinOut1;
         IPin pinIn0, pinIn1;
-        pinOut0 = DsFindPin.ByDirection((IBaseFilter)bufferSource, PinDirection.Output, 0);//audio
-        pinOut1 = DsFindPin.ByDirection((IBaseFilter)bufferSource, PinDirection.Output, 1);//video
+
+				pinOut0 = DsFindPin.ByDirection((IBaseFilter)fileSource, PinDirection.Output, 0);
+				if(pinOut0 == null)
+				{
+					Log.Error("DVR2XVID:FAILED:unable to get pins of source");
+					Cleanup();
+					return false;
+				}
+				pinIn0 = DsFindPin.ByDirection(mpegDemuxer, PinDirection.Input, 0);
+				if (pinIn0 == null)
+				{
+					Log.Error("DVR2XVID:FAILED:unable to get pins of demuxer");
+					Cleanup();
+					return false;
+				}
+
+				hr = graphBuilder.Connect(pinOut0, pinIn0);
+				if (hr != 0)
+				{
+					Log.Error("DVR2XVID:FAILED:unable to connect audio pins :0x{0:X}", hr);
+					Cleanup();
+					return false;
+				}
+
+
+        pinOut0 = DsFindPin.ByDirection((IBaseFilter)mpegDemuxer, PinDirection.Output, 0);//audio
+        pinOut1 = DsFindPin.ByDirection((IBaseFilter)mpegDemuxer, PinDirection.Output, 1);//video
         if (pinOut0 == null || pinOut1 == null)
         {
-          Log.Error("DVR2XVID:FAILED:unable to get pins of source");
+          Log.Error("DVR2XVID:FAILED:unable to get pins of demuxer");
           Cleanup();
           return false;
         }
@@ -171,7 +211,7 @@ namespace WindowPlugins.VideoEditor
         //				if (hr!=0)
         //					Log.Error("DVR2XVID:FAILED:to SetSyncSource :0x{0:X}",hr);
         mediaControl = graphBuilder as IMediaControl;
-        mediaSeeking = bufferSource as IStreamBufferMediaSeeking;
+				mediaSeeking = graphBuilder as IMediaSeeking;//fileSource as IMediaSeeking;
         mediaEvt = graphBuilder as IMediaEventEx;
         mediaPos = graphBuilder as IMediaPosition;
 
@@ -220,7 +260,7 @@ namespace WindowPlugins.VideoEditor
         mediaControl.GetState(500, out state);
         GC.Collect(); GC.Collect(); GC.Collect(); GC.WaitForPendingFinalizers();
         graphBuilder.RemoveFilter(aviMuxer);
-        graphBuilder.RemoveFilter(xvidCodec);
+        graphBuilder.RemoveFilter(divxCodec);
         graphBuilder.RemoveFilter(mp3Codec);
         graphBuilder.RemoveFilter((IBaseFilter)fileWriterFilter);
         if (!AddCodecs(graphBuilder, info)) return false;
@@ -307,9 +347,9 @@ namespace WindowPlugins.VideoEditor
       mediaPos = null;
       mediaControl = null;
 
-      if (xvidCodec != null)
-        Marshal.ReleaseComObject(xvidCodec);
-      xvidCodec = null;
+      if (divxCodec != null)
+        Marshal.ReleaseComObject(divxCodec);
+      divxCodec = null;
 
       if (mp3Codec != null)
         Marshal.ReleaseComObject(mp3Codec);
@@ -346,17 +386,17 @@ namespace WindowPlugins.VideoEditor
     bool AddCodecs(IGraphBuilder graphBuilder, TranscodeInfo info)
     {
       int hr;
-      Log.Info("MPEG2DIVX: add Divx codec to graph");
-      string monikerXVID = @"@device:cm:{33D9A760-90C8-11D0-BD43-00A0C911CE86}\xvid";
-      xvidCodec = Marshal.BindToMoniker(monikerXVID) as IBaseFilter;
-      if (xvidCodec == null)
+      Log.Info("MPEG2DIVX: add ffdshow (Divx) codec to graph");
+			string monikerXVID = @"@device:sw:{33D9A760-90C8-11D0-BD43-00A0C911CE86}\ffdshow video encoder";
+      divxCodec = Marshal.BindToMoniker(monikerXVID) as IBaseFilter;
+      if (divxCodec == null)
       {
           Log.Error("MPEG2DIVX:FAILED:Unable to create Divx MPEG-4 Codec");
         Cleanup();
         return false;
       }
 
-      hr = graphBuilder.AddFilter(xvidCodec, "XviD MPEG-4 Codec");
+			hr = graphBuilder.AddFilter(divxCodec, "ffdshow video encoder");
       if (hr != 0)
       {
         Log.Error("DVR2XVID:FAILED:Add XviD MPEG-4 Codec to filtergraph :0x{0:X}", hr);
@@ -446,9 +486,9 @@ namespace WindowPlugins.VideoEditor
 
 
       //connect output of mpeg2 codec to xvid codec
-      Log.Info("DVR2XVID: connect mpeg2 video codec->xvid codec");
+      Log.Info("DVR2XVID: connect mpeg2 video codec->divx codec");
       IPin pinOut, pinIn;
-      pinIn = DsFindPin.ByDirection(xvidCodec, PinDirection.Input, 0);
+      pinIn = DsFindPin.ByDirection(divxCodec, PinDirection.Input, 0);
       if (pinIn == null)
       {
         Log.Error("DVR2XVID:FAILED:cannot get input pin of xvid codec:0x{0:X}", hr);
@@ -525,7 +565,7 @@ namespace WindowPlugins.VideoEditor
 
       //connect output of xvid codec to pin#1 of avimux
       Log.Info("DVR2XVID: connect xvid codec->avimux");
-      pinOut = DsFindPin.ByDirection(xvidCodec, PinDirection.Output, 0);
+      pinOut = DsFindPin.ByDirection(divxCodec, PinDirection.Output, 0);
       if (pinOut == null)
       {
         Log.Error("DVR2XVID:FAILED:cannot get input pin of mp3 codec:0x{0:X}", hr);

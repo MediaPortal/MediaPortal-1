@@ -88,9 +88,6 @@ namespace WindowPlugins.VideoEditor
 			{
 				return windowID;
 			}
-			set
-			{
-			}
 		}
 		public override bool Init()
 		{
@@ -160,6 +157,7 @@ namespace WindowPlugins.VideoEditor
 			}
 			base.OnPageDestroy(new_windowId);
 		}
+
 		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
 		{
 			if (control == backBtn)
@@ -235,6 +233,28 @@ namespace WindowPlugins.VideoEditor
 						dvrmsMod.OnFinished += new DvrMsModifier.Finished(dvrmsMod_OnFinished);
 						dvrmsMod.TranscodeToMpeg(new System.IO.FileInfo(item.Path), duration);
 
+					}
+					if (joinCutSpinCtrl.GetLabel() == "Convert") //Dvr-ms to mpeg
+					{
+						Mpeg2Divx convert = new Mpeg2Divx();
+						progressBar.Percentage = 50;
+						progressBar.Visible = true;
+						MediaPortal.Core.Transcoding.TranscodeInfo info = new MediaPortal.Core.Transcoding.TranscodeInfo();
+						info.Author = "MediaPortal";
+						//info.Channel = tinfo.recorded.Channel;
+						//info.Description = tinfo.recorded.Description;
+						info.Title = "test";//tinfo.recorded.Title;
+						//info.Start = tinfo.recorded.StartTime;
+						//info.End = tinfo.recorded.EndTime;
+						//TimeSpan ts = (tinfo.recorded.EndTime - tinfo.recorded.StartTime);
+						//info.Duration = (int)ts.TotalSeconds;
+						info.file = @"d:\PRO7_original.mpg"; //tinfo.recorded.FileName;
+						convert.CreateProfile(new System.Drawing.Size(360, 288), 2000, 25);
+						convert.Transcode(info, MediaPortal.Core.Transcoding.VideoFormat.Divx, MediaPortal.Core.Transcoding.Quality.High);
+						while (!convert.IsFinished())
+						{
+							System.Threading.Thread.Sleep(1000);
+						}
 					}
 				}
 
