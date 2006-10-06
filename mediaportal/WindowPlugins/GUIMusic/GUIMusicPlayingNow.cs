@@ -46,6 +46,15 @@ namespace MediaPortal.GUI.Music
 {
   public class GUIMusicPlayingNow : GUIWindow
   {
+    private enum PopularityRating : int
+    {
+      unknown = 0,
+      existent = 1,
+      known =2,
+      wellknown =3,
+      famous = 4
+    }
+
     private enum ControlIDs
     {
       LBL_CAPTION = 1,
@@ -72,9 +81,12 @@ namespace MediaPortal.GUI.Music
       LIST_TAG_INFO = 155,
       LIST_ALBUM_INFO = 166,
 
-      IMGLIST_TRACK1 = 77,
-      IMGLIST_TRACK2 = 78,
-      IMGLIST_TRACK3 = 79,
+      IMGLIST_UNKNOW_TRACK1 = 77,
+      IMGLIST_UNKNOW_TRACK2 = 78,
+      IMGLIST_UNKNOW_TRACK3 = 79,
+      IMGLIST_FAMOUS_TRACK1 = 87,
+      IMGLIST_FAMOUS_TRACK2 = 88,
+      IMGLIST_FAMOUS_TRACK3 = 89,
     }
 
     #region Properties
@@ -86,18 +98,21 @@ namespace MediaPortal.GUI.Music
 
     #endregion
 
-    [SkinControlAttribute((int)ControlIDs.LBL_CAPTION)]           protected GUILabelControl LblCaption = null;
-    [SkinControlAttribute((int)ControlIDs.IMG_COVERART)]          protected GUIImage ImgCoverArt = null;
-    [SkinControlAttribute((int)ControlIDs.PROG_TRACK)]            protected GUIProgressControl ProgTrack = null;
-    [SkinControlAttribute((int)ControlIDs.IMG_TRACK_PROGRESS_BG)] protected GUIImage ImgTrackProgressBkGrnd = null;
-    [SkinControlAttribute((int)ControlIDs.LBL_UP_NEXT)]           protected GUILabelControl LblUpNext = null;
-    [SkinControlAttribute((int)ControlIDs.LIST_TAG_INFO)]         protected GUIListControl facadeTagInfo = null;
-    [SkinControlAttribute((int)ControlIDs.LIST_ALBUM_INFO)]       protected GUIListControl facadeAlbumInfo = null;
-    [SkinControlAttribute((int)ControlIDs.BEST_ALBUM_TRACKS)]     protected GUIFadeLabel LblBestAlbumTracks = null;
-    [SkinControlAttribute((int)ControlIDs.BEST_TAG_TRACKS)]       protected GUIFadeLabel LblBestTagTracks = null;
-    [SkinControlAttribute((int)ControlIDs.IMGLIST_TRACK1)]        protected GUIImageList ImgListTrack1 = null;
-    [SkinControlAttribute((int)ControlIDs.IMGLIST_TRACK2)]        protected GUIImageList ImgListTrack2 = null;
-    [SkinControlAttribute((int)ControlIDs.IMGLIST_TRACK3)]        protected GUIImageList ImgListTrack3 = null;
+    [SkinControlAttribute((int)ControlIDs.LBL_CAPTION)]              protected GUILabelControl LblCaption = null;
+    [SkinControlAttribute((int)ControlIDs.IMG_COVERART)]             protected GUIImage ImgCoverArt = null;
+    [SkinControlAttribute((int)ControlIDs.PROG_TRACK)]               protected GUIProgressControl ProgTrack = null;
+    [SkinControlAttribute((int)ControlIDs.IMG_TRACK_PROGRESS_BG)]    protected GUIImage ImgTrackProgressBkGrnd = null;
+    [SkinControlAttribute((int)ControlIDs.LBL_UP_NEXT)]              protected GUILabelControl LblUpNext = null;
+    [SkinControlAttribute((int)ControlIDs.LIST_TAG_INFO)]            protected GUIListControl facadeTagInfo = null;
+    [SkinControlAttribute((int)ControlIDs.LIST_ALBUM_INFO)]          protected GUIListControl facadeAlbumInfo = null;
+    [SkinControlAttribute((int)ControlIDs.BEST_ALBUM_TRACKS)]        protected GUIFadeLabel LblBestAlbumTracks = null;
+    [SkinControlAttribute((int)ControlIDs.BEST_TAG_TRACKS)]          protected GUIFadeLabel LblBestTagTracks = null;
+    [SkinControlAttribute((int)ControlIDs.IMGLIST_UNKNOW_TRACK1)]    protected GUIImageList ImgListUnknownTrack1 = null;
+    [SkinControlAttribute((int)ControlIDs.IMGLIST_UNKNOW_TRACK2)]    protected GUIImageList ImgListUnknownTrack2 = null;
+    [SkinControlAttribute((int)ControlIDs.IMGLIST_UNKNOW_TRACK3)]    protected GUIImageList ImgListUnknownTrack3 = null;
+    [SkinControlAttribute((int)ControlIDs.IMGLIST_FAMOUS_TRACK1)]    protected GUIImageList ImgListFamousTrack1 = null;
+    [SkinControlAttribute((int)ControlIDs.IMGLIST_FAMOUS_TRACK2)]    protected GUIImageList ImgListFamousTrack2 = null;
+    [SkinControlAttribute((int)ControlIDs.IMGLIST_FAMOUS_TRACK3)]    protected GUIImageList ImgListFamousTrack3 = null;
 
     public enum TrackProgressType { Elapsed, CountDown };
 
@@ -437,12 +452,7 @@ namespace MediaPortal.GUI.Music
 
       _trackChanged = true;
 
-      if (ImgListTrack1 != null && ImgListTrack2 != null && ImgListTrack3 != null)
-      {
-        ImgListTrack1.Visible = false;
-        ImgListTrack2.Visible = false;
-        ImgListTrack3.Visible = false;
-      }
+      ToggleTopTrackRatings(false, PopularityRating.unknown);
 
       GUIPropertyManager.SetProperty("#currentmodule", String.Format("{0}/{1}", GUILocalizeStrings.Get(100005), GUILocalizeStrings.Get(4540)));
       LblUpNext.Label = GUILocalizeStrings.Get(4541);
@@ -741,12 +751,7 @@ namespace MediaPortal.GUI.Music
                 LblBestTagTracks.Visible = false;
               facadeAlbumInfo.Clear();
               facadeTagInfo.Clear();
-              if (ImgListTrack1 != null && ImgListTrack2 != null && ImgListTrack3 != null)
-              {
-                ImgListTrack1.Visible = false;
-                ImgListTrack2.Visible = false;
-                ImgListTrack3.Visible = false;
-              }
+              ToggleTopTrackRatings(false, PopularityRating.unknown);
             }
           }
           else
@@ -1220,13 +1225,55 @@ namespace MediaPortal.GUI.Music
         vizWindow.ClearImages();
     }
 
+    private void ToggleTopTrackRatings(bool showStars_, PopularityRating starType_)
+    {
+      try
+      {
+        if (showStars_)
+        {
+          switch (starType_)
+          {
+            case PopularityRating.unknown:
+              if (ImgListUnknownTrack1 != null && ImgListUnknownTrack1 != null && ImgListUnknownTrack1 != null)
+              {
+                ImgListUnknownTrack1.Visible = true;
+                ImgListUnknownTrack2.Visible = true;
+                ImgListUnknownTrack3.Visible = true;
+              }
+              break;
+            case PopularityRating.famous:
+              if (ImgListFamousTrack1 != null && ImgListFamousTrack2 != null && ImgListFamousTrack3 != null)
+              {
+                ImgListFamousTrack1.Visible = true;
+                ImgListFamousTrack2.Visible = true;
+                ImgListFamousTrack3.Visible = true;
+              }
+              break;
+          }
+        }
+        else // hide ALL stars
+        {
+          ImgListUnknownTrack1.Visible = false;
+          ImgListUnknownTrack2.Visible = false;
+          ImgListUnknownTrack3.Visible = false;
+          ImgListFamousTrack1.Visible = false;
+          ImgListFamousTrack2.Visible = false;
+          ImgListFamousTrack3.Visible = false;
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Warn("GUIMusicPlayingNow: Could not toggle rating stars - {0}", ex.Message);
+      }
+    }
 
     public void OnUpdateAlbumInfoCompleted(AlbumInfoRequest request, List<Song> AlbumTracks)
-    {      
+    {
       if (request.Equals(_lastAlbumRequest))
       {
         GUIListItem item = null;
         facadeAlbumInfo.Clear();
+        ToggleTopTrackRatings(false, PopularityRating.unknown);
         //GUIPropertyManager.SetProperty("#Lastfm.Rating.AlbumTrack1", "0");
         //GUIPropertyManager.SetProperty("#Lastfm.Rating.AlbumTrack2", "0");
         //GUIPropertyManager.SetProperty("#Lastfm.Rating.AlbumTrack3", "0");
@@ -1265,7 +1312,6 @@ namespace MediaPortal.GUI.Music
             item = new GUIListItem(AlbumTracks[i].ToShortString());
             item.Label = AlbumTracks[i].Title;
             //item.Label2 = " (" + GUILocalizeStrings.Get(931) + ": " + Convert.ToString(AlbumTracks[i].TimesPlayed) + ")";
-            
             //item.Label2 = " (" + GUILocalizeStrings.Get(931) + ": " + Convert.ToString(AlbumTracks[i].Rating) + ")";
 
             item.MusicTag = BuildMusicTagFromSong(AlbumTracks[i]);
@@ -1275,13 +1321,7 @@ namespace MediaPortal.GUI.Music
             string currentTrackRatingProperty = "#Lastfm.Rating.AlbumTrack" + Convert.ToString(i + 1);
             try
             {
-              GUIPropertyManager.SetProperty(currentTrackRatingProperty, Convert.ToString(AlbumTracks[i].Rating));
-              if (ImgListTrack1 != null && ImgListTrack2 != null && ImgListTrack3 != null)
-              {
-                ImgListTrack1.Visible = true;
-                ImgListTrack2.Visible = true;
-                ImgListTrack3.Visible = true;
-              }
+              GUIPropertyManager.SetProperty(currentTrackRatingProperty, Convert.ToString(AlbumTracks[i].Rating));              
             }
             catch (Exception ex)
             {
@@ -1296,6 +1336,13 @@ namespace MediaPortal.GUI.Music
         }
         if (facadeAlbumInfo.Count > 0)
         {
+          int popularity = AlbumTracks[0].TimesPlayed;
+
+          if (popularity > 10000)
+            ToggleTopTrackRatings(true, PopularityRating.famous);
+          else
+            ToggleTopTrackRatings(true, PopularityRating.unknown);
+
           //if (CurrentThumbFileName == GUIGraphicsContext.Skin + @"\media\missing_coverart.png")
           //{
           CurrentThumbFileName = GUIMusicFiles.GetCoverArt(false, CurrentTrackFileName, CurrentTrackTag);
