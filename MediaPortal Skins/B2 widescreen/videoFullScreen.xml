@@ -9,8 +9,9 @@
 			<type>image</type>
 			<id>0</id>
 			<posX>948</posX>
-			<posY>40</posY>
-			<texture>video-empty.png</texture>
+			<posY>80</posY>
+<!-- 			<texture>video-empty.png</texture> -->
+			<texture>-</texture>
 			<colorkey>0</colorkey>
 			<colordiffuse>White</colordiffuse>
 			<visible>no</visible>
@@ -19,12 +20,14 @@
 			<description>row 1 label</description>
 			<type>label</type>
 			<id>10</id>
-			<posX>1005</posX>
-			<posY>73</posY>
+<!-- 			<posX>1005</posX>
+			<posY>73</posY> -->
+        		<posX>1186</posX>
+	        	<posY>29</posY>
 			<label>-</label>
 			<align>left</align>
 			<font>font13</font>
-			<textcolor>White</textcolor>
+			<textcolor>Black</textcolor>
 			<visible>no</visible>
 		</control>
 		<control>
@@ -56,9 +59,10 @@
 			<type>image</type>
 			<id>16</id>
 			<posX>948</posX>
-			<posY>40</posY>
+			<posY>80</posY>
 			<visible>no</visible>
-			<texture>video-pause.png</texture>
+<!-- 			<texture>video-pause.png</texture> -->
+			<texture>-</texture>
 			<colorkey>0</colorkey>
 			<colordiffuse>White</colordiffuse>
 		</control>
@@ -67,7 +71,7 @@
 			<type>image</type>
 			<id>17</id>
 			<posX>948</posX>
-			<posY>40</posY>
+			<posY>80</posY>
 			<visible>no</visible>
 			<texture>video+2x.png</texture>
 			<colorkey>0</colorkey>
@@ -78,7 +82,7 @@
 			<type>image</type>
 			<id>18</id>
 			<posX>948</posX>
-			<posY>40</posY>
+			<posY>80</posY>
 			<visible>no</visible>
 			<texture>video+4x.png</texture>
 			<colorkey>0</colorkey>
@@ -89,7 +93,7 @@
 			<type>image</type>
 			<id>19</id>
 			<posX>948</posX>
-			<posY>40</posY>
+			<posY>80</posY>
 			<visible>no</visible>
 			<texture>video+8x.png</texture>
 			<colorkey>0</colorkey>
@@ -100,7 +104,7 @@
 			<type>image</type>
 			<id>20</id>
 			<posX>948</posX>
-			<posY>40</posY>
+			<posY>80</posY>
 			<visible>no</visible>
 			<texture>video+16x.png</texture>
 			<colorkey>0</colorkey>
@@ -111,7 +115,7 @@
 			<type>image</type>
 			<id>21</id>
 			<posX>948</posX>
-			<posY>40</posY>
+			<posY>80</posY>
 			<visible>no</visible>
 			<texture>video+32x.png</texture>
 			<colorkey>0</colorkey>
@@ -122,7 +126,7 @@
 			<type>image</type>
 			<id>23</id>
 			<posX>948</posX>
-			<posY>40</posY>
+			<posY>80</posY>
 			<visible>no</visible>
 			<texture>video-2x.png</texture>
 			<colorkey>0</colorkey>
@@ -133,7 +137,7 @@
 			<type>image</type>
 			<id>24</id>
 			<posX>948</posX>
-			<posY>40</posY>
+			<posY>80</posY>
 			<visible>no</visible>
 			<texture>video-4x.png</texture>
 			<colorkey>0</colorkey>
@@ -144,7 +148,7 @@
 			<type>image</type>
 			<id>25</id>
 			<posX>948</posX>
-			<posY>40</posY>
+			<posY>80</posY>
 			<visible>no</visible>
 			<texture>video-8x.png</texture>
 			<colorkey>0</colorkey>
@@ -155,7 +159,7 @@
 			<type>image</type>
 			<id>26</id>
 			<posX>948</posX>
-			<posY>40</posY>
+			<posY>80</posY>
 			<visible>no</visible>
 			<texture>video-16x.png</texture>
 			<colorkey>0</colorkey>
@@ -166,13 +170,13 @@
 			<type>image</type>
 			<id>27</id>
 			<posX>948</posX>
-			<posY>40</posY>
+			<posY>80</posY>
 			<visible>no</visible>
 			<texture>video-32x.png</texture>
 			<colorkey>0</colorkey>
 			<colordiffuse>White</colordiffuse>
 		</control>
-		<control>
+<!-- 		<control>
 			<description>bar image</description>
 			<type>image</type>
 			<id>105</id>
@@ -232,7 +236,7 @@
 			<align>left</align>
 			<font>font16</font>
 			<textcolor>White</textcolor>
-		</control>
+		</control> -->
 		<control>
 			<type>image</type>
 			<id>500</id>
@@ -256,5 +260,6 @@
 			<colordiffuse>White</colordiffuse>
 			<visible>no</visible>
 		</control>
+		<import>common.progressbar.xml</import>
 	</controls>
 </window>
