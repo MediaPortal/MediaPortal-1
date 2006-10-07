@@ -1,12 +1,17 @@
 <window>
-	<id>3003</id> 
-	<defaultcontrol>213</defaultcontrol> 
-	<allowoverlay>no</allowoverlay>
-<controls>
+<id>3003</id>
+    <defaultcontrol>213</defaultcontrol>
+    <allowoverlay>no</allowoverlay>
+    <define>#percentage:#TV.View.Percentage</define>
+    <define>#currentplaytime:#TV.View.start</define>
+    <define>#currentremaining:#TV.View.stop</define>
+    <controls>
+    <import>common.progressbar.xml</import>
+
 	<control>
 		<description>background</description> 
 		<type>image</type> 
-		<id>0</id> 
+		<id>0</id>
 		<posX>20</posX> 
 		<posY>330</posY>
 		<width>400</width>
@@ -29,7 +34,7 @@
 	</control>
 
 
-	<control>
+<!-- 	<control>
 		<description>progressbar background</description>
 		<type>image</type>
 		<id>0</id>
@@ -88,7 +93,7 @@
 		<align>left</align>
 		<font>font13</font> 
 		<textcolor>FFFFFFFF</textcolor> 
-	</control>
+	</control> -->
 
 	<control>
 		<description>Current Time Info</description>
@@ -116,10 +121,10 @@
 		<description>Channel Name</description>
 		<id>0</id>
 		<type>textbox</type>
-		<width>320</width>
+		<width>310</width>
 		<height>30</height>
 		<posX>110</posX>
-		<posY>350</posY>
+		<posY>340</posY>
 		<align>left</align>
 		<font>font13</font>
 		<label>#TV.View.channel</label>
@@ -132,7 +137,7 @@
 		<width>290</width>
 		<height>30</height> 
 		<posX>110</posX> 
-		<posY>380</posY>
+		<posY>368</posY>
 		<align>left</align>
 		<font>font13</font> 
 		<textcolor>FFB2D4F5</textcolor>
@@ -142,9 +147,9 @@
 		<type>textboxscrollup</type>
 		<id>38</id>
 		<posX>110</posX>
-		<posY>405</posY>
+		<posY>400</posY>
 		<width>290</width>
-		<height>75</height>
+		<height>99</height>
 		<align>left</align>
 		<label>#TV.View.description</label>
 		<font>font13</font>
@@ -157,7 +162,7 @@
 		<width>290</width> 
 		<height>30</height>
 		<posX>110</posX> 
-		<posY>500</posY>
+		<posY>510</posY>
 		<align>left</align> 
 		<font>font13</font> 
 		<textcolor>FFB2D4F5</textcolor>

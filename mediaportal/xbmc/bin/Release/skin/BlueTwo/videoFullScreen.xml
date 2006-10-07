@@ -3,13 +3,14 @@
   <defaultcontrol>13</defaultcontrol> 
   <allowoverlay>no</allowoverlay>
    <controls>
+     <import>common.progressbar.xml</import>
 	<control>
 		<description>bar image</description> 
 		<type>image</type> 
 		<id>0</id> 
 		<posX>500</posX> 
 		<posY>30</posY> 
-		<texture>video-empty.png</texture> 
+		<texture>-</texture>
 		<colorkey>0</colorkey> 
 		<colordiffuse>White</colordiffuse> 
 		<visible>no</visible>
@@ -18,8 +19,8 @@
 		<description>row 1 label</description> 
 		<type>label</type> 
 		<id>10</id> 
-		<posX>530</posX> 
-		<posY>55</posY> 
+		<posX>622</posX>
+		<posY>30</posY>
 		<label>-</label> 
 		<align>left</align> 
 		<font>font13</font> 
@@ -43,7 +44,7 @@
 		<type>label</type> 
 		<id>12</id> 
 		<posX>70</posX> 
-		<posY>92</posY> 
+		<posY>92</posY>
 		<label>-</label> 
 		<align>left</align> 
 		<font>font13</font> 
@@ -53,9 +54,9 @@
 	<control>
 		<description>pause image</description> 
 		<type>image</type> 
-		<id>16</id> 
+		<id>16</id>
 		<posX>500</posX> 
-		<posY>30</posY> 
+		<posY>60</posY>
 		<visible>no</visible> 
 		<texture>video-pause.png</texture> 
 		<colorkey>0</colorkey> 
@@ -65,8 +66,8 @@
 		<description>2x image</description> 
 		<type>image</type> 
 		<id>17</id> 
-		<posX>500</posX> 
-		<posY>30</posY> 
+		<posX>590</posX>
+		<posY>17</posY>
 		<visible>no</visible> 
 		<texture>video+2x.png</texture> 
 		<colorkey>0</colorkey> 
@@ -76,8 +77,8 @@
 		<description>4x image</description> 
 		<type>image</type> 
 		<id>18</id> 
-		<posX>500</posX> 
-		<posY>30</posY> 
+		<posX>590</posX>
+		<posY>17</posY>
 		<visible>no</visible> 
 		<texture>video+4x.png</texture> 
 		<colorkey>0</colorkey> 
@@ -87,8 +88,8 @@
 		<description>8x image</description> 
 		<type>image</type> 
 		<id>19</id> 
-		<posX>500</posX> 
-		<posY>30</posY> 
+		<posX>590</posX>
+		<posY>17</posY>
 		<visible>no</visible> 
 		<texture>video+8x.png</texture> 
 		<colorkey>0</colorkey> 
@@ -98,8 +99,8 @@
 		<description>16x image</description> 
 		<type>image</type> 
 		<id>20</id> 
-		<posX>500</posX> 
-		<posY>30</posY> 
+		<posX>590</posX>
+		<posY>17</posY>
 		<visible>no</visible> 
 		<texture>video+16x.png</texture> 
 		<colorkey>0</colorkey> 
@@ -109,8 +110,8 @@
 		<description>32x image</description> 
 		<type>image</type> 
 		<id>21</id> 
-		<posX>500</posX> 
-		<posY>30</posY> 
+		<posX>590</posX>
+		<posY>17</posY>
 		<visible>no</visible> 
 		<texture>video+32x.png</texture> 
 		<colorkey>0</colorkey> 
@@ -120,8 +121,8 @@
 		<description>- 2x image</description> 
 		<type>image</type> 
 		<id>23</id> 
-		<posX>500</posX> 
-		<posY>30</posY> 
+		<posX>590</posX>
+		<posY>17</posY>
 		<visible>no</visible> 
 		<texture>video-2x.png</texture> 
 		<colorkey>0</colorkey> 
@@ -131,8 +132,8 @@
 		<description>- 4x image</description> 
 		<type>image</type> 
 		<id>24</id> 
-		<posX>500</posX> 
-		<posY>30</posY> 
+		<posX>590</posX>
+		<posY>17</posY>
 		<visible>no</visible> 
 		<texture>video-4x.png</texture> 
 		<colorkey>0</colorkey> 
@@ -142,8 +143,8 @@
 		<description>- 8x image</description> 
 		<type>image</type> 
 		<id>25</id> 
-		<posX>500</posX> 
-		<posY>30</posY>  
+		<posX>590</posX>
+		<posY>17</posY>
 		<visible>no</visible> 
 		<texture>video-8x.png</texture> 
 		<colorkey>0</colorkey> 
@@ -153,8 +154,8 @@
 		<description>- 16x image</description> 
 		<type>image</type> 
 		<id>26</id> 
-		<posX>500</posX> 
-		<posY>30</posY> 
+		<posX>590</posX>
+		<posY>17</posY>
 		<visible>no</visible> 
 		<texture>video-16x.png</texture> 
 		<colorkey>0</colorkey> 
@@ -164,14 +165,14 @@
 		<description>- 32x image</description> 
 		<type>image</type> 
 		<id>27</id> 
-		<posX>500</posX> 
-		<posY>30</posY>  
+		<posX>590</posX>
+		<posY>17</posY>
 		<visible>no</visible> 
 		<texture>video-32x.png</texture> 
 		<colorkey>0</colorkey> 
 		<colordiffuse>White</colordiffuse> 
 	</control> 
-	<control>
+<!-- 	<control>
 		<description>bar image</description> 
 		<type>image</type> 
 		<id>105</id> 
@@ -230,7 +231,7 @@
 		<align>left</align> 
 		<font>font16</font> 
 		<textcolor>White</textcolor> 
-	</control>
+	</control> -->
 	<control>
 		<type>image</type> 
 		<id>500</id> 
