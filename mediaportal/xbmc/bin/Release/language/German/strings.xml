@@ -3857,6 +3857,22 @@
       <id>2054</id>
       <value>Kein Eintrag!</value>
    </string>
+  <string>
+    <id>2065</id>
+    <value>Welche mpeg Datei soll nach divx konvertiert werden:</value>
+  </string>
+  <string>
+    <id>2066</id>
+    <value>Mpeg nach divx</value>
+  </string>
+  <string>
+    <id>2067</id>
+    <value>Welche dvr-ms Datei soll nach divx konvertiert werden:</value>
+  </string>
+  <string>
+    <id>2068</id>
+    <value>Dvr-ms nach divx</value>
+  </string>
 	<string>
 		<id>2069</id>
 		<value>Die Dateien wurden zusammengefügt.</value>

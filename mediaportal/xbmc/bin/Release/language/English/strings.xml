@@ -3857,6 +3857,22 @@
       <id>2054</id>
       <value>No Entry!</value>
    </string>
+  <string>
+    <id>2065</id>
+    <value>Please, choose the mpeg file you would like to convert to divx:</value>
+  </string>
+  <string>
+    <id>2066</id>
+    <value>Mpeg to divx</value>
+  </string>
+  <string>
+    <id>2067</id>
+    <value>Please, choose the dvr-ms file you would like to convert to divx:</value>
+  </string>
+  <string>
+    <id>2068</id>
+    <value>Dvr-ms to divx</value>
+  </string>
 	<string>
 		<id>2069</id>
 		<value>Finished to join the video files</value>
