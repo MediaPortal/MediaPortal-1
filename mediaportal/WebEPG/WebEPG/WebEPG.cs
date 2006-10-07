@@ -208,7 +208,7 @@ namespace MediaPortal.EPG
 
       _xmlreader = new MediaPortal.Webepg.Profile.Xml(_configFile);
       maxGrabDays = _xmlreader.GetValueAsInt("General", "MaxDays", 1);
-      grabberDir = _xmlreader.GetValueAsString("General", "GrabberDir", Environment.CurrentDirectory + "\\WebEPG\\grabbers\\");
+      grabberDir = _xmlreader.GetValueAsString("General", "GrabberDir", Config.GetSubFolder(Config.Dir.Base, "WebEPG\\grabbers\\"));
       _epgGrabber = new WebListingGrabber(maxGrabDays, grabberDir);
 
       int AuthCount = _xmlreader.GetValueAsInt("AuthSites", "Count", 0);
