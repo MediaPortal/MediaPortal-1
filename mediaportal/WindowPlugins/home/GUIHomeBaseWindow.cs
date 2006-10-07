@@ -153,13 +153,16 @@ namespace MediaPortal.GUI.Home
 
     public string GetHoverFileName(string FileName)
     {
-      if (!FileName.ToLower().Contains("hover_")) FileName = "hover_" + FileName;
+      string name = System.IO.Path.GetFileName(FileName);
+      string dir  = System.IO.Path.GetDirectoryName(FileName);
+      if (dir.Length > 0) dir = dir + "\\";
+      if (!name.ToLower().Contains("hover_")) FileName = dir + "hover_" + name;
       return GetMediaFileName(FileName);
     }
 
     protected string GetMediaFileName(string name)
     {
-      if (System.IO.Path.GetDirectoryName(name) == "") 
+      if (System.IO.Path.GetPathRoot(name) == "") 
       {
         name = String.Format(@"{0}\media\{1}", GUIGraphicsContext.Skin, name);
       }

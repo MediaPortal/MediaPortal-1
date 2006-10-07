@@ -313,7 +313,7 @@ namespace MediaPortal.Games.Tetris
       strButtonText = GUILocalizeStrings.Get((int)Strings.MyTetris);
       strButtonImage = "";
       strButtonImageFocus = "";
-      strPictureImage = @"tetris\hover.png";
+      strPictureImage = @"tetris\hover_tetris.png";
       return true;
     }
 
