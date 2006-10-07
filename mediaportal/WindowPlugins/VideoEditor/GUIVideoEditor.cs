@@ -234,7 +234,7 @@ namespace WindowPlugins.VideoEditor
 						dvrmsMod.TranscodeToMpeg(new System.IO.FileInfo(item.Path), duration);
 
 					}
-					if (joinCutSpinCtrl.GetLabel() == "Convert") //Dvr-ms to mpeg
+					if (joinCutSpinCtrl.GetLabel() == GUILocalizeStrings.Get(2066)) // Mpeg to divx
 					{
 						Mpeg2Divx convert = new Mpeg2Divx();
 						progressBar.Percentage = 50;
@@ -248,7 +248,7 @@ namespace WindowPlugins.VideoEditor
 						//info.End = tinfo.recorded.EndTime;
 						//TimeSpan ts = (tinfo.recorded.EndTime - tinfo.recorded.StartTime);
 						//info.Duration = (int)ts.TotalSeconds;
-						info.file = @"d:\PRO7_original.mpg"; //tinfo.recorded.FileName;
+                        info.file = item.Path; //tinfo.recorded.FileName;
 						convert.CreateProfile(new System.Drawing.Size(360, 288), 2000, 25);
 						convert.Transcode(info, MediaPortal.Core.Transcoding.VideoFormat.Divx, MediaPortal.Core.Transcoding.Quality.High);
 						while (!convert.IsFinished())
@@ -256,6 +256,29 @@ namespace WindowPlugins.VideoEditor
 							System.Threading.Thread.Sleep(1000);
 						}
 					}
+
+                    if (joinCutSpinCtrl.GetLabel() == GUILocalizeStrings.Get(2068)) // Dvrms to divx
+                    {
+                        Dvrms2Divx convert = new Dvrms2Divx();
+                        progressBar.Percentage = 50;
+                        progressBar.Visible = true;
+                        MediaPortal.Core.Transcoding.TranscodeInfo info = new MediaPortal.Core.Transcoding.TranscodeInfo();
+                        info.Author = "MediaPortal";
+                        //info.Channel = tinfo.recorded.Channel;
+                        //info.Description = tinfo.recorded.Description;
+                        info.Title = "test";//tinfo.recorded.Title;
+                        //info.Start = tinfo.recorded.StartTime;
+                        //info.End = tinfo.recorded.EndTime;
+                        //TimeSpan ts = (tinfo.recorded.EndTime - tinfo.recorded.StartTime);
+                        //info.Duration = (int)ts.TotalSeconds;
+                        info.file = item.Path; //tinfo.recorded.FileName;
+                        convert.CreateProfile(new System.Drawing.Size(360, 288), 2000, 25);
+                        convert.Transcode(info, MediaPortal.Core.Transcoding.VideoFormat.Divx, MediaPortal.Core.Transcoding.Quality.High);
+                        while (!convert.IsFinished())
+                        {
+                            System.Threading.Thread.Sleep(1000);
+                        }
+                    }
 				}
 
 				else if (item.Label.Substring(1, 1) == ":")  // is a drive
@@ -288,19 +311,40 @@ namespace WindowPlugins.VideoEditor
 					startJoinBtn.Label = GUILocalizeStrings.Get(2079); //Start joining
 					titelLbl.Label = GUILocalizeStrings.Get(2074);	//Please, choose the files you would like to join:
 				}
-				if (joinCutSpinCtrl.GetLabel() == GUILocalizeStrings.Get(2077))		//cut
+				else if (joinCutSpinCtrl.GetLabel() == GUILocalizeStrings.Get(2077))		//cut
 				{
 					joinListCtrl.IsVisible = false;
 					startJoinBtn.IsEnabled = false;
 					titelLbl.Label = GUILocalizeStrings.Get(2092);	//Please, choose a file you would like to edit:
 				}
-				if (joinCutSpinCtrl.GetLabel() == GUILocalizeStrings.Get(2071))		//dvr-ms to mpeg
+				else if (joinCutSpinCtrl.GetLabel() == GUILocalizeStrings.Get(2071))		//dvr-ms to mpeg
 				{
 					joinListCtrl.IsVisible = false;
 					startJoinBtn.IsEnabled = false;
 					//startJoinBtn.Label = GUILocalizeStrings.Get(2072);    //Start converting
 					titelLbl.Label = GUILocalizeStrings.Get(2073);		//"Please, choose a file you would like to convert:";
 				}
+                else if (joinCutSpinCtrl.GetLabel() == GUILocalizeStrings.Get(2071))		//dvr-ms to mpeg
+                {
+                    joinListCtrl.IsVisible = false;
+                    startJoinBtn.IsEnabled = false;
+                    //startJoinBtn.Label = GUILocalizeStrings.Get(2072);    //Start converting
+                    titelLbl.Label = GUILocalizeStrings.Get(2073);		//"Please, choose a file you would like to convert:";
+                }
+                else if (joinCutSpinCtrl.GetLabel() == GUILocalizeStrings.Get(2066))		//mpeg to divx
+                {
+                    joinListCtrl.IsVisible = false;
+                    startJoinBtn.IsEnabled = false;
+                    //startJoinBtn.Label = GUILocalizeStrings.Get(2072);    //Start converting
+                    titelLbl.Label = GUILocalizeStrings.Get(2065);		//"Please, choose the mpeg file you would like to convert to divx:";
+                }
+                else if (joinCutSpinCtrl.GetLabel() == GUILocalizeStrings.Get(2068))		//dvr-ms to divx
+                {
+                    joinListCtrl.IsVisible = false;
+                    startJoinBtn.IsEnabled = false;
+                    //startJoinBtn.Label = GUILocalizeStrings.Get(2072);    //Start converting
+                    titelLbl.Label = GUILocalizeStrings.Get(2067);		//"Please, choose the dvr-ms file you would like to convert to divx:";
+                }
 			}
 
 			if (control == startJoinBtn)
