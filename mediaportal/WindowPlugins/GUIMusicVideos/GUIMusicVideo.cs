@@ -105,7 +105,7 @@ namespace MediaPortal.GUI.MusicVideos
         private int miSelectedIndex = 0;
         private YahooVideo moCurrentPlayingVideo;
         private string msSelectedGenre;
-        private ILog moLog;
+        //private ILog moLog;
         #endregion
 
         public GUIMusicVideos()
