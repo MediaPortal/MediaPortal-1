@@ -124,7 +124,7 @@
 		<width>320</width>
 		<height>30</height>
 		<posX>150</posX>
-		<posY>498</posY>
+		<posY>488</posY>
 		<align>left</align>
 		<font>font13</font>
 		<label>#TV.View.channel</label>
@@ -137,7 +137,7 @@
 		<width>290</width>
 		<height>30</height> 
 		<posX>150</posX>
-		<posY>528</posY>
+		<posY>516</posY>
 		<align>left</align>
 		<font>font13</font> 
 		<textcolor>FFB2D4F5</textcolor>
@@ -147,9 +147,9 @@
 		<type>textboxscrollup</type>
 		<id>38</id>
 		<posX>150</posX>
-		<posY>553</posY>
+		<posY>548</posY>
 		<width>290</width>
-		<height>75</height>
+		<height>99</height>
 		<align>left</align>
 		<label>#TV.View.description</label>
 		<font>font10</font>
@@ -162,7 +162,7 @@
 		<width>290</width> 
 		<height>30</height>
 		<posX>150</posX>
-		<posY>648</posY>
+		<posY>658</posY>
 		<align>left</align> 
 		<font>font13</font> 
 		<textcolor>FFB2D4F5</textcolor>
