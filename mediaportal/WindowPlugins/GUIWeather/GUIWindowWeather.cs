@@ -578,6 +578,7 @@ namespace MediaPortal.GUI.Weather
         _temperatureFarenheit = xmlreader.GetValueAsString("weather", "temperature", "C");
         _windSpeed = xmlreader.GetValueAsString("weather", "speed", "K");
         _refreshIntercal = xmlreader.GetValueAsInt("weather", "refresh", 30);
+        _refreshTimer = DateTime.Now.AddMinutes(-(_refreshIntercal + 1));
 
         bool bFound = false;
         for (int i = 0; i < 20; i++)
