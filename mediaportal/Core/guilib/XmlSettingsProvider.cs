@@ -156,7 +156,7 @@ namespace MediaPortal.Profile
           else if (IsAtEntry(reader))
           {
             entry = reader.GetAttribute("name");
-            value = reader.ReadInnerXml();
+            value = reader.ReadString();
             function.Invoke(section, entry, value);
           }
         }
