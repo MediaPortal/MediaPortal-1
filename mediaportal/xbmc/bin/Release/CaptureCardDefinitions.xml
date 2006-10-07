@@ -11168,6 +11168,20 @@
     </tv>
   </capturecard>
 
+  <capturecard commercialname="Twinhan DVB-C (Mantis)" capturename="DTV-DVB Mantis Virtual BDA Receiver" devid="ven_1822&amp;dev_4e35&amp;subsys_00081822&amp;rev_01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="tunerdevice" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBC Network Provider"  checkdevice="false"/>
+        <filter cat="tunerdevice"     name="DTV-DVB Mantis DVBC BDA Receiver"	checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
   <capturecard commercialname="WinFast PVR2000" capturename="WinFast PVR2000 WDM Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_663d107d&amp;rev_05">
     <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
     <tv>
