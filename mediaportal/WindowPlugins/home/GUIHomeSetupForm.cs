@@ -184,7 +184,7 @@ namespace MediaPortal.GUI.Home
 
     public bool CanEnable()
     {
-      return true;
+      return false;
     }
 
     public bool DefaultEnabled()
