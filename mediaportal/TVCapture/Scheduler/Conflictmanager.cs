@@ -56,8 +56,10 @@ namespace MediaPortal.TV.Recording
     static void WorkerThreadFunction()
     {
       System.Threading.Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
-      //DateTime dtStart = DateTime.Now;
-      foreach (TVRecording rec in _recordings)
+      // We'll use a clone of _recordings instead of _recordings itself
+      // to avoid it to be modified while enumerating and using it (raised an exception for at least one user)
+      List<TVRecording> _temprecordings = new List<TVRecording>(_recordings); 
+      foreach (TVRecording rec in _temprecordings)
       {
         DetermineIsConflict(rec);
       }
