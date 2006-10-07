@@ -125,4 +125,6 @@ private:
   int                  m_videoPid;
 	bool								 m_bSeenAudioStart;
 	bool								 m_bSeenVideoStart;
+	int									m_iPmtContinuityCounter;
+	int									 m_iPatContinuityCounter;
 };

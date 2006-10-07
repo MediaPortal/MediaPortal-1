@@ -278,6 +278,8 @@ STDMETHODIMP CTimeShifting::Start()
 		}
 		m_bSeenAudioStart=false;
 		m_bSeenVideoStart=false;
+		m_iPmtContinuityCounter=-1;
+		m_iPatContinuityCounter=-1;
 		LogDebug("Timeshifter:Start timeshifting:'%s'",m_szFileName);
 		LogDebug("real pcr:%x pmt:%x audio:%x video:%x mode:%d", m_pcrPid, m_pmtPid, m_audioPid,m_videoPid,m_timeShiftMode);
 		LogDebug("fake pcr:%x pmt:%x audio:%x video:%x", FAKE_PCR_PID, FAKE_PMT_PID, FAKE_AUDIO_PID, FAKE_VIDEO_PID);
@@ -539,16 +541,15 @@ void CTimeShifting::WriteFakePAT()
   int pid=PID_PAT;
   int PayLoadUnitStart=1;
   int AdaptionControl=1;
-  static int ContinuityCounter=0;
-  ContinuityCounter++;
-  if (ContinuityCounter>0xf) ContinuityCounter=0;
+  m_iPatContinuityCounter++;
+  if (m_iPatContinuityCounter>0xf) m_iPatContinuityCounter=0;
 
   BYTE pat[200];
   memset(pat,0,sizeof(pat));
   pat[0]=0x47;
   pat[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
   pat[2]=(pid&0xff);
-  pat[3]=(AdaptionControl<<4) +ContinuityCounter;
+  pat[3]=(AdaptionControl<<4) +m_iPatContinuityCounter;
   pat[4]=0;
 
   pat[5]=tableId;//table id
@@ -575,7 +576,7 @@ void CTimeShifting::WriteFakePAT()
 void CTimeShifting::WriteFakePMT()
 {
   int program_info_length=0;
-  int sectionLenght=9+2*5+3;
+  int sectionLenght=9+2*5+5;
   int version_number=0;
   int current_next_indicator=1;
   int section_number = 0;
@@ -586,16 +587,16 @@ void CTimeShifting::WriteFakePMT()
   int pid=FAKE_PMT_PID;
   int PayLoadUnitStart=1;
   int AdaptionControl=1;
-  static int ContinuityCounter=0;
-  ContinuityCounter++;
-  if (ContinuityCounter>0xf) ContinuityCounter=0;
+
+  m_iPmtContinuityCounter++;
+  if (m_iPmtContinuityCounter>0xf) m_iPmtContinuityCounter=0;
 
   BYTE pmt[200];
   memset(pmt,0,sizeof(pmt));
   pmt[0]=0x47;
   pmt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
   pmt[2]=(pid&0xff);
-  pmt[3]=(AdaptionControl<<4) +ContinuityCounter;
+  pmt[3]=(AdaptionControl<<4) +m_iPmtContinuityCounter;
   pmt[4]=0;
   pmt[5]=tableId;//table id
   pmt[6]=0x80+((sectionLenght>>8)&0xf);
@@ -612,14 +613,14 @@ void CTimeShifting::WriteFakePMT()
   
   pmt[17]=2;//video stream_type
   pmt[18]=(FAKE_VIDEO_PID>>8)&0x1F;
-  pmt[19]=(FAKE_VIDEO_PID)&0xffF;
+  pmt[19]=(FAKE_VIDEO_PID)&0xff;
   pmt[20]=0;
   pmt[21]=0;
 
 
   pmt[22]=3;//audio stream_type
   pmt[23]=(FAKE_AUDIO_PID>>8)&0x1F;
-  pmt[24]=(FAKE_AUDIO_PID)&0xffF;
+  pmt[24]=(FAKE_AUDIO_PID)&0xff;
   pmt[25]=0;
   pmt[26]=0;
 
