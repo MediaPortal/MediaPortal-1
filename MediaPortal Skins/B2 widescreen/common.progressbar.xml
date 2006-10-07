@@ -6,9 +6,9 @@
 		<type>image</type>
 		<id>104</id>
 		<posX>60</posX>
-		<posY>20</posY>
+		<posY>10</posY>
 		<width>1246</width>
-		<height>44</height>
+		<height>60</height>
 		<texture>osd_bg_top.png</texture>
 	</control>
 	<control>
@@ -16,9 +16,9 @@
 		<type>image</type>
 		<id>105</id>
 		<posX>196</posX>
-		<posY>31</posY>
+		<posY>26</posY>
 		<width>780</width>
-		<height>20</height>
+		<height>30</height>
 		<texture>osd_progress_background.png</texture>
 		<visible>yes</visible>
 	</control>
