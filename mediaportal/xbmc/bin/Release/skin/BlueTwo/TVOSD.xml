@@ -149,7 +149,7 @@
 		<posX>110</posX>
 		<posY>400</posY>
 		<width>290</width>
-		<height>99</height>
+		<height>108</height>
 		<align>left</align>
 		<label>#TV.View.description</label>
 		<font>font13</font>
@@ -162,7 +162,7 @@
 		<width>290</width> 
 		<height>30</height>
 		<posX>110</posX> 
-		<posY>510</posY>
+		<posY>518</posY>
 		<align>left</align> 
 		<font>font13</font> 
 		<textcolor>FFB2D4F5</textcolor>
