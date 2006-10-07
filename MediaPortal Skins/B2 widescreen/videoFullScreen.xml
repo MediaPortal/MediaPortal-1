@@ -62,8 +62,8 @@
 			<posX>948</posX>
 			<posY>80</posY>
 			<visible>no</visible>
-<!-- 			<texture>video-pause.png</texture> -->
-			<texture>-</texture>
+			<texture>video-pause.png</texture>
+<!-- 			<texture>-</texture> -->
 			<colorkey>0</colorkey>
 			<colordiffuse>White</colordiffuse>
 		</control>

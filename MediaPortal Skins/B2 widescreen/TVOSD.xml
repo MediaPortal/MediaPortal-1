@@ -121,7 +121,7 @@
 		<description>Channel Name</description>
 		<id>0</id>
 		<type>textbox</type>
-		<width>320</width>
+		<width>310</width>
 		<height>30</height>
 		<posX>150</posX>
 		<posY>488</posY>
