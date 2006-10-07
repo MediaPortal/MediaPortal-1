@@ -4,7 +4,7 @@
 	<defaultcontrol>13</defaultcontrol>
 	<allowoverlay>no</allowoverlay>
 	<controls>
-            <import>common.progressbar.xml</import>
+        <import>common.progressbar.xml</import>
 		<control>
 			<description>bar image</description>
 			<type>image</type>
@@ -77,7 +77,6 @@
 	         	<posY>19</posY>
 			<visible>no</visible>
 			<texture>video+2x.png</texture>
-			<filtered>no</filtered>
 			<colorkey>0</colorkey>
 			<colordiffuse>White</colordiffuse>
 		</control>

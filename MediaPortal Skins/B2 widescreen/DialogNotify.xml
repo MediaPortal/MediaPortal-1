@@ -23,7 +23,7 @@
 				<id>0</id>
 				<posX>607</posX>
 				<posY>533</posY>
-				<width>466</width>
+				<width>566</width>
 				<height>200</height>
 				<texture>dialog_background.png</texture>
 			</control>
@@ -41,7 +41,7 @@
 				<description>OK button</description>
 				<type>button</type>
 				<id>4</id>
-				<posX>988</posX>
+				<posX>1077</posX>
 				<posY>564</posY>
 				<width>42</width>
 				<height>42</height>
@@ -70,9 +70,10 @@
 				<description>textarea</description>
 				<type>textbox</type>
 				<id>6</id>
-				<posX>806</posX>
+				<font>font10</font>
+				<posX>796</posX>
 				<posY>593</posY>
-				<width>293</width>
+				<width>300</width>
 				<height>120</height>
 				<spinWidth>21</spinWidth>
 				<spinHeight>21</spinHeight>
