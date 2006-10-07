@@ -29,6 +29,7 @@ using MediaPortal.Util;
 using DirectShowLib.SBE;
 using MediaPortal.TV.Database;
 using MediaPortal.Video.Database;
+using MediaPortal.Core.Transcoding;
 
 namespace WindowPlugins.VideoEditor
 {
