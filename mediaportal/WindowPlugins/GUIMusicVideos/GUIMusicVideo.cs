@@ -182,7 +182,6 @@ namespace MediaPortal.GUI.MusicVideos
 
         public override bool Init()
         {
-            GUIWindowManager.OnNewAction += new OnActionHandler(OnAction);
             return Load(GUIGraphicsContext.Skin + @"\mymusicvideos.xml");
         }
 
