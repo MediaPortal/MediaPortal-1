@@ -29,6 +29,7 @@ using MediaPortal.Services;
 using MediaPortal.Webepg.Profile;
 using MediaPortal.TV.Database;
 using MediaPortal.WebEPG;
+using MediaPortal.Util;
 using MediaPortal.Utils;
 using MediaPortal.Utils.Time;
 using MediaPortal.Utils.Services;
@@ -83,8 +84,8 @@ namespace MediaPortal.EPG
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
 
-      _configFile = Environment.CurrentDirectory + "\\WebEPG\\WebEPG.xml";
-      _xmltvDirectory = Environment.CurrentDirectory + "\\xmltv\\";
+      _configFile = Config.GetFile(Config.Dir.Base, "WebEPG", "WebEPG.xml");
+      _xmltvDirectory = Config.GetSubFolder(Config.Dir.Base, "xmltv");
     }
 
     public bool Import()
