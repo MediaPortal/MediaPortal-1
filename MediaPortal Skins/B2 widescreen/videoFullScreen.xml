@@ -4,6 +4,7 @@
 	<defaultcontrol>13</defaultcontrol>
 	<allowoverlay>no</allowoverlay>
 	<controls>
+            <import>common.progressbar.xml</import>
 		<control>
 			<description>bar image</description>
 			<type>image</type>
@@ -72,8 +73,8 @@
 			<id>17</id>
 <!-- 			<width>733</width>
 			<height>26</height> -->
-         		<posX>1168</posX>
-	         	<posY>20</posY>
+         		<posX>1166</posX>
+	         	<posY>19</posY>
 			<visible>no</visible>
 			<texture>video+2x.png</texture>
 			<filtered>no</filtered>
@@ -84,8 +85,8 @@
 			<description>4x image</description>
 			<type>image</type>
 			<id>18</id>
-         		<posX>1168</posX>
-	         	<posY>20</posY>
+         		<posX>1166</posX>
+	         	<posY>19</posY>
 			<visible>no</visible>
 			<texture>video+4x.png</texture>
 			<colorkey>0</colorkey>
@@ -95,8 +96,8 @@
 			<description>8x image</description>
 			<type>image</type>
 			<id>19</id>
-         		<posX>1168</posX>
-	         	<posY>20</posY>
+         		<posX>1166</posX>
+	         	<posY>19</posY>
 			<visible>no</visible>
 			<texture>video+8x.png</texture>
 			<colorkey>0</colorkey>
@@ -106,8 +107,8 @@
 			<description>16x image</description>
 			<type>image</type>
 			<id>20</id>
-         		<posX>1168</posX>
-	         	<posY>20</posY>
+         		<posX>1166</posX>
+	         	<posY>19</posY>
 			<visible>no</visible>
 			<texture>video+16x.png</texture>
 			<colorkey>0</colorkey>
@@ -117,8 +118,8 @@
 			<description>32x image</description>
 			<type>image</type>
 			<id>21</id>
-         		<posX>1168</posX>
-	         	<posY>20</posY>
+         		<posX>1166</posX>
+	         	<posY>19</posY>
 			<visible>no</visible>
 			<texture>video+32x.png</texture>
 			<colorkey>0</colorkey>
@@ -128,8 +129,8 @@
 			<description>- 2x image</description>
 			<type>image</type>
 			<id>23</id>
-         		<posX>1168</posX>
-	         	<posY>20</posY>
+         		<posX>1166</posX>
+	         	<posY>19</posY>
 			<visible>no</visible>
 			<texture>video-2x.png</texture>
 			<colorkey>0</colorkey>
@@ -139,8 +140,8 @@
 			<description>- 4x image</description>
 			<type>image</type>
 			<id>24</id>
-         		<posX>1168</posX>
-	         	<posY>20</posY>
+         		<posX>1166</posX>
+	         	<posY>19</posY>
 			<visible>no</visible>
 			<texture>video-4x.png</texture>
 			<colorkey>0</colorkey>
@@ -150,8 +151,8 @@
 			<description>- 8x image</description>
 			<type>image</type>
 			<id>25</id>
-         		<posX>1168</posX>
-	         	<posY>20</posY>
+         		<posX>1166</posX>
+	         	<posY>19</posY>
 			<visible>no</visible>
 			<texture>video-8x.png</texture>
 			<colorkey>0</colorkey>
@@ -161,8 +162,8 @@
 			<description>- 16x image</description>
 			<type>image</type>
 			<id>26</id>
-         		<posX>1168</posX>
-	         	<posY>20</posY>
+         		<posX>1166</posX>
+	         	<posY>19</posY>
 			<visible>no</visible>
 			<texture>video-16x.png</texture>
 			<colorkey>0</colorkey>
@@ -172,8 +173,8 @@
 			<description>- 32x image</description>
 			<type>image</type>
 			<id>27</id>
-         		<posX>1168</posX>
-	         	<posY>20</posY>
+         		<posX>1166</posX>
+	         	<posY>19</posY>
 			<visible>no</visible>
 			<texture>video-32x.png</texture>
 			<colorkey>0</colorkey>
@@ -263,6 +264,6 @@
 			<colordiffuse>White</colordiffuse>
 			<visible>no</visible>
 		</control>
-		<import>common.progressbar.xml</import>
+
 	</controls>
 </window>
