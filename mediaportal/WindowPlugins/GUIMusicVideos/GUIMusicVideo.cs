@@ -73,10 +73,7 @@ namespace MediaPortal.GUI.MusicVideos
         protected GUIButtonControl btnMyPlaylists = null;
         [SkinControlAttribute(50)]
         protected GUIListControl listSongs = null;
-        [SkinControlAttribute(111)]
-        protected GUIGroup grp1 = null;
-        [SkinControlAttribute(222)]
-        protected GUIGroup grp2 = null;
+        
         #endregion
         #region Enumerations
         enum State
@@ -97,17 +94,18 @@ namespace MediaPortal.GUI.MusicVideos
         private YahooSettings moSettings;
 
         //private Hashtable moYahooSiteTable;
-        YahooTopVideos moTopVideos;
-        YahooNewVideos moNewVideos;
-        YahooSearch moYahooSearch;
-        YahooFavorites moFavoriteManager;
-        YahooGenres moGenre;
+        private YahooTopVideos moTopVideos;
+        private YahooNewVideos moNewVideos;
+        private YahooSearch moYahooSearch;
+        private YahooFavorites moFavoriteManager;
+        private YahooGenres moGenre;
         //String lsSelectedBitRate = "";
         //String lsSelectedCountry = "";
-        public int CURRENT_STATE = (int)State.HOME;
-        int miSelectedIndex = 0;
-        YahooVideo moCurrentPlayingVideo;
-        string msSelectedGenre;
+        private int CURRENT_STATE = (int)State.HOME;
+        private int miSelectedIndex = 0;
+        private YahooVideo moCurrentPlayingVideo;
+        private string msSelectedGenre;
+        private ILog moLog;
         #endregion
 
         public GUIMusicVideos()
@@ -183,7 +181,8 @@ namespace MediaPortal.GUI.MusicVideos
         }
 
         public override bool Init()
-        {            
+        {
+            GUIWindowManager.OnNewAction += new OnActionHandler(OnAction);
             return Load(GUIGraphicsContext.Skin + @"\mymusicvideos.xml");
         }
 
@@ -929,6 +928,7 @@ namespace MediaPortal.GUI.MusicVideos
             //labelState.Label = String.Format(GUILocalizeStrings.Get(30010), moYahooSearch.getLastSearchText(), moYahooSearch.getCurrentPageNumber());
             btnNextPage.Disabled = !moYahooSearch.hasNext();
             btnPreviousPage.Disabled = true;
+            updateButtonStates();
         }
         private void onClickTopVideos()
         {
@@ -1145,6 +1145,7 @@ namespace MediaPortal.GUI.MusicVideos
             if (moSettings.mbUseVMR9)
             {
                 g_Player.PlayVideoStream(lsVideoLink);
+                
             }
             else
             {
