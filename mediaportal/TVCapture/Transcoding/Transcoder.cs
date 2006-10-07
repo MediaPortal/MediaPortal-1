@@ -474,38 +474,71 @@ namespace MediaPortal.TV.Recording
       tinfo.SetProperties();
     }
 
-    static void ConvertToXvid(TranscodeInfo info, TranscoderInfo tinfo)
-    {
-      Dvrms2XVID xvidEncoder = new Dvrms2XVID();
-      xvidEncoder.CreateProfile(tinfo.ScreenSize, tinfo.bitRate, tinfo.FPS);
-      if (!xvidEncoder.Transcode(info, VideoFormat.Xvid, tinfo.quality))
-      {
-        tinfo.status = Status.Error;
-        tinfo.SetProperties();
-        return;
-      }
-      while (!xvidEncoder.IsFinished())
-      {
-        if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) return;
-        tinfo.percentDone = xvidEncoder.Percentage();
-        tinfo.SetProperties();
-        System.Threading.Thread.Sleep(1000);
-        if (tinfo.status == Status.Canceled)
-        {
-          xvidEncoder.Stop();
-          return;
-        }
-      }
-      if (tinfo.deleteOriginal)
-      {
-         MediaPortal.Util.Utils.DeleteRecording(info.file);
-        tinfo.recorded.FileName = System.IO.Path.ChangeExtension(info.file, ".avi");
-        TVDatabase.SetRecordedFileName(tinfo.recorded);
-      }
-      tinfo.status = Status.Completed;
-      tinfo.SetProperties();
-      return;
-    }
+		static void ConvertToXvid(TranscodeInfo info, TranscoderInfo tinfo)
+		{
+			Dvrms2XVID xvidEncoder = new Dvrms2XVID();
+			xvidEncoder.CreateProfile(tinfo.ScreenSize, tinfo.bitRate, tinfo.FPS);
+			if (!xvidEncoder.Transcode(info, VideoFormat.Xvid, tinfo.quality))
+			{
+				tinfo.status = Status.Error;
+				tinfo.SetProperties();
+				return;
+			}
+			while (!xvidEncoder.IsFinished())
+			{
+				if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) return;
+				tinfo.percentDone = xvidEncoder.Percentage();
+				tinfo.SetProperties();
+				System.Threading.Thread.Sleep(1000);
+				if (tinfo.status == Status.Canceled)
+				{
+					xvidEncoder.Stop();
+					return;
+				}
+			}
+			if (tinfo.deleteOriginal)
+			{
+				MediaPortal.Util.Utils.DeleteRecording(info.file);
+				tinfo.recorded.FileName = System.IO.Path.ChangeExtension(info.file, ".avi");
+				TVDatabase.SetRecordedFileName(tinfo.recorded);
+			}
+			tinfo.status = Status.Completed;
+			tinfo.SetProperties();
+			return;
+		}
+		static void ConvertDvrmsToDivx(TranscodeInfo info, TranscoderInfo tinfo)
+		{
+			Dvrms2Divx divxEncoder = new Dvrms2Divx();
+			divxEncoder.CreateProfile(tinfo.ScreenSize, tinfo.bitRate, tinfo.FPS);
+			if (!divxEncoder.Transcode(info, VideoFormat.Xvid, tinfo.quality))
+			{
+				tinfo.status = Status.Error;
+				tinfo.SetProperties();
+				return;
+			}
+			while (!divxEncoder.IsFinished())
+			{
+				if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) return;
+				tinfo.percentDone = divxEncoder.Percentage();
+				tinfo.SetProperties();
+				System.Threading.Thread.Sleep(1000);
+				if (tinfo.status == Status.Canceled)
+				{
+					divxEncoder.Stop();
+					return;
+				}
+			}
+			if (tinfo.deleteOriginal)
+			{
+				MediaPortal.Util.Utils.DeleteRecording(info.file);
+				tinfo.recorded.FileName = System.IO.Path.ChangeExtension(info.file, ".avi");
+				TVDatabase.SetRecordedFileName(tinfo.recorded);
+			}
+			tinfo.status = Status.Completed;
+			tinfo.SetProperties();
+			return;
+
+		}
     #endregion
   }
 }

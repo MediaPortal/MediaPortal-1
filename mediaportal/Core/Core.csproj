@@ -319,6 +319,7 @@
     <Compile Include="ThumbDbLib\ThumbnailCreatorNet.cs" />
     <Compile Include="ThumbDbLib\ThumbnailDatabase.cs" />
     <Compile Include="ThumbDbLib\ThumbnailDatabaseCache.cs" />
+    <Compile Include="Transcoding\Dvrms2Divx.cs" />
     <Compile Include="UserInterfaceControls\MPContextMenuStrip.cs">
       <SubType>Component</SubType>
     </Compile>

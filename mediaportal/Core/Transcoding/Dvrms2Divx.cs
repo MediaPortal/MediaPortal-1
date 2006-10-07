@@ -33,9 +33,9 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Core.Transcoding;
 using System.Runtime.InteropServices;
 
-namespace WindowPlugins.VideoEditor
+namespace MediaPortal.Core.Transcoding
 {
-    class Dvrms2Divx : ITranscode
+    public class Dvrms2Divx : ITranscode
     {
         protected DsROTEntry _rotEntry = null;
         protected IGraphBuilder graphBuilder = null;
