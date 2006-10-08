@@ -70,7 +70,7 @@ namespace WindowPlugins.VideoEditor
 
     public bool HasSetup()
     {
-      return false;
+      return true;
     }
 
     public string PluginName()
@@ -80,7 +80,9 @@ namespace WindowPlugins.VideoEditor
 
     public void ShowPlugin()
     {
-      System.Windows.Forms.MessageBox.Show("Nothing to configure - just enable and start MP ;)");
+      //System.Windows.Forms.MessageBox.Show("Nothing to configure - just enable and start MP ;)");
+			VideoEditorConfiguration config = new VideoEditorConfiguration();
+			config.Show();
     }
 
     #endregion

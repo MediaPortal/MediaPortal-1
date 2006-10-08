@@ -966,6 +966,12 @@
     <Compile Include="VideoEditor\Mpeg2Splitter.cs" />
     <Compile Include="VideoEditor\MpegModifier.cs" />
     <Compile Include="VideoEditor\TimeDomain.cs" />
+    <Compile Include="VideoEditor\VideoEditorConfiguration.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="VideoEditor\VideoEditorConfiguration.Designer.cs">
+      <DependentUpon>VideoEditorConfiguration.cs</DependentUpon>
+    </Compile>
     <Compile Include="VideoEditor\VideoEditorPreview.cs" />
     <Compile Include="VideoEditor\VideoEditorSetup.cs" />
     <EmbeddedResource Include="GUIAlarm\AlarmSetupForm.resx">
@@ -1080,6 +1086,10 @@
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="VideoEditor\VideoEditorConfiguration.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>VideoEditorConfiguration.cs</DependentUpon>
     </EmbeddedResource>
     <Content Include="GUIPrograms\FileDetailContents.xml" />
     <Content Include="GUIPrograms\ProgramSettingProfiles.xml" />
