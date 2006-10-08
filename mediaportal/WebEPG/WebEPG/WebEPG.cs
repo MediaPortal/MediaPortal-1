@@ -85,7 +85,7 @@ namespace MediaPortal.EPG
       _log = services.Get<ILog>();
 
       _configFile = Config.GetFile(Config.Dir.Base, "WebEPG", "WebEPG.xml");
-      _xmltvDirectory = Config.GetSubFolder(Config.Dir.Base, "xmltv");
+      _xmltvDirectory = Config.GetSubFolder(Config.Dir.Base, "xmltv\\");
     }
 
     public bool Import()
