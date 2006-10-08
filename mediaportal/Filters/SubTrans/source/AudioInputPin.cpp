@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *  Author: tourettes
  *	http://www.team-mediaportal.com
  *
@@ -45,8 +45,8 @@ CAudioInputPin::CAudioInputPin( CSubTransform *m_pTransform,
     CRenderedInputPin(NAME( "CAudioInputPin" ),
 					pFilter,						// Filter
 					pLock,							// Locking
-					phr,							// Return code
-					L"Audio" ),						// Pin name
+					phr,							  // Return code
+					L"Audio" ),					// Pin name
 					m_pReceiveLock( pReceiveLock ),
 					m_pTransform( m_pTransform )
 {
@@ -65,23 +65,23 @@ CAudioInputPin::~CAudioInputPin()
 HRESULT CAudioInputPin::CheckMediaType( const CMediaType *pmt )
 {
 	Log("Audio pin: CheckMediaType()");
-//	if( pmt->subtype == MEDIASUBTYPE_MPEG2_TRANSPORT )
+	if( pmt->subtype == MEDIASUBTYPE_MPEG2_TRANSPORT )
 	{
 		return S_OK;
 	}
 	return S_FALSE;
 }
-/*
+
 HRESULT CAudioInputPin::CompleteConnect( IPin *pPin )
 {
 	HRESULT hr=CBasePin::CompleteConnect( pPin );
 
 	IMPEG2PIDMap	*pMap=NULL;
 	IEnumPIDMap		*pPidEnum=NULL;
-	ULONG			pid;
-	PID_MAP			pm;
-	ULONG			count;
-	ULONG			umPid;
+//	ULONG			    pid;
+	PID_MAP			  pm;
+	ULONG			    count;
+	ULONG			    umPid;
 
 	hr=pPin->QueryInterface( IID_IMPEG2PIDMap,(void**)&pMap );
 	if( SUCCEEDED(hr) && pMap!=NULL )
@@ -103,8 +103,7 @@ HRESULT CAudioInputPin::CompleteConnect( IPin *pPin )
 					break;
 				}
 			}
-			pid = 0xAUDIO;	// THIS IS A TEST PID ONLY
-			hr = pMap->MapPID( 1, &pid, MEDIA_TRANSPORT_PAYLOAD ); //MEDIA_ELEMENTARY_STREAM ); //
+			hr = pMap->MapPID( 1, &m_audioPid, MEDIA_TRANSPORT_PACKET ); //MEDIA_ELEMENTARY_STREAM ); //
 
 			pPidEnum->Release();
 		}
@@ -112,7 +111,7 @@ HRESULT CAudioInputPin::CompleteConnect( IPin *pPin )
 	}
 	return hr;
 }
-*/
+
 
 //
 // Receive
@@ -183,11 +182,11 @@ void CAudioInputPin::Reset()
 	m_bReset = true;
 }
 
-/*void CAudioInputPin::SetAudioPID( ULONG pPID )
+void CAudioInputPin::SetAudioPID( ULONG pPID )
 {
-	m_AudioPID = pPID;
+	m_audioPid = pPID;
 }
-*/
+
 
 STDMETHODIMP CAudioInputPin::BeginFlush(void)
 {
@@ -247,18 +246,18 @@ HRESULT CAudioInputPin::CurrentPTS( BYTE *pData, ULONGLONG *ptsValue,int *stream
 	if( offset >= 188 ) 
 		return S_FALSE;
 	
-	if(header.SyncByte==0x47 && pData[offset]==0 && pData[offset+1]==0 && pData[offset+2]==1)
+	if( header.SyncByte==0x47 && pData[offset]==0 && pData[offset+1]==0 && pData[offset+2]==1 )
 	{
 		*streamType=(int)((pData[offset+3]>>5) & 0x07);
-		WORD pesLen=(pData[offset+4]<<8)+pData[offset+5];
-		GetPESHeader(&pData[offset+6],&pes);
-		BYTE pesHeaderLen=pData[offset+8];
-		if(header.Pid) // valid header
+		WORD pesLen=( pData[offset+4]<<8 ) + pData[offset+5];
+		GetPESHeader( &pData[offset+6], &pes );
+		BYTE pesHeaderLen = pData[offset+8];
+		if( header.Pid ) // valid header
 		{
-			if(pes.PTSFlags==0x02)
+			if( pes.PTSFlags==0x02 )
 			{
 				// audio pes found
-				GetPTS(&pData[offset+9],ptsValue);
+				GetPTS( &pData[offset+9], ptsValue );
 				hr = S_OK;
 			}
 		}	
@@ -266,7 +265,7 @@ HRESULT CAudioInputPin::CurrentPTS( BYTE *pData, ULONGLONG *ptsValue,int *stream
 	return hr;
 }
 
-HRESULT CAudioInputPin::GetTSHeader( BYTE *data,TSHeader *header )
+HRESULT CAudioInputPin::GetTSHeader( BYTE *data, TSHeader *header )
 {
 	header->SyncByte=data[0];
 	header->TransportError=(data[1] & 0x80)>0?true:false;

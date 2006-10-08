@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *  Author: tourettes
  *	http://www.team-mediaportal.com
  *
@@ -47,10 +47,10 @@ CSubtitleInputPin::CSubtitleInputPin( CSubTransform *pDump,
 										HRESULT *phr ) :
 
     CRenderedInputPin(NAME( "CSubtitleInputPin" ),
-					pFilter,						// Filter
-					pLock,							// Locking
-					phr,							// Return code
-					L"Subtitle" ),					// Pin name
+					pFilter,						  // Filter
+					pLock,							  // Locking
+					phr,							    // Return code
+					L"Subtitle" ),				// Pin name
 					m_pReceiveLock( pReceiveLock ),
 					m_pDump( pDump ),
 					m_tLast( 0 ),
@@ -61,7 +61,7 @@ CSubtitleInputPin::CSubtitleInputPin( CSubTransform *pDump,
 {
 	m_PESdata = (unsigned char*)malloc(32000); // size is just a guess...
 	Reset();
-	Log( "Subtitle: Pin created" );
+	Log( "Subtitle: Input pin created" );
 }
 
 CSubtitleInputPin::~CSubtitleInputPin()
@@ -70,11 +70,9 @@ CSubtitleInputPin::~CSubtitleInputPin()
 //
 // CheckMediaType
 //
-// Check if the pin can support this specific proposed type and format
-//
 HRESULT CSubtitleInputPin::CheckMediaType( const CMediaType *pmt )
 {
-	Log("Subtitle:CheckMediaType()");
+  Log("Subtitle: CSubtitleInputPin::CheckMediaType()");
 	if( pmt->majortype == GUID_NULL )
 	{
 		return S_OK;
@@ -85,8 +83,6 @@ HRESULT CSubtitleInputPin::CheckMediaType( const CMediaType *pmt )
 //
 // BreakConnect
 //
-// Break a connection
-//
 HRESULT CSubtitleInputPin::BreakConnect()
 {
     return CRenderedInputPin::BreakConnect();
@@ -94,20 +90,20 @@ HRESULT CSubtitleInputPin::BreakConnect()
 
 HRESULT CSubtitleInputPin::CompleteConnect( IPin *pPin )
 {
-	HRESULT hr=CBasePin::CompleteConnect( pPin );
+	HRESULT hr = CBasePin::CompleteConnect( pPin );
 	
 	IMPEG2PIDMap	*pMap=NULL;
 	IEnumPIDMap		*pPidEnum=NULL;
-	ULONG			pid;
-	PID_MAP			pm;
-	ULONG			count;
-	ULONG			umPid;
+	ULONG			    pid;
+	PID_MAP			  pm;
+	ULONG			    count;
+	ULONG			    umPid;
 	
-	hr=pPin->QueryInterface( IID_IMPEG2PIDMap,(void**)&pMap );
-	if( SUCCEEDED(hr) && pMap!=NULL )
+	hr = pPin->QueryInterface( IID_IMPEG2PIDMap,(void**)&pMap );
+	if( SUCCEEDED(hr) && pMap != NULL )
 	{
-		hr=pMap->EnumPIDMap( &pPidEnum );
-		if( SUCCEEDED(hr) && pPidEnum!=NULL )
+		hr = pMap->EnumPIDMap( &pPidEnum );
+		if( SUCCEEDED( hr ) && pPidEnum != NULL )
 		{
 			while( pPidEnum->Next( 1, &pm, &count ) == S_OK )
 			{
@@ -118,13 +114,13 @@ HRESULT CSubtitleInputPin::CompleteConnect( IPin *pPin )
 					
 				umPid = pm.ulPID;
 				hr = pMap->UnmapPID( 1, &umPid );
-				if( FAILED(hr) )
+				if( FAILED( hr ) )
 				{	
 					break;
 				}
 			}
-			pid = m_SubtitlePID;	// THIS IS A TEST PID ONLY
-			hr = pMap->MapPID( 1, &pid, MEDIA_TRANSPORT_PAYLOAD ); //MEDIA_ELEMENTARY_STREAM ); // 
+			pid = m_SubtitlePID;
+			hr = pMap->MapPID( 1, &pid, MEDIA_TRANSPORT_PAYLOAD );
 
 			pPidEnum->Release();
 		}
@@ -173,7 +169,6 @@ STDMETHODIMP CSubtitleInputPin::Receive( IMediaSample *pSample )
 		CAutoLock lock(m_pReceiveLock);
 		PBYTE pbData = NULL;
 		
-		// Has the filter been stopped yet?
 		REFERENCE_TIME tStart, tStop;
 		pSample->GetTime( &tStart, &tStop);
 
@@ -181,12 +176,12 @@ STDMETHODIMP CSubtitleInputPin::Receive( IMediaSample *pSample )
 		long lDataLen = 0;
 
 		HRESULT hr = pSample->GetPointer( &pbData );
-		if( FAILED(hr) ) 
+		if( FAILED( hr ) ) 
 		{
 			Log( "Subtitle: Receive() err" );
 			return hr;
 		}
-		lDataLen=pSample->GetActualDataLength();
+		lDataLen = pSample->GetActualDataLength();
 
 		if( lDataLen > 5 )
 		{
@@ -250,16 +245,15 @@ STDMETHODIMP CSubtitleInputPin::Receive( IMediaSample *pSample )
 					Log( "Subtitle: Receive() - PES data continues in the next sample" );
 				}
 			}
-		
 		}
 	}
 
 	catch(...)
 	{
-		Log( "Subtitle: --- UNHANDLED EXCEPTION ---" );
+		Log( "Subtitle: --- UNHANDLED EXCEPTION --- CSubtitleInputPin::Receive()" );
 	}
-
-    return S_OK;
+  
+  return S_OK;
 }
 
 void CSubtitleInputPin::Reset()
@@ -293,12 +287,8 @@ STDMETHODIMP CSubtitleInputPin::EndFlush(void)
 	return CRenderedInputPin::EndFlush();
 }
 
-
-
 //
 // NewSegment
-//
-// Called when we are seeked
 //
 STDMETHODIMP CSubtitleInputPin::NewSegment( REFERENCE_TIME tStart,
 											REFERENCE_TIME tStop,

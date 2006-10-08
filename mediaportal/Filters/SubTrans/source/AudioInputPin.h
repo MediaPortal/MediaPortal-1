@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *  Author: tourettes
  *	http://www.team-mediaportal.com
  *
@@ -41,20 +41,20 @@ typedef tsheader TSHeader;
  
 struct pesheader
 {
-	BYTE     Reserved				;
-	BYTE     ScramblingControl		;
-	BYTE     Priority 				;
-	BYTE     dataAlignmentIndicator	;
-	BYTE     Copyright				;
-	BYTE     Original				;
-	BYTE     PTSFlags				;
-	BYTE     ESCRFlag				;
-	BYTE     ESRateFlag				;
-	BYTE     DSMTrickModeFlag		;
-	BYTE     AdditionalCopyInfoFlag	;
-	BYTE     PESCRCFlag				;
-	BYTE     PESExtensionFlag		;
-	BYTE     PESHeaderDataLength	;
+	BYTE     Reserved;
+	BYTE     ScramblingControl;
+	BYTE     Priority;
+	BYTE     dataAlignmentIndicator;
+	BYTE     Copyright;
+	BYTE     Original;
+	BYTE     PTSFlags;
+	BYTE     ESCRFlag;
+	BYTE     ESRateFlag;
+	BYTE     DSMTrickModeFlag;
+	BYTE     AdditionalCopyInfoFlag;
+	BYTE     PESCRCFlag;
+	BYTE     PESExtensionFlag;
+	BYTE     PESHeaderDataLength;
 };
 typedef pesheader PESHeader;
 
@@ -71,9 +71,9 @@ class CAudioInputPin : public CRenderedInputPin
 {
 private:
 
-    CSubTransform* const	m_pTransform;		// Main renderer object
-    CCritSec * const		m_pReceiveLock;		// Sample critical section
-	bool					m_bReset;
+    CSubTransform* const	m_pTransform;		  // Main renderer object
+    CCritSec * const		  m_pReceiveLock;		// Sample critical section
+	  bool					        m_bReset;
 
 public:
 
@@ -84,14 +84,16 @@ public:
 					CCritSec *pReceiveLock,
 					HRESULT *phr );
 
-	~CAudioInputPin();
+	  ~CAudioInputPin();
 
     STDMETHODIMP Receive(IMediaSample *pSample);
     STDMETHODIMP BeginFlush(void);
     STDMETHODIMP EndFlush(void);
 
-    // Check if the pin can support this specific proposed type and format
     HRESULT CheckMediaType( const CMediaType * );
+    HRESULT CAudioInputPin::CompleteConnect( IPin *pPin );
+
+    void SetAudioPID( ULONG pPID );
 
 	void Reset();
 		
@@ -108,4 +110,5 @@ private:
 private:
 
 	ULONGLONG m_currentPTS;
+  ULONG m_audioPid;
 };

@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *  Author: tourettes
  *	http://www.team-mediaportal.com
  *
@@ -65,7 +65,7 @@ BOOL APIENTRY DllMain(HANDLE hModule,
 	return DllEntryPoint((HINSTANCE)(hModule), dwReason, lpReserved);
 }
 
-// Logging 
+// Logging for debug builds
 #ifdef DEBUG
 char *logbuffer=NULL; 
 void Log( const char *fmt, ... ) 
