@@ -285,10 +285,11 @@ namespace WindowPlugins.VideoEditor
 						progressBar.Percentage = 0;
 						progressBar.Visible = true;
 						int duration;
-						//g_Player.Play(item.Path);
-						duration = (int)103;//g_Player.Duration;
-						//g_Player.Stop();
-						//g_Player.Release();
+						g_Player.Play(item.Path);
+						duration = (int)g_Player.Duration;
+						g_Player.Stop();
+						g_Player.Release();
+						System.Threading.Thread.Sleep(1000);
 						dvrmsMod = new DvrMsModifier();
 						dvrmsMod.OnProgress += new DvrMsModifier.Progress(OnProgress);
 						dvrmsMod.OnFinished += new DvrMsModifier.Finished(dvrmsMod_OnFinished);
