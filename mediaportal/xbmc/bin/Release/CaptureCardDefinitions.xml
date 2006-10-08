@@ -16675,7 +16675,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="AverTV Purity-3D Dual MCE 500 - Tuner 1" capturename="AVerMedia XC-MPEG YUV Capture 1" devid="ven_1745&amp;dev_2020&amp;subsys_f7381461&amp;rev_00">
+  <capturecard commercialname="AverTV Purity-3D Dual MCE 500 - Tuner 1" capturename="AVerMedia XC-MPEG Capture 1" devid="ven_1745&amp;dev_2020&amp;subsys_f7381461&amp;rev_00">
     <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"/>
@@ -16683,7 +16683,7 @@
         <filter cat="tvtuner"  name="AVerMedia XC-MPEG Tuner 1"       checkdevice="true"/>
         <filter cat="tvaudio"  name="AVerMedia XC-MPEG TVAudio 1"		  checkdevice="true"/>
         <filter cat="crossbar" name="AVerMedia XC-MPEG CrossBar 1"	  checkdevice="true"/>
-        <filter cat="capture"  name="AVerMedia XC-MPEG YUV Capture 1" checkdevice="true"/>
+        <filter cat="capture"  name="AVerMedia XC-MPEG Capture 1"     checkdevice="true"/>
         <filter cat="encoder"  name="AVerMedia XC-MPEG Encoder 1"		  checkdevice="true"/>
       </filters>
       <connections>
@@ -16698,7 +16698,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="AverTV Purity-3D Dual MCE 500 - Tuner 2" capturename="AVerMedia XC-MPEG YUV Capture 2" devid="ven_1745&amp;dev_2020&amp;subsys_f7381461&amp;rev_00">
+  <capturecard commercialname="AverTV Purity-3D Dual MCE 500 - Tuner 2" capturename="AVerMedia XC-MPEG Capture 2" devid="ven_1745&amp;dev_2020&amp;subsys_f7381461&amp;rev_00">
     <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"/>
@@ -16706,7 +16706,7 @@
         <filter cat="tvtuner"  name="AVerMedia XC-MPEG Tuner 2"       checkdevice="true"/>
         <filter cat="tvaudio"  name="AVerMedia XC-MPEG TVAudio 2"		  checkdevice="true"/>
         <filter cat="crossbar" name="AVerMedia XC-MPEG CrossBar 2"	  checkdevice="true"/>
-        <filter cat="capture"  name="AVerMedia XC-MPEG YUV Capture 2" checkdevice="true"/>
+        <filter cat="capture"  name="AVerMedia XC-MPEG Capture 2"     checkdevice="true"/>
         <filter cat="encoder"  name="AVerMedia XC-MPEG Encoder 2"     checkdevice="true"/>
       </filters>
       <connections>
@@ -16721,7 +16721,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="AverTV Purity-3D Dual MCE 500 - Tuner 1" capturename="AVerMedia XC-MPEG YUV Capture 1" devid="ven_1745&amp;dev_2020&amp;subsys_20201745&amp;rev_00">
+  <capturecard commercialname="AverTV Purity-3D Dual MCE 500 - Tuner 1" capturename="AVerMedia XC-MPEG Capture 1" devid="ven_1745&amp;dev_2020&amp;subsys_20201745&amp;rev_00">
     <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"/>
@@ -16729,7 +16729,7 @@
         <filter cat="tvtuner"  name="AVerMedia XC-MPEG Tuner 1"       checkdevice="true"/>
         <filter cat="tvaudio"  name="AVerMedia XC-MPEG TVAudio 1"		  checkdevice="true"/>
         <filter cat="crossbar" name="AVerMedia XC-MPEG CrossBar 1"	  checkdevice="true"/>
-        <filter cat="capture"  name="AVerMedia XC-MPEG YUV Capture 1" checkdevice="true"/>
+        <filter cat="capture"  name="AVerMedia XC-MPEG Capture 1"     checkdevice="true"/>
         <filter cat="encoder"  name="AVerMedia XC-MPEG Encoder 1"		  checkdevice="true"/>
       </filters>
       <connections>
@@ -16744,7 +16744,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="AverTV Purity-3D Dual MCE 500 - Tuner 2" capturename="AVerMedia XC-MPEG YUV Capture 2" devid="ven_1745&amp;dev_2020&amp;subsys_20201745&amp;rev_00">
+  <capturecard commercialname="AverTV Purity-3D Dual MCE 500 - Tuner 2" capturename="AVerMedia XC-MPEG Capture 2" devid="ven_1745&amp;dev_2020&amp;subsys_20201745&amp;rev_00">
     <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"/>
@@ -16752,7 +16752,7 @@
         <filter cat="tvtuner"  name="AVerMedia XC-MPEG Tuner 2"       checkdevice="true"/>
         <filter cat="tvaudio"  name="AVerMedia XC-MPEG TVAudio 2"		  checkdevice="true"/>
         <filter cat="crossbar" name="AVerMedia XC-MPEG CrossBar 2"	  checkdevice="true"/>
-        <filter cat="capture"  name="AVerMedia XC-MPEG YUV Capture 2" checkdevice="true"/>
+        <filter cat="capture"  name="AVerMedia XC-MPEG Capture 2"     checkdevice="true"/>
         <filter cat="encoder"  name="AVerMedia XC-MPEG Encoder 2"     checkdevice="true"/>
       </filters>
       <connections>
