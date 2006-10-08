@@ -10,6 +10,16 @@
 
     <control>
         <type>label</type>
+        <description>Article title/searchterm</description>
+        <id>4</id>
+        <posX>250</posX>
+        <posY>70</posY>
+        <label>Wikipedia</label>
+        <font>font16</font>
+        <align>right</align>
+    </control>
+    <control>
+        <type>label</type>
         <description>Image description</description>
         <id>5</id>
         <posX>250</posX>
@@ -53,8 +63,8 @@
         <onright>20</onright>
         <onup>11</onup>
         <ondown>12</ondown>
-		<label>2514</label>
-		<visible>no</visible>
+	<label>2514</label>
+	<visible>no</visible>
     </control>
 	<control>
         <type>button</type>
@@ -82,7 +92,7 @@
     </control>
 
     <control>
-		<description>Here is the article text displayed</description>
+	<description>Here is the article text displayed</description>
         <type>textbox</type>
         <id>20</id>
         <posX>280</posX>
@@ -96,25 +106,25 @@
         <spinPosY>530</spinPosY>
         <spinPosX>610</spinPosX>
         <text></text>
-        <SpinPosX>264</SpinPosX>
-        <SpinPosY>538</SpinPosY>
+<!--        <SpinPosX>264</SpinPosX>
+        <SpinPosY>538</SpinPosY> -->
       </control>
 	  
-	<control>		
-		<description>Article Image</description>
-		<type>image</type>
-		<id>25</id>
-		<posX>264</posX>
-		<posY>72</posY>
-		<width>440</width>
-		<height>466</height>
-		<texture></texture>
-		<visible>no</visible>
-		<colorkey>00000000</colorkey>
-		<colordiffuse>White</colordiffuse>
-		<filtered>yes</filtered>
-		<centered>yes</centered>
-		<keepaspectratio>yes</keepaspectratio>
-	</control>	
+    	<control>
+    		<description>Article Image</description>
+    		<type>image</type>
+    		<id>25</id>
+    		<posX>264</posX>
+    		<posY>72</posY>
+    		<width>440</width>
+    		<height>466</height>
+    		<texture></texture>
+    		<visible>no</visible>
+    		<colorkey>00000000</colorkey>
+    		<colordiffuse>White</colordiffuse>
+    		<filtered>yes</filtered>
+    		<centered>yes</centered>
+    		<keepaspectratio>yes</keepaspectratio>
+    	</control>	
 </controls>
 </window>

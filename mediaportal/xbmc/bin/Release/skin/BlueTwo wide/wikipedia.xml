@@ -4,27 +4,31 @@
     <defaultcontrol>10</defaultcontrol>
     <allowoverlay>yes</allowoverlay>
 	<define>#header.label:2516</define>
-<!-- 	<define>#header.text:Wikipedia</define> -->
+        <define>#header.image:wikipedia_logo.png</define>
 	<define>#header.hover:hover_wikipedia.png</define>
 	<controls>
 	  <import>common.window.xml</import>
-          <control>
-              <type>image</type>
-              <description>wikipedia text logo</description>
-              <id>2</id>
-              <posX>113</posX>
-              <posY>26</posY>
-              <texture>wikipedia_logo.png</texture>
-          </control>
+	  
           <control>
               <type>label</type>
               <description>Article title/searchterm</description>
               <id>4</id>
-              <posX>474</posX>
-              <posY>93</posY>
+              <posX>250</posX>
+              <posY>70</posY>
               <label>Wikipedia</label>
               <font>font16</font>
               <align>right</align>
+          </control>
+          <control>
+              <type>label</type>
+              <description>Image description</description>
+              <id>5</id>
+              <posX>250</posX>
+              <posY>70</posY>
+              <label>Wikipedia</label>
+              <font>font16</font>
+              <align>right</align>
+              <visible>no</visible>
           </control>
           <control>
               <type>button</type>
@@ -101,8 +105,6 @@
               <spinHeight>21</spinHeight>
               <spinPosY>706</spinPosY>
               <spinPosX>1157</spinPosX>
-              <SpinPosX>264</SpinPosX>
-              <SpinPosY>538</SpinPosY>
           </control>
           <control>
               <description>Article Image</description>
