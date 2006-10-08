@@ -258,28 +258,42 @@ namespace WindowPlugins.VideoEditor
 						}
 					}
 
-                    if (joinCutSpinCtrl.GetLabel() == GUILocalizeStrings.Get(2068)) // Dvrms to divx
-                    {
-                        Dvrms2Divx convert = new Dvrms2Divx();
-                        progressBar.Percentage = 50;
-                        progressBar.Visible = true;
-                        MediaPortal.Core.Transcoding.TranscodeInfo info = new MediaPortal.Core.Transcoding.TranscodeInfo();
-                        info.Author = "MediaPortal";
-                        //info.Channel = tinfo.recorded.Channel;
-                        //info.Description = tinfo.recorded.Description;
-                        info.Title = "test";//tinfo.recorded.Title;
-                        //info.Start = tinfo.recorded.StartTime;
-                        //info.End = tinfo.recorded.EndTime;
-                        //TimeSpan ts = (tinfo.recorded.EndTime - tinfo.recorded.StartTime);
-                        //info.Duration = (int)ts.TotalSeconds;
-                        info.file = item.Path; //tinfo.recorded.FileName;
-                        convert.CreateProfile(new System.Drawing.Size(360, 288), 2000, 25);
-                        convert.Transcode(info, MediaPortal.Core.Transcoding.VideoFormat.Divx, MediaPortal.Core.Transcoding.Quality.High);
-                        while (!convert.IsFinished())
-                        {
-                            System.Threading.Thread.Sleep(1000);
-                        }
-                    }
+					if (joinCutSpinCtrl.GetLabel() == GUILocalizeStrings.Get(2068)) // Dvrms to divx
+					{
+						/*MediaPortal.Core.Transcoding.Dvrms2Divx convert = new MediaPortal.Core.Transcoding.Dvrms2Divx();
+						progressBar.Percentage = 50;
+						progressBar.Visible = true;
+						MediaPortal.Core.Transcoding.TranscodeInfo info = new MediaPortal.Core.Transcoding.TranscodeInfo();
+						info.Author = "MediaPortal";
+						//info.Channel = tinfo.recorded.Channel;
+						//info.Description = tinfo.recorded.Description;
+						info.Title = "test";//tinfo.recorded.Title;
+						//info.Start = tinfo.recorded.StartTime;
+						//info.End = tinfo.recorded.EndTime;
+						//TimeSpan ts = (tinfo.recorded.EndTime - tinfo.recorded.StartTime);
+						//info.Duration = (int)ts.TotalSeconds;
+						info.file = item.Path; //tinfo.recorded.FileName;
+						convert.CreateProfile(new System.Drawing.Size(360, 288), 2000, 25);
+						convert.Transcode(info, MediaPortal.Core.Transcoding.VideoFormat.Divx, MediaPortal.Core.Transcoding.Quality.High);
+						while (!convert.IsFinished())
+						{
+							System.Threading.Thread.Sleep(1000);
+						}*/
+
+						recInfo = new TVRecorded();					
+						filetoConvert = item.Path;
+						progressBar.Percentage = 0;
+						progressBar.Visible = true;
+						int duration;
+						//g_Player.Play(item.Path);
+						duration = (int)103;//g_Player.Duration;
+						//g_Player.Stop();
+						//g_Player.Release();
+						dvrmsMod = new DvrMsModifier();
+						dvrmsMod.OnProgress += new DvrMsModifier.Progress(OnProgress);
+						dvrmsMod.OnFinished += new DvrMsModifier.Finished(dvrmsMod_OnFinished);
+						dvrmsMod.ConvertToDivx(new System.IO.FileInfo(item.Path), duration);
+					}
 				}
 
 				else if (item.Label.Substring(1, 1) == ":")  // is a drive

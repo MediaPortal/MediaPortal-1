@@ -39,6 +39,7 @@ namespace WindowPlugins.VideoEditor
     System.Timers.Timer cutProgresstime;
 		System.Timers.Timer joinProgresstime;
 		System.Timers.Timer transcodeProgresstime;
+		System.Timers.Timer convertProgresstime;
     public delegate void Finished();
     public event Finished OnFinished;
     public delegate void Progress(int percentage);
@@ -50,6 +51,7 @@ namespace WindowPlugins.VideoEditor
     List<TimeDomain> cutPoints;
 		List<System.IO.FileInfo> fileList;
 		MediaPortal.Core.Transcoding.Dvrms2Mpeg tompeg;
+		MediaPortal.Core.Transcoding.Dvrms2Divx toDivx;
 		//string filetoConvert;
 		//bool inDatabase;
 		MediaPortal.TV.Database.TVRecorded recInfo;
@@ -305,6 +307,25 @@ namespace WindowPlugins.VideoEditor
 			}
 		}
 
+		void convertProgresstime_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+		{
+			if (toDivx.IsTranscoding())
+			{
+				if (OnProgress != null)
+					OnProgress(toDivx.Percentage());
+			}
+			else if (toDivx.IsFinished())
+			{
+				convertProgresstime.Stop();
+				toDivx.Stop();
+				if (OnProgress != null)
+					OnProgress(100);
+				if (OnFinished != null)
+					OnFinished();
+
+			}
+		}
+
 		#endregion
 
 		public void TranscodeToMpeg(System.IO.FileInfo inFilename,int duration)
@@ -372,6 +393,72 @@ namespace WindowPlugins.VideoEditor
 				//tompeg.Stop();
 			}
 		}
+
+		public void ConvertToDivx(System.IO.FileInfo inFilename, int duration)
+		{
+			this.inFilename = inFilename;
+			newDuration = duration;
+			System.Threading.Thread convertThread = new System.Threading.Thread(new System.Threading.ThreadStart(ConvertToDivx));
+			convertThread.IsBackground = true;
+			convertThread.Priority = System.Threading.ThreadPriority.BelowNormal;
+			convertThread.Start();
+			//TranscodeToMpeg();
+		}
+
+		public void ConvertToDivx()
+		{
+			try
+			{
+				toDivx = new MediaPortal.Core.Transcoding.Dvrms2Divx();
+				recInfo = new MediaPortal.TV.Database.TVRecorded();
+				convertProgresstime = new System.Timers.Timer(1000);
+				convertProgresstime.Elapsed += new System.Timers.ElapsedEventHandler(convertProgresstime_Elapsed);
+				MediaPortal.Core.Transcoding.TranscodeInfo divxInfo = new MediaPortal.Core.Transcoding.TranscodeInfo();
+				divxInfo.Author = "MediaPortal";
+
+				if (MediaPortal.TV.Database.TVDatabase.GetRecordedTVByFilename(inFilename.FullName, ref recInfo))
+				{
+					divxInfo.Channel = recInfo.Channel;
+					divxInfo.Description = recInfo.Description;
+					divxInfo.Duration = (int)(recInfo.EndTime.Subtract(recInfo.StartTime)).Seconds;
+					divxInfo.End = recInfo.EndTime;
+					divxInfo.file = recInfo.FileName;
+					divxInfo.Start = recInfo.StartTime;
+					divxInfo.Title = recInfo.Title;
+				}
+				else
+				{
+					divxInfo.Channel = "none";
+					divxInfo.Description = "none";
+					//MediaPortal.Player.g_Player.Play(inFilename.FullName);
+					divxInfo.Duration = (int)newDuration;//(int)MediaPortal.Player.g_Player.Duration;
+					//MediaPortal.Player.g_Player.Stop();
+					divxInfo.file = inFilename.FullName;
+					divxInfo.Start = DateTime.Now;
+					divxInfo.End = divxInfo.Start.AddSeconds(divxInfo.Duration);
+					divxInfo.Title = inFilename.Name;
+				}
+				
+				//filetoConvert = inFilename.FullName;
+				toDivx.CreateProfile(new System.Drawing.Size(360, 288), 2000, 25);
+				toDivx.Transcode(divxInfo, MediaPortal.Core.Transcoding.VideoFormat.Divx, MediaPortal.Core.Transcoding.Quality.Custom);
+				convertProgresstime.Start();
+				while (!toDivx.IsFinished())
+				{
+					System.Threading.Thread.Sleep(500);
+				}
+			}
+			catch (Exception ex)
+			{
+				Log.Error(ex);
+			}
+			finally
+			{
+				//tompeg.Stop();
+			}
+		}
+
+		
 
     public System.IO.FileInfo InFilename
     {
