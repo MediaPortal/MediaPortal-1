@@ -127,14 +127,15 @@ namespace MediaPortal.GUI.Library
     static bool vmr9Allowed = true;
     static Size videoSize;
     static bool hasFocus = false;
+    static DateTime _lastActivity = DateTime.Now;
 
     const uint SC_MONITORPOWER = 0xF170;
     const uint WM_SYSCOMMAND = 0x0112;
-    const uint MONITOR_ON = 0x0001;
-    const uint MONITOR_OFF = 0x0002;
+    const int MONITOR_ON = -1;
+    const int MONITOR_OFF = 2;
 
     [DllImport("user32.dll")]
-    static extern bool SendMessage(IntPtr hWnd, uint Msg, uint wParam, uint lParam);
+    static extern bool SendMessage(IntPtr hWnd, uint Msg, uint wParam, IntPtr lParam);
 
     // singleton. Dont allow any instance of this class
     private GUIGraphicsContext()
@@ -143,6 +144,14 @@ namespace MediaPortal.GUI.Library
 
     static GUIGraphicsContext()
     {
+    }
+
+    /// <summary>
+    /// Set/get last User Activity
+    /// </summary>
+    static public DateTime LastActivity
+    {
+      get { return _lastActivity; }
     }
 
     /// <summary>
@@ -158,9 +167,9 @@ namespace MediaPortal.GUI.Library
           if (turnOffMonitor)
           {
             if (value)
-              SendMessage(Form.ActiveForm.Handle, WM_SYSCOMMAND, SC_MONITORPOWER, MONITOR_OFF);
+              SendMessage(Form.ActiveForm.Handle, WM_SYSCOMMAND, SC_MONITORPOWER, (IntPtr)MONITOR_OFF);
             else
-              SendMessage(Form.ActiveForm.Handle, WM_SYSCOMMAND, SC_MONITORPOWER, MONITOR_ON);
+              SendMessage(Form.ActiveForm.Handle, WM_SYSCOMMAND, SC_MONITORPOWER, (IntPtr)MONITOR_ON);
           }
 
           blankScreen = value;
@@ -194,11 +203,20 @@ namespace MediaPortal.GUI.Library
     //SV
     //static bool Fullscreen
     static public bool Fullscreen
-      {
+    {
       get
       {
         return ((Width == Screen.PrimaryScreen.Bounds.Width) && (Height == Screen.PrimaryScreen.Bounds.Height));
       }
+    }
+
+    /// <summary>
+    /// Resets last user activity & unblanks screen
+    /// </summary>
+    static public void ResetLastActivity()
+    {
+      _lastActivity = DateTime.Now;
+      GUIGraphicsContext.BlankScreen = false;
     }
 
     /// <summary>
@@ -270,7 +288,7 @@ namespace MediaPortal.GUI.Library
       {
         m_iOffsetX = xmlReader.GetValueAsInt("screen", "offsetx", 0);
         m_iOffsetY = xmlReader.GetValueAsInt("screen", "offsety", 0);
-        
+
         m_iOSDOffset = xmlReader.GetValueAsInt("screen", "offsetosd", 0);
         m_iOverScanLeft = xmlReader.GetValueAsInt("screen", "overscanleft", 0);
         m_iOverScanTop = xmlReader.GetValueAsInt("screen", "overscantop", 0);

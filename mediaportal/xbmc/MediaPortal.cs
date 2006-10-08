@@ -91,7 +91,6 @@ public class MediaPortalApp : D3DApp, IRender
   private USBUIRT usbuirtdevice;
   private WinLirc winlircdevice; //sd00//
   private RedEye redeyedevice; //PB00//
-  private DateTime screenSaverTimer = DateTime.Now;
   private bool useScreenSaver = true;
   private int timeScreenSaver = 60;
   private bool restoreTopMost = false;
@@ -659,8 +658,7 @@ public class MediaPortalApp : D3DApp, IRender
               }
             }
             GUIGraphicsContext.OnAction(action);
-            screenSaverTimer = DateTime.Now;
-            GUIGraphicsContext.BlankScreen = false;
+            GUIGraphicsContext.ResetLastActivity();
           }
 
           if (keyCode != Keys.A)
@@ -1078,7 +1076,7 @@ public class MediaPortalApp : D3DApp, IRender
         if (Screen.PrimaryScreen.Bounds.Width > GUIGraphicsContext.SkinSize.Width)
           Size = new Size(GUIGraphicsContext.SkinSize.Width + 8, GUIGraphicsContext.SkinSize.Height + 54);
         else
-          Size = new Size(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);        
+          Size = new Size(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);
       }
     }
     GUIWindowManager.OnResize();
@@ -1389,8 +1387,7 @@ public class MediaPortalApp : D3DApp, IRender
         if (GUIGraphicsContext.IsFullScreenVideo ||
             GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_SLIDESHOW)
         {
-          screenSaverTimer = DateTime.Now;
-          GUIGraphicsContext.BlankScreen = false;
+          GUIGraphicsContext.ResetLastActivity();
         }
 
         if (!GUIGraphicsContext.BlankScreen)
@@ -1401,7 +1398,7 @@ public class MediaPortalApp : D3DApp, IRender
             if (window < (int)GUIWindow.Window.WINDOW_WIZARD_WELCOME ||
                 window > (int)GUIWindow.Window.WINDOW_WIZARD_FINISHED)
             {
-              TimeSpan ts = DateTime.Now - screenSaverTimer;
+              TimeSpan ts = DateTime.Now - GUIGraphicsContext.LastActivity;
               if (ts.TotalSeconds >= timeScreenSaver)
               {
                 GUIGraphicsContext.BlankScreen = true;
@@ -1409,7 +1406,7 @@ public class MediaPortalApp : D3DApp, IRender
             }
             else
             {
-              screenSaverTimer = DateTime.Now;
+              GUIGraphicsContext.ResetLastActivity();
             }
           }
         }
@@ -1438,8 +1435,7 @@ public class MediaPortalApp : D3DApp, IRender
       GUIWindow window;
       if (action.IsUserAction())
       {
-        screenSaverTimer = DateTime.Now;
-        GUIGraphicsContext.BlankScreen = false;
+        GUIGraphicsContext.ResetLastActivity();
       }
       switch (action.wID)
       {
@@ -1701,13 +1697,13 @@ public class MediaPortalApp : D3DApp, IRender
                 {
                   win.OnAction(new Action(Action.ActionType.ACTION_MOVE_LEFT, 0, 0));
                 }
-               /* GUIOverlayWindow topBar =
-                    (GUIOverlayWindow)
-                    GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TOPBARHOME);
-                if (topBar != null)
-                {
-                  topBar.Focused = true;
-                }*/
+                /* GUIOverlayWindow topBar =
+                     (GUIOverlayWindow)
+                     GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TOPBARHOME);
+                 if (topBar != null)
+                 {
+                   topBar.Focused = true;
+                 }*/
                 return;
               }
 
@@ -1970,7 +1966,7 @@ public class MediaPortalApp : D3DApp, IRender
     Action action = new Action();
     if (GUIWindowManager.IsRouted)
     {
-      screenSaverTimer = DateTime.Now;
+      GUIGraphicsContext.ResetLastActivity();
       if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindowEx, key, ref action) &&
           (GUIWindowManager.ActiveWindowEx != (int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD) &&
           (GUIWindowManager.ActiveWindowEx != (int)GUIWindow.Window.WINDOW_VIRTUAL_WEB_KEYBOARD) &&
@@ -2006,7 +2002,7 @@ public class MediaPortalApp : D3DApp, IRender
     {
       if (action.ShouldDisableScreenSaver)
       {
-        screenSaverTimer = DateTime.Now;
+        GUIGraphicsContext.ResetLastActivity();
       }
 
       if (action.SoundFileName.Length > 0 && !g_Player.Playing)
@@ -2017,7 +2013,7 @@ public class MediaPortalApp : D3DApp, IRender
     }
     else
     {
-      screenSaverTimer = DateTime.Now;
+      GUIGraphicsContext.ResetLastActivity();
     }
     action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
     GUIGraphicsContext.OnAction(action);
@@ -2025,8 +2021,7 @@ public class MediaPortalApp : D3DApp, IRender
 
   protected override void keydown(KeyEventArgs e)
   {
-    screenSaverTimer = DateTime.Now;
-    GUIGraphicsContext.BlankScreen = false;
+    GUIGraphicsContext.ResetLastActivity();
     Key key = new Key(0, (int)e.KeyCode);
     Action action = new Action();
     if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindowEx, key, ref action))
@@ -2067,8 +2062,7 @@ public class MediaPortalApp : D3DApp, IRender
       action.MouseButton = e.Button;
       GUIGraphicsContext.OnAction(action);
 
-      screenSaverTimer = DateTime.Now;
-      GUIGraphicsContext.BlankScreen = false;
+      GUIGraphicsContext.ResetLastActivity();
     }
     else if (e.Delta < 0)
     {
@@ -2076,8 +2070,7 @@ public class MediaPortalApp : D3DApp, IRender
       action.MouseButton = e.Button;
       GUIGraphicsContext.OnAction(action);
 
-      screenSaverTimer = DateTime.Now;
-      GUIGraphicsContext.BlankScreen = false;
+      GUIGraphicsContext.ResetLastActivity();
     }
     base.OnMouseWheel(e);
   }
@@ -2106,8 +2099,7 @@ public class MediaPortalApp : D3DApp, IRender
     {
       if ((Math.Abs(m_iLastMousePositionX - iCursorX) > 10) || (Math.Abs(m_iLastMousePositionY - iCursorY) > 10))
       {
-        screenSaverTimer = DateTime.Now;
-        GUIGraphicsContext.BlankScreen = false;
+        GUIGraphicsContext.ResetLastActivity();
       }
       //check any still waiting single click events
       if (GUIGraphicsContext.DBLClickAsRightClick && bMouseClickFired)
@@ -2147,8 +2139,7 @@ public class MediaPortalApp : D3DApp, IRender
       return;
     }
 
-    screenSaverTimer = DateTime.Now;
-    GUIGraphicsContext.BlankScreen = false;
+    GUIGraphicsContext.ResetLastActivity();
     // Disable first mouse action when mouse was hidden
     if (!_showCursor)
     {
@@ -2197,8 +2188,7 @@ public class MediaPortalApp : D3DApp, IRender
 
   protected override void mouseclick(MouseEventArgs e)
   {
-    screenSaverTimer = DateTime.Now;
-    GUIGraphicsContext.BlankScreen = false;
+    GUIGraphicsContext.ResetLastActivity();
     // Disable first mouse action when mouse was hidden
     if (!_showCursor)
     {
@@ -3043,7 +3033,7 @@ GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter = TextureFilter.None;
     {
       m_iDateLayout = xmlreader.GetValueAsInt("home", "datelayout", 0);
     }
-    screenSaverTimer = DateTime.Now;
+    GUIGraphicsContext.ResetLastActivity();
   }
 
   /// <summary>

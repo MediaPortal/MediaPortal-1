@@ -312,6 +312,7 @@ namespace MediaPortal.InputDevices
         MediaPortal.Util.Utils.PlaySound(map.Sound, false, true);
       if (map.Focus && !GUIGraphicsContext.HasFocus)
       {
+        GUIGraphicsContext.ResetLastActivity();
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GETFOCUS, 0, 0, 0, 0, 0, null);
         GUIWindowManager.SendThreadMessage(msg);
         return true;
@@ -330,6 +331,7 @@ namespace MediaPortal.InputDevices
           SendKeys.SendWait(map.CmdProperty);
           break;
         case "WINDOW":  // activate Window x
+          GUIGraphicsContext.ResetLastActivity();
           GUIMessage msg;
           if ((Convert.ToInt32(map.CmdProperty) == (int)GUIWindow.Window.WINDOW_HOME) ||
             (Convert.ToInt32(map.CmdProperty) == (int)GUIWindow.Window.WINDOW_SECOND_HOME))
@@ -353,6 +355,7 @@ namespace MediaPortal.InputDevices
         case "POWER": // power down commands
           if ((map.CmdProperty == "STANDBY") || (map.CmdProperty == "HIBERNATE"))
           {
+            GUIGraphicsContext.ResetLastActivity();
             // Stop all media before suspending or hibernating
             g_Player.Stop();
 
@@ -387,6 +390,7 @@ namespace MediaPortal.InputDevices
           break;
         case "PROCESS":
           {
+            GUIGraphicsContext.ResetLastActivity();
             if (processID > 0)
             {
               Process proc = Process.GetProcessById(processID);
