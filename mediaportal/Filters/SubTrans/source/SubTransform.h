@@ -49,6 +49,7 @@ struct __declspec(uuid("559E6E81-FAC4-4EBC-9530-662DAA27EDC2")) ITSFileSource;
 DECLARE_INTERFACE_( IStreamAnalyzer, IUnknown )
 {
    STDMETHOD(SetSubtitlePID) (THIS_ ULONG pPID ) PURE;
+   STDMETHOD(SetAudioPID)    (THIS_ ULONG pPID ) PURE;
 };
 
 class CSubTransform : public CTransformFilter, public MSubdecoderObserver
@@ -98,6 +99,7 @@ public:
 
 	// Interface
 	STDMETHOD(SetSubtitlePID)( THIS_ ULONG pPID );
+  STDMETHOD(SetAudioPID)   ( THIS_ ULONG pPID );
 
 	// From MSubdecoderObserver
 	void Notify();
