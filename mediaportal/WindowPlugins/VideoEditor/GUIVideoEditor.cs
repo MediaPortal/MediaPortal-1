@@ -22,6 +22,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using System.IO;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
@@ -29,6 +30,8 @@ using MediaPortal.Util;
 using DirectShowLib.SBE;
 using MediaPortal.TV.Database;
 using MediaPortal.Video.Database;
+using System.Threading;
+using Mpeg2SplitterPackage;
 using MediaPortal.Core.Transcoding;
 
 namespace WindowPlugins.VideoEditor
@@ -77,6 +80,7 @@ namespace WindowPlugins.VideoEditor
 		//bool inDatabase;
 		TVRecorded recInfo;
 		DvrMsModifier dvrmsMod;
+	    private Thread joinThread;
 		#endregion
 
 		public GUIVideoEditor()
@@ -365,26 +369,58 @@ namespace WindowPlugins.VideoEditor
 
 			if (control == startJoinBtn)
 			{
-				if (joiningList[0].Extension.ToLower() == ".dvr-ms")
+				if (joiningList[0] != null && joiningList[1] != null)
 				{
-					DvrMsModifier joinmod = new DvrMsModifier();
-					if (joiningList[0] != null && joiningList[1] != null)
+					if (joiningList[0].Extension.ToLower() == ".dvr-ms")
 					{
-						progressBar.Visible = true;
-						joinmod.JoinDvr(joiningList);
-						joinmod.OnFinished += new DvrMsModifier.Finished(joinmod_OnFinished);
-						joinmod.OnProgress += new DvrMsModifier.Progress(OnProgress);
+						DvrMsModifier joinmod = new DvrMsModifier();
+						{
+							progressBar.Visible = true;
+							joinmod.JoinDvr(joiningList);
+							joinmod.OnFinished += new DvrMsModifier.Finished(joinmod_OnFinished);
+							joinmod.OnProgress += new DvrMsModifier.Progress(OnProgress);
+						}
 					}
-					//else
-					//System.Windows.Forms.MessageBox.Show("keineDatei");
+					else if ( (joiningList[0].Extension.ToLower() == ".mpeg") || (joiningList[0].Extension.ToLower() == ".mpg") )
+					{
+			          joinThread = new Thread(new ThreadStart(joinMpeg));
+			          joinThread.Priority = ThreadPriority.BelowNormal;
+          			  joinThread.Start();
+					}
 				}
+				//else
+				//System.Windows.Forms.MessageBox.Show("keineDatei");
 			}
 
 
 			//System.Windows.Forms.MessageBox.Show(controlId.ToString() + "::" + control.Name + "::" + actionType.ToString());
 			base.OnClicked(controlId, control, actionType);
 		}
+	    private void joinMpeg()
+	    {
+			FileInfo outFilename;
+            string outPath;
+			if (joiningList[0].Extension.ToLower() == ".mpeg")
+			{
+				outPath = joiningList[0].FullName.Replace(".mpeg", "_joined.mpeg");
+			} 
+			else //if (joiningList[0].Extension.ToLower() == ".mpg")
+			{
+				outPath = joiningList[0].FullName.Replace(".mpg", "_joined.mpg");
+			}
+			outFilename = new System.IO.FileInfo(outPath);
 
+			if (outFilename.Exists)
+			{
+				outFilename.Delete();
+			}
+		    Mpeg2Splitter cMpeg2Splitter = new Mpeg2Splitter();
+            cMpeg2Splitter.OnProgress += new Mpeg2Splitter.Progress(OnProgress);
+            cMpeg2Splitter.OnFinished += new Mpeg2Splitter.Finished(joinmod_OnFinished);
+	        cMpeg2Splitter.Join(joiningList, outFilename.FullName);
+		    //progressLbl.Label = "100";
+		    progressBar.Percentage = 100;
+		}
 		void joinmod_OnFinished()
 		{
 			GUIDialogYesNo yesnoDialog = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
