@@ -2,6 +2,7 @@
 #include "rtspclient.h"
 #include "MemorySink.h"
 
+extern void Log(const char *fmt, ...) ;
 CRTSPClient::CRTSPClient(CMemoryBuffer& buffer)
 :m_buffer(buffer)
 {
@@ -377,6 +378,10 @@ void CRTSPClient::StopBufferThread()
 	m_BufferThreadActive = false;
 }
 
+bool CRTSPClient::IsRunning()
+{
+	return m_BufferThreadActive;
+}
 void CRTSPClient::ThreadProc()
 {
 	HRESULT hr = S_OK;
@@ -384,12 +389,12 @@ void CRTSPClient::ThreadProc()
 
 //	BoostThread Boost;
 
-  ::SetThreadPriority(GetCurrentThread(),THREAD_PRIORITY_ABOVE_NORMAL);
+	::SetThreadPriority(GetCurrentThread(),THREAD_PRIORITY_HIGHEST);
   *m_env << "rtsp thread started:" << "\"\n";
 	while (m_env!=NULL && !ThreadIsStopping(0))
 	{
 		m_env->taskScheduler().doEventLoop(); 
-		//Sleep(1);
+		//if (m_buffer.Size() > 800000) Sleep(5);
 	};
   *m_env << "rtsp thread stopped:" << "\"\n";
 	m_BufferThreadActive = false;

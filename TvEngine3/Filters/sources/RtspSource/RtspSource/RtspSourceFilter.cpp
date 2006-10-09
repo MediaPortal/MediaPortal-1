@@ -26,6 +26,7 @@
 #include <initguid.h>
 #include "RtspSourceFilter.h"
 #include "outputpin.h"
+extern void Log(const char *fmt, ...) ;
 
 const AMOVIESETUP_MEDIATYPE acceptOutputPinTypes =
 {
@@ -119,24 +120,14 @@ int CRtspSourceFilter::GetPinCount()
 
 STDMETHODIMP CRtspSourceFilter::Run(REFERENCE_TIME tStart)
 {
-  if (m_client.Initialize())
-  {
-	  char url[MAX_PATH];
-	  WideCharToMultiByte(CP_ACP,0,m_fileName,-1,url,MAX_PATH,0,0);
-    if (m_client.OpenStream(url))
-    {
-      m_client.Play();
-    }
-  }
-  
 	return CSource::Run(tStart);
 }
 
 STDMETHODIMP CRtspSourceFilter::Stop()
 {
+	HRESULT hr=CSource::Stop();
   m_client.Stop();
   m_buffer.Clear();
-	HRESULT hr=CSource::Stop();
 	return hr;
 }
 
@@ -154,7 +145,18 @@ STDMETHODIMP CRtspSourceFilter::GetDuration(REFERENCE_TIME *dur)
 STDMETHODIMP CRtspSourceFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt)
 {
 	wcscpy(m_fileName,pszFileName);
-  wcscpy(m_fileName,L"rtsp://192.168.1.58/test");
+  wcscpy(m_fileName,L"rtsp://192.168.100.102/stream1");
+
+  if (m_client.Initialize())
+  {
+	  char url[MAX_PATH];
+	  WideCharToMultiByte(CP_ACP,0,m_fileName,-1,url,MAX_PATH,0,0);
+    if (m_client.OpenStream(url))
+    {
+      m_client.Play();
+    }
+  }
+	while (m_buffer.Size() < 200000) Sleep(5);	
 	return S_OK;
 }
 STDMETHODIMP CRtspSourceFilter::GetCurFile(LPOLESTR * ppszFileName,AM_MEDIA_TYPE *pmt)
@@ -182,10 +184,18 @@ ULONG CRtspSourceFilter::GetMiscFlags()
 
 LONG CRtspSourceFilter::GetData(BYTE* pData, long size)
 {
-  while (m_buffer.Size() < 100000) 
-  {
-    Sleep(10);
-  }
+	if (m_buffer.Size() < size)
+	{
+		Log("sleep %d/%d", size,m_buffer.Size());
+		while (m_buffer.Size() < 10*size) 
+		{
+			if (!m_client.IsRunning()) return 0;
+			Sleep(1);	
+		}
+	}
+			
+	if (!m_client.IsRunning()) return 0;
+	Log("%d/%d", size,m_buffer.Size());
   DWORD bytesRead= m_buffer.ReadFromBuffer(pData, size, 0);
   return bytesRead;
 }

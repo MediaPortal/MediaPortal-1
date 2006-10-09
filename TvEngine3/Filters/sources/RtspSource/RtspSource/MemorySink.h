@@ -26,5 +26,8 @@ protected:
 
 private: // redefined virtual functions:
   virtual Boolean continuePlaying();
+	CCritSec m_BufferLock;
+	byte* m_pSubmitBuffer;
+	int   m_iSubmitBufferPos;
 	
 };

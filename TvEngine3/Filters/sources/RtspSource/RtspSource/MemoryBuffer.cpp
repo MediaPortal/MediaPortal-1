@@ -29,12 +29,12 @@ void CMemoryBuffer::Clear()
 }
 DWORD CMemoryBuffer::Size()
 {
-	CAutoLock BufferLock(&m_BufferLock);
   return m_BytesInBuffer;
 }
 
 DWORD CMemoryBuffer::ReadFromBuffer(BYTE *pbData, long lDataLength, long lOffset)
 {	
+	if (lDataLength<0) return 0;
   long bytesWritten = 0;
 	CAutoLock BufferLock(&m_BufferLock);
 	while (bytesWritten < lDataLength)
@@ -47,7 +47,7 @@ DWORD CMemoryBuffer::ReadFromBuffer(BYTE *pbData, long lDataLength, long lOffset
 		BUFFERITEM *item = m_Array.at(0);
     
 		long copyLength = min(item->nDataLength - item->nOffset, lDataLength-bytesWritten);
-		memcpy(pbData + bytesWritten, &item->data[item->nOffset], copyLength);
+		memcpy(&pbData[bytesWritten], &item->data[item->nOffset], copyLength);
 
 		bytesWritten += copyLength;
 		item->nOffset += copyLength;

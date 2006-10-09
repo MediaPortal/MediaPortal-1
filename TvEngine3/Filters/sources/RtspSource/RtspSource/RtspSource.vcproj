@@ -112,6 +112,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="..\..\StreamingServer\StreamingServer\UsageEnvironment;..\..\StreamingServer\StreamingServer\liveMedia;..\..\StreamingServer\StreamingServer\groupsock;..\..\StreamingServer\StreamingServer\BasicUsageEnvironment"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -125,10 +126,10 @@
 			<Tool
 				Name="VCLinkerTool"
 				RegisterOutput="true"
-				AdditionalDependencies="strmbase.lib winmm.lib"
+				AdditionalDependencies="strmbase.lib ws2_32.lib winmm.lib"
 				OutputFile="$(OutDir)\$(ProjectName).ax"
 				GenerateManifest="false"
-				IgnoreDefaultLibraryNames="libcmt.lib"
+				IgnoreDefaultLibraryNames=""
 				ModuleDefinitionFile="rtspsourcefilter.def"
 				SubSystem="2"
 			/>

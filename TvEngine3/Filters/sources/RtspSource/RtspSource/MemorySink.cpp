@@ -3,6 +3,7 @@
 #include "GroupsockHelper.hh"
 
 ////////// CMemorySink //////////
+#define SUBMIT_BUF_SIZE 5264
 
 CMemorySink::CMemorySink(UsageEnvironment& env,CMemoryBuffer& buffer, unsigned bufferSize) 
   : MediaSink(env),  
@@ -10,6 +11,8 @@ CMemorySink::CMemorySink(UsageEnvironment& env,CMemoryBuffer& buffer, unsigned b
   m_buffer(buffer)
 {
   fBuffer = new unsigned char[bufferSize];
+	m_pSubmitBuffer = new byte[SUBMIT_BUF_SIZE];
+	m_iSubmitBufferPos=0;
 }
 
 CMemorySink::~CMemorySink() 
@@ -39,7 +42,14 @@ void CMemorySink::afterGettingFrame(void* clientData, unsigned frameSize,unsigne
 
 void CMemorySink::addData(unsigned char* data, unsigned dataSize,struct timeval presentationTime) 
 {
-  m_buffer.PutBuffer(data, dataSize,0);
+	CAutoLock BufferLock(&m_BufferLock);
+	if (m_iSubmitBufferPos+dataSize > SUBMIT_BUF_SIZE)
+	{
+		m_buffer.PutBuffer(m_pSubmitBuffer, m_iSubmitBufferPos,0);
+		m_iSubmitBufferPos=0;
+	}
+	memcpy(&m_pSubmitBuffer[m_iSubmitBufferPos],data,dataSize);
+	m_iSubmitBufferPos+=dataSize;
 }
 
 

@@ -16,6 +16,7 @@ public:
   bool OpenStream(char* url);
   void Play();
   void Stop();
+	bool IsRunning();
 protected:
   CMemoryBuffer& m_buffer;
   Medium* createClient(UsageEnvironment& env,int verbosityLevel, char const* applicationName) ;

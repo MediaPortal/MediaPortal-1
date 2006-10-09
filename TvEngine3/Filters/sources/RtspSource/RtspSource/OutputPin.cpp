@@ -72,7 +72,7 @@ HRESULT COutputPin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES
 			pRequest->cBuffers = 2;
 	}
 
-	pRequest->cbBuffer = 1316*20;
+	pRequest->cbBuffer = 5264*3;
 
 
 	ALLOCATOR_PROPERTIES Actual;
@@ -105,7 +105,7 @@ HRESULT COutputPin::FillBuffer(IMediaSample *pSample)
 {
   BYTE* pBuffer;
   pSample->GetPointer(&pBuffer);
-	long lDataLength = pSample->GetActualDataLength();
+	long lDataLength = 5264*3;//pSample->GetActualDataLength();
   DWORD bytesRead=m_pFilter->GetData(pBuffer,lDataLength);
   pSample->SetActualDataLength(bytesRead);
   return S_OK;
