@@ -18,8 +18,8 @@
 			<description>Exit button</description>
 			<type>button</type>
 			<id>2</id>
-			<posX>925</posX>
-			<posY>190</posY>
+			<posX>935</posX>
+			<posY>180</posY>
 			<width>58</width>
 			<height>58</height>
 			<textureFocus>dialogue_shutdown_focus.png</textureFocus>
@@ -35,8 +35,8 @@
 			<type>label</type>
 			<id>4</id>
 			<posX>425</posX>
-			<posY>190</posY>
-			<width>400</width>
+			<posY>182</posY>
+			<width>415</width>
 			<label>11000</label>
 			<font>font13</font>
 			<textcolor>FFFFFFFF</textcolor>
@@ -46,8 +46,8 @@
 			<type>label</type>
 			<id>5</id>
 			<posX>425</posX>
-			<posY>233</posY>
-			<width>400</width>
+			<posY>228</posY>
+			<width>415</width>
 			<font>font13</font>
 			<textcolor>FFFFFFFF</textcolor>
 		</control>
