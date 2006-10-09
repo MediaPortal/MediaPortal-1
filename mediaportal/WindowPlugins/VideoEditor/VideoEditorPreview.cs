@@ -40,11 +40,6 @@ namespace WindowPlugins.VideoEditor
 {
   internal class VideoEditorPreview : GUIWindow
   {
-    private enum EMode
-    {
-      E_CUT,
-      E_TRIM
-    } ;
 
     private const int windowID = 170602;
 
@@ -130,8 +125,6 @@ namespace WindowPlugins.VideoEditor
     private int editCutPointsIndex;
     private int lastIndexedCutPoint;
 
-    //EMode eMode = EMode.E_CUT;
-    private EMode eMode = EMode.E_TRIM;
     private const int NR_OF_SPILTER_TIME_STAMPS = 40;
     private SPLITTER_TIME_STAMP[] tStamp = new SPLITTER_TIME_STAMP[NR_OF_SPILTER_TIME_STAMPS];
     private int iCount = 0;
@@ -692,14 +685,7 @@ namespace WindowPlugins.VideoEditor
       cMpeg2Splitter.OnFinished += new Mpeg2Splitter.Finished(dvrMod_OnFinished);
 
       //CutProgressTime();
-      if (eMode == EMode.E_CUT)
-      {
-        cMpeg2Splitter.Cut(inFilename.FullName, outFilename.FullName, ref tStamp, iCount);
-      }
-      else
-      {
-        cMpeg2Splitter.Trim(inFilename.FullName, outFilename.FullName, ref tStamp[0]);
-      }
+      cMpeg2Splitter.Rip(inFilename.FullName, outFilename.FullName, ref tStamp, cutPointsList.Count);
       //cutFinished = true;
       progressLbl.Label = "100";
       progressBar.Percentage = 100;
