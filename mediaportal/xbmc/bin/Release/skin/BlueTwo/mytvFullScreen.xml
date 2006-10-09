@@ -34,10 +34,10 @@
 			<type>label</type> 
 			<id>11</id> 
 			<posX>622</posX>
-			<posY>45</posY>
+			<posY>90</posY>
 			<label>-</label> 
 			<align>left</align> 
-			<font>font13</font> 
+			<font>font13</font>
 			<textcolor>FFFFFFFF</textcolor> 
 			<visible>no</visible>
 		</control>
@@ -46,7 +46,7 @@
 			<type>label</type> 
 			<id>12</id> 
 			<posX>622</posX>
-			<posY>60</posY> 
+			<posY>150</posY> 
 			<label>-</label> 
 			<align>left</align> 
 			<font>font13</font> 
@@ -180,7 +180,7 @@
 			<id>105</id> 
 			<posX>60</posX> 
 			<posY>474</posY>
-			<width>600</width> 
+			<width>600</width>
 			<texture>dialog_osd_background.png</texture> 
 			<colorkey>0</colorkey> 
 			<colordiffuse>White</colordiffuse> 

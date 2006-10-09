@@ -6,25 +6,24 @@
 	<controls>
             <import>common.progressbar.xml</import>
 		<control>
-			<description>bar image</description>
-			<type>image</type>
-			<id>0</id>
-            <posX>1172</posX>
+		  <description>bar image</description>
+		  <type>image</type>
+		  <id>0</id>
+                  <posX>1172</posX>
 	          <posY>16</posY>
 	          <width>158</width>
 	          <height>52</height>
-<!-- 			<texture>video-empty.png</texture> -->
-            <texture>osd_bg.png</texture>
-			<colorkey>0</colorkey>
-			<colordiffuse>White</colordiffuse>
-			<visible>no</visible>
+                  <texture>osd_bg.png</texture>
+		  <colorkey>0</colorkey>
+		  <colordiffuse>White</colordiffuse>
+		  <visible>no</visible>
 		</control>
 		<control>
 			<description>row 1 label</description>
 			<type>label</type>
 			<id>10</id>
         		<posX>1186</posX>
-            <posY>27</posY>
+                        <posY>27</posY>
 			<label>-</label>
 			<align>left</align>
 			<font>font13</font>
@@ -36,7 +35,7 @@
 			<type>label</type>
 			<id>11</id>
         		<posX>1186</posX>
-	        	<posY>44</posY>
+	        	<posY>87</posY>
 			<label>-</label>
 			<align>left</align>
 			<font>font13</font>
@@ -48,7 +47,7 @@
 			<type>label</type>
 			<id>12</id>
         		<posX>1186</posX>
-	        	<posY>59</posY>
+	        	<posY>147</posY>
 			<label>-</label>
 			<align>left</align>
 			<font>font13</font>

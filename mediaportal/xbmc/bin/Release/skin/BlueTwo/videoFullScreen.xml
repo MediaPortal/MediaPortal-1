@@ -35,7 +35,7 @@
 		<type>label</type> 
 		<id>11</id> 
 		<posX>622</posX>
-		<posY>45</posY>
+		<posY>90</posY>
 		<label>-</label> 
 		<align>left</align> 
 		<font>font13</font> 
@@ -47,7 +47,7 @@
 		<type>label</type> 
 		<id>12</id> 
 		<posX>622</posX>
-		<posY>60</posY>
+		<posY>150</posY>
 		<label>-</label> 
 		<align>left</align> 
 		<font>font13</font> 
