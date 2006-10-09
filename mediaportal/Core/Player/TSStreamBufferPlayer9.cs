@@ -35,6 +35,7 @@ using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
 using MediaPortal.GUI.Library;
 using DirectShowLib;
+using DirectShowLib.BDA;
 using DShowNET.Helper;
 
 namespace MediaPortal.Player
@@ -138,7 +139,10 @@ namespace MediaPortal.Player
     VMR9Util _vmr9 = null;
     IPin _pinAudio = null;
     IPin _pinVideo = null;
-    #endregion
+    IPin _pinAudioTS = null;
+    IPin _pinSubtitle = null;
+    bool enableDvbSubtitles = false;
+#endregion
 
     #region ctor
     public TStreamBufferPlayer9()
@@ -233,6 +237,7 @@ namespace MediaPortal.Player
           strVideoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "");
           strAudioCodec = xmlreader.GetValueAsString("mytv", "audiocodec", "");
           strAudioRenderer = xmlreader.GetValueAsString("mytv", "audiorenderer", "Default DirectSound Device");
+          enableDvbSubtitles = xmlreader.GetValueAsBool("mytv", "dvbsubtitles", false);
           string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "normal");
           if (strValue.Equals("zoom"))
             GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom;
@@ -259,6 +264,9 @@ namespace MediaPortal.Player
           _audioCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strAudioCodec);
         if (strAudioRenderer.Length > 0)
           _audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(_graphBuilder, strAudioRenderer, false);
+        if (enableDvbSubtitles == true) 
+          _subtitleFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, "MediaPortal DVB subtitles transform");
+        
         // FlipGer: add custom filters to graph
         customFilters = new IBaseFilter[intFilters];
         string[] arrFilters = strFilters.Split(';');
@@ -398,7 +406,6 @@ namespace MediaPortal.Player
           AMMediaType mpeg2ProgramStream = new AMMediaType();
           mpeg2ProgramStream.majorType = MediaType.Stream;
           mpeg2ProgramStream.subType = MediaSubType.Mpeg2Program;
-
           mpeg2ProgramStream.unkPtr = IntPtr.Zero;
           mpeg2ProgramStream.sampleSize = 0;
           mpeg2ProgramStream.temporalCompression = false;
@@ -482,7 +489,39 @@ namespace MediaPortal.Player
           MapPids();
         }
 
+        // Connect DVB subtitle filter pins in the graph
+        if (_mpegDemux != null && enableDvbSubtitles == true)
+        {
+          IMpeg2Demultiplexer demuxer = _mpegDemux as IMpeg2Demultiplexer;
+          hr = demuxer.CreateOutputPin( GetAudioTSMedia(), "AudioTS", out _pinAudioTS );
 
+          if (hr == 0)
+          {
+            Log.Info("TSStreamBufferPlayer9:_pinAudioTS OK");
+
+            IPin pDemuxerAudioTS = DsFindPin.ByName(_mpegDemux, "AudioTS");
+            IPin pSubtitleAudioTS = DsFindPin.ByName(_subtitleFilter, "Audio");
+            hr = _graphBuilder.Connect(pDemuxerAudioTS, pSubtitleAudioTS);
+          }
+          else
+          {
+            Log.Info("TSStreamBufferPlayer9:Failed to create _pinAudioTS in demuxer:{0:X}", hr);
+          }
+
+          hr = demuxer.CreateOutputPin(GetSubtitleMedia(), "Subtitle", out _pinSubtitle);
+          if (hr == 0)
+          {
+            Log.Info("TSStreamBufferPlayer9:_pinAudioTS OK");
+
+            IPin pDemuxerSubtitle = DsFindPin.ByName(_mpegDemux, "Subtitle");
+            IPin pSubtitle = DsFindPin.ByName(_subtitleFilter, "Subtitle");
+            hr = _graphBuilder.Connect(pDemuxerSubtitle, pSubtitle);
+          }
+          else
+          {
+            Log.Info("TSStreamBufferPlayer9:Failed to create _pinSubtitle in demuxer:{0:X}", hr);
+          }
+        }
 
         _mediaCtrl = (IMediaControl)_graphBuilder;
         _mediaEvt = (IMediaEventEx)_graphBuilder;
@@ -491,8 +530,6 @@ namespace MediaPortal.Player
         {
           Log.Error("Unable to get IMediaSeeking interface#1");
         }
-
-
         if (_audioRendererFilter != null)
         {
           Log.Info("TSStreamBufferPlayer9:set reference clock");
@@ -509,7 +546,6 @@ namespace MediaPortal.Player
           hr = _mediaSeeking.SetPositions(new DsLong(latest), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(0), AMSeekingSeekingFlags.NoPositioning);
           Log.Info("TSStreamBufferPlayer9:seek :{0:X}", hr);
         }
-
 
         if (_isRadio == false)
         {
@@ -539,9 +575,6 @@ namespace MediaPortal.Player
         return false;
       }
     }
-
-
-
 
     /// <summary> do cleanup and release DirectShow. </summary>
     protected override void CloseInterfaces()
@@ -628,6 +661,13 @@ namespace MediaPortal.Player
           while ((hr = Marshal.ReleaseComObject(_audioRendererFilter)) > 0)
             ;
           _audioRendererFilter = null;
+        }
+
+        if (_subtitleFilter != null)
+        {
+          while ((hr = Marshal.ReleaseComObject(_subtitleFilter)) > 0)
+            ;
+          _subtitleFilter = null;
         }
 
         // FlipGer: release custom filters
@@ -765,6 +805,39 @@ namespace MediaPortal.Player
       return mediaVideo;
     }
 
+    AMMediaType GetAudioTSMedia()
+    {
+      AMMediaType mediaAudioTS = new AMMediaType();
+      mediaAudioTS.majorType = MediaType.Stream;
+      mediaAudioTS.subType = MediaSubType.Mpeg2Transport;
+      mediaAudioTS.formatType = FormatType.Null;
+      mediaAudioTS.formatPtr = IntPtr.Zero;
+      mediaAudioTS.sampleSize = 1;
+      mediaAudioTS.temporalCompression = false;
+      mediaAudioTS.fixedSizeSamples = true;
+      mediaAudioTS.unkPtr = IntPtr.Zero;
+      mediaAudioTS.formatType = FormatType.None;
+      mediaAudioTS.formatSize = 0;
+      mediaAudioTS.formatPtr = IntPtr.Zero;
+      return mediaAudioTS;
+    }
+
+    AMMediaType GetSubtitleMedia()
+    {
+      AMMediaType mediaSubtitle = new AMMediaType();
+      mediaSubtitle.majorType = MediaType.Null;
+      mediaSubtitle.subType = MediaSubType.Null;
+      mediaSubtitle.formatType = FormatType.Null;
+      mediaSubtitle.formatPtr = IntPtr.Zero;
+      mediaSubtitle.sampleSize = 1;
+      mediaSubtitle.temporalCompression = false;
+      mediaSubtitle.fixedSizeSamples = true;
+      mediaSubtitle.unkPtr = IntPtr.Zero;
+      mediaSubtitle.formatType = FormatType.None;
+      mediaSubtitle.formatSize = 0;
+      mediaSubtitle.formatPtr = IntPtr.Zero;
+      return mediaSubtitle;
+    }
     void MapPids()
     {
       if (_pinAudio == null) return;

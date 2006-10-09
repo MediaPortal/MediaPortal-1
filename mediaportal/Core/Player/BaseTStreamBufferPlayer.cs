@@ -96,6 +96,7 @@ namespace MediaPortal.Player
     protected IBaseFilter _videoCodecFilter = null;
     protected IBaseFilter _audioCodecFilter = null;
     protected IBaseFilter _audioRendererFilter = null;
+    protected IBaseFilter _subtitleFilter = null;
     protected IBaseFilter[] customFilters; // FlipGer: array for custom directshow filters
     /// <summary> control interface. </summary>
     protected IMediaControl _mediaCtrl = null;
