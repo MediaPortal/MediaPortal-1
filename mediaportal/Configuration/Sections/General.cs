@@ -111,7 +111,7 @@ namespace MediaPortal.Configuration.Sections
 	    new string[] { "general", "startbasichome", "false" },
       new string[] { "general", "turnmonitoronafterresume", "false" },
       new string[] { "general", "enables3trick","true" },
-      new string[] { "general", "autosize", "true" }
+      new string[] { "general", "autosize", "false" }
       //new string[] { "general", "allowfocus", "false" }
       };
 

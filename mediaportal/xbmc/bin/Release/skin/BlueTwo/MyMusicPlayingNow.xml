@@ -60,6 +60,8 @@
          <height>250</height>
          <texture>-</texture>
          <keepaspectratio>no</keepaspectratio>
+         <centered>yes</centered>
+         <zoom>yes</zoom>
       </control>
      <control>
          <type>fadelabel</type>
