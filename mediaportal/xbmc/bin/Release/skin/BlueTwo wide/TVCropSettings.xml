@@ -10,15 +10,15 @@
 			<posX>300</posX>
 			<posY>125</posY>
 			<width>766</width>
-			<height>568</height>
-			<texture>context_background.png</texture>
+			<height>368</height>
+			<texture>dialog_schedule_rec.png</texture>
 		</control>
 
 		<control>
 			<description>Exit button</description>
 			<type>button</type>
 			<id>2</id>
-			<posX>905</posX>
+			<posX>925</posX>
 			<posY>190</posY>
 			<width>58</width>
 			<height>58</height>
@@ -35,7 +35,8 @@
 			<type>label</type>
 			<id>4</id>
 			<posX>425</posX>
-			<posY>206</posY>
+			<posY>190</posY>
+			<width>400</width>
 			<label>11000</label>
 			<font>font13</font>
 			<textcolor>FFFFFFFF</textcolor>
@@ -46,6 +47,7 @@
 			<id>5</id>
 			<posX>425</posX>
 			<posY>233</posY>
+			<width>400</width>
 			<font>font13</font>
 			<textcolor>FFFFFFFF</textcolor>
 		</control>

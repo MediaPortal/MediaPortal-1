@@ -32,7 +32,8 @@
 			<type>label</type>
 			<id>4</id>
 			<posX>245</posX>
-			<posY>155</posY>
+			<posY>154</posY>
+			<width>250</width>
 			<label>11000</label>
 			<font>font13</font>
 			<textcolor>FFFFFFFF</textcolor>
@@ -43,6 +44,7 @@
 			<id>5</id>
 			<posX>245</posX>
 			<posY>175</posY>
+			<width>250</width>
 			<font>font13</font>
 			<textcolor>FFFFFFFF</textcolor>
 		</control>
