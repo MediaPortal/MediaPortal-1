@@ -127,7 +127,7 @@ namespace WindowPlugins.VideoEditor
 
     private const int NR_OF_SPILTER_TIME_STAMPS = 40;
     private SPLITTER_TIME_STAMP[] tStamp = new SPLITTER_TIME_STAMP[NR_OF_SPILTER_TIME_STAMPS];
-    private int iCount = 0;
+   // private int iCount = 0;
 
     #endregion
 
@@ -158,7 +158,7 @@ namespace WindowPlugins.VideoEditor
     {
       try
       {
-        iCount = 0;
+        //iCount = 0;
         return Load(GUIGraphicsContext.Skin + @"\VideoEditorCutScreen.xml");
       }
       catch (Exception ex)
@@ -689,7 +689,7 @@ namespace WindowPlugins.VideoEditor
       //cutFinished = true;
       progressLbl.Label = "100";
       progressBar.Percentage = 100;
-      MessageBox(GUILocalizeStrings.Get(2082), GUILocalizeStrings.Get(2111));
+     // MessageBox(GUILocalizeStrings.Get(2082), GUILocalizeStrings.Get(2111));
       // progressBar.IsVisible = false;
       //progressLbl.IsVisible = false;
       //cutBtn.IsEnabled = true;
