@@ -14,9 +14,10 @@ public:
   virtual ~CRTSPClient(void);
   bool Initialize();
   bool OpenStream(char* url);
-  void Play();
+  bool Play(float fStart);
   void Stop();
 	bool IsRunning();
+	long Duration();
 protected:
   CMemoryBuffer& m_buffer;
   Medium* createClient(UsageEnvironment& env,int verbosityLevel, char const* applicationName) ;
@@ -60,4 +61,7 @@ public:
 	void StopBufferThread();
 	virtual void ThreadProc();
   bool m_BufferThreadActive;
+	long m_duration;
+	float m_fStart;
+	char m_url[2048];
 };

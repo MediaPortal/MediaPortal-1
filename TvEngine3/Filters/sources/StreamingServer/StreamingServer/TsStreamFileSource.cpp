@@ -26,13 +26,15 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "TsStreamFileSource.hh"
 #include "InputFile.hh"
 #include "GroupsockHelper.hh"
+extern void Log(const char *fmt, ...) ;
 
   
 TsStreamFileSource*
 TsStreamFileSource::createNew(UsageEnvironment& env, char const* fileName,
 				unsigned preferredFrameSize,
-				unsigned playTimePerFrame) {
-  
+				unsigned playTimePerFrame) 
+{
+	Log("ts:open %s",fileName);  
   MultiFileReader* reader = new MultiFileReader();
   reader->SetFileName((char*)fileName);
   reader->OpenFile();
@@ -43,6 +45,7 @@ TsStreamFileSource::createNew(UsageEnvironment& env, char const* fileName,
     = new TsStreamFileSource(env, (FILE*)reader, deleteFidOnClose,
 			       preferredFrameSize, playTimePerFrame);
   newSource->fFileSize = reader->GetFileSize();
+	Log("ts:size %d",(DWORD)newSource->fFileSize);  
   return newSource;
 }
 
@@ -58,16 +61,20 @@ TsStreamFileSource::createNew(UsageEnvironment& env, FILE* fid,
 			       preferredFrameSize, playTimePerFrame);
   MultiFileReader* reader = (MultiFileReader*)fid;
   newSource->fFileSize = reader->GetFileSize();
+	Log("ts:size %d",(DWORD)newSource->fFileSize);  
 
   return newSource;
 }
 
 void TsStreamFileSource::seekToByteAbsolute(u_int64_t byteNumber) {
+	Log("ts:seek %d",(DWORD)byteNumber);  
   MultiFileReader* reader = (MultiFileReader*)fFid;
   reader->SetFilePointer( (int64_t)byteNumber, FILE_BEGIN);
 }
 
-void TsStreamFileSource::seekToByteRelative(int64_t offset) {
+void TsStreamFileSource::seekToByteRelative(int64_t offset) 
+{
+	Log("ts:seek rel %d",(DWORD)offset);  
   MultiFileReader* reader = (MultiFileReader*)fFid;
   reader->SetFilePointer((int64_t)offset, FILE_CURRENT);
 }

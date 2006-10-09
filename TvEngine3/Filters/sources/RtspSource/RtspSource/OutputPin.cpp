@@ -27,6 +27,7 @@ COutputPin::COutputPin(LPUNKNOWN pUnk, CRtspSourceFilter *pFilter, HRESULT *phr,
 	m_pFilter(pFilter),
 	m_section(section)
 {
+	m_rtDuration=CRefTime(7200L*1000L);
 }
 
 COutputPin::~COutputPin(void)
@@ -112,13 +113,29 @@ HRESULT COutputPin::FillBuffer(IMediaSample *pSample)
 }
 HRESULT COutputPin::ChangeStart()
 {
+	if (m_rtStart>m_rtDuration) 
+	{
+		m_rtStart=m_rtDuration;
+	}
+	float milliSec=m_rtStart.Millisecs();
+	milliSec/=1000.0;
+	if (milliSec<0) return 0;
+	m_pFilter->Seek(milliSec);
   return S_OK;
 }
+
 HRESULT COutputPin::ChangeStop()
 {
 	return S_OK;
 }
+
 HRESULT COutputPin::ChangeRate()
 {
 	return S_OK;
+}
+
+
+void COutputPin::UpdateStopStart()
+{
+	m_pFilter->GetStartStop(m_rtStart, m_rtDuration);
 }

@@ -40,5 +40,6 @@ public:
 	HRESULT ChangeStop();
 	HRESULT ChangeRate();
 	CRtspSourceFilter *	const m_pFilter;
+	void UpdateStopStart();
 	CCritSec* m_section;
 };

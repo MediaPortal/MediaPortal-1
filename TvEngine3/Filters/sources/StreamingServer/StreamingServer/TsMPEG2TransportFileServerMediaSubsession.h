@@ -18,6 +18,7 @@ protected:
   virtual ~TsMPEG2TransportFileServerMediaSubsession();
 
 private: // redefined virtual functions
+	virtual void seekStreamSource(FramedSource* inputSource, float seekNPT);
   virtual FramedSource* createNewStreamSource(unsigned clientSessionId,
 					      unsigned& estBitrate);
   virtual RTPSink* createNewRTPSink(Groupsock* rtpGroupsock,

@@ -135,8 +135,28 @@ STDMETHODIMP CRtspSourceFilter::Pause()
 {
   return CSource::Pause();
 }
+
+void CRtspSourceFilter::GetStartStop(CRefTime &m_rtStart,CRefTime  &m_rtStop)
+{
+	m_rtStart= CRefTime(0L);
+	m_rtStop= CRefTime(m_client.Duration());
+}
+
+void CRtspSourceFilter::Seek(float start)
+{
+	if (m_client.IsRunning()==false) return;
+//	Log("Seek:%f", start);
+//	start=20.0f;
+	if (m_client.Play(start))
+	{
+		while (m_buffer.Size() < 200000) Sleep(5);	
+	}
+	m_pOutputPin->UpdateStopStart();
+}
+
 STDMETHODIMP CRtspSourceFilter::GetDuration(REFERENCE_TIME *dur)
 {
+	CRefTime reftime(m_client.Duration());
 	if(!dur)
 		return E_INVALIDARG;
 	return NOERROR;
@@ -153,10 +173,11 @@ STDMETHODIMP CRtspSourceFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *
 	  WideCharToMultiByte(CP_ACP,0,m_fileName,-1,url,MAX_PATH,0,0);
     if (m_client.OpenStream(url))
     {
-      m_client.Play();
+      m_client.Play(0.0f);
     }
   }
 	while (m_buffer.Size() < 200000) Sleep(5);	
+	m_pOutputPin->UpdateStopStart();
 	return S_OK;
 }
 STDMETHODIMP CRtspSourceFilter::GetCurFile(LPOLESTR * ppszFileName,AM_MEDIA_TYPE *pmt)
@@ -186,7 +207,7 @@ LONG CRtspSourceFilter::GetData(BYTE* pData, long size)
 {
 	if (m_buffer.Size() < size)
 	{
-		Log("sleep %d/%d", size,m_buffer.Size());
+		//Log("sleep %d/%d", size,m_buffer.Size());
 		while (m_buffer.Size() < 10*size) 
 		{
 			if (!m_client.IsRunning()) return 0;
@@ -195,7 +216,7 @@ LONG CRtspSourceFilter::GetData(BYTE* pData, long size)
 	}
 			
 	if (!m_client.IsRunning()) return 0;
-	Log("%d/%d", size,m_buffer.Size());
+	//Log("%d/%d", size,m_buffer.Size());
   DWORD bytesRead= m_buffer.ReadFromBuffer(pData, size, 0);
   return bytesRead;
 }

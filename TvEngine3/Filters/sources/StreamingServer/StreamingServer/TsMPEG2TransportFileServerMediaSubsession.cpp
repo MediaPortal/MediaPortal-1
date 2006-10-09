@@ -3,6 +3,7 @@
 #include "TsStreamFileSource.hh"
 #include "MPEG2TransportStreamFramer.hh"
 
+extern void Log(const char *fmt, ...) ;
 
 TsMPEG2TransportFileServerMediaSubsession* TsMPEG2TransportFileServerMediaSubsession::createNew(UsageEnvironment& env,char const* fileName,Boolean reuseFirstSource) 
 {
@@ -41,4 +42,8 @@ RTPSink* TsMPEG2TransportFileServerMediaSubsession::createNewRTPSink(Groupsock* 
   return SimpleRTPSink::createNew(envir(), rtpGroupsock,
 				  33, 90000, "video", "mp2t",
 				  1, True, False /*no 'M' bit*/);
+}
+void TsMPEG2TransportFileServerMediaSubsession::seekStreamSource(FramedSource* inputSource, float seekNPT)
+{
+	Log("ts seekStreamSource %f", seekNPT);
 }

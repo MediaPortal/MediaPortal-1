@@ -21,6 +21,8 @@ CRTSPClient::CRTSPClient(CMemoryBuffer& buffer)
   fileSinkBufferSize = 20000;
   oneFilePerFrame = False;
   m_BufferThreadActive=false;
+	m_duration=7200*1000;
+	m_fStart=0.0f;
 }
 
 CRTSPClient::~CRTSPClient()
@@ -71,7 +73,8 @@ Boolean CRTSPClient::clientStartPlayingSession(Medium* client,MediaSession* sess
 {
   if (client == NULL || session == NULL) return False;
   RTSPClient* rtspClient = (RTSPClient*)client;
-  return rtspClient->playMediaSession(*session);
+  return rtspClient->playMediaSession(*session,m_fStart);
+
 }
 
 Boolean CRTSPClient::clientTearDownSession(Medium* client,MediaSession* session) 
@@ -178,6 +181,7 @@ void CRTSPClient::shutdown()
 
 bool CRTSPClient::Initialize()
 {
+	m_duration=7200*1000;
 	TaskScheduler* scheduler = BasicTaskScheduler::createNew();
   m_env = BasicUsageEnvironment::createNew(*scheduler);
 	
@@ -194,6 +198,7 @@ bool CRTSPClient::Initialize()
 
 bool CRTSPClient::OpenStream(char* url)
 {
+	strcpy(m_url,url);
 	// Open the URL, to get a SDP description: 
   char* sdpDescription= getSDPDescriptionFromURL(m_ourClient, url, ""/*username*/, ""/*password*/,""/*proxyServerName*/, 0/*proxyServerPortNum*/,1234/*desiredPortNum*/);
   if (sdpDescription == NULL) 
@@ -204,6 +209,40 @@ bool CRTSPClient::OpenStream(char* url)
   }
   *m_env << "Opened URL \"" << url<< "\", returning a SDP description:\n" << sdpDescription << "\n";
 
+	char* range=strstr(sdpDescription,"a=range:npt=");
+	if (range!=NULL)
+	{
+		range+=strlen("a=range:npt=");
+		char rangeEnd[128];
+		char rangeStart[128];
+		strcpy(rangeEnd,"");
+		strcpy(rangeStart,"");
+		int pos=0;
+		while (isdigit(range[pos]) )
+		{
+			rangeStart[pos]=range[pos];
+			rangeStart[pos+1]=0;
+			pos++;
+		}
+		pos++;
+		while (isdigit(range[pos]) )
+		{
+			rangeEnd[pos]=range[pos];
+			rangeEnd[pos+1]=0;
+			pos++;
+		}
+	
+		if (strlen(rangeStart)>0)
+		{
+			long startOfFile =0;//atol(rangeStart);
+			long endOfFile =7200*1000;
+			if (strlen(rangeEnd)>0)
+			{
+				endOfFile=atol(rangeEnd);
+			}
+			m_duration=endOfFile-startOfFile;
+		}
+	}
   // Create a media session object from this SDP description:
   m_session = MediaSession::createNew(*m_env, sdpDescription);
   delete[] sdpDescription;
@@ -346,7 +385,7 @@ bool CRTSPClient::OpenStream(char* url)
 		madeProgress = True;
 	}
 
-  if (!startPlayingStreams()) return false;
+  
   return true;
 }
 
@@ -382,6 +421,10 @@ bool CRTSPClient::IsRunning()
 {
 	return m_BufferThreadActive;
 }
+long CRTSPClient::Duration()
+{
+	return m_duration;
+}
 void CRTSPClient::ThreadProc()
 {
 	HRESULT hr = S_OK;
@@ -401,7 +444,29 @@ void CRTSPClient::ThreadProc()
 	return;
 }
 
-void CRTSPClient::Play()
+bool CRTSPClient::Play(float fStart)
 {
-		StartBufferThread();
+	m_fStart=fStart;
+	if (m_BufferThreadActive)
+	{
+		Stop();
+		m_buffer.Clear();
+		if (Initialize()==false) 
+		{
+			shutdown();
+			return false;
+		}
+		if (OpenStream(m_url)==false) 
+		{
+			shutdown();
+			return false;
+		}
+	}
+	if (!startPlayingStreams()) 
+	{			
+		shutdown();
+		return false;
+	}
+	StartBufferThread();
+	return true;
 }

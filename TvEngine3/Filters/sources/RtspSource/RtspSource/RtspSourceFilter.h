@@ -49,6 +49,8 @@ public:
 	STDMETHODIMP    GetCurFile(LPOLESTR * ppszFileName,AM_MEDIA_TYPE *pmt);
 	STDMETHODIMP    GetDuration(REFERENCE_TIME *dur);
   LONG GetData(BYTE* pData, long size);
+	void GetStartStop(CRefTime &m_rtStart, CRefTime &m_rtStop);
+	void Seek(float start);
 private:
 	CCritSec        m_section;
   COutputPin* m_pOutputPin;
