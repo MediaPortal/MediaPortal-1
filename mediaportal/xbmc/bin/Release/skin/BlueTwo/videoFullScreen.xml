@@ -34,8 +34,8 @@
 		<description>row 2 label</description> 
 		<type>label</type> 
 		<id>11</id> 
-		<posX>70</posX> 
-		<posY>72</posY> 
+		<posX>622</posX>
+		<posY>45</posY>
 		<label>-</label> 
 		<align>left</align> 
 		<font>font13</font> 
@@ -46,8 +46,8 @@
 		<description>row 3 label</description> 
 		<type>label</type> 
 		<id>12</id> 
-		<posX>70</posX> 
-		<posY>92</posY>
+		<posX>622</posX>
+		<posY>60</posY>
 		<label>-</label> 
 		<align>left</align> 
 		<font>font13</font> 
