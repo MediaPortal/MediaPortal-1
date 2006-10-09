@@ -51,8 +51,7 @@ namespace MediaPortal.GUI.Music
       unknown = 0,
       existent = 1,
       known =2,
-      wellknown =3,
-      famous = 4
+      famous = 3,
     }
 
     private enum ControlIDs
@@ -81,9 +80,15 @@ namespace MediaPortal.GUI.Music
       LIST_TAG_INFO = 155,
       LIST_ALBUM_INFO = 166,
 
-      IMGLIST_UNKNOW_TRACK1 = 77,
-      IMGLIST_UNKNOW_TRACK2 = 78,
-      IMGLIST_UNKNOW_TRACK3 = 79,
+      IMGLIST_UNKNOWN_TRACK1 = 77,
+      IMGLIST_UNKNOWN_TRACK2 = 78,
+      IMGLIST_UNKNOWN_TRACK3 = 79,
+      IMGLIST_EXISTENT_TRACK1 = 80,
+      IMGLIST_EXISTENT_TRACK2 = 81,
+      IMGLIST_EXISTENT_TRACK3 = 82,
+      IMGLIST_KNOWN_TRACK1 = 83,
+      IMGLIST_KNOWN_TRACK2 = 84,
+      IMGLIST_KNOWN_TRACK3 = 85,
       IMGLIST_FAMOUS_TRACK1 = 87,
       IMGLIST_FAMOUS_TRACK2 = 88,
       IMGLIST_FAMOUS_TRACK3 = 89,
@@ -107,9 +112,15 @@ namespace MediaPortal.GUI.Music
     [SkinControlAttribute((int)ControlIDs.LIST_ALBUM_INFO)]          protected GUIListControl facadeAlbumInfo = null;
     [SkinControlAttribute((int)ControlIDs.BEST_ALBUM_TRACKS)]        protected GUIFadeLabel LblBestAlbumTracks = null;
     [SkinControlAttribute((int)ControlIDs.BEST_TAG_TRACKS)]          protected GUIFadeLabel LblBestTagTracks = null;
-    [SkinControlAttribute((int)ControlIDs.IMGLIST_UNKNOW_TRACK1)]    protected GUIImageList ImgListUnknownTrack1 = null;
-    [SkinControlAttribute((int)ControlIDs.IMGLIST_UNKNOW_TRACK2)]    protected GUIImageList ImgListUnknownTrack2 = null;
-    [SkinControlAttribute((int)ControlIDs.IMGLIST_UNKNOW_TRACK3)]    protected GUIImageList ImgListUnknownTrack3 = null;
+    [SkinControlAttribute((int)ControlIDs.IMGLIST_UNKNOWN_TRACK1)]   protected GUIImageList ImgListUnknownTrack1 = null;
+    [SkinControlAttribute((int)ControlIDs.IMGLIST_UNKNOWN_TRACK2)]   protected GUIImageList ImgListUnknownTrack2 = null;
+    [SkinControlAttribute((int)ControlIDs.IMGLIST_UNKNOWN_TRACK3)]   protected GUIImageList ImgListUnknownTrack3 = null;
+    [SkinControlAttribute((int)ControlIDs.IMGLIST_EXISTENT_TRACK1)]  protected GUIImageList ImgListExistingTrack1 = null;
+    [SkinControlAttribute((int)ControlIDs.IMGLIST_EXISTENT_TRACK2)]  protected GUIImageList ImgListExistingTrack2 = null;
+    [SkinControlAttribute((int)ControlIDs.IMGLIST_EXISTENT_TRACK3)]  protected GUIImageList ImgListExistingTrack3 = null;
+    [SkinControlAttribute((int)ControlIDs.IMGLIST_KNOWN_TRACK1)]     protected GUIImageList ImgListKnownTrack1 = null;
+    [SkinControlAttribute((int)ControlIDs.IMGLIST_KNOWN_TRACK2)]     protected GUIImageList ImgListKnownTrack2 = null;
+    [SkinControlAttribute((int)ControlIDs.IMGLIST_KNOWN_TRACK3)]     protected GUIImageList ImgListKnownTrack3 = null;
     [SkinControlAttribute((int)ControlIDs.IMGLIST_FAMOUS_TRACK1)]    protected GUIImageList ImgListFamousTrack1 = null;
     [SkinControlAttribute((int)ControlIDs.IMGLIST_FAMOUS_TRACK2)]    protected GUIImageList ImgListFamousTrack2 = null;
     [SkinControlAttribute((int)ControlIDs.IMGLIST_FAMOUS_TRACK3)]    protected GUIImageList ImgListFamousTrack3 = null;
@@ -157,7 +168,7 @@ namespace MediaPortal.GUI.Music
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         UseID3 = xmlreader.GetValueAsBool("musicfiles", "showid3", true);
-        ShowVisualization = xmlreader.GetValueAsBool("musicmisc", "showVisInNowPlaying", true);
+        ShowVisualization = xmlreader.GetValueAsBool("musicmisc", "showVisInNowPlaying", false);
         _doArtistLookups = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmthumbs", true);
         _doAlbumLookups = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmtopalbums", true);
         _doTrackTagLookups = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmtracktags", true);
@@ -1241,6 +1252,22 @@ namespace MediaPortal.GUI.Music
                 ImgListUnknownTrack3.Visible = true;
               }
               break;
+            case PopularityRating.existent:
+              if (ImgListExistingTrack1 != null && ImgListExistingTrack2 != null && ImgListExistingTrack3 != null)
+              {
+                ImgListExistingTrack1.Visible = true;
+                ImgListExistingTrack2.Visible = true;
+                ImgListExistingTrack3.Visible = true;
+              }
+              break;
+            case PopularityRating.known:
+              if (ImgListKnownTrack1 != null && ImgListKnownTrack2 != null && ImgListKnownTrack3 != null)
+              {
+                ImgListKnownTrack1.Visible = true;
+                ImgListKnownTrack2.Visible = true;
+                ImgListKnownTrack3.Visible = true;
+              }
+              break;
             case PopularityRating.famous:
               if (ImgListFamousTrack1 != null && ImgListFamousTrack2 != null && ImgListFamousTrack3 != null)
               {
@@ -1256,6 +1283,12 @@ namespace MediaPortal.GUI.Music
           ImgListUnknownTrack1.Visible = false;
           ImgListUnknownTrack2.Visible = false;
           ImgListUnknownTrack3.Visible = false;
+          ImgListExistingTrack1.Visible = false;
+          ImgListExistingTrack2.Visible = false;
+          ImgListExistingTrack3.Visible = false;
+          ImgListKnownTrack1.Visible = false;
+          ImgListKnownTrack2.Visible = false;
+          ImgListKnownTrack3.Visible = false;
           ImgListFamousTrack1.Visible = false;
           ImgListFamousTrack2.Visible = false;
           ImgListFamousTrack3.Visible = false;
@@ -1338,8 +1371,14 @@ namespace MediaPortal.GUI.Music
         {
           int popularity = AlbumTracks[0].TimesPlayed;
 
-          if (popularity > 10000)
+          if (popularity > 40000)
             ToggleTopTrackRatings(true, PopularityRating.famous);
+          else
+          if (popularity > 10000)
+              ToggleTopTrackRatings(true, PopularityRating.known);
+            else
+              if (popularity > 2500)
+                ToggleTopTrackRatings(true, PopularityRating.existent);
           else
             ToggleTopTrackRatings(true, PopularityRating.unknown);
 
