@@ -2,7 +2,7 @@
 <window>
     <controls>
 	<control>
-		<description>progressbar background</description>
+		<description>background</description>
 		<type>image</type>
 		<id>104</id>
 		<posX>20</posX>
@@ -12,7 +12,7 @@
 		<texture>osd_bg_top.png</texture>
 	</control>
 	<control>
-		<description>background</description>
+		<description>progressbar background</description>
 		<type>image</type>
 		<id>105</id>
 		<posX>86</posX>
@@ -43,7 +43,7 @@
 		<description>Start Time Info</description>
 		<type>label</type>
 		<id>101</id>
-		<posX>44</posX>
+		<posX>34</posX>
 		<posY>30</posY>
 		<label>#currentplaytime</label>
 		<align>left</align>

@@ -307,7 +307,7 @@
             <label>#TV.RecordedTV.Description</label>
             <textcolor>FFFFFFFF</textcolor>
          </control>
-         <control>
+<!--          <control>
             <type>label</type>
             <description>genre</description>
             <id>17</id>
@@ -316,7 +316,7 @@
             <label>#TV.RecordedTV.Genre</label>
             <align>right</align>
             <textcolor>ffb2d4f5</textcolor>
-         </control>
+         </control> -->
       </control>
       <control>
          <type>image</type>

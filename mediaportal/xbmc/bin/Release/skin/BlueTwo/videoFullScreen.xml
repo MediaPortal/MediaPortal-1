@@ -6,18 +6,21 @@
      <import>common.progressbar.xml</import>
 	<control>
 		<description>bar image</description> 
-		<type>image</type> 
+		<type>image</type>
 		<id>0</id> 
-		<posX>500</posX> 
-		<posY>30</posY> 
-		<texture>-</texture>
+		<posX>602</posX>
+		<posY>20</posY>
+		<width>118</width>
+		<height>38</height>
+<!-- 		<texture>video-empty.png</texture> -->
+		<texture>osd_bg.png</texture>
 		<colorkey>0</colorkey> 
-		<colordiffuse>White</colordiffuse> 
+		<colordiffuse>White</colordiffuse>
 		<visible>no</visible>
 	</control>
 	<control>
 		<description>row 1 label</description> 
-		<type>label</type> 
+		<type>label</type>
 		<id>10</id> 
 		<posX>622</posX>
 		<posY>30</posY>
@@ -55,8 +58,10 @@
 		<description>pause image</description> 
 		<type>image</type> 
 		<id>16</id>
-		<posX>500</posX> 
-		<posY>60</posY>
+		<posX>604</posX>
+		<posY>22</posY>
+		<width>92</width>
+		<height>34</height>
 		<visible>no</visible> 
 		<texture>video-pause.png</texture> 
 		<colorkey>0</colorkey> 
@@ -172,7 +177,7 @@
 		<colorkey>0</colorkey> 
 		<colordiffuse>White</colordiffuse> 
 	</control> 
-<!-- 	<control>
+ 	<control>
 		<description>bar image</description> 
 		<type>image</type> 
 		<id>105</id> 
@@ -181,14 +186,14 @@
 		<width>600</width> 
 		<texture>dialog_osd_background.png</texture> 
 		<colorkey>0</colorkey> 
-		<colordiffuse>White</colordiffuse> 
+		<colordiffuse>White</colordiffuse>
 		<visible>no</visible>
 	</control>
-	<control>
+<!--	<control>
 		<description>background</description> 
 		<type>image</type> 
 		<id>104</id> 
-		<posX>171</posX> 
+		<posX>171</posX>
 		<posY>496</posY>
 		<width>375</width>
 		<height>22</height>
