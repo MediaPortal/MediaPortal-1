@@ -50,6 +50,8 @@
 			<height>484</height>
 			<texture>nowplaying_background.png</texture>
 			<keepaspectratio>no</keepaspectratio>
+			<centered>yes</centered>
+			<zoom>yes</zoom>
 		</control>
 		<control>
 			<type>image</type>
