@@ -18,6 +18,7 @@ public:
 	DWORD ReadFromBuffer(BYTE *pbData, long lDataLength, long lOffset);
 	HRESULT PutBuffer(BYTE *pbData, long lDataLength, long lOffset);
 	void Clear();
+  DWORD Size();
 protected:
 	vector<BUFFERITEM *> m_Array;
 	CCritSec m_BufferLock;

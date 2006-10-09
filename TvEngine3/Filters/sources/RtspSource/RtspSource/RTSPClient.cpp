@@ -350,6 +350,14 @@ bool CRTSPClient::OpenStream(char* url)
 }
 
 
+void CRTSPClient::Stop()
+{
+  if (m_BufferThreadActive==false) return;
+  StopBufferThread();
+  shutdown();
+  m_buffer.Clear();
+}
+
 void CRTSPClient::StartBufferThread()
 {
   if (!m_BufferThreadActive)
@@ -376,11 +384,12 @@ void CRTSPClient::ThreadProc()
 
 //	BoostThread Boost;
 
+  ::SetThreadPriority(GetCurrentThread(),THREAD_PRIORITY_ABOVE_NORMAL);
   *m_env << "rtsp thread started:" << "\"\n";
 	while (m_env!=NULL && !ThreadIsStopping(0))
 	{
 		m_env->taskScheduler().doEventLoop(); 
-		Sleep(1);
+		//Sleep(1);
 	};
   *m_env << "rtsp thread stopped:" << "\"\n";
 	m_BufferThreadActive = false;

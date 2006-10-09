@@ -51,7 +51,7 @@ HRESULT COutputPin::GetMediaType(CMediaType *pmt)
 
 	pmt->InitMediaType();
   pmt->SetType      (& MEDIATYPE_Stream);
-	pmt->SetSubtype   (& MEDIASUBTYPE_MPEG2_PROGRAM);
+	pmt->SetSubtype   (& MEDIASUBTYPE_MPEG2_TRANSPORT);
   pmt->SetFormatType(&FORMAT_None);
 	pmt->SetSampleSize(1);
 	pmt->SetTemporalCompression(FALSE);
@@ -72,7 +72,7 @@ HRESULT COutputPin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES
 			pRequest->cBuffers = 2;
 	}
 
-	pRequest->cbBuffer = 0x10000;
+	pRequest->cbBuffer = 1316*20;
 
 
 	ALLOCATOR_PROPERTIES Actual;
@@ -105,7 +105,8 @@ HRESULT COutputPin::FillBuffer(IMediaSample *pSample)
 {
   BYTE* pBuffer;
   pSample->GetPointer(&pBuffer);
-  DWORD bytesRead=m_pFilter->GetData(pBuffer,0x2000);
+	long lDataLength = pSample->GetActualDataLength();
+  DWORD bytesRead=m_pFilter->GetData(pBuffer,lDataLength);
   pSample->SetActualDataLength(bytesRead);
   return S_OK;
 }

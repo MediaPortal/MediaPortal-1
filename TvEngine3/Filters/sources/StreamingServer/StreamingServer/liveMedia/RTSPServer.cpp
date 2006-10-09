@@ -42,9 +42,9 @@ void Log(const char *fmt, ...)
 	tmp=vsprintf(buffer, fmt, ap);
 	va_end(ap); 
 
-	FILE* fp = fopen("log/stream.log","a+");
-	if (fp!=NULL)
-	{
+	//FILE* fp = fopen("log/stream.log","a+");
+	//if (fp!=NULL)
+	{/*
 		SYSTEMTIME systemTime;
 		GetLocalTime(&systemTime);
 		fprintf(fp,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d [%x]%s\n",
@@ -53,6 +53,16 @@ void Log(const char *fmt, ...)
 			GetCurrentThreadId(),
 			buffer);
 		fclose(fp);
+    */
+    char bb[2000];
+		SYSTEMTIME systemTime;
+		GetLocalTime(&systemTime);
+    sprintf(bb,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d [%x]%s\n",
+			systemTime.wDay, systemTime.wMonth, systemTime.wYear,
+			systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
+			GetCurrentThreadId(),
+			buffer);
+    ::OutputDebugStringA(bb);
 	}
 };
 ////////// RTSPServer //////////

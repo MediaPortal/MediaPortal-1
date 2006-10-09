@@ -134,8 +134,10 @@ STDMETHODIMP CRtspSourceFilter::Run(REFERENCE_TIME tStart)
 
 STDMETHODIMP CRtspSourceFilter::Stop()
 {
-		HRESULT hr=CSource::Stop();
-		return hr;
+  m_client.Stop();
+  m_buffer.Clear();
+	HRESULT hr=CSource::Stop();
+	return hr;
 }
 
 STDMETHODIMP CRtspSourceFilter::Pause()
@@ -152,6 +154,7 @@ STDMETHODIMP CRtspSourceFilter::GetDuration(REFERENCE_TIME *dur)
 STDMETHODIMP CRtspSourceFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt)
 {
 	wcscpy(m_fileName,pszFileName);
+  wcscpy(m_fileName,L"rtsp://192.168.1.58/test");
 	return S_OK;
 }
 STDMETHODIMP CRtspSourceFilter::GetCurFile(LPOLESTR * ppszFileName,AM_MEDIA_TYPE *pmt)
@@ -168,7 +171,7 @@ STDMETHODIMP CRtspSourceFilter::GetCurFile(LPOLESTR * ppszFileName,AM_MEDIA_TYPE
 	{
 		ZeroMemory(pmt, sizeof(*pmt));
 		pmt->majortype = MEDIATYPE_Stream;
-		pmt->subtype = MEDIASUBTYPE_MPEG2_PROGRAM;
+    pmt->subtype = MEDIASUBTYPE_MPEG2_TRANSPORT;
 	}
 	return S_OK;
 }
@@ -177,9 +180,14 @@ ULONG CRtspSourceFilter::GetMiscFlags()
 	return AM_FILTER_MISC_FLAGS_IS_SOURCE;
 }
 
-LONG CRtspSourceFilter::GetData(BYTE* pData, unsigned short size)
+LONG CRtspSourceFilter::GetData(BYTE* pData, long size)
 {
-  return m_buffer.ReadFromBuffer(pData, size, 0);
+  while (m_buffer.Size() < 100000) 
+  {
+    Sleep(10);
+  }
+  DWORD bytesRead= m_buffer.ReadFromBuffer(pData, size, 0);
+  return bytesRead;
 }
 ////////////////////////////////////////////////////////////////////////
 //

@@ -107,7 +107,7 @@ void TSThread::InternalThreadProc()
 	SetEvent(m_hDoneEvent);
 }
 
-void TSThread::thread_function(void* p)
+ void __cdecl TSThread::thread_function(void* p)
 {
 	TSThread *thread = reinterpret_cast<TSThread *>(p);
 	thread->InternalThreadProc();

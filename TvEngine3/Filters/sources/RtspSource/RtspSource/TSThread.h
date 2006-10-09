@@ -46,7 +46,7 @@ private:
 	HANDLE m_hDoneEvent;
 	HANDLE m_hStopEvent;
 	HANDLE m_threadHandle;
-	static void thread_function(void* p);
+	static  void __cdecl thread_function(void* p);
 };
 
 #endif

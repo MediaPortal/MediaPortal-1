@@ -48,7 +48,7 @@ public:
 	STDMETHODIMP    Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt);
 	STDMETHODIMP    GetCurFile(LPOLESTR * ppszFileName,AM_MEDIA_TYPE *pmt);
 	STDMETHODIMP    GetDuration(REFERENCE_TIME *dur);
-  LONG GetData(BYTE* pData, unsigned short size);
+  LONG GetData(BYTE* pData, long size);
 private:
 	CCritSec        m_section;
   COutputPin* m_pOutputPin;

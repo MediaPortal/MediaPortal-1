@@ -4,8 +4,10 @@
 
 #define MAX_MEMORY_BUFFER_SIZE (1024L*1024L*4L)
 
+extern void Log(const char *fmt, ...) ;
 CMemoryBuffer::CMemoryBuffer(void)
 {
+  m_BytesInBuffer=0;
 }
 
 CMemoryBuffer::~CMemoryBuffer()
@@ -23,6 +25,12 @@ void CMemoryBuffer::Clear()
 		delete item;
 	}
 	m_Array.clear();
+  m_BytesInBuffer=0;
+}
+DWORD CMemoryBuffer::Size()
+{
+	CAutoLock BufferLock(&m_BufferLock);
+  return m_BytesInBuffer;
 }
 
 DWORD CMemoryBuffer::ReadFromBuffer(BYTE *pbData, long lDataLength, long lOffset)
@@ -32,8 +40,10 @@ DWORD CMemoryBuffer::ReadFromBuffer(BYTE *pbData, long lDataLength, long lOffset
 	while (bytesWritten < lDataLength)
 	{
 		if(!m_Array.size() || m_Array.size() <= 0)
-			return E_FAIL;
-
+    {
+      ::OutputDebugStringA(" empty buffer\n");
+			return 0;
+    }
 		BUFFERITEM *item = m_Array.at(0);
     
 		long copyLength = min(item->nDataLength - item->nOffset, lDataLength-bytesWritten);
@@ -71,6 +81,7 @@ HRESULT CMemoryBuffer::PutBuffer(BYTE *pbData, long lDataLength, long lOffset)
 
   while (m_BytesInBuffer > MAX_MEMORY_BUFFER_SIZE)
   {
+    Log("Delete buffer\n");
 		BUFFERITEM *item = m_Array.at(0);
     int copyLength=item->nDataLength - item->nOffset;
 

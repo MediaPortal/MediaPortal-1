@@ -100,7 +100,7 @@ void MultiFramedRTPSource::doStopGettingFrames() {
   fReorderingBuffer->reset();
   reset();
 }
-
+static bool indoGetNextFrame1=false;
 void MultiFramedRTPSource::doGetNextFrame() {
   if (!fAreDoingNetworkReads) {
     // Turn on background read handling of incoming packets:
@@ -114,10 +114,15 @@ void MultiFramedRTPSource::doGetNextFrame() {
   fSavedMaxSize = fMaxSize;
   fFrameSize = 0; // for now
   fNeedDelivery = True;
-  doGetNextFrame1();
+  if (indoGetNextFrame1==false)
+  {
+    doGetNextFrame1();
+  }
 }
 
-void MultiFramedRTPSource::doGetNextFrame1() {
+void MultiFramedRTPSource::doGetNextFrame1() 
+{
+  indoGetNextFrame1=true;
   while (fNeedDelivery) {
     // If we already have packet data available, then deliver it now.
     Boolean packetLossPrecededThis;
@@ -127,34 +132,41 @@ void MultiFramedRTPSource::doGetNextFrame1() {
 
     fNeedDelivery = False;
 
-    if (nextPacket->useCount() == 0) {
+    if (nextPacket->useCount() == 0) 
+    {
       // Before using the packet, check whether it has a special header
       // that needs to be processed:
       unsigned specialHeaderSize;
-      if (!processSpecialHeader(nextPacket, specialHeaderSize)) {
-	// Something's wrong with the header; reject the packet:
-	fReorderingBuffer->releaseUsedPacket(nextPacket);
-	fNeedDelivery = True;
-	break;
+      if (!processSpecialHeader(nextPacket, specialHeaderSize)) 
+      {
+	        // Something's wrong with the header; reject the packet:
+	        fReorderingBuffer->releaseUsedPacket(nextPacket);
+	        fNeedDelivery = True;
+	        break;
       }
       nextPacket->skip(specialHeaderSize);
     }
 
     // Check whether we're part of a multi-packet frame, and whether
     // there was packet loss that would render this packet unusable:
-    if (fCurrentPacketBeginsFrame) {
-      if (packetLossPrecededThis || fPacketLossInFragmentedFrame) {
-	// We didn't get all of the previous frame.
-	// Forget any data that we used from it:
-	fTo = fSavedTo; fMaxSize = fSavedMaxSize;
-	fFrameSize = 0;
+    if (fCurrentPacketBeginsFrame) 
+    {
+      if (packetLossPrecededThis || fPacketLossInFragmentedFrame) 
+      {
+	      // We didn't get all of the previous frame.
+	      // Forget any data that we used from it:
+	      fTo = fSavedTo; fMaxSize = fSavedMaxSize;
+	      fFrameSize = 0;
       }
       fPacketLossInFragmentedFrame = False;
-    } else if (packetLossPrecededThis) {
+    } 
+    else if (packetLossPrecededThis) 
+    {
       // We're in a multi-packet frame, with preceding packet loss
       fPacketLossInFragmentedFrame = True;
     }
-    if (fPacketLossInFragmentedFrame) {
+    if (fPacketLossInFragmentedFrame) 
+    {
       // This packet is unusable; reject it:
       fReorderingBuffer->releaseUsedPacket(nextPacket);
       fNeedDelivery = True;
@@ -169,29 +181,34 @@ void MultiFramedRTPSource::doGetNextFrame1() {
 		    fCurPacketMarkerBit);
     fFrameSize += frameSize;
     
-    if (!nextPacket->hasUsableData()) {
+    if (!nextPacket->hasUsableData()) 
+    {
       // We're completely done with this packet now
       fReorderingBuffer->releaseUsedPacket(nextPacket);
     }
 
-    if (fCurrentPacketCompletesFrame || fNumTruncatedBytes > 0) {
+    if (fCurrentPacketCompletesFrame || fNumTruncatedBytes > 0) 
+    {
       // We have all the data that the client wants.
       if (fNumTruncatedBytes > 0) {
-	envir() << "MultiFramedRTPSource::doGetNextFrame1(): The total received frame size exceeds the client's buffer size ("
-		<< fSavedMaxSize << ").  "
-		<< fNumTruncatedBytes << " bytes of trailing data will be dropped!\n";
+	      envir() << "MultiFramedRTPSource::doGetNextFrame1(): The total received frame size exceeds the client's buffer size ("
+		      << fSavedMaxSize << ").  "
+		      << fNumTruncatedBytes << " bytes of trailing data will be dropped!\n";
       }
       // Call our own 'after getting' function.  Because we're preceded
       // by a network read, we can call this directly, without risking
       // infinite recursion.
       afterGetting(this);
-    } else {
+    } 
+    else 
+    {
       // This packet contained fragmented data, and does not complete
       // the data that the client wants.  Keep getting data:
       fTo += frameSize; fMaxSize -= frameSize;
       fNeedDelivery = True;
     }
   }
+  indoGetNextFrame1=false;
 }
 
 void MultiFramedRTPSource
