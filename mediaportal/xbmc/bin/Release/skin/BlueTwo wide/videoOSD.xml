@@ -11,7 +11,7 @@
 		<type>label</type>
 		<id>0</id>
 		<posX>1186</posX>
-		<posY>29</posY>
+		<posY>27</posY>
 		<label>#time</label>
 		<align>left</align>
 		<font>font13</font>

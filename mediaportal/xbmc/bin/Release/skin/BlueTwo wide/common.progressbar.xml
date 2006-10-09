@@ -16,7 +16,7 @@
 		<type>image</type>
 		<id>105</id>
 		<posX>196</posX>
-		<posY>26</posY>
+		<posY>25</posY>
 		<width>780</width>
 		<height>30</height>
 		<texture>osd_progress_background.png</texture>
@@ -27,7 +27,7 @@
 		<type>progress</type>
 		<id>1</id>
 		<posX>185</posX>
-		<posY>34</posY>
+		<posY>33</posY>
 		<width>814</width>
 		<height>14</height>
 		<texturebg>osd_progress_back.png</texturebg>
@@ -43,8 +43,8 @@
 		<description>Start Time Info</description>
 		<type>label</type>
 		<id>101</id>
-		<posX>110</posX>
-		<posY>29</posY>
+		<posX>100</posX>
+		<posY>27</posY>
 		<label>#currentplaytime</label>
 		<align>left</align>
 		<font>font13</font>
@@ -55,7 +55,7 @@
 		<type>label</type>
 		<id>102</id>
 		<posX>1032</posX>
-		<posY>29</posY>
+		<posY>27</posY>
 		<label>#currentremaining</label>
 		<align>left</align>
 		<font>font13</font>
