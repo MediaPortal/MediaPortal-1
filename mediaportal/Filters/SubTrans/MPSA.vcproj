@@ -243,6 +243,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\source\PMTInputPin.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\source\dvbsubs\subtitle.cpp"
 				>
 			</File>
@@ -273,6 +277,10 @@
 			</File>
 			<File
 				RelativePath=".\source\dvbsubs\pes.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\PMTInputPin.h"
 				>
 			</File>
 			<File
