@@ -24,6 +24,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #ifndef _FRAMED_FILE_SOURCE_HH
 #include "FramedFileSource.hh"
 #endif
+#include "FileReader.h"
 #include "MultiFileReader.h"
 
 class TsStreamFileSource: public FramedFileSource {

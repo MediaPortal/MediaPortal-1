@@ -45,6 +45,7 @@ private:
   unsigned long fTSPacketCount;
   double fTSPacketDurationEstimate;
   HashTable* fPIDStatusTable;
+  char m_fileName[MAX_PATH];
 };
 
 #endif

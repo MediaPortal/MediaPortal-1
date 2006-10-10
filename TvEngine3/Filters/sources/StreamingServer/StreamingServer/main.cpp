@@ -1,3 +1,4 @@
+#include <streams.h>
 #include "liveMedia.hh"
 #include "BasicUsageEnvironment.hh"
 #include "GroupsockHelper.hh"
@@ -6,6 +7,7 @@
 #include "TsMPEG2TransportFileServerMediaSubsession.h" 
 #include "TsMPEG1or2FileServerDemux.h" 
 #include "MPEG1or2FileServerDemux.hh" 
+#include "TsFileDuration.h"
 
 const char* STREAM_NAME = "testStream";
 const char* STREAM_DESCRIPTION = "Session streamed by \"Streamserver v1.0\"";
@@ -20,6 +22,20 @@ void StreamAddTimeShiftFile(char* streamName, char* fileName,bool isProgramStrea
 void StreamAddMpegFile(char* streamName, char* fileName);
 void StreamRemove(char* streamName);
 
+#if _DEBUG
+
+int _tmain(int argc, _TCHAR* argv[])
+{
+  StreamSetup();
+  StreamAddTimeShiftFile("test", "C:\\media\\movies\\NASA abc HDTV 720p.ts",false);
+  while (true)
+  {
+    StreamRun();
+  }
+	return 0;
+}
+
+#endif
 
 void StreamSetup()
 {

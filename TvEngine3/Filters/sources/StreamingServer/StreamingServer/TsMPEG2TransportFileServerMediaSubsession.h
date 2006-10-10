@@ -16,6 +16,7 @@ protected:
 					  Boolean reuseFirstSource);
       // called only by createNew();
   virtual ~TsMPEG2TransportFileServerMediaSubsession();
+  virtual float duration() const;
 
 private: // redefined virtual functions
 	virtual void seekStreamSource(FramedSource* inputSource, float seekNPT);
@@ -24,6 +25,7 @@ private: // redefined virtual functions
   virtual RTPSink* createNewRTPSink(Groupsock* rtpGroupsock,
                                     unsigned char rtpPayloadTypeIfDynamic,
 				    FramedSource* inputSource);
+  char m_fileName[MAX_PATH];
 };
 
 #endif

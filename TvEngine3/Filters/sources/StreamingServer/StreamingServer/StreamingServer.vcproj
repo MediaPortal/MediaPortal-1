@@ -19,7 +19,7 @@
 			Name="Debug|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="2"
+			ConfigurationType="1"
 			CharacterSet="0"
 			>
 			<Tool
@@ -62,10 +62,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="WSock32.Lib"
+				AdditionalDependencies="strmbasd.lib winmm.lib WSock32.Lib"
 				LinkIncremental="2"
 				GenerateManifest="true"
-				ModuleDefinitionFile="StreamingServer.def"
+				ModuleDefinitionFile=""
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -140,7 +140,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="WSock32.Lib"
+				AdditionalDependencies="strmbase.lib winmm.lib WSock32.Lib"
 				LinkIncremental="1"
 				ModuleDefinitionFile="StreamingServer.def"
 				GenerateDebugInformation="false"
@@ -779,6 +779,22 @@
 		<Filter
 			Name="TsFileSource"
 			>
+			<File
+				RelativePath=".\PidInfo.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PidParser.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\SampleBuffer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TsFileDuration.cpp"
+				>
+			</File>
 			<File
 				RelativePath=".\TsStreamFileSource.cpp"
 				>

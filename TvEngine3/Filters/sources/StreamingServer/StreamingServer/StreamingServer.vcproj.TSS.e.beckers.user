@@ -9,8 +9,8 @@
 			Name="Debug|Win32"
 			>
 			<DebugSettings
-				Command="C:\temp\TVLibrary\TestApp\bin\Debug\TestApp.exe"
-				WorkingDirectory="C:\temp\TVLibrary\TestApp\bin\Debug"
+				Command="C:\erwin\tvServer\Filters\sources\StreamingServer\debug\StreamingServer.exe"
+				WorkingDirectory=""
 				CommandArguments=""
 				Attach="false"
 				DebuggerType="0"

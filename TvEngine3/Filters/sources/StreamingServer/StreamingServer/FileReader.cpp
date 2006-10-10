@@ -178,6 +178,13 @@ BOOL FileReader::IsFileInvalid()
 	return (m_hFile == INVALID_HANDLE_VALUE);
 }
 
+__int64 FileReader::GetFileSize()
+{
+  __int64 pStartPosition =0;
+  __int64 pLength=0;
+  GetFileSize(&pStartPosition, &pLength);
+  return pLength;
+}
 int FileReader::GetFileSize(__int64 *pStartPosition, __int64 *pLength)
 {
 //	CheckPointer(pStartPosition,E_POINTER);

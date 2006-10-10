@@ -35,7 +35,15 @@ TsStreamFileSource::createNew(UsageEnvironment& env, char const* fileName,
 				unsigned playTimePerFrame) 
 {
 	Log("ts:open %s",fileName);  
-  MultiFileReader* reader = new MultiFileReader();
+  FileReader* reader;
+  if (strstr(fileName,".tsbuffer")!=NULL)
+  {
+    reader = new MultiFileReader();
+  }
+  else
+  {
+    reader = new FileReader();
+  }
   reader->SetFileName((char*)fileName);
   reader->OpenFile();
   

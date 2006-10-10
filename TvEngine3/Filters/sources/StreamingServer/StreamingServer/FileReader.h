@@ -49,6 +49,7 @@ public:
 	virtual int get_DelayMode(WORD *DelayMode);
 	virtual int set_DelayMode(WORD DelayMode);
 	virtual int get_ReaderMode(WORD *ReaderMode);
+	virtual __int64 GetFileSize();
 	virtual int GetFileSize(__int64 *pStartPosition, __int64 *pLength);
 	int GetInfoFileSize(__int64 *lpllsize);
 	int GetStartPosition(__int64 *lpllpos);
