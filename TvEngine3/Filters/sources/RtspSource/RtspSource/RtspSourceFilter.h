@@ -21,6 +21,9 @@
 #pragma once
 #include "rtspclient.h"
 #include "MemoryBuffer.h"
+#include "demux.h"
+#include "pidinfo.h"
+
 // {DF5ACC0A-5612-44ba-963B-C757298F4030}
 DEFINE_GUID(CLSID_RtspSource,0xdf5acc0a, 0x5612, 0x44ba, 0x96, 0x3b, 0xc7, 0x57, 0x29, 0x8f, 0x40, 0x30);
 class COutputPin;
@@ -48,10 +51,16 @@ public:
 	STDMETHODIMP    Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt);
 	STDMETHODIMP    GetCurFile(LPOLESTR * ppszFileName,AM_MEDIA_TYPE *pmt);
 	STDMETHODIMP    GetDuration(REFERENCE_TIME *dur);
+	HRESULT OnConnect();
   LONG GetData(BYTE* pData, long size);
 	void GetStartStop(CRefTime &m_rtStart, CRefTime &m_rtStop);
 	void Seek(float start);
+  void ResetStreamTime();
+  BOOL is_Active(void);
+	CFilterList m_FilterRefList;	// List to hold the Removed filters.string
 private:
+  Demux*          m_pDemux;
+  PidInfo         m_pids;
 	CCritSec        m_section;
   COutputPin* m_pOutputPin;
   WCHAR m_fileName[1024];

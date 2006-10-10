@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="RtspSource"
 	ProjectGUID="{5DDBC183-7264-46B2-8987-214F7089EC60}"
 	RootNamespace="RtspSource"
@@ -168,6 +168,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\Demux.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\MemoryBuffer.cpp"
 				>
 			</File>
@@ -177,6 +181,10 @@
 			</File>
 			<File
 				RelativePath=".\OutputPin.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PidInfo.cpp"
 				>
 			</File>
 			<File
@@ -219,6 +227,10 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath=".\Demux.h"
+				>
+			</File>
 			<File
 				RelativePath=".\MemoryBuffer.h"
 				>

@@ -70,15 +70,18 @@ CUnknown * WINAPI CRtspSourceFilter::CreateInstance(LPUNKNOWN punk, HRESULT *phr
 CRtspSourceFilter::CRtspSourceFilter(IUnknown *pUnk, HRESULT *phr) 
 :	CSource(NAME("CRtspSource"), pUnk, CLSID_RtspSource)
 ,m_client(m_buffer)
+,m_FilterRefList(NAME("MyFilterRefList"))
 {
 	wcscpy(m_fileName,L"");
   m_pOutputPin = new COutputPin(GetOwner(), this, phr, &m_section);
+	m_pDemux = new Demux(&m_pids, this, &m_FilterRefList);
 }
 
 CRtspSourceFilter::~CRtspSourceFilter(void)
 {
 	m_pOutputPin->Disconnect();
 	delete m_pOutputPin;
+  delete m_pDemux;
 }
 
 STDMETHODIMP CRtspSourceFilter::NonDelegatingQueryInterface(REFIID riid, void ** ppv)
@@ -118,6 +121,27 @@ int CRtspSourceFilter::GetPinCount()
     return 1;
 }
 
+void CRtspSourceFilter::ResetStreamTime()
+{
+	CRefTime cTime;
+	StreamTime(cTime);
+	m_tStart = REFERENCE_TIME(m_tStart) + REFERENCE_TIME(cTime);
+}
+HRESULT CRtspSourceFilter::OnConnect()
+{
+  m_pids.aud=0x24;
+  m_pids.vid=0x21;
+  m_pids.pcr=0x21;
+  m_pids.pmt=0x20;
+  m_pDemux->set_ClockMode(1);
+  m_pDemux->set_Auto(TRUE);
+  m_pDemux->set_FixedAspectRatio(TRUE);
+  m_pDemux->set_MPEG2Audio2Mode(TRUE);
+
+  m_pDemux->AOnConnect();
+  m_pDemux->SetRefClock();
+  return S_OK;
+}
 STDMETHODIMP CRtspSourceFilter::Run(REFERENCE_TIME tStart)
 {
 	m_client.Run();
@@ -138,6 +162,11 @@ STDMETHODIMP CRtspSourceFilter::Pause()
   return CSource::Pause();
 }
 
+BOOL CRtspSourceFilter::is_Active(void)
+{
+	return ((m_State == State_Paused) || (m_State == State_Running));
+}
+
 void CRtspSourceFilter::GetStartStop(CRefTime &m_rtStart,CRefTime  &m_rtStop)
 {
 	m_rtStop= CRefTime(m_client.Duration());
@@ -148,7 +177,7 @@ void CRtspSourceFilter::Seek(float start)
 	if (m_client.IsRunning()==false) return;
 	if (m_client.Play(start))
 	{
-		m_client.FillBuffer(200000);
+		m_client.FillBuffer( (1024*200L));
 	}
 	m_pOutputPin->UpdateStopStart();
 }
@@ -176,6 +205,7 @@ STDMETHODIMP CRtspSourceFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *
 			{
 				m_pOutputPin->UpdateStopStart();
 				m_client.FillBuffer(200000);
+        
 			}
 			else return E_FAIL;
     }
@@ -212,7 +242,8 @@ LONG CRtspSourceFilter::GetData(BYTE* pData, long size)
 	if (m_buffer.Size() < size)
 	{
 		//Log("sleep %d/%d", size,m_buffer.Size());
-		while (m_buffer.Size() < 10*size) 
+    int minBufSize=10*size;
+		while (m_buffer.Size() < minBufSize) 
 		{
 			if (!m_client.IsRunning()) return 0;
 			Sleep(1);	

@@ -20,7 +20,7 @@ public:
 	long Duration();
 	bool Run();
 	bool Pause();
-	void FillBuffer(int byteCount);
+	void FillBuffer(DWORD byteCount);
 protected:
   CMemoryBuffer& m_buffer;
   Medium* createClient(UsageEnvironment& env,int verbosityLevel, char const* applicationName) ;

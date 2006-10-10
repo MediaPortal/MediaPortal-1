@@ -34,15 +34,29 @@ public:
 	HRESULT DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES *pRequest);
 	HRESULT CompleteConnect(IPin *pReceivePin);
 	HRESULT FillBuffer(IMediaSample *pSample);
+	HRESULT CheckConnect(IPin *pReceivePin);
+	HRESULT BreakConnect();
 
 	// CSourceSeeking
+	HRESULT Run(REFERENCE_TIME tStart);
 	HRESULT ChangeStart();
 	HRESULT ChangeStop();
 	HRESULT ChangeRate();
+	STDMETHODIMP SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LONGLONG *pStop, DWORD StopFlags);
 
 	virtual HRESULT OnThreadStartPlay(void) ;
-	CRtspSourceFilter *	const m_pFilter;
 	void UpdateStopStart();
+protected:
+  HRESULT DisconnectOutputPins(IBaseFilter *pFilter);
+  HRESULT DisconnectDemux();
+  HRESULT SetDemuxClock(IReferenceClock *pClock);
+  HRESULT SetAccuratePos(REFERENCE_TIME seektime);
+	CRtspSourceFilter *	const m_pFilter;
 	CCritSec* m_section;
+  CCritSec m_SeekLock;
+  CCritSec m_FillLock;
+  bool m_DemuxLock;
 	bool m_bRunning;
+  bool m_bSeeking;
+  bool m_biMpegDemux;
 };

@@ -433,7 +433,7 @@ long CRTSPClient::Duration()
 {
 	return m_duration;
 }
-void CRTSPClient::FillBuffer(int byteCount)
+void CRTSPClient::FillBuffer(DWORD byteCount)
 {	
 	bool oldRunning=m_bSleep;
 	m_bSleep=false;
@@ -457,7 +457,6 @@ void CRTSPClient::ThreadProc()
 	{
 		m_env->taskScheduler().doEventLoop(); 
 		if (m_bSleep) Sleep(10);
-		Sleep(1);
 	};
   *m_env << "rtsp thread stopped:" << "\"\n";
 	m_BufferThreadActive = false;
