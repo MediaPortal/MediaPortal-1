@@ -28,6 +28,7 @@ COutputPin::COutputPin(LPUNKNOWN pUnk, CRtspSourceFilter *pFilter, HRESULT *phr,
 	m_section(section)
 {
 	m_rtDuration=CRefTime(7200L*1000L);
+	
 }
 
 COutputPin::~COutputPin(void)
@@ -117,7 +118,8 @@ HRESULT COutputPin::ChangeStart()
 	{
 		m_rtStart=m_rtDuration;
 	}
-	float milliSec=m_rtStart.Millisecs();
+	float milliSec=m_rtDuration.Millisecs();
+	milliSec=m_rtStart.Millisecs();
 	milliSec/=1000.0;
 	if (milliSec<0) return 0;
 	m_pFilter->Seek(milliSec);
@@ -134,6 +136,10 @@ HRESULT COutputPin::ChangeRate()
 	return S_OK;
 }
 
+HRESULT COutputPin::OnThreadStartPlay(void) 
+{
+	return CSourceStream::OnThreadStartPlay();
+}
 
 void COutputPin::UpdateStopStart()
 {

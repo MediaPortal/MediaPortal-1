@@ -39,7 +39,10 @@ public:
 	HRESULT ChangeStart();
 	HRESULT ChangeStop();
 	HRESULT ChangeRate();
+
+	virtual HRESULT OnThreadStartPlay(void) ;
 	CRtspSourceFilter *	const m_pFilter;
 	void UpdateStopStart();
 	CCritSec* m_section;
+	bool m_bRunning;
 };

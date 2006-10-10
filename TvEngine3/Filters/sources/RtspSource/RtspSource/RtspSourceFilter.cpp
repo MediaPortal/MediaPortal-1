@@ -120,6 +120,7 @@ int CRtspSourceFilter::GetPinCount()
 
 STDMETHODIMP CRtspSourceFilter::Run(REFERENCE_TIME tStart)
 {
+	m_client.Run();
 	return CSource::Run(tStart);
 }
 
@@ -133,23 +134,21 @@ STDMETHODIMP CRtspSourceFilter::Stop()
 
 STDMETHODIMP CRtspSourceFilter::Pause()
 {
+	m_client.Pause();
   return CSource::Pause();
 }
 
 void CRtspSourceFilter::GetStartStop(CRefTime &m_rtStart,CRefTime  &m_rtStop)
 {
-	m_rtStart= CRefTime(0L);
 	m_rtStop= CRefTime(m_client.Duration());
 }
 
 void CRtspSourceFilter::Seek(float start)
 {
 	if (m_client.IsRunning()==false) return;
-//	Log("Seek:%f", start);
-//	start=20.0f;
 	if (m_client.Play(start))
 	{
-		while (m_buffer.Size() < 200000) Sleep(5);	
+		m_client.FillBuffer(200000);
 	}
 	m_pOutputPin->UpdateStopStart();
 }
@@ -165,7 +164,7 @@ STDMETHODIMP CRtspSourceFilter::GetDuration(REFERENCE_TIME *dur)
 STDMETHODIMP CRtspSourceFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt)
 {
 	wcscpy(m_fileName,pszFileName);
-  wcscpy(m_fileName,L"rtsp://192.168.100.102/stream1");
+  wcscpy(m_fileName,L"rtsp://192.168.1.58/test");
 
   if (m_client.Initialize())
   {
@@ -173,11 +172,16 @@ STDMETHODIMP CRtspSourceFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *
 	  WideCharToMultiByte(CP_ACP,0,m_fileName,-1,url,MAX_PATH,0,0);
     if (m_client.OpenStream(url))
     {
-      m_client.Play(0.0f);
+      if (m_client.Play(0.0f))
+			{
+				m_pOutputPin->UpdateStopStart();
+				m_client.FillBuffer(200000);
+			}
+			else return E_FAIL;
     }
+		else return E_FAIL;
   }
-	while (m_buffer.Size() < 200000) Sleep(5);	
-	m_pOutputPin->UpdateStopStart();
+	else return E_FAIL;
 	return S_OK;
 }
 STDMETHODIMP CRtspSourceFilter::GetCurFile(LPOLESTR * ppszFileName,AM_MEDIA_TYPE *pmt)

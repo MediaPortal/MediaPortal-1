@@ -23,6 +23,8 @@ CRTSPClient::CRTSPClient(CMemoryBuffer& buffer)
   m_BufferThreadActive=false;
 	m_duration=7200*1000;
 	m_fStart=0.0f;
+	m_session=NULL;
+	m_ourClient=NULL;
 }
 
 CRTSPClient::~CRTSPClient()
@@ -198,6 +200,8 @@ bool CRTSPClient::Initialize()
 
 bool CRTSPClient::OpenStream(char* url)
 {
+	m_session=NULL;
+	m_bSleep=true;
 	strcpy(m_url,url);
 	// Open the URL, to get a SDP description: 
   char* sdpDescription= getSDPDescriptionFromURL(m_ourClient, url, ""/*username*/, ""/*password*/,""/*proxyServerName*/, 0/*proxyServerPortNum*/,1234/*desiredPortNum*/);
@@ -218,18 +222,22 @@ bool CRTSPClient::OpenStream(char* url)
 		strcpy(rangeEnd,"");
 		strcpy(rangeStart,"");
 		int pos=0;
+		int setPos=0;
 		while (isdigit(range[pos]) )
 		{
-			rangeStart[pos]=range[pos];
-			rangeStart[pos+1]=0;
+			rangeStart[setPos]=range[pos];
+			rangeStart[setPos+1]=0;
 			pos++;
+			setPos++;
 		}
 		pos++;
+		setPos=0;
 		while (isdigit(range[pos]) )
 		{
-			rangeEnd[pos]=range[pos];
-			rangeEnd[pos+1]=0;
+			rangeEnd[setPos]=range[pos];
+			rangeEnd[setPos+1]=0;
 			pos++;
+			setPos++;
 		}
 	
 		if (strlen(rangeStart)>0)
@@ -240,7 +248,7 @@ bool CRTSPClient::OpenStream(char* url)
 			{
 				endOfFile=atol(rangeEnd);
 			}
-			m_duration=endOfFile-startOfFile;
+			m_duration=(endOfFile-startOfFile)*1000;
 		}
 	}
   // Create a media session object from this SDP description:
@@ -425,6 +433,17 @@ long CRTSPClient::Duration()
 {
 	return m_duration;
 }
+void CRTSPClient::FillBuffer(int byteCount)
+{	
+	bool oldRunning=m_bSleep;
+	m_bSleep=false;
+	while ( IsRunning() && m_buffer.Size() < byteCount)
+	{
+		Sleep(5);
+	}
+	m_bSleep=oldRunning;
+
+}
 void CRTSPClient::ThreadProc()
 {
 	HRESULT hr = S_OK;
@@ -437,13 +456,24 @@ void CRTSPClient::ThreadProc()
 	while (m_env!=NULL && !ThreadIsStopping(0))
 	{
 		m_env->taskScheduler().doEventLoop(); 
-		//if (m_buffer.Size() > 800000) Sleep(5);
+		if (m_bSleep) Sleep(10);
+		Sleep(1);
 	};
   *m_env << "rtsp thread stopped:" << "\"\n";
 	m_BufferThreadActive = false;
 	return;
 }
 
+bool CRTSPClient::Run()
+{
+	m_bSleep=false;
+	return true;
+}
+bool CRTSPClient::Pause()
+{
+	m_bSleep=true;
+	return true;
+}
 bool CRTSPClient::Play(float fStart)
 {
 	m_fStart=fStart;

@@ -18,6 +18,9 @@ public:
   void Stop();
 	bool IsRunning();
 	long Duration();
+	bool Run();
+	bool Pause();
+	void FillBuffer(int byteCount);
 protected:
   CMemoryBuffer& m_buffer;
   Medium* createClient(UsageEnvironment& env,int verbosityLevel, char const* applicationName) ;
@@ -54,7 +57,7 @@ protected:
   Boolean streamUsingTCP ;
   unsigned fileSinkBufferSize ;
   Boolean oneFilePerFrame ;
-
+	
 public:
   //thread
 	void StartBufferThread();
@@ -64,4 +67,5 @@ public:
 	long m_duration;
 	float m_fStart;
 	char m_url[2048];
+	bool m_bSleep;
 };
