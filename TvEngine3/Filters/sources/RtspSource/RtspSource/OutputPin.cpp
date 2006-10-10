@@ -21,6 +21,8 @@
 #include <streams.h>
 #include "OutputPin.h"
 #include "demux.h"
+ 
+#define BUFFER_SIZE (1316*15)
 
 COutputPin::COutputPin(LPUNKNOWN pUnk, CRtspSourceFilter *pFilter, HRESULT *phr,CCritSec* section) :
 	CSourceStream(NAME("pinOut"), phr, pFilter, L"Out"),
@@ -86,7 +88,7 @@ HRESULT COutputPin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES
 			pRequest->cBuffers = 2;
 	}
 
-	pRequest->cbBuffer = (1316*5);
+	pRequest->cbBuffer = BUFFER_SIZE;
 
 
 	ALLOCATOR_PROPERTIES Actual;
@@ -176,7 +178,7 @@ HRESULT COutputPin::FillBuffer(IMediaSample *pSample)
 	CAutoLock lock(&m_FillLock);
   BYTE* pBuffer;
   pSample->GetPointer(&pBuffer);
-	long lDataLength = 5264*3;//pSample->GetActualDataLength();
+	long lDataLength = BUFFER_SIZE;//pSample->GetActualDataLength();
   DWORD bytesRead=m_pFilter->GetData(pBuffer,lDataLength);
   pSample->SetActualDataLength(bytesRead);
   return S_OK;
