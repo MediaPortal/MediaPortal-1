@@ -141,6 +141,7 @@ namespace MediaPortal.Player
     IPin _pinVideo = null;
     IPin _pinAudioTS = null;
     IPin _pinSubtitle = null;
+    IPin _pinPMT = null;
     bool enableDvbSubtitles = false;
 #endregion
 
@@ -493,7 +494,7 @@ namespace MediaPortal.Player
         if (_mpegDemux != null && enableDvbSubtitles == true)
         {
           IMpeg2Demultiplexer demuxer = _mpegDemux as IMpeg2Demultiplexer;
-          hr = demuxer.CreateOutputPin( GetAudioTSMedia(), "AudioTS", out _pinAudioTS );
+          hr = demuxer.CreateOutputPin( GetTSMedia(), "AudioTS", out _pinAudioTS );
 
           if (hr == 0)
           {
@@ -520,6 +521,20 @@ namespace MediaPortal.Player
           else
           {
             Log.Info("TSStreamBufferPlayer9:Failed to create _pinSubtitle in demuxer:{0:X}", hr);
+          }
+          
+          hr = demuxer.CreateOutputPin(GetTSMedia(), "PMT", out _pinPMT);
+          if (hr == 0)
+          {
+            Log.Info("TSStreamBufferPlayer9:_pinPMT OK");
+
+            IPin pDemuxerSubtitle = DsFindPin.ByName(_mpegDemux, "PMT");
+            IPin pSubtitle = DsFindPin.ByName(_subtitleFilter, "PMT");
+            hr = _graphBuilder.Connect(pDemuxerSubtitle, pSubtitle);
+          }
+          else
+          {
+            Log.Info("TSStreamBufferPlayer9:Failed to create _pinPMT in demuxer:{0:X}", hr);
           }
         }
 
@@ -805,7 +820,7 @@ namespace MediaPortal.Player
       return mediaVideo;
     }
 
-    AMMediaType GetAudioTSMedia()
+    AMMediaType GetTSMedia()
     {
       AMMediaType mediaAudioTS = new AMMediaType();
       mediaAudioTS.majorType = MediaType.Stream;
