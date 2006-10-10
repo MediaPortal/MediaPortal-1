@@ -1104,7 +1104,13 @@ namespace MediaPortal.TV.Recording
       if (dvbGraph != null)
       {
         Log.Info("TVCapture.Stop() cardproperties.Dispose()");
-        dvbGraph.CardProperties.Dispose();
+        // When using a USB based TV Card and it is not attached, the Cardproperties.Dispose causes a NullReferenceException
+        try
+        {
+          dvbGraph.CardProperties.Dispose();
+        }
+        catch (Exception)
+        { }
       }
       DeleteGraph();
     }
