@@ -108,7 +108,7 @@ namespace Mpeg2SplitterPackage
 #if (STAND_ALONE)
         private bool bLogEnabled = true;
 #else
-        private bool bLogEnabled = true;
+        private bool bLogEnabled = false;
 #endif
 
         System.Timers.Timer progressTime;
