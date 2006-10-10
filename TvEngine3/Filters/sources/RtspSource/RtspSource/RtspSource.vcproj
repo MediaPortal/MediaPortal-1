@@ -221,6 +221,10 @@
 				RelativePath=".\TSThread.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\WaitEvent.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -249,6 +253,10 @@
 			</File>
 			<File
 				RelativePath=".\RtspSourceFilter.h"
+				>
+			</File>
+			<File
+				RelativePath=".\WaitEvent.h"
 				>
 			</File>
 		</Filter>

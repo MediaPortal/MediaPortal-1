@@ -29,7 +29,7 @@ TsMPEG2TransportFileServerMediaSubsession::~TsMPEG2TransportFileServerMediaSubse
 
 FramedSource* TsMPEG2TransportFileServerMediaSubsession::createNewStreamSource(unsigned /*clientSessionId*/, unsigned& estBitrate) 
 {
-  estBitrate = 5000; // kbps, estimate
+  estBitrate = 15000; // kbps, estimate
 
   // Create the video source:
   unsigned const inputDataChunkSize= TRANSPORT_PACKETS_PER_NETWORK_PACKET*TRANSPORT_PACKET_SIZE;

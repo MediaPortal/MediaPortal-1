@@ -1,5 +1,5 @@
 #pragma once
-
+#include "WaitEvent.h"
 #include <vector>
 using namespace std;
 class CMemoryBuffer
@@ -23,4 +23,5 @@ protected:
 	vector<BUFFERITEM *> m_Array;
 	CCritSec m_BufferLock;
   DWORD    m_BytesInBuffer;
+  CWaitEvent m_event;
 };

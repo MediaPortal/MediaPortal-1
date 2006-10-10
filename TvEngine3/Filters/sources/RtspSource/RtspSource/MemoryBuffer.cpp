@@ -6,6 +6,7 @@
 
 extern void Log(const char *fmt, ...) ;
 CMemoryBuffer::CMemoryBuffer(void)
+:m_event(NULL,TRUE,FALSE,"memevent")
 {
   m_BytesInBuffer=0;
 }
@@ -35,6 +36,11 @@ DWORD CMemoryBuffer::Size()
 DWORD CMemoryBuffer::ReadFromBuffer(BYTE *pbData, long lDataLength, long lOffset)
 {	
 	if (lDataLength<0) return 0;
+  while (m_BytesInBuffer < lDataLength)
+  {
+    m_event.ResetEvent();
+    m_event.Wait();
+  }
   long bytesWritten = 0;
 	CAutoLock BufferLock(&m_BufferLock);
 	while (bytesWritten < lDataLength)
@@ -89,6 +95,10 @@ HRESULT CMemoryBuffer::PutBuffer(BYTE *pbData, long lDataLength, long lOffset)
 		m_Array.erase(m_Array.begin());
     delete[] item->data;
 		delete item;
+  }
+  if (m_BytesInBuffer>0)
+  {
+    m_event.SetEvent();
   }
 	return S_OK;
 }

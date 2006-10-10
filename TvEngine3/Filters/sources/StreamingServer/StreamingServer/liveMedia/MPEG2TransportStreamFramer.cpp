@@ -7,14 +7,14 @@
 #include <GroupsockHelper.hh> // for "gettimeofday()"
 
 #define TRANSPORT_PACKET_SIZE 188
-#define NEW_DURATION_WEIGHT 0.5
+#define NEW_DURATION_WEIGHT 1  //0.5
   // How much weight to give to the latest duration measurement (must be <= 1)
-#define TIME_ADJUSTMENT_FACTOR 0.8
+#define TIME_ADJUSTMENT_FACTOR 1 //0.8
   // A factor by which to adjust the duration estimate to ensure that the overall
   // packet transmission times remains matched with the PCR times (which will be the
   // times that we expect receivers to play the incoming packets).
   // (must be <= 1)
-#define MAX_PLAYOUT_BUFFER_DURATION 0.1 // (seconds)
+#define MAX_PLAYOUT_BUFFER_DURATION 1 // (seconds)
 
 ////////// PIDStatus //////////
 

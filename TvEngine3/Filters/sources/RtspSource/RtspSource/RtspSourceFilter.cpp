@@ -204,7 +204,7 @@ STDMETHODIMP CRtspSourceFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *
       if (m_client.Play(0.0f))
 			{
 				m_pOutputPin->UpdateStopStart();
-				m_client.FillBuffer(200000);
+				m_client.FillBuffer( (1024*800L));
         
 			}
 			else return E_FAIL;
@@ -239,17 +239,6 @@ ULONG CRtspSourceFilter::GetMiscFlags()
 
 LONG CRtspSourceFilter::GetData(BYTE* pData, long size)
 {
-	if (m_buffer.Size() < size)
-	{
-		//Log("sleep %d/%d", size,m_buffer.Size());
-    int minBufSize=10*size;
-		while (m_buffer.Size() < minBufSize) 
-		{
-			if (!m_client.IsRunning()) return 0;
-			Sleep(1);	
-		}
-	}
-			
 	if (!m_client.IsRunning()) return 0;
 	//Log("%d/%d", size,m_buffer.Size());
   DWORD bytesRead= m_buffer.ReadFromBuffer(pData, size, 0);

@@ -86,7 +86,7 @@ HRESULT COutputPin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES
 			pRequest->cBuffers = 2;
 	}
 
-	pRequest->cbBuffer = 5264*3;
+	pRequest->cbBuffer = (1316*5);
 
 
 	ALLOCATOR_PROPERTIES Actual;

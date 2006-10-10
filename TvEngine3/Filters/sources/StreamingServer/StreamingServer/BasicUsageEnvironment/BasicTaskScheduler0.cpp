@@ -74,7 +74,7 @@ void BasicTaskScheduler0::doEventLoop(char* watchVariable) {
   //for (int i=0; i < 10;++i)
   {
 //    if (watchVariable != NULL && *watchVariable != 0) break;
-    SingleStep(1000000);
+    SingleStep(0);
   }
 }
 

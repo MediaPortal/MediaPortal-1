@@ -27,7 +27,7 @@ void StreamRemove(char* streamName);
 int _tmain(int argc, _TCHAR* argv[])
 {
   StreamSetup();
-  StreamAddTimeShiftFile("test", "C:\\media\\movies\\NASA abc HDTV 720p.ts",false);
+  StreamAddTimeShiftFile("test", "C:\\test.ts",false);
   while (true)
   {
     StreamRun();
