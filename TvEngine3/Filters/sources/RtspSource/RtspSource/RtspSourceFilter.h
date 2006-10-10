@@ -54,7 +54,7 @@ public:
 	HRESULT OnConnect();
   LONG GetData(BYTE* pData, long size);
 	void GetStartStop(CRefTime &m_rtStart, CRefTime &m_rtStop);
-	void Seek(float start);
+	void Seek(CRefTime start);
   void ResetStreamTime();
   BOOL is_Active(void);
 	CFilterList m_FilterRefList;	// List to hold the Removed filters.string
@@ -66,4 +66,5 @@ private:
   WCHAR m_fileName[1024];
   CRTSPClient m_client;
   CMemoryBuffer m_buffer;
+	CRefTime			m_rtStartFrom;
 };

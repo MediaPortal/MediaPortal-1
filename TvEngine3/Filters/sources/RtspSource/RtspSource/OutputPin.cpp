@@ -22,7 +22,7 @@
 #include "OutputPin.h"
 #include "demux.h"
  
-#define BUFFER_SIZE (1316*15)
+#define BUFFER_SIZE (1316*5)
 
 COutputPin::COutputPin(LPUNKNOWN pUnk, CRtspSourceFilter *pFilter, HRESULT *phr,CCritSec* section) :
 	CSourceStream(NAME("pinOut"), phr, pFilter, L"Out"),
@@ -39,10 +39,12 @@ COutputPin::COutputPin(LPUNKNOWN pUnk, CRtspSourceFilter *pFilter, HRESULT *phr,
 	AM_SEEKING_CanGetDuration	|
 	AM_SEEKING_Source;
 	m_rtDuration=CRefTime(7200L*1000L);
+	m_rtDurationAtStart=CRefTime(7200L*1000L);
 	m_bSeeking = false;
   m_DemuxLock=false;
   m_biMpegDemux=false;
-	
+	m_tickCount=GetTickCount();
+	m_tickUpdateCount=GetTickCount();
 }
 
 COutputPin::~COutputPin(void)
@@ -173,14 +175,32 @@ HRESULT COutputPin::CompleteConnect(IPin *pReceivePin)
 	return hr;
 }
 
+static int locked=0;
 HRESULT COutputPin::FillBuffer(IMediaSample *pSample)
 {
 	CAutoLock lock(&m_FillLock);
+	if (locked)
+	{
+		::OutputDebugStringA("LOCKED!!!\n");
+		pSample->SetActualDataLength(0);
+		return S_OK;
+	}
+	locked=1;
   BYTE* pBuffer;
   pSample->GetPointer(&pBuffer);
 	long lDataLength = BUFFER_SIZE;//pSample->GetActualDataLength();
   DWORD bytesRead=m_pFilter->GetData(pBuffer,lDataLength);
   pSample->SetActualDataLength(bytesRead);
+	locked=0;
+	long ticks=GetTickCount()-m_tickUpdateCount;
+	if (ticks>1000)
+	{
+		ticks=GetTickCount()-m_tickCount;
+		CRefTime refAdd(ticks);
+		m_rtDuration = refAdd+m_rtDurationAtStart;
+		m_pFilter->NotifyEvent(EC_LENGTH_CHANGED, NULL, NULL);	
+		m_tickUpdateCount=GetTickCount();
+	}
   return S_OK;
 }
 HRESULT COutputPin::ChangeStart()
@@ -201,16 +221,16 @@ HRESULT COutputPin::ChangeRate()
 }
 
 HRESULT COutputPin::Run(REFERENCE_TIME tStart)
-{/*
-	CAutoLock fillLock(&m_FillLock);
-	CAutoLock seekLock(&m_SeekLock);
+{
+	//CAutoLock fillLock(&m_FillLock);
+	//CAutoLock seekLock(&m_SeekLock);
   m_pFilter->ResetStreamTime();
 	if (!m_bSeeking && !m_DemuxLock)
 	{	
 		CComPtr<IReferenceClock> pClock;
 		Demux::GetReferenceClock(m_pFilter, &pClock);
 		SetDemuxClock(pClock);
-	}*/
+	}
 	return CBaseOutputPin::Run(tStart);
 }
 HRESULT COutputPin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LONGLONG *pStop, DWORD StopFlags)
@@ -272,18 +292,14 @@ HRESULT COutputPin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LONGLON
 HRESULT COutputPin::SetAccuratePos(REFERENCE_TIME seektime)
 {
 	m_pFilter->ResetStreamTime();
-	m_rtStart = seektime;
-	float milliSec=m_rtDuration.Millisecs();
-	milliSec=m_rtStart.Millisecs();
-	milliSec/=1000.0;
-	if (milliSec<0) return 0;
-	m_pFilter->Seek(milliSec);
+	m_pFilter->Seek(m_rtStart);
+	return S_OK;
 }
 HRESULT COutputPin::OnThreadStartPlay(void) 
 {
 	CAutoLock fillLock(&m_FillLock);
 	CAutoLock lock(&m_SeekLock);
- // DeliverNewSegment(m_rtStart, m_rtStop, 1.0 );
+  DeliverNewSegment(m_rtStart, m_rtStop, 1.0 );
 	return CSourceStream::OnThreadStartPlay( );
 }
 
@@ -291,6 +307,8 @@ void COutputPin::UpdateStopStart()
 {
 	CAutoLock lock(&m_SeekLock);
 	m_pFilter->GetStartStop(m_rtStart, m_rtDuration);
+	m_rtDurationAtStart=m_rtDuration;
+	m_tickCount=GetTickCount();
 }
 
 

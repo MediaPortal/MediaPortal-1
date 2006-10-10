@@ -59,4 +59,7 @@ protected:
 	bool m_bRunning;
   bool m_bSeeking;
   bool m_biMpegDemux;
+	DWORD m_tickCount;
+	DWORD m_tickUpdateCount;
+	CRefTime m_rtDurationAtStart;
 };

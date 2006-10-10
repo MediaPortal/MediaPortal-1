@@ -28,6 +28,8 @@
 #include "outputpin.h"
 extern void Log(const char *fmt, ...) ;
 
+#define BUFFER_BEFORE_PLAY_SIZE (1024L*200) //200Kb
+
 const AMOVIESETUP_MEDIATYPE acceptOutputPinTypes =
 {
 	&MEDIATYPE_Stream,                  // major type
@@ -75,6 +77,7 @@ CRtspSourceFilter::CRtspSourceFilter(IUnknown *pUnk, HRESULT *phr)
 	wcscpy(m_fileName,L"");
   m_pOutputPin = new COutputPin(GetOwner(), this, phr, &m_section);
 	m_pDemux = new Demux(&m_pids, this, &m_FilterRefList);
+	m_rtStartFrom=0;
 }
 
 CRtspSourceFilter::~CRtspSourceFilter(void)
@@ -129,8 +132,8 @@ void CRtspSourceFilter::ResetStreamTime()
 }
 HRESULT CRtspSourceFilter::OnConnect()
 {
-  m_pids.aud=0x24;
-  m_pids.vid=0x21;
+  m_pids.aud=0x31;
+  m_pids.vid=0x30;
   m_pids.pcr=0x21;
   m_pids.pmt=0x20;
   m_pDemux->set_ClockMode(1);
@@ -144,6 +147,17 @@ HRESULT CRtspSourceFilter::OnConnect()
 }
 STDMETHODIMP CRtspSourceFilter::Run(REFERENCE_TIME tStart)
 {
+	float milliSecs=m_rtStartFrom.Millisecs();
+	milliSecs/=1000.0f;
+
+	m_buffer.Clear();
+  if (m_client.Play(milliSecs))
+	{
+		m_pOutputPin->UpdateStopStart();
+		m_client.FillBuffer( BUFFER_BEFORE_PLAY_SIZE);
+    
+	}
+	else return E_FAIL;
 	m_client.Run();
 	return CSource::Run(tStart);
 }
@@ -172,14 +186,9 @@ void CRtspSourceFilter::GetStartStop(CRefTime &m_rtStart,CRefTime  &m_rtStop)
 	m_rtStop= CRefTime(m_client.Duration());
 }
 
-void CRtspSourceFilter::Seek(float start)
+void CRtspSourceFilter::Seek(CRefTime start)
 {
-	if (m_client.IsRunning()==false) return;
-	if (m_client.Play(start))
-	{
-		m_client.FillBuffer( (1024*200L));
-	}
-	m_pOutputPin->UpdateStopStart();
+	m_rtStartFrom=start;
 }
 
 STDMETHODIMP CRtspSourceFilter::GetDuration(REFERENCE_TIME *dur)
@@ -193,7 +202,7 @@ STDMETHODIMP CRtspSourceFilter::GetDuration(REFERENCE_TIME *dur)
 STDMETHODIMP CRtspSourceFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt)
 {
 	wcscpy(m_fileName,pszFileName);
-  wcscpy(m_fileName,L"rtsp://192.168.1.58/test");
+  wcscpy(m_fileName,L"rtsp://192.168.100.102/stream1");
 
   if (m_client.Initialize())
   {
@@ -201,13 +210,8 @@ STDMETHODIMP CRtspSourceFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *
 	  WideCharToMultiByte(CP_ACP,0,m_fileName,-1,url,MAX_PATH,0,0);
     if (m_client.OpenStream(url))
     {
-      if (m_client.Play(0.0f))
-			{
-				m_pOutputPin->UpdateStopStart();
-				m_client.FillBuffer( (1024*800L));
-        
-			}
-			else return E_FAIL;
+			m_pOutputPin->UpdateStopStart();
+
     }
 		else return E_FAIL;
   }
@@ -240,7 +244,6 @@ ULONG CRtspSourceFilter::GetMiscFlags()
 LONG CRtspSourceFilter::GetData(BYTE* pData, long size)
 {
 	if (!m_client.IsRunning()) return 0;
-	//Log("%d/%d", size,m_buffer.Size());
   DWORD bytesRead= m_buffer.ReadFromBuffer(pData, size, 0);
   return bytesRead;
 }

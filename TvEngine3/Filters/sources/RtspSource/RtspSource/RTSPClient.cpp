@@ -435,12 +435,14 @@ long CRTSPClient::Duration()
 }
 void CRTSPClient::FillBuffer(DWORD byteCount)
 {	
+	Log("Fillbuffer...%d\n",byteCount);
 	bool oldRunning=m_bSleep;
 	m_bSleep=false;
 	while ( IsRunning() && m_buffer.Size() < byteCount)
 	{
 		Sleep(5);
 	}
+	Log("Fillbuffer...%d/%d\n",byteCount,m_buffer.Size() );
 	m_bSleep=oldRunning;
 
 }
@@ -451,11 +453,12 @@ void CRTSPClient::ThreadProc()
 
 //	BoostThread Boost;
 
-  ::SetThreadPriority(GetCurrentThread(),THREAD_PRIORITY_ABOVE_NORMAL);
+	::SetThreadPriority(GetCurrentThread(),THREAD_PRIORITY_TIME_CRITICAL);
   *m_env << "rtsp thread started:" << "\"\n";
 	while (m_env!=NULL && !ThreadIsStopping(0))
 	{
 		m_env->taskScheduler().doEventLoop(); 
+			
 	}
   *m_env << "rtsp thread stopped:" << "\"\n";
 	m_BufferThreadActive = false;

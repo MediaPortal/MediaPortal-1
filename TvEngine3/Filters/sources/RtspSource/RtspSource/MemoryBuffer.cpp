@@ -2,7 +2,7 @@
 #include <streams.h>
 #include "MemoryBuffer.h"
 
-#define MAX_MEMORY_BUFFER_SIZE (1024L*1024L*4L)
+#define MAX_MEMORY_BUFFER_SIZE (1024L*1024L*12L)
 
 extern void Log(const char *fmt, ...) ;
 CMemoryBuffer::CMemoryBuffer(void)
@@ -37,17 +37,19 @@ DWORD CMemoryBuffer::ReadFromBuffer(BYTE *pbData, long lDataLength, long lOffset
 {	
 	if (lDataLength<0) return 0;
   while (m_BytesInBuffer < lDataLength)
-  {
+  {	
     m_event.ResetEvent();
     m_event.Wait();
   }
+		
+	//Log("get..%d/%d",lDataLength,m_BytesInBuffer);
   long bytesWritten = 0;
 	CAutoLock BufferLock(&m_BufferLock);
 	while (bytesWritten < lDataLength)
 	{
 		if(!m_Array.size() || m_Array.size() <= 0)
     {
-      ::OutputDebugStringA(" empty buffer\n");
+			::OutputDebugStringA("read:empty buffer\n");
 			return 0;
     }
 		BUFFERITEM *item = m_Array.at(0);
@@ -85,9 +87,10 @@ HRESULT CMemoryBuffer::PutBuffer(BYTE *pbData, long lDataLength, long lOffset)
   m_Array.push_back(item);
   m_BytesInBuffer+=item->nDataLength;
 
+	//Log("add..%d/%d",lDataLength,m_BytesInBuffer);
   while (m_BytesInBuffer > MAX_MEMORY_BUFFER_SIZE)
   {
-    Log("Delete buffer\n");
+		Log("add: full buffer (%d)",m_BytesInBuffer);
 		BUFFERITEM *item = m_Array.at(0);
     int copyLength=item->nDataLength - item->nOffset;
 
