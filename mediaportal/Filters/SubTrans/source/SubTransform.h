@@ -33,6 +33,7 @@
 
 class CSubtitleInputPin;
 class CAudioInputPin;
+class CPMTInputPin;
 class CDVBSubDecoder;
 
 typedef __int64 int64_t;
@@ -109,6 +110,7 @@ private:
 
 	CSubtitleInputPin*	m_pSubtitlePin;
 	CAudioInputPin*		  m_pAudioPin;
+  CPMTInputPin*       m_pPMTPin;
 	
 	CDVBSubDecoder*		  m_pSubDecoder;
 
