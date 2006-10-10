@@ -110,6 +110,7 @@ namespace MediaPortal.Playlists
     PlayList _emptyPlayList = new PlayList();
     PlayList _musicVideoPlayList = new PlayList();
     bool _repeatPlayList = true;
+    string _currentPlaylistName = string.Empty;
 
     public PlayListPlayer()
     {
@@ -444,6 +445,12 @@ namespace MediaPortal.Playlists
         if (value >= -1 && value < GetPlaylist(CurrentPlaylistType).Count)
           _currentSong = value;
       }
+    }
+
+    public string CurrentPlaylistName
+    {
+      get { return _currentPlaylistName; }
+      set { _currentPlaylistName = value; }
     }
 
     public void Remove(PlayListType type, string filename)
