@@ -39,7 +39,7 @@ namespace MediaPortal.Player
 {
   public class RTSPPlayer : IPlayer
   {
-    [ComImport, Guid("E5B059AC-65A6-400A-A113-06F46EB488DD")]
+    [ComImport, Guid("DF5ACC0A-5612-44ba-963B-C757298F4030")]
     protected class RtpSourceFilter { }
     public enum PlayState
     {
@@ -89,7 +89,7 @@ namespace MediaPortal.Player
     protected IBaseFilter audioCodecFilter = null;
     protected IBaseFilter audioRendererFilter = null;
     protected IBaseFilter[] customFilters; // FlipGer: array for custom directshow filters
-
+    protected IBaseFilter _mpegDemux;
     protected IDirectVobSub vobSub;
     DateTime elapsedTimer = DateTime.Now;
 
@@ -145,6 +145,9 @@ namespace MediaPortal.Player
         Log.Info("RTSPPlayer: add source filter");
         Vmr9.AddVMR9(graphBuilder);
         Vmr9.Enable(false);
+
+        _mpegDemux = (IBaseFilter)new MPEG2Demultiplexer();
+        graphBuilder.AddFilter(_mpegDemux, "MPEG-2 Demultiplexer");
 
         IBaseFilter rtspSource = (IBaseFilter)new RtpSourceFilter();
         int hr = graphBuilder.AddFilter((IBaseFilter)rtspSource, "RTSP Source Filter");
@@ -304,6 +307,12 @@ namespace MediaPortal.Player
         basicVideo = null;
         videoWin = null;
 
+        if (_mpegDemux != null)
+        {
+          while ((hr = Marshal.ReleaseComObject(_mpegDemux)) > 0)
+            ;
+          _mpegDemux = null;
+        }
         if (videoCodecFilter != null)
         {
           while (Marshal.ReleaseComObject(videoCodecFilter)>0); 
@@ -470,8 +479,9 @@ namespace MediaPortal.Player
       {
         if (mediaPos != null)
         {
-          //mediaPos.get_Duration(out m_dDuration);
+          mediaPos.get_Duration(out m_dDuration);
           mediaPos.get_CurrentPosition(out m_dCurrentPos);
+          Log.Info("rtsp: pos:{0} duration:{1}", m_dCurrentPos, m_dDuration);
         }
 
         if (GUIGraphicsContext.BlankScreen || (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false))
