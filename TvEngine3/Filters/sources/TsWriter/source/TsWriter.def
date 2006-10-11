@@ -1,4 +1,4 @@
-LIBRARY     MPFileWriter.ax
+LIBRARY     TsFileWriter.ax
 
 EXPORTS
             DllMain                 PRIVATE

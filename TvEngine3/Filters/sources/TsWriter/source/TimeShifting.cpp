@@ -301,12 +301,15 @@ STDMETHODIMP CTimeShifting::Start()
 		LogDebug("Timeshifter:Start timeshifting:'%s'",m_szFileName);
 //		LogDebug("real pcr:%x pmt:%x audio:%x video:%x mode:%d", m_pcrPid, m_pmtPid, m_audioPid,m_videoPid,m_timeShiftMode);
 //		LogDebug("fake pcr:%x pmt:%x audio:%x video:%x", FAKE_PCR_PID, FAKE_PMT_PID, FAKE_AUDIO_PID, FAKE_VIDEO_PID);
+		m_bTimeShifting=true;
 		if (m_timeShiftMode==TransportStream)
 		{
+      for (int i=0;i <100;++i)
+      {
 			WriteFakePAT();
 			WriteFakePMT();
+      }
 		}
-		m_bTimeShifting=true;
 	}
 	catch(...)
 	{
@@ -634,16 +637,17 @@ void CTimeShifting::WriteFakePMT()
   m_iPmtContinuityCounter++;
   if (m_iPmtContinuityCounter>0xf) m_iPmtContinuityCounter=0;
 
-  BYTE pmt[200];
-  memset(pmt,0,sizeof(pmt));
+  BYTE pmt[256];
+  memset(pmt,0xff,sizeof(pmt));
   pmt[0]=0x47;
   pmt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
   pmt[2]=(pid&0xff);
   pmt[3]=(AdaptionControl<<4) +m_iPmtContinuityCounter;
   pmt[4]=0;
+  byte* pmtPtr=&pmt[4];
   pmt[5]=tableId;//table id
-  pmt[6]=0x80+((sectionLenght>>8)&0xf);
-  pmt[7]=sectionLenght&0xff;
+  pmt[6]=0;
+  pmt[7]=0;
   pmt[8]=(FAKE_SERVICE_ID>>8)&0xff;
   pmt[9]=(FAKE_SERVICE_ID)&0xff;
   pmt[10]=((version_number&0x1f)<<1)+current_next_indicator;
@@ -654,24 +658,28 @@ void CTimeShifting::WriteFakePMT()
   pmt[15]=(program_info_length>>8)&0xff;
   pmt[16]=(program_info_length)&0xff;
   
-  pmt[17]=2;//video stream_type
-  pmt[18]=(FAKE_VIDEO_PID>>8)&0x1F;
-  pmt[19]=(FAKE_VIDEO_PID)&0xff;
-  pmt[20]=0;
-  pmt[21]=0;
+  int offset=17;
+	itvecPids it=m_vecPids.begin();
+	while (it!=m_vecPids.end())
+	{
+		PidInfo& info=*it;
+    pmt[offset++]=info.serviceType;
+    pmt[offset++]=(info.fakePid>>8)&0x1F; // reserved; elementary_pid (high)
+    pmt[offset++]=(info.fakePid)&0xff; // elementary_pid (low)
+    pmt[offset++]=0xF0;// reserved; ES_info_length (high)
+    pmt[offset++]=0;   // ES_info_length (low)
+    ++it;
+  }
 
 
-  pmt[22]=3;//audio stream_type
-  pmt[23]=(FAKE_AUDIO_PID>>8)&0x1F;
-  pmt[24]=(FAKE_AUDIO_PID)&0xff;
-  pmt[25]=0;
-  pmt[26]=0;
+  unsigned section_length = (m_vecPids.size()*5 +9+4);
+  pmt[6]=0x80+((section_length>>8)&0xf);
+  pmt[7]=section_length&0xff;
 
-  int len=26;
-  DWORD crc= crc32((char*)&pmt[5],len-5);
-  pmt[len]=(crc>>24)&0xff;
-  pmt[len+1]=(crc>>16)&0xff;
-  pmt[len+2]=(crc>>8)&0xff;
-  pmt[len+3]=(crc)&0xff;
+  DWORD crc= crc32((char*)&pmt[5],offset-5);
+  pmt[offset++]=(crc>>24)&0xff;
+  pmt[offset++]=(crc>>16)&0xff;
+  pmt[offset++]=(crc>>8)&0xff;
+  pmt[offset++]=(crc)&0xff;
   Write(pmt,188);
 }
