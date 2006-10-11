@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 **********/
 // "mTunnel" multicast access service
-// Copyright (c) 1996-2001 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2006 Live Networks, Inc.  All rights reserved.
 // Helper routines to implement 'group sockets'
 // C++ header
 
@@ -99,6 +99,20 @@ char const* timestampString();
     var.sin_addr.s_addr = (adr);\
     var.sin_port = (prt);\
     SET_SOCKADDR_SIN_LEN(var);
+
+
+// By default, we create sockets with the SO_REUSE_* flag set.
+// If, instead, you want to create sockets without the SO_REUSE_* flags,
+// Then enclose the creation code with:
+//          {
+//            NoReuse dummy;
+//            ...
+//          }
+class NoReuse {
+public:
+  NoReuse();
+  ~NoReuse();
+};
 
 
 #if (defined(__WIN32__) || defined(_WIN32)) && !defined(IMN_PIM)

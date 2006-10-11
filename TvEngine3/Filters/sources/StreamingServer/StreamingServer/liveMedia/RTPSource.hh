@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2005 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2006 Live Networks, Inc.  All rights reserved.
 // RTP Sources
 // C++ header
 
@@ -144,19 +144,21 @@ public:
 
   RTPReceptionStats* lookup(u_int32_t SSRC) const;
 
-private: // constructor and destructor, called only by RTPSource:
+protected: // constructor and destructor, called only by RTPSource:
   friend class RTPSource;
   RTPReceptionStatsDB(RTPSource& rtpSource);
   virtual ~RTPReceptionStatsDB();
 
-private:
+protected:
   void add(u_int32_t SSRC, RTPReceptionStats* stats);
 
-private:
+protected:
   friend class Iterator;
   RTPSource& fOurRTPSource;
-  HashTable* fTable;
   unsigned fNumActiveSourcesSinceLastReset;
+
+private:
+  HashTable* fTable;
   unsigned fTotNumPacketsReceived; // for all SSRCs
 };
 
@@ -195,7 +197,7 @@ public:
     return fTotalInterPacketGaps;
   }
 
-private:
+protected:
   // called only by RTPReceptionStatsDB:
   friend class RTPReceptionStatsDB;
   RTPReceptionStats(RTPSource& rtpSource, u_int32_t SSRC,
@@ -203,6 +205,7 @@ private:
   RTPReceptionStats(RTPSource& rtpSource, u_int32_t SSRC);
   virtual ~RTPReceptionStats();
 
+private:
   void noteIncomingPacket(u_int16_t seqNum, u_int32_t rtpTimestamp,
 			  unsigned timestampFrequency,
 			  Boolean useForJitterCalculation,
@@ -217,7 +220,7 @@ private:
       // resets periodic stats (called each time they're used to
       // generate a reception report)
 
-private:
+protected:
   RTPSource& fOurRTPSource;
   u_int32_t fSSRC;
   unsigned fNumPacketsReceivedSinceLastReset;
@@ -238,6 +241,7 @@ private:
   unsigned fMinInterPacketGapUS, fMaxInterPacketGapUS;
   struct timeval fTotalInterPacketGaps;
 
+private:
   // Used to convert from RTP timestamp to 'wall clock' time:
   Boolean fHasBeenSynchronized;
   u_int32_t fSyncTimestamp;

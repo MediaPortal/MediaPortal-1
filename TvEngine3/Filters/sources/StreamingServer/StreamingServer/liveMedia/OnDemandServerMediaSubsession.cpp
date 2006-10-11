@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2005 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2006 Live Networks, Inc.  All rights reserved.
 // A 'ServerMediaSubsession' object that creates new, unicast, "RTPSink"s
 // on demand.
 // Implementation
@@ -26,10 +26,11 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 
 OnDemandServerMediaSubsession
 ::OnDemandServerMediaSubsession(UsageEnvironment& env,
-				Boolean reuseFirstSource)
+				Boolean reuseFirstSource,
+				portNumBits initialPortNum)
   : ServerMediaSubsession(env),
-    fReuseFirstSource(reuseFirstSource), fLastStreamToken(NULL),
-    fSDPLines(NULL) {
+    fReuseFirstSource(reuseFirstSource), fInitialPortNum(initialPortNum),
+    fLastStreamToken(NULL), fSDPLines(NULL) {
   fDestinationsHashTable = HashTable::create(ONE_WORD_HASH_KEYS);
   gethostname(fCNAME, sizeof fCNAME);
   fCNAME[sizeof fCNAME-1] = '\0'; // just in case
@@ -170,45 +171,54 @@ void OnDemandServerMediaSubsession
     FramedSource* mediaSource
       = createNewStreamSource(clientSessionId, streamBitrate);
 
-    // Create a new 'groupsock' for the RTP destination, and make sure that
-    // its port number is even:
-    struct in_addr dummyAddr; dummyAddr.s_addr = 0;
-    Groupsock* rtpGroupsock;
-    Groupsock* rtpGroupsock_old = NULL;
-    portNumBits serverRTPPortNum = 0;
-    while (1) {
-      rtpGroupsock = new Groupsock(envir(), dummyAddr, 0, 255);
-      if (!getSourcePort(envir(), rtpGroupsock->socketNum(), serverRTPPort)) break;
-      serverRTPPortNum = ntohs(serverRTPPort.num());
-
-      // If the port number's even, we're done:
-      if ((serverRTPPortNum&1) == 0) break;
-
-      // Try again (while keeping the old 'groupsock' around, so that we get
-      // a different socket number next time):
-      delete rtpGroupsock_old;
-      rtpGroupsock_old = rtpGroupsock;
-    }
-    delete rtpGroupsock_old;
-
-    // Create a sink for this stream:
+    // Create 'groupsock' and 'sink' objects for the destination,
+    // using previously unused server port numbers:
     RTPSink* rtpSink;
     BasicUDPSink* udpSink;
+    Groupsock* rtpGroupsock;
     Groupsock* rtcpGroupsock;
+    portNumBits serverPortNum;
     if (clientRTCPPort.num() == 0) {
-      // We're streaming raw UDP (not RTP):
+      // We're streaming raw UDP (not RTP). Create a single groupsock:
+      NoReuse dummy; // ensures that we skip over ports that are already in use
+      for (serverPortNum = fInitialPortNum; ; ++serverPortNum) {
+	struct in_addr dummyAddr; dummyAddr.s_addr = 0;
+
+	serverRTPPort = serverPortNum;
+	rtpGroupsock = new Groupsock(envir(), dummyAddr, serverRTPPort, 255);
+	if (rtpGroupsock->socketNum() >= 0) break; // success
+      }
+
+      rtcpGroupsock = NULL;
       rtpSink = NULL;
       udpSink = BasicUDPSink::createNew(envir(), rtpGroupsock);
-      rtcpGroupsock = NULL;
     } else {
-      // Normal case: We're streaming RTP (over UDP or TCP):
+      // Normal case: We're streaming RTP (over UDP or TCP).  Create a pair of
+      // groupsocks (RTP and RTCP), with adjacent port numbers (RTP port number even):
+      NoReuse dummy; // ensures that we skip over ports that are already in use
+      for (portNumBits serverPortNum = fInitialPortNum; ; serverPortNum += 2) {
+	struct in_addr dummyAddr; dummyAddr.s_addr = 0;
+
+	serverRTPPort = serverPortNum;
+	rtpGroupsock = new Groupsock(envir(), dummyAddr, serverRTPPort, 255);
+	if (rtpGroupsock->socketNum() < 0) {
+	  delete rtpGroupsock;
+	  continue; // try again
+	}
+
+	serverRTCPPort = serverPortNum+1;
+	rtcpGroupsock = new Groupsock(envir(), dummyAddr, serverRTCPPort, 255);
+	if (rtcpGroupsock->socketNum() < 0) {
+	  delete rtcpGroupsock;
+	  continue; // try again
+	}
+
+	break; // success
+      }
+      
       unsigned char rtpPayloadType = 96 + trackNumber()-1; // if dynamic
       rtpSink = createNewRTPSink(rtpGroupsock, rtpPayloadType, mediaSource);
       udpSink = NULL;
-    
-      // Create a 'groupsock' for a 'RTCP instance' to be created later:
-      rtcpGroupsock = new Groupsock(envir(), dummyAddr, serverRTPPortNum+1, 255);
-      getSourcePort(envir(), rtcpGroupsock->socketNum(), serverRTCPPort);
     }
     
     // Turn off the destinations for each groupsock.  They'll get set later
@@ -300,8 +310,8 @@ void OnDemandServerMediaSubsession::deleteStream(unsigned clientSessionId,
   if (streamState != NULL) streamState->endPlaying(destinations);
 
   // Delete the "StreamState" structure if it's no longer being used:
-  if (streamState != NULL && streamState->referenceCount() > 0) {
-    --streamState->referenceCount();
+  if (streamState != NULL && streamState->referenceCount() >= 0) {
+    if (streamState->referenceCount() > 0) --streamState->referenceCount();
     if (streamState->referenceCount() == 0) {
       delete streamState;
       if (fLastStreamToken == streamToken) fLastStreamToken = NULL; 
@@ -427,9 +437,6 @@ void StreamState
 				fRTPSink, NULL /* we're a server */);
         // Note: This starts RTCP running automatically
   }
-  if (fRTCPInstance != NULL)
-    fRTCPInstance->setSpecificRRHandler(dests->addr.s_addr, dests->rtcpPort,
-					rtcpRRHandler, rtcpRRHandlerClientData);
 
   if (dests->isTCP) {
     // Change RTP and RTCP to use the TCP socket instead of UDP:
@@ -438,12 +445,18 @@ void StreamState
     }
     if (fRTCPInstance != NULL) {
       fRTCPInstance->addStreamSocket(dests->tcpSocketNum, dests->rtcpChannelId);
+      fRTCPInstance->setSpecificRRHandler(dests->tcpSocketNum, dests->rtcpChannelId,
+					  rtcpRRHandler, rtcpRRHandlerClientData);
     }
   } else {
     // Tell the RTP and RTCP 'groupsocks' about this destination
     // (in case they don't already have it):
     if (fRTPgs != NULL) fRTPgs->addDestination(dests->addr, dests->rtpPort);
     if (fRTCPgs != NULL) fRTCPgs->addDestination(dests->addr, dests->rtcpPort);
+    if (fRTCPInstance != NULL) {
+      fRTCPInstance->setSpecificRRHandler(dests->addr.s_addr, dests->rtcpPort,
+					  rtcpRRHandler, rtcpRRHandlerClientData);
+    }
   }
 }
 
@@ -460,6 +473,8 @@ void StreamState::endPlaying(Destinations* dests) {
     }
     if (fRTCPInstance != NULL) {
       fRTCPInstance->removeStreamSocket(dests->tcpSocketNum, dests->rtcpChannelId);
+      fRTCPInstance->setSpecificRRHandler(dests->tcpSocketNum, dests->rtcpChannelId,
+					  NULL, NULL);
     }
   } else {
     // Tell the RTP and RTCP 'groupsocks' to stop using these destinations:

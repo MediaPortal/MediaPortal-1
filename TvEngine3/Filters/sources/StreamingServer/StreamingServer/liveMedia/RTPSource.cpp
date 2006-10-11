@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2005 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2006 Live Networks, Inc.  All rights reserved.
 // RTP Sources
 // Implementation
 
@@ -247,19 +247,21 @@ void RTPReceptionStats
     ++fTotBytesReceived_hi;
   }
 
-  // Check whether the sequence number has wrapped around:
-  unsigned seqNumCycle = (fHighestExtSeqNumReceived&0xFFFF0000);
+  // Check whether the new sequence number is the highest yet seen:
   unsigned oldSeqNum = (fHighestExtSeqNumReceived&0xFFFF);
-  unsigned seqNumDifference = (unsigned)((int)seqNum-(int)oldSeqNum);
-  if (seqNumDifference >= 0x8000
-      && seqNumLT((u_int16_t)oldSeqNum, seqNum)) {
-    // sequence number wrapped around => start a new cycle:
-    seqNumCycle += 0x10000;
-  }
+  if (seqNumLT((u_int16_t)oldSeqNum, seqNum)) {
+    // This packet was not an old packet received out of order, so check it:
+    unsigned seqNumCycle = (fHighestExtSeqNumReceived&0xFFFF0000);
+    unsigned seqNumDifference = (unsigned)((int)seqNum-(int)oldSeqNum);
+    if (seqNumDifference >= 0x8000) {
+      // The sequence number wrapped around, so start a new cycle:
+      seqNumCycle += 0x10000;
+    }
 
-  unsigned newSeqNum = seqNumCycle|seqNum;
-  if (newSeqNum > fHighestExtSeqNumReceived) {
-    fHighestExtSeqNumReceived = newSeqNum;
+    unsigned newSeqNum = seqNumCycle|seqNum;
+    if (newSeqNum > fHighestExtSeqNumReceived) {
+      fHighestExtSeqNumReceived = newSeqNum;
+    }
   }
 
   // Record the inter-packet delay

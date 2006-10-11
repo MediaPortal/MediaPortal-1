@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2005 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2006 Live Networks, Inc.  All rights reserved.
 // A 'ServerMediaSubsession' object that creates new, unicast, "RTPSink"s
 // on demand, from an WAV audio file.
 // Implementation
@@ -83,6 +83,8 @@ FramedSource* WAVAudioFileServerMediaSubsession
     if (wavSource == NULL) break;
 
     // Get attributes of the audio source:
+
+    fAudioFormat = wavSource->getAudioFormat();
     fBitsPerSample = wavSource->bitsPerSample();
     if (fBitsPerSample != 8 && fBitsPerSample !=  16) {
       envir() << "The input file contains " << fBitsPerSample
@@ -131,29 +133,45 @@ RTPSink* WAVAudioFileServerMediaSubsession
   do {
     char* mimeType;
     unsigned char payloadFormatCode;
-    if (fBitsPerSample == 16) {
-      if (fConvertToULaw) {
-	mimeType = "PCMU";
-	if (fSamplingFrequency == 8000 && fNumChannels == 1) {
-	  payloadFormatCode = 0; // a static RTP payload type
+    if (fAudioFormat == WA_PCM) { 
+      if (fBitsPerSample == 16) {
+	if (fConvertToULaw) {
+	  mimeType = "PCMU";
+	  if (fSamplingFrequency == 8000 && fNumChannels == 1) {
+	    payloadFormatCode = 0; // a static RTP payload type
+	  } else {
+	    payloadFormatCode = rtpPayloadTypeIfDynamic;
+	  }
 	} else {
-	  payloadFormatCode = rtpPayloadTypeIfDynamic;
+	  mimeType = "L16";
+	  if (fSamplingFrequency == 44100 && fNumChannels == 2) {
+	    payloadFormatCode = 10; // a static RTP payload type
+	  } else if (fSamplingFrequency == 44100 && fNumChannels == 1) {
+	    payloadFormatCode = 11; // a static RTP payload type
+	  } else {
+	    payloadFormatCode = rtpPayloadTypeIfDynamic;
+	  }
 	}
-      } else {
-	mimeType = "L16";
-	if (fSamplingFrequency == 44100 && fNumChannels == 2) {
-	  payloadFormatCode = 10; // a static RTP payload type
-	} else if (fSamplingFrequency == 44100 && fNumChannels == 1) {
-	  payloadFormatCode = 11; // a static RTP payload type
-	} else {
-	  payloadFormatCode = rtpPayloadTypeIfDynamic;
-	}
+      } else { // fBitsPerSample == 8
+	mimeType = "L8";
+	payloadFormatCode = rtpPayloadTypeIfDynamic;
       }
-    } else { // fBitsPerSample == 8
-      mimeType = "L8";
-      payloadFormatCode = rtpPayloadTypeIfDynamic;
+    } else if (fAudioFormat == WA_PCMU) {
+      mimeType = "PCMU";
+      if (fSamplingFrequency == 8000 && fNumChannels == 1) {
+	payloadFormatCode = 0; // a static RTP payload type
+      } else {
+	payloadFormatCode = rtpPayloadTypeIfDynamic;
+      }
+    } else {
+      mimeType = "PCMA";
+      if (fSamplingFrequency == 8000 && fNumChannels == 1) {
+	payloadFormatCode = 8; // a static RTP payload type
+      } else {
+	payloadFormatCode = rtpPayloadTypeIfDynamic;
+      }
     }
-
+    
     return SimpleRTPSink::createNew(envir(), rtpGroupsock,
 				    payloadFormatCode, fSamplingFrequency,
 				    "audio", mimeType, fNumChannels);

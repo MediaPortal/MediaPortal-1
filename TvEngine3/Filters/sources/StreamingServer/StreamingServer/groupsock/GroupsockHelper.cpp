@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 **********/
 // "mTunnel" multicast access service
-// Copyright (c) 1996-2005 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2006 Live Networks, Inc.  All rights reserved.
 // Helper routines to implement 'group sockets'
 // Implementation
 
@@ -39,6 +39,16 @@ static void socketErr(UsageEnvironment& env, char* errorMsg) {
 	env.setResultErrMsg(errorMsg);
 }
 
+static int reuseFlag = 1;
+
+NoReuse::NoReuse() {
+  reuseFlag = 0;
+}
+
+NoReuse::~NoReuse() {
+  reuseFlag = 1;
+}
+
 int setupDatagramSocket(UsageEnvironment& env, Port port,
 #ifdef IP_MULTICAST_LOOP
 			Boolean setLoopback
@@ -57,7 +67,6 @@ int setupDatagramSocket(UsageEnvironment& env, Port port,
     return newSocket;
   }
   
-  const int reuseFlag = 1;
   if (setsockopt(newSocket, SOL_SOCKET, SO_REUSEADDR,
 		 (const char*)&reuseFlag, sizeof reuseFlag) < 0) {
     socketErr(env, "setsockopt(SO_REUSEADDR) error: ");
@@ -65,9 +74,6 @@ int setupDatagramSocket(UsageEnvironment& env, Port port,
     return -1;
   }
   
-#if defined(__WIN32__) || defined(_WIN32)
-  // Windoze doesn't handle SO_REUSEPORT or IP_MULTICAST_LOOP
-#else
 #ifdef SO_REUSEPORT
   if (setsockopt(newSocket, SOL_SOCKET, SO_REUSEPORT,
 		 (const char*)&reuseFlag, sizeof reuseFlag) < 0) {
@@ -85,7 +91,6 @@ int setupDatagramSocket(UsageEnvironment& env, Port port,
     closeSocket(newSocket);
     return -1;
   }
-#endif
 #endif
   
   // Note: Windoze requires binding, even if the port number is 0
@@ -136,7 +141,6 @@ int setupStreamSocket(UsageEnvironment& env,
     return newSocket;
   }
   
-  const int reuseFlag = 1;
   if (setsockopt(newSocket, SOL_SOCKET, SO_REUSEADDR,
 		 (const char*)&reuseFlag, sizeof reuseFlag) < 0) {
     socketErr(env, "setsockopt(SO_REUSEADDR) error: ");
@@ -148,9 +152,6 @@ int setupStreamSocket(UsageEnvironment& env,
   // normally don't set them.  However, if you really want to do this
   // #define REUSE_FOR_TCP
 #ifdef REUSE_FOR_TCP
-#if defined(__WIN32__) || defined(_WIN32)
-    // Windoze doesn't handle SO_REUSEPORT
-#else
 #ifdef SO_REUSEPORT
   if (setsockopt(newSocket, SOL_SOCKET, SO_REUSEPORT,
 		 (const char*)&reuseFlag, sizeof reuseFlag) < 0) {
@@ -158,7 +159,6 @@ int setupStreamSocket(UsageEnvironment& env,
     closeSocket(newSocket);
     return -1;
   }
-#endif
 #endif
 #endif
 

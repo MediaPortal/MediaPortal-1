@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2005 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2006 Live Networks, Inc.  All rights reserved.
 // An abstraction of a network interface used for RTP (or RTCP).
 // (This allows the RTP-over-TCP hack (RFC 2326, section 10.12) to
 // be implemented transparently.)
@@ -73,6 +73,10 @@ public:
     fAuxReadHandlerFunc = handlerFunc;
     fAuxReadHandlerClientData = handlerClientData;
   }
+
+  // A hack for supporting handlers for RTCP packets arriving interleaved over TCP:
+  int nextTCPReadStreamSocketNum() const { return fNextTCPReadStreamSocketNum; }
+  unsigned char nextTCPReadStreamChannelId() const { return fNextTCPReadStreamChannelId; }
 
 private:
   friend class SocketDescriptor;

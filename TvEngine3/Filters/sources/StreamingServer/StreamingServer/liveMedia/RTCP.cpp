@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2005 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2006 Live Networks, Inc.  All rights reserved.
 // RTCP
 // Implementation
 
@@ -136,6 +136,11 @@ RTCPInstance::RTCPInstance(UsageEnvironment& env, Groupsock* RTCPgs,
 #ifdef DEBUG
   fprintf(stderr, "RTCPInstance[%p]::RTCPInstance()\n", this);
 #endif
+  if (fTotSessionBW == 0) { // not allowed!
+    env << "RTCPInstance::RTCPInstance error: totSessionBW parameter should not be zero!\n";
+    fTotSessionBW = 1;
+  }
+
   if (isSSMSource) RTCPgs->multicastSendOnly(); // don't receive multicast
     
   double timeNow = dTimeNow();
@@ -317,6 +322,8 @@ void RTCPInstance::incomingReportHandler1() {
   int typeOfPacket = PACKET_UNKNOWN_TYPE;
 
   do {
+    int tcpReadStreamSocketNum = fRTCPInterface.nextTCPReadStreamSocketNum();
+    unsigned char tcpReadStreamChannelId = fRTCPInterface.nextTCPReadStreamChannelId();
     if (!fRTCPInterface.handleRead(pkt, maxPacketSize,
 				   packetSize, fromAddress)) {
       break;
@@ -449,8 +456,19 @@ void RTCPInstance::incomingReportHandler1() {
 
 	    // Specific RR handler:
 	    if (fSpecificRRHandlerTable != NULL) {
-	      netAddressBits fromAddr = fromAddress.sin_addr.s_addr;
-	      Port fromPort(ntohs(fromAddress.sin_port)); 
+	      netAddressBits fromAddr;
+	      portNumBits fromPortNum;
+	      if (tcpReadStreamSocketNum < 0) {
+		// Normal case: We read the RTCP packet over UDP
+		fromAddr = fromAddress.sin_addr.s_addr;
+		fromPortNum = ntohs(fromAddress.sin_port);
+	      } else {
+		// Special case: We read the RTCP packet over TCP (interleaved)
+		// Hack: Use the TCP socket and channel id to look up the handler
+		fromAddr = tcpReadStreamSocketNum;
+		fromPortNum = tcpReadStreamChannelId;
+	      }
+	      Port fromPort(fromPortNum); 
 	      RRHandlerRecord* rrHandler
 		= (RRHandlerRecord*)(fSpecificRRHandlerTable->Lookup(fromAddr, (~0), fromPort));
 	      if (rrHandler != NULL) {
@@ -565,6 +583,9 @@ void RTCPInstance::onReceive(int typeOfPacket, int totPacketSize,
 }
 
 void RTCPInstance::sendReport() {
+  /// Note: Don't send a SR until at least one RTP packet has been sent. (David Bertrand, 2006.07.18)
+  if (fSink != NULL && !fSink->haveComputedFirstTimestamp()) return;
+
 #ifdef DEBUG
   fprintf(stderr, "sending REPORT\n");
 #endif

@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2005 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2006 Live Networks, Inc.  All rights reserved.
 // A RTSP server
 // C++ header
 
@@ -111,6 +111,7 @@ private:
   private:
     UsageEnvironment& envir() { return fOurServer.envir(); }
     void reclaimStreamStates();
+    void resetRequestBuffer();
     static void incomingRequestHandler(void*, int /*mask*/);
     void incomingRequestHandler1();
     void handleCmd_bad(char const* cseq);
@@ -132,21 +133,10 @@ private:
 			char const* cseq, char const* fullRequestStr);
     void handleCmd_PAUSE(ServerMediaSubsession* subsession,
 			 char const* cseq);
-		void handleCmd_SET_PARAMETER(ServerMediaSubsession* subsession,
-				 char const* cseq, char const* fullRequestStr);
     void handleCmd_GET_PARAMETER(ServerMediaSubsession* subsession,
 				 char const* cseq, char const* fullRequestStr);
     Boolean authenticationOK(char const* cmdName, char const* cseq,
 			     char const* fullRequestStr);
-    Boolean parseRequestString(char const *reqStr, unsigned reqStrSize,
-			       char *resultCmdName,
-			       unsigned resultCmdNameMaxSize, 
-			       char* resultURLPreSuffix,
-			       unsigned resultURLPreSuffixMaxSize, 
-			       char* resultURLSuffix,
-			       unsigned resultURLSuffixMaxSize, 
-			       char* resultCSeq,
-			       unsigned resultCSeqMaxSize); 
     void noteLiveness();
     Boolean isMulticast() const { return fIsMulticast; }
     static void noteClientLiveness(RTSPClientSession* clientSession);
@@ -159,7 +149,9 @@ private:
     int fClientSocket;
     struct sockaddr_in fClientAddr;
     TaskToken fLivenessCheckTask;
-    unsigned char fBuffer[RTSP_BUFFER_SIZE];
+    unsigned char fRequestBuffer[RTSP_BUFFER_SIZE];
+    unsigned fRequestBytesAlreadySeen, fRequestBufferBytesLeft;
+    unsigned char* fLastCRLF;
     unsigned char fResponseBuffer[RTSP_BUFFER_SIZE];
     Boolean fIsMulticast, fSessionIsActive, fStreamAfterSETUP;
     Authenticator fCurrentAuthenticator; // used if access control is needed

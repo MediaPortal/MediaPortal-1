@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2005 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2006 Live Networks, Inc.  All rights reserved.
 // Framed Sources
 // Implementation
 
@@ -144,7 +144,3 @@ unsigned FramedSource::maxFrameSize() const {
   // By default, this source has no maximum frame size.
   return 0;
 } 
-
-Boolean FramedSource::isPrioritizedRTPStreamSelector() const {
-  return False; // default implementation
-}

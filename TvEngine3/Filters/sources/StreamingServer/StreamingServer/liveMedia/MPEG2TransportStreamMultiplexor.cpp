@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2005 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2006 Live Networks, Inc.  All rights reserved.
 // A class for generating MPEG-2 Transport Stream from one or more input
 // Elementary Stream data sources
 // Implementation
@@ -26,7 +26,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #define PAT_FREQUENCY 100 // # of packets between Program Association Tables
 #define PMT_FREQUENCY 500 // # of packets between Program Map Tables
 
-#define PID_TABLE_SIZE 256
+#define PID_TABLE_SIZE 0x200
 
 MPEG2TransportStreamMultiplexor
 ::MPEG2TransportStreamMultiplexor(UsageEnvironment& env)
@@ -90,7 +90,7 @@ void MPEG2TransportStreamMultiplexor
   fInputBufferSize = bufferSize;
   fInputBufferBytesUsed = 0;
 
-  u_int8_t stream_id = fInputBuffer[3];
+  int stream_id = fInputBuffer[3];
   // Use "stream_id" directly as our PID.
   // Also, figure out the Program Map 'stream type' from this.
   if (stream_id == 0xBE) { // padding_stream; ignore
@@ -99,7 +99,7 @@ void MPEG2TransportStreamMultiplexor
     setProgramStreamMap(fInputBufferSize);
     fInputBufferSize = 0; // then, ignore the buffer
   } else {
-    fCurrentPID = stream_id;
+    fCurrentPID = stream_id+0x100;
     
     // Set the stream's type:
     u_int8_t& streamType = fPIDState[fCurrentPID].streamType; // alias
@@ -131,7 +131,7 @@ void MPEG2TransportStreamMultiplexor
 }
 
 void MPEG2TransportStreamMultiplexor
-::deliverDataToClient(u_int8_t pid, unsigned char* buffer, unsigned bufferSize,
+::deliverDataToClient(int pid, unsigned char* buffer, unsigned bufferSize,
 		      unsigned& startPositionInBuffer) {
   // Construct a new Transport packet, and deliver it to the client:
   if (fMaxSize < TRANSPORT_PACKET_SIZE) {
@@ -177,11 +177,12 @@ void MPEG2TransportStreamMultiplexor
     
     // Fill in the header of the Transport Stream packet:
     unsigned char* header = fTo;
+    int pidHi=(pid>>8)&0xff;
     *header++ = 0x47; // sync_byte
-    *header++ = (startPositionInBuffer == 0) ? 0x40 : 0x00;
+    *header++ = (startPositionInBuffer == 0) ? (0x40+pidHi) : (0x00+pidHi);
       // transport_error_indicator, payload_unit_start_indicator, transport_priority,
       // first 5 bits of PID
-    *header++ = pid;
+    *header++ = (pid&0xff);
       // last 8 bits of PID
     unsigned& continuity_counter = fPIDState[pid].counter; // alias
     *header++ = adaptation_field_control|(continuity_counter&0x0F);
@@ -221,7 +222,7 @@ static u_int32_t calculateCRC(u_int8_t* data, unsigned dataLength); // forward
 
 #define PAT_PID 0
 #define OUR_PROGRAM_NUMBER 1
-#define OUR_PROGRAM_MAP_PID 0x10
+#define OUR_PROGRAM_MAP_PID 0x20
 
 void MPEG2TransportStreamMultiplexor::deliverPATPacket() {
   // First, create a new buffer for the PAT packet:
@@ -275,16 +276,16 @@ void MPEG2TransportStreamMultiplexor::deliverPMTPacket(Boolean hasChanged) {
   *pmt++ = 0xC1|((fProgramMapVersion&0x1F)<<1); // reserved; version_number; current_next_indicator
   *pmt++ = 0; // section_number
   *pmt++ = 0; // last_section_number
-  *pmt++ = 0xE0; // reserved; PCR_PID (high)
-  *pmt++ = fPCR_PID; // PCR_PID (low)
+  *pmt++ = 0xe0+((fPCR_PID>>8)&0xff); // reserved; PCR_PID (high)
+  *pmt++ = (fPCR_PID&0xff); // PCR_PID (low)
   *pmt++ = 0xF0; // reserved; program_info_length (high)
   *pmt++ = 0; // program_info_length (low)
   for (int pid = 0; pid < PID_TABLE_SIZE; ++pid) {
     if (fPIDState[pid].streamType != 0) { 
       // This PID gets recorded in the table
       *pmt++ = fPIDState[pid].streamType;
-      *pmt++ = 0xE0; // reserved; elementary_pid (high)
-      *pmt++ = pid; // elementary_pid (low)
+      *pmt++ = 0xE0+((pid>>8)&0xff); // reserved; elementary_pid (high)
+      *pmt++ = (pid&0xff); // elementary_pid (low)
       *pmt++ = 0xF0; // reserved; ES_info_length (high)
       *pmt++ = 0; // ES_info_length (low)
     }
@@ -333,7 +334,7 @@ void MPEG2TransportStreamMultiplexor::setProgramStreamMap(unsigned frameSize) {
 
   while (offset + 4 <= frameSize) {
     u_int8_t stream_type = fInputBuffer[offset];
-    u_int8_t elementary_stream_id = fInputBuffer[offset+1];
+    u_int8_t elementary_stream_id = fInputBuffer[offset+1]+0x100;
 
     fPIDState[elementary_stream_id].streamType = stream_type;
 

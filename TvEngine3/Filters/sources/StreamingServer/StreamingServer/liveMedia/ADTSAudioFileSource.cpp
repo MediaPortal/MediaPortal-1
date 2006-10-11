@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2005 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2006 Live Networks, Inc.  All rights reserved.
 // A source object for AAC audio files in ADTS format
 // Implementation
 
@@ -108,6 +108,8 @@ ADTSAudioFileSource::~ADTSAudioFileSource() {
   CloseInputFile(fFid);
 }
 
+// Note: We should change the following to use asynchronous file reading, #####
+// as we now do with ByteStreamFileSource. #####
 void ADTSAudioFileSource::doGetNextFrame() {
   // Begin by reading the 7-byte fixed_variable headers:
   unsigned char headers[7];

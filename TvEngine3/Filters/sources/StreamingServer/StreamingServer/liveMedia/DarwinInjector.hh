@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2005 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2006 Live Networks, Inc.  All rights reserved.
 // An object that redirects one or more RTP/RTCP streams - forming a single
 // multimedia session - into a 'Darwin Streaming Server' (for subsequent
 // reflection to potentially arbitrarily many remote RTSP clients).
@@ -57,7 +57,7 @@ class SubstreamDescriptor; // forward
 class DarwinInjector: public Medium {
 public:
   static DarwinInjector* createNew(UsageEnvironment& env,
-				   char const* applicationName = NULL,
+				   char const* applicationName = "DarwinInjector",
 				   int verbosityLevel = 0);
 
   static Boolean lookupByName(UsageEnvironment& env, char const* name,

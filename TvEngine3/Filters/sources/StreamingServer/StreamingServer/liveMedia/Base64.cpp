@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2005 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2006 Live Networks, Inc.  All rights reserved.
 // Base64 encoding and decoding
 // implementation
 
@@ -76,10 +76,9 @@ unsigned char* base64Decode(char* in, unsigned& resultSize,
 static const char base64Char[] =
 "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-char* base64Encode(char const* orig) {
+char* base64Encode(char const* orig, unsigned origLength) {
   if (orig == NULL) return NULL;
 
-  unsigned const origLength = strlen(orig);
   unsigned const numOrig24BitValues = origLength/3;
   Boolean havePadding = origLength > numOrig24BitValues*3;
   Boolean havePadding2 = origLength == numOrig24BitValues*3 + 2;

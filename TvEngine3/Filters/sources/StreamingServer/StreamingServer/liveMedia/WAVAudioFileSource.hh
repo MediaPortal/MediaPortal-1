@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2005 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2006 Live Networks, Inc.  All rights reserved.
 // A WAV audio file source
 // NOTE: Samples are returned in little-endian order (the same order in which
 // they were stored in the file).
@@ -27,14 +27,25 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "AudioInputDevice.hh"
 #endif
 
+typedef enum {
+  WA_PCM = 1,
+  WA_PCMA = 6,
+  WA_PCMU = 7,
+  WA_UNKNOWN
+}WAV_AUDIO_FORMAT;
+
+
 class WAVAudioFileSource: public AudioInputDevice {
 public:
+
   static WAVAudioFileSource* createNew(UsageEnvironment& env,
 					char const* fileName);
 
   unsigned numPCMBytes() const;
   void setScaleFactor(int scale);
   void seekToPCMByte(unsigned byteNumber);
+
+  unsigned char getAudioFormat();
 
 protected:
   WAVAudioFileSource(UsageEnvironment& env, FILE* fid);
@@ -56,6 +67,8 @@ private:
   unsigned fWAVHeaderSize;
   unsigned fFileSize;
   int fScaleFactor;
+
+  unsigned char fAudioFormat;
 };
 
 #endif

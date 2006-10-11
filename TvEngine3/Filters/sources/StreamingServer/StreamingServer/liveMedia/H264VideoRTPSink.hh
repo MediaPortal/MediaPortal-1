@@ -24,6 +24,11 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #ifndef _VIDEO_RTP_SINK_HH
 #include "VideoRTPSink.hh"
 #endif
+#ifndef _FRAMED_FILTER_HH
+#include "FramedFilter.hh"
+#endif
+
+class H264FUAFragmenter;
 
 class H264VideoRTPSink: public VideoRTPSink {
 public:
@@ -51,11 +56,58 @@ private: // redefined virtual functions:
                                       unsigned numBytesInFrame,
                                       struct timeval frameTimestamp,
                                       unsigned numRemainingBytes);
+  virtual Boolean frameCanAppearAfterPacketStart(unsigned char const* frameStart,
+						 unsigned numBytesInFrame) const;
   virtual char const* auxSDPLine();
 
+protected:
+  H264FUAFragmenter* fOurFragmenter;
+
 private:
-  class H264FUAFragmenter* fOurFragmenter;
   char* fFmtpSDPLine;
 };
+
+
+////////// H264FUAFragmenter definition //////////
+
+// Because of the ideosyncracies of the H.264 RTP payload format, we implement
+// "H264VideoRTPSink" using a separate "H264FUAFragmenter" class that delivers,
+// to the "H264VideoRTPSink", only fragments that will fit within an outgoing
+// RTP packet.  I.e., we implement fragmentation in this separate "H264FUAFragmenter"
+// class, rather than in "H264VideoRTPSink".
+// (Note: This class should be used only by "H264VideoRTPSink", or a subclass.)
+
+class H264FUAFragmenter: public FramedFilter {
+public:
+  H264FUAFragmenter(UsageEnvironment& env, FramedSource* inputSource,
+		    unsigned inputBufferMax, unsigned maxOutputPacketSize);
+
+  Boolean lastFragmentCompletedNALUnit() const { return fLastFragmentCompletedNALUnit; }
+
+private: // redefined virtual functions:
+  virtual void doGetNextFrame();
+
+private:
+  virtual ~H264FUAFragmenter();
+
+  static void afterGettingFrame(void* clientData, unsigned frameSize,
+				unsigned numTruncatedBytes,
+                                struct timeval presentationTime,
+                                unsigned durationInMicroseconds);
+  void afterGettingFrame1(unsigned frameSize,
+                          unsigned numTruncatedBytes,
+                          struct timeval presentationTime,
+                          unsigned durationInMicroseconds);
+
+private:
+  unsigned fInputBufferSize;
+  unsigned fMaxOutputPacketSize;
+  unsigned char* fInputBuffer;
+  unsigned fNumValidDataBytes;
+  unsigned fCurDataOffset;
+  unsigned fSaveNumTruncatedBytes;
+  Boolean fLastFragmentCompletedNALUnit;
+};
+
 
 #endif

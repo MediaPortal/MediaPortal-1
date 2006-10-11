@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2005 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2006 Live Networks, Inc.  All rights reserved.
 // An object that redirects one or more RTP/RTCP streams - forming a single
 // multimedia session - into a 'Darwin Streaming Server' (for subsequent
 // reflection to potentially arbitrarily many remote RTSP clients).
@@ -70,13 +70,14 @@ Boolean DarwinInjector::lookupByName(UsageEnvironment& env, char const* name,
 DarwinInjector::DarwinInjector(UsageEnvironment& env,
 			       char const* applicationName, int verbosityLevel)
   : Medium(env),
-    fApplicationName(applicationName), fVerbosityLevel(verbosityLevel),
+    fApplicationName(strDup(applicationName)), fVerbosityLevel(verbosityLevel),
     fRTSPClient(NULL), fSubstreamSDPSizes(0),
     fHeadSubstream(NULL), fTailSubstream(NULL) {
 } 
 
 DarwinInjector::~DarwinInjector() {
   delete fHeadSubstream;
+  delete[] (char*)fApplicationName;
   Medium::close(fRTSPClient);
 }
 
@@ -134,7 +135,7 @@ Boolean DarwinInjector
       "t=0 0\r\n"
       "a=x-qt-text-nam:%s\r\n"
       "a=x-qt-text-inf:%s\r\n"
-      "a=x-qt-text-cmt:%s\r\n"
+      "a=x-qt-text-cmt:source application:%s\r\n"
       "a=x-qt-text-aut:%s\r\n"
       "a=x-qt-text-cpy:%s\r\n";
       // plus, %s for each substream SDP

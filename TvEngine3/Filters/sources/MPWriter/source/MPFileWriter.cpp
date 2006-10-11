@@ -26,6 +26,7 @@
 #include <streams.h>
 #include <initguid.h>
 #include "MPFileWriter.h"
+#include "liveMedia.hh"
 
 // Setup data
 const AMOVIESETUP_MEDIATYPE sudPinTypes =
@@ -352,7 +353,7 @@ CDump::CDump(LPUNKNOWN pUnk, HRESULT *phr) :
 
 		DeleteFile("MPFileWriter.log");
     m_pRecordFile = NULL;
-		m_pTimeShiftFile=NULL;
+    
 
     m_pFilter = new CDumpFilter(this, GetOwner(), &m_Lock, phr);
     if (m_pFilter == NULL) 
@@ -375,6 +376,7 @@ CDump::CDump(LPUNKNOWN pUnk, HRESULT *phr) :
 
 	strcpy(m_strRecordingFileName,"");
 	strcpy(m_strTimeShiftFileName,"");
+  m_bIsTimeShifting=false;
 }
 
 
@@ -393,13 +395,7 @@ CDump::~CDump()
 			m_pRecordFile->CloseFile();
 			delete m_pRecordFile;
 			m_pRecordFile=NULL;
-		}
-		if (m_pTimeShiftFile!=NULL)
-		{
-			m_pTimeShiftFile->CloseFile();
-			delete m_pTimeShiftFile;
-			m_pTimeShiftFile=NULL;
-		}
+		} 
 }
 
 
@@ -501,29 +497,22 @@ STDMETHODIMP CDump::StartTimeShifting( )
 	
 	::DeleteFile((LPCTSTR) m_strRecordingFileName);
 	LogDebug("Start TimeShifting:'%s'",m_strTimeShiftFileName);
+  
+  m_tsWriter.Initialize(m_strTimeShiftFileName);
+  m_bIsTimeShifting=true;
 	WCHAR wstrFileName[2048];
 	MultiByteToWideChar(CP_ACP,0,m_strTimeShiftFileName,-1,wstrFileName,1+strlen(m_strTimeShiftFileName));
-	m_pTimeShiftFile = new MultiFileWriter();
-	if (FAILED(m_pTimeShiftFile->OpenFile(wstrFileName))) 
-	{
-		m_pTimeShiftFile->CloseFile();
-		delete m_pTimeShiftFile;
-		m_pTimeShiftFile=NULL;
-		return E_FAIL;
-	}
 	return S_OK;
 
 }	
 STDMETHODIMP CDump::StopTimeShifting( )
 {
 	CAutoLock lock(&m_Lock);
-	if (m_pTimeShiftFile==NULL) return S_OK;
 
 	LogDebug("Stop TimeShifting:'%s'",m_strTimeShiftFileName);
-	m_pTimeShiftFile->CloseFile();
-	delete m_pTimeShiftFile;
-	m_pTimeShiftFile=NULL;
+	m_tsWriter.Close();
 	strcpy(m_strTimeShiftFileName,"");
+  m_bIsTimeShifting=false;
 	return S_OK;
 }
 
@@ -591,10 +580,10 @@ HRESULT CDump::Write(PBYTE pbData, LONG lDataLength)
 	{
 		m_pRecordFile->Write(pbData,lDataLength);
 	}
-	if (m_pTimeShiftFile!=NULL)
-	{
-		m_pTimeShiftFile->Write(pbData,lDataLength);
-	}
+  if (m_bIsTimeShifting)
+  {
+    m_tsWriter.Write(pbData,lDataLength);
+  }
 	return S_OK;
 }
 

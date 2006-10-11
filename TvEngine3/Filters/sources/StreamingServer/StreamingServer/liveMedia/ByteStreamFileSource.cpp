@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2005 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2006 Live Networks, Inc.  All rights reserved.
 // A file source that is a plain byte stream (rather than frames)
 // Implementation
 
@@ -74,11 +74,17 @@ ByteStreamFileSource::ByteStreamFileSource(UsageEnvironment& env, FILE* fid,
 					   unsigned playTimePerFrame)
   : FramedFileSource(env, fid), fPreferredFrameSize(preferredFrameSize),
     fPlayTimePerFrame(playTimePerFrame), fLastPlayTime(0), fFileSize(0),
-    fDeleteFidOnClose(deleteFidOnClose) {
+    fDeleteFidOnClose(deleteFidOnClose), fHaveStartedReading(False) {
 }
 
 ByteStreamFileSource::~ByteStreamFileSource() {
-  if (fDeleteFidOnClose && fFid != NULL) fclose(fFid);
+  if (fFid == NULL) return;
+
+#ifndef READ_FROM_FILES_SYNCHRONOUSLY
+  envir().taskScheduler().turnOffBackgroundReadHandling(fileno(fFid));
+#endif
+
+  if (fDeleteFidOnClose) fclose(fFid);
 }
 
 void ByteStreamFileSource::doGetNextFrame() {
@@ -87,6 +93,31 @@ void ByteStreamFileSource::doGetNextFrame() {
     return;
   }
 
+#ifdef READ_FROM_FILES_SYNCHRONOUSLY
+  doReadFromFile();
+#else
+  if (!fHaveStartedReading) {
+    // Await readable data from the file:
+    envir().taskScheduler().turnOnBackgroundReadHandling(fileno(fFid),
+	       (TaskScheduler::BackgroundHandlerProc*)&fileReadableHandler, this);
+    fHaveStartedReading = True;
+  }
+#endif
+}
+
+void ByteStreamFileSource::doStopGettingFrames() {
+#ifndef READ_FROM_FILES_SYNCHRONOUSLY
+  envir().taskScheduler().turnOffBackgroundReadHandling(fileno(fFid));
+  fHaveStartedReading = False;
+#endif
+}
+
+void ByteStreamFileSource::fileReadableHandler(ByteStreamFileSource* source, int /*mask*/) {
+  if (!source->isCurrentlyAwaitingData()) return; // we're not ready for the data yet
+  source->doReadFromFile();
+}
+
+void ByteStreamFileSource::doReadFromFile() {
   // Try to read as many bytes as will fit in the buffer provided
   // (or "fPreferredFrameSize" if less)
   if (fPreferredFrameSize > 0 && fPreferredFrameSize < fMaxSize) {
@@ -115,7 +146,14 @@ void ByteStreamFileSource::doGetNextFrame() {
     gettimeofday(&fPresentationTime, NULL);
   }
 
-  // Switch to another task, and inform the reader that he has data:
+  // Inform the reader that he has data:
+#ifdef READ_FROM_FILES_SYNCHRONOUSLY
+  // To avoid possible infinite recursion, we need to return to the event loop to do this:
   nextTask() = envir().taskScheduler().scheduleDelayedTask(0,
 				(TaskFunc*)FramedSource::afterGetting, this);
+#else
+  // Because the file read was done from the event loop, we can call the
+  // 'after getting' function directly, without risk of infinite recursion:
+  FramedSource::afterGetting(this);
+#endif
 }

@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2005 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2006 Live Networks, Inc.  All rights reserved.
 // RTP sink for MPEG-4 Elementary Stream video (RFC 3016)
 // C++ header
 
@@ -40,7 +40,7 @@ protected:
 
   virtual ~MPEG4ESVideoRTPSink();
 
-private: // redefined virtual functions:
+protected: // redefined virtual functions:
   virtual Boolean sourceIsCompatibleWithUs(MediaSource& source);
 
   virtual void doSpecialFrameHandling(unsigned fragmentationOffset,
@@ -55,8 +55,10 @@ private: // redefined virtual functions:
 
   virtual char const* auxSDPLine();
 
-private:
+protected:
   Boolean fVOPIsPresent;
+
+private:
   char* fAuxSDPLine;
 };
 

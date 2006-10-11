@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2005 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2006 Live Networks, Inc.  All rights reserved.
 // A source object for AMR audio files (as defined in RFC 3267, section 5)
 // Implementation
 
@@ -111,6 +111,8 @@ static unsigned short frameSizeWideband[16] = {
   FT_INVALID, FT_INVALID, 0, 0
 };
 
+// Note: We should change the following to use asynchronous file reading, #####
+// as we now do with ByteStreamFileSource. #####
 void AMRAudioFileSource::doGetNextFrame() {
   if (feof(fFid) || ferror(fFid)) {
     handleClosure(this);

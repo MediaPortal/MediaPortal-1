@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2005 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2006 Live Networks, Inc.  All rights reserved.
 // An abstraction of a network interface used for RTP (or RTCP).
 // (This allows the RTP-over-TCP hack (RFC 2326, section 10.12) to
 // be implemented transparently.)
@@ -92,7 +92,7 @@ RTPInterface::RTPInterface(Medium* owner, Groupsock* gs)
   : fOwner(owner), fGS(gs),
     fTCPStreams(NULL),
     fNextTCPReadSize(0), fNextTCPReadStreamSocketNum(-1),
-    fReadHandlerProc(NULL),
+    fNextTCPReadStreamChannelId(0xFF), fReadHandlerProc(NULL),
     fAuxReadHandlerFunc(NULL), fAuxReadHandlerClientData(NULL) {
 }
 
@@ -144,7 +144,7 @@ void RTPInterface::sendPacket(unsigned char* packet, unsigned packetSize) {
   // Normal case: Send as a UDP packet:
   fGS->output(envir(), fGS->ttl(), packet, packetSize);
 
-  // Also, send over each of our TCP socket:
+  // Also, send over each of our TCP sockets:
   for (tcpStreamRecord* streams = fTCPStreams; streams != NULL;
        streams = streams->fNext) {
     sendRTPOverTCP(packet, packetSize,
@@ -345,6 +345,7 @@ void SocketDescriptor::tcpReadHandler(SocketDescriptor* socketDescriptor,
 			fromAddress) != 2) break;
     rtpInterface->fNextTCPReadSize = ntohs(size);
     rtpInterface->fNextTCPReadStreamSocketNum = socketNum;
+    rtpInterface->fNextTCPReadStreamChannelId = streamChannelId;
 #ifdef DEBUG
     fprintf(stderr, "SocketDescriptor::tcpReadHandler() reading %d bytes on channel %d\n", rtpInterface->fNextTCPReadSize, streamChannelId);
 #endif

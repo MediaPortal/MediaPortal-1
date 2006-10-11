@@ -111,8 +111,12 @@ unsigned H263plusVideoStreamParser::parse(u_int64_t & currentDuration)
          // We were able to acquire a frame from the input.
 
          // Parse the returned frame header (if any)
-         if (!ParseShortHeader(fTo, &fNextInfo))
-           ;// fprintf(stderr,"H263plusVideoStreamParser: Fatal error\n");
+         if (!ParseShortHeader(fTo, &fNextInfo)) {
+#ifdef DEBUG
+	   fprintf(stderr,"H263plusVideoStreamParser: Fatal error\n");
+#endif
+	 }
+
          trDifference = GetTRDifference(fNextInfo.tr, fCurrentInfo.tr);
 
          // calculate the current frame duration

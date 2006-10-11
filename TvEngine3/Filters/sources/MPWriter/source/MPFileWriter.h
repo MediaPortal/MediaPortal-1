@@ -8,6 +8,7 @@
 #include <map>
 #include "filewriter.h"
 #include "multifilewriter.h"
+#include "ProgramToTransportStream.h"
 using namespace std;
 
 class CDumpInputPin;
@@ -104,7 +105,6 @@ class CDump : public CUnknown, public IMPFileRecord
     CCritSec 		m_Lock;                // Main renderer critical section
     CCritSec 		m_ReceiveLock;         // Sublock for received samples
 		FileWriter* m_pRecordFile;
-		MultiFileWriter* m_pTimeShiftFile;
 public:
     DECLARE_IUNKNOWN
 
@@ -131,4 +131,6 @@ private:
 
 	char	m_strRecordingFileName[1024];
 	char	m_strTimeShiftFileName[1024];
+  CProgramToTransportStream m_tsWriter;
+    bool m_bIsTimeShifting;
 };

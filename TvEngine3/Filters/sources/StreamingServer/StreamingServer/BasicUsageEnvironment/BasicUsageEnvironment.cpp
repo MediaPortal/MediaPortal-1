@@ -23,7 +23,9 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 
 ////////// BasicUsageEnvironment //////////
 
-extern void Log(const char *fmt, ...) ;
+void Log(const char *fmt, ...) 
+{
+}
 #if defined(__WIN32__) || defined(_WIN32)
 extern "C" int initializeWinsockIfNecessary();
 #endif

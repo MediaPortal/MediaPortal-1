@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2005 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2006 Live Networks, Inc.  All rights reserved.
 // A class for generating MPEG-2 Transport Stream from one or more input
 // Elementary Stream data sources
 // C++ header
@@ -29,7 +29,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "MPEG1or2Demux.hh" // for SCR
 #endif
 
-#define PID_TABLE_SIZE 256
+#define PID_TABLE_SIZE 0x200
 
 class MPEG2TransportStreamMultiplexor: public FramedSource {
 protected:
@@ -48,7 +48,7 @@ private:
   virtual void doGetNextFrame();
 
 private:
-  void deliverDataToClient(u_int8_t pid, unsigned char* buffer, unsigned bufferSize,
+  void deliverDataToClient(int pid, unsigned char* buffer, unsigned bufferSize,
 			   unsigned& startPositionInBuffer);
 
   void deliverPATPacket();
@@ -68,7 +68,7 @@ private:
     unsigned counter;
     u_int8_t streamType; // for use in Program Maps
   } fPIDState[PID_TABLE_SIZE];
-  u_int8_t fPCR_PID, fCurrentPID;
+  int fPCR_PID, fCurrentPID;
       // Note: We map 8-bit stream_ids directly to PIDs 
   MPEG1or2Demux::SCR fPCR;
   unsigned char* fInputBuffer;

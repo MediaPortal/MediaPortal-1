@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2005 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2006 Live Networks, Inc.  All rights reserved.
 // Framed Sources
 // C++ header
 
@@ -71,9 +71,6 @@ public:
       // called by getNextFrame()
 
   Boolean isCurrentlyAwaitingData() const {return fIsCurrentlyAwaitingData;}
-
-  // Tests for specific types of 'framed source': 
-  virtual Boolean isPrioritizedRTPStreamSelector() const;
 
 protected:
   FramedSource(UsageEnvironment& env); // abstract base class

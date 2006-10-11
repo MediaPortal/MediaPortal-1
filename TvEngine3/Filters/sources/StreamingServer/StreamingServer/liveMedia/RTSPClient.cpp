@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2005 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2006 Live Networks, Inc.  All rights reserved.
 // A generic RTSP client
 // Implementation
 
@@ -143,8 +143,9 @@ void RTSPClient::setUserAgentString(char const* userAgentStr) {
 }
 
 RTSPClient::~RTSPClient() {
+  envir().taskScheduler().turnOffBackgroundReadHandling(fInputSocketNum); // must be called before:
   reset();
-  envir().taskScheduler().turnOffBackgroundReadHandling(fInputSocketNum);
+
   delete[] fResponseBuffer;
   delete[] fUserAgentHeaderStr;
 }
@@ -1946,12 +1947,12 @@ RTSPClient::createAuthenticatorString(Authenticator const* authenticator,
       authenticator->reclaimDigestResponse(response);
     } else { // Basic authentication
       char* const authFmt = "Authorization: Basic %s\r\n";
-      char* usernamePassword
-	= new char[strlen(authenticator->username())
-		  + strlen(authenticator->password()) + 2];
-      sprintf(usernamePassword, "%s:%s",
-	      authenticator->username(), authenticator->password());
-      char* response = base64Encode(usernamePassword);
+
+      unsigned usernamePasswordLength = strlen(authenticator->username()) + 1 + strlen(authenticator->password());
+      char* usernamePassword = new char[usernamePasswordLength+1];
+      sprintf(usernamePassword, "%s:%s", authenticator->username(), authenticator->password());
+
+      char* response = base64Encode(usernamePassword, usernamePasswordLength);
       unsigned authBufSize = strlen(authFmt) + strlen(response);
       authenticatorStr = new char[authBufSize];
       sprintf(authenticatorStr, authFmt, response);
@@ -2006,7 +2007,7 @@ Boolean RTSPClient::sendRequest(char const* requestString, char const* tag,
 
   char* newRequestString = NULL;
   if (fTunnelOverHTTPPortNum != 0 && base64EncodeIfOverHTTP) {
-    requestString = newRequestString = base64Encode(requestString);
+    requestString = newRequestString = base64Encode(requestString, strlen(requestString));
     if (fVerbosityLevel >= 1) {
       envir() << "\tThe request was base-64 encoded to: " << requestString << "\n\n";
     }

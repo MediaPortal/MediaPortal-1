@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2005 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2006 Live Networks, Inc.  All rights reserved.
 // A filter that breaks up an MPEG-4 video elementary stream into
 //   frames for:
 // - Visual Object Sequence (VS) Header + Visual Object (VO) Header
@@ -634,6 +634,13 @@ unsigned MPEG4VideoStreamParser::parseVideoObjectPlane() {
   default: {
     if (isVideoObjectStartCode(next4Bytes)) {
       setParseState(PARSING_VIDEO_OBJECT_LAYER);
+    } else if (isVideoObjectLayerStartCode(next4Bytes)){
+      // copy all bytes that we see, up until we reach a VOP_START_CODE:
+      u_int32_t next4Bytes = get4Bytes();
+      while (next4Bytes != VOP_START_CODE) {
+	saveToNextCode(next4Bytes);
+      }
+      setParseState(PARSING_VIDEO_OBJECT_PLANE);
     } else {
       usingSource()->envir() << "MPEG4VideoStreamParser::parseVideoObjectPlane(): Saw unexpected code "
 			     << (void*)next4Bytes << "\n";

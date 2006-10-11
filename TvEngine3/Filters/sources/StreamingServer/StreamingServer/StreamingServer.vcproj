@@ -676,10 +676,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\liveMedia\PrioritizedRTPStreamSelector.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\liveMedia\QCELPAudioRTPSource.cpp"
 				>
 			</File>
