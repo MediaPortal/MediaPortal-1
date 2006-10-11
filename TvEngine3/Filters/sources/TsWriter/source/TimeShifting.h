@@ -24,6 +24,7 @@
 #include "criticalsection.h"
 #include "entercriticalsection.h"
 #include <vector>
+#include <map>
 using namespace std;
 using namespace Mediaportal;
 
@@ -46,8 +47,8 @@ DEFINE_GUID(IID_ITsTimeshifting,0x89459bf6, 0xd00e, 0x4d28, 0x92, 0x8e, 0x9d, 0x
 DECLARE_INTERFACE_(ITsTimeshifting, IUnknown)
 {
 	STDMETHOD(SetPcrPid)(THIS_ int pcrPid)PURE;
-	STDMETHOD(AddPesStream)(THIS_ int pid, bool isAudio, bool isVideo)PURE;
-	STDMETHOD(RemovePesStream)(THIS_ int pid)PURE;
+	STDMETHOD(AddStream)(THIS_ int pid, int serviceType)PURE;
+	STDMETHOD(RemoveStream)(THIS_ int pid)PURE;
 	
   STDMETHOD(SetTimeShiftingFileName)(THIS_ char* pszFileName)PURE;
   STDMETHOD(Start)(THIS_ )PURE;
@@ -75,13 +76,20 @@ DECLARE_INTERFACE_(ITsTimeshifting, IUnknown)
 class CTimeShifting: public CUnknown, public ITsTimeshifting, public IFileWriter
 {
 public:
+	struct PidInfo
+	{
+		int  realPid;
+		int  fakePid;
+		int  serviceType;
+		bool seenStart;
+	};
 	CTimeShifting(LPUNKNOWN pUnk, HRESULT *phr);
 	~CTimeShifting(void);
   DECLARE_IUNKNOWN
 	
 	STDMETHODIMP SetPcrPid(int pcrPid);
-	STDMETHODIMP AddPesStream(int pid,bool isAudio,bool isVideo);
-	STDMETHODIMP RemovePesStream(int pid);
+	STDMETHODIMP AddStream(int pid, int serviceType);
+	STDMETHODIMP RemoveStream(int pid);
 	STDMETHODIMP SetTimeShiftingFileName(char* pszFileName);
 	STDMETHODIMP Start();
 	STDMETHODIMP Stop();
@@ -121,10 +129,10 @@ private:
 	CCriticalSection     m_section;
   int                  m_pmtPid;
   int                  m_pcrPid;
-  int                  m_audioPid;
-  int                  m_videoPid;
+	vector<PidInfo>			 m_vecPids;
+	typedef vector<PidInfo>::iterator itvecPids;
 	bool								 m_bSeenAudioStart;
 	bool								 m_bSeenVideoStart;
-	int									m_iPmtContinuityCounter;
+	int									 m_iPmtContinuityCounter;
 	int									 m_iPatContinuityCounter;
 };
