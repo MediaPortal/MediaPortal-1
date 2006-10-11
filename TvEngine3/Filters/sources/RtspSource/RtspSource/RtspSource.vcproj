@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="8,00"
 	Name="RtspSource"
 	ProjectGUID="{5DDBC183-7264-46B2-8987-214F7089EC60}"
 	RootNamespace="RtspSource"
@@ -716,10 +716,6 @@
 			</File>
 			<File
 				RelativePath="..\..\StreamingServer\StreamingServer\liveMedia\PassiveServerMediaSubsession.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\StreamingServer\StreamingServer\liveMedia\PrioritizedRTPStreamSelector.cpp"
 				>
 			</File>
 			<File
