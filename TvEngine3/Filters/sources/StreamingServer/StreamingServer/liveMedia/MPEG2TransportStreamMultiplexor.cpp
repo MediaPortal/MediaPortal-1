@@ -20,7 +20,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 
 #include "MPEG2TransportStreamMultiplexor.hh"
-
+extern void Log(const char *fmt, ...) ;
 #define TRANSPORT_PACKET_SIZE 188
 
 #define PAT_FREQUENCY 100 // # of packets between Program Association Tables
@@ -123,6 +123,7 @@ void MPEG2TransportStreamMultiplexor
     if (fCurrentPID == fPCR_PID) {
       // Record the input's current SCR timestamp, for use as our PCR:
       fPCR = scr;
+      //Log("pcr:%d %d %d %d", scr.highBit,scr.remainingBits,scr.extension,scr.isValid);
     }
   }
 

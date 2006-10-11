@@ -25,6 +25,25 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 
 void Log(const char *fmt, ...) 
 {
+	va_list ap;
+	va_start(ap,fmt);
+
+	char buffer[1000]; 
+	int tmp;
+	va_start(ap,fmt);
+	tmp=vsprintf(buffer, fmt, ap);
+	va_end(ap); 
+
+	
+	SYSTEMTIME systemTime;
+	GetLocalTime(&systemTime);
+  char buf[1000];
+	sprintf(buf,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d %s\n",
+		systemTime.wDay, systemTime.wMonth, systemTime.wYear,
+		systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
+		buffer);
+  ::OutputDebugString(buf);
+	
 }
 #if defined(__WIN32__) || defined(_WIN32)
 extern "C" int initializeWinsockIfNecessary();
