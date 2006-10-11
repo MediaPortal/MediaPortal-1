@@ -177,7 +177,9 @@ void CRTSPClient::shutdown()
   Medium::close(m_session);
 
   // Finally, shut down our client:
-  Medium::close(m_ourClient);
+  Medium::close(m_ourClient);;
+	m_session=NULL;;
+	m_ourClient=NULL;
 }
 
 
@@ -420,7 +422,7 @@ void CRTSPClient::StopBufferThread()
 	if (!m_BufferThreadActive)
 		return;
 
-	StopThread(10);
+	StopThread(5000);
 
 	m_BufferThreadActive = false;
 }
@@ -493,6 +495,20 @@ bool CRTSPClient::Play(float fStart)
 			return false;
 		}
 	}
+  if (m_ourClient==NULL||m_session==NULL)
+  {
+		m_buffer.Clear();
+		if (Initialize()==false) 
+		{
+			shutdown();
+			return false;
+		}
+		if (OpenStream(m_url)==false) 
+		{
+			shutdown();
+			return false;
+		}
+  }
 	if (!startPlayingStreams()) 
 	{			
 		shutdown();

@@ -129,6 +129,7 @@
 				AdditionalDependencies="strmbase.lib ws2_32.lib winmm.lib"
 				OutputFile="$(OutDir)\$(ProjectName).ax"
 				GenerateManifest="false"
+				IgnoreAllDefaultLibraries="false"
 				IgnoreDefaultLibraryNames=""
 				ModuleDefinitionFile="rtspsourcefilter.def"
 				SubSystem="2"
@@ -807,6 +808,82 @@
 			</File>
 			<File
 				RelativePath="..\..\StreamingServer\StreamingServer\liveMedia\WAVAudioFileSource.cpp"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="pat pmt parser"
+			>
+			<File
+				RelativePath=".\ChannelInfo.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ChannelInfo.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DvbUtil.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DvbUtil.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PacketSync.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PacketSync.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PatParser.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PatParser.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PidTable.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PidTable.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PmtParser.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PmtParser.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Section.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Section.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SectionDecoder.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\SectionDecoder.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TsHeader.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TsHeader.h"
 				>
 			</File>
 		</Filter>

@@ -5,10 +5,12 @@
 #define MAX_MEMORY_BUFFER_SIZE (1024L*1024L*12L)
 
 extern void Log(const char *fmt, ...) ;
+
 CMemoryBuffer::CMemoryBuffer(void)
 :m_event(NULL,TRUE,FALSE,"memevent")
 {
   m_BytesInBuffer=0;
+  m_pcallback=NULL;
 }
 
 CMemoryBuffer::~CMemoryBuffer()
@@ -83,25 +85,37 @@ HRESULT CMemoryBuffer::PutBuffer(BYTE *pbData, long lDataLength, long lOffset)
   item->data = new byte[item->nDataLength];
   memcpy(item->data, &pbData[lOffset], item->nDataLength);
 
-	CAutoLock BufferLock(&m_BufferLock);
-  m_Array.push_back(item);
-  m_BytesInBuffer+=item->nDataLength;
-
-	//Log("add..%d/%d",lDataLength,m_BytesInBuffer);
-  while (m_BytesInBuffer > MAX_MEMORY_BUFFER_SIZE)
   {
-		Log("add: full buffer (%d)",m_BytesInBuffer);
-		BUFFERITEM *item = m_Array.at(0);
-    int copyLength=item->nDataLength - item->nOffset;
+	  CAutoLock BufferLock(&m_BufferLock);
+    m_Array.push_back(item);
+    m_BytesInBuffer+=item->nDataLength;
 
-    m_BytesInBuffer-=copyLength;
-		m_Array.erase(m_Array.begin());
-    delete[] item->data;
-		delete item;
+	  //Log("add..%d/%d",lDataLength,m_BytesInBuffer);
+    while (m_BytesInBuffer > MAX_MEMORY_BUFFER_SIZE)
+    {
+		  Log("add: full buffer (%d)",m_BytesInBuffer);
+		  BUFFERITEM *item = m_Array.at(0);
+      int copyLength=item->nDataLength - item->nOffset;
+
+      m_BytesInBuffer-=copyLength;
+		  m_Array.erase(m_Array.begin());
+      delete[] item->data;
+		  delete item;
+    }
+    if (m_BytesInBuffer>0)
+    {
+      m_event.SetEvent();
+    }
   }
-  if (m_BytesInBuffer>0)
+  if (m_pcallback)
   {
-    m_event.SetEvent();
+    m_pcallback->OnRawDataReceived(&pbData[lOffset],lDataLength);
   }
 	return S_OK;
+}
+
+
+void CMemoryBuffer::SetCallback(IMemoryCallback* callback)
+{
+  m_pcallback=callback;
 }

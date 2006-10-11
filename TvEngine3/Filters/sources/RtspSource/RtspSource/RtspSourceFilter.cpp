@@ -26,6 +26,7 @@
 #include <initguid.h>
 #include "RtspSourceFilter.h"
 #include "outputpin.h"
+#include "ChannelInfo.h"
 extern void Log(const char *fmt, ...) ;
 
 #define BUFFER_BEFORE_PLAY_SIZE (1024L*200) //200Kb
@@ -130,21 +131,41 @@ void CRtspSourceFilter::ResetStreamTime()
 	StreamTime(cTime);
 	m_tStart = REFERENCE_TIME(m_tStart) + REFERENCE_TIME(cTime);
 }
+
 HRESULT CRtspSourceFilter::OnConnect()
 {
-  m_pids.aud=0x31;
-  m_pids.vid=0x30;
-  m_pids.pcr=0x21;
-  m_pids.pmt=0x20;
+  m_buffer.SetCallback(this);
+  m_patParser.Reset();
+  if (m_client.Play(0.0f))
+  {
+    while (m_patParser.Count()==0)
+    {
+      Sleep(10);
+    }
+    CChannelInfo info;
+    m_patParser.GetChannel(0,info);
+    CPidTable pids=info.PidTable;
+    m_pids.aud=pids.AudioPid1;
+    m_pids.aud2=pids.AudioPid2;
+    m_pids.ac3=pids.AC3Pid;
+    m_pids.vid=pids.VideoPid;
+    m_pids.pcr=pids.PcrPid;
+    m_pids.pmt=pids.PmtPid;
+  }
+  else
+  {
+    return E_FAIL;
+  }
+  m_client.Stop();
   m_pDemux->set_ClockMode(1);
   m_pDemux->set_Auto(TRUE);
   m_pDemux->set_FixedAspectRatio(TRUE);
   m_pDemux->set_MPEG2Audio2Mode(TRUE);
-
   m_pDemux->AOnConnect();
   m_pDemux->SetRefClock();
   return S_OK;
 }
+
 STDMETHODIMP CRtspSourceFilter::Run(REFERENCE_TIME tStart)
 {
 	float milliSecs=m_rtStartFrom.Millisecs();
@@ -155,7 +176,6 @@ STDMETHODIMP CRtspSourceFilter::Run(REFERENCE_TIME tStart)
 	{
 		m_pOutputPin->UpdateStopStart();
 		m_client.FillBuffer( BUFFER_BEFORE_PLAY_SIZE);
-    
 	}
 	else return E_FAIL;
 	m_client.Run();
@@ -202,7 +222,7 @@ STDMETHODIMP CRtspSourceFilter::GetDuration(REFERENCE_TIME *dur)
 STDMETHODIMP CRtspSourceFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt)
 {
 	wcscpy(m_fileName,pszFileName);
-  wcscpy(m_fileName,L"rtsp://192.168.100.102/stream1");
+  //wcscpy(m_fileName,L"rtsp://192.168.1.58/test");
 
   if (m_client.Initialize())
   {
@@ -247,6 +267,17 @@ LONG CRtspSourceFilter::GetData(BYTE* pData, long size)
   DWORD bytesRead= m_buffer.ReadFromBuffer(pData, size, 0);
   return bytesRead;
 }
+
+
+void CRtspSourceFilter::OnTsPacket(byte* tsPacket)
+{
+  m_patParser.OnTsPacket(tsPacket);
+}
+
+void CRtspSourceFilter::OnRawDataReceived(BYTE *pbData, long lDataLength)
+{
+	OnRawData(pbData, lDataLength);
+}
 ////////////////////////////////////////////////////////////////////////
 //
 // Exported entry points for registration and unregistration 
@@ -287,3 +318,4 @@ BOOL APIENTRY DllMain(HANDLE hModule,
 {
 	return DllEntryPoint((HINSTANCE)(hModule), dwReason, lpReserved);
 }
+
