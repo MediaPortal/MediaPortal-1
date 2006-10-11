@@ -2042,7 +2042,7 @@ namespace TvLibrary.Implementations.Analog
     {
       get
       {
-        return false;
+        return true;
       }
     }
     /// <summary>
