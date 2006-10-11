@@ -189,6 +189,14 @@ STDMETHODIMP CTimeShifting::GetMode(int *mode)
 STDMETHODIMP CTimeShifting::AddStream(int pid, int serviceType)
 {
 	CEnterCriticalSection enter(m_section);
+	itvecPids it=m_vecPids.begin();
+	while (it!=m_vecPids.end())
+	{
+		PidInfo& info=*it;
+    if (info.realPid==pid) return S_OK;
+    ++it;
+  }
+
 	try
 	{
 		if (serviceType==3||serviceType==4||serviceType==0x81)

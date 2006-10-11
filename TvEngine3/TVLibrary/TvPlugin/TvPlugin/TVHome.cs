@@ -1232,7 +1232,7 @@ namespace TvPlugin
       g_Player.MediaType mediaType = g_Player.MediaType.TV;
       if (channel.IsRadio)
         mediaType = g_Player.MediaType.Radio;
-      if (System.IO.File.Exists(timeshiftFileName))
+      if (true==false&&System.IO.File.Exists(timeshiftFileName))
       {
         MediaPortal.GUI.Library.Log.Info("tvhome:startplay:{0}", timeshiftFileName);
         g_Player.Play(timeshiftFileName, mediaType);
