@@ -133,17 +133,20 @@ void CRtspSourceFilter::ResetStreamTime()
 }
 
 HRESULT CRtspSourceFilter::OnConnect()
-{
+{	
+	Log("Filter:OnConnect, find pat/pmt...");
   m_buffer.SetCallback(this);
   m_patParser.Reset();
   if (m_client.Play(0.0f))
   {
+		Log("Filter:OnConnect, wait for pat/pmt...");
     while (m_patParser.Count()==0)
     {
       Sleep(10);
     }
     CChannelInfo info;
     m_patParser.GetChannel(0,info);
+		
     CPidTable pids=info.PidTable;
     m_pids.aud=pids.AudioPid1;
     m_pids.aud2=pids.AudioPid2;
@@ -151,11 +154,16 @@ HRESULT CRtspSourceFilter::OnConnect()
     m_pids.vid=pids.VideoPid;
     m_pids.pcr=pids.PcrPid;
     m_pids.pmt=pids.PmtPid;
+		Log("Filter:OnConnect, audio1:%x audio2:%x ac3:%x video:%x pcr:%x pmt:%x",
+					pids.AudioPid1,pids.AudioPid2,pids.AC3Pid,pids.VideoPid,pids.PcrPid,pids.PmtPid);
   }
   else
   {
+		Log("Filter:OnConnect, failed to play stream...");
     return E_FAIL;
   }
+	
+	Log("Filter:setup demuxer...");
   m_client.Stop();
   m_pDemux->set_ClockMode(1);
   m_pDemux->set_Auto(TRUE);
@@ -163,27 +171,37 @@ HRESULT CRtspSourceFilter::OnConnect()
   m_pDemux->set_MPEG2Audio2Mode(TRUE);
   m_pDemux->AOnConnect();
   m_pDemux->SetRefClock();
+	Log("Filter:connect done...");
   return S_OK;
 }
 
 STDMETHODIMP CRtspSourceFilter::Run(REFERENCE_TIME tStart)
 {
+	Log("Filter:run()");
 	float milliSecs=m_rtStartFrom.Millisecs();
 	milliSecs/=1000.0f;
 
 	m_buffer.Clear();
+	Log("Filter:play stream() from %f",milliSecs);
   if (m_client.Play(milliSecs))
 	{
+		Log("Filter:buffer...");
 		m_pOutputPin->UpdateStopStart();
 		m_client.FillBuffer( BUFFER_BEFORE_PLAY_SIZE);
+		Log("Filter:playing...");
 	}
-	else return E_FAIL;
+	else 
+	{	
+		Log("Filter:failed to play stream()");
+		return E_FAIL;
+	}
 	m_client.Run();
 	return CSource::Run(tStart);
 }
 
 STDMETHODIMP CRtspSourceFilter::Stop()
 {
+	Log("Filter:stop playing...");
 	HRESULT hr=CSource::Stop();
   m_client.Stop();
   m_buffer.Clear();
@@ -192,6 +210,7 @@ STDMETHODIMP CRtspSourceFilter::Stop()
 
 STDMETHODIMP CRtspSourceFilter::Pause()
 {
+	Log("Filter:pause playing...");
 	m_client.Pause();
   return CSource::Pause();
 }
@@ -222,20 +241,35 @@ STDMETHODIMP CRtspSourceFilter::GetDuration(REFERENCE_TIME *dur)
 STDMETHODIMP CRtspSourceFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt)
 {
 	wcscpy(m_fileName,pszFileName);
-  //wcscpy(m_fileName,L"rtsp://192.168.1.58/test");
+	if (wcsstr(m_fileName,L"rtsp://")==NULL)
+	{
+		wcscpy(m_fileName,L"rtsp://127.0.0.1/stream1");
+	}
 
+	Log("------------------");
+	Log("Filter:Initialize");
   if (m_client.Initialize())
   {
 	  char url[MAX_PATH];
 	  WideCharToMultiByte(CP_ACP,0,m_fileName,-1,url,MAX_PATH,0,0);
+		Log("Filter:open stream:%s",url);
     if (m_client.OpenStream(url))
     {
+			Log("Filter:stream length :%d msec",m_client.Duration());
 			m_pOutputPin->UpdateStopStart();
 
     }
-		else return E_FAIL;
+		else 
+		{
+			Log("Filter:failed to open stream");
+			return E_FAIL;
+		}
   }
-	else return E_FAIL;
+	else 
+	{
+		Log("Filter:failed to open initialize client");
+		return E_FAIL;
+	}
 	return S_OK;
 }
 STDMETHODIMP CRtspSourceFilter::GetCurFile(LPOLESTR * ppszFileName,AM_MEDIA_TYPE *pmt)
