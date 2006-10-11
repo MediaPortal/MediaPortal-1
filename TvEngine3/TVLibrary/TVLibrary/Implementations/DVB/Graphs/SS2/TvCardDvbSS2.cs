@@ -386,7 +386,7 @@ namespace TvLibrary.Implementations.DVB
           if (addPid)
           {
             Log.Log.WriteFile("ss2: set timeshift {0}", info);
-            timeshift.AddPesStream((short)info.pid, (info.isAC3Audio || info.isAudio), info.isVideo);
+            timeshift.AddStream((short)info.pid, (short)info.stream_type);
           }
         }
       }
@@ -1707,9 +1707,12 @@ namespace TvLibrary.Implementations.DVB
           ITsTimeShift timeshift = _filterTsAnalyzer as ITsTimeShift;
           if (_currentAudioStream != null)
           {
-            timeshift.RemovePesStream((short)_currentAudioStream.Pid);
+            timeshift.RemoveStream((short)_currentAudioStream.Pid);
           }
-          timeshift.AddPesStream((short)audioStream.Pid, true, false);
+          if (audioStream.StreamType == AudioStreamType.AC3)
+            timeshift.AddStream((short)audioStream.Pid, 0x81);
+          else
+            timeshift.AddStream((short)audioStream.Pid, 3);
 
           ITsRecorder recorder = _filterTsAnalyzer as ITsRecorder;
           if (_currentAudioStream != null)
