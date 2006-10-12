@@ -117,7 +117,13 @@ namespace TvLibrary.Implementations.Analog
             string channelName = _card.TeletextDecoder.GetTeletextChannelName();
             if (channelName != "")
             {
-              channel.Name = channelName;
+              channel.Name="";
+              for (int x = 0; x < channelName.Length; ++x)
+              {
+                char k = channelName[x];
+                if (k < (char)32 || k > (char)127) break;
+                channel.Name += k.ToString();
+              }
               break;
             }
           }
