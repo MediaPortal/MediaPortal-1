@@ -430,6 +430,7 @@ namespace TvLibrary.Implementations.DVB
       }
       if (programStream == false)
       {
+        recorder.AddStream((short)0x11, false, false);//sdt
         recorder.AddStream((short)dvbChannel.PmtPid, false, false);
         recorder.SetMode(TimeShiftingMode.TransportStream);
         Log.Log.WriteFile("ss2: record transport stream mode");
