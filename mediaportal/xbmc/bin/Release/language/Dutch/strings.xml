@@ -6050,8 +6050,63 @@
     <value>Ontdekkings mode</value>
   </string>
   <string>
+    <id>34014</id>
+    <value>Toevoegen aan profiel</value>
+  </string>
+  <string>
+    <id>34030</id>
+    <value>Geen tags</value>
+  </string>
+  <string>
+    <id>34031</id>
+    <value>Geen vrienden</value>
+  </string>
+  <string>
+    <id>34040</id>
+    <value>Aanbevolen Radio</value>
+  </string>
+  <string>
+    <id>34041</id>
+    <value>Stem af met gekozen tag</value>
+  </string>
+  <string>
+    <id>34042</id>
+    <value>Er is nog geen tag gekozen</value>
+  </string>
+  <string>
+    <id>34043</id>
+    <value>Persoonlijke radio van: </value>
+  </string>
+  <string>
+    <id>34044</id>
+    <value>Favoriete tracks van: </value>
+  </string>
+  <string>
+    <id>34045</id>
+    <value>Er is nog geen vriend uitgekozen</value>
+  </string>
+  <string>
+    <id>34046</id>
+    <value>Mijn persoonlijke radio</value>
+  </string>
+  <string>
+    <id>34047</id>
+    <value>Mijn favoriete tracks</value>
+  </string>
+  <string>
+    <id>34050</id>
+    <value>Geen stream actief</value>
+  </string>
+  <string>
+    <id>34051</id>
+    <value>Stream beëindigd!</value>
+  </string>
+  <string>
+    <id>34052</id>
+    <value>Geen materiaal meer of slechte verbinding</value>
+  </string>
+  <string>
     <id>100511</id>
     <value>Mijn muziek/volledig scherm</value>
   </string>
-
 </strings>
