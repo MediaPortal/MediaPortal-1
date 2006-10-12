@@ -22,7 +22,7 @@
 #include "PmtParser.h"
 #include "tsheader.h"
 
-void LogDebug(const char *fmt, ...) ;
+extern void Log(const char *fmt, ...) ;
 CPmtParser::CPmtParser()
 {
 	m_pmtCallback=NULL;
@@ -67,7 +67,7 @@ void CPmtParser::OnNewSection(CSection& sections)
   int program_info_length = ((section[start+10] & 0xF)<<8)+section[start+11];
   int len2 = program_info_length;
   int pointer = 12;
-  int len1 = section_length - pointer;
+  int len1 = section_length -( 9 + program_info_length +4);
   int x;
 
 	if (!_isFound)
@@ -82,13 +82,10 @@ void CPmtParser::OnNewSection(CSection& sections)
   // loop 1
   while (len2 > 0)
   {
-	  if (pointer+1>=sectionLen) return ;
 	  int indicator=section[start+pointer];
-	  x = 0;
-	  x = section[start+pointer + 1] + 2;
-	  len2 -= x;
-	  pointer += x;
-	  len1 -= x;
+	  int descriptorLen=section[start+pointer+1];
+	  len2 -= (descriptorLen+2);
+	  pointer += (descriptorLen+2);
   }
   // loop 2
   int stream_type=0;
@@ -100,13 +97,13 @@ void CPmtParser::OnNewSection(CSection& sections)
   m_pidInfo.Reset();
   m_pidInfo.PmtPid=GetPid();
   m_pidInfo.ServiceId=program_number;
-  
-  while (len1 > 4)
+  while (len1 > 0)
   {
-	  if (pointer+4>=sectionLen) return ;
+	  //if (start+pointer+4>=sectionLen+9) return ;
 	  stream_type = section[start+pointer];
 	  elementary_PID = ((section[start+pointer+1]&0x1F)<<8)+section[start+pointer+2];
 	  ES_info_length = ((section[start+pointer+3] & 0xF)<<8)+section[start+pointer+4];
+    //Log("pmt: pid:%x type:%x",elementary_PID, stream_type);
 	  if(stream_type==1 || stream_type==2)
 	  {
 			//mpeg2 video

@@ -136,6 +136,7 @@ HRESULT CRtspSourceFilter::OnConnect()
 {	
 	Log("Filter:OnConnect, find pat/pmt...");
   m_buffer.SetCallback(this);
+  m_patParser.SkipPacketsAtStart(500);
   m_patParser.Reset();
   if (m_client.Play(0.0f))
   {
@@ -324,6 +325,7 @@ void CRtspSourceFilter::OnTsPacket(byte* tsPacket)
 
 void CRtspSourceFilter::OnRawDataReceived(BYTE *pbData, long lDataLength)
 {
+  if (m_State == State_Running) return;
 	OnRawData(pbData, lDataLength);
 }
 ////////////////////////////////////////////////////////////////////////

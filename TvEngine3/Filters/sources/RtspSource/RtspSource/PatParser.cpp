@@ -31,6 +31,8 @@
 void Log(const char *fmt, ...) ;
 CPatParser::CPatParser(void)
 {
+  m_packetsToSkip=0;
+  m_packetsReceived=0;
   Reset();
   SetTableId(0);
   SetPid(0);
@@ -57,6 +59,7 @@ void  CPatParser::Reset()
 	Log("PatParser:Reset()");
 	CSectionDecoder::Reset();
   CleanUp();
+  m_packetsReceived=0;
 }
 
  
@@ -94,14 +97,22 @@ bool CPatParser::GetChannel(int index, CChannelInfo& info)
 	return true;
 }
 
+void CPatParser::SkipPacketsAtStart(__int64 packets)
+{
+  m_packetsToSkip=packets;
+}
 void CPatParser::OnTsPacket(byte* tsPacket)
 {
-  for (int i=0; i < m_pmtParsers.size();++i)
+  m_packetsReceived++;
+  if (m_packetsReceived > m_packetsToSkip)
   {
-    CPmtParser* parser=m_pmtParsers[i];
-    parser->OnTsPacket(tsPacket);
+    for (int i=0; i < m_pmtParsers.size();++i)
+    {
+      CPmtParser* parser=m_pmtParsers[i];
+      parser->OnTsPacket(tsPacket);
+    }
+    CSectionDecoder::OnTsPacket(tsPacket);
   }
-  CSectionDecoder::OnTsPacket(tsPacket);
 	
 }
 

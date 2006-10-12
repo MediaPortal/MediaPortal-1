@@ -23,5 +23,6 @@ BOOL CWaitEvent::Wait()
 {
   DWORD dwResult=::WaitForSingleObject(m_hObject,1000);
   if (dwResult==WAIT_OBJECT_0) return true;
+
   return false;
 }

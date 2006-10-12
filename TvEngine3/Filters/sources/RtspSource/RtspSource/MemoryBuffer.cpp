@@ -7,7 +7,7 @@
 extern void Log(const char *fmt, ...) ;
 
 CMemoryBuffer::CMemoryBuffer(void)
-:m_event(NULL,TRUE,FALSE,"memevent")
+:m_event(NULL,FALSE,FALSE,NULL)
 {
   m_BytesInBuffer=0;
   m_pcallback=NULL;
@@ -84,7 +84,7 @@ HRESULT CMemoryBuffer::PutBuffer(BYTE *pbData, long lDataLength, long lOffset)
   item->nDataLength=(lDataLength-lOffset);
   item->data = new byte[item->nDataLength];
   memcpy(item->data, &pbData[lOffset], item->nDataLength);
-
+  bool sleep=false;
   {
 	  CAutoLock BufferLock(&m_BufferLock);
     m_Array.push_back(item);
@@ -93,6 +93,7 @@ HRESULT CMemoryBuffer::PutBuffer(BYTE *pbData, long lDataLength, long lOffset)
 	  //Log("add..%d/%d",lDataLength,m_BytesInBuffer);
     while (m_BytesInBuffer > MAX_MEMORY_BUFFER_SIZE)
     {
+      sleep=true;
 		  Log("add: full buffer (%d)",m_BytesInBuffer);
 		  BUFFERITEM *item = m_Array.at(0);
       int copyLength=item->nDataLength - item->nOffset;
@@ -110,6 +111,10 @@ HRESULT CMemoryBuffer::PutBuffer(BYTE *pbData, long lDataLength, long lOffset)
   if (m_pcallback)
   {
     m_pcallback->OnRawDataReceived(&pbData[lOffset],lDataLength);
+  }
+  if (sleep)
+  {
+    Sleep(10);
   }
 	return S_OK;
 }

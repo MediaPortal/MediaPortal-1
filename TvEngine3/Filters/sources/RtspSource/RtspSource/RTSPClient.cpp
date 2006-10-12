@@ -455,12 +455,11 @@ void CRTSPClient::ThreadProc()
 
 //	BoostThread Boost;
 
-	::SetThreadPriority(GetCurrentThread(),THREAD_PRIORITY_TIME_CRITICAL);
+	//::SetThreadPriority(GetCurrentThread(),THREAD_PRIORITY_TIME_CRITICAL);
   *m_env << "rtsp thread started:" << "\"\n";
 	while (m_env!=NULL && !ThreadIsStopping(0))
 	{
-		m_env->taskScheduler().doEventLoop(); 
-			
+      m_env->taskScheduler().doEventLoop(); 
 	}
   *m_env << "rtsp thread stopped:" << "\"\n";
 	m_BufferThreadActive = false;

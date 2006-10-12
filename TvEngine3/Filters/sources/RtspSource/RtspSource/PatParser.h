@@ -31,6 +31,7 @@ class CPatParser : public CSectionDecoder
 public:
   CPatParser(void);
   virtual ~CPatParser(void);
+  void        SkipPacketsAtStart(__int64 packets);
 	void	      OnTsPacket(byte* tsPacket);
   void        Reset();
 	void        OnNewSection(CSection& section);
@@ -40,4 +41,6 @@ public:
 private:
   void        CleanUp();
   vector<CPmtParser*> m_pmtParsers;
+  __int64     m_packetsReceived;
+  __int64     m_packetsToSkip;
 };
