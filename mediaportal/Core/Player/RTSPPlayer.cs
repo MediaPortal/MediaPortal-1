@@ -375,6 +375,21 @@ namespace MediaPortal.Player
       }
     }
 
+    public override bool IsTV
+    {
+      get
+      {
+        return true;
+      }
+    }
+
+    public override bool IsTimeShifting
+    {
+      get
+      {
+        return true;
+      }
+    }
 
     public override bool Play(string strFile)
     {
