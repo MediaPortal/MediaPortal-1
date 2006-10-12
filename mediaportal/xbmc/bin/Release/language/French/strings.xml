@@ -5172,6 +5172,87 @@
 		<id>19100</id>
 		<value>Geoclock</value>
 	</string>
+<!--
+   Please be aware that Sudoku is a trademark in some
+   countries. Use "Nanpure" (like the playstation does)
+   if this applies for your country, too.
+-->
+	<string>
+		<id>19101</id>
+		<value>Sudoku</value>
+	</string>
+	<string>
+		<id>19102</id>
+		<value>Nouvelle partie</value>
+	</string>
+	<string>
+		<id>19103</id>
+		<value>Resoudre</value>
+	</string>
+	<string>
+		<id>19104</id>
+		<value>Effacer</value>
+	</string>
+	<string>
+		<id>19105</id>
+		<value>Bloquer dépl. invalides</value>
+	</string>
+	<string>
+		<id>19106</id>
+		<value>Montrer dépl. invalides</value>
+	</string>
+	<string>
+		<id>19107</id>
+		<value>Niveau: </value>
+	</string>
+	<string>
+		<id>19108</id>
+		<value>facile</value>
+	</string>
+	<string>
+		<id>19109</id>
+		<value>moyen</value>
+	</string>
+	<string>
+		<id>19110</id>
+		<value>difficile</value>
+	</string>
+	<string>
+		<id>19111</id>
+		<value>Partie terminée</value>
+	</string>
+	<string>
+		<id>19112</id>
+		<value>Félicitations !</value>
+	</string>
+	<string>
+      <id>19113</id>
+		<value>Vous avez gagné.</value>
+	</string>
+	<string>
+      <id>19114</id>
+		<value>Désolé, mais votre solution est fausse.</value>
+	</string>
+	<string>
+      <id>19115</id>
+		<value>Débutant</value>
+	</string>
+	<string>
+      <id>19116</id>
+		<value>Valeur de la case</value>
+	</string>
+	<string>
+      <id>19117</id>
+		<value>Effacer la case</value>
+	</string>
+	<string>
+      <id>19118</id>
+		<value>Aide un coup</value>
+	</string>
+	<string>
+		<id>19119</id>
+		<value>Recommencer la partie</value>
+	</string>
 	<string>
 		<id>25001</id>
 		<value>En attente de la page {0:X}...!</value>
@@ -5292,6 +5373,102 @@
 		<id>33040</id>
 		<value>Copier joué maintenant spam au presse-papier</value>
 	</string>                          
+	<string>
+		<id>34000</id>
+		<value>Last.fm</value>
+	</string>   
+	<string>
+		<id>34001</id>
+		<value>Départ/Change flux</value>
+	</string>
+	<string>
+		<id>34002</id>
+		<value>Ami : </value>
+	</string>
+	<string>
+		<id>34003</id>
+		<value>Voisin :</value>
+	</string>
+	<string>
+		<id>34004</id>
+		<value>Groupe : </value>
+	</string>
+	<string>
+		<id>34010</id>
+		<value>Aime</value>
+	</string>
+	<string>
+		<id>34011</id>
+		<value>Bannir</value>
+	</string>
+	<string>
+		<id>34012</id>
+		<value>Sauter</value>
+	</string>
+	<string>
+		<id>34013</id>
+		<value>Mode découverte</value>
+	</string>
+	<string>
+		<id>34014</id>
+		<value>Soumettre profil</value>
+	</string>
+	<string>
+		<id>34020</id>
+		<value>Flux courant :</value>
+	</string>
+	<string>
+		<id>34030</id>
+		<value>Pas de tag</value>
+	</string>
+	<string>
+		<id>34031</id>
+		<value>Pas d'ami</value>
+	</string>
+	<string>
+		<id>34040</id>
+		<value>Recommandation radio</value>
+	</string>
+	<string>
+		<id>34041</id>
+		<value>Balayer dans Tag : </value>
+	</string>
+	<string>
+		<id>34042</id>
+		<value>Pas de Tag encore choisi</value>
+	</string>
+	<string>
+		<id>34043</id>
+		<value>Radio personnelle de: </value>
+	</string>
+	<string>
+		<id>34044</id>
+		<value>Piste préférée de: </value>
+	</string>
+	<string>
+		<id>34045</id>
+		<value>Pas d'ami encore choisi</value>
+	</string>
+	<string>
+		<id>34046</id>
+		<value>Ma radio personnelle</value>
+	</string>
+	<string>
+		<id>34047</id>
+		<value>Mes pistes préférées</value>
+	</string>
+	<string>
+		<id>34050</id>
+		<value>Pas de flux actif</value>
+	</string>
+	<string>
+		<id>34051</id>
+		<value>Flux terminé</value>
+	</string>   
+	<string>
+		<id>34052</id>
+		<value>Pas d'infos ou mauvaise connexion</value>
+	</string>
 	<string>
 		<id>99845</id>
 		<value>Recherche sur TV.com</value>
