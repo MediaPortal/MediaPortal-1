@@ -144,6 +144,7 @@ HRESULT CRtspSourceFilter::OnConnect()
     {
       Sleep(10);
     }
+		Log("Filter:OnConnect, got pat/pmt...");
     CChannelInfo info;
     m_patParser.GetChannel(0,info);
 		
@@ -251,13 +252,14 @@ STDMETHODIMP CRtspSourceFilter::GetDuration(REFERENCE_TIME *dur)
 
 STDMETHODIMP CRtspSourceFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt)
 {
+	Log("------------------");
 	wcscpy(m_fileName,pszFileName);
 	if (wcsstr(m_fileName,L"rtsp://")==NULL)
 	{
-		wcscpy(m_fileName,L"rtsp://127.0.0.1/stream1");
+		Log("Filter:using defailt filename");
+		wcscpy(m_fileName,L"rtsp://pcebeckers/stream1");
 	}
 
-	Log("------------------");
 	Log("Filter:Initialize");
   if (m_client.Initialize())
   {
@@ -281,6 +283,7 @@ STDMETHODIMP CRtspSourceFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *
 		Log("Filter:failed to open initialize client");
 		return E_FAIL;
 	}
+	Log("Filter:load done");
 	return S_OK;
 }
 STDMETHODIMP CRtspSourceFilter::GetCurFile(LPOLESTR * ppszFileName,AM_MEDIA_TYPE *pmt)

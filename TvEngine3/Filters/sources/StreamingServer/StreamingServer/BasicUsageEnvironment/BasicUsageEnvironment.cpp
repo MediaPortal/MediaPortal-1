@@ -37,6 +37,18 @@ void Log(const char *fmt, ...)
 	
 	SYSTEMTIME systemTime;
 	GetLocalTime(&systemTime);
+
+	FILE* fp = fopen("log/rtsp.log","a+");
+	if (fp!=NULL)
+	{
+		SYSTEMTIME systemTime;
+		GetLocalTime(&systemTime);
+		fprintf(fp,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d %s\n",
+			systemTime.wDay, systemTime.wMonth, systemTime.wYear,
+			systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
+			buffer);
+		fclose(fp);
+	}
   char buf[1000];
 	sprintf(buf,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d %s\n",
 		systemTime.wDay, systemTime.wMonth, systemTime.wYear,
