@@ -551,7 +551,11 @@ namespace TvPlugin
       }
       dlg.SelectedLabel = selected;
       dlg.DoModal(this.GetID);
-      if (dlg.SelectedLabel < 0) return;
+      if (dlg.SelectedLabel < 0)
+      {
+        MediaPortal.GUI.Library.Log.Info("TVHome:nothing selected");
+        return;
+      }
       ViewChannelAndCheck(dlg.SelectedLabelText);
     }
 
@@ -980,6 +984,7 @@ namespace TvPlugin
 
     static public bool ViewChannelAndCheck(string channel)
     {
+      MediaPortal.GUI.Library.Log.Info("TVHome.ViewChannelAndCheck(): View channel={0}", channel);
       if (g_Player.Playing)
       {
         if (g_Player.IsTVRecording) return true;
@@ -987,7 +992,6 @@ namespace TvPlugin
         if (g_Player.IsDVD) return true;
         if ((g_Player.IsMusic && g_Player.HasVideo)) return true;
       }
-      MediaPortal.GUI.Library.Log.Info("TVHome.ViewChannel(): View channel={0}", channel);
 
       if (channel != Navigator.CurrentChannel)
         Navigator.LastViewedChannel = Navigator.CurrentChannel;
