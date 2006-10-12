@@ -101,6 +101,13 @@ namespace Tag.FLAC
       public byte[] ApplicationData;
     }
 
+    private struct SeekTableInfoBlock
+    {
+      public long StreamPosition;
+      public bool LastMetadataBlock;
+      public int MetadataLength;
+    }
+
     private struct VorbisCommentInfoBlock
     {
       public long StreamPosition;
@@ -144,6 +151,7 @@ namespace Tag.FLAC
     private StreamInfoBlock StreamInfo = new StreamInfoBlock();
     private PaddingInfoBlock PaddingBlock = new PaddingInfoBlock();
     private ApplicationInfoBlock ApplicationInfo = new ApplicationInfoBlock();
+    private SeekTableInfoBlock SeekTableBlock = new SeekTableInfoBlock();
     private VorbisCommentInfoBlock VorbisCommentsInfo = new VorbisCommentInfoBlock();
     private CueSheetInfoBlock CueSheetInfo = new CueSheetInfoBlock();
 
@@ -514,7 +522,7 @@ namespace Tag.FLAC
       bool hasMoreMetadataBlocks = (hdrInfo & 1) == 0;
       bool isLastMetadataBlock = !hasMoreMetadataBlocks;
 
-      byte blockType = (byte) (hdrInfo & 254);
+      byte blockType = (byte) (hdrInfo & 255);
 
       int metadataLength = Utils.ReadSynchronizedData(buffer, 1, 3);
 
@@ -544,7 +552,7 @@ namespace Tag.FLAC
         return true;
       }
 
-      else if (blockType == (byte) BlockType.Application)
+      else if (blockType == (byte)BlockType.Application)
       {
         // Have we already read the Application block?  If so, something's wrong so bail out
         if (ApplicationInfo.StreamPosition > 0)
@@ -553,6 +561,19 @@ namespace Tag.FLAC
         }
 
         ReadApplicationBlock(metadataLength, isLastMetadataBlock);
+        metadataBlocksRead++;
+        return true;
+      } 
+      
+      else if (blockType == (byte)BlockType.SeekTable)
+      {
+        // Have we already read the Seektable block?  If so, something's wrong so bail out
+        if (SeekTableBlock.StreamPosition > 0)
+        {
+          return false;
+        }
+
+        ReadBlockSeekTable(metadataLength, isLastMetadataBlock);
         metadataBlocksRead++;
         return true;
       }
@@ -661,6 +682,16 @@ namespace Tag.FLAC
         AudioFileStream.Read(buffer, 0, dataLength - 4);
         ApplicationInfo.ApplicationData = buffer;
       }
+    }
+
+    private void ReadBlockSeekTable(int blockLength, bool isLastMetadataBlock)
+    {
+      SeekTableBlock.StreamPosition = AudioFileStream.Position;
+      SeekTableBlock.LastMetadataBlock = isLastMetadataBlock;
+      SeekTableBlock.MetadataLength = blockLength;
+
+      // Don't care about the seektable so skip over it;
+      AudioFileStream.Seek(blockLength, SeekOrigin.Current);
     }
 
     private void ReadVorbisCommentsBlock(int blockLength, bool isLastMetadataBlock)
