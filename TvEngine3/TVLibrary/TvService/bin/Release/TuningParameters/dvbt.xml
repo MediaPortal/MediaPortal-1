@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="iso-8859-1" ?>
-<!-- changed : 27-September-2006 by infinityloop				-->
+<!-- changed : 02-October-2006 by dman_lfc				-->
 <!-- contains:										-->
 <!--   - Australia 								-->
 <!--   - Austria 									-->
@@ -13,6 +13,7 @@
 <!--   - Netherlands 							-->
 <!--   - New Zealand							-->
 <!--   - Norway 									-->
+<!--   - Singapore                -->
 <!--   - Spain 										-->
 <!--   - Sweden 									-->
 <!--   - Taiwan 									-->
@@ -489,6 +490,428 @@
 		<carrier frequency="850000" bandwidth="8" />
 		<carrier frequency="858000" bandwidth="8" />
 	</country>
+	<country name="Finland - Ala-Vuokki" offset="125">
+		<carrier frequency="698000" bandwidth="8" />
+		<carrier frequency="786000" bandwidth="8" />
+	</country>
+	<country name="Finland - Anjalankoski" offset="125">
+		<carrier frequency="482000" bandwidth="8" />
+		<carrier frequency="522000" bandwidth="8" />
+		<carrier frequency="730000" bandwidth="8" />
+	</country>
+	<country name="Finland - Espoo" offset="125">
+		<carrier frequency="562000" bandwidth="8" />
+		<carrier frequency="658000" bandwidth="8" />
+		<carrier frequency="674000" bandwidth="8" />
+	</country>
+	<country name="Finland - Eurajoki" offset="125">
+		<carrier frequency="610000" bandwidth="8" />
+		<carrier frequency="666000" bandwidth="8" />
+		<carrier frequency="722000" bandwidth="8" />
+	</country>
+	<country name="Finland - Fiskars" offset="125">
+		<carrier frequency="562000" bandwidth="8" />
+		<carrier frequency="658000" bandwidth="8" />
+		<carrier frequency="674000" bandwidth="8" />
+	</country>
+	<country name="Finland - Haapavesi" offset="125">
+		<carrier frequency="578000" bandwidth="8" />
+		<carrier frequency="642000" bandwidth="8" />
+	</country>
+	<country name="Finland - Hanko" offset="125">
+		<carrier frequency="618000" bandwidth="8" />
+		<carrier frequency="746000" bandwidth="8" />
+	</country>
+	<country name="Finland - Heinola" offset="125">
+		<carrier frequency="554000" bandwidth="8" />
+		<carrier frequency="786000" bandwidth="8" />
+	</country>
+	<country name="Finland - Hetta" offset="125">
+		<carrier frequency="554000" bandwidth="8" />
+		<carrier frequency="610000" bandwidth="8" />
+	</country>
+	<country name="Finland - Houtskär" offset="125">
+		<carrier frequency="626000" bandwidth="8" />
+		<carrier frequency="682000" bandwidth="8" />
+	</country>
+	<country name="Finland - Hämeenlinna/Painokangas" offset="125">
+		<carrier frequency="482000" bandwidth="8" />
+		<carrier frequency="522000" bandwidth="8" />
+	</country>
+	<country name="Finland - Iisalmi" offset="125">
+		<carrier frequency="514000" bandwidth="8" />
+		<carrier frequency="610000" bandwidth="8" />
+	</country>
+	<country name="Finland - Ikaalinen/Riitiala" offset="125">
+		<carrier frequency="650000" bandwidth="8" />
+		<carrier frequency="738000" bandwidth="8" />
+	</country>
+	<country name="Finland - Inari" offset="125">
+		<carrier frequency="690000" bandwidth="8" />
+		<carrier frequency="506000" bandwidth="8" />
+	</country>
+	<country name="Finland - Jalasjärvi" offset="125">
+		<carrier frequency="522000" bandwidth="8" />
+		<carrier frequency="650000" bandwidth="8" />
+	</country>
+	<country name="Finland - Joensuu/Vestinkallio" offset="125">
+		<carrier frequency="666000" bandwidth="8" />
+		<carrier frequency="786000" bandwidth="8" />
+	</country>
+	<country name="Finland - Joutsa" offset="125">
+		<carrier frequency="482000" bandwidth="8" />
+		<carrier frequency="570000" bandwidth="8" />
+	</country>
+	<country name="Finland - Joutseno" offset="125">
+		<carrier frequency="682000" bandwidth="8" />
+		<carrier frequency="586000" bandwidth="8" />
+		<carrier frequency="762000" bandwidth="8" />
+	</country>
+	<country name="Finland - Juntusranta" offset="125">
+		<carrier frequency="642000" bandwidth="8" />
+		<carrier frequency="666000" bandwidth="8" />
+	</country>
+	<country name="Finland - Jyväskylä" offset="125">
+		<carrier frequency="546000" bandwidth="8" />
+		<carrier frequency="786000" bandwidth="8" />
+		<carrier frequency="746000" bandwidth="8" />
+	</country>
+	<country name="Finland - Jämsä/Kuorevesi/Halli" offset="125">
+		<carrier frequency="674000" bandwidth="8" />
+		<carrier frequency="650000" bandwidth="8" />
+	</country>
+	<country name="Finland - Jämsä/Matkosvuori" offset="125">
+		<carrier frequency="602000" bandwidth="8" />
+		<carrier frequency="658000" bandwidth="8" />
+	</country>
+	<country name="Finland - Kaihuanvaara" offset="125">
+		<carrier frequency="626000" bandwidth="8" />
+		<carrier frequency="706000" bandwidth="8" />
+	</country>
+	<country name="Finland - Kaipola" offset="125">
+		<carrier frequency="602000" bandwidth="8" />
+		<carrier frequency="658000" bandwidth="8" />
+	</country>
+	<country name="Finland - Kangaslampi" offset="125">
+		<carrier frequency="754000" bandwidth="8" />
+		<carrier frequency="786000" bandwidth="8" />
+	</country>
+	<country name="Finland - Kangasniemi" offset="125">
+		<carrier frequency="602000" bandwidth="8" />
+		<carrier frequency="706000" bandwidth="8" />
+	</country>
+	<country name="Finland - Kankaanpää" offset="125">
+		<carrier frequency="650000" bandwidth="8" />
+		<carrier frequency="682000" bandwidth="8" />
+	</country>
+	<country name="Finland - Karigasniemi" offset="125">
+		<carrier frequency="706000" bandwidth="8" />
+		<carrier frequency="698000" bandwidth="8" />
+	</country>
+	<country name="Finland - Karkkila" offset="125">
+		<carrier frequency="594000" bandwidth="8" />
+		<carrier frequency="650000" bandwidth="8" />
+	</country>
+	<country name="Finland - Karstula" offset="125">
+		<carrier frequency="722000" bandwidth="8" />
+		<carrier frequency="762000" bandwidth="8" />
+	</country>
+	<country name="Finland - Kaunispää" offset="125">
+		<carrier frequency="690000" bandwidth="8" />
+		<carrier frequency="506000" bandwidth="8" />
+	</country>
+	<country name="Finland - Kerimäki" offset="125">
+		<carrier frequency="546000" bandwidth="8" />
+		<carrier frequency="602000" bandwidth="8" />
+	</country>
+	<country name="Finland - Keuruu" offset="125">
+		<carrier frequency="674000" bandwidth="8" />
+		<carrier frequency="706000" bandwidth="8" />
+	</country>
+	<country name="Finland - Keuruu/Haapamäki" offset="125">
+		<carrier frequency="682000" bandwidth="8" />
+		<carrier frequency="762000" bandwidth="8" />
+	</country>
+	<country name="Finland - Kiihtelysvaara" offset="125">
+		<carrier frequency="514000" bandwidth="8" />
+		<carrier frequency="778000" bandwidth="8" />
+	</country>
+	<country name="Finland - Kilpisjärvi" offset="125">
+		<carrier frequency="666000" bandwidth="8" />
+		<carrier frequency="690000" bandwidth="8" />
+	</country>
+	<country name="Finland - Koli" offset="125">
+		<carrier frequency="506000" bandwidth="8" />
+		<carrier frequency="626000" bandwidth="8" />
+		<carrier frequency="682000" bandwidth="8" />
+	</country>
+	<country name="Finland - Korpilahti/Vaarunvuori" offset="125">
+		<carrier frequency="546000" bandwidth="8" />
+		<carrier frequency="786000" bandwidth="8" />
+	</country>
+	<country name="Finland - Korppoo" offset="125">
+		<carrier frequency="626000" bandwidth="8" />
+		<carrier frequency="682000" bandwidth="8" />
+	</country>
+	<country name="Finland - Kruunupyy" offset="125">
+		<carrier frequency="522000" bandwidth="8" />
+		<carrier frequency="482000" bandwidth="8" />
+	</country>
+	<country name="Finland - Kuhmoinen" offset="125">
+		<carrier frequency="594000" bandwidth="8" />
+		<carrier frequency="666000" bandwidth="8" />
+	</country>
+	<country name="Finland - Kuhmoinen/Harjunsalmi" offset="125">
+		<carrier frequency="482000" bandwidth="8" />
+		<carrier frequency="522000" bandwidth="8" />
+	</country>
+	<country name="Finland - Kuopio" offset="125">
+		<carrier frequency="498000" bandwidth="8" />
+		<carrier frequency="554000" bandwidth="8" />
+		<carrier frequency="618000" bandwidth="8" />
+	</country>
+	<country name="Finland - Kustavi" offset="125">
+		<carrier frequency="714000" bandwidth="8" />
+		<carrier frequency="698000" bandwidth="8" />
+	</country>
+	<country name="Finland - Kuttanen" offset="125">
+		<carrier frequency="730000" bandwidth="8" />
+		<carrier frequency="770000" bandwidth="8" />
+	</country>
+	<country name="Finland - Lahti" offset="125">
+		<carrier frequency="570000" bandwidth="8" />
+		<carrier frequency="682000" bandwidth="8" />
+		<carrier frequency="762000" bandwidth="8" />
+	</country>
+	<country name="Finland - Lapua" offset="125">
+		<carrier frequency="610000" bandwidth="8" />
+		<carrier frequency="602000" bandwidth="8" />
+		<carrier frequency="746000" bandwidth="8" />
+	</country>
+	<country name="Finland - Laukaa" offset="125">
+		<carrier frequency="546000" bandwidth="8" />
+		<carrier frequency="786000" bandwidth="8" />
+	</country>
+	<country name="Finland - Laukaa/Vihtavuori" offset="125">
+		<carrier frequency="546000" bandwidth="8" />
+		<carrier frequency="786000" bandwidth="8" />
+	</country>
+	<country name="Finland - Lohja" offset="125">
+		<carrier frequency="706000" bandwidth="8" />
+		<carrier frequency="746000" bandwidth="8" />
+		<carrier frequency="754000" bandwidth="8" />
+	</country>
+	<country name="Finland - Loimaa" offset="125">
+		<carrier frequency="650000" bandwidth="8" />
+		<carrier frequency="682000" bandwidth="8" />
+	</country>
+	<country name="Finland - Luhanka" offset="125">
+		<carrier frequency="562000" bandwidth="8" />
+		<carrier frequency="674000" bandwidth="8" />
+	</country>
+	<country name="Finland - Luopioinen" offset="125">
+		<carrier frequency="650000" bandwidth="8" />
+		<carrier frequency="674000" bandwidth="8" />
+	</country>
+	<country name="Finland - Mikkeli" offset="125">
+		<carrier frequency="538000" bandwidth="8" />
+		<carrier frequency="650000" bandwidth="8" />
+		<carrier frequency="778000" bandwidth="8" />
+	</country>
+	<country name="Finland - Mänttä" offset="125">
+		<carrier frequency="658000" bandwidth="8" />
+		<carrier frequency="722000" bandwidth="8" />
+	</country>
+	<country name="Finland - Mäntyharju" offset="125">
+		<carrier frequency="490000" bandwidth="8" />
+		<carrier frequency="514000" bandwidth="8" />
+	</country>
+	<country name="Finland - Nilsiä" offset="125">
+		<carrier frequency="578000" bandwidth="8" />
+		<carrier frequency="642000" bandwidth="8" />
+	</country>
+	<country name="Finland - Nokia" offset="125">
+		<carrier frequency="594000" bandwidth="8" />
+		<carrier frequency="746000" bandwidth="8" />
+	</country>
+	<country name="Finland - Nokia/Siuro/Linnavuori" offset="125">
+		<carrier frequency="594000" bandwidth="8" />
+		<carrier frequency="746000" bandwidth="8" />
+	</country>
+	<country name="Finland - Oulu" offset="125">
+		<carrier frequency="634000" bandwidth="8" />
+		<carrier frequency="714000" bandwidth="8" />
+		<carrier frequency="738000" bandwidth="8" />
+	</country>
+	<country name="Finland - Padasjoki/Arrakoski" offset="125">
+		<carrier frequency="498000" bandwidth="8" />
+		<carrier frequency="530000" bandwidth="8" />
+	</country>
+	<country name="Finland - Parikkala" offset="125">
+		<carrier frequency="554000" bandwidth="8" />
+		<carrier frequency="570000" bandwidth="8" />
+	</country>
+	<country name="Finland - Parkano" offset="125">
+		<carrier frequency="506000" bandwidth="8" />
+		<carrier frequency="546000" bandwidth="8" />
+	</country>
+	<country name="Finland - Pello" offset="125">
+		<carrier frequency="546000" bandwidth="8" />
+		<carrier frequency="594000" bandwidth="8" />
+	</country>
+	<country name="Finland - Perho" offset="125">
+		<carrier frequency="594000" bandwidth="8" />
+		<carrier frequency="674000" bandwidth="8" />
+	</country>
+	<country name="Finland - Pernaja" offset="125">
+		<carrier frequency="490000" bandwidth="8" />
+		<carrier frequency="706000" bandwidth="8" />
+	</country>
+	<country name="Finland - Pihtipudas" offset="125">
+		<carrier frequency="706000" bandwidth="8" />
+		<carrier frequency="666000" bandwidth="8" />
+	</country>
+	<country name="Finland - Porvoo" offset="125">
+		<carrier frequency="490000" bandwidth="8" />
+		<carrier frequency="706000" bandwidth="8" />
+	</country>
+	<country name="Finland - Posio" offset="125">
+		<carrier frequency="554000" bandwidth="8" />
+		<carrier frequency="618000" bandwidth="8" />
+	</country>
+	<country name="Finland - Pudasjärvi" offset="125">
+		<carrier frequency="658000" bandwidth="8" />
+		<carrier frequency="690000" bandwidth="8" />
+	</country>
+	<country name="Finland - Puolanka" offset="125">
+		<carrier frequency="642000" bandwidth="8" />
+		<carrier frequency="666000" bandwidth="8" />
+	</country>
+	<country name="Finland - Pyhätunturi" offset="125">
+		<carrier frequency="786000" bandwidth="8" />
+		<carrier frequency="634000" bandwidth="8" />
+	</country>
+	<country name="Finland - Pyhävuori" offset="125">
+		<carrier frequency="530000" bandwidth="8" />
+		<carrier frequency="634000" bandwidth="8" />
+	</country>
+	<country name="Finland - Pyynikki" offset="125">
+		<carrier frequency="626000" bandwidth="8" />
+		<carrier frequency="658000" bandwidth="8" />
+	</country>
+	<country name="Finland - Raahe" offset="125">
+		<carrier frequency="546000" bandwidth="8" />
+		<carrier frequency="618000" bandwidth="8" />
+	</country>
+	<country name="Finland - Ranua" offset="125">
+		<carrier frequency="578000" bandwidth="8" />
+		<carrier frequency="778000" bandwidth="8" />
+	</country>
+	<country name="Finland - Rautavaara" offset="125">
+		<carrier frequency="658000" bandwidth="8" />
+		<carrier frequency="738000" bandwidth="8" />
+	</country>
+	<country name="Finland - Ristijärvi" offset="125">
+		<carrier frequency="546000" bandwidth="8" />
+		<carrier frequency="722000" bandwidth="8" />
+	</country>
+	<country name="Finland - Rovaniemi" offset="125">
+		<carrier frequency="650000" bandwidth="8" />
+		<carrier frequency="674000" bandwidth="8" />
+	</country>
+	<country name="Finland - Ruka" offset="125">
+		<carrier frequency="570000" bandwidth="8" />
+		<carrier frequency="690000" bandwidth="8" />
+	</country>
+	<country name="Finland - Saarijärvi" offset="125">
+		<carrier frequency="682000" bandwidth="8" />
+		<carrier frequency="722000" bandwidth="8" />
+	</country>
+	<country name="Finland - Salla" offset="125">
+		<carrier frequency="514000" bandwidth="8" />
+		<carrier frequency="610000" bandwidth="8" />
+	</country>
+
+	<country name="Finland - Salo" offset="125">
+		<carrier frequency="482000" bandwidth="8" />
+		<carrier frequency="666000" bandwidth="8" />
+	</country>
+	<country name="Finland - Sysmä/Liikola" offset="125">
+		<carrier frequency="498000" bandwidth="8" />
+		<carrier frequency="594000" bandwidth="8" />
+	</country>
+	<country name="Finland - Taivalkoski" offset="125">
+		<carrier frequency="562000" bandwidth="8" />
+		<carrier frequency="610000" bandwidth="8" />
+	</country>
+	<country name="Finland - Tammela" offset="125">
+		<carrier frequency="482000" bandwidth="8" />
+		<carrier frequency="522000" bandwidth="8" />
+		<carrier frequency="706000" bandwidth="8" />
+	</country>
+	<country name="Finland - Tammisaari" offset="125">
+		<carrier frequency="618000" bandwidth="8" />
+		<carrier frequency="650000" bandwidth="8" />
+	</country>
+	<country name="Finland - Tampere" offset="125">
+		<carrier frequency="578000" bandwidth="8" />
+		<carrier frequency="490000" bandwidth="8" />
+		<carrier frequency="770000" bandwidth="8" />
+	</country>
+	<country name="Finland - Tervola" offset="125">
+		<carrier frequency="626000" bandwidth="8" />
+		<carrier frequency="642000" bandwidth="8" />
+	</country>
+	<country name="Finland - Turku" offset="125">
+		<carrier frequency="714000" bandwidth="8" />
+		<carrier frequency="698000" bandwidth="8" />
+		<carrier frequency="538000" bandwidth="8" />
+	</country>
+	<country name="Finland - Utsjoki" offset="125">
+		<carrier frequency="658000" bandwidth="8" />
+		<carrier frequency="714000" bandwidth="8" />
+	</country>
+	<country name="Finland - Vaala" offset="125">
+		<carrier frequency="770000" bandwidth="8" />
+		<carrier frequency="786000" bandwidth="8" />
+	</country>
+	<country name="Finland - Vaasa" offset="125">
+		<carrier frequency="610000" bandwidth="8" />
+		<carrier frequency="602000" bandwidth="8" />
+	</country>
+	<country name="Finland - Vantaa/Hakunila" offset="125">
+		<carrier frequency="562000" bandwidth="8" />
+		<carrier frequency="658000" bandwidth="8" />
+	</country>
+	<country name="Finland - Vuokatti" offset="125">
+		<carrier frequency="546000" bandwidth="8" />
+		<carrier frequency="722000" bandwidth="8" />
+		<carrier frequency="746000" bandwidth="8" />
+	</country>
+	<country name="Finland - Vuokatti/Lentiira" offset="125">
+		<carrier frequency="498000" bandwidth="8" />
+		<carrier frequency="562000" bandwidth="8" />
+	</country>
+	<country name="Finland - Vuotso" offset="125">
+		<carrier frequency="554000" bandwidth="8" />
+		<carrier frequency="706000" bandwidth="8" />
+	</country>
+	<country name="Finland - Ylläs" offset="125">
+		<carrier frequency="546000" bandwidth="8" />
+		<carrier frequency="594000" bandwidth="8" />
+	</country>
+	<country name="Finland - Ämmänsaari" offset="125">
+		<carrier frequency="642000" bandwidth="8" />
+		<carrier frequency="666000" bandwidth="8" />
+	</country>
+	<country name="Finland - Äänekoski" offset="125">
+		<carrier frequency="610000" bandwidth="8" />
+		<carrier frequency="730000" bandwidth="8" />
+	</country>
+	<country name="Finland - Äänekoski/Konginkangas" offset="125">
+		<carrier frequency="658000" bandwidth="8" />
+		<carrier frequency="690000" bandwidth="8" />
+	</country>
 	<country name="France - All Regions" offset="167"> 
 		<carrier frequency="474000"/> 
 		<carrier frequency="482000"/> 
@@ -830,7 +1253,7 @@
 		<carrier frequency="850000" bandwidth="8" />
 		<carrier frequency="858000" bandwidth="8" />
 	</country>
-	<country name="Germany - Berlin" offset="125">
+	<country name="Germany - Berlin/Brandenburg" offset="125">
 		<carrier frequency="177500" bandwidth="7" />
 		<carrier frequency="191500" bandwidth="7" />
 		<carrier frequency="506000" bandwidth="8" />
@@ -842,7 +1265,7 @@
 		<carrier frequency="778000" bandwidth="8" />
 		<carrier frequency="826000" bandwidth="8" />		
 	</country>
-	<country name="Germany - Bremen-Unterweser" offset="125">
+	<country name="Germany - Bremen/Unterweser" offset="125">
 		<carrier frequency="482000" bandwidth="8" />
 		<carrier frequency="538000" bandwidth="8" />
 		<carrier frequency="562000" bandwidth="8" />
@@ -852,7 +1275,7 @@
 		<carrier frequency="746000" bandwidth="8" />
 	</country>
 	
-	<country name="Germany - Bremerhaven-Cuxhaven" offset="125">
+	<country name="Germany - Bremerhaven/Cuxhaven" offset="125">
 		<carrier frequency="482000" bandwidth="8" />
 		<carrier frequency="498000" bandwidth="8" />
 		<carrier frequency="538000" bandwidth="8" />
@@ -874,7 +1297,7 @@
 	   <carrier frequency="746000" bandwidth="8" />
 	   <carrier frequency="778000" bandwidth="8" />
 	</country>
-	<country name="Germany - Goettingen" offset="125">
+	<country name="Germany - Göttingen" offset="125">
 		<carrier frequency="474000" bandwidth="8" />
 		<carrier frequency="594000" bandwidth="8" />
 		<carrier frequency="770000" bandwidth="8" />
@@ -889,7 +1312,7 @@
 		<carrier frequency="594000" bandwidth="8" />
 		<carrier frequency="658000" bandwidth="8" />
 	</country>
-	<country name="Germany - Koeln/Bonn" offset="125">
+	<country name="Germany - Köln/Bonn" offset="125">
 		<carrier frequency="514000" bandwidth="8" />
 		<carrier frequency="538000" bandwidth="8" />
 		<carrier frequency="594000" bandwidth="8" />
@@ -897,7 +1320,7 @@
 		<carrier frequency="698000" bandwidth="8" />
 		<carrier frequency="826000" bandwidth="8" />
 	</country>
-	<country name="Germany - Muenchen" offset="125">
+	<country name="Germany - München" offset="125">
 		<carrier frequency="212500" bandwidth="10" />
 		<carrier frequency="578000" bandwidth="10" />
 		<carrier frequency="586000" bandwidth="10" />
@@ -905,7 +1328,7 @@
 		<carrier frequency="754000" bandwidth="10" />
 		<carrier frequency="834000" bandwidth="10" />
 	</country>
-	<country name="Germany - Osnabrueck/Lingen" offset="125">
+	<country name="Germany - Osnabrück/Lingen" offset="125">
 		<carrier frequency="602000" bandwidth="8" />
 		<carrier frequency="634000" bandwidth="8" />
 		<carrier frequency="770000" bandwidth="8" />
@@ -916,7 +1339,7 @@
 		<carrier frequency="650000" bandwidth="8" />
 		<carrier frequency="690000" bandwidth="8" />
 	</country>
-	<country name="Germany - Rhein-Main" offset="125">
+	<country name="Germany - Rhein/Main" offset="125">
 		<carrier frequency="198500" bandwidth="8" />
 		<carrier frequency="482000" bandwidth="8" />
 		<carrier frequency="538000" bandwidth="8" />
@@ -1062,8 +1485,13 @@
 	<country name="Norway - Oslo (trials)" offset="0">
 		<carrier frequency="722000" bandwidth="8" />
 		<carrier frequency="770000" bandwidth="8" />
-	</country> 
-	<country name="Spain - Andalucia - Almeria">
+	</country>
+  <country name="Singapore">
+    <carrier frequency="538000" bandwidth="8" />
+    <carrier frequency="602000" bandwidth="8" />
+    <carrier frequency="610000" bandwidth="8" />
+  </country>
+  <country name="Spain - Andalucia - Almeria">
 		<carrier frequency="778000" bandwidth="8" />
 		<carrier frequency="762000" bandwidth="8" />
 		<carrier frequency="834000" bandwidth="8" />
