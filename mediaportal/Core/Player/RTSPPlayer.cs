@@ -481,7 +481,7 @@ namespace MediaPortal.Player
         {
           mediaPos.get_Duration(out m_dDuration);
           mediaPos.get_CurrentPosition(out m_dCurrentPos);
-          Log.Info("rtsp: pos:{0} duration:{1}", m_dCurrentPos, m_dDuration);
+          //Log.Info("rtsp: pos:{0} duration:{1}", m_dCurrentPos, m_dDuration);
         }
 
         if (GUIGraphicsContext.BlankScreen || (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false))
