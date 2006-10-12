@@ -67,6 +67,7 @@ namespace TvLibrary.Interfaces.Analyzer
                        out IntPtr audioLanguage2,
                        out IntPtr audioLanguage3,
                        out short teletextPid,
-                       out short subtitlePid);
+                       out short subtitlePid,
+                       out short videoStreamType);
   }
 }

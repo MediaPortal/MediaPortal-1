@@ -51,6 +51,7 @@ void CPidTable::Reset()
   TeletextPid=0;
   SubtitlePid=0;
   ServiceId=-1;
+	videoServiceType=-1;
 }
 
 CPidTable CPidTable::operator = (const CPidTable &pids)
@@ -74,6 +75,7 @@ CPidTable CPidTable::operator = (const CPidTable &pids)
   TeletextPid=pids.TeletextPid;
   SubtitlePid=pids.SubtitlePid;
   ServiceId=pids.ServiceId;
+	videoServiceType=pids.videoServiceType;
 
   return *this;
 }

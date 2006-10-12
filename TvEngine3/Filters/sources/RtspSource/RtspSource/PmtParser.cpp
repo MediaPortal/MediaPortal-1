@@ -22,7 +22,7 @@
 #include "PmtParser.h"
 #include "tsheader.h"
 
-void Log(const char *fmt, ...) ;
+void LogDebug(const char *fmt, ...) ;
 CPmtParser::CPmtParser()
 {
 	m_pmtCallback=NULL;
@@ -72,7 +72,7 @@ void CPmtParser::OnNewSection(CSection& sections)
 
 	if (!_isFound)
 	{
-		//Log("got pmt:%x service id:%x", GetPid(), program_number);
+		//LogDebug("got pmt:%x service id:%x", GetPid(), program_number);
 		_isFound=true;	
 		if (m_pmtCallback!=NULL)
 		{
@@ -109,11 +109,25 @@ void CPmtParser::OnNewSection(CSection& sections)
 	  ES_info_length = ((section[start+pointer+3] & 0xF)<<8)+section[start+pointer+4];
 	  if(stream_type==1 || stream_type==2)
 	  {
+			//mpeg2 video
 		  if(m_pidInfo.VideoPid==0)
+			{
+				m_pidInfo.VideoPid=elementary_PID;
+				m_pidInfo.videoServiceType=stream_type;
+			}
+	  }
+		if(stream_type==0x10 || stream_type==0x1b)
+	  {
+			//h.264/mpeg4 video
+		  if(m_pidInfo.VideoPid==0)
+			{
 			  m_pidInfo.VideoPid=elementary_PID;
+				m_pidInfo.videoServiceType=stream_type;
+			}
 	  }
 	  if(stream_type==3 || stream_type==4)
 	  {
+			//mpeg 2 audio
 		  audioToSet=0;
 		  if(m_pidInfo.AudioPid1==0)
 		  {
@@ -141,6 +155,7 @@ void CPmtParser::OnNewSection(CSection& sections)
 
 	  if(stream_type==0x81)
 	  {
+			//ac3 audio
 		  if(m_pidInfo.AC3Pid==0)
 			  m_pidInfo.AC3Pid=elementary_PID;
 	  }
@@ -191,7 +206,7 @@ void CPmtParser::OnNewSection(CSection& sections)
 		  pointer += x;
 
 	  }
-//	  Log("DecodePMT pid:0x%x pcrpid:0x%x videopid:0x%x audiopid:0x%x ac3pid:0x%x sid:%x",
+//	  LogDebug("DecodePMT pid:0x%x pcrpid:0x%x videopid:0x%x audiopid:0x%x ac3pid:0x%x sid:%x",
 //		  m_pidInfo.PmtPid, m_pidInfo.PcrPid,m_pidInfo.VideoPid,m_pidInfo.AudioPid1,m_pidInfo.AC3Pid,m_pidInfo.ServiceId);
   }
 }

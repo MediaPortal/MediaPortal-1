@@ -151,7 +151,18 @@ HRESULT CRtspSourceFilter::OnConnect()
     m_pids.aud=pids.AudioPid1;
     m_pids.aud2=pids.AudioPid2;
     m_pids.ac3=pids.AC3Pid;
-    m_pids.vid=pids.VideoPid;
+		if ( pids.videoServiceType==0x1b)
+		{
+			m_pids.h264=pids.VideoPid;
+		}
+		else if (pids.videoServiceType==0x10)
+		{
+			m_pids.mpeg4=pids.VideoPid;
+		}
+		else
+		{
+			m_pids.vid=pids.VideoPid;
+		}
     m_pids.pcr=pids.PcrPid;
     m_pids.pmt=pids.PmtPid;
 		Log("Filter:OnConnect, audio1:%x audio2:%x ac3:%x video:%x pcr:%x pmt:%x",

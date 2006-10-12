@@ -122,7 +122,8 @@ STDMETHODIMP CChannelScan::GetChannel(int index,
 									 char** audioLanguage2,
 									 char** audioLanguage3,
 									 int* teletextPid,
-									 int* subtitlePid)
+									 int* subtitlePid,
+									 int* videoStreamType)
 {
 	static char sServiceName[128];
 	static char sProviderName[128];
@@ -142,6 +143,7 @@ STDMETHODIMP CChannelScan::GetChannel(int index,
 		*serviceId=0;
 		*pmtPid=0;
 		*lcn=10000;
+		*videoStreamType=0;
 
 		CChannelInfo info;
 		info.Reset();
@@ -190,6 +192,7 @@ STDMETHODIMP CChannelScan::GetChannel(int index,
 			*audioLanguage3=sAudioLang3;
 			*teletextPid=info.PidTable.TeletextPid;
 			*subtitlePid=info.PidTable.SubtitlePid;
+			*videoStreamType=info.PidTable.videoServiceType;
 		}
 	}
 	catch(...)

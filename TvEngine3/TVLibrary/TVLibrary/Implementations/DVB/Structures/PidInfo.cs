@@ -76,7 +76,7 @@ namespace TvLibrary.Implementations.DVB.Structures
 
     /// <summary>
     /// Ctor for an ac3 pid
-    /// </summary>
+    /// </summary> 
     /// <param name="ac3Pid">The ac3 pid.</param>
     /// <param name="audioLanguage">The audio language.</param>
     public void Ac3Pid(int ac3Pid, string audioLanguage)
@@ -91,11 +91,11 @@ namespace TvLibrary.Implementations.DVB.Structures
     /// Ctor for an video pid
     /// </summary>
     /// <param name="videoPid">The video pid.</param>
-    public void VideoPid(int videoPid)
+    public void VideoPid(int videoPid, int streamType)
     {
       pid = videoPid;
       language = "";
-      stream_type = 1;
+      stream_type = streamType;
       isVideo = true;
     }
     /// <summary>

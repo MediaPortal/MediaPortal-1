@@ -61,7 +61,8 @@ DECLARE_INTERFACE_(ITSChannelScan, IUnknown)
 										 char** audioLanguage2,
 										 char** audioLanguage3,
 										 int* teletextPid,
-										 int* subtitlePid)PURE;
+										 int* subtitlePid,
+										 int* videoStreamType)PURE;
 
 };
 
@@ -105,7 +106,8 @@ public:
 										 char** audioLanguage2,
 										 char** audioLanguage3,
 										 int* teletextPid,
-										 int* subtitlePid);
+										 int* subtitlePid,
+										 int* videoStreamType);
 
 
 	void OnTsPacket(byte* tsPacket);

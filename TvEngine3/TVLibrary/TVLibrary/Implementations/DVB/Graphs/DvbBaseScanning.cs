@@ -269,6 +269,7 @@ namespace TvLibrary.Implementations.DVB
         string strAudioLanguage1 = "";
         string strAudioLanguage2 = "";
         string strAudioLanguage3 = "";
+        short videoStreamType;
         int found = 0;
         short lcn = -1;
         _analyzer.GetCount(out channelCount);
@@ -288,8 +289,12 @@ namespace TvLibrary.Implementations.DVB
                   out frequency, out lcn, out EIT_schedule_flag, out EIT_present_following_flag, out runningStatus,
                   out freeCAMode, out serviceType, out modulation, out providerName, out serviceName,
                   out pcrPid, out pmtPid, out videoPid, out audio1Pid, out audio2Pid, out audio3Pid,
-                  out ac3Pid, out  audioLanguage1, out audioLanguage2, out audioLanguage3, out teletextPid, out subtitlePid);
+                  out ac3Pid, out  audioLanguage1, out audioLanguage2, out audioLanguage3, out teletextPid, out subtitlePid, out videoStreamType);
             bool isValid = ((networkId != 0 || transportId != 0 || serviceId != 0) && pmtPid != 0);
+            if (videoStreamType == 0x10 || videoStreamType == 0x1b)
+            {
+              Log.Log.WriteFile("H264/MPEG4!");
+            }
             if ((channel as ATSCChannel) != null)
             {
               isValid = (majorChannel != 0 && minorChannel != 0);
@@ -322,7 +327,7 @@ namespace TvLibrary.Implementations.DVB
               if (videoPid > 0)
               {
                 PidInfo pidInfo = new PidInfo();
-                pidInfo.VideoPid(videoPid);
+                pidInfo.VideoPid(videoPid,videoStreamType);
                 info.AddPid(pidInfo);
               }
               if (audio1Pid > 0)

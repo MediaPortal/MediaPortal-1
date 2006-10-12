@@ -109,11 +109,26 @@ void CPmtParser::OnNewSection(CSection& sections)
 	  ES_info_length = ((section[start+pointer+3] & 0xF)<<8)+section[start+pointer+4];
 	  if(stream_type==1 || stream_type==2)
 	  {
+			//mpeg2 video
 		  if(m_pidInfo.VideoPid==0)
+			{
+				m_pidInfo.VideoPid=elementary_PID;
+				m_pidInfo.videoServiceType=stream_type;
+			}
+	  }
+		if(stream_type==0x10 || stream_type==0x1b)
+	  {
+			//h.264				= stream type 0x1b
+			//mpeg4 video = stream type 0x10
+		  if(m_pidInfo.VideoPid==0)
+			{
 			  m_pidInfo.VideoPid=elementary_PID;
+				m_pidInfo.videoServiceType=stream_type;
+			}
 	  }
 	  if(stream_type==3 || stream_type==4)
 	  {
+			//mpeg 2 audio
 		  audioToSet=0;
 		  if(m_pidInfo.AudioPid1==0)
 		  {
@@ -141,6 +156,7 @@ void CPmtParser::OnNewSection(CSection& sections)
 
 	  if(stream_type==0x81)
 	  {
+			//ac3 audio
 		  if(m_pidInfo.AC3Pid==0)
 			  m_pidInfo.AC3Pid=elementary_PID;
 	  }

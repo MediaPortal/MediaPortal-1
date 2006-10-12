@@ -48,6 +48,6 @@ public:
 	WORD AC3Pid;
 	WORD TeletextPid;
 	WORD SubtitlePid;
-
   int  ServiceId;
+	int  videoServiceType;
 };

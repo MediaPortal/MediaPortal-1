@@ -212,7 +212,7 @@ STDMETHODIMP CTimeShifting::AddStream(int pid, int serviceType)
 			FAKE_AUDIO_PID++;
 			m_multiPlexer.AddPesStream(pid,true,false);
     }
-		else if (serviceType==1||serviceType==2)
+		else if (serviceType==1||serviceType==2||serviceType==0x10||serviceType==0x1b)
     {
 			if (m_pcrPid == pid)
 			{
@@ -515,7 +515,7 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 		PidInfo& info=*it;
 		if (header.Pid==info.realPid)
 		{
-			if (info.serviceType==1 || info.serviceType==2)
+			if (info.serviceType==1 || info.serviceType==2||info.serviceType==0x10||info.serviceType==0x1b)
 			{
 				//video
 				if (!info.seenStart) 

@@ -1227,7 +1227,7 @@ namespace TvLibrary.Implementations.DVB
         audioInfo.Ac3Pid(atscChannel.AudioPid, "");
         _channelInfo.AddPid(audioInfo);
         PidInfo videoInfo = new PidInfo();
-        videoInfo.VideoPid(atscChannel.VideoPid);
+        videoInfo.VideoPid(atscChannel.VideoPid,1);
         _channelInfo.AddPid(videoInfo);
 
         Log.Log.Write(" video:{0:X} audio:{1:X} pcr:{2:X} pmt:{3:X}",
