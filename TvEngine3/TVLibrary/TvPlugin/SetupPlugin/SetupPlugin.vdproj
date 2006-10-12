@@ -22,13 +22,49 @@
         "Entry"
         {
         "MsmKey" = "8:_03A83257344976986E46EEE60F3E8C9B"
-        "OwnerKey" = "8:_3B690A828C79B276280756D742215D28"
+        "OwnerKey" = "8:_04265AB06E85D181484F8E5D7F9B1ACF"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_03A83257344976986E46EEE60F3E8C9B"
         "OwnerKey" = "8:_952DD846A32F4601B01E30F1F41A599D"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_04265AB06E85D181484F8E5D7F9B1ACF"
+        "OwnerKey" = "8:_5280FEF9CB744301A152E1B9ADDBF18E"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_04265AB06E85D181484F8E5D7F9B1ACF"
+        "OwnerKey" = "8:_FCBEE79BBC694CBEA07D047723660866"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_04265AB06E85D181484F8E5D7F9B1ACF"
+        "OwnerKey" = "8:_F8A1580A599E41CC95CA274BD8109061"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_04265AB06E85D181484F8E5D7F9B1ACF"
+        "OwnerKey" = "8:_A987C233BAE14CE1A50509BEB71AD2A4"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_04265AB06E85D181484F8E5D7F9B1ACF"
+        "OwnerKey" = "8:_952DD846A32F4601B01E30F1F41A599D"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_04265AB06E85D181484F8E5D7F9B1ACF"
+        "OwnerKey" = "8:_7B892AEAC3231F58EDB9E8E2EDC2BC8B"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -65,42 +101,6 @@
         {
         "MsmKey" = "8:_2F8F73274266DCA02CB198E017FE8BE4"
         "OwnerKey" = "8:_CD2C9FE9EF5475C8D31023BDC3A5F1E8"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_3B690A828C79B276280756D742215D28"
-        "OwnerKey" = "8:_952DD846A32F4601B01E30F1F41A599D"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_3B690A828C79B276280756D742215D28"
-        "OwnerKey" = "8:_FCBEE79BBC694CBEA07D047723660866"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_3B690A828C79B276280756D742215D28"
-        "OwnerKey" = "8:_F8A1580A599E41CC95CA274BD8109061"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_3B690A828C79B276280756D742215D28"
-        "OwnerKey" = "8:_7B892AEAC3231F58EDB9E8E2EDC2BC8B"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_3B690A828C79B276280756D742215D28"
-        "OwnerKey" = "8:_5280FEF9CB744301A152E1B9ADDBF18E"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_3B690A828C79B276280756D742215D28"
-        "OwnerKey" = "8:_A987C233BAE14CE1A50509BEB71AD2A4"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -358,6 +358,12 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_04265AB06E85D181484F8E5D7F9B1ACF"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_FCBEE79BBC694CBEA07D047723660866"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -479,12 +485,6 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_952DD846A32F4601B01E30F1F41A599D"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_3B690A828C79B276280756D742215D28"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -644,11 +644,42 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_04265AB06E85D181484F8E5D7F9B1ACF"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:Gentle.Framework, Version=1.2.9.18134, Culture=neutral, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_04265AB06E85D181484F8E5D7F9B1ACF"
+                    {
+                    "Name" = "8:Gentle.Framework.DLL"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:Gentle.Framework.DLL"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_E88C006BAD524657A925AC041F38E802"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:TRUE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_17BF44C2E5BF2D66B0526B7B6FA375A0"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Databases, Version=1.0.2475.17292, Culture=neutral, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:Databases, Version=1.0.2475.17861, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_17BF44C2E5BF2D66B0526B7B6FA375A0"
@@ -782,37 +813,6 @@
                     }
                 }
             "SourcePath" = "8:edtftpnet-1.2.2.DLL"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_E88C006BAD524657A925AC041F38E802"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:TRUE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_3B690A828C79B276280756D742215D28"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Gentle.Framework, Version=1.2.9.18134, Culture=neutral, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_3B690A828C79B276280756D742215D28"
-                    {
-                    "Name" = "8:Gentle.Framework.DLL"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:Gentle.Framework.DLL"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_E88C006BAD524657A925AC041F38E802"
@@ -1390,7 +1390,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Core, Version=1.0.2475.17291, Culture=neutral, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:Core, Version=1.0.2476.22405, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_CD2C9FE9EF5475C8D31023BDC3A5F1E8"
@@ -1668,9 +1668,9 @@
         "Product"
         {
         "Name" = "8:Microsoft Visual Studio"
-        "ProductName" = "8:TVServer Mediaportal Plugin"
+        "ProductName" = "8:Mediaportal"
         "ProductCode" = "8:{F7444E89-5BC0-497E-9650-E50539860DE0}"
-        "PackageCode" = "8:{4F7A07E9-787B-4775-945E-A3BF54596C1A}"
+        "PackageCode" = "8:{C204064A-B175-4997-9AE5-DBA9D5326A64}"
         "UpgradeCode" = "8:{93E7284D-C9D1-4386-9A08-1A85408D3CCA}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:FALSE"
@@ -1681,7 +1681,7 @@
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:www.team-mediaportal.com"
         "Title" = "8:TVServer Mediaportal Plugin"
-        "Subject" = "8:"
+        "Subject" = "8:Installation of the TvPlugin"
         "ARPCONTACT" = "8:Team MediaPortal"
         "Keywords" = "8:"
         "ARPCOMMENTS" = "8:"
