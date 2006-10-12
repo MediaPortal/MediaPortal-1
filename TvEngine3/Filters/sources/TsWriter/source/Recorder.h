@@ -23,7 +23,9 @@
 #include "filewriter.h"
 #include "criticalsection.h"
 #include "entercriticalsection.h"
-
+#include "timeshifting.h"
+#include <vector>
+using namespace std;
 using namespace Mediaportal;
 
 // {B45662E3-2749-4a34-993A-0C1659E86E83}
@@ -33,12 +35,14 @@ DEFINE_GUID(IID_ITsRecorder,0xb45662e3, 0x2749, 0x4a34, 0x99, 0x3a, 0xc, 0x16, 0
 DECLARE_INTERFACE_(ITsRecorder, IUnknown)
 {
 	STDMETHOD(SetPcrPid)(THIS_ int pcrPid)PURE;
-	STDMETHOD(AddPesStream)(THIS_ int pid,bool isAudio,bool isVideo)PURE;
-	STDMETHOD(RemovePesStream)(THIS_ int pid)PURE;
+	STDMETHOD(AddStream)(THIS_ int pid,bool isAudio,bool isVideo)PURE;
+	STDMETHOD(RemoveStream)(THIS_ int pid)PURE;
 	
   STDMETHOD(SetRecordingFileName)(THIS_ char* pszFileName)PURE;
   STDMETHOD(StartRecord)(THIS_ )PURE;
   STDMETHOD(StopRecord)(THIS_ )PURE;
+	STDMETHOD(GetMode) (THIS_ int *mode) PURE;
+	STDMETHOD(SetMode) (THIS_ int mode) PURE;
 };
 
 class CRecorder: public CUnknown, public ITsRecorder, public IFileWriter
@@ -49,18 +53,24 @@ public:
   DECLARE_IUNKNOWN
 	
 	STDMETHODIMP SetPcrPid(int pcrPid);
-	STDMETHODIMP AddPesStream(int pid,bool isAudio,bool isVideo);
-	STDMETHODIMP RemovePesStream(int pid);
+	STDMETHODIMP AddStream(int pid,bool isAudio,bool isVideo);
+	STDMETHODIMP RemoveStream(int pid);
 	STDMETHODIMP SetRecordingFileName(char* pszFileName);
 	STDMETHODIMP StartRecord();
 	STDMETHODIMP StopRecord();
+	STDMETHODIMP GetMode(int *mode) ;
+	STDMETHODIMP SetMode(int mode) ;
 
 	void OnTsPacket(byte* tsPacket);
 	void Write(byte* buffer, int len);
 private:
+  void WriteTs(byte* tsPacket);
 	CMultiplexer m_multiPlexer;
 	bool				 m_bRecording;
 	char				 m_szFileName[2048];
 	FileWriter* m_pRecordFile;
 	CCriticalSection m_section;
+  TimeShiftingMode     m_timeShiftMode;
+	vector<int>			 m_vecPids;
+	typedef vector<int>::iterator itvecPids;
 };

@@ -113,7 +113,19 @@ namespace TvLibrary.Interfaces
     /// <value>The max channel.</value>
     int MaxChannel { get;}
 
-    bool IsTransportStream { get;}
+    /// <summary>
+    /// returns true if we timeshift in transport stream mode
+    /// false we timeshift in program stream mode
+    /// </summary>
+    /// <value>true for transport stream, false for program stream.</value>
+    bool IsTimeshiftingTransportStream { get;}
+      
+    /// <summary>
+    /// returns true if we record in transport stream mode
+    /// false we record in program stream mode
+    /// </summary>
+    /// <value>true for transport stream, false for program stream.</value>
+    bool IsRecordingTransportStream { get;}
     #endregion
 
     #region epg & scanning
@@ -181,7 +193,7 @@ namespace TvLibrary.Interfaces
     /// <param name="fileName">filename to which to recording should be saved</param>
     /// <param name="startTime">unused</param>
     /// <returns>true if succeeded else false</returns>
-    bool StartRecording(RecordingType recordingType, string fileName, long startTime);
+    bool StartRecording(RecordingType recordingType,  string fileName, long startTime);
 
     /// <summary>
     /// Stop recording

@@ -27,6 +27,7 @@
 #include <initguid.h>
 
 #include "recorder.h"
+#include "tsheader.h"
 
 
 extern void LogDebug(const char *fmt, ...) ;
@@ -35,6 +36,7 @@ extern void LogDebug(const char *fmt, ...) ;
 CRecorder::CRecorder(LPUNKNOWN pUnk, HRESULT *phr) 
 :CUnknown( NAME ("MpTsRecorder"), pUnk)
 {
+  m_timeShiftMode=ProgramStream;
 	m_bRecording=false;
 	m_pRecordFile=NULL;
 	m_multiPlexer.SetFileWriterCallBack(this);
@@ -49,14 +51,32 @@ void CRecorder::OnTsPacket(byte* tsPacket)
 	CEnterCriticalSection enter(m_section);
 	if (m_bRecording)
 	{
-		m_multiPlexer.OnTsPacket(tsPacket);
-		//if (fpOut!=NULL)
-		//{
-		//fwrite(tsPacket,1,188,fpOut);
-		//}
+    if (m_timeShiftMode==ProgramStream)
+    {
+		  m_multiPlexer.OnTsPacket(tsPacket);
+    }
+    else
+    {
+      WriteTs(tsPacket);
+    }
 	}
 }
 
+STDMETHODIMP CRecorder::SetMode(int mode) 
+{
+  m_timeShiftMode=(TimeShiftingMode)mode;
+  if (mode==ProgramStream)
+			LogDebug("Recorder:program stream mode");
+  else
+      LogDebug("Recorder:transport stream mode");
+	return S_OK;
+}
+
+STDMETHODIMP CRecorder::GetMode(int *mode) 
+{
+  *mode=(int)m_timeShiftMode;
+	return S_OK;
+}
 
 STDMETHODIMP CRecorder::SetPcrPid(int pcrPid)
 {
@@ -65,31 +85,46 @@ STDMETHODIMP CRecorder::SetPcrPid(int pcrPid)
 	m_multiPlexer.SetPcrPid(pcrPid);
 	return S_OK;
 }
-STDMETHODIMP CRecorder::AddPesStream(int pid,bool isAudio,bool isVideo)
+
+STDMETHODIMP CRecorder::AddStream(int pid,bool isAudio,bool isVideo)
 {
 	CEnterCriticalSection enter(m_section);
 	if (isAudio)
-		LogDebug("Recorder:add audio pes stream pid:%x",pid);
+		LogDebug("Recorder:add audio stream pid:%x",pid);
 	else if (isVideo)
-		LogDebug("Recorder:add video pes stream pid:%x",pid);
+		LogDebug("Recorder:add video stream pid:%x",pid);
 	else 
-		LogDebug("Recorder:add private pes stream pid:%x",pid);
+		LogDebug("Recorder:add private stream pid:%x",pid);
 
+  m_vecPids.push_back(pid);
 	m_multiPlexer.AddPesStream(pid,isAudio,isVideo);
 	return S_OK;
 }
 
-STDMETHODIMP CRecorder::RemovePesStream(int pid)
+STDMETHODIMP CRecorder::RemoveStream(int pid)
 {
 	CEnterCriticalSection enter(m_section);
 	LogDebug("Recorder:remove pes stream pid:%x",pid);
 	m_multiPlexer.RemovePesStream(pid);
+  itvecPids it = m_vecPids.begin();
+  while (it!=m_vecPids.end())
+  {
+    if (*it==pid)
+    {
+      it=m_vecPids.erase(it);
+    }
+    else
+    {
+      ++it;
+    }
+  }
 	return S_OK;
 }
 
 STDMETHODIMP CRecorder::SetRecordingFileName(char* pszFileName)
 {
 	CEnterCriticalSection enter(m_section);
+  m_vecPids.clear();
 	m_multiPlexer.Reset();
 	strcpy(m_szFileName,pszFileName);
 	return S_OK;
@@ -130,9 +165,6 @@ STDMETHODIMP CRecorder::StopRecord()
 		delete m_pRecordFile;
 		m_pRecordFile=NULL;
 	}
-	//if (fpOut!=NULL)
-	//	fclose(fpOut);
-	//fpOut=NULL;
 	return S_OK;
 }
 
@@ -145,4 +177,33 @@ void CRecorder::Write(byte* buffer, int len)
 	{
 		m_pRecordFile->Write(buffer,len);
 	}
+}
+
+void CRecorder::WriteTs(byte* tsPacket)
+{
+	if (!m_bRecording) return;
+	CTsHeader header(tsPacket);
+	if (header.TransportError) return;
+  if (header.Pid==0)
+  {
+    //PAT
+    Write(tsPacket,188);
+    return;
+  }
+  if (header.Pid==m_multiPlexer.GetPcrPid())
+  {
+    //PCR
+    Write(tsPacket,188);
+      return;
+  }
+  itvecPids it = m_vecPids.begin();
+  while (it!=m_vecPids.end())
+  {
+    if (header.Pid==*it)
+    {
+      Write(tsPacket,188);
+      return;
+    }
+    ++it;
+  }
 }

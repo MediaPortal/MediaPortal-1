@@ -298,33 +298,77 @@ namespace TvLibrary.Implementations.DVB
 
       ITsRecorder recorder = _filterTsAnalyzer as ITsRecorder;
       recorder.SetPcrPid((short)dvbChannel.PcrPid);
+      bool programStream = true;
       foreach (PidInfo info in _channelInfo.pids)
       {
         if (info.isAC3Audio || info.isAudio || info.isVideo)
         {
           bool addPid = false;
-          if (info.isVideo) addPid = true;
+          if (info.isVideo)
+          {
+            addPid = true;
+            if (info.stream_type == 0x10 || info.stream_type == 0x1b)
+            {
+              programStream = false;
+            }
+          }
           if (info.isAudio || info.isAC3Audio)
           {
-            if (info.pid == _currentAudioStream.Pid) addPid = true;
+             addPid = true;
           }
+
           if (addPid)
           {
             Log.Log.WriteFile("dvb: set record {0}", info);
-            recorder.AddPesStream((short)info.pid, (info.isAC3Audio || info.isAudio), info.isVideo);
+            recorder.AddStream((short)info.pid, (info.isAC3Audio || info.isAudio), info.isVideo);
           }
         }
       }
+      if (programStream == false)
+      {
+        recorder.AddStream((short)dvbChannel.PmtPid, false, false);
+        recorder.SetMode(TimeShiftingMode.TransportStream);
+        Log.Log.WriteFile("dvb: record transport stream mode");
+      }
+      else
+      {
+        recorder.SetMode(TimeShiftingMode.ProgramStream);
+        Log.Log.WriteFile("dvb: record program stream mode");
+      }
     }
 
-    public bool IsTransportStream
+    /// <summary>
+    /// returns true if we timeshift in transport stream mode
+    /// false we timeshift in program stream mode
+    /// </summary>
+    /// <value>true for transport stream, false for program stream.</value>
+    public bool IsTimeshiftingTransportStream
     {
       get
       {
         return true;
       }
     }
-
+    /// <summary>
+    /// returns true if we record in transport stream mode
+    /// false we record in program stream mode
+    /// </summary>
+    /// <value>true for transport stream, false for program stream.</value>
+    public bool IsRecordingTransportStream
+    {
+      get
+      {
+        if (_channelInfo == null) return false;
+        foreach (PidInfo info in _channelInfo.pids)
+        {
+          if (info.isVideo)
+          {
+            if (info.stream_type == 0x10 || info.stream_type == 0x1b) return true;
+          }
+        }
+        return false;
+      }
+    }
     /// <summary>
     /// sets the filename used for timeshifting
     /// </summary>
@@ -2123,12 +2167,6 @@ namespace TvLibrary.Implementations.DVB
           else
             timeshift.AddStream((short)audioStream.Pid, 3);
 
-          ITsRecorder recorder = _filterTsAnalyzer as ITsRecorder;
-          if (_currentAudioStream != null)
-          {
-            recorder.RemovePesStream((short)_currentAudioStream.Pid);
-          }
-          recorder.AddPesStream((short)audioStream.Pid, true, false);
         }
         _currentAudioStream = audioStream;
         _pmtVersion = -1;

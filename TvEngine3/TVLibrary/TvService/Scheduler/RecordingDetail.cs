@@ -128,6 +128,10 @@ namespace TvService
       {
         return _fileName;
       }
+      set
+      {
+        _fileName = value;
+      }
     }
     /// <summary>
     /// Gets the date/time on which the recording should stop

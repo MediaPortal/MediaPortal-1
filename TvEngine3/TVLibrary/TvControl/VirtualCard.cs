@@ -527,11 +527,11 @@ namespace TvControl
     /// <param name="contentRecording">not used</param>
     /// <param name="startTime">not used</param>
     /// <returns>true if success otherwise false</returns>
-    public bool StartRecording(string fileName, bool contentRecording, long startTime)
+    public bool StartRecording(ref string fileName, bool contentRecording, long startTime)
     {
       if (_cardId < 0) return false;
       RemoteControl.HostName = _server;
-      return RemoteControl.Instance.StartRecording(_cardId, fileName, contentRecording, startTime);
+      return RemoteControl.Instance.StartRecording(_cardId,ref fileName, contentRecording, startTime);
     }
 
     /// <summary>

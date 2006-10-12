@@ -1075,7 +1075,7 @@ namespace TvService
           if (System.IO.File.Exists(fileName))
           {
             _streamer.Start();
-            _streamer.AddTimeShiftFile(String.Format("stream{0}", cardId), fileName, (false==_localCards[cardId].IsTransportStream));
+            _streamer.AddTimeShiftFile(String.Format("stream{0}", cardId), fileName, (false==_localCards[cardId].IsTimeshiftingTransportStream));
           }
           else
           {
@@ -1160,12 +1160,11 @@ namespace TvService
     /// <param name="contentRecording">if true then create a content recording else a reference recording</param>
     /// <param name="startTime">not used</param>
     /// <returns></returns>
-    public bool StartRecording(int cardId, string fileName, bool contentRecording, long startTime)
+    public bool StartRecording(int cardId, ref string fileName, bool contentRecording, long startTime)
     {
       try
       {
         if (_allDbscards[cardId].Enabled == false) return false;
-        Log.Write("Controller: StartRecording {0} {1}", cardId, fileName);
         lock (this)
         {
           RecordingType recType = RecordingType.Content;
@@ -1173,9 +1172,18 @@ namespace TvService
           if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
           {
             RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
-            return RemoteControl.Instance.StartRecording(cardId, fileName, contentRecording, startTime);
+            return RemoteControl.Instance.StartRecording(cardId, ref fileName, contentRecording, startTime);
           }
 
+          if (_localCards[cardId].IsRecordingTransportStream)
+          {
+            fileName = System.IO.Path.ChangeExtension(fileName, ".ts");
+          }
+          else
+          {
+            fileName = System.IO.Path.ChangeExtension(fileName, ".mpg");
+          }
+          Log.Write("Controller: StartRecording {0} {1}", cardId, fileName);
           return _localCards[cardId].StartRecording(recType, fileName, startTime);
         }
       }

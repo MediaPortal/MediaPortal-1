@@ -408,7 +408,9 @@ namespace TvService
         recording.MakeFileName(cardInfo.Card.RecordingFolder);
         recording.CardInfo = cardInfo;
         Log.Write("Scheduler : record to {0}", recording.FileName);
-        if (false == _controller.StartRecording(cardInfo.Id, recording.FileName, false, 0)) return false;
+        string fileName = recording.FileName;
+        if (false == _controller.StartRecording(cardInfo.Id, ref fileName, false, 0)) return false;
+        recording.FileName = fileName;
         _recordingsInProgressList.Add(recording);
         Log.Write("recList:count:{0} add scheduleid:{1} card:{2}", _recordingsInProgressList.Count, recording.Schedule.IdSchedule, recording.CardInfo.Card.Name);
       }

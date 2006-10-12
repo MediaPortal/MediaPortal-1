@@ -33,14 +33,18 @@ namespace TvLibrary.Interfaces.Analyzer
     [PreserveSig]
     int SetPcrPid(short pcrPid);
     [PreserveSig]
-    int AddPesStream(short pid, bool isAudio, bool isVideo);
+    int AddStream(short pid, bool isAudio, bool isVideo);
     [PreserveSig]
-    int RemovePesStream(short pid);
+    int RemoveStream(short pid);
     [PreserveSig]
     int SetRecordingFileName([In, MarshalAs(UnmanagedType.LPStr)]			string fileName);
     [PreserveSig]
     int StartRecord();
     [PreserveSig]
     int StopRecord();
+    [PreserveSig]
+    int GetMode(out TimeShiftingMode mode);
+    [PreserveSig]
+    int SetMode(TimeShiftingMode mode);
   }
 }

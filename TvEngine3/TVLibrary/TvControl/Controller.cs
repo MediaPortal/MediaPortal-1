@@ -281,7 +281,7 @@ namespace TvControl
     /// <param name="contentRecording">not used</param>
     /// <param name="startTime">not used</param>
     /// <returns>true if success otherwise false</returns>
-    bool StartRecording(int cardId, string fileName, bool contentRecording, long startTime);
+    bool StartRecording(int cardId, ref string fileName, bool contentRecording, long startTime);
 
     /// <summary>
     /// Stops recording.

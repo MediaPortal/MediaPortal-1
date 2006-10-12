@@ -2038,13 +2038,32 @@ namespace TvLibrary.Implementations.Analog
       }
     }
 
-    public bool IsTransportStream
+    /// <summary>
+    /// returns true if we timeshift in transport stream mode
+    /// false we timeshift in program stream mode
+    /// </summary>
+    /// <value>true for transport stream, false for program stream.</value>
+    public bool IsTimeshiftingTransportStream
     {
       get
       {
         return true;
       }
     }
+
+    /// <summary>
+    /// returns true if we record in transport stream mode
+    /// false we record in program stream mode
+    /// </summary>
+    /// <value>true for transport stream, false for program stream.</value>
+    public bool IsRecordingTransportStream
+    {
+      get
+      {
+        return false;
+      }
+    }
+
     /// <summary>
     /// returns true if card is currently scanning
     /// </summary>
