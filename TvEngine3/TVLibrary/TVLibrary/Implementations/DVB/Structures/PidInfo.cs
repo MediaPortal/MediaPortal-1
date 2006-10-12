@@ -83,7 +83,7 @@ namespace TvLibrary.Implementations.DVB.Structures
     {
       pid = ac3Pid;
       language = audioLanguage;
-      stream_type = 0;
+      stream_type = 0x81;
       isAC3Audio = true;
     }
 

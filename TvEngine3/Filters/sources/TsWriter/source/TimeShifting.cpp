@@ -142,7 +142,7 @@ STDMETHODIMP CTimeShifting::SetPcrPid(int pcrPid)
 	CEnterCriticalSection enter(m_section);
 	try
 	{
-		//LogDebug("Timeshifter:pcr pid:%x",pcrPid); 
+		LogDebug("Timeshifter:pcr pid:%x",pcrPid); 
 		m_multiPlexer.ClearStreams();
 		m_multiPlexer.SetPcrPid(pcrPid);
     m_pcrPid=pcrPid;
@@ -159,7 +159,7 @@ STDMETHODIMP CTimeShifting::SetPmtPid(int pmtPid)
   CEnterCriticalSection enter(m_section);
 	try
 	{
-		//LogDebug("Timeshifter:pmt pid:%x",pmtPid);
+		LogDebug("Timeshifter:pmt pid:%x",pmtPid);
     m_pmtPid=pmtPid;
 	}
 	catch(...)
@@ -188,6 +188,7 @@ STDMETHODIMP CTimeShifting::GetMode(int *mode)
 
 STDMETHODIMP CTimeShifting::AddStream(int pid, int serviceType)
 {
+  if (pid==0) return S_OK;
 	CEnterCriticalSection enter(m_section);
 	itvecPids it=m_vecPids.begin();
 	while (it!=m_vecPids.end())
