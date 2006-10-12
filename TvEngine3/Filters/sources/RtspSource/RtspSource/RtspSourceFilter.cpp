@@ -178,7 +178,7 @@ HRESULT CRtspSourceFilter::OnConnect()
 	
 	Log("Filter:setup demuxer...");
   m_client.Stop();
-  m_pDemux->set_ClockMode(1);
+  m_pDemux->set_ClockMode(3);
   m_pDemux->set_Auto(TRUE);
   m_pDemux->set_FixedAspectRatio(TRUE);
   m_pDemux->set_MPEG2Audio2Mode(TRUE);
@@ -190,6 +190,7 @@ HRESULT CRtspSourceFilter::OnConnect()
 
 STDMETHODIMP CRtspSourceFilter::Run(REFERENCE_TIME tStart)
 {
+  m_pDemux->SetRefClock();
 	Log("Filter:run()");
 	float milliSecs=m_rtStartFrom.Millisecs();
 	milliSecs/=1000.0f;

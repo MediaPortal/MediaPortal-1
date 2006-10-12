@@ -175,23 +175,15 @@ HRESULT COutputPin::CompleteConnect(IPin *pReceivePin)
 	return hr;
 }
 
-static int locked=0;
 HRESULT COutputPin::FillBuffer(IMediaSample *pSample)
 {
 	CAutoLock lock(&m_FillLock);
-	if (locked)
-	{
-		::OutputDebugStringA("LOCKED!!!\n");
-		pSample->SetActualDataLength(0);
-		return S_OK;
-	}
-	locked=1;
+
   BYTE* pBuffer;
   pSample->GetPointer(&pBuffer);
 	long lDataLength = BUFFER_SIZE;//pSample->GetActualDataLength();
   DWORD bytesRead=m_pFilter->GetData(pBuffer,lDataLength);
   pSample->SetActualDataLength(bytesRead);
-	locked=0;
 	long ticks=GetTickCount()-m_tickUpdateCount;
 	if (ticks>1000)
 	{
