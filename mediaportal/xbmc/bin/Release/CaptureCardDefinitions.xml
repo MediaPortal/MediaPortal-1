@@ -970,11 +970,11 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"    name="ATI AVStream Analog Tuner"		checkdevice="true"/>
-        <filter cat="tvaudio"    name="ATI AVStream Analog TV Audio"	checkdevice="true"/>
-        <filter cat="crossbar"   name="ATI AVStream Analog Xbar"		checkdevice="true"/>
-        <filter cat="capture"    name="ATI AVStream Analog Capture"     checkdevice="true"/>
-        <filter cat="mux"    	 name="ATI AVStream MPEG2 Multiplexer"  checkdevice="true"/>
+        <filter cat="tvtuner"   name="ATI AVStream Analog Tuner"		  checkdevice="true"/>
+        <filter cat="tvaudio"   name="ATI AVStream Analog TV Audio"	  checkdevice="true"/>
+        <filter cat="crossbar"  name="ATI AVStream Analog Xbar"		    checkdevice="true"/>
+        <filter cat="capture"   name="ATI AVStream Analog Capture"    checkdevice="true"/>
+        <filter cat="mux"       name="ATI AVStream MPEG2 Multiplexer" checkdevice="true"/>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%tvtuner%"/>
@@ -8817,23 +8817,23 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"		name="Cinergy 400 TV Tuner"		checkdevice="true"/>
-        <filter cat="tvaudio"		name="Cinergy 400 TV TvAudio"	checkdevice="true"/>
-        <filter cat="crossbar"		name="Cinergy 400 TV Crossbar"	checkdevice="true"/>
-        <filter cat="capture"		name="Cinergy 400 TV Capture"	checkdevice="true"/>
-		<filter cat="videncoder"	name="%videoencoder%"			checkdevice="false"/>
-		<filter cat="audencoder"	name="%audioencoder%"			checkdevice="false"/>
-		<filter cat="mux"			name="%mpegmux%"				checkdevice="false"/>
+        <filter cat="tvtuner"		  name="Cinergy 400 TV Tuner"		  checkdevice="true"/>
+        <filter cat="tvaudio"		  name="Cinergy 400 TV TvAudio"	  checkdevice="true"/>
+        <filter cat="crossbar"		name="Cinergy 400 TV Crossbar"  checkdevice="true"/>
+        <filter cat="capture"		  name="Cinergy 400 TV Capture"	  checkdevice="true"/>
+        <filter cat="videncoder"	name="%videoencoder%"			      checkdevice="false"/>
+        <filter cat="audencoder"	name="%audioencoder%"			      checkdevice="false"/>
+        <filter cat="mux"			    name="%mpegmux%"				        checkdevice="false"/>
       </filters>
       <connections>
-		<connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
         <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
         <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
         <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
         <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
         <connection sourcefilter="capture"		sourcepin="3" sinkfilter="audencoder"	sinkpin="0"/>
-        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
-        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
       </connections>
     </tv>
   </capturecard>
@@ -16822,6 +16822,22 @@
     </tv>
   </capturecard>
 
+  <!-- Twinhan MagicBox - hacked driver test for EriSan -->
+  
+  <capturecard commercialname="Twinhan MagicBox Test" capturename="DVB-T Mobility TV receiver" devid="vid_1822&amp;pid_3202">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="tunerdevice" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"	checkdevice="false"/>
+        <filter cat="tunerdevice"     name="DVB-T Mobility TV receiver"       checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
   <capturecard commercialname="Kworld 210-Tevion DVBT" capturename="713x BDA Digital Capture" devid="ven_1131&amp;dev_7133&amp;subsys_725017de&amp;rev_d1">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
     <tv>
@@ -16877,6 +16893,91 @@
         <connection sourcefilter="capture"    sourcepin="3" sinkfilter="audencoder" sinkpin="0"/>
         <connection sourcefilter="videncoder" sourcepin="0" sinkfilter="mux"        sinkpin="0"/>
         <connection sourcefilter="audencoder" sourcepin="0" sinkfilter="mux"        sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="ATI TV Wonder 650 (NTSC)" capturename="ATI AVStream Analog Capture" devid="ven_1002&amp;dev_4d50&amp;subsys_a6981002&amp;rev_00">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"   name="ATI AVStream Analog Tuner"		  checkdevice="true"/>
+        <filter cat="tvaudio"   name="ATI AVStream Analog TV Audio"	  checkdevice="true"/>
+        <filter cat="crossbar"  name="ATI AVStream Analog Xbar"		    checkdevice="true"/>
+        <filter cat="capture"   name="ATI AVStream Analog Capture"    checkdevice="true"/>
+        <filter cat="mux"       name="ATI AVStream MPEG2 Multiplexer" checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"	sinkpin="0"/>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"	sinkpin="0"/>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"	sinkpin="1"/>
+        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="mux"		  sinkpin="0"/>
+        <connection sourcefilter="capture"  sourcepin="4" sinkfilter="mux"		  sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="ATI TV Wonder 650 (ATSC)" capturename="ATI BDA Digital Capture" devid="ven_1002&amp;dev_4d50&amp;subsys_a6981002&amp;rev_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"  checkdevice="false"/>
+        <filter cat="tunerdevice"     name="ATI BDA Digital Tuner"            checkdevice="true"/>
+        <filter cat="capture"         name="ATI BDA Digital Capture"          checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="HP Expresscard" capturename="HP Analog TV Tuner" devid="vid_1164&amp;pid_0601">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="capture" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"    name="Python2 USB TvTuner"		checkdevice="true"/>
+        <filter cat="tvaudio"    name="Python2 USB TvAudio"		checkdevice="true"/>
+        <filter cat="crossbar"   name="Python2 USB Crossbar"	checkdevice="true"/>
+        <filter cat="capture"    name="HP Analog TV Tuner"    checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"	sinkpin="0"/>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"	sinkpin="0"/>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"	sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Terratec Cinergy 600 TV" capturename="Cinergy 600 TV Capture" devid="ven_1131&amp;dev_7134&amp;subsys_1158153b&amp;rev_01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		  name="Cinergy 600 TV Tuner"		  checkdevice="true"/>
+        <filter cat="tvaudio"		  name="Cinergy 600 TV TvAudio"	  checkdevice="true"/>
+        <filter cat="crossbar"		name="Cinergy 600 TV Crossbar"  checkdevice="true"/>
+        <filter cat="capture"		  name="Cinergy 600 TV Capture"	  checkdevice="true"/>
+        <filter cat="videncoder"	name="%videoencoder%"			      checkdevice="false"/>
+        <filter cat="audencoder"	name="%audioencoder%"			      checkdevice="false"/>
+        <filter cat="mux"			    name="%mpegmux%"				        checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="3" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
       </connections>
     </tv>
   </capturecard>
