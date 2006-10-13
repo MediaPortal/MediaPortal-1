@@ -10228,13 +10228,14 @@
   <capturecard commercialname="Angel II Dual TV Tuner (Tuner 1)" capturename="Angel II MPEG Device" devid="ven_1033&amp;dev_013a&amp;subsys_001b1809&amp;rev_0c">
     <capabilities tv="true" radio="false" mpeg2="true" mce="true" sw="false" bda="false"/>
     <tv>
-      <interface cat="encoder" video="" audio="" mpeg2="0"/>
+      <!-- <interface cat="encoder" video="" audio="" mpeg2="0"/> -->
+      <interface cat="capture" video="" audio="" mpeg2="0"/>
       <filters>
         <filter cat="tvtuner"  name="Angel II TvTuner"      checkdevice="true"/>
         <filter cat="tvaudio"  name="Angel II TvAudio"      checkdevice="true"/>
         <filter cat="crossbar" name="Angel II Crossbar"     checkdevice="true"/>
         <filter cat="capture"  name="Angel II MPEG Device"  checkdevice="true"/>
-        <filter cat="encoder"  name="Angel II Encoder"      checkdevice="true"/>
+        <!-- <filter cat="encoder"  name="Angel Encoder"     checkdevice="true"/> -->
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%tvtuner%"/>
@@ -10242,8 +10243,8 @@
         <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%audiotuner%"/>
         <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"	sinkpin="0"/>
         <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"	sinkpin="1"/>
-        <connection sourcefilter="capture"  sourcepin="1" sinkfilter="encoder"	sinkpin="0"/>
-        <connection sourcefilter="capture"  sourcepin="2" sinkfilter="encoder"	sinkpin="1"/>
+        <!-- <connection sourcefilter="capture"  sourcepin="1" sinkfilter="encoder"	sinkpin="0"/>
+        <connection sourcefilter="capture"  sourcepin="2" sinkfilter="encoder"	sinkpin="1"/> -->
       </connections>
     </tv>
   </capturecard>
@@ -10251,13 +10252,14 @@
   <capturecard commercialname="Angel II Dual TV Tuner (Tuner 2)" capturename="Angel II MPEG Device" devid="angel2_ch2_rev0">
     <capabilities tv="true" radio="false" mpeg2="true" mce="true" sw="false" bda="false"/>
     <tv>
-      <interface cat="encoder" video="" audio="" mpeg2="0"/>
+      <!-- <interface cat="encoder" video="" audio="" mpeg2="0"/> -->
+      <interface cat="capture" video="" audio="" mpeg2="0"/>
       <filters>
         <filter cat="tvtuner"  name="Angel II TvTuner"      checkdevice="true"/>
         <filter cat="tvaudio"  name="Angel II TvAudio"      checkdevice="true"/>
         <filter cat="crossbar" name="Angel II Crossbar"     checkdevice="true"/>
         <filter cat="capture"  name="Angel II MPEG Device"  checkdevice="true"/>
-        <filter cat="encoder"  name="Angel II Encoder"      checkdevice="true"/>
+        <!-- <filter cat="encoder"  name="Angel Encoder"     checkdevice="true"/> -->
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%tvtuner%"/>
@@ -10265,8 +10267,8 @@
         <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%audiotuner%"/>
         <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"	sinkpin="0"/>
         <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"	sinkpin="1"/>
-        <connection sourcefilter="capture"  sourcepin="1" sinkfilter="encoder"	sinkpin="0"/>
-        <connection sourcefilter="capture"  sourcepin="2" sinkfilter="encoder"	sinkpin="1"/>
+        <!-- <connection sourcefilter="capture"  sourcepin="1" sinkfilter="encoder"	sinkpin="0"/>
+        <connection sourcefilter="capture"  sourcepin="2" sinkfilter="encoder"	sinkpin="1"/> -->
       </connections>
     </tv>
   </capturecard>
