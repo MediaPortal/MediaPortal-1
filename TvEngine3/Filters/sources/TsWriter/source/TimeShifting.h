@@ -23,6 +23,7 @@
 #include "multifilewriter.h"
 #include "criticalsection.h"
 #include "entercriticalsection.h"
+#include "tsheader.h"
 #include <vector>
 #include <map>
 using namespace std;
@@ -122,6 +123,10 @@ private:
 	void PatchPcr(byte* tsPacket);
 	void PatchPtsDts(byte* tsPacket);
 
+  bool GetPtsDts(byte* pesHeader, __int64& pts, __int64& dts);
+  void PatchPcr(byte* tsPacket,CTsHeader& header);
+  void PatchPtsDts(byte* tsPacket,CTsHeader& header,__int64 startPcr);
+
 	MultiFileWriterParam m_params;
   TimeShiftingMode     m_timeShiftMode;
 	CMultiplexer         m_multiPlexer;
@@ -137,4 +142,8 @@ private:
 	bool								 m_bSeenVideoStart;
 	int									 m_iPmtContinuityCounter;
 	int									 m_iPatContinuityCounter;
+  
+	__int64 m_startPcr;
+	__int64 m_highestPcr;
+  bool    m_bDetermineNewStartPcr;
 };

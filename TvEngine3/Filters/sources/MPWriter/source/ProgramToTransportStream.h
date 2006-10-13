@@ -12,6 +12,7 @@ public:
   CProgramToTransportStream(void);
   virtual ~CProgramToTransportStream(void);
   void Initialize(char* fileNameOut);
+  void ClearStreams();
   void Close();
   void Write(byte* data, int len);
 
@@ -19,6 +20,7 @@ public:
 	void StopBufferThread();
 	virtual void ThreadProc();
   bool m_BufferThreadActive;
+  
 private:
   UsageEnvironment* m_env;
   CMemoryBuffer m_buffer;

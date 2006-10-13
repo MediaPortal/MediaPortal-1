@@ -255,7 +255,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\source\PacketSync.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\source\ProgramToTransportStream.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\TsHeader.cpp"
 				>
 			</File>
 			<File
@@ -292,7 +300,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\source\PacketSync.h"
+				>
+			</File>
+			<File
 				RelativePath=".\source\ProgramToTransportStream.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\TsHeader.h"
 				>
 			</File>
 			<File

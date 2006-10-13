@@ -45,6 +45,10 @@ void CProgramToTransportStream::Initialize(char* fileNameOut)
   StartBufferThread();
 }
 
+void CProgramToTransportStream::ClearStreams()
+{
+  m_outputSink->ClearStreams();
+}
 void CProgramToTransportStream::Write(byte* data, int len)
 {
   m_buffer.PutBuffer(data, len, 1);
@@ -54,10 +58,6 @@ void CProgramToTransportStream::Close()
 {
   m_buffer.Stop();
   StopBufferThread();
-  
-
-  
-
 }
 
 
@@ -97,8 +97,8 @@ void CProgramToTransportStream::ThreadProc()
 		m_env->taskScheduler().doEventLoop(); 
 			
 	}
-  m_outputSink->stopPlaying();
-  delete m_outputSink;
+  //m_outputSink->stopPlaying();
+  //delete m_outputSink;
   m_outputSink=NULL;
   delete m_inputSource;
   m_inputSource=NULL;
