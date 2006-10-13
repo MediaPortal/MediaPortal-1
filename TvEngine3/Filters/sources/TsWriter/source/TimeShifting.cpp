@@ -41,6 +41,7 @@ int FAKE_PMT_PID      = 0x20;
 int FAKE_PCR_PID      = 0x21;
 int FAKE_VIDEO_PID    = 0x30;
 int FAKE_AUDIO_PID    = 0x40;
+int FAKE_SUBTITLE_PID = 0x50;
 
 extern void LogDebug(const char *fmt, ...) ;
 
@@ -234,6 +235,18 @@ STDMETHODIMP CTimeShifting::AddStream(int pid, int serviceType)
 			FAKE_VIDEO_PID++;
 			m_multiPlexer.AddPesStream(pid,false,true);
     }
+		else if (serviceType==5||serviceType==6)
+		{
+      PidInfo info;
+			info.realPid=pid;
+			info.fakePid=FAKE_SUBTITLE_PID;
+			info.seenStart=false;
+			info.serviceType=serviceType;
+			m_vecPids.push_back(info);
+			LogDebug("Timeshifter:add subtitle stream real pid:%x fake pid:%x type:%x",info.realPid,info.fakePid,info.serviceType);
+			FAKE_SUBTITLE_PID++;
+			m_multiPlexer.AddPesStream(pid,false,true);
+		}
 		else 
     {
       PidInfo info;
@@ -342,7 +355,8 @@ STDMETHODIMP CTimeShifting::Reset()
 		FAKE_PMT_PID      = 0x20;
 		FAKE_PCR_PID      = 0x21;
 		FAKE_VIDEO_PID    = 0x30;
-		FAKE_AUDIO_PID    = 0x31;
+		FAKE_AUDIO_PID    = 0x40;
+		FAKE_SUBTITLE_PID = 0x50;
 	}
 	catch(...)
 	{
@@ -533,6 +547,8 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 				int pid=info.fakePid;
 				pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
 				pkt[2]=(pid&0xff);
+				if (header.Pid==m_pcrPid) PatchPcr(pkt);
+				if (PayLoadUnitStart) PatchPtsDts(pkt);
 				Write(pkt,188);
 				return;
 			}
@@ -554,6 +570,22 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 				int pid=info.fakePid;
 				pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
 				pkt[2]=(pid&0xff);
+				if (header.Pid==m_pcrPid) PatchPcr(pkt);
+				if (PayLoadUnitStart) PatchPtsDts(pkt);
+				Write(pkt,188);
+				return;
+			}
+
+			if (info.serviceType==5 || info.serviceType==6)
+			{
+				//subtitle pid...
+				byte pkt[200];
+				memcpy(pkt,tsPacket,188);
+				int pid=info.fakePid;
+				pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
+				pkt[2]=(pid&0xff);
+				if (header.Pid==m_pcrPid) PatchPcr(pkt);
+				if (PayLoadUnitStart) PatchPtsDts(pkt);
 				Write(pkt,188);
 				return;
 			}
@@ -565,6 +597,7 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 			pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
 			pkt[2]=(pid&0xff);
 			Write(pkt,188);
+			return;
 		}
 		++it;
 	}
@@ -576,6 +609,7 @@ void CTimeShifting::WriteTs(byte* tsPacket)
     int pid=FAKE_PCR_PID;
     pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
     pkt[2]=(pid&0xff);
+		if (PayLoadUnitStart) PatchPcr(pkt);
     Write(pkt,188);
     return;
   }
@@ -691,4 +725,12 @@ void CTimeShifting::WriteFakePMT()
   pmt[offset++]=(crc>>8)&0xff;
   pmt[offset++]=(crc)&0xff;
   Write(pmt,188);
+}
+
+void CTimeShifting::PatchPcr(byte* tsPacket)
+{
+}
+
+void CTimeShifting::PatchPtsDts(byte* tsPacket)
+{
 }

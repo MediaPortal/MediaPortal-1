@@ -119,6 +119,8 @@ private:
 	void WriteTs(byte* tsPacket);
   void WriteFakePAT();  
   void WriteFakePMT();
+	void PatchPcr(byte* tsPacket);
+	void PatchPtsDts(byte* tsPacket);
 
 	MultiFileWriterParam m_params;
   TimeShiftingMode     m_timeShiftMode;
