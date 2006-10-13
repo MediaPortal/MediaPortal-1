@@ -278,7 +278,7 @@ namespace TvLibrary.Implementations.DVB
           if (info.isDVBSubtitle) addPid = true;
           if (info.isAudio || info.isAC3Audio)
           {
-            if (info.pid == _currentAudioStream.Pid) addPid = true;
+            /*if (info.pid == _currentAudioStream.Pid)*/ addPid = true;
           }
           if (addPid)
           {
@@ -1317,6 +1317,7 @@ namespace TvLibrary.Implementations.DVB
         }
         Log.Log.WriteFile("  pid:{0:X} pcr", info.pcr_pid);
         Log.Log.WriteFile("  pid:{0:X} pmt", info.network_pmt_PID);
+        
         foreach (PidInfo pidInfo in info.pids)
         {
           Log.Log.WriteFile("  {0}", pidInfo.ToString());
@@ -1334,7 +1335,7 @@ namespace TvLibrary.Implementations.DVB
           }
           if (pidInfo.isAC3Audio || pidInfo.isAudio)
           {
-            if (_currentAudioStream == null)
+            if (_currentAudioStream == null || pidInfo.isAC3Audio)
             {
               _currentAudioStream = new DVBAudioStream();
               _currentAudioStream.Pid = pidInfo.pid;

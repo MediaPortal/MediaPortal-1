@@ -382,7 +382,7 @@ namespace TvLibrary.Implementations.DVB
           if (info.isDVBSubtitle) addPid = true;
           if (info.isAudio || info.isAC3Audio)
           {
-            if (info.pid == _currentAudioStream.Pid) addPid = true;
+            /*if (info.pid == _currentAudioStream.Pid)*/ addPid = true;
           }
           if (addPid)
           {
@@ -887,7 +887,7 @@ namespace TvLibrary.Implementations.DVB
         }
         if (pmtData.isAC3Audio || pmtData.isAudio)
         {
-          if (_currentAudioStream == null)
+          if (_currentAudioStream == null || pmtData.isAC3Audio)
           {
             _currentAudioStream = new DVBAudioStream();
             _currentAudioStream.Pid = pmtData.pid;
@@ -900,9 +900,9 @@ namespace TvLibrary.Implementations.DVB
           if (_currentAudioStream.Pid == pmtData.pid)
           {
             Log.Log.WriteFile("    map audio pid:0x{0:X}", pmtData.pid);
-            hwPids.Add((ushort)pmtData.pid);
             writer.SetAudioPid((short)pmtData.pid);
           }
+          hwPids.Add((ushort)pmtData.pid);
         }
 
         if (pmtData.isVideo)
