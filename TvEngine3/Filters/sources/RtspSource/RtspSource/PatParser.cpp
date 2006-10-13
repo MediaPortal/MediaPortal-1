@@ -100,6 +100,7 @@ bool CPatParser::GetChannel(int index, CChannelInfo& info)
 void CPatParser::SkipPacketsAtStart(__int64 packets)
 {
   m_packetsToSkip=packets;
+  m_packetsReceived=0;
 }
 void CPatParser::OnTsPacket(byte* tsPacket)
 {

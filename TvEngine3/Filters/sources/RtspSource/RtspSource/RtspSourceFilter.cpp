@@ -141,34 +141,47 @@ HRESULT CRtspSourceFilter::OnConnect()
   if (m_client.Play(0.0f))
   {
 		Log("Filter:OnConnect, wait for pat/pmt...");
+    DWORD tickStart=GetTickCount();
     while (m_patParser.Count()==0)
     {
       Sleep(10);
+      DWORD elapsed=GetTickCount()-tickStart;
+      if (elapsed>3000)
+      {
+		    Log("Filter:OnConnect, no pat/pmt received in 3 secs...");
+        m_client.Stop();
+        return E_FAIL;
+      }
     }
 		Log("Filter:OnConnect, got pat/pmt...");
     CChannelInfo info;
     m_patParser.GetChannel(0,info);
 		
     CPidTable pids=info.PidTable;
+    m_pids.Clear();
     m_pids.aud=pids.AudioPid1;
     m_pids.aud2=pids.AudioPid2;
     m_pids.ac3=pids.AC3Pid;
+    m_pids.pcr=pids.PcrPid;
+    m_pids.pmt=pids.PmtPid;
 		if ( pids.videoServiceType==0x1b)
 		{
+		  Log("Filter:OnConnect, audio1:%x audio2:%x ac3:%x h264 video:%x pcr:%x pmt:%x",
+					  pids.AudioPid1,pids.AudioPid2,pids.AC3Pid,pids.VideoPid,pids.PcrPid,pids.PmtPid);
 			m_pids.h264=pids.VideoPid;
 		}
 		else if (pids.videoServiceType==0x10)
 		{
+		  Log("Filter:OnConnect, audio1:%x audio2:%x ac3:%x mpeg4 video:%x pcr:%x pmt:%x",
+					  pids.AudioPid1,pids.AudioPid2,pids.AC3Pid,pids.VideoPid,pids.PcrPid,pids.PmtPid);
 			m_pids.mpeg4=pids.VideoPid;
 		}
 		else
 		{
+		  Log("Filter:OnConnect, audio1:%x audio2:%x ac3:%x mpeg2 video:%x pcr:%x pmt:%x",
+					  pids.AudioPid1,pids.AudioPid2,pids.AC3Pid,pids.VideoPid,pids.PcrPid,pids.PmtPid);
 			m_pids.vid=pids.VideoPid;
 		}
-    m_pids.pcr=pids.PcrPid;
-    m_pids.pmt=pids.PmtPid;
-		Log("Filter:OnConnect, audio1:%x audio2:%x ac3:%x video:%x pcr:%x pmt:%x",
-					pids.AudioPid1,pids.AudioPid2,pids.AC3Pid,pids.VideoPid,pids.PcrPid,pids.PmtPid);
   }
   else
   {
@@ -181,7 +194,7 @@ HRESULT CRtspSourceFilter::OnConnect()
   m_pDemux->set_ClockMode(3);
   m_pDemux->set_Auto(TRUE);
   m_pDemux->set_FixedAspectRatio(TRUE);
-  m_pDemux->set_MPEG2Audio2Mode(TRUE);
+  m_pDemux->set_MPEG2Audio2Mode(FALSE);
   m_pDemux->AOnConnect();
   m_pDemux->SetRefClock();
 	Log("Filter:connect done...");
