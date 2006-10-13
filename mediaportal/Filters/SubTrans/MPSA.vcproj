@@ -223,11 +223,152 @@
 	</References>
 	<Files>
 		<Filter
+			Name="Header Files"
+			Filter="h;hpp;hxx;hm;inl"
+			>
+			<File
+				RelativePath=".\source\AudioInputPin.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\DemuxPinMapper.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\dvbsubs\dvbsubs.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\dvbsubs\pes.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\PidObserver.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\PMTInputPin.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\SubdecoderObserver.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\dvbsubs\subtitle.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\SubtitleInputPin.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\SubTransform.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\dvbsubs\tables.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="PatParser"
+			>
+			<Filter
+				Name="Header Files"
+				>
+				<File
+					RelativePath=".\source\PatParser\ChannelInfo.h"
+					>
+				</File>
+				<File
+					RelativePath=".\source\PatParser\DvbUtil.h"
+					>
+				</File>
+				<File
+					RelativePath=".\source\PatParser\ISectionCallback.h"
+					>
+				</File>
+				<File
+					RelativePath=".\source\PatParser\PacketSync.h"
+					>
+				</File>
+				<File
+					RelativePath=".\source\PatParser\PatParser.h"
+					>
+				</File>
+				<File
+					RelativePath=".\source\PatParser\PidTable.h"
+					>
+				</File>
+				<File
+					RelativePath=".\source\PatParser\PmtParser.h"
+					>
+				</File>
+				<File
+					RelativePath=".\source\PatParser\Section.h"
+					>
+				</File>
+				<File
+					RelativePath=".\source\PatParser\SectionDecoder.h"
+					>
+				</File>
+				<File
+					RelativePath=".\source\PatParser\TsHeader.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Source Files"
+				>
+				<File
+					RelativePath=".\source\PatParser\ChannelInfo.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\source\PatParser\DvbUtil.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\source\PatParser\PacketSync.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\source\PatParser\PatParser.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\source\PatParser\PidTable.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\source\PatParser\PmtParser.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\source\PatParser\Section.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\source\PatParser\SectionDecoder.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\source\PatParser\TsHeader.cpp"
+					>
+				</File>
+			</Filter>
+		</Filter>
+		<Filter
 			Name="Source Files"
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
 				RelativePath=".\source\AudioInputPin.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\DemuxPinMapper.cpp"
 				>
 			</File>
 			<File
@@ -260,47 +401,6 @@
 			</File>
 			<File
 				RelativePath=".\source\SubTransform.def"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="Header Files"
-			Filter="h;hpp;hxx;hm;inl"
-			>
-			<File
-				RelativePath=".\source\AudioInputPin.h"
-				>
-			</File>
-			<File
-				RelativePath=".\source\dvbsubs\dvbsubs.h"
-				>
-			</File>
-			<File
-				RelativePath=".\source\dvbsubs\pes.h"
-				>
-			</File>
-			<File
-				RelativePath=".\source\PMTInputPin.h"
-				>
-			</File>
-			<File
-				RelativePath=".\source\SubdecoderObserver.h"
-				>
-			</File>
-			<File
-				RelativePath=".\source\dvbsubs\subtitle.h"
-				>
-			</File>
-			<File
-				RelativePath=".\source\SubtitleInputPin.h"
-				>
-			</File>
-			<File
-				RelativePath=".\source\SubTransform.h"
-				>
-			</File>
-			<File
-				RelativePath=".\source\dvbsubs\tables.h"
 				>
 			</File>
 		</Filter>
