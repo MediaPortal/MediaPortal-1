@@ -51,6 +51,14 @@ DECLARE_INTERFACE_( IStreamAnalyzer, IUnknown )
    STDMETHOD(SetAudioPID)    (THIS_ ULONG pPID ) PURE;
 };
 
+typedef struct PTSTime
+{
+	ULONGLONG h;
+	ULONGLONG m;
+	ULONGLONG s;
+	ULONGLONG u;
+};
+
 class CSubTransform : public CTransformFilter, public MSubdecoderObserver, public MPidObserver
 {
 public:
@@ -110,6 +118,8 @@ private:
   HRESULT ProcessFrameUYVY( BYTE *pbInput, BYTE *pbOutput, long *pcbByte );
   HRESULT ProcessFrameYUY2( BYTE *pbInput, BYTE *pbOutput, long *pcbByte );
 	
+  void PTSToPTSTime( ULONGLONG pts, PTSTime* ptsTime );
+
 	void StretchSubtitle();
 
   VIDEOINFOHEADER		m_VihIn;   // Current video format (input)
@@ -133,6 +143,8 @@ private:
 	ULONGLONG m_curPTS; 
 	ULONGLONG m_firstPTS;
 	ULONGLONG m_PTSdiff;
+  
+  bool      m_firstPTSDone;
 
   HBITMAP				m_DibsSub; // dibsection for to-be-scaled subtitle bitmap
   HDC					  m_DC;

@@ -59,15 +59,6 @@ struct pesheader
 };
 typedef pesheader PESHeader;
 
-struct timedata
-{
-	int h;
-	int m;
-	int s;
-	int u;
-};
-typedef timedata PTSTime;
-
 class CAudioInputPin : public CRenderedInputPin, CDemuxPinMapper
 {
 public:
