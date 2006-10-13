@@ -93,6 +93,7 @@
     <Compile Include="TVScheduler.cs" />
     <Compile Include="TVSearch.cs" />
     <Compile Include="teletext\TvTeletext.cs" />
+    <Compile Include="TvSetup.cs" />
     <Compile Include="TVUtil.cs" />
     <Compile Include="TVZapOSD.cs" />
   </ItemGroup>

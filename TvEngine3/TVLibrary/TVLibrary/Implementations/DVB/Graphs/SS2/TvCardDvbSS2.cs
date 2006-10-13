@@ -379,6 +379,7 @@ namespace TvLibrary.Implementations.DVB
         {
           bool addPid = false;
           if (info.isVideo) addPid = true;
+          if (info.isDVBSubtitle) addPid = true;
           if (info.isAudio || info.isAC3Audio)
           {
             if (info.pid == _currentAudioStream.Pid) addPid = true;

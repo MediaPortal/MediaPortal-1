@@ -275,6 +275,7 @@ namespace TvLibrary.Implementations.DVB
         {
           bool addPid = false;
           if (info.isVideo) addPid = true;
+          if (info.isDVBSubtitle) addPid = true;
           if (info.isAudio || info.isAC3Audio)
           {
             if (info.pid == _currentAudioStream.Pid) addPid = true;
@@ -314,7 +315,7 @@ namespace TvLibrary.Implementations.DVB
           }
           if (info.isAudio || info.isAC3Audio)
           {
-             addPid = true;
+            addPid = true;
           }
 
           if (addPid)
@@ -1272,7 +1273,7 @@ namespace TvLibrary.Implementations.DVB
         audioInfo.Ac3Pid(atscChannel.AudioPid, "");
         _channelInfo.AddPid(audioInfo);
         PidInfo videoInfo = new PidInfo();
-        videoInfo.VideoPid(atscChannel.VideoPid,1);
+        videoInfo.VideoPid(atscChannel.VideoPid, 1);
         _channelInfo.AddPid(videoInfo);
 
         Log.Log.Write(" video:{0:X} audio:{1:X} pcr:{2:X} pmt:{3:X}",

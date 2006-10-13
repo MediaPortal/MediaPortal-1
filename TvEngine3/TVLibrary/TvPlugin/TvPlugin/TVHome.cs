@@ -420,6 +420,10 @@ namespace TvPlugin
 
       if (!RemoteControl.IsConnected)
       {
+        RemoteControl.Clear();
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SETTINGS_TVENGINE);
+        return;
+        /*
         GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
         if (pDlgOK != null)
         {
@@ -428,7 +432,7 @@ namespace TvPlugin
           pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
           GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
           return;
-        }
+        }*/
       }
       LoadSettings();
       //stop the old recorder.
