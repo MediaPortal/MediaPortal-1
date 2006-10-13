@@ -77,11 +77,11 @@ namespace TvService
     {
       if (hostName == "127.0.0.1") return true;
       string localHostName = Dns.GetHostName();
-      if (String.Compare(hostName ,localHostName,true)==0) return true;
+      if (String.Compare(hostName, localHostName, true) == 0) return true;
       IPHostEntry local = Dns.GetHostByName(localHostName);
       foreach (IPAddress ipaddress in local.AddressList)
       {
-        if (String.Compare(hostName ,ipaddress.ToString(),true)==0) return true;
+        if (String.Compare(hostName, ipaddress.ToString(), true) == 0) return true;
       }
       return false;
     }
@@ -96,8 +96,30 @@ namespace TvService
     {
       try
       {
+        TvCardCollection localCardCollection = new TvCardCollection();
+        _localCards = new Dictionary<int, ITVCard>();
+        _allDbscards = new Dictionary<int, Card>();
+        _cardLocks = new Dictionary<int, bool>();
+        _clientReferenceCount = new Dictionary<int, int>();
+
         Log.Write("Controller: Started at {0}", Dns.GetHostName());
-        IList servers =Server.ListAll();
+        IPHostEntry local = Dns.GetHostByName(Dns.GetHostName());
+        foreach (IPAddress ipaddress in local.AddressList)
+        {
+          Log.Write("Controller: local ip adress:{0}", ipaddress.ToString());
+        }
+        IList servers;
+        try
+        {
+          servers = Server.ListAll();
+        }
+        catch (Exception ex)
+        {
+          Log.Write("!!!Controller:Unable to connect to database!!!");
+          Log.Write("Controller: database connection string:{0}", Gentle.Framework.ProviderFactory.GetDefaultProvider().ConnectionString);
+          Log.Write("Sql error:{0}", ex.Message);
+          return;
+        }
         Server ourServer = null;
         foreach (Server server in servers)
         {
@@ -125,7 +147,6 @@ namespace TvService
         _isMaster = ourServer.IsMaster;
 
         //enumerate all tv cards...
-        TvCardCollection localCardCollection = new TvCardCollection();
         TvBusinessLayer layer = new TvBusinessLayer();
         for (int i = 0; i < localCardCollection.Cards.Count; ++i)
         {
@@ -169,7 +190,7 @@ namespace TvService
             }
           }
         }
-        
+
         _localCards = new Dictionary<int, ITVCard>();
         _allDbscards = new Dictionary<int, Card>();
         _cardLocks = new Dictionary<int, bool>();
@@ -701,7 +722,7 @@ namespace TvService
     {
       try
       {
-        if (_allDbscards[cardId].Enabled == false) return new TimeSpan(0, 0, 0, 15); 
+        if (_allDbscards[cardId].Enabled == false) return new TimeSpan(0, 0, 0, 15);
         if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
         {
           RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
@@ -962,7 +983,7 @@ namespace TvService
     {
       try
       {
-        if (_allDbscards[cardId].Enabled == false) return ;
+        if (_allDbscards[cardId].Enabled == false) return;
         if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
         {
           RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
@@ -989,7 +1010,7 @@ namespace TvService
     {
       try
       {
-        if (_allDbscards[cardId].Enabled == false) return new byte[] { 1 }; 
+        if (_allDbscards[cardId].Enabled == false) return new byte[] { 1 };
         if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
         {
           RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
@@ -1085,7 +1106,7 @@ namespace TvService
           if (System.IO.File.Exists(fileName))
           {
             _streamer.Start();
-            _streamer.AddTimeShiftFile(String.Format("stream{0}", cardId), fileName, (false==_localCards[cardId].IsTimeshiftingTransportStream));
+            _streamer.AddTimeShiftFile(String.Format("stream{0}", cardId), fileName, (false == _localCards[cardId].IsTimeshiftingTransportStream));
           }
           else
           {
@@ -1277,7 +1298,7 @@ namespace TvService
     {
       try
       {
-        if (_allDbscards[cardId].Enabled == false) return ;
+        if (_allDbscards[cardId].Enabled == false) return;
         if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
         {
           //RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
@@ -1348,7 +1369,7 @@ namespace TvService
 
     public void SetCurrentAudioStream(int cardId, IAudioStream stream)
     {
-      if (_allDbscards[cardId].Enabled == false) return ;
+      if (_allDbscards[cardId].Enabled == false) return;
       Log.WriteFile("Controller: setaudiostream:{0} {1}", cardId, stream);
       if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
       {
@@ -1655,6 +1676,10 @@ namespace TvService
         }
       }
     }
+    /// <summary>
+    /// Gets a value indicating whether all cards are idle.
+    /// </summary>
+    /// <value><c>true</c> if [all cards idle]; otherwise, <c>false</c>.</value>
     public bool AllCardsIdle
     {
       get
@@ -1672,17 +1697,21 @@ namespace TvService
       }
     }
 
+    /// <summary>
+    /// Stops the grabbing epg.
+    /// </summary>
+    /// <param name="cardId">The card id.</param>
     public void StopGrabbingEpg(int cardId)
     {
-      if (false==_allDbscards.ContainsKey(cardId)) return;
+      if (false == _allDbscards.ContainsKey(cardId)) return;
       if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
       {
         // RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
-       // RemoteControl.Instance.StopGrabbingEpg(cardId);
+        // RemoteControl.Instance.StopGrabbingEpg(cardId);
         return;
       }
 
-       _localCards[cardId].IsEpgGrabbing = false;
+      _localCards[cardId].IsEpgGrabbing = false;
     }
 
     #endregion

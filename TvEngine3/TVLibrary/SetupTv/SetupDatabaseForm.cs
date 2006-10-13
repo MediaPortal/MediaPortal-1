@@ -64,7 +64,7 @@ namespace SetupTv
           }
           if (keyValue[0].ToLower() == "data source")
           {
-            if (keyValue[1] == "-")
+            if (keyValue[1].Length==0 || keyValue[1] == "-")
             {
               if (lookupMachineName)
               {
