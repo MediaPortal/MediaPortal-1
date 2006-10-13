@@ -117,6 +117,7 @@ namespace TvLibrary.Implementations.DVB.Structures
       pid = subtitlePid;
       language = "";
       isDVBSubtitle = true;
+      stream_type = 5;
     }
     /// <summary>
     /// Returns the fully qualified type name of this instance.
@@ -126,12 +127,12 @@ namespace TvLibrary.Implementations.DVB.Structures
     /// </returns>
     public override string ToString()
     {
-      if (isVideo) return String.Format("pid:{0:X} video", pid);
-      if (isAC3Audio) return String.Format("pid:{0:X} ac3 lang:{1} type:{2}", pid, language, stream_type);
-      if (isAudio) return String.Format("pid:{0:X} audio lang:{1} type:{2}", pid, language, stream_type);
-      if (isTeletext) return String.Format("pid:{0:X} teletext", pid);
-      if (isDVBSubtitle) return String.Format("pid:{0:X} subtitle", pid);
-      return string.Format("pid:{0:X} type unknown", pid);
+      if (isVideo) return String.Format("pid:{0:X} video type:{1:X}", pid, stream_type);
+      if (isAC3Audio) return String.Format("pid:{0:X} ac3 lang:{1} type:{2:X}", pid, language, stream_type);
+      if (isAudio) return String.Format("pid:{0:X} audio lang:{1} type:{2:X}", pid, language, stream_type);
+      if (isTeletext) return String.Format("pid:{0:X} teletext type:{1:X}", pid, stream_type);
+      if (isDVBSubtitle) return String.Format("pid:{0:X} subtitle type:{1:X}", pid, stream_type);
+      return string.Format("pid:{0:X} type:{1:X}", pid, stream_type);
     }
   }
 }
