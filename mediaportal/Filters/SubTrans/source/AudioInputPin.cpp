@@ -228,7 +228,18 @@ HRESULT CAudioInputPin::GetPESHeader( BYTE *data, PESHeader *header )
 }
 void CAudioInputPin::GetPTS( BYTE *data, ULONGLONG *pts )
 {	
-	*pts= 0xFFFFFFFFL & ( (6&data[0])<<29 | (255&data[1])<<22 | (254&data[2])<<14 | (255&data[3])<<7 | (((254&data[4])>>1)& 0x7F));
+	//*pts= 0xFFFFFFFFL & ( (6&data[0])<<29 | (255&data[1])<<22 | (254&data[2])<<14 | (255&data[3])<<7 | (((254&data[4])>>1)& 0x7F));
+
+	uint64_t p0,p1,p2,p3,p4;
+
+	// PTS is in bytes 9,10,11,12,13
+	p0=(data[4]&0xfe)>>1|((data[3]&1)<<7);
+	p1=(data[3]&0xfe)>>1|((data[2]&2)<<6);
+	p2=(data[2]&0xfc)>>2|((data[1]&3)<<6);
+	p3=(data[1]&0xfc)>>2|((data[0]&6)<<5);
+	p4=(data[0]&0x08)>>3;
+
+	*pts=p0|(p1<<8)|(p2<<16)|(p3<<24)|(p4<<32);
 }
 HRESULT CAudioInputPin::CurrentPTS( BYTE *pData, ULONGLONG *ptsValue,int *streamType )
 {
