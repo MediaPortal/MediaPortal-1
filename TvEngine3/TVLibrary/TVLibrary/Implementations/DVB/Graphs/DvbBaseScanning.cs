@@ -61,7 +61,11 @@ namespace TvLibrary.Implementations.DVB
       /// <summary>
       /// Service contains video in H.264
       /// </summary>
-      H264Stream = 0x1b
+      H264Stream = 0x1b,
+      /// <summary>
+      /// Service contains video in H.264
+      /// </summary>
+      Mpeg4OrH264Stream = 134
     }
     #region consts
     const int ScanMaxChannels = 10;
@@ -163,7 +167,7 @@ namespace TvLibrary.Implementations.DVB
       ResetSignalUpdate();
       bool locked = (_card.IsTunerLocked);
       TimeSpan tsUpdate = DateTime.Now - startTime;
-      Log.Log.WriteFile("Scan: signal status update took {0} msec",tsUpdate.TotalMilliseconds);
+      Log.Log.WriteFile("Scan: signal status update took {0} msec", tsUpdate.TotalMilliseconds);
       if (tsUpdate.TotalMilliseconds > 2000)
       {
         //getting signal status takes a looong time due to card driver issue
@@ -327,7 +331,7 @@ namespace TvLibrary.Implementations.DVB
               if (videoPid > 0)
               {
                 PidInfo pidInfo = new PidInfo();
-                pidInfo.VideoPid(videoPid,videoStreamType);
+                pidInfo.VideoPid(videoPid, videoStreamType);
                 info.AddPid(pidInfo);
               }
               if (audio1Pid > 0)
@@ -369,7 +373,8 @@ namespace TvLibrary.Implementations.DVB
               startTime = DateTime.Now;
               bool isTvRadioChannel = false;
               if (info.serviceType == (int)ServiceType.Video || info.serviceType == (int)ServiceType.Mpeg4Stream ||
-                  info.serviceType == (int)ServiceType.Audio || info.serviceType == (int)ServiceType.H264Stream)
+                  info.serviceType == (int)ServiceType.Audio || info.serviceType == (int)ServiceType.H264Stream ||
+                  info.serviceType == (int)ServiceType.Mpeg4OrH264Stream)
               {
                 IChannel dvbChannel = CreateNewChannel(info);
                 if (dvbChannel != null)

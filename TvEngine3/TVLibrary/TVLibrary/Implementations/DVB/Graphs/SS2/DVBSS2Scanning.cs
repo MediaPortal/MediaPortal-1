@@ -101,7 +101,7 @@ namespace TvLibrary.Implementations.DVB
       dvbsChannel.Polarisation = tuningChannel.Polarisation;
       dvbsChannel.SwitchingFrequency = tuningChannel.SwitchingFrequency;
       dvbsChannel.Frequency = tuningChannel.Frequency;
-      dvbsChannel.IsTv = (info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg4Stream || info.serviceType == (int)DvbBaseScanning.ServiceType.Video || info.serviceType == (int)DvbBaseScanning.ServiceType.H264Stream);
+      dvbsChannel.IsTv = (info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg4Stream || info.serviceType == (int)DvbBaseScanning.ServiceType.Video || info.serviceType == (int)DvbBaseScanning.ServiceType.H264Stream|| info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg4OrH264Stream);
       dvbsChannel.IsRadio = (info.serviceType == (int)DvbBaseScanning.ServiceType.Audio);
       dvbsChannel.NetworkId = info.networkID;
       dvbsChannel.ServiceId = info.serviceID;
