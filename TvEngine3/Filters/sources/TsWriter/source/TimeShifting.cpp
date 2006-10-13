@@ -152,6 +152,18 @@ STDMETHODIMP CTimeShifting::SetPcrPid(int pcrPid)
 		m_multiPlexer.SetPcrPid(pcrPid);
     m_pcrPid=pcrPid;
     m_bDetermineNewStartPcr=true;
+		if (m_bTimeShifting)
+		{
+			m_vecPids.clear();
+			FAKE_NETWORK_ID   = 0x456;
+			FAKE_TRANSPORT_ID = 0x4;
+			FAKE_SERVICE_ID   = 0x89;
+			FAKE_PMT_PID      = 0x20;
+			FAKE_PCR_PID      = 0x21;
+			FAKE_VIDEO_PID    = 0x30;
+			FAKE_AUDIO_PID    = 0x40;
+			FAKE_SUBTITLE_PID = 0x50;
+		}
 	}
 	catch(...)
 	{
