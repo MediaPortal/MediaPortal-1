@@ -57,10 +57,10 @@ CAudioInputPin::CAudioInputPin( CSubTransform *m_pTransform,
 CAudioInputPin::~CAudioInputPin()
 {
 }
+
+
 //
 // CheckMediaType
-//
-// Check if the pin can support this specific proposed type and format
 //
 HRESULT CAudioInputPin::CheckMediaType( const CMediaType *pmt )
 {
@@ -72,44 +72,18 @@ HRESULT CAudioInputPin::CheckMediaType( const CMediaType *pmt )
 	return S_FALSE;
 }
 
+
 HRESULT CAudioInputPin::CompleteConnect( IPin *pPin )
 {
-	HRESULT hr=CBasePin::CompleteConnect( pPin );
+	HRESULT hr = CBasePin::CompleteConnect( pPin );
+  m_pDemuxerPin = pPin;
 
-	IMPEG2PIDMap	*pMap=NULL;
-	IEnumPIDMap		*pPidEnum=NULL;
-//	ULONG			    pid;
-	PID_MAP			  pm;
-	ULONG			    count;
-	ULONG			    umPid;
+  if( m_audioPid == -1 )
+    return hr;  // PID is mapped later when we have it 
 
-	hr=pPin->QueryInterface( IID_IMPEG2PIDMap,(void**)&pMap );
-	if( SUCCEEDED(hr) && pMap!=NULL )
-	{
-		hr=pMap->EnumPIDMap( &pPidEnum );
-		if( SUCCEEDED(hr) && pPidEnum!=NULL )
-		{
-			while( pPidEnum->Next( 1, &pm, &count ) == S_OK )
-			{
-				if ( count != 1 )
-				{
-					break;
-				}
+  hr = MapPidToDemuxer( m_audioPid, m_pDemuxerPin, MEDIA_TRANSPORT_PACKET );
 
-				umPid = pm.ulPID;
-				hr = pMap->UnmapPID( 1, &umPid );
-				if( FAILED(hr) )
-				{
-					break;
-				}
-			}
-			hr = pMap->MapPID( 1, &m_audioPid, MEDIA_TRANSPORT_PACKET ); //MEDIA_ELEMENTARY_STREAM ); //
-
-			pPidEnum->Release();
-		}
-		pMap->Release();
-	}
-	return hr;
+  return hr;
 }
 
 
@@ -118,7 +92,10 @@ HRESULT CAudioInputPin::CompleteConnect( IPin *pPin )
 //
 STDMETHODIMP CAudioInputPin::Receive( IMediaSample *pSample )
 {
-	try
+	if( m_audioPid == -1 )
+    return S_OK;  // Nothing to be done yet
+  
+  try
 	{
 		if ( m_bReset )
 		{
@@ -177,14 +154,16 @@ STDMETHODIMP CAudioInputPin::Receive( IMediaSample *pSample )
     return S_OK;
 }
 
+
 void CAudioInputPin::Reset()
 {
 	m_bReset = true;
 }
 
-void CAudioInputPin::SetAudioPID( ULONG pPID )
+void CAudioInputPin::SetAudioPid( LONG pPid )
 {
-	m_audioPid = pPID;
+	m_audioPid = pPid;
+  MapPidToDemuxer( m_audioPid, m_pDemuxerPin, MEDIA_TRANSPORT_PACKET );
 }
 
 
@@ -193,16 +172,20 @@ STDMETHODIMP CAudioInputPin::BeginFlush(void)
 	Reset();
 	return CRenderedInputPin::BeginFlush();
 }
+
+
 STDMETHODIMP CAudioInputPin::EndFlush(void)
 {
 	Reset();
 	return CRenderedInputPin::EndFlush();
 }
 
+
 ULONGLONG CAudioInputPin::GetCurrentPTS()
 {
 	return m_currentPTS;
 }
+
 
 //
 // Helper methods from MPSA/Sections.cpp

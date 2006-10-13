@@ -52,11 +52,12 @@ CSubtitleInputPin::CSubtitleInputPin( CSubTransform *pDump,
 					phr,							    // Return code
 					L"Subtitle" ),				// Pin name
 					m_pReceiveLock( pReceiveLock ),
+          m_pDemuxerPin( NULL ),
 					m_pDump( pDump ),
 					m_tLast( 0 ),
 					m_PESdata( NULL ),
 					m_pSubDecoder( pSubDecoder ),
-					m_SubtitlePID( 0 ),
+					m_SubtitlePid( -1 ),
 					m_PESlenght( 0 )
 {
 	m_PESdata = (unsigned char*)malloc(32000); // size is just a guess...
@@ -85,48 +86,20 @@ HRESULT CSubtitleInputPin::CheckMediaType( const CMediaType *pmt )
 //
 HRESULT CSubtitleInputPin::BreakConnect()
 {
-    return CRenderedInputPin::BreakConnect();
+  return CRenderedInputPin::BreakConnect();
 }
 
 HRESULT CSubtitleInputPin::CompleteConnect( IPin *pPin )
 {
 	HRESULT hr = CBasePin::CompleteConnect( pPin );
-	
-	IMPEG2PIDMap	*pMap=NULL;
-	IEnumPIDMap		*pPidEnum=NULL;
-	ULONG			    pid;
-	PID_MAP			  pm;
-	ULONG			    count;
-	ULONG			    umPid;
-	
-	hr = pPin->QueryInterface( IID_IMPEG2PIDMap,(void**)&pMap );
-	if( SUCCEEDED(hr) && pMap != NULL )
-	{
-		hr = pMap->EnumPIDMap( &pPidEnum );
-		if( SUCCEEDED( hr ) && pPidEnum != NULL )
-		{
-			while( pPidEnum->Next( 1, &pm, &count ) == S_OK )
-			{
-				if ( count != 1 ) 
-				{
-					break;
-				}
-					
-				umPid = pm.ulPID;
-				hr = pMap->UnmapPID( 1, &umPid );
-				if( FAILED( hr ) )
-				{	
-					break;
-				}
-			}
-			pid = m_SubtitlePID;
-			hr = pMap->MapPID( 1, &pid, MEDIA_TRANSPORT_PAYLOAD );
+  m_pDemuxerPin = pPin;
 
-			pPidEnum->Release();
-		}
-		pMap->Release();
-	}
-	return hr;
+  if( m_SubtitlePid == -1 )
+    return hr;  // PID is mapped later when we have it 
+
+  hr = MapPidToDemuxer( m_SubtitlePid, m_pDemuxerPin, MEDIA_TRANSPORT_PAYLOAD );
+
+  return hr;
 }
 
 //
@@ -148,7 +121,10 @@ STDMETHODIMP CSubtitleInputPin::ReceiveCanBlock()
 //
 STDMETHODIMP CSubtitleInputPin::Receive( IMediaSample *pSample )
 {
-	try
+	if( m_SubtitlePid == -1 )
+    return S_OK;  // Nothing to be done yet
+
+  try
 	{
 		if ( m_bReset )
 		{
@@ -202,7 +178,7 @@ STDMETHODIMP CSubtitleInputPin::Receive( IMediaSample *pSample )
 					Log("Subtitle: Receive() - all PES data in one sample");
 					
 					// Send the whole sample to decoder
-					m_pSubDecoder->ProcessPES( pbData, m_PESlenght, m_SubtitlePID );
+					m_pSubDecoder->ProcessPES( pbData, m_PESlenght, m_SubtitlePid );
 				}
 				else // PES continues in the next packet
 				{
@@ -233,7 +209,7 @@ STDMETHODIMP CSubtitleInputPin::Receive( IMediaSample *pSample )
 					Log("Subtitle: Receive() - all PES data arrived - last byte 0xFF");
 					
 					memcpy( m_PESdata + m_Position, pbData, lDataLen );
-					m_pSubDecoder->ProcessPES( m_PESdata, m_PESlenght, m_SubtitlePID );
+					m_pSubDecoder->ProcessPES( m_PESdata, m_PESlenght, m_SubtitlePid );
 					
 					m_Position = 0;
 				}
@@ -261,9 +237,10 @@ void CSubtitleInputPin::Reset()
 	m_bReset = true;
 }
 
-void CSubtitleInputPin::SetSubtitlePID( ULONG pPID )
+void CSubtitleInputPin::SetSubtitlePid( LONG pPid )
 {
-	m_SubtitlePID = pPID;
+	m_SubtitlePid = pPid;
+  MapPidToDemuxer( m_SubtitlePid, m_pDemuxerPin, MEDIA_TRANSPORT_PAYLOAD );
 }
 
 //

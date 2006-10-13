@@ -30,6 +30,10 @@
 #include <initguid.h>
 
 #include "PMTInputPin.h"
+#include "PidObserver.h"
+#include "PatParser\PatParser.h"
+#include "PatParser\PmtParser.h"
+#include "PatParser\PidTable.h"
 
 extern void Log( const char *fmt, ... );
 
@@ -41,7 +45,8 @@ CPMTInputPin::CPMTInputPin( CSubTransform *m_pTransform,
 								CBaseFilter *pFilter,
 								CCritSec *pLock,
 								CCritSec *pReceiveLock,
-								HRESULT *phr ) :
+								HRESULT *phr,
+                MPidObserver *pPidObserver ) :
 
     CBaseInputPin( NAME( "CPMTInputPin" ),
 					      pFilter,						// Filter
@@ -49,13 +54,22 @@ CPMTInputPin::CPMTInputPin( CSubTransform *m_pTransform,
 					      phr,							  // Return code
 					      L"PMT" ),						// Pin name
 					      m_pReceiveLock( pReceiveLock ),
-					      m_pTransform( m_pTransform )
+					      m_pTransform( m_pTransform ),
+  m_pDemuxerPin( NULL ),
+  m_pPidObserver( pPidObserver ),
+  m_SubtitlePid( -1 ),
+  m_streamVideoPid( -1 ),
+  m_AudioPid( -1 )
 {
-	Log( "PMT: Pin created" );
+	m_pPatParser = new CPatParser();
+  m_pPatParser->Reset();
+  Log( "PMT: Pin created" );
 }
+
 
 CPMTInputPin::~CPMTInputPin()
 {
+  delete m_pPatParser;
 }
 //
 // CheckMediaType
@@ -72,41 +86,22 @@ HRESULT CPMTInputPin::CheckMediaType( const CMediaType *pmt )
 
 HRESULT CPMTInputPin::CompleteConnect( IPin *pPin )
 {
-	HRESULT hr=CBasePin::CompleteConnect( pPin );
+  m_pDemuxerPin = pPin;
+	HRESULT hr = CBasePin::CompleteConnect( pPin );
+  if( hr == S_OK )
+  {
+    return MapPidToDemuxer( PMT_PID, m_pDemuxerPin, MEDIA_TRANSPORT_PACKET );
+  }
+  else
+  {
+    return hr;
+  }
+}
 
-	IMPEG2PIDMap	*pMap=NULL;
-	IEnumPIDMap		*pPidEnum=NULL;
-	PID_MAP			  pm;
-	ULONG			    count;
-	ULONG			    umPid;
 
-	hr=pPin->QueryInterface( IID_IMPEG2PIDMap,(void**)&pMap );
-	if( SUCCEEDED(hr) && pMap!=NULL )
-	{
-		hr=pMap->EnumPIDMap( &pPidEnum );
-		if( SUCCEEDED(hr) && pPidEnum!=NULL )
-		{
-			while( pPidEnum->Next( 1, &pm, &count ) == S_OK )
-			{
-				if ( count != 1 )
-				{
-					break;
-				}
-
-				umPid = pm.ulPID;
-				hr = pMap->UnmapPID( 1, &umPid );
-				if( FAILED(hr) )
-				{
-					break;
-				}
-			}
-			hr = pMap->MapPID( 1, &PMT_PID, MEDIA_TRANSPORT_PACKET );
-
-			pPidEnum->Release();
-		}
-		pMap->Release();
-	}
-	return hr;
+void CPMTInputPin::SetVideoPid( int videoPid )
+{
+  m_streamVideoPid = videoPid;
 }
 
 
@@ -119,11 +114,6 @@ STDMETHODIMP CPMTInputPin::Receive( IMediaSample *pSample )
 
   //CAutoLock lock(m_pReceiveLock);
   PBYTE pbData=NULL;
-
-// Has the filter been stopped yet?
-//  REFERENCE_TIME tStart, tStop;
-//  pSample->GetTime(&tStart, &tStop);
-//  m_tLast = tStart;
 	long lDataLen=0;
 
   HRESULT hr = pSample->GetPointer( &pbData );
@@ -134,32 +124,103 @@ STDMETHODIMP CPMTInputPin::Receive( IMediaSample *pSample )
 	lDataLen = pSample->GetActualDataLength();
 	// decode
 	if( lDataLen > 5 )
-		Process( pbData, lDataLen );
+		hr = Process( pbData, lDataLen );
 
-  return S_OK;
+  if( hr == S_OK && ( m_SubtitlePid == -1 || m_AudioPid == -1 ) )
+  {
+    // Try to find a correct PMT
+    int count = m_pPatParser->m_pmtParsers.size();
+    if( count > 0 )
+    {
+      CPidTable pidTable;
+      ULONG videoPid = 0;
+      for( int i = 0; i < count ; i++ )
+      {
+        pidTable = m_pPatParser->m_pmtParsers[i]->GetPidInfo();
+        videoPid = pidTable.VideoPid;
+        
+        if( m_streamVideoPid == videoPid && m_pPidObserver != NULL )
+        {
+          if( m_AudioPid == -1 )
+          {
+            m_AudioPid = pidTable.AudioPid1;
+            m_pPidObserver->SetAudioPid( m_AudioPid  );
+          }
+          if( m_SubtitlePid == -1 ) 
+          {
+            m_SubtitlePid = pidTable.SubtitlePid;
+            m_pPidObserver->SetSubtitlePid( m_SubtitlePid );
+          }
+          break; // correct PMT is found
+        }
+      }
+    }
+  }
+    
+  return hr;
 }
+
 
 HRESULT CPMTInputPin::Process( BYTE *pbData, long len )
 {
-	return S_OK;
+  OnRawData( pbData, len );
+  return S_OK;
 }
 
 
-/*void CPMTInputPin::Reset()
+void CPMTInputPin::OnTsPacket( byte* tsPacket )
 {
-	m_bReset = true;
+  m_pPatParser->OnTsPacket( tsPacket );
+
+  unsigned int count = m_pPatParser->m_pmtParsers.size();
+  if( count > 0 )
+  {
+    // Map all PMT pids 
+    if( count > mappedPids.size() ) 
+    {
+      for( unsigned int i = 0 ; i < count ; i++ )
+      {
+        bool alreadyMapped = false;
+        int pid = m_pPatParser->m_pmtParsers[i]->GetPid();
+        
+        for( unsigned int j = 0 ; j < mappedPids.size() ; j++ )
+        {
+          if( mappedPids[j] == pid )
+          {
+            alreadyMapped = true;
+            break;
+          }
+        }
+        
+        if( !alreadyMapped )
+        {
+          MapPidToDemuxer( pid, m_pDemuxerPin, MEDIA_TRANSPORT_PACKET );
+          mappedPids.resize( mappedPids.size() + 1 );
+          mappedPids[mappedPids.size() - 1] = pid;
+        }
+      }
+    }
+  }
 }
-*/
-/*
+
+void CPMTInputPin::Reset()
+{
+  m_SubtitlePid = -1;
+  m_AudioPid = -1;
+  m_pPatParser->Reset();
+  mappedPids.clear();
+}
+
+
 STDMETHODIMP CPMTInputPin::BeginFlush(void)
 {
 	Reset();
-	return CRenderedInputPin::BeginFlush();
+	return CBaseInputPin::BeginFlush();
 }
+
+
 STDMETHODIMP CPMTInputPin::EndFlush(void)
 {
 	Reset();
-	return CRenderedInputPin::EndFlush();
+	return CBaseInputPin::EndFlush();
 }
-*/
-

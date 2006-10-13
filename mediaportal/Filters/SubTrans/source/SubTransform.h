@@ -30,6 +30,7 @@
 
 #include "dvbsubs\dvbsubs.h"
 #include "SubdecoderObserver.h"
+#include "PidObserver.h"
 
 class CSubtitleInputPin;
 class CAudioInputPin;
@@ -50,7 +51,7 @@ DECLARE_INTERFACE_( IStreamAnalyzer, IUnknown )
    STDMETHOD(SetAudioPID)    (THIS_ ULONG pPID ) PURE;
 };
 
-class CSubTransform : public CTransformFilter, public MSubdecoderObserver
+class CSubTransform : public CTransformFilter, public MSubdecoderObserver, public MPidObserver
 {
 public:
   // Constructor & destructor
@@ -58,12 +59,14 @@ public:
   ~CSubTransform();
 
   // Overridden CTransformFilter methods
-  HRESULT CheckInputType( const CMediaType *mtIn);
+  HRESULT CheckInputType( const CMediaType *mtIn );
   HRESULT CheckTransform( const CMediaType *mtIn, const CMediaType *mtOut );
   HRESULT DecideBufferSize( IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES *pProp );
   HRESULT GetMediaType( int iPosition, CMediaType *pMediaType );
   HRESULT Transform( IMediaSample *pIn, IMediaSample *pOut );
   HRESULT SetMediaType( PIN_DIRECTION direction, const CMediaType *pmt );
+  //HRESULT CompleteConnect( PIN_DIRECTION direction, IPin *pReceivePin );
+  HRESULT CheckConnect(PIN_DIRECTION dir,IPin *pPin);
 
 	STDMETHODIMP Run( REFERENCE_TIME tStart );
 	STDMETHODIMP Pause();
@@ -92,11 +95,15 @@ public:
 	void Reset();
 
 	// Interface
-	STDMETHOD(SetSubtitlePID)( THIS_ ULONG pPID );
-  STDMETHOD(SetAudioPID)   ( THIS_ ULONG pPID );
+	STDMETHOD(SetSubtitlePid)( THIS_ ULONG pPid );
+  STDMETHOD(SetAudioPid)   ( THIS_ ULONG pPid );
 
 	// From MSubdecoderObserver
 	void Notify();
+
+  // From MPidObserver
+  void SetAudioPid( LONG pid );
+	void SetSubtitlePid( LONG pid );
 
 private:
   
@@ -134,4 +141,6 @@ private:
 
 	bool m_bRenderCurrentSubtitle;
 	bool m_bSubtitleDiscarded;
+
+  int m_VideoPid;
 };

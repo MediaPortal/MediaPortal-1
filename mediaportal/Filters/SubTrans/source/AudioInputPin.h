@@ -24,18 +24,19 @@
 #pragma warning( disable: 4511 4512 4995 )
 
 #include "SubTransform.h"
+#include "DemuxPinMapper.h"
 #include <streams.h>
 
 struct tsheader
 {
-	BYTE SyncByte			;
-	bool TransportError		;
-	bool PayloadUnitStart	;
-	bool TransportPriority	;
-	unsigned short Pid		;
-	BYTE TScrambling		;
-	BYTE AdaptionControl	;
-	BYTE ContinuityCounter	;
+	BYTE SyncByte;
+	bool TransportError;
+	bool PayloadUnitStart;
+	bool TransportPriority;
+	unsigned short Pid;
+	BYTE TScrambling;
+	BYTE AdaptionControl;
+	BYTE ContinuityCounter;
 };
 typedef tsheader TSHeader;
  
@@ -67,33 +68,27 @@ struct timedata
 };
 typedef timedata PTSTime;
 
-class CAudioInputPin : public CRenderedInputPin
+class CAudioInputPin : public CRenderedInputPin, CDemuxPinMapper
 {
-private:
-
-    CSubTransform* const	m_pTransform;		  // Main renderer object
-    CCritSec * const		  m_pReceiveLock;		// Sample critical section
-	  bool					        m_bReset;
-
 public:
 
-    CAudioInputPin( CSubTransform *m_pTransform,
-					LPUNKNOWN pUnk,
-					CBaseFilter *pFilter,
-					CCritSec *pLock,
-					CCritSec *pReceiveLock,
-					HRESULT *phr );
+  CAudioInputPin( CSubTransform *m_pTransform,
+				          LPUNKNOWN pUnk,
+				          CBaseFilter *pFilter,
+				          CCritSec *pLock,
+				          CCritSec *pReceiveLock,
+				          HRESULT *phr );
 
-	  ~CAudioInputPin();
+	~CAudioInputPin();
 
-    STDMETHODIMP Receive(IMediaSample *pSample);
-    STDMETHODIMP BeginFlush(void);
-    STDMETHODIMP EndFlush(void);
+  STDMETHODIMP Receive( IMediaSample *pSample );
+  STDMETHODIMP BeginFlush( void );
+  STDMETHODIMP EndFlush( void );
 
-    HRESULT CheckMediaType( const CMediaType * );
-    HRESULT CAudioInputPin::CompleteConnect( IPin *pPin );
+  HRESULT CheckMediaType( const CMediaType * );
+  HRESULT CAudioInputPin::CompleteConnect( IPin *pPin );
 
-    void SetAudioPID( ULONG pPID );
+  void SetAudioPid( LONG pPid );
 
 	void Reset();
 		
@@ -107,8 +102,12 @@ private:
 	HRESULT CurrentPTS( BYTE *pData, ULONGLONG *ptsValue, int *streamType );
 	void GetPTS( BYTE *data, ULONGLONG *pts );
 
-private:
+  CSubTransform* const	m_pTransform;		  // Main renderer object
+  CCritSec * const		  m_pReceiveLock;		// Sample critical section
+	bool					        m_bReset;
 
 	ULONGLONG m_currentPTS;
-  ULONG m_audioPid;
+  LONG m_audioPid;
+
+  IPin *m_pDemuxerPin;
 };

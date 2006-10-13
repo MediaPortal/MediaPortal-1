@@ -23,54 +23,54 @@
 #pragma once
 #pragma warning(disable: 4511 4512 4995)
 
+#include "SubTransform.h"
+#include "DemuxPinMapper.h"
+#include "dvbsubs\dvbsubs.h"
 #include <streams.h>
 
-#include "SubTransform.h"
-#include "dvbsubs\dvbsubs.h"
-
-
-class CSubtitleInputPin : public CRenderedInputPin
+class CSubtitleInputPin : public CRenderedInputPin, public CDemuxPinMapper
 {
-private:
-    CSubTransform* const m_pDump;				// Main renderer object
-    CCritSec * const	m_pReceiveLock;			// Sample critical section
-    REFERENCE_TIME		m_tLast;				// Last sample receive time
-	bool				m_bReset;
 public:
 
-    CSubtitleInputPin( CSubTransform *pDump,
-                  LPUNKNOWN pUnk,
-                  CBaseFilter *pFilter,
-                  CCritSec *pLock,
-                  CCritSec *pReceiveLock,
-				  CDVBSubDecoder* pSubDecoder,
-                  HRESULT *phr );
+  CSubtitleInputPin( CSubTransform *pDump,
+                LPUNKNOWN pUnk,
+                CBaseFilter *pFilter,
+                CCritSec *pLock,
+                CCritSec *pReceiveLock,
+			          CDVBSubDecoder* pSubDecoder,
+                HRESULT *phr );
 
 	~CSubtitleInputPin();
 
-    // Do something with this media sample
-    STDMETHODIMP Receive(IMediaSample *pSample);
-    STDMETHODIMP EndOfStream(void);
-    STDMETHODIMP ReceiveCanBlock();
+  // Do something with this media sample
+  STDMETHODIMP Receive( IMediaSample *pSample );
+  STDMETHODIMP EndOfStream( void );
+  STDMETHODIMP ReceiveCanBlock();
 
-    STDMETHODIMP BeginFlush(void);
-    STDMETHODIMP EndFlush(void);
+  STDMETHODIMP BeginFlush( void );
+  STDMETHODIMP EndFlush( void );
 
-    // Check if the pin can support this specific proposed type and format
-    HRESULT CheckMediaType(const CMediaType *);
-	HRESULT CompleteConnect(IPin *pPin);
-    HRESULT BreakConnect();
-    STDMETHODIMP NewSegment(REFERENCE_TIME tStart,REFERENCE_TIME tStop,double dRate);
+  HRESULT CheckMediaType( const CMediaType * );
+  HRESULT CompleteConnect( IPin *pPin );
+  HRESULT BreakConnect();
+  STDMETHODIMP NewSegment( REFERENCE_TIME tStart, REFERENCE_TIME tStop, double dRate );
 
 	void Reset();
-	void SetSubtitlePID( ULONG pPID );
+	void SetSubtitlePid( LONG pPID );
 
 private:
 
 	CDVBSubDecoder*		m_pSubDecoder;
 	unsigned char*		m_PESdata;
-	int					m_Position;
-	int					m_PESlenght;
+	
+  IPin        *m_pDemuxerPin;
 
-	ULONG				m_SubtitlePID;
+  int					m_Position;
+	int					m_PESlenght;
+	LONG				m_SubtitlePid;
+
+  CSubTransform* const  m_pDump;				// Main renderer object
+  CCritSec * const	    m_pReceiveLock; // Sample critical section
+  REFERENCE_TIME		    m_tLast;				// Last sample receive time
+  bool				          m_bReset;
 };

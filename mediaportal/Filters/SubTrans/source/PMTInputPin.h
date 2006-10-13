@@ -24,16 +24,16 @@
 #pragma warning( disable: 4995 )
 
 #include "SubTransform.h"
+#include "DemuxPinMapper.h"
+#include "PatParser\PacketSync.h"
 #include <streams.h>
+#include <vector>
 
-class CPMTInputPin : public CBaseInputPin
+class CPatParser;
+class MPidObserver;
+
+class CPMTInputPin : public CBaseInputPin, CPacketSync, CDemuxPinMapper
 {
-private:
-
-    CSubTransform* const	m_pTransform;		  	// Main renderer object
-    CCritSec * const		  m_pReceiveLock;			// Sample critical section
-	  bool				      	  m_bReset;
-
 public:
 
     CPMTInputPin( CSubTransform *m_pTransform,
@@ -41,21 +41,40 @@ public:
 					CBaseFilter *pFilter,
 					CCritSec *pLock,
 					CCritSec *pReceiveLock,
-					HRESULT *phr );
+					HRESULT *phr,
+          MPidObserver *pPidObserver );
 
 	  ~CPMTInputPin();
 
     STDMETHODIMP Receive(IMediaSample *pSample);
-//    STDMETHODIMP BeginFlush(void);
-//    STDMETHODIMP EndFlush(void);
+    STDMETHODIMP BeginFlush(void);
+    STDMETHODIMP EndFlush(void);
 
     HRESULT CheckMediaType( const CMediaType * );
     HRESULT CompleteConnect( IPin *pPin );
+    
+    // From CPacketSync
+    void OnTsPacket( byte* tsPacket );
 
-private:
+    void SetVideoPid( int videoPid );
+    void Reset();
 
 private:
   
   HRESULT Process( BYTE *pbData, long len );
 
+  CPatParser* m_pPatParser;
+  IPin*       m_pDemuxerPin;
+
+  MPidObserver* m_pPidObserver;
+
+  LONG m_streamVideoPid;
+  LONG m_SubtitlePid;
+  LONG m_AudioPid;
+
+  std::vector<int> mappedPids;
+
+  CSubTransform* const	m_pTransform;		  	// Main renderer object
+  CCritSec * const		  m_pReceiveLock;			// Sample critical section
+  bool				      	  m_bReset;
 };
