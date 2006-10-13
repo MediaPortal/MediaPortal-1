@@ -66,14 +66,22 @@ namespace TvService
       Init();
     }
 
+    /// <summary>
+    /// Determines whether the specified host name is the local pc or not.
+    /// </summary>
+    /// <param name="hostName">Name of the host or ip adress</param>
+    /// <returns>
+    /// 	<c>true</c> if the specified host name is local; otherwise, <c>false</c>.
+    /// </returns>
     bool IsLocal(string hostName)
     {
-      if (hostName == Dns.GetHostName()) return true;
       if (hostName == "127.0.0.1") return true;
-      IPHostEntry local = Dns.GetHostByName(Dns.GetHostName());
+      string localHostName = Dns.GetHostName();
+      if (String.Compare(hostName ,localHostName,true)==0) return true;
+      IPHostEntry local = Dns.GetHostByName(localHostName);
       foreach (IPAddress ipaddress in local.AddressList)
       {
-        if (hostName == ipaddress.ToString()) return true;
+        if (String.Compare(hostName ,ipaddress.ToString(),true)==0) return true;
       }
       return false;
     }
@@ -86,10 +94,9 @@ namespace TvService
     /// </summary>
     void Init()
     {
-      
       try
       {
-        Log.Write("Controller: Started");
+        Log.Write("Controller: Started at {0}", Dns.GetHostName());
         IList servers =Server.ListAll();
         Server ourServer = null;
         foreach (Server server in servers)
@@ -100,21 +107,24 @@ namespace TvService
             break;
           }
         }
+
         if (ourServer == null)
         {
           Log.WriteFile("Controller: create new server in database");
           ourServer = new Server(false, Dns.GetHostName());
           if (servers.Count == 0)
           {
+            //there are no other servers
+            //so we are the master one.
             ourServer.IsMaster = true;
             _isMaster = true;
           }
           ourServer.Persist();
-          Log.WriteFile("Controller: new server created");
+          Log.WriteFile("Controller: new server created for {0} master:{1} ", Dns.GetHostName(), _isMaster);
         }
         _isMaster = ourServer.IsMaster;
 
-
+        //enumerate all tv cards...
         TvCardCollection localCardCollection = new TvCardCollection();
         TvBusinessLayer layer = new TvBusinessLayer();
         for (int i = 0; i < localCardCollection.Cards.Count; ++i)
@@ -136,7 +146,7 @@ namespace TvService
           }
         }
 
-        //remove old cards...
+        //delete cards from the database which are removed from the pc
         IList cardsInDbs = Card.ListAll();
         int cardsInstalled = localCardCollection.Cards.Count;
         foreach (Card dbsCard in cardsInDbs)
