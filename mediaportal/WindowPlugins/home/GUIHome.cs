@@ -61,9 +61,10 @@ namespace MediaPortal.GUI.Home
 			if (menuMain == null) return;
 			menuMain.ButtonInfos.Clear();
 			ArrayList plugins = PluginManager.SetupForms;
+			int myPluginsCount = 0;
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        foreach (ISetupForm setup in plugins)
+				foreach (ISetupForm setup in plugins)
         {
           string plugInText;
           string focusTexture;
@@ -78,11 +79,20 @@ namespace MediaPortal.GUI.Home
               string showInHome = xmlreader.GetValue("home", setup.PluginName());
               if ((showInHome == null) || (showInHome.Length < 1))
               {
-                if ((showPlugin == null) || (showPlugin.ShowDefaultHome() == false)) continue;      // check the default
+                if (showPlugin == null) continue;
+								if (showPlugin.ShowDefaultHome() == false) 
+								{
+									myPluginsCount++;
+									continue;      
+								}
               }
               else
               {
-                if (showInHome.ToLower().Equals("no")) continue;
+								if (showInHome.ToLower().Equals("no"))
+								{
+									myPluginsCount++;
+									continue;
+								}
               }
             }
             if ((focusTexture == null) || (focusTexture.Length < 1)) focusTexture = setup.PluginName();
@@ -95,7 +105,7 @@ namespace MediaPortal.GUI.Home
           }
         }
       }
-      if (_useMyPlugins)
+			if ((_useMyPlugins) && (myPluginsCount > 0))
       {
         string focusTexture    = GetFocusTextureFileName("my plugins");
         string nonFocusTexture = GetNonFocusTextureFileName("my plugins");
