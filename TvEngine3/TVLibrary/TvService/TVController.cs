@@ -1692,6 +1692,7 @@ namespace TvService
           if (IsTimeShifting(cardId)) return false;
           if (IsScanning(cardId)) return false;
           if (IsLocked(cardId)) return false;
+          if (IsGrabbingEpg(cardId)) return false;
         }
         return true;
       }

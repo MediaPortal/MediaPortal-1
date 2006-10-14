@@ -1029,7 +1029,7 @@ namespace TvLibrary.Implementations.DVB
         DsUtils.FreeAMMediaType(mediaTypes[0]);
         if (tifConnected == false)
         {
-          //Log.Log.WriteFile("dvb:try tif:{0}", FilterGraphTools.LogPinInfo(pins[0]));
+          Log.Log.WriteFile("dvb:try tif:{0}", FilterGraphTools.LogPinInfo(pins[0]));
           hr = _graphBuilder.Connect(pins[0], pinInTif);
           if (hr == 0)
           {
@@ -1040,12 +1040,12 @@ namespace TvLibrary.Implementations.DVB
           }
           else
           {
-            // Log.Log.WriteFile("    tif not connected:0x{0:X}", hr);
+            Log.Log.WriteFile("    tif not connected:0x{0:X}", hr);
           }
         }
         if (mpeg2SectionsConnected == false)
         {
-          //Log.Log.WriteFile("    try sections&tables:{0}", FilterGraphTools.LogPinInfo(pins[0]));
+          Log.Log.WriteFile("    try sections&tables:{0}", FilterGraphTools.LogPinInfo(pins[0]));
           hr = _graphBuilder.Connect(pins[0], pinInSec);
           if (hr == 0)
           {
@@ -1054,7 +1054,7 @@ namespace TvLibrary.Implementations.DVB
           }
           else
           {
-            //            Log.Log.WriteFile("    dvb:mpeg 2 sections and tables not connected:0x{0:X}", hr);
+            Log.Log.WriteFile("    dvb:mpeg 2 sections and tables not connected:0x{0:X}", hr);
           }
         }
         Release.ComObject("mpeg2 demux pin" + pinNr.ToString(), pins[0]);
@@ -1065,12 +1065,12 @@ namespace TvLibrary.Implementations.DVB
       if (tifConnected == false)
       {
         Log.Log.WriteFile("    unable to connect transport information filter");
-        throw new TvException("unable to connect transport information filter");
+        //throw new TvException("unable to connect transport information filter");
       }
       if (mpeg2SectionsConnected == false)
       {
         Log.Log.WriteFile("    unable to connect mpeg 2 sections and tables filter");
-        throw new TvException("unable to connect mpeg 2 sections and tables filter");
+        //throw new TvException("unable to connect mpeg 2 sections and tables filter");
       }
     }
 
