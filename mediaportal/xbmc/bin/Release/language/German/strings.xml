@@ -4834,7 +4834,23 @@
    <string>
       <id>6025</id>
       <value>Skip-Stufen-Konfiguration</value>
-   </string>      
+   </string>
+     <string>
+    <id>6026</id>
+    <value>Bitte IP-Adresse oder Computername</value>
+  </string>
+  <string>
+    <id>6027</id>
+    <value>des Master Tv-Servers eingeben.</value>
+  </string>
+  <string>
+    <id>6028</id>
+    <value>Aktuelle Einstellung:</value>
+  </string>
+  <string>
+    <id>6029</id>
+    <value>Ändern</value>
+  </string>      
    <string Prefix="Meine ">
       <id>8000</id>
       <value>E-Mails</value>
