@@ -51,7 +51,7 @@ DECLARE_INTERFACE_( IStreamAnalyzer, IUnknown )
    STDMETHOD(SetAudioPID)    (THIS_ ULONG pPID ) PURE;
 };
 
-typedef struct PTSTime
+struct PTSTime
 {
 	ULONGLONG h;
 	ULONGLONG m;
