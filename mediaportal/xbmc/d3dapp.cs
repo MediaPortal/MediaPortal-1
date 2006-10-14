@@ -273,10 +273,6 @@ namespace MediaPortal
     private int m_iSleepingTime = 50;
     private bool autoHideTaskbar = true;
     private bool alwaysOnTop = false;
-    private Device m_dddevice = null;
-    private SurfaceDescription m_dddescription = null;
-    private Surface m_ddfront = null;
-    private Surface m_ddback = null;
     private bool useExclusiveDirectXMode;
 
     [DllImport("winmm.dll")]
@@ -1481,7 +1477,7 @@ namespace MediaPortal
 
           //Log.Info("app.EnvironmentResized()");
           EnvironmentResized(GUIGraphicsContext.DX9Device, new CancelEventArgs());
-          InitializeDeviceObjects();
+          //InitializeDeviceObjects();
         }
         deviceLost = false;
         _needUpdate = true;
@@ -2345,25 +2341,6 @@ namespace MediaPortal
     }
 
 
-    private void CreateDirectDrawSurface()
-    {
-      m_dddescription = new SurfaceDescription();
-      m_dddevice = new Device();
-      m_dddevice.SetCooperativeLevel(this, CooperativeLevelFlags.Exclusive);
-      m_dddevice.SetDisplayMode(presentParams.BackBufferWidth, presentParams.BackBufferHeight, 32, 0, false);
-
-      m_dddescription.SurfaceCaps.PrimarySurface = true;
-      m_dddescription.SurfaceCaps.Flip = true;
-      m_dddescription.SurfaceCaps.Complex = true;
-      m_dddescription.BackBufferCount = 1;
-      m_ddfront = new Surface(m_dddescription, m_dddevice);
-      SurfaceCaps caps = new SurfaceCaps();
-      // Yes, we are using a back buffer
-      caps.BackBuffer = true;
-
-      // Associate the front buffer to back buffer with specified caps
-      m_ddback = m_ddfront.GetAttachedSurface(caps);
-    }
 
     private void televisionMenuItem_Click(object sender, EventArgs e)
     {
