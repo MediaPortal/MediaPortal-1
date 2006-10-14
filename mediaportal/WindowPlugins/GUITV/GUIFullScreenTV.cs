@@ -1329,10 +1329,10 @@ namespace MediaPortal.GUI.TV
       {
         dlg.AddLocalizedString(492); // Audio language menu
       }
-      dlg.AddLocalizedString(970); // Previous window
-
+      
       dlg.AddLocalizedString(11000); // Crop settings
 
+      dlg.AddLocalizedString(970); // Previous window
 
       _isDialogVisible = true;
 
