@@ -205,11 +205,7 @@ namespace SetupTv
       //
       // Make sure this section doesn't already exist
       //
-      if (settingSections.ContainsKey(section.Text))
-      {
-        return;
-      }
-
+      
       //
       // Add section to tree
       //
