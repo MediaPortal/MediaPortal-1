@@ -1,4 +1,5 @@
 #include <streams.h>
+#include <winsock.h>
 #include "liveMedia.hh"
 #include "BasicUsageEnvironment.hh"
 #include "GroupsockHelper.hh"
@@ -22,6 +23,8 @@ void StreamAddTimeShiftFile(char* streamName, char* fileName,bool isProgramStrea
 void StreamAddMpegFile(char* streamName, char* fileName);
 void StreamRemove(char* streamName);
 
+extern netAddressBits SendingInterfaceAddr ;
+extern netAddressBits ReceivingInterfaceAddr ;
 #if _DEBUG
 
 int _tmain(int argc, _TCHAR* argv[])
@@ -37,9 +40,13 @@ int _tmain(int argc, _TCHAR* argv[])
 
 #endif
 
-void StreamSetup()
+void StreamSetup(char* ipAdress)
 {
-	Log("Setup stream server");
+	Log("Setup stream server for ip:%s",ipAdress);
+	
+	ReceivingInterfaceAddr=inet_addr(ipAdress );
+	SendingInterfaceAddr=inet_addr(ipAdress );
+
   TaskScheduler* scheduler = BasicTaskScheduler::createNew();
   env = BasicUsageEnvironment::createNew(*scheduler);
 

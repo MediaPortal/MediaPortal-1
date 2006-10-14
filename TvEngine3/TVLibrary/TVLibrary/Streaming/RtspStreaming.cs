@@ -23,6 +23,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Net;
+using System.Net.Sockets;
 using TvLibrary.Log;
 
 namespace TVLibrary.Streaming
@@ -34,7 +36,7 @@ namespace TVLibrary.Streaming
   {
     #region imports
     [DllImport("StreamingServer.dll", CharSet = CharSet.Ansi)]
-    protected static extern void StreamSetup();
+    protected static extern void StreamSetup(string ipAdress);
 
     [DllImport("StreamingServer.dll", CharSet = CharSet.Ansi)]
     protected static extern void StreamRun();
@@ -61,7 +63,13 @@ namespace TVLibrary.Streaming
     {
       try
       {
-        StreamSetup();
+        string localHostName = Dns.GetHostName();
+        IPHostEntry local = Dns.GetHostByName(localHostName);
+        foreach (IPAddress ipaddress in local.AddressList)
+        {
+          StreamSetup(ipaddress.ToString());
+          break;
+        }
         _initialized = true;
         _streams = new Dictionary<string, string>();
       }
