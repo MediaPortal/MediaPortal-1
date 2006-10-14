@@ -393,6 +393,7 @@ namespace TvService
     /// <returns></returns>
     bool GrabEpgForChannel(Channel channel, IChannel tuning)
     {
+      if (_tvController.AllCardsIdle == false) return false;
       IList dbsCards = Card.ListAll();
 
       //handle ATSC
@@ -727,11 +728,11 @@ namespace TvService
     {
       if (_isRunning == false) return false;
       if (cardId < 0) return false;
-      //if (RemoteControl.Instance.IsRecording(cardId)) return false;
-      //if (RemoteControl.Instance.IsTimeShifting(cardId)) return false;
-      //if (RemoteControl.Instance.IsScanning(cardId)) return false;
-      //if (_tvController.IsLocked(cardId)) return false;
-      return _tvController.AllCardsIdle;
+      if (RemoteControl.Instance.IsRecording(cardId)) return false;
+      if (RemoteControl.Instance.IsTimeShifting(cardId)) return false;
+      if (RemoteControl.Instance.IsScanning(cardId)) return false;
+      if (_tvController.IsLocked(cardId)) return false;
+      return true;
     }
     #endregion
   }
