@@ -260,7 +260,7 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.WriteFile("dvbt:  Tune:{0}", channel);
       try
       {
-        _pmtVersion = -1;
+        
         DVBTChannel dvbtChannel = channel as DVBTChannel;
 
         if (dvbtChannel == null)

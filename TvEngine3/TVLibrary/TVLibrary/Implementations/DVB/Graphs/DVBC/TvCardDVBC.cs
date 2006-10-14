@@ -252,7 +252,7 @@ namespace TvLibrary.Implementations.DVB
     public bool Tune(IChannel channel)
     {
       Log.Log.WriteFile("dvbc: Tune:{0}", channel);
-      _pmtVersion = -1;
+      
       DVBCChannel dvbcChannel = channel as DVBCChannel;
       if (dvbcChannel == null)
       {

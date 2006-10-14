@@ -365,6 +365,7 @@ namespace TvLibrary.Implementations.DVB
     void SetTimeShiftPids()
     {
       if (_channelInfo == null) return;
+      if (_channelInfo.pids.Count== 0) return;
       if (_currentChannel == null) return;
       if (_currentAudioStream == null) return;
       DVBBaseChannel dvbChannel = _currentChannel as DVBBaseChannel;
@@ -397,6 +398,7 @@ namespace TvLibrary.Implementations.DVB
     {
       if (_channelInfo == null) return;
       if (_currentChannel == null) return;
+      if (_channelInfo.pids.Count == 0) return;
       if (_currentAudioStream == null) return;
       DVBBaseChannel dvbChannel = _currentChannel as DVBBaseChannel;
       if (dvbChannel == null) return;
@@ -523,7 +525,7 @@ namespace TvLibrary.Implementations.DVB
       if (state == FilterState.Running)
       {
         Log.Log.WriteFile("ss2:RunGraph already running");
-        _pmtVersion = -1;
+
         DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
         SetAnalyzerMapping(channel.PmtPid);
         return;
@@ -1390,8 +1392,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns>true if succeeded else false</returns>
     public bool Tune(IChannel channel)
     {
-      _pmtVersion = -1;
-
+      
       Log.Log.WriteFile("ss2:Tune({0})", channel);
       if (_epgGrabbing)
       {
@@ -1418,6 +1419,7 @@ namespace TvLibrary.Implementations.DVB
           return true;
         }
       }
+      _pmtVersion = -1;
       _startTimeShifting = false;
       _channelInfo = new ChannelInfo();
       _currentChannel = channel;

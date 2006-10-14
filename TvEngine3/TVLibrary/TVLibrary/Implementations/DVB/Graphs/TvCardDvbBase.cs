@@ -261,6 +261,7 @@ namespace TvLibrary.Implementations.DVB
     void SetTimeShiftPids()
     {
       if (_channelInfo == null) return;
+      if (_channelInfo.pids.Count == 0) return;
       if (_currentChannel == null) return;
       if (_currentAudioStream == null) return;
       DVBBaseChannel dvbChannel = _currentChannel as DVBBaseChannel;
@@ -292,6 +293,7 @@ namespace TvLibrary.Implementations.DVB
     void SetRecorderPids()
     {
       if (_channelInfo == null) return;
+      if (_channelInfo.pids.Count == 0) return;
       if (_currentChannel == null) return;
       if (_currentAudioStream == null) return;
       DVBBaseChannel dvbChannel = _currentChannel as DVBBaseChannel;
@@ -487,7 +489,7 @@ namespace TvLibrary.Implementations.DVB
       if (state == FilterState.Running)
       {
         Log.Log.WriteFile("dvb:RunGraph: already running");
-        _pmtVersion = -1;
+        //_pmtVersion = -1;
         DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
         if (channel != null)
         {

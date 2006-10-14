@@ -266,7 +266,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public bool Tune(IChannel channel)
     {
-      _pmtVersion = -1;
+
       DVBSChannel dvbsChannel = channel as DVBSChannel;
 
       if (dvbsChannel == null)
