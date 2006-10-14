@@ -8752,9 +8752,9 @@
     <tv> 
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"/> 
       <filters> 
-        <filter cat="networkprovider" 	name="Microsoft DVBT Network Provider" 	checkdevice="false"/> 
-        <filter cat="tunerdevice" 		name="TOSHIBA DVB-T BDA Tuner" 			checkdevice="true"/> 
-        <filter cat="capture" 			name="TOSHIBA DVB-T BDA Capture" 		checkdevice="true"/> 
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider" 	checkdevice="false"/> 
+        <filter cat="tunerdevice" 		name="TOSHIBA DVB-T BDA Tuner" 			    checkdevice="true"/> 
+        <filter cat="capture" 			  name="TOSHIBA DVB-T BDA Capture" 		    checkdevice="true"/> 
       </filters> 
       <connections>
         <connection sourcefilter="networkprovider"	sourcepin="0"	sinkfilter="tunerdevice"	sinkpin="0"/>
@@ -17022,6 +17022,22 @@
         <connection sourcefilter="crossbar"   sourcepin="1" sinkfilter="audcapture" sinkpin="0"/>
         <connection sourcefilter="capture"    sourcepin="0" sinkfilter="encoder"    sinkpin="0"/>
         <connection sourcefilter="audcapture" sourcepin="0" sinkfilter="encoder"    sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Creative DVB-T" capturename="Creative DVB-T Capture" devid="vid_1584&amp;pid_b002">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"/>
+        <filter cat="tunerdevice"     name="Creative DVB-T Tuner"             checkdevice="true"/>
+        <filter cat="capture"         name="Creative DVB-T Capture"           checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider"  sourcepin="0" sinkfilter="tunerdevice"  sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"      sourcepin="0" sinkfilter="capture"      sinkpin="0"/>
       </connections>
     </tv>
   </capturecard>
