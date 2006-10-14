@@ -293,6 +293,7 @@ namespace TvService
             Log.Write("EPG timeout:{0}.", ts.TotalSeconds);
             _currentChannel.LastGrabTime = DateTime.Now;
             _currentChannel.Persist();
+            _tvController.StopGrabbingEpg(_currentCardId);
             //DatabaseManager.Instance.SaveChanges();
             //DatabaseManager.Instance.ClearQueryCache();
 
