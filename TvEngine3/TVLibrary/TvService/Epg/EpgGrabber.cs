@@ -620,10 +620,7 @@ namespace TvService
         if (_currentChannel != null)
         {
           _currentChannel.LastGrabTime = DateTime.Now;
-          //SaveOptions options = new SaveOptions();
-          //options.IsTransactional = false;
-          //options.UpdateBatchSize = 100;
-          //DatabaseManager.Instance.SaveChanges(options);
+          _currentChannel.Persist();
           
           Log.Write("EPG: database updated for {0} {1} {2}", _currentChannel.Name, _state, IsCardIdle(_currentCardId));
         }
@@ -704,6 +701,7 @@ namespace TvService
         if (offset == -1)
         {
           channel.LastGrabTime = DateTime.Now;
+          channel.Persist();
           return true;
         }
         string title = program.Text[offset].Title;
@@ -721,6 +719,7 @@ namespace TvService
       }//foreach (EpgProgram program in epgChannel.Programs)
 
       channel.LastGrabTime = DateTime.Now;
+      channel.Persist();
       return true;
     }
 
