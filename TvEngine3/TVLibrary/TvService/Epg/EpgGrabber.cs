@@ -627,6 +627,11 @@ namespace TvService
           
           Log.Write("EPG: database updated for {0} {1} {2}", _currentChannel.Name, _state, IsCardIdle(_currentCardId));
         }
+        if (_state != EpgState.Idle && _currentCardId >= 0)
+        {
+          _tvController.StopGrabbingEpg(_currentCardId);
+        }
+        _currentCardId = -1;
         _state = EpgState.Idle;
         _currentCardId = -1;
       }
