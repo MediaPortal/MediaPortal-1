@@ -19,7 +19,7 @@
     </control>
     <control>
       <type>label</type>
-      <description>Please specify the ipadress or hostname</description>
+      <description>Please specify the IP address or hostname</description>
       <id>1</id>
       <posX>260</posX>
       <posY>96</posY>
@@ -27,7 +27,7 @@
     </control>
     <control>
       <type>label</type>
-      <description>of the master Tv-server</description>
+      <description>of the master TV-Server</description>
       <id>1</id>
       <posX>260</posX>
       <posY>112</posY>
