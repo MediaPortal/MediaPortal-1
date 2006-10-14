@@ -123,9 +123,9 @@ private:
 	void PatchPcr(byte* tsPacket);
 	void PatchPtsDts(byte* tsPacket);
 
-  bool GetPtsDts(byte* pesHeader, __int64& pts, __int64& dts);
+  bool GetPtsDts(byte* pesHeader, UINT64& pts, UINT64& dts);
   void PatchPcr(byte* tsPacket,CTsHeader& header);
-  void PatchPtsDts(byte* tsPacket,CTsHeader& header,__int64 startPcr);
+  void PatchPtsDts(byte* tsPacket,CTsHeader& header,UINT64 startPcr);
 
 	MultiFileWriterParam m_params;
   TimeShiftingMode     m_timeShiftMode;
@@ -143,7 +143,8 @@ private:
 	int									 m_iPmtContinuityCounter;
 	int									 m_iPatContinuityCounter;
   
-	__int64 m_startPcr;
-	__int64 m_highestPcr;
+	UINT64 m_startPcr;
+	UINT64 m_highestPcr;
   bool    m_bDetermineNewStartPcr;
+	bool		m_bStartPcrFound;
 };

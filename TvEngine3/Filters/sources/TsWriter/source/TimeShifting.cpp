@@ -117,6 +117,7 @@ CTimeShifting::CTimeShifting(LPUNKNOWN pUnk, HRESULT *phr)
 	m_pTimeShiftFile=NULL;
 	m_multiPlexer.SetFileWriterCallBack(this);
   
+	m_bStartPcrFound=false;
   m_startPcr=0;
   m_highestPcr=0;
   m_bDetermineNewStartPcr=false;
@@ -309,6 +310,7 @@ STDMETHODIMP CTimeShifting::SetTimeShiftingFileName(char* pszFileName)
     m_pcrPid=-1;
     m_vecPids.clear();
 	  m_startPcr=0;
+		m_bStartPcrFound=false;
 	  m_highestPcr=0;
     m_bDetermineNewStartPcr=false;
 		m_multiPlexer.Reset();
@@ -347,6 +349,7 @@ STDMETHODIMP CTimeShifting::Start()
 		m_iPatContinuityCounter=-1;
     m_bDetermineNewStartPcr=false;
 		m_startPcr=0;
+		m_bStartPcrFound=false;
 		m_highestPcr=0;
 //		LogDebug("real pcr:%x pmt:%x audio:%x video:%x mode:%d", m_pcrPid, m_pmtPid, m_audioPid,m_videoPid,m_timeShiftMode);
 //		LogDebug("fake pcr:%x pmt:%x audio:%x video:%x", FAKE_PCR_PID, FAKE_PMT_PID, FAKE_AUDIO_PID, FAKE_VIDEO_PID);
@@ -376,6 +379,7 @@ STDMETHODIMP CTimeShifting::Reset()
     m_pcrPid=-1;
     m_bDetermineNewStartPcr=false;
 	  m_startPcr=0;
+		m_bStartPcrFound=false;
 	  m_highestPcr=0;
 		m_vecPids.clear();
 		m_multiPlexer.Reset();
@@ -580,8 +584,11 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 				pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
 				pkt[2]=(pid&0xff);
 				if (header.Pid==m_pcrPid) PatchPcr(pkt,header);
-				if (PayLoadUnitStart) PatchPtsDts(pkt,header,m_startPcr);
-				if (m_bDetermineNewStartPcr==false) Write(pkt,188);
+				if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
+				{
+					if (PayLoadUnitStart) PatchPtsDts(pkt,header,m_startPcr);
+					Write(pkt,188);
+				}
 				return;
 			}
 
@@ -604,7 +611,11 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 				pkt[2]=(pid&0xff);
 				if (header.Pid==m_pcrPid) PatchPcr(pkt,header);
 				if (PayLoadUnitStart) PatchPtsDts(pkt,header,m_startPcr);
-				if (m_bDetermineNewStartPcr==false) Write(pkt,188);
+				if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
+				{
+					if (PayLoadUnitStart) PatchPtsDts(pkt,header,m_startPcr);
+					Write(pkt,188);
+				}
 				return;
 			}
 
@@ -618,7 +629,11 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 				pkt[2]=(pid&0xff);
 				if (header.Pid==m_pcrPid) PatchPcr(pkt,header);
 				if (PayLoadUnitStart) PatchPtsDts(pkt,header,m_startPcr);
-				if (m_bDetermineNewStartPcr==false) Write(pkt,188);
+				if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
+				{
+					if (PayLoadUnitStart) PatchPtsDts(pkt,header,m_startPcr);
+					Write(pkt,188);
+				}
 				return;
 			}
 
@@ -629,7 +644,11 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 			pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
 			pkt[2]=(pid&0xff);
 			if (header.Pid==m_pcrPid) PatchPcr(pkt,header);
-      if (m_bDetermineNewStartPcr==false) Write(pkt,188);
+			if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
+			{
+				if (PayLoadUnitStart) PatchPtsDts(pkt,header,m_startPcr);
+				Write(pkt,188);
+			}
 			return;
 		}
 		++it;
@@ -643,7 +662,10 @@ void CTimeShifting::WriteTs(byte* tsPacket)
     pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
     pkt[2]=(pid&0xff);
 		PatchPcr(pkt,header);
-    if (m_bDetermineNewStartPcr==false) Write(pkt,188);
+    if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
+		{
+			Write(pkt,188);
+		}
     return;
   }
 }
@@ -766,39 +788,60 @@ void CTimeShifting::PatchPcr(byte* tsPacket,CTsHeader& header)
   if (tsPacket[4]<7) return; //adaptation field length
   if (tsPacket[5]!=0x10) return;
 
+
+/*
+	char buf[1255];
+	strcpy(buf,"");
+	for (int i=0; i < 30;++i)
+	{
+		char tmp[200];
+		sprintf(tmp,"%02.2x ", tsPacket[i]);
+		strcat(buf,tmp);
+	}
+	LogDebug(buf);*/
+
   // There's a PCR.  Get it
-  __int64 pcrBaseHigh = (tsPacket[6]<<24)|(tsPacket[7]<<16)|(tsPacket[8]<<8)|tsPacket[9];
-	pcrBaseHigh<<=1;
-	pcrBaseHigh += ((tsPacket[10]>>7)&0x1);
+	UINT64 pcrBaseHigh=0LL;
+	UINT64 k=tsPacket[6]; k<<=25LL;pcrBaseHigh+=k;
+	k=tsPacket[7]; k<<=17LL;pcrBaseHigh+=k;
+	k=tsPacket[8]; k<<=9LL;pcrBaseHigh+=k;
+	k=tsPacket[9]; k<<=1LL;pcrBaseHigh+=k;
+	k=((tsPacket[10]>>7)&0x1); pcrBaseHigh +=k;
+
+
+//  UINT64 pcrBaseHigh = (tsPacket[6]<<24)|(tsPacket[7]<<16)|(tsPacket[8]<<8)|tsPacket[9];
+//	pcrBaseHigh<<=1LL;
+//pcrBaseHigh += ((tsPacket[10]>>7)&0x1);
 //  double clock = pcrBaseHigh/45000.0;
 //  if ((tsPacket[10]&0x80) != 0) clock += 1/90000.0; // add in low-bit (if set)
 //  unsigned short pcrExt = ((tsPacket[10]&0x01)<<8) | tsPacket[11];
 //  clock += pcrExt/27000000.0;
 
 
-  __int64 pcrNew=pcrBaseHigh;
+  UINT64 pcrNew=pcrBaseHigh;
   if (m_bDetermineNewStartPcr )
   {
-   if (pcrNew!=0) 
+   if (pcrNew!=0LL) 
     {
       m_bDetermineNewStartPcr=false;
 	    //correct pcr rollover
-      __int64 duration=m_highestPcr-m_startPcr;
+      UINT64 duration=m_highestPcr-m_startPcr;
     
-      LogDebug("Pcr change detected from:%x to:%x duration:%x", (DWORD)m_highestPcr, (DWORD)pcrNew,(DWORD)duration);
-	    __int64 newStartPcr = pcrNew- (duration) ;
-	    LogDebug("Pcr new start pcr from:%x to %x ", (DWORD)m_startPcr,(DWORD)newStartPcr);
+      LogDebug("Pcr change detected from:%I64d to:%I64d  duration:%I64d ", m_highestPcr, pcrNew,duration);
+	    UINT64 newStartPcr = pcrNew- (duration) ;
+	    LogDebug("Pcr new start pcr from:%I64d  to %I64d  ", m_startPcr,newStartPcr);
       m_startPcr=newStartPcr;
       m_highestPcr=newStartPcr;
 			pcrLogCount=0;
     }
   }
   
-	if (m_startPcr==0)
+	if (m_bStartPcrFound==false)
 	{
+		m_bStartPcrFound=true;
 		m_startPcr = pcrNew;
     m_highestPcr=pcrNew;
-		LogDebug("Pcr new start pcr :%x", (DWORD)m_startPcr);
+		LogDebug("Pcr new start pcr :%I64d", m_startPcr);
 	} 
 
   if (pcrNew > m_highestPcr)
@@ -806,37 +849,51 @@ void CTimeShifting::PatchPcr(byte* tsPacket,CTsHeader& header)
 	  m_highestPcr=pcrNew;
   }
 
-  __int64 pcrHi=pcrNew - m_startPcr;
-  tsPacket[6] = ((pcrHi>>24)&0xff);
-  tsPacket[7] = ((pcrHi>>16)&0xff);
-  tsPacket[8] = ((pcrHi>>8)&0xff);
-  tsPacket[9] = ((pcrHi)&0xff);
-  tsPacket[10]=0;
+	return;
+  UINT64 pcrHi=pcrNew - m_startPcr;
+  tsPacket[6] = ((pcrHi>>25)&0xff);
+  tsPacket[7] = ((pcrHi>>17)&0xff);
+  tsPacket[8] = ((pcrHi>>9)&0xff);
+  tsPacket[9] = ((pcrHi>>1)&0xff);
+  tsPacket[10]=	 (pcrHi&0x1);
   tsPacket[11]=0;
-	if (pcrLogCount< 20) LogDebug("pcr: org:%x new:%x start:%x", (DWORD)pcrBaseHigh,(DWORD)pcrHi,(DWORD)m_startPcr);
+//	LogDebug("pcr: org:%x new:%x start:%x", (DWORD)pcrBaseHigh,(DWORD)pcrHi,(DWORD)m_startPcr);
 	pcrLogCount++;
 }
 
-void CTimeShifting::PatchPtsDts(byte* tsPacket,CTsHeader& header,__int64 startPcr)
+void CTimeShifting::PatchPtsDts(byte* tsPacket,CTsHeader& header,UINT64 startPcr)
 {
+	return;
   if (false==header.PayloadUnitStart) return;
   int start=header.PayLoadStart;
   if (tsPacket[start] !=0 || tsPacket[start+1] !=0  || tsPacket[start+2] !=1) return; 
 
   byte* pesHeader=&tsPacket[start];
-	__int64 pts=0,dts=0;
+	UINT64 pts=0LL;
+	UINT64 dts=0LL;
 	if (!GetPtsDts(pesHeader, pts, dts)) 
 	{
 		return ;
 	}
-	if (pts>0)
+	if (pts>0LL)
 	{
-		__int64 ptsorg=pts;
-		if (pts < startPcr) 
-			pts=0;
-		else
-			pts-=startPcr;
-		if (pcrLogCount< 20) LogDebug("pts: org:%x new:%x start:%x", (DWORD)ptsorg,(DWORD)pts,(DWORD)startPcr);
+		/*
+		char buf[1255];
+		strcpy(buf,"");
+		for (int i=0; i < 30;++i)
+		{
+			char tmp[200];
+			sprintf(tmp,"%02.2x ", tsPacket[i]);
+			strcat(buf,tmp);
+		}
+		LogDebug(buf);*/
+		
+		UINT64 ptsorg=pts;
+		if (pts > startPcr) 
+			pts = (UINT64)( ((UINT64)pts) - ((UINT64)startPcr) );
+//		else pts=0LL;
+		//LogDebug("pts: org:%I64d new:%I64d start:%I64d pid:%x", ptsorg,pts,startPcr,header.Pid);
+		
 		byte marker=0x21;
 		if (dts!=0) marker=0x31;
 		pesHeader[13]=(((pts&0x7f)<<1)+1); pts>>=7;
@@ -845,13 +902,11 @@ void CTimeShifting::PatchPtsDts(byte* tsPacket,CTsHeader& header,__int64 startPc
 		pesHeader[10]=(pts&0xff);					pts>>=8;
 		pesHeader[9]= (((pts&7)<<1)+marker); 
 	}
-	if (dts >0)
+	if (dts >0LL)
 	{
-		if (dts < startPcr) 
-			dts=0;
-		else
-			dts-=startPcr;
-
+		if (dts > startPcr) 
+			dts = (UINT64)( ((UINT64)dts) - ((UINT64)startPcr) );
+//		else dts=0LL;
 		pesHeader[18]=(((dts&0x7f)<<1)+1); dts>>=7;
 		pesHeader[17]= (dts&0xff);				  dts>>=8;
 		pesHeader[16]=(((dts&0x7f)<<1)+1); dts>>=7;
@@ -861,7 +916,7 @@ void CTimeShifting::PatchPtsDts(byte* tsPacket,CTsHeader& header,__int64 startPc
 }
 
 
-bool CTimeShifting::GetPtsDts(byte* pesHeader, __int64& pts, __int64& dts)
+bool CTimeShifting::GetPtsDts(byte* pesHeader, UINT64& pts, UINT64& dts)
 {
 	pts=0;
 	dts=0;
@@ -871,13 +926,19 @@ bool CTimeShifting::GetPtsDts(byte* pesHeader, __int64& pts, __int64& dts)
 	if ( (pesHeader[7]&0x40)!=0) dtsAvailable=true;
 	if (ptsAvailable)
 	{	
-		pts+= ((pesHeader[13]>>1)&0x7f);					// 7bits	7
+		pts+= ((pesHeader[13]>>1)&0x7f);				// 7bits	7
 		pts+=(pesHeader[12]<<7);								// 8bits	15
 		pts+=((pesHeader[11]>>1)<<15);					// 7bits	22
 		pts+=((pesHeader[10])<<22);							// 8bits	30
-    __int64 k=((pesHeader[9]>>1)&0x7);
-    k <<=30;
+		//LogDebug("pts1:%x", (DWORD)pts);
+    UINT64 k=((pesHeader[9]>>1)&0x7);
+		//LogDebug("k1:%x", (DWORD)k);
+    k <<=30LL;
+		//LogDebug("k2:%x", (DWORD)k);
 		pts+=k;			// 3bits
+		//LogDebug("pts2:%x", (DWORD)pts);
+		pts &= 0x1FFFFFFFFLL;
+		//LogDebug("pts3:%x", (DWORD)pts);
 	}
 	if (dtsAvailable)
 	{
@@ -885,10 +946,12 @@ bool CTimeShifting::GetPtsDts(byte* pesHeader, __int64& pts, __int64& dts)
 		dts+=(pesHeader[17]<<7);								// 8bits	15
 		dts+=((pesHeader[16]>>1)<<15);					// 7bits	22
 		dts+=((pesHeader[15])<<22);							// 8bits	30
-    __int64 k=((pesHeader[14]>>1)&0x7);
-    k <<=30;
+    UINT64 k=((pesHeader[14]>>1)&0x7);
+    k <<=30LL;
 		dts+=k;			// 3bits
+		dts &= 0x1FFFFFFFFLL;
 	
 	}
+	
 	return (ptsAvailable||dtsAvailable);
 }
