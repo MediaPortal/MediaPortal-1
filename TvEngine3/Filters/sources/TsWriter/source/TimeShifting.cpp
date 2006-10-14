@@ -42,7 +42,7 @@ int FAKE_PCR_PID      = 0x21;
 int FAKE_VIDEO_PID    = 0x30;
 int FAKE_AUDIO_PID    = 0x40;
 int FAKE_SUBTITLE_PID = 0x50;
-
+static int pcrLogCount=0;
 extern void LogDebug(const char *fmt, ...) ;
 
 static DWORD crc_table[256] = {
@@ -148,14 +148,15 @@ STDMETHODIMP CTimeShifting::SetPcrPid(int pcrPid)
 	try
 	{
 		LogDebug("Timeshifter:pcr pid:0x%x",pcrPid); 
+		pcrLogCount=0;
 		m_multiPlexer.ClearStreams();
 		m_multiPlexer.SetPcrPid(pcrPid);
-    m_pcrPid=pcrPid;
 		if (m_bTimeShifting)
 		{
 			LogDebug("Timeshifter:determine new start pcr"); 
 			m_bDetermineNewStartPcr=true;
 		}
+    m_pcrPid=pcrPid;
 		m_vecPids.clear();
 		FAKE_NETWORK_ID   = 0x456;
 		FAKE_TRANSPORT_ID = 0x4;
@@ -352,8 +353,11 @@ STDMETHODIMP CTimeShifting::Start()
 		m_bTimeShifting=true;
 		if (m_timeShiftMode==TransportStream)
 		{
-			WriteFakePAT();
-			WriteFakePMT();
+			for (int i=0; i < 20;++i)
+			{
+				WriteFakePAT();
+				WriteFakePMT();
+			}
 		}
 	}
 	catch(...)
@@ -552,10 +556,6 @@ void CTimeShifting::WriteTs(byte* tsPacket)
   int PayLoadUnitStart=0;
   if (header.PayloadUnitStart) PayLoadUnitStart=1;
 
-	if (header.Pid==m_pcrPid)
-	{
-		PatchPcr(tsPacket,header);
-	}
 	itvecPids it=m_vecPids.begin();
 	while (it!=m_vecPids.end())
 	{
@@ -579,8 +579,9 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 				int pid=info.fakePid;
 				pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
 				pkt[2]=(pid&0xff);
+				if (header.Pid==m_pcrPid) PatchPcr(pkt,header);
 				if (PayLoadUnitStart) PatchPtsDts(pkt,header,m_startPcr);
-				Write(pkt,188);
+				if (m_bDetermineNewStartPcr==false) Write(pkt,188);
 				return;
 			}
 
@@ -601,8 +602,9 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 				int pid=info.fakePid;
 				pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
 				pkt[2]=(pid&0xff);
+				if (header.Pid==m_pcrPid) PatchPcr(pkt,header);
 				if (PayLoadUnitStart) PatchPtsDts(pkt,header,m_startPcr);
-				Write(pkt,188);
+				if (m_bDetermineNewStartPcr==false) Write(pkt,188);
 				return;
 			}
 
@@ -614,8 +616,9 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 				int pid=info.fakePid;
 				pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
 				pkt[2]=(pid&0xff);
+				if (header.Pid==m_pcrPid) PatchPcr(pkt,header);
 				if (PayLoadUnitStart) PatchPtsDts(pkt,header,m_startPcr);
-				Write(pkt,188);
+				if (m_bDetermineNewStartPcr==false) Write(pkt,188);
 				return;
 			}
 
@@ -625,7 +628,8 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 			int pid=info.fakePid;
 			pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
 			pkt[2]=(pid&0xff);
-      Write(pkt,188);
+			if (header.Pid==m_pcrPid) PatchPcr(pkt,header);
+      if (m_bDetermineNewStartPcr==false) Write(pkt,188);
 			return;
 		}
 		++it;
@@ -638,7 +642,8 @@ void CTimeShifting::WriteTs(byte* tsPacket)
     int pid=FAKE_PCR_PID;
     pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
     pkt[2]=(pid&0xff);
-    Write(pkt,188);
+		PatchPcr(pkt,header);
+    if (m_bDetermineNewStartPcr==false) Write(pkt,188);
     return;
   }
 }
@@ -758,11 +763,13 @@ void CTimeShifting::WriteFakePMT()
 void CTimeShifting::PatchPcr(byte* tsPacket,CTsHeader& header)
 {
   if (header.PayLoadOnly()) return;
-  if (tsPacket[4]<7) return;
+  if (tsPacket[4]<7) return; //adaptation field length
   if (tsPacket[5]!=0x10) return;
 
   // There's a PCR.  Get it
   __int64 pcrBaseHigh = (tsPacket[6]<<24)|(tsPacket[7]<<16)|(tsPacket[8]<<8)|tsPacket[9];
+	pcrBaseHigh<<=1;
+	pcrBaseHigh += ((tsPacket[10]>>7)&0x1);
 //  double clock = pcrBaseHigh/45000.0;
 //  if ((tsPacket[10]&0x80) != 0) clock += 1/90000.0; // add in low-bit (if set)
 //  unsigned short pcrExt = ((tsPacket[10]&0x01)<<8) | tsPacket[11];
@@ -783,6 +790,7 @@ void CTimeShifting::PatchPcr(byte* tsPacket,CTsHeader& header)
 	    LogDebug("Pcr new start pcr from:%x to %x ", (DWORD)m_startPcr,(DWORD)newStartPcr);
       m_startPcr=newStartPcr;
       m_highestPcr=newStartPcr;
+			pcrLogCount=0;
     }
   }
   
@@ -805,6 +813,8 @@ void CTimeShifting::PatchPcr(byte* tsPacket,CTsHeader& header)
   tsPacket[9] = ((pcrHi)&0xff);
   tsPacket[10]=0;
   tsPacket[11]=0;
+	if (pcrLogCount< 20) LogDebug("pcr: org:%x new:%x start:%x", (DWORD)pcrBaseHigh,(DWORD)pcrHi,(DWORD)m_startPcr);
+	pcrLogCount++;
 }
 
 void CTimeShifting::PatchPtsDts(byte* tsPacket,CTsHeader& header,__int64 startPcr)
@@ -821,11 +831,12 @@ void CTimeShifting::PatchPtsDts(byte* tsPacket,CTsHeader& header,__int64 startPc
 	}
 	if (pts>0)
 	{
+		__int64 ptsorg=pts;
 		if (pts < startPcr) 
 			pts=0;
 		else
 			pts-=startPcr;
-	//	LogDebug(" pts:%x start:%x", (DWORD)pts,(DWORD)startPcr);
+		if (pcrLogCount< 20) LogDebug("pts: org:%x new:%x start:%x", (DWORD)ptsorg,(DWORD)pts,(DWORD)startPcr);
 		byte marker=0x21;
 		if (dts!=0) marker=0x31;
 		pesHeader[13]=(((pts&0x7f)<<1)+1); pts>>=7;
