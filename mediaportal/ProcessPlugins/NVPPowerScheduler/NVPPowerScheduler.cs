@@ -840,6 +840,9 @@ namespace MediaPortal.PowerScheduler
 						{
 							m_SDTimer.Start();
 							if (m_bExtensiveLog) Log.Debug("PowerScheduler: WndProc -> SDTimer.Start()");
+							LoadSettings();  // Settings may changed by Mediaportal.cs
+							m_bShutdownEnabled = false;
+							ResetShutdownTimer(m_iShutdownInterval);
 						}
 						break;
 				}
