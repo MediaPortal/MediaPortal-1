@@ -702,91 +702,106 @@ public class MediaPortalApp : D3DApp, IRender
     }
   }
 
+	static object syncObj = new object();
+
   //called when windows wants to hibernate or go into standbye mode
   private bool OnSuspend(ref Message msg)
   {
-    if (_suspended)
-    {
-      return true;
-    }
+		lock (syncObj)
+		{
+			if (_suspended)
+			{
+				return true;
+			}
 
-    if (Recorder.IsRecording()) // if we are recording then deny request
-    {
-      msg.Result = new IntPtr(BROADCAST_QUERY_DENY);
-      Log.Info("Main: TVRecording running -> Suspend stopped");
-      return false;
-    }
-    //stop playback
-    _suspended = true;
-    InputDevices.Stop();
+			if (Recorder.IsRecording()) // if we are recording then deny request
+			{
+				msg.Result = new IntPtr(BROADCAST_QUERY_DENY);
+				Log.Info("Main: TVRecording running -> Suspend stopped");
+				return false;
+			}
+		
+			//switch to windowed mode
+			if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false && !windowed)
+			{
+				Log.Info("Main: Switching to windowed mode");
+				SwitchFullScreenOrWindowed(true);
+			}
+					
+			//stop playback
+			_suspended = true;
+			InputDevices.Stop();
 
-    Log.Info("Main: Stopping playback");
-    g_Player.Stop();
-    Log.Info("Main: Stopping recorder");
-    Recorder.Stop();
-    Log.Info("Main: Stopping AutoPlay");
-    AutoPlay.StopListening();
+			Log.Info("Main: Stopping playback");
+			g_Player.Stop();
+			Log.Info("Main: Stopping recorder");
+			Recorder.Stop();
+			Log.Info("Main: Stopping AutoPlay");
+			AutoPlay.StopListening();
 
-    //switch to windowed mode
-    if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false && !windowed)
-    {
-      Log.Info("Main: Switching to windowed mode");
-      SwitchFullScreenOrWindowed(true);
-    }
-    Log.Info("Main: OnSuspend - Done");
-    return true;
+			Log.Info("Main: OnSuspend - Done");
+			return true;
+		}
   }
 
   //called when windows wakes up again
+	static object syncResume = new object();
   private void OnResume()
   {
-    if (!_suspended)
-    {
-      return;
-    }
-    _suspended = false;
-    if (_startWithBasicHome)
-    {
-      Log.Info("Main: Switch to basic home screen");
-      GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SECOND_HOME);
-    }
-    else
-    {
-      Log.Info("Main: Switch to home screen");
-      GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
-    }
-    //_suspended = false;
+		lock (syncResume)
+		{
+			if (!_suspended)
+			{
+				return;
+			}
+			
+			if (_startWithBasicHome)
+			{
+				Log.Info("Main: Switch to basic home screen");
+				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SECOND_HOME);
+			}
+			else
+			{
+				Log.Info("Main: Switch to home screen");
+				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
+			}
+			//_suspended = false;
 
-    EXECUTION_STATE oldState = EXECUTION_STATE.ES_CONTINUOUS;
-    bool turnMonitorOn;
-    using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-    {
-      turnMonitorOn = xmlreader.GetValueAsBool("general", "turnmonitoronafterresume", false);
-      if (turnMonitorOn)
-      {
-        Log.Info("Main: OnResume - Trying to wake up the monitor / tv");
-        EXECUTION_STATE state = EXECUTION_STATE.ES_CONTINUOUS |
-                                EXECUTION_STATE.ES_DISPLAY_REQUIRED;
-        oldState = SetThreadExecutionState(state);
-      }
-    }
+			EXECUTION_STATE oldState = EXECUTION_STATE.ES_CONTINUOUS;
+			bool turnMonitorOn;
+			using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+			{
+				turnMonitorOn = xmlreader.GetValueAsBool("general", "turnmonitoronafterresume", false);
+				if (turnMonitorOn)
+				{
+					Log.Info("Main: OnResume - Trying to wake up the monitor / tv");
+					EXECUTION_STATE state = EXECUTION_STATE.ES_CONTINUOUS |
+																	EXECUTION_STATE.ES_DISPLAY_REQUIRED;
+					oldState = SetThreadExecutionState(state);
+				}
+			}
 
-    Recorder.Stop();  // bug fix from Powerscheduler
-    if (!Recorder.Running && !_onResumeRunning)
-    {
-      _onResumeRunning = true;
-      Log.Info("Main: Starting recorder");
-      Recorder.Start();
-      if (turnMonitorOn)
-      {
-        SetThreadExecutionState(oldState);
-      }
-    }
+			Recorder.Stop();  // bug fix from Powerscheduler
+			if (!Recorder.Running && !_onResumeRunning)
+			{
+				_onResumeRunning = true;
+				Log.Info("Main: Starting recorder");
+				Recorder.Start();
+				if (turnMonitorOn)
+				{
+					SetThreadExecutionState(oldState);
+				}
+			}
 
-    AutoPlay.StartListening();
-    InputDevices.Init();
+			AutoPlay.StartListening();
+			InputDevices.Init();
 
-    _onResumeRunning = false;
+			_onResumeRunning = false;
+			_suspended = false;
+			deviceLost = true;  // reset device
+			Log.Info("Main: OnResume - Done");
+			
+		}
   }
 
   #endregion
@@ -813,7 +828,7 @@ public class MediaPortalApp : D3DApp, IRender
   {
     if (_suspended)
     {
-      return;
+			return;
     } //we are suspended/hibernated
     try
     {
@@ -840,7 +855,7 @@ public class MediaPortalApp : D3DApp, IRender
   {
     if (_suspended)
     {
-      return;
+			return;
     } //we are suspended/hibernated
     try
     {
@@ -1359,7 +1374,7 @@ public class MediaPortalApp : D3DApp, IRender
   {
     if (_suspended)
     {
-      return;
+			return;
     } //we are suspended/hibernated
 #if !DEBUG
     try
@@ -1428,7 +1443,7 @@ public class MediaPortalApp : D3DApp, IRender
   {
     if (_suspended)
     {
-      return;
+			return;
     }
     try
     {
@@ -2502,7 +2517,7 @@ public class MediaPortalApp : D3DApp, IRender
   {
     if (_suspended)
     {
-      return;
+			return;
     }
     switch (message.Message)
     {
