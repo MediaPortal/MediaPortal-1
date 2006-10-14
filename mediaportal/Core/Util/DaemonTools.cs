@@ -20,6 +20,7 @@
  */
 using System;
 using System.Diagnostics;
+using System.Collections.Generic;
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Util
@@ -34,6 +35,7 @@ namespace MediaPortal.Util
     static bool   _Enabled;
     static int    _DriveNo;
     static string _MountedIsoFile=String.Empty;
+    static List<string> _supportedExtensions;
 
     static DaemonTools()
     {
@@ -44,6 +46,29 @@ namespace MediaPortal.Util
         _Drive=xmlreader.GetValueAsString("daemon", "drive", "E:");
         _DriveNo=xmlreader.GetValueAsInt("daemon", "driveNo", 0);
       }
+      /*
+       * DAEMON Tools supports the following image files:
+       * cue/bin
+       * iso
+       * ccd (CloneCD)
+       * bwt (Blindwrite)
+       * mds (Media Descriptor File)
+       * cdi (Discjuggler)
+       * nrg (Nero)
+       * pdi (Instant CD/DVD)
+       * b5t (BlindWrite 5)
+       */
+      _supportedExtensions = new List<string>();
+      _supportedExtensions.Add(".cue");
+      _supportedExtensions.Add(".bin");
+      _supportedExtensions.Add(".iso");
+      _supportedExtensions.Add(".ccd");
+      _supportedExtensions.Add(".bwt");
+      _supportedExtensions.Add(".mds");
+      _supportedExtensions.Add(".cdi");
+      _supportedExtensions.Add(".nrg");
+      _supportedExtensions.Add(".pdi");
+      _supportedExtensions.Add(".b5t");
     }
 
     static public bool IsEnabled
@@ -116,5 +141,24 @@ namespace MediaPortal.Util
       if (_MountedIsoFile!=String.Empty) return _Drive;
       return String.Empty;
     }
-	}
+
+    /// <summary>
+    /// This method check is the given extension is a image file
+    /// </summary>
+    /// <param name="extension">file extension</param>
+    /// <returns>
+    /// true: if file is an image file (.img, .nrg, .bin, .iso, ...)
+    /// false: if the file is not an image file
+    /// </returns>
+    static public bool IsImageFile(string extension)
+    {
+      if (extension == null) return false;
+      if (extension == String.Empty) return false;
+      extension = extension.ToLower();
+      foreach (string ext in _supportedExtensions)
+        if (ext.Equals(extension))
+          return true;
+      return false;
+    }
+  }
 }

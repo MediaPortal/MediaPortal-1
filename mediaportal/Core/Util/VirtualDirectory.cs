@@ -119,12 +119,12 @@ namespace MediaPortal.Util
     /// <summary>
     /// Method to add a new file extension to the file extensions list
     /// </summary>
-    /// <param name="extensionension">string containg the new extension in the format .mp3</param>
-    public void AddExtension(string extensionension)
+    /// <param name="extension">string containg the new extension in the format .mp3</param>
+    public void AddExtension(string extension)
     {
       if (m_extensions == null)
         m_extensions = new List<string>();
-      m_extensions.Add(extensionension.ToLower());
+      m_extensions.Add(extension.ToLower());
     }
 
     /// <summary>
@@ -425,21 +425,14 @@ namespace MediaPortal.Util
     /// <summary>
     /// This method check is the given extension is a image file
     /// </summary>
-    /// <param name="extensionension">file extension</param>
+    /// <param name="extension">file extension</param>
     /// <returns>
-    /// true: if file is an image file (.img, .nrg, .bin, .iso)
+    /// true: if file is an image file (.img, .nrg, .bin, .iso, ...)
     /// false: if the file is not an image file
     /// </returns>
-    static public bool IsImageFile(string extensionension)
+    static public bool IsImageFile(string extension)
     {
-      if (extensionension == null) return false;
-      if (extensionension == String.Empty) return false;
-      extensionension = extensionension.ToLower();
-      if (extensionension == ".img" || extensionension == ".bin" || extensionension == ".iso" || extensionension == ".nrg")
-      {
-        return true;
-      }
-      return false;
+      return DaemonTools.IsImageFile(extension);
     }
 
     public bool IsRemote(string folder)
@@ -548,8 +541,8 @@ namespace MediaPortal.Util
       {
         if (DaemonTools.IsEnabled)
         {
-          string extensionension = System.IO.Path.GetExtension(strDir);
-          if (IsImageFile(extensionension))
+          string extension = System.IO.Path.GetExtension(strDir);
+          if (IsImageFile(extension))
           {
             if (!DaemonTools.IsMounted(strDir))
             {
@@ -750,8 +743,8 @@ namespace MediaPortal.Util
         {
           for (int i = 0; i < strFiles.Length; ++i)
           {
-            string extensionension = System.IO.Path.GetExtension(strFiles[i]);
-            if (IsImageFile(extensionension))
+            string extension = System.IO.Path.GetExtension(strFiles[i]);
+            if (IsImageFile(extension))
             {
               if (DaemonTools.IsEnabled)
               {
@@ -828,8 +821,8 @@ namespace MediaPortal.Util
       bool VirtualShare = false;
       if (DaemonTools.IsEnabled)
       {
-        string extensionension = System.IO.Path.GetExtension(strDir);
-        if (IsImageFile(extensionension))
+        string extension = System.IO.Path.GetExtension(strDir);
+        if (IsImageFile(extension))
         {
           AutoPlay.StopListening();
           if (!DaemonTools.IsMounted(strDir))
@@ -922,8 +915,8 @@ namespace MediaPortal.Util
       {
         for (int i = 0; i < strFiles.Length; ++i)
         {
-          string extensionension = System.IO.Path.GetExtension(strFiles[i]);
-          if (IsImageFile(extensionension))
+          string extension = System.IO.Path.GetExtension(strFiles[i]);
+          if (IsImageFile(extension))
           {
             if (DaemonTools.IsEnabled)
             {
@@ -1353,8 +1346,8 @@ namespace MediaPortal.Util
       {
         if (DaemonTools.IsEnabled)
         {
-          string extensionension = System.IO.Path.GetExtension(strDir);
-          if (IsImageFile(extensionension))
+          string extension = System.IO.Path.GetExtension(strDir);
+          if (IsImageFile(extension))
           {
             if (!DaemonTools.IsMounted(strDir))
             {
@@ -1608,14 +1601,14 @@ namespace MediaPortal.Util
           {
 
             //<OKAY_AWRIGHT-310506>
-            string extensionension;
+            string extension;
             if (!doesContainRedBookData)
-              extensionension = System.IO.Path.GetExtension(strFiles[i]);
+              extension = System.IO.Path.GetExtension(strFiles[i]);
             else
-              extensionension = ".cda";
+              extension = ".cda";
             //</OKAY_AWRIGHT-310506>
 
-            if (IsImageFile(extensionension))
+            if (IsImageFile(extension))
             {
               if (DaemonTools.IsEnabled)
               {
@@ -1796,8 +1789,8 @@ namespace MediaPortal.Util
       bool VirtualShare = false;
       if (DaemonTools.IsEnabled)
       {
-        string extensionension = System.IO.Path.GetExtension(strDir);
-        if (IsImageFile(extensionension))
+        string extension = System.IO.Path.GetExtension(strDir);
+        if (IsImageFile(extension))
         {
           if (!DaemonTools.IsMounted(strDir))
           {
@@ -1888,8 +1881,8 @@ namespace MediaPortal.Util
       {
         for (int i = 0; i < strFiles.Length; ++i)
         {
-          string extensionension = System.IO.Path.GetExtension(strFiles[i]);
-          if (IsImageFile(extensionension))
+          string extension = System.IO.Path.GetExtension(strFiles[i]);
+          if (IsImageFile(extension))
           {
             if (DaemonTools.IsEnabled)
             {
