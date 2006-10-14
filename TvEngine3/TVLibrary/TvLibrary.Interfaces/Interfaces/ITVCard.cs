@@ -67,6 +67,12 @@ namespace TvLibrary.Interfaces
     bool CanTune(IChannel channel);
 
     /// <summary>
+    /// Stops the current graph
+    /// </summary>
+    /// <returns></returns>
+    void StopGraph();
+
+    /// <summary>
     /// Returns true when unscrambled audio/video is received otherwise false
     /// </summary>
     /// <returns>true of false</returns>

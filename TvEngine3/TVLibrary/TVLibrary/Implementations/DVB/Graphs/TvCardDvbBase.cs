@@ -263,7 +263,7 @@ namespace TvLibrary.Implementations.DVB
       if (_channelInfo == null) return;
       if (_channelInfo.pids.Count == 0) return;
       if (_currentChannel == null) return;
-      if (_currentAudioStream == null) return;
+      //if (_currentAudioStream == null) return;
       DVBBaseChannel dvbChannel = _currentChannel as DVBBaseChannel;
       if (dvbChannel == null) return;
 
@@ -526,7 +526,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Methods which stops the graph
     /// </summary>
-    protected void StopGraph()
+    public void StopGraph()
     {
       if (!CheckThreadId()) return;
       if (_epgGrabbing)

@@ -1757,7 +1757,7 @@ namespace TvLibrary.Implementations.Analog
     /// <summary>
     /// Methods which stops the graph
     /// </summary>
-    protected void StopGraph()
+    public void StopGraph()
     {
       if (!CheckThreadId()) return;
       FilterState state;

@@ -1088,12 +1088,14 @@ namespace TvService
           if (WaitForUnScrambledSignal(cardId) == false)
           {
             Log.Write("Controller: channel is scrambled");
+            _localCards[cardId].StopGraph();
             return TvResult.ChannelIsScrambled;
           }
 
           bool result = _localCards[cardId].StartTimeShifting(fileName);
           if (result == false)
           {
+            _localCards[cardId].StopGraph();
             return TvResult.UnableToStartGraph;
           }
           _clientReferenceCount[cardId]++;
@@ -1101,6 +1103,7 @@ namespace TvService
           fileName += ".tsbuffer";
           if (!WaitForTimeShiftFile(cardId, fileName))
           {
+            _localCards[cardId].StopGraph();
             return TvResult.NoVideoAudioDetected;
           }
           if (System.IO.File.Exists(fileName))
