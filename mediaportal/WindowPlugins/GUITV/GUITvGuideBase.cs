@@ -2633,8 +2633,8 @@ namespace MediaPortal.GUI.TV
 
                 dlg.Reset();
                 dlg.SetHeading(_currentProgram.Title);
-                dlg.AddLocalizedString(1041); //Upcoming episodes
                 dlg.AddLocalizedString(938);  //View this channel
+                dlg.AddLocalizedString(1041); //Upcoming episodes
                 dlg.DoModal(GetID);
 
                 if (dlg.SelectedLabel == -1)
