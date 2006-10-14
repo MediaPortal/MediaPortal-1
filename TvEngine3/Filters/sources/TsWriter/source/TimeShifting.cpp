@@ -584,9 +584,9 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 				pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
 				pkt[2]=(pid&0xff);
 				if (header.Pid==m_pcrPid) PatchPcr(pkt,header);
+				if (PayLoadUnitStart) PatchPtsDts(pkt,header,m_startPcr);
 				if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
 				{
-					if (PayLoadUnitStart) PatchPtsDts(pkt,header,m_startPcr);
 					Write(pkt,188);
 				}
 				return;
@@ -610,10 +610,9 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 				pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
 				pkt[2]=(pid&0xff);
 				if (header.Pid==m_pcrPid) PatchPcr(pkt,header);
-				if (PayLoadUnitStart) PatchPtsDts(pkt,header,m_startPcr);
+				if (PayLoadUnitStart)  PatchPtsDts(pkt,header,m_startPcr);
 				if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
 				{
-					if (PayLoadUnitStart) PatchPtsDts(pkt,header,m_startPcr);
 					Write(pkt,188);
 				}
 				return;
@@ -631,7 +630,6 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 				if (PayLoadUnitStart) PatchPtsDts(pkt,header,m_startPcr);
 				if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
 				{
-					if (PayLoadUnitStart) PatchPtsDts(pkt,header,m_startPcr);
 					Write(pkt,188);
 				}
 				return;
@@ -646,7 +644,6 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 			if (header.Pid==m_pcrPid) PatchPcr(pkt,header);
 			if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
 			{
-				if (PayLoadUnitStart) PatchPtsDts(pkt,header,m_startPcr);
 				Write(pkt,188);
 			}
 			return;
@@ -849,7 +846,7 @@ void CTimeShifting::PatchPcr(byte* tsPacket,CTsHeader& header)
 	  m_highestPcr=pcrNew;
   }
 
-	return;
+	
   UINT64 pcrHi=pcrNew - m_startPcr;
   tsPacket[6] = ((pcrHi>>25)&0xff);
   tsPacket[7] = ((pcrHi>>17)&0xff);
@@ -863,7 +860,6 @@ void CTimeShifting::PatchPcr(byte* tsPacket,CTsHeader& header)
 
 void CTimeShifting::PatchPtsDts(byte* tsPacket,CTsHeader& header,UINT64 startPcr)
 {
-	return;
   if (false==header.PayloadUnitStart) return;
   int start=header.PayLoadStart;
   if (tsPacket[start] !=0 || tsPacket[start+1] !=0  || tsPacket[start+2] !=1) return; 
@@ -886,13 +882,13 @@ void CTimeShifting::PatchPtsDts(byte* tsPacket,CTsHeader& header,UINT64 startPcr
 			sprintf(tmp,"%02.2x ", tsPacket[i]);
 			strcat(buf,tmp);
 		}
-		LogDebug(buf);*/
-		
+		LogDebug(buf);
+		*/
 		UINT64 ptsorg=pts;
 		if (pts > startPcr) 
 			pts = (UINT64)( ((UINT64)pts) - ((UINT64)startPcr) );
-//		else pts=0LL;
-		//LogDebug("pts: org:%I64d new:%I64d start:%I64d pid:%x", ptsorg,pts,startPcr,header.Pid);
+		else pts=0LL;
+	//	LogDebug("pts: org:%I64d new:%I64d start:%I64d pid:%x", ptsorg,pts,startPcr,header.Pid);
 		
 		byte marker=0x21;
 		if (dts!=0) marker=0x31;
@@ -906,7 +902,7 @@ void CTimeShifting::PatchPtsDts(byte* tsPacket,CTsHeader& header,UINT64 startPcr
 	{
 		if (dts > startPcr) 
 			dts = (UINT64)( ((UINT64)dts) - ((UINT64)startPcr) );
-//		else dts=0LL;
+		else dts=0LL;
 		pesHeader[18]=(((dts&0x7f)<<1)+1); dts>>=7;
 		pesHeader[17]= (dts&0xff);				  dts>>=8;
 		pesHeader[16]=(((dts&0x7f)<<1)+1); dts>>=7;
@@ -918,8 +914,8 @@ void CTimeShifting::PatchPtsDts(byte* tsPacket,CTsHeader& header,UINT64 startPcr
 
 bool CTimeShifting::GetPtsDts(byte* pesHeader, UINT64& pts, UINT64& dts)
 {
-	pts=0;
-	dts=0;
+	pts=0LL;
+	dts=0LL;
 	bool ptsAvailable=false;
 	bool dtsAvailable=false;
 	if ( (pesHeader[7]&0x80)!=0) ptsAvailable=true;
@@ -930,15 +926,10 @@ bool CTimeShifting::GetPtsDts(byte* pesHeader, UINT64& pts, UINT64& dts)
 		pts+=(pesHeader[12]<<7);								// 8bits	15
 		pts+=((pesHeader[11]>>1)<<15);					// 7bits	22
 		pts+=((pesHeader[10])<<22);							// 8bits	30
-		//LogDebug("pts1:%x", (DWORD)pts);
     UINT64 k=((pesHeader[9]>>1)&0x7);
-		//LogDebug("k1:%x", (DWORD)k);
     k <<=30LL;
-		//LogDebug("k2:%x", (DWORD)k);
 		pts+=k;			// 3bits
-		//LogDebug("pts2:%x", (DWORD)pts);
 		pts &= 0x1FFFFFFFFLL;
-		//LogDebug("pts3:%x", (DWORD)pts);
 	}
 	if (dtsAvailable)
 	{
