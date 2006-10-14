@@ -1184,7 +1184,11 @@ public class MediaPortalApp : D3DApp, IRender
 
   protected override void Render(float timePassed)
   {
-    if (reentrant)
+		if (_suspended)
+		{
+			return;
+		}
+		if (reentrant)
     {
       Log.Info("Main: DX9 re-entrant"); //remove
       return;
