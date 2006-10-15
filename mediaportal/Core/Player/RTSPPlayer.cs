@@ -102,14 +102,20 @@ namespace MediaPortal.Player
     protected const int WS_CLIPSIBLINGS = 0x04000000;
     protected bool m_bVisible = false;
     protected DateTime updateTimer;
+    protected g_Player.MediaType _mediaType;
 
     VMR9Util Vmr9 = null;
 
     public RTSPPlayer()
     {
+      _mediaType = g_Player.MediaType.TV;
+    }
+    public RTSPPlayer(g_Player.MediaType mediaType)
+    {
+      _mediaType = mediaType;
     }
 
-    protected  void OnInitialized()
+    protected void OnInitialized()
     {
       if (Vmr9 != null)
       {
@@ -119,15 +125,18 @@ namespace MediaPortal.Player
       }
     }
     /// <summary> create the used COM components and get the interfaces. </summary>
-    protected  bool GetInterfaces()
+    protected bool GetInterfaces()
     {
-      Vmr9 = new VMR9Util();
-
-      // switch back to directx fullscreen mode
-      Log.Info("RTSPPlayer: Enabling DX9 exclusive mode");
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
-      GUIWindowManager.SendMessage(msg);
-
+      Vmr9 = null;
+      if (IsRadio == false)
+      {
+        Vmr9 = new VMR9Util();
+      
+        // switch back to directx fullscreen mode
+        Log.Info("RTSPPlayer: Enabling DX9 exclusive mode");
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
+        GUIWindowManager.SendMessage(msg);
+      }
       //Type comtype = null;
       //object comobj = null;
 
@@ -143,8 +152,11 @@ namespace MediaPortal.Player
         graphBuilder = (IGraphBuilder)new FilterGraph();
 
         Log.Info("RTSPPlayer: add source filter");
-        Vmr9.AddVMR9(graphBuilder);
-        Vmr9.Enable(false);
+        if (IsRadio == false)
+        {
+          Vmr9.AddVMR9(graphBuilder);
+          Vmr9.Enable(false);
+        }
 
         _mpegDemux = (IBaseFilter)new MPEG2Demultiplexer();
         graphBuilder.AddFilter(_mpegDemux, "MPEG-2 Demultiplexer");
@@ -173,26 +185,28 @@ namespace MediaPortal.Player
           int intCount = 0;
           while (xmlreader.GetValueAsString("movieplayer", "filter" + intCount.ToString(), "undefined") != "undefined")
           {
-              if (xmlreader.GetValueAsBool("movieplayer", "usefilter" + intCount.ToString(), false))
-              {
-                  strFilters += xmlreader.GetValueAsString("movieplayer", "filter" + intCount.ToString(), "undefined") + ";";
-                  intFilters++;
-              }
-              intCount++;
+            if (xmlreader.GetValueAsBool("movieplayer", "usefilter" + intCount.ToString(), false))
+            {
+              strFilters += xmlreader.GetValueAsString("movieplayer", "filter" + intCount.ToString(), "undefined") + ";";
+              intFilters++;
+            }
+            intCount++;
           }
         }
         string extension = System.IO.Path.GetExtension(m_strCurrentFile).ToLower();
-        //if (extension.Equals(".dvr-ms") || extension.Equals(".mpg") || extension.Equals(".mpeg") || extension.Equals(".bin") || extension.Equals(".dat"))
-        //{
+        if (IsRadio == false)
+        {
           if (strVideoCodec.Length > 0) videoCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strVideoCodec);
-          if (strAudioCodec.Length > 0) audioCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strAudioCodec);
-        //}
+        }
+        if (strAudioCodec.Length > 0) audioCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strAudioCodec);
+
+
         // FlipGer: add custom filters to graph
         customFilters = new IBaseFilter[intFilters];
         string[] arrFilters = strFilters.Split(';');
         for (int i = 0; i < intFilters; i++)
         {
-            customFilters[i] = DirectShowUtil.AddFilterToGraph(graphBuilder, arrFilters[i]);
+          customFilters[i] = DirectShowUtil.AddFilterToGraph(graphBuilder, arrFilters[i]);
         }
         if (strAudiorenderer.Length > 0) audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(graphBuilder, strAudiorenderer, false);
 
@@ -216,15 +230,18 @@ namespace MediaPortal.Player
         Log.Info("RTSPPlayer: render output pins of rtsp filter");
         DirectShowUtil.RenderOutputPins(graphBuilder, (IBaseFilter)rtspSource);
 
-        if (!Vmr9.IsVMR9Connected)
+        if (IsRadio == false)
         {
-          //VMR9 is not supported, switch to overlay
-          Log.Info("RTSPPlayer: vmr9 not connected");
-          mediaCtrl = null;
-          Cleanup();
-          return false ;
+          if (!Vmr9.IsVMR9Connected)
+          {
+            //VMR9 is not supported, switch to overlay
+            Log.Info("RTSPPlayer: vmr9 not connected");
+            mediaCtrl = null;
+            Cleanup();
+            return false;
+          }
+          Vmr9.SetDeinterlaceMode();
         }
-        Vmr9.SetDeinterlaceMode();
 
 
         mediaCtrl = (IMediaControl)graphBuilder;
@@ -234,8 +251,11 @@ namespace MediaPortal.Player
         basicAudio = graphBuilder as IBasicAudio;
         //DirectShowUtil.SetARMode(graphBuilder,AspectRatioMode.Stretched);
         DirectShowUtil.EnableDeInterlace(graphBuilder);
-        m_iVideoWidth = Vmr9.VideoWidth;
-        m_iVideoHeight = Vmr9.VideoHeight;
+        if (Vmr9 != null)
+        {
+          m_iVideoWidth = Vmr9.VideoWidth;
+          m_iVideoHeight = Vmr9.VideoHeight;
+        }
         Log.Info("RTSPPlayer: graph build successfull");
         return true;
       }
@@ -247,7 +267,7 @@ namespace MediaPortal.Player
       }
     }
 
-    protected  void OnProcess()
+    protected void OnProcess()
     {
       if (Vmr9 != null)
       {
@@ -257,7 +277,7 @@ namespace MediaPortal.Player
     }
 
     /// <summary> do cleanup and release DirectShow. </summary>
-    protected  void CloseInterfaces()
+    protected void CloseInterfaces()
     {
       Cleanup();
     }
@@ -315,27 +335,27 @@ namespace MediaPortal.Player
         }
         if (videoCodecFilter != null)
         {
-          while (Marshal.ReleaseComObject(videoCodecFilter)>0); 
+          while (Marshal.ReleaseComObject(videoCodecFilter) > 0) ;
           videoCodecFilter = null;
         }
         if (audioCodecFilter != null)
         {
-          while (Marshal.ReleaseComObject(audioCodecFilter)>0); 
+          while (Marshal.ReleaseComObject(audioCodecFilter) > 0) ;
           audioCodecFilter = null;
         }
         if (audioRendererFilter != null)
         {
-          while (Marshal.ReleaseComObject(audioRendererFilter)>0); 
+          while (Marshal.ReleaseComObject(audioRendererFilter) > 0) ;
           audioRendererFilter = null;
         }
         // FlipGer: release custom filters
         for (int i = 0; i < customFilters.Length; i++)
         {
-            if (customFilters[i] != null)
-            {
-                while ((hr = Marshal.ReleaseComObject(customFilters[i])) > 0);
-            }
-            customFilters[i] = null;
+          if (customFilters[i] != null)
+          {
+            while ((hr = Marshal.ReleaseComObject(customFilters[i])) > 0) ;
+          }
+          customFilters[i] = null;
         }
 
         if (vobSub != null)
@@ -379,7 +399,14 @@ namespace MediaPortal.Player
     {
       get
       {
-        return true;
+        return (_mediaType == g_Player.MediaType.TV);
+      }
+    }
+    public override bool IsRadio
+    {
+      get
+      {
+        return (_mediaType == g_Player.MediaType.Radio);
       }
     }
 
@@ -387,7 +414,7 @@ namespace MediaPortal.Player
     {
       get
       {
-        return true;
+        return (_mediaType == g_Player.MediaType.TV || _mediaType == g_Player.MediaType.Radio);
       }
     }
 
@@ -454,7 +481,7 @@ namespace MediaPortal.Player
         if (m_dDuration < 1) m_dDuration = 1;
         SeekAbsolute(m_dDuration - 1);
 
-        
+
 
         OnInitialized();
       }

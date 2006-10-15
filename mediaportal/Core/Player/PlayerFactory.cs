@@ -239,7 +239,7 @@ namespace MediaPortal.Player
       IPlayer newPlayer = null;
       if (fileName.ToLower().IndexOf("rtsp:") >= 0)
       {
-        return new RTSPPlayer();
+        return new RTSPPlayer(type);
       }
       string extension = System.IO.Path.GetExtension(fileName).ToLower();
       if (extension != ".tv" && extension != ".sbe" && extension != ".dvr-ms"
