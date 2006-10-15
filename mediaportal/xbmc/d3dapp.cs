@@ -1477,7 +1477,7 @@ namespace MediaPortal
 
           //Log.Info("app.EnvironmentResized()");
           EnvironmentResized(GUIGraphicsContext.DX9Device, new CancelEventArgs());
-          //InitializeDeviceObjects();
+          InitializeDeviceObjects();
         }
         deviceLost = false;
         _needUpdate = true;
