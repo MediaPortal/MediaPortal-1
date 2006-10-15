@@ -157,7 +157,8 @@ STDMETHODIMP CAudioInputPin::Receive( IMediaSample *pSample )
 
 void CAudioInputPin::Reset()
 {
-	m_bReset = true;
+  m_bReset = true;
+  m_currentPTS = 0;
 }
 
 void CAudioInputPin::SetAudioPid( LONG pPid )
