@@ -47,6 +47,7 @@ namespace MediaPortal.PowerScheduler
     static int m_iShutdownInterval = 3;		// idle minutes before shutdown(hibernate/standby)
     static long m_iCurrentStart = 0;			// store current wakeup time (ticks) for comparesing
     static int m_iActiveWindow = -1;			// current active window, used to check when WINDOW_HOME is activated
+		static bool m_bWasActive = false;           // used to check if playing state has changed 
     static string m_shutdownMode = "None";		// mode to use for shutdown (Hibernate, Suspend, Shutdown, None)
     static bool m_bShutdownEnabled = false;		// shutdown enabled/disabled
     static DateTime m_dtShutdownTime = new DateTime();	// Next time system will automaticly shutdown
@@ -315,31 +316,35 @@ namespace MediaPortal.PowerScheduler
 				Log.Info("   - Database Update        = " + TVDatabase.SupressEvents.ToString());
       }
 
-      // when the active window has changed check if 
-      // to enable or disable shutdown
-      if (m_iActiveWindow != (int)GUIWindowManager.ActiveWindow)
-      {
-        m_iActiveWindow = GUIWindowManager.ActiveWindow;
+			// is something going on(playback etc) which prevents shutdown
+			bool active = (g_Player.Playing) ||         // are we playing something ? 
+										(Recorder.IsRadio()) ||       // are we playing analog or digital radio?    
+										(Recorder.IsRecording()) ||   // are we recording something? 
+										(TVDatabase.SupressEvents);   // is there a DataBase update running?
+												;
+			bool windowChanged = (m_iActiveWindow != (int)GUIWindowManager.ActiveWindow);
+			bool activeChanged = (m_bWasActive != active);
 
-        if ((m_iActiveWindow == (int)GUIWindow.Window.WINDOW_HOME) ||
-            (m_iActiveWindow == (int)GUIWindow.Window.WINDOW_SECOND_HOME))
-        {
-          if (m_bExtensiveLog) Log.Info(" PowerScheduler: ShutdownManager - in HOME Window ");
-          bool enableShutdown = true;
-          //are we playing something?
-          if (
-              //(g_Player.Playing && g_Player.IsRadio) ||  // are we playing internet radio?
-              //(g_Player.Playing && g_Player.IsMusic) ||  // are we playing music? 
-              (g_Player.Playing)                     ||    // are we playing something ? 
-              (Recorder.IsRadio())                   ||    // are we playing analog or digital radio?    
-              (Recorder.IsRecording())               )     // are we recording something? 
-						  
-          {
-            //yes -> then disable shutdown
+			// when the active window has changed check if 
+			// to enable or disable shutdown
+			if (windowChanged || activeChanged)
+			{
+				m_iActiveWindow = GUIWindowManager.ActiveWindow;
+				m_bWasActive = active;
+
+				if ((m_iActiveWindow == (int)GUIWindow.Window.WINDOW_HOME) ||
+						(m_iActiveWindow == (int)GUIWindow.Window.WINDOW_SECOND_HOME))
+				{
+					if (m_bExtensiveLog) Log.Info(" PowerScheduler: ShutdownManager - in HOME Window ");
+					bool enableShutdown = true;
+					//are we playing something?
+					if (active)
+					{
+						//yes -> then disable shutdown
             if (m_bExtensiveLog) Log.Info(" PowerScheduler: shutdown disabled - we are playing something or a DB update is running");
             ResetShutdownTimer(0);
             enableShutdown = false;
-            m_iActiveWindow = -1; //check again next time
+						if (windowChanged) m_iActiveWindow = -1; //check again next time if the window changed
           }
 
           if (!m_bShutdownEnabled && enableShutdown)
