@@ -2,7 +2,8 @@
 
 <!-- xmltv_radiotimes_com.xml  Version 1.0 -->
 <!-- 26-01-2006		Added ITV4 and More4+1		Version 1.1 -->
-<!-- 21-03/2006		Added Sky Three				Version 1.2 -->
+<!-- 21-03/2006		Added Sky Three			Version 1.2 -->
+<!-- 15/10/2006		Added Five Life, Five US	Version 1.3 -->
 
 <profile>
   <section name="ChannelList">
@@ -113,7 +114,9 @@
 		<entry name="film4@channel4.com">160</entry>          <!-- FilmFour -->
 		<entry name="film4p1@channel4.com">584</entry>          <!-- FilmFour Plus 1 -->
 		<entry name="film4w@channel4.com">1041</entry>          <!-- FilmFour Weekly -->
-		<entry name="five">134</entry>          <!-- five -->
+		<entry name="five.tv">134</entry>          <!-- five -->
+		<entry name="us@five.tv">2008</entry>          <!-- five Us-->
+		<entry name="life@five.tv">2007</entry>          <!-- five Life -->
 		<entry name="flaunt.tv">1141</entry>          <!-- Flaunt -->
 		<entry name="fxuk.tv">1461</entry>          <!-- FX -->
 		<entry name="god.tv">137</entry>          <!-- God Channel -->
