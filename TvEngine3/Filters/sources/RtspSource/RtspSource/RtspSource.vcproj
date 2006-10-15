@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="8,00"
 	Name="RtspSource"
 	ProjectGUID="{5DDBC183-7264-46B2-8987-214F7089EC60}"
 	RootNamespace="RtspSource"
@@ -182,7 +182,7 @@
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories=""
 				IgnoreAllDefaultLibraries="false"
-				IgnoreDefaultLibraryNames=""
+				IgnoreDefaultLibraryNames="libcmt.lib"
 				ModuleDefinitionFile=".\rtspsourcefilter.def"
 				ProgramDatabaseFile=".\Release/rtspsourcefilter.pdb"
 				StackReserveSize="2097152"

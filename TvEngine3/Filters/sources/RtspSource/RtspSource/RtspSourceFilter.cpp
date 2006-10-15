@@ -164,6 +164,7 @@ HRESULT CRtspSourceFilter::OnConnect()
     m_pids.ac3=pids.AC3Pid;
     m_pids.pcr=pids.PcrPid;
     m_pids.pmt=pids.PmtPid;
+		m_pids.sub=pids.SubtitlePid;
 		if ( pids.videoServiceType==0x1b)
 		{
 		  Log("Filter:OnConnect, audio1:%x audio2:%x ac3:%x h264 video:%x pcr:%x pmt:%x",
@@ -194,6 +195,7 @@ HRESULT CRtspSourceFilter::OnConnect()
   m_pDemux->set_ClockMode(3);
   m_pDemux->set_Auto(TRUE);
   m_pDemux->set_FixedAspectRatio(TRUE);
+	m_pDemux->set_CreateSubPinOnDemux(m_pids.sub!=0);
   m_pDemux->set_MPEG2Audio2Mode(FALSE);
   m_pDemux->AOnConnect();
   m_pDemux->SetRefClock();
