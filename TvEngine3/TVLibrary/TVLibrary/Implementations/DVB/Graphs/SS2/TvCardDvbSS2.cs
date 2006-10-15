@@ -365,7 +365,7 @@ namespace TvLibrary.Implementations.DVB
     void SetTimeShiftPids()
     {
       if (_channelInfo == null) return;
-      if (_channelInfo.pids.Count== 0) return;
+      if (_channelInfo.pids.Count == 0) return;
       if (_currentChannel == null) return;
       //if (_currentAudioStream == null) return;
       DVBBaseChannel dvbChannel = _currentChannel as DVBBaseChannel;
@@ -376,20 +376,10 @@ namespace TvLibrary.Implementations.DVB
       timeshift.SetPmtPid((short)dvbChannel.PmtPid);
       foreach (PidInfo info in _channelInfo.pids)
       {
-        if (info.isAC3Audio || info.isAudio || info.isVideo)
+        if (info.isAC3Audio || info.isAudio || info.isVideo || info.isDVBSubtitle)
         {
-          bool addPid = false;
-          if (info.isVideo) addPid = true;
-          if (info.isDVBSubtitle) addPid = true;
-          if (info.isAudio || info.isAC3Audio)
-          {
-            /*if (info.pid == _currentAudioStream.Pid)*/ addPid = true;
-          }
-          if (addPid)
-          {
-            Log.Log.WriteFile("ss2: set timeshift {0}", info);
-            timeshift.AddStream((short)info.pid, (short)info.stream_type);
-          }
+          Log.Log.WriteFile("ss2: set timeshift {0}", info);
+          timeshift.AddStream((short)info.pid, (short)info.stream_type);
         }
       }
     }
@@ -421,7 +411,7 @@ namespace TvLibrary.Implementations.DVB
           }
           if (info.isAudio || info.isAC3Audio)
           {
-           addPid = true;
+            addPid = true;
           }
 
           if (addPid)
@@ -1392,7 +1382,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns>true if succeeded else false</returns>
     public bool Tune(IChannel channel)
     {
-      
+
       Log.Log.WriteFile("ss2:Tune({0})", channel);
       if (_epgGrabbing)
       {

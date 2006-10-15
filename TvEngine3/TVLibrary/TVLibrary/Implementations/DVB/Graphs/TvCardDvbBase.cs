@@ -272,20 +272,10 @@ namespace TvLibrary.Implementations.DVB
       timeshift.SetPmtPid((short)dvbChannel.PmtPid);
       foreach (PidInfo info in _channelInfo.pids)
       {
-        if (info.isAC3Audio || info.isAudio || info.isVideo)
+        if (info.isAC3Audio || info.isAudio || info.isVideo || info.isDVBSubtitle)
         {
-          bool addPid = false;
-          if (info.isVideo) addPid = true;
-          if (info.isDVBSubtitle) addPid = true;
-          if (info.isAudio || info.isAC3Audio)
-          {
-            /*if (info.pid == _currentAudioStream.Pid)*/ addPid = true;
-          }
-          if (addPid)
-          {
-            Log.Log.WriteFile("dvb: set timeshift {0}", info);
-            timeshift.AddStream((short)info.pid, (short)info.stream_type);
-          }
+          Log.Log.WriteFile("dvb: set timeshift {0}", info);
+          timeshift.AddStream((short)info.pid, (short)info.stream_type);
         }
       }
     }
@@ -1319,7 +1309,7 @@ namespace TvLibrary.Implementations.DVB
         }
         Log.Log.WriteFile("  pid:{0:X} pcr", info.pcr_pid);
         Log.Log.WriteFile("  pid:{0:X} pmt", info.network_pmt_PID);
-        
+
         foreach (PidInfo pidInfo in info.pids)
         {
           Log.Log.WriteFile("  {0}", pidInfo.ToString());
