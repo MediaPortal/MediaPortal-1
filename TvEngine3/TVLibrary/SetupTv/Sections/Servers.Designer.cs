@@ -30,9 +30,10 @@ namespace SetupTv.Sections
     {
       this.mpListView1 = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-      this.buttonDelete = new System.Windows.Forms.Button();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
+      this.buttonDelete = new System.Windows.Forms.Button();
       this.buttonMaster = new System.Windows.Forms.Button();
+      this.button1 = new System.Windows.Forms.Button();
       this.SuspendLayout();
       // 
       // mpListView1
@@ -55,6 +56,10 @@ namespace SetupTv.Sections
       this.columnHeader1.Text = "Server";
       this.columnHeader1.Width = 200;
       // 
+      // columnHeader2
+      // 
+      this.columnHeader2.Text = "Type";
+      // 
       // buttonDelete
       // 
       this.buttonDelete.Location = new System.Drawing.Point(386, 201);
@@ -64,10 +69,6 @@ namespace SetupTv.Sections
       this.buttonDelete.Text = "Delete";
       this.buttonDelete.UseVisualStyleBackColor = true;
       this.buttonDelete.Click += new System.EventHandler(this.buttonDelete_Click);
-      // 
-      // columnHeader2
-      // 
-      this.columnHeader2.Text = "Type";
       // 
       // buttonMaster
       // 
@@ -79,10 +80,21 @@ namespace SetupTv.Sections
       this.buttonMaster.UseVisualStyleBackColor = true;
       this.buttonMaster.Click += new System.EventHandler(this.buttonMaster_Click);
       // 
+      // button1
+      // 
+      this.button1.Location = new System.Drawing.Point(192, 201);
+      this.button1.Name = "button1";
+      this.button1.Size = new System.Drawing.Size(54, 23);
+      this.button1.TabIndex = 5;
+      this.button1.Text = "Edit";
+      this.button1.UseVisualStyleBackColor = true;
+      this.button1.Click += new System.EventHandler(this.button1_Click);
+      // 
       // Servers
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.Controls.Add(this.button1);
       this.Controls.Add(this.buttonMaster);
       this.Controls.Add(this.buttonDelete);
       this.Controls.Add(this.mpListView1);
@@ -100,5 +112,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Button buttonDelete;
     private System.Windows.Forms.ColumnHeader columnHeader2;
     private System.Windows.Forms.Button buttonMaster;
+    private System.Windows.Forms.Button button1;
   }
 }

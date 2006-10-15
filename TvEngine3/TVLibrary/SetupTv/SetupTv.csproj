@@ -44,6 +44,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\TVDatabase\references\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.ReportViewer.Common, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <Reference Include="Microsoft.ReportViewer.WinForms, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
@@ -54,6 +56,8 @@
       <HintPath>..\..\..\Program Files\Reference Assemblies\Microsoft\WinFX\v3.0\System.Runtime.Remoting.dll</HintPath>
     </Reference>
     <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Services" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -211,6 +215,12 @@
     </Compile>
     <Compile Include="Sections\FormEditChannel.Designer.cs">
       <DependentUpon>FormEditChannel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\FormEditIpAdress.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Sections\FormEditIpAdress.Designer.cs">
+      <DependentUpon>FormEditIpAdress.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\GroupNameForm.cs">
       <SubType>Form</SubType>
@@ -397,6 +407,10 @@
     <EmbeddedResource Include="Sections\FormEditChannel.resx">
       <SubType>Designer</SubType>
       <DependentUpon>FormEditChannel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\FormEditIpAdress.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>FormEditIpAdress.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Servers.resx">
       <SubType>Designer</SubType>

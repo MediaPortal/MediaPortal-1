@@ -111,5 +111,24 @@ namespace SetupTv.Sections
       }
       MessageBox.Show("Changes made require TvService to restart. Please restart the tvservice");
     }
+
+    private void button1_Click(object sender, EventArgs e)
+    {
+      if (mpListView1.SelectedIndices.Count < 1) return;
+      int index = mpListView1.SelectedIndices[0];
+      ListViewItem item = mpListView1.Items[index];
+      Server server = (Server)item.Tag;
+
+      FormEditIpAdress dlg = new FormEditIpAdress();
+      dlg.HostName = server.HostName;
+      if (dlg.ShowDialog() == DialogResult.OK)
+      {
+        item.Text = dlg.HostName;
+        server.HostName = dlg.HostName;
+        server.Persist();
+        MessageBox.Show("Changes made require TvService to restart. Please restart the tvservice");
+      }
+
+    }
   }
 }

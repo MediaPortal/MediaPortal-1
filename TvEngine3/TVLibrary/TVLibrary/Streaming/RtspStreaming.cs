@@ -59,12 +59,11 @@ namespace TVLibrary.Streaming
     #endregion
 
     #region ctor
-    public RtspStreaming()
+    public RtspStreaming(string hostName)
     {
       try
       {
-        string localHostName = Dns.GetHostName();
-        IPHostEntry local = Dns.GetHostByName(localHostName);
+        IPHostEntry local = Dns.GetHostByName(hostName);
         foreach (IPAddress ipaddress in local.AddressList)
         {
           StreamSetup(ipaddress.ToString());

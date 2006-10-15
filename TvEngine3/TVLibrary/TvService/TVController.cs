@@ -125,6 +125,7 @@ namespace TvService
         {
           if (IsLocal(server.HostName))
           {
+            Log.WriteFile("Controller: server running on {0}",server.HostName);
             ourServer = server;
             break;
           }
@@ -214,7 +215,8 @@ namespace TvService
           }
         }
 
-        _streamer = new RtspStreaming();
+        Log.WriteFile("Controller: setup streaming");
+        _streamer = new RtspStreaming(ourServer.HostName);
 
         if (_isMaster)
         {
@@ -228,6 +230,7 @@ namespace TvService
       {
         Log.Write(ex);
       }
+      Log.WriteFile("Controller: initalized");
     }
     #endregion
 
