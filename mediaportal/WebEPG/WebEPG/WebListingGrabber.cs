@@ -1,23 +1,25 @@
-/*
-  *	Copyright (C) 2005-2006 Team MediaPortal
-  *	http://www.team-mediaportal.com
-  *
-  *  This Program is free software; you can redistribute it and/or modify
-  *  it under the terms of the GNU General Public License as published by
-  *  the Free Software Foundation; either version 2, or (at your option)
-  *  any later version.
-  *
-  *  This Program is distributed in the hope that it will be useful,
-  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  *  GNU General Public License for more details.
-  *
-  *  You should have received a copy of the GNU General Public License
-  *  along with GNU Make; see the file COPYING.  If not, write to
-  *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
-  *  http://www.gnu.org/copyleft/gpl.html
-  *
-  */
+#region Copyright (C) 2006 Team MediaPortal
+/* 
+ *	Copyright (C) 2005-2006 Team MediaPortal
+ *	http://www.team-mediaportal.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+#endregion
 
 using System;
 using System.IO;
@@ -37,18 +39,21 @@ using MediaPortal.Utils.Services;
 
 namespace MediaPortal.EPG
 {
-  public enum Expect
-  {
-    Start,
-    Morning,
-    Afternoon
-  }
-
   /// <summary>
   /// Summary description for Class1
   /// </summary>
   public class WebListingGrabber
   {
+    #region Enums
+    public enum Expect
+    {
+      Start,
+      Morning,
+      Afternoon
+    }
+    #endregion
+
+    #region Variables
     WorldTimeZone _SiteTimeZone = null;
     HTTPRequest _listingRequest;
     HTTPRequest _requestSubURL;
@@ -93,7 +98,9 @@ namespace MediaPortal.EPG
     int _siteGuideDays;
     int _GrabDay;
     ILog _log;
+    #endregion
 
+    #region Constructors/Destructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -106,7 +113,9 @@ namespace MediaPortal.EPG
       _maxGrabDays = maxGrabDays;
       _strBaseDir = baseDir;
     }
+    #endregion
 
+    #region Public Methods
     public bool Initalise(string File)
     {
       string listingTemplate;
@@ -275,6 +284,150 @@ namespace MediaPortal.EPG
       return epochdate;
     }
 
+    public ArrayList GetGuide(string strChannelID, bool Linked, int linkStart, int linkEnd)
+    {
+      return GetGuide(strChannelID, Linked, linkStart, linkEnd, DateTime.Now);
+    }
+
+    public ArrayList GetGuide(string strChannelID, bool Linked, int linkStart, int linkEnd, DateTime startDateTime)
+    {
+      _strID = strChannelID;
+      _grabLinked = Linked;
+      _linkStart = linkStart;
+      _linkEnd = linkEnd;
+      int offset = 0;
+
+      string searchID = _xmlreader.GetValueAsString("ChannelList", strChannelID, "");
+      string searchLang = _xmlreader.GetValueAsString("Listing", "SearchLanguage", "en-US");
+      _strWeekDay = _xmlreader.GetValueAsString("Listing", "WeekdayString", "dddd");
+      CultureInfo culture = new CultureInfo(searchLang);
+
+      _removeProgramsList = _xmlreader.GetValueAsString("RemovePrograms", "*", "");
+      if (_removeProgramsList != "")
+        _removeProgramsList += ";";
+      string chanRemovePrograms = _xmlreader.GetValueAsString("RemovePrograms", strChannelID, "");
+      if (chanRemovePrograms != "")
+      {
+        _removeProgramsList += chanRemovePrograms;
+        _removeProgramsList += ";";
+      }
+
+      if (searchID == "")
+      {
+        _log.Info(LogType.WebEPG, "WebEPG: ChannelId: {0} not found!", strChannelID);
+        return null;
+      }
+
+      _programs = new ArrayList();
+
+      HTTPRequest channelRequest = new HTTPRequest(_listingRequest);
+      channelRequest.ReplaceTag("[ID]", searchID);
+      HTTPRequest pageRequest;
+
+      _log.Info(LogType.WebEPG, "WebEPG: ChannelId: {0}", strChannelID);
+
+      _GrabDay = 0;
+      _StartGrab = startDateTime;
+      _log.Debug(LogType.WebEPG, "WebEPG: Grab Start {0} {1}", _StartGrab.ToShortTimeString(), _StartGrab.ToShortDateString());
+      int requestedStartDay = startDateTime.Subtract(DateTime.Now).Days;
+      if (requestedStartDay > 0)
+      {
+        if (requestedStartDay > _siteGuideDays)
+        {
+          _log.Error(LogType.WebEPG, "WebEPG: Trying to grab pass guide days");
+          return null;
+        }
+
+        if (requestedStartDay + _maxGrabDays > _siteGuideDays)
+        {
+          _maxGrabDays = _siteGuideDays - requestedStartDay;
+          _log.Warn(LogType.WebEPG, "WebEPG: Grab days more than Guide days, limiting to {0}", _maxGrabDays);
+        }
+
+        _GrabDay = requestedStartDay;
+        if (_GrabDay > _maxGrabDays)
+          _maxGrabDays = _GrabDay + _maxGrabDays;
+      }
+
+      //TVDatabase.BeginTransaction();
+      //TVDatabase.ClearCache();
+      //TVDatabase.RemoveOldPrograms();
+
+      int dbChannelId;
+      string dbChannelName;
+      _dbPrograms = new ArrayList();
+      _dbLastProg = 0;
+
+      try
+      {
+        if (TVDatabase.GetEPGMapping(strChannelID, out dbChannelId, out dbChannelName)) // (nodeId.InnerText, out idTvChannel, out strTvChannel);
+        {
+          //DateTime endGrab = _StartGrab.AddDays(_maxGrabDays + 1);
+          //DateTime startGrab = _StartGrab.AddHours(-1);
+          TVDatabase.GetProgramsPerChannel(dbChannelName, ref _dbPrograms);
+        }
+      }
+      catch (Exception)
+      {
+        _log.Error(LogType.WebEPG, "WebEPG: Database failed, disabling db lookup");
+        _dblookup = false;
+      }
+
+
+      while (_GrabDay < _maxGrabDays)
+      {
+        pageRequest = new HTTPRequest(channelRequest);
+        if (_strDayNames != null)
+          pageRequest.ReplaceTag("[DAY_NAME]", _strDayNames[_GrabDay]);
+
+        pageRequest.ReplaceTag("[DAY_OFFSET]", (_GrabDay + _offsetStart).ToString());
+        pageRequest.ReplaceTag("[EPOCH_TIME]", GetEpochTime(_StartGrab).ToString());
+        pageRequest.ReplaceTag("[EPOCH_DATE]", GetEpochDate(_StartGrab).ToString());
+        pageRequest.ReplaceTag("[DAYOFYEAR]", _StartGrab.DayOfYear.ToString());
+        pageRequest.ReplaceTag("[YYYY]", _StartGrab.Year.ToString());
+        pageRequest.ReplaceTag("[MM]", String.Format("{0:00}", _StartGrab.Month));
+        pageRequest.ReplaceTag("[_M]", _StartGrab.Month.ToString());
+        pageRequest.ReplaceTag("[MONTH]", _StartGrab.ToString("MMMM", culture));
+        pageRequest.ReplaceTag("[DD]", String.Format("{0:00}", _StartGrab.Day));
+        pageRequest.ReplaceTag("[_D]", _StartGrab.Day.ToString());
+        pageRequest.ReplaceTag("[WEEKDAY]", _StartGrab.ToString(_strWeekDay, culture));
+
+        offset = 0;
+        _LastStart = 0;
+        _bNextDay = false;
+        _listingTime = (int)Expect.Start;
+
+        bool error;
+        while (GetListing(new HTTPRequest(pageRequest), offset, searchID, out error))
+        {
+          Thread.Sleep(_grabDelay);
+          if (_maxListingCount == 0)
+            break;
+          offset++; // += _maxListingCount;
+        }
+        if (error)
+        {
+          _log.Error(LogType.WebEPG, "WebEPG: ChannelId: {0} grabber error", strChannelID);
+          break;
+        }
+        //_GrabDay++;
+        if (channelRequest != pageRequest)
+        {
+          _StartGrab = _StartGrab.AddDays(1);
+          _GrabDay++;
+        }
+        else
+        {
+          if (!pageRequest.HasTag("[LIST_OFFSET]"))
+            break;
+        }
+      }
+
+      return _programs;
+    }
+    #endregion
+
+    #region Private Methods
     private int getMonth(string month)
     {
       if (_monthLookup)
@@ -581,6 +734,14 @@ namespace MediaPortal.EPG
       //Adjust TimeZone
       AdjustTimeZone(guideData, ref program);
 
+      //Program starts in the past
+      if (program.Start < GetLongDateTime(_StartGrab))
+      {
+        _log.Info(LogType.WebEPG, "WebEPG: Program starts in the past, ignoring it");
+        return null;
+      }
+
+
       // Check TV db if program exists
       if (_dblookup)
       {
@@ -722,147 +883,6 @@ namespace MediaPortal.EPG
 
       return bMore;
     }
-
-    public ArrayList GetGuide(string strChannelID, bool Linked, int linkStart, int linkEnd)
-    {
-      return GetGuide(strChannelID, Linked, linkStart, linkEnd, DateTime.Now);
-    }
-
-    public ArrayList GetGuide(string strChannelID, bool Linked, int linkStart, int linkEnd, DateTime startDateTime)
-    {
-      _strID = strChannelID;
-      _grabLinked = Linked;
-      _linkStart = linkStart;
-      _linkEnd = linkEnd;
-      int offset = 0;
-
-      string searchID = _xmlreader.GetValueAsString("ChannelList", strChannelID, "");
-      string searchLang = _xmlreader.GetValueAsString("Listing", "SearchLanguage", "en-US");
-      _strWeekDay = _xmlreader.GetValueAsString("Listing", "WeekdayString", "dddd");
-      CultureInfo culture = new CultureInfo(searchLang);
-
-      _removeProgramsList = _xmlreader.GetValueAsString("RemovePrograms", "*", "");
-      if (_removeProgramsList != "")
-        _removeProgramsList += ";";
-      string chanRemovePrograms = _xmlreader.GetValueAsString("RemovePrograms", strChannelID, "");
-      if (chanRemovePrograms != "")
-      {
-        _removeProgramsList += chanRemovePrograms;
-        _removeProgramsList += ";";
-      }
-
-      if (searchID == "")
-      {
-        _log.Info(LogType.WebEPG, "WebEPG: ChannelId: {0} not found!", strChannelID);
-        return null;
-      }
-
-      _programs = new ArrayList();
-
-      HTTPRequest channelRequest = new HTTPRequest(_listingRequest);
-      channelRequest.ReplaceTag("[ID]", searchID);
-      HTTPRequest pageRequest;
-
-      _log.Info(LogType.WebEPG, "WebEPG: ChannelId: {0}", strChannelID);
-
-      _GrabDay = 0;
-      _StartGrab = startDateTime;
-      _log.Debug(LogType.WebEPG, "WebEPG: Grab Start {0} {1}", _StartGrab.ToShortTimeString(), _StartGrab.ToShortDateString());
-      int requestedStartDay = startDateTime.Subtract(DateTime.Now).Days;
-      if (requestedStartDay > 0)
-      {
-        if (requestedStartDay > _siteGuideDays)
-        {
-          _log.Error(LogType.WebEPG, "WebEPG: Trying to grab pass guide days");
-          return null;
-        }
-
-        if (requestedStartDay + _maxGrabDays > _siteGuideDays)
-        {
-          _maxGrabDays = _siteGuideDays - requestedStartDay;
-          _log.Warn(LogType.WebEPG, "WebEPG: Grab days more than Guide days, limiting to {0}", _maxGrabDays);
-        }
-
-        _GrabDay = requestedStartDay;
-        if (_GrabDay > _maxGrabDays)
-          _maxGrabDays = _GrabDay + _maxGrabDays;
-      }
-
-      //TVDatabase.BeginTransaction();
-      //TVDatabase.ClearCache();
-      //TVDatabase.RemoveOldPrograms();
-
-      int dbChannelId;
-      string dbChannelName;
-      _dbPrograms = new ArrayList();
-      _dbLastProg = 0;
-
-      try
-      {
-        if (TVDatabase.GetEPGMapping(strChannelID, out dbChannelId, out dbChannelName)) // (nodeId.InnerText, out idTvChannel, out strTvChannel);
-        {
-          DateTime endGrab = _StartGrab.AddDays(_maxGrabDays + 1);
-          DateTime startGrab = _StartGrab.AddHours(-1);
-          TVDatabase.GetProgramsPerChannel(dbChannelName, GetLongDateTime(startGrab), GetLongDateTime(endGrab), ref _dbPrograms);
-        }
-      }
-      catch (Exception)
-      {
-        _log.Error(LogType.WebEPG, "WebEPG: Database failed, disabling db lookup");
-        _dblookup = false;
-      }
-
-
-      while (_GrabDay < _maxGrabDays)
-      {
-        pageRequest = new HTTPRequest(channelRequest);
-        if (_strDayNames != null)
-          pageRequest.ReplaceTag("[DAY_NAME]", _strDayNames[_GrabDay]);
-
-        pageRequest.ReplaceTag("[DAY_OFFSET]", (_GrabDay + _offsetStart).ToString());
-        pageRequest.ReplaceTag("[EPOCH_TIME]", GetEpochTime(_StartGrab).ToString());
-        pageRequest.ReplaceTag("[EPOCH_DATE]", GetEpochDate(_StartGrab).ToString());
-        pageRequest.ReplaceTag("[DAYOFYEAR]", _StartGrab.DayOfYear.ToString());
-        pageRequest.ReplaceTag("[YYYY]", _StartGrab.Year.ToString());
-        pageRequest.ReplaceTag("[MM]", String.Format("{0:00}", _StartGrab.Month));
-        pageRequest.ReplaceTag("[_M]", _StartGrab.Month.ToString());
-        pageRequest.ReplaceTag("[MONTH]", _StartGrab.ToString("MMMM", culture));
-        pageRequest.ReplaceTag("[DD]", String.Format("{0:00}", _StartGrab.Day));
-        pageRequest.ReplaceTag("[_D]", _StartGrab.Day.ToString());
-        pageRequest.ReplaceTag("[WEEKDAY]", _StartGrab.ToString(_strWeekDay, culture));
-
-        offset = 0;
-        _LastStart = 0;
-        _bNextDay = false;
-        _listingTime = (int)Expect.Start;
-
-        bool error;
-        while (GetListing(new HTTPRequest(pageRequest), offset, searchID, out error))
-        {
-          Thread.Sleep(_grabDelay);
-          if (_maxListingCount == 0)
-            break;
-          offset++; // += _maxListingCount;
-        }
-        if (error)
-        {
-          _log.Error(LogType.WebEPG, "WebEPG: ChannelId: {0} grabber error", strChannelID);
-          break;
-        }
-        //_GrabDay++;
-        if (channelRequest != pageRequest)
-        {
-          _StartGrab = _StartGrab.AddDays(1);
-          _GrabDay++;
-        }
-        else
-        {
-          if (!pageRequest.HasTag("[LIST_OFFSET]"))
-            break;
-        }
-      }
-
-      return _programs;
-    }
+    #endregion
   }
 }
