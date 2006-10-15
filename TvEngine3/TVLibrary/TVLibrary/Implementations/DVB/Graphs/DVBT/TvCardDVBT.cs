@@ -70,7 +70,7 @@ namespace TvLibrary.Implementations.DVB
 
       try
       {
-//        BuildGraph();
+        //        BuildGraph();
         //        RunGraph();
         //        StopGraph();
       }
@@ -260,7 +260,7 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.WriteFile("dvbt:  Tune:{0}", channel);
       try
       {
-        
+
         DVBTChannel dvbtChannel = channel as DVBTChannel;
 
         if (dvbtChannel == null)
@@ -269,13 +269,10 @@ namespace TvLibrary.Implementations.DVB
           return false;
         }
 
-        if (IsReceivingAudioVideo == false)
+        DVBTChannel oldChannel = _currentChannel as DVBTChannel;
+        if (_currentChannel != null)
         {
-          DVBTChannel oldChannel = _currentChannel as DVBTChannel;
-          if (_currentChannel != null)
-          {
-            if (oldChannel.Equals(channel)) return true;
-          }
+          if (oldChannel.Equals(channel)) return true;
         }
         if (_graphState == GraphState.Idle)
         {
