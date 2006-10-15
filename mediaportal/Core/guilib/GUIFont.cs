@@ -594,6 +594,7 @@ namespace MediaPortal.GUI.Library
       }
       _textureFont = null;
       _systemFont = null;
+      _textureCoords = null;
       if (_fontAdded)
       {
         if (logfonts) Log.Info("GUIFont:Dispose({0}) fontengine: Remove font:{1}", _fontName, ID.ToString());
