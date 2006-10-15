@@ -3857,6 +3857,22 @@
       <id>2054</id>
       <value>Ingen innslag!</value>
    </string>
+   <string>
+    <id>2065</id>
+    <value>Vennligst, velg hvilken mpg fil du vil konvertere til divx:</value>
+  </string>
+  <string>
+    <id>2066</id>
+    <value>Mpeg til divx</value>
+  </string>
+  <string>
+    <id>2067</id>
+    <value>Vennligst, velg hvilken dvr-ms fil du vil konvertere til divx:</value>
+  </string>
+  <string>
+    <id>2068</id>
+    <value>Dvr-ms til divx</value>
+  </string>
 	 <string>
 		<id>2069</id>
 		<value>Ferdig med å lime sammen video filene</value>
@@ -4821,7 +4837,23 @@
    <string>
       <id>6025</id>
       <value>Stegvis oppsett</value>
-   </string>      
+   </string>
+  <string>
+    <id>6026</id>
+    <value>Vennligst, spesifiser ip adressen eller datamaskin navn</value>
+  </string>
+  <string>
+    <id>6027</id>
+    <value>til master TV-Server</value>
+  </string>
+  <string>
+    <id>6028</id>
+    <value>Gjeldende instilling:</value>
+  </string>
+  <string>
+    <id>6029</id>
+    <value>Endre</value>
+  </string>      
    <string Prefix="Min ">
       <id>8000</id>
       <value>Epost</value>
