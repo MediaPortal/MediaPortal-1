@@ -383,6 +383,7 @@ namespace MediaPortal.GUI.Library
       }
       //Log.Info("Add window :{0} id:{1}", Window.ToString(), Window.GetID);
       _listWindows[_windowCount] = Window;
+      _listWindows[_windowCount].Restore();
       _windowCount++;
       Window.OnAdded();
     }
