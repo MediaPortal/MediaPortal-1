@@ -1074,147 +1074,6 @@ namespace MediaPortal
 
 
     /// <summary>
-    /// Called when user toggles between fullscreen mode and windowed mode
-    /// </summary>
-    public void ToggleFullscreen()
-    {
-      Log.Info("D3D: ToggleFullscreen");
-      int AdapterOrdinalOld = graphicsSettings.AdapterOrdinal;
-      DeviceType DevTypeOld = graphicsSettings.DevType;
-
-      isHandlingSizeChanges = false;
-      isChangingFormStyle = true;
-      ready = false;
-
-      // Toggle the windowed state
-      windowed = !windowed;
-
-      // Save our maximized settings..
-      if (!windowed && isMaximized)
-        this.WindowState = FormWindowState.Normal;
-
-      graphicsSettings.IsWindowed = windowed;
-
-      // If AdapterOrdinal and DevType are the same, we can just do a Reset().
-      // If they've changed, we need to do a complete device teardown/rebuild.
-      if (graphicsSettings.AdapterOrdinal == AdapterOrdinalOld &&
-          graphicsSettings.DevType == DevTypeOld)
-      {
-        BuildPresentParamsFromSettings();
-      // Resize the 3D device
-      RETRY:
-        try
-        {
-          GUIGraphicsContext.DX9Device.Reset(presentParams);
-        }
-        catch
-        {
-          if (windowed)
-            ForceWindowed();
-          else
-            // Sit in a loop until the device passes Reset()
-            try
-            {
-              GUIGraphicsContext.DX9Device.TestCooperativeLevel();
-            }
-            catch (DeviceNotResetException)
-            {
-              // Device still needs to be Reset. Try again.
-              // Yield some CPU time to other processes
-#if !PROFILING
-              Thread.Sleep(100); // 100 milliseconds
-#endif
-              goto RETRY;
-            }
-        }
-        EnvironmentResized(GUIGraphicsContext.DX9Device, new CancelEventArgs());
-      }
-      else
-      {
-        GUIGraphicsContext.DX9Device.Dispose();
-        GUIGraphicsContext.DX9Device = null;
-        InitializeEnvironment();
-      }
-
-      // When moving from fullscreen to windowed mode, it is important to
-      // adjust the window size after resetting the device rather than
-      // beforehand to ensure that you get the window size you want.  For
-      // example, when switching from 640x480 fullscreen to windowed with
-      // a 1000x600 window on a 1024x768 desktop, it is impossible to set
-      // the window size to 1000x600 until after the display mode has
-      // changed to 1024x768, because windows cannot be larger than the
-      // desktop.
-
-      if (windowed)
-      {
-        // if our render target is the main window and we haven't said 
-        // ignore the menus, add our menu
-        if ((ourRenderTarget == this) && (isUsingMenus))
-          this.Menu = menuStripMain;
-        this.FormBorderStyle = FormBorderStyle.Sizable;
-        isChangingFormStyle = false;
-
-        // We were maximized, restore that state
-        if (isMaximized)
-          this.WindowState = FormWindowState.Maximized;
-        this.SendToBack();
-        this.BringToFront();
-        this.ClientSize = storedSize;
-        this.Location = storedLocation;
-        this.TopMost = alwaysOnTop;
-        //this.FormBorderStyle=FormBorderStyle.None;
-      }
-      else
-      {
-        if (this.Menu != null)
-          this.Menu = null;
-
-        this.FormBorderStyle = FormBorderStyle.None;
-        isChangingFormStyle = false;
-      }
-      isHandlingSizeChanges = true;
-      ready = true;
-    }
-
-
-    /// <summary>
-    /// Switch to a windowed mode, even if that means picking a new device and/or adapter
-    /// </summary>
-    public void ForceWindowed()
-    {
-      if (windowed)
-        return;
-
-      if (!FindBestWindowedMode(false, false))
-        return;
-
-      windowed = true;
-
-      // Now destroy the current 3D device objects, then reinitialize
-
-      ready = false;
-
-      // Release display objects, so a new device can be created
-      GUIGraphicsContext.DX9Device.Dispose();
-      GUIGraphicsContext.DX9Device = null;
-
-      // Create the new device
-      try
-      {
-        InitializeEnvironment();
-      }
-      catch (SampleException e)
-      {
-        HandleSampleException(e, ApplicationMessage.ApplicationMustExit);
-      }
-      catch
-      {
-        HandleSampleException(new SampleException(), ApplicationMessage.ApplicationMustExit);
-      }
-      ready = true;
-    }
-
-    /// <summary>
     /// Save player state (when form was resized)
     /// </summary>
     protected void SavePlayerState()
@@ -1475,9 +1334,9 @@ namespace MediaPortal
           }
           catch { }
 
-          //Log.Info("app.EnvironmentResized()");
+          Log.Info("app.EnvironmentResized()");
           EnvironmentResized(GUIGraphicsContext.DX9Device, new CancelEventArgs());
-          InitializeDeviceObjects();
+          //InitializeDeviceObjects();
         }
         deviceLost = false;
         _needUpdate = true;
@@ -1720,73 +1579,6 @@ namespace MediaPortal
     }
 
     /// <summary>
-    /// Prepares the simulation for a new device being selected
-    /// </summary>
-    public void UserSelectNewDevice(object sender, EventArgs e)
-    {
-      // Prompt the user to select a new device or mode
-      if (active && ready)
-        DoSelectNewDevice();
-    }
-
-
-    /// <summary>
-    /// Displays a dialog so the user can select a new adapter, device, or
-    /// display mode, and then recreates the 3D environment if needed
-    /// </summary>
-    private void DoSelectNewDevice()
-    {
-      isHandlingSizeChanges = false;
-      // Can't display dialogs in fullscreen mode
-      if (windowed == false)
-        try
-        {
-          ToggleFullscreen();
-          isHandlingSizeChanges = false;
-        }
-        catch
-        {
-          HandleSampleException(new ResetFailedException(), ApplicationMessage.ApplicationMustExit);
-          return;
-        }
-
-      // Make sure the main form is in the background
-      this.SendToBack();
-      D3DSettingsForm settingsForm = new D3DSettingsForm(enumerationSettings, graphicsSettings);
-      DialogResult result = settingsForm.ShowDialog(null);
-      if (result != DialogResult.OK)
-      {
-        isHandlingSizeChanges = true;
-        return;
-      }
-      graphicsSettings = settingsForm.settings;
-
-      windowed = graphicsSettings.IsWindowed;
-
-      // Release display objects, so a new device can be created
-      GUIGraphicsContext.DX9Device.Dispose();
-      GUIGraphicsContext.DX9Device = null;
-
-      // Inform the display class of the change. It will internally
-      // re-create valid surfaces, a d3ddevice, etc.
-      try
-      {
-        InitializeEnvironment();
-      }
-      catch (SampleException d3de)
-      {
-        HandleSampleException(d3de, ApplicationMessage.ApplicationMustExit);
-      }
-      catch
-      {
-        HandleSampleException(new SampleException(), ApplicationMessage.ApplicationMustExit);
-      }
-
-      isHandlingSizeChanges = true;
-    }
-
-
-    /// <summary>
     /// Will end the simulation
     /// </summary>
     private void ExitSample(object sender, EventArgs e)
@@ -1979,24 +1771,6 @@ namespace MediaPortal
         e.Handled = true;
         return;
 
-        /*
-                // Toggle the fullscreen/window mode
-                if (active && ready)
-                {
-                  try
-                  {
-                    ToggleFullscreen();                    
-                    return;
-                  }
-                  catch
-                  {
-                    HandleSampleException(new ResetFailedException(), ApplicationMessage.ApplicationMustExit);
-                  }
-                  finally
-                  {
-                    e.Handled = true;
-                  }
-                }*/
       }
       else if (e.KeyCode == Keys.F2)
         OnSetup(null, null);
@@ -2115,12 +1889,7 @@ namespace MediaPortal
       this.menuItemTelevision.Index = 4;
       this.menuItemTelevision.Text = "Television";
       this.menuItemTelevision.Click += new System.EventHandler(this.televisionMenuItem_Click);
-      // 
-      // menuItemChangeDevice
-      // 
-      this.menuItemChangeDevice.Index = -1;
-      this.menuItemChangeDevice.Text = "&Change Device...";
-      this.menuItemChangeDevice.Click += new System.EventHandler(this.UserSelectNewDevice);
+ 
       // 
       // menuBreakFile
       // 
