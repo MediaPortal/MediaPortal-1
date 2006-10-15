@@ -144,12 +144,14 @@ STDMETHODIMP CPMTInputPin::Receive( IMediaSample *pSample )
           if( m_AudioPid == -1 )
           {
             m_AudioPid = pidTable.AudioPid1;
-            m_pPidObserver->SetAudioPid( m_AudioPid  );
+            if( m_AudioPid > 0 ) 
+              m_pPidObserver->SetAudioPid( m_AudioPid  );
           }
           if( m_SubtitlePid == -1 ) 
           {
             m_SubtitlePid = pidTable.SubtitlePid;
-            m_pPidObserver->SetSubtitlePid( m_SubtitlePid );
+            if( m_SubtitlePid > 0 ) 
+              m_pPidObserver->SetSubtitlePid( m_SubtitlePid );
           }
           break; // correct PMT is found
         }
