@@ -58,6 +58,7 @@ namespace TvService
     Dictionary<int, Card> _allDbscards;
     Dictionary<int, ITVCard> _localCards;
     Dictionary<int, int> _clientReferenceCount;
+    Server _ourServer = null;
     #endregion
 
     #region ctor
@@ -120,39 +121,39 @@ namespace TvService
           Log.Write("Sql error:{0}", ex.Message);
           return;
         }
-        Server ourServer = null;
+        
         foreach (Server server in servers)
         {
           if (IsLocal(server.HostName))
           {
             Log.WriteFile("Controller: server running on {0}",server.HostName);
-            ourServer = server;
+            _ourServer = server;
             break;
           }
         }
 
-        if (ourServer == null)
+        if (_ourServer == null)
         {
           Log.WriteFile("Controller: create new server in database");
-          ourServer = new Server(false, Dns.GetHostName());
+          _ourServer = new Server(false, Dns.GetHostName());
           if (servers.Count == 0)
           {
             //there are no other servers
             //so we are the master one.
-            ourServer.IsMaster = true;
+            _ourServer.IsMaster = true;
             _isMaster = true;
           }
-          ourServer.Persist();
+          _ourServer.Persist();
           Log.WriteFile("Controller: new server created for {0} master:{1} ", Dns.GetHostName(), _isMaster);
         }
-        _isMaster = ourServer.IsMaster;
+        _isMaster = _ourServer.IsMaster;
 
         //enumerate all tv cards...
         TvBusinessLayer layer = new TvBusinessLayer();
         for (int i = 0; i < localCardCollection.Cards.Count; ++i)
         {
           bool found = false;
-          IList cards = ourServer.ReferringCard();
+          IList cards = _ourServer.ReferringCard();
           foreach (Card card in cards)
           {
             if (card.DevicePath == localCardCollection.Cards[i].DevicePath)
@@ -164,7 +165,7 @@ namespace TvService
           if (!found)
           {
             Log.WriteFile("Controller: add card:{0}", localCardCollection.Cards[i].Name);
-            layer.AddCard(localCardCollection.Cards[i].Name, localCardCollection.Cards[i].DevicePath, ourServer);
+            layer.AddCard(localCardCollection.Cards[i].Name, localCardCollection.Cards[i].DevicePath, _ourServer);
           }
         }
 
@@ -173,7 +174,7 @@ namespace TvService
         int cardsInstalled = localCardCollection.Cards.Count;
         foreach (Card dbsCard in cardsInDbs)
         {
-          if (dbsCard.ReferencedServer().IdServer == ourServer.IdServer)
+          if (dbsCard.ReferencedServer().IdServer == _ourServer.IdServer)
           {
             bool found = false;
             for (int cardNumber = 0; cardNumber < cardsInstalled; ++cardNumber)
@@ -216,7 +217,7 @@ namespace TvService
         }
 
         Log.WriteFile("Controller: setup streaming");
-        _streamer = new RtspStreaming(ourServer.HostName);
+        _streamer = new RtspStreaming(_ourServer.HostName);
 
         if (_isMaster)
         {
@@ -1394,8 +1395,7 @@ namespace TvService
         RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
         return RemoteControl.Instance.GetStreamingUrl(cardId);
       }
-      string hostName = Dns.GetHostName();
-      return String.Format("rtsp://{0}/stream{1}", hostName, cardId);
+      return String.Format("rtsp://{0}/stream{1}", _ourServer.HostName, cardId);
     }
 
     public string GetRecordingUrl(int idRecording)
@@ -1409,8 +1409,7 @@ namespace TvService
       }
       _streamer.Start();
       string streamName = _streamer.AddMpegFile(recording.FileName);
-      string hostName = Dns.GetHostName();
-      string url = String.Format("rtsp://{0}/{1}", hostName, streamName);
+      string url = String.Format("rtsp://{0}/{1}", _ourServer.HostName, streamName);
       Log.WriteFile("Controller: streaming url:{0} file:{1}", url, recording.FileName);
       return url;
     }
