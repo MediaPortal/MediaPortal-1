@@ -2574,6 +2574,14 @@
 		<value>Timeshift måste sättas på manuellt</value>
 	</string>
 	<string>
+		<id>789</id>
+		<value>Nu: </value>
+	</string>
+	<string>
+		<id>790</id>
+    <value>Nästa: </value>
+	</string>
+	<string>
 		<id>798</id>
 		<value>Lågt</value>
 	</string>
@@ -2624,6 +2632,10 @@
 	<string>
 		<id>810</id>
 		<value>Kort</value>
+	</string>
+	<string>
+		<id>820</id>
+		<value>Ta bort ej sedd inspelning?</value>
 	</string>
 	<string>
 		<id>850</id>
@@ -3420,6 +3432,10 @@
 	<string>
 		<id>1105</id>
 		<value>Importerar spår</value>
+	</string>
+	<string>
+		<id>1190</id>
+		<value>Zoom 14:9</value>
 	</string>
 	<string>
 		<id>1440</id>
