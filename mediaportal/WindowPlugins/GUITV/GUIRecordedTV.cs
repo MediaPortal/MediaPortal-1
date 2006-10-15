@@ -1042,7 +1042,6 @@ namespace MediaPortal.GUI.TV
           if (!System.IO.File.Exists(thumbNail))
           {
             DvrMsImageGrabber.GrabFrame(rec.FileName, thumbNail, System.Drawing.Imaging.ImageFormat.Jpeg, 128, 128);
-						Thread.Sleep(500);  // avoid 100% CPU load
           }
         }
       }
