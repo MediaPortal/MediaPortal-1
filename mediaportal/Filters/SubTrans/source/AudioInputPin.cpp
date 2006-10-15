@@ -127,18 +127,17 @@ STDMETHODIMP CAudioInputPin::Receive( IMediaSample *pSample )
 				if( pbData[pos] == 0x47 && pbData[pos+TSPacketSize] == 0x47 && 
 					pbData[pos+TSPacketSize*2] == 0x47 )
 				{
-					//Log( "Audio pin: Receive - found TS packet pos = %d", pos );
 					// Payload start?
 					if( ( pbData[pos+1] & 0x40 ) > 0 )
 					{
 						if( S_OK == CurrentPTS( &pbData[pos], &pts, &streamType ) )
 						{
 							m_currentPTS = pts;
-							Log("PTS = %lld - Audio pin: Receive - Current", pts );
+							Log("Audio pin: Receive - audio PTS = %lld - ", pts );
 						}
 						else
 						{
-							Log("Audio pin: Receive - CurrentPTS FAILED!!!");
+							Log("Audio pin: Receive - audio PTS FAILED!");
 						}
 					}
 				}
@@ -194,38 +193,38 @@ ULONGLONG CAudioInputPin::GetCurrentPTS()
 
 HRESULT CAudioInputPin::GetPESHeader( BYTE *data, PESHeader *header )
 {
-	header->Reserved=(data[0] & 0xC0)>>6;
-	header->ScramblingControl=(data[0] &0x30)>>4;
-	header->Priority=(data[0] & 0x08)>>3;
-	header->dataAlignmentIndicator=(data[0] & 0x04)>>2;
-	header->Copyright=(data[0] & 0x02)>>1;
-	header->Original=data[0] & 0x01;
-	header->PTSFlags=(data[1] & 0xC0)>>6;
-	header->ESCRFlag=(data[1] & 0x20)>>5;
-	header->ESRateFlag=(data[1] & 0x10)>>4;
-	header->DSMTrickModeFlag=(data[1] & 0x08)>>3;
-	header->AdditionalCopyInfoFlag=(data[1] & 0x04)>>2;
-	header->PESCRCFlag=(data[1] & 0x02)>>1;
-	header->PESExtensionFlag=data[1] & 0x01;
-	header->PESHeaderDataLength=data[2];
+	header->Reserved = ( data[0] & 0xC0 ) >> 6;
+	header->ScramblingControl = ( data[0] & 0x30 ) >> 4;
+	header->Priority = ( data[0] & 0x08 ) >> 3;
+	header->dataAlignmentIndicator = ( data[0] & 0x04 ) >> 2;
+	header->Copyright = ( data[0] & 0x02 ) >> 1;
+	header->Original = data[0] & 0x01;
+	header->PTSFlags = ( data[1] & 0xC0 ) >> 6;
+	header->ESCRFlag = ( data[1] & 0x20 ) >> 5;
+	header->ESRateFlag = ( data[1] & 0x10 ) >> 4;
+	header->DSMTrickModeFlag=(data[1] & 0x08 ) >> 3;
+	header->AdditionalCopyInfoFlag = ( data[1] & 0x04 ) >> 2;
+	header->PESCRCFlag = ( data[1] & 0x02 ) >> 1;
+	header->PESExtensionFlag = data[1] & 0x01;
+	header->PESHeaderDataLength = data[2];
 	return S_OK;
 }
 void CAudioInputPin::GetPTS( BYTE *data, ULONGLONG *pts )
 {	
 	//*pts= 0xFFFFFFFFL & ( (6&data[0])<<29 | (255&data[1])<<22 | (254&data[2])<<14 | (255&data[3])<<7 | (((254&data[4])>>1)& 0x7F));
 
-	uint64_t p0,p1,p2,p3,p4;
+	uint64_t p0, p1, p2, p3, p4;
 
 	// PTS is in bytes 9,10,11,12,13
-	p0=(data[4]&0xfe)>>1|((data[3]&1)<<7);
-	p1=(data[3]&0xfe)>>1|((data[2]&2)<<6);
-	p2=(data[2]&0xfc)>>2|((data[1]&3)<<6);
-	p3=(data[1]&0xfc)>>2|((data[0]&6)<<5);
-	p4=(data[0]&0x08)>>3;
+	p0 = ( data[4] & 0xfe ) >> 1 | ( ( data[3] & 1 ) << 7 );
+	p1 = ( data[3] & 0xfe ) >> 1 | ( ( data[2] & 2 ) << 6 );
+	p2 = ( data[2] & 0xfc ) >> 2 | ( ( data[1] & 3 ) << 6 );
+	p3 = ( data[1] & 0xfc ) >> 2 | ( ( data[0] & 6 ) << 5 );
+	p4 = ( data[0] & 0x08 ) >> 3;
 
-	*pts=p0|(p1<<8)|(p2<<16)|(p3<<24)|(p4<<32);
+	*pts = p0 | ( p1 << 8 ) | ( p2 << 16 ) | ( p3 << 24 ) | ( p4 << 32 );
 }
-HRESULT CAudioInputPin::CurrentPTS( BYTE *pData, ULONGLONG *ptsValue,int *streamType )
+HRESULT CAudioInputPin::CurrentPTS( BYTE *pData, ULONGLONG *ptsValue, int *streamType )
 {
 	HRESULT hr=S_FALSE;
 	*ptsValue=-1;
@@ -235,21 +234,21 @@ HRESULT CAudioInputPin::CurrentPTS( BYTE *pData, ULONGLONG *ptsValue,int *stream
 	int offset=4;
 	bool found=false;
 
-	if(header.AdaptionControl==1 || header.AdaptionControl==3)
-		offset+=pData[4];
+	if( header.AdaptionControl == 1 || header.AdaptionControl == 3 )
+		offset += pData[4];
 
 	if( offset >= 188 ) 
 		return S_FALSE;
 	
 	if( header.SyncByte==0x47 && pData[offset]==0 && pData[offset+1]==0 && pData[offset+2]==1 )
 	{
-		*streamType=(int)((pData[offset+3]>>5) & 0x07);
-		WORD pesLen=( pData[offset+4]<<8 ) + pData[offset+5];
+		*streamType=(int)( ( pData[offset+3] >> 5 ) & 0x07 );
+		WORD pesLen=( pData[offset+4] << 8 ) + pData[offset+5];
 		GetPESHeader( &pData[offset+6], &pes );
 		BYTE pesHeaderLen = pData[offset+8];
 		if( header.Pid ) // valid header
 		{
-			if( pes.PTSFlags==0x02 )
+			if( pes.PTSFlags == 0x02 )
 			{
 				// audio pes found
 				GetPTS( &pData[offset+9], ptsValue );
@@ -262,13 +261,13 @@ HRESULT CAudioInputPin::CurrentPTS( BYTE *pData, ULONGLONG *ptsValue,int *stream
 
 HRESULT CAudioInputPin::GetTSHeader( BYTE *data, TSHeader *header )
 {
-	header->SyncByte=data[0];
-	header->TransportError=(data[1] & 0x80)>0?true:false;
-	header->PayloadUnitStart=(data[1] & 0x40)>0?true:false;
-	header->TransportPriority=(data[1] & 0x20)>0?true:false;
-	header->Pid=((data[1] & 0x1F) <<8)+data[2];
-	header->TScrambling=data[3] & 0xC0;
-	header->AdaptionControl=(data[3]>>4) & 0x3;
-	header->ContinuityCounter=data[3] & 0x0F;
+	header->SyncByte = data[0];
+	header->TransportError = ( data[1] & 0x80) > 0 ? true:false;
+	header->PayloadUnitStart = ( data[1] & 0x40 ) > 0 ? true:false;
+	header->TransportPriority = ( data[1] & 0x20 ) > 0 ? true:false;
+	header->Pid = ( ( data[1] & 0x1F ) << 8 ) + data[2];
+	header->TScrambling = data[3] & 0xC0;
+	header->AdaptionControl=( data[3] >> 4 ) & 0x3;
+	header->ContinuityCounter = data[3] & 0x0F;
 	return S_OK;
 }
