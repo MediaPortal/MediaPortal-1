@@ -635,6 +635,7 @@ namespace MediaPortal.GUI.MusicVideos
             }
         }
         #endregion
+
         #region userdefined methods
         private void onClickFavorites()
         {
@@ -786,6 +787,7 @@ namespace MediaPortal.GUI.MusicVideos
                 }
                 Log.Info("you selected country :{0}", dlgSel.SelectedLabelText);
                 moSettings.msDefaultCountryName = dlgSel.SelectedLabelText;
+								moYahooSearch = new YahooSearch(moSettings.msDefaultCountryName);
                 moTopVideos = new YahooTopVideos(moSettings.msDefaultCountryName);
                 RefreshPage();
             }
