@@ -566,7 +566,7 @@ namespace MediaPortal.PowerScheduler
           //if recording has been canceled, then skip it
           if (recording.Canceled > 0)
           {
-            Log.Info(" PowerScheduler: skipping canceled recording - {0}", recording.Title);
+						if (m_bExtensiveLog) Log.Debug(" PowerScheduler: skipping canceled recording - {0}", recording.Title);
             continue;            
           }
 					tmpNextStarttime = recording.StartTime.AddMinutes(-m_iPreRecordInterval);
@@ -669,8 +669,7 @@ namespace MediaPortal.PowerScheduler
 
         if (TVGuideRecordings.Count > 0)
         {
-          if (m_bExtensiveLog)
-            Log.Info(" PowerScheduler:  Evaluate TVGuide recordings ");
+          if (m_bExtensiveLog) Log.Info(" PowerScheduler:  Evaluate TVGuide recordings ");
 
           ArrayList tvPrograms = new ArrayList();
           bool programfound = false;
