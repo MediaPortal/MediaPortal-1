@@ -198,9 +198,20 @@ void CPmtParser::OnNewSection(CSection& sections)
 		  if(indicator==0x56 && m_pidInfo.TeletextPid==0)
 			  m_pidInfo.TeletextPid=elementary_PID;
 
-      if (indicator==0x59 && m_pidInfo.SubtitlePid==0)
-          m_pidInfo.SubtitlePid=elementary_PID;
-			
+			if(indicator==0x59 && m_pidInfo.SubtitlePid==0)
+			{
+				if (stream_type==5||stream_type==6)
+				{
+					BYTE d[3];
+					d[0]=section[start+pointer+2];
+					d[1]=section[start+pointer+3];
+					d[2]=section[start+pointer+4];
+					m_pidInfo.SubtitlePid=elementary_PID;
+					m_pidInfo.SubLang1_1=d[0];
+					m_pidInfo.SubLang1_2=d[1];
+					m_pidInfo.SubLang1_3=d[2];
+				}
+			}
 		  len2 -= x;
 		  len1 -= x;
 		  pointer += x;
