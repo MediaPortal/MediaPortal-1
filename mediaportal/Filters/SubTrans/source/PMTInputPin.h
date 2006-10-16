@@ -36,28 +36,28 @@ class CPMTInputPin : public CBaseInputPin, CPacketSync, CDemuxPinMapper
 {
 public:
 
-    CPMTInputPin( CSubTransform *m_pTransform,
-					LPUNKNOWN pUnk,
-					CBaseFilter *pFilter,
-					CCritSec *pLock,
-					CCritSec *pReceiveLock,
-					HRESULT *phr,
-          MPidObserver *pPidObserver );
+  CPMTInputPin( CSubTransform *m_pTransform,
+				LPUNKNOWN pUnk,
+				CBaseFilter *pFilter,
+				CCritSec *pLock,
+				CCritSec *pReceiveLock,
+				HRESULT *phr,
+        MPidObserver *pPidObserver );
 
-	  ~CPMTInputPin();
+  ~CPMTInputPin();
 
-    STDMETHODIMP Receive(IMediaSample *pSample);
-    STDMETHODIMP BeginFlush(void);
-    STDMETHODIMP EndFlush(void);
+  STDMETHODIMP Receive(IMediaSample *pSample);
+  STDMETHODIMP BeginFlush(void);
+  STDMETHODIMP EndFlush(void);
 
-    HRESULT CheckMediaType( const CMediaType * );
-    HRESULT CompleteConnect( IPin *pPin );
-    
-    // From CPacketSync
-    void OnTsPacket( byte* tsPacket );
+  HRESULT CheckMediaType( const CMediaType * );
+  HRESULT CompleteConnect( IPin *pPin );
+  
+  // From CPacketSync
+  void OnTsPacket( byte* tsPacket );
 
-    void SetVideoPid( int videoPid );
-    void Reset();
+  void SetVideoPid( int videoPid );
+  void Reset();
 
 private:
   
