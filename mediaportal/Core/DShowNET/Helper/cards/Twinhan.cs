@@ -314,13 +314,13 @@ namespace DShowNET
 
       Log.Info("Twinhan: send PMT cam:{0} {1} len:{2} video:0x{3:X} audio:0x{4:X}", camType, camNumber, caPMTLen, videoPid, audioPid);
 
-     /* string line = "";
+      string line = "";
       for (int i = 0; i < caPMTLen; ++i)
       { 
         string tmp=String.Format("{0:X} ",caPMT[i]);
         line+=tmp;
       }
-      Log.Log.WriteFile(line);*/
+      Log.Info("capmt:{0}", line);
       if (caPMT.Length==0)
         return;
       Marshal.Copy(caPMT, 0, ptrPMT, caPMTLen);
