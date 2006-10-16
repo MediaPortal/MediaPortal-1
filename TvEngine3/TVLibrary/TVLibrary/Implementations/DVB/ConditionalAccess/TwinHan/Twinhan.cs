@@ -30,90 +30,6 @@ namespace TvLibrary.Implementations.DVB
   /// </summary>
   public class Twinhan
   {
-    #region twinhan sample app code:
-    //#define CTL_CODE( DeviceType, Function, Method, Access ) (                 \
-    //		((DeviceType) << 16) | ((Access) << 14) | ((Function) << 2) | (Method) \
-    //		)
-    //#define THBDA_IO_INDEX													0xAA00
-    //#define THBDA_IOCTL_CI_SEND_PMT                 CTL_CODE(THBDA_IO_INDEX, 206, METHOD_BUFFERED, FILE_ANY_ACCESS)
-    //#define THBDA_IOCTL_CHECK_INTERFACE             CTL_CODE(THBDA_IO_INDEX, 121, METHOD_BUFFERED, FILE_ANY_ACCESS)
-    //#define THBDA_IOCTL_CI_PARSER_PMT               CTL_CODE(THBDA_IO_INDEX, 207, METHOD_BUFFERED, FILE_ANY_ACCESS)
-    //typedef struct 
-    //				{
-    //					GUID    CmdGUID;            // Private Command GUID
-    //					DWORD   dwIoControlCode;    // operation
-    //					LPVOID  lpInBuffer;         // input data buffer
-    //					DWORD   nInBufferSize;      // size of input data buffer
-    //					LPVOID  lpOutBuffer;        // output data buffer
-    //					DWORD   nOutBufferSize;     // size of output data buffer
-    //					LPDWORD lpBytesReturned;    // byte count
-    //				} THBDACMD, *PTHBDACMD;
-
-    //		BOOL CBDAFilterGraph::BDAIOControl( DWORD  dwIoControlCode,
-    //			LPVOID lpInBuffer,
-    //			DWORD  nInBufferSize,
-    //			LPVOID lpOutBuffer,
-    //			DWORD  nOutBufferSize,
-    //			LPDWORD lpBytesReturned)
-    //		{
-    //			if (!m_KsTunerPropSet)
-    //				return FALSE;
-    //
-    //			KSPROPERTY instance_data;
-    //
-    //			ULONG    ulOutBuf = 0;
-    //			ULONG    ulReturnBuf = 0;
-    //			THBDACMD THBDACmd;
-    //
-    //			THBDACmd.CmdGUID = GUID_THBDA_CMD;
-    //			THBDACmd.dwIoControlCode = dwIoControlCode;
-    //			THBDACmd.lpInBuffer = lpInBuffer;
-    //			THBDACmd.nInBufferSize = nInBufferSize;
-    //			THBDACmd.lpOutBuffer = lpOutBuffer;
-    //			THBDACmd.nOutBufferSize = nOutBufferSize;
-    //			THBDACmd.lpBytesReturned = lpBytesReturned;
-    //
-    //			HRESULT hr = m_KsTunerPropSet->Set(GUID_THBDA_TUNER, 
-    //				NULL, 
-    //				&instance_data, sizeof(instance_data),
-    //				&THBDACmd, sizeof(THBDACmd));
-    //
-    //			if (FAILED(hr))
-    //				return FALSE;
-    //			else
-    //				return TRUE;
-    //		}
-    //
-    //		BOOL CBDAFilterGraph::CheckBDAInterface()
-    //		{
-    //			BOOL bStatus = FALSE;
-    //			DWORD dwBytesReturned = 0;
-    //
-    //			bStatus = BDAIOControl( THBDA_IOCTL_CHECK_INTERFACE,
-    //				NULL,
-    //				0,
-    //				NULL,
-    //				0,
-    //				(LPDWORD)&dwBytesReturned);
-    //
-    //			return bStatus;
-    //		}
-
-    //		BOOL CBDAFilterGraph::SendCAPMT(PBYTE pBuff, BYTE byBuffSize)
-    //		{
-    //				BOOL bStatus = FALSE;
-    //				DWORD dwBytesReturned = 0;
-    //
-    //				bStatus = BDAIOControl( THBDA_IOCTL_CI_SEND_PMT,
-    //									(LPVOID)pBuff,
-    //									byBuffSize,
-    //									NULL,
-    //									0,
-    //									(LPDWORD)&dwBytesReturned);
-    //		    
-    //				return bStatus;
-    //		}
-    #endregion
 
     #region guids
     readonly Guid THBDA_TUNER = new Guid("E5644CC4-17A1-4eed-BD90-74FDA1D65423");
@@ -129,6 +45,11 @@ namespace TvLibrary.Implementations.DVB
     bool _isTwinHanCard;
     bool _camPresent;
     IBaseFilter _captureFilter;
+    IntPtr _ptrPmt;
+    IntPtr _ptrDwBytesReturned;
+    IntPtr _thbdaBuf;
+    IntPtr _ptrOutBuffer;
+    IntPtr _ptrOutBuffer2;
     #endregion
 
     /// <summary>
@@ -138,6 +59,12 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="captureFilter">The capture filter.</param>
     public Twinhan(IBaseFilter tunerFilter, IBaseFilter captureFilter)
     {
+      _ptrPmt = Marshal.AllocCoTaskMem(8192);
+      _ptrDwBytesReturned= Marshal.AllocCoTaskMem(20);
+      _thbdaBuf= Marshal.AllocCoTaskMem(8192);
+      _ptrOutBuffer= Marshal.AllocCoTaskMem(8192);
+      _ptrOutBuffer2= Marshal.AllocCoTaskMem(8192);
+      
       _captureFilter = tunerFilter;
       _initialized = false;
       _camPresent = false;
@@ -151,8 +78,7 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.WriteFile("Cam detected:{0}", _camPresent);
         }
       }
-      _initialized = true;
-
+      _initialized = true; 
     }
     /// <summary>
     /// Reutns if the tuner specified in the constructor supports twinhan CI/CAM handling
@@ -200,36 +126,33 @@ namespace TvLibrary.Implementations.DVB
         if (propertySet != null)
         {
           Guid propertyGuid = THBDA_TUNER;
-          IntPtr thbdaBuf = Marshal.AllocCoTaskMem(1024);
-          IntPtr ptrDwBytesReturned = Marshal.AllocCoTaskMem(4);
-          IntPtr ptrOutBuffer = Marshal.AllocCoTaskMem(4096);
           try
           {
             int thbdaLen = 0x28;
-            Marshal.WriteInt32(thbdaBuf, 0, 0x255e0082);//GUID_THBDA_CMD  = new Guid( "255E0082-2017-4b03-90F8-856A62CB3D67" );
-            Marshal.WriteInt16(thbdaBuf, 4, 0x2017);
-            Marshal.WriteInt16(thbdaBuf, 6, 0x4b03);
-            Marshal.WriteByte(thbdaBuf, 8, 0x90);
-            Marshal.WriteByte(thbdaBuf, 9, 0xf8);
-            Marshal.WriteByte(thbdaBuf, 10, 0x85);
-            Marshal.WriteByte(thbdaBuf, 11, 0x6a);
-            Marshal.WriteByte(thbdaBuf, 12, 0x62);
-            Marshal.WriteByte(thbdaBuf, 13, 0xcb);
-            Marshal.WriteByte(thbdaBuf, 14, 0x3d);
-            Marshal.WriteByte(thbdaBuf, 15, 0x67);
-            Marshal.WriteInt32(thbdaBuf, 16, (int)THBDA_IOCTL_CI_GET_STATE);//control code
-            Marshal.WriteInt32(thbdaBuf, 20, (int)IntPtr.Zero); //LPVOID inbuffer
-            Marshal.WriteInt32(thbdaBuf, 24, 0);                //DWORD inbuffersize
-            Marshal.WriteInt32(thbdaBuf, 28, ptrOutBuffer.ToInt32()); //LPVOID outbuffer
-            Marshal.WriteInt32(thbdaBuf, 32, 4096);                //DWORD outbuffersize
-            Marshal.WriteInt32(thbdaBuf, 36, (int)ptrDwBytesReturned);//LPVOID bytesreturned
+            Marshal.WriteInt32(_thbdaBuf, 0, 0x255e0082);//GUID_THBDA_CMD  = new Guid( "255E0082-2017-4b03-90F8-856A62CB3D67" );
+            Marshal.WriteInt16(_thbdaBuf, 4, 0x2017);
+            Marshal.WriteInt16(_thbdaBuf, 6, 0x4b03);
+            Marshal.WriteByte(_thbdaBuf, 8, 0x90);
+            Marshal.WriteByte(_thbdaBuf, 9, 0xf8);
+            Marshal.WriteByte(_thbdaBuf, 10, 0x85);
+            Marshal.WriteByte(_thbdaBuf, 11, 0x6a);
+            Marshal.WriteByte(_thbdaBuf, 12, 0x62);
+            Marshal.WriteByte(_thbdaBuf, 13, 0xcb);
+            Marshal.WriteByte(_thbdaBuf, 14, 0x3d);
+            Marshal.WriteByte(_thbdaBuf, 15, 0x67);
+            Marshal.WriteInt32(_thbdaBuf, 16, (int)THBDA_IOCTL_CI_GET_STATE);//control code
+            Marshal.WriteInt32(_thbdaBuf, 20, (int)IntPtr.Zero); //LPVOID inbuffer
+            Marshal.WriteInt32(_thbdaBuf, 24, 0);                //DWORD inbuffersize
+            Marshal.WriteInt32(_thbdaBuf, 28, _ptrOutBuffer.ToInt32()); //LPVOID outbuffer
+            Marshal.WriteInt32(_thbdaBuf, 32, 4096);                //DWORD outbuffersize
+            Marshal.WriteInt32(_thbdaBuf, 36, (int)_ptrDwBytesReturned);//LPVOID bytesreturned
 
-            int hr = propertySet.Set(propertyGuid, 0, thbdaBuf, thbdaLen, thbdaBuf, thbdaLen);
+            int hr = propertySet.Set(propertyGuid, 0, _thbdaBuf, thbdaLen, _thbdaBuf, thbdaLen);
             if (hr == 0)
             {
-              int bytesReturned = Marshal.ReadInt32(ptrDwBytesReturned);
-              CIState = (uint)Marshal.ReadInt32(ptrOutBuffer, 0);
-              MMIState = (uint)Marshal.ReadInt32(ptrOutBuffer, 4);
+              int bytesReturned = Marshal.ReadInt32(_ptrDwBytesReturned);
+              CIState = (uint)Marshal.ReadInt32(_ptrOutBuffer, 0);
+              MMIState = (uint)Marshal.ReadInt32(_ptrOutBuffer, 4);
               Log.Log.WriteFile("twinhan:CI State:{0:X} MMI State:{1:X}", CIState, MMIState);
             }
             else
@@ -239,9 +162,6 @@ namespace TvLibrary.Implementations.DVB
           }
           finally
           {
-            Marshal.FreeCoTaskMem(thbdaBuf);
-            Marshal.FreeCoTaskMem(ptrDwBytesReturned);
-            Marshal.FreeCoTaskMem(ptrOutBuffer);
           }
         }
         //Marshal.ReleaseComObject(pin);
@@ -285,30 +205,29 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.WriteFile("Twinhan: check for twinhan driver");
 
       bool success = false;
-      IntPtr ptrDwBytesReturned = Marshal.AllocCoTaskMem(4);
+      
       try
       {
         int thbdaLen = 0x28;
-        IntPtr thbdaBuf = Marshal.AllocCoTaskMem(thbdaLen);
         try
         {
-          Marshal.WriteInt32(thbdaBuf, 0, 0x255e0082);//GUID_THBDA_CMD  = new Guid( "255E0082-2017-4b03-90F8-856A62CB3D67" );
-          Marshal.WriteInt16(thbdaBuf, 4, 0x2017);
-          Marshal.WriteInt16(thbdaBuf, 6, 0x4b03);
-          Marshal.WriteByte(thbdaBuf, 8, 0x90);
-          Marshal.WriteByte(thbdaBuf, 9, 0xf8);
-          Marshal.WriteByte(thbdaBuf, 10, 0x85);
-          Marshal.WriteByte(thbdaBuf, 11, 0x6a);
-          Marshal.WriteByte(thbdaBuf, 12, 0x62);
-          Marshal.WriteByte(thbdaBuf, 13, 0xcb);
-          Marshal.WriteByte(thbdaBuf, 14, 0x3d);
-          Marshal.WriteByte(thbdaBuf, 15, 0x67);
-          Marshal.WriteInt32(thbdaBuf, 16, (int)THBDA_IOCTL_CHECK_INTERFACE);//control code
-          Marshal.WriteInt32(thbdaBuf, 20, (int)IntPtr.Zero);
-          Marshal.WriteInt32(thbdaBuf, 24, 0);
-          Marshal.WriteInt32(thbdaBuf, 28, (int)IntPtr.Zero);
-          Marshal.WriteInt32(thbdaBuf, 32, 0);
-          Marshal.WriteInt32(thbdaBuf, 36, (int)ptrDwBytesReturned);
+          Marshal.WriteInt32(_thbdaBuf, 0, 0x255e0082);//GUID_THBDA_CMD  = new Guid( "255E0082-2017-4b03-90F8-856A62CB3D67" );
+          Marshal.WriteInt16(_thbdaBuf, 4, 0x2017);
+          Marshal.WriteInt16(_thbdaBuf, 6, 0x4b03);
+          Marshal.WriteByte(_thbdaBuf, 8, 0x90);
+          Marshal.WriteByte(_thbdaBuf, 9, 0xf8);
+          Marshal.WriteByte(_thbdaBuf, 10, 0x85);
+          Marshal.WriteByte(_thbdaBuf, 11, 0x6a);
+          Marshal.WriteByte(_thbdaBuf, 12, 0x62);
+          Marshal.WriteByte(_thbdaBuf, 13, 0xcb);
+          Marshal.WriteByte(_thbdaBuf, 14, 0x3d);
+          Marshal.WriteByte(_thbdaBuf, 15, 0x67);
+          Marshal.WriteInt32(_thbdaBuf, 16, (int)THBDA_IOCTL_CHECK_INTERFACE);//control code
+          Marshal.WriteInt32(_thbdaBuf, 20, (int)IntPtr.Zero);
+          Marshal.WriteInt32(_thbdaBuf, 24, 0);
+          Marshal.WriteInt32(_thbdaBuf, 28, (int)IntPtr.Zero);
+          Marshal.WriteInt32(_thbdaBuf, 32, 0);
+          Marshal.WriteInt32(_thbdaBuf, 36, (int)_ptrDwBytesReturned);
 
           IPin pin = DsFindPin.ByDirection(_captureFilter, PinDirection.Input, 0);
           if (pin != null)
@@ -318,7 +237,7 @@ namespace TvLibrary.Implementations.DVB
             {
               Guid propertyGuid = THBDA_TUNER;
 
-              int hr = propertySet.Set(propertyGuid, 0, thbdaBuf, thbdaLen, thbdaBuf, thbdaLen);
+              int hr = propertySet.Set(propertyGuid, 0, _thbdaBuf, thbdaLen, _thbdaBuf, thbdaLen);
               if (hr == 0)
               {
                 Log.Log.WriteFile("twinhan card detected");
@@ -331,12 +250,11 @@ namespace TvLibrary.Implementations.DVB
         }
         finally
         {
-          Marshal.FreeCoTaskMem(thbdaBuf);
         }
       }
       finally
       {
-        Marshal.FreeCoTaskMem(ptrDwBytesReturned);
+        
       }
       return success;
     }
@@ -355,56 +273,37 @@ namespace TvLibrary.Implementations.DVB
       if (IsCamPresent() == false) return;
       int camNumber = (int)camType;
 
-      IntPtr ptrPMT = Marshal.AllocCoTaskMem(caPMTLen);
 
       Log.Log.WriteFile("Twinhan: send PMT cam:{0} len:{1} video:0x{2:X} audio:0x{3:X}", camType, caPMTLen, videoPid, audioPid);
 
       if (caPMT.Length==0)
         return;
-      Marshal.Copy(caPMT, 0, ptrPMT, caPMTLen);
-
-      IntPtr ptrDwBytesReturned = Marshal.AllocCoTaskMem(4);
-      if (ptrDwBytesReturned == IntPtr.Zero)
-      {
-        Marshal.FreeCoTaskMem(ptrPMT);
-        return;
+      string line = "";
+      for (int i = 0; i < caPMTLen; ++i)
+      { 
+        string tmp=String.Format("{0:X} ",caPMT[i]);
+        line+=tmp;
       }
-      IntPtr ksBla = Marshal.AllocCoTaskMem(0x18);
-      if (ksBla == IntPtr.Zero)
-      {
-        Marshal.FreeCoTaskMem(ptrPMT);
-        Marshal.FreeCoTaskMem(ptrDwBytesReturned);
-        return;
-      }
-
+      Log.Log.WriteFile("capmt:{0}", line);
+      Marshal.Copy(caPMT, 0, _ptrPmt, caPMTLen);
       int thbdaLen = 0x28;
-      IntPtr thbdaBuf = Marshal.AllocCoTaskMem(thbdaLen);
-      if (thbdaBuf == IntPtr.Zero)
-      {
-        Marshal.FreeCoTaskMem(ptrPMT);
-        Marshal.FreeCoTaskMem(ptrDwBytesReturned);
-        Marshal.FreeCoTaskMem(ksBla);
-        return;
-      }
-
-
-      Marshal.WriteInt32(thbdaBuf, 0, 0x255e0082);//GUID_THBDA_CMD  = new Guid( "255E0082-2017-4b03-90F8-856A62CB3D67" );
-      Marshal.WriteInt16(thbdaBuf, 4, 0x2017);
-      Marshal.WriteInt16(thbdaBuf, 6, 0x4b03);
-      Marshal.WriteByte(thbdaBuf, 8, 0x90);
-      Marshal.WriteByte(thbdaBuf, 9, 0xf8);
-      Marshal.WriteByte(thbdaBuf, 10, 0x85);
-      Marshal.WriteByte(thbdaBuf, 11, 0x6a);
-      Marshal.WriteByte(thbdaBuf, 12, 0x62);
-      Marshal.WriteByte(thbdaBuf, 13, 0xcb);
-      Marshal.WriteByte(thbdaBuf, 14, 0x3d);
-      Marshal.WriteByte(thbdaBuf, 15, 0x67);
-      Marshal.WriteInt32(thbdaBuf, 16, (int)THBDA_IOCTL_CI_SEND_PMT);//dwIoControlCode
-      Marshal.WriteInt32(thbdaBuf, 20, (int)ptrPMT);//lpInBuffer
-      Marshal.WriteInt32(thbdaBuf, 24, caPMTLen);//nInBufferSize
-      Marshal.WriteInt32(thbdaBuf, 28, 0);//lpOutBuffer
-      Marshal.WriteInt32(thbdaBuf, 32, 0);//nOutBufferSize
-      Marshal.WriteInt32(thbdaBuf, 36, (int)ptrDwBytesReturned);//lpBytesReturned
+      Marshal.WriteInt32(_thbdaBuf, 0, 0x255e0082);//GUID_THBDA_CMD  = new Guid( "255E0082-2017-4b03-90F8-856A62CB3D67" );
+      Marshal.WriteInt16(_thbdaBuf, 4, 0x2017);
+      Marshal.WriteInt16(_thbdaBuf, 6, 0x4b03);
+      Marshal.WriteByte(_thbdaBuf, 8, 0x90);
+      Marshal.WriteByte(_thbdaBuf, 9, 0xf8);
+      Marshal.WriteByte(_thbdaBuf, 10, 0x85);
+      Marshal.WriteByte(_thbdaBuf, 11, 0x6a);
+      Marshal.WriteByte(_thbdaBuf, 12, 0x62);
+      Marshal.WriteByte(_thbdaBuf, 13, 0xcb);
+      Marshal.WriteByte(_thbdaBuf, 14, 0x3d);
+      Marshal.WriteByte(_thbdaBuf, 15, 0x67);
+      Marshal.WriteInt32(_thbdaBuf, 16, (int)THBDA_IOCTL_CI_SEND_PMT);//dwIoControlCode
+      Marshal.WriteInt32(_thbdaBuf, 20, (int)_ptrPmt);//lpInBuffer
+      Marshal.WriteInt32(_thbdaBuf, 24, caPMTLen);//nInBufferSize
+      Marshal.WriteInt32(_thbdaBuf, 28, 0);//lpOutBuffer
+      Marshal.WriteInt32(_thbdaBuf, 32, 0);//nOutBufferSize
+      Marshal.WriteInt32(_thbdaBuf, 36, (int)_ptrDwBytesReturned);//lpBytesReturned
 
       IPin pin = DsFindPin.ByDirection(_captureFilter, PinDirection.Input, 0);
       if (pin != null)
@@ -413,9 +312,8 @@ namespace TvLibrary.Implementations.DVB
         if (propertySet != null)
         {
           Guid propertyGuid = THBDA_TUNER;
-          int hr = propertySet.Set(propertyGuid, 0, ksBla, 0x18, thbdaBuf, thbdaLen);
-          int back = Marshal.ReadInt32(ptrDwBytesReturned);
-          int ksBlaVal = Marshal.ReadInt32(ksBla);
+          int hr = propertySet.Set(propertyGuid, 0, _ptrOutBuffer2, 0x18, _thbdaBuf, thbdaLen);
+          int back = Marshal.ReadInt32(_ptrDwBytesReturned); 
 
           if (hr != 0)
           {
@@ -430,10 +328,6 @@ namespace TvLibrary.Implementations.DVB
       }
 
 
-      Marshal.FreeCoTaskMem(thbdaBuf);
-      Marshal.FreeCoTaskMem(ptrDwBytesReturned);
-      Marshal.FreeCoTaskMem(ptrPMT);
-      Marshal.FreeCoTaskMem(ksBla);
     }
   }
 }
