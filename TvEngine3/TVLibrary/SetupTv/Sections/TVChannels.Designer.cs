@@ -35,7 +35,6 @@ namespace SetupTv.Sections
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
       this.mpButtonClear = new MediaPortal.UserInterface.Controls.MPButton();
-      this.mpButtonClearEncrypted = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpLabelChannelCount = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpButtonDel = new MediaPortal.UserInterface.Controls.MPButton();
       this.buttonUtp = new System.Windows.Forms.Button();
@@ -97,16 +96,6 @@ namespace SetupTv.Sections
       this.mpButtonClear.UseVisualStyleBackColor = true;
       this.mpButtonClear.Click += new System.EventHandler(this.mpButtonClear_Click);
       // 
-      // mpButtonClearEncrypted
-      // 
-      this.mpButtonClearEncrypted.Location = new System.Drawing.Point(297, 347);
-      this.mpButtonClearEncrypted.Name = "mpButtonClearEncrypted";
-      this.mpButtonClearEncrypted.Size = new System.Drawing.Size(100, 23);
-      this.mpButtonClearEncrypted.TabIndex = 1;
-      this.mpButtonClearEncrypted.Text = "Delete Encrypted";
-      this.mpButtonClearEncrypted.UseVisualStyleBackColor = true;
-      this.mpButtonClearEncrypted.Click += new System.EventHandler(this.mpButtonClearEncrypted_Click);
-      // 
       // mpLabelChannelCount
       // 
       this.mpLabelChannelCount.AutoSize = true;
@@ -164,7 +153,6 @@ namespace SetupTv.Sections
       this.Controls.Add(this.buttonUtp);
       this.Controls.Add(this.mpLabelChannelCount);
       this.Controls.Add(this.mpButtonDel);
-      this.Controls.Add(this.mpButtonClearEncrypted);
       this.Controls.Add(this.mpButtonClear);
       this.Controls.Add(this.mpListView1);
       this.Name = "TvChannels";
@@ -183,7 +171,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ColumnHeader columnHeader2;
     private System.Windows.Forms.ColumnHeader columnHeader4;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonClear;
-    private MediaPortal.UserInterface.Controls.MPButton mpButtonClearEncrypted;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabelChannelCount;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonDel;
     private System.Windows.Forms.Button buttonUtp;
