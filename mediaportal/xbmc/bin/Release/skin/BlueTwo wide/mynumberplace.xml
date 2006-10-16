@@ -2,10 +2,9 @@
 <window>
 	<id>7777</id>
 	<defaultcontrol>2</defaultcontrol>
-	<allowoverlay>yes</allowoverlay>
+        <allowoverlay>no</allowoverlay>
 	<define>#header.label:19101</define>
-<!-- 	<define>#header.text:music</define> -->
-	<define>#header.hover:hover_mynumberplace.png</define>
+  <!--<define>#header.hover:hover_mynumberplace.png</define>-->
 	<controls>
 		<import>common.window.xml</import>
 		<import>common.time.xml</import>
@@ -96,7 +95,104 @@
 			</control>
 		</control>
 		<control>
-			<type>group</type>
+		<type>group</type>
+                      <control>
+                        <description>Scoreboard background</description>
+                        <type>image</type>
+                        <id>20</id>
+                        <posX>128</posX>
+                        <posY>505</posY>
+                        <width>250</width>
+                        <height>180</height>
+                        <texture>tetris\scoreboard.png</texture>
+                        <colordiffuse>60ffffff</colordiffuse>
+                      </control>
+<!--                       <control>
+                        <description>Time: label</description>
+                        <type>label</type>
+                        <id>21</id>
+                        <posX>142</posX>
+                        <posY>510</posY>
+                        <label>-</label>
+                      </control> -->
+                      <control>
+                        <description>Time</description>
+                        <type>label</type>
+                        <id>22</id>
+                        <posX>360</posX>
+                        <posY>510</posY>
+                        <width>162</width>
+                        <align>right</align>
+                        <font>font16</font>
+                        <textcolor>white</textcolor>
+                        <label>#numberplace.time</label>
+                      </control>
+<!--                       <control>
+                        <description>Highscore: label</description>
+                        <type>label</type>
+                        <id>23</id>
+                        <posX>142</posX>
+                        <posY>540</posY>
+                        <label>19008</label>
+                      </control> -->
+                      <control>
+                        <description>Rank1: label</description>
+                        <type>label</type>
+                        <id>24</id>
+                        <posX>142</posX>
+                        <posY>574</posY>
+                        <label>#numberplace.name1</label>
+                      </control>
+                      <control>
+                        <description>Rank1 Score: label</description>
+                        <type>label</type>
+                        <id>25</id>
+                        <posX>360</posX>
+                        <posY>574</posY>
+                        <width>162</width>
+                        <align>right</align>
+                        <label>#numberplace.score1</label>
+                      </control>
+                      <control>
+                        <description>Rank2 Name: label</description>
+                        <type>label</type>
+                        <id>26</id>
+                        <posX>142</posX>
+                        <posY>608</posY>
+                        <label>#numberplace.name2</label>
+                      </control>
+                      <control>
+                        <description>Rank2 Score: label</description>
+                        <type>label</type>
+                        <id>27</id>
+                        <posX>360</posX>
+                        <posY>608</posY>
+                        <width>162</width>
+                        <align>right</align>
+                        <label>#numberplace.score2</label>
+                      </control>
+                      <control>
+                        <description>Rank3 Name: label</description>
+                        <type>label</type>
+                        <id>28</id>
+                        <posX>142</posX>
+                        <posY>642</posY>
+                        <label>#numberplace.name3</label>
+                      </control>
+                      <control>
+                        <description>Rank3 Score: label</description>
+                        <type>label</type>
+                        <id>29</id>
+                        <posX>360</posX>
+                        <posY>642</posY>
+                        <width>162</width>
+                        <align>right</align>
+                        <label>#numberplace.score3</label>
+                      </control>
+                    </control>
+
+                    <control>
+                        <type>group</type>
 			<description>BarVerGroup</description>
 			<id>700</id>
 			<posX>550</posX>
