@@ -94,6 +94,11 @@ namespace MediaPortal.GUI.Music
       IMGLIST_FAMOUS_TRACK3 = 89,
     }
 
+    public enum TrackProgressType
+    {
+      Elapsed, CountDown
+    }
+
     #region Properties
 
     public GUIMusicBaseWindow MusicWindow
@@ -125,7 +130,7 @@ namespace MediaPortal.GUI.Music
     [SkinControlAttribute((int)ControlIDs.IMGLIST_FAMOUS_TRACK2)]    protected GUIImageList ImgListFamousTrack2 = null;
     [SkinControlAttribute((int)ControlIDs.IMGLIST_FAMOUS_TRACK3)]    protected GUIImageList ImgListFamousTrack3 = null;
 
-    public enum TrackProgressType { Elapsed, CountDown };
+    private const int DISPLAY_LISTITEM_COUNT = 3;
 
     private bool ControlsInitialized = false;
     private PlayListPlayer PlaylistPlayer = null;
@@ -149,10 +154,8 @@ namespace MediaPortal.GUI.Music
     private bool _doArtistLookups = true;
     private bool _doAlbumLookups = true;
     private bool _doTrackTagLookups = true;
-
-    //SV Added by SteveV 2006-09-07
-    private bool UsingInternalMusicPlayer = false;
-    private bool ShowVisualization = false;
+    private bool _usingBassEngine = false;
+    private bool _showVisualization = false;
 
 
     public GUIMusicPlayingNow()
@@ -168,13 +171,13 @@ namespace MediaPortal.GUI.Music
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         UseID3 = xmlreader.GetValueAsBool("musicfiles", "showid3", true);
-        ShowVisualization = xmlreader.GetValueAsBool("musicmisc", "showVisInNowPlaying", false);
+        _showVisualization = xmlreader.GetValueAsBool("musicmisc", "showVisInNowPlaying", false);
         _doArtistLookups = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmthumbs", true);
         _doAlbumLookups = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmtopalbums", true);
         _doTrackTagLookups = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmtracktags", true);
       }
 
-      UsingInternalMusicPlayer = BassMusicPlayer.IsDefaultMusicPlayer;
+      _usingBassEngine = BassMusicPlayer.IsDefaultMusicPlayer;
     }
 
     void g_Player_PlayBackEnded(g_Player.MediaType type, string filename)
@@ -287,7 +290,7 @@ namespace MediaPortal.GUI.Music
     private bool AddImageToImagePathContainer(string newImage)
     {
       // Check if we should let the visualization window handle image flipping
-      if (UsingInternalMusicPlayer && ShowVisualization)
+      if (_usingBassEngine && _showVisualization)
       {
         Log.Debug("GUIMusicPlayingNow: adding image to visualization - {0}", newImage);
         Visualization.VisualizationWindow vizWindow = BassMusicPlayer.Player.VisualizationWindow;
@@ -337,7 +340,7 @@ namespace MediaPortal.GUI.Music
     private void FlipPictures()
     {
       // Check if we should let the visualization window handle image flipping
-      if (UsingInternalMusicPlayer && ShowVisualization)
+      if (_usingBassEngine && _showVisualization)
         return;
 
       if (ImgCoverArt != null)
@@ -571,7 +574,7 @@ namespace MediaPortal.GUI.Music
             if (CurrentThumbFileName.Length > 0)
               AddImageToImagePathContainer(CurrentThumbFileName);
 
-            if (UsingInternalMusicPlayer)
+            if (_usingBassEngine)
               BassMusicPlayer.Player.VisualizationWindow.CoverArtImagePath = CurrentThumbFileName;
 
             UpdateImagePathContainer();
@@ -1200,7 +1203,7 @@ namespace MediaPortal.GUI.Music
 
     private void SetVisualizationWindow()
     {
-      if (!ControlsInitialized || !UsingInternalMusicPlayer || !ShowVisualization)
+      if (!ControlsInitialized || !_usingBassEngine || !_showVisualization)
         return;
 
       Visualization.VisualizationWindow vizWindow = BassMusicPlayer.Player.VisualizationWindow;
@@ -1227,7 +1230,7 @@ namespace MediaPortal.GUI.Music
 
     private void ClearVisualizationImages()
     {
-      if (!UsingInternalMusicPlayer || !ShowVisualization)
+      if (!_usingBassEngine || !_showVisualization)
         return;
 
       Visualization.VisualizationWindow vizWindow = BassMusicPlayer.Player.VisualizationWindow;
@@ -1363,7 +1366,7 @@ namespace MediaPortal.GUI.Music
             }
 
             // display 3 items only
-            if (facadeAlbumInfo.Count == 3)
+            if (facadeAlbumInfo.Count == DISPLAY_LISTITEM_COUNT)
               break;
           }
         }
@@ -1371,16 +1374,20 @@ namespace MediaPortal.GUI.Music
         {
           int popularity = AlbumTracks[0].TimesPlayed;
 
-          if (popularity > 40000)
-            ToggleTopTrackRatings(true, PopularityRating.famous);
-          else
-          if (popularity > 10000)
-              ToggleTopTrackRatings(true, PopularityRating.known);
+          // only display stars if list is filled
+          if (facadeAlbumInfo.Count == DISPLAY_LISTITEM_COUNT)
+          {
+            if (popularity > 40000)
+              ToggleTopTrackRatings(true, PopularityRating.famous);
             else
-              if (popularity > 2500)
-                ToggleTopTrackRatings(true, PopularityRating.existent);
-          else
-            ToggleTopTrackRatings(true, PopularityRating.unknown);
+              if (popularity > 10000)
+                ToggleTopTrackRatings(true, PopularityRating.known);
+              else
+                if (popularity > 2500)
+                  ToggleTopTrackRatings(true, PopularityRating.existent);
+                else
+                  ToggleTopTrackRatings(true, PopularityRating.unknown);
+          }
 
           //if (CurrentThumbFileName == GUIGraphicsContext.Skin + @"\media\missing_coverart.png")
           //{
@@ -1441,7 +1448,7 @@ namespace MediaPortal.GUI.Music
             facadeTagInfo.Add(item);
 
             // display 3 items only
-            if (facadeTagInfo.Count == 3)
+            if (facadeTagInfo.Count == DISPLAY_LISTITEM_COUNT)
               break;
           }
 
