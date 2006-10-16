@@ -275,7 +275,7 @@ namespace TvLibrary.Implementations.DVB
         if (info.isAC3Audio || info.isAudio || info.isVideo || info.isDVBSubtitle)
         {
           Log.Log.WriteFile("dvb: set timeshift {0}", info);
-          timeshift.AddStream((short)info.pid, (short)info.stream_type);
+          timeshift.AddStream((short)info.pid, (short)info.stream_type,info.language);
         }
       }
     }
@@ -2151,17 +2151,17 @@ namespace TvLibrary.Implementations.DVB
         {
           ITsVideoAnalyzer writer = (ITsVideoAnalyzer)_filterTsAnalyzer;
           writer.SetAudioPid((short)audioStream.Pid);
-
+/*
           ITsTimeShift timeshift = _filterTsAnalyzer as ITsTimeShift;
           if (_currentAudioStream != null)
           {
             timeshift.RemoveStream((short)_currentAudioStream.Pid);
           }
           if (audioStream.StreamType == AudioStreamType.AC3)
-            timeshift.AddStream((short)audioStream.Pid, 0x81);
+            timeshift.AddStream((short)audioStream.Pid, 0x81,audioStream.Language);
           else
-            timeshift.AddStream((short)audioStream.Pid, 3);
-
+            timeshift.AddStream((short)audioStream.Pid, 3, audioStream.Language);
+*/
         }
         _currentAudioStream = audioStream;
         _pmtVersion = -1;

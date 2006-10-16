@@ -44,7 +44,7 @@ Guid("89459BF6-D00E-4d28-928E-9DA8F76B6D3A"),
     [PreserveSig]
     int SetPcrPid(short pcrPid);
     [PreserveSig]
-    int AddStream(short pid, short serviceType);
+    int AddStream(short pid, short serviceType,[In, MarshalAs(UnmanagedType.LPStr)] string language);
     [PreserveSig]
     int RemoveStream(short pid);
     [PreserveSig]
