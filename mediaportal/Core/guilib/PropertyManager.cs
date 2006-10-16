@@ -230,6 +230,18 @@ namespace MediaPortal.GUI.Library
       _properties["#Lastfm.Rating.AlbumTrack1"] = String.Empty;
       _properties["#Lastfm.Rating.AlbumTrack2"] = String.Empty;
       _properties["#Lastfm.Rating.AlbumTrack3"] = String.Empty;
+
+      _properties["#numberplace.time"] = String.Empty;
+      _properties["#numberplace.name1"] = String.Empty;
+      _properties["#numberplace.name2"] = String.Empty;
+      _properties["#numberplace.name3"] = String.Empty;
+      _properties["#numberplace.name4"] = String.Empty;
+      _properties["#numberplace.name5"] = String.Empty;
+      _properties["#numberplace.score1"] = String.Empty;
+      _properties["#numberplace.score2"] = String.Empty;
+      _properties["#numberplace.score3"] = String.Empty;
+      _properties["#numberplace.score4"] = String.Empty;
+      _properties["#numberplace.score5"] = String.Empty;      
     }
 
     /// <summary>

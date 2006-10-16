@@ -8,15 +8,15 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2, or (at your option)
  *  any later version.
- *   
+ *
  *  This Program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU General Public License for more details.
- *   
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
@@ -163,7 +163,7 @@ namespace MediaPortal.GUI.NumberPlace
 
             IList solns = Solve((Grid)puzzle.Clone(), 10);
             return puzzle;
-            */
+       */
     }
 
     /// <summary>
@@ -324,7 +324,9 @@ namespace MediaPortal.GUI.NumberPlace
     }
 
     /// <summary>
-    /// 
+    /// rate a grid
+    /// returns it as int
+    /// the lower the harder
     /// </summary>
     /// <param name="grid">Grid</param>
     /// <returns></returns>
@@ -335,13 +337,13 @@ namespace MediaPortal.GUI.NumberPlace
       rateAll = 0;
       //			for(int trys = 0; trys<10;trys++)
       //			{
-      grid = (Grid)gridOrg.Clone();
-      rate = 0;
+      //			grid = (Grid)gridOrg.Clone();
+      //      		rate = 0;
       while (grid.CountFilledCells() < (grid.CellsInRow * grid.CellsInRow))
       {
         int cand = FindUniqueCandidates(grid);
 
-        rate += nodes;
+        rate += cand;
         if (cand > 0)
         {
           int candidateIndex = random.Next(cand);
@@ -366,7 +368,9 @@ namespace MediaPortal.GUI.NumberPlace
         }
         else
         {
-					rate = rate - ((grid.BlocksAcross * grid.BlocksAcross) - grid.CountFilledCells());
+          //rate = rate - ((grid.BlocksAcross * grid.BlocksAcross) - grid.CountFilledCells());
+          //no more unique cells -> difficult grid
+          rate = grid.CountFilledCells();
           break;
         }
 
@@ -375,11 +379,10 @@ namespace MediaPortal.GUI.NumberPlace
       //				MediaPortal.GUI.Library.Log.WriteFile(MediaPortal.GUI.Library.LogType.Log, "Soduko Rate end "+trys+" notes: {0}", rate);
       //			}
       return rate;
-
     }
 
     /// <summary>
-    /// Find all Unique Candidates in grid 
+    /// Find all Unique Candidates in grid
     /// and fill out the uniqueCandidates Array in the grid
     /// </summary>
     /// <param name="grid">Grid</param>

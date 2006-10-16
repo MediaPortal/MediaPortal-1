@@ -8,15 +8,15 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2, or (at your option)
  *  any later version.
- *   
+ *
  *  This Program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU General Public License for more details.
- *   
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
@@ -25,6 +25,7 @@
 using System;
 using System.Diagnostics;
 using System.Collections;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using System.IO;
 using System.Reflection;
@@ -58,6 +59,38 @@ namespace MediaPortal.GUI.NumberPlace
       Hard = 3
     }
 
+    public class Highscore
+    {
+      protected string name;
+      protected int score;
+      //      protected int rating = 0;
+      //      protected int totalSec = 0;
+
+      public string Name
+      {
+        get { return name; }
+        set { name = value; }
+      }
+      public int Score
+      {
+        get { return score; }
+        set { score = value; }
+      }
+
+      public Highscore(string _name, int _score)
+      {
+        this.name = _name;
+        this.score = _score;
+      }
+    }
+
+    private sealed class ScoreComparer : IComparer<Highscore>
+    {
+      public int Compare(Highscore item1, Highscore item2)
+      {
+        return item2.Score - item1.Score;
+      }
+    }
     #region Serialization
 
     [Serializable]
@@ -66,6 +99,7 @@ namespace MediaPortal.GUI.NumberPlace
       protected bool m_bShow;
       protected bool m_bBlock;
       protected int m_bLevel;
+      protected List<Highscore> m_highScore = new List<Highscore>();
 
       public Settings()
       {
@@ -95,6 +129,14 @@ namespace MediaPortal.GUI.NumberPlace
         set { m_bLevel = value; }
       }
 
+      [XmlElement("Highscores")]
+      public List<Highscore> HighScore
+      {
+        get { return m_highScore; }
+
+        set { m_highScore = value; }
+      }
+
       public void Load()
       {
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
@@ -102,6 +144,14 @@ namespace MediaPortal.GUI.NumberPlace
           m_bShow = xmlreader.GetValueAsBool("NumberPlace", "showerrormoves", false);
           m_bBlock = xmlreader.GetValueAsBool("NumberPlace", "blockerrormoves", false);
           m_bLevel = xmlreader.GetValueAsInt("NumberPlace", "level", 1);
+          m_highScore.Clear();
+          for (int i = 1; i < 4; i++)
+          {
+            string name = xmlreader.GetValueAsString("NumberPlace", "name" + i, String.Empty);
+            int score = xmlreader.GetValueAsInt("NumberPlace", "score" + i, 0);
+            if (!name.Equals(String.Empty))
+              m_highScore.Add(new Highscore(name, score));
+          }
         }
       }
 
@@ -112,6 +162,11 @@ namespace MediaPortal.GUI.NumberPlace
           xmlwriter.SetValueAsBool("NumberPlace", "showerrormoves", m_bShow);
           xmlwriter.SetValueAsBool("NumberPlace", "blockerrormoves", m_bBlock);
           xmlwriter.SetValue("NumberPlace", "level", m_bLevel);
+          for (int i = 1; i <= m_highScore.Count && i < 4; i++)
+          {
+            xmlwriter.SetValue("NumberPlace", "name" + i, m_highScore[i - 1].Name);
+            xmlwriter.SetValue("NumberPlace", "score" + i, m_highScore[i - 1].Score);
+          }
         }
       }
     }
@@ -129,12 +184,24 @@ namespace MediaPortal.GUI.NumberPlace
     [SkinControlAttribute((int)SkinControlIDs.BTN_SHOW_INVALID_MOVES)]     protected GUIToggleButtonControl btnShowInvalidMoves = null;
     [SkinControlAttribute((int)SkinControlIDs.BTN_LEVEL)]                  protected GUIButtonControl btnLevel = null;
     [SkinControlAttribute((int)SkinControlIDs.BTN_CLEAR)]                  protected GUIButtonControl btnClear = null;
-    
+
 
     static private readonly string pluginConfigFileName = "mynumberplace";
 
     protected static long m_dwCellIncorrectTextColor = 0xFFFF0000;
     protected static long m_dwTextColor = 0xFFFFFFFF;
+
+    private int nSeconds;
+    private int nMinutes;
+    private int gameRating;
+    private int totalSec = 0;
+    private System.Timers.Timer timer = new System.Timers.Timer();
+    private string strSeconds = "00";
+    private string strMinutes = "00";
+    private bool gameRunning = false;
+    private bool isScoreGame = false;
+
+    private DateTime startTime;
 
     Settings _Settings = new Settings();
 
@@ -151,6 +218,8 @@ namespace MediaPortal.GUI.NumberPlace
 
       // Create our skin xml file
       CreateSkinXML(GetWindowId(), GUIGraphicsContext.Skin);
+
+      this.timer.Elapsed += new System.Timers.ElapsedEventHandler(OnTimer_Tick);
 
       // Load the skin xml file
       return Load(GUIGraphicsContext.Skin + @"\" + pluginConfigFileName + ".xml");
@@ -185,7 +254,7 @@ namespace MediaPortal.GUI.NumberPlace
           if (!File.Exists(fileName))
           {
             // Delete the skin file if it already exists - not
-            //File.Delete(fileName);					
+            //File.Delete(fileName);
 
             // Now create the skin file only if it not exists
             Stream writer = File.Create(fileName);
@@ -231,6 +300,15 @@ namespace MediaPortal.GUI.NumberPlace
         {
           GUIControl.DeSelectControl(GetID, ((int)SkinControlIDs.BTN_BLOCK_INVALID_MOVES));
         }
+
+        for (int i = 1; i < 4; i++)
+        {
+          GUIPropertyManager.SetProperty("#numberplace.name" + i, " ");
+          GUIPropertyManager.SetProperty("#numberplace.score" + i, " ");
+        }
+        if (gameRunning)
+          ResumeTimer();
+
         UpdateButtonStates();
       }
       catch (Exception e1)
@@ -243,6 +321,8 @@ namespace MediaPortal.GUI.NumberPlace
     private void ClearGrid()
     {
       grid.Reset();
+      StopTimer();
+      gameRunning = false;
 
       for (int row = 0; row < grid.CellsInRow; row++)
       {
@@ -302,7 +382,7 @@ namespace MediaPortal.GUI.NumberPlace
     {
       int i = 0, rating = 0;
 
-      while (i < 500)
+      while (i < 100)
       {
         i++;
         puzzle = Solver.Generate(3);
@@ -311,9 +391,9 @@ namespace MediaPortal.GUI.NumberPlace
         {
           break;
         }
-        if (i == 499)
+        if (i == 99)
         {
-          Log.Debug("GUINumberPlace: None of the generated games wherre hard enough - aborting with new game at rating: {0}", rating);
+          Log.Debug("GUINumberPlace: None of the generated games where hard enough - aborting with new game at rating: {0}", rating);
           break;
         }
       }
@@ -341,22 +421,22 @@ namespace MediaPortal.GUI.NumberPlace
       }
       GUIControl.SetControlLabel(GetID, btnLevel.GetID, textLine);
     }
-    
+
     private void ResetGame()
     {
-        for (int row = 0; row < grid.CellsInRow; row++)
+      for (int row = 0; row < grid.CellsInRow; row++)
+      {
+        for (int column = 0; column < grid.CellsInRow; column++)
         {
-            for (int column = 0; column < grid.CellsInRow; column++)
-            {
-                int cellControlId = (1000 * (row + 1)) + column;
-                CellControl cntlFoc = (CellControl)GetControl(cellControlId);
-                if( cntlFoc.editable)
-                {
-                    cntlFoc.CellValue = 0;
-                    grid.cells[row , column] = 0;
-                }
-            }
+          int cellControlId = (1000 * (row + 1)) + column;
+          CellControl cntlFoc = (CellControl)GetControl(cellControlId);
+          if (cntlFoc.editable)
+          {
+            cntlFoc.CellValue = 0;
+            grid.cells[row, column] = 0;
+          }
         }
+      }
     }
 
     private void Result()
@@ -364,10 +444,31 @@ namespace MediaPortal.GUI.NumberPlace
       GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
       if (SolvedCorrect())
       {
+        StopTimer();
+        gameRunning = false;
+        int score = (100000000 / gameRating) / totalSec;
+
         dlg.SetHeading(GUILocalizeStrings.Get(19111)); // Game Over
         dlg.SetLine(1, GUILocalizeStrings.Get(19112)); // Congratulation!
         dlg.SetLine(2, GUILocalizeStrings.Get(19113)); // You have solved the game correctly.
-        dlg.SetLine(3, String.Empty);
+
+        if ((_Settings.HighScore.Count < 3 || score > _Settings.HighScore[2].Score) && isScoreGame)
+        {
+          //dlg.SetLine(3, "New Highscore! Your Name?");
+          dlg.DoModal(GUIWindowManager.ActiveWindow);
+
+          string name = GetPlayerName();
+          _Settings.HighScore.Add(new Highscore(name, score));
+          _Settings.HighScore.Sort(new ScoreComparer());
+          _Settings.Save();
+        }
+        else
+        {
+          dlg.DoModal(GUIWindowManager.ActiveWindow);
+        }
+
+        Log.Info("GUINumberPlace: Solved in: {0} game Rating: {2} Score: {1}", totalSec, score, gameRating);
+
         //Utils.PlaySound("notify.wav", false, true);
       }
       else
@@ -376,8 +477,82 @@ namespace MediaPortal.GUI.NumberPlace
         dlg.SetLine(1, GUILocalizeStrings.Get(19114)); // Sorry, but your solution is wrong.
         dlg.SetLine(2, String.Empty);
         dlg.SetLine(3, String.Empty);
+        dlg.DoModal(GUIWindowManager.ActiveWindow);
       }
-      dlg.DoModal(GUIWindowManager.ActiveWindow);
+    }
+
+    #region Timer Functions
+    public void OnTimer_Tick(object sender, System.EventArgs e)
+    {
+      if (nSeconds == 59)
+      {
+        nSeconds = 0;
+        nMinutes++;
+      }
+      else
+      {
+        nSeconds++;
+      }
+
+      strSeconds = "";
+      strMinutes = "";
+      if (nSeconds < 10)
+        strSeconds = "0";
+      strSeconds += nSeconds;
+      if (nMinutes < 10)
+        strMinutes = "0";
+      strMinutes += nMinutes;
+    }
+
+    private void ResumeTimer()
+    {
+      timer.Enabled = true;
+      startTime = DateTime.Now;
+    }
+
+    private void StartTimer()
+    {
+      startTime = DateTime.Now;
+      timer.Interval = 1000;
+      timer.Enabled = true;
+
+      nSeconds = 0;
+      nMinutes = 0;
+      totalSec = 0;
+    }
+
+    private void StopTimer()
+    {
+      timer.Enabled = false;
+
+      //calculate the correct needed time 
+      TimeSpan sub = DateTime.Now.Subtract(startTime);
+
+      nMinutes = sub.Minutes;
+      nSeconds = sub.Seconds;
+
+      strSeconds = "";
+      strMinutes = "";
+      if (nSeconds < 10)
+        strSeconds = "0";
+      strSeconds += nSeconds;
+      if (nMinutes < 10)
+        strMinutes = "0";
+      strMinutes += nMinutes;
+
+      totalSec += (nMinutes * 60) + nSeconds;
+    }
+    #endregion
+
+    private string GetPlayerName()
+    {
+      VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
+      if (null == keyboard) return null;
+      keyboard.Reset();
+      keyboard.DoModal(GetID);
+      if (keyboard.IsConfirmed)
+        return keyboard.Text;
+      return "unknown";
     }
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
@@ -394,11 +569,11 @@ namespace MediaPortal.GUI.NumberPlace
             {
               int cellControlId = (1000 * (row + 1)) + column;
               CellControl cntlFoc = (CellControl)GetControl(cellControlId);
-              if( cntlFoc.editable)
+              if (cntlFoc.editable)
               {
-              	cntlFoc.CellValue = solution.cells[row, column];
-              	cntlFoc.M_dwDisabledColor = m_dwCellIncorrectTextColor;
-              	cntlFoc.editable = false;
+                cntlFoc.CellValue = solution.cells[row, column];
+                cntlFoc.M_dwDisabledColor = m_dwCellIncorrectTextColor;
+                cntlFoc.editable = false;
               }
             }
           }
@@ -415,33 +590,35 @@ namespace MediaPortal.GUI.NumberPlace
         switch ((LevelName)_Settings.Level)
         {
           case LevelName.Kids:
-            minrating = 50;
-            maxrating = 250;
+            minrating = 550;
+            maxrating = 999;
             break;
           case LevelName.Easy:
-            minrating = 150;
-            maxrating = 350;
+            minrating = 450;
+            maxrating = 650;
             break;
           case LevelName.Medium:
             minrating = 250;
-            maxrating = 450;
+            maxrating = 550;
             break;
           case LevelName.Hard:
-            minrating = 450;
-            maxrating = 999;
+            minrating = 0;
+            maxrating = 250;
             break;
         }
         puzzle = GenerateLevel(puzzle, minrating, maxrating);
-
+        gameRating = Solver.Rate(puzzle);
         //puzzle = Solver.Generate(3);
         Grid solution = Solver.Solve(puzzle);
         if ((LevelName)_Settings.Level == LevelName.Easy)
         {
           puzzle = Solver.FillOutCells(puzzle, solution, 10);
+          gameRating = Solver.Rate(puzzle);
         }
         else if ((LevelName)_Settings.Level == LevelName.Kids)
         {
           puzzle = Solver.FillOutCells(puzzle, solution, 20);
+          gameRating = Solver.Rate(puzzle) * 2;
         }
 
         for (int row = 0; row < grid.CellsInRow; row++)
@@ -462,13 +639,22 @@ namespace MediaPortal.GUI.NumberPlace
           }
         }
         grid = puzzle;
+        StartTimer();
+        gameRunning = true;
+        if (_Settings.Show || _Settings.Block)
+          isScoreGame = false;
+        else
+          isScoreGame = true;
       }
       else if (control == btnBlockInvalidMoves)
       {
         _Settings.Block = btnBlockInvalidMoves.Selected;
         if (btnBlockInvalidMoves.Selected)
+        {
           if (btnShowInvalidMoves.Selected)
             _Settings.Show = btnShowInvalidMoves.Selected = false;
+          isScoreGame = false;
+        }
         _Settings.Save();
       }
       else if (control == btnClear)
@@ -479,8 +665,11 @@ namespace MediaPortal.GUI.NumberPlace
       {
         _Settings.Show = btnShowInvalidMoves.Selected;
         if (btnShowInvalidMoves.Selected)
+        {
           if (btnBlockInvalidMoves.Selected)
             _Settings.Block = btnBlockInvalidMoves.Selected = false;
+          isScoreGame = false;
+        }
         ShowInvalid();
         _Settings.Save();
       }
@@ -508,6 +697,8 @@ namespace MediaPortal.GUI.NumberPlace
       {
         int candidateIndex = random.Next(81 - grid.CountFilledCells());
         int m = -1, row = 0, column = 0;
+        isScoreGame = false;
+
         for (row = 0; row < 9 && m < candidateIndex; row++)
         {
           for (column = 0; column < 9 && m < candidateIndex; column++)
@@ -521,7 +712,6 @@ namespace MediaPortal.GUI.NumberPlace
               {
                 cntlFoc.CellValue = cntlFoc.SolutionValue;
                 grid.cells[row, column] = cntlFoc.SolutionValue;
-
               }
             }
           }
@@ -534,6 +724,7 @@ namespace MediaPortal.GUI.NumberPlace
       }
       base.OnClicked(controlId, control, actionType);
     }
+
 
     public override void OnAction(Action action)
     {
@@ -592,9 +783,8 @@ namespace MediaPortal.GUI.NumberPlace
         }
       }
       else
-
         if (action.wID == Action.ActionType.ACTION_KEY_PRESSED ||
-          (action.wID >= Action.ActionType.REMOTE_0 && action.wID <= Action.ActionType.REMOTE_9))
+            (action.wID >= Action.ActionType.REMOTE_0 && action.wID <= Action.ActionType.REMOTE_9))
         {
           int controlId = GetFocusControlId();
           if (controlId >= 1000 && controlId <= 9008)
@@ -643,10 +833,30 @@ namespace MediaPortal.GUI.NumberPlace
             }
           }
         }
-
+        else if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
+        {
+          StopTimer();
+        }
       base.OnAction(action);
     }
-    
+
+    public override void Render(float timePassed)
+    {
+      base.Render(timePassed);
+      // Do not render if not visible.
+      if (GUIGraphicsContext.EditMode == false)
+      {
+        if (!IsVisible) return;
+      }
+
+      GUIPropertyManager.SetProperty("#numberplace.time", strMinutes + ":" + strSeconds);
+
+      for (int i = 0; i < _Settings.HighScore.Count; i++)
+      {
+        GUIPropertyManager.SetProperty("#numberplace.name" + (i + 1), _Settings.HighScore[i].Name);
+        GUIPropertyManager.SetProperty("#numberplace.score" + (i + 1), (_Settings.HighScore[i].Score).ToString());
+      }
+    }
 
     #region ISetupForm Members
     public int GetWindowId()
