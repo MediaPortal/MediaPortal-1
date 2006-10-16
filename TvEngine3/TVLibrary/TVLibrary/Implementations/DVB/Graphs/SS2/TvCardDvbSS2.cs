@@ -863,48 +863,51 @@ namespace TvLibrary.Implementations.DVB
       }
       Log.Log.WriteFile("    pcr pid:0x{0:X}", info.pcr_pid);
       Log.Log.WriteFile("    pmt pid:0x{0:X}", info.network_pmt_PID);
-      foreach (PidInfo pmtData in info.pids)
+      if (info.pids != null)
       {
-        if (pmtData.pid == 0 || pmtData.pid > 0x1fff) continue;
-        if (pmtData.isTeletext)
+        foreach (PidInfo pmtData in info.pids)
         {
-          Log.Log.WriteFile("    map teletext pid:0x{0:X}", pmtData.pid);
-          if (GrabTeletext)
+          if (pmtData.pid == 0 || pmtData.pid > 0x1fff) continue;
+          if (pmtData.isTeletext)
           {
-            ITsTeletextGrabber grabber = (ITsTeletextGrabber)_filterTsAnalyzer;
-            grabber.SetTeletextPid((short)pmtData.pid);
+            Log.Log.WriteFile("    map teletext pid:0x{0:X}", pmtData.pid);
+            if (GrabTeletext)
+            {
+              ITsTeletextGrabber grabber = (ITsTeletextGrabber)_filterTsAnalyzer;
+              grabber.SetTeletextPid((short)pmtData.pid);
+            }
+            hwPids.Add((ushort)pmtData.pid);
+            _hasTeletext = true;
           }
-          hwPids.Add((ushort)pmtData.pid);
-          _hasTeletext = true;
-        }
-        if (pmtData.isAC3Audio || pmtData.isAudio)
-        {
-          if (_currentAudioStream == null || pmtData.isAC3Audio)
+          if (pmtData.isAC3Audio || pmtData.isAudio)
           {
-            _currentAudioStream = new DVBAudioStream();
-            _currentAudioStream.Pid = pmtData.pid;
-            _currentAudioStream.Language = pmtData.language;
-            _currentAudioStream.StreamType = AudioStreamType.Mpeg2;
-            if (pmtData.isAC3Audio)
-              _currentAudioStream.StreamType = AudioStreamType.AC3;
+            if (_currentAudioStream == null || pmtData.isAC3Audio)
+            {
+              _currentAudioStream = new DVBAudioStream();
+              _currentAudioStream.Pid = pmtData.pid;
+              _currentAudioStream.Language = pmtData.language;
+              _currentAudioStream.StreamType = AudioStreamType.Mpeg2;
+              if (pmtData.isAC3Audio)
+                _currentAudioStream.StreamType = AudioStreamType.AC3;
+            }
+
+            if (_currentAudioStream.Pid == pmtData.pid)
+            {
+              Log.Log.WriteFile("    map audio pid:0x{0:X}", pmtData.pid);
+              writer.SetAudioPid((short)pmtData.pid);
+            }
+            hwPids.Add((ushort)pmtData.pid);
           }
 
-          if (_currentAudioStream.Pid == pmtData.pid)
+          if (pmtData.isVideo)
           {
-            Log.Log.WriteFile("    map audio pid:0x{0:X}", pmtData.pid);
-            writer.SetAudioPid((short)pmtData.pid);
-          }
-          hwPids.Add((ushort)pmtData.pid);
-        }
-
-        if (pmtData.isVideo)
-        {
-          Log.Log.WriteFile("    map video pid:0x{0:X}", pmtData.pid);
-          hwPids.Add((ushort)pmtData.pid);
-          writer.SetVideoPid((short)pmtData.pid);
-          if (info.pcr_pid > 0 && info.pcr_pid != pmtData.pid)
-          {
-            hwPids.Add((ushort)info.pcr_pid);
+            Log.Log.WriteFile("    map video pid:0x{0:X}", pmtData.pid);
+            hwPids.Add((ushort)pmtData.pid);
+            writer.SetVideoPid((short)pmtData.pid);
+            if (info.pcr_pid > 0 && info.pcr_pid != pmtData.pid)
+            {
+              hwPids.Add((ushort)info.pcr_pid);
+            }
           }
         }
       }
@@ -2131,7 +2134,10 @@ namespace TvLibrary.Implementations.DVB
 #else
         if (SendPmtToCam())
         {
-          SetMpegPidMapping(_channelInfo);
+          if (_channelInfo != null)
+          {
+            SetMpegPidMapping(_channelInfo);
+          }
         }
 #endif
       }

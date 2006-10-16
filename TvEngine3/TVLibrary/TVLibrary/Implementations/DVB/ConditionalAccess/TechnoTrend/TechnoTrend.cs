@@ -17,25 +17,6 @@
  *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
  *  http://www.gnu.org/copyleft/gpl.html
  *
- *//* 
- *	Copyright (C) 2005-2006 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
  */
 using System;
 using System.Collections;
@@ -44,6 +25,7 @@ using System.Runtime.InteropServices;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using System.Windows.Forms;
+using TvLibrary.Channels;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -189,24 +171,24 @@ namespace TvLibrary.Implementations.DVB
           (info.achName == TechnoTrend.USB2_T_TUNER) ||
           (info.achName == TechnoTrend.USB2_S_TUNER))
       {
-        Log.Log.WriteFile( "TechnoTrend card type:{0}", TechnoTrendDeviceType.eDevTypeUsb2);
+        Log.Log.WriteFile("TechnoTrend card type:{0}", TechnoTrendDeviceType.eDevTypeUsb2);
         _deviceType = TechnoTrendDeviceType.eDevTypeUsb2;
       }
       else if (info.achName == TechnoTrend.BUDGET3_TUNER)
       {
-        Log.Log.WriteFile( "TechnoTrend card type:{0}", TechnoTrendDeviceType.eDevTypeB3);
+        Log.Log.WriteFile("TechnoTrend card type:{0}", TechnoTrendDeviceType.eDevTypeB3);
         _deviceType = TechnoTrendDeviceType.eDevTypeB3;
       }
       else if ((info.achName == TechnoTrend.BUDGET2_C_TUNER) ||
                 (info.achName == TechnoTrend.BUDGET2_S_TUNER) ||
                 (info.achName == TechnoTrend.BUDGET2_T_TUNER))
       {
-        Log.Log.WriteFile( "TechnoTrend card type:{0}", TechnoTrendDeviceType.eDevTypeB2);
+        Log.Log.WriteFile("TechnoTrend card type:{0}", TechnoTrendDeviceType.eDevTypeB2);
         _deviceType = TechnoTrendDeviceType.eDevTypeB2;
       }
       else if (info.achName == TechnoTrend.USB2_PINNACLE_TUNER)
       {
-        Log.Log.WriteFile( "TechnoTrend card type:{0}", TechnoTrendDeviceType.eDevTypeUsb2Pinnacle);
+        Log.Log.WriteFile("TechnoTrend card type:{0}", TechnoTrendDeviceType.eDevTypeUsb2Pinnacle);
         _deviceType = TechnoTrendDeviceType.eDevTypeUsb2Pinnacle;
       }
       else
@@ -222,7 +204,7 @@ namespace TvLibrary.Implementations.DVB
         _handle = bdaapiOpenHWIdx((UInt32)_deviceType, deviceId);
         if (_handle != 0xffffffff)
         {
-          Log.Log.WriteFile(  "Technotrend: card detected");
+          Log.Log.WriteFile("Technotrend: card detected");
           _isCamInitializedTable.Add(_handle, false);
           unsafe
           {
@@ -233,7 +215,7 @@ namespace TvLibrary.Implementations.DVB
             int hr = bdaapiOpenCISlim(_handle, _technoTrendStructure);
             if (hr == 0)
             {
-              Log.Log.WriteFile(  "Technotrend: CI opened");
+              Log.Log.WriteFile("Technotrend: CI opened");
               _hasCam = true;
             }
             return;
@@ -242,7 +224,7 @@ namespace TvLibrary.Implementations.DVB
       }
       catch (Exception)
       {
-        Log.Log.WriteFile(  "Technotrend: unable to initialize (does ttBdaDrvApi_Dll.dll exists?)");
+        Log.Log.WriteFile("Technotrend: unable to initialize (does ttBdaDrvApi_Dll.dll exists?)");
         //int x = 1;
       }
       _deviceType = TechnoTrendDeviceType.eTypeUnknown;
@@ -250,23 +232,23 @@ namespace TvLibrary.Implementations.DVB
 
     int GetDeviceID(IBaseFilter tunerfilter)
     {
-      Log.Log.WriteFile( "TechnoTrend: Looking Device ID");
+      Log.Log.WriteFile("TechnoTrend: Looking Device ID");
       IPin outputPin = DirectShowLib.DsFindPin.ByDirection(tunerfilter, PinDirection.Output, 0);
       if (outputPin == null)
         return -1;
-      Log.Log.WriteFile( "TechnoTrend: Got Pin");
+      Log.Log.WriteFile("TechnoTrend: Got Pin");
       IKsPin iKsPin = outputPin as IKsPin;
       KSMULTIPLE_ITEM pmi;
       IntPtr pDataReturned;
       int hr = iKsPin.KsQueryMediums(out pDataReturned);
-      Release.ComObject("technotrend pin",outputPin);
+      Release.ComObject("technotrend pin", outputPin);
       if (hr != 0)
       {
-        Log.Log.WriteFile( "TechnoTrend: Pin does not support Mediums");
+        Log.Log.WriteFile("TechnoTrend: Pin does not support Mediums");
         return -1;  // Pin does not support mediums.
       }
       pmi = (KSMULTIPLE_ITEM)Marshal.PtrToStructure(pDataReturned, typeof(KSMULTIPLE_ITEM));
-      Log.Log.WriteFile( "TechnoTrend: Got Mediums:{0}", pmi.Count);
+      Log.Log.WriteFile("TechnoTrend: Got Mediums:{0}", pmi.Count);
       if (pmi.Count != 0)
       {
         // Use pointer arithmetic to reference the first medium structure.
@@ -277,7 +259,7 @@ namespace TvLibrary.Implementations.DVB
         REGPINMEDIUM medium = (REGPINMEDIUM)Marshal.PtrToStructure(ptrData, typeof(REGPINMEDIUM));
         int id = (int)medium.dw1;
         Marshal.FreeCoTaskMem(pDataReturned);
-        Log.Log.WriteFile( "TechnoTrend: Device ID:{0}", id);
+        Log.Log.WriteFile("TechnoTrend: Device ID:{0}", id);
         return id;
       }
       else
@@ -293,7 +275,7 @@ namespace TvLibrary.Implementations.DVB
       if (_handle != 0xffffffff)
       {
         _isCamInitializedTable.Remove(_handle);
-        Log.Log.WriteFile(  "Technotrend: close");
+        Log.Log.WriteFile("Technotrend: close");
         if (_hasCam)
         {
           bdaapiCloseCI(_handle);
@@ -302,6 +284,10 @@ namespace TvLibrary.Implementations.DVB
       }
       _handle = 0xffffffff;
       _hasCam = false;
+    }
+    public bool IsCamReady()
+    {
+      return (bool)_isCamInitializedTable[_handle];
     }
 
     public bool IsTechnoTrend
@@ -324,23 +310,23 @@ namespace TvLibrary.Implementations.DVB
     {
       if ((bool)_isCamInitializedTable[_handle] == false)
       {
-        Log.Log.WriteFile(  "Technotrend: service cannot be decoded because the CAM is not ready yet");
+        Log.Log.WriteFile("Technotrend: service cannot be decoded because the CAM is not ready yet");
         return false;
       }
       int hr = bdaapiCIReadPSIFastDrvDemux(_handle, serviceId);
       if (hr == 0)
       {
-        Log.Log.WriteFile(  "Technotrend: service decoded");
+        Log.Log.WriteFile("Technotrend: service decoded");
         return true;
       }
       else
       {
-        Log.Log.WriteFile(  "Technotrend: unable to decode service");
+        Log.Log.WriteFile("Technotrend: unable to decode service");
         return false;
       }
     }
 
-    public void SendDiseqCommand(int antennaNr, int frequency, int switchingFrequency, int polarisation, int diseqcType)
+    public void SendDiseqCommand(DVBSChannel channel)
     {
       // send DISEQC:
       //Data             : 4 bytes in form of 
@@ -366,47 +352,61 @@ namespace TvLibrary.Implementations.DVB
       byte length = 4;
       byte position = 0;
       byte option = 0;
-      switch (diseqcType)
+      switch (channel.DisEqc)
       {
-        case 0:
-          goto case 1;
-        case 1://simple A
+        case DisEqcType.None://simple A
           position = 0;
           option = 0;
           break;
-        case 2://simple B
+        case DisEqcType.SimpleA://simple A
           position = 0;
           option = 0;
           break;
-        case 3://Level 1 A/A
+        case DisEqcType.SimpleB://simple B
           position = 0;
           option = 0;
           break;
-        case 4://Level 1 B/A
+        case DisEqcType.Level1AA://Level 1 A/A
+          position = 0;
+          option = 0;
+          break;
+        case DisEqcType.Level1BA://Level 1 B/A
           position = 1;
           option = 0;
           break;
-        case 5://Level 1 A/B
+        case DisEqcType.Level1AB://Level 1 A/B
           position = 0;
           option = 1;
           break;
-        case 6://Level 1 B/B
+        case DisEqcType.Level1BB://Level 1 B/B
           position = 1;
           option = 1;
           break;
       }
+      //int lnbFrequency = 10600000;
+      bool hiBand = true;
+      if (channel.Frequency >= 11700000)
+      {
+        //lnbFrequency = 10600000;
+        hiBand = true;
+      }
+      else
+      {
+        //lnbFrequency = 9750000;
+        hiBand = false;
+      }
+
       IntPtr ptrData = Marshal.AllocCoTaskMem(4);
       try
       {
-        int pol;
         uint diseqc = 0xE01038F0;
 
-        if (frequency > switchingFrequency)                 // high band
+        if (hiBand)                 // high band
           diseqc |= 0x00000001;
         else                        // low band
           diseqc &= 0xFFFFFFFE;
 
-        if (polarisation == 1)             // vertikal
+        if (channel.Polarisation == Polarisation.LinearV)             // vertikal
           diseqc &= 0xFFFFFFFD;
         else                        // horizontal
           diseqc |= 0x00000002;
@@ -421,18 +421,13 @@ namespace TvLibrary.Implementations.DVB
         else                        // option A
           diseqc &= 0xFFFFFFF7;
 
-        if (polarisation == 0)//horizontal
-          pol = (int)Polarisation.LinearH;
-        else
-          pol = (int)Polarisation.LinearV;
-
         Marshal.WriteByte(ptrData, 0, (byte)((diseqc >> 24) & 0xff));
         Marshal.WriteByte(ptrData, 1, (byte)((diseqc >> 16) & 0xff));
         Marshal.WriteByte(ptrData, 2, (byte)((diseqc >> 8) & 0xff));
         Marshal.WriteByte(ptrData, 3, (byte)((diseqc) & 0xff));
 
-        bdaapiSetDiSEqCMsg(_handle, ptrData, length, repeat, toneburst, pol);
-        Log.Log.WriteFile(  "Technotrend: Diseqc Command Send");
+        bdaapiSetDiSEqCMsg(_handle, ptrData, length, repeat, toneburst, (int)channel.Polarisation);
+        Log.Log.WriteFile("Technotrend: Diseqc Command Send");
       }
       finally
       {
@@ -450,25 +445,25 @@ namespace TvLibrary.Implementations.DVB
     {
       int uiAntPwrOnOff = 0;
       string Get5vAntennae = "Disabled";
-      Log.Log.WriteFile( "Setting TechnoTrend DVB-T 5v Antennae Power enabled:{0}", onOff);
+      Log.Log.WriteFile("Setting TechnoTrend DVB-T 5v Antennae Power enabled:{0}", onOff);
       bdaapiSetDVBTAntPwr(_handle, onOff);
       bdaapiGetDVBTAntPwr(_handle, ref uiAntPwrOnOff);
       if (uiAntPwrOnOff == 0) Get5vAntennae = "Disabled";
       if (uiAntPwrOnOff == 1) Get5vAntennae = "Enabled";
       if (uiAntPwrOnOff == 2) Get5vAntennae = "Not Connected";
-      Log.Log.WriteFile( "TechnoTrend DVB-T 5v Antennae status:{0}", Get5vAntennae);
+      Log.Log.WriteFile("TechnoTrend DVB-T 5v Antennae status:{0}", Get5vAntennae);
     }
 
     unsafe public static void OnSlotStatus(UInt32 Context, Byte nSlot, Byte nStatus, SlotInfo* csInfo)
     {
       if ((nStatus == 2) || (nStatus == 3) || (nStatus == 4))
       {
-        Log.Log.WriteFile(  "Technotrend: CAM initialized {0}", Context);
+        Log.Log.WriteFile("Technotrend: CAM initialized {0}", Context);
         _isCamInitializedTable[Context] = true;
       }
       else
       {
-        Log.Log.WriteFile(  "Technotrend: CAM not initialized, Card;{0} status:{1}", Context, nStatus);
+        Log.Log.WriteFile("Technotrend: CAM not initialized, Card;{0} status:{1}", Context, nStatus);
         _isCamInitializedTable[Context] = false;
       }
 

@@ -154,12 +154,8 @@ namespace TvLibrary.Implementations.DVB
     protected DateTime _dateRecordingStarted = DateTime.MinValue;
     #endregion
 
-#if FORM
     protected bool _newPMT = false;
-    System.Windows.Forms.Timer _pmtTimer = new System.Windows.Forms.Timer();
-#else
     System.Timers.Timer _pmtTimer = new System.Timers.Timer();
-#endif
     bool _pmtTimerRentrant = false;
     #endregion
 
@@ -209,9 +205,7 @@ namespace TvLibrary.Implementations.DVB
     protected void SubmitTuneRequest(ITuneRequest tuneRequest)
     {
       if (!CheckThreadId()) return;
-#if FORM      
-      _newPMT=false;
-#endif
+
       Log.Log.WriteFile("dvb:SubmitTuneRequest");
       _startTimeShifting = false;
       _channelInfo = new ChannelInfo();
@@ -251,6 +245,7 @@ namespace TvLibrary.Implementations.DVB
       SendHwPids(pids);
 
       _pmtVersion = -1;
+      _newPMT = false;
     }
 
 
@@ -486,6 +481,7 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.WriteFile("dvb:RunGraph");
       _teletextDecoder.ClearBuffer();
       _pmtVersion = -1;
+      _newPMT = false;
 
       int hr = 0;
 
@@ -535,6 +531,7 @@ namespace TvLibrary.Implementations.DVB
       _pmtTimer.Enabled = false;
       _startTimeShifting = false;
       _pmtVersion = -1;
+      _newPMT = false;
       _recordingFileName = "";
       _channelInfo = new ChannelInfo();
       _currentChannel = null;
@@ -1306,53 +1303,55 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.WriteFile("  pid:{0:X} pcr", info.pcr_pid);
         Log.Log.WriteFile("  pid:{0:X} pmt", info.network_pmt_PID);
 
-        foreach (PidInfo pidInfo in info.pids)
+        if (info.pids != null)
         {
-          Log.Log.WriteFile("  {0}", pidInfo.ToString());
-          if (pidInfo.pid == 0 || pidInfo.pid > 0x1fff) continue;
-          if (pidInfo.isTeletext)
+          foreach (PidInfo pidInfo in info.pids)
           {
-            Log.Log.WriteFile("    map {0}", pidInfo);
-            if (GrabTeletext)
-            {
-              ITsTeletextGrabber grabber = (ITsTeletextGrabber)_filterTsAnalyzer;
-              grabber.SetTeletextPid((short)pidInfo.pid);
-            }
-            hwPids.Add((ushort)pidInfo.pid);
-            _hasTeletext = true;
-          }
-          if (pidInfo.isAC3Audio || pidInfo.isAudio)
-          {
-            if (_currentAudioStream == null || pidInfo.isAC3Audio)
-            {
-              _currentAudioStream = new DVBAudioStream();
-              _currentAudioStream.Pid = pidInfo.pid;
-              _currentAudioStream.Language = pidInfo.language;
-              _currentAudioStream.StreamType = AudioStreamType.Mpeg2;
-              if (pidInfo.isAC3Audio)
-                _currentAudioStream.StreamType = AudioStreamType.AC3;
-            }
-
-            if (_currentAudioStream.Pid == pidInfo.pid)
+            Log.Log.WriteFile("  {0}", pidInfo.ToString());
+            if (pidInfo.pid == 0 || pidInfo.pid > 0x1fff) continue;
+            if (pidInfo.isTeletext)
             {
               Log.Log.WriteFile("    map {0}", pidInfo);
-              writer.SetAudioPid((short)pidInfo.pid);
+              if (GrabTeletext)
+              {
+                ITsTeletextGrabber grabber = (ITsTeletextGrabber)_filterTsAnalyzer;
+                grabber.SetTeletextPid((short)pidInfo.pid);
+              }
+              hwPids.Add((ushort)pidInfo.pid);
+              _hasTeletext = true;
             }
-            hwPids.Add((ushort)pidInfo.pid);
-          }
-
-          if (pidInfo.isVideo)
-          {
-            Log.Log.WriteFile("    map {0}", pidInfo);
-            hwPids.Add((ushort)pidInfo.pid);
-            writer.SetVideoPid((short)pidInfo.pid);
-            if (info.pcr_pid > 0 && info.pcr_pid != pidInfo.pid)
+            if (pidInfo.isAC3Audio || pidInfo.isAudio)
             {
-              hwPids.Add((ushort)info.pcr_pid);
+              if (_currentAudioStream == null || pidInfo.isAC3Audio)
+              {
+                _currentAudioStream = new DVBAudioStream();
+                _currentAudioStream.Pid = pidInfo.pid;
+                _currentAudioStream.Language = pidInfo.language;
+                _currentAudioStream.StreamType = AudioStreamType.Mpeg2;
+                if (pidInfo.isAC3Audio)
+                  _currentAudioStream.StreamType = AudioStreamType.AC3;
+              }
+
+              if (_currentAudioStream.Pid == pidInfo.pid)
+              {
+                Log.Log.WriteFile("    map {0}", pidInfo);
+                writer.SetAudioPid((short)pidInfo.pid);
+              }
+              hwPids.Add((ushort)pidInfo.pid);
+            }
+
+            if (pidInfo.isVideo)
+            {
+              Log.Log.WriteFile("    map {0}", pidInfo);
+              hwPids.Add((ushort)pidInfo.pid);
+              writer.SetVideoPid((short)pidInfo.pid);
+              if (info.pcr_pid > 0 && info.pcr_pid != pidInfo.pid)
+              {
+                hwPids.Add((ushort)info.pcr_pid);
+              }
             }
           }
         }
-
         if (info.network_pmt_PID >= 0 && ((DVBBaseChannel)_currentChannel).ServiceId >= 0)
         {
           hwPids.Add((ushort)info.network_pmt_PID);
@@ -2000,16 +1999,19 @@ namespace TvLibrary.Implementations.DVB
         if (_graphRunning == false) return;
         if (_pmtTimerRentrant) return;
         _pmtTimerRentrant = true;
-#if FORM
+
         if (_newPMT)
         {
           if (SendPmtToCam())
           {
-                SetMpegPidMapping(_channelInfo);
+            if (_channelInfo != null)
+            {
+              SetMpegPidMapping(_channelInfo);
+              _newPMT = false;
+            }
           } 
-          _newPMT=false;
         }
-#endif
+
 
       }
       catch (Exception ex)
@@ -2303,14 +2305,18 @@ namespace TvLibrary.Implementations.DVB
       {
         Log.Log.WriteFile("dvb:OnPMTReceived()");
         if (_graphRunning == false) return 0;
-#if FORM
-      _newPMT=true;
-#else
         if (SendPmtToCam())
         {
-          SetMpegPidMapping(_channelInfo);
+          _newPMT = false;
+          if (_channelInfo != null)
+          {
+            SetMpegPidMapping(_channelInfo);
+          }
         }
-#endif
+        else
+        {
+          _newPMT = true;
+        }
       }
       catch (Exception ex)
       {
@@ -2359,16 +2365,24 @@ namespace TvLibrary.Implementations.DVB
                     audioPid = _currentAudioStream.Pid;
                   }
 
-                  if (_conditionalAccess.SendPMT(_camType,(DVBBaseChannel)Channel, pmt, pmtLength, audioPid) == false)
+                  if (_conditionalAccess.SendPMT(_camType, (DVBBaseChannel)Channel, pmt, pmtLength, audioPid) == false)
                   {
+                    Log.Log.WriteFile("dvb:cam ready:{0}", _conditionalAccess.IsCamReady());
                     return true;
+                  }
+                  else
+                  {
+                    //cam is not ready yet
+                    Log.Log.WriteFile("dvb:cam ready:{0}", _conditionalAccess.IsCamReady());
+                    _pmtVersion = -1;
+                    return false;
                   }
                 }
                 _pmtVersion = version;
+                
                 return true;
               }
             }
-
           }
         }
         catch (Exception ex)

@@ -58,7 +58,7 @@ namespace TvLibrary.Implementations.DVB
         return;
       }
       _digitalEveryWhere = null;
-      
+
       Log.Log.WriteFile("Check for Twinhan");
       _twinhan = new Twinhan(tunerFilter, captureFilter);
       if (_twinhan.IsTwinhan)
@@ -87,15 +87,23 @@ namespace TvLibrary.Implementations.DVB
       {
         _digitalEveryWhere.IsCamReady();
       }
+      if (_twinhan!= null)
+      {
+        return _twinhan.IsCamReady();
+      }
+      if (_technoTrend != null)
+      {
+        return _technoTrend.IsCamReady();
+      }
       return true;
     }
-    
+
     /// <summary>
     /// resets the CAM
     /// </summary>
     public void ResetCAM()
     {
-      if (_digitalEveryWhere!=null)
+      if (_digitalEveryWhere != null)
       {
         _digitalEveryWhere.ResetCAM();
       }
@@ -109,7 +117,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="pmtLength">length of the pmt array</param>
     /// <param name="audioPid">pid of the current audio stream</param>
     /// <returns></returns>
-    public bool SendPMT(CamType camType,DVBBaseChannel channel, byte[] PMT, int pmtLength, int audioPid)
+    public bool SendPMT(CamType camType, DVBBaseChannel channel, byte[] PMT, int pmtLength, int audioPid)
     {
       if (_digitalEveryWhere != null)
       {
@@ -119,12 +127,12 @@ namespace TvLibrary.Implementations.DVB
       {
 
         ChannelInfo info = new ChannelInfo();
-        info.DecodePmt(PMT); 
+        info.DecodePmt(PMT);
         int videoPid = -1;
         foreach (PidInfo pmtData in info.pids)
         {
-          if (pmtData.isVideo && videoPid<0) videoPid = pmtData.pid;
-          if (pmtData.isAudio && audioPid<0) audioPid = pmtData.pid;
+          if (pmtData.isVideo && videoPid < 0) videoPid = pmtData.pid;
+          if (pmtData.isAudio && audioPid < 0) audioPid = pmtData.pid;
           if (videoPid >= 0 && audioPid >= 0) break;
         }
         int caPmtLen;
@@ -149,6 +157,10 @@ namespace TvLibrary.Implementations.DVB
       {
         _digitalEveryWhere.SendDiseqcCommand(channel);
       }
+      if (_technoTrend != null)
+      {
+        _technoTrend.SendDiseqCommand(channel);
+      }
     }
     /// <summary>
     /// Instructs the cam/ci module to use hardware filter and only send the pids listed in pids to the pc
@@ -156,7 +168,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="channel">The current tv/radio channel.</param>
     /// <param name="pids">The pids.</param>
     /// <remarks>when the pids array is empty, pid filtering is disabled and all pids are received</remarks>
-    public void SendPids(DVBBaseChannel channel,ArrayList pids)
+    public void SendPids(DVBBaseChannel channel, ArrayList pids)
     {
       if (_digitalEveryWhere != null)
       {
@@ -165,7 +177,7 @@ namespace TvLibrary.Implementations.DVB
         isDvbt = ((channel as DVBTChannel) != null);
         isDvbs = ((channel as DVBSChannel) != null);
         isAtsc = ((channel as ATSCChannel) != null);
-        _digitalEveryWhere.SetHardwarePidFiltering(isDvbc,isDvbt,isDvbs,isAtsc,pids);
+        _digitalEveryWhere.SetHardwarePidFiltering(isDvbc, isDvbt, isDvbs, isAtsc, pids);
       }
     }
   }

@@ -190,7 +190,7 @@ namespace TvLibrary.Implementations.DVB
     /// </returns>
     public bool IsCamReady()
     {
-      return IsCamPresent();
+      return true;
     }
 
     /// <summary>
