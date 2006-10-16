@@ -93,7 +93,7 @@ namespace SetupTv
           XmlDocument doc = new XmlDocument();
           doc.Load("gentle.config");
           XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
-          XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString");;
+          XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString"); ;
           RemoteControl.Instance.DatabaseConnectionString = node.InnerText;
           //DatabaseManager.Instance.Clear();
         }
@@ -205,7 +205,7 @@ namespace SetupTv
       //
       // Make sure this section doesn't already exist
       //
-      
+
       //
       // Add section to tree
       //
@@ -453,8 +453,11 @@ namespace SetupTv
     {
       try
       {
-        RemoteControl.Instance.EpgGrabberEnabled = true;
-        RemoteControl.Instance.OnNewSchedule();
+        if (RemoteControl.IsConnected)
+        {
+          RemoteControl.Instance.EpgGrabberEnabled = true;
+          RemoteControl.Instance.OnNewSchedule();
+        }
       }
       catch (Exception)
       { }
@@ -546,15 +549,20 @@ namespace SetupTv
 
     private void okButton_Click(object sender, EventArgs e)
     {
-      applyButton_Click(sender, e);
-
-      if (null != _previousSection)
+      try
       {
-        _previousSection.OnSectionDeActivated();
-        _previousSection = null;
+        applyButton_Click(sender, e);
+
+        if (null != _previousSection)
+        {
+          _previousSection.OnSectionDeActivated();
+          _previousSection = null;
+        }
+        Close();
       }
-      Close();
-      //DatabaseManager.Instance.SaveChanges();
+      catch (Exception)
+      {
+      }
     }
 
 

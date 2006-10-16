@@ -49,7 +49,7 @@ void CPmtParser::SetPmtCallBack(IPmtCallBack* callback)
 
 
 void CPmtParser::OnNewSection(CSection& sections)
-{
+{ 
   byte* section=(&sections.Data)[0];
   int sectionLen=sections.SectionLength;
 
@@ -67,7 +67,7 @@ void CPmtParser::OnNewSection(CSection& sections)
   int program_info_length = ((section[start+10] & 0xF)<<8)+section[start+11];
   int len2 = program_info_length;
   int pointer = 12;
-  int len1 = section_length - pointer;
+  int len1 = section_length -( 9 + program_info_length +4);
   int x;
 
 	if (!_isFound)
@@ -82,13 +82,10 @@ void CPmtParser::OnNewSection(CSection& sections)
   // loop 1
   while (len2 > 0)
   {
-	  if (pointer+1>=sectionLen) return ;
 	  int indicator=section[start+pointer];
-	  x = 0;
-	  x = section[start+pointer + 1] + 2;
-	  len2 -= x;
-	  pointer += x;
-	  len1 -= x;
+	  int descriptorLen=section[start+pointer+1];
+	  len2 -= (descriptorLen+2);
+	  pointer += (descriptorLen+2);
   }
   // loop 2
   int stream_type=0;
@@ -100,13 +97,13 @@ void CPmtParser::OnNewSection(CSection& sections)
   m_pidInfo.Reset();
   m_pidInfo.PmtPid=GetPid();
   m_pidInfo.ServiceId=program_number;
-  
-  while (len1 > 4)
+  while (len1 > 0)
   {
-	  if (pointer+4>=sectionLen) return ;
+	  //if (start+pointer+4>=sectionLen+9) return ;
 	  stream_type = section[start+pointer];
 	  elementary_PID = ((section[start+pointer+1]&0x1F)<<8)+section[start+pointer+2];
 	  ES_info_length = ((section[start+pointer+3] & 0xF)<<8)+section[start+pointer+4];
+    //Log("pmt: pid:%x type:%x",elementary_PID, stream_type);
 	  if(stream_type==1 || stream_type==2)
 	  {
 			//mpeg2 video
@@ -118,8 +115,7 @@ void CPmtParser::OnNewSection(CSection& sections)
 	  }
 		if(stream_type==0x10 || stream_type==0x1b)
 	  {
-			//h.264				= stream type 0x1b
-			//mpeg4 video = stream type 0x10
+			//h.264/mpeg4 video
 		  if(m_pidInfo.VideoPid==0)
 			{
 			  m_pidInfo.VideoPid=elementary_PID;
@@ -201,7 +197,21 @@ void CPmtParser::OnNewSection(CSection& sections)
 		  }
 		  if(indicator==0x56 && m_pidInfo.TeletextPid==0)
 			  m_pidInfo.TeletextPid=elementary_PID;
-			
+
+			if(indicator==0x59 && m_pidInfo.SubtitlePid==0)
+			{
+				if (stream_type==6)
+				{
+					BYTE d[3];
+					d[0]=section[start+pointer+2];
+					d[1]=section[start+pointer+3];
+					d[2]=section[start+pointer+4];
+					m_pidInfo.SubtitlePid=elementary_PID;
+					m_pidInfo.SubLang1_1=d[0];
+					m_pidInfo.SubLang1_2=d[1];
+					m_pidInfo.SubLang1_3=d[2];
+				}
+			}
 		  len2 -= x;
 		  len1 -= x;
 		  pointer += x;

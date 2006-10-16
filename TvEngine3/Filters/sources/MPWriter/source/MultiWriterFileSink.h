@@ -32,9 +32,9 @@ protected:
       // called only by createNew()
 
 protected:
-  bool GetPtsDts(byte* pesHeader, __int64& pts, __int64& dts);
+  bool GetPtsDts(byte* pesHeader, UINT64& pts, UINT64& dts);
   void PatchPcr(byte* tsPacket,CTsHeader& header);
-  void PatchPtsDts(byte* tsPacket,CTsHeader& header,__int64 startPcr);
+  void PatchPtsDts(byte* tsPacket,CTsHeader& header,UINT64 startPcr);
   static void afterGettingFrame(void* clientData, unsigned frameSize,unsigned numTruncatedBytes,struct timeval presentationTime,
 				unsigned durationInMicroseconds);
   virtual void afterGettingFrame1(unsigned frameSize,struct timeval presentationTime);
@@ -49,6 +49,7 @@ protected:
 	__int64 m_startPcr;
 	__int64 m_highestPcr;
   bool    m_bDetermineNewStartPcr;
+  bool    m_bStartPcrFound;
 private: // redefined virtual functions:
   CCritSec m_Lock;
   virtual Boolean continuePlaying();

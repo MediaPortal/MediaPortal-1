@@ -49,5 +49,8 @@ public:
 	WORD TeletextPid;
 	WORD SubtitlePid;
   int  ServiceId;
+	BYTE SubLang1_1;
+	BYTE SubLang1_2;
+	BYTE SubLang1_3;
 	int  videoServiceType;
 };

@@ -106,7 +106,10 @@ namespace SetupTv.Sections
     {
       base.OnSectionDeActivated();
       timer1.Enabled = false;
-      RemoteControl.Instance.EpgGrabberEnabled = false;
+      if (RemoteControl.IsConnected)
+      {
+        RemoteControl.Instance.EpgGrabberEnabled = false;
+      }
     }
 
     private void TestService_Load(object sender, EventArgs e)

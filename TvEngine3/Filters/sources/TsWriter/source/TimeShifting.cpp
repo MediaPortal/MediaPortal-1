@@ -770,16 +770,22 @@ void CTimeShifting::WriteFakePMT()
 		pmtLength+=4;
 		if (info.serviceType==5||info.serviceType==6)
 		{ 
-			int esLen=strlen(info.language);
+			int esLen=strlen(info.language)+5;
 			pmt[offset++]=esLen+2;   // ES_info_length (low)
 			pmt[offset++]=0x59;   // descriptor indicator
 			pmt[offset++]=esLen;
 			pmtLength+=3;
-			for (int i=0; i < esLen;++i)
+			for (int i=0; i < 3;++i)
 			{
 				pmt[offset++]=info.language[i];
 				pmtLength++;
 			}
+			pmt[offset++]=0x10;
+			pmt[offset++]=0x00;
+			pmt[offset++]=0x01;
+			pmt[offset++]=0x00;
+			pmt[offset++]=0x01;
+      pmtLength+=5;
 		}
     else
 		{
@@ -790,7 +796,7 @@ void CTimeShifting::WriteFakePMT()
   }
 
 
-  unsigned section_length = (pmtLength +9+4);
+  unsigned section_length = (pmtLength );
   pmt[6]=0x80+((section_length>>8)&0xf);
   pmt[7]=section_length&0xff;
 
