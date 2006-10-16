@@ -67,6 +67,11 @@ namespace MediaPortal.Player
     protected int m_aspectX = 1;
     protected int m_aspectY = 1;
 
+    IPin _pinAudioTS = null;
+    IPin _pinSubtitle = null;
+    IPin _pinPMT = null;
+    bool enableDvbSubtitles = false;
+
     protected bool m_bStarted = false;
     protected DsROTEntry _rotEntry = null;
 
@@ -88,6 +93,7 @@ namespace MediaPortal.Player
     protected IBaseFilter videoCodecFilter = null;
     protected IBaseFilter audioCodecFilter = null;
     protected IBaseFilter audioRendererFilter = null;
+    protected IBaseFilter _subtitleFilter = null;
     protected IBaseFilter[] customFilters; // FlipGer: array for custom directshow filters
     protected IBaseFilter _mpegDemux;
     protected IDirectVobSub vobSub;
@@ -181,6 +187,7 @@ namespace MediaPortal.Player
           strVideoCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2videocodec", "");
           strAudioCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2audiocodec", "");
           strAudiorenderer = xmlreader.GetValueAsString("movieplayer", "audiorenderer", "Default DirectSound Device");
+          enableDvbSubtitles = xmlreader.GetValueAsBool("mytv", "dvbsubtitles", false);
           // FlipGer: load infos for custom filters
           int intCount = 0;
           while (xmlreader.GetValueAsString("movieplayer", "filter" + intCount.ToString(), "undefined") != "undefined")
@@ -200,6 +207,8 @@ namespace MediaPortal.Player
         }
         if (strAudioCodec.Length > 0) audioCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strAudioCodec);
 
+        if (enableDvbSubtitles == true)
+          _subtitleFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, "MediaPortal DVB subtitles transform");
 
         // FlipGer: add custom filters to graph
         customFilters = new IBaseFilter[intFilters];
@@ -229,6 +238,55 @@ namespace MediaPortal.Player
         }
         Log.Info("RTSPPlayer: render output pins of rtsp filter");
         DirectShowUtil.RenderOutputPins(graphBuilder, (IBaseFilter)rtspSource);
+
+        // Connect DVB subtitle filter pins in the graph
+        if (_mpegDemux != null && enableDvbSubtitles == true)
+        {
+          IMpeg2Demultiplexer demuxer = _mpegDemux as IMpeg2Demultiplexer;
+          hr = demuxer.CreateOutputPin(GetTSMedia(), "AudioTS", out _pinAudioTS);
+
+          if (hr == 0)
+          {
+            Log.Info("RTSPPlayer:_pinAudioTS OK");
+
+            IPin pDemuxerAudioTS = DsFindPin.ByName(_mpegDemux, "AudioTS");
+            IPin pSubtitleAudioTS = DsFindPin.ByName(_subtitleFilter, "Audio");
+            hr = graphBuilder.Connect(pDemuxerAudioTS, pSubtitleAudioTS);
+          }
+          else
+          {
+            Log.Info("RTSPPlayer:Failed to create _pinAudioTS in demuxer:{0:X}", hr);
+          }
+
+          hr = demuxer.CreateOutputPin(GetSubtitleMedia(), "Subtitle", out _pinSubtitle);
+          if (hr == 0)
+          {
+            Log.Info("RTSPPlayer:_pinAudioTS OK");
+
+            IPin pDemuxerSubtitle = DsFindPin.ByName(_mpegDemux, "Subtitle");
+            IPin pSubtitle = DsFindPin.ByName(_subtitleFilter, "Subtitle");
+            hr = graphBuilder.Connect(pDemuxerSubtitle, pSubtitle);
+          }
+          else
+          {
+            Log.Info("RTSPPlayer:Failed to create _pinSubtitle in demuxer:{0:X}", hr);
+          }
+
+          hr = demuxer.CreateOutputPin(GetTSMedia(), "PMT", out _pinPMT);
+          if (hr == 0)
+          {
+            Log.Info("RTSPPlayer:_pinPMT OK");
+
+            IPin pDemuxerSubtitle = DsFindPin.ByName(_mpegDemux, "PMT");
+            IPin pSubtitle = DsFindPin.ByName(_subtitleFilter, "PMT");
+            hr = graphBuilder.Connect(pDemuxerSubtitle, pSubtitle);
+          }
+          else
+          {
+            Log.Info("RTSPPlayer:Failed to create _pinPMT in demuxer:{0:X}", hr);
+          }
+        }
+
 
         if (IsRadio == false)
         {
@@ -342,6 +400,11 @@ namespace MediaPortal.Player
         {
           while (Marshal.ReleaseComObject(audioCodecFilter) > 0) ;
           audioCodecFilter = null;
+        }
+        if (_subtitleFilter != null)
+        {
+          while ((hr = Marshal.ReleaseComObject(_subtitleFilter)) > 0) ;
+          _subtitleFilter = null;
         }
         if (audioRendererFilter != null)
         {
@@ -1026,6 +1089,40 @@ namespace MediaPortal.Player
       CloseInterfaces();
     }
     #endregion
+
+    AMMediaType GetTSMedia()
+    {
+      AMMediaType mediaAudioTS = new AMMediaType();
+      mediaAudioTS.majorType = MediaType.Stream;
+      mediaAudioTS.subType = MediaSubType.Mpeg2Transport;
+      mediaAudioTS.formatType = FormatType.Null;
+      mediaAudioTS.formatPtr = IntPtr.Zero;
+      mediaAudioTS.sampleSize = 1;
+      mediaAudioTS.temporalCompression = false;
+      mediaAudioTS.fixedSizeSamples = true;
+      mediaAudioTS.unkPtr = IntPtr.Zero;
+      mediaAudioTS.formatType = FormatType.None;
+      mediaAudioTS.formatSize = 0;
+      mediaAudioTS.formatPtr = IntPtr.Zero;
+      return mediaAudioTS;
+    }
+
+    AMMediaType GetSubtitleMedia()
+    {
+      AMMediaType mediaSubtitle = new AMMediaType();
+      mediaSubtitle.majorType = MediaType.Null;
+      mediaSubtitle.subType = MediaSubType.Null;
+      mediaSubtitle.formatType = FormatType.Null;
+      mediaSubtitle.formatPtr = IntPtr.Zero;
+      mediaSubtitle.sampleSize = 1;
+      mediaSubtitle.temporalCompression = false;
+      mediaSubtitle.fixedSizeSamples = true;
+      mediaSubtitle.unkPtr = IntPtr.Zero;
+      mediaSubtitle.formatType = FormatType.None;
+      mediaSubtitle.formatSize = 0;
+      mediaSubtitle.formatPtr = IntPtr.Zero;
+      return mediaSubtitle;
+    }
 
   }
 }
