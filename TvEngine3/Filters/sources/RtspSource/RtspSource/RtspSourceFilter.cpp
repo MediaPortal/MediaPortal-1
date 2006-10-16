@@ -274,7 +274,7 @@ STDMETHODIMP CRtspSourceFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *
 	if (wcsstr(m_fileName,L"rtsp://")==NULL)
 	{
 		Log("Filter:using defailt filename");
-		wcscpy(m_fileName,L"rtsp://pcebeckers/stream1");
+		wcscpy(m_fileName,L"rtsp://pcebeckers/test");
 	}
 
 	Log("Filter:Initialize");

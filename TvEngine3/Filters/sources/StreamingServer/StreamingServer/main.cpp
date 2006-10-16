@@ -16,7 +16,7 @@ const char* FILE_NAME = "C:\\temp\\testApp\\live.ts.tsbuffer";
 extern void Log(const char *fmt, ...) ;
 UsageEnvironment* env;
 RTSPServer* rtspServer;
-void StreamSetup();
+void StreamSetup(char* ipAdress);
 void StreamRun();
 void announceStream(RTSPServer* rtspServer, ServerMediaSession* sms,char * streamName, char * inputFileName); // fwd
 void StreamAddTimeShiftFile(char* streamName, char* fileName,bool isProgramStream);
@@ -29,8 +29,8 @@ extern netAddressBits ReceivingInterfaceAddr ;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-  StreamSetup();
-  StreamAddTimeShiftFile("test", "C:\\test.ts",false);
+  StreamSetup("192.168.1.58");
+  StreamAddTimeShiftFile("test", "C:\\1.ts.tsbuffer",false);
   while (true)
   {
     StreamRun();
