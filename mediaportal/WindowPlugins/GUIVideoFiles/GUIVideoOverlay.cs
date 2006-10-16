@@ -173,7 +173,7 @@ namespace MediaPortal.GUI.Video
     /// </remarks>
     void SetCurrentFile(string fileName)
     {
-      if (fileName.Contains(@"last.fm/last.mp3"))
+      if (fileName.Contains(@"/last.mp3?"))
         return;
 
       GUIPropertyManager.RemovePlayerProperties();

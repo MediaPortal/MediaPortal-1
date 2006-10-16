@@ -86,7 +86,7 @@ namespace MediaPortal.Music.Database
     private static CookieContainer _cookies;
 
     // radio related
-    private static string _radioStreamURL;
+    private static string _radioStreamLocation;
     private static string _radioSession;
     private static bool _subscriber;
     #endregion
@@ -142,7 +142,7 @@ namespace MediaPortal.Music.Database
       lastConnectAttempt = DateTime.MinValue;
       minConnectWaitTime = new TimeSpan(0, 0, CONNECT_WAIT_TIME);
       _cookies = new CookieContainer();
-      _radioStreamURL = String.Empty;
+      _radioStreamLocation = String.Empty;
       _radioSession = String.Empty;
       _subscriber = false;
     }
@@ -197,6 +197,14 @@ namespace MediaPortal.Music.Database
         DoRadioHandshake(false);
 
         return _radioSession;
+      }
+    }
+
+    public static string RadioStreamLocation
+    {
+      get
+      {
+        return _radioStreamLocation;
       }
     }
 
@@ -466,8 +474,8 @@ namespace MediaPortal.Music.Database
       string tmpUser = System.Web.HttpUtility.UrlEncode(username).ToLower();
       string tmpPass = HashSingleString(password);
       string url = RADIO_SCROBBLER_URL
-                 + "handshake.php"
-                 + "?version=" + "1.0.7"
+                 + "handshake.php?"
+                 + "version=" + "1.0.7"
                  + "&platform=" + "win32"
                  + "&username=" + tmpUser
                  + "&passwordmd5=" + tmpPass
@@ -486,6 +494,18 @@ namespace MediaPortal.Music.Database
 
       if (_useDebugLog)
         Log.Debug("AudioscrobblerBase: {0}", "Radio handshake successful");
+
+      url = "http://ws.audioscrobbler.com/ass/"
+           + "upgrade.php?"
+           + "platform=" + "win"
+           + "&version=" + "1.0.7"
+           + "&lang=" + "en"
+           + "&user=" + tmpUser;
+
+      GetResponse(url, "", true);
+      if (_useDebugLog)
+        Log.Debug("AudioscrobblerBase: {0}", "Upgrade request send");
+
       return true;
     }
     
@@ -637,6 +657,8 @@ namespace MediaPortal.Music.Database
           parse_success = parseBadUserMessage(respType, reader);
         else if (respType.StartsWith("session="))
           success = parse_success = parseRadioStreamMessage(respType, reader);
+        else if (respType.StartsWith(@"[App]")) // upgrade message
+          success = parse_success = true;
 
         else
         {
@@ -899,7 +921,7 @@ namespace MediaPortal.Music.Database
         {
           i++;
           if (i == 1)
-            _radioStreamURL = type_.Substring(11);
+            _radioStreamLocation = type_.Substring(11);
           if (i == 2)
           {
             if (type_.Substring(11) == "1")
@@ -909,7 +931,7 @@ namespace MediaPortal.Music.Database
 
           }
         }
-        Log.Info("AudioscrobblerBase: Successfully initialised radio stream {0} - subscriber: {1}", _radioStreamURL, _subscriber);
+        Log.Info("AudioscrobblerBase: Successfully initialised radio stream {0} - subscriber: {1}", _radioStreamLocation, _subscriber);
 
         return true;
       }

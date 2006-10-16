@@ -66,6 +66,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     Personal = 3,
     Recommended = 4,
     Tags = 5,
+    Neighbours = 6,
   }
 
   class StreamControl
@@ -99,6 +100,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     private AsyncGetRequest httpcommand = null;
 
     #region Examples
+    // 4. http.request.uri = Request URI: http://ws.audioscrobbler.com/ass/upgrade.php?platform=win&version=1.0.7&lang=en&user=f1n4rf1n
     // 5. http.request.uri = Request URI: http://ws.audioscrobbler.com/radio/np.php?session=e5b0c80f5b5d0937d407fb77a913cb6a
     // 6. http.request.uri = Request URI: http://ws.audioscrobbler.com/ass/artistmetadata.php?artist=Sportfreunde%20Stiller&lang=en
     // 7. http.request.uri = Request URI: http://ws.audioscrobbler.com/ass/metadata.php?artist=Sportfreunde%20Stiller&track=Alles%20Das&album=Macht%20doch%20was%20ihr%20wollt%20-%20Ich%20geh%2527%20jetzt%2521
@@ -152,7 +154,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
         if (_currentSession != String.Empty)
         {
           _isSubscriber = AudioscrobblerBase.Subscriber;
-          _currentRadioURL = "http://streamer1.last.fm/last.mp3?Session=" + _currentSession;
+          //_currentRadioURL = "http://streamer1.last.fm/last.mp3?Session=" + _currentSession;
+          _currentRadioURL = AudioscrobblerBase.RadioStreamLocation;
           _currentState = StreamPlaybackState.initialized;
 
           _isInit = true;

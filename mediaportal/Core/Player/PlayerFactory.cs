@@ -225,7 +225,7 @@ namespace MediaPortal.Player
       }
 
       // use BASS player for Internet radio streams 
-      if (fileName.IndexOf(@"last.fm/last.mp3") > 0)
+      if (fileName.IndexOf(@"/last.mp3?") > 0)
         return BassMusicPlayer.Player;
 
 

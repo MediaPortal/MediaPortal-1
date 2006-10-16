@@ -643,7 +643,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     protected void PlayBackStoppedHandler(g_Player.MediaType type, int stoptime, string filename)
     {
-      if (!filename.Contains(@"last.fm/last.mp3") || LastFMStation.CurrentStreamState != StreamPlaybackState.streaming)
+      if (!filename.Contains(@"/last.mp3?") || LastFMStation.CurrentStreamState != StreamPlaybackState.streaming)
         return;
 
       OnPlaybackStopped();
@@ -651,7 +651,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     protected void PlayBackEndedHandler(g_Player.MediaType type, string filename)
     {
-      if (!filename.Contains(@"last.fm/last.mp3") || LastFMStation.CurrentStreamState != StreamPlaybackState.streaming)
+      if (!filename.Contains(@"/last.mp3?") || LastFMStation.CurrentStreamState != StreamPlaybackState.streaming)
         return;
 
       //GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);

@@ -601,7 +601,7 @@ namespace MediaPortal.GUI.Music
     {
       // watch if we're still playing a last.fm radio stream
       if (g_Player.Playing)
-        if (g_Player.CurrentFile.Contains(@"last.fm/last.mp3"))
+        if (g_Player.CurrentFile.Contains(@"/last.mp3?"))
           g_Player.Stop();
 
 
