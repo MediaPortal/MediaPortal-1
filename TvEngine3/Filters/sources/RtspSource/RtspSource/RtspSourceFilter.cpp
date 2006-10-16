@@ -167,14 +167,14 @@ HRESULT CRtspSourceFilter::OnConnect()
 		m_pids.sub=pids.SubtitlePid;
 		if ( pids.videoServiceType==0x1b)
 		{
-		  Log("Filter:OnConnect, audio1:%x audio2:%x ac3:%x h264 video:%x pcr:%x pmt:%x",
-					  pids.AudioPid1,pids.AudioPid2,pids.AC3Pid,pids.VideoPid,pids.PcrPid,pids.PmtPid);
+			Log("Filter:OnConnect, audio1:%x audio2:%x ac3:%x h264 video:%x pcr:%x pmt:%x sub:%x",
+				pids.AudioPid1,pids.AudioPid2,pids.AC3Pid,pids.VideoPid,pids.PcrPid,pids.PmtPid,pids.SubtitlePid);
 			m_pids.h264=pids.VideoPid;
 		}
 		else if (pids.videoServiceType==0x10)
 		{
-		  Log("Filter:OnConnect, audio1:%x audio2:%x ac3:%x mpeg4 video:%x pcr:%x pmt:%x",
-					  pids.AudioPid1,pids.AudioPid2,pids.AC3Pid,pids.VideoPid,pids.PcrPid,pids.PmtPid);
+		  Log("Filter:OnConnect, audio1:%x audio2:%x ac3:%x mpeg4 video:%x pcr:%x pmt:%x sub:%x",
+					  pids.AudioPid1,pids.AudioPid2,pids.AC3Pid,pids.VideoPid,pids.PcrPid,pids.PmtPid,pids.SubtitlePid);
 			m_pids.mpeg4=pids.VideoPid;
 		}
 		else

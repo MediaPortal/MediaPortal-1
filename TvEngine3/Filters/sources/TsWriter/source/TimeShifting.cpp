@@ -207,7 +207,7 @@ STDMETHODIMP CTimeShifting::GetMode(int *mode)
 }
 
 
-STDMETHODIMP CTimeShifting::AddStream(int pid, int serviceType)
+STDMETHODIMP CTimeShifting::AddStream(int pid, int serviceType, char* language)
 {
   if (pid==0) return S_OK;
 	CEnterCriticalSection enter(m_section);
@@ -228,6 +228,7 @@ STDMETHODIMP CTimeShifting::AddStream(int pid, int serviceType)
 			info.fakePid=FAKE_AUDIO_PID;
 			info.seenStart=false;
 			info.serviceType=serviceType;
+			strcpy(info.language,language);
 			m_vecPids.push_back(info);
 			
 			LogDebug("Timeshifter:add audio stream real pid:0x%x fake pid:0x%x type:%x",info.realPid,info.fakePid,info.serviceType);
@@ -250,6 +251,7 @@ STDMETHODIMP CTimeShifting::AddStream(int pid, int serviceType)
 			info.fakePid=FAKE_VIDEO_PID;
 			info.seenStart=false;
 			info.serviceType=serviceType;
+			strcpy(info.language,language);
 			m_vecPids.push_back(info);
 			LogDebug("Timeshifter:add video stream real pid:0x%x fake pid:0x%x type:%x",info.realPid,info.fakePid,info.serviceType);
 			FAKE_VIDEO_PID++;
@@ -262,6 +264,7 @@ STDMETHODIMP CTimeShifting::AddStream(int pid, int serviceType)
 			info.fakePid=FAKE_SUBTITLE_PID;
 			info.seenStart=false;
 			info.serviceType=serviceType;
+			strcpy(info.language,language);
 			m_vecPids.push_back(info);
 			LogDebug("Timeshifter:add subtitle stream real pid:0x%x fake pid:0x%x type:%x",info.realPid,info.fakePid,info.serviceType);
 			FAKE_SUBTITLE_PID++;
@@ -274,6 +277,7 @@ STDMETHODIMP CTimeShifting::AddStream(int pid, int serviceType)
 			info.fakePid=pid;
 			info.serviceType=serviceType;
 			info.seenStart=false;
+			strcpy(info.language,language);
 			LogDebug("Timeshifter:add stream real pid:0x%x fake pid:0x%x type:%x",info.realPid,info.fakePid,info.serviceType);
 			m_vecPids.push_back(info);
     }
@@ -753,6 +757,7 @@ void CTimeShifting::WriteFakePMT()
   pmt[15]=(program_info_length>>8)&0xff;
   pmt[16]=(program_info_length)&0xff;
   
+	int pmtLength=9+4;
   int offset=17;
 	itvecPids it=m_vecPids.begin();
 	while (it!=m_vecPids.end())
@@ -762,12 +767,30 @@ void CTimeShifting::WriteFakePMT()
     pmt[offset++]=(info.fakePid>>8)&0x1F; // reserved; elementary_pid (high)
     pmt[offset++]=(info.fakePid)&0xff; // elementary_pid (low)
     pmt[offset++]=0xF0;// reserved; ES_info_length (high)
-    pmt[offset++]=0;   // ES_info_length (low)
+		pmtLength+=4;
+		if (info.serviceType==5||info.serviceType==6)
+		{ 
+			int esLen=strlen(info.language);
+			pmt[offset++]=esLen+2;   // ES_info_length (low)
+			pmt[offset++]=0x59;   // descriptor indicator
+			pmt[offset++]=esLen;
+			pmtLength+=3;
+			for (int i=0; i < esLen;++i)
+			{
+				pmt[offset++]=info.language[i];
+				pmtLength++;
+			}
+		}
+    else
+		{
+			pmt[offset++]=0;   // ES_info_length (low)
+			pmtLength++;
+		}
     ++it;
   }
 
 
-  unsigned section_length = (m_vecPids.size()*5 +9+4);
+  unsigned section_length = (pmtLength +9+4);
   pmt[6]=0x80+((section_length>>8)&0xf);
   pmt[7]=section_length&0xff;
 
