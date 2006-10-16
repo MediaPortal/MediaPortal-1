@@ -25,6 +25,7 @@
 
 #include "SubTransform.h"
 #include "DemuxPinMapper.h"
+#include "PatParser\PacketSync.h"
 #include <streams.h>
 
 struct tsheader
@@ -59,7 +60,7 @@ struct pesheader
 };
 typedef pesheader PESHeader;
 
-class CAudioInputPin : public CRenderedInputPin, CDemuxPinMapper
+class CAudioInputPin : public CRenderedInputPin, CDemuxPinMapper, CPacketSync
 {
 public:
 
@@ -84,6 +85,9 @@ public:
 	void Reset();
 		
 	ULONGLONG GetCurrentPTS();
+
+  // From CPacketSync
+  void OnTsPacket( byte* tsPacket );
 
 private:
 

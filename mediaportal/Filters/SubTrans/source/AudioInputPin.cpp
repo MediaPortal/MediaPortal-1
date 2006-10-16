@@ -95,62 +95,56 @@ STDMETHODIMP CAudioInputPin::Receive( IMediaSample *pSample )
 	if( m_audioPid == -1 )
     return S_OK;  // Nothing to be done yet
   
-  try
+  if ( m_bReset )
 	{
-		if ( m_bReset )
+		Log( "Audio pin: reset" );
+		m_bReset = false;
+	}
+	CheckPointer( pSample, E_POINTER );
+
+	CAutoLock lock(m_pReceiveLock);
+	PBYTE pbData = NULL;
+
+	long lDataLen = 0;
+
+	HRESULT hr = pSample->GetPointer( &pbData );
+	if( FAILED(hr) )
+	{
+		Log( "Audio pin: Receive() err = %d", hr );
+		return hr;
+	}
+	lDataLen = pSample->GetActualDataLength();
+
+  OnRawData( pbData, lDataLen );
+/*
+	if( lDataLen > TSPacketSize )
+	{
+		ULONGLONG pts( 0 );
+		int streamType( 0 ); // not used
+		
+		for( int pos( 0 ) ; pos < lDataLen - TSPacketSize*2 ; pos++ )
 		{
-			Log( "Audio pin: reset" );
-			m_bReset = false;
-		}
-		CheckPointer( pSample, E_POINTER );
-
-		CAutoLock lock(m_pReceiveLock);
-		PBYTE pbData = NULL;
-
-		long lDataLen = 0;
-
-		HRESULT hr = pSample->GetPointer( &pbData );
-		if( FAILED(hr) )
-		{
-			Log( "Audio pin: Receive() err = %d", hr );
-			return hr;
-		}
-		lDataLen = pSample->GetActualDataLength();
-
-		if( lDataLen > TSPacketSize )
-		{
-			ULONGLONG pts( 0 );
-			int streamType( 0 ); // not used
-			
-			for( int pos( 0 ) ; pos < lDataLen - TSPacketSize*2 ; pos++ )
+			if( pbData[pos] == 0x47 && pbData[pos+TSPacketSize] == 0x47 && 
+				pbData[pos+TSPacketSize*2] == 0x47 )
 			{
-				if( pbData[pos] == 0x47 && pbData[pos+TSPacketSize] == 0x47 && 
-					pbData[pos+TSPacketSize*2] == 0x47 )
+				// Payload start?
+				if( ( pbData[pos+1] & 0x40 ) > 0 )
 				{
-					// Payload start?
-					if( ( pbData[pos+1] & 0x40 ) > 0 )
+					if( S_OK == CurrentPTS( &pbData[pos], &pts, &streamType ) )
 					{
-						if( S_OK == CurrentPTS( &pbData[pos], &pts, &streamType ) )
-						{
-							m_currentPTS = pts;
-							Log("Audio pin: Receive - audio PTS = %lld - ", pts );
-						}
-						else
-						{
-							Log("Audio pin: Receive - audio PTS FAILED!");
-						}
+						m_currentPTS = pts;
+						Log("Audio pin: Receive - audio PTS = %lld - ", pts );
+					}
+					else
+					{
+						Log("Audio pin: Receive - audio PTS FAILED!");
 					}
 				}
 			}
 		}
 	}
-
-	catch(...)
-	{
-		Log( "Audio pin: --- UNHANDLED EXCEPTION ---" );
-	}
-
-    return S_OK;
+*/
+  return S_OK;
 }
 
 
@@ -186,6 +180,24 @@ ULONGLONG CAudioInputPin::GetCurrentPTS()
 	return m_currentPTS;
 }
 
+void CAudioInputPin::OnTsPacket( byte* tsPacket )
+{
+  ULONGLONG pts( 0 );
+  int streamType( 0 ); // not used
+
+	if( ( tsPacket[1] & 0x40 ) > 0 )
+	{
+		if( S_OK == CurrentPTS( &tsPacket[0], &pts, &streamType ) )
+		{
+			m_currentPTS = pts;
+			Log("Audio pin: Receive - audio PTS = %lld - ", pts );
+		}
+		else
+		{
+			Log("Audio pin: Receive - audio PTS FAILED!");
+		}
+	}
+}
 
 //
 // Helper methods from MPSA/Sections.cpp
