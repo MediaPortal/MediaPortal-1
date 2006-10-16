@@ -95,6 +95,20 @@ STDMETHODIMP CChannelScan::GetCount(int* channelCount)
 	}
 	return S_OK;
 }
+
+STDMETHODIMP CChannelScan::IsReady( BOOL* yesNo) 
+{
+	CEnterCriticalSection enter(m_section);
+	try
+	{
+		*yesNo=m_patParser.IsReady();
+	}
+	catch(...)
+	{
+		LogDebug("analyzer CChannelScan::IsReady exception");
+	}
+	return S_OK;
+}
 STDMETHODIMP CChannelScan::GetChannel(int index,
 									 int* networkId,
 									 int* transportId,
@@ -123,6 +137,7 @@ STDMETHODIMP CChannelScan::GetChannel(int index,
 									 char** audioLanguage3,
 									 int* teletextPid,
 									 int* subtitlePid,
+									 char** subLanguage1,
 									 int* videoStreamType)
 {
 	static char sServiceName[128];
@@ -130,6 +145,7 @@ STDMETHODIMP CChannelScan::GetChannel(int index,
 	static char sAudioLang1[10];
 	static char sAudioLang2[10];
 	static char sAudioLang3[10];
+	static char ssubLanguage1[10];
 	CEnterCriticalSection enter(m_section);
 	try
 	{
@@ -138,6 +154,7 @@ STDMETHODIMP CChannelScan::GetChannel(int index,
 		strcpy(sAudioLang1,"");
 		strcpy(sAudioLang2,"");
 		strcpy(sAudioLang3,"");
+    strcpy(ssubLanguage1,"");
 		*networkId=0;
 		*transportId=0;
 		*serviceId=0;
@@ -163,6 +180,10 @@ STDMETHODIMP CChannelScan::GetChannel(int index,
 			sAudioLang3[1]=info.PidTable.Lang3_2;
 			sAudioLang3[2]=info.PidTable.Lang3_3;
 			sAudioLang3[3]=0;
+      ssubLanguage1[0]=info.PidTable.SubLang1_1;
+      ssubLanguage1[1]=info.PidTable.SubLang1_2;
+      ssubLanguage1[2]=info.PidTable.SubLang1_3;
+      ssubLanguage1[3]=0;
 			*lcn=info.LCN;
 			*networkId=info.NetworkId;
 			*transportId=info.TransportId;
@@ -192,6 +213,7 @@ STDMETHODIMP CChannelScan::GetChannel(int index,
 			*audioLanguage3=sAudioLang3;
 			*teletextPid=info.PidTable.TeletextPid;
 			*subtitlePid=info.PidTable.SubtitlePid;
+      *subLanguage1=ssubLanguage1;
 			*videoStreamType=info.PidTable.videoServiceType;
 		}
 	}

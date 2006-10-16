@@ -26,6 +26,15 @@ using TvLibrary.Teletext;
 using DirectShowLib.SBE;
 namespace TvLibrary.Interfaces
 {
+  public enum CamType:int
+  {
+    Default=0,
+    Viaccess=1,
+    Aston=2,
+    Conax=3,
+    CryptoWorks=4
+
+  }
   /// <summary>
   /// interface for a tv card
   /// </summary>
@@ -132,6 +141,8 @@ namespace TvLibrary.Interfaces
     /// </summary>
     /// <value>true for transport stream, false for program stream.</value>
     bool IsRecordingTransportStream { get;}
+
+    CamType CamType {get;set;}
     #endregion
 
     #region epg & scanning

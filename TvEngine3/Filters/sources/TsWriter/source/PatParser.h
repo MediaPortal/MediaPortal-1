@@ -40,6 +40,7 @@ public:
   void  Reset();
 	void  OnNewSection(CSection& section);
 
+  BOOL        IsReady();
   int         Count();
   bool        GetChannel(int index, CChannelInfo& info);
   void        Dump();

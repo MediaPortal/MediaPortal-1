@@ -20,7 +20,7 @@
  */
 using System;
 using System.Runtime.InteropServices;
-
+using TvLibrary.Interfaces;
 
 using DirectShowLib;
 namespace TvLibrary.Implementations.DVB
@@ -350,27 +350,15 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="audioPid">The audio pid.</param>
     /// <param name="PMT">The PMT.</param>
     /// <param name="pmtLen">The PMT lenght</param>
-    public void SendPMT(string camType, uint videoPid, uint audioPid, byte[] caPMT, int caPMTLen)
+    public void SendPMT(CamType camType, uint videoPid, uint audioPid, byte[] caPMT, int caPMTLen)
     {
       if (IsCamPresent() == false) return;
-      int camNumber = 1;
-      camType = camType.ToLower();
-      if (camType.ToLower() == "default") camNumber = 0;
-      if (camType.ToLower() == "viaccess") camNumber = 1;
-      else if (camType.ToLower() == "aston") camNumber = 2;
-      else if (camType.ToLower() == "conax") camNumber = 3;
-      else if (camType.ToLower() == "cryptoworks") camNumber = 4;
+      int camNumber = (int)camType;
 
       IntPtr ptrPMT = Marshal.AllocCoTaskMem(caPMTLen);
 
-      Log.Log.WriteFile("Twinhan: send PMT cam:{0} {1} len:{2} video:0x{3:X} audio:0x{4:X}", camType, camNumber, caPMTLen, videoPid, audioPid);
-     /* string line = "";
-      for (int i = 0; i < caPMTLen; ++i)
-      { 
-        string tmp=String.Format("{0:X} ",caPMT[i]);
-        line+=tmp;
-      }
-      Log.Log.WriteFile(line);*/
+      Log.Log.WriteFile("Twinhan: send PMT cam:{0} len:{1} video:0x{2:X} audio:0x{3:X}", camType, caPMTLen, videoPid, audioPid);
+
       if (caPMT.Length==0)
         return;
       Marshal.Copy(caPMT, 0, ptrPMT, caPMTLen);

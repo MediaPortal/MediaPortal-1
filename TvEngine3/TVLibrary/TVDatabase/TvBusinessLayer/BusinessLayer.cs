@@ -28,7 +28,7 @@ namespace TvDatabase
         card.IdServer = server.IdServer;
         return card;
       }
-      Card newCard = new Card(devicePath,name,1,true,new DateTime(2000,1,1),"",server.IdServer,true);
+      Card newCard = new Card(devicePath,name,1,true,new DateTime(2000,1,1),"",server.IdServer,true,0);
       newCard.Persist();
       return newCard;
     }

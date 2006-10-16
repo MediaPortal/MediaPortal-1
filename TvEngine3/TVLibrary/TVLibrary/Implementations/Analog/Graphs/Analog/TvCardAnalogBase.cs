@@ -2257,6 +2257,17 @@ namespace TvLibrary.Implementations.Analog
         return true;
       }
     }
+
+    public CamType CamType
+    {
+      get
+      {
+        return CamType.Default;
+      }
+      set
+      {
+      }
+    }
   }
 }
 

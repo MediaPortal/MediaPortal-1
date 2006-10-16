@@ -105,6 +105,7 @@ CREATE TABLE Card(
 	recordingFolder varchar(256) NOT NULL,
 	idServer int NOT NULL,
 	enabled bit NOT NULL,
+	camType int NOT NULL,
  CONSTRAINT PK_Cards PRIMARY KEY  
 (
 	idCard ASC
@@ -391,5 +392,5 @@ GO
 GO
 delete from version
 GO
-insert into version(versionNumber) values(9)
+insert into version(versionNumber) values(10)
 GO

@@ -52,19 +52,21 @@ namespace SetupTv.Sections
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.listViewStatus = new System.Windows.Forms.ListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
+      this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpComboBoxCam = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
       // progressBarQuality
       // 
-      this.progressBarQuality.Location = new System.Drawing.Point(107, 183);
+      this.progressBarQuality.Location = new System.Drawing.Point(106, 207);
       this.progressBarQuality.Name = "progressBarQuality";
       this.progressBarQuality.Size = new System.Drawing.Size(328, 10);
       this.progressBarQuality.TabIndex = 59;
       // 
       // progressBarLevel
       // 
-      this.progressBarLevel.Location = new System.Drawing.Point(107, 160);
+      this.progressBarLevel.Location = new System.Drawing.Point(106, 184);
       this.progressBarLevel.Name = "progressBarLevel";
       this.progressBarLevel.Size = new System.Drawing.Size(328, 10);
       this.progressBarLevel.TabIndex = 58;
@@ -72,7 +74,7 @@ namespace SetupTv.Sections
       // label2
       // 
       this.label2.AutoSize = true;
-      this.label2.Location = new System.Drawing.Point(17, 180);
+      this.label2.Location = new System.Drawing.Point(16, 204);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(74, 13);
       this.label2.TabIndex = 57;
@@ -81,7 +83,7 @@ namespace SetupTv.Sections
       // label1
       // 
       this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(17, 157);
+      this.label1.Location = new System.Drawing.Point(16, 181);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(64, 13);
       this.label1.TabIndex = 56;
@@ -89,14 +91,14 @@ namespace SetupTv.Sections
       // 
       // progressBar1
       // 
-      this.progressBar1.Location = new System.Drawing.Point(20, 220);
+      this.progressBar1.Location = new System.Drawing.Point(19, 244);
       this.progressBar1.Name = "progressBar1";
       this.progressBar1.Size = new System.Drawing.Size(328, 10);
       this.progressBar1.TabIndex = 55;
       // 
       // mpButtonScanTv
       // 
-      this.mpButtonScanTv.Location = new System.Drawing.Point(331, 364);
+      this.mpButtonScanTv.Location = new System.Drawing.Point(330, 388);
       this.mpButtonScanTv.Name = "mpButtonScanTv";
       this.mpButtonScanTv.Size = new System.Drawing.Size(131, 23);
       this.mpButtonScanTv.TabIndex = 50;
@@ -146,7 +148,9 @@ namespace SetupTv.Sections
       // 
       // groupBox1
       // 
+      this.groupBox1.Controls.Add(this.mpLabel3);
       this.groupBox1.Controls.Add(this.mpLNB4);
+      this.groupBox1.Controls.Add(this.mpComboBoxCam);
       this.groupBox1.Controls.Add(this.mpTransponder4);
       this.groupBox1.Controls.Add(this.mpDisEqc4);
       this.groupBox1.Controls.Add(this.mpLNB3);
@@ -160,9 +164,9 @@ namespace SetupTv.Sections
       this.groupBox1.Controls.Add(this.mpLNB1);
       this.groupBox1.Controls.Add(this.mpTransponder1);
       this.groupBox1.Controls.Add(this.mpDisEqc1);
-      this.groupBox1.Location = new System.Drawing.Point(3, 8);
+      this.groupBox1.Location = new System.Drawing.Point(2, 8);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(447, 144);
+      this.groupBox1.Size = new System.Drawing.Size(447, 168);
       this.groupBox1.TabIndex = 66;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "LNB Setup";
@@ -279,7 +283,7 @@ namespace SetupTv.Sections
       // 
       this.listViewStatus.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1});
-      this.listViewStatus.Location = new System.Drawing.Point(18, 236);
+      this.listViewStatus.Location = new System.Drawing.Point(17, 260);
       this.listViewStatus.Name = "listViewStatus";
       this.listViewStatus.Size = new System.Drawing.Size(427, 122);
       this.listViewStatus.TabIndex = 67;
@@ -290,6 +294,31 @@ namespace SetupTv.Sections
       // 
       this.columnHeader1.Text = "Status";
       this.columnHeader1.Width = 350;
+      // 
+      // mpLabel3
+      // 
+      this.mpLabel3.AutoSize = true;
+      this.mpLabel3.Location = new System.Drawing.Point(39, 148);
+      this.mpLabel3.Name = "mpLabel3";
+      this.mpLabel3.Size = new System.Drawing.Size(33, 13);
+      this.mpLabel3.TabIndex = 74;
+      this.mpLabel3.Text = "CAM:";
+      // 
+      // mpComboBoxCam
+      // 
+      this.mpComboBoxCam.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.mpComboBoxCam.FormattingEnabled = true;
+      this.mpComboBoxCam.Items.AddRange(new object[] {
+            "default",
+            "viaccess",
+            "aston",
+            "conax",
+            "cryptoworks"});
+      this.mpComboBoxCam.Location = new System.Drawing.Point(78, 141);
+      this.mpComboBoxCam.Name = "mpComboBoxCam";
+      this.mpComboBoxCam.Size = new System.Drawing.Size(103, 21);
+      this.mpComboBoxCam.TabIndex = 73;
+      this.mpComboBoxCam.SelectedIndexChanged += new System.EventHandler(this.mpComboBoxCam_SelectedIndexChanged);
       // 
       // CardDvbS
       // 
@@ -305,7 +334,8 @@ namespace SetupTv.Sections
       this.Controls.Add(this.progressBar1);
       this.Controls.Add(this.mpButtonScanTv);
       this.Name = "CardDvbS";
-      this.Size = new System.Drawing.Size(468, 397);
+      this.Size = new System.Drawing.Size(468, 420);
+      this.Load += new System.EventHandler(this.CardDvbS_Load);
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
       this.ResumeLayout(false);
@@ -339,5 +369,7 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPComboBox mpDisEqc4;
     private System.Windows.Forms.ListView listViewStatus;
     private System.Windows.Forms.ColumnHeader columnHeader1;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel3;
+    private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxCam;
   }
 }

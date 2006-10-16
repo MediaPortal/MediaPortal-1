@@ -230,14 +230,16 @@ namespace TvLibrary.Implementations.DVB
         //Log.Log.WriteFile("Tuner locked:{0} signal level:{1} signal quality:{2}", _card.IsTunerLocked, _card.SignalLevel, _card.SignalQuality);
         startTime = DateTime.Now;
         short channelCount;
+        bool yesNo;
         while (true)
         {
           System.Threading.Thread.Sleep(100);
-          _analyzer.GetCount(out channelCount);
-          if (channelCount > 0) break;
+          _analyzer.IsReady(out yesNo);
+          if (yesNo) break;
           TimeSpan ts = DateTime.Now - startTime;
-          if (ts.TotalMilliseconds > 2000) break;
+          if (ts.TotalMilliseconds > 3000) break;
         }
+        _analyzer.GetCount(out channelCount);
         if (channelCount == 0)
         {
           _analyzer.GetCount(out channelCount);
@@ -268,6 +270,7 @@ namespace TvLibrary.Implementations.DVB
         IntPtr audioLanguage1;
         IntPtr audioLanguage2;
         IntPtr audioLanguage3;
+        IntPtr subtitleLanguage;
         short teletextPid;
         short subtitlePid;
         string strAudioLanguage1 = "";
@@ -293,7 +296,7 @@ namespace TvLibrary.Implementations.DVB
                   out frequency, out lcn, out EIT_schedule_flag, out EIT_present_following_flag, out runningStatus,
                   out freeCAMode, out serviceType, out modulation, out providerName, out serviceName,
                   out pcrPid, out pmtPid, out videoPid, out audio1Pid, out audio2Pid, out audio3Pid,
-                  out ac3Pid, out  audioLanguage1, out audioLanguage2, out audioLanguage3, out teletextPid, out subtitlePid, out videoStreamType);
+                  out ac3Pid, out  audioLanguage1, out audioLanguage2, out audioLanguage3, out teletextPid, out subtitlePid,out subtitleLanguage, out videoStreamType);
             bool isValid = ((networkId != 0 || transportId != 0 || serviceId != 0) && pmtPid != 0);
             if (videoStreamType == 0x10 || videoStreamType == 0x1b)
             {

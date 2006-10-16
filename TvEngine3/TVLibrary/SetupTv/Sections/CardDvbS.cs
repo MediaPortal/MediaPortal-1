@@ -283,6 +283,9 @@ namespace SetupTv.Sections
       mpLNB2_CheckedChanged(null, null); ;
       mpLNB3_CheckedChanged(null, null); ;
       mpLNB4_CheckedChanged(null, null); ;
+      
+      Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
+      mpComboBoxCam.SelectedIndex = card.CamType;
     }
     public override void OnSectionDeActivated()
     {
@@ -552,6 +555,19 @@ namespace SetupTv.Sections
     {
       mpTransponder4.Enabled = mpLNB4.Checked;
       mpDisEqc4.Enabled = mpLNB4.Checked;
+    }
+
+    private void CardDvbS_Load(object sender, EventArgs e)
+    {
+
+    }
+
+    private void mpComboBoxCam_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
+      card.CamType = mpComboBoxCam.SelectedIndex;
+      card.Persist();
     }
 
 

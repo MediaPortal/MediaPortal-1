@@ -41,6 +41,8 @@ namespace SetupTv.Sections
       this.mpComboBoxCountry = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.listViewStatus = new System.Windows.Forms.ListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
+      this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpComboBox1Cam = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.SuspendLayout();
       // 
       // progressBarQuality
@@ -115,11 +117,12 @@ namespace SetupTv.Sections
       this.mpBeveledLine1.Name = "mpBeveledLine1";
       this.mpBeveledLine1.Size = new System.Drawing.Size(423, 43);
       this.mpBeveledLine1.TabIndex = 32;
+      this.mpBeveledLine1.Load += new System.EventHandler(this.mpBeveledLine1_Load);
       // 
       // mpLabel1
       // 
       this.mpLabel1.AutoSize = true;
-      this.mpLabel1.Location = new System.Drawing.Point(28, 47);
+      this.mpLabel1.Location = new System.Drawing.Point(28, 46);
       this.mpLabel1.Name = "mpLabel1";
       this.mpLabel1.Size = new System.Drawing.Size(46, 13);
       this.mpLabel1.TabIndex = 34;
@@ -129,10 +132,11 @@ namespace SetupTv.Sections
       // 
       this.mpComboBoxCountry.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboBoxCountry.FormattingEnabled = true;
-      this.mpComboBoxCountry.Location = new System.Drawing.Point(80, 40);
+      this.mpComboBoxCountry.Location = new System.Drawing.Point(80, 39);
       this.mpComboBoxCountry.Name = "mpComboBoxCountry";
       this.mpComboBoxCountry.Size = new System.Drawing.Size(175, 21);
       this.mpComboBoxCountry.TabIndex = 33;
+      this.mpComboBoxCountry.SelectedIndexChanged += new System.EventHandler(this.mpComboBoxCountry_SelectedIndexChanged);
       // 
       // listViewStatus
       // 
@@ -150,10 +154,37 @@ namespace SetupTv.Sections
       this.columnHeader1.Text = "Status";
       this.columnHeader1.Width = 350;
       // 
+      // mpLabel2
+      // 
+      this.mpLabel2.AutoSize = true;
+      this.mpLabel2.Location = new System.Drawing.Point(280, 46);
+      this.mpLabel2.Name = "mpLabel2";
+      this.mpLabel2.Size = new System.Drawing.Size(33, 13);
+      this.mpLabel2.TabIndex = 70;
+      this.mpLabel2.Text = "CAM:";
+      // 
+      // mpComboBox1Cam
+      // 
+      this.mpComboBox1Cam.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.mpComboBox1Cam.FormattingEnabled = true;
+      this.mpComboBox1Cam.Items.AddRange(new object[] {
+            "default",
+            "viaccess",
+            "aston",
+            "conax",
+            "cryptoworks"});
+      this.mpComboBox1Cam.Location = new System.Drawing.Point(319, 39);
+      this.mpComboBox1Cam.Name = "mpComboBox1Cam";
+      this.mpComboBox1Cam.Size = new System.Drawing.Size(103, 21);
+      this.mpComboBox1Cam.TabIndex = 69;
+      this.mpComboBox1Cam.SelectedIndexChanged += new System.EventHandler(this.mpComboBox1_SelectedIndexChanged);
+      // 
       // CardDvbC
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.Controls.Add(this.mpLabel2);
+      this.Controls.Add(this.mpComboBox1Cam);
       this.Controls.Add(this.listViewStatus);
       this.Controls.Add(this.progressBarQuality);
       this.Controls.Add(this.progressBarLevel);
@@ -167,7 +198,7 @@ namespace SetupTv.Sections
       this.Controls.Add(this.mpComboBoxCountry);
       this.Controls.Add(this.mpBeveledLine1);
       this.Name = "CardDvbC";
-      this.Size = new System.Drawing.Size(468, 397);
+      this.Size = new System.Drawing.Size(468, 420);
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -188,5 +219,7 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxCountry;
     private System.Windows.Forms.ListView listViewStatus;
     private System.Windows.Forms.ColumnHeader columnHeader1;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
+    private MediaPortal.UserInterface.Controls.MPComboBox mpComboBox1Cam;
   }
 }

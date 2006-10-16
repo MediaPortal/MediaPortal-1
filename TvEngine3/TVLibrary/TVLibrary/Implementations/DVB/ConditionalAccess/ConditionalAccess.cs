@@ -25,6 +25,8 @@ using System.Text;
 using DirectShowLib;
 using TvLibrary.Channels;
 using TvLibrary.Implementations.DVB.Structures;
+using TvLibrary.Interfaces;
+
 namespace TvLibrary.Implementations.DVB
 {
   /// <summary>
@@ -107,7 +109,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="pmtLength">length of the pmt array</param>
     /// <param name="audioPid">pid of the current audio stream</param>
     /// <returns></returns>
-    public bool SendPMT(DVBBaseChannel channel, byte[] PMT, int pmtLength, int audioPid)
+    public bool SendPMT(CamType camType,DVBBaseChannel channel, byte[] PMT, int pmtLength, int audioPid)
     {
       if (_digitalEveryWhere != null)
       {
@@ -127,7 +129,7 @@ namespace TvLibrary.Implementations.DVB
         }
         int caPmtLen;
         byte[] caPmt = info.caPMT.CaPmtStruct(out caPmtLen);
-        _twinhan.SendPMT("default", (uint)videoPid, (uint)audioPid, caPmt,caPmtLen);
+        _twinhan.SendPMT(camType, (uint)videoPid, (uint)audioPid, caPmt, caPmtLen);
         return true;
       }
       if (_technoTrend != null)

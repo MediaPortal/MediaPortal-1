@@ -897,6 +897,8 @@ namespace TvService
           {
             if (CurrentChannel(cardId).Equals(channel)) return true;
           }
+          Card card = Card.Retrieve(cardId);
+          _localCards[cardId].CamType = (CamType)card.CamType;
           bool result = _localCards[cardId].Tune(channel);
           Log.Write("Controller: Tuner locked:{0} signal strength:{1} signal quality:{2}",
              _localCards[cardId].IsTunerLocked, _localCards[cardId].SignalLevel, _localCards[cardId].SignalQuality);
@@ -924,6 +926,8 @@ namespace TvService
             RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
             return RemoteControl.Instance.TuneScan(cardId, channel);
           }
+          Card card = Card.Retrieve(cardId);
+          _localCards[cardId].CamType = (CamType)card.CamType;
           bool result = _localCards[cardId].TuneScan(channel);
           Log.Write("Controller: Tuner locked:{0} signal strength:{1} signal quality:{2}",
              _localCards[cardId].IsTunerLocked, _localCards[cardId].SignalLevel, _localCards[cardId].SignalQuality);

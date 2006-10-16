@@ -2191,6 +2191,17 @@ namespace TvLibrary.Implementations.DVB
       }
       return false;
     }
+
+    public CamType CamType
+    {
+      get
+      {
+        return CamType.Default;
+      }
+      set
+      {
+      }
+    }
   }
 }
 

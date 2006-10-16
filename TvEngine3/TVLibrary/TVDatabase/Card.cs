@@ -34,14 +34,16 @@ namespace TvDatabase
 		[TableColumn("idServer", NotNull = true), ForeignKey("Server", "idServer")]
 		private int idServer;
 		[TableColumn("enabled", NotNull=true)]
-		private bool enabled;
+    private bool enabled;
+    [TableColumn("camType", NotNull = true)]
+    private int camType;
 		#endregion
 			
 		#region Constructors
 		/// <summary> 
 		/// Create a new object by specifying all fields (except the auto-generated primary key field). 
 		/// </summary> 
-		public Card(string devicePath, string name, int priority, bool grabEPG, DateTime lastEpgGrab, string recordingFolder, int idServer, bool enabled)
+		public Card(string devicePath, string name, int priority, bool grabEPG, DateTime lastEpgGrab, string recordingFolder, int idServer, bool enabled, int camType)
 		{
 			isChanged = true;
 			this.devicePath = devicePath;
@@ -52,13 +54,14 @@ namespace TvDatabase
 			this.recordingFolder = recordingFolder;
 			this.idServer = idServer;
 			this.enabled = enabled;
+      this.camType = camType;
 		}
 			
 		/// <summary> 
 		/// Create an object from an existing row of data. This will be used by Gentle to 
 		/// construct objects from retrieved rows. 
 		/// </summary> 
-		public Card(int idCard, string devicePath, string name, int priority, bool grabEPG, DateTime lastEpgGrab, string recordingFolder, int idServer, bool enabled)
+		public Card(int idCard, string devicePath, string name, int priority, bool grabEPG, DateTime lastEpgGrab, string recordingFolder, int idServer, bool enabled, int camType)
 		{
 			this.idCard = idCard;
 			this.devicePath = devicePath;
@@ -69,6 +72,7 @@ namespace TvDatabase
 			this.recordingFolder = recordingFolder;
 			this.idServer = idServer;
 			this.enabled = enabled;
+      this.camType = camType;
 		}
 		#endregion
 
@@ -160,6 +164,15 @@ namespace TvDatabase
 			get { return enabled; }
 			set { isChanged |= enabled != value; enabled = value; }
 		}
+
+    /// <summary>
+    /// Property relating to database column idServer
+    /// </summary>
+    public int CamType
+    {
+      get { return camType; }
+      set { isChanged |= camType != value; camType = value; }
+    }
 		#endregion
 
 		#region Storage and Retrieval

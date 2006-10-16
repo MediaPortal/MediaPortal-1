@@ -74,9 +74,6 @@ namespace TvLibrary.Implementations.DVB
     }
     #endregion
 
-
-
-
     #region constants
 
     [ComImport, Guid("fc50bed6-fe38-42d3-b831-771690091a6e")]
@@ -92,8 +89,6 @@ namespace TvLibrary.Implementations.DVB
     class CyberLinkDumpFilter { };
 
     #endregion
-
-
 
     #region variables
     protected ConditionalAccess _conditionalAccess = null;
@@ -146,6 +141,7 @@ namespace TvLibrary.Implementations.DVB
     protected bool _startTimeShifting = false;
     DVBAudioStream _currentAudioStream;
     BaseEpgGrabber _epgGrabberCallback = null;
+    CamType _camType;
 
 
 
@@ -2363,7 +2359,7 @@ namespace TvLibrary.Implementations.DVB
                     audioPid = _currentAudioStream.Pid;
                   }
 
-                  if (_conditionalAccess.SendPMT((DVBBaseChannel)Channel, pmt, pmtLength, audioPid) == false)
+                  if (_conditionalAccess.SendPMT(_camType,(DVBBaseChannel)Channel, pmt, pmtLength, audioPid) == false)
                   {
                     return true;
                   }
@@ -2389,6 +2385,17 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
 
+    public CamType CamType
+    {
+      get
+      {
+        return _camType;
+      }
+      set
+      {
+        _camType = value;
+      }
+    }
 
   }
 }

@@ -40,6 +40,9 @@ namespace TvLibrary.Interfaces.Analyzer
     int GetCount(out short channelCount);
 
     [PreserveSig]
+	  int IsReady( out bool yesNo);
+
+    [PreserveSig]
     int GetChannel(short index,
                        out short networkId,
                        out short transportId,
@@ -68,6 +71,7 @@ namespace TvLibrary.Interfaces.Analyzer
                        out IntPtr audioLanguage3,
                        out short teletextPid,
                        out short subtitlePid,
+                       out IntPtr subtitleLanguage,
                        out short videoStreamType);
   }
 }

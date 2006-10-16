@@ -69,15 +69,32 @@ void CPatParser::SetConditionalAccess(CConditionalAccess* access)
 	m_pConditionalAccess=access;
 }
  
+BOOL CPatParser::IsReady()
+{
+ if (m_vctParser.Count() > 0)
+  {
+    return TRUE;
+  }
+	if (m_nitDecoder.Ready()==false) return FALSE;
+  if (m_pmtParsers.size()==false) return FALSE;
+  for (int i=0; i < m_pmtParsers.size();++i)
+  {
+    CPmtParser* parser=m_pmtParsers[i];
+    if (false==parser->Ready()) return FALSE;
+    CPidTable& table=parser->GetPidInfo();
+    CChannelInfo info;
+	  if (false==m_sdtParser.GetChannelInfo(table.ServiceId,info)) return FALSE;
+  }
+  return TRUE;
+}
+
 int CPatParser::Count()
 {
   if (m_vctParser.Count() > 0)
   {
     return m_vctParser.Count();
   }
-	if (m_nitDecoder.Ready()==false) return 0;
-  int count= m_pmtParsers.size();
-	return count;
+  return m_pmtParsers.size();
 }
 
 bool CPatParser::GetChannel(int index, CChannelInfo& info)
@@ -101,35 +118,16 @@ bool CPatParser::GetChannel(int index, CChannelInfo& info)
 	{
 		return false;
 	}
-
   CPidTable& table=parser->GetPidInfo();
-  if ( m_vctParser.Count() > 0) 
-  {
-		if (m_vctParser.GetChannelInfo(table.ServiceId,info))
-		{
-			info.PidTable = table;
-			info.LCN=m_nitDecoder.GetLogicialChannelNumber(info.NetworkId,info.TransportId,info.ServiceId);
-			return true;
-		}
-  }
 	if (m_sdtParser.Count()>0)
   {
-    if (m_sdtParser.GetChannelInfo(table.ServiceId,info))
+    if (m_sdtParser.GetChannelInfo(table.ServiceId, info))
 		{
 			info.PidTable = table;
 			info.LCN=m_nitDecoder.GetLogicialChannelNumber(info.NetworkId,info.TransportId,info.ServiceId);
 			return true;
 		}
   }
-/*
-	sprintf(unknownChannel.ProviderName,"unknown");
-	sprintf(unknownChannel.ServiceName,"%x", table.ServiceId);
-	unknownChannel.PidTable=table;
-	unknownChannel.ServiceType=0;
-	unknownChannel.NetworkId=0xfff;
-	unknownChannel.TransportId=0xfff;
-	unknownChannel.ServiceId=table.ServiceId;
-	info=unknownChannel;*/
 	return false;
 }
 

@@ -34,6 +34,7 @@ DECLARE_INTERFACE_(ITSChannelScan, IUnknown)
 	STDMETHOD(Start)(THIS_)PURE;
 	STDMETHOD(Stop)(THIS_)PURE;
 	STDMETHOD(GetCount)(THIS_ int* channelCount)PURE;
+	STDMETHOD(IsReady)(THIS_ BOOL* yesNo)PURE;
 	STDMETHOD(GetChannel)(THIS_ int index,
 										 int* networkId,
 										 int* transportId,
@@ -62,6 +63,7 @@ DECLARE_INTERFACE_(ITSChannelScan, IUnknown)
 										 char** audioLanguage3,
 										 int* teletextPid,
 										 int* subtitlePid,
+										 char** subLanguage1,
 										 int* videoStreamType)PURE;
 
 };
@@ -79,6 +81,7 @@ public:
 	STDMETHODIMP Start();
 	STDMETHODIMP Stop();
 	STDMETHODIMP GetCount(int* channelCount);
+	STDMETHODIMP IsReady( BOOL* yesNo);
 	STDMETHODIMP GetChannel(int index,
 										 int* networkId,
 										 int* transportId,
@@ -107,6 +110,7 @@ public:
 										 char** audioLanguage3,
 										 int* teletextPid,
 										 int* subtitlePid,
+										 char** subLanguage1,
 										 int* videoStreamType);
 
 

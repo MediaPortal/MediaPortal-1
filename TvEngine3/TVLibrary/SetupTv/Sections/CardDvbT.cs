@@ -100,6 +100,10 @@ namespace SetupTv.Sections
       UpdateStatus();
       TvBusinessLayer layer = new TvBusinessLayer();
       mpComboBoxCountry.SelectedIndex = Int32.Parse(layer.GetSetting("dvbt" + _cardNumber.ToString() + "Country", "0").Value);
+
+      
+      Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
+      mpComboBoxCam.SelectedIndex = card.CamType;
     }
 
 
@@ -290,6 +294,15 @@ namespace SetupTv.Sections
     private void CardDvbT_Load(object sender, EventArgs e)
     {
 
+    }
+
+    private void mpComboBoxCam_SelectedIndexChanged(object sender, EventArgs e)
+    {
+
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
+      card.CamType = mpComboBoxCam.SelectedIndex;
+      card.Persist();
     }
   }
 }

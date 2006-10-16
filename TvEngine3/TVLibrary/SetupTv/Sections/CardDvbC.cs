@@ -231,6 +231,10 @@ namespace SetupTv.Sections
       TvBusinessLayer layer = new TvBusinessLayer();
       mpComboBoxCountry.SelectedIndex = Int32.Parse(layer.GetSetting("dvbc" + _cardNumber.ToString() + "Country", "0").Value);
 
+      
+      Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
+      mpComboBox1Cam.SelectedIndex = card.CamType;
+
     }
     public override void OnSectionDeActivated()
     {
@@ -394,6 +398,25 @@ namespace SetupTv.Sections
 
       lastItem = listViewStatus.Items.Add(new ListViewItem("Scan done..."));
       lastItem.EnsureVisible();
+    }
+
+    private void mpComboBox1_SelectedIndexChanged(object sender, EventArgs e)
+    {
+
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
+      card.CamType = mpComboBox1Cam.SelectedIndex;
+      card.Persist();
+    }
+
+    private void mpComboBoxCountry_SelectedIndexChanged(object sender, EventArgs e)
+    {
+
+    }
+
+    private void mpBeveledLine1_Load(object sender, EventArgs e)
+    {
+
     }
 
   }
