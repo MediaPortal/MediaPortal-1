@@ -127,36 +127,39 @@ namespace SetupTv
         IList cards = Card.ListAll();
         foreach (Server server in dbsServers)
         {
+          int cardNo = 1;
           TvCards cardPage = new TvCards(server.HostName);
           AddChildSection(servers, cardPage);
           foreach (Card dbsCard in server.ReferringCard())
           {
+
             CardType type = RemoteControl.Instance.Type(dbsCard.IdCard);
-            string cardName = RemoteControl.Instance.CardName(dbsCard.IdCard);
+            string cardName = dbsCard.Name;
             switch (type)
             {
               case CardType.Analog:
-                cardName = String.Format("Analog {0}", cardName);
+                cardName = String.Format("{0} Analog {1}", cardNo, cardName);
                 AddChildSection(cardPage, new CardAnalog(cardName, dbsCard.IdCard));
                 break;
 
               case CardType.DvbT:
-                cardName = String.Format("DVB-T {0}", cardName);
+                cardName = String.Format("{0} DVB-T {1}", cardNo, cardName);
                 AddChildSection(cardPage, new CardDvbT(cardName, dbsCard.IdCard));
                 break;
               case CardType.DvbC:
-                cardName = String.Format("DVB-C {0}", cardName);
+                cardName = String.Format("{0} DVB-C {1}", cardNo, cardName);
                 AddChildSection(cardPage, new CardDvbC(cardName, dbsCard.IdCard));
                 break;
               case CardType.DvbS:
-                cardName = String.Format("DVB-S {0}", cardName);
+                cardName = String.Format("{0} DVB-S {1}", cardNo, cardName);
                 AddChildSection(cardPage, new CardDvbS(cardName, dbsCard.IdCard));
                 break;
               case CardType.Atsc:
-                cardName = String.Format("ATSC {0}", cardName);
+                cardName = String.Format("{0} ATSC {1}", cardNo,cardName);
                 AddChildSection(cardPage, new CardAtsc(cardName, dbsCard.IdCard));
                 break;
             }
+            cardNo++;
           }
         }
 
