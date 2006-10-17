@@ -765,16 +765,18 @@ namespace MediaPortal.Music.Database
         // remove CD1, CD2, CDn from Tracks
         if (Util.Utils.ShouldStack(cleanString, cleanString))
           Util.Utils.RemoveStackEndings(ref cleanString);
-        //dotIndex = cleanString.IndexOf("CD");
-        //if (dotIndex > 0)
-        //  cleanString = cleanString.Remove(dotIndex);
-        // remove [DJ Spacko MIX 2000]
+        // remove [DJ Spacko MIX (2000)]
         dotIndex = cleanString.IndexOf("[");
         if (dotIndex > 0)
           cleanString = cleanString.Remove(dotIndex);
         dotIndex = cleanString.IndexOf("(");
         if (dotIndex > 0)
           cleanString = cleanString.Remove(dotIndex);
+
+        // substitute "&" with "and"
+        cleanString = cleanString.Replace("&", " and ");
+        // make sure there's only one space
+        cleanString = cleanString.Replace("  ", " ");
 
         dotIndex = 0;
         if (cleanString != String.Empty)
@@ -813,7 +815,8 @@ namespace MediaPortal.Music.Database
                 break;
           }
           while (dotIndex > 0);
-        } 
+        }         
+
         // build a clean end
         dotIndex = outString.LastIndexOf('-');
         if (dotIndex >= outString.Length - 2)
