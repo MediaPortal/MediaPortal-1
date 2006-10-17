@@ -308,6 +308,7 @@ namespace TvLibrary.Implementations.DVB
 
     public bool SendPMT(int serviceId)
     {
+      Log.Log.WriteFile("Technotrend: SendPMT serviceId:{0}",serviceId);
       if ((bool)_isCamInitializedTable[_handle] == false)
       {
         Log.Log.WriteFile("Technotrend: service cannot be decoded because the CAM is not ready yet");

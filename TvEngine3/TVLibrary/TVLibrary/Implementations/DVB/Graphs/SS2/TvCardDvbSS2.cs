@@ -846,7 +846,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="info"></param>
     protected void SetMpegPidMapping(ChannelInfo info)
     {
-      //if (!CheckThreadId()) return;
+      if (info == null) return;
       Log.Log.WriteFile("ss2:SetMpegPidMapping");
 
       ITsVideoAnalyzer writer = (ITsVideoAnalyzer)_filterTsAnalyzer;

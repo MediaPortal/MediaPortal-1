@@ -1279,7 +1279,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="info"></param>
     protected void SetMpegPidMapping(ChannelInfo info)
     {
-      //if (!CheckThreadId()) return;
+      if (info == null) return;
       try
       {
         Log.Log.WriteFile("dvb:SetMpegPidMapping");
