@@ -27,9 +27,10 @@
 #include "DemuxPinMapper.h"
 #include "dvbsubs\dvbsubs.h"
 #include "PatParser\PacketSync.h"
+#include "PatParser\PesDecoder.h"
 #include <streams.h>
 
-class CSubtitleInputPin : public CRenderedInputPin, public CDemuxPinMapper, public CPacketSync
+class CSubtitleInputPin : public CRenderedInputPin, public CDemuxPinMapper, public CPacketSync, public CPesCallback
 {
 public:
 
@@ -62,10 +63,15 @@ public:
   // From CPacketSync
   void OnTsPacket( byte* tsPacket );
 
+  // From CPesCallback
+  int OnNewPesPacket( int streamid,byte* header, int headerlen,byte* data, int len, bool isStart );
+
 private:
 
 	CDVBSubDecoder*		m_pSubDecoder;
 	unsigned char*		m_PESdata;
+
+  CPesDecoder*  m_pesDecoder;
 	
   IPin        *m_pDemuxerPin;
 

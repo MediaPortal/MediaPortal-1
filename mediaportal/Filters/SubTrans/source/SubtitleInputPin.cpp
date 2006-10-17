@@ -61,12 +61,16 @@ CSubtitleInputPin::CSubtitleInputPin( CSubTransform *pDump,
 					m_PESlenght( 0 )
 {
 	m_PESdata = (unsigned char*)malloc(32000); // size is just a guess...
-	Reset();
+	
+  m_pesDecoder = new CPesDecoder( this );
+  
+  Reset();
 	Log( "Subtitle: Input pin created" );
 }
 
 CSubtitleInputPin::~CSubtitleInputPin()
 {
+  delete m_pesDecoder;
 }
 //
 // CheckMediaType
@@ -98,6 +102,8 @@ HRESULT CSubtitleInputPin::CompleteConnect( IPin *pPin )
     return hr;  // PID is mapped later when we have it 
 
   hr = MapPidToDemuxer( m_SubtitlePid, m_pDemuxerPin, MEDIA_TRANSPORT_PACKET );
+
+  m_pesDecoder->SetPid( m_SubtitlePid );
 
   return hr;
 }
@@ -237,10 +243,16 @@ STDMETHODIMP CSubtitleInputPin::Receive( IMediaSample *pSample )
 
 void CSubtitleInputPin::OnTsPacket( byte* tsPacket )
 {
-
-
+  m_pesDecoder->OnTsPacket( tsPacket );
 }
 
+int CSubtitleInputPin::OnNewPesPacket( int streamid, byte* header, int headerlen, 
+                                       byte* data, int len, bool isStart )
+{
+  m_pSubDecoder->ProcessPES( data, len, m_SubtitlePid );
+
+  return 0;
+}
 
 void CSubtitleInputPin::Reset()
 {
@@ -250,7 +262,8 @@ void CSubtitleInputPin::Reset()
 void CSubtitleInputPin::SetSubtitlePid( LONG pPid )
 {
 	m_SubtitlePid = pPid;
-  MapPidToDemuxer( m_SubtitlePid, m_pDemuxerPin, MEDIA_TRANSPORT_PAYLOAD );
+  MapPidToDemuxer( m_SubtitlePid, m_pDemuxerPin, MEDIA_TRANSPORT_PACKET );
+  m_pesDecoder->SetPid( m_SubtitlePid );
 }
 
 //
@@ -263,12 +276,12 @@ STDMETHODIMP CSubtitleInputPin::EndOfStream( void )
 
 } // EndOfStream
 
-STDMETHODIMP CSubtitleInputPin::BeginFlush(void)
+STDMETHODIMP CSubtitleInputPin::BeginFlush( void )
 {
 //	Reset();
 	return CRenderedInputPin::BeginFlush();
 }
-STDMETHODIMP CSubtitleInputPin::EndFlush(void)
+STDMETHODIMP CSubtitleInputPin::EndFlush( void )
 {
 //	Reset();
 	return CRenderedInputPin::EndFlush();
