@@ -2367,6 +2367,7 @@ namespace TvLibrary.Implementations.DVB
 
                   if (_conditionalAccess.SendPMT(_camType, (DVBBaseChannel)Channel, pmt, pmtLength, audioPid) == false)
                   {
+                    _pmtVersion = version;
                     Log.Log.WriteFile("dvb:cam ready:{0}", _conditionalAccess.IsCamReady());
                     return true;
                   }
