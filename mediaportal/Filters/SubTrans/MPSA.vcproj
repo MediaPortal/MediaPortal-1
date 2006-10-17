@@ -272,7 +272,7 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="PatParser"
+			Name="StreamParsing"
 			>
 			<Filter
 				Name="Header Files"
@@ -298,6 +298,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\source\PatParser\PesDecoder.h"
+					>
+				</File>
+				<File
 					RelativePath=".\source\PatParser\PidTable.h"
 					>
 				</File>
@@ -311,6 +315,10 @@
 				</File>
 				<File
 					RelativePath=".\source\PatParser\SectionDecoder.h"
+					>
+				</File>
+				<File
+					RelativePath=".\source\TsHeader.h"
 					>
 				</File>
 				<File
@@ -335,6 +343,10 @@
 				</File>
 				<File
 					RelativePath=".\source\PatParser\PatParser.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\source\PatParser\PesDecoder.cpp"
 					>
 				</File>
 				<File
