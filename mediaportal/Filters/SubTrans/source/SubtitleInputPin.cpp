@@ -124,8 +124,8 @@ STDMETHODIMP CSubtitleInputPin::Receive( IMediaSample *pSample )
 	if( m_SubtitlePid == -1 )
     return S_OK;  // Nothing to be done yet
 
-  try
-	{
+//  try
+//	{
 		if ( m_bReset )
 		{
 			Log( "Subtitle: reset" );
@@ -159,6 +159,9 @@ STDMETHODIMP CSubtitleInputPin::Receive( IMediaSample *pSample )
 		}
 		lDataLen = pSample->GetActualDataLength();
 
+    OnRawData( pbData, lDataLen );
+
+/*
 		if( lDataLen > 5 )
 		{
 			Log("Subtitle: Receive() -- first bytes data %d %d %d %d -- lDataLen = %d IsDiscontinuity = %d", pbData[0], pbData[1], pbData[2], pbData[3], lDataLen, pSample->IsDiscontinuity() );
@@ -227,10 +230,17 @@ STDMETHODIMP CSubtitleInputPin::Receive( IMediaSample *pSample )
 	catch(...)
 	{
 		Log( "Subtitle: --- UNHANDLED EXCEPTION --- CSubtitleInputPin::Receive()" );
-	}
+	}*/
   
   return S_OK;
 }
+
+void CSubtitleInputPin::OnTsPacket( byte* tsPacket )
+{
+
+
+}
+
 
 void CSubtitleInputPin::Reset()
 {

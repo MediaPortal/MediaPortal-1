@@ -26,9 +26,10 @@
 #include "SubTransform.h"
 #include "DemuxPinMapper.h"
 #include "dvbsubs\dvbsubs.h"
+#include "PatParser\PacketSync.h"
 #include <streams.h>
 
-class CSubtitleInputPin : public CRenderedInputPin, public CDemuxPinMapper
+class CSubtitleInputPin : public CRenderedInputPin, public CDemuxPinMapper, public CPacketSync
 {
 public:
 
@@ -56,7 +57,10 @@ public:
   STDMETHODIMP NewSegment( REFERENCE_TIME tStart, REFERENCE_TIME tStop, double dRate );
 
 	void Reset();
-	void SetSubtitlePid( LONG pPID );
+  void SetSubtitlePid( LONG pPID );
+
+  // From CPacketSync
+  void OnTsPacket( byte* tsPacket );
 
 private:
 
