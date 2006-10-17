@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Text;
+using System.Xml;
 using System.Windows.Forms;
 using TvControl;
 using DirectShowLib;
@@ -134,7 +135,7 @@ namespace SetupTv.Sections
       SqlStatement stmt = sb.GetStatement(true);
       IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
       IList allmaps = ChannelMap.ListAll();
-      
+
 
       List<ListViewItem> items = new List<ListViewItem>();
       foreach (Channel ch in channels)
@@ -390,6 +391,126 @@ namespace SetupTv.Sections
       // Perform the sort with these new sort options.
       this.mpListView1.Sort();
       ReOrder();
+    }
+
+    void AddAttribute(XmlNode node, string tagName, string tagValue)
+    {
+      XmlAttribute attr = node.OwnerDocument.CreateAttribute(tagName);
+      attr.InnerText = tagValue;
+      node.Attributes.Append(attr);
+    }
+    void AddAttribute(XmlNode node, string tagName, int tagValue)
+    {
+      AddAttribute(node, tagName, tagValue.ToString());
+    }
+    void AddAttribute(XmlNode node, string tagName, bool tagValue)
+    {
+      AddAttribute(node, tagName, tagValue.ToString());
+    }
+
+    void Export()
+    {
+      XmlDocument xmlDoc = new XmlDocument();
+      XmlNode rootElement=xmlDoc.CreateElement("tvserver");
+      AddAttribute(rootElement, "version", "1.0");
+
+      XmlNode nodeServers = xmlDoc.CreateElement("servers");
+      IList servers = Server.ListAll();
+      foreach (Server server in servers)
+      {
+        XmlNode nodeServer = xmlDoc.CreateElement("server");
+        AddAttribute(nodeServer, "HostName", server.HostName);
+        AddAttribute(nodeServer, "IdServer", server.IdServer);
+        AddAttribute(nodeServer, "IsMaster", server.IsMaster);
+
+        XmlNode nodeCards = xmlDoc.CreateElement("cards");
+        IList cards = Card.ListAll();
+        foreach (Card card in cards)
+        {
+          XmlNode nodeCard = xmlDoc.CreateElement("card");
+          AddAttribute(nodeCard, "IdCard", card.IdCard);
+          AddAttribute(nodeCard, "DevicePath", card.DevicePath);
+          AddAttribute(nodeCard, "Enabled", card.Enabled);
+          AddAttribute(nodeCard, "CamType", card.CamType);
+          AddAttribute(nodeCard, "GrabEPG", card.GrabEPG);
+          AddAttribute(nodeCard, "LastEpgGrab", String.Format("{0}-{1}-{2} {3}:{4}:{5}", card.LastEpgGrab.Year, card.LastEpgGrab.Month, card.LastEpgGrab.Day, card.LastEpgGrab.Hour, card.LastEpgGrab.Minute, card.LastEpgGrab.Second));
+          AddAttribute(nodeCard, "Name", card.Name);
+          AddAttribute(nodeCard, "Priority", card.Priority);
+          AddAttribute(nodeCard, "RecordingFolder", card.RecordingFolder);
+          nodeCards.AppendChild(nodeCard);
+        }
+        nodeServer.AppendChild(nodeCards);
+        nodeServers.AppendChild(nodeServer);
+      }
+      rootElement.AppendChild(nodeServers);
+
+      XmlNode nodechannels = xmlDoc.CreateElement("channels");
+      IList channels = Channel.ListAll();
+      foreach(Channel channel in channels)
+      {
+        XmlNode nodechannel = xmlDoc.CreateElement("channel");
+        AddAttribute(nodechannel, "Name", channel.Name);
+        AddAttribute(nodechannel, "GrabEpg", channel.GrabEpg);
+        AddAttribute(nodechannel, "IdChannel", channel.IdChannel);
+        AddAttribute(nodechannel, "IsRadio", channel.IsRadio);
+        AddAttribute(nodechannel, "IsTv", channel.IsTv);
+        AddAttribute(nodechannel, "LastGrabTime", String.Format("{0}-{1}-{2} {3}:{4}:{5}", channel.LastGrabTime.Year, channel.LastGrabTime.Month,channel.LastGrabTime.Day,channel.LastGrabTime.Hour,channel.LastGrabTime.Minute,channel.LastGrabTime.Second));
+        AddAttribute(nodechannel, "SortOrder", channel.SortOrder);
+        AddAttribute(nodechannel, "TimesWatched", channel.TimesWatched);
+        AddAttribute(nodechannel, "TotalTimeWatched", String.Format("{0}-{1}-{2} {3}:{4}:{5}", channel.TotalTimeWatched.Year, channel.TotalTimeWatched.Month, channel.TotalTimeWatched.Day, channel.TotalTimeWatched.Hour, channel.TotalTimeWatched.Minute, channel.TotalTimeWatched.Second));
+        AddAttribute(nodechannel, "VisibleInGuide", channel.VisibleInGuide);
+
+        XmlNode nodeMaps = xmlDoc.CreateElement("mappings");
+        foreach (ChannelMap map in channel.ReferringChannelMap()) 
+        {
+          XmlNode nodeMap = xmlDoc.CreateElement("map");
+          AddAttribute(nodeMap, "IdCard", map.IdCard);
+          AddAttribute(nodeMap, "IdChannel", map.IdChannel);
+          AddAttribute(nodeMap, "IdChannelMap", map.IdChannelMap);
+          nodeMaps.AppendChild(nodeMap);
+        }
+        nodechannel.AppendChild(nodeMaps);
+
+        XmlNode nodeTuningDetails = xmlDoc.CreateElement("TuningDetails");
+        foreach (TuningDetail detail in channel.ReferringTuningDetail())
+        {
+          XmlNode nodeTune = xmlDoc.CreateElement("tune");
+          AddAttribute(nodeTune, "IdChannel", detail.IdChannel);
+          AddAttribute(nodeTune, "IdTuning", detail.IdTuning);
+          AddAttribute(nodeTune, "AudioPid", detail.AudioPid);
+          AddAttribute(nodeTune, "Bandwidth", detail.Bandwidth);
+          AddAttribute(nodeTune, "ChannelNumber", detail.ChannelNumber);
+          AddAttribute(nodeTune, "ChannelType", (int)detail.ChannelType);
+          AddAttribute(nodeTune, "CountryId", (int)detail.CountryId);
+          AddAttribute(nodeTune, "Diseqc", (int)detail.Diseqc);
+          AddAttribute(nodeTune, "FreeToAir", detail.FreeToAir);
+          AddAttribute(nodeTune, "Frequency", detail.Frequency);
+          AddAttribute(nodeTune, "MajorChannel", detail.MajorChannel);
+          AddAttribute(nodeTune, "MinorChannel", detail.MinorChannel);
+          AddAttribute(nodeTune, "Modulation", detail.Modulation);
+          AddAttribute(nodeTune, "Name", detail.Name);
+          AddAttribute(nodeTune, "NetworkId", detail.NetworkId);
+          AddAttribute(nodeTune, "PcrPid", detail.PcrPid);
+          AddAttribute(nodeTune, "PmtPid", detail.PmtPid);
+          AddAttribute(nodeTune, "Polarisation", (int)detail.Polarisation);
+          AddAttribute(nodeTune, "Provider", detail.Provider);
+          AddAttribute(nodeTune, "ServiceId", (int)detail.ServiceId);
+          AddAttribute(nodeTune, "SwitchingFrequency", (int)detail.SwitchingFrequency);
+          AddAttribute(nodeTune, "Symbolrate", (int)detail.Symbolrate);
+          AddAttribute(nodeTune, "TransportId", (int)detail.TransportId);
+          AddAttribute(nodeTune, "TuningSource", (int)detail.TuningSource);
+          AddAttribute(nodeTune, "VideoPid", (int)detail.VideoPid);
+          AddAttribute(nodeTune, "VideoSource", (int)detail.VideoSource);
+          nodeTuningDetails.AppendChild(nodeTune);
+        }
+        nodechannel.AppendChild(nodeTuningDetails);
+
+        nodechannels.AppendChild(nodechannel);
+      }
+      rootElement.AppendChild(nodechannels);
+      xmlDoc.AppendChild(rootElement);
+      xmlDoc.Save("export.xml");
+      MessageBox.Show("Channels exported to 'export.xml'");
     }
   }
 }
