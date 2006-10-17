@@ -7,7 +7,7 @@ namespace TvLibrary.Implementations.DVB.Structures
   /// <summary>
   /// Structure holding all information about a single pid
   /// </summary>
-  public struct PidInfo
+  public class PidInfo
   {
     /// <summary>
     /// stream type
@@ -35,7 +35,7 @@ namespace TvLibrary.Implementations.DVB.Structures
     /// <summary>
     /// audio language
     /// </summary>
-    public string language;
+    public string language = "";
     /// <summary>
     /// true if pid contains ac3 audio
     /// </summary>
@@ -59,7 +59,7 @@ namespace TvLibrary.Implementations.DVB.Structures
     /// <summary>
     /// teletext language
     /// </summary>
-    public string teletextLANG;
+    public string teletextLANG ="";
 
     /// <summary>
     /// Ctor for an audio pid
@@ -68,6 +68,8 @@ namespace TvLibrary.Implementations.DVB.Structures
     /// <param name="audioLanguage">The audio language.</param>
     public void AudioPid(int audioPid, string audioLanguage)
     {
+
+      if (audioLanguage == null) audioLanguage = "";
       pid = audioPid;
       language = audioLanguage;
       stream_type = 3;
@@ -81,6 +83,7 @@ namespace TvLibrary.Implementations.DVB.Structures
     /// <param name="audioLanguage">The audio language.</param>
     public void Ac3Pid(int ac3Pid, string audioLanguage)
     {
+      if (audioLanguage == null) audioLanguage = "";
       pid = ac3Pid;
       language = audioLanguage;
       stream_type = 0x81;
@@ -134,5 +137,6 @@ namespace TvLibrary.Implementations.DVB.Structures
       if (isDVBSubtitle) return String.Format("pid:{0:X} subtitle type:{1:X}", pid, stream_type);
       return string.Format("pid:{0:X} type:{1:X}", pid, stream_type);
     }
+
   }
 }

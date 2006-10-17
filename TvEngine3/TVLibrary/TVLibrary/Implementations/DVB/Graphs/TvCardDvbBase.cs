@@ -2011,8 +2011,6 @@ namespace TvLibrary.Implementations.DVB
             }
           } 
         }
-
-
       }
       catch (Exception ex)
       {
