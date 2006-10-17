@@ -302,7 +302,7 @@ namespace MediaPortal.Configuration
               if (!alreadyAdded)
                 cardComboBox.Items.Add(cbcc);
             }
-            break;
+            if (addNewCard) break; // must not break in edit mode
           }
 
           //treat the TTPremium DVB-S card as a general H/W card
@@ -335,7 +335,7 @@ namespace MediaPortal.Configuration
               if (!alreadyAdded)
                 cardComboBox.Items.Add(cbcc);
             }
-            break;
+            if (addNewCard) break; // must not break in edit mode
           }
 
 
