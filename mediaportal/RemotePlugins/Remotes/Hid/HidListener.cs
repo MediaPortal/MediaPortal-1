@@ -26,17 +26,21 @@
 using System;
 using System.Windows.Forms;
 using System.Threading;
+using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Util;
+using MediaPortal.Hooks;
 
 namespace MediaPortal.InputDevices
 {
-	public class HidListener
-	{
+  public class HidListener
+  {
     bool controlEnabled = false;
+    bool controlEnabledGlobally = false;
     bool logVerbose = false;           // Verbose logging
     InputHandler _inputHandler;
+    KeyboardHook _keyboardHook;
 
     public HidListener()
     {
@@ -52,6 +56,7 @@ namespace MediaPortal.InputDevices
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         controlEnabled = xmlreader.GetValueAsBool("remote", "HID", false);
+        controlEnabledGlobally = xmlreader.GetValueAsBool("remote", "HIDGlobal", false);
         logVerbose = xmlreader.GetValueAsBool("remote", "HIDVerboseLog", false);
       }
 
@@ -64,17 +69,72 @@ namespace MediaPortal.InputDevices
           Log.Info("HID: Error loading default mapping file - please reinstall MediaPortal");
         }
       }
+
+      if (controlEnabledGlobally)
+      {
+        _keyboardHook = new KeyboardHook();
+        _keyboardHook.KeyDown += new KeyEventHandler(OnKeyDown);
+        _keyboardHook.IsEnabled = true;
+      }
     }
 
     public void DeInit()
     {
+      if (_keyboardHook != null && _keyboardHook.IsEnabled)
+        _keyboardHook.IsEnabled = false;
     }
 
-		public bool WndProc(ref Message msg, out Action action, out char key, out Keys keyCode)
-		{
-			action = null;
-			key = (char)0;
-			keyCode = Keys.A;
+    [DllImport("user32.dll")]
+    static extern bool SendMessage(IntPtr hWnd, uint Msg, uint wParam, uint lParam);
+
+    void OnKeyDown(object sender, KeyEventArgs e)
+    {
+      if (GUIGraphicsContext.form != null && GUIGraphicsContext.form.Focused == false)
+      {
+        AppCommands appCommand = KeyCodeToAppCommand(e.KeyCode);
+
+        if (appCommand != AppCommands.None)
+        {
+          int device = 0;
+          int keys = (((int)appCommand & ~0xF000) | (device & 0xF000));
+          int lParam = (((keys) << 16) | (((int)e.KeyCode)));
+
+          // since the normal process involves geting polled via WndProc we have to get a tiny bit dirty 
+          // and send a message back to the main form in order to get the key press handled without 
+          // duplicating action mapping code from the main app
+          SendMessage(GUIGraphicsContext.form.Handle, 0x0319, (uint)GUIGraphicsContext.form.Handle, (uint)lParam);
+        }
+      }
+    }
+
+    AppCommands KeyCodeToAppCommand(Keys keyCode)
+    {
+      switch (keyCode)
+      {
+        case Keys.MediaNextTrack:
+          return AppCommands.MediaNextTrack;
+        case Keys.MediaPlayPause:
+          return AppCommands.MediaPlayPause;
+        case Keys.MediaPreviousTrack:
+          return AppCommands.MediaPreviousTrack;
+        case Keys.MediaStop:
+          return AppCommands.MediaStop;
+        case Keys.VolumeDown:
+          return AppCommands.VolumeDown;
+        case Keys.VolumeMute:
+          return AppCommands.VolumeMute;
+        case Keys.VolumeUp:
+          return AppCommands.VolumeUp;
+      }
+
+      return AppCommands.None;
+    }
+
+    public bool WndProc(ref Message msg, out Action action, out char key, out Keys keyCode)
+    {
+      action = null;
+      key = (char)0;
+      keyCode = Keys.A;
 
       if (controlEnabled)
       {
@@ -104,6 +164,6 @@ namespace MediaPortal.InputDevices
         return true;
       }
       return false;
-		}
-	}
+    }
+  }
 }

@@ -130,6 +130,7 @@ namespace MediaPortal.Configuration.Sections
     private MPLabel labelIrTransServerPort;
     private MPLabel labelIrTransNoteModel;
     private MPGroupBox groupBoxIrTransSettings;
+    private MPCheckBox checkBoxHidGlobal;
 
     private X10RemoteForm x10Form = null;
 
@@ -353,6 +354,7 @@ namespace MediaPortal.Configuration.Sections
 
         checkBoxHidEnabled.Checked = xmlreader.GetValueAsBool("remote", "HID", false);
         checkBoxHidExtendedLogging.Checked = xmlreader.GetValueAsBool("remote", "HIDVerboseLog", false);
+        checkBoxHidGlobal.Checked = xmlreader.GetValueAsBool("remote", "HIDGlobal", false);
         buttonHidMapping.Enabled = checkBoxHidEnabled.Checked;
         groupBoxHidSettings.Enabled = checkBoxHidEnabled.Checked;
 
@@ -379,7 +381,7 @@ namespace MediaPortal.Configuration.Sections
         // Fill combobox with list of availabe FireDTV recievers
         try
         {
-          fireDTV = new FireDTVControl((IntPtr) 0);
+          fireDTV = new FireDTVControl((IntPtr)0);
           if (fireDTV.OpenDrivers())
           {
             comboBoxFireDTVReceiver.DataSource = fireDTV.SourceFilters;
@@ -389,7 +391,7 @@ namespace MediaPortal.Configuration.Sections
         }
         catch (Exception e)
         {
-          Log.Error("FireDTVRemote: Exception during setting combo {0}",e.Message);
+          Log.Error("FireDTVRemote: Exception during setting combo {0}", e.Message);
         }
 
         // Set the rest of the controls
@@ -460,6 +462,7 @@ namespace MediaPortal.Configuration.Sections
 
         xmlwriter.SetValueAsBool("remote", "HID", checkBoxHidEnabled.Checked);
         xmlwriter.SetValueAsBool("remote", "HIDVerboseLog", checkBoxHidExtendedLogging.Checked);
+        xmlwriter.SetValueAsBool("remote", "HIDGlobal", checkBoxHidGlobal.Checked);
 
         #endregion
 
@@ -603,6 +606,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonFireDTVMapping = new MediaPortal.UserInterface.Controls.MPButton();
       this.checkBoxFireDTVEnabled = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+      this.checkBoxHidGlobal = new MediaPortal.UserInterface.Controls.MPCheckBox();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMceUsa)).BeginInit();
       this.tabControlRemotes.SuspendLayout();
       this.tabPageMce.SuspendLayout();
@@ -1339,11 +1343,12 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.groupBoxHidSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxHidSettings.Controls.Add(this.checkBoxHidGlobal);
       this.groupBoxHidSettings.Controls.Add(this.checkBoxHidExtendedLogging);
       this.groupBoxHidSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxHidSettings.Location = new System.Drawing.Point(12, 72);
       this.groupBoxHidSettings.Name = "groupBoxHidSettings";
-      this.groupBoxHidSettings.Size = new System.Drawing.Size(440, 56);
+      this.groupBoxHidSettings.Size = new System.Drawing.Size(440, 64);
       this.groupBoxHidSettings.TabIndex = 5;
       this.groupBoxHidSettings.TabStop = false;
       this.groupBoxHidSettings.Text = "Settings";
@@ -1365,7 +1370,7 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxHidInfo.Controls.Add(this.labelHidInfo);
       this.groupBoxHidInfo.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxHidInfo.Location = new System.Drawing.Point(12, 136);
+      this.groupBoxHidInfo.Location = new System.Drawing.Point(12, 144);
       this.groupBoxHidInfo.Name = "groupBoxHidInfo";
       this.groupBoxHidInfo.Size = new System.Drawing.Size(440, 80);
       this.groupBoxHidInfo.TabIndex = 4;
@@ -1699,6 +1704,17 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.toolTip.ShowAlways = true;
       // 
+      // checkBoxHidGlobal
+      // 
+      this.checkBoxHidGlobal.AutoSize = true;
+      this.checkBoxHidGlobal.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxHidGlobal.Location = new System.Drawing.Point(167, 24);
+      this.checkBoxHidGlobal.Name = "checkBoxHidGlobal";
+      this.checkBoxHidGlobal.Size = new System.Drawing.Size(54, 17);
+      this.checkBoxHidGlobal.TabIndex = 4;
+      this.checkBoxHidGlobal.Text = "Global";
+      this.checkBoxHidGlobal.UseVisualStyleBackColor = true;
+      // 
       // Remote
       // 
       this.Controls.Add(this.tabControlRemotes);
@@ -1818,7 +1834,7 @@ namespace MediaPortal.Configuration.Sections
         rid1[0].usUsage = 0x88;
         rid1[0].dwFlags = 0;
         rid1[0].hwndTarget = hwnd;
-        bool Success = RegisterRawInputDevices(rid1, (uint) rid1.Length, (uint) Marshal.SizeOf(rid1[0]));
+        bool Success = RegisterRawInputDevices(rid1, (uint)rid1.Length, (uint)Marshal.SizeOf(rid1[0]));
         if (Success)
         {
           return true;
@@ -1828,7 +1844,7 @@ namespace MediaPortal.Configuration.Sections
         rid1[0].usUsage = 0x01;
         rid1[0].dwFlags = 0;
         rid1[0].hwndTarget = hwnd;
-        Success = RegisterRawInputDevices(rid1, (uint) rid1.Length, (uint) Marshal.SizeOf(rid1[0]));
+        Success = RegisterRawInputDevices(rid1, (uint)rid1.Length, (uint)Marshal.SizeOf(rid1[0]));
         if (Success)
         {
           return true;
@@ -2044,6 +2060,7 @@ namespace MediaPortal.Configuration.Sections
     private void buttonHidDefaults_Click(object sender, EventArgs e)
     {
       checkBoxHidExtendedLogging.Checked = false;
+      checkBoxHidGlobal.Checked = false;
     }
 
     #endregion
@@ -2084,7 +2101,7 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
- 
+
     #endregion
   }
 }

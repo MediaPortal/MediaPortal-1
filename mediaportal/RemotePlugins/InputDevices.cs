@@ -57,6 +57,7 @@ namespace MediaPortal.InputDevices
       HCWRemote.Init(GUIGraphicsContext.ActiveForm);
       X10Remote.Init(GUIGraphicsContext.ActiveForm);
       IrTrans.Init(GUIGraphicsContext.ActiveForm);
+      //Keyboard.Init(GUIGraphicsContext.ActiveForm);
     }
 
     public static void Stop()
@@ -73,6 +74,7 @@ namespace MediaPortal.InputDevices
       HCWRemote.DeInit();
       X10Remote.DeInit();
       IrTrans.DeInit();
+      //Keyboard.DeInit();
       diRemote.Stop();
 
       _initialized = false;
@@ -84,6 +86,12 @@ namespace MediaPortal.InputDevices
       key = (char)0;
       keyCode = Keys.A;
 
+      //if (Keyboard.WndProc(msg))
+      //return true;
+
+      if (HidListener.WndProc(ref msg, out action, out key, out keyCode))
+        return true;
+
       if (HCWRemote.WndProc(msg))
         return true;
 
@@ -91,9 +99,6 @@ namespace MediaPortal.InputDevices
         return true;
 
       if (MCE2005Remote.WndProc(msg))
-        return true;
-
-      if (HidListener.WndProc(ref msg, out action, out key, out keyCode))
         return true;
 
       return false;
@@ -124,6 +129,7 @@ namespace MediaPortal.InputDevices
     static X10Remote X10Remote = new X10Remote();
     static DirectInputHandler diRemote = new DirectInputHandler();
     static IrTrans IrTrans = new IrTrans();
+    //static Keyboard Keyboard = new Keyboard();
     static RemoteControls.FireDTVRemote FireDTVRemote = new RemoteControls.FireDTVRemote();
     static AppCommands _lastHidRequest;
     static int _lastHidRequestTick;
