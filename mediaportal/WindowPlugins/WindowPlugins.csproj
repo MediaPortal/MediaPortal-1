@@ -1094,9 +1094,6 @@
     <Content Include="GUIPrograms\FileDetailContents.xml" />
     <Content Include="GUIPrograms\ProgramSettingProfiles.xml" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Resources\" />
-  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>
