@@ -141,9 +141,12 @@ STDMETHODIMP CPMTInputPin::Receive( IMediaSample *pSample )
         
         if( m_streamVideoPid == videoPid && m_pPidObserver != NULL )
         {
-          if( m_AudioPid == -1 && pidTable.AudioPid1 > 0)
+          if( m_AudioPid == -1 && pidTable.PcrPid > 0)
           {
-            m_AudioPid = pidTable.AudioPid1;             
+            //m_AudioPid = pidTable.AudioPid1;             
+			  m_AudioPid = pidTable.PcrPid;
+			  Log("AudioPid set to PcrPid value of %x",m_AudioPid);
+			  
             m_pPidObserver->SetAudioPid( m_AudioPid  );
           }
           if( m_SubtitlePid == -1 && pidTable.SubtitlePid > 0) 
@@ -156,7 +159,8 @@ STDMETHODIMP CPMTInputPin::Receive( IMediaSample *pSample )
       }
     }
   }
-    
+  
+  //m_pPidObserver->SetAudioPid(0x80);  
   return hr;
 }
 

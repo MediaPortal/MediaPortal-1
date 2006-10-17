@@ -53,10 +53,10 @@ DECLARE_INTERFACE_( IStreamAnalyzer, IUnknown )
 
 struct PTSTime
 {
-	ULONGLONG h;
-	ULONGLONG m;
-	ULONGLONG s;
-	ULONGLONG u;
+	int h;
+	int m;
+	int s;
+	int u;
 };
 
 class CSubTransform : public CTransformFilter, public MSubdecoderObserver, public MPidObserver
@@ -112,13 +112,13 @@ public:
   // From MPidObserver
   void SetAudioPid( LONG pid );
 	void SetSubtitlePid( LONG pid );
-
+void PTSToPTSTime( ULONGLONG pts, PTSTime* ptsTime );
 private:
   
   HRESULT ProcessFrameUYVY( BYTE *pbInput, BYTE *pbOutput, long *pcbByte );
   HRESULT ProcessFrameYUY2( BYTE *pbInput, BYTE *pbOutput, long *pcbByte );
 	
-  void PTSToPTSTime( ULONGLONG pts, PTSTime* ptsTime );
+  
 
 	void StretchSubtitle();
 

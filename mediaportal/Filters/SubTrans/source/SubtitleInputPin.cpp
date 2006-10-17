@@ -74,7 +74,7 @@ CSubtitleInputPin::~CSubtitleInputPin()
 HRESULT CSubtitleInputPin::CheckMediaType( const CMediaType *pmt )
 {
   Log("Subtitle: CSubtitleInputPin::CheckMediaType()");
-	if( pmt->majortype == GUID_NULL )
+  if( pmt->subtype == MEDIASUBTYPE_MPEG2_TRANSPORT)
 	{
 		return S_OK;
 	}
@@ -97,7 +97,7 @@ HRESULT CSubtitleInputPin::CompleteConnect( IPin *pPin )
   if( m_SubtitlePid == -1 )
     return hr;  // PID is mapped later when we have it 
 
-  hr = MapPidToDemuxer( m_SubtitlePid, m_pDemuxerPin, MEDIA_TRANSPORT_PAYLOAD );
+  hr = MapPidToDemuxer( m_SubtitlePid, m_pDemuxerPin, MEDIA_TRANSPORT_PACKET );
 
   return hr;
 }

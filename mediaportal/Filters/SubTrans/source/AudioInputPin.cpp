@@ -77,12 +77,12 @@ HRESULT CAudioInputPin::CompleteConnect( IPin *pPin )
 {
 	HRESULT hr = CBasePin::CompleteConnect( pPin );
   m_pDemuxerPin = pPin;
-
+  //m_audioPid = 0x80;
   if( m_audioPid == -1 )
     return hr;  // PID is mapped later when we have it 
 
   hr = MapPidToDemuxer( m_audioPid, m_pDemuxerPin, MEDIA_TRANSPORT_PACKET );
-
+	
   return hr;
 }
 
@@ -115,8 +115,9 @@ STDMETHODIMP CAudioInputPin::Receive( IMediaSample *pSample )
 	}
 	lDataLen = pSample->GetActualDataLength();
 
-  OnRawData( pbData, lDataLen );
-/*
+	OnRawData( pbData, lDataLen );
+	//OnTsPacket(pbData);
+	/*
 	if( lDataLen > TSPacketSize )
 	{
 		ULONGLONG pts( 0 );
@@ -143,7 +144,8 @@ STDMETHODIMP CAudioInputPin::Receive( IMediaSample *pSample )
 			}
 		}
 	}
-*/
+	*/
+
   return S_OK;
 }
 
@@ -182,10 +184,38 @@ ULONGLONG CAudioInputPin::GetCurrentPTS()
 
 void CAudioInputPin::OnTsPacket( byte* tsPacket )
 {
-  ULONGLONG pts( 0 );
-  int streamType( 0 ); // not used
+	ULONGLONG pts( 0 );
+	int streamType( 0 ); // not used
+	int PCR_FLAG;
+	PTSTime ptstime;
+	int adaptation_field_control = (tsPacket[3] & 0x30) >> 4;
 
-	if( ( tsPacket[1] & 0x40 ) > 0 )
+	if (adaptation_field_control == 2 || adaptation_field_control == 3) // adaptation field exists
+	{ 
+		PCR_FLAG = (tsPacket[5] & 0x10) >> 4;
+		if (tsPacket[4]>=7 && PCR_FLAG == 1)  // adaptation field is long enough and PCR_FLAG is set on.
+		{
+			UINT64 pcrBaseHigh=0LL;
+			UINT64 k=tsPacket[6]; k<<=25LL;pcrBaseHigh+=k;
+			k=tsPacket[7]; k<<=17LL;pcrBaseHigh+=k;
+			k=tsPacket[8]; k<<=9LL;pcrBaseHigh+=k;
+			k=tsPacket[9]; k<<=1LL;pcrBaseHigh+=k;
+			k=((tsPacket[10]>>7)&0x1); pcrBaseHigh +=k;
+			m_currentPTS = pcrBaseHigh;
+			m_pTransform->PTSToPTSTime(m_currentPTS,&ptstime);
+			Log("Audio pin: Receive - audio PTS = %lld - %d:%02d:%02d:%03d", m_currentPTS,ptstime.h,ptstime.m,ptstime.s,ptstime.u );
+		} 
+		else 
+		{
+			Log("TS packet did not contain PCR value: PCR_FLAG = 0 or adaptation_field_length<7");
+		}
+	} 
+	else 
+	{
+		Log("TS packet did not contain adaptation field. afc: %d", adaptation_field_control);
+	}
+
+/*	if( ( tsPacket[1] & 0x40 ) > 0 )
 	{
 		if( S_OK == CurrentPTS( &tsPacket[0], &pts, &streamType ) )
 		{
@@ -197,6 +227,7 @@ void CAudioInputPin::OnTsPacket( byte* tsPacket )
 			Log("Audio pin: Receive - audio PTS FAILED!");
 		}
 	}
+*/
 }
 
 //
