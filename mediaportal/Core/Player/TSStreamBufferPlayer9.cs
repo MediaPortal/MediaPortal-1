@@ -509,7 +509,7 @@ namespace MediaPortal.Player
             Log.Info("TSStreamBufferPlayer9:Failed to create _pinAudioTS in demuxer:{0:X}", hr);
           }
 
-          hr = demuxer.CreateOutputPin(GetSubtitleMedia(), "Subtitle", out _pinSubtitle);
+          hr = demuxer.CreateOutputPin(GetTSMedia(), "Subtitle", out _pinSubtitle);
           if (hr == 0)
           {
             Log.Info("TSStreamBufferPlayer9:_pinAudioTS OK");
