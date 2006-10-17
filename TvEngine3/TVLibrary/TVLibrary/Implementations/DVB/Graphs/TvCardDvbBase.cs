@@ -2004,10 +2004,10 @@ namespace TvLibrary.Implementations.DVB
         {
           if (SendPmtToCam())
           {
+            _newPMT = false;
             if (_channelInfo != null)
             {
               SetMpegPidMapping(_channelInfo);
-              _newPMT = false;
             }
           } 
         }
@@ -2304,10 +2304,10 @@ namespace TvLibrary.Implementations.DVB
       try
       {
         Log.Log.WriteFile("dvb:OnPMTReceived()");
+        _newPMT = false;
         if (_graphRunning == false) return 0;
         if (SendPmtToCam())
         {
-          _newPMT = false;
           if (_channelInfo != null)
           {
             SetMpegPidMapping(_channelInfo);
@@ -2335,7 +2335,7 @@ namespace TvLibrary.Implementations.DVB
       {
         if ((_currentChannel as ATSCChannel) != null) return true;
         DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
-        if (channel == null) return false;
+        if (channel == null) return true;
         IntPtr pmtMem = Marshal.AllocCoTaskMem(4096);// max. size for pmt
         try
         {
@@ -2365,16 +2365,16 @@ namespace TvLibrary.Implementations.DVB
                     audioPid = _currentAudioStream.Pid;
                   }
 
-                  if (_conditionalAccess.SendPMT(_camType, (DVBBaseChannel)Channel, pmt, pmtLength, audioPid) == false)
+                  if (_conditionalAccess.SendPMT(_camType, (DVBBaseChannel)Channel, pmt, pmtLength, audioPid) )
                   {
                     _pmtVersion = version;
-                    Log.Log.WriteFile("dvb:cam ready:{0}", _conditionalAccess.IsCamReady());
+                    Log.Log.WriteFile("dvb:cam flags:{0}", _conditionalAccess.IsCamReady());
                     return true;
                   }
                   else
                   {
                     //cam is not ready yet
-                    Log.Log.WriteFile("dvb:cam ready:{0}", _conditionalAccess.IsCamReady());
+                    Log.Log.WriteFile("dvb:SendPmt failed cam flags:{0}", _conditionalAccess.IsCamReady());
                     _pmtVersion = -1;
                     return false;
                   }
