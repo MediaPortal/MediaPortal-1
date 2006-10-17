@@ -55,7 +55,7 @@ namespace TvControl
     /// <returns>TvResult indicating whether method succeeded</returns>
     public TvResult StartTimeShifting(string channelName, out VirtualCard card)
     {
-      TvResult result= RemoteControl.Instance.StartTimeShifting(channelName, out card);
+      TvResult result= RemoteControl.Instance.StartTimeShifting(channelName, new User(),out card);
       return result;
     }
 

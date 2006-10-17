@@ -507,7 +507,7 @@ namespace TvControl
     {
       if (_cardId < 0) return;
       RemoteControl.HostName = _server;
-      RemoteControl.Instance.StopTimeShifting(_cardId);
+      RemoteControl.Instance.StopTimeShifting(_cardId, new User());
     }
 
     /// <summary>
@@ -534,6 +534,13 @@ namespace TvControl
       return RemoteControl.Instance.StartRecording(_cardId,ref fileName, contentRecording, startTime);
     }
 
+    public bool IsLocked(out User user)
+    {
+      user = null;
+      if (_cardId < 0) return false;
+      RemoteControl.HostName = _server;
+      return RemoteControl.Instance.IsCardInUse(_cardId, out user);
+    }
     /// <summary>
     /// Gets the number of subpages for a teletext page.
     /// </summary>

@@ -413,19 +413,17 @@ namespace TvService
             bool cardLocked = false;
             try
             {
-              cardLocked = _tvController.Lock(card.IdCard);
-              if (cardLocked == false) continue;
-              RemoteControl.Instance.TuneScan(card.IdCard, tuning);
-              _currentCardId = card.IdCard;
-              _tvController.GrabEpg(this, card.IdCard);
+              User cardUser;
+              if (_tvController.IsCardInUse(card.IdCard, out cardUser) == false)
+              {
+                RemoteControl.Instance.TuneScan(card.IdCard, tuning);
+                _currentCardId = card.IdCard;
+                _tvController.GrabEpg(this, card.IdCard);
+              }
             }
             catch (Exception ex)
             {
               throw ex;
-            }
-            finally
-            {
-              if (cardLocked) _tvController.Unlock(card.IdCard);
             }
             return true;
           }
@@ -450,8 +448,6 @@ namespace TvService
             bool cardLocked = false;
             try
             {
-              cardLocked = _tvController.Lock(card.IdCard);
-              if (cardLocked == false) continue;
               RemoteControl.Instance.TuneScan(card.IdCard, tuning);
               _currentCardId = card.IdCard;
               _tvController.GrabEpg(this, card.IdCard);
@@ -459,10 +455,6 @@ namespace TvService
             catch (Exception ex)
             {
               throw ex;
-            }
-            finally
-            {
-              if (cardLocked) _tvController.Unlock(card.IdCard);
             }
             return true;
           }
@@ -486,8 +478,6 @@ namespace TvService
             bool cardLocked = false;
             try
             {
-              cardLocked = _tvController.Lock(card.IdCard);
-              if (cardLocked == false) continue;
               RemoteControl.Instance.TuneScan(card.IdCard, tuning);
               _currentCardId = card.IdCard;
               _tvController.GrabEpg(this, card.IdCard);
@@ -495,10 +485,6 @@ namespace TvService
             catch (Exception ex)
             {
               throw ex;
-            }
-            finally
-            {
-              if (cardLocked) _tvController.Unlock(card.IdCard);
             }
             return true;
           }
@@ -522,8 +508,6 @@ namespace TvService
             bool cardLocked = false;
             try
             {
-              cardLocked = _tvController.Lock(card.IdCard);
-              if (cardLocked == false) continue;
               RemoteControl.Instance.TuneScan(card.IdCard, tuning);
               _currentCardId = card.IdCard;
               _tvController.GrabEpg(this, card.IdCard);
@@ -531,10 +515,6 @@ namespace TvService
             catch (Exception ex)
             {
               throw ex;
-            }
-            finally
-            {
-              if (cardLocked) _tvController.Unlock(card.IdCard);
             }
             return true;
           }
@@ -736,7 +716,8 @@ namespace TvService
       if (RemoteControl.Instance.IsRecording(cardId)) return false;
       if (RemoteControl.Instance.IsTimeShifting(cardId)) return false;
       if (RemoteControl.Instance.IsScanning(cardId)) return false;
-      if (_tvController.IsLocked(cardId)) return false;
+      User cardUser;
+      if (_tvController.IsCardInUse(cardId, out cardUser)) return false;
       return true;
     }
     #endregion

@@ -271,7 +271,7 @@ namespace TvControl
     /// </summary>
     /// <param name="cardId">id of the card.</param>
     /// <returns>true if success otherwise false</returns>
-    bool StopTimeShifting(int cardId);
+    bool StopTimeShifting(int cardId, User user);
 
     /// <summary>
     /// Starts recording.
@@ -391,7 +391,7 @@ namespace TvControl
     /// <param name="channelName">Name of the channel</param>
     /// <param name="card">returns on which card timeshifting is started</param>
     /// <returns>TvResult indicating whether method succeeded</returns>
-    TvResult StartTimeShifting(string channelName, out VirtualCard card);
+    TvResult StartTimeShifting(string channelName, User user, out VirtualCard card);
 
     /// <summary>
     /// Checks if the channel specified is being recorded and ifso
@@ -433,6 +433,9 @@ namespace TvControl
     /// Returns the SQl connection string to the database
     /// </summary>
     string DatabaseConnectionString { get;set;}
+
+
+    bool IsCardInUse(int cardId, out User user);
     #endregion
 
 

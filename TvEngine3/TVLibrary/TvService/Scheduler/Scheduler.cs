@@ -174,7 +174,7 @@ namespace TvService
         if (IsTimeToRecord(schedule, now, out newRecording))
         {
           //yes, then lets recording it
-          StartRecord(newRecording);
+          StartRecord(newRecording, GetUser());
         }
       }
     }
@@ -378,10 +378,10 @@ namespace TvService
     /// </summary>
     /// <param name="recording">Recording instance</param>
     /// <returns>true if recording is started, otherwise false</returns>
-    bool StartRecord(RecordingDetail recording)
+    bool StartRecord(RecordingDetail recording, User user)
     {
       Log.Write("Scheduler : time to record {0} {1}-{2} {3}", recording.Channel, DateTime.Now, recording.EndTime, recording.Schedule.ProgramName);
-      List<CardDetail> freeCards = _tvController.GetFreeCardsForChannelName(recording.Channel);
+      List<CardDetail> freeCards = _tvController.GetFreeCardsForChannelName(recording.Channel, user);
       if (freeCards.Count == 0) return false;
       CardDetail cardInfo = freeCards[0];
       Log.Write("Scheduler : record on card:{0} priority:{1}", cardInfo.Id, cardInfo.Card.Priority);
@@ -389,12 +389,8 @@ namespace TvService
       bool cardLocked = false;
       try
       {
-        cardLocked = _tvController.Lock(cardInfo.Id);
-        if (!cardLocked)
-        {
-          Log.Write("Scheduler : card {0} is locked", cardInfo.Id);
-          return false;
-        }
+
+        _tvController.LockCard(cardInfo.Id, user);
 
         if (cardInfo.Card.RecordingFolder == String.Empty)
           cardInfo.Card.RecordingFolder = System.IO.Directory.GetCurrentDirectory();
@@ -422,7 +418,7 @@ namespace TvService
       {
         if (cardLocked)
         {
-          _tvController.Unlock(cardInfo.Id);
+          _tvController.UnlockCard(cardInfo.Id);
         }
       }
       return true;
@@ -436,7 +432,7 @@ namespace TvService
     {
       Log.Write("Scheduler : stop record {0} {1}-{2} {3}", recording.Channel, DateTime.Now, recording.EndTime, recording.Schedule.ProgramName);
       _controller.StopRecording(recording.CardInfo.Id);
-      _controller.StopTimeShifting(recording.CardInfo.Id);
+      _controller.StopTimeShifting(recording.CardInfo.Id, GetUser());
 
       IList servers = Server.ListAll();
       Server ourServer = null;
@@ -541,6 +537,10 @@ namespace TvService
       }
     }
 
+    public User GetUser()
+    {
+      return new User("Scheduler", true);
+    }
     #endregion
   }
 }

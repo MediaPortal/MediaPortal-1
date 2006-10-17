@@ -93,6 +93,13 @@ namespace SetupTv.Sections
           else
             item.SubItems.Add(channel.Name);
           item.SubItems.Add("");
+          User cardUser;
+          if (vcard.IsLocked(out cardUser))
+          {
+            item.SubItems.Add(cardUser.Name);
+          }
+          else
+            item.SubItems.Add("");
           item.Tag = vcard;
         }
       }
@@ -132,7 +139,7 @@ namespace SetupTv.Sections
       }
       else
       {
-        TvResult result=server.StartTimeShifting(channel, out card);
+        TvResult result = server.StartTimeShifting(channel, out card);
         if (result != TvResult.Succeeded)
         {
           switch (result)
@@ -270,6 +277,13 @@ namespace SetupTv.Sections
             item.SubItems[3].Text = "";
           else
             item.SubItems[3].Text = channel.Name;
+          User cardUser;
+          if (card.IsLocked(out cardUser))
+          {
+            item.SubItems[5].Text =cardUser.Name;
+          }
+          else
+            item.SubItems[5].Text = "";
         }
       }
       catch (Exception)
@@ -316,7 +330,7 @@ namespace SetupTv.Sections
         ch.LastGrabTime = Schedule.MinSchedule;
         ch.Persist();
       }
-      
+
       RemoteControl.Instance.EpgGrabberEnabled = true;
     }
 
@@ -335,7 +349,7 @@ namespace SetupTv.Sections
         {
           if (RemoteControl.Instance.CurrentChannelName(card.IdCard) == channelName)
           {
-            VirtualCard vcard=new VirtualCard(card.IdCard, RemoteControl.HostName);
+            VirtualCard vcard = new VirtualCard(card.IdCard, RemoteControl.HostName);
             vcard.RecordingFolder = card.RecordingFolder;
             return vcard;
           }

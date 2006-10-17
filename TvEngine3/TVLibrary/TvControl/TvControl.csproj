@@ -41,6 +41,7 @@
   <ItemGroup>
     <Compile Include="RemoteControl.cs" />
     <Compile Include="TvServer.cs" />
+    <Compile Include="User.cs" />
     <Compile Include="VirtualCard.cs" />
     <Compile Include="Controller.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

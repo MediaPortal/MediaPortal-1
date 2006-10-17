@@ -53,6 +53,7 @@ namespace SetupTv.Sections
       this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
+      this.User = new System.Windows.Forms.ColumnHeader();
       this.buttonRestart = new System.Windows.Forms.Button();
       this.mpButtonReGrabEpg = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpGroupBox1.SuspendLayout();
@@ -242,7 +243,8 @@ namespace SetupTv.Sections
             this.columnHeader2,
             this.columnHeader3,
             this.columnHeader4,
-            this.columnHeader5});
+            this.columnHeader5,
+            this.User});
       this.mpListView1.FullRowSelect = true;
       this.mpListView1.Location = new System.Drawing.Point(12, 197);
       this.mpListView1.Name = "mpListView1";
@@ -273,6 +275,11 @@ namespace SetupTv.Sections
       // 
       this.columnHeader5.Text = "Scrambled";
       this.columnHeader5.Width = 80;
+      // 
+      // User
+      // 
+      this.User.Text = "User";
+      this.User.Width = 100;
       // 
       // buttonRestart
       // 
@@ -344,5 +351,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Button buttonRestart;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonReGrabEpg;
     private System.Windows.Forms.ColumnHeader columnHeader5;
+    private System.Windows.Forms.ColumnHeader User;
   }
 }
