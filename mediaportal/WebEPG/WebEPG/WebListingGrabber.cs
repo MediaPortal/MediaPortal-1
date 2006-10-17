@@ -93,6 +93,7 @@ namespace MediaPortal.EPG
     ArrayList _programs;
     ArrayList _dbPrograms;
     DateTime _StartGrab;
+    long _startDateTime;
     int _dbLastProg;
     int _maxGrabDays;
     int _siteGuideDays;
@@ -328,6 +329,7 @@ namespace MediaPortal.EPG
 
       _GrabDay = 0;
       _StartGrab = startDateTime;
+      _startDateTime = GetLongDateTime(startDateTime.AddHours(-2));
       _log.Debug(LogType.WebEPG, "WebEPG: Grab Start {0} {1}", _StartGrab.ToShortTimeString(), _StartGrab.ToShortDateString());
       int requestedStartDay = startDateTime.Subtract(DateTime.Now).Days;
       if (requestedStartDay > 0)
@@ -735,7 +737,7 @@ namespace MediaPortal.EPG
       AdjustTimeZone(guideData, ref program);
 
       //Program starts in the past
-      if (program.Start < GetLongDateTime(_StartGrab))
+      if (program.Start < _startDateTime)
       {
         _log.Info(LogType.WebEPG, "WebEPG: Program starts in the past, ignoring it");
         return null;
