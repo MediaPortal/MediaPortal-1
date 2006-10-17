@@ -1923,7 +1923,7 @@ namespace TvService
       if (!WaitForUnScrambledSignal(cardId)) return false;
       DateTime timeStart = DateTime.Now;
       ulong fileSize = 0;
-      if (IsScrambled(cardId)) return false;
+      
 
       timeStart = DateTime.Now;
       try
