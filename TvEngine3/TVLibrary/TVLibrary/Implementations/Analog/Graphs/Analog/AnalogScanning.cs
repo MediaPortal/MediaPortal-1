@@ -99,7 +99,10 @@ namespace TvLibrary.Implementations.Analog
       _card.IsScanning = true;
       AnalogChannel analogChannel = (AnalogChannel)channel;
       _card.Tune(channel);
-      _card.GrabTeletext = true;
+      if (channel.IsTv)
+      {
+        _card.GrabTeletext = true;
+      }
       if (_card.IsTunerLocked)
       {
         if (channel.IsTv)
@@ -108,7 +111,7 @@ namespace TvLibrary.Implementations.Analog
           _previousFrequency = _card.VideoFrequency;
         }
 
-        if (_card.GrabTeletext)
+        if (_card.GrabTeletext && channel.IsTv)
         {
           _card.TeletextDecoder.ClearTeletextChannelName();
           for (int i = 0; i < 20; ++i)
@@ -133,6 +136,7 @@ namespace TvLibrary.Implementations.Analog
         _card.IsScanning = false;
         return list;
       }
+      _card.GrabTeletext = false;
       _card.IsScanning = false;
       return null;
     }

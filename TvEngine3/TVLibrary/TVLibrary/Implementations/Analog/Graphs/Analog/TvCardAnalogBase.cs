@@ -2014,15 +2014,7 @@ namespace TvLibrary.Implementations.Analog
       }
     }
 
-    /// <summary>
-    /// Method to check if card can tune to the channel specified
-    /// </summary>
-    /// <returns>true if card can tune to the channel otherwise false</returns>
-    public bool CanTune(IChannel channel)
-    {
-      if ((channel as AnalogChannel) == null) return false;
-      return true;
-    }
+    
 
     /// <summary>
     /// returns true if card is currently grabbing the epg

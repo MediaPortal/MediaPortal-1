@@ -83,7 +83,16 @@ namespace SetupTv.Sections
       if (channel == null)
         mpLabelChannel.Text = "none";
       else
-        mpLabelChannel.Text = String.Format("#{0} {1}", channel.ChannelNumber, channel.Name);
+      {
+        if (channel.IsTv)
+          mpLabelChannel.Text = String.Format("#{0} {1}", channel.ChannelNumber, channel.Name);
+        else
+        {
+          float freq = channel.Frequency;
+          freq /= 1000000f;
+          mpLabelChannel.Text = String.Format("Radio {0} MHz", freq.ToString("f2"));
+        }
+      }
     }
 
     public override void OnSectionActivated()
@@ -193,6 +202,14 @@ namespace SetupTv.Sections
 
     private void mpButtonScanRadio_Click(object sender, EventArgs e)
     {
+      AnalogChannel radioChannel = new AnalogChannel();
+      radioChannel.Frequency = 96000000;
+      radioChannel.IsRadio = true;
+      if (!RemoteControl.Instance.CanTune(_cardNumber, radioChannel))
+      {
+        MessageBox.Show("The Tv Card does not support radio");
+        return;
+      }
       Thread scanThread = new Thread(new ThreadStart(DoRadioScan));
       scanThread.Start();
     }
@@ -258,8 +275,9 @@ namespace SetupTv.Sections
           channel.IsTv = false;
           channel.IsRadio = true;
 
-          RemoteControl.Instance.Tune(_cardNumber, channel);
+          RemoteControl.Instance.TuneScan(_cardNumber, channel);
           UpdateStatus();
+          System.Threading.Thread.Sleep(2000);
           if (SignalStrength(sensitivity) == 100)
           {
             ListViewItem item = mpListView1.Items.Add(channel.Frequency.ToString());
@@ -275,6 +293,7 @@ namespace SetupTv.Sections
             layer.AddTuningDetails(dbChannel, channel);
 
             layer.MapChannelToCard(card, dbChannel);
+            freq += 300000;
           }
         }
 

@@ -208,6 +208,29 @@ namespace TvLibrary.Implementations.Analog
       return result;
     }
     /// <summary>
+    /// Method to check if card can tune to the channel specified
+    /// </summary>
+    /// <returns>true if card can tune to the channel otherwise false</returns>
+    public bool CanTune(IChannel channel)
+    {
+      if ((channel as AnalogChannel) == null) return false;
+      if (channel.IsRadio)
+      {
+        if (_graphState == GraphState.Idle)
+        {
+          BuildGraph();
+          RunGraph();
+        }
+        IAMTVTuner tuner = _filterTvTuner as IAMTVTuner;
+        AMTunerModeType tunerModes;
+        tuner.GetAvailableModes(out tunerModes);
+        if ((AMTunerModeType.FMRadio & tunerModes) != 0) return true;
+        return false;
+      }
+      return true;
+    }
+
+    /// <summary>
     /// Tunes the specified channel.
     /// </summary>
     /// <param name="channel">The channel.</param>
@@ -254,9 +277,19 @@ namespace TvLibrary.Implementations.Analog
         {
           tvTuner.put_InputType(0, analogChannel.TunerSource);
         }
-        if (analogChannel.ChannelNumber != _previousChannel.ChannelNumber)
+        if (analogChannel.IsRadio)
         {
-          tvTuner.put_Channel(analogChannel.ChannelNumber, AMTunerSubChannel.Default, AMTunerSubChannel.Default);
+          if (analogChannel.Frequency != _previousChannel.Frequency)
+          {
+            tvTuner.put_Channel((int)analogChannel.Frequency, AMTunerSubChannel.Default, AMTunerSubChannel.Default);
+          }
+        }
+        else
+        {
+          if (analogChannel.ChannelNumber != _previousChannel.ChannelNumber)
+          {
+            tvTuner.put_Channel(analogChannel.ChannelNumber, AMTunerSubChannel.Default, AMTunerSubChannel.Default);
+          }
         }
       }
       else
@@ -448,9 +481,9 @@ namespace TvLibrary.Implementations.Analog
         if (_graphState == GraphState.Idle) return false;
 
         if (!CheckThreadId()) return false;
-        TimeSpan ts = DateTime.Now - _lastSignalUpdate;
-        if (ts.TotalMilliseconds < 1000) return _tunerLocked;
-        _lastSignalUpdate = DateTime.Now;
+        //TimeSpan ts = DateTime.Now - _lastSignalUpdate;
+        //if (ts.TotalMilliseconds < 1000) return _tunerLocked;
+        //_lastSignalUpdate = DateTime.Now;
         IAMTVTuner tvTuner = _filterTvTuner as IAMTVTuner;
         AMTunerSignalStrength signalStrength;
         tvTuner.SignalPresent(out signalStrength);
