@@ -2,7 +2,7 @@
 	<id>34</id>
 	<defaultcontrol>50</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
-	<autohidetopbar>yes</autohidetopbar>
+	<disabletopbar>yes</disabletopbar>
 	<controls>
 		<control>
 			<description>background image</description>
@@ -25,19 +25,6 @@
 			<texture>background_glass_hoover_area.png</texture>
 		</control>
     <control>
-      <description>animationLogo</description>
-      <id>99999</id>
-      <posX>130</posX>
-      <posY>20</posY>
-      <width>94</width>
-      <height>125</height>
-      <type>animation</type>
-      <textures>animations\1.png;animations\2.png;animations\3.png;animations\4.png;animations\5.png;animations\6.png;animations\7.png;animations\8.png;animations\9.png;animations\10.png;animations\11.png;animations\12.png;animations\13.png;animations\14.png;animations\15.png;animations\16.png;animations\17.png;animations\18.png;animations\19.png;animations\20.png;animations\21.png;animations\22.png;animations\23.png;animations\24.png;animations\25.png;animations\26.png;animations\27.png;animations\28.png;animations\29.png;animations\30.png;animations\31.png;animations\32.png;animations\33.png;animations\34.png;animations\35.png;animations\36.png;animations\37.png;animations\38.png;animations\39.png;animations\40.png;animations\41.png;animations\42.png;animations\43.png;animations\44.png;animations\45.png;animations\46.png;animations\47.png;animations\48.png;animations\49.png;animations\50.png;animations\51.png;animations\52.png;animations\53.png;animations\54.png;animations\55.png;animations\56.png;animations\57.png;animations\58.png;animations\59.png;animations\60.png;animations\61.png;animations\62.png;animations\63.png;animations\64.png;animations\65.png;animations\66.png;animations\67.png;animations\68.png;animations\69.png;animations\70.png;animations\71.png;animations\72.png;animations\73.png;animations\74.png;animations\75.png;animations\76.png;animations\77.png;animations\78.png;animations\79.png;animations\80.png;animations\81.png;animations\82.png;animations\83.png;animations\84.png;animations\85.png;animations\86.png;animations\87.png;animations\88.png;animations\89.png</textures>
-      <Duration>0:0:15</Duration>
-      <RepeatBehavior>1</RepeatBehavior>
-      <FillBehavior>HoldEnd</FillBehavior>
-    </control>
-		<control>
 			<description>Menu</description>
 			<type>menu</type>
 			<id>50</id>
@@ -45,19 +32,21 @@
 			<posY>130</posY>
 			<width>310</width>
       <dimColor>80ffffff</dimColor>
-			<buttonTextXOff>20</buttonTextXOff>
+			<buttonTextXOff>48</buttonTextXOff>
 			<buttonTextYOff>6</buttonTextYOff>
       <buttonOffset>25</buttonOffset>
 			<buttonFont>font16</buttonFont>
 			<buttonHeight>45</buttonHeight>
-			<spaceBetweenButtons>20</spaceBetweenButtons>
+			<spaceBetweenButtons>18</spaceBetweenButtons>
 			<numberOfButtons>5</numberOfButtons>
 			<textureButtonFocus>hp_selectionbar.png</textureButtonFocus>
 			<textureButtonNoFocus>-</textureButtonNoFocus>
       <hoverX>100</hoverX>
       <hoverY>200</hoverY>
       <hoverWidth>230</hoverWidth>
-      <hoverHeight>250</hoverHeight>
+      <hoverHeight>225</hoverHeight>
+      <scrollTime>160</scrollTime>
+      <scrollTimeMin>100</scrollTimeMin>
 			<textureBackground>background_glass_menu_area.png</textureBackground>
       <onright>13</onright>
       <onleft>10</onleft>
@@ -90,7 +79,7 @@
       <description>Back button</description>
 			<type>button</type>
 			<id>10</id>
-			<posX>440</posX>
+      <posX>410</posX>
 			<posY>40</posY>
 			<width>56</width>
 			<height>80</height>
@@ -107,7 +96,7 @@
 			<description>videowallpaper button</description>
 			<type>button</type>
 			<id>11</id>
-			<posX>500</posX>
+      <posX>470</posX>
 			<posY>40</posY>
 			<width>56</width>
 			<height>89</height>
@@ -124,7 +113,7 @@
 			<description>basichome button button</description>
 			<type>button</type>
 			<id>12</id>
-			<posX>560</posX>
+      <posX>530</posX>
 			<posY>40</posY>
 			<width>56</width>
 			<height>83</height>
@@ -141,7 +130,7 @@
 			<description>Exit button</description>
 			<type>button</type>
 			<id>13</id>
-			<posX>620</posX>
+      <posX>590</posX>
 			<posY>40</posY>
 			<width>56</width>
 			<height>83</height>
