@@ -102,5 +102,4 @@ void CTsHeader::LogHeader()
 	Log("  PayLoadOnly            :%d", PayLoadOnly());
 	Log("  AdaptionFieldOnly      :%d", AdaptionFieldOnly());
 	Log("  AdaptionFieldAndPayLoad:%d", AdaptionFieldAndPayLoad());
-
 }
