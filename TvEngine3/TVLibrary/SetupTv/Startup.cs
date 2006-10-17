@@ -139,12 +139,12 @@ namespace SetupTv
       }
 
       int cards = 0;
-      //RemoteControl.HostName="mediacenter";
       // fill the cache
       //auto start the tv-service
       if (!ServiceHelper.IsInstalled)
       {
 #if DEBUG
+        RemoteControl.HostName="pcebeckers";
 #else
         MessageBox.Show("The Tv service is not installed");
         return;

@@ -265,7 +265,7 @@ namespace TvLibrary.Implementations.DVB
       {
         if (info.isAC3Audio || info.isAudio || info.isVideo || info.isDVBSubtitle)
         {
-          Log.Log.WriteFile("dvb: set timeshift {0}", info);
+          Log.Log.WriteFile("dvb: set timeshift {0}:{1}", info.stream_type,info);
           timeshift.AddStream((short)info.pid, (short)info.stream_type,info.language);
         }
       }

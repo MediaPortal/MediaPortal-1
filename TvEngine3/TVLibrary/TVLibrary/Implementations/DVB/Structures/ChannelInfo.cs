@@ -217,7 +217,7 @@ namespace TvLibrary.Implementations.DVB.Structures
       // ac3
       pmt.pid = Marshal.ReadInt16(data, 36);
       pmt.isAC3Audio = true;
-      pmt.stream_type = 0;
+      pmt.stream_type = 0x81;
       pmt.language = "";
       RemoveInvalidChars(ref pmt.language);
       pids.Add(pmt);
@@ -446,9 +446,17 @@ namespace TvLibrary.Implementations.DVB.Structures
                     pmt.language = DVB_GetMPEGISO639Lang(data);
                     break;
                   case 0x6A:
+                    pmt.isAudio = false;
+                    pmt.isVideo = false;
+                    pmt.isTeletext = false;
+                    pmt.isDVBSubtitle = true;
                     pmt.isAC3Audio = true;
+                    pmt.stream_type = 0x81;
                     break;
                   case 0x56:
+                    pmt.isAC3Audio = false;
+                    pmt.isAudio = false;
+                    pmt.isVideo = false;
                     pmt.isTeletext = true;
                     pmt.teletextLANG = DVB_GetTeletextDescriptor(data);
                     break;
@@ -456,7 +464,12 @@ namespace TvLibrary.Implementations.DVB.Structures
                   case 0x59:
                     if (pmt.stream_type == 0x05 || pmt.stream_type == 0x06)
                     {
+                      pmt.isAC3Audio = false;
+                      pmt.isAudio = false;
+                      pmt.isVideo = false;
+                      pmt.isTeletext = false;
                       pmt.isDVBSubtitle = true;
+                      pmt.stream_type = 0x6;
                       pmt.language = DVB_SubtitleDescriptior(data);
                     }
                     break;
