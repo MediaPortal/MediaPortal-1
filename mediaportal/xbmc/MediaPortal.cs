@@ -702,106 +702,106 @@ public class MediaPortalApp : D3DApp, IRender
     }
   }
 
-	static object syncObj = new object();
+  static object syncObj = new object();
 
   //called when windows wants to hibernate or go into standbye mode
   private bool OnSuspend(ref Message msg)
   {
-		lock (syncObj)
-		{
-			if (_suspended)
-			{
-				return true;
-			}
+    lock (syncObj)
+    {
+      if (_suspended)
+      {
+        return true;
+      }
 
-			if (Recorder.IsRecording()) // if we are recording then deny request
-			{
-				msg.Result = new IntPtr(BROADCAST_QUERY_DENY);
-				Log.Info("Main: TVRecording running -> Suspend stopped");
-				return false;
-			}
-		
-			//switch to windowed mode
-			if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false && !windowed)
-			{
-				Log.Info("Main: Switching to windowed mode");
-				SwitchFullScreenOrWindowed(true);
-			}
-					
-			//stop playback
-			_suspended = true;
-			InputDevices.Stop();
+      if (Recorder.IsRecording()) // if we are recording then deny request
+      {
+        msg.Result = new IntPtr(BROADCAST_QUERY_DENY);
+        Log.Info("Main: TVRecording running -> Suspend stopped");
+        return false;
+      }
 
-			Log.Info("Main: Stopping playback");
-			g_Player.Stop();
-			Log.Info("Main: Stopping recorder");
-			Recorder.Stop();
-			Log.Info("Main: Stopping AutoPlay");
-			AutoPlay.StopListening();
+      //switch to windowed mode
+      if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false && !windowed)
+      {
+        Log.Info("Main: Switching to windowed mode");
+        SwitchFullScreenOrWindowed(true);
+      }
 
-			Log.Info("Main: OnSuspend - Done");
-			return true;
-		}
+      //stop playback
+      _suspended = true;
+      InputDevices.Stop();
+
+      Log.Info("Main: Stopping playback");
+      g_Player.Stop();
+      Log.Info("Main: Stopping recorder");
+      Recorder.Stop();
+      Log.Info("Main: Stopping AutoPlay");
+      AutoPlay.StopListening();
+
+      Log.Info("Main: OnSuspend - Done");
+      return true;
+    }
   }
 
   //called when windows wakes up again
-	static object syncResume = new object();
+  static object syncResume = new object();
   private void OnResume()
   {
-		lock (syncResume)
-		{
-			if (!_suspended)
-			{
-				return;
-			}
-			
-			if (_startWithBasicHome)
-			{
-				Log.Info("Main: Switch to basic home screen");
-				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SECOND_HOME);
-			}
-			else
-			{
-				Log.Info("Main: Switch to home screen");
-				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
-			}
-			//_suspended = false;
+    lock (syncResume)
+    {
+      if (!_suspended)
+      {
+        return;
+      }
 
-			EXECUTION_STATE oldState = EXECUTION_STATE.ES_CONTINUOUS;
-			bool turnMonitorOn;
-			using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-			{
-				turnMonitorOn = xmlreader.GetValueAsBool("general", "turnmonitoronafterresume", false);
-				if (turnMonitorOn)
-				{
-					Log.Info("Main: OnResume - Trying to wake up the monitor / tv");
-					EXECUTION_STATE state = EXECUTION_STATE.ES_CONTINUOUS |
-																	EXECUTION_STATE.ES_DISPLAY_REQUIRED;
-					oldState = SetThreadExecutionState(state);
-				}
-			}
+      if (_startWithBasicHome)
+      {
+        Log.Info("Main: Switch to basic home screen");
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SECOND_HOME);
+      }
+      else
+      {
+        Log.Info("Main: Switch to home screen");
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
+      }
+      //_suspended = false;
 
-			Recorder.Stop();  // bug fix from Powerscheduler
-			if (!Recorder.Running && !_onResumeRunning)
-			{
-				_onResumeRunning = true;
-				Log.Info("Main: Starting recorder");
-				Recorder.Start();
-				if (turnMonitorOn)
-				{
-					SetThreadExecutionState(oldState);
-				}
-			}
+      EXECUTION_STATE oldState = EXECUTION_STATE.ES_CONTINUOUS;
+      bool turnMonitorOn;
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        turnMonitorOn = xmlreader.GetValueAsBool("general", "turnmonitoronafterresume", false);
+        if (turnMonitorOn)
+        {
+          Log.Info("Main: OnResume - Trying to wake up the monitor / tv");
+          EXECUTION_STATE state = EXECUTION_STATE.ES_CONTINUOUS |
+                                  EXECUTION_STATE.ES_DISPLAY_REQUIRED;
+          oldState = SetThreadExecutionState(state);
+        }
+      }
 
-			AutoPlay.StartListening();
-			InputDevices.Init();
+      Recorder.Stop();  // bug fix from Powerscheduler
+      if (!Recorder.Running && !_onResumeRunning)
+      {
+        _onResumeRunning = true;
+        Log.Info("Main: Starting recorder");
+        Recorder.Start();
+        if (turnMonitorOn)
+        {
+          SetThreadExecutionState(oldState);
+        }
+      }
 
-			_onResumeRunning = false;
-			_suspended = false;
-			deviceLost = true;  // reset device
-			Log.Info("Main: OnResume - Done");
-			
-		}
+      AutoPlay.StartListening();
+      InputDevices.Init();
+
+      _onResumeRunning = false;
+      _suspended = false;
+      deviceLost = true;  // reset device
+      Log.Info("Main: OnResume - Done");
+
+    }
   }
 
   #endregion
@@ -828,7 +828,7 @@ public class MediaPortalApp : D3DApp, IRender
   {
     if (_suspended)
     {
-			return;
+      return;
     } //we are suspended/hibernated
     try
     {
@@ -855,7 +855,7 @@ public class MediaPortalApp : D3DApp, IRender
   {
     if (_suspended)
     {
-			return;
+      return;
     } //we are suspended/hibernated
     try
     {
@@ -941,6 +941,14 @@ public class MediaPortalApp : D3DApp, IRender
     GUIPropertyManager.SetProperty("#date", GetDate());
     GUIPropertyManager.SetProperty("#time", GetTime());
 
+    GUIPropertyManager.SetProperty("#Day", GetDay());                   // 01
+    GUIPropertyManager.SetProperty("#SDOW", GetShortDayOfWeek());       // Sun
+    GUIPropertyManager.SetProperty("#DOW", GetDayOfWeek());             // Sunday
+    GUIPropertyManager.SetProperty("#Month", GetMonth());               // 01
+    GUIPropertyManager.SetProperty("#SMOY", GetShortMonthOfYear());     // Jan
+    GUIPropertyManager.SetProperty("#MOY", GetMonthOfYear());           // January
+    GUIPropertyManager.SetProperty("#SY", GetShortYear());              // 80
+    GUIPropertyManager.SetProperty("#Year", GetYear());                 // 1980
     JobDispatcher.Init();
     //
     // Kill the splash screen
@@ -1184,11 +1192,11 @@ public class MediaPortalApp : D3DApp, IRender
 
   protected override void Render(float timePassed)
   {
-		if (_suspended)
-		{
-			return;
-		}
-		if (reentrant)
+    if (_suspended)
+    {
+      return;
+    }
+    if (reentrant)
     {
       Log.Info("Main: DX9 re-entrant"); //remove
       return;
@@ -1378,7 +1386,7 @@ public class MediaPortalApp : D3DApp, IRender
   {
     if (_suspended)
     {
-			return;
+      return;
     } //we are suspended/hibernated
 #if !DEBUG
     try
@@ -1447,7 +1455,7 @@ public class MediaPortalApp : D3DApp, IRender
   {
     if (_suspended)
     {
-			return;
+      return;
     }
     try
     {
@@ -2521,7 +2529,7 @@ public class MediaPortalApp : D3DApp, IRender
   {
     if (_suspended)
     {
-			return;
+      return;
     }
     switch (message.Message)
     {
@@ -2819,6 +2827,145 @@ GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter = TextureFilter.None;
     return strTime;
   }
 
+  protected string GetDay()
+  {
+    DateTime cur = DateTime.Now;
+    return String.Format("{0}", cur.Day);
+  }
+
+  protected string GetShortDayOfWeek()
+  {
+    DateTime cur = DateTime.Now;
+    string ddd;
+    switch (cur.DayOfWeek)
+    {
+      case DayOfWeek.Monday:
+        ddd = GUILocalizeStrings.Get(657);
+        break;
+      case DayOfWeek.Tuesday:
+        ddd = GUILocalizeStrings.Get(658);
+        break;
+      case DayOfWeek.Wednesday:
+        ddd = GUILocalizeStrings.Get(659);
+        break;
+      case DayOfWeek.Thursday:
+        ddd = GUILocalizeStrings.Get(660);
+        break;
+      case DayOfWeek.Friday:
+        ddd = GUILocalizeStrings.Get(661);
+        break;
+      case DayOfWeek.Saturday:
+        ddd = GUILocalizeStrings.Get(662);
+        break;
+      default:
+        ddd = GUILocalizeStrings.Get(663);
+        break;
+    }
+    return ddd;
+  }
+
+  protected string GetDayOfWeek()
+  {
+    DateTime cur = DateTime.Now;
+    string dddd;
+    switch (cur.DayOfWeek)
+    {
+      case DayOfWeek.Monday:
+        dddd = GUILocalizeStrings.Get(11);
+        break;
+      case DayOfWeek.Tuesday:
+        dddd = GUILocalizeStrings.Get(12);
+        break;
+      case DayOfWeek.Wednesday:
+        dddd = GUILocalizeStrings.Get(13);
+        break;
+      case DayOfWeek.Thursday:
+        dddd = GUILocalizeStrings.Get(14);
+        break;
+      case DayOfWeek.Friday:
+        dddd = GUILocalizeStrings.Get(15);
+        break;
+      case DayOfWeek.Saturday:
+        dddd = GUILocalizeStrings.Get(16);
+        break;
+      default:
+        dddd = GUILocalizeStrings.Get(17);
+        break;
+    }
+    return dddd;
+  }
+
+  protected string GetMonth()
+  {
+    DateTime cur = DateTime.Now;
+    return cur.ToString("MM");
+  }
+
+  protected string GetShortMonthOfYear()
+  {
+    DateTime cur = DateTime.Now;
+    string SMOY = GetMonthOfYear();
+    SMOY = SMOY.Substring(0, 3);
+    return SMOY;
+  }
+
+  protected string GetMonthOfYear()
+  {
+    DateTime cur = DateTime.Now;
+    string MMMM;
+    switch (cur.Month)
+    {
+      case 1:
+        MMMM = GUILocalizeStrings.Get(21);
+        break;
+      case 2:
+        MMMM = GUILocalizeStrings.Get(22);
+        break;
+      case 3:
+        MMMM = GUILocalizeStrings.Get(23);
+        break;
+      case 4:
+        MMMM = GUILocalizeStrings.Get(24);
+        break;
+      case 5:
+        MMMM = GUILocalizeStrings.Get(25);
+        break;
+      case 6:
+        MMMM = GUILocalizeStrings.Get(26);
+        break;
+      case 7:
+        MMMM = GUILocalizeStrings.Get(27);
+        break;
+      case 8:
+        MMMM = GUILocalizeStrings.Get(28);
+        break;
+      case 9:
+        MMMM = GUILocalizeStrings.Get(29);
+        break;
+      case 10:
+        MMMM = GUILocalizeStrings.Get(30);
+        break;
+      case 11:
+        MMMM = GUILocalizeStrings.Get(31);
+        break;
+      default:
+        MMMM = GUILocalizeStrings.Get(32);
+        break;
+    }
+    return MMMM;
+  }
+
+  protected string GetShortYear()
+  {
+    DateTime cur = DateTime.Now;
+    return cur.ToString("yy");
+  }
+
+  protected string GetYear()
+  {
+    DateTime cur = DateTime.Now;
+    return cur.ToString("yyyy");
+  }
 
   protected void CheckSkinVersion()
   {
