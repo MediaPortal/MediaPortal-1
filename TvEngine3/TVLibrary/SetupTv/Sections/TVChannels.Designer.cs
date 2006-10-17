@@ -40,6 +40,9 @@ namespace SetupTv.Sections
       this.buttonUtp = new System.Windows.Forms.Button();
       this.buttonDown = new System.Windows.Forms.Button();
       this.mpButtonEdit = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpButtonExpert = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpButtonImport = new MediaPortal.UserInterface.Controls.MPButton();
+      this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
       this.SuspendLayout();
       // 
       // mpListView1
@@ -106,7 +109,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonDel
       // 
-      this.mpButtonDel.Location = new System.Drawing.Point(237, 347);
+      this.mpButtonDel.Location = new System.Drawing.Point(183, 350);
       this.mpButtonDel.Name = "mpButtonDel";
       this.mpButtonDel.Size = new System.Drawing.Size(54, 23);
       this.mpButtonDel.TabIndex = 1;
@@ -136,7 +139,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonEdit
       // 
-      this.mpButtonEdit.Location = new System.Drawing.Point(173, 347);
+      this.mpButtonEdit.Location = new System.Drawing.Point(119, 350);
       this.mpButtonEdit.Name = "mpButtonEdit";
       this.mpButtonEdit.Size = new System.Drawing.Size(58, 23);
       this.mpButtonEdit.TabIndex = 5;
@@ -144,10 +147,36 @@ namespace SetupTv.Sections
       this.mpButtonEdit.UseVisualStyleBackColor = true;
       this.mpButtonEdit.Click += new System.EventHandler(this.mpButtonEdit_Click);
       // 
+      // mpButtonExpert
+      // 
+      this.mpButtonExpert.Location = new System.Drawing.Point(315, 350);
+      this.mpButtonExpert.Name = "mpButtonExpert";
+      this.mpButtonExpert.Size = new System.Drawing.Size(54, 23);
+      this.mpButtonExpert.TabIndex = 6;
+      this.mpButtonExpert.Text = "Export";
+      this.mpButtonExpert.UseVisualStyleBackColor = true;
+      this.mpButtonExpert.Click += new System.EventHandler(this.mpButtonExpert_Click);
+      // 
+      // mpButtonImport
+      // 
+      this.mpButtonImport.Location = new System.Drawing.Point(255, 350);
+      this.mpButtonImport.Name = "mpButtonImport";
+      this.mpButtonImport.Size = new System.Drawing.Size(54, 23);
+      this.mpButtonImport.TabIndex = 7;
+      this.mpButtonImport.Text = "Import";
+      this.mpButtonImport.UseVisualStyleBackColor = true;
+      this.mpButtonImport.Click += new System.EventHandler(this.mpButtonImport_Click);
+      // 
+      // openFileDialog1
+      // 
+      this.openFileDialog1.FileName = "openFileDialog1";
+      // 
       // TvChannels
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.Controls.Add(this.mpButtonImport);
+      this.Controls.Add(this.mpButtonExpert);
       this.Controls.Add(this.mpButtonEdit);
       this.Controls.Add(this.buttonDown);
       this.Controls.Add(this.buttonUtp);
@@ -177,5 +206,8 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Button buttonDown;
     private System.Windows.Forms.ColumnHeader columnHeader7;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonEdit;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonExpert;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonImport;
+    private System.Windows.Forms.OpenFileDialog openFileDialog1;
   }
 }
