@@ -73,7 +73,7 @@ STDMETHODIMP CChannelScan::Stop()
 		m_patParser.SetConditionalAccess(NULL);
 		if (m_pConditionalAccess!=NULL)
 		{
-			delete m_pConditionalAccess;
+			delete m_pConditionalAccess; 
 		}
 		m_pConditionalAccess=NULL;
 	}
