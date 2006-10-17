@@ -54,7 +54,7 @@ namespace TvService
     Scheduler _scheduler;
     RtspStreaming _streamer;
     bool _isMaster = false;
-    
+
     Dictionary<int, Card> _allDbscards;
     Dictionary<int, ITVCard> _localCards;
     Dictionary<int, User> _cardsInUse;
@@ -102,7 +102,7 @@ namespace TvService
 
     public void UnlockCard(int cardId)
     {
-      if (false == _cardsInUse.ContainsKey(cardId)) return ;
+      if (false == _cardsInUse.ContainsKey(cardId)) return;
       _cardsInUse.Remove(cardId);
     }
 
@@ -121,7 +121,7 @@ namespace TvService
         _localCards = new Dictionary<int, ITVCard>();
         _allDbscards = new Dictionary<int, Card>();
         _cardsInUse = new Dictionary<int, User>();
-        
+
 
         Log.Write("Controller: Started at {0}", Dns.GetHostName());
         IPHostEntry local = Dns.GetHostByName(Dns.GetHostName());
@@ -215,8 +215,8 @@ namespace TvService
 
         _localCards = new Dictionary<int, ITVCard>();
         _allDbscards = new Dictionary<int, Card>();
-        
-        
+
+
         cardsInDbs = Card.ListAll();
         foreach (Card card in cardsInDbs)
         {
@@ -806,7 +806,7 @@ namespace TvService
         return DateTime.MinValue;
       }
     }
- 
+
 
     /// <summary>
     /// Returns whether the channel to which the card is tuned is
@@ -1103,17 +1103,20 @@ namespace TvService
         Log.Write("Controller: StopTimeShifting {0}", cardId);
         lock (this)
         {
-          if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
-          {
-            RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
-            return RemoteControl.Instance.StopTimeShifting(cardId, user);
-          }
+          bool result;
           User cardUser;
           if (IsCardInUse(cardId, out cardUser))
           {
             if (user.IsAdmin == false && cardUser.Name != user.Name) return false;
           }
-          bool result = _localCards[cardId].StopTimeShifting();
+          if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
+          {
+            RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
+            result = RemoteControl.Instance.StopTimeShifting(cardId, user);
+            UnlockCard(cardId);
+            return result;
+          }
+          result = _localCards[cardId].StopTimeShifting();
           if (result == true)
           {
             Log.Write("Controller:Timeshifting stopped on card:{0}", cardId);
@@ -1689,7 +1692,7 @@ namespace TvService
     /// </summary>
     /// <param name="channelName">Name of the channel.</param>
     /// <returns>list containg all free cards which can receive the channel</returns>
-    public List<CardDetail> GetFreeCardsForChannelName(string channelName,User user)
+    public List<CardDetail> GetFreeCardsForChannelName(string channelName, User user)
     {
       try
       {
