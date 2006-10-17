@@ -144,6 +144,7 @@ namespace MediaPortal.InputDevices
     private MediaPortal.UserInterface.Controls.MPTextBox textBoxKeyCode;
     private MediaPortal.UserInterface.Controls.MPLabel labelExpand;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxGainFocus;
+    private MediaPortal.UserInterface.Controls.MPButton buttonEdit;
 
     #endregion
 
@@ -273,6 +274,7 @@ namespace MediaPortal.InputDevices
       this.groupBoxLayer = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.comboBoxLayer = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.labelLayer = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.buttonEdit = new MediaPortal.UserInterface.Controls.MPButton();
       this.groupBoxAction.SuspendLayout();
       this.groupBoxCondition.SuspendLayout();
       this.groupBoxLayer.SuspendLayout();
@@ -304,18 +306,18 @@ namespace MediaPortal.InputDevices
       // buttonDefault
       // 
       this.buttonDefault.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonDefault.Location = new System.Drawing.Point(272, 392);
+      this.buttonDefault.Location = new System.Drawing.Point(268, 437);
       this.buttonDefault.Name = "buttonDefault";
-      this.buttonDefault.Size = new System.Drawing.Size(56, 20);
+      this.buttonDefault.Size = new System.Drawing.Size(75, 23);
       this.buttonDefault.TabIndex = 28;
-      this.buttonDefault.Text = "Default";
+      this.buttonDefault.Text = "Reset";
       this.buttonDefault.UseVisualStyleBackColor = true;
       this.buttonDefault.Click += new System.EventHandler(this.buttonDefault_Click);
       // 
       // buttonRemove
       // 
       this.buttonRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonRemove.Location = new System.Drawing.Point(208, 392);
+      this.buttonRemove.Location = new System.Drawing.Point(272, 392);
       this.buttonRemove.Name = "buttonRemove";
       this.buttonRemove.Size = new System.Drawing.Size(56, 20);
       this.buttonRemove.TabIndex = 27;
@@ -452,6 +454,7 @@ namespace MediaPortal.InputDevices
       // 
       // textBoxKeyCode
       // 
+      this.textBoxKeyCode.BorderColor = System.Drawing.Color.Empty;
       this.textBoxKeyCode.Enabled = false;
       this.textBoxKeyCode.Location = new System.Drawing.Point(152, 124);
       this.textBoxKeyCode.MaxLength = 3;
@@ -472,6 +475,7 @@ namespace MediaPortal.InputDevices
       // 
       // textBoxKeyChar
       // 
+      this.textBoxKeyChar.BorderColor = System.Drawing.Color.Empty;
       this.textBoxKeyChar.Enabled = false;
       this.textBoxKeyChar.Location = new System.Drawing.Point(72, 124);
       this.textBoxKeyChar.MaxLength = 3;
@@ -504,6 +508,7 @@ namespace MediaPortal.InputDevices
       // 
       // comboBoxSound
       // 
+      this.comboBoxSound.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxSound.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxSound.ForeColor = System.Drawing.Color.DarkRed;
       this.comboBoxSound.Location = new System.Drawing.Point(72, 153);
@@ -562,6 +567,7 @@ namespace MediaPortal.InputDevices
       // 
       // comboBoxCmdProperty
       // 
+      this.comboBoxCmdProperty.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxCmdProperty.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxCmdProperty.ForeColor = System.Drawing.Color.DarkGreen;
       this.comboBoxCmdProperty.Location = new System.Drawing.Point(24, 92);
@@ -638,6 +644,7 @@ namespace MediaPortal.InputDevices
       // 
       // comboBoxCondProperty
       // 
+      this.comboBoxCondProperty.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxCondProperty.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxCondProperty.ForeColor = System.Drawing.Color.Blue;
       this.comboBoxCondProperty.Location = new System.Drawing.Point(24, 68);
@@ -663,6 +670,7 @@ namespace MediaPortal.InputDevices
       // 
       // comboBoxLayer
       // 
+      this.comboBoxLayer.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxLayer.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxLayer.ForeColor = System.Drawing.Color.DimGray;
       this.comboBoxLayer.Location = new System.Drawing.Point(80, 20);
@@ -680,11 +688,23 @@ namespace MediaPortal.InputDevices
       this.labelLayer.TabIndex = 16;
       this.labelLayer.Text = "Layer:";
       // 
+      // buttonEdit
+      // 
+      this.buttonEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.buttonEdit.Location = new System.Drawing.Point(208, 392);
+      this.buttonEdit.Name = "buttonEdit";
+      this.buttonEdit.Size = new System.Drawing.Size(56, 20);
+      this.buttonEdit.TabIndex = 30;
+      this.buttonEdit.Text = "Edit";
+      this.buttonEdit.UseVisualStyleBackColor = true;
+      this.buttonEdit.Click += new System.EventHandler(this.buttonEdit_Click);
+      // 
       // InputMappingForm
       // 
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
       this.AutoScroll = true;
       this.ClientSize = new System.Drawing.Size(592, 470);
+      this.Controls.Add(this.buttonEdit);
       this.Controls.Add(this.labelExpand);
       this.Controls.Add(this.treeMapping);
       this.Controls.Add(this.buttonDefault);
@@ -1552,6 +1572,25 @@ namespace MediaPortal.InputDevices
       }
     }
 
+    private void buttonEdit_Click(object sender, EventArgs e)
+    {
+      TreeNode node = treeMapping.SelectedNode;
+      Data data = (Data)node.Tag;
+
+      if (data.Type == "BUTTON")
+      {
+        NewButtonForm newButtonForm = new NewButtonForm();
+        newButtonForm.ButtonName = (string)data.Parameter;
+        newButtonForm.ButtonCode = (string)data.Value;
+        newButtonForm.ShowDialog();
+        if (newButtonForm.Accepted)
+        {
+          Log.Info("Name: {0}", newButtonForm.ButtonName);
+          Log.Info("Code: {0}", newButtonForm.ButtonCode);
+        }
+      }
+    }
+
     private void buttonNew_Click(object sender, System.EventArgs e)
     {
       TreeNode node = treeMapping.SelectedNode;
@@ -1605,6 +1644,15 @@ namespace MediaPortal.InputDevices
           node.Nodes.Add(newLayer);
           newLayer.Expand();
           treeMapping.SelectedNode = newLayer;
+          break;
+        default:
+          //NewButtonForm newButtonForm = new NewButtonForm();
+          //newButtonForm.ShowDialog();
+          //if (newButtonForm.Accepted)
+          //{
+          //  Log.Info("Name: {0}", newButtonForm.ButtonName);
+          //  Log.Info("Code: {0}", newButtonForm.ButtonCode);
+          //}
           break;
       }
       changedSettings = true;
