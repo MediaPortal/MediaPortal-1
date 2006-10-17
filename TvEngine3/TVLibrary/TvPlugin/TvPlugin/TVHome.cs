@@ -1011,7 +1011,7 @@ namespace TvPlugin
           SeekToEnd();
         }
         VirtualCard card;
-        succeeded = RemoteControl.Instance.StartTimeShifting(channel, out card);
+        succeeded = RemoteControl.Instance.StartTimeShifting(channel, new User(),out card);
         TVHome.Card = card;
         MediaPortal.GUI.Library.Log.Info("succeeded:{0} scrambled:{1}", succeeded, TVHome.Card.IsScrambled);
         if (succeeded == TvResult.Succeeded)
@@ -1098,7 +1098,7 @@ namespace TvPlugin
           SeekToEnd();
         }
         VirtualCard card;
-        TvResult succeeded = RemoteControl.Instance.StartTimeShifting(channel, out card);
+        TvResult succeeded = RemoteControl.Instance.StartTimeShifting(channel,new User(), out card);
         TVHome.Card = card;
         if (succeeded == TvResult.Succeeded)
         {
