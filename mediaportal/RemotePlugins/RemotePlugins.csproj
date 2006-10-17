@@ -183,9 +183,22 @@
     <Compile Include="ControlDevices\Devices\USBUIRT\USBUIRTAdvancedForm.Designer.cs">
       <DependentUpon>USBUIRTAdvancedForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Hook\Hook.cs" />
+    <Compile Include="Hook\HookDelegate.cs" />
+    <Compile Include="Hook\HookEventArgs.cs" />
+    <Compile Include="Hook\HookEventHandler.cs" />
+    <Compile Include="Hook\HookType.cs" />
+    <Compile Include="Hook\KeyboardHook.cs" />
+    <Compile Include="Hook\NativeMethods.cs" />
     <Compile Include="InputMapper\InputHandler.cs" />
     <Compile Include="InputMapper\InputMappingForm.cs">
       <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="InputMapper\NewButtonForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="InputMapper\NewButtonForm.Designer.cs">
+      <DependentUpon>NewButtonForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Remotes\DirectInputRemote\DirectInputHandler.cs">
       <SubType>Code</SubType>
@@ -255,6 +268,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ControlDevices\Devices\USBUIRT\USBUIRTLearnForm.resx">
       <DependentUpon>USBUIRTLearnForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InputMapper\NewButtonForm.resx">
+      <DependentUpon>NewButtonForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Remotes\X10Remote\X10RemoteForm.resx">
