@@ -69,18 +69,12 @@ public:
 private:
 
 	CDVBSubDecoder*		m_pSubDecoder;
-	unsigned char*		m_PESdata;
-
-  CPesDecoder*  m_pesDecoder;
+  CPesDecoder*      m_pesDecoder;
 	
-  IPin        *m_pDemuxerPin;
-
-  int					m_Position;
-	int					m_PESlenght;
-	LONG				m_SubtitlePid;
+  IPin  *m_pDemuxerPin;
+	LONG  m_SubtitlePid;
 
   CSubTransform* const  m_pDump;				// Main renderer object
   CCritSec * const	    m_pReceiveLock; // Sample critical section
-  REFERENCE_TIME		    m_tLast;				// Last sample receive time
   bool				          m_bReset;
 };

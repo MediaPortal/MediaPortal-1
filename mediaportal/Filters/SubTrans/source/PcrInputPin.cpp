@@ -91,7 +91,9 @@ HRESULT CPcrInputPin::CompleteConnect( IPin *pPin )
 //
 STDMETHODIMP CPcrInputPin::Receive( IMediaSample *pSample )
 {
-	if( m_pcrPid == -1 )
+	CAutoLock lock( m_pReceiveLock );
+
+  if( m_pcrPid == -1 )
     return S_OK;  // Nothing to be done yet
 
   if ( m_bReset )
@@ -101,7 +103,6 @@ STDMETHODIMP CPcrInputPin::Receive( IMediaSample *pSample )
 	}
 	CheckPointer( pSample, E_POINTER );
 
-	CAutoLock lock(m_pReceiveLock);
 	PBYTE pbData = NULL;
 
 	long lDataLen = 0;
