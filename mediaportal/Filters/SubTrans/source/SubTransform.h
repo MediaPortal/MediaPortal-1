@@ -1,4 +1,4 @@
-/* 
+/*
  *	Copyright (C) 2005-2006 Team MediaPortal
  *  Author: tourettes
  *	http://www.team-mediaportal.com
@@ -7,15 +7,15 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2, or (at your option)
  *  any later version.
- *   
+ *
  *  This Program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU General Public License for more details.
- *   
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
@@ -42,13 +42,13 @@ typedef __int64 int64_t;
 //typedef unsigned __int8 uint8_t;
 
 // {591AB987-9689-4c07-846D-0006D5DD2BFD}
-DEFINE_GUID(CLSID_SubTransform, 
+DEFINE_GUID(CLSID_SubTransform,
 	0x591ab987, 0x9689, 0x4c07, 0x84, 0x6d, 0x0, 0x6, 0xd5, 0xdd, 0x2b, 0xfd);
 
 DECLARE_INTERFACE_( IStreamAnalyzer, IUnknown )
 {
-   STDMETHOD(SetSubtitlePID) (THIS_ ULONG pPID ) PURE;
-   STDMETHOD(SetAudioPID)    (THIS_ ULONG pPID ) PURE;
+   STDMETHOD( SetSubtitlePID ) ( THIS_ ULONG pPID ) PURE;
+   STDMETHOD( SetPcrPID ) ( THIS_ ULONG pPID ) PURE;
 };
 
 struct PTSTime
@@ -76,9 +76,9 @@ public:
   //HRESULT CompleteConnect( PIN_DIRECTION direction, IPin *pReceivePin );
   HRESULT CheckConnect(PIN_DIRECTION dir,IPin *pPin);
 
-	STDMETHODIMP Run( REFERENCE_TIME tStart );
-	STDMETHODIMP Pause();
-	STDMETHODIMP Stop();
+  STDMETHODIMP Run( REFERENCE_TIME tStart );
+  STDMETHODIMP Pause();
+  STDMETHODIMP Stop();
 
   HRESULT BeginFlush( void );
   HRESULT EndFlush( void );
@@ -115,7 +115,7 @@ public:
   void PTSToPTSTime( ULONGLONG pts, PTSTime* ptsTime );
 
 private:
-  
+
   HRESULT ProcessFrameUYVY( BYTE *pbInput, BYTE *pbOutput, long *pcbByte );
   HRESULT ProcessFrameYUY2( BYTE *pbInput, BYTE *pbOutput, long *pcbByte );
 
@@ -127,7 +127,7 @@ private:
 	CSubtitleInputPin*	m_pSubtitlePin;
 	CPcrInputPin*		    m_pPcrPin;
   CPMTInputPin*       m_pPMTPin;
-	
+
 	CDVBSubDecoder*		  m_pSubDecoder;
 
 	CCritSec			m_Lock;				    // Main renderer critical section
@@ -139,10 +139,10 @@ private:
   ULONGLONG m_NextSubtitlePTS;
 	ULONGLONG m_curSubtitlePTS;
 	ULONGLONG m_ShowDuration;
-	ULONGLONG m_curPTS; 
+	ULONGLONG m_curPTS;
 	ULONGLONG m_firstPTS;
 	ULONGLONG m_PTSdiff;
-  
+
   bool      m_firstPTSDone;
 
   HBITMAP				m_DibsSub;  // dibsection for to-be-scaled subtitle bitmap

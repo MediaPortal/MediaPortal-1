@@ -46,12 +46,12 @@ CPcrInputPin::CPcrInputPin( CSubTransform *m_pTransform,
 					pFilter,						// Filter
 					pLock,							// Locking
 					phr,							  // Return code
-					L"Audio" ),					// Pin name
+					L"Pcr" ),					// Pin name
 					m_pReceiveLock( pReceiveLock ),
 					m_pTransform( m_pTransform )
 {
 	Reset();
-	Log( "Audio: Pin created" );
+	Log( "Pcr: Pin created" );
 }
 
 CPcrInputPin::~CPcrInputPin()
@@ -78,10 +78,10 @@ HRESULT CPcrInputPin::CompleteConnect( IPin *pPin )
 	HRESULT hr = CBasePin::CompleteConnect( pPin );
   m_pDemuxerPin = pPin;
   if( m_pcrPid == -1 )
-    return hr;  // PID is mapped later when we have it 
+    return hr;  // PID is mapped later when we have it
 
   hr = MapPidToDemuxer( m_pcrPid, m_pDemuxerPin, MEDIA_TRANSPORT_PACKET );
-	
+
   return hr;
 }
 
@@ -93,7 +93,7 @@ STDMETHODIMP CPcrInputPin::Receive( IMediaSample *pSample )
 {
 	if( m_pcrPid == -1 )
     return S_OK;  // Nothing to be done yet
-  
+
   if ( m_bReset )
 	{
 		Log( "Audio pin: reset" );
@@ -121,10 +121,10 @@ STDMETHODIMP CPcrInputPin::Receive( IMediaSample *pSample )
 	{
 		ULONGLONG pts( 0 );
 		int streamType( 0 ); // not used
-		
+
 		for( int pos( 0 ) ; pos < lDataLen - TSPacketSize*2 ; pos++ )
 		{
-			if( pbData[pos] == 0x47 && pbData[pos+TSPacketSize] == 0x47 && 
+			if( pbData[pos] == 0x47 && pbData[pos+TSPacketSize] == 0x47 &&
 				pbData[pos+TSPacketSize*2] == 0x47 )
 			{
 				// Payload start?
@@ -133,11 +133,11 @@ STDMETHODIMP CPcrInputPin::Receive( IMediaSample *pSample )
 					if( S_OK == CurrentPTS( &pbData[pos], &pts, &streamType ) )
 					{
 						m_currentPTS = pts;
-						Log("Audio pin: Receive - audio PTS = %lld - ", pts );
+						Log("Audio pin: Receive - pcr = %lld - ", pts );
 					}
 					else
 					{
-						Log("Audio pin: Receive - audio PTS FAILED!");
+						Log("Audio pin: Receive - pcr FAILED!");
 					}
 				}
 			}
@@ -190,7 +190,7 @@ void CPcrInputPin::OnTsPacket( byte* tsPacket )
 	int adaptation_field_control = (tsPacket[3] & 0x30) >> 4;
 
 	if (adaptation_field_control == 2 || adaptation_field_control == 3) // adaptation field exists
-	{ 
+	{
 		PCR_FLAG = (tsPacket[5] & 0x10) >> 4;
 		if (tsPacket[4]>=7 && PCR_FLAG == 1)  // adaptation field is long enough and PCR_FLAG is set on.
 		{
@@ -202,14 +202,14 @@ void CPcrInputPin::OnTsPacket( byte* tsPacket )
 			k=((tsPacket[10]>>7)&0x1); pcrBaseHigh +=k;
 			m_currentPTS = pcrBaseHigh;
 			m_pTransform->PTSToPTSTime(m_currentPTS,&ptstime);
-			Log("Audio pin: Receive - audio PTS = %lld - %d:%02d:%02d:%03d", m_currentPTS,ptstime.h,ptstime.m,ptstime.s,ptstime.u );
-		} 
-		else 
+			Log("Pcr pin: Receive - pcr = %lld - %d:%02d:%02d:%03d", m_currentPTS,ptstime.h,ptstime.m,ptstime.s,ptstime.u );
+		}
+		else
 		{
 			Log("TS packet did not contain PCR value: PCR_FLAG = 0 or adaptation_field_length<7");
 		}
-	} 
-	else 
+	}
+	else
 	{
 		Log("TS packet did not contain adaptation field. afc: %d", adaptation_field_control);
 	}
@@ -219,11 +219,11 @@ void CPcrInputPin::OnTsPacket( byte* tsPacket )
 		if( S_OK == CurrentPTS( &tsPacket[0], &pts, &streamType ) )
 		{
 			m_currentPTS = pts;
-			Log("Audio pin: Receive - audio PTS = %lld - ", pts );
+			Log("Pcr pin: Receive - pcr = %lld - ", pts );
 		}
 		else
 		{
-			Log("Audio pin: Receive - audio PTS FAILED!");
+			Log("Pcr pin: Receive - pcr FAILED!");
 		}
 	}
 */
@@ -252,7 +252,7 @@ HRESULT CPcrInputPin::GetPESHeader( BYTE *data, PESHeader *header )
 	return S_OK;
 }
 void CPcrInputPin::GetPTS( BYTE *data, ULONGLONG *pts )
-{	
+{
 	//*pts= 0xFFFFFFFFL & ( (6&data[0])<<29 | (255&data[1])<<22 | (254&data[2])<<14 | (255&data[3])<<7 | (((254&data[4])>>1)& 0x7F));
 
 	uint64_t p0, p1, p2, p3, p4;
@@ -279,9 +279,9 @@ HRESULT CPcrInputPin::CurrentPTS( BYTE *pData, ULONGLONG *ptsValue, int *streamT
 	if( header.AdaptionControl == 1 || header.AdaptionControl == 3 )
 		offset += pData[4];
 
-	if( offset >= 188 ) 
+	if( offset >= 188 )
 		return S_FALSE;
-	
+
 	if( header.SyncByte==0x47 && pData[offset]==0 && pData[offset+1]==0 && pData[offset+2]==1 )
 	{
 		*streamType=(int)( ( pData[offset+3] >> 5 ) & 0x07 );
@@ -292,11 +292,10 @@ HRESULT CPcrInputPin::CurrentPTS( BYTE *pData, ULONGLONG *ptsValue, int *streamT
 		{
 			if( pes.PTSFlags == 0x02 )
 			{
-				// audio pes found
 				GetPTS( &pData[offset+9], ptsValue );
 				hr = S_OK;
 			}
-		}	
+		}
 	}
 	return hr;
 }
