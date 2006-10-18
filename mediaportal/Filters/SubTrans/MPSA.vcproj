@@ -227,15 +227,15 @@
 			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
-				RelativePath=".\source\AudioInputPin.h"
-				>
-			</File>
-			<File
 				RelativePath=".\source\DemuxPinMapper.h"
 				>
 			</File>
 			<File
 				RelativePath=".\source\dvbsubs\dvbsubs.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\PcrInputPin.h"
 				>
 			</File>
 			<File
@@ -376,10 +376,6 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath=".\source\AudioInputPin.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\source\DemuxPinMapper.cpp"
 				>
 			</File>
@@ -389,6 +385,10 @@
 			</File>
 			<File
 				RelativePath=".\source\dvbsubs\dvbsubs.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\PcrInputPin.cpp"
 				>
 			</File>
 			<File
