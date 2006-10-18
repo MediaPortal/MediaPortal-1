@@ -26,6 +26,6 @@ class MPidObserver
 {
 	public:
 
-		virtual void SetAudioPid( LONG pid ) = 0;
+		virtual void SetPcrPid( LONG pid ) = 0;
 		virtual void SetSubtitlePid( LONG pid ) = 0;
 };

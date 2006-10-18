@@ -57,9 +57,9 @@ CPMTInputPin::CPMTInputPin( CSubTransform *m_pTransform,
 					      m_pTransform( m_pTransform ),
   m_pDemuxerPin( NULL ),
   m_pPidObserver( pPidObserver ),
-  m_SubtitlePid( -1 ),
+  m_subtitlePid( -1 ),
   m_streamVideoPid( -1 ),
-  m_AudioPid( -1 )
+  m_pcrPid( -1 )
 {
 	m_pPatParser = new CPatParser();
   m_pPatParser->Reset();
@@ -126,7 +126,7 @@ STDMETHODIMP CPMTInputPin::Receive( IMediaSample *pSample )
 	if( lDataLen > 5 )
 		hr = Process( pbData, lDataLen );
 
-  if( hr == S_OK && ( m_SubtitlePid == -1 || m_AudioPid == -1 ) )
+  if( hr == S_OK && ( m_subtitlePid == -1 || m_pcrPid == -1 ) )
   {
     // Try to find a correct PMT
     int count = m_pPatParser->m_pmtParsers.size();
@@ -141,26 +141,21 @@ STDMETHODIMP CPMTInputPin::Receive( IMediaSample *pSample )
         
         if( m_streamVideoPid == videoPid && m_pPidObserver != NULL )
         {
-          if( m_AudioPid == -1 && pidTable.PcrPid > 0)
+          if( m_pcrPid == -1 && pidTable.PcrPid > 0)
           {
-            //m_AudioPid = pidTable.AudioPid1;             
-			  m_AudioPid = pidTable.PcrPid;
-			  Log("AudioPid set to PcrPid value of %x",m_AudioPid);
-			  
-            m_pPidObserver->SetAudioPid( m_AudioPid  );
+			      m_pcrPid = pidTable.PcrPid;
+            m_pPidObserver->SetPcrPid( m_pcrPid  );
           }
-          if( m_SubtitlePid == -1 && pidTable.SubtitlePid > 0) 
+          if( m_subtitlePid == -1 && pidTable.SubtitlePid > 0) 
           {
-            m_SubtitlePid = pidTable.SubtitlePid;
-            m_pPidObserver->SetSubtitlePid( m_SubtitlePid );
+            m_subtitlePid = pidTable.SubtitlePid;
+            m_pPidObserver->SetSubtitlePid( m_subtitlePid );
           }
           break; // correct PMT is found
         }
       }
     }
   }
-  
-  //m_pPidObserver->SetAudioPid(0x80);  
   return hr;
 }
 
@@ -209,8 +204,8 @@ void CPMTInputPin::OnTsPacket( byte* tsPacket )
 
 void CPMTInputPin::Reset()
 {
-  m_SubtitlePid = -1;
-  m_AudioPid = -1;
+  m_subtitlePid = -1;
+  m_pcrPid = -1;
   m_pPatParser->Reset();
   mappedPids.clear();
 }

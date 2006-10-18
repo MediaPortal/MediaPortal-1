@@ -33,7 +33,7 @@
 #include "PidObserver.h"
 
 class CSubtitleInputPin;
-class CAudioInputPin;
+class CPcrInputPin;
 class CPMTInputPin;
 class CDVBSubDecoder;
 
@@ -103,22 +103,21 @@ public:
 	void Reset();
 
 	// Interface
-	STDMETHOD(SetSubtitlePid)( THIS_ ULONG pPid );
-  STDMETHOD(SetAudioPid)   ( THIS_ ULONG pPid );
+	STDMETHOD(SetSubtitlePid) ( THIS_ ULONG pPid );
+  STDMETHOD(SetPcrPid)      ( THIS_ ULONG pPid );
 
 	// From MSubdecoderObserver
 	void Notify();
 
   // From MPidObserver
-  void SetAudioPid( LONG pid );
+  void SetPcrPid( LONG pid );
 	void SetSubtitlePid( LONG pid );
-void PTSToPTSTime( ULONGLONG pts, PTSTime* ptsTime );
+  void PTSToPTSTime( ULONGLONG pts, PTSTime* ptsTime );
+
 private:
   
   HRESULT ProcessFrameUYVY( BYTE *pbInput, BYTE *pbOutput, long *pcbByte );
   HRESULT ProcessFrameYUY2( BYTE *pbInput, BYTE *pbOutput, long *pcbByte );
-	
-  
 
 	void StretchSubtitle();
 
@@ -126,7 +125,7 @@ private:
   VIDEOINFOHEADER		m_VihOut;  // Current video format (output)
 
 	CSubtitleInputPin*	m_pSubtitlePin;
-	CAudioInputPin*		  m_pAudioPin;
+	CPcrInputPin*		    m_pPcrPin;
   CPMTInputPin*       m_pPMTPin;
 	
 	CDVBSubDecoder*		  m_pSubDecoder;
@@ -134,7 +133,7 @@ private:
 	CCritSec			m_Lock;				    // Main renderer critical section
   CCritSec			m_ReceiveLock;		// Sublock for received samples
 
-	unsigned char*  m_curSubtitleData;//[720*576*3];
+	unsigned char*  m_curSubtitleData;  //[720*576*3];
 	CSubtitle*      m_pSubtitle;
 
   ULONGLONG m_NextSubtitlePTS;
@@ -146,7 +145,7 @@ private:
   
   bool      m_firstPTSDone;
 
-  HBITMAP				m_DibsSub; // dibsection for to-be-scaled subtitle bitmap
+  HBITMAP				m_DibsSub;  // dibsection for to-be-scaled subtitle bitmap
   HDC					  m_DC;
   void *				m_pDibBits;
   HGDIOBJ				m_OldObject;

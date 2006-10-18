@@ -69,8 +69,8 @@ private:
   MPidObserver* m_pPidObserver;
 
   LONG m_streamVideoPid;
-  LONG m_SubtitlePid;
-  LONG m_AudioPid;
+  LONG m_subtitlePid;
+  LONG m_pcrPid;
 
   std::vector<int> mappedPids;
 
