@@ -537,6 +537,11 @@ namespace MediaPortal.GUI.TV
         return;
       _updateTimer = DateTime.Now;
 
+      // Don't update if recorder is stopped!
+      if (Recorder.Running == false)
+        return;
+      if (Recorder.CommandProcessor==null)
+        return;
       // Don't update while busy - Will make it look bad!
       if (Recorder.CommandProcessor.IsBusy)
         return;
