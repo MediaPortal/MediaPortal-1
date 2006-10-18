@@ -750,9 +750,16 @@ namespace MediaPortal.EPG
         TVProgram dbProg = dbProgram(program.Title, program.Start);
         if (dbProg != null)
         {
-          _log.Info(LogType.WebEPG, "WebEPG: Program in db copying it");
+          _log.Info(LogType.WebEPG, "WebEPG: Program already in db");
           dbProg.Channel = _strID;
-          return dbProg;
+          if (program.End != 0 && dbProg.End == program.End)
+          {
+            return dbProg;
+          }
+          else
+          {
+            _log.Info(LogType.WebEPG, "WebEPG: Program changed updating");
+          }
         }
       }
 
