@@ -67,7 +67,7 @@ namespace MediaPortal.Player
     protected int m_aspectX = 1;
     protected int m_aspectY = 1;
 
-    IPin _pinAudioTS = null;
+    IPin _pinPcr = null;
     IPin _pinSubtitle = null;
     IPin _pinPMT = null;
     bool enableDvbSubtitles = false;
@@ -243,25 +243,25 @@ namespace MediaPortal.Player
         if (_mpegDemux != null && enableDvbSubtitles == true)
         {
           IMpeg2Demultiplexer demuxer = _mpegDemux as IMpeg2Demultiplexer;
-          hr = demuxer.CreateOutputPin(GetTSMedia(), "AudioTS", out _pinAudioTS);
+          hr = demuxer.CreateOutputPin(GetTSMedia(), "Pcr", out _pinPcr);
 
           if (hr == 0)
           {
-            Log.Info("RTSPPlayer:_pinAudioTS OK");
+            Log.Info("RTSPPlayer:_pinPcr OK");
 
-            IPin pDemuxerAudioTS = DsFindPin.ByName(_mpegDemux, "AudioTS");
-            IPin pSubtitleAudioTS = DsFindPin.ByName(_subtitleFilter, "Audio");
-            hr = graphBuilder.Connect(pDemuxerAudioTS, pSubtitleAudioTS);
+            IPin pDemuxerPcr = DsFindPin.ByName(_mpegDemux, "Pcr");
+            IPin pSubtitlePcr = DsFindPin.ByName(_subtitleFilter, "Audio");
+            hr = graphBuilder.Connect(pDemuxerPcr, pSubtitlePcr);
           }
           else
           {
-            Log.Info("RTSPPlayer:Failed to create _pinAudioTS in demuxer:{0:X}", hr);
+            Log.Info("RTSPPlayer:Failed to create _pinPcr in demuxer:{0:X}", hr);
           }
 
           hr = demuxer.CreateOutputPin(GetSubtitleMedia(), "Subtitle", out _pinSubtitle);
           if (hr == 0)
           {
-            Log.Info("RTSPPlayer:_pinAudioTS OK");
+            Log.Info("RTSPPlayer:_pinPcr OK");
 
             IPin pDemuxerSubtitle = DsFindPin.ByName(_mpegDemux, "Subtitle");
             IPin pSubtitle = DsFindPin.ByName(_subtitleFilter, "Subtitle");
@@ -1092,19 +1092,19 @@ namespace MediaPortal.Player
 
     AMMediaType GetTSMedia()
     {
-      AMMediaType mediaAudioTS = new AMMediaType();
-      mediaAudioTS.majorType = MediaType.Stream;
-      mediaAudioTS.subType = MediaSubType.Mpeg2Transport;
-      mediaAudioTS.formatType = FormatType.Null;
-      mediaAudioTS.formatPtr = IntPtr.Zero;
-      mediaAudioTS.sampleSize = 1;
-      mediaAudioTS.temporalCompression = false;
-      mediaAudioTS.fixedSizeSamples = true;
-      mediaAudioTS.unkPtr = IntPtr.Zero;
-      mediaAudioTS.formatType = FormatType.None;
-      mediaAudioTS.formatSize = 0;
-      mediaAudioTS.formatPtr = IntPtr.Zero;
-      return mediaAudioTS;
+      AMMediaType TS = new AMMediaType();
+      TS.majorType = MediaType.Stream;
+      TS.subType = MediaSubType.Mpeg2Transport;
+      TS.formatType = FormatType.Null;
+      TS.formatPtr = IntPtr.Zero;
+      TS.sampleSize = 1;
+      TS.temporalCompression = false;
+      TS.fixedSizeSamples = true;
+      TS.unkPtr = IntPtr.Zero;
+      TS.formatType = FormatType.None;
+      TS.formatSize = 0;
+      TS.formatPtr = IntPtr.Zero;
+      return TS;
     }
 
     AMMediaType GetSubtitleMedia()

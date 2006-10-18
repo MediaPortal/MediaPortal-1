@@ -139,7 +139,7 @@ namespace MediaPortal.Player
     VMR9Util _vmr9 = null;
     IPin _pinAudio = null;
     IPin _pinVideo = null;
-    IPin _pinAudioTS = null;
+    IPin _pinPcr = null;
     IPin _pinSubtitle = null;
     IPin _pinPMT = null;
     bool enableDvbSubtitles = false;
@@ -494,25 +494,25 @@ namespace MediaPortal.Player
         if (_mpegDemux != null && enableDvbSubtitles == true)
         {
           IMpeg2Demultiplexer demuxer = _mpegDemux as IMpeg2Demultiplexer;
-          hr = demuxer.CreateOutputPin( GetTSMedia(), "AudioTS", out _pinAudioTS );
+          hr = demuxer.CreateOutputPin( GetTSMedia(), "Pcr", out _pinPcr );
 
           if (hr == 0)
           {
-            Log.Info("TSStreamBufferPlayer9:_pinAudioTS OK");
+            Log.Info("TSStreamBufferPlayer9:_pinPcr OK");
 
-            IPin pDemuxerAudioTS = DsFindPin.ByName(_mpegDemux, "AudioTS");
-            IPin pSubtitleAudioTS = DsFindPin.ByName(_subtitleFilter, "Audio");
-            hr = _graphBuilder.Connect(pDemuxerAudioTS, pSubtitleAudioTS);
+            IPin pDemuxerPcr = DsFindPin.ByName(_mpegDemux, "Pcr");
+            IPin pSubtitlePcr = DsFindPin.ByName(_subtitleFilter, "Pcr");
+            hr = _graphBuilder.Connect(pDemuxerPcr, pSubtitlePcr);
           }
           else
           {
-            Log.Info("TSStreamBufferPlayer9:Failed to create _pinAudioTS in demuxer:{0:X}", hr);
+            Log.Info("TSStreamBufferPlayer9:Failed to create _pinPcr in demuxer:{0:X}", hr);
           }
 
           hr = demuxer.CreateOutputPin(GetTSMedia(), "Subtitle", out _pinSubtitle);
           if (hr == 0)
           {
-            Log.Info("TSStreamBufferPlayer9:_pinAudioTS OK");
+            Log.Info("TSStreamBufferPlayer9:_pinPcr OK");
 
             IPin pDemuxerSubtitle = DsFindPin.ByName(_mpegDemux, "Subtitle");
             IPin pSubtitle = DsFindPin.ByName(_subtitleFilter, "Subtitle");
