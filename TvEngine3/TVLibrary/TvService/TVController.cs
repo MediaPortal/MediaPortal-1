@@ -1717,6 +1717,22 @@ namespace TvService
       _localCards[cardId].IsEpgGrabbing = false;
     }
 
+    public List<string> ServerIpAdresses
+    {
+      get
+      {
+        List<string> ipadresses = new List<string>();
+        string localHostName = Dns.GetHostName();
+        IPHostEntry local = Dns.GetHostByName(localHostName);
+        foreach (IPAddress ipaddress in local.AddressList)
+        {
+          ipadresses.Add(ipaddress.ToString());
+        }
+        return ipadresses;
+      }
+    }
+
+
     #endregion
 
     #endregion

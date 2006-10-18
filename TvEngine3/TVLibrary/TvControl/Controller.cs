@@ -444,6 +444,8 @@ namespace TvControl
     /// 	<c>true</c> if card is in use; otherwise, <c>false</c>.
     /// </returns>
     bool IsCardInUse(int cardId, out User user);
+
+    List<string> ServerIpAdresses { get;}
     #endregion
 
 

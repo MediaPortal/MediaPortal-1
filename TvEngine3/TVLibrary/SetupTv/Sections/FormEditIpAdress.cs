@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using TvControl;
 
 namespace SetupTv.Sections
 {
@@ -18,7 +19,20 @@ namespace SetupTv.Sections
 
     private void FormEditIpAdress_Load(object sender, EventArgs e)
     {
-      textBox1.Text = HostName;
+      List<string> ipAdresses = RemoteControl.Instance.ServerIpAdresses;
+      comboBox1.Items.Clear();
+      int selected = 0;
+      int counter = 0;
+      foreach (string ipAdress in ipAdresses)
+      {
+        comboBox1.Items.Add(ipAdress);
+        if (String.Compare(ipAdress, HostName, true) == 0)
+        {
+          selected = counter;
+        }
+        counter++;
+      }
+      comboBox1.SelectedIndex = selected;
 
     }
 
@@ -30,7 +44,10 @@ namespace SetupTv.Sections
 
     private void button1_Click(object sender, EventArgs e)
     {
-      HostName= textBox1.Text ;
+      if (comboBox1.SelectedIndex >= 0)
+      {
+        HostName = comboBox1.SelectedItem.ToString();
+      }
       this.DialogResult = DialogResult.OK;
       this.Close();
     }
