@@ -108,9 +108,12 @@ namespace MediaPortal.InputDevices
       if (!_controlEnabled)
         return;
 
-      _x10Form.Close();
-      _x10Form.Dispose();
-      _x10Form = null;
+      if (_x10Form != null)
+      {
+        _x10Form.Close();
+        _x10Form.Dispose();
+        _x10Form = null;
+      }
 
       _inputHandler = null;
 
