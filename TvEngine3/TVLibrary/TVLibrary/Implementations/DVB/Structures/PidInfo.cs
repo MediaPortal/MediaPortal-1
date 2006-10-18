@@ -94,6 +94,7 @@ namespace TvLibrary.Implementations.DVB.Structures
     /// Ctor for an video pid
     /// </summary>
     /// <param name="videoPid">The video pid.</param>
+    /// <param name="streamType">the stream Type.</param>
     public void VideoPid(int videoPid, int streamType)
     {
       pid = videoPid;

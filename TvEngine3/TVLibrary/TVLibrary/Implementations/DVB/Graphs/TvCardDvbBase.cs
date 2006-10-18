@@ -33,7 +33,6 @@ using TvLibrary.Implementations;
 using DirectShowLib.SBE;
 using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Analyzer;
-using TvLibrary.Interfaces.TsFileSink;
 using TvLibrary.Channels;
 using TvLibrary.Implementations.DVB.Structures;
 using TvLibrary.Epg;
@@ -188,13 +187,13 @@ namespace TvLibrary.Implementations.DVB
     protected bool CheckThreadId()
     {
       return true;
-      if (_managedThreadId != System.Threading.Thread.CurrentThread.ManagedThreadId)
+      /* if (_managedThreadId != System.Threading.Thread.CurrentThread.ManagedThreadId)
       {
 
         Log.Log.WriteFile("dvb:Invalid thread id {0}!={1}", _managedThreadId, System.Threading.Thread.CurrentThread.ManagedThreadId);
         return true;
         //return false;
-      }
+      }*/
       return true;
     }
     /// <summary>
@@ -2398,6 +2397,10 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
 
+    /// <summary>
+    /// Gets or sets the type of the cam.
+    /// </summary>
+    /// <value>The type of the cam.</value>
     public CamType CamType
     {
       get

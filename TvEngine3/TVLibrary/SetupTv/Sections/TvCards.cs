@@ -36,6 +36,7 @@ namespace SetupTv.Sections
 {
   public partial class TvCards : SectionSettings
   {
+    bool _needRestart = false;
     public TvCards()
       : this("TV Cards")
     {
@@ -50,10 +51,15 @@ namespace SetupTv.Sections
     public override void OnSectionDeActivated()
     {
       ReOrder();
+      if (_needRestart)
+      {
+        RemoteControl.Instance.Restart();
+      }
       base.OnSectionDeActivated();
     }
     public override void OnSectionActivated()
     {
+      _needRestart = false;
       base.OnSectionActivated();
       mpListView1.Items.Clear();
       Dictionary<string, CardType> cardTypes = new Dictionary<string, CardType>();
@@ -128,6 +134,8 @@ namespace SetupTv.Sections
       }
       ReOrder();
       mpListView1.EndUpdate();
+
+      _needRestart = true;
     }
 
     private void buttonDown_Click(object sender, EventArgs e)
@@ -148,6 +156,7 @@ namespace SetupTv.Sections
       }
       ReOrder();
       mpListView1.EndUpdate();
+      _needRestart = true;
     }
 
     void ReOrder()
@@ -158,6 +167,8 @@ namespace SetupTv.Sections
 
         Card card = (Card)mpListView1.Items[i].Tag;
         card.Priority = mpListView1.Items.Count - i;
+        if (card.Enabled != mpListView1.Items[i].Checked)
+          _needRestart = true;
         card.Enabled = mpListView1.Items[i].Checked;
         card.Persist();
       }

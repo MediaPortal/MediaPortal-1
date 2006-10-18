@@ -59,6 +59,10 @@ namespace TVLibrary.Streaming
     #endregion
 
     #region ctor
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RtspStreaming"/> class.
+    /// </summary>
+    /// <param name="hostName">ipadress to use for streaming.</param>
     public RtspStreaming(string hostName)
     {
       try
@@ -112,7 +116,8 @@ namespace TVLibrary.Streaming
     /// Creates a new RTSP stream
     /// </summary>
     /// <param name="streamName">Name of the stream.</param>
-    /// <param name="fileName">Name of the timeshift file.</param>
+    /// <param name="fileName">Name of the timeshift file.</param
+    /// <param name="isProgramStream">true if file is a mpeg-2 program stream, false if file is a mpeg-2 transport stream.</param>
     public void AddTimeShiftFile(string streamName, string fileName, bool isProgramStream)
     {
       if (_initialized == false) return;

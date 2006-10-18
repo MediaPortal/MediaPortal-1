@@ -24,6 +24,9 @@ using System.Text;
 
 namespace TvLibrary.Teletext
 {
+  /// <summary>
+  /// class which can render a teletext page
+  /// </summary>
   public class TeletextPageRenderer
   {
     #region constants
@@ -119,6 +122,10 @@ namespace TvLibrary.Teletext
 
     #endregion
 
+    /// <summary>
+    /// Gets or sets the render width.
+    /// </summary>
+    /// <value>The width.</value>
     public int Width
     {
       get { return _pageRenderWidth; }
@@ -127,6 +134,10 @@ namespace TvLibrary.Teletext
         Clear();
       }
     }
+    /// <summary>
+    /// Gets or sets the render height.
+    /// </summary>
+    /// <value>The height.</value>
     public int Height
     {
       get { return _pageRenderHeight; }
@@ -137,6 +148,10 @@ namespace TvLibrary.Teletext
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating if concealed mode is on or off
+    /// </summary>
+    /// <value><c>true</c> if concealed mode; otherwise, <c>false</c>.</value>
     public bool HiddenMode
     {
       get
@@ -148,6 +163,10 @@ namespace TvLibrary.Teletext
         _hiddenMode = value;
       }
     }
+    /// <summary>
+    /// Get/sets transparent mode on/off
+    /// </summary>
+    /// <value><c>true</c> if transparent mode is enabled; otherwise, <c>false</c>.</value>
     public bool TransparentMode
     {
       get { return _transparentMode; }
@@ -155,6 +174,10 @@ namespace TvLibrary.Teletext
     }
 
 
+    /// <summary>
+    /// Gets or sets the current selected page.
+    /// </summary>
+    /// <value>The current selected page.</value>
     public string PageSelectText
     {
       get
@@ -169,6 +192,9 @@ namespace TvLibrary.Teletext
       }
     }
 
+    /// <summary>
+    /// Clears this instance.
+    /// </summary>
     public void Clear()
     {
       if (_pageBitmap != null)
@@ -181,6 +207,18 @@ namespace TvLibrary.Teletext
     }
 
 
+    /// <summary>
+    /// Renders the specified character.
+    /// </summary>
+    /// <param name="graph">The graph.</param>
+    /// <param name="chr">The CHR.</param>
+    /// <param name="attrib">The attrib.</param>
+    /// <param name="x">The x.</param>
+    /// <param name="y">The y.</param>
+    /// <param name="w">The w.</param>
+    /// <param name="h">The h.</param>
+    /// <param name="isSubtitlePage">if set to <c>true</c> [is subtitle page].</param>
+    /// <param name="txtLanguage">The TXT language.</param>
     void Render(System.Drawing.Graphics graph, byte chr, int attrib, ref int x, ref int y, int w, int h, bool isSubtitlePage, int txtLanguage)
     {
 
@@ -446,6 +484,11 @@ namespace TvLibrary.Teletext
       return;
     }
 
+    /// <summary>
+    /// Gets the color.
+    /// </summary>
+    /// <param name="colorNumber">The color number.</param>
+    /// <returns>System.Drawing.Color</returns>
     System.Drawing.Color GetColor(int colorNumber)
     {
 
@@ -476,6 +519,13 @@ namespace TvLibrary.Teletext
     }
 
 
+    /// <summary>
+    /// Renders a teletext page page.
+    /// </summary>
+    /// <param name="byPage">The page data.</param>
+    /// <param name="mPage">The page number.</param>
+    /// <param name="sPage">The subpage number.</param>
+    /// <returns>bitmap containing the teletext page</returns>
     public System.Drawing.Bitmap RenderPage(byte[] byPage, int mPage, int sPage)
     {
       if (_pageBitmap == null)
@@ -885,11 +935,25 @@ namespace TvLibrary.Teletext
     }
 
     #region private members
+    /// <summary>
+    /// Determines whether the number is a decimal number or not
+    /// </summary>
+    /// <param name="i">The number.</param>
+    /// <returns>
+    /// 	<c>true</c> decimal; otherwise, <c>false</c>.
+    /// </returns>
     bool IsDecimalPage(int i)
     {
       return (bool)(((i & 0x00F) <= 9) && ((i & 0x0F0) <= 0x90));
     }
 
+    /// <summary>
+    /// Determines whether the number is a decimal subpage number or not
+    /// </summary>
+    /// <param name="i">The number.</param>
+    /// <returns>
+    /// 	<c>true</c> decimal; otherwise, <c>false</c>.
+    /// </returns>
     bool IsDecimalSubPage(int i)
     {
       if (i >= 0x80) return false;

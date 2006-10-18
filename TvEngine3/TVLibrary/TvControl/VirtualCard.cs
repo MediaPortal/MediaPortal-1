@@ -477,17 +477,7 @@ namespace TvControl
       return RemoteControl.Instance.GetTeletextPage(_cardId, pageNumber, subPageNumber);
     }
 
-    /// <summary>
-    /// Starts the epg grabber to grab the epg and update the tvguide
-    /// </summary>
-    /// <returns></returns>
-    //public void GrabEpg()
-    //{
-    //  if (_cardId < 0) return;
-    //  RemoteControl.HostName = _server;
-    //  RemoteControl.Instance.GrabEpg(_cardId);
-    //}
-
+    
     /// <summary>
     /// scans current transponder for channels.
     /// </summary>
@@ -534,6 +524,13 @@ namespace TvControl
       return RemoteControl.Instance.StartRecording(_cardId,ref fileName, contentRecording, startTime);
     }
 
+    /// <summary>
+    /// Determines whether the card is locked.
+    /// </summary>
+    /// <param name="user">The user which has locked the card</param>
+    /// <returns>
+    /// 	<c>true</c> if the card is locked; otherwise, <c>false</c>.
+    /// </returns>
     public bool IsLocked(out User user)
     {
       user = null;

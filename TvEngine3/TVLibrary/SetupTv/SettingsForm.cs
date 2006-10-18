@@ -95,6 +95,7 @@ namespace SetupTv
           XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
           XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString"); ;
           RemoteControl.Instance.DatabaseConnectionString = node.InnerText;
+          RemoteControl.Instance.Restart();
           //DatabaseManager.Instance.Clear();
         }
 

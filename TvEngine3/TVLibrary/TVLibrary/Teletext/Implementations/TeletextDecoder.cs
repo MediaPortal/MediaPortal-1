@@ -25,6 +25,9 @@ using System.Text;
 
 namespace TvLibrary.Teletext
 {
+  /// <summary>
+  /// teletext decoder class
+  /// </summary>
   public class TeletextDecoder
   {
     #region constants
@@ -57,6 +60,9 @@ namespace TvLibrary.Teletext
     #endregion
 
     #region public members
+    /// <summary>
+    /// Clears this instance.
+    /// </summary>
     public void Clear()
     {
       for (int i = 0; i <= MAX_MAGAZINE; ++i)
@@ -67,6 +73,12 @@ namespace TvLibrary.Teletext
       _pageCache.Clear();
     }
 
+    /// <summary>
+    /// Decodes the specified row data.
+    /// </summary>
+    /// <param name="rowData">The row data.</param>
+    /// <param name="startOff">The start off.</param>
+    /// <param name="rows">The rows.</param>
     public void Decode(byte[] rowData, int startOff, int rows)
     {
       int line = 0;

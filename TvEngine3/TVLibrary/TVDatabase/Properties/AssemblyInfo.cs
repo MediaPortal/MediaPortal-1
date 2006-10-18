@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("TVDatabase")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("TSS")]
+[assembly: AssemblyCompany("Team MediaPortal")]
 [assembly: AssemblyProduct("TVDatabase")]
-[assembly: AssemblyCopyright("Copyright © TSS 2006")]
+[assembly: AssemblyCopyright("Copyright © Team MediaPortal 2006")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

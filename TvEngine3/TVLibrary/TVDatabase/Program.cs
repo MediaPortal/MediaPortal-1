@@ -15,8 +15,6 @@ namespace TvDatabase
 	[TableName("Program")]
 	public class Program : Persistent
   {
-    Program _currentProgram = null;
-    Program _nextProgram = null;
 
 		#region Members
 		private bool isChanged;

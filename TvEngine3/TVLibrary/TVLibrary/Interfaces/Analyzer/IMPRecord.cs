@@ -25,25 +25,63 @@ using System.Runtime.InteropServices;
 
 namespace TvLibrary.Interfaces.Analyzer
 {
+  /// <summary>
+  /// Interface to the File recorder com object
+  /// </summary>
   [ComVisible(true), ComImport,
   Guid("d5ff805e-a98b-4d56-bede-3f1b8ef72533"),
   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IMPRecord
   {
+    /// <summary>
+    /// Sets the name of the recording file.
+    /// </summary>
+    /// <param name="fileName">Name of the file.</param>
+    /// <returns></returns>
     [PreserveSig]
     int SetRecordingFileName([In, MarshalAs(UnmanagedType.LPStr)]			string fileName);
+    /// <summary>
+    /// Starts recording.
+    /// </summary>
+    /// <returns></returns>
     [PreserveSig]
     int StartRecord();
+    /// <summary>
+    /// Stops the recording.
+    /// </summary>
+    /// <returns></returns>
     [PreserveSig]
     int StopRecord();
+    /// <summary>
+    /// Determines whether the we are receiving audio and video.
+    /// </summary>
+    /// <param name="yesNo">if we are receiving audio and video then true<c>true</c></param>
+    /// <returns></returns>
     [PreserveSig]
     int IsReceiving(out bool yesNo);
+    /// <summary>
+    /// Resets this recorder.
+    /// </summary>
+    /// <returns></returns>
     [PreserveSig]
     int Reset();
+    /// <summary>
+    /// Sets the name of the time shift file.
+    /// </summary>
+    /// <param name="fileName">Name of the file.</param>
+    /// <returns></returns>
     [PreserveSig]
     int SetTimeShiftFileName([In, MarshalAs(UnmanagedType.LPStr)]			string fileName);
+    /// <summary>
+    /// Starts  time shifting.
+    /// </summary>
+    /// <returns></returns>
     [PreserveSig]
     int StartTimeShifting();
+    /// <summary>
+    /// Stops  time shifting.
+    /// </summary>
+    /// <returns></returns>
     [PreserveSig]
     int StopTimeShifting();
   }

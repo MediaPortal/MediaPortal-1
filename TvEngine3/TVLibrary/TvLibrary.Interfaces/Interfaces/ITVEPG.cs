@@ -27,20 +27,39 @@ using TvLibrary.Epg;
 namespace TvLibrary.Interfaces
 {
 
+  /// <summary>
+  /// callback interface for the EPG
+  /// </summary>
   [ComVisible(true), ComImport,
  Guid("FFAB5D98-2309-4d90-9C71-E4B2F490CF5A"),
   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IEpgCallback
   {
+    /// <summary>
+    /// Called when epg is received.
+    /// </summary>
+    /// <returns></returns>
     [PreserveSig]
     int OnEpgReceived();
   };
 
+  /// <summary>
+  /// Base class used for dvb epg-grabbing
+  /// </summary>
   public abstract class BaseEpgGrabber : IEpgCallback
   {
+    /// <summary>
+    /// Gets called when epg has been cancelled
+    /// Should be overriden by the class
+    /// </summary>
     public virtual void OnEpgCancelled() 
     { 
     }
+    /// <summary>
+    /// Gets called when epg has been received
+    /// Should be overriden by the class
+    /// </summary>
+    /// <returns></returns>
     public virtual int OnEpgReceived()
     {
       return 0;
@@ -60,6 +79,10 @@ namespace TvLibrary.Interfaces
     /// </summary>
     void GrabEpg(BaseEpgGrabber callback);
 
+    /// <summary>
+    /// returns a list of all epg data for each channel found.
+    /// </summary>
+    /// <value>The epg.</value>
     List<EpgChannel> Epg { get;}
 
   }

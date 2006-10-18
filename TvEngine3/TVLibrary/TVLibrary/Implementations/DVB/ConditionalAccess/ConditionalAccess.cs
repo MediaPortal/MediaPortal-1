@@ -112,6 +112,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Sends the PMT to the CI module
     /// </summary>
+    /// <param name="camType">type of cam in use</param>
     /// <param name="channel">channel on which we are tuned</param>
     /// <param name="PMT">byte array containing the PMT</param>
     /// <param name="pmtLength">length of the pmt array</param>

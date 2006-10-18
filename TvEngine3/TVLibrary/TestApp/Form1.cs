@@ -37,7 +37,7 @@ namespace TestApp
     ITVCard _currentCard;
     bool _stopStreaming = false;
     bool _streamingRunning = false;
-    Player _player;
+    //Player _player;
 
     public Form1()
     {
@@ -348,7 +348,7 @@ namespace TestApp
       if (_currentCard.IsTimeShifting)
       {
         //_player.Stop();
-        _player = null;
+        //_player = null;
         _currentCard.StopTimeShifting();
         _stopStreaming = true;
         button3.Text = "Timeshift .ts";

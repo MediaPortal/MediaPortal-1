@@ -25,29 +25,66 @@ using System.Runtime.InteropServices;
 
 namespace TvLibrary.Interfaces.Analyzer
 {
+  /// <summary>
+  /// Interface to the video analyzer com object
+  /// </summary>
   [ComVisible(true), ComImport,
   Guid("59f8d617-92fd-48d5-8f6d-a97bfd95c448"),
   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ITsVideoAnalyzer
   {
+    /// <summary>
+    /// Sets the video pid.
+    /// </summary>
+    /// <param name="videoPid">The video pid.</param>
+    /// <returns></returns>
     [PreserveSig]
     int SetVideoPid(short videoPid);
 
+    /// <summary>
+    /// Gets the video pid.
+    /// </summary>
+    /// <param name="videoPid">The video pid.</param>
+    /// <returns></returns>
     [PreserveSig]
     int GetVideoPid(out short videoPid);
 
+    /// <summary>
+    /// Sets the audio pid.
+    /// </summary>
+    /// <param name="audioPid">The audio pid.</param>
+    /// <returns></returns>
     [PreserveSig]
     int SetAudioPid(short audioPid);
 
+    /// <summary>
+    /// Gets the audio pid.
+    /// </summary>
+    /// <param name="audioPid">The audio pid.</param>
+    /// <returns></returns>
     [PreserveSig]
     int GetAudioPid(out short audioPid);
 
+    /// <summary>
+    /// Determines whether video is encrypted
+    /// </summary>
+    /// <param name="yesNo">1 of encrypted, 0 if not encrypted.</param>
+    /// <returns></returns>
     [PreserveSig]
     int IsVideoEncrypted(out short yesNo);
 
+    /// <summary>
+    /// Determines whether audio is encrypted
+    /// </summary>
+    /// <param name="yesNo">1 of encrypted, 0 if not encrypted.</param>
+    /// <returns></returns>
     [PreserveSig]
     int IsAudioEncrypted(out short yesNo);
 
+    /// <summary>
+    /// Resets video analyzer.
+    /// </summary>
+    /// <returns></returns>
     [PreserveSig]
     int Reset();
   }

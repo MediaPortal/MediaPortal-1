@@ -80,6 +80,7 @@ namespace SetupTv.Sections
       Server server = (Server)item.Tag;
       server.Delete();
       MessageBox.Show("Changes made require TvService to restart. Please restart the tvservice");
+      RemoteControl.Instance.Restart();
       OnSectionActivated();
     }
 
@@ -109,6 +110,7 @@ namespace SetupTv.Sections
         }
         server.Persist();
       }
+      RemoteControl.Instance.Restart();
       MessageBox.Show("Changes made require TvService to restart. Please restart the tvservice");
     }
 
@@ -126,6 +128,7 @@ namespace SetupTv.Sections
         item.Text = dlg.HostName;
         server.HostName = dlg.HostName;
         server.Persist();
+        RemoteControl.Instance.Restart();
         MessageBox.Show("Changes made require TvService to restart. Please restart the tvservice");
       }
 

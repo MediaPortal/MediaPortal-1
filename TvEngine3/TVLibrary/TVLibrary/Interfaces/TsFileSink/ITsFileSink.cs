@@ -22,9 +22,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
-
+/*
 namespace TvLibrary.Interfaces.TsFileSink
 {
+  /// <summary>
+  /// interface to the file sink com object
+  /// </summary>
 
   [ComImport, Guid("5CDD5C68-80DC-43E1-9E44-C849CA8026E7")]
   public class TsFileSink { };
@@ -74,4 +77,4 @@ namespace TvLibrary.Interfaces.TsFileSink
     [PreserveSig]
     int GetFileBufferSize(ref long lpllsize);
   }
-}
+}*/

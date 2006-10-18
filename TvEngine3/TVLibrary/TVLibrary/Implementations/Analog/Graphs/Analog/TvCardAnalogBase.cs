@@ -29,7 +29,6 @@ using DirectShowLib.SBE;
 using TvLibrary.Log;
 using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Analyzer;
-using TvLibrary.Interfaces.TsFileSink;
 using TvLibrary.Teletext;
 using TvLibrary.Epg;
 using TvLibrary.Implementations.DVB;
@@ -2250,6 +2249,10 @@ namespace TvLibrary.Implementations.Analog
       }
     }
 
+    /// <summary>
+    /// Gets or sets the type of the cam.
+    /// </summary>
+    /// <value>The type of the cam.</value>
     public CamType CamType
     {
       get

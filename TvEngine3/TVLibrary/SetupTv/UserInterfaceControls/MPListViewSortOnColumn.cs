@@ -6,7 +6,7 @@ using System.Text;
 using System.Windows.Forms;
 
 using System.Collections;
-using System.Text;
+
 
 namespace MediaPortal.UserInterface.Controls
 {

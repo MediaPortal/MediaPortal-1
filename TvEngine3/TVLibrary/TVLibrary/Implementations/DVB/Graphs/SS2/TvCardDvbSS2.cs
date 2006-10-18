@@ -30,7 +30,6 @@ using DirectShowLib.SBE;
 using DirectShowLib.BDA;
 using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Analyzer;
-using TvLibrary.Interfaces.TsFileSink;
 using TvLibrary.Epg;
 using TvLibrary.Channels;
 using TvLibrary.Implementations.DVB.Structures;
@@ -251,13 +250,13 @@ namespace TvLibrary.Implementations.DVB
     protected bool CheckThreadId()
     {
       return true;
-      if (_managedThreadId != System.Threading.Thread.CurrentThread.ManagedThreadId)
+      /* (_managedThreadId != System.Threading.Thread.CurrentThread.ManagedThreadId)
       {
 
         Log.Log.WriteFile("ss2:Invalid thread id!!!");
         return false;
       }
-      return true;
+      return true;*/
     }
 
     /// <summary>
@@ -478,7 +477,7 @@ namespace TvLibrary.Implementations.DVB
       if (!CheckThreadId()) return;
       _timeshiftFileName = fileName;
       Log.Log.WriteFile("ss2:SetTimeShiftFileName:{0}", fileName);
-      int hr;
+      
       if (_filterTsAnalyzer != null)
       {
         ITsTimeShift timeshift = _filterTsAnalyzer as ITsTimeShift;
@@ -2198,6 +2197,10 @@ namespace TvLibrary.Implementations.DVB
       return false;
     }
 
+    /// <summary>
+    /// Gets or sets the type of the cam.
+    /// </summary>
+    /// <value>The type of the cam.</value>
     public CamType CamType
     {
       get

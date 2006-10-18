@@ -270,6 +270,7 @@ namespace TvControl
     /// Stops the time shifting.
     /// </summary>
     /// <param name="cardId">id of the card.</param>
+    /// <param name="user">user credentials.</param>
     /// <returns>true if success otherwise false</returns>
     bool StopTimeShifting(int cardId, User user);
 
@@ -299,12 +300,6 @@ namespace TvControl
     IChannel[] Scan(int cardId, IChannel channel);
 
 
-    /// <summary>
-    /// Grabs the epg for the card specified
-    /// </summary>
-    /// <param name="cardId">id of the card.</param>
-    /// <returns></returns>
-    //void GrabEpg(int cardId);
 
     /// <summary>
     /// returns the minium channel numbers for analog cards
@@ -390,6 +385,7 @@ namespace TvControl
     /// </summary>
     /// <param name="channelName">Name of the channel</param>
     /// <param name="card">returns on which card timeshifting is started</param>
+    /// <param name="user">user credentials.</param>
     /// <returns>TvResult indicating whether method succeeded</returns>
     TvResult StartTimeShifting(string channelName, User user, out VirtualCard card);
 
@@ -434,7 +430,19 @@ namespace TvControl
     /// </summary>
     string DatabaseConnectionString { get;set;}
 
+    /// <summary>
+    /// Restarts the service.
+    /// </summary>
+    void Restart();
 
+    /// <summary>
+    /// Determines whether the card is in use
+    /// </summary>
+    /// <param name="cardId">The card id.</param>
+    /// <param name="user">The user who uses the card.</param>
+    /// <returns>
+    /// 	<c>true</c> if card is in use; otherwise, <c>false</c>.
+    /// </returns>
     bool IsCardInUse(int cardId, out User user);
     #endregion
 

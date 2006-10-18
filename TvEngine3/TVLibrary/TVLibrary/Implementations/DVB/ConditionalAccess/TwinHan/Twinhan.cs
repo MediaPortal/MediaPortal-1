@@ -266,8 +266,8 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="camType">Type of the cam.</param>
     /// <param name="videoPid">The video pid.</param>
     /// <param name="audioPid">The audio pid.</param>
-    /// <param name="PMT">The PMT.</param>
-    /// <param name="pmtLen">The PMT lenght</param>
+    /// <param name="caPMT">The caPMT structure.</param>
+    /// <param name="caPMTLen">The caPMT lenght</param>
     public void SendPMT(CamType camType, uint videoPid, uint audioPid, byte[] caPMT, int caPMTLen)
     {
       if (IsCamPresent() == false) return;

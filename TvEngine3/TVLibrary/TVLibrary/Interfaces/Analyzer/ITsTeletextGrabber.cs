@@ -25,29 +25,59 @@ using System.Runtime.InteropServices;
 
 namespace TvLibrary.Interfaces.Analyzer
 {
+  /// <summary>
+  /// Interface to the Teletext callback 
+  /// </summary>
   [ComVisible(true), ComImport,
   Guid("540EA3F3-C2E0-4a96-9FC2-071875962911"),
   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ITeletextCallBack
   {
+    /// <summary>
+    /// Called when teletext has been received.
+    /// </summary>
+    /// <param name="data">The data.</param>
+    /// <param name="packetCount">The packet count.</param>
+    /// <returns></returns>
     [PreserveSig]
     int OnTeletextReceived(IntPtr data, short packetCount);
   };
 
+  /// <summary>
+  /// Interface to the Teletext grabber com object
+  /// </summary>
   [ComVisible(true), ComImport,
  Guid("9A9E7592-A178-4a63-A210-910FD7FFEC8C"),
   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ITsTeletextGrabber
   {
+    /// <summary>
+    /// Starts grabbing teletext.
+    /// </summary>
+    /// <returns></returns>
     [PreserveSig]
     int Start();
 
+    /// <summary>
+    /// Stops grabbing teletext.
+    /// </summary>
+    /// <returns></returns>
     [PreserveSig]
     int Stop();
 
+    /// <summary>
+    /// Sets the teletext pid.
+    /// </summary>
+    /// <param name="teletextPid">The teletext pid.</param>
+    /// <returns></returns>
     [PreserveSig]
     int SetTeletextPid(short teletextPid);
 
+    /// <summary>
+    /// Sets the call back which will be called when teletext has been received.
+    /// </summary>
+    /// <param name="callback">The callback.</param>
+    /// <returns></returns>
     [PreserveSig]
     int SetCallBack(ITeletextCallBack callback);
 

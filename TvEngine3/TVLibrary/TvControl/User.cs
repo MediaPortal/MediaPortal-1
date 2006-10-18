@@ -5,6 +5,9 @@ using System.Net;
 
 namespace TvControl
 {
+  /// <summary>
+  /// Class holding user credentials
+  /// </summary>
   [Serializable]
   public class User
   {
@@ -23,6 +26,7 @@ namespace TvControl
     /// <summary>
     /// Initializes a new instance of the <see cref="User"/> class.
     /// </summary>
+    /// <param name="name">The name.</param>
     /// <param name="isAdmin">if set to <c>true</c> [is admin].</param>
     public User(string name, bool isAdmin)
     {

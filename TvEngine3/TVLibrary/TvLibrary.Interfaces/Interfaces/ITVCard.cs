@@ -26,12 +26,30 @@ using TvLibrary.Teletext;
 using DirectShowLib.SBE;
 namespace TvLibrary.Interfaces
 {
+  /// <summary>
+  /// cam types
+  /// </summary>
   public enum CamType:int
   {
-    Default=0,
+    /// <summary>
+    /// Default
+    /// </summary>
+    Default = 0,
+    /// <summary>
+    /// Viacess cam
+    /// </summary>
     Viaccess=1,
+    /// <summary>
+    /// Aston cam
+    /// </summary>
     Aston=2,
+    /// <summary>
+    /// Conax cam
+    /// </summary>
     Conax=3,
+    /// <summary>
+    /// Cryptoworks cam
+    /// </summary>
     CryptoWorks=4
 
   }
@@ -142,12 +160,24 @@ namespace TvLibrary.Interfaces
     /// <value>true for transport stream, false for program stream.</value>
     bool IsRecordingTransportStream { get;}
 
+    /// <summary>
+    /// Gets or sets the type of the cam.
+    /// </summary>
+    /// <value>The type of the cam.</value>
     CamType CamType {get;set;}
     #endregion
 
     #region epg & scanning
+    /// <summary>
+    /// Grabs the epg.
+    /// </summary>
+    /// <param name="callback">The callback which gets called when epg is received or canceled.</param>
     void GrabEpg(BaseEpgGrabber callback);
 
+    /// <summary>
+    /// returns a list of all epg data for each channel found.
+    /// </summary>
+    /// <value>The epg.</value>
     List<EpgChannel> Epg { get;}
 
     /// <summary>

@@ -90,13 +90,7 @@ namespace TvService
 
 
     public delegate void UtilEventHandler(Process proc, bool waitForExit);
-    static public event UtilEventHandler OnStartExternal = null;	// Event: Start external process / waeberd & mPod
-    static public event UtilEventHandler OnStopExternal = null;		// Event: Stop external process	/ waeberd & mPod
 
-    static bool restartMCEehRecvr = false;
-    static bool restartMCEehSched = false;
-    static ServiceController ehRecvr = new ServiceController("ehRecvr");
-    static ServiceController ehSched = new ServiceController("ehSched");
 
     static char[] crypt = new char[10] { 'G', 'D', 'J', 'S', 'I', 'B', 'T', 'P', 'W', 'Q' };
 

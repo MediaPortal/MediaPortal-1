@@ -24,6 +24,9 @@ using System.Text;
 
 namespace TvLibrary.Teletext
 {
+  /// <summary>
+  /// class which can decode toptext
+  /// </summary>
   public class ToptextDecoder
   {
     #region constants
@@ -58,6 +61,10 @@ namespace TvLibrary.Teletext
     byte[] _row24 = new byte[42];
     #endregion
 
+    /// <summary>
+    /// Gets the page number for the red button.
+    /// </summary>
+    /// <value>the page number for the red button.</value>
     public int Red
     {
       get
@@ -65,6 +72,10 @@ namespace TvLibrary.Teletext
         return _pageRed;
       }
     }
+    /// <summary>
+    /// Gets the page number for the Green button.
+    /// </summary>
+    /// <value>the page number for the Green button.</value>
     public int Green
     {
       get
@@ -72,6 +83,10 @@ namespace TvLibrary.Teletext
         return _pageGreen;
       }
     }
+    /// <summary>
+    /// Gets the page number for the Yellow button.
+    /// </summary>
+    /// <value>the page number for the Yellow button.</value>
     public int Yellow
     {
       get
@@ -79,6 +94,10 @@ namespace TvLibrary.Teletext
         return _pageYellow;
       }
     }
+    /// <summary>
+    /// Gets the page number for the Blue button.
+    /// </summary>
+    /// <value>the page number for the Blue button.</value>
     public int Blue
     {
       get
@@ -87,6 +106,10 @@ namespace TvLibrary.Teletext
       }
     }
 
+    /// <summary>
+    /// Gets the row24.
+    /// </summary>
+    /// <value>The row24.</value>
     public byte[] Row24
     {
       get
@@ -94,6 +117,11 @@ namespace TvLibrary.Teletext
         return (byte[])_row24.Clone();
       }
     }
+    /// <summary>
+    /// Converts to a number to its hex value.
+    /// </summary>
+    /// <param name="number">The number.</param>
+    /// <returns></returns>
     int ConvertToHex(int number)
     {
       if (number < 0) return -1;
@@ -102,6 +130,12 @@ namespace TvLibrary.Teletext
       int units = (number % 10);
       return mag * 0x100 + tens * 0x10 + units;
     }
+    /// <summary>
+    /// Decodes the toptext for a specific page.
+    /// </summary>
+    /// <param name="cache">The cache.</param>
+    /// <param name="pageNumber">The page number.</param>
+    /// <returns>true when decoding succeeded</returns>
     public bool Decode(TeletextPageCache cache, int pageNumber)
     {
       int red, green, yellow, blue;
@@ -132,6 +166,18 @@ namespace TvLibrary.Teletext
       }
       return true;
     }
+    /// <summary>
+    /// Gets the page links for a page.
+    /// </summary>
+    /// <param name="cache">The cache.</param>
+    /// <param name="pageNumber">The page number.</param>
+    /// <param name="redPage">The red page.</param>
+    /// <param name="greenPage">The green page.</param>
+    /// <param name="yellowPage">The yellow page.</param>
+    /// <param name="bluePage">The blue page.</param>
+    /// <param name="nextGroup">The next group.</param>
+    /// <param name="nextBlock">The next block.</param>
+    /// <returns></returns>
     public bool GetPageLinks(TeletextPageCache cache, int pageNumber, out int redPage, out int greenPage, out int yellowPage, out int bluePage, out string nextGroup, out string nextBlock)
     {
       //red   = previous page in current
@@ -244,6 +290,9 @@ namespace TvLibrary.Teletext
       return true;
     }
 
+    /// <summary>
+    /// Clears this instance.
+    /// </summary>
     public void Clear()
     {
       for (int x = 0; x < _row24.Length; x++)
@@ -257,12 +306,25 @@ namespace TvLibrary.Teletext
       _pageDescription = new string[900];
     }
 
+    /// <summary>
+    /// Determines whether the specified page is a toptext page
+    /// </summary>
+    /// <param name="pageNumber">The page number.</param>
+    /// <param name="subPageNumber">The sub page number.</param>
+    /// <returns>
+    /// 	<c>true</c> if the specified page number is a toptext page; otherwise, <c>false</c>.
+    /// </returns>
     static public bool IsTopTextPage(int pageNumber, int subPageNumber)
     {
       if (pageNumber >= TOP_BASIC_PAGE && pageNumber < 0x1fd) return true;
       return false;
     }
 
+    /// <summary>
+    /// Decodes the basic toptext page.
+    /// </summary>
+    /// <param name="cache">The cache.</param>
+    /// <returns></returns>
     bool DecodeBasicPage(TeletextPageCache cache)
     {
       //basic toppage contains information which teletext pages are onair
@@ -304,6 +366,10 @@ namespace TvLibrary.Teletext
       return true;
     }
 
+    /// <summary>
+    /// Decodes the toptext multi page.
+    /// </summary>
+    /// <param name="cache">The cache.</param>
     void DecodeMultiPage(TeletextPageCache cache)
     {
       // multi page contains the number of subpages transmitted for each page (100-899);
@@ -332,6 +398,10 @@ namespace TvLibrary.Teletext
       }
     }
 
+    /// <summary>
+    /// Decodes the additional toptext pages.
+    /// </summary>
+    /// <param name="cache">The cache.</param>
     void DecodeAdditionalPages(TeletextPageCache cache)
     {
       //addditional pages carry information to display on line 24

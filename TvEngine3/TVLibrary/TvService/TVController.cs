@@ -87,6 +87,14 @@ namespace TvService
       return false;
     }
 
+    /// <summary>
+    /// Determines whether the card is in use
+    /// </summary>
+    /// <param name="cardId">The card id.</param>
+    /// <param name="user">The user which uses the card</param>
+    /// <returns>
+    /// 	<c>true</c> if card is in use; otherwise, <c>false</c>.
+    /// </returns>
     public bool IsCardInUse(int cardId, out User user)
     {
       user = null;
@@ -95,11 +103,20 @@ namespace TvService
       return true;
     }
 
+    /// <summary>
+    /// Locks the card for the specified user
+    /// </summary>
+    /// <param name="cardId">The card id.</param>
+    /// <param name="user">The user.</param>
     public void LockCard(int cardId, User user)
     {
       _cardsInUse[cardId] = user;
     }
 
+    /// <summary>
+    /// Unlocks the card.
+    /// </summary>
+    /// <param name="cardId">The card id.</param>
     public void UnlockCard(int cardId)
     {
       if (false == _cardsInUse.ContainsKey(cardId)) return;
@@ -267,7 +284,11 @@ namespace TvService
     /// </summary>
     public void Dispose()
     {
-      Log.Write("Controller: stopped");
+      DeInit();
+    }
+
+    public void DeInit()
+    {
       if (_streamer != null)
       {
         Log.WriteFile("Controller: stop streamer...");
@@ -277,20 +298,23 @@ namespace TvService
       }
       if (_scheduler != null)
       {
+        Log.WriteFile("Controller: stop scheduler...");
         _scheduler.Stop();
         _scheduler = null;
+        Log.WriteFile("Controller: scheduler stopped...");
       }
       if (_epgGrabber != null)
       {
+        Log.WriteFile("Controller: stop epg grabber...");
         _epgGrabber.Stop();
         _epgGrabber = null;
+        Log.WriteFile("Controller: epg stopped...");
       }
-      Log.WriteFile("Controller: dispose cards");
       Dictionary<int, ITVCard>.Enumerator enumerator = _localCards.GetEnumerator();
       while (enumerator.MoveNext())
       {
         KeyValuePair<int, ITVCard> key = enumerator.Current;
-        Log.WriteFile("Controller:  dispose:{0}", key.Value.Name);
+        Log.WriteFile("Controller:  dispose card:{0}", key.Value.Name);
         try
         {
           key.Value.Dispose();
@@ -301,7 +325,6 @@ namespace TvService
         }
       }
       _localCards = null;
-      Log.WriteFile("Controller: cards disposed");
     }
 
     #endregion
@@ -1601,6 +1624,19 @@ namespace TvService
       }
     }
 
+    public void Restart()
+    {
+      try
+      {
+        DeInit();
+        Init();
+      }
+      catch (Exception ex)
+      {
+        Log.Write(ex);
+        return;
+      }
+    }
     /// <summary>
     /// Returns the SQl connection string to the database
     /// </summary>
@@ -1633,6 +1669,7 @@ namespace TvService
           node.InnerText = value;
           doc.Save("gentle.config");
           Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(value);
+          DeInit();
           Init();
         }
         catch (Exception ex)
@@ -1923,7 +1960,7 @@ namespace TvService
       if (!WaitForUnScrambledSignal(cardId)) return false;
       DateTime timeStart = DateTime.Now;
       ulong fileSize = 0;
-      
+
 
       timeStart = DateTime.Now;
       try

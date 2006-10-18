@@ -410,7 +410,6 @@ namespace TvService
               continue;//card is busy
             }
             Log.Write("EPG: grab atsc epg for {0}", tuning.ToString());
-            bool cardLocked = false;
             try
             {
               User cardUser;
@@ -445,7 +444,6 @@ namespace TvService
               continue;//card is busy
             }
             Log.Write("EPG: grab dvbc epg for {0}", tuning.ToString());
-            bool cardLocked = false;
             try
             {
               RemoteControl.Instance.TuneScan(card.IdCard, tuning);
@@ -475,7 +473,6 @@ namespace TvService
               continue;//card is busy
             }
             Log.Write("EPG: grab dvbs epg for {0}", tuning.ToString());
-            bool cardLocked = false;
             try
             {
               RemoteControl.Instance.TuneScan(card.IdCard, tuning);
@@ -505,7 +502,6 @@ namespace TvService
               continue;//card is busy
             }
             Log.Write("EPG: grab dvbt epg for {0}", tuning.ToString());
-            bool cardLocked = false;
             try
             {
               RemoteControl.Instance.TuneScan(card.IdCard, tuning);
