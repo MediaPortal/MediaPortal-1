@@ -968,11 +968,12 @@ namespace MediaPortal.GUI.Library
     {
       if (!_shouldRestore) return;
       _shouldRestore = false;
+      FreeResources();
       Children.Clear();
       _listPositions.Clear();
       Load(_windowXmlFileName);
       LoadSkin();
-      FreeResources();
+
       AllocResources();
     }
     /// <summary>
