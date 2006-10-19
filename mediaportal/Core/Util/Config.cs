@@ -191,6 +191,7 @@ private Config()
     private static void LoadDirs(string startuppath)
     {
       Set(Dir.Base, startuppath + @"\");
+      LoadDefaultDirs();
       if (!ReadConfig(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Team MediaPortal\"))
       {
         if (!ReadConfig(Get(Dir.Base)))
