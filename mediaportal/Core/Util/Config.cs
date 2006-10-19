@@ -44,7 +44,8 @@ namespace MediaPortal.Util
       Cache,
       Weather,
       CustomInputDevice,
-      Config
+      Config,
+      CustomInputDefault,
     }
     #endregion
 
@@ -275,6 +276,7 @@ private Config()
       Set(Dir.Cache, Path.Combine(baseDir, @"cache\"));
       Set(Dir.Config, baseDir);
       Set(Dir.CustomInputDevice, Path.Combine(baseDir, @"InputDeviceMappings\custom\"));
+      Set(Dir.CustomInputDefault, Path.Combine(baseDir, @"InputDeviceMappings\defaults\"));
       Set(Dir.Database, Path.Combine(baseDir, @"database\"));
       Set(Dir.Language, Path.Combine(baseDir, @"language\"));
       Set(Dir.Log, Path.Combine(baseDir, @"log\"));

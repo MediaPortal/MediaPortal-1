@@ -179,7 +179,7 @@ namespace MediaPortal.InputDevices
     {
       string path = string.Empty;
       string pathCustom = Config.GetFile(Config.Dir.CustomInputDevice, deviceXmlName + ".xml");
-      string pathDefault = Config.GetFile(Config.Dir.Base, @"InputDeviceMappings\defaults", deviceXmlName + ".xml");
+      string pathDefault = Config.GetFile(Config.Dir.CustomInputDefault, deviceXmlName + ".xml");
 
       if (System.IO.File.Exists(pathCustom) && CheckXmlFile(pathCustom))
       {

@@ -33,7 +33,7 @@
   </Dir>
   <!-- The Path were all the Plugins are located. Don't modify -->
   <Dir id = "Plugins">
-    <Path>%APPDATA%\MediaPortal\plugins\</Path>
+    <Path>plugins\</Path>
   </Dir>
   <!-- The Path were the log files should be written to -->
   <Dir id = "Log">
@@ -43,13 +43,17 @@
   <Dir id = "CustomInputDevice">
     <Path>%APPDATA%\MediaPortal\InputDeviceMappings\custom</Path>
   </Dir>
+  <!-- The Path were the Default Inputdevice Mappings are located. -->
+  <Dir id = "CustomInputDefault">
+    <Path>%APPDATA%\MediaPortal\InputDeviceMappings\defaults</Path>
+  </Dir>
   <!-- The Path were the skins are located -->
   <Dir id = "Skin">
     <Path>%APPDATA%\MediaPortal\skin\</Path>
   </Dir>
     <!-- The Path were the Language files are located -->
   <Dir id = "Language">
-    <Path>%APPDATA%\MediaPortal\language\</Path>
+    <Path>language\</Path>
   </Dir>
   <!-- The Path for the databases -->
   <Dir id = "Database">
@@ -61,7 +65,7 @@
   </Dir>
   <!-- The Path were all the Weather related files are located. -->
   <Dir id = "Weather">
-    <Path>%APPDATA%\MediaPortal\weather\</Path>
+    <Path>weather\</Path>
   </Dir>
   <!-- A Path holding cached information. Like Picture thumbs, modified skin files (packedgfx), etc. Files in there can be removed by the user -->
   <Dir id = "Cache">
