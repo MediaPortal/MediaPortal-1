@@ -232,14 +232,15 @@ private Config()
                 XmlNode path = nodeDir.SelectSingleNode("Path");
                 if (path != null)
                 {
+                  
                   string strPath = path.InnerText;
                   string commonData = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
                   strPath=strPath.Replace("%APPDATA%",commonData);
                   // Check to see, if the location was specified with an absolute or relative path.
-                  // In case of relative path, prefix it with the startuppath                 
-                  if (!Path.IsPathRooted(path.InnerText))
+                  // In case of relative path, prefix it with the startuppath   
+                  if (!Path.IsPathRooted(strPath))
                   {
-                    strPath = Get(Dir.Base) + path.InnerText;
+                    strPath = Get(Dir.Base) + strPath;
                   }
                   // See if we got a slash at the end. If not add one.
                   if (!strPath.EndsWith(@"\"))
