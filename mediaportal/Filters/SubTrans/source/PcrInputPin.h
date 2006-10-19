@@ -28,38 +28,6 @@
 #include "PatParser\PacketSync.h"
 #include <streams.h>
 
-struct tsheader
-{
-	BYTE SyncByte;
-	bool TransportError;
-	bool PayloadUnitStart;
-	bool TransportPriority;
-	unsigned short Pid;
-	BYTE TScrambling;
-	BYTE AdaptionControl;
-	BYTE ContinuityCounter;
-};
-typedef tsheader TSHeader;
- 
-struct pesheader
-{
-	BYTE     Reserved;
-	BYTE     ScramblingControl;
-	BYTE     Priority;
-	BYTE     dataAlignmentIndicator;
-	BYTE     Copyright;
-	BYTE     Original;
-	BYTE     PTSFlags;
-	BYTE     ESCRFlag;
-	BYTE     ESRateFlag;
-	BYTE     DSMTrickModeFlag;
-	BYTE     AdditionalCopyInfoFlag;
-	BYTE     PESCRCFlag;
-	BYTE     PESExtensionFlag;
-	BYTE     PESHeaderDataLength;
-};
-typedef pesheader PESHeader;
-
 class CPcrInputPin : public CRenderedInputPin, CDemuxPinMapper, CPacketSync
 {
 public:
@@ -91,15 +59,8 @@ public:
 
 private:
 
-	// Helper methods from MPSA/Sections.h
-	HRESULT GetTSHeader( BYTE *data,TSHeader *header );
-	HRESULT GetPESHeader( BYTE *data, PESHeader *header );
-	HRESULT CurrentPTS( BYTE *pData, ULONGLONG *ptsValue, int *streamType );
-	void GetPTS( BYTE *data, ULONGLONG *pts );
-
   CSubTransform* const	m_pTransform;		  // Main renderer object
   CCritSec * const		  m_pReceiveLock;		// Sample critical section
-	bool					        m_bReset;
 
 	ULONGLONG m_currentPTS;
   LONG m_pcrPid;
