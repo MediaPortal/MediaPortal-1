@@ -99,9 +99,9 @@ namespace TvLibrary.Implementations.DVB
         // Method names should be self explanatory
         AddNetworkProviderFilter(typeof(ATSCNetworkProvider).GUID);
         CreateTuningSpace();
-        AddMpeg2DemuxerTif();
+        AddMpeg2DemuxerToGraph();
         AddAndConnectBDABoardFilters(_device);
-        AddTransportStreamFiltersToGraph();
+        AddBdaTransportFiltersToGraph();
 
 
         GetTunerSignalStatistics();
@@ -300,7 +300,7 @@ namespace TvLibrary.Implementations.DVB
 
         _currentChannel = channel;
         SubmitTuneRequest(_tuneRequest);
-        SetAnalyzerMapping(atscChannel.PmtPid);
+        SetupPmtGrabber(atscChannel.PmtPid);
       }
       catch (Exception ex)
       {

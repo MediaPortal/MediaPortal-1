@@ -39,9 +39,10 @@ namespace TvService
       // 
       // serviceInstaller1
       // 
-      this.serviceInstaller1.Description = "Service which handles timeshifting/recording";
+      this.serviceInstaller1.Description = "Mediaportal Tv Service. Handles all tv related tasks.";
       this.serviceInstaller1.DisplayName = "TVService";
       this.serviceInstaller1.ServiceName = "TVService";
+      this.serviceInstaller1.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
       // 
       // ProjectInstaller
       // 

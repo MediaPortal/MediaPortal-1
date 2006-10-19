@@ -103,9 +103,9 @@ namespace TvLibrary.Implementations.DVB
         // Method names should be self explanatory
         AddNetworkProviderFilter(typeof(DVBSNetworkProvider).GUID);
         CreateTuningSpace();
-        AddMpeg2DemuxerTif();
+        AddMpeg2DemuxerToGraph();
         AddAndConnectBDABoardFilters(_device);
-        AddTransportStreamFiltersToGraph();
+        AddBdaTransportFiltersToGraph();
 
         GetTunerSignalStatistics();
         _graphState = GraphState.Created;
@@ -311,7 +311,7 @@ namespace TvLibrary.Implementations.DVB
 
 
 
-      SetAnalyzerMapping(dvbsChannel.PmtPid);
+      SetupPmtGrabber(dvbsChannel.PmtPid);
       return true;
     }
     /// <summary>

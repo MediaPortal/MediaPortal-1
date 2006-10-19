@@ -103,9 +103,9 @@ namespace TvLibrary.Implementations.DVB
         // Method names should be self explanatory
         AddNetworkProviderFilter(typeof(DVBTNetworkProvider).GUID);
         CreateTuningSpace();
-        AddMpeg2DemuxerTif();
+        AddMpeg2DemuxerToGraph();
         AddAndConnectBDABoardFilters(_device);
-        AddTransportStreamFiltersToGraph();
+        AddBdaTransportFiltersToGraph();
 
         //        ConnectFilters();
         GetTunerSignalStatistics();
@@ -293,7 +293,7 @@ namespace TvLibrary.Implementations.DVB
         _currentChannel = channel;
         SubmitTuneRequest(_tuneRequest);
 
-        SetAnalyzerMapping(dvbtChannel.PmtPid);
+        SetupPmtGrabber(dvbtChannel.PmtPid);
       }
       catch (Exception ex)
       {

@@ -473,7 +473,7 @@ namespace TvLibrary.Implementations.DVB
         DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
         if (channel != null)
         {
-          SetAnalyzerMapping(channel.PmtPid);
+          SetupPmtGrabber(channel.PmtPid);
         }
         return;
       }
@@ -497,7 +497,7 @@ namespace TvLibrary.Implementations.DVB
       DVBBaseChannel dvbChannel = _currentChannel as DVBBaseChannel;
       if (dvbChannel != null)
       {
-        SetAnalyzerMapping(dvbChannel.PmtPid);
+        SetupPmtGrabber(dvbChannel.PmtPid);
       }
       _pmtTimer.Enabled = true;
       _graphRunning = true;
@@ -751,8 +751,8 @@ namespace TvLibrary.Implementations.DVB
           Release.ComObject("inftee main pin in", pinIn);
           Release.ComObject("tuner pin out", pinOut);
           Log.Log.WriteFile("dvb:  using only tv tuner ifilter...");
-          ConnectMpeg2DemuxersToMainTee();
-          GetVideoAudioPins();
+          ConnectMpeg2DemuxToInfTee();
+          AddTsAnalyzerToGraph();
           _conditionalAccess = new ConditionalAccess(_filterTuner, _filterCapture);
           return;
         }
@@ -761,8 +761,8 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.WriteFile("dvb:  unable to use single tv tuner filter...");
         throw new TvException("No Tv Receiver filter found");
       }
-      ConnectMpeg2DemuxersToMainTee();
-      GetVideoAudioPins();
+      ConnectMpeg2DemuxToInfTee();
+      AddTsAnalyzerToGraph();
       _conditionalAccess = new ConditionalAccess(_filterTuner, _filterCapture);
     }
 
@@ -780,9 +780,9 @@ namespace TvLibrary.Implementations.DVB
 
 
     /// <summary>
-    /// adds the mpeg-2 demultiplexer filter to the graph
+    /// adds the mpeg-2 demultiplexer filter and inftee filter to the graph
     /// </summary>
-    protected void AddMpeg2DemuxerTif()
+    protected void AddMpeg2DemuxerToGraph()
     {
       if (!CheckThreadId()) return;
       if (_filterMpeg2DemuxTif != null) return;
@@ -828,9 +828,9 @@ namespace TvLibrary.Implementations.DVB
       }
     }
     /// <summary>
-    /// Connects the mpeg2 demuxers to main tee.
+    /// Connects the mpeg2 demuxers to the inf tee filter.
     /// </summary>
-    protected void ConnectMpeg2DemuxersToMainTee()
+    protected void ConnectMpeg2DemuxToInfTee()
     {
       //multi demux
 
@@ -873,7 +873,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Gets the video audio pins.
     /// </summary>
-    protected void GetVideoAudioPins()
+    protected void AddTsAnalyzerToGraph()
     {
 
       if (_filterTsAnalyzer == null)
@@ -924,7 +924,7 @@ namespace TvLibrary.Implementations.DVB
     /// adds the BDA Transport Information Filter  and the
     /// MPEG-2 sections and tables filter to the graph 
     /// </summary>
-    protected void AddTransportStreamFiltersToGraph()
+    protected void AddBdaTransportFiltersToGraph()
     {
       if (!CheckThreadId()) return;
       Log.Log.WriteFile("dvb:AddTransportStreamFiltersToGraph");
@@ -1057,70 +1057,6 @@ namespace TvLibrary.Implementations.DVB
     }
 
 
-
-    /// <summary>
-    /// Connects the outputs of the mpeg-2 demultiplexer filter to streambuffer sink filter
-    /// </summary>
-    protected void ConnectSinkFilter()
-    {/*
-      if (!CheckThreadId()) return;
-      if (_filterStreamBufferSink == null) return;
-      Log.Log.WriteFile("dvb:ConnectSinkFilter");
-      int hr = 0;
-      IPin pinOut;
-      int pinsConnected = 0;
-      // Connect the 5 MPEG-2 Demux output pins
-      for (int i = 0; i < 10; i++)
-      {
-        pinOut = DsFindPin.ByDirection(_filterMpeg2DemuxTs, PinDirection.Output, i);
-        if (pinOut == null) return;
-        IEnumMediaTypes enumMedia;
-        pinOut.EnumMediaTypes(out enumMedia);
-
-        while (true)
-        {
-          int fetched;
-          AMMediaType[] mediaTypes = new AMMediaType[2];
-          enumMedia.Next(1, mediaTypes, out fetched);
-          if (fetched != 1) break;
-
-          if (mediaTypes[0].majorType == MediaType.Video || mediaTypes[0].majorType == MediaType.Audio)
-          {
-            IPin pin1 = DsFindPin.ByDirection((IBaseFilter)_filterStreamBufferSink, PinDirection.Input, 0);
-            IPin pin2 = DsFindPin.ByDirection((IBaseFilter)_filterStreamBufferSink, PinDirection.Input, 1);
-            hr = _graphBuilder.Connect(pinOut, pin1);
-            if (hr == 0)
-            {
-              Log.Log.WriteFile("dvb:connected stream buffer sink pin 1");
-              pinsConnected++;
-            }
-            else if (pin2 != null)
-            {
-              hr = _graphBuilder.Connect(pinOut, pin2);
-              if (hr == 0)
-              {
-                Log.Log.WriteFile("dvb:connected stream buffer sink pin 2");
-                pinsConnected++;
-              }
-            }
-            if (pin1 != null) Release.ComObject("Streambuffersink pin0", pin1);
-            if (pin2 != null) Release.ComObject("Streambuffersink pin1", pin2);
-            DsUtils.FreeAMMediaType(mediaTypes[0]);
-            if (pinsConnected == 2)
-            {
-              return;
-            }
-            break;
-          }
-          else
-          {
-            DsUtils.FreeAMMediaType(mediaTypes[0]);
-          }
-        }
-        Release.ComObject("mpeg2 demux pin:" + i.ToString(), pinOut);
-      }*/
-    }
-
     /// <summary>
     /// destroys the graph and cleans up any resources
     /// </summary>
@@ -1237,10 +1173,10 @@ namespace TvLibrary.Implementations.DVB
     #region pidmapping
 
     /// <summary>
-    /// Maps the correct pids to the SI analyzer pin
+    /// Instructs the ts analyzer filter to start grabbing the PMT
     /// </summary>
     /// <param name="pmtPid">pid of the PMT</param>
-    protected void SetAnalyzerMapping(int pmtPid)
+    protected void SetupPmtGrabber(int pmtPid)
     {
       if (pmtPid < 0) return;
       if (!CheckThreadId()) return;

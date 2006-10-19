@@ -321,20 +321,20 @@ namespace TvLibrary.Implementations.DVB
 
       hr = _interfaceB2C2TunerCtrl.CheckLock();
 
-      AddMpeg2DemuxerTif();
-      ConnectMainTee();
-      ConnectMpeg2DemuxersToMainTee();
+      AddMpeg2DemuxerToGraph();
+      ConnectInfTeeToSS2();
+      ConnectMpeg2DemuxToInfTee();
 
-      GetVideoAudioPins();
+      AddTsAnalyzerToGraph();
 
       SendHWPids(new ArrayList());
       _graphState = GraphState.Created;
     }
 
     /// <summary>
-    /// Connects the main tee to the SS2 filter
+    /// Connects the SS2 filter to the infTee
     /// </summary>
-    void ConnectMainTee()
+    void ConnectInfTeeToSS2()
     {
       Log.Log.WriteFile("ss2:ConnectMainTee()");
       int hr = 0;
@@ -516,7 +516,7 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.WriteFile("ss2:RunGraph already running");
 
         DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
-        SetAnalyzerMapping(channel.PmtPid);
+        SetupPmtGrabber(channel.PmtPid);
         return;
       }
 
@@ -548,7 +548,7 @@ namespace TvLibrary.Implementations.DVB
       _epgGrabbing = false;
       _dateTimeShiftStarted = DateTime.Now;
       DVBBaseChannel dvbChannel = _currentChannel as DVBBaseChannel;
-      SetAnalyzerMapping(dvbChannel.PmtPid);
+      SetupPmtGrabber(dvbChannel.PmtPid);
       _pmtTimer.Enabled = true;
       _graphRunning = true;
 
@@ -647,7 +647,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// adds the mpeg-2 demultiplexer filter to the graph
     /// </summary>
-    protected void AddMpeg2DemuxerTif()
+    protected void AddMpeg2DemuxerToGraph()
     {
       if (!CheckThreadId()) return;
       if (_filterMpeg2DemuxTif != null) return;
@@ -675,7 +675,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Connects the mpeg2 demuxers to main tee.
     /// </summary>
-    protected void ConnectMpeg2DemuxersToMainTee()
+    protected void ConnectMpeg2DemuxToInfTee()
     {
       //multi demux
 
@@ -697,7 +697,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Gets the video audio pins.
     /// </summary>
-    protected void GetVideoAudioPins()
+    protected void AddTsAnalyzerToGraph()
     {
       if (!CheckThreadId()) return;
       //multi demux
@@ -810,10 +810,10 @@ namespace TvLibrary.Implementations.DVB
     #region pidmapping
 
     /// <summary>
-    /// Maps the correct pids to the SI analyzer pin
+    /// Instructs the ts analyzer filter to start grabbing the PMT
     /// </summary>
     /// <param name="pmtPid">pid of the PMT</param>
-    protected void SetAnalyzerMapping(int pmtPid)
+    protected void SetupPmtGrabber(int pmtPid)
     {
       try
       {
@@ -1593,7 +1593,7 @@ namespace TvLibrary.Implementations.DVB
       SendHWPids(pids);
 
 
-      SetAnalyzerMapping(dvbsChannel.PmtPid);
+      SetupPmtGrabber(dvbsChannel.PmtPid);
       Log.Log.WriteFile("ss2:tune done");
       return true;
     }
