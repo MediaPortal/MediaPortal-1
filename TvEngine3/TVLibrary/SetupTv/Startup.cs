@@ -57,33 +57,6 @@ namespace SetupTv
     /// <param name="arguments"></param>
     public Startup(string[] arguments)
     {
-
-
-      if (!System.IO.File.Exists("mediaportal.xml"))
-        startupMode = StartupMode.Wizard;
-
-      else if (arguments != null)
-      {
-        foreach (string argument in arguments)
-        {
-          string trimmedArgument = argument.ToLower();
-
-          if (trimmedArgument.StartsWith("/wizard"))
-          {
-            startupMode = StartupMode.Wizard;
-          }
-
-          if (trimmedArgument.StartsWith("/section"))
-          {
-            string[] subArguments = argument.Split('=');
-
-            if (subArguments.Length >= 2)
-            {
-              sectionsConfiguration = subArguments[1];
-            }
-          }
-        }
-      }
       startupMode = StartupMode.Normal;
     }
 
@@ -122,6 +95,7 @@ namespace SetupTv
     [STAThread]
     public static void Main(string[] arguments)
     {
+      
       Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
       //test connection with database
       SetupDatabaseForm dlg = new SetupDatabaseForm();
@@ -131,45 +105,33 @@ namespace SetupTv
       }
       if (dlg.ShouldDoUpgrade())
       {
-        ServiceHelper.Stop();
 
         dlg.CreateDatabase();
 
-        ServiceHelper.Restart();
       }
 
       int cards = 0;
-      // fill the cache
-      //auto start the tv-service
-      if (!ServiceHelper.IsInstalled)
-      {
-#if DEBUG
-        RemoteControl.HostName="pcebeckers";
-#else
-        MessageBox.Show("The Tv service is not installed");
-        return;
-#endif
-      }
-      if (ServiceHelper.IsInstalled && !ServiceHelper.IsRunning)
-      {
-#if DEBUG
-#else
-        ServiceHelper.Restart();
-#endif
-      }
+      
 
       try
       {
-#if DEBUG
-      //  RemoteControl.HostName = "mediacenter";
-#endif
         cards = RemoteControl.Instance.Cards;
-
       }
       catch (Exception)
       {
-        MessageBox.Show("The Tv service is not running");
-        return;
+        DialogResult result=MessageBox.Show("The Tv service is not running\rShould I start the tvservice?","Mediaportal Tv Server",MessageBoxButtons.YesNo);
+        if (result != DialogResult.Yes) return;
+        ServiceHelper.Restart();
+        try
+        {
+          RemoteControl.Clear();
+          cards = RemoteControl.Instance.Cards;
+        }
+        catch (Exception)
+        {
+          MessageBox.Show("Failed to startup tvservice");
+          return;
+        }
       }
 
       try

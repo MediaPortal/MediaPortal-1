@@ -87,17 +87,15 @@ namespace SetupTv
         //
         // Build options tree
         //
+        XmlDocument doc = new XmlDocument();
+        string fname = String.Format(@"{0}\MediaPortal TV Server\gentle.config", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+        doc.Load(fname);
+        XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
+        XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString");
+
+        Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(node.InnerText);
+        
         IList dbsServers = Server.ListAll();
-        if (dbsServers.Count == 0)
-        {
-          XmlDocument doc = new XmlDocument();
-          doc.Load("gentle.config");
-          XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
-          XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString"); ;
-          RemoteControl.Instance.DatabaseConnectionString = node.InnerText;
-          RemoteControl.Instance.Restart();
-          //DatabaseManager.Instance.Clear();
-        }
 
         TvBusinessLayer layer = new TvBusinessLayer();
         Servers servers = new Servers();

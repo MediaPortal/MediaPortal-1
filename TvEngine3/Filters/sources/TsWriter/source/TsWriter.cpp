@@ -25,6 +25,7 @@
 #include <time.h>
 #include <streams.h>
 #include <initguid.h>
+#include <shlobj.h>
 #include "TsWriter.h"
 #include "tsheader.h"
 
@@ -75,7 +76,11 @@ void LogDebug(const char *fmt, ...)
 	tmp=vsprintf(buffer, fmt, ap);
 	va_end(ap); 
 
-	FILE* fp = fopen("TsWriter.log","a+");
+  TCHAR folder[MAX_PATH];
+  TCHAR fileName[MAX_PATH];
+  ::SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
+  sprintf(fileName,"%s\\MediaPortal TV Server\\log\\TsWriter.Log",folder);
+	FILE* fp = fopen(fileName,"a+");
 	if (fp!=NULL)
 	{
 		SYSTEMTIME systemTime;

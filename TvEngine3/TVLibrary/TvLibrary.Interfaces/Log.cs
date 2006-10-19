@@ -44,7 +44,7 @@ namespace TvLibrary.Log
     static Log()
     {
       _previousDate = DateTime.Now.Date;
-      System.IO.Directory.CreateDirectory("log");
+      //System.IO.Directory.CreateDirectory("log");
       BackupLogFiles();
     }
     /// <summary>
@@ -132,7 +132,7 @@ namespace TvLibrary.Log
     }
     static string GetFileName()
     {
-      string fname = @"log\tv.log";
+      string fname = String.Format(@"{0}\MediaPortal TV Server\log\tv.log", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
       return fname;
     }
 

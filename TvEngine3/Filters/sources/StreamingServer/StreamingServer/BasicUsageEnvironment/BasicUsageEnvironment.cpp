@@ -20,6 +20,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #ifndef IMN_PIM
 #include "BasicUsageEnvironment.hh"
 #include <stdio.h>
+#include <shlobj.h>
 
 ////////// BasicUsageEnvironment //////////
 
@@ -38,7 +39,11 @@ void Log(const char *fmt, ...)
 	SYSTEMTIME systemTime;
 	GetLocalTime(&systemTime);
 
-	FILE* fp = fopen("log/rtsp.log","a+");
+  TCHAR folder[MAX_PATH];
+  TCHAR fileName[MAX_PATH];
+  ::SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
+  sprintf(fileName,"%s\\MediaPortal TV Server\\log\\streaming server.Log",folder);
+	FILE* fp = fopen(fileName,"a+");
 	if (fp!=NULL)
 	{
 		SYSTEMTIME systemTime;

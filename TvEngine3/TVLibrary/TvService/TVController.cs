@@ -134,6 +134,8 @@ namespace TvService
     {
       try
       {
+        Log.WriteFile(@"{0}\MediaPortal TV Server\gentle.config", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+        Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(DatabaseConnectionString);
         TvCardCollection localCardCollection = new TvCardCollection();
         _localCards = new Dictionary<int, ITVCard>();
         _allDbscards = new Dictionary<int, Card>();
@@ -1647,7 +1649,7 @@ namespace TvService
         try
         {
           XmlDocument doc = new XmlDocument();
-          doc.Load("gentle.config");
+          doc.Load(String.Format(@"{0}\MediaPortal TV Server\gentle.config", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)));
           XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
           XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString"); ;
           return node.InnerText;
@@ -1663,11 +1665,12 @@ namespace TvService
         try
         {
           XmlDocument doc = new XmlDocument();
-          doc.Load("gentle.config");
+          doc.Load(String.Format(@"{0}\MediaPortal TV Server\gentle.config", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)));
+
           XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
           XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString"); ;
           node.InnerText = value;
-          doc.Save("gentle.config");
+          doc.Save(String.Format(@"{0}\MediaPortal TV Server\gentle.config", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)));
           Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(value);
           DeInit();
           Init();

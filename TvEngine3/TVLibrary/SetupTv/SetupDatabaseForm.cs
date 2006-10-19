@@ -45,7 +45,8 @@ namespace SetupTv
       try
       {
         XmlDocument doc = new XmlDocument();
-        doc.Load("gentle.config");
+        string fname = String.Format(@"{0}\MediaPortal TV Server\gentle.config", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+        doc.Load(fname);
         XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
         XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString");
         string text = node.InnerText;
@@ -181,15 +182,17 @@ namespace SetupTv
     }
     void Save()
     {
+      string fname = String.Format(@"{0}\MediaPortal TV Server\gentle.config", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+
       string connectionString = String.Format("Password={0};Persist Security Info=True;User ID={1};Initial Catalog=TvLibrary;Data Source={2};",
             mpTextBoxPassword.Text, mpTextBoxUserId.Text, mpTextBoxServer.Text);
       XmlDocument doc = new XmlDocument();
 
-      doc.Load("gentle.config");
+      doc.Load(fname);
       XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
       XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString"); ;
       node.InnerText = connectionString;
-      doc.Save("gentle.config");
+      doc.Save(fname);
     }
 
     private void mpButtonSave_Click(object sender, EventArgs e)
