@@ -1,24 +1,31 @@
 #include <streams.h>
 #include "ProgramToTransportStream.h"
 #include "MemoryStreamSource.h"
+extern void LogDebug(const char *fmt, ...) ;
 
 CProgramToTransportStream::CProgramToTransportStream(void)
 {
+  m_bRunning=false;
+  LogDebug("CProgramToTransportStream::ctor");
+  TaskScheduler* scheduler = BasicTaskScheduler::createNew();
+  m_env = BasicUsageEnvironment::createNew(*scheduler);
 }
 
 CProgramToTransportStream::~CProgramToTransportStream(void)
 {
+  LogDebug("CProgramToTransportStream::dtor");
 }
 
-void afterPlaying(void* /*clientData*/) 
+void afterPlaying(void* clientData) 
 {
+  LogDebug("CProgramToTransportStream afterPlaying");
+  MPEG2TransportStreamFromPESSource* outputSink=(MPEG2TransportStreamFromPESSource*)clientData;
 }
 void CProgramToTransportStream::Initialize(char* fileNameOut)
 {
+  LogDebug("CProgramToTransportStream::Initialize %s",fileNameOut);
   m_BufferThreadActive=false;
   m_buffer.Clear();
-  TaskScheduler* scheduler = BasicTaskScheduler::createNew();
-  m_env = BasicUsageEnvironment::createNew(*scheduler);
   
   
   m_inputSource = CMemoryStreamSource::createNew(*m_env, "",m_buffer);
@@ -43,19 +50,26 @@ void CProgramToTransportStream::Initialize(char* fileNameOut)
     return;
   }
   StartBufferThread();
+  m_bRunning=true;
 }
 
 void CProgramToTransportStream::ClearStreams()
 {
+  LogDebug("CProgramToTransportStream::ClearStreams()");
   m_outputSink->ClearStreams();
 }
 void CProgramToTransportStream::Write(byte* data, int len)
-{
-  m_buffer.PutBuffer(data, len, 1);
+{ 
+  if (m_bRunning)
+  {
+    m_buffer.PutBuffer(data, len, 1);
+  }
 }
 
 void CProgramToTransportStream::Close()
 {
+  LogDebug("CProgramToTransportStream::Close()");
+  m_bRunning=false;
   m_buffer.Stop();
   StopBufferThread();
 }
@@ -63,6 +77,7 @@ void CProgramToTransportStream::Close()
 
 void CProgramToTransportStream::StartBufferThread()
 {
+  LogDebug("CProgramToTransportStream::StartBufferThread()");
   m_buffer.Clear();
   if (!m_BufferThreadActive)
 	{
@@ -73,10 +88,11 @@ void CProgramToTransportStream::StartBufferThread()
 
 void CProgramToTransportStream::StopBufferThread()
 {
+  LogDebug("CProgramToTransportStream::StopBufferThread()");
 	if (!m_BufferThreadActive)
 		return;
 
-	StopThread(5000);
+  StopThread(INFINITE);
 
 	m_BufferThreadActive = false;
 }
@@ -88,21 +104,22 @@ void CProgramToTransportStream::ThreadProc()
 //	BoostThread Boost;
 
 	//::SetThreadPriority(GetCurrentThread(),THREAD_PRIORITY_TIME_CRITICAL);
-  *m_env << "output thread started:" << "\"\n";
+  
+  LogDebug("CProgramToTransportStream::Thread started()");
     
-  m_outputSink->startPlaying(*m_tsFrames, afterPlaying, NULL);
-  *m_env << "output thread playing:" << "\"\n";
+  m_outputSink->startPlaying(*m_tsFrames, afterPlaying, m_tsFrames);
+  LogDebug("CProgramToTransportStream::Thread playing()");
 	while (m_env!=NULL && !ThreadIsStopping(0))
 	{
 		m_env->taskScheduler().doEventLoop(); 
 			
 	}
-  //m_outputSink->stopPlaying();
-  //delete m_outputSink;
+  Medium::close(m_outputSink);
+  Medium::close(m_inputSource);
+  Medium::close(m_tsFrames);
   m_outputSink=NULL;
-  delete m_inputSource;
   m_inputSource=NULL;
-  *m_env << "output thread stopped:" << "\"\n";
+  LogDebug("CProgramToTransportStream::Thread stopped()");
 	m_BufferThreadActive = false;
 	return;
 }

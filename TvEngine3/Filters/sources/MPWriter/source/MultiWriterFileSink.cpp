@@ -7,7 +7,7 @@
 
 ////////// CMultiWriterFileSink //////////
 
-extern void Log(const char *fmt, ...) ;
+extern void LogDebug(const char *fmt, ...) ;
 CMultiWriterFileSink::CMultiWriterFileSink(UsageEnvironment& env, MultiFileWriter* fid, unsigned bufferSize,char const* perFrameFileNamePrefix) 
   : MediaSink(env), fOutFid(fid), fBufferSize(bufferSize) 
 {
@@ -16,11 +16,13 @@ CMultiWriterFileSink::CMultiWriterFileSink(UsageEnvironment& env, MultiFileWrite
 	m_highestPcr=0;
   m_bDetermineNewStartPcr=false;
   m_bStartPcrFound=false;
+  LogDebug("CMultiWriterFileSink::ctor");
  
 }
 
 CMultiWriterFileSink::~CMultiWriterFileSink() 
 {
+  LogDebug("CMultiWriterFileSink::dtor");
   if (fOutFid != NULL) 
   {
     fOutFid->CloseFile();
@@ -33,11 +35,13 @@ CMultiWriterFileSink* CMultiWriterFileSink::createNew(UsageEnvironment& env, cha
 {
   do 
   {
+    LogDebug("CMultiWriterFileSink::create file:%s",fileName);
     MultiFileWriter* fid = new MultiFileWriter();
 	  WCHAR wstrFileName[2048];
 	  MultiByteToWideChar(CP_ACP,0,fileName,-1,wstrFileName,1+strlen(fileName));
     if (FAILED(fid->OpenFile(wstrFileName)))
     {
+      LogDebug("CMultiWriterFileSink::create file:%s failed",fileName);
       delete fid;
       return NULL;
     }
@@ -84,6 +88,7 @@ void CMultiWriterFileSink::afterGettingFrame1(unsigned frameSize,struct timeval 
 
 void CMultiWriterFileSink::OnTsPacket(byte* tsPacket)
 {
+  /*
   if (tsPacket==NULL) return;
   CTsHeader header (tsPacket);
   if (header.Pid==0x1e0)
@@ -94,6 +99,7 @@ void CMultiWriterFileSink::OnTsPacket(byte* tsPacket)
   }
   else if (header.Pid==0x1c0)
   {
+    PatchPcr(tsPacket,header);
     PatchPtsDts(tsPacket,header,m_startPcr);
   }
 
@@ -103,7 +109,9 @@ void CMultiWriterFileSink::OnTsPacket(byte* tsPacket)
 		{
       fOutFid->Write(tsPacket, 188);
     }
-  }
+  }*/
+      fOutFid->Write(tsPacket, 188);
+
 }
 
   
@@ -157,9 +165,9 @@ void CMultiWriterFileSink::PatchPcr(byte* tsPacket,CTsHeader& header)
 	    //correct pcr rollover
       UINT64 duration=m_highestPcr-m_startPcr;
     
-      Log("Pcr change detected from:%I64d to:%I64d  duration:%I64d ", m_highestPcr, pcrNew,duration);
+      LogDebug("Pcr change detected from:%I64d to:%I64d  duration:%I64d ", m_highestPcr, pcrNew,duration);
 	    UINT64 newStartPcr = pcrNew- (duration) ;
-	    Log("Pcr new start pcr from:%I64d  to %I64d  ", m_startPcr,newStartPcr);
+	    LogDebug("Pcr new start pcr from:%I64d  to %I64d  ", m_startPcr,newStartPcr);
       m_startPcr=newStartPcr;
       m_highestPcr=newStartPcr;
     }
@@ -170,7 +178,7 @@ void CMultiWriterFileSink::PatchPcr(byte* tsPacket,CTsHeader& header)
 		m_bStartPcrFound=true;
 		m_startPcr = pcrNew;
     m_highestPcr=pcrNew;
-		Log("Pcr new start pcr :%I64d", m_startPcr);
+		LogDebug("Pcr new start pcr :%I64d", m_startPcr);
 	} 
 
   if (pcrNew > m_highestPcr)
@@ -186,7 +194,7 @@ void CMultiWriterFileSink::PatchPcr(byte* tsPacket,CTsHeader& header)
   tsPacket[9] = ((pcrHi>>1)&0xff);
   tsPacket[10]=	 (pcrHi&0x1);
   tsPacket[11]=0;
-//	Log("pcr: org:%x new:%x start:%x", (DWORD)pcrBaseHigh,(DWORD)pcrHi,(DWORD)m_startPcr);
+//	LogDebug("pcr: org:%x new:%x start:%x", (DWORD)pcrBaseHigh,(DWORD)pcrHi,(DWORD)m_startPcr);
 }
 
 void CMultiWriterFileSink::PatchPtsDts(byte* tsPacket,CTsHeader& header,UINT64 startPcr)

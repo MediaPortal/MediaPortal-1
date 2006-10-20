@@ -7,6 +7,8 @@
 
 ////////// CMemoryStreamSource //////////
 
+extern void LogDebug(const char *fmt, ...) ;
+
 CMemoryStreamSource* CMemoryStreamSource::createNew(UsageEnvironment& env, char const* fileName,CMemoryBuffer& buffer,unsigned preferredFrameSize,unsigned playTimePerFrame) 
 {
   FILE* fid = (FILE*)4;
@@ -45,10 +47,12 @@ CMemoryStreamSource::CMemoryStreamSource(UsageEnvironment& env, FILE* fid,CMemor
     fDeleteFidOnClose(deleteFidOnClose),
     m_buffer(buffer)
 {
+  LogDebug("CMemoryStreamSource::ctor()");
 }
 
 CMemoryStreamSource::~CMemoryStreamSource() 
 {
+  LogDebug("CMemoryStreamSource::dtor()");
   if (fDeleteFidOnClose && fFid != NULL) 
   {
     fFid=NULL;
@@ -67,6 +71,7 @@ void CMemoryStreamSource::doGetNextFrame()
 
   if (fFrameSize==0) 
   {
+    LogDebug("CMemoryStreamSource::doGetNextFrame->handleClosure()");
     handleClosure(this);
     return;
   }

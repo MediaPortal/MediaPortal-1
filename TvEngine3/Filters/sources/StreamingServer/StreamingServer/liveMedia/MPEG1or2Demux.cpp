@@ -88,6 +88,7 @@ MPEG1or2Demux
     fNumPendingReads(0), fHaveUndeliveredData(False) {
   fParser = new MPEGProgramStreamParser(this, inputSource);
   for (unsigned i = 0; i < 256; ++i) {
+    memset(&fOutput[i],0,sizeof(OutputDescriptor_t));
     fOutput[i].savedDataHead = fOutput[i].savedDataTail = NULL;
     fOutput[i].isPotentiallyReadable = False;
     fOutput[i].isCurrentlyActive = False;

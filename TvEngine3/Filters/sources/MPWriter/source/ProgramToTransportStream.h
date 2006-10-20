@@ -27,4 +27,5 @@ private:
   CMultiWriterFileSink* m_outputSink;
   CMemoryStreamSource* m_inputSource;
   FramedSource* m_tsFrames;
+  bool m_bRunning;
 };

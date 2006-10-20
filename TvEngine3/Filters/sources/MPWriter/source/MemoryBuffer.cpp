@@ -4,7 +4,7 @@
 
 #define MAX_MEMORY_BUFFER_SIZE (500000)
 
-extern void Log(const char *fmt, ...) ;
+extern void LogDebug(const char *fmt, ...) ;
 
 CMemoryBuffer::CMemoryBuffer(void)
 :m_event(NULL,TRUE,FALSE,"memevent")
@@ -38,6 +38,7 @@ DWORD CMemoryBuffer::Size()
 }
 void CMemoryBuffer::Stop()
 {
+	LogDebug("CMemoryBuffer::Stop()");
   Clear();
   m_bStopping=true;
 }
@@ -47,7 +48,11 @@ DWORD CMemoryBuffer::ReadFromBuffer(BYTE *pbData, long lDataLength, long lOffset
 	if (lDataLength<0) return 0;
   while (m_BytesInBuffer < lDataLength)
   {	
-    if (m_bStopping) return 0;
+    if (m_bStopping) 
+    {
+	    LogDebug("ReadFromBuffer::Stop()");
+      return 0;
+    }
     m_event.ResetEvent();
     m_event.Wait();
   }
@@ -60,7 +65,7 @@ DWORD CMemoryBuffer::ReadFromBuffer(BYTE *pbData, long lDataLength, long lOffset
     if (m_bStopping) return 0;
 		if(!m_Array.size() || m_Array.size() <= 0)
     {
-			::OutputDebugStringA("read:empty buffer\n");
+			LogDebug("read:empty buffer\n");
 			return 0;
     }
 		BUFFERITEM *item = m_Array.at(0);
@@ -102,7 +107,7 @@ HRESULT CMemoryBuffer::PutBuffer(BYTE *pbData, long lDataLength, long lOffset)
 	  //Log("add..%d/%d",lDataLength,m_BytesInBuffer);
     while (m_BytesInBuffer > MAX_MEMORY_BUFFER_SIZE)
     {
-		  Log("add: full buffer (%d)",m_BytesInBuffer);
+		  LogDebug("add: full buffer (%d)",m_BytesInBuffer);
 		  BUFFERITEM *item = m_Array.at(0);
       int copyLength=item->nDataLength - item->nOffset;
 

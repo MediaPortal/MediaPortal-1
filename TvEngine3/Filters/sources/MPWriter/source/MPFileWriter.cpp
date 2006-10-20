@@ -60,7 +60,6 @@ const AMOVIESETUP_FILTER sudDump =
 
 void LogDebug(const char *fmt, ...) 
 {
-#ifndef DEBUG
 	va_list ap;
 	va_start(ap,fmt);
 
@@ -85,7 +84,6 @@ void LogDebug(const char *fmt, ...)
 			buffer);
 		fclose(fp);
 	}
-#endif
 };
 
 //
