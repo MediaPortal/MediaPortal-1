@@ -432,60 +432,67 @@ namespace MediaPortal.Player
         #endregion
 
 
-        if (autoBuildGraph == false)
+
+        #region connect tsfilesource->demux 
+        Log.Info("TSStreamBufferPlayer9:connect tsfilesource->mpeg2 demux");
+        IPin pinTsOut = DsFindPin.ByDirection((IBaseFilter)_fileSource, PinDirection.Output, 0);
+        if (pinTsOut == null)
         {
-          #region connect tsfilesource->demux when autoBuildGraph == false
-          Log.Info("TSStreamBufferPlayer9:connect tsfilesource->mpeg2 demux");
-          IPin pinTsOut = DsFindPin.ByDirection((IBaseFilter)_fileSource, PinDirection.Output, 0);
-          if (pinTsOut == null)
-          {
-            Log.Info("TSStreamBufferPlayer9:failed to find output pin of tsfilesource");
-            return false;
-          }
-          IPin pinDemuxIn = DsFindPin.ByDirection(_mpegDemux, PinDirection.Input, 0);
-          if (pinDemuxIn == null)
-          {
-            Log.Info("TSStreamBufferPlayer9:failed to find output pin of tsfilesource");
-            return false;
-          }
+          Log.Info("TSStreamBufferPlayer9:failed to find output pin of tsfilesource");
+          return false;
+        }
+        IPin pinDemuxIn = DsFindPin.ByDirection(_mpegDemux, PinDirection.Input, 0);
+        if (pinDemuxIn == null)
+        {
+          Log.Info("TSStreamBufferPlayer9:failed to find output pin of tsfilesource");
+          return false;
+        }
 
-          hr = _graphBuilder.Connect(pinTsOut, pinDemuxIn);
-          if (hr != 0)
-          {
-            Log.Info("TSStreamBufferPlayer9:failed to connect tsfilesource->mpeg2 demux:{0:X}", hr);
-            return false;
-          }
-          Marshal.ReleaseComObject(pinTsOut);
-          Marshal.ReleaseComObject(pinDemuxIn);
+        hr = _graphBuilder.Connect(pinTsOut, pinDemuxIn);
+        if (hr != 0)
+        {
+          Log.Info("TSStreamBufferPlayer9:failed to connect tsfilesource->mpeg2 demux:{0:X}", hr);
+          return false;
+        }
+        Marshal.ReleaseComObject(pinTsOut);
+        Marshal.ReleaseComObject(pinDemuxIn);
 
-          MapPids();
-          #endregion
+        #endregion
 
-          #region render demux audio/video pins
-          Log.Info("TSStreamBufferPlayer9:render audio output pin");
-          hr = _graphBuilder.Render(_pinAudio);
-          if (hr != 0)
+        #region render demux output pins
+        if (_isRadio)
+        {
+          IEnumPins enumPins;
+          _mpegDemux.EnumPins(out enumPins);
+          IPin[] pins = new IPin[2];
+          int fetched = 0;
+          while (enumPins.Next(1, pins, out fetched) == 0)
           {
-            Log.Info("TSStreamBufferPlayer9:failed to render video output pin:{0:X}", hr);
-          }
-
-          if (_isRadio == false)
-          {
-            Log.Info("TSStreamBufferPlayer9:render video output pin");
-            hr = _graphBuilder.Render(_pinVideo);
-            if (hr != 0)
+            if (fetched != 1) break;
+            PinDirection direction;
+            pins[0].QueryDirection(out direction);
+            if (direction == PinDirection.Input) continue;
+            IEnumMediaTypes enumMediaTypes;
+            pins[0].EnumMediaTypes(out enumMediaTypes);
+            AMMediaType[] mediaTypes = new AMMediaType[20];
+            int fetchedTypes;
+            enumMediaTypes.Next(20, mediaTypes, out fetchedTypes);
+            for (int i = 0; i < fetchedTypes; ++i)
             {
-              Log.Info("TSStreamBufferPlayer9:failed to render audio output pin:{0:X}", hr);
+              if (mediaTypes[i].majorType == MediaType.Audio)
+              {
+                _graphBuilder.Render(pins[0]);
+                break;
+              }
             }
           }
-          #endregion
         }
         else
         {
           Log.Info("TSStreamBufferPlayer9:render tsfilesource outputs");
           DirectShowUtil.RenderOutputPins(_graphBuilder, (IBaseFilter)_fileSource);
         }
-
+        #endregion
 
         if (autoBuildGraph == false)
         {
