@@ -876,6 +876,7 @@ namespace TvPlugin
           return;
         }
         GUIPropertyManager.SetProperty("#TV.View.channel", Navigator.CurrentChannel);
+        GUIPropertyManager.SetProperty("#TV.View.title", Navigator.CurrentChannel);
         Program current = Navigator.Channel.CurrentProgram;
         if (current != null)
         {
