@@ -427,7 +427,7 @@ namespace TvDatabase
                               channelType, channelNumber, (int)channelFrequency, country, isRadio, isTv,
                               networkId, transportId, serviceId, pmtPid, freeToAir,
                               modulation, polarisation, symbolRate, diseqc, switchFrequency,
-                              bandwidth, majorChannel, minorChannel, pcrPid, videoInputType, tunerSource,audioPid,videoPid);
+                              bandwidth, majorChannel, minorChannel, pcrPid, videoInputType, tunerSource, videoPid, audioPid);
       detail.Persist();
       return detail;
     }

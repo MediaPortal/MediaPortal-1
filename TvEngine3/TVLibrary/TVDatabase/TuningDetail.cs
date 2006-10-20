@@ -69,17 +69,17 @@ namespace TvDatabase
 		private int videoSource;
 		[TableColumn("tuningSource", NotNull=true)]
     private int tuningSource;
-    [TableColumn("audioPid", NotNull = true)]
-    private int audioPid;
     [TableColumn("videoPid", NotNull = true)]
     private int videoPid;
+    [TableColumn("audioPid", NotNull = true)]
+    private int audioPid;
 		#endregion
 			
 		#region Constructors
 		/// <summary> 
 		/// Create a new object by specifying all fields (except the auto-generated primary key field). 
 		/// </summary> 
-		public TuningDetail(int idChannel, string name, string provider, int channelType, int channelNumber, int frequency, int countryId, bool isRadio, bool isTv, int networkId, int transportId, int serviceId, int pmtPid, bool freeToAir, int modulation, int polarisation, int symbolrate, int diseqc, int switchingFrequency, int bandwidth, int majorChannel, int minorChannel, int pcrPid, int videoSource, int tuningSource, int audioPid, int videoPid)
+    public TuningDetail(int idChannel, string name, string provider, int channelType, int channelNumber, int frequency, int countryId, bool isRadio, bool isTv, int networkId, int transportId, int serviceId, int pmtPid, bool freeToAir, int modulation, int polarisation, int symbolrate, int diseqc, int switchingFrequency, int bandwidth, int majorChannel, int minorChannel, int pcrPid, int videoSource, int tuningSource, int videoPid, int audioPid)
 		{
 			isChanged = true;
 			this.idChannel = idChannel;
@@ -115,7 +115,7 @@ namespace TvDatabase
 		/// Create an object from an existing row of data. This will be used by Gentle to 
 		/// construct objects from retrieved rows. 
 		/// </summary> 
-		public TuningDetail(int idTuning, int idChannel, string name, string provider, int channelType, int channelNumber, int frequency, int countryId, bool isRadio, bool isTv, int networkId, int transportId, int serviceId, int pmtPid, bool freeToAir, int modulation, int polarisation, int symbolrate, int diseqc, int switchingFrequency, int bandwidth, int majorChannel, int minorChannel, int pcrPid, int videoSource, int tuningSource, int audioPid, int videoPid)
+    public TuningDetail(int idTuning, int idChannel, string name, string provider, int channelType, int channelNumber, int frequency, int countryId, bool isRadio, bool isTv, int networkId, int transportId, int serviceId, int pmtPid, bool freeToAir, int modulation, int polarisation, int symbolrate, int diseqc, int switchingFrequency, int bandwidth, int majorChannel, int minorChannel, int pcrPid, int videoSource, int tuningSource, int videoPid, int audioPid)
 		{
 			this.idTuning = idTuning;
 			this.idChannel = idChannel;
