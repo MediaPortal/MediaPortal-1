@@ -227,10 +227,6 @@ STDMETHODIMP CTimeShifting::AddStream(int pid, int serviceType, char* language)
 			{
 				FAKE_PCR_PID = FAKE_AUDIO_PID;
 			}
-			else
-			{
-				FAKE_PCR_PID = 0x21;
-			}
       PidInfo info;
 			info.realPid=pid;
 			info.fakePid=FAKE_AUDIO_PID;
@@ -248,10 +244,6 @@ STDMETHODIMP CTimeShifting::AddStream(int pid, int serviceType, char* language)
 			if (m_pcrPid == pid)
 			{
 				FAKE_PCR_PID = FAKE_VIDEO_PID;
-			}
-			else
-			{
-				FAKE_PCR_PID = 0x21;
 			}
 			//LogDebug("Timeshifter:add video pes stream pid:%x",pid);
       PidInfo info;
