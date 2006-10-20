@@ -125,11 +125,12 @@ namespace SetupTv
         try
         {
           RemoteControl.Clear();
+          RemoteControl.HostName = "localhost";
           cards = RemoteControl.Instance.Cards;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-          MessageBox.Show("Failed to startup tvservice");
+          MessageBox.Show("Failed to startup tvservice"+ex.ToString());
           return;
         }
       }
