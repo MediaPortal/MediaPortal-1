@@ -143,7 +143,7 @@ namespace MediaPortal.Player
     IPin _pinSubtitle = null;
     IPin _pinPMT = null;
     bool enableDvbSubtitles = false;
-#endregion
+    #endregion
 
     #region ctor
     public TStreamBufferPlayer9()
@@ -193,20 +193,22 @@ namespace MediaPortal.Player
 
       // switch back to directx fullscreen mode
       Log.Info("TSStreamBufferPlayer9: Enabling DX9 exclusive mode");
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
-      GUIWindowManager.SendMessage(msg);
-
+      if (_isRadio == false)
+      {
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
+        GUIWindowManager.SendMessage(msg);
+      }
       //Log.Info("TSStreamBufferPlayer9: build graph");
 
       try
       {
         _graphBuilder = (IGraphBuilder)new FilterGraph();
-        Log.Info("TSStreamBufferPlayer9: add _vmr9");
 
         _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
         #region add vmr9
         if (_isRadio == false)
         {
+          Log.Info("TSStreamBufferPlayer9: add _vmr9");
           _vmr9 = new VMR9Util();
           _vmr9.AddVMR9(_graphBuilder);
           _vmr9.Enable(false);
@@ -224,16 +226,16 @@ namespace MediaPortal.Player
         string strFilters = ""; // FlipGer: collect custom filters
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
-            // FlipGer: load infos for custom filters
+          // FlipGer: load infos for custom filters
           int intCount = 0;
           while (xmlreader.GetValueAsString("mytv", "filter" + intCount.ToString(), "undefined") != "undefined")
           {
-              if (xmlreader.GetValueAsBool("mytv", "usefilter" + intCount.ToString(), false))
-              {
-                  strFilters += xmlreader.GetValueAsString("mytv", "filter" + intCount.ToString(), "undefined") + ";";
-                  intFilters++;
-              }
-              intCount++;
+            if (xmlreader.GetValueAsBool("mytv", "usefilter" + intCount.ToString(), false))
+            {
+              strFilters += xmlreader.GetValueAsString("mytv", "filter" + intCount.ToString(), "undefined") + ";";
+              intFilters++;
+            }
+            intCount++;
           }
           strVideoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "");
           strAudioCodec = xmlreader.GetValueAsString("mytv", "audiocodec", "");
@@ -265,15 +267,15 @@ namespace MediaPortal.Player
           _audioCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strAudioCodec);
         if (strAudioRenderer.Length > 0)
           _audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(_graphBuilder, strAudioRenderer, false);
-        if (enableDvbSubtitles == true) 
+        if (enableDvbSubtitles == true)
           _subtitleFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, "MediaPortal DVB subtitles transform");
-        
+
         // FlipGer: add custom filters to graph
         customFilters = new IBaseFilter[intFilters];
         string[] arrFilters = strFilters.Split(';');
         for (int i = 0; i < intFilters; i++)
         {
-            customFilters[i] = DirectShowUtil.AddFilterToGraph(_graphBuilder, arrFilters[i]);
+          customFilters[i] = DirectShowUtil.AddFilterToGraph(_graphBuilder, arrFilters[i]);
         }
 
         #endregion
@@ -355,7 +357,7 @@ namespace MediaPortal.Player
 
         #endregion
 
-        #region add mpeg-2 demux filter 
+        #region add mpeg-2 demux filter
         //forces tsfilesource to connect to the ms-demuxer and not another demuxer registered
         Log.Info("TSStreamBufferPlayer9:add mpeg-2 demultiplexer to graph");
         _mpegDemux = (IBaseFilter)new MPEG2Demultiplexer();
@@ -494,7 +496,7 @@ namespace MediaPortal.Player
         if (_mpegDemux != null && enableDvbSubtitles == true)
         {
           IMpeg2Demultiplexer demuxer = _mpegDemux as IMpeg2Demultiplexer;
-          hr = demuxer.CreateOutputPin( GetTSMedia(), "Pcr", out _pinPcr );
+          hr = demuxer.CreateOutputPin(GetTSMedia(), "Pcr", out _pinPcr);
 
           if (hr == 0)
           {
@@ -522,7 +524,7 @@ namespace MediaPortal.Player
           {
             Log.Info("TSStreamBufferPlayer9:Failed to create _pinSubtitle in demuxer:{0:X}", hr);
           }
-          
+
           hr = demuxer.CreateOutputPin(GetTSMedia(), "PMT", out _pinPMT);
           if (hr == 0)
           {
@@ -688,11 +690,11 @@ namespace MediaPortal.Player
         // FlipGer: release custom filters
         for (int i = 0; i < customFilters.Length; i++)
         {
-            if (customFilters[i] != null)
-            {
-                while ((hr = Marshal.ReleaseComObject(customFilters[i])) > 0) ;
-            }
-            customFilters[i] = null;
+          if (customFilters[i] != null)
+          {
+            while ((hr = Marshal.ReleaseComObject(customFilters[i])) > 0) ;
+          }
+          customFilters[i] = null;
         }
         if (_mpegDemux != null)
         {

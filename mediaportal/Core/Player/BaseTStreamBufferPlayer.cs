@@ -153,7 +153,7 @@ namespace MediaPortal.Player
     }
     public override bool Play(string strFile)
     {
-      Log.Info("Streambufferplayer play:{0}", strFile);
+      Log.Info("Streambufferplayer play:{0} radio:{1}", strFile,_isRadio);
       if (!System.IO.File.Exists(strFile))
         return false;
       iSpeed = 1;
