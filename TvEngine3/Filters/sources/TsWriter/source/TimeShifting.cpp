@@ -223,6 +223,14 @@ STDMETHODIMP CTimeShifting::AddStream(int pid, int serviceType, char* language)
 	{
 		if (serviceType==3||serviceType==4||serviceType==0x81)
     {
+			if (m_pcrPid == pid)
+			{
+				FAKE_PCR_PID = FAKE_AUDIO_PID;
+			}
+			else
+			{
+				FAKE_PCR_PID = 0x21;
+			}
       PidInfo info;
 			info.realPid=pid;
 			info.fakePid=FAKE_AUDIO_PID;
@@ -310,6 +318,7 @@ STDMETHODIMP CTimeShifting::SetTimeShiftingFileName(char* pszFileName)
 	try
 	{
 		LogDebug("Timeshifter:set filename:%s",pszFileName);
+    m_iPacketCounter=0;
     m_pmtPid=-1;
     m_pcrPid=-1;
     m_vecPids.clear();
@@ -334,7 +343,6 @@ STDMETHODIMP CTimeShifting::Start()
 	try
 	{
 		if (strlen(m_szFileName)==0) return E_FAIL;
-		LogDebug("Timeshifter:Start timeshifting:'%s'",m_szFileName);
 		::DeleteFile((LPCTSTR) m_szFileName);
 		WCHAR wstrFileName[2048];
 		MultiByteToWideChar(CP_ACP,0,m_szFileName,-1,wstrFileName,1+strlen(m_szFileName));
@@ -355,8 +363,17 @@ STDMETHODIMP CTimeShifting::Start()
 		m_startPcr=0;
 		m_bStartPcrFound=false;
 		m_highestPcr=0;
-//		LogDebug("real pcr:%x pmt:%x audio:%x video:%x mode:%d", m_pcrPid, m_pmtPid, m_audioPid,m_videoPid,m_timeShiftMode);
-//		LogDebug("fake pcr:%x pmt:%x audio:%x video:%x", FAKE_PCR_PID, FAKE_PMT_PID, FAKE_AUDIO_PID, FAKE_VIDEO_PID);
+    m_iPacketCounter=0;
+    LogDebug("Timeshifter:Start timeshifting:'%s'",m_szFileName);
+    LogDebug("Timeshifter:real pcr:%x fake pcr:%x",m_pcrPid,FAKE_PCR_PID);
+    LogDebug("Timeshifter:real pmt:%x fake pmt:%x",m_pmtPid,FAKE_PMT_PID);
+    itvecPids it=m_vecPids.begin();
+    while (it!=m_vecPids.end())
+    {
+	    PidInfo& info=*it;
+      LogDebug("Timeshifter:real pid:%x fake pid:%x type:%x",info.realPid,info.fakePid,info.serviceType);
+      ++it;
+    }
 		m_bTimeShifting=true;
 		if (m_timeShiftMode==TransportStream)
 		{
@@ -395,6 +412,7 @@ STDMETHODIMP CTimeShifting::Reset()
 		FAKE_VIDEO_PID    = 0x30;
 		FAKE_AUDIO_PID    = 0x40;
 		FAKE_SUBTITLE_PID = 0x50;
+    m_iPacketCounter=0;
 	}
 	catch(...)
 	{
@@ -541,23 +559,11 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 	CTsHeader header(tsPacket);
 	
 	if (header.TransportError) return;
-  if (header.Pid==0)
+  if (m_iPacketCounter>=100)
   {
-    //PAT
-    if (header.PayloadUnitStart)
-    {
-      WriteFakePAT();
-    }
-    return;
-  }
-
-  if (header.Pid==m_pmtPid)
-  {
-    //PMT
-    if (header.PayloadUnitStart)
-    {
-      WriteFakePMT();
-    }
+    WriteFakePAT();
+    WriteFakePMT();
+    m_iPacketCounter=0;
     return;
   }
 
@@ -592,6 +598,7 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 				if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
 				{
 					Write(pkt,188);
+          m_iPacketCounter++;
 				}
 				return;
 			}
@@ -618,6 +625,7 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 				if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
 				{
 					Write(pkt,188);
+          m_iPacketCounter++;
 				}
 				return;
 			}
@@ -635,6 +643,7 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 				if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
 				{
 					Write(pkt,188);
+          m_iPacketCounter++;
 				}
 				return;
 			}
@@ -649,6 +658,7 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 			if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
 			{
 				Write(pkt,188);
+        m_iPacketCounter++;
 			}
 			return;
 		}
@@ -666,6 +676,7 @@ void CTimeShifting::WriteTs(byte* tsPacket)
     if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
 		{
 			Write(pkt,188);
+      m_iPacketCounter++;
 		}
     return;
   }

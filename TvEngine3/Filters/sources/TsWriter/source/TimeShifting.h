@@ -148,4 +148,5 @@ private:
 	UINT64 m_highestPcr;
   bool    m_bDetermineNewStartPcr;
 	bool		m_bStartPcrFound;
+  int     m_iPacketCounter;
 };
