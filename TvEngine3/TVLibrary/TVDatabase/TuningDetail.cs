@@ -69,10 +69,10 @@ namespace TvDatabase
 		private int videoSource;
 		[TableColumn("tuningSource", NotNull=true)]
     private int tuningSource;
-    [TableColumn("videoPid", NotNull = true)]
-    private int videoPid;
     [TableColumn("audioPid", NotNull = true)]
     private int audioPid;
+    [TableColumn("videoPid", NotNull = true)]
+    private int videoPid;
 		#endregion
 			
 		#region Constructors

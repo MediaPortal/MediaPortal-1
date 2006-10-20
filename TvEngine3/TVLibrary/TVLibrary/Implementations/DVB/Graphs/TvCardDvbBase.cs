@@ -1184,8 +1184,8 @@ namespace TvLibrary.Implementations.DVB
 
       if ((_currentChannel as ATSCChannel) != null)
       {
-        Log.Log.Write("SetAnalyzerMapping for atsc");
         ATSCChannel atscChannel = (ATSCChannel)_currentChannel;
+        Log.Log.Write("SetAnalyzerMapping for atsc:{0}", atscChannel);
         _channelInfo = new ChannelInfo();
         _channelInfo.network_pmt_PID = atscChannel.PmtPid;
         _channelInfo.pcr_pid = atscChannel.PcrPid;
@@ -1196,8 +1196,7 @@ namespace TvLibrary.Implementations.DVB
         videoInfo.VideoPid(atscChannel.VideoPid, 1);
         _channelInfo.AddPid(videoInfo);
 
-        Log.Log.Write(" video:{0:X} audio:{1:X} pcr:{2:X} pmt:{3:X}",
-            atscChannel.VideoPid, atscChannel.AudioPid, atscChannel.PcrPid, atscChannel.PmtPid);
+        Log.Log.Write(" video:{0:X} audio:{1:X} pcr:{2:X} pmt:{3:X}",atscChannel.VideoPid, atscChannel.AudioPid, atscChannel.PcrPid, atscChannel.PmtPid);
         SetMpegPidMapping(_channelInfo);
       }
       else
