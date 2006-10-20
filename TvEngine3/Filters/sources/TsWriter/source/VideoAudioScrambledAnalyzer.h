@@ -23,6 +23,12 @@
 class CVideoAudioScrambledAnalyzer
 {
 public:
+  enum ScrambleState
+  {
+    Unknown,
+    Scrambled,
+    UnScrambled
+  };
 	CVideoAudioScrambledAnalyzer(void);
 	~CVideoAudioScrambledAnalyzer(void);
 
@@ -39,12 +45,9 @@ public:
 	void OnTsPacket(byte* tsPacket);
 
 private:
+  void Dump(bool audio, bool video);
 		int m_videoPid;
 		int m_audioPid;
-		BOOL m_bAudioEncrypted;
-		BOOL m_bVideoEncrypted;
-		DWORD m_audioTimer;
-		DWORD m_videoTimer;
-		BOOL m_bInitAudio;
-		BOOL m_bInitVideo;
+		enum ScrambleState m_bAudioEncrypted;
+		enum ScrambleState m_bVideoEncrypted;
 };

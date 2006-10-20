@@ -9,6 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SetupTv</RootNamespace>
     <AssemblyName>SetupTv</AssemblyName>
+    <Win32Resource>C:\erwin\tvServer\TVLibrary\SetupTv\setuptv.RES</Win32Resource>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

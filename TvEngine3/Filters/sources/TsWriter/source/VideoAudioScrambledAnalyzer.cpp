@@ -27,6 +27,8 @@ extern void LogDebug(const char *fmt, ...) ;
 
 CVideoAudioScrambledAnalyzer::CVideoAudioScrambledAnalyzer()
 {
+  m_videoPid=0;
+  m_audioPid=0;
 	Reset();
 }
 
@@ -58,24 +60,20 @@ int  CVideoAudioScrambledAnalyzer::GetAudioPid()
 
 bool CVideoAudioScrambledAnalyzer::IsAudioScrambled()
 {
-	return (m_bAudioEncrypted==TRUE);
+	return (m_bAudioEncrypted==Scrambled);
 }
 
 bool CVideoAudioScrambledAnalyzer::IsVideoScrambled()
 {
-	return (m_bVideoEncrypted==TRUE);
+	return (m_bVideoEncrypted==Scrambled);
 }
 
 
 void CVideoAudioScrambledAnalyzer::Reset()
 {
 		LogDebug("analyzer: reset");
-		m_bInitAudio=TRUE;
-		m_bInitVideo=TRUE;
-		m_bVideoEncrypted=TRUE;
-		m_bAudioEncrypted=TRUE;
-		m_audioTimer=GetTickCount();
-		m_videoTimer=GetTickCount();
+		m_bVideoEncrypted=Unknown;
+		m_bAudioEncrypted=Unknown;
 }
 
 void CVideoAudioScrambledAnalyzer::OnTsPacket(byte* tsPacket)
@@ -86,55 +84,63 @@ void CVideoAudioScrambledAnalyzer::OnTsPacket(byte* tsPacket)
 	BOOL scrambled= (header.TScrambling!=0);
 	if (header.Pid==m_audioPid && m_audioPid > 0x10) 
 	{
-		if (TRUE==scrambled)
-		{
-			m_audioTimer=GetTickCount();
-		}
-
-		if (scrambled != m_bAudioEncrypted || m_bInitAudio)
-		{
-			m_bInitAudio=FALSE;
-			if (FALSE == scrambled)
-			{
-				DWORD timeSpan=GetTickCount()-m_audioTimer;
-				if (timeSpan > 150)
-				{
-					LogDebug("analyzer: audio pid %x unscrambled %x", m_audioPid,header.TScrambling);
-					m_bAudioEncrypted=scrambled;
-				}
-			}
-			else
-			{
-				LogDebug("analyzer: audio pid %x scrambled %x", m_audioPid,header.TScrambling);
-				m_bAudioEncrypted=scrambled;
-			}
-		}
+    enum ScrambleState newState;
+    if (scrambled)
+      newState=Scrambled;
+    else
+      newState=UnScrambled;
+    if (newState!=m_bAudioEncrypted)
+    {
+      m_bAudioEncrypted=newState;
+		  Dump(true,false);
+    }
 	}
 
 	if (header.Pid==m_videoPid && m_videoPid > 0x10) 
 	{
-		if (TRUE==scrambled)
-		{
-			m_videoTimer=GetTickCount();
-		}
-
-		if (scrambled != m_bVideoEncrypted || m_bInitVideo)
-		{
-			m_bInitVideo=FALSE;
-			if (FALSE == scrambled)
-			{
-				DWORD timeSpan=GetTickCount()-m_videoTimer;
-				if (timeSpan > 150)
-				{
-					LogDebug("analyzer: video pid %x unscrambled %x", m_videoPid,header.TScrambling);
-					m_bVideoEncrypted=scrambled;
-				}
-			}
-			else
-			{
-				LogDebug("analyzer: video pid %x scrambled %x", m_videoPid,header.TScrambling);
-				m_bVideoEncrypted=scrambled;
-			}
-		}
+    enum ScrambleState newState;
+    if (scrambled)
+      newState=Scrambled;
+    else
+      newState=UnScrambled;
+    if (newState!=m_bVideoEncrypted)
+    {
+      m_bVideoEncrypted=newState;
+		  Dump(false,true);
+    }
 	}
+}
+
+void CVideoAudioScrambledAnalyzer::Dump(bool audio, bool video)
+{
+  if (audio)
+  {
+    switch (m_bAudioEncrypted)
+    {
+      case Unknown: 
+        LogDebug("analyzer: audio unknown");
+      break;
+      case Scrambled: 
+        LogDebug("analyzer: audio Scrambled");
+      break;
+      case UnScrambled: 
+        LogDebug("analyzer: audio UnScrambled");
+      break;
+    }
+  }
+  if (video)
+  {
+    switch (m_bVideoEncrypted)
+    {
+      case Unknown: 
+        LogDebug("analyzer: video unknown");
+      break;
+      case Scrambled: 
+        LogDebug("analyzer: video Scrambled");
+      break;
+      case UnScrambled: 
+        LogDebug("analyzer: video UnScrambled");
+      break;
+    }
+  }
 }

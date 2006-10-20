@@ -37,6 +37,7 @@ CVideoAnalyzer::CVideoAnalyzer(LPUNKNOWN pUnk, HRESULT *phr)
 }
 CVideoAnalyzer::~CVideoAnalyzer(void)
 {
+		m_videoAudioAnalyzer.Reset();
 }
   
 STDMETHODIMP CVideoAnalyzer::SetVideoPid( int videoPid)

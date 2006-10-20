@@ -97,7 +97,6 @@ namespace TvLibrary.Implementations.DVB
         _capBuilder.SetFiltergraph(_graphBuilder);
         _rotEntry = new DsROTEntry(_graphBuilder);
 
-        // Method names should be self explanatory
         AddNetworkProviderFilter(typeof(DVBCNetworkProvider).GUID);
         CreateTuningSpace();
         AddMpeg2DemuxerToGraph();
@@ -105,7 +104,6 @@ namespace TvLibrary.Implementations.DVB
         AddBdaTransportFiltersToGraph();
 
         GetTunerSignalStatistics();
-        //CreateTimeShiftingGraph();
         _graphState = GraphState.Created;
 
       }
@@ -329,15 +327,14 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.WriteFile("dvbc:StartTimeShifting not tuned to a channel but to a transponder");
           throw new TvException("StartTimeShifting not tuned to a channel but to a transponder");
         }
+
+        //RunGraph();
+        //Tune(Channel);
         if (_graphState == GraphState.Created)
         {
           SetTimeShiftFileName(fileName);
         }
-
-        RunGraph();
         _graphState = GraphState.TimeShifting;
-        Tune(Channel);
-        //FileAccessHelper.GrantFullControll(fileName);
         return true;
 
       }
