@@ -433,7 +433,7 @@ namespace MediaPortal.Player
 
 
 
-        #region connect tsfilesource->demux 
+        #region connect tsfilesource->demux
         Log.Info("TSStreamBufferPlayer9:connect tsfilesource->mpeg2 demux");
         IPin pinTsOut = DsFindPin.ByDirection((IBaseFilter)_fileSource, PinDirection.Output, 0);
         if (pinTsOut == null)
@@ -489,8 +489,19 @@ namespace MediaPortal.Player
         }
         else
         {
-          Log.Info("TSStreamBufferPlayer9:render tsfilesource outputs");
-          DirectShowUtil.RenderOutputPins(_graphBuilder, (IBaseFilter)_fileSource);
+          Log.Info("TSStreamBufferPlayer9:render demux outputs");
+          IEnumPins enumPins;
+          _mpegDemux.EnumPins(out enumPins);
+          IPin[] pins = new IPin[2];
+          int fetched = 0;
+          while (enumPins.Next(1, pins, out fetched) == 0)
+          {
+            if (fetched != 1) break;
+            PinDirection direction;
+            pins[0].QueryDirection(out direction);
+            if (direction == PinDirection.Input) continue;
+            _graphBuilder.Render(pins[0]);
+          }
         }
         #endregion
 
