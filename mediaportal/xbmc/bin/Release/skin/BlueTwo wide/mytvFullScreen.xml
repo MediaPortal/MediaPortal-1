@@ -4,26 +4,25 @@
 	<defaultcontrol>13</defaultcontrol>
 	<allowoverlay>no</allowoverlay>
 	<controls>
-	      <control>
-		<description>bar image</description>
-		<type>image</type>
-		<id>0</id>
-                <posX>1172</posX>
-	        <posY>16</posY>
-	        <width>158</width>
-	        <height>52</height>
-                <texture>osd_bg.png</texture>
-	 	<colorkey>0</colorkey>
-		<colordiffuse>White</colordiffuse>
-		<visible>no</visible>
-	      </control>
+		<control>
+		  <description>bar image</description>
+		  <posX>60</posX>
+		  <posY>10</posY>
+		  <width>1246</width>
+		  <height>60</height>
+		  <texture>osd_bg_top.png</texture>
+		  <type>image</type>
+		  <id>0</id>
+		  <colordiffuse>White</colordiffuse>
+		  <visible>no</visible>
+		</control>
 		<control>
 			<description>row 1 label</description>
 			<type>label</type>
 			<id>10</id>
 <!-- 			<posX>1005</posX>
 			<posY>73</posY> -->
-        		<posX>1186</posX>
+        		<posX>1177</posX>
 	        	<posY>27</posY>
 			<label>-</label>
 			<align>left</align>
@@ -35,7 +34,7 @@
 			<description>row 2 label</description>
 			<type>label</type>
 			<id>11</id>
-        		<posX>1186</posX>
+        		<posX>1177</posX>
 	        	<posY>87</posY>
 			<label>-</label>
 			<align>left</align>
@@ -47,7 +46,7 @@
 			<description>row 3 label</description>
 			<type>label</type>
 			<id>12</id>
-        		<posX>1186</posX>
+        		<posX>1177</posX>
 	        	<posY>147</posY>
 			<label>-</label>
 			<align>left</align>

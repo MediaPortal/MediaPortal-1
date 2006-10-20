@@ -30,10 +30,10 @@
 		<description>Progress Bar</description>
 		<type>progress</type>
 		<id>1</id>
-		<posX>185</posX>
-		<posY>611</posY>
-		<width>200</width>
-		<height>5</height>
+		<posX>195</posX>
+		<posY>615</posY>
+		<width>180</width>
+		<height>4</height>
 		<texturebg>osd_progress_back.png</texturebg>
 		<lefttexture>osd_progress_left.png</lefttexture>
 		<midtexture>osd_progress_mid.png</midtexture>
@@ -45,22 +45,22 @@
 		<description>Start Time Info</description>
 		<type>label</type>
 		<id>101</id>
-		<posX>190</posX>
+		<posX>195</posX>
 		<posY>604</posY>
 		<label>#TV.View.start</label>
 		<align>right</align>
-		<font>font13</font>
+		<font>font12</font>
 		<textcolor>FFFFFFFF</textcolor>
 	</control>
 	<control>
 		<description>End Time Info</description>
 		<type>label</type>
 		<id>102</id>
-		<posX>375</posX>
+		<posX>365</posX>
 		<posY>604</posY>
 		<label>#TV.View.stop</label>
 		<align>left</align>
-		<font>font13</font>
+		<font>font12</font>
 		<textcolor>FFFFFFFF</textcolor>
 	</control>
 		<control>
@@ -80,9 +80,9 @@
 		<width>300</width>
 		<height>30</height>
 		<posX>150</posX>
-		<posY>628</posY>
+		<posY>633</posY>
 		<align>left</align>
-		<font>font16</font>
+		<font>font13</font>
 		<textcolor>FFB2D4F5</textcolor>
 	</control>
 	<control>
@@ -92,9 +92,9 @@
 		<width>300</width>
 		<height>30</height>
 		<posX>150</posX>
-		<posY>658</posY>
+		<posY>666</posY>
 		<align>left</align>
-		<font>font13</font>
+		<font>font12</font>
 		<textcolor>FFFFFFFF</textcolor>
 	</control>
 	<control>
@@ -105,7 +105,7 @@
 		<posY>573</posY>
 		<label>-</label>
 		<align>left</align>
-		<font>font16</font>
+		<font>font13</font>
 		<textcolor>FFFFFFFF</textcolor>
 	</control>
 </controls>

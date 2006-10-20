@@ -3,16 +3,15 @@
   <defaultcontrol>13</defaultcontrol> 
   <allowoverlay>no</allowoverlay>
   <controls>
-        <control>
+  <control>
 		<description>bar image</description>
 		<type>image</type>
 		<id>0</id>
-		<posX>602</posX>
+		<posX>20</posX>
 		<posY>20</posY>
-	 	<width>118</width>
-	 	<height>38</height>
-<!-- 		<texture>video-empty.png</texture> -->
-		<texture>osd_bg.png</texture>
+		<width>680</width>
+		<height>40</height>
+		<texture>osd_bg_top.png</texture>
 		<colorkey>0</colorkey>
 	 	<colordiffuse>White</colordiffuse>
 		<visible>no</visible>
@@ -21,44 +20,46 @@
 			<description>row 1 label</description> 
 			<type>label</type> 
 			<id>10</id> 
-			<posX>622</posX>
-		        <posY>30</posY>
+		  <posX>614</posX>
+		  <posY>30</posY>
 			<label>-</label> 
 			<align>left</align> 
 			<font>font13</font> 
-			<textcolor>FFFFFFFF</textcolor> 
+		  <textcolor>Black</textcolor> 
 			<visible>no</visible>
 		</control>
 		<control>
 			<description>row 2 label</description> 
 			<type>label</type> 
 			<id>11</id> 
-			<posX>622</posX>
+		  <posX>614</posX>
 			<posY>90</posY>
 			<label>-</label> 
 			<align>left</align> 
 			<font>font13</font>
-			<textcolor>FFFFFFFF</textcolor> 
+		  <textcolor>Black</textcolor>
 			<visible>no</visible>
 		</control>
 		<control>
 			<description>row 3 label</description> 
 			<type>label</type> 
 			<id>12</id> 
-			<posX>622</posX>
+		  <posX>614</posX>
 			<posY>150</posY> 
-			<label>-</label> 
+			<label>-</label>
 			<align>left</align> 
 			<font>font13</font> 
-			<textcolor>FFFFFFFF</textcolor> 
+		  <textcolor>Black</textcolor> 
 			<visible>no</visible> 
 		</control>
 		<control>
 			<description>pause image</description> 
 			<type>image</type> 
 			<id>16</id> 
-			<posX>500</posX> 
-			<posY>30</posY> 
+      <posX>604</posX>
+		  <posY>22</posY>
+		  <width>92</width>
+		  <height>34</height>
 			<visible>no</visible> 
 			<texture>video-pause.png</texture> 
 			<colorkey>0</colorkey> 
@@ -68,8 +69,8 @@
 			<description>2x image</description> 
 			<type>image</type> 
 			<id>17</id> 
-			<posX>500</posX> 
-			<posY>30</posY> 
+  		<posX>590</posX>
+	  	<posY>17</posY>
 			<visible>no</visible> 
 			<texture>video+2x.png</texture> 
 			<colorkey>0</colorkey> 
@@ -79,8 +80,8 @@
 			<description>4x image</description> 
 			<type>image</type> 
 			<id>18</id> 
-			<posX>500</posX> 
-			<posY>30</posY> 
+  		<posX>590</posX>
+	  	<posY>17</posY>
 			<visible>no</visible> 
 			<texture>video+4x.png</texture> 
 			<colorkey>0</colorkey> 
@@ -90,8 +91,8 @@
 			<description>8x image</description> 
 			<type>image</type> 
 			<id>19</id> 
-			<posX>500</posX> 
-			<posY>30</posY> 
+  		<posX>590</posX>
+	  	<posY>17</posY>
 			<visible>no</visible> 
 			<texture>video+8x.png</texture> 
 			<colorkey>0</colorkey> 
@@ -101,8 +102,8 @@
 			<description>16x image</description> 
 			<type>image</type> 
 			<id>20</id> 
-			<posX>500</posX> 
-			<posY>30</posY> 
+  		<posX>590</posX>
+	  	<posY>17</posY>
 			<visible>no</visible> 
 			<texture>video+16x.png</texture> 
 			<colorkey>0</colorkey> 
@@ -112,8 +113,8 @@
 			<description>32x image</description> 
 			<type>image</type> 
 			<id>21</id> 
-			<posX>500</posX> 
-			<posY>30</posY> 
+  		<posX>590</posX>
+	  	<posY>17</posY>
 			<visible>no</visible> 
 			<texture>video+32x.png</texture> 
 			<colorkey>0</colorkey> 
@@ -123,8 +124,8 @@
 			<description>- 2x image</description> 
 			<type>image</type> 
 			<id>23</id> 
-			<posX>500</posX> 
-			<posY>30</posY> 
+  		<posX>590</posX>
+	  	<posY>17</posY>
 			<visible>no</visible> 
 			<texture>video-2x.png</texture> 
 			<colorkey>0</colorkey> 
@@ -134,8 +135,8 @@
 			<description>- 4x image</description> 
 			<type>image</type> 
 			<id>24</id> 
-			<posX>500</posX> 
-			<posY>30</posY> 
+  		<posX>590</posX>
+	  	<posY>17</posY>
 			<visible>no</visible> 
 			<texture>video-4x.png</texture> 
 			<colorkey>0</colorkey> 
@@ -145,8 +146,8 @@
 			<description>- 8x image</description> 
 			<type>image</type> 
 			<id>25</id> 
-			<posX>500</posX> 
-			<posY>30</posY>  
+  		<posX>590</posX>
+	  	<posY>17</posY>
 			<visible>no</visible> 
 			<texture>video-8x.png</texture> 
 			<colorkey>0</colorkey> 
@@ -156,8 +157,8 @@
 			<description>- 16x image</description> 
 			<type>image</type> 
 			<id>26</id> 
-			<posX>500</posX> 
-			<posY>30</posY> 
+  		<posX>590</posX>
+	  	<posY>17</posY>
 			<visible>no</visible> 
 			<texture>video-16x.png</texture> 
 			<colorkey>0</colorkey> 
@@ -167,8 +168,8 @@
 			<description>- 32x image</description> 
 			<type>image</type> 
 			<id>27</id> 
-			<posX>500</posX> 
-			<posY>30</posY>  
+  		<posX>590</posX>
+	  	<posY>17</posY>
 			<visible>no</visible> 
 			<texture>video-32x.png</texture> 
 			<colorkey>0</colorkey> 
