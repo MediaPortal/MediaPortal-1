@@ -183,7 +183,7 @@ namespace MediaPortal.GUI.Library
     int _scrollPosition = 0;
     int _scrollPosititionX = 0;
     int _lastItem = -1;
-    int _frames = 12;
+    int _frames = 6;
     int _sleeper = 0;
     bool _refresh = false;
     protected GUIverticalScrollbar _verticalScrollBar = null;

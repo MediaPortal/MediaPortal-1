@@ -606,7 +606,7 @@ namespace MediaPortal.GUI.Library
       GUIGraphicsContext.DX9Device.Viewport = oldview;
 
       //
-      _frames = 12;
+      _frames = 6;
       int iStep = _itemHeight / _frames;
       if (0 == iStep) iStep = 1;
       if (_scrollingLeft)
