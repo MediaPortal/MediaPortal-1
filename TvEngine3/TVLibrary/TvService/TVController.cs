@@ -1980,6 +1980,11 @@ namespace TvService
       DateTime timeStart = DateTime.Now;
       ulong fileSize = 0;
 
+      IChannel channel = _localCards[cardId].Channel;
+      bool isRadio = channel.IsRadio;
+      ulong minTimeShiftFile = 300 * 1024;//300Kb
+      if (isRadio)
+        minTimeShiftFile = 100 * 1024;//100Kb
 
       timeStart = DateTime.Now;
       try
@@ -2002,7 +2007,7 @@ namespace TvService
                     Log.Write("Controller: timeshifting fileSize:{0}", fileSize);
                   }
                   fileSize = newfileSize;
-                  if (fileSize >= 300 * 1024) // 300kb ..
+                  if (fileSize >= minTimeShiftFile) 
                   {
                     TimeSpan ts = DateTime.Now - timeStart;
                     Log.Write("Controller: timeshifting fileSize:{0} {1}", fileSize, ts.TotalMilliseconds);

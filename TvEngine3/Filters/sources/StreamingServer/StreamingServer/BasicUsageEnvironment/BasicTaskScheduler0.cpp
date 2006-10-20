@@ -71,7 +71,7 @@ void BasicTaskScheduler0::unscheduleDelayedTask(TaskToken& prevTask) {
 
 void BasicTaskScheduler0::doEventLoop(char* watchVariable) {
   // Repeatedly loop, handling readble sockets and timed events:
-  for (int i=0; i < 10;++i)
+  //for (int i=0; i < 10;++i)
   {
 //    if (watchVariable != NULL && *watchVariable != 0) break;
     SingleStep(1000000LL); //delay time is in micro seconds
