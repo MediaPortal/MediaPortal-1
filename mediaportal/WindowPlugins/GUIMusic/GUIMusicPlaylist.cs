@@ -122,7 +122,7 @@ namespace MediaPortal.GUI.Music
     private bool _useSimilarRandom = true;
     private bool _rememberStartTrack = true;
     private AudioscrobblerUtils ascrobbler = null;
-    private ScrobblerUtilsRequest _lastSimilarArtistRequest;
+    private ScrobblerUtilsRequest _lastRequest;
     //private Thread ScrobbleThread;
     //private Object ScrobbleLock;
     #endregion
@@ -203,8 +203,8 @@ namespace MediaPortal.GUI.Music
 
     public override void DeInit()
     {
-      if (_lastSimilarArtistRequest != null)
-        ascrobbler.RemoveRequest(_lastSimilarArtistRequest);
+      if (_lastRequest != null)
+        ascrobbler.RemoveRequest(_lastRequest);
 
       base.DeInit();
     }
@@ -1163,9 +1163,51 @@ namespace MediaPortal.GUI.Music
                       _trackArtist,
                       _useSimilarRandom,
                       new SimilarArtistRequest.SimilarArtistRequestHandler(OnUpdateSimilarArtistsCompleted));
-        _lastSimilarArtistRequest = request2;
+        _lastRequest = request2;
         ascrobbler.AddRequest(request2);
       }
+    }
+
+    private void UpdateNeighboursArtists(bool randomizeList)
+    {
+      NeighboursArtistsRequest request = new NeighboursArtistsRequest(
+                      randomizeList,
+                      new NeighboursArtistsRequest.NeighboursArtistsRequestHandler(OnUpdateNeighboursArtistsCompleted));
+      _lastRequest = request;
+      ascrobbler.AddRequest(request);
+    }
+
+    private void UpdateFriendsArtists(bool randomizeList)
+    {
+      FriendsArtistsRequest request = new FriendsArtistsRequest(
+                      randomizeList,
+                      new FriendsArtistsRequest.FriendsArtistsRequestHandler(OnUpdateFriendsArtistsCompleted));
+      _lastRequest = request;
+      ascrobbler.AddRequest(request);
+    }
+
+    private void UpdateRandomTracks()
+    {
+      RandomTracksRequest request = new RandomTracksRequest(
+                      new RandomTracksRequest.RandomTracksRequestHandler(OnUpdateRandomTracksCompleted));
+      _lastRequest = request;
+      ascrobbler.AddRequest(request);
+    }
+
+    private void UpdateUnheardTracks()
+    {
+      UnheardTracksRequest request = new UnheardTracksRequest(
+                      new UnheardTracksRequest.UnheardTracksRequestHandler(OnUpdateUnheardTracksCompleted));
+      _lastRequest = request;
+      ascrobbler.AddRequest(request);
+    }
+
+    private void UpdateFavoriteTracks()
+    {
+      FavoriteTracksRequest request = new FavoriteTracksRequest(
+                      new FavoriteTracksRequest.FavoriteTracksRequestHandler(OnUpdateFavoriteTracksCompleted));
+      _lastRequest = request;
+      ascrobbler.AddRequest(request);
     }
 
     void DoScrobbleLookups()
@@ -1179,6 +1221,7 @@ namespace MediaPortal.GUI.Music
         Song current10SekSong = new Song();
         List<Song> scrobbledArtists = new List<Song>();
 
+        ascrobbler.RemoveRequest(_lastRequest);
         switch (currentScrobbleMode)
         {
           case ScrobbleMode.Similar:
@@ -1204,9 +1247,6 @@ namespace MediaPortal.GUI.Music
 
                 try
                 {
-                  if (_lastSimilarArtistRequest != null)
-                    ascrobbler.RemoveRequest(_lastSimilarArtistRequest);
-
                   UpdateSimilarArtists(current10SekSong.Artist);
                   //scrobbledArtists = ascrobbler.getSimilarArtists(current10SekSong.ToURLArtistString(), _useSimilarRandom);
                   return;
@@ -1225,7 +1265,7 @@ namespace MediaPortal.GUI.Music
             //{
               try
               {
-                scrobbledArtists = ascrobbler.getNeighboursArtists(true);
+                UpdateNeighboursArtists(true);
               }
               catch (Exception ex)
               {
@@ -1239,7 +1279,7 @@ namespace MediaPortal.GUI.Music
             //{
               try
               {
-                scrobbledArtists = ascrobbler.getFriendsArtists(true);
+                UpdateFriendsArtists(true);
               }
               catch (Exception ex)
               {
@@ -1248,31 +1288,28 @@ namespace MediaPortal.GUI.Music
             //}
             break;
           case ScrobbleMode.Random:
-            //lock (ScrobbleLock)
-            //{
-              try
+            try
+            {
+              switch (currentOfflineMode)
               {
-                switch (currentOfflineMode)
-                {
-                  case offlineMode.random:
-                    scrobbledArtists = ascrobbler.getRandomTracks();
-                    break;
-                  case offlineMode.timesplayed:
-                    scrobbledArtists = ascrobbler.getUnhearedTracks();
-                    break;
-                  case offlineMode.favorites:
-                    scrobbledArtists = ascrobbler.getFavoriteTracks();
-                    break;
-                  default:
-                    scrobbledArtists = ascrobbler.getRandomTracks();
-                    break;
-                }
+                case offlineMode.random:
+                  UpdateRandomTracks();
+                  break;
+                case offlineMode.timesplayed:
+                  UpdateUnheardTracks();
+                  break;
+                case offlineMode.favorites:
+                  UpdateFavoriteTracks();
+                  break;
+                default:
+                  UpdateRandomTracks();
+                  break;
               }
-              catch (Exception ex)
-              {
-                Log.Error("ScrobbleLookupThread: exception on lookup - Random {0}", ex.Message);
-              }
-            //}
+            }
+            catch (Exception ex)
+            {
+              Log.Error("ScrobbleLookupThread: exception on lookup - Random {0}", ex.Message);
+            }
             break;
         }
 
@@ -1285,10 +1322,50 @@ namespace MediaPortal.GUI.Music
 
     public void OnUpdateSimilarArtistsCompleted(SimilarArtistRequest request2, List<Song> SimilarArtists)
     {
-      if (request2.Equals(_lastSimilarArtistRequest))
+      if (request2.Equals(_lastRequest))
         OnScrobbleLookupsCompleted(SimilarArtists);
       else
         Log.Warn("GUIMusicPlaylist: OnUpdateSimilarArtistsCompleted: unexpected response for request: {0}", request2.Type);
+    }
+
+    public void OnUpdateNeighboursArtistsCompleted(NeighboursArtistsRequest request, List<Song> NeighboursArtists)
+    {
+      if (request.Equals(_lastRequest))
+        OnScrobbleLookupsCompleted(NeighboursArtists);
+      else
+        Log.Warn("GUIMusicPlaylist: OnUpdateNeighboursArtistsCompleted: unexpected response for request: {0}", request.Type);
+    }
+
+    public void OnUpdateFriendsArtistsCompleted(FriendsArtistsRequest request, List<Song> FriendsArtists)
+    {
+      if (request.Equals(_lastRequest))
+        OnScrobbleLookupsCompleted(FriendsArtists);
+      else
+        Log.Warn("GUIMusicPlaylist: OnUpdateFriendsArtistsCompleted: unexpected response for request: {0}", request.Type);
+    }
+
+    public void OnUpdateRandomTracksCompleted(RandomTracksRequest request, List<Song> RandomTracks)
+    {
+      if (request.Equals(_lastRequest))
+        OnScrobbleLookupsCompleted(RandomTracks);
+      else
+        Log.Warn("GUIMusicPlaylist: OnUpdateRandomTracksCompleted: unexpected response for request: {0}", request.Type);
+    }
+
+    public void OnUpdateUnheardTracksCompleted(UnheardTracksRequest request, List<Song> UnheardTracks)
+    {
+      if (request.Equals(_lastRequest))
+        OnScrobbleLookupsCompleted(UnheardTracks);
+      else
+        Log.Warn("GUIMusicPlaylist: OnUpdateRandomTracksCompleted: unexpected response for request: {0}", request.Type);
+    }
+
+    public void OnUpdateFavoriteTracksCompleted(FavoriteTracksRequest request, List<Song> FavoriteTracks)
+    {
+      if (request.Equals(_lastRequest))
+        OnScrobbleLookupsCompleted(FavoriteTracks);
+      else
+        Log.Warn("GUIMusicPlaylist: OnUpdateRandomTracksCompleted: unexpected response for request: {0}", request.Type);
     }
 
     void OnScrobbleLookupsCompleted(List<Song> LookupArtists)

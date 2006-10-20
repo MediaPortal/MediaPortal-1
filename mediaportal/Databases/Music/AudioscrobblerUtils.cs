@@ -293,6 +293,116 @@ namespace MediaPortal.Music.Database
     }
   }
 
+  public class NeighboursArtistsRequest : ScrobblerUtilsRequest
+  {
+    bool _randomizeList;
+
+    public delegate void NeighboursArtistsRequestHandler(NeighboursArtistsRequest request, List<Song> songs);
+    public event NeighboursArtistsRequestHandler NeighboursArtistsRequestCompleted;
+
+    public NeighboursArtistsRequest(bool randomizeList)
+      : base(RequestType.GetNeighboursArtists)
+    {
+      _randomizeList = randomizeList;
+    }
+    public NeighboursArtistsRequest(bool randomizeList, NeighboursArtistsRequestHandler handler)
+      : this(randomizeList)
+    {
+      NeighboursArtistsRequestCompleted += handler;
+    }
+    public override void PerformRequest()
+    {
+      List<Song> songs = AudioscrobblerUtils.Instance.getNeighboursArtists(_randomizeList);
+      if (NeighboursArtistsRequestCompleted != null)
+        NeighboursArtistsRequestCompleted(this, songs);
+    }
+  }
+
+  public class FriendsArtistsRequest : ScrobblerUtilsRequest
+  {
+    bool _randomizeList;
+
+    public delegate void FriendsArtistsRequestHandler(FriendsArtistsRequest request, List<Song> songs);
+    public event FriendsArtistsRequestHandler FriendsArtistsRequestCompleted;
+
+    public FriendsArtistsRequest(bool randomizeList)
+      : base(RequestType.GetFriendsArtists)
+    {
+      _randomizeList = randomizeList;
+    }
+    public FriendsArtistsRequest(bool randomizeList, FriendsArtistsRequestHandler handler)
+      : this(randomizeList)
+    {
+      FriendsArtistsRequestCompleted += handler;
+    }
+    public override void PerformRequest()
+    {
+      List<Song> songs = AudioscrobblerUtils.Instance.getFriendsArtists(_randomizeList);
+      if (FriendsArtistsRequestCompleted != null)
+        FriendsArtistsRequestCompleted(this, songs);
+    }
+  }
+
+  public class RandomTracksRequest : ScrobblerUtilsRequest
+  {
+    public delegate void RandomTracksRequestHandler(RandomTracksRequest request, List<Song> songs);
+    public event RandomTracksRequestHandler RandomTracksRequestCompleted;
+
+    public RandomTracksRequest()
+      : base(RequestType.GetRandomTracks) { }
+    public RandomTracksRequest(RandomTracksRequestHandler handler)
+      : this()
+    {
+      RandomTracksRequestCompleted += handler;
+    }
+    public override void PerformRequest()
+    {
+      List<Song> songs = AudioscrobblerUtils.Instance.getRandomTracks();
+      if (RandomTracksRequestCompleted != null)
+        RandomTracksRequestCompleted(this, songs);
+    }
+  }
+
+  public class UnheardTracksRequest : ScrobblerUtilsRequest
+  {
+    public delegate void UnheardTracksRequestHandler(UnheardTracksRequest request, List<Song> songs);
+    public event UnheardTracksRequestHandler UnheardTracksRequestCompleted;
+
+    public UnheardTracksRequest()
+      : base(RequestType.GetUnhearedTracks) { }
+    public UnheardTracksRequest(UnheardTracksRequestHandler handler)
+      : this()
+    {
+      UnheardTracksRequestCompleted += handler;
+    }
+    public override void PerformRequest()
+    {
+      List<Song> songs = AudioscrobblerUtils.Instance.getUnhearedTracks();
+      if (UnheardTracksRequestCompleted != null)
+        UnheardTracksRequestCompleted(this, songs);
+    }
+  }
+
+  public class FavoriteTracksRequest : ScrobblerUtilsRequest
+  {
+    public delegate void FavoriteTracksRequestHandler(FavoriteTracksRequest request, List<Song> songs);
+    public event FavoriteTracksRequestHandler FavoriteTracksRequestCompleted;
+
+    public FavoriteTracksRequest()
+      : base(RequestType.GetFavoriteTracks) { }
+    public FavoriteTracksRequest(FavoriteTracksRequestHandler handler)
+      : this()
+    {
+      FavoriteTracksRequestCompleted += handler;
+    }
+    public override void PerformRequest()
+    {
+      List<Song> songs = AudioscrobblerUtils.Instance.getFavoriteTracks();
+      if (FavoriteTracksRequestCompleted != null)
+        FavoriteTracksRequestCompleted(this, songs);
+    }
+  }
+
   #endregion
   
   public class AudioscrobblerUtils
