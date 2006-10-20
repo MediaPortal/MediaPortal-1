@@ -308,7 +308,7 @@ namespace TvLibrary.Implementations.DVB
 
     public bool SendPMT(int serviceId)
     {
-      Log.Log.WriteFile("Technotrend: SendPMT serviceId:{0}",serviceId);
+      Log.Log.WriteFile("Technotrend: SendPMT serviceId:{0}", serviceId);
       if ((bool)_isCamInitializedTable[_handle] == false)
       {
         Log.Log.WriteFile("Technotrend: service cannot be decoded because the CAM is not ready yet");
@@ -322,7 +322,7 @@ namespace TvLibrary.Implementations.DVB
       }
       else
       {
-        Log.Log.WriteFile("Technotrend: unable to decode service");
+        Log.Log.WriteFile("Technotrend: unable to decode service:{0:X}", hr);
         return false;
       }
     }
@@ -427,8 +427,8 @@ namespace TvLibrary.Implementations.DVB
         Marshal.WriteByte(ptrData, 2, (byte)((diseqc >> 8) & 0xff));
         Marshal.WriteByte(ptrData, 3, (byte)((diseqc) & 0xff));
 
-        bdaapiSetDiSEqCMsg(_handle, ptrData, length, repeat, toneburst, (int)channel.Polarisation);
-        Log.Log.WriteFile("Technotrend: Diseqc Command Send");
+        int hr = bdaapiSetDiSEqCMsg(_handle, ptrData, length, repeat, toneburst, (int)channel.Polarisation);
+        Log.Log.WriteFile("Technotrend: Diseqc Command Send:{0:X}", hr);
       }
       finally
       {
