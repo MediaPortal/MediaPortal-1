@@ -1,50 +1,50 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <strings>
 	<characters>255</characters>
-	<string>
-		<id>0</id>
-		<value>Mine Programmer</value>
-	</string>
-	<string>
-		<id>1</id>
-		<value>Mine Billeder</value>
-	</string>
-	<string>
-		<id>2</id>
-		<value>Min Musik</value>
-	</string>
-	<string>
-		<id>3</id>
-		<value>Mine Film</value>
-	</string>
-	<string>
-		<id>4</id>
-		<value>TV-Guide</value>
-	</string>
-	<string>
-		<id>5</id>
-		<value>Mine Indstillinger</value>
-	</string>
-	<string>
-		<id>6</id>
-		<value>XBOX Media Center CVS build</value>
-	</string>
-	<string>
-		<id>7</id>
-		<value>Mine Filer</value>
-	</string>
-	<string>
-		<id>8</id>
-		<value>Min Vejrudsigt</value>
-	</string>
-	<string>
-		<id>9</id>
-		<value>Mine Nyheder</value>
-	</string>
-	<string>
-		<id>10</id>
-		<value>Mine Opskrifter</value>
-	</string>
+<string Prefix="Mine ">
+      <id>0</id>
+      <value>Programmer</value>
+   </string>
+  <string Prefix="Mine ">
+      <id>1</id>
+      <value>Billeder</value>
+   </string>
+  <string Prefix="Min ">
+      <id>2</id>
+      <value>Musik</value>
+   </string>
+  <string Prefix="Mine ">
+      <id>3</id>
+      <value>Videoer</value>
+   </string>
+   <string>
+      <id>4</id>
+      <value>TV Guide</value>
+   </string>
+   <string>
+      <id>5</id>
+      <value>Indstillinger</value>
+   </string>
+   <string>
+      <id>6</id>
+      <value>XBOX Media Center CVS build</value>
+   </string>
+  <string Prefix="Mine ">
+      <id>7</id>
+      <value>Filer</value>
+   </string>
+  <string Prefix="Min ">
+      <id>8</id>
+      <value>Vejrudsigt</value>
+   </string>
+  <string Prefix="Mine ">
+      <id>9</id>
+      <value>Nyheder</value>
+   </string>
+  <string Prefix="Mine ">
+      <id>10</id>
+      <value>Opskrifter</value>
+   </string>
 	<string>
 		<id>11</id>
 		<value>Mandag</value>
@@ -1346,6 +1346,14 @@
 		<value>Fugtighed</value>
 	</string>
 	<string>
+		<id>407</id>
+		<value>Fra</value>
+	</string>
+	<string>
+		<id>408</id>
+		<value>på</value>
+	</string>
+	<string>
 		<id>410</id>
 		<value>Tilslutter til Weather.com</value>
 	</string>
@@ -1778,10 +1786,6 @@
 		<value>Marker</value>
 	</string>
 	<string>
-		<id>555</id>
-		<value>Fra {0} på {1} {2}</value>
-	</string>
-	<string>
 		<id>600</id>
 		<value>TVGuide</value>
 	</string>
@@ -1801,9 +1805,9 @@
 		<id>604</id>
 		<value>Optaget TV</value>
 	</string>
-	<string>
+	<string Prefix="Mit ">
 		<id>605</id>
-		<value>Mit TV</value>
+		<value>Fjernsyn</value>
 	</string>
 	<string>
 		<id>606</id>
@@ -2041,9 +2045,9 @@
 		<id>664</id>
 		<value>Slet dette billede?</value>
 	</string>
-	<string>
+	<string Prefix="Min ">
 		<id>665</id>
-		<value>Min Radio</value>
+		<value>Radio</value>
 	</string>
 	<string>
 		<id>666</id>
@@ -2449,9 +2453,9 @@
 		<id>810</id>
 		<value>Kort</value>
 	</string>
-	<string>
+	<string Prefix="Min ">
 		<id>850</id>
-		<value>Min Alarm</value>
+		<value>Alarm</value>
 	</string>
 	<string>
 		<id>851</id>
@@ -2701,9 +2705,9 @@
 		<id>912</id>
 		<value>Kunne ikke hente de seneste nyheder!</value>
 	</string>
-	<string>
+	<string Prefix="Mine">
 		<id>913</id>
-		<value>Mine Moduler</value>
+		<value>Moduler</value>
 	</string>
 	<string>
 		<id>914</id>
@@ -3977,9 +3981,9 @@
 		<id>3022</id>
 		<value>af</value>
 	</string>
-	<string>
+	<string Prefix="Mine ">
 		<id>5900</id>
-		<value>Mine Trailere</value>
+		<value>Trailere</value>
 	</string>
 	<string>
 		<id>5901</id>
@@ -4337,9 +4341,9 @@
 		<id>25001</id>
 		<value>Venter på side {0:X}...!</value>
 	</string>
-	<string>
+	<string Prefix="Mit">
 		<id>19001</id>
-		<value>Mit Tetris</value>
+		<value>Tetris</value>
 	</string>
 	<string>
 		<id>19002</id>
@@ -5029,9 +5033,9 @@
 		<id>200037</id>
 		<value>Spring over&gt;</value>
 	</string>
-	<string>
+	<string Prefix="Min">
 		<id>4000</id>
-		<value>Min Internet browser</value>
+		<value>Internet browser</value>
 	</string>
 	<string>
 		<id>4001</id>
