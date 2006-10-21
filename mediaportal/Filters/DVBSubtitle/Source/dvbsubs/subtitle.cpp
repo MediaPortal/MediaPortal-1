@@ -1,6 +1,5 @@
 /* 
  *	Copyright (C) 2005-2006 Team MediaPortal
- *  Author: tourettes
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify

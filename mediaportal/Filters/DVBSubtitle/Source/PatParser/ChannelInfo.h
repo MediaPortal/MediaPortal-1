@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2005-2006 Team MediaPortal
+ *	Copyright (C) 2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,49 +18,30 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#pragma once
+#include "pidtable.h" 
 
-#ifndef _BITMAP_H
-#define _BITMAP_H
-
-#include <windows.h>
-
-typedef unsigned __int64 uint64_t;
-typedef unsigned __int16 uint16_t;
-typedef unsigned __int8 uint8_t;
-
-class CSubtitle
+class CChannelInfo
 {
 public:
+  CChannelInfo(void);
+  virtual ~CChannelInfo(void);
+  void Reset();
+  int NetworkId;
+  int TransportId;
+  int ServiceId;
+  int MajorChannel;
+  int MinorChannel;
+  int Frequency;
+  int EIT_schedule_flag;
+  int EIT_present_following_flag;
+  int RunningStatus;
+  int FreeCAMode;
+  int ServiceType;
+  int Modulation;
+	int LCN;
+  char ProviderName[255];
+  char ServiceName[255];
 
-	CSubtitle( int width, int height );
-	
-	~CSubtitle();
-	BITMAP m_Bitmap;
-	BITMAP* GetBitmap();
-
-	int RenderBitmap( unsigned char* buffer, char *file_name, 
-		unsigned char* my_palette, unsigned char* my_trans, int col_count );
-	
-	int Width();
-	
-	int Height();
-
-	uint64_t PTS();
-	
-	void SetPTS( uint64_t PTS );
-
-  int FirstScanline();
-
-	unsigned char* GetData(); 
-
-	int CSubtitle::GetData( int pos );
-
-	unsigned char* m_Data;
-
-  int m_FirstScanline;
-
-private:
-	
-	uint64_t m_PTS;
+  CPidTable PidTable;
 };
-#endif

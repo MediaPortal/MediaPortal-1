@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2005-2006 Team MediaPortal
+ *	Copyright (C) 2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,49 +18,38 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#pragma once
 
-#ifndef _BITMAP_H
-#define _BITMAP_H
-
-#include <windows.h>
-
-typedef unsigned __int64 uint64_t;
-typedef unsigned __int16 uint16_t;
-typedef unsigned __int8 uint8_t;
-
-class CSubtitle
+#define MAX_PES_PACKET 0x80000
+class CPesCallback
 {
 public:
-
-	CSubtitle( int width, int height );
-	
-	~CSubtitle();
-	BITMAP m_Bitmap;
-	BITMAP* GetBitmap();
-
-	int RenderBitmap( unsigned char* buffer, char *file_name, 
-		unsigned char* my_palette, unsigned char* my_trans, int col_count );
-	
-	int Width();
-	
-	int Height();
-
-	uint64_t PTS();
-	
-	void SetPTS( uint64_t PTS );
-
-  int FirstScanline();
-
-	unsigned char* GetData(); 
-
-	int CSubtitle::GetData( int pos );
-
-	unsigned char* m_Data;
-
-  int m_FirstScanline;
-
-private:
-	
-	uint64_t m_PTS;
+	virtual int OnNewPesPacket(int streamId,byte* header, int headerlen,byte* data, int len, bool isStart)=0;
 };
-#endif
+
+class CPesDecoder
+{
+public:
+	CPesDecoder(CPesCallback* callback);
+	virtual ~CPesDecoder(void);
+	void					SetMaxLength(int len);
+	void					SetPid(int pid);
+	int						GetPid();
+	bool					OnTsPacket(byte* tsPacket);
+	void					Reset();
+	int						GetStreamId();
+	bool					IsAudio();
+	bool					IsVideo();
+	void					SetStreamId(int streamId);
+private:
+  bool          m_bStart;
+  int           m_iPesHeaderLen;
+  byte          m_pesHeader[256];
+	CPesCallback* m_pCallback;
+	unsigned long m_packets;
+	int					  m_pid;
+	byte*					m_pesBuffer;
+	int						m_iWritePos;
+	int						m_iMaxLength;
+	int						m_iStreamId;
+};

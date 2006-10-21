@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2005-2006 Team MediaPortal
+ *	Copyright (C) 2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,49 +18,39 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-
-#ifndef _BITMAP_H
-#define _BITMAP_H
-
+#pragma once
 #include <windows.h>
-
-typedef unsigned __int64 uint64_t;
-typedef unsigned __int16 uint16_t;
-typedef unsigned __int8 uint8_t;
-
-class CSubtitle
+class CPidTable
 {
 public:
 
-	CSubtitle( int width, int height );
-	
-	~CSubtitle();
-	BITMAP m_Bitmap;
-	BITMAP* GetBitmap();
+  CPidTable();
+  virtual ~CPidTable();
+  void Reset();
+  
+  CPidTable operator = (const CPidTable &pids);
 
-	int RenderBitmap( unsigned char* buffer, char *file_name, 
-		unsigned char* my_palette, unsigned char* my_trans, int col_count );
-	
-	int Width();
-	
-	int Height();
-
-	uint64_t PTS();
-	
-	void SetPTS( uint64_t PTS );
-
-  int FirstScanline();
-
-	unsigned char* GetData(); 
-
-	int CSubtitle::GetData( int pos );
-
-	unsigned char* m_Data;
-
-  int m_FirstScanline;
-
-private:
-	
-	uint64_t m_PTS;
+	ULONG PcrPid;
+	ULONG PmtPid;
+	WORD VideoPid;
+	WORD AudioPid1;
+	BYTE Lang1_1;
+	BYTE Lang1_2;
+	BYTE Lang1_3;
+	WORD AudioPid2;
+	BYTE Lang2_1;
+	BYTE Lang2_2;
+	BYTE Lang2_3;
+  WORD AudioPid3;
+	BYTE Lang3_1;
+	BYTE Lang3_2;
+	BYTE Lang3_3;
+	WORD AC3Pid;
+	WORD TeletextPid;
+	WORD SubtitlePid;
+  int  ServiceId;
+	BYTE SubLang1_1;
+	BYTE SubLang1_2;
+	BYTE SubLang1_3;
+	int  videoServiceType;
 };
-#endif

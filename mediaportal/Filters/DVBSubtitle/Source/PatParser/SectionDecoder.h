@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2005-2006 Team MediaPortal
+ *	Copyright (C) 2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,49 +18,31 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#pragma once
+#include "ISectionCallback.h"
+#include "dvbutil.h"
+#include "Section.h"
 
-#ifndef _BITMAP_H
-#define _BITMAP_H
+#define MAX_SECTIONS 256
 
-#include <windows.h>
-
-typedef unsigned __int64 uint64_t;
-typedef unsigned __int16 uint16_t;
-typedef unsigned __int8 uint8_t;
-
-class CSubtitle
+class CSectionDecoder : public CDvbUtil
 {
 public:
-
-	CSubtitle( int width, int height );
-	
-	~CSubtitle();
-	BITMAP m_Bitmap;
-	BITMAP* GetBitmap();
-
-	int RenderBitmap( unsigned char* buffer, char *file_name, 
-		unsigned char* my_palette, unsigned char* my_trans, int col_count );
-	
-	int Width();
-	
-	int Height();
-
-	uint64_t PTS();
-	
-	void SetPTS( uint64_t PTS );
-
-  int FirstScanline();
-
-	unsigned char* GetData(); 
-
-	int CSubtitle::GetData( int pos );
-
-	unsigned char* m_Data;
-
-  int m_FirstScanline;
-
+  CSectionDecoder(void);
+  ~CSectionDecoder(void);
+	void SetCallBack(ISectionCallback* callback);
+	void OnTsPacket(byte* tsPacket);
+  void SetPid(int pid);
+  int  GetPid();
+  void SetTableId(int tableId);
+	void Reset();
+  int  GetTableId();
+  virtual void OnNewSection(CSection& section);
+protected:
 private:
-	
-	uint64_t m_PTS;
+  int			    m_pid;
+  int			    m_tableId;
+  CSection		m_section;
+	int         m_iContinuityCounter;
+	ISectionCallback* m_pCallback;
 };
-#endif
