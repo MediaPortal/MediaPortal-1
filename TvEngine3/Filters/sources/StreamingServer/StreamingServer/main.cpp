@@ -1,5 +1,6 @@
 #include <streams.h>
 #include <winsock.h>
+#include <shlobj.h>
 #include "liveMedia.hh"
 #include "BasicUsageEnvironment.hh"
 #include "GroupsockHelper.hh"
@@ -11,7 +12,7 @@
 #include "TsFileDuration.h"
 
 const char* STREAM_NAME = "testStream";
-const char* STREAM_DESCRIPTION = "Session streamed by \"Streamserver v1.0\"";
+const char* STREAM_DESCRIPTION = "Session streamed by \"MediaPortal Tv Server v1.0\"";
 const char* FILE_NAME = "C:\\temp\\testApp\\live.ts.tsbuffer";
 extern void Log(const char *fmt, ...) ;
 UsageEnvironment* env;
@@ -42,6 +43,13 @@ int _tmain(int argc, _TCHAR* argv[])
 
 void StreamSetup(char* ipAdress)
 {
+  TCHAR folder[MAX_PATH];
+  TCHAR fileName[MAX_PATH];
+  ::SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
+  sprintf(fileName,"%s\\MediaPortal TV Server\\log\\streaming server.Log",folder);
+	::DeleteFile(fileName);
+
+
 	Log("Setup stream server for ip:%s",ipAdress);
 	
 	ReceivingInterfaceAddr=inet_addr(ipAdress );
