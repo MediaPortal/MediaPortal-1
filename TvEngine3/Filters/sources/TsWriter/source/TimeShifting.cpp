@@ -549,8 +549,8 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 	if (m_pcrPid<0 || m_vecPids.size()==0|| m_pmtPid<0) return;
 
 	CTsHeader header(tsPacket);
-	
 	if (header.TransportError) return;
+	if (header.TScrambling!=0) return;
   if (m_iPacketCounter>=100)
   {
     WriteFakePAT();
