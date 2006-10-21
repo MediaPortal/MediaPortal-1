@@ -125,6 +125,7 @@ namespace MediaPortal.Player
     {
       if (Vmr9 != null)
       {
+        Vmr9.FrameCounter = 123;
         Vmr9.Enable(true);
         _updateNeeded = true;
         SetVideoWindow();
@@ -1016,8 +1017,12 @@ namespace MediaPortal.Player
           if (dTime < Duration)
           {
             Log.Info("seekabs:{0}", dTime);
+            if (Vmr9 != null)
+              Vmr9.FrameCounter = 123;
             mediaPos.put_CurrentPosition(dTime);
             Log.Info("seekabs:{0} done", dTime);
+            if (Vmr9 != null)
+              Vmr9.FrameCounter = 123;
           }
         }
       }
