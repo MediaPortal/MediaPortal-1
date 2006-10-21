@@ -767,29 +767,55 @@ char* CDVBSubDecoder::Pts2hmsu( uint64_t pts, char sep )
 
 uint64_t CDVBSubDecoder::Get_pes_pts (unsigned char* buf) 
 {
-	uint64_t PTS;
-	int PTS_DTS_flags;
-	uint64_t p0,p1,p2,p3,p4;
+	UINT64 pts=0LL;
+	UINT64 dts=0LL;
+	UINT64 k = 0LL;
+	//int PTS_DTS_flags;
+	//uint64_t p0,p1,p2,p3,p4;
+	bool PTS_available=false;
+	bool DTS_available=false;
 
-	PTS_DTS_flags=(buf[7]&0xb0)>>6;
+	if ( (buf[7]&0x80)!=0) PTS_available=true;
+	if ( (buf[7]&0x40)!=0) DTS_available=true;
+	//PTS_DTS_flags=(buf[7]&0xb0)>>6;
 	
-	if ((PTS_DTS_flags&0x02)==0x02) 
+	//if ((PTS_DTS_flags&0x02)==0x02) 
+	if (PTS_available)
 	{
 		// PTS is in bytes 9,10,11,12,13
-		p0=(buf[13]&0xfe)>>1|((buf[12]&1)<<7);
-		p1=(buf[12]&0xfe)>>1|((buf[11]&2)<<6);
-		p2=(buf[11]&0xfc)>>2|((buf[10]&3)<<6);
-		p3=(buf[10]&0xfc)>>2|((buf[9]&6)<<5);
-		p4=(buf[9]&0x08)>>3;
+		//p0=(buf[13]&0xfe)>>1|((buf[12]&1)<<7);
+		//p1=(buf[12]&0xfe)>>1|((buf[11]&2)<<6);
+		//p2=(buf[11]&0xfc)>>2|((buf[10]&3)<<6);
+		//p3=(buf[10]&0xfc)>>2|((buf[9]&6)<<5);
+		//p4=(buf[9]&0x08)>>3;
 
-		PTS=p0|(p1<<8)|(p2<<16)|(p3<<24)|(p4<<32);
-	} 
-	else 
-	{
-		PTS = 0;
+		//PTS=p0|(p1<<8)|(p2<<16)|(p3<<24)|(p4<<32);
+
+		/* Hobbit code to replace earlier futile attempts to solve these numbers */
+
+		pts+= ((buf[13]>>1)&0x7f);				// 7bits	7
+		pts+=(buf[12]<<7);								// 8bits	15
+		pts+=((buf[11]>>1)<<15);					// 7bits	22
+		pts+=((buf[10])<<22);							// 8bits	30
+		k=((buf[9]>>1)&0x7);
+		k <<=30LL;
+		pts+=k;			// 3bits
+		pts &= 0x1FFFFFFFFLL;
+		
 	}
-	
-	return( PTS );
+	if (DTS_available) 
+	{
+		dts= (buf[18]>>1);								// 7bits	7
+		dts+=(buf[17]<<7);								// 8bits	15
+		dts+=((buf[16]>>1)<<15);					// 7bits	22
+		dts+=((buf[15])<<22);							// 8bits	30
+		k=((buf[14]>>1)&0x7);
+		k <<=30LL;
+		dts+=k;			// 3bits
+		dts &= 0x1FFFFFFFFLL;
+	}
+	Log("Decoder PTS: %lld, DTS: %lld",pts,dts);
+	return( pts );
 }
 
 BITMAP* CDVBSubDecoder::GetSubtitle()
