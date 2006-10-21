@@ -1,3 +1,5 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
  *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,6 +20,9 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
+
 #region usings
 using System;
 using System.IO;
@@ -58,8 +63,8 @@ namespace MediaPortal.TV.Recording
 
 
 
-    protected int _currentCardIndex=-1;
-    string _currentTvChannel=String.Empty;
+    protected int _currentCardIndex = -1;
+    string _currentTvChannel = String.Empty;
     protected DateTime _killTimeshiftingTimer;
 
     static List<TVChannel> _tvChannelsList = new List<TVChannel>();
@@ -75,23 +80,24 @@ namespace MediaPortal.TV.Recording
     public string TVChannelName
     {
       get { return _currentTvChannel; }
-      set {
+      set
+      {
         if (_currentTvChannel != value)
         {
           _currentTvChannel = value;
           if (_currentTvChannel != string.Empty)
           {
-              if (OnTvChannelChanged != null)
-                  OnTvChannelChanged(_currentTvChannel);
+            if (OnTvChannelChanged != null)
+              OnTvChannelChanged(_currentTvChannel);
           }
         }
       }
     }
-    
+
     public int CurrentCardIndex
     {
       get { return _currentCardIndex; }
-      set { _currentCardIndex=value; }
+      set { _currentCardIndex = value; }
     }
     public virtual void ResetTimeshiftTimer()
     {
@@ -103,12 +109,13 @@ namespace MediaPortal.TV.Recording
     {
       foreach (TVChannel chan in _tvChannelsList)
       {
-        if (String.Compare(chan.Name,channelName,true)==0)
+        if (String.Compare(chan.Name, channelName, true) == 0)
         {
           if (chan.External)
           {
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_TUNE_EXTERNAL_CHANNEL, 0, 0, 0, 0, 0, null);
             msg.Label = chan.ExternalTunerChannel;
+            msg.Label2 = _currentCardIndex.ToString();
             GUIWindowManager.SendThreadMessage(msg);
           }
           break;
@@ -116,13 +123,13 @@ namespace MediaPortal.TV.Recording
       }
     }
 
-    public void OnTvStopped(int card,TVCaptureDevice device)
+    public void OnTvStopped(int card, TVCaptureDevice device)
     {
-      if (OnTvViewingStopped!=null)
+      if (OnTvViewingStopped != null)
         OnTvViewingStopped(card, device);
     }
-    
-    public void OnTvStart(int card,TVCaptureDevice device)
+
+    public void OnTvStart(int card, TVCaptureDevice device)
     {
       if (OnTvViewingStarted != null)
         OnTvViewingStarted(card, device);
