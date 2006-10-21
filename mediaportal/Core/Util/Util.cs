@@ -119,7 +119,7 @@ namespace MediaPortal.Util
       {
         m_bHideExtensions = xmlreader.GetValueAsBool("general", "hideextensions", true);
 
-        string strTmp = xmlreader.GetValueAsString("music", "extensions", ".mp3,.wma,.ogg,.flac,.wav,.cda,.b4s,.m4a,.m4p");
+        string strTmp = xmlreader.GetValueAsString("music", "extensions", ".mp3,.wma,.ogg,.flac,.wav,.cda,.m3u,.pls,.b4s,.m4a,.m4p,.mp4,.wpl,.wv,.ape,.mpc");
         Tokens tok = new Tokens(strTmp, new char[] { ',' });
         foreach (string extension in tok)
         {

@@ -29,49 +29,51 @@ using MediaPortal.Util;
 #pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
-	public class MusicExtensions : MediaPortal.Configuration.Sections.FileExtensions
-	{
-		private System.ComponentModel.IContainer components = null;
+  public class MusicExtensions : MediaPortal.Configuration.Sections.FileExtensions
+  {
+    private System.ComponentModel.IContainer components = null;
 
-		public MusicExtensions() : this("Music Extensions")
-		{
-		}
+    public MusicExtensions()
+      : this("Music Extensions")
+    {
+    }
 
-		public MusicExtensions(string name) : base(name)
-		{
-			// This call is required by the Windows Form Designer.
-			InitializeComponent();
+    public MusicExtensions(string name)
+      : base(name)
+    {
+      // This call is required by the Windows Form Designer.
+      InitializeComponent();
 
-			// TODO: Add any initialization after the InitializeComponent call
-		}
+      // TODO: Add any initialization after the InitializeComponent call
+    }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public override void LoadSettings()
-		{
+    /// <summary>
+    /// 
+    /// </summary>
+    public override void LoadSettings()
+    {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-			{
-                //SV
-				//Extensions = xmlreader.GetValueAsString("music", "extensions", ".mp3,.wma,.ogg,.flac,.wav,.cda,.m3u,.pls,.b4s,.m4a,.m4p,.wpl");
-                Extensions = xmlreader.GetValueAsString("music", "extensions", ".mp3,.wma,.ogg,.flac,.wav,.cda,.m3u,.pls,.b4s,.m4a,.m4p,.mp4,.wpl,.wv,.ape");
-            }
-		}
+      {
+        //SV
+        //Extensions = xmlreader.GetValueAsString("music", "extensions", ".mp3,.wma,.ogg,.flac,.wav,.cda,.m3u,.pls,.b4s,.m4a,.m4p,.wpl");
+        Extensions = xmlreader.GetValueAsString("music", "extensions", ".mp3,.wma,.ogg,.flac,.wav,.cda,.m3u,.pls,.b4s,.m4a,.m4p,.mp4,.wpl,.wv,.ape,.mpc");
+      }
+    }
 
-		public override void SaveSettings()
-		{
+    public override void SaveSettings()
+    {
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-			{
-				//
-				// Set language
-				//
-				xmlwriter.SetValue("music", "extensions", Extensions);
-			}
-		}
+      {
+        //
+        // Set language
+        //
+        xmlwriter.SetValue("music", "extensions", Extensions);
+      }
+    }
 
     public override object GetSetting(string name)
     {
-      switch(name.ToLower())
+      switch (name.ToLower())
       {
         case "extensions":
           return Extensions;
@@ -81,31 +83,31 @@ namespace MediaPortal.Configuration.Sections
     }
 
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if (components != null) 
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
 
-		#region Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
-			components = new System.ComponentModel.Container();
-		}
-		#endregion
-	}
+    #region Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
+      components = new System.ComponentModel.Container();
+    }
+    #endregion
+  }
 }
 
