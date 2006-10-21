@@ -124,16 +124,11 @@ bool CRTSPClient::setupStreams()
 
 		if (!clientSetupSubsession(m_ourClient, subsession, streamUsingTCP)) 
 		{
-			*m_env << "Failed to setup \"" << subsession->mediumName()
-				<< "/" << subsession->codecName()
-				<< "\" subsession: " << m_env->getResultMsg() << "\n";
+			Log( "Failed to setup %s %s %s" ,subsession->mediumName(),subsession->codecName(),m_env->getResultMsg() );;
 		} 
 		else 
 		{
-			*m_env << "Setup \"" << subsession->mediumName()
-				<< "/" << subsession->codecName()
-				<< "\" subsession (client ports " << subsession->clientPortNum()
-				<< "-" << subsession->clientPortNum()+1 << ")\n";
+			Log( "Setup %s %s %d %d" ,subsession->mediumName(),subsession->codecName(),subsession->clientPortNum(),subsession->clientPortNum()+1);;
 			madeProgress = True;
 		}
 	}
@@ -149,13 +144,13 @@ bool CRTSPClient::startPlayingStreams()
 {
   if (!clientStartPlayingSession(m_ourClient, m_session)) 
   {
-    *m_env << "Failed to start playing session: " << m_env ->getResultMsg() << "\n";
+    Log("Failed to start playing session:%s " ,m_env ->getResultMsg() );
     shutdown();
     return false;
   } 
   else 
   {
-    *m_env  << "Started playing session\n";
+    Log("Started playing session");
   }
   return true;
 }
@@ -192,8 +187,7 @@ bool CRTSPClient::Initialize()
   m_ourClient = createClient(*m_env, 0/*verbosityLevel*/, "TSFileSource");
   if (m_ourClient == NULL) 
 	{
-    *m_env << "Failed to create " << clientProtocolName
-				<< " client: " << m_env->getResultMsg() << "\n";
+    Log("Failed to create %s %s" ,clientProtocolName,m_env->getResultMsg() );
     shutdown();
     return false;
   }
@@ -203,17 +197,17 @@ bool CRTSPClient::Initialize()
 bool CRTSPClient::OpenStream(char* url)
 {
 	m_session=NULL;
-	m_bSleep=true;
+	
 	strcpy(m_url,url);
 	// Open the URL, to get a SDP description: 
   char* sdpDescription= getSDPDescriptionFromURL(m_ourClient, url, ""/*username*/, ""/*password*/,""/*proxyServerName*/, 0/*proxyServerPortNum*/,1234/*desiredPortNum*/);
   if (sdpDescription == NULL) 
 	{
-    *m_env << "Failed to get a SDP description from URL \"" << url << "\": " << m_env->getResultMsg() << "\n";
+    Log("Failed to get a SDP description from URL %s %s",url ,m_env->getResultMsg() );
     shutdown();
     return false;
   }
-  *m_env << "Opened URL \"" << url<< "\", returning a SDP description:\n" << sdpDescription << "\n";
+  Log("Opened URL %s %s",url,sdpDescription);
 
 	char* range=strstr(sdpDescription,"a=range:npt=");
 	if (range!=NULL)
@@ -258,13 +252,13 @@ bool CRTSPClient::OpenStream(char* url)
   delete[] sdpDescription;
   if (m_session == NULL) 
 	{
-    *m_env << "Failed to create a MediaSession object from the SDP description: " << m_env->getResultMsg() << "\n";
+    Log("Failed to create a MediaSession object from the SDP description:%s ",m_env->getResultMsg());
     shutdown();
     return false;
   } 
 	else if (!m_session->hasSubsessions()) 
 	{
-    *m_env << "This session has no media subsessions (i.e., \"m=\" lines)\n";
+    Log("This session has no media subsessions");
     shutdown();
     return false;
   }
@@ -281,10 +275,7 @@ bool CRTSPClient::OpenStream(char* url)
 		{
       if (strcmp(subsession->mediumName(), singleMediumToTest) != 0) 
 			{
-				*m_env << "Ignoring \"" << subsession->mediumName()
-				  << "/" << subsession->codecName()
-				  << "\" subsession, because we've asked to receive a single " << singleMedium
-				  << " session only\n";
+				Log("Ignoring %s %s %s" , subsession->mediumName(),subsession->codecName(),singleMedium);
 				continue;
       } 
 			else 
@@ -304,16 +295,11 @@ bool CRTSPClient::OpenStream(char* url)
 		{
       if (!subsession->initiate(simpleRTPoffsetArg)) 
 			{
-				*m_env  << "Unable to create receiver for \"" << subsession->mediumName()
-					<< "/" << subsession->codecName()
-					<< "\" subsession: " << m_env->getResultMsg() << "\n";
+				Log("Unable to create receiver for %s %s %s" ,subsession->mediumName(),subsession->codecName(),m_env->getResultMsg());
 			} 
 			else 
 			{
-				*m_env  << "Created receiver for \"" << subsession->mediumName()
-					<< "/" << subsession->codecName()
-					<< "\" subsession (client ports " << subsession->clientPortNum()
-					<< "-" << subsession->clientPortNum()+1 << ")\n";
+				Log("Created receiver for %s %s %d %d " ,subsession->mediumName(),subsession->codecName(),subsession->clientPortNum(),subsession->clientPortNum()+1 );
 				madeProgress = True;
 
 				if (subsession->rtpSource() != NULL) 
@@ -330,12 +316,8 @@ bool CRTSPClient::OpenStream(char* url)
 						int socketNum= subsession->rtpSource()->RTPgs()->socketNum();
 						unsigned curBufferSize= getReceiveBufferSize(*m_env, socketNum);
 						unsigned newBufferSize= setReceiveBufferTo(*m_env, socketNum, socketInputBufferSize);
-						*m_env  << "Changed socket receive buffer size for the \""
-							 << subsession->mediumName()
-							 << "/" << subsession->codecName()
-							 << "\" subsession from "
-							 << curBufferSize << " to "
-							 << newBufferSize << " bytes\n";
+						Log( "Changed socket receive buffer size for the %s %s %d %d",
+							subsession->mediumName(),subsession->codecName(),curBufferSize,newBufferSize);
 					}
 				}
       }
@@ -344,10 +326,7 @@ bool CRTSPClient::OpenStream(char* url)
 		{
       if (subsession->clientPortNum() == 0) 
 			{
-				*m_env  << "No client port was specified for the \""
-						 << subsession->mediumName()
-						 << "/" << subsession->codecName()
-						 << "\" subsession.  (Try adding the \"-p <portNum>\" option.)\n";
+				Log("No client port was specified for the %s %s",subsession->mediumName(),subsession->codecName());
       } 
 			else 
 			{	
@@ -379,11 +358,11 @@ bool CRTSPClient::OpenStream(char* url)
 		subsession->sink = fileSink;
 		if (subsession->sink == NULL) 
 		{
-			*m_env << "Failed to create FileSink\"" << m_env->getResultMsg() << "\n";
+			Log("Failed to create FileSink %s",m_env->getResultMsg());
       shutdown();
       return false;
 		} 
-		*m_env << "Created output sink:" << "\"\n";
+		Log("Created output sink:");;
     subsession->sink->startPlaying(*(subsession->readSource()),subsessionAfterPlaying,subsession);
 				  
 		// Also set a handler to be called if a RTCP "BYE" arrives
@@ -403,28 +382,35 @@ bool CRTSPClient::OpenStream(char* url)
 void CRTSPClient::Stop()
 {
   if (m_BufferThreadActive==false) return;
+	Log("CRTSPClient:Stop");
   StopBufferThread();
   shutdown();
   m_buffer.Clear();
+	Log("CRTSPClient:Stop done");
 }
 
 void CRTSPClient::StartBufferThread()
 {
+	Log("StartBufferThread");
   if (!m_BufferThreadActive)
 	{
 		StartThread();
 		m_BufferThreadActive = true;
 	}
+	Log("StartBufferThread done");
 }
 
 void CRTSPClient::StopBufferThread()
 {
+	Log("StopBufferThread");
+	m_bRunning=false;
 	if (!m_BufferThreadActive)
 		return;
 
-	StopThread(5000);
+	StopThread(20000);
 
 	m_BufferThreadActive = false;
+	Log("StopBufferThread done");
 }
 
 bool CRTSPClient::IsRunning()
@@ -438,46 +424,45 @@ long CRTSPClient::Duration()
 void CRTSPClient::FillBuffer(DWORD byteCount)
 {	
 	Log("Fillbuffer...%d\n",byteCount);
-	bool oldRunning=m_bSleep;
-	m_bSleep=false;
 	while ( IsRunning() && m_buffer.Size() < byteCount)
 	{
 		Sleep(5);
 	}
 	Log("Fillbuffer...%d/%d\n",byteCount,m_buffer.Size() );
-	m_bSleep=oldRunning;
-
+	
 }
 void CRTSPClient::ThreadProc()
 {
 	HRESULT hr = S_OK;
 	m_BufferThreadActive = TRUE;
-
-//	BoostThread Boost;
-
-	//::SetThreadPriority(GetCurrentThread(),THREAD_PRIORITY_TIME_CRITICAL);
-  *m_env << "rtsp thread started:" << "\"\n";
+	m_bRunning=true;
+	::SetThreadPriority(GetCurrentThread(),THREAD_PRIORITY_ABOVE_NORMAL);
+  Log("rtsp thread started");
 	while (m_env!=NULL && !ThreadIsStopping(0))
 	{
+		for (int i=0; i < 10;++i)
+		{
+			if (m_bRunning==false) break;
       m_env->taskScheduler().doEventLoop(); 
+		}
+		if (m_bRunning==false) break;
 	}
-  *m_env << "rtsp thread stopped:" << "\"\n";
+  Log("rtsp thread stopped");
 	m_BufferThreadActive = false;
 	return;
 }
 
 bool CRTSPClient::Run()
 {
-	m_bSleep=false;
 	return true;
 }
 bool CRTSPClient::Pause()
 {
-	m_bSleep=true;
 	return true;
 }
 bool CRTSPClient::Play(float fStart)
 {
+	Log("Play from %f", fStart);
 	m_fStart=fStart;
 	if (m_BufferThreadActive)
 	{

@@ -67,5 +67,5 @@ public:
 	long m_duration;
 	float m_fStart;
 	char m_url[2048];
-	bool m_bSleep;
+	bool m_bRunning;
 };

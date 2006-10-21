@@ -29,7 +29,7 @@
 #include "ChannelInfo.h"
 extern void Log(const char *fmt, ...) ;
 
-#define BUFFER_BEFORE_PLAY_SIZE (1024L*200) //200Kb
+#define BUFFER_BEFORE_PLAY_SIZE (1024L*500) //500Kb
 
 const AMOVIESETUP_MEDIATYPE acceptOutputPinTypes =
 {
@@ -232,8 +232,11 @@ STDMETHODIMP CRtspSourceFilter::Stop()
 {
 	Log("Filter:stop playing...");
 	HRESULT hr=CSource::Stop();
+	Log("Filter:stop client...");
   m_client.Stop();
+	Log("Filter:clear buffer...");
   m_buffer.Clear();
+	Log("Filter:stop done...%x",hr);
 	return hr;
 }
 
