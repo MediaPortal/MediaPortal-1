@@ -479,7 +479,7 @@ namespace MediaPortal.Player
     {
       get
       {
-        return true;
+        return (_isRadio==false);
       }
     }
     public override bool IsTimeShifting

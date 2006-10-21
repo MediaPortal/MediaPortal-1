@@ -229,15 +229,87 @@ namespace MediaPortal.Player
         }
 
 
-        //Log.Info("TSStreamBufferPlayer9: open file:{0}",filename);
+        //Log.Info("RTSPPlayer: open file:{0}",filename);
         hr = interfaceFile.Load(m_strCurrentFile, null);
         if (hr != 0)
         {
           Log.Error("RTSPPlayer:Failed to open file:{0} :0x{1:x}", m_strCurrentFile, hr);
           return false;
         }
-        Log.Info("RTSPPlayer: render output pins of rtsp filter");
-        DirectShowUtil.RenderOutputPins(graphBuilder, (IBaseFilter)rtspSource);
+
+
+        #region connect rtspsource->demux
+        Log.Info("RTSPPlayer:connect rtspsource->mpeg2 demux");
+        IPin pinTsOut = DsFindPin.ByDirection((IBaseFilter)rtspSource, PinDirection.Output, 0);
+        if (pinTsOut == null)
+        {
+          Log.Info("RTSPPlayer:failed to find output pin of tsfilesource");
+          return false;
+        }
+        IPin pinDemuxIn = DsFindPin.ByDirection(_mpegDemux, PinDirection.Input, 0);
+        if (pinDemuxIn == null)
+        {
+          Log.Info("RTSPPlayer:failed to find output pin of tsfilesource");
+          return false;
+        }
+
+        hr = graphBuilder.Connect(pinTsOut, pinDemuxIn);
+        if (hr != 0)
+        {
+          Log.Info("RTSPPlayer:failed to connect rtspsource->mpeg2 demux:{0:X}", hr);
+          return false;
+        }
+        Marshal.ReleaseComObject(pinTsOut);
+        Marshal.ReleaseComObject(pinDemuxIn);
+
+        #endregion
+
+        #region render demux output pins
+        if (IsRadio)
+        {
+          IEnumPins enumPins;
+          _mpegDemux.EnumPins(out enumPins);
+          IPin[] pins = new IPin[2];
+          int fetched = 0;
+          while (enumPins.Next(1, pins, out fetched) == 0)
+          {
+            if (fetched != 1) break;
+            PinDirection direction;
+            pins[0].QueryDirection(out direction);
+            if (direction == PinDirection.Input) continue;
+            IEnumMediaTypes enumMediaTypes;
+            pins[0].EnumMediaTypes(out enumMediaTypes);
+            AMMediaType[] mediaTypes = new AMMediaType[20];
+            int fetchedTypes;
+            enumMediaTypes.Next(20, mediaTypes, out fetchedTypes);
+            for (int i = 0; i < fetchedTypes; ++i)
+            {
+              if (mediaTypes[i].majorType == MediaType.Audio)
+              {
+                graphBuilder.Render(pins[0]);
+                break;
+              }
+            }
+          }
+        }
+        else
+        {
+          Log.Info("RTSPPlayer:render demux outputs");
+          IEnumPins enumPins;
+          _mpegDemux.EnumPins(out enumPins);
+          IPin[] pins = new IPin[2];
+          int fetched = 0;
+          while (enumPins.Next(1, pins, out fetched) == 0)
+          {
+            if (fetched != 1) break;
+            PinDirection direction;
+            pins[0].QueryDirection(out direction);
+            if (direction == PinDirection.Input) continue;
+            graphBuilder.Render(pins[0]);
+          }
+        }
+        #endregion
+
 
         // Connect DVB subtitle filter pins in the graph
         if (_mpegDemux != null && enableDvbSubtitles == true)
