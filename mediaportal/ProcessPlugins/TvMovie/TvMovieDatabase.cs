@@ -544,6 +544,7 @@ namespace ProcessPlugins.TvMovie
               epgEntry.Description = sb.ToString();
             }
 
+						TVDatabase.SupressEvents = true;   // Bav - testing if this is root of powerscheduler problems
             TVDatabase.UpdateProgram(epgEntry);
             if (_slowImport)
               Thread.Sleep(50);
