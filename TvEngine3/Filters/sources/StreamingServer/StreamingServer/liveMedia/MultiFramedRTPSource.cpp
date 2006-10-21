@@ -101,6 +101,7 @@ void MultiFramedRTPSource::doStopGettingFrames() {
   reset();
 }
 
+static bool bInDoGetNextFrame1=false;
 void MultiFramedRTPSource::doGetNextFrame() {
   if (!fAreDoingNetworkReads) {
     // Turn on background read handling of incoming packets:
@@ -114,10 +115,13 @@ void MultiFramedRTPSource::doGetNextFrame() {
   fSavedMaxSize = fMaxSize;
   fFrameSize = 0; // for now
   fNeedDelivery = True;
-  doGetNextFrame1();
+	doGetNextFrame1();
 }
 
 void MultiFramedRTPSource::doGetNextFrame1() {
+	if (bInDoGetNextFrame1) return;
+
+	bInDoGetNextFrame1=true;
   while (fNeedDelivery) {
     // If we already have packet data available, then deliver it now.
     Boolean packetLossPrecededThis;
@@ -192,6 +196,7 @@ void MultiFramedRTPSource::doGetNextFrame1() {
       fNeedDelivery = True;
     }
   }
+	bInDoGetNextFrame1=false;
 }
 
 void MultiFramedRTPSource
