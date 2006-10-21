@@ -45,6 +45,7 @@ int FAKE_SUBTITLE_PID = 0x50;
 static int pcrLogCount=0;
 extern void LogDebug(const char *fmt, ...) ;
 
+//FILE* fTsFile=NULL;
 static DWORD crc_table[256] = {
 	0x00000000, 0x04c11db7, 0x09823b6e, 0x0d4326d9, 0x130476dc, 0x17c56b6b,
 	0x1a864db2, 0x1e475005, 0x2608edb8, 0x22c9f00f, 0x2f8ad6d6, 0x2b4bcb61,
@@ -339,6 +340,7 @@ STDMETHODIMP CTimeShifting::Start()
 		WCHAR wstrFileName[2048];
 		MultiByteToWideChar(CP_ACP,0,m_szFileName,-1,wstrFileName,1+strlen(m_szFileName));
 
+		//fTsFile = fopen("c:\\users\\public\\test.ts","wb+");
 		m_pTimeShiftFile = new MultiFileWriter(&m_params);
 		if (FAILED(m_pTimeShiftFile->OpenFile(wstrFileName))) 
 		{
@@ -418,6 +420,7 @@ STDMETHODIMP CTimeShifting::Stop()
 	CEnterCriticalSection enter(m_section);
 	try
 	{
+		//fclose(fTsFile );
 		LogDebug("Timeshifter:Stop timeshifting:'%s'",m_szFileName);
 		m_bTimeShifting=false;
 		m_multiPlexer.Reset();
@@ -448,6 +451,7 @@ void CTimeShifting::Write(byte* buffer, int len)
 		if (m_pTimeShiftFile!=NULL)
 		{
 			m_pTimeShiftFile->Write(buffer,len);
+			//fwrite(buffer,1,len,fTsFile);
 		}
 	}
 	catch(...)
@@ -556,11 +560,11 @@ void CTimeShifting::WriteTs(byte* tsPacket)
     WriteFakePAT();
     WriteFakePMT();
     m_iPacketCounter=0;
-    return;
   }
 
   int PayLoadUnitStart=0;
   if (header.PayloadUnitStart) PayLoadUnitStart=1;
+
 
 	itvecPids it=m_vecPids.begin();
 	while (it!=m_vecPids.end())
