@@ -2554,9 +2554,10 @@ namespace TvPlugin
         {
           foreach (GroupMap chan in TVHome.Navigator.CurrentGroup.ReferringGroupMap())
           {
-            if (chan.ReferencedChannel().VisibleInGuide)
+            Channel ch = chan.ReferencedChannel();
+            if (ch.VisibleInGuide && ch.IsTv)
             {
-              _channelList.Add(chan.ReferencedChannel());
+              _channelList.Add(ch);
             }
           }
         }
