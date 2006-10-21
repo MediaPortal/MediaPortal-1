@@ -583,7 +583,7 @@
 	</string>
 	<string>
 		<id>214</id>
-		<value>Calib.écran</value>
+		<value>Calibration écran</value>
 	</string>
 	<string>
 		<id>215</id>
@@ -4273,7 +4273,7 @@
 	</string>
 	<string>
 		<id>2503</id>
-		<value>Wikipedia sélectionné :</value>
+		<value>Wikipedia sélectionné:</value>
 	</string>
 	<string>
 		<id>2504</id>
@@ -4289,11 +4289,11 @@
 	</string>
 	<string>
 		<id>2507</id>
-		<value>Images pour cet article :</value>
+		<value>Images pour cet article:</value>
 	</string>
 	<string>
 		<id>2508</id>
-		<value>Pas d'image referencées par cet article.</value>
+		<value>Pas d'image référencées pour cet article.</value>
 	</string>
 	<string>
 		<id>2509</id>
@@ -4317,7 +4317,7 @@
 	</string>
 	<string>
 		<id>2514</id>
-		<value>Retour au text</value>
+		<value>Retour au texte</value>
 	</string>
 	<string>
 		<id>2515</id>
@@ -5187,7 +5187,7 @@
 	</string>
 	<string>
 		<id>19103</id>
-		<value>Resoudre</value>
+		<value>Résoudre</value>
 	</string>
 	<string>
 		<id>19104</id>
@@ -5247,7 +5247,7 @@
 	</string>
 	<string>
       <id>19118</id>
-		<value>Aide un coup</value>
+		<value>Aider une fois</value>
 	</string>
 	<string>
 		<id>19119</id>
@@ -5259,7 +5259,7 @@
 	</string>
 	<string>
 		<id>30000</id>
-		<value>clips vidéos</value>
+		<value>Clips vidéos</value>
 	</string>
 	<string>
 		<id>30001</id>
@@ -5427,7 +5427,7 @@
 	</string>
 	<string>
 		<id>34040</id>
-		<value>Recommandation radio</value>
+		<value>Radio recommandé</value>
 	</string>
 	<string>
 		<id>34041</id>
