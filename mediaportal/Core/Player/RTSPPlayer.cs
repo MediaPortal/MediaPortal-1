@@ -267,6 +267,7 @@ namespace MediaPortal.Player
         #region render demux output pins
         if (IsRadio)
         {
+          Log.Info("RTSPPlayer:render audio demux outputs");
           IEnumPins enumPins;
           _mpegDemux.EnumPins(out enumPins);
           IPin[] pins = new IPin[2];
@@ -294,7 +295,7 @@ namespace MediaPortal.Player
         }
         else
         {
-          Log.Info("RTSPPlayer:render demux outputs");
+          Log.Info("RTSPPlayer:render audio/video demux outputs");
           IEnumPins enumPins;
           _mpegDemux.EnumPins(out enumPins);
           IPin[] pins = new IPin[2];
@@ -385,6 +386,15 @@ namespace MediaPortal.Player
         {
           m_iVideoWidth = Vmr9.VideoWidth;
           m_iVideoHeight = Vmr9.VideoHeight;
+        }
+        if (audioRendererFilter != null)
+        {
+          Log.Info("TSStreamBufferPlayer9:set reference clock");
+          IMediaFilter mp = graphBuilder as IMediaFilter;
+          IReferenceClock clock = audioRendererFilter as IReferenceClock;
+          hr = mp.SetSyncSource(null);
+          hr = mp.SetSyncSource(clock);
+          Log.Info("TSStreamBufferPlayer9:set reference clock:{0:X}", hr);
         }
         Log.Info("RTSPPlayer: graph build successfull");
         return true;
